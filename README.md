@@ -28,7 +28,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 * [Make some albums private](doc/Authentication.md)
 * [Versions changelog](doc/Changelog.md)
 * [Known issues](doc/Issues.md)
-* [License](doc/License.md)
+* [License](License.md)
 
 
 ## Features
