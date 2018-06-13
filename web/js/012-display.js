@@ -2034,9 +2034,16 @@ $(document).ready(function() {
 		else
 			return false;
 	}
+
+	function expireInterval() {
+		// returns the expire interval for the cookies, in seconds
+		// = 1000 days, ~ 3 years
+		return 1000 * 24 * 60 * 60;
+	}
+
 	function setBooleanCookie(key, value) {
 		var expires = new Date();
-		expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+		expires.setTime(expires.getTime() + expireInterval() * 1000);
 		if (value)
 			value = 1;
 		else
@@ -2061,7 +2068,7 @@ $(document).ready(function() {
 	}
 	function setCookie(key, value) {
 		var expires = new Date();
-		expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+		expires.setTime(expires.getTime() + expireInterval() * 1000);
 		document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
 		return true;
 	}
