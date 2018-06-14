@@ -43,7 +43,7 @@
 			if (file_exists("/usr/share/javascript/jquery/jquery.js")) { ?>
 		<script type="text/javascript" src="/javascript/jquery/jquery.js"></script>
 	<?php	} else { ?>
-		<script type="text/javascript" src="js/000-jquery-1.12.4.js"></script>
+		<script type="text/javascript" src="js/000-jquery-3.3.1.js"></script>
 	<?php	}
 
 		// jQuery-hashchange should be in Debian! ?>
