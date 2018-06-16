@@ -218,7 +218,12 @@ def report_times(final):
 
 		media_count_and_time = "Media    " + ((max_digit - len(_num_media)) * " ") + _num_media + ' / ' + str(report_times.num_media_in_tree) + ' (' + str(int(num_media * 1000 / report_times.num_media_in_tree) / 10) + '%)'
 		if num_media:
-			media_count_and_time += ",      " + str(int(time_till_now / 1000000 / num_media * 1000) / 1000) + " s/media"
+			mean_time = int(time_till_now / 1000000 / num_media * 1000) / 1000
+			media_count_and_time += ",      " + str(mean_time) + " s/media"
+			if mean_time <= 0.5:
+				mean_speed = int(1 / mean_time * 100) / 100
+				media_count_and_time += ",      " + str(mean_speed) + " media/s"
+
 		print(media_count_and_time)
 		media_count_and_time = "                  processed " + ((max_digit - len(_num_media_processed)) * " ") + _num_media_processed
 		if num_media_processed and num_media_processed != num_media:
