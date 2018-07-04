@@ -2356,7 +2356,7 @@ $(document).ready(function() {
 	/* Event listeners */
 
 	$(document).on('keydown', function(e) {
-		if (e.target.tagName.toLowerCase() != 'input') {
+		if (! $("ul#right-menu").hasClass("expand")) {
 			if (! e.ctrlKey && ! e.shiftKey && ! e.altKey) {
 				if (nextLink && (e.keyCode === 39 || e.keyCode === 78 || e.keyCode === 13 || e.keyCode === 32) && currentMedia !== null) {
 					//            arrow right                  n             return              space
@@ -2371,45 +2371,51 @@ $(document).ready(function() {
 					goFullscreen(e);
 					return false;
 				} else if (upLink && (e.keyCode === 27 || e.keyCode === 38 || e.keyCode === 33)) {
-					//                            esc            arrow up             page up
+					//                               esc            arrow up             page up
 					fromEscKey = true;
 					swipeDown(upLink);
 					return false;
 				} else if (mediaLink && currentMedia === null && (e.keyCode === 40 || e.keyCode === 34)) {
-					//                                              arrow down           page down
+					//                                                    arrow down           page down
 					swipeUp(mediaLink);
 					return false;
 				} else if (currentMedia !== null && e.keyCode === 68) {
-					//                                        d
+					//                                              d
 					$("#download-link")[0].click();
 					return false;
 				} else if (currentMedia !== null && e.keyCode === 70) {
-					//                                        f
+					//                                              f
 					goFullscreen(e);
 					return false;
 				} else if (currentMedia !== null && e.keyCode === 77) {
-					//                                        m
+					//                                              m
 					showMetadata(e);
 					return false;
 				} else if (currentMedia !== null && e.keyCode === 79) {
-					//                                        o
+					//                                              o
 					$("#original-link")[0].click();
 					return false;
 				} else if (currentMedia !== null && hasGpsData(currentMedia) && e.keyCode === 83) {
-					//                                                                    s
+					//                                                                          s
 						$("#map-link")[0].click();
 					return false;
 				}
 			}
-
-			if (e.keyCode === 69 && ! e.ctrlKey && ! e.shiftKey) {
-				//        e, possibly with alt
-					$("#menu-icon")[0].click();
-				return false;
-			}
-
-			return true;
 		}
+
+		if (
+			(
+				e.target.tagName.toLowerCase() != 'input' && e.keyCode === 69 ||
+				//                                                         e: opens (and closes, if focus in not in input field) the menu
+				$("ul#right-menu").hasClass("expand") && e.keyCode === 27
+				//                                                    esc: closes the menu
+			) &&
+		 	! e.ctrlKey && ! e.shiftKey && ! e.altKey
+		) {
+			$("#menu-icon")[0].click();
+			return false;
+		}
+	return true;
 	});
 	$("#album-view").on('mousewheel', swipeOnWheel);
 
