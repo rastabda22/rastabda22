@@ -662,10 +662,14 @@
 	PhotoFloat.detectSearchSubAlbum = function() {
 		var splittedHash = location.hash.split('/');
 		var splittedSearchAndSubalbumHash;
+		var searchCacheBase = '', searchSubAlbum = '';
 		if (splittedHash.length >= 3 && PhotoFloat.isSearchCacheBase(splittedHash[2])) {
 			splittedSearchAndSubalbumHash = splittedHash[2].split(Options.cache_folder_separator);
-			var searchCacheBase = splittedSearchAndSubalbumHash.slice(0, 2).join(Options.cache_folder_separator);
-			var searchSubAlbum = splittedSearchAndSubalbumHash.slice(2).join(Options.cache_folder_separator);
+			searchCacheBase = splittedSearchAndSubalbumHash.slice(0, 2).join(Options.cache_folder_separator);
+			searchSubAlbum = splittedSearchAndSubalbumHash.slice(2).join(Options.cache_folder_separator);
+		} else if (splittedHash.length == 2 && PhotoFloat.isSearchCacheBase(splittedHash[1])) {
+			splittedSearchAndSubalbumHash = splittedHash[1].split(Options.cache_folder_separator);
+			searchCacheBase = splittedSearchAndSubalbumHash[0];
 		}
 		return [searchCacheBase, searchSubAlbum];
 	}
