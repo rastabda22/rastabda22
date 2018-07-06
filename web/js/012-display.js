@@ -1121,7 +1121,10 @@ $(document).ready(function() {
 
 				upLink = "#!/";
 				if (currentAlbum.parentCacheBase && currentAlbum.parentCacheBase != "root") {
-					upLink = "#!/" + correctUpHash(currentAlbum.parentCacheBase);
+					if (returnLinkFromSearch != '' && searchCacheBase != '' && searchSubAlbum == '')
+						upLink = returnLinkFromSearch;
+					else
+						upLink = "#!/" + correctUpHash(currentAlbum.parentCacheBase);
 				}
 
 				if (
@@ -1766,13 +1769,20 @@ $(document).ready(function() {
 
 
 		if (currentAlbum.media.length == 1) {
-			if (currentAlbum.parentCacheBase && currentAlbum.parentCacheBase != "root")
-				upLink = "#!/" + correctUpHash(currentAlbum.parentCacheBase);
+			if (currentAlbum.parentCacheBase && currentAlbum.parentCacheBase != "root") {
+				if (returnLinkFromSearch != '' && searchCacheBase != '' && searchSubAlbum == '')
+					upLink = returnLinkFromSearch;
+				else
+					upLink = "#!/" + correctUpHash(currentAlbum.parentCacheBase);
+			}
 			nextLink = "";
 			prevLink = "";
 			$("#media-view").css('cursor', 'default');
 		} else {
-			upLink = "#!/" + correctUpHash(currentAlbum.cacheBase);
+			if (returnLinkFromSearch != '' && searchCacheBase != '' && searchSubAlbum == '')
+				upLink = returnLinkFromSearch;
+			else
+				upLink = "#!/" + correctUpHash(currentAlbum.cacheBase);
 			nextLink = "#!/" + photoFloat.mediaHashURIEncoded(currentAlbum, nextMedia);
 			prevLink = "#!/" + photoFloat.mediaHashURIEncoded(currentAlbum, prevMedia);
 			$("#next").show();
@@ -2350,6 +2360,11 @@ $(document).ready(function() {
 
 	// this function is needed in order to let this point to the correct value in photoFloat.parseHash
 	function parseHash(hash, callback, error) {
+		if (returnLinkFromSearch && ! PhotoFloat.isSearchCacheBase(hash)) {
+			// reset the return link from search
+			returnLinkFromSearch = '';
+		}
+
 		photoFloat.parseHash(hash, callback, error);
 	}
 
@@ -2523,6 +2538,7 @@ $(document).ready(function() {
 		// save current hash in order to come back there when exiting from search
 		var searchTerms = encodeURIComponent($("#search-field").val().normalize().trim().replace(/  /g, ' ').replace(/ /g, '_'));
 		var bySearchViewLinkBase = "#!/" + Options.by_search_string;
+		if (! returnLinkFromSearch && ! PhotoFloat.isSearchCacheBase(currentAlbum.cacheBase))
 			returnLinkFromSearch = location.hash;
 		if (searchTerms) {
 			var bySearchViewLink = bySearchViewLinkBase + Options.cache_folder_separator;
