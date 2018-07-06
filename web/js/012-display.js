@@ -511,14 +511,10 @@ $(document).ready(function() {
 	}
 
 	function detectSearchSubAlbum() {
-		var splittedHash = location.hash.split('/');
-		var splittedSearchAndSubalbumHash;
-		if (splittedHash.length >= 3 && PhotoFloat.isSearchCacheBase(splittedHash[2])) {
-			splittedSearchAndSubalbumHash = splittedHash[2].split(Options.cache_folder_separator);
-			searchCacheBase = splittedSearchAndSubalbumHash.slice(0, 2).join(Options.cache_folder_separator);
-			searchSubAlbum = splittedSearchAndSubalbumHash.slice(2).join(Options.cache_folder_separator);
-		}
-		return;
+		var array = PhotoFloat.detectSearchSubAlbum();
+		var cacheBase = array[0];
+		var subAlbum = array[1];
+		return [cacheBase, subAlbum];
 	}
 
 	function setTitle() {
@@ -2188,7 +2184,11 @@ $(document).ready(function() {
 
 		undie();
 		$("#loading").hide();
-		detectSearchSubAlbum();
+
+		// fill the variables which has to do with searches
+		array = detectSearchSubAlbum();
+		searchCacheBase = array[0];
+		searchSubAlbum = array[1];
 
 		$(window).off("resize");
 

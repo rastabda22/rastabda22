@@ -652,6 +652,17 @@
 		return string.indexOf(PhotoFloat.bySearchStringWithTrailingSeparator) === 0;
 	};
 
+	PhotoFloat.detectSearchSubAlbum = function() {
+		var splittedHash = location.hash.split('/');
+		var splittedSearchAndSubalbumHash;
+		if (splittedHash.length >= 3 && PhotoFloat.isSearchCacheBase(splittedHash[2])) {
+			splittedSearchAndSubalbumHash = splittedHash[2].split(Options.cache_folder_separator);
+			var searchCacheBase = splittedSearchAndSubalbumHash.slice(0, 2).join(Options.cache_folder_separator);
+			var searchSubAlbum = splittedSearchAndSubalbumHash.slice(2).join(Options.cache_folder_separator);
+		}
+		return [searchCacheBase, searchSubAlbum];
+	}
+
 	PhotoFloat.mediaHashURIEncoded = function(album, media) {
 		var hash;
 		if (PhotoFloat.isByDateCacheBase(album.cacheBase) || PhotoFloat.isByGpsCacheBase(album.cacheBase) || PhotoFloat.isSearchCacheBase(album.cacheBase) && ! PhotoFloat.searchAndSubalbumHash)
