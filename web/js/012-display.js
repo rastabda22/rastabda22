@@ -57,7 +57,7 @@ $(document).ready(function() {
 	var numSubAlbumsReady;
 	var fromEscKey = false;
 	var firstEscKey = true;
-	var nextLink = "", prevLink = "", upLink = "", mediaLink = "", savedLink = "";
+	var nextLink = "", prevLink = "", upLink = "", mediaLink = "", returnLinkFromSearch = "";
 	var searchCacheBase = '', searchSubAlbum = '';
 
 	/* Displays */
@@ -511,14 +511,10 @@ $(document).ready(function() {
 	}
 
 	function detectSearchSubAlbum() {
-		var splittedHash = location.hash.split('/');
-		var splittedSearchAndSubalbumHash;
-		if (splittedHash.length >= 3 && PhotoFloat.isSearchCacheBase(splittedHash[2])) {
-			splittedSearchAndSubalbumHash = splittedHash[2].split(Options.cache_folder_separator);
-			searchCacheBase = splittedSearchAndSubalbumHash.slice(0, 2).join(Options.cache_folder_separator);
-			searchSubAlbum = splittedSearchAndSubalbumHash.slice(2).join(Options.cache_folder_separator);
-		}
-		return;
+		var array = PhotoFloat.detectSearchSubAlbum();
+		var cacheBase = array[0];
+		var subAlbum = array[1];
+		return [cacheBase, subAlbum];
 	}
 
 	function setTitle() {
@@ -1121,7 +1117,10 @@ $(document).ready(function() {
 
 				upLink = "#!/";
 				if (currentAlbum.parentCacheBase && currentAlbum.parentCacheBase != "root") {
-					upLink = "#!/" + correctUpHash(currentAlbum.parentCacheBase);
+					if (returnLinkFromSearch != '' && searchCacheBase != '' && searchSubAlbum == '')
+						upLink = returnLinkFromSearch;
+					else
+						upLink = "#!/" + correctUpHash(currentAlbum.parentCacheBase);
 				}
 
 				if (
@@ -1766,13 +1765,20 @@ $(document).ready(function() {
 
 
 		if (currentAlbum.media.length == 1) {
-			if (currentAlbum.parentCacheBase && currentAlbum.parentCacheBase != "root")
-				upLink = "#!/" + correctUpHash(currentAlbum.parentCacheBase);
+			if (currentAlbum.parentCacheBase && currentAlbum.parentCacheBase != "root") {
+				if (returnLinkFromSearch != '' && searchCacheBase != '' && searchSubAlbum == '')
+					upLink = returnLinkFromSearch;
+				else
+					upLink = "#!/" + correctUpHash(currentAlbum.parentCacheBase);
+			}
 			nextLink = "";
 			prevLink = "";
 			$("#media-view").css('cursor', 'default');
 		} else {
-			upLink = "#!/" + correctUpHash(currentAlbum.cacheBase);
+			if (returnLinkFromSearch != '' && searchCacheBase != '' && searchSubAlbum == '')
+				upLink = returnLinkFromSearch;
+			else
+				upLink = "#!/" + correctUpHash(currentAlbum.cacheBase);
 			nextLink = "#!/" + photoFloat.mediaHashURIEncoded(currentAlbum, nextMedia);
 			prevLink = "#!/" + photoFloat.mediaHashURIEncoded(currentAlbum, prevMedia);
 			$("#next").show();
@@ -2178,7 +2184,11 @@ $(document).ready(function() {
 
 		undie();
 		$("#loading").hide();
-		detectSearchSubAlbum();
+
+		// fill the variables which has to do with searches
+		array = detectSearchSubAlbum();
+		searchCacheBase = array[0];
+		searchSubAlbum = array[1];
 
 		$(window).off("resize");
 
@@ -2331,6 +2341,11 @@ $(document).ready(function() {
 					if (searchRegexCookie !== null)
 						Options.search_regex = searchRegexCookie;
 
+					Options.foldersStringWithTrailingSeparator = Options.folders_string + Options.cache_folder_separator;
+					Options.byDateStringWithTrailingSeparator = Options.by_date_string + Options.cache_folder_separator;
+					Options.byGpsStringWithTrailingSeparator = Options.by_gps_string + Options.cache_folder_separator;
+					Options.bySearchStringWithTrailingSeparator = Options.by_search_string + Options.cache_folder_separator;
+
 					callback(location.hash, hashParsed, die);
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
@@ -2350,6 +2365,12 @@ $(document).ready(function() {
 
 	// this function is needed in order to let this point to the correct value in photoFloat.parseHash
 	function parseHash(hash, callback, error) {
+		if (! PhotoFloat.isSearchHash()) {
+			// reset the return link from search
+			returnLinkFromSearch = hash;
+		} else if (! returnLinkFromSearch)
+			returnLinkFromSearch = "#!/" + Options.folders_string;
+
 		photoFloat.parseHash(hash, callback, error);
 	}
 
@@ -2521,9 +2542,12 @@ $(document).ready(function() {
 	$('#search-button').on("click", function() {
 		var searchOptions = '';
 		// save current hash in order to come back there when exiting from search
-		savedLink = location.hash;
 		var searchTerms = encodeURIComponent($("#search-field").val().normalize().trim().replace(/  /g, ' ').replace(/ /g, '_'));
 		var bySearchViewLinkBase = "#!/" + Options.by_search_string;
+		if (! PhotoFloat.isSearchHash())
+			returnLinkFromSearch = location.hash;
+		else if (! returnLinkFromSearch)
+			returnLinkFromSearch = "#!/" + Options.folders_string;
 		if (searchTerms) {
 			var bySearchViewLink = bySearchViewLinkBase + Options.cache_folder_separator;
 			if (Options.search_inside_words)
