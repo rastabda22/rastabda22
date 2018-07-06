@@ -2341,6 +2341,11 @@ $(document).ready(function() {
 					if (searchRegexCookie !== null)
 						Options.search_regex = searchRegexCookie;
 
+					Options.foldersStringWithTrailingSeparator = Options.folders_string + Options.cache_folder_separator;
+					Options.byDateStringWithTrailingSeparator = Options.by_date_string + Options.cache_folder_separator;
+					Options.byGpsStringWithTrailingSeparator = Options.by_gps_string + Options.cache_folder_separator;
+					Options.bySearchStringWithTrailingSeparator = Options.by_search_string + Options.cache_folder_separator;
+
 					callback(location.hash, hashParsed, die);
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
