@@ -652,6 +652,18 @@
 		return string.indexOf(PhotoFloat.bySearchStringWithTrailingSeparator) === 0;
 	};
 
+	PhotoFloat.isSearchHash = function() {
+		var hash = location.hash.substring(3);
+		var result = hash.indexOf(PhotoFloat.bySearchStringWithTrailingSeparator) === 0;
+		if (result)
+			return result;
+		else {
+			var array = PhotoFloat.detectSearchSubAlbum();
+			// array is [searchCacheBase, searchSubAlbum]
+			return array[0] != '';
+		}
+	};
+
 	PhotoFloat.detectSearchSubAlbum = function() {
 		var splittedHash = location.hash.split('/');
 		var splittedSearchAndSubalbumHash;

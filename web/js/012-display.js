@@ -2360,7 +2360,7 @@ $(document).ready(function() {
 
 	// this function is needed in order to let this point to the correct value in photoFloat.parseHash
 	function parseHash(hash, callback, error) {
-		if (returnLinkFromSearch && ! PhotoFloat.isSearchCacheBase(hash)) {
+		if (returnLinkFromSearch && ! PhotoFloat.isSearchHash()) {
 			// reset the return link from search
 			returnLinkFromSearch = '';
 		}
@@ -2538,8 +2538,10 @@ $(document).ready(function() {
 		// save current hash in order to come back there when exiting from search
 		var searchTerms = encodeURIComponent($("#search-field").val().normalize().trim().replace(/  /g, ' ').replace(/ /g, '_'));
 		var bySearchViewLinkBase = "#!/" + Options.by_search_string;
-		if (! returnLinkFromSearch && ! PhotoFloat.isSearchCacheBase(currentAlbum.cacheBase))
+		if (! PhotoFloat.isSearchCacheBase(currentAlbum.cacheBase))
 			returnLinkFromSearch = location.hash;
+		else if (! returnLinkFromSearch)
+			returnLinkFromSearch = "#!/" + Options.folders_string;
 		if (searchTerms) {
 			var bySearchViewLink = bySearchViewLinkBase + Options.cache_folder_separator;
 			if (Options.search_inside_words)
