@@ -57,7 +57,7 @@ $(document).ready(function() {
 	var numSubAlbumsReady;
 	var fromEscKey = false;
 	var firstEscKey = true;
-	var nextLink = "", prevLink = "", upLink = "", mediaLink = "", savedLink = "";
+	var nextLink = "", prevLink = "", upLink = "", mediaLink = "", returnLinkFromSearch = "";
 	var searchCacheBase = '', searchSubAlbum = '';
 
 	/* Displays */
@@ -2521,9 +2521,9 @@ $(document).ready(function() {
 	$('#search-button').on("click", function() {
 		var searchOptions = '';
 		// save current hash in order to come back there when exiting from search
-		savedLink = location.hash;
 		var searchTerms = encodeURIComponent($("#search-field").val().normalize().trim().replace(/  /g, ' ').replace(/ /g, '_'));
 		var bySearchViewLinkBase = "#!/" + Options.by_search_string;
+			returnLinkFromSearch = location.hash;
 		if (searchTerms) {
 			var bySearchViewLink = bySearchViewLinkBase + Options.cache_folder_separator;
 			if (Options.search_inside_words)
