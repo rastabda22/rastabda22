@@ -667,9 +667,8 @@
 			splittedSearchAndSubalbumHash = splittedHash[2].split(Options.cache_folder_separator);
 			searchCacheBase = splittedSearchAndSubalbumHash.slice(0, 2).join(Options.cache_folder_separator);
 			searchSubAlbum = splittedSearchAndSubalbumHash.slice(2).join(Options.cache_folder_separator);
-		} else if (splittedHash.length == 2 && PhotoFloat.isSearchCacheBase(splittedHash[1])) {
-			splittedSearchAndSubalbumHash = splittedHash[1].split(Options.cache_folder_separator);
-			searchCacheBase = splittedSearchAndSubalbumHash[0];
+		} else if ([2, 4].indexOf(splittedHash.length) != -1 && PhotoFloat.isSearchCacheBase(splittedHash[1])) {
+			searchCacheBase = splittedHash[1];
 		}
 		return [searchCacheBase, searchSubAlbum];
 	}
