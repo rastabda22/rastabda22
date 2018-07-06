@@ -89,7 +89,9 @@
 		} else {
 			self = this;
 			this.getAlbum(
+				// thisAlbum
 				Options.by_gps_string,
+				// callback
 				function() {
 					self.geotaggedPhotosFound = true;
 					$("#by-gps-view").off("click");
@@ -100,6 +102,7 @@
 						return false;
 					});
 				},
+				// error
 				function() {
 					$("#by-gps-view").addClass("hidden");
 					self.geotaggedPhotosFound = false;
@@ -146,10 +149,6 @@
 		var SearchWordsFromUser, SearchWordsFromUserNormalized, SearchWordsFromUserNormalizedAccordingToOptions;
 		var indexWords, indexAlbums, wordsWithOptionsString;
 		// this vars are defined here and not at the beginning of the file because the options must have been read
-		PhotoFloat.foldersStringWithTrailingSeparator = Options.folders_string + Options.cache_folder_separator;
-		PhotoFloat.byDateStringWithTrailingSeparator = Options.by_date_string + Options.cache_folder_separator;
-		PhotoFloat.byGpsStringWithTrailingSeparator = Options.by_gps_string + Options.cache_folder_separator;
-		PhotoFloat.bySearchStringWithTrailingSeparator = Options.by_search_string + Options.cache_folder_separator;
 
 		$("#error-too-many-images").hide();
 		$(".search-failed").hide();
@@ -634,20 +633,45 @@
 	};
 
 	PhotoFloat.isByDateCacheBase = function(string) {
-		return string == Options.by_date_string || string.indexOf(PhotoFloat.byDateStringWithTrailingSeparator) === 0;
+		return string == Options.by_date_string || string.indexOf(Options.byDateStringWithTrailingSeparator) === 0;
 	};
 
 	PhotoFloat.isByGpsCacheBase = function(string) {
-		return string == Options.by_gps_string || string.indexOf(PhotoFloat.byGpsStringWithTrailingSeparator) === 0;
+		return string == Options.by_gps_string || string.indexOf(Options.byGpsStringWithTrailingSeparator) === 0;
 	};
 
 	PhotoFloat.isFolderCacheBase = function(string) {
-		return string == Options.folders_string || string.indexOf(PhotoFloat.foldersStringWithTrailingSeparator) === 0;
+		return string == Options.folders_string || string.indexOf(Options.foldersStringWithTrailingSeparator) === 0;
 	};
 
 	PhotoFloat.isSearchCacheBase = function(string) {
-		return string.indexOf(PhotoFloat.bySearchStringWithTrailingSeparator) === 0;
+		return string.indexOf(Options.bySearchStringWithTrailingSeparator) === 0;
 	};
+
+	PhotoFloat.isSearchHash = function() {
+		var hash = location.hash.substring(3);
+		if (hash.indexOf(Options.bySearchStringWithTrailingSeparator) === 0)
+			return true;
+		else {
+			var array = PhotoFloat.detectSearchSubAlbum();
+			// array is [searchCacheBase, searchSubAlbum]
+			return array[0] != '';
+		}
+	};
+
+	PhotoFloat.detectSearchSubAlbum = function() {
+		var splittedHash = location.hash.split('/');
+		var splittedSearchAndSubalbumHash;
+		var searchCacheBase = '', searchSubAlbum = '';
+		if (splittedHash.length >= 3 && PhotoFloat.isSearchCacheBase(splittedHash[2])) {
+			splittedSearchAndSubalbumHash = splittedHash[2].split(Options.cache_folder_separator);
+			searchCacheBase = splittedSearchAndSubalbumHash.slice(0, 2).join(Options.cache_folder_separator);
+			searchSubAlbum = splittedSearchAndSubalbumHash.slice(2).join(Options.cache_folder_separator);
+		} else if ([2, 4].indexOf(splittedHash.length) != -1 && PhotoFloat.isSearchCacheBase(splittedHash[1])) {
+			searchCacheBase = splittedHash[1];
+		}
+		return [searchCacheBase, searchSubAlbum];
+	}
 
 	PhotoFloat.mediaHashURIEncoded = function(album, media) {
 		var hash;
@@ -722,13 +746,13 @@
 			hash = hash.substring(rootString.length);
 		else {
 			if (PhotoFloat.isFolderCacheBase(hash))
-				hash = hash.substring(PhotoFloat.foldersStringWithTrailingSeparator.length);
+				hash = hash.substring(Options.foldersStringWithTrailingSeparator.length);
 			else if (PhotoFloat.isByDateCacheBase(hash))
-				hash = hash.substring(PhotoFloat.byDateStringWithTrailingSeparator.length);
+				hash = hash.substring(Options.byDateStringWithTrailingSeparator.length);
 			else if (PhotoFloat.isByGpsCacheBase(hash))
-				hash = hash.substring(PhotoFloat.byGpsStringWithTrailingSeparator.length);
+				hash = hash.substring(Options.byGpsStringWithTrailingSeparator.length);
 			else if (PhotoFloat.isSearchCacheBase(hash))
-				hash = hash.substring(PhotoFloat.bySearchStringWithTrailingSeparator.length);
+				hash = hash.substring(Options.bySearchStringWithTrailingSeparator.length);
 		}
 		if (media.cacheSubdir)
 			return PhotoFloat.pathJoin([Options.server_cache_path, media.cacheSubdir, hash]);
