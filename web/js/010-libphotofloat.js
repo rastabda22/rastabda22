@@ -89,7 +89,9 @@
 		} else {
 			self = this;
 			this.getAlbum(
+				// thisAlbum
 				Options.by_gps_string,
+				// callback
 				function() {
 					self.geotaggedPhotosFound = true;
 					$("#by-gps-view").off("click");
@@ -100,6 +102,7 @@
 						return false;
 					});
 				},
+				// error
 				function() {
 					$("#by-gps-view").addClass("hidden");
 					self.geotaggedPhotosFound = false;
