@@ -1166,7 +1166,7 @@ $(document).ready(function() {
 						if (PhotoFloat.isSearchCacheBase(currentAlbum.cacheBase)) {
 							subfolderHash = PhotoFloat.pathJoin([
 								currentAlbum.subalbums[i].cacheBase,
-								currentAlbum.cacheBase + Options.cache_folder_separator + currentAlbum.subalbums[i].cacheBase
+								[currentAlbum.cacheBase, currentAlbum.subalbums[i].cacheBase].join(Options.cache_folder_separator)
 							]);
 						} else if (searchCacheBase) {
 							subfolderHash = PhotoFloat.pathJoin([
