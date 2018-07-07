@@ -979,7 +979,7 @@ $(document).ready(function() {
 	}
 
 	function showAlbum(populate) {
-		var i, imageLink, linkContainer, container, image, media, thumbsElement, subalbums, subalbumsElement, hash, subfolderHash, thumbHash, thumbnailSize;
+		var i, imageLink, linkContainer, container, image, media, thumbsElement, subalbums, subalbumsElement, mediaHash, subfolderHash, thumbHash, thumbnailSize;
 		var width, height, thumbWidth, thumbHeight, imageString, calculatedWidth, populateMedia;
 		var albumViewWidth, correctedAlbumThumbSize = Options.album_thumb_size;
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
@@ -1084,8 +1084,8 @@ $(document).ready(function() {
 					image = $(imageString);
 
 					image.get(0).media = currentAlbum.media[i];
-					hash = photoFloat.mediaHashURIEncoded(currentAlbum, currentAlbum.media[i]);
-					imageLink = $("<a id='link-" + hash + "' href='#!/" + hash + "'></a>");
+					mediaHash = photoFloat.mediaHashURIEncoded(currentAlbum, currentAlbum.media[i]);
+					imageLink = $("<a id='link-" + mediaHash + "' href='#!/" + mediaHash + "'></a>");
 					imageLink.append(image);
 					media.push(imageLink);
 					(function(theLink, theImage) {
