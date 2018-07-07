@@ -144,16 +144,13 @@
 		$("#" + id).fadeOut(4000);
 	};
 
-	PhotoFloat.prototype.parseHash = function(hash, callback, error) {
-		var self, hashParts, lastSlashPosition, hashPartsCount, albumHash, albumHashToGet, albumHashes, mediaHash = null, foldersHash = null;
-		var SearchWordsFromUser, SearchWordsFromUserNormalized, SearchWordsFromUserNormalizedAccordingToOptions;
-		var indexWords, indexAlbums, wordsWithOptionsString;
-		// this vars are defined here and not at the beginning of the file because the options must have been read
+	PhotoFloat.decodeHash = function(hash) {
+		// decodes the hash and returns its components
 
-		$("#error-too-many-images").hide();
-		$(".search-failed").hide();
+		var hashParts, lastSlashPosition, hashPartsCount, albumHash, mediaHash = null, foldersHash = null;
+
 		hash = PhotoFloat.cleanHash(hash);
-		// count the number of slashes in hash, by date hashes have 2, folders ones 1
+		// count the number of slashes in hash
 		if (! hash.length) {
 			albumHash = Options.folders_string;
 			mediaHash = null;
@@ -179,7 +176,7 @@
 					mediaHash = hashParts[1];
 				}
 			} else if (hashPartsCount == 3) {
-				// virtual folder hash: by date/gps/search album, folders album, media
+				// virtual folder hash: by date/gps/search album, folders album where the image is, media
 				albumHash = hashParts[0];
 				if (PhotoFloat.isFolderCacheBase(hashParts[1])) {
 					foldersHash = hashParts[1];
@@ -189,6 +186,21 @@
 				mediaHash = hashParts[2];
 			}
 		}
+		return [albumHash, mediaHash, foldersHash];
+	}
+
+	PhotoFloat.prototype.parseHash = function(hash, callback, error) {
+		var self, albumHashToGet, albumHashes, albumHash, mediaHash, foldersHash;
+		var SearchWordsFromUser, SearchWordsFromUserNormalized, SearchWordsFromUserNormalizedAccordingToOptions;
+		var indexWords, indexAlbums, wordsWithOptionsString;
+		// this vars are defined here and not at the beginning of the file because the options must have been read
+
+		$("#error-too-many-images").hide();
+		$(".search-failed").hide();
+		array = PhotoFloat.decodeHash(hash);
+		albumHash = array[0];
+		mediaHash = array[1];
+		foldersHash = array[2];
 
 		albumHashes = [];
 		SearchWordsFromUser = [];
