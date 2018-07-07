@@ -145,7 +145,7 @@
 	};
 
 	PhotoFloat.prototype.parseHash = function(hash, callback, error) {
-		var self, hashParts, lastSlashPosition, slashCount, albumHash, albumHashToGet, albumHashes, mediaHash = null, foldersHash = null;
+		var self, hashParts, lastSlashPosition, hashPartsCount, albumHash, albumHashToGet, albumHashes, mediaHash = null, foldersHash = null;
 		var SearchWordsFromUser, SearchWordsFromUserNormalized, SearchWordsFromUserNormalizedAccordingToOptions;
 		var indexWords, indexAlbums, wordsWithOptionsString;
 		// this vars are defined here and not at the beginning of the file because the options must have been read
@@ -159,16 +159,16 @@
 			mediaHash = null;
 		} else {
 			hashParts = hash.split("/");
-			slashCount = hashParts.length -1;
+			hashPartsCount = hashParts.length;
 			lastSlashPosition = hash.lastIndexOf("/");
 			PhotoFloat.searchAndSubalbumHash = "";
 
-			if (slashCount === 0) {
+			if (hashPartsCount === 1) {
 				// folders only or root of a virtual folders: album only
 				albumHash = hash;
-			} else if (slashCount == 1) {
-				// folders hash: album and media
-				// or: search album and folder
+			} else if (hashPartsCount == 2) {
+				// folders hash: album, media
+				// search hash: search album, folder
 				albumHash = hashParts[0];
 				if (PhotoFloat.isFolderCacheBase(hashParts[1])) {
 					foldersHash = hashParts[1];
@@ -178,7 +178,7 @@
 				} else {
 					mediaHash = hashParts[1];
 				}
-			} else if (slashCount == 2) {
+			} else if (hashPartsCount == 3) {
 				// virtual folder hash: by date/gps/search album, folders album, media
 				albumHash = hashParts[0];
 				if (PhotoFloat.isFolderCacheBase(hashParts[1])) {
