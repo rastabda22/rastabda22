@@ -197,7 +197,7 @@
 
 		$("#error-too-many-images").hide();
 		$(".search-failed").hide();
-		array = PhotoFloat.decodeHash(hash);
+		var array = PhotoFloat.decodeHash(hash);
 		albumHash = array[0];
 		mediaHash = array[1];
 		foldersHash = array[2];
