@@ -1108,10 +1108,7 @@ $(document).ready(function() {
 					firstEscKey = false;
 				} else {
 					// reset mediaLink
-					if (currentAlbum.media.length)
-						mediaLink = photoFloat.encodeHash(currentAlbum, currentAlbum.media[0]);
-					else
-						mediaLink = "#!/" + currentAlbum.cacheBase;
+					mediaLink = photoFloat.encodeHash(currentAlbum, null);
 					firstEscKey = true;
 				}
 

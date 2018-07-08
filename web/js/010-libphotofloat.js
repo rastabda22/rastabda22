@@ -174,8 +174,11 @@
 					album.cacheBase,
 					media.cacheBase
 				]);
+		} else if (album.hasOwnProperty(media) && album.media.length == 1) {
+			// album hash with one media
+			return PhotoFloat.encodeHash(album, album.media[0]);
 		} else {
-			// album hash
+			// album hash with more media
 			if (PhotoFloat.isSearchCacheBase(album.cacheBase) && ! PhotoFloat.searchAndSubalbumHash)
 				hash = PhotoFloat.pathJoin([
 					album.searchInFolderCacheBase,
