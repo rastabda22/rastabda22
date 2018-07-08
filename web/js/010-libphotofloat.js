@@ -782,7 +782,33 @@
 		}
 	};
 
+	PhotoFloat.decodeSearchAndSubalbumHash = function() {
+		// decode the variable PhotoFloat.searchAndSubalbumHash into its components searchCacheBase and searchSubAlbum
+
+		var splittedSearchAndSubalbumHash = PhotoFloat.searchAndSubalbumHash.split(Options.cache_folder_separator);
+		searchCacheBase = splittedSearchAndSubalbumHash.slice(0, 2).join(Options.cache_folder_separator);
+		searchSubAlbum = splittedSearchAndSubalbumHash.slice(2).join(Options.cache_folder_separator);
+		return [searchCacheBase, searchSubAlbum];
+	}
+
 	PhotoFloat.detectSearchSubAlbum = function() {
+
+		var array = PhotoFloat.decodeHash(location.hash);
+		var albumHash = array[0];
+		var mediaHash = array[1];
+		var mediaFolderHash = array[2];
+		var searchInFolderHash = array[3];
+		var searchCacheBase = '', searchSubAlbum = '';
+		var splittedSearchAndSubalbumHash;
+		if (PhotoFloat.searchAndSubalbumHash) {
+			array = PhotoFloat.decodeSearchAndSubalbumHash();
+			searchCacheBase = array[0];
+			searchSubAlbum = array[1];
+		} else if (PhotoFloat.isSearchCacheBase(albumHash)) {
+			searchCacheBase = albumHash;
+		}
+		return [searchCacheBase, searchSubAlbum];
+
 		var splittedHash = location.hash.split('/');
 		var splittedSearchAndSubalbumHash;
 		var searchCacheBase = '', searchSubAlbum = '';
