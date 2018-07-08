@@ -2258,10 +2258,11 @@ $(document).ready(function() {
 		return;
 	}
 
-	function getOptions(callback) {
-		if (Object.keys(Options).length > 0)
-			callback(location.hash, hashParsed, die);
-		else {
+	function getOptions() {
+		if (Object.keys(Options).length > 0) {
+			// options.json has already been loaded
+			parseHash(location.hash, hashParsed, die);
+		} else {
 			var optionsFile = PhotoFloat.pathJoin(["cache/options.json"]);
 			var ajaxOptions = {
 				type: "GET",
@@ -2347,7 +2348,7 @@ $(document).ready(function() {
 					Options.byGpsStringWithTrailingSeparator = Options.by_gps_string + Options.cache_folder_separator;
 					Options.bySearchStringWithTrailingSeparator = Options.by_search_string + Options.cache_folder_separator;
 
-					callback(location.hash, hashParsed, die);
+					parseHash(location.hash, hashParsed, die);
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					if (errorThrown == "Not Found") {
@@ -2844,7 +2845,7 @@ $(document).ready(function() {
 		$("ul#right-menu").removeClass("expand");
 		searchCacheBase = '';
 		searchSubAlbum = '';
-		getOptions(parseHash);
+		getOptions();
 	});
 	$(window).hashchange();
 
