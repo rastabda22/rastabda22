@@ -9,6 +9,7 @@
 		PhotoFloat.searchAndSubalbumHash = '';
 		PhotoFloat.searchWordsFromJsonFile = this.searchWordsFromJsonFile;
 		PhotoFloat.searchAlbumCacheBaseFromJsonFile = this.searchAlbumCacheBaseFromJsonFile;
+		PhotoFloat.returnLinkFromSearch = '';
 	}
 
 	/* public member functions */

@@ -57,7 +57,7 @@ $(document).ready(function() {
 	var numSubAlbumsReady;
 	var fromEscKey = false;
 	var firstEscKey = true;
-	var nextLink = "", prevLink = "", upLink = "", mediaLink = "", returnLinkFromSearch = "";
+	var nextLink = "", prevLink = "", upLink = "", mediaLink = "", savedHash = '';
 	var searchCacheBase = '', searchSubAlbum = '';
 
 	/* Displays */
@@ -2369,9 +2369,9 @@ $(document).ready(function() {
 		if (Object.keys(Options).length > 0) {
 			if (! PhotoFloat.isSearchHash()) {
 				// reset the return link from search
-				returnLinkFromSearch = hash;
-			} else if (! returnLinkFromSearch)
-				returnLinkFromSearch = "#!/" + Options.folders_string;
+				PhotoFloat.returnLinkFromSearch = hash;
+			} else if (! PhotoFloat.returnLinkFromSearch)
+				PhotoFloat.returnLinkFromSearch = "#!/" + Options.folders_string;
 
 			photoFloat.parseHash(hash, callback, error);
 		} else {
@@ -2550,10 +2550,11 @@ $(document).ready(function() {
 		// save current hash in order to come back there when exiting from search
 		var searchTerms = encodeURIComponent($("#search-field").val().normalize().trim().replace(/  /g, ' ').replace(/ /g, '_'));
 		var bySearchViewLinkBase = "#!/" + Options.by_search_string;
+		// save the current hash in order to come back there when exiting from search
 		if (! PhotoFloat.isSearchHash())
-			returnLinkFromSearch = location.hash;
-		else if (! returnLinkFromSearch)
-			returnLinkFromSearch = "#!/" + Options.folders_string;
+			PhotoFloat.returnLinkFromSearch = location.hash;
+		if (! PhotoFloat.returnLinkFromSearch)
+			PhotoFloat.returnLinkFromSearch = "#!/" + Options.folders_string;
 		if (searchTerms) {
 			var bySearchViewLink = bySearchViewLinkBase + Options.cache_folder_separator;
 			if (Options.search_inside_words)
