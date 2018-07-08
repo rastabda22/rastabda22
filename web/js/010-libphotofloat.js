@@ -242,6 +242,64 @@
 		return [albumHash, mediaHash, foldersHash];
 	}
 
+	PhotoFloat.upHash = function(hash) {
+		var resultHash;
+		var array = PhotoFloat.decodeHash(hash);
+		albumHash = array[0];
+		mediaHash = array[1];
+		mediaFolderHash = array[2];
+		searchInFolderHash = array[3];
+		// PhotoFloat.searchAndSubalbumHash is assigned too
+
+		if (mediaHash !== null) {
+			// hash of a media: remove the media
+			if (mediaFolderHash === null && searchInFolderHash === null && PhotoFloat.searchAndSubalbumHash == '') {
+				// folders hash: album, media
+				resultHash = albumHash;
+			} else if (mediaFolderHash !== null && searchInFolderHash === null && PhotoFloat.searchAndSubalbumHash == '') {
+				// gps hash: by date album, album where the image is, media
+				// date hash: by gps album, album where the image is, media
+				resultHash = albumHash;
+			} else if (mediaFolderHash !== null && searchInFolderHash !== null && PhotoFloat.searchAndSubalbumHash == '') {
+			// search hash of found media: folder to perform the search in, search album, album where the image is, media
+				resultHash = PhotoFloat.pathJoin([searchInFolderHash, albumHash]);
+			} else if (mediaFolderHash !== null && searchInFolderHash !== null && PhotoFloat.searchAndSubalbumHash !== '') {
+				// search hash of media in sub folder: folder to perform the search in, subfolder, search and subalmum hash, album where the image is, media
+				resultHash = PhotoFloat.pathJoin([searchInFolderHash, albumHash, PhotoFloat.searchAndSubalbumHash]);
+			}
+		} else {
+			// hash of an album: go up in the album tree
+			if (mediaFolderHash === null && searchInFolderHash === null && PhotoFloat.searchAndSubalbumHash == '') {
+				// folders or gps or date hash: album only
+				var arrayFromAlbumHash = albumHash.split(Options.cache_folder_separator);
+				arrayFromAlbumHash = arrayFromAlbumHash.slice(0, -1);
+				resultHash = arrayFromAlbumHash.join(Options.cache_folder_separator);
+			} else if (mediaFolderHash === null && searchInFolderHash !== null && PhotoFloat.searchAndSubalbumHash == '') {
+				// search hash: folder to perform the search in, search album
+				resultHash = PhotoFloat.returnLinkFromSearch;
+			} else if (mediaFolderHash === null && searchInFolderHash !== null && PhotoFloat.searchAndSubalbumHash !== '') {
+				// search hash of subfolder: folder to perform the search in, subfolder, search and subalmum hash
+				array = PhotoFloat.decodeSearchAndSubalbumHash();
+				searchCacheBase = array[0];
+				searchSubAlbum = array[1];
+
+				// we must the subalbum must
+				// if (searchSubAlbum.indexOf(albumHash) === 0 && albumHash.length < searchSubAlbum.length) {
+				if (albumHash == searchSubAlbum) {
+					// we are at one of the albums found as search result => go to the search album
+					resultHash = PhotoFloat.pathJoin([searchInFolderHash, searchCacheBase]);
+				} else {
+					// we are in a subalbum of one of the albums found as search result => go up one level
+					var arrayFromSearchSubAlbum = searchSubAlbum.split(Options.cache_folder_separator);
+					arrayFromSearchSubAlbum = arrayFromSearchSubAlbum.slice(0, -1);
+					resultHash = PhotoFloat.pathJoin([searchInFolderHash, albumHash, [searchCacheBase, searchSubAlbum].join(Options.cache_folder_separator)]);
+				}
+			}
+		}
+
+		return "#!/" + resultHash;
+	}
+
 	PhotoFloat.prototype.parseHash = function(hash, callback, error) {
 		var self, albumHashToGet, albumHashes, albumHash, mediaHash, foldersHash;
 		var SearchWordsFromUser, SearchWordsFromUserNormalized, SearchWordsFromUserNormalizedAccordingToOptions;
