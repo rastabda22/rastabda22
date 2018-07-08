@@ -2556,7 +2556,7 @@ $(document).ready(function() {
 		if (! PhotoFloat.returnLinkFromSearch)
 			PhotoFloat.returnLinkFromSearch = "#!/" + Options.folders_string;
 		if (searchTerms) {
-			var bySearchViewLink = bySearchViewLinkBase + Options.cache_folder_separator;
+			bySearchViewLink += Options.cache_folder_separator;
 			if (Options.search_inside_words)
 				searchOptions += 'i' + Options.search_options_separator;
 			if (Options.search_any_word)
@@ -2566,10 +2566,9 @@ $(document).ready(function() {
 			if (Options.search_accent_sensitive)
 				searchOptions += 'a' + Options.search_options_separator;
 			bySearchViewLink += searchOptions + searchTerms;
-			window.location.href = bySearchViewLink;
-		} else {
-			window.location.href = bySearchViewLinkBase;
 		}
+		window.location.href = bySearchViewLink;
+
 		focusSearchField();
 		return false;
 	});
