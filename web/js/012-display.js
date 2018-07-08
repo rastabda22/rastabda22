@@ -1163,19 +1163,22 @@ $(document).ready(function() {
 					subalbumsElement.insertBefore(thumbsElement);
 
 					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
-						if (PhotoFloat.isSearchCacheBase(currentAlbum.cacheBase)) {
-							subfolderHash = PhotoFloat.pathJoin([
-								currentAlbum.subalbums[i].cacheBase,
-								[currentAlbum.cacheBase, currentAlbum.subalbums[i].cacheBase].join(Options.cache_folder_separator)
-							]);
-						} else if (searchCacheBase) {
-							subfolderHash = PhotoFloat.pathJoin([
-								currentAlbum.subalbums[i].cacheBase,
-								[searchCacheBase, searchSubAlbum].join(Options.cache_folder_separator)
-							]);
-						} else {
-							subfolderHash = currentAlbum.subalbums[i].cacheBase;
-						}
+						// if (PhotoFloat.isSearchCacheBase(currentAlbum.cacheBase)) {
+						// 	subfolderHash = PhotoFloat.pathJoin([
+						// 		currentAlbum.searchInFolderCacheBase,
+						// 		currentAlbum.subalbums[i].cacheBase,
+						// 		[currentAlbum.cacheBase, currentAlbum.subalbums[i].cacheBase].join(Options.cache_folder_separator)
+						// 	]);
+						// } else if (searchCacheBase) {
+						// 	subfolderHash = PhotoFloat.pathJoin([
+						// 		currentAlbum.searchInFolderCacheBase,
+						// 		currentAlbum.subalbums[i].cacheBase,
+						// 		[searchCacheBase, searchSubAlbum].join(Options.cache_folder_separator)
+						// 	]);
+						// } else {
+						// 	subfolderHash = currentAlbum.subalbums[i].cacheBase;
+						// }
+						subfolderHash = photoFloat.encodeHash(currentAlbum.subalbums[i], null);
 
 						// generate the subalbum caption
 						if (PhotoFloat.isByDateCacheBase(currentAlbum.cacheBase)) {
@@ -1288,7 +1291,7 @@ $(document).ready(function() {
 						container = $("#" + PhotoFloat.hashCode(currentAlbum.subalbums[i].cacheBase));
 						// add the clicks
 						container.off('click').css("cursor", "pointer").on('click', {hash: subfolderHash}, function(ev) {
-							window.location.href = "#!/" + ev.data.hash;
+							window.location.href = ev.data.hash;
 						});
 
 						//////////////////// begin anonymous function /////////////////////
@@ -1324,18 +1327,20 @@ $(document).ready(function() {
 
 								if (PhotoFloat.isByDateCacheBase(currentAlbum.cacheBase)) {
 									titleName = PhotoFloat.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
-									link = PhotoFloat.pathJoin(["#!", randomMedia.dayAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
+									// randomMediaLink = PhotoFloat.pathJoin(["#!", randomMedia.dayAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
 								} else if (PhotoFloat.isByGpsCacheBase(currentAlbum.cacheBase)) {
 									humanGeonames = PhotoFloat.pathJoin([Options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
 									titleName = PhotoFloat.pathJoin([humanGeonames, randomMedia.name]);
-									link = PhotoFloat.pathJoin(["#!", randomMedia.gpsAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
+									// randomMediaLink = PhotoFloat.pathJoin(["#!", randomMedia.gpsAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
 								} else if (PhotoFloat.isSearchCacheBase(currentAlbum.cacheBase)) {
 									titleName = randomMedia.albumName;
-									link = PhotoFloat.pathJoin(["#!", randomMedia.foldersCacheBase, currentAlbum.cacheBase + Options.cache_folder_separator + theSubalbum.cacheBase, randomMedia.cacheBase]);
+									// randomMediaLink = PhotoFloat.pathJoin(["#!", randomMedia.foldersCacheBase, currentAlbum.cacheBase + Options.cache_folder_separator + theSubalbum.cacheBase, randomMedia.cacheBase]);
 								} else {
 									titleName = randomMedia.albumName;
-									link = PhotoFloat.pathJoin(["#!", randomMedia.foldersCacheBase, randomMedia.cacheBase]);
+									// randomMediaLink = PhotoFloat.pathJoin(["#!", randomMedia.foldersCacheBase, randomMedia.cacheBase]);
 								}
+								randomMediaLink = photoFloat.encodeHash(randomAlbum, randomMedia);
+
 								titleName = titleName.substr(titleName.indexOf('/') + 1);
 								goTo = _t(".go-to") + " " + titleName;
 								htmlText =	"<a href=\"" + link + "\">" +
