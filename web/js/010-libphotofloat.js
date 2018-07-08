@@ -144,6 +144,56 @@
 		$("#" + id).fadeOut(4000);
 	};
 
+	PhotoFloat.encodeHash = function(album, media) {
+		var hash;
+		if (media !== null) {
+			// media hash
+			if (PhotoFloat.isByDateCacheBase(album.cacheBase) || PhotoFloat.isByGpsCacheBase(album.cacheBase))
+				hash = PhotoFloat.pathJoin([
+					album.cacheBase,
+					media.foldersCacheBase,
+					media.cacheBase
+				]);
+			else if (PhotoFloat.isSearchCacheBase(album.cacheBase) && ! PhotoFloat.searchAndSubalbumHash)
+				hash = PhotoFloat.pathJoin([
+					album.searchInFolderCacheBase,
+					album.cacheBase,
+					media.foldersCacheBase,
+					media.cacheBase
+				]);
+			else if (PhotoFloat.searchAndSubalbumHash)
+				hash = PhotoFloat.pathJoin([
+					album.searchInFolderCacheBase,
+					album.cacheBase,
+					PhotoFloat.searchAndSubalbumHash,
+					media.foldersCacheBase,
+					media.cacheBase
+				]);
+			else
+				hash = PhotoFloat.pathJoin([
+					album.cacheBase,
+					media.cacheBase
+				]);
+		} else {
+			// album hash
+			if (PhotoFloat.isSearchCacheBase(album.cacheBase) && ! PhotoFloat.searchAndSubalbumHash)
+				hash = PhotoFloat.pathJoin([
+					album.searchInFolderCacheBase,
+					album.cacheBase
+				]);
+			else if (PhotoFloat.searchAndSubalbumHash)
+				hash = PhotoFloat.pathJoin([
+					album.searchInFolderCacheBase,
+					album.cacheBase,
+					PhotoFloat.searchAndSubalbumHash
+				]);
+			else
+				hash = album.cacheBase;
+
+		}
+		return hash;
+	};
+
 	PhotoFloat.decodeHash = function(hash) {
 		// decodes the hash and returns its components
 
@@ -685,28 +735,6 @@
 		return [searchCacheBase, searchSubAlbum];
 	}
 
-	PhotoFloat.mediaHashURIEncoded = function(album, media) {
-		var hash;
-		if (PhotoFloat.isByDateCacheBase(album.cacheBase) || PhotoFloat.isByGpsCacheBase(album.cacheBase) || PhotoFloat.isSearchCacheBase(album.cacheBase) && ! PhotoFloat.searchAndSubalbumHash)
-			hash = PhotoFloat.pathJoin([
-				album.cacheBase,
-				media.foldersCacheBase,
-				media.cacheBase
-			]);
-		else if (PhotoFloat.searchAndSubalbumHash)
-			hash = PhotoFloat.pathJoin([
-				album.cacheBase,
-				PhotoFloat.searchAndSubalbumHash,
-				media.cacheBase
-			]);
-		else
-			hash = PhotoFloat.pathJoin([
-				album.cacheBase,
-				media.cacheBase
-			]);
-		return hash;
-	};
-
 	PhotoFloat.pathJoin = function(pathArr) {
 		var result = '';
 		for (var i = 0; i < pathArr.length; ++i) {
@@ -837,7 +865,7 @@
 	/* make static methods callable as member functions */
 	PhotoFloat.prototype.cacheBase = PhotoFloat.cacheBase;
 	PhotoFloat.prototype.mediaHash = PhotoFloat.mediaHash;
-	PhotoFloat.prototype.mediaHashURIEncoded = PhotoFloat.mediaHashURIEncoded;
+	PhotoFloat.prototype.encodeHash = PhotoFloat.encodeHash;
 	PhotoFloat.prototype.pathJoin = PhotoFloat.pathJoin;
 	PhotoFloat.prototype.mediaPath = PhotoFloat.mediaPath;
 	PhotoFloat.prototype.originalMediaPath = PhotoFloat.originalMediaPath;

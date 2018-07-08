@@ -1084,7 +1084,7 @@ $(document).ready(function() {
 					image = $(imageString);
 
 					image.get(0).media = currentAlbum.media[i];
-					mediaHash = photoFloat.mediaHashURIEncoded(currentAlbum, currentAlbum.media[i]);
+					mediaHash = photoFloat.encodeHash(currentAlbum, currentAlbum.media[i]);
 					imageLink = $("<a id='link-" + mediaHash + "' href='#!/" + mediaHash + "'></a>");
 					imageLink.append(image);
 					media.push(imageLink);
@@ -1109,7 +1109,7 @@ $(document).ready(function() {
 				} else {
 					// reset mediaLink
 					if (currentAlbum.media.length)
-						mediaLink = "#!/" + photoFloat.mediaHashURIEncoded(currentAlbum, currentAlbum.media[0]);
+						mediaLink = "#!/" + photoFloat.encodeHash(currentAlbum, currentAlbum.media[0]);
 					else
 						mediaLink = "#!/" + currentAlbum.cacheBase;
 					firstEscKey = true;
@@ -1630,7 +1630,7 @@ $(document).ready(function() {
 		var nextReducedPhoto, prevReducedPhoto;
 		var exposureTime;
 
-		mediaLink = "#!/" + photoFloat.mediaHashURIEncoded(currentAlbum, currentMedia);
+		mediaLink = "#!/" + photoFloat.encodeHash(currentAlbum, currentMedia);
 		firstEscKey = true;
 
 		thumbnailSize = Options.media_thumb_size;
@@ -1779,8 +1779,9 @@ $(document).ready(function() {
 				upLink = returnLinkFromSearch;
 			else
 				upLink = "#!/" + correctUpHash(currentAlbum.cacheBase);
-			nextLink = "#!/" + photoFloat.mediaHashURIEncoded(currentAlbum, nextMedia);
-			prevLink = "#!/" + photoFloat.mediaHashURIEncoded(currentAlbum, prevMedia);
+
+			nextLink = "#!/" + photoFloat.encodeHash(currentAlbum, nextMedia);
+			prevLink = "#!/" + photoFloat.encodeHash(currentAlbum, prevMedia);
 			$("#next").show();
 			$("#prev").show();
 			$("#media-view")
