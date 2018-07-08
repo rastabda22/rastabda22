@@ -191,7 +191,7 @@
 				hash = album.cacheBase;
 
 		}
-		return hash;
+		return "#!/" + hash;
 	};
 
 	PhotoFloat.decodeHash = function(hash) {
