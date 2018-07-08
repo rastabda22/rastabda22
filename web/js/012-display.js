@@ -2260,122 +2260,121 @@ $(document).ready(function() {
 		return;
 	}
 
-	function getOptions() {
-		if (Object.keys(Options).length > 0) {
-			// options.json has already been loaded
-			parseHash(location.hash, hashParsed, die);
-		} else {
-			var optionsFile = PhotoFloat.pathJoin(["cache/options.json"]);
-			var ajaxOptions = {
-				type: "GET",
-				dataType: "json",
-				url: optionsFile,
-				success: function(data) {
-					// for map zoom levels, see http://wiki.openstreetmap.org/wiki/Zoom_levels
+	function getOptions(hash, callback, error) {
+		var ajaxOptions = {
+			type: "GET",
+			dataType: "json",
+			url: "cache/options.json",
+			success: function(data) {
+				// for map zoom levels, see http://wiki.openstreetmap.org/wiki/Zoom_levels
 
-					for (var key in data)
-						if (data.hasOwnProperty(key))
-							Options[key] = data[key];
-					translate();
-					// server_cache_path actually is a constant: it cannot be passed as an option, because getOptions need to know it before reading the options
-					// options.json is in this directory
-					Options.server_cache_path = 'cache';
+				for (var key in data)
+					if (data.hasOwnProperty(key))
+						Options[key] = data[key];
+				translate();
+				// server_cache_path actually is a constant: it cannot be passed as an option, because getOptions need to know it before reading the options
+				// options.json is in this directory
+				Options.server_cache_path = 'cache';
 
-					maxSize = Options.reduced_sizes[Options.reduced_sizes.length - 1];
+				maxSize = Options.reduced_sizes[Options.reduced_sizes.length - 1];
 
-					// override according to user selections
-					var slideCookie = getBooleanCookie("albums_slide_style");
-					if (slideCookie !== null)
-						Options.albums_slide_style = slideCookie;
+				// override according to user selections
+				var slideCookie = getBooleanCookie("albums_slide_style");
+				if (slideCookie !== null)
+					Options.albums_slide_style = slideCookie;
 
-					if (Options.thumb_spacing)
-						Options.spacingToggle = Options.thumb_spacing;
-					else
-						Options.spacingToggle = Options.media_thumb_size * 0.03;
+				if (Options.thumb_spacing)
+					Options.spacingToggle = Options.thumb_spacing;
+				else
+					Options.spacingToggle = Options.media_thumb_size * 0.03;
 
-					var spacingCookie = getNumberCookie("spacing");
-					if (spacingCookie !== null) {
-						Options.spacing = spacingCookie;
-					} else {
-						Options.spacing = Options.thumb_spacing;
-					}
-
-					var showAlbumNamesCookie = getBooleanCookie("show_album_names_below_thumbs");
-					if (showAlbumNamesCookie !== null)
-						Options.show_album_names_below_thumbs = showAlbumNamesCookie;
-
-					var showMediaCountCookie = getBooleanCookie("show_album_media_count");
-					if (showMediaCountCookie !== null)
-						Options.show_album_media_count = showMediaCountCookie;
-
-					var showMediaNamesCookie = getBooleanCookie("show_media_names_below_thumbs");
-					if (showMediaNamesCookie !== null)
-						Options.show_media_names_below_thumbs = showMediaNamesCookie;
-
-					var squareAlbumsCookie = getCookie("album_thumb_type");
-					if (squareAlbumsCookie !== null)
-						Options.album_thumb_type = squareAlbumsCookie;
-
-					var squareMediaCookie = getCookie("media_thumb_type");
-					if (squareMediaCookie !== null)
-						Options.media_thumb_type = squareMediaCookie;
-
-					Options.search_inside_words = false;
-					var searchInsideWordsCookie = getBooleanCookie("search_inside_words");
-					if (searchInsideWordsCookie !== null)
-						Options.search_inside_words = searchInsideWordsCookie;
-
-					Options.search_any_word = false;
-					var searchAnyWordCookie = getBooleanCookie("search_any_word");
-					if (searchAnyWordCookie !== null)
-						Options.search_any_word = searchAnyWordCookie;
-
-					Options.search_case_sensitive = false;
-					var searchCaseSensitiveCookie = getBooleanCookie("search_case_sensitive");
-					if (searchCaseSensitiveCookie !== null)
-						Options.search_case_sensitive = searchCaseSensitiveCookie;
-
-					Options.search_accent_sensitive = false;
-					var searchAccentSensitiveCookie = getBooleanCookie("search_accent_sensitive");
-					if (searchAccentSensitiveCookie !== null)
-						Options.search_accent_sensitive = searchAccentSensitiveCookie;
-
-					Options.search_regex = false;
-					var searchRegexCookie = getBooleanCookie("search_regex");
-					if (searchRegexCookie !== null)
-						Options.search_regex = searchRegexCookie;
-
-					Options.foldersStringWithTrailingSeparator = Options.folders_string + Options.cache_folder_separator;
-					Options.byDateStringWithTrailingSeparator = Options.by_date_string + Options.cache_folder_separator;
-					Options.byGpsStringWithTrailingSeparator = Options.by_gps_string + Options.cache_folder_separator;
-					Options.bySearchStringWithTrailingSeparator = Options.by_search_string + Options.cache_folder_separator;
-
-					parseHash(location.hash, hashParsed, die);
-				},
-				error: function(jqXHR, textStatus, errorThrown) {
-					if (errorThrown == "Not Found") {
-						$("#album-view").fadeOut(200);
-						$("#media-view").fadeOut(200);
-						$("#album-view").stop().fadeIn(3500);
-						$("#media-view").stop().fadeIn(3500);
-						$("#error-options-file").stop().fadeIn(200);
-						$("#error-options-file, #error-overlay, #auth-text").fadeOut(2500);
-					}
+				var spacingCookie = getNumberCookie("spacing");
+				if (spacingCookie !== null) {
+					Options.spacing = spacingCookie;
+				} else {
+					Options.spacing = Options.thumb_spacing;
 				}
-			};
-			$.ajax(ajaxOptions);
-		}
+
+				var showAlbumNamesCookie = getBooleanCookie("show_album_names_below_thumbs");
+				if (showAlbumNamesCookie !== null)
+					Options.show_album_names_below_thumbs = showAlbumNamesCookie;
+
+				var showMediaCountCookie = getBooleanCookie("show_album_media_count");
+				if (showMediaCountCookie !== null)
+					Options.show_album_media_count = showMediaCountCookie;
+
+				var showMediaNamesCookie = getBooleanCookie("show_media_names_below_thumbs");
+				if (showMediaNamesCookie !== null)
+					Options.show_media_names_below_thumbs = showMediaNamesCookie;
+
+				var squareAlbumsCookie = getCookie("album_thumb_type");
+				if (squareAlbumsCookie !== null)
+					Options.album_thumb_type = squareAlbumsCookie;
+
+				var squareMediaCookie = getCookie("media_thumb_type");
+				if (squareMediaCookie !== null)
+					Options.media_thumb_type = squareMediaCookie;
+
+				Options.search_inside_words = false;
+				var searchInsideWordsCookie = getBooleanCookie("search_inside_words");
+				if (searchInsideWordsCookie !== null)
+					Options.search_inside_words = searchInsideWordsCookie;
+
+				Options.search_any_word = false;
+				var searchAnyWordCookie = getBooleanCookie("search_any_word");
+				if (searchAnyWordCookie !== null)
+					Options.search_any_word = searchAnyWordCookie;
+
+				Options.search_case_sensitive = false;
+				var searchCaseSensitiveCookie = getBooleanCookie("search_case_sensitive");
+				if (searchCaseSensitiveCookie !== null)
+					Options.search_case_sensitive = searchCaseSensitiveCookie;
+
+				Options.search_accent_sensitive = false;
+				var searchAccentSensitiveCookie = getBooleanCookie("search_accent_sensitive");
+				if (searchAccentSensitiveCookie !== null)
+					Options.search_accent_sensitive = searchAccentSensitiveCookie;
+
+				Options.search_regex = false;
+				var searchRegexCookie = getBooleanCookie("search_regex");
+				if (searchRegexCookie !== null)
+					Options.search_regex = searchRegexCookie;
+
+				Options.foldersStringWithTrailingSeparator = Options.folders_string + Options.cache_folder_separator;
+				Options.byDateStringWithTrailingSeparator = Options.by_date_string + Options.cache_folder_separator;
+				Options.byGpsStringWithTrailingSeparator = Options.by_gps_string + Options.cache_folder_separator;
+				Options.bySearchStringWithTrailingSeparator = Options.by_search_string + Options.cache_folder_separator;
+
+				photoFloat.parseHash(hash, callback, error);
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				if (errorThrown == "Not Found") {
+					$("#album-view").fadeOut(200);
+					$("#media-view").fadeOut(200);
+					$("#album-view").stop().fadeIn(3500);
+					$("#media-view").stop().fadeIn(3500);
+					$("#error-options-file").stop().fadeIn(200);
+					$("#error-options-file, #error-overlay, #auth-text").fadeOut(2500);
+				}
+			}
+		};
+		$.ajax(ajaxOptions);
 	}
 
 	// this function is needed in order to let this point to the correct value in photoFloat.parseHash
 	function parseHash(hash, callback, error) {
-		if (! PhotoFloat.isSearchHash()) {
-			// reset the return link from search
-			returnLinkFromSearch = hash;
-		} else if (! returnLinkFromSearch)
-			returnLinkFromSearch = "#!/" + Options.folders_string;
+		if (Object.keys(Options).length > 0) {
+			if (! PhotoFloat.isSearchHash()) {
+				// reset the return link from search
+				returnLinkFromSearch = hash;
+			} else if (! returnLinkFromSearch)
+				returnLinkFromSearch = "#!/" + Options.folders_string;
 
-		photoFloat.parseHash(hash, callback, error);
+			photoFloat.parseHash(hash, callback, error);
+		} else {
+			getOptions(hash, callback, error);
+		}
+		// photoFloat.parseHash(hash, callback, error);
 	}
 
 	/* Event listeners */
@@ -2847,7 +2846,10 @@ $(document).ready(function() {
 		$("ul#right-menu").removeClass("expand");
 		searchCacheBase = '';
 		searchSubAlbum = '';
-		getOptions();
+		if (Object.keys(Options).length > 0)
+			parseHash(location.hash, hashParsed, die);
+		else
+			getOptions(location.hash, hashParsed, die);
 	});
 	$(window).hashchange();
 
