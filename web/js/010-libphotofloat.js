@@ -253,7 +253,7 @@
 			}
 		}
 		return [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash];
-	}
+	};
 
 	PhotoFloat.upHash = function(hash) {
 		var resultHash;
@@ -304,9 +304,7 @@
 		}
 
 		return "#!/" + resultHash;
-	}
-
-
+	};
 
 	PhotoFloat.prototype.parseHash = function(hash, callback, error) {
 		var self, albumHashToGet, albumHashes;
@@ -789,7 +787,7 @@
 	};
 
 	PhotoFloat.isSearchHash = function(hash) {
-		var hash = PhotoFloat.cleanHash(hash);
+		hash = PhotoFloat.cleanHash(hash);
 		var array = PhotoFloat.decodeHash(hash);
 		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
 		if (PhotoFloat.isSearchCacheBase(hash) || array[4] !== null)

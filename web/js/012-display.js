@@ -1371,12 +1371,12 @@ $(document).ready(function() {
 
 					// check for overflow in album-caption class in order to adapt album caption height to the string length
 					// when diving into search subalbum, the whole album path is showed and it can be lengthy
-					maxHeight = null;
+					var maxHeight = null;
 					$('.album-caption').each(function() {
 						var thisHeight = $(this)[0].scrollHeight;
 						maxHeight = (thisHeight > maxHeight) ? thisHeight : maxHeight;
 					});
-					difference = maxHeight - parseFloat($(".album-caption").css("height"));
+					var difference = maxHeight - parseFloat($(".album-caption").css("height"));
 					$(".album-button-and-caption").css("height", (parseInt($(".album-button-and-caption").css("height")) + difference) + 'px');
 					$(".album-caption").css("height", maxHeight + 'px');
 
