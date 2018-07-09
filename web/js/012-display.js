@@ -993,6 +993,11 @@ $(document).ready(function() {
 			if (populateMedia === true && isVirtualAlbum)
 				populateMedia = populateMedia && ! tooBig;
 
+			var array = PhotoFloat.decodeHash(location.hash);
+			// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
+			var savedSearchSubAlbumHash = array[3];
+			var savedSearchAlbumHash = array[4];
+
 			if (isVirtualAlbum && tooBig) {
 				$("#thumbs").empty();
 				$("#error-too-many-images").html(
@@ -1005,11 +1010,6 @@ $(document).ready(function() {
 				populateMedia == "refreshBoth"
 			) {
 				media = [];
-
-				var array = PhotoFloat.decodeHash(location.hash);
-				// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-				var savedSearchSubAlbumHash = array[3];
-				var savedSearchAlbumHash = array[4];
 
 				//
 				// media loop
