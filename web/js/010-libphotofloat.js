@@ -146,7 +146,7 @@
 	};
 
 	PhotoFloat.encodeHash = function(album, media, savedSearchSubAlbumHash, savedSearchAlbumHash) {
-		var hash, albumHash, mediaHash;
+		var hash, albumHash;
 		if (typeof album === "string")
 			albumHash = album;
 		else
@@ -213,7 +213,7 @@
 	PhotoFloat.decodeHash = function(hash) {
 		// decodes the hash and returns its components
 
-		var hashParts, hashPartsCount, albumHash, mediaFolderHash = null, mediaHash = null, searchInFolderHash = null;
+		var hashParts, hashPartsCount, albumHash, mediaFolderHash = null, mediaHash = null;
 		var savedSearchAlbumHash = null, savedSearchSubAlbumHash = null;
 
 		hash = PhotoFloat.cleanHash(hash);
@@ -261,7 +261,6 @@
 		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
 		var albumHash = array[0];
 		var mediaHash = array[1];
-		var mediaFolderHash = array[2];
 		var savedSearchSubAlbumHash = array[3];
 		var savedSearchAlbumHash = array[4];
 
@@ -270,11 +269,11 @@
 			if (savedSearchAlbumHash !== null)
 				// media in found album or in one of its subalbum
 				// remove the trailing media
-				resultHash = hash.split(Options.cache_folder_separator).slice(0, -1).join(Options.cache_folder_separator);
+				resultHash = PhotoFloat.pathJoin(hash.split("/").slice(0, -1));
 			else
 				// all the other cases
 				// remove the trailing media and the folder it's inside
-				resultHash = hash.split(Options.cache_folder_separator).slice(0, -2).join(Options.cache_folder_separator);
+				resultHash = PhotoFloat.pathJoin(hash.split("/").slice(0, -2));
 		} else {
 			// hash of an album: go up in the album tree
 			if (savedSearchAlbumHash !== null) {
@@ -319,8 +318,6 @@
 		var albumHash = array[0];
 		var mediaHash = array[1];
 		var mediaFolderHash = array[2];
-		var savedSearchSubAlbumHash = array[3];
-		var savedSearchAlbumHash = array[4];
 
 		albumHashes = [];
 		SearchWordsFromUser = [];
