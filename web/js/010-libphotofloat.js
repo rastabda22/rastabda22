@@ -798,48 +798,6 @@
 			return false;
 	};
 
-	PhotoFloat.decodeSearchAndSubalbumHash = function() {
-		// decode the variable PhotoFloat.searchAndSubalbumHash into its components searchCacheBase and searchSubAlbum
-
-		var splittedSearchAndSubalbumHash = PhotoFloat.searchAndSubalbumHash.split(Options.cache_folder_separator);
-		searchCacheBase = splittedSearchAndSubalbumHash.slice(0, 2).join(Options.cache_folder_separator);
-		searchSubAlbum = splittedSearchAndSubalbumHash.slice(2).join(Options.cache_folder_separator);
-		return [searchCacheBase, searchSubAlbum];
-	}
-
-	PhotoFloat.detectSearchSubAlbum = function() {
-		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-		var array = PhotoFloat.decodeHash(location.hash);
-		albumHash = array[0];
-		mediaHash = array[1];
-		mediaFolderHash = array[2];
-		savedSearchSubAlbumHash = array[3];
-		savedSearchAlbumHash = array[4];
-
-		var searchCacheBase = '', searchSubAlbum = '';
-		var splittedSearchAndSubalbumHash;
-		if (PhotoFloat.searchAndSubalbumHash) {
-			array = PhotoFloat.decodeSearchAndSubalbumHash();
-			searchCacheBase = array[0];
-			searchSubAlbum = array[1];
-		} else if (PhotoFloat.isSearchCacheBase(albumHash)) {
-			searchCacheBase = albumHash;
-		}
-		return [searchCacheBase, searchSubAlbum];
-
-		var splittedHash = location.hash.split('/');
-		var splittedSearchAndSubalbumHash;
-		var searchCacheBase = '', searchSubAlbum = '';
-		if (splittedHash.length >= 3 && PhotoFloat.isSearchCacheBase(splittedHash[2])) {
-			splittedSearchAndSubalbumHash = splittedHash[2].split(Options.cache_folder_separator);
-			searchCacheBase = splittedSearchAndSubalbumHash.slice(0, 2).join(Options.cache_folder_separator);
-			searchSubAlbum = splittedSearchAndSubalbumHash.slice(2).join(Options.cache_folder_separator);
-		} else if ([2, 4].indexOf(splittedHash.length) != -1 && PhotoFloat.isSearchCacheBase(splittedHash[1])) {
-			searchCacheBase = splittedHash[1];
-		}
-		return [searchCacheBase, searchSubAlbum];
-	}
-
 	PhotoFloat.pathJoin = function(pathArr) {
 		var result = '';
 		for (var i = 0; i < pathArr.length; ++i) {

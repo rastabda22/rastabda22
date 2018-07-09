@@ -58,7 +58,6 @@ $(document).ready(function() {
 	var fromEscKey = false;
 	var firstEscKey = true;
 	var nextLink = "", prevLink = "", upLink = "", mediaLink = "", savedHash = '';
-	var searchCacheBase = '', searchSubAlbum = '';
 
 	/* Displays */
 
@@ -702,15 +701,15 @@ $(document).ready(function() {
 
 			var array = PhotoFloat.decodeHash(location.hash);
 			// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-			var albumHash = array[0];
-			var mediaHash = array[1];
-			var mediaFolderHash = array[2];
-			var savedSearchSubAlbumHash = array[3];
+			// var albumHash = array[0];
+			// var mediaHash = array[1];
+			// var mediaFolderHash = array[2];
+			// var savedSearchSubAlbumHash = array[3];
 			var savedSearchAlbumHash = array[4];
 
 
 			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
-				title += "<a class='" + titleAnchorClassesItalics + "' href='#!/" + searchCacheBase + "'>";
+				title += "<a class='" + titleAnchorClassesItalics + "' href='" + savedSearchAlbumHash + "'>";
 				title += "(" + _t("#by-search") + ")";
 				title += "</a>";
 				title += "&raquo;";
@@ -1758,21 +1757,11 @@ $(document).ready(function() {
 
 
 		if (currentAlbum.media.length == 1) {
-			// if (currentAlbum.parentCacheBase && currentAlbum.parentCacheBase != "root") {
-			// 	if (returnLinkFromSearch != '' && searchCacheBase != '' && searchSubAlbum == '')
-			// 		upLink = returnLinkFromSearch;
-			// 	else
-			// 		upLink = "#!/" + correctUpHash(currentAlbum.parentCacheBase);
-			// }
 			upLink = PhotoFloat.upHash(location.hash);
 			nextLink = "";
 			prevLink = "";
 			$("#media-view").css('cursor', 'default');
 		} else {
-			// if (returnLinkFromSearch != '' && searchCacheBase != '' && searchSubAlbum == '')
-			// 	upLink = returnLinkFromSearch;
-			// else
-			// 	upLink = "#!/" + correctUpHash(currentAlbum.cacheBase);
 			upLink = PhotoFloat.upHash(location.hash);
 
 			nextLink = photoFloat.encodeHash(currentAlbum, nextMedia);
@@ -2181,10 +2170,10 @@ $(document).ready(function() {
 		undie();
 		$("#loading").hide();
 
-		// fill the variables which has to do with searches
-		array = detectSearchSubAlbum();
-		searchCacheBase = array[0];
-		searchSubAlbum = array[1];
+		var array = PhotoFloat.decodeHash(location.hash);
+		savedSearchSubAlbumHash = array[3];
+		savedSearchAlbumHash = array[4];
+
 
 		$(window).off("resize");
 
@@ -2848,8 +2837,6 @@ $(document).ready(function() {
 		$("link[rel=image_src]").remove();
 		$("link[rel=video_src]").remove();
 		$("ul#right-menu").removeClass("expand");
-		searchCacheBase = '';
-		searchSubAlbum = '';
 		if (Object.keys(Options).length > 0)
 			parseHash(location.hash, hashParsed, die);
 		else
