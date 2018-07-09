@@ -1756,13 +1756,11 @@ $(document).ready(function() {
 		$('#prev').off();
 
 
+		upLink = PhotoFloat.upHash(location.hash);
 		if (currentAlbum.media.length == 1) {
-			upLink = PhotoFloat.upHash(location.hash);
 			nextLink = "";
 			prevLink = "";
 			$("#media-view").css('cursor', 'default');
-		} else {
-			upLink = PhotoFloat.upHash(location.hash);
 
 			nextLink = photoFloat.encodeHash(currentAlbum, nextMedia);
 			prevLink = photoFloat.encodeHash(currentAlbum, prevMedia);
