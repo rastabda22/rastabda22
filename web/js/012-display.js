@@ -57,7 +57,7 @@ $(document).ready(function() {
 	var numSubAlbumsReady;
 	var fromEscKey = false;
 	var firstEscKey = true;
-	var nextLink = "", prevLink = "", upLink = "", mediaLink = "", savedHash = '';
+	var nextLink = "", prevLink = "", upLink = "", mediaLink = "";
 
 	/* Displays */
 
@@ -509,16 +509,9 @@ $(document).ready(function() {
 		}
 	}
 
-	function detectSearchSubAlbum() {
-		var array = PhotoFloat.detectSearchSubAlbum();
-		var cacheBase = array[0];
-		var subAlbum = array[1];
-		return [cacheBase, subAlbum];
-	}
-
 	function setTitle() {
 		var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, originalTitle;
-		var titleAnchorClasses, hiddenTitle = "", beginLink, linksToLeave, numLinks, latitude, longitude, arrayCoordinates, numMediaInSubAlbums;
+		var titleAnchorClasses, titleAnchorClassesItalics, hiddenTitle = "", beginLink, linksToLeave, numLinks, latitude, longitude, arrayCoordinates, numMediaInSubAlbums;
 		// gpsLevelNumber is the number of levels for the by gps tree
 		// current levels are country, region, place => 3
 		var gpsLevelNumber = 3;
@@ -980,7 +973,6 @@ $(document).ready(function() {
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
 		var tooBig = false, isVirtualAlbum = false;
 		var mapLinkIcon;
-		var element;
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
 		var folderArray, folder;
 
@@ -1286,10 +1278,9 @@ $(document).ready(function() {
 						(function(theSubalbum, theImage, theLink) {
 							// function(subalbum, container, callback, error)  ---  callback(album,   album.media[index], container,            subalbum);
 							photoFloat.pickRandomMedia(theSubalbum, currentAlbum, function(randomAlbum, randomMedia, theOriginalAlbumContainer, subalbum) {
-								var htmlText, maxHeight, difference;
+								var htmlText;
 								var titleName, randomMediaLink, goTo, humanGeonames;
 								var mediaSrc = chooseThumbnail(randomAlbum, randomMedia, Options.album_thumb_size);
-								var overflow;
 
 								PhotoFloat.subalbumIndex ++;
 								mediaWidth = randomMedia.metadata.size[0];
@@ -2168,11 +2159,6 @@ $(document).ready(function() {
 		undie();
 		$("#loading").hide();
 
-		var array = PhotoFloat.decodeHash(location.hash);
-		savedSearchSubAlbumHash = array[3];
-		savedSearchAlbumHash = array[4];
-
-
 		$(window).off("resize");
 
 		if (album === currentAlbum && media === currentMedia)
@@ -2524,16 +2510,12 @@ $(document).ready(function() {
 	// search
 	$('#search-button').on("click", function() {
 		var searchOptions = '';
-		var array, albumHash;
 
 		// save the current hash in order to come back there when exiting from search
 		if (! PhotoFloat.isSearchHash(location.hash))
 			PhotoFloat.returnLinkFromSearch = PhotoFloat.cleanHash(location.hash);
 		if (! PhotoFloat.returnLinkFromSearch)
 			PhotoFloat.returnLinkFromSearch = Options.folders_string;
-
-		// array = PhotoFloat.decodeHash(location.hash);
-		// albumHash = array[0];
 
 		var bySearchViewHash = "#!/" + Options.by_search_string;
 
@@ -2552,7 +2534,6 @@ $(document).ready(function() {
 			bySearchViewHash += searchOptions + searchTerms;
 		}
 
-		// if (! PhotoFloat.isSearchCacheBase(albumHash))
 		bySearchViewHash += Options.cache_folder_separator + PhotoFloat.returnLinkFromSearch;
 
 		window.location.href = bySearchViewHash;
