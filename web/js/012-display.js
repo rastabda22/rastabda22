@@ -491,6 +491,11 @@ $(document).ready(function() {
 			$("ul#right-menu li#accent-sensitive").addClass("hidden");
 			$("ul#right-menu li#album-search").addClass("hidden");
 		}
+
+		if (PhotoFloat.isSearchCacheBase(currentAlbum.cacheBase))
+			$("li#album-search").html(_t("#refine-search"));
+		else
+			$("li#album-search").html(_t("#album-search"));
 	}
 
 	function transformAltPlaceName(altPlaceName) {
