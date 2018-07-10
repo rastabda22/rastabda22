@@ -503,6 +503,9 @@ $(document).ready(function() {
 		if (cleanedHash == '' || cleanedHash == Options.folders_string)
 			$("ul#right-menu li#album-search").addClass("hidden");
 
+		if (PhotoFloat.isSearchHash(location.hash) && $("ul#right-menu li#refine-search").hasClass("selected"))
+			$("ul#right-menu li#album-search").addClass("hidden");
+
 
 	}
 
