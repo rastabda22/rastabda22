@@ -462,8 +462,6 @@ $(document).ready(function() {
 			$("ul#right-menu li#case-sensitive").removeClass("hidden");
 			$("ul#right-menu li#accent-sensitive").removeClass("hidden");
 			$("ul#right-menu li#album-search").removeClass("hidden");
-			$("ul#right-menu li#regex-word").removeClass("hidden");
-			$("ul#right-menu li#regex-word").removeClass("selected");
 			if (Options.search_inside_words)
 				$("ul#right-menu li#inside-words").addClass("selected");
 			else

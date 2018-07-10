@@ -337,7 +337,6 @@
 				var wordsStringNormalized = PhotoFloat.removeAccents(wordsStringOriginal.toLowerCase());
 				if (wordsAndOptions.length > 1) {
 					var searchOptions = wordsAndOptions.slice(0, -1);
-					Options.search_regex = searchOptions.indexOf('r') > -1;
 					Options.search_inside_words = searchOptions.indexOf('i') > -1;
 					Options.search_any_word = searchOptions.indexOf('n') > -1;
 					Options.search_case_sensitive = searchOptions.indexOf('c') > -1;
