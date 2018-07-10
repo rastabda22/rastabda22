@@ -1742,6 +1742,7 @@ $(document).ready(function() {
 			nextLink = "";
 			prevLink = "";
 			$("#media-view").css('cursor', 'default');
+		} else {
 
 			nextLink = photoFloat.encodeHash(currentAlbum, nextMedia);
 			prevLink = photoFloat.encodeHash(currentAlbum, prevMedia);
