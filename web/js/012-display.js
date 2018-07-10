@@ -452,6 +452,7 @@ $(document).ready(function() {
 			Options.search_any_word ||
 			Options.search_case_sensitive ||
 			Options.search_accent_sensitive ||
+			Options.search_current_album ||
 			$("ul#right-menu li#no-search-string").is(":visible") ||
 			$("ul#right-menu li#no-results").is(":visible") ||
 			$("ul#right-menu li#search-too-wide").is(":visible")
@@ -460,6 +461,7 @@ $(document).ready(function() {
 			$("ul#right-menu li#any-word").removeClass("hidden");
 			$("ul#right-menu li#case-sensitive").removeClass("hidden");
 			$("ul#right-menu li#accent-sensitive").removeClass("hidden");
+			$("ul#right-menu li#album-search").removeClass("hidden");
 			$("ul#right-menu li#regex-word").removeClass("hidden");
 			$("ul#right-menu li#regex-word").removeClass("selected");
 			if (Options.search_inside_words)
@@ -478,11 +480,16 @@ $(document).ready(function() {
 				$("ul#right-menu li#accent-sensitive").addClass("selected");
 			else
 				$("ul#right-menu li#accent-sensitive").removeClass("selected");
+			if (Options.search_current_album)
+				$("ul#right-menu li#album-search").addClass("selected");
+			else
+				$("ul#right-menu li#album-search").removeClass("selected");
 		} else {
 			$("ul#right-menu li#inside-words").addClass("hidden");
 			$("ul#right-menu li#any-word").addClass("hidden");
 			$("ul#right-menu li#case-sensitive").addClass("hidden");
 			$("ul#right-menu li#accent-sensitive").addClass("hidden");
+			$("ul#right-menu li#album-search").addClass("hidden");
 		}
 	}
 
@@ -2292,6 +2299,10 @@ $(document).ready(function() {
 				if (searchAccentSensitiveCookie !== null)
 					Options.search_accent_sensitive = searchAccentSensitiveCookie;
 
+				Options.search_current_album = false;
+				var searchCurrentAlbumCookie = getBooleanCookie("search_current_album");
+				if (searchCurrentAlbumCookie !== null)
+					Options.search_current_album = searchCurrentAlbumCookie;
 
 				Options.foldersStringWithTrailingSeparator = Options.folders_string + Options.cache_folder_separator;
 				Options.byDateStringWithTrailingSeparator = Options.by_date_string + Options.cache_folder_separator;
@@ -2500,9 +2511,10 @@ $(document).ready(function() {
 
 		// save the current hash in order to come back there when exiting from search
 		if (! PhotoFloat.isSearchHash(location.hash))
-			PhotoFloat.returnLinkFromSearch = PhotoFloat.cleanHash(location.hash);
-		if (! PhotoFloat.returnLinkFromSearch)
-			PhotoFloat.returnLinkFromSearch = Options.folders_string;
+			Options.album_to_search_in = PhotoFloat.cleanHash(location.hash);
+
+		if (Options.album_to_search_in === null)
+			Options.album_to_search_in = Options.folders_string;
 
 		var bySearchViewHash = "#!/" + Options.by_search_string;
 
@@ -2518,6 +2530,8 @@ $(document).ready(function() {
 				searchOptions += 'c' + Options.search_options_separator;
 			if (Options.search_accent_sensitive)
 				searchOptions += 'a' + Options.search_options_separator;
+			if (Options.search_current_album)
+				searchOptions += 'o' + Options.search_options_separator;
 			bySearchViewHash += searchOptions + searchTerms;
 		}
 
@@ -2577,6 +2591,10 @@ $(document).ready(function() {
 		focusSearchField();
 	}
 
+	$("li#album-search").on('click', toggleCurrentAbumSearch);
+	function toggleCurrentAbumSearch(ev) {
+		Options.search_current_album = ! Options.search_current_album;
+		setBooleanCookie("search_current_album", Options.search_current_album);
 		updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();

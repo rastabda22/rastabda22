@@ -344,6 +344,7 @@
 					Options.search_any_word = searchOptions.indexOf('n') > -1;
 					Options.search_case_sensitive = searchOptions.indexOf('c') > -1;
 					Options.search_accent_sensitive = searchOptions.indexOf('a') > -1;
+					Options.search_current_album = searchOptions.indexOf('o') > -1;
 				}
 
 				$("ul#right-menu #search-field").attr("value", wordsStringOriginal);
