@@ -448,7 +448,6 @@ $(document).ready(function() {
 
 		if (
 			currentAlbum !== null && (PhotoFloat.isSearchCacheBase(currentAlbum.cacheBase) || currentAlbum.cacheBase == Options.by_search_string) ||
-			Options.search_regex ||
 			Options.search_inside_words ||
 			Options.search_any_word ||
 			Options.search_case_sensitive ||
@@ -462,37 +461,28 @@ $(document).ready(function() {
 			$("ul#right-menu li#case-sensitive").removeClass("hidden");
 			$("ul#right-menu li#accent-sensitive").removeClass("hidden");
 			$("ul#right-menu li#regex-word").removeClass("hidden");
-			if (Options.search_regex) {
-				$("ul#right-menu li#regex-word").addClass("selected");
-				$("ul#right-menu li#inside-words").addClass("hidden");
-				$("ul#right-menu li#any-word").addClass("hidden");
-				$("ul#right-menu li#case-sensitive").addClass("hidden");
-				$("ul#right-menu li#accent-sensitive").addClass("hidden");
-			} else {
-				$("ul#right-menu li#regex-word").removeClass("selected");
-				if (Options.search_inside_words)
-					$("ul#right-menu li#inside-words").addClass("selected");
-				else
-					$("ul#right-menu li#inside-words").removeClass("selected");
-				if (Options.search_any_word)
-					$("ul#right-menu li#any-word").addClass("selected");
-				else
-					$("ul#right-menu li#any-word").removeClass("selected");
-				if (Options.search_case_sensitive)
-					$("ul#right-menu li#case-sensitive").addClass("selected");
-				else
-					$("ul#right-menu li#case-sensitive").removeClass("selected");
-				if (Options.search_accent_sensitive)
-					$("ul#right-menu li#accent-sensitive").addClass("selected");
-				else
-					$("ul#right-menu li#accent-sensitive").removeClass("selected");
-			}
+			$("ul#right-menu li#regex-word").removeClass("selected");
+			if (Options.search_inside_words)
+				$("ul#right-menu li#inside-words").addClass("selected");
+			else
+				$("ul#right-menu li#inside-words").removeClass("selected");
+			if (Options.search_any_word)
+				$("ul#right-menu li#any-word").addClass("selected");
+			else
+				$("ul#right-menu li#any-word").removeClass("selected");
+			if (Options.search_case_sensitive)
+				$("ul#right-menu li#case-sensitive").addClass("selected");
+			else
+				$("ul#right-menu li#case-sensitive").removeClass("selected");
+			if (Options.search_accent_sensitive)
+				$("ul#right-menu li#accent-sensitive").addClass("selected");
+			else
+				$("ul#right-menu li#accent-sensitive").removeClass("selected");
 		} else {
 			$("ul#right-menu li#inside-words").addClass("hidden");
 			$("ul#right-menu li#any-word").addClass("hidden");
 			$("ul#right-menu li#case-sensitive").addClass("hidden");
 			$("ul#right-menu li#accent-sensitive").addClass("hidden");
-			$("ul#right-menu li#regex-word").addClass("hidden");
 		}
 	}
 
@@ -2301,10 +2291,6 @@ $(document).ready(function() {
 				if (searchAccentSensitiveCookie !== null)
 					Options.search_accent_sensitive = searchAccentSensitiveCookie;
 
-				Options.search_regex = false;
-				var searchRegexCookie = getBooleanCookie("search_regex");
-				if (searchRegexCookie !== null)
-					Options.search_regex = searchRegexCookie;
 
 				Options.foldersStringWithTrailingSeparator = Options.folders_string + Options.cache_folder_separator;
 				Options.byDateStringWithTrailingSeparator = Options.by_date_string + Options.cache_folder_separator;
@@ -2590,10 +2576,6 @@ $(document).ready(function() {
 		focusSearchField();
 	}
 
-	$("li#regex-word").on('click', toggleRegexSearch);
-	function toggleRegexSearch(ev) {
-		Options.search_regex = ! Options.search_regex;
-		setBooleanCookie("search_regex", Options.search_regex);
 		updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
