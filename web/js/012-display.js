@@ -2304,6 +2304,7 @@ $(document).ready(function() {
 				if (searchCurrentAlbumCookie !== null)
 					Options.search_current_album = searchCurrentAlbumCookie;
 
+				Options.album_to_search_in = null;
 				Options.foldersStringWithTrailingSeparator = Options.folders_string + Options.cache_folder_separator;
 				Options.byDateStringWithTrailingSeparator = Options.by_date_string + Options.cache_folder_separator;
 				Options.byGpsStringWithTrailingSeparator = Options.by_gps_string + Options.cache_folder_separator;
