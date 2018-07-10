@@ -347,12 +347,10 @@
 				if (Options.search_current_album)
 					Options.album_to_search_in = splittedAlbumHash.slice(2).join(Options.cache_folder_separator);
 				else
-					Options.album_to_search_in = Options.saved_album_to_search_in;
+					Options.album_to_search_in = Options.folders_string;
 
-				if (Options.search_refine)
-					Options.album_to_search_in = splittedAlbumHash.slice(2).join(Options.cache_folder_separator);
-				else
-					Options.album_to_search_in = Options.saved_album_to_search_in;
+				if (PhotoFloat.isSearchHash(location.hash) && Options.search_refine)
+					Options.album_to_search_in = albumHash;
 
 				$("ul#right-menu #search-field").attr("value", wordsStringOriginal);
 				wordsString = PhotoFloat.normalizeAccordingToOptions(wordsString);

@@ -499,6 +499,9 @@ $(document).ready(function() {
 
 		if (! PhotoFloat.isSearchHash(location.hash))
 			$("ul#right-menu li#refine-search").addClass("hidden");
+		var cleanedHash = PhotoFloat.cleanHash(location.hash);
+		if (cleanedHash == '' || cleanedHash == Options.folders_string)
+			$("ul#right-menu li#album-search").addClass("hidden");
 
 
 	}
