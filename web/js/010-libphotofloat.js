@@ -342,7 +342,17 @@
 					Options.search_case_sensitive = searchOptions.indexOf('c') > -1;
 					Options.search_accent_sensitive = searchOptions.indexOf('a') > -1;
 					Options.search_current_album = searchOptions.indexOf('o') > -1;
+					Options.search_refine = searchOptions.indexOf('e') > -1;
 				}
+				if (Options.search_current_album)
+					Options.album_to_search_in = splittedAlbumHash.slice(2).join(Options.cache_folder_separator);
+				else
+					Options.album_to_search_in = Options.saved_album_to_search_in;
+
+				if (Options.search_refine)
+					Options.album_to_search_in = splittedAlbumHash.slice(2).join(Options.cache_folder_separator);
+				else
+					Options.album_to_search_in = Options.saved_album_to_search_in;
 
 				$("ul#right-menu #search-field").attr("value", wordsStringOriginal);
 				wordsString = PhotoFloat.normalizeAccordingToOptions(wordsString);
