@@ -504,8 +504,9 @@ $(document).ready(function() {
 			$("ul#right-menu li#album-search").addClass("hidden");
 
 		if (PhotoFloat.isSearchHash(location.hash) && $("ul#right-menu li#refine-search").hasClass("selected"))
-			$("ul#right-menu li#album-search").addClass("hidden");
-
+			$("ul#right-menu li#album-search").addClass("dimmed");
+		else
+			$("ul#right-menu li#album-search").removeClass("dimmed");
 
 	}
 

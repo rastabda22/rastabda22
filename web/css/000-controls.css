@@ -581,6 +581,10 @@ ul#right-menu.expand li.selected {
 	background-position: right;
 }
 
+ul#right-menu.expand li.dimmed {
+	opacity: 0.2;
+}
+
 ul#right-menu li:not(.active) {
 	color: darkgray;
 }
