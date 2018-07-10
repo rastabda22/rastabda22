@@ -9,7 +9,6 @@
 		PhotoFloat.searchAndSubalbumHash = '';
 		PhotoFloat.searchWordsFromJsonFile = this.searchWordsFromJsonFile;
 		PhotoFloat.searchAlbumCacheBaseFromJsonFile = this.searchAlbumCacheBaseFromJsonFile;
-		PhotoFloat.returnLinkFromSearch = '';
 	}
 
 	/* public member functions */
@@ -330,7 +329,6 @@
 
 				// wordsWithOptionsString = albumHash.substring(Options.by_search_string.length + 1);
 				wordsWithOptionsString = splittedAlbumHash[1];
-				PhotoFloat.returnLinkFromSearch = splittedAlbumHash[2];
 				var wordsAndOptions = wordsWithOptionsString.split(Options.search_options_separator);
 				var wordsString = wordsAndOptions[wordsAndOptions.length - 1];
 				var wordsStringOriginal = wordsString.replace(/_/g, ' ');

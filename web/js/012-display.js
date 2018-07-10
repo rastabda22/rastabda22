@@ -2541,7 +2541,7 @@ $(document).ready(function() {
 			bySearchViewHash += searchOptions + searchTerms;
 		}
 
-		bySearchViewHash += Options.cache_folder_separator + PhotoFloat.returnLinkFromSearch;
+		bySearchViewHash += Options.cache_folder_separator + Options.album_to_search_in;
 
 		window.location.href = bySearchViewHash;
 
