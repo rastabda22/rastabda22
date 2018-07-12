@@ -95,7 +95,20 @@ var translations =
 			"#metadata-data-duration": "Duration",
 			"#metadata-data-latitude": "Latitude",
 			"#metadata-data-longitude": "Longitude",
-			"#show-map": "[s] Show the place where the photo was taken using "
+			"#show-map": "[s] Show the place where the photo was taken using ",
+			"#month-01": "January",
+			"#month-02": "February",
+			"#month-03": "March",
+			"#month-04": "April",
+			"#month-05": "May",
+			"#month-06": "June",
+			"#month-07": "July",
+			"#month-08": "August",
+			"#month-09": "September",
+			"#month-10": "October",
+			"#month-11": "November",
+			"#month-12": "December",
+			"#day": "day"
 		},
 		"it": {
 			"#next-media-title": "Prossima [n]",
@@ -192,7 +205,20 @@ var translations =
 			"#metadata-data-duration": "Durata",
 			"#metadata-data-latitude": "Latitudine",
 			"#metadata-data-longitude": "Longitudine",
-			"#show-map": "[s] Mostra il luogo in cui fu scattata la foto usando "
+			"#show-map": "[s] Mostra il luogo in cui fu scattata la foto usando ",
+			"#month-01": "Gennaio",
+			"#month-02": "Febbraio",
+			"#month-03": "Marzo",
+			"#month-04": "Aprile",
+			"#month-05": "Maggio",
+			"#month-06": "Giugno",
+			"#month-07": "Luglio",
+			"#month-08": "Agosto",
+			"#month-09": "Settembre",
+			"#month-10": "Ottobre",
+			"#month-11": "Novembre",
+			"#month-12": "Dicembre",
+			"#day": "giorno"
 		},
 		"es": {
 			"#next-media-title": "Siguiente [n]",
@@ -289,7 +315,20 @@ var translations =
 			"#metadata-data-duration": "Duración",
 			"#metadata-data-latitude": "Latitud",
 			"#metadata-data-longitude": "Longitud",
-			"#show-map": "[s] Muestra el lugar donde la foto fue tomada usando "
+			"#show-map": "[s] Muestra el lugar donde la foto fue tomada usando ",
+			"#month-01": "Enero",
+			"#month-02": "Febrero",
+			"#month-03": "Marzo",
+			"#month-04": "Abril",
+			"#month-05": "Mayo",
+			"#month-06": "Junio",
+			"#month-07": "Julio",
+			"#month-08": "Agosto",
+			"#month-09": "Septiembre",
+			"#month-10": "Octubre",
+			"#month-11": "Noviembre",
+			"#month-12": "Dicembre",
+			"#day": "día"
 		},
 		"fr": {
 			"#next-media-title": "Suivant [n]",
@@ -386,6 +425,19 @@ var translations =
 			"#metadata-data-duration": "Durée",
 			"#metadata-data-latitude": "Latitude",
 			"#metadata-data-longitude": "Longitude",
-			"#show-map": "[s] Afficher la localisation où la photo a été prise en utilisant "
+			"#show-map": "[s] Afficher la localisation où la photo a été prise en utilisant ",
+			"#month-01": "Janvier",
+			"#month-02": "Février",
+			"#month-03": "Mars",
+			"#month-04": "Avril",
+			"#month-05": "Mai",
+			"#month-06": "Juin",
+			"#month-07": "Juilllet",
+			"#month-08": "Août",
+			"#month-09": "Septembre",
+			"#month-10": "Octobre",
+			"#month-11": "Novembre",
+			"#month-12": "Décembre",
+			"#day": "journée"
 		}
 	};

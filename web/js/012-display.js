@@ -575,7 +575,13 @@ $(document).ready(function() {
 					title += "<a class='" + titleAnchorClasses + "' href='#!/" + encodeURI(currentAlbum.ancestorsCacheBase[i]) + "'" + ">";
 				else
 					title += "<span class='title-no-anchor'>";
-				title += textComponents[i];
+
+				if (i == 3)
+					title += _t("#month-" + textComponents[i]);
+				else
+					title += textComponents[i];
+
+
 				if (i < components.length - 1 || currentMedia !== null)
 					title += "</a>";
 				else
@@ -1177,12 +1183,12 @@ $(document).ready(function() {
 						if (PhotoFloat.isByDateCacheBase(currentAlbum.cacheBase)) {
 							folderArray = currentAlbum.subalbums[i].cacheBase.split(Options.cache_folder_separator);
 							folder = "";
-							if (folderArray.length >= 2)
+							if (folderArray.length == 2)
 								folder += folderArray[1];
-							if (folderArray.length >= 3)
-								folder += "-" + folderArray[2];
-							if (folderArray.length == 4)
-								folder += "-" + folderArray[3];
+							else if (folderArray.length == 3)
+								folder += " " + _t("#month-" + folderArray[2]);
+							else if (folderArray.length == 4)
+								folder += _t("#day") + " " + parseInt(folderArray[3]);
 						} else if (PhotoFloat.isByGpsCacheBase(currentAlbum.cacheBase)) {
 							var level = currentAlbum.subalbums[i].cacheBase.split(Options.cache_folder_separator).length - 2;
 							var folderName = '';
