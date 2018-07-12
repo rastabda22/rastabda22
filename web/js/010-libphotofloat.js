@@ -290,9 +290,12 @@
 					]);
 				}
 			} else {
-				if (albumHash == Options.folders_string || albumHash == Options.by_date_string || albumHash == Options.by_gps_string)
+				if (albumHash == Options.folders_string)
 					// stay there
 					resultHash = albumHash;
+				else if (albumHash == Options.by_date_string || albumHash == Options.by_gps_string)
+					// go to folders root
+					resultHash = Options.folders_string;
 				else if (PhotoFloat.isSearchCacheBase(albumHash)) {
 					// the return folder must be extracted from the album hash
 					resultHash = albumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
