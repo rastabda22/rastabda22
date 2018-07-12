@@ -326,7 +326,7 @@
 		SearchWordsFromUserNormalizedAccordingToOptions = [];
 		if (albumHash) {
 			albumHash = decodeURI(albumHash);
-			if (PhotoFloat.isSearchCacheBase(albumHash) || albumHash == Options.by_search_string) {
+			if (PhotoFloat.isSearchCacheBase(albumHash)) {
 				var splittedAlbumHash = albumHash.split(Options.cache_folder_separator);
 
 				// wordsWithOptionsString = albumHash.substring(Options.by_search_string.length + 1);
@@ -347,10 +347,7 @@
 					// Options.search_refine = searchOptions.indexOf('e') > -1;
 				}
 
-				if (PhotoFloat.isSearchHash(location.hash))
-					Options.album_to_search_in = splittedAlbumHash.slice(2).join(Options.cache_folder_separator);
-				else
-					Options.album_to_search_in = Options.folders_string;
+				Options.album_to_search_in = splittedAlbumHash.slice(2).join(Options.cache_folder_separator);
 
 				// if (PhotoFloat.isSearchHash(location.hash) && Options.search_refine)
 				// 	Options.album_to_search_in = albumHash;

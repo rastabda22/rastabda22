@@ -2538,10 +2538,23 @@ $(document).ready(function() {
 		var searchOptions = '';
 
 		// save the current hash in order to come back there when exiting from search
-		if (! PhotoFloat.isSearchHash(location.hash))
+		if (PhotoFloat.isSearchHash(location.hash)) {
+			// it's already a search hash: get the album to search in from there
+			var array = PhotoFloat.decodeHash(location.hash);
+			var albumHash = array[0];
+			if (PhotoFloat.isSearchCacheBase(albumHash)) {
+				// a plain search
+				var splittedAlbumHash = albumHash.split(Options.cache_folder_separator);
+				Options.album_to_search_in = splittedAlbumHash.slice(2).join(Options.cache_folder_separator);
+			} else
+				// a subalbum of a search
+				Options.album_to_search_in = albumHash;
+		} else {
+			// not a search hash: use the current album hash
 			Options.album_to_search_in = PhotoFloat.cleanHash(location.hash);
-		else
+
 			Options.saved_album_to_search_in = Options.album_to_search_in;
+		}
 
 		if (! Options.hasOwnProperty('album_to_search_in') || ! Options.album_to_search_in)
 			Options.album_to_search_in = Options.folders_string;
