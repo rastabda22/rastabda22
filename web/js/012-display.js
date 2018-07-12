@@ -2540,7 +2540,7 @@ $(document).ready(function() {
 		else
 			Options.saved_album_to_search_in = Options.album_to_search_in;
 
-		if (Options.album_to_search_in === null)
+		if (! Options.album_to_search_in)
 			Options.album_to_search_in = Options.folders_string;
 
 		var bySearchViewHash = "#!/" + Options.by_search_string;
