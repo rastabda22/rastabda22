@@ -2464,9 +2464,8 @@ $(document).ready(function() {
 					$("#original-link")[0].click();
 					return false;
 				} else if (currentMedia !== null && hasGpsData(currentMedia) && e.keyCode === 83) {
-					//                                                                          s
 						$("#map-link")[0].click();
-					return false;
+						return false;
 				}
 			}
 		}
