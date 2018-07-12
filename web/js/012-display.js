@@ -453,7 +453,7 @@ $(document).ready(function() {
 			Options.search_case_sensitive ||
 			Options.search_accent_sensitive ||
 			Options.search_current_album ||
-			Options.search_refine ||
+			// Options.search_refine ||
 			$("ul#right-menu li#no-search-string").is(":visible") ||
 			$("ul#right-menu li#no-results").is(":visible") ||
 			$("ul#right-menu li#search-too-wide").is(":visible")
@@ -463,7 +463,7 @@ $(document).ready(function() {
 			$("ul#right-menu li#case-sensitive").removeClass("hidden");
 			$("ul#right-menu li#accent-sensitive").removeClass("hidden");
 			$("ul#right-menu li#album-search").removeClass("hidden");
-			$("ul#right-menu li#refine-search").removeClass("hidden");
+			// $("ul#right-menu li#refine-search").removeClass("hidden");
 			if (Options.search_inside_words)
 				$("ul#right-menu li#inside-words").addClass("selected");
 			else
@@ -484,29 +484,29 @@ $(document).ready(function() {
 				$("ul#right-menu li#album-search").addClass("selected");
 			else
 				$("ul#right-menu li#album-search").removeClass("selected");
-			if (Options.search_refine)
-				$("ul#right-menu li#refine-search").addClass("selected");
-			else
-				$("ul#right-menu li#refine-search").removeClass("selected");
+			// if (Options.search_refine)
+			// 	$("ul#right-menu li#refine-search").addClass("selected");
+			// else
+			// 	$("ul#right-menu li#refine-search").removeClass("selected");
 		} else {
 			$("ul#right-menu li#inside-words").addClass("hidden");
 			$("ul#right-menu li#any-word").addClass("hidden");
 			$("ul#right-menu li#case-sensitive").addClass("hidden");
 			$("ul#right-menu li#accent-sensitive").addClass("hidden");
 			$("ul#right-menu li#album-search").addClass("hidden");
-			$("ul#right-menu li#refine-search").addClass("hidden");
+			// $("ul#right-menu li#refine-search").addClass("hidden");
 		}
 
-		if (! PhotoFloat.isSearchHash(location.hash))
-			$("ul#right-menu li#refine-search").addClass("hidden");
+		// if (! PhotoFloat.isSearchHash(location.hash))
+		// 	$("ul#right-menu li#refine-search").addClass("hidden");
 		var cleanedHash = PhotoFloat.cleanHash(location.hash);
 		if (cleanedHash == '' || cleanedHash == Options.folders_string)
 			$("ul#right-menu li#album-search").addClass("hidden");
 
-		if (PhotoFloat.isSearchHash(location.hash) && $("ul#right-menu li#refine-search").hasClass("selected"))
-			$("ul#right-menu li#album-search").addClass("dimmed");
-		else
-			$("ul#right-menu li#album-search").removeClass("dimmed");
+		// if (PhotoFloat.isSearchHash(location.hash) && $("ul#right-menu li#refine-search").hasClass("selected"))
+		// 	$("ul#right-menu li#album-search").addClass("dimmed");
+		// else
+		// 	$("ul#right-menu li#album-search").removeClass("dimmed");
 
 	}
 
@@ -2321,10 +2321,10 @@ $(document).ready(function() {
 				if (searchCurrentAlbumCookie !== null)
 					Options.search_current_album = searchCurrentAlbumCookie;
 
-				Options.search_refine = false;
-				var searchRefineCookie = getBooleanCookie("search_refine");
-				if (searchRefineCookie !== null)
-					Options.search_refine = searchRefineCookie;
+				// Options.search_refine = false;
+				// var searchRefineCookie = getBooleanCookie("search_refine");
+				// if (searchRefineCookie !== null)
+				// 	Options.search_refine = searchRefineCookie;
 
 				Options.album_to_search_in = Options.folders_string;
 				Options.saved_album_to_search_in = Options.folders_string;
@@ -2559,8 +2559,8 @@ $(document).ready(function() {
 				searchOptions += 'a' + Options.search_options_separator;
 			if (Options.search_current_album)
 				searchOptions += 'o' + Options.search_options_separator;
-			if (Options.search_refine)
-				searchOptions += 'e' + Options.search_options_separator;
+			// if (Options.search_refine)
+			// 	searchOptions += 'e' + Options.search_options_separator;
 			bySearchViewHash += searchOptions + searchTerms;
 		}
 
@@ -2630,15 +2630,15 @@ $(document).ready(function() {
 		focusSearchField();
 	}
 
-	$("li#refine-search").on('click', toggleRefineSearch);
-	function toggleRefineSearch(ev) {
-		Options.search_refine = ! Options.search_refine;
-		setBooleanCookie("search_refine", Options.search_refine);
-		updateMenu();
-		if ($("#search-field").val().trim())
-			$('#search-button').click();
-		focusSearchField();
-	}
+	// $("li#refine-search").on('click', toggleRefineSearch);
+	// function toggleRefineSearch(ev) {
+	// 	Options.search_refine = ! Options.search_refine;
+	// 	setBooleanCookie("search_refine", Options.search_refine);
+	// 	updateMenu();
+	// 	if (false && $("#search-field").val().trim())
+	// 		$('#search-button').click();
+	// 	focusSearchField();
+	// }
 
 	// subalbums
 	$("li.album-sort.by-date").on('click', sortAlbumsByDate);
