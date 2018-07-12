@@ -513,16 +513,37 @@
 											// inside words
 											for (indexMedia = 0; indexMedia < theAlbum.media.length; indexMedia ++) {
 												normalizedWords = PhotoFloat.normalizeAccordingToOptions(theAlbum.media[indexMedia].words);
-												if (normalizedWords.some(function(element) {
-													return element.indexOf(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) > -1;
-												}))
+												if (
+													normalizedWords.some(
+														function(element) {
+															return element.indexOf(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) > -1;
+														}
+													) &&
+													! Options.search_current_album ||
+													[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) !== -1 || (
+														// check that media is inside the current album tree
+														theAlbum.media[indexMedia].foldersCacheBase.indexOf(Options.album_to_search_in) === 0 ||
+														theAlbum.media[indexMedia].hasOwnProperty("dayAlbumCacheBase") && theAlbum.media[indexMedia].dayAlbumCacheBase.indexOf(Options.album_to_search_in) === 0 ||
+														theAlbum.media[indexMedia].hasOwnProperty("gpsAlbumCacheBase") && theAlbum.media[indexMedia].gpsAlbumCacheBase.indexOf(Options.album_to_search_in) === 0
+													)
+												)
 													matchingMedia.push(theAlbum.media[indexMedia]);
 											}
 											for (indexSubalbums = 0; indexSubalbums < theAlbum.subalbums.length; indexSubalbums ++) {
 												normalizedWords = PhotoFloat.normalizeAccordingToOptions(theAlbum.subalbums[indexSubalbums].words);
-												if (normalizedWords.some(function(element) {
-													return element.indexOf(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) > -1;
-												}))
+												if (
+													normalizedWords.some(
+														function(element) {
+															return element.indexOf(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) > -1;
+														}
+													) &&
+													! Options.search_current_album ||
+													[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) !== -1 || (
+														// check that media is inside the current album tree
+														theAlbum.subalbums[indexSubalbums].cacheBase.indexOf(Options.album_to_search_in) === 0 &&
+														theAlbum.subalbums[indexSubalbums].cacheBase != Options.album_to_search_in
+													)
+												)
 													matchingSubalbums.push(theAlbum.subalbums[indexSubalbums]);
 											}
 										}
