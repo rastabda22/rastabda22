@@ -690,7 +690,51 @@ $(document).ready(function() {
 				title += "<span class='title-no-anchor'";
 			else
 				title += "<a class='" + titleAnchorClassesItalics + "' href='#!/" + currentAlbum.cacheBase + "'";
-			title += ">(" + _t("#by-search") + ")";
+
+			if (Options.search_current_album) {
+				var pathsArray;
+				var albumSearchedInLength = currentAlbum.cacheBase.split(Options.cache_folder_separator).slice(2).length;
+				var albumTypeString = '';
+
+				title += ">(" + _t("#search-in") + ' ';
+
+				if (currentAlbum.media.length) {
+					if (PhotoFloat.isFolderCacheBase(Options.album_to_search_in))
+						pathsArray = currentAlbum.media[0].folders_album.split('/').slice(1, albumSearchedInLength);
+					else if (PhotoFloat.isByDateCacheBase(Options.album_to_search_in)) {
+						albumTypeString = '[' + _t('#by-date') + '] ';
+						pathsArray = currentAlbum.media[0].dayAlbum.split('/').slice(1, albumSearchedInLength);
+						if (pathsArray.length >= 2)
+							pathsArray[1] = _t("#month-" + pathsArray[1]);
+					} else if (PhotoFloat.isByGpsCacheBase(Options.album_to_search_in)) {
+						albumTypeString = '[' + _t('#by-gps') + '] ';
+						pathsArray = currentAlbum.media[0].gpsAlbum.split('/').slice(1, albumSearchedInLength);
+						if (pathsArray.length >= 1)
+							pathsArray[0] = currentAlbum.media[0].geoname.country_name;
+						if (pathsArray.length >= 2)
+							pathsArray[1] = currentAlbum.media[0].geoname.region_name;
+						if (pathsArray.length == 3) {
+							if (currentAlbum.media[0].geoname.alt_place_name !== undefined)
+								pathsArray[2] = transformAltPlaceName(currentAlbum.media[0].geoname.alt_place_name);
+							else
+								pathsArray[2] = currentAlbum.media[0].geoname.place_name;
+						}
+					}
+				} else if (currentAlbum.subalbums.length) {
+					// a search produces subalbums only if performed from a folders album, folders cacheBase can be used
+					pathsArray = currentAlbum.subalbums[0].path.split('/').slice(1, albumSearchedInLength);
+				}
+
+				title += albumTypeString;
+				if (albumTypeString.length)
+					title += ' &raquo; ';
+				title += pathsArray.join(' &raquo; ');
+
+				title += ")";
+			} else {
+				title += ">(" + _t("#by-search") + ")";
+			}
+
 			if (currentMedia === null)
 				title += "</span>";
 			else
@@ -770,7 +814,9 @@ $(document).ready(function() {
 					}
 					title += ")</span>";
 				}
+			}
 
+			for (i = 2; i < components.length; ++i) {
 				if (i < components.length - 1 || currentMedia !== null)
 					title += "&raquo;";
 
