@@ -344,7 +344,8 @@
 					Options.search_current_album = searchOptions.indexOf('o') > -1;
 					// Options.search_refine = searchOptions.indexOf('e') > -1;
 				}
-				if (Options.search_current_album)
+
+				if (PhotoFloat.isSearchHash(location.hash))
 					Options.album_to_search_in = splittedAlbumHash.slice(2).join(Options.cache_folder_separator);
 				else
 					Options.album_to_search_in = Options.folders_string;

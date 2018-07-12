@@ -2326,8 +2326,10 @@ $(document).ready(function() {
 				// if (searchRefineCookie !== null)
 				// 	Options.search_refine = searchRefineCookie;
 
-				Options.album_to_search_in = Options.folders_string;
-				Options.saved_album_to_search_in = Options.folders_string;
+				if (! Options.hasOwnProperty('album_to_search_in') || ! Options.album_to_search_in)
+					Options.album_to_search_in = Options.folders_string;
+				if (! Options.hasOwnProperty('saved_album_to_search_in') || ! Options.saved_album_to_search_in)
+					Options.saved_album_to_search_in = Options.folders_string;
 
 				Options.foldersStringWithTrailingSeparator = Options.folders_string + Options.cache_folder_separator;
 				Options.byDateStringWithTrailingSeparator = Options.by_date_string + Options.cache_folder_separator;
@@ -2540,7 +2542,7 @@ $(document).ready(function() {
 		else
 			Options.saved_album_to_search_in = Options.album_to_search_in;
 
-		if (! Options.album_to_search_in)
+		if (! Options.hasOwnProperty('album_to_search_in') || ! Options.album_to_search_in)
 			Options.album_to_search_in = Options.folders_string;
 
 		var bySearchViewHash = "#!/" + Options.by_search_string;
