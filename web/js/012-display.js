@@ -2424,18 +2424,18 @@ $(document).ready(function() {
 	/* Event listeners */
 
 	$(document).on('keydown', function(e) {
-		if (! $("ul#right-menu").hasClass("expand")) {
+		if (! $("#search-field").is(':focus')) {
 			if (! e.ctrlKey && ! e.shiftKey && ! e.altKey) {
 				if (nextLink && (e.keyCode === 39 || e.keyCode === 78 || e.keyCode === 13 || e.keyCode === 32) && currentMedia !== null) {
-					//            arrow right                  n             return              space
+					//                  arrow right                  n               return               space
 					swipeLeft(nextLink);
 					return false;
 				} else if (prevLink && (e.keyCode === 37 || e.keyCode === 80 || e.keyCode === 8) && currentMedia !== null) {
-					//                   arrow left                   p           backspace
+					//                          arrow left                  p           backspace
 					swipeRight(prevLink);
 					return false;
 				} else if (e.keyCode === 27 && ! Modernizr.fullscreen && fullScreenStatus) {
-					//             esc
+					//                    esc
 					goFullscreen(e);
 					return false;
 				} else if (upLink && (e.keyCode === 27 || e.keyCode === 38 || e.keyCode === 33)) {
@@ -2464,6 +2464,7 @@ $(document).ready(function() {
 					$("#original-link")[0].click();
 					return false;
 				} else if (currentMedia !== null && hasGpsData(currentMedia) && e.keyCode === 83) {
+					 	//                                                                        s
 						$("#map-link")[0].click();
 						return false;
 				}
