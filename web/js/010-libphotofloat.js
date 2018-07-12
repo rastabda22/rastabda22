@@ -360,6 +360,9 @@
 				SearchWordsFromUserNormalized = wordsStringNormalized.split(' ');
 				$("ul#right-menu").addClass("expand");
 
+				if (SearchWordsFromUser.length == 1)
+					$("ul#right-menu li#any-word").addClass("dimmed");
+
 				var searchResultsAlbumFinal = {};
 				searchResultsAlbumFinal.media = [];
 				searchResultsAlbumFinal.subalbums = [];
