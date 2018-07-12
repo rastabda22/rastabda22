@@ -492,7 +492,7 @@
 													PhotoFloat.normalizeAccordingToOptions(theAlbum.media[indexMedia].words).indexOf(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) > -1 &&
 													! Options.search_current_album ||
 													[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) !== -1 || (
-														// check that media is inside the current album tree
+														// check whether the media is inside the current album tree
 														theAlbum.media[indexMedia].foldersCacheBase.indexOf(Options.album_to_search_in) === 0 ||
 														theAlbum.media[indexMedia].hasOwnProperty("dayAlbumCacheBase") && theAlbum.media[indexMedia].dayAlbumCacheBase.indexOf(Options.album_to_search_in) === 0 ||
 														theAlbum.media[indexMedia].hasOwnProperty("gpsAlbumCacheBase") && theAlbum.media[indexMedia].gpsAlbumCacheBase.indexOf(Options.album_to_search_in) === 0
@@ -505,7 +505,7 @@
 													PhotoFloat.normalizeAccordingToOptions(theAlbum.subalbums[indexSubalbums].words).indexOf(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) > -1 &&
 													! Options.search_current_album ||
 													[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) !== -1 || (
-														// check that media is inside the current album tree
+														// check whether the media is inside the current album tree
 														theAlbum.subalbums[indexSubalbums].cacheBase.indexOf(Options.album_to_search_in) === 0 &&
 														theAlbum.subalbums[indexSubalbums].cacheBase != Options.album_to_search_in
 													)
@@ -525,7 +525,7 @@
 													) &&
 													! Options.search_current_album ||
 													[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) !== -1 || (
-														// check that media is inside the current album tree
+														// check whether the media is inside the current album tree
 														theAlbum.media[indexMedia].foldersCacheBase.indexOf(Options.album_to_search_in) === 0 ||
 														theAlbum.media[indexMedia].hasOwnProperty("dayAlbumCacheBase") && theAlbum.media[indexMedia].dayAlbumCacheBase.indexOf(Options.album_to_search_in) === 0 ||
 														theAlbum.media[indexMedia].hasOwnProperty("gpsAlbumCacheBase") && theAlbum.media[indexMedia].gpsAlbumCacheBase.indexOf(Options.album_to_search_in) === 0
@@ -543,7 +543,7 @@
 													) &&
 													! Options.search_current_album ||
 													[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) !== -1 || (
-														// check that media is inside the current album tree
+														// check whether the media is inside the current album tree
 														theAlbum.subalbums[indexSubalbums].cacheBase.indexOf(Options.album_to_search_in) === 0 &&
 														theAlbum.subalbums[indexSubalbums].cacheBase != Options.album_to_search_in
 													)
