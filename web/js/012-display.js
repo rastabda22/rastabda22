@@ -2355,11 +2355,12 @@ $(document).ready(function() {
 	// this function is needed in order to let this point to the correct value in photoFloat.parseHash
 	function parseHash(hash, callback, error) {
 		if (Object.keys(Options).length > 0) {
-			// if (! PhotoFloat.isSearchHash(hash)) {
+			// if (! PhotoFloat.isSearchHash(hash))
 			// 	// reset the return link from search
-			// 	Options.album_to_search_in = hash;
-			// } else if (Options.album_to_search_in === null)
-			// 	Options.album_to_search_in = "#!/" + Options.folders_string;
+			// 	Options.album_to_search_in = PhotoFloat.cleanHash(hash);
+			//
+			// if (! Options.hasOwnProperty('album_to_search_in') || ! Options.album_to_search_in)
+			// 	Options.album_to_search_in = Options.folders_string;
 
 			photoFloat.parseHash(hash, callback, error);
 		} else {
