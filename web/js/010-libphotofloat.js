@@ -265,14 +265,16 @@
 
 		if (mediaHash !== null) {
 			// hash of a media: remove the media
-			if (savedSearchAlbumHash !== null)
+			if (savedSearchAlbumHash !== null || PhotoFloat.isFolderCacheBase(albumHash))
 				// media in found album or in one of its subalbum
+				// or
+				// media in folder hash:
 				// remove the trailing media
-				resultHash = PhotoFloat.pathJoin(hash.split("/").slice(0, -1));
+				resultHash = PhotoFloat.pathJoin(hash.split("/").slice(1, -1));
 			else
 				// all the other cases
 				// remove the trailing media and the folder it's inside
-				resultHash = PhotoFloat.pathJoin(hash.split("/").slice(0, -2));
+				resultHash = PhotoFloat.pathJoin(hash.split("/").slice(1, -2));
 		} else {
 			// hash of an album: go up in the album tree
 			if (savedSearchAlbumHash !== null) {
