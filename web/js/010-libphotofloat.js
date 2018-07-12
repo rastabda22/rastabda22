@@ -364,6 +364,8 @@
 
 				if (SearchWordsFromUser.length == 1)
 					$("ul#right-menu li#any-word").addClass("dimmed");
+				else
+					$("ul#right-menu li#any-word").removeClass("dimmed");
 
 				var searchResultsAlbumFinal = {};
 				searchResultsAlbumFinal.media = [];
