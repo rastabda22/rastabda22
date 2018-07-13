@@ -530,7 +530,6 @@ $(document).ready(function() {
 		// current levels are country, region, place => 3
 		var gpsLevelNumber = 3;
 		var gpsName = '';
-		var mediaForNames = null;
 		var gpsHtmlTitle;
 
 		updateMenu();
@@ -617,20 +616,13 @@ $(document).ready(function() {
 			documentTitle += " (" + _t("#by-gps") + ")";
 
 			for (i = 2; i < components.length; ++i) {
-				if (currentMedia !== null)
-					mediaForNames = currentMedia;
-				else
-					mediaForNames = currentAlbum.media[0];
+				var currentAlbumPathArray = currentAlbum.path.split('/').slice(1);
 				if (i == 2)
-					gpsName = mediaForNames.geoname.country_name;
+					gpsName = translateGpsCodeToName('country', currentAlbumPathArray[0]);
 				else if (i == 3)
-					gpsName = mediaForNames.geoname.region_name;
-				else if (i == 4) {
-					if (mediaForNames.geoname.alt_place_name !== undefined)
-						gpsName = transformAltPlaceName(mediaForNames.geoname.alt_place_name);
-					else
-						gpsName = mediaForNames.geoname.place_name;
-				}
+					gpsName = translateGpsCodeToName('region', currentAlbumPathArray[1]);
+				else if (i == 4)
+					gpsName = translateGpsCodeToName('place', currentAlbumPathArray[2]);
 
 				if (gpsName === '')
 					gpsName = _t('.not-specified');
@@ -692,7 +684,7 @@ $(document).ready(function() {
 			else
 				title += "<a class='" + titleAnchorClassesItalics + "' href='#!/" + currentAlbum.cacheBase + "'>";
 
-			if (Options.search_current_album && Options.album_to_search_in != Options.folders_string) {
+			if (Options.search_current_album && [Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) == -1) {
 				var pathsArray;
 				var cacheBasesArray = [];
 				var splittedCacheBase, thisCacheBase;
@@ -716,16 +708,32 @@ $(document).ready(function() {
 						splittedCacheBase = currentAlbum.media[0].gpsAlbumCacheBase.split(Options.cache_folder_separator);
 						albumTypeString = "<a href='#!/" + Options.by_gps_string + "'"  + _t('#by-gps') + ']</a> ';
 						pathsArray = currentAlbum.media[0].gpsAlbum.split('/').slice(1, albumSearchedInLength);
-						if (pathsArray.length >= 1)
-							pathsArray[0] = currentAlbum.media[0].geoname.country_name;
-						if (pathsArray.length >= 2)
-							pathsArray[1] = currentAlbum.media[0].geoname.region_name;
-						if (pathsArray.length == 3) {
-							if (currentAlbum.media[0].geoname.alt_place_name !== undefined)
-								pathsArray[2] = transformAltPlaceName(currentAlbum.media[0].geoname.alt_place_name);
-							else
-								pathsArray[2] = currentAlbum.media[0].geoname.place_name;
+
+						if (! Options.hasOwnProperty('album_to_search_in__names_array')) {
+							// let us translate once for all the country, region, place codes to their respective names
+							// Execution arrives here when a reload of the page is done
+							if (PhotoFloat.isByGpsCacheBase(Options.album_to_search_in)) {
+								var albumToSearchInArray = Options.album_to_search_in.split(Options.cache_folder_separator).slice(1);
+								Options.album_to_search_in__names_array = [
+									translateGpsCodeToName('country', albumToSearchInArray[0]),
+									translateGpsCodeToName('region', albumToSearchInArray[1]),
+									translateGpsCodeToName('place', albumToSearchInArray[2])
+								];
+							}
 						}
+
+						// if (pathsArray.length >= 1)
+						// 	pathsArray[0] = translateGpsCodeToName('country', pathsArray[0]);
+						// if (pathsArray.length >= 2)
+						// 	pathsArray[1] = translateGpsCodeToName('region', pathsArray[1]);
+						// if (pathsArray.length == 3)
+						// 	pathsArray[2] = translateGpsCodeToName('place', pathsArray[2]);
+						if (pathsArray.length >= 1)
+							pathsArray[0] = Options.album_to_search_in__names_array[0];
+						if (pathsArray.length >= 2)
+							pathsArray[1] = Options.album_to_search_in__names_array[1];
+						if (pathsArray.length == 3)
+							pathsArray[2] = Options.album_to_search_in__names_array[2];
 					}
 					for (var i = 0; i < pathsArray.length; i ++)
 						cacheBasesArray[i] = splittedCacheBase.slice(0, i + 2).join(Options.cache_folder_separator);
@@ -2232,6 +2240,27 @@ $(document).ready(function() {
 		$("body, html").css("overflow", "auto");
 	}
 
+	function translateGpsCodeToName(selector, code) {
+		var gpsName, mediaForNames;
+
+		if (currentMedia !== null)
+			mediaForNames = currentMedia;
+		else
+			mediaForNames = currentAlbum.media[0];
+
+		if (selector == 'country')
+			gpsName = mediaForNames.geoname.country_name;
+		else if (selector =='region')
+			gpsName = mediaForNames.geoname.region_name;
+		else if (selector == 'place') {
+			if (mediaForNames.geoname.alt_place_name !== undefined)
+				gpsName = transformAltPlaceName(mediaForNames.geoname.alt_place_name);
+			else
+				gpsName = mediaForNames.geoname.place_name;
+		}
+
+		return gpsName;
+	}
 
 
 	/* Entry point for most events */
@@ -2270,6 +2299,15 @@ $(document).ready(function() {
 			sortAlbumsMedia();
 			updateMenu();
 		}
+
+		var currentAlbumPathArray = currentAlbum.path.split('/').slice(1);
+		if (PhotoFloat.isByGpsCacheBase(currentAlbum.cacheBase)) {
+			// we must translate the country, region, place codes to their respective names
+			currentAlbumPathArray = [translateGpsCodeToName('country', currentAlbumPathArray[0]), translateGpsCodeToName('region', currentAlbumPathArray[1]), translateGpsCodeToName('place', currentAlbumPathArray[2])];
+		}
+		var currentAlbumPath = currentAlbumPathArray.join('/');
+
+		$("#album-search").attr('title', _t("#current-album-is") + '"'+ currentAlbumPath + '"');
 
 		if (currentMedia !== null || currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1) {
 			if (currentMedia === null) {
@@ -2604,28 +2642,32 @@ $(document).ready(function() {
 	// search
 	$('#search-button').on("click", function() {
 		var searchOptions = '';
+		var array = PhotoFloat.decodeHash(location.hash);
+		var albumHash = array[0];
 
 		// save the current hash in order to come back there when exiting from search
-		if (PhotoFloat.isSearchHash(location.hash)) {
-			// it's already a search hash: get the album to search in from there
-			var array = PhotoFloat.decodeHash(location.hash);
-			var albumHash = array[0];
-			if (PhotoFloat.isSearchCacheBase(albumHash)) {
-				// a plain search
-				var splittedAlbumHash = albumHash.split(Options.cache_folder_separator);
-				Options.album_to_search_in = splittedAlbumHash.slice(2).join(Options.cache_folder_separator);
-			} else
-				// a subalbum of a search
-				Options.album_to_search_in = albumHash;
+		if (PhotoFloat.isSearchCacheBase(albumHash)) {
+			// a plain search: get the folder to search in from the search album hash
+			Options.album_to_search_in = albumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
 		} else {
-			// not a search hash: use the current album hash
-			Options.album_to_search_in = PhotoFloat.cleanHash(location.hash);
+			// it's a subalbum of a search or it's not a search hash: use the current album hash
+			Options.album_to_search_in = albumHash;
 
 			Options.saved_album_to_search_in = Options.album_to_search_in;
 		}
 
 		if (! Options.hasOwnProperty('album_to_search_in') || ! Options.album_to_search_in)
 			Options.album_to_search_in = Options.folders_string;
+
+		// let us translate once for all the country, region, place codes to their respective names
+		if (PhotoFloat.isByGpsCacheBase(Options.album_to_search_in)) {
+			var albumToSearchInArray = Options.album_to_search_in.split(Options.cache_folder_separator).slice(1);
+			Options.album_to_search_in__names_array = [
+				translateGpsCodeToName('country', albumToSearchInArray[0]),
+				translateGpsCodeToName('region', albumToSearchInArray[1]),
+				translateGpsCodeToName('place', albumToSearchInArray[2])
+			];
+		}
 
 		var bySearchViewHash = "#!/" + Options.by_search_string;
 
