@@ -562,7 +562,7 @@ $(document).ready(function() {
 
 		if (isDateTitle) {
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>";
-			title += "<span class='title-no-anchor'>(" + _t("#by-date") + ")</span>&raquo;";
+			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_date_string + "'>(" + _t("#by-date") + ")</a>&raquo;";
 
 			documentTitle += components[0];
 			if (components.length > 2 || currentMedia !== null)
@@ -607,8 +607,8 @@ $(document).ready(function() {
 					documentTitle = " \u00ab " + documentTitle;
 			}
 		} else if (isGpsTitle) {
-			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>";
-			title += "<span class='title-no-anchor'>(" + _t("#by-gps") + ")</span>&raquo;";
+			title = "<a class='" + titleAnchorClasses + "' href='#!/'>" + components[0] + "</a>";
+			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_gps_string + "'>(" + _t("#by-gps") + ")</a>&raquo;";
 
 			documentTitle += components[0];
 			if (components.length > 2 || currentMedia !== null)
