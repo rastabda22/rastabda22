@@ -2430,7 +2430,7 @@ $(document).ready(function() {
 				if (searchAccentSensitiveCookie !== null)
 					Options.search_accent_sensitive = searchAccentSensitiveCookie;
 
-				Options.search_current_album = false;
+				Options.search_current_album = true;
 				var searchCurrentAlbumCookie = getBooleanCookie("search_current_album");
 				if (searchCurrentAlbumCookie !== null)
 					Options.search_current_album = searchCurrentAlbumCookie;
