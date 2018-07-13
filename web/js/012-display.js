@@ -679,11 +679,6 @@ $(document).ready(function() {
 			var where;
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>&raquo;";
 
-			if (currentMedia === null)
-				title += "<span class='title-no-anchor'>";
-			else
-				title += "<a class='" + titleAnchorClassesItalics + "' href='#!/" + currentAlbum.cacheBase + "'>";
-
 			if (
 				Options.search_current_album &&
 				[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) == -1
@@ -695,7 +690,11 @@ $(document).ready(function() {
 				var albumSearchedInLength = currentAlbum.cacheBase.split(Options.cache_folder_separator).slice(2).length;
 				var albumTypeString = '';
 
-				where = "(" + _t("#search-in") + ' ';
+				where =
+					"<a class='search-link' href='#!/" + currentAlbum.cacheBase + "'>" +
+				 	_t("#search-in") +
+					"</a>" +
+					' ';
 
 				if (currentAlbum.media.length) {
 					if (PhotoFloat.isFolderCacheBase(Options.album_to_search_in)) {
@@ -755,17 +754,22 @@ $(document).ready(function() {
 						where += ' &raquo; ';
 					where += "<a class='search-link' href='" + thisCacheBase + "'>" + pathsArray[i] + "</a>";
 				}
-
-				where += ")";
 			} else {
-				where = "(" + _t("#by-search") + ")";
+				where =
+				 	"<a class='" + titleAnchorClassesItalics + "' href='#!/" + currentAlbum.cacheBase + "'>" +
+					_t("#by-search") +
+					"</a>";
 			}
-			title += where;
 
 			if (currentMedia === null)
+				title += "<span class='title-no-anchor'>";
+			title += "(";
+
+			title += where;
+
+			title += ")";
+			if (currentMedia === null)
 				title += "</span>";
-			else
-				title += "</a>";
 
 			// do not show the options and the search words, they are visible in the menu
 			// show the image name, if it is there
@@ -774,7 +778,7 @@ $(document).ready(function() {
 			}
 
 			// build the html page title
-			documentTitle += " " + where +" \u00ab " + components[0];
+			documentTitle += " (" + where +") \u00ab " + components[0];
 			if (currentMedia !== null)
 				documentTitle = " \u00ab " + documentTitle;
 		} else {
