@@ -777,6 +777,10 @@ $(document).ready(function() {
 				title += "&raquo;";
 			}
 
+			// strip html for html page (https://stackoverflow.com/questions/822452/strip-html-from-text-javascript#822464)
+			// replaces &raquo; with \u00bb
+			where = where.replace(/<(?:.|\n)*?>/gm, '').replace(/&raquo;/g, '\u00bb');
+
 			// build the html page title
 			documentTitle += " (" + where +") \u00ab " + components[0];
 			if (currentMedia !== null)
