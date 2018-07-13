@@ -344,8 +344,8 @@ class Album(object):
 
 			if hasattr(_parent, "alt_name"):
 				ancestors_names.append(_parent.alt_name)
-			elif hasattr(_parent, "_name"):
-				ancestors_names.append(_parent._name)
+			elif hasattr(_parent, "name"):
+				ancestors_names.append(_parent.name)
 
 			if hasattr(_parent, "center"):
 				ancestors_center.append(_parent.center)
@@ -360,6 +360,7 @@ class Album(object):
 		ancestors_center.reverse()
 
 		dictionary = {
+			"name": self.name,
 			"path": path_to_dict,
 			"cacheSubdir": self._subdir,
 			"date": self.date,
