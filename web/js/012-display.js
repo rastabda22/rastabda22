@@ -684,7 +684,10 @@ $(document).ready(function() {
 			else
 				title += "<a class='" + titleAnchorClassesItalics + "' href='#!/" + currentAlbum.cacheBase + "'>";
 
-			if (Options.search_current_album && [Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) == -1) {
+			if (
+				Options.search_current_album &&
+				[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) == -1
+			) {
 				var pathsArray;
 				var cacheBasesArray = [];
 				var splittedCacheBase, thisCacheBase;
