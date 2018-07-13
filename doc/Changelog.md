@@ -1,3 +1,6 @@
+* Search is now performed by default in current folder
+* Months aren't any more numeric, using localized month names
+
 ### version 3.4 (July 6, 2018)
 
 * moved scripts into bin directory. Create `scanner` as a link to `main.py`. Added `make_album_ini.sh`to create a default `album.ini` file in a directory.
