@@ -724,12 +724,6 @@ $(document).ready(function() {
 							}
 						}
 
-						// if (pathsArray.length >= 1)
-						// 	pathsArray[0] = translateGpsCodeToName('country', pathsArray[0]);
-						// if (pathsArray.length >= 2)
-						// 	pathsArray[1] = translateGpsCodeToName('region', pathsArray[1]);
-						// if (pathsArray.length == 3)
-						// 	pathsArray[2] = translateGpsCodeToName('place', pathsArray[2]);
 						if (pathsArray.length >= 1)
 							pathsArray[0] = Options.album_to_search_in__names_array[0];
 						if (pathsArray.length >= 2)
