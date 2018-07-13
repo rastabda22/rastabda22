@@ -959,8 +959,8 @@
 
 	PhotoFloat.sortByPath = function(albumList) {
 		if (PhotoFloat.isByGpsCacheBase(albumList[0].cacheBase)) {
-			if (albumList[0].hasOwnProperty('alt_name'))
-				return PhotoFloat.sortBy(albumList, 'alt_name');
+			if (albumList[0].hasOwnProperty('altName'))
+				return PhotoFloat.sortBy(albumList, 'altName');
 			else
 				return PhotoFloat.sortBy(albumList, 'name');
 		} else

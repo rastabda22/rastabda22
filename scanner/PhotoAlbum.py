@@ -369,7 +369,7 @@ class Album(object):
 		if hasattr(self, "name"):
 			dictionary["name"] = self.name
 		if hasattr(self, "alt_name"):
-			dictionary["alt_name"] = self.alt_name
+			dictionary["altName"] = self.alt_name
 
 		if self.parent is not None:
 			dictionary["parentCacheBase"] = self.parent.cache_base
@@ -1924,7 +1924,7 @@ class Media(object):
 
 		# the following data don't belong properly to media, but to album, but they must be put here in order to work with date, gps and search structure
 		media["albumName"] = self.album_path
-		media["folders_album"] = folders_album
+		media["foldersAlbum"] = folders_album
 		media["foldersCacheBase"] = self.album.cache_base
 		media["cacheSubdir"] = self.album.subdir
 		return media

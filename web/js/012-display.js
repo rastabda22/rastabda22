@@ -702,7 +702,7 @@ $(document).ready(function() {
 				if (currentAlbum.media.length) {
 					if (PhotoFloat.isFolderCacheBase(Options.album_to_search_in)) {
 						splittedCacheBase = currentAlbum.media[0].foldersCacheBase.split(Options.cache_folder_separator);
-						pathsArray = currentAlbum.media[0].folders_album.split('/').slice(1, albumSearchedInLength);
+						pathsArray = currentAlbum.media[0].foldersAlbum.split('/').slice(1, albumSearchedInLength);
 					} else if (PhotoFloat.isByDateCacheBase(Options.album_to_search_in)) {
 						splittedCacheBase = currentAlbum.media[0].dayAlbumCacheBase.split(Options.cache_folder_separator);
 						albumTypeString = "<a href='#!/" + Options.by_date_string + "'" + _t('#by-date') + ']</a> ';
@@ -1276,7 +1276,7 @@ $(document).ready(function() {
 							else if (level < 2)
 								folderName = currentAlbum.subalbums[i].name;
 							else
-								folderName = transformAltPlaceName(currentAlbum.subalbums[i].alt_name);
+								folderName = transformAltPlaceName(currentAlbum.subalbums[i].altName);
 							folderTitle = _t('#place-icon-title') + folderName;
 
 							folder = "<span class='gps-folder'>" +
