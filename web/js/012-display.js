@@ -602,7 +602,10 @@ $(document).ready(function() {
 					title += "&raquo;";
 
 				// keep buildimg the html page title
-				documentTitle = textComponents[i] + documentTitle;
+				if (i == 3)
+					documentTitle = _t("#month-" + textComponents[i]) + documentTitle;
+				else
+					documentTitle = textComponents[i] + documentTitle;
 				if (i < components.length - 1 || currentMedia !== null)
 					documentTitle = " \u00ab " + documentTitle;
 			}
