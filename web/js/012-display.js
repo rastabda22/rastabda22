@@ -2656,9 +2656,6 @@ $(document).ready(function() {
 		if (! Options.hasOwnProperty('album_to_search_in') || ! Options.album_to_search_in)
 			Options.album_to_search_in = Options.folders_string;
 
-		if (PhotoFloat.isByGpsCacheBase(Options.album_to_search_in))
-			Options.album_to_search_in__names_array = currentAlbum.ancestorsNames.slice(2).join('/');
-
 		var bySearchViewHash = "#!/" + Options.by_search_string;
 
 		// build the search album part of the hash
