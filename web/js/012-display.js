@@ -627,13 +627,8 @@ $(document).ready(function() {
 			documentTitle += " (" + _t("#by-gps") + ")";
 
 			for (i = 2; i < components.length; ++i) {
-				var currentAlbumPathArray = currentAlbum.path.split('/').slice(1);
-				if (i == 2)
-					gpsName = translateGpsCodeToName('country', currentAlbumPathArray[0]);
-				else if (i == 3)
-					gpsName = translateGpsCodeToName('region', currentAlbumPathArray[1]);
-				else if (i == 4)
-					gpsName = translateGpsCodeToName('place', currentAlbumPathArray[2]);
+				var currentAlbumPath = currentAlbum.ancestorsNames.slice(2);
+				gpsName = currentAlbumPath[i];
 
 				if (gpsName === '')
 					gpsName = _t('.not-specified');
@@ -2219,33 +2214,13 @@ $(document).ready(function() {
 		$("body, html").css("overflow", "auto");
 	}
 
-	function translateGpsCodeToName(selector, code) {
-		var gpsName, mediaForNames;
-
-		if (currentMedia !== null)
-			mediaForNames = currentMedia;
-		else
-			mediaForNames = currentAlbum.media[0];
-
-		if (selector == 'country')
-			gpsName = mediaForNames.geoname.country_name;
-		else if (selector =='region')
-			gpsName = mediaForNames.geoname.region_name;
-		else if (selector == 'place') {
-			if (mediaForNames.geoname.alt_place_name !== undefined)
-				gpsName = transformAltPlaceName(mediaForNames.geoname.alt_place_name);
-			else
-				gpsName = mediaForNames.geoname.place_name;
-		}
-
-		return gpsName;
-	}
 
 
 	/* Entry point for most events */
 
 	function hashParsed(album, media, mediaIndex) {
 		var populateAlbum;
+		var currentAlbumPath, currentAlbumPathArray;
 
 		undie();
 		$("#loading").hide();
@@ -2279,12 +2254,10 @@ $(document).ready(function() {
 			updateMenu();
 		}
 
-		var currentAlbumPathArray = currentAlbum.path.split('/').slice(1);
-		if (PhotoFloat.isByGpsCacheBase(currentAlbum.cacheBase)) {
-			// we must translate the country, region, place codes to their respective names
-			currentAlbumPathArray = [translateGpsCodeToName('country', currentAlbumPathArray[0]), translateGpsCodeToName('region', currentAlbumPathArray[1]), translateGpsCodeToName('place', currentAlbumPathArray[2])];
-		}
-		var currentAlbumPath = currentAlbumPathArray.join('/');
+		currentAlbumPathArray = currentAlbum.path.split('/').slice(1);
+		if (PhotoFloat.isByGpsCacheBase(currentAlbum.cacheBase))
+			currentAlbumPathArray = currentAlbum.ancestorsNames.slice(2);
+		currentAlbumPath = currentAlbumPathArray.join('/');
 
 		$("#album-search").attr('title', _t("#current-album-is") + '"'+ currentAlbumPath + '"');
 
@@ -2638,15 +2611,8 @@ $(document).ready(function() {
 		if (! Options.hasOwnProperty('album_to_search_in') || ! Options.album_to_search_in)
 			Options.album_to_search_in = Options.folders_string;
 
-		// let us translate once for all the country, region, place codes to their respective names
-		if (PhotoFloat.isByGpsCacheBase(Options.album_to_search_in)) {
-			var albumToSearchInArray = Options.album_to_search_in.split(Options.cache_folder_separator).slice(1);
-			Options.album_to_search_in__names_array = [
-				translateGpsCodeToName('country', albumToSearchInArray[0]),
-				translateGpsCodeToName('region', albumToSearchInArray[1]),
-				translateGpsCodeToName('place', albumToSearchInArray[2])
-			];
-		}
+		if (PhotoFloat.isByGpsCacheBase(Options.album_to_search_in))
+			Options.album_to_search_in__names_array = currentAlbum.ancestorsNames.slice(2).join('/');
 
 		var bySearchViewHash = "#!/" + Options.by_search_string;
 
