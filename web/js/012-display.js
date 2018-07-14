@@ -703,20 +703,16 @@ $(document).ready(function() {
 					 "<span id='search-album-to-be-filled'></span>";
 			} else {
 				where =
-				 	"<a class='" + titleAnchorClassesItalics + "' href='#!/" + currentAlbum.cacheBase + "'>" +
+				 	"<a class='search-link' href='#!/" + currentAlbum.cacheBase + "'>" +
 					_t("#by-search") +
 					"</a>";
 			}
 
-			if (currentMedia === null)
-				title += "<span class='title-no-anchor'>";
-			title += "(";
+			title += "<span class='title-no-anchor'>(";
 
 			title += where;
 
-			title += ")";
-			if (currentMedia === null)
-				title += "</span>";
+			title += ")</span>";
 
 			// do not show the options and the search words, they are visible in the menu
 			// show the image name, if it is there
@@ -737,9 +733,11 @@ $(document).ready(function() {
 				title += "&raquo;";
 
 			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
-				title += "<a class='" + titleAnchorClassesItalics + "' href='" + savedSearchAlbumHash + "'>";
-				title += "(" + _t("#by-search") + ")";
+				title += "<span class='title-no-anchor'>(";
+				title += "<a class='search-link' href='" + savedSearchAlbumHash + "'>";
+				title += _t("#by-search");
 				title += "</a>";
+				title += ")</span>";
 				title += "&raquo;";
 
 				documentTitle = " (" + _t("#by-search") + ") \u00ab " + documentTitle;
