@@ -701,7 +701,7 @@ $(document).ready(function() {
 				photoFloat.getAlbum(
 					Options.album_to_search_in,
 					function(theAlbum) {
-						var whereLinks = '', thisCacheBase, name;
+						var whereLinks = '', thisCacheBase, name, documentTitle;
 						if (theAlbum.hasOwnProperty('ancestorsNames')) {
 							albumTypeString = "<a href='#!/" + Options.by_gps_string + "'"  + _t('#by-gps') + ']</a> ' + ' &raquo; ';
 							for (var i = 2; i < theAlbum.ancestorsNames.length; i ++) {
@@ -716,7 +716,13 @@ $(document).ready(function() {
 							}
 						}
 
+						// insert the album tree links in DOM
 						$("#search-album-to-be-filled").replaceWith(whereLinks);
+						// correct the page title too
+						documentTitle = $(document).attr('title');
+						documentTitle = documentTitle.replace(_t("#search-in"), _t("#search-in") + ' ' + stripHtmlAndReplaceEntities(whereLinks));
+						document.title = documentTitle;
+
 					},
 					die
 				);
@@ -749,9 +755,7 @@ $(document).ready(function() {
 				title += "&raquo;";
 			}
 
-			// strip html for html page (https://stackoverflow.com/questions/822452/strip-html-from-text-javascript#822464)
-			// replaces &raquo; with \u00bb
-			where = where.replace(/<(?:.|\n)*?>/gm, '').replace(/&raquo;/g, '\u00bb');
+			where = stripHtmlAndReplaceEntities(where);
 
 			// build the html page title
 			documentTitle += " (" + where +") \u00ab " + components[0];
@@ -876,6 +880,13 @@ $(document).ready(function() {
 		setOptions();
 
 		return;
+	}
+
+	function stripHtmlAndReplaceEntities(htmlString) {
+		// converto for for html page title
+		// strip html (https://stackoverflow.com/questions/822452/strip-html-from-text-javascript#822464)
+		// and replaces &raquo; with \u00bb
+		return htmlString.replace(/<(?:.|\n)*?>/gm, '').replace(/&raquo;/g, '\u00bb');
 	}
 
 	function initializeSortPropertiesAndCookies() {
