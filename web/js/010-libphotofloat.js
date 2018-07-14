@@ -331,6 +331,10 @@
 		SearchWordsFromUserNormalizedAccordingToOptions = [];
 		if (albumHash) {
 			albumHash = decodeURI(albumHash);
+
+			if ([Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(albumHash) !== -1)
+				$("ul#right-menu li#album-search").addClass("dimmed");
+
 			if (PhotoFloat.isSearchCacheBase(albumHash)) {
 				var splittedAlbumHash = albumHash.split(Options.cache_folder_separator);
 
@@ -353,7 +357,6 @@
 				}
 
 				Options.album_to_search_in = splittedAlbumHash.slice(2).join(Options.cache_folder_separator);
-
 
 				if ([Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) !== -1)
 					$("ul#right-menu li#album-search").addClass("dimmed");
