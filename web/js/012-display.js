@@ -560,6 +560,14 @@ $(document).ready(function() {
 			titleAnchorClasses += ' mobile';
 		titleAnchorClassesItalics = titleAnchorClasses + ' italic';
 
+		var array = PhotoFloat.decodeHash(location.hash);
+		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
+		var albumHash = array[0];
+		// var mediaHash = array[1];
+		// var mediaFolderHash = array[2];
+		// var savedSearchSubAlbumHash = array[3];
+		var savedSearchAlbumHash = array[4];
+
 		if (isDateTitle) {
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>";
 			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_date_string + "'>(" + _t("#by-date") + ")</a>&raquo;";
@@ -787,15 +795,6 @@ $(document).ready(function() {
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>";
 			if (components.length > 1 || currentMedia !== null)
 				title += "&raquo;";
-
-			var array = PhotoFloat.decodeHash(location.hash);
-			// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-			// var albumHash = array[0];
-			// var mediaHash = array[1];
-			// var mediaFolderHash = array[2];
-			// var savedSearchSubAlbumHash = array[3];
-			var savedSearchAlbumHash = array[4];
-
 
 			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
 				title += "<a class='" + titleAnchorClassesItalics + "' href='" + savedSearchAlbumHash + "'>";
