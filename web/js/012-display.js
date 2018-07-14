@@ -785,12 +785,11 @@ $(document).ready(function() {
 					}
 					title += ")</span>";
 				}
+				if (i < components.length - 1 || currentMedia !== null)
+					title += "&raquo;";
 			}
 
 			for (i = 2; i < components.length; ++i) {
-				if (i < components.length - 1 || currentMedia !== null)
-					title += "&raquo;";
-
 				// keep building the html page title
 				documentTitle = textComponents[i] + documentTitle;
 				if (i < components.length - 1 || currentMedia !== null)
