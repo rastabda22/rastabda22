@@ -696,37 +696,6 @@ $(document).ready(function() {
 				var albumSearchedInLength = currentAlbum.cacheBase.split(Options.cache_folder_separator).slice(2).length;
 				var albumTypeString = '';
 
-				// get the names from the album
-				// we must use getAlbum() because the album could not be in the cache yet (as when ctl-r is pressed)
-				photoFloat.getAlbum(
-					Options.album_to_search_in,
-					function(theAlbum) {
-						var whereLinks = '', thisCacheBase, name, documentTitle;
-						if (theAlbum.hasOwnProperty('ancestorsNames')) {
-							albumTypeString = "<a href='#!/" + Options.by_gps_string + "'"  + _t('#by-gps') + ']</a> ' + ' &raquo; ';
-							for (var i = 2; i < theAlbum.ancestorsNames.length; i ++) {
-								name = theAlbum.ancestorsNames[i];
-								if (i == 3 && PhotoFloat.isByDateCacheBase(Options.album_to_search_in))
-									// convert the month number to localized month name
-									name = _t("#month-" + name);
-								thisCacheBase = "#!/" + theAlbum.ancestorsCacheBase.slice(2, i + 1).join(Options.cache_folder_separator);
-								if (i > 2)
-									whereLinks += ' &raquo; ';
-								whereLinks += "<a class='search-link' href='" + thisCacheBase + "'>" + name + "</a>";
-							}
-						}
-
-						// insert the album tree links in DOM
-						$("#search-album-to-be-filled").replaceWith(whereLinks);
-						// correct the page title too
-						documentTitle = $(document).attr('title');
-						documentTitle = documentTitle.replace(_t("#search-in") + ' ', _t("#search-in") + ' ' + stripHtmlAndReplaceEntities(whereLinks));
-						document.title = documentTitle;
-
-					},
-					die
-				);
-
 				where =
 					 "<a class='main-search-link' href='#!/" + currentAlbum.cacheBase + "'>" +
 					 _t("#search-in") +
@@ -829,9 +798,6 @@ $(document).ready(function() {
 			}
 		}
 
-
-
-
 		// leave only the last link on mobile
 		linksToLeave = 1;
 		numLinks = title.split("<a class=").length - 1;
@@ -877,6 +843,38 @@ $(document).ready(function() {
 			documentTitle =  photoFloat.trimExtension(currentAlbum.media[0].name) + " \u00ab " + documentTitle;
 
 		document.title = documentTitle;
+
+		// get the names from the album
+		// we must use getAlbum() because the album could not be in the cache yet (as when ctl-r is pressed)
+		photoFloat.getAlbum(
+			Options.album_to_search_in,
+			function(theAlbum) {
+				var whereLinks = '', thisCacheBase, name, documentTitle;
+				if (theAlbum.hasOwnProperty('ancestorsNames')) {
+					albumTypeString = "<a href='#!/" + Options.by_gps_string + "'"  + _t('#by-gps') + ']</a> ' + ' &raquo; ';
+					for (var i = 2; i < theAlbum.ancestorsNames.length; i ++) {
+						name = theAlbum.ancestorsNames[i];
+						if (i == 3 && PhotoFloat.isByDateCacheBase(Options.album_to_search_in))
+							// convert the month number to localized month name
+							name = _t("#month-" + name);
+						thisCacheBase = "#!/" + theAlbum.ancestorsCacheBase.slice(2, i + 1).join(Options.cache_folder_separator);
+						if (i > 2)
+							whereLinks += ' &raquo; ';
+						whereLinks += "<a class='search-link' href='" + thisCacheBase + "'>" + name + "</a>";
+					}
+				}
+
+				// insert the album tree links in DOM
+				$("#search-album-to-be-filled").replaceWith(whereLinks);
+				// correct the page title too
+				documentTitle = $(document).attr('title');
+				documentTitle = documentTitle.replace(_t("#search-in") + ' ', _t("#search-in") + ' ' + stripHtmlAndReplaceEntities(whereLinks));
+				document.title = documentTitle;
+
+			},
+			die
+		);
+
 		setOptions();
 
 		return;
