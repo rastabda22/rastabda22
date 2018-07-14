@@ -496,13 +496,14 @@
 											// whole word
 											for (indexMedia = 0; indexMedia < theAlbum.media.length; indexMedia ++) {
 												if (
-													PhotoFloat.normalizeAccordingToOptions(theAlbum.media[indexMedia].words).indexOf(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) > -1 &&
-													! Options.search_current_album ||
-													[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) !== -1 || (
-														// check whether the media is inside the current album tree
-														theAlbum.media[indexMedia].foldersCacheBase.indexOf(Options.album_to_search_in) === 0 ||
-														theAlbum.media[indexMedia].hasOwnProperty("dayAlbumCacheBase") && theAlbum.media[indexMedia].dayAlbumCacheBase.indexOf(Options.album_to_search_in) === 0 ||
-														theAlbum.media[indexMedia].hasOwnProperty("gpsAlbumCacheBase") && theAlbum.media[indexMedia].gpsAlbumCacheBase.indexOf(Options.album_to_search_in) === 0
+													PhotoFloat.normalizeAccordingToOptions(theAlbum.media[indexMedia].words).indexOf(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) > -1 && (
+														! Options.search_current_album ||
+														[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) !== -1 || (
+															// check whether the media is inside the current album tree
+															theAlbum.media[indexMedia].foldersCacheBase.indexOf(Options.album_to_search_in) === 0 ||
+															theAlbum.media[indexMedia].hasOwnProperty("dayAlbumCacheBase") && theAlbum.media[indexMedia].dayAlbumCacheBase.indexOf(Options.album_to_search_in) === 0 ||
+															theAlbum.media[indexMedia].hasOwnProperty("gpsAlbumCacheBase") && theAlbum.media[indexMedia].gpsAlbumCacheBase.indexOf(Options.album_to_search_in) === 0
+														)
 													)
 												)
 													matchingMedia.push(theAlbum.media[indexMedia]);
@@ -510,13 +511,14 @@
 											for (indexSubalbums = 0; indexSubalbums < theAlbum.subalbums.length; indexSubalbums ++) {
 												if (
 													PhotoFloat.normalizeAccordingToOptions(theAlbum.subalbums[indexSubalbums].words).indexOf(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) > -1 &&
-													! Options.search_current_album ||
-													[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) !== -1 || (
-														// check whether the media is inside the current album tree
-														theAlbum.subalbums[indexSubalbums].cacheBase.indexOf(Options.album_to_search_in) === 0 &&
-														theAlbum.subalbums[indexSubalbums].cacheBase != Options.album_to_search_in
+													(
+														! Options.search_current_album ||
+														[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) !== -1 || (
+															// check whether the media is inside the current album tree
+															theAlbum.subalbums[indexSubalbums].cacheBase.indexOf(Options.album_to_search_in) === 0 &&
+															theAlbum.subalbums[indexSubalbums].cacheBase != Options.album_to_search_in
+														)
 													)
-
 												)
 													matchingSubalbums.push(theAlbum.subalbums[indexSubalbums]);
 											}
@@ -529,13 +531,14 @@
 														function(element) {
 															return element.indexOf(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) > -1;
 														}
-													) &&
-													! Options.search_current_album ||
-													[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) !== -1 || (
-														// check whether the media is inside the current album tree
-														theAlbum.media[indexMedia].foldersCacheBase.indexOf(Options.album_to_search_in) === 0 ||
-														theAlbum.media[indexMedia].hasOwnProperty("dayAlbumCacheBase") && theAlbum.media[indexMedia].dayAlbumCacheBase.indexOf(Options.album_to_search_in) === 0 ||
-														theAlbum.media[indexMedia].hasOwnProperty("gpsAlbumCacheBase") && theAlbum.media[indexMedia].gpsAlbumCacheBase.indexOf(Options.album_to_search_in) === 0
+													) && (
+														! Options.search_current_album ||
+														[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) !== -1 || (
+															// check whether the media is inside the current album tree
+															theAlbum.media[indexMedia].foldersCacheBase.indexOf(Options.album_to_search_in) === 0 ||
+															theAlbum.media[indexMedia].hasOwnProperty("dayAlbumCacheBase") && theAlbum.media[indexMedia].dayAlbumCacheBase.indexOf(Options.album_to_search_in) === 0 ||
+															theAlbum.media[indexMedia].hasOwnProperty("gpsAlbumCacheBase") && theAlbum.media[indexMedia].gpsAlbumCacheBase.indexOf(Options.album_to_search_in) === 0
+														)
 													)
 												)
 													matchingMedia.push(theAlbum.media[indexMedia]);
@@ -547,12 +550,13 @@
 														function(element) {
 															return element.indexOf(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) > -1;
 														}
-													) &&
-													! Options.search_current_album ||
-													[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) !== -1 || (
-														// check whether the media is inside the current album tree
-														theAlbum.subalbums[indexSubalbums].cacheBase.indexOf(Options.album_to_search_in) === 0 &&
-														theAlbum.subalbums[indexSubalbums].cacheBase != Options.album_to_search_in
+													) && (
+														! Options.search_current_album ||
+														[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) !== -1 || (
+															// check whether the media is inside the current album tree
+															theAlbum.subalbums[indexSubalbums].cacheBase.indexOf(Options.album_to_search_in) === 0 &&
+															theAlbum.subalbums[indexSubalbums].cacheBase != Options.album_to_search_in
+														)
 													)
 												)
 													matchingSubalbums.push(theAlbum.subalbums[indexSubalbums]);
