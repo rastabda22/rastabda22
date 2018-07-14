@@ -500,8 +500,8 @@ $(document).ready(function() {
 		// if (! PhotoFloat.isSearchHash(location.hash))
 		// 	$("ul#right-menu li#refine-search").addClass("hidden");
 		var cleanedHash = PhotoFloat.cleanHash(location.hash);
-		if (cleanedHash == '' || cleanedHash == Options.folders_string)
-			$("ul#right-menu li#album-search").addClass("hidden");
+		// if (cleanedHash == '' || cleanedHash == Options.folders_string)
+		// 	$("ul#right-menu li#album-search").addClass("hidden");
 
 		// if (PhotoFloat.isSearchHash(location.hash) && $("ul#right-menu li#refine-search").hasClass("selected"))
 		// 	$("ul#right-menu li#album-search").addClass("dimmed");
@@ -2400,7 +2400,8 @@ $(document).ready(function() {
 				Options.byGpsStringWithTrailingSeparator = Options.by_gps_string + Options.cache_folder_separator;
 				Options.bySearchStringWithTrailingSeparator = Options.by_search_string + Options.cache_folder_separator;
 
-				photoFloat.parseHash(hash, callback, error);
+				// photoFloat.parseHash(hash, callback, error);
+				parseHash(hash, callback, error);
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				if (errorThrown == "Not Found") {
@@ -2418,6 +2419,13 @@ $(document).ready(function() {
 
 	// this function is needed in order to let this point to the correct value in photoFloat.parseHash
 	function parseHash(hash, callback, error) {
+		if (! PhotoFloat.isSearchHash(hash)) {
+			// reset current album search flag to its default value
+			Options.search_current_album = true;
+			setBooleanCookie("search_current_album", Options.search_current_album);
+			updateMenu();
+		}
+
 		if (Object.keys(Options).length > 0) {
 			// if (! PhotoFloat.isSearchHash(hash))
 			// 	// reset the return link from search
