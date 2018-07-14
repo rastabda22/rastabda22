@@ -666,7 +666,11 @@
 												$(".search-failed").hide();
 											}
 											searchResultsAlbumFinal.numMediaInAlbum = searchResultsAlbumFinal.media.length;
+
 											searchResultsAlbumFinal.numMediaInSubTree = searchResultsAlbumFinal.media.length;
+											for (var i = 0; i < searchResultsAlbumFinal.subalbums.length; i ++)
+												searchResultsAlbumFinal.numMediaInSubTree += searchResultsAlbumFinal.subalbums[i].numMediaInSubTree;
+
 											if (! self.albumCache.hasOwnProperty(searchResultsAlbumFinal.cacheBase))
 												self.albumCache[searchResultsAlbumFinal.cacheBase] = searchResultsAlbumFinal;
 
