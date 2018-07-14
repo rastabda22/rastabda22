@@ -567,6 +567,14 @@ ul#right-menu li#menu-icon {
 	font-style: normal;
 }
 
+a.main-search-link {
+	color: lightsalmon;
+}
+
+a.main-search-link:hover {
+	color: salmon;
+}
+
 a.search-link {
 	color: orange;
 }

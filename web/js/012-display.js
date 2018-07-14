@@ -722,7 +722,7 @@ $(document).ready(function() {
 				);
 
 				where =
-					 "<a class='search-link' href='#!/" + currentAlbum.cacheBase + "'>" +
+					 "<a class='main-search-link' href='#!/" + currentAlbum.cacheBase + "'>" +
 					 _t("#search-in") +
 					 "</a> " +
 					 "<span id='search-album-to-be-filled'></span>";
