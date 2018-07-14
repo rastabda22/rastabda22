@@ -730,6 +730,28 @@ $(document).ready(function() {
 
 			where = stripHtmlAndReplaceEntities(where);
 
+			if (components.length > 2 && currentMedia === null && (currentAlbum.media.length || currentAlbum.subalbums.length)) {
+				title += " <span id=\"title-count\">(";
+				title += _t("#title-found") + ' ';
+				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
+				if (currentAlbum.media.length) {
+					title += currentAlbum.media.length + " ";
+					title += _t(".title-media");
+					if (currentAlbum.subalbums.length)
+						title += ", ";
+				}
+				if (currentAlbum.subalbums.length) {
+					title += currentAlbum.subalbums.length + " ";
+					title += _t("#title-albums");
+				}
+				if (currentAlbum.media.length > 0 && currentAlbum.subalbums.length > 0) {
+					title += ", ";
+					title += _t("#title-total") + " ";
+					title += currentAlbum.media.length + currentAlbum.subalbums.length;
+				}
+				title += ")</span>";
+			}
+
 			// build the html page title
 			documentTitle += " (" + where +") \u00ab " + components[0];
 			if (currentMedia !== null)
