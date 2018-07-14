@@ -570,7 +570,10 @@ $(document).ready(function() {
 
 		if (isDateTitle) {
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>";
-			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_date_string + "'>(" + _t("#by-date") + ")</a>&raquo;";
+			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_date_string + "'>(" + _t("#by-date") + ")</a>";
+
+			if (components.length > 2 || currentMedia !== null)
+				title += "&raquo;";
 
 			documentTitle += components[0];
 			if (components.length > 2 || currentMedia !== null)
@@ -593,19 +596,6 @@ $(document).ready(function() {
 					title += "</a>";
 				else
 					title += "</span>";
-				if (i == components.length - 1 && currentMedia === null) {
-					if (! isMobile.any()) {
-						title += " <span id=\"title-count\">(";
-						title += currentAlbum.media.length + " ";
-						title += _t(".title-media") + " ";
-					 	if (components.length >= 5)
-							title += _t("#title-in-day-album");
-						else
-							title += _t("#title-in-date-album");
-						title += ")</span>";
-					}
-					title += "</span>";
-				}
 				if (i < components.length - 1 || currentMedia !== null)
 					title += "&raquo;";
 
@@ -617,9 +607,26 @@ $(document).ready(function() {
 				if (i < components.length - 1 || currentMedia !== null)
 					documentTitle = " \u00ab " + documentTitle;
 			}
+
+			if (components.length > 1 && currentMedia === null) {
+				if (! isMobile.any()) {
+					title += " <span id=\"title-count\">(";
+					title += currentAlbum.media.length + " ";
+					title += _t(".title-media") + " ";
+				 	if (components.length >= 5)
+						title += _t("#title-in-day-album");
+					else
+						title += _t("#title-in-date-album");
+					title += ")</span>";
+				}
+				title += "</span>";
+			}
 		} else if (isGpsTitle) {
 			title = "<a class='" + titleAnchorClasses + "' href='#!/'>" + components[0] + "</a>";
-			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_gps_string + "'>(" + _t("#by-gps") + ")</a>&raquo;";
+			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_gps_string + "'>(" + _t("#by-gps") + ")</a>";
+
+			if (components.length > 2 || currentMedia !== null)
+				title += "&raquo;";
 
 			documentTitle += components[0];
 			if (components.length > 2 || currentMedia !== null)
@@ -627,7 +634,7 @@ $(document).ready(function() {
 			documentTitle += " (" + _t("#by-gps") + ")";
 
 			for (i = 2; i < components.length; ++i) {
-				var currentAlbumPath = currentAlbum.ancestorsNames.slice(2);
+				var currentAlbumPath = currentAlbum.ancestorsNames;
 				gpsName = currentAlbumPath[i];
 
 				if (gpsName === '')
@@ -658,16 +665,6 @@ $(document).ready(function() {
 									"<img class='title-img' title='" + gpsHtmlTitle + "' alt='" + gpsHtmlTitle + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
 									"</a>";
 
-				if (i == components.length - 1 && currentMedia === null) {
-					title += " <span id=\"title-count\">(";
-					title += currentAlbum.media.length + " ";
-					title += _t(".title-media") + " ";
-					if (components.length >= gpsLevelNumber + 2)
-						title += _t("#title-in-gps-album");
-					else
-						title += _t("#title-in-gpss-album");
-					title += ")</span>";
-				}
 				if (i < components.length - 1 || currentMedia !== null)
 					title += "&raquo;";
 
@@ -675,6 +672,17 @@ $(document).ready(function() {
 				documentTitle = gpsName + documentTitle;
 				if (i < components.length - 1 || currentMedia !== null)
 					documentTitle = " \u00ab " + documentTitle;
+			}
+
+			if (components.length > 1 && currentMedia === null) {
+				title += " <span id=\"title-count\">(";
+				title += currentAlbum.media.length + " ";
+				title += _t(".title-media") + " ";
+				if (components.length >= gpsLevelNumber + 2)
+					title += _t("#title-in-gps-album");
+				else
+					title += _t("#title-in-gpss-album");
+				title += ")</span>";
 			}
 		} else if (isSearchTitle) {
 			// i=0: title
@@ -729,7 +737,7 @@ $(document).ready(function() {
 		} else {
 			// folders title
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>";
-			if (components.length > 1 || currentMedia !== null)
+			if (components.length > 2 || currentMedia !== null)
 				title += "&raquo;";
 
 			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
@@ -760,31 +768,32 @@ $(document).ready(function() {
 				else
 					title += "</span>";
 
-				if (i == components.length - 1 && currentMedia === null) {
-					title += " <span id=\"title-count\">(";
-					numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
-					if (currentAlbum.media.length) {
-						title += currentAlbum.media.length + " ";
-						title += _t(".title-media") + " ";
-						title += _t("#title-in-album");
-						if (numMediaInSubAlbums)
-							title += ", ";
-					}
-					if (numMediaInSubAlbums) {
-						title += numMediaInSubAlbums + " ";
-						if (! currentAlbum.media.length)
-							title += _t(".title-media") + " ";
-						title += _t("#title-in-subalbums");
-					}
-					if (currentAlbum.media.length > 0 && numMediaInSubAlbums > 0) {
-						title += ", ";
-						title += _t("#title-total") + " ";
-						title += currentAlbum.media.length + numMediaInSubAlbums;
-					}
-					title += ")</span>";
-				}
 				if (i < components.length - 1 || currentMedia !== null)
 					title += "&raquo;";
+			}
+
+			if (components.length > 1 && currentMedia === null) {
+				title += " <span id=\"title-count\">(";
+				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
+				if (currentAlbum.media.length) {
+					title += currentAlbum.media.length + " ";
+					title += _t(".title-media") + " ";
+					title += _t("#title-in-album");
+					if (numMediaInSubAlbums)
+						title += ", ";
+				}
+				if (numMediaInSubAlbums) {
+					title += numMediaInSubAlbums + " ";
+					if (! currentAlbum.media.length)
+						title += _t(".title-media") + " ";
+					title += _t("#title-in-subalbums");
+				}
+				if (currentAlbum.media.length > 0 && numMediaInSubAlbums > 0) {
+					title += ", ";
+					title += _t("#title-total") + " ";
+					title += currentAlbum.media.length + numMediaInSubAlbums;
+				}
+				title += ")</span>";
 			}
 
 			for (i = 2; i < components.length; ++i) {
