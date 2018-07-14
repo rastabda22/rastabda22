@@ -701,64 +701,36 @@ $(document).ready(function() {
 				var albumSearchedInLength = currentAlbum.cacheBase.split(Options.cache_folder_separator).slice(2).length;
 				var albumTypeString = '';
 
-				where =
-					"<a class='search-link' href='#!/" + currentAlbum.cacheBase + "'>" +
-				 	_t("#search-in") +
-					"</a>" +
-					' ';
-
-				if (currentAlbum.media.length) {
-					if (PhotoFloat.isFolderCacheBase(Options.album_to_search_in)) {
-						splittedCacheBase = currentAlbum.media[0].foldersCacheBase.split(Options.cache_folder_separator);
-						pathsArray = currentAlbum.media[0].foldersAlbum.split('/').slice(1, albumSearchedInLength);
-					} else if (PhotoFloat.isByDateCacheBase(Options.album_to_search_in)) {
-						splittedCacheBase = currentAlbum.media[0].dayAlbumCacheBase.split(Options.cache_folder_separator);
-						albumTypeString = "<a href='#!/" + Options.by_date_string + "'" + _t('#by-date') + ']</a> ';
-						pathsArray = currentAlbum.media[0].dayAlbum.split('/').slice(1, albumSearchedInLength);
-						if (pathsArray.length >= 2)
-							pathsArray[1] = _t("#month-" + pathsArray[1]);
-					} else if (PhotoFloat.isByGpsCacheBase(Options.album_to_search_in)) {
-						splittedCacheBase = currentAlbum.media[0].gpsAlbumCacheBase.split(Options.cache_folder_separator);
-						albumTypeString = "<a href='#!/" + Options.by_gps_string + "'"  + _t('#by-gps') + ']</a> ';
-						pathsArray = currentAlbum.media[0].gpsAlbum.split('/').slice(1, albumSearchedInLength);
-
-						if (! Options.hasOwnProperty('album_to_search_in__names_array')) {
-							// let us translate once for all the country, region, place codes to their respective names
-							// Execution arrives here when a reload of the page is done
-							if (PhotoFloat.isByGpsCacheBase(Options.album_to_search_in)) {
-								var albumToSearchInArray = Options.album_to_search_in.split(Options.cache_folder_separator).slice(1);
-								Options.album_to_search_in__names_array = [
-									translateGpsCodeToName('country', albumToSearchInArray[0]),
-									translateGpsCodeToName('region', albumToSearchInArray[1]),
-									translateGpsCodeToName('place', albumToSearchInArray[2])
-								];
+				// get the names from the album
+				// we must use getAlbum() because the album could not be in the cache yet (as when ctl-r is pressed)
+				photoFloat.getAlbum(
+					Options.album_to_search_in,
+					function(theAlbum) {
+						var whereLinks = '', thisCacheBase, name;
+						if (theAlbum.hasOwnProperty('ancestorsNames')) {
+							albumTypeString = "<a href='#!/" + Options.by_gps_string + "'"  + _t('#by-gps') + ']</a> ' + ' &raquo; ';
+							for (var i = 2; i < theAlbum.ancestorsNames.length; i ++) {
+								name = theAlbum.ancestorsNames[i];
+								if (i == 3 && PhotoFloat.isByDateCacheBase(Options.album_to_search_in))
+									// convert the month number to localized month name
+									name = _t("#month-" + name);
+								thisCacheBase = "#!/" + theAlbum.ancestorsCacheBase.slice(2, i + 1).join(Options.cache_folder_separator);
+								if (i > 2)
+									whereLinks += ' &raquo; ';
+								whereLinks += "<a class='search-link' href='" + thisCacheBase + "'>" + name + "</a>";
 							}
 						}
 
-						if (pathsArray.length >= 1)
-							pathsArray[0] = Options.album_to_search_in__names_array[0];
-						if (pathsArray.length >= 2)
-							pathsArray[1] = Options.album_to_search_in__names_array[1];
-						if (pathsArray.length == 3)
-							pathsArray[2] = Options.album_to_search_in__names_array[2];
-					}
-					for (var i = 0; i < pathsArray.length; i ++)
-						cacheBasesArray[i] = splittedCacheBase.slice(0, i + 2).join(Options.cache_folder_separator);
-				} else if (currentAlbum.subalbums.length) {
-					// a search produces subalbums only if performed from a folders album, folders cacheBase can be used
-					splittedCacheBase = currentAlbum.media[0].foldersCacheBase.split(Options.cache_folder_separator);
-					pathsArray = currentAlbum.subalbums[0].path.split('/').slice(1, albumSearchedInLength);
-				}
+						$("#search-album-to-be-filled").replaceWith(whereLinks);
+					},
+					die
+				);
 
-				where += albumTypeString;
-				if (albumTypeString.length)
-					where += ' &raquo; ';
-				for (var i = 0; i < pathsArray.length; i ++) {
-					thisCacheBase = "#!/" + splittedCacheBase.slice(0, i + 2).join(Options.cache_folder_separator);
-					if (i)
-						where += ' &raquo; ';
-					where += "<a class='search-link' href='" + thisCacheBase + "'>" + pathsArray[i] + "</a>";
-				}
+				where =
+					 "<a class='search-link' href='#!/" + currentAlbum.cacheBase + "'>" +
+					 _t("#search-in") +
+					 "</a> " +
+					 "<span id='search-album-to-be-filled'></span>";
 			} else {
 				where =
 				 	"<a class='" + titleAnchorClassesItalics + "' href='#!/" + currentAlbum.cacheBase + "'>" +
