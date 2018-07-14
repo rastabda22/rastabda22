@@ -720,7 +720,7 @@ $(document).ready(function() {
 						$("#search-album-to-be-filled").replaceWith(whereLinks);
 						// correct the page title too
 						documentTitle = $(document).attr('title');
-						documentTitle = documentTitle.replace(_t("#search-in"), _t("#search-in") + ' ' + stripHtmlAndReplaceEntities(whereLinks));
+						documentTitle = documentTitle.replace(_t("#search-in") + ' ', _t("#search-in") + ' ' + stripHtmlAndReplaceEntities(whereLinks));
 						document.title = documentTitle;
 
 					},
