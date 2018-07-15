@@ -410,6 +410,8 @@
 			PhotoFloat.searchAndSubalbumHash = decodeURI(PhotoFloat.searchAndSubalbumHash);
 
 		if (this.albumCache.hasOwnProperty(albumHashToGet)) {
+			if (! this.albumCache[albumHashToGet].subalbums.length && ! this.albumCache[albumHashToGet].media.length)
+				PhotoFloat.noResults();
 			PhotoFloat.selectMedia(this.albumCache[albumHashToGet], mediaFolderHash, mediaHash, callback);
 		} else if (! PhotoFloat.isSearchCacheBase(albumHash) || SearchWordsFromUser.length === 0) {
 			this.getAlbum(
