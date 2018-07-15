@@ -1,5 +1,7 @@
 * Search is now performed by default in current folder
 * Months aren't any more numeric, using localized month names
+* Better caption for date albums
+* Root album, root virtual albums and search results have their totals counters too
 
 ### version 3.4 (July 6, 2018)
 
