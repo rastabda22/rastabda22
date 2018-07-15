@@ -567,6 +567,22 @@ ul#right-menu li#menu-icon {
 	font-style: normal;
 }
 
+a.main-search-link {
+	color: lightsalmon;
+}
+
+a.main-search-link:hover {
+	color: salmon;
+}
+
+a.search-link {
+	color: orange;
+}
+
+a.search-link:hover {
+	color: orangered;
+}
+
 ul#right-menu img#search-button {
 	width: 1.7em;
 	height: 1.7em;
@@ -579,6 +595,10 @@ ul#right-menu.expand li.selected {
 	background-image: url(../img/ic_check_circle_black_24dp_1x.png);
 	background-repeat: no-repeat;
 	background-position: right;
+}
+
+ul#right-menu.expand li.dimmed {
+	opacity: 0.2;
 }
 
 ul#right-menu li:not(.active) {

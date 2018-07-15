@@ -332,25 +332,37 @@ class Album(object):
 		by_date_position = path_to_dict.find(Options.config['by_date_string'])
 		by_gps_position = path_to_dict.find(Options.config['by_gps_string'])
 		by_search_position = path_to_dict.find(Options.config['by_search_string'])
-		if path_to_dict and by_date_position == -1 and by_gps_position == -1 and by_search_position == -1 and self.cache_base != "root" and folder_position != 0:
+		if not path_to_dict:
+			path_to_dict = Options.config['folders_string']
+		elif path_to_dict and by_date_position == -1 and by_gps_position == -1 and by_search_position == -1 and self.cache_base != "root" and folder_position != 0:
 			path_to_dict = Options.config['folders_string'] + '/' + path_to_dict
 
 		ancestors_cache_base = list()
+		ancestors_names = list()
 		ancestors_center = list()
 		_parent = self
 		while True:
 			ancestors_cache_base.append(_parent.cache_base)
+
+			if hasattr(_parent, "alt_name"):
+				ancestors_names.append(_parent.alt_name)
+			elif hasattr(_parent, "name"):
+				ancestors_names.append(_parent.name)
+
 			if hasattr(_parent, "center"):
 				ancestors_center.append(_parent.center)
 			else:
 				ancestors_center.append("")
+
 			if _parent.parent is None:
 				break
 			_parent = _parent.parent
 		ancestors_cache_base.reverse()
+		ancestors_names.reverse()
 		ancestors_center.reverse()
 
 		dictionary = {
+			"name": self.name,
 			"path": path_to_dict,
 			"cacheSubdir": self._subdir,
 			"date": self.date,
@@ -358,6 +370,7 @@ class Album(object):
 			"media": self.media_list,
 			"cacheBase": self.cache_base,
 			"ancestorsCacheBase": ancestors_cache_base,
+			"ancestorsNames": ancestors_names,
 			"ancestorsCenter": ancestors_center,
 			"physicalPath": path_without_folders_marker,
 			"numMediaInSubTree": self.num_media_in_sub_tree,
@@ -369,7 +382,7 @@ class Album(object):
 		if hasattr(self, "name"):
 			dictionary["name"] = self.name
 		if hasattr(self, "alt_name"):
-			dictionary["alt_name"] = self.alt_name
+			dictionary["altName"] = self.alt_name
 
 		if self.parent is not None:
 			dictionary["parentCacheBase"] = self.parent.cache_base
@@ -1924,7 +1937,7 @@ class Media(object):
 
 		# the following data don't belong properly to media, but to album, but they must be put here in order to work with date, gps and search structure
 		media["albumName"] = self.album_path
-		media["folders_album"] = folders_album
+		media["foldersAlbum"] = folders_album
 		media["foldersCacheBase"] = self.album.cache_base
 		media["cacheSubdir"] = self.album.subdir
 		return media

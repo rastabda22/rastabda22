@@ -1,3 +1,10 @@
+### version 3.5 (July 15, 2018)
+
+* Search is now performed by default in current folder, a new menu option permits to search in all albums
+* Months aren't numeric any more, localized month names are used
+* Better captions for date albums
+* Root album, the roots of the virtual albums and search results have their counters too at the end of the title line
+
 ### version 3.4 (July 6, 2018)
 
 * moved scripts into bin directory. Create `scanner` as a link to `main.py`. Added `make_album_ini.sh`to create a default `album.ini` file in a directory.
