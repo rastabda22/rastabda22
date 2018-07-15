@@ -36,8 +36,8 @@ Content (albums and media files) can be shared over some popular social plaforms
 ### Gallery
 
 - [x] Manages images and videos, and permits sharing them (single image or album).
-- [x] Media can be browsed by folder, by date or by geolocation. Switching among album, date and place views.
-- [x] Media and folders can be sorted ascending/descending by date or by name.
+- [x] Media can be browsed by folder, by date or by geolocation. The user switches among album, date and place views.
+- [x] Media and folders can be sorted ascending/descending, by date or by name.
 - [x] Media can be searched by file/album name, title, description, tags; search may be whole word or inside words, considering accents and capitals or not, in current album (in virtual albums too) or in the whole tree.
 - [x] Thumbnails can be square (cropped, with optional face detection by [OpenCV](https://opencv.org/)) or full-content.
 
@@ -58,7 +58,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 
 ### Great User Experience
 
-- [x] Keyboard navigation: arrows, pageup/down, `[esc]`, `[f]` (fullscreen), `[m]` (metadata).
+- [x] Keyboard navigation: arrows, pageup/down, `[esc]`, `[f]` (fullscreen), `[m]` (metadata), space/backspace (like in [Darktable](https://www.darktable.org/)).
 - [x] Mouse-wheel support.
 - [x] Various user interface option can be changed by the user.
 - [x] Animations to make the interface feel nice.
