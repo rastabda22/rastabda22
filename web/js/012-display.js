@@ -1708,6 +1708,7 @@ $(document).ready(function() {
 	}
 
 	function insertMedia(currentMedia, appendTo) {
+		var width = currentMedia.metadata.size[0], height = currentMedia.metadata.size[1];
 		var mediaSrc;
 
 		if (currentMedia.mediaType == "video") {
@@ -1755,7 +1756,6 @@ $(document).ready(function() {
 	}
 
 	function showMedia(album) {
-		var width = currentMedia.metadata.size[0], height = currentMedia.metadata.size[1];
 		var prevMedia, nextMedia, text, thumbnailSize, i, linkTag, triggerLoad, videoOK = true;
 		var nextReducedPhoto, prevReducedPhoto;
 		var exposureTime;
