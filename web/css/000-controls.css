@@ -262,7 +262,7 @@ video {
 	bottom: 0;
 }
 
-#media-box-inner {
+.media-box-inner {
 	position: absolute;
 	top: 50%;
 	width: 100%;

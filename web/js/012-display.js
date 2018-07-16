@@ -184,42 +184,42 @@ $(document).ready(function() {
 
 	function swipeRight(dest) {
 		if (dest) {
-			$("#media-box-inner").stop().animate({
+			$(".media-box-inner").stop().animate({
 				right: "-=" + window.innerWidth,
 			}, 300, function() {
 				window.location.href = dest;
-				$("#media-box-inner").css('right', "");
+				$(".media-box-inner").css('right', "");
 			});
 		}
 	}
 	function swipeLeft(dest) {
 		if (dest) {
-			$("#media-box-inner").stop().animate({
+			$(".media-box-inner").stop().animate({
 				left: "-=" + window.innerWidth,
 			}, 300, function() {
 				window.location.href = dest;
-				$("#media-box-inner").css('left', "");
+				$(".media-box-inner").css('left', "");
 			});
 		}
 	}
 
 	function swipeUp(dest) {
 		if (dest) {
-			$("#media-box-inner").stop().animate({
+			$(".media-box-inner").stop().animate({
 				top: "-=" + window.innerHeight,
 			}, 300, function() {
 				window.location.href = dest;
-				$("#media-box-inner").css('top', "");
+				$(".media-box-inner").css('top', "");
 			});
 		}
 	}
 	function swipeDown(dest) {
 		if (dest) {
-			$("#media-box-inner").stop().animate({
+			$(".media-box-inner").stop().animate({
 				top: "+=" + window.innerHeight,
 			}, 300, function() {
 				window.location.href = dest;
-				$("#media-box-inner").css('top', "");
+				$(".media-box-inner").css('top', "");
 			});
 		}
 	}
@@ -1490,7 +1490,7 @@ $(document).ready(function() {
 			$("#media-view").hide();
 			$("#media-view").removeClass("no-bottom-space");
 			$("#album-view").removeClass("no-bottom-space");
-			$("#media-box-inner").empty();
+			$(".media-box-inner").empty();
 			$("#media-box").hide();
 			$("#thumbs").show();
 			var foldersViewLink = "#!/" + encodeURIComponent(Options.folders_string);
@@ -1707,7 +1707,8 @@ $(document).ready(function() {
 		return photoFloat.mediaPath(album, media, thumbnailSize);
 	}
 
-	function insertMedia(currentMedia, appendTo) {
+	function createMedia(currentMedia) {
+		// creates a media element that can be inserted in DOM (e.g. with append/prepend methods)
 		var width = currentMedia.metadata.size[0], height = currentMedia.metadata.size[1];
 		var mediaSrc;
 
@@ -1739,20 +1740,20 @@ $(document).ready(function() {
 				}
 			}
 
-			$('<img/>', { id: 'media' })
-				.appendTo(appendTo)
+			mediaElement = $('<img/>', { id: 'media' })
 				.hide()
 				.attr("width", width)
 				.attr("height", height)
 				.attr("ratio", width / height)
 				.attr("src", encodeURI(mediaSrc))
 				.attr("alt", currentMedia.name)
-				.attr("title", currentMedia.date);
+				.attr("title", currentMedia.date)
+				.addClass("");
 			linkTag = '<link rel="image_src" href="' + encodeURI(mediaSrc) + '" />';
 			triggerLoad = "load";
 		}
 
-		return [linkTag, triggerLoad];
+		return [mediaElement, linkTag, triggerLoad];
 	}
 
 	function showMedia(album) {
@@ -1792,11 +1793,11 @@ $(document).ready(function() {
 
 		if (currentMedia.mediaType == "video") {
 			if (! Modernizr.video) {
-				$('<div id="video-unsupported-html5">' + _t("#video-unsupported-html5") + '</div>').appendTo('#media-box-inner');
+				$('<div id="video-unsupported-html5">' + _t("#video-unsupported-html5") + '</div>').appendTo('.media-box-inner center');
 				videoOK = false;
 			}
 			else if (! Modernizr.video.h264) {
-				$('<div id="video-unsupported-h264">' + _t("#video-unsupported-h264") + '</div>').appendTo('#media-box-inner');
+				$('<div id="video-unsupported-h264">' + _t("#video-unsupported-h264") + '</div>').appendTo('.media-box-inner center');
 				videoOK = false;
 			}
 		}
@@ -1837,9 +1838,21 @@ $(document).ready(function() {
 		}
 
 		if (currentMedia.mediaType == "photo" || currentMedia.mediaType == "video" && videoOK) {
-			var array = insertMedia(currentMedia, "#media-box-inner");
-			linkTag = array[0];
-			triggerLoad = array[1];
+			if ($('.media-box-inner.center').is(':empty')){
+				var array = createMedia(currentMedia);
+				centerElement = array[0].addClass('center');
+				linkTag = array[1];
+				triggerLoad = array[2];
+				$(".media-box-inner.center").append(centerElement);
+			}
+
+			array = createMedia(prevMedia);
+			leftElement = array[0];
+			$(".media-box-inner.left").append(leftElement);
+
+			array = createMedia(nextMedia);
+			rightElement = array[0];
+			$(".media-box-inner.right").append(rightElement);
 
 			$("link[rel=image_src]").remove();
 			$('link[rel="video_src"]').remove();
