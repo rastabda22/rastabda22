@@ -1755,8 +1755,42 @@ $(document).ready(function() {
 			}
 		}
 
-		if (currentMedia.mediaType == "photo" || currentMedia.mediaType == "video" && videoOK) {
+		if (currentAlbum.media.length > 1) {
+			// prepare for previous media
+			i = currentMediaIndex;
+			currentAlbum.media[currentMediaIndex].byDateName =
+				PhotoFloat.pathJoin([currentAlbum.media[currentMediaIndex].dayAlbum, currentAlbum.media[currentMediaIndex].name]);
+			currentAlbum.media[currentMediaIndex].byGpsName =
+					PhotoFloat.pathJoin([currentAlbum.media[currentMediaIndex].gpsAlbum, currentAlbum.media[currentMediaIndex].name]);
+			if (i === 0)
+				i = currentAlbum.media.length - 1;
+			else
+				i --;
+			prevMedia = currentAlbum.media[i];
+			prevMedia.byDateName = PhotoFloat.pathJoin([prevMedia.dayAlbum, prevMedia.name]);
+			prevMedia.byGpsName = PhotoFloat.pathJoin([prevMedia.gpsAlbum, prevMedia.name]);
 
+			// prepare for next media
+			i = currentMediaIndex;
+			if (i == currentAlbum.media.length - 1)
+				i = 0;
+			else
+				i ++;
+			nextMedia = currentAlbum.media[i];
+			nextMedia.byDateName = PhotoFloat.pathJoin([nextMedia.dayAlbum, nextMedia.name]);
+			nextMedia.byGpsName = PhotoFloat.pathJoin([nextMedia.gpsAlbum, nextMedia.name]);
+
+			if (nextMedia.mediaType == "photo") {
+				nextReducedPhoto = chooseReducedPhoto(nextMedia, null);
+				$.preloadImages(nextReducedPhoto);
+			}
+			if (prevMedia.mediaType == "photo") {
+				prevReducedPhoto = chooseReducedPhoto(prevMedia, null);
+				$.preloadImages(prevReducedPhoto);
+			}
+		}
+
+		if (currentMedia.mediaType == "photo" || currentMedia.mediaType == "video" && videoOK) {
 			if (currentMedia.mediaType == "video") {
 				if (fullScreenStatus && currentMedia.albumName.match(/\.avi$/) === null) {
 					// .avi videos are not played by browsers
@@ -1808,38 +1842,6 @@ $(document).ready(function() {
 				$("#metadata-hide").hide();
 			}
 
-			if (currentAlbum.media.length > 1) {
-				i = currentMediaIndex;
-				currentAlbum.media[currentMediaIndex].byDateName =
-					PhotoFloat.pathJoin([currentAlbum.media[currentMediaIndex].dayAlbum, currentAlbum.media[currentMediaIndex].name]);
-				currentAlbum.media[currentMediaIndex].byGpsName =
-						PhotoFloat.pathJoin([currentAlbum.media[currentMediaIndex].gpsAlbum, currentAlbum.media[currentMediaIndex].name]);
-				if (i === 0)
-					i = currentAlbum.media.length - 1;
-				else
-					i --;
-				prevMedia = currentAlbum.media[i];
-				prevMedia.byDateName = PhotoFloat.pathJoin([prevMedia.dayAlbum, prevMedia.name]);
-				prevMedia.byGpsName = PhotoFloat.pathJoin([prevMedia.gpsAlbum, prevMedia.name]);
-
-				i = currentMediaIndex;
-				if (i == currentAlbum.media.length - 1)
-					i = 0;
-				else
-					i ++;
-				nextMedia = currentAlbum.media[i];
-				nextMedia.byDateName = PhotoFloat.pathJoin([nextMedia.dayAlbum, nextMedia.name]);
-				nextMedia.byGpsName = PhotoFloat.pathJoin([nextMedia.gpsAlbum, nextMedia.name]);
-
-				if (nextMedia.mediaType == "photo") {
-					nextReducedPhoto = chooseReducedPhoto(nextMedia, null);
-					$.preloadImages(nextReducedPhoto);
-				}
-				if (prevMedia.mediaType == "photo") {
-					prevReducedPhoto = chooseReducedPhoto(prevMedia, null);
-					$.preloadImages(prevReducedPhoto);
-				}
-			}
 		}
 
 		$("#media-view").off('contextmenu click mousewheel');
