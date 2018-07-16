@@ -52,7 +52,6 @@ $(document).ready(function() {
 	var photoFloat = new PhotoFloat();
 	var maxSize;
 	var fullScreenStatus = false;
-	var photoSrc, videoSrc;
 	var language;
 	var numSubAlbumsReady;
 	var fromEscKey = false;
@@ -1708,6 +1707,53 @@ $(document).ready(function() {
 		return photoFloat.mediaPath(album, media, thumbnailSize);
 	}
 
+	function insertMedia(currentMedia, appendTo) {
+		var mediaSrc;
+
+		if (currentMedia.mediaType == "video") {
+			if (fullScreenStatus && currentMedia.albumName.match(/\.avi$/) === null) {
+				// .avi videos are not played by browsers
+				mediaSrc = currentMedia.albumName;
+			} else {
+				mediaSrc = photoFloat.mediaPath(currentAlbum, currentMedia, "");
+			}
+			$('<video/>', { id: 'media', controls: true })
+				.appendTo(appendTo)
+				.attr("width", width)
+				.attr("height", height)
+				.attr("ratio", width / height)
+				.attr("src", encodeURI(mediaSrc))
+				.attr("alt", currentMedia.name);
+			triggerLoad = "loadstart";
+			linkTag = '<link rel="video_src" href="' + encodeURI(mediaSrc) + '" />';
+		} else if (currentMedia.mediaType == "photo") {
+			mediaSrc = chooseReducedPhoto(currentMedia, null);
+			if (maxSize) {
+				if (width > height &&  width > maxSize) {
+					height = Math.round(height * maxSize / width);
+					width = maxSize;
+				} else if (height > width && height > maxSize) {
+					width = Math.round(width * maxSize / height);
+					height = maxSize;
+				}
+			}
+
+			$('<img/>', { id: 'media' })
+				.appendTo(appendTo)
+				.hide()
+				.attr("width", width)
+				.attr("height", height)
+				.attr("ratio", width / height)
+				.attr("src", encodeURI(mediaSrc))
+				.attr("alt", currentMedia.name)
+				.attr("title", currentMedia.date);
+			linkTag = '<link rel="image_src" href="' + encodeURI(mediaSrc) + '" />';
+			triggerLoad = "load";
+		}
+
+		return [linkTag, triggerLoad];
+	}
+
 	function showMedia(album) {
 		var width = currentMedia.metadata.size[0], height = currentMedia.metadata.size[1];
 		var prevMedia, nextMedia, text, thumbnailSize, i, linkTag, triggerLoad, videoOK = true;
@@ -1791,46 +1837,9 @@ $(document).ready(function() {
 		}
 
 		if (currentMedia.mediaType == "photo" || currentMedia.mediaType == "video" && videoOK) {
-			if (currentMedia.mediaType == "video") {
-				if (fullScreenStatus && currentMedia.albumName.match(/\.avi$/) === null) {
-					// .avi videos are not played by browsers
-					videoSrc = currentMedia.albumName;
-				} else {
-					videoSrc = photoFloat.mediaPath(currentAlbum, currentMedia, "");
-				}
-				$('<video/>', { id: 'media', controls: true })
-					.appendTo('#media-box-inner')
-					.attr("width", width)
-					.attr("height", height)
-					.attr("ratio", width / height)
-					.attr("src", encodeURI(videoSrc))
-					.attr("alt", currentMedia.name);
-				triggerLoad = "loadstart";
-				linkTag = '<link rel="video_src" href="' + encodeURI(videoSrc) + '" />';
-			} else if (currentMedia.mediaType == "photo") {
-				photoSrc = chooseReducedPhoto(currentMedia, null);
-				if (maxSize) {
-					if (width > height &&  width > maxSize) {
-						height = Math.round(height * maxSize / width);
-						width = maxSize;
-					} else if (height > width && height > maxSize) {
-						width = Math.round(width * maxSize / height);
-						height = maxSize;
-					}
-				}
-
-				$('<img/>', { id: 'media' })
-					.appendTo('#media-box-inner')
-					.hide()
-					.attr("width", width)
-					.attr("height", height)
-					.attr("ratio", width / height)
-					.attr("src", encodeURI(photoSrc))
-					.attr("alt", currentMedia.name)
-					.attr("title", currentMedia.date);
-				linkTag = '<link rel="image_src" href="' + encodeURI(photoSrc) + '" />';
-				triggerLoad = "load";
-			}
+			var array = insertMedia(currentMedia, "#media-box-inner");
+			linkTag = array[0];
+			triggerLoad = array[1];
 
 			$("link[rel=image_src]").remove();
 			$('link[rel="video_src"]').remove();
