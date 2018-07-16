@@ -1807,15 +1807,17 @@ $(document).ready(function() {
 			i = currentMediaIndex;
 			currentAlbum.media[currentMediaIndex].byDateName =
 				PhotoFloat.pathJoin([currentAlbum.media[currentMediaIndex].dayAlbum, currentAlbum.media[currentMediaIndex].name]);
-			currentAlbum.media[currentMediaIndex].byGpsName =
-					PhotoFloat.pathJoin([currentAlbum.media[currentMediaIndex].gpsAlbum, currentAlbum.media[currentMediaIndex].name]);
+			if (currentAlbum.media[currentMediaIndex].hasOwnProperty("gpsAlbum"))
+				currentAlbum.media[currentMediaIndex].byGpsName =
+						PhotoFloat.pathJoin([currentAlbum.media[currentMediaIndex].gpsAlbum, currentAlbum.media[currentMediaIndex].name]);
 			if (i === 0)
 				i = currentAlbum.media.length - 1;
 			else
 				i --;
 			prevMedia = currentAlbum.media[i];
 			prevMedia.byDateName = PhotoFloat.pathJoin([prevMedia.dayAlbum, prevMedia.name]);
-			prevMedia.byGpsName = PhotoFloat.pathJoin([prevMedia.gpsAlbum, prevMedia.name]);
+			if (prevMedia.hasOwnProperty("gpsAlbum"))
+				prevMedia.byGpsName = PhotoFloat.pathJoin([prevMedia.gpsAlbum, prevMedia.name]);
 
 			// prepare for next media
 			i = currentMediaIndex;
@@ -1825,7 +1827,8 @@ $(document).ready(function() {
 				i ++;
 			nextMedia = currentAlbum.media[i];
 			nextMedia.byDateName = PhotoFloat.pathJoin([nextMedia.dayAlbum, nextMedia.name]);
-			nextMedia.byGpsName = PhotoFloat.pathJoin([nextMedia.gpsAlbum, nextMedia.name]);
+			if (nextMedia.hasOwnProperty("gpsAlbum"))
+				nextMedia.byGpsName = PhotoFloat.pathJoin([nextMedia.gpsAlbum, nextMedia.name]);
 
 			if (nextMedia.mediaType == "photo") {
 				nextReducedPhoto = chooseReducedPhoto(nextMedia, null);
