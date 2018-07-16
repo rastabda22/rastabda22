@@ -1772,7 +1772,7 @@ $(document).ready(function() {
 					.attr("src", encodeURI(videoSrc))
 					.attr("alt", currentMedia.name);
 				triggerLoad = "loadstart";
-				linkTag = "<link rel=\"video_src\" href=\"" + encodeURI(videoSrc) + "\" />";
+				linkTag = '<link rel="video_src" href="' + encodeURI(videoSrc) + '" />';
 			} else if (currentMedia.mediaType == "photo") {
 				photoSrc = chooseReducedPhoto(currentMedia, null);
 				if (maxSize) {
@@ -1794,7 +1794,7 @@ $(document).ready(function() {
 					.attr("src", encodeURI(photoSrc))
 					.attr("alt", currentMedia.name)
 					.attr("title", currentMedia.date);
-				linkTag = "<link rel=\"image_src\" href=\"" + encodeURI(photoSrc) + "\" />";
+				linkTag = '<link rel="image_src" href="' + encodeURI(photoSrc) + '" />';
 				triggerLoad = "load";
 			}
 
