@@ -1753,7 +1753,7 @@ $(document).ready(function() {
 			} else {
 				mediaSrc = photoFloat.mediaPath(currentAlbum, currentMedia, "");
 			}
-			$('<video/>', { id: id, controls: true })
+			mediaElement = $('<video/>', { id: id, controls: true })
 				.attr("width", width)
 				.attr("height", height)
 				.attr("ratio", width / height)
@@ -1836,8 +1836,8 @@ $(document).ready(function() {
 		if ($("#album-view").is(":visible"))
 			albumViewHeight = $("#album-view").outerHeight();
 
-		if (! fromSwipe)
-			$('#media').remove();
+		// if (! fromSwipe)
+		// 	$('#media').remove();
 		$("#media").off("load");
 
 		if (currentAlbum.media.length > 1) {
