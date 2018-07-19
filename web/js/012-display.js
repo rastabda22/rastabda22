@@ -2407,7 +2407,9 @@ $(document).ready(function() {
 
 		$("#album-search").attr('title', _t("#current-album-is") + '"'+ currentAlbumPath + '"');
 
-		if (currentMedia !== null || currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1) {
+		var isAlbumWithOneMedia =
+			currentMedia !== null || currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1;
+		if (isAlbumWithOneMedia) {
 			if (currentMedia === null) {
 				currentMedia = currentAlbum.media[0];
 				currentMediaIndex = 0;
@@ -2419,8 +2421,13 @@ $(document).ready(function() {
 			previousMedia = null;
 			showMedia(currentAlbum);
 		}
-		populateAlbum = previousAlbum !== currentAlbum || previousMedia !== currentMedia;
-		showAlbum(populateAlbum);
+
+		if (! isAlbumWithOneMedia || $("#album-view").is(":visible")) {
+			populateAlbum =
+			 	previousAlbum !== currentAlbum || previousMedia !== currentMedia;
+			showAlbum(populateAlbum);
+		}
+
 		// options function must be called again in order to set elements previously absent
 		setOptions();
 		if (currentMedia !== null) {
