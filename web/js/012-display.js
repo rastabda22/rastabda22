@@ -1940,19 +1940,18 @@ $(document).ready(function() {
 			currentMedia.mediaType == "photo" ||
 			currentMedia.mediaType == "video" && videoOK(currentMedia, '.media-box-inner center')
 		) {
-			if ($('.media-box-inner.center').is(':empty')){
-				array = createMedia(currentMedia, 'media');
-				element = array[0];
-				linkTag = array[1];
-				triggerLoad = array[2];
-				$(".media-box-inner.center").append(element);
+			array = createMedia(currentMedia, 'media');
+			element = array[0];
+			linkTag = array[1];
+			triggerLoad = array[2];
+			// if ($('.media-box-inner.center').is(':empty'))
+			$(".media-box-inner.center").empty();
+			$(".media-box-inner.center").append(element);
 
-				$("link[rel=image_src]").remove();
-				$('link[rel="video_src"]').remove();
-				$("head").append(linkTag);
+			$("link[rel=image_src]").remove();
+			$('link[rel="video_src"]').remove();
+			$("head").append(linkTag);
 
-				$('#media').on(triggerLoad, {id: '#media', media: currentMedia}, scaleMedia);
-			}
 			$('#media').off(triggerLoad);
 			$('#media').on(triggerLoad, {id: '#media', media: currentMedia}, scaleMedia);
 
