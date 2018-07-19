@@ -2572,45 +2572,45 @@ $(document).ready(function() {
 	$(document).on('keydown', function(e) {
 		if (! $("#search-field").is(':focus')) {
 			if (! e.ctrlKey && ! e.shiftKey && ! e.altKey) {
-				if (nextLink && (e.keyCode === 39 || e.keyCode === 78 || e.keyCode === 13 || e.keyCode === 32) && currentMedia !== null) {
-					//                  arrow right                  n               return               space
-					swipeLeft(nextLink);
+				if ((e.keyCode === 39 || e.keyCode === 78 || e.keyCode === 13 || e.keyCode === 32) && nextMedia && currentMedia !== null) {
+					//      arrow right                  n               return               space
+					swipeLeft(currentAlbum, nextMedia);
 					return false;
-				} else if (prevLink && (e.keyCode === 37 || e.keyCode === 80 || e.keyCode === 8) && currentMedia !== null) {
-					//                          arrow left                  p           backspace
-					swipeRight(prevLink);
+				} else if ((e.keyCode === 37 || e.keyCode === 80 || e.keyCode === 8) && prevMedia && currentMedia !== null) {
+					//              arrow left                  p           backspace
+					swipeRight(currentAlbum, prevMedia);
 					return false;
 				} else if (e.keyCode === 27 && ! Modernizr.fullscreen && fullScreenStatus) {
 					//                    esc
 					goFullscreen(e);
 					return false;
-				} else if (upLink && (e.keyCode === 27 || e.keyCode === 38 || e.keyCode === 33)) {
-					//                               esc            arrow up             page up
+				} else if ((e.keyCode === 27 || e.keyCode === 38 || e.keyCode === 33) && upLink) {
+					//                     esc            arrow up             page up
 					fromEscKey = true;
 					swipeDown(upLink);
 					return false;
-				} else if (mediaLink && currentMedia === null && (e.keyCode === 40 || e.keyCode === 34)) {
-					//                                                    arrow down           page down
+				} else if ((e.keyCode === 40 || e.keyCode === 34) && mediaLink && currentMedia === null) {
+					//              arrow down           page down
 					swipeUp(mediaLink);
 					return false;
-				} else if (currentMedia !== null && e.keyCode === 68) {
-					//                                              d
+				} else if (e.keyCode === 68 && currentMedia !== null) {
+					//                      d
 					$("#download-link")[0].click();
 					return false;
-				} else if (currentMedia !== null && e.keyCode === 70) {
-					//                                              f
+				} else if (e.keyCode === 70 && currentMedia !== null) {
+					//                      f
 					goFullscreen(e);
 					return false;
-				} else if (currentMedia !== null && e.keyCode === 77) {
-					//                                              m
+				} else if (e.keyCode === 77 && currentMedia !== null) {
+					//                      m
 					showMetadata(e);
 					return false;
 				} else if (currentMedia !== null && e.keyCode === 79) {
 					//                                              o
 					$("#original-link")[0].click();
 					return false;
-				} else if (currentMedia !== null && hasGpsData(currentMedia) && e.keyCode === 83) {
-					 	//                                                                        s
+				} else if (e.keyCode === 83 && currentMedia !== null && hasGpsData(currentMedia)) {
+					 	//                    s
 						$("#map-link")[0].click();
 						return false;
 				}
