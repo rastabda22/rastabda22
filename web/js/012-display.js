@@ -1651,7 +1651,7 @@ $(document).ready(function() {
 			container = $(window);
 		else {
 			container = $("#media-view");
-			if ($("#thumbs").is(":visible"))
+			if ($("#album-view").is(":visible"))
 				containerBottom = $("#album-view").outerHeight();
 			else if (bottomSocialButtons() && containerBottom < $(".ssk").outerHeight())
 				// correct container bottom when social buttons are on the bottom
@@ -2718,6 +2718,7 @@ $(document).ready(function() {
 		$("#media").off();
 		if (Modernizr.fullscreen) {
 			e.preventDefault();
+			$("#album-view").addClass('hidden');
 			$("#media-box").fullScreen({
 				callback: function(isFullscreen) {
 					fullScreenStatus = isFullscreen;
@@ -2730,13 +2731,13 @@ $(document).ready(function() {
 			$("#media").off();
 			if (! fullScreenStatus) {
 				$("#title-container").hide();
-				$("#album-view").hide();
+				$("#album-view").addClass('hidden');
 				$("#enter-fullscreen").toggle();
 				$("#exit-fullscreen").toggle();
 				fullScreenStatus = true;
 			} else {
 				$("#title-container").show();
-				$("#album-view").show();
+				$("#album-view").removeClass('hidden');
 				$("#enter-fullscreen").toggle();
 				$("#exit-fullscreen").toggle();
 				fullScreenStatus = false;
