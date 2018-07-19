@@ -48,7 +48,6 @@ $(document).ready(function() {
 	var currentMediaIndex = -1;
 	var previousAlbum = null;
 	var previousMedia = null;
-	var nextMedia = null;
 	var photoFloat = new PhotoFloat();
 	var maxSize;
 	var fullScreenStatus = false;
@@ -183,7 +182,7 @@ $(document).ready(function() {
 	}
 
 	function swipeRight(album, media) {
-		var array, element, triggerLoad;
+		var array, element, triggerLoad, link;
 
 		if (media && ! $("#album-view").hasClass('fired')) {
 			$("#album-view").addClass('fired');
@@ -230,7 +229,7 @@ $(document).ready(function() {
 	}
 
 	function swipeLeft(album, media) {
-		var array, element, triggerLoad;
+		var array, element, triggerLoad, link;
 
 		if (media && ! $("#album-view").hasClass('fired')) {
 			$("#album-view").addClass('fired');
@@ -633,7 +632,7 @@ $(document).ready(function() {
 
 		var array = PhotoFloat.decodeHash(location.hash);
 		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-		var albumHash = array[0];
+		// var albumHash = array[0];
 		// var mediaHash = array[1];
 		// var mediaFolderHash = array[2];
 		// var savedSearchSubAlbumHash = array[3];
@@ -768,11 +767,6 @@ $(document).ready(function() {
 				Options.search_current_album &&
 				[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) == -1
 			) {
-				var pathsArray;
-				var cacheBasesArray = [];
-				var splittedCacheBase, thisCacheBase;
-
-				var albumSearchedInLength = currentAlbum.cacheBase.split(Options.cache_folder_separator).slice(2).length;
 				var albumTypeString = '';
 
 				where =
@@ -1804,7 +1798,7 @@ $(document).ready(function() {
 	function createMedia(currentMedia, id) {
 		// creates a media element that can be inserted in DOM (e.g. with append/prepend methods)
 		var width = currentMedia.metadata.size[0], height = currentMedia.metadata.size[1];
-		var mediaSrc;
+		var mediaSrc, mediaElement, triggerLoad, linkTag;
 
 		if (currentMedia.mediaType == "video") {
 			if (fullScreenStatus && currentMedia.albumName.match(/\.avi$/) === null) {
