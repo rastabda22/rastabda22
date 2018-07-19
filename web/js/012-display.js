@@ -1868,14 +1868,14 @@ $(document).ready(function() {
 			if (nextMedia.hasOwnProperty("gpsAlbum"))
 				nextMedia.byGpsName = PhotoFloat.pathJoin([nextMedia.gpsAlbum, nextMedia.name]);
 
-			// if (nextMedia.mediaType == "photo") {
-			// 	nextReducedPhoto = chooseReducedPhoto(nextMedia, null);
-			// 	$.preloadImages(nextReducedPhoto);
-			// }
-			// if (prevMedia.mediaType == "photo") {
-			// 	prevReducedPhoto = chooseReducedPhoto(prevMedia, null);
-			// 	$.preloadImages(prevReducedPhoto);
-			// }
+			if (nextMedia.mediaType == "photo") {
+				nextReducedPhoto = chooseReducedPhoto(nextMedia, null);
+				$.preloadImages(nextReducedPhoto);
+			}
+			if (prevMedia.mediaType == "photo") {
+				prevReducedPhoto = chooseReducedPhoto(prevMedia, null);
+				$.preloadImages(prevReducedPhoto);
+			}
 		}
 
 		if (
