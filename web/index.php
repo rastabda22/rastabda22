@@ -211,7 +211,7 @@
 	<div id="media-view">
 		<div id="media-box">
 			<a id="next-media">
-				<div id="media-box-inner" ></div>
+				<div class="media-box-inner center" id="media-box-inner"></div>
 			</a>
 			<div id="media-bar">
 				<div id="links">
