@@ -275,12 +275,14 @@ $(document).ready(function() {
 	}
 
 	function swipeUp(dest) {
+		// Actually swiping up is passing from an album to a media, so there is no animation
+		// ...or... the media could be let enter from below, as in horizontal swipe... TO DO
 		if (dest) {
 			$("#media-box-inner").stop().animate({
 				top: "-=" + window.innerHeight,
 			}, 300, function() {
 				window.location.href = dest;
-				$("#media-box-inner").css('top', "");
+				$("#media-box-inner").hide().css('top', "");
 			});
 		}
 	}
@@ -290,7 +292,7 @@ $(document).ready(function() {
 				top: "+=" + window.innerHeight,
 			}, 300, function() {
 				window.location.href = dest;
-				$("#media-box-inner").css('top', "");
+				$("#media-box-inner").hide().css('top', "");
 			});
 		}
 	}
@@ -1544,7 +1546,7 @@ $(document).ready(function() {
 			$("#media-view").hide();
 			$("#media-view").removeClass("no-bottom-space");
 			$("#album-view").removeClass("no-bottom-space");
-			$("#media-box-inner").empty();
+			$("#media-box-inner").show().empty();
 			$("#media-box").hide();
 			$("#thumbs").show();
 			var foldersViewLink = "#!/" + encodeURIComponent(Options.folders_string);
@@ -1927,7 +1929,7 @@ $(document).ready(function() {
 			linkTag = array[1];
 			triggerLoad = array[2];
 
-			$("#media-box-inner").empty();
+			$("#media-box-inner").show().empty();
 			$("#media-box-inner").append(element);
 
 			$("link[rel=image_src]").remove();
