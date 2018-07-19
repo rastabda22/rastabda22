@@ -125,15 +125,14 @@ class TreeWalker:
 				self.all_json_files.append(Options.config['by_date_string'] + ".json")
 				self.origin_album.add_album(by_date_album)
 
-			if self.tree_by_geonames:
-				message("generating by geonames albums...", "", 4)
-				by_geonames_album = self.generate_geonames_albums(self.origin_album)
-				next_level()
-				message("by geonames albums generated", "", 5)
-				back_level()
-				if by_geonames_album is not None and not by_geonames_album.empty:
-					self.all_json_files.append(Options.config['by_gps_string'] + ".json")
-					self.origin_album.add_album(by_geonames_album)
+			message("generating by geonames albums...", "", 4)
+			by_geonames_album = self.generate_geonames_albums(self.origin_album)
+			next_level()
+			message("by geonames albums generated", "", 5)
+			back_level()
+			if by_geonames_album is not None and not by_geonames_album.empty:
+				self.all_json_files.append(Options.config['by_gps_string'] + ".json")
+				self.origin_album.add_album(by_geonames_album)
 
 			message("generating by search albums...", "", 4)
 			by_search_album = self.generate_by_search_albums(self.origin_album)
