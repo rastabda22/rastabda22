@@ -276,21 +276,21 @@ $(document).ready(function() {
 
 	function swipeUp(dest) {
 		if (dest) {
-			$(".media-box-inner").stop().animate({
+			$("#media-box-inner").stop().animate({
 				top: "-=" + window.innerHeight,
 			}, 300, function() {
 				window.location.href = dest;
-				$(".media-box-inner").css('top', "");
+				$("#media-box-inner").css('top', "");
 			});
 		}
 	}
 	function swipeDown(dest) {
 		if (dest) {
-			$(".media-box-inner").stop().animate({
+			$("#media-box-inner").stop().animate({
 				top: "+=" + window.innerHeight,
 			}, 300, function() {
 				window.location.href = dest;
-				$(".media-box-inner").css('top', "");
+				$("#media-box-inner").css('top', "");
 			});
 		}
 	}
@@ -1544,7 +1544,7 @@ $(document).ready(function() {
 			$("#media-view").hide();
 			$("#media-view").removeClass("no-bottom-space");
 			$("#album-view").removeClass("no-bottom-space");
-			$(".media-box-inner").empty();
+			$("#media-box-inner").empty();
 			$("#media-box").hide();
 			$("#thumbs").show();
 			var foldersViewLink = "#!/" + encodeURIComponent(Options.folders_string);
@@ -1920,15 +1920,15 @@ $(document).ready(function() {
 
 		if (
 			currentMedia.mediaType == "photo" ||
-			currentMedia.mediaType == "video" && videoOK(currentMedia, '.media-box-inner center')
+			currentMedia.mediaType == "video" && videoOK(currentMedia, '#media-box-inner')
 		) {
 			array = createMedia(currentMedia, 'media');
 			element = array[0];
 			linkTag = array[1];
 			triggerLoad = array[2];
-			// if ($('.media-box-inner.center').is(':empty'))
-			$(".media-box-inner.center").empty();
-			$(".media-box-inner.center").append(element);
+
+			$("#media-box-inner").empty();
+			$("#media-box-inner").append(element);
 
 			$("link[rel=image_src]").remove();
 			$('link[rel="video_src"]').remove();
