@@ -1,3 +1,7 @@
+* Better swiping: the new image enters with the current one exiting
+* Various bug fixes
+* Always save the gps root album so that the absence of media with gps data can be detected without any js error
+
 ### version 3.5 (July 15, 2018)
 
 * Search is now performed by default in current folder, a new menu option permits to search in all albums
