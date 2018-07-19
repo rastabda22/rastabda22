@@ -25,9 +25,11 @@ a:hover {
 	opacity: 0.7;
 	filter: alpha(opacity=70); /* For IE8 and earlier */
 }
-#title-count.hidden {
+
+.hidden {
 	display: none;
 }
+
 #title, #title:hover {
 	padding: 0.4em;
 	font-weight: bold;
@@ -65,10 +67,6 @@ a.title-anchor.mobile {
 #album-view {
 	position: absolute;
 	padding: .5em;
-}
-
-#album-view.hidden {
-	display: none;
 }
 
 #thumbs {
@@ -113,11 +111,6 @@ a.title-anchor.mobile {
 	padding-top: .2em;
 }
 
-
-.album-caption.hidden {
-	display: none;
-}
-
 .album-caption a {
 	color: inherit;
 }
@@ -128,10 +121,6 @@ a.title-anchor.mobile {
 	opacity: 0.7;
 	filter: alpha(opacity=70); /* For IE8 and earlier */
 	font-size: 70%;
-}
-
-.album-caption-count.hidden {
-	display: none;
 }
 
 /* this class is needed in order to get the thumbnails vertically centered,
@@ -446,9 +435,9 @@ video {
 }
 
 .media-caption.hidden, .album-caption.hidden {
-	display: none;
 	margin-bottom: 0;
 }
+
 .media-caption {
 	font-size: 75%;
 	color: chartreuse;
@@ -612,9 +601,5 @@ ul#right-menu li.active:not(.caption):hover {
 ul#right-menu li:not(.caption) {
 	padding-left: 1.7em;
 	padding-right: 2em;
-}
-
-ul#right-menu.expand li.hidden {
-	display: none;
 }
 /* end right menu */
