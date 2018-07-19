@@ -93,7 +93,7 @@
 				Options.by_gps_string,
 				// callback
 				function() {
-					if (! self.albumCache['Options.by_gps_string'].numMediaInSubTree) {
+					if (! self.albumCache[Options.by_gps_string].numMediaInSubTree) {
 						$("#by-gps-view").addClass("hidden");
 						self.geotaggedPhotosFound = false;
 					} else {
