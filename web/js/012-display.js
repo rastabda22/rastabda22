@@ -1746,8 +1746,10 @@ $(document).ready(function() {
 			$("#prev").css("left", (parseInt($("#prev").css("left")) + $(".ssk").outerWidth()) + "px");
 		}
 
-		if (event.data.media === currentMedia)
+		if (event.data.media === currentMedia) {
+			$(window).off("resize");
 			$(window).on("resize", {id: event.data.id, media: mediaObject}, scaleMedia);
+		}
 
 		if (event.data.animateFunction)
 			event.data.animateFunction();
@@ -1951,6 +1953,8 @@ $(document).ready(function() {
 
 				$('#media').on(triggerLoad, {id: '#media', media: currentMedia}, scaleMedia);
 			}
+			$('#media').off(triggerLoad);
+			$('#media').on(triggerLoad, {id: '#media', media: currentMedia}, scaleMedia);
 
 			if (! Options.persistent_metadata) {
 				$("#metadata").hide();
