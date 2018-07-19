@@ -57,7 +57,6 @@ $(document).ready(function() {
 	var fromEscKey = false;
 	var firstEscKey = true;
 	var nextLink = "", prevLink = "", upLink = "", mediaLink = "", nextMedia = null, prevMedia = null;
-	var fromSwipe = false;
 
 	/* Displays */
 
@@ -218,7 +217,6 @@ $(document).ready(function() {
 									$("#media-box-inner").remove();
 									$(".media-box-inner.left").removeClass('left').attr('id', 'media-box-inner').css("right", "");
 									$("#media-left").attr('id', 'media');
-									fromSwipe = true;
 									$("#album-view").removeClass('fired');
 									window.location.href = link;
 								}
@@ -265,7 +263,6 @@ $(document).ready(function() {
 									$("#media-box-inner").remove();
 									$(".media-box-inner.right").removeClass('right').attr('id', 'media-box-inner').css("left", "");
 									$("#media-right").attr('id', 'media');
-									fromSwipe = true;
 									$("#album-view").removeClass('fired');
 									window.location.href = link;
 								}
@@ -1897,8 +1894,6 @@ $(document).ready(function() {
 		if ($("#album-view").is(":visible"))
 			albumViewHeight = $("#album-view").outerHeight();
 
-		// if (! fromSwipe)
-		// 	$('#media').remove();
 		$("#media").off("load");
 
 		if (currentAlbum.media.length > 1) {
