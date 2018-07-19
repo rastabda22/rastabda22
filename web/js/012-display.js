@@ -1834,11 +1834,11 @@ $(document).ready(function() {
 	function videoOK(media, selector) {
 		var cacheBase = PhotoFloat.pathJoin([media.parent.cacheBase, media.cacheBase]);
 		if (! Modernizr.video) {
-			$('<div id="video-unsupported-html5"' + cacheBase + '>' + _t("#video-unsupported-html5") + '</div>').appendTo('.media-box-inner center');
+			$('<div id="video-unsupported-html5"' + cacheBase + '>' + _t("#video-unsupported-html5") + '</div>').appendTo(selector);
 			return false;
 		}
 		else if (! Modernizr.video.h264) {
-			$('<div id="video-unsupported-h264' + cacheBase + '">' + _t("#video-unsupported-h264") + '</div>').appendTo('.media-box-inner center');
+			$('<div id="video-unsupported-h264' + cacheBase + '">' + _t("#video-unsupported-h264") + '</div>').appendTo(selector);
 			return false;
 		}
 
