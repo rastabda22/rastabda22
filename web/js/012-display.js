@@ -429,6 +429,12 @@ $(document).ready(function() {
 
 		$("ul#right-menu li.ui").removeClass("hidden");
 
+		$("ul#right-menu li.hide-title").removeClass("hidden");
+		if (Options.hide_title)
+			$("ul#right-menu li.hide-title").addClass("selected");
+		else
+			$("ul#right-menu li.hide-title").removeClass("selected");
+
 		if (currentMedia !== null || currentAlbum !== null && currentAlbum.subalbums.length === 0) {
 			$("ul#right-menu li.slide").addClass("hidden");
 		} else {
@@ -509,6 +515,7 @@ $(document).ready(function() {
 		}
 
 		if (
+			$("ul#right-menu li.hide-title").hasClass("hidden") &&
 			$("ul#right-menu li.slide").hasClass("hidden") &&
 			$("ul#right-menu li.spaced").hasClass("hidden") &&
 			$("ul#right-menu li.album-names").hasClass("hidden") &&
@@ -2215,6 +2222,10 @@ $(document).ready(function() {
 		else
 			$("#title-count").addClass("hidden");
 
+		if (Options.hide_title)
+			$("#title-container").addClass("hidden");
+		else
+			$("#title-container").removeClass("hidden");
 	}
 
 	function em2px(selector, em) {
@@ -2476,6 +2487,10 @@ $(document).ready(function() {
 				maxSize = Options.reduced_sizes[Options.reduced_sizes.length - 1];
 
 				// override according to user selections
+				var titleCookie = getBooleanCookie("hide_title");
+				if (titleCookie !== null)
+					Options.hide_title = titleCookie;
+
 				var slideCookie = getBooleanCookie("albums_slide_style");
 				if (slideCookie !== null)
 					Options.albums_slide_style = slideCookie;
@@ -2965,6 +2980,25 @@ $(document).ready(function() {
 			sortAlbumsMedia();
 			updateMenu();
 			showAlbum("refreshMedia");
+			focusSearchField();
+		}
+		return false;
+	}
+
+	$("ul#right-menu li.hide-title").on('click', toggleTitle);
+	function toggleTitle(ev) {
+		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+			Options.hide_title = ! Options.hide_title;
+			setBooleanCookie("hide_title", Options.hide_title);
+			updateMenu();
+			if (Options.hide_title)
+				$("#title-container").addClass("hidden");
+			else
+				$("#title-container").removeClass("hidden");
+			if (currentMedia !== null)
+				showMedia(currentAlbum);
+			else
+				showAlbum(false);
 			focusSearchField();
 		}
 		return false;

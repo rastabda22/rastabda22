@@ -1,6 +1,7 @@
 * Better swiping: the new image enters with the current one exiting
 * Various bug fixes
 * Always save the gps root album so that the absence of media with gps data can be detected without any js error
+* Added option `hide_title`, and added correponding menu entry that hides the title
 
 ### version 3.5 (July 15, 2018)
 

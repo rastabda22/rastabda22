@@ -264,6 +264,7 @@
 		<li id="folders-view" class="day-gps-folders-view"></li>
 		<li id="by-date-view" class="day-gps-folders-view"></li>
 		<li id="by-gps-view" class="day-gps-folders-view"></li>
+
 		<li class="sort album-sort caption"></li>
 		<li class='sort album-sort by-date'></li>
 		<li class='sort album-sort by-name'></li>
@@ -272,7 +273,9 @@
 		<li class='sort media-sort by-date'></li>
 		<li class='sort media-sort by-name'></li>
 		<li class='sort media-sort sort-reverse active'></li>
+
 		<li class='ui caption'></li>
+		<li class='ui hide-title active'></li>
 		<li class='ui slide active'></li>
 		<li class='ui spaced active'></li>
 		<li class='ui album-names active'></li>

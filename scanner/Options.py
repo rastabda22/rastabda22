@@ -155,6 +155,7 @@ def get_options():
 		elif option in ('follow_symlinks',
 				'checksum',
 				'different_album_thumbnails',
+				'hide_title',
 				'albums_slide_style',
 				'show_media_names_below_thumbs',
 				'show_album_names_below_thumbs',

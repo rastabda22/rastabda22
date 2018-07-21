@@ -278,6 +278,9 @@ language =
 # the title of the collections of photos/albums
 page_title = My photos
 
+# Should the title be hidden by default
+hide_title = false
+
 # spacing between thumbnails, pixels (integer)
 # the user can modify this value
 thumb_spacing = 0
