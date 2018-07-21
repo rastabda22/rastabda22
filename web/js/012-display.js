@@ -176,8 +176,6 @@ $(document).ready(function() {
 		} else if (d == "u") {
 			if (currentMedia === null)
 				swipeUp(mediaLink);
-			else
-				swipeLeft(currentAlbum, nextMedia);
 		}
 	}
 
