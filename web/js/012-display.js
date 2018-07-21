@@ -2007,8 +2007,9 @@ $(document).ready(function() {
 			});
 		}
 
-		$("#original-link").attr("target", "_blank").attr("href", encodeURI(photoFloat.originalMediaPath(currentMedia)));
-		$("#download-link").attr("href", encodeURI(photoFloat.originalMediaPath(currentMedia))).attr("download", "");
+		var originalMediaPath = encodeURI(photoFloat.originalMediaPath(currentMedia));
+		$("#original-link").attr("target", "_blank").attr("href", originalMediaPath);
+		$("#download-link").attr("href", originalMediaPath).attr("download", "");
 		if (hasGpsData(currentMedia)) {
 			$("#menu-map-link").attr("target", "_blank").attr("href", encodeURI(mapLink(currentMedia.metadata.latitude, currentMedia.metadata.longitude, Options.photo_map_zoom_level)));
 			$('#menu-map-link').show();
