@@ -474,7 +474,10 @@ $(document).ready(function() {
 				$("ul#right-menu li.album-names").removeClass("selected");
 		}
 
-		if (currentMedia !== null || currentAlbum !== null && (currentAlbum.subalbums.length === 0 && currentAlbum.media.length <= 1)) {
+		if (
+			currentMedia !== null ||
+			currentAlbum !== null && currentAlbum.subalbums.length === 0 && Options.hide_title
+		) {
 			$("ul#right-menu li.media-count").addClass("hidden");
 		} else {
 			$("ul#right-menu li.media-count").removeClass("hidden");
@@ -3045,7 +3048,7 @@ $(document).ready(function() {
 
 	$("ul#right-menu li.media-count").on('click', toggleMediaCount);
 	function toggleMediaCount(ev) {
-		if (currentMedia === null && currentAlbum.subalbums.length && ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if (currentMedia === null && (currentAlbum.subalbums.length || Options.hide_title) && ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			Options.show_album_media_count = ! Options.show_album_media_count;
 			setBooleanCookie("show_album_media_count", Options.show_album_media_count);
 			updateMenu();
