@@ -1304,7 +1304,7 @@ $(document).ready(function() {
 					if (PhotoFloat.isFolderCacheBase(currentAlbum.cacheBase) && ! Options.show_album_names_below_thumbs)
 						heightfactor = 0;
 					else if (! Options.show_album_media_count)
-						heightfactor = 1.1;
+						heightfactor = 1.6;
 					else
 						heightfactor = 2.8;
 					buttonAndCaptionHeight = albumButtonWidth(correctedAlbumThumbSize, buttonBorder) + captionHeight * heightfactor;
