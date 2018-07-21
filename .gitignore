@@ -5,3 +5,5 @@
 venv/*
 .nfs*
 Release.key
+web/albums
+web/cache
