@@ -2412,9 +2412,9 @@ $(document).ready(function() {
 		$("#album-search").attr('title', _t("#current-album-is") + '"'+ currentAlbumPath + '"');
 
 		var isAlbumWithOneMedia =
-			currentMedia !== null || currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1;
-		if (isAlbumWithOneMedia) {
-			if (currentMedia === null) {
+			currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1;
+		if (currentMedia !== null || isAlbumWithOneMedia) {
+			if (isAlbumWithOneMedia) {
 				currentMedia = currentAlbum.media[0];
 				currentMediaIndex = 0;
 				$("#next-media").css("cursor", "default");
