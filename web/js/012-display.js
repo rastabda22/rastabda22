@@ -215,6 +215,8 @@ $(document).ready(function() {
 								function() {
 									$("#media-box-inner").remove();
 									$(".media-box-inner.left").removeClass('left').attr('id', 'media-box-inner').css("right", "");
+									// since the id #media-box-inner has been moved from one element to another, swipe detection must be enabled again
+									addSwipeDetection('media-box-inner',swipe);
 									$("#media-left").attr('id', 'media');
 									$("#album-view").removeClass('fired');
 									window.location.href = link;
@@ -261,6 +263,8 @@ $(document).ready(function() {
 								function() {
 									$("#media-box-inner").remove();
 									$(".media-box-inner.right").removeClass('right').attr('id', 'media-box-inner').css("left", "");
+									// since the id #media-box-inner has been moved from one element to another, swipe detection must be enabled again
+									addSwipeDetection('media-box-inner',swipe);
 									$("#media-right").attr('id', 'media');
 									$("#album-view").removeClass('fired');
 									window.location.href = link;
