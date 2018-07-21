@@ -102,7 +102,7 @@ $(document).ready(function() {
 	}
 
 	// adapted from https://stackoverflow.com/questions/15084675/how-to-implement-swipe-gestures-for-mobile-devices#answer-27115070
-	function detectSwipe(el,callback) {
+	function addSwipeDetection(el,callback) {
 		var swipe_det, ele, min_x, min_y, max_x, max_y, direc;
 		var touchStart, touchMove, touchEnd;
 		touchStart = function(e) {
@@ -2675,7 +2675,7 @@ $(document).ready(function() {
 		return true;
 	}
 
-	$(document).on('load', detectSwipe('media-box-inner',swipe));
+	$(document).on('load', addSwipeDetection('media-box-inner',swipe));
 
 	if (isMobile.any()) {
 		$("#links").css("display", "inline").css("opacity", 0.5);
