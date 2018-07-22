@@ -1277,13 +1277,13 @@ class TreeWalker:
 		message("searching for stale cache files", info, 4)
 
 		for cache_file in sorted(os.listdir(os.path.join(Options.config['cache_path'], subdir))):
-			if os.path.isdir(os.path.join(Options.config['cache_path'], cache_file)):
+			if os.path.isdir(os.path.join(Options.config['cache_path'], subdir, cache_file)):
 				next_level()
-				self.remove_stale(cache_file)
-				if not os.listdir(os.path.join(Options.config['cache_path'], cache_file)):
+				self.remove_stale(os.path.join(subdir, cache_file))
+				if not os.listdir(os.path.join(Options.config['cache_path'], subdir, cache_file)):
 					next_level()
 					message("empty subdir, deleting...", "", 4)
-					file_to_delete = os.path.join(Options.config['cache_path'], cache_file)
+					file_to_delete = os.path.join(Options.config['cache_path'], subdir, cache_file)
 					next_level()
 					os.rmdir(os.path.join(Options.config['cache_path'], file_to_delete))
 					message("empty subdir, deleted", "", 5)
