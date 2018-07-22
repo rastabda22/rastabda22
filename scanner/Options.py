@@ -340,6 +340,14 @@ def get_options():
 			message("FATAL ERROR", config['cache_path'] + " not writable, quitting", 0)
 			sys.exit(-97)
 
+	# calculate the number of media in the album tree: it will be used in order to guess the execution time
+	special_files = [config['exclude_tree_marker'], config['exclude_files_marker'], config['metadata_filename']]
+	message("counting media in albums...", "", 4)
+	config['num_media_in_tree'] = sum([len([file for file in files if file[:1] != '.' and file not in special_files]) for dirpath, dirs, files in os.walk(config['album_path']) if dirpath.find('/.') == -1])
+	next_level()
+	message("media in albums counted", str(config['num_media_in_tree']), 4)
+	back_level()
+
 	# get old options: they are revised in order to decide whether to recreate something
 	json_options_file = os.path.join(config['cache_path'], "options.json")
 	try:

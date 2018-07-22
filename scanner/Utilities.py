@@ -139,18 +139,6 @@ def report_times(final):
 	albums where media is not geotagged or has no EXIF.
 	"""
 
-	try:
-		# detect uninitialized variable
-		report_times.num_media_in_tree
-	except AttributeError:
-		# calculate the number of media in the album tree: it will be used in order to guess the execution time
-		special_files = [Options.config['exclude_tree_marker'], Options.config['exclude_files_marker'], Options.config['metadata_filename']]
-		message("counting media in albums...", "", 4)
-		report_times.num_media_in_tree = sum([len([file for file in files if file[:1] != '.' and file not in special_files]) for dirpath, dirs, files in os.walk(Options.config['album_path']) if dirpath.find('/.') == -1])
-		next_level()
-		message("media in albums counted", str(report_times.num_media_in_tree), 4)
-		back_level()
-
 	print()
 	print((50 - len("message")) * " ", "message", (15 - len("total time")) * " ", "total time", (15 - len("counter")) * " ", "counter", (20 - len("average time")) * " ", "average time")
 	print()
@@ -188,10 +176,10 @@ def report_times(final):
 
 	_num_media = str(num_media)
 	# do not print the report if browsing hasn't been done
-	if num_media > 0 and report_times.num_media_in_tree > 0:
+	if num_media > 0 and Options.config['num_media_in_tree'] > 0:
 		# normal run, print final report about photos, videos, geotags, exif dates
 		try:
-			time_missing = time_till_now / num_media * report_times.num_media_in_tree - time_till_now
+			time_missing = time_till_now / num_media * Options.config['num_media_in_tree'] - time_till_now
 			if time_missing >= 0:
 				(_time_missing, _time_missing_unfolded) = time_totals(time_missing)
 				print((50 - len("total time missing")) * " ", "total time missing", (18 - len(_time_missing)) * " ", _time_missing, "     ", _time_missing_unfolded)
@@ -216,7 +204,7 @@ def report_times(final):
 		_num_video_processed = str(Options.num_video_processed)
 		max_digit = len(_num_media)
 
-		media_count_and_time = "Media    " + ((max_digit - len(_num_media)) * " ") + _num_media + ' / ' + str(report_times.num_media_in_tree) + ' (' + str(int(num_media * 1000 / report_times.num_media_in_tree) / 10) + '%)'
+		media_count_and_time = "Media    " + ((max_digit - len(_num_media)) * " ") + _num_media + ' / ' + str(Options.config['num_media_in_tree']) + ' (' + str(int(num_media * 1000 / Options.config['num_media_in_tree']) / 10) + '%)'
 		if num_media:
 			mean_time = int(time_till_now / 1000000 / num_media * 1000) / 1000
 			media_count_and_time += ",      " + str(mean_time) + " s/media"
