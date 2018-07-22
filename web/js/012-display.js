@@ -2448,7 +2448,11 @@ $(document).ready(function() {
 			showMedia(currentAlbum);
 		}
 
-		if (! isAlbumWithOneMedia || $("#album-view").is(":visible")) {
+		if (currentMedia === null && ! isAlbumWithOneMedia)
+			$("#album-view").removeClass("media-view-container");
+
+		// if (! isAlbumWithOneMedia || $("#album-view").is(":visible")) {
+		if ($("#album-view").is(":visible")) {
 			populateAlbum =
 			 	previousAlbum !== currentAlbum || previousMedia !== currentMedia;
 			showAlbum(populateAlbum);
