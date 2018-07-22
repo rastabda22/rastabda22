@@ -1238,10 +1238,12 @@ class TreeWalker:
 
 
 	def remove_stale(self, subdir=""):
+		# preparing files and directories lists
 		if not subdir:
 			message("cleaning up, be patient...", "", 3)
 			next_level()
 			message("building stale list...", "", 4)
+
 			for album in self.all_albums:
 				self.all_json_files.append(album.json_file)
 			for media in self.all_media:
@@ -1257,28 +1259,31 @@ class TreeWalker:
 			message("stale list built", "", 5)
 			back_level()
 			info = "in cache path"
-			deletable_files_suffixes_re = r"\.json$"
+			deletable_files_re = r"\.json$"
+
 		else:
-			info = "in subdir " + subdir
 			# reduced sizes, thumbnails, old style thumbnails
 			if subdir == Options.config['cache_album_subdir']:
 				self.all_json_files_by_subdir[subdir] = list()
 				for path in self.all_album_composite_images:
 					self.all_json_files_by_subdir[subdir].append(path)
-				deletable_files_suffixes_re = r"\.jpg$"
+				deletable_files_re = r"\.jpg$"
 			else:
-				deletable_files_suffixes_re = r"(" + Options.config['cache_folder_separator'] + r"|_)transcoded(_([1-9][0-9]{0,3}[kKmM]|[1-9][0-9]{3,10})(_[1-5]?[0-9])?)?\.mp4$"
-				deletable_files_suffixes_re += r"|(" + Options.config['cache_folder_separator'] + r"|_)[1-9][0-9]{1,4}(a|t|s|[at][sf])?\.jpg$"
+				deletable_files_re = r"(" + Options.config['cache_folder_separator'] + r"|_)" + \
+					r"transcoded(_([1-9][0-9]{0,3}[kKmM]|[1-9][0-9]{3,10})(_[1-5]?[0-9])?)?\.mp4$" + \
+					r"|(" + Options.config['cache_folder_separator'] + r"|_)[1-9][0-9]{1,4}(a|t|s|[at][sf])?\.jpg$"
+			info = "in subdir " + subdir
+
 		message("searching for stale cache files", info, 4)
 
 		for cache_file in sorted(os.listdir(os.path.join(Options.config['cache_path'], subdir))):
-			if os.path.isdir(os.path.join(Options.config['cache_path'], cache_file)):
+			if os.path.isdir(os.path.join(Options.config['cache_path'], subdir, cache_file)):
 				next_level()
-				self.remove_stale(cache_file)
-				if not os.listdir(os.path.join(Options.config['cache_path'], cache_file)):
+				self.remove_stale(os.path.join(subdir, cache_file))
+				if not os.listdir(os.path.join(Options.config['cache_path'], subdir, cache_file)):
 					next_level()
 					message("empty subdir, deleting...", "", 4)
-					file_to_delete = os.path.join(Options.config['cache_path'], cache_file)
+					file_to_delete = os.path.join(Options.config['cache_path'], subdir, cache_file)
 					next_level()
 					os.rmdir(os.path.join(Options.config['cache_path'], file_to_delete))
 					message("empty subdir, deleted", "", 5)
@@ -1289,7 +1294,7 @@ class TreeWalker:
 				# only delete json's, transcoded videos, reduced images and thumbnails
 				next_level()
 				message("deciding whether to keep a cache file...", "", 7)
-				match = re.search(deletable_files_suffixes_re, cache_file)
+				match = re.search(deletable_files_re, cache_file)
 				next_level()
 				message("decided whether to keep a cache file", cache_file, 6)
 				back_level()
