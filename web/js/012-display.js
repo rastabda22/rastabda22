@@ -1917,15 +1917,6 @@ $(document).ready(function() {
 			nextMedia.byDateName = PhotoFloat.pathJoin([nextMedia.dayAlbum, nextMedia.name]);
 			if (nextMedia.hasOwnProperty("gpsAlbum"))
 				nextMedia.byGpsName = PhotoFloat.pathJoin([nextMedia.gpsAlbum, nextMedia.name]);
-
-			if (nextMedia.mediaType == "photo") {
-				nextReducedPhoto = chooseReducedPhoto(nextMedia, null);
-				$.preloadImages(nextReducedPhoto);
-			}
-			if (prevMedia.mediaType == "photo") {
-				prevReducedPhoto = chooseReducedPhoto(prevMedia, null);
-				$.preloadImages(prevReducedPhoto);
-			}
 		}
 
 		if (
@@ -1945,7 +1936,23 @@ $(document).ready(function() {
 			$("head").append(linkTag);
 
 			$('#media').off(triggerLoad);
-			$('#media').on(triggerLoad, {id: '#media', media: currentMedia}, scaleMedia);
+			$('#media').on(
+				triggerLoad,
+				{
+					id: '#media',
+					media: currentMedia,
+					callback: function() {
+						if (nextMedia.mediaType == "photo") {
+							nextReducedPhoto = chooseReducedPhoto(nextMedia, null);
+							$.preloadImages(nextReducedPhoto);
+						}
+						if (prevMedia.mediaType == "photo") {
+							prevReducedPhoto = chooseReducedPhoto(prevMedia, null);
+							$.preloadImages(prevReducedPhoto);
+						}
+					}
+				}, scaleMedia
+			);
 			// in case the image has been already loaded, trigger the event
 			$('#media').trigger("load");
 
