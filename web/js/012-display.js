@@ -1742,11 +1742,6 @@ $(document).ready(function() {
 			$("#prev").css("left", (parseInt($("#prev").css("left")) + $(".ssk").outerWidth()) + "px");
 		}
 
-		if (event.data.media === currentMedia) {
-			$(window).off("resize");
-			$(window).on("resize", {id: event.data.id, media: mediaObject}, scaleMedia);
-		}
-
 		if (event.data.animateFunction)
 			event.data.animateFunction();
 	}
@@ -1951,6 +1946,11 @@ $(document).ready(function() {
 
 			$('#media').off(triggerLoad);
 			$('#media').on(triggerLoad, {id: '#media', media: currentMedia}, scaleMedia);
+			// in case the image has been already loaded, trigger the event
+			$('#media').trigger("load");
+
+			$(window).off("resize");
+			$(window).on("resize", {id: "#media", media: currentMedia}, scaleMedia);
 
 			if (! Options.persistent_metadata) {
 				$("#metadata").hide();
