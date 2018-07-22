@@ -199,7 +199,7 @@ $(document).ready(function() {
 					{
 						id: '#media-left',
 						media: media,
-						animateFunction: function() {
+						callback: function() {
 							// animation must wait for load completion
 							$.when(
 								$(".media-box-inner.left").animate({
@@ -247,7 +247,7 @@ $(document).ready(function() {
 					triggerLoad, {
 						id: '#media-right',
 						media: media,
-						animateFunction: function() {
+						callback: function() {
 							// animation must wait for load completion
 							$.when(
 								$(".media-box-inner.right").animate({
@@ -1742,8 +1742,8 @@ $(document).ready(function() {
 			$("#prev").css("left", (parseInt($("#prev").css("left")) + $(".ssk").outerWidth()) + "px");
 		}
 
-		if (event.data.animateFunction)
-			event.data.animateFunction();
+		if (event.data.callback)
+			event.data.callback();
 	}
 
 	function chooseReducedPhoto(media, container) {
