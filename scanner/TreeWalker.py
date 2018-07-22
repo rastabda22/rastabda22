@@ -1240,14 +1240,6 @@ class TreeWalker:
 	def remove_stale(self, subdir=""):
 		# preparing files and directories lists
 		if not subdir:
-			# preparing regexp's for files that can be deleted
-			deletable_files_suffixes_re = {
-				"albums": r"\.jpg$",
-				"subdirs": r"(" +
-				 	Options.config['cache_folder_separator'] + r"|_)transcoded(_([1-9][0-9]{0,3}[kKmM]|[1-9][0-9]{3,10})(_[1-5]?[0-9])?)?\.mp4$" +
-					r"|(" + Options.config['cache_folder_separator'] + r"|_)[1-9][0-9]{1,4}(a|t|s|[at][sf])?\.jpg$"
-			}
-
 			message("cleaning up, be patient...", "", 3)
 			next_level()
 			message("building stale list...", "", 4)
@@ -1275,9 +1267,11 @@ class TreeWalker:
 				self.all_json_files_by_subdir[subdir] = list()
 				for path in self.all_album_composite_images:
 					self.all_json_files_by_subdir[subdir].append(path)
-				deletable_files_re = deletable_files_suffixes_re["album"]
+				deletable_files_re = r"\.jpg$"
 			else:
-				deletable_files_re = deletable_files_suffixes_re["subdirs"]
+				deletable_files_re = r"(" + Options.config['cache_folder_separator'] + r"|_)" + \
+					r"transcoded(_([1-9][0-9]{0,3}[kKmM]|[1-9][0-9]{3,10})(_[1-5]?[0-9])?)?\.mp4$" + \
+					r"|(" + Options.config['cache_folder_separator'] + r"|_)[1-9][0-9]{1,4}(a|t|s|[at][sf])?\.jpg$"
 			info = "in subdir " + subdir
 
 		message("searching for stale cache files", info, 4)
