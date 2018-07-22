@@ -3,6 +3,7 @@
 * Always save the gps root album so that the absence of media with gps data can be detected without any js error
 * Added option `hide_title`, and added correponding menu entry that hides the title
 * speed up loading of images
+* Better implementation of cache subdirs in md5 mode: a different subdirs schema is used according to the media number, in such a way that no more than 400 files and 256 subdirs are used (see issue #106); when media number is low, a default subdir is used (new option `default_cache_album`)
 
 ### version 3.5 (July 15, 2018)
 
