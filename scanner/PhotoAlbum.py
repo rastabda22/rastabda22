@@ -107,21 +107,16 @@ class Album(object):
 				else:
 					# @python2
 					if sys.version_info < (3, ):
-						self._subdir = ''
-						previous_digits = 0
-						for digits in cache_folders_num_digits_array:
-							if self._subdir:
-								self._subdir += '/'
-							self._subdir += hashlib.md5(path).hexdigest()[previous_digits:digits]
-							previous_digits = digits
+						hash = hashlib.md5(path).hexdigest()
 					else:
-						self._subdir = ''
-						previous_digits = 0
-						for digits in cache_folders_num_digits_array:
-							if self._subdir:
-								self._subdir += '/'
-							self._subdir = hashlib.md5(os.fsencode(path)).hexdigest()[:2]
-							previous_digits = digits
+						hash = hashlib.md5(os.fsencode(path)).hexdigest()
+					self._subdir = ''
+					previous_digits = 0
+					for digits in cache_folders_num_digits_array:
+						if self._subdir:
+							self._subdir += '/'
+						self._subdir += hash[previous_digits:previous_digits + digits]
+						previous_digits = digits
 			elif Options.config['subdir_method'] == "folder":
 				if path.find("/") == -1:
 					self._subdir = "__"
