@@ -1941,11 +1941,11 @@ $(document).ready(function() {
 					id: '#media',
 					media: currentMedia,
 					callback: function() {
-						if (nextMedia.mediaType == "photo") {
+						if (nextMedia !== null && nextMedia.mediaType == "photo") {
 							var nextReducedPhoto = chooseReducedPhoto(nextMedia, null);
 							$.preloadImages(nextReducedPhoto);
 						}
-						if (prevMedia.mediaType == "photo") {
+						if (prevMedia !== null && prevMedia.mediaType == "photo") {
 							var prevReducedPhoto = chooseReducedPhoto(prevMedia, null);
 							$.preloadImages(prevReducedPhoto);
 						}
