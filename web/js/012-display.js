@@ -2407,8 +2407,7 @@ $(document).ready(function() {
 		previousAlbum = currentAlbum;
 		if (currentAlbum && PhotoFloat.isByDateCacheBase(currentAlbum.cacheBase) && media !== null) {
 			previousMedia = media;
-		}
-		else {
+		} else {
 			previousMedia = currentMedia;
 		}
 		currentAlbum = album;
