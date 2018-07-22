@@ -2,6 +2,7 @@
 * Various bug fixes
 * Always save the gps root album so that the absence of media with gps data can be detected without any js error
 * Added option `hide_title`, and added correponding menu entry that hides the title
+* speed up loading of images
 
 ### version 3.5 (July 15, 2018)
 
