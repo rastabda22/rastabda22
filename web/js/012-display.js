@@ -1830,7 +1830,6 @@ $(document).ready(function() {
 			}
 
 			mediaElement = $('<img/>', { id: id })
-				.hide()
 				.attr("width", width)
 				.attr("height", height)
 				.attr("ratio", width / height)
@@ -1941,8 +1940,7 @@ $(document).ready(function() {
 			linkTag = array[1];
 			triggerLoad = array[2];
 
-			$("#media-box-inner").show().empty();
-			$("#media-box-inner").append(element);
+			$("#media-box-inner").show().html(element[0]).children();
 
 			$("link[rel=image_src]").remove();
 			$('link[rel="video_src"]').remove();
