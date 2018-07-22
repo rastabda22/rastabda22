@@ -1238,6 +1238,7 @@ class TreeWalker:
 
 
 	def remove_stale(self, subdir=""):
+		# preparing files and directories lists
 		if not subdir:
 			# preparing regexp's for files that can be deleted
 			deletable_files_suffixes_re = {
@@ -1269,7 +1270,6 @@ class TreeWalker:
 			deletable_files_re = r"\.json$"
 
 		else:
-			info = "in subdir " + subdir
 			# reduced sizes, thumbnails, old style thumbnails
 			if subdir == Options.config['cache_album_subdir']:
 				self.all_json_files_by_subdir[subdir] = list()
@@ -1278,6 +1278,8 @@ class TreeWalker:
 				deletable_files_re = deletable_files_suffixes_re["album"]
 			else:
 				deletable_files_re = deletable_files_suffixes_re["subdirs"]
+			info = "in subdir " + subdir
+
 		message("searching for stale cache files", info, 4)
 
 		for cache_file in sorted(os.listdir(os.path.join(Options.config['cache_path'], subdir))):
