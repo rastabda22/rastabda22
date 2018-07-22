@@ -1239,9 +1239,18 @@ class TreeWalker:
 
 	def remove_stale(self, subdir=""):
 		if not subdir:
+			# preparing regexp's for files that can be deleted
+			deletable_files_suffixes_re = {
+				"albums": r"\.jpg$",
+				"subdirs": r"(" +
+				 	Options.config['cache_folder_separator'] + r"|_)transcoded(_([1-9][0-9]{0,3}[kKmM]|[1-9][0-9]{3,10})(_[1-5]?[0-9])?)?\.mp4$" +
+					r"|(" + Options.config['cache_folder_separator'] + r"|_)[1-9][0-9]{1,4}(a|t|s|[at][sf])?\.jpg$"
+			}
+
 			message("cleaning up, be patient...", "", 3)
 			next_level()
 			message("building stale list...", "", 4)
+
 			for album in self.all_albums:
 				self.all_json_files.append(album.json_file)
 			for media in self.all_media:
@@ -1257,7 +1266,8 @@ class TreeWalker:
 			message("stale list built", "", 5)
 			back_level()
 			info = "in cache path"
-			deletable_files_suffixes_re = r"\.json$"
+			deletable_files_re = r"\.json$"
+
 		else:
 			info = "in subdir " + subdir
 			# reduced sizes, thumbnails, old style thumbnails
@@ -1265,10 +1275,9 @@ class TreeWalker:
 				self.all_json_files_by_subdir[subdir] = list()
 				for path in self.all_album_composite_images:
 					self.all_json_files_by_subdir[subdir].append(path)
-				deletable_files_suffixes_re = r"\.jpg$"
+				deletable_files_re = deletable_files_suffixes_re["album"]
 			else:
-				deletable_files_suffixes_re = r"(" + Options.config['cache_folder_separator'] + r"|_)transcoded(_([1-9][0-9]{0,3}[kKmM]|[1-9][0-9]{3,10})(_[1-5]?[0-9])?)?\.mp4$"
-				deletable_files_suffixes_re += r"|(" + Options.config['cache_folder_separator'] + r"|_)[1-9][0-9]{1,4}(a|t|s|[at][sf])?\.jpg$"
+				deletable_files_re = deletable_files_suffixes_re["subdirs"]
 		message("searching for stale cache files", info, 4)
 
 		for cache_file in sorted(os.listdir(os.path.join(Options.config['cache_path'], subdir))):
@@ -1289,7 +1298,7 @@ class TreeWalker:
 				# only delete json's, transcoded videos, reduced images and thumbnails
 				next_level()
 				message("deciding whether to keep a cache file...", "", 7)
-				match = re.search(deletable_files_suffixes_re, cache_file)
+				match = re.search(deletable_files_re, cache_file)
 				next_level()
 				message("decided whether to keep a cache file", cache_file, 6)
 				back_level()
