@@ -1855,7 +1855,6 @@ $(document).ready(function() {
 
 	function showMedia(album) {
 		var text, thumbnailSize, i, linkTag, triggerLoad, array, element;
-		var nextReducedPhoto, prevReducedPhoto;
 		var exposureTime;
 
 		mediaLink = photoFloat.encodeHash(currentAlbum, currentMedia);
@@ -1943,11 +1942,11 @@ $(document).ready(function() {
 					media: currentMedia,
 					callback: function() {
 						if (nextMedia.mediaType == "photo") {
-							nextReducedPhoto = chooseReducedPhoto(nextMedia, null);
+							var nextReducedPhoto = chooseReducedPhoto(nextMedia, null);
 							$.preloadImages(nextReducedPhoto);
 						}
 						if (prevMedia.mediaType == "photo") {
-							prevReducedPhoto = chooseReducedPhoto(prevMedia, null);
+							var prevReducedPhoto = chooseReducedPhoto(prevMedia, null);
 							$.preloadImages(prevReducedPhoto);
 						}
 					}
