@@ -1893,6 +1893,8 @@ $(document).ready(function() {
 
 		$("#media").off("load");
 
+		nextMedia = null;
+		prevMedia = null;
 		if (currentAlbum.media.length > 1) {
 			// prepare for previous media
 			i = currentMediaIndex;
@@ -1940,7 +1942,8 @@ $(document).ready(function() {
 			linkTag = array[1];
 			triggerLoad = array[2];
 
-			$("#media-box-inner").show().html(element[0]).children();
+			if (! $("#media-box-inner").html())
+				$("#media-box-inner").show().html(element[0]);
 
 			$("link[rel=image_src]").remove();
 			$('link[rel="video_src"]').remove();
@@ -2431,6 +2434,7 @@ $(document).ready(function() {
 				currentMedia = currentAlbum.media[0];
 				currentMediaIndex = 0;
 				$("#next-media").css("cursor", "default");
+				$("#album-view").addClass("hidden");
 			} else {
 				$("#next-media").css("cursor", "ew-resize");
 			}
