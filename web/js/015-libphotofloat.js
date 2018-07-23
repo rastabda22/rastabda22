@@ -616,6 +616,12 @@
 												$("#album-view").removeClass("hidden");
 												$(".search-failed").hide();
 											}
+
+											// add the parent
+											for (indexMedia = 0; indexMedia < searchResultsAlbumFinal.media.length; indexMedia ++) {
+												searchResultsAlbumFinal.media[indexMedia].parent = searchResultsAlbumFinal;
+											}
+
 											searchResultsAlbumFinal.numMediaInAlbum = searchResultsAlbumFinal.media.length;
 
 											searchResultsAlbumFinal.numMediaInSubTree = searchResultsAlbumFinal.media.length;
