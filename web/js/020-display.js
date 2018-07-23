@@ -873,8 +873,8 @@ $(document).ready(function() {
 		}
 
 		// leave only the last link on mobile
+		numLinks = (title.match(/<a class=/g) || []).length;
 		linksToLeave = 1;
-		numLinks = title.split("<a class=").length - 1;
 		if (isMobile.any() && numLinks > linksToLeave) {
 			for (i = 1; i <= numLinks - linksToLeave; i ++) {
 				beginLink = title.indexOf("<a class=", 3);
