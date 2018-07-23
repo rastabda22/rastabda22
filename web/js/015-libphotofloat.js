@@ -665,7 +665,7 @@
 			}
 		}
 		callback(theAlbum, media, i);
-		if (! media === null || util.isAlbumWithOneMedia(theAlbum))
+		if (util.isSearchCacheBase(theAlbum.cacheBase) && (media === null && ! util.isAlbumWithOneMedia(theAlbum)))
 			$("ul#right-menu").addClass("expand");
 
 	};
