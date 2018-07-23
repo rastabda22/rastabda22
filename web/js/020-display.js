@@ -328,7 +328,7 @@ $(document).ready(function() {
 			var reducedSizesIndex = 1;
 			if (Options.reduced_sizes.length == 1)
 				reducedSizesIndex = 0;
-			var prefix = removeFolderMarker(currentMedia.foldersCacheBase);
+			var prefix = util.removeFolderMarker(currentMedia.foldersCacheBase);
 			if (prefix)
 				prefix += Options.cache_folder_separator;
 			if (currentMedia.mediaType == "video") {
@@ -372,15 +372,6 @@ $(document).ready(function() {
 			var socialWidth = Math.floor(window.innerWidth / numSocial);
 			$('.ssk').width(socialWidth * 2 + "px");
 		}
-	}
-
-	function removeFolderMarker(cacheBase) {
-		if (util.isFolderCacheBase(cacheBase)) {
-			cacheBase = cacheBase.substring(Options.folders_string.length);
-			if (cacheBase.length > 0)
-				cacheBase = cacheBase.substring(1);
-		}
-		return cacheBase;
 	}
 
 	function updateMenu() {
@@ -721,7 +712,7 @@ $(document).ready(function() {
 					 latitude = arrayCoordinates.latitude;
 					 longitude = arrayCoordinates.longitude;
 				}
-				title += "<a href=" + mapLink(latitude, longitude, Options.map_zoom_levels[(i - 2)]) + " target='_blank'>" +
+				title += "<a href=" + util.mapLink(latitude, longitude, Options.map_zoom_levels[(i - 2)]) + " target='_blank'>" +
 									"<img class='title-img' title='" + gpsHtmlTitle + "' alt='" + gpsHtmlTitle + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
 									"</a>";
 
@@ -895,10 +886,10 @@ $(document).ready(function() {
 
 		if (currentMedia !== null) {
 			title += "<span id=\"media-name\">" + util.trimExtension(currentMedia.name) + "</span>";
-			if (hasGpsData(currentMedia)) {
+			if (util.hasGpsData(currentMedia)) {
 				latitude = currentMedia.metadata.latitude;
 				longitude = currentMedia.metadata.longitude;
-				title += "<a href=" + mapLink(latitude, longitude, Options.photo_map_zoom_level) + " target='_blank'>" +
+				title += "<a href=" + util.mapLink(latitude, longitude, Options.photo_map_zoom_level) + " target='_blank'>" +
 										"<img class='title-img' title='" + _t("#show-on-map") + " [s]' alt='" + _t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
 										"</a>";
 			}
@@ -1178,10 +1169,10 @@ $(document).ready(function() {
 					imgTitle = currentAlbum.media[i].albumName;
 
 					mapLinkIcon = "";
-					if (hasGpsData(currentAlbum.media[i])) {
+					if (util.hasGpsData(currentAlbum.media[i])) {
 						var latitude = currentAlbum.media[i].metadata.latitude;
 						var longitude = currentAlbum.media[i].metadata.longitude;
-						mapLinkIcon = "<a href=" + mapLink(latitude, longitude, Options.photo_map_zoom_level) + " target='_blank'>" +
+						mapLinkIcon = "<a href=" + util.mapLink(latitude, longitude, Options.photo_map_zoom_level) + " target='_blank'>" +
 													"<img class='thumbnail-map-link' title='" + _t("#show-on-map") + " [s]' alt='" + _t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
 													"</a>";
 					}
@@ -1273,7 +1264,7 @@ $(document).ready(function() {
 					if (Options.albums_slide_style)
 						margin = Math.round(correctedAlbumThumbSize * 0.05);
 
-					captionFontSize = Math.round(em2px("body", 1) * correctedAlbumThumbSize / Options.album_thumb_size);
+					captionFontSize = Math.round(util.em2px("body", 1) * correctedAlbumThumbSize / Options.album_thumb_size);
 					captionHeight = parseInt(captionFontSize * 1.1) + 1;
 					if (util.isFolderCacheBase(currentAlbum.cacheBase) && ! Options.show_album_names_below_thumbs)
 						heightfactor = 0;
@@ -1325,7 +1316,7 @@ $(document).ready(function() {
 
 							folder = "<span class='gps-folder'>" +
 												folderName +
-												"<a href='" + mapLink(currentAlbum.subalbums[i].center.latitude, currentAlbum.subalbums[i].center.longitude, Options.map_zoom_levels[level]) +
+												"<a href='" + util.mapLink(currentAlbum.subalbums[i].center.latitude, currentAlbum.subalbums[i].center.longitude, Options.map_zoom_levels[level]) +
 																"' title='" + folderName +
 																"' target='_blank'" +
 														">" +
@@ -2001,8 +1992,8 @@ $(document).ready(function() {
 		var originalMediaPath = encodeURI(phFl.originalMediaPath(currentMedia));
 		$("#original-link").attr("target", "_blank").attr("href", originalMediaPath);
 		$("#download-link").attr("href", originalMediaPath).attr("download", "");
-		if (hasGpsData(currentMedia)) {
-			$("#menu-map-link").attr("target", "_blank").attr("href", encodeURI(mapLink(currentMedia.metadata.latitude, currentMedia.metadata.longitude, Options.photo_map_zoom_level)));
+		if (util.hasGpsData(currentMedia)) {
+			$("#menu-map-link").attr("target", "_blank").attr("href", encodeURI(util.mapLink(currentMedia.metadata.latitude, currentMedia.metadata.longitude, Options.photo_map_zoom_level)));
 			$('#menu-map-link').show();
 			$('#menu-map-divider').show();
 		} else {
@@ -2037,7 +2028,7 @@ $(document).ready(function() {
 				return false;
 			});
 
-			if (! hasGpsData(currentMedia)) {
+			if (! util.hasGpsData(currentMedia)) {
 				$("#by-gps-view").addClass("hidden");
 			} else {
 				$("#by-gps-view").on("click", function(ev) {
@@ -2052,7 +2043,7 @@ $(document).ready(function() {
 				return false;
 			});
 			$("#by-date-view").removeClass("active").addClass("selected").off("click");
-			if (! hasGpsData(currentMedia)) {
+			if (! util.hasGpsData(currentMedia)) {
 				$("#by-gps-view").addClass("hidden");
 			} else {
 				$("#by-gps-view").on("click", function(ev) {
@@ -2081,7 +2072,7 @@ $(document).ready(function() {
 				window.location.href = byDateViewLink;
 				return false;
 			});
-			if (! hasGpsData(currentMedia)) {
+			if (! util.hasGpsData(currentMedia)) {
 				$("#by-gps-view").addClass("hidden");
 			} else {
 				$("#by-gps-view").on("click", function(ev) {
@@ -2151,31 +2142,13 @@ $(document).ready(function() {
 		var linkTitle = _t('#show-map') + Options.map_service;
 		$('#metadata tr.gps').attr("title", linkTitle).on('click', function(ev) {
 			ev.stopPropagation();
-			window.open(mapLink(currentMedia.metadata.latitude, currentMedia.metadata.longitude, Options.photo_map_zoom_level), '_blank');
+			window.open(util.mapLink(currentMedia.metadata.latitude, currentMedia.metadata.longitude, Options.photo_map_zoom_level), '_blank');
 		});
 
 		translate();
 
 		$("#subalbums").hide();
 		$("#media-view").show();
-	}
-
-	function hasGpsData(media) {
-		return media.mediaType == "photo" && typeof media.metadata.latitude !== "undefined";
-	}
-
-	function mapLink(latitude, longitude, zoom) {
-		var link;
-		if (Options.map_service == 'openstreetmap') {
-			link = 'http://www.openstreetmap.org/#map=' + zoom + '/' + latitude + '/' + longitude;
-		}
-		else if (Options.map_service == 'googlemaps') {
-			link = 'https://www.google.com/maps/@' + latitude + ',' + longitude + ',' + zoom + 'z';
-		}
-		else if (Options.map_service == 'osmtools') {
-			link = 'http://m.osmtools.de/index.php?mlon=' + longitude + '&mlat=' + latitude + '&icon=6&zoom=' + zoom;
-		}
-		return link;
 	}
 
 	function setOptions() {
@@ -2212,10 +2185,6 @@ $(document).ready(function() {
 			$("#title-container").removeClass("hidden");
 	}
 
-	function em2px(selector, em) {
-		var emSize = parseFloat($(selector).css("font-size"));
-		return (em * emSize);
-	}
 	function getBooleanCookie(key) {
 		var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
 		if (! keyValue)
@@ -2644,7 +2613,7 @@ $(document).ready(function() {
 					//                                              o
 					$("#original-link")[0].click();
 					return false;
-				} else if (e.keyCode === 83 && currentMedia !== null && hasGpsData(currentMedia)) {
+				} else if (e.keyCode === 83 && currentMedia !== null && util.hasGpsData(currentMedia)) {
 					 	//                    s
 						$("#map-link")[0].click();
 						return false;

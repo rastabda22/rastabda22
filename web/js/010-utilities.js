@@ -242,6 +242,38 @@
 				return thumbnailWidth + 2 * buttonBorder;
 		}
 
+	Utilities.prototype.removeFolderMarker = function (cacheBase) {
+		if (this.isFolderCacheBase(cacheBase)) {
+			cacheBase = cacheBase.substring(Options.folders_string.length);
+			if (cacheBase.length > 0)
+				cacheBase = cacheBase.substring(1);
+		}
+		return cacheBase;
+	}
+
+	Utilities.prototype.hasGpsData = function(media) {
+		return media.mediaType == "photo" && typeof media.metadata.latitude !== "undefined";
+	}
+
+	Utilities.prototype.em2px = function(selector, em) {
+		var emSize = parseFloat($(selector).css("font-size"));
+		return (em * emSize);
+	}
+
+	Utilities.prototype.mapLink = function(latitude, longitude, zoom) {
+		var link;
+		if (Options.map_service == 'openstreetmap') {
+			link = 'http://www.openstreetmap.org/#map=' + zoom + '/' + latitude + '/' + longitude;
+		}
+		else if (Options.map_service == 'googlemaps') {
+			link = 'https://www.google.com/maps/@' + latitude + ',' + longitude + ',' + zoom + 'z';
+		}
+		else if (Options.map_service == 'osmtools') {
+			link = 'http://m.osmtools.de/index.php?mlon=' + longitude + '&mlat=' + latitude + '&icon=6&zoom=' + zoom;
+		}
+		return link;
+	}
+
 
 
   window.Utilities = Utilities;
