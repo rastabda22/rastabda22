@@ -215,6 +215,34 @@
 		$("#" + id).fadeOut(4000);
 	};
 
+	Utilities.prototype.stripHtmlAndReplaceEntities = function(htmlString) {
+		// converto for for html page title
+		// strip html (https://stackoverflow.com/questions/822452/strip-html-from-text-javascript#822464)
+		// and replaces &raquo; with \u00bb
+		return htmlString.replace(/<(?:.|\n)*?>/gm, '').replace(/&raquo;/g, '\u00bb');
+	}
+
+	Utilities.prototype.transformAltPlaceName = function(altPlaceName) {
+		var underscoreIndex = altPlaceName.lastIndexOf('_');
+		if (underscoreIndex != -1) {
+			var number = altPlaceName.substring(underscoreIndex + 1);
+			while (number.indexOf('0') === 0)
+				number = number.substr(1);
+			var base = altPlaceName.substring(0, underscoreIndex);
+			return base + ' (' + _t('.subalbum') + number + ')';
+		} else {
+			return altPlaceName;
+		}
+	}
+
+	Utilities.prototype.albumButtonWidth = function(thumbnailWidth, buttonBorder) {
+			if (Options.albums_slide_style)
+				return Math.round((thumbnailWidth + 2 * buttonBorder) * 1.1);
+			else
+				return thumbnailWidth + 2 * buttonBorder;
+		}
+
+
 
   window.Utilities = Utilities;
 }());

@@ -583,19 +583,6 @@ $(document).ready(function() {
 		}
 	}
 
-	function transformAltPlaceName(altPlaceName) {
-		var underscoreIndex = altPlaceName.lastIndexOf('_');
-		if (underscoreIndex != -1) {
-			var number = altPlaceName.substring(underscoreIndex + 1);
-			while (number.indexOf('0') === 0)
-				number = number.substr(1);
-			var base = altPlaceName.substring(0, underscoreIndex);
-			return base + ' (' + _t('.subalbum') + number + ')';
-		} else {
-			return altPlaceName;
-		}
-	}
-
 	function setTitle() {
 		var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, originalTitle;
 		var titleAnchorClasses, titleAnchorClassesItalics, hiddenTitle = "", beginLink, linksToLeave, numLinks, latitude, longitude, arrayCoordinates, numMediaInSubAlbums;
@@ -796,7 +783,7 @@ $(document).ready(function() {
 				title += "&raquo;";
 			}
 
-			where = stripHtmlAndReplaceEntities(where);
+			where = utilities.stripHtmlAndReplaceEntities(where);
 
 			if (components.length > 2 && currentMedia === null && (currentAlbum.media.length || currentAlbum.subalbums.length)) {
 				title += " <span id=\"title-count\">(";
@@ -964,7 +951,7 @@ $(document).ready(function() {
 				$("#search-album-to-be-filled").replaceWith(whereLinks);
 				// correct the page title too
 				documentTitle = $(document).attr('title');
-				documentTitle = documentTitle.replace(_t("#search-in") + ' ', _t("#search-in") + ' ' + stripHtmlAndReplaceEntities(whereLinks));
+				documentTitle = documentTitle.replace(_t("#search-in") + ' ', _t("#search-in") + ' ' + utilities.stripHtmlAndReplaceEntities(whereLinks));
 				document.title = documentTitle;
 
 			},
@@ -974,13 +961,6 @@ $(document).ready(function() {
 		setOptions();
 
 		return;
-	}
-
-	function stripHtmlAndReplaceEntities(htmlString) {
-		// converto for for html page title
-		// strip html (https://stackoverflow.com/questions/822452/strip-html-from-text-javascript#822464)
-		// and replaces &raquo; with \u00bb
-		return htmlString.replace(/<(?:.|\n)*?>/gm, '').replace(/&raquo;/g, '\u00bb');
 	}
 
 	function initializeSortPropertiesAndCookies() {
@@ -1126,13 +1106,6 @@ $(document).ready(function() {
 			$(".thumb-container").removeClass("current-thumb");
 			thumb.parent().addClass("current-thumb");
 		}
-	}
-
-	function albumButtonWidth(thumbnailWidth, buttonBorder) {
-		if (Options.albums_slide_style)
-			return Math.round((thumbnailWidth + 2 * buttonBorder) * 1.1);
-		else
-			return thumbnailWidth + 2 * buttonBorder;
 	}
 
 	function showAlbum(populate) {
@@ -1288,7 +1261,7 @@ $(document).ready(function() {
 							parseInt($("#album-view").css("padding-left")) -
 							parseInt($("#album-view").css("padding-right")) -
 							scrollBarWidth;
-					if ((albumButtonWidth(correctedAlbumThumbSize, buttonBorder) + Options.spacing) * Options.min_album_thumbnail > albumViewWidth) {
+					if ((utilities.albumButtonWidth(correctedAlbumThumbSize, buttonBorder) + Options.spacing) * Options.min_album_thumbnail > albumViewWidth) {
 						if (Options.albums_slide_style)
 							correctedAlbumThumbSize =
 								Math.floor((albumViewWidth / Options.min_album_thumbnail - Options.spacing - 2 * slideBorder) / 1.1 - 2 * buttonBorder);
@@ -1308,7 +1281,7 @@ $(document).ready(function() {
 						heightfactor = 1.6;
 					else
 						heightfactor = 2.8;
-					buttonAndCaptionHeight = albumButtonWidth(correctedAlbumThumbSize, buttonBorder) + captionHeight * heightfactor;
+					buttonAndCaptionHeight = utilities.albumButtonWidth(correctedAlbumThumbSize, buttonBorder) + captionHeight * heightfactor;
 
 					// insert into DOM
 					subalbumsElement = $("#subalbums");
@@ -1347,7 +1320,7 @@ $(document).ready(function() {
 							else if (level < 2)
 								folderName = currentAlbum.subalbums[i].name;
 							else
-								folderName = transformAltPlaceName(currentAlbum.subalbums[i].name);
+								folderName = utilities.transformAltPlaceName(currentAlbum.subalbums[i].name);
 							folderTitle = _t('#place-icon-title') + folderName;
 
 							folder = "<span class='gps-folder'>" +
@@ -1412,7 +1385,7 @@ $(document).ready(function() {
 									"margin-right: " + Options.spacing + "px; " +
 									"margin-top: " + Options.spacing + "px; " +
 									"height: " + buttonAndCaptionHeight + "px; " +
-									"width: " + albumButtonWidth(correctedAlbumThumbSize, buttonBorder) + "px; ";
+									"width: " + utilities.albumButtonWidth(correctedAlbumThumbSize, buttonBorder) + "px; ";
 						if (Options.albums_slide_style)
 							albumButtonAndCaptionHtml += "background-color:" + Options.album_button_background_color + ";";
 						albumButtonAndCaptionHtml +=
