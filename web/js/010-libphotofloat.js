@@ -1006,6 +1006,15 @@
 	PhotoFloat.prototype.originalMediaPath = PhotoFloat.originalMediaPath;
 	PhotoFloat.prototype.trimExtension = PhotoFloat.trimExtension;
 	PhotoFloat.prototype.cleanHash = PhotoFloat.cleanHash;
+	PhotoFloat.prototype.isSearchHash = PhotoFloat.isSearchHash;
+	PhotoFloat.prototype.isFolderCacheBase = PhotoFloat.isFolderCacheBase;
+	PhotoFloat.prototype.isByDateCacheBase = PhotoFloat.isByDateCacheBase;
+	PhotoFloat.prototype.isByGpsCacheBase = PhotoFloat.isByGpsCacheBase;
+	PhotoFloat.prototype.isSearchCacheBase = PhotoFloat.isSearchCacheBase;
+	PhotoFloat.prototype.decodeHash = PhotoFloat.decodeHash;
+	PhotoFloat.prototype.upHash = PhotoFloat.upHash;
+	PhotoFloat.prototype.sortByPath = PhotoFloat.sortByPath;
+	PhotoFloat.prototype.hashCode = PhotoFloat.hashCode;
 	/* expose class globally */
 	window.PhotoFloat = PhotoFloat;
 	PhotoFloat.searchAndSubalbumHash = this.searchAndSubalbumHash;
