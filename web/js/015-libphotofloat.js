@@ -112,26 +112,11 @@
 
 		if (media !== null) {
 			// media hash
-			if (util.isFolderCacheBase(albumHash))
-				// media in folders album, count = 2
-				hash = util.pathJoin([
-					albumHash,
-					media.cacheBase
-				]);
-			else if (util.isByDateCacheBase(albumHash) || util.isByGpsCacheBase(albumHash))
-				// media in date or gps album, count = 3
-				hash = util.pathJoin([
-					albumHash,
-					media.foldersCacheBase,
-					media.cacheBase
-				]);
-			else if (util.isSearchCacheBase(albumHash)) {
-				// media in search album
+			if (util.isFolderCacheBase(albumHash)) {
 				if (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null)
-					// found media, count = 3
+					// media in folders album, count = 2
 					hash = util.pathJoin([
 						albumHash,
-						media.foldersCacheBase,
 						media.cacheBase
 					]);
 				else
@@ -142,7 +127,17 @@
 						savedSearchAlbumHash,
 						media.cacheBase
 					]);
-			}
+			} else if (
+				util.isByDateCacheBase(albumHash) ||
+				util.isByGpsCacheBase(albumHash) ||
+				util.isSearchCacheBase(albumHash) && (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null)
+			)
+				// media in date or gps album, count = 3
+				hash = util.pathJoin([
+					albumHash,
+					media.foldersCacheBase,
+					media.cacheBase
+				]);
 		} else {
 			// no media: album hash
 			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
@@ -152,13 +147,10 @@
 					savedSearchSubAlbumHash,
 					savedSearchAlbumHash
 				]);
-			else if (util.isSearchCacheBase(albumHash))
-				// plain search album, count = 1
-				hash = albumHash;
 			else
+				// plain search album, count = 1
 				// folders album, count = 1
 				hash = albumHash;
-
 		}
 		return "#!/" + hash;
 	};
@@ -324,7 +316,6 @@
 				SearchWordsFromUser = wordsString.split('_');
 				SearchWordsFromUserNormalizedAccordingToOptions = wordsStringNormalizedAccordingToOptions.split(' ');
 				SearchWordsFromUserNormalized = wordsStringNormalized.split(' ');
-				$("ul#right-menu").addClass("expand");
 
 				if (SearchWordsFromUser.length == 1)
 					$("ul#right-menu li#any-word").addClass("dimmed");
@@ -674,6 +665,9 @@
 			}
 		}
 		callback(theAlbum, media, i);
+		if (! media === null || util.isAlbumWithOneMedia(theAlbum))
+			$("ul#right-menu").addClass("expand");
+
 	};
 
 	PhotoFloat.hashCode = function(hash) {

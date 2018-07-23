@@ -206,6 +206,7 @@
 
   Utilities.prototype.noResults = function(id) {
 		// no media found or other search fail, show the message
+		$("ul#right-menu").addClass("expand");
 		$("#album-view").addClass("hidden");
 		$("#media-view").addClass("hidden");
 		if (typeof id === "undefined")
