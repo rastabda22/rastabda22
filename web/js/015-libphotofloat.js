@@ -271,6 +271,7 @@
 
 		$("#error-too-many-images").hide();
 		$(".search-failed").hide();
+		$("#media-view").removeClass("hidden");
 		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
 		var array = PhotoFloat.decodeHash(hash);
 		var albumHash = array[0];
