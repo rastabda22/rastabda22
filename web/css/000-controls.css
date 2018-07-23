@@ -526,10 +526,13 @@ ul#right-menu li#menu-icon, ul#right-menu.expand li {
 	padding: .1em .5em;
 }
 
+ul#right-menu {
+	opacity: 0.6;
+}
+
 ul#right-menu.expand li {
 	display: list-item;
 	text-align: left;
-	opacity: 0.6;
 	font-style: italic;
 }
 
