@@ -2554,9 +2554,9 @@ $(document).ready(function() {
 		}
 
 		if (Object.keys(Options).length > 0) {
-			// if (! util.isSearchHash(hash))
-			// 	// reset the return link from search
-			// 	Options.album_to_search_in = phFl.cleanHash(hash);
+			if (! util.isSearchHash(hash))
+				// reset the return link from search
+				Options.album_to_search_in = phFl.cleanHash(hash);
 			//
 			// if (! Options.hasOwnProperty('album_to_search_in') || ! Options.album_to_search_in)
 			// 	Options.album_to_search_in = Options.folders_string;
