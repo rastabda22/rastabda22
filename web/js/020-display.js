@@ -776,7 +776,11 @@ $(document).ready(function() {
 
 			where = util.stripHtmlAndReplaceEntities(where);
 
-			if (components.length > 2 && currentMedia === null && (currentAlbum.media.length || currentAlbum.subalbums.length)) {
+			if (
+				components.length > 2 &&
+				(currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)) &&
+				(currentAlbum.media.length || currentAlbum.subalbums.length)
+			) {
 				title += " <span id=\"title-count\">(";
 				title += _t("#title-found") + ' ';
 				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
