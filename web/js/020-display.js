@@ -2375,8 +2375,7 @@ $(document).ready(function() {
 
 		$("#album-search").attr('title', _t("#current-album-is") + '"'+ currentAlbumPath + '"');
 
-		var isAlbumWithOneMedia =
-			currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1;
+		var isAlbumWithOneMedia = util.isAlbumWithOneMedia(currentAlbum);
 		if (currentMedia !== null || isAlbumWithOneMedia) {
 			if (isAlbumWithOneMedia) {
 				currentMedia = currentAlbum.media[0];

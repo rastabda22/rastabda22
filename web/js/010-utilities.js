@@ -274,7 +274,9 @@
 		return link;
 	}
 
-
+	Utilities.prototype.isAlbumWithOneMedia = function(currentAlbum) {
+		return currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1;
+	}
 
   window.Utilities = Utilities;
 }());
