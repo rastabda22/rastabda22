@@ -48,7 +48,7 @@ $(document).ready(function() {
 	var currentMediaIndex = -1;
 	var previousAlbum = null;
 	var previousMedia = null;
-	var photoFloat = new PhotoFloat();
+	var phFl = new PhotoFloat();
 	var util = new Utilities();
 	var maxSize;
 	var fullScreenStatus = false;
@@ -185,7 +185,7 @@ $(document).ready(function() {
 
 		if (media && ! $("#album-view").hasClass('fired')) {
 			$("#album-view").addClass('fired');
-			link = photoFloat.encodeHash(album, media);
+			link = phFl.encodeHash(album, media);
 			$("#next-media").prepend('<div class="media-box-inner left" style="right: 100%;"></div>');
 			if (
 				media.mediaType == "photo" ||
@@ -234,7 +234,7 @@ $(document).ready(function() {
 
 		if (media && ! $("#album-view").hasClass('fired')) {
 			$("#album-view").addClass('fired');
-			link = photoFloat.encodeHash(album, media);
+			link = phFl.encodeHash(album, media);
 			$("#next-media").append('<div class="media-box-inner right" style="left: 100%;"></div>');
 			if (
 				media.mediaType == "photo" ||
@@ -620,7 +620,7 @@ $(document).ready(function() {
 			titleAnchorClasses += ' mobile';
 		titleAnchorClassesItalics = titleAnchorClasses + ' italic';
 
-		var array = photoFloat.decodeHash(location.hash);
+		var array = phFl.decodeHash(location.hash);
 		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
 		// var albumHash = array[0];
 		// var mediaHash = array[1];
@@ -929,7 +929,7 @@ $(document).ready(function() {
 
 		// get the names from the album
 		// we must use getAlbum() because the album could not be in the cache yet (as when ctl-r is pressed)
-		photoFloat.getAlbum(
+		phFl.getAlbum(
 			Options.album_to_search_in,
 			function(theAlbum) {
 				var whereLinks = '', thisCacheBase, name, documentTitle;
@@ -1118,7 +1118,7 @@ $(document).ready(function() {
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
 		var folderArray, folder;
 
-		photoFloat.subalbumIndex = 0;
+		phFl.subalbumIndex = 0;
 		numSubAlbumsReady = 0;
 
 		if (Options.albums_slide_style)
@@ -1135,7 +1135,7 @@ $(document).ready(function() {
 			if (populateMedia === true && isVirtualAlbum)
 				populateMedia = populateMedia && ! tooBig;
 
-			var array = photoFloat.decodeHash(location.hash);
+			var array = phFl.decodeHash(location.hash);
 			// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
 			var savedSearchSubAlbumHash = array[3];
 			var savedSearchAlbumHash = array[4];
@@ -1213,9 +1213,9 @@ $(document).ready(function() {
 
 					image.get(0).media = currentAlbum.media[i];
 					if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
-						mediaHash = photoFloat.encodeHash(currentAlbum, currentAlbum.media[i], savedSearchSubAlbumHash, savedSearchAlbumHash);
+						mediaHash = phFl.encodeHash(currentAlbum, currentAlbum.media[i], savedSearchSubAlbumHash, savedSearchAlbumHash);
 					else
-						mediaHash = photoFloat.encodeHash(currentAlbum, currentAlbum.media[i]);
+						mediaHash = phFl.encodeHash(currentAlbum, currentAlbum.media[i]);
 					imageLink = $("<a id='link-" + mediaHash + "' href='" + mediaHash + "'></a>");
 					imageLink.append(image);
 					media.push(imageLink);
@@ -1240,14 +1240,14 @@ $(document).ready(function() {
 				} else {
 					// reset mediaLink
 					if (currentAlbum.media.length)
-						mediaLink = photoFloat.encodeHash(currentAlbum, currentAlbum.media[0]);
+						mediaLink = phFl.encodeHash(currentAlbum, currentAlbum.media[0]);
 					else
 						mediaLink = "#!/" + currentAlbum.cacheBase;
 
 					firstEscKey = true;
 				}
 
-				upLink = photoFloat.upHash(location.hash);
+				upLink = phFl.upHash(location.hash);
 
 				if (
 					populate === true ||
@@ -1293,12 +1293,12 @@ $(document).ready(function() {
 					//
 					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
 						if (util.isSearchCacheBase(currentAlbum.cacheBase))
-							subfolderHash = photoFloat.encodeHash(currentAlbum.subalbums[i], null, currentAlbum.subalbums[i].cacheBase, currentAlbum.cacheBase);
+							subfolderHash = phFl.encodeHash(currentAlbum.subalbums[i], null, currentAlbum.subalbums[i].cacheBase, currentAlbum.cacheBase);
 						else {
 							if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
-								subfolderHash = photoFloat.encodeHash(currentAlbum.subalbums[i].cacheBase, null, savedSearchSubAlbumHash, savedSearchAlbumHash);
+								subfolderHash = phFl.encodeHash(currentAlbum.subalbums[i].cacheBase, null, savedSearchSubAlbumHash, savedSearchAlbumHash);
 							else
-								subfolderHash = photoFloat.encodeHash(currentAlbum.subalbums[i], null);
+								subfolderHash = phFl.encodeHash(currentAlbum.subalbums[i], null);
 						}
 
 						// generate the subalbum caption
@@ -1346,7 +1346,7 @@ $(document).ready(function() {
 						captionHtml = "<div class='album-caption";
 						if (util.isFolderCacheBase(currentAlbum.cacheBase) && ! Options.show_album_names_below_thumbs)
 							captionHtml += " hidden";
-						captionHtml += "' id='album-caption-" + photoFloat.hashCode(currentAlbum.subalbums[i].cacheBase) + "'" +
+						captionHtml += "' id='album-caption-" + phFl.hashCode(currentAlbum.subalbums[i].cacheBase) + "'" +
 													"style='" +
 														"width: " + correctedAlbumThumbSize + "px; " +
 														"font-size: " + captionFontSize + "px; " +
@@ -1375,7 +1375,7 @@ $(document).ready(function() {
 
 						// a dot could be present in a cache base, making $("#" + cacheBase) fail, beware...
 						albumButtonAndCaptionHtml =
-							"<div id='" + photoFloat.hashCode(currentAlbum.subalbums[i].cacheBase) + "' " +
+							"<div id='" + phFl.hashCode(currentAlbum.subalbums[i].cacheBase) + "' " +
 								"class='album-button-and-caption";
 						if (Options.albums_slide_style)
 							albumButtonAndCaptionHtml += " slide";
@@ -1409,7 +1409,7 @@ $(document).ready(function() {
 						linkContainer.append(caption);
 
 						subalbumsElement.append(linkContainer);
-						container = $("#" + photoFloat.hashCode(currentAlbum.subalbums[i].cacheBase));
+						container = $("#" + phFl.hashCode(currentAlbum.subalbums[i].cacheBase));
 						// add the clicks
 						container.off('click').css("cursor", "pointer").on('click', {hash: subfolderHash}, function(ev) {
 							window.location.href = ev.data.hash;
@@ -1419,12 +1419,12 @@ $(document).ready(function() {
 						//      })(currentAlbum.subalbums[i], image, container);
 						(function(theSubalbum, theImage, theLink) {
 							// function(subalbum, container, callback, error)  ---  callback(album,   album.media[index], container,            subalbum);
-							photoFloat.pickRandomMedia(theSubalbum, currentAlbum, function(randomAlbum, randomMedia, theOriginalAlbumContainer, subalbum) {
+							phFl.pickRandomMedia(theSubalbum, currentAlbum, function(randomAlbum, randomMedia, theOriginalAlbumContainer, subalbum) {
 								var htmlText;
 								var titleName, randomMediaLink, goTo, humanGeonames;
 								var mediaSrc = chooseThumbnail(randomAlbum, randomMedia, Options.album_thumb_size);
 
-								photoFloat.subalbumIndex ++;
+								phFl.subalbumIndex ++;
 								mediaWidth = randomMedia.metadata.size[0];
 								mediaHeight = randomMedia.metadata.size[1];
 								if (Options.album_thumb_type == "fit") {
@@ -1459,7 +1459,7 @@ $(document).ready(function() {
 									titleName = randomMedia.albumName;
 									// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, randomMedia.cacheBase]);
 								}
-								randomMediaLink = photoFloat.encodeHash(randomAlbum, randomMedia);
+								randomMediaLink = phFl.encodeHash(randomAlbum, randomMedia);
 
 								titleName = titleName.substr(titleName.indexOf('/') + 1);
 								goTo = _t(".go-to") + " " + titleName;
@@ -1726,7 +1726,7 @@ $(document).ready(function() {
 		var mediaSize = Math.max(mediaWidth, mediaHeight);
 		var mediaRatio = mediaWidth / mediaHeight, containerRatio;
 
-		chosenMedia = photoFloat.originalMediaPath(media);
+		chosenMedia = phFl.originalMediaPath(media);
 		maxSize = 0;
 
 		if (container === null) {
@@ -1756,14 +1756,14 @@ $(document).ready(function() {
 				)
 					break;
 			}
-			chosenMedia = photoFloat.mediaPath(currentAlbum, media, Options.reduced_sizes[i]);
+			chosenMedia = phFl.mediaPath(currentAlbum, media, Options.reduced_sizes[i]);
 			maxSize = Options.reduced_sizes[i];
 		}
 		return chosenMedia;
 	}
 
 	function chooseThumbnail(album, media, thumbnailSize) {
-		return photoFloat.mediaPath(album, media, thumbnailSize);
+		return phFl.mediaPath(album, media, thumbnailSize);
 	}
 
 	function createMedia(currentMedia, id) {
@@ -1776,7 +1776,7 @@ $(document).ready(function() {
 				// .avi videos are not played by browsers
 				mediaSrc = currentMedia.albumName;
 			} else {
-				mediaSrc = photoFloat.mediaPath(currentAlbum, currentMedia, "");
+				mediaSrc = phFl.mediaPath(currentAlbum, currentMedia, "");
 			}
 			mediaElement = $('<video/>', { id: id, controls: true })
 				.attr("width", width)
@@ -1831,7 +1831,7 @@ $(document).ready(function() {
 		var text, thumbnailSize, i, linkTag, triggerLoad, array, element;
 		var exposureTime;
 
-		mediaLink = photoFloat.encodeHash(currentAlbum, currentMedia);
+		mediaLink = phFl.encodeHash(currentAlbum, currentMedia);
 		firstEscKey = true;
 
 		thumbnailSize = Options.media_thumb_size;
@@ -1945,15 +1945,15 @@ $(document).ready(function() {
 		$('#prev').off();
 
 
-		upLink = photoFloat.upHash(location.hash);
+		upLink = phFl.upHash(location.hash);
 		if (currentAlbum.media.length == 1) {
 			nextLink = "";
 			prevLink = "";
 			$("#media-view").css('cursor', 'default');
 		} else {
 
-			nextLink = photoFloat.encodeHash(currentAlbum, nextMedia);
-			prevLink = photoFloat.encodeHash(currentAlbum, prevMedia);
+			nextLink = phFl.encodeHash(currentAlbum, nextMedia);
+			prevLink = phFl.encodeHash(currentAlbum, prevMedia);
 			$("#next").show();
 			$("#prev").show();
 			$("#media-view")
@@ -1998,7 +1998,7 @@ $(document).ready(function() {
 			});
 		}
 
-		var originalMediaPath = encodeURI(photoFloat.originalMediaPath(currentMedia));
+		var originalMediaPath = encodeURI(phFl.originalMediaPath(currentMedia));
 		$("#original-link").attr("target", "_blank").attr("href", originalMediaPath);
 		$("#download-link").attr("href", originalMediaPath).attr("download", "");
 		if (hasGpsData(currentMedia)) {
@@ -2555,7 +2555,7 @@ $(document).ready(function() {
 				Options.byGpsStringWithTrailingSeparator = Options.by_gps_string + Options.cache_folder_separator;
 				Options.bySearchStringWithTrailingSeparator = Options.by_search_string + Options.cache_folder_separator;
 
-				// photoFloat.parseHash(hash, callback, error);
+				// phFl.parseHash(hash, callback, error);
 				parseHash(hash, callback, error);
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
@@ -2572,7 +2572,7 @@ $(document).ready(function() {
 		$.ajax(ajaxOptions);
 	}
 
-	// this function is needed in order to let this point to the correct value in photoFloat.parseHash
+	// this function is needed in order to let this point to the correct value in phFl.parseHash
 	function parseHash(hash, callback, error) {
 		if (! util.isSearchHash(hash)) {
 			// reset current album search flag to its default value
@@ -2584,16 +2584,16 @@ $(document).ready(function() {
 		if (Object.keys(Options).length > 0) {
 			// if (! util.isSearchHash(hash))
 			// 	// reset the return link from search
-			// 	Options.album_to_search_in = photoFloat.cleanHash(hash);
+			// 	Options.album_to_search_in = phFl.cleanHash(hash);
 			//
 			// if (! Options.hasOwnProperty('album_to_search_in') || ! Options.album_to_search_in)
 			// 	Options.album_to_search_in = Options.folders_string;
 
-			photoFloat.parseHash(hash, callback, error);
+			phFl.parseHash(hash, callback, error);
 		} else {
 			getOptions(hash, callback, error);
 		}
-		// photoFloat.parseHash(hash, callback, error);
+		// phFl.parseHash(hash, callback, error);
 	}
 
 	/* Event listeners */
@@ -2770,7 +2770,7 @@ $(document).ready(function() {
 	// search
 	$('#search-button').on("click", function() {
 		var searchOptions = '';
-		var array = photoFloat.decodeHash(location.hash);
+		var array = phFl.decodeHash(location.hash);
 		var albumHash = array[0];
 
 		// save the current hash in order to come back there when exiting from search
@@ -3129,7 +3129,7 @@ $(document).ready(function() {
 	$("#auth-form").submit(function() {
 		var password = $("#password");
 		password.css("background-color", "rgb(128, 128, 200)");
-		photoFloat.authenticate(password.val(), function(success) {
+		phFl.authenticate(password.val(), function(success) {
 			password.val("");
 			if (success) {
 				password.css("background-color", "rgb(200, 200, 200)");
