@@ -75,6 +75,7 @@
 
 		<script type="text/javascript" src="js/008-social.js"></script>
 		<script type="text/javascript" src="js/009-translations.js"></script>
+		<script type="text/javascript" src="js/010-utilities.js"></script>
 		<script type="text/javascript" src="js/015-libphotofloat.js"></script>
 		<script type="text/javascript" src="js/020-display.js"></script>
 	<?php } ?>
