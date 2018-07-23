@@ -318,7 +318,7 @@ $(document).ready(function() {
 		folders = folders.substring(0, folders.lastIndexOf('/'));
 		url += folders;
 		if (currentMedia === null || currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1) {
-			mediaParameter = PhotoFloat.pathJoin([
+			mediaParameter = photoFloat.pathJoin([
 				Options.server_cache_path,
 				Options.cache_album_subdir,
 				currentAlbum.cacheBase
@@ -331,12 +331,12 @@ $(document).ready(function() {
 			if (prefix)
 				prefix += Options.cache_folder_separator;
 			if (currentMedia.mediaType == "video") {
-				mediaParameter = PhotoFloat.pathJoin([
+				mediaParameter = photoFloat.pathJoin([
 					Options.server_cache_path,
 					currentMedia.cacheSubdir,
 				]) + prefix + currentMedia.cacheBase + Options.cache_folder_separator + "transcoded_" + Options.video_transcode_bitrate + "_" + Options.video_crf + ".mp4";
 			} else if (currentMedia.mediaType == "photo") {
-				mediaParameter = PhotoFloat.pathJoin([
+				mediaParameter = photoFloat.pathJoin([
 					Options.server_cache_path,
 					currentMedia.cacheSubdir,
 					prefix + currentMedia.cacheBase
@@ -374,7 +374,7 @@ $(document).ready(function() {
 	}
 
 	function removeFolderMarker(cacheBase) {
-		if (PhotoFloat.isFolderCacheBase(cacheBase)) {
+		if (photoFloat.isFolderCacheBase(cacheBase)) {
 			cacheBase = cacheBase.substring(Options.folders_string.length);
 			if (cacheBase.length > 0)
 				cacheBase = cacheBase.substring(1);
@@ -464,7 +464,7 @@ $(document).ready(function() {
 				$("ul#right-menu li.square-album-thumbnails").removeClass("selected");
 		}
 
-		if (currentMedia !== null || currentAlbum !== null && (currentAlbum.subalbums.length === 0 || ! PhotoFloat.isFolderCacheBase(currentAlbum.cacheBase))) {
+		if (currentMedia !== null || currentAlbum !== null && (currentAlbum.subalbums.length === 0 || ! photoFloat.isFolderCacheBase(currentAlbum.cacheBase))) {
 			$("ul#right-menu li.album-names").addClass("hidden");
 		} else {
 			$("ul#right-menu li.album-names").removeClass("hidden");
@@ -490,7 +490,7 @@ $(document).ready(function() {
 		if (
 			currentMedia !== null ||
 			currentAlbum !== null && (
-				currentAlbum.media.length === 0 || ! PhotoFloat.isFolderCacheBase(currentAlbum.cacheBase) && currentAlbum.media.length > Options.big_virtual_folders_threshold
+				currentAlbum.media.length === 0 || ! photoFloat.isFolderCacheBase(currentAlbum.cacheBase) && currentAlbum.media.length > Options.big_virtual_folders_threshold
 			)
 		) {
 			$("ul#right-menu li.media-names").addClass("hidden");
@@ -505,7 +505,7 @@ $(document).ready(function() {
 		if (
 			currentMedia !== null ||
 			currentAlbum !== null && (
-				currentAlbum.media.length === 0 || ! PhotoFloat.isFolderCacheBase(currentAlbum.cacheBase) && currentAlbum.media.length > Options.big_virtual_folders_threshold
+				currentAlbum.media.length === 0 || ! photoFloat.isFolderCacheBase(currentAlbum.cacheBase) && currentAlbum.media.length > Options.big_virtual_folders_threshold
 			)
 		) {
 			$("ul#right-menu li.square-media-thumbnails").addClass("hidden");
@@ -531,7 +531,7 @@ $(document).ready(function() {
 		}
 
 		if (
-			currentAlbum !== null && (PhotoFloat.isSearchCacheBase(currentAlbum.cacheBase) || currentAlbum.cacheBase == Options.by_search_string) ||
+			currentAlbum !== null && (photoFloat.isSearchCacheBase(currentAlbum.cacheBase) || currentAlbum.cacheBase == Options.by_search_string) ||
 			Options.search_inside_words ||
 			Options.search_any_word ||
 			Options.search_case_sensitive ||
@@ -632,7 +632,7 @@ $(document).ready(function() {
 			titleAnchorClasses += ' mobile';
 		titleAnchorClassesItalics = titleAnchorClasses + ' italic';
 
-		var array = PhotoFloat.decodeHash(location.hash);
+		var array = photoFloat.decodeHash(location.hash);
 		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
 		// var albumHash = array[0];
 		// var mediaHash = array[1];
@@ -949,7 +949,7 @@ $(document).ready(function() {
 					albumTypeString = "<a href='#!/" + Options.by_gps_string + "'"  + _t('#by-gps') + ']</a> ' + ' &raquo; ';
 					for (var i = 2; i < theAlbum.ancestorsNames.length; i ++) {
 						name = theAlbum.ancestorsNames[i];
-						if (i == 3 && PhotoFloat.isByDateCacheBase(Options.album_to_search_in))
+						if (i == 3 && photoFloat.isByDateCacheBase(Options.album_to_search_in))
 							// convert the month number to localized month name
 							name = _t("#month-" + name);
 						thisCacheBase = "#!/" + theAlbum.ancestorsCacheBase.slice(2, i + 1).join(Options.cache_folder_separator);
@@ -1037,12 +1037,12 @@ $(document).ready(function() {
 		var m;
 
 		if (needAlbumNameSort()) {
-			currentAlbum.subalbums = PhotoFloat.sortByPath(currentAlbum.subalbums);
+			currentAlbum.subalbums = photoFloat.sortByPath(currentAlbum.subalbums);
 			currentAlbum.albumNameSort = true;
 			currentAlbum.albumNameReverseSort = false;
 			// $("li.album-sort.by-name").addClass("selected");
 		} else if (needAlbumDateSort()) {
-			currentAlbum.subalbums = PhotoFloat.sortByDate(currentAlbum.subalbums);
+			currentAlbum.subalbums = photoFloat.sortByDate(currentAlbum.subalbums);
 			currentAlbum.albumNameSort = false;
 			currentAlbum.albumDateReverseSort = false;
 		}
@@ -1056,7 +1056,7 @@ $(document).ready(function() {
 		}
 
 		if (needMediaNameSort()) {
-			currentAlbum.media = PhotoFloat.sortByName(currentAlbum.media);
+			currentAlbum.media = photoFloat.sortByName(currentAlbum.media);
 			currentAlbum.mediaNameSort = true;
 			currentAlbum.mediaNameReverseSort = false;
 			if (currentMedia !== null) {
@@ -1068,7 +1068,7 @@ $(document).ready(function() {
 				}
 			}
 		} else if (needMediaDateSort()) {
-			currentAlbum.media = PhotoFloat.sortByDate(currentAlbum.media);
+			currentAlbum.media = photoFloat.sortByDate(currentAlbum.media);
 			currentAlbum.mediaNameSort = false;
 			currentAlbum.mediaDateReverseSort = false;
 			if (currentMedia !== null) {
@@ -1102,10 +1102,10 @@ $(document).ready(function() {
 		}
 		$("#thumbs img.thumbnail").each(function() {
 			if (
-				(PhotoFloat.isFolderCacheBase(currentAlbum.cacheBase) || currentAlbum.cacheBase == Options.folders_string) && this.title === media.albumName ||
-				PhotoFloat.isByDateCacheBase(currentAlbum.cacheBase) && this.title === media.albumName ||
-				PhotoFloat.isByGpsCacheBase(currentAlbum.cacheBase) && this.title === media.albumName ||
-				PhotoFloat.isSearchCacheBase(currentAlbum.cacheBase) && this.title === media.albumName
+				(photoFloat.isFolderCacheBase(currentAlbum.cacheBase) || currentAlbum.cacheBase == Options.folders_string) && this.title === media.albumName ||
+				photoFloat.isByDateCacheBase(currentAlbum.cacheBase) && this.title === media.albumName ||
+				photoFloat.isByGpsCacheBase(currentAlbum.cacheBase) && this.title === media.albumName ||
+				photoFloat.isSearchCacheBase(currentAlbum.cacheBase) && this.title === media.albumName
 			) {
 				thumb = $(this);
 				return false;
@@ -1144,7 +1144,7 @@ $(document).ready(function() {
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
 		var folderArray, folder;
 
-		PhotoFloat.subalbumIndex = 0;
+		photoFloat.subalbumIndex = 0;
 		numSubAlbumsReady = 0;
 
 		if (Options.albums_slide_style)
@@ -1156,12 +1156,12 @@ $(document).ready(function() {
 			thumbnailSize = Options.media_thumb_size;
 
 			populateMedia = populate;
-			isVirtualAlbum = (PhotoFloat.isByDateCacheBase(currentAlbum.cacheBase) || PhotoFloat.isByGpsCacheBase(currentAlbum.cacheBase) || PhotoFloat.isSearchCacheBase(currentAlbum.cacheBase) );
+			isVirtualAlbum = (photoFloat.isByDateCacheBase(currentAlbum.cacheBase) || photoFloat.isByGpsCacheBase(currentAlbum.cacheBase) || photoFloat.isSearchCacheBase(currentAlbum.cacheBase) );
 			tooBig = currentAlbum.path.split("/").length < 4 && currentAlbum.media.length > Options.big_virtual_folders_threshold;
 			if (populateMedia === true && isVirtualAlbum)
 				populateMedia = populateMedia && ! tooBig;
 
-			var array = PhotoFloat.decodeHash(location.hash);
+			var array = photoFloat.decodeHash(location.hash);
 			// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
 			var savedSearchSubAlbumHash = array[3];
 			var savedSearchAlbumHash = array[4];
@@ -1273,7 +1273,7 @@ $(document).ready(function() {
 					firstEscKey = true;
 				}
 
-				upLink = PhotoFloat.upHash(location.hash);
+				upLink = photoFloat.upHash(location.hash);
 
 				if (
 					populate === true ||
@@ -1301,7 +1301,7 @@ $(document).ready(function() {
 
 					captionFontSize = Math.round(em2px("body", 1) * correctedAlbumThumbSize / Options.album_thumb_size);
 					captionHeight = parseInt(captionFontSize * 1.1) + 1;
-					if (PhotoFloat.isFolderCacheBase(currentAlbum.cacheBase) && ! Options.show_album_names_below_thumbs)
+					if (photoFloat.isFolderCacheBase(currentAlbum.cacheBase) && ! Options.show_album_names_below_thumbs)
 						heightfactor = 0;
 					else if (! Options.show_album_media_count)
 						heightfactor = 1.6;
@@ -1318,7 +1318,7 @@ $(document).ready(function() {
 					// subalbum loop
 					//
 					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
-						if (PhotoFloat.isSearchCacheBase(currentAlbum.cacheBase))
+						if (photoFloat.isSearchCacheBase(currentAlbum.cacheBase))
 							subfolderHash = photoFloat.encodeHash(currentAlbum.subalbums[i], null, currentAlbum.subalbums[i].cacheBase, currentAlbum.cacheBase);
 						else {
 							if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
@@ -1328,7 +1328,7 @@ $(document).ready(function() {
 						}
 
 						// generate the subalbum caption
-						if (PhotoFloat.isByDateCacheBase(currentAlbum.cacheBase)) {
+						if (photoFloat.isByDateCacheBase(currentAlbum.cacheBase)) {
 							folderArray = currentAlbum.subalbums[i].cacheBase.split(Options.cache_folder_separator);
 							folder = "";
 							if (folderArray.length == 2)
@@ -1337,7 +1337,7 @@ $(document).ready(function() {
 								folder += " " + _t("#month-" + folderArray[2]);
 							else if (folderArray.length == 4)
 								folder += _t("#day") + " " + parseInt(folderArray[3]);
-						} else if (PhotoFloat.isByGpsCacheBase(currentAlbum.cacheBase)) {
+						} else if (photoFloat.isByGpsCacheBase(currentAlbum.cacheBase)) {
 							var level = currentAlbum.subalbums[i].cacheBase.split(Options.cache_folder_separator).length - 2;
 							var folderName = '';
 							var folderTitle = '';
@@ -1370,9 +1370,9 @@ $(document).ready(function() {
 						captionColor = Options.albums_slide_style ? Options.slide_album_caption_color : Options.album_caption_color;
 
 						captionHtml = "<div class='album-caption";
-						if (PhotoFloat.isFolderCacheBase(currentAlbum.cacheBase) && ! Options.show_album_names_below_thumbs)
+						if (photoFloat.isFolderCacheBase(currentAlbum.cacheBase) && ! Options.show_album_names_below_thumbs)
 							captionHtml += " hidden";
-						captionHtml += "' id='album-caption-" + PhotoFloat.hashCode(currentAlbum.subalbums[i].cacheBase) + "'" +
+						captionHtml += "' id='album-caption-" + photoFloat.hashCode(currentAlbum.subalbums[i].cacheBase) + "'" +
 													"style='" +
 														"width: " + correctedAlbumThumbSize + "px; " +
 														"font-size: " + captionFontSize + "px; " +
@@ -1382,7 +1382,7 @@ $(document).ready(function() {
 													">" + folder + "</div>";
 
 						captionHtml += "<div class='album-caption-count";
-						if (PhotoFloat.isFolderCacheBase(currentAlbum.cacheBase) && ! Options.show_album_names_below_thumbs || ! Options.show_album_media_count)
+						if (photoFloat.isFolderCacheBase(currentAlbum.cacheBase) && ! Options.show_album_names_below_thumbs || ! Options.show_album_media_count)
 							captionHtml += " hidden";
 						captionHtml += "'" +
 									"style='" +
@@ -1401,7 +1401,7 @@ $(document).ready(function() {
 
 						// a dot could be present in a cache base, making $("#" + cacheBase) fail, beware...
 						albumButtonAndCaptionHtml =
-							"<div id='" + PhotoFloat.hashCode(currentAlbum.subalbums[i].cacheBase) + "' " +
+							"<div id='" + photoFloat.hashCode(currentAlbum.subalbums[i].cacheBase) + "' " +
 								"class='album-button-and-caption";
 						if (Options.albums_slide_style)
 							albumButtonAndCaptionHtml += " slide";
@@ -1435,7 +1435,7 @@ $(document).ready(function() {
 						linkContainer.append(caption);
 
 						subalbumsElement.append(linkContainer);
-						container = $("#" + PhotoFloat.hashCode(currentAlbum.subalbums[i].cacheBase));
+						container = $("#" + photoFloat.hashCode(currentAlbum.subalbums[i].cacheBase));
 						// add the clicks
 						container.off('click').css("cursor", "pointer").on('click', {hash: subfolderHash}, function(ev) {
 							window.location.href = ev.data.hash;
@@ -1450,7 +1450,7 @@ $(document).ready(function() {
 								var titleName, randomMediaLink, goTo, humanGeonames;
 								var mediaSrc = chooseThumbnail(randomAlbum, randomMedia, Options.album_thumb_size);
 
-								PhotoFloat.subalbumIndex ++;
+								photoFloat.subalbumIndex ++;
 								mediaWidth = randomMedia.metadata.size[0];
 								mediaHeight = randomMedia.metadata.size[1];
 								if (Options.album_thumb_type == "fit") {
@@ -1471,19 +1471,19 @@ $(document).ready(function() {
 									thumbHeight = correctedAlbumThumbSize;
 								}
 
-								if (PhotoFloat.isByDateCacheBase(currentAlbum.cacheBase)) {
-									titleName = PhotoFloat.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
-									// randomMediaLink = PhotoFloat.pathJoin(["#!", randomMedia.dayAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
-								} else if (PhotoFloat.isByGpsCacheBase(currentAlbum.cacheBase)) {
-									humanGeonames = PhotoFloat.pathJoin([Options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
-									titleName = PhotoFloat.pathJoin([humanGeonames, randomMedia.name]);
-									// randomMediaLink = PhotoFloat.pathJoin(["#!", randomMedia.gpsAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
-								} else if (PhotoFloat.isSearchCacheBase(currentAlbum.cacheBase)) {
+								if (photoFloat.isByDateCacheBase(currentAlbum.cacheBase)) {
+									titleName = photoFloat.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
+									// randomMediaLink = photoFloat.pathJoin(["#!", randomMedia.dayAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
+								} else if (photoFloat.isByGpsCacheBase(currentAlbum.cacheBase)) {
+									humanGeonames = photoFloat.pathJoin([Options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
+									titleName = photoFloat.pathJoin([humanGeonames, randomMedia.name]);
+									// randomMediaLink = photoFloat.pathJoin(["#!", randomMedia.gpsAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
+								} else if (photoFloat.isSearchCacheBase(currentAlbum.cacheBase)) {
 									titleName = randomMedia.albumName;
-									// randomMediaLink = PhotoFloat.pathJoin(["#!", randomMedia.foldersCacheBase, currentAlbum.cacheBase + Options.cache_folder_separator + theSubalbum.cacheBase, randomMedia.cacheBase]);
+									// randomMediaLink = photoFloat.pathJoin(["#!", randomMedia.foldersCacheBase, currentAlbum.cacheBase + Options.cache_folder_separator + theSubalbum.cacheBase, randomMedia.cacheBase]);
 								} else {
 									titleName = randomMedia.albumName;
-									// randomMediaLink = PhotoFloat.pathJoin(["#!", randomMedia.foldersCacheBase, randomMedia.cacheBase]);
+									// randomMediaLink = photoFloat.pathJoin(["#!", randomMedia.foldersCacheBase, randomMedia.cacheBase]);
 								}
 								randomMediaLink = photoFloat.encodeHash(randomAlbum, randomMedia);
 
@@ -1586,7 +1586,7 @@ $(document).ready(function() {
 				});
 				$("#by-gps-view").removeClass("active").addClass("selected");
 			} else if (
-				PhotoFloat.isSearchCacheBase(currentAlbum.cacheBase) && currentAlbum.media.length === 0 && currentAlbum.subalbums.length === 0
+				photoFloat.isSearchCacheBase(currentAlbum.cacheBase) && currentAlbum.media.length === 0 && currentAlbum.subalbums.length === 0
 			) {
 				$("#folders-view").on("click", function(ev) {
 					$("#album-view").removeClass("hidden");
@@ -1752,7 +1752,7 @@ $(document).ready(function() {
 		var mediaSize = Math.max(mediaWidth, mediaHeight);
 		var mediaRatio = mediaWidth / mediaHeight, containerRatio;
 
-		chosenMedia = PhotoFloat.originalMediaPath(media);
+		chosenMedia = photoFloat.originalMediaPath(media);
 		maxSize = 0;
 
 		if (container === null) {
@@ -1840,7 +1840,7 @@ $(document).ready(function() {
 	}
 
 	function videoOK(media, selector) {
-		var cacheBase = PhotoFloat.pathJoin([media.parent.cacheBase, media.cacheBase]);
+		var cacheBase = photoFloat.pathJoin([media.parent.cacheBase, media.cacheBase]);
 		if (! Modernizr.video) {
 			$('<div id="video-unsupported-html5"' + cacheBase + '>' + _t("#video-unsupported-html5") + '</div>').appendTo(selector);
 			return false;
@@ -1893,18 +1893,18 @@ $(document).ready(function() {
 			// prepare for previous media
 			i = currentMediaIndex;
 			currentAlbum.media[currentMediaIndex].byDateName =
-				PhotoFloat.pathJoin([currentAlbum.media[currentMediaIndex].dayAlbum, currentAlbum.media[currentMediaIndex].name]);
+				photoFloat.pathJoin([currentAlbum.media[currentMediaIndex].dayAlbum, currentAlbum.media[currentMediaIndex].name]);
 			if (currentAlbum.media[currentMediaIndex].hasOwnProperty("gpsAlbum"))
 				currentAlbum.media[currentMediaIndex].byGpsName =
-						PhotoFloat.pathJoin([currentAlbum.media[currentMediaIndex].gpsAlbum, currentAlbum.media[currentMediaIndex].name]);
+						photoFloat.pathJoin([currentAlbum.media[currentMediaIndex].gpsAlbum, currentAlbum.media[currentMediaIndex].name]);
 			if (i === 0)
 				i = currentAlbum.media.length - 1;
 			else
 				i --;
 			prevMedia = currentAlbum.media[i];
-			prevMedia.byDateName = PhotoFloat.pathJoin([prevMedia.dayAlbum, prevMedia.name]);
+			prevMedia.byDateName = photoFloat.pathJoin([prevMedia.dayAlbum, prevMedia.name]);
 			if (prevMedia.hasOwnProperty("gpsAlbum"))
-				prevMedia.byGpsName = PhotoFloat.pathJoin([prevMedia.gpsAlbum, prevMedia.name]);
+				prevMedia.byGpsName = photoFloat.pathJoin([prevMedia.gpsAlbum, prevMedia.name]);
 
 			// prepare for next media
 			i = currentMediaIndex;
@@ -1913,9 +1913,9 @@ $(document).ready(function() {
 			else
 				i ++;
 			nextMedia = currentAlbum.media[i];
-			nextMedia.byDateName = PhotoFloat.pathJoin([nextMedia.dayAlbum, nextMedia.name]);
+			nextMedia.byDateName = photoFloat.pathJoin([nextMedia.dayAlbum, nextMedia.name]);
 			if (nextMedia.hasOwnProperty("gpsAlbum"))
-				nextMedia.byGpsName = PhotoFloat.pathJoin([nextMedia.gpsAlbum, nextMedia.name]);
+				nextMedia.byGpsName = photoFloat.pathJoin([nextMedia.gpsAlbum, nextMedia.name]);
 		}
 
 		if (
@@ -1971,7 +1971,7 @@ $(document).ready(function() {
 		$('#prev').off();
 
 
-		upLink = PhotoFloat.upHash(location.hash);
+		upLink = photoFloat.upHash(location.hash);
 		if (currentAlbum.media.length == 1) {
 			nextLink = "";
 			prevLink = "";
@@ -2037,17 +2037,17 @@ $(document).ready(function() {
 			$('#menu-map-divider').hide();
 		}
 
-		var foldersViewLink = "#!/" + PhotoFloat.pathJoin([
+		var foldersViewLink = "#!/" + photoFloat.pathJoin([
 									currentMedia.foldersCacheBase,
 									currentMedia.cacheBase
 								]);
-		var byDateViewLink = "#!/" + PhotoFloat.pathJoin([
+		var byDateViewLink = "#!/" + photoFloat.pathJoin([
 									currentMedia.dayAlbumCacheBase,
 									currentMedia.foldersCacheBase,
 									currentMedia.cacheBase
 								]);
 		if (currentMedia.gpsAlbumCacheBase)
-			var byGpsViewLink = "#!/" + PhotoFloat.pathJoin([
+			var byGpsViewLink = "#!/" + photoFloat.pathJoin([
 									currentMedia.gpsAlbumCacheBase,
 									currentMedia.foldersCacheBase,
 									currentMedia.cacheBase
@@ -2055,7 +2055,7 @@ $(document).ready(function() {
 
 
 		$(".day-gps-folders-view").addClass("active").removeClass("hidden").removeClass("selected").off("click");
-		if (PhotoFloat.isFolderCacheBase(currentAlbum.cacheBase)) {
+		if (photoFloat.isFolderCacheBase(currentAlbum.cacheBase)) {
 			// folder album: change to by date or by gps view
 			$("#folders-view").removeClass("active").addClass("selected").off("click");
 			$("#by-date-view").on("click", function(ev) {
@@ -2071,7 +2071,7 @@ $(document).ready(function() {
 					return false;
 				});
 			}
-		} else if (PhotoFloat.isByDateCacheBase(currentAlbum.cacheBase)) {
+		} else if (photoFloat.isByDateCacheBase(currentAlbum.cacheBase)) {
 			// by date album: change to folder or by gps view
 			$("#folders-view").on("click", function(ev) {
 				window.location.href = foldersViewLink;
@@ -2086,7 +2086,7 @@ $(document).ready(function() {
 					return false;
 				});
 			}
-		} else if (PhotoFloat.isByGpsCacheBase(currentAlbum.cacheBase)) {
+		} else if (photoFloat.isByGpsCacheBase(currentAlbum.cacheBase)) {
 			$("#folders-view").on("click", function(ev) {
 				window.location.href = foldersViewLink;
 				return false;
@@ -2097,7 +2097,7 @@ $(document).ready(function() {
 			});
 			// by gps album: change to folder or by day view
 			$("#by-gps-view").removeClass("active").addClass("selected").off("click");
-		} else if (PhotoFloat.isSearchCacheBase(currentAlbum.cacheBase)) {
+		} else if (photoFloat.isSearchCacheBase(currentAlbum.cacheBase)) {
 			// by search album: change to folder or by gps or by view
 			$("#folders-view").on("click", function(ev) {
 				window.location.href = foldersViewLink;
@@ -2405,7 +2405,7 @@ $(document).ready(function() {
 			currentAlbum = null;
 
 		previousAlbum = currentAlbum;
-		if (currentAlbum && PhotoFloat.isByDateCacheBase(currentAlbum.cacheBase) && media !== null) {
+		if (currentAlbum && photoFloat.isByDateCacheBase(currentAlbum.cacheBase) && media !== null) {
 			previousMedia = media;
 		} else {
 			previousMedia = currentMedia;
@@ -2426,7 +2426,7 @@ $(document).ready(function() {
 		}
 
 		currentAlbumPathArray = currentAlbum.path.split('/').slice(1);
-		if (PhotoFloat.isByGpsCacheBase(currentAlbum.cacheBase))
+		if (photoFloat.isByGpsCacheBase(currentAlbum.cacheBase))
 			currentAlbumPathArray = currentAlbum.ancestorsNames.slice(2);
 		currentAlbumPath = currentAlbumPathArray.join('/');
 
@@ -2600,7 +2600,7 @@ $(document).ready(function() {
 
 	// this function is needed in order to let this point to the correct value in photoFloat.parseHash
 	function parseHash(hash, callback, error) {
-		if (! PhotoFloat.isSearchHash(hash)) {
+		if (! photoFloat.isSearchHash(hash)) {
 			// reset current album search flag to its default value
 			Options.search_current_album = true;
 			setBooleanCookie("search_current_album", Options.search_current_album);
@@ -2608,9 +2608,9 @@ $(document).ready(function() {
 		}
 
 		if (Object.keys(Options).length > 0) {
-			// if (! PhotoFloat.isSearchHash(hash))
+			// if (! photoFloat.isSearchHash(hash))
 			// 	// reset the return link from search
-			// 	Options.album_to_search_in = PhotoFloat.cleanHash(hash);
+			// 	Options.album_to_search_in = photoFloat.cleanHash(hash);
 			//
 			// if (! Options.hasOwnProperty('album_to_search_in') || ! Options.album_to_search_in)
 			// 	Options.album_to_search_in = Options.folders_string;
@@ -2796,11 +2796,11 @@ $(document).ready(function() {
 	// search
 	$('#search-button').on("click", function() {
 		var searchOptions = '';
-		var array = PhotoFloat.decodeHash(location.hash);
+		var array = photoFloat.decodeHash(location.hash);
 		var albumHash = array[0];
 
 		// save the current hash in order to come back there when exiting from search
-		if (PhotoFloat.isSearchCacheBase(albumHash)) {
+		if (photoFloat.isSearchCacheBase(albumHash)) {
 			// a plain search: get the folder to search in from the search album hash
 			Options.album_to_search_in = albumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
 		} else {
