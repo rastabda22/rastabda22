@@ -29,6 +29,7 @@
 	};
 
 	Utilities.prototype.union = function(a, b) {
+		var self = this;
 		if (a === [])
 			return b;
 		if (b === [])
@@ -44,7 +45,7 @@
 		for (var i = 0; i < b.length; i ++) {
 			if (! a.some(
 				function (e) {
-					return this.normalizeAccordingToOptions(b[i][property]) == this.normalizeAccordingToOptions(e[property]);
+					return self.normalizeAccordingToOptions(b[i][property]) == self.normalizeAccordingToOptions(e[property]);
 				})
 			)
 				union.push(b[i]);
