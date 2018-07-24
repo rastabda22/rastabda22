@@ -1522,14 +1522,16 @@ $(document).ready(function() {
 
 					// check for overflow in album-caption class in order to adapt album caption height to the string length
 					// when diving into search subalbum, the whole album path is showed and it can be lengthy
-					var maxHeight = null;
-					$('.album-caption').each(function() {
-						var thisHeight = $(this)[0].scrollHeight;
-						maxHeight = (thisHeight > maxHeight) ? thisHeight : maxHeight;
-					});
-					var difference = maxHeight - parseFloat($(".album-caption").css("height"));
-					$(".album-button-and-caption").css("height", (parseInt($(".album-button-and-caption").css("height")) + difference) + 'px');
-					$(".album-caption").css("height", maxHeight + 'px');
+					if (Options.show_album_names_below_thumbs) {
+						var maxHeight = null;
+						$('.album-caption').each(function() {
+							var thisHeight = $(this)[0].scrollHeight;
+							maxHeight = (thisHeight > maxHeight) ? thisHeight : maxHeight;
+						});
+						var difference = maxHeight - parseFloat($(".album-caption").css("height"));
+						$(".album-button-and-caption").css("height", (parseInt($(".album-button-and-caption").css("height")) + difference) + 'px');
+						$(".album-caption").css("height", maxHeight + 'px');
+					}
 
 					if (Options.albums_slide_style)
 						$(".album-button").css("background-color", Options.album_button_background_color);
