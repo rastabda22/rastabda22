@@ -599,7 +599,8 @@ $(document).ready(function() {
 
 	function setTitle() {
 		var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, originalTitle;
-		var titleAnchorClasses, titleAnchorClassesItalics, hiddenTitle = "", beginLink, linksToLeave, numLinks, latitude, longitude, arrayCoordinates, numMediaInSubAlbums;
+		var titleAnchorClasses, titleAnchorClassesItalics, hiddenTitle = "", albumTypeString, where, initialValue, searchFolderHash;
+		var beginLink, linksToLeave, numLinks, beginAt, latitude, longitude, arrayCoordinates, numMediaInSubAlbums;
 		// gpsLevelNumber is the number of levels for the by gps tree
 		// current levels are country, region, place => 3
 		var gpsLevelNumber = 3;
@@ -636,7 +637,7 @@ $(document).ready(function() {
 
 		var array = phFl.decodeHash(location.hash);
 		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-		// var albumHash = array[0];
+		var albumHash = array[0];
 		// var mediaHash = array[1];
 		// var mediaFolderHash = array[2];
 		// var savedSearchSubAlbumHash = array[3];
@@ -764,20 +765,19 @@ $(document).ready(function() {
 			// (optional) i=2: image cache or folder
 			// (optional) i=3 up: folder or image
 			// (optional) i=n: image
-			var where;
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>&raquo;";
 
 			if (
 				Options.search_current_album &&
 				[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) == -1
 			) {
-				var albumTypeString = '';
-
+				searchFolderHash = albumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
 				where =
 					 "<a class='main-search-link' href='#!/" + currentAlbum.cacheBase + "'>" +
-					 _t("#search-in") +
+					 _t("#by-search") +
 					 "</a> " +
-					 "<span id='search-album-to-be-filled'></span>";
+					 _t("#in") +
+					 " <span id='search-album-to-be-filled'></span>";
 			} else {
 				where =
 				 	"<a class='search-link' href='#!/" + currentAlbum.cacheBase + "'>" +
@@ -785,19 +785,14 @@ $(document).ready(function() {
 					"</a>";
 			}
 
-			title += "<span class='title-no-anchor'>(";
-
-			title += where;
-
-			title += ")</span>";
+			title += "<span class='title-no-anchor'>(" + where + ")</span>";
+			where = util.stripHtmlAndReplaceEntities(where);
 
 			// do not show the options and the search words, they are visible in the menu
 			// show the image name, if it is there
 			if (currentMedia !== null) {
 				title += "&raquo;";
 			}
-
-			where = util.stripHtmlAndReplaceEntities(where);
 
 			if (
 				components.length > 2 &&
@@ -836,21 +831,38 @@ $(document).ready(function() {
 				title += "&raquo;";
 
 			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
-				title += "<span class='title-no-anchor'>(";
-				title += "<a class='search-link' href='" + savedSearchAlbumHash + "'>";
-				title += _t("#by-search");
-				title += "</a>";
-				title += ")</span>";
-				title += "&raquo;";
+				searchFolderHash = savedSearchAlbumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
+				if (searchFolderHash.split(Options.cache_folder_separator).length > 1) {
+					where =
+						 "<a class='main-search-link' href='#!/" + savedSearchAlbumHash + "'>" +
+						 _t("#by-search") +
+						 "</a> " +
+						 _t("#in") +
+						 " <span id='search-album-to-be-filled'></span>";
+				} else {
+					where =
+					 	"<a class='search-link' href='#!/" + savedSearchAlbumHash + "'>" +
+						_t("#by-search") +
+						"</a>";
+				}
 
-				documentTitle = " (" + _t("#by-search") + ") \u00ab " + documentTitle;
+				title += "<span class='title-no-anchor'>(" + where + ")</span>";
+				title += "&raquo;";
+				where = util.stripHtmlAndReplaceEntities(where);
+
+				documentTitle += " (" + where +") \u00ab " + documentTitle;
 			}
 
 			documentTitle += components[0];
 			if (components.length > 2 || currentMedia !== null)
 				documentTitle = " \u00ab " + documentTitle;
 
-			for (i = 2; i < components.length; ++i) {
+			initialValue = 2;
+			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
+				// the  folders from the first until the search folder inclusive must not be shown
+				initialValue = savedSearchAlbumHash.split(Options.cache_folder_separator).slice(2).length + 1;
+			}
+			for (i = initialValue; i < components.length; ++i) {
 				if (i < components.length - 1 || currentMedia !== null)
 					title += "<a class='" + titleAnchorClasses + "' href='#!/" + encodeURI(currentAlbum.ancestorsCacheBase[i]) + "'>";
 				else
@@ -891,24 +903,12 @@ $(document).ready(function() {
 				title += ")</span>";
 			}
 
-			for (i = 2; i < components.length; ++i) {
+			for (i = initialValue; i < components.length; ++i) {
 				// keep building the html page title
 				documentTitle = textComponents[i] + documentTitle;
 				if (i < components.length - 1 || currentMedia !== null)
 					documentTitle = " \u00ab " + documentTitle;
 			}
-		}
-
-		// leave only the last link on mobile
-		numLinks = (title.match(/<a class=/g) || []).length;
-		linksToLeave = 1;
-		if (isMobile.any() && numLinks > linksToLeave) {
-			for (i = 1; i <= numLinks - linksToLeave; i ++) {
-				beginLink = title.indexOf("<a class=", 3);
-				hiddenTitle += title.substring(0, beginLink);
-				title = title.substring(beginLink);
-			}
-			title = "<a id=\"dots\" href=\"javascript:void(0)\">... &raquo; </a><span id=\"hidden-title\">" + hiddenTitle + "</span> " + title;
 		}
 
 		if (currentMedia !== null) {
@@ -922,20 +922,36 @@ $(document).ready(function() {
 			}
 		}
 
-		if (currentMedia === null && currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1) {
-			title += " &raquo; <span id=\"media-name\">" + util.trimExtension(currentAlbum.media[0].name) + "</span>";
+		if (isMobile.any()) {
+			// leave only the last link on mobile
+			if (title.indexOf("#search-album-to-be-filled") !== -1)
+				beginAt = title.indexOf("search-album-to-be-filled");
+			else
+				beginAt = 0;
+			numLinks = (title.substring(beginAt).match(/<a class=/g) || []).length;
+			linksToLeave = 1;
+			if (numLinks > linksToLeave) {
+				for (i = 1; i <= numLinks - linksToLeave; i ++) {
+					beginLink = title.indexOf("<a class=", beginAt);
+					hiddenTitle += title.substring(0, beginLink);
+					title = title.substring(beginLink);
+				}
+				title = "<a id=\"dots\" href=\"javascript:void(0)\">... &raquo; </a><span id=\"hidden-title\">" + hiddenTitle + "</span> " + title;
+			}
 		}
 
 		$("#title-string").html(title);
 
-		$("#dots").off();
-		$("#dots").on('click', function(ev) {
-			if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-				$("#dots").hide();
-				$("#hidden-title").show();
-				return false;
-			}
-		});
+		if (isMobile.any()) {
+			$("#dots").off();
+			$("#dots").on('click', function(ev) {
+				if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+					$("#dots").hide();
+					$("#hidden-title").show();
+					return false;
+				}
+			});
+		}
 
 		// keep generating the html page title
 		if (currentMedia !== null)
@@ -945,36 +961,47 @@ $(document).ready(function() {
 
 		document.title = documentTitle;
 
-		// get the names from the album
-		// we must use getAlbum() because the album could not be in the cache yet (as when ctl-r is pressed)
-		phFl.getAlbum(
-			Options.album_to_search_in,
-			function(theAlbum) {
-				var whereLinks = '', thisCacheBase, name, documentTitle;
-				if (theAlbum.hasOwnProperty('ancestorsNames')) {
-					albumTypeString = "<a href='#!/" + Options.by_gps_string + "'"  + _t('#by-gps') + ']</a> ' + ' &raquo; ';
-					for (var i = 2; i < theAlbum.ancestorsNames.length; i ++) {
-						name = theAlbum.ancestorsNames[i];
-						if (i == 3 && util.isByDateCacheBase(Options.album_to_search_in))
-							// convert the month number to localized month name
-							name = _t("#month-" + name);
-						thisCacheBase = "#!/" + theAlbum.ancestorsCacheBase.slice(2, i + 1).join(Options.cache_folder_separator);
-						if (i > 2)
-							whereLinks += ' &raquo; ';
-						whereLinks += "<a class='search-link' href='" + thisCacheBase + "'>" + name + "</a>";
+
+		if (currentMedia === null && currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1) {
+			title += " &raquo; <span id=\"media-name\">" + util.trimExtension(currentAlbum.media[0].name) + "</span>";
+		}
+
+		if ($("#search-album-to-be-filled").length) {
+			// for searches in current folder we must get the names from the album
+			// we must use getAlbum() because the album could not be in the cache yet (as when ctl-r is pressed)
+			phFl.getAlbum(
+				searchFolderHash,
+				function(theAlbum) {
+					var whereLinks = '', thisCacheBase, name, documentTitle;
+
+					if (theAlbum.hasOwnProperty('ancestorsNames')) {
+						albumTypeString = "<a href='#!/" + Options.by_gps_string + "'"  + _t('#by-gps') + ']</a> ' + ' &raquo; ';
+						for (var i = 2; i < theAlbum.ancestorsNames.length; i ++) {
+							name = theAlbum.ancestorsNames[i];
+							if (i == 3 && util.isByDateCacheBase(Options.album_to_search_in))
+								// convert the month number to localized month name
+								name = _t("#month-" + name);
+							thisCacheBase = "#!/" + theAlbum.ancestorsCacheBase.slice(2, i + 1).join(Options.cache_folder_separator);
+							if (i > 2)
+								whereLinks += ' &raquo; ';
+							whereLinks += "<a class='search-link' href='" + thisCacheBase + "'>" + name + "</a>";
+						}
 					}
-				}
 
-				// insert the album tree links in DOM
-				$("#search-album-to-be-filled").replaceWith(whereLinks);
-				// correct the page title too
-				documentTitle = $(document).attr('title');
-				documentTitle = documentTitle.replace(_t("#search-in") + ' ', _t("#search-in") + ' ' + util.stripHtmlAndReplaceEntities(whereLinks));
-				document.title = documentTitle;
+					// insert the album tree links in DOM (if )
+					$("#search-album-to-be-filled").replaceWith(whereLinks);
 
-			},
-			die
-		);
+					// correct the page title too
+					documentTitle = $(document).attr('title');
+					documentTitle = documentTitle.replace(
+						_t("#by-search") + ' ' + _t("#-in") + ' ',
+						_t("#by-search") + ' ' + _t("#-in") + ' ' + util.stripHtmlAndReplaceEntities(whereLinks)
+					);
+					document.title = documentTitle;
+				},
+				die
+			);
+		}
 
 		setOptions();
 
