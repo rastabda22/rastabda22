@@ -427,7 +427,11 @@ $(document).ready(function() {
 		else
 			$("ul#right-menu li.hide-title").removeClass("selected");
 
-		if (currentMedia !== null || currentAlbum !== null && currentAlbum.subalbums.length === 0) {
+		if (
+			currentMedia !== null ||
+			util.isAlbumWithOneMedia(currentAlbum) ||
+			currentAlbum !== null && currentAlbum.subalbums.length === 0
+		) {
 			$("ul#right-menu li.slide").addClass("hidden");
 		} else {
 			$("ul#right-menu li.slide").removeClass("hidden");
@@ -437,7 +441,11 @@ $(document).ready(function() {
 				$("ul#right-menu li.slide").removeClass("selected");
 		}
 
-		if (currentMedia !== null || currentAlbum !== null && currentAlbum.subalbums.length <= 1 && currentAlbum.media.length <= 1) {
+		if (
+			currentMedia !== null ||
+			util.isAlbumWithOneMedia(currentAlbum) ||
+			currentAlbum !== null && currentAlbum.subalbums.length <= 1 && currentAlbum.media.length <= 1
+		) {
 			$("ul#right-menu li.spaced").addClass("hidden");
 		} else {
 			$("ul#right-menu li.spaced").removeClass("hidden");
@@ -446,7 +454,11 @@ $(document).ready(function() {
 			else
 				$("ul#right-menu li.spaced").removeClass("selected");
 		}
-		if (currentMedia !== null || currentAlbum !== null && currentAlbum.subalbums.length === 0) {
+
+		if (
+			currentMedia !== null ||
+			util.isAlbumWithOneMedia(currentAlbum) ||
+			currentAlbum !== null && currentAlbum.subalbums.length === 0) {
 			$("ul#right-menu li.square-album-thumbnails").addClass("hidden");
 		} else {
 			$("ul#right-menu li.square-album-thumbnails").removeClass("hidden");
@@ -456,7 +468,11 @@ $(document).ready(function() {
 				$("ul#right-menu li.square-album-thumbnails").removeClass("selected");
 		}
 
-		if (currentMedia !== null || currentAlbum !== null && (currentAlbum.subalbums.length === 0 || ! util.isFolderCacheBase(currentAlbum.cacheBase))) {
+		if (
+			currentMedia !== null ||
+			util.isAlbumWithOneMedia(currentAlbum) ||
+			currentAlbum !== null && (currentAlbum.subalbums.length === 0 || ! util.isFolderCacheBase(currentAlbum.cacheBase))
+		) {
 			$("ul#right-menu li.album-names").addClass("hidden");
 		} else {
 			$("ul#right-menu li.album-names").removeClass("hidden");
@@ -468,6 +484,7 @@ $(document).ready(function() {
 
 		if (
 			currentMedia !== null ||
+			util.isAlbumWithOneMedia(currentAlbum) ||
 			currentAlbum !== null && currentAlbum.subalbums.length === 0 && Options.hide_title
 		) {
 			$("ul#right-menu li.media-count").addClass("hidden");
@@ -481,8 +498,10 @@ $(document).ready(function() {
 
 		if (
 			currentMedia !== null ||
+			util.isAlbumWithOneMedia(currentAlbum) ||
 			currentAlbum !== null && (
-				currentAlbum.media.length === 0 || ! util.isFolderCacheBase(currentAlbum.cacheBase) && currentAlbum.media.length > Options.big_virtual_folders_threshold
+				currentAlbum.media.length === 0 ||
+				! util.isFolderCacheBase(currentAlbum.cacheBase) && currentAlbum.media.length > Options.big_virtual_folders_threshold
 			)
 		) {
 			$("ul#right-menu li.media-names").addClass("hidden");
@@ -496,8 +515,10 @@ $(document).ready(function() {
 
 		if (
 			currentMedia !== null ||
+			util.isAlbumWithOneMedia(currentAlbum) ||
 			currentAlbum !== null && (
-				currentAlbum.media.length === 0 || ! util.isFolderCacheBase(currentAlbum.cacheBase) && currentAlbum.media.length > Options.big_virtual_folders_threshold
+				currentAlbum.media.length === 0 ||
+				! util.isFolderCacheBase(currentAlbum.cacheBase) && currentAlbum.media.length > Options.big_virtual_folders_threshold
 			)
 		) {
 			$("ul#right-menu li.square-media-thumbnails").addClass("hidden");
@@ -523,7 +544,9 @@ $(document).ready(function() {
 		}
 
 		if (
-			currentAlbum !== null && (util.isSearchCacheBase(currentAlbum.cacheBase) || currentAlbum.cacheBase == Options.by_search_string) ||
+				currentAlbum !== null &&
+				(util.isSearchCacheBase(currentAlbum.cacheBase) || currentAlbum.cacheBase == Options.by_search_string)
+				||
 			Options.search_inside_words ||
 			Options.search_any_word ||
 			Options.search_case_sensitive ||
