@@ -488,6 +488,7 @@ video {
 ul#right-menu li {
 	padding: 0 .5em;
 	cursor: pointer;
+	font-size: 90%;
 }
 
 ul#right-menu li.caption, ul#right-menu li:not(.active) {
