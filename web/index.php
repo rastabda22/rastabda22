@@ -276,7 +276,7 @@
 		<li class='sort media-sort sort-reverse active'></li>
 
 		<li class='ui caption'></li>
-		<li class='ui hide-title active'></li>
+		<li class='ui hide-title-and-thumbnails active'></li>
 		<li class='ui slide active'></li>
 		<li class='ui spaced active'></li>
 		<li class='ui album-names active'></li>

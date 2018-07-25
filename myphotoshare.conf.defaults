@@ -282,7 +282,7 @@ language =
 page_title = My photos
 
 # Should the title be hidden by default
-hide_title = false
+hide_title_and_thumbnails = false
 
 # spacing between thumbnails, pixels (integer)
 # the user can modify this value
