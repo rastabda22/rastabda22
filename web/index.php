@@ -242,7 +242,7 @@
 		<div id="error-too-many-images"></div>
 		<div id="powered-by">
 			<span id="powered-by-string">Powered by</span>
-			<a href="https://github.com/paolobenve/myphotoshare" target="_blank">MyPhotoShare</a>
+			<a href="https://gitlab.com/paolobenve/myphotoshare" target="_blank">MyPhotoShare</a>
 		</div>
 	</div>
 
