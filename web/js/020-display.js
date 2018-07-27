@@ -1698,7 +1698,7 @@ $(document).ready(function() {
 					height = maxSize;
 				}
 			}
-			if (photoSrc != previousSrc || media.attr("width") != width || media.attr("height") != height) {
+			if (encodeURI(photoSrc) != previousSrc || media.attr("width") != width || media.attr("height") != height) {
 				$("link[rel=image_src]").remove();
 				$('link[rel="video_src"]').remove();
 				$("head").append("<link rel=\"image_src\" href=\"" + encodeURI(photoSrc) + "\" />");
