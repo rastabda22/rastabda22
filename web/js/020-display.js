@@ -1710,7 +1710,7 @@ $(document).ready(function() {
 			}
 		}
 
-		if (parseInt(media.attr("width")) > containerWidth && media.attr("ratio") > containerRatio) {
+		if (parseInt(media.attr("width")) > containerWidth && media.attr("ratio") >= containerRatio) {
 			height = container.width() / media.attr("ratio");
 			media
 				.css("width", containerWidth + "px")
@@ -1723,7 +1723,7 @@ $(document).ready(function() {
 				mediaBarBottom = 0;
 			else if (mediaObject.mediaType == "photo")
 				mediaBarBottom = (containerHeight - containerWidth / ratio) / 2;
-		} else if (parseInt(media.attr("height")) > containerHeight && media.attr("ratio") < containerRatio) {
+		} else if (parseInt(media.attr("height")) > containerHeight && media.attr("ratio") <= containerRatio) {
 			media
 				.css("height", containerHeight + "px")
 				.css("width", (containerHeight * ratio) + "px")
