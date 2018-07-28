@@ -181,11 +181,17 @@ $(document).ready(function() {
 	}
 
 	function swipeRight(album, media) {
-		var array, element, triggerLoad, link;
+		var array, savedSearchSubAlbumHash, savedSearchAlbumHash, element, triggerLoad, link;
 
 		if (media && ! $("#album-view").hasClass('fired')) {
 			$("#album-view").addClass('fired');
-			link = phFl.encodeHash(album, media);
+
+			array = phFl.decodeHash(location.hash);
+			// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
+			savedSearchSubAlbumHash = array[3];
+			savedSearchAlbumHash = array[4];
+
+			link = phFl.encodeHash(album, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
 			$("#next-media").prepend('<div class="media-box-inner left" style="right: 100%;"></div>');
 			if (
 				media.mediaType == "photo" ||
@@ -230,11 +236,17 @@ $(document).ready(function() {
 	}
 
 	function swipeLeft(album, media) {
-		var array, element, triggerLoad, link;
+		var array, savedSearchSubAlbumHash, savedSearchAlbumHash, element, triggerLoad, link;
 
 		if (media && ! $("#album-view").hasClass('fired')) {
 			$("#album-view").addClass('fired');
-			link = phFl.encodeHash(album, media);
+
+			array = phFl.decodeHash(location.hash);
+			// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
+			savedSearchSubAlbumHash = array[3];
+			savedSearchAlbumHash = array[4];
+
+			link = phFl.encodeHash(album, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
 			$("#next-media").append('<div class="media-box-inner right" style="left: 100%;"></div>');
 			if (
 				media.mediaType == "photo" ||
@@ -1161,10 +1173,15 @@ $(document).ready(function() {
 		var tooBig = false, isVirtualAlbum = false;
 		var mapLinkIcon;
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
-		var folderArray, folder;
+		var array, folderArray, folder, savedSearchSubAlbumHash, savedSearchAlbumHash;
 
 		phFl.subalbumIndex = 0;
 		numSubAlbumsReady = 0;
+
+		array = phFl.decodeHash(location.hash);
+		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
+		savedSearchSubAlbumHash = array[3];
+		savedSearchAlbumHash = array[4];
 
 		if (Options.albums_slide_style)
 			slideBorder = 3;
@@ -1179,11 +1196,6 @@ $(document).ready(function() {
 			tooBig = currentAlbum.path.split("/").length < 4 && currentAlbum.media.length > Options.big_virtual_folders_threshold;
 			if (populateMedia === true && isVirtualAlbum)
 				populateMedia = populateMedia && ! tooBig;
-
-			var array = phFl.decodeHash(location.hash);
-			// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-			var savedSearchSubAlbumHash = array[3];
-			var savedSearchAlbumHash = array[4];
 
 			if (isVirtualAlbum && tooBig) {
 				$("#thumbs").empty();
@@ -1285,7 +1297,7 @@ $(document).ready(function() {
 				} else {
 					// reset mediaLink
 					if (currentAlbum.media.length)
-						mediaLink = phFl.encodeHash(currentAlbum, currentAlbum.media[0]);
+						mediaLink = phFl.encodeHash(currentAlbum, currentAlbum.media[0], savedSearchSubAlbumHash, savedSearchAlbumHash);
 					else
 						mediaLink = "#!/" + currentAlbum.cacheBase;
 
@@ -1876,9 +1888,15 @@ $(document).ready(function() {
 
 	function showMedia(album) {
 		var text, thumbnailSize, i, linkTag, triggerLoad, array, element;
-		var exposureTime;
+		var exposureTime, albumViewHeight;
+		var array, savedSearchSubAlbumHash, savedSearchAlbumHash;
 
-		mediaLink = phFl.encodeHash(currentAlbum, currentMedia);
+		array = phFl.decodeHash(location.hash);
+		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
+		savedSearchSubAlbumHash = array[3];
+		savedSearchAlbumHash = array[4];
+
+		mediaLink = phFl.encodeHash(currentAlbum, currentMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
 		firstEscKey = true;
 
 		thumbnailSize = Options.media_thumb_size;
@@ -1905,7 +1923,7 @@ $(document).ready(function() {
 				$("#album-view").removeClass("hidden");
 		}
 
-		var albumViewHeight = 0;
+		albumViewHeight = 0;
 		if ($("#album-view").is(":visible"))
 			albumViewHeight = $("#album-view").outerHeight();
 
@@ -2001,9 +2019,13 @@ $(document).ready(function() {
 			prevLink = "";
 			$("#media-view").css('cursor', 'default');
 		} else {
+			var array = phFl.decodeHash(location.hash);
+			// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
+			var savedSearchSubAlbumHash = array[3];
+			var savedSearchAlbumHash = array[4];
 
-			nextLink = phFl.encodeHash(currentAlbum, nextMedia);
-			prevLink = phFl.encodeHash(currentAlbum, prevMedia);
+			nextLink = phFl.encodeHash(currentAlbum, nextMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
+			prevLink = phFl.encodeHash(currentAlbum, prevMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
 			$("#next").show();
 			$("#prev").show();
 			$("#media-view")
