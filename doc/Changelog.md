@@ -1,8 +1,8 @@
-* Better swiping: the new image enters with the current one exiting
+* Better swiping: the new image enters while the current one exits
 * Various bug fixes
-* Always save the gps root album so that the absence of media with gps data can be detected without any js error
+* Scanner: always save the gps root album so that the absence of media with gps data can be detected without any js error
 * Added option `hide_title_and_thumbnails`, and added correponding menu entry that hides title and thumbnails, for a less distracted media vision
-* speed up loading of images
+* Speed up loading of images
 * Better implementation of cache subdirs in md5 mode: a different subdirs schema is used according to the media number, in such a way that no more than 400 files and 256 subdirs are used (see issue #106); when media number is low, a default subdir is used (new option `default_cache_album`)
 
 ### version 3.5 (July 15, 2018)
