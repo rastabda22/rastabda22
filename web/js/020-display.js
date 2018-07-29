@@ -102,83 +102,204 @@ $(document).ready(function() {
 		return language;
 	}
 
-	// adapted from https://stackoverflow.com/questions/15084675/how-to-implement-swipe-gestures-for-mobile-devices#answer-27115070
-	function addSwipeDetection(el,callback) {
-		var swipe_det, ele, min_x, min_y, max_x, max_y, direc;
-		var touchStart, touchMove, touchEnd;
-		touchStart = function(e) {
-			var t = e.touches[0];
-			swipe_det.sX = t.screenX;
-			swipe_det.sY = t.screenY;
-		};
-		touchMove = function(e) {
-			e.preventDefault();
-			var t = e.touches[0];
-			swipe_det.eX = t.screenX;
-			swipe_det.eY = t.screenY;
-		};
-		touchEnd = function(e) {
-			//horizontal detection
-			if (
-				(swipe_det.eX - min_x > swipe_det.sX || swipe_det.eX + min_x < swipe_det.sX) &&
-				swipe_det.eY < swipe_det.sY + max_y &&
-				swipe_det.sY > swipe_det.eY - max_y &&
-				swipe_det.eX > 0
-			) {
-				if(swipe_det.eX > swipe_det.sX)
-					direc = "r";
-				else
-					direc = "l";
-			}
-			//vertical detection
-			else if (
-				(swipe_det.eY - min_y > swipe_det.sY || swipe_det.eY + min_y < swipe_det.sY) &&
-				swipe_det.eX < swipe_det.sX + max_x &&
-				swipe_det.sX > swipe_det.eX - max_x &&
-				swipe_det.eY > 0
-			) {
-				if(swipe_det.eY > swipe_det.sY)
-					direc = "d";
-				else
-					direc = "u";
-			}
-
-			if (direc !== "") {
-				if(typeof callback == 'function')
-					callback(el,direc);
-			}
-			direc = "";
-			swipe_det.sX = 0;
-			swipe_det.eX = 0;
-		};
-		swipe_det = {};
-		swipe_det.sX = 0; swipe_det.eX = 0;
-		min_x = 30;  //min x swipe for horizontal swipe
-		max_x = 30;  //max x difference for vertical swipe
-		min_y = 50;  //min y swipe for vertical swipe
-		max_y = 60;  //max y difference for horizontal swipe
-		direc = "";
-		ele = document.getElementById(el);
-		ele.addEventListener('touchstart', touchStart, false);
-		ele.addEventListener('touchmove', touchMove, false);
-		ele.addEventListener('touchend', touchEnd, false);
+	function cssWidth(mediaSelector) {
+		return parseInt($(mediaSelector).css("width"));
 	}
 
-	function swipe(el,d) {
-		if (d == "r") {
-			swipeRight(currentAlbum, prevMedia);
-		} else if (d == "l") {
-			swipeLeft(currentAlbum, nextMedia);
-		} else if (d == "d") {
-			if (upLink) {
-				fromEscKey = true;
-				swipeDown(upLink);
-			}
-		} else if (d == "u") {
-			if (currentMedia === null)
-				swipeUp(mediaLink);
-		}
+	function reductionWidth(mediaSelector) {
+		return $(mediaSelector).attr("width");
 	}
+
+	function pinched(mediaSelector) {
+		return cssWidth(mediaSelector) == reductionWidth(mediaSelector);
+	}
+
+	// define the actions to be taken on pinch, swipe, tap, double tap
+	function addGesturesDetection(detectionSelector, mediaSelector) {
+		// get the two initial values:
+
+		// the reduction width in the page
+		var myCssWidth = cssWidth(mediaSelector);
+
+		// the reduction width
+		var myReductionWidth = reductionWidth(mediaSelector);
+
+		$(detectionSelector).swipe(
+			{
+				tap:function(event, target) {
+					// when small => swipe left
+					// when big => pinch out (make smaller)
+					if (fingerCount === 1) {
+						if (! pinched(mediaSelector)) {
+	 						swipeLeft(currentAlbum, prevMedia);
+						} else {
+							$(mediaSelector).animate(
+								{
+					        'width': myCssWidth,
+									'height': auto
+					    	}
+							);
+						}
+					}
+        },
+        doubleTap:function(event, target) {
+					// when small => pinch in (make bigger)
+					// when big => pinch further in choosing a bigger reduction
+					if (fingerCount === 1) {
+						if (! pinched(mediaSelector)) {
+							$(mediaSelector).animate(
+								{
+					        'width': myReductionWidth,
+									'height': auto
+					    	}
+							);
+						} else {
+							// TO DO: select next bigger reduction
+						}
+					}
+        },
+				swipeLeft:function(event, direction, distance, duration, fingerCount) {
+					// when small => swipe next media
+					// when big => nothing
+					if (fingerCount === 1 && ! pinched(mediaSelector)) {
+ 						swipeLeft(currentAlbum, prevMedia);
+ 					}
+				},
+				swipeRight:function(event, direction, distance, duration, fingerCount) {
+					// when small => swipe previous media
+					// when big => nothing
+					if (fingerCount === 1 && ! pinched(mediaSelector)) {
+						swipeRight(currentAlbum, prevMedia);
+					}
+				},
+				swipeUp:function(event, direction, distance, duration, fingerCount) {
+					// when small => go from album to its 1st media
+					// when big => nothing
+					if (fingerCount === 1 && ! pinched(mediaSelector) && currentMedia === null)
+						swipeUp(mediaLink);
+				},
+				swipeDown:function(event, direction, distance, duration, fingerCount) {
+					// when small => go from media to its album
+					// when big => nothing
+					if (fingerCount === 1 && ! pinched(mediaSelector) && upLink) {
+						fromEscKey = true;
+						swipeDown(upLink);
+					}
+				},
+				pinchIn:function(event, direction, distance, duration, fingerCount, pinchZoom) {
+					// when small => pinch in (make bigger)
+					// when big => pinch further in choosing a bigger reduction
+					if (fingerCount > 1) {
+						if (! pinched(mediaSelector)) {
+							$(mediaSelector).animate(
+								{
+					        'width': myReductionWidth,
+									'height': auto
+					    	}
+							);
+						} else {
+							// TO DO: select next bigger reduction
+						}
+					}
+				},
+				pinchOut:function(event, direction, distance, duration, fingerCount, pinchZoom) {
+					// when small => nothing
+					// when big => pinch out
+					if (fingerCount > 1) {
+						if (pinched(mediaSelector)) {
+							$(mediaSelector).animate(
+								{
+					        'width': myCssWidth,
+									'height': auto
+					    	}
+							);
+						}
+					}
+				},
+				fingers:$.fn.swipe.fingers.ALL
+			}
+		);
+	};
+
+
+
+	// // adapted from https://stackoverflow.com/questions/15084675/how-to-implement-swipe-gestures-for-mobile-devices#answer-27115070
+	// function addSwipeDetection(el,callback) {
+	// 	var swipe_det, ele, min_x, min_y, max_x, max_y, direc;
+	// 	var touchStart, touchMove, touchEnd;
+	// 	touchStart = function(e) {
+	// 		var t = e.touches[0];
+	// 		swipe_det.sX = t.screenX;
+	// 		swipe_det.sY = t.screenY;
+	// 	};
+	// 	touchMove = function(e) {
+	// 		e.preventDefault();
+	// 		var t = e.touches[0];
+	// 		swipe_det.eX = t.screenX;
+	// 		swipe_det.eY = t.screenY;
+	// 	};
+	// 	touchEnd = function(e) {
+	// 		//horizontal detection
+	// 		if (
+	// 			(swipe_det.eX - min_x > swipe_det.sX || swipe_det.eX + min_x < swipe_det.sX) &&
+	// 			swipe_det.eY < swipe_det.sY + max_y &&
+	// 			swipe_det.sY > swipe_det.eY - max_y &&
+	// 			swipe_det.eX > 0
+	// 		) {
+	// 			if(swipe_det.eX > swipe_det.sX)
+	// 				direc = "r";
+	// 			else
+	// 				direc = "l";
+	// 		}
+	// 		//vertical detection
+	// 		else if (
+	// 			(swipe_det.eY - min_y > swipe_det.sY || swipe_det.eY + min_y < swipe_det.sY) &&
+	// 			swipe_det.eX < swipe_det.sX + max_x &&
+	// 			swipe_det.sX > swipe_det.eX - max_x &&
+	// 			swipe_det.eY > 0
+	// 		) {
+	// 			if(swipe_det.eY > swipe_det.sY)
+	// 				direc = "d";
+	// 			else
+	// 				direc = "u";
+	// 		}
+	//
+	// 		if (direc !== "") {
+	// 			if(typeof callback == 'function')
+	// 				callback(el,direc);
+	// 		}
+	// 		direc = "";
+	// 		swipe_det.sX = 0;
+	// 		swipe_det.eX = 0;
+	// 	};
+	// 	swipe_det = {};
+	// 	swipe_det.sX = 0; swipe_det.eX = 0;
+	// 	min_x = 30;  //min x swipe for horizontal swipe
+	// 	max_x = 30;  //max x difference for vertical swipe
+	// 	min_y = 50;  //min y swipe for vertical swipe
+	// 	max_y = 60;  //max y difference for horizontal swipe
+	// 	direc = "";
+	// 	ele = document.getElementById(el);
+	// 	ele.addEventListener('touchstart', touchStart, false);
+	// 	ele.addEventListener('touchmove', touchMove, false);
+	// 	ele.addEventListener('touchend', touchEnd, false);
+	// }
+	//
+	// function swipe(el,d) {
+	// 	if (d == "r") {
+	// 		swipeRight(currentAlbum, prevMedia);
+	// 	} else if (d == "l") {
+	// 		swipeLeft(currentAlbum, nextMedia);
+	// 	} else if (d == "d") {
+	// 		if (upLink) {
+	// 			fromEscKey = true;
+	// 			swipeDown(upLink);
+	// 		}
+	// 	} else if (d == "u") {
+	// 		if (currentMedia === null)
+	// 			swipeUp(mediaLink);
+	// 	}
+	// }
 
 	function swipeRight(album, media) {
 		var array, savedSearchSubAlbumHash, savedSearchAlbumHash, element, triggerLoad, link;
@@ -221,7 +342,8 @@ $(document).ready(function() {
 									$("#media-box-inner").remove();
 									$(".media-box-inner.left").removeClass('left').attr('id', 'media-box-inner').css("right", "");
 									// since the id #media-box-inner has been moved from one element to another, swipe detection must be enabled again
-									addSwipeDetection('media-box-inner',swipe);
+									// addSwipeDetection('media-box-inner',swipe);
+									addGesturesDetection('media-box-inner', 'media');
 									$("#media-left").attr('id', 'media');
 									$("#album-view").removeClass('fired');
 									window.location.href = link;
@@ -275,7 +397,8 @@ $(document).ready(function() {
 									$("#media-box-inner").remove();
 									$(".media-box-inner.right").removeClass('right').attr('id', 'media-box-inner').css("left", "");
 									// since the id #media-box-inner has been moved from one element to another, swipe detection must be enabled again
-									addSwipeDetection('media-box-inner',swipe);
+									// addSwipeDetection('media-box-inner',swipe);
+									addGesturesDetection('media-box-inner', 'media');
 									$("#media-right").attr('id', 'media');
 									$("#album-view").removeClass('fired');
 									window.location.href = link;
@@ -2729,7 +2852,7 @@ $(document).ready(function() {
 		return true;
 	}
 
-	$(document).on('load', addSwipeDetection('media-box-inner',swipe));
+	$(document).on('load', addGesturesDetection('media-box-inner', 'media'));
 
 	if (isMobile.any()) {
 		$("#links").css("display", "inline").css("opacity", 0.5);
