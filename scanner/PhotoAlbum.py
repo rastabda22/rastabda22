@@ -2115,15 +2115,13 @@ class Metadata(object):
 		"""
 		Helper function to create the data structure returned by the EXIF GPS info
 		from the decimal value entered by the user in a 'album.ini' metadata file.
-		Longitude and latitude metadata are stored as rationals.
-			GPS = ( (deg1, deg2),
-					(min1, min2),
-					(sec1, sec2) )
+		Longitude and latitude metadata are stored as integers.
+			GPS = (deg, min, sec)
 		"""
 		frac, deg = math.modf(value)
 		frac, min = math.modf(frac * 60.0)
 		frac, sec = math.modf(frac * 60.0)
-		return ((int(deg), 1), (int(min), 1), (int(sec), 1))
+		return (int(deg), int(min), int(sec))
 
 
 	@staticmethod
