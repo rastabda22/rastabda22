@@ -1,6 +1,6 @@
 # Known issues
 
-Updated: 2018-02-28
+Updated: 2018-07-28
 
 #### Issues related to previous scanner versions
 
@@ -47,3 +47,10 @@ Oriental languages like chinese do not define easily word separation, so whole w
 #### python3-exif not present in debian Jessie, still stuck with python2
 
 Due to a bug in PIL `_getexif()`,  since version 3.4beta9 `exifread` (`python3-exifread` package in `debian`) and `exiftool` are used too in order to get the exif metadata from the photos. However, `python3-exifread` is not packaged for `debian jessie`, so we must stick on python2 for the scanner: if you have been able to install `exifread` for python3, simply change "python2" to "python3" in the first line of `scanner/main.py`.
+
+
+#### Scanner abort with error message `python2: tif_ojpeg.c:899: OJPEGPostDecode: Assertion `sp->libjpeg_session_active!=0' failed.`
+
+This is again a bug in pillow: https://github.com/python-pillow/Pillow/issues/671
+It happens when the scanner processes some /old/ TIFF files. In my case, this happens with files created by a Xerox scanner-copier, when creating digital version of old photos. A way to bypass it is to recreate the TIFF files. First, to identify the culprit files, you can change MyPhotoShare logging level `max_verbose = 5` in `/etc/myphotoshare/myphotoshare.conf`. Then open the file in GIMP and save it. GIMP will complain while opening the TIFF file with a message "Depreciated and troublesome old-style JPEG compression mode, please convert to new stylex JPEG compression and notify vendor of writing software".
+
