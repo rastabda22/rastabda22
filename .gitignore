@@ -1,3 +1,4 @@
+*.pyc
 *.swp
 .tags
 .tags_swap
@@ -5,3 +6,6 @@
 venv/*
 .nfs*
 Release.key
+web/albums
+web/cache
+.vscode/*
