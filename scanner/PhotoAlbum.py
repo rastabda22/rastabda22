@@ -181,7 +181,12 @@ class Album(object):
 		"""Read the 'album.ini' file in the directory 'self.absolute_path' to
 		get user defined metadata for the album and pictures.
 		"""
-		self.album_ini = configparser.ConfigParser(allow_no_value=True)
+		# @python2
+		if sys.version_info < (3, ):
+			self.album_ini = configparser.RawConfigParser(allow_no_value=True)
+		else:
+			self.album_ini = configparser.ConfigParser(allow_no_value=True, interpolation=None)
+
 		message("reading album.ini...", "", 5)
 		self.album_ini.read(file_name)
 		next_level()
