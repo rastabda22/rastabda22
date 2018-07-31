@@ -181,7 +181,12 @@ class Album(object):
 		"""Read the 'album.ini' file in the directory 'self.absolute_path' to
 		get user defined metadata for the album and pictures.
 		"""
-		self.album_ini = configparser.ConfigParser(allow_no_value=True)
+		# @python2
+		if sys.version_info < (3, ):
+			self.album_ini = configparser.RawConfigParser(allow_no_value=True)
+		else:
+			self.album_ini = configparser.ConfigParser(allow_no_value=True, interpolation=None)
+
 		message("reading album.ini...", "", 5)
 		self.album_ini.read(file_name)
 		next_level()
@@ -2110,15 +2115,13 @@ class Metadata(object):
 		"""
 		Helper function to create the data structure returned by the EXIF GPS info
 		from the decimal value entered by the user in a 'album.ini' metadata file.
-		Longitude and latitude metadata are stored as rationals.
-			GPS = ( (deg1, deg2),
-					(min1, min2),
-					(sec1, sec2) )
+		Longitude and latitude metadata are stored as integers.
+			GPS = (deg, min, sec)
 		"""
 		frac, deg = math.modf(value)
 		frac, min = math.modf(frac * 60.0)
 		frac, sec = math.modf(frac * 60.0)
-		return ((int(deg), 1), (int(min), 1), (int(sec), 1))
+		return (int(deg), int(min), int(sec))
 
 
 	@staticmethod
