@@ -112,7 +112,7 @@ if [ ! -f "$DIR/$ALBUM_INI" ]; then
 	echo "# - place_name: The name of the city or town to be displayed." >> "$DIR/$ALBUM_INI"
 	echo >> "$DIR/$ALBUM_INI"
 	echo >> "$DIR/$ALBUM_INI"
-	echo "#[DEFAULT]" >> "$DIR/$ALBUM_INI"
+	echo "[DEFAULT]" >> "$DIR/$ALBUM_INI"
 	echo "#tags = " >> "$DIR/$ALBUM_INI"
 	echo "#date = " >> "$DIR/$ALBUM_INI"
 	echo "#latitude = " >> "$DIR/$ALBUM_INI"
