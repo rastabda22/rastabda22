@@ -2,35 +2,79 @@
 ###########
 # Create a default MyPhotoShare 'album.ini' file based on media content files in a directory.
 # Append new media sections if 'album.ini' already exists.
+# Name of metadata file (default 'album.ini') is read from config file (default /etc/myphotoshare/myphotoshare.conf)
 
 # All media file extensions that will be considered
 # jpg,jpeg,JPG,JPEG,mp4,avi,MP4,AVI,tiff,TIF
 
 
+
 print_usage()
 {
-	echo "Usage: $0 [-i METADATA_FILENAME] FOLDER"
-	echo "Create template of 'album.ini' file in 'FOLDER' based on its media content."
-	echo "When the file 'album.ini' already exists in 'FOLDER', new media are added to the file."
+	echo "Usage: $0 FOLDER"
+	echo "Create template of '$ALBUM_INI' file in 'FOLDER' based on its media content."
+	echo "When the file '$ALBUM_INI' already exists in 'FOLDER', new media are added to the file."
+	echo "Existing metadata is not touched."
+	echo "The name of the metadata file '$ALBUM_INI' is taken from configuration file."
 	echo
 	echo "Options:"
-	echo "  -i: Define the filename used to store user-defined metadata instead of default 'album.ini'"
+	echo "   -c CONFIG_FILE: Define path and name of the configuration file else"
+	echo "   will use '/etc/myphotoshare/myphotoshare.conf'."
 	echo
 	echo "Example:"
-	echo "   $0 -i .album.ini ~/Pictures/vacations"
-	echo "   Create hidden file '.album.ini' in '~/Pictures/vacations"
+	echo "   $0 ~/Pictures/vacations"
+	echo "   Create file '$ALBUM_INI' in '~/Pictures/vacations' with default metadata for all"
+	echo "   media contained that folder. '$ALBUM_INI' name is read from"
+	echo "  '/etc/myphotoshare/myphotoshare.conf'."
+}
+
+
+# Set $CONF with configuration filename
+set_config()
+{
+	# Already defined and valid: we stop there
+	if [ -f "$CONF" ]; then
+		return
+	fi
+	# Try to use parameter
+	if [ -f "$1" ]; then
+		CONF="$1"
+	fi
+	# Else use defauly
+	if [ -z "$CONF" ]; then
+		CONF="/etc/myphotoshare/myphotoshare.conf"
+	fi
+	# Stop if nothing worked
+	if [ ! -f "$CONF" ]; then
+		( >&2 echo "Error: Configuration file '$CONF' does not exist." )
+		exit 1
+	fi
+}
+
+
+# Get metadata filename from configuration and set $ALBUM_INI
+set_album_ini()
+{
+	# Get metadata filename from configuration
+	if [ -f "$CONF" ]; then
+		ALBUM_INI="$(sed -nr 's/^\s*metadata_filename\s*=\s*([\.\w]+)\s*.*$/\1/p' "$CONF")"
+	fi
+	# If not set, use defaults
+	if [ -z "$ALBUM_INI" ]; then
+		ALBUM_INI="album.ini"
+	fi
 }
 
 
 # Process options
-ALBUM_INI="album.ini"
-
 while getopts "i:" option; do
 	case $option in
-		i)
-			ALBUM_INI="$OPTARG"
+		c)
+			set_config "$OPTARG"
 		;;
 		\?)
+			set_config
+			set_album_ini
 			print_usage
 			exit 1
 		;;
@@ -40,6 +84,9 @@ shift $((OPTIND-1))
 
 # Process parameters
 DIR=${1%/}
+
+set_config
+set_album_ini
 
 if [ -z "$DIR" ]; then
 	print_usage
