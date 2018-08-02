@@ -6,16 +6,16 @@ CONF="$1"
 
 if [ -z "$CONF" ]; then
 	# The script must be launched with the user's config file
-	echo
-	echo "Usage: ./$0 MYPHOTOSHARE_CONFIG_FILE"
-	echo
-	echo "Quitting"
+	( >&2 echo )
+	( >&2 echo "Usage: ./$0 MYPHOTOSHARE_CONFIG_FILE" )
+	( >&2 echo )
+	( >&2 echo "Quitting" )
 	exit 1
 elif [ ! -f "$CONF" ]; then
-	echo
-	echo "Error: file '$CONF' does not exist"
-	echo
-	echo "Quitting"
+	( >&2 echo )
+	( >&2 echo "Error: file '$CONF' does not exist" )
+	( >&2 echo )
+	( >&2 echo "Quitting" )
 	exit 1
 fi
 
@@ -26,11 +26,11 @@ if [ ! -e "$DEFAULT_CONF" ]; then
 	DEFAULT_CONF="$PROJECT_DIR/myphotoshare.conf.defaults"
 fi
 if [ ! -e "$DEFAULT_CONF" ]; then
-	echo
-	echo "Can't find default config file 'myphotoshare.conf.defaults'."
-	echo "Run $0 from MyPhotoShare root directory."
-	echo
-	echo "Quitting"
+	( >&2 echo )
+	( >&2 echo "Can't find default config file 'myphotoshare.conf.defaults'." )
+	( >&2 echo "Run $0 from MyPhotoShare root directory." )
+	( >&2 echo )
+	( >&2 echo "Quitting" )
 	exit 1
 fi
 
@@ -55,32 +55,32 @@ case $MINIFY_JS in
 	web_service)
 		curl https://javascript-minifier.com/ > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
-			echo "'curl' not installed or 'https://javascript-minifier.com/' down"
-			echo "Aborting..."
+			( >&2 echo "'curl' not installed or 'https://javascript-minifier.com/' down" )
+			( >&2 echo "Aborting..." )
 			exit 1
 		fi
 	;;
 	jsmin2)
 		python2 -m jsmin > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
-			echo "'jsmin' for Python2 is not installed. Look for package 'python-jsmin' or 'https://github.com/tikitu/jsmin'"
-			echo "Aborting..."
+			( >&2 echo "'jsmin' for Python2 is not installed. Look for package 'python-jsmin' or 'https://github.com/tikitu/jsmin'" )
+			( >&2 echo "Aborting..." )
 			exit 1
 		fi
 	;;
 	jsmin3)
 		python3 -m jsmin > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
-			echo "'jsmin' for Python3 is not installed. Look for package 'python3-jsmin' or 'https://github.com/tikitu/jsmin'"
-			echo "Aborting..."
+			( >&2 echo "'jsmin' for Python3 is not installed. Look for package 'python3-jsmin' or 'https://github.com/tikitu/jsmin'" )
+			( >&2 echo "Aborting..." )
 			exit 1
 		fi
 	;;
 	uglifyjs)
 		uglifyjs -V > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
-			echo "'uglifyjs' is not installed. Look for package 'node-uglifyjs' or 'http://lisperator.net/uglifyjs/'"
-			echo "Aborting..."
+			( >&2 echo "'uglifyjs' is not installed. Look for package 'node-uglifyjs' or 'http://lisperator.net/uglifyjs/'" )
+			( >&2 echo "Aborting..." )
 			exit 1
 		fi
 esac
@@ -89,16 +89,16 @@ case $MINIFY_CSS in
 	web_service)
 		curl https://cssminifier.com/ > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
-			echo "'curl' not installed or 'https://cssminifier.com/' down"
-			echo "Aborting..."
+			( >&2 echo "'curl' not installed or 'https://cssminifier.com/' down" )
+			( >&2 echo "Aborting..." )
 			exit 1
 		fi
 	;;
 	cssmin)
 		cssmin -h > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
-			echo "'cssmin' is not installed. Look for package 'cssmin' or 'https://github.com/zacharyvoase/cssmin'"
-			echo "Aborting..."
+			( >&2 echo "'cssmin' is not installed. Look for package 'cssmin' or 'https://github.com/zacharyvoase/cssmin'" )
+			( >&2 echo "Aborting..." )
 			exit 1
 		fi
 	;;
@@ -112,7 +112,7 @@ echo
 CAT_LIST=""
 rm -f *.min.js
 if [ $? -ne 0 ]; then
-	echo "Can't write files. Aborting..."
+	( >&2 echo "Can't write files. Aborting..." )
 	exit 1
 fi
 while read jsfile; do
@@ -194,7 +194,7 @@ echo == Minifying css files in css directory ==
 echo
 rm -f *.min.css
 if [ $? -ne 0 ]; then
-	echo "Can't write files. Aborting..."
+	( >&2 echo "Can't write files. Aborting..." )
 	exit 1
 fi
 ls -1 *.css | grep -Ev "min.css$" | while read cssfile; do
