@@ -4,7 +4,7 @@
 # Append new media sections if 'album.ini' already exists.
 
 # All media file extensions that will be considered
-# jpg,jpeg,JPG,JPEG,mp4,avi,MP4,AVI
+# jpg,jpeg,JPG,JPEG,mp4,avi,MP4,AVI,tiff,TIF
 
 
 print_usage()
@@ -96,7 +96,7 @@ fi
 # Loop on album content
 SAVEIFS="$IFS"
 IFS=$(echo -en "\n\b")
-for media in $(ls "$DIR"/*.{jpg,jpeg,JPG,JPEG,mp4,avi,MP4,AVI} 2> /dev/null); do
+for media in $(ls "$DIR"/*.{jpg,jpeg,JPG,JPEG,mp4,avi,MP4,AVI,tiff,TIF} 2> /dev/null); do
 	SECTION=${media##*/}
 	TITLE=${SECTION%.*}
 	SECTION_EXISTS=$(grep -c "\[$SECTION\]" "$DIR/$ALBUM_INI")
