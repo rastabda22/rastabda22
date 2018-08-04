@@ -23,8 +23,8 @@
     return $(mediaSelector).attr("height");
   }
 
-  PinchSwipe.pinched = function(mediaSelector) {
-    return PinchSwipe.cssWidth(mediaSelector) == PinchSwipe.reductionWidth(mediaSelector);
+  PinchSwipe.pinched = function(mediaSelector, initialCssWidth) {
+    return PinchSwipe.cssWidth(mediaSelector) > initialCssWidth;
   }
 
   // define the actions to be taken on pinch, swipe, tap, double tap
@@ -46,7 +46,7 @@
 					tap:function(event, target) {
 						// when small => swipe left
 						// when big => pinch out (make smaller)
-						if (! PinchSwipe.pinched(mediaSelector)) {
+						if (! PinchSwipe.pinched(mediaSelector, myCssWidth)) {
 	 						PinchSwipe.swipeLeft(prevMedia);
 						} else {
 							$(mediaSelector).animate(
@@ -60,7 +60,7 @@
 	        doubleTap:function(event, target) {
 						// when small => pinch in (make bigger)
 						// when big => pinch further in choosing a bigger reduction
-						if (! PinchSwipe.pinched(mediaSelector)) {
+						if (! PinchSwipe.pinched(mediaSelector, myCssWidth)) {
 							$(mediaSelector).animate(
 								{
 					        'width': myReductionWidth,
@@ -75,7 +75,7 @@
 						// when small => swipe next media
 						// when big => let media scroll
 						if (fingerCount === 1) {
-						 	if (! pinched(mediaSelector)) {
+						 	if (! pinched(mediaSelector, myCssWidth)) {
 		 						PinchSwipe.swipeLeft(prevMedia);
 		 					} else {
 								return true;
@@ -86,7 +86,7 @@
 						// when small => swipe previous media
 						// when big => let media scroll
 						if (fingerCount === 1) {
-						 	if (! pinched(mediaSelector)) {
+						 	if (! pinched(mediaSelector, myCssWidth)) {
 								PinchSwipe.swipeRight(prevMedia);
 							} else {
 								return true;
@@ -96,7 +96,7 @@
 					swipeDown:function(event, direction, distance, duration, fingerCount) {
 						// when small => go from media to its album
 						// when big => nothing
-						if (fingerCount === 1 && ! pinched(mediaSelector) && upLink) {
+						if (fingerCount === 1 && ! pinched(mediaSelector, myCssWidth) && upLink) {
 							fromEscKey = true;
 							swipeDown(upLink);
 						}
@@ -105,7 +105,7 @@
 						// when small => pinch in (make bigger)
 						// when big => pinch further in choosing a bigger reduction
 						if (fingerCount > 1) {
-							if (! pinched(mediaSelector)) {
+							if (! pinched(mediaSelector, myCssWidth)) {
 								$(mediaSelector).animate(
 									{
 						        'width': myReductionWidth,
@@ -122,7 +122,7 @@
 						// when small => nothing
 						// when big => pinch out
 						if (fingerCount > 1) {
-							if (pinched(mediaSelector)) {
+							if (pinched(mediaSelector, myCssWidth)) {
 								$(mediaSelector).animate(
 									{
 						        'width': myCssWidth,
@@ -142,7 +142,7 @@
 					swipeUp:function(event, direction, distance, duration, fingerCount) {
 						// when small => go from album to its 1st media
 						// when big => nothing
-						if (fingerCount === 1 && ! pinched(mediaSelector))
+						if (fingerCount === 1 && ! pinched(mediaSelector, myCssWidth))
 							swipeUp(mediaLink);
 					},
 					fingers:$.fn.swipe.fingers.ALL
