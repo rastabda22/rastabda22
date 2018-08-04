@@ -280,7 +280,7 @@
 		return currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1;
 	}
 
-	Utilities.chooseReducedPhoto = function(currentAlbum, media, container, fullScreenStatus) {
+	Utilities.chooseReducedPhoto = function(media, container, fullScreenStatus) {
 		var chosenMedia, reducedWidth, reducedHeight;
 		var mediaWidth = media.metadata.size[0], mediaHeight = media.metadata.size[1];
 		var mediaSize = Math.max(mediaWidth, mediaHeight);
@@ -322,7 +322,7 @@
 		return chosenMedia;
 	}
 
-	Utilities.prototype.createMedia = function(currentAlbum, currentMedia, id, fullScreenStatus) {
+	Utilities.prototype.createMedia = function(mediaId, id, fullScreenStatus) {
 		// creates a media element that can be inserted in DOM (e.g. with append/prepend methods)
 		var width = currentMedia.metadata.size[0], height = currentMedia.metadata.size[1];
 		var mediaSrc, mediaElement, triggerLoad, linkTag;
@@ -343,7 +343,7 @@
 			triggerLoad = "loadstart";
 			linkTag = '<link rel="video_src" href="' + encodeURI(mediaSrc) + '" />';
 		} else if (currentMedia.mediaType == "photo") {
-			mediaSrc = Utilities.chooseReducedPhoto(currentAlbum, currentMedia, null, fullScreenStatus);
+			mediaSrc = Utilities.chooseReducedPhoto(currentMedia, null, fullScreenStatus);
 			if (maxSize) {
 				if (width > height &&  width > maxSize) {
 					height = Math.round(height * maxSize / width);
@@ -469,7 +469,7 @@
 		containerRatio = containerWidth / containerHeight;
 
 		if (mediaObject.mediaType == "photo") {
-			photoSrc = Utilities.chooseReducedPhoto(currentAlbum, mediaObject, container, fullScreenStatus);
+			photoSrc = Utilities.chooseReducedPhoto(mediaObject, container, fullScreenStatus);
 			previousSrc = media.attr("src");
 			// chooseReducedPhoto() sets maxSize to 0 if it returns the original media
 			if (maxSize) {

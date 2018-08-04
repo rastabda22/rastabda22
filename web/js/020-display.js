@@ -1540,7 +1540,7 @@ $(document).ready(function() {
 			currentMedia.mediaType == "photo" ||
 			currentMedia.mediaType == "video" && videoOK(currentMedia, '#media-box-inner')
 		) {
-			array = util.createMedia(currentAlbum, currentMedia, 'media', fullScreenStatus);
+			array = util.createMedia(currentMedia, 'media', fullScreenStatus);
 			element = array[0];
 			linkTag = array[1];
 			triggerLoad = array[2];

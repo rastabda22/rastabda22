@@ -263,7 +263,7 @@
 				media.mediaType == "photo" ||
 				media.mediaType == "video" && videoOK(media, '.media-box-inner left')
 			) {
-				array = util.createMedia(currentAlbum, media, 'media-left', fullScreenStatus);
+				array = util.createMedia(media, 'media-left', fullScreenStatus);
 				element = array[0];
 				triggerLoad = array[2];
 				$(".media-box-inner.left").append(element);
@@ -319,7 +319,7 @@
 				media.mediaType == "photo" ||
 				media.mediaType == "video" && videoOK(media, '.media-box-inner right')
 			) {
-				array = util.createMedia(currentAlbum, media, 'media-right', fullScreenStatus);
+				array = util.createMedia(media, 'media-right', fullScreenStatus);
 				element = array[0];
 				triggerLoad = array[2];
 				$(".media-box-inner.right").append(element);
