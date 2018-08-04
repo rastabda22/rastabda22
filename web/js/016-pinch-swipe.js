@@ -60,7 +60,7 @@
 	        doubleTap:function(event, target) {
 						// when small => pinch in (make bigger)
 						// when big => pinch further in choosing a bigger reduction
-						if (! pinched(mediaSelector)) {
+						if (! PinchSwipe.pinched(mediaSelector)) {
 							$(mediaSelector).animate(
 								{
 					        'width': myReductionWidth,
@@ -87,7 +87,7 @@
 						// when big => let media scroll
 						if (fingerCount === 1) {
 						 	if (! pinched(mediaSelector)) {
-								swipeRight(currentAlbum, prevMedia);
+								PinchSwipe.swipeRight(currentAlbum, prevMedia);
 							} else {
 								return true;
 							}
@@ -257,13 +257,13 @@
 			savedSearchSubAlbumHash = array[3];
 			savedSearchAlbumHash = array[4];
 
-			link = phFl.encodeHash(album, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
+			link = phFl.encodeHash(currentAlbum, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
 			$("#next-media").prepend('<div class="media-box-inner left" style="right: 100%;"></div>');
 			if (
 				media.mediaType == "photo" ||
 				media.mediaType == "video" && videoOK(media, '.media-box-inner left')
 			) {
-				array = util.createMedia(album, media, 'media-left', fullScreenStatus);
+				array = util.createMedia(currentAlbum, media, 'media-left', fullScreenStatus);
 				element = array[0];
 				triggerLoad = array[2];
 				$(".media-box-inner.left").append(element);
@@ -313,13 +313,13 @@
 			savedSearchSubAlbumHash = array[3];
 			savedSearchAlbumHash = array[4];
 
-			link = phFl.encodeHash(album, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
+			link = phFl.encodeHash(currentAlbum, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
 			$("#next-media").append('<div class="media-box-inner right" style="left: 100%;"></div>');
 			if (
 				media.mediaType == "photo" ||
 				media.mediaType == "video" && videoOK(media, '.media-box-inner right')
 			) {
-				array = util.createMedia(album, media, 'media-right', fullScreenStatus);
+				array = util.createMedia(currentAlbum, media, 'media-right', fullScreenStatus);
 				element = array[0];
 				triggerLoad = array[2];
 				$(".media-box-inner.right").append(element);
