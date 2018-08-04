@@ -56,7 +56,8 @@ $(document).ready(function() {
 	var numSubAlbumsReady;
 	var fromEscKey = false;
 	var firstEscKey = true;
-	var nextLink = "", prevLink = "", upLink = "", mediaLink = "", nextMedia = null, prevMedia = null;
+	// var nextLink = "", prevLink = "";
+	var upLink = "", mediaLink = "", nextMedia = null, prevMedia = null;
 
 	/* Displays */
 
@@ -2015,8 +2016,8 @@ $(document).ready(function() {
 
 		upLink = phFl.upHash(location.hash);
 		if (currentAlbum.media.length == 1) {
-			nextLink = "";
-			prevLink = "";
+			// nextLink = "";
+			// prevLink = "";
 			$("#media-view").css('cursor', 'default');
 		} else {
 			var array = phFl.decodeHash(location.hash);
@@ -2024,8 +2025,8 @@ $(document).ready(function() {
 			var savedSearchSubAlbumHash = array[3];
 			var savedSearchAlbumHash = array[4];
 
-			nextLink = phFl.encodeHash(currentAlbum, nextMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
-			prevLink = phFl.encodeHash(currentAlbum, prevMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
+			// nextLink = phFl.encodeHash(currentAlbum, nextMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
+			// prevLink = phFl.encodeHash(currentAlbum, prevMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
 			$("#next").show();
 			$("#prev").show();
 			$("#media-view")
