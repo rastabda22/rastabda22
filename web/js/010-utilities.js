@@ -322,28 +322,32 @@
 		return chosenMedia;
 	}
 
-	Utilities.prototype.createMedia = function(mediaId, id, fullScreenStatus) {
+	Utilities.prototype.createMedia = function(media, id, fullScreenStatus) {
 		// creates a media element that can be inserted in DOM (e.g. with append/prepend methods)
-		var width = currentMedia.metadata.size[0], height = currentMedia.metadata.size[1];
+		var width = media.metadata.size[0], height = media.metadata.size[1];
 		var mediaSrc, mediaElement, triggerLoad, linkTag;
 
-		if (currentMedia.mediaType == "video") {
-			if (fullScreenStatus && currentMedia.albumName.match(/\.avi$/) === null) {
+		if (media.mediaType == "video") {
+			if (fullScreenStatus && media.albumName.match(/\.avi$/) === null) {
 				// .avi videos are not played by browsers
-				mediaSrc = currentMedia.albumName;
+				mediaSrc = media.albumName;
 			} else {
-				mediaSrc = this.mediaPath(currentAlbum, currentMedia, "");
+				mediaSrc = this.mediaPath(currentAlbum, media, "");
 			}
 			mediaElement = $('<video/>', { id: id, controls: true })
 				.attr("width", width)
 				.attr("height", height)
 				.attr("ratio", width / height)
 				.attr("src", encodeURI(mediaSrc))
-				.attr("alt", currentMedia.name);
+				.attr("alt", media.name);
 			triggerLoad = "loadstart";
 			linkTag = '<link rel="video_src" href="' + encodeURI(mediaSrc) + '" />';
-		} else if (currentMedia.mediaType == "photo") {
-			mediaSrc = Utilities.chooseReducedPhoto(currentMedia, null, fullScreenStatus);
+		} else if (media.mediaType == "photo") {
+			if (fullScreenStatus && Modernizr.fullscreen)
+				container = $(window);
+			else
+				container = $("#media-view");
+			mediaSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
 			if (maxSize) {
 				if (width > height &&  width > maxSize) {
 					height = Math.round(height * maxSize / width);
@@ -359,8 +363,8 @@
 				.attr("height", height)
 				.attr("ratio", width / height)
 				.attr("src", encodeURI(mediaSrc))
-				.attr("alt", currentMedia.name)
-				.attr("title", currentMedia.date)
+				.attr("alt", media.name)
+				.attr("title", media.date)
 				.addClass("");
 			linkTag = '<link rel="image_src" href="' + encodeURI(mediaSrc) + '" />';
 			triggerLoad = "load";
