@@ -16,11 +16,11 @@
   }
 
   PinchSwipe.reductionWidth = function(mediaSelector) {
-    return $(mediaSelector).attr("width");
+    return parseInt($(mediaSelector).attr("width"));
   }
 
   PinchSwipe.reductionHeight = function(mediaSelector) {
-    return $(mediaSelector).attr("height");
+    return parseInt($(mediaSelector).attr("height"));
   }
 
   PinchSwipe.pinched = function(mediaSelector, initialCssWidth) {
