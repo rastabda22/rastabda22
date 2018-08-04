@@ -1,3 +1,7 @@
+var fullScreenStatus = false;
+var currentMedia = null;
+var currentAlbum = null;
+var nextMedia = null, prevMedia = null;
 var Options = {};
 var isMobile = {
 	Android: function() {
@@ -43,21 +47,19 @@ $(document).ready(function() {
 
 	/* Globals */
 
-	var currentAlbum = null;
-	var currentMedia = null;
 	var currentMediaIndex = -1;
 	var previousAlbum = null;
 	var previousMedia = null;
 	var phFl = new PhotoFloat();
 	var util = new Utilities();
+	var ps = new PinchSwipe();
 	var maxSize;
-	var fullScreenStatus = false;
 	var language;
 	var numSubAlbumsReady;
 	var fromEscKey = false;
 	var firstEscKey = true;
 	// var nextLink = "", prevLink = "";
-	var upLink = "", mediaLink = "", nextMedia = null, prevMedia = null;
+	var upLink = "", mediaLink = "";
 
 	/* Displays */
 
@@ -101,364 +103,6 @@ $(document).ready(function() {
 				language = userLang;
 		}
 		return language;
-	}
-
-	function cssWidth(mediaSelector) {
-		return parseInt($(mediaSelector).css("width"));
-	}
-
-	function cssHeight(mediaSelector) {
-		return parseInt($(mediaSelector).css("height"));
-	}
-
-	function reductionWidth(mediaSelector) {
-		return $(mediaSelector).attr("width");
-	}
-
-	function reductionHeight(mediaSelector) {
-		return $(mediaSelector).attr("height");
-	}
-
-	function pinched(mediaSelector) {
-		return cssWidth(mediaSelector) == reductionWidth(mediaSelector);
-	}
-
-	// define the actions to be taken on pinch, swipe, tap, double tap
-	function addGesturesDetection(detectionSelector, mediaSelector) {
-
-		// get the two initial values:
-
-		// the reduction width and height in the page
-		var myCssWidth = cssWidth(mediaSelector);
-		var myCssHeight = cssHeight(mediaSelector);
-
-		// the reduction width and height
-		var myReductionWidth = reductionWidth(mediaSelector);
-		var myReductionHeight = reductionHeight(mediaSelector);
-
-		if (mediaSelector) {
-			$(detectionSelector).swipe(
-				{
-					tap:function(event, target) {
-						// when small => swipe left
-						// when big => pinch out (make smaller)
-						if (! pinched(mediaSelector)) {
-	 						swipeLeft(currentAlbum, prevMedia);
-						} else {
-							$(mediaSelector).animate(
-								{
-					        'width': myCssWidth,
-									'height': myCssHeight
-					    	}
-							);
-						}
-	        },
-	        doubleTap:function(event, target) {
-						// when small => pinch in (make bigger)
-						// when big => pinch further in choosing a bigger reduction
-						if (! pinched(mediaSelector)) {
-							$(mediaSelector).animate(
-								{
-					        'width': myReductionWidth,
-									'height': myReductionHeight
-					    	}
-							);
-						} else {
-							// TO DO: select next bigger reduction
-						}
-	        },
-					swipeLeft:function(event, direction, distance, duration, fingerCount) {
-						// when small => swipe next media
-						// when big => let media scroll
-						if (fingerCount === 1) {
-						 	if (! pinched(mediaSelector)) {
-		 						swipeLeft(currentAlbum, prevMedia);
-		 					} else {
-								return true;
-							}
-						}
-					},
-					swipeRight:function(event, direction, distance, duration, fingerCount) {
-						// when small => swipe previous media
-						// when big => let media scroll
-						if (fingerCount === 1) {
-						 	if (! pinched(mediaSelector)) {
-								swipeRight(currentAlbum, prevMedia);
-							} else {
-								return true;
-							}
-						}
-					},
-					swipeDown:function(event, direction, distance, duration, fingerCount) {
-						// when small => go from media to its album
-						// when big => nothing
-						if (fingerCount === 1 && ! pinched(mediaSelector) && upLink) {
-							fromEscKey = true;
-							swipeDown(upLink);
-						}
-					},
-					pinchIn:function(event, direction, distance, duration, fingerCount, pinchZoom) {
-						// when small => pinch in (make bigger)
-						// when big => pinch further in choosing a bigger reduction
-						if (fingerCount > 1) {
-							if (! pinched(mediaSelector)) {
-								$(mediaSelector).animate(
-									{
-						        'width': myReductionWidth,
-										'height': myReductionHeight
-						    	}
-								);
-								return false;
-							} else {
-								// TO DO: select next bigger reduction
-							}
-						}
-					},
-					pinchOut:function(event, direction, distance, duration, fingerCount, pinchZoom) {
-						// when small => nothing
-						// when big => pinch out
-						if (fingerCount > 1) {
-							if (pinched(mediaSelector)) {
-								$(mediaSelector).animate(
-									{
-						        'width': myCssWidth,
-										'height': myCssHeight
-						    	}
-								);
-							}
-						}
-					},
-					fingers:$.fn.swipe.fingers.ALL
-				}
-			);
-		} else {
-			// it's an album
-			$(detectionSelector).swipe(
-				{
-					swipeUp:function(event, direction, distance, duration, fingerCount) {
-						// when small => go from album to its 1st media
-						// when big => nothing
-						if (fingerCount === 1 && ! pinched(mediaSelector))
-							swipeUp(mediaLink);
-					},
-					fingers:$.fn.swipe.fingers.ALL
-				}
-			);
-		}
-	};
-
-
-
-	// // adapted from https://stackoverflow.com/questions/15084675/how-to-implement-swipe-gestures-for-mobile-devices#answer-27115070
-	// function addSwipeDetection(el,callback) {
-	// 	var swipe_det, ele, min_x, min_y, max_x, max_y, direc;
-	// 	var touchStart, touchMove, touchEnd;
-	// 	touchStart = function(e) {
-	// 		var t = e.touches[0];
-	// 		swipe_det.sX = t.screenX;
-	// 		swipe_det.sY = t.screenY;
-	// 	};
-	// 	touchMove = function(e) {
-	// 		e.preventDefault();
-	// 		var t = e.touches[0];
-	// 		swipe_det.eX = t.screenX;
-	// 		swipe_det.eY = t.screenY;
-	// 	};
-	// 	touchEnd = function(e) {
-	// 		//horizontal detection
-	// 		if (
-	// 			(swipe_det.eX - min_x > swipe_det.sX || swipe_det.eX + min_x < swipe_det.sX) &&
-	// 			swipe_det.eY < swipe_det.sY + max_y &&
-	// 			swipe_det.sY > swipe_det.eY - max_y &&
-	// 			swipe_det.eX > 0
-	// 		) {
-	// 			if(swipe_det.eX > swipe_det.sX)
-	// 				direc = "r";
-	// 			else
-	// 				direc = "l";
-	// 		}
-	// 		//vertical detection
-	// 		else if (
-	// 			(swipe_det.eY - min_y > swipe_det.sY || swipe_det.eY + min_y < swipe_det.sY) &&
-	// 			swipe_det.eX < swipe_det.sX + max_x &&
-	// 			swipe_det.sX > swipe_det.eX - max_x &&
-	// 			swipe_det.eY > 0
-	// 		) {
-	// 			if(swipe_det.eY > swipe_det.sY)
-	// 				direc = "d";
-	// 			else
-	// 				direc = "u";
-	// 		}
-	//
-	// 		if (direc !== "") {
-	// 			if(typeof callback == 'function')
-	// 				callback(el,direc);
-	// 		}
-	// 		direc = "";
-	// 		swipe_det.sX = 0;
-	// 		swipe_det.eX = 0;
-	// 	};
-	// 	swipe_det = {};
-	// 	swipe_det.sX = 0; swipe_det.eX = 0;
-	// 	min_x = 30;  //min x swipe for horizontal swipe
-	// 	max_x = 30;  //max x difference for vertical swipe
-	// 	min_y = 50;  //min y swipe for vertical swipe
-	// 	max_y = 60;  //max y difference for horizontal swipe
-	// 	direc = "";
-	// 	ele = document.getElementById(el);
-	// 	ele.addEventListener('touchstart', touchStart, false);
-	// 	ele.addEventListener('touchmove', touchMove, false);
-	// 	ele.addEventListener('touchend', touchEnd, false);
-	// }
-	//
-	// function swipe(el,d) {
-	// 	if (d == "r") {
-	// 		swipeRight(currentAlbum, prevMedia);
-	// 	} else if (d == "l") {
-	// 		swipeLeft(currentAlbum, nextMedia);
-	// 	} else if (d == "d") {
-	// 		if (upLink) {
-	// 			fromEscKey = true;
-	// 			swipeDown(upLink);
-	// 		}
-	// 	} else if (d == "u") {
-	// 		if (currentMedia === null)
-	// 			swipeUp(mediaLink);
-	// 	}
-	// }
-
-	function swipeRight(album, media) {
-		var array, savedSearchSubAlbumHash, savedSearchAlbumHash, element, triggerLoad, link;
-
-		if (media && ! $("#album-view").hasClass('fired')) {
-			$("#album-view").addClass('fired');
-
-			array = phFl.decodeHash(location.hash);
-			// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-			savedSearchSubAlbumHash = array[3];
-			savedSearchAlbumHash = array[4];
-
-			link = phFl.encodeHash(album, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
-			$("#next-media").prepend('<div class="media-box-inner left" style="right: 100%;"></div>');
-			if (
-				media.mediaType == "photo" ||
-				media.mediaType == "video" && videoOK(media, '.media-box-inner left')
-			) {
-				array = createMedia(media, 'media-left');
-				element = array[0];
-				triggerLoad = array[2];
-				$(".media-box-inner.left").append(element);
-				$('#media-left').on(
-					triggerLoad,
-					{
-						id: '#media-left',
-						media: media,
-						callback: function() {
-							// animation must wait for load completion
-							$.when(
-								$(".media-box-inner.left").animate({
-									right: 0,
-								}, 300).promise(),
-								$("#media-box-inner").animate({
-										left: "100%",
-									}, 300
-								).promise()
-							).done(
-								function() {
-									$("#media-box-inner").remove();
-									$(".media-box-inner.left").removeClass('left').attr('id', 'media-box-inner').css("right", "");
-									// since the id #media-box-inner has been moved from one element to another, swipe detection must be enabled again
-									// addSwipeDetection('media-box-inner',swipe);
-									addGesturesDetection('#media-view', '#media');
-									$("#media-left").attr('id', 'media');
-									$("#album-view").removeClass('fired');
-									window.location.href = link;
-								}
-							);
-						}
-					},
-					scaleMedia
-				);
-			}
-		}
-	}
-
-	function swipeLeft(album, media) {
-		var array, savedSearchSubAlbumHash, savedSearchAlbumHash, element, triggerLoad, link;
-
-		if (media && ! $("#album-view").hasClass('fired')) {
-			$("#album-view").addClass('fired');
-
-			array = phFl.decodeHash(location.hash);
-			// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-			savedSearchSubAlbumHash = array[3];
-			savedSearchAlbumHash = array[4];
-
-			link = phFl.encodeHash(album, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
-			$("#next-media").append('<div class="media-box-inner right" style="left: 100%;"></div>');
-			if (
-				media.mediaType == "photo" ||
-				media.mediaType == "video" && videoOK(media, '.media-box-inner right')
-			) {
-				array = createMedia(media, 'media-right');
-				element = array[0];
-				triggerLoad = array[2];
-				$(".media-box-inner.right").append(element);
-				$('#media-right').on(
-					triggerLoad, {
-						id: '#media-right',
-						media: media,
-						callback: function() {
-							// animation must wait for load completion
-							$.when(
-								$(".media-box-inner.right").animate({
-									left: 0,
-								}, 300).promise(),
-								$("#media-box-inner").animate({
-										right: "100%",
-									}, 300
-								).promise()
-							).done(
-								function() {
-									$("#media-box-inner").remove();
-									$(".media-box-inner.right").removeClass('right').attr('id', 'media-box-inner').css("left", "");
-									// since the id #media-box-inner has been moved from one element to another, swipe detection must be enabled again
-									// addSwipeDetection('media-box-inner',swipe);
-									addGesturesDetection('#media-view', '#media');
-									$("#media-right").attr('id', 'media');
-									$("#album-view").removeClass('fired');
-									window.location.href = link;
-								}
-							);
-						}
-					},
-					scaleMedia
-				);
-			}
-		}
-	}
-
-	function swipeUp(dest) {
-		// Actually swiping up is passing from an album to a media, so there is no animation
-		// ...or... the media could be let enter from below, as in horizontal swipe... TO DO
-		if (dest) {
-			$("#media-box-inner").stop().animate({
-				top: "-=" + window.innerHeight,
-			}, 300, function() {
-				window.location.href = dest;
-				$("#media-box-inner").hide().css('top', "");
-			});
-		}
-	}
-	function swipeDown(dest) {
-		if (dest) {
-			$("#media-box-inner").stop().animate({
-				top: "+=" + window.innerHeight,
-			}, 300, function() {
-				window.location.href = dest;
-				$("#media-box-inner").hide().css('top', "");
-			});
-		}
 	}
 
 	function socialButtons() {
@@ -1795,232 +1439,13 @@ $(document).ready(function() {
 
 		setOptions();
 
-		addGesturesDetection('#album-view', '');
+		ps.addGesturesDetection('#album-view', '');
 
 		setTimeout(scrollToThumb, 1);
 	}
 
-	function lateralSocialButtons() {
-		return $(".ssk-group").css("display") == "block";
-	}
-	function bottomSocialButtons() {
-		return ! lateralSocialButtons();
-	}
-	function scaleMedia(event) {
-		var media, mediaObject, container, containerBottom = 0, containerTop = 0, containerRatio, photoSrc, previousSrc;
-		var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth(), mediaBarBottom = 0;
-		var width, height, ratio;
-
-		media = $(event.data.id);
-		media.off();
-
-		mediaObject = currentMedia;
-		if (event.data.id.indexOf('left') != -1) {
-			media.parent().css('right', '100%');
-			mediaObject = event.data.media;
-		} else if (event.data.id.indexOf('right') != -1) {
-			media.parent().css('left', '100%');
-			mediaObject = event.data.media;
-		}
-
-		width = mediaObject.metadata.size[0];
-		height = mediaObject.metadata.size[1];
-		ratio = width / height;
-
-		if (fullScreenStatus && Modernizr.fullscreen)
-			container = $(window);
-		else {
-			container = $("#media-view");
-			if ($("#album-view").is(":visible"))
-				containerBottom = $("#album-view").outerHeight();
-			else if (bottomSocialButtons() && containerBottom < $(".ssk").outerHeight())
-				// correct container bottom when social buttons are on the bottom
-				containerBottom = $(".ssk").outerHeight();
-			containerTop = 0;
-			if ($("#title-container").is(":visible"))
-				containerTop = $("#title-container").outerHeight();
-			containerHeight -= containerBottom + containerTop;
-			if (mediaObject === currentMedia) {
-				container.css("top", containerTop + "px");
-				container.css("bottom", containerBottom + "px");
-			}
-		}
-
-		containerRatio = containerWidth / containerHeight;
-
-		if (mediaObject.mediaType == "photo") {
-			photoSrc = chooseReducedPhoto(mediaObject, container);
-			previousSrc = media.attr("src");
-			// chooseReducedPhoto() sets maxSize to 0 if it returns the original media
-			if (maxSize) {
-				if (width > height && width > maxSize) {
-					height = Math.round(height * maxSize / width);
-					width = maxSize;
-				} else if (height > width && height > maxSize) {
-					width = Math.round(width * maxSize / height);
-					height = maxSize;
-				}
-			}
-			if (encodeURI(photoSrc) != previousSrc || media.attr("width") != width || media.attr("height") != height) {
-				$("link[rel=image_src]").remove();
-				$('link[rel="video_src"]').remove();
-				$("head").append("<link rel=\"image_src\" href=\"" + encodeURI(photoSrc) + "\" />");
-				media
-					.attr("src", encodeURI(photoSrc))
-					.attr("width", width)
-					.attr("height", height)
-					.attr("ratio", ratio);
-			}
-		}
-
-		if (parseInt(media.attr("width")) > containerWidth && media.attr("ratio") >= containerRatio) {
-			height = container.width() / media.attr("ratio");
-			media
-				.css("width", containerWidth + "px")
-				.css("height", (containerWidth / ratio) + "px")
-				.parent()
-					.css("height", height)
-					.css("margin-top", - height / 2)
-					.css("top", "50%");
-			if (mediaObject.mediaType == "video")
-				mediaBarBottom = 0;
-			else if (mediaObject.mediaType == "photo")
-				mediaBarBottom = (containerHeight - containerWidth / ratio) / 2;
-		} else if (parseInt(media.attr("height")) > containerHeight && media.attr("ratio") <= containerRatio) {
-			media
-				.css("height", containerHeight + "px")
-				.css("width", (containerHeight * ratio) + "px")
-				.parent()
-					.css("height", "100%")
-					.css("margin-top", "0")
-					.css("top", "0");
-			if (mediaObject.mediaType == "video") {
-				media.css("height", parseInt(media.css("height")) - $("#links").outerHeight());
-				mediaBarBottom = 0;
-			} else if (mediaObject.mediaType == "photo")
-				// put media bar slightly below so that video buttons are not covered
-				mediaBarBottom = 0;
-		} else {
-			media
-				.css("height", "")
-				.css("width", "")
-				.parent()
-					.css("height", media.attr("height"))
-					.css("margin-top", - media.attr("height") / 2)
-					.css("top", "50%");
-			mediaBarBottom = (container.height() - media.attr("height")) / 2;
-			if (fullScreenStatus) {
-				if (mediaObject.mediaType == "video") {
-					mediaBarBottom = 0;
-				}
-			}
-		}
-
-		$("#media-bar").css("bottom", 0);
-
-		media.show();
-
-		if (! fullScreenStatus && currentAlbum.media.length > 1 && lateralSocialButtons()) {
-			// correct back arrow position when social buttons are on the left
-			$("#prev").css("left", "");
-			$("#prev").css("left", (parseInt($("#prev").css("left")) + $(".ssk").outerWidth()) + "px");
-		}
-
-		if (event.data.callback)
-			event.data.callback();
-	}
-
-	function chooseReducedPhoto(media, container) {
-		var chosenMedia, reducedWidth, reducedHeight;
-		var mediaWidth = media.metadata.size[0], mediaHeight = media.metadata.size[1];
-		var mediaSize = Math.max(mediaWidth, mediaHeight);
-		var mediaRatio = mediaWidth / mediaHeight, containerRatio;
-
-		chosenMedia = phFl.originalMediaPath(media);
-		maxSize = 0;
-
-		if (container === null) {
-			// try with what is more probable to be the container
-			if (fullScreenStatus)
-				container = $(window);
-			else {
-				container = $("#media-view");
-			}
-		}
-
-		containerRatio = container.width() / container.height();
-
-		for (var i = 0; i < Options.reduced_sizes.length; i++) {
-			if (Options.reduced_sizes[i] < mediaSize) {
-				if (mediaWidth > mediaHeight) {
-					reducedWidth = Options.reduced_sizes[i];
-					reducedHeight = Options.reduced_sizes[i] * mediaHeight / mediaWidth;
-				} else {
-					reducedHeight = Options.reduced_sizes[i];
-					reducedWidth = Options.reduced_sizes[i] * mediaWidth / mediaHeight;
-				}
-
-				if (
-					mediaRatio > containerRatio && reducedWidth < container.width() * screenRatio ||
-					mediaRatio < containerRatio && reducedHeight < container.height() * screenRatio
-				)
-					break;
-			}
-			chosenMedia = phFl.mediaPath(currentAlbum, media, Options.reduced_sizes[i]);
-			maxSize = Options.reduced_sizes[i];
-		}
-		return chosenMedia;
-	}
-
 	function chooseThumbnail(album, media, thumbnailSize) {
-		return phFl.mediaPath(album, media, thumbnailSize);
-	}
-
-	function createMedia(currentMedia, id) {
-		// creates a media element that can be inserted in DOM (e.g. with append/prepend methods)
-		var width = currentMedia.metadata.size[0], height = currentMedia.metadata.size[1];
-		var mediaSrc, mediaElement, triggerLoad, linkTag;
-
-		if (currentMedia.mediaType == "video") {
-			if (fullScreenStatus && currentMedia.albumName.match(/\.avi$/) === null) {
-				// .avi videos are not played by browsers
-				mediaSrc = currentMedia.albumName;
-			} else {
-				mediaSrc = phFl.mediaPath(currentAlbum, currentMedia, "");
-			}
-			mediaElement = $('<video/>', { id: id, controls: true })
-				.attr("width", width)
-				.attr("height", height)
-				.attr("ratio", width / height)
-				.attr("src", encodeURI(mediaSrc))
-				.attr("alt", currentMedia.name);
-			triggerLoad = "loadstart";
-			linkTag = '<link rel="video_src" href="' + encodeURI(mediaSrc) + '" />';
-		} else if (currentMedia.mediaType == "photo") {
-			mediaSrc = chooseReducedPhoto(currentMedia, null);
-			if (maxSize) {
-				if (width > height &&  width > maxSize) {
-					height = Math.round(height * maxSize / width);
-					width = maxSize;
-				} else if (height > width && height > maxSize) {
-					width = Math.round(width * maxSize / height);
-					height = maxSize;
-				}
-			}
-
-			mediaElement = $('<img/>', { id: id })
-				.attr("width", width)
-				.attr("height", height)
-				.attr("ratio", width / height)
-				.attr("src", encodeURI(mediaSrc))
-				.attr("alt", currentMedia.name)
-				.attr("title", currentMedia.date)
-				.addClass("");
-			linkTag = '<link rel="image_src" href="' + encodeURI(mediaSrc) + '" />';
-			triggerLoad = "load";
-		}
-
-		return [mediaElement, linkTag, triggerLoad];
+		return util.mediaPath(album, media, thumbnailSize);
 	}
 
 	function videoOK(media, selector) {
@@ -2115,7 +1540,7 @@ $(document).ready(function() {
 			currentMedia.mediaType == "photo" ||
 			currentMedia.mediaType == "video" && videoOK(currentMedia, '#media-box-inner')
 		) {
-			array = createMedia(currentMedia, 'media');
+			array = util.createMedia(currentAlbum, currentMedia, 'media', fullScreenStatus);
 			element = array[0];
 			linkTag = array[1];
 			triggerLoad = array[2];
@@ -2135,21 +1560,21 @@ $(document).ready(function() {
 					media: currentMedia,
 					callback: function() {
 						if (nextMedia !== null && nextMedia.mediaType == "photo") {
-							var nextReducedPhoto = chooseReducedPhoto(nextMedia, null);
+							var nextReducedPhoto = util.chooseReducedPhoto(currentAlbum, nextMedia, null, fullScreenStatus);
 							$.preloadImages(nextReducedPhoto);
 						}
 						if (prevMedia !== null && prevMedia.mediaType == "photo") {
-							var prevReducedPhoto = chooseReducedPhoto(prevMedia, null);
+							var prevReducedPhoto = util.chooseReducedPhoto(currentAlbum, prevMedia, null, fullScreenStatus);
 							$.preloadImages(prevReducedPhoto);
 						}
 					}
-				}, scaleMedia
+				}, util.scaleMedia
 			);
 			// in case the image has been already loaded, trigger the event
 			$('#media').trigger("load");
 
 			$(window).off("resize");
-			$(window).on("resize", {id: "#media", media: currentMedia}, scaleMedia);
+			$(window).on("resize", {id: "#media", media: currentMedia}, util.scaleMedia);
 
 			if (! Options.persistent_metadata) {
 				$("#metadata").hide();
@@ -2184,7 +1609,7 @@ $(document).ready(function() {
 				.on('contextmenu', function(ev) {
 					if (! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 						ev.preventDefault();
-						swipeRight(currentAlbum, prevMedia);
+						ps.swipeRight(currentAlbum, prevMedia);
 					}
 				})
 				.on('click', function(ev) {
@@ -2195,13 +1620,13 @@ $(document).ready(function() {
 							(ev.shiftKey || ev.ctrlKey) && currentMedia.mediaType == "video"
 						)
 					) {
-						swipeLeft(currentAlbum, nextMedia);
+						ps.swipeLeft(currentAlbum, nextMedia);
 						return false;
 					} else {
 						return true;
 					}
 				})
-				.on('mousewheel', swipeOnWheel);
+				.on('mousewheel', ps.swipeOnWheel);
 				$("#media-bar").on('click', function(ev) {
 					ev.stopPropagation();
 				}).on('contextmenu', function(ev) {
@@ -2209,19 +1634,19 @@ $(document).ready(function() {
 				});
 			$('#next').on('click', function(ev) {
 				if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-					swipeLeft(currentAlbum, nextMedia);
+					ps.swipeLeft(currentAlbum, nextMedia);
 					return false;
 				}
 			});
 			$('#prev').on('click', function(ev) {
 				if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-					swipeRight(currentAlbum, prevMedia);
+					ps.swipeRight(currentAlbum, prevMedia);
 					return false;
 				}
 			});
 		}
 
-		var originalMediaPath = encodeURI(phFl.originalMediaPath(currentMedia));
+		var originalMediaPath = encodeURI(util.originalMediaPath(currentMedia));
 		$("#original-link").attr("target", "_blank").attr("href", originalMediaPath);
 		$("#download-link").attr("href", originalMediaPath).attr("download", "");
 		if (util.hasGpsData(currentMedia)) {
@@ -2382,7 +1807,7 @@ $(document).ready(function() {
 		$("#subalbums").hide();
 		$("#media-view").show();
 
-		addGesturesDetection('#media-view', '#media');
+		ps.addGesturesDetection('#media-view', '#media');
 	}
 
 	function setOptions() {
@@ -2807,14 +2232,14 @@ $(document).ready(function() {
 					//    arrow right                  n               return               space
 					nextMedia && currentMedia !== null
 				) {
-					swipeLeft(currentAlbum, nextMedia);
+					ps.swipeLeft(currentAlbum, nextMedia);
 					return false;
 				} else if (
 					(e.keyCode === 37 || e.keyCode === 80 || e.keyCode === 8) &&
 					//     arrow left                  p           backspace
 					prevMedia && currentMedia !== null
 				) {
-					swipeRight(currentAlbum, prevMedia);
+					ps.swipeRight(currentAlbum, prevMedia);
 					return false;
 				} else if (e.keyCode === 27 && ! Modernizr.fullscreen && fullScreenStatus) {
 					//                    esc
@@ -2823,11 +2248,11 @@ $(document).ready(function() {
 				} else if ((e.keyCode === 27 || e.keyCode === 38 || e.keyCode === 33) && upLink) {
 					//                     esc            arrow up             page up
 					fromEscKey = true;
-					swipeDown(upLink);
+					ps.swipeDown(upLink);
 					return false;
 				} else if ((e.keyCode === 40 || e.keyCode === 34) && mediaLink && currentMedia === null) {
 					//              arrow down           page down
-					swipeUp(mediaLink);
+					ps.swipeUp(mediaLink);
 					return false;
 				} else if (e.keyCode === 68 && currentMedia !== null) {
 					//                      d
@@ -2867,21 +2292,8 @@ $(document).ready(function() {
 		}
 	return true;
 	});
-	$("#album-view").on('mousewheel', swipeOnWheel);
 
-	function swipeOnWheel(event, delta) {
-		if (currentMedia === null)
-			return true;
-		if (delta < 0) {
-			swipeLeft(currentAlbum, nextMedia);
-			return false;
-		} else if (delta > 0) {
-			swipeRight(currentAlbum, prevMedia);
-			return false;
-		}
-		return true;
-	}
-
+	$("#album-view").on('mousewheel', ps.swipeOnWheel);
 
 	if (isMobile.any()) {
 		$("#links").css("display", "inline").css("opacity", 0.5);
