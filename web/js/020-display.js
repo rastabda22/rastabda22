@@ -1466,6 +1466,7 @@ $(document).ready(function() {
 		var text, thumbnailSize, i, linkTag, triggerLoad, array, element;
 		var exposureTime, albumViewHeight;
 		var array, savedSearchSubAlbumHash, savedSearchAlbumHash;
+		var videoOk;
 
 		array = phFl.decodeHash(location.hash);
 		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
@@ -1536,6 +1537,79 @@ $(document).ready(function() {
 				nextMedia.byGpsName = util.pathJoin([nextMedia.gpsAlbum, nextMedia.name]);
 		}
 
+		function loadNextPrevMedia() {
+			// load next and previous images, so that swipe is prettier
+
+			// array = phFl.decodeHash(location.hash);
+			// // array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
+			// savedSearchSubAlbumHash = array[3];
+			// savedSearchAlbumHash = array[4];
+			//
+			// link = phFl.encodeHash(currentAlbum, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
+			$("#next-media").append('<div class="media-box-inner right""></div>');
+			// in case a video cannot be shown, substitute the video with a proper message
+			videoOK = nextMedia.mediaType == "video" && videoOK(nextMedia, '.media-box-inner.right');
+			if (nextMedia.mediaType == "photo" || videoOK) {
+				array = util.createMedia(nextMedia, 'media-right', fullScreenStatus);
+				var element = array[0];
+				var triggerLoad = array[2];
+				$(".media-box-inner.right").append(element)
+					.off(triggerLoad)
+					.on(
+						triggerLoad,
+						{
+							id: "#media-right",
+							media: nextMedia,
+							callback: function() {
+								$("#media-box-inner").addClass('right-loaded');
+							}
+						},
+						util.scaleMedia
+					);
+					// in case the image has been already loaded, trigger the event
+					$('.media-box-inner.right').trigger(triggerLoad);
+
+			} else
+				$("#media-box-inner").addClass('right-loaded');
+
+			$("#next-media").prepend('<div class="media-box-inner left""></div>');
+			// in case a video cannot be shown, substitute the video with a proper message
+			videoOK = prevMedia.mediaType == "video" && videoOK(prevMedia, '.media-box-inner.left');
+			if (nextMedia.mediaType == "photo" || videoOK) {
+				array = util.createMedia(prevMedia, 'media-left', fullScreenStatus);
+				var element = array[0];
+				var triggerLoad = array[2];
+				$(".media-box-inner.left").append(element)
+					.off(triggerLoad)
+					.on(
+						triggerLoad,
+						{
+							id: "#media-left",
+							media: prevMedia,
+							callback: function() {
+								$("#media-box-inner").addClass('left-loaded');
+							}
+						},
+						util.scaleMedia
+					);
+				// in case the image has been already loaded, trigger the event
+				$('.media-box-inner.left').trigger(triggerLoad);
+			} else
+				$("#media-box-inner").addClass('left-loaded');
+
+			// if (
+			// 	nextMedia !== null &&
+			// 	nextMedia.mediaType == "photo" ||
+			//
+			// ) {
+			// 	var nextReducedPhoto = util.chooseReducedPhoto(nextMedia, null, fullScreenStatus);
+			// 	// $.preloadImages(nextReducedPhoto);
+			// }
+			// if (prevMedia !== null && prevMedia.mediaType == "photo") {
+			// 	var prevReducedPhoto = util.chooseReducedPhoto(prevMedia, null, fullScreenStatus);
+			// 	// $.preloadImages(prevReducedPhoto);
+		}
+
 		if (
 			currentMedia.mediaType == "photo" ||
 			currentMedia.mediaType == "video" && videoOK(currentMedia, '#media-box-inner')
@@ -1558,20 +1632,12 @@ $(document).ready(function() {
 				{
 					id: '#media',
 					media: currentMedia,
-					callback: function() {
-						if (nextMedia !== null && nextMedia.mediaType == "photo") {
-							var nextReducedPhoto = util.chooseReducedPhoto(currentAlbum, nextMedia, null, fullScreenStatus);
-							$.preloadImages(nextReducedPhoto);
-						}
-						if (prevMedia !== null && prevMedia.mediaType == "photo") {
-							var prevReducedPhoto = util.chooseReducedPhoto(currentAlbum, prevMedia, null, fullScreenStatus);
-							$.preloadImages(prevReducedPhoto);
-						}
-					}
-				}, util.scaleMedia
+					callback: loadNextPrevMedia
+				},
+				util.scaleMedia
 			);
 			// in case the image has been already loaded, trigger the event
-			$('#media').trigger("load");
+			$('#media').trigger(triggerLoad);
 
 			$(window).off("resize");
 			$(window).on("resize", {id: "#media", media: currentMedia}, util.scaleMedia);
@@ -1581,7 +1647,8 @@ $(document).ready(function() {
 				$("#metadata-show").show();
 				$("#metadata-hide").hide();
 			}
-		}
+		} else
+			loadNextPrevMedia();
 
 		$("#media-view").off('contextmenu click mousewheel');
 		$("#media-bar").off();
