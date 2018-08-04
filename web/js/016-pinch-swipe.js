@@ -250,8 +250,8 @@
 	PinchSwipe.swipeRight = function(media) {
 		var array, savedSearchSubAlbumHash, savedSearchAlbumHash, element, triggerLoad, link;
 
-		if (media && ! $("#album-view").hasClass('fired')) {
-			$("#album-view").addClass('fired');
+		if (media && ! $("#album-view").hasClass('animation-fired')) {
+			$("#album-view").addClass('animation-fired');
 
 			array = phFl.decodeHash(location.hash);
 			// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
@@ -291,7 +291,7 @@
 									// addSwipeDetection('media-box-inner',swipe);
 									PinchSwipe.addGesturesDetection('#media-view');
 									$("#media-left").attr('id', 'media');
-									$("#album-view").removeClass('fired');
+									$("#album-view").removeClass('animation-fired');
 									window.location.href = link;
 								}
 							);
@@ -306,8 +306,8 @@
 	PinchSwipe.swipeLeft = function(media) {
 		var array, savedSearchSubAlbumHash, savedSearchAlbumHash, element, triggerLoad, link;
 
-		if (media && ! $("#album-view").hasClass('fired')) {
-			$("#album-view").addClass('fired');
+		if (media && ! $("#album-view").hasClass('animation-fired')) {
+			$("#album-view").addClass('animation-fired');
 
 			array = phFl.decodeHash(location.hash);
 			// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
@@ -347,7 +347,7 @@
 									// addSwipeDetection('media-box-inner',swipe);
 									PinchSwipe.addGesturesDetection('#media-view');
 									$("#media-right").attr('id', 'media');
-									$("#album-view").removeClass('fired');
+									$("#album-view").removeClass('animation-fired');
 									window.location.href = link;
 								}
 							);
