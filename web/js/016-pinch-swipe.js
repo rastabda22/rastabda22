@@ -47,7 +47,7 @@
 						// when small => swipe left
 						// when big => pinch out (make smaller)
 						if (! PinchSwipe.pinched(mediaSelector)) {
-	 						PinchSwipe.swipeLeft(currentAlbum, prevMedia);
+	 						PinchSwipe.swipeLeft(prevMedia);
 						} else {
 							$(mediaSelector).animate(
 								{
@@ -76,7 +76,7 @@
 						// when big => let media scroll
 						if (fingerCount === 1) {
 						 	if (! pinched(mediaSelector)) {
-		 						PinchSwipe.swipeLeft(currentAlbum, prevMedia);
+		 						PinchSwipe.swipeLeft(prevMedia);
 		 					} else {
 								return true;
 							}
@@ -87,7 +87,7 @@
 						// when big => let media scroll
 						if (fingerCount === 1) {
 						 	if (! pinched(mediaSelector)) {
-								PinchSwipe.swipeRight(currentAlbum, prevMedia);
+								PinchSwipe.swipeRight(prevMedia);
 							} else {
 								return true;
 							}
@@ -217,9 +217,9 @@
 	//
 	// function swipe(el,d) {
 	// 	if (d == "r") {
-	// 		swipeRight(currentAlbum, prevMedia);
+	// 		swipeRight(prevMedia);
 	// 	} else if (d == "l") {
-	// 		swipeLeft(currentAlbum, nextMedia);
+	// 		swipeLeft(nextMedia);
 	// 	} else if (d == "d") {
 	// 		if (upLink) {
 	// 			fromEscKey = true;
@@ -235,10 +235,10 @@
 		if (currentMedia === null)
 			return true;
 		if (delta < 0) {
-			PinchSwipe.swipeLeft(currentAlbum, nextMedia);
+			PinchSwipe.swipeLeft(nextMedia);
 			return false;
 		} else if (delta > 0) {
-			PinchSwipe.swipeRight(currentAlbum, prevMedia);
+			PinchSwipe.swipeRight(prevMedia);
 			return false;
 		}
 		return true;
@@ -246,7 +246,7 @@
 
 
 
-	PinchSwipe.swipeRight = function(album, media) {
+	PinchSwipe.swipeRight = function(media) {
 		var array, savedSearchSubAlbumHash, savedSearchAlbumHash, element, triggerLoad, link;
 
 		if (media && ! $("#album-view").hasClass('fired')) {
@@ -302,7 +302,7 @@
 		}
 	}
 
-	PinchSwipe.swipeLeft = function(album, media) {
+	PinchSwipe.swipeLeft = function(media) {
 		var array, savedSearchSubAlbumHash, savedSearchAlbumHash, element, triggerLoad, link;
 
 		if (media && ! $("#album-view").hasClass('fired')) {

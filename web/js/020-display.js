@@ -1609,7 +1609,7 @@ $(document).ready(function() {
 				.on('contextmenu', function(ev) {
 					if (! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 						ev.preventDefault();
-						ps.swipeRight(currentAlbum, prevMedia);
+						ps.swipeRight(prevMedia);
 					}
 				})
 				.on('click', function(ev) {
@@ -1620,7 +1620,7 @@ $(document).ready(function() {
 							(ev.shiftKey || ev.ctrlKey) && currentMedia.mediaType == "video"
 						)
 					) {
-						ps.swipeLeft(currentAlbum, nextMedia);
+						ps.swipeLeft(nextMedia);
 						return false;
 					} else {
 						return true;
@@ -1634,13 +1634,13 @@ $(document).ready(function() {
 				});
 			$('#next').on('click', function(ev) {
 				if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-					ps.swipeLeft(currentAlbum, nextMedia);
+					ps.swipeLeft(nextMedia);
 					return false;
 				}
 			});
 			$('#prev').on('click', function(ev) {
 				if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-					ps.swipeRight(currentAlbum, prevMedia);
+					ps.swipeRight(prevMedia);
 					return false;
 				}
 			});
@@ -2232,14 +2232,14 @@ $(document).ready(function() {
 					//    arrow right                  n               return               space
 					nextMedia && currentMedia !== null
 				) {
-					ps.swipeLeft(currentAlbum, nextMedia);
+					ps.swipeLeft(nextMedia);
 					return false;
 				} else if (
 					(e.keyCode === 37 || e.keyCode === 80 || e.keyCode === 8) &&
 					//     arrow left                  p           backspace
 					prevMedia && currentMedia !== null
 				) {
-					ps.swipeRight(currentAlbum, prevMedia);
+					ps.swipeRight(prevMedia);
 					return false;
 				} else if (e.keyCode === 27 && ! Modernizr.fullscreen && fullScreenStatus) {
 					//                    esc
