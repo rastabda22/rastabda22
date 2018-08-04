@@ -28,8 +28,9 @@
   }
 
   // define the actions to be taken on pinch, swipe, tap, double tap
-	PinchSwipe.addGesturesDetection = function(detectionSelector, mediaSelector) {
+	PinchSwipe.addGesturesDetection = function(detectionSelector) {
 
+    mediaSelector = "#media";
 		// get the two initial values:
 
 		// the reduction width and height in the page
@@ -288,7 +289,7 @@
 									$(".media-box-inner.left").removeClass('left').attr('id', 'media-box-inner').css("right", "");
 									// since the id #media-box-inner has been moved from one element to another, swipe detection must be enabled again
 									// addSwipeDetection('media-box-inner',swipe);
-									PinchSwipe.addGesturesDetection('#media-view', '#media');
+									PinchSwipe.addGesturesDetection('#media-view');
 									$("#media-left").attr('id', 'media');
 									$("#album-view").removeClass('fired');
 									window.location.href = link;
@@ -344,7 +345,7 @@
 									$(".media-box-inner.right").removeClass('right').attr('id', 'media-box-inner').css("left", "");
 									// since the id #media-box-inner has been moved from one element to another, swipe detection must be enabled again
 									// addSwipeDetection('media-box-inner',swipe);
-									PinchSwipe.addGesturesDetection('#media-view', '#media');
+									PinchSwipe.addGesturesDetection('#media-view');
 									$("#media-right").attr('id', 'media');
 									$("#album-view").removeClass('fired');
 									window.location.href = link;

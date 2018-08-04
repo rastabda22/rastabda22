@@ -1439,7 +1439,7 @@ $(document).ready(function() {
 
 		setOptions();
 
-		ps.addGesturesDetection('#album-view', '');
+		ps.addGesturesDetection('#album-view');
 
 		setTimeout(scrollToThumb, 1);
 	}
@@ -1807,7 +1807,7 @@ $(document).ready(function() {
 		$("#subalbums").hide();
 		$("#media-view").show();
 
-		ps.addGesturesDetection('#media-view', '#media');
+		ps.addGesturesDetection('#media-view');
 	}
 
 	function setOptions() {
