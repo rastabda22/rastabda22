@@ -172,7 +172,7 @@ $(document).ready(function() {
 		// initialize social buttons (http://socialsharekit.com/)
 		SocialShareKit.init({
 		});
-		if (! Modernizr.flexbox && bottomSocialButtons()) {
+		if (! Modernizr.flexbox && util.bottomSocialButtons()) {
 			var numSocial = 5;
 			var socialWidth = Math.floor(window.innerWidth / numSocial);
 			$('.ssk').width(socialWidth * 2 + "px");

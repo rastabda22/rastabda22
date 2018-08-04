@@ -453,7 +453,7 @@
 			container = $("#media-view");
 			if ($("#album-view").is(":visible"))
 				containerBottom = $("#album-view").outerHeight();
-			else if (bottomSocialButtons() && containerBottom < $(".ssk").outerHeight())
+			else if (Utilities.bottomSocialButtons() && containerBottom < $(".ssk").outerHeight())
 				// correct container bottom when social buttons are on the bottom
 				containerBottom = $(".ssk").outerHeight();
 			containerTop = 0;
@@ -555,7 +555,7 @@
 	}
 
 	Utilities.bottomSocialButtons = function() {
-		return ! lateralSocialButtons();
+		return ! Utilities.lateralSocialButtons();
 	}
 
 	/* make static methods callable as member functions */
