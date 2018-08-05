@@ -213,9 +213,13 @@
 	</div>
 	<div id="media-view">
 		<div id="media-box">
-			<a id="next-media">
-				<div id="media-box-inner"></div>
-			</a>
+			<div id="media-container">
+				<div class="media-box-inner left"></div>
+				<a id="next-media">
+					<div class="media-box-inner" id="media-box-inner"></div>
+				</a>
+				<div class="media-box-inner right"></div>
+			</div>
 			<div id="media-bar">
 				<div id="links">
 					<a id="metadata-show" href="javascript:void(0)"></a>

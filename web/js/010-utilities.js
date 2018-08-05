@@ -438,14 +438,7 @@
 		media = $(event.data.id);
 		media.off();
 
-		mediaObject = currentMedia;
-		if (event.data.id.indexOf('left') != -1) {
-			media.parent().css('right', '100%');
-			mediaObject = event.data.media;
-		} else if (event.data.id.indexOf('right') != -1) {
-			media.parent().css('left', '100%');
-			mediaObject = event.data.media;
-		}
+		mediaObject = event.data.media;
 
 		width = mediaObject.metadata.size[0];
 		height = mediaObject.metadata.size[1];
@@ -500,24 +493,18 @@
 		if (parseInt(media.attr("width")) > containerWidth && media.attr("ratio") >= containerRatio) {
 			height = container.width() / media.attr("ratio");
 			media
-				.css("width", containerWidth + "px")
-				.css("height", (containerWidth / ratio) + "px")
-				.parent()
-					.css("height", height)
-					.css("margin-top", - height / 2)
-					.css("top", "50%");
+				.css("height", height)
+				.css("margin-top", - height / 2)
+				.css("top", "50%");
 			if (mediaObject.mediaType == "video")
 				mediaBarBottom = 0;
 			else if (mediaObject.mediaType == "photo")
 				mediaBarBottom = (containerHeight - containerWidth / ratio) / 2;
 		} else if (parseInt(media.attr("height")) > containerHeight && media.attr("ratio") <= containerRatio) {
 			media
-				.css("height", containerHeight + "px")
-				.css("width", (containerHeight * ratio) + "px")
-				.parent()
-					.css("height", "100%")
-					.css("margin-top", "0")
-					.css("top", "0");
+				.css("height", "100%")
+				.css("margin-top", "0")
+				.css("top", "0");
 			if (mediaObject.mediaType == "video") {
 				media.css("height", parseInt(media.css("height")) - $("#links").outerHeight());
 				mediaBarBottom = 0;
@@ -526,12 +513,9 @@
 				mediaBarBottom = 0;
 		} else {
 			media
-				.css("height", "")
-				.css("width", "")
-				.parent()
-					.css("height", media.attr("height"))
-					.css("margin-top", - media.attr("height") / 2)
-					.css("top", "50%");
+				.css("height", media.attr("height"))
+				.css("margin-top", - media.attr("height") / 2)
+				.css("top", "50%");
 			mediaBarBottom = (container.height() - media.attr("height")) / 2;
 			if (fullScreenStatus) {
 				if (mediaObject.mediaType == "video") {

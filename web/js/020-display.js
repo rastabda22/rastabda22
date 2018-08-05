@@ -2,6 +2,8 @@ var fullScreenStatus = false;
 var currentMedia = null;
 var currentAlbum = null;
 var nextMedia = null, prevMedia = null;
+var windowWidth = $(window).outerWidth();
+var windowHeight = $(window).outerHeight();
 var Options = {};
 var isMobile = {
 	Android: function() {
@@ -1477,6 +1479,11 @@ $(document).ready(function() {
 		firstEscKey = true;
 
 		thumbnailSize = Options.media_thumb_size;
+		nextMediaHeight = windowHeight - $("#title-container").height() - $("#album-view").height()
+		$("#media-view").css("width", windowWidth).css("height", nextMediaHeight);
+		$("#media-box").css("width", windowWidth).css("height", nextMediaHeight);
+		$("#media-container").css("width", windowWidth * 3).css("height", nextMediaHeight).css("transform", "translate(-" + windowWidth + "px, 0px)");
+		$(".media-box-inner").css("width", windowWidth).css("height", nextMediaHeight);
 		$("#media-box").show();
 		if (currentAlbum.media.length == 1) {
 			$("#next").hide();
@@ -1546,7 +1553,6 @@ $(document).ready(function() {
 			// savedSearchAlbumHash = array[4];
 			//
 			// link = phFl.encodeHash(currentAlbum, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
-			$("#next-media").append('<div class="media-box-inner right""></div>');
 			// in case a video cannot be shown, substitute the video with a proper message
 			videoOK = nextMedia.mediaType == "video" && videoOK(nextMedia, '.media-box-inner.right');
 			if (nextMedia.mediaType == "photo" || videoOK) {
@@ -1572,7 +1578,6 @@ $(document).ready(function() {
 			} else
 				$("#media-box-inner").addClass('right-loaded');
 
-			$("#next-media").prepend('<div class="media-box-inner left""></div>');
 			// in case a video cannot be shown, substitute the video with a proper message
 			videoOK = prevMedia.mediaType == "video" && videoOK(prevMedia, '.media-box-inner.left');
 			if (nextMedia.mediaType == "photo" || videoOK) {
@@ -1640,7 +1645,14 @@ $(document).ready(function() {
 			$('#media').trigger(triggerLoad);
 
 			$(window).off("resize");
-			$(window).on("resize", {id: "#media", media: currentMedia}, util.scaleMedia);
+			$(window).on(
+				"resize",
+				{
+					id: "#media",
+					media: currentMedia
+				},
+				util.scaleMedia
+			);
 
 			if (! Options.persistent_metadata) {
 				$("#metadata").hide();
@@ -2106,10 +2118,10 @@ $(document).ready(function() {
 			if (isAlbumWithOneMedia) {
 				currentMedia = currentAlbum.media[0];
 				currentMediaIndex = 0;
-				$("#next-media").css("cursor", "default");
+				$("#media-container").css("cursor", "default");
 				$("#album-view").addClass("hidden");
 			} else {
-				$("#next-media").css("cursor", "ew-resize");
+				$("#media-container").css("cursor", "ew-resize");
 			}
 			nextMedia = null;
 			previousMedia = null;

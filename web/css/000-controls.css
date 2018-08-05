@@ -225,6 +225,8 @@ a.title-anchor.mobile {
 
 #media-box {
 	display: inline;
+	position: relative;
+	overflow: hidden;
 }
 
 #media-view {
@@ -240,6 +242,15 @@ a.title-anchor.mobile {
 	cursor: ew-resize;
 }
 
+#media-container {
+	/* float: left; */
+	/* display: inline; */
+	transition-property: transform;
+	transition-timing-function: ease-out;
+	transform: translate(0px, 0px);
+	transition-duration: 0s;
+}
+
 video {
 	cursor: default;
 }
@@ -251,10 +262,13 @@ video {
 	bottom: 0;
 }
 
-.media-box-inner, #media-box-inner {
-	position: absolute;
-	/* top: 50%; */
-	width: 100%;
+.media-box-inner {
+	display: block;
+	float: left;
+}
+
+.media-box-inner img {
+	position: relative;
 }
 
 #album-view.no-bottom-space {
