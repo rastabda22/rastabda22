@@ -206,41 +206,46 @@
 	<?php } ?>
 	</div>
 
-	<div id="title-container">
-		<div id="title">
-			<span id="title-string"></span>
-		</div>
-	</div>
 	<div id="media-view">
-		<div id="media-box">
-			<div id="media-container">
-				<div class="media-box-inner left"></div>
-				<a id="next-media">
-					<div class="media-box-inner" id="media-box-inner"></div>
-				</a>
-				<div class="media-box-inner right"></div>
-			</div>
-			<div id="media-bar">
-				<div id="links">
-					<a id="metadata-show" href="javascript:void(0)"></a>
-					<a id="metadata-hide" style="display:none;" href="javascript:void(0)"></a> |
-					<a id="original-link"></a> |
-					<a id="download-link"></a> <a id="menu-map-divider">|</a>
-					<a id="menu-map-link"></a>
-					<a id="fullscreen" href="javascript:void(0)">
-						<span id="fullscreen-divider"> | </span>
-						<span id="enter-fullscreen"></span>
-						<span id="exit-fullscreen"></span>
-					</a>
+		<div id="media-box-container">
+			<div class="media-box" id="center">
+
+				<div class="media-box-inner">
 				</div>
-				<div id="metadata"></div>
+
+				<div class="media-bar">
+					<div class="links">
+						<a class="metadata-show"></a>
+						<a class="metadata-hide"></a> |
+						<a class="original-link"></a> |
+						<a class="download-link"></a> <a class="menu-map-divider">|</a>
+						<a class="menu-map-link"></a>
+						<a class="fullscreen">
+							<span class="fullscreen-divider"> | </span>
+							<span class="enter-fullscreen"></span>
+							<span class="exit-fullscreen"></span>
+						</a>
+					</div>
+					<div class="metadata">
+					</div>
+				</div>
+
 			</div>
 		</div>
 
 		<a id="prev">&lsaquo;</a>
 		<a id="next">&rsaquo;</a>
+
 	</div>
+
 	<div id="album-view">
+
+		<div class="title-container">
+			<div class="title">
+				<span class="title-string"></span>
+			</div>
+		</div>
+
 		<div id="subalbums"></div>
 		<div id="thumbs">
 			<div id="loading"></div>

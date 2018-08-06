@@ -2,6 +2,7 @@
 
   var phFl = new PhotoFloat();
   var util = new Utilities();
+  var speed = 500;
 
 	/* constructor */
 	function PinchSwipe() {
@@ -27,10 +28,18 @@
     return PinchSwipe.cssWidth(mediaSelector) > initialCssWidth;
   }
 
+  PinchSwipe.scrollImages = function(distance, duration) {
+      $("#media-box-container").css("transition-duration", (duration / 1000).toFixed(1) + "s");
+
+      //inverse the number we set in the css
+      var value = (distance < 0 ? "" : "-") + Math.abs(distance).toString();
+      $("#media-box-container").css("transform", "translate(" + value + "px,0)");
+  }
+
   // define the actions to be taken on pinch, swipe, tap, double tap
 	PinchSwipe.addGesturesDetection = function(detectionSelector) {
 
-    mediaSelector = "#media";
+    mediaSelector = ".media-box#center img";
 		// get the two initial values:
 
 		// the reduction width and height in the page
@@ -41,115 +50,176 @@
 		var myReductionWidth = PinchSwipe.reductionWidth(mediaSelector);
 		var myReductionHeight = PinchSwipe.reductionHeight(mediaSelector);
 
-		if (mediaSelector) {
-			$(detectionSelector).swipe(
-				{
-					tap:function(event, target) {
-						// when small => swipe left
-						// when big => pinch out (make smaller)
-						if (! PinchSwipe.pinched(mediaSelector, myCssWidth)) {
-	 						PinchSwipe.swipeLeft(prevMedia);
-						} else {
-							$(mediaSelector).animate(
-								{
-					        'width': myCssWidth,
-									'height': myCssHeight
-					    	}
-							);
-						}
-	        },
-	        doubleTap:function(event, target) {
-						// when small => pinch in (make bigger)
-						// when big => pinch further in choosing a bigger reduction
-						if (! PinchSwipe.pinched(mediaSelector, myCssWidth)) {
-							$(mediaSelector).animate(
-								{
-					        'width': myReductionWidth,
-									'height': myReductionHeight
-					    	}
-							);
-						} else {
-							// TO DO: select next bigger reduction
-						}
-	        },
-					swipeLeft:function(event, direction, distance, duration, fingerCount) {
-						// when small => swipe next media
-						// when big => let media scroll
-						if (fingerCount === 1) {
-						 	if (! pinched(mediaSelector, myCssWidth)) {
-		 						PinchSwipe.swipeLeft(prevMedia);
-		 					} else {
-								return true;
-							}
-						}
-					},
-					swipeRight:function(event, direction, distance, duration, fingerCount) {
-						// when small => swipe previous media
-						// when big => let media scroll
-						if (fingerCount === 1) {
-						 	if (! pinched(mediaSelector, myCssWidth)) {
-								PinchSwipe.swipeRight(prevMedia);
-							} else {
-								return true;
-							}
-						}
-					},
-					swipeDown:function(event, direction, distance, duration, fingerCount) {
-						// when small => go from media to its album
-						// when big => nothing
-						if (fingerCount === 1 && ! pinched(mediaSelector, myCssWidth) && upLink) {
-							fromEscKey = true;
-							swipeDown(upLink);
-						}
-					},
-					pinchIn:function(event, direction, distance, duration, fingerCount, pinchZoom) {
-						// when small => pinch in (make bigger)
-						// when big => pinch further in choosing a bigger reduction
-						if (fingerCount > 1) {
-							if (! pinched(mediaSelector, myCssWidth)) {
-								$(mediaSelector).animate(
-									{
-						        'width': myReductionWidth,
-										'height': myReductionHeight
-						    	}
-								);
-								return false;
-							} else {
-								// TO DO: select next bigger reduction
-							}
-						}
-					},
-					pinchOut:function(event, direction, distance, duration, fingerCount, pinchZoom) {
-						// when small => nothing
-						// when big => pinch out
-						if (fingerCount > 1) {
-							if (pinched(mediaSelector, myCssWidth)) {
-								$(mediaSelector).animate(
-									{
-						        'width': myCssWidth,
-										'height': myCssHeight
-						    	}
-								);
-							}
-						}
-					},
-					fingers:$.fn.swipe.fingers.ALL
-				}
-			);
-		} else {
-			// it's an album
-			$(detectionSelector).swipe(
-				{
-					swipeUp:function(event, direction, distance, duration, fingerCount) {
-						// when small => go from album to its 1st media
-						// when big => nothing
-						if (fingerCount === 1 && ! pinched(mediaSelector, myCssWidth))
-							swipeUp(mediaLink);
-					},
-					fingers:$.fn.swipe.fingers.ALL
-				}
-			);
-		}
+    var swipeOptions = {
+      triggerOnTouchEnd: true,
+      swipeStatus: swipeStatus,
+      pinchStatus: pinchStatus,
+      // allowPageScroll: "vertical",
+      threshold: 75
+    };
+
+    /**
+     * Catch each phase of the swipe.
+     * move : we drag the div
+     * cancel : we animate back to where we were
+     * end : we animate to the next image
+     */
+    function swipeStatus(event, phase, direction, distance) {
+      var array, savedSearchSubAlbumHash, savedSearchAlbumHash, element, triggerLoad, link, selector, media;
+
+      //If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
+      if (
+        $("#media-box-inner").hasClass('left-loaded') &&
+        $("#media-box-inner").hasClass('right-loaded') &&
+        (direction == "left" || direction == "right")
+      ) {
+        if (phase == "move") {
+          if (direction == "left") {
+              scrollImages(windowWidth + distance, 0);
+          } else if (direction == "right") {
+              scrollImages(windowWidth - distance, 0);
+          }
+        } else if (phase == "cancel") {
+          scrollImages(windowWidth, speed);
+        } else if (phase == "end") {
+          if (direction == "right") {
+            previousImage(speed);
+          } else if (direction == "left") {
+            nextImage(speed);
+          }
+        }
+      }
+    }
+
+    function pinchStatus(event, phase, direction, distance) {
+    }
+
+    function previousImage(speed) {
+
+    }
+
+    function nextImage(speed) {
+        // currentImg = Math.min(currentImg + 1, maxImages - 1);
+
+    }
+
+    /**
+     * Manually update the position of the imgs on drag
+     */
+
+    $(function () {
+      $(detectionSelector).swipe(swipeOptions);
+    });
+
+		// if (mediaSelector) {
+		// 	$(detectionSelector).swipe(
+		// 		{
+		// 			tap:function(event, target) {
+		// 				// when small => swipe left
+		// 				// when big => pinch out (make smaller)
+		// 				if (! PinchSwipe.pinched(mediaSelector, myCssWidth)) {
+	 	// 					PinchSwipe.swipeLeft(prevMedia);
+		// 				} else {
+		// 					$(mediaSelector).animate(
+		// 						{
+		// 			        'width': myCssWidth,
+		// 							'height': myCssHeight
+		// 			    	}
+		// 					);
+		// 				}
+	  //       },
+	  //       doubleTap:function(event, target) {
+		// 				// when small => pinch in (make bigger)
+		// 				// when big => pinch further in choosing a bigger reduction
+		// 				if (! PinchSwipe.pinched(mediaSelector, myCssWidth)) {
+		// 					$(mediaSelector).animate(
+		// 						{
+		// 			        'width': myReductionWidth,
+		// 							'height': myReductionHeight
+		// 			    	}
+		// 					);
+		// 				} else {
+		// 					// TO DO: select next bigger reduction
+		// 				}
+	  //       },
+		// 			swipeLeft:function(event, direction, distance, duration, fingerCount) {
+		// 				// when small => swipe next media
+		// 				// when big => let media scroll
+		// 				if (fingerCount === 1) {
+		// 				 	if (! pinched(mediaSelector, myCssWidth)) {
+		//  						PinchSwipe.swipeLeft(prevMedia);
+		//  					} else {
+		// 						return true;
+		// 					}
+		// 				}
+		// 			},
+		// 			swipeRight:function(event, direction, distance, duration, fingerCount) {
+		// 				// when small => swipe previous media
+		// 				// when big => let media scroll
+		// 				if (fingerCount === 1) {
+		// 				 	if (! pinched(mediaSelector, myCssWidth)) {
+		// 						PinchSwipe.swipeRight(prevMedia);
+		// 					} else {
+		// 						return true;
+		// 					}
+		// 				}
+		// 			},
+		// 			swipeDown:function(event, direction, distance, duration, fingerCount) {
+		// 				// when small => go from media to its album
+		// 				// when big => nothing
+		// 				if (fingerCount === 1 && ! pinched(mediaSelector, myCssWidth) && upLink) {
+		// 					fromEscKey = true;
+		// 					swipeDown(upLink);
+		// 				}
+		// 			},
+		// 			pinchIn:function(event, direction, distance, duration, fingerCount, pinchZoom) {
+		// 				// when small => pinch in (make bigger)
+		// 				// when big => pinch further in choosing a bigger reduction
+		// 				if (fingerCount > 1) {
+		// 					if (! pinched(mediaSelector, myCssWidth)) {
+		// 						$(mediaSelector).animate(
+		// 							{
+		// 				        'width': myReductionWidth,
+		// 								'height': myReductionHeight
+		// 				    	}
+		// 						);
+		// 						return false;
+		// 					} else {
+		// 						// TO DO: select next bigger reduction
+		// 					}
+		// 				}
+		// 			},
+		// 			pinchOut:function(event, direction, distance, duration, fingerCount, pinchZoom) {
+		// 				// when small => nothing
+		// 				// when big => pinch out
+		// 				if (fingerCount > 1) {
+		// 					if (pinched(mediaSelector, myCssWidth)) {
+		// 						$(mediaSelector).animate(
+		// 							{
+		// 				        'width': myCssWidth,
+		// 								'height': myCssHeight
+		// 				    	}
+		// 						);
+		// 					}
+		// 				}
+		// 			},
+		// 			fingers:$.fn.swipe.fingers.ALL
+		// 		}
+		// 	);
+		// } else {
+		// 	// it's an album
+		// 	$(detectionSelector).swipe(
+		// 		{
+		// 			swipeUp:function(event, direction, distance, duration, fingerCount) {
+		// 				// when small => go from album to its 1st media
+		// 				// when big => nothing
+		// 				if (fingerCount === 1 && ! pinched(mediaSelector, myCssWidth))
+		// 					swipeUp(mediaLink);
+		// 			},
+		// 			fingers:$.fn.swipe.fingers.ALL
+		// 		}
+		// 	);
+		// }
 	};
 
 
@@ -248,115 +318,41 @@
 
 
 	PinchSwipe.swipeRight = function(media) {
-		var array, savedSearchSubAlbumHash, savedSearchAlbumHash, element, triggerLoad, link;
+		var mediaBoxRightContent;
 
-		if (media && ! $("#album-view").hasClass('animation-fired')) {
-			$("#album-view").addClass('animation-fired');
+    $("#media-box-container").on(
+      'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
+      function() {
+        mediaBoxRightContent = $(".media-box#right").html();
+        $(".media-box#right").remove();
+        $(".media-box#center").attr('id', 'right');
+        $(".media-box#left").attr('id', 'center');
+        $("#media-box-container").prepend(mediaBoxRightContent.replace('id="right"', 'id="left"'));
+        $("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
+        window.location.href = link;
+      }
+    );
 
-			array = phFl.decodeHash(location.hash);
-			// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-			savedSearchSubAlbumHash = array[3];
-			savedSearchAlbumHash = array[4];
-
-			link = phFl.encodeHash(currentAlbum, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
-			$("#next-media").prepend('<div class="media-box-inner left" style="right: 100%;"></div>');
-			if (
-				media.mediaType == "photo" ||
-				media.mediaType == "video" && videoOK(media, '.media-box-inner left')
-			) {
-				array = util.createMedia(media, 'media-left', fullScreenStatus);
-				element = array[0];
-				triggerLoad = array[2];
-				$(".media-box-inner.left").append(element);
-				$('#media-left').on(
-					triggerLoad,
-					{
-						id: '#media-left',
-						media: media,
-						callback: function() {
-							// animation must wait for load completion
-							$.when(
-								$(".media-box-inner.left").animate({
-									right: 0,
-								}, 300).promise(),
-								$("#media-box-inner").animate({
-										left: "100%",
-									}, 300
-								).promise()
-							).done(
-								function() {
-									$("#media-box-inner").remove();
-									$(".media-box-inner.left").removeClass('left').attr('id', 'media-box-inner').css("right", "");
-									// since the id #media-box-inner has been moved from one element to another, swipe detection must be enabled again
-									// addSwipeDetection('media-box-inner',swipe);
-									PinchSwipe.addGesturesDetection('#media-view');
-									$("#media-left").attr('id', 'media');
-									$("#album-view").removeClass('animation-fired');
-									window.location.href = link;
-								}
-							);
-						}
-					},
-					util.scaleMedia
-				);
-			}
-		}
+    PinchSwipe.scrollImages(0, speed);
 	}
 
 	PinchSwipe.swipeLeft = function(media) {
-		var array, savedSearchSubAlbumHash, savedSearchAlbumHash, element, triggerLoad, link;
+    var mediaBoxLeftContent;
 
-		if (media && ! $("#album-view").hasClass('animation-fired')) {
-			$("#album-view").addClass('animation-fired');
+    $("#media-box-container").on(
+      'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
+      function() {
+        mediaBoxLeftContent = $(".media-box#left").html();
+        $(".media-box#left").remove();
+        $(".media-box#center").attr('id', 'left');
+        $(".media-box#right").attr('id', 'center');
+        $("#media-box-container").append(mediaBoxLeftContent.replace('id="left"', 'id="right"'));
+        $("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
+        window.location.href = link;
+      }
+    );
 
-			array = phFl.decodeHash(location.hash);
-			// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-			savedSearchSubAlbumHash = array[3];
-			savedSearchAlbumHash = array[4];
-
-			link = phFl.encodeHash(currentAlbum, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
-			$("#next-media").append('<div class="media-box-inner right" style="left: 100%;"></div>');
-			if (
-				media.mediaType == "photo" ||
-				media.mediaType == "video" && videoOK(media, '.media-box-inner right')
-			) {
-				array = util.createMedia(media, 'media-right', fullScreenStatus);
-				element = array[0];
-				triggerLoad = array[2];
-				$(".media-box-inner.right").append(element);
-				$('#media-right').on(
-					triggerLoad,
-          {
-						id: '#media-right',
-						media: media,
-						callback: function() {
-							// animation must wait for load completion
-							$.when(
-								$(".media-box-inner.right").animate({
-									left: 0,
-								}, 300).promise(),
-								$("#media-box-inner").animate({
-										right: "100%",
-									}, 300
-								).promise()
-							).done(
-								function() {
-									$("#media-box-inner").remove();
-									$(".media-box-inner.right").removeClass('right').attr('id', 'media-box-inner').css("left", "");
-									// since the id #media-box-inner has been moved from one element to another, swipe detection must be enabled again
-									// addSwipeDetection('media-box-inner',swipe);
-									PinchSwipe.addGesturesDetection('#media-view');
-									$("#media-right").attr('id', 'media');
-									$("#album-view").removeClass('animation-fired');
-									window.location.href = link;
-								}
-							);
-						}
-					},
-					util.scaleMedia
-				);
-			}
-		}
+    PinchSwipe.scrollImages(windowWidth * 2, speed);
 	}
 
 	PinchSwipe.prototype.swipeUp = function(dest) {

@@ -63,6 +63,17 @@ $(document).ready(function() {
 	// var nextLink = "", prevLink = "";
 	var upLink = "", mediaLink = "";
 
+	// triplicate the #mediaview content in order to swipe the media
+	var mediaBoxContainerContent = $("#media-box-container").html();
+	$("#media-box-container").prepend(mediaBoxContainerContent.replace('id="center"', 'id="left"'));
+	$("#media-box-container").append(mediaBoxContainerContent.replace('id="center"', 'id="right"'));
+
+	// copy the title structure into #media-view
+	var titleContent = $("#album-view").children().first().html();
+	$("#media-view .media-box#center").prepend(titleContent);
+	$("#media-view .media-box#left").prepend(titleContent);
+	$("#media-view .media-box#right").prepend(titleContent);
+
 	/* Displays */
 
 	function _t(id) {
@@ -83,7 +94,7 @@ $(document).ready(function() {
 				if (! translations[language].hasOwnProperty(key))
 					keyLanguage = 'en';
 
-				if (key == '#title-string' && document.title.substr(0, 5) != "<?php")
+				if (key == '.title-string' && document.title.substr(0, 5) != "<?php")
 					// don't set page title, php has already set it
 					continue;
 				selector = $(key);
@@ -404,7 +415,7 @@ $(document).ready(function() {
 		}
 	}
 
-	function setTitle() {
+	function setTitle(parentSelector) {
 		var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, originalTitle;
 		var titleAnchorClasses, titleAnchorClassesItalics, hiddenTitle = "", albumTypeString, where, initialValue, searchFolderHash;
 		var beginLink, linksToLeave, numLinks, beginAt, latitude, longitude, arrayCoordinates, numMediaInSubAlbums;
@@ -419,7 +430,7 @@ $(document).ready(function() {
 		if (Options.page_title !== "")
 			originalTitle = Options.page_title;
 		else
-			originalTitle = translations[language]["#title-string"];
+			originalTitle = translations[language][".title-string"];
 
 
 		if (! currentAlbum.path.length)
@@ -496,9 +507,9 @@ $(document).ready(function() {
 					title += currentAlbum.media.length + " ";
 					title += _t(".title-media") + " ";
 				 	if (components.length >= 5)
-						title += _t("#title-in-day-album");
+						title += _t(".title-in-day-album");
 					else
-						title += _t("#title-in-date-album");
+						title += _t(".title-in-date-album");
 					title += ")</span>";
 				}
 				title += "</span>";
@@ -561,9 +572,9 @@ $(document).ready(function() {
 				title += currentAlbum.media.length + " ";
 				title += _t(".title-media") + " ";
 				if (components.length >= gpsLevelNumber + 2)
-					title += _t("#title-in-gps-album");
+					title += _t(".title-in-gps-album");
 				else
-					title += _t("#title-in-gpss-album");
+					title += _t(".title-in-gpss-album");
 				title += ")</span>";
 			}
 		} else if (isSearchTitle) {
@@ -607,7 +618,7 @@ $(document).ready(function() {
 				(currentAlbum.media.length || currentAlbum.subalbums.length)
 			) {
 				title += " <span id=\"title-count\">(";
-				title += _t("#title-found") + ' ';
+				title += _t(".title-found") + ' ';
 				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
 				if (currentAlbum.media.length) {
 					title += currentAlbum.media.length + " ";
@@ -617,11 +628,11 @@ $(document).ready(function() {
 				}
 				if (currentAlbum.subalbums.length) {
 					title += currentAlbum.subalbums.length + " ";
-					title += _t("#title-albums");
+					title += _t(".title-albums");
 				}
 				if (currentAlbum.media.length > 0 && currentAlbum.subalbums.length > 0) {
 					title += ", ";
-					title += _t("#title-total") + " ";
+					title += _t(".title-total") + " ";
 					title += currentAlbum.media.length + currentAlbum.subalbums.length;
 				}
 				title += ")</span>";
@@ -692,7 +703,7 @@ $(document).ready(function() {
 				if (currentAlbum.media.length) {
 					title += currentAlbum.media.length + " ";
 					title += _t(".title-media") + " ";
-					title += _t("#title-in-album");
+					title += _t(".title-in-album");
 					if (numMediaInSubAlbums)
 						title += ", ";
 				}
@@ -700,11 +711,11 @@ $(document).ready(function() {
 					title += numMediaInSubAlbums + " ";
 					if (! currentAlbum.media.length)
 						title += _t(".title-media") + " ";
-					title += _t("#title-in-subalbums");
+					title += _t(".title-in-subalbums");
 				}
 				if (currentAlbum.media.length > 0 && numMediaInSubAlbums > 0) {
 					title += ", ";
-					title += _t("#title-total") + " ";
+					title += _t(".title-total") + " ";
 					title += currentAlbum.media.length + numMediaInSubAlbums;
 				}
 				title += ")</span>";
@@ -719,7 +730,7 @@ $(document).ready(function() {
 		}
 
 		if (currentMedia !== null) {
-			title += "<span id=\"media-name\">" + util.trimExtension(currentMedia.name) + "</span>";
+			title += "<span class=\"media-name\">" + util.trimExtension(currentMedia.name) + "</span>";
 			if (util.hasGpsData(currentMedia)) {
 				latitude = currentMedia.metadata.latitude;
 				longitude = currentMedia.metadata.longitude;
@@ -747,7 +758,7 @@ $(document).ready(function() {
 			}
 		}
 
-		$("#title-string").html(title);
+		$(parentSelector + " .title-string").html(title);
 
 		if (isMobile.any()) {
 			$("#dots").off();
@@ -770,7 +781,7 @@ $(document).ready(function() {
 
 
 		if (currentMedia === null && currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1) {
-			title += " &raquo; <span id=\"media-name\">" + util.trimExtension(currentAlbum.media[0].name) + "</span>";
+			title += " &raquo; <span class=\"media-name\">" + util.trimExtension(currentAlbum.media[0].name) + "</span>";
 		}
 
 		if ($("#search-album-to-be-filled").length) {
@@ -1376,7 +1387,7 @@ $(document).ready(function() {
 
 		}
 
-		if (currentMedia === null) {
+		if (currentMedia === null && ! isAlbumWithOneMedia(currentAlbum)) {
 			$(".thumb-container").removeClass("current-thumb");
 			$("#album-view").removeClass("media-view-container");
 			if (currentAlbum.subalbums.length > 0)
@@ -1386,7 +1397,7 @@ $(document).ready(function() {
 			$("#media-view").hide();
 			$("#media-view").removeClass("no-bottom-space");
 			$("#album-view").removeClass("no-bottom-space");
-			$("#media-box-inner").show().empty();
+			$("#media-box-inner").show().children().last().remove();
 			$("#media-box").hide();
 			$("#album-view").removeClass("hidden");
 			var foldersViewLink = "#!/" + encodeURIComponent(Options.folders_string);
@@ -1431,6 +1442,8 @@ $(document).ready(function() {
 				$(".day-gps-folders-view").addClass("hidden");
 			}
 			$("#powered-by").show();
+
+			ps.addGesturesDetection('#album-view');
 		} else {
 			if (currentAlbum.media.length == 1)
 				$("#album-view").addClass("hidden");
@@ -1441,9 +1454,8 @@ $(document).ready(function() {
 
 		setOptions();
 
-		ps.addGesturesDetection('#album-view');
-
-		setTimeout(scrollToThumb, 1);
+		if (! $("#album-view").hasClass("hidden"))
+			setTimeout(scrollToThumb, 1);
 	}
 
 	function chooseThumbnail(album, media, thumbnailSize) {
@@ -1453,203 +1465,154 @@ $(document).ready(function() {
 	function videoOK(media, selector) {
 		var cacheBase = util.pathJoin([media.parent.cacheBase, media.cacheBase]);
 		if (! Modernizr.video) {
-			$('<div id="video-unsupported-html5"' + cacheBase + '>' + _t("#video-unsupported-html5") + '</div>').appendTo(selector);
+			$('<div id="video-unsupported-html5"' + cacheBase + '>' + _t("#video-unsupported-html5") + '</div>').appendTo(selector + " .media-box-inner");
 			return false;
 		}
 		else if (! Modernizr.video.h264) {
-			$('<div id="video-unsupported-h264' + cacheBase + '">' + _t("#video-unsupported-h264") + '</div>').appendTo(selector);
+			$('<div id="video-unsupported-h264' + cacheBase + '">' + _t("#video-unsupported-h264") + '</div>').appendTo(selector + " .media-box-inner");
 			return false;
 		}
 
 		return true;
 	}
 
-	function showMedia(album) {
+	function showMedia(album, media, selector) {
+
+		function loadNextPrevMedia() {
+			if (selector === ".media-box#center") {
+				showMedia(album, prevMedia, '.media-box#left');
+				showMedia(album, nextMedia, '.media-box#right');
+			}
+		}
+
 		var text, thumbnailSize, i, linkTag, triggerLoad, array, element;
 		var exposureTime, albumViewHeight;
 		var array, savedSearchSubAlbumHash, savedSearchAlbumHash;
 		var videoOk;
+
+		setTitle(selector);
 
 		array = phFl.decodeHash(location.hash);
 		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
 		savedSearchSubAlbumHash = array[3];
 		savedSearchAlbumHash = array[4];
 
-		mediaLink = phFl.encodeHash(currentAlbum, currentMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
+		mediaLink = phFl.encodeHash(currentAlbum, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
 		firstEscKey = true;
 
-		thumbnailSize = Options.media_thumb_size;
-		nextMediaHeight = windowHeight - $("#title-container").height() - $("#album-view").height()
-		$("#media-view").css("width", windowWidth).css("height", nextMediaHeight);
-		$("#media-box").css("width", windowWidth).css("height", nextMediaHeight);
-		$("#media-container").css("width", windowWidth * 3).css("height", nextMediaHeight).css("transform", "translate(-" + windowWidth + "px, 0px)");
-		$(".media-box-inner").css("width", windowWidth).css("height", nextMediaHeight);
-		$("#media-box").show();
-		if (currentAlbum.media.length == 1) {
-			$("#next").hide();
-			$("#prev").hide();
-			$("#media-view").addClass("no-bottom-space");
-			$("#album-view").addClass("no-bottom-space");
-			$("#album-view").addClass("hidden");
-		} else {
-			$("#next").show();
-			$("#prev").show();
-			$("#media-view").removeClass("no-bottom-space");
-			$("#album-view").removeClass("no-bottom-space");
-			if ($("#album-view").is(":visible"))
-				$("#media-view").css("bottom", (thumbnailSize + 15).toString() + "px");
-			$("#album-view").css("height", (thumbnailSize + 20).toString() + "px");
-			$("#album-view").addClass("media-view-container");
-			$("#album-view.media-view-container").css("height", (thumbnailSize + 22).toString() + "px");
+		if (selector === ".media-box#center") {
 			if (Options.hide_title_and_thumbnails)
 				$("#album-view").addClass("hidden");
 			else
 				$("#album-view").removeClass("hidden");
+
+			if (currentAlbum.media.length == 1)
+				$("#album-view").addClass("hidden");
+			else
+				$("#album-view").css("height", (thumbnailSize + 20).toString() + "px");
+		}
+		albumViewHeight = $("#album-view").outerHeight();
+
+		thumbnailSize = Options.media_thumb_size;
+		heightForMediaAndTitle = windowHeight - albumViewHeight;
+		heightForMedia = heightForMediaAndTitle - $(selector + " .title-container").height();
+
+		if (selector === ".media-box#center") {
+			$("#media-box-container").css("width", windowWidth * 3).css("height", heightForMediaAndTitle).css("transform", "translate(-" + windowWidth + "px, 0px)");
 		}
 
-		albumViewHeight = 0;
-		if ($("#album-view").is(":visible"))
-			albumViewHeight = $("#album-view").outerHeight();
+		$(selector).css("width", windowWidth).css("height", heightForMediaAndTitle);
+		$(selector + " .media-box-inner").css("width", windowWidth).css("height", heightForMedia);
+		$(selector).show();
 
-		$("#media").off("load");
+		if (currentAlbum.media.length == 1) {
+			$(selector + " .next").hide();
+			$(selector + " .prev").hide();
+			// $("#media-view").addClass("no-bottom-space");
+			// $("#album-view").addClass("no-bottom-space");
+		} else {
+			$(selector + " .next").show();
+			$(selector + " .prev").show();
+			// $("#media-view").removeClass("no-bottom-space");
+			// $("#album-view").removeClass("no-bottom-space");
+			// if ($("#album-view").is(":visible")) {
+			// 	// $("#media-view").css("bottom", (thumbnailSize + 15).toString() + "px");
+			// 	$("#media-view").css("bottom", albumViewHeight + "px");
+			// }
+			$("#album-view").addClass("media-view-container");
+			$("#album-view.media-view-container").css("height", (thumbnailSize + 22).toString() + "px");
+		}
+
+		currentAlbum.media[currentMediaIndex].byDateName =
+			util.pathJoin([currentAlbum.media[currentMediaIndex].dayAlbum, currentAlbum.media[currentMediaIndex].name]);
+		if (currentAlbum.media[currentMediaIndex].hasOwnProperty("gpsAlbum"))
+			currentAlbum.media[currentMediaIndex].byGpsName =
+					util.pathJoin([currentAlbum.media[currentMediaIndex].gpsAlbum, currentAlbum.media[currentMediaIndex].name]);
 
 		nextMedia = null;
 		prevMedia = null;
 		if (currentAlbum.media.length > 1) {
 			// prepare for previous media
-			i = currentMediaIndex;
-			currentAlbum.media[currentMediaIndex].byDateName =
-				util.pathJoin([currentAlbum.media[currentMediaIndex].dayAlbum, currentAlbum.media[currentMediaIndex].name]);
-			if (currentAlbum.media[currentMediaIndex].hasOwnProperty("gpsAlbum"))
-				currentAlbum.media[currentMediaIndex].byGpsName =
-						util.pathJoin([currentAlbum.media[currentMediaIndex].gpsAlbum, currentAlbum.media[currentMediaIndex].name]);
-			if (i === 0)
-				i = currentAlbum.media.length - 1;
-			else
-				i --;
-			prevMedia = currentAlbum.media[i];
+			previousMediaIndex = (currentMediaIndex === 0 ?
+															currentAlbum.media.length - 1 :
+															currentMediaIndex - 1);
+			prevMedia = currentAlbum.media[previousMediaIndex];
 			prevMedia.byDateName = util.pathJoin([prevMedia.dayAlbum, prevMedia.name]);
 			if (prevMedia.hasOwnProperty("gpsAlbum"))
 				prevMedia.byGpsName = util.pathJoin([prevMedia.gpsAlbum, prevMedia.name]);
 
 			// prepare for next media
-			i = currentMediaIndex;
-			if (i == currentAlbum.media.length - 1)
-				i = 0;
-			else
-				i ++;
-			nextMedia = currentAlbum.media[i];
+			nextMediaIndex = (currentMediaIndex === currentAlbum.media.length - 1 ?
+													0 :
+													currentMediaIndex + 1);
+			nextMedia = currentAlbum.media[nextMediaIndex];
 			nextMedia.byDateName = util.pathJoin([nextMedia.dayAlbum, nextMedia.name]);
 			if (nextMedia.hasOwnProperty("gpsAlbum"))
 				nextMedia.byGpsName = util.pathJoin([nextMedia.gpsAlbum, nextMedia.name]);
 		}
 
-		function loadNextPrevMedia() {
-			// load next and previous images, so that swipe is prettier
-
-			// array = phFl.decodeHash(location.hash);
-			// // array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-			// savedSearchSubAlbumHash = array[3];
-			// savedSearchAlbumHash = array[4];
-			//
-			// link = phFl.encodeHash(currentAlbum, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
-			// in case a video cannot be shown, substitute the video with a proper message
-			videoOK = nextMedia.mediaType == "video" && videoOK(nextMedia, '.media-box-inner.right');
-			if (nextMedia.mediaType == "photo" || videoOK) {
-				array = util.createMedia(nextMedia, 'media-right', fullScreenStatus);
-				var element = array[0];
-				var triggerLoad = array[2];
-				$(".media-box-inner.right").append(element)
-					.off(triggerLoad)
-					.on(
-						triggerLoad,
-						{
-							id: "#media-right",
-							media: nextMedia,
-							callback: function() {
-								$("#media-box-inner").addClass('right-loaded');
-							}
-						},
-						util.scaleMedia
-					);
-					// in case the image has been already loaded, trigger the event
-					$('.media-box-inner.right').trigger(triggerLoad);
-
-			} else
-				$("#media-box-inner").addClass('right-loaded');
-
-			// in case a video cannot be shown, substitute the video with a proper message
-			videoOK = prevMedia.mediaType == "video" && videoOK(prevMedia, '.media-box-inner.left');
-			if (nextMedia.mediaType == "photo" || videoOK) {
-				array = util.createMedia(prevMedia, 'media-left', fullScreenStatus);
-				var element = array[0];
-				var triggerLoad = array[2];
-				$(".media-box-inner.left").append(element)
-					.off(triggerLoad)
-					.on(
-						triggerLoad,
-						{
-							id: "#media-left",
-							media: prevMedia,
-							callback: function() {
-								$("#media-box-inner").addClass('left-loaded');
-							}
-						},
-						util.scaleMedia
-					);
-				// in case the image has been already loaded, trigger the event
-				$('.media-box-inner.left').trigger(triggerLoad);
-			} else
-				$("#media-box-inner").addClass('left-loaded');
-
-			// if (
-			// 	nextMedia !== null &&
-			// 	nextMedia.mediaType == "photo" ||
-			//
-			// ) {
-			// 	var nextReducedPhoto = util.chooseReducedPhoto(nextMedia, null, fullScreenStatus);
-			// 	// $.preloadImages(nextReducedPhoto);
-			// }
-			// if (prevMedia !== null && prevMedia.mediaType == "photo") {
-			// 	var prevReducedPhoto = util.chooseReducedPhoto(prevMedia, null, fullScreenStatus);
-			// 	// $.preloadImages(prevReducedPhoto);
-		}
-
 		if (
 			currentMedia.mediaType == "photo" ||
-			currentMedia.mediaType == "video" && videoOK(currentMedia, '#media-box-inner')
+			currentMedia.mediaType == "video" && videoOK(currentMedia, selector)
 		) {
-			array = util.createMedia(currentMedia, 'media', fullScreenStatus);
+			// var mediaId = "media-" + selector.substring(1);
+			// var mediaSelector = "#" + mediaId;
+			var mediaSelector = selector + " .media-box-inner img";
+			array = util.createMedia(media, mediaSelector, fullScreenStatus);
 			element = array[0];
 			linkTag = array[1];
 			triggerLoad = array[2];
 
-			if (! $("#media-box-inner").html())
-				$("#media-box-inner").show().html(element[0]);
+			$(selector + " .media-box-inner").show().append(element[0]);
 
 			$("link[rel=image_src]").remove();
 			$('link[rel="video_src"]').remove();
 			$("head").append(linkTag);
 
-			$('#media').off(triggerLoad);
-			$('#media').on(
+			$(mediaSelector).off(triggerLoad);
+			$(mediaSelector).on(
 				triggerLoad,
 				{
-					id: '#media',
-					media: currentMedia,
+					// id: mediaId,
+					mediaSelector: mediaSelector,
+					media: media,
+					resize: false,
 					callback: loadNextPrevMedia
 				},
 				util.scaleMedia
 			);
 			// in case the image has been already loaded, trigger the event
-			$('#media').trigger(triggerLoad);
+			$(mediaSelector).trigger(triggerLoad);
 
 			$(window).off("resize");
 			$(window).on(
 				"resize",
 				{
-					id: "#media",
-					media: currentMedia
+					// id: mediaId,
+					mediaSelector: mediaSelector,
+					media: media,
+					resize: true,
+					callback: loadNextPrevMedia
 				},
 				util.scaleMedia
 			);
@@ -1663,9 +1626,9 @@ $(document).ready(function() {
 			loadNextPrevMedia();
 
 		$("#media-view").off('contextmenu click mousewheel');
-		$("#media-bar").off();
-		$('#next').off();
-		$('#prev').off();
+		$(selector + " .media-box-inner .media-bar").off();
+		$(selector + " .next").off();
+		$(selector + " .prev").off();
 
 
 		upLink = phFl.upHash(location.hash);
@@ -1681,8 +1644,8 @@ $(document).ready(function() {
 
 			// nextLink = phFl.encodeHash(currentAlbum, nextMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
 			// prevLink = phFl.encodeHash(currentAlbum, prevMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
-			$("#next").show();
-			$("#prev").show();
+			$(selector + " .next").show();
+			$(selector + " .prev").show();
 			$("#media-view")
 				.css('cursor', '')
 				.on('contextmenu', function(ev) {
@@ -1706,18 +1669,18 @@ $(document).ready(function() {
 					}
 				})
 				.on('mousewheel', ps.swipeOnWheel);
-				$("#media-bar").on('click', function(ev) {
+				$(selector + " .media-box-inner .media-bar").on('click', function(ev) {
 					ev.stopPropagation();
 				}).on('contextmenu', function(ev) {
 					ev.stopPropagation();
 				});
-			$('#next').on('click', function(ev) {
+			$(selector + " .prev").on('click', function(ev) {
 				if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 					ps.swipeLeft(nextMedia);
 					return false;
 				}
 			});
-			$('#prev').on('click', function(ev) {
+			$(selector + " .next").on('click', function(ev) {
 				if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 					ps.swipeRight(prevMedia);
 					return false;
@@ -1726,16 +1689,16 @@ $(document).ready(function() {
 		}
 
 		var originalMediaPath = encodeURI(util.originalMediaPath(currentMedia));
-		$("#original-link").attr("target", "_blank").attr("href", originalMediaPath);
-		$("#download-link").attr("href", originalMediaPath).attr("download", "");
+		$(selector + " .original-link").attr("target", "_blank").attr("href", originalMediaPath);
+		$(selector + " .download-link").attr("href", originalMediaPath).attr("download", "");
 		if (util.hasGpsData(currentMedia)) {
-			$("#menu-map-link").attr("target", "_blank").attr("href", encodeURI(util.mapLink(currentMedia.metadata.latitude, currentMedia.metadata.longitude, Options.photo_map_zoom_level)));
-			$('#menu-map-link').show();
-			$('#menu-map-divider').show();
+			$(selector + " .menu-map-link").attr("target", "_blank").attr("href", encodeURI(util.mapLink(currentMedia.metadata.latitude, currentMedia.metadata.longitude, Options.photo_map_zoom_level)));
+			$(selector + " .menu-map-link").show();
+			$(selector + " .menu-map-divider").show();
 		} else {
-			$("#menu-map-link").removeAttr("href").css("cursor","pointer");
-			$('#menu-map-link').hide();
-			$('#menu-map-divider').hide();
+			$(selector + " .menu-map-link").removeAttr("href").css("cursor","pointer");
+			$(selector + " .menu-map-link").hide();
+			$(selector + " .menu-map-divider").hide();
 		}
 
 		var foldersViewLink = "#!/" + util.pathJoin([
@@ -1818,32 +1781,32 @@ $(document).ready(function() {
 			}
 		}
 
-		$('#metadata tr.gps').off('click');
+		$(selector + " .metadata tr.gps").off('click');
 		text = "<table>";
 		if (typeof currentMedia.metadata.title !== "undefined")
-			text += "<tr><td id=\"metadata-data-title\"></td><td>" + currentMedia.metadata.title.replace(/\n/g, "<br>") + "</td></tr>";
+			text += "<tr><td class=\"metadata-data-title\"></td><td>" + currentMedia.metadata.title.replace(/\n/g, "<br>") + "</td></tr>";
 		if (typeof currentMedia.metadata.description !== "undefined")
-			text += "<tr><td id=\"metadata-data-description\"></td><td>" + currentMedia.metadata.description.replace(/\n/g, "<br>") + "</td></tr>";
+			text += "<tr><td class=\"metadata-data-description\"></td><td>" + currentMedia.metadata.description.replace(/\n/g, "<br>") + "</td></tr>";
 		if (typeof currentMedia.metadata.tags !== "undefined")
-			text += "<tr><td id=\"metadata-data-tags\"></td><td>" + currentMedia.metadata.tags + "</td></tr>";
+			text += "<tr><td class=\"metadata-data-tags\"></td><td>" + currentMedia.metadata.tags + "</td></tr>";
 		if (typeof currentMedia.date !== "undefined")
-			text += "<tr><td id=\"metadata-data-date\"></td><td>" + currentMedia.date + "</td></tr>";
+			text += "<tr><td class=\"metadata-data-date\"></td><td>" + currentMedia.date + "</td></tr>";
 		if (typeof currentMedia.metadata.size !== "undefined")
-			text += "<tr><td id=\"metadata-data-size\"></td><td>" + currentMedia.metadata.size[0] + " x " + currentMedia.metadata.size[1] + "</td></tr>";
+			text += "<tr><td class=\"metadata-data-size\"></td><td>" + currentMedia.metadata.size[0] + " x " + currentMedia.metadata.size[1] + "</td></tr>";
 		if (typeof currentMedia.metadata.make !== "undefined")
-			text += "<tr><td id=\"metadata-data-make\"></td><td>" + currentMedia.metadata.make + "</td></tr>";
+			text += "<tr><td class=\"metadata-data-make\"></td><td>" + currentMedia.metadata.make + "</td></tr>";
 		if (typeof currentMedia.metadata.model !== "undefined")
-			text += "<tr><td id=\"metadata-data-model\"></td><td>" + currentMedia.metadata.model + "</td></tr>";
+			text += "<tr><td class=\"metadata-data-model\"></td><td>" + currentMedia.metadata.model + "</td></tr>";
 		if (typeof currentMedia.metadata.aperture !== "undefined")
-			text += "<tr><td id=\"metadata-data-aperture\"></td><td> f/" + currentMedia.metadata.aperture + "</td></tr>";
+			text += "<tr><td class=\"metadata-data-aperture\"></td><td> f/" + currentMedia.metadata.aperture + "</td></tr>";
 		if (typeof currentMedia.metadata.focalLength !== "undefined")
-			text += "<tr><td id=\"metadata-data-focalLength\"></td><td>" + currentMedia.metadata.focalLength + " mm</td></tr>";
+			text += "<tr><td class=\"metadata-data-focalLength\"></td><td>" + currentMedia.metadata.focalLength + " mm</td></tr>";
 		if (typeof currentMedia.metadata.subjectDistanceRange !== "undefined")
-			text += "<tr><td id=\"metadata-data-subjectDistanceRange\"></td><td>" + currentMedia.metadata.subjectDistanceRange + "</td></tr>";
+			text += "<tr><td class=\"metadata-data-subjectDistanceRange\"></td><td>" + currentMedia.metadata.subjectDistanceRange + "</td></tr>";
 		if (typeof currentMedia.metadata.iso !== "undefined")
-			text += "<tr><td id=\"metadata-data-iso\"></td><td>" + currentMedia.metadata.iso + "</td></tr>";
+			text += "<tr><td class=\"metadata-data-iso\"></td><td>" + currentMedia.metadata.iso + "</td></tr>";
 		if (typeof currentMedia.metadata.sceneCaptureType !== "undefined")
-			text += "<tr><td id=\"metadata-data-sceneCaptureType\"></td><td>" + currentMedia.metadata.sceneCaptureType + "</td></tr>";
+			text += "<tr><td class=\"metadata-data-sceneCaptureType\"></td><td>" + currentMedia.metadata.sceneCaptureType + "</td></tr>";
 		if (typeof currentMedia.metadata.exposureTime !== "undefined") {
 			if (typeof currentMedia.metadata.exposureTime === "string")
 				exposureTime = currentMedia.metadata.exposureTime;
@@ -1851,32 +1814,32 @@ $(document).ready(function() {
 				exposureTime = Math.round(currentMedia.metadata.exposureTime * 10 ) / 10;
 			else
 				exposureTime = "1/" + Math.round(1 / currentMedia.metadata.exposureTime);
-			text += "<tr><td id=\"metadata-data-exposureTime\"></td><td>" + exposureTime + " sec</td></tr>";
+			text += "<tr><td class=\"metadata-data-exposureTime\"></td><td>" + exposureTime + " sec</td></tr>";
 		}
 		if (typeof currentMedia.metadata.exposureProgram !== "undefined")
-			text += "<tr><td id=\"metadata-data-exposureProgram\"></td><td>" + currentMedia.metadata.exposureProgram + "</td></tr>";
+			text += "<tr><td class=\"metadata-data-exposureProgram\"></td><td>" + currentMedia.metadata.exposureProgram + "</td></tr>";
 		if (typeof currentMedia.metadata.exposureCompensation !== "undefined")
-			text += "<tr><td id=\"metadata-data-exposureCompensation\"></td><td>" + currentMedia.metadata.exposureCompensation + "</td></tr>";
+			text += "<tr><td class=\"metadata-data-exposureCompensation\"></td><td>" + currentMedia.metadata.exposureCompensation + "</td></tr>";
 		if (typeof currentMedia.metadata.spectralSensitivity !== "undefined")
-			text += "<tr><td id=\"metadata-data-spectralSensitivity\"></td><td>" + currentMedia.metadata.spectralSensitivity + "</td></tr>";
+			text += "<tr><td class=\"metadata-data-spectralSensitivity\"></td><td>" + currentMedia.metadata.spectralSensitivity + "</td></tr>";
 		if (typeof currentMedia.metadata.sensingMethod !== "undefined")
-			text += "<tr><td id=\"metadata-data-sensingMethod\"></td><td>" + currentMedia.metadata.sensingMethod + "</td></tr>";
+			text += "<tr><td class=\"metadata-data-sensingMethod\"></td><td>" + currentMedia.metadata.sensingMethod + "</td></tr>";
 		if (typeof currentMedia.metadata.lightSource !== "undefined")
-			text += "<tr><td id=\"metadata-data-lightSource\"></td><td>" + currentMedia.metadata.lightSource + "</td></tr>";
+			text += "<tr><td class=\"metadata-data-lightSource\"></td><td>" + currentMedia.metadata.lightSource + "</td></tr>";
 		if (typeof currentMedia.metadata.flash !== "undefined")
-			text += "<tr><td id=\"metadata-data-flash\"></td><td>" + currentMedia.metadata.flash + "</td></tr>";
+			text += "<tr><td class=\"metadata-data-flash\"></td><td>" + currentMedia.metadata.flash + "</td></tr>";
 		if (typeof currentMedia.metadata.orientationText !== "undefined")
-			text += "<tr><td id=\"metadata-data-orientation\"></td><td>" + currentMedia.metadata.orientationText + "</td></tr>";
+			text += "<tr><td class=\"metadata-data-orientation\"></td><td>" + currentMedia.metadata.orientationText + "</td></tr>";
 		if (typeof currentMedia.metadata.duration !== "undefined")
-			text += "<tr><td id=\"metadata-data-duration\"></td><td>" + currentMedia.metadata.duration + " sec</td></tr>";
+			text += "<tr><td class=\"metadata-data-duration\"></td><td>" + currentMedia.metadata.duration + " sec</td></tr>";
 		if (typeof currentMedia.metadata.latitude !== "undefined")
-			text += "<tr id='map-link' class='gps'><td id=\"metadata-data-latitude\"></td><td>" + currentMedia.metadata.latitudeMS + " </td></tr>";
+			text += "<tr class='map-link' class='gps'><td class=\"metadata-data-latitude\"></td><td>" + currentMedia.metadata.latitudeMS + " </td></tr>";
 		if (typeof currentMedia.metadata.longitude !== "undefined")
-			text += "<tr class='gps'><td id=\"metadata-data-longitude\"></td><td>" + currentMedia.metadata.longitudeMS + " </td></tr>";
+			text += "<tr class='gps'><td class=\"metadata-data-longitude\"></td><td>" + currentMedia.metadata.longitudeMS + " </td></tr>";
 		text += "</table>";
-		$("#metadata").html(text);
+		$(selector + " .metadata").html(text);
 		var linkTitle = _t('#show-map') + Options.map_service;
-		$('#metadata tr.gps').attr("title", linkTitle).on('click', function(ev) {
+		$(selector + " .metadata tr.gps").attr("title", linkTitle).on('click', function(ev) {
 			ev.stopPropagation();
 			window.open(util.mapLink(currentMedia.metadata.latitude, currentMedia.metadata.longitude, Options.photo_map_zoom_level), '_blank');
 		});
@@ -1895,7 +1858,7 @@ $(document).ready(function() {
 		mediaThumbnailSize = Options.media_thumb_size;
 		$("body").css("background-color", Options.background_color);
 
-		$("#title").css("font-size", Options.title_font_size);
+		$(".title").css("font-size", Options.title_font_size);
 		$(".title-anchor").css("color", Options.title_color);
 		$(".title-anchor").hover(function() {
 			//mouse over
@@ -1904,7 +1867,7 @@ $(document).ready(function() {
 			//mouse out
 			$(this).css("color", Options.title_color);
 		});
-		$("#media-name").css("color", Options.title_image_name_color);
+		$(".media-name").css("color", Options.title_image_name_color);
 		$(".thumb-and-caption-container").css("margin-right", Options.spacing.toString() + "px");
 
 		if (currentMedia !== null || ! Options.show_media_names_below_thumbs)
@@ -1913,14 +1876,14 @@ $(document).ready(function() {
 			$(".media-caption").removeClass("hidden");
 
 		if (Options.show_album_media_count)
-			$("#title-count").removeClass("hidden");
+			$(".title-count").removeClass("hidden");
 		else
-			$("#title-count").addClass("hidden");
+			$(".title-count").addClass("hidden");
 
 		if (Options.hide_title_and_thumbnails)
-			$("#title-container").addClass("hidden");
+			$(".title-container").addClass("hidden");
 		else
-			$("#title-container").removeClass("hidden");
+			$(".title-container").removeClass("hidden");
 	}
 
 	function getBooleanCookie(key) {
@@ -2098,8 +2061,6 @@ $(document).ready(function() {
 		setOptions();
 
 		if (currentMedia === null || typeof currentMedia === "object") {
-			setTitle();
-
 			initializeSortPropertiesAndCookies();
 			$("#menu-icon").attr("title", _t("#menu-icon-title"));
 			sortAlbumsMedia();
@@ -2125,8 +2086,12 @@ $(document).ready(function() {
 			}
 			nextMedia = null;
 			previousMedia = null;
-			showMedia(currentAlbum);
+			$("#album-view .title-container").hide();
+			$("#media-view .title-container").show();
+			showMedia(currentAlbum, currentMedia, '.media-box#center');
 		} else {
+			$("#album-view .title-container").show();
+			$("#media-view .title-container").hide();
 			$("#album-view").removeClass("media-view-container");
 		}
 
@@ -2375,14 +2340,14 @@ $(document).ready(function() {
 	$("#album-view").on('mousewheel', ps.swipeOnWheel);
 
 	if (isMobile.any()) {
-		$("#links").css("display", "inline").css("opacity", 0.5);
+		$(".media-box#center .links").css("display", "inline").css("opacity", 0.5);
 	} else {
 		//~ $("#media-view").off();
 		$("#media-view").on('mouseenter', function() {
-			$("#links").stop().fadeTo("slow", 0.50).css("display", "inline");
+			$(".media-box#center .links").stop().fadeTo("slow", 0.50).css("display", "inline");
 		});
 		$("#media-view").on('mouseleave', function() {
-			$("#links").stop().fadeOut("slow");
+			$(".media-box#center .links").stop().fadeOut("slow");
 		});
 	}
 
@@ -2394,11 +2359,11 @@ $(document).ready(function() {
 		$(this).stop().fadeTo("fast", 0.4);
 	});
 
-	$("#metadata-show").on('click', showMetadataFromMouse);
-	$("#metadata-hide").on('click', showMetadataFromMouse);
-	$("#metadata").on('click', showMetadataFromMouse);
+	$(".metadata-show").on('click', showMetadataFromMouse);
+	$(".metadata-hide").on('click', showMetadataFromMouse);
+	$(".metadata").on('click', showMetadataFromMouse);
 
-	$("#fullscreen").on('click', goFullscreenFromMouse);
+	$(".fullscreen").on('click', goFullscreenFromMouse);
 	$("#next").attr("title", _t("#next-media-title"));
 	$("#prev").attr("title", _t("#prev-media-title"));
 
@@ -2412,25 +2377,25 @@ $(document).ready(function() {
 					fullScreenStatus = isFullscreen;
 					$("#enter-fullscreen").toggle();
 					$("#exit-fullscreen").toggle();
-					showMedia(currentAlbum);
+					showMedia(currentAlbum, currentMedia, '.media-box#center');
 				}
 			});
 		} else {
 			$("#media").off();
 			if (! fullScreenStatus) {
-				$("#title-container").hide();
+				$(".title-container").hide();
 				$("#album-view").addClass('hidden');
 				$("#enter-fullscreen").toggle();
 				$("#exit-fullscreen").toggle();
 				fullScreenStatus = true;
 			} else {
-				$("#title-container").show();
+				$(".title-container").show();
 				$("#album-view").removeClass('hidden');
 				$("#enter-fullscreen").toggle();
 				$("#exit-fullscreen").toggle();
 				fullScreenStatus = false;
 			}
-			showMedia(currentAlbum);
+			showMedia(currentAlbum, currentMedia, '.media-box#center');
 		}
 	}
 
@@ -2685,16 +2650,18 @@ $(document).ready(function() {
 			setBooleanCookie("hide_title_and_thumbnails", Options.hide_title_and_thumbnails);
 			updateMenu();
 			if (Options.hide_title_and_thumbnails) {
-				$("#title-container").addClass("hidden");
+				$(".title-container").addClass("hidden");
 				$("#album-view").addClass("hidden");
 			} else {
-				$("#title-container").removeClass("hidden");
+				$(".title-container").removeClass("hidden");
 				$("#album-view").removeClass("hidden");
 				showAlbum("refreshMedia");
 			}
-			if (currentMedia !== null)
-				showMedia(currentAlbum);
-			else
+			if (currentMedia !== null) {
+				showMedia(currentAlbum, currentMedia, '.media-box#center');
+				showMedia(currentAlbum, nextMedia, '.media-box#right');
+				showMedia(currentAlbum, prevMedia, '.media-box#left');
+			} else
 				showAlbum(false);
 			focusSearchField();
 		}
