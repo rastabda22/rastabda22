@@ -1604,18 +1604,19 @@ $(document).ready(function() {
 			// in case the image has been already loaded, trigger the event
 			$(mediaSelector).trigger(triggerLoad);
 
-			$(window).off("resize");
-			$(window).on(
-				"resize",
-				{
-					// id: mediaId,
-					mediaSelector: mediaSelector,
-					media: media,
-					resize: true,
-					callback: loadNextPrevMedia
-				},
-				util.scaleMedia
-			);
+			if (selector === ".media-box#center") {
+				$(window).off("resize");
+				$(window).on(
+					"resize",
+					{
+						mediaSelector: mediaSelector,
+						media: media,
+						resize: true,
+						callback: loadNextPrevMedia
+					},
+					util.scaleMedia
+				);
+			}
 
 			if (! Options.persistent_metadata) {
 				$("#metadata").hide();
