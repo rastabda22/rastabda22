@@ -323,12 +323,18 @@
     $("#media-box-container").on(
       'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
       function() {
-        mediaBoxRightContent = $(".media-box#right").html();
+        mediaBoxRightContent = $(".media-box#right")[0].outerHTML;
         $(".media-box#right").remove();
         $(".media-box#center").attr('id', 'right');
         $(".media-box#left").attr('id', 'center');
         $("#media-box-container").prepend(mediaBoxRightContent.replace('id="right"', 'id="left"'));
         $("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
+
+        array = phFl.decodeHash(location.hash);
+        // array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
+        savedSearchSubAlbumHash = array[3];
+        savedSearchAlbumHash = array[4];
+        link = phFl.encodeHash(currentAlbum, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
         window.location.href = link;
       }
     );
@@ -342,12 +348,18 @@
     $("#media-box-container").on(
       'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
       function() {
-        mediaBoxLeftContent = $(".media-box#left").html();
+        mediaBoxLeftContent = $(".media-box#left")[0].outerHTML;
         $(".media-box#left").remove();
         $(".media-box#center").attr('id', 'left');
         $(".media-box#right").attr('id', 'center');
         $("#media-box-container").append(mediaBoxLeftContent.replace('id="left"', 'id="right"'));
         $("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
+
+        array = phFl.decodeHash(location.hash);
+        // array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
+        savedSearchSubAlbumHash = array[3];
+        savedSearchAlbumHash = array[4];
+        link = phFl.encodeHash(currentAlbum, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
         window.location.href = link;
       }
     );
