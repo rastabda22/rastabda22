@@ -1511,15 +1511,15 @@ $(document).ready(function() {
 			else
 				$("#album-view").css("height", (thumbnailSize + 20).toString() + "px");
 		}
-		albumViewHeight = $("#album-view").outerHeight();
 
 		thumbnailSize = Options.media_thumb_size;
+
+		albumViewHeight = $("#album-view").outerHeight();
 		heightForMediaAndTitle = windowHeight - albumViewHeight;
 		heightForMedia = heightForMediaAndTitle - $(selector + " .title-container").height();
 
-		if (selector === ".media-box#center") {
+		if (selector === ".media-box#center")
 			$("#media-box-container").css("width", windowWidth * 3).css("height", heightForMediaAndTitle).css("transform", "translate(-" + windowWidth + "px, 0px)");
-		}
 
 		$(selector).css("width", windowWidth).css("height", heightForMediaAndTitle);
 		$(selector + " .media-box-inner").css("width", windowWidth).css("height", heightForMedia);
