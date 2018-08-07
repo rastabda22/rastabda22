@@ -322,7 +322,7 @@
 		return chosenMedia;
 	}
 
-	Utilities.prototype.createMedia = function(media, selector, fullScreenStatus) {
+	Utilities.prototype.createMedia = function(media, fullScreenStatus) {
 		// creates a media element that can be inserted in DOM (e.g. with append/prepend methods)
 		var width = media.metadata.size[0], height = media.metadata.size[1];
 		var mediaSrc, mediaElement, triggerLoad, linkTag;
@@ -434,20 +434,25 @@
 		var media, media, container, containerBottom = 0, containerTop = 0, containerRatio, photoSrc, previousSrc;
 		var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth(), mediaBarBottom = 0;
 		var width, height, ratio, differentSize = false;
-		var selector = event.data.mediaSelector;
+		var id = event.data.id;
 
 		windowWidth = $(window).outerWidth();
 		windowHeight = $(window).outerHeight();
 		albumViewHeight = $("#album-view").outerHeight();
 		heightForMediaAndTitle = windowHeight - albumViewHeight;
-		heightForMedia = heightForMediaAndTitle - $(selector + " .title-container").outerHeight();
+		heightForMedia = heightForMediaAndTitle - $(".media-box#" + id + " .title-container").outerHeight();
 
-		if (selector === ".media-box#center .media-box-inner img")
+		if (id === "center") {
 			$("#media-box-container").css("width", windowWidth * 3).css("height", heightForMediaAndTitle).css("transform", "translate(-" + windowWidth + "px, 0px)");
-		$(selector).parent().parent().css("width", windowWidth).css("height", heightForMediaAndTitle);
-		$(selector).parent().css("width", windowWidth).css("height", heightForMedia);
+			array = [id, 'left', 'right'];
+			for (i = 0; i < array.length; i ++) {
+				$(".media-box#" + array[i]).css("width", windowWidth).css("height", heightForMediaAndTitle);
+				$(".media-box#" + array[i] + " .media-box-inner").css("width", windowWidth).css("height", heightForMedia);
+				$(".media-box#" + array[i]).show();
+			}
+		}
 
-		mediaElement = $(event.data.mediaSelector);
+		mediaElement = $(".media-box#" + id + " .media-box-inner img");
 		mediaElement.off();
 
 		media = event.data.media;
@@ -459,15 +464,15 @@
 		if (fullScreenStatus && Modernizr.fullscreen)
 			container = $(window);
 		else {
-			container = $("#media-view");
+			container = $(".media-box#" + id + " .media-box-inner");
 			if ($("#album-view").is(":visible"))
 				containerBottom = $("#album-view").outerHeight();
 			else if (Utilities.bottomSocialButtons() && containerBottom < $(".ssk").outerHeight())
 				// correct container bottom when social buttons are on the bottom
 				containerBottom = $(".ssk").outerHeight();
 			containerTop = 0;
-			if ($("#title-container").is(":visible"))
-				containerTop = $("#title-container").outerHeight();
+			if ($(".media-box#" + id + " .title-container").is(":visible"))
+				containerTop = $(".media-box#" + id + " .title-container").outerHeight();
 			containerHeight -= containerBottom + containerTop;
 			if (media === currentMedia) {
 				container.css("top", containerTop + "px");

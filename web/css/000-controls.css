@@ -231,7 +231,6 @@ a.title-anchor.mobile {
 
 #media-view {
 	position: absolute;
-	top: 3em;
 	overflow: hidden;
 	margin-bottom: 8px;
 	left: 0;
@@ -242,7 +241,7 @@ a.title-anchor.mobile {
 	cursor: ew-resize;
 }
 
-#media-container {
+#media-box-container {
 	/* float: left; */
 	/* display: inline; */
 	transition-property: transform;
