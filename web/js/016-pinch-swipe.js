@@ -368,24 +368,33 @@
 	PinchSwipe.prototype.swipeUp = function(dest) {
 		// Actually swiping up is passing from an album to a media, so there is no animation
 		// ...or... the media could be let enter from below, as in horizontal swipe... TO DO
+    // As is, it doesn't work
 		if (dest) {
-			$("#media-box-inner").stop().animate({
-				top: "-=" + window.innerHeight,
-			}, 300, function() {
-				window.location.href = dest;
-				$("#media-box-inner").hide().css('top', "");
-			});
+			$(".media-box#center .media-box-inner").stop().animate(
+        {
+  				top: "-=" + window.innerHeight,
+  			},
+        300,
+        function() {
+  				window.location.href = dest;
+  				$(".media-box#center .media-box-inner").hide().css('top', "");
+  			}
+      );
 		}
 	}
 
   PinchSwipe.prototype.swipeDown = function(dest) {
 		if (dest) {
-			$("#media-box-inner").stop().animate({
-				top: "+=" + window.innerHeight,
-			}, 300, function() {
-				window.location.href = dest;
-				$("#media-box-inner").hide().css('top', "");
-			});
+			$(".media-box#center .media-box-inner").stop().animate(
+        {
+  				top: "+=" + window.innerHeight,
+  			},
+        300,
+        function() {
+  				window.location.href = dest;
+  				$(".media-box#center .media-box-inner").hide().css('top', "");
+  			}
+      );
 		}
 	}
 
