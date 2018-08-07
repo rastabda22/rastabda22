@@ -1498,6 +1498,8 @@ $(document).ready(function() {
 		mediaLink = phFl.encodeHash(currentAlbum, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
 		firstEscKey = true;
 
+		thumbnailSize = Options.media_thumb_size;
+
 		if (id === "center") {
 			if (Options.hide_title_and_thumbnails)
 				$("#album-view").addClass("hidden");
@@ -1513,11 +1515,9 @@ $(document).ready(function() {
 			}
 		}
 
-		thumbnailSize = Options.media_thumb_size;
-
 		albumViewHeight = $("#album-view").outerHeight();
 		heightForMediaAndTitle = windowHeight - albumViewHeight;
-		heightForMedia = heightForMediaAndTitle - $(".media-box#" + id + " .title-container").height();
+		heightForMedia = heightForMediaAndTitle - $(".media-box#" + id + " .title").outerHeight();
 
 		if (id === "center") {
 			$("#media-box-container").css("width", windowWidth * 3).css("height", heightForMediaAndTitle).css("transform", "translate(-" + windowWidth + "px, 0px)");
@@ -1886,9 +1886,9 @@ $(document).ready(function() {
 			$(".title-count").addClass("hidden");
 
 		if (Options.hide_title_and_thumbnails)
-			$(".title-container").addClass("hidden");
+			$(".title").addClass("hidden");
 		else
-			$(".title-container").removeClass("hidden");
+			$(".title").removeClass("hidden");
 	}
 
 	function getBooleanCookie(key) {
@@ -2091,12 +2091,12 @@ $(document).ready(function() {
 			}
 			nextMedia = null;
 			previousMedia = null;
-			$("#album-view .title-container").hide();
-			$("#media-view .title-container").show();
+			$("#album-view .title").hide();
+			$("#media-view .title").show();
 			showMedia(currentAlbum, currentMedia, 'center');
 		} else {
-			$("#album-view .title-container").show();
-			$("#media-view .title-container").hide();
+			$("#album-view .title").show();
+			$("#media-view .title").hide();
 			$("#album-view").removeClass("media-view-container");
 		}
 
@@ -2388,13 +2388,13 @@ $(document).ready(function() {
 		} else {
 			$("#media").off();
 			if (! fullScreenStatus) {
-				$(".title-container").hide();
+				$(".title").hide();
 				$("#album-view").addClass('hidden');
 				$("#enter-fullscreen").toggle();
 				$("#exit-fullscreen").toggle();
 				fullScreenStatus = true;
 			} else {
-				$(".title-container").show();
+				$(".title").show();
 				$("#album-view").removeClass('hidden');
 				$("#enter-fullscreen").toggle();
 				$("#exit-fullscreen").toggle();
@@ -2655,10 +2655,10 @@ $(document).ready(function() {
 			setBooleanCookie("hide_title_and_thumbnails", Options.hide_title_and_thumbnails);
 			updateMenu();
 			if (Options.hide_title_and_thumbnails) {
-				$(".title-container").addClass("hidden");
+				$(".title").addClass("hidden");
 				$("#album-view").addClass("hidden");
 			} else {
-				$(".title-container").removeClass("hidden");
+				$(".title").removeClass("hidden");
 				$("#album-view").removeClass("hidden");
 				showAlbum("refreshMedia");
 			}

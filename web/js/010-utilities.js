@@ -440,7 +440,7 @@
 		windowHeight = $(window).outerHeight();
 		albumViewHeight = $("#album-view").outerHeight();
 		heightForMediaAndTitle = windowHeight - albumViewHeight;
-		heightForMedia = heightForMediaAndTitle - $(".media-box#" + id + " .title-container").outerHeight();
+		heightForMedia = heightForMediaAndTitle - $(".media-box#" + id + " .title").outerHeight();
 
 		if (id === "center") {
 			$("#media-box-container").css("width", windowWidth * 3).css("height", heightForMediaAndTitle).css("transform", "translate(-" + windowWidth + "px, 0px)");
@@ -471,8 +471,8 @@
 				// correct container bottom when social buttons are on the bottom
 				containerBottom = $(".ssk").outerHeight();
 			containerTop = 0;
-			if ($(".media-box#" + id + " .title-container").is(":visible"))
-				containerTop = $(".media-box#" + id + " .title-container").outerHeight();
+			if ($(".media-box#" + id + " .title").is(":visible"))
+				containerTop = $(".media-box#" + id + " .title").outerHeight();
 			containerHeight -= containerBottom + containerTop;
 			if (media === currentMedia) {
 				container.css("top", containerTop + "px");
