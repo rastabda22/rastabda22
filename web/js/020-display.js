@@ -468,10 +468,12 @@ $(document).ready(function() {
 			if (components.length > 2 || currentMedia !== null)
 				title += "&raquo;";
 
-			documentTitle += components[0];
-			if (components.length > 2 || currentMedia !== null)
-				documentTitle = " \u00ab " + documentTitle;
-			documentTitle += " (" + _t("#by-date") + ")";
+			if (id === "center") {
+				documentTitle += components[0];
+				if (components.length > 2 || currentMedia !== null)
+					documentTitle = " \u00ab " + documentTitle;
+				documentTitle += " (" + _t("#by-date") + ")";
+			}
 
 			for (i = 2; i < components.length; ++i) {
 				if (i < components.length - 1 || currentMedia !== null)
@@ -492,13 +494,15 @@ $(document).ready(function() {
 				if (i < components.length - 1 || currentMedia !== null)
 					title += "&raquo;";
 
-				// keep buildimg the html page title
-				if (i == 3)
-					documentTitle = _t("#month-" + textComponents[i]) + documentTitle;
-				else
-					documentTitle = textComponents[i] + documentTitle;
-				if (i < components.length - 1 || currentMedia !== null)
-					documentTitle = " \u00ab " + documentTitle;
+				if (id === "center") {
+					// keep buildimg the html page title
+					if (i == 3)
+						documentTitle = _t("#month-" + textComponents[i]) + documentTitle;
+					else
+						documentTitle = textComponents[i] + documentTitle;
+					if (i < components.length - 1 || currentMedia !== null)
+						documentTitle = " \u00ab " + documentTitle;
+				}
 			}
 
 			if (components.length > 1 && currentMedia === null) {
@@ -521,10 +525,12 @@ $(document).ready(function() {
 			if (components.length > 2 || currentMedia !== null)
 				title += "&raquo;";
 
-			documentTitle += components[0];
-			if (components.length > 2 || currentMedia !== null)
-				documentTitle = " \u00ab " + documentTitle;
-			documentTitle += " (" + _t("#by-gps") + ")";
+			if (id === "center") {
+				documentTitle += components[0];
+				if (components.length > 2 || currentMedia !== null)
+					documentTitle = " \u00ab " + documentTitle;
+				documentTitle += " (" + _t("#by-gps") + ")";
+			}
 
 			for (i = 2; i < components.length; ++i) {
 				var currentAlbumPath = currentAlbum.ancestorsNames;
@@ -561,10 +567,12 @@ $(document).ready(function() {
 				if (i < components.length - 1 || currentMedia !== null)
 					title += "&raquo;";
 
-				// keep buildimg the html page title
-				documentTitle = gpsName + documentTitle;
-				if (i < components.length - 1 || currentMedia !== null)
-					documentTitle = " \u00ab " + documentTitle;
+				if (id === "center") {
+					// keep buildimg the html page title
+					documentTitle = gpsName + documentTitle;
+					if (i < components.length - 1 || currentMedia !== null)
+						documentTitle = " \u00ab " + documentTitle;
+				}
 			}
 
 			if (components.length > 1 && currentMedia === null) {
@@ -638,10 +646,12 @@ $(document).ready(function() {
 				title += ")</span>";
 			}
 
-			// build the html page title
-			documentTitle += " (" + where +") \u00ab " + components[0];
-			if (currentMedia !== null)
-				documentTitle = " \u00ab " + documentTitle;
+			if (id === "center") {
+				// build the html page title
+				documentTitle += " (" + where +") \u00ab " + components[0];
+				if (currentMedia !== null)
+					documentTitle = " \u00ab " + documentTitle;
+			}
 		} else {
 			// folders title
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>";
@@ -668,12 +678,16 @@ $(document).ready(function() {
 				title += "&raquo;";
 				where = util.stripHtmlAndReplaceEntities(where);
 
-				documentTitle += " (" + where +") \u00ab " + documentTitle;
+				if (id === "center") {
+					documentTitle += " (" + where +") \u00ab " + documentTitle;
+				}
 			}
 
-			documentTitle += components[0];
-			if (components.length > 2 || currentMedia !== null)
-				documentTitle = " \u00ab " + documentTitle;
+			if (id === "center") {
+				documentTitle += components[0];
+				if (components.length > 2 || currentMedia !== null)
+					documentTitle = " \u00ab " + documentTitle;
+			}
 
 			initialValue = 2;
 			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
@@ -721,11 +735,13 @@ $(document).ready(function() {
 				title += ")</span>";
 			}
 
-			for (i = initialValue; i < components.length; ++i) {
-				// keep building the html page title
-				documentTitle = textComponents[i] + documentTitle;
-				if (i < components.length - 1 || currentMedia !== null)
-					documentTitle = " \u00ab " + documentTitle;
+			if (id === "center") {
+				for (i = initialValue; i < components.length; ++i) {
+					// keep building the html page title
+					documentTitle = textComponents[i] + documentTitle;
+					if (i < components.length - 1 || currentMedia !== null)
+						documentTitle = " \u00ab " + documentTitle;
+				}
 			}
 		}
 
@@ -771,13 +787,15 @@ $(document).ready(function() {
 			});
 		}
 
-		// keep generating the html page title
-		if (currentMedia !== null)
-			documentTitle = util.trimExtension(currentMedia.name) + documentTitle;
-		else if (currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1)
-			documentTitle =  util.trimExtension(currentAlbum.media[0].name) + " \u00ab " + documentTitle;
+		if (id === "center") {
+			// keep generating the html page title
+			if (currentMedia !== null)
+				documentTitle = util.trimExtension(currentMedia.name) + documentTitle;
+			else if (currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1)
+				documentTitle =  util.trimExtension(currentAlbum.media[0].name) + " \u00ab " + documentTitle;
 
-		document.title = documentTitle;
+			document.title = documentTitle;
+		}
 
 
 		if (currentMedia === null && currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1) {
@@ -809,13 +827,15 @@ $(document).ready(function() {
 					// insert the album tree links in DOM (if )
 					$("#search-album-to-be-filled").replaceWith(whereLinks);
 
-					// correct the page title too
-					documentTitle = $(document).attr('title');
-					documentTitle = documentTitle.replace(
-						_t("#by-search") + ' ' + _t("#-in") + ' ',
-						_t("#by-search") + ' ' + _t("#-in") + ' ' + util.stripHtmlAndReplaceEntities(whereLinks)
-					);
-					document.title = documentTitle;
+					if (id === "center") {
+						// correct the page title too
+						documentTitle = $(document).attr('title');
+						documentTitle = documentTitle.replace(
+							_t("#by-search") + ' ' + _t("#-in") + ' ',
+							_t("#by-search") + ' ' + _t("#-in") + ' ' + util.stripHtmlAndReplaceEntities(whereLinks)
+						);
+						document.title = documentTitle;
+					}
 				},
 				die
 			);
