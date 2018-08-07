@@ -349,10 +349,10 @@
 				container = $(".media-box#" + id + " .media-box-inner");
 			mediaSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
 			if (maxSize) {
-				if (width > height &&  width > maxSize) {
+				if (width > height &&  width >= maxSize) {
 					height = Math.round(height * maxSize / width);
 					width = maxSize;
-				} else if (height > width && height > maxSize) {
+				} else if (height > width && height >= maxSize) {
 					width = Math.round(width * maxSize / height);
 					height = maxSize;
 				}
