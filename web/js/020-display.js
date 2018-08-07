@@ -1387,7 +1387,7 @@ $(document).ready(function() {
 
 		}
 
-		if (currentMedia === null && ! isAlbumWithOneMedia(currentAlbum)) {
+		if (currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)) {
 			$(".thumb-container").removeClass("current-thumb");
 			$("#album-view").removeClass("media-view-container");
 			if (currentAlbum.subalbums.length > 0)
