@@ -1550,13 +1550,13 @@ $(document).ready(function() {
 		setTitle(id);
 
 		if (currentAlbum.media.length == 1) {
-			$(".media-box#" + id + " .next").hide();
-			$(".media-box#" + id + " .prev").hide();
+			$("#next").hide();
+			$("#prev").hide();
 			// $("#media-view").addClass("no-bottom-space");
 			// $("#album-view").addClass("no-bottom-space");
 		} else {
-			$(".media-box#" + id + " .next").show();
-			$(".media-box#" + id + " .prev").show();
+			$("#next").show();
+			$("#prev").show();
 			// $("#media-view").removeClass("no-bottom-space");
 			// $("#album-view").removeClass("no-bottom-space");
 			// if ($("#album-view").is(":visible")) {
@@ -1658,9 +1658,9 @@ $(document).ready(function() {
 			}
 
 			if (! Options.persistent_metadata) {
-				$(".media-box#" + id + " .metadata").hide();
-				$(".media-box#" + id + " .metadata-show").show();
-				$(".media-box#" + id + " .metadata-hide").hide();
+				$(".media-box .metadata").hide();
+				$(".media-box .metadata-show").show();
+				$(".media-box .metadata-hide").hide();
 			}
 		} else
 			loadNextPrevMedia();
@@ -1668,8 +1668,8 @@ $(document).ready(function() {
 		if (id === "center") {
 			$(".media-view#center .media-box-inner").off('contextmenu click mousewheel');
 			$(".media-box#center .media-box-inner .media-bar").off();
-			$("#media-view #next").off();
-			$("#media-view #prev").off();
+			$("#next").off();
+			$("#prev").off();
 
 			upLink = phFl.upHash(location.hash);
 			if (currentAlbum.media.length == 1) {
@@ -1684,8 +1684,8 @@ $(document).ready(function() {
 
 				// nextLink = phFl.encodeHash(currentAlbum, nextMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
 				// prevLink = phFl.encodeHash(currentAlbum, prevMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
-				$("#media-view #next").show();
-				$("#media-view #prev").show();
+				$("#next").show();
+				$("#prev").show();
 				$(".media-box#center .media-box-inner")
 					.css('cursor', '')
 					.on('contextmenu', function(ev) {
@@ -1720,7 +1720,7 @@ $(document).ready(function() {
 						return false;
 					}
 				});
-				$("#media-view #next").on('click', function(ev) {
+				$("#next").on('click', function(ev) {
 					if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 						ps.swipeRight(prevMedia);
 						return false;
@@ -2405,8 +2405,8 @@ $(document).ready(function() {
 	$(".media-box#center .metadata").on('click', showMetadataFromMouse);
 
 	$(".media-box#center .fullscreen").on('click', goFullscreenFromMouse);
-	$("#media-view #next").attr("title", _t("#next-media-title"));
-	$("#media-view #prev").attr("title", _t("#prev-media-title"));
+	$("#next").attr("title", _t("#next-media-title"));
+	$("#prev").attr("title", _t("#prev-media-title"));
 
 	function goFullscreen(e) {
 		$("#media").off();
