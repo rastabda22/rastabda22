@@ -1506,9 +1506,10 @@ $(document).ready(function() {
 		}
 
 		var text, thumbnailSize, i, linkTag, triggerLoad, array, element;
-		var exposureTime, albumViewHeight;
-		var array, savedSearchSubAlbumHash, savedSearchAlbumHash;
+		var exposureTime, albumViewHeight, heightForMedia, heightForMediaAndTitle;
+		var savedSearchSubAlbumHash, savedSearchAlbumHash;
 		var videoOk;
+		var previousMediaIndex, nextMediaIndex;
 
 		array = phFl.decodeHash(location.hash);
 		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
@@ -1659,10 +1660,10 @@ $(document).ready(function() {
 			// prevLink = "";
 			$("#media-view").css('cursor', 'default');
 		} else {
-			var array = phFl.decodeHash(location.hash);
+			array = phFl.decodeHash(location.hash);
 			// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-			var savedSearchSubAlbumHash = array[3];
-			var savedSearchAlbumHash = array[4];
+			savedSearchSubAlbumHash = array[3];
+			savedSearchAlbumHash = array[4];
 
 			// nextLink = phFl.encodeHash(currentAlbum, nextMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
 			// prevLink = phFl.encodeHash(currentAlbum, prevMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);

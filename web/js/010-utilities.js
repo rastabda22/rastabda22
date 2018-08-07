@@ -222,7 +222,7 @@
 		// strip html (https://stackoverflow.com/questions/822452/strip-html-from-text-javascript#822464)
 		// and replaces &raquo; with \u00bb
 		return htmlString.replace(/<(?:.|\n)*?>/gm, '').replace(/&raquo;/g, '\u00bb');
-	}
+	};
 
 	Utilities.prototype.transformAltPlaceName = function(altPlaceName) {
 		var underscoreIndex = altPlaceName.lastIndexOf('_');
@@ -235,14 +235,14 @@
 		} else {
 			return altPlaceName;
 		}
-	}
+	};
 
 	Utilities.prototype.albumButtonWidth = function(thumbnailWidth, buttonBorder) {
 			if (Options.albums_slide_style)
 				return Math.round((thumbnailWidth + 2 * buttonBorder) * 1.1);
 			else
 				return thumbnailWidth + 2 * buttonBorder;
-		}
+	};
 
 	Utilities.prototype.removeFolderMarker = function (cacheBase) {
 		if (this.isFolderCacheBase(cacheBase)) {
@@ -251,16 +251,16 @@
 				cacheBase = cacheBase.substring(1);
 		}
 		return cacheBase;
-	}
+	};
 
 	Utilities.prototype.hasGpsData = function(media) {
 		return media.mediaType == "photo" && typeof media.metadata.latitude !== "undefined";
-	}
+	};
 
 	Utilities.prototype.em2px = function(selector, em) {
 		var emSize = parseFloat($(selector).css("font-size"));
 		return (em * emSize);
-	}
+	};
 
 	Utilities.prototype.mapLink = function(latitude, longitude, zoom) {
 		var link;
@@ -274,11 +274,11 @@
 			link = 'http://m.osmtools.de/index.php?mlon=' + longitude + '&mlat=' + latitude + '&icon=6&zoom=' + zoom;
 		}
 		return link;
-	}
+	};
 
 	Utilities.prototype.isAlbumWithOneMedia = function(currentAlbum) {
 		return currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1;
-	}
+	};
 
 	Utilities.chooseReducedPhoto = function(media, container, fullScreenStatus) {
 		var chosenMedia, reducedWidth, reducedHeight;
@@ -320,12 +320,12 @@
 			maxSize = Options.reduced_sizes[i];
 		}
 		return chosenMedia;
-	}
+	};
 
 	Utilities.prototype.createMedia = function(media, id, fullScreenStatus) {
 		// creates a media element that can be inserted in DOM (e.g. with append/prepend methods)
 		var width = media.metadata.size[0], height = media.metadata.size[1];
-		var mediaSrc, mediaElement, triggerLoad, linkTag;
+		var mediaSrc, mediaElement, triggerLoad, linkTag, container;
 
 		if (media.mediaType == "video") {
 			if (fullScreenStatus && media.albumName.match(/\.avi$/) === null) {
@@ -371,7 +371,7 @@
 		}
 
 		return [mediaElement, linkTag, triggerLoad];
-	}
+	};
 
 	Utilities.originalMediaPath = function(media) {
 		return media.albumName;
@@ -431,10 +431,11 @@
 	};
 
 	Utilities.prototype.scaleMedia = function(event) {
-		var media, media, container, containerBottom = 0, containerTop = 0, containerRatio, photoSrc, previousSrc;
+		var media, mediaElement, container, containerBottom = 0, containerTop = 0, containerRatio, photoSrc, previousSrc;
 		var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth(), mediaBarBottom = 0;
 		var width, height, ratio, differentSize = false;
 		var id = event.data.id;
+		var albumViewHeight, heightForMedia, heightForMediaAndTitle;
 
 		windowWidth = $(window).outerWidth();
 		windowHeight = $(window).outerHeight();
@@ -552,15 +553,15 @@
 
 		if (event.data.callback)
 			event.data.callback();
-	}
+	};
 
 	Utilities.lateralSocialButtons = function() {
 		return $(".ssk-group").css("display") == "block";
-	}
+	};
 
 	Utilities.bottomSocialButtons = function() {
 		return ! Utilities.lateralSocialButtons();
-	}
+	};
 
 	/* make static methods callable as member functions */
 	Utilities.prototype.chooseReducedPhoto = Utilities.chooseReducedPhoto;
