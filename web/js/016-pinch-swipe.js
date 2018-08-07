@@ -39,7 +39,7 @@
   // define the actions to be taken on pinch, swipe, tap, double tap
 	PinchSwipe.addGesturesDetection = function(detectionSelector) {
 
-    mediaSelector = ".media-box#center img";
+    mediaSelector = ".media-box#center .media-box-inner img";
 		// get the two initial values:
 
 		// the reduction width and height in the page

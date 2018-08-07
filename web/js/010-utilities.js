@@ -444,16 +444,12 @@
 
 		if (id === "center") {
 			$("#media-box-container").css("width", windowWidth * 3).css("height", heightForMediaAndTitle).css("transform", "translate(-" + windowWidth + "px, 0px)");
-			array = [id, 'left', 'right'];
-			for (i = 0; i < array.length; i ++) {
-				$(".media-box#" + array[i]).css("width", windowWidth).css("height", heightForMediaAndTitle);
-				$(".media-box#" + array[i] + " .media-box-inner").css("width", windowWidth).css("height", heightForMedia);
-				$(".media-box#" + array[i]).show();
-			}
+			$(".media-box").css("width", windowWidth).css("height", heightForMediaAndTitle);
+			$(".media-box .media-box-inner").css("width", windowWidth).css("height", heightForMedia);
+			$(".media-box").show();
 		}
 
 		mediaElement = $(".media-box#" + id + " .media-box-inner img");
-		mediaElement.off();
 
 		media = event.data.media;
 
@@ -474,10 +470,8 @@
 			if ($(".media-box#" + id + " .title").is(":visible"))
 				containerTop = $(".media-box#" + id + " .title").outerHeight();
 			containerHeight -= containerBottom + containerTop;
-			if (media === currentMedia) {
-				container.css("top", containerTop + "px");
-				container.css("bottom", containerBottom + "px");
-			}
+			container.css("top", containerTop + "px");
+			container.css("bottom", containerBottom + "px");
 		}
 
 		containerRatio = containerWidth / containerHeight;
@@ -492,28 +486,28 @@
 
 			// chooseReducedPhoto() sets maxSize to 0 if it returns the original media
 			if (maxSize) {
-				if (width > height && width > maxSize) {
+				if (width > height && width >= maxSize) {
 					height = Math.round(height * maxSize / width);
 					width = maxSize;
-				} else if (height > width && height > maxSize) {
+				} else if (height > width && height >= maxSize) {
 					width = Math.round(width * maxSize / height);
 					height = maxSize;
 				}
 			}
-			if (differentSize || mediaElement.attr("width") != width || mediaElement.attr("height") != height) {
+			if (differentSize || parseInt(mediaElement.attr("width")) !== width || parseInt(mediaElement.attr("height")) !== height) {
 				$("link[rel=image_src]").remove();
 				$('link[rel="video_src"]').remove();
 				$("head").append("<link rel=\"image_src\" href=\"" + encodeURI(photoSrc) + "\" />");
-				mediaElement
-					.attr("src", encodeURI(photoSrc))
-					.attr("width", width)
-					.attr("height", height)
-					.attr("ratio", ratio);
 			}
+			mediaElement
+				.attr("src", encodeURI(photoSrc))
+				.attr("width", width)
+				.attr("height", height)
+				.attr("ratio", ratio);
 		}
 
-		if (parseInt(mediaElement.attr("width")) > containerWidth && mediaElement.attr("ratio") >= containerRatio) {
-			height = container.width() / mediaElement.attr("ratio");
+		if (parseInt(mediaElement.attr("width")) > containerWidth && parseInt(mediaElement.attr("ratio")) >= containerRatio) {
+			height = container.width() / parseInt(mediaElement.attr("ratio"));
 			mediaElement
 				.css("height", height)
 				.css("margin-top", - height / 2)
@@ -546,7 +540,7 @@
 			}
 		}
 
-		$(".media-bar").css("bottom", 0);
+		$(".media-box#" + id + " .media-bar").css("bottom", 0);
 
 		mediaElement.show();
 

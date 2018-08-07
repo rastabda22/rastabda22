@@ -1521,12 +1521,9 @@ $(document).ready(function() {
 
 		if (id === "center") {
 			$("#media-box-container").css("width", windowWidth * 3).css("height", heightForMediaAndTitle).css("transform", "translate(-" + windowWidth + "px, 0px)");
-			array = [id, 'left', 'right'];
-			for (i = 0; i < array.length; i ++) {
-				$(".media-box#" + array[i]).css("width", windowWidth).css("height", heightForMediaAndTitle);
-				$(".media-box#" + array[i] + " .media-box-inner").css("width", windowWidth).css("height", heightForMedia);
-				$(".media-box#" + array[i]).show();
-			}
+			$(".media-box").css("width", windowWidth).css("height", heightForMediaAndTitle);
+			$(".media-box .media-box-inner").css("width", windowWidth).css("height", heightForMedia);
+			$(".media-box").show();
 		}
 
 		setTitle(id);
@@ -1606,7 +1603,7 @@ $(document).ready(function() {
 				util.scaleMedia
 			);
 			// in case the image has been already loaded, trigger the event
-			$(mediaSelector).trigger(triggerLoad);
+			// $(mediaSelector).trigger(triggerLoad);
 
 			if (id === "center") {
 				$(window).off("resize");
@@ -1623,9 +1620,9 @@ $(document).ready(function() {
 			}
 
 			if (! Options.persistent_metadata) {
-				$("#metadata").hide();
-				$("#metadata-show").show();
-				$("#metadata-hide").hide();
+				$(".media-box#" + id + " .metadata").hide();
+				$(".media-box#" + id + " .metadata-show").show();
+				$(".media-box#" + id + " .metadata-hide").hide();
 			}
 		} else
 			loadNextPrevMedia();
@@ -2364,13 +2361,13 @@ $(document).ready(function() {
 		$(this).stop().fadeTo("fast", 0.4);
 	});
 
-	$(".metadata-show").on('click', showMetadataFromMouse);
-	$(".metadata-hide").on('click', showMetadataFromMouse);
-	$(".metadata").on('click', showMetadataFromMouse);
+	$(".media-box#center .metadata-show").on('click', showMetadataFromMouse);
+	$(".media-box#center .metadata-hide").on('click', showMetadataFromMouse);
+	$(".media-box#center .metadata").on('click', showMetadataFromMouse);
 
-	$(".fullscreen").on('click', goFullscreenFromMouse);
-	$("#next").attr("title", _t("#next-media-title"));
-	$("#prev").attr("title", _t("#prev-media-title"));
+	$(".media-box#center .fullscreen").on('click', goFullscreenFromMouse);
+	$(".media-box#center .next").attr("title", _t("#next-media-title"));
+	$(".media-box#center .prev").attr("title", _t("#prev-media-title"));
 
 	function goFullscreen(e) {
 		$("#media").off();
@@ -2761,10 +2758,10 @@ $(document).ready(function() {
 	}
 
 	function showMetadata() {
-		if ($("#metadata").css("display") == "none") {
-			$("#metadata-show").hide();
-			$("#metadata-hide").show();
-			$("#metadata")
+		if ($(".media-box#center .metadata").css("display") == "none") {
+			$(".media-box#center .metadata-show").hide();
+			$(".media-box#center .metadata-hide").show();
+			$(".media-box#center .metadata")
 				.stop()
 				.css("height", 0)
 				.css("padding-top", 0)
@@ -2775,9 +2772,9 @@ $(document).ready(function() {
 					$(this).css("height", "auto");
 				});
 		} else {
-			$("#metadata-show").show();
-			$("#metadata-hide").hide();
-			$("#metadata")
+			$(".media-box#center .metadata-show").show();
+			$(".media-box#center .metadata-hide").hide();
+			$(".media-box#center .metadata")
 				.stop()
 				.animate({ height: 0, paddingTop: 0, paddingBottom: 0 }, "slow", function() {
 					$(this).hide();
