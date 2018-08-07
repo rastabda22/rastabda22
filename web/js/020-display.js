@@ -1633,8 +1633,25 @@ $(document).ready(function() {
 					{
 						id: id,
 						media: media,
-						resize: true,
-						callback: loadNextPrevMedia
+						resize: true
+					},
+					util.scaleMedia
+				);
+				$(window).on(
+					"resize",
+					{
+						id: "left",
+						media: prevMedia,
+						resize: true
+					},
+					util.scaleMedia
+				);
+				$(window).on(
+					"resize",
+					{
+						id: "right",
+						media: prevMedia,
+						resize: true
 					},
 					util.scaleMedia
 				);
