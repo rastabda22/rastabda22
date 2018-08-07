@@ -434,9 +434,18 @@
 		var media, media, container, containerBottom = 0, containerTop = 0, containerRatio, photoSrc, previousSrc;
 		var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth(), mediaBarBottom = 0;
 		var width, height, ratio, differentSize = false;
+		var selector = event.data.mediaSelector;
 
 		windowWidth = $(window).outerWidth();
 		windowHeight = $(window).outerHeight();
+		albumViewHeight = $("#album-view").outerHeight();
+		heightForMediaAndTitle = windowHeight - albumViewHeight;
+		heightForMedia = heightForMediaAndTitle - $(selector + " .title-container").outerHeight();
+
+		if (selector === ".media-box#center .media-box-inner img")
+			$("#media-box-container").css("width", windowWidth * 3).css("height", heightForMediaAndTitle).css("transform", "translate(-" + windowWidth + "px, 0px)");
+		$(selector).parent().parent().css("width", windowWidth).css("height", heightForMediaAndTitle);
+		$(selector).parent().css("width", windowWidth).css("height", heightForMedia);
 
 		mediaElement = $(event.data.mediaSelector);
 		mediaElement.off();
