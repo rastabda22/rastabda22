@@ -1631,7 +1631,7 @@ $(document).ready(function() {
 				$(window).on(
 					"resize",
 					{
-						id: id,
+						id: "center",
 						media: media,
 						resize: true
 					},
