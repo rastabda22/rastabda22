@@ -498,12 +498,12 @@
 				$("link[rel=image_src]").remove();
 				$('link[rel="video_src"]').remove();
 				$("head").append("<link rel=\"image_src\" href=\"" + encodeURI(photoSrc) + "\" />");
+				mediaElement
+					.attr("src", encodeURI(photoSrc))
+					.attr("width", width)
+					.attr("height", height)
+					.attr("ratio", ratio);
 			}
-			mediaElement
-				.attr("src", encodeURI(photoSrc))
-				.attr("width", width)
-				.attr("height", height)
-				.attr("ratio", ratio);
 		}
 
 		if (parseInt(mediaElement.attr("width")) > containerWidth && parseInt(mediaElement.attr("ratio")) >= containerRatio) {
