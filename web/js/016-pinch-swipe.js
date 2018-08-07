@@ -318,12 +318,12 @@
 
 
 	PinchSwipe.swipeRight = function(media) {
-		var mediaBoxRightContent;
-
-    $("#media-box-container").on(
+		$("#media-box-container").on(
       'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
       function() {
-        mediaBoxRightContent = $(".media-box#right")[0].outerHTML;
+        // remove right image and move html code to left side
+        var mediaBoxRightContent = $(".media-box#right")[0].outerHTML;
+        var array, savedSearchSubAlbumHash, savedSearchAlbumHash;
         $(".media-box#right").remove();
         $(".media-box#center").attr('id', 'right');
         $(".media-box#left").attr('id', 'center');
@@ -334,8 +334,7 @@
         // array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
         savedSearchSubAlbumHash = array[3];
         savedSearchAlbumHash = array[4];
-        link = phFl.encodeHash(currentAlbum, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
-        window.location.href = link;
+        window.location.href = phFl.encodeHash(currentAlbum, prevMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
       }
     );
 
@@ -343,12 +342,12 @@
 	}
 
 	PinchSwipe.swipeLeft = function(media) {
-    var mediaBoxLeftContent;
-
     $("#media-box-container").on(
       'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
       function() {
-        mediaBoxLeftContent = $(".media-box#left")[0].outerHTML;
+        // remove left image and move html code to right side
+        var mediaBoxLeftContent = $(".media-box#left")[0].outerHTML;
+        var array, savedSearchSubAlbumHash, savedSearchAlbumHash;
         $(".media-box#left").remove();
         $(".media-box#center").attr('id', 'left');
         $(".media-box#right").attr('id', 'center');
@@ -359,8 +358,7 @@
         // array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
         savedSearchSubAlbumHash = array[3];
         savedSearchAlbumHash = array[4];
-        link = phFl.encodeHash(currentAlbum, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
-        window.location.href = link;
+        window.location.href = phFl.encodeHash(currentAlbum, nextMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
       }
     );
 
