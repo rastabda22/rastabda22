@@ -433,7 +433,7 @@
 	Utilities.prototype.scaleMedia = function(event) {
 		var media, mediaElement, container, containerBottom = 0, containerTop = 0, containerRatio, photoSrc, previousSrc;
 		var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth(), mediaBarBottom = 0;
-		var width, height, ratio, differentSize = false;
+		var mediaWidth, mediaHeight, attrWidth, attrHeight, cssWidth, cssHeight, ratio, differentSize = false;
 		var id = event.data.id;
 		var albumViewHeight, heightForMedia, heightForMediaAndTitle;
 
@@ -454,9 +454,9 @@
 
 		media = event.data.media;
 
-		width = media.metadata.size[0];
-		height = media.metadata.size[1];
-		ratio = width / height;
+		mediaWidth = media.metadata.size[0];
+		mediaHeight = media.metadata.size[1];
+		ratio = mediaWidth / mediaHeight;
 
 		if (fullScreenStatus && Modernizr.fullscreen)
 			container = $(window);
@@ -487,39 +487,41 @@
 
 			// chooseReducedPhoto() sets maxSize to 0 if it returns the original media
 			if (maxSize) {
-				if (width > height && width >= maxSize) {
-					height = Math.round(height * maxSize / width);
-					width = maxSize;
-				} else if (height > width && height >= maxSize) {
-					width = Math.round(width * maxSize / height);
-					height = maxSize;
+				if (mediaWidth > mediaHeight && mediaWidth >= maxSize) {
+					attrHeight = Math.round(mediaHeight * maxSize / mediaWidth);
+					attrWidth = maxSize;
+				} else if (mediaHeight > mediaWidth && mediaHeight >= maxSize) {
+					attrWidth = Math.round(mediaWidth * maxSize / mediaHeight);
+					attrHeight = maxSize;
 				}
 			}
-			if (differentSize || parseInt(mediaElement.attr("width")) !== width || parseInt(mediaElement.attr("height")) !== height) {
+			if (differentSize || parseInt(mediaElement.attr("width")) !== attrWidth || parseInt(mediaElement.attr("height")) !== attrHeight) {
 				$("link[rel=image_src]").remove();
 				$('link[rel="video_src"]').remove();
 				$("head").append("<link rel=\"image_src\" href=\"" + encodeURI(photoSrc) + "\" />");
 				mediaElement
 					.attr("src", encodeURI(photoSrc))
-					.attr("width", width)
-					.attr("height", height)
+					.attr("width", attrWidth)
+					.attr("height", attrHeight)
 					.attr("ratio", ratio);
 			}
 		}
 
-		if (parseInt(mediaElement.attr("width")) > containerWidth && parseInt(mediaElement.attr("ratio")) >= containerRatio) {
-			height = container.width() / parseInt(mediaElement.attr("ratio"));
+		if (parseInt(mediaElement.attr("width")) > containerWidth && parseFloat(mediaElement.attr("ratio")) >= containerRatio) {
+			cssHeight = container.width() / parseFloat(mediaElement.attr("ratio"));
 			mediaElement
-				.css("height", height)
-				.css("margin-top", - height / 2)
+				.css("height", cssHeight)
+				.css("width", "auto")
+				.css("margin-top", - cssHeight / 2)
 				.css("top", "50%");
 			if (media.mediaType == "video")
 				mediaBarBottom = 0;
 			else if (media.mediaType == "photo")
 				mediaBarBottom = (containerHeight - containerWidth / ratio) / 2;
-		} else if (parseInt(mediaElement.attr("height")) > containerHeight && mediaElement.attr("ratio") <= containerRatio) {
+		} else if (parseInt(mediaElement.attr("height")) > containerHeight && parseFloat(mediaElement.attr("ratio")) <= containerRatio) {
 			mediaElement
 				.css("height", "100%")
+				.css("width", "auto")
 				.css("margin-top", "0")
 				.css("top", "0");
 			if (media.mediaType == "video") {
@@ -531,6 +533,7 @@
 		} else {
 			mediaElement
 				.css("height", mediaElement.attr("height"))
+				.css("width", "auto")
 				.css("margin-top", - mediaElement.attr("height") / 2)
 				.css("top", "50%");
 			mediaBarBottom = (container.height() - mediaElement.attr("height")) / 2;
