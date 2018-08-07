@@ -322,7 +322,7 @@
 		return chosenMedia;
 	}
 
-	Utilities.prototype.createMedia = function(media, fullScreenStatus) {
+	Utilities.prototype.createMedia = function(media, id, fullScreenStatus) {
 		// creates a media element that can be inserted in DOM (e.g. with append/prepend methods)
 		var width = media.metadata.size[0], height = media.metadata.size[1];
 		var mediaSrc, mediaElement, triggerLoad, linkTag;
@@ -346,7 +346,7 @@
 			if (fullScreenStatus && Modernizr.fullscreen)
 				container = $(window);
 			else
-				container = $("#media-view");
+				container = $(".media-box#" + id + " .media-box-inner");
 			mediaSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
 			if (maxSize) {
 				if (width > height &&  width > maxSize) {

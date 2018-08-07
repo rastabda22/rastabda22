@@ -1579,7 +1579,7 @@ $(document).ready(function() {
 			// var mediaId = "media-" + selector.substring(1);
 			// var mediaSelector = "#" + mediaId;
 			var mediaSelector = ".media-box#" + id + " .media-box-inner img";
-			array = util.createMedia(media, fullScreenStatus);
+			array = util.createMedia(media, id, fullScreenStatus);
 			element = array[0];
 			linkTag = array[1];
 			triggerLoad = array[2];
