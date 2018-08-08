@@ -485,6 +485,8 @@
 			} else
 				photoSrc = mediaElement.attr("src");
 
+			attrWidth = mediaWidth;
+			attrHeight = mediaHeight;
 			// chooseReducedPhoto() sets maxSize to 0 if it returns the original media
 			if (maxSize) {
 				if (mediaWidth > mediaHeight && mediaWidth >= maxSize) {
@@ -495,6 +497,7 @@
 					attrHeight = maxSize;
 				}
 			}
+
 			if (differentSize || parseInt(mediaElement.attr("width")) !== attrWidth || parseInt(mediaElement.attr("height")) !== attrHeight) {
 				$("link[rel=image_src]").remove();
 				$('link[rel="video_src"]').remove();
