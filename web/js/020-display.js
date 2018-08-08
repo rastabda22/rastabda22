@@ -2434,8 +2434,8 @@ $(document).ready(function() {
 			$("#media-view").fullScreen({
 				callback: function(isFullscreen) {
 					fullScreenStatus = isFullscreen;
-					$("#enter-fullscreen").toggle();
-					$("#exit-fullscreen").toggle();
+					$(".enter-fullscreen").toggle();
+					$(".exit-fullscreen").toggle();
 					showMedia(currentAlbum, currentMedia, 'center');
 				}
 			});
