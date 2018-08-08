@@ -322,10 +322,8 @@
 		return chosenMedia;
 	};
 
-	Utilities.prototype.createMedia = function(media, id, fullScreenStatus) {
-		// creates a media element that can be inserted in DOM (e.g. with append/prepend methods)
-		var width = media.metadata.size[0], height = media.metadata.size[1];
-		var mediaSrc, mediaElement, triggerLoad, linkTag, container;
+	Utilities.prototype.chooseMediaReduction = function(media, id, fullScreenStatus) {
+		// chooses the proper reduction to use depending on the container size
 
 		if (media.mediaType == "video") {
 			if (fullScreenStatus && media.albumName.match(/\.avi$/) === null) {
@@ -334,43 +332,86 @@
 			} else {
 				mediaSrc = this.mediaPath(currentAlbum, media, "");
 			}
-			mediaElement = $('<video/>', {controls: true })
-				.attr("width", width)
-				.attr("height", height)
-				.attr("ratio", width / height)
-				.attr("src", encodeURI(mediaSrc))
-				.attr("alt", media.name);
-			triggerLoad = "loadstart";
-			linkTag = '<link rel="video_src" href="' + encodeURI(mediaSrc) + '" />';
 		} else if (media.mediaType == "photo") {
 			if (fullScreenStatus && Modernizr.fullscreen)
 				container = $(window);
 			else
 				container = $(".media-box#" + id + " .media-box-inner");
+
 			mediaSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
+		}
+
+		return mediaSrc;
+	};
+
+	Utilities.prototype.createMediaHtml = function(media, id, fullScreenStatus) {
+		// creates a media element that can be inserted in DOM (e.g. with append/prepend methods)
+
+		// the actual sizes of the image
+		var width = media.metadata.size[0], height = media.metadata.size[1];
+		var mediaSrc, mediaElement, container;
+
+		if (media.mediaType == "video") {
+			if (fullScreenStatus && media.albumName.match(/\.avi$/) === null) {
+				// .avi videos are not played by browsers
+				mediaSrc = media.albumName;
+			} else {
+				mediaSrc = this.mediaPath(currentAlbum, media, "");
+			}
+
+			mediaElement = $('<video/>', {controls: true });
+		} else if (media.mediaType == "photo") {
+			if (fullScreenStatus && Modernizr.fullscreen)
+				container = $(window);
+			else
+				container = $(".media-box#" + id + " .media-box-inner");
+
+			mediaSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
+
 			if (maxSize) {
-				if (width > height &&  width >= maxSize) {
-					height = Math.round(height * maxSize / width);
+				// correct phisical width and height according to reduction sizes
+				if (width > height) {
 					width = maxSize;
-				} else if (height > width && height >= maxSize) {
-					width = Math.round(width * maxSize / height);
+					height = Math.round(height / width * maxSize);
+				} else {
 					height = maxSize;
+					width = Math.round(width / height * maxSize);
 				}
 			}
 
 			mediaElement = $('<img/>')
-				.attr("width", width)
-				.attr("height", height)
-				.attr("ratio", width / height)
-				.attr("src", encodeURI(mediaSrc))
-				.attr("alt", media.name)
-				.attr("title", media.date)
-				.addClass("");
-			linkTag = '<link rel="image_src" href="' + encodeURI(mediaSrc) + '" />';
-			triggerLoad = "load";
+				.attr("title", media.date);
 		}
 
-		return [mediaElement, linkTag, triggerLoad];
+		mediaElement
+			.attr("width", width)
+			.attr("height", height)
+			.attr("ratio", width / height)
+			.attr("src", encodeURI(mediaSrc))
+			.attr("alt", media.name);
+
+
+		return mediaElement[0];
+	};
+
+	Utilities.prototype.createMediaLinkTag = function(media, mediaSrc) {
+		// creates a link tag to be inserted in <head>
+
+		if (media.mediaType == "video") {
+			return '<link rel="video_src" href="' + encodeURI(mediaSrc) + '" />';
+		} else if (media.mediaType == "photo") {
+			return '<link rel="image_src" href="' + encodeURI(mediaSrc) + '" />';
+		}
+	};
+
+	Utilities.prototype.chooseTriggerEvent = function(media) {
+		// choose the event that must trigger the scaleMedia function
+
+		if (media.mediaType == "video") {
+			return "loadstart";
+		} else if (media.mediaType == "photo") {
+			return "load";
+		}
 	};
 
 	Utilities.originalMediaPath = function(media) {
@@ -431,9 +472,13 @@
 	};
 
 	Utilities.prototype.scaleMedia = function(event) {
-		var media, mediaElement, container, containerBottom = 0, containerTop = 0, containerRatio, photoSrc, previousSrc;
-		var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth(), mediaBarBottom = 0;
-		var mediaWidth, mediaHeight, attrWidth, attrHeight, cssWidth, cssHeight, ratio, differentSize = false;
+		// this function works on the img tag identified by event.data.id
+		// it adjusts width, height and position so that it fits in its parent (<div class="bedia-box-inner">, or the whole window)
+		// and centers vertically
+		var media = event.data.media, mediaElement, container, containerBottom = 0, containerTop = 0, containerRatio, photoSrc, previousSrc;
+		var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth();
+		var mediaBarBottom = 0;
+		var mediaWidth, mediaHeight, attrWidth, attrHeight, cssWidth, cssHeight, ratio;
 		var id = event.data.id;
 		var albumViewHeight, heightForMedia, heightForMediaAndTitle;
 
@@ -442,8 +487,12 @@
 		albumViewHeight = $("#album-view").outerHeight();
 		heightForMediaAndTitle = windowHeight - albumViewHeight;
 		heightForMedia = heightForMediaAndTitle - $(".media-box#" + id + " .title").outerHeight();
+		if (Utilities.bottomSocialButtons() && containerBottom < $(".ssk").outerHeight())
+			// correct container bottom when social buttons are on the bottom
+			heightForMedia -= $(".ssk").outerHeight();
 
-		if (id === "center") {
+		if (event.data.resize && id === "center") {
+			// this is executed only when resizing, it's not needed when first scaling
 			$("#media-box-container").css("width", windowWidth * 3).css("height", heightForMediaAndTitle).css("transform", "translate(-" + windowWidth + "px, 0px)");
 			$(".media-box").css("width", windowWidth).css("height", heightForMediaAndTitle);
 			$(".media-box .media-box-inner").css("width", windowWidth).css("height", heightForMedia);
@@ -452,100 +501,99 @@
 
 		mediaElement = $(".media-box#" + id + " .media-box-inner img");
 
-		media = event.data.media;
-
 		mediaWidth = media.metadata.size[0];
 		mediaHeight = media.metadata.size[1];
+		attrWidth = mediaWidth;
+		attrHeight = mediaHeight;
 		ratio = mediaWidth / mediaHeight;
 
 		if (fullScreenStatus && Modernizr.fullscreen)
 			container = $(window);
 		else {
 			container = $(".media-box#" + id + " .media-box-inner");
-			if ($("#album-view").is(":visible"))
-				containerBottom = $("#album-view").outerHeight();
-			else if (Utilities.bottomSocialButtons() && containerBottom < $(".ssk").outerHeight())
-				// correct container bottom when social buttons are on the bottom
-				containerBottom = $(".ssk").outerHeight();
-			containerTop = 0;
-			if ($(".media-box#" + id + " .title").is(":visible"))
-				containerTop = $(".media-box#" + id + " .title").outerHeight();
-			containerHeight -= containerBottom + containerTop;
-			container.css("top", containerTop + "px");
-			container.css("bottom", containerBottom + "px");
+			// if ($("#album-view").is(":visible"))
+			// 	containerBottom = $("#album-view").outerHeight();
+			// else if (Utilities.bottomSocialButtons() && containerBottom < $(".ssk").outerHeight())
+			// 	// correct container bottom when social buttons are on the bottom
+			// 	containerBottom = $(".ssk").outerHeight();
+			// containerTop = 0;
+			// if ($(".media-box#" + id + " .title").is(":visible"))
+			// 	containerTop = $(".media-box#" + id + " .title").outerHeight();
+			// containerHeight -= containerBottom + containerTop;
+			// container.css("top", containerTop + "px");
+			// container.css("bottom", containerBottom + "px");
 		}
 
+		containerHeight = heightForMedia;
 		containerRatio = containerWidth / containerHeight;
 
 		if (media.mediaType == "photo") {
 			if (event.data.resize) {
-				photoSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
 				previousSrc = mediaElement.attr("src");
-				differentSize = (encodeURI(photoSrc) != previousSrc);
-			} else
-				photoSrc = mediaElement.attr("src");
+				photoSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
 
-			attrWidth = mediaWidth;
-			attrHeight = mediaHeight;
-			// chooseReducedPhoto() sets maxSize to 0 if it returns the original media
-			if (maxSize) {
-				if (mediaWidth > mediaHeight && mediaWidth >= maxSize) {
-					attrHeight = Math.round(mediaHeight * maxSize / mediaWidth);
-					attrWidth = maxSize;
-				} else if (mediaHeight > mediaWidth && mediaHeight >= maxSize) {
-					attrWidth = Math.round(mediaWidth * maxSize / mediaHeight);
-					attrHeight = maxSize;
+				if (encodeURI(photoSrc) != previousSrc) {
+					// resizing had the effect that a different reduction has been choosed
+
+					// chooseReducedPhoto() sets maxSize to 0 if it returns the original media
+					if (maxSize) {
+						if (mediaWidth > mediaHeight) {
+							attrWidth = maxSize;
+							attrHeight = Math.round(mediaHeight / mediaWidth * attrWidth);
+						} else {
+							attrHeight = maxSize;
+							attrWidth = Math.round(mediaWidth / mediaHeight * attrHeight);
+						}
+					}
+
+					$("link[rel=image_src]").remove();
+					$('link[rel="video_src"]').remove();
+					$("head").append("<link rel=\"image_src\" href=\"" + encodeURI(photoSrc) + "\" />");
+					mediaElement
+						.attr("src", encodeURI(photoSrc))
+						.attr("width", attrWidth)
+						.attr("height", attrHeight)
+						.attr("ratio", ratio);
 				}
-			}
 
-			if (differentSize || parseInt(mediaElement.attr("width")) !== attrWidth || parseInt(mediaElement.attr("height")) !== attrHeight) {
-				$("link[rel=image_src]").remove();
-				$('link[rel="video_src"]').remove();
-				$("head").append("<link rel=\"image_src\" href=\"" + encodeURI(photoSrc) + "\" />");
-				mediaElement
-					.attr("src", encodeURI(photoSrc))
-					.attr("width", attrWidth)
-					.attr("height", attrHeight)
-					.attr("ratio", ratio);
 			}
 		}
 
-		if (parseInt(mediaElement.attr("width")) > containerWidth && parseFloat(mediaElement.attr("ratio")) >= containerRatio) {
-			cssHeight = container.width() / parseFloat(mediaElement.attr("ratio"));
-			mediaElement
-				.css("height", cssHeight)
-				.css("width", "auto")
-				.css("margin-top", - cssHeight / 2)
-				.css("top", "50%");
-			if (media.mediaType == "video")
-				mediaBarBottom = 0;
-			else if (media.mediaType == "photo")
-				mediaBarBottom = (containerHeight - containerWidth / ratio) / 2;
-		} else if (parseInt(mediaElement.attr("height")) > containerHeight && parseFloat(mediaElement.attr("ratio")) <= containerRatio) {
-			mediaElement
-				.css("height", "100%")
-				.css("width", "auto")
-				.css("margin-top", "0")
-				.css("top", "0");
-			if (media.mediaType == "video") {
-				mediaElement.css("height", parseInt(mediaElement.css("height")) - $(".links").outerHeight());
-				mediaBarBottom = 0;
-			} else if (media.mediaType == "photo")
-				// put media bar slightly below so that video buttons are not covered
-				mediaBarBottom = 0;
-		} else {
-			mediaElement
-				.css("height", mediaElement.attr("height"))
-				.css("width", "auto")
-				.css("margin-top", - mediaElement.attr("height") / 2)
-				.css("top", "50%");
-			mediaBarBottom = (container.height() - mediaElement.attr("height")) / 2;
-			if (fullScreenStatus) {
-				if (media.mediaType == "video") {
-					mediaBarBottom = 0;
-				}
-			}
-		}
+		// if (parseInt(mediaElement.attr("width")) > containerWidth && parseFloat(mediaElement.attr("ratio")) >= containerRatio) {
+		// 	mediaElement
+		// 		.css("width", "100%")
+		// 		.css("height", "auto")
+		// 		.css("margin-top", - cssHeight / 2)
+		// 		.css("top", "50%");
+		// 	if (media.mediaType == "video")
+		// 		mediaBarBottom = 0;
+		// 	else if (media.mediaType == "photo")
+		// 		mediaBarBottom = (containerHeight - containerWidth / ratio) / 2;
+		// } else if (parseInt(mediaElement.attr("height")) > containerHeight && parseFloat(mediaElement.attr("ratio")) <= containerRatio) {
+		// 	mediaElement
+		// 		.css("height", "100%")
+		// 		.css("width", "auto")
+		// 		.css("margin-top", "0")
+		// 		.css("top", "0");
+		// 	if (media.mediaType == "video") {
+		// 		mediaElement.css("height", parseInt(mediaElement.css("height")) - $(".links").outerHeight());
+		// 		mediaBarBottom = 0;
+		// 	} else if (media.mediaType == "photo")
+		// 		// put media bar slightly below so that video buttons are not covered
+		// 		mediaBarBottom = 0;
+		// } else {
+		// 	mediaElement
+		// 		.css("height", mediaElement.attr("height"))
+		// 		.css("width", "auto")
+		// 		.css("margin-top", - mediaElement.attr("height") / 2)
+		// 		.css("top", "50%");
+		// 	mediaBarBottom = (container.height() - mediaElement.attr("height")) / 2;
+		// 	if (fullScreenStatus) {
+		// 		if (media.mediaType == "video") {
+		// 			mediaBarBottom = 0;
+		// 		}
+		// 	}
+		// }
 
 		$(".media-box#" + id + " .media-bar").css("bottom", 0);
 

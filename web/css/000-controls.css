@@ -227,6 +227,7 @@ a.title-anchor.mobile {
 .media-box {
 	display: block;
 	float: left;
+	position: relative;
 }
 
 #media-view {
@@ -266,7 +267,16 @@ video {
 }
 
 .media-box-inner img {
-	position: relative;
+	max-height: 100%;
+	max-width: 100%;
+	width: auto;
+	height: auto;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
 }
 
 #album-view.no-bottom-space {

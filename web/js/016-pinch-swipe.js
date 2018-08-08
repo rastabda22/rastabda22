@@ -321,20 +321,20 @@
 		$("#media-box-container").on(
       'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
       function() {
-        // remove right image and move html code to left side
-        var mediaBoxRightContent = $(".media-box#right")[0].outerHTML;
-        var array, savedSearchSubAlbumHash, savedSearchAlbumHash;
-        $(".media-box#right").remove();
-        $(".media-box#center").attr('id', 'right');
-        $(".media-box#left").attr('id', 'center');
-        $("#media-box-container").prepend(mediaBoxRightContent.replace('id="right"', 'id="left"'));
-        $("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
+        // // remove right image and move html code to left side
+        // var mediaBoxRightContent = $(".media-box#right")[0].outerHTML;
+        // var array, savedSearchSubAlbumHash, savedSearchAlbumHash;
+        // $(".media-box#right").remove();
+        // $(".media-box#center").attr('id', 'right');
+        // $(".media-box#left").attr('id', 'center');
+        // $("#media-box-container").prepend(mediaBoxRightContent.replace('id="right"', 'id="left"'));
+        // $("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
 
         array = phFl.decodeHash(location.hash);
         // array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
         savedSearchSubAlbumHash = array[3];
         savedSearchAlbumHash = array[4];
-        window.location.href = phFl.encodeHash(currentAlbum, prevMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
+        window.location.href = phFl.encodeHash(currentAlbum, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
       }
     );
 
@@ -346,19 +346,19 @@
       'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
       function() {
         // remove left image and move html code to right side
-        var mediaBoxLeftContent = $(".media-box#left")[0].outerHTML;
-        var array, savedSearchSubAlbumHash, savedSearchAlbumHash;
-        $(".media-box#left").remove();
-        $(".media-box#center").attr('id', 'left');
-        $(".media-box#right").attr('id', 'center');
-        $("#media-box-container").append(mediaBoxLeftContent.replace('id="left"', 'id="right"'));
-        $("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
+        // var mediaBoxLeftContent = $(".media-box#left")[0].outerHTML;
+        // var array, savedSearchSubAlbumHash, savedSearchAlbumHash;
+        // $(".media-box#left .media-box-inner").empty();
+        // $(".media-box#center").attr('id', 'left');
+        // $(".media-box#right").attr('id', 'center');
+        // $("#media-box-container").append(mediaBoxLeftContent.replace('id="left"', 'id="right"'));
+        // $("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
 
         array = phFl.decodeHash(location.hash);
         // array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
         savedSearchSubAlbumHash = array[3];
         savedSearchAlbumHash = array[4];
-        window.location.href = phFl.encodeHash(currentAlbum, nextMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
+        window.location.href = phFl.encodeHash(currentAlbum, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
       }
     );
 
