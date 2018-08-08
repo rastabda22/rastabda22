@@ -1522,12 +1522,14 @@ $(document).ready(function() {
 		thumbnailSize = Options.media_thumb_size;
 
 		if (id === "center") {
-			if (Options.hide_title_and_thumbnails || currentAlbum.media.length == 1)
+			if (Options.hide_title_and_thumbnails || currentAlbum.media.length == 1 || fullScreenStatus) {
 				$("#album-view").addClass("hidden");
-			else {
+				$(".title").addClass("hidden");
+			} else {
 				$("#album-view").removeClass("hidden");
 				$("#album-view").addClass("media-view-container");
-				$("#album-view").css("height", (thumbnailSize + 22).toString() + "px");
+				// $("#album-view").css("height", (thumbnailSize + 22).toString() + "px");
+				$(".title").removeClass("hidden");
 			}
 		}
 
@@ -2441,14 +2443,14 @@ $(document).ready(function() {
 			if (! fullScreenStatus) {
 				$(".title").hide();
 				$("#album-view").addClass('hidden');
-				$("#enter-fullscreen").toggle();
-				$("#exit-fullscreen").toggle();
+				$(".enter-fullscreen").toggle();
+				$(".exit-fullscreen").toggle();
 				fullScreenStatus = true;
 			} else {
 				$(".title").show();
 				$("#album-view").removeClass('hidden');
-				$("#enter-fullscreen").toggle();
-				$("#exit-fullscreen").toggle();
+				$(".enter-fullscreen").toggle();
+				$(".exit-fullscreen").toggle();
 				fullScreenStatus = false;
 			}
 			showMedia(currentAlbum, currentMedia, 'center');
