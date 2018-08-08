@@ -621,6 +621,8 @@
 			$("#prev").css("left", (parseInt($("#prev").css("left")) + $(".ssk").outerWidth()) + "px");
 		}
 
+		Utilities.setLinksVisibility();
+
 		if (event.data.callback)
 			event.data.callback();
 	};
@@ -633,12 +635,27 @@
 		return ! Utilities.lateralSocialButtons();
 	};
 
+	Utilities.setLinksVisibility = function() {
+		if (isMobile.any()) {
+			$(".media-box .links").css("display", "inline").css("opacity", 0.5);
+		} else {
+			$("#media-view").off();
+			$("#media-view").on('mouseenter', function() {
+				$(".media-box .links").stop().fadeTo("slow", 0.50).css("display", "inline");
+			});
+			$("#media-view").on('mouseleave', function() {
+				$(".media-box .links").stop().fadeOut("slow");
+			});
+		}
+	}
+
 	/* make static methods callable as member functions */
 	Utilities.prototype.chooseReducedPhoto = Utilities.chooseReducedPhoto;
 	Utilities.prototype.originalMediaPath = Utilities.originalMediaPath;
 	Utilities.prototype.mediaPath = Utilities.mediaPath;
 	Utilities.prototype.isFolderCacheBase = Utilities.isFolderCacheBase;
 	Utilities.prototype.pathJoin = Utilities.pathJoin;
+	Utilities.prototype.setLinksVisibility = Utilities.setLinksVisibility;
 
   window.Utilities = Utilities;
 }());

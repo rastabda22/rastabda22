@@ -2408,17 +2408,7 @@ $(document).ready(function() {
 
 	$("#album-view").on('mousewheel', ps.swipeOnWheel);
 
-	if (isMobile.any()) {
-		$(".media-box#center .links").css("display", "inline").css("opacity", 0.5);
-	} else {
-		//~ $("#media-view").off();
-		$("#media-view").on('mouseenter', function() {
-			$(".media-box#center .links").stop().fadeTo("slow", 0.50).css("display", "inline");
-		});
-		$("#media-view").on('mouseleave', function() {
-			$(".media-box#center .links").stop().fadeOut("slow");
-		});
-	}
+	util.setLinksVisibility();
 
 	$("#next, #prev").on('mouseenter', function() {
 		$(this).stop().fadeTo("fast", 1);
