@@ -264,6 +264,7 @@ video {
 
 .media-box-inner {
 	display: block;
+	position: relative;
 }
 
 .media-box-inner img {
