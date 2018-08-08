@@ -1540,7 +1540,8 @@ $(document).ready(function() {
 		heightForMedia = heightForMediaAndTitle - $(".media-box#" + id + " .title").outerHeight();
 
 		if (id === "center") {
-			$("#media-box-container").css("width", windowWidth * 3).css("height", heightForMediaAndTitle).css("transform", "translate(-" + windowWidth + "px, 0px)");
+			$("#media-box-container").css("width", windowWidth * 3).css("height", heightForMediaAndTitle);
+			$("#media-box-container").css("transform", "translate(-" + windowWidth + "px, 0px)");
 			$(".media-box").css("width", windowWidth).css("height", heightForMediaAndTitle);
 			$(".media-box .media-box-inner").css("width", windowWidth).css("height", heightForMedia);
 			$(".media-box").show();
