@@ -498,12 +498,20 @@
 		// 	// correct container bottom when social buttons are on the bottom
 		// 	heightForMediaAndTitle -= $(".ssk").outerHeight();
 
+		// widths must be set before calculating title height
+		if (event.data.resize && id === "center") {
+			// this is executed only when resizing, it's not needed when first scaling
+			$("#media-box-container").css("width", windowWidth * 3).css("transform", "translate(-" + windowWidth + "px, 0px)");
+			$(".media-box").css("width", windowWidth);
+			$(".media-box .media-box-inner").css("width", windowWidth);
+			$(".media-box").show();
+		}
 		heightForMedia = heightForMediaAndTitle - $(".media-box#" + id + " .title").outerHeight();
 		if (event.data.resize && id === "center") {
 			// this is executed only when resizing, it's not needed when first scaling
-			$("#media-box-container").css("width", windowWidth * 3).css("height", heightForMediaAndTitle).css("transform", "translate(-" + windowWidth + "px, 0px)");
-			$(".media-box").css("width", windowWidth).css("height", heightForMediaAndTitle);
-			$(".media-box .media-box-inner").css("width", windowWidth).css("height", heightForMedia);
+			$("#media-box-container").css("height", heightForMediaAndTitle);
+			$(".media-box").css("height", heightForMediaAndTitle);
+			$(".media-box .media-box-inner").css("height", heightForMedia);
 			$(".media-box").show();
 		}
 
