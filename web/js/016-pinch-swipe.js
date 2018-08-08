@@ -322,6 +322,7 @@
       'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
       function() {
         $("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
+        $("#media-box-container").css("transition-duration", "0s");
 
         // remove right image and move html code to left side
         var mediaBoxRightContent = $(".media-box#right")[0].outerHTML;
@@ -348,6 +349,7 @@
       'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
       function() {
         $("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
+        $("#media-box-container").css("transition-duration", "0s");
 
         // remove left image and move html code to right side
         var mediaBoxLeftContent = $(".media-box#left")[0].outerHTML;
