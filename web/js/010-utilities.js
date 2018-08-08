@@ -494,9 +494,9 @@
 			// slightly separate media from bottom thumbnails
 			heightForMediaAndTitle -= 5;
 
-		if (Utilities.bottomSocialButtons() && containerBottom < $(".ssk").outerHeight())
-			// correct container bottom when social buttons are on the bottom
-			heightForMediaAndTitle -= $(".ssk").outerHeight();
+		// if (Utilities.bottomSocialButtons() && containerBottom < $(".ssk").outerHeight())
+		// 	// correct container bottom when social buttons are on the bottom
+		// 	heightForMediaAndTitle -= $(".ssk").outerHeight();
 
 		heightForMedia = heightForMediaAndTitle - $(".media-box#" + id + " .title").outerHeight();
 		if (event.data.resize && id === "center") {
