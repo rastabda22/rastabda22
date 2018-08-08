@@ -1528,7 +1528,7 @@ $(document).ready(function() {
 			} else {
 				$("#album-view").removeClass("hidden");
 				$("#album-view").addClass("media-view-container");
-				// $("#album-view").css("height", (thumbnailSize + 22).toString() + "px");
+				$("#album-view").css("height", (thumbnailSize + 22).toString() + "px");
 				$(".title").removeClass("hidden");
 			}
 		}
