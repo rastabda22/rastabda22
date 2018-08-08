@@ -311,8 +311,8 @@
 				}
 
 				if (
-					mediaRatio > containerRatio && reducedWidth < container.width() * screenRatio ||
-					mediaRatio < containerRatio && reducedHeight < container.height() * screenRatio
+					mediaRatio > containerRatio && reducedWidth < container.width() * devicePixelRatio ||
+					mediaRatio < containerRatio && reducedHeight < container.height() * devicePixelRatio
 				)
 					break;
 			}
@@ -427,7 +427,7 @@
 			var actualSize = size;
 			var albumThumbSize = Options.album_thumb_size;
 			var mediaThumbSize = Options.media_thumb_size;
-			if ((size == albumThumbSize || size == mediaThumbSize) && screenRatio > 1) {
+			if ((size == albumThumbSize || size == mediaThumbSize) && devicePixelRatio > 1) {
 				actualSize = Math.round(actualSize * Options.mobile_thumbnail_factor);
 				albumThumbSize = Math.round(albumThumbSize * Options.mobile_thumbnail_factor);
 				mediaThumbSize = Math.round(mediaThumbSize * Options.mobile_thumbnail_factor);
