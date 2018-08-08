@@ -66,8 +66,8 @@
 		<script type="text/javascript" src="js/004-fullscreen.js"></script>
 	<?php	}
 
-			// Use system wide modernizr if available
-			if (file_exists("/usr/share/javascript/modernizr/modernizr.min.js")) { ?>
+	// Use system wide modernizr if available
+	if (! $options['use_internal_modernizr'] && file_exists("/usr/share/javascript/modernizr/modernizr.min.js")) { ?>
 		<script type="text/javascript" src="/javascript/modernizr/modernizr.min.js"></script>
 	<?php	} else { ?>
 		<script type="text/javascript" src="js/005-modernizr.js"></script>

@@ -269,6 +269,9 @@ photo_map_zoom_level = 16
 # A value of 200 seems acceptable on a pc, 100 is more sure
 max_search_album_number = 100
 
+# should the internal Modernizr be used?
+use_internal_modernizr = true
+
 ###########################################################
 # user interface options
 ###########################################################
