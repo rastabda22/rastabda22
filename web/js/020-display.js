@@ -64,9 +64,9 @@ $(document).ready(function() {
 	var upLink = "", mediaLink = "";
 
 	// triplicate the #mediaview content in order to swipe the media
-	var mediaBoxWithContent = $(".media-box")[0].outerHTML;
-	$("#media-box-container").prepend(mediaBoxWithContent.replace('id="center"', 'id="left"'));
-	$("#prev").before(mediaBoxWithContent.replace('id="center"', 'id="right"'));
+	var mediaBoxContainerContent = $("#media-box-container").html();
+	$("#media-box-container").prepend(mediaBoxContainerContent.replace('id="center"', 'id="left"'));
+	$("#media-box-container").append(mediaBoxContainerContent.replace('id="center"', 'id="right"'));
 
 	// copy the title structure into #media-view
 	var titleContent = $("#album-view").children().first().html();
@@ -1545,8 +1545,6 @@ $(document).ready(function() {
 			$(".media-box").css("width", windowWidth).css("height", heightForMediaAndTitle);
 			$(".media-box .media-box-inner").css("width", windowWidth).css("height", heightForMedia);
 			$(".media-box").show();
-			$("#prev").css("left", windowWidth);
-			$("#next").css("right", windowWidth);
 
 			if (currentAlbum.media.length == 1) {
 				$("#next").hide();
