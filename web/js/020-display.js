@@ -1537,6 +1537,15 @@ $(document).ready(function() {
 
 		albumViewHeight = $("#album-view").outerHeight();
 		heightForMediaAndTitle = windowHeight - albumViewHeight;
+
+		// slightly separate media from bottom thumbnails
+		if (albumViewHeight)
+			heightForMediaAndTitle -= 5;
+
+		if (Utilities.bottomSocialButtons() && containerBottom < $(".ssk").outerHeight())
+			// correct container bottom when social buttons are on the bottom
+			heightForMediaAndTitle -= $(".ssk").outerHeight();
+
 		heightForMedia = heightForMediaAndTitle - $(".media-box#" + id + " .title").outerHeight();
 
 		if (id === "center") {

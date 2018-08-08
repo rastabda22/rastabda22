@@ -486,11 +486,16 @@
 		windowHeight = $(window).outerHeight();
 		albumViewHeight = $("#album-view").outerHeight();
 		heightForMediaAndTitle = windowHeight - albumViewHeight;
-		heightForMedia = heightForMediaAndTitle - $(".media-box#" + id + " .title").outerHeight();
+
+		if (albumViewHeight)
+			// slightly separate media from bottom thumbnails
+			heightForMediaAndTitle -= 5;
+
 		if (Utilities.bottomSocialButtons() && containerBottom < $(".ssk").outerHeight())
 			// correct container bottom when social buttons are on the bottom
-			heightForMedia -= $(".ssk").outerHeight();
+			heightForMediaAndTitle -= $(".ssk").outerHeight();
 
+		heightForMedia = heightForMediaAndTitle - $(".media-box#" + id + " .title").outerHeight();
 		if (event.data.resize && id === "center") {
 			// this is executed only when resizing, it's not needed when first scaling
 			$("#media-box-container").css("width", windowWidth * 3).css("height", heightForMediaAndTitle).css("transform", "translate(-" + windowWidth + "px, 0px)");
