@@ -4,6 +4,7 @@
 * Added option `hide_title_and_thumbnails`, and added correponding menu entry that hides title and thumbnails, for a less distracted media vision
 * Speed up loading of images
 * Better implementation of cache subdirs in md5 mode: a different subdirs schema is used according to the media number, in such a way that no more than 400 files and 256 subdirs are used (see issue #106); when media number is low, a default subdir is used (new option `default_cache_album`)
+* new option `use_internal_modernizr`: it make js use the included Modernizr instead of the system one
 
 ### version 3.5 (July 15, 2018)
 
