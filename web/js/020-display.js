@@ -2431,7 +2431,7 @@ $(document).ready(function() {
 		if (Modernizr.fullscreen) {
 			e.preventDefault();
 			$("#album-view").addClass('hidden');
-			$("#media-box-container").fullScreen({
+			$("#media-view").fullScreen({
 				callback: function(isFullscreen) {
 					fullScreenStatus = isFullscreen;
 					$("#enter-fullscreen").toggle();
