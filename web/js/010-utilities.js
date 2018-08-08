@@ -294,7 +294,7 @@
 			if (fullScreenStatus)
 				container = $(window);
 			else {
-				container = $("#media-view");
+				container = $(".media-box#center .media-box-inner");
 			}
 		}
 
