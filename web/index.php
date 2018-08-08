@@ -231,10 +231,11 @@
 				</div>
 
 			</div>
-		</div>
 
-		<a id="prev">&lsaquo;</a>
-		<a id="next">&rsaquo;</a>
+			<a id="prev">&lsaquo;</a>
+			<a id="next">&rsaquo;</a>
+
+		</div>
 
 	</div>
 
