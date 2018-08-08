@@ -321,12 +321,13 @@
 		$("#media-box-container").on(
       'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
       function() {
+        var mediaBoxRightContent = $(".media-box#right")[0].outerHTML;
+        var array, savedSearchSubAlbumHash, savedSearchAlbumHash;
+
         $("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
         $("#media-box-container").css("transition-duration", "0s");
 
         // remove right image and move html code to left side
-        var mediaBoxRightContent = $(".media-box#right")[0].outerHTML;
-        var array, savedSearchSubAlbumHash, savedSearchAlbumHash;
         $(".media-box#right").remove();
         $(".media-box#center").attr('id', 'right');
         $(".media-box#left").attr('id', 'center');
@@ -348,12 +349,13 @@
     $("#media-box-container").on(
       'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
       function() {
+        var mediaBoxLeftContent = $(".media-box#left")[0].outerHTML;
+        var array, savedSearchSubAlbumHash, savedSearchAlbumHash;
+
         $("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
         $("#media-box-container").css("transition-duration", "0s");
 
         // remove left image and move html code to right side
-        var mediaBoxLeftContent = $(".media-box#left")[0].outerHTML;
-        var array, savedSearchSubAlbumHash, savedSearchAlbumHash;
         $(".media-box#left").remove();
         $("#media-box-container").css("transform", "translate(0px,0)");
         $(".media-box#center").attr('id', 'left');
