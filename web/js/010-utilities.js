@@ -484,7 +484,10 @@
 
 		windowWidth = $(window).outerWidth();
 		windowHeight = $(window).outerHeight();
-		albumViewHeight = $("#album-view").outerHeight();
+		if ($("#album-view").is(":visible"))
+			albumViewHeight = $("#album-view").outerHeight();
+		else
+			albumViewHeight = 0;
 		heightForMediaAndTitle = windowHeight - albumViewHeight;
 
 		if (albumViewHeight)

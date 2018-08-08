@@ -1528,7 +1528,8 @@ $(document).ready(function() {
 			} else {
 				$("#album-view").removeClass("hidden");
 				$("#album-view").addClass("media-view-container");
-				$("#album-view").css("height", (thumbnailSize + 22).toString() + "px");
+				if ($("#album-view").is(":visible"))
+					$("#album-view").css("height", (thumbnailSize + 22).toString() + "px");
 				$(".title").removeClass("hidden");
 			}
 		}
