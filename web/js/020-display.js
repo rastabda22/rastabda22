@@ -2827,7 +2827,7 @@ $(document).ready(function() {
 				.css("padding-bottom", 0)
 				.show()
 				.stop()
-				.animate({ height: $("#metadata > table").height(), paddingTop: 3, paddingBottom: 3 }, "slow", function() {
+				.animate({ height: $(".metadata > table").height(), paddingTop: 3, paddingBottom: 3 }, "slow", function() {
 					$(this).css("height", "auto");
 				});
 		} else {
