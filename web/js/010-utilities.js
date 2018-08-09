@@ -402,7 +402,7 @@
 			.attr("alt", media.name);
 
 
-		return mediaElement[0];
+		return mediaElement[0].outerHTML;
 	};
 
 	Utilities.prototype.createMediaLinkTag = function(media, mediaSrc) {
