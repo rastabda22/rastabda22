@@ -1615,11 +1615,15 @@ $(document).ready(function() {
 			mediaHtml = util.createMediaHtml(media, id, fullScreenStatus);
 			triggerLoad = util.chooseTriggerEvent(media);
 
-			mediaBoxInnerElement.show().append(mediaHtml);
+			if (mediaBoxInnerElement.html() !== mediaHtml) {
+				// only replace the media-box-inner content if it's not yet there
+				mediaBoxInnerElement.empty();
+				mediaBoxInnerElement.show().append(mediaHtml);
 
-			$("link[rel=image_src]").remove();
-			$('link[rel="video_src"]').remove();
-			$("head").append(util.createMediaLinkTag(media, mediaSrc));
+				$("link[rel=image_src]").remove();
+				$('link[rel="video_src"]').remove();
+				$("head").append(util.createMediaLinkTag(media, mediaSrc));
+			}
 
 			$(mediaSelector).off(triggerLoad);
 			$(mediaSelector).on(
