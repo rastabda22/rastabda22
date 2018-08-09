@@ -20,6 +20,7 @@ a:hover {
 	font-weight: bold;
 	line-height: 1.3em;
 	text-align: left;
+	cursor: default;
 }
 
 #album-view .title {
