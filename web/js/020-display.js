@@ -1428,8 +1428,8 @@ $(document).ready(function() {
 			$("#media-view").hide();
 			$("#media-view").removeClass("no-bottom-space");
 			$("#album-view").removeClass("no-bottom-space");
-			$("#media-box-inner").show().children().last().remove();
-			$("#media-box").hide();
+			// $("#media-box-inner").show().children().last().remove();
+			// $("#media-box").hide();
 			$("#album-view").removeClass("hidden");
 			var foldersViewLink = "#!/" + encodeURIComponent(Options.folders_string);
 			var byDateViewLink = "#!/" + encodeURIComponent(Options.by_date_string);
