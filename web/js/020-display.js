@@ -419,6 +419,7 @@ $(document).ready(function() {
 		var gpsLevelNumber = 3;
 		var gpsName = '';
 		var gpsHtmlTitle;
+		var setDocumentTitle = (id === "center" || id === "album");
 
 		updateMenu();
 
@@ -463,7 +464,7 @@ $(document).ready(function() {
 			if (components.length > 2 || currentMedia !== null)
 				title += raquo;
 
-			if (id === "center") {
+			if (setDocumentTitle) {
 				documentTitle += components[0];
 				if (components.length > 2 || currentMedia !== null)
 					documentTitle = " \u00ab " + documentTitle;
@@ -489,7 +490,7 @@ $(document).ready(function() {
 				if (i < components.length - 1 || currentMedia !== null)
 					title += raquo;
 
-				if (id === "center") {
+				if (setDocumentTitle) {
 					// keep buildimg the html page title
 					if (i == 3)
 						documentTitle = _t("#month-" + textComponents[i]) + documentTitle;
@@ -520,7 +521,7 @@ $(document).ready(function() {
 			if (components.length > 2 || currentMedia !== null)
 				title += raquo;
 
-			if (id === "center") {
+			if (setDocumentTitle) {
 				documentTitle += components[0];
 				if (components.length > 2 || currentMedia !== null)
 					documentTitle = " \u00ab " + documentTitle;
@@ -562,7 +563,7 @@ $(document).ready(function() {
 				if (i < components.length - 1 || currentMedia !== null)
 					title += raquo;
 
-				if (id === "center") {
+				if (setDocumentTitle) {
 					// keep buildimg the html page title
 					documentTitle = gpsName + documentTitle;
 					if (i < components.length - 1 || currentMedia !== null)
@@ -641,7 +642,7 @@ $(document).ready(function() {
 				title += ")</span>";
 			}
 
-			if (id === "center") {
+			if (setDocumentTitle) {
 				// build the html page title
 				documentTitle += " (" + where +") \u00ab " + components[0];
 				if (currentMedia !== null)
@@ -673,12 +674,12 @@ $(document).ready(function() {
 				title += raquo;
 				where = util.stripHtmlAndReplaceEntities(where);
 
-				if (id === "center") {
+				if (setDocumentTitle) {
 					documentTitle += " (" + where +") \u00ab " + documentTitle;
 				}
 			}
 
-			if (id === "center") {
+			if (setDocumentTitle) {
 				documentTitle += components[0];
 				if (components.length > 2 || currentMedia !== null)
 					documentTitle = " \u00ab " + documentTitle;
@@ -730,7 +731,7 @@ $(document).ready(function() {
 				title += ")</span>";
 			}
 
-			if (id === "center") {
+			if (setDocumentTitle) {
 				for (i = initialValue; i < components.length; ++i) {
 					// keep building the html page title
 					documentTitle = textComponents[i] + documentTitle;
@@ -780,7 +781,11 @@ $(document).ready(function() {
 			}
 		}
 
-		$(".media-box#" + id + " .title-string").html(title);
+		if (id === "album")
+			$("#album-view .title-string").html(title);
+		else
+			$(".media-box#" + id + " .title-string").html(title);
+
 
 		if (isMobile.any()) {
 			$("#dots").off();
@@ -793,7 +798,7 @@ $(document).ready(function() {
 			});
 		}
 
-		if (id === "center") {
+		if (setDocumentTitle) {
 			// keep generating the html page title
 			if (currentMedia !== null)
 				documentTitle = util.trimExtension(currentMedia.name) + documentTitle;
@@ -833,7 +838,7 @@ $(document).ready(function() {
 					// insert the album tree links in DOM (if )
 					$("#search-album-to-be-filled").replaceWith(whereLinks);
 
-					if (id === "center") {
+					if (setDocumentTitle) {
 						// correct the page title too
 						documentTitle = $(document).attr('title');
 						documentTitle = documentTitle.replace(
@@ -2171,12 +2176,13 @@ $(document).ready(function() {
 			}
 			nextMedia = null;
 			previousMedia = null;
-			$("#album-view .title").hide();
-			$("#media-view .title").show();
+			// $("#album-view .title").hide();
+			// $("#media-view .title").show();
 			showMedia(currentAlbum, currentMedia, 'center');
 		} else {
-			$("#album-view .title").show();
-			$("#media-view .title").hide();
+			// $("#album-view .title").show();
+			setTitle("album");
+			// $("#media-view .title").hide();
 			$("#album-view").removeClass("media-view-container");
 		}
 
