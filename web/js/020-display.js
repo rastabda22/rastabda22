@@ -786,7 +786,9 @@ $(document).ready(function() {
 						break;
 					}
 				}
-				title = "<a id=\"dots\" href=\"javascript:void(0)\">... " + raquo + " </a><span id=\"hidden-title\">" + hiddenTitle + "</span> " + title;
+				title =
+					"<span class='dots-surroundings'><span class='title-no-anchor dots'>...</span>" + raquo +"</span>" +
+					" <span class=\"hidden-title\">" + hiddenTitle + "</span> " + title;
 			}
 		}
 
@@ -797,11 +799,11 @@ $(document).ready(function() {
 
 
 		if (isMobile.any()) {
-			$("#dots").off();
-			$("#dots").on('click', function(ev) {
+			$(".dots").off();
+			$("#center .dots").on('click', function(ev) {
 				if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-					$("#dots").hide();
-					$("#hidden-title").show();
+					$(".dots-surroundings").hide();
+					$(".hidden-title").show();
 					return false;
 				}
 			});

@@ -514,7 +514,7 @@ video {
 	opacity: 1;
 }
 
-#hidden-title {
+.hidden-title {
 	display: none;
 }
 
