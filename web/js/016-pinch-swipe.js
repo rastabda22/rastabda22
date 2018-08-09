@@ -69,23 +69,21 @@
 
       //If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
       if (
-        $("#media-box-inner").hasClass('left-loaded') &&
-        $("#media-box-inner").hasClass('right-loaded') &&
         (direction == "left" || direction == "right")
       ) {
         if (phase == "move") {
           if (direction == "left") {
-              scrollImages(windowWidth + distance, 0);
+              PinchSwipe.scrollImages(windowWidth + distance, 0);
           } else if (direction == "right") {
-              scrollImages(windowWidth - distance, 0);
+              PinchSwipe.scrollImages(windowWidth - distance, 0);
           }
         } else if (phase == "cancel") {
-          scrollImages(windowWidth, speed);
+          PinchSwipe.scrollImages(windowWidth, speed);
         } else if (phase == "end") {
           if (direction == "right") {
-            previousImage(speed);
+            PinchSwipe.swipeRight(prevMedia);
           } else if (direction == "left") {
-            nextImage(speed);
+            PinchSwipe.swipeLeft(nextMedia);
           }
         }
       }
@@ -94,14 +92,6 @@
     function pinchStatus(event, phase, direction, distance) {
     }
 
-    function previousImage(speed) {
-
-    }
-
-    function nextImage(speed) {
-        // currentImg = Math.min(currentImg + 1, maxImages - 1);
-
-    }
 
     /**
      * Manually update the position of the imgs on drag
