@@ -360,7 +360,7 @@
         $("#media-box-container").css("transform", "translate(0px,0)");
         $(".media-box#center").attr('id', 'left');
         $(".media-box#right").attr('id', 'center');
-        $("#prev").before(mediaBoxLeftContent.replace('id="left"', 'id="right"'));
+        $("#media-box-container").append(mediaBoxLeftContent.replace('id="left"', 'id="right"'));
 
         array = phFl.decodeHash(location.hash);
         // array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
