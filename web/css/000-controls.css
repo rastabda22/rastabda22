@@ -14,13 +14,13 @@ a:hover {
 }
 
 .title, .title:hover {
-	font-weight: bold;
 	font-size: medium;
 	padding: 0.4em;
 	font-weight: bold;
 	line-height: 1.3em;
 	text-align: left;
 	cursor: default;
+	word-wrap: break-word;
 }
 
 #album-view .title {
