@@ -62,6 +62,7 @@
       triggerOnTouchEnd: true,
       swipeStatus: swipeStatus,
       pinchStatus: pinchStatus,
+      tap: tap,
       // allowPageScroll: "vertical",
       threshold: 75
     };
@@ -78,7 +79,8 @@
       console.log(phase, direction, distance);
 
       if (
-        (true || direction == "left" || direction == "right")
+        // (true || direction == "left" || direction == "right")
+        (distance > 0)
       ) {
         if (phase == "move") {
           if (direction == "left") {
@@ -101,6 +103,10 @@
     }
 
     function pinchStatus(event, phase, direction, distance) {
+    }
+
+    function tap(event, target) {
+      PinchSwipe.swipeLeft(nextMedia);
     }
 
 
