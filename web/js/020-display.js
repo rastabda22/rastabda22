@@ -1482,18 +1482,23 @@ $(document).ready(function() {
 		return util.mediaPath(album, media, thumbnailSize);
 	}
 
-	function videoOK(media, id) {
-		var cacheBase = util.pathJoin([media.parent.cacheBase, media.cacheBase]);
+	function videoOK() {
+		if (! Modernizr.video || ! Modernizr.video.h264)
+			return false;
+		else
+			return true;
+	}
+
+	function addVideoUnsupportedMarker(id) {
 		if (! Modernizr.video) {
-			$(".media-box#" + id + " .media-box-inner").html('<div id="video-unsupported-html5"' + cacheBase + '>' + _t("#video-unsupported-html5") + '</div>');
+			$(".media-box#" + id + " .media-box-inner").html('<div class="video-unsupported-html5"></div>');
 			return false;
 		}
 		else if (! Modernizr.video.h264) {
-			$(".media-box#" + id + " .media-box-inner").html('<div id="video-unsupported-h264' + cacheBase + '">' + _t("#video-unsupported-h264") + '</div>');
+			$(".media-box#" + id + " .media-box-inner").html('<div class="video-unsupported-h264"></div>');
 			return false;
-		}
-
-		return true;
+		} else
+			return true;
 	}
 
 	function showMedia(album, media, id) {
@@ -1603,9 +1608,10 @@ $(document).ready(function() {
 
 		var mediaBoxInnerElement = $(".media-box#" + id + " .media-box-inner");
 		// empty the img container: another image will be put in there
-		mediaBoxInnerElement.empty();
-		if (currentMedia.mediaType == "video" && ! videoOK(currentMedia, id)) {
-			// videoOK has put a marker in #media-box-inner
+
+		if (currentMedia.mediaType == "video" && ! videoOK()) {
+			mediaBoxInnerElement.empty();
+			addVideoUnsupportedMarker(id);
 			if (id === "center")
 				loadNextPrevMedia();
 		} else {
