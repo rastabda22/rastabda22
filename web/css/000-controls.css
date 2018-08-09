@@ -22,6 +22,11 @@ a:hover {
 	text-align: left;
 }
 
+#album-view .title {
+	padding-left: 0;
+	padding-top: 0;
+}
+
 .title-count {
 	font-size: 80%;
 	font-style: italic;
