@@ -1663,7 +1663,7 @@ $(document).ready(function() {
 				util.scaleMedia
 			);
 			// in case the image has been already loaded, trigger the event
-			// $(mediaSelector).trigger(triggerLoad);
+			$(mediaSelector).trigger(triggerLoad);
 
 			if (id === "center") {
 				$(window).off("resize");
