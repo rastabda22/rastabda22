@@ -613,7 +613,7 @@ $(document).ready(function() {
 	function setTitle() {
 		var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, originalTitle;
 		var titleAnchorClasses, titleAnchorClassesItalics, hiddenTitle = "", albumTypeString, where, initialValue, searchFolderHash;
-		var beginLink, linksToLeave, numLinks, beginAt, latitude, longitude, arrayCoordinates, numMediaInSubAlbums;
+		var beginLink, linksToLeave, numLinks, beginAt, latitude, longitude, arrayCoordinates, numMediaInSubAlbums, raquo = "&raquo;";
 		// gpsLevelNumber is the number of levels for the by gps tree
 		// current levels are country, region, place => 3
 		var gpsLevelNumber = 3;
@@ -661,7 +661,7 @@ $(document).ready(function() {
 			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_date_string + "'>(" + _t("#by-date") + ")</a>";
 
 			if (components.length > 2 || currentMedia !== null)
-				title += "&raquo;";
+				title += raquo;
 
 			documentTitle += components[0];
 			if (components.length > 2 || currentMedia !== null)
@@ -685,7 +685,7 @@ $(document).ready(function() {
 				else
 					title += "</span>";
 				if (i < components.length - 1 || currentMedia !== null)
-					title += "&raquo;";
+					title += raquo;
 
 				// keep buildimg the html page title
 				if (i == 3)
@@ -714,7 +714,7 @@ $(document).ready(function() {
 			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_gps_string + "'>(" + _t("#by-gps") + ")</a>";
 
 			if (components.length > 2 || currentMedia !== null)
-				title += "&raquo;";
+				title += raquo;
 
 			documentTitle += components[0];
 			if (components.length > 2 || currentMedia !== null)
@@ -754,7 +754,7 @@ $(document).ready(function() {
 									"</a>";
 
 				if (i < components.length - 1 || currentMedia !== null)
-					title += "&raquo;";
+					title += raquo;
 
 				// keep buildimg the html page title
 				documentTitle = gpsName + documentTitle;
@@ -778,7 +778,7 @@ $(document).ready(function() {
 			// (optional) i=2: image cache or folder
 			// (optional) i=3 up: folder or image
 			// (optional) i=n: image
-			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>&raquo;";
+			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>" + raquo;
 
 			if (
 				Options.search_current_album &&
@@ -804,7 +804,7 @@ $(document).ready(function() {
 			// do not show the options and the search words, they are visible in the menu
 			// show the image name, if it is there
 			if (currentMedia !== null) {
-				title += "&raquo;";
+				title += raquo;
 			}
 
 			if (
@@ -841,7 +841,7 @@ $(document).ready(function() {
 			// folders title
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>";
 			if (components.length > 2 || currentMedia !== null)
-				title += "&raquo;";
+				title += raquo;
 
 			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
 				searchFolderHash = savedSearchAlbumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
@@ -860,7 +860,7 @@ $(document).ready(function() {
 				}
 
 				title += "<span class='title-no-anchor'>(" + where + ")</span>";
-				title += "&raquo;";
+				title += raquo;
 				where = util.stripHtmlAndReplaceEntities(where);
 
 				documentTitle += " (" + where +") \u00ab " + documentTitle;
@@ -889,7 +889,7 @@ $(document).ready(function() {
 					title += "</span>";
 
 				if (i < components.length - 1 || currentMedia !== null)
-					title += "&raquo;";
+					title += raquo;
 			}
 
 			if (components.length > 1 && currentMedia === null) {
@@ -937,19 +937,30 @@ $(document).ready(function() {
 
 		if (isMobile.any()) {
 			// leave only the last link on mobile
-			if (title.indexOf("#search-album-to-be-filled") !== -1)
+			// separate on "&raquo;""
+			if (title.indexOf("search-album-to-be-filled") !== -1)
 				beginAt = title.indexOf("search-album-to-be-filled");
 			else
 				beginAt = 0;
+
 			numLinks = (title.substring(beginAt).match(/<a class=/g) || []).length;
 			linksToLeave = 1;
 			if (numLinks > linksToLeave) {
-				for (i = 1; i <= numLinks - linksToLeave; i ++) {
+				for (i = 1; i <= numLinks; i ++) {
 					beginLink = title.indexOf("<a class=", beginAt);
-					hiddenTitle += title.substring(0, beginLink);
-					title = title.substring(beginLink);
+					if (i <= linksToLeave) {
+						beginAt = beginLink + 1;
+					} else {
+						// be sure to separate on "&raquo;"
+						lastRaquoPosition = title.substring(0, beginLink).lastIndexOf(raquo);
+						if (lastRaquoPosition + raquo.length !== beginLink)
+							beginLink = lastRaquoPosition + raquo.length;
+						hiddenTitle += title.substring(0, beginLink);
+						title = title.substring(beginLink);
+						break;
+					}
 				}
-				title = "<a id=\"dots\" href=\"javascript:void(0)\">... &raquo; </a><span id=\"hidden-title\">" + hiddenTitle + "</span> " + title;
+				title = "<a id=\"dots\" href=\"javascript:void(0)\">... " + raquo + " </a><span id=\"hidden-title\">" + hiddenTitle + "</span> " + title;
 			}
 		}
 
@@ -976,7 +987,7 @@ $(document).ready(function() {
 
 
 		if (currentMedia === null && currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1) {
-			title += " &raquo; <span id=\"media-name\">" + util.trimExtension(currentAlbum.media[0].name) + "</span>";
+			title += " " + raquo + "<span id=\"media-name\">" + util.trimExtension(currentAlbum.media[0].name) + "</span>";
 		}
 
 		if ($("#search-album-to-be-filled").length) {
@@ -988,7 +999,7 @@ $(document).ready(function() {
 					var whereLinks = '', thisCacheBase, name, documentTitle;
 
 					if (theAlbum.hasOwnProperty('ancestorsNames')) {
-						albumTypeString = "<a href='#!/" + Options.by_gps_string + "'"  + _t('#by-gps') + ']</a> ' + ' &raquo; ';
+						albumTypeString = "<a href='#!/" + Options.by_gps_string + "'"  + _t('#by-gps') + ']</a> ' + ' ' + raquo + ' ';
 						for (var i = 2; i < theAlbum.ancestorsNames.length; i ++) {
 							name = theAlbum.ancestorsNames[i];
 							if (i == 3 && util.isByDateCacheBase(Options.album_to_search_in))
@@ -996,7 +1007,7 @@ $(document).ready(function() {
 								name = _t("#month-" + name);
 							thisCacheBase = "#!/" + theAlbum.ancestorsCacheBase.slice(2, i + 1).join(Options.cache_folder_separator);
 							if (i > 2)
-								whereLinks += ' &raquo; ';
+								whereLinks += ' ' + raquo + ' ';
 							whereLinks += "<a class='search-link' href='" + thisCacheBase + "'>" + name + "</a>";
 						}
 					}
