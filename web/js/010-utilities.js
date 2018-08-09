@@ -1,6 +1,17 @@
 (function() {
 	/* constructor */
 	function Utilities() {
+		$(document).ready(
+			function() {
+				var originalMediaBoxContainerHtml = $(".media-box#center")[0].outerHTML;
+				if (originalMediaBoxContainerHtml.indexOf('<div class="title">') === -1) {
+					var titleContent = $("#album-view").clone().children().first();
+					Utilities.originalMediaBoxContainerContent = $(originalMediaBoxContainerHtml).prepend(titleContent)[0].outerHTML;
+				} else {
+					Utilities.originalMediaBoxContainerContent = originalMediaBoxContainerHtml;
+				}
+			}
+		);
 	}
   Utilities.prototype.cloneObject = function(object) {
     return Object.assign({}, object);
@@ -649,6 +660,13 @@
 		}
 	}
 
+	Utilities.mediaBoxGenerator = function(id) {
+		if (id === 'left')
+			$("#media-box-container").prepend(Utilities.originalMediaBoxContainerContent.replace('id="center"', 'id="left"'));
+		else if (id === 'right')
+			$("#media-box-container").append(Utilities.originalMediaBoxContainerContent.replace('id="center"', 'id="right"'));
+	}
+
 	/* make static methods callable as member functions */
 	Utilities.prototype.chooseReducedPhoto = Utilities.chooseReducedPhoto;
 	Utilities.prototype.originalMediaPath = Utilities.originalMediaPath;
@@ -656,6 +674,8 @@
 	Utilities.prototype.isFolderCacheBase = Utilities.isFolderCacheBase;
 	Utilities.prototype.pathJoin = Utilities.pathJoin;
 	Utilities.prototype.setLinksVisibility = Utilities.setLinksVisibility;
+	Utilities.prototype.mediaBoxGenerator = Utilities.mediaBoxGenerator;
+	Utilities.prototype.originalMediaBoxContainerContent = Utilities.originalMediaBoxContainerContent;
 
   window.Utilities = Utilities;
 }());

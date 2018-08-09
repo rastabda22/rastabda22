@@ -64,15 +64,10 @@ $(document).ready(function() {
 	var upLink = "", mediaLink = "";
 
 	// triplicate the #mediaview content in order to swipe the media
-	var mediaBoxContainerContent = $("#media-box-container").html();
-	$("#media-box-container").prepend(mediaBoxContainerContent.replace('id="center"', 'id="left"'));
-	$("#media-box-container").append(mediaBoxContainerContent.replace('id="center"', 'id="right"'));
-
-	// copy the title structure into #media-view
-	var titleContent = $("#album-view").children().first().html();
-	$("#media-view .media-box#center").prepend(titleContent);
-	$("#media-view .media-box#left").prepend(titleContent);
-	$("#media-view .media-box#right").prepend(titleContent);
+	var titleContent = $("#album-view").clone().children().first();
+	util.mediaBoxGenerator('left');
+	util.mediaBoxGenerator('right');
+	$(".media-box#center").prepend(titleContent)[0].outerHTML;
 
 	/* Displays */
 
