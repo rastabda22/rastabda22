@@ -423,6 +423,15 @@ $(document).ready(function() {
 
 		updateMenu();
 
+		if (id === "album") {
+			$(".media-box#" + id + " .title-string").hide();
+			$("#album-view .title-string").show();
+		} else {
+			$(".media-box#" + id + " .title-string").show();
+			$("#album-view .title-string").hide();
+		}
+
+
 		if (Options.page_title !== "")
 			originalTitle = Options.page_title;
 		else
