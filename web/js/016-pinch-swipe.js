@@ -75,8 +75,10 @@
     function swipeStatus(event, phase, direction, distance) {
       var array, savedSearchSubAlbumHash, savedSearchAlbumHash, element, triggerLoad, link, selector, media;
       //If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
+      console.log(phase, direction, distance);
+
       if (
-        (direction == "left" || direction == "right")
+        (true || direction == "left" || direction == "right")
       ) {
         if (phase == "move") {
           if (direction == "left") {
@@ -91,6 +93,8 @@
             PinchSwipe.swipeRight(prevMedia);
           } else if (direction == "left") {
             PinchSwipe.swipeLeft(nextMedia);
+          } else if (direction == "down") {
+            PinchSwipe.swipeDown(upLink);
           }
         }
       }
@@ -197,7 +201,7 @@
 		}
 	}
 
-  PinchSwipe.prototype.swipeDown = function(dest) {
+  PinchSwipe.swipeDown = function(dest) {
 		if (dest) {
 			$(".media-box#center .media-box-inner").stop().animate(
         {
@@ -216,6 +220,7 @@
   /* make static methods callable as member functions */
 	PinchSwipe.prototype.swipeLeft = PinchSwipe.swipeLeft;
 	PinchSwipe.prototype.swipeRight = PinchSwipe.swipeRight;
+	PinchSwipe.prototype.swipeDown = PinchSwipe.swipeDown;
 	PinchSwipe.prototype.addGesturesDetection = PinchSwipe.addGesturesDetection;
 
   window.PinchSwipe = PinchSwipe;

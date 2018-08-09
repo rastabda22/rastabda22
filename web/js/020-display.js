@@ -1,7 +1,7 @@
 var fullScreenStatus = false;
 var currentMedia = null;
 var currentAlbum = null;
-var nextMedia = null, prevMedia = null;
+var nextMedia = null, prevMedia = null, upLink = "";
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
 var Options = {};
@@ -61,7 +61,7 @@ $(document).ready(function() {
 	var fromEscKey = false;
 	var firstEscKey = true;
 	// var nextLink = "", prevLink = "";
-	var upLink = "", mediaLink = "";
+	var mediaLink = "";
 
 	// triplicate the #mediaview content in order to swipe the media
 	var titleContent = $("#album-view").clone().children().first();
