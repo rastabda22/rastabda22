@@ -391,7 +391,8 @@
         300,
         function() {
   				window.location.href = dest;
-  				$(".media-box#center .media-box-inner").hide().css('top', "");
+  				$("#media-view").hide();
+  				$(".media-box#center .media-box-inner").css('top', "");
   			}
       );
 		}
