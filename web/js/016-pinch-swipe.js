@@ -193,6 +193,8 @@
         $(".media-box#right").attr('id', 'center');
         util.mediaBoxGenerator('right');
         $(".media-box#right").css("width", $(".media-box#center").attr('width')).css("height", $(".media-box#center").attr('height'));
+        // this translation avoid the flickering when inserting the right image into the DOM
+        $("#media-box-container").css("transform", "translate(-" + windowWidth + "px, 0px)");
 
         array = phFl.decodeHash(location.hash);
         // array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
