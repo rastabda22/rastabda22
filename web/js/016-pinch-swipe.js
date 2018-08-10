@@ -45,11 +45,49 @@
   }
 
   // define the actions to be taken on pinch, swipe, tap, double tap
-	PinchSwipe.addGesturesDetection = function(detectionSelector) {
+	PinchSwipe.addAlbumGesturesDetection = function() {
+
+    var swipeOptions = {
+      triggerOnTouchEnd: true,
+      swipeStatus: swipeStatus,
+      // allowPageScroll: "vertical",
+      threshold: 75
+    };
+
+    /**
+     * Catch each phase of the swipe.
+     * move : we drag the div
+     * cancel : we animate back to where we were
+     * end : we animate to the next image
+     */
+    function swipeStatus(event, phase, direction, distance , duration , fingerCount) {
+      //If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
+      // console.log(event, phase, direction, distance);
+      if (phase == "move" && direction == "down") {
+        PinchSwipe.swipeDown(upLink);
+      }
+    }
+
+    /**
+     * Manually update the position of the imgs on drag
+     */
+
+    $(function () {
+      $('.media-box#center .media-box-inner').swipe('destroy');
+      $('#album-view').swipe(swipeOptions);
+    });
+	};
+
+  // define the actions to be taken on pinch, swipe, tap, double tap
+	PinchSwipe.addMediaGesturesDetection = function() {
 
     var mediaSelector = ".media-box#center .media-box-inner img";
     var tapDistanceThreshold = 3;
     var longTap;
+    // the initial scale of the image is surely <= 1
+    var initialMediaScale = $(mediaSelector).css("width") / $(mediaSelector).attr("width");
+    var maxAllowedZoom = 2;
+
 
 		// get the two initial values:
 
@@ -65,6 +103,8 @@
       triggerOnTouchEnd: true,
       swipeStatus: swipeStatus,
       pinchStatus: pinchStatus,
+      pinchIn: pinchIn,
+      pinchOut: pinchOut,
       tap: tap,
       longTap: longTap,
       doubleTap: doubleTap,
@@ -79,14 +119,13 @@
      * cancel : we animate back to where we were
      * end : we animate to the next image
      */
-    function swipeStatus(event, phase, direction, distance) {
-      var array, savedSearchSubAlbumHash, savedSearchAlbumHash, element, triggerLoad, link, selector, media;
+    function swipeStatus(event, phase, direction, distance , duration , fingerCount) {
       //If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
-      console.log(event, phase, direction, distance);
+      // console.log(event, phase, direction, distance);
       if (phase == "start")
         longTap = false;
 
-      if (distance > tapDistanceThreshold) {
+      if (distance > tapDistanceThreshold && fingerCount == 1) {
         if (phase == "move") {
           if (direction == "left") {
               PinchSwipe.scrollMedia(windowWidth + distance);
@@ -107,7 +146,30 @@
       }
     }
 
-    function pinchStatus(event, phase, direction, distance) {
+    function pinchStatus(event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData) {
+      console.log("pinchStatus, ", event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData)
+      if (phase == "move" && fingerCount >= 2 && pinchZoom <= maxAllowedZoom) {
+        $(mediaSelector).css("transform", "scale(" + pinchZoom + "," + pinchZoom + ")");
+
+      }
+    }
+
+    function pinchIn(event, direction, distance, duration, fingerCount, pinchZoom) {
+      console.log("pinchIn, ", event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData)
+      if (direction == "in") {
+
+      } else {
+
+      }
+    }
+
+    function pinchOut(event, direction, distance, duration, fingerCount, pinchZoom) {
+      console.log("pinchOut, ", event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData)
+      if (direction == "in") {
+
+      } else {
+
+      }
     }
 
     function hold(event, target) {
@@ -136,7 +198,8 @@
      */
 
     $(function () {
-      $(detectionSelector).swipe(swipeOptions);
+      $('#album-view').swipe('destroy');
+      $('.media-box#center .media-box-inner').swipe(swipeOptions);
     });
 	};
 
@@ -250,7 +313,8 @@
 	PinchSwipe.prototype.swipeLeft = PinchSwipe.swipeLeft;
 	PinchSwipe.prototype.swipeRight = PinchSwipe.swipeRight;
 	PinchSwipe.prototype.swipeDown = PinchSwipe.swipeDown;
-	PinchSwipe.prototype.addGesturesDetection = PinchSwipe.addGesturesDetection;
+	PinchSwipe.prototype.addMediaGesturesDetection = PinchSwipe.addMediaGesturesDetection;
+	PinchSwipe.prototype.addAlbumGesturesDetection = PinchSwipe.addAlbumGesturesDetection;
 
   window.PinchSwipe = PinchSwipe;
 }());

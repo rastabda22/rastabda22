@@ -1485,7 +1485,7 @@ $(document).ready(function() {
 			}
 			$("#powered-by").show();
 
-			ps.addGesturesDetection('#album-view');
+			ps.addAlbumGesturesDetection();
 		} else {
 			if (currentAlbum.media.length == 1)
 				$("#album-view").addClass("hidden");
@@ -1786,7 +1786,7 @@ $(document).ready(function() {
 				});
 			}
 
-			ps.addGesturesDetection('.media-box#center .media-box-inner');
+			ps.addMediaGesturesDetection();
 		}
 
 		var originalMediaPath = encodeURI(util.originalMediaPath(currentMedia));
