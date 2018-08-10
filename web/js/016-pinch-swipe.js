@@ -87,6 +87,7 @@
     // the initial scale of the image is surely <= 1
     var initialMediaScale = $(mediaSelector).css("width") / $(mediaSelector).attr("width");
     var maxAllowedZoom = 2;
+    var currentZoom = 1;
 
 
 		// get the two initial values:
@@ -134,7 +135,7 @@
           }
         } else if (phase == "cancel") {
           PinchSwipe.swipeMedia(windowWidth);
-        } else if (phase == "end") {
+        } else if (phase == "end" && currentZoom == 1) {
           if (direction == "right") {
             PinchSwipe.swipeRight(prevMedia);
           } else if (direction == "left") {
@@ -148,9 +149,9 @@
 
     function pinchStatus(event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData) {
       console.log("pinchStatus, ", event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData)
-      if (phase == "move" && fingerCount >= 2 && pinchZoom <= maxAllowedZoom) {
+      if (phase == "move" && fingerCount >= 2 && pinchZoom <= maxAllowedZoom && pinchZoom >= 1) {
         $(mediaSelector).css("transform", "scale(" + pinchZoom + "," + pinchZoom + ")");
-
+        currentZoom = pinchZoom;
       }
     }
 
