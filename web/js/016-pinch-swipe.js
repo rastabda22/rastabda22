@@ -47,7 +47,10 @@
   // define the actions to be taken on pinch, swipe, tap, double tap
 	PinchSwipe.addGesturesDetection = function(detectionSelector) {
 
-    mediaSelector = ".media-box#center .media-box-inner img";
+    var mediaSelector = ".media-box#center .media-box-inner img";
+    var tapDistanceThreshold = 3;
+    var longTap;
+
 		// get the two initial values:
 
 		// the reduction width and height in the page
@@ -63,6 +66,8 @@
       swipeStatus: swipeStatus,
       pinchStatus: pinchStatus,
       tap: tap,
+      longtap: longTap,
+      hold: hold,
       // allowPageScroll: "vertical",
       threshold: 75
     };
@@ -76,12 +81,11 @@
     function swipeStatus(event, phase, direction, distance) {
       var array, savedSearchSubAlbumHash, savedSearchAlbumHash, element, triggerLoad, link, selector, media;
       //If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
-      console.log(phase, direction, distance);
+      console.log(event, phase, direction, distance);
+      if (phase == "start")
+        longTap = false;
 
-      if (
-        // (true || direction == "left" || direction == "right")
-        (distance > 0)
-      ) {
+      if (distance > tapDistanceThreshold) {
         if (phase == "move") {
           if (direction == "left") {
               PinchSwipe.scrollMedia(windowWidth + distance);
@@ -105,12 +109,20 @@
     function pinchStatus(event, phase, direction, distance) {
     }
 
+    function hold(event, target) {
+      longTap = true;
+    }
+
     function tap(event, target) {
       if (event.which === 3)
         // right click
         PinchSwipe.swipeRight(prevMedia);
-      else
+      else if (! longTap)
         PinchSwipe.swipeLeft(nextMedia);
+    }
+
+    function longTap(event, target) {
+      PinchSwipe.swipeRight(prevMedia);
     }
 
 
