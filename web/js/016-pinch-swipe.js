@@ -29,11 +29,20 @@
   }
 
   PinchSwipe.scrollMedia = function(distance) {
-      $("#media-box-container").css("transition-duration", "0s");
+    $("#media-box-container").css("transition-duration", "0s");
 
-      //inverse the number we set in the css
-      var value = (distance <= 0 ? "" : "-") + Math.abs(distance).toString();
-      $("#media-box-container").css("transform", "translate(" + value + "px,0)");
+    //inverse the number we set in the css
+    var value = (distance <= 0 ? "" : "-") + Math.abs(distance).toString();
+    $("#media-box-container").css("transform", "translate(" + value + "px,0)");
+  }
+
+  PinchSwipe.scrollMediaInItsContainer = function(distance) {
+    // console.log(distance);
+    $(".media-box#center .media-box-inner img").css("transition-duration", "0s");
+
+    //inverse the number we set in the css
+    var value = (distance >= 0 ? "" : "-") + Math.abs(distance).toString();
+    $(".media-box#center .media-box-inner img").css("transform", "translate(" + value + "px,0)");
   }
 
   PinchSwipe.swipeMedia = function(distance) {
@@ -88,6 +97,7 @@
     var initialMediaScale = $(mediaSelector).css("width") / $(mediaSelector).attr("width");
     var maxAllowedZoom = 2;
     var currentZoom = 1;
+    var fromResetZoom = false;
 
 
 		// get the two initial values:
@@ -103,13 +113,19 @@
     var swipeOptions = {
       triggerOnTouchEnd: true,
       swipeStatus: swipeStatus,
-      pinchStatus: pinchStatus,
-      pinchIn: pinchIn,
-      pinchOut: pinchOut,
       tap: tap,
       longTap: longTap,
       doubleTap: doubleTap,
       hold: hold,
+      // allowPageScroll: "vertical",
+      threshold: 75
+    };
+
+    var pinchOptions = {
+      triggerOnTouchEnd: true,
+      swipeStatus: dragStatus,
+      pinchStatus: pinchStatus,
+      tap: tap,
       // allowPageScroll: "vertical",
       threshold: 75
     };
@@ -126,7 +142,7 @@
       if (phase == "start")
         longTap = false;
 
-      if (distance > tapDistanceThreshold && fingerCount == 1) {
+      if (distance > tapDistanceThreshold && fingerCount == 1 && currentZoom == 1) {
         if (phase == "move") {
           if (direction == "left") {
               PinchSwipe.scrollMedia(windowWidth + distance);
@@ -147,29 +163,27 @@
       }
     }
 
+    function dragStatus(event, phase, direction, distance , duration , fingerCount) {
+      //If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
+      console.log(event, phase, direction, distance);
+      if (distance > tapDistanceThreshold && fingerCount == 1 && currentZoom > 1) {
+        if (phase == "move") {
+          if (direction == "left") {
+              PinchSwipe.scrollMediaInItsContainer(windowWidth + distance);
+          } else if (direction == "right") {
+              PinchSwipe.scrollMediaInItsContainer(windowWidth - distance);
+          }
+        } else if (phase == "cancel") {
+          // PinchSwipe.swipeMedia(windowWidth);
+        }
+      }
+    }
+
     function pinchStatus(event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData) {
-      console.log("pinchStatus, ", event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData)
+      // console.log("pinchStatus, ", event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData)
       if (phase == "move" && fingerCount >= 2 && pinchZoom <= maxAllowedZoom && pinchZoom >= 1) {
         $(mediaSelector).css("transform", "scale(" + pinchZoom + "," + pinchZoom + ")");
         currentZoom = pinchZoom;
-      }
-    }
-
-    function pinchIn(event, direction, distance, duration, fingerCount, pinchZoom) {
-      console.log("pinchIn, ", event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData)
-      if (direction == "in") {
-
-      } else {
-
-      }
-    }
-
-    function pinchOut(event, direction, distance, duration, fingerCount, pinchZoom) {
-      console.log("pinchOut, ", event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData)
-      if (direction == "in") {
-
-      } else {
-
       }
     }
 
@@ -178,11 +192,22 @@
     }
 
     function tap(event, target) {
-      if (event.which === 3)
-        // right click
-        PinchSwipe.swipeRight(prevMedia);
-      else if (! longTap)
-        PinchSwipe.swipeLeft(nextMedia);
+      if (currentZoom == 1) {
+        if (event.which === 3)
+          // right click
+          PinchSwipe.swipeRight(prevMedia);
+        else if (! longTap) {
+          if (! fromResetZoom)
+            PinchSwipe.swipeLeft(nextMedia);
+          else
+            fromResetZoom = false;
+        }
+      } else {
+        // image scaled up, reduce it to base zoom
+        $(mediaSelector).css("transform", "scale(1,1)");
+        currentZoom = 1;
+        fromResetZoom = true;
+      }
     }
 
     function longTap(event, target) {
@@ -201,6 +226,7 @@
     $(function () {
       $('#album-view').swipe('destroy');
       $('.media-box#center .media-box-inner').swipe(swipeOptions);
+      $('.media-box#center .media-box-inner img').swipe(pinchOptions);
     });
 	};
 
