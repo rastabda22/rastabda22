@@ -66,7 +66,8 @@
       swipeStatus: swipeStatus,
       pinchStatus: pinchStatus,
       tap: tap,
-      longtap: longTap,
+      longTap: longTap,
+      doubleTap: doubleTap,
       hold: hold,
       // allowPageScroll: "vertical",
       threshold: 75
@@ -122,6 +123,10 @@
     }
 
     function longTap(event, target) {
+      PinchSwipe.swipeRight(prevMedia);
+    }
+
+    function doubleTap(event, target) {
       PinchSwipe.swipeRight(prevMedia);
     }
 
