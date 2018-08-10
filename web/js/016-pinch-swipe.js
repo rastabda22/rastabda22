@@ -106,7 +106,11 @@
     }
 
     function tap(event, target) {
-      PinchSwipe.swipeLeft(nextMedia);
+      if (event.which === 3)
+        // right click
+        PinchSwipe.swipeRight(prevMedia);
+      else
+        PinchSwipe.swipeLeft(nextMedia);
     }
 
 
