@@ -97,7 +97,7 @@
 
     var baseTranslateX = 0;
     var baseTranslateY = 0;
-    var currTranslX = 0;
+    var currentTranslateX = 0;
     var currentTranslateY = 0;
 
     var mediaWidth = parseInt($(mediaSelector).css("width"));
@@ -184,22 +184,22 @@
             // || currentMilliseconds() - milliseconds > 1000
           ) {
             // distance = 0
-            baseTranslateX = currTranslX;
+            baseTranslateX = currentTranslateX;
             baseTranslateY = currentTranslateY;
             milliseconds = currentMilliseconds();
           } else {
             // distance is the cumulative value from start
             if (direction == "right")
-              currTranslX = Math.max(Math.min(baseTranslateX + distance, maxAllowedTranslateX), minAllowedTranslateX);
+              currentTranslateX = Math.max(Math.min(baseTranslateX + distance, maxAllowedTranslateX), minAllowedTranslateX);
             else if (direction == "left")
-              currTranslX = Math.max(Math.min(baseTranslateX - distance, maxAllowedTranslateX), minAllowedTranslateX);
+              currentTranslateX = Math.max(Math.min(baseTranslateX - distance, maxAllowedTranslateX), minAllowedTranslateX);
             else if (direction == "down")
               currentTranslateY = Math.max(Math.min(baseTranslateY + distance, maxAllowedTranslateY), minAllowedTranslateY);
             else if (direction == "up")
               currentTranslateY = Math.max(Math.min(baseTranslateY - distance, maxAllowedTranslateY), minAllowedTranslateY);
           }
 
-          var xString = currTranslX.toString();
+          var xString = currentTranslateX.toString();
           var yString = currentTranslateY.toString();
           var zoomString = currentZoom.toString();
 
@@ -231,7 +231,7 @@
             console.log("move", currentZoom);
           }
 
-          var xString = currTranslX.toString();
+          var xString = currentTranslateX.toString();
           var yString = currentTranslateY.toString();
           var zoomString = currentZoom.toString();
           if (currentZoom > 1) {
