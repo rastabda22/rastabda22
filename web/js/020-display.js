@@ -2196,7 +2196,7 @@ $(document).ready(function() {
 			showMedia(currentAlbum, currentMedia, 'center');
 		} else {
 			// $("#album-view .title").show();
-			setTitle("album");
+			setTitle("album", null);
 			// $("#media-view .title").hide();
 			$("#album-view").removeClass("media-view-container");
 		}
