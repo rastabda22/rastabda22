@@ -312,8 +312,9 @@
 		// creates a media element that can be inserted in DOM (e.g. with append/prepend methods)
 
 		// the actual sizes of the image
-		var width = media.metadata.size[0], height = media.metadata.size[1];
+		var mediaWidth = media.metadata.size[0], mediaHeight = media.metadata.size[1];
 		var mediaSrc, mediaElement, container;
+		var attrWidth, attrHeight;
 
 		if (media.mediaType == "video") {
 			if (fullScreenStatus && media.albumName.match(/\.avi$/) === null) {
@@ -334,12 +335,12 @@
 
 			if (maxSize) {
 				// correct phisical width and height according to reduction sizes
-				if (width > height) {
-					width = maxSize;
-					height = Math.round(height / width * maxSize);
+				if (mediaWidth > mediaHeight) {
+					attrWidth = maxSize;
+					attrHeight = Math.round(mediaHeight / mediaWidth * maxSize);
 				} else {
-					height = maxSize;
-					width = Math.round(width / height * maxSize);
+					attrHeight = maxSize;
+					attrWidth = Math.round(mediaWidth / mediaHeight * maxSize);
 				}
 			}
 
@@ -348,12 +349,11 @@
 		}
 
 		mediaElement
-			.attr("width", width)
-			.attr("height", height)
-			.attr("ratio", width / height)
+			.attr("width", attrWidth)
+			.attr("height", attrHeight)
+			.attr("ratio", mediaWidth / mediaHeight)
 			.attr("src", encodeURI(mediaSrc))
 			.attr("alt", media.name);
-
 
 		return mediaElement[0].outerHTML;
 	};
