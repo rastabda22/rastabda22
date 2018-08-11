@@ -87,7 +87,8 @@
     // the initial scale of the image is surely <= 1
     var initialMediaScale = $(mediaSelector).css("width") / $(mediaSelector).attr("width");
 
-    var maxAllowedZoom = 2;
+    var maxAllowedZoom = devicePixelRatio;
+    // minAllowedZoom must be <=1
     var minAllowedZoom = 1;
     var baseZoom = 1;
     var currentZoom = 1;
@@ -173,12 +174,12 @@
       if (distance > tapDistanceThreshold && fingerCount == 1 && currentZoom > 1) {
         console.log("__dragStatus__, zoom="+currentZoom.toString(), "curTrY=" + currentTranslateY.toString(), event, phase, direction, distance);
         if (["start", "move"].indexOf(phase) !== -1) {
-          maxAllowedTranslateX = currentZoom * mediaWidth / 2 - mediaBoxInnerWidth / 2;
+          maxAllowedTranslateX = Math.abs(currentZoom * mediaWidth - mediaBoxInnerWidth) / 2;
           minAllowedTranslateX = - maxAllowedTranslateX;
-          maxAllowedTranslateY = currentZoom * mediaHeight / 2 - mediaBoxInnerHeight / 2;
+          maxAllowedTranslateY = Math.abs(currentZoom * mediaHeight - mediaBoxInnerHeight) / 2;
           minAllowedTranslateY = - maxAllowedTranslateY;
           if (
-            phase == "start"
+            phase == "start" || distance == 0
             // || currentMilliseconds() - milliseconds > 1000
           ) {
             // distance = 0
@@ -232,6 +233,12 @@
           var xString = currTranslX.toString();
           var yString = currentTranslateY.toString();
           var zoomString = currentZoom.toString();
+          if (currentZoom > 1) {
+            $('.media-box#center .media-box-inner').swipe("disable");
+          } else {
+            $('.media-box#center .media-box-inner').swipe("enable");
+          }
+
 
           $(".media-box#center .media-box-inner img").css("transform", "scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
           console.log("scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
@@ -269,6 +276,7 @@
          // image scaled up, reduce it to base zoom
          $(mediaSelector).css("transform", "scale(1,1)");
          currentZoom = 1;
+         $('.media-box#center .media-box-inner').swipe("enable");
          fromResetZoom = true;
        }
     }
