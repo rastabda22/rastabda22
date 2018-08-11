@@ -290,7 +290,7 @@
     $(function () {
       $('#album-view').swipe('destroy');
 
-      maxAllowedZoom = $(mediaSelector).attr("width") / parseInt($(mediaSelector).parent().css("width")) * devicePixelRatio;
+      maxAllowedZoom = ($(mediaSelector).attr("width") / $(mediaSelector)[0].width).toFixed(2);
       $(mediaSelector).parent().swipe(swipeOptions);
       $(mediaSelector).swipe(pinchOptions);
     });
