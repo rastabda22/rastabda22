@@ -36,15 +36,6 @@
     $("#media-box-container").css("transform", "translate(" + value + "px,0)");
   }
 
-  PinchSwipe.scrollMediaInItsContainer = function(distance) {
-    // console.log(distance);
-    $(".media-box#center .media-box-inner img").css("transition-duration", "0s");
-
-    //inverse the number we set in the css
-    var value = (distance >= 0 ? "" : "-") + Math.abs(distance).toString();
-    $(".media-box#center .media-box-inner img").css("transform", "translate(" + value + "px,0)");
-  }
-
   PinchSwipe.swipeMedia = function(distance) {
       $("#media-box-container").css("transition-duration", "0.5s");
 
@@ -95,20 +86,28 @@
     var longTap;
     // the initial scale of the image is surely <= 1
     var initialMediaScale = $(mediaSelector).css("width") / $(mediaSelector).attr("width");
+
     var maxAllowedZoom = 2;
+    var minAllowedZoom = 1;
+    var baseZoom = 1;
     var currentZoom = 1;
     var fromResetZoom = false;
 
+    var baseTranslateX = 0;
+    var baseTranslateY = 0;
+    var currTranslX = 0;
+    var currentTranslateY = 0;
+
+    var mediaWidth = parseInt($(mediaSelector).css("width"));
+    var mediaHeight = parseInt($(mediaSelector).css("height"));
+    var mediaBoxInnerWidth = parseInt($(".media-box#center .media-box-inner").css("width"));
+    var mediaBoxInnerHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
+
+    milliseconds = currentMilliseconds();
+
+    $(".media-box#center .media-box-inner img").css("transition-duration", "0s");
 
 		// get the two initial values:
-
-		// the reduction width and height in the page
-		var myCssWidth = PinchSwipe.cssWidth(mediaSelector);
-		var myCssHeight = PinchSwipe.cssHeight(mediaSelector);
-
-		// the reduction width and height
-		var myReductionWidth = PinchSwipe.reductionWidth(mediaSelector);
-		var myReductionHeight = PinchSwipe.reductionHeight(mediaSelector);
 
     var swipeOptions = {
       triggerOnTouchEnd: true,
@@ -130,6 +129,11 @@
       threshold: 75
     };
 
+    function currentMilliseconds() {
+      var date = new Date();
+      return date.getTime();
+    }
+
     /**
      * Catch each phase of the swipe.
      * move : we drag the div
@@ -138,7 +142,7 @@
      */
     function swipeStatus(event, phase, direction, distance , duration , fingerCount) {
       //If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
-      // console.log(event, phase, direction, distance);
+      // console.log("__swipeStatus__, zoom="+baseZoom, event, phase, direction, distance , duration , fingerCount);
       if (phase == "start")
         longTap = false;
 
@@ -151,7 +155,7 @@
           }
         } else if (phase == "cancel") {
           PinchSwipe.swipeMedia(windowWidth);
-        } else if (phase == "end" && currentZoom == 1) {
+        } else if (phase == "end") {
           if (direction == "right") {
             PinchSwipe.swipeRight(prevMedia);
           } else if (direction == "left") {
@@ -165,25 +169,73 @@
 
     function dragStatus(event, phase, direction, distance , duration , fingerCount) {
       //If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
-      console.log(event, phase, direction, distance);
+
       if (distance > tapDistanceThreshold && fingerCount == 1 && currentZoom > 1) {
-        if (phase == "move") {
-          if (direction == "left") {
-              PinchSwipe.scrollMediaInItsContainer(windowWidth + distance);
-          } else if (direction == "right") {
-              PinchSwipe.scrollMediaInItsContainer(windowWidth - distance);
+        console.log("__dragStatus__, zoom="+currentZoom.toString(), "curTrY=" + currentTranslateY.toString(), event, phase, direction, distance);
+        if (["start", "move"].indexOf(phase) !== -1) {
+          maxAllowedTranslateX = currentZoom * mediaWidth / 2 - mediaBoxInnerWidth / 2;
+          minAllowedTranslateX = - maxAllowedTranslateX;
+          maxAllowedTranslateY = currentZoom * mediaHeight / 2 - mediaBoxInnerHeight / 2;
+          minAllowedTranslateY = - maxAllowedTranslateY;
+          if (
+            phase == "start"
+            // || currentMilliseconds() - milliseconds > 1000
+          ) {
+            // distance = 0
+            baseTranslateX = currTranslX;
+            baseTranslateY = currentTranslateY;
+            milliseconds = currentMilliseconds();
+          } else {
+            // distance is the cumulative value from start
+            if (direction == "right")
+              currTranslX = Math.max(Math.min(baseTranslateX + distance, maxAllowedTranslateX), minAllowedTranslateX);
+            else if (direction == "left")
+              currTranslX = Math.max(Math.min(baseTranslateX - distance, maxAllowedTranslateX), minAllowedTranslateX);
+            else if (direction == "down")
+              currentTranslateY = Math.max(Math.min(baseTranslateY + distance, maxAllowedTranslateY), minAllowedTranslateY);
+            else if (direction == "up")
+              currentTranslateY = Math.max(Math.min(baseTranslateY - distance, maxAllowedTranslateY), minAllowedTranslateY);
           }
-        } else if (phase == "cancel") {
-          // PinchSwipe.swipeMedia(windowWidth);
+
+          var xString = currTranslX.toString();
+          var yString = currentTranslateY.toString();
+          var zoomString = currentZoom.toString();
+
+          $(".media-box#center .media-box-inner img").css("transform", "scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
         }
       }
     }
 
     function pinchStatus(event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData) {
-      // console.log("pinchStatus, ", event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData)
-      if (phase == "move" && fingerCount >= 2 && pinchZoom <= maxAllowedZoom && pinchZoom >= 1) {
-        $(mediaSelector).css("transform", "scale(" + pinchZoom + "," + pinchZoom + ")");
-        currentZoom = pinchZoom;
+      // console.log("pinchStatus, zoom="+currentZoom, event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData, ["start", "move"].indexOf(phase))
+      if (fingerCount >= 2) {
+        // console.log(milliseconds, currentMilliseconds(), currentMilliseconds() - milliseconds)
+
+        if (["start", "move"].indexOf(phase) !== -1) {
+          if (
+            phase == "start"
+            // || currentMilliseconds() - milliseconds > 1000
+          ) {
+            // distance = 0
+            baseZoom = currentZoom;
+            milliseconds = currentMilliseconds();
+            console.log("start", currentZoom);
+          } else {
+            // distance is the cumulative value from start
+            // if (direction == "in")
+            //   zoom = baseZoom * pinchZoom;
+            // else if (direction == "out")
+            currentZoom = Math.max(Math.min(baseZoom * pinchZoom, maxAllowedZoom), minAllowedZoom);
+            console.log("move", currentZoom);
+          }
+
+          var xString = currTranslX.toString();
+          var yString = currentTranslateY.toString();
+          var zoomString = currentZoom.toString();
+
+          $(".media-box#center .media-box-inner img").css("transform", "scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
+          console.log("scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
+        }
       }
     }
 
@@ -202,11 +254,6 @@
           else
             fromResetZoom = false;
         }
-      } else {
-        // image scaled up, reduce it to base zoom
-        $(mediaSelector).css("transform", "scale(1,1)");
-        currentZoom = 1;
-        fromResetZoom = true;
       }
     }
 
@@ -215,9 +262,16 @@
     }
 
     function doubleTap(event, target) {
-      PinchSwipe.swipeRight(prevMedia);
+      if (currentZoom == 1) {
+        PinchSwipe.swipeRight(prevMedia);
+      } else {
+         // currentZoom > 1
+         // image scaled up, reduce it to base zoom
+         $(mediaSelector).css("transform", "scale(1,1)");
+         currentZoom = 1;
+         fromResetZoom = true;
+       }
     }
-
 
     /**
      * Manually update the position of the imgs on drag
