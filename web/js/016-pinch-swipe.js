@@ -128,7 +128,7 @@
       pinchStatus: pinchStatus,
       tap: tap,
       // allowPageScroll: "vertical",
-      threshold: 75
+      threshold: 10
     };
 
     function currentMilliseconds() {
