@@ -1451,13 +1451,13 @@ $(document).ready(function() {
 				$("#by-date-view").on("click", function(ev) {
 					window.location.href = byDateViewLink;
 				});
-				util.addClickToByGpsButton(byGpsViewLink);
+				phFl.addClickToByGpsButton(byGpsViewLink);
 			} else if (currentAlbum.cacheBase == Options.by_date_string) {
 				$("#folders-view").on("click", function(ev) {
 					window.location.href = foldersViewLink;
 				});
 				$("#by-date-view").removeClass("active").addClass("selected");
-				util.addClickToByGpsButton(byGpsViewLink);
+				phFl.addClickToByGpsButton(byGpsViewLink);
 			}	else if (currentAlbum.cacheBase == Options.by_gps_string) {
 				$("#folders-view").on("click", function(ev) {
 					window.location.href = foldersViewLink;
@@ -1479,7 +1479,7 @@ $(document).ready(function() {
 					$("#album-view").removeClass("hidden");
 					window.location.href = byDateViewLink;
 				});
-				util.addClickToByGpsButton(byGpsViewLink);
+				phFl.addClickToByGpsButton(byGpsViewLink);
 			} else {
 				$(".day-gps-folders-view").addClass("hidden");
 			}
