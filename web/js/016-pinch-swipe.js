@@ -226,6 +226,10 @@
           //   zoom = baseZoom * pinchZoom;
           // else if (direction == "out")
           currentZoom = Math.max(Math.min((baseZoom * pinchZoom).toFixed(2), maxAllowedZoom), minAllowedZoom);
+          if (pinchZoom < 1) {
+            // translation must be reduced too
+            currentTranslateX = (currentTranslateX * pinchZoom).toFixed(2);
+            currentTranslateY = (currentTranslateY * pinchZoom).toFixed(2);
           }
         }
 
