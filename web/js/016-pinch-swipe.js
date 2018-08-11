@@ -283,10 +283,6 @@
        }
     }
 
-    /**
-     * Manually update the position of the imgs on drag
-     */
-
     $(function () {
       $('#album-view').swipe('destroy');
 
