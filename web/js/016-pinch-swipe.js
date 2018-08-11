@@ -148,7 +148,7 @@
       if (phase == "start")
         longTap = false;
 
-      if (distance > tapDistanceThreshold && fingerCount == 1 && currentZoom == 1) {
+      if (distance >= tapDistanceThreshold && fingerCount == 1 && currentZoom == 1) {
         if (phase == "move") {
           if (direction == "left") {
               PinchSwipe.scrollMedia(windowWidth + distance);
