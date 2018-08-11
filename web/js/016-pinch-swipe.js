@@ -73,7 +73,8 @@
      */
 
     $(function () {
-      $('.media-box#center .media-box-inner').swipe('destroy');
+      $(".media-box#center .media-box-inner").swipe('destroy');
+      $(".media-box#center .media-box-inner img").swipe('destroy');
       $('#album-view').swipe(swipeOptions);
     });
 	};
@@ -87,7 +88,7 @@
     // the initial scale of the image is surely <= 1
     var initialMediaScale = $(mediaSelector).css("width") / $(mediaSelector).attr("width");
 
-    var maxAllowedZoom = devicePixelRatio;
+    var maxAllowedZoom;
     // minAllowedZoom must be <=1
     var minAllowedZoom = 1;
     var baseZoom = 1;
@@ -101,12 +102,12 @@
 
     var mediaWidth = parseInt($(mediaSelector).css("width"));
     var mediaHeight = parseInt($(mediaSelector).css("height"));
-    var mediaBoxInnerWidth = parseInt($(".media-box#center .media-box-inner").css("width"));
-    var mediaBoxInnerHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
+    var mediaBoxInnerWidth = parseInt($(mediaSelector).parent().css("width"));
+    var mediaBoxInnerHeight = parseInt($(mediaSelector).parent().css("height"));
 
     milliseconds = currentMilliseconds();
 
-    $(".media-box#center .media-box-inner img").css("transition-duration", "0s");
+    $(mediaSelector).css("transition-duration", "0s");
 
 		// get the two initial values:
 
@@ -202,7 +203,7 @@
           var yString = currentTranslateY.toString();
           var zoomString = currentZoom.toString();
 
-          $(".media-box#center .media-box-inner img").css("transform", "scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
+          $(mediaSelector).css("transform", "scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
         }
       }
     }
@@ -234,13 +235,13 @@
           var yString = currentTranslateY.toString();
           var zoomString = currentZoom.toString();
           if (currentZoom > 1) {
-            $('.media-box#center .media-box-inner').swipe("disable");
+            $(mediaSelector).parent().swipe("disable");
           } else {
-            $('.media-box#center .media-box-inner').swipe("enable");
+            $(mediaSelector).parent().swipe("enable");
           }
 
 
-          $(".media-box#center .media-box-inner img").css("transform", "scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
+          $(mediaSelector).css("transform", "scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
           console.log("scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
         }
       }
@@ -276,7 +277,7 @@
          // image scaled up, reduce it to base zoom
          $(mediaSelector).css("transform", "scale(1,1)");
          currentZoom = 1;
-         $('.media-box#center .media-box-inner').swipe("enable");
+         $(mediaSelector).parent().swipe("enable");
          fromResetZoom = true;
        }
     }
@@ -287,8 +288,10 @@
 
     $(function () {
       $('#album-view').swipe('destroy');
-      $('.media-box#center .media-box-inner').swipe(swipeOptions);
-      $('.media-box#center .media-box-inner img').swipe(pinchOptions);
+
+      maxAllowedZoom = $(mediaSelector).attr("width") / parseInt($(mediaSelector).parent().css("width")) * devicePixelRatio;
+      $(mediaSelector).parent().swipe(swipeOptions);
+      $(mediaSelector).swipe(pinchOptions);
     });
 	};
 
