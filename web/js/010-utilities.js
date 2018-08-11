@@ -125,53 +125,6 @@
 		});
 	};
 
-  Utilities.prototype.addClickToByGpsButton = function(link) {
-		var self;
-		// this function returns true if the root album has the by gps subalbum
-		if (this.geotaggedPhotosFound !== null) {
-			if (this.geotaggedPhotosFound) {
-				$("#by-gps-view").off("click");
-				$("#by-gps-view").removeClass("hidden").addClass("active").on("click", function(ev) {
-					$(".search-failed").hide();
-					$("#album-view").removeClass("hidden");
-					window.location.href = link;
-					return false;
-				});
-			} else {
-				$("#by-gps-view").addClass("hidden");
-			}
-		} else {
-			self = this;
-			this.getAlbum(
-				// thisAlbum
-				Options.by_gps_string,
-				// callback
-				function() {
-					if (! self.albumCache[Options.by_gps_string].numMediaInSubTree) {
-						$("#by-gps-view").addClass("hidden");
-						self.geotaggedPhotosFound = false;
-					} else {
-						self.geotaggedPhotosFound = true;
-						$("#by-gps-view").off("click");
-						$("#by-gps-view").removeClass("hidden").addClass("active").on("click", function(ev) {
-							$(".search-failed").hide();
-							$("#album-view").removeClass("hidden");
-              window.location.href = link;
-							return false;
-						});
-					}
-				},
-				// error
-				// execution arrives here if no gps json file has been found
-				// (but gps json file must exist)
-				function() {
-					$("#by-gps-view").addClass("hidden");
-					self.geotaggedPhotosFound = false;
-				}
-			);
-		}
-	};
-
   Utilities.prototype.trimExtension = function(name) {
 		var index = name.lastIndexOf(".");
 		if (index !== -1)
