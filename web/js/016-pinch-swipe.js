@@ -210,40 +210,37 @@
 
     function pinchStatus(event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData) {
       // console.log("pinchStatus, zoom="+currentZoom, event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData, ["start", "move"].indexOf(phase))
-      if (fingerCount >= 2) {
-        // console.log(milliseconds, currentMilliseconds(), currentMilliseconds() - milliseconds)
 
-        if (["start", "move"].indexOf(phase) !== -1) {
-          if (
-            phase == "start"
-            // || currentMilliseconds() - milliseconds > 1000
-          ) {
-            // distance = 0
-            baseZoom = currentZoom;
-            milliseconds = currentMilliseconds();
-            console.log("start", currentZoom);
-          } else {
-            // distance is the cumulative value from start
-            // if (direction == "in")
-            //   zoom = baseZoom * pinchZoom;
-            // else if (direction == "out")
-            currentZoom = Math.max(Math.min(baseZoom * pinchZoom, maxAllowedZoom), minAllowedZoom);
-            console.log("move", currentZoom);
+      if (["start", "move"].indexOf(phase) !== -1) {
+        if (
+          phase == "start"
+          // || currentMilliseconds() - milliseconds > 1000
+        ) {
+          // distance = 0
+          baseZoom = currentZoom;
+          milliseconds = currentMilliseconds();
+          console.log("start", baseZoom, currentZoom);
+        } else if(fingerCount >= 2) {
+          // distance is the cumulative value from start
+          // if (direction == "in")
+          //   zoom = baseZoom * pinchZoom;
+          // else if (direction == "out")
+          currentZoom = Math.max(Math.min((baseZoom * pinchZoom).toFixed(2), maxAllowedZoom), minAllowedZoom);
           }
-
-          var xString = currentTranslateX.toString();
-          var yString = currentTranslateY.toString();
-          var zoomString = currentZoom.toString();
-          if (currentZoom > 1) {
-            $(mediaSelector).parent().swipe("disable");
-          } else {
-            $(mediaSelector).parent().swipe("enable");
-          }
-
-
-          $(mediaSelector).css("transform", "scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
-          console.log("scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
         }
+
+        var xString = currentTranslateX.toString();
+        var yString = currentTranslateY.toString();
+        var zoomString = currentZoom.toString();
+        if (currentZoom > 1) {
+          $(mediaSelector).parent().swipe("disable");
+        } else {
+          $(mediaSelector).parent().swipe("enable");
+        }
+
+
+          console.log("scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
+        $(mediaSelector).css("transform", "scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
       }
     }
 
