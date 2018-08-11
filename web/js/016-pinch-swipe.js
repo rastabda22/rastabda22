@@ -83,7 +83,7 @@
 	PinchSwipe.addMediaGesturesDetection = function() {
 
     var mediaSelector = ".media-box#center .media-box-inner img";
-    var tapDistanceThreshold = 3;
+    var tapDistanceThreshold = 2;
     var longTap;
     // the initial scale of the image is surely <= 1
     var initialMediaScale = $(mediaSelector).css("width") / $(mediaSelector).attr("width");
