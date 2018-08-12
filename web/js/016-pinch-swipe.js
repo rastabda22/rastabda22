@@ -98,64 +98,62 @@
       //If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
       // console.log("__swipeStatus__, zoom="+baseZoom, event, phase, direction, distance , duration , fingerCount);
       if (phase == "start")
-        longTap = false;
+        isLongTap = false;
 
-      if (distance >= tapDistanceThreshold && fingerCount == 1 && currentZoom == 1) {
-        if (phase == "move") {
-          if (direction == "left") {
-              PinchSwipe.scrollMedia(windowWidth + distance);
-          } else if (direction == "right") {
-              PinchSwipe.scrollMedia(windowWidth - distance);
+      if (distance >= tapDistanceThreshold && fingerCount == 1) {
+        if (currentZoom == 1) {
+          // zoom = 1: swipe
+          if (phase == "move") {
+            if (direction == "left") {
+                PinchSwipe.scrollMedia(windowWidth + distance);
+            } else if (direction == "right") {
+                PinchSwipe.scrollMedia(windowWidth - distance);
+            }
+          } else if (phase == "cancel") {
+            PinchSwipe.swipeMedia(windowWidth);
+          } else if (phase == "end") {
+            if (direction == "right") {
+              PinchSwipe.swipeRight(prevMedia);
+            } else if (direction == "left") {
+              PinchSwipe.swipeLeft(nextMedia);
+            } else if (direction == "down") {
+              PinchSwipe.swipeDown(upLink);
+            }
           }
-        } else if (phase == "cancel") {
-          PinchSwipe.swipeMedia(windowWidth);
-        } else if (phase == "end") {
-          if (direction == "right") {
-            PinchSwipe.swipeRight(prevMedia);
-          } else if (direction == "left") {
-            PinchSwipe.swipeLeft(nextMedia);
-          } else if (direction == "down") {
-            PinchSwipe.swipeDown(upLink);
+        } else {
+          // zoom > 1: drag
+          console.log("__dragStatus__, zoom="+currentZoom.toString(), "curTrY=" + currentTranslateY.toString(), event, phase, direction, distance);
+          if (["start", "move"].indexOf(phase) !== -1) {
+            var maxAllowedTranslateX = Math.abs(currentZoom * mediaWidth - mediaBoxInnerWidth) / 2;
+            var minAllowedTranslateX = - maxAllowedTranslateX;
+            var maxAllowedTranslateY = Math.abs(currentZoom * mediaHeight - mediaBoxInnerHeight) / 2;
+            var minAllowedTranslateY = - maxAllowedTranslateY;
+            if (
+              phase == "start" || distance == 0
+              // || currentMilliseconds() - milliseconds > 1000
+            ) {
+              // distance = 0
+              baseTranslateX = currentTranslateX;
+              baseTranslateY = currentTranslateY;
+              milliseconds = currentMilliseconds();
+            } else {
+              // distance is the cumulative value from start
+              if (direction == "right")
+                currentTranslateX = Math.max(Math.min(baseTranslateX + distance, maxAllowedTranslateX), minAllowedTranslateX);
+              else if (direction == "left")
+                currentTranslateX = Math.max(Math.min(baseTranslateX - distance, maxAllowedTranslateX), minAllowedTranslateX);
+              else if (direction == "down")
+                currentTranslateY = Math.max(Math.min(baseTranslateY + distance, maxAllowedTranslateY), minAllowedTranslateY);
+              else if (direction == "up")
+                currentTranslateY = Math.max(Math.min(baseTranslateY - distance, maxAllowedTranslateY), minAllowedTranslateY);
+            }
+
+            var xString = currentTranslateX.toString();
+            var yString = currentTranslateY.toString();
+            var zoomString = currentZoom.toString();
+
+            $(mediaSelector).css("transform", "scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
           }
-        }
-      }
-    }
-
-    function dragStatus(event, phase, direction, distance , duration , fingerCount) {
-      //If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
-
-      if (distance > tapDistanceThreshold && fingerCount == 1 && currentZoom > 1) {
-        console.log("__dragStatus__, zoom="+currentZoom.toString(), "curTrY=" + currentTranslateY.toString(), event, phase, direction, distance);
-        if (["start", "move"].indexOf(phase) !== -1) {
-          maxAllowedTranslateX = Math.abs(currentZoom * mediaWidth - mediaBoxInnerWidth) / 2;
-          minAllowedTranslateX = - maxAllowedTranslateX;
-          maxAllowedTranslateY = Math.abs(currentZoom * mediaHeight - mediaBoxInnerHeight) / 2;
-          minAllowedTranslateY = - maxAllowedTranslateY;
-          if (
-            phase == "start" || distance == 0
-            // || currentMilliseconds() - milliseconds > 1000
-          ) {
-            // distance = 0
-            baseTranslateX = currentTranslateX;
-            baseTranslateY = currentTranslateY;
-            milliseconds = currentMilliseconds();
-          } else {
-            // distance is the cumulative value from start
-            if (direction == "right")
-              currentTranslateX = Math.max(Math.min(baseTranslateX + distance, maxAllowedTranslateX), minAllowedTranslateX);
-            else if (direction == "left")
-              currentTranslateX = Math.max(Math.min(baseTranslateX - distance, maxAllowedTranslateX), minAllowedTranslateX);
-            else if (direction == "down")
-              currentTranslateY = Math.max(Math.min(baseTranslateY + distance, maxAllowedTranslateY), minAllowedTranslateY);
-            else if (direction == "up")
-              currentTranslateY = Math.max(Math.min(baseTranslateY - distance, maxAllowedTranslateY), minAllowedTranslateY);
-          }
-
-          var xString = currentTranslateX.toString();
-          var yString = currentTranslateY.toString();
-          var zoomString = currentZoom.toString();
-
-          $(mediaSelector).css("transform", "scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
         }
       }
     }
@@ -163,7 +161,7 @@
     function pinchStatus(event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData) {
       // console.log("pinchStatus, zoom="+currentZoom, event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData, ["start", "move"].indexOf(phase))
 
-      if (["start", "move"].indexOf(phase) !== -1) {
+      if (["start", "move"].indexOf(phase) !== -1 && fingerCount >= 2) {
         if (
           phase == "start"
           // || currentMilliseconds() - milliseconds > 1000
@@ -172,7 +170,7 @@
           baseZoom = currentZoom;
           milliseconds = currentMilliseconds();
           console.log("start", baseZoom, currentZoom);
-        } else if(fingerCount >= 2) {
+        } else {
           // distance is the cumulative value from start
           // if (direction == "in")
           //   zoom = baseZoom * pinchZoom;
@@ -201,7 +199,7 @@
     }
 
     function hold(event, target) {
-      longTap = true;
+      isLongTap = true;
     }
 
     function tap(event, target) {
@@ -209,7 +207,7 @@
         if (event.which === 3)
           // right click
           PinchSwipe.swipeRight(prevMedia);
-        else if (! longTap) {
+        else if (! isLongTap) {
           if (! fromResetZoom)
             PinchSwipe.swipeLeft(nextMedia);
           else
