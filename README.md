@@ -51,7 +51,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 
 ### Mobile Friendly
 
-- [x] Swipe gestures for mobile.
+- [x] Swipe, pinch and drag gestures for mobile.
 - [x] Sharp images and thumbnails on mobile.
 - [x] Smooth media scaling.
 - [x] Consistent hash URL format.
