@@ -3,6 +3,8 @@
   var phFl = new PhotoFloat();
   var util = new Utilities();
   var speed = 500;
+  var mediaContainerSelector = ".media-box#center .media-box-inner";
+  var mediaSelector = mediaContainerSelector + " img";
 
 	/* constructor */
 	function PinchSwipe() {
@@ -73,8 +75,8 @@
      */
 
     $(function () {
-      $(".media-box#center .media-box-inner").swipe('destroy');
-      $(".media-box#center .media-box-inner img").swipe('destroy');
+      $(mediaContainerSelector).swipe('destroy');
+      $(mediaSelector).swipe('destroy');
       $('#album-view').swipe(swipeOptions);
     });
 	};
@@ -287,7 +289,7 @@
       $('#album-view').swipe('destroy');
 
       maxAllowedZoom = ($(mediaSelector).attr("width") / $(mediaSelector)[0].width).toFixed(2);
-      $(mediaSelector).parent().swipe(swipeOptions);
+      $(mediaContainerSelector).swipe(swipeOrDragOptions);
       $(mediaSelector).swipe(pinchOptions);
     });
 	};
@@ -370,14 +372,14 @@
 		// ...or... the media could be let enter from below, as in horizontal swipe... TO DO
     // As is, it doesn't work
 		if (dest) {
-			$(".media-box#center .media-box-inner").stop().animate(
+			$(mediaContainerSelector).stop().animate(
         {
   				top: "-=" + window.innerHeight,
   			},
         300,
         function() {
   				window.location.href = dest;
-  				$(".media-box#center .media-box-inner").hide().css('top', "");
+  				$(mediaContainerSelector).hide().css('top', "");
   			}
       );
 		}
@@ -385,7 +387,7 @@
 
   PinchSwipe.swipeDown = function(dest) {
 		if (dest) {
-			$(".media-box#center .media-box-inner").stop().animate(
+			$(mediaContainerSelector).stop().animate(
         {
   				top: "+=" + window.innerHeight,
   			},
@@ -393,7 +395,7 @@
         function() {
   				window.location.href = dest;
   				$("#media-view").hide();
-  				$(".media-box#center .media-box-inner").css('top', "");
+  				$(mediaContainerSelector).css('top', "");
   			}
       );
 		}
