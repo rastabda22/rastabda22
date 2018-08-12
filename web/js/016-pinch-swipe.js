@@ -10,23 +10,23 @@
 
   PinchSwipe.cssWidth = function(mediaSelector) {
     return parseInt($(mediaSelector).css("width"));
-  }
+  };
 
   PinchSwipe.cssHeight = function(mediaSelector) {
     return parseInt($(mediaSelector).css("height"));
-  }
+  };
 
   PinchSwipe.reductionWidth = function(mediaSelector) {
     return parseInt($(mediaSelector).attr("width"));
-  }
+  };
 
   PinchSwipe.reductionHeight = function(mediaSelector) {
     return parseInt($(mediaSelector).attr("height"));
-  }
+  };
 
   PinchSwipe.pinched = function(mediaSelector, initialCssWidth) {
     return PinchSwipe.cssWidth(mediaSelector) > initialCssWidth;
-  }
+  };
 
   PinchSwipe.scrollMedia = function(distance) {
     $("#media-box-container").css("transition-duration", "0s");
@@ -34,15 +34,15 @@
     //inverse the number we set in the css
     var value = (distance <= 0 ? "" : "-") + Math.abs(distance).toString();
     $("#media-box-container").css("transform", "translate(" + value + "px,0)");
-  }
+  };
 
   PinchSwipe.swipeMedia = function(distance) {
-      $("#media-box-container").css("transition-duration", "0.5s");
+      $("#media-box-container").css("transition-duration", speed + "ms");
 
       //inverse the number we set in the css
       var value = (distance <= 0 ? "" : "-") + Math.abs(distance).toString();
       $("#media-box-container").css("transform", "translate(" + value + "px,0)");
-  }
+  };
 
   // define the actions to be taken on pinch, swipe, tap, double tap
 	PinchSwipe.addAlbumGesturesDetection = function() {
@@ -303,7 +303,7 @@
 			return false;
 		}
 		return true;
-	}
+	};
 
 	PinchSwipe.swipeRight = function(media) {
 		$("#media-box-container").on(
@@ -332,7 +332,7 @@
     );
 
     PinchSwipe.swipeMedia(0);
-	}
+	};
 
 	PinchSwipe.swipeLeft = function(media) {
     $("#media-box-container").on(
@@ -363,7 +363,7 @@
     );
 
     PinchSwipe.swipeMedia(windowWidth * 2);
-	}
+	};
 
 	PinchSwipe.prototype.swipeUp = function(dest) {
 		// Actually swiping up is passing from an album to a media, so there is no animation
@@ -381,7 +381,7 @@
   			}
       );
 		}
-	}
+	};
 
   PinchSwipe.swipeDown = function(dest) {
 		if (dest) {
@@ -397,7 +397,7 @@
   			}
       );
 		}
-	}
+	};
 
   /* make static methods callable as member functions */
 	PinchSwipe.prototype.swipeLeft = PinchSwipe.swipeLeft;
