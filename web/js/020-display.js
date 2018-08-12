@@ -1487,6 +1487,7 @@ $(document).ready(function() {
 
 			ps.addAlbumGesturesDetection();
 		} else {
+			// currentMedia !== null
 			if (currentAlbum.media.length == 1)
 				$("#album-view").addClass("hidden");
 			else
@@ -1585,6 +1586,7 @@ $(document).ready(function() {
 			$("#media-box-container").css("transform", "translate(-" + windowWidth + "px, 0px)");
 			$(".media-box").css("width", windowWidth).css("height", heightForMediaAndTitle);
 			$(".media-box .media-box-inner").css("width", windowWidth).css("height", heightForMedia);
+			$(".links").addClass("hidden");
 			$(".media-box").show();
 
 			if (currentAlbum.media.length == 1) {
@@ -1764,6 +1766,8 @@ $(document).ready(function() {
 					}
 				});
 			}
+
+			$(".links").removeClass("hidden");
 
 			ps.addMediaGesturesDetection();
 		}
