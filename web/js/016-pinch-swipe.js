@@ -186,12 +186,6 @@
         var xString = currentTranslateX.toString();
         var yString = currentTranslateY.toString();
         var zoomString = currentZoom.toString();
-        if (currentZoom > 1) {
-          $(mediaSelector).parent().swipe("disable");
-        } else {
-          $(mediaSelector).parent().swipe("enable");
-        }
-
 
           console.log("scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
         $(mediaSelector).css("transform", "scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
@@ -228,7 +222,6 @@
          // image scaled up, reduce it to base zoom
          $(mediaSelector).css("transform", "scale(1,1)");
          currentZoom = 1;
-         $(mediaSelector).parent().swipe("enable");
          fromResetZoom = true;
        }
     }
