@@ -123,9 +123,9 @@
         } else {
           // zoom > 1: drag
           console.log("__dragStatus__, zoom="+currentZoom.toString(), "curTrX=" + currentTranslateX.toString(), event, phase, direction, distance);
-          var maxAllowedTranslateX = Math.abs(currentZoom * mediaWidth - mediaBoxInnerWidth) / 2;
+          var maxAllowedTranslateX = Math.max(currentZoom * mediaWidth - mediaBoxInnerWidth, 0) / 2;
           var minAllowedTranslateX = - maxAllowedTranslateX;
-          var maxAllowedTranslateY = Math.abs(currentZoom * mediaHeight - mediaBoxInnerHeight) / 2;
+          var maxAllowedTranslateY = Math.max(currentZoom * mediaHeight - mediaBoxInnerHeight, 0) / 2;
           var minAllowedTranslateY = - maxAllowedTranslateY;
           if (
             phase == "start" || phase == "end" || phase == "cancel" || distance == 0
@@ -151,7 +151,7 @@
           var yString = currentTranslateY.toString();
           var zoomString = currentZoom.toString();
 
-          $(mediaSelector).css("transform", "scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
+          $(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + "," + zoomString + ")");
         }
       }
     }
@@ -186,7 +186,7 @@
         var zoomString = currentZoom.toString();
 
           console.log("scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
-        $(mediaSelector).css("transform", "scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
+        $(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + "," + zoomString + ")");
       }
     }
 
