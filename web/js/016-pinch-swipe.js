@@ -64,7 +64,6 @@
      */
     function swipeStatus(event, phase, direction, distance , duration , fingerCount) {
       //If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
-      // console.log(event, phase, direction, distance);
       if (phase == "move" && direction == "down") {
         PinchSwipe.swipeDown(upLink);
       }
@@ -96,7 +95,6 @@
      */
     function swipeStatus(event, phase, direction, distance , duration , fingerCount) {
       //If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
-      // console.log("__swipeStatus__, zoom="+baseZoom, event, phase, direction, distance , duration , fingerCount);
       if (phase == "start")
         isLongTap = false;
 
@@ -122,7 +120,6 @@
           }
         } else {
           // zoom > 1: drag
-          console.log("__dragStatus__, zoom="+currentZoom.toString(), "curTrX=" + currentTranslateX.toString(), event, phase, direction, distance);
           var maxAllowedTranslateX = Math.max(currentZoom * mediaWidth - mediaBoxInnerWidth, 0) / 2;
           var minAllowedTranslateX = - maxAllowedTranslateX;
           var maxAllowedTranslateY = Math.max(currentZoom * mediaHeight - mediaBoxInnerHeight, 0) / 2;
@@ -157,8 +154,6 @@
     }
 
     function pinchStatus(event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData) {
-      // console.log("pinchStatus, zoom="+currentZoom, event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData, ["start", "move"].indexOf(phase))
-
       if (phase === "start" || phase === "move") {
         if (
           phase === "start"
@@ -167,7 +162,6 @@
           // distance = 0
           baseZoom = currentZoom;
           milliseconds = currentMilliseconds();
-          console.log("start", baseZoom, currentZoom);
         } else if (fingerCount >= 2) {
           // distance is the cumulative value from start
           // if (direction == "in")
@@ -185,7 +179,6 @@
         var yString = currentTranslateY.toString();
         var zoomString = currentZoom.toString();
 
-          console.log("scale(" + zoomString + "," + zoomString + ") translate(" + xString + "px," + yString + "px)");
         $(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + "," + zoomString + ")");
       }
     }

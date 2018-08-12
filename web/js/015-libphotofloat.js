@@ -475,13 +475,11 @@
 						$("#album-view").removeClass("hidden");
 						$(".search-failed").hide();
 						for (indexWords = 0; indexWords <= lastIndex; indexWords ++) {
-							// console.log("n. album to get", albumHashes[indexWords].length);
 							searchResultsMedia[indexWords] = [];
 							searchResultsSubalbums[indexWords] = [];
 							for (indexAlbums = 0; indexAlbums < albumHashes[indexWords].length; indexAlbums ++) {
 								// getAlbum is called here with 2 more parameters, indexAlbums and indexWords, in order to know their ValueError
 								// if they are not passed as arguments, the success function will see their values updates (getAlbum is an asyncronous function)
-								// console.log("ialbum", indexAlbums);
 								self.getAlbum(
 									albumHashes[indexWords][indexAlbums],
 									// success:
@@ -572,8 +570,7 @@
 										}
 										// the following instruction makes me see that numSearchAlbumsReady never reaches numSubAlbumsToGet when numSubAlbumsToGet is > 1000,
 										// numSearchAlbumsReady remains < 1000
-										// console.log(thisIndexAlbums, searchResultsMedia[thisIndexWords].length, numSearchAlbumsReady + 1, numSubAlbumsToGet);
-
+										
 										numSearchAlbumsReady ++;
 										if (numSearchAlbumsReady >= numSubAlbumsToGet) {
 											// all the albums have been got, we can merge the results
