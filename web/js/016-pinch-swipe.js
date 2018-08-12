@@ -83,60 +83,10 @@
 
   // define the actions to be taken on pinch, swipe, tap, double tap
 	PinchSwipe.addMediaGesturesDetection = function() {
-
-    var mediaSelector = ".media-box#center .media-box-inner img";
-    var tapDistanceThreshold = 2;
-    var longTap;
-    // the initial scale of the image is surely <= 1
-    var initialMediaScale = $(mediaSelector).css("width") / $(mediaSelector).attr("width");
-
-    var maxAllowedZoom;
-    // minAllowedZoom must be <=1
-    var minAllowedZoom = 1;
-    var baseZoom = 1;
-    var currentZoom = 1;
-    var fromResetZoom = false;
-
-    var baseTranslateX = 0;
-    var baseTranslateY = 0;
-    var currentTranslateX = 0;
-    var currentTranslateY = 0;
-
-    var mediaWidth = parseInt($(mediaSelector).css("width"));
-    var mediaHeight = parseInt($(mediaSelector).css("height"));
-    var mediaBoxInnerWidth = parseInt($(mediaSelector).parent().css("width"));
-    var mediaBoxInnerHeight = parseInt($(mediaSelector).parent().css("height"));
-
-    milliseconds = currentMilliseconds();
-
-    $(mediaSelector).css("transition-duration", "0s");
-
-		// get the two initial values:
-
-    var swipeOptions = {
-      triggerOnTouchEnd: true,
-      swipeStatus: swipeStatus,
-      tap: tap,
-      longTap: longTap,
-      doubleTap: doubleTap,
-      hold: hold,
-      // allowPageScroll: "vertical",
-      threshold: 75
-    };
-
-    var pinchOptions = {
-      triggerOnTouchEnd: true,
-      swipeStatus: dragStatus,
-      pinchStatus: pinchStatus,
-      tap: tap,
-      // allowPageScroll: "vertical",
-      threshold: 10
-    };
-
-    function currentMilliseconds() {
-      var date = new Date();
-      return date.getTime();
-    }
+    // swipe and drag gestures are detected on the media
+    // pinch gesture is detected on its container, .media-box-inner
+    // they must be separated because it seems that detecting drag and pinch on the same selector
+    // has troubles: start event is reported on pinch or on drag, but not on both
 
     /**
      * Catch each phase of the swipe.
@@ -283,6 +233,60 @@
          $(mediaSelector).parent().swipe("enable");
          fromResetZoom = true;
        }
+    }
+
+    var tapDistanceThreshold = 2;
+    var isLongTap;
+
+    var maxAllowedZoom;
+    // minAllowedZoom must be <=1
+    var minAllowedZoom = 1;
+    var baseZoom = 1;
+    var currentZoom = 1;
+    var fromResetZoom = false;
+
+    var baseTranslateX = 0;
+    var baseTranslateY = 0;
+    var currentTranslateX = 0;
+    var currentTranslateY = 0;
+
+    var mediaWidth = parseInt($(mediaSelector).css("width"));
+    var mediaHeight = parseInt($(mediaSelector).css("height"));
+    var mediaBoxInnerWidth = parseInt($(mediaContainerSelector).css("width"));
+    var mediaBoxInnerHeight = parseInt($(mediaContainerSelector).css("height"));
+
+    var milliseconds = currentMilliseconds();
+
+    $(mediaSelector).css("transition-duration", "0s");
+
+		// get the two initial values:
+
+    var swipeOrDragOptions = {
+      triggerOnTouchEnd: true,
+      allowPageScroll: "none",
+      swipeStatus: swipeStatus,
+      tap: tap,
+      longTap: longTap,
+      doubleTap: doubleTap,
+      hold: hold,
+      // allowPageScroll: "vertical",
+      threshold: 75,
+      fingers: 1
+    };
+
+    var pinchOptions = {
+      triggerOnTouchEnd: true,
+      allowPageScroll: "none",
+      preventDefaultEvents: true,
+      pinchStatus: pinchStatus,
+      // allowPageScroll: "vertical",
+      threshold: 10,
+      fingers: 2
+    };
+
+    function currentMilliseconds() {
+      var date = new Date();
+      return date.getTime();
     }
 
     $(function () {
