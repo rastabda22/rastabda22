@@ -123,7 +123,7 @@
         } else {
           // zoom > 1: drag
           console.log("__dragStatus__, zoom="+currentZoom.toString(), "curTrY=" + currentTranslateY.toString(), event, phase, direction, distance);
-          if (["start", "move"].indexOf(phase) !== -1) {
+          if (phase === "start" || phase === "move") {
             var maxAllowedTranslateX = Math.abs(currentZoom * mediaWidth - mediaBoxInnerWidth) / 2;
             var minAllowedTranslateX = - maxAllowedTranslateX;
             var maxAllowedTranslateY = Math.abs(currentZoom * mediaHeight - mediaBoxInnerHeight) / 2;
@@ -161,16 +161,16 @@
     function pinchStatus(event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData) {
       // console.log("pinchStatus, zoom="+currentZoom, event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData, ["start", "move"].indexOf(phase))
 
-      if (["start", "move"].indexOf(phase) !== -1 && fingerCount >= 2) {
+      if (phase === "start" || phase === "move") {
         if (
-          phase == "start"
+          phase === "start"
           // || currentMilliseconds() - milliseconds > 1000
         ) {
           // distance = 0
           baseZoom = currentZoom;
           milliseconds = currentMilliseconds();
           console.log("start", baseZoom, currentZoom);
-        } else {
+        } else if (fingerCount >= 2) {
           // distance is the cumulative value from start
           // if (direction == "in")
           //   zoom = baseZoom * pinchZoom;
