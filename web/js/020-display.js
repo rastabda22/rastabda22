@@ -455,7 +455,7 @@ $(document).ready(function() {
 		}
 
 		if (
-			currentMedia !== null ||
+			currentMedia !== null && ! $("#album-view").is(":visible") ||
 			util.isAlbumWithOneMedia(currentAlbum) ||
 			currentAlbum !== null && currentAlbum.subalbums.length <= 1 && currentAlbum.media.length <= 1
 		) {
@@ -527,7 +527,7 @@ $(document).ready(function() {
 		}
 
 		if (
-			currentMedia !== null ||
+			currentMedia !== null && ! $("#album-view").is(":visible") ||
 			util.isAlbumWithOneMedia(currentAlbum) ||
 			currentAlbum !== null && (
 				currentAlbum.media.length === 0 ||
