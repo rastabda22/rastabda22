@@ -1692,32 +1692,7 @@ $(document).ready(function() {
 						event.data.media = nextMedia;
 						util.scaleMedia(event);
 					}
-
-					// {
-					// 	id: "center",
-					// 	media: media,
-					// 	resize: true
-					// },
-					// util.scaleMedia
 				);
-				// $(window).on(
-				// 	"resize",
-				// 	{
-				// 		id: "left",
-				// 		media: prevMedia,
-				// 		resize: true
-				// 	},
-				// 	util.scaleMedia
-				// );
-				// $(window).on(
-				// 	"resize",
-				// 	{
-				// 		id: "right",
-				// 		media: prevMedia,
-				// 		resize: true
-				// 	},
-				// 	util.scaleMedia
-				// );
 
 				if (! Options.persistent_metadata) {
 					$(".media-box .metadata").hide();
