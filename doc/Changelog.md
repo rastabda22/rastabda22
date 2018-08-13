@@ -1,11 +1,11 @@
 * Better swiping: the new image enters while the current one exits
+* Added pinching and dragging capabilities
 * Various bug fixes
 * Scanner: always save the gps root album so that the absence of media with gps data can be detected without any js error
-* Added option `hide_title_and_thumbnails`, and added correponding menu entry that hides title and thumbnails, for a less distracted media vision
+* Added options `hide_title` and `hide_bottom_thumbnails`, and added correponding menu entries, for a less distracted media vision
 * Speed up loading of images
 * Better implementation of cache subdirs in md5 mode: a different subdirs schema is used according to the media number, in such a way that no more than 400 files and 256 subdirs are used (see issue #106); when media number is low, a default subdir is used (new option `default_cache_album`)
-* new option `use_internal_modernizr`: it make js use the included Modernizr instead of the system one
-* Added pinching and dragging capabilities
+* new option `use_internal_modernizr` (default _true_): it makes js use the included Modernizr instead of the system one
 
 ### version 3.5 (July 15, 2018)
 

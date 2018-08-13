@@ -510,33 +510,31 @@
 		containerRatio = containerWidth / containerHeight;
 
 		if (media.mediaType == "photo") {
-			if (event.data.resize) {
-				previousSrc = mediaElement.attr("src");
-				photoSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
+			previousSrc = mediaElement.attr("src");
+			photoSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
 
-				if (encodeURI(photoSrc) != previousSrc) {
-					// resizing had the effect that a different reduction has been choosed
+			if (encodeURI(photoSrc) != previousSrc) {
+				// resizing had the effect that a different reduction has been choosed
 
-					// chooseReducedPhoto() sets maxSize to 0 if it returns the original media
-					if (maxSize) {
-						if (mediaWidth > mediaHeight) {
-							attrWidth = maxSize;
-							attrHeight = Math.round(mediaHeight / mediaWidth * attrWidth);
-						} else {
-							attrHeight = maxSize;
-							attrWidth = Math.round(mediaWidth / mediaHeight * attrHeight);
-						}
+				// chooseReducedPhoto() sets maxSize to 0 if it returns the original media
+				if (maxSize) {
+					if (mediaWidth > mediaHeight) {
+						attrWidth = maxSize;
+						attrHeight = Math.round(mediaHeight / mediaWidth * attrWidth);
+					} else {
+						attrHeight = maxSize;
+						attrWidth = Math.round(mediaWidth / mediaHeight * attrHeight);
 					}
-
-					$("link[rel=image_src]").remove();
-					$('link[rel="video_src"]').remove();
-					$("head").append("<link rel=\"image_src\" href=\"" + encodeURI(photoSrc) + "\" />");
-					mediaElement
-						.attr("src", encodeURI(photoSrc))
-						.attr("width", attrWidth)
-						.attr("height", attrHeight)
-						.attr("ratio", ratio);
 				}
+
+				$("link[rel=image_src]").remove();
+				$('link[rel="video_src"]').remove();
+				$("head").append("<link rel=\"image_src\" href=\"" + encodeURI(photoSrc) + "\" />");
+				mediaElement
+					.attr("src", encodeURI(photoSrc))
+					.attr("width", attrWidth)
+					.attr("height", attrHeight)
+					.attr("ratio", ratio);
 			}
 		}
 

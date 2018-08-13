@@ -284,8 +284,13 @@ language =
 # the title of the collections of photos/albums
 page_title = My photos
 
-# Should the title be hidden by default
-hide_title_and_thumbnails = false
+# Should the title be hidden by default?
+# a right menu entry let the user show it
+hide_title = false
+
+# Should the bottom thumbnail in media view be hidden by default?
+# a right menu entry let the user show it
+hide_bottom_thumbnails = false
 
 # spacing between thumbnails, pixels (integer)
 # the user can modify this value
