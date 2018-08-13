@@ -512,7 +512,7 @@ $(document).ready(function() {
 
 			if (components.length > 1 && media === null) {
 				if (! isMobile.any()) {
-					title += " <span id='title-count'>(";
+					title += " <span class='title-count'>(";
 					title += currentAlbum.media.length + " ";
 					title += _t(".title-media") + " ";
 				 	if (components.length >= 5)
@@ -581,7 +581,7 @@ $(document).ready(function() {
 			}
 
 			if (components.length > 1 && media === null) {
-				title += " <span id='title-count'>(";
+				title += " <span class='title-count'>(";
 				title += currentAlbum.media.length + " ";
 				title += _t(".title-media") + " ";
 				if (components.length >= gpsLevelNumber + 2)
@@ -630,7 +630,7 @@ $(document).ready(function() {
 				(media === null && ! util.isAlbumWithOneMedia(currentAlbum)) &&
 				(currentAlbum.media.length || currentAlbum.subalbums.length)
 			) {
-				title += " <span id='title-count'>(";
+				title += " <span class='title-count'>(";
 				title += _t(".title-found") + ' ';
 				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
 				if (currentAlbum.media.length) {
@@ -717,7 +717,7 @@ $(document).ready(function() {
 			}
 
 			if (components.length > 1 && media === null) {
-				title += " <span id='title-count'>(";
+				title += " <span class='title-count'>(";
 				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
 				if (currentAlbum.media.length) {
 					title += currentAlbum.media.length + " ";
