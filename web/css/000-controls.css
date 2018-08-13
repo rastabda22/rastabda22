@@ -240,7 +240,7 @@ a.title-anchor.mobile {
 #media-view {
 	position: absolute;
 	overflow: hidden;
-	margin-bottom: 8px;
+	/* margin-bottom: 8px; */
 	left: 0;
 	right: 0;
 	text-align: center;

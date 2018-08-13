@@ -440,14 +440,14 @@
 		// it adjusts width, height and position so that it fits in its parent (<div class="bedia-box-inner">, or the whole window)
 		// and centers vertically
 		var media = event.data.media, mediaElement, container, containerBottom = 0, containerTop = 0, containerRatio, photoSrc, previousSrc;
-		var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth();
+		var containerHeight, containerWidth;
 		var mediaBarBottom = 0;
 		var mediaWidth, mediaHeight, attrWidth, attrHeight, cssWidth, cssHeight, ratio;
 		var id = event.data.id;
 		var albumViewHeight, heightForMedia, heightForMediaAndTitle;
 
-		windowWidth = $(window).outerWidth();
-		windowHeight = $(window).outerHeight();
+		windowWidth = $(window).innerWidth();
+		windowHeight = $(window).innerHeight();
 		if ($("#album-view").is(":visible"))
 			albumViewHeight = $("#album-view").outerHeight();
 		else
@@ -471,13 +471,10 @@
 			$(".media-box").show();
 		}
 		heightForMedia = heightForMediaAndTitle - $(".media-box#" + id + " .title").outerHeight();
-		if (event.data.resize && id === "center") {
-			// this is executed only when resizing, it's not needed when first scaling
-			$("#media-box-container").css("height", heightForMediaAndTitle);
-			$(".media-box").css("height", heightForMediaAndTitle);
-			$(".media-box .media-box-inner").css("height", heightForMedia);
-			$(".media-box").show();
-		}
+		$("#media-box-container").css("height", heightForMediaAndTitle);
+		$(".media-box").css("height", heightForMediaAndTitle);
+		$(".media-box .media-box-inner").css("height", heightForMedia);
+		$(".media-box").show();
 
 		mediaElement = $(".media-box#" + id + " .media-box-inner img");
 
@@ -535,11 +532,13 @@
 						.attr("height", attrHeight)
 						.attr("ratio", ratio);
 				}
-
 			}
 		}
 
-		$(".media-box#" + id + " .media-bar").css("bottom", 0);
+		if (Utilities.bottomSocialButtons()) {
+			mediaBarBottom = $(".ssk").outerHeight();
+		}
+		$(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
 
 		mediaElement.show();
 
