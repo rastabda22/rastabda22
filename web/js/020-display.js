@@ -1015,7 +1015,7 @@ $(document).ready(function() {
 
 	function showAlbum(populate) {
 		var i, imageLink, linkContainer, container, image, media, thumbsElement, subalbums, subalbumsElement, mediaHash, subfolderHash, thumbHash, thumbnailSize;
-		var width, height, thumbWidth, thumbHeight, imageString, calculatedWidth, populateMedia;
+		var width, height, thumbWidth, thumbHeight, imageString, calculatedWidth, calculatedHeight, populateMedia;
 		var albumViewWidth, correctedAlbumThumbSize = Options.album_thumb_size;
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
 		var tooBig = false, isVirtualAlbum = false;
@@ -1081,6 +1081,10 @@ $(document).ready(function() {
 						calculatedWidth = Options.media_thumb_size;
 					}
 					imgTitle = currentAlbum.media[i].albumName;
+					calculatedHeight = Options.media_thumb_size;
+
+					calculatedWidth = Math.min(calculatedWidth, $(window).innerWidth());
+					calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
 					mapLinkIcon = "";
 					if (util.hasGpsData(currentAlbum.media[i])) {
@@ -1091,13 +1095,14 @@ $(document).ready(function() {
 													"</a>";
 					}
 
-					imageString =	"<div class=\"thumb-and-caption-container\" style=\"" +
-										"width: " + calculatedWidth + "px;\"" +
-									">" +
-								"<div class='thumb-container' " + "style='" +
+					imageString =	"<div class='thumb-and-caption-container' style='" +
 										"width: " + calculatedWidth + "px; " +
-										"height: " + Options.media_thumb_size + "px;" +
-									"\">" +
+									"'>" +
+								"<div class='thumb-container' " + "style='" +
+										// "width: " + calculatedWidth + "px; " +
+										"width: " + calculatedWidth + "px; " +
+										"height: " + calculatedHeight + "px;" +
+									"'>" +
 									mapLinkIcon +
 									"<span class='helper'></span>" +
 									"<img title='" + imgTitle + "'" +
@@ -1106,6 +1111,10 @@ $(document).ready(function() {
 										"class='thumbnail" + "'" +
 										"height='" + thumbHeight + "'" +
 										"width='" + thumbWidth + "'" +
+										"style='" +
+											 "width: " + calculatedWidth + "px; " +
+											 "height: " + calculatedHeight + "px;" +
+											 "'" +
 									"/>" +
 								"</div>" +
 								"<div class='media-caption'>" +
