@@ -288,6 +288,7 @@
 
 	Utilities.prototype.chooseMediaReduction = function(media, id, fullScreenStatus) {
 		// chooses the proper reduction to use depending on the container size
+		var container, mediaSrc;
 
 		if (media.mediaType == "video") {
 			if (fullScreenStatus && media.albumName.match(/\.avi$/) === null) {
@@ -554,7 +555,7 @@
 
 			// position next/prev buttons verticallly centered in media-box-inner
 			var mediaBoxInnerHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
-			var titleHeight = parseInt($(".media-box#center .title").css("height"));
+			titleHeight = parseInt($(".media-box#center .title").css("height"));
 			var prevNextHeight = parseInt($("#next").outerHeight());
 			$("#next, #prev").css(
 				"top",
@@ -599,7 +600,7 @@
 				$(".media-box .links").stop().fadeOut("slow");
 			});
 		}
-	}
+	};
 
 	Utilities.prototype.setNextPrevVisibility = function() {
 		if (isMobile.any()) {
@@ -614,14 +615,14 @@
 				$(this).stop().fadeTo("fast", 0.4);
 			});
 		}
-	}
+	};
 
 	Utilities.mediaBoxGenerator = function(id) {
 		if (id === 'left')
 			$("#media-box-container").prepend(Utilities.originalMediaBoxContainerContent.replace('id="center"', 'id="left"'));
 		else if (id === 'right')
 			$("#media-box-container").append(Utilities.originalMediaBoxContainerContent.replace('id="center"', 'id="right"'));
-	}
+	};
 
 	/* make static methods callable as member functions */
 	Utilities.prototype.chooseReducedPhoto = Utilities.chooseReducedPhoto;
