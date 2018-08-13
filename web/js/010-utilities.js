@@ -613,6 +613,21 @@
 		}
 	}
 
+	Utilities.prototype.setNextPrevVisibility = function() {
+		if (isMobile.any()) {
+			$("#next, #prev").css("display", "inline").css("opacity", 1);
+		} else {
+			$("#next, #prev").off('mouseenter mouseleave');
+			$("#next, #prev").on('mouseenter', function() {
+				$(this).stop().fadeTo("fast", 1);
+			});
+
+			$("#next, #prev").on('mouseleave', function() {
+				$(this).stop().fadeTo("fast", 0.4);
+			});
+		}
+	}
+
 	Utilities.mediaBoxGenerator = function(id) {
 		if (id === 'left')
 			$("#media-box-container").prepend(Utilities.originalMediaBoxContainerContent.replace('id="center"', 'id="left"'));

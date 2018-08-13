@@ -2425,14 +2425,7 @@ $(document).ready(function() {
 	$("#album-view").on('mousewheel', ps.swipeOnWheel);
 
 	util.setLinksVisibility();
-
-	$("#next, #prev").on('mouseenter', function() {
-		$(this).stop().fadeTo("fast", 1);
-	});
-
-	$("#next, #prev").on('mouseleave', function() {
-		$(this).stop().fadeTo("fast", 0.4);
-	});
+	util.setNextPrevVisibility();
 
 	$(".media-box#center .metadata-show").on('click', showMetadataFromMouse);
 	$(".media-box#center .metadata-hide").on('click', showMetadataFromMouse);
