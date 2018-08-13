@@ -285,7 +285,7 @@
     }
 
     $(function () {
-      $('#album-view').swipe('destroy');
+      // $('#album-view').swipe('destroy');
 
       maxAllowedZoom = ($(mediaSelector).attr("width") / $(mediaSelector)[0].width).toFixed(2);
       $(mediaContainerSelector).swipe(swipeOrDragOptions);
