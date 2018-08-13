@@ -444,7 +444,7 @@
 		var mediaBarBottom = 0;
 		var mediaWidth, mediaHeight, attrWidth, attrHeight, cssWidth, cssHeight, ratio;
 		var id = event.data.id;
-		var albumViewHeight, heightForMedia, heightForMediaAndTitle;
+		var albumViewHeight, heightForMedia, heightForMediaAndTitle, titleHeight;
 
 		windowWidth = $(window).innerWidth();
 		windowHeight = $(window).innerHeight();
@@ -470,7 +470,12 @@
 			$(".media-box .media-box-inner").css("width", windowWidth);
 			$(".media-box").show();
 		}
-		heightForMedia = heightForMediaAndTitle - $(".media-box#" + id + " .title").outerHeight();
+		if ($(".media-box#" + id + " .title").is(":visible"))
+			titleHeight = $(".media-box#" + id + " .title").outerHeight();
+		else
+			titleHeight = 0;
+
+		heightForMedia = heightForMediaAndTitle - titleHeight;
 		$("#media-box-container").css("height", heightForMediaAndTitle);
 		$(".media-box").css("height", heightForMediaAndTitle);
 		$(".media-box .media-box-inner").css("height", heightForMedia);
