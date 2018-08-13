@@ -1494,7 +1494,7 @@ $(document).ready(function() {
 			}
 			$("#powered-by").show();
 
-			ps.addAlbumGesturesDetection();
+			// ps.addAlbumGesturesDetection();
 		} else {
 			// currentMedia !== null
 			if (currentAlbum.media.length == 1)

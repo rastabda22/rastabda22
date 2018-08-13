@@ -46,39 +46,41 @@
       $("#media-box-container").css("transform", "translate(" + value + "px,0)");
   };
 
-  // define the actions to be taken on pinch, swipe, tap, double tap
-	PinchSwipe.addAlbumGesturesDetection = function() {
-
-    var swipeOptions = {
-      triggerOnTouchEnd: true,
-      swipeStatus: swipeStatus,
-      // allowPageScroll: "vertical",
-      threshold: 75
-    };
-
-    /**
-     * Catch each phase of the swipe.
-     * move : we drag the div
-     * cancel : we animate back to where we were
-     * end : we animate to the next image
-     */
-    function swipeStatus(event, phase, direction, distance , duration , fingerCount) {
-      //If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
-      if (phase == "move" && direction == "down") {
-        PinchSwipe.swipeDown(upLink);
-      }
-    }
-
-    /**
-     * Manually update the position of the imgs on drag
-     */
-
-    $(function () {
-      $(mediaContainerSelector).swipe('destroy');
-      $(mediaSelector).swipe('destroy');
-      $('#album-view').swipe(swipeOptions);
-    });
-	};
+  // // define the actions to be taken on pinch, swipe, tap, double tap
+	// PinchSwipe.addAlbumGesturesDetection = function() {
+  //
+  //   var swipeOptions = {
+  //     triggerOnTouchEnd: true,
+  //     swipeStatus: swipeStatus,
+  //     allowPageScroll: "vertical",
+  //     // allowPageScroll: "vertical",
+  //     threshold: 75
+  //   };
+  //
+  //   /**
+  //    * Catch each phase of the swipe.
+  //    * move : we drag the div
+  //    * cancel : we animate back to where we were
+  //    * end : we animate to the next image
+  //    */
+  //   function swipeStatus(event, phase, direction, distance , duration , fingerCount) {
+  //     //If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
+  //     console.log(event, phase, direction, distance , duration , fingerCount);
+  //     if (phase == "move" && direction == "down") {
+  //       PinchSwipe.swipeDown(upLink);
+  //     }
+  //   }
+  //
+  //   /**
+  //    * Manually update the position of the imgs on drag
+  //    */
+  //
+  //   $(function () {
+  //     $(mediaContainerSelector).swipe('destroy');
+  //     $(mediaSelector).swipe('destroy');
+  //     $('#album-view').swipe(swipeOptions);
+  //   });
+	// };
 
   // define the actions to be taken on pinch, swipe, tap, double tap
 	PinchSwipe.addMediaGesturesDetection = function() {
