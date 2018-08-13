@@ -23,6 +23,10 @@ a:hover {
 	word-wrap: break-word;
 }
 
+.fullScreen .title {
+	display: none;
+}
+
 #album-view .title {
 	padding-left: 0;
 	padding-top: 0;

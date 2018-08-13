@@ -2457,10 +2457,6 @@ $(document).ready(function() {
 					fullScreenStatus = isFullscreen;
 					$(".enter-fullscreen").toggle();
 					$(".exit-fullscreen").toggle();
-					if (isFullscreen)
-						$(".title").hide();
-					else
-						$(".title").show();
 					showMedia(currentAlbum, currentMedia, 'center');
 				}
 			});
