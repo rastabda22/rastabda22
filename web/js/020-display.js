@@ -512,7 +512,7 @@ $(document).ready(function() {
 
 			if (components.length > 1 && media === null) {
 				if (! isMobile.any()) {
-					title += " <span id=\"title-count\">(";
+					title += " <span id='title-count'>(";
 					title += currentAlbum.media.length + " ";
 					title += _t(".title-media") + " ";
 				 	if (components.length >= 5)
@@ -581,7 +581,7 @@ $(document).ready(function() {
 			}
 
 			if (components.length > 1 && media === null) {
-				title += " <span id=\"title-count\">(";
+				title += " <span id='title-count'>(";
 				title += currentAlbum.media.length + " ";
 				title += _t(".title-media") + " ";
 				if (components.length >= gpsLevelNumber + 2)
@@ -630,7 +630,7 @@ $(document).ready(function() {
 				(media === null && ! util.isAlbumWithOneMedia(currentAlbum)) &&
 				(currentAlbum.media.length || currentAlbum.subalbums.length)
 			) {
-				title += " <span id=\"title-count\">(";
+				title += " <span id='title-count'>(";
 				title += _t(".title-found") + ' ';
 				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
 				if (currentAlbum.media.length) {
@@ -717,7 +717,7 @@ $(document).ready(function() {
 			}
 
 			if (components.length > 1 && media === null) {
-				title += " <span id=\"title-count\">(";
+				title += " <span id='title-count'>(";
 				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
 				if (currentAlbum.media.length) {
 					title += currentAlbum.media.length + " ";
@@ -751,7 +751,7 @@ $(document).ready(function() {
 		}
 
 		if (media !== null) {
-			title += "<span class=\"media-name\">" + util.trimExtension(media.name) + "</span>";
+			title += "<span class='media-name'>" + util.trimExtension(media.name) + "</span>";
 			if (util.hasGpsData(media)) {
 				latitude = media.metadata.latitude;
 				longitude = media.metadata.longitude;
@@ -788,7 +788,7 @@ $(document).ready(function() {
 				}
 				title =
 					"<span class='dots-surroundings'><span class='title-no-anchor dots'>...</span>" + raquo +"</span>" +
-					" <span class=\"hidden-title\">" + hiddenTitle + "</span> " + title;
+					" <span class='hidden-title'>" + hiddenTitle + "</span> " + title;
 			}
 		}
 
@@ -821,7 +821,7 @@ $(document).ready(function() {
 
 
 		if (media === null && currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1) {
-			title += " " + raquo + "<span class=\"media-name\">" + util.trimExtension(currentAlbum.media[0].name) + "</span>";
+			title += " " + raquo + "<span class='media-name'>" + util.trimExtension(currentAlbum.media[0].name) + "</span>";
 		}
 
 		if ($("#search-album-to-be-filled").length) {
@@ -1048,8 +1048,8 @@ $(document).ready(function() {
 			if (isVirtualAlbum && tooBig) {
 				$("#thumbs").empty();
 				$("#error-too-many-images").html(
-					"<span id=\"too-many-images\">" + _t('#too-many-images') + "</span>: " + currentAlbum.media.length +
-					" (<span id=\"too-many-images-limit-is\">" + _t('#too-many-images-limit-is') + "</span> " + Options.big_virtual_folders_threshold +  ")</span>"
+					"<span id='too-many-images'>" + _t('#too-many-images') + "</span>: " + currentAlbum.media.length +
+					" (<span id='too-many-images-limit-is'>" + _t('#too-many-images-limit-is') + "</span> " + Options.big_virtual_folders_threshold +  ")</span>"
 				).show();
 			} else if (
 				populateMedia === true ||
@@ -1094,21 +1094,21 @@ $(document).ready(function() {
 					imageString =	"<div class=\"thumb-and-caption-container\" style=\"" +
 										"width: " + calculatedWidth + "px;\"" +
 									">" +
-								"<div class=\"thumb-container\" " + "style=\"" +
+								"<div class='thumb-container' " + "style='" +
 										"width: " + calculatedWidth + "px; " +
 										"height: " + Options.media_thumb_size + "px;" +
 									"\">" +
 									mapLinkIcon +
-									"<span class=\"helper\"></span>" +
-									"<img title=\"" + imgTitle + "\"" +
-										"alt=\"" + util.trimExtension(currentAlbum.media[i].name) + "\"" +
-										"src=\"" +  encodeURI(thumbHash) + "\"" +
-										"class=\"thumbnail" + "\"" +
-										"height=\"" + thumbHeight + "\"" +
-										"width=\"" + thumbWidth + "\"" +
+									"<span class='helper'></span>" +
+									"<img title='" + imgTitle + "'" +
+										"alt='" + util.trimExtension(currentAlbum.media[i].name) + "'" +
+										"src='" +  encodeURI(thumbHash) + "'" +
+										"class='thumbnail" + "'" +
+										"height='" + thumbHeight + "'" +
+										"width='" + thumbWidth + "'" +
 									"/>" +
 								"</div>" +
-								"<div class=\"media-caption\">" +
+								"<div class='media-caption'>" +
 								"<span>" +
 								currentAlbum.media[i].name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
 								"</span>";
@@ -1368,23 +1368,23 @@ $(document).ready(function() {
 
 								titleName = titleName.substr(titleName.indexOf('/') + 1);
 								goTo = _t(".go-to") + " " + titleName;
-								htmlText =	"<a href=\"" + randomMediaLink + "\">" +
-										"<img src=\"img/link-arrow.png\" " +
-											"title=\"" + goTo + "\" " +
-											"alt=\"" + goTo + "\" " +
-											"class=\"album-button-random-media-link\" " +
-											" style=\"width: 20px;" +
+								htmlText =	"<a href='" + randomMediaLink + "'>" +
+										"<img src='img/link-arrow.png' " +
+											"title='" + goTo + "' " +
+											"alt='" + goTo + "' " +
+											"class='album-button-random-media-link' " +
+											" style='width: 20px;" +
 												" height: 20px;" +
-												"\"" +">" +
+												"'" +">" +
 										"</a>" +
-										"<span class=\"helper\"></span>" +
+										"<span class='helper'></span>" +
 										"<img " +
-											"title=\"" + titleName + "\"" +
-											" class=\"thumbnail\"" +
-											" src=\"" + encodeURI(mediaSrc) + "\"" +
-											" style=\"width:" + thumbWidth + "px;" +
+											"title='" + titleName + "'" +
+											" class='thumbnail'" +
+											" src='" + encodeURI(mediaSrc) + "'" +
+											" style='width:" + thumbWidth + "px;" +
 												" height:" + thumbHeight + "px;" +
-												"\"" +
+												"'" +
 										">";
 								theImage.html(htmlText);
 
@@ -1870,29 +1870,29 @@ $(document).ready(function() {
 		$(".media-box#" + id + " .metadata tr.gps").off('click');
 		text = "<table>";
 		if (typeof media.metadata.title !== "undefined")
-			text += "<tr><td class=\"metadata-data-title\"></td><td>" + media.metadata.title.replace(/\n/g, "<br>") + "</td></tr>";
+			text += "<tr><td class='metadata-data-title'></td><td>" + media.metadata.title.replace(/\n/g, "<br>") + "</td></tr>";
 		if (typeof media.metadata.description !== "undefined")
-			text += "<tr><td class=\"metadata-data-description\"></td><td>" + media.metadata.description.replace(/\n/g, "<br>") + "</td></tr>";
+			text += "<tr><td class='metadata-data-description'></td><td>" + media.metadata.description.replace(/\n/g, "<br>") + "</td></tr>";
 		if (typeof media.metadata.tags !== "undefined")
-			text += "<tr><td class=\"metadata-data-tags\"></td><td>" + media.metadata.tags + "</td></tr>";
+			text += "<tr><td class='metadata-data-tags'></td><td>" + media.metadata.tags + "</td></tr>";
 		if (typeof media.date !== "undefined")
-			text += "<tr><td class=\"metadata-data-date\"></td><td>" + media.date + "</td></tr>";
+			text += "<tr><td class='metadata-data-date'></td><td>" + media.date + "</td></tr>";
 		if (typeof media.metadata.size !== "undefined")
-			text += "<tr><td class=\"metadata-data-size\"></td><td>" + media.metadata.size[0] + " x " + media.metadata.size[1] + "</td></tr>";
+			text += "<tr><td class='metadata-data-size'></td><td>" + media.metadata.size[0] + " x " + media.metadata.size[1] + "</td></tr>";
 		if (typeof media.metadata.make !== "undefined")
-			text += "<tr><td class=\"metadata-data-make\"></td><td>" + media.metadata.make + "</td></tr>";
+			text += "<tr><td class='metadata-data-make'></td><td>" + media.metadata.make + "</td></tr>";
 		if (typeof media.metadata.model !== "undefined")
-			text += "<tr><td class=\"metadata-data-model\"></td><td>" + media.metadata.model + "</td></tr>";
+			text += "<tr><td class='metadata-data-model'></td><td>" + media.metadata.model + "</td></tr>";
 		if (typeof media.metadata.aperture !== "undefined")
-			text += "<tr><td class=\"metadata-data-aperture\"></td><td> f/" + media.metadata.aperture + "</td></tr>";
+			text += "<tr><td class='metadata-data-aperture'></td><td> f/" + media.metadata.aperture + "</td></tr>";
 		if (typeof media.metadata.focalLength !== "undefined")
-			text += "<tr><td class=\"metadata-data-focalLength\"></td><td>" + media.metadata.focalLength + " mm</td></tr>";
+			text += "<tr><td class='metadata-data-focalLength'></td><td>" + media.metadata.focalLength + " mm</td></tr>";
 		if (typeof media.metadata.subjectDistanceRange !== "undefined")
-			text += "<tr><td class=\"metadata-data-subjectDistanceRange\"></td><td>" + media.metadata.subjectDistanceRange + "</td></tr>";
+			text += "<tr><td class='metadata-data-subjectDistanceRange'></td><td>" + media.metadata.subjectDistanceRange + "</td></tr>";
 		if (typeof media.metadata.iso !== "undefined")
-			text += "<tr><td class=\"metadata-data-iso\"></td><td>" + media.metadata.iso + "</td></tr>";
+			text += "<tr><td class='metadata-data-iso'></td><td>" + media.metadata.iso + "</td></tr>";
 		if (typeof media.metadata.sceneCaptureType !== "undefined")
-			text += "<tr><td class=\"metadata-data-sceneCaptureType\"></td><td>" + media.metadata.sceneCaptureType + "</td></tr>";
+			text += "<tr><td class='metadata-data-sceneCaptureType'></td><td>" + media.metadata.sceneCaptureType + "</td></tr>";
 		if (typeof media.metadata.exposureTime !== "undefined") {
 			if (typeof media.metadata.exposureTime === "string")
 				exposureTime = media.metadata.exposureTime;
@@ -1900,28 +1900,28 @@ $(document).ready(function() {
 				exposureTime = Math.round(media.metadata.exposureTime * 10 ) / 10;
 			else
 				exposureTime = "1/" + Math.round(1 / media.metadata.exposureTime);
-			text += "<tr><td class=\"metadata-data-exposureTime\"></td><td>" + exposureTime + " sec</td></tr>";
+			text += "<tr><td class='metadata-data-exposureTime'></td><td>" + exposureTime + " sec</td></tr>";
 		}
 		if (typeof media.metadata.exposureProgram !== "undefined")
-			text += "<tr><td class=\"metadata-data-exposureProgram\"></td><td>" + media.metadata.exposureProgram + "</td></tr>";
+			text += "<tr><td class='metadata-data-exposureProgram'></td><td>" + media.metadata.exposureProgram + "</td></tr>";
 		if (typeof media.metadata.exposureCompensation !== "undefined")
-			text += "<tr><td class=\"metadata-data-exposureCompensation\"></td><td>" + media.metadata.exposureCompensation + "</td></tr>";
+			text += "<tr><td class='metadata-data-exposureCompensation'></td><td>" + media.metadata.exposureCompensation + "</td></tr>";
 		if (typeof media.metadata.spectralSensitivity !== "undefined")
-			text += "<tr><td class=\"metadata-data-spectralSensitivity\"></td><td>" + media.metadata.spectralSensitivity + "</td></tr>";
+			text += "<tr><td class='metadata-data-spectralSensitivity'></td><td>" + media.metadata.spectralSensitivity + "</td></tr>";
 		if (typeof media.metadata.sensingMethod !== "undefined")
-			text += "<tr><td class=\"metadata-data-sensingMethod\"></td><td>" + media.metadata.sensingMethod + "</td></tr>";
+			text += "<tr><td class='metadata-data-sensingMethod'></td><td>" + media.metadata.sensingMethod + "</td></tr>";
 		if (typeof media.metadata.lightSource !== "undefined")
-			text += "<tr><td class=\"metadata-data-lightSource\"></td><td>" + media.metadata.lightSource + "</td></tr>";
+			text += "<tr><td class='metadata-data-lightSource'></td><td>" + media.metadata.lightSource + "</td></tr>";
 		if (typeof media.metadata.flash !== "undefined")
-			text += "<tr><td class=\"metadata-data-flash\"></td><td>" + media.metadata.flash + "</td></tr>";
+			text += "<tr><td class='metadata-data-flash'></td><td>" + media.metadata.flash + "</td></tr>";
 		if (typeof media.metadata.orientationText !== "undefined")
-			text += "<tr><td class=\"metadata-data-orientation\"></td><td>" + media.metadata.orientationText + "</td></tr>";
+			text += "<tr><td class='metadata-data-orientation'></td><td>" + media.metadata.orientationText + "</td></tr>";
 		if (typeof media.metadata.duration !== "undefined")
-			text += "<tr><td class=\"metadata-data-duration\"></td><td>" + media.metadata.duration + " sec</td></tr>";
+			text += "<tr><td class='metadata-data-duration'></td><td>" + media.metadata.duration + " sec</td></tr>";
 		if (typeof media.metadata.latitude !== "undefined")
-			text += "<tr class='map-link' class='gps'><td class=\"metadata-data-latitude\"></td><td>" + media.metadata.latitudeMS + " </td></tr>";
+			text += "<tr class='map-link' class='gps'><td class='metadata-data-latitude'></td><td>" + media.metadata.latitudeMS + " </td></tr>";
 		if (typeof media.metadata.longitude !== "undefined")
-			text += "<tr class='gps'><td class=\"metadata-data-longitude\"></td><td>" + media.metadata.longitudeMS + " </td></tr>";
+			text += "<tr class='gps'><td class='metadata-data-longitude'></td><td>" + media.metadata.longitudeMS + " </td></tr>";
 		text += "</table>";
 		$(".media-box#" + id + " .metadata").html(text);
 		var linkTitle = _t('#show-map') + Options.map_service;
