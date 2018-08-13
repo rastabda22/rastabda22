@@ -1084,7 +1084,10 @@ $(document).ready(function() {
 					imgTitle = currentAlbum.media[i].albumName;
 					calculatedHeight = Options.media_thumb_size;
 
-					calculatedWidth = Math.min(calculatedWidth, $(window).innerWidth());
+					calculatedWidth = Math.min(
+						calculatedWidth,
+						($(window).innerWidth() - 2 * parseInt($("#album-view").css("padding")))
+					);
 					calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
 					mapLinkIcon = "";
