@@ -539,42 +539,6 @@
 			}
 		}
 
-		// if (parseInt(mediaElement.attr("width")) > containerWidth && parseFloat(mediaElement.attr("ratio")) >= containerRatio) {
-		// 	mediaElement
-		// 		.css("width", "100%")
-		// 		.css("height", "auto")
-		// 		.css("margin-top", - cssHeight / 2)
-		// 		.css("top", "50%");
-		// 	if (media.mediaType == "video")
-		// 		mediaBarBottom = 0;
-		// 	else if (media.mediaType == "photo")
-		// 		mediaBarBottom = (containerHeight - containerWidth / ratio) / 2;
-		// } else if (parseInt(mediaElement.attr("height")) > containerHeight && parseFloat(mediaElement.attr("ratio")) <= containerRatio) {
-		// 	mediaElement
-		// 		.css("height", "100%")
-		// 		.css("width", "auto")
-		// 		.css("margin-top", "0")
-		// 		.css("top", "0");
-		// 	if (media.mediaType == "video") {
-		// 		mediaElement.css("height", parseInt(mediaElement.css("height")) - $(".links").outerHeight());
-		// 		mediaBarBottom = 0;
-		// 	} else if (media.mediaType == "photo")
-		// 		// put media bar slightly below so that video buttons are not covered
-		// 		mediaBarBottom = 0;
-		// } else {
-		// 	mediaElement
-		// 		.css("height", mediaElement.attr("height"))
-		// 		.css("width", "auto")
-		// 		.css("margin-top", - mediaElement.attr("height") / 2)
-		// 		.css("top", "50%");
-		// 	mediaBarBottom = (container.height() - mediaElement.attr("height")) / 2;
-		// 	if (fullScreenStatus) {
-		// 		if (media.mediaType == "video") {
-		// 			mediaBarBottom = 0;
-		// 		}
-		// 	}
-		// }
-
 		$(".media-box#" + id + " .media-bar").css("bottom", 0);
 
 		mediaElement.show();
