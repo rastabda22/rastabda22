@@ -1541,6 +1541,7 @@ $(document).ready(function() {
 
 		function loadNextPrevMedia() {
 			if (id === "center") {
+				ps.addMediaGesturesDetection();
 				showMedia(album, prevMedia, 'left');
 				showMedia(album, nextMedia, 'right');
 			}
@@ -1781,8 +1782,6 @@ $(document).ready(function() {
 			}
 
 			$(".links").removeClass("hidden");
-
-			ps.addMediaGesturesDetection();
 		}
 
 		var originalMediaPath = encodeURI(util.originalMediaPath(currentMedia));
