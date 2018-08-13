@@ -800,7 +800,8 @@ $(document).ready(function() {
 
 		if (isMobile.any()) {
 			$(".dots").off();
-			$("#center .dots").on('click', function(ev) {
+
+			$(".dots").on('click', function(ev) {
 				if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 					$(".dots-surroundings").hide();
 					$(".hidden-title").show();
