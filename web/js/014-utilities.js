@@ -548,9 +548,9 @@
 		mediaElement.show();
 
 		if (id === "center") {
+			$("#prev").css("left", "");
 			if (! fullScreenStatus && currentAlbum.media.length > 1 && Utilities.lateralSocialButtons()) {
 				// correct back arrow position when social buttons are on the left
-				$("#prev").css("left", "");
 				$("#prev").css("left", (parseInt($("#prev").css("left")) + $(".ssk").outerWidth()) + "px");
 			}
 
