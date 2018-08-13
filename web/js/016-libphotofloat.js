@@ -475,13 +475,11 @@
 						$("#album-view").removeClass("hidden");
 						$(".search-failed").hide();
 						for (indexWords = 0; indexWords <= lastIndex; indexWords ++) {
-							// console.log("n. album to get", albumHashes[indexWords].length);
 							searchResultsMedia[indexWords] = [];
 							searchResultsSubalbums[indexWords] = [];
 							for (indexAlbums = 0; indexAlbums < albumHashes[indexWords].length; indexAlbums ++) {
 								// getAlbum is called here with 2 more parameters, indexAlbums and indexWords, in order to know their ValueError
 								// if they are not passed as arguments, the success function will see their values updates (getAlbum is an asyncronous function)
-								// console.log("ialbum", indexAlbums);
 								self.getAlbum(
 									albumHashes[indexWords][indexAlbums],
 									// success:
@@ -572,8 +570,7 @@
 										}
 										// the following instruction makes me see that numSearchAlbumsReady never reaches numSubAlbumsToGet when numSubAlbumsToGet is > 1000,
 										// numSearchAlbumsReady remains < 1000
-										// console.log(thisIndexAlbums, searchResultsMedia[thisIndexWords].length, numSearchAlbumsReady + 1, numSubAlbumsToGet);
-
+										
 										numSearchAlbumsReady ++;
 										if (numSearchAlbumsReady >= numSubAlbumsToGet) {
 											// all the albums have been got, we can merge the results
@@ -759,63 +756,6 @@
 		return media.cacheBase;
 	};
 
-	PhotoFloat.mediaPath = function(album, media, size) {
-		var suffix = Options.cache_folder_separator, hash, rootString = "root-";
-		if (
-			media.mediaType == "photo" ||
-			media.mediaType == "video" && [Options.album_thumb_size, Options.media_thumb_size].indexOf(size) != -1
-		) {
-			var actualSize = size;
-			var albumThumbSize = Options.album_thumb_size;
-			var mediaThumbSize = Options.media_thumb_size;
-			if ((size == albumThumbSize || size == mediaThumbSize) && screenRatio > 1) {
-				actualSize = Math.round(actualSize * Options.mobile_thumbnail_factor);
-				albumThumbSize = Math.round(albumThumbSize * Options.mobile_thumbnail_factor);
-				mediaThumbSize = Math.round(mediaThumbSize * Options.mobile_thumbnail_factor);
-			}
-			suffix += actualSize.toString();
-			if (size == Options.album_thumb_size) {
-				suffix += "a";
-				if (Options.album_thumb_type == "square")
-					suffix += "s";
-				else if (Options.album_thumb_type == "fit")
-					suffix += "f";
-			}
-			else if (size == Options.media_thumb_size) {
-				suffix += "t";
-				if (Options.media_thumb_type == "square")
-					suffix += "s";
-				else if (Options.media_thumb_type == "fixed_height")
-					suffix += "f";
-			}
-			suffix += ".jpg";
-		} else if (media.mediaType == "video") {
-			suffix += "transcoded_" + Options.video_transcode_bitrate + "_" + Options.video_crf + ".mp4";
-		}
-
-		hash = media.foldersCacheBase + Options.cache_folder_separator + media.cacheBase + suffix;
-		if (hash.indexOf(rootString) === 0)
-			hash = hash.substring(rootString.length);
-		else {
-			if (util.isFolderCacheBase(hash))
-				hash = hash.substring(Options.foldersStringWithTrailingSeparator.length);
-			else if (util.isByDateCacheBase(hash))
-				hash = hash.substring(Options.byDateStringWithTrailingSeparator.length);
-			else if (util.isByGpsCacheBase(hash))
-				hash = hash.substring(Options.byGpsStringWithTrailingSeparator.length);
-			else if (util.isSearchCacheBase(hash))
-				hash = hash.substring(Options.bySearchStringWithTrailingSeparator.length);
-		}
-		if (media.cacheSubdir)
-			return util.pathJoin([Options.server_cache_path, media.cacheSubdir, hash]);
-		else
-			return util.pathJoin([Options.server_cache_path, hash]);
-	};
-
-	PhotoFloat.originalMediaPath = function(media) {
-		return media.albumName;
-	};
-
 	PhotoFloat.cleanHash = function(hash) {
 		while (hash.length) {
 			if (hash.charAt(0) === "#")
@@ -839,8 +779,6 @@
 	PhotoFloat.prototype.cacheBase = PhotoFloat.cacheBase;
 	PhotoFloat.prototype.mediaHash = PhotoFloat.mediaHash;
 	PhotoFloat.prototype.encodeHash = PhotoFloat.encodeHash;
-	PhotoFloat.prototype.mediaPath = PhotoFloat.mediaPath;
-	PhotoFloat.prototype.originalMediaPath = PhotoFloat.originalMediaPath;
 	PhotoFloat.prototype.cleanHash = PhotoFloat.cleanHash;
 	PhotoFloat.prototype.decodeHash = PhotoFloat.decodeHash;
 	PhotoFloat.prototype.upHash = PhotoFloat.upHash;
