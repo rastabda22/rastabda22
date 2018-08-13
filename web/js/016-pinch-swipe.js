@@ -134,14 +134,9 @@
             // milliseconds = currentMilliseconds();
           } else {
             // distance is the cumulative value from start
-            if (direction == "right")
-              currentTranslateX = Math.max(Math.min(baseTranslateX + distance, maxAllowedTranslateX), minAllowedTranslateX);
-            else if (direction == "left")
-              currentTranslateX = Math.max(Math.min(baseTranslateX - distance, maxAllowedTranslateX), minAllowedTranslateX);
-            else if (direction == "down")
-              currentTranslateY = Math.max(Math.min(baseTranslateY + distance, maxAllowedTranslateY), minAllowedTranslateY);
-            else if (direction == "up")
-              currentTranslateY = Math.max(Math.min(baseTranslateY - distance, maxAllowedTranslateY), minAllowedTranslateY);
+            // dragVector is calculated by pinchStatus
+            currentTranslateX = Math.max(Math.min(baseTranslateX + distance * dragVector["x"], maxAllowedTranslateX), minAllowedTranslateX);
+            currentTranslateY = Math.max(Math.min(baseTranslateY + distance * dragVector["y"], maxAllowedTranslateY), minAllowedTranslateY);
           }
 
           var xString = currentTranslateX.toString();
@@ -154,6 +149,20 @@
     }
 
     function pinchStatus(event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData) {
+      // the drag vector is calculated here for use in the swipeStatus function
+      // lamentably, swipeStatus doesn't return info about the swipt vector
+      var dragVectorX = fingerData[0]["end"]["x"] - fingerData[0]["start"]["x"];
+      var dragVectorY = fingerData[0]["end"]["y"] - fingerData[0]["start"]["y"];
+      var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
+      if (dragVectorLength)
+        // normalize the vector
+        dragVector = {
+          "x": dragVectorX / dragVectorLength,
+          "y": dragVectorY / dragVectorLength
+        };
+      else
+        dragVector = [0, 0];
+
       if (phase === "start" || phase === "move") {
         if (
           phase === "start"
@@ -231,6 +240,8 @@
     var baseTranslateY = 0;
     var currentTranslateX = 0;
     var currentTranslateY = 0;
+
+    var dragVector = [0, 0];
 
     var mediaWidth = parseInt($(mediaSelector).css("width"));
     var mediaHeight = parseInt($(mediaSelector).css("height"));
