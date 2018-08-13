@@ -579,13 +579,35 @@
 
 		mediaElement.show();
 
-		if (! fullScreenStatus && currentAlbum.media.length > 1 && Utilities.lateralSocialButtons()) {
-			// correct back arrow position when social buttons are on the left
-			$("#prev").css("left", "");
-			$("#prev").css("left", (parseInt($("#prev").css("left")) + $(".ssk").outerWidth()) + "px");
+		if (id === "center") {
+			if (! fullScreenStatus && currentAlbum.media.length > 1 && Utilities.lateralSocialButtons()) {
+				// correct back arrow position when social buttons are on the left
+				$("#prev").css("left", "");
+				$("#prev").css("left", (parseInt($("#prev").css("left")) + $(".ssk").outerWidth()) + "px");
+			}
+
+			// position next/prev buttons verticallly centered in media-box-inner
+			var mediaBoxInnerHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
+			var titleHeight = parseInt($(".media-box#center .title").css("height"));
+			var prevNextHeight = parseInt($("#next").outerHeight());
+			$("#next, #prev").css(
+				"top",
+				titleHeight + (mediaBoxInnerHeight - prevNextHeight) / 2
+			);
+			// position lateral social buttons verticallly centered in media-box-inner
+			if (Utilities.lateralSocialButtons()) {
+				var socialHeight = parseInt($(".ssk-left").outerHeight());
+				$(".ssk-left").css(
+					"top",
+					titleHeight + (mediaBoxInnerHeight - socialHeight) / 2 + socialHeight / 2
+				);
+			} else {
+				$(".ssk-left").css("top", "");
+			}
+
+			Utilities.setLinksVisibility();
 		}
 
-		Utilities.setLinksVisibility();
 
 		if (event.data.callback)
 			event.data.callback();

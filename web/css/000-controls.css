@@ -206,6 +206,7 @@ a.title-anchor.mobile {
 #next, #prev {
 	position: absolute;
 	width: auto;
+	height: auto;
 	font-size: 4.5em;
 	line-height: 0;
 	top: 40%;
