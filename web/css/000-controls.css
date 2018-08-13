@@ -333,6 +333,7 @@ video {
 	-moz-border-top-left-radius: 5px;
 	-webkit-border-top-right-radius: 5px;
 	-webkit-border-top-left-radius: 5px;
+	cursor: pointer;
 }
 
 .links.hidden {
@@ -393,6 +394,7 @@ video {
 .enter-fullscreen, .fullscreen-divider {
 	display: inline;
 }
+
 #powered-by {
 	clear: both;
 	text-align: center;
