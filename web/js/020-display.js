@@ -1547,6 +1547,11 @@ $(document).ready(function() {
 	function showMedia(album, media, id) {
 
 		function loadNextPrevMedia() {
+			$("#pinch-in").off("click");
+			$("#pinch-out").off("click");
+			$("#pinch-in").on("click", ps.pinchIn);
+			$("#pinch-out").on("click", ps.pinchOut);
+
 			if (id === "center") {
 				ps.addMediaGesturesDetection();
 				showMedia(album, prevMedia, 'left');
