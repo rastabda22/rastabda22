@@ -166,14 +166,12 @@
         dragVector = [0, 0];
 
       if (phase === "start" || phase === "move") {
-        if (
-          phase === "start"
-          // || currentMilliseconds() - milliseconds > 1000
-        ) {
+        if (phase === "start") {
           // distance = 0
           baseZoom = currentZoom;
           milliseconds = currentMilliseconds();
         } else if (fingerCount >= 2) {
+          // phase is "move"
           // distance is the cumulative value from start
           // if (direction == "in")
           //   zoom = baseZoom * pinchZoom;
