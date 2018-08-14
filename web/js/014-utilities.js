@@ -440,10 +440,11 @@
 		// this function works on the img tag identified by event.data.id
 		// it adjusts width, height and position so that it fits in its parent (<div class="bedia-box-inner">, or the whole window)
 		// and centers vertically
-		var media = event.data.media, mediaElement, container, containerBottom = 0, containerTop = 0, containerRatio, photoSrc, previousSrc;
+		var media = event.data.media, mediaElement, container, containerRatio, photoSrc, previousSrc;
+		var containerTop = 0, containerBottom = 0, cssWidth, cssHeight;
 		var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth();
 		var mediaBarBottom = 0;
-		var mediaWidth, mediaHeight, attrWidth, attrHeight, cssWidth, cssHeight, ratio;
+		var mediaWidth, mediaHeight, attrWidth, attrHeight, ratio;
 		var id = event.data.id;
 		var albumViewHeight, heightForMedia, heightForMediaAndTitle, titleHeight;
 

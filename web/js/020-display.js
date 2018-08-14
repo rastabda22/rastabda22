@@ -1554,10 +1554,9 @@ $(document).ready(function() {
 			}
 		}
 
-		var text, thumbnailSize, triggerLoad, mediaHtml, mediaSelector;
+		var text, thumbnailSize, triggerLoad, mediaHtml, mediaSelector, mediaSrc;
 		var exposureTime, albumViewHeight, heightForMedia, heightForMediaAndTitle;
 		var savedSearchSubAlbumHash, savedSearchAlbumHash;
-		var videoOk;
 		var previousMediaIndex, nextMediaIndex;
 
 		array = phFl.decodeHash(location.hash);
