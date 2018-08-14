@@ -2,9 +2,16 @@
 
   var phFl = new PhotoFloat();
   var util = new Utilities();
-  var speed = 500;
+  var swipeSpeed = 500;
+  var pinchSpeed = 500;
   var mediaContainerSelector = ".media-box#center .media-box-inner";
   var mediaSelector = mediaContainerSelector + " img";
+  var currentZoom = 1, zoomIncrement = 1.25, zoomDecrement = 0.8;
+  var maxAllowedZoom;
+  // minAllowedZoom must be <=1
+  var minAllowedZoom = 1;
+  var currentTranslateX = 0;
+  var currentTranslateY = 0;
 
 	/* constructor */
 	function PinchSwipe() {
@@ -39,11 +46,37 @@
   };
 
   PinchSwipe.swipeMedia = function(distance) {
-      $("#media-box-container").css("transition-duration", speed + "ms");
+      $("#media-box-container").css("transition-duration", swipeSpeed + "ms");
 
       //inverse the number we set in the css
       var value = (distance <= 0 ? "" : "-") + Math.abs(distance).toString();
       $("#media-box-container").css("transform", "translate(" + value + "px,0)");
+  };
+
+  PinchSwipe.pinchInOut = function(pinchZoom) {
+    $(mediaSelector).css("transition-duration", pinchSpeed + "ms");
+    startZoom = currentZoom;
+    currentZoom = Math.max(Math.min((currentZoom * pinchZoom).toFixed(2), maxAllowedZoom), minAllowedZoom);
+    if (pinchZoom < 1 && startZoom > 1) {
+      // translation must be reduced too
+      currentTranslateX = (currentTranslateX * (currentZoom - 1) / (startZoom - 1)).toFixed(2);
+      currentTranslateY = (currentTranslateY * (currentZoom - 1) / (startZoom - 1)).toFixed(2);
+    }
+
+    var xString = currentTranslateX.toString();
+    var yString = currentTranslateY.toString();
+    var zoomString = currentZoom.toString();
+
+    $(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + ")");
+
+  };
+
+  PinchSwipe.pinchIn = function() {
+    PinchSwipe.pinchInOut(zoomIncrement);
+  };
+
+  PinchSwipe.pinchOut = function() {
+    PinchSwipe.pinchInOut(zoomDecrement);
   };
 
   // // define the actions to be taken on pinch, swipe, tap, double tap
@@ -100,7 +133,8 @@
       if (phase == "start")
         isLongTap = false;
 
-      if (distance >= tapDistanceThreshold && fingerCount == 1) {
+      // when dragging with the mouse, fingerCount is 0
+      if (distance >= tapDistanceThreshold && fingerCount <= 1) {
         if (currentZoom == 1) {
           // zoom = 1: swipe
           if (phase == "move") {
@@ -176,11 +210,13 @@
           // if (direction == "in")
           //   zoom = baseZoom * pinchZoom;
           // else if (direction == "out")
+          var startZoom = currentZoom;
           currentZoom = Math.max(Math.min((baseZoom * pinchZoom).toFixed(2), maxAllowedZoom), minAllowedZoom);
-          if (pinchZoom < 1) {
+
+          if (pinchZoom < 1 && startZoom > 1) {
             // translation must be reduced too
-            currentTranslateX = (currentTranslateX * pinchZoom).toFixed(2);
-            currentTranslateY = (currentTranslateY * pinchZoom).toFixed(2);
+            currentTranslateX = (currentTranslateX * (currentZoom - 1) / (startZoom - 1)).toFixed(2);
+            currentTranslateY = (currentTranslateY * (currentZoom - 1) / (startZoom - 1)).toFixed(2);
           }
         }
 
@@ -229,17 +265,11 @@
     var tapDistanceThreshold = 2;
     var isLongTap;
 
-    var maxAllowedZoom;
-    // minAllowedZoom must be <=1
-    var minAllowedZoom = 1;
     var baseZoom = 1;
-    var currentZoom = 1;
     var fromResetZoom = false;
 
     var baseTranslateX = 0;
     var baseTranslateY = 0;
-    var currentTranslateX = 0;
-    var currentTranslateY = 0;
 
     var dragVector = [0, 0];
 
@@ -304,7 +334,7 @@
 		return true;
 	};
 
-	PinchSwipe.swipeRight = function(media) {
+  PinchSwipe.swipeRight = function(media) {
 		$("#media-box-container").on(
       'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
       function() {
@@ -402,6 +432,8 @@
 	PinchSwipe.prototype.swipeLeft = PinchSwipe.swipeLeft;
 	PinchSwipe.prototype.swipeRight = PinchSwipe.swipeRight;
 	PinchSwipe.prototype.swipeDown = PinchSwipe.swipeDown;
+	PinchSwipe.prototype.pinchIn = PinchSwipe.pinchIn;
+	PinchSwipe.prototype.pinchOut = PinchSwipe.pinchOut;
 	PinchSwipe.prototype.addMediaGesturesDetection = PinchSwipe.addMediaGesturesDetection;
 	PinchSwipe.prototype.addAlbumGesturesDetection = PinchSwipe.addAlbumGesturesDetection;
 

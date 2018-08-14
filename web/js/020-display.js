@@ -1544,14 +1544,6 @@ $(document).ready(function() {
 			return true;
 	}
 
-	function pinchIn() {
-
-	}
-
-	function pinchOut() {
-
-	}
-
 	function showMedia(album, media, id) {
 
 		function loadNextPrevMedia() {
@@ -2468,10 +2460,10 @@ $(document).ready(function() {
 	$(".media-box#center .fullscreen").on('click', goFullscreenFromMouse);
 	$("#next").attr("title", _t("#next-media-title")).attr("alt", _t("#next-media-title"));
 	$("#prev").attr("title", _t("#prev-media-title")).attr("alt", _t("#prev-media-title"));
-	$("#pinch-out").attr("title", _t("#pinch-out-title")).attr("alt", _t("#pinch-out-title"));
 	$("#pinch-in").attr("title", _t("#pinch-in-title")).attr("alt", _t("#pinch-in-title"));
-	$("#pinch-in").on("click", pinchIn);
-	$("#pinch-out").on("click", pinchOut);
+	$("#pinch-out").attr("title", _t("#pinch-out-title")).attr("alt", _t("#pinch-out-title"));
+	$("#pinch-in").on("click", ps.pinchIn);
+	$("#pinch-out").on("click", ps.pinchOut);
 
 	function goFullscreen(e) {
 		// $("#media").off();
