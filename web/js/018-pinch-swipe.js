@@ -324,13 +324,25 @@
   PinchSwipe.prototype.swipeOnWheel = function(event, delta) {
 		if (currentMedia === null)
 			return true;
-		if (delta < 0) {
-			PinchSwipe.swipeLeft(nextMedia);
-			return false;
-		} else if (delta > 0) {
-			PinchSwipe.swipeRight(prevMedia);
-			return false;
-		}
+    if (! event.shiftKey && ! event.altKey && ! event.ctrlKey) {
+      // mouse wheel with no key: swipe
+  		if (delta < 0) {
+  			PinchSwipe.swipeLeft(nextMedia);
+  			return false;
+  		} else if (delta > 0) {
+  			PinchSwipe.swipeRight(prevMedia);
+  			return false;
+  		}
+    } else {
+      // mouse wheel with shift/control/alt key: pinch
+  		if (delta < 0) {
+  			PinchSwipe.pinchOut();
+  			return false;
+  		} else if (delta > 0) {
+  			PinchSwipe.pinchIn();
+  			return false;
+  		}
+    }
 		return true;
 	};
 
