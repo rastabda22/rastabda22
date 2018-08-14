@@ -1756,12 +1756,15 @@ $(document).ready(function() {
 				$("#prev").show();
 				mediaBoxInnerElement
 					.css('cursor', '')
-					.on('contextmenu', function(ev) {
+					.on(
+						'contextmenu',
+						function(ev) {
 						if (! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 							ev.preventDefault();
 							ps.swipeRight(prevMedia);
+							}
 						}
-					})
+					)
 					.on('mousewheel', ps.swipeOnWheel);
 					$(".media-box#center .media-box-inner .media-bar").on('click', function(ev) {
 						ev.stopPropagation();
