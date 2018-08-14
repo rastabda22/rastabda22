@@ -535,8 +535,7 @@
 				mediaElement
 					.attr("src", encodeURI(photoSrc))
 					.attr("width", attrWidth)
-					.attr("height", attrHeight)
-					.attr("ratio", ratio);
+					.attr("height", attrHeight);
 			}
 		}
 
@@ -574,8 +573,16 @@
 			}
 
 			Utilities.setLinksVisibility();
-		}
 
+			var actualHeight = mediaElement.height();
+			var actualWidth = mediaElement.width();
+			var distanceFromImageBorder = 15;
+			var pinchBottom = (containerHeight - actualHeight) / 2 + distanceFromImageBorder;
+			var pinchRight = (containerWidth - actualWidth) / 2 + distanceFromImageBorder;
+			$(".pinch").css("right", pinchRight.toString() + "px");
+			$("#pinch-out").css("bottom", pinchBottom.toString() + "px");
+			$("#pinch-in").css("bottom", (pinchBottom + 26).toString() + "px");
+		}
 
 		if (event.data.callback)
 			event.data.callback();

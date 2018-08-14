@@ -219,14 +219,32 @@ a.title-anchor.mobile {
 	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=35)";
 	filter: alpha(opacity=35);
 }
+
+#next:hover, #prev:hover {
+	cursor: pointer;
+}
+
 #prev {
 	left: 0.1em;
 }
+
 #next {
 	right: 0.1em;
 }
-#next:hover, #prev:hover {
+
+img.pinch {
+	top: unset;
+	left: unset;
+	background-color: black;
+	opacity: 0.5;
 	cursor: pointer;
+	position: absolute;
+	z-index: 10;
+}
+
+img.pinch:hover {
+	background-color: grey;
+	opacity: 0.7;
 }
 
 /* #media-box {

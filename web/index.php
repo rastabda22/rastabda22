@@ -235,7 +235,8 @@
 
 		<a id="prev">&lsaquo;</a>
 		<a id="next">&rsaquo;</a>
-
+		<img src="img/pinch-minus.png" id="pinch-out" class="pinch" width="25" height="25">
+		<img src="img/pinch-plus.png" id="pinch-in" class="pinch" width="25" height="25">
 	</div>
 
 	<div id="album-view">

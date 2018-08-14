@@ -3,6 +3,8 @@ var translations =
 		"en": {
 			"#next-media-title": "Next [n]",
 			"#prev-media-title": "Previous [p]",
+			"#pinch-in-title": "Zoom in [+]",
+			"#pinch-out-title": "Zoom out [-]",
 			".metadata-show": "show metadata [m]",
 			".metadata-hide": "hide metadata [m]",
 			".original-link": "view original [o]",
@@ -118,6 +120,8 @@ var translations =
 		"it": {
 			"#next-media-title": "Prossima [n]",
 			"#prev-media-title": "Precedente [p]",
+			"#pinch-in-title": "Zoom avanti [+]",
+			"#pinch-out-title": "Zoom indietro [-]",
 			".metadata-show": "metadati [m]",
 			".metadata-hide": "nascondi [m]",
 			".original-link": "vedi originale [o]",
@@ -233,6 +237,8 @@ var translations =
 		"es": {
 			"#next-media-title": "Siguiente [n]",
 			"#prev-media-title": "Anterior [p]",
+			"#pinch-in-title": "Zoom adelante [+]",
+			"#pinch-out-title": "Zoom atrás [-]",
 			".metadata-show": "metadatos [m]",
 			".metadata-hide": "esconde metadatos [m]",
 			".original-link": "ve original [o]",
@@ -348,6 +354,8 @@ var translations =
 		"fr": {
 			"#next-media-title": "Suivant [n]",
 			"#prev-media-title": "Précédent [p]",
+			"#pinch-in-title": "Zoom in [+]",
+			"#pinch-out-title": "Zoom out [-]",
 			".metadata-show": "afficher les métadonnées [m]",
 			".metadata-hide": "cacher les métadonnées [m]",
 			".original-link": "voir l'original [o]",
