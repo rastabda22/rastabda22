@@ -420,7 +420,7 @@ $(document).ready(function() {
 	function setTitle(id, media) {
 		var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, originalTitle;
 		var titleAnchorClasses, titleAnchorClassesItalics, hiddenTitle = "", albumTypeString, where, initialValue, searchFolderHash;
-		var beginLink, linksToLeave, numLinks, beginAt, latitude, longitude, arrayCoordinates, numMediaInSubAlbums, raquo = "&raquo;";
+		var beginLink, linksToLeave, numLinks, beginAt, latitude, longitude, arrayCoordinates, numMediaInSubAlbums, raquo = "&raquo;", lastRaquoPosition;
 		// gpsLevelNumber is the number of levels for the by gps tree
 		// current levels are country, region, place => 3
 		var gpsLevelNumber = 3;
