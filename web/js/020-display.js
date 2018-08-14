@@ -1771,6 +1771,7 @@ $(document).ready(function() {
 					}).on('contextmenu', function(ev) {
 						ev.stopPropagation();
 					});
+
 				$("#prev").on('click', function(ev) {
 					if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 						ps.swipeRight(prevMedia);
