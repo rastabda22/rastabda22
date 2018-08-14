@@ -1762,20 +1762,6 @@ $(document).ready(function() {
 							ps.swipeRight(prevMedia);
 						}
 					})
-					// .on('click', function(ev) {
-					// 	if (
-					// 		ev.which == 1 && ! ev.altKey &&
-					// 		(
-					// 			! ev.shiftKey && ! ev.ctrlKey && currentMedia.mediaType == "photo" ||
-					// 			(ev.shiftKey || ev.ctrlKey) && currentMedia.mediaType == "video"
-					// 		)
-					// 	) {
-					// 		ps.swipeLeft(nextMedia);
-					// 		return false;
-					// 	} else {
-					// 		return true;
-					// 	}
-					// })
 					.on('mousewheel', ps.swipeOnWheel);
 					$(".media-box#center .media-box-inner .media-bar").on('click', function(ev) {
 						ev.stopPropagation();
