@@ -145,7 +145,7 @@
           var yString = currentTranslateY.toString();
           var zoomString = currentZoom.toString();
 
-          $(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + "," + zoomString + ")");
+          $(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + ")");
         }
       }
     }
@@ -190,7 +190,7 @@
         var yString = currentTranslateY.toString();
         var zoomString = currentZoom.toString();
 
-        $(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + "," + zoomString + ")");
+        $(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + ")");
       }
     }
 
@@ -222,7 +222,7 @@
       } else {
          // currentZoom > 1
          // image scaled up, reduce it to base zoom
-         $(mediaSelector).css("transform", "scale(1,1)");
+         $(mediaSelector).css("transform", "scale(1)");
          currentZoom = 1;
          fromResetZoom = true;
        }
