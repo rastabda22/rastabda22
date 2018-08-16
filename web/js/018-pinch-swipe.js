@@ -172,12 +172,10 @@
           var minAllowedTranslateY = - maxAllowedTranslateY;
           if (
             phase == "start" || phase == "end" || phase == "cancel" || distance == 0
-            // || currentMilliseconds() - milliseconds > 1000
           ) {
             // distance = 0
             baseTranslateX = currentTranslateX;
             baseTranslateY = currentTranslateY;
-            // milliseconds = currentMilliseconds();
           } else {
             // distance is the cumulative value from start
             // dragVector is calculated by pinchStatus
@@ -213,7 +211,6 @@
         if (phase === "start") {
           // distance = 0
           baseZoom = currentZoom;
-          milliseconds = currentMilliseconds();
         } else if (fingerCount >= 2) {
           // phase is "move"
           // distance is the cumulative value from start
@@ -288,8 +285,6 @@
     var mediaBoxInnerWidth = parseInt($(mediaContainerSelector).css("width"));
     var mediaBoxInnerHeight = parseInt($(mediaContainerSelector).css("height"));
 
-    var milliseconds = currentMilliseconds();
-
     $(mediaSelector).css("transition-duration", "0s");
 
 		// get the two initial values:
@@ -316,11 +311,6 @@
       threshold: 10,
       fingers: 2
     };
-
-    function currentMilliseconds() {
-      var date = new Date();
-      return date.getTime();
-    }
 
     $(function () {
       // $('#album-view').swipe('destroy');
