@@ -2461,6 +2461,10 @@ $(document).ready(function() {
 	$("#prev").attr("title", _t("#prev-media-title")).attr("alt", _t("#prev-media-title"));
 	$("#pinch-in").attr("title", _t("#pinch-in-title")).attr("alt", _t("#pinch-in-title"));
 	$("#pinch-out").attr("title", _t("#pinch-out-title")).attr("alt", _t("#pinch-out-title"));
+	if (isMobile.any()) {
+		$("#pinch-in").css("width", "30px").css("height", "30px");
+		$("#pinch-out").css("width", "30px").css("height", "30px");
+	}
 	$("#pinch-in").on("click", ps.pinchIn);
 	$("#pinch-out").on("click", ps.pinchOut);
 
