@@ -1554,8 +1554,10 @@ $(document).ready(function() {
 
 			if (id === "center") {
 				ps.addMediaGesturesDetection();
-				showMedia(album, prevMedia, 'left');
-				showMedia(album, nextMedia, 'right');
+				if (album.media.length > 1) {
+					showMedia(album, prevMedia, 'left');
+					showMedia(album, nextMedia, 'right');
+				}
 			}
 		}
 
@@ -1715,13 +1717,15 @@ $(document).ready(function() {
 						event.data.media = media;
 						util.scaleMedia(event);
 
-						event.data.id = "left";
-						event.data.media = prevMedia;
-						util.scaleMedia(event);
+						if (album.media.length > 1) {
+							event.data.id = "left";
+							event.data.media = prevMedia;
+							util.scaleMedia(event);
 
-						event.data.id = "right";
-						event.data.media = nextMedia;
-						util.scaleMedia(event);
+							event.data.id = "right";
+							event.data.media = nextMedia;
+							util.scaleMedia(event);
+						}
 					}
 				);
 
