@@ -53,10 +53,9 @@
       $("#media-box-container").css("transform", "translate(" + value + "px,0)");
   };
 
-  PinchSwipe.pinchInOut = function(pinchZoom) {
-    $(mediaSelector).css("transition-duration", pinchSpeed + "ms");
-    startZoom = currentZoom;
-    currentZoom = Math.max(Math.min((currentZoom * pinchZoom).toFixed(2), maxAllowedZoom), minAllowedZoom);
+  PinchSwipe.pinchInOut = function(baseZoom, pinchZoom, duration) {
+    var startZoom = baseZoom;
+    currentZoom = Math.max(Math.min((baseZoom * pinchZoom).toFixed(2), maxAllowedZoom), minAllowedZoom);
     if (pinchZoom < 1 && startZoom > 1) {
       // translation must be reduced too
       currentTranslateX = (currentTranslateX * (currentZoom - 1) / (startZoom - 1)).toFixed(2);
@@ -67,6 +66,7 @@
     var yString = currentTranslateY.toString();
     var zoomString = currentZoom.toString();
 
+    $(mediaSelector).css("transition-duration", duration + "ms");
     $(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + ")");
 
     if (currentZoom == maxAllowedZoom)
@@ -82,11 +82,11 @@
   };
 
   PinchSwipe.pinchIn = function() {
-    PinchSwipe.pinchInOut(zoomIncrement);
+    PinchSwipe.pinchInOut(currentZoom, zoomIncrement, pinchSpeed);
   };
 
   PinchSwipe.pinchOut = function() {
-    PinchSwipe.pinchInOut(zoomDecrement);
+    PinchSwipe.pinchInOut(currentZoom, zoomDecrement, pinchSpeed);
   };
 
   // // define the actions to be taken on pinch, swipe, tap, double tap
@@ -207,32 +207,28 @@
       else
         dragVector = [0, 0];
 
-      if (phase === "start" || phase === "move") {
-        if (phase === "start") {
-          // distance = 0
-          baseZoom = currentZoom;
-        } else if (fingerCount >= 2) {
-          // phase is "move"
-          // distance is the cumulative value from start
-          // if (direction == "in")
-          //   zoom = baseZoom * pinchZoom;
-          // else if (direction == "out")
-          var startZoom = currentZoom;
-          currentZoom = Math.max(Math.min((baseZoom * pinchZoom).toFixed(2), maxAllowedZoom), minAllowedZoom);
-
-          if (pinchZoom < 1 && startZoom > 1) {
-            // translation must be reduced too
-            currentTranslateX = (currentTranslateX * (currentZoom - 1) / (startZoom - 1)).toFixed(2);
-            currentTranslateY = (currentTranslateY * (currentZoom - 1) / (startZoom - 1)).toFixed(2);
-          }
-        }
-
-        var xString = currentTranslateX.toString();
-        var yString = currentTranslateY.toString();
-        var zoomString = currentZoom.toString();
-
-        $(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + ")");
+      if (phase === "start") {
+        // distance = 0
+        baseZoom = currentZoom;
+      } else if (phase === "move" && fingerCount >= 2) {
+        // phase is "move"
+        PinchSwipe.pinchInOut(baseZoom, pinchZoom, 0);
+        // var startZoom = currentZoom;
+        // currentZoom = Math.max(Math.min((baseZoom * pinchZoom).toFixed(2), maxAllowedZoom), minAllowedZoom);
+        //
+        // if (pinchZoom < 1 && startZoom > 1) {
+        //   // translation must be reduced too
+        //   currentTranslateX = (currentTranslateX * (currentZoom - 1) / (startZoom - 1)).toFixed(2);
+        //   currentTranslateY = (currentTranslateY * (currentZoom - 1) / (startZoom - 1)).toFixed(2);
+        // }
       }
+
+      // var xString = currentTranslateX.toString();
+      // var yString = currentTranslateY.toString();
+      // var zoomString = currentZoom.toString();
+      //
+      // $(mediaSelector).css("transition-duration", "0ms");
+      // $(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + ")");
     }
 
     function hold(event, target) {
@@ -285,7 +281,7 @@
     var mediaBoxInnerWidth = parseInt($(mediaContainerSelector).css("width"));
     var mediaBoxInnerHeight = parseInt($(mediaContainerSelector).css("height"));
 
-    $(mediaSelector).css("transition-duration", "0s");
+    $(mediaSelector).css("transition-duration", "0ms");
 
 		// get the two initial values:
 
