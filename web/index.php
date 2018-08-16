@@ -214,7 +214,7 @@
 				</div>
 
 				<div class="media-bar">
-					<div class="links hidden">
+					<div class="links">
 						<a class="metadata-show"></a>
 						<a class="metadata-hide"></a> |
 						<a class="original-link"></a> |
@@ -235,8 +235,10 @@
 
 		<a id="prev">&lsaquo;</a>
 		<a id="next">&rsaquo;</a>
-		<img src="img/pinch-plus.png" id="pinch-in" class="pinch" width="25" height="25">
-		<img src="img/pinch-minus.png" id="pinch-out" class="pinch" width="25" height="25" style="display: none;">
+		<div id="pinch-container">
+			<img src="img/pinch-plus.png" id="pinch-in" class="pinch" width="25" height="25">
+			<img src="img/pinch-minus.png" id="pinch-out" class="pinch" width="25" height="25">
+		</div>
 	</div>
 
 	<div id="album-view">

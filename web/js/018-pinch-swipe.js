@@ -70,14 +70,14 @@
     $(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + ")");
 
     if (currentZoom == maxAllowedZoom)
-      $("#pinch-in").hide();
+      $("#pinch-in").addClass("disabled");
     else
-      $("#pinch-in").show();
+      $("#pinch-in").removeClass("disabled");
 
     if (currentZoom == minAllowedZoom)
-      $("#pinch-out").hide();
+      $("#pinch-out").addClass("disabled");
     else
-      $("#pinch-out").show();
+      $("#pinch-out").removeClass("disabled");
 
   };
 

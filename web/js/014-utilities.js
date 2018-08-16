@@ -574,19 +574,46 @@
 
 			Utilities.setLinksVisibility();
 
+			// calculate and set pinch buttons position
 			var actualHeight = mediaElement.height();
 			var actualWidth = mediaElement.width();
 			var distanceFromImageBorder = 15;
 			var pinchBottom = (containerHeight - actualHeight) / 2 + distanceFromImageBorder;
 			var pinchRight = (containerWidth - actualWidth) / 2 + distanceFromImageBorder;
-			$(".pinch").css("right", pinchRight.toString() + "px");
-			$("#pinch-out").css("bottom", pinchBottom.toString() + "px");
-			$("#pinch-in").css("bottom", (pinchBottom + 26).toString() + "px");
+			$("#pinch-container").css("right", pinchRight.toString() + "px").css("bottom", pinchBottom.toString() + "px");
+			if ($("#center .links").is(":visible") && Utilities.isColliding($("#pinch-container"), $("#center .links"))) {
+					// overlap with the links bar: move up the pinch buttons
+					pinchBottom += $("#center .links").height();
+					$("#pinch-container").css("bottom", pinchBottom.toString() + "px");
+			}
 		}
 
 		if (event.data.callback)
 			event.data.callback();
 	};
+
+	Utilities.isColliding = function(div1, div2) {
+		// from https://gist.github.com/jtsternberg/c272d7de5b967cec2d3d
+		// Div 1 data
+		var d1_offset             = div1.offset();
+		var d1_height             = div1.outerHeight(true);
+		var d1_width              = div1.outerWidth(true);
+		var d1_distance_from_top  = d1_offset.top + d1_height;
+		var d1_distance_from_left = d1_offset.left + d1_width;
+
+		// Div 2 data
+		var d2_offset             = div2.offset();
+		var d2_height             = div2.outerHeight(true);
+		var d2_width              = div2.outerWidth(true);
+		var d2_distance_from_top  = d2_offset.top + d2_height;
+		var d2_distance_from_left = d2_offset.left + d2_width;
+
+		var not_colliding = ( d1_distance_from_top < d2_offset.top || d1_offset.top > d2_distance_from_top || d1_distance_from_left < d2_offset.left || d1_offset.left > d2_distance_from_left );
+
+		// Return whether it IS colliding
+		return ! not_colliding;
+	};
+
 
 	Utilities.lateralSocialButtons = function() {
 		return $(".ssk-group").css("display") == "block";

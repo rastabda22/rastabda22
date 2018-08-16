@@ -232,22 +232,39 @@ a.title-anchor.mobile {
 	right: 0.1em;
 }
 
-img.pinch {
+#pinch-container {
 	top: unset;
 	bottom: 15px;
 	left: unset;
 	right: 15px;
-	background-color: black;
-	opacity: 0.5;
-	cursor: pointer;
 	position: absolute;
+	z-index: 10;
+	width: 25px;
+	height: 52px;
 	z-index: 10;
 }
 
-img.pinch:hover {
-	background-color: grey;
-	opacity: 0.7;
+img.pinch {
+	background-color: black;
+	opacity: 0.4;
+	cursor: pointer;
+	position: relative;;
 }
+
+img.pinch:hover {
+	opacity: 0.6;
+}
+
+img.pinch.disabled {
+	opacity: 0.1;
+}
+
+/* img#pinch-in {
+	top: 0;
+}
+img#pinch-out {
+	top: 27px;
+} */
 
 /* #media-box {
 	display: inline;
