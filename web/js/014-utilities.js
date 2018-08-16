@@ -581,6 +581,7 @@
 			var pinchBottom = (containerHeight - actualHeight) / 2 + distanceFromImageBorder;
 			var pinchRight = (containerWidth - actualWidth) / 2 + distanceFromImageBorder;
 			$("#pinch-container").css("right", pinchRight.toString() + "px").css("bottom", pinchBottom.toString() + "px");
+
 			if ($("#center .links").is(":visible") && Utilities.isColliding($("#pinch-container"), $("#center .links"))) {
 					// overlap with the links bar: move up the pinch buttons
 					pinchBottom += $("#center .links").height();
