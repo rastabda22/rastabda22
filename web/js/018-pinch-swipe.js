@@ -285,7 +285,6 @@
     var mediaBoxInnerHeight = parseInt($(mediaContainerSelector).css("height"));
 
     currentZoom = 1;
-    PinchSwipe.setPinchButtonsVisibility();
 
     $(mediaSelector).css("transition-duration", "0ms");
 
@@ -318,6 +317,9 @@
       // $('#album-view').swipe('destroy');
 
       maxAllowedZoom = ($(mediaSelector).attr("width") / $(mediaSelector)[0].width).toFixed(2);
+
+      PinchSwipe.setPinchButtonsVisibility();
+
       $(mediaContainerSelector).swipe(swipeOrDragOptions);
       $(mediaSelector).swipe(pinchOptions);
     });
