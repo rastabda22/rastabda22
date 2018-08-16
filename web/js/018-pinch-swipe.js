@@ -69,6 +69,10 @@
     $(mediaSelector).css("transition-duration", duration + "ms");
     $(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + ")");
 
+    PinchSwipe.setPinchButtonsVisibility();
+  };
+
+  PinchSwipe.setPinchButtonsVisibility = function() {
     if (currentZoom == maxAllowedZoom)
       $("#pinch-in").addClass("disabled");
     else
@@ -78,7 +82,6 @@
       $("#pinch-out").addClass("disabled");
     else
       $("#pinch-out").removeClass("disabled");
-
   };
 
   PinchSwipe.pinchIn = function() {
@@ -281,6 +284,7 @@
     var mediaBoxInnerWidth = parseInt($(mediaContainerSelector).css("width"));
     var mediaBoxInnerHeight = parseInt($(mediaContainerSelector).css("height"));
 
+    PinchSwipe.setPinchButtonsVisibility();
     $(mediaSelector).css("transition-duration", "0ms");
 
 		// get the two initial values:
