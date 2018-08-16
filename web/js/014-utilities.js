@@ -582,10 +582,14 @@
 			var pinchRight = (containerWidth - actualWidth) / 2 + distanceFromImageBorder;
 			$("#pinch-container").css("right", pinchRight.toString() + "px").css("bottom", pinchBottom.toString() + "px");
 
-			if ($("#center .links").is(":visible") && Utilities.isColliding($("#pinch-container"), $("#center .links"))) {
+			if ($("#center .links").is(":visible")) {
+				while (Utilities.isColliding($("#pinch-container"), $("#center .links")) || Utilities.isColliding($("#pinch-container"), $(".ssk-group"))) {
 					// overlap with the links bar: move up the pinch buttons
-					pinchBottom += $("#center .links").height();
+					pinchBottom += 5;
 					$("#pinch-container").css("bottom", pinchBottom.toString() + "px");
+				}
+				// add some more space
+				$("#pinch-container").css("bottom", (pinchBottom + distanceFromImageBorder).toString() + "px");
 			}
 		}
 
