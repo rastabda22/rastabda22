@@ -69,6 +69,16 @@
 
     $(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + ")");
 
+    if (currentZoom == maxAllowedZoom)
+      $("#pinch-in").hide();
+    else
+      $("#pinch-in").show();
+
+    if (currentZoom == minAllowedZoom)
+      $("#pinch-out").hide();
+    else
+      $("#pinch-out").show();
+
   };
 
   PinchSwipe.pinchIn = function() {
