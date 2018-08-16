@@ -6,7 +6,7 @@
   var pinchSpeed = 500;
   var mediaContainerSelector = ".media-box#center .media-box-inner";
   var mediaSelector = mediaContainerSelector + " img";
-  var currentZoom = 1, zoomIncrement = 1.5, zoomDecrement = 0.666666667;
+  var currentZoom, zoomIncrement = 1.5, zoomDecrement = 0.666666667;
   var maxAllowedZoom;
   // minAllowedZoom must be <=1
   var minAllowedZoom = 1;
@@ -284,7 +284,9 @@
     var mediaBoxInnerWidth = parseInt($(mediaContainerSelector).css("width"));
     var mediaBoxInnerHeight = parseInt($(mediaContainerSelector).css("height"));
 
+    currentZoom = 1;
     PinchSwipe.setPinchButtonsVisibility();
+
     $(mediaSelector).css("transition-duration", "0ms");
 
 		// get the two initial values:
