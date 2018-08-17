@@ -12,6 +12,7 @@
   var minAllowedZoom = 1;
   var currentTranslateX = 0;
   var currentTranslateY = 0;
+  var nextSizeReduction;
 
 	/* constructor */
 	function PinchSwipe() {
@@ -55,11 +56,32 @@
 
   PinchSwipe.pinchInOut = function(baseZoom, pinchZoom, duration) {
     var startZoom = baseZoom;
+    var currentSize, nextSize, photoWidth, photoHeight, width, height;
     currentZoom = Math.max(Math.min((baseZoom * pinchZoom).toFixed(2), maxAllowedZoom), minAllowedZoom);
     if (pinchZoom < 1 && startZoom > 1) {
       // translation must be reduced too
       currentTranslateX = (currentTranslateX * (currentZoom - 1) / (startZoom - 1)).toFixed(2);
       currentTranslateY = (currentTranslateY * (currentZoom - 1) / (startZoom - 1)).toFixed(2);
+    } else if (currentZoom == maxAllowedZoom && nextSizeReduction !== false) {
+      currentSize = util.currentSize();
+      nextSize = util.nextSize();
+      if (nextSize !== false) {
+        if (nextSize === 0)
+          // util.nextSize() returns zero for the original image
+          nextSize = Math.max(currentMedia.metadata.size);
+        photoWidth = currentMedia.metadata.size[0];
+        photoHeight = currentMedia.metadata.size[1];
+        if (photoWidth > photoHeight) {
+          width = nextSize;
+          height = nextSize / photoWidth * photoHeight;
+        } else {
+          height = nextSize;
+          width = nextSize / photoHeight * photoWidth;
+        }
+        $(mediaSelector).attr("width", width).attr("height", height).attr("src", nextSizeReduction);
+        baseZoom = maxAllowedZoom;
+        maxAllowedZoom = ($(mediaSelector).attr("width") / $(mediaSelector)[0].width).toFixed(2);
+      }
     }
 
     var xString = currentTranslateX.toString();
@@ -68,6 +90,22 @@
 
     $(mediaSelector).css("transition-duration", duration + "ms");
     $(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + ")");
+
+    if (pinchZoom > 1) {
+      // preload next size photo
+      // A CHECK THAT IT'S A PHOTO IS MISSING
+      $(mediaSelector).on(
+        'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
+        function() {
+          $(mediaSelector).off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
+
+          nextSizeReduction = util.nextSizeReduction();
+          if (nextSizeReduction !== false) {
+            $.preloadImages(nextSizeReduction);
+          }
+        }
+      );
+    }
 
     PinchSwipe.setPinchButtonsVisibility();
   };
