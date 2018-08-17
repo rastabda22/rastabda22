@@ -262,26 +262,35 @@
 			}
 		}
 
+		containerWidth = container.width();
+		containerHeight = container.height();
 		containerRatio = container.width() / container.height();
 
-		for (var i = 0; i < Options.reduced_sizes.length; i++) {
-			if (Options.reduced_sizes[i] < mediaSize) {
-				if (mediaWidth > mediaHeight) {
-					reducedWidth = Options.reduced_sizes[i];
-					reducedHeight = Options.reduced_sizes[i] * mediaHeight / mediaWidth;
-				} else {
-					reducedHeight = Options.reduced_sizes[i];
-					reducedWidth = Options.reduced_sizes[i] * mediaWidth / mediaHeight;
-				}
+		if (
+			mediaRatio >= containerRatio && mediaWidth <= containerWidth * devicePixelRatio ||
+			mediaRatio < containerRatio && mediaHeight <= containerHeight * devicePixelRatio
+		) {
+			// the original media is smaller than the container, use it
+		} else {
+			for (var i = 0; i < Options.reduced_sizes.length; i++) {
+				if (Options.reduced_sizes[i] < mediaSize) {
+					if (mediaWidth > mediaHeight) {
+						reducedWidth = Options.reduced_sizes[i];
+						reducedHeight = Options.reduced_sizes[i] * mediaHeight / mediaWidth;
+					} else {
+						reducedHeight = Options.reduced_sizes[i];
+						reducedWidth = Options.reduced_sizes[i] * mediaWidth / mediaHeight;
+					}
 
-				if (
-					mediaRatio > containerRatio && reducedWidth < container.width() * devicePixelRatio ||
-					mediaRatio < containerRatio && reducedHeight < container.height() * devicePixelRatio
-				)
-					break;
+					if (
+						mediaRatio > containerRatio && reducedWidth < containerWidth * devicePixelRatio ||
+						mediaRatio < containerRatio && reducedHeight < containerHeight * devicePixelRatio
+					)
+						break;
+				}
+				chosenMedia = this.mediaPath(currentAlbum, media, Options.reduced_sizes[i]);
+				maxSize = Options.reduced_sizes[i];
 			}
-			chosenMedia = this.mediaPath(currentAlbum, media, Options.reduced_sizes[i]);
-			maxSize = Options.reduced_sizes[i];
 		}
 		return chosenMedia;
 	};
