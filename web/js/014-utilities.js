@@ -309,6 +309,60 @@
 		return mediaSrc;
 	};
 
+	Utilities.currentSize = function() {
+		// returns the size of the photo in DOM
+
+		var result;
+		var currentReduction = $(".media-box#center .media-box-inner img").attr("src");
+		if (currentReduction === currentMedia.albumName)
+			// it's the original image
+			result = 0;
+		else {
+			for (var i = 0; i < Options.reduced_sizes.length; i ++) {
+				if (currentReduction === Utilities.mediaPath(currentAlbum, currentMedia, Options.reduced_sizes[i])) {
+					result = Options.reduced_sizes[i];
+					break;
+				}
+			}
+		}
+		return result;
+	};
+
+	Utilities.nextSize = function() {
+		// returns the next bigger size of photo in DOM
+
+		var currentPhotoSize = Utilities.currentSize();
+		if (currentPhotoSize === 0)
+			// it's already the original image
+			result = false;
+		else if (currentPhotoSize === Options.reduced_sizes[0])
+			result = 0;
+		else {
+			for (var i = 1; i < Options.reduced_sizes.length; i ++) {
+				if (currentPhotoSize === Options.reduced_sizes[i]) {
+					result = Options.reduced_sizes[i - 1];
+					break;
+				}
+			}
+		}
+		return result;
+	};
+
+	Utilities.prototype.nextSizeReduction = function() {
+		// returns the file name of the reduction with next bigger size than that in DOM
+
+		var nextPhotoSize = Utilities.nextSize();
+		if (nextPhotoSize === false)
+			// it's already the original image
+			result = false;
+		else if (nextPhotoSize === 0)
+			result = currentMedia.albumName;
+		else
+			result = Utilities.mediaPath(currentAlbum, currentMedia, nextPhotoSize);
+
+		return result;
+	};
+
 	Utilities.prototype.createMediaHtml = function(media, id, fullScreenStatus) {
 		// creates a media element that can be inserted in DOM (e.g. with append/prepend methods)
 
@@ -678,6 +732,8 @@
 	Utilities.prototype.setLinksVisibility = Utilities.setLinksVisibility;
 	Utilities.prototype.mediaBoxGenerator = Utilities.mediaBoxGenerator;
 	Utilities.prototype.originalMediaBoxContainerContent = Utilities.originalMediaBoxContainerContent;
+	Utilities.prototype.currentSize = Utilities.currentSize;
+	Utilities.prototype.nextSize = Utilities.nextSize;
 
   window.Utilities = Utilities;
 }());
