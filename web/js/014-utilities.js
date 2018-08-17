@@ -378,7 +378,7 @@
 		// the actual sizes of the image
 		var mediaWidth = media.metadata.size[0], mediaHeight = media.metadata.size[1];
 		var mediaSrc, mediaElement, container;
-		var attrWidth, attrHeight;
+		var attrWidth = mediaWidth, attrHeight = mediaHeight;
 
 		if (media.mediaType == "video") {
 			if (fullScreenStatus && media.albumName.match(/\.avi$/) === null) {
