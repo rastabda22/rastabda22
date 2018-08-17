@@ -323,7 +323,7 @@
 
 		var result;
 		var currentReduction = $(".media-box#center .media-box-inner img").attr("src");
-		if (currentReduction === currentMedia.albumName)
+		if (currentReduction === encodeURI(currentMedia.albumName))
 			// it's the original image
 			result = 0;
 		else {
