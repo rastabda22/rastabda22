@@ -111,6 +111,7 @@
   };
 
   PinchSwipe.setPinchButtonsVisibility = function() {
+    $("#pinch-container").removeClass("hidden");
     if (currentZoom == maxAllowedZoom)
       $("#pinch-in").addClass("disabled");
     else
@@ -414,6 +415,7 @@
       }
     );
 
+    $("#pinch-container").addClass("hidden");
     PinchSwipe.swipeMedia(0);
 	};
 
@@ -445,6 +447,7 @@
       }
     );
 
+    $("#pinch-container").addClass("hidden");
     PinchSwipe.swipeMedia(windowWidth * 2);
 	};
 
