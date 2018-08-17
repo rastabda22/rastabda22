@@ -310,7 +310,7 @@
 
 		$("#error-too-many-images").hide();
 		$(".search-failed").hide();
-		$("#media-view").removeClass("hidden");
+		// $("#media-view").removeClass("hidden");
 		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
 		var array = PhotoFloat.decodeHash(hash);
 		var albumHash = array[0];
@@ -570,7 +570,7 @@
 										}
 										// the following instruction makes me see that numSearchAlbumsReady never reaches numSubAlbumsToGet when numSubAlbumsToGet is > 1000,
 										// numSearchAlbumsReady remains < 1000
-										
+
 										numSearchAlbumsReady ++;
 										if (numSearchAlbumsReady >= numSubAlbumsToGet) {
 											// all the albums have been got, we can merge the results

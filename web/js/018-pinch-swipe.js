@@ -478,7 +478,7 @@
         300,
         function() {
   				window.location.href = dest;
-  				$("#media-view").hide();
+  				// $("#media-view").addClass("hidden");
   				$(mediaContainerSelector).css('top', "");
   			}
       );

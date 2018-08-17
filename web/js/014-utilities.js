@@ -599,6 +599,7 @@
 		$(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
 
 		mediaElement.show();
+		// $("#media-view").removeClass("hidden");
 
 		if (id === "center") {
 			$("#prev").css("left", "");

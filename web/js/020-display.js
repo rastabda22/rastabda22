@@ -1450,13 +1450,13 @@ $(document).ready(function() {
 		}
 
 		if (currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)) {
+			$("#media-view").addClass("hidden");
 			$(".thumb-container").removeClass("current-thumb");
 			$("#album-view").removeClass("media-view-container");
 			if (currentAlbum.subalbums.length > 0)
 				$("#subalbums").show();
 			else
 				$("#subalbums").hide();
-			$("#media-view").hide();
 			$("#media-view").removeClass("no-bottom-space");
 			$("#album-view").removeClass("no-bottom-space");
 			// $("#media-box-inner").show().children().last().remove();
@@ -1508,6 +1508,8 @@ $(document).ready(function() {
 			// ps.addAlbumGesturesDetection();
 		} else {
 			// currentMedia !== null
+			$("#media-view").removeClass("hidden");
+
 			if (currentAlbum.media.length == 1)
 				$("#album-view").addClass("hidden");
 			else
@@ -1552,6 +1554,8 @@ $(document).ready(function() {
 			$("#pinch-in").on("click", ps.pinchIn);
 			$("#pinch-out").on("click", ps.pinchOut);
 
+			$(mediaSelector).off(triggerLoad);
+
 			if (id === "center") {
 				ps.addMediaGesturesDetection();
 				if (album.media.length > 1) {
@@ -1565,6 +1569,9 @@ $(document).ready(function() {
 		var exposureTime, albumViewHeight, heightForMedia, heightForMediaAndTitle;
 		var savedSearchSubAlbumHash, savedSearchAlbumHash;
 		var previousMediaIndex, nextMediaIndex;
+
+		if (id === "center")
+			$("#media-view").removeClass("hidden");
 
 		array = phFl.decodeHash(location.hash);
 		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
@@ -1954,7 +1961,7 @@ $(document).ready(function() {
 		translate();
 
 		$("#subalbums").hide();
-		$("#media-view").show();
+		// $("#media-view").removeClass("hidden");
 	}
 
 	function setOptions() {
@@ -2195,6 +2202,7 @@ $(document).ready(function() {
 			// $("#media-view .title").show();
 			showMedia(currentAlbum, currentMedia, 'center');
 		} else {
+
 			// $("#album-view .title").show();
 			setTitle("album", null);
 			// $("#media-view .title").hide();
