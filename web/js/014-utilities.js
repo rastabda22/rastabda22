@@ -573,29 +573,34 @@
 			}
 
 			Utilities.setLinksVisibility();
-
-			// calculate and set pinch buttons position
-			var actualHeight = mediaElement.height();
-			var actualWidth = mediaElement.width();
-			var distanceFromImageBorder = 15;
-			var pinchBottom = (containerHeight - actualHeight) / 2 + distanceFromImageBorder;
-			var pinchRight = (containerWidth - actualWidth) / 2 + distanceFromImageBorder;
-			$("#pinch-container").css("right", pinchRight.toString() + "px").css("bottom", pinchBottom.toString() + "px");
-
-			if ($("#center .links").is(":visible")) {
-				while (Utilities.isColliding($("#pinch-container"), $("#center .links")) || Utilities.isColliding($("#pinch-container"), $(".ssk-group"))) {
-					// overlap with the links bar: move up the pinch buttons
-					pinchBottom += 5;
-					$("#pinch-container").css("bottom", pinchBottom.toString() + "px");
-				}
-				// add some more space
-				$("#pinch-container").css("bottom", (pinchBottom + distanceFromImageBorder).toString() + "px");
-			}
+			Utilities.setPinchButtonsPosition(containerHeight, containerWidth);
 		}
 
 		if (event.data.callback)
 			event.data.callback();
 	};
+
+	Utilities.setPinchButtonsPosition = function(containerHeight, containerWidth) {
+		// calculate and set pinch buttons position
+
+		var mediaElement = $(".media-box#center .media-box-inner img");
+		var actualHeight = mediaElement.height();
+		var actualWidth = mediaElement.width();
+		var distanceFromImageBorder = 15;
+		var pinchBottom = Math.round((containerHeight - actualHeight) / 2 + distanceFromImageBorder);
+		var pinchRight = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
+		$("#pinch-container").css("right", pinchRight.toString() + "px").css("bottom", pinchBottom.toString() + "px");
+
+		if ($("#center .links").is(":visible")) {
+			while (Utilities.isColliding($("#pinch-container"), $("#center .links")) || Utilities.isColliding($("#pinch-container"), $(".ssk-group"))) {
+				// overlap with the links bar: move up the pinch buttons
+				pinchBottom += 5;
+				$("#pinch-container").css("bottom", pinchBottom.toString() + "px");
+			}
+			// add some more space
+			$("#pinch-container").css("bottom", (pinchBottom + distanceFromImageBorder).toString() + "px");
+		}
+	}
 
 	Utilities.isColliding = function(div1, div2) {
 		// from https://gist.github.com/jtsternberg/c272d7de5b967cec2d3d
