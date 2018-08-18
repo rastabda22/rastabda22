@@ -1569,7 +1569,7 @@ $(document).ready(function() {
 		}
 
 		var text, thumbnailSize, triggerLoad, mediaHtml, mediaSelector, mediaSrc;
-		var exposureTime, albumViewHeight, heightForMedia, heightForMediaAndTitle;
+		var exposureTime, heightForMedia, heightForMediaAndTitle;
 		var savedSearchSubAlbumHash, savedSearchAlbumHash;
 		var previousMediaIndex, nextMediaIndex;
 
@@ -1607,18 +1607,7 @@ $(document).ready(function() {
 		else if (id === "right")
 			setTitle(id, nextMedia);
 
-
-
-		albumViewHeight = $("#album-view").outerHeight();
-		heightForMediaAndTitle = windowHeight - albumViewHeight;
-
-		// slightly separate media from bottom thumbnails
-		if (albumViewHeight)
-			heightForMediaAndTitle -= 5;
-
-		// if (Utilities.bottomSocialButtons() && containerBottom < $(".ssk").outerHeight())
-		// 	// correct container bottom when social buttons are on the bottom
-		// 	heightForMediaAndTitle -= $(".ssk").outerHeight();
+		heightForMediaAndTitle = util.mediaBoxContainerHeight();
 
 		heightForMedia = heightForMediaAndTitle - $(".media-box#" + id + " .title").outerHeight();
 

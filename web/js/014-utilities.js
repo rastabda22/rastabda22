@@ -509,6 +509,22 @@
 			return this.pathJoin([Options.server_cache_path, hash]);
 	};
 
+	Utilities.mediaBoxContainerHeight = function() {
+		var albumViewHeight, heightForMediaAndTitle;
+		windowHeight = $(window).innerHeight();
+		if ($("#album-view").is(":visible"))
+			albumViewHeight = parseInt($("#album-view").css("height"));
+		else
+			albumViewHeight = 0;
+		heightForMediaAndTitle = windowHeight - albumViewHeight;
+
+		if (albumViewHeight)
+			// slightly separate media from bottom thumbnails
+			heightForMediaAndTitle -= 5;
+
+		return heightForMediaAndTitle;
+	}
+
 	Utilities.prototype.scaleMedia = function(event) {
 		// this function works on the img tag identified by event.data.id
 		// it adjusts width, height and position so that it fits in its parent (<div class="bedia-box-inner">, or the whole window)
@@ -519,23 +535,10 @@
 		var mediaBarBottom = 0;
 		var mediaWidth, mediaHeight, attrWidth, attrHeight, ratio;
 		var id = event.data.id;
-		var albumViewHeight, heightForMedia, heightForMediaAndTitle, titleHeight;
+		var heightForMedia, heightForMediaAndTitle, titleHeight;
 
 		windowWidth = $(window).innerWidth();
-		windowHeight = $(window).innerHeight();
-		if ($("#album-view").is(":visible"))
-			albumViewHeight = $("#album-view").outerHeight();
-		else
-			albumViewHeight = 0;
-		heightForMediaAndTitle = windowHeight - albumViewHeight;
-
-		if (albumViewHeight)
-			// slightly separate media from bottom thumbnails
-			heightForMediaAndTitle -= 5;
-
-		// if (Utilities.bottomSocialButtons() && containerBottom < $(".ssk").outerHeight())
-		// 	// correct container bottom when social buttons are on the bottom
-		// 	heightForMediaAndTitle -= $(".ssk").outerHeight();
+		heightForMediaAndTitle = Utilities.mediaBoxContainerHeight();
 
 		// widths must be set before calculating title height
 		if (event.data.resize && id === "center") {
@@ -732,6 +735,7 @@
 	Utilities.prototype.nextSize = Utilities.nextSize;
 	Utilities.prototype.isColliding = Utilities.isColliding;
 	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
+	Utilities.prototype.mediaBoxContainerHeight = Utilities.mediaBoxContainerHeight;
 
   window.Utilities = Utilities;
 }());
