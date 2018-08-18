@@ -97,7 +97,6 @@
 
     if (pinchZoom > 1) {
       // preload next size photo
-      // A CHECK THAT IT'S A PHOTO IS MISSING
       nextSizeReduction = util.nextSizeReduction();
       if (nextSizeReduction !== false) {
         $.preloadImages(nextSizeReduction);
@@ -337,8 +336,6 @@
     currentZoom = 1;
 
     $(mediaSelector).css("transition-duration", "0ms");
-
-		// get the two initial values:
 
     var swipeOrDragOptions = {
       triggerOnTouchEnd: true,
