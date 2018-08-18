@@ -1709,7 +1709,8 @@ $(document).ready(function() {
 				util.scaleMedia
 			);
 			// in case the image has been already loaded, trigger the event
-			$(mediaSelector).trigger(triggerLoad);
+			if ($(mediaSelector)[0].complete)
+				$(mediaSelector).trigger(triggerLoad);
 
 			if (id === "center") {
 				$(window).off("resize");
