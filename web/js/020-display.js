@@ -1558,6 +1558,8 @@ $(document).ready(function() {
 
 			if (id === "center") {
 				ps.addMediaGesturesDetection();
+				ps.setPinchButtonsPosition(containerHeight, containerWidth);
+
 				if (album.media.length > 1) {
 					showMedia(album, prevMedia, 'left');
 					showMedia(album, nextMedia, 'right');

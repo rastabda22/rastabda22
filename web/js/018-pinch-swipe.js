@@ -130,6 +130,28 @@
     }
   };
 
+  PinchSwipe.prototype.setPinchButtonsPosition = function(containerHeight, containerWidth) {
+		// calculate and set pinch buttons position
+
+		var mediaElement = $(".media-box#center .media-box-inner img");
+		var actualHeight = mediaElement.height();
+		var actualWidth = mediaElement.width();
+		var distanceFromImageBorder = 15;
+		var pinchBottom = Math.round((containerHeight - actualHeight) / 2 + distanceFromImageBorder);
+		var pinchRight = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
+		$("#pinch-container").css("right", pinchRight.toString() + "px").css("bottom", pinchBottom.toString() + "px");
+
+		if ($("#center .links").is(":visible")) {
+			while (Utilities.isColliding($("#pinch-container"), $("#center .links")) || Utilities.isColliding($("#pinch-container"), $(".ssk-group"))) {
+				// overlap with the links bar: move up the pinch buttons
+				pinchBottom += 5;
+				$("#pinch-container").css("bottom", pinchBottom.toString() + "px");
+			}
+			// add some more space
+			$("#pinch-container").css("bottom", (pinchBottom + distanceFromImageBorder).toString() + "px");
+		}
+	};
+
   PinchSwipe.pinchIn = function() {
     PinchSwipe.pinchInOut(currentZoom, zoomIncrement, pinchSpeed);
   };
