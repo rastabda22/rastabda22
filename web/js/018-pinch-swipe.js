@@ -98,17 +98,10 @@
     if (pinchZoom > 1) {
       // preload next size photo
       // A CHECK THAT IT'S A PHOTO IS MISSING
-      $(mediaSelector).on(
-        'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
-        function() {
-          $(mediaSelector).off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
-
-          nextSizeReduction = util.nextSizeReduction();
-          if (nextSizeReduction !== false) {
-            $.preloadImages(nextSizeReduction);
-          }
-        }
-      );
+      nextSizeReduction = util.nextSizeReduction();
+      if (nextSizeReduction !== false) {
+        $.preloadImages(nextSizeReduction);
+      }
     }
 
     PinchSwipe.setPinchButtonsVisibility();
