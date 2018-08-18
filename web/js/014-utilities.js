@@ -319,19 +319,20 @@
 	};
 
 	Utilities.currentSize = function() {
-		// returns the size of the photo in DOM
+		// returns the pixel size of the photo in DOM
+		// returns 0 if it's the original image
 
 		var result;
 		var currentReduction = $(".media-box#center .media-box-inner img").attr("src");
-		if (currentReduction === encodeURI(currentMedia.albumName))
-			// it's the original image
-			result = 0;
-		else {
-			for (var i = 0; i < Options.reduced_sizes.length; i ++) {
-				if (currentReduction === Utilities.mediaPath(currentAlbum, currentMedia, Options.reduced_sizes[i])) {
-					result = Options.reduced_sizes[i];
-					break;
-				}
+
+		// default: it's the original image
+		result = 0;
+
+		// check if it's a reduction
+		for (var i = 0; i < Options.reduced_sizes.length; i ++) {
+			if (currentReduction === Utilities.mediaPath(currentAlbum, currentMedia, Options.reduced_sizes[i])) {
+				result = Options.reduced_sizes[i];
+				break;
 			}
 		}
 		return result;
@@ -339,11 +340,14 @@
 
 	Utilities.nextSize = function() {
 		// returns the next bigger size of photo in DOM
+		// returns 0 if the image in the DOM is the biggest available reduction
+		// returns false if in the DOM there is the original image
 
 		var currentPhotoSize = Utilities.currentSize();
+
 		if (currentPhotoSize === 0)
-			// it's already the original image
-			result = false;
+			// default: it's already the original image
+			var result = false;
 		else if (currentPhotoSize === Options.reduced_sizes[0])
 			result = 0;
 		else {
@@ -354,13 +358,19 @@
 				}
 			}
 		}
+
+		// return the original image size if the reduction size is bigger than image size
+		if (result > Math.max(currentMedia.metadata.size[0], currentMedia.metadata.size[1]))
+			result = 0;
+
 		return result;
 	};
 
 	Utilities.prototype.nextSizeReduction = function() {
-		// returns the file name of the reduction with next bigger size than that in DOM
+		// returns the file name of the reduction with the next bigger size than the reduction in DOM
 
 		var nextPhotoSize = Utilities.nextSize();
+
 		if (nextPhotoSize === false)
 			// it's already the original image
 			result = false;
