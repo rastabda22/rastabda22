@@ -338,7 +338,7 @@
     initialMediaWidthOnScreen = $(mediaSelector)[0].width;
     maxAllowedZoom = ($(mediaSelector).attr("width") / initialMediaWidthOnScreen).toFixed(2);
     if (currentZoom > 1) {
-      // change currentZoom so that the photo looks like before
+      // change zoom so that the photo looks like before
       currentZoom = currentZoom / initialMediaWidthOnScreen * pastInitialMediaWidthOnScreen;
       PinchSwipe.pinchInOut(pastCurrentZoom, currentZoom / pastCurrentZoom, 0);
     }
