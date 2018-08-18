@@ -110,19 +110,19 @@
   PinchSwipe.setPinchButtonsVisibility = function() {
     $("#pinch-container").removeClass("hidden");
 
+    $("#pinch-in").off("click");
     if (currentZoom == maxAllowedZoom) {
-      $("#pinch-in").off("click");
       $("#pinch-in").addClass("disabled");
     } else {
-      $("#pinch-in").on("click", ps.pinchIn);
+      $("#pinch-in").on("click", PinchSwipe.pinchIn);
       $("#pinch-in").removeClass("disabled");
     }
 
+    $("#pinch-out").off("click");
     if (currentZoom == minAllowedZoom) {
-      $("#pinch-out").off("click");
       $("#pinch-out").addClass("disabled");
     } else {
-      $("#pinch-out").on("click", ps.pinchOut);
+      $("#pinch-out").on("click", PinchSwipe.pinchOut);
       $("#pinch-out").removeClass("disabled");
     }
   };
