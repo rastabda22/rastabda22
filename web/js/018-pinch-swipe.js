@@ -228,8 +228,8 @@
           } else {
             // distance is the cumulative value from start
             // dragVector is calculated by pinchStatus
-            currentTranslateX = Math.max(Math.min(baseTranslateX + distance * dragVector["x"], maxAllowedTranslateX), minAllowedTranslateX);
-            currentTranslateY = Math.max(Math.min(baseTranslateY + distance * dragVector["y"], maxAllowedTranslateY), minAllowedTranslateY);
+            currentTranslateX = Math.max(Math.min(baseTranslateX + distance * dragVector.x, maxAllowedTranslateX), minAllowedTranslateX);
+            currentTranslateY = Math.max(Math.min(baseTranslateY + distance * dragVector.y, maxAllowedTranslateY), minAllowedTranslateY);
           }
 
           var xString = currentTranslateX.toString();
@@ -244,8 +244,8 @@
     function pinchStatus(event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData) {
       // the drag vector is calculated here for use in the swipeStatus function
       // lamentably, swipeStatus doesn't return info about the swipt vector
-      var dragVectorX = fingerData[0]["end"]["x"] - fingerData[0]["start"]["x"];
-      var dragVectorY = fingerData[0]["end"]["y"] - fingerData[0]["start"]["y"];
+      var dragVectorX = fingerData[0].end.x - fingerData[0].start.x;
+      var dragVectorY = fingerData[0].end.y - fingerData[0].start.y;
       var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
       if (dragVectorLength)
         // normalize the vector
