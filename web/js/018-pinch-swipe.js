@@ -366,17 +366,31 @@
       fingers: 2
     };
 
-    $(function () {
-      // $('#album-view').swipe('destroy');
+    nextSizeReduction = util.nextSizeReduction();
+    PinchSwipe.initialize();
 
-      maxAllowedZoom = ($(mediaSelector).attr("width") / $(mediaSelector)[0].width).toFixed(2);
+    $(mediaContainerSelector).swipe(swipeOrDragOptions);
+    $(mediaSelector).swipe(pinchOptions);
+  };
 
-      PinchSwipe.setPinchButtonsVisibility();
+  PinchSwipe.initialize = function () {
+    // $('#album-view').swipe('destroy');
 
-      $(mediaContainerSelector).swipe(swipeOrDragOptions);
-      $(mediaSelector).swipe(pinchOptions);
-    });
-	};
+    if (currentZoom > 1) {
+      var pastInitialMediaWidthOnScreen = initialMediaWidthOnScreen;
+      var pastCurrentZoom = currentZoom;
+    }
+    initialMediaWidthOnScreen = $(mediaSelector)[0].width;
+    maxAllowedZoom = ($(mediaSelector).attr("width") / initialMediaWidthOnScreen).toFixed(2);
+    if (currentZoom > 1) {
+      // change currentZoom so that the photo looks like before
+      currentZoom = currentZoom / initialMediaWidthOnScreen * pastInitialMediaWidthOnScreen;
+      PinchSwipe.pinchInOut(pastCurrentZoom, currentZoom / pastCurrentZoom, 0);
+    }
+    console.log(pastInitialMediaWidthOnScreen, initialMediaWidthOnScreen, pastCurrentZoom, currentZoom, $(mediaSelector).attr("src"), "max", maxAllowedZoom);
+
+    PinchSwipe.setPinchButtonsVisibility();
+  };
 
   PinchSwipe.prototype.swipeOnWheel = function(event, delta) {
 		if (currentMedia === null)
@@ -507,6 +521,8 @@
 	PinchSwipe.prototype.pinchOut = PinchSwipe.pinchOut;
 	PinchSwipe.prototype.addMediaGesturesDetection = PinchSwipe.addMediaGesturesDetection;
 	PinchSwipe.prototype.addAlbumGesturesDetection = PinchSwipe.addAlbumGesturesDetection;
+	PinchSwipe.prototype.setPinchButtonsVisibility = PinchSwipe.setPinchButtonsVisibility;
+	PinchSwipe.prototype.initialize = PinchSwipe.initialize;
 
   window.PinchSwipe = PinchSwipe;
 }());

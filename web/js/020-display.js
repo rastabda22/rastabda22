@@ -1725,15 +1725,18 @@ $(document).ready(function() {
 
 						event.data.id = "center";
 						event.data.media = media;
+						event.data.callback = pinchSwipeInitialization;
 						util.scaleMedia(event);
 
 						if (album.media.length > 1) {
 							event.data.id = "left";
 							event.data.media = prevMedia;
+							event.data.callback = pinchSwipeInitialization;
 							util.scaleMedia(event);
 
 							event.data.id = "right";
 							event.data.media = nextMedia;
+							event.data.callback = pinchSwipeInitialization;
 							util.scaleMedia(event);
 						}
 					}
@@ -1999,6 +2002,11 @@ $(document).ready(function() {
 			$(".title").addClass("hidden");
 		else
 			$(".title").removeClass("hidden");
+	}
+
+	function pinchSwipeInitialization () {
+		ps.initialize();
+		ps.setPinchButtonsPosition(containerHeight, containerWidth);
 	}
 
 	function getBooleanCookie(key) {
