@@ -12,7 +12,8 @@
   var minAllowedZoom = 1;
   var currentTranslateX = 0;
   var currentTranslateY = 0;
-  var nextSizeReduction;
+  var nextSizeReduction = false;
+  var initialMediaWidthOnScreen;
 
 	/* constructor */
 	function PinchSwipe() {
@@ -55,33 +56,36 @@
   };
 
   PinchSwipe.pinchInOut = function(baseZoom, pinchZoom, duration) {
-    var startZoom = baseZoom;
-    var currentSize, nextSize, photoWidth, photoHeight, width, height;
+    console.log("----", baseZoom, pinchZoom);
+    var nextSize, photoWidth, photoHeight, width, height;
     currentZoom = Math.max(Math.min((baseZoom * pinchZoom).toFixed(2), maxAllowedZoom), minAllowedZoom);
-    if (pinchZoom < 1 && startZoom > 1) {
+    console.log(currentZoom);
+    if (pinchZoom < 1 && baseZoom > 1) {
       // translation must be reduced too
-      currentTranslateX = (currentTranslateX * (currentZoom - 1) / (startZoom - 1)).toFixed(2);
-      currentTranslateY = (currentTranslateY * (currentZoom - 1) / (startZoom - 1)).toFixed(2);
-    } else if (currentZoom == maxAllowedZoom && nextSizeReduction !== false) {
-      currentSize = util.currentSize();
-      nextSize = util.nextSize();
-      if (nextSize !== false) {
-        if (nextSize === 0)
-          // util.nextSize() returns zero for the original image
-          nextSize = Math.max(currentMedia.metadata.size);
-        photoWidth = currentMedia.metadata.size[0];
-        photoHeight = currentMedia.metadata.size[1];
-        if (photoWidth > photoHeight) {
-          width = nextSize;
-          height = nextSize / photoWidth * photoHeight;
-        } else {
-          height = nextSize;
-          width = nextSize / photoHeight * photoWidth;
+      currentTranslateX = (currentTranslateX * (currentZoom - 1) / (baseZoom - 1)).toFixed(2);
+      currentTranslateY = (currentTranslateY * (currentZoom - 1) / (baseZoom - 1)).toFixed(2);
+    } else if (currentZoom == maxAllowedZoom) {
+      if (nextSizeReduction !== false) {
+        nextSize = util.nextSize();
+        if (nextSize !== false) {
+          if (nextSize === 0)
+            // util.nextSize() returns zero for the original image
+            nextSize = Math.max(currentMedia.metadata.size[0], currentMedia.metadata.size[1]);
+          photoWidth = currentMedia.metadata.size[0];
+          photoHeight = currentMedia.metadata.size[1];
+          if (photoWidth > photoHeight) {
+            width = nextSize;
+            height = (nextSize / photoWidth * photoHeight).toFixed(0);
+          } else {
+            height = nextSize;
+            width = (nextSize / photoHeight * photoWidth).toFixed(0);
+          }
+          $(mediaSelector).attr("width", width).attr("height", height).attr("src", nextSizeReduction);
+          maxAllowedZoom = ($(mediaSelector).attr("width") / initialMediaWidthOnScreen).toFixed(2);
+          console.log($(mediaSelector).attr("src"), $(mediaSelector).attr("width"), "max", maxAllowedZoom);
         }
-        $(mediaSelector).attr("width", width).attr("height", height).attr("src", nextSizeReduction);
-        baseZoom = maxAllowedZoom;
-        maxAllowedZoom = ($(mediaSelector).attr("width") / $(mediaSelector)[0].width).toFixed(2);
       }
+      baseZoom = maxAllowedZoom;
     }
 
     var xString = currentTranslateX.toString();
