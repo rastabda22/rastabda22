@@ -211,10 +211,7 @@ a.title-anchor.mobile {
 	position: absolute;
 	width: auto;
 	height: auto;
-	font-size: 4.5em;
-	line-height: 0;
 	top: 40%;
-	font-weight: bold;
 	opacity: 0.35;
 	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=35)";
 	filter: alpha(opacity=35);
@@ -225,11 +222,11 @@ a.title-anchor.mobile {
 }
 
 #prev {
-	left: 0.1em;
+	left: 0;
 }
 
 #next {
-	right: 0.1em;
+	right: 0;
 }
 
 #pinch-container {
