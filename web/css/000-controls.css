@@ -257,6 +257,7 @@ img.pinch:hover {
 
 img.pinch.disabled {
 	opacity: 0.1;
+	cursor: default;
 }
 
 /* img#pinch-in {
