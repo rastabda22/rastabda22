@@ -605,12 +605,6 @@
 		// $("#media-view").removeClass("hidden");
 
 		if (id === "center") {
-			$("#prev").css("left", "");
-			if (! fullScreenStatus && currentAlbum.media.length > 1 && Utilities.lateralSocialButtons() && Utilities.isColliding($(".ssk-left"), $("#prev"))) {
-				// correct back arrow position when social buttons are on the left
-				$("#prev").css("left", (parseInt($("#prev").css("left")) + $(".ssk").outerWidth()) + "px");
-			}
-
 			// position next/prev buttons verticallly centered in media-box-inner
 			var mediaBoxInnerHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
 			titleHeight = parseInt($(".media-box#center .title").css("height"));
@@ -706,6 +700,18 @@
 		}
 	};
 
+	Utilities.correctPrevNextPosition = function() {
+		$("#prev").css("left", "");
+		if (! fullScreenStatus && currentAlbum.media.length > 1 && Utilities.lateralSocialButtons() && Utilities.isColliding($(".ssk-left"), $("#prev")))
+			// correct back arrow position when social buttons are on the left
+			$("#prev").css("left", $(".ssk").outerWidth().toString() + "px");
+
+		$("#next").css("right", "");
+		if (! fullScreenStatus && currentAlbum.media.length > 1 && Utilities.isColliding($("#pinch-container"), $("#next")))
+			// correct forward arrow position when they overlap with pinch buttons
+			$("#next").css("right", ($("#pinch-container").outerWidth() + parseInt($("#pinch-container").css("right"))).toString() + "px");
+	}
+
 	Utilities.mediaBoxGenerator = function(id) {
 		if (id === 'left')
 			$("#media-box-container").prepend(Utilities.originalMediaBoxContainerContent.replace('id="center"', 'id="left"'));
@@ -725,6 +731,7 @@
 	Utilities.prototype.currentSize = Utilities.currentSize;
 	Utilities.prototype.nextSize = Utilities.nextSize;
 	Utilities.prototype.isColliding = Utilities.isColliding;
+	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
 
   window.Utilities = Utilities;
 }());

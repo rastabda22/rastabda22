@@ -1559,6 +1559,7 @@ $(document).ready(function() {
 			if (id === "center") {
 				ps.addMediaGesturesDetection();
 				ps.setPinchButtonsPosition(containerHeight, containerWidth);
+				util.correctPrevNextPosition();
 
 				if (album.media.length > 1) {
 					showMedia(album, prevMedia, 'left');
@@ -2007,6 +2008,7 @@ $(document).ready(function() {
 	function pinchSwipeInitialization () {
 		ps.initialize();
 		ps.setPinchButtonsPosition(containerHeight, containerWidth);
+		util.correctPrevNextPosition();
 	}
 
 	function getBooleanCookie(key) {
