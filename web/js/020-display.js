@@ -2155,6 +2155,13 @@ $(document).ready(function() {
 		$("#loading").hide();
 
 		$(window).off("resize");
+		$(window).on(
+			"resize",
+			function () {
+				windowWidth = $(window).outerWidth();
+				windowHeight = $(window).outerHeight();
+			}
+		);
 
 		if (album === currentAlbum && media === currentMedia)
 			return;
