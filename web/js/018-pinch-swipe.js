@@ -262,22 +262,7 @@
       } else if (phase === "move" && fingerCount >= 2) {
         // phase is "move"
         PinchSwipe.pinchInOut(baseZoom, pinchZoom, 0);
-        // var startZoom = currentZoom;
-        // currentZoom = Math.max(Math.min((baseZoom * pinchZoom).toFixed(2), maxAllowedZoom), minAllowedZoom);
-        //
-        // if (pinchZoom < 1 && startZoom > 1) {
-        //   // translation must be reduced too
-        //   currentTranslateX = (currentTranslateX * (currentZoom - 1) / (startZoom - 1)).toFixed(2);
-        //   currentTranslateY = (currentTranslateY * (currentZoom - 1) / (startZoom - 1)).toFixed(2);
-        // }
       }
-
-      // var xString = currentTranslateX.toString();
-      // var yString = currentTranslateY.toString();
-      // var zoomString = currentZoom.toString();
-      //
-      // $(mediaSelector).css("transition-duration", "0ms");
-      // $(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + ")");
     }
 
     function hold(event, target) {

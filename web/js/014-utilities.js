@@ -558,17 +558,6 @@
 			container = $(window);
 		else {
 			container = $(".media-box#" + id + " .media-box-inner");
-			// if ($("#album-view").is(":visible"))
-			// 	containerBottom = $("#album-view").outerHeight();
-			// else if (Utilities.bottomSocialButtons() && containerBottom < $(".ssk").outerHeight())
-			// 	// correct container bottom when social buttons are on the bottom
-			// 	containerBottom = $(".ssk").outerHeight();
-			// containerTop = 0;
-			// if ($(".media-box#" + id + " .title").is(":visible"))
-			// 	containerTop = $(".media-box#" + id + " .title").outerHeight();
-			// containerHeight -= containerBottom + containerTop;
-			// container.css("top", containerTop + "px");
-			// container.css("bottom", containerBottom + "px");
 		}
 
 		containerHeight = heightForMedia;
