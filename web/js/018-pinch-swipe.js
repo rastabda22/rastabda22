@@ -56,10 +56,8 @@
   };
 
   PinchSwipe.pinchInOut = function(baseZoom, pinchZoom, duration) {
-    console.log("----", baseZoom, pinchZoom);
     var nextSize, photoWidth, photoHeight, width, height;
     currentZoom = Math.max(Math.min((baseZoom * pinchZoom).toFixed(2), maxAllowedZoom), minAllowedZoom);
-    console.log(currentZoom);
     if (pinchZoom < 1 && baseZoom > 1) {
       // translation must be reduced too
       currentTranslateX = (currentTranslateX * (currentZoom - 1) / (baseZoom - 1)).toFixed(2);
@@ -82,7 +80,6 @@
           }
           $(mediaSelector).attr("width", width).attr("height", height).attr("src", nextSizeReduction);
           maxAllowedZoom = ($(mediaSelector).attr("width") / initialMediaWidthOnScreen).toFixed(2);
-          console.log($(mediaSelector).attr("src"), $(mediaSelector).attr("width"), "max", maxAllowedZoom);
         }
       }
       baseZoom = maxAllowedZoom;
@@ -155,42 +152,6 @@
   PinchSwipe.pinchOut = function() {
     PinchSwipe.pinchInOut(currentZoom, zoomDecrement, pinchSpeed);
   };
-
-  // // define the actions to be taken on pinch, swipe, tap, double tap
-	// PinchSwipe.addAlbumGesturesDetection = function() {
-  //
-  //   var swipeOptions = {
-  //     triggerOnTouchEnd: true,
-  //     swipeStatus: swipeStatus,
-  //     allowPageScroll: "vertical",
-  //     // allowPageScroll: "vertical",
-  //     threshold: 75
-  //   };
-  //
-  //   /**
-  //    * Catch each phase of the swipe.
-  //    * move : we drag the div
-  //    * cancel : we animate back to where we were
-  //    * end : we animate to the next image
-  //    */
-  //   function swipeStatus(event, phase, direction, distance , duration , fingerCount) {
-  //     //If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
-  //     console.log(event, phase, direction, distance , duration , fingerCount);
-  //     if (phase == "move" && direction == "down") {
-  //       PinchSwipe.swipeDown(upLink);
-  //     }
-  //   }
-  //
-  //   /**
-  //    * Manually update the position of the imgs on drag
-  //    */
-  //
-  //   $(function () {
-  //     $(mediaContainerSelector).swipe('destroy');
-  //     $(mediaSelector).swipe('destroy');
-  //     $('#album-view').swipe(swipeOptions);
-  //   });
-	// };
 
   // define the actions to be taken on pinch, swipe, tap, double tap
 	PinchSwipe.addMediaGesturesDetection = function() {
@@ -381,7 +342,6 @@
       currentZoom = currentZoom / initialMediaWidthOnScreen * pastInitialMediaWidthOnScreen;
       PinchSwipe.pinchInOut(pastCurrentZoom, currentZoom / pastCurrentZoom, 0);
     }
-    console.log(pastInitialMediaWidthOnScreen, initialMediaWidthOnScreen, pastCurrentZoom, currentZoom, $(mediaSelector).attr("src"), "max", maxAllowedZoom);
 
     PinchSwipe.setPinchButtonsVisibility();
   };
