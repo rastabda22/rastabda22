@@ -693,7 +693,7 @@
 
 	Utilities.prototype.setNextPrevVisibility = function() {
 		if (isMobile.any()) {
-			$("#next, #prev").css("display", "inline").css("opacity", 1);
+			$("#next, #prev").css("display", "inline").css("opacity", 0.5);
 		} else {
 			$("#next, #prev").off('mouseenter mouseleave');
 			$("#next, #prev").on('mouseenter', function() {
