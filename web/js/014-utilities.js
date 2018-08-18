@@ -601,11 +601,6 @@
 			}
 		}
 
-		if (Utilities.bottomSocialButtons()) {
-			mediaBarBottom = $(".ssk").outerHeight();
-		}
-		$(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
-
 		mediaElement.show();
 		// $("#media-view").removeClass("hidden");
 
@@ -637,6 +632,11 @@
 
 			Utilities.setLinksVisibility();
 		}
+
+		if (Utilities.bottomSocialButtons()) {
+			mediaBarBottom = $(".ssk").outerHeight();
+		}
+		$(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
 
 		if (event.data.callback) {
 			if (event.data.callback.name !== "pinchSwipeInitialization" || id === "center")
