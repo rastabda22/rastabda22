@@ -2008,6 +2008,12 @@ $(document).ready(function() {
 			$(".title").addClass("hidden-by-option");
 		else
 			$(".title").removeClass("hidden-by-option");
+
+			if (Options.hide_bottom_thumbnails && (currentMedia != null || util.isAlbumWithOneMedia(currentAlbum))) {
+				$("#album-view").addClass("hidden-by-option");
+			} else {
+				$("#album-view").removeClass("hidden-by-option");
+			}
 	}
 
 	function pinchSwipeInitialization (containerHeight, containerWidth) {
