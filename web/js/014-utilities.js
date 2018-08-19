@@ -343,11 +343,12 @@
 		// returns 0 if the image in the DOM is the biggest available reduction
 		// returns false if in the DOM there is the original image
 
+		var result;
 		var currentPhotoSize = Utilities.currentSize();
 
 		if (currentPhotoSize === 0)
 			// default: it's already the original image
-			var result = false;
+			result = false;
 		else if (currentPhotoSize === Options.reduced_sizes[0])
 			result = 0;
 		else {
@@ -369,6 +370,7 @@
 	Utilities.prototype.nextSizeReduction = function() {
 		// returns the file name of the reduction with the next bigger size than the reduction in DOM
 
+		var result;
 		var nextPhotoSize = Utilities.nextSize();
 
 		if (nextPhotoSize === false)
@@ -519,7 +521,7 @@
 			heightForMediaAndTitle -= Options.media_thumb_size + 22 + 5;
 
 		return heightForMediaAndTitle;
-	}
+	};
 
 	Utilities.prototype.scaleMedia = function(event) {
 		// this function works on the img tag identified by event.data.id
@@ -709,7 +711,7 @@
 		if (! fullScreenStatus && currentAlbum.media.length > 1 && Utilities.isColliding($("#pinch-container"), $("#next")))
 			// correct forward arrow position when they overlap with pinch buttons
 			$("#next").css("right", ($("#pinch-container").outerWidth() + parseInt($("#pinch-container").css("right"))).toString() + "px");
-	}
+	};
 
 	Utilities.mediaBoxGenerator = function(id) {
 		if (id === 'left')

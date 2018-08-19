@@ -19,7 +19,6 @@
   var maxAllowedTranslateX, minAllowedTranslateX, maxAllowedTranslateY, minAllowedTranslateY;
   var mediaWidth, mediaHeight;
   var mediaBoxInnerWidth, mediaBoxInnerHeight;
-  var savedMediaBoxContainerHeight, savedMediaBoxHeight, savedMediaBoxInnerHeight;
 
   var baseTranslateX = 0, baseTranslateY = 0;
 
@@ -352,16 +351,18 @@
 
   PinchSwipe.prototype.getCurrentZoom = function () {
     return currentZoom;
-  }
+  };
+
   PinchSwipe.initialize = function () {
     // $('#album-view').swipe('destroy');
 
+    var pastInitialMediaWidthOnScreen, pastCurrentZoom;
     mediaBoxInnerWidth = parseInt($(mediaContainerSelector).css("width"));
     mediaBoxInnerHeight = parseInt($(mediaContainerSelector).css("height"));
 
     if (currentZoom > 1) {
-      var pastInitialMediaWidthOnScreen = initialMediaWidthOnScreen;
-      var pastCurrentZoom = currentZoom;
+      pastInitialMediaWidthOnScreen = initialMediaWidthOnScreen;
+      pastCurrentZoom = currentZoom;
     }
     initialMediaWidthOnScreen = $(mediaSelector)[0].width;
     maxAllowedZoom = Number(($(mediaSelector).attr("width") / initialMediaWidthOnScreen).toFixed(2));

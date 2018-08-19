@@ -1571,7 +1571,7 @@ $(document).ready(function() {
 		var text, thumbnailSize, triggerLoad, mediaHtml, mediaSelector, mediaSrc;
 		var exposureTime, heightForMedia, heightForMediaAndTitle;
 		var savedSearchSubAlbumHash, savedSearchAlbumHash;
-		var previousMediaIndex, nextMediaIndex;
+		var previousMediaIndex, nextMediaIndex, array;
 
 		if (id === "center")
 			$("#media-view").removeClass("hidden");
