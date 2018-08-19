@@ -1600,9 +1600,9 @@ $(document).ready(function() {
 			setTitle(id, currentMedia);
 
 			if (Options.hide_bottom_thumbnails) {
-				$("#album-view").addClass("hidden-by-options");
+				$("#album-view").addClass("hidden-by-option");
 			} else {
-				$("#album-view").removeClass("hidden-by-options");
+				$("#album-view").removeClass("hidden-by-option");
 			}
 
 			if (currentAlbum.media.length == 1) {
