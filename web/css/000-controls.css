@@ -40,7 +40,7 @@ a:hover {
 	filter: alpha(opacity=70); /* For IE8 and earlier */
 }
 
-.hidden {
+.hidden, .hidden-by-option, .hidden-by-fullscreen {
 	display: none !important;
 }
 
