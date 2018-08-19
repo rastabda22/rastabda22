@@ -32,6 +32,10 @@ a:hover {
 	padding-top: 0;
 }
 
+#album-view .title.hidden {
+	padding: 0;
+}
+
 .title-count {
 	font-size: 80%;
 	font-style: italic;
