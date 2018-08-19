@@ -1731,7 +1731,7 @@ $(document).ready(function() {
 						event.data.id = "center";
 						event.data.media = media;
 						event.data.callback = pinchSwipeInitialization;
-						event.data.currentZoom = ps.getCurrentZoom;
+						event.data.currentZoom = ps.getCurrentZoom();
 						util.scaleMedia(event);
 
 						if (album.media.length > 1) {
