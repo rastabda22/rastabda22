@@ -576,7 +576,7 @@
 			previousSrc = mediaElement.attr("src");
 			photoSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
 
-			if (encodeURI(photoSrc) != previousSrc) {
+			if (encodeURI(photoSrc) != previousSrc && event.data.currentZoom === 1) {
 				// resizing had the effect that a different reduction has been choosed
 
 				// chooseReducedPhoto() sets maxSize to 0 if it returns the original media
