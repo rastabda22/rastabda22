@@ -31,7 +31,7 @@ num_video_processed = 0
 photos_without_geotag = []
 photos_without_exif_date = []
 options_not_to_be_saved = ['cache_path', 'index_html_path', 'album_path']
-options_requiring_json_regeneration = ['geonames_language', 'unspecified_geonames_code', 'get_geonames_online', 'metadata_tools_preference']
+options_requiring_json_regeneration = ['geonames_language', 'unspecified_geonames_code', 'get_geonames_online', 'metadata_tools_preference', 'num_media_in_tree']
 options_requiring_reduced_images_regeneration = ['jpeg_quality']
 options_requiring_thumbnails_regeneration = ['face_cascade_scale_factor', 'small_square_crops_background_color', 'cv2_installed']
 
@@ -155,6 +155,8 @@ def get_options():
 		elif option in ('follow_symlinks',
 				'checksum',
 				'different_album_thumbnails',
+				'hide_title',
+				'hide_bottom_thumbnails',
 				'albums_slide_style',
 				'show_media_names_below_thumbs',
 				'show_album_names_below_thumbs',
@@ -166,6 +168,7 @@ def get_options():
 				'default_media_reverse_sort',
 				'recreate_fixed_height_thumbnails',
 				'get_geonames_online',
+				'use_internal_modernizr',
 				'show_faces',
 				'use_stop_words'
 		):
@@ -338,6 +341,14 @@ def get_options():
 		except OSError:
 			message("FATAL ERROR", config['cache_path'] + " not writable, quitting", 0)
 			sys.exit(-97)
+
+	# calculate the number of media in the album tree: it will be used in order to guess the execution time
+	special_files = [config['exclude_tree_marker'], config['exclude_files_marker'], config['metadata_filename']]
+	message("counting media in albums...", "", 4)
+	config['num_media_in_tree'] = sum([len([file for file in files if file[:1] != '.' and file not in special_files]) for dirpath, dirs, files in os.walk(config['album_path']) if dirpath.find('/.') == -1])
+	next_level()
+	message("media in albums counted", str(config['num_media_in_tree']), 4)
+	back_level()
 
 	# get old options: they are revised in order to decide whether to recreate something
 	json_options_file = os.path.join(config['cache_path'], "options.json")

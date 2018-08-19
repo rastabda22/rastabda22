@@ -4,7 +4,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, user-scalable=no">
 	<meta name="fragment" content="!" />
 	<meta name="medium" content="image" />
 	<?php
@@ -66,17 +66,20 @@
 		<script type="text/javascript" src="js/004-fullscreen.js"></script>
 	<?php	}
 
-			// Use system wide modernizr if available
-			if (file_exists("/usr/share/javascript/modernizr/modernizr.min.js")) { ?>
+	// Use system wide modernizr if available
+	if (! $options['use_internal_modernizr'] && file_exists("/usr/share/javascript/modernizr/modernizr.min.js")) { ?>
 		<script type="text/javascript" src="/javascript/modernizr/modernizr.min.js"></script>
 	<?php	} else { ?>
 		<script type="text/javascript" src="js/005-modernizr.js"></script>
 	<?php	} ?>
 
-		<script type="text/javascript" src="js/008-social.js"></script>
-		<script type="text/javascript" src="js/009-translations.js"></script>
-		<script type="text/javascript" src="js/010-libphotofloat.js"></script>
-		<script type="text/javascript" src="js/012-display.js"></script>
+		<script type="text/javascript" src="js/006-jquery-touchswipe.js"></script>
+		<script type="text/javascript" src="js/010-social.js"></script>
+		<script type="text/javascript" src="js/012-translations.js"></script>
+		<script type="text/javascript" src="js/014-utilities.js"></script>
+		<script type="text/javascript" src="js/016-libphotofloat.js"></script>
+		<script type="text/javascript" src="js/018-pinch-swipe.js"></script>
+		<script type="text/javascript" src="js/020-display.js"></script>
 	<?php } ?>
 
 	<?php
@@ -203,37 +206,47 @@
 	<?php } ?>
 	</div>
 
-	<div id="title-container">
-		<div id="title">
-			<span id="title-string"></span>
-		</div>
-	</div>
 	<div id="media-view">
-		<div id="media-box">
-			<a id="next-media">
-				<div id="media-box-inner" ></div>
-			</a>
-			<div id="media-bar">
-				<div id="links">
-					<a id="metadata-show" href="javascript:void(0)"></a>
-					<a id="metadata-hide" style="display:none;" href="javascript:void(0)"></a> |
-					<a id="original-link"></a> |
-					<a id="download-link"></a> <a id="menu-map-divider">|</a>
-					<a id="menu-map-link"></a>
-					<a id="fullscreen" href="javascript:void(0)">
-						<span id="fullscreen-divider"> | </span>
-						<span id="enter-fullscreen"></span>
-						<span id="exit-fullscreen"></span>
-					</a>
+		<div id="media-box-container">
+			<div class="media-box" id="center">
+
+				<div class="media-box-inner">
 				</div>
-				<div id="metadata"></div>
+
+				<div class="media-bar">
+					<div class="links">
+						<a class="metadata-show"></a>
+						<a class="metadata-hide"></a> |
+						<a class="original-link"></a> |
+						<a class="download-link"></a> <a class="menu-map-divider">|</a>
+						<a class="menu-map-link"></a>
+						<a class="fullscreen">
+							<span class="fullscreen-divider"> | </span>
+							<span class="enter-fullscreen"></span>
+							<span class="exit-fullscreen"></span>
+						</a>
+					</div>
+					<div class="metadata">
+					</div>
+				</div>
+
 			</div>
 		</div>
 
-		<a id="prev">&lsaquo;</a>
-		<a id="next">&rsaquo;</a>
+		<img id="prev" width="42" height="88" src="img/prev.png">
+		<img id="next" width="42" height="88" src="img/next.png">
+		<div id="pinch-container">
+			<img src="img/pinch-plus.png" id="pinch-in" class="pinch" width="25" height="25">
+			<img src="img/pinch-minus.png" id="pinch-out" class="pinch disabled" width="25" height="25">
+		</div>
 	</div>
+
 	<div id="album-view">
+
+		<div class="title">
+			<span class="title-string"></span>
+		</div>
+
 		<div id="subalbums"></div>
 		<div id="thumbs">
 			<div id="loading"></div>
@@ -241,7 +254,7 @@
 		<div id="error-too-many-images"></div>
 		<div id="powered-by">
 			<span id="powered-by-string">Powered by</span>
-			<a href="https://github.com/paolobenve/myphotoshare" target="_blank">MyPhotoShare</a>
+			<a href="https://gitlab.com/paolobenve/myphotoshare" target="_blank">MyPhotoShare</a>
 		</div>
 	</div>
 
@@ -264,6 +277,7 @@
 		<li id="folders-view" class="day-gps-folders-view"></li>
 		<li id="by-date-view" class="day-gps-folders-view"></li>
 		<li id="by-gps-view" class="day-gps-folders-view"></li>
+
 		<li class="sort album-sort caption"></li>
 		<li class='sort album-sort by-date'></li>
 		<li class='sort album-sort by-name'></li>
@@ -272,7 +286,10 @@
 		<li class='sort media-sort by-date'></li>
 		<li class='sort media-sort by-name'></li>
 		<li class='sort media-sort sort-reverse active'></li>
+
 		<li class='ui caption'></li>
+		<li class='ui hide-title active'></li>
+		<li class='ui hide-bottom-thumbnails active'></li>
 		<li class='ui slide active'></li>
 		<li class='ui spaced active'></li>
 		<li class='ui album-names active'></li>

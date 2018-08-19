@@ -1,4 +1,4 @@
-# MyPhotoShare v. 3.5 (July 15, 2018)
+# MyPhotoShare v. 3.6 (August 19, 2018)
 ### A Web Photo Gallery Done Right via Static JSON & Dynamic Javascript
 #### by Jason A. Donenfeld (<Jason@zx2c4.com>), Jerome Charaoui (jerome@riseup.net)  Joachim Tingvold (joachim@tingvold.com), Paolo Benvenuto (<paolobenve@gmail.com>), Pierre Métras (<p.metras@videotron.ca>)
 
@@ -51,15 +51,14 @@ Content (albums and media files) can be shared over some popular social plaforms
 
 ### Mobile Friendly
 
-- [x] Swipe gestures for mobile.
+- [x] Swipe, pinch and drag gestures for mobile.
 - [x] Sharp images and thumbnails on mobile.
 - [x] Smooth media scaling.
-- [x] Consistent hash URL format.
 
 ### Great User Experience
 
-- [x] Keyboard navigation: arrows, pageup/down, `[esc]`, `[f]` (fullscreen), `[m]` (metadata), space/backspace (like in [Darktable](https://www.darktable.org/)).
-- [x] Mouse-wheel support.
+- [x] Keyboard navigation: arrows, pageup/down, `[esc]`, `[f]` (fullscreen), `[d]` (download original), `[o]` (show original), `[s]` (map), `[m]` (metadata), `[e]` (open right menu), `[+]` (pinch in), `[-]` (pinch out), space/backspace (like in [Darktable](https://www.darktable.org/)).
+- [x] Mouse-wheel support, including for pinching (with ctrl or shift).
 - [x] Various user interface option can be changed by the user.
 - [x] Animations to make the interface feel nice.
 - [x] Separate album view and photo view.
@@ -88,6 +87,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Scanner verbosity levels can be set in the configuration file.
 - [x] Developer friendly with debug mode for using unminimized css's and js's.
 - [x] Photos metadata can be overloaded by user defined values in special file `album.ini`.
+- [x] Consistent hash URL format.
 
 
 ## Community
