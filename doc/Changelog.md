@@ -1,3 +1,5 @@
+### version 3.6 (August 19, 2018)
+
 * Better swiping: the new image enters while the current one exits
 * Added pinching and dragging capabilities, by gestures, by buttons, by keyboard
 * Various bug fixes
