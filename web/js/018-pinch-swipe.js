@@ -74,6 +74,8 @@
       // translation must be reduced too
       currentTranslateX = Number((currentTranslateX * (currentZoom - 1) / (baseZoom - 1)).toFixed(2));
       currentTranslateY = Number((currentTranslateY * (currentZoom - 1) / (baseZoom - 1)).toFixed(2));
+      baseTranslateX = currentTranslateX;
+      baseTranslateY = currentTranslateY;
     } else if (currentZoom == maxAllowedZoom) {
       if (nextSizeReduction !== false) {
         nextSize = util.nextSize();
@@ -311,6 +313,8 @@
     mediaHeight = parseInt($(mediaSelector).css("height"));
 
     currentZoom = 1;
+    baseTranslateX = 0;
+    baseTranslateY = 0;
     currentTranslateX = 0;
     currentTranslateY = 0;
 
