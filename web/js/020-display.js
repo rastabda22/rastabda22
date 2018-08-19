@@ -1649,10 +1649,6 @@ $(document).ready(function() {
 				$("#prev").show();
 				// $("#media-view").removeClass("no-bottom-space");
 				// $("#album-view").removeClass("no-bottom-space");
-				// if ($("#album-view").is(":visible")) {
-				// 	// $("#media-view").css("bottom", (thumbnailSize + 15).toString() + "px");
-				// 	$("#media-view").css("bottom", albumViewHeight + "px");
-				// }
 			}
 
 			currentAlbum.media[currentMediaIndex].byDateName =
