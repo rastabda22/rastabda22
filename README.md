@@ -1,4 +1,4 @@
-# MyPhotoShare v. 3.6 (August 19, 2018)
+# MyPhotoShare v. 3.6.1 (August 19, 2018)
 ### A Web Photo Gallery Done Right via Static JSON & Dynamic Javascript
 #### by Jason A. Donenfeld (<Jason@zx2c4.com>), Jerome Charaoui (jerome@riseup.net)  Joachim Tingvold (joachim@tingvold.com), Paolo Benvenuto (<paolobenve@gmail.com>), Pierre Métras (<p.metras@videotron.ca>)
 
@@ -58,6 +58,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 ### Great User Experience
 
 - [x] Keyboard navigation: arrows, pageup/down, `[esc]`, `[f]` (fullscreen), `[d]` (download original), `[o]` (show original), `[s]` (map), `[m]` (metadata), `[e]` (open right menu), `[+]` (pinch in), `[-]` (pinch out), space/backspace (like in [Darktable](https://www.darktable.org/)).
+- [x] Keyboard dragging when the photo is zoomed in.
 - [x] Mouse-wheel support, including for pinching (with ctrl or shift).
 - [x] Various user interface option can be changed by the user.
 - [x] Animations to make the interface feel nice.
