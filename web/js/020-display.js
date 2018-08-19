@@ -371,7 +371,6 @@ $(document).ready(function() {
 			Options.search_any_word ||
 			Options.search_case_sensitive ||
 			Options.search_accent_sensitive ||
-			Options.search_current_album ||
 			// Options.search_refine ||
 			$("ul#right-menu li#no-search-string").is(":visible") ||
 			$("ul#right-menu li#no-results").is(":visible") ||
