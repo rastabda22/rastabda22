@@ -2815,9 +2815,9 @@ $(document).ready(function() {
 			setBooleanCookie("hide_bottom_thumbnails", Options.hide_bottom_thumbnails);
 			updateMenu();
 			if (Options.hide_bottom_thumbnails) {
-				$("#album-view").addClass("hidden");
+				$("#album-view").addClass("hidden-by-option");
 			} else {
-				$("#album-view").removeClass("hidden");
+				$("#album-view").removeClass("hidden-by-option");
 			}
 			showAlbum("refreshMedia");
 			if (currentMedia !== null) {
