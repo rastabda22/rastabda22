@@ -2414,18 +2414,26 @@ $(document).ready(function() {
 	$(document).on('keydown', function(e) {
 		if (! $("#search-field").is(':focus')) {
 			if (! e.ctrlKey && ! e.shiftKey && ! e.altKey) {
-				if (
-					(e.keyCode === 39 || e.keyCode === 78 || e.keyCode === 13 || e.keyCode === 32) &&
-					//    arrow right                  n               return               space
-					nextMedia && currentMedia !== null
-				) {
+				if (e.keyCode === 39 && nextMedia && currentMedia !== null) {
+					//     arrow right
 					ps.swipeLeftOrDrag(nextMedia);
 					return false;
 				} else if (
-					(e.keyCode === 37 || e.keyCode === 80 || e.keyCode === 8) &&
-					//     arrow left                  p           backspace
+					(e.keyCode === 78 || e.keyCode === 13 || e.keyCode === 32) &&
+					//             n               return               space
+					nextMedia && currentMedia !== null
+				) {
+					ps.swipeLeft(nextMedia);
+					return false;
+				} else if (
+					(e.keyCode === 80 || e.keyCode === 8) &&
+					//             p           backspace
 					prevMedia && currentMedia !== null
 				) {
+					ps.swipeRight(prevMedia);
+					return false;
+				} else if (e.keyCode === 37 && prevMedia && currentMedia !== null) {
+					//             arrow left
 					ps.swipeRightOrDrag(prevMedia);
 					return false;
 				} else if (e.keyCode === 27 && ! Modernizr.fullscreen && fullScreenStatus) {
@@ -2433,9 +2441,9 @@ $(document).ready(function() {
 					goFullscreen(e);
 					return false;
 				} else if (e.keyCode === 27 && upLink) {
-					//                     esc            arrow up             page up
-					fromEscKey = true;
+					//                    esc
 					if (ps.getCurrentZoom() == 1) {
+						fromEscKey = true;
 						ps.swipeDown(upLink);
 						return false;
 					} else {
@@ -2443,15 +2451,15 @@ $(document).ready(function() {
 						return false;
 					}
 				} else if ((e.keyCode === 38 || e.keyCode === 33) && upLink) {
-					//                     esc            arrow up             page up
+					//                arrow up             page up
 					ps.swipeDownOrDrag(upLink);
 					return false;
-				} else if ((e.keyCode === 40 || e.keyCode === 34)) {
+				} else if (e.keyCode === 40 || e.keyCode === 34) {
 					//              arrow down           page down
 				 	if (mediaLink && currentMedia === null) {
 						ps.swipeUp(mediaLink);
 						return false;
-					} else if (currentMedia !== null) {
+					} else if (ps.getCurrentZoom() > 1) {
 						ps.swipeUpOrDrag(mediaLink);
 						return false;
 					}
@@ -2467,8 +2475,8 @@ $(document).ready(function() {
 					//                      m
 					showMetadata(e);
 					return false;
-				} else if (currentMedia !== null && e.keyCode === 79) {
-					//                                              o
+				} else if (e.keyCode === 79 && currentMedia !== null) {
+					//                      o
 					$("#original-link")[0].click();
 					return false;
 				} else if (currentMedia !== null && (e.keyCode === 107 || e.keyCode === 187)) {
