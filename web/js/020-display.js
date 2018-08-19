@@ -364,9 +364,9 @@ $(document).ready(function() {
 		}
 
 		if (
-				currentAlbum !== null &&
-				(util.isSearchCacheBase(currentAlbum.cacheBase) || currentAlbum.cacheBase == Options.by_search_string)
-				||
+			currentAlbum !== null &&
+			(util.isSearchCacheBase(currentAlbum.cacheBase) || currentAlbum.cacheBase == Options.by_search_string)
+			||
 			Options.search_inside_words ||
 			Options.search_any_word ||
 			Options.search_case_sensitive ||
