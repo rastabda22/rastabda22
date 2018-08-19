@@ -2420,28 +2420,42 @@ $(document).ready(function() {
 					//    arrow right                  n               return               space
 					nextMedia && currentMedia !== null
 				) {
-					ps.swipeLeft(nextMedia);
+					ps.swipeLeftOrDrag(nextMedia);
 					return false;
 				} else if (
 					(e.keyCode === 37 || e.keyCode === 80 || e.keyCode === 8) &&
 					//     arrow left                  p           backspace
 					prevMedia && currentMedia !== null
 				) {
-					ps.swipeRight(prevMedia);
+					ps.swipeRightOrDrag(prevMedia);
 					return false;
 				} else if (e.keyCode === 27 && ! Modernizr.fullscreen && fullScreenStatus) {
 					//                    esc
 					goFullscreen(e);
 					return false;
-				} else if ((e.keyCode === 27 || e.keyCode === 38 || e.keyCode === 33) && upLink) {
+				} else if (e.keyCode === 27 && upLink) {
 					//                     esc            arrow up             page up
 					fromEscKey = true;
-					ps.swipeDown(upLink);
+					if (ps.getCurrentZoom() == 1) {
+						ps.swipeDownOrDrag(upLink);
+						return false;
+					} else {
+						ps.pinchOut();
+						return false;
+					}
+				} else if ((e.keyCode === 38 || e.keyCode === 33) && upLink) {
+					//                     esc            arrow up             page up
+					ps.swipeDownOrDrag(upLink);
 					return false;
-				} else if ((e.keyCode === 40 || e.keyCode === 34) && mediaLink && currentMedia === null) {
+				} else if ((e.keyCode === 40 || e.keyCode === 34)) {
 					//              arrow down           page down
-					ps.swipeUp(mediaLink);
-					return false;
+				 	if (mediaLink && currentMedia === null) {
+						ps.swipeUp(mediaLink);
+						return false;
+					} else if (currentMedia !== null) {
+						ps.swipeUpOrDrag(mediaLink);
+						return false;
+					}
 				} else if (e.keyCode === 68 && currentMedia !== null) {
 					//                      d
 					$("#download-link")[0].click();
