@@ -2437,7 +2437,7 @@ $(document).ready(function() {
 					//                     esc            arrow up             page up
 					fromEscKey = true;
 					if (ps.getCurrentZoom() == 1) {
-						ps.swipeDownOrDrag(upLink);
+						ps.swipeDown(upLink);
 						return false;
 					} else {
 						ps.pinchOut();
