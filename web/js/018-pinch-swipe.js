@@ -405,7 +405,7 @@
       PinchSwipe.swipeRight(media);
     else {
       // drag
-      PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: -1, y: 0}, dragSpeed);
+      PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 1, y: 0}, dragSpeed);
     }
 
   };
@@ -445,7 +445,7 @@
       PinchSwipe.swipeLeft(media);
     else {
       // drag
-      PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 1, y: 0}, dragSpeed);
+      PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: -1, y: 0}, dragSpeed);
     }
 
   };
