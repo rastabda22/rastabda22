@@ -1,3 +1,8 @@
+### version 3.6.1 (August 19, 2018)
+
+* Added keyboard translation when image is zoomed in
+* bug fixes
+
 ### version 3.6 (August 19, 2018)
 
 * Better swiping: the new image enters while the current one exits
