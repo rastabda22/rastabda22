@@ -1548,7 +1548,7 @@ $(document).ready(function() {
 
 	function showMedia(album, media, id) {
 
-		function loadNextPrevMedia() {
+		function loadNextPrevMedia(containerHeight, containerWidth) {
 			$("#pinch-in").off("click");
 			$("#pinch-out").off("click");
 			$("#pinch-in").on("click", ps.pinchIn);
@@ -2010,7 +2010,7 @@ $(document).ready(function() {
 			$(".title").removeClass("hidden-by-option");
 	}
 
-	function pinchSwipeInitialization () {
+	function pinchSwipeInitialization (containerHeight, containerWidth) {
 		ps.initialize();
 		ps.setPinchButtonsPosition(containerHeight, containerWidth);
 		util.correctPrevNextPosition();

@@ -637,7 +637,7 @@
 
 		if (event.data.callback) {
 			if (event.data.callback.name !== "pinchSwipeInitialization" || id === "center")
-				event.data.callback();
+				event.data.callback(containerHeight, containerWidth);
 		}
 	};
 
