@@ -510,17 +510,13 @@
 	};
 
 	Utilities.mediaBoxContainerHeight = function() {
-		var albumViewHeight, heightForMediaAndTitle;
+		var heightForMediaAndTitle;
 		windowHeight = $(window).innerHeight();
+		heightForMediaAndTitle = windowHeight;
 		if ($("#album-view").is(":visible"))
-			albumViewHeight = parseInt($("#album-view").css("height"));
-		else
-			albumViewHeight = 0;
-		heightForMediaAndTitle = windowHeight - albumViewHeight;
-
-		if (albumViewHeight)
-			// slightly separate media from bottom thumbnails
-			heightForMediaAndTitle -= 5;
+			// 22 is for the scroll bar and the current media marker
+			// 5 is an extra space
+			heightForMediaAndTitle -= Options.media_thumb_size + 22 + 5;
 
 		return heightForMediaAndTitle;
 	}
