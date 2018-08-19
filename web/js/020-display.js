@@ -2457,6 +2457,14 @@ $(document).ready(function() {
 					//                                              o
 					$("#original-link")[0].click();
 					return false;
+				} else if (currentMedia !== null && (e.keyCode === 107 || e.keyCode === 187)) {
+					//                                       + on keypad                    +
+					ps.pinchIn();
+					return false;
+				} else if (currentMedia !== null && (e.keyCode === 109 || e.keyCode === 189)) {
+					//                                       - on keypad                    -
+					ps.pinchOut();
+					return false;
 				} else if (e.keyCode === 83 && currentMedia !== null && util.hasGpsData(currentMedia)) {
 					 	//                    s
 						$("#map-link")[0].click();
