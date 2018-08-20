@@ -1,3 +1,6 @@
+* Added lazy load unveil plugin for faster page loading
+* bug fixes
+
 ### version 3.6.1 (August 19, 2018)
 
 * Added keyboard translation when image is zoomed in

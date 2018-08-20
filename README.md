@@ -65,6 +65,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Separate album view and photo view.
 - [x] Media animation when passing to next/previous media.
 - [x] Available in English, Italian, Spanish, French. User interface translated via separate translation file. Add your language!
+- [x] Lazy loading thumbnail for a faster page load
 
 ### Social
 

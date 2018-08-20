@@ -74,6 +74,7 @@
 	<?php	} ?>
 
 		<script type="text/javascript" src="js/006-jquery-touchswipe.js"></script>
+		<script type="text/javascript" src="js/007-jquery-unveil.js"></script>
 		<script type="text/javascript" src="js/010-social.js"></script>
 		<script type="text/javascript" src="js/012-translations.js"></script>
 		<script type="text/javascript" src="js/014-utilities.js"></script>
