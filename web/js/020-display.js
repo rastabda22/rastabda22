@@ -2445,7 +2445,7 @@ $(document).ready(function() {
 				} else if (e.keyCode === 27) {
 					//                    esc
 					// warning: modern browsers will always exit fullscreen when pressing esc
-					if (! Modernizr.fullscreen && ps.getCurrentZoom() == 1) {
+					if (ps.getCurrentZoom() > 1) {
 						ps.pinchOut();
 						return false;
 					} else if (! Modernizr.fullscreen && fullScreenStatus) {
