@@ -1,3 +1,8 @@
+### version 3.6.2 (August 20, 2018)
+
+* Now using lazyload jquery plugin for faster page loading
+* bug fixes
+
 ### version 3.6.1 (August 19, 2018)
 
 * Added keyboard translation when image is zoomed in

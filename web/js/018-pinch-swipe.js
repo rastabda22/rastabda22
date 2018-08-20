@@ -237,7 +237,7 @@
           } else {
             // distance is the cumulative value from start
             // dragVector is calculated by pinchStatus
-            PinchSwipe.drag(distance, dragVector, 0);
+            PinchSwipe.drag(distance / currentZoom / devicePixelRatio, dragVector, 0);
           }
 
         }
@@ -432,7 +432,6 @@
         util.mediaBoxGenerator('left');
         $(".media-box#left").css("width", $(".media-box#center").attr('width')).css("height", $(".media-box#center").attr('height'));
 
-
         array = phFl.decodeHash(location.hash);
         // array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
         savedSearchSubAlbumHash = array[3];
@@ -473,7 +472,7 @@
         $(".media-box#right").css("width", $(".media-box#center").attr('width')).css("height", $(".media-box#center").attr('height'));
         // this translation avoid the flickering when inserting the right image into the DOM
         // if (! isMobile(any))
-          $("#media-box-container").css("transform", "translate(-" + windowWidth + "px, 0px)");
+        $("#media-box-container").css("transform", "translate(-" + windowWidth + "px, 0px)");
 
         array = phFl.decodeHash(location.hash);
         // array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
@@ -529,7 +528,7 @@
 		if (dest) {
 			$(mediaContainerSelector).stop().animate(
         {
-  				top: "+=" + window.innerHeight,
+  				top: "+=" + window.innerHeight
   			},
         300,
         function() {

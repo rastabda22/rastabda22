@@ -711,6 +711,10 @@ class Media(object):
 			self._attributes["metadata"]["aperture"] = exif["FNumber"]
 		if "FocalLength" in exif:
 			self._attributes["metadata"]["focalLength"] = exif["FocalLength"]
+		if "ISO" in exif:
+			self._attributes["metadata"]["iso"] = exif["ISO"]
+		if "ISOSettings" in exif:
+			self._attributes["metadata"]["iso"] = exif["ISOSettings"]
 		if "ISOSpeedRatings" in exif:
 			self._attributes["metadata"]["iso"] = exif["ISOSpeedRatings"]
 		if "MakerNote ISO" in exif:
