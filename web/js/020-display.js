@@ -1119,7 +1119,7 @@ $(document).ready(function() {
 									"<img title='" + imgTitle + "' " +
 										"alt='" + util.trimExtension(currentAlbum.media[i].name) + "' " +
 										"data-src='" +  encodeURI(thumbHash) + "' " +
-										"class='thumbnail" + "' " +
+										"class='thumbnail lazyload-media" + "' " +
 										"height='" + thumbHeight + "' " +
 										"width='" + thumbWidth + "' " +
 										"style='" +
@@ -1157,7 +1157,7 @@ $(document).ready(function() {
 				thumbsElement.empty();
 				thumbsElement.append.apply(thumbsElement, media);
 			}
-			$("img").unveil();
+			lazyload(document.querySelectorAll(".lazyload-media"));
 
 			if (currentMedia === null) {
 				if (fromEscKey && firstEscKey) {
@@ -1406,6 +1406,8 @@ $(document).ready(function() {
 								$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
 								$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName).attr("data-src", encodeURI(mediaSrc));
 								$("#" + id + " img.thumbnail").css("width", thumbWidth).css("height", thumbHeight);
+
+								lazyload(document.querySelectorAll(".lazyload-album-" + id));
 
 								numSubAlbumsReady ++;
 								if (numSubAlbumsReady >= theOriginalAlbumContainer.subalbums.length) {
