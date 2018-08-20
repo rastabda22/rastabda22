@@ -1,3 +1,5 @@
+### version 3.6.2 (August 20, 2018)
+
 * Now using lazyload jquery plugin for faster page loading
 * bug fixes
 
