@@ -2442,18 +2442,18 @@ $(document).ready(function() {
 					//             arrow left
 					ps.swipeRightOrDrag(prevMedia);
 					return false;
-				} else if (e.keyCode === 27 && ! Modernizr.fullscreen && fullScreenStatus) {
+				} else if (e.keyCode === 27) {
 					//                    esc
-					goFullscreen(e);
-					return false;
-				} else if (e.keyCode === 27 && upLink) {
-					//                    esc
-					if (ps.getCurrentZoom() == 1) {
+					// warning: modern browsers will always exit fullscreen when pressing esc
+					if (! Modernizr.fullscreen && ps.getCurrentZoom() == 1) {
+						ps.pinchOut();
+						return false;
+					} else if (! Modernizr.fullscreen && fullScreenStatus) {
+						goFullscreen(e);
+						return false;
+					} else if (upLink) {
 						fromEscKey = true;
 						ps.swipeDown(upLink);
-						return false;
-					} else {
-						ps.pinchOut();
 						return false;
 					}
 				} else if ((e.keyCode === 38 || e.keyCode === 33) && upLink) {
