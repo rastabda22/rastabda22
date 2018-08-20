@@ -237,7 +237,7 @@
           } else {
             // distance is the cumulative value from start
             // dragVector is calculated by pinchStatus
-            PinchSwipe.drag(distance, dragVector, 0);
+            PinchSwipe.drag(distance / currentZoom / devicePixelRatio, dragVector, 0);
           }
 
         }
