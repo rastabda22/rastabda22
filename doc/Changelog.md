@@ -1,4 +1,4 @@
-* Added lazy load unveil plugin for faster page loading
+* Now using lazyload jquery plugin for faster page loading
 * bug fixes
 
 ### version 3.6.1 (August 19, 2018)
