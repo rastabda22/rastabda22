@@ -489,7 +489,7 @@ $(document).ready(function() {
 
 			for (i = 2; i < components.length; ++i) {
 				if (i < components.length - 1 || media !== null)
-					title += "<a class='" + titleAnchorClasses + "' href='#!/" + encodeURI(currentAlbum.ancestorsCacheBase[i]) + "'" + ">";
+					title += "<a class='" + titleAnchorClasses + "' href='#!/" + encodeURI(currentAlbum.ancestorsCacheBase[i]) + "'>";
 				else
 					title += "<span class='title-no-anchor'>";
 
@@ -1116,12 +1116,12 @@ $(document).ready(function() {
 									"'>" +
 									mapLinkIcon +
 									"<span class='helper'></span>" +
-									"<img title='" + imgTitle + "'" +
-										"alt='" + util.trimExtension(currentAlbum.media[i].name) + "'" +
-										"data-src='" +  encodeURI(thumbHash) + "'" +
-										"class='thumbnail" + "'" +
-										"height='" + thumbHeight + "'" +
-										"width='" + thumbWidth + "'" +
+									"<img title='" + imgTitle + "' " +
+										"alt='" + util.trimExtension(currentAlbum.media[i].name) + "' " +
+										"data-src='" +  encodeURI(thumbHash) + "' " +
+										"class='thumbnail" + "' " +
+										"height='" + thumbHeight + "' " +
+										"width='" + thumbWidth + "' " +
 										"style='" +
 											 "width: " + calculatedWidth + "px; " +
 											 "height: " + calculatedHeight + "px;" +
@@ -1272,7 +1272,7 @@ $(document).ready(function() {
 						captionHtml = "<div class='album-caption";
 						if (util.isFolderCacheBase(currentAlbum.cacheBase) && ! Options.show_album_names_below_thumbs)
 							captionHtml += " hidden";
-						captionHtml += "' id='album-caption-" + phFl.hashCode(currentAlbum.subalbums[i].cacheBase) + "'" +
+						captionHtml += "' id='album-caption-" + phFl.hashCode(currentAlbum.subalbums[i].cacheBase) + "' " +
 													"style='" +
 														"width: " + correctedAlbumThumbSize + "px; " +
 														"font-size: " + captionFontSize + "px; " +
@@ -1284,7 +1284,7 @@ $(document).ready(function() {
 						captionHtml += "<div class='album-caption-count";
 						if (util.isFolderCacheBase(currentAlbum.cacheBase) && ! Options.show_album_names_below_thumbs || ! Options.show_album_media_count)
 							captionHtml += " hidden";
-						captionHtml += "'" +
+						captionHtml += "' " +
 									"style='" +
 										"font-size: " + Math.round((captionFontSize / 1.5)) + "px; " +
 										"height: " + captionHeight + "px; " +
@@ -1394,16 +1394,16 @@ $(document).ready(function() {
 											"title='" + goTo + "' " +
 											"alt='" + goTo + "' " +
 											"class='album-button-random-media-link' " +
-											" style='width: 20px;" +
+											"style='width: 20px;" +
 												" height: 20px;" +
-												"'" +">" +
+												"'>" +
 										"</a>" +
 										"<span class='helper'></span>" +
 										"<img " +
-											"title='" + titleName + "'" +
-											" class='thumbnail'" +
-											" data-src='" + encodeURI(mediaSrc) + "'" +
-											" style='width:" + thumbWidth + "px;" +
+											"title='" + titleName + "' " +
+											"class='thumbnail' " +
+											"data-src='" + encodeURI(mediaSrc) + "' " +
+											"style='width:" + thumbWidth + "px;" +
 												" height:" + thumbHeight + "px;" +
 												"'" +
 										">";
