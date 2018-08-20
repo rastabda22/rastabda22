@@ -2479,7 +2479,7 @@ $(document).ready(function() {
 					return false;
 				} else if (e.keyCode === 77 && currentMedia !== null) {
 					//                      m
-					showMetadata(e);
+					toggleMetadata();
 					return false;
 				} else if (e.keyCode === 79 && currentMedia !== null) {
 					//                      o
@@ -2579,7 +2579,7 @@ $(document).ready(function() {
 	function showMetadataFromMouse(ev) {
 		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			ev.stopPropagation();
-			showMetadata();
+			toggleMetadata();
 			return false;
 		}
 	}
@@ -2946,7 +2946,7 @@ $(document).ready(function() {
 		return false;
 	}
 
-	function showMetadata() {
+	function toggleMetadata() {
 		if ($(".media-box .metadata").css("display") == "none") {
 			$(".media-box .metadata-show").hide();
 			$(".media-box .metadata-hide").show();
