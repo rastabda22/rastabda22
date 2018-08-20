@@ -1027,7 +1027,7 @@ $(document).ready(function() {
 		var albumViewWidth, correctedAlbumThumbSize = Options.album_thumb_size;
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
 		var tooBig = false, isVirtualAlbum = false;
-		var mapLinkIcon;
+		var mapLinkIcon, id;
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
 		var array, folderArray, folder, savedSearchSubAlbumHash, savedSearchAlbumHash;
 
@@ -1300,8 +1300,9 @@ $(document).ready(function() {
 
 
 						// a dot could be present in a cache base, making $("#" + cacheBase) fail, beware...
+						id = phFl.hashCode(currentAlbum.subalbums[i].cacheBase);
 						albumButtonAndCaptionHtml =
-							"<div id='" + phFl.hashCode(currentAlbum.subalbums[i].cacheBase) + "' " +
+							"<div id='" + id + "' " +
 								"class='album-button-and-caption";
 						if (Options.albums_slide_style)
 							albumButtonAndCaptionHtml += " slide";
@@ -1329,7 +1330,19 @@ $(document).ready(function() {
 													"margin:" + margin + "px;" +
 												"'" +
 												">" +
-												"</div>"
+												"<a href=''>" +
+													"<img " +
+														"src='img/link-arrow.png' " +
+														"class='album-button-random-media-link' " +
+														"style='" +
+															"width: 20px;" +
+															" height: 20px;" +
+															"'" +
+														">" +
+												"</a>" +
+												"<span class='helper'></span>" +
+												"<img class='thumbnail lazyload-album-" + id + "'>" +
+											"</div>"
 										);
 						linkContainer.append(image);
 						linkContainer.append(caption);
@@ -1343,7 +1356,7 @@ $(document).ready(function() {
 
 						//////////////////// begin anonymous function /////////////////////
 						//      })(currentAlbum.subalbums[i], image, container);
-						(function(theSubalbum, theImage, theLink) {
+						(function(theSubalbum, theImage, theLink, id) {
 							// function(subalbum, container, callback, error)  ---  callback(album,   album.media[index], container,            subalbum);
 							phFl.pickRandomMedia(theSubalbum, currentAlbum, function(randomAlbum, randomMedia, theOriginalAlbumContainer, subalbum) {
 								var htmlText;
@@ -1389,26 +1402,10 @@ $(document).ready(function() {
 
 								titleName = titleName.substr(titleName.indexOf('/') + 1);
 								goTo = _t(".go-to") + " " + titleName;
-								htmlText =	"<a href='" + randomMediaLink + "'>" +
-										"<img src='img/link-arrow.png' " +
-											"title='" + goTo + "' " +
-											"alt='" + goTo + "' " +
-											"class='album-button-random-media-link' " +
-											"style='width: 20px;" +
-												" height: 20px;" +
-												"'>" +
-										"</a>" +
-										"<span class='helper'></span>" +
-										"<img " +
-											"title='" + titleName + "' " +
-											"class='thumbnail' " +
-											"data-src='" + encodeURI(mediaSrc) + "' " +
-											"style='width:" + thumbWidth + "px;" +
-												" height:" + thumbHeight + "px;" +
-												"'" +
-										">";
-								theImage.html(htmlText);
-								$("img").unveil();
+								$("#" + id + " a").attr("href", randomMediaLink);
+								$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
+								$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName).attr("data-src", encodeURI(mediaSrc));
+								$("#" + id + " img.thumbnail").css("width", thumbWidth).css("height", thumbHeight);
 
 								numSubAlbumsReady ++;
 								if (numSubAlbumsReady >= theOriginalAlbumContainer.subalbums.length) {
@@ -1422,7 +1419,7 @@ $(document).ready(function() {
 								subalbums.splice(subalbums.indexOf(theLink), 1);
 							});
 							i ++; i --;
-						})(currentAlbum.subalbums[i], image, container);
+						})(currentAlbum.subalbums[i], image, container, id);
 						//////////////////// end anonymous function /////////////////////
 					}
 
