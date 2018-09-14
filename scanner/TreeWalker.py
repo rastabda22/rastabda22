@@ -785,7 +785,12 @@ class TreeWalker:
 										self.add_media_to_tree_by_date(media)
 										if media.has_gps_data:
 											self.add_media_to_tree_by_geonames(media)
+										message("adding media to search tree...", "", 5)
+										# the following function has a check on media already present
 										self.add_media_to_tree_by_search(media)
+										next_level()
+										message("media added to search tree", "", 5)
+										back_level()
 
 										self.all_media.append(media)
 								next_level()
@@ -885,7 +890,14 @@ class TreeWalker:
 					max_file_date = max(max_file_date, sub_max_file_date)
 					album.num_media_in_sub_tree += num
 					album.add_album(next_walked_album)
+					next_level()
+					message("adding album to search tree...", "", 5)
 					self.add_album_to_tree_by_search(next_walked_album)
+					next_level()
+					message("album added to search tree", "", 5)
+					back_level()
+					back_level()
+
 			elif os.path.isfile(entry_with_path):
 				if skip_files:
 					continue
