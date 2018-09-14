@@ -191,18 +191,41 @@ class Album(object):
 		return max(self.media_list[-1].date, self.subalbums_list[-1].date)
 
 
-	def __cmp__(self, other):
-		try:
-			return cmp(self.date, other.date)
-		except TypeError:
-			return 1
+	# def __cmp__(self, other):
+	# 	try:
+	# 		return cmp(self.date, other.date)
+	# 	except TypeError:
+	# 		return 1
 
+	def __eq__(self, other):
+		return self.path == other.path
+
+	def __ne__(self, other):
+		return not self.__eq__(other)
 
 	def __lt__(self, other):
 		try:
 			return self.date < other.date
 		except TypeError:
-			return True
+			return False
+
+	def __le__(self, other):
+		try:
+			return self.date <= other.date
+		except TypeError:
+			return False
+
+	def __gt__(self, other):
+		try:
+			return self.date > other.date
+		except TypeError:
+			return False
+
+	def __ge__(self, other):
+		try:
+			return self.date >= other.date
+		except TypeError:
+			return False
 
 
 	def read_album_ini(self, file_name):
@@ -1894,25 +1917,50 @@ class Media(object):
 		else:
 			return ""
 
-	def __cmp__(self, other):
-		try:
-			date_compare = cmp(self.date, other.date)
-		except TypeError:
-			date_compare = 1
-		if date_compare == 0:
-			return cmp(self.name, other.name)
-		return date_compare
+	# def __cmp__(self, other):
+	# 	try:
+	# 		date_compare = cmp(self.date, other.date)
+	# 	except TypeError:
+	# 		date_compare = 1
+	# 	if date_compare == 0:
+	# 		return cmp(self.name, other.name)
+	# 	return date_compare
+
+	def __eq__(self, other):
+		return self.path == other.path
+
+	def __ne__(self, other):
+		return not self.__eq__(other)
 
 	def __lt__(self, other):
 		try:
-			if self.date < other.date:
-				return True
-			elif self.date > other.date:
-				return False
-			else:
+			if self.date == other.date:
 				return self.name < other.name
+			else:
+				return self.date < other.date
 		except TypeError:
-			return True
+			return False
+
+	def __le__(self, other):
+		try:
+			return self.date <= other.date
+		except TypeError:
+			return False
+
+	def __gt__(self, other):
+		try:
+			if self.date == other.date:
+				return self.name > other.name
+			else:
+				return self.date > other.date
+		except TypeError:
+			return False
+
+	def __ge__(self, other):
+		try:
+			return self.date <= other.date
+		except TypeError:
+			return False
 
 	@property
 	def attributes(self):
