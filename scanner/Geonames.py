@@ -112,7 +112,11 @@ class Geonames(object):
 			# get country, region (state for federal countries), and place
 			try_number = 0
 			while True:
-				response = requests.get(Geonames._base_nearby_url.format(str(latitude), str(longitude)))
+				try:
+					response = requests.get(Geonames._base_nearby_url.format(str(latitude), str(longitude)))
+				except ConnectionError:
+					# sometimes geonames.org aborts the connection => use local files
+					break
 				try:
 					result = Geonames._decode_nearby_place(response.text)
 					if isinstance(result, dict):
