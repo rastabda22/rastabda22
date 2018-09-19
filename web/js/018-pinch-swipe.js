@@ -528,7 +528,8 @@
 		if (dest) {
 			$(mediaContainerSelector).stop().animate(
         {
-  				top: "+=" + window.innerHeight
+  				top: "+=" + window.innerHeight,
+          opacity: 0
   			},
         300,
         function() {

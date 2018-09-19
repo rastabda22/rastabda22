@@ -1705,6 +1705,8 @@ $(document).ready(function() {
 				$("head").append(util.createMediaLinkTag(media, mediaSrc));
 			}
 
+			if (id === "center")
+				$(mediaBoxInnerElement).css("opacity", 1);
 			$(mediaSelector).off(triggerLoad);
 			$(mediaSelector).on(
 				triggerLoad,
