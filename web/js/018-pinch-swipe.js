@@ -7,7 +7,7 @@
   var dragSpeed = 500;
   var mediaContainerSelector = ".media-box#center .media-box-inner";
   var mediaSelector = mediaContainerSelector + " img";
-  var currentZoom, zoomAfterFirstPinch, zoomIncrement = 1.5, zoomDecrement = 0.666666667;
+  var currentZoom, zoomAfterFirstPinch, zoomIncrement = 1.5625, zoomDecrement = 1 / zoomIncrement;
   var maxAllowedZoom;
   // minAllowedZoom must be <=1
   var minAllowedZoom = 1;
