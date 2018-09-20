@@ -2425,7 +2425,12 @@ $(document).ready(function() {
 	$(document).on('keydown', function(e) {
 		if (! $("#search-field").is(':focus')) {
 			if (! e.ctrlKey && ! e.shiftKey && ! e.altKey) {
-				if (e.keyCode === 39 && nextMedia && currentMedia !== null) {
+				if (e.keyCode === 9) {
+					//            tab
+					toggleTitle(e);
+					toggleBottomThumbnails(e);
+					return false;
+				} else if (e.keyCode === 39 && nextMedia && currentMedia !== null) {
 					//     arrow right
 					ps.swipeLeftOrDrag(nextMedia);
 					return false;
@@ -2820,7 +2825,7 @@ $(document).ready(function() {
 
 	$("ul#right-menu li.hide-title").on('click', toggleTitle);
 	function toggleTitle(ev) {
-		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			Options.hide_title = ! Options.hide_title;
 			setBooleanCookie("hide_title", Options.hide_title);
 			updateMenu();
@@ -2843,7 +2848,7 @@ $(document).ready(function() {
 
 	$("ul#right-menu li.hide-bottom-thumbnails").on('click', toggleBottomThumbnails);
 	function toggleBottomThumbnails(ev) {
-		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			Options.hide_bottom_thumbnails = ! Options.hide_bottom_thumbnails;
 			setBooleanCookie("hide_bottom_thumbnails", Options.hide_bottom_thumbnails);
 			updateMenu();
