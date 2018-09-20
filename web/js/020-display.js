@@ -1786,9 +1786,10 @@ $(document).ready(function() {
 					.on(
 						'contextmenu',
 						function(ev) {
-						if (! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-							ev.preventDefault();
-							ps.swipeRight(prevMedia);
+							if (! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+								ev.preventDefault();
+								if (ps.getCurrentZoom() == 1)
+									ps.swipeRight(prevMedia);
 							}
 						}
 					)
