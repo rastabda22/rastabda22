@@ -2427,9 +2427,12 @@ $(document).ready(function() {
 			if (! e.ctrlKey && ! e.shiftKey && ! e.altKey) {
 				if (e.keyCode === 9) {
 					//            tab
-					toggleTitle(e);
-					toggleBottomThumbnails(e);
-					return false;
+					e.preventDefault();
+					if (ps.getCurrentZoom() == 1) {
+						toggleTitle(e);
+						toggleBottomThumbnails(e);
+						return false;
+					}
 				} else if (e.keyCode === 39 && nextMedia && currentMedia !== null) {
 					//     arrow right
 					ps.swipeLeftOrDrag(nextMedia);
