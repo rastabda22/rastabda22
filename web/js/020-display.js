@@ -2021,7 +2021,7 @@ $(document).ready(function() {
 			}
 	}
 
-	function pinchSwipeInitialization (containerHeight, containerWidth) {
+	function pinchSwipeInitialization(containerHeight, containerWidth) {
 		ps.initialize();
 		ps.setPinchButtonsPosition(containerHeight, containerWidth);
 		util.correctPrevNextPosition();
