@@ -384,14 +384,32 @@
 		if (currentMedia === null)
 			return true;
     if (! event.shiftKey && ! event.altKey && ! event.ctrlKey) {
-      // mouse wheel with no key: swipe
-  		if (delta < 0) {
-  			PinchSwipe.swipeLeft(nextMedia);
-  			return false;
-  		} else if (delta > 0) {
-  			PinchSwipe.swipeRight(prevMedia);
-  			return false;
-  		}
+      if (currentZoom ==  1) {
+        // mouse wheel with no key: swipe
+    		if (delta < 0) {
+    			PinchSwipe.swipeLeft(nextMedia);
+    			return false;
+    		} else if (delta > 0) {
+    			PinchSwipe.swipeRight(prevMedia);
+    			return false;
+    		}
+      } else {
+        // drag
+        if (event.deltaY < 0) {
+    			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 0, y: -1}, dragSpeed);
+    			return false;
+    		} else if (event.deltaY > 0) {
+    			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 0, y: 1}, dragSpeed);
+    			return false;
+    		} else if (event.deltaX < 0) {
+    			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 1, y: 0}, dragSpeed);
+    			return false;
+    		} else if (event.deltaX > 0) {
+    			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: -1, y: 0}, dragSpeed);
+    			return false;
+    		}
+
+      }
     } else {
       // mouse wheel with shift/control/alt key: pinch
   		if (delta < 0) {
