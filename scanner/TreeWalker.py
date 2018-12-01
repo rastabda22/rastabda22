@@ -993,11 +993,11 @@ class TreeWalker:
 						if media.has_exif_date:
 							Options.num_photo_with_exif_date += 1
 						else:
-							photos_without_exif_date_in_dir.append(entry_with_path)
+							photos_without_exif_date_in_dir.append("      " + entry_with_path)
 						if media.has_gps_data:
 							Options.num_photo_geotagged += 1
 						else:
-							photos_without_geotag_in_dir.append(entry_with_path)
+							photos_without_geotag_in_dir.append("      " + entry_with_path)
 
 					next_level()
 					message("adding media to by date tree...", "", 5)
@@ -1044,11 +1044,11 @@ class TreeWalker:
 				back_level()
 		if num_photo_in_dir:
 			if num_photo_in_dir == len(photos_without_geotag_in_dir):
-				Options.photos_without_geotag.append(absolute_path + " (" + str(num_photo_in_dir) + " photos)")
+				Options.photos_without_geotag.append(str(num_photo_in_dir) + " photos in " + absolute_path)
 			else:
 				Options.photos_without_geotag.extend(photos_without_geotag_in_dir)
 			if num_photo_in_dir == len(photos_without_exif_date_in_dir):
-				Options.photos_without_exif_date.append(absolute_path + " (" + str(num_photo_in_dir) + " photos)")
+				Options.photos_without_exif_date.append(str(num_photo_in_dir) + " photos in " + absolute_path)
 			else:
 				Options.photos_without_exif_date.extend(photos_without_exif_date_in_dir)
 		if not album.empty:
