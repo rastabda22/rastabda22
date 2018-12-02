@@ -121,7 +121,7 @@ class Geonames(object):
 			while True:
 				try:
 					response = requests.get(Geonames._base_nearby_url.format(str(latitude), str(longitude)))
-				except ConnectionError:
+				except requests.exceptions.RequestException as e:
 					# sometimes geonames.org aborts the connection => use local files
 					break
 				try:
