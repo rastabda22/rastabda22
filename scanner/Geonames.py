@@ -120,9 +120,12 @@ class Geonames(object):
 			try_number = 0
 			while True:
 				try:
-					response = requests.get(Geonames._base_nearby_url.format(str(latitude), str(longitude)))
+					response = requests.get(Geonames._base_nearby_url.format(str(latitude), str(longitude)), timeout=30)
 				except requests.exceptions.RequestException as e:
 					# sometimes geonames.org aborts the connection => use local files
+					next_level()
+					message("error in requests.get", e, 5)
+					back_level()
 					break
 				try:
 					result = Geonames._decode_nearby_place(response.text)
