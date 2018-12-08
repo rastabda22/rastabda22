@@ -145,14 +145,7 @@ def report_times(final):
 	time_till_now = 0
 	for category in sorted(Options.elapsed_times, key=Options.elapsed_times.get, reverse=True):
 		time = int(round(Options.elapsed_times[category]))
-		if time == 0:
-			_time = ""
-		elif time <= 1800:
-			_time = str(time) + " μs"
-		elif time <= 1800000:
-			_time = str(int(round(time / 1000))) + "    ms"
-		else:
-			_time = str(int(round(time / 1000000))) + "       s "
+		(_time, _time_unfolded) = time_totals(time)
 
 		time_till_now += time
 
