@@ -194,7 +194,7 @@ def report_times(final):
 		_num_photo_with_exif_date_and_geotags = str(Options.num_photo_with_exif_date_and_geotags)
 		_num_photo_with_exif_date_and_without_geotags = str(Options.num_photo_with_exif_date_and_without_geotags)
 		_num_photo_without_exif_date_and_with_geotags = str(Options.num_photo_without_exif_date_and_with_geotags)
-		_num_photo_without_exif_date_and_geotags = str(Options.num_photo_without_exif_date_and_geotags)
+		_num_photo_without_exif_date_and_without_geotags = str(Options.num_photo_without_exif_date_and_without_geotags)
 		_num_video = str(Options.num_video)
 		_num_video_processed = str(Options.num_video_processed)
 		max_digit = len(_num_media)
@@ -222,9 +222,9 @@ def report_times(final):
 
 		print("                                  with exif date and geotags         " + _num_photo_with_exif_date_and_geotags.rjust(max_digit))
 
-		print("                                  without exif date and geotags      " + _num_photo_without_exif_date_and_geotags.rjust(max_digit))
+		print("                                  without exif date and geotags      " + _num_photo_without_exif_date_and_without_geotags.rjust(max_digit))
 		# if final:
-		for photo in Options.photos_without_exif_date_and_geotags:
+		for photo in Options.photos_without_exif_date_and_without_geotags:
 			print("                                      - " + photo)
 		print("                                  with exif date but without geotags " + _num_photo_with_exif_date_and_without_geotags.rjust(max_digit))
 		# if final:

@@ -842,7 +842,7 @@ class TreeWalker:
 		num_photo_in_dir = 0
 		photos_with_exif_date_and_without_geotags_in_dir = []
 		photos_without_exif_date_and_with_geotags_in_dir = []
-		photos_without_exif_date_and_geotags_in_dir = []
+		photos_without_exif_date_and_without_geotags_in_dir = []
 		for entry in self._listdir_sorted_by_time(absolute_path):
 			try:
 				# @python2
@@ -1006,8 +1006,8 @@ class TreeWalker:
 							Options.num_photo_without_exif_date_and_with_geotags += 1
 							photos_without_exif_date_and_with_geotags_in_dir.append("      " + entry_with_path)
 						elif not media.has_exif_date and not media.has_gps_data:
-							Options.num_photo_without_exif_date_and_geotags += 1
-							photos_without_exif_date_and_geotags_in_dir.append(     "      " + entry_with_path)
+							Options.num_photo_without_exif_date_and_without_geotags += 1
+							photos_without_exif_date_and_without_geotags_in_dir.append("      " + entry_with_path)
 
 					next_level()
 					message("adding media to by date tree...", "", 5)
