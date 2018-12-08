@@ -206,14 +206,10 @@ def report_times(final):
 				media_count_and_time += ",      " + str(mean_speed) + " media/s"
 
 		print(media_count_and_time)
-		media_count_and_time = "                  processed " + ((max_digit - len(_num_media_processed)) * " ") + _num_media_processed
+		media_count_and_time = "                  processed " + _num_media_processed.rjust(max_digit)
 		if num_media_processed and num_media_processed != num_media:
 			media_count_and_time += ",      " + str(int(time_till_now / num_media_processed / 10000) / 100) + " s/processed media"
 		print(media_count_and_time)
-		print("- Videos " + ((max_digit - len(_num_video)) * " ") + _num_video)
-		print("                  processed " + ((max_digit - len(_num_video_processed)) * " ") + _num_video_processed)
-		print("- Photos " + ((max_digit - len(_num_photo)) * " ") + _num_photo)
-		print("                  processed " + ((max_digit - len(_num_photo_processed)) * " ") + _num_photo_processed)
 		print("                                  geotagged         " + ((max_digit - len(_num_photo_geotagged)) * " ") + _num_photo_geotagged)
 		print("                                  whithout geotags  " + ((max_digit - len(_num_photo_without_geotags)) * " ") + _num_photo_without_geotags)
 		if final and Options.num_photo_processed != Options.num_photo_geotagged:
@@ -224,4 +220,8 @@ def report_times(final):
 		if final and Options.num_photo_processed != Options.num_photo_with_exif_date:
 			for photo in Options.photos_without_exif_date:
 				print("                                      - " + photo)
+		print("- Videos " + _num_video.rjust(max_digit))
+		print("                  processed " + _num_video_processed.rjust(max_digit))
+		print("- Photos " + _num_photo.rjust(max_digit))
+		print("                  processed " + _num_photo_processed.rjust(max_digit))
 		print()
