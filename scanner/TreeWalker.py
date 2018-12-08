@@ -1053,7 +1053,7 @@ class TreeWalker:
 					back_level()
 				back_level()
 		if num_photo_in_dir:
-			max_digit = len(str(num_photo_in_dir))
+			max_digit = len(str(Options.config['num_media_in_tree']))
 			_padded_num_photo_in_dir = str(num_photo_in_dir).rjust(max_digit)
 			if num_photo_in_dir == len(photos_with_exif_date_and_without_geotags_in_dir):
 				Options.photos_with_exif_date_and_without_geotags.append(_padded_num_photo_in_dir + "/" + _padded_num_photo_in_dir + " photos in " + absolute_path)
