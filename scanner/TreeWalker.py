@@ -1000,11 +1000,11 @@ class TreeWalker:
 						if media.has_exif_date and media.has_gps_data:
 							Options.num_photo_with_exif_date_and_geotags += 1
 						elif media.has_exif_date and not media.has_gps_data:
-							photos_with_exif_date_and_without_geotags_in_dir.append("      " + entry_with_path)
+							photos_with_exif_date_and_without_geotags_in_dir.append(   "      " + entry_with_path)
 							Options.num_photo_with_exif_date_and_without_geotags += 1
 						elif not media.has_exif_date and media.has_gps_data:
 							Options.num_photo_without_exif_date_and_with_geotags += 1
-							photos_without_exif_date_and_with_geotags_in_dir.append("      " + entry_with_path)
+							photos_without_exif_date_and_with_geotags_in_dir.append(   "      " + entry_with_path)
 						elif not media.has_exif_date and not media.has_gps_data:
 							Options.num_photo_without_exif_date_and_without_geotags += 1
 							photos_without_exif_date_and_without_geotags_in_dir.append("      " + entry_with_path)
@@ -1067,11 +1067,11 @@ class TreeWalker:
 				Options.photos_without_exif_date_and_with_geotags.append(str(len(photos_without_exif_date_and_with_geotags_in_dir)).rjust(max_digit) + "/" + _padded_num_photo_in_dir + " photos in " + absolute_path + ":")
 				Options.photos_without_exif_date_and_with_geotags.extend(photos_without_exif_date_and_with_geotags_in_dir)
 
-			if num_photo_in_dir == len(photos_without_exif_date_and_geotags_in_dir):
-				Options.photos_without_exif_date_and_with_geotags.append(_padded_num_photo_in_dir + "/" + _padded_num_photo_in_dir + " photos in " + absolute_path)
-			elif len(photos_without_exif_date_and_geotags_in_dir):
-				Options.photos_without_exif_date_and_with_geotags.append(str(len(photos_without_exif_date_and_geotags_in_dir)).rjust(max_digit) + "/" + _padded_num_photo_in_dir + " photos in " + absolute_path + ":")
-				Options.photos_without_exif_date_and_with_geotags.extend(photos_without_exif_date_and_geotags_in_dir)
+			if num_photo_in_dir == len(photos_without_exif_date_and_without_geotags_in_dir):
+				Options.photos_without_exif_date_and_without_geotags.append(_padded_num_photo_in_dir + "/" + _padded_num_photo_in_dir + " photos in " + absolute_path)
+			elif len(photos_without_exif_date_and_without_geotags_in_dir):
+				Options.photos_without_exif_date_and_without_geotags.append(str(len(photos_without_exif_date_and_without_geotags_in_dir)).rjust(max_digit) + "/" + _padded_num_photo_in_dir + " photos in " + absolute_path + ":")
+				Options.photos_without_exif_date_and_without_geotags.extend(photos_without_exif_date_and_without_geotags_in_dir)
 
 		if not album.empty:
 			next_level()
