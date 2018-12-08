@@ -189,10 +189,12 @@ def report_times(final):
 		_num_media_processed = str(num_media_processed)
 		_num_photo = str(Options.num_photo)
 		_num_photo_processed = str(Options.num_photo_processed)
-		_num_photo_geotagged = str(Options.num_photo_geotagged)
+		_num_photo_with_geotags = str(Options.num_photo_with_geotags)
 		_num_photo_with_exif_date = str(Options.num_photo_with_exif_date)
-		_num_photo_without_geotags = str(Options.num_photo - Options.num_photo_geotagged)
-		_num_photo_without_exif_date = str(Options.num_photo - Options.num_photo_with_exif_date)
+		_num_photo_with_exif_date_and_geotags = str(Options.num_photo_with_exif_date_and_geotags)
+		_num_photo_with_exif_date_and_without_geotags = str(Options.num_photo_with_exif_date_and_without_geotags)
+		_num_photo_without_exif_date_and_with_geotags = str(Options.num_photo_without_exif_date_and_with_geotags)
+		_num_photo_without_exif_date_and_geotags = str(Options.num_photo_without_exif_date_and_geotags)
 		_num_video = str(Options.num_video)
 		_num_video_processed = str(Options.num_video_processed)
 		max_digit = len(_num_media)
@@ -210,18 +212,26 @@ def report_times(final):
 		if num_media_processed and num_media_processed != num_media:
 			media_count_and_time += ",      " + str(int(time_till_now / num_media_processed / 10000) / 100) + " s/processed media"
 		print(media_count_and_time)
-		print("                                  geotagged         " + ((max_digit - len(_num_photo_geotagged)) * " ") + _num_photo_geotagged)
-		print("                                  whithout geotags  " + ((max_digit - len(_num_photo_without_geotags)) * " ") + _num_photo_without_geotags)
-		if final and Options.num_photo_processed != Options.num_photo_geotagged:
-			for photo in Options.photos_without_geotag:
-				print("                                      - " + photo)
-		print("                                  with exif date    " + ((max_digit - len(_num_photo_with_exif_date)) * " ") + _num_photo_with_exif_date)
-		print("                                  without exif date " + ((max_digit - len(_num_photo_without_exif_date)) * " ") + _num_photo_without_exif_date)
-		if final and Options.num_photo_processed != Options.num_photo_with_exif_date:
-			for photo in Options.photos_without_exif_date:
-				print("                                      - " + photo)
 		print("- Videos " + _num_video.rjust(max_digit))
 		print("                  processed " + _num_video_processed.rjust(max_digit))
 		print("- Photos " + _num_photo.rjust(max_digit))
 		print("                  processed " + _num_photo_processed.rjust(max_digit))
+
+		print("                                  with exif date                     " + _num_photo_with_exif_date.rjust(max_digit))
+		print("                                  with geotags                       " + _num_photo_with_geotags.rjust(max_digit))
+
+		print("                                  with exif date and geotags         " + _num_photo_with_exif_date_and_geotags.rjust(max_digit))
+		print("                                  with exif date but without geotags " + _num_photo_with_exif_date_and_without_geotags.rjust(max_digit))
+		# if final:
+		for photo in Options.photos_with_exif_date_and_without_geotags:
+			print("                                      - " + photo)
+		print("                                  with exif data but without geotags " + _num_photo_without_exif_date_and_with_geotags.rjust(max_digit))
+		# if final:
+		for photo in Options.photos_without_exif_date_and_with_geotags:
+			print("                                      - " + photo)
+		print("                                  without exif date and geotags      " + _num_photo_without_exif_date_and_geotags.rjust(max_digit))
+		# if final:
+		for photo in Options.photos_without_exif_date_and_geotags:
+			print("                                      - " + photo)
+
 		print()
