@@ -113,7 +113,7 @@ def time_totals(time):
 	seconds = int(round(time / 1000000))
 	if time <= 1800:
 		_total_time = str(int(round(time))) + " μs"
-	elif time <= 1800:
+	elif time <= 1800000:
 		_total_time = str(int(round(time / 1000))) + "    ms"
 	else:
 		_total_time = str(seconds) + "       s "
