@@ -62,8 +62,8 @@ def message(category, text, verbose=0):
 			except KeyError:
 				Options.elapsed_times[category] = microseconds
 				Options.elapsed_times_counter[category] = 1
-			microseconds = str(microseconds)
-		print((9 - len(microseconds)) * " ", microseconds, "%s %s%s[%s]%s%s" % (now.isoformat(' '), max(0, message.level) * "  |", sep, str(category), max(1, (45 - len(str(category)))) * " ", str(text)))
+			_microseconds = str(microseconds)
+		print(_microseconds.rjust(9), "%s %s%s[%s]%s%s" % (now.isoformat(' '), max(0, message.level) * "  |", sep, str(category), max(1, (45 - len(str(category)))) * " ", str(text)))
 
 
 """
@@ -140,7 +140,7 @@ def report_times(final):
 	"""
 
 	print()
-	print((50 - len("message")) * " ", "message", (15 - len("total time")) * " ", "total time", (15 - len("counter")) * " ", "counter", (20 - len("average time")) * " ", "average time")
+	print("message".rjust(50) + "total time".rjust(15) + "counter".rjust(15) + "average time".rjust(20))
 	print()
 	time_till_now = 0
 	for category in sorted(Options.elapsed_times, key=Options.elapsed_times.get, reverse=True):
@@ -167,11 +167,11 @@ def report_times(final):
 			_average_time = str(int(round(average_time / 1000))) + "    ms"
 		else:
 			_average_time = str(int(round(average_time / 1000000))) + "       s "
-		print((50 - len(category)) * " ", category, (18 - len(_time)) * " ", _time, (15 - len(counter)) * " ", counter, (20 - len(_average_time)) * " ", _average_time)
+		print(category.rjust(50) + _time.rjust(18) + counter.rjust(15) + _average_time.rjust(20))
 
 	(_time_till_now, _time_till_now_unfolded) = time_totals(time_till_now)
 	print()
-	print((50 - len("time taken till now")) * " ", "time taken till now", (18 - len(_time_till_now)) * " ", _time_till_now, "     ", _time_till_now_unfolded)
+	print("time taken till now".rjust(50) + _time_till_now.rjust(18) + "     " + _time_till_now_unfolded)
 	num_media = Options.num_video + Options.num_photo
 
 	_num_media = str(num_media)
@@ -182,11 +182,11 @@ def report_times(final):
 			time_missing = time_till_now / num_media * Options.config['num_media_in_tree'] - time_till_now
 			if time_missing >= 0:
 				(_time_missing, _time_missing_unfolded) = time_totals(time_missing)
-				print((50 - len("total time missing")) * " ", "total time missing", (18 - len(_time_missing)) * " ", _time_missing, "     ", _time_missing_unfolded)
+				print("total time missing".rjust(50) + _time_missing.rjust(18) + "     " + _time_missing_unfolded)
 			time_total = time_till_now + time_missing
 			if time_total > 0:
 				(_time_total, _time_total_unfolded) = time_totals(time_total)
-				print((50 - len("total time")) * " ", "total time", (18 - len(_time_total)) * " ", _time_total, "     ", _time_total_unfolded)
+				print("total time".rjust(50) + _time_total.rjust(18) + "     " + _time_total_unfolded)
 		except ZeroDivisionError:
 			pass
 		print()
@@ -204,7 +204,7 @@ def report_times(final):
 		_num_video_processed = str(Options.num_video_processed)
 		max_digit = len(_num_media)
 
-		media_count_and_time = "Media    " + ((max_digit - len(_num_media)) * " ") + _num_media + ' / ' + str(Options.config['num_media_in_tree']) + ' (' + str(int(num_media * 1000 / Options.config['num_media_in_tree']) / 10) + '%)'
+		media_count_and_time = "Media    " + _num_media.rjust(max_digit) + ' / ' + str(Options.config['num_media_in_tree']) + ' (' + str(int(num_media * 1000 / Options.config['num_media_in_tree']) / 10) + '%)'
 		if num_media:
 			mean_time = int(time_till_now / 1000000 / num_media * 1000) / 1000
 			media_count_and_time += ",      " + str(mean_time) + " s/media"
