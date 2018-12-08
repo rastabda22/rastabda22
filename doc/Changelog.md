@@ -1,5 +1,6 @@
-* better use of mouse wheel when zoom > 1
-* new shortcut: tab: toggles title and bottom thumbnails visibility (as in gimp, darktable)
+* Bug fixes
+* Better use of mouse wheel when zoom > 1
+* New shortcut: tab: toggles title and bottom thumbnails visibility (as in gimp, darktable)
 
 ### version 3.6.3 (September 14, 2018)
 
