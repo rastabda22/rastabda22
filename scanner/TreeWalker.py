@@ -1044,14 +1044,15 @@ class TreeWalker:
 				back_level()
 		if num_photo_in_dir:
 			if num_photo_in_dir == len(photos_without_geotag_in_dir):
-				Options.photos_without_geotag.append(str(num_photo_in_dir) + " photos in " + absolute_path)
+				Options.photos_without_geotag.append(str(len(photos_without_geotag_in_dir)) + "/" + str(num_photo_in_dir) + " photos in " + absolute_path)
 			elif len(photos_without_geotag_in_dir):
 				Options.photos_without_geotag.append(str(len(photos_without_geotag_in_dir)) + "/" + str(num_photo_in_dir) + " photos in " + absolute_path + ":")
 				Options.photos_without_geotag.extend(photos_without_geotag_in_dir)
+
 			if num_photo_in_dir == len(photos_without_exif_date_in_dir):
-				Options.photos_without_exif_date.append(str(num_photo_in_dir) + " photos in " + absolute_path)
+				Options.photos_without_exif_date.append(str(len(photos_without_exif_date_in_dir)) + "/" + str(num_photo_in_dir) + " photos in " + absolute_path)
 			elif len(photos_without_exif_date_in_dir):
-				Options.photos_without_geotag.append(str(len(photos_without_exif_date_in_dir)) + "/" + str(num_photo_in_dir) + " photos in " + absolute_path + ":")
+				Options.photos_without_exif_date.append(str(len(photos_without_exif_date_in_dir)) + "/" + str(num_photo_in_dir) + " photos in " + absolute_path + ":")
 				Options.photos_without_exif_date.extend(photos_without_exif_date_in_dir)
 		if not album.empty:
 			next_level()
