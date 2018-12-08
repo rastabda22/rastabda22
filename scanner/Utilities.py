@@ -226,10 +226,12 @@ def report_times(final):
 		# if final:
 		for photo in Options.photos_without_exif_date_and_without_geotags:
 			print("                                      - " + photo)
+
 		print("                                  with exif date but without geotags " + _num_photo_with_exif_date_and_without_geotags.rjust(max_digit))
 		# if final:
 		for photo in Options.photos_with_exif_date_and_without_geotags:
 			print("                                      - " + photo)
+
 		print("                                  without exif data but with geotags " + _num_photo_without_exif_date_and_with_geotags.rjust(max_digit))
 		# if final:
 		for photo in Options.photos_without_exif_date_and_with_geotags:
