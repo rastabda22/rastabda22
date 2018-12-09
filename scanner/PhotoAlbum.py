@@ -84,25 +84,7 @@ class Album(object):
 			)
 		):
 			if Options.config['subdir_method'] == "md5":
-				# let's use a variable schema for cache subfolders, so that every directory has no more than 32 media (about 400 files)
-				cache_folders_num_digits = int(math.log(Options.config['num_media_in_tree'] / 2, 16))
-				# it's not good to have many subfolders, let's use a multi-level structure,
-				# every structure uses a maximum of 2 digits, so that no more than 256 folders are used
-				cache_folders_num_digits_array = []
-				cache_folders_string = ''
-				while cache_folders_num_digits > 1:
-					cache_folders_num_digits_array.append(2)
-					cache_folders_num_digits -= 2
-					cache_folders_string += "aa/"
-				if cache_folders_num_digits:
-					cache_folders_num_digits_array.append(1)
-					cache_folders_string += "a/"
-				if cache_folders_string:
-					message("cache subfolders, using the schema:", cache_folders_string, 4)
-				else:
-					message("cache subfolders:", "few media, using default subdir: " + Options.config['default_cache_album'], 4)
-
-				if cache_folders_num_digits_array == []:
+				if Options.config['cache_folders_num_digits_array'] == []:
 					self._subdir = Options.config['default_cache_album']
 				else:
 					# @python2
@@ -112,7 +94,7 @@ class Album(object):
 						hash = hashlib.md5(os.fsencode(path)).hexdigest()
 					self._subdir = ''
 					previous_digits = 0
-					for digits in cache_folders_num_digits_array:
+					for digits in Options.config['cache_folders_num_digits_array']:
 						if self._subdir:
 							self._subdir += '/'
 						self._subdir += hash[previous_digits:previous_digits + digits]

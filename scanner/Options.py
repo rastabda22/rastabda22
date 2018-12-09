@@ -6,6 +6,7 @@ import os
 import sys
 import json
 import ast
+import math
 
 # @python2
 try:
@@ -36,7 +37,7 @@ photos_without_exif_date_or_geotags = []
 num_video = 0
 num_video_processed = 0
 options_not_to_be_saved = ['cache_path', 'index_html_path', 'album_path']
-options_requiring_json_regeneration = ['geonames_language', 'unspecified_geonames_code', 'get_geonames_online', 'metadata_tools_preference', 'num_media_in_tree']
+options_requiring_json_regeneration = ['geonames_language', 'unspecified_geonames_code', 'get_geonames_online', 'metadata_tools_preference', 'subdir_method', 'cache_folders_num_digits_array']
 options_requiring_reduced_images_regeneration = ['jpeg_quality']
 options_requiring_thumbnails_regeneration = ['face_cascade_scale_factor', 'small_square_crops_background_color', 'cv2_installed']
 
@@ -354,6 +355,28 @@ def get_options():
 	next_level()
 	message("media in albums counted", str(config['num_media_in_tree']), 4)
 	back_level()
+
+	config['cache_folders_num_digits_array'] = []
+	if config['subdir_method'] == "md5":
+		message("determining cache folders schema...", "", 4)
+		# let's use a variable schema for cache subfolders, so that every directory has no more than 32 media (about 400 files)
+		cache_folders_num_digits = int(math.log(config['num_media_in_tree'] / 2, 16))
+		# it's not good to have many subfolders, let's use a multi-level structure,
+		# every structure uses a maximum of 2 digits, so that no more than 256 folders are used
+		cache_folders_string = ''
+		while cache_folders_num_digits > 1:
+			config['cache_folders_num_digits_array'].append(2)
+			cache_folders_num_digits -= 2
+			cache_folders_string += "aa/"
+		if cache_folders_num_digits:
+			config['cache_folders_num_digits_array'].append(1)
+			cache_folders_string += "a/"
+		next_level()
+		if cache_folders_string:
+			message("cache folders schema determined", "using the schema: " + cache_folders_string, 4)
+		else:
+			message("cache folders schema determined", "few media, using default subdir: " + config['default_cache_album'], 4)
+		back_level()
 
 	# get old options: they are revised in order to decide whether to recreate something
 	json_options_file = os.path.join(config['cache_path'], "options.json")
