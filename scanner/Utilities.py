@@ -222,11 +222,6 @@ def report_times(final):
 
 		print("                                  with exif date and geotags         " + _num_photo_with_exif_date_and_geotags.rjust(max_digit))
 
-		print("                                  without exif date and geotags      " + _num_photo_without_exif_date_or_geotags.rjust(max_digit))
-		# if final:
-		for photo in Options.photos_without_exif_date_or_geotags:
-			print("                                      - " + photo)
-
 		print("                                  with exif date but without geotags " + _num_photo_with_exif_date_and_without_geotags.rjust(max_digit))
 		# if final:
 		for photo in Options.photos_with_exif_date_and_without_geotags:
@@ -235,6 +230,11 @@ def report_times(final):
 		print("                                  without exif data but with geotags " + _num_photo_without_exif_date_and_with_geotags.rjust(max_digit))
 		# if final:
 		for photo in Options.photos_without_exif_date_and_with_geotags:
+			print("                                      - " + photo)
+
+		print("                                  without exif date or geotags      " + _num_photo_without_exif_date_or_geotags.rjust(max_digit))
+		# if final:
+		for photo in Options.photos_without_exif_date_or_geotags:
 			print("                                      - " + photo)
 
 		print()
