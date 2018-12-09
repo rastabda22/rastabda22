@@ -997,17 +997,19 @@ class TreeWalker:
 						if media.has_gps_data:
 							Options.num_photo_with_geotags += 1
 
-						if media.has_exif_date and media.has_gps_data:
-							Options.num_photo_with_exif_date_and_geotags += 1
-						elif media.has_exif_date and not media.has_gps_data:
-							photos_with_exif_date_and_without_geotags_in_dir.append(   "      " + entry_with_path)
-							Options.num_photo_with_exif_date_and_without_geotags += 1
-						elif not media.has_exif_date and media.has_gps_data:
-							Options.num_photo_without_exif_date_and_with_geotags += 1
-							photos_without_exif_date_and_with_geotags_in_dir.append(   "      " + entry_with_path)
-						elif not media.has_exif_date and not media.has_gps_data:
-							Options.num_photo_without_exif_date_or_geotags += 1
-							photos_without_exif_date_or_geotags_in_dir.append("      " + entry_with_path)
+						if media.has_exif_date:
+							if media.has_gps_data:
+								Options.num_photo_with_exif_date_and_geotags += 1
+							else:
+								Options.num_photo_with_exif_date_and_without_geotags += 1
+								photos_with_exif_date_and_without_geotags_in_dir.append("      " + entry_with_path)
+						else:
+							if media.has_gps_data:
+								Options.num_photo_without_exif_date_and_with_geotags += 1
+								photos_without_exif_date_and_with_geotags_in_dir.append("      " + entry_with_path)
+							else:
+								Options.num_photo_without_exif_date_or_geotags += 1
+								photos_without_exif_date_or_geotags_in_dir.append(      "      " + entry_with_path)
 
 					next_level()
 					message("adding media to by date tree...", "", 5)
