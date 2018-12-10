@@ -997,10 +997,8 @@ class TreeWalker:
 
 						if media.has_exif_date:
 							num_photo_with_exif_date_in_dir += 1
-							Options.num_photo_with_exif_date += num_photo_with_exif_date_in_dir
 						if media.has_gps_data:
 							num_photo_with_geotags_in_dir += 1
-							Options.num_photo_with_geotags += num_photo_with_geotags_in_dir
 
 						if media.has_exif_date:
 							if media.has_gps_data:
