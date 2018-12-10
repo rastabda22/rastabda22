@@ -839,7 +839,10 @@ class TreeWalker:
 
 		#~ for entry in sorted(os.listdir(absolute_path)):
 		message("reading directory", absolute_path, 5)
+		num_video_in_dir = 0
+		num_video_processed_in_dir = 0
 		num_photo_in_dir = 0
+		num_photo_processed_in_dir = 0
 		num_photo_with_exif_date_in_dir = 0
 		num_photo_with_geotags_in_dir = 0
 		num_photo_with_exif_date_and_geotags_in_dir = 0
@@ -986,14 +989,13 @@ class TreeWalker:
 					album.num_media_in_sub_tree += 1
 					album.num_media_in_album += 1
 					if media.is_video:
-						Options.num_video += 1
+						num_video_in_dir += 1
 						if not cache_hit:
-							Options.num_video_processed += 1
+							num_video_processed_in_dir += 1
 					else:
-						Options.num_photo += 1
 						num_photo_in_dir += 1
 						if not cache_hit:
-							Options.num_photo_processed += 1
+							num_photo_processed_in_dir += 1
 
 						if media.has_exif_date:
 							num_photo_with_exif_date_in_dir += 1
@@ -1054,12 +1056,20 @@ class TreeWalker:
 					message("not image nor video", "", 1)
 					back_level()
 				back_level()
+
+		if num_video_in_dir:
+			Options.num_video += num_video_in_dir
+			Options.num_video_processed += num_video_processed_in_dir
+
 		if num_photo_in_dir:
 			max_digit = len(str(Options.config['num_media_in_tree']))
 			_lpadded_num_photo_in_dir = str(num_photo_in_dir).rjust(max_digit)
 			_rpadded_num_photo_in_dir = str(num_photo_in_dir).ljust(max_digit)
 			_all_photos_in_path = _lpadded_num_photo_in_dir + "/" + _rpadded_num_photo_in_dir + " photos in " + absolute_path
 			_some_photo_in_path = "/" + _rpadded_num_photo_in_dir + " photos in " + absolute_path + ":"
+
+			Options.num_photo += num_photo_in_dir
+			Options.num_photo_processed += num_photo_processed_in_dir
 
 			Options.num_photo_with_exif_date += num_photo_with_exif_date_in_dir
 			Options.num_photo_with_geotags += num_photo_with_geotags_in_dir
