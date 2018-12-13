@@ -1825,8 +1825,7 @@ class Media(object):
 
 	@property
 	def month(self):
-		#~ return self.date.strftime("%B").capitalize() + " " + self.year
-		return self.date.strftime("%m")
+		return str(self.date.month).zfill(2)
 
 	@property
 	def day(self):
@@ -2008,7 +2007,12 @@ class Media(object):
 class PhotoAlbumEncoder(json.JSONEncoder):
 	def default(self, obj):
 		if isinstance(obj, datetime):
-			return obj.strftime("%Y-%m-%d %H:%M:%S")
+			# there was the line:
+			# return obj.strftime("%Y-%m-%d %H:%M:%S")
+			# but strftime throws an exception in python2 if year < 1900
+			date = str(obj.year) + '-' + str(obj.month).zfill(2) + '-' + str(obj.day).zfill(2)
+			date = date + ' ' + str(obj.hour).zfill(2) + ':' + str(obj.minute).zfill(2) + ':' + str(obj.second).zfill(2)
+			return date
 		if isinstance(obj, Album) or isinstance(obj, Media):
 			return obj.to_dict()
 		return json.JSONEncoder.default(self, obj)
