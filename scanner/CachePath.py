@@ -138,14 +138,14 @@ def last_modification_time(path):
 	last_mtime = datetime.fromtimestamp(maximum)
 	return last_mtime
 
-def checksum(path):
+def checksum(file_pointer):
 	block_size = 65536
 	hasher = hashlib.md5()
-	with open(path, 'rb') as afile:
-		buf = afile.read(block_size)
-		while len(buf) > 0:
-			hasher.update(buf)
-			buf = afile.read(block_size)
+	# with open(path, 'rb') as afile:
+	buf = file_pointer.read(block_size)
+	while len(buf) > 0:
+		hasher.update(buf)
+		buf = file_pointer.read(block_size)
 	return hasher.hexdigest()
 
 def square_thumbnail_sizes():

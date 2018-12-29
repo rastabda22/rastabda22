@@ -505,7 +505,6 @@ class Media(object):
 
 		self.is_valid = True
 
-		next_level()
 		image = None
 		try:
 			mtime = file_mtime(media_path)
@@ -517,29 +516,44 @@ class Media(object):
 			message("could not read file or dir mtime", media_path, 5)
 			back_level()
 			self.is_valid = False
-			back_level()
 			return
 
 		if Options.config['checksum']:
+			checksum_OK = True
+			if attributes is not None and not 'checksum' in attributes:
+				message("no checksum in json file", "", 5)
+				checksum_OK = False
 			next_level()
-			message("generating checksum...", media_path, 5)
-			this_checksum = checksum(media_path)
+			message("generating checksum...", "", 5)
+			media_path_pointer = open(media_path, 'rb')
+			self.checksum = checksum(media_path_pointer)
 			next_level()
 			message("checksum generated", "", 5)
+			if checksum_OK and attributes is not None:
+				if attributes["dateTimeFile"] != mtime:
+					message("modification time different", "no need to compare the checksum", 5)
+				elif attributes['checksum'] == self.checksum:
+					message("checksum OK!", "", 5)
+				else:
+					message("bad checksum!", "", 5)
+					checksum_OK = False
 			back_level()
 			back_level()
 
 		if (
 			attributes is not None and
-			attributes["dateTimeFile"] >= mtime and
-			(not Options.config['checksum'] or 'checksum' in attributes and attributes['checksum'] == this_checksum)
+			attributes["dateTimeFile"] == mtime and
+			(not Options.config['checksum'] or checksum_OK)
 		):
-			self._attributes = attributes
-			self._attributes["dateTimeDir"] = dir_mtime
-			# self.cache_base = attributes["cacheBase"]
-			back_level()
-			return
+				# media in json file is OK
+				self._attributes = attributes
+				self._attributes["dateTimeDir"] = dir_mtime
+				# self.cache_base = attributes["cacheBase"]
+				media_path_pointer.close()
+				return
 
+		next_level()
+		message("bad media in json file!", "working with the media file", 5)
 		self._attributes = {}
 		self._attributes["metadata"] = {}
 		self._attributes["dateTimeFile"] = mtime
@@ -547,7 +561,7 @@ class Media(object):
 		self._attributes["mediaType"] = "photo"
 
 		try:
-			image = Image.open(media_path)
+			image = Image.open(media_path_pointer)
 		except KeyboardInterrupt:
 			raise
 		except IOError:
@@ -586,6 +600,7 @@ class Media(object):
 					back_level()
 					self.is_valid = False
 		back_level()
+		media_path_pointer.close()
 		return
 
 
@@ -1994,7 +2009,7 @@ class Media(object):
 		if hasattr(self, "words"):
 			media["words"] = self.words
 		if Options.config['checksum']:
-			media["checksum"] = checksum(os.path.join(Options.config['album_path'], self.media_file_name))
+			media["checksum"] = self.checksum
 
 		# the following data don't belong properly to media, but to album, but they must be put here in order to work with date, gps and search structure
 		media["albumName"] = self.album_path
