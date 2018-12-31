@@ -528,15 +528,13 @@ class Media(object):
 			indented_message("checksum generated", "", 5)
 
 			if checksum_OK and attributes is not None:
-				next_level()
 				if attributes["dateTimeFile"] != mtime:
-					message("modification time different", "no need to compare the checksum", 5)
+					indented_message("modification time different", "no need to compare the checksum", 5)
 				elif attributes['checksum'] == self.checksum:
-					message("checksum OK!", "", 5)
+					indented_message("checksum OK!", "", 5)
 				else:
-					message("bad checksum!", "", 5)
+					indented_message("bad checksum!", "", 5)
 					checksum_OK = False
-				back_level()
 			back_level()
 
 		if (
