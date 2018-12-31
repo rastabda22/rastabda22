@@ -360,7 +360,10 @@ def get_options():
 	if config['subdir_method'] == "md5":
 		message("determining cache folders schema...", "", 4)
 		# let's use a variable schema for cache subfolders, so that every directory has no more than 32 media (about 400 files)
-		cache_folders_num_digits = int(math.log(config['num_media_in_tree'] / 2, 16))
+		try:
+			cache_folders_num_digits = int(math.log(config['num_media_in_tree'] / 2, 16))
+		except ValueError:
+			cache_folders_num_digits = 1
 		# it's not good to have many subfolders, let's use a multi-level structure,
 		# every structure uses a maximum of 2 digits, so that no more than 256 folders are used
 		cache_folders_string = ''
