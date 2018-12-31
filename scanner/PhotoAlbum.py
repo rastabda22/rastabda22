@@ -33,7 +33,7 @@ import math
 import numpy as np
 import exifread
 
-from CachePath import remove_album_path, remove_folders_marker, trim_base_custom, checksum, thumbnail_types_and_sizes, file_mtime, photo_cache_name, video_cache_name
+from CachePath import remove_album_path, remove_folders_marker, trim_base_custom, thumbnail_types_and_sizes, file_mtime, photo_cache_name, video_cache_name
 from Utilities import message, indented_message, next_level, back_level
 from Geonames import Geonames
 from PIL import Image
@@ -485,21 +485,61 @@ class Album(object):
 
 class Media(object):
 	def __init__(self, album, media_path, thumbs_path=None, attributes=None):
+		if attributes is not None:
+			# media generation from file
+			self.generate_media_from_cache(album, media_path, attributes)
+		else:
+			 # media generation from json cache
+			 self.generate_media_from_file(album, media_path, thumbs_path)
+
+	def generate_media_from_cache(self, album, media_path, attributes):
 		next_level()
 		message("entered Media init", "", 5)
 		self.album = album
 		self.media_path = media_path
 		self.media_file_name = remove_album_path(media_path)
-		message("reading dir name...", "", 5)
 		dirname = os.path.dirname(media_path)
-		indented_message("dir name read!", "", 5)
 		self.folders = remove_album_path(dirname)
 		self.album_path = os.path.join('albums', self.media_file_name)
 		self.cache_base = album.generate_cache_base(trim_base_custom(media_path, album.absolute_path), self.media_file_name)
 
 		self.is_valid = True
 
-		image = None
+		# try:
+		# 	message("reading file and dir times...", "", 5)
+		# 	mtime = file_mtime(media_path)
+		# 	dir_mtime = file_mtime(dirname)
+		# 	indented_message("file and dir times read!", "", 5)
+		# except KeyboardInterrupt:
+		# 	raise
+		# except OSError:
+		# 	indented_message("could not read file or dir mtime", "", 5)
+		# 	self.is_valid = False
+		# 	back_level()
+		# 	return
+
+		# if (attributes["dateTimeFile"] == mtime):
+		# 	# media in json file is OK
+		self._attributes = attributes
+		# self._attributes["dateTimeDir"] = dir_mtime
+		# self.cache_base = attributes["cacheBase"]
+		# media_path_pointer.close()
+		back_level()
+		return
+
+	def generate_media_from_file(self, album, media_path, thumbs_path):
+		next_level()
+		message("entered Media init", "", 5)
+		self.album = album
+		self.media_path = media_path
+		self.media_file_name = remove_album_path(media_path)
+		dirname = os.path.dirname(media_path)
+		self.folders = remove_album_path(dirname)
+		self.album_path = os.path.join('albums', self.media_file_name)
+		self.cache_base = album.generate_cache_base(trim_base_custom(media_path, album.absolute_path), self.media_file_name)
+
+		self.is_valid = True
+
 		try:
 			message("reading file and dir times...", "", 5)
 			mtime = file_mtime(media_path)
@@ -513,90 +553,57 @@ class Media(object):
 			back_level()
 			return
 
-		if Options.config['checksum']:
-			checksum_OK = True
-			if attributes is not None and not 'checksum' in attributes:
-				message("no checksum in json file", "", 5)
-				checksum_OK = False
+		self._attributes = {}
+		self._attributes["metadata"] = {}
+		self._attributes["dateTimeFile"] = mtime
+		self._attributes["dateTimeDir"] = dir_mtime
+		self._attributes["mediaType"] = "photo"
 
-			message("opening media file...", "", 5)
-			media_path_pointer = open(media_path, 'rb')
-			indented_message("media file opened!", "", 5)
+		message("opening media file...", "", 5)
+		media_path_pointer = open(media_path, 'rb')
+		indented_message("media file opened!", "", 5)
 
-			message("generating checksum...", "", 5)
-			self.checksum = checksum(media_path_pointer)
-			indented_message("checksum generated", "", 5)
+		image = None
+		try:
+			next_level()
+			message("opening media with PIL...", "", 5)
+			image = Image.open(media_path_pointer)
+		except KeyboardInterrupt:
+			raise
+		except IOError:
+			indented_message("Image.open() raised IOError, could be a video", "", 5)
+		except ValueError:
+			# PIL cannot read this file (seen for .xpm file)
+			# next lines will detect that the image is invalid
+			indented_message("ValueError when Image.open(), could be a video", "", 5)
+		else:
+			indented_message("media opened with PIL!", "", 5)
 
-			if checksum_OK and attributes is not None:
-				if attributes["dateTimeFile"] != mtime:
-					indented_message("modification time different", "no need to compare the checksum", 5)
-				elif attributes['checksum'] == self.checksum:
-					indented_message("checksum OK!", "", 5)
-				else:
-					indented_message("bad checksum!", "", 5)
-					checksum_OK = False
-
-		if (
-			attributes is not None and
-			attributes["dateTimeFile"] == mtime and
-			(not Options.config['checksum'] or checksum_OK)
-		):
-				# media in json file is OK
-				self._attributes = attributes
-				self._attributes["dateTimeDir"] = dir_mtime
-				# self.cache_base = attributes["cacheBase"]
-				media_path_pointer.close()
-				back_level()
-				return
-
-		if attributes is None:
-			self._attributes = {}
-			self._attributes["metadata"] = {}
-			self._attributes["dateTimeFile"] = mtime
-			self._attributes["dateTimeDir"] = dir_mtime
-			self._attributes["mediaType"] = "photo"
-
-			try:
-				next_level()
-				message("opening media with PIL...", "", 5)
-				image = Image.open(media_path_pointer)
-			except KeyboardInterrupt:
-				raise
-			except IOError:
-				indented_message("Image.open() raised IOError, could be a video", media_path, 5)
-			except ValueError:
-				# PIL cannot read this file (seen for .xpm file)
-				# next lines will detect that the image is invalid
-				indented_message("ValueError when Image.open(), could be a video", media_path, 5)
+		if self.is_valid:
+			if isinstance(image, Image.Image):
+				self._photo_metadata(image)
+				self._photo_thumbnails(image, media_path, Options.config['cache_path'])
+				if self.has_gps_data:
+					message("looking for geonames...", "", 5)
+					self.get_geonames()
 			else:
-				indented_message("media opened with PIL!", "", 5)
+				# try with video detection
+				self._video_metadata(media_path)
+				if self.is_video:
+					self._video_transcode(thumbs_path, media_path)
+					if self.is_valid:
+						self._video_thumbnails(thumbs_path, media_path)
 
-			if self.is_valid:
-				if isinstance(image, Image.Image):
-					self._photo_metadata(image)
-					self._photo_thumbnails(image, media_path, Options.config['cache_path'])
-					if self.has_gps_data:
-						message("looking for geonames...", "", 5)
-						self.get_geonames()
-
+						if self.has_gps_data:
+							message("looking for geonames...", "", 5)
+							self.get_geonames()
 				else:
-					# try with video detection
-					self._video_metadata(media_path)
-					if self.is_video:
-						self._video_transcode(thumbs_path, media_path)
-						if self.is_valid:
-							self._video_thumbnails(thumbs_path, media_path)
-
-							if self.has_gps_data:
-								message("looking for geonames...", "", 5)
-								self.get_geonames()
-					else:
-						indented_message("error transcodind, not a video?", "", 5)
-						self.is_valid = False
-			back_level()
-			media_path_pointer.close()
-			back_level()
-			return
+					indented_message("error transcodind, not a video?", "", 5)
+					self.is_valid = False
+		back_level()
+		media_path_pointer.close()
+		back_level()
+		return
 
 
 	@property
@@ -1666,6 +1673,10 @@ class Media(object):
 	@property
 	def name(self):
 		return os.path.basename(self.media_file_name)
+
+	@property
+	def checksum(self):
+		return self._attributes["checksum"]
 
 	@property
 	def title(self):

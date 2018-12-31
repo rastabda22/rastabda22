@@ -16,7 +16,7 @@ from datetime import datetime
 
 from PIL import Image
 
-from CachePath import remove_album_path, file_mtime, last_modification_time, trim_base_custom, remove_folders_marker
+from CachePath import remove_album_path, file_mtime, last_modification_time, trim_base_custom, remove_folders_marker, checksum
 from Utilities import message, indented_message, next_level, back_level, report_times
 from PhotoAlbum import Media, Album, PhotoAlbumEncoder
 from Geonames import Geonames
@@ -738,22 +738,25 @@ class TreeWalker:
 								indented_message("json file is OK", "", 4)
 								json_file_OK = True
 								album = cached_album
-								message("adding media in album to big lists...", "", 5)
 								for media in album.media:
+									message("adding media in album to lists...", "", 5)
 									if not any(media.media_file_name == _media.media_file_name for _media in self.all_media):
 										message("adding media to tree by date...", "", 5)
 										self.add_media_to_tree_by_date(media)
 										indented_message("media added to tree by date!", "", 5)
+
 										if media.has_gps_data:
 											message("adding media to by geonames tree...", "", 5)
 											self.add_media_to_tree_by_geonames(media)
 											indented_message("media added to by geonames tree!", "", 5)
+
 										message("adding media to search tree...", "", 5)
 										self.add_media_to_tree_by_search(media)
 										indented_message("media added to search tree!", "", 5)
 
+										message("adding media to all media list...", "", 5)
 										self.all_media.append(media)
-								indented_message("added media to big lists", "", 5)
+										indented_message("media added to all media list!", "", 5)
 							else:
 								indented_message("json file invalid (old or invalid path)", "", 4)
 								cached_album = None
@@ -855,78 +858,124 @@ class TreeWalker:
 				# save the file name for the end of the cycle, so that subdirs are processed first
 				files_in_dir.append(entry_with_path)
 
+		next_level()
 		for entry_with_path in files_in_dir:
-			cache_hit = False
-			mtime = file_mtime(entry_with_path)
-			max_file_date = max(max_file_date, mtime)
-			media = None
-			cached_media = None
-
+			message("working with file", entry_with_path, 5)
 			next_level()
-			absolute_cache_file_exists = False
-			if cached_album:
+			cache_hit = True
+			dirname = os.path.dirname(entry_with_path)
+			try:
+				message("reading file and dir times...", "", 5)
+				mtime = file_mtime(entry_with_path)
+				dir_mtime = file_mtime(dirname)
+				indented_message("file and dir times read!", "", 5)
+			except KeyboardInterrupt:
+				raise
+			except OSError:
+				indented_message("could not read file or dir mtime", "", 5)
+				continue
+			else:
+				max_file_date = max(max_file_date, mtime)
+				media = None
+				cached_media = None
+				absolute_cache_file_exists = False
+
+			if Options.config['checksum']:
+				message("calculating checksum...", "", 5)
+				with open(entry_with_path, 'rb') as media_path_pointer:
+					media_checksum = checksum(media_path_pointer)
+				indented_message("checksum calculated", "", 5)
+
+			if not cached_album:
+				indented_message("json file invalid", "not a cache hit", 5)
+				cache_hit = False
+
+			if cache_hit and cached_album:
+				next_level()
 				message("reading cache media from cached album...", "", 5)
 				cached_media = cached_album.media_from_path(entry_with_path)
-				indented_message("cache media read", "", 5)
-				if cached_media and	mtime <= cached_media.datetime_file:
-					cache_files = cached_media.image_caches
-					# check if the cache files actually exist and are not old
-					cache_hit = True
-					for cache_file in cache_files:
-						absolute_cache_file = os.path.join(Options.config['cache_path'], cache_file)
-						absolute_cache_file_exists = os.path.exists(absolute_cache_file)
-						if (
-							Options.config['recreate_fixed_height_thumbnails'] and
-							absolute_cache_file_exists and file_mtime(absolute_cache_file) < json_file_mtime
-						):
-							# remove wide images, in order not to have blurred thumbnails
-							fixed_height_thumbnail_re = "_" + str(Options.config['media_thumb_size']) + r"tf\.jpg$"
-							match = re.search(fixed_height_thumbnail_re, cache_file)
-							if match and cached_media.size[0] > cached_media.size[1]:
-								try:
-									os.unlink(os.path.join(Options.config['cache_path'], cache_file))
-									message("deleted, re-creating fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 3)
-								except OSError:
-									message("error deleting fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 1)
+				indented_message("cached media read", "", 5)
+				# cached_media._attributes["dateTimeDir"] = dir_mtime
 
-						if (
-							not absolute_cache_file_exists or
-							json_file_OK and (
-								file_mtime(absolute_cache_file) < cached_media.datetime_file or
-								file_mtime(absolute_cache_file) > json_file_mtime
-							) or
-							Options.config['recreate_reduced_photos'] or
-							Options.config['recreate_thumbnails']
-						):
-							cache_hit = False
-							break
-					if cache_hit:
-						media = cached_media
-						if media.is_video:
-							message("reduced size transcoded video and thumbnails OK", os.path.basename(entry_with_path), 4)
+				if cached_media._attributes["dateTimeFile"] != mtime:
+					indented_message("modification time different", "not a cache hit", 5)
+					cache_hit = False
+
+				if cache_hit and Options.config['checksum']:
+					try:
+						cached_media._attributes['checksum']
+					except KeyError:
+						message("no checksum in json file", "not a cache hit", 5)
+						cache_hit = False
+					else:
+						if cached_media._attributes['checksum'] == media_checksum:
+							indented_message("checksum OK!", "", 5)
 						else:
-							message("reduced size images and thumbnails OK", os.path.basename(entry_with_path), 4)
-					#~ else:
-						#~ absolute_cache_file = ""
-			if not cache_hit:
-				message("not a cache hit", entry_with_path, 4)
-				if not json_file_OK:
-					indented_message("reason: json file not OK", "  " + json_message, 4)
-				elif cached_media is None:
-					indented_message("reason: media not cached", "", 4)
-				elif not absolute_cache_file_exists:
-					indented_message("reason: unexistent reduction/thumbnail", "", 4)
-				elif file_mtime(absolute_cache_file) < cached_media.datetime_file:
-					indented_message("reason: reduct/thumbn older than cached media", "", 4)
-				elif file_mtime(absolute_cache_file) > json_file_mtime:
-					indented_message("reason: reduct/thumbn newer than json file", "", 4)
+							indented_message("bad checksum!", "not a cache hit", 5)
+							cache_hit = False
 
-				if Options.config['recreate_reduced_photos']:
-					indented_message("reduced photo recreation requested", "", 4)
-				if Options.config['recreate_thumbnails']:
-					indented_message("thumbnail recreation requested", "", 4)
-				message("processing media from file", entry_with_path, 5)
-				media = Media(album, entry_with_path, Options.config['cache_path'])
+				if cache_hit and cached_media:
+					if mtime != cached_media.datetime_file:
+						message("file datetime different from cache one", "not a cache hit", 5)
+						cache_hit = False
+					else:
+						cache_files = cached_media.image_caches
+						# check if the cache files actually exist and are not old
+						for cache_file in cache_files:
+							absolute_cache_file = os.path.join(Options.config['cache_path'], cache_file)
+							absolute_cache_file_exists = os.path.exists(absolute_cache_file)
+							if (
+								Options.config['recreate_fixed_height_thumbnails'] and
+								absolute_cache_file_exists and file_mtime(absolute_cache_file) < json_file_mtime
+							):
+								# remove wide images, in order not to have blurred thumbnails
+								fixed_height_thumbnail_re = "_" + str(Options.config['media_thumb_size']) + r"tf\.jpg$"
+								match = re.search(fixed_height_thumbnail_re, cache_file)
+								if match and cached_media.size[0] > cached_media.size[1]:
+									try:
+										os.unlink(os.path.join(Options.config['cache_path'], cache_file))
+										message("deleted, re-creating fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 3)
+									except OSError:
+										message("error deleting fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 1)
+
+							if not absolute_cache_file_exists:
+								indented_message("unexistent reduction/thumbnail", "not a cache hit", 4)
+								cache_hit = False
+								break
+							if file_mtime(absolute_cache_file) < cached_media.datetime_file:
+								indented_message("reduction/thumbnail older than cached media", "not a cache hit", 4)
+								cache_hit = False
+								break
+							if file_mtime(absolute_cache_file) > json_file_mtime:
+								indented_message("reduction/thumbnail newer than json file", "not a cache hit", 4)
+								cache_hit = False
+								break
+							if Options.config['recreate_reduced_photos']:
+								indented_message("reduced photo recreation requested", "not a cache hit", 4)
+								cache_hit = False
+								break
+							if Options.config['recreate_thumbnails']:
+								indented_message("thumbnail recreation requested", "not a cache hit", 4)
+								cache_hit = False
+								break
+				back_level()
+
+			if cache_hit:
+				media = cached_media
+				if media.is_video:
+					message("reduced size transcoded video and thumbnails OK", "", 4)
+				else:
+					message("reduced size images and thumbnails OK", "", 4)
+						#~ else:
+							#~ absolute_cache_file = ""
+			else:
+				message("not a cache hit", entry_with_path, 4)
+
+				message("processing media from file", "", 5)
+				media = Media(album, entry_with_path, Options.config['cache_path'], None)
+				print(media)
+				if Options.config['checksum']:
+					media._attributes["checksum"] = media_checksum
 
 			if media.is_valid:
 				album.num_media_in_sub_tree += 1
@@ -988,6 +1037,7 @@ class TreeWalker:
 			elif not media.is_valid:
 				indented_message("not image nor video", "", 1)
 			back_level()
+		back_level()
 
 		if num_video_in_dir:
 			Options.num_video += num_video_in_dir
