@@ -738,10 +738,11 @@ class TreeWalker:
 								indented_message("json file is OK", "", 4)
 								json_file_OK = True
 								album = cached_album
+								message("adding media in album to lists...", "", 5)
+								next_level()
 								for media in album.media:
-									message("adding media in album to lists...", "", 5)
 									if not any(media.media_file_name == _media.media_file_name for _media in self.all_media):
-										message("adding media to tree by date...", "", 5)
+										message("adding media to tree by date...", media, 5)
 										self.add_media_to_tree_by_date(media)
 										indented_message("media added to tree by date!", "", 5)
 
@@ -757,6 +758,7 @@ class TreeWalker:
 										message("adding media to all media list...", "", 5)
 										self.all_media.append(media)
 										indented_message("media added to all media list!", "", 5)
+								back_level()
 							else:
 								indented_message("json file invalid (old or invalid path)", "", 4)
 								cached_album = None
@@ -1080,9 +1082,9 @@ class TreeWalker:
 
 		if not album.empty:
 			next_level()
-			message("adding album to big list...", "", 5)
+			message("adding album to albums list...", "", 5)
 			self.all_albums.append(album)
-			indented_message("added album to big list", "", 4)
+			indented_message("album added to albums list", "", 4)
 			back_level()
 		else:
 			message("VOID: no media in this directory", os.path.basename(absolute_path), 4)
