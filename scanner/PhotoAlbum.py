@@ -549,7 +549,7 @@ class Media(object):
 				back_level()
 				return
 
-		if (attributes is None):
+		if attributes is None:
 			self._attributes = {}
 			self._attributes["metadata"] = {}
 			self._attributes["dateTimeFile"] = mtime
