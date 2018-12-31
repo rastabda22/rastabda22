@@ -14,7 +14,7 @@ try:
 except ImportError:
 	import ConfigParser as configparser
 
-from Utilities import message, next_level, back_level, find, find_in_usr_share
+from Utilities import message, indented_message, next_level, back_level, find, find_in_usr_share
 
 config = {}
 date_time_format = "%Y-%m-%d %H:%M:%S"
@@ -80,31 +80,23 @@ def initialize_opencv():
 			message("looking for file...", FACE_CONFIG_FILE + " in /", 5)
 			face_config_file_with_path = find(FACE_CONFIG_FILE)
 		if not face_config_file_with_path:
-			next_level()
-			message("face xml file not found", FACE_CONFIG_FILE, 5)
-			back_level()
+			indented_message("face xml file not found", FACE_CONFIG_FILE, 5)
 			config['cv2_installed'] = False
 		else:
 			face_cascade = cv2.CascadeClassifier(face_config_file_with_path)
 
-			next_level()
-			message("face xml file found and initialized:", face_config_file_with_path, 5)
-			back_level()
+			indented_message("face xml file found and initialized:", face_config_file_with_path, 5)
 			EYE_CONFIG_FILE = "haarcascade_eye.xml"
 			message("looking for file...", EYE_CONFIG_FILE, 5)
 			eye_config_file_with_path = find_in_usr_share(EYE_CONFIG_FILE)
 			if not eye_config_file_with_path:
 				eye_config_file_with_path = find(EYE_CONFIG_FILE)
 			if not eye_config_file_with_path:
-				next_level()
-				message("eyes xml file not found", EYE_CONFIG_FILE, 5)
-				back_level()
+				indented_message("eyes xml file not found", EYE_CONFIG_FILE, 5)
 				config['cv2_installed'] = False
 			else:
 				eye_cascade = cv2.CascadeClassifier(eye_config_file_with_path)
-				next_level()
-				message("found and initialized:", eye_config_file_with_path, 5)
-				back_level()
+				indented_message("found and initialized:", eye_config_file_with_path, 5)
 		back_level()
 	except ImportError:
 		config['cv2_installed'] = False
@@ -154,9 +146,7 @@ def get_options():
 				else:
 					config[option] = ""
 			except configparser.Error:
-				next_level()
-				message("WARNING: option " + option + " in user config file", "is not integer, using default value", 2)
-				back_level()
+				indented_message("WARNING: option " + option + " in user config file", "is not integer, using default value", 2)
 				config[option] = default_config.getint('options', option)
 		elif option in ('follow_symlinks',
 				'checksum',
@@ -181,9 +171,7 @@ def get_options():
 			try:
 				config[option] = usr_config.getboolean('options', option)
 			except ValueError:
-				next_level()
-				message("WARNING: option " + option + " in user config file", "is not boolean, using default value", 2)
-				back_level()
+				indented_message("WARNING: option " + option + " in user config file", "is not boolean, using default value", 2)
 				config[option] = default_config.getboolean('options', option)
 		elif option in ('reduced_sizes', 'map_zoom_levels', 'metadata_tools_preference'):
 			config[option] = ast.literal_eval(usr_config.get('options', option))
@@ -352,9 +340,7 @@ def get_options():
 	special_files = [config['exclude_tree_marker'], config['exclude_files_marker'], config['metadata_filename']]
 	message("counting media in albums...", "", 4)
 	config['num_media_in_tree'] = sum([len([file for file in files if file[:1] != '.' and file not in special_files]) for dirpath, dirs, files in os.walk(config['album_path']) if dirpath.find('/.') == -1])
-	next_level()
-	message("media in albums counted", str(config['num_media_in_tree']), 4)
-	back_level()
+	indented_message("media in albums counted", str(config['num_media_in_tree']), 4)
 
 	config['cache_folders_num_digits_array'] = []
 	if config['subdir_method'] == "md5":

@@ -77,6 +77,10 @@ The identation level printed by the message function.
 """
 message.level = 0
 
+def indented_message(category, text, verbose=0):
+	next_level()
+	message(category, text, verbose)
+	back_level()
 
 def next_level(verbose=0):
 	"""
