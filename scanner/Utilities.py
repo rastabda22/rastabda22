@@ -203,9 +203,12 @@ def report_times(final):
 		if num_media:
 			mean_time = int(time_till_now / 1000000 / num_media * 1000) / 1000
 			media_count_and_time += ",      " + str(mean_time) + " s/media"
-			if mean_time <= 0.5:
-				mean_speed = int(1 / mean_time * 100) / 100
-				media_count_and_time += ",      " + str(mean_speed) + " media/s"
+			mean_speed_sec = int(1 / mean_time * 100) / 100
+			media_count_and_time += ",      " + str(mean_speed_sec) + " media/s"
+			mean_speed_min = int(1 / mean_time * 60 * 100) / 100
+			media_count_and_time += ",      " + str(mean_speed_min) + " media/min"
+			mean_speed_hour = int(1 / mean_time * 3600 * 100) / 100
+			media_count_and_time += ",      " + str(mean_speed_hour) + " media/hour"
 
 		print(media_count_and_time)
 		media_count_and_time = "                  processed " + _num_media_processed.rjust(max_digit)
