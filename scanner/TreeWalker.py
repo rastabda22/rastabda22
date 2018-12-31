@@ -846,15 +846,18 @@ class TreeWalker:
 			elif os.path.isfile(entry_with_path):
 				if skip_files:
 					continue
-				next_level()
+
+				if any(remove_album_path(entry_with_path) == _media.media_file_name for _media in self.all_media):
+					# do not process the media twice
+					continue
+
 				cache_hit = False
 				mtime = file_mtime(entry_with_path)
 				max_file_date = max(max_file_date, mtime)
 				media = None
 				cached_media = None
-				if any(remove_album_path(entry_with_path) == _media.media_file_name for _media in self.all_media):
-					# do not process the media twice
-					continue
+
+				next_level()
 				if cached_album:
 					message("reading cache media from cached album...", "", 5)
 					cached_media = cached_album.media_from_path(entry_with_path)
