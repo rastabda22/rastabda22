@@ -741,13 +741,16 @@ class TreeWalker:
 								message("adding media in album to big lists...", "", 5)
 								for media in album.media:
 									if not any(media.media_file_name == _media.media_file_name for _media in self.all_media):
+										message("adding media to tree by date...", "", 5)
 										self.add_media_to_tree_by_date(media)
+										indented_message("media added to tree by date!", "", 5)
 										if media.has_gps_data:
+											message("adding media to by geonames tree...", "", 5)
 											self.add_media_to_tree_by_geonames(media)
+											indented_message("media added to by geonames tree!", "", 5)
 										message("adding media to search tree...", "", 5)
-										# the following function has a check on media already present
 										self.add_media_to_tree_by_search(media)
-										indented_message("media added to search tree", "", 5)
+										indented_message("media added to search tree!", "", 5)
 
 										self.all_media.append(media)
 								indented_message("added media to big lists", "", 5)
