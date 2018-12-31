@@ -549,54 +549,54 @@ class Media(object):
 				back_level()
 				return
 
-		message("bad media in json file!", "working with the media file", 5)
-		self._attributes = {}
-		self._attributes["metadata"] = {}
-		self._attributes["dateTimeFile"] = mtime
-		self._attributes["dateTimeDir"] = dir_mtime
-		self._attributes["mediaType"] = "photo"
+		if (attributes is None):
+			self._attributes = {}
+			self._attributes["metadata"] = {}
+			self._attributes["dateTimeFile"] = mtime
+			self._attributes["dateTimeDir"] = dir_mtime
+			self._attributes["mediaType"] = "photo"
 
-		try:
-			next_level()
-			message("opening media with PIL...", "", 5)
-			image = Image.open(media_path_pointer)
-		except KeyboardInterrupt:
-			raise
-		except IOError:
-			indented_message("Image.open() raised IOError, could be a video", media_path, 5)
-		except ValueError:
-			# PIL cannot read this file (seen for .xpm file)
-			# next lines will detect that the image is invalid
-			indented_message("ValueError when Image.open(), could be a video", media_path, 5)
-		else:
-			indented_message("media opened with PIL!", "", 5)
-
-		if self.is_valid:
-			if isinstance(image, Image.Image):
-				self._photo_metadata(image)
-				self._photo_thumbnails(image, media_path, Options.config['cache_path'])
-				if self.has_gps_data:
-					message("looking for geonames...", "", 5)
-					self.get_geonames()
-
+			try:
+				next_level()
+				message("opening media with PIL...", "", 5)
+				image = Image.open(media_path_pointer)
+			except KeyboardInterrupt:
+				raise
+			except IOError:
+				indented_message("Image.open() raised IOError, could be a video", media_path, 5)
+			except ValueError:
+				# PIL cannot read this file (seen for .xpm file)
+				# next lines will detect that the image is invalid
+				indented_message("ValueError when Image.open(), could be a video", media_path, 5)
 			else:
-				# try with video detection
-				self._video_metadata(media_path)
-				if self.is_video:
-					self._video_transcode(thumbs_path, media_path)
-					if self.is_valid:
-						self._video_thumbnails(thumbs_path, media_path)
+				indented_message("media opened with PIL!", "", 5)
 
-						if self.has_gps_data:
-							message("looking for geonames...", "", 5)
-							self.get_geonames()
+			if self.is_valid:
+				if isinstance(image, Image.Image):
+					self._photo_metadata(image)
+					self._photo_thumbnails(image, media_path, Options.config['cache_path'])
+					if self.has_gps_data:
+						message("looking for geonames...", "", 5)
+						self.get_geonames()
+
 				else:
-					indented_message("error transcodind, not a video?", "", 5)
-					self.is_valid = False
-		back_level()
-		media_path_pointer.close()
-		back_level()
-		return
+					# try with video detection
+					self._video_metadata(media_path)
+					if self.is_video:
+						self._video_transcode(thumbs_path, media_path)
+						if self.is_valid:
+							self._video_thumbnails(thumbs_path, media_path)
+
+							if self.has_gps_data:
+								message("looking for geonames...", "", 5)
+								self.get_geonames()
+					else:
+						indented_message("error transcodind, not a video?", "", 5)
+						self.is_valid = False
+			back_level()
+			media_path_pointer.close()
+			back_level()
+			return
 
 
 	@property
