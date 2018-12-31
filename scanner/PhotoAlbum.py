@@ -540,13 +540,15 @@ class Media(object):
 			next_level()
 			message("media file opened!", "", 5)
 			back_level()
-			next_level()
+
 			message("generating checksum...", "", 5)
-			media_path_pointer = open(media_path, 'rb')
 			self.checksum = checksum(media_path_pointer)
 			next_level()
 			message("checksum generated", "", 5)
+			back_level()
+
 			if checksum_OK and attributes is not None:
+				next_level()
 				if attributes["dateTimeFile"] != mtime:
 					message("modification time different", "no need to compare the checksum", 5)
 				elif attributes['checksum'] == self.checksum:
@@ -554,7 +556,7 @@ class Media(object):
 				else:
 					message("bad checksum!", "", 5)
 					checksum_OK = False
-			back_level()
+				back_level()
 			back_level()
 
 		if (
@@ -567,9 +569,9 @@ class Media(object):
 				self._attributes["dateTimeDir"] = dir_mtime
 				# self.cache_base = attributes["cacheBase"]
 				media_path_pointer.close()
+				back_level()
 				return
 
-		next_level()
 		message("bad media in json file!", "working with the media file", 5)
 		self._attributes = {}
 		self._attributes["metadata"] = {}
