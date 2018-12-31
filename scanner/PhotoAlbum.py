@@ -535,7 +535,6 @@ class Media(object):
 				else:
 					indented_message("bad checksum!", "", 5)
 					checksum_OK = False
-			back_level()
 
 		if (
 			attributes is not None and
