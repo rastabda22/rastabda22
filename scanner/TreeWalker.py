@@ -799,6 +799,7 @@ class TreeWalker:
 		photos_with_exif_date_and_without_geotags_in_dir = []
 		photos_without_exif_date_and_with_geotags_in_dir = []
 		photos_without_exif_date_or_geotags_in_dir = []
+		files_in_dir = []
 		for entry in self._listdir_sorted_by_time(absolute_path):
 			try:
 				# @python2
@@ -847,114 +848,115 @@ class TreeWalker:
 				if skip_files:
 					continue
 
-				if any(remove_album_path(entry_with_path) == _media.media_file_name for _media in self.all_media):
-					# do not process the media twice
-					continue
+				# if any(remove_album_path(entry_with_path) == _media.media_file_name for _media in self.all_media):
+				# 	# do not process the media twice
+				# 	continue
 
-				cache_hit = False
-				mtime = file_mtime(entry_with_path)
-				max_file_date = max(max_file_date, mtime)
-				media = None
-				cached_media = None
+				# save the file name for the end of the cycle, so that subdirs are processed first
+				files_in_dir.append(entry_with_path)
 
-				next_level()
-				if cached_album:
-					message("reading cache media from cached album...", "", 5)
-					cached_media = cached_album.media_from_path(entry_with_path)
-					indented_message("cache media read", "", 5)
-					if cached_media and	mtime <= cached_media.datetime_file:
-						cache_files = cached_media.image_caches
-						# check if the cache files actually exist and are not old
-						cache_hit = True
-						for cache_file in cache_files:
-							absolute_cache_file = os.path.join(Options.config['cache_path'], cache_file)
-							absolute_cache_file_exists = os.path.exists(absolute_cache_file)
-							if (
-								Options.config['recreate_fixed_height_thumbnails'] and
-								absolute_cache_file_exists and file_mtime(absolute_cache_file) < json_file_mtime
-							):
-								# remove wide images, in order not to have blurred thumbnails
-								fixed_height_thumbnail_re = "_" + str(Options.config['media_thumb_size']) + r"tf\.jpg$"
-								match = re.search(fixed_height_thumbnail_re, cache_file)
-								if match and cached_media.size[0] > cached_media.size[1]:
-									try:
-										os.unlink(os.path.join(Options.config['cache_path'], cache_file))
-										message("deleted, re-creating fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 3)
-									except OSError:
-										message("error deleting fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 1)
+		for entry_with_path in files_in_dir:
+			cache_hit = False
+			mtime = file_mtime(entry_with_path)
+			max_file_date = max(max_file_date, mtime)
+			media = None
+			cached_media = None
 
-							if (
-								not absolute_cache_file_exists or
-								json_file_OK and (
-									file_mtime(absolute_cache_file) < cached_media.datetime_file or
-									file_mtime(absolute_cache_file) > json_file_mtime
-								) or
-								(Options.config['recreate_reduced_photos'] or Options.config['recreate_thumbnails'])
-							):
-								cache_hit = False
-								break
-						if cache_hit:
-							media = cached_media
-							if media.is_video:
-								message("reduced size transcoded video and thumbnails OK", os.path.basename(entry_with_path), 4)
-							else:
-								message("reduced size images and thumbnails OK", os.path.basename(entry_with_path), 4)
-						#~ else:
-							#~ absolute_cache_file = ""
-				if not cache_hit:
-					message("not a cache hit", entry_with_path, 4)
-					next_level()
-					if not json_file_OK:
-						message("reason: json file not OK", "  " + json_message, 4)
-					else:
-						if cached_media is None:
-							message("reason: media not cached", "", 4)
-						# TODO: We can't execute the code below as cache_hit = False...
-						elif cache_hit:
-							if not absolute_cache_file_exists:
-								message("reason: unexistent reduction/thumbnail", "", 4)
-							else:
-								if file_mtime(absolute_cache_file) < cached_media.datetime_file:
-									message("reason: reduct/thumbn older than cached media", "", 4)
-								elif file_mtime(absolute_cache_file) > json_file_mtime:
-									message("reason: reduct/thumbn newer than json file", "", 4)
+			next_level()
+			absolute_cache_file_exists = False
+			if cached_album:
+				message("reading cache media from cached album...", "", 5)
+				cached_media = cached_album.media_from_path(entry_with_path)
+				indented_message("cache media read", "", 5)
+				if cached_media and	mtime <= cached_media.datetime_file:
+					cache_files = cached_media.image_caches
+					# check if the cache files actually exist and are not old
+					cache_hit = True
+					for cache_file in cache_files:
+						absolute_cache_file = os.path.join(Options.config['cache_path'], cache_file)
+						absolute_cache_file_exists = os.path.exists(absolute_cache_file)
+						if (
+							Options.config['recreate_fixed_height_thumbnails'] and
+							absolute_cache_file_exists and file_mtime(absolute_cache_file) < json_file_mtime
+						):
+							# remove wide images, in order not to have blurred thumbnails
+							fixed_height_thumbnail_re = "_" + str(Options.config['media_thumb_size']) + r"tf\.jpg$"
+							match = re.search(fixed_height_thumbnail_re, cache_file)
+							if match and cached_media.size[0] > cached_media.size[1]:
+								try:
+									os.unlink(os.path.join(Options.config['cache_path'], cache_file))
+									message("deleted, re-creating fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 3)
+								except OSError:
+									message("error deleting fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 1)
 
-					if Options.config['recreate_reduced_photos']:
-						message("reduced photo recreation requested", "", 4)
-					if Options.config['recreate_thumbnails']:
-						message("thumbnail recreation requested", "", 4)
-					back_level()
-					message("processing media from file", entry_with_path, 5)
-					media = Media(album, entry_with_path, Options.config['cache_path'])
-
-				if media.is_valid:
-					album.num_media_in_sub_tree += 1
-					album.num_media_in_album += 1
-					if media.is_video:
-						num_video_in_dir += 1
-						if not cache_hit:
-							num_video_processed_in_dir += 1
-					else:
-						num_photo_in_dir += 1
-						if not cache_hit:
-							num_photo_processed_in_dir += 1
-
-						if media.has_exif_date:
-							num_photo_with_exif_date_in_dir += 1
-						if media.has_gps_data:
-							num_photo_with_geotags_in_dir += 1
-
-						if media.has_exif_date:
-							if media.has_gps_data:
-								num_photo_with_exif_date_and_geotags_in_dir += 1
-							else:
-								photos_with_exif_date_and_without_geotags_in_dir.append("      " + entry_with_path)
+						if (
+							not absolute_cache_file_exists or
+							json_file_OK and (
+								file_mtime(absolute_cache_file) < cached_media.datetime_file or
+								file_mtime(absolute_cache_file) > json_file_mtime
+							) or
+							Options.config['recreate_reduced_photos'] or
+							Options.config['recreate_thumbnails']
+						):
+							cache_hit = False
+							break
+					if cache_hit:
+						media = cached_media
+						if media.is_video:
+							message("reduced size transcoded video and thumbnails OK", os.path.basename(entry_with_path), 4)
 						else:
-							if media.has_gps_data:
-								photos_without_exif_date_and_with_geotags_in_dir.append("      " + entry_with_path)
-							else:
-								photos_without_exif_date_or_geotags_in_dir.append(      "      " + entry_with_path)
+							message("reduced size images and thumbnails OK", os.path.basename(entry_with_path), 4)
+					#~ else:
+						#~ absolute_cache_file = ""
+			if not cache_hit:
+				message("not a cache hit", entry_with_path, 4)
+				if not json_file_OK:
+					indented_message("reason: json file not OK", "  " + json_message, 4)
+				elif cached_media is None:
+					indented_message("reason: media not cached", "", 4)
+				elif not absolute_cache_file_exists:
+					indented_message("reason: unexistent reduction/thumbnail", "", 4)
+				elif file_mtime(absolute_cache_file) < cached_media.datetime_file:
+					indented_message("reason: reduct/thumbn older than cached media", "", 4)
+				elif file_mtime(absolute_cache_file) > json_file_mtime:
+					indented_message("reason: reduct/thumbn newer than json file", "", 4)
 
+				if Options.config['recreate_reduced_photos']:
+					indented_message("reduced photo recreation requested", "", 4)
+				if Options.config['recreate_thumbnails']:
+					indented_message("thumbnail recreation requested", "", 4)
+				message("processing media from file", entry_with_path, 5)
+				media = Media(album, entry_with_path, Options.config['cache_path'])
+
+			if media.is_valid:
+				album.num_media_in_sub_tree += 1
+				album.num_media_in_album += 1
+				if media.is_video:
+					num_video_in_dir += 1
+					if not cache_hit:
+						num_video_processed_in_dir += 1
+				else:
+					num_photo_in_dir += 1
+					if not cache_hit:
+						num_photo_processed_in_dir += 1
+
+					if media.has_exif_date:
+						num_photo_with_exif_date_in_dir += 1
+					if media.has_gps_data:
+						num_photo_with_geotags_in_dir += 1
+
+					if media.has_exif_date:
+						if media.has_gps_data:
+							num_photo_with_exif_date_and_geotags_in_dir += 1
+						else:
+							photos_with_exif_date_and_without_geotags_in_dir.append("      " + entry_with_path)
+					else:
+						if media.has_gps_data:
+							photos_without_exif_date_and_with_geotags_in_dir.append("      " + entry_with_path)
+						else:
+							photos_without_exif_date_or_geotags_in_dir.append(      "      " + entry_with_path)
+
+				if not any(media.media_file_name == _media.media_file_name for _media in self.all_media):
 					next_level()
 					message("adding media to by date tree...", "", 5)
 					# the following function has a check on media already present
@@ -983,9 +985,9 @@ class TreeWalker:
 
 					back_level()
 
-				elif not media.is_valid:
-					indented_message("not image nor video", "", 1)
-				back_level()
+			elif not media.is_valid:
+				indented_message("not image nor video", "", 1)
+			back_level()
 
 		if num_video_in_dir:
 			Options.num_video += num_video_in_dir
