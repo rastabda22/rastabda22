@@ -495,10 +495,16 @@ class Album(object):
 
 class Media(object):
 	def __init__(self, album, media_path, thumbs_path=None, attributes=None):
+		next_level()
+		message("entered Media init", "", 5)
 		self.album = album
 		self.media_path = media_path
 		self.media_file_name = remove_album_path(media_path)
+		message("reading dir name...", "", 5)
 		dirname = os.path.dirname(media_path)
+		next_level()
+		message("dir name read!", "", 5)
+		back_level()
 		self.folders = remove_album_path(dirname)
 		self.album_path = os.path.join('albums', self.media_file_name)
 		self.cache_base = album.generate_cache_base(trim_base_custom(media_path, album.absolute_path), self.media_file_name)
@@ -507,15 +513,20 @@ class Media(object):
 
 		image = None
 		try:
+			message("reading file and dir times...", "", 5)
 			mtime = file_mtime(media_path)
 			dir_mtime = file_mtime(dirname)
+			next_level()
+			message("file and dir times read!", "", 5)
+			back_level()
 		except KeyboardInterrupt:
 			raise
 		except OSError:
 			next_level()
-			message("could not read file or dir mtime", media_path, 5)
+			message("could not read file or dir mtime", "", 5)
 			back_level()
 			self.is_valid = False
+			back_level()
 			return
 
 		if Options.config['checksum']:
@@ -523,6 +534,12 @@ class Media(object):
 			if attributes is not None and not 'checksum' in attributes:
 				message("no checksum in json file", "", 5)
 				checksum_OK = False
+
+			message("opening media file...", "", 5)
+			media_path_pointer = open(media_path, 'rb')
+			next_level()
+			message("media file opened!", "", 5)
+			back_level()
 			next_level()
 			message("generating checksum...", "", 5)
 			media_path_pointer = open(media_path, 'rb')
@@ -561,6 +578,8 @@ class Media(object):
 		self._attributes["mediaType"] = "photo"
 
 		try:
+			next_level()
+			message("opening media with PIL...", "", 5)
 			image = Image.open(media_path_pointer)
 		except KeyboardInterrupt:
 			raise
@@ -573,6 +592,10 @@ class Media(object):
 			# next lines will detect that the image is invalid
 			next_level()
 			message("ValueError when Image.open(), could be a video", media_path, 5)
+			back_level()
+		else:
+			next_level()
+			message("media opened with PIL!", "", 5)
 			back_level()
 
 		if self.is_valid:
@@ -601,6 +624,7 @@ class Media(object):
 					self.is_valid = False
 		back_level()
 		media_path_pointer.close()
+		back_level()
 		return
 
 
