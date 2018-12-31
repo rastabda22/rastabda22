@@ -195,16 +195,12 @@ def get_options():
 			max_spaces += " "
 
 		default_option_value = str(default_config.get('options', option))
-		default_option_length = len(default_option_value)
-		default_spaces = ""
-		for _ in range(max_length - default_option_length - 2):
-			default_spaces += " "
 		if default_config.get('options', option) == usr_config.get('options', option):
-			option_value = "  " + option_value + spaces + "[DEFAULT" + max_spaces + "]"
+			option_value = "  " + option_value + spaces + "DEFAULT"
 		else:
-			option_value = "* " + option_value + spaces + "[DEFAULT: " + default_option_value + default_spaces + "]"
+			option_value = "* " + option_value + spaces + "DEFAULT: " + default_option_value
 
-		message(option, option_value, 0)
+		message("option value", option.ljust(45) + ": " + option_value, 0)
 
 	# all cache names are lower case => bit rate must be lower case too
 	config['video_transcode_bitrate'] = config['video_transcode_bitrate'].lower()
