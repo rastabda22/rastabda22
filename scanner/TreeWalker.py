@@ -839,7 +839,7 @@ class TreeWalker:
 					indented_message("album added to search tree", "", 5)
 					back_level()
 
-			elif os.path.isfile(entry_with_path):
+			elif os.path.isfile(entry_with_path) and not json_file_OK:
 				if skip_files:
 					continue
 				next_level()
