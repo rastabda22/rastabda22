@@ -594,7 +594,8 @@ class TreeWalker:
 				if media not in self.tree_by_search[word]["media_words"]:
 					self.tree_by_search[word]["media_words"].append(media)
 				if unicode_word not in self.tree_by_search[word]["unicode_words"]:
-					self.tree_by_search[word]["unicode_words"].append(unicode_word)
+					if not any(media.media_file_name == _media.media_file_name for _media in self.tree_by_search[word]["unicode_words"]):
+						self.tree_by_search[word]["unicode_words"].append(unicode_word)
 
 	def add_album_to_tree_by_search(self, album):
 		words_for_word_list, unicode_words, words_for_search_album_name = self.prepare_for_tree_by_search(album)
