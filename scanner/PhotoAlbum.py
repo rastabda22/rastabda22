@@ -1740,7 +1740,7 @@ class Media(object):
 		correct_date = None
 		if not self.is_valid:
 			correct_date = datetime(1900, 1, 1)
-		if "dateTimeOriginal" in self._attributes["metadata"]:
+		elif "dateTimeOriginal" in self._attributes["metadata"]:
 			correct_date = self._attributes["metadata"]["dateTimeOriginal"]
 		elif "dateTime" in self._attributes["metadata"]:
 			correct_date = self._attributes["metadata"]["dateTime"]
