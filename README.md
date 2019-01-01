@@ -48,6 +48,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] EXIF, IPTC and XMP Metadata display.
 - [x] Link to original media.
 - [x] Link for direct download.
+- [x] Allows enlarging the photo till 1:1 aspect.
 
 ### Mobile Friendly
 
@@ -122,5 +123,5 @@ It is, essentially, a slick and fast, minimal but still well-featured photo gall
 As a term of comparizon, on my medium-sized pc, with the images on a NFS mounted NAS partition:
 
 * scanning with face detection for the first time a 692 photos directory tree for a total size of 2.3 GB takes about 700 seconds (about 1 sec/media, 1 media/sec); face detection takes about 267ms/photo.
-* re-scan of "all OK" tree with 36000 media files for a total size of 87 GB takes about 14 minutes (about 20 ms/media, 50 media/sec).
+* re-scan of "all OK" tree of 36000 media files for a total size of 87 GB takes about 14 minutes (20 ms/media, 50 media/sec) if not using checksums, and about 90 minutes (110 ms/media, 9 media/sec) when using checksums.
 * scanning of videos takes a much longer time than photos, the bigger the video the greater the time.
