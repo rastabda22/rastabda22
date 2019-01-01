@@ -770,6 +770,7 @@ class TreeWalker:
 				# will execution never come here?
 				indented_message("json file unexistent", json_message, 4)
 				json_file_OK = False
+			# is the following exception needed? it surely catched date errors...
 			except (ValueError, AttributeError, KeyError):
 				indented_message("json file invalid", json_message, 4)
 				json_file_OK = False
