@@ -889,7 +889,7 @@ class TreeWalker:
 					media_checksum = checksum(media_path_pointer)
 				indented_message("checksum calculated", "", 5)
 
-			if not cached_album:
+			if cached_album is None:
 				indented_message("json file invalid", "not a cache hit", 5)
 				cache_hit = False
 
