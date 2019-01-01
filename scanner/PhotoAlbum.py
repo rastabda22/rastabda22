@@ -505,25 +505,7 @@ class Media(object):
 
 		self.is_valid = True
 
-		# try:
-		# 	message("reading file and dir times...", "", 5)
-		# 	mtime = file_mtime(media_path)
-		# 	dir_mtime = file_mtime(dirname)
-		# 	indented_message("file and dir times read!", "", 5)
-		# except KeyboardInterrupt:
-		# 	raise
-		# except OSError:
-		# 	indented_message("could not read file or dir mtime", "", 5)
-		# 	self.is_valid = False
-		# 	back_level()
-		# 	return
-
-		# if (attributes["dateTimeFile"] == mtime):
-		# 	# media in json file is OK
 		self._attributes = attributes
-		# self._attributes["dateTimeDir"] = dir_mtime
-		# self.cache_base = attributes["cacheBase"]
-		# media_path_pointer.close()
 		back_level()
 		return
 
