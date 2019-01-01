@@ -289,11 +289,11 @@ def get_options():
 		message("options", "guessed value(s):", 2)
 		next_level()
 		if guessed_index_dir:
-			message('index_html_path', config['index_html_path'], 2)
+			message('guessed directory', 'index_html_path' + '=' + config['index_html_path'], 2)
 		if guessed_album_dir:
-			message('album_path', config['album_path'], 2)
+			message('guessed directory', 'album_path' + '=' + config['album_path'], 2)
 		if guessed_cache_dir:
-			message('cache_path', config['cache_path'], 2)
+			message('guessed directory', 'cache_path' + '=' + config['cache_path'], 2)
 		back_level()
 
 	# the album directory must exist and be readable
