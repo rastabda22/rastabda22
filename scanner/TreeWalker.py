@@ -669,7 +669,7 @@ class TreeWalker:
 		#~ if trimmed_path:
 			#~ absolute_path_with_marker = os.path.join(absolute_path_with_marker, trimmed_path)
 		max_file_date = file_mtime(absolute_path)
-		message("Walking                                 ", os.path.basename(absolute_path), 3)
+		message(">>>>>>>>>>>  Walking", absolute_path, 3)
 		next_level()
 		message("cache base", album_cache_base, 4)
 		if not os.access(absolute_path, os.R_OK | os.X_OK):
