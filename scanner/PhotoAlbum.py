@@ -483,6 +483,7 @@ class Album(object):
 
 		return subalbum_or_media_path
 
+
 class Media(object):
 	def __init__(self, album, media_path, thumbs_path=None, attributes=None):
 		if attributes is not None:
@@ -493,8 +494,6 @@ class Media(object):
 			 self.generate_media_from_file(album, media_path, thumbs_path)
 
 	def generate_media_from_cache(self, album, media_path, attributes):
-		next_level()
-		message("entered Media init", "", 5)
 		self.album = album
 		self.media_path = media_path
 		self.media_file_name = remove_album_path(media_path)
@@ -506,7 +505,6 @@ class Media(object):
 		self.is_valid = True
 
 		self._attributes = attributes
-		back_level()
 		return
 
 	def generate_media_from_file(self, album, media_path, thumbs_path):
@@ -587,16 +585,13 @@ class Media(object):
 		back_level()
 		return
 
-
 	@property
 	def datetime_file(self):
 		return self._attributes["dateTimeFile"]
 
-
 	@property
 	def datetime_dir(self):
 		return self._attributes["dateTimeDir"]
-
 
 	def get_geonames(self):
 		self._attributes["geoname"] = Geonames.lookup_nearby_place(self.latitude, self.longitude)
@@ -612,7 +607,6 @@ class Media(object):
 		# Overwrite with album.ini values when album has been read from file
 		if self.album.album_ini:
 			Metadata.set_geoname_from_album_ini(self.name, self._attributes, self.album.album_ini)
-
 
 	def _photo_metadata(self, image):
 

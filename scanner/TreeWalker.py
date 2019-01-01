@@ -860,6 +860,7 @@ class TreeWalker:
 				# save the file name for the end of the cycle, so that subdirs are processed first
 				files_in_dir.append(entry_with_path)
 
+		message("working with files in dir", absolute_path, 5)
 		next_level()
 		for entry_with_path in files_in_dir:
 			message("working with file", entry_with_path, 5)
@@ -896,10 +897,14 @@ class TreeWalker:
 				next_level()
 				message("reading cache media from cached album...", "", 5)
 				cached_media = cached_album.media_from_path(entry_with_path)
-				indented_message("cached media read", "", 5)
+				if cached_media is None:
+					indented_message("media absent fron cache", "not a cache hit", 5)
+					cache_hit = False
+				else:
+					indented_message("cached media read", "", 5)
 				# cached_media._attributes["dateTimeDir"] = dir_mtime
 
-				if cached_media._attributes["dateTimeFile"] != mtime:
+				if cache_hit and cached_media._attributes["dateTimeFile"] != mtime:
 					indented_message("modification time different", "not a cache hit", 5)
 					cache_hit = False
 
