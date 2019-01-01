@@ -895,13 +895,13 @@ class TreeWalker:
 
 			if cache_hit and cached_album:
 				next_level()
-				message("reading cache media from cached album...", "", 5)
+				message("getting media from cached album...", "", 5)
 				cached_media = cached_album.media_from_path(entry_with_path)
 				if cached_media is None:
 					indented_message("media absent fron cache", "not a cache hit", 5)
 					cache_hit = False
 				else:
-					indented_message("cached media read", "", 5)
+					indented_message("cached media got!", "", 5)
 				# cached_media._attributes["dateTimeDir"] = dir_mtime
 
 				if cache_hit and cached_media._attributes["dateTimeFile"] != mtime:
@@ -912,18 +912,18 @@ class TreeWalker:
 					try:
 						cached_media._attributes['checksum']
 					except KeyError:
-						message("no checksum in json file", "not a cache hit", 5)
+						message("not a cache hit", "no checksum in json file", 5)
 						cache_hit = False
 					else:
 						if cached_media._attributes['checksum'] == media_checksum:
 							indented_message("checksum OK!", "", 5)
 						else:
-							indented_message("bad checksum!", "not a cache hit", 5)
+							indented_message("not a cache hit", "bad checksum!", 5)
 							cache_hit = False
 
 				if cache_hit and cached_media:
 					if mtime != cached_media.datetime_file:
-						message("file datetime different from cache one", "not a cache hit", 5)
+						message("not a cache hit", "file datetime different from cache one", 5)
 						cache_hit = False
 					else:
 						cache_files = cached_media.image_caches
@@ -946,23 +946,23 @@ class TreeWalker:
 										message("error deleting fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 1)
 
 							if not absolute_cache_file_exists:
-								indented_message("unexistent reduction/thumbnail", "not a cache hit", 4)
+								indented_message("not a cache hit", "unexistent reduction/thumbnail", 4)
 								cache_hit = False
 								break
 							if file_mtime(absolute_cache_file) < cached_media.datetime_file:
-								indented_message("reduction/thumbnail older than cached media", "not a cache hit", 4)
+								indented_message("not a cache hit", "reduction/thumbnail older than cached media", 4)
 								cache_hit = False
 								break
 							if file_mtime(absolute_cache_file) > json_file_mtime:
-								indented_message("reduction/thumbnail newer than json file", "not a cache hit", 4)
+								indented_message("not a cache hit", "reduction/thumbnail newer than json file", 4)
 								cache_hit = False
 								break
 							if Options.config['recreate_reduced_photos']:
-								indented_message("reduced photo recreation requested", "not a cache hit", 4)
+								indented_message("not a cache hit", "reduced photo recreation requested", 4)
 								cache_hit = False
 								break
 							if Options.config['recreate_thumbnails']:
-								indented_message("thumbnail recreation requested", "not a cache hit", 4)
+								indented_message("not a cache hit", "thumbnail recreation requested", 4)
 								cache_hit = False
 								break
 				back_level()
@@ -970,17 +970,12 @@ class TreeWalker:
 			if cache_hit:
 				media = cached_media
 				if media.is_video:
-					message("reduced size transcoded video and thumbnails OK", "", 4)
+					message("cache hit!", "transcoded video and thumbnails OK", 4)
 				else:
-					message("reduced size images and thumbnails OK", "", 4)
-						#~ else:
-							#~ absolute_cache_file = ""
+					message("cache hit!", "reduced size images and thumbnails OK", 4)
 			else:
-				message("not a cache hit", entry_with_path, 4)
-
 				message("processing media from file", "", 5)
 				media = Media(album, entry_with_path, Options.config['cache_path'], None)
-				print(media)
 				if Options.config['checksum']:
 					media._attributes["checksum"] = media_checksum
 
@@ -1013,17 +1008,18 @@ class TreeWalker:
 							photos_without_exif_date_or_geotags_in_dir.append(      "      " + entry_with_path)
 
 				if not any(media.media_file_name == _media.media_file_name for _media in self.all_media):
+					message("adding media in album to lists...", "", 5)
 					next_level()
-					message("adding media to by date tree...", "", 5)
+					message("adding media to tree by date...", "", 5)
 					# the following function has a check on media already present
 					self.add_media_to_tree_by_date(media)
-					indented_message("media added to by date tree", "", 5)
+					indented_message("media added to tree by date", "", 5)
 
 					if media.has_gps_data:
-						message("adding media to by geonames tree...", "", 5)
+						message("adding media to tree by geonames...", "", 5)
 						# the following function has a check on media already present
 						self.add_media_to_tree_by_geonames(media)
-						indented_message("media added to by geonames tree", "", 5)
+						indented_message("media added to tree by geonames", "", 5)
 
 					message("adding media to search tree...", "", 5)
 					# the following function has a check on media already present
@@ -1040,7 +1036,6 @@ class TreeWalker:
 					indented_message("media added to big list", "", 5)
 
 					back_level()
-
 			elif not media.is_valid:
 				indented_message("not image nor video", "", 1)
 			back_level()
