@@ -1921,12 +1921,16 @@ class Media(object):
 			if key == "metadata":
 				for key1, value1 in list(value.items()):
 					if key1.startswith("dateTime"):
-						try:
-							dictionary[key][key1] = datetime.strptime(value1, Options.date_time_format)
-						except KeyboardInterrupt:
-							raise
-						# except ValueError:
-						# 	pass
+						while True:
+							try:
+								dictionary[key][key1] = datetime.strptime(value1, Options.date_time_format)
+								break
+							except KeyboardInterrupt:
+								raise
+							except ValueError:
+								# year < 1000 incorrectly inserted in json file ("31" instead of "0031")
+								value1 = "0" + value1
+
 		message("processing media from cached album", media_path, 5)
 		return Media(album, media_path, None, dictionary)
 
