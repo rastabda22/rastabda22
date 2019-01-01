@@ -172,6 +172,12 @@ class Album(object):
 			return self.media_list[-1].date
 		return max(self.media_list[-1].date, self.subalbums_list[-1].date)
 
+	@property
+	def date_string(self):
+		date_str = str(self.date)
+		while len(date_str) < 19:
+			date_str = "0" + date_str
+		return date_str
 
 	# def __cmp__(self, other):
 	# 	try:
@@ -327,7 +333,7 @@ class Album(object):
 					sub_dict = {
 						"path": path_to_dict,
 						"cacheBase": subalbum.cache_base,
-						"date": subalbum.date,
+						"date": subalbum.date_string,
 						"numMediaInSubTree": subalbum.num_media_in_sub_tree
 					}
 					if hasattr(subalbum, "center"):
@@ -388,7 +394,7 @@ class Album(object):
 			"name": self.name,
 			"path": path_to_dict,
 			"cacheSubdir": self._subdir,
-			"date": self.date,
+			"date": self.date_string,
 			"subalbums": subalbums,
 			"media": self.media_list,
 			"cacheBase": self.cache_base,
@@ -1743,6 +1749,13 @@ class Media(object):
 		return correct_date
 
 	@property
+	def date_string(self):
+		date_str = str(self.date)
+		while len(date_str) < 19:
+			date_str = "0" + date_str
+		return date_str
+
+	@property
 	def has_gps_data(self):
 		return "latitude" in self._attributes["metadata"] and "longitude" in self._attributes["metadata"]
 
@@ -1760,7 +1773,11 @@ class Media(object):
 
 	@property
 	def year(self):
-		return str(self.date.year)
+		year_str = str(self.date.year)
+		while len(year_str) < 4:
+			year_str = "0" + year_str
+		return year_str
+
 
 	@property
 	def month(self):
@@ -1908,8 +1925,8 @@ class Media(object):
 							dictionary[key][key1] = datetime.strptime(value1, Options.date_time_format)
 						except KeyboardInterrupt:
 							raise
-						except ValueError:
-							pass
+						# except ValueError:
+						# 	pass
 		message("processing media from cached album", media_path, 5)
 		return Media(album, media_path, None, dictionary)
 
@@ -1922,7 +1939,7 @@ class Media(object):
 		media = self.attributes
 		media["name"] = self.name
 		media["cacheBase"] = self.cache_base
-		media["date"] = self.date
+		media["date"] = self.date_string
 		# media["yearAlbum"] = self.year_album_path
 		# media["monthAlbum"] = self.month_album_path
 		media["dayAlbum"] = self.day_album_path
