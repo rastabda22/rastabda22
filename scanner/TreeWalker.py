@@ -790,10 +790,10 @@ class TreeWalker:
 			album.parent = parent_album
 		album.cache_base = album_cache_base
 
-		message("subdir for cache files", " " + album.subdir, 3)
-
 		#~ for entry in sorted(os.listdir(absolute_path)):
 		message("reading directory", absolute_path, 5)
+		message("subdir for cache files", " " + album.subdir, 3)
+
 		num_video_in_dir = 0
 		num_video_processed_in_dir = 0
 		num_photo_in_dir = 0
