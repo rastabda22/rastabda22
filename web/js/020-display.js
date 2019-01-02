@@ -451,9 +451,13 @@ $(document).ready(function() {
 				else
 					title += "<span class='title-no-anchor'>";
 
-				if (i == 3)
-					title += util._t("#month-" + textComponents[i]);
-				else
+				if (i == 3) {
+					textComponents[i] = util._t("#month-" + textComponents[i]);
+					title += textComponents[i];
+				} else if (i == 2 || i == 4) {
+					textComponents[i] = parseInt(textComponents[i]);
+					title += textComponents[i];
+				} else
 					title += textComponents[i];
 
 
@@ -465,11 +469,8 @@ $(document).ready(function() {
 					title += raquo;
 
 				if (setDocumentTitle) {
-					// keep buildimg the html page title
-					if (i == 3)
-						documentTitle = util._t("#month-" + textComponents[i]) + documentTitle;
-					else
-						documentTitle = textComponents[i] + documentTitle;
+					// keep building the html page title
+					documentTitle = textComponents[i] + documentTitle;
 					if (i < components.length - 1 || media !== null)
 						documentTitle = " \u00ab " + documentTitle;
 				}
@@ -1189,9 +1190,9 @@ $(document).ready(function() {
 						if (util.isByDateCacheBase(currentAlbum.cacheBase)) {
 							folderArray = currentAlbum.subalbums[i].cacheBase.split(Options.cache_folder_separator);
 							folder = "";
-							if (folderArray.length == 2)
-								folder += folderArray[1];
-							else if (folderArray.length == 3)
+							if (folderArray.length == 2) {
+								folder += parseInt(folderArray[1]);
+							} else if (folderArray.length == 3)
 								folder += " " + util._t("#month-" + folderArray[2]);
 							else if (folderArray.length == 4)
 								folder += util._t("#day") + " " + parseInt(folderArray[3]);
