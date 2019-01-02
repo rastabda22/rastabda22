@@ -742,13 +742,6 @@ class TreeWalker:
 							elif Options.json_version == 0 or not hasattr(cached_album, "json_version") or not cached_album.json_version == Options.json_version:
 								indented_message("not an album cache hit", "unexistent or old json_version", 4)
 								cached_album = None
-							# if (
-							# 	file_mtime(absolute_path) <= json_file_mtime and
-							# 	cached_album is not None and
-							# 	hasattr(cached_album, "absolute_path") and
-							# 	cached_album.absolute_path == absolute_path and
-							# 	Options.json_version != 0 and hasattr(cached_album, "json_version") and cached_album.json_version == Options.json_version
-							# ):
 							else:
 								indented_message("album cache hit!", "", 4)
 								album = cached_album
