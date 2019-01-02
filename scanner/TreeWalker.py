@@ -708,14 +708,14 @@ class TreeWalker:
 		cached_album = None
 		json_message = json_file
 		if Options.config['recreate_json_files']:
-			message("forced json file recreation", "some sensible option has changed", 3)
+			message("not an album cache hit", "forced json file recreation, some sensible option has changed", 3)
 		else:
 			try:
 				if json_file_exists:
 					if not os.access(json_file, os.R_OK):
-						message("json file unreadable", json_file, 1)
+						message("not an album cache hit", "json file unreadable", 1)
 					elif not os.access(json_file, os.W_OK):
-						message("json file unwritable", json_file, 1)
+						message("not an album cache hit", "json file unwritable", 1)
 					else:
 						if album_ini_good and file_mtime(album_ini_file) > json_file_mtime:
 							# a check on album_ini_file content would have been good:
@@ -727,21 +727,22 @@ class TreeWalker:
 							message("reading json file to import album...", json_file, 5)
 							# the following is the instruction which could raise the error
 							cached_album = Album.from_cache(json_file, album_cache_base)
-							indented_message("json file read", "", 5)
 							if file_mtime(absolute_path) >= json_file_mtime:
 								indented_message("invalid json file", "dir time > json file time", 4)
 								cached_album = None
 							elif cached_album is None:
 								indented_message("invalid json file", "null cached album", 4)
 								cached_album = None
+							indented_message("json file read and imported", "", 5)
+								indented_message("not an album cache hit", "null cached album", 4)
 							elif not hasattr(cached_album, "absolute_path"):
-								indented_message("invalid json file", "cached album hasn't absolute_path", 4)
+								indented_message("not an album cache hit", "cached album hasn't absolute_path", 4)
 								cached_album = None
 							elif cached_album.absolute_path != absolute_path:
-								indented_message("invalid json file", "cached album's absolute_path != absolute_path", 4)
+								indented_message("not an album cache hit", "cached album's absolute_path != absolute_path", 4)
 								cached_album = None
 							elif Options.json_version == 0 or not hasattr(cached_album, "json_version") or not cached_album.json_version == Options.json_version:
-								indented_message("invalid json file", "unexistent or old json_version", 4)
+								indented_message("not an album cache hit", "unexistent or old json_version", 4)
 								cached_album = None
 							# if (
 							# 	file_mtime(absolute_path) <= json_file_mtime and
@@ -751,8 +752,8 @@ class TreeWalker:
 							# 	Options.json_version != 0 and hasattr(cached_album, "json_version") and cached_album.json_version == Options.json_version
 							# ):
 							else:
-								indented_message("json file is OK", "", 4)
 								json_file_OK = True
+								indented_message("album cache hit!", "", 4)
 								album = cached_album
 				else:
 					must_process_album_ini = True
@@ -760,12 +761,12 @@ class TreeWalker:
 				raise
 			except IOError:
 				# will execution never come here?
-				indented_message("json file unexistent", json_message, 4)
 				json_file_OK = False
+				indented_message("not an album cache hit", "json file unexistent", 4)
 			# is the following exception needed? it surely catched date errors...
 			except (ValueError, AttributeError, KeyError):
-				indented_message("invalid json file", "ValueError, AttributeError or KeyError somewhere", 4)
 				json_file_OK = False
+				indented_message("not an album cache hit", "ValueError, AttributeError or KeyError somewhere", 4)
 				cached_album = None
 
 		if not json_file_OK:
@@ -777,7 +778,9 @@ class TreeWalker:
 			if not must_process_album_ini:
 				message("album.ini values already in json file", "", 2)
 			else:
+				message("reading album.ini...", "", 2)
 				album.read_album_ini(album_ini_file)
+				indented_message("album.ini read!", "", 2)
 
 		if parent_album is not None:
 			album.parent = parent_album
@@ -883,7 +886,7 @@ class TreeWalker:
 				indented_message("checksum calculated", "", 5)
 
 			if cached_album is None:
-				indented_message("json file invalid", "not a cache hit", 5)
+				indented_message("not a cache hit", "json file invalid", 5)
 				cache_hit = False
 
 			if cache_hit and cached_album:
