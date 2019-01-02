@@ -224,8 +224,8 @@ def report_times(final):
 		print("- Photos " + _num_photo.rjust(max_digit))
 		print("                  processed " + _num_photo_processed.rjust(max_digit))
 
-		print("                                  with exif date                     " + _num_photo_with_exif_date.rjust(max_digit))
-		print("                                  with geotags                       " + _num_photo_with_geotags.rjust(max_digit))
+		print("                                  with exif date                  " + _num_photo_with_exif_date.rjust(max_digit))
+		print("                                  with geotags                    " + _num_photo_with_geotags.rjust(max_digit))
 		print()
 		print("                                  with both exif date and geotags " + _num_photo_with_exif_date_and_geotags.rjust(max_digit))
 		if final:
