@@ -1032,8 +1032,7 @@ class TreeWalker:
 					indented_message("media added to album", "", 5)
 
 					message("adding media to big list...", "", 5)
-					if not any(media.media_file_name == _media.media_file_name for _media in self.all_media):
-						self.all_media.append(media)
+					self.all_media.append(media)
 					indented_message("media added to big list", "", 5)
 
 					back_level()
