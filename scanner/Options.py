@@ -6,6 +6,7 @@ import os
 import sys
 import json
 import ast
+import math
 
 # @python2
 try:
@@ -13,7 +14,7 @@ try:
 except ImportError:
 	import ConfigParser as configparser
 
-from Utilities import message, next_level, back_level, find, find_in_usr_share
+from Utilities import message, indented_message, next_level, back_level, find, find_in_usr_share
 
 config = {}
 date_time_format = "%Y-%m-%d %H:%M:%S"
@@ -24,14 +25,19 @@ elapsed_times = {}
 elapsed_times_counter = {}
 num_photo = 0
 num_photo_processed = 0
-num_photo_geotagged = 0
 num_photo_with_exif_date = 0
+num_photo_with_geotags = 0
+num_photo_with_exif_date_and_geotags = 0
+num_photo_with_exif_date_and_without_geotags = 0
+num_photo_without_exif_date_and_with_geotags = 0
+num_photo_without_exif_date_or_geotags = 0
+photos_with_exif_date_and_without_geotags = []
+photos_without_exif_date_and_with_geotags = []
+photos_without_exif_date_or_geotags = []
 num_video = 0
 num_video_processed = 0
-photos_without_geotag = []
-photos_without_exif_date = []
 options_not_to_be_saved = ['cache_path', 'index_html_path', 'album_path']
-options_requiring_json_regeneration = ['geonames_language', 'unspecified_geonames_code', 'get_geonames_online', 'metadata_tools_preference', 'num_media_in_tree']
+options_requiring_json_regeneration = ['geonames_language', 'unspecified_geonames_code', 'get_geonames_online', 'metadata_tools_preference', 'subdir_method', 'cache_folders_num_digits_array']
 options_requiring_reduced_images_regeneration = ['jpeg_quality']
 options_requiring_thumbnails_regeneration = ['face_cascade_scale_factor', 'small_square_crops_background_color', 'cv2_installed']
 
@@ -55,8 +61,9 @@ eye_cascade = None
 # json_version = 1 since ...
 # json_version = 2 since checksums have been added
 # json_version = 3 since geotag managing is optional
-# json_version = 4 since search feature added
-json_version = "3.6"
+# json_version = 3.4 since search feature added
+# json_version = 3.6.4 since changed wrong album/media attributes
+json_version = "3.6.4"
 
 def initialize_opencv():
 	global face_cascade, eye_cascade
@@ -74,31 +81,23 @@ def initialize_opencv():
 			message("looking for file...", FACE_CONFIG_FILE + " in /", 5)
 			face_config_file_with_path = find(FACE_CONFIG_FILE)
 		if not face_config_file_with_path:
-			next_level()
-			message("face xml file not found", FACE_CONFIG_FILE, 5)
-			back_level()
+			indented_message("face xml file not found", FACE_CONFIG_FILE, 5)
 			config['cv2_installed'] = False
 		else:
 			face_cascade = cv2.CascadeClassifier(face_config_file_with_path)
 
-			next_level()
-			message("face xml file found and initialized:", face_config_file_with_path, 5)
-			back_level()
+			indented_message("face xml file found and initialized:", face_config_file_with_path, 5)
 			EYE_CONFIG_FILE = "haarcascade_eye.xml"
 			message("looking for file...", EYE_CONFIG_FILE, 5)
 			eye_config_file_with_path = find_in_usr_share(EYE_CONFIG_FILE)
 			if not eye_config_file_with_path:
 				eye_config_file_with_path = find(EYE_CONFIG_FILE)
 			if not eye_config_file_with_path:
-				next_level()
-				message("eyes xml file not found", EYE_CONFIG_FILE, 5)
-				back_level()
+				indented_message("eyes xml file not found", EYE_CONFIG_FILE, 5)
 				config['cv2_installed'] = False
 			else:
 				eye_cascade = cv2.CascadeClassifier(eye_config_file_with_path)
-				next_level()
-				message("found and initialized:", eye_config_file_with_path, 5)
-				back_level()
+				indented_message("found and initialized:", eye_config_file_with_path, 5)
 		back_level()
 	except ImportError:
 		config['cv2_installed'] = False
@@ -148,9 +147,7 @@ def get_options():
 				else:
 					config[option] = ""
 			except configparser.Error:
-				next_level()
-				message("WARNING: option " + option + " in user config file", "is not integer, using default value", 2)
-				back_level()
+				indented_message("WARNING: option " + option + " in user config file", "is not integer, using default value", 2)
 				config[option] = default_config.getint('options', option)
 		elif option in ('follow_symlinks',
 				'checksum',
@@ -175,9 +172,7 @@ def get_options():
 			try:
 				config[option] = usr_config.getboolean('options', option)
 			except ValueError:
-				next_level()
-				message("WARNING: option " + option + " in user config file", "is not boolean, using default value", 2)
-				back_level()
+				indented_message("WARNING: option " + option + " in user config file", "is not boolean, using default value", 2)
 				config[option] = default_config.getboolean('options', option)
 		elif option in ('reduced_sizes', 'map_zoom_levels', 'metadata_tools_preference'):
 			config[option] = ast.literal_eval(usr_config.get('options', option))
@@ -201,16 +196,12 @@ def get_options():
 			max_spaces += " "
 
 		default_option_value = str(default_config.get('options', option))
-		default_option_length = len(default_option_value)
-		default_spaces = ""
-		for _ in range(max_length - default_option_length - 2):
-			default_spaces += " "
 		if default_config.get('options', option) == usr_config.get('options', option):
-			option_value = "  " + option_value + spaces + "[DEFAULT" + max_spaces + "]"
+			option_value = "  " + option_value + spaces + "DEFAULT"
 		else:
-			option_value = "* " + option_value + spaces + "[DEFAULT: " + default_option_value + default_spaces + "]"
+			option_value = "* " + option_value + spaces + "DEFAULT: " + default_option_value
 
-		message(option, option_value, 0)
+		message("option value", option.ljust(45) + ": " + option_value, 0)
 
 	# all cache names are lower case => bit rate must be lower case too
 	config['video_transcode_bitrate'] = config['video_transcode_bitrate'].lower()
@@ -299,11 +290,11 @@ def get_options():
 		message("options", "guessed value(s):", 2)
 		next_level()
 		if guessed_index_dir:
-			message('index_html_path', config['index_html_path'], 2)
+			message('guessed directory', 'index_html_path' + '=' + config['index_html_path'], 2)
 		if guessed_album_dir:
-			message('album_path', config['album_path'], 2)
+			message('guessed directory', 'album_path' + '=' + config['album_path'], 2)
 		if guessed_cache_dir:
-			message('cache_path', config['cache_path'], 2)
+			message('guessed directory', 'cache_path' + '=' + config['cache_path'], 2)
 		back_level()
 
 	# the album directory must exist and be readable
@@ -346,9 +337,32 @@ def get_options():
 	special_files = [config['exclude_tree_marker'], config['exclude_files_marker'], config['metadata_filename']]
 	message("counting media in albums...", "", 4)
 	config['num_media_in_tree'] = sum([len([file for file in files if file[:1] != '.' and file not in special_files]) for dirpath, dirs, files in os.walk(config['album_path']) if dirpath.find('/.') == -1])
-	next_level()
-	message("media in albums counted", str(config['num_media_in_tree']), 4)
-	back_level()
+	indented_message("media in albums counted", str(config['num_media_in_tree']), 4)
+
+	config['cache_folders_num_digits_array'] = []
+	if config['subdir_method'] == "md5":
+		message("determining cache folders schema...", "", 4)
+		# let's use a variable schema for cache subfolders, so that every directory has no more than 32 media (about 400 files)
+		try:
+			cache_folders_num_digits = int(math.log(config['num_media_in_tree'] / 2, 16))
+		except ValueError:
+			cache_folders_num_digits = 1
+		# it's not good to have many subfolders, let's use a multi-level structure,
+		# every structure uses a maximum of 2 digits, so that no more than 256 folders are used
+		cache_folders_string = ''
+		while cache_folders_num_digits > 1:
+			config['cache_folders_num_digits_array'].append(2)
+			cache_folders_num_digits -= 2
+			cache_folders_string += "aa/"
+		if cache_folders_num_digits:
+			config['cache_folders_num_digits_array'].append(1)
+			cache_folders_string += "a/"
+		next_level()
+		if cache_folders_string:
+			message("cache folders schema determined", "using the schema: " + cache_folders_string, 4)
+		else:
+			message("cache folders schema determined", "few media, using default subdir: " + config['default_cache_album'], 4)
+		back_level()
 
 	# get old options: they are revised in order to decide whether to recreate something
 	json_options_file = os.path.join(config['cache_path'], "options.json")

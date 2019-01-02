@@ -15,7 +15,7 @@ import Options
 #pylint from CachePath import *
 #import CachePath
 #pylint from Utilities import *
-from Utilities import message, next_level, back_level
+from Utilities import message, indented_message, next_level, back_level
 
 
 # For information on endpoints and arguments see the geonames
@@ -75,9 +75,7 @@ class Geonames(object):
 						'longitude': float(col[5])
 					}
 					self.cities.append(city_line)
-			next_level()
-			message("local geonames files read and processed", "", 5)
-			back_level()
+			indented_message("local geonames files read and processed", "", 5)
 			back_level()
 
 
@@ -94,17 +92,20 @@ class Geonames(object):
 			distance = Geonames._distance_between_coordinates(c_latitude, c_longitude, latitude, longitude)
 			if distance < Geonames.MAX_DISTANCE_METERS:
 				# ok with value from cache!
-				next_level()
-				message("geoname got from cache", "", 5)
-				back_level()
+				indented_message("geoname got from cache", "", 5)
 				back_level()
 				# # add to cache only if not too close to existing point
 				# if distance > Geonames.MAX_DISTANCE_METERS / 2.0:
 				# 	Geonames.geonames_cache[(latitude, longitude)] = result
 				return result
-		next_level()
-		message("geonames not found in cache", "", 5)
-		back_level()
+		indented_message("geonames not found in cache", "", 5)
+
+		# python2 and 3 versions of json.loads (used inside _decode_nearby_place()) throw different exception, be prepared
+		# see https://stackoverflow.com/questions/53355389/python-2-3-compatibility-issue-with-exception
+		try:
+		    json_parse_exception = json.decoder.JSONDecodeError # Python3
+		except AttributeError:  # Python2
+		    json_parse_exception = ValueError
 
 		got = False
 		if Options.config['get_geonames_online']:
@@ -113,37 +114,29 @@ class Geonames(object):
 			try_number = 0
 			while True:
 				try:
-					response = requests.get(Geonames._base_nearby_url.format(str(latitude), str(longitude)))
-				except ConnectionError:
+					response = requests.get(Geonames._base_nearby_url.format(str(latitude), str(longitude)), timeout=30)
+				except requests.exceptions.RequestException as e:
 					# sometimes geonames.org aborts the connection => use local files
+					indented_message("error in requests.get", e, 5)
 					break
 				try:
 					result = Geonames._decode_nearby_place(response.text)
 					if isinstance(result, dict):
 						got = True
-						next_level()
-						message("geonames got from geonames.org online", "", 5)
-						back_level()
+						indented_message("geonames got from geonames.org online", "", 5)
 						break
 					else:
 						# result is a number, which means that the request to geonames.org produced  an error
 						try_number += 1
-						next_level()
-						message("geonames.org returned error code, retrying...", "try = " + str(try_number) + ", error code = " + str(result), 5)
-						back_level()
-				except json.decoder.JSONDecodeError:
+						indented_message("geonames.org returned error code, retrying...", "try = " + str(try_number) + ", error code = " + str(result), 5)
+				except json_parse_exception:
 					# error when decoding
-					# once the json.loads() function inside _decode_nearby_place() throwed the error:
-					# json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+					# json.loads() function inside _decode_nearby_place() can throwed JSONDecodeError (python3) or ValueError (python2):
 					try_number += 1
 					if try_number <= 3:
-						next_level()
-						message("error deconding geonames.org response, retrying...", "try = " + str(try_number), 5)
-						back_level()
+						indented_message("error deconding geonames.org response, retrying...", "try = " + str(try_number), 5)
 				if try_number == 3:
-					next_level()
-					message("three errors", "giving up", 5)
-					back_level()
+					indented_message("three errors", "giving up", 5)
 					break
 
 		if not got:
@@ -151,16 +144,12 @@ class Geonames(object):
 			message("getting geonames from local files...", "", 5)
 			result = min([city for city in Geonames.cities], key=lambda c: Geonames.quick_distance_between_coordinates(c['latitude'], c['longitude'], latitude, longitude))
 			result['distance'] = Geonames._distance_between_coordinates(latitude, longitude, result['latitude'], result['longitude'])
-			next_level()
-			message("geonames got from local files", "", 5)
-			back_level()
+			indented_message("geonames got from local files", "", 5)
 
 		# add to cache
 		message("adding geonames to cache...", "", 5)
 		Geonames.geonames_cache.append(((latitude, longitude), result))
-		next_level()
-		message("geonames added to cache", "", 5)
-		back_level()
+		indented_message("geonames added to cache", "", 5)
 
 		back_level()
 
@@ -239,9 +228,7 @@ class Geonames(object):
 		c = 2.0 * math.asin(math.sqrt(a))
 		earth_radius = 6371000.0  # radius of the earth in m
 		dist = int(earth_radius * c)
-		next_level()
-		message("distance between coordinates calculated", str(dist) + " meters", 5)
-		back_level()
+		indented_message("distance between coordinates calculated", str(dist) + " meters", 5)
 		back_level()
 		return dist
 

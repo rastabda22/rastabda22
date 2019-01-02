@@ -33,8 +33,8 @@ import math
 import numpy as np
 import exifread
 
-from CachePath import remove_album_path, remove_folders_marker, trim_base_custom, checksum, thumbnail_types_and_sizes, file_mtime, photo_cache_name, video_cache_name
-from Utilities import message, next_level, back_level
+from CachePath import remove_album_path, remove_folders_marker, trim_base_custom, thumbnail_types_and_sizes, file_mtime, photo_cache_name, video_cache_name
+from Utilities import message, indented_message, next_level, back_level
 from Geonames import Geonames
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
@@ -84,25 +84,7 @@ class Album(object):
 			)
 		):
 			if Options.config['subdir_method'] == "md5":
-				# let's use a variable schema for cache subfolders, so that every directory has no more than 32 media (about 400 files)
-				cache_folders_num_digits = int(math.log(Options.config['num_media_in_tree'] / 2, 16))
-				# it's not good to have many subfolders, let's use a multi-level structure,
-				# every structure uses a maximum of 2 digits, so that no more than 256 folders are used
-				cache_folders_num_digits_array = []
-				cache_folders_string = ''
-				while cache_folders_num_digits > 1:
-					cache_folders_num_digits_array.append(2)
-					cache_folders_num_digits -= 2
-					cache_folders_string += "aa/"
-				if cache_folders_num_digits:
-					cache_folders_num_digits_array.append(1)
-					cache_folders_string += "a/"
-				if cache_folders_string:
-					message("cache subfolders, using the schema:", cache_folders_string, 4)
-				else:
-					message("cache subfolders:", "few media, using default subdir: " + Options.config['default_cache_album'], 4)
-
-				if cache_folders_num_digits_array == []:
+				if Options.config['cache_folders_num_digits_array'] == []:
 					self._subdir = Options.config['default_cache_album']
 				else:
 					# @python2
@@ -112,7 +94,7 @@ class Album(object):
 						hash = hashlib.md5(os.fsencode(path)).hexdigest()
 					self._subdir = ''
 					previous_digits = 0
-					for digits in cache_folders_num_digits_array:
+					for digits in Options.config['cache_folders_num_digits_array']:
 						if self._subdir:
 							self._subdir += '/'
 						self._subdir += hash[previous_digits:previous_digits + digits]
@@ -190,6 +172,12 @@ class Album(object):
 			return self.media_list[-1].date
 		return max(self.media_list[-1].date, self.subalbums_list[-1].date)
 
+	@property
+	def date_string(self):
+		date_str = str(self.date)
+		while len(date_str) < 19:
+			date_str = "0" + date_str
+		return date_str
 
 	# def __cmp__(self, other):
 	# 	try:
@@ -235,16 +223,12 @@ class Album(object):
 		self.album_ini = configparser.ConfigParser(allow_no_value=True)
 		message("reading album.ini...", "", 5)
 		self.album_ini.read(file_name)
-		next_level()
-		message("album.ini read", file_name, 5)
-		back_level()
+		indented_message("album.ini read", file_name, 5)
 
 		next_level()
 		message("adding album.ini metadata values to album...", "", 5)
 		Metadata.set_metadata_from_album_ini("album", self._attributes, self.album_ini)
-		next_level()
-		message("metadata values from album.ini added to album...", "", 5)
-		back_level()
+		indented_message("metadata values from album.ini added to album...", "", 5)
 		back_level()
 
 
@@ -284,15 +268,11 @@ class Album(object):
 			sys.exit(-97)
 		message("sorting album...", self.absolute_path, 5)
 		self.sort_subalbums_and_media()
-		next_level()
-		message("album sorted", "", 4)
-		back_level()
+		indented_message("album sorted", "", 4)
 		message("saving album...", "", 5)
 		with open(json_file_with_path, 'w') as filepath:
 			json.dump(self, filepath, cls=PhotoAlbumEncoder)
-		next_level()
-		message("album saved", "", 3)
-		back_level()
+		indented_message("album saved", "", 3)
 
 	@staticmethod
 	def from_cache(path, album_cache_base):
@@ -300,9 +280,7 @@ class Album(object):
 		message("reading album...", "", 5)
 		with open(path, "r") as filepath:
 			dictionary = json.load(filepath)
-		next_level()
-		message("album read", "", 5)
-		back_level()
+		indented_message("album read", "", 5)
 		back_level()
 		# generate the album from the json file loaded
 		# subalbums are not generated yet
@@ -355,7 +333,7 @@ class Album(object):
 					sub_dict = {
 						"path": path_to_dict,
 						"cacheBase": subalbum.cache_base,
-						"date": subalbum.date,
+						"date": subalbum.date_string,
 						"numMediaInSubTree": subalbum.num_media_in_sub_tree
 					}
 					if hasattr(subalbum, "center"):
@@ -363,11 +341,11 @@ class Album(object):
 					if hasattr(subalbum, "name"):
 						sub_dict["name"] = subalbum.name
 					if hasattr(subalbum, "alt_name"):
-						sub_dict["alt_name"] = subalbum.alt_name
+						sub_dict["altName"] = subalbum.alt_name
 					if hasattr(subalbum, "words"):
 						sub_dict["words"] = subalbum.words
 					if hasattr(subalbum, "unicode_words"):
-						sub_dict["unicode_words"] = subalbum.unicode_words
+						sub_dict["unicodeWords"] = subalbum.unicode_words
 					subalbums.append(sub_dict)
 
 		else:
@@ -416,7 +394,7 @@ class Album(object):
 			"name": self.name,
 			"path": path_to_dict,
 			"cacheSubdir": self._subdir,
-			"date": self.date,
+			"date": self.date_string,
 			"subalbums": subalbums,
 			"media": self.media_list,
 			"cacheBase": self.cache_base,
@@ -511,8 +489,17 @@ class Album(object):
 
 		return subalbum_or_media_path
 
+
 class Media(object):
 	def __init__(self, album, media_path, thumbs_path=None, attributes=None):
+		if attributes is not None:
+			# media generation from file
+			self.generate_media_from_cache(album, media_path, attributes)
+		else:
+			 # media generation from json cache
+			 self.generate_media_from_file(album, media_path, thumbs_path)
+
+	def generate_media_from_cache(self, album, media_path, attributes):
 		self.album = album
 		self.media_path = media_path
 		self.media_file_name = remove_album_path(media_path)
@@ -523,38 +510,32 @@ class Media(object):
 
 		self.is_valid = True
 
+		self._attributes = attributes
+		return
+
+	def generate_media_from_file(self, album, media_path, thumbs_path):
 		next_level()
-		image = None
+		message("entered Media init", "", 5)
+		self.album = album
+		self.media_path = media_path
+		self.media_file_name = remove_album_path(media_path)
+		dirname = os.path.dirname(media_path)
+		self.folders = remove_album_path(dirname)
+		self.album_path = os.path.join('albums', self.media_file_name)
+		self.cache_base = album.generate_cache_base(trim_base_custom(media_path, album.absolute_path), self.media_file_name)
+
+		self.is_valid = True
+
 		try:
+			message("reading file and dir times...", "", 5)
 			mtime = file_mtime(media_path)
 			dir_mtime = file_mtime(dirname)
+			indented_message("file and dir times read!", "", 5)
 		except KeyboardInterrupt:
 			raise
 		except OSError:
-			next_level()
-			message("could not read file or dir mtime", media_path, 5)
-			back_level()
+			indented_message("could not read file or dir mtime", "", 5)
 			self.is_valid = False
-			back_level()
-			return
-
-		if Options.config['checksum']:
-			next_level()
-			message("generating checksum...", media_path, 5)
-			this_checksum = checksum(media_path)
-			next_level()
-			message("checksum generated", "", 5)
-			back_level()
-			back_level()
-
-		if (
-			attributes is not None and
-			attributes["dateTimeFile"] >= mtime and
-			(not Options.config['checksum'] or 'checksum' in attributes and attributes['checksum'] == this_checksum)
-		):
-			self._attributes = attributes
-			self._attributes["dateTimeDir"] = dir_mtime
-			# self.cache_base = attributes["cacheBase"]
 			back_level()
 			return
 
@@ -564,20 +545,25 @@ class Media(object):
 		self._attributes["dateTimeDir"] = dir_mtime
 		self._attributes["mediaType"] = "photo"
 
+		message("opening media file...", "", 5)
+		media_path_pointer = open(media_path, 'rb')
+		indented_message("media file opened!", "", 5)
+
+		image = None
 		try:
-			image = Image.open(media_path)
+			next_level()
+			message("opening media with PIL...", "", 5)
+			image = Image.open(media_path_pointer)
 		except KeyboardInterrupt:
 			raise
 		except IOError:
-			next_level()
-			message("Image.open() raised IOError, could be a video", media_path, 5)
-			back_level()
+			indented_message("Image.open() raised IOError, could be a video", "", 5)
 		except ValueError:
 			# PIL cannot read this file (seen for .xpm file)
 			# next lines will detect that the image is invalid
-			next_level()
-			message("ValueError when Image.open(), could be a video", media_path, 5)
-			back_level()
+			indented_message("ValueError when Image.open(), could be a video", "", 5)
+		else:
+			indented_message("media opened with PIL!", "", 5)
 
 		if self.is_valid:
 			if isinstance(image, Image.Image):
@@ -586,7 +572,6 @@ class Media(object):
 				if self.has_gps_data:
 					message("looking for geonames...", "", 5)
 					self.get_geonames()
-
 			else:
 				# try with video detection
 				self._video_metadata(media_path)
@@ -599,23 +584,20 @@ class Media(object):
 							message("looking for geonames...", "", 5)
 							self.get_geonames()
 				else:
-					next_level()
-					message("error transcodind, not a video?", "", 5)
-					back_level()
+					indented_message("error transcodind, not a video?", "", 5)
 					self.is_valid = False
 		back_level()
+		media_path_pointer.close()
+		back_level()
 		return
-
 
 	@property
 	def datetime_file(self):
 		return self._attributes["dateTimeFile"]
 
-
 	@property
 	def datetime_dir(self):
 		return self._attributes["dateTimeDir"]
-
 
 	def get_geonames(self):
 		self._attributes["geoname"] = Geonames.lookup_nearby_place(self.latitude, self.longitude)
@@ -631,7 +613,6 @@ class Media(object):
 		# Overwrite with album.ini values when album has been read from file
 		if self.album.album_ini:
 			Metadata.set_geoname_from_album_ini(self.name, self._attributes, self.album.album_ini)
-
 
 	def _photo_metadata(self, image):
 
@@ -672,18 +653,14 @@ class Media(object):
 					_exif = self._photo_metadata_by_PIL(image)
 
 				if _exif:
-					next_level()
-					message("metadata extracted by " + _tool, "", 5)
-					back_level()
+					indented_message("metadata extracted by " + _tool, "", 5)
 					used_tool = _tool
 					previous = ''
 					break
 				else:
 					previous = ', ' + _tool + ' -> {}'
 			except:
-				next_level()
-				message("UNMANAGED ERROR extracting metadata by " + _tool, "", 5)
-				back_level()
+				indented_message("UNMANAGED ERROR extracting metadata by " + _tool, "", 5)
 
 		all_keys = list(_exif.keys())
 
@@ -699,9 +676,7 @@ class Media(object):
 		if exif:
 			message("setting metadata extracted with " + used_tool, "", 5)
 			self._set_photo_metadata(exif)
-			next_level()
-			message("metadata set!", "", 5)
-			back_level()
+			indented_message("metadata set!", "", 5)
 
 	def _set_photo_metadata(self, exif):
 		if "Orientation" in exif:
@@ -817,9 +792,7 @@ class Media(object):
 			next_level()
 			message("adding album.ini metadata values to photo...", "", 5)
 			Metadata.set_metadata_from_album_ini(self.name, self._attributes, self.album.album_ini)
-			next_level()
-			message("metadata values from album.ini added to photo...", "", 5)
-			back_level()
+			indented_message("metadata values from album.ini added to photo...", "", 5)
 			back_level()
 
 		# pprint(self._attributes)
@@ -831,15 +804,11 @@ class Media(object):
 		except KeyboardInterrupt:
 			raise
 		except AttributeError:
-			next_level()
-			message("AttributeError extracting metadata", "", 5)
-			back_level()
+			indented_message("AttributeError extracting metadata", "", 5)
 			return {}
 
 		if not info:
-			next_level()
-			message("empty metadata", "", 5)
-			back_level()
+			indented_message("empty metadata", "", 5)
 			return {}
 
 		_exif = {}
@@ -972,17 +941,13 @@ class Media(object):
 	def _video_metadata(self, path, original=True):
 		return_code = VideoProbeWrapper().call('-show_format', '-show_streams', '-of', 'json', '-loglevel', '0', path)
 		if not return_code:
-			next_level()
-			message("error probing video, not a video?", path, 5)
-			back_level()
+			indented_message("error probing video, not a video?", path, 5)
 			self.is_valid = False
 			return
 		info = json.loads(return_code.decode(sys.getdefaultencoding()))
 		for s in info["streams"]:
 			if 'codec_type' in s:
-				next_level()
-				message("debug: s[codec_type]", s['codec_type'], 5)
-				back_level()
+				indented_message("debug: s[codec_type]", s['codec_type'], 5)
 			if 'codec_type' in s and s['codec_type'] == 'video':
 				self._attributes["mediaType"] = "video"
 				self._attributes["metadata"]["size"] = (int(s["width"]), int(s["height"]))
@@ -999,9 +964,7 @@ class Media(object):
 			next_level()
 			message("adding album.ini metadata values to video...", "", 5)
 			Metadata.set_metadata_from_album_ini(self.name, self._attributes, self.album.album_ini)
-			next_level()
-			message("metadata values from album.ini added to video...", "", 5)
-			back_level()
+			indented_message("metadata values from album.ini added to video...", "", 5)
 			back_level()
 
 
@@ -1086,15 +1049,11 @@ class Media(object):
 		for thumb_size in Options.config['reduced_sizes']:
 			reduced_size_image = self.reduce_size_or_make_thumbnail(reduced_size_image, photo_path, thumbs_path, thumb_size)
 			reduced_size_images = [reduced_size_image] + reduced_size_images
-		next_level()
-		message("reduced sizes checked!", "", 5)
-		back_level()
+		indented_message("reduced sizes checked!", "", 5)
 
 		message("checking thumbnails", "", 5)
 		self.generate_all_thumbnails(reduced_size_images, photo_path, thumbs_path)
-		next_level()
-		message("thumbnails checked!", "", 5)
-		back_level()
+		indented_message("thumbnails checked!", "", 5)
 
 
 	@staticmethod
@@ -1186,9 +1145,7 @@ class Media(object):
 				_is_thumbnail and not Options.config['recreate_thumbnails']
 			)
 		):
-			next_level()
-			message("reduction/thumbnail OK, skipping", "", 5)
-			back_level()
+			indented_message("reduction/thumbnail OK, skipping", "", 5)
 			back_level()
 			return start_image
 
@@ -1249,9 +1206,7 @@ class Media(object):
 						sizes_change = "from " + str(start_image_width) + "x" + str(start_image_height) + " to " + str(width_for_detecting) + "x" + str(height_for_detecting)
 						message("reducing size for face detection...", sizes_change, 5)
 						start_image_copy_for_detecting.thumbnail((longer_size, longer_size), Image.ANTIALIAS)
-						next_level()
-						message("size reduced", "", 5)
-						back_level()
+						indented_message("size reduced", "", 5)
 
 					# opencv!
 					# see http://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_objdetect/py_face_detection/py_face_detection.html#haar-cascade-detection-in-opencv
@@ -1293,15 +1248,11 @@ class Media(object):
 							next_level()
 							message("faces detected", str(len(faces)) + " faces", 4)
 							(x_center, y_center) = self.face_center(faces.tolist(), actual_thumb_size)
-							next_level()
-							message("opencv", "center: " + str(x_center) + ", " + str(y_center), 4)
-							back_level()
+							indented_message("opencv", "center: " + str(x_center) + ", " + str(y_center), 4)
 							back_level()
 						else:
 							try_shifting = False
-							next_level()
-							message("no faces detected", "", 4)
-							back_level()
+							indented_message("no faces detected", "", 4)
 
 				if min(start_image_width, start_image_height) >= actual_thumb_size:
 					# image is bigger than the square which will result from cropping
@@ -1414,27 +1365,21 @@ class Media(object):
 		try:
 			message("making copy...", "", 5)
 			start_image_copy = start_image.copy()
-			next_level()
-			message("copy made", info_string, 4)
-			back_level()
+			indented_message("copy made", info_string, 4)
 		except KeyboardInterrupt:
 			raise
 		except:
 			# we try again to work around PIL bug
 			message("making copy (2nd try)...", info_string, 5)
 			start_image_copy = start_image.copy()
-			next_level()
-			message("copy made (2nd try)", info_string, 5)
-			back_level()
+			indented_message("copy made (2nd try)", info_string, 5)
 
 		# both width and height of thumbnail are less then width and height of start_image, no blurring will happen
 		# we can resize, but first crop to square if needed
 		if must_crop:
 			message("cropping...", info_string, 4)
 			start_image_copy = start_image_copy.crop((left, top, right, bottom))
-			next_level()
-			message("cropped (" + str(original_thumb_size) + ")", "", 5)
-			back_level()
+			indented_message("cropped (" + str(original_thumb_size) + ")", "", 5)
 
 		if max(start_image_copy.size[0], start_image_copy.size[1]) <= actual_thumb_size:
 			# no resize
@@ -1471,17 +1416,13 @@ class Media(object):
 			new_image = Image.new('RGBA', (actual_thumb_size, actual_thumb_size), Options.config['small_square_crops_background_color'])
 			new_image.paste(start_image_copy, (int((actual_thumb_size - start_image_copy.size[0]) / 2), int((actual_thumb_size - start_image_copy.size[1]) / 2)))
 			start_image_copy_filled = new_image
-			next_level()
-			message("filled", "", 5)
-			back_level()
+			indented_message("filled", "", 5)
 
 		# the subdir hadn't been created when creating the album in order to avoid creation of empty directories
 		if not os.path.exists(thumbs_path_with_subdir):
 			message("creating unexistent subdir", "", 5)
 			os.makedirs(thumbs_path_with_subdir)
-			next_level()
-			message("unexistent subdir created", thumbs_path_with_subdir, 4)
-			back_level()
+			indented_message("unexistent subdir created", thumbs_path_with_subdir, 4)
 
 		if os.path.exists(thumb_path) and not os.access(thumb_path, os.W_OK):
 			message("FATAL ERROR", thumb_path + " not writable, quitting")
@@ -1495,9 +1436,7 @@ class Media(object):
 			x = int((start_image_copy_filled.size[0] - video_transparency.size[0]) / 2)
 			y = int((start_image_copy_filled.size[1] - video_transparency.size[1]) / 2)
 			start_image_copy_for_saving.paste(video_transparency, (x, y), video_transparency)
-			next_level()
-			message("video transparency added", "", 4)
-			back_level()
+			indented_message("video transparency added", "", 4)
 		else:
 			start_image_copy_for_saving = start_image_copy_filled
 
@@ -1546,9 +1485,7 @@ class Media(object):
 			back_level()
 			return start_image_copy
 		except:
-			next_level()
-			message(str(original_thumb_size) + " thumbnail", "save failure to " + os.path.basename(thumb_path), 1)
-			back_level()
+			indented_message(str(original_thumb_size) + " thumbnail", "save failure to " + os.path.basename(thumb_path), 1)
 			try:
 				os.unlink(thumb_path)
 			except OSError:
@@ -1571,9 +1508,7 @@ class Media(object):
 			tfn                     # temporary file to store extracted image
 		)
 		if not return_code:
-			next_level()
-			message("couldn't extract video frame", os.path.basename(original_path), 1)
-			back_level()
+			indented_message("couldn't extract video frame", os.path.basename(original_path), 1)
 			try:
 				os.unlink(tfn)
 			except OSError:
@@ -1589,9 +1524,7 @@ class Media(object):
 				pass
 			raise
 		except:
-			next_level()
-			message("error opening video thumbnail", tfn + " from " + original_path, 5)
-			back_level()
+			indented_message("error opening video thumbnail", tfn + " from " + original_path, 5)
 			self.is_valid = False
 			try:
 				os.unlink(tfn)
@@ -1629,9 +1562,7 @@ class Media(object):
 		else:
 			message("creating still unexistent album cache subdir", "", 5)
 			os.makedirs(album_cache_path)
-			next_level()
-			message("still unexistent subdir created", album_cache_path, 4)
-			back_level()
+			indented_message("still unexistent subdir created", album_cache_path, 4)
 
 		transcode_path = os.path.join(album_cache_path, album_prefix + video_cache_name(self))
 		# get number of cores on the system, and use all minus one
@@ -1658,9 +1589,7 @@ class Media(object):
 		info_string = "mp4, h264, " + Options.config['video_transcode_bitrate'] + " bit/sec, crf=" + str(Options.config['video_crf'])
 
 		if os.path.exists(transcode_path) and file_mtime(transcode_path) >= self.datetime_file:
-			next_level()
-			message("existent transcoded video", info_string, 4)
-			back_level()
+			indented_message("existent transcoded video", info_string, 4)
 			self._video_metadata(transcode_path, False)
 			return
 
@@ -1689,9 +1618,7 @@ class Media(object):
 		try:
 			return_code = VideoTranscodeWrapper().call(*transcode_cmd)
 			if return_code != False:
-				next_level()
-				message("transcoded", "", 4)
-				back_level()
+				indented_message("transcoded", "", 4)
 		except KeyboardInterrupt:
 			raise
 
@@ -1707,16 +1634,12 @@ class Media(object):
 			try:
 				return_code = VideoTranscodeWrapper().call(*tmp_transcode_cmd)
 				if return_code != False:
-					next_level()
-					message("transcoded with yuv420p", "", 2)
-					back_level()
+					indented_message("transcoded with yuv420p", "", 2)
 			except KeyboardInterrupt:
 				raise
 
 			if not return_code:
-				next_level()
-				message("transcoding failure", os.path.basename(original_path), 1)
-				back_level()
+				indented_message("transcoding failure", os.path.basename(original_path), 1)
 				self.is_valid = False
 				try:
 					os.unlink(transcode_path)
@@ -1732,6 +1655,10 @@ class Media(object):
 	@property
 	def name(self):
 		return os.path.basename(self.media_file_name)
+
+	@property
+	def checksum(self):
+		return self._attributes["checksum"]
 
 	@property
 	def title(self):
@@ -1764,6 +1691,7 @@ class Media(object):
 
 	def __str__(self):
 		return self.name
+		# return self.name + ":\n" + str(self.__class__) + ":\n" + str(self.__dict__)
 
 	@property
 	def path(self):
@@ -1813,13 +1741,20 @@ class Media(object):
 		correct_date = None
 		if not self.is_valid:
 			correct_date = datetime(1900, 1, 1)
-		if "dateTimeOriginal" in self._attributes["metadata"]:
+		elif "dateTimeOriginal" in self._attributes["metadata"]:
 			correct_date = self._attributes["metadata"]["dateTimeOriginal"]
 		elif "dateTime" in self._attributes["metadata"]:
 			correct_date = self._attributes["metadata"]["dateTime"]
 		else:
 			correct_date = self._attributes["dateTimeFile"]
 		return correct_date
+
+	@property
+	def date_string(self):
+		date_str = str(self.date)
+		while len(date_str) < 19:
+			date_str = "0" + date_str
+		return date_str
 
 	@property
 	def has_gps_data(self):
@@ -1839,12 +1774,15 @@ class Media(object):
 
 	@property
 	def year(self):
-		return str(self.date.year)
+		year_str = str(self.date.year)
+		while len(year_str) < 4:
+			year_str = "0" + year_str
+		return year_str
+
 
 	@property
 	def month(self):
-		#~ return self.date.strftime("%B").capitalize() + " " + self.year
-		return self.date.strftime("%m")
+		return str(self.date.month).zfill(2)
 
 	@property
 	def day(self):
@@ -1984,12 +1922,16 @@ class Media(object):
 			if key == "metadata":
 				for key1, value1 in list(value.items()):
 					if key1.startswith("dateTime"):
-						try:
-							dictionary[key][key1] = datetime.strptime(value1, Options.date_time_format)
-						except KeyboardInterrupt:
-							raise
-						except ValueError:
-							pass
+						while True:
+							try:
+								dictionary[key][key1] = datetime.strptime(value1, Options.date_time_format)
+								break
+							except KeyboardInterrupt:
+								raise
+							except ValueError:
+								# year < 1000 incorrectly inserted in json file ("31" instead of "0031")
+								value1 = "0" + value1
+
 		message("processing media from cached album", media_path, 5)
 		return Media(album, media_path, None, dictionary)
 
@@ -2002,7 +1944,7 @@ class Media(object):
 		media = self.attributes
 		media["name"] = self.name
 		media["cacheBase"] = self.cache_base
-		media["date"] = self.date
+		media["date"] = self.date_string
 		# media["yearAlbum"] = self.year_album_path
 		# media["monthAlbum"] = self.month_album_path
 		media["dayAlbum"] = self.day_album_path
@@ -2013,7 +1955,7 @@ class Media(object):
 		if hasattr(self, "words"):
 			media["words"] = self.words
 		if Options.config['checksum']:
-			media["checksum"] = checksum(os.path.join(Options.config['album_path'], self.media_file_name))
+			media["checksum"] = self.checksum
 
 		# the following data don't belong properly to media, but to album, but they must be put here in order to work with date, gps and search structure
 		media["albumName"] = self.album_path
@@ -2026,7 +1968,12 @@ class Media(object):
 class PhotoAlbumEncoder(json.JSONEncoder):
 	def default(self, obj):
 		if isinstance(obj, datetime):
-			return obj.strftime("%Y-%m-%d %H:%M:%S")
+			# there was the line:
+			# return obj.strftime("%Y-%m-%d %H:%M:%S")
+			# but strftime throws an exception in python2 if year < 1900
+			date = str(obj.year) + '-' + str(obj.month).zfill(2) + '-' + str(obj.day).zfill(2)
+			date = date + ' ' + str(obj.hour).zfill(2) + ':' + str(obj.minute).zfill(2) + ':' + str(obj.second).zfill(2)
+			return date
 		if isinstance(obj, Album) or isinstance(obj, Media):
 			return obj.to_dict()
 		return json.JSONEncoder.default(self, obj)

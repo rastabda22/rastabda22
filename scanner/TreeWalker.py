@@ -16,8 +16,8 @@ from datetime import datetime
 
 from PIL import Image
 
-from CachePath import remove_album_path, file_mtime, last_modification_time, trim_base_custom, remove_folders_marker
-from Utilities import message, next_level, back_level, report_times
+from CachePath import remove_album_path, file_mtime, last_modification_time, trim_base_custom, remove_folders_marker, checksum
+from Utilities import message, indented_message, next_level, back_level, report_times
 from PhotoAlbum import Media, Album, PhotoAlbumEncoder
 from Geonames import Geonames
 import Options
@@ -89,9 +89,7 @@ class TreeWalker:
 		else:
 			message("creating still unexistent album cache subdir", self.album_cache_path, 4)
 			os.makedirs(self.album_cache_path)
-			next_level()
-			message("still unexistent subdir created", "", 5)
-			back_level()
+			indented_message("still unexistent subdir created", "", 5)
 
 		self.origin_album = Album(Options.config['album_path'])
 		# self.origin_album.read_album_ini() # origin_album is not a physical one, it's the parent of the root physical tree and of the virtual albums
@@ -106,9 +104,7 @@ class TreeWalker:
 			next_level()
 			self.save_all_media_json()
 			back_level()
-			next_level()
-			message("all media json file saved", "", 5)
-			back_level()
+			indented_message("all media json file saved", "", 5)
 
 			self.all_json_files.append("all_media.json")
 
@@ -118,27 +114,21 @@ class TreeWalker:
 
 			message("generating by date albums...", "", 4)
 			by_date_album = self.generate_date_albums(self.origin_album)
-			next_level()
-			message("by date albums generated", "", 5)
-			back_level()
+			indented_message("by date albums generated", "", 5)
 			if by_date_album is not None and not by_date_album.empty:
 				self.all_json_files.append(Options.config['by_date_string'] + ".json")
 				self.origin_album.add_album(by_date_album)
 
 			message("generating by geonames albums...", "", 4)
 			by_geonames_album = self.generate_geonames_albums(self.origin_album)
-			next_level()
-			message("by geonames albums generated", "", 5)
-			back_level()
+			indented_message("by geonames albums generated", "", 5)
 			if by_geonames_album is not None and not by_geonames_album.empty:
 				self.all_json_files.append(Options.config['by_gps_string'] + ".json")
 				self.origin_album.add_album(by_geonames_album)
 
 			message("generating by search albums...", "", 4)
 			by_search_album = self.generate_by_search_albums(self.origin_album)
-			next_level()
-			message("by search albums generated", "", 5)
-			back_level()
+			indented_message("by search albums generated", "", 5)
 			if by_search_album is not None and not by_search_album.empty:
 				self.all_json_files.append(Options.config['by_search_string'] + ".json")
 				self.origin_album.add_album(by_search_album)
@@ -241,9 +231,7 @@ class TreeWalker:
 							by_date_max_file_date = single_media_date
 					self.all_albums.append(day_album)
 					self.generate_composite_image(day_album, day_max_file_date)
-					next_level()
-					message("day album worked out", media[0].year + "-" + media[0].month + "-" + media[0].day, 4)
-					back_level()
+					indented_message("day album worked out", media[0].year + "-" + media[0].month + "-" + media[0].day, 4)
 				self.all_albums.append(month_album)
 				self.generate_composite_image(month_album, month_max_file_date)
 			self.all_albums.append(year_album)
@@ -303,9 +291,7 @@ class TreeWalker:
 			word_album.unicode_words = media_and_album_words["unicode_words"]
 			self.all_albums.append(word_album)
 			# self.generate_composite_image(word_album, word_max_file_date)
-			next_level()
-			message("word album worked out", word, 4)
-			back_level()
+			indented_message("word album worked out", word, 4)
 			back_level()
 		self.all_albums.append(by_search_album)
 		back_level()
@@ -344,9 +330,7 @@ class TreeWalker:
 					next_level()
 					message("sorting media...", "", 5)
 					media_list.sort(key=lambda m: m.latitude)
-					next_level()
-					message("media sorted", "", 5)
-					back_level()
+					indented_message("media sorted", "", 5)
 					# check if there are too many media in album
 					# in case, "place" album will be split in "place (subalbum 1)", "place (subalbum 2)",...
 					# clustering is made with the kmeans algorithm
@@ -365,30 +349,22 @@ class TreeWalker:
 							cluster_list = Geonames.find_centers(media_list, K)
 							max_cluster_length = max([len(cluster) for cluster in cluster_list])
 							if max_cluster_length <= Options.config['big_virtual_folders_threshold']:
-								next_level()
-								message("clustered with k-means algorithm", "OK!", 5)
-								back_level()
+								indented_message("clustered with k-means algorithm", "OK!", 5)
 								break
 							# detect no convergence
 							max_cluster_length_list.append(max_cluster_length)
 							max_cluster_length_list.pop(0)
 							if max(max_cluster_length_list) > 0 and max(max_cluster_length_list) == min(max_cluster_length_list):
 								# three times the same value: no convergence
-								next_level()
-								message("clustering with k-means algorithm failed", "max cluster length doesn't converge, it's stuck at " + str(max_cluster_length), 5)
-								back_level()
+								indented_message("clustering with k-means algorithm failed", "max cluster length doesn't converge, it's stuck at " + str(max_cluster_length), 5)
 								clustering_failed = True
 								break
 
 							if K > len(media_list):
-								next_level()
-								message("clustering with k-means algorithm failed", "clusters remain too big even with k > len(media_list)", 5)
-								back_level()
+								indented_message("clustering with k-means algorithm failed", "clusters remain too big even with k > len(media_list)", 5)
 								clustering_failed = true
 								break
-							next_level()
-							message("clustering with k-means algorithm not ok", "biggest cluster has " + str(max_cluster_length) + " photos", 5)
-							back_level()
+							indented_message("clustering with k-means algorithm not ok", "biggest cluster has " + str(max_cluster_length) + " photos", 5)
 							K = K * 2
 						next_level()
 						if clustering_failed:
@@ -410,9 +386,7 @@ class TreeWalker:
 									next_level()
 									message("sorting cluster by date...", "", 5)
 									cluster.sort()
-									next_level()
-									message("cluster sorted by date", "", 5)
-									back_level()
+									indented_message("cluster sorted by date", "", 5)
 
 									message("splitting cluster...", "", 5)
 									new_length = len(cluster) // (integer_ratio + 1)
@@ -422,21 +396,15 @@ class TreeWalker:
 										cluster_list_new.append(cluster[start:end])
 									# the remaining is still to be appended
 									cluster_list_new.append(cluster[end:])
-									next_level()
-									message("cluster splitted", "", 5)
-									back_level()
+									indented_message("cluster splitted", "", 5)
 									back_level()
 								else:
-									next_level()
-									message("cluster is OK", "", 5)
-									back_level()
+									indented_message("cluster is OK", "", 5)
 									cluster_list_new.append(cluster)
 								back_level()
 							cluster_list = cluster_list_new[:]
 							max_cluster_length = max([len(cluster) for cluster in cluster_list])
-							next_level()
-							message("big clusters splitted into smaller ones", "biggest cluster lenght is now " + str(max_cluster_length), 5)
-							back_level()
+							indented_message("big clusters splitted into smaller ones", "biggest cluster lenght is now " + str(max_cluster_length), 5)
 
 						message("clustering terminated", "there are " + str(len(cluster_list)) + " clusters", 5)
 						back_level()
@@ -444,9 +412,7 @@ class TreeWalker:
 						back_level()
 
 					else:
-						next_level()
-						message("it's not a big list", "", 5)
-						back_level()
+						indented_message("it's not a big list", "", 5)
 						cluster_list = [media_list]
 
 					# iterate on cluster_list
@@ -528,9 +494,7 @@ class TreeWalker:
 						self.all_albums.append(place_album)
 						self.generate_composite_image(place_album, place_max_file_date)
 						if set_alt_place:
-							next_level()
-							message("cluster worked out", str(i) + "-th cluster: " + cluster[0].country_code + "-" + cluster[0].region_code + "-" + alt_place_name, 4)
-							back_level()
+							indented_message("cluster worked out", str(i) + "-th cluster: " + cluster[0].country_code + "-" + cluster[0].region_code + "-" + alt_place_name, 4)
 							back_level()
 						else:
 							# next_level()
@@ -630,7 +594,8 @@ class TreeWalker:
 				if media not in self.tree_by_search[word]["media_words"]:
 					self.tree_by_search[word]["media_words"].append(media)
 				if unicode_word not in self.tree_by_search[word]["unicode_words"]:
-					self.tree_by_search[word]["unicode_words"].append(unicode_word)
+					if not any(media.media_file_name == _media.media_file_name for _media in self.tree_by_search[word]["unicode_words"]):
+						self.tree_by_search[word]["unicode_words"].append(unicode_word)
 
 	def add_album_to_tree_by_search(self, album):
 		words_for_word_list, unicode_words, words_for_search_album_name = self.prepare_for_tree_by_search(album)
@@ -704,7 +669,7 @@ class TreeWalker:
 		#~ if trimmed_path:
 			#~ absolute_path_with_marker = os.path.join(absolute_path_with_marker, trimmed_path)
 		max_file_date = file_mtime(absolute_path)
-		message("Walking                                 ", os.path.basename(absolute_path), 3)
+		message(">>>>>>>>>>>  Walking", absolute_path, 3)
 		next_level()
 		message("cache base", album_cache_base, 4)
 		if not os.access(absolute_path, os.R_OK | os.X_OK):
@@ -713,9 +678,7 @@ class TreeWalker:
 			return [None, 0, None]
 		listdir = os.listdir(absolute_path)
 		if Options.config['exclude_tree_marker'] in listdir:
-			next_level()
-			message("excluded with subfolders by marker file", Options.config['exclude_tree_marker'], 4)
-			back_level()
+			indented_message("excluded with subfolders by marker file", Options.config['exclude_tree_marker'], 4)
 			back_level()
 			return [None, 0, None]
 		skip_files = False
@@ -729,9 +692,7 @@ class TreeWalker:
 		json_file_mtime = None
 		if json_file_exists:
 			json_file_mtime = file_mtime(json_file)
-		json_file_OK = False
 		album_ini_file = os.path.join(absolute_path, Options.config['metadata_filename'])
-		can_use_existing_json_file = True
 		album_ini_good = False
 		must_process_album_ini = False
 		if os.path.exists(album_ini_file):
@@ -743,105 +704,95 @@ class TreeWalker:
 				album_ini_good = True
 
 		cached_album = None
+		album_cache_hit = False
 		json_message = json_file
 		if Options.config['recreate_json_files']:
-			message("forced json file recreation", "some sensible option has changed", 3)
+			message("not an album cache hit", "forced json file recreation, some sensible option has changed", 3)
 		else:
 			try:
 				if json_file_exists:
 					if not os.access(json_file, os.R_OK):
-						message("json file unreadable", json_file, 1)
+						message("not an album cache hit", "json file unreadable", 1)
 					elif not os.access(json_file, os.W_OK):
-						message("json file unwritable", json_file, 1)
+						message("not an album cache hit", "json file unwritable", 1)
 					else:
 						if album_ini_good and file_mtime(album_ini_file) > json_file_mtime:
 							# a check on album_ini_file content would have been good:
 							# execution comes here even if album.ini hasn't anything significant
-							message("album.ini newer than json file", "recreating json file taking into account album.ini", 4)
-							can_use_existing_json_file = False
+							message("not an album cache hit", "album.ini newer than json file, recreating json file taking into account album.ini", 4)
 							must_process_album_ini = True
-						if can_use_existing_json_file:
+						elif file_mtime(absolute_path) >= json_file_mtime:
+							indented_message("not an album cache hit", "dir time > json file time", 4)
+						else:
 							message("reading json file to import album...", json_file, 5)
 							# the following is the instruction which could raise the error
 							cached_album = Album.from_cache(json_file, album_cache_base)
-							next_level()
-							message("json file read", "", 5)
-							back_level()
-							if (
-								file_mtime(absolute_path) <= json_file_mtime and
-								cached_album is not None and
-								hasattr(cached_album, "absolute_path") and
-								cached_album.absolute_path == absolute_path and
-								Options.json_version != 0 and hasattr(cached_album, "json_version") and cached_album.json_version == Options.json_version
-							):
-								next_level()
-								message("json file is OK", "", 4)
-								back_level()
-								json_file_OK = True
-								album = cached_album
-								message("adding media in album to big lists...", "", 5)
-								for media in album.media:
-									if not any(media.media_file_name == _media.media_file_name for _media in self.all_media):
-										self.add_media_to_tree_by_date(media)
-										if media.has_gps_data:
-											self.add_media_to_tree_by_geonames(media)
-										message("adding media to search tree...", "", 5)
-										# the following function has a check on media already present
-										self.add_media_to_tree_by_search(media)
-										next_level()
-										message("media added to search tree", "", 5)
-										back_level()
-
-										self.all_media.append(media)
-								next_level()
-								message("added media to big lists", "", 5)
-								back_level()
-							else:
-								next_level()
-								message("json file invalid (old or invalid path)", "", 4)
-								back_level()
+							indented_message("json file read and imported", "", 5)
+							# if file_mtime(absolute_path) >= json_file_mtime:
+							# 	indented_message("invalid json file", "dir time > json file time", 4)
+							# 	cached_album = None
+							if cached_album is None:
+								indented_message("not an album cache hit", "null cached album, perhaps because of unexistent/old json_version", 4)
+							elif not hasattr(cached_album, "absolute_path"):
+								indented_message("not an album cache hit", "cached album hasn't absolute_path", 4)
 								cached_album = None
+							elif cached_album.absolute_path != absolute_path:
+								indented_message("not an album cache hit", "cached album's absolute_path != absolute_path", 4)
+								cached_album = None
+							# the next commented-out check isn't needed because the same condition is checked in Album() and None is returned
+							# elif Options.json_version == 0 or not hasattr(cached_album, "json_version") or not cached_album.json_version == Options.json_version:
+							# 	indented_message("not an album cache hit", "unexistent or old json_version", 4)
+							# 	cached_album = None
+							else:
+								indented_message("album cache hit!", "", 4)
+								album = cached_album
+								album_cache_hit = True
 				else:
 					must_process_album_ini = True
 			except KeyboardInterrupt:
 				raise
 			except IOError:
 				# will execution never come here?
-				next_level()
-				message("json file unexistent", json_message, 4)
-				back_level()
-				json_file_OK = False
+				indented_message("not an album cache hit", "json file unexistent", 4)
+				album_cache_hit = False
+			# is the following exception needed? it surely catched date errors...
 			except (ValueError, AttributeError, KeyError):
-				next_level()
-				message("json file invalid", json_message, 4)
-				back_level()
-				json_file_OK = False
+				indented_message("not an album cache hit", "ValueError, AttributeError or KeyError somewhere", 4)
+				album_cache_hit = False
 				cached_album = None
 
-		if not json_file_OK:
+		if not album_cache_hit:
 			message("generating void album...", "", 5)
 			album = Album(absolute_path)
-			next_level()
-			message("void album generated", "", 5)
-			back_level()
+			indented_message("void album generated", "", 5)
 
 		if album_ini_good:
 			if not must_process_album_ini:
 				message("album.ini values already in json file", "", 2)
 			else:
+				message("reading album.ini...", "", 2)
 				album.read_album_ini(album_ini_file)
+				indented_message("album.ini read!", "", 2)
 
 		if parent_album is not None:
 			album.parent = parent_album
 		album.cache_base = album_cache_base
 
-		message("subdir for cache files", " " + album.subdir, 3)
-
 		#~ for entry in sorted(os.listdir(absolute_path)):
 		message("reading directory", absolute_path, 5)
+		message("subdir for cache files", " " + album.subdir, 3)
+
+		num_video_in_dir = 0
+		num_video_processed_in_dir = 0
 		num_photo_in_dir = 0
-		photos_without_geotag_in_dir = []
-		photos_without_exif_date_in_dir = []
+		num_photo_processed_in_dir = 0
+		num_photo_with_exif_date_in_dir = 0
+		num_photo_with_geotags_in_dir = 0
+		num_photo_with_exif_date_and_geotags_in_dir = 0
+		photos_with_exif_date_and_without_geotags_in_dir = []
+		photos_without_exif_date_and_with_geotags_in_dir = []
+		photos_without_exif_date_or_geotags_in_dir = []
+		files_in_dir = []
 		for entry in self._listdir_sorted_by_time(absolute_path):
 			try:
 				# @python2
@@ -852,9 +803,7 @@ class TreeWalker:
 			except KeyboardInterrupt:
 				raise
 			except:
-				next_level()
-				message("unicode error", entry, 1)
-				back_level()
+				indented_message("unicode error", entry, 1)
 				continue
 
 			if entry[0] == '.' or entry == Options.config['metadata_filename']:
@@ -863,27 +812,19 @@ class TreeWalker:
 
 			entry_with_path = os.path.join(absolute_path, entry)
 			if not os.path.exists(entry_with_path):
-				next_level()
-				message("unexistent file, perhaps a symlink, skipping", entry_with_path, 2)
-				back_level()
+				indented_message("unexistent file, perhaps a symlink, skipping", entry_with_path, 2)
 			elif not os.access(entry_with_path, os.R_OK):
-				next_level()
-				message("unreadable file", entry_with_path, 2)
-				back_level()
+				indented_message("unreadable file", entry_with_path, 2)
 			elif os.path.islink(entry_with_path) and not Options.config['follow_symlinks']:
 				# this way file symlink are skipped too: may be symlinks can be checked only for directories?
-				next_level()
-				message("symlink, skipping as set in options", entry_with_path, 3)
-				back_level()
+				indented_message("symlink, skipping as set in options", entry_with_path, 3)
 			elif os.path.isdir(entry_with_path):
 				trimmed_path = trim_base_custom(absolute_path, Options.config['album_path'])
 				entry_for_cache_base = os.path.join(Options.config['folders_string'], trimmed_path, entry)
 				next_level()
 				message("determining cache base...", "", 5)
 				next_album_cache_base = album.generate_cache_base(entry_for_cache_base)
-				next_level()
-				message("cache base determined", "", 5)
-				back_level()
+				indented_message("cache base determined", "", 5)
 				back_level()
 				[next_walked_album, num, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, album)
 				if next_walked_album is not None:
@@ -893,30 +834,88 @@ class TreeWalker:
 					next_level()
 					message("adding album to search tree...", "", 5)
 					self.add_album_to_tree_by_search(next_walked_album)
-					next_level()
-					message("album added to search tree", "", 5)
-					back_level()
+					indented_message("album added to search tree", "", 5)
 					back_level()
 
 			elif os.path.isfile(entry_with_path):
 				if skip_files:
 					continue
-				next_level()
-				cache_hit = False
+
+				# if any(remove_album_path(entry_with_path) == _media.media_file_name for _media in self.all_media):
+				# 	# do not process the media twice
+				# 	continue
+
+				# save the file name for the end of the cycle, so that subdirs are processed first
+				files_in_dir.append(entry_with_path)
+
+		message("working with files in dir", absolute_path, 5)
+		next_level()
+		for entry_with_path in files_in_dir:
+			message("working with file", entry_with_path, 5)
+			next_level()
+			cache_hit = True
+			dirname = os.path.dirname(entry_with_path)
+			try:
+				message("reading file and dir times...", "", 5)
 				mtime = file_mtime(entry_with_path)
+				dir_mtime = file_mtime(dirname)
+				indented_message("file and dir times read!", "", 5)
+			except KeyboardInterrupt:
+				raise
+			except OSError:
+				indented_message("could not read file or dir mtime", "", 5)
+				continue
+			else:
 				max_file_date = max(max_file_date, mtime)
 				media = None
 				cached_media = None
-				if cached_album:
-					message("reading cache media from cached album...", "", 5)
-					cached_media = cached_album.media_from_path(entry_with_path)
-					next_level()
-					message("cache media read", "", 5)
-					back_level()
-					if cached_media and	mtime <= cached_media.datetime_file:
+				absolute_cache_file_exists = False
+
+			if Options.config['checksum']:
+				message("calculating checksum...", "", 5)
+				with open(entry_with_path, 'rb') as media_path_pointer:
+					media_checksum = checksum(media_path_pointer)
+				indented_message("checksum calculated", "", 5)
+
+			if not album_cache_hit:
+				indented_message("not a cache hit", "json file invalid", 5)
+				cache_hit = False
+
+			if album_cache_hit and cache_hit:
+				next_level()
+				message("getting media from cached album...", "", 5)
+				cached_media = cached_album.media_from_path(entry_with_path)
+				if cached_media is None:
+					indented_message("media absent fron cache", "not a cache hit", 5)
+					cache_hit = False
+				else:
+					indented_message("cached media got!", "", 5)
+				# cached_media._attributes["dateTimeDir"] = dir_mtime
+
+				if cache_hit and cached_media._attributes["dateTimeFile"] != mtime:
+					indented_message("modification time different", "not a cache hit", 5)
+					cache_hit = False
+
+				if cache_hit and Options.config['checksum']:
+					try:
+						cached_media._attributes['checksum']
+					except KeyError:
+						message("not a cache hit", "no checksum in json file", 5)
+						cache_hit = False
+					else:
+						if cached_media._attributes['checksum'] == media_checksum:
+							indented_message("checksum OK!", "", 5)
+						else:
+							indented_message("not a cache hit", "bad checksum!", 5)
+							cache_hit = False
+
+				if cache_hit and cached_media:
+					if mtime != cached_media.datetime_file:
+						message("not a cache hit", "file datetime different from cache one", 5)
+						cache_hit = False
+					else:
 						cache_files = cached_media.image_caches
 						# check if the cache files actually exist and are not old
-						cache_hit = True
 						for cache_file in cache_files:
 							absolute_cache_file = os.path.join(Options.config['cache_path'], cache_file)
 							absolute_cache_file_exists = os.path.exists(absolute_cache_file)
@@ -934,130 +933,145 @@ class TreeWalker:
 									except OSError:
 										message("error deleting fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 1)
 
-							if (
-								not absolute_cache_file_exists or
-								json_file_OK and (
-									file_mtime(absolute_cache_file) < cached_media.datetime_file or
-									file_mtime(absolute_cache_file) > json_file_mtime
-								) or
-								(Options.config['recreate_reduced_photos'] or Options.config['recreate_thumbnails'])
-							):
+							if not absolute_cache_file_exists:
+								indented_message("not a cache hit", "unexistent reduction/thumbnail", 4)
 								cache_hit = False
 								break
-						if cache_hit:
-							media = cached_media
-							if media.is_video:
-								message("reduced size transcoded video and thumbnails OK", os.path.basename(entry_with_path), 4)
-							else:
-								message("reduced size images and thumbnails OK", os.path.basename(entry_with_path), 4)
-						#~ else:
-							#~ absolute_cache_file = ""
-				if not cache_hit:
-					message("not a cache hit", entry_with_path, 4)
-					next_level()
-					if not json_file_OK:
-						message("reason: json file not OK", "  " + json_message, 4)
-					else:
-						if cached_media is None:
-							message("reason: media not cached", "", 4)
-						# TODO: We can't execute the code below as cache_hit = False...
-						elif cache_hit:
-							if not absolute_cache_file_exists:
-								message("reason: unexistent reduction/thumbnail", "", 4)
-							else:
-								if file_mtime(absolute_cache_file) < cached_media.datetime_file:
-									message("reason: reduct/thumbn older than cached media", "", 4)
-								elif file_mtime(absolute_cache_file) > json_file_mtime:
-									message("reason: reduct/thumbn newer than json file", "", 4)
+							if file_mtime(absolute_cache_file) < cached_media.datetime_file:
+								indented_message("not a cache hit", "reduction/thumbnail older than cached media", 4)
+								cache_hit = False
+								break
+							if file_mtime(absolute_cache_file) > json_file_mtime:
+								indented_message("not a cache hit", "reduction/thumbnail newer than json file", 4)
+								cache_hit = False
+								break
+							if Options.config['recreate_reduced_photos']:
+								indented_message("not a cache hit", "reduced photo recreation requested", 4)
+								cache_hit = False
+								break
+							if Options.config['recreate_thumbnails']:
+								indented_message("not a cache hit", "thumbnail recreation requested", 4)
+								cache_hit = False
+								break
+				back_level()
 
-					if Options.config['recreate_reduced_photos']:
-						message("reduced photo recreation requested", "", 4)
-					if Options.config['recreate_thumbnails']:
-						message("thumbnail recreation requested", "", 4)
-					back_level()
-					message("processing media from file", entry_with_path, 5)
-					media = Media(album, entry_with_path, Options.config['cache_path'])
+			if cache_hit:
+				media = cached_media
+				if media.is_video:
+					message("cache hit!", "transcoded video and thumbnails OK", 4)
+				else:
+					message("cache hit!", "reduced size images and thumbnails OK", 4)
+			else:
+				message("processing media from file", "", 5)
+				media = Media(album, entry_with_path, Options.config['cache_path'], None)
+				if Options.config['checksum']:
+					media._attributes["checksum"] = media_checksum
 
-				if media.is_valid:
-					album.num_media_in_sub_tree += 1
-					album.num_media_in_album += 1
-					if media.is_video:
-						Options.num_video += 1
-						if not cache_hit:
-							Options.num_video_processed += 1
-					else:
-						Options.num_photo += 1
-						num_photo_in_dir += 1
-						if not cache_hit:
-							Options.num_photo_processed += 1
-						if media.has_exif_date:
-							Options.num_photo_with_exif_date += 1
-						else:
-							photos_without_exif_date_in_dir.append(entry_with_path)
+			if media.is_valid:
+				album.num_media_in_sub_tree += 1
+				album.num_media_in_album += 1
+				if media.is_video:
+					num_video_in_dir += 1
+					if not cache_hit:
+						num_video_processed_in_dir += 1
+				else:
+					num_photo_in_dir += 1
+					if not cache_hit:
+						num_photo_processed_in_dir += 1
+
+					if media.has_exif_date:
+						num_photo_with_exif_date_in_dir += 1
+					if media.has_gps_data:
+						num_photo_with_geotags_in_dir += 1
+
+					if media.has_exif_date:
 						if media.has_gps_data:
-							Options.num_photo_geotagged += 1
+							num_photo_with_exif_date_and_geotags_in_dir += 1
 						else:
-							photos_without_geotag_in_dir.append(entry_with_path)
+							photos_with_exif_date_and_without_geotags_in_dir.append("      " + entry_with_path)
+					else:
+						if media.has_gps_data:
+							photos_without_exif_date_and_with_geotags_in_dir.append("      " + entry_with_path)
+						else:
+							photos_without_exif_date_or_geotags_in_dir.append(      "      " + entry_with_path)
 
+				if not any(media.media_file_name == _media.media_file_name for _media in self.all_media):
+					message("adding media in album to lists...", "", 5)
 					next_level()
-					message("adding media to by date tree...", "", 5)
+					message("adding media to tree by date...", "", 5)
 					# the following function has a check on media already present
 					self.add_media_to_tree_by_date(media)
-					next_level()
-					message("media added to by date tree", "", 5)
-					back_level()
+					indented_message("media added to tree by date", "", 5)
 
 					if media.has_gps_data:
-						message("adding media to by geonames tree...", "", 5)
+						message("adding media to tree by geonames...", "", 5)
 						# the following function has a check on media already present
 						self.add_media_to_tree_by_geonames(media)
-						next_level()
-						message("media added to by geonames tree", "", 5)
-						back_level()
+						indented_message("media added to tree by geonames", "", 5)
 
 					message("adding media to search tree...", "", 5)
 					# the following function has a check on media already present
 					self.add_media_to_tree_by_search(media)
-					next_level()
-					message("media added to search tree", "", 5)
-					back_level()
+					indented_message("media added to search tree", "", 5)
 
 					message("adding media to album...", "", 5)
 					album.add_media(media)
-					next_level()
-					message("media added to album", "", 5)
-					back_level()
+					indented_message("media added to album", "", 5)
 
 					message("adding media to big list...", "", 5)
-					if not any(media.media_file_name == _media.media_file_name for _media in self.all_media):
-						self.all_media.append(media)
-					next_level()
-					message("media added to big list", "", 5)
-					back_level()
+					self.all_media.append(media)
+					indented_message("media added to big list", "", 5)
 
 					back_level()
+			elif not media.is_valid:
+				indented_message("not image nor video", "", 1)
+			back_level()
+		back_level()
 
-				elif not media.is_valid:
-					next_level()
-					message("not image nor video", "", 1)
-					back_level()
-				back_level()
+		if num_video_in_dir:
+			Options.num_video += num_video_in_dir
+			Options.num_video_processed += num_video_processed_in_dir
+
 		if num_photo_in_dir:
-			if num_photo_in_dir == len(photos_without_geotag_in_dir):
-				Options.photos_without_geotag.append(absolute_path + " (" + str(num_photo_in_dir) + " photos)")
-			else:
-				Options.photos_without_geotag.extend(photos_without_geotag_in_dir)
-			if num_photo_in_dir == len(photos_without_exif_date_in_dir):
-				Options.photos_without_exif_date.append(absolute_path + " (" + str(num_photo_in_dir) + " photos)")
-			else:
-				Options.photos_without_exif_date.extend(photos_without_exif_date_in_dir)
+			max_digit = len(str(Options.config['num_media_in_tree']))
+			_lpadded_num_photo_in_dir = str(num_photo_in_dir).rjust(max_digit)
+			_rpadded_num_photo_in_dir = str(num_photo_in_dir).ljust(max_digit)
+			_all_photos_in_path = _lpadded_num_photo_in_dir + "/" + _rpadded_num_photo_in_dir + " photos in " + absolute_path
+			_some_photo_in_path = "/" + _rpadded_num_photo_in_dir + " photos in " + absolute_path + ":"
+
+			Options.num_photo += num_photo_in_dir
+			Options.num_photo_processed += num_photo_processed_in_dir
+
+			Options.num_photo_with_exif_date += num_photo_with_exif_date_in_dir
+			Options.num_photo_with_geotags += num_photo_with_geotags_in_dir
+			Options.num_photo_with_exif_date_and_geotags += num_photo_with_exif_date_and_geotags_in_dir
+
+			Options.num_photo_with_exif_date_and_without_geotags += len(photos_with_exif_date_and_without_geotags_in_dir)
+			if num_photo_in_dir == len(photos_with_exif_date_and_without_geotags_in_dir):
+				Options.photos_with_exif_date_and_without_geotags.append(_all_photos_in_path)
+			elif len(photos_with_exif_date_and_without_geotags_in_dir):
+				Options.photos_with_exif_date_and_without_geotags.append(str(len(photos_with_exif_date_and_without_geotags_in_dir)).rjust(max_digit) + _some_photo_in_path)
+				Options.photos_with_exif_date_and_without_geotags.extend(photos_with_exif_date_and_without_geotags_in_dir)
+
+			Options.num_photo_without_exif_date_and_with_geotags += len(photos_without_exif_date_and_with_geotags_in_dir)
+			if num_photo_in_dir == len(photos_without_exif_date_and_with_geotags_in_dir):
+				Options.photos_without_exif_date_and_with_geotags.append(_all_photos_in_path)
+			elif len(photos_without_exif_date_and_with_geotags_in_dir):
+				Options.photos_without_exif_date_and_with_geotags.append(str(len(photos_without_exif_date_and_with_geotags_in_dir)).rjust(max_digit) + _some_photo_in_path)
+				Options.photos_without_exif_date_and_with_geotags.extend(photos_without_exif_date_and_with_geotags_in_dir)
+
+			Options.num_photo_without_exif_date_or_geotags += len(photos_without_exif_date_or_geotags_in_dir)
+			if num_photo_in_dir == len(photos_without_exif_date_or_geotags_in_dir):
+				Options.photos_without_exif_date_or_geotags.append(_all_photos_in_path)
+			elif len(photos_without_exif_date_or_geotags_in_dir):
+				Options.photos_without_exif_date_or_geotags.append(str(len(photos_without_exif_date_or_geotags_in_dir)).rjust(max_digit) + _some_photo_in_path)
+				Options.photos_without_exif_date_or_geotags.extend(photos_without_exif_date_or_geotags_in_dir)
+
 		if not album.empty:
 			next_level()
-			message("adding album to big list...", "", 5)
+			message("adding album to albums list...", "", 5)
 			self.all_albums.append(album)
-			next_level()
-			message("added album to big list", "", 4)
-			back_level()
+			indented_message("album added to albums list", "", 4)
 			back_level()
 		else:
 			message("VOID: no media in this directory", os.path.basename(absolute_path), 4)
@@ -1106,9 +1120,7 @@ class TreeWalker:
 			message("composite image OK", "", 5)
 			with open(composite_image_path, 'a'):
 				os.utime(composite_image_path, None)
-			next_level()
-			message("composite image OK, touched", composite_image_path, 4)
-			back_level()
+			indented_message("composite image OK, touched", composite_image_path, 4)
 			back_level()
 			return
 
@@ -1205,9 +1217,7 @@ class TreeWalker:
 
 		# save the composite image
 		img.save(composite_image_path, "JPEG", quality=Options.config['jpeg_quality'])
-		next_level()
-		message("composite image generated", "", 5)
-		back_level()
+		indented_message("composite image generated", "", 5)
 		back_level()
 
 
@@ -1215,21 +1225,15 @@ class TreeWalker:
 		media_list = []
 		message("sorting all media list...", "", 5)
 		self.all_media.sort()
-		next_level()
-		message("all media list sorted", "", 5)
-		back_level()
+		indented_message("all media list sorted", "", 5)
 		message("building media path list...", "", 5)
 		for media in self.all_media:
 			media_list.append(media.path)
-		next_level()
-		message("media path list built", "", 5)
-		back_level()
+		indented_message("media path list built", "", 5)
 		message("caching all media path list...", "", 4)
 		with open(os.path.join(Options.config['cache_path'], "all_media.json"), 'w') as all_media_file:
 			json.dump(media_list, all_media_file, cls=PhotoAlbumEncoder)
-		next_level()
-		message("all media path list cached", "", 5)
-		back_level()
+		indented_message("all media path list cached", "", 5)
 
 
 	@staticmethod
@@ -1244,9 +1248,7 @@ class TreeWalker:
 
 		with open(json_options_file, 'w') as options_file:
 			json.dump(options_to_save, options_file)
-		next_level()
-		message("saved json options file", "", 5)
-		back_level()
+		indented_message("saved json options file", "", 5)
 
 
 	def remove_stale(self, subdir=""):
@@ -1267,9 +1269,7 @@ class TreeWalker:
 					except KeyError:
 						self.all_json_files_by_subdir[album_subdir] = list()
 						self.all_json_files_by_subdir[album_subdir].append(entry_without_subdir)
-			next_level()
-			message("stale list built", "", 5)
-			back_level()
+			indented_message("stale list built", "", 5)
 			info = "in cache path"
 			deletable_files_re = r"\.json$"
 
@@ -1307,9 +1307,7 @@ class TreeWalker:
 				next_level()
 				message("deciding whether to keep a cache file...", "", 7)
 				match = re.search(deletable_files_re, cache_file)
-				next_level()
-				message("decided whether to keep a cache file", cache_file, 6)
-				back_level()
+				indented_message("decided whether to keep a cache file", cache_file, 6)
 				if match:
 					try:
 						# @python2
@@ -1332,13 +1330,9 @@ class TreeWalker:
 						message("removing stale cache file...", cache_file, 3)
 						file_to_delete = os.path.join(Options.config['cache_path'], subdir, cache_file)
 						os.unlink(file_to_delete)
-						next_level()
-						message("stale cache file removed", "", 5)
-						back_level()
+						indented_message("stale cache file removed", "", 5)
 				else:
-					next_level()
-					message("not a stale cache file, keeping it", cache_file, 2)
-					back_level()
+					indented_message("not a stale cache file, keeping it", cache_file, 2)
 					back_level()
 					continue
 				back_level()

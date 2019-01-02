@@ -7,7 +7,7 @@
   var dragSpeed = 500;
   var mediaContainerSelector = ".media-box#center .media-box-inner";
   var mediaSelector = mediaContainerSelector + " img";
-  var currentZoom, zoomIncrement = 1.5, zoomDecrement = 0.666666667;
+  var currentZoom, zoomAfterFirstPinch, zoomIncrement = 1.5625, zoomDecrement = 1 / zoomIncrement;
   var maxAllowedZoom;
   // minAllowedZoom must be <=1
   var minAllowedZoom = 1;
@@ -164,11 +164,45 @@
 	};
 
   PinchSwipe.pinchIn = function() {
-    PinchSwipe.pinchInOut(currentZoom, zoomIncrement, pinchSpeed);
+    if (currentZoom == 1 && ! $(".title").hasClass("hidden-by-pinch") && ($(".title").is(":visible") || $("#album-view").is(":visible"))) {
+      $(".title").addClass("hidden-by-pinch");
+      $("#album-view").addClass("hidden-by-pinch");
+      var event = {data: {}};
+      event.data.resize = true;
+      event.data.id = "center";
+      event.data.media = currentMedia;
+      event.data.callback = function() {
+        mediaWidthOnScreen = $(mediaSelector)[0].width;
+        currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
+        zoomAfterFirstPinch = currentZoom;
+      };
+      event.data.currentZoom = currentZoom;
+      pastMediaWidthOnScreen = $(mediaSelector)[0].width;
+      util.scaleMedia(event);
+    } else
+      PinchSwipe.pinchInOut(currentZoom, zoomIncrement, pinchSpeed);
   };
 
   PinchSwipe.pinchOut = function() {
-    PinchSwipe.pinchInOut(currentZoom, zoomDecrement, pinchSpeed);
+    if (currentZoom <= zoomAfterFirstPinch && $(".title").hasClass("hidden-by-pinch")) {
+      $(".title").removeClass("hidden-by-pinch");
+      $("#album-view").removeClass("hidden-by-pinch");
+      var event = {data: {}};
+      event.data.resize = true;
+      event.data.id = "center";
+      event.data.media = currentMedia;
+      event.data.callback = function() {
+        mediaWidthOnScreen = $(mediaSelector)[0].width;
+        // currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
+        currentZoom = 1;
+        zoomAfterFirstPinch = currentZoom;
+      };
+      event.data.currentZoom = currentZoom;
+      pastMediaWidthOnScreen = $(mediaSelector)[0].width;
+      util.scaleMedia(event);
+    } else {
+      PinchSwipe.pinchInOut(currentZoom, zoomDecrement, pinchSpeed);
+    }
   };
 
   PinchSwipe.drag = function(distance, dragVector, duration) {
@@ -384,14 +418,32 @@
 		if (currentMedia === null)
 			return true;
     if (! event.shiftKey && ! event.altKey && ! event.ctrlKey) {
-      // mouse wheel with no key: swipe
-  		if (delta < 0) {
-  			PinchSwipe.swipeLeft(nextMedia);
-  			return false;
-  		} else if (delta > 0) {
-  			PinchSwipe.swipeRight(prevMedia);
-  			return false;
-  		}
+      if (currentZoom ==  1) {
+        // mouse wheel with no key: swipe
+    		if (delta < 0) {
+    			PinchSwipe.swipeLeft(nextMedia);
+    			return false;
+    		} else if (delta > 0) {
+    			PinchSwipe.swipeRight(prevMedia);
+    			return false;
+    		}
+      } else {
+        // drag
+        if (event.deltaY < 0) {
+    			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 0, y: -1}, dragSpeed);
+    			return false;
+    		} else if (event.deltaY > 0) {
+    			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 0, y: 1}, dragSpeed);
+    			return false;
+    		} else if (event.deltaX < 0) {
+    			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 1, y: 0}, dragSpeed);
+    			return false;
+    		} else if (event.deltaX > 0) {
+    			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: -1, y: 0}, dragSpeed);
+    			return false;
+    		}
+
+      }
     } else {
       // mouse wheel with shift/control/alt key: pinch
   		if (delta < 0) {
@@ -528,7 +580,8 @@
 		if (dest) {
 			$(mediaContainerSelector).stop().animate(
         {
-  				top: "+=" + window.innerHeight
+  				top: "+=" + window.innerHeight,
+          opacity: 0
   			},
         300,
         function() {
