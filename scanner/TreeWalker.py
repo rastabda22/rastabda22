@@ -692,9 +692,7 @@ class TreeWalker:
 		json_file_mtime = None
 		if json_file_exists:
 			json_file_mtime = file_mtime(json_file)
-		json_file_OK = False
 		album_ini_file = os.path.join(absolute_path, Options.config['metadata_filename'])
-		can_use_existing_json_file = True
 		album_ini_good = False
 		must_process_album_ini = False
 		if os.path.exists(album_ini_file):
@@ -706,6 +704,7 @@ class TreeWalker:
 				album_ini_good = True
 
 		cached_album = None
+		album_cache_hit = False
 		json_message = json_file
 		if Options.config['recreate_json_files']:
 			message("not an album cache hit", "forced json file recreation, some sensible option has changed", 3)
@@ -720,20 +719,19 @@ class TreeWalker:
 						if album_ini_good and file_mtime(album_ini_file) > json_file_mtime:
 							# a check on album_ini_file content would have been good:
 							# execution comes here even if album.ini hasn't anything significant
-							message("album.ini newer than json file", "recreating json file taking into account album.ini", 4)
-							can_use_existing_json_file = False
+							message("not an album cache hit", "album.ini newer than json file, recreating json file taking into account album.ini", 4)
 							must_process_album_ini = True
-						if can_use_existing_json_file:
+						elif file_mtime(absolute_path) >= json_file_mtime:
+							indented_message("not an album cache hit", "dir time > json file time", 4)
+						else:
 							message("reading json file to import album...", json_file, 5)
 							# the following is the instruction which could raise the error
 							cached_album = Album.from_cache(json_file, album_cache_base)
-							if file_mtime(absolute_path) >= json_file_mtime:
-								indented_message("invalid json file", "dir time > json file time", 4)
-								cached_album = None
-							elif cached_album is None:
-								indented_message("invalid json file", "null cached album", 4)
-								cached_album = None
 							indented_message("json file read and imported", "", 5)
+							# if file_mtime(absolute_path) >= json_file_mtime:
+							# 	indented_message("invalid json file", "dir time > json file time", 4)
+							# 	cached_album = None
+							if cached_album is None:
 								indented_message("not an album cache hit", "null cached album", 4)
 							elif not hasattr(cached_album, "absolute_path"):
 								indented_message("not an album cache hit", "cached album hasn't absolute_path", 4)
@@ -752,24 +750,24 @@ class TreeWalker:
 							# 	Options.json_version != 0 and hasattr(cached_album, "json_version") and cached_album.json_version == Options.json_version
 							# ):
 							else:
-								json_file_OK = True
 								indented_message("album cache hit!", "", 4)
 								album = cached_album
+								album_cache_hit = True
 				else:
 					must_process_album_ini = True
 			except KeyboardInterrupt:
 				raise
 			except IOError:
 				# will execution never come here?
-				json_file_OK = False
 				indented_message("not an album cache hit", "json file unexistent", 4)
+				album_cache_hit = False
 			# is the following exception needed? it surely catched date errors...
 			except (ValueError, AttributeError, KeyError):
-				json_file_OK = False
 				indented_message("not an album cache hit", "ValueError, AttributeError or KeyError somewhere", 4)
+				album_cache_hit = False
 				cached_album = None
 
-		if not json_file_OK:
+		if not album_cache_hit:
 			message("generating void album...", "", 5)
 			album = Album(absolute_path)
 			indented_message("void album generated", "", 5)
@@ -885,11 +883,11 @@ class TreeWalker:
 					media_checksum = checksum(media_path_pointer)
 				indented_message("checksum calculated", "", 5)
 
-			if cached_album is None:
+			if not album_cache_hit:
 				indented_message("not a cache hit", "json file invalid", 5)
 				cache_hit = False
 
-			if cache_hit and cached_album:
+			if album_cache_hit and cache_hit:
 				next_level()
 				message("getting media from cached album...", "", 5)
 				cached_media = cached_album.media_from_path(entry_with_path)
