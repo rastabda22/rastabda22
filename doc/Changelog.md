@@ -1,10 +1,10 @@
 ### version 3.6.4 (January 1, 2019)
 
-
 * Better use of mouse wheel when zoom > 1
 * New shortcut: tab: toggles title and bottom thumbnails visibility (as in gimp, darktable)
 * Scanner code refactored for better speed
 * Fixed incorrect count of media
+* Fixed desappeared number from clusterized places
 * Fixed bug with years < 1000
 * Many more bug fixes
 

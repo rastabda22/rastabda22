@@ -1204,7 +1204,7 @@ $(document).ready(function() {
 							else if (level < 2)
 								folderName = currentAlbum.subalbums[i].name;
 							else
-								folderName = util.transformAltPlaceName(currentAlbum.subalbums[i].name);
+								folderName = util.transformAltPlaceName(currentAlbum.subalbums[i].altName);
 							folderTitle = util._t('#place-icon-title') + folderName;
 
 							folder = "<span class='gps-folder'>" +

@@ -61,8 +61,9 @@ eye_cascade = None
 # json_version = 1 since ...
 # json_version = 2 since checksums have been added
 # json_version = 3 since geotag managing is optional
-# json_version = 4 since search feature added
-json_version = "3.6"
+# json_version = 3.4 since search feature added
+# json_version = 3.6.4 since changed wrong album/media attributes
+json_version = "3.6.4"
 
 def initialize_opencv():
 	global face_cascade, eye_cascade

@@ -48,7 +48,7 @@
 					if (cacheKey == Options.by_search_string) {
 						// root of search albums: build the word list
 						for (i = 0; i < theAlbum.subalbums.length; ++i) {
-							PhotoFloat.searchWordsFromJsonFile.push(theAlbum.subalbums[i].unicode_words);
+							PhotoFloat.searchWordsFromJsonFile.push(theAlbum.subalbums[i].unicodeWords);
 							PhotoFloat.searchAlbumCacheBaseFromJsonFile.push(theAlbum.subalbums[i].cacheBase);
 						}
 					} else if (! util.isSearchCacheBase(cacheKey)) {

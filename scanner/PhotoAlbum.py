@@ -341,11 +341,11 @@ class Album(object):
 					if hasattr(subalbum, "name"):
 						sub_dict["name"] = subalbum.name
 					if hasattr(subalbum, "alt_name"):
-						sub_dict["alt_name"] = subalbum.alt_name
+						sub_dict["altName"] = subalbum.alt_name
 					if hasattr(subalbum, "words"):
 						sub_dict["words"] = subalbum.words
 					if hasattr(subalbum, "unicode_words"):
-						sub_dict["unicode_words"] = subalbum.unicode_words
+						sub_dict["unicodeWords"] = subalbum.unicode_words
 					subalbums.append(sub_dict)
 
 		else:
