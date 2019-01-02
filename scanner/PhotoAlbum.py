@@ -1691,6 +1691,7 @@ class Media(object):
 
 	def __str__(self):
 		return self.name
+		# return self.name + ":\n" + str(self.__class__) + ":\n" + str(self.__dict__)
 
 	@property
 	def path(self):
