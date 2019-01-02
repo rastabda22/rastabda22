@@ -1,4 +1,4 @@
-### version 3.6.4 (January 1, 2019)
+### version 3.6.4 (January 2, 2019)
 
 * Better use of mouse wheel when zoom > 1
 * New shortcut: tab: toggles title and bottom thumbnails visibility (as in gimp, darktable)
