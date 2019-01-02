@@ -4,8 +4,8 @@
 * New shortcut: tab: toggles title and bottom thumbnails visibility (as in gimp, darktable)
 * Scanner code refactored for better speed
 * Fixed incorrect count of media
-* Fixed desappeared number from clusterized places
-* Fixed bug with years < 1000
+* Fixed desappeared serial number from clusterized places
+* Fixed bugs with years < 1000
 * Many more bug fixes
 
 ### version 3.6.3 (September 14, 2018)
