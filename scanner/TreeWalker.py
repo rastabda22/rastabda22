@@ -817,8 +817,10 @@ class TreeWalker:
 				indented_message("unreadable file", entry_with_path, 2)
 			elif os.path.islink(entry_with_path) and not Options.config['follow_symlinks']:
 				# this way file symlink are skipped too: may be symlinks can be checked only for directories?
-				indented_message("symlink, skipping as set in options", entry_with_path, 3)
+				indented_message("symlink, skipping it as per 'follow_symlinks' option", entry_with_path, 3)
 			elif os.path.isdir(entry_with_path):
+				if os.path.islink(entry_with_path) and Options.config['follow_symlinks']:
+					indented_message("symlink to dir, following it as per 'follow_symlinks' option", entry_with_path, 3)
 				trimmed_path = trim_base_custom(absolute_path, Options.config['album_path'])
 				entry_for_cache_base = os.path.join(Options.config['folders_string'], trimmed_path, entry)
 				next_level()
@@ -840,6 +842,8 @@ class TreeWalker:
 			elif os.path.isfile(entry_with_path):
 				if skip_files:
 					continue
+				if os.path.islink(entry_with_path) and Options.config['follow_symlinks']:
+					indented_message("symlink to file, following it as per 'follow_symlinks' option", entry_with_path, 3)
 
 				# if any(remove_album_path(entry_with_path) == _media.media_file_name for _media in self.all_media):
 				# 	# do not process the media twice
