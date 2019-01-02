@@ -433,7 +433,7 @@ $(document).ready(function() {
 
 		if (isDateTitle) {
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>";
-			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_date_string + "'>(" + util.util._t("#by-date") + ")</a>";
+			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_date_string + "'>(" + util._t("#by-date") + ")</a>";
 
 			if (components.length > 2 || media !== null)
 				title += raquo;
@@ -442,7 +442,7 @@ $(document).ready(function() {
 				documentTitle += components[0];
 				if (components.length > 2 || media !== null)
 					documentTitle = " \u00ab " + documentTitle;
-				documentTitle += " (" + util.util._t("#by-date") + ")";
+				documentTitle += " (" + util._t("#by-date") + ")";
 			}
 
 			for (i = 2; i < components.length; ++i) {
@@ -452,7 +452,7 @@ $(document).ready(function() {
 					title += "<span class='title-no-anchor'>";
 
 				if (i == 3)
-					title += util.util._t("#month-" + textComponents[i]);
+					title += util._t("#month-" + textComponents[i]);
 				else
 					title += textComponents[i];
 
@@ -467,7 +467,7 @@ $(document).ready(function() {
 				if (setDocumentTitle) {
 					// keep buildimg the html page title
 					if (i == 3)
-						documentTitle = util.util._t("#month-" + textComponents[i]) + documentTitle;
+						documentTitle = util._t("#month-" + textComponents[i]) + documentTitle;
 					else
 						documentTitle = textComponents[i] + documentTitle;
 					if (i < components.length - 1 || media !== null)
@@ -479,7 +479,7 @@ $(document).ready(function() {
 				if (! isMobile.any()) {
 					title += " <span class='title-count'>(";
 					title += currentAlbum.media.length + " ";
-					title += util.util._t(".title-media") + " ";
+					title += util._t(".title-media") + " ";
 				 	if (components.length >= 5)
 						title += util._t(".title-in-day-album");
 					else
@@ -1592,7 +1592,7 @@ $(document).ready(function() {
 
 		if (id === "center") {
 			$("#media-box-container").css("width", windowWidth * 3).css("height", heightForMediaAndTitle);
-			$("#media-box-container").css("transform", "util.util.util.translate(-" + windowWidth + "px, 0px)");
+			$("#media-box-container").css("transform", "util.translate(-" + windowWidth + "px, 0px)");
 			$(".media-box").css("width", windowWidth).css("height", heightForMediaAndTitle);
 			$(".media-box .media-box-inner").css("width", windowWidth).css("height", heightForMedia);
 			// $(".links").addClass("hidden");
@@ -1933,7 +1933,7 @@ $(document).ready(function() {
 			window.open(util.mapLink(media.metadata.latitude, media.metadata.longitude, Options.photo_map_zoom_level), '_blank');
 		});
 
-		util.util.util.translate();
+		util.translate();
 
 		$("#subalbums").hide();
 		// $("#media-view").removeClass("hidden");
