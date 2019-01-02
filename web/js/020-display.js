@@ -414,7 +414,7 @@ $(document).ready(function() {
 		isGpsTitle = (components.length > 1 && components[1] == Options.by_gps_string);
 		isSearchTitle = (components.length > 1 && components[1] == Options.by_search_string);
 
-		// textComponents = components doesn't work: textComponents becomes a pointer to components
+		// 'textComponents = components' doesn't work: textComponents becomes a pointer to components
 		var textComponents = components.slice();
 
 		// generate the title in the page top
@@ -1202,10 +1202,10 @@ $(document).ready(function() {
 							var folderTitle = '';
 							if (currentAlbum.subalbums[i].name === '')
 								folderName = util._t('.not-specified');
-							else if (level < 2)
-								folderName = currentAlbum.subalbums[i].name;
-							else
+							else if (currentAlbum.subalbums[i].hasOwnProperty('altName'))
 								folderName = util.transformAltPlaceName(currentAlbum.subalbums[i].altName);
+							else
+								folderName = currentAlbum.subalbums[i].name;
 							folderTitle = util._t('#place-icon-title') + folderName;
 
 							folder = "<span class='gps-folder'>" +

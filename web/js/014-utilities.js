@@ -237,10 +237,8 @@
 		var underscoreIndex = altPlaceName.lastIndexOf('_');
 		if (underscoreIndex != -1) {
 			var number = altPlaceName.substring(underscoreIndex + 1);
-			while (number.indexOf('0') === 0)
-				number = number.substr(1);
 			var base = altPlaceName.substring(0, underscoreIndex);
-			return base + ' (' + this._t('.subalbum') + number + ')';
+			return base + ' (' + this._t('.subalbum') + parseInt(number) + ')';
 		} else {
 			return altPlaceName;
 		}
