@@ -728,40 +728,32 @@ class TreeWalker:
 							# the following is the instruction which could raise the error
 							cached_album = Album.from_cache(json_file, album_cache_base)
 							indented_message("json file read", "", 5)
-							if (
-								file_mtime(absolute_path) <= json_file_mtime and
-								cached_album is not None and
-								hasattr(cached_album, "absolute_path") and
-								cached_album.absolute_path == absolute_path and
-								Options.json_version != 0 and hasattr(cached_album, "json_version") and cached_album.json_version == Options.json_version
-							):
+							if file_mtime(absolute_path) >= json_file_mtime:
+								indented_message("invalid json file", "dir time > json file time", 4)
+								cached_album = None
+							elif cached_album is None:
+								indented_message("invalid json file", "null cached album", 4)
+								cached_album = None
+							elif not hasattr(cached_album, "absolute_path"):
+								indented_message("invalid json file", "cached album hasn't absolute_path", 4)
+								cached_album = None
+							elif cached_album.absolute_path != absolute_path:
+								indented_message("invalid json file", "cached album's absolute_path != absolute_path", 4)
+								cached_album = None
+							elif Options.json_version == 0 or not hasattr(cached_album, "json_version") or not cached_album.json_version == Options.json_version:
+								indented_message("invalid json file", "unexistent or old json_version", 4)
+								cached_album = None
+							# if (
+							# 	file_mtime(absolute_path) <= json_file_mtime and
+							# 	cached_album is not None and
+							# 	hasattr(cached_album, "absolute_path") and
+							# 	cached_album.absolute_path == absolute_path and
+							# 	Options.json_version != 0 and hasattr(cached_album, "json_version") and cached_album.json_version == Options.json_version
+							# ):
+							else:
 								indented_message("json file is OK", "", 4)
 								json_file_OK = True
 								album = cached_album
-								# message("adding media in album to lists...", "", 5)
-								# next_level()
-								# for media in album.media:
-								# 	if not any(media.media_file_name == _media.media_file_name for _media in self.all_media):
-								# 		message("adding media to tree by date...", media, 5)
-								# 		self.add_media_to_tree_by_date(media)
-								# 		indented_message("media added to tree by date!", "", 5)
-								#
-								# 		if media.has_gps_data:
-								# 			message("adding media to by geonames tree...", "", 5)
-								# 			self.add_media_to_tree_by_geonames(media)
-								# 			indented_message("media added to by geonames tree!", "", 5)
-								#
-								# 		message("adding media to search tree...", "", 5)
-								# 		self.add_media_to_tree_by_search(media)
-								# 		indented_message("media added to search tree!", "", 5)
-								#
-								# 		message("adding media to all media list...", "", 5)
-								# 		self.all_media.append(media)
-								# 		indented_message("media added to all media list!", "", 5)
-								# back_level()
-							else:
-								indented_message("json file invalid (old or invalid path)", "", 4)
-								cached_album = None
 				else:
 					must_process_album_ini = True
 			except KeyboardInterrupt:
@@ -772,7 +764,7 @@ class TreeWalker:
 				json_file_OK = False
 			# is the following exception needed? it surely catched date errors...
 			except (ValueError, AttributeError, KeyError):
-				indented_message("json file invalid", json_message, 4)
+				indented_message("invalid json file", "ValueError, AttributeError or KeyError somewhere", 4)
 				json_file_OK = False
 				cached_album = None
 
