@@ -71,48 +71,6 @@ $(document).ready(function() {
 
 	/* Displays */
 
-	function _t(id) {
-		language = getLanguage();
-		if (translations[language][id])
-			return translations[language][id];
-		else
-			return translations.en[id];
-	}
-
-	function translate() {
-		var selector, keyLanguage;
-
-		language = getLanguage();
-		for (var key in translations.en) {
-			if (translations[language].hasOwnProperty(key) || translations.en.hasOwnProperty(key)) {
-				keyLanguage = language;
-				if (! translations[language].hasOwnProperty(key))
-					keyLanguage = 'en';
-
-				if (key == '.title-string' && document.title.substr(0, 5) != "<?php")
-					// don't set page title, php has already set it
-					continue;
-				selector = $(key);
-				if (selector.length) {
-					selector.html(translations[keyLanguage][key]);
-				}
-			}
-		}
-	}
-
-	function getLanguage() {
-		language = "en";
-		if (Options.language && translations[Options.language] !== undefined)
-			language = Options.language;
-		else {
-			var userLang = navigator.language || navigator.userLanguage || navigator.browserLanguage || navigator.systemLanguage;
-			userLang = userLang.split('-')[0];
-			if (translations[userLang] !== undefined)
-				language = userLang;
-		}
-		return language;
-	}
-
 	function socialButtons() {
 		var url, hash, myShareUrl = "";
 		var mediaParameter;
@@ -475,7 +433,7 @@ $(document).ready(function() {
 
 		if (isDateTitle) {
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>";
-			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_date_string + "'>(" + _t("#by-date") + ")</a>";
+			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_date_string + "'>(" + util.util._t("#by-date") + ")</a>";
 
 			if (components.length > 2 || media !== null)
 				title += raquo;
@@ -484,7 +442,7 @@ $(document).ready(function() {
 				documentTitle += components[0];
 				if (components.length > 2 || media !== null)
 					documentTitle = " \u00ab " + documentTitle;
-				documentTitle += " (" + _t("#by-date") + ")";
+				documentTitle += " (" + util.util._t("#by-date") + ")";
 			}
 
 			for (i = 2; i < components.length; ++i) {
@@ -494,7 +452,7 @@ $(document).ready(function() {
 					title += "<span class='title-no-anchor'>";
 
 				if (i == 3)
-					title += _t("#month-" + textComponents[i]);
+					title += util.util._t("#month-" + textComponents[i]);
 				else
 					title += textComponents[i];
 
@@ -509,7 +467,7 @@ $(document).ready(function() {
 				if (setDocumentTitle) {
 					// keep buildimg the html page title
 					if (i == 3)
-						documentTitle = _t("#month-" + textComponents[i]) + documentTitle;
+						documentTitle = util.util._t("#month-" + textComponents[i]) + documentTitle;
 					else
 						documentTitle = textComponents[i] + documentTitle;
 					if (i < components.length - 1 || media !== null)
@@ -521,18 +479,18 @@ $(document).ready(function() {
 				if (! isMobile.any()) {
 					title += " <span class='title-count'>(";
 					title += currentAlbum.media.length + " ";
-					title += _t(".title-media") + " ";
+					title += util.util._t(".title-media") + " ";
 				 	if (components.length >= 5)
-						title += _t(".title-in-day-album");
+						title += util._t(".title-in-day-album");
 					else
-						title += _t(".title-in-date-album");
+						title += util._t(".title-in-date-album");
 					title += ")</span>";
 				}
 				title += "</span>";
 			}
 		} else if (isGpsTitle) {
 			title = "<a class='" + titleAnchorClasses + "' href='#!/'>" + components[0] + "</a>";
-			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_gps_string + "'>(" + _t("#by-gps") + ")</a>";
+			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_gps_string + "'>(" + util._t("#by-gps") + ")</a>";
 
 			if (components.length > 2 || media !== null)
 				title += raquo;
@@ -541,7 +499,7 @@ $(document).ready(function() {
 				documentTitle += components[0];
 				if (components.length > 2 || media !== null)
 					documentTitle = " \u00ab " + documentTitle;
-				documentTitle += " (" + _t("#by-gps") + ")";
+				documentTitle += " (" + util._t("#by-gps") + ")";
 			}
 
 			for (i = 2; i < components.length; ++i) {
@@ -549,12 +507,12 @@ $(document).ready(function() {
 				gpsName = currentAlbumPath[i];
 
 				if (gpsName === '')
-					gpsName = _t('.not-specified');
-				gpsHtmlTitle = _t("#place-icon-title") + gpsName;
+					gpsName = util._t('.not-specified');
+				gpsHtmlTitle = util._t("#place-icon-title") + gpsName;
 
 				if (i < components.length - 1 || media !== null) {
 					title += "<a class='" + titleAnchorClasses + "' href='#!/" + encodeURI(currentAlbum.ancestorsCacheBase[i]) + "'";
-					title += " title='" + _t("#place-icon-title") + gpsName + _t("#place-icon-title-end") + "'";
+					title += " title='" + util._t("#place-icon-title") + gpsName + util._t("#place-icon-title-end") + "'";
 					title += ">";
 				} else
 					title += "<span class='title-no-anchor'>";
@@ -590,11 +548,11 @@ $(document).ready(function() {
 			if (components.length > 1 && media === null) {
 				title += " <span class='title-count'>(";
 				title += currentAlbum.media.length + " ";
-				title += _t(".title-media") + " ";
+				title += util._t(".title-media") + " ";
 				if (components.length >= gpsLevelNumber + 2)
-					title += _t(".title-in-gps-album");
+					title += util._t(".title-in-gps-album");
 				else
-					title += _t(".title-in-gpss-album");
+					title += util._t(".title-in-gpss-album");
 				title += ")</span>";
 			}
 		} else if (isSearchTitle) {
@@ -612,14 +570,14 @@ $(document).ready(function() {
 				searchFolderHash = albumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
 				where =
 					 "<a class='main-search-link' href='#!/" + currentAlbum.cacheBase + "'>" +
-					 _t("#by-search") +
+					 util._t("#by-search") +
 					 "</a> " +
-					 _t("#in") +
+					 util._t("#in") +
 					 " <span id='search-album-to-be-filled'></span>";
 			} else {
 				where =
 				 	"<a class='search-link' href='#!/" + currentAlbum.cacheBase + "'>" +
-					_t("#by-search") +
+					util._t("#by-search") +
 					"</a>";
 			}
 
@@ -638,21 +596,21 @@ $(document).ready(function() {
 				(currentAlbum.media.length || currentAlbum.subalbums.length)
 			) {
 				title += " <span class='title-count'>(";
-				title += _t(".title-found") + ' ';
+				title += util._t(".title-found") + ' ';
 				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
 				if (currentAlbum.media.length) {
 					title += currentAlbum.media.length + " ";
-					title += _t(".title-media");
+					title += util._t(".title-media");
 					if (currentAlbum.subalbums.length)
 						title += ", ";
 				}
 				if (currentAlbum.subalbums.length) {
 					title += currentAlbum.subalbums.length + " ";
-					title += _t(".title-albums");
+					title += util._t(".title-albums");
 				}
 				if (currentAlbum.media.length > 0 && currentAlbum.subalbums.length > 0) {
 					title += ", ";
-					title += _t(".title-total") + " ";
+					title += util._t(".title-total") + " ";
 					title += currentAlbum.media.length + currentAlbum.subalbums.length;
 				}
 				title += ")</span>";
@@ -675,14 +633,14 @@ $(document).ready(function() {
 				if (searchFolderHash.split(Options.cache_folder_separator).length > 1) {
 					where =
 						 "<a class='main-search-link' href='#!/" + savedSearchAlbumHash + "'>" +
-						 _t("#by-search") +
+						 util._t("#by-search") +
 						 "</a> " +
-						 _t("#in") +
+						 util._t("#in") +
 						 " <span id='search-album-to-be-filled'></span>";
 				} else {
 					where =
 					 	"<a class='search-link' href='#!/" + savedSearchAlbumHash + "'>" +
-						_t("#by-search") +
+						util._t("#by-search") +
 						"</a>";
 				}
 
@@ -728,20 +686,20 @@ $(document).ready(function() {
 				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
 				if (currentAlbum.media.length) {
 					title += currentAlbum.media.length + " ";
-					title += _t(".title-media") + " ";
-					title += _t(".title-in-album");
+					title += util._t(".title-media") + " ";
+					title += util._t(".title-in-album");
 					if (numMediaInSubAlbums)
 						title += ", ";
 				}
 				if (numMediaInSubAlbums) {
 					title += numMediaInSubAlbums + " ";
 					if (! currentAlbum.media.length)
-						title += _t(".title-media") + " ";
-					title += _t(".title-in-subalbums");
+						title += util._t(".title-media") + " ";
+					title += util._t(".title-in-subalbums");
 				}
 				if (currentAlbum.media.length > 0 && numMediaInSubAlbums > 0) {
 					title += ", ";
-					title += _t(".title-total") + " ";
+					title += util._t(".title-total") + " ";
 					title += currentAlbum.media.length + numMediaInSubAlbums;
 				}
 				title += ")</span>";
@@ -763,7 +721,7 @@ $(document).ready(function() {
 				latitude = media.metadata.latitude;
 				longitude = media.metadata.longitude;
 				title += "<a href=" + util.mapLink(latitude, longitude, Options.photo_map_zoom_level) + " target='_blank'>" +
-										"<img class='title-img' title='" + _t("#show-on-map") + " [s]' alt='" + _t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
+										"<img class='title-img' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
 										"</a>";
 			}
 		}
@@ -841,12 +799,12 @@ $(document).ready(function() {
 					var whereLinks = '', thisCacheBase, name, documentTitle;
 
 					if (theAlbum.hasOwnProperty('ancestorsNames')) {
-						albumTypeString = "<a href='#!/" + Options.by_gps_string + "'"  + _t('#by-gps') + ']</a> ' + ' ' + raquo + ' ';
+						albumTypeString = "<a href='#!/" + Options.by_gps_string + "'"  + util._t('#by-gps') + ']</a> ' + ' ' + raquo + ' ';
 						for (var i = 2; i < theAlbum.ancestorsNames.length; i ++) {
 							name = theAlbum.ancestorsNames[i];
 							if (i == 3 && util.isByDateCacheBase(Options.album_to_search_in))
 								// convert the month number to localized month name
-								name = _t("#month-" + name);
+								name = util._t("#month-" + name);
 							thisCacheBase = "#!/" + theAlbum.ancestorsCacheBase.slice(2, i + 1).join(Options.cache_folder_separator);
 							if (i > 2)
 								whereLinks += ' ' + raquo + ' ';
@@ -861,8 +819,8 @@ $(document).ready(function() {
 						// correct the page title too
 						documentTitle = $(document).attr('title');
 						documentTitle = documentTitle.replace(
-							_t("#by-search") + ' ' + _t("#-in") + ' ',
-							_t("#by-search") + ' ' + _t("#-in") + ' ' + util.stripHtmlAndReplaceEntities(whereLinks)
+							util._t("#by-search") + ' ' + util._t("#-in") + ' ',
+							util._t("#by-search") + ' ' + util._t("#-in") + ' ' + util.stripHtmlAndReplaceEntities(whereLinks)
 						);
 						document.title = documentTitle;
 					}
@@ -1056,8 +1014,8 @@ $(document).ready(function() {
 			if (isVirtualAlbum && tooBig) {
 				$("#thumbs").empty();
 				$("#error-too-many-images").html(
-					"<span id='too-many-images'>" + _t('#too-many-images') + "</span>: " + currentAlbum.media.length +
-					" (<span id='too-many-images-limit-is'>" + _t('#too-many-images-limit-is') + "</span> " + Options.big_virtual_folders_threshold +  ")</span>"
+					"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + currentAlbum.media.length +
+					" (<span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + Options.big_virtual_folders_threshold +  ")</span>"
 				).show();
 			} else if (
 				populateMedia === true ||
@@ -1102,7 +1060,7 @@ $(document).ready(function() {
 						var latitude = currentAlbum.media[i].metadata.latitude;
 						var longitude = currentAlbum.media[i].metadata.longitude;
 						mapLinkIcon = "<a href=" + util.mapLink(latitude, longitude, Options.photo_map_zoom_level) + " target='_blank'>" +
-													"<img class='thumbnail-map-link' title='" + _t("#show-on-map") + " [s]' alt='" + _t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
+													"<img class='thumbnail-map-link' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
 													"</a>";
 					}
 
@@ -1234,20 +1192,20 @@ $(document).ready(function() {
 							if (folderArray.length == 2)
 								folder += folderArray[1];
 							else if (folderArray.length == 3)
-								folder += " " + _t("#month-" + folderArray[2]);
+								folder += " " + util._t("#month-" + folderArray[2]);
 							else if (folderArray.length == 4)
-								folder += _t("#day") + " " + parseInt(folderArray[3]);
+								folder += util._t("#day") + " " + parseInt(folderArray[3]);
 						} else if (util.isByGpsCacheBase(currentAlbum.cacheBase)) {
 							var level = currentAlbum.subalbums[i].cacheBase.split(Options.cache_folder_separator).length - 2;
 							var folderName = '';
 							var folderTitle = '';
 							if (currentAlbum.subalbums[i].name === '')
-								folderName = _t('.not-specified');
+								folderName = util._t('.not-specified');
 							else if (level < 2)
 								folderName = currentAlbum.subalbums[i].name;
 							else
 								folderName = util.transformAltPlaceName(currentAlbum.subalbums[i].name);
-							folderTitle = _t('#place-icon-title') + folderName;
+							folderTitle = util._t('#place-icon-title') + folderName;
 
 							folder = "<span class='gps-folder'>" +
 												folderName +
@@ -1293,7 +1251,7 @@ $(document).ready(function() {
 								">(";
 						captionHtml +=		currentAlbum.subalbums[i].numMediaInSubTree;
 						captionHtml +=		" <span class='title-media'>";
-						captionHtml +=		_t(".title-media");
+						captionHtml +=		util._t(".title-media");
 						captionHtml +=		"</span>";
 						captionHtml += ")</div>";
 						caption = $(captionHtml);
@@ -1401,7 +1359,7 @@ $(document).ready(function() {
 								randomMediaLink = phFl.encodeHash(randomAlbum, randomMedia);
 
 								titleName = titleName.substr(titleName.indexOf('/') + 1);
-								goTo = _t(".go-to") + " " + titleName;
+								goTo = util._t(".go-to") + " " + titleName;
 								$("#" + id + " a").attr("href", randomMediaLink);
 								$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
 								$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName).attr("data-src", encodeURI(mediaSrc));
@@ -1634,7 +1592,7 @@ $(document).ready(function() {
 
 		if (id === "center") {
 			$("#media-box-container").css("width", windowWidth * 3).css("height", heightForMediaAndTitle);
-			$("#media-box-container").css("transform", "translate(-" + windowWidth + "px, 0px)");
+			$("#media-box-container").css("transform", "util.util.util.translate(-" + windowWidth + "px, 0px)");
 			$(".media-box").css("width", windowWidth).css("height", heightForMediaAndTitle);
 			$(".media-box .media-box-inner").css("width", windowWidth).css("height", heightForMedia);
 			// $(".links").addClass("hidden");
@@ -1969,13 +1927,13 @@ $(document).ready(function() {
 			text += "<tr class='gps'><td class='metadata-data-longitude'></td><td>" + media.metadata.longitudeMS + " </td></tr>";
 		text += "</table>";
 		$(".media-box#" + id + " .metadata").html(text);
-		var linkTitle = _t('#show-map') + Options.map_service;
+		var linkTitle = util._t('#show-map') + Options.map_service;
 		$(".media-box#" + id + " .metadata tr.gps").attr("title", linkTitle).on('click', function(ev) {
 			ev.stopPropagation();
 			window.open(util.mapLink(media.metadata.latitude, media.metadata.longitude, Options.photo_map_zoom_level), '_blank');
 		});
 
-		translate();
+		util.util.util.translate();
 
 		$("#subalbums").hide();
 		// $("#media-view").removeClass("hidden");
@@ -2210,7 +2168,7 @@ $(document).ready(function() {
 
 		if (currentMedia === null || typeof currentMedia === "object") {
 			initializeSortPropertiesAndCookies();
-			$("#menu-icon").attr("title", _t("#menu-icon-title"));
+			$("#menu-icon").attr("title", util._t("#menu-icon-title"));
 			sortAlbumsMedia();
 			updateMenu();
 		}
@@ -2220,7 +2178,7 @@ $(document).ready(function() {
 			currentAlbumPathArray = currentAlbum.ancestorsNames.slice(2);
 		currentAlbumPath = currentAlbumPathArray.join('/');
 
-		$("#album-search").attr('title', _t("#current-album-is") + '"'+ currentAlbumPath + '"');
+		$("#album-search").attr('title', util._t("#current-album-is") + '"'+ currentAlbumPath + '"');
 
 		var isAlbumWithOneMedia = util.isAlbumWithOneMedia(currentAlbum);
 		if (currentMedia !== null || isAlbumWithOneMedia) {
@@ -2287,7 +2245,7 @@ $(document).ready(function() {
 				for (var key in data)
 					if (data.hasOwnProperty(key))
 						Options[key] = data[key];
-				translate();
+				util.translate();
 				// server_cache_path actually is a constant: it cannot be passed as an option, because getOptions need to know it before reading the options
 				// options.json is in this directory
 				Options.server_cache_path = 'cache';
@@ -2539,10 +2497,10 @@ $(document).ready(function() {
 	$(".media-box#center .metadata").on('click', showMetadataFromMouse);
 
 	$(".media-box#center .fullscreen").on('click', goFullscreenFromMouse);
-	$("#next").attr("title", _t("#next-media-title")).attr("alt", _t("#next-media-title"));
-	$("#prev").attr("title", _t("#prev-media-title")).attr("alt", _t("#prev-media-title"));
-	$("#pinch-in").attr("title", _t("#pinch-in-title")).attr("alt", _t("#pinch-in-title"));
-	$("#pinch-out").attr("title", _t("#pinch-out-title")).attr("alt", _t("#pinch-out-title"));
+	$("#next").attr("title", util._t("#next-media-title")).attr("alt", util._t("#next-media-title"));
+	$("#prev").attr("title", util._t("#prev-media-title")).attr("alt", util._t("#prev-media-title"));
+	$("#pinch-in").attr("title", util._t("#pinch-in-title")).attr("alt", util._t("#pinch-in-title"));
+	$("#pinch-out").attr("title", util._t("#pinch-out-title")).attr("alt", util._t("#pinch-out-title"));
 	if (isMobile.any()) {
 		$("#pinch-in").css("width", "30px").css("height", "30px");
 		$("#pinch-out").css("width", "30px").css("height", "30px");

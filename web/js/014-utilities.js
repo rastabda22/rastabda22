@@ -13,6 +13,51 @@
 			}
 		);
 	}
+
+	Utilities.prototype._t = function(id) {
+		language = this.getLanguage();
+		if (translations[language][id])
+			return translations[language][id];
+		else
+			return translations.en[id];
+	}
+
+	Utilities.prototype.translate = function() {
+		var selector, keyLanguage;
+
+		language = this.getLanguage();
+		for (var key in translations.en) {
+			if (translations[language].hasOwnProperty(key) || translations.en.hasOwnProperty(key)) {
+				keyLanguage = language;
+				if (! translations[language].hasOwnProperty(key))
+					keyLanguage = 'en';
+
+				if (key == '.title-string' && document.title.substr(0, 5) != "<?php")
+					// don't set page title, php has already set it
+					continue;
+				selector = $(key);
+				if (selector.length) {
+					selector.html(translations[keyLanguage][key]);
+				}
+			}
+		}
+	}
+
+	Utilities.prototype.getLanguage = function() {
+		language = "en";
+		if (Options.language && translations[Options.language] !== undefined)
+			language = Options.language;
+		else {
+			var userLang = navigator.language || navigator.userLanguage || navigator.browserLanguage || navigator.systemLanguage;
+			userLang = userLang.split('-')[0];
+			if (translations[userLang] !== undefined)
+				language = userLang;
+		}
+		return language;
+	}
+
+
+
   Utilities.prototype.cloneObject = function(object) {
     return Object.assign({}, object);
   };
@@ -195,7 +240,7 @@
 			while (number.indexOf('0') === 0)
 				number = number.substr(1);
 			var base = altPlaceName.substring(0, underscoreIndex);
-			return base + ' (' + _t('.subalbum') + number + ')';
+			return base + ' (' + this._t('.subalbum') + number + ')';
 		} else {
 			return altPlaceName;
 		}
