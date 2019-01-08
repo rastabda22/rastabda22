@@ -234,9 +234,11 @@ class Album(object):
 
 
 	def add_media(self, media):
-		if not any(media.media_file_name == _media.media_file_name for _media in self.media_list):
-			self.media_list.append(media)
-			self.media_list_is_sorted = False
+		# before adding the media, remove any media with the same file name
+		# it could be there because the album was a cache hit but the media wasn't
+		self.media_list = [_media for _media in self.media_list if media.media_file_name != _media.media_file_name]
+		self.media_list.append(media)
+		self.media_list_is_sorted = False
 
 	def add_album(self, album):
 		self.subalbums_list.append(album)
