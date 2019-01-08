@@ -724,10 +724,10 @@ class TreeWalker:
 						elif file_mtime(absolute_path) >= json_file_mtime:
 							indented_message("not an album cache hit", "dir time > json file time", 4)
 						else:
-							message("reading json file to import album...", json_file, 5)
+							message("maybe a cache hit", "working with '" + json_file + "' to import album...", 5)
 							# the following is the instruction which could raise the error
 							cached_album = Album.from_cache(json_file, album_cache_base)
-							indented_message("json file read and imported", "", 5)
+							indented_message("json file imported", "", 5)
 							# if file_mtime(absolute_path) >= json_file_mtime:
 							# 	indented_message("invalid json file", "dir time > json file time", 4)
 							# 	cached_album = None
@@ -890,7 +890,7 @@ class TreeWalker:
 				message("getting media from cached album...", "", 5)
 				cached_media = cached_album.media_from_path(entry_with_path)
 				if cached_media is None:
-					indented_message("media absent fron cache", "not a cache hit", 5)
+					indented_message("no such media in cached album", "not a cache hit", 5)
 					cache_hit = False
 				else:
 					indented_message("cached media got!", "", 5)
