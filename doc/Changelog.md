@@ -1,3 +1,8 @@
+### version 3.6.5 (January 9, 2019)
+
+* Fixed bug which caused error with just geotagged photos
+* Better messages
+
 ### version 3.6.4 (January 2, 2019)
 
 * Better use of mouse wheel when zoom > 1
