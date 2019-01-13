@@ -783,10 +783,8 @@ class Media(object):
 			self._attributes["metadata"]["altitude"] = gps_altitude
 			self._attributes["metadata"]["altitudeRef"] = gps_altitude_ref
 			self._attributes["metadata"]["latitude"] = gps_latitude
-			# self._attributes["metadata"]["latitude"] = Metadata.convert_to_degrees_decimal(gps_latitude, gps_latitude_ref)
 			self._attributes["metadata"]["latitudeMS"] = Metadata.convert_decimal_to_degrees_minutes_seconds(gps_latitude, gps_latitude_ref)
 			self._attributes["metadata"]["longitude"] = gps_longitude
-			# self._attributes["metadata"]["longitude"] = Metadata.convert_to_degrees_decimal(gps_longitude, gps_longitude_ref)
 			self._attributes["metadata"]["longitudeMS"] = Metadata.convert_decimal_to_degrees_minutes_seconds(gps_longitude, gps_longitude_ref)
 
 		# Overwrite with album.ini values when it has been read from file
@@ -2044,38 +2042,38 @@ class Metadata(object):
 		gps_longitude_ref = None
 		if album_ini.has_section(name):
 			try:
-				gps_latitude = Metadata.create_gps_struct(abs(album_ini.getfloat(name, "latitude")))
-				gps_latitude_ref = "N" if album_ini.getfloat(name, "latitude") > 0.0 else "S"
+				gps_latitude = album_ini.getfloat(name, "latitude")
+				gps_latitude_ref = "N" if gps_latitude > 0.0 else "S"
 			except ValueError:
 				message("ERROR", "Incorrect latitude in [" + name + "] in '" + Options.config['metadata_filename'] + "'", 1)
 			except NoOptionError:
 				pass
 		elif "latitude" in album_ini.defaults():
 			try:
-				gps_latitude = Metadata.create_gps_struct(abs(float(album_ini.defaults()["latitude"])))
-				gps_latitude_ref = "N" if float(album_ini.defaults()["latitude"]) > 0.0 else "S"
+				gps_latitude = float(album_ini.defaults()["latitude"])
+				gps_latitude_ref = "N" if gps_latitude > 0.0 else "S"
 			except ValueError:
 				message("ERROR", "Incorrect latitude in [" + name + "] in '" + Options.config['metadata_filename'] + "'", 1)
 		if album_ini.has_section(name):
 			try:
-				gps_longitude = Metadata.create_gps_struct(abs(album_ini.getfloat(name, "longitude")))
-				gps_longitude_ref = "E" if album_ini.getfloat(name, "longitude") > 0.0 else "W"
+				gps_longitude = album_ini.getfloat(name, "longitude")
+				gps_longitude_ref = "E" if gps_longitude > 0.0 else "W"
 			except ValueError:
 				message("ERROR", "Incorrect longitude in [" + name + "] in '" + Options.config['metadata_filename'] + "'", 1)
 			except NoOptionError:
 				pass
 		elif "longitude" in album_ini.defaults():
 			try:
-				gps_longitude = Metadata.create_gps_struct(abs(float(album_ini.defaults()["longitude"])))
-				gps_longitude_ref = "E" if float(album_ini.defaults()["longitude"]) > 0.0 else "W"
+				gps_longitude = float(album_ini.defaults()["longitude"])
+				gps_longitude_ref = "E" if gps_longitude > 0.0 else "W"
 			except ValueError:
 				message("ERROR", "Incorrect longitude in [" + name + "] in '" + Options.config['metadata_filename'] + "'", 1)
 
 		if gps_latitude and gps_latitude_ref and gps_longitude and gps_longitude_ref:
-			attributes["metadata"]["latitude"] = Metadata.convert_to_degrees_decimal(gps_latitude, gps_latitude_ref)
-			attributes["metadata"]["latitudeMS"] = Metadata.convert_to_degrees_minutes_seconds(gps_latitude, gps_latitude_ref)
-			attributes["metadata"]["longitude"] = Metadata.convert_to_degrees_decimal(gps_longitude, gps_longitude_ref)
-			attributes["metadata"]["longitudeMS"] = Metadata.convert_to_degrees_minutes_seconds(gps_longitude, gps_longitude_ref)
+			attributes["metadata"]["latitude"] = gps_latitude
+			attributes["metadata"]["latitudeMS"] = Metadata.convert_decimal_to_degrees_minutes_seconds(gps_latitude, gps_latitude_ref)
+			attributes["metadata"]["longitude"] = gps_longitude
+			attributes["metadata"]["longitudeMS"] = Metadata.convert_decimal_to_degrees_minutes_seconds(gps_longitude, gps_longitude_ref)
 
 		# Tags
 		if album_ini.has_section(name):
@@ -2135,22 +2133,6 @@ class Metadata(object):
 
 
 	@staticmethod
-	def create_gps_struct(value):
-		"""
-		Helper function to create the data structure returned by the EXIF GPS info
-		from the decimal value entered by the user in a 'album.ini' metadata file.
-		Longitude and latitude metadata are stored as rationals.
-			GPS = ( (deg1, deg2),
-					(min1, min2),
-					(sec1, sec2) )
-		"""
-		frac, deg = math.modf(value)
-		frac, min = math.modf(frac * 60.0)
-		frac, sec = math.modf(frac * 60.0)
-		return ((int(deg), 1), (int(min), 1), (int(sec), 1))
-
-
-	@staticmethod
 	def convert_to_degrees_minutes_seconds(value, ref):
 		"""
 		Helper function to convert the GPS coordinates stored in the EXIF to degrees, minutes and seconds.
@@ -2187,22 +2169,6 @@ class Metadata(object):
 
 		return result
 
-	@staticmethod
-	def convert_tuple_to_degrees_minutes_seconds(value, ref):
-		"""
-		Helper function to convert the GPS coordinates stored in the EXIF to degrees, minutes and seconds.
-		"""
-
-		# Degrees
-		d = value[0][0] / value[0][1]
-		# Minutes
-		m = value[1][0] / value[1][1]
-		# Seconds
-		s = int(value[2][0] / value[2][1] * 1000) / 1000
-
-		result = str(d) + "º " + str(m) + "' " + str(s) + '" ' + ref
-
-		return result
 
 	@staticmethod
 	def convert_to_degrees_decimal(value, ref):
