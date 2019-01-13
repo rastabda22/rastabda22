@@ -62,8 +62,8 @@ def message(category, text, verbose=0):
 			except KeyError:
 				Options.elapsed_times[category] = microseconds
 				Options.elapsed_times_counter[category] = 1
-			microseconds = str(microseconds)
-		print((9 - len(microseconds)) * " ", microseconds, "%s %s%s[%s]%s%s" % (now.isoformat(' '), max(0, message.level) * "  |", sep, str(category), max(1, (45 - len(str(category)))) * " ", str(text)))
+			_microseconds = str(microseconds)
+		print(_microseconds.rjust(9), "%s %s%s[%s]%s%s" % (now.isoformat(' '), max(0, message.level) * "  |", sep, str(category), max(1, (45 - len(str(category)))) * " ", str(text)))
 
 
 """
@@ -77,6 +77,10 @@ The identation level printed by the message function.
 """
 message.level = 0
 
+def indented_message(category, text, verbose=0):
+	next_level()
+	message(category, text, verbose)
+	back_level()
 
 def next_level(verbose=0):
 	"""
@@ -113,7 +117,7 @@ def time_totals(time):
 	seconds = int(round(time / 1000000))
 	if time <= 1800:
 		_total_time = str(int(round(time))) + " μs"
-	elif time <= 1800:
+	elif time <= 1800000:
 		_total_time = str(int(round(time / 1000))) + "    ms"
 	else:
 		_total_time = str(seconds) + "       s "
@@ -139,32 +143,13 @@ def report_times(final):
 	albums where media is not geotagged or has no EXIF.
 	"""
 
-	try:
-		# detect uninitialized variable
-		report_times.num_media_in_tree
-	except AttributeError:
-		# calculate the number of media in the album tree: it will be used in order to guess the execution time
-		special_files = [Options.config['exclude_tree_marker'], Options.config['exclude_files_marker'], Options.config['metadata_filename']]
-		message("counting media in albums...", "", 4)
-		report_times.num_media_in_tree = sum([len([file for file in files if file[:1] != '.' and file not in special_files]) for dirpath, dirs, files in os.walk(Options.config['album_path']) if dirpath.find('/.') == -1])
-		next_level()
-		message("media in albums counted", str(report_times.num_media_in_tree), 4)
-		back_level()
-
 	print()
-	print((50 - len("message")) * " ", "message", (15 - len("total time")) * " ", "total time", (15 - len("counter")) * " ", "counter", (20 - len("average time")) * " ", "average time")
+	print("message".rjust(50) + "total time".rjust(15) + "counter".rjust(15) + "average time".rjust(20))
 	print()
 	time_till_now = 0
 	for category in sorted(Options.elapsed_times, key=Options.elapsed_times.get, reverse=True):
 		time = int(round(Options.elapsed_times[category]))
-		if time == 0:
-			_time = ""
-		elif time <= 1800:
-			_time = str(time) + " μs"
-		elif time <= 1800000:
-			_time = str(int(round(time / 1000))) + "    ms"
-		else:
-			_time = str(int(round(time / 1000000))) + "       s "
+		(_time, _time_unfolded) = time_totals(time)
 
 		time_till_now += time
 
@@ -179,26 +164,26 @@ def report_times(final):
 			_average_time = str(int(round(average_time / 1000))) + "    ms"
 		else:
 			_average_time = str(int(round(average_time / 1000000))) + "       s "
-		print((50 - len(category)) * " ", category, (18 - len(_time)) * " ", _time, (15 - len(counter)) * " ", counter, (20 - len(_average_time)) * " ", _average_time)
+		print(category.rjust(50) + _time.rjust(18) + counter.rjust(15) + _average_time.rjust(20))
 
 	(_time_till_now, _time_till_now_unfolded) = time_totals(time_till_now)
 	print()
-	print((50 - len("time taken till now")) * " ", "time taken till now", (18 - len(_time_till_now)) * " ", _time_till_now, "     ", _time_till_now_unfolded)
+	print("time taken till now".rjust(50) + _time_till_now.rjust(18) + "     " + _time_till_now_unfolded)
 	num_media = Options.num_video + Options.num_photo
 
 	_num_media = str(num_media)
 	# do not print the report if browsing hasn't been done
-	if num_media > 0 and report_times.num_media_in_tree > 0:
+	if num_media > 0 and Options.config['num_media_in_tree'] > 0:
 		# normal run, print final report about photos, videos, geotags, exif dates
 		try:
-			time_missing = time_till_now / num_media * report_times.num_media_in_tree - time_till_now
+			time_missing = time_till_now / num_media * Options.config['num_media_in_tree'] - time_till_now
 			if time_missing >= 0:
 				(_time_missing, _time_missing_unfolded) = time_totals(time_missing)
-				print((50 - len("total time missing")) * " ", "total time missing", (18 - len(_time_missing)) * " ", _time_missing, "     ", _time_missing_unfolded)
+				print("total time missing".rjust(50) + _time_missing.rjust(18) + "     " + _time_missing_unfolded)
 			time_total = time_till_now + time_missing
 			if time_total > 0:
 				(_time_total, _time_total_unfolded) = time_totals(time_total)
-				print((50 - len("total time")) * " ", "total time", (18 - len(_time_total)) * " ", _time_total, "     ", _time_total_unfolded)
+				print("total time".rjust(50) + _time_total.rjust(18) + "     " + _time_total_unfolded)
 		except ZeroDivisionError:
 			pass
 		print()
@@ -208,39 +193,56 @@ def report_times(final):
 		_num_media_processed = str(num_media_processed)
 		_num_photo = str(Options.num_photo)
 		_num_photo_processed = str(Options.num_photo_processed)
-		_num_photo_geotagged = str(Options.num_photo_geotagged)
+		_num_photo_with_geotags = str(Options.num_photo_with_geotags)
 		_num_photo_with_exif_date = str(Options.num_photo_with_exif_date)
-		_num_photo_without_geotags = str(Options.num_photo - Options.num_photo_geotagged)
-		_num_photo_without_exif_date = str(Options.num_photo - Options.num_photo_with_exif_date)
+		_num_photo_with_exif_date_and_geotags = str(Options.num_photo_with_exif_date_and_geotags)
+		_num_photo_with_exif_date_and_without_geotags = str(Options.num_photo_with_exif_date_and_without_geotags)
+		_num_photo_without_exif_date_and_with_geotags = str(Options.num_photo_without_exif_date_and_with_geotags)
+		_num_photo_without_exif_date_or_geotags = str(Options.num_photo_without_exif_date_or_geotags)
 		_num_video = str(Options.num_video)
 		_num_video_processed = str(Options.num_video_processed)
 		max_digit = len(_num_media)
 
-		media_count_and_time = "Media    " + ((max_digit - len(_num_media)) * " ") + _num_media + ' / ' + str(report_times.num_media_in_tree) + ' (' + str(int(num_media * 1000 / report_times.num_media_in_tree) / 10) + '%)'
+		media_count_and_time = "Media    " + _num_media.rjust(max_digit) + ' / ' + str(Options.config['num_media_in_tree']) + ' (' + str(int(num_media * 1000 / Options.config['num_media_in_tree']) / 10) + '%)'
 		if num_media:
 			mean_time = int(time_till_now / 1000000 / num_media * 1000) / 1000
 			media_count_and_time += ",      " + str(mean_time) + " s/media"
-			if mean_time <= 0.5:
-				mean_speed = int(1 / mean_time * 100) / 100
-				media_count_and_time += ",      " + str(mean_speed) + " media/s"
+			mean_speed_sec = int(1 / mean_time * 100) / 100
+			media_count_and_time += ",      " + str(mean_speed_sec) + " media/s"
+			mean_speed_min = int(1 / mean_time * 60 * 100) / 100
+			media_count_and_time += ",      " + str(mean_speed_min) + " media/min"
+			mean_speed_hour = int(1 / mean_time * 3600 * 100) / 100
+			media_count_and_time += ",      " + str(mean_speed_hour) + " media/hour"
 
 		print(media_count_and_time)
-		media_count_and_time = "                  processed " + ((max_digit - len(_num_media_processed)) * " ") + _num_media_processed
+		media_count_and_time = "                  processed " + _num_media_processed.rjust(max_digit)
 		if num_media_processed and num_media_processed != num_media:
 			media_count_and_time += ",      " + str(int(time_till_now / num_media_processed / 10000) / 100) + " s/processed media"
 		print(media_count_and_time)
-		print("- Videos " + ((max_digit - len(_num_video)) * " ") + _num_video)
-		print("                  processed " + ((max_digit - len(_num_video_processed)) * " ") + _num_video_processed)
-		print("- Photos " + ((max_digit - len(_num_photo)) * " ") + _num_photo)
-		print("                  processed " + ((max_digit - len(_num_photo_processed)) * " ") + _num_photo_processed)
-		print("                                  geotagged         " + ((max_digit - len(_num_photo_geotagged)) * " ") + _num_photo_geotagged)
-		print("                                  whithout geotags  " + ((max_digit - len(_num_photo_without_geotags)) * " ") + _num_photo_without_geotags)
-		if final and Options.num_photo_processed != Options.num_photo_geotagged:
-			for photo in Options.photos_without_geotag:
+		print("- Videos " + _num_video.rjust(max_digit))
+		print("                  processed " + _num_video_processed.rjust(max_digit))
+		print("- Photos " + _num_photo.rjust(max_digit))
+		print("                  processed " + _num_photo_processed.rjust(max_digit))
+
+		print("                               + with exif date                    " + _num_photo_with_exif_date.rjust(max_digit))
+		print("                               + with geotags                      " + _num_photo_with_geotags.rjust(max_digit))
+		print()
+		print("                               + with both exif date and geotags   " + _num_photo_with_exif_date_and_geotags.rjust(max_digit))
+		if final:
+			print()
+		print("                               + missing only geotags              " + _num_photo_with_exif_date_and_without_geotags.rjust(max_digit))
+		if final:
+			for photo in Options.photos_with_exif_date_and_without_geotags:
 				print("                                      - " + photo)
-		print("                                  with exif date    " + ((max_digit - len(_num_photo_with_exif_date)) * " ") + _num_photo_with_exif_date)
-		print("                                  without exif date " + ((max_digit - len(_num_photo_without_exif_date)) * " ") + _num_photo_without_exif_date)
-		if final and Options.num_photo_processed != Options.num_photo_with_exif_date:
-			for photo in Options.photos_without_exif_date:
+			print()
+		print("                               + missing only exif date            " + _num_photo_without_exif_date_and_with_geotags.rjust(max_digit))
+		if final:
+			for photo in Options.photos_without_exif_date_and_with_geotags:
 				print("                                      - " + photo)
+			print()
+		print("                               + missing both exif date or geotags " + _num_photo_without_exif_date_or_geotags.rjust(max_digit))
+		if final:
+			for photo in Options.photos_without_exif_date_or_geotags:
+				print("                                      - " + photo)
+			print()
 		print()

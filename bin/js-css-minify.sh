@@ -77,6 +77,13 @@ case $MINIFY_JS in
 		fi
 	;;
 	uglifyjs)
+		buble -v > /dev/null 2>&1
+		if [ $? -ne 0 ]; then
+			echo "'buble' is not installed and is required for using 'uglifyjs' minifier."
+			echo "Look for package 'node-buble' or 'https://github.com/Rich-Harris/buble'"
+			echo "Aborting..."
+			exit 1
+		fi
 		uglifyjs -V > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
 			( >&2 echo "'uglifyjs' is not installed. Look for package 'node-uglifyjs' or 'http://lisperator.net/uglifyjs/'" )
@@ -139,18 +146,26 @@ while read jsfile; do
 		
 		004-fullscreen*)
 		# Currently, there is no minified library in the Debian package... So this test is
-		# be skipped and will be used in future Debian versions
+		# skipped and will be used in future Debian versions
 		if [ -e /usr/share/javascript/jquery-fullscreen/jquery.fullscreen.min.js ]; then
 			CAT_LIST="$CAT_LIST /usr/share/javascript/jquery-fullscreen/jquery.fullscreen.min.js"
 			echo "... Found system jquery-fullscreen; using it."
 			continue
 		fi
-
 		;;
+
 		005-modernizr*)
 		if [ -e /usr/share/javascript/modernizr/modernizr.min.js ]; then
 			CAT_LIST="$CAT_LIST /usr/share/javascript/modernizr/modernizr.min.js"
 			echo "... Found system modernizr; using it."
+			continue
+		fi
+		;;
+
+		007-jquery-lazyload*)
+		if [ -e /usr/share/javascript/jquery-lazyload/jquery.lazyload.min.js ]; then
+			CAT_LIST="$CAT_LIST /usr/share/javascript/jquery-lazyload/jquery.lazyload.min.js"
+			echo "... Found system jquery-lazyload; using it."
 			continue
 		fi
 		;;
@@ -170,7 +185,8 @@ while read jsfile; do
 		;;
 
 		uglifyjs)
-			uglifyjs -o $newfile $jsfile
+			# We need to use 'buble' first to convert from ES6 to ES5 as uglifyjs only parses ES5.
+			buble $jsfile | uglifyjs - -o $newfile
 		;;
 
 		*)

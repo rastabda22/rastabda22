@@ -91,7 +91,10 @@ js_minifier = jsmin3
 # scanner options
 ###########################################################
 
-# cache subfolder: where the album composite images will be saved
+# default cache subfolder to use when no subdir is generate
+default_cache_album = media_reductions
+
+# cache subfolder for composite images: where the album composite images will be saved
 cache_album_subdir = cache_album
 
 # Filename where user-defined metadata is stored in albums
@@ -266,6 +269,9 @@ photo_map_zoom_level = 16
 # A value of 200 seems acceptable on a pc, 100 is more sure
 max_search_album_number = 100
 
+# should the internal Modernizr be used?
+use_internal_modernizr = true
+
 ###########################################################
 # user interface options
 ###########################################################
@@ -277,6 +283,14 @@ language =
 
 # the title of the collections of photos/albums
 page_title = My photos
+
+# Should the title be hidden by default?
+# a right menu entry let the user show it
+hide_title = false
+
+# Should the bottom thumbnail in media view be hidden by default?
+# a right menu entry let the user show it
+hide_bottom_thumbnails = false
 
 # spacing between thumbnails, pixels (integer)
 # the user can modify this value

@@ -1,4 +1,4 @@
-# MyPhotoShare v. 3.5 (July 15, 2018)
+# MyPhotoShare v. 3.6.6 (January 13, 2019)
 ### A Web Photo Gallery Done Right via Static JSON & Dynamic Javascript
 #### by Jason A. Donenfeld (<Jason@zx2c4.com>), Jerome Charaoui (jerome@riseup.net)  Joachim Tingvold (joachim@tingvold.com), Paolo Benvenuto (<paolobenve@gmail.com>), Pierre Métras (<p.metras@videotron.ca>)
 
@@ -48,23 +48,25 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] EXIF, IPTC and XMP Metadata display.
 - [x] Link to original media.
 - [x] Link for direct download.
+- [x] Allows enlarging the photo till 1:1 aspect.
 
 ### Mobile Friendly
 
-- [x] Swipe gestures for mobile.
+- [x] Swipe, pinch and drag gestures for mobile.
 - [x] Sharp images and thumbnails on mobile.
 - [x] Smooth media scaling.
-- [x] Consistent hash URL format.
 
 ### Great User Experience
 
-- [x] Keyboard navigation: arrows, pageup/down, `[esc]`, `[f]` (fullscreen), `[m]` (metadata), space/backspace (like in [Darktable](https://www.darktable.org/)).
-- [x] Mouse-wheel support.
+- [x] Keyboard navigation: arrows, pageup/down, `[esc]`, `[f]` (fullscreen), `[d]` (download original), `[o]` (show original), `[s]` (map), `[m]` (metadata), `[e]` (open right menu), `[+]` (pinch in), `[-]` (pinch out), space/backspace (like in [Darktable](https://www.darktable.org/)).
+- [x] Keyboard dragging when the photo is zoomed in.
+- [x] Mouse-wheel support, including for pinching (with ctrl or shift).
 - [x] Various user interface option can be changed by the user.
 - [x] Animations to make the interface feel nice.
 - [x] Separate album view and photo view.
 - [x] Media animation when passing to next/previous media.
 - [x] Available in English, Italian, Spanish, French. User interface translated via separate translation file. Add your language!
+- [x] Lazy loading thumbnail for a faster page load
 
 ### Social
 
@@ -88,6 +90,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Scanner verbosity levels can be set in the configuration file.
 - [x] Developer friendly with debug mode for using unminimized css's and js's.
 - [x] Photos metadata can be overloaded by user defined values in special file `album.ini`.
+- [x] Consistent hash URL format.
 
 
 ## Community
@@ -120,5 +123,6 @@ It is, essentially, a slick and fast, minimal but still well-featured photo gall
 As a term of comparizon, on my medium-sized pc, with the images on a NFS mounted NAS partition:
 
 * scanning with face detection for the first time a 692 photos directory tree for a total size of 2.3 GB takes about 700 seconds (about 1 sec/media, 1 media/sec); face detection takes about 267ms/photo.
-* re-scan of "all OK" tree with 36000 media files for a total size of 87 GB takes about 14 minutes (about 20 ms/media, 50 media/sec).
+* re-scan of "all OK" tree of 36000 media files for a total size of 87 GB takes about 14 minutes (20 ms/media, 50 media/sec) if not using checksums, and about 90 minutes (110 ms/media, 9 media/sec) when using checksums.
+* scanning for the first time about 40000 photo with less than 100 videos takes about 5 hour with checksums enabled
 * scanning of videos takes a much longer time than photos, the bigger the video the greater the time.

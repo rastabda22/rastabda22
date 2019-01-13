@@ -1,3 +1,48 @@
+### version 3.6.6 (January 13, 2019)
+
+* Fixed various bugs
+* Completed french translation
+
+### version 3.6.5 (January 9, 2019)
+
+* Fixed bug which caused error with just geotagged photos
+* Better messages
+
+### version 3.6.4 (January 2, 2019)
+
+* Better use of mouse wheel when zoom > 1
+* New shortcut: tab: toggles title and bottom thumbnails visibility (as in gimp, darktable)
+* Scanner code refactored for better speed
+* Fixed incorrect count of media
+* Fixed desappeared serial number from clusterized places
+* Fixed bugs with years < 1000
+* Many more bug fixes
+
+### version 3.6.3 (September 14, 2018)
+
+* Bug fixes
+
+### version 3.6.2 (August 20, 2018)
+
+* Now using lazyload jquery plugin for faster page loading
+* bug fixes
+
+### version 3.6.1 (August 19, 2018)
+
+* Added keyboard translation when image is zoomed in
+* bug fixes
+
+### version 3.6 (August 19, 2018)
+
+* Better swiping: the new image enters while the current one exits
+* Added pinching and dragging capabilities, by gestures, by buttons, by keyboard
+* Various bug fixes
+* Scanner: always save the gps root album so that the absence of media with gps data can be detected without throwing any js error
+* Added options `hide_title` and `hide_bottom_thumbnails`, and added correponding menu entries, for a less distracted media vision
+* Speed up loading of images
+* Better implementation of cache subdirs in md5 mode: a different subdirs schema is used according to the media number, in such a way that no more than 400 files and 256 subdirs are used (see issue #106); when media number is low, a default subdir is used (new option `default_cache_album`)
+* new option `use_internal_modernizr` (default _true_): it makes js use the included Modernizr instead of the system one
+
 ### version 3.5 (July 15, 2018)
 
 * Search is now performed by default in current folder, a new menu option permits to search in all albums
