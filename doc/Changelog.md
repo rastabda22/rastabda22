@@ -1,3 +1,8 @@
+### version 3.6.6 (January 13, 2019)
+
+* Fixed various bugs
+* Completed french translation
+
 ### version 3.6.5 (January 9, 2019)
 
 * Fixed bug which caused error with just geotagged photos
