@@ -30,7 +30,7 @@ else:
 
 	print("building language list")
 	# get the languages defined in the translation js file
-	translations_file = "web/js/009-translations.js"
+	translations_file = "web/js/012-translations.js"
 	translations_structure = {}
 	with open(translations_file, "rt") as translations_p:
 		translations = translations_p.read().splitlines(True)
