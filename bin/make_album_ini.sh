@@ -65,7 +65,7 @@ if [ ! -f "$DIR/$ALBUM_INI" ]; then
 	echo "# - place_name: The name of the city or town to be displayed." >> "$DIR/$ALBUM_INI"
 	echo >> "$DIR/$ALBUM_INI"
 	echo >> "$DIR/$ALBUM_INI"
-	echo "#[DEFAULT]" >> "$DIR/$ALBUM_INI"
+	echo "[DEFAULT]" >> "$DIR/$ALBUM_INI"
 	echo "#tags = " >> "$DIR/$ALBUM_INI"
 	echo "#date = " >> "$DIR/$ALBUM_INI"
 	echo "#latitude = " >> "$DIR/$ALBUM_INI"
@@ -96,7 +96,7 @@ fi
 # Loop on album content
 SAVEIFS="$IFS"
 IFS=$(echo -en "\n\b")
-for media in $(ls "$DIR"/*.{jpg,jpeg,JPG,JPEG,mp4,avi,MP4,AVI} 2> /dev/null); do
+for media in $(ls "$DIR"/*.{jpg,jpeg,JPG,JPEG,mp4,avi,MP4,AVI,MOV} 2> /dev/null); do
 	SECTION=${media##*/}
 	TITLE=${SECTION%.*}
 	SECTION_EXISTS=$(grep -c "\[$SECTION\]" "$DIR/$ALBUM_INI")
