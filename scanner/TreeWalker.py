@@ -515,19 +515,6 @@ class TreeWalker:
 		back_level()
 		return by_geonames_album
 
-	def add_media_to_tree_by_date(self, media):
-		# add the given media to a temporary structure where media are organized by year, month, date
-
-		if media.year not in list(self.tree_by_date.keys()):
-			self.tree_by_date[media.year] = {}
-		if media.month not in list(self.tree_by_date[media.year].keys()):
-			self.tree_by_date[media.year][media.month] = {}
-		if media.day not in list(self.tree_by_date[media.year][media.month].keys()):
-			self.tree_by_date[media.year][media.month][media.day] = list()
-		if not any(media.media_file_name == _media.media_file_name for _media in self.tree_by_date[media.year][media.month][media.day]):
-		#~ if not media in self.tree_by_date[media.year][media.month][media.day]:
-			self.tree_by_date[media.year][media.month][media.day].append(media)
-
 	def remove_stopwords(self, alphabetic_words, search_normalized_words, ascii_words):
 		# remove the stopwords found in alphabetic_words, from search_normalized_words and ascii_words
 		purged_alphabetic_words = set(alphabetic_words) - TreeWalker.lowercase_stopwords
@@ -581,6 +568,19 @@ class TreeWalker:
 		"""
 		if TreeWalker.lowercase_stopwords == {}:
 			TreeWalker.load_stopwords()
+
+	def add_media_to_tree_by_date(self, media):
+		# add the given media to a temporary structure where media are organized by year, month, date
+
+		if media.year not in list(self.tree_by_date.keys()):
+			self.tree_by_date[media.year] = {}
+		if media.month not in list(self.tree_by_date[media.year].keys()):
+			self.tree_by_date[media.year][media.month] = {}
+		if media.day not in list(self.tree_by_date[media.year][media.month].keys()):
+			self.tree_by_date[media.year][media.month][media.day] = list()
+		if not any(media.media_file_name == _media.media_file_name for _media in self.tree_by_date[media.year][media.month][media.day]):
+		#~ if not media in self.tree_by_date[media.year][media.month][media.day]:
+			self.tree_by_date[media.year][media.month][media.day].append(media)
 
 	def add_media_to_tree_by_search(self, media):
 		words_for_word_list, unicode_words, words_for_search_album_name = self.prepare_for_tree_by_search(media)
