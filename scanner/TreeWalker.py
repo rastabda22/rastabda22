@@ -362,7 +362,7 @@ class TreeWalker:
 
 							if K > len(media_list):
 								indented_message("clustering with k-means algorithm failed", "clusters remain too big even with k > len(media_list)", 5)
-								clustering_failed = true
+								clustering_failed = True
 								break
 							indented_message("clustering with k-means algorithm not ok", "biggest cluster has " + str(max_cluster_length) + " photos", 5)
 							K = K * 2
