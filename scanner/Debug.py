@@ -19,13 +19,27 @@ import tracemalloc
 
 
 def start():
+    """
+    Start capturing memory traces for profiler.
+    """
+
     tracemalloc.start()
 
 def take_snapshot():
+    """
+    Take a memory snapshot for analysis.
+    """
+
     return tracemalloc.take_snapshot()
 
 
 def display_top(snapshot, key_type='lineno', limit=10, cumulative=False):
+    """
+    Do a memory usage analysis based on the snapshot given as parameter
+    and print it sorted by memory usage.
+    See  `tracemalloc` documentation for parameters values.
+    """
+
     snapshot = snapshot.filter_traces((
         tracemalloc.Filter(False, "<frozen importlib._bootstrap>"),
         tracemalloc.Filter(False, "<unknown>"),
