@@ -15,6 +15,9 @@ from TreeWalker import TreeWalker
 from Utilities import report_times, message
 import Options
 
+# @python2
+if sys.version_info >= (3, 4):
+	import Debug
 
 def main():
 	# @python2
@@ -29,9 +32,22 @@ def main():
 	Options.get_options()
 
 	try:
+		# @python2
+		if sys.version_info >= (3, 4):
+			if Options.config['debug_memory']:
+				Debug.start()
+		
 		os.umask(0o02)
 		TreeWalker()
 		report_times(True)
+
+		# @python2
+		if sys.version_info >= (3, 4):
+			if Options.config['debug_memory']:
+				message("Profiling Memory", "", 3)
+				snapshot = Debug.take_snapshot()
+				Debug.display_top(snapshot, key_type='lineno', limit=30)
+			
 		message("    The end!    ", "", 3)
 	except KeyboardInterrupt:
 		message("keyboard", "CTRL+C pressed, quitting.")

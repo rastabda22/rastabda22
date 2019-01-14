@@ -67,6 +67,9 @@ max_verbose = 3
 # I'm getting it working if running in pyCharm, the scanner stops with a segfault if run from terminal. Why????
 show_faces = false
 
+# Memory profiling (Python >= 3.4)
+# Dumps the memory usage of scanner when indexing is completed.
+debug_memory = true
 
 ###########################################################
 # minifying
