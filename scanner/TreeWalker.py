@@ -630,7 +630,6 @@ class TreeWalker:
 		ascii_phrase = convert_to_ascii_only(search_normalized_phrase)
 
 		alphabetic_words = phrase_to_words(alphabetic_phrase)
-		lowercase_words = phrase_to_words(lowercase_phrase)
 		search_normalized_words = phrase_to_words(search_normalized_phrase)
 		ascii_words = phrase_to_words(ascii_phrase)
 
