@@ -1000,18 +1000,17 @@ class TreeWalker:
 							photos_without_exif_date_or_geotags_in_dir.append(      "      " + entry_with_path)
 
 				if not any(media.media_file_name == _media.media_file_name for _media in self.all_media):
-					message("adding media in album to lists...", "", 5)
 					next_level()
-					message("adding media to tree by date...", "", 5)
+					message("adding media to dates tree...", "", 5)
 					# the following function has a check on media already present
 					self.add_media_to_tree_by_date(media)
-					indented_message("media added to tree by date", "", 5)
+					indented_message("media added to dates tree!", "", 5)
 
 					if media.has_gps_data:
-						message("adding media to tree by geonames...", "", 5)
+						message("adding media to geonames tree...", "", 5)
 						# the following function has a check on media already present
 						self.add_media_to_tree_by_geonames(media)
-						indented_message("media added to tree by geonames", "", 5)
+						indented_message("media added to geonames tree!", "", 5)
 
 					message("adding media to search tree...", "", 5)
 					# the following function has a check on media already present
@@ -1022,11 +1021,14 @@ class TreeWalker:
 					album.add_media(media)
 					indented_message("media added to album", "", 5)
 
-					message("adding media to big list...", "", 5)
+					message("adding media to all media list...", "", 5)
 					self.all_media.append(media)
-					indented_message("media added to big list", "", 5)
+					indented_message("media added to all media list", "", 5)
 
 					back_level()
+				else:
+					indented_message("media not added to anything...", "it was already there", 5)
+
 			elif not media.is_valid:
 				indented_message("not image nor video", "", 1)
 			back_level()
