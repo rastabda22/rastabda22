@@ -57,7 +57,7 @@ set_album_ini()
 {
 	# Get metadata filename from configuration
 	if [ -f "$CONF" ]; then
-		ALBUM_INI="$(sed -nr 's/^\s*metadata_filename\s*=\s*([\.\w]+)\s*.*$/\1/p' "$CONF")"
+		ALBUM_INI="$(sed -nr 's/^\s*metadata_filename\s*=\s*((\w|\.)+)\s*.*$/\1/p' "$CONF")"
 	fi
 	# If not set, use defaults
 	if [ -z "$ALBUM_INI" ]; then
@@ -67,7 +67,7 @@ set_album_ini()
 
 
 # Process options
-while getopts "i:" option; do
+while getopts "c:" option; do
 	case $option in
 		c)
 			set_config "$OPTARG"
