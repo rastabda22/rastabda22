@@ -1,3 +1,8 @@
+### version 3.6.7 (January 14, 2019)
+
+* Bug fixes with album.ini file and geolocation
+* Non-sense line removed
+
 ### version 3.6.6 (January 13, 2019)
 
 * Fixed various bugs
