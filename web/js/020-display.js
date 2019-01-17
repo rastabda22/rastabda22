@@ -430,6 +430,7 @@ $(document).ready(function() {
 		// var mediaFolderHash = array[2];
 		// var savedSearchSubAlbumHash = array[3];
 		var savedSearchAlbumHash = array[4];
+		var fillInSpan = "<span id='fill-in-map-link'></span>";
 
 		if (isDateTitle) {
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>";
@@ -682,6 +683,8 @@ $(document).ready(function() {
 					title += raquo;
 			}
 
+			title += fillInSpan;
+
 			if (components.length > 1 && media === null) {
 				title += " <span class='title-count'>(";
 				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
@@ -716,7 +719,17 @@ $(document).ready(function() {
 			}
 		}
 
-		if (media !== null) {
+		if (media === null) {
+			if(title.indexOf(fillInSpan) > -1) {
+				if (currentAlbum.media.some(util.hasGpsData)) {
+					title = title.replace(
+										fillInSpan,
+										"<a class='map-popup-trigger'>" +
+											"<img class='title-img' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
+										"</a>");
+				}
+			}
+		} else {
 			title += "<span class='media-name'>" + util.trimExtension(media.name) + "</span>";
 			if (util.hasGpsData(media)) {
 				latitude = media.metadata.latitude;
