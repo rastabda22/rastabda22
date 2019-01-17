@@ -2553,7 +2553,10 @@ $(document).ready(function() {
 				} else if (e.keyCode === 27) {
 					//                    esc
 					// warning: modern browsers will always exit fullscreen when pressing esc
-					if (ps.getCurrentZoom() > 1) {
+					if ($('#mapdiv').html()) {
+						// we are in a map: close it
+						$('.map-close-button').trigger('click');
+					} else if (ps.getCurrentZoom() > 1) {
 						ps.pinchOut();
 						return false;
 					} else if (! Modernizr.fullscreen && fullScreenStatus) {
