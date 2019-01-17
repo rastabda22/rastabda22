@@ -719,16 +719,25 @@ $(document).ready(function() {
 			}
 		}
 
-		var popupTrigger =
-			"<a class='map-popup-trigger'>" +
-				"<img class='title-img' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
-			"</a>";
 		if (media !== null) {
 			title += "<span class='media-name'>" + util.trimExtension(media.name) + "</span>";
 			if (util.hasGpsData(currentMedia))
-				title += popupTrigger;
-		} else if (title.indexOf(fillInSpan) > -1 && currentAlbum.media.some(util.hasGpsData))
-			title = title.replace(fillInSpan, popupTrigger);
+				title += "<a class='map-popup-trigger'>" +
+					"<img class='title-img' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
+				"</a>";
+		} else if (title.indexOf(fillInSpan) > -1 && currentAlbum.media.some(util.hasGpsData)) {
+			title = title.replace(
+				fillInSpan,
+				"<a class='map-popup-trigger'>" +
+					"<img class='title-img' " +
+							"title='" + util._t("#show-markers-on-map") + "' " +
+							"alt='" + util._t("#show-markers-on-map") + "' " +
+							"height='20px' " +
+							"src='img/ic_place_white_24dp_2x.png'" +
+						">" +
+				"</a>"
+			);
+		}
 
 		if (isMobile.any()) {
 			// leave only the last link on mobile
@@ -2056,7 +2065,7 @@ $(document).ready(function() {
 			text += "<tr class='gps'><td class='metadata-data-longitude'></td><td>" + media.metadata.longitudeMS + " </td></tr>";
 		text += "</table>";
 		$(".media-box#" + id + " .metadata").html(text);
-		var linkTitle = util._t('#show-map') + Options.map_service;
+		var linkTitle = util._t('#show-map');
 		$(".media-box#" + id + " .metadata tr.gps").attr("title", linkTitle).on('click', function(ev) {
 			$(".map-popup-trigger")[0].click();
 		});
