@@ -20,7 +20,7 @@
 			return translations[language][id];
 		else
 			return translations.en[id];
-	}
+	};
 
 	Utilities.prototype.translate = function() {
 		var selector, keyLanguage;
@@ -41,7 +41,7 @@
 				}
 			}
 		}
-	}
+	};
 
 	Utilities.prototype.getLanguage = function() {
 		language = "en";
@@ -54,7 +54,7 @@
 				language = userLang;
 		}
 		return language;
-	}
+	};
 
 
 
