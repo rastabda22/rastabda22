@@ -1910,7 +1910,9 @@ $(document).ready(function() {
 		$(".media-box#" + id + " .original-link").attr("target", "_blank").attr("href", originalMediaPath);
 		$(".media-box#" + id + " .download-link").attr("href", originalMediaPath).attr("download", "");
 		if (util.hasGpsData(currentMedia)) {
-			$(".media-box#" + id + " .menu-map-link").attr("target", "_blank").attr("href", encodeURI(util.mapLink(currentMedia.metadata.latitude, currentMedia.metadata.longitude, Options.photo_map_zoom_level)));
+			$(".media-box#" + id + " .menu-map-link").on('click', function(ev) {
+				$(".map-popup-trigger")[0].click();
+			});
 			$(".media-box#" + id + " .menu-map-link").show();
 			$(".media-box#" + id + " .menu-map-divider").show();
 		} else {
@@ -2060,8 +2062,7 @@ $(document).ready(function() {
 		$(".media-box#" + id + " .metadata").html(text);
 		var linkTitle = util._t('#show-map') + Options.map_service;
 		$(".media-box#" + id + " .metadata tr.gps").attr("title", linkTitle).on('click', function(ev) {
-			ev.stopPropagation();
-			window.open(util.mapLink(media.metadata.latitude, media.metadata.longitude, Options.photo_map_zoom_level), '_blank');
+			$(".map-popup-trigger")[0].click();
 		});
 
 		util.translate();
@@ -2549,7 +2550,7 @@ $(document).ready(function() {
 					// warning: modern browsers will always exit fullscreen when pressing esc
 					if ($('#mapdiv').html()) {
 						// we are in a map: close it
-						$('.map-close-button').trigger('click');
+						$('.map-close-button')[0].click();
 					} else if (ps.getCurrentZoom() > 1) {
 						ps.pinchOut();
 						return false;
@@ -2600,7 +2601,7 @@ $(document).ready(function() {
 					return false;
 				} else if (e.keyCode === 83 && currentMedia !== null && util.hasGpsData(currentMedia)) {
 					 	//                    s
-						$("#map-link")[0].click();
+						$(".map-popup-trigger")[0].click();
 						return false;
 				}
 			}
