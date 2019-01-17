@@ -571,7 +571,6 @@
 		// it adjusts width, height and position so that it fits in its parent (<div class="bedia-box-inner">, or the whole window)
 		// and centers vertically
 		var media = event.data.media, mediaElement, container, containerRatio, photoSrc, previousSrc;
-		var containerTop = 0, containerBottom = 0, cssWidth, cssHeight;
 		var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth();
 		var mediaBarBottom = 0;
 		var mediaWidth, mediaHeight, attrWidth, attrHeight, ratio;
