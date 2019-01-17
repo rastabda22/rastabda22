@@ -430,6 +430,7 @@ $(document).ready(function() {
 		// var mediaFolderHash = array[2];
 		// var savedSearchSubAlbumHash = array[3];
 		var savedSearchAlbumHash = array[4];
+		var fillInSpan = "<span id='fill-in-map-link'></span>";
 
 		if (isDateTitle) {
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>";
@@ -682,6 +683,8 @@ $(document).ready(function() {
 					title += raquo;
 			}
 
+			title += fillInSpan;
+
 			if (components.length > 1 && media === null) {
 				title += " <span class='title-count'>(";
 				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
@@ -716,14 +719,18 @@ $(document).ready(function() {
 			}
 		}
 
+		var popupTrigger =
+			"<a class='map-popup-trigger'>" +
+				"<img class='title-img' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
+			"</a>";
 		if (media !== null) {
 			title += "<span class='media-name'>" + util.trimExtension(media.name) + "</span>";
-			if (util.hasGpsData(media)) {
-				latitude = media.metadata.latitude;
-				longitude = media.metadata.longitude;
-				title += "<a href=" + util.mapLink(latitude, longitude, Options.photo_map_zoom_level) + " target='_blank'>" +
-										"<img class='title-img' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
-										"</a>";
+			title += popupTrigger;
+		} else {
+			if(title.indexOf(fillInSpan) > -1) {
+				if (currentAlbum.media.some(util.hasGpsData)) {
+					title = title.replace(fillInSpan, popupTrigger);
+				}
 			}
 		}
 
@@ -831,6 +838,130 @@ $(document).ready(function() {
 		}
 
 		setOptions();
+
+		// activate the map popup trigger
+		$(".map-popup-trigger").click(function(){
+			var mediaList = null, i;
+			if (currentMedia !== null && util.hasGpsData(currentMedia))
+				mediaList = [currentMedia];
+			else if (currentAlbum.media.some(util.hasGpsData))
+				mediaList = currentAlbum.media;
+
+			// build the array of the uniq points
+			if(mediaList) {
+				var arrayPoints = [], point;
+				for (i = 0; i < mediaList.length; ++i) {
+					if (util.hasGpsData(mediaList[i])) {
+						point = [];
+						point[0] = parseFloat(mediaList[i].metadata.longitude);
+						point[1] = parseFloat(mediaList[i].metadata.latitude);
+						if (
+							! arrayPoints.length ||
+							arrayPoints.every(
+								function(p) {
+									return p[0] != point[0] || p[1] != point[1];
+								}
+							)
+						) {
+							arrayPoints.push(point);
+						}
+					}
+				}
+
+				// calculate the center
+				var center = [0, 0];
+				for (i = 0; i < arrayPoints.length; ++i) {
+					center[0] += arrayPoints[i][0];
+					center[1] += arrayPoints[i][1];
+				}
+				center[0] /= arrayPoints.length;
+				center[1] /= arrayPoints.length;
+
+				// default zoom is used for single media or media list with one point
+				var zoom = Options.photo_map_zoom_level;
+				if (arrayPoints.length > 1) {
+					// calculate the maximum distance from the center
+					// it's needed in order to calculate the zoom level
+					var maxDistance = 0;
+					for (i = 0; i < arrayPoints.length; ++i) {
+						maxDistance = Math.max(maxDistance, Math.abs(util.distanceBetweenCoordinatePoints(center, arrayPoints[i])));
+					}
+
+					// calculate the zoom level needed in order to have all the points inside the map
+					// see https://wiki.openstreetmap.org/wiki/Zoom_levels
+					// maximum OSM zoom is 19
+					var earthCircumference = 40075016;
+					zoom = Math.min(19, parseInt(Math.log2(Math.min(windowWidth, windowHeight) * earthCircumference * Math.cos(util.degreesToRadians(center[1])) / 256 / (maxDistance * 2))));
+				}
+
+				$('.map-container').show();
+				var markersList = [];
+
+				// create the map with the proper center
+				var map = new ol.Map(
+					{
+						view: new ol.View(
+							{
+								center: ol.proj.fromLonLat(center),
+								zoom: zoom
+							}
+						),
+						layers: [
+							new ol.layer.Tile(
+								{
+									source: new ol.source.OSM()
+								}
+							)
+						],
+						target: 'mapdiv'
+					}
+				);
+
+				// the style for the markers
+				var markerStyle = new ol.style.Style({
+				        image: new ol.style.Icon(/** @type {module:ol/style/Icon~Options} */ ({
+				          anchor: [0.5, 1],
+				          anchorXUnits: 'fraction',
+				          anchorYUnits: 'fraction',
+									scale: 0.4,
+				          src: 'img/ic_place_white_24dp_2x.png',
+									color: 'black'
+				        }))
+				      });
+
+				for (i = 0; i < arrayPoints.length; ++i) {
+					// add the marker
+					markersList[i] = new ol.Feature({
+						geometry: new ol.geom.Point(ol.proj.fromLonLat(arrayPoints[i])),
+						name: i
+					});
+					// apply the style to the marker
+					markersList[i].setStyle(markerStyle);
+				}
+
+				// markersList[arrayPoints.length] = new ol.Feature({
+				// 	geometry: new ol.geom.Point(ol.proj.fromLonLat(center)),
+				// 	name: i
+				// });
+
+				// generate the markers vector
+				var markers = new ol.source.Vector({
+				    features: markersList
+				});
+
+				// generate the markers layer
+				var markerVectorLayer = new ol.layer.Vector({
+				    source: markers,
+				});
+
+				// add the markers layer to the map
+				map.addLayer(markerVectorLayer);
+			}
+		});
+		$('.map-close-button').click(function(){
+			$('.map-container').hide();
+			$('#mapdiv').empty();
+		});
 
 		return;
 	}
@@ -1318,7 +1449,6 @@ $(document).ready(function() {
 						(function(theSubalbum, theImage, theLink, id) {
 							// function(subalbum, container, callback, error)  ---  callback(album,   album.media[index], container,            subalbum);
 							phFl.pickRandomMedia(theSubalbum, currentAlbum, function(randomAlbum, randomMedia, theOriginalAlbumContainer, subalbum) {
-								var htmlText;
 								var titleName, randomMediaLink, goTo, humanGeonames;
 								var mediaSrc = chooseThumbnail(randomAlbum, randomMedia, Options.album_thumb_size);
 
@@ -2417,7 +2547,10 @@ $(document).ready(function() {
 				} else if (e.keyCode === 27) {
 					//                    esc
 					// warning: modern browsers will always exit fullscreen when pressing esc
-					if (ps.getCurrentZoom() > 1) {
+					if ($('#mapdiv').html()) {
+						// we are in a map: close it
+						$('.map-close-button').trigger('click');
+					} else if (ps.getCurrentZoom() > 1) {
 						ps.pinchOut();
 						return false;
 					} else if (! Modernizr.fullscreen && fullScreenStatus) {

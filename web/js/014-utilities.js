@@ -20,7 +20,7 @@
 			return translations[language][id];
 		else
 			return translations.en[id];
-	}
+	};
 
 	Utilities.prototype.translate = function() {
 		var selector, keyLanguage;
@@ -41,7 +41,7 @@
 				}
 			}
 		}
-	}
+	};
 
 	Utilities.prototype.getLanguage = function() {
 		language = "en";
@@ -54,7 +54,7 @@
 				language = userLang;
 		}
 		return language;
-	}
+	};
 
 
 
@@ -571,7 +571,6 @@
 		// it adjusts width, height and position so that it fits in its parent (<div class="bedia-box-inner">, or the whole window)
 		// and centers vertically
 		var media = event.data.media, mediaElement, container, containerRatio, photoSrc, previousSrc;
-		var containerTop = 0, containerBottom = 0, cssWidth, cssHeight;
 		var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth();
 		var mediaBarBottom = 0;
 		var mediaWidth, mediaHeight, attrWidth, attrHeight, ratio;
@@ -706,6 +705,29 @@
 		return ! not_colliding;
 	};
 
+	Utilities.degreesToRadians = function(degrees) {
+		var pi = Math.PI;
+		return degrees * (pi/180);
+	};
+
+	Utilities.distanceBetweenCoordinatePoints = function(point1, point2) {
+		// converted from Geonames.py
+		// Calculate the great circle distance in meters between two points on the earth (specified in decimal degrees)
+
+		// convert decimal degrees to radians
+		var r_lon1 = Utilities.degreesToRadians(point1[0]);
+		var r_lat1 = Utilities.degreesToRadians(point1[1]);
+		var r_lon2 = Utilities.degreesToRadians(point2[0]);
+		var r_lat2 = Utilities.degreesToRadians(point2[1]);
+		// haversine formula
+		var d_r_lon = r_lon2 - r_lon1;
+		var d_r_lat = r_lat2 - r_lat1;
+		var a = Math.sin(d_r_lat / 2) ** 2 + Math.cos(r_lat1) * Math.cos(r_lat2) * Math.sin(d_r_lon / 2) ** 2;
+		var c = 2 * Math.asin(Math.sqrt(a));
+		var earth_radius = 6371000;  // radius of the earth in m
+		var dist = parseInt(earth_radius * c);
+		return dist;
+	};
 
 	Utilities.lateralSocialButtons = function() {
 		return $(".ssk-group").css("display") == "block";
@@ -776,6 +798,8 @@
 	Utilities.prototype.currentSize = Utilities.currentSize;
 	Utilities.prototype.nextSize = Utilities.nextSize;
 	Utilities.prototype.isColliding = Utilities.isColliding;
+	Utilities.prototype.distanceBetweenCoordinatePoints = Utilities.distanceBetweenCoordinatePoints;
+	Utilities.prototype.degreesToRadians = Utilities.degreesToRadians;
 	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
 	Utilities.prototype.mediaBoxContainerHeight = Utilities.mediaBoxContainerHeight;
 
