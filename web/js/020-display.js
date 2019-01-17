@@ -1318,7 +1318,6 @@ $(document).ready(function() {
 						(function(theSubalbum, theImage, theLink, id) {
 							// function(subalbum, container, callback, error)  ---  callback(album,   album.media[index], container,            subalbum);
 							phFl.pickRandomMedia(theSubalbum, currentAlbum, function(randomAlbum, randomMedia, theOriginalAlbumContainer, subalbum) {
-								var htmlText;
 								var titleName, randomMediaLink, goTo, humanGeonames;
 								var mediaSrc = chooseThumbnail(randomAlbum, randomMedia, Options.album_thumb_size);
 
