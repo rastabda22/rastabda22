@@ -1,0 +1,87 @@
+/* Popup box BEGIN */
+
+.map-popup-trigger {
+    cursor: pointer;
+    /* font-size: 20px;
+    margin: 20px;
+    display: inline-block;
+    font-weight: bold; */
+}
+
+.map-container{
+    background:rgba(0,0,0,.4);
+    cursor:pointer;
+    display:none;
+    height:100%;
+    position:fixed;
+    text-align:center;
+    top:0;
+    width:100%;
+    z-index:10000;
+    color: gray;
+}
+.map-container .helper{
+    display:inline-block;
+    height:100%;
+    vertical-align:middle;
+}
+.map-container > div {
+    background-color: #fff;
+    box-shadow: 10px 10px 60px #555;
+    display: inline-block;
+    height: auto;
+    /* max-width: 85%; */
+    min-height: 100px;
+    vertical-align: middle;
+    width: 94%;
+    height: 91%;
+    position: relative;
+    border-radius: 8px;
+    padding: 10px;
+}
+.map-container #mapdiv {
+    /* width: 99%;
+    height: 99%; */
+    color: black !important;
+}
+.map-close-button {
+    background-color: #fff;
+    border: 3px solid #999;
+    border-radius: 50px;
+    cursor: pointer;
+    display: inline-block;
+    font-family: arial;
+    font-weight: bold;
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    font-size: 25px;
+    line-height: 30px;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+}
+.map-close-button:hover {
+    background-color: #ccc;
+}
+
+#mapdiv {
+  height: 100%;
+}
+
+#mapdiv .ol-overlaycontainer-stopevent ul {
+  list-style-type: none;
+}
+#mapdiv .ol-overlaycontainer-stopevent ul li {
+  font-size: 80%;
+  list-style-type: none;
+}
+#mapdiv .ol-overlaycontainer-stopevent ul li a {
+  color: black;
+}
+#mapdiv .ol-overlaycontainer-stopevent {
+  position: absolute;
+  bottom: 1%;
+  right: 1%;
+}
+/* Popup box END */
