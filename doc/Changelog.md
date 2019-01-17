@@ -1,3 +1,6 @@
+* A position icon is added to album titles: opens an OpenLayers map with the media markers
+* The OpenLayers map is used for the single media too
+
 ### version 3.6.7 (January 14, 2019)
 
 * Bug fixes with album.ini file and geolocation
