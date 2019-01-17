@@ -897,7 +897,7 @@ $(document).ready(function() {
 					// see https://wiki.openstreetmap.org/wiki/Zoom_levels
 					// maximum OSM zoom is 19
 					var earthCircumference = 40075016;
-					zoom = Math.min(19, parseInt(Math.log2(Math.min(windowWidth, windowHeight) * earthCircumference * Math.cos(util.degreesToRadians(center[1])) / 256 / (maxDistance * 5))));
+					zoom = Math.min(19, parseInt(Math.log2(Math.min(windowWidth, windowHeight) * earthCircumference * Math.cos(util.degreesToRadians(center[1])) / 256 / (maxDistance * 2))));
 				}
 
 				$('.map-container').show();
