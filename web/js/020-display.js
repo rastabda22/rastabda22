@@ -719,24 +719,18 @@ $(document).ready(function() {
 			}
 		}
 
-		if (media === null) {
+		var popupTrigger =
+			"<a class='map-popup-trigger'>" +
+				"<img class='title-img' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
+			"</a>";
+		if (media !== null) {
+			title += "<span class='media-name'>" + util.trimExtension(media.name) + "</span>";
+			title += popupTrigger;
+		} else {
 			if(title.indexOf(fillInSpan) > -1) {
 				if (currentAlbum.media.some(util.hasGpsData)) {
-					title = title.replace(
-										fillInSpan,
-										"<a class='map-popup-trigger'>" +
-											"<img class='title-img' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
-										"</a>");
+					title = title.replace(fillInSpan, popupTrigger);
 				}
-			}
-		} else {
-			title += "<span class='media-name'>" + util.trimExtension(media.name) + "</span>";
-			if (util.hasGpsData(media)) {
-				latitude = media.metadata.latitude;
-				longitude = media.metadata.longitude;
-				title += "<a href=" + util.mapLink(latitude, longitude, Options.photo_map_zoom_level) + " target='_blank'>" +
-										"<img class='title-img' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
-										"</a>";
 			}
 		}
 
