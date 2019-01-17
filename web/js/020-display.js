@@ -725,14 +725,10 @@ $(document).ready(function() {
 			"</a>";
 		if (media !== null) {
 			title += "<span class='media-name'>" + util.trimExtension(media.name) + "</span>";
-			title += popupTrigger;
-		} else {
-			if(title.indexOf(fillInSpan) > -1) {
-				if (currentAlbum.media.some(util.hasGpsData)) {
-					title = title.replace(fillInSpan, popupTrigger);
-				}
-			}
-		}
+			if (util.hasGpsData(currentMedia))
+				title += popupTrigger;
+		} else if (title.indexOf(fillInSpan) > -1 && currentAlbum.media.some(util.hasGpsData))
+			title = title.replace(fillInSpan, popupTrigger);
 
 		if (isMobile.any()) {
 			// leave only the last link on mobile
