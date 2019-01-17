@@ -845,6 +845,122 @@ $(document).ready(function() {
 
 		setOptions();
 
+		// activate the map popup trigger
+		$(".map-popup-trigger").click(function(){
+			var mediaList = null, i;
+			if (currentMedia !== null && util.hasGpsData(currentMedia))
+				mediaList = [currentMedia];
+			else if (currentAlbum.media.some(util.hasGpsData))
+				mediaList = currentAlbum.media;
+
+			// build the array of the uniq points
+			if(mediaList) {
+				var arrayPoints = [], point;
+				for (i = 0; i < mediaList.length; ++i) {
+					console.log(mediaList[i].name, mediaList[i].metadata.longitude, mediaList[i].metadata.latitude);
+					if (util.hasGpsData(mediaList[i])) {
+						point = [];
+						point[0] = parseFloat(mediaList[i].metadata.longitude);
+						point[1] = parseFloat(mediaList[i].metadata.latitude);
+						if (
+							! arrayPoints.length ||
+							arrayPoints.every(
+								function(p) {
+									return p[0] != point[0] || p[1] != point[1];
+								}
+							)
+						) {
+							arrayPoints.push(point);
+						}
+					}
+				}
+
+				// calculate the center
+				var center = [0, 0];
+				for (i = 0; i < arrayPoints.length; ++i) {
+					center[0] += arrayPoints[i][0];
+					center[1] += arrayPoints[i][1];
+				}
+				center[0] /= arrayPoints.length;
+				center[1] /= arrayPoints.length;
+
+				// calculate the maximum distance from the center
+				// it's needed in order to calculate the zoom level
+				var maxDistance = 0;
+				for (i = 0; i < arrayPoints.length; ++i) {
+					maxDistance = Math.max(Math.abs(util.distanceBetweenCoordinatePoints(center, arrayPoints[i])));
+				}
+
+				// calculate the zoom level needed in order to have all the points inside the map
+				// see https://wiki.openstreetmap.org/wiki/Zoom_levels
+				// maximum OSM zoom is 19
+				var earthCircumference = 40075016;
+				var zoom = Math.min(19, parseInt(Math.log2(Math.min(windowWidth, windowHeight) * earthCircumference * Math.cos(util.degreesToRadians(center[1])) / 256 / (maxDistance * 5))));
+
+				$('.map-container').show();
+				var markersList = [];
+
+				// create the map with the proper center
+				var map = new ol.Map(
+					{
+						view: new ol.View(
+							{
+								center: ol.proj.fromLonLat(center),
+								zoom: zoom
+							}
+						),
+						layers: [
+							new ol.layer.Tile(
+								{
+									source: new ol.source.OSM()
+								}
+							)
+						],
+						target: 'mapdiv'
+								}
+				);
+
+				// the style for the markers
+				var markerStyle = new ol.style.Style({
+				        image: new ol.style.Icon(/** @type {module:ol/style/Icon~Options} */ ({
+				          anchor: [0.5, 1],
+				          anchorXUnits: 'fraction',
+				          anchorYUnits: 'fraction',
+									scale: 0.4,
+				          src: 'img/ic_place_white_24dp_2x.png',
+									color: 'black'
+				        }))
+				      });
+
+				for (i = 0; i < arrayPoints.length; ++i) {
+					// add the marker
+					markersList[i] = new ol.Feature({
+						geometry: new ol.geom.Point(ol.proj.fromLonLat(arrayPoints[i])),
+						name: i
+					});
+					// apply the style to the marker
+					markersList[i].setStyle(markerStyle);
+				}
+
+				// generate the markers vector
+				var markers = new ol.source.Vector({
+				    features: markersList
+				});
+
+				// generate the markers layer
+				var markerVectorLayer = new ol.layer.Vector({
+				    source: markers,
+				});
+
+				// add the markers layer to the map
+				map.addLayer(markerVectorLayer);
+			}
+		});
+		$('.map-close-button').click(function(){
+			$('.map-container').hide();
+			$('#mapdiv').empty();
+		});
+
 		return;
 	}
 
