@@ -857,7 +857,6 @@ $(document).ready(function() {
 			if(mediaList) {
 				var arrayPoints = [], point;
 				for (i = 0; i < mediaList.length; ++i) {
-					console.log(mediaList[i].name, mediaList[i].metadata.longitude, mediaList[i].metadata.latitude);
 					if (util.hasGpsData(mediaList[i])) {
 						point = [];
 						point[0] = parseFloat(mediaList[i].metadata.longitude);
@@ -917,7 +916,7 @@ $(document).ready(function() {
 							)
 						],
 						target: 'mapdiv'
-								}
+					}
 				);
 
 				// the style for the markers
