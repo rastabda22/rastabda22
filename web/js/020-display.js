@@ -883,18 +883,22 @@ $(document).ready(function() {
 				center[0] /= arrayPoints.length;
 				center[1] /= arrayPoints.length;
 
-				// calculate the maximum distance from the center
-				// it's needed in order to calculate the zoom level
-				var maxDistance = 0;
-				for (i = 0; i < arrayPoints.length; ++i) {
-					maxDistance = Math.max(Math.abs(util.distanceBetweenCoordinatePoints(center, arrayPoints[i])));
-				}
+				// default zoom is used for single media or media list with one point
+				var zoom = Options.photo_map_zoom_level;
+				if (arrayPoints.length > 1) {
+					// calculate the maximum distance from the center
+					// it's needed in order to calculate the zoom level
+					var maxDistance = 0;
+					for (i = 0; i < arrayPoints.length; ++i) {
+						maxDistance = Math.max(maxDistance, Math.abs(util.distanceBetweenCoordinatePoints(center, arrayPoints[i])));
+					}
 
-				// calculate the zoom level needed in order to have all the points inside the map
-				// see https://wiki.openstreetmap.org/wiki/Zoom_levels
-				// maximum OSM zoom is 19
-				var earthCircumference = 40075016;
-				var zoom = Math.min(19, parseInt(Math.log2(Math.min(windowWidth, windowHeight) * earthCircumference * Math.cos(util.degreesToRadians(center[1])) / 256 / (maxDistance * 5))));
+					// calculate the zoom level needed in order to have all the points inside the map
+					// see https://wiki.openstreetmap.org/wiki/Zoom_levels
+					// maximum OSM zoom is 19
+					var earthCircumference = 40075016;
+					zoom = Math.min(19, parseInt(Math.log2(Math.min(windowWidth, windowHeight) * earthCircumference * Math.cos(util.degreesToRadians(center[1])) / 256 / (maxDistance * 5))));
+				}
 
 				$('.map-container').show();
 				var markersList = [];
@@ -940,6 +944,11 @@ $(document).ready(function() {
 					// apply the style to the marker
 					markersList[i].setStyle(markerStyle);
 				}
+
+				// markersList[arrayPoints.length] = new ol.Feature({
+				// 	geometry: new ol.geom.Point(ol.proj.fromLonLat(center)),
+				// 	name: i
+				// });
 
 				// generate the markers vector
 				var markers = new ol.source.Vector({
