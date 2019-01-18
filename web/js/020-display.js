@@ -845,6 +845,7 @@ $(document).ready(function() {
 		setOptions();
 
 		// activate the map popup trigger
+		$(".map-popup-trigger").off();
 		$(".map-popup-trigger").click(function(){
 			var mediaList = null, i;
 			if (currentMedia !== null && util.hasGpsData(currentMedia))
