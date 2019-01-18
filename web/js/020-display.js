@@ -477,6 +477,8 @@ $(document).ready(function() {
 				}
 			}
 
+			title += fillInSpan;
+
 			if (components.length > 1 && media === null) {
 				if (! isMobile.any()) {
 					title += " <span class='title-count'>(";
@@ -532,9 +534,6 @@ $(document).ready(function() {
 					 latitude = arrayCoordinates.latitude;
 					 longitude = arrayCoordinates.longitude;
 				}
-				title += "<a href=" + util.mapLink(latitude, longitude, Options.map_zoom_levels[(i - 2)]) + " target='_blank'>" +
-									"<img class='title-img' title='" + gpsHtmlTitle + "' alt='" + gpsHtmlTitle + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
-									"</a>";
 
 				if (i < components.length - 1 || media !== null)
 					title += raquo;
@@ -546,6 +545,8 @@ $(document).ready(function() {
 						documentTitle = " \u00ab " + documentTitle;
 				}
 			}
+
+			title += fillInSpan;
 
 			if (components.length > 1 && media === null) {
 				title += " <span class='title-count'>(";
