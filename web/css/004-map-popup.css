@@ -85,3 +85,7 @@
   right: 1%;
 }
 /* Popup box END */
+
+.ol-rotate, .ol-rotate-reset, .ol-attribution button {
+  display: none;
+}
