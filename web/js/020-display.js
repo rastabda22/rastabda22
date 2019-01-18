@@ -2605,7 +2605,13 @@ $(document).ready(function() {
 					//                                       - on keypad                    -
 					ps.pinchOut();
 					return false;
-				} else if (e.keyCode === 83 && currentMedia !== null && util.hasGpsData(currentMedia)) {
+				} else if (
+					e.keyCode === 83 &&
+					(
+						currentMedia !== null && util.hasGpsData(currentMedia) ||
+						currentMedia === null && currentAlbum.media.some(util.hasGpsData)
+					)
+				) {
 					 	//                    s
 						$(".map-popup-trigger")[0].click();
 						return false;
