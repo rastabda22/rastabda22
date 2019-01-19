@@ -1,5 +1,9 @@
 * A position icon is added to album titles: opens an OpenLayers map with the media markers
 * The OpenLayers map is used for the single media too
+* All the subalbum names in album view have the position icon that opens the OpenLayers map
+* Removed unnecessary options:
+  * `map_service`: the js app doesn't use any more those external tools
+  * `map_zoom_levels`
 
 ### version 3.6.7 (January 14, 2019)
 

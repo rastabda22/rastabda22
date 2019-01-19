@@ -269,20 +269,6 @@
 		return (em * emSize);
 	};
 
-	Utilities.prototype.mapLink = function(latitude, longitude, zoom) {
-		var link;
-		if (Options.map_service == 'openstreetmap') {
-			link = 'http://www.openstreetmap.org/#map=' + zoom + '/' + latitude + '/' + longitude;
-		}
-		else if (Options.map_service == 'googlemaps') {
-			link = 'https://www.google.com/maps/@' + latitude + ',' + longitude + ',' + zoom + 'z';
-		}
-		else if (Options.map_service == 'osmtools') {
-			link = 'http://m.osmtools.de/index.php?mlon=' + longitude + '&mlat=' + latitude + '&icon=6&zoom=' + zoom;
-		}
-		return link;
-	};
-
 	Utilities.prototype.isAlbumWithOneMedia = function(currentAlbum) {
 		return currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1;
 	};
