@@ -2588,6 +2588,7 @@ $(document).ready(function() {
 	/* Event listeners */
 
 	$(document).on('keydown', function(e) {
+		isMap = $('#mapdiv').html() ? 1 : 0;
 		if (! $("#search-field").is(':focus')) {
 			if (! e.ctrlKey && ! e.shiftKey && ! e.altKey) {
 				if (e.keyCode === 9) {
@@ -2623,9 +2624,10 @@ $(document).ready(function() {
 				} else if (e.keyCode === 27) {
 					//                    esc
 					// warning: modern browsers will always exit fullscreen when pressing esc
-					if ($('#mapdiv').html()) {
+					if (isMap) {
 						// we are in a map: close it
 						$('.map-close-button')[0].click();
+						return false;
 					} else if (ps.getCurrentZoom() > 1) {
 						ps.pinchOut();
 						return false;
@@ -2666,14 +2668,24 @@ $(document).ready(function() {
 					//                      o
 					$("#original-link")[0].click();
 					return false;
-				} else if (currentMedia !== null && (e.keyCode === 107 || e.keyCode === 187)) {
-					//                                       + on keypad                    +
-					ps.pinchIn();
-					return false;
-				} else if (currentMedia !== null && (e.keyCode === 109 || e.keyCode === 189)) {
-					//                                       - on keypad                    -
-					ps.pinchOut();
-					return false;
+				} else if (e.keyCode === 107 || e.keyCode === 187) {
+					//             + on keypad                    +
+					if (isMap) {
+						$(".ol-zoom-in")[0].click();
+						return false;
+					} else if (currentMedia !== null) {
+						ps.pinchIn();
+						return false;
+					}
+				} else if (e.keyCode === 109 || e.keyCode === 189) {
+					//         - on keypad                    -
+					if (isMap) {
+						$(".ol-zoom-out")[0].click();
+						return false;
+					} else if (currentMedia !== null) {
+						ps.pinchOut();
+						return false;
+					}
 				} else if (
 					e.keyCode === 83 &&
 					(
