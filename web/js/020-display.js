@@ -847,130 +847,166 @@ $(document).ready(function() {
 
 		// activate the map popup trigger
 		$(".map-popup-trigger").off();
-		$(".map-popup-trigger").click(function(){
-			var mediaList = null, i;
-			if (currentMedia !== null && util.hasGpsData(currentMedia))
-				mediaList = [currentMedia];
-			else if (currentAlbum.media.some(util.hasGpsData))
-				mediaList = currentAlbum.media;
+		$(".map-popup-trigger").click(generateMapFromDefaults);
 
-			// build the array of the uniq points
-			if(mediaList) {
-				var arrayPoints = [], point;
-				for (i = 0; i < mediaList.length; ++i) {
-					if (util.hasGpsData(mediaList[i])) {
-						point = [];
-						point[0] = parseFloat(mediaList[i].metadata.longitude);
-						point[1] = parseFloat(mediaList[i].metadata.latitude);
-						if (
-							! arrayPoints.length ||
-							arrayPoints.every(
-								function(p) {
-									return p[0] != point[0] || p[1] != point[1];
-								}
-							)
-						) {
-							arrayPoints.push(point);
-						}
-					}
-				}
 
-				// calculate the center
-				var center = [0, 0];
-				for (i = 0; i < arrayPoints.length; ++i) {
-					center[0] += arrayPoints[i][0];
-					center[1] += arrayPoints[i][1];
-				}
-				center[0] /= arrayPoints.length;
-				center[1] /= arrayPoints.length;
 
-				// default zoom is used for single media or media list with one point
-				var zoom = Options.photo_map_zoom_level;
-				if (arrayPoints.length > 1) {
-					// calculate the maximum distance from the center
-					// it's needed in order to calculate the zoom level
-					var maxDistance = 0;
-					for (i = 0; i < arrayPoints.length; ++i) {
-						maxDistance = Math.max(maxDistance, Math.abs(util.distanceBetweenCoordinatePoints(center, arrayPoints[i])));
-					}
-
-					// calculate the zoom level needed in order to have all the points inside the map
-					// see https://wiki.openstreetmap.org/wiki/Zoom_levels
-					// maximum OSM zoom is 19
-					var earthCircumference = 40075016;
-					zoom = Math.min(19, parseInt(Math.log2(Math.min(windowWidth, windowHeight) * earthCircumference * Math.cos(util.degreesToRadians(center[1])) / 256 / (maxDistance * 2))));
-				}
-
-				$('.map-container').show();
-				var markersList = [];
-
-				// create the map with the proper center
-				var map = new ol.Map(
-					{
-						view: new ol.View(
-							{
-								center: ol.proj.fromLonLat(center),
-								zoom: zoom
-							}
-						),
-						layers: [
-							new ol.layer.Tile(
-								{
-									source: new ol.source.OSM()
-								}
-							)
-						],
-						target: 'mapdiv'
-					}
-				);
-
-				// the style for the markers
-				var markerStyle = new ol.style.Style({
-				        image: new ol.style.Icon(/** @type {module:ol/style/Icon~Options} */ ({
-				          anchor: [0.5, 1],
-				          anchorXUnits: 'fraction',
-				          anchorYUnits: 'fraction',
-									scale: 0.4,
-				          src: 'img/ic_place_white_24dp_2x.png',
-									color: 'black'
-				        }))
-				      });
-
-				for (i = 0; i < arrayPoints.length; ++i) {
-					// add the marker
-					markersList[i] = new ol.Feature({
-						geometry: new ol.geom.Point(ol.proj.fromLonLat(arrayPoints[i])),
-						name: i
-					});
-					// apply the style to the marker
-					markersList[i].setStyle(markerStyle);
-				}
-
-				// markersList[arrayPoints.length] = new ol.Feature({
-				// 	geometry: new ol.geom.Point(ol.proj.fromLonLat(center)),
-				// 	name: i
-				// });
-
-				// generate the markers vector
-				var markers = new ol.source.Vector({
-				    features: markersList
-				});
-
-				// generate the markers layer
-				var markerVectorLayer = new ol.layer.Vector({
-				    source: markers,
-				});
-
-				// add the markers layer to the map
-				map.addLayer(markerVectorLayer);
-			}
-		});
 		$('.map-close-button').click(function(){
 			$('.map-container').hide();
 			$('#mapdiv').empty();
 		});
 
 		return;
+	}
+
+	function generateMapFromIThMedia(ev) {
+		if (util.hasGpsData(ev.data.media)) {
+			ev.preventDefault();
+			generateMap([ev.data.media]);
+		}
+	}
+
+	function generateMapFromIThSubalbum(ev) {
+		phFl.getAlbum(
+			ev.data.subalbum,
+			function(subalbum){
+				if (subalbum.media.some(util.hasGpsData)) {
+					ev.stopPropagation();
+					ev.preventDefault();
+					generateMap(subalbum.media);
+				} else {
+					$("#warning-no-geolocated-media").stop().fadeIn(200);
+					$("#warning-no-geolocated-media").fadeOut(3000);
+
+				}
+			},
+			die
+		);
+	}
+
+	function generateMapFromDefaults() {
+		var mediaList = [];
+
+		if (currentMedia !== null && util.hasGpsData(currentMedia))
+			mediaList = [currentMedia];
+		else if (currentAlbum.media.some(util.hasGpsData))
+			mediaList = currentAlbum.media;
+
+		if (mediaList != [])
+			generateMap(mediaList);
+	}
+
+	function generateMap(mediaList) {
+		// build the array of the uniq points
+		if(mediaList) {
+			var arrayPoints = [], point;
+			for (i = 0; i < mediaList.length; ++i) {
+				if (util.hasGpsData(mediaList[i])) {
+					point = [];
+					point[0] = parseFloat(mediaList[i].metadata.longitude);
+					point[1] = parseFloat(mediaList[i].metadata.latitude);
+					if (
+						! arrayPoints.length ||
+						arrayPoints.every(
+							function(p) {
+								return p[0] != point[0] || p[1] != point[1];
+							}
+						)
+					) {
+						arrayPoints.push(point);
+					}
+				}
+			}
+
+			// calculate the center
+			var center = [0, 0];
+			for (i = 0; i < arrayPoints.length; ++i) {
+				center[0] += arrayPoints[i][0];
+				center[1] += arrayPoints[i][1];
+			}
+			center[0] /= arrayPoints.length;
+			center[1] /= arrayPoints.length;
+
+			// default zoom is used for single media or media list with one point
+			var zoom = Options.photo_map_zoom_level;
+			if (arrayPoints.length > 1) {
+				// calculate the maximum distance from the center
+				// it's needed in order to calculate the zoom level
+				var maxDistance = 0;
+				for (i = 0; i < arrayPoints.length; ++i) {
+					maxDistance = Math.max(maxDistance, Math.abs(util.distanceBetweenCoordinatePoints(center, arrayPoints[i])));
+				}
+
+				// calculate the zoom level needed in order to have all the points inside the map
+				// see https://wiki.openstreetmap.org/wiki/Zoom_levels
+				// maximum OSM zoom is 19
+				var earthCircumference = 40075016;
+				zoom = Math.min(19, parseInt(Math.log2(Math.min(windowWidth, windowHeight) * earthCircumference * Math.cos(util.degreesToRadians(center[1])) / 256 / (maxDistance * 2))));
+			}
+
+			$('.map-container').show();
+			var markersList = [];
+
+			// create the map with the proper center
+			var map = new ol.Map(
+				{
+					view: new ol.View(
+						{
+							center: ol.proj.fromLonLat(center),
+							zoom: zoom
+						}
+					),
+					layers: [
+						new ol.layer.Tile(
+							{
+								source: new ol.source.OSM()
+							}
+						)
+					],
+					target: 'mapdiv'
+				}
+			);
+
+			// the style for the markers
+			var markerStyle = new ol.style.Style({
+							image: new ol.style.Icon(/** @type {module:ol/style/Icon~Options} */ ({
+								anchor: [0.5, 1],
+								anchorXUnits: 'fraction',
+								anchorYUnits: 'fraction',
+								scale: 0.4,
+								src: 'img/ic_place_white_24dp_2x.png',
+								color: 'black'
+							}))
+						});
+
+			for (i = 0; i < arrayPoints.length; ++i) {
+				// add the marker
+				markersList[i] = new ol.Feature({
+					geometry: new ol.geom.Point(ol.proj.fromLonLat(arrayPoints[i])),
+					name: i
+				});
+				// apply the style to the marker
+				markersList[i].setStyle(markerStyle);
+			}
+
+			// markersList[arrayPoints.length] = new ol.Feature({
+			// 	geometry: new ol.geom.Point(ol.proj.fromLonLat(center)),
+			// 	name: i
+			// });
+
+			// generate the markers vector
+			var markers = new ol.source.Vector({
+					features: markersList
+			});
+
+			// generate the markers layer
+			var markerVectorLayer = new ol.layer.Vector({
+					source: markers,
+			});
+
+			// add the markers layer to the map
+			map.addLayer(markerVectorLayer);
+		}
 	}
 
 	function initializeSortPropertiesAndCookies() {
@@ -1198,9 +1234,17 @@ $(document).ready(function() {
 					if (util.hasGpsData(currentAlbum.media[i])) {
 						var latitude = currentAlbum.media[i].metadata.latitude;
 						var longitude = currentAlbum.media[i].metadata.longitude;
-						mapLinkIcon = "<a href=" + util.mapLink(latitude, longitude, Options.photo_map_zoom_level) + " target='_blank'>" +
-													"<img class='thumbnail-map-link' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
-													"</a>";
+						mapLinkIcon =
+							"<a id='media-map-link-" + i + "'>" +
+								"<img " +
+									// "id='media-map-link-" + i + "' " +
+									"class='thumbnail-map-link' " +
+									"title='" + util._t("#show-on-map") + "' " +
+									"alt='" + util._t("#show-on-map") + "' " +
+									"height='20px' " +
+									"src='img/ic_place_white_24dp_2x.png'" +
+								">" +
+							"</a>";
 					}
 
 					imageString =	"<div class='thumb-and-caption-container' style='" +
@@ -1253,6 +1297,12 @@ $(document).ready(function() {
 				thumbsElement = $("#thumbs");
 				thumbsElement.empty();
 				thumbsElement.append.apply(thumbsElement, media);
+
+				// generate the click event for the map for every media
+				for (i = 0; i < currentAlbum.media.length; ++i) {
+					$("#media-map-link-" + i).off();
+					$("#media-map-link-" + i).on('click', {media: currentAlbum.media[i]}, generateMapFromIThMedia);
+				}
 			}
 			lazyload(document.querySelectorAll(".lazyload-media"));
 
@@ -1327,15 +1377,15 @@ $(document).ready(function() {
 						// generate the subalbum caption
 						if (util.isByDateCacheBase(currentAlbum.cacheBase)) {
 							folderArray = currentAlbum.subalbums[i].cacheBase.split(Options.cache_folder_separator);
-							folder = "";
+							folderName = "";
 							if (folderArray.length == 2) {
-								folder += parseInt(folderArray[1]);
+								folderName += parseInt(folderArray[1]);
 							} else if (folderArray.length == 3)
-								folder += " " + util._t("#month-" + folderArray[2]);
+								folderName += " " + util._t("#month-" + folderArray[2]);
 							else if (folderArray.length == 4)
-								folder += util._t("#day") + " " + parseInt(folderArray[3]);
+								folderName += util._t("#day") + " " + parseInt(folderArray[3]);
+								folderTitle = folderName;
 						} else if (util.isByGpsCacheBase(currentAlbum.cacheBase)) {
-							var level = currentAlbum.subalbums[i].cacheBase.split(Options.cache_folder_separator).length - 2;
 							var folderName = '';
 							var folderTitle = '';
 							if (currentAlbum.subalbums[i].name === '')
@@ -1346,19 +1396,24 @@ $(document).ready(function() {
 								folderName = currentAlbum.subalbums[i].name;
 							folderTitle = util._t('#place-icon-title') + folderName;
 
-							folder = "<span class='gps-folder'>" +
-												folderName +
-												"<a href='" + util.mapLink(currentAlbum.subalbums[i].center.latitude, currentAlbum.subalbums[i].center.longitude, Options.map_zoom_levels[level]) +
-																"' title='" + folderName +
-																"' target='_blank'" +
-														">" +
-													"<img class='title-img' title='" + folderTitle + "'  alt='" + folderTitle + "' height='15px' src='img/ic_place_white_24dp_2x.png' />" +
-												"</a>" +
-											"</span>";
 						}
 						else {
-							folder = currentAlbum.subalbums[i].path;
+							folderName = currentAlbum.subalbums[i].path;
+							folderTitle = folderName;
 						}
+
+						folder = "<span class='folder-name'>" +
+											folderName +
+											"<a id='subalbum-map-link-" + i + "' >" +
+												"<img " +
+													"class='title-img' " +
+													"title='" + folderTitle + "' " +
+													"alt='" + folderTitle + "' " +
+													"height='15px' " +
+													"src='img/ic_place_white_24dp_2x.png' " +
+												"/>" +
+											"</a>" +
+										"</span>";
 
 						// // get the value in style sheet (element with that class doesn't exist in DOM)
 						// var $el = $('<div class="album-caption"></div>');
@@ -1455,72 +1510,81 @@ $(document).ready(function() {
 						//      })(currentAlbum.subalbums[i], image, container);
 						(function(theSubalbum, theImage, theLink, id) {
 							// function(subalbum, container, callback, error)  ---  callback(album,   album.media[index], container,            subalbum);
-							phFl.pickRandomMedia(theSubalbum, currentAlbum, function(randomAlbum, randomMedia, theOriginalAlbumContainer, subalbum) {
-								var titleName, randomMediaLink, goTo, humanGeonames;
-								var mediaSrc = chooseThumbnail(randomAlbum, randomMedia, Options.album_thumb_size);
+							phFl.pickRandomMedia(
+								theSubalbum,
+								currentAlbum,
+								function(randomAlbum, randomMedia, theOriginalAlbumContainer, subalbum) {
+									var titleName, randomMediaLink, goTo, humanGeonames;
+									var mediaSrc = chooseThumbnail(randomAlbum, randomMedia, Options.album_thumb_size);
 
-								phFl.subalbumIndex ++;
-								mediaWidth = randomMedia.metadata.size[0];
-								mediaHeight = randomMedia.metadata.size[1];
-								if (Options.album_thumb_type == "fit") {
-									if (mediaWidth < correctedAlbumThumbSize && mediaHeight < correctedAlbumThumbSize) {
-										thumbWidth = mediaWidth;
-										thumbHeight = mediaHeight;
-									} else {
-										if (mediaWidth > mediaHeight) {
-											thumbWidth = correctedAlbumThumbSize;
-											thumbHeight = Math.floor(correctedAlbumThumbSize * mediaHeight / mediaWidth);
+									phFl.subalbumIndex ++;
+									mediaWidth = randomMedia.metadata.size[0];
+									mediaHeight = randomMedia.metadata.size[1];
+									if (Options.album_thumb_type == "fit") {
+										if (mediaWidth < correctedAlbumThumbSize && mediaHeight < correctedAlbumThumbSize) {
+											thumbWidth = mediaWidth;
+											thumbHeight = mediaHeight;
 										} else {
-											thumbWidth = Math.floor(correctedAlbumThumbSize * mediaWidth / mediaHeight);
-											thumbHeight = correctedAlbumThumbSize;
+											if (mediaWidth > mediaHeight) {
+												thumbWidth = correctedAlbumThumbSize;
+												thumbHeight = Math.floor(correctedAlbumThumbSize * mediaHeight / mediaWidth);
+											} else {
+												thumbWidth = Math.floor(correctedAlbumThumbSize * mediaWidth / mediaHeight);
+												thumbHeight = correctedAlbumThumbSize;
+											}
 										}
+									} else if (Options.album_thumb_type == "square") {
+										thumbWidth = correctedAlbumThumbSize;
+										thumbHeight = correctedAlbumThumbSize;
 									}
-								} else if (Options.album_thumb_type == "square") {
-									thumbWidth = correctedAlbumThumbSize;
-									thumbHeight = correctedAlbumThumbSize;
+
+									if (util.isByDateCacheBase(currentAlbum.cacheBase)) {
+										titleName = util.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
+										// randomMediaLink = util.pathJoin(["#!", randomMedia.dayAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
+									} else if (util.isByGpsCacheBase(currentAlbum.cacheBase)) {
+										humanGeonames = util.pathJoin([Options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
+										titleName = util.pathJoin([humanGeonames, randomMedia.name]);
+										// randomMediaLink = util.pathJoin(["#!", randomMedia.gpsAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
+									} else if (util.isSearchCacheBase(currentAlbum.cacheBase)) {
+										titleName = randomMedia.albumName;
+										// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, currentAlbum.cacheBase + Options.cache_folder_separator + theSubalbum.cacheBase, randomMedia.cacheBase]);
+									} else {
+										titleName = randomMedia.albumName;
+										// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, randomMedia.cacheBase]);
+									}
+									randomMediaLink = phFl.encodeHash(randomAlbum, randomMedia);
+
+									titleName = titleName.substr(titleName.indexOf('/') + 1);
+									goTo = util._t(".go-to") + " " + titleName;
+									$("#" + id + " .album-button a").attr("href", randomMediaLink);
+									$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
+									$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName).attr("data-src", encodeURI(mediaSrc));
+									$("#" + id + " img.thumbnail").css("width", thumbWidth).css("height", thumbHeight);
+
+									lazyload(document.querySelectorAll(".lazyload-album-" + id));
+
+									numSubAlbumsReady ++;
+									if (numSubAlbumsReady >= theOriginalAlbumContainer.subalbums.length) {
+										// now all the subalbums random thumbnails has been loaded
+										// we can run the function that prepare the stuffs for sharing
+										socialButtons();
+									}
+								},
+								function error() {
+									currentAlbum.subalbums.splice(currentAlbum.subalbums.indexOf(theSubalbum), 1);
+									theLink.remove();
+									subalbums.splice(subalbums.indexOf(theLink), 1);
 								}
-
-								if (util.isByDateCacheBase(currentAlbum.cacheBase)) {
-									titleName = util.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
-									// randomMediaLink = util.pathJoin(["#!", randomMedia.dayAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
-								} else if (util.isByGpsCacheBase(currentAlbum.cacheBase)) {
-									humanGeonames = util.pathJoin([Options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
-									titleName = util.pathJoin([humanGeonames, randomMedia.name]);
-									// randomMediaLink = util.pathJoin(["#!", randomMedia.gpsAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
-								} else if (util.isSearchCacheBase(currentAlbum.cacheBase)) {
-									titleName = randomMedia.albumName;
-									// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, currentAlbum.cacheBase + Options.cache_folder_separator + theSubalbum.cacheBase, randomMedia.cacheBase]);
-								} else {
-									titleName = randomMedia.albumName;
-									// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, randomMedia.cacheBase]);
-								}
-								randomMediaLink = phFl.encodeHash(randomAlbum, randomMedia);
-
-								titleName = titleName.substr(titleName.indexOf('/') + 1);
-								goTo = util._t(".go-to") + " " + titleName;
-								$("#" + id + " a").attr("href", randomMediaLink);
-								$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
-								$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName).attr("data-src", encodeURI(mediaSrc));
-								$("#" + id + " img.thumbnail").css("width", thumbWidth).css("height", thumbHeight);
-
-								lazyload(document.querySelectorAll(".lazyload-album-" + id));
-
-								numSubAlbumsReady ++;
-								if (numSubAlbumsReady >= theOriginalAlbumContainer.subalbums.length) {
-									// now all the subalbums random thumbnails has been loaded
-									// we can run the function that prepare the stuffs for sharing
-									socialButtons();
-								}
-							}, function error() {
-								currentAlbum.subalbums.splice(currentAlbum.subalbums.indexOf(theSubalbum), 1);
-								theLink.remove();
-								subalbums.splice(subalbums.indexOf(theLink), 1);
-							});
+							);
 							i ++; i --;
 						})(currentAlbum.subalbums[i], image, container, id);
 						//////////////////// end anonymous function /////////////////////
 					}
 
+					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
+						$("#subalbum-map-link-" + i).off();
+						$("#subalbum-map-link-" + i).on('click', {subalbum: currentAlbum.subalbums[i]}, generateMapFromIThSubalbum);
+					}
 
 					$("#subalbums").show();
 					$("#album-view").removeClass("media-view-container");
