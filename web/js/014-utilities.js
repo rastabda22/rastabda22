@@ -701,10 +701,10 @@
 		// Calculate the great circle distance in meters between two points on the earth (specified in decimal degrees)
 
 		// convert decimal degrees to radians
-		var r_lon1 = Utilities.degreesToRadians(point1[0]);
-		var r_lat1 = Utilities.degreesToRadians(point1[1]);
-		var r_lon2 = Utilities.degreesToRadians(point2[0]);
-		var r_lat2 = Utilities.degreesToRadians(point2[1]);
+		var r_lon1 = Utilities.degreesToRadians(point1.long);
+		var r_lat1 = Utilities.degreesToRadians(point1.lat);
+		var r_lon2 = Utilities.degreesToRadians(point2.long);
+		var r_lat2 = Utilities.degreesToRadians(point2.lat);
 		// haversine formula
 		var d_r_lon = r_lon2 - r_lon1;
 		var d_r_lat = r_lat2 - r_lat1;

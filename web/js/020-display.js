@@ -898,34 +898,43 @@ $(document).ready(function() {
 
 	function generateMap(mediaList) {
 		// build the array of the uniq points
+		var index;
 		if(mediaList) {
 			var arrayPoints = [], point;
 			for (i = 0; i < mediaList.length; ++i) {
 				if (util.hasGpsData(mediaList[i])) {
-					point = [];
-					point[0] = parseFloat(mediaList[i].metadata.longitude);
-					point[1] = parseFloat(mediaList[i].metadata.latitude);
-					if (
-						! arrayPoints.length ||
-						arrayPoints.every(
-							function(p) {
-								return p[0] != point[0] || p[1] != point[1];
-							}
-						)
-					) {
+					point = {
+						'long': parseFloat(mediaList[i].metadata.longitude),
+						'lat' : parseFloat(mediaList[i].metadata.latitude),
+						'mediaNameList': [mediaList[i].albumName]
+					};
+					if (! arrayPoints.length)
 						arrayPoints.push(point);
+					else {
+						if (
+							arrayPoints.some(
+								function(p, i) {
+									index = i;
+									return p.lat == point.lat && p.long == point.long;
+								}
+							)
+						) {
+							arrayPoints[index].mediaNameList.push(mediaList[i].albumName);
+						} else {
+							arrayPoints.push(point);
+						}
 					}
 				}
 			}
 
 			// calculate the center
-			var center = [0, 0];
+			var center = {'lat': 0, 'long': 0};
 			for (i = 0; i < arrayPoints.length; ++i) {
-				center[0] += arrayPoints[i][0];
-				center[1] += arrayPoints[i][1];
+				center.lat += arrayPoints[i].lat;
+				center.long += arrayPoints[i].long;
 			}
-			center[0] /= arrayPoints.length;
-			center[1] /= arrayPoints.length;
+			center.lat /= arrayPoints.length;
+			center.long /= arrayPoints.length;
 
 			// default zoom is used for single media or media list with one point
 			var zoom = Options.photo_map_zoom_level;
@@ -941,7 +950,7 @@ $(document).ready(function() {
 				// see https://wiki.openstreetmap.org/wiki/Zoom_levels
 				// maximum OSM zoom is 19
 				var earthCircumference = 40075016;
-				zoom = Math.min(19, parseInt(Math.log2(Math.min(windowWidth, windowHeight) * earthCircumference * Math.cos(util.degreesToRadians(center[1])) / 256 / (maxDistance * 2))));
+				zoom = Math.min(19, parseInt(Math.log2(Math.min(windowWidth, windowHeight) * earthCircumference * Math.cos(util.degreesToRadians(center.lat)) / 256 / (maxDistance * 2))));
 			}
 
 			$('.map-container').show();
@@ -952,7 +961,7 @@ $(document).ready(function() {
 				{
 					view: new ol.View(
 						{
-							center: ol.proj.fromLonLat(center),
+							center: ol.proj.fromLonLat([center.long, center.lat]),
 							zoom: zoom
 						}
 					),
@@ -982,17 +991,12 @@ $(document).ready(function() {
 			for (i = 0; i < arrayPoints.length; ++i) {
 				// add the marker
 				markersList[i] = new ol.Feature({
-					geometry: new ol.geom.Point(ol.proj.fromLonLat(arrayPoints[i])),
-					name: i
+					geometry: new ol.geom.Point(ol.proj.fromLonLat([arrayPoints[i].long, arrayPoints[i].lat])),
+					namesList: arrayPoints[i].mediaNameList
 				});
 				// apply the style to the marker
 				markersList[i].setStyle(markerStyle);
 			}
-
-			// markersList[arrayPoints.length] = new ol.Feature({
-			// 	geometry: new ol.geom.Point(ol.proj.fromLonLat(center)),
-			// 	name: i
-			// });
 
 			// generate the markers vector
 			var markers = new ol.source.Vector({
