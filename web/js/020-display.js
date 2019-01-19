@@ -2654,7 +2654,7 @@ $(document).ready(function() {
 					}
 				} else if (e.keyCode === 68 && currentMedia !== null && ! isMap) {
 					//                      d
-					$("#download-link")[0].click();
+					$("#center .download-link")[0].click();
 					return false;
 				} else if (e.keyCode === 70 && currentMedia !== null && ! isMap) {
 					//                      f
@@ -2666,7 +2666,7 @@ $(document).ready(function() {
 					return false;
 				} else if (e.keyCode === 79 && currentMedia !== null && ! isMap) {
 					//                      o
-					$("#original-link")[0].click();
+					$("#center .original-link")[0].click();
 					return false;
 				} else if (e.keyCode === 107 || e.keyCode === 187) {
 					//             + on keypad                    +
