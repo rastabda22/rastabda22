@@ -8,6 +8,8 @@
 
 It permits browsing the media by folder, date and geotags.
 
+Whenever geotagged photos are found, a map with the photo(s) position can be shown using OpenLayers.
+
 Content (albums and media files) can be shared over some popular social plaforms.
 
 **MyPhotoShare** is a Jason A. Donenfeld's *photofloat* fork, enriched by Jerome Charaoui's patches permitting showing videos, Paolo Benvenuto's and Pierre Métras's following development.
