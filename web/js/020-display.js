@@ -974,7 +974,7 @@ $(document).ready(function() {
 								anchorXUnits: 'fraction',
 								anchorYUnits: 'fraction',
 								scale: 0.4,
-								src: 'img/ic_place_white_24dp_2x.png',
+								src: 'img/ic_place_void_black_24dp_2x.png',
 								color: 'black'
 							}))
 						});
