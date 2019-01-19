@@ -2688,12 +2688,13 @@ $(document).ready(function() {
 					}
 				} else if (
 					e.keyCode === 83 &&
+					//             s
+					! isMap &&
 					(
 						currentMedia !== null && util.hasGpsData(currentMedia) ||
 						currentMedia === null && currentAlbum.media.some(util.hasGpsData)
 					)
 				) {
-					 	//                    s
 						$(".map-popup-trigger")[0].click();
 						return false;
 				}
