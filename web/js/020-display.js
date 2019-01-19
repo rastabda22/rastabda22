@@ -2599,25 +2599,25 @@ $(document).ready(function() {
 						toggleBottomThumbnails(e);
 						return false;
 					}
-				} else if (e.keyCode === 39 && nextMedia && currentMedia !== null) {
+				} else if (e.keyCode === 39 && nextMedia && currentMedia !== null && ! isMap) {
 					//     arrow right
 					ps.swipeLeftOrDrag(nextMedia);
 					return false;
 				} else if (
 					(e.keyCode === 78 || e.keyCode === 13 || e.keyCode === 32) &&
 					//             n               return               space
-					nextMedia && currentMedia !== null
+					nextMedia && currentMedia !== null && ! isMap
 				) {
 					ps.swipeLeft(nextMedia);
 					return false;
 				} else if (
 					(e.keyCode === 80 || e.keyCode === 8) &&
 					//             p           backspace
-					prevMedia && currentMedia !== null
+					prevMedia && currentMedia !== null && ! isMap
 				) {
 					ps.swipeRight(prevMedia);
 					return false;
-				} else if (e.keyCode === 37 && prevMedia && currentMedia !== null) {
+				} else if (e.keyCode === 37 && prevMedia && currentMedia !== null && ! isMap) {
 					//             arrow left
 					ps.swipeRightOrDrag(prevMedia);
 					return false;
@@ -2639,11 +2639,11 @@ $(document).ready(function() {
 						ps.swipeDown(upLink);
 						return false;
 					}
-				} else if ((e.keyCode === 38 || e.keyCode === 33) && upLink) {
+				} else if ((e.keyCode === 38 || e.keyCode === 33) && upLink && ! isMap) {
 					//                arrow up             page up
 					ps.swipeDownOrDrag(upLink);
 					return false;
-				} else if (e.keyCode === 40 || e.keyCode === 34) {
+				} else if (e.keyCode === 40 || e.keyCode === 34 && ! isMap) {
 					//              arrow down           page down
 				 	if (mediaLink && currentMedia === null) {
 						ps.swipeUp(mediaLink);
@@ -2652,19 +2652,19 @@ $(document).ready(function() {
 						ps.swipeUpOrDrag(mediaLink);
 						return false;
 					}
-				} else if (e.keyCode === 68 && currentMedia !== null) {
+				} else if (e.keyCode === 68 && currentMedia !== null && ! isMap) {
 					//                      d
 					$("#download-link")[0].click();
 					return false;
-				} else if (e.keyCode === 70 && currentMedia !== null) {
+				} else if (e.keyCode === 70 && currentMedia !== null && ! isMap) {
 					//                      f
 					goFullscreen(e);
 					return false;
-				} else if (e.keyCode === 77 && currentMedia !== null) {
+				} else if (e.keyCode === 77 && currentMedia !== null && ! isMap) {
 					//                      m
 					toggleMetadata();
 					return false;
-				} else if (e.keyCode === 79 && currentMedia !== null) {
+				} else if (e.keyCode === 79 && currentMedia !== null && ! isMap) {
 					//                      o
 					$("#original-link")[0].click();
 					return false;
