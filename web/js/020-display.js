@@ -845,7 +845,7 @@ $(document).ready(function() {
 
 		setOptions();
 
-		// activate the map popup trigger
+		// activate the map popup trigger in the title
 		$(".map-popup-trigger").off();
 		$(".map-popup-trigger").click(generateMapFromDefaults);
 
