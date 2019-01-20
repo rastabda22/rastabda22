@@ -914,7 +914,7 @@ $(document).ready(function() {
 			center.long /= pointList.length;
 
 			// default zoom is used for single media or media list with one point
-			var zoom = Options.photo_map_zoom_level;
+			var maxDistance = 100;
 			if (pointList.length > 1) {
 				// calculate the maximum distance from the center
 				// it's needed in order to calculate the zoom level
@@ -922,13 +922,12 @@ $(document).ready(function() {
 				for (i = 0; i < pointList.length; ++i) {
 					maxDistance = Math.max(maxDistance, Math.abs(util.distanceBetweenCoordinatePoints(center, pointList[i])));
 				}
-
-				// calculate the zoom level needed in order to have all the points inside the map
-				// see https://wiki.openstreetmap.org/wiki/Zoom_levels
-				// maximum OSM zoom is 19
-				var earthCircumference = 40075016;
-				zoom = Math.min(19, parseInt(Math.log2(Math.min(windowWidth, windowHeight) * earthCircumference * Math.cos(util.degreesToRadians(center.lat)) / 256 / (maxDistance * 2))));
 			}
+			// calculate the zoom level needed in order to have all the points inside the map
+			// see https://wiki.openstreetmap.org/wiki/Zoom_levels
+			// maximum OSM zoom is 19
+			var earthCircumference = 40075016;
+			zoom = Math.min(19, parseInt(Math.log2(Math.min(windowWidth, windowHeight) * earthCircumference * Math.cos(util.degreesToRadians(center.lat)) / 256 / (maxDistance * 2))));
 
 			$('.map-container').show();
 			var markersList = [];

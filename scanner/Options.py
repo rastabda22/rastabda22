@@ -125,8 +125,8 @@ def get_options():
 	next_level()
 	# pass config values to a dict, because ConfigParser objects are not reliable
 	for option in default_config.options('options'):
-		if option in ('max_verbose',
-				'photo_map_zoom_level',
+		if option in (
+				'max_verbose',
 				'jpeg_quality',
 				'video_crf',
 				'thumb_spacing',
