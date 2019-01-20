@@ -1,4 +1,4 @@
-* A position icon is added to album titles: opens an OpenLayers map with the media markers
+* A position icon is added to album titles: opens an OpenLayers map with the markers for all the media in the album and subalbums
 * The OpenLayers map is used for the single media too
 * All the subalbum names in album view have the position icon that opens the OpenLayers map
 * Removed unnecessary options:
