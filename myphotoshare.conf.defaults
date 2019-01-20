@@ -2,7 +2,7 @@
 #
 # This file is imported through the ConfigParser standard module
 #       boolean values:
-#          1 = yes = = true;
+#          1 = yes = true;
 #          0 = no;
 # Do not use uppercase letters, they won't be detected properly somewhere
 #
@@ -69,7 +69,7 @@ show_faces = false
 
 # Memory profiling (Python >= 3.4)
 # Dumps the memory usage of scanner when indexing is completed.
-debug_memory = true
+debug_memory = false
 
 ###########################################################
 # minifying
