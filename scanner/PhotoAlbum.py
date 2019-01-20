@@ -68,6 +68,7 @@ class Album(object):
 		self.subalbums_list_is_sorted = True
 		self._subdir = ""
 		self.num_media_in_sub_tree = 0
+		self.positions_and_media_in_tree = []
 		self.num_media_in_album = 0
 		self.parent = None
 		self.album_ini = None
@@ -336,7 +337,8 @@ class Album(object):
 						"path": path_to_dict,
 						"cacheBase": subalbum.cache_base,
 						"date": subalbum.date_string,
-						"numMediaInSubTree": subalbum.num_media_in_sub_tree
+						"numMediaInSubTree": subalbum.num_media_in_sub_tree,
+						"positionsAndMediaInTree": subalbum.positions_and_media_in_tree
 					}
 					if hasattr(subalbum, "center"):
 						sub_dict["center"] = subalbum.center
@@ -406,6 +408,7 @@ class Album(object):
 			"physicalPath": path_without_folders_marker,
 			"numMediaInSubTree": self.num_media_in_sub_tree,
 			"numMediaInAlbum": self.num_media_in_album,
+			"positionsAndMediaInTree": self.positions_and_media_in_tree,
 			"jsonVersion": Options.json_version
 		}
 		if hasattr(self, "center"):
