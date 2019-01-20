@@ -726,7 +726,7 @@ $(document).ready(function() {
 				title += "<a class='map-popup-trigger'>" +
 					"<img class='title-img' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
 				"</a>";
-		} else if (title.indexOf(fillInSpan) > -1 && currentAlbum.media.some(util.hasGpsData)) {
+		} else if (title.indexOf(fillInSpan) > -1 && currentAlbum.positionsAndMediaInTree) {
 			title = title.replace(
 				fillInSpan,
 				"<a class='map-popup-trigger'>" +
@@ -862,88 +862,65 @@ $(document).ready(function() {
 	function generateMapFromMedia(ev) {
 		if (util.hasGpsData(ev.data.media)) {
 			ev.preventDefault();
-			generateMap([ev.data.media]);
+			var point =
+				{
+					'long': parseFloat(ev.data.media.metadata.longitude),
+					'lat' : parseFloat(ev.data.media.metadata.latitude),
+					'mediaNameList': [ev.data.media.albumName]
+				};
+			generateMap([point]);
 		}
 	}
 
-		phFl.getAlbum(
-			ev.data.subalbum,
-			function(subalbum){
-				if (subalbum.media.some(util.hasGpsData)) {
-					ev.stopPropagation();
-					ev.preventDefault();
-					generateMap(subalbum.media);
-				} else {
-					$("#warning-no-geolocated-media").stop().fadeIn(200);
-					$("#warning-no-geolocated-media").fadeOut(3000);
-
-				}
-			},
-			die
-		);
 	function generateMapFromSubalbum(ev) {
+		if (ev.data.subalbum.positionsAndMediaInTree) {
+			ev.stopPropagation();
+			ev.preventDefault();
+			generateMap(ev.data.subalbum.positionsAndMediaInTree);
+		} else {
+			$("#warning-no-geolocated-media").stop().fadeIn(200);
+			$("#warning-no-geolocated-media").fadeOut(3000);
+		}
 	}
 
 	function generateMapFromDefaults() {
-		var mediaList = [];
+		var pointList = [];
 
 		if (currentMedia !== null && util.hasGpsData(currentMedia))
-			mediaList = [currentMedia];
-		else if (currentAlbum.media.some(util.hasGpsData))
-			mediaList = currentAlbum.media;
+			pointList = [
+				{
+					'long': parseFloat(currentMedia.metadata.longitude),
+					'lat' : parseFloat(currentMedia.metadata.latitude),
+					'mediaNameList': [currentMedia.albumName]
+				}
+			];
+		else if (currentAlbum.positionsAndMediaInTree)
+			pointList = currentAlbum.positionsAndMediaInTree;
 
-		if (mediaList != [])
-			generateMap(mediaList);
+		if (pointList != [])
+			generateMap(pointList);
 	}
 
-	function generateMap(mediaList) {
-		// build the array of the uniq points
-		var index;
-		if(mediaList) {
-			var arrayPoints = [], point;
-			for (i = 0; i < mediaList.length; ++i) {
-				if (util.hasGpsData(mediaList[i])) {
-					point = {
-						'long': parseFloat(mediaList[i].metadata.longitude),
-						'lat' : parseFloat(mediaList[i].metadata.latitude),
-						'mediaNameList': [mediaList[i].albumName]
-					};
-					if (! arrayPoints.length)
-						arrayPoints.push(point);
-					else {
-						if (
-							arrayPoints.some(
-								function(p, i) {
-									index = i;
-									return p.lat == point.lat && p.long == point.long;
-								}
-							)
-						) {
-							arrayPoints[index].mediaNameList.push(mediaList[i].albumName);
-						} else {
-							arrayPoints.push(point);
-						}
-					}
-				}
-			}
-
+	function generateMap(pointList) {
+		// pointList is an array of uniq points with a list of the media geolocated there
+		if(pointList) {
 			// calculate the center
 			var center = {'lat': 0, 'long': 0};
-			for (i = 0; i < arrayPoints.length; ++i) {
-				center.lat += arrayPoints[i].lat;
-				center.long += arrayPoints[i].long;
+			for (i = 0; i < pointList.length; ++i) {
+				center.lat += pointList[i].lat;
+				center.long += pointList[i].long;
 			}
-			center.lat /= arrayPoints.length;
-			center.long /= arrayPoints.length;
+			center.lat /= pointList.length;
+			center.long /= pointList.length;
 
 			// default zoom is used for single media or media list with one point
 			var zoom = Options.photo_map_zoom_level;
-			if (arrayPoints.length > 1) {
+			if (pointList.length > 1) {
 				// calculate the maximum distance from the center
 				// it's needed in order to calculate the zoom level
 				var maxDistance = 0;
-				for (i = 0; i < arrayPoints.length; ++i) {
-					maxDistance = Math.max(maxDistance, Math.abs(util.distanceBetweenCoordinatePoints(center, arrayPoints[i])));
+				for (i = 0; i < pointList.length; ++i) {
+					maxDistance = Math.max(maxDistance, Math.abs(util.distanceBetweenCoordinatePoints(center, pointList[i])));
 				}
 
 				// calculate the zoom level needed in order to have all the points inside the map
@@ -988,11 +965,11 @@ $(document).ready(function() {
 							}))
 						});
 
-			for (i = 0; i < arrayPoints.length; ++i) {
+			for (i = 0; i < pointList.length; ++i) {
 				// add the marker
 				markersList[i] = new ol.Feature({
-					geometry: new ol.geom.Point(ol.proj.fromLonLat([arrayPoints[i].long, arrayPoints[i].lat])),
-					namesList: arrayPoints[i].mediaNameList
+					geometry: new ol.geom.Point(ol.proj.fromLonLat([pointList[i].long, pointList[i].lat])),
+					namesList: pointList[i].mediaNameList
 				});
 				// apply the style to the marker
 				markersList[i].setStyle(markerStyle);
@@ -2692,7 +2669,7 @@ $(document).ready(function() {
 					! isMap &&
 					(
 						currentMedia !== null && util.hasGpsData(currentMedia) ||
-						currentMedia === null && currentAlbum.media.some(util.hasGpsData)
+						currentMedia === null && currentAlbum.positionsAndMediaInTree
 					)
 				) {
 						$(".map-popup-trigger")[0].click();

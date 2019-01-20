@@ -95,7 +95,7 @@ class TreeWalker:
 		# self.origin_album.read_album_ini() # origin_album is not a physical one, it's the parent of the root physical tree and of the virtual albums
 		self.origin_album.cache_base = "root"
 		next_level()
-		[folders_album, num, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], self.origin_album)
+		[folders_album, num, positions, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], self.origin_album)
 		back_level()
 		if folders_album is None:
 			message("WARNING", "ALBUMS ROOT EXCLUDED BY MARKER FILE", 2)
@@ -109,6 +109,7 @@ class TreeWalker:
 			self.all_json_files.append("all_media.json")
 
 			folders_album.num_media_in_sub_tree = num
+			folders_album.positions_and_media_in_tree = positions
 			self.origin_album.add_album(folders_album)
 			self.all_json_files.append(Options.config['folders_string'] + ".json")
 
@@ -241,6 +242,39 @@ class TreeWalker:
 			self.generate_composite_image(by_date_album, by_date_max_file_date)
 		back_level()
 		return by_date_album
+
+	def add_media_to_position(self, positions, media):
+		# adds the media position and name to the positions list received as second argument
+		position = {
+			'long': media.longitude,
+			'lat' : media.latitude,
+			'media_name_list': [media.media_path]
+		}
+		positions = self.add_position_to_positions(positions, position)
+		return positions
+
+	def add_position_to_positions(self, positions, position):
+		# adds the given position to the positions list received as second argument
+		if positions == []:
+			positions = [position]
+		else:
+			match = False
+			for index, _position in enumerate(positions):
+				if position['lat'] == _position['lat'] and position['long'] == _position['long']:
+					positions[index]['media_name_list'].append(position['media_name_list'][0])
+					match = True
+					break
+			if not match:
+				positions.append(position)
+		return positions
+
+	def merge_positions(self, positions, positions1):
+		# adds the media position and name to the positions list received as second argument
+		for position in positions1:
+			positions = self.add_position_to_positions(positions, position)
+
+		return positions
+
 
 	def generate_by_search_albums(self, origin_album):
 		next_level()
@@ -827,10 +861,11 @@ class TreeWalker:
 				next_album_cache_base = album.generate_cache_base(entry_for_cache_base)
 				indented_message("cache base determined", "", 5)
 				back_level()
-				[next_walked_album, num, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, album)
+				[next_walked_album, num, positions, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, album)
 				if next_walked_album is not None:
 					max_file_date = max(max_file_date, sub_max_file_date)
 					album.num_media_in_sub_tree += num
+					album.positions_and_media_in_tree = self.merge_positions(album.positions_and_media_in_tree, positions)
 					album.add_album(next_walked_album)
 					next_level()
 					message("adding album to search tree...", "", 5)
@@ -972,6 +1007,8 @@ class TreeWalker:
 
 			if media.is_valid:
 				album.num_media_in_sub_tree += 1
+				if media.has_gps_data:
+					album.positions_and_media_in_tree = self.add_media_to_position(album.positions_and_media_in_tree, media)
 				album.num_media_in_album += 1
 				if media.is_video:
 					num_video_in_dir += 1
@@ -1088,7 +1125,7 @@ class TreeWalker:
 
 		report_times(False)
 
-		return [album, album.num_media_in_sub_tree, max_file_date]
+		return [album, album.num_media_in_sub_tree, album.positions_and_media_in_tree, max_file_date]
 
 
 	@staticmethod
