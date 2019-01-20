@@ -936,6 +936,11 @@ $(document).ready(function() {
 			// create the map with the proper center
 			var map = new ol.Map(
 				{
+					controls: ol.control.defaults().extend(
+						[
+							new ol.control.ScaleLine()
+						]
+					),
 					view: new ol.View(
 						{
 							center: ol.proj.fromLonLat([center.long, center.lat]),
