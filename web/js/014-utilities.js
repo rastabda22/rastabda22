@@ -711,7 +711,7 @@
 		var a = Math.sin(d_r_lat / 2) ** 2 + Math.cos(r_lat1) * Math.cos(r_lat2) * Math.sin(d_r_lon / 2) ** 2;
 		var c = 2 * Math.asin(Math.sqrt(a));
 		var earth_radius = 6371000;  // radius of the earth in m
-		var dist = parseInt(earth_radius * c);
+		var dist = earth_radius * c;
 		return dist;
 	};
 
