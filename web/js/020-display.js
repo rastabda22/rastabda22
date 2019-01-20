@@ -859,14 +859,13 @@ $(document).ready(function() {
 		return;
 	}
 
-	function generateMapFromIThMedia(ev) {
+	function generateMapFromMedia(ev) {
 		if (util.hasGpsData(ev.data.media)) {
 			ev.preventDefault();
 			generateMap([ev.data.media]);
 		}
 	}
 
-	function generateMapFromIThSubalbum(ev) {
 		phFl.getAlbum(
 			ev.data.subalbum,
 			function(subalbum){
@@ -882,6 +881,7 @@ $(document).ready(function() {
 			},
 			die
 		);
+	function generateMapFromSubalbum(ev) {
 	}
 
 	function generateMapFromDefaults() {
@@ -1305,7 +1305,7 @@ $(document).ready(function() {
 				// generate the click event for the map for every media
 				for (i = 0; i < currentAlbum.media.length; ++i) {
 					$("#media-map-link-" + i).off();
-					$("#media-map-link-" + i).on('click', {media: currentAlbum.media[i]}, generateMapFromIThMedia);
+					$("#media-map-link-" + i).on('click', {media: currentAlbum.media[i]}, generateMapFromMedia);
 				}
 			}
 			lazyload(document.querySelectorAll(".lazyload-media"));
@@ -1587,7 +1587,7 @@ $(document).ready(function() {
 
 					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
 						$("#subalbum-map-link-" + i).off();
-						$("#subalbum-map-link-" + i).on('click', {subalbum: currentAlbum.subalbums[i]}, generateMapFromIThSubalbum);
+						$("#subalbum-map-link-" + i).on('click', {subalbum: currentAlbum.subalbums[i]}, generateMapFromSubalbum);
 					}
 
 					$("#subalbums").show();
