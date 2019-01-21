@@ -932,6 +932,43 @@ $(document).ready(function() {
 			$('.map-container').show();
 			var markersList = [];
 
+			// add the popup code after the #mapdiv element
+			// this code cannot be put in index.html/php file, because the "new ol.Overlay()" code removes it (why!?!?!?)
+			$("#mapdiv").after(
+				'<div id="popup" class="ol-popup">\n' +
+				'  <a href="#" id="popup-closer" class="ol-popup-closer"></a>\n' +
+				'  <div id="popup-content"></div>\n' +
+				'</div>'
+			);
+
+			/**
+       * Elements that make up the popup.
+       */
+      var container = document.getElementById('popup');
+      var content = document.getElementById('popup-content');
+      var closer = document.getElementById('popup-closer');
+
+      /**
+       * Create an overlay to anchor the popup to the map.
+       */
+      var overlay = new ol.Overlay({
+        element: container,
+        autoPan: true,
+        autoPanAnimation: {
+          duration: 250
+        }
+      });
+
+			/**
+       * Add a click handler to hide the popup.
+       * @return {boolean} Don't follow the href.
+       */
+      closer.onclick = function() {
+        overlay.setPosition(undefined);
+        closer.blur();
+        return false;
+      };
+
 			// create the map with the proper center
 			var map = new ol.Map(
 				{
@@ -946,6 +983,7 @@ $(document).ready(function() {
 							zoom: zoom
 						}
 					),
+					overlays: [overlay],
 					layers: [
 						new ol.layer.Tile(
 							{
@@ -992,6 +1030,36 @@ $(document).ready(function() {
 
 			// add the markers layer to the map
 			map.addLayer(markerVectorLayer);
+
+			/**
+			 * Add a click handler to the map to render the popup.
+			 */
+			map.on('singleclick', function(evt) {
+				var clickedPosition = ol.proj.toLonLat(evt.coordinate);
+				console.log(clickedPosition, pointList);
+				var minimumDistance = false, newMinimumDistance, distance, index;
+				for(var i = 0; i < pointList.length; i ++) {
+					distance = Math.abs(util.distanceBetweenCoordinatePoints({long: clickedPosition[0], lat: clickedPosition[1]}, pointList[i]));
+					console.log(i, distance);
+					if (minimumDistance === false) {
+						minimumDistance = distance;
+						index = i;
+					} else {
+						newMinimumDistance = Math.min(minimumDistance, distance);
+						if (newMinimumDistance != minimumDistance) {
+							minimumDistance = newMinimumDistance;
+							index = i;
+						}
+					}
+				}
+
+				console.log(index, clickedPosition, pointList[index], minimumDistance);
+				var coordinateForPopup = [pointList[index].long, pointList[index].lat];
+				content.innerHTML = '<p>Point # ' + index + '. Coordinates: ' + coordinateForPopup + '</p>';
+				console.log(content.innerHTML);
+				overlay.setPosition(ol.proj.fromLonLat(coordinateForPopup));
+				// overlay.setPosition(coordinateForPopup);
+			});
 		}
 	}
 
