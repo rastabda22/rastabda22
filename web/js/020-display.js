@@ -1055,7 +1055,12 @@ $(document).ready(function() {
 
 				// console.log(index, clickedPosition, pointList[index], minimumDistance);
 				var coordinateForPopup = [pointList[index].long, pointList[index].lat];
-				content.innerHTML = '<p>Point # ' + index + '. Coordinates: ' + coordinateForPopup + '</p>';
+				var text = '<p>Point # ' + index + '. Coordinates: ' + coordinateForPopup + '</p><ul>';
+				for(i = 0; i < pointList[index].media_name_list.length; i ++) {
+					text += '<li>' + pointList[index].media_name_list[i] + '</li>';
+				}
+				text += '</ul>';
+				content.innerHTML = text;
 				overlay.setPosition(ol.proj.fromLonLat(coordinateForPopup));
 				// overlay.setPosition(coordinateForPopup);
 			});
