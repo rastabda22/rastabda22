@@ -1035,10 +1035,10 @@ $(document).ready(function() {
 			 * Add a click handler to the map to render the popup.
 			 */
 			map.on('singleclick', function(evt) {
-				var clickedPosition = ol.proj.toLonLat(evt.coordinate);
 				console.log(clickedPosition, pointList);
+				var clickedPosition = ol.proj.toLonLat(evt.coordinate), i;
 				var minimumDistance = false, newMinimumDistance, distance, index;
-				for(var i = 0; i < pointList.length; i ++) {
+				for(i = 0; i < pointList.length; i ++) {
 					distance = Math.abs(util.distanceBetweenCoordinatePoints({long: clickedPosition[0], lat: clickedPosition[1]}, pointList[i]));
 					console.log(i, distance);
 					if (minimumDistance === false) {
@@ -1438,8 +1438,8 @@ $(document).ready(function() {
 								folderName += util._t("#day") + " " + parseInt(folderArray[3]);
 								folderTitle = folderName;
 						} else if (util.isByGpsCacheBase(currentAlbum.cacheBase)) {
-							var folderName = '';
-							var folderTitle = '';
+							folderName = '';
+							folderTitle = '';
 							if (currentAlbum.subalbums[i].name === '')
 								folderName = util._t('.not-specified');
 							else if (currentAlbum.subalbums[i].hasOwnProperty('altName'))
