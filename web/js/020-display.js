@@ -906,7 +906,7 @@ $(document).ready(function() {
 		if(pointList) {
 			// calculate the center
 			var center = {'lat': 0, 'long': 0};
-			for (i = 0; i < pointList.length; ++i) {
+			for (var i = 0; i < pointList.length; ++i) {
 				center.lat += pointList[i].lat;
 				center.long += pointList[i].long;
 			}
@@ -918,7 +918,7 @@ $(document).ready(function() {
 			if (pointList.length > 1) {
 				// calculate the maximum distance from the center
 				// it's needed in order to calculate the zoom level
-				var maxDistance = 0;
+				maxDistance = 0;
 				for (i = 0; i < pointList.length; ++i) {
 					maxDistance = Math.max(maxDistance, Math.abs(util.distanceBetweenCoordinatePoints(center, pointList[i])));
 				}
@@ -927,7 +927,7 @@ $(document).ready(function() {
 			// see https://wiki.openstreetmap.org/wiki/Zoom_levels
 			// maximum OSM zoom is 19
 			var earthCircumference = 40075016;
-			zoom = Math.min(19, parseInt(Math.log2(Math.min(windowWidth, windowHeight) * earthCircumference * Math.cos(util.degreesToRadians(center.lat)) / 256 / (maxDistance * 2))));
+			var zoom = Math.min(19, parseInt(Math.log2(Math.min(windowWidth, windowHeight) * earthCircumference * Math.cos(util.degreesToRadians(center.lat)) / 256 / (maxDistance * 2))));
 
 			$('.map-container').show();
 			var markersList = [];
@@ -1148,7 +1148,7 @@ $(document).ready(function() {
 		var tooBig = false, isVirtualAlbum = false;
 		var mapLinkIcon, id;
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
-		var array, folderArray, folder, savedSearchSubAlbumHash, savedSearchAlbumHash;
+		var array, folderArray, folder, folderName, folderTitle, savedSearchSubAlbumHash, savedSearchAlbumHash;
 
 		phFl.subalbumIndex = 0;
 		numSubAlbumsReady = 0;
@@ -1218,8 +1218,6 @@ $(document).ready(function() {
 
 					mapLinkIcon = "";
 					if (util.hasGpsData(currentAlbum.media[i])) {
-						var latitude = currentAlbum.media[i].metadata.latitude;
-						var longitude = currentAlbum.media[i].metadata.longitude;
 						mapLinkIcon =
 							"<a id='media-map-link-" + i + "'>" +
 								"<img " +
@@ -2570,7 +2568,7 @@ $(document).ready(function() {
 	/* Event listeners */
 
 	$(document).on('keydown', function(e) {
-		isMap = $('#mapdiv').html() ? 1 : 0;
+		var isMap = $('#mapdiv').html() ? 1 : 0;
 		if (! $("#search-field").is(':focus')) {
 			if (! e.ctrlKey && ! e.shiftKey && ! e.altKey) {
 				if (e.keyCode === 9) {
