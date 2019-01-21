@@ -4,7 +4,7 @@
 * Removed unnecessary options:
   * `map_service`: the js app doesn't use any more those external tools
   * `map_zoom_levels`
-  * `photo_map_zoom_level`: a measure of the map is hardcoded
+ * Option`photo_map_zoom_level` removed and replaced by `photo_map_size`: size in meters of the map for a single photo
 
 ### version 3.6.7 (January 14, 2019)
 
