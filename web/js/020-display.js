@@ -953,7 +953,8 @@ $(document).ready(function() {
 							}
 						)
 					],
-					target: 'mapdiv'
+					target: 'mapdiv',
+					keyboardEventTarget: document
 				}
 			);
 
@@ -2652,8 +2653,8 @@ $(document).ready(function() {
 				} else if (e.keyCode === 107 || e.keyCode === 187) {
 					//             + on keypad                    +
 					if (isMap) {
-						$(".ol-zoom-in")[0].click();
-						return false;
+						// $(".ol-zoom-in")[0].click();
+						// return false;
 					} else if (currentMedia !== null) {
 						ps.pinchIn();
 						return false;
@@ -2661,8 +2662,8 @@ $(document).ready(function() {
 				} else if (e.keyCode === 109 || e.keyCode === 189) {
 					//         - on keypad                    -
 					if (isMap) {
-						$(".ol-zoom-out")[0].click();
-						return false;
+						// $(".ol-zoom-out")[0].click();
+						// return false;
 					} else if (currentMedia !== null) {
 						ps.pinchOut();
 						return false;
