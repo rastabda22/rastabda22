@@ -20,6 +20,12 @@
     z-index:10000;
     color: gray;
 }
+
+@media (max-height: 700px) {
+  .map-container{
+    height: unset !important;
+  }
+}
 .map-container .helper{
     display:inline-block;
     height:100%;
