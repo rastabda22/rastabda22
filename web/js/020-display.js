@@ -1035,12 +1035,12 @@ $(document).ready(function() {
 			 * Add a click handler to the map to render the popup.
 			 */
 			map.on('singleclick', function(evt) {
-				console.log(clickedPosition, pointList);
 				var clickedPosition = ol.proj.toLonLat(evt.coordinate), i;
+				// console.log(clickedPosition, pointList);
 				var minimumDistance = false, newMinimumDistance, distance, index;
 				for(i = 0; i < pointList.length; i ++) {
 					distance = Math.abs(util.distanceBetweenCoordinatePoints({long: clickedPosition[0], lat: clickedPosition[1]}, pointList[i]));
-					console.log(i, distance);
+					// console.log(i, distance);
 					if (minimumDistance === false) {
 						minimumDistance = distance;
 						index = i;
@@ -1053,10 +1053,9 @@ $(document).ready(function() {
 					}
 				}
 
-				console.log(index, clickedPosition, pointList[index], minimumDistance);
+				// console.log(index, clickedPosition, pointList[index], minimumDistance);
 				var coordinateForPopup = [pointList[index].long, pointList[index].lat];
 				content.innerHTML = '<p>Point # ' + index + '. Coordinates: ' + coordinateForPopup + '</p>';
-				console.log(content.innerHTML);
 				overlay.setPosition(ol.proj.fromLonLat(coordinateForPopup));
 				// overlay.setPosition(coordinateForPopup);
 			});
