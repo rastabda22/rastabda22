@@ -2610,7 +2610,7 @@ $(document).ready(function() {
 						// we are in a map: close it
 						$('.map-close-button')[0].click();
 						return false;
-					} else if (ps.getCurrentZoom() > 1) {
+					} else if (ps.getCurrentZoom() > 1 || $(".title").hasClass("hidden-by-pinch")) {
 						ps.pinchOut();
 						return false;
 					} else if (! Modernizr.fullscreen && fullScreenStatus) {

@@ -585,7 +585,6 @@
   			},
         300,
         function() {
-          $("#album-view").removeClass("hidden-by-pinch");
   				window.location.href = dest;
   				// $("#media-view").addClass("hidden");
   				$(mediaContainerSelector).css('top', "");
