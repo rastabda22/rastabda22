@@ -748,7 +748,7 @@ $(document).ready(function() {
 			else
 				beginAt = 0;
 
-			numLinks = (title.substring(beginAt).match(/<a class=/g) || []).length;
+			numLinks = (title.substring(beginAt).match(/<a class='title/g) || []).length;
 			linksToLeave = 1;
 			if (numLinks > linksToLeave) {
 				for (i = 1; i <= numLinks; i ++) {
