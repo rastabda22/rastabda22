@@ -891,7 +891,11 @@ $(document).ready(function() {
 				{
 					'long': parseFloat(currentMedia.metadata.longitude),
 					'lat' : parseFloat(currentMedia.metadata.latitude),
-					'mediaNameList': [currentMedia.albumName]
+					'mediaNameList': [{
+						'name': currentMedia.albumName,
+						'cacheBase': currentMedia.cacheBase,
+						'albumCacheBase': currentAlbum.cacheBase
+					}]
 				}
 			];
 		else if (currentAlbum.positionsAndMediaInTree)
@@ -1055,14 +1059,99 @@ $(document).ready(function() {
 
 				// console.log(index, clickedPosition, pointList[index], minimumDistance);
 				var coordinateForPopup = [pointList[index].long, pointList[index].lat];
-				var text = '<p>Point # ' + index + '. Coordinates: ' + coordinateForPopup + '</p><ul>';
-				for(i = 0; i < pointList[index].media_name_list.length; i ++) {
-					text += '<li>' + pointList[index].media_name_list[i] + '</li>';
+				var text = '';
+				// for(i = 0; i < pointList[index].media_name_list.length; i ++) {
+				for(i = 0; i < 1; i ++) {
+
+					// we must get the media corresponding to the name in the point
+					var mediaName = pointList[index].mediaNameList[i].name;
+					var cacheBase = pointList[index].mediaNameList[i].cacheBase;
+					var albumCacheBase = pointList[index].mediaNameList[i].albumCacheBase;
+
+					phFl.getAlbum(
+						albumCacheBase,
+						function(theAlbum) {
+							var i, index;
+
+							for(i = 0; i < theAlbum.media.length; i ++) {
+								if (theAlbum.media[i].cacheBase == cacheBase) {
+									index = i;
+									break;
+								}
+							}
+							width = theAlbum.media[index].metadata.size[0];
+							height = theAlbum.media[index].metadata.size[1];
+							thumbnailSize = Options.media_thumb_size;
+							thumbHash = chooseThumbnail(theAlbum, theAlbum.media[index], thumbnailSize);
+
+							if (Options.media_thumb_type == "fixed_height") {
+								if (height < Options.media_thumb_size) {
+									thumbHeight = height;
+									thumbWidth = width;
+								} else {
+									thumbHeight = Options.media_thumb_size;
+									thumbWidth = thumbHeight * width / height;
+								}
+								calculatedWidth = thumbWidth;
+							} else if (Options.media_thumb_type == "square") {
+								thumbHeight = thumbnailSize;
+								thumbWidth = thumbnailSize;
+								calculatedWidth = Options.media_thumb_size;
+							}
+							imgTitle = theAlbum.media[index].albumName;
+							calculatedHeight = Options.media_thumb_size;
+
+							calculatedWidth = Math.min(
+								calculatedWidth,
+								($(window).innerWidth() - 2 * parseInt($("#album-view").css("padding")))
+							);
+							calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
+
+							mediaHash = phFl.encodeHash(theAlbum, theAlbum.media[index]);
+
+							imageString =
+									"<div id='popup-image' class='thumb-and-caption-container' style='" +
+												"width: " + calculatedWidth + "px; " +
+											"'>" +
+										"<div class='thumb-container' " + "style='" +
+												// "width: " + calculatedWidth + "px; " +
+												"width: " + calculatedWidth + "px; " +
+												"height: " + calculatedHeight + "px;" +
+											"'>" +
+												"<span class='helper'></span>" +
+												"<img title='" + imgTitle + "' " +
+													"alt='" + util.trimExtension(theAlbum.media[index].name) + "' " +
+													"src='" +  encodeURI(thumbHash) + "' " +
+													"class='thumbnail" + "' " +
+													"height='" + thumbHeight + "' " +
+													"width='" + thumbWidth + "' " +
+													"style='" +
+														 "width: " + calculatedWidth + "px; " +
+														 "height: " + calculatedHeight + "px;" +
+														 "'" +
+													"/>" +
+										"</div>" +
+										"<div class='media-caption'>" +
+											"<span>" +
+											theAlbum.media[index].name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+											"</span>" +
+										"</div>" +
+									"</div>";
+							image = $(imageString);
+							image.get(0).media = theAlbum.media[index];
+
+							content.innerHTML = imageString;
+							overlay.setPosition(ol.proj.fromLonLat(coordinateForPopup));
+							$("#popup-image").on('click', function(ev) {
+								$('#popup-closer')[0].click();
+								$('#popup #popup-content').html("");
+								$('.map-close-button')[0].click();
+								window.location.href = mediaHash;
+							})
+						},
+						die
+					);
 				}
-				text += '</ul>';
-				content.innerHTML = text;
-				overlay.setPosition(ol.proj.fromLonLat(coordinateForPopup));
-				// overlay.setPosition(coordinateForPopup);
 			});
 		}
 	}
@@ -2641,6 +2730,7 @@ $(document).ready(function() {
 
 	$(document).on('keydown', function(e) {
 		var isMap = $('#mapdiv').html() ? 1 : 0;
+		var isPopup = $('#popup #popup-content').html() ? 1 : 0;
 		if (! $("#search-field").is(':focus')) {
 			if (! e.ctrlKey && ! e.shiftKey && ! e.altKey) {
 				if (e.keyCode === 9) {
@@ -2677,8 +2767,13 @@ $(document).ready(function() {
 					//                    esc
 					// warning: modern browsers will always exit fullscreen when pressing esc
 					if (isMap) {
-						// we are in a map: close it
-						$('.map-close-button')[0].click();
+						if (isPopup) {
+							// the popup is there: close it
+							$('#popup-closer')[0].click();
+							$('#popup #popup-content').html("");
+						} else
+							// we are in a map: close it
+							$('.map-close-button')[0].click();
 						return false;
 					} else if (ps.getCurrentZoom() > 1 || $(".title").hasClass("hidden-by-pinch")) {
 						ps.pinchOut();
