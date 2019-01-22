@@ -1015,8 +1015,7 @@ $(document).ready(function() {
 			for (i = 0; i < pointList.length; ++i) {
 				// add the marker
 				markersList[i] = new ol.Feature({
-					geometry: new ol.geom.Point(ol.proj.fromLonLat([pointList[i].long, pointList[i].lat])),
-					namesList: pointList[i].mediaNameList
+					geometry: new ol.geom.Point(ol.proj.fromLonLat([pointList[i].long, pointList[i].lat]))
 				});
 				// apply the style to the marker
 				markersList[i].setStyle(markerStyle);
