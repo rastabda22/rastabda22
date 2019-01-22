@@ -224,3 +224,7 @@
 #popup-content .media-caption {
   color: black;
 }
+
+#popup-content .thumb-and-caption-container {
+  display: table-cell;
+}
