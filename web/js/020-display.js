@@ -1044,6 +1044,8 @@ $(document).ready(function() {
 			map.on('singleclick', function(evt) {
 				var clickedPosition = ol.proj.toLonLat(evt.coordinate), i;
 				// console.log(clickedPosition, pointList);
+
+				// decide what point is to be used: the nearest to the clicked position
 				var minimumDistance = false, newMinimumDistance, distance, index;
 				for(i = 0; i < pointList.length; i ++) {
 					distance = Math.abs(util.distanceBetweenCoordinatePoints({long: clickedPosition[0], lat: clickedPosition[1]}, pointList[i]));
