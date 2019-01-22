@@ -248,7 +248,11 @@ class TreeWalker:
 		position = {
 			'long': media.longitude,
 			'lat' : media.latitude,
-			'media_name_list': [media.media_path]
+			'mediaNameList': [{
+				'name': media.media_path,
+				'cacheBase': media.cache_base,
+				'albumCacheBase': media.album.cache_base
+			}]
 		}
 		positions = self.add_position_to_positions(positions, position)
 		return positions
@@ -261,7 +265,7 @@ class TreeWalker:
 			match = False
 			for index, _position in enumerate(positions):
 				if position['lat'] == _position['lat'] and position['long'] == _position['long']:
-					positions[index]['media_name_list'].append(position['media_name_list'][0])
+					positions[index]['mediaNameList'].extend(position['mediaNameList'])
 					match = True
 					break
 			if not match:
