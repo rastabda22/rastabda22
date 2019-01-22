@@ -866,7 +866,11 @@ $(document).ready(function() {
 				{
 					'long': parseFloat(ev.data.media.metadata.longitude),
 					'lat' : parseFloat(ev.data.media.metadata.latitude),
-					'mediaNameList': [ev.data.media.albumName]
+					'mediaNameList': [{
+						'name': ev.data.media.albumName,
+						'cacheBase': ev.data.media.cacheBase,
+						'albumCacheBase': ev.data.album.cacheBase
+					}]
 				};
 			generateMap([point]);
 		}
