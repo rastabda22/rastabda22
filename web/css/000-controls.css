@@ -56,7 +56,7 @@ img.thumbnail-img {
 	padding-left: .5em;
 }
 
-.title-anchor, .title-no-anchor, .gps-folder img {
+.title-anchor, .title-no-anchor, .folder-name img {
 	padding: 0 .5em;
 }
 
@@ -201,9 +201,13 @@ a.title-anchor.mobile {
 }
 
 #thumbs .thumbnail-map-link {
-	opacity: .8;
+	opacity: .5;
 	top: 5px;
 	right: 5px;
+}
+
+#thumbs .thumbnail-map-link:hover {
+	opacity: 1;
 }
 
 .album-button-random-media-link:hover, .thumbnail-map-link:hover {
