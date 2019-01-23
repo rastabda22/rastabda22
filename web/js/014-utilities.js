@@ -90,6 +90,7 @@
 		}
 		return oldPoints;
 	}
+	
 	Utilities.prototype.addMediaToPoints = function(oldPoints, newMedia) {
 		var newPoint = {
 			'long': parseFloat(newMedia.metadata.longitude),
