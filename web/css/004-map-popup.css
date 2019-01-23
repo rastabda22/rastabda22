@@ -223,6 +223,8 @@
 
 #popup-content .media-caption {
   color: black;
+}
+#popup-content {
   overflow: scroll;
 }
 
