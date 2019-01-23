@@ -203,18 +203,20 @@ class TreeWalker:
 					day_max_file_date = None
 					month_album.add_album(day_album)
 					for single_media in media:
-						day_album.positions_and_media_in_tree = self.add_media_to_position(day_album.positions_and_media_in_tree, single_media)
 						single_media.day_album_cache_base = day_album.cache_base
 						day_album.add_media(single_media)
 						day_album.num_media_in_sub_tree += 1
 						day_album.num_media_in_album += 1
-						month_album.positions_and_media_in_tree = self.add_media_to_position(month_album.positions_and_media_in_tree, single_media)
 						month_album.add_media(single_media)
 						month_album.num_media_in_sub_tree += 1
-						year_album.positions_and_media_in_tree = self.add_media_to_position(year_album.positions_and_media_in_tree, single_media)
 						year_album.add_media(single_media)
 						year_album.num_media_in_sub_tree += 1
-						by_date_album.positions_and_media_in_tree = self.add_media_to_position(by_date_album.positions_and_media_in_tree, single_media)
+						if has_gps_data(single_media):
+							day_album.positions_and_media_in_tree = self.add_media_to_position(day_album.positions_and_media_in_tree, single_media)
+							month_album.positions_and_media_in_tree = self.add_media_to_position(month_album.positions_and_media_in_tree, single_media)
+							year_album.positions_and_media_in_tree = self.add_media_to_position(year_album.positions_and_media_in_tree, single_media)
+							by_date_album.positions_and_media_in_tree = self.add_media_to_position(by_date_album.positions_and_media_in_tree, single_media)
+
 						by_date_album.add_media(single_media)
 						by_date_album.num_media_in_sub_tree += 1
 						single_media_date = max(single_media.datetime_file, single_media.datetime_dir)
