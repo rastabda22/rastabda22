@@ -1064,8 +1064,9 @@ $(document).ready(function() {
 					}
 				}
 
-				// how many thumbnail may we have in a line?
-				var maxThumbnailsInRow = parseInt($("#mapdiv").width() / Options.media_thumb_size);
+				// how much space is available horizontally for the thumbnails?
+				var maxWidthForThumbnails = parseInt($("#mapdiv").width() * 0.8);
+				var usedWidthForThumbnails = 0;
 
 				// reset the thumbnails
 				content.innerHTML = '';
@@ -1154,9 +1155,13 @@ $(document).ready(function() {
 							image = $(imageString);
 							image.get(0).media = theAlbum.media[indexInAlbum];
 
-							content.innerHTML += imageString;
-							if (i % maxThumbnailsInRow == maxThumbnailsInRow - 1)
-								content.innerHTML += '<br />';
+							if (usedWidthForThumbnails + calculatedWidth > maxWidthForThumbnails) {
+								content.innerHTML += '<br />' + imageString;
+								usedWidthForThumbnails = calculatedWidth;
+							} else {
+								content.innerHTML += imageString;
+								usedWidthForThumbnails += calculatedWidth;
+							}
 
 							imagesGot += 1;
 							if (imagesGot == pointList[index].mediaNameList.length) {
