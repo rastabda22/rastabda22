@@ -304,6 +304,7 @@ class TreeWalker:
 			word_max_file_date = None
 			by_search_album.add_album(word_album)
 			for single_media in media_and_album_words["media_words"]:
+				word_album.positions_and_media_in_tree = self.add_media_to_position(word_album.positions_and_media_in_tree, single_media)
 				word_album.add_media(single_media)
 				word_album.num_media_in_sub_tree += 1
 				word_album.num_media_in_album += 1

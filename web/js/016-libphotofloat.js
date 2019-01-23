@@ -368,6 +368,7 @@
 					$("ul#right-menu li#any-word").addClass("dimmed");
 
 				var searchResultsAlbumFinal = {};
+				searchResultsAlbumFinal.positionsAndMediaInTree = [];
 				searchResultsAlbumFinal.media = [];
 				searchResultsAlbumFinal.subalbums = [];
 				searchResultsAlbumFinal.numMediaInAlbum = 0;
@@ -664,13 +665,16 @@
 											// add the parent
 											for (indexMedia = 0; indexMedia < searchResultsAlbumFinal.media.length; indexMedia ++) {
 												searchResultsAlbumFinal.media[indexMedia].parent = searchResultsAlbumFinal;
+												searchResultsAlbumFinal.positionsAndMediaInTree = util.addMediaToPoints(searchResultsAlbumFinal.positionsAndMediaInTree, searchResultsAlbumFinal.media[indexMedia]);
 											}
 
 											searchResultsAlbumFinal.numMediaInAlbum = searchResultsAlbumFinal.media.length;
 
 											searchResultsAlbumFinal.numMediaInSubTree = searchResultsAlbumFinal.media.length;
-											for (var i = 0; i < searchResultsAlbumFinal.subalbums.length; i ++)
+											for (var i = 0; i < searchResultsAlbumFinal.subalbums.length; i ++) {
 												searchResultsAlbumFinal.numMediaInSubTree += searchResultsAlbumFinal.subalbums[i].numMediaInSubTree;
+												searchResultsAlbumFinal.positionsAndMediaInTree = util.mergePoints(searchResultsAlbumFinal.positionsAndMediaInTree, searchResultsAlbumFinal.subalbums[i].positionsAndMediaInTree);
+											}
 
 											if (! self.albumCache.hasOwnProperty(searchResultsAlbumFinal.cacheBase))
 												self.albumCache[searchResultsAlbumFinal.cacheBase] = searchResultsAlbumFinal;

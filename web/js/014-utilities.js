@@ -84,6 +84,36 @@
 		});
 	};
 
+	Utilities.prototype.mergePoints = function(oldPoints, newPoints) {
+		for (var i = 0; i < newPoints.length; i ++) {
+			oldPoints = this.addPointToPoints(oldPoints, newPoints[i]);
+		}
+		return oldPoints;
+	}
+	Utilities.prototype.addMediaToPoints = function(oldPoints, newMedia) {
+		var newPoint = {
+			'long': parseFloat(newMedia.metadata.longitude),
+			'lat' : parseFloat(newMedia.metadata.latitude),
+			'mediaNameList': [{
+				'name': newMedia.albumName,
+				'cacheBase': newMedia.cacheBase,
+				'albumCacheBase': newMedia.parent.cacheBase
+			}]
+		};
+		return this.addPointToPoints(oldPoints, newPoint);
+	}
+
+	Utilities.prototype.addPointToPoints = function(oldPoints, newPoint) {
+		for (var i = 0; i < oldPoints.length; i ++) {
+			if (newPoint.long == oldPoints[i].long && newPoint.lat == oldPoints[i].lat) {
+				oldPoints[i].mediaNameList.push(newPoint.mediaNameList[0]);
+				return oldPoints;
+			}
+		}
+		oldPoints.push(newPoint);
+		return oldPoints;
+	}
+
 	Utilities.prototype.union = function(a, b) {
 		var self = this;
 		if (a === [])

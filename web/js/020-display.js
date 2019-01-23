@@ -593,6 +593,8 @@ $(document).ready(function() {
 				title += raquo;
 			}
 
+			title += fillInSpan;
+
 			if (
 				components.length > 2 &&
 				(media === null && ! util.isAlbumWithOneMedia(currentAlbum)) &&
