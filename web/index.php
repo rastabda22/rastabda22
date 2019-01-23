@@ -213,7 +213,7 @@
 	<div class="map-container">
 		<span class="helper"></span>
 		<div>
-			<div class="map-close-button">X</div>
+			<div class="map-close-button"></div>
 			<div id="mapdiv"></div>
 		</div>
 	</div>

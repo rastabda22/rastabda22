@@ -18,7 +18,6 @@
     top:0;
     width:100%;
     z-index:10000;
-    color: gray;
 }
 
 @media (max-height: 700px) {
@@ -50,7 +49,7 @@
     height: 99%; */
     color: black !important;
 }
-.map-close-button {
+.map-close-button, .ol-popup-closer {
     background-color: #fff;
     border: 3px solid #999;
     border-radius: 50px;
@@ -66,9 +65,16 @@
     width: 30px;
     height: 30px;
     text-align: center;
+    color: gray;
 }
-.map-close-button:hover {
+
+.map-close-button:after, .ol-popup-closer:after {
+  content: "✖";
+}
+
+.map-close-button:hover, a.ol-popup-closer:hover {
     background-color: #ccc;
+    color: gray;
 }
 
 #mapdiv {
@@ -170,6 +176,7 @@
 .ol-zoom {
   width: 30px;
   margin: auto;
+  opacity: 0.6;
 }
 .ol-zoom-in, .ol-zoom-out {
   padding: 2px;
@@ -189,6 +196,7 @@
   left: -50px;
   /* min-width: 280px; */
 }
+
 .ol-popup:after, .ol-popup:before {
   top: 100%;
   border: solid transparent;
@@ -198,36 +206,28 @@
   position: absolute;
   pointer-events: none;
 }
+
 .ol-popup:after {
   border-top-color: white;
   border-width: 10px;
   left: 48px;
   margin-left: -10px;
 }
+
 .ol-popup:before {
   border-top-color: #cccccc;
   border-width: 11px;
   left: 48px;
   margin-left: -11px;
 }
-.ol-popup-closer {
-  text-decoration: none;
-  position: absolute;
-  top: 2px;
-  right: 8px;
-  color: gray;
-}
-.ol-popup-closer:after {
-  content: "✖";
-}
 
 #popup-content .media-caption {
   color: black;
 }
 
-/* #popup-content {
-  overflow: scroll;
-} */
+#popup-content {
+  overflow-y: auto;
+}
 
 #popup-content .thumb-and-caption-container {
   display: table-cell;
