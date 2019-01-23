@@ -211,7 +211,7 @@ class TreeWalker:
 						month_album.num_media_in_sub_tree += 1
 						year_album.add_media(single_media)
 						year_album.num_media_in_sub_tree += 1
-						if has_gps_data(single_media):
+						if single_media.has_gps_data:
 							day_album.positions_and_media_in_tree = self.add_media_to_position(day_album.positions_and_media_in_tree, single_media)
 							month_album.positions_and_media_in_tree = self.add_media_to_position(month_album.positions_and_media_in_tree, single_media)
 							year_album.positions_and_media_in_tree = self.add_media_to_position(year_album.positions_and_media_in_tree, single_media)
