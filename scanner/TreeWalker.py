@@ -720,12 +720,12 @@ class TreeWalker:
 		if not os.access(absolute_path, os.R_OK | os.X_OK):
 			message("access denied to directory", os.path.basename(absolute_path), 1)
 			back_level()
-			return [None, 0, None]
+			return [None, 0, [], None]
 		listdir = os.listdir(absolute_path)
 		if Options.config['exclude_tree_marker'] in listdir:
 			indented_message("excluded with subfolders by marker file", Options.config['exclude_tree_marker'], 4)
 			back_level()
-			return [None, 0, None]
+			return [None, 0, [], None]
 		skip_files = False
 		if Options.config['exclude_files_marker'] in listdir:
 			next_level()
