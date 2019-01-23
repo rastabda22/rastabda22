@@ -224,9 +224,10 @@
 #popup-content .media-caption {
   color: black;
 }
-#popup-content {
+
+/* #popup-content {
   overflow: scroll;
-}
+} */
 
 #popup-content .thumb-and-caption-container {
   display: table-cell;
