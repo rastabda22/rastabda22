@@ -1172,6 +1172,7 @@ $(document).ready(function() {
 								// all the images have been fetched and put in DOM: we can generate the popup,
 								// but before set a css value: position: absolute make the popup to be shown in a wrong position
 								$("#mapdiv .ol-overlaycontainer-stopevent").css("position", "unset");
+								$("#popup-content").css("max-height", parseInt(windowHeight * 0.8)).css("overflow-y", "scroll");
 								overlay.setPosition(ol.proj.fromLonLat(coordinateForPopup));
 
 								// add the click events to every image
