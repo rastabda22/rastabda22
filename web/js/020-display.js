@@ -950,6 +950,8 @@ $(document).ready(function() {
 				'  <div id="popup-content"></div>\n' +
 				'</div>'
 			);
+			// set this correct value, when showing the popup it was changed in order to show the popup in the right position
+			$("#mapdiv .ol-overlaycontainer-stopevent").css("position", "absolute");
 
 			/**
        * Elements that make up the popup.
@@ -975,6 +977,8 @@ $(document).ready(function() {
        */
       closer.onclick = function() {
         overlay.setPosition(undefined);
+				// set this correct value, when showing the popup it was changed in order to show the popup in the right position
+				$("#mapdiv .ol-overlaycontainer-stopevent").css("position", "absolute");
         closer.blur();
         return false;
       };
@@ -1165,8 +1169,12 @@ $(document).ready(function() {
 
 							imagesGot += 1;
 							if (imagesGot == pointList[index].mediaNameList.length) {
-								// all the images have been fetched and put in DOM
+								// all the images have been fetched and put in DOM: we can generate the popup,
+								// but before set a css value: position: absolute make the popup to be shown in a wrong position
+								$("#mapdiv .ol-overlaycontainer-stopevent").css("position", "unset");
 								overlay.setPosition(ol.proj.fromLonLat(coordinateForPopup));
+
+								// add the click events to every image
 								for(var ii = 0; ii < pointList[index].mediaNameList.length; ii ++) {
 									$("#popup-image-" + ii).on('click', {ii: ii}, function(ev) {
 										$('#popup-closer')[0].click();
