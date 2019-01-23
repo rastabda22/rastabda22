@@ -86,7 +86,7 @@
   color: black;
 }
 #mapdiv .ol-overlaycontainer-stopevent {
-  /* position: absolute; */
+  position: absolute;
   bottom: 1%;
   right: 1%;
 }
