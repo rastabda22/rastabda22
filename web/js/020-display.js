@@ -947,6 +947,7 @@ $(document).ready(function() {
 			$("#mapdiv").after(
 				'<div id="popup" class="ol-popup">\n' +
 				'  <a href="#" id="popup-closer" class="ol-popup-closer"></a>\n' +
+				'  <a href="#" id="popup-mover" class="ol-popup-mover"></a>\n' +
 				'  <div id="popup-content"></div>\n' +
 				'</div>'
 			);
@@ -959,6 +960,7 @@ $(document).ready(function() {
       var container = document.getElementById('popup');
       var content = document.getElementById('popup-content');
       var closer = document.getElementById('popup-closer');
+      var mover = document.getElementById('popup-mover');
 
       /**
        * Create an overlay to anchor the popup to the map.
@@ -980,6 +982,21 @@ $(document).ready(function() {
 				// set this correct value, when showing the popup it was changed in order to show the popup in the right position
 				$("#mapdiv .ol-overlaycontainer-stopevent").css("position", "absolute");
         closer.blur();
+        return false;
+      };
+
+      mover.onclick = function() {
+				var currentIndex = Options.available_map_popup_position.findIndex(
+					function(orientation) {
+						return $(".ol-popup").hasClass(orientation);
+					}
+				);
+				var nextIndex = currentIndex + 1;
+				if (currentIndex == Options.available_map_popup_position.length - 1)
+					nextIndex = 0;
+				$(".ol-popup").
+					removeClass(Options.available_map_popup_position[currentIndex]).
+					addClass(Options.available_map_popup_position[nextIndex]);
         return false;
       };
 
@@ -1172,7 +1189,16 @@ $(document).ready(function() {
 								// all the images have been fetched and put in DOM: we can generate the popup,
 								// but before set a css value: position: absolute make the popup to be shown in a wrong position
 								$("#mapdiv .ol-overlaycontainer-stopevent").css("position", "unset");
-								$("#popup-content").css("max-height", parseInt(windowHeight * 0.8)).css("overflow-y", "auto");
+								$("#popup-content").css("max-height", parseInt(windowHeight * 0.8));
+								if (
+									Options.available_map_popup_position.every(
+										function(orientation) {
+											return ! $(".ol-popup").hasClass(orientation);
+										}
+									)
+								) {
+									$(".ol-popup").addClass(Options.default_map_popup_position);
+								}
 								overlay.setPosition(ol.proj.fromLonLat(coordinateForPopup));
 
 								// add the click events to every image
