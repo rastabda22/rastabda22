@@ -55,7 +55,7 @@ thumbnail_types_and_sizes_list = None
 config['cv2_installed'] = True
 face_cascade = None
 eye_cascade = None
-config['available_map_popup_position'] = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW' ]
+config['available_map_popup_positions'] = ['NE','SE', 'SW', 'NW' ]
 
 # set this variable to a new value (previously was a number, now it may include letters) whenever the json files structure changes, it can be the app version
 # json_version = 0 is debug mode: json files are always considered invalid

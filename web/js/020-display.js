@@ -986,17 +986,17 @@ $(document).ready(function() {
       };
 
       mover.onclick = function() {
-				var currentIndex = Options.available_map_popup_position.findIndex(
+				var currentIndex = Options.available_map_popup_positions.findIndex(
 					function(orientation) {
 						return $(".ol-popup").hasClass(orientation);
 					}
 				);
 				var nextIndex = currentIndex + 1;
-				if (currentIndex == Options.available_map_popup_position.length - 1)
+				if (currentIndex == Options.available_map_popup_positions.length - 1)
 					nextIndex = 0;
 				$(".ol-popup").
-					removeClass(Options.available_map_popup_position[currentIndex]).
-					addClass(Options.available_map_popup_position[nextIndex]);
+					removeClass(Options.available_map_popup_positions[currentIndex]).
+					addClass(Options.available_map_popup_positions[nextIndex]);
         return false;
       };
 
@@ -1034,7 +1034,7 @@ $(document).ready(function() {
 								anchorXUnits: 'fraction',
 								anchorYUnits: 'fraction',
 								scale: 0.4,
-								src: 'img/ic_place_void_black_24dp_2x.png'
+								src: 'img/red_marker_31x44.png'
 								// color: 'red'
 							}))
 						});
@@ -1191,7 +1191,7 @@ $(document).ready(function() {
 								$("#mapdiv .ol-overlaycontainer-stopevent").css("position", "unset");
 								$("#popup-content").css("max-height", parseInt(windowHeight * 0.8));
 								if (
-									Options.available_map_popup_position.every(
+									Options.available_map_popup_positions.every(
 										function(orientation) {
 											return ! $(".ol-popup").hasClass(orientation);
 										}
