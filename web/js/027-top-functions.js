@@ -1095,7 +1095,7 @@
 			f.focusSearchField();
 		}
 		return false;
-	}
+	};
 
 
 	TopFunctions.prototype.sortMediaByName = function(ev) {
@@ -1111,7 +1111,7 @@
 			f.focusSearchField();
 		}
 		return false;
-	}
+	};
 
 	TopFunctions.prototype.sortMediaReverse = function(ev) {
 		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
@@ -1126,7 +1126,7 @@
 			f.focusSearchField();
 		}
 		return false;
-	}
+	};
 
 	TopFunctions.prototype.toggleTitle = function(ev) {
 		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
@@ -1148,7 +1148,7 @@
 			f.focusSearchField();
 		}
 		return false;
-	}
+	};
 
 	TopFunctions.prototype.toggleBottomThumbnails = function(ev) {
 		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
@@ -1170,7 +1170,7 @@
 			f.focusSearchField();
 		}
 		return false;
-	}
+	};
 
 	TopFunctions.prototype.toggleSlideMode = function(ev) {
 		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
@@ -1181,7 +1181,7 @@
 			f.focusSearchField();
 		}
 		return false;
-	}
+	};
 
 	TopFunctions.prototype.toggleSpacing = function(ev) {
 		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
@@ -1195,7 +1195,7 @@
 			f.focusSearchField();
 		}
 		return false;
-	}
+	};
 
 	TopFunctions.prototype.toggleAlbumNames = function(ev) {
 		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
@@ -1206,7 +1206,7 @@
 			f.focusSearchField();
 		}
 		return false;
-	}
+	};
 
 	TopFunctions.prototype.toggleMediaCount = function(ev) {
 		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
@@ -1217,7 +1217,7 @@
 			f.focusSearchField();
 		}
 		return false;
-	}
+	};
 
 	TopFunctions.prototype.toggleMediaNames = function(ev) {
 		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
@@ -1228,7 +1228,7 @@
 			f.focusSearchField();
 		}
 		return false;
-	}
+	};
 
 	TopFunctions.prototype.toggleAlbumsSquare = function(ev) {
 		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
@@ -1239,7 +1239,7 @@
 			f.focusSearchField();
 		}
 		return false;
-	}
+	};
 
 	TopFunctions.prototype.toggleMediaSquare = function(ev) {
 		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
@@ -1250,7 +1250,7 @@
 			f.focusSearchField();
 		}
 		return false;
-	}
+	};
 
 
   TopFunctions.showAlbum = function(populate) {

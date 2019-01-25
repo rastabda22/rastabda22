@@ -89,7 +89,7 @@
 			oldPoints = this.addPointToPoints(oldPoints, newPoints[i]);
 		}
 		return oldPoints;
-	}
+	};
 
 	Utilities.prototype.addMediaToPoints = function(oldPoints, newMedia) {
 		var newPoint = {
@@ -102,7 +102,7 @@
 			}]
 		};
 		return this.addPointToPoints(oldPoints, newPoint);
-	}
+	};
 
 	Utilities.prototype.addPointToPoints = function(oldPoints, newPoint) {
 		for (var i = 0; i < oldPoints.length; i ++) {
@@ -113,7 +113,7 @@
 		}
 		oldPoints.push(newPoint);
 		return oldPoints;
-	}
+	};
 
 	Utilities.prototype.union = function(a, b) {
 		var self = this;
@@ -832,16 +832,16 @@
 		}
 		// $("#error-overlay").fadeTo(500, 0.8);
 		$("body, html").css("overflow", "hidden");
-	}
+	};
 
 	Utilities.prototype.undie = function() {
 		$(".error, #error-overlay, #auth-text", ".search-failed").fadeOut(500);
 		$("body, html").css("overflow", "auto");
-	}
+	};
 
 	Utilities.prototype.chooseThumbnail	= function(album, media, thumbnailSize) {
-			return this.mediaPath(album, media, thumbnailSize);
-		}
+		return this.mediaPath(album, media, thumbnailSize);
+	};
 
 	/* make static methods callable as member functions */
 	Utilities.prototype.chooseReducedPhoto = Utilities.chooseReducedPhoto;

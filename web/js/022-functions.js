@@ -521,7 +521,7 @@
 		ps.initialize();
 		ps.setPinchButtonsPosition(containerHeight, containerWidth);
 		util.correctPrevNextPosition();
-	}
+	};
 
 	Functions.getBooleanCookie = function(key) {
 		var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
@@ -531,13 +531,13 @@
 			return true;
 		else
 			return false;
-	}
+	};
 
 	Functions.expireInterval = function() {
 		// returns the expire interval for the cookies, in seconds
 		// = 1000 days, ~ 3 years
 		return 1000 * 24 * 60 * 60;
-	}
+	};
 
 	Functions.setBooleanCookie = function(key, value) {
 		var expires = new Date();
@@ -548,7 +548,7 @@
 			value = 0;
 		document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
 		return true;
-	}
+	};
 
 	Functions.getCookie = function(key) {
 		var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
@@ -556,20 +556,22 @@
 			return null;
 		else
 			return keyValue[2];
-	}
+	};
+
 	Functions.getNumberCookie = function(key) {
 		var keyValue = Functions.getCookie(key);
 		if (keyValue === null)
 			return null;
 		else
 			return parseFloat(keyValue);
-	}
+	};
+
 	Functions.prototype.setCookie = function(key, value) {
 		var expires = new Date();
 		expires.setTime(expires.getTime() + Functions.expireInterval() * 1000);
 		document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
 		return true;
-	}
+	};
 
 	// this function refer to the need that the html showed be sorted
 	Functions.needAlbumNameSort = function() {
@@ -578,28 +580,31 @@
 			! currentAlbum.albumNameSort &&
 			Functions.getBooleanCookie("albumNameSortRequested");
 		return result;
-	}
+	};
+
 	Functions.needAlbumDateSort = function() {
 		var result =
 			currentAlbum.subalbums.length &&
 			currentAlbum.albumNameSort &&
 			! Functions.getBooleanCookie("albumNameSortRequested");
 		return result;
-	}
+	};
+
 	Functions.needAlbumDateReverseSort = function() {
 		var result =
 			currentAlbum.subalbums.length &&
 			! currentAlbum.albumNameSort &&
 			currentAlbum.albumDateReverseSort !== Functions.getBooleanCookie("albumDateReverseSortRequested");
 		return result;
-	}
+	};
+
 	Functions.needAlbumNameReverseSort = function() {
 		var result =
 			currentAlbum.subalbums.length &&
 			currentAlbum.albumNameSort &&
 			currentAlbum.albumNameReverseSort !== Functions.getBooleanCookie("albumNameReverseSortRequested");
 		return result;
-	}
+	};
 
 	Functions.needMediaNameSort = function() {
 		var result =
@@ -607,28 +612,32 @@
 			! currentAlbum.mediaNameSort &&
 			Functions.getBooleanCookie("mediaNameSortRequested");
 		return result;
-	}
+	};
+
 	Functions.needMediaDateSort = function() {
 		var result =
 			currentAlbum.media.length &&
 			currentAlbum.mediaNameSort &&
 			! Functions.getBooleanCookie("mediaNameSortRequested");
 		return result;
-	}
+	};
+
 	Functions.needMediaDateReverseSort = function() {
 		var result =
 			currentAlbum.media.length &&
 			! currentAlbum.mediaNameSort &&
 			currentAlbum.mediaDateReverseSort !== Functions.getBooleanCookie("mediaDateReverseSortRequested");
 		return result;
-	}
+	};
+
 	Functions.needMediaNameReverseSort = function() {
 		var result =
 			currentAlbum.media.length &&
 			currentAlbum.mediaNameSort &&
 			currentAlbum.mediaNameReverseSort !== Functions.getBooleanCookie("mediaNameReverseSortRequested");
 		return result;
-	}
+	};
+
 
 	// this function is needed in order to let this point to the correct value in phFl.parseHash
 	Functions.parseHash = function(hash, callback, error) {
@@ -652,7 +661,7 @@
 			Functions.getOptions(hash, callback, error);
 		}
 		// phFl.parseHash(hash, callback, error);
-	}
+	};
 
 	Functions.getOptions = function(hash, callback, error) {
 		var ajaxOptions = {
@@ -857,7 +866,7 @@
 					$(this).hide();
 				});
 		}
-	}
+	};
 
 	Functions.prototype.toggleMenu = function(ev) {
 		$("ul#right-menu").toggleClass("expand");
