@@ -88,8 +88,8 @@ $(document).ready(function() {
 					//            tab
 					e.preventDefault();
 					if (ps.getCurrentZoom() == 1) {
-						toggleTitle(e);
-						toggleBottomThumbnails(e);
+						f.toggleTitle(e);
+						f.toggleBottomThumbnails(e);
 						return false;
 					}
 				} else if (e.keyCode === 39 && nextMedia && currentMedia !== null && ! isMap) {
@@ -311,21 +311,21 @@ $(document).ready(function() {
 	// }
 
 	// subalbums
-	$("li.album-sort.by-date").on('click', f.sortAlbumsByDate);
-	$("li.album-sort.by-name").on('click', f.sortAlbumsByName);
-	$("li.album-sort.sort-reverse").on('click', f.sortAlbumsReverse);
-	$("li.media-sort.by-date").on('click', f.sortMediaByDate);
-	$("li.media-sort.by-name").on('click', f.sortMediaByName);
-	$("li.media-sort.sort-reverse").on('click', f.sortMediaReverse);
-	$("ul#right-menu li.hide-title").on('click', f.toggleTitle);
-	$("ul#right-menu li.hide-bottom-thumbnails").on('click', f.toggleBottomThumbnails);
-	$("ul#right-menu li.slide").on('click', f.toggleSlideMode);
-	$("ul#right-menu li.spaced").on('click', f.toggleSpacing);
-	$("ul#right-menu li.album-names").on('click', f.toggleAlbumNames);
-	$("ul#right-menu li.media-count").on('click', f.toggleMediaCount);
-	$("ul#right-menu li.media-names").on('click', f.toggleMediaNames);
-	$("ul#right-menu li.square-album-thumbnails").on('click', f.toggleAlbumsSquare);
-	$("ul#right-menu li.square-media-thumbnails").on('click', f.toggleMediaSquare);
+	$("li.album-sort.by-date").on('click', tF.sortAlbumsByDate);
+	$("li.album-sort.by-name").on('click', tF.sortAlbumsByName);
+	$("li.album-sort.sort-reverse").on('click', tF.sortAlbumsReverse);
+	$("li.media-sort.by-date").on('click', tF.sortMediaByDate);
+	$("li.media-sort.by-name").on('click', tF.sortMediaByName);
+	$("li.media-sort.sort-reverse").on('click', tF.sortMediaReverse);
+	$("ul#right-menu li.hide-title").on('click', tF.toggleTitle);
+	$("ul#right-menu li.hide-bottom-thumbnails").on('click', tF.toggleBottomThumbnails);
+	$("ul#right-menu li.slide").on('click', tF.toggleSlideMode);
+	$("ul#right-menu li.spaced").on('click', tF.toggleSpacing);
+	$("ul#right-menu li.album-names").on('click', tF.toggleAlbumNames);
+	$("ul#right-menu li.media-count").on('click', tF.toggleMediaCount);
+	$("ul#right-menu li.media-names").on('click', tF.toggleMediaNames);
+	$("ul#right-menu li.square-album-thumbnails").on('click', tF.toggleAlbumsSquare);
+	$("ul#right-menu li.square-media-thumbnails").on('click', tF.toggleMediaSquare);
 	$("#menu-icon").off();
 	$("#menu-icon").on("click", f.toggleMenu);
 

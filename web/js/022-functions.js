@@ -420,7 +420,7 @@
 			if (currentMediaIndex !== undefined && currentMediaIndex != -1)
 				currentMediaIndex = currentAlbum.media.length - 1 - currentMediaIndex;
 		}
-	}
+	};
 
 	Functions.prototype.scrollToThumb = function() {
 		var media, thumb;
@@ -456,14 +456,14 @@
 			$(".thumb-container").removeClass("current-thumb");
 			thumb.parent().addClass("current-thumb");
 		}
-	}
+	};
 
-		function videoOK() {
-		if (! Modernizr.video || ! Modernizr.video.h264)
-			return false;
-		else
-			return true;
-	}
+	Functions.prototype.videoOK = function() {
+	if (! Modernizr.video || ! Modernizr.video.h264)
+		return false;
+	else
+		return true;
+	};
 
 	Functions.prototype.addVideoUnsupportedMarker = function(id) {
 		if (! Modernizr.video) {
@@ -475,7 +475,7 @@
 			return false;
 		} else
 			return true;
-	}
+	};
 
 	Functions.prototype.setOptions = function() {
     var albumThumbnailSize, mediaThumbnailSize;
