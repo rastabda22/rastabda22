@@ -2,7 +2,7 @@
 
   var phFl = new PhotoFloat();
   var util = new Utilities();
-	var ps = new PinchSwipe();
+	var pS = new PinchSwipe();
 
 	/* constructor */
 	function Functions() {
@@ -518,8 +518,8 @@
   };
 
 	Functions.prototype.pinchSwipeInitialization = function(containerHeight, containerWidth) {
-		ps.initialize();
-		ps.setPinchButtonsPosition(containerHeight, containerWidth);
+		pS.initialize();
+		pS.setPinchButtonsPosition(containerHeight, containerWidth);
 		util.correctPrevNextPosition();
 	};
 

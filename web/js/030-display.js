@@ -55,7 +55,7 @@ $(document).ready(function() {
 	var previousMedia = null;
 	var phFl = new PhotoFloat();
 	var util = new Utilities();
-	var ps = new PinchSwipe();
+	var pS = new PinchSwipe();
 	var f = new Functions();
 	var map = new MapFunctions();
 	var tF = new TopFunctions();
@@ -87,32 +87,32 @@ $(document).ready(function() {
 				if (e.keyCode === 9) {
 					//            tab
 					e.preventDefault();
-					if (ps.getCurrentZoom() == 1) {
+					if (pS.getCurrentZoom() == 1) {
 						f.toggleTitle(e);
 						f.toggleBottomThumbnails(e);
 						return false;
 					}
 				} else if (e.keyCode === 39 && nextMedia && currentMedia !== null && ! isMap) {
 					//     arrow right
-					ps.swipeLeftOrDrag(nextMedia);
+					pS.swipeLeftOrDrag(nextMedia);
 					return false;
 				} else if (
 					(e.keyCode === 78 || e.keyCode === 13 || e.keyCode === 32) &&
 					//             n               return               space
 					nextMedia && currentMedia !== null && ! isMap
 				) {
-					ps.swipeLeft(nextMedia);
+					pS.swipeLeft(nextMedia);
 					return false;
 				} else if (
 					(e.keyCode === 80 || e.keyCode === 8) &&
 					//             p           backspace
 					prevMedia && currentMedia !== null && ! isMap
 				) {
-					ps.swipeRight(prevMedia);
+					pS.swipeRight(prevMedia);
 					return false;
 				} else if (e.keyCode === 37 && prevMedia && currentMedia !== null && ! isMap) {
 					//             arrow left
-					ps.swipeRightOrDrag(prevMedia);
+					pS.swipeRightOrDrag(prevMedia);
 					return false;
 				} else if (e.keyCode === 27) {
 					//                    esc
@@ -126,28 +126,28 @@ $(document).ready(function() {
 							// we are in a map: close it
 							$('.map-close-button')[0].click();
 						return false;
-					} else if (ps.getCurrentZoom() > 1 || $(".title").hasClass("hidden-by-pinch")) {
-						ps.pinchOut();
+					} else if (pS.getCurrentZoom() > 1 || $(".title").hasClass("hidden-by-pinch")) {
+						pS.pinchOut();
 						return false;
 					} else if (! Modernizr.fullscreen && fullScreenStatus) {
 						tF.goFullscreen(e);
 						return false;
 					} else if (upLink) {
 						fromEscKey = true;
-						ps.swipeDown(upLink);
+						pS.swipeDown(upLink);
 						return false;
 					}
 				} else if ((e.keyCode === 38 || e.keyCode === 33) && upLink && ! isMap) {
 					//                arrow up             page up
-					ps.swipeDownOrDrag(upLink);
+					pS.swipeDownOrDrag(upLink);
 					return false;
 				} else if (e.keyCode === 40 || e.keyCode === 34 && ! isMap) {
 					//              arrow down           page down
 				 	if (mediaLink && currentMedia === null) {
-						ps.swipeUp(mediaLink);
+						pS.swipeUp(mediaLink);
 						return false;
-					} else if (ps.getCurrentZoom() > 1) {
-						ps.swipeUpOrDrag(mediaLink);
+					} else if (pS.getCurrentZoom() > 1) {
+						pS.swipeUpOrDrag(mediaLink);
 						return false;
 					}
 				} else if (e.keyCode === 68 && currentMedia !== null && ! isMap) {
@@ -172,7 +172,7 @@ $(document).ready(function() {
 						// $(".ol-zoom-in")[0].click();
 						// return false;
 					} else if (currentMedia !== null) {
-						ps.pinchIn();
+						pS.pinchIn();
 						return false;
 					}
 				} else if (e.keyCode === 109 || e.keyCode === 189) {
@@ -181,7 +181,7 @@ $(document).ready(function() {
 						// $(".ol-zoom-out")[0].click();
 						// return false;
 					} else if (currentMedia !== null) {
-						ps.pinchOut();
+						pS.pinchOut();
 						return false;
 					}
 				} else if (
@@ -214,7 +214,7 @@ $(document).ready(function() {
 		return true;
 	});
 
-	// $("#album-view").on('mousewheel', ps.swipeOnWheel);
+	// $("#album-view").on('mousewheel', pS.swipeOnWheel);
 
 	util.setLinksVisibility();
 	util.setNextPrevVisibility();
@@ -232,8 +232,8 @@ $(document).ready(function() {
 		$("#pinch-in").css("width", "30px").css("height", "30px");
 		$("#pinch-out").css("width", "30px").css("height", "30px");
 	}
-	$("#pinch-in").on("click", ps.pinchIn);
-	$("#pinch-out").on("click", ps.pinchOut);
+	$("#pinch-in").on("click", pS.pinchIn);
+	$("#pinch-out").on("click", pS.pinchOut);
 
 	// binds the click events to the sort buttons
 

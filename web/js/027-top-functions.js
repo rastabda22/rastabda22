@@ -3,7 +3,7 @@
   var phFl = new PhotoFloat();
   var util = new Utilities();
   var map = new MapFunctions();
-  var ps = new PinchSwipe();
+  var pS = new PinchSwipe();
   var f = new Functions();
 
 	/* constructor */
@@ -502,14 +502,14 @@
     function loadNextPrevMedia(containerHeight, containerWidth) {
       $("#pinch-in").off("click");
       $("#pinch-out").off("click");
-      $("#pinch-in").on("click", ps.pinchIn);
-      $("#pinch-out").on("click", ps.pinchOut);
+      $("#pinch-in").on("click", pS.pinchIn);
+      $("#pinch-out").on("click", pS.pinchOut);
 
       $(mediaSelector).off(triggerLoad);
 
       if (id === "center") {
-        ps.addMediaGesturesDetection();
-        ps.setPinchButtonsPosition(containerHeight, containerWidth);
+        pS.addMediaGesturesDetection();
+        pS.setPinchButtonsPosition(containerHeight, containerWidth);
         util.correctPrevNextPosition();
 
         if (album.media.length > 1) {
@@ -684,7 +684,7 @@
             event.data.id = "center";
             event.data.media = media;
             event.data.callback = f.pinchSwipeInitialization;
-            event.data.currentZoom = ps.getCurrentZoom();
+            event.data.currentZoom = pS.getCurrentZoom();
             util.scaleMedia(event);
 
             if (album.media.length > 1) {
@@ -737,12 +737,12 @@
             function(ev) {
               if (! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
                 ev.preventDefault();
-                if (ps.getCurrentZoom() == 1)
-                  ps.swipeRight(prevMedia);
+                if (pS.getCurrentZoom() == 1)
+                  pS.swipeRight(prevMedia);
               }
             }
           )
-          .on('mousewheel', ps.swipeOnWheel);
+          .on('mousewheel', pS.swipeOnWheel);
           $(".media-box#center .media-box-inner .media-bar").on('click', function(ev) {
             ev.stopPropagation();
           }).on('contextmenu', function(ev) {
@@ -751,13 +751,13 @@
 
         $("#prev").on('click', function(ev) {
           if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-            ps.swipeRight(prevMedia);
+            pS.swipeRight(prevMedia);
             return false;
           }
         });
         $("#next").on('click', function(ev) {
           if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-            ps.swipeLeft(nextMedia);
+            pS.swipeLeft(nextMedia);
             return false;
           }
         });
@@ -1764,7 +1764,7 @@
 			}
 			$("#powered-by").show();
 
-			// ps.addAlbumGesturesDetection();
+			// pS.addAlbumGesturesDetection();
 		} else {
 			// currentMedia !== null
 			$("#media-view").removeClass("hidden");
