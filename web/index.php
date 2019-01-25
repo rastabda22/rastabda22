@@ -82,6 +82,7 @@
 		<script type="text/javascript" src="js/014-utilities.js"></script>
 		<script type="text/javascript" src="js/016-libphotofloat.js"></script>
 		<script type="text/javascript" src="js/018-pinch-swipe.js"></script>
+		<script type="text/javascript" src="js/019-map.js"></script>
 		<script type="text/javascript" src="js/020-display.js"></script>
 
 	<?php } ?>
