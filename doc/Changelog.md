@@ -6,6 +6,7 @@
   * `map_zoom_levels`
  * Option`photo_map_zoom_level` removed and replaced by `photo_map_size`: size in meters of the map for a single photo
  * New option `default_map_popup_position`
+ * More photos can be added (with shift-click) and removed (with ctl-click) from the popup
 
 ### version 3.6.7 (January 14, 2019)
 
