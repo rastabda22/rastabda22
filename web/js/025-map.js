@@ -210,11 +210,15 @@
 			// add the markers layer to the map
 			map.addLayer(markerVectorLayer);
 
+      var usedWidthForThumbnails;
+      var start = 0;
+
 			/**
 			 * Add a click handler to the map to render the popup.
 			 */
 			map.on('singleclick', function(evt) {
 				var clickedPosition = ol.proj.toLonLat(evt.coordinate), i;
+        var br = '<br />';
 				// console.log(clickedPosition, pointList);
 
 				// decide what point is to be used: the nearest to the clicked position
@@ -236,10 +240,17 @@
 
 				// how much space is available horizontally for the thumbnails?
 				var maxWidthForThumbnails = parseInt($("#mapdiv").width() * 0.8);
-				var usedWidthForThumbnails = 0;
+        var indexMediaInDOM;
 
-				// reset the thumbnails
-				content.innerHTML = '';
+        if (evt.originalEvent.shiftKey || evt.originalEvent.ctrlKey) {
+          // get the space used by the thumbnails
+          usedWidthForThumbnails = $("#popup-content").width();
+          start = $("#popup .thumb-and-caption-container").length;
+        } else {
+          // reset the thumbnails if not shift- nor ctrl-clicking
+  				content.innerHTML = '';
+          usedWidthForThumbnails = 0;
+        }
 
 				// console.log(index, clickedPosition, pointList[index], minimumDistance);
 				var coordinateForPopup = [pointList[index].long, pointList[index].lat];
@@ -247,6 +258,7 @@
 				var imagesGot = 0;
 				var mediaHashes = [];
 				for(i = 0; i < pointList[index].mediaNameList.length; i ++) {
+          indexMediaInDOM = i + start;
 
 					// we must get the media corresponding to the name in the point
 					var mediaName = pointList[index].mediaNameList[i].name;
@@ -293,73 +305,93 @@
 							calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
 							mediaHashes[i] = phFl.encodeHash(theAlbum, theAlbum.media[indexInAlbum]);
+              var hash = theAlbum.cacheBase + "--" + theAlbum.media[indexInAlbum].cacheBase;
+              var codedHashClass = "popup-img-" + phFl.hashCode(hash);
+              var codedHashClassSelector = "." + codedHashClass;
 
-							imageString =
-									"<div id='popup-image-" + i + "' class='thumb-and-caption-container' style='" +
-												"width: " + calculatedWidth + "px; " +
-											"'>" +
-										"<div class='thumb-container' " + "style='" +
-												// "width: " + calculatedWidth + "px; " +
-												"width: " + calculatedWidth + "px; " +
-												"height: " + calculatedHeight + "px;" +
-											"'>" +
-												"<span class='helper'></span>" +
-												"<img title='" + imgTitle + "' " +
-													"alt='" + util.trimExtension(theAlbum.media[indexInAlbum].name) + "' " +
-													"src='" +  encodeURI(thumbHash) + "' " +
-													"class='thumbnail" + "' " +
-													"height='" + thumbHeight + "' " +
-													"width='" + thumbWidth + "' " +
-													"style='" +
-														 "width: " + calculatedWidth + "px; " +
-														 "height: " + calculatedHeight + "px;" +
-														 "'" +
-													"/>" +
-										"</div>" +
-										"<div class='media-caption'>" +
-											"<span>" +
-											theAlbum.media[indexInAlbum].name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
-											"</span>" +
-										"</div>" +
-									"</div>";
-							image = $(imageString);
-							image.get(0).media = theAlbum.media[indexInAlbum];
+              if (evt.originalEvent.ctrlKey) {
+                if ($(codedHashClassSelector).length) {
+                  // ctrl-click removes the images from the popup
+                  if (content.innerHTML.indexOf(codedHashClass) > content.innerHTML.lastIndexOf(br))
+                    usedWidthForThumbnails -= calculatedWidth;
+                  $(codedHashClassSelector).remove();
+                  // close the popup if no image in it
+                  if (! $("#popup .thumb-and-caption-container").length)
+                    $('#popup-closer')[0].click();
+                }
+              } else if (evt.originalEvent.shiftKey && $(codedHashClassSelector).length) {
+                // shift click doesn't anything if the image is already there
+                return;
+              } else {
+  							imageString =
+  								"<div id='popup-image-" + indexMediaInDOM + "' class='thumb-and-caption-container " + codedHashClass + "' style='" +
+  											"width: " + calculatedWidth + "px; " +
+  										"'>" +
+  									"<div class='thumb-container' " + "style='" +
+  											// "width: " + calculatedWidth + "px; " +
+  											"width: " + calculatedWidth + "px; " +
+  											"height: " + calculatedHeight + "px;" +
+  										"'>" +
+  											"<span class='helper'></span>" +
+  											"<img title='" + imgTitle + "' " +
+  												"alt='" + util.trimExtension(theAlbum.media[indexInAlbum].name) + "' " +
+  												"src='" +  encodeURI(thumbHash) + "' " +
+  												"class='thumbnail" + "' " +
+  												"height='" + thumbHeight + "' " +
+  												"width='" + thumbWidth + "' " +
+  												"style='" +
+  													 "width: " + calculatedWidth + "px; " +
+  													 "height: " + calculatedHeight + "px;" +
+  													 "'" +
+  												"/>" +
+  									"</div>" +
+  									"<div class='media-caption'>" +
+  										"<span>" +
+  										theAlbum.media[indexInAlbum].name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+  										"</span>" +
+  									"</div>" +
+  								"</div>";
+  							image = $(imageString);
+  							image.get(0).media = theAlbum.media[indexInAlbum];
 
-							if (usedWidthForThumbnails + calculatedWidth > maxWidthForThumbnails) {
-								content.innerHTML += '<br />' + imageString;
-								usedWidthForThumbnails = calculatedWidth;
-							} else {
-								content.innerHTML += imageString;
-								usedWidthForThumbnails += calculatedWidth;
-							}
+  							if (usedWidthForThumbnails + calculatedWidth > maxWidthForThumbnails) {
+  								content.innerHTML += br + imageString;
+  								usedWidthForThumbnails = calculatedWidth;
+  							} else {
+  								content.innerHTML += imageString;
+  								usedWidthForThumbnails += calculatedWidth;
+  							}
 
-							imagesGot += 1;
-							if (imagesGot == pointList[index].mediaNameList.length) {
-								// all the images have been fetched and put in DOM: we can generate the popup,
-								// but before set a css value: position: absolute make the popup to be shown in a wrong position
-								$("#mapdiv .ol-overlaycontainer-stopevent").css("position", "unset");
-								$("#popup-content").css("max-height", parseInt(windowHeight * 0.8));
-								if (
-									Options.available_map_popup_positions.every(
-										function(orientation) {
-											return ! $(".ol-popup").hasClass(orientation);
-										}
-									)
-								) {
-									$(".ol-popup").addClass(Options.default_map_popup_position);
-								}
-								overlay.setPosition(ol.proj.fromLonLat(coordinateForPopup));
+  							imagesGot += 1;
 
-								// add the click events to every image
-								for(var ii = 0; ii < pointList[index].mediaNameList.length; ii ++) {
-									$("#popup-image-" + ii).on('click', {ii: ii}, function(ev) {
-										$('#popup-closer')[0].click();
-										$('#popup #popup-content').html("");
-										$('.map-close-button')[0].click();
-										window.location.href = mediaHashes[ev.data.ii];
-									});
-								}
-							}
+  							if (imagesGot == pointList[index].mediaNameList.length) {
+  								// all the images have been fetched and put in DOM: we can generate the popup,
+  								// but before set a css value: position: absolute make the popup to be shown in a wrong position
+
+                  $("#mapdiv .ol-overlaycontainer-stopevent").css("position", "unset");
+  								$("#popup-content").css("max-height", parseInt(windowHeight * 0.8));
+  								if (
+  									Options.available_map_popup_positions.every(
+  										function(orientation) {
+  											return ! $(".ol-popup").hasClass(orientation);
+  										}
+  									)
+  								) {
+  									$(".ol-popup").addClass(Options.default_map_popup_position);
+  								}
+  								overlay.setPosition(ol.proj.fromLonLat(coordinatesForPopup));
+
+  								// add the click events to every image
+  								for(var ii = 0; ii < pointList[index].mediaNameList.length; ii ++) {
+  									$("#popup-image-" + (ii + start)).on('click', {ii: ii}, function(ev) {
+  										$('#popup-closer')[0].click();
+  										$('#popup #popup-content').html("");
+  										$('.map-close-button')[0].click();
+  										window.location.href = mediaHashes[ev.data.ii];
+  									});
+  								}
+  							}
+              }
 						},
 						util.die,
 						i,
