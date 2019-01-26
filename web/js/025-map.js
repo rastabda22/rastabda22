@@ -255,7 +255,7 @@
 
 					phFl.getAlbum(
 						albumCacheBase,
-						function(theAlbum, i) {
+						function(theAlbum, i, cacheBase) {
 							var j, indexInAlbum;
 
 							for(j = 0; j < theAlbum.media.length; j ++) {
@@ -362,7 +362,8 @@
 							}
 						},
 						util.die,
-						i
+						i,
+            cacheBase
 					);
 				}
 			});
