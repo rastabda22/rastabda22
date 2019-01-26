@@ -81,8 +81,12 @@
     bottom: -20px;
 }
 
-.ol-popup-mover::after {
-  content: "⭮";
+.SE .ol-popup-mover::after {
+  content: "⭦";
+}
+
+.NW .ol-popup-mover::after {
+  content: "⭨";
 }
 
 .map-close-button:hover, a.ol-popup-closer:hover, a.ol-popup-mover:hover {
@@ -221,11 +225,11 @@
 
 /* .ol-popup::after, .ol-popup:before { */
 .ol-popup::after {
+  position: absolute;
   border: 18px solid transparent;
   content: "";
   height: 0;
   width: 0;
-  position: absolute;
   pointer-events: none;
 }
 
@@ -236,63 +240,7 @@
   margin-left: -11px;
 } */
 
-.ol-popup.N {
-	position: absolute;
-  left: -50%;
-  bottom: 18px;
-}
-
-.ol-popup.N::after {
-	top: 100%;
-  left: 50%;
-	border-top-color: white;
-	border-bottom: 0;
-	margin-left: -20px;
-	/* margin-bottom: -18px; */
-}
-
-
-.north.ol-popup {
-	position: absolute;
-	background: white;
-	border-radius: .4em;
-  left: -50px;
-  bottom: 18px;
-}
-
-.north.ol-popup::after {
-	content: '';
-	position: absolute;
-	bottom: 0;
-  left: 50px;
-	width: 0;
-	height: 0;
-	border: 18px solid transparent;
-	border-top-color: white;
-	border-bottom: 0;
-	margin-left: -20px;
-	/* margin-bottom: -18px; */
-}
-
-
-
-
-.ol-popup.NE {
-	position: absolute;
-  left: -15px;
-  bottom: 17px;
-}
-
-.ol-popup.NE::after {
-	bottom: 0;
-  left: 10px;
-	border-top-color: white;
-	border-bottom: 0;
-	margin-bottom: -18px;
-  border-width: 18px 4px 0px 4px;
-}
 .ol-popup.SE {
-	position: relative;
   left: -15.5px;
   top: 17px;
 }
@@ -307,25 +255,7 @@
   border-width: 0px 4px 18px;
 }
 
-.ol-popup.SW {
-	position: absolute;
-  right: -25px;
-  top: 17px;
-}
-
-.ol-popup.SW::after {
-	top: 0;
-  right: 20px;
-	border-bottom-color: white;
-	border-top: 0;
-	margin-left: -18px;
-	margin-top: -18px;
-  border-width: 0px 4px 18px;
-}
-
-
 .ol-popup.NW {
-  position: absolute;
   right: -25px;
   bottom: 16px;
 }
