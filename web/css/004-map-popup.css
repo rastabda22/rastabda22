@@ -79,6 +79,7 @@
 
 .ol-popup-mover {
     bottom: -20px;
+    left: -20px
 }
 
 .SE .ol-popup-mover::after {
