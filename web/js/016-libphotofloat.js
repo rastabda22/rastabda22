@@ -219,10 +219,10 @@
 			self = this;
 			this.getAlbum(
 				// thisAlbum
-				Options.by_gps_string,
+				Options.folders_string,
 				// callback
-				function() {
-					if (! self.albumCache[Options.by_gps_string].numMediaInSubTree) {
+				function(rootAlbum) {
+					if (! rootAlbum.positionsAndMediaInTree.length) {
 						$("#by-gps-view").addClass("hidden");
 						self.geotaggedPhotosFound = false;
 					} else {
