@@ -72,6 +72,8 @@
 			center.lat /= pointList.length;
 			center.long /= pointList.length;
 
+      var br = '<br />';
+
 			// default zoom is used for single media or media list with one point
 			var maxDistance = Options.photo_map_size;
 			if (pointList.length > 1) {
@@ -117,9 +119,11 @@
       var overlay = new ol.Overlay({
         element: container,
         autoPan: true,
+        autoPanMargin: 10,
         autoPanAnimation: {
           duration: 250
-        }
+        },
+        positioning: 'bottom-right'
       });
 
 			/**
@@ -211,15 +215,14 @@
 			// add the markers layer to the map
 			map.addLayer(markerVectorLayer);
 
-      var usedWidthForThumbnails;
-      var start = 0;
+      var usedWidthForThumbnails = 0;
+      var lastIndex;
 
 			/**
 			 * Add a click handler to the map to render the popup.
 			 */
 			map.on('singleclick', function(evt) {
 				var clickedPosition = ol.proj.toLonLat(evt.coordinate), i;
-        var br = '<br />';
 				// console.log(clickedPosition, pointList);
 
 				// decide what point is to be used: the nearest to the clicked position
@@ -243,14 +246,11 @@
 				var maxWidthForThumbnails = parseInt($("#mapdiv").width() * 0.8);
         var indexMediaInDOM;
 
-        if (evt.originalEvent.shiftKey || evt.originalEvent.ctrlKey) {
-          // get the space used by the thumbnails
-          usedWidthForThumbnails = $("#popup-content").width();
-          start = $("#popup .thumb-and-caption-container").length;
-        } else {
+        if (! evt.originalEvent.shiftKey && ! evt.originalEvent.ctrlKey) {
           // reset the thumbnails if not shift- nor ctrl-clicking
   				content.innerHTML = '';
           usedWidthForThumbnails = 0;
+          lastIndex = 0;
         }
 
 				// console.log(index, clickedPosition, pointList[index], minimumDistance);
@@ -259,7 +259,7 @@
 				var imagesGot = 0;
 				var mediaHashes = [];
 				for(i = 0; i < pointList[index].mediaNameList.length; i ++) {
-          indexMediaInDOM = i + start;
+          indexMediaInDOM = i + lastIndex;
 
 					// we must get the media corresponding to the name in the point
 					var mediaName = pointList[index].mediaNameList[i].name;
@@ -313,9 +313,11 @@
               if (evt.originalEvent.ctrlKey) {
                 if ($(codedHashClassSelector).length) {
                   // ctrl-click removes the images from the popup
-                  if (content.innerHTML.indexOf(codedHashClass) > content.innerHTML.lastIndexOf(br))
-                    usedWidthForThumbnails -= calculatedWidth;
                   $(codedHashClassSelector).remove();
+                  // reflow the images
+                  var result = MapFunctions.reflowThumbnails(br, maxWidthForThumbnails);
+                  content.innerHTML = result.code;
+                  usedWidthForThumbnails = result.usedWidth;
                   // close the popup if no image in it
                   if (! $("#popup .thumb-and-caption-container").length)
                     $('#popup-closer')[0].click();
@@ -384,13 +386,14 @@
 
   								// add the click events to every image
   								for(var ii = 0; ii < pointList[index].mediaNameList.length; ii ++) {
-  									$("#popup-image-" + (ii + start)).on('click', {ii: ii}, function(ev) {
+  									$("#popup-image-" + (ii + lastIndex)).on('click', {ii: ii}, function(ev) {
   										$('#popup-closer')[0].click();
   										$('#popup #popup-content').html("");
   										$('.map-close-button')[0].click();
   										window.location.href = mediaHashes[ev.data.ii];
   									});
   								}
+                  lastIndex += pointList[index].mediaNameList.length
   							}
               }
 						},
@@ -402,6 +405,29 @@
 			});
 		}
 	}
+
+  MapFunctions.reflowThumbnails = function(br, maxWidthForThumbnails) {
+    var img, width, usedWidth = 0, result = '';
+
+    if ($("#popup .thumb-and-caption-container").length) {
+      $("#popup .thumb-and-caption-container").each(
+        function(index) {
+          if ($(this).hasClass('thumb-and-caption-container')) {
+            width = parseInt($(this).children().css("width"));
+
+            if (usedWidth + width > maxWidthForThumbnails) {
+              result += br + $(this).get(0).outerHTML;
+              usedWidth = width;
+            } else {
+              result += $(this).get(0).outerHTML;
+              usedWidth += width;
+            }
+          }
+        }
+      );
+    }
+    return {'code': result, 'usedWidth': usedWidth};
+  };
 
   // MapFunctions.prototype.generateMapFromDefaults = MapFunctions.generateMapFromDefaults;
 
