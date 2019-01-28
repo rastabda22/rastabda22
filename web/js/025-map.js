@@ -73,6 +73,7 @@
 			center.long /= pointList.length;
 
       var br = '<br />';
+      var thumbAndCaptionHeight = 0;
 
 			// default zoom is used for single media or media list with one point
 			var maxDistance = Options.photo_map_size;
@@ -132,6 +133,7 @@
        */
       closer.onclick = function() {
         overlay.setPosition(undefined);
+        $("#popup-content").html("");
 				// set this correct value, when showing the popup it was changed in order to show the popup in the right position
 				$("#mapdiv .ol-overlaycontainer-stopevent").css("position", "absolute");
         closer.blur();
@@ -215,7 +217,6 @@
 			// add the markers layer to the map
 			map.addLayer(markerVectorLayer);
 
-      var usedWidthForThumbnails = 0;
       var lastIndex;
 
 			/**
@@ -249,7 +250,6 @@
         if (! evt.originalEvent.shiftKey && ! evt.originalEvent.ctrlKey) {
           // reset the thumbnails if not shift- nor ctrl-clicking
   				content.innerHTML = '';
-          usedWidthForThumbnails = 0;
           lastIndex = 0;
         }
 
@@ -259,8 +259,6 @@
 				var imagesGot = 0;
 				var mediaHashes = [];
 				for(i = 0; i < pointList[index].mediaNameList.length; i ++) {
-          indexMediaInDOM = i + lastIndex;
-
 					// we must get the media corresponding to the name in the point
 					var mediaName = pointList[index].mediaNameList[i].name;
 					var cacheBase = pointList[index].mediaNameList[i].cacheBase;
@@ -269,7 +267,7 @@
 					phFl.getAlbum(
 						albumCacheBase,
 						function(theAlbum, i, cacheBase) {
-							var j, indexInAlbum;
+							var j, indexInAlbum, imageString, image;
 
 							for(j = 0; j < theAlbum.media.length; j ++) {
 								if (theAlbum.media[j].cacheBase == cacheBase) {
@@ -314,10 +312,6 @@
                 if ($(codedHashClassSelector).length) {
                   // ctrl-click removes the images from the popup
                   $(codedHashClassSelector).remove();
-                  // reflow the images
-                  var result = MapFunctions.reflowThumbnails(br, maxWidthForThumbnails);
-                  content.innerHTML = result.code;
-                  usedWidthForThumbnails = result.usedWidth;
                   // close the popup if no image in it
                   if (! $("#popup .thumb-and-caption-container").length)
                     $('#popup-closer')[0].click();
@@ -326,6 +320,7 @@
                 // shift click doesn't anything if the image is already there
                 return;
               } else {
+                indexMediaInDOM = i + lastIndex;
   							imageString =
   								"<div id='popup-image-" + indexMediaInDOM + "' class='thumb-and-caption-container " + codedHashClass + "' style='" +
   											"width: " + calculatedWidth + "px; " +
@@ -354,16 +349,12 @@
   										"</span>" +
   									"</div>" +
   								"</div>";
-  							image = $(imageString);
-  							image.get(0).media = theAlbum.media[indexInAlbum];
+  							// image = $(imageString);
+  							// image.get(0).media = theAlbum.media[indexInAlbum];
 
-  							if (usedWidthForThumbnails + calculatedWidth > maxWidthForThumbnails) {
-  								content.innerHTML += br + imageString;
-  								usedWidthForThumbnails = calculatedWidth;
-  							} else {
-  								content.innerHTML += imageString;
-  								usedWidthForThumbnails += calculatedWidth;
-  							}
+                $("#popup-content").append($(imageString));
+                thumbAndCaptionHeight = Math.max(thumbAndCaptionHeight, parseInt($("popup-image-" + indexMediaInDOM).height()));
+                $("#popup-content .thumb-and-caption-container").height(thumbAndCaptionHeight + "px");
 
   							imagesGot += 1;
 
@@ -372,7 +363,7 @@
   								// but before set a css value: position: absolute make the popup to be shown in a wrong position
 
                   $("#mapdiv .ol-overlaycontainer-stopevent").css("position", "unset");
-  								$("#popup-content").css("max-height", parseInt(windowHeight * 0.8));
+  								$("#popup-content").css("max-height", parseInt(windowHeight * 0.8)).css("max-width", parseInt(windowWidth * 0.8));
   								if (
   									Options.available_map_popup_positions.every(
   										function(orientation) {
@@ -393,7 +384,7 @@
   										window.location.href = mediaHashes[ev.data.ii];
   									});
   								}
-                  lastIndex += pointList[index].mediaNameList.length
+                  lastIndex += pointList[index].mediaNameList.length;
   							}
               }
 						},
@@ -405,31 +396,6 @@
 			});
 		}
 	}
-
-  MapFunctions.reflowThumbnails = function(br, maxWidthForThumbnails) {
-    var img, width, usedWidth = 0, result = '';
-
-    if ($("#popup .thumb-and-caption-container").length) {
-      $("#popup .thumb-and-caption-container").each(
-        function(index) {
-          if ($(this).hasClass('thumb-and-caption-container')) {
-            width = parseInt($(this).children().css("width"));
-
-            if (usedWidth + width > maxWidthForThumbnails) {
-              result += br + $(this).get(0).outerHTML;
-              usedWidth = width;
-            } else {
-              result += $(this).get(0).outerHTML;
-              usedWidth += width;
-            }
-          }
-        }
-      );
-    }
-    return {'code': result, 'usedWidth': usedWidth};
-  };
-
-  // MapFunctions.prototype.generateMapFromDefaults = MapFunctions.generateMapFromDefaults;
 
   window.MapFunctions = MapFunctions;
 }());

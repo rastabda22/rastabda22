@@ -211,7 +211,8 @@
 }
 
 #popup-content .thumb-and-caption-container {
-  display: table-cell;
+  display: inline-block;
+  vertical-align: top;
 }
 
 .ol-popup {
@@ -222,6 +223,7 @@
   padding: 15px;
   border-radius: 10px;
   border: 1px solid #cccccc;
+  width: max-content;
 }
 
 /* .ol-popup::after, .ol-popup:before { */
