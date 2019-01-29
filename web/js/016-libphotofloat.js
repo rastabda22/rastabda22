@@ -36,14 +36,11 @@
 		}
 		if (PhotoFloat.albumCache.hasOwnProperty(cacheKey)) {
 			if (typeof thisIndexWords === "undefined" && typeof thisIndexAlbums === "undefined") {
-				console.log("  from cache", cacheKey)
 				callback(PhotoFloat.albumCache[cacheKey]);
 			} else {
-				console.log("  from cache", cacheKey)
 				callback(PhotoFloat.albumCache[cacheKey], thisIndexWords, thisIndexAlbums);
 			}
 		} else {
-			console.log("from net", cacheKey)
 			var cacheFile = util.pathJoin([Options.server_cache_path, cacheKey + ".json"]);
 			self = this;
 			ajaxOptions = {
@@ -65,7 +62,6 @@
 							theAlbum.media[i].parent = theAlbum;
 					}
 
-					console.log("-> to cache", cacheKey)
 					PhotoFloat.albumCache[cacheKey] = theAlbum;
 
 					if (typeof thisIndexWords === "undefined" && typeof thisIndexAlbums === "undefined")
