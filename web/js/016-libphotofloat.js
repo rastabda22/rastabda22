@@ -270,8 +270,8 @@
 				// thisAlbum
 				Options.folders_string,
 				// callback
-				function(rootAlbum) {
-					if (! rootAlbum.positionsAndMediaInTree.length) {
+				function(foldersAlbum) {
+					if (! foldersAlbum.numPoints) {
 						$("#by-gps-view").addClass("hidden");
 						self.geotaggedPhotosFound = false;
 					} else {

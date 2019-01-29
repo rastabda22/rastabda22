@@ -190,7 +190,7 @@ $(document).ready(function() {
 					! isMap &&
 					(
 						currentMedia !== null && util.hasGpsData(currentMedia) ||
-						currentMedia === null && currentAlbum.positionsAndMediaInTree
+						currentMedia === null && currentAlbum.positionsAndMediaInTree.length
 					)
 				) {
 						$(".map-popup-trigger")[0].click();

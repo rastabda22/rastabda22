@@ -28,7 +28,7 @@
 	};
 
 	MapFunctions.prototype.generateMapFromSubalbum = function(ev) {
-		if (ev.data.subalbum.positionsAndMediaInTree) {
+		if (ev.data.subalbum.positionsAndMediaInTree.length) {
 			ev.stopPropagation();
 			ev.preventDefault();
 			generateMap(ev.data.subalbum.positionsAndMediaInTree);
@@ -53,7 +53,7 @@
 					}]
 				}
 			];
-		else if (currentAlbum.positionsAndMediaInTree)
+		else if (currentAlbum.positionsAndMediaInTree.length)
 			pointList = currentAlbum.positionsAndMediaInTree;
 
 		if (pointList != [])
