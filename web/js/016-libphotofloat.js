@@ -73,9 +73,6 @@
 		} else
 			cacheKey = thisAlbum.cacheBase;
 
-		if (cacheKey == '_f') {
-			1 == 1;
-		}
 		if (PhotoFloat.albumCache.hasOwnProperty(cacheKey)) {
 			if (typeof thisIndexWords === "undefined" && typeof thisIndexAlbums === "undefined") {
 				callback(PhotoFloat.albumCache[cacheKey]);
