@@ -4,7 +4,7 @@
 
 	/* constructor */
 	function PhotoFloat() {
-		this.albumCache = [];
+		PhotoFloat.albumCache = [];
 		this.geotaggedPhotosFound = null;
 		this.searchWordsFromJsonFile = [];
 		this.searchAlbumCacheBaseFromJsonFile = [];
@@ -31,12 +31,19 @@
 		} else
 			cacheKey = thisAlbum.cacheBase;
 
-		if (this.albumCache.hasOwnProperty(cacheKey)) {
-			if (typeof thisIndexWords === "undefined" && typeof thisIndexAlbums === "undefined")
-				callback(this.albumCache[cacheKey]);
-			else
-				callback(this.albumCache[cacheKey], thisIndexWords, thisIndexAlbums);
+		if (cacheKey == '_f') {
+			1 == 1;
+		}
+		if (PhotoFloat.albumCache.hasOwnProperty(cacheKey)) {
+			if (typeof thisIndexWords === "undefined" && typeof thisIndexAlbums === "undefined") {
+				console.log("  from cache", cacheKey)
+				callback(PhotoFloat.albumCache[cacheKey]);
+			} else {
+				console.log("  from cache", cacheKey)
+				callback(PhotoFloat.albumCache[cacheKey], thisIndexWords, thisIndexAlbums);
+			}
 		} else {
+			console.log("from net", cacheKey)
 			var cacheFile = util.pathJoin([Options.server_cache_path, cacheKey + ".json"]);
 			self = this;
 			ajaxOptions = {
@@ -58,7 +65,8 @@
 							theAlbum.media[i].parent = theAlbum;
 					}
 
-					self.albumCache[cacheKey] = theAlbum;
+					console.log("-> to cache", cacheKey)
+					PhotoFloat.albumCache[cacheKey] = theAlbum;
 
 					if (typeof thisIndexWords === "undefined" && typeof thisIndexAlbums === "undefined")
 						callback(theAlbum);
@@ -403,10 +411,10 @@
 		if (PhotoFloat.searchAndSubalbumHash)
 			PhotoFloat.searchAndSubalbumHash = decodeURI(PhotoFloat.searchAndSubalbumHash);
 
-		if (this.albumCache.hasOwnProperty(albumHashToGet)) {
-			if (! this.albumCache[albumHashToGet].subalbums.length && ! this.albumCache[albumHashToGet].media.length)
+		if (PhotoFloat.albumCache.hasOwnProperty(albumHashToGet)) {
+			if (! PhotoFloat.albumCache[albumHashToGet].subalbums.length && ! PhotoFloat.albumCache[albumHashToGet].media.length)
 				util.noResults();
-			PhotoFloat.selectMedia(this.albumCache[albumHashToGet], mediaFolderHash, mediaHash, callback);
+			PhotoFloat.selectMedia(PhotoFloat.albumCache[albumHashToGet], mediaFolderHash, mediaHash, callback);
 		} else if (! util.isSearchCacheBase(albumHash) || SearchWordsFromUser.length === 0) {
 			this.getAlbum(
 				albumHashToGet,
@@ -685,8 +693,8 @@
 													);
 											}
 
-											if (! self.albumCache.hasOwnProperty(searchResultsAlbumFinal.cacheBase))
-												self.albumCache[searchResultsAlbumFinal.cacheBase] = searchResultsAlbumFinal;
+											if (! PhotoFloat.albumCache.hasOwnProperty(searchResultsAlbumFinal.cacheBase))
+												PhotoFloat.albumCache[searchResultsAlbumFinal.cacheBase] = searchResultsAlbumFinal;
 
 											PhotoFloat.selectMedia(searchResultsAlbumFinal, null, mediaHash, callback);
 										}
