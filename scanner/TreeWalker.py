@@ -1317,6 +1317,7 @@ class TreeWalker:
 
 			for album in self.all_albums:
 				self.all_json_files.append(album.json_file)
+				self.all_json_files.append(album.positions_json_file)
 			for media in self.all_media:
 				album_subdir = media.album.subdir
 				for entry in media.image_caches:

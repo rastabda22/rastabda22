@@ -16,6 +16,48 @@
 	}
 
 	/* public member functions */
+	PhotoFloat.prototype.getPositions = function(thisAlbum, callback, error) {
+		var cacheFile = util.pathJoin([Options.server_cache_path, thisAlbum.cacheBase + ".positions.json"]);
+		// get the file
+		ajaxOptions = {
+			type: "GET",
+			dataType: "json",
+			url: cacheFile,
+			success: function(positions) {
+				var iSubalbum, iPosition, iPhoto, position;
+				thisAlbum.positionsAndMediaInTree = positions;
+				// we must add the corresponding positions to every subalbums
+				for (iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; ++ iSubalbum) {
+					thisAlbum.subalbums[iSubalbum].positionsAndMediaInTree = [];
+					for (iPosition = 0; iPosition < positions.length; ++ iPosition) {
+						position = {};
+						position.lat = positions[iPosition].lat;
+						position.long = positions[iPosition].long;
+						position.mediaNameList = [];
+						for (iPhoto = 0; iPhoto < positions[iPosition].mediaNameList.length; ++ iPhoto) {
+							// add the photos belonging to this subalbum
+							if (positions[iPosition].mediaNameList[iPhoto].albumCacheBase == thisAlbum.subalbums[iSubalbum].cacheBase) {
+								position.mediaNameList.push(positions[iPosition].mediaNameList[iPhoto]);
+							}
+						}
+						if (position.mediaNameList.length)
+							thisAlbum.subalbums[iSubalbum].positionsAndMediaInTree.push(position);
+					}
+				}
+
+				// PhotoFloat.albumCache[cacheKey] = theAlbum;
+
+				callback(thisAlbum);
+			}
+		};
+		if (typeof error !== "undefined" && error !== null) {
+			ajaxOptions.error = function(jqXHR, textStatus, errorThrown) {
+				error(jqXHR.status);
+			};
+		}
+		$.ajax(ajaxOptions);
+	}
+
 	PhotoFloat.prototype.getAlbum = function(thisAlbum, callback, error, thisIndexWords, thisIndexAlbums) {
 		var cacheKey, ajaxOptions, self;
 
@@ -48,26 +90,32 @@
 				dataType: "json",
 				url: cacheFile,
 				success: function(theAlbum) {
-					var i;
-					if (cacheKey == Options.by_search_string) {
-						// root of search albums: build the word list
-						for (i = 0; i < theAlbum.subalbums.length; ++i) {
-							PhotoFloat.searchWordsFromJsonFile.push(theAlbum.subalbums[i].unicodeWords);
-							PhotoFloat.searchAlbumCacheBaseFromJsonFile.push(theAlbum.subalbums[i].cacheBase);
-						}
-					} else if (! util.isSearchCacheBase(cacheKey)) {
-						for (i = 0; i < theAlbum.subalbums.length; ++i)
-							theAlbum.subalbums[i].parent = theAlbum;
-						for (i = 0; i < theAlbum.media.length; ++i)
-							theAlbum.media[i].parent = theAlbum;
-					}
+					self.getPositions(
+						theAlbum,
+						function(theAlbum) {
+							var i;
+							if (cacheKey == Options.by_search_string) {
+								// root of search albums: build the word list
+								for (i = 0; i < theAlbum.subalbums.length; ++i) {
+									PhotoFloat.searchWordsFromJsonFile.push(theAlbum.subalbums[i].unicodeWords);
+									PhotoFloat.searchAlbumCacheBaseFromJsonFile.push(theAlbum.subalbums[i].cacheBase);
+								}
+							} else if (! util.isSearchCacheBase(cacheKey)) {
+								for (i = 0; i < theAlbum.subalbums.length; ++i)
+									theAlbum.subalbums[i].parent = theAlbum;
+								for (i = 0; i < theAlbum.media.length; ++i)
+									theAlbum.media[i].parent = theAlbum;
+							}
 
-					PhotoFloat.albumCache[cacheKey] = theAlbum;
+							PhotoFloat.albumCache[cacheKey] = theAlbum;
 
-					if (typeof thisIndexWords === "undefined" && typeof thisIndexAlbums === "undefined")
-						callback(theAlbum);
-					else
-						callback(theAlbum, thisIndexWords, thisIndexAlbums);
+							if (typeof thisIndexWords === "undefined" && typeof thisIndexAlbums === "undefined")
+								callback(theAlbum);
+							else
+								callback(theAlbum, thisIndexWords, thisIndexAlbums);
+						},
+						error
+					)
 				}
 			};
 			if (typeof error !== "undefined" && error !== null) {
