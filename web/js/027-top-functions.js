@@ -364,7 +364,7 @@
         title += "<a class='map-popup-trigger'>" +
           "<img class='title-img' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
         "</a>";
-    } else if (title.indexOf(fillInSpan) > -1 && currentAlbum.positionsAndMediaInTree.length) {
+    } else if (title.indexOf(fillInSpan) > -1 && currentAlbum.numPositionsInTree) {
       title = title.replace(
         fillInSpan,
         "<a class='map-popup-trigger'>" +

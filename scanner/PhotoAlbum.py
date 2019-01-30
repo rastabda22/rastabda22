@@ -350,6 +350,7 @@ class Album(object):
 						"cacheBase": subalbum.cache_base,
 						"date": subalbum.date_string,
 						# "positionsAndMediaInTree": subalbum.positions_and_media_in_tree,
+						"numPositionsInTree": len(subalbum.positions_and_media_in_tree),
 						"numMediaInSubTree": subalbum.num_media_in_sub_tree
 					}
 					if hasattr(subalbum, "center"):
@@ -420,6 +421,7 @@ class Album(object):
 			"physicalPath": path_without_folders_marker,
 			"numMediaInSubTree": self.num_media_in_sub_tree,
 			"numMediaInAlbum": self.num_media_in_album,
+			"numPositionsInTree": len(self.positions_and_media_in_tree),
 			# "positionsAndMediaInTree": self.positions_and_media_in_tree,
 			"jsonVersion": Options.json_version
 		}
