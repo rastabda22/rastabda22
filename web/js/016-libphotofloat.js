@@ -768,6 +768,7 @@
 														searchResultsAlbumFinal.subalbums[i].positionsAndMediaInTree
 													);
 											}
+											searchResultsAlbumFinal.numPositionsInTree = searchResultsAlbumFinal.positionsAndMediaInTree.length;
 
 											if (! PhotoFloat.albumCache.hasOwnProperty(searchResultsAlbumFinal.cacheBase))
 												PhotoFloat.albumCache[searchResultsAlbumFinal.cacheBase] = searchResultsAlbumFinal;
