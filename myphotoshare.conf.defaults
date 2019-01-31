@@ -73,7 +73,7 @@ debug_memory = false
 
 # Execution profiling
 # Dumps function calls sorted by execution time
-debug_profile = true
+debug_profile = false
 
 ###########################################################
 # minifying
