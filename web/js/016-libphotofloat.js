@@ -746,10 +746,11 @@
 												$(".search-failed").hide();
 											}
 
-											// add the parent
 											for (indexMedia = 0; indexMedia < searchResultsAlbumFinal.media.length; indexMedia ++) {
+												// add the parent to the media
 												searchResultsAlbumFinal.media[indexMedia].parent = searchResultsAlbumFinal;
 												if (util.hasGpsData(searchResultsAlbumFinal.media[indexMedia]))
+													// add the media position
 													searchResultsAlbumFinal.positionsAndMediaInTree =
 														util.addMediaToPoints(
 															searchResultsAlbumFinal.positionsAndMediaInTree,
@@ -761,13 +762,16 @@
 
 											searchResultsAlbumFinal.numMediaInSubTree = searchResultsAlbumFinal.media.length;
 											for (var i = 0; i < searchResultsAlbumFinal.subalbums.length; i ++) {
+												// update the media count
 												searchResultsAlbumFinal.numMediaInSubTree += searchResultsAlbumFinal.subalbums[i].numMediaInSubTree;
+												// add the points from the subalbums
 												searchResultsAlbumFinal.positionsAndMediaInTree =
 													util.mergePoints(
 														searchResultsAlbumFinal.positionsAndMediaInTree,
 														searchResultsAlbumFinal.subalbums[i].positionsAndMediaInTree
 													);
 											}
+											// add the point count
 											searchResultsAlbumFinal.numPositionsInTree = searchResultsAlbumFinal.positionsAndMediaInTree.length;
 
 											if (! PhotoFloat.albumCache.hasOwnProperty(searchResultsAlbumFinal.cacheBase))
