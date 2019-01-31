@@ -221,7 +221,7 @@ class Album(object):
 		get user defined metadata for the album and pictures.
 		"""
 		self.album_ini = configparser.ConfigParser(allow_no_value=True)
-		message("reading album.ini...", "", 5)
+		message("reading album.ini...", file_name, 5)
 		self.album_ini.read(file_name)
 		indented_message("album.ini read", file_name, 5)
 
@@ -270,29 +270,29 @@ class Album(object):
 			sys.exit(-97)
 		message("sorting album...", self.absolute_path, 5)
 		self.sort_subalbums_and_media()
-		indented_message("album sorted", "", 4)
-		message("saving album...", "", 5)
+		indented_message("album sorted", self.absolute_path, 4)
+		message("saving album...", self.absolute_path, 5)
 		with open(json_file_with_path, 'w') as filepath:
 			json.dump(self, filepath, cls=PhotoAlbumEncoder)
-		indented_message("album saved", "", 3)
+		indented_message("album saved", self.absolute_path, 3)
 
 	@staticmethod
 	def from_cache(path, album_cache_base):
 		next_level()
-		message("reading album...", "", 5)
+		message("reading album...", path, 5)
 		with open(path, "r") as filepath:
 			dictionary = json.load(filepath)
-		indented_message("album read", "", 5)
+		indented_message("album read", path, 5)
 		back_level()
 		# generate the album from the json file loaded
 		# subalbums are not generated yet
-		message("converting album to dict from json file...", "", 5)
+		message("converting album to dict from json file...", path, 5)
 		next_level()
 		dictionary = Album.from_dict(dictionary, album_cache_base)
 		if dictionary is not None:
-			message("album converted to dict from json file", "", 4)
+			message("album converted to dict from json file", path, 4)
 		else:
-			message("json version unexistent or old", "", 4)
+			message("json version unexistent or old", path, 4)
 		back_level()
 		return dictionary
 
