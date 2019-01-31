@@ -260,7 +260,6 @@
 				var mediaHashes = [];
 				for(i = 0; i < pointList[index].mediaNameList.length; i ++) {
 					// we must get the media corresponding to the name in the point
-					var mediaName = pointList[index].mediaNameList[i].name;
 					var cacheBase = pointList[index].mediaNameList[i].cacheBase;
 					var albumCacheBase = pointList[index].mediaNameList[i].albumCacheBase;
 

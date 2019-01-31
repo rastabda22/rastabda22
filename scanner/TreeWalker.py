@@ -255,7 +255,6 @@ class TreeWalker:
 			'long': media.longitude,
 			'lat' : media.latitude,
 			'mediaNameList': [{
-				'name': media.media_path,
 				'cacheBase': media.cache_base,
 				'albumCacheBase': media.album.cache_base
 			}]

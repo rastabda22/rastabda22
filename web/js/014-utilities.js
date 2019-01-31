@@ -96,7 +96,6 @@
 			'long': parseFloat(newMedia.metadata.longitude),
 			'lat' : parseFloat(newMedia.metadata.latitude),
 			'mediaNameList': [{
-				'name': newMedia.albumName,
 				'cacheBase': newMedia.cacheBase,
 				'albumCacheBase': newMedia.parent.cacheBase
 			}]
