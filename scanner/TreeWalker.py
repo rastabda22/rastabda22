@@ -95,7 +95,7 @@ class TreeWalker:
 		# self.origin_album.read_album_ini() # origin_album is not a physical one, it's the parent of the root physical tree and of the virtual albums
 		self.origin_album.cache_base = "root"
 		next_level()
-		[folders_album, num, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], self.origin_album)
+		[folders_album, num, positions, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], self.origin_album)
 		back_level()
 		if folders_album is None:
 			message("WARNING", "ALBUMS ROOT EXCLUDED BY MARKER FILE", 2)
@@ -109,6 +109,7 @@ class TreeWalker:
 			self.all_json_files.append("all_media.json")
 
 			folders_album.num_media_in_sub_tree = num
+			folders_album.positions_and_media_in_tree = positions
 			self.origin_album.add_album(folders_album)
 			self.all_json_files.append(Options.config['folders_string'] + ".json")
 
@@ -242,6 +243,43 @@ class TreeWalker:
 		back_level()
 		return by_date_album
 
+	def add_media_to_position(self, positions, media):
+		# adds the media position and name to the positions list received as second argument
+		position = {
+			'long': media.longitude,
+			'lat' : media.latitude,
+			'mediaNameList': [{
+				'name': media.media_path,
+				'cacheBase': media.cache_base,
+				'albumCacheBase': media.album.cache_base
+			}]
+		}
+		positions = self.add_position_to_positions(positions, position)
+		return positions
+
+	def add_position_to_positions(self, positions, position):
+		# adds the given position to the positions list received as second argument
+		if positions == []:
+			positions = [position]
+		else:
+			match = False
+			for index, _position in enumerate(positions):
+				if position['lat'] == _position['lat'] and position['long'] == _position['long']:
+					positions[index]['mediaNameList'].extend(position['mediaNameList'])
+					match = True
+					break
+			if not match:
+				positions.append(position)
+		return positions
+
+	def merge_positions(self, positions, positions1):
+		# adds the media position and name to the positions list received as second argument
+		for position in positions1:
+			positions = self.add_position_to_positions(positions, position)
+
+		return positions
+
+
 	def generate_by_search_albums(self, origin_album):
 		next_level()
 		# convert the temporary structure where media are organized by words to a set of albums
@@ -362,7 +400,7 @@ class TreeWalker:
 
 							if K > len(media_list):
 								indented_message("clustering with k-means algorithm failed", "clusters remain too big even with k > len(media_list)", 5)
-								clustering_failed = true
+								clustering_failed = True
 								break
 							indented_message("clustering with k-means algorithm not ok", "biggest cluster has " + str(max_cluster_length) + " photos", 5)
 							K = K * 2
@@ -515,19 +553,6 @@ class TreeWalker:
 		back_level()
 		return by_geonames_album
 
-	def add_media_to_tree_by_date(self, media):
-		# add the given media to a temporary structure where media are organized by year, month, date
-
-		if media.year not in list(self.tree_by_date.keys()):
-			self.tree_by_date[media.year] = {}
-		if media.month not in list(self.tree_by_date[media.year].keys()):
-			self.tree_by_date[media.year][media.month] = {}
-		if media.day not in list(self.tree_by_date[media.year][media.month].keys()):
-			self.tree_by_date[media.year][media.month][media.day] = list()
-		if not any(media.media_file_name == _media.media_file_name for _media in self.tree_by_date[media.year][media.month][media.day]):
-		#~ if not media in self.tree_by_date[media.year][media.month][media.day]:
-			self.tree_by_date[media.year][media.month][media.day].append(media)
-
 	def remove_stopwords(self, alphabetic_words, search_normalized_words, ascii_words):
 		# remove the stopwords found in alphabetic_words, from search_normalized_words and ascii_words
 		purged_alphabetic_words = set(alphabetic_words) - TreeWalker.lowercase_stopwords
@@ -582,6 +607,19 @@ class TreeWalker:
 		if TreeWalker.lowercase_stopwords == {}:
 			TreeWalker.load_stopwords()
 
+	def add_media_to_tree_by_date(self, media):
+		# add the given media to a temporary structure where media are organized by year, month, date
+
+		if media.year not in list(self.tree_by_date.keys()):
+			self.tree_by_date[media.year] = {}
+		if media.month not in list(self.tree_by_date[media.year].keys()):
+			self.tree_by_date[media.year][media.month] = {}
+		if media.day not in list(self.tree_by_date[media.year][media.month].keys()):
+			self.tree_by_date[media.year][media.month][media.day] = list()
+		if not any(media.media_file_name == _media.media_file_name for _media in self.tree_by_date[media.year][media.month][media.day]):
+		#~ if not media in self.tree_by_date[media.year][media.month][media.day]:
+			self.tree_by_date[media.year][media.month][media.day].append(media)
+
 	def add_media_to_tree_by_search(self, media):
 		words_for_word_list, unicode_words, words_for_search_album_name = self.prepare_for_tree_by_search(media)
 		media.words = words_for_word_list
@@ -594,8 +632,8 @@ class TreeWalker:
 				if media not in self.tree_by_search[word]["media_words"]:
 					self.tree_by_search[word]["media_words"].append(media)
 				if unicode_word not in self.tree_by_search[word]["unicode_words"]:
-					if not any(media.media_file_name == _media.media_file_name for _media in self.tree_by_search[word]["unicode_words"]):
-						self.tree_by_search[word]["unicode_words"].append(unicode_word)
+					# if not any(media.media_file_name == _media.media_file_name for _media in self.tree_by_search[word]["unicode_words"]):
+					self.tree_by_search[word]["unicode_words"].append(unicode_word)
 
 	def add_album_to_tree_by_search(self, album):
 		words_for_word_list, unicode_words, words_for_search_album_name = self.prepare_for_tree_by_search(album)
@@ -630,7 +668,6 @@ class TreeWalker:
 		ascii_phrase = convert_to_ascii_only(search_normalized_phrase)
 
 		alphabetic_words = phrase_to_words(alphabetic_phrase)
-		lowercase_words = phrase_to_words(lowercase_phrase)
 		search_normalized_words = phrase_to_words(search_normalized_phrase)
 		ascii_words = phrase_to_words(ascii_phrase)
 
@@ -828,10 +865,11 @@ class TreeWalker:
 				next_album_cache_base = album.generate_cache_base(entry_for_cache_base)
 				indented_message("cache base determined", "", 5)
 				back_level()
-				[next_walked_album, num, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, album)
+				[next_walked_album, num, positions, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, album)
 				if next_walked_album is not None:
 					max_file_date = max(max_file_date, sub_max_file_date)
 					album.num_media_in_sub_tree += num
+					album.positions_and_media_in_tree = self.merge_positions(album.positions_and_media_in_tree, positions)
 					album.add_album(next_walked_album)
 					next_level()
 					message("adding album to search tree...", "", 5)
@@ -973,6 +1011,8 @@ class TreeWalker:
 
 			if media.is_valid:
 				album.num_media_in_sub_tree += 1
+				if media.has_gps_data:
+					album.positions_and_media_in_tree = self.add_media_to_position(album.positions_and_media_in_tree, media)
 				album.num_media_in_album += 1
 				if media.is_video:
 					num_video_in_dir += 1
@@ -1000,18 +1040,17 @@ class TreeWalker:
 							photos_without_exif_date_or_geotags_in_dir.append(      "      " + entry_with_path)
 
 				if not any(media.media_file_name == _media.media_file_name for _media in self.all_media):
-					message("adding media in album to lists...", "", 5)
 					next_level()
-					message("adding media to tree by date...", "", 5)
+					message("adding media to dates tree...", "", 5)
 					# the following function has a check on media already present
 					self.add_media_to_tree_by_date(media)
-					indented_message("media added to tree by date", "", 5)
+					indented_message("media added to dates tree!", "", 5)
 
 					if media.has_gps_data:
-						message("adding media to tree by geonames...", "", 5)
+						message("adding media to geonames tree...", "", 5)
 						# the following function has a check on media already present
 						self.add_media_to_tree_by_geonames(media)
-						indented_message("media added to tree by geonames", "", 5)
+						indented_message("media added to geonames tree!", "", 5)
 
 					message("adding media to search tree...", "", 5)
 					# the following function has a check on media already present
@@ -1022,11 +1061,14 @@ class TreeWalker:
 					album.add_media(media)
 					indented_message("media added to album", "", 5)
 
-					message("adding media to big list...", "", 5)
+					message("adding media to all media list...", "", 5)
 					self.all_media.append(media)
-					indented_message("media added to big list", "", 5)
+					indented_message("media added to all media list", "", 5)
 
 					back_level()
+				else:
+					indented_message("media not added to anything...", "it was already there", 5)
+
 			elif not media.is_valid:
 				indented_message("not image nor video", "", 1)
 			back_level()
@@ -1087,7 +1129,7 @@ class TreeWalker:
 
 		report_times(False)
 
-		return [album, album.num_media_in_sub_tree, max_file_date]
+		return [album, album.num_media_in_sub_tree, album.positions_and_media_in_tree, max_file_date]
 
 
 	@staticmethod

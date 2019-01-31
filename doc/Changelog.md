@@ -1,3 +1,19 @@
+### version 3.7beta (January 22, 2019)
+
+* A position icon is added to album titles: opens an OpenLayers map with the markers for all the media in the album and subalbums
+* The markers are clickable and they show the clickable thumbnails for that position
+* The OpenLayers map is used for the single media too
+* All the subalbum names in album view have the position icon that opens the OpenLayers map
+* Removed unnecessary options:
+  * `map_service`: the js app doesn't use any more those external tools
+  * `map_zoom_levels`
+ * Option`photo_map_zoom_level` removed and replaced by `photo_map_size`: size in meters of the map for a single photo
+
+### version 3.6.7 (January 14, 2019)
+
+* Bug fixes with album.ini file and geolocation
+* Non-sense line removed
+
 ### version 3.6.6 (January 13, 2019)
 
 * Fixed various bugs

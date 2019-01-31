@@ -430,6 +430,7 @@ $(document).ready(function() {
 		// var mediaFolderHash = array[2];
 		// var savedSearchSubAlbumHash = array[3];
 		var savedSearchAlbumHash = array[4];
+		var fillInSpan = "<span id='fill-in-map-link'></span>";
 
 		if (isDateTitle) {
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>";
@@ -475,6 +476,8 @@ $(document).ready(function() {
 						documentTitle = " \u00ab " + documentTitle;
 				}
 			}
+
+			title += fillInSpan;
 
 			if (components.length > 1 && media === null) {
 				if (! isMobile.any()) {
@@ -531,9 +534,6 @@ $(document).ready(function() {
 					 latitude = arrayCoordinates.latitude;
 					 longitude = arrayCoordinates.longitude;
 				}
-				title += "<a href=" + util.mapLink(latitude, longitude, Options.map_zoom_levels[(i - 2)]) + " target='_blank'>" +
-									"<img class='title-img' title='" + gpsHtmlTitle + "' alt='" + gpsHtmlTitle + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
-									"</a>";
 
 				if (i < components.length - 1 || media !== null)
 					title += raquo;
@@ -545,6 +545,8 @@ $(document).ready(function() {
 						documentTitle = " \u00ab " + documentTitle;
 				}
 			}
+
+			title += fillInSpan;
 
 			if (components.length > 1 && media === null) {
 				title += " <span class='title-count'>(";
@@ -682,6 +684,8 @@ $(document).ready(function() {
 					title += raquo;
 			}
 
+			title += fillInSpan;
+
 			if (components.length > 1 && media === null) {
 				title += " <span class='title-count'>(";
 				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
@@ -718,13 +722,22 @@ $(document).ready(function() {
 
 		if (media !== null) {
 			title += "<span class='media-name'>" + util.trimExtension(media.name) + "</span>";
-			if (util.hasGpsData(media)) {
-				latitude = media.metadata.latitude;
-				longitude = media.metadata.longitude;
-				title += "<a href=" + util.mapLink(latitude, longitude, Options.photo_map_zoom_level) + " target='_blank'>" +
-										"<img class='title-img' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
-										"</a>";
-			}
+			if (util.hasGpsData(currentMedia))
+				title += "<a class='map-popup-trigger'>" +
+					"<img class='title-img' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
+				"</a>";
+		} else if (title.indexOf(fillInSpan) > -1 && currentAlbum.positionsAndMediaInTree) {
+			title = title.replace(
+				fillInSpan,
+				"<a class='map-popup-trigger'>" +
+					"<img class='title-img' " +
+							"title='" + util._t("#show-markers-on-map") + "' " +
+							"alt='" + util._t("#show-markers-on-map") + "' " +
+							"height='20px' " +
+							"src='img/ic_place_white_24dp_2x.png'" +
+						">" +
+				"</a>"
+			);
 		}
 
 		if (isMobile.any()) {
@@ -735,7 +748,7 @@ $(document).ready(function() {
 			else
 				beginAt = 0;
 
-			numLinks = (title.substring(beginAt).match(/<a class=/g) || []).length;
+			numLinks = (title.substring(beginAt).match(/<a class='title/g) || []).length;
 			linksToLeave = 1;
 			if (numLinks > linksToLeave) {
 				for (i = 1; i <= numLinks; i ++) {
@@ -832,7 +845,337 @@ $(document).ready(function() {
 
 		setOptions();
 
+		// activate the map popup trigger in the title
+		$(".map-popup-trigger").off();
+		$(".map-popup-trigger").click(generateMapFromDefaults);
+
+
+
+		$('.map-close-button').click(function(){
+			$('.map-container').hide();
+			$('#mapdiv').empty();
+		});
+
 		return;
+	}
+
+	function generateMapFromMedia(ev) {
+		if (util.hasGpsData(ev.data.media)) {
+			ev.preventDefault();
+			var point =
+				{
+					'long': parseFloat(ev.data.media.metadata.longitude),
+					'lat' : parseFloat(ev.data.media.metadata.latitude),
+					'mediaNameList': [{
+						'name': ev.data.media.albumName,
+						'cacheBase': ev.data.media.cacheBase,
+						'albumCacheBase': ev.data.album.cacheBase
+					}]
+				};
+			generateMap([point]);
+		}
+	}
+
+	function generateMapFromSubalbum(ev) {
+		if (ev.data.subalbum.positionsAndMediaInTree) {
+			ev.stopPropagation();
+			ev.preventDefault();
+			generateMap(ev.data.subalbum.positionsAndMediaInTree);
+		} else {
+			$("#warning-no-geolocated-media").stop().fadeIn(200);
+			$("#warning-no-geolocated-media").fadeOut(3000);
+		}
+	}
+
+	function generateMapFromDefaults() {
+		var pointList = [];
+
+		if (currentMedia !== null && util.hasGpsData(currentMedia))
+			pointList = [
+				{
+					'long': parseFloat(currentMedia.metadata.longitude),
+					'lat' : parseFloat(currentMedia.metadata.latitude),
+					'mediaNameList': [{
+						'name': currentMedia.albumName,
+						'cacheBase': currentMedia.cacheBase,
+						'albumCacheBase': currentAlbum.cacheBase
+					}]
+				}
+			];
+		else if (currentAlbum.positionsAndMediaInTree)
+			pointList = currentAlbum.positionsAndMediaInTree;
+
+		if (pointList != [])
+			generateMap(pointList);
+	}
+
+	function generateMap(pointList) {
+		// pointList is an array of uniq points with a list of the media geolocated there
+		if(pointList) {
+			// calculate the center
+			var center = {'lat': 0, 'long': 0};
+			for (var i = 0; i < pointList.length; ++i) {
+				center.lat += pointList[i].lat;
+				center.long += pointList[i].long;
+			}
+			center.lat /= pointList.length;
+			center.long /= pointList.length;
+
+			// default zoom is used for single media or media list with one point
+			var maxDistance = Options.photo_map_size;
+			if (pointList.length > 1) {
+				// calculate the maximum distance from the center
+				// it's needed in order to calculate the zoom level
+				maxDistance = 0;
+				for (i = 0; i < pointList.length; ++i) {
+					maxDistance = Math.max(maxDistance, Math.abs(util.distanceBetweenCoordinatePoints(center, pointList[i])));
+				}
+			}
+			// calculate the zoom level needed in order to have all the points inside the map
+			// see https://wiki.openstreetmap.org/wiki/Zoom_levels
+			// maximum OSM zoom is 19
+			var earthCircumference = 40075016;
+			var zoom = Math.min(19, parseInt(Math.log2(Math.min(windowWidth, windowHeight) * earthCircumference * Math.cos(util.degreesToRadians(center.lat)) / 256 / (maxDistance * 2))));
+
+			$('.map-container').show();
+			var markersList = [];
+
+			// add the popup code after the #mapdiv element
+			// this code cannot be put in index.html/php file, because the "new ol.Overlay()" code removes it (why!?!?!?)
+			$("#mapdiv").after(
+				'<div id="popup" class="ol-popup">\n' +
+				'  <a href="#" id="popup-closer" class="ol-popup-closer"></a>\n' +
+				'  <div id="popup-content"></div>\n' +
+				'</div>'
+			);
+
+			/**
+       * Elements that make up the popup.
+       */
+      var container = document.getElementById('popup');
+      var content = document.getElementById('popup-content');
+      var closer = document.getElementById('popup-closer');
+
+      /**
+       * Create an overlay to anchor the popup to the map.
+       */
+      var overlay = new ol.Overlay({
+        element: container,
+        autoPan: true,
+        autoPanAnimation: {
+          duration: 250
+        }
+      });
+
+			/**
+       * Add a click handler to hide the popup.
+       * @return {boolean} Don't follow the href.
+       */
+      closer.onclick = function() {
+        overlay.setPosition(undefined);
+        closer.blur();
+        return false;
+      };
+
+			// create the map with the proper center
+			var map = new ol.Map(
+				{
+					controls: ol.control.defaults().extend(
+						[
+							new ol.control.ScaleLine()
+						]
+					),
+					view: new ol.View(
+						{
+							center: ol.proj.fromLonLat([center.long, center.lat]),
+							zoom: zoom
+						}
+					),
+					overlays: [overlay],
+					layers: [
+						new ol.layer.Tile(
+							{
+								source: new ol.source.OSM()
+							}
+						)
+					],
+					target: 'mapdiv',
+					keyboardEventTarget: document
+				}
+			);
+
+			// the style for the markers
+			var markerStyle = new ol.style.Style({
+							image: new ol.style.Icon(/** @type {module:ol/style/Icon~Options} */ ({
+								anchor: [0.5, 1],
+								anchorXUnits: 'fraction',
+								anchorYUnits: 'fraction',
+								scale: 0.4,
+								src: 'img/ic_place_void_black_24dp_2x.png'
+								// color: 'red'
+							}))
+						});
+
+			for (i = 0; i < pointList.length; ++i) {
+				// add the marker
+				markersList[i] = new ol.Feature({
+					geometry: new ol.geom.Point(ol.proj.fromLonLat([pointList[i].long, pointList[i].lat]))
+				});
+				// apply the style to the marker
+				markersList[i].setStyle(markerStyle);
+			}
+
+			// generate the markers vector
+			var markers = new ol.source.Vector({
+					features: markersList
+			});
+
+			// generate the markers layer
+			var markerVectorLayer = new ol.layer.Vector({
+					source: markers,
+			});
+
+			// add the markers layer to the map
+			map.addLayer(markerVectorLayer);
+
+			/**
+			 * Add a click handler to the map to render the popup.
+			 */
+			map.on('singleclick', function(evt) {
+				var clickedPosition = ol.proj.toLonLat(evt.coordinate), i;
+				// console.log(clickedPosition, pointList);
+
+				// decide what point is to be used: the nearest to the clicked position
+				var minimumDistance = false, newMinimumDistance, distance, index;
+				for(i = 0; i < pointList.length; i ++) {
+					distance = Math.abs(util.distanceBetweenCoordinatePoints({long: clickedPosition[0], lat: clickedPosition[1]}, pointList[i]));
+					// console.log(i, distance);
+					if (minimumDistance === false) {
+						minimumDistance = distance;
+						index = i;
+					} else {
+						newMinimumDistance = Math.min(minimumDistance, distance);
+						if (newMinimumDistance != minimumDistance) {
+							minimumDistance = newMinimumDistance;
+							index = i;
+						}
+					}
+				}
+
+				// how many thumbnail may we have in a line?
+				var maxThumbnailsInRow = parseInt($("#mapdiv").width() / Options.media_thumb_size);
+
+				// reset the thumbnails
+				content.innerHTML = '';
+
+				// console.log(index, clickedPosition, pointList[index], minimumDistance);
+				var coordinateForPopup = [pointList[index].long, pointList[index].lat];
+				var text = '';
+				var imagesGot = 0;
+				var mediaHashes = [];
+				for(i = 0; i < pointList[index].mediaNameList.length; i ++) {
+
+					// we must get the media corresponding to the name in the point
+					var mediaName = pointList[index].mediaNameList[i].name;
+					var cacheBase = pointList[index].mediaNameList[i].cacheBase;
+					var albumCacheBase = pointList[index].mediaNameList[i].albumCacheBase;
+
+					phFl.getAlbum(
+						albumCacheBase,
+						function(theAlbum, i) {
+							var j, indexInAlbum;
+
+							for(j = 0; j < theAlbum.media.length; j ++) {
+								if (theAlbum.media[j].cacheBase == cacheBase) {
+									indexInAlbum = j;
+									break;
+								}
+							}
+							width = theAlbum.media[indexInAlbum].metadata.size[0];
+							height = theAlbum.media[indexInAlbum].metadata.size[1];
+							thumbnailSize = Options.media_thumb_size;
+							thumbHash = chooseThumbnail(theAlbum, theAlbum.media[indexInAlbum], thumbnailSize);
+
+							if (Options.media_thumb_type == "fixed_height") {
+								if (height < Options.media_thumb_size) {
+									thumbHeight = height;
+									thumbWidth = width;
+								} else {
+									thumbHeight = Options.media_thumb_size;
+									thumbWidth = thumbHeight * width / height;
+								}
+								calculatedWidth = thumbWidth;
+							} else if (Options.media_thumb_type == "square") {
+								thumbHeight = thumbnailSize;
+								thumbWidth = thumbnailSize;
+								calculatedWidth = Options.media_thumb_size;
+							}
+							imgTitle = theAlbum.media[indexInAlbum].albumName;
+							calculatedHeight = Options.media_thumb_size;
+
+							calculatedWidth = Math.min(
+								calculatedWidth,
+								($(window).innerWidth() - 2 * parseInt($("#album-view").css("padding")))
+							);
+							calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
+
+							mediaHashes[i] = phFl.encodeHash(theAlbum, theAlbum.media[indexInAlbum]);
+
+							imageString =
+									"<div id='popup-image-" + i + "' class='thumb-and-caption-container' style='" +
+												"width: " + calculatedWidth + "px; " +
+											"'>" +
+										"<div class='thumb-container' " + "style='" +
+												// "width: " + calculatedWidth + "px; " +
+												"width: " + calculatedWidth + "px; " +
+												"height: " + calculatedHeight + "px;" +
+											"'>" +
+												"<span class='helper'></span>" +
+												"<img title='" + imgTitle + "' " +
+													"alt='" + util.trimExtension(theAlbum.media[indexInAlbum].name) + "' " +
+													"src='" +  encodeURI(thumbHash) + "' " +
+													"class='thumbnail" + "' " +
+													"height='" + thumbHeight + "' " +
+													"width='" + thumbWidth + "' " +
+													"style='" +
+														 "width: " + calculatedWidth + "px; " +
+														 "height: " + calculatedHeight + "px;" +
+														 "'" +
+													"/>" +
+										"</div>" +
+										"<div class='media-caption'>" +
+											"<span>" +
+											theAlbum.media[indexInAlbum].name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+											"</span>" +
+										"</div>" +
+									"</div>";
+							image = $(imageString);
+							image.get(0).media = theAlbum.media[indexInAlbum];
+
+							content.innerHTML += imageString;
+							if (i % maxThumbnailsInRow == maxThumbnailsInRow - 1)
+								content.innerHTML += '<br />';
+
+							imagesGot += 1;
+							if (imagesGot == pointList[index].mediaNameList.length) {
+								// all the images have been fetched and put in DOM
+								overlay.setPosition(ol.proj.fromLonLat(coordinateForPopup));
+								for(var ii = 0; ii < pointList[index].mediaNameList.length; ii ++) {
+									$("#popup-image-" + ii).on('click', {ii: ii}, function(ev) {
+										$('#popup-closer')[0].click();
+										$('#popup #popup-content').html("");
+										$('.map-close-button')[0].click();
+										window.location.href = mediaHashes[ev.data.ii];
+									});
+								}
+							}
+						},
+						die,
+						i
+					);
+				}
+			});
+		}
 	}
 
 	function initializeSortPropertiesAndCookies() {
@@ -988,7 +1331,7 @@ $(document).ready(function() {
 		var tooBig = false, isVirtualAlbum = false;
 		var mapLinkIcon, id;
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
-		var array, folderArray, folder, savedSearchSubAlbumHash, savedSearchAlbumHash;
+		var array, folderArray, folder, folderName, folderTitle, savedSearchSubAlbumHash, savedSearchAlbumHash;
 
 		phFl.subalbumIndex = 0;
 		numSubAlbumsReady = 0;
@@ -1058,11 +1401,17 @@ $(document).ready(function() {
 
 					mapLinkIcon = "";
 					if (util.hasGpsData(currentAlbum.media[i])) {
-						var latitude = currentAlbum.media[i].metadata.latitude;
-						var longitude = currentAlbum.media[i].metadata.longitude;
-						mapLinkIcon = "<a href=" + util.mapLink(latitude, longitude, Options.photo_map_zoom_level) + " target='_blank'>" +
-													"<img class='thumbnail-map-link' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
-													"</a>";
+						mapLinkIcon =
+							"<a id='media-map-link-" + i + "'>" +
+								"<img " +
+									// "id='media-map-link-" + i + "' " +
+									"class='thumbnail-map-link' " +
+									"title='" + util._t("#show-on-map") + "' " +
+									"alt='" + util._t("#show-on-map") + "' " +
+									"height='20px' " +
+									"src='img/ic_place_white_24dp_2x.png'" +
+								">" +
+							"</a>";
 					}
 
 					imageString =	"<div class='thumb-and-caption-container' style='" +
@@ -1115,6 +1464,12 @@ $(document).ready(function() {
 				thumbsElement = $("#thumbs");
 				thumbsElement.empty();
 				thumbsElement.append.apply(thumbsElement, media);
+
+				// generate the click event for the map for every media
+				for (i = 0; i < currentAlbum.media.length; ++i) {
+					$("#media-map-link-" + i).off();
+					$("#media-map-link-" + i).on('click', {media: currentAlbum.media[i], album: currentAlbum}, generateMapFromMedia);
+				}
 			}
 			lazyload(document.querySelectorAll(".lazyload-media"));
 
@@ -1189,17 +1544,17 @@ $(document).ready(function() {
 						// generate the subalbum caption
 						if (util.isByDateCacheBase(currentAlbum.cacheBase)) {
 							folderArray = currentAlbum.subalbums[i].cacheBase.split(Options.cache_folder_separator);
-							folder = "";
+							folderName = "";
 							if (folderArray.length == 2) {
-								folder += parseInt(folderArray[1]);
+								folderName += parseInt(folderArray[1]);
 							} else if (folderArray.length == 3)
-								folder += " " + util._t("#month-" + folderArray[2]);
+								folderName += " " + util._t("#month-" + folderArray[2]);
 							else if (folderArray.length == 4)
-								folder += util._t("#day") + " " + parseInt(folderArray[3]);
+								folderName += util._t("#day") + " " + parseInt(folderArray[3]);
+								folderTitle = folderName;
 						} else if (util.isByGpsCacheBase(currentAlbum.cacheBase)) {
-							var level = currentAlbum.subalbums[i].cacheBase.split(Options.cache_folder_separator).length - 2;
-							var folderName = '';
-							var folderTitle = '';
+							folderName = '';
+							folderTitle = '';
 							if (currentAlbum.subalbums[i].name === '')
 								folderName = util._t('.not-specified');
 							else if (currentAlbum.subalbums[i].hasOwnProperty('altName'))
@@ -1208,19 +1563,24 @@ $(document).ready(function() {
 								folderName = currentAlbum.subalbums[i].name;
 							folderTitle = util._t('#place-icon-title') + folderName;
 
-							folder = "<span class='gps-folder'>" +
-												folderName +
-												"<a href='" + util.mapLink(currentAlbum.subalbums[i].center.latitude, currentAlbum.subalbums[i].center.longitude, Options.map_zoom_levels[level]) +
-																"' title='" + folderName +
-																"' target='_blank'" +
-														">" +
-													"<img class='title-img' title='" + folderTitle + "'  alt='" + folderTitle + "' height='15px' src='img/ic_place_white_24dp_2x.png' />" +
-												"</a>" +
-											"</span>";
 						}
 						else {
-							folder = currentAlbum.subalbums[i].path;
+							folderName = currentAlbum.subalbums[i].path;
+							folderTitle = folderName;
 						}
+
+						folder = "<span class='folder-name'>" +
+											folderName +
+											"<a id='subalbum-map-link-" + i + "' >" +
+												"<img " +
+													"class='title-img' " +
+													"title='" + folderTitle + "' " +
+													"alt='" + folderTitle + "' " +
+													"height='15px' " +
+													"src='img/ic_place_white_24dp_2x.png' " +
+												"/>" +
+											"</a>" +
+										"</span>";
 
 						// // get the value in style sheet (element with that class doesn't exist in DOM)
 						// var $el = $('<div class="album-caption"></div>');
@@ -1317,73 +1677,81 @@ $(document).ready(function() {
 						//      })(currentAlbum.subalbums[i], image, container);
 						(function(theSubalbum, theImage, theLink, id) {
 							// function(subalbum, container, callback, error)  ---  callback(album,   album.media[index], container,            subalbum);
-							phFl.pickRandomMedia(theSubalbum, currentAlbum, function(randomAlbum, randomMedia, theOriginalAlbumContainer, subalbum) {
-								var htmlText;
-								var titleName, randomMediaLink, goTo, humanGeonames;
-								var mediaSrc = chooseThumbnail(randomAlbum, randomMedia, Options.album_thumb_size);
+							phFl.pickRandomMedia(
+								theSubalbum,
+								currentAlbum,
+								function(randomAlbum, randomMedia, theOriginalAlbumContainer, subalbum) {
+									var titleName, randomMediaLink, goTo, humanGeonames;
+									var mediaSrc = chooseThumbnail(randomAlbum, randomMedia, Options.album_thumb_size);
 
-								phFl.subalbumIndex ++;
-								mediaWidth = randomMedia.metadata.size[0];
-								mediaHeight = randomMedia.metadata.size[1];
-								if (Options.album_thumb_type == "fit") {
-									if (mediaWidth < correctedAlbumThumbSize && mediaHeight < correctedAlbumThumbSize) {
-										thumbWidth = mediaWidth;
-										thumbHeight = mediaHeight;
-									} else {
-										if (mediaWidth > mediaHeight) {
-											thumbWidth = correctedAlbumThumbSize;
-											thumbHeight = Math.floor(correctedAlbumThumbSize * mediaHeight / mediaWidth);
+									phFl.subalbumIndex ++;
+									mediaWidth = randomMedia.metadata.size[0];
+									mediaHeight = randomMedia.metadata.size[1];
+									if (Options.album_thumb_type == "fit") {
+										if (mediaWidth < correctedAlbumThumbSize && mediaHeight < correctedAlbumThumbSize) {
+											thumbWidth = mediaWidth;
+											thumbHeight = mediaHeight;
 										} else {
-											thumbWidth = Math.floor(correctedAlbumThumbSize * mediaWidth / mediaHeight);
-											thumbHeight = correctedAlbumThumbSize;
+											if (mediaWidth > mediaHeight) {
+												thumbWidth = correctedAlbumThumbSize;
+												thumbHeight = Math.floor(correctedAlbumThumbSize * mediaHeight / mediaWidth);
+											} else {
+												thumbWidth = Math.floor(correctedAlbumThumbSize * mediaWidth / mediaHeight);
+												thumbHeight = correctedAlbumThumbSize;
+											}
 										}
+									} else if (Options.album_thumb_type == "square") {
+										thumbWidth = correctedAlbumThumbSize;
+										thumbHeight = correctedAlbumThumbSize;
 									}
-								} else if (Options.album_thumb_type == "square") {
-									thumbWidth = correctedAlbumThumbSize;
-									thumbHeight = correctedAlbumThumbSize;
+
+									if (util.isByDateCacheBase(currentAlbum.cacheBase)) {
+										titleName = util.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
+										// randomMediaLink = util.pathJoin(["#!", randomMedia.dayAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
+									} else if (util.isByGpsCacheBase(currentAlbum.cacheBase)) {
+										humanGeonames = util.pathJoin([Options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
+										titleName = util.pathJoin([humanGeonames, randomMedia.name]);
+										// randomMediaLink = util.pathJoin(["#!", randomMedia.gpsAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
+									} else if (util.isSearchCacheBase(currentAlbum.cacheBase)) {
+										titleName = randomMedia.albumName;
+										// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, currentAlbum.cacheBase + Options.cache_folder_separator + theSubalbum.cacheBase, randomMedia.cacheBase]);
+									} else {
+										titleName = randomMedia.albumName;
+										// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, randomMedia.cacheBase]);
+									}
+									randomMediaLink = phFl.encodeHash(randomAlbum, randomMedia);
+
+									titleName = titleName.substr(titleName.indexOf('/') + 1);
+									goTo = util._t(".go-to") + " " + titleName;
+									$("#" + id + " .album-button a").attr("href", randomMediaLink);
+									$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
+									$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName).attr("data-src", encodeURI(mediaSrc));
+									$("#" + id + " img.thumbnail").css("width", thumbWidth).css("height", thumbHeight);
+
+									lazyload(document.querySelectorAll(".lazyload-album-" + id));
+
+									numSubAlbumsReady ++;
+									if (numSubAlbumsReady >= theOriginalAlbumContainer.subalbums.length) {
+										// now all the subalbums random thumbnails has been loaded
+										// we can run the function that prepare the stuffs for sharing
+										socialButtons();
+									}
+								},
+								function error() {
+									currentAlbum.subalbums.splice(currentAlbum.subalbums.indexOf(theSubalbum), 1);
+									theLink.remove();
+									subalbums.splice(subalbums.indexOf(theLink), 1);
 								}
-
-								if (util.isByDateCacheBase(currentAlbum.cacheBase)) {
-									titleName = util.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
-									// randomMediaLink = util.pathJoin(["#!", randomMedia.dayAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
-								} else if (util.isByGpsCacheBase(currentAlbum.cacheBase)) {
-									humanGeonames = util.pathJoin([Options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
-									titleName = util.pathJoin([humanGeonames, randomMedia.name]);
-									// randomMediaLink = util.pathJoin(["#!", randomMedia.gpsAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
-								} else if (util.isSearchCacheBase(currentAlbum.cacheBase)) {
-									titleName = randomMedia.albumName;
-									// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, currentAlbum.cacheBase + Options.cache_folder_separator + theSubalbum.cacheBase, randomMedia.cacheBase]);
-								} else {
-									titleName = randomMedia.albumName;
-									// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, randomMedia.cacheBase]);
-								}
-								randomMediaLink = phFl.encodeHash(randomAlbum, randomMedia);
-
-								titleName = titleName.substr(titleName.indexOf('/') + 1);
-								goTo = util._t(".go-to") + " " + titleName;
-								$("#" + id + " a").attr("href", randomMediaLink);
-								$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
-								$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName).attr("data-src", encodeURI(mediaSrc));
-								$("#" + id + " img.thumbnail").css("width", thumbWidth).css("height", thumbHeight);
-
-								lazyload(document.querySelectorAll(".lazyload-album-" + id));
-
-								numSubAlbumsReady ++;
-								if (numSubAlbumsReady >= theOriginalAlbumContainer.subalbums.length) {
-									// now all the subalbums random thumbnails has been loaded
-									// we can run the function that prepare the stuffs for sharing
-									socialButtons();
-								}
-							}, function error() {
-								currentAlbum.subalbums.splice(currentAlbum.subalbums.indexOf(theSubalbum), 1);
-								theLink.remove();
-								subalbums.splice(subalbums.indexOf(theLink), 1);
-							});
+							);
 							i ++; i --;
 						})(currentAlbum.subalbums[i], image, container, id);
 						//////////////////// end anonymous function /////////////////////
 					}
 
+					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
+						$("#subalbum-map-link-" + i).off();
+						$("#subalbum-map-link-" + i).on('click', {subalbum: currentAlbum.subalbums[i]}, generateMapFromSubalbum);
+					}
 
 					$("#subalbums").show();
 					$("#album-view").removeClass("media-view-container");
@@ -1780,7 +2148,9 @@ $(document).ready(function() {
 		$(".media-box#" + id + " .original-link").attr("target", "_blank").attr("href", originalMediaPath);
 		$(".media-box#" + id + " .download-link").attr("href", originalMediaPath).attr("download", "");
 		if (util.hasGpsData(currentMedia)) {
-			$(".media-box#" + id + " .menu-map-link").attr("target", "_blank").attr("href", encodeURI(util.mapLink(currentMedia.metadata.latitude, currentMedia.metadata.longitude, Options.photo_map_zoom_level)));
+			$(".media-box#" + id + " .menu-map-link").on('click', function(ev) {
+				$(".map-popup-trigger")[0].click();
+			});
 			$(".media-box#" + id + " .menu-map-link").show();
 			$(".media-box#" + id + " .menu-map-divider").show();
 		} else {
@@ -1928,10 +2298,9 @@ $(document).ready(function() {
 			text += "<tr class='gps'><td class='metadata-data-longitude'></td><td>" + media.metadata.longitudeMS + " </td></tr>";
 		text += "</table>";
 		$(".media-box#" + id + " .metadata").html(text);
-		var linkTitle = util._t('#show-map') + Options.map_service;
+		var linkTitle = util._t('#show-map');
 		$(".media-box#" + id + " .metadata tr.gps").attr("title", linkTitle).on('click', function(ev) {
-			ev.stopPropagation();
-			window.open(util.mapLink(media.metadata.latitude, media.metadata.longitude, Options.photo_map_zoom_level), '_blank');
+			$(".map-popup-trigger")[0].click();
 		});
 
 		util.translate();
@@ -2382,6 +2751,8 @@ $(document).ready(function() {
 	/* Event listeners */
 
 	$(document).on('keydown', function(e) {
+		var isMap = $('#mapdiv').html() ? 1 : 0;
+		var isPopup = $('#popup #popup-content').html() ? 1 : 0;
 		if (! $("#search-field").is(':focus')) {
 			if (! e.ctrlKey && ! e.shiftKey && ! e.altKey) {
 				if (e.keyCode === 9) {
@@ -2392,32 +2763,41 @@ $(document).ready(function() {
 						toggleBottomThumbnails(e);
 						return false;
 					}
-				} else if (e.keyCode === 39 && nextMedia && currentMedia !== null) {
+				} else if (e.keyCode === 39 && nextMedia && currentMedia !== null && ! isMap) {
 					//     arrow right
 					ps.swipeLeftOrDrag(nextMedia);
 					return false;
 				} else if (
 					(e.keyCode === 78 || e.keyCode === 13 || e.keyCode === 32) &&
 					//             n               return               space
-					nextMedia && currentMedia !== null
+					nextMedia && currentMedia !== null && ! isMap
 				) {
 					ps.swipeLeft(nextMedia);
 					return false;
 				} else if (
 					(e.keyCode === 80 || e.keyCode === 8) &&
 					//             p           backspace
-					prevMedia && currentMedia !== null
+					prevMedia && currentMedia !== null && ! isMap
 				) {
 					ps.swipeRight(prevMedia);
 					return false;
-				} else if (e.keyCode === 37 && prevMedia && currentMedia !== null) {
+				} else if (e.keyCode === 37 && prevMedia && currentMedia !== null && ! isMap) {
 					//             arrow left
 					ps.swipeRightOrDrag(prevMedia);
 					return false;
 				} else if (e.keyCode === 27) {
 					//                    esc
 					// warning: modern browsers will always exit fullscreen when pressing esc
-					if (ps.getCurrentZoom() > 1) {
+					if (isMap) {
+						if (isPopup) {
+							// the popup is there: close it
+							$('#popup-closer')[0].click();
+							$('#popup #popup-content').html("");
+						} else
+							// we are in a map: close it
+							$('.map-close-button')[0].click();
+						return false;
+					} else if (ps.getCurrentZoom() > 1 || $(".title").hasClass("hidden-by-pinch")) {
 						ps.pinchOut();
 						return false;
 					} else if (! Modernizr.fullscreen && fullScreenStatus) {
@@ -2428,11 +2808,11 @@ $(document).ready(function() {
 						ps.swipeDown(upLink);
 						return false;
 					}
-				} else if ((e.keyCode === 38 || e.keyCode === 33) && upLink) {
+				} else if ((e.keyCode === 38 || e.keyCode === 33) && upLink && ! isMap) {
 					//                arrow up             page up
 					ps.swipeDownOrDrag(upLink);
 					return false;
-				} else if (e.keyCode === 40 || e.keyCode === 34) {
+				} else if (e.keyCode === 40 || e.keyCode === 34 && ! isMap) {
 					//              arrow down           page down
 				 	if (mediaLink && currentMedia === null) {
 						ps.swipeUp(mediaLink);
@@ -2441,33 +2821,50 @@ $(document).ready(function() {
 						ps.swipeUpOrDrag(mediaLink);
 						return false;
 					}
-				} else if (e.keyCode === 68 && currentMedia !== null) {
+				} else if (e.keyCode === 68 && currentMedia !== null && ! isMap) {
 					//                      d
-					$("#download-link")[0].click();
+					$("#center .download-link")[0].click();
 					return false;
-				} else if (e.keyCode === 70 && currentMedia !== null) {
+				} else if (e.keyCode === 70 && currentMedia !== null && ! isMap) {
 					//                      f
 					goFullscreen(e);
 					return false;
-				} else if (e.keyCode === 77 && currentMedia !== null) {
+				} else if (e.keyCode === 77 && currentMedia !== null && ! isMap) {
 					//                      m
 					toggleMetadata();
 					return false;
-				} else if (e.keyCode === 79 && currentMedia !== null) {
+				} else if (e.keyCode === 79 && currentMedia !== null && ! isMap) {
 					//                      o
-					$("#original-link")[0].click();
+					$("#center .original-link")[0].click();
 					return false;
-				} else if (currentMedia !== null && (e.keyCode === 107 || e.keyCode === 187)) {
-					//                                       + on keypad                    +
-					ps.pinchIn();
-					return false;
-				} else if (currentMedia !== null && (e.keyCode === 109 || e.keyCode === 189)) {
-					//                                       - on keypad                    -
-					ps.pinchOut();
-					return false;
-				} else if (e.keyCode === 83 && currentMedia !== null && util.hasGpsData(currentMedia)) {
-					 	//                    s
-						$("#map-link")[0].click();
+				} else if (e.keyCode === 107 || e.keyCode === 187) {
+					//             + on keypad                    +
+					if (isMap) {
+						// $(".ol-zoom-in")[0].click();
+						// return false;
+					} else if (currentMedia !== null) {
+						ps.pinchIn();
+						return false;
+					}
+				} else if (e.keyCode === 109 || e.keyCode === 189) {
+					//         - on keypad                    -
+					if (isMap) {
+						// $(".ol-zoom-out")[0].click();
+						// return false;
+					} else if (currentMedia !== null) {
+						ps.pinchOut();
+						return false;
+					}
+				} else if (
+					e.keyCode === 83 &&
+					//             s
+					! isMap &&
+					(
+						currentMedia !== null && util.hasGpsData(currentMedia) ||
+						currentMedia === null && currentAlbum.positionsAndMediaInTree
+					)
+				) {
+						$(".map-popup-trigger")[0].click();
 						return false;
 				}
 			}
