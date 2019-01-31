@@ -40,7 +40,7 @@ def message(category, text, verbose=0):
 	try:
 		message.max_verbose = Options.config['max_verbose']
 	except KeyError:
-		message.max_verbose = 10
+		message.max_verbose = 5
 	except AttributeError:
 		message.max_verbose = 0
 
