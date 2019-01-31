@@ -255,6 +255,10 @@ big_virtual_folders_threshold = 999
 # The map size in meters of the map for a single photo
 photo_map_size = 100
 
+# default map popup position
+# allowed values in ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'] (see options.py)
+default_map_popup_position = SE
+
 # The maximum number of search album that will be loaded
 # A value of 200 seems acceptable on a pc, 100 is more sure
 max_search_album_number = 100

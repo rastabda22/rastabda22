@@ -84,6 +84,37 @@
 		});
 	};
 
+	Utilities.prototype.mergePoints = function(oldPoints, newPoints) {
+		for (var i = 0; i < newPoints.length; i ++) {
+			oldPoints = this.addPointToPoints(oldPoints, newPoints[i]);
+		}
+		return oldPoints;
+	};
+
+	Utilities.prototype.addMediaToPoints = function(oldPoints, newMedia) {
+		var newPoint = {
+			'long': parseFloat(newMedia.metadata.longitude),
+			'lat' : parseFloat(newMedia.metadata.latitude),
+			'mediaNameList': [{
+				'name': newMedia.albumName,
+				'cacheBase': newMedia.cacheBase,
+				'albumCacheBase': newMedia.parent.cacheBase
+			}]
+		};
+		return this.addPointToPoints(oldPoints, newPoint);
+	};
+
+	Utilities.prototype.addPointToPoints = function(oldPoints, newPoint) {
+		for (var i = 0; i < oldPoints.length; i ++) {
+			if (newPoint.long == oldPoints[i].long && newPoint.lat == oldPoints[i].lat) {
+				oldPoints[i].mediaNameList.push(newPoint.mediaNameList[0]);
+				return oldPoints;
+			}
+		}
+		oldPoints.push(newPoint);
+		return oldPoints;
+	};
+
 	Utilities.prototype.union = function(a, b) {
 		var self = this;
 		if (a === [])
@@ -770,6 +801,46 @@
 		else if (id === 'right')
 			$("#media-box-container").append(Utilities.originalMediaBoxContainerContent.replace('id="center"', 'id="right"'));
 		$(".media-box#" + id + " .metadata").css("display", $(".media-box#center .metadata").css("display"));
+	};
+
+	/* Error displays */
+	Utilities.prototype.die = function(error) {
+		if (error == 403) {
+			$("#auth-text").stop().fadeIn(1000);
+			$("#password").focus();
+		} else {
+			// Jason's code only had the following line
+			//$("#error-text").stop().fadeIn(2500);
+
+			var rootLink = "#!/" + Options.folders_string;
+
+			$("#album-view").fadeOut(200);
+			$("#media-view").fadeOut(200);
+
+			if (window.location.href == rootLink) {
+				$("#loading").hide();
+				$("#error-text-folder").stop();
+				$("#error-root-folder").stop().fadeIn(2000);
+				$("#powered-by").show();
+			} else {
+				$("#error-text-folder").stop().fadeIn(200);
+				$("#error-text-folder, #error-overlay, #auth-text").fadeOut(3500);
+				$("#album-view").stop().fadeOut(100).fadeIn(3500);
+				$("#media-view").stop().fadeOut(100).fadeIn(3500);
+				window.location.href = rootLink;
+			}
+		}
+		// $("#error-overlay").fadeTo(500, 0.8);
+		$("body, html").css("overflow", "hidden");
+	};
+
+	Utilities.prototype.undie = function() {
+		$(".error, #error-overlay, #auth-text", ".search-failed").fadeOut(500);
+		$("body, html").css("overflow", "auto");
+	};
+
+	Utilities.prototype.chooseThumbnail	= function(album, media, thumbnailSize) {
+		return this.mediaPath(album, media, thumbnailSize);
 	};
 
 	/* make static methods callable as member functions */

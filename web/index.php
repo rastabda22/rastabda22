@@ -82,7 +82,10 @@
 		<script type="text/javascript" src="js/014-utilities.js"></script>
 		<script type="text/javascript" src="js/016-libphotofloat.js"></script>
 		<script type="text/javascript" src="js/018-pinch-swipe.js"></script>
-		<script type="text/javascript" src="js/020-display.js"></script>
+		<script type="text/javascript" src="js/022-functions.js"></script>
+		<script type="text/javascript" src="js/025-map.js"></script>
+		<script type="text/javascript" src="js/027-top-functions.js"></script>
+		<script type="text/javascript" src="js/030-display.js"></script>
 
 	<?php } ?>
 
@@ -213,7 +216,7 @@
 	<div class="map-container">
 		<span class="helper"></span>
 		<div>
-			<div class="map-close-button">X</div>
+			<div class="map-close-button"></div>
 			<div id="mapdiv"></div>
 		</div>
 	</div>
