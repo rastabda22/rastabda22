@@ -212,10 +212,10 @@ class TreeWalker:
 						year_album.add_media(single_media)
 						year_album.num_media_in_sub_tree += 1
 						if single_media.has_gps_data:
-							day_album.positions_and_media_in_tree = self.add_media_to_position(day_album.positions_and_media_in_tree, single_media)
-							month_album.positions_and_media_in_tree = self.add_media_to_position(month_album.positions_and_media_in_tree, single_media)
-							year_album.positions_and_media_in_tree = self.add_media_to_position(year_album.positions_and_media_in_tree, single_media)
-							by_date_album.positions_and_media_in_tree = self.add_media_to_position(by_date_album.positions_and_media_in_tree, single_media)
+							day_album.positions_and_media_in_tree = self.add_media_to_position(day_album.positions_and_media_in_tree, single_media, Options.config['by_date_string'])
+							month_album.positions_and_media_in_tree = self.add_media_to_position(month_album.positions_and_media_in_tree, single_media, Options.config['by_date_string'])
+							year_album.positions_and_media_in_tree = self.add_media_to_position(year_album.positions_and_media_in_tree, single_media, Options.config['by_date_string'])
+							by_date_album.positions_and_media_in_tree = self.add_media_to_position(by_date_album.positions_and_media_in_tree, single_media, Options.config['by_date_string'])
 
 						by_date_album.add_media(single_media)
 						by_date_album.num_media_in_sub_tree += 1
@@ -249,14 +249,20 @@ class TreeWalker:
 		back_level()
 		return by_date_album
 
-	def add_media_to_position(self, positions, media):
+	def add_media_to_position(self, positions, media, type_string):
 		# adds the media position and name to the positions list received as second argument
+		if type_string == Options.config['folders_string']:
+			media_album_cache_base = media.album.cache_base
+		elif type_string == Options.config['by_date_string']:
+			media_album_cache_base = media.day_album_cache_base
+		elif type_string == Options.config['by_gps_string']:
+			media_album_cache_base = media.gps_album_cache_base
 		position = {
 			'long': media.longitude,
 			'lat' : media.latitude,
 			'mediaNameList': [{
 				'cacheBase': media.cache_base,
-				'albumCacheBase': media.album.cache_base
+				'albumCacheBase': media_album_cache_base
 			}]
 		}
 		positions = self.add_position_to_positions(positions, position)
@@ -483,17 +489,17 @@ class TreeWalker:
 							cluster[j].gps_path = remove_album_path(place_path)
 							cluster[j].place_name = place_name
 							cluster[j].alt_place_name = alt_place_name
-							place_album.positions_and_media_in_tree = self.add_media_to_position(place_album.positions_and_media_in_tree, single_media)
+							place_album.positions_and_media_in_tree = self.add_media_to_position(place_album.positions_and_media_in_tree, single_media, Options.config['by_gps_string'])
 							place_album.add_media(single_media)
 							place_album.num_media_in_sub_tree += 1
 							place_album.num_media_in_album += 1
-							region_album.positions_and_media_in_tree = self.add_media_to_position(region_album.positions_and_media_in_tree, single_media)
+							region_album.positions_and_media_in_tree = self.add_media_to_position(region_album.positions_and_media_in_tree, single_media, Options.config['by_gps_string'])
 							region_album.add_media(single_media)
 							region_album.num_media_in_sub_tree += 1
-							country_album.positions_and_media_in_tree = self.add_media_to_position(country_album.positions_and_media_in_tree, single_media)
+							country_album.positions_and_media_in_tree = self.add_media_to_position(country_album.positions_and_media_in_tree, single_media, Options.config['by_gps_string'])
 							country_album.add_media(single_media)
 							country_album.num_media_in_sub_tree += 1
-							by_geonames_album.positions_and_media_in_tree = self.add_media_to_position(by_geonames_album.positions_and_media_in_tree, single_media)
+							by_geonames_album.positions_and_media_in_tree = self.add_media_to_position(by_geonames_album.positions_and_media_in_tree, single_media, Options.config['by_gps_string'])
 							by_geonames_album.add_media(single_media)
 							by_geonames_album.num_media_in_sub_tree += 1
 
@@ -1022,7 +1028,7 @@ class TreeWalker:
 			if media.is_valid:
 				album.num_media_in_sub_tree += 1
 				if media.has_gps_data:
-					album.positions_and_media_in_tree = self.add_media_to_position(album.positions_and_media_in_tree, media)
+					album.positions_and_media_in_tree = self.add_media_to_position(album.positions_and_media_in_tree, media, Options.config['folders_string'])
 				album.num_media_in_album += 1
 				if media.is_video:
 					num_video_in_dir += 1
