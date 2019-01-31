@@ -168,7 +168,8 @@ def get_options():
 				'use_internal_modernizr',
 				'show_faces',
 				'use_stop_words',
-				'debug_memory'
+				'debug_memory',
+				'debug_profile'
 		):
 			try:
 				config[option] = usr_config.getboolean('options', option)

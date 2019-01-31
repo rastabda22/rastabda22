@@ -15,9 +15,6 @@ from TreeWalker import TreeWalker
 from Utilities import report_times, message
 import Options
 
-# @python2
-if sys.version_info >= (3, 4):
-	import Debug
 
 def main():
 	# @python2
@@ -35,7 +32,12 @@ def main():
 		# @python2
 		if sys.version_info >= (3, 4):
 			if Options.config['debug_memory']:
-				Debug.start()
+				# Import the Debug module only if debugging is enabled
+				import Debug
+				Debug.memory_start()
+			if Options.config['debug_profile']:
+				import Debug
+				Debug.profile_start()
 		
 		os.umask(0o02)
 		TreeWalker()
@@ -43,10 +45,13 @@ def main():
 
 		# @python2
 		if sys.version_info >= (3, 4):
+			if Options.config['debug_profile']:
+				Debug.profile_stop()
 			if Options.config['debug_memory']:
-				message("Profiling Memory", "", 3)
-				snapshot = Debug.take_snapshot()
-				Debug.display_top(snapshot, key_type='lineno', limit=30)
+				snapshot = Debug.memory_stop()
+				Debug.memory_dump(snapshot, key_type='lineno', limit=30)
+			if Options.config['debug_profile']:
+				Debug.profile_dump(cumulative=False)
 			
 		message("    The end!    ", "", 3)
 	except KeyboardInterrupt:

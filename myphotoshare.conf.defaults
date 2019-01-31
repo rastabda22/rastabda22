@@ -71,6 +71,10 @@ show_faces = false
 # Dumps the memory usage of scanner when indexing is completed.
 debug_memory = false
 
+# Execution profiling
+# Dumps function calls sorted by execution time
+debug_profile = true
+
 ###########################################################
 # minifying
 ###########################################################

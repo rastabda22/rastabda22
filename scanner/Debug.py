@@ -16,29 +16,42 @@
 import linecache
 import os
 import tracemalloc
+import cProfile
+import pstats
+import io
 
 
-def start():
+# The execution profile context. The code is not reintering.
+_pr = cProfile.Profile()
+
+
+def memory_start():
     """
     Start capturing memory traces for profiler.
     """
 
     tracemalloc.start()
 
-def take_snapshot():
+
+def memory_stop():
     """
-    Take a memory snapshot for analysis.
+    Stop tracing memory and return the memory snapshot for analysis.
     """
 
     return tracemalloc.take_snapshot()
 
 
-def display_top(snapshot, key_type='lineno', limit=10, cumulative=False):
+def memory_dump(snapshot, key_type='lineno', limit=30, cumulative=False):
     """
     Do a memory usage analysis based on the snapshot given as parameter
     and print it sorted by memory usage.
     See  `tracemalloc` documentation for parameters values.
+    `limit` is the number of memory traces printed.
     """
+
+    print()
+    print()
+    print("====== Memory Profile =====")
 
     snapshot = snapshot.filter_traces((
         tracemalloc.Filter(False, "<frozen importlib._bootstrap>"),
@@ -63,3 +76,43 @@ def display_top(snapshot, key_type='lineno', limit=10, cumulative=False):
         print("%s other: %.1f KiB" % (len(other), size / 1024))
     total = sum(stat.size for stat in top_stats)
     print("Total allocated size: %.1f KiB" % (total / 1024))
+
+    print("===========================")
+
+
+def profile_start():
+    """
+    Enable execution profiling.
+    """
+
+    _pr.enable()
+
+
+def profile_stop():
+    """
+    Disable execution profiling.
+    """
+
+    _pr.disable()
+
+
+def profile_dump(limit=30, cumulative=False):
+    """
+    Print code execution time profile.
+    `limit` is the number of execution stacks printed.
+    `cumulative` when `True`, profile is by cumulative time in a function
+    else sort according to time spent within each function (what functions
+    were looping a lot, and taking a lot of time).
+    """
+    
+    print()
+    print()
+    print("====== Execution Profile =====")
+
+    s = io.StringIO()
+    ps = pstats.Stats(_pr, stream=s).sort_stats('cumulative' if cumulative else 'time')
+    ps.print_stats(limit)
+    print(s.getvalue())
+
+    print("==============================")
+
