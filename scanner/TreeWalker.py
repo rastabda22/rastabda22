@@ -249,7 +249,7 @@ class TreeWalker:
 		back_level()
 		return by_date_album
 
-	def add_media_to_position(self, positions, media):
+	def add_media_to_position(self, positions, media, option=''):
 		# adds the media position and name to the positions list received as second argument
 		position = {
 			'long': media.longitude,
