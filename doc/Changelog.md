@@ -1,4 +1,10 @@
+### version ?
+* Albums' metadata filename can be specified in config file (album.ini by default)
+
+### version 3.7beta (January 22, 2019)
+
 * A position icon is added to album titles: opens an OpenLayers map with the markers for all the media in the album and subalbums
+* The markers are clickable and they show the clickable thumbnails for that position
 * The OpenLayers map is used for the single media too
 * All the subalbum names in album view have the position icon that opens the OpenLayers map
 * Removed unnecessary options:
