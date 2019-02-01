@@ -1,3 +1,6 @@
+### version ?
+* Albums' metadata filename can be specified in config file (album.ini by default)
+
 ### version 3.7beta (January 22, 2019)
 
 * A position icon is added to album titles: opens an OpenLayers map with the markers for all the media in the album and subalbums
