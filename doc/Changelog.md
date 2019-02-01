@@ -1,5 +1,4 @@
-### version ?
-* Albums' metadata filename can be specified in config file (album.ini by default)
+* Albums' metadata filename specification in config file (album.ini by default) in now used in `make_album_ini.sh`
 
 ### version 3.7beta (January 22, 2019)
 
