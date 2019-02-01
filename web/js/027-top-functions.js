@@ -1500,17 +1500,18 @@
 						}
 
 						folder = "<span class='folder-name'>" +
-											folderName +
-											"<a id='subalbum-map-link-" + i + "' >" +
-												"<img " +
-													"class='title-img' " +
-													"title='" + folderTitle + "' " +
-													"alt='" + folderTitle + "' " +
-													"height='15px' " +
-													"src='img/ic_place_white_24dp_2x.png' " +
-												"/>" +
-											"</a>" +
-										"</span>";
+											folderName;
+            if (currentAlbum.subalbums[i].hasOwnProperty("positionsAndMediaInTree") && currentAlbum.subalbums[i].positionsAndMediaInTree.length)
+  						folder += "<a id='subalbum-map-link-" + i + "' >" +
+  												"<img " +
+  													"class='title-img' " +
+  													"title='" + folderTitle + "' " +
+  													"alt='" + folderTitle + "' " +
+  													"height='15px' " +
+  													"src='img/ic_place_white_24dp_2x.png' " +
+  												"/>" +
+  											"</a>";
+						folder += "</span>";
 
 						// // get the value in style sheet (element with that class doesn't exist in DOM)
 						// var $el = $('<div class="album-caption"></div>');
@@ -1680,7 +1681,8 @@
 
 					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
 						$("#subalbum-map-link-" + i).off();
-						$("#subalbum-map-link-" + i).on('click', {subalbum: currentAlbum.subalbums[i]}, map.generateMapFromSubalbum);
+            if (currentAlbum.subalbums[i].hasOwnProperty("positionsAndMediaInTree") && currentAlbum.subalbums[i].positionsAndMediaInTree.length)
+              $("#subalbum-map-link-" + i).on('click', {subalbum: currentAlbum.subalbums[i]}, map.generateMapFromSubalbum);
 					}
 
 					$("#subalbums").show();
