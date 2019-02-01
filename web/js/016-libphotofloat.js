@@ -19,26 +19,28 @@
 	PhotoFloat.addPositionsToSubalbums = function(thisAlbum) {
 		var iSubalbum, iPosition, iPhoto, position, subalbumCacheKey;
 		var positions = thisAlbum.positionsAndMediaInTree;
-		for (iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; ++ iSubalbum) {
-			thisAlbum.subalbums[iSubalbum].positionsAndMediaInTree = [];
-			for (iPosition = 0; iPosition < positions.length; ++ iPosition) {
-				position = {};
-				position.lat = positions[iPosition].lat;
-				position.long = positions[iPosition].long;
-				position.mediaNameList = [];
-				for (iPhoto = 0; iPhoto < positions[iPosition].mediaNameList.length; ++ iPhoto) {
-					// add the photos belonging to this subalbum
-					if (positions[iPosition].mediaNameList[iPhoto].albumCacheBase.indexOf(thisAlbum.subalbums[iSubalbum].cacheBase) == 0) {
-						position.mediaNameList.push(positions[iPosition].mediaNameList[iPhoto]);
+		if (thisAlbum.hasOwnProperty(subalbums)) {
+			for (iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; ++ iSubalbum) {
+				thisAlbum.subalbums[iSubalbum].positionsAndMediaInTree = [];
+				for (iPosition = 0; iPosition < positions.length; ++ iPosition) {
+					position = {};
+					position.lat = positions[iPosition].lat;
+					position.long = positions[iPosition].long;
+					position.mediaNameList = [];
+					for (iPhoto = 0; iPhoto < positions[iPosition].mediaNameList.length; ++ iPhoto) {
+						// add the photos belonging to this subalbum
+						if (positions[iPosition].mediaNameList[iPhoto].albumCacheBase.indexOf(thisAlbum.subalbums[iSubalbum].cacheBase) == 0) {
+							position.mediaNameList.push(positions[iPosition].mediaNameList[iPhoto]);
+						}
 					}
+					if (position.mediaNameList.length)
+						thisAlbum.subalbums[iSubalbum].positionsAndMediaInTree.push(position);
 				}
-				if (position.mediaNameList.length)
-					thisAlbum.subalbums[iSubalbum].positionsAndMediaInTree.push(position);
-			}
 
-			// save in the cache
-			subalbumCacheKey = thisAlbum.subalbums[iSubalbum].cacheBase + ".positions";
-			PhotoFloat.albumCache[subalbumCacheKey] = thisAlbum.subalbums[iSubalbum].positionsAndMediaInTree;
+				// save in the cache
+				subalbumCacheKey = thisAlbum.subalbums[iSubalbum].cacheBase + ".positions";
+				PhotoFloat.albumCache[subalbumCacheKey] = thisAlbum.subalbums[iSubalbum].positionsAndMediaInTree;
+			}
 		}
 	};
 
@@ -732,6 +734,7 @@
 													if (match && matchingSubalbums.indexOf(searchResultsAlbumFinal.subalbums[indexSubalbums]) == -1)
 														matchingSubalbums.push(searchResultsAlbumFinal.subalbums[indexSubalbums]);
 												}
+
 												searchResultsAlbumFinal.subalbums = matchingSubalbums;
 
 												// search albums need to conform to default behaviour of albums: json files have subalbums and media sorted by date not reversed
@@ -760,24 +763,42 @@
 
 											searchResultsAlbumFinal.numMediaInAlbum = searchResultsAlbumFinal.media.length;
 
+											var numSubalbumsProcessed = 0;
 											searchResultsAlbumFinal.numMediaInSubTree = searchResultsAlbumFinal.media.length;
-											for (var i = 0; i < searchResultsAlbumFinal.subalbums.length; i ++) {
+											for (var indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
 												// update the media count
 												searchResultsAlbumFinal.numMediaInSubTree += searchResultsAlbumFinal.subalbums[i].numMediaInSubTree;
 												// add the points from the subalbums
-												searchResultsAlbumFinal.positionsAndMediaInTree =
-													util.mergePoints(
-														searchResultsAlbumFinal.positionsAndMediaInTree,
-														searchResultsAlbumFinal.subalbums[i].positionsAndMediaInTree
-													);
+
+												// the subalbum could still have no positionsAndMediaInTree array, get it
+												if (! searchResultsAlbumFinal.subalbums[indexSubalbums].hasOwnProperty("positionsAndMediaInTree"))
+													searchResultsAlbumFinal.subalbums[indexSubalbums].positionsAndMediaInTree = [];
+
+												PhotoFloat.getPositions(
+													searchResultsAlbumFinal.subalbums[indexSubalbums],
+													function(subalbum) {
+														searchResultsAlbumFinal.positionsAndMediaInTree = util.mergePoints(
+																		searchResultsAlbumFinal.positionsAndMediaInTree,
+																		subalbum.positionsAndMediaInTree
+														);
+														numSubalbumsProcessed ++;
+														if (numSubalbumsProcessed >= searchResultsAlbumFinal.subalbums.length) {
+															// now all the subalbums have the positionsAndMediaInTree array, we can go on
+
+															// add the point count
+															searchResultsAlbumFinal.numPositionsInTree = searchResultsAlbumFinal.positionsAndMediaInTree.length;
+															// save in the cash array
+															if (! PhotoFloat.albumCache.hasOwnProperty(searchResultsAlbumFinal.cacheBase)) {
+																PhotoFloat.albumCache[searchResultsAlbumFinal.cacheBase] = searchResultsAlbumFinal;
+																PhotoFloat.albumCache[searchResultsAlbumFinal.cacheBase + ".positions"] = searchResultsAlbumFinal.positionsAndMediaInTree;
+															}
+
+															PhotoFloat.selectMedia(searchResultsAlbumFinal, null, mediaHash, callback);
+														}
+													},
+													util.die
+												);
 											}
-											// add the point count
-											searchResultsAlbumFinal.numPositionsInTree = searchResultsAlbumFinal.positionsAndMediaInTree.length;
-
-											if (! PhotoFloat.albumCache.hasOwnProperty(searchResultsAlbumFinal.cacheBase))
-												PhotoFloat.albumCache[searchResultsAlbumFinal.cacheBase] = searchResultsAlbumFinal;
-
-											PhotoFloat.selectMedia(searchResultsAlbumFinal, null, mediaHash, callback);
 										}
 									},
 									error,
