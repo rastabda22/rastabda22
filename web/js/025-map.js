@@ -62,6 +62,186 @@
 			MapFunctions.generateMap(pointList);
 	};
 
+  MapFunctions.mapClick = function(evt, pointList) {
+    var clickedPosition = evt.latlng, i;
+    // console.log(clickedPosition, pointList);
+
+    // decide what point is to be used: the nearest to the clicked position
+    var minimumDistance = false, newMinimumDistance, distance, index;
+    for(i = 0; i < pointList.length; i ++) {
+    	distance = Math.abs(util.distanceBetweenCoordinatePoints({long: clickedPosition.lng, lat: clickedPosition.lat}, pointList[i]));
+    	// console.log(i, distance);
+    	if (minimumDistance === false) {
+    		minimumDistance = distance;
+    		index = i;
+    	} else {
+    		newMinimumDistance = Math.min(minimumDistance, distance);
+    		if (newMinimumDistance != minimumDistance) {
+    			minimumDistance = newMinimumDistance;
+    			index = i;
+    		}
+    	}
+    }
+
+    // how much space is available horizontally for the thumbnails?
+    var maxWidthForThumbnails = parseInt($("#mapdiv").width() * 0.8);
+    var indexMediaInDOM;
+
+    if (! evt.originalEvent.shiftKey && ! evt.originalEvent.ctrlKey) {
+      // reset the thumbnails if not shift- nor ctrl-clicking
+    	// content.innerHTML = '';
+      lastIndex = 0;
+    }
+
+    // console.log(index, clickedPosition, pointList[index], minimumDistance);
+    coordinatesForPopup = [pointList[index].lat, pointList[index].long];
+    var text = '';
+    var imagesGot = 0;
+    var mediaHashes = [];
+    var imagesString = '';
+    for(i = 0; i < pointList[index].mediaNameList.length; i ++) {
+    	// we must get the media corresponding to the name in the point
+    	var cacheBase = pointList[index].mediaNameList[i].cacheBase;
+    	var albumCacheBase = pointList[index].mediaNameList[i].albumCacheBase;
+
+    	phFl.getAlbum(
+    		albumCacheBase,
+    		function(theAlbum, i, cacheBase) {
+    			var j, indexInAlbum, imageString, image;
+
+    			for(j = 0; j < theAlbum.media.length; j ++) {
+    				if (theAlbum.media[j].cacheBase == cacheBase) {
+    					indexInAlbum = j;
+    					break;
+    				}
+    			}
+    			width = theAlbum.media[indexInAlbum].metadata.size[0];
+    			height = theAlbum.media[indexInAlbum].metadata.size[1];
+    			thumbnailSize = Options.media_thumb_size;
+    			thumbHash = util.chooseThumbnail(theAlbum, theAlbum.media[indexInAlbum], thumbnailSize);
+
+    			if (Options.media_thumb_type == "fixed_height") {
+    				if (height < Options.media_thumb_size) {
+    					thumbHeight = height;
+    					thumbWidth = width;
+    				} else {
+    					thumbHeight = Options.media_thumb_size;
+    					thumbWidth = thumbHeight * width / height;
+    				}
+    				calculatedWidth = thumbWidth;
+    			} else if (Options.media_thumb_type == "square") {
+    				thumbHeight = thumbnailSize;
+    				thumbWidth = thumbnailSize;
+    				calculatedWidth = Options.media_thumb_size;
+    			}
+    			imgTitle = theAlbum.media[indexInAlbum].albumName;
+    			calculatedHeight = Options.media_thumb_size;
+
+    			calculatedWidth = Math.min(
+    				calculatedWidth,
+    				($(window).innerWidth() - 2 * parseInt($("#album-view").css("padding")))
+    			);
+    			calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
+
+    			mediaHashes[i] = phFl.encodeHash(theAlbum, theAlbum.media[indexInAlbum]);
+          var hash = theAlbum.cacheBase + "--" + theAlbum.media[indexInAlbum].cacheBase;
+          var codedHashClass = "popup-img-" + phFl.hashCode(hash);
+          var codedHashClassSelector = "." + codedHashClass;
+
+          if (evt.originalEvent.ctrlKey) {
+            if ($(codedHashClassSelector).length) {
+              // ctrl-click removes the images from the popup
+              $(codedHashClassSelector).remove();
+              // close the popup if no image in it
+              if (! $(".leaflet-popup .thumb-and-caption-container").length)
+                $('leaflet-popup-close-button')[0].click();
+            }
+          } else if (evt.originalEvent.shiftKey && $(codedHashClassSelector).length) {
+            // shift click doesn't anything if the image is already there
+            return;
+          } else {
+            indexMediaInDOM = i + lastIndex;
+    				imagesString +=
+    					"<div id='popup-image-" + indexMediaInDOM + "' class='thumb-and-caption-container " + codedHashClass + "' style='" +
+    								"width: " + calculatedWidth + "px; " +
+    							"'>" +
+    						"<div class='thumb-container' " + "style='" +
+    								// "width: " + calculatedWidth + "px; " +
+    								"width: " + calculatedWidth + "px; " +
+    								"height: " + calculatedHeight + "px;" +
+    							"'>" +
+    								"<span class='helper'></span>" +
+    								"<img title='" + imgTitle + "' " +
+    									"alt='" + util.trimExtension(theAlbum.media[indexInAlbum].name) + "' " +
+    									"src='" +  encodeURI(thumbHash) + "' " +
+    									"class='thumbnail" + "' " +
+    									"height='" + thumbHeight + "' " +
+    									"width='" + thumbWidth + "' " +
+    									"style='" +
+    										 "width: " + calculatedWidth + "px; " +
+    										 "height: " + calculatedHeight + "px;" +
+    										 "'" +
+    									"/>" +
+    						"</div>" +
+    						"<div class='media-caption'>" +
+    							"<span>" +
+    							theAlbum.media[indexInAlbum].name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+    							"</span>" +
+    						"</div>" +
+    					"</div>";
+    				// image = $(imageString);
+    				// image.get(0).media = theAlbum.media[indexInAlbum];
+
+            // $("#popup-content").append($(imageString));
+            // thumbAndCaptionHeight = Math.max(thumbAndCaptionHeight, parseInt($("popup-image-" + indexMediaInDOM).height()));
+            // $("#popup-content .thumb-and-caption-container").height(thumbAndCaptionHeight + "px");
+
+    				imagesGot += 1;
+
+    				if (imagesGot == pointList[index].mediaNameList.length) {
+              var popup = L.popup()
+                .setLatLng(coordinatesForPopup)
+                .setContent(imagesString)
+                .openOn(mymap);
+              // all the images have been fetched and put in DOM: we can generate the popup,
+    					// but before set a css value: position: absolute make the popup to be shown in a wrong position
+
+
+
+
+              // $("#mapdiv .ol-overlaycontainer-stopevent").css("position", "unset");
+    					$(".leaflet-popup-content").css("max-height", parseInt(windowHeight * 0.8)).css("max-width", parseInt(windowWidth * 0.8));
+    					if (
+    						Options.available_map_popup_positions.every(
+    							function(orientation) {
+    								return ! $(".ol-popup").hasClass(orientation);
+    							}
+    						)
+    					) {
+    						$(".ol-popup").addClass(Options.default_map_popup_position);
+    					}
+    					// overlay.setPosition(ol.proj.fromLonLat(coordinatesForPopup));
+
+    					// add the click events to every image
+    					for(var ii = 0; ii < pointList[index].mediaNameList.length; ii ++) {
+    						$("#popup-image-" + (ii + lastIndex)).on('click', {ii: ii}, function(ev) {
+    							$('.leaflet-popup-close-button')[0].click();
+    							// $('#popup #popup-content').html("");
+    							$('.map-close-button')[0].click();
+    							window.location.href = mediaHashes[ev.data.ii];
+    						});
+    					}
+              lastIndex += pointList[index].mediaNameList.length;
+    				}
+          }
+    		},
+    		util.die,
+    		i,
+        cacheBase
+    	);
+    }
+  };
+
 	MapFunctions.generateMap = function(pointList) {
 		// pointList is an array of uniq points with a list of the media geolocated there
 
@@ -185,157 +365,22 @@
       for (iPoint = 0; iPoint < pointList.length; iPoint ++) {
 				for(iPhoto = 0; iPhoto < pointList[iPoint].mediaNameList.length; iPhoto ++) {
 					// we must get the media corresponding to the name in the point
-					var cacheBase = pointList[iPoint].mediaNameList[iPhoto].cacheBase;
-					var albumCacheBase = pointList[iPoint].mediaNameList[iPhoto].albumCacheBase;
+          if (cacheBases)
+            cacheBases += '<br />';
+          cacheBases += pointList[iPoint].mediaNameList[iPhoto].cacheBase;
 
-					phFl.getAlbum(
-						albumCacheBase,
-						function(theAlbum, iPoint, cacheBase) {
-							var j, indexInAlbum, imageString = '', image;
-
-							for(j = 0; j < theAlbum.media.length; j ++) {
-								if (theAlbum.media[j].cacheBase == cacheBase) {
-									indexInAlbum = j;
-									break;
-								}
-							}
-							width = theAlbum.media[indexInAlbum].metadata.size[0];
-							height = theAlbum.media[indexInAlbum].metadata.size[1];
-							thumbnailSize = Options.media_thumb_size;
-							thumbHash = util.chooseThumbnail(theAlbum, theAlbum.media[indexInAlbum], thumbnailSize);
-
-							if (Options.media_thumb_type == "fixed_height") {
-								if (height < Options.media_thumb_size) {
-									thumbHeight = height;
-									thumbWidth = width;
-								} else {
-									thumbHeight = Options.media_thumb_size;
-									thumbWidth = thumbHeight * width / height;
-								}
-								calculatedWidth = thumbWidth;
-							} else if (Options.media_thumb_type == "square") {
-								thumbHeight = thumbnailSize;
-								thumbWidth = thumbnailSize;
-								calculatedWidth = Options.media_thumb_size;
-							}
-							imgTitle = theAlbum.media[indexInAlbum].albumName;
-							calculatedHeight = Options.media_thumb_size;
-
-							calculatedWidth = Math.min(
-								calculatedWidth,
-								($(window).innerWidth() - 2 * parseInt($("#album-view").css("padding")))
-							);
-							calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
-
-							mediaHashes[iPoint] = phFl.encodeHash(theAlbum, theAlbum.media[indexInAlbum]);
-              var hash = theAlbum.cacheBase + "--" + theAlbum.media[indexInAlbum].cacheBase;
-              var codedHashClass = "popup-img-" + phFl.hashCode(hash);
-              var codedHashClassSelector = "." + codedHashClass;
-
-              // if (evt.originalEvent.ctrlKey) {
-              //   if ($(codedHashClassSelector).length) {
-              //     // ctrl-click removes the images from the popup
-              //     $(codedHashClassSelector).remove();
-              //     // close the popup if no image in it
-              //     if (! $("#popup .thumb-and-caption-container").length)
-              //       $('#popup-closer')[0].click();
-              //   }
-              // } else if (evt.originalEvent.shiftKey && $(codedHashClassSelector).length) {
-              //   // shift click doesn't anything if the image is already there
-              //   return;
-              // } else {
-                indexMediaInDOM = iPhoto + lastIndex;
-  							imageStrings[iPhoto] =
-  								"<div id='popup-image-" + indexMediaInDOM + "' class='thumb-and-caption-container " + codedHashClass + "' style='" +
-  											"width: " + calculatedWidth + "px; " +
-  										"'>" +
-  									"<div class='thumb-container' " + "style='" +
-  											// "width: " + calculatedWidth + "px; " +
-  											"width: " + calculatedWidth + "px; " +
-  											"height: " + calculatedHeight + "px;" +
-  										"'>" +
-  											"<span class='helper'></span>" +
-  											"<img title='" + imgTitle + "' " +
-  												"alt='" + util.trimExtension(theAlbum.media[indexInAlbum].name) + "' " +
-  												"src='" +  encodeURI(thumbHash) + "' " +
-  												"class='thumbnail" + "' " +
-  												"height='" + thumbHeight + "' " +
-  												"width='" + thumbWidth + "' " +
-  												"style='" +
-  													 "width: " + calculatedWidth + "px; " +
-  													 "height: " + calculatedHeight + "px;" +
-  													 "'" +
-  												"/>" +
-  									"</div>" +
-  									"<div class='media-caption'>" +
-  										"<span>" +
-  										theAlbum.media[indexInAlbum].name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
-  										"</span>" +
-  									"</div>" +
-  								"</div>";
-  							// image = $(imageString);
-  							// image.get(0).media = theAlbum.media[indexInAlbum];
-
-  							imagesGot += 1;
-
-  							if (imagesGot == pointList[iPoint].mediaNameList.length) {
-  								// all the images have been fetched and put in DOM: we can generate the popup,
-  								// but before set a css value: position: absolute make the popup to be shown in a wrong position
-
-  								// $("#popup-content").css("max-height", parseInt(windowHeight * 0.8)).css("max-width", parseInt(windowWidth * 0.8));
-  								// if (
-  								// 	Options.available_map_popup_positions.every(
-  								// 		function(orientation) {
-  								// 			return ! $(".ol-popup").hasClass(orientation);
-  								// 		}
-  								// 	)
-  								// ) {
-  								// 	$(".ol-popup").addClass(Options.default_map_popup_position);
-  								// }
-
-                  // add the marker
-                  markers[iPoint] = L.marker([pointList[iPoint].lat, pointList[iPoint].long]).addTo(mymap);
-                  // the tooltip
-                  markers[iPoint].bindTooltip("prova");
-                  // the click
-                  var ii;
-  								for(var ii = 0; ii < pointList[iPoint].mediaNameList.length; ii ++) {
-                    imageString += imageStrings[ii]
-                  }
-                  markers[iPoint].bindPopup(imageString);
-  								for(var ii = 0; ii < pointList[iPoint].mediaNameList.length; ii ++) {
-                    // add the click events to every image
-  									$("#popup-image-" + (ii + lastIndex)).on('click', {ii: ii}, function(ev) {
-  										$('#popup-closer')[0].click();
-  										$('#popup #popup-content').html("");
-  										$('.map-close-button')[0].click();
-  										window.location.href = mediaHashes[ev.data.ii];
-  									});
-  								}
-                  lastIndex += pointList[iPoint].mediaNameList.length;
-  							}
-              // }
-						},
-						util.die,
-						iPoint,
-            cacheBase
-					);
-				}
-			}
-
-      //
-			// // generate the markers vector
-			// var markers = new ol.source.Vector({
-			// 		features: markersList
-			// });
-      //
-			// // generate the markers layer
-			// var markerVectorLayer = new ol.layer.Vector({
-			// 		source: markers,
-			// });
-      //
-			// // add the markers layer to the map
-			// map.addLayer(markerVectorLayer);
+          markers[iPoint] = L.marker([pointList[iPoint].lat, pointList[iPoint].long]).addTo(mymap);
+          // the tooltip
+          markers[iPoint].bindTooltip(cacheBases);
+          // make markers react to click like the other map points
+          markers[iPoint].on(
+            'click',
+            function(e) {
+              MapFunctions.mapClick(e, pointList);
+            }
+          );
+        }
+      }
 
       var lastIndex;
 
