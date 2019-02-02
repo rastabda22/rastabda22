@@ -1,3 +1,8 @@
+### version 3.7beta1 (February ..., 2019)
+
+* A memory and execution profiler has been added in the `scanner`, when run with Python 3.4+. The profilers can be enabled with the `debug_profile` and `debug_memory` in the configuration file.
+* The trace messages enabled by the `max_verbose` config option have been changed a bit to be more precise based on the level.
+
 ### version 3.7beta (January 22, 2019)
 
 * A position icon is added to album titles: opens an OpenLayers map with the markers for all the media in the album and subalbums
