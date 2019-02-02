@@ -3,7 +3,7 @@
   var phFl = new PhotoFloat();
   var util = new Utilities();
   var mapIsInitialized = false;
-  var mymap, tileLayer;
+  var mymap;
 
 	/* constructor */
 	function MapFunctions() {
@@ -62,7 +62,7 @@
 			MapFunctions.generateMap(pointList);
 	};
 
-  MapFunctions.mapClick = function(evt, pointList) {
+  MapFunctions.mapClick = function(evt, pointList, lastIndex) {
     var clickedPosition = evt.latlng, i;
     // console.log(clickedPosition, pointList);
 
@@ -217,6 +217,29 @@
             // all the images have been fetched and put in DOM: we can generate the popup,
   					// but before set a css value: position: absolute make the popup to be shown in a wrong position
 
+            // add the popup mover
+            $(".popup-mover").remove();
+            $(".leaflet-popup-close-button").after('<a id="popup-mover" class="popup-mover"></a>');
+            // add the corresponding listener
+            $(".popup-mover")
+              .on(
+                "click",
+                function() {
+                  var currentIndex = Options.available_map_popup_positions.findIndex(
+                    function(orientation) {
+                      return $(".leaflet-popup").hasClass(orientation);
+                    }
+                  );
+                  var nextIndex = currentIndex + 1;
+                  if (currentIndex == Options.available_map_popup_positions.length - 1)
+                    nextIndex = 0;
+                  $(".leaflet-popup").
+                    removeClass(Options.available_map_popup_positions[currentIndex]).
+                    addClass(Options.available_map_popup_positions[nextIndex]);
+                  return false;
+                }
+              );
+
 
 
 
@@ -225,11 +248,11 @@
   					if (
   						Options.available_map_popup_positions.every(
   							function(orientation) {
-  								return ! $(".ol-popup").hasClass(orientation);
+  								return ! $(".leaflet-popup").hasClass(orientation);
   							}
   						)
   					) {
-  						$(".ol-popup").addClass(Options.default_map_popup_position);
+  						$(".leaflet-popup").addClass(Options.default_map_popup_position);
   					}
   					// overlay.setPosition(ol.proj.fromLonLat(coordinatesForPopup));
 
@@ -287,56 +310,7 @@
 
 			$('.map-container').show();
 			var markers = [];
-
-			// // add the popup code after the #mapdiv element
-			// // this code cannot be put in index.html/php file, because the "new ol.Overlay()" code removes it (why!?!?!?)
-			// $("#mapdiv").after(
-			// 	'<div id="popup" class="ol-popup">\n' +
-			// 	'  <a href="#" id="popup-closer" class="ol-popup-closer"></a>\n' +
-			// 	'  <a href="#" id="popup-mover" class="ol-popup-mover"></a>\n' +
-			// 	'  <div id="popup-content"></div>\n' +
-			// 	'</div>'
-			// );
-			// // set this correct value, when showing the popup it was changed in order to show the popup in the right position
-			// $("#mapdiv .ol-overlaycontainer-stopevent").css("position", "absolute");
-
-			/**
-       * Elements that make up the popup.
-       */
-      var container = document.getElementById('popup');
-      var content = document.getElementById('popup-content');
-      var closer = document.getElementById('popup-closer');
-      var mover = document.getElementById('popup-mover');
-
-			// /**
-      //  * Add a click handler to hide the popup.
-      //  * @return {boolean} Don't follow the href.
-      //  */
-      // closer.onclick = function() {
-      //   overlay.setPosition(undefined);
-      //   $("#popup-content").html("");
-			// 	// set this correct value, when showing the popup it was changed in order to show the popup in the right position
-			// 	$("#mapdiv .ol-overlaycontainer-stopevent").css("position", "absolute");
-      //   closer.blur();
-      //   return false;
-      // };
-
       var coordinatesForPopup;
-      // mover.onclick = function() {
-			// 	var currentIndex = Options.available_map_popup_positions.findIndex(
-			// 		function(orientation) {
-			// 			return $(".ol-popup").hasClass(orientation);
-			// 		}
-			// 	);
-			// 	var nextIndex = currentIndex + 1;
-			// 	if (currentIndex == Options.available_map_popup_positions.length - 1)
-			// 		nextIndex = 0;
-			// 	$(".ol-popup").
-			// 		removeClass(Options.available_map_popup_positions[currentIndex]).
-			// 		addClass(Options.available_map_popup_positions[nextIndex]);
-      //   return false;
-      // };
-
       if (mapIsInitialized)
         mymap.remove();
 
@@ -344,27 +318,15 @@
       mapIsInitialized = true;
 
 
-      tileLayer = L.tileLayer(
+      L.tileLayer(
         'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
         {
           attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
           maxZoom: 18,
           id: 'mapbox.streets'
         }
-      );
-      tileLayer.addTo(mymap);
-
-			// // the style for the markers
-			// var markerStyle = new ol.style.Style({
-			// 				image: new ol.style.Icon(/** @type {module:ol/style/Icon~Options} */ ({
-			// 					anchor: [0.5, 1],
-			// 					anchorXUnits: 'fraction',
-			// 					anchorYUnits: 'fraction',
-			// 					scale: 0.4,
-			// 					src: 'img/red_marker_31x44.png'
-			// 					// color: 'red'
-			// 				}))
-			// 			});
+      ).addTo(mymap);
+      L.control.scale().addTo(mymap);
 
       var text = '';
       var imagesGot = 0;
@@ -387,7 +349,7 @@
           markers[iPoint].on(
             'click',
             function(e) {
-              MapFunctions.mapClick(e, pointList);
+              MapFunctions.mapClick(e, pointList, lastIndex);
             }
           );
         }
@@ -396,162 +358,12 @@
       /**
        * Add a click handler to the map to render the popup.
        */
-      // mymap.on('click', function(e){alert("asdf");});
       mymap.on(
         'click',
         function(e) {
           MapFunctions.mapClick(e, pointList);
         }
       );
-
-			// 		phFl.getAlbum(
-			// 			albumCacheBase,
-			// 			function(theAlbum, iPoint, cacheBase) {
-			// 				var j, indexInAlbum, imageString = '', image;
-      //
-			// 				for(j = 0; j < theAlbum.media.length; j ++) {
-			// 					if (theAlbum.media[j].cacheBase == cacheBase) {
-			// 						indexInAlbum = j;
-			// 						break;
-			// 					}
-			// 				}
-			// 				width = theAlbum.media[indexInAlbum].metadata.size[0];
-			// 				height = theAlbum.media[indexInAlbum].metadata.size[1];
-			// 				thumbnailSize = Options.media_thumb_size;
-			// 				thumbHash = util.chooseThumbnail(theAlbum, theAlbum.media[indexInAlbum], thumbnailSize);
-      //
-			// 				if (Options.media_thumb_type == "fixed_height") {
-			// 					if (height < Options.media_thumb_size) {
-			// 						thumbHeight = height;
-			// 						thumbWidth = width;
-			// 					} else {
-			// 						thumbHeight = Options.media_thumb_size;
-			// 						thumbWidth = thumbHeight * width / height;
-			// 					}
-			// 					calculatedWidth = thumbWidth;
-			// 				} else if (Options.media_thumb_type == "square") {
-			// 					thumbHeight = thumbnailSize;
-			// 					thumbWidth = thumbnailSize;
-			// 					calculatedWidth = Options.media_thumb_size;
-			// 				}
-			// 				imgTitle = theAlbum.media[indexInAlbum].albumName;
-			// 				calculatedHeight = Options.media_thumb_size;
-      //
-			// 				calculatedWidth = Math.min(
-			// 					calculatedWidth,
-			// 					($(window).innerWidth() - 2 * parseInt($("#album-view").css("padding")))
-			// 				);
-			// 				calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
-      //
-			// 				mediaHashes[iPoint] = phFl.encodeHash(theAlbum, theAlbum.media[indexInAlbum]);
-      //         var hash = theAlbum.cacheBase + "--" + theAlbum.media[indexInAlbum].cacheBase;
-      //         var codedHashClass = "popup-img-" + phFl.hashCode(hash);
-      //         var codedHashClassSelector = "." + codedHashClass;
-      //
-      //         // if (evt.originalEvent.ctrlKey) {
-      //         //   if ($(codedHashClassSelector).length) {
-      //         //     // ctrl-click removes the images from the popup
-      //         //     $(codedHashClassSelector).remove();
-      //         //     // close the popup if no image in it
-      //         //     if (! $("#popup .thumb-and-caption-container").length)
-      //         //       $('#popup-closer')[0].click();
-      //         //   }
-      //         // } else if (evt.originalEvent.shiftKey && $(codedHashClassSelector).length) {
-      //         //   // shift click doesn't anything if the image is already there
-      //         //   return;
-      //         // } else {
-      //           indexMediaInDOM = iPhoto + lastIndex;
-  		// 					imageStrings[iPhoto] =
-  		// 						"<div id='popup-image-" + indexMediaInDOM + "' class='thumb-and-caption-container " + codedHashClass + "' style='" +
-  		// 									"width: " + calculatedWidth + "px; " +
-  		// 								"'>" +
-  		// 							"<div class='thumb-container' " + "style='" +
-  		// 									// "width: " + calculatedWidth + "px; " +
-  		// 									"width: " + calculatedWidth + "px; " +
-  		// 									"height: " + calculatedHeight + "px;" +
-  		// 								"'>" +
-  		// 									"<span class='helper'></span>" +
-  		// 									"<img title='" + imgTitle + "' " +
-  		// 										"alt='" + util.trimExtension(theAlbum.media[indexInAlbum].name) + "' " +
-  		// 										"src='" +  encodeURI(thumbHash) + "' " +
-  		// 										"class='thumbnail" + "' " +
-  		// 										"height='" + thumbHeight + "' " +
-  		// 										"width='" + thumbWidth + "' " +
-  		// 										"style='" +
-  		// 											 "width: " + calculatedWidth + "px; " +
-  		// 											 "height: " + calculatedHeight + "px;" +
-  		// 											 "'" +
-  		// 										"/>" +
-  		// 							"</div>" +
-  		// 							"<div class='media-caption'>" +
-  		// 								"<span>" +
-  		// 								theAlbum.media[indexInAlbum].name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
-  		// 								"</span>" +
-  		// 							"</div>" +
-  		// 						"</div>";
-  		// 					// image = $(imageString);
-  		// 					// image.get(0).media = theAlbum.media[indexInAlbum];
-      //
-  		// 					imagesGot += 1;
-      //
-  		// 					if (imagesGot == pointList[iPoint].mediaNameList.length) {
-  		// 						// all the images have been fetched and put in DOM: we can generate the popup,
-  		// 						// but before set a css value: position: absolute make the popup to be shown in a wrong position
-      //
-  		// 						// $("#popup-content").css("max-height", parseInt(windowHeight * 0.8)).css("max-width", parseInt(windowWidth * 0.8));
-  		// 						// if (
-  		// 						// 	Options.available_map_popup_positions.every(
-  		// 						// 		function(orientation) {
-  		// 						// 			return ! $(".ol-popup").hasClass(orientation);
-  		// 						// 		}
-  		// 						// 	)
-  		// 						// ) {
-  		// 						// 	$(".ol-popup").addClass(Options.default_map_popup_position);
-  		// 						// }
-      //
-      //             // add the marker
-      //             markers[iPoint] = L.marker([pointList[iPoint].lat, pointList[iPoint].long]).addTo(mymap);
-      //             // the tooltip
-      //             markers[iPoint].bindTooltip("prova");
-      //             // the click
-      //             var ii;
-  		// 						for(var ii = 0; ii < pointList[iPoint].mediaNameList.length; ii ++) {
-      //               imageString += imageStrings[ii]
-      //             }
-      //             markers[iPoint].bindPopup(imageString);
-  		// 						for(var ii = 0; ii < pointList[iPoint].mediaNameList.length; ii ++) {
-      //               // add the click events to every image
-  		// 							$("#popup-image-" + (ii + lastIndex)).on('click', {ii: ii}, function(ev) {
-  		// 								$('#popup-closer')[0].click();
-  		// 								$('#popup #popup-content').html("");
-  		// 								$('.map-close-button')[0].click();
-  		// 								window.location.href = mediaHashes[ev.data.ii];
-  		// 							});
-  		// 						}
-      //             lastIndex += pointList[iPoint].mediaNameList.length;
-  		// 					}
-      //         // }
-			// 			},
-			// 			util.die,
-			// 			iPoint,
-      //       cacheBase
-			// 		);
-			// 	}
-			// }
-
-      //
-			// // generate the markers vector
-			// var markers = new ol.source.Vector({
-			// 		features: markersList
-			// });
-      //
-			// // generate the markers layer
-			// var markerVectorLayer = new ol.layer.Vector({
-			// 		source: markers,
-			// });
-      //
-			// // add the markers layer to the map
-			// map.addLayer(markerVectorLayer);
 		}
 	};
 
