@@ -1,3 +1,5 @@
+* Albums' metadata filename specification in config file (album.ini by default) in now used in `make_album_ini.sh`
+
 ### version 3.7beta (January 22, 2019)
 
 * A position icon is added to album titles: opens an OpenLayers map with the markers for all the media in the album and subalbums
@@ -10,7 +12,6 @@
  * Option`photo_map_zoom_level` removed and replaced by `photo_map_size`: size in meters of the map for a single photo
  * New option `default_map_popup_position`
  * More photos can be added (with shift-click) and removed (with ctl-click) from the popup
- * Albums' metadata filename can be specified in config file (album.ini by default)
 
 ### version 3.6.7 (January 14, 2019)
 
