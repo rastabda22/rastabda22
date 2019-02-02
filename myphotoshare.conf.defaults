@@ -259,18 +259,8 @@ big_virtual_folders_threshold = 999
 # js options
 ###########################################################
 
-# the service to use for geotag maps:
-# available values:
-# - openstreetmap (the maps which are generated have no marker)
-# - googlemaps (the maps which are generated have no marker)
-# - osmtools (the maps which are generated have a marker)
-map_service = osmtools
-
-# A 3-values tuple specifying the zoom values to use respectively for country-, admin- and place-level maps
-map_zoom_levels = [6, 9, 15]
-
-# The zoom value to use for the map shown with the photo
-photo_map_zoom_level = 16
+# The map size in meters of the map for a single photo
+photo_map_size = 100
 
 # The maximum number of search album that will be loaded
 # A value of 200 seems acceptable on a pc, 100 is more sure

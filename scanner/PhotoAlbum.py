@@ -68,6 +68,7 @@ class Album(object):
 		self.subalbums_list_is_sorted = True
 		self._subdir = ""
 		self.num_media_in_sub_tree = 0
+		self.positions_and_media_in_tree = []
 		self.num_media_in_album = 0
 		self.parent = None
 		self.album_ini = None
@@ -156,6 +157,10 @@ class Album(object):
 	@property
 	def json_file(self):
 		return self.cache_base + ".json"
+
+	@property
+	def positions_json_file(self):
+		return self.cache_base + ".positions.json"
 
 	@property
 	def subdir(self):
@@ -268,13 +273,21 @@ class Album(object):
 		if os.path.exists(json_file_with_path) and not os.access(json_file_with_path, os.W_OK):
 			message("FATAL ERROR", json_file_with_path + " not writable, quitting", 0)
 			sys.exit(-97)
+		json_positions_file_with_path = os.path.join(Options.config['cache_path'], self.positions_json_file)
+		if os.path.exists(json_positions_file_with_path) and not os.access(json_positions_file_with_path, os.W_OK):
+			message("FATAL ERROR", json_positions_file_with_path + " not writable, quitting", 0)
+			sys.exit(-97)
 		message("sorting album...", self.absolute_path, 5)
 		self.sort_subalbums_and_media()
 		indented_message("album sorted", self.absolute_path, 4)
 		message("saving album...", self.absolute_path, 5)
 		with open(json_file_with_path, 'w') as filepath:
 			json.dump(self, filepath, cls=PhotoAlbumEncoder)
-		indented_message("album saved", self.absolute_path, 3)
+		indented_message("album saved", "", 3)
+		message("saving positions album...", "", 5)
+		with open(json_positions_file_with_path, 'w') as filepath:
+				json.dump(self.positions_and_media_in_tree, filepath, cls=PhotoAlbumEncoder)
+		indented_message("positions album saved", "", 3)
 
 	@staticmethod
 	def from_cache(path, album_cache_base):
@@ -336,7 +349,8 @@ class Album(object):
 						"path": path_to_dict,
 						"cacheBase": subalbum.cache_base,
 						"date": subalbum.date_string,
-						"numMediaInSubTree": subalbum.num_media_in_sub_tree
+						"numMediaInSubTree": subalbum.num_media_in_sub_tree,
+						"positionsAndMediaInTree": subalbum.positions_and_media_in_tree
 					}
 					if hasattr(subalbum, "center"):
 						sub_dict["center"] = subalbum.center
@@ -406,6 +420,7 @@ class Album(object):
 			"physicalPath": path_without_folders_marker,
 			"numMediaInSubTree": self.num_media_in_sub_tree,
 			"numMediaInAlbum": self.num_media_in_album,
+			"positionsAndMediaInTree": self.positions_and_media_in_tree,
 			"jsonVersion": Options.json_version
 		}
 		if hasattr(self, "center"):
@@ -414,6 +429,8 @@ class Album(object):
 			dictionary["name"] = self.name
 		if hasattr(self, "alt_name"):
 			dictionary["altName"] = self.alt_name
+		if self.cache_base == Options.config['folders_string']:
+			dictionary["numPoints"] = len(self.positions_and_media_in_tree)
 
 		if self.parent is not None:
 			dictionary["parentCacheBase"] = self.parent.cache_base

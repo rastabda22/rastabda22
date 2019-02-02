@@ -1,4 +1,4 @@
-# MyPhotoShare v. 3.6.7 (January 14, 2019)
+# MyPhotoShare v. 3.7beta (January 22, 2019)
 ### A Web Photo Gallery Done Right via Static JSON & Dynamic Javascript
 #### by Jason A. Donenfeld (<Jason@zx2c4.com>), Jerome Charaoui (jerome@riseup.net)  Joachim Tingvold (joachim@tingvold.com), Paolo Benvenuto (<paolobenve@gmail.com>), Pierre Métras (<p.metras@videotron.ca>)
 
@@ -7,6 +7,8 @@
 **MyPhotoShare** is an open source web photo gallery aimed at sleekness and speed. It works over directory structures rather than esoteric photo database management software. Everything it generates is static, which means it's extremely fast.
 
 It permits browsing the media by folder, date and geotags.
+
+Whenever geotagged photos are found, a map with the photo(s) position can be shown using OpenLayers, and clicking the photo markers the photo thumbnails for that point are shown.
 
 Content (albums and media files) can be shared over some popular social plaforms.
 
@@ -40,6 +42,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Media and folders can be sorted ascending/descending, by date or by name.
 - [x] Media can be searched by file/album name, title, description, tags; search may be whole word or inside words, considering accents and capitals or not, in current album (in virtual albums too) or in the whole tree.
 - [x] Thumbnails can be square (cropped, with optional face detection by [OpenCV](https://opencv.org/)) or full-content.
+- [x] Maps can be generated (in a popup, thanks to OpenLayers) showing photos positions; the points are clickable and the thumbnails are shown; more photos can be added (with shift-click) and removed (with ctl-click) from the popup.
 
 ### For Photographers
 

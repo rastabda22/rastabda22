@@ -1,6 +1,6 @@
 # Known issues
 
-Updated: 2018-02-28
+Updated: 2019-01-30
 
 #### Issues related to previous scanner versions
 
@@ -53,3 +53,15 @@ Due to a bug in PIL `_getexif()`,  since version 3.4beta9 `exifread` (`python3-e
 #### Bad dragging of enlarged photos
 
 If a photo is enlarged, dragging works, but in a very rough manner.
+
+#### Slow web site
+
+If there are many images in the album (say > 1000) you may experience slowlyness in the web site. This is expecially true when the photos are geotagged.
+
+You can speed up the site enabling `json` compression in your web server. On `debian`'s `apache2` this can be easily achieved adding the following line in the proper place to the file `/etc/apache2/mods-enabled/deflate.conf`:
+
+```apache
+    AddOutputFilterByType DEFLATE application/json
+```
+
+For other web servers/distributions a solution can be found easily.

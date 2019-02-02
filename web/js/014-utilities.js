@@ -20,7 +20,7 @@
 			return translations[language][id];
 		else
 			return translations.en[id];
-	}
+	};
 
 	Utilities.prototype.translate = function() {
 		var selector, keyLanguage;
@@ -41,7 +41,7 @@
 				}
 			}
 		}
-	}
+	};
 
 	Utilities.prototype.getLanguage = function() {
 		language = "en";
@@ -54,7 +54,7 @@
 				language = userLang;
 		}
 		return language;
-	}
+	};
 
 
 
@@ -82,6 +82,36 @@
 			}
 			return false;
 		});
+	};
+
+	Utilities.prototype.mergePoints = function(oldPoints, newPoints) {
+		for (var i = 0; i < newPoints.length; i ++) {
+			oldPoints = this.addPointToPoints(oldPoints, newPoints[i]);
+		}
+		return oldPoints;
+	};
+
+	Utilities.prototype.addMediaToPoints = function(oldPoints, newMedia) {
+		var newPoint = {
+			'long': parseFloat(newMedia.metadata.longitude),
+			'lat' : parseFloat(newMedia.metadata.latitude),
+			'mediaNameList': [{
+				'cacheBase': newMedia.cacheBase,
+				'albumCacheBase': newMedia.parent.cacheBase
+			}]
+		};
+		return this.addPointToPoints(oldPoints, newPoint);
+	};
+
+	Utilities.prototype.addPointToPoints = function(oldPoints, newPoint) {
+		for (var i = 0; i < oldPoints.length; i ++) {
+			if (newPoint.long == oldPoints[i].long && newPoint.lat == oldPoints[i].lat) {
+				oldPoints[i].mediaNameList.push(newPoint.mediaNameList[0]);
+				return oldPoints;
+			}
+		}
+		oldPoints.push(newPoint);
+		return oldPoints;
 	};
 
 	Utilities.prototype.union = function(a, b) {
@@ -267,20 +297,6 @@
 	Utilities.prototype.em2px = function(selector, em) {
 		var emSize = parseFloat($(selector).css("font-size"));
 		return (em * emSize);
-	};
-
-	Utilities.prototype.mapLink = function(latitude, longitude, zoom) {
-		var link;
-		if (Options.map_service == 'openstreetmap') {
-			link = 'http://www.openstreetmap.org/#map=' + zoom + '/' + latitude + '/' + longitude;
-		}
-		else if (Options.map_service == 'googlemaps') {
-			link = 'https://www.google.com/maps/@' + latitude + ',' + longitude + ',' + zoom + 'z';
-		}
-		else if (Options.map_service == 'osmtools') {
-			link = 'http://m.osmtools.de/index.php?mlon=' + longitude + '&mlat=' + latitude + '&icon=6&zoom=' + zoom;
-		}
-		return link;
 	};
 
 	Utilities.prototype.isAlbumWithOneMedia = function(currentAlbum) {
@@ -571,7 +587,6 @@
 		// it adjusts width, height and position so that it fits in its parent (<div class="bedia-box-inner">, or the whole window)
 		// and centers vertically
 		var media = event.data.media, mediaElement, container, containerRatio, photoSrc, previousSrc;
-		var containerTop = 0, containerBottom = 0, cssWidth, cssHeight;
 		var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth();
 		var mediaBarBottom = 0;
 		var mediaWidth, mediaHeight, attrWidth, attrHeight, ratio;
@@ -706,6 +721,29 @@
 		return ! not_colliding;
 	};
 
+	Utilities.degreesToRadians = function(degrees) {
+		var pi = Math.PI;
+		return degrees * (pi/180);
+	};
+
+	Utilities.distanceBetweenCoordinatePoints = function(point1, point2) {
+		// converted from Geonames.py
+		// Calculate the great circle distance in meters between two points on the earth (specified in decimal degrees)
+
+		// convert decimal degrees to radians
+		var r_lon1 = Utilities.degreesToRadians(point1.long);
+		var r_lat1 = Utilities.degreesToRadians(point1.lat);
+		var r_lon2 = Utilities.degreesToRadians(point2.long);
+		var r_lat2 = Utilities.degreesToRadians(point2.lat);
+		// haversine formula
+		var d_r_lon = r_lon2 - r_lon1;
+		var d_r_lat = r_lat2 - r_lat1;
+		var a = Math.sin(d_r_lat / 2) ** 2 + Math.cos(r_lat1) * Math.cos(r_lat2) * Math.sin(d_r_lon / 2) ** 2;
+		var c = 2 * Math.asin(Math.sqrt(a));
+		var earth_radius = 6371000;  // radius of the earth in m
+		var dist = earth_radius * c;
+		return dist;
+	};
 
 	Utilities.lateralSocialButtons = function() {
 		return $(".ssk-group").css("display") == "block";
@@ -764,6 +802,46 @@
 		$(".media-box#" + id + " .metadata").css("display", $(".media-box#center .metadata").css("display"));
 	};
 
+	/* Error displays */
+	Utilities.prototype.die = function(error) {
+		if (error == 403) {
+			$("#auth-text").stop().fadeIn(1000);
+			$("#password").focus();
+		} else {
+			// Jason's code only had the following line
+			//$("#error-text").stop().fadeIn(2500);
+
+			var rootLink = "#!/" + Options.folders_string;
+
+			$("#album-view").fadeOut(200);
+			$("#media-view").fadeOut(200);
+
+			if (window.location.href == rootLink) {
+				$("#loading").hide();
+				$("#error-text-folder").stop();
+				$("#error-root-folder").stop().fadeIn(2000);
+				$("#powered-by").show();
+			} else {
+				$("#error-text-folder").stop().fadeIn(200);
+				$("#error-text-folder, #error-overlay, #auth-text").fadeOut(3500);
+				$("#album-view").stop().fadeOut(100).fadeIn(3500);
+				$("#media-view").stop().fadeOut(100).fadeIn(3500);
+				window.location.href = rootLink;
+			}
+		}
+		// $("#error-overlay").fadeTo(500, 0.8);
+		$("body, html").css("overflow", "hidden");
+	};
+
+	Utilities.prototype.undie = function() {
+		$(".error, #error-overlay, #auth-text", ".search-failed").fadeOut(500);
+		$("body, html").css("overflow", "auto");
+	};
+
+	Utilities.prototype.chooseThumbnail	= function(album, media, thumbnailSize) {
+		return this.mediaPath(album, media, thumbnailSize);
+	};
+
 	/* make static methods callable as member functions */
 	Utilities.prototype.chooseReducedPhoto = Utilities.chooseReducedPhoto;
 	Utilities.prototype.originalMediaPath = Utilities.originalMediaPath;
@@ -776,6 +854,8 @@
 	Utilities.prototype.currentSize = Utilities.currentSize;
 	Utilities.prototype.nextSize = Utilities.nextSize;
 	Utilities.prototype.isColliding = Utilities.isColliding;
+	Utilities.prototype.distanceBetweenCoordinatePoints = Utilities.distanceBetweenCoordinatePoints;
+	Utilities.prototype.degreesToRadians = Utilities.degreesToRadians;
 	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
 	Utilities.prototype.mediaBoxContainerHeight = Utilities.mediaBoxContainerHeight;
 

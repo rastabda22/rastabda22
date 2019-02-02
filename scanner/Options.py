@@ -55,6 +55,7 @@ thumbnail_types_and_sizes_list = None
 config['cv2_installed'] = True
 face_cascade = None
 eye_cascade = None
+config['available_map_popup_positions'] = ['SE', 'NW' ]
 
 # set this variable to a new value (previously was a number, now it may include letters) whenever the json files structure changes, it can be the app version
 # json_version = 0 is debug mode: json files are always considered invalid
@@ -63,7 +64,7 @@ eye_cascade = None
 # json_version = 3 since geotag managing is optional
 # json_version = 3.4 since search feature added
 # json_version = 3.6.4 since changed wrong album/media attributes
-json_version = "3.6.4"
+json_version = "3.7beta1"
 
 def initialize_opencv():
 	global face_cascade, eye_cascade
@@ -125,8 +126,8 @@ def get_options():
 	next_level()
 	# pass config values to a dict, because ConfigParser objects are not reliable
 	for option in default_config.options('options'):
-		if option in ('max_verbose',
-				'photo_map_zoom_level',
+		if option in (
+				'max_verbose',
 				'jpeg_quality',
 				'video_crf',
 				'thumb_spacing',
@@ -176,7 +177,7 @@ def get_options():
 			except ValueError:
 				indented_message("WARNING: option " + option + " in user config file", "is not boolean, using default value", 2)
 				config[option] = default_config.getboolean('options', option)
-		elif option in ('reduced_sizes', 'map_zoom_levels', 'metadata_tools_preference'):
+		elif option in ('reduced_sizes', 'metadata_tools_preference'):
 			config[option] = ast.literal_eval(usr_config.get('options', option))
 		elif option in ('mobile_thumbnail_factor', 'face_cascade_scale_factor'):
 			config[option] = usr_config.getfloat('options', option)
