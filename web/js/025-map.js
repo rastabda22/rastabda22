@@ -156,12 +156,13 @@
               // ctrl-click removes the images from the popup
               $(codedHashClassSelector).remove();
               // close the popup if no image in it
-              if (! $(".leaflet-popup .thumb-and-caption-container").length)
+              if (! $(".leaflet-popup .thumb-and-caption-container").length) {
                 $('.leaflet-popup-close-button')[0].click();
+                return;
+              }
             }
           } else if (evt.originalEvent.shiftKey && $(codedHashClassSelector).length) {
             // shift click doesn't anything if the image is already there
-            return;
           } else {
             indexMediaInDOM = i + lastIndex;
     				imagesString +=
@@ -206,6 +207,8 @@
 
             if (evt.originalEvent.ctrlKey)
               imagesString = $(".leaflet-popup-content").html();
+            if (! imagesString)
+              return;
 
             var popup = L.popup()
               .setLatLng(coordinatesForPopup)
