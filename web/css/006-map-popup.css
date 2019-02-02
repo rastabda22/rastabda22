@@ -52,7 +52,7 @@
     color: black !important;
 }
 
-.map-close-button, .leaflet-popup-close-button, .ol-popup-mover {
+.map-close-button, #mapdiv .leaflet-popup-close-button, .ol-popup-mover {
     background-color: #fff;
     border: 3px solid #999;
     border-radius: 50px;
@@ -62,21 +62,23 @@
     font-weight: bold;
     position: absolute;
     right: -20px;
-    font-size: 25px;
+    font-size: 0;
     line-height: 30px;
     width: 30px;
     height: 30px;
     text-align: center;
-    color: gray;
+    color: white;
     z-index: 1;
 }
 
-.map-close-button, .leaflet-popup-close-button {
+.map-close-button, #mapdiv .leaflet-popup-close-button {
     top: -20px;
 }
 
-.map-close-button::after, .leaflet-popup-close-button::after {
+.map-close-button::after, #mapdiv .leaflet-popup-close-button::after {
   content: "✖";
+  color: gray;
+  font-size: 25px;
 }
 
 .ol-popup-mover {

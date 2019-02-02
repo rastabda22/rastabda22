@@ -99,6 +99,9 @@
     var imagesGot = 0;
     var mediaHashes = [];
     var imagesString = '';
+    if (evt.originalEvent.shiftKey)
+      imagesString = $(".leaflet-popup-content").html();
+
     for(i = 0; i < pointList[index].mediaNameList.length; i ++) {
     	// we must get the media corresponding to the name in the point
     	var cacheBase = pointList[index].mediaNameList[i].cacheBase;
