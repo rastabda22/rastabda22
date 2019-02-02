@@ -99,7 +99,7 @@
     var imagesGot = 0;
     var mediaHashes = [];
     var imagesString = '';
-    if (evt.originalEvent.shiftKey)
+    if (evt.originalEvent.shiftKey || evt.originalEvent.ctrlKey)
       imagesString = $(".leaflet-popup-content").html();
 
     for(i = 0; i < pointList[index].mediaNameList.length; i ++) {
@@ -157,7 +157,7 @@
               $(codedHashClassSelector).remove();
               // close the popup if no image in it
               if (! $(".leaflet-popup .thumb-and-caption-container").length)
-                $('leaflet-popup-close-button')[0].click();
+                $('.leaflet-popup-close-button')[0].click();
             }
           } else if (evt.originalEvent.shiftKey && $(codedHashClassSelector).length) {
             // shift click doesn't anything if the image is already there
@@ -199,44 +199,48 @@
             // thumbAndCaptionHeight = Math.max(thumbAndCaptionHeight, parseInt($("popup-image-" + indexMediaInDOM).height()));
             // $("#popup-content .thumb-and-caption-container").height(thumbAndCaptionHeight + "px");
 
-    				imagesGot += 1;
-
-    				if (imagesGot == pointList[index].mediaNameList.length) {
-              var popup = L.popup()
-                .setLatLng(coordinatesForPopup)
-                .setContent(imagesString)
-                .openOn(mymap);
-              // all the images have been fetched and put in DOM: we can generate the popup,
-    					// but before set a css value: position: absolute make the popup to be shown in a wrong position
-
-
-
-
-              // $("#mapdiv .ol-overlaycontainer-stopevent").css("position", "unset");
-    					$(".leaflet-popup-content").css("max-height", parseInt(windowHeight * 0.8)).css("max-width", parseInt(windowWidth * 0.8));
-    					if (
-    						Options.available_map_popup_positions.every(
-    							function(orientation) {
-    								return ! $(".ol-popup").hasClass(orientation);
-    							}
-    						)
-    					) {
-    						$(".ol-popup").addClass(Options.default_map_popup_position);
-    					}
-    					// overlay.setPosition(ol.proj.fromLonLat(coordinatesForPopup));
-
-    					// add the click events to every image
-    					for(var ii = 0; ii < pointList[index].mediaNameList.length; ii ++) {
-    						$("#popup-image-" + (ii + lastIndex)).on('click', {ii: ii}, function(ev) {
-    							$('.leaflet-popup-close-button')[0].click();
-    							// $('#popup #popup-content').html("");
-    							$('.map-close-button')[0].click();
-    							window.location.href = mediaHashes[ev.data.ii];
-    						});
-    					}
-              lastIndex += pointList[index].mediaNameList.length;
-    				}
           }
+  				imagesGot += 1;
+
+  				if (imagesGot == pointList[index].mediaNameList.length) {
+
+            if (evt.originalEvent.ctrlKey)
+              imagesString = $(".leaflet-popup-content").html();
+
+            var popup = L.popup()
+              .setLatLng(coordinatesForPopup)
+              .setContent(imagesString)
+              .openOn(mymap);
+            // all the images have been fetched and put in DOM: we can generate the popup,
+  					// but before set a css value: position: absolute make the popup to be shown in a wrong position
+
+
+
+
+            // $("#mapdiv .ol-overlaycontainer-stopevent").css("position", "unset");
+  					$(".leaflet-popup-content").css("max-height", parseInt(windowHeight * 0.8)).css("max-width", parseInt(windowWidth * 0.8));
+  					if (
+  						Options.available_map_popup_positions.every(
+  							function(orientation) {
+  								return ! $(".ol-popup").hasClass(orientation);
+  							}
+  						)
+  					) {
+  						$(".ol-popup").addClass(Options.default_map_popup_position);
+  					}
+  					// overlay.setPosition(ol.proj.fromLonLat(coordinatesForPopup));
+
+  					// add the click events to every image
+  					for(var ii = 0; ii < pointList[index].mediaNameList.length; ii ++) {
+  						$("#popup-image-" + (ii + lastIndex)).on('click', {ii: ii}, function(ev) {
+  							$('.leaflet-popup-close-button')[0].click();
+  							// $('#popup #popup-content').html("");
+  							$('.map-close-button')[0].click();
+  							window.location.href = mediaHashes[ev.data.ii];
+  						});
+  					}
+            lastIndex += pointList[index].mediaNameList.length;
+  				}
     		},
     		util.die,
     		i,
