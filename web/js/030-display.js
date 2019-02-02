@@ -88,8 +88,8 @@ $(document).ready(function() {
 					//            tab
 					e.preventDefault();
 					if (pS.getCurrentZoom() == 1) {
-						f.toggleTitle(e);
-						f.toggleBottomThumbnails(e);
+						tF.toggleTitle(e);
+						tF.toggleBottomThumbnails(e);
 						return false;
 					}
 				} else if (e.keyCode === 39 && nextMedia && currentMedia !== null && ! isMap) {

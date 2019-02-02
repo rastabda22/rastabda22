@@ -8,6 +8,9 @@
   * `map_service`: the js app doesn't use any more those external tools
   * `map_zoom_levels`
  * Option`photo_map_zoom_level` removed and replaced by `photo_map_size`: size in meters of the map for a single photo
+ * New option `default_map_popup_position`
+ * More photos can be added (with shift-click) and removed (with ctl-click) from the popup
+ * Albums' metadata filename can be specified in config file (album.ini by default)
 
 ### version 3.6.7 (January 14, 2019)
 
