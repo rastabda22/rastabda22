@@ -383,6 +383,16 @@
       }
 
       var lastIndex;
+      /**
+       * Add a click handler to the map to render the popup.
+       */
+      // mymap.on('click', function(e){alert("asdf");});
+      mymap.on(
+        'click',
+        function(e) {
+          MapFunctions.mapClick(e, pointList);
+        }
+      );
 
 			/**
 			 * Add a click handler to the map to render the popup.
