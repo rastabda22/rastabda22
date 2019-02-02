@@ -81,7 +81,7 @@ $(document).ready(function() {
 
 	$(document).on('keydown', function(e) {
 		var isMap = $('#mapdiv').html() ? 1 : 0;
-		var isPopup = $('#popup #popup-content').html() ? 1 : 0;
+		var isPopup = $('.leaflet-popup').html() ? 1 : 0;
 		if (! $("#search-field").is(':focus')) {
 			if (! e.ctrlKey && ! e.shiftKey && ! e.altKey) {
 				if (e.keyCode === 9) {
@@ -120,8 +120,8 @@ $(document).ready(function() {
 					if (isMap) {
 						if (isPopup) {
 							// the popup is there: close it
-							$('#popup-closer')[0].click();
-							$('#popup #popup-content').html("");
+							$('.leaflet-popup-close-button')[0].click();
+							// $('#popup #popup-content').html("");
 						} else
 							// we are in a map: close it
 							$('.map-close-button')[0].click();
