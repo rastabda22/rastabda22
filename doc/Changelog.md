@@ -1,8 +1,6 @@
-<<<<<<< HEAD
+
 * Albums' metadata filename specification in config file (album.ini by default) in now used in `make_album_ini.sh`
 
-=======
->>>>>>> f4c397b71ff4bddc567b36ea55fd8ac391f99ebe
 ### version 3.7beta (January 22, 2019)
 
 * A position icon is added to album titles: opens an OpenLayers map with the markers for all the media in the album and subalbums
