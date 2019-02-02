@@ -34,8 +34,8 @@
 		<link href="css/001-fonts.css" rel="stylesheet" type="text/css" />
 		<link href="css/002-mobile.css" rel="stylesheet" type="text/css" />
 		<link href="css/003-social.css" rel="stylesheet" type="text/css" />
-		<link href="css/004-map-popup.css" rel="stylesheet" type="text/css" />
 		<link href="css/005-leaflet.css" rel="stylesheet" type="text/css" />
+		<link href="css/006-map-popup.css" rel="stylesheet" type="text/css" />
 	<?php	}
 
 			if (strcasecmp($options['debug_js'], "false") == 0 || $options['debug_js'] == "0") { ?>

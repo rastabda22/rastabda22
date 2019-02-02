@@ -23,6 +23,8 @@
 @media (max-height: 700px) {
   .map-container{
     height: unset !important;
+    width: 95%;
+    top: 5%;
   }
 }
 .map-container .helper{
@@ -50,7 +52,7 @@
     color: black !important;
 }
 
-.map-close-button, .ol-popup-closer, .ol-popup-mover {
+.map-close-button, .leaflet-popup-close-button, .ol-popup-mover {
     background-color: #fff;
     border: 3px solid #999;
     border-radius: 50px;
@@ -69,11 +71,11 @@
     z-index: 1;
 }
 
-.map-close-button, .ol-popup-closer {
+.map-close-button, .leaflet-popup-close-button {
     top: -20px;
 }
 
-.map-close-button::after, .ol-popup-closer::after {
+.map-close-button::after, .leaflet-popup-close-button::after {
   content: "✖";
 }
 
@@ -202,20 +204,20 @@
 }
 
 
-#popup-content .media-caption {
+.leaflet-popup-content .media-caption {
   color: black;
 }
 
-#popup-content {
+.leaflet-popup-content {
   overflow-y: auto;
 }
 
-#popup-content .thumb-and-caption-container {
+.leaflet-popup-content .thumb-and-caption-container {
   display: inline-block;
   vertical-align: top;
 }
 
-.ol-popup {
+/* .leaflet-popup {
   position: absolute;
   background-color: white;
   -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
@@ -224,10 +226,10 @@
   border-radius: 10px;
   border: 1px solid #cccccc;
   width: max-content;
-}
+} */
 
 /* .ol-popup::after, .ol-popup:before { */
-.ol-popup::after {
+.leaflet-popup::after {
   position: absolute;
   border: 18px solid transparent;
   content: "";
@@ -243,12 +245,12 @@
   margin-left: -11px;
 } */
 
-.ol-popup.SE {
+.leaflet-popup.SE {
   left: -15.5px;
   top: 17px;
 }
 
-.ol-popup.SE::after {
+.leaflet-popup.SE::after {
 	top: 0;
   left: 28px;
 	border-bottom-color: white;
@@ -258,16 +260,20 @@
   border-width: 0px 4px 18px;
 }
 
-.ol-popup.NW {
+.leaflet-popup.NW {
   right: -25px;
   bottom: 16px;
 }
 
-.ol-popup.NW::after {
+.leaflet-popup.NW::after {
   bottom: 0;
   right: 20px;
 	border-top-color: white;
 	border-bottom: 0;
 	margin-bottom: -18px;
   border-width: 18px 4px 0px 4px;
+}
+
+.leaflet-marker-pane {
+  text-align: left;
 }
