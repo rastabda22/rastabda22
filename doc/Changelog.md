@@ -1,13 +1,16 @@
-### version 3.7beta (January 22, 2019)
+### version 3.7beta3 (January 22, 2019)
 
-* A position icon is added to album titles: opens an OpenLayers map with the markers for all the media in the album and subalbums
+* A position icon is added to album titles: opens an Leaflet map with the markers for all the media in the album and subalbums
 * The markers are clickable and they show the clickable thumbnails for that position
-* The OpenLayers map is used for the single media too
-* All the subalbum names in album view have the position icon that opens the OpenLayers map
+* The Leaflet map is used for the single media too
+* All the subalbum names in album view have the position icon that opens the Leaflet map
 * Removed unnecessary options:
   * `map_service`: the js app doesn't use any more those external tools
   * `map_zoom_levels`
  * Option`photo_map_zoom_level` removed and replaced by `photo_map_size`: size in meters of the map for a single photo
+ * New option `default_map_popup_position`
+ * More photos can be added (with shift-click) and removed (with ctl-click) from the popup
+ * Albums' metadata filename specification in config file (album.ini by default) in now used in `make_album_ini.sh`
 
 ### version 3.6.7 (January 14, 2019)
 
