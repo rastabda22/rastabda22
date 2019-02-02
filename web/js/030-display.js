@@ -57,7 +57,6 @@ $(document).ready(function() {
 	var util = new Utilities();
 	var pS = new PinchSwipe();
 	var f = new Functions();
-	var map = new MapFunctions();
 	var tF = new TopFunctions();
 	var maxSize;
 	var language;
@@ -169,7 +168,6 @@ $(document).ready(function() {
 				} else if (e.keyCode === 107 || e.keyCode === 187) {
 					//             + on keypad                    +
 					if (isMap) {
-						// $(".ol-zoom-in")[0].click();
 						// return false;
 					} else if (currentMedia !== null) {
 						pS.pinchIn();
@@ -178,7 +176,6 @@ $(document).ready(function() {
 				} else if (e.keyCode === 109 || e.keyCode === 189) {
 					//         - on keypad                    -
 					if (isMap) {
-						// $(".ol-zoom-out")[0].click();
 						// return false;
 					} else if (currentMedia !== null) {
 						pS.pinchOut();

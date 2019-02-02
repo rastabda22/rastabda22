@@ -85,6 +85,7 @@
 
     // how much space is available horizontally for the thumbnails?
     var maxWidthForThumbnails = parseInt($("#mapdiv").width() * 0.8);
+    var maxHeightForThumbnails = parseInt($("#mapdiv").height() * 0.8);
     var indexMediaInDOM;
 
     if (! evt.originalEvent.shiftKey && ! evt.originalEvent.ctrlKey) {
@@ -94,8 +95,7 @@
     }
 
     // console.log(index, clickedPosition, pointList[index], minimumDistance);
-    coordinatesForPopup = [pointList[index].lat, pointList[index].long];
-    var text = '';
+    var coordinatesForPopup = [pointList[index].lat, pointList[index].long];
     var imagesGot = 0;
     var mediaHashes = [];
     var imagesString = '';
@@ -110,7 +110,7 @@
     	phFl.getAlbum(
     		albumCacheBase,
     		function(theAlbum, i, cacheBase) {
-    			var j, indexInAlbum, imageString, image;
+    			var j, indexInAlbum;
 
     			for(j = 0; j < theAlbum.media.length; j ++) {
     				if (theAlbum.media[j].cacheBase == cacheBase) {
@@ -118,11 +118,13 @@
     					break;
     				}
     			}
-    			width = theAlbum.media[indexInAlbum].metadata.size[0];
-    			height = theAlbum.media[indexInAlbum].metadata.size[1];
-    			thumbnailSize = Options.media_thumb_size;
-    			thumbHash = util.chooseThumbnail(theAlbum, theAlbum.media[indexInAlbum], thumbnailSize);
+    			var width = theAlbum.media[indexInAlbum].metadata.size[0];
+    			var height = theAlbum.media[indexInAlbum].metadata.size[1];
+    			var thumbnailSize = Options.media_thumb_size;
+    			var thumbHash = util.chooseThumbnail(theAlbum, theAlbum.media[indexInAlbum], thumbnailSize);
+          var thumbHeight, thumbWidth;
 
+          var calculatedWidth, calculatedHeight;
     			if (Options.media_thumb_type == "fixed_height") {
     				if (height < Options.media_thumb_size) {
     					thumbHeight = height;
@@ -137,7 +139,7 @@
     				thumbWidth = thumbnailSize;
     				calculatedWidth = Options.media_thumb_size;
     			}
-    			imgTitle = theAlbum.media[indexInAlbum].albumName;
+    			var imgTitle = theAlbum.media[indexInAlbum].albumName;
     			calculatedHeight = Options.media_thumb_size;
 
     			calculatedWidth = Math.min(
@@ -210,7 +212,7 @@
             if (! imagesString)
               return;
 
-            var popup = L.popup()
+            var popup = L.popup({maxWidth: maxWidthForThumbnails, maxHeight: maxHeightForThumbnails})
               .setLatLng(coordinatesForPopup)
               .setContent(imagesString)
               .openOn(mymap);
@@ -240,10 +242,6 @@
                 }
               );
 
-
-
-
-            // $("#mapdiv .ol-overlaycontainer-stopevent").css("position", "unset");
   					$(".leaflet-popup-content").css("max-height", parseInt(windowHeight * 0.8)).css("max-width", parseInt(windowWidth * 0.8));
   					if (
   						Options.available_map_popup_positions.every(
@@ -254,7 +252,6 @@
   					) {
   						$(".leaflet-popup").addClass(Options.default_map_popup_position);
   					}
-  					// overlay.setPosition(ol.proj.fromLonLat(coordinatesForPopup));
 
   					// add the click events to every image
   					for(var ii = 0; ii < pointList[index].mediaNameList.length; ii ++) {
@@ -290,7 +287,7 @@
 			center.long /= pointList.length;
 
       var br = '<br />';
-      var thumbAndCaptionHeight = 0;
+      // var thumbAndCaptionHeight = 0;
 
 			// default zoom is used for single media or media list with one point
 			var maxDistance = Options.photo_map_size;
@@ -310,7 +307,6 @@
 
 			$('.map-container').show();
 			var markers = [];
-      var coordinatesForPopup;
       if (mapIsInitialized)
         mymap.remove();
 
@@ -328,18 +324,14 @@
       ).addTo(mymap);
       L.control.scale().addTo(mymap);
 
-      var text = '';
-      var imagesGot = 0;
-      var mediaHashes = [];
-      var imageStrings = [];
       var lastIndex = 0;
       var cacheBases;
-      for (iPoint = 0; iPoint < pointList.length; iPoint ++) {
+      for (var iPoint = 0; iPoint < pointList.length; iPoint ++) {
         cacheBases = '';
-				for(iPhoto = 0; iPhoto < pointList[iPoint].mediaNameList.length; iPhoto ++) {
+				for(var iPhoto = 0; iPhoto < pointList[iPoint].mediaNameList.length; iPhoto ++) {
 					// we must get the media corresponding to the name in the point
           if (cacheBases)
-            cacheBases += '<br />';
+            cacheBases += br;
           cacheBases += pointList[iPoint].mediaNameList[iPhoto].cacheBase;
 
           markers[iPoint] = L.marker([pointList[iPoint].lat, pointList[iPoint].long]).addTo(mymap);
