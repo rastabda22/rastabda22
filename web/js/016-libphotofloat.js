@@ -19,7 +19,7 @@
 	PhotoFloat.addPositionsToSubalbums = function(thisAlbum) {
 		var iSubalbum, iPosition, iPhoto, position, subalbumCacheKey;
 		var positions = thisAlbum.positionsAndMediaInTree;
-		if (thisAlbum.hasOwnProperty(subalbums)) {
+		if (thisAlbum.hasOwnProperty("subalbums")) {
 			for (iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; ++ iSubalbum) {
 				thisAlbum.subalbums[iSubalbum].positionsAndMediaInTree = [];
 				for (iPosition = 0; iPosition < positions.length; ++ iPosition) {
