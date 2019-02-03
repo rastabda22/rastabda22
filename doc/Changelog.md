@@ -1,4 +1,4 @@
-### version 3.7beta3 (January 22, 2019)
+### version 3.7beta3 (February 2, 2019)
 
 * A position icon is added to album titles: opens an Leaflet map with the markers for all the media in the album and subalbums
 * The markers are clickable and they show the clickable thumbnails for that position
