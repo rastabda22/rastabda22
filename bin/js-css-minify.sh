@@ -79,9 +79,9 @@ case $MINIFY_JS in
 	uglifyjs)
 		buble -v > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
-			echo "'buble' is not installed and is required for using 'uglifyjs' minifier."
-			echo "Look for package 'node-buble' or 'https://github.com/Rich-Harris/buble'"
-			echo "Aborting..."
+			( >&2 echo "'buble' is not installed and is required for using 'uglifyjs' minifier." )
+			( >&2 echo "Look for package 'node-buble' or 'https://github.com/Rich-Harris/buble'" )
+			( >&2 echo "Aborting..." )
 			exit 1
 		fi
 		uglifyjs -V > /dev/null 2>&1
@@ -226,8 +226,8 @@ ls -1 *.css | grep -Ev "min.css$" | while read cssfile; do
 		;;
 
 		*)
-			echo "Unsupported CSS minifier: $MINIFY_CSS. Check option 'css_minifier' in '$CONF'"
-			echo "Doing nothing on file $cssfile"
+			( >&2 echo "Unsupported CSS minifier: $MINIFY_CSS. Check option 'css_minifier' in '$CONF'" )
+			( >&2 echo "Doing nothing on file $cssfile" )
 	esac
 done
 

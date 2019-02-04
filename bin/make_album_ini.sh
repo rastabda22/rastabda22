@@ -11,21 +11,21 @@
 
 print_usage()
 {
-	echo "Usage: $0 FOLDER"
-	echo "Create template of '$ALBUM_INI' file in 'FOLDER' based on its media content."
-	echo "When the file '$ALBUM_INI' already exists in 'FOLDER', new media are added to the file."
-	echo "Existing metadata is not touched."
-	echo "The name of the metadata file '$ALBUM_INI' is taken from configuration file."
-	echo
-	echo "Options:"
-	echo "   -c CONFIG_FILE: Define path and name of the configuration file else"
-	echo "   will use '/etc/myphotoshare/myphotoshare.conf'."
-	echo
-	echo "Example:"
-	echo "   $0 ~/Pictures/vacations"
-	echo "   Create file '$ALBUM_INI' in '~/Pictures/vacations' with default metadata for all"
-	echo "   media contained that folder. '$ALBUM_INI' name is read from"
-	echo "  '/etc/myphotoshare/myphotoshare.conf'."
+	( >&2 echo "Usage: $0 [ -c CONFIG_FILE ] FOLDER" )
+	( >&2 echo "Create template of '$ALBUM_INI' file in 'FOLDER' based on its media content." )
+	( >&2 echo "When the file '$ALBUM_INI' already exists in 'FOLDER', new media are added to the file." )
+	( >&2 echo "Existing metadata is not touched." )
+	( >&2 echo "The name of the metadata file '$ALBUM_INI' is taken from configuration file CONFIG_FILE." )
+	( >&2 echo )
+	( >&2 echo "Options:" )
+	( >&2 echo "   -c CONFIG_FILE: Define path and name of the configuration file else" )
+	( >&2 echo "   will use '/etc/myphotoshare/myphotoshare.conf'." )
+	( >&2 echo )
+	( >&2 echo "Example:" )
+	( >&2 echo "   $0 ~/Pictures/vacations" )
+	( >&2 echo "   Create file '$ALBUM_INI' in '~/Pictures/vacations' with default metadata for all" )
+	( >&2 echo "   media contained that folder. '$ALBUM_INI' name is read from" )
+	( >&2 echo "  '/etc/myphotoshare/myphotoshare.conf'." )
 }
 
 
@@ -98,6 +98,7 @@ fi
 
 
 if [ ! -f "$DIR/$ALBUM_INI" ]; then
+	echo "Create file '$DIR/$ALBUM_INI'."
 	echo "# User defined metadata for MyPhotoShare" > "$DIR/$ALBUM_INI"
 	echo "########################################" >> "$DIR/$ALBUM_INI"
 	echo "# Possible metadata:" >> "$DIR/$ALBUM_INI"
@@ -137,7 +138,6 @@ if [ $SECTION_EXISTS -eq 0 ]; then
 	echo "#tags = " >> "$DIR/$ALBUM_INI"
 	echo >> "$DIR/$ALBUM_INI"
 	echo >> "$DIR/$ALBUM_INI"
-	((SECTION_COUNT+=1))
 fi
 
 # Loop on album content
