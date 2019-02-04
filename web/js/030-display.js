@@ -57,7 +57,6 @@ $(document).ready(function() {
 	var util = new Utilities();
 	var pS = new PinchSwipe();
 	var f = new Functions();
-	var map = new MapFunctions();
 	var tF = new TopFunctions();
 	var maxSize;
 	var language;
@@ -81,7 +80,7 @@ $(document).ready(function() {
 
 	$(document).on('keydown', function(e) {
 		var isMap = $('#mapdiv').html() ? 1 : 0;
-		var isPopup = $('#popup #popup-content').html() ? 1 : 0;
+		var isPopup = $('.leaflet-popup').html() ? 1 : 0;
 		if (! $("#search-field").is(':focus')) {
 			if (! e.ctrlKey && ! e.shiftKey && ! e.altKey) {
 				if (e.keyCode === 9) {
@@ -120,8 +119,8 @@ $(document).ready(function() {
 					if (isMap) {
 						if (isPopup) {
 							// the popup is there: close it
-							$('#popup-closer')[0].click();
-							$('#popup #popup-content').html("");
+							$('.leaflet-popup-close-button')[0].click();
+							// $('#popup #popup-content').html("");
 						} else
 							// we are in a map: close it
 							$('.map-close-button')[0].click();
@@ -169,7 +168,6 @@ $(document).ready(function() {
 				} else if (e.keyCode === 107 || e.keyCode === 187) {
 					//             + on keypad                    +
 					if (isMap) {
-						// $(".ol-zoom-in")[0].click();
 						// return false;
 					} else if (currentMedia !== null) {
 						pS.pinchIn();
@@ -178,7 +176,6 @@ $(document).ready(function() {
 				} else if (e.keyCode === 109 || e.keyCode === 189) {
 					//         - on keypad                    -
 					if (isMap) {
-						// $(".ol-zoom-out")[0].click();
 						// return false;
 					} else if (currentMedia !== null) {
 						pS.pinchOut();

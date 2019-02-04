@@ -34,7 +34,8 @@
 		<link href="css/001-fonts.css" rel="stylesheet" type="text/css" />
 		<link href="css/002-mobile.css" rel="stylesheet" type="text/css" />
 		<link href="css/003-social.css" rel="stylesheet" type="text/css" />
-		<link href="css/004-map-popup.css" rel="stylesheet" type="text/css" />
+		<link href="css/005-leaflet.css" rel="stylesheet" type="text/css" />
+		<link href="css/006-map-popup.css" rel="stylesheet" type="text/css" />
 	<?php	}
 
 			if (strcasecmp($options['debug_js'], "false") == 0 || $options['debug_js'] == "0") { ?>
@@ -76,7 +77,7 @@
 
 		<script type="text/javascript" src="js/006-jquery-touchswipe.js"></script>
 		<script type="text/javascript" src="js/007-jquery-lazyload.js"></script>
-		<script type="text/javascript" src="js/008-open-layers.js"></script>
+		<script type="text/javascript" src="js/008-leaflet.js"></script>
 		<script type="text/javascript" src="js/010-social.js"></script>
 		<script type="text/javascript" src="js/012-translations.js"></script>
 		<script type="text/javascript" src="js/014-utilities.js"></script>
