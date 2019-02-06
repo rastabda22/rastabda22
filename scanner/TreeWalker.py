@@ -249,15 +249,20 @@ class TreeWalker:
 		back_level()
 		return by_date_album
 
-	def add_media_to_position(self, positions, media, option=''):
+	def add_media_to_position(self, positions, media, type_string):
 		# adds the media position and name to the positions list received as second argument
+		if type_string == Options.config['folders_string']:
+			media_album_cache_base = media.album.cache_base
+		elif type_string == Options.config['by_date_string']:
+			media_album_cache_base = media.day_album_cache_base
+		elif type_string == Options.config['by_gps_string']:
+			media_album_cache_base = media.gps_album_cache_base
 		position = {
 			'long': media.longitude,
 			'lat' : media.latitude,
 			'mediaNameList': [{
-				'name': media.media_path,
 				'cacheBase': media.cache_base,
-				'albumCacheBase': media.album.cache_base
+				'albumCacheBase': media_album_cache_base
 			}]
 		}
 		positions = self.add_position_to_positions(positions, position)
@@ -1023,7 +1028,7 @@ class TreeWalker:
 			if media.is_valid:
 				album.num_media_in_sub_tree += 1
 				if media.has_gps_data:
-					album.positions_and_media_in_tree = self.add_media_to_position(album.positions_and_media_in_tree, media)
+					album.positions_and_media_in_tree = self.add_media_to_position(album.positions_and_media_in_tree, media, Options.config['folders_string'])
 				album.num_media_in_album += 1
 				if media.is_video:
 					num_video_in_dir += 1
