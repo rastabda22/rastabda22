@@ -767,7 +767,7 @@
 											searchResultsAlbumFinal.numMediaInSubTree = searchResultsAlbumFinal.media.length;
 											for (var indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
 												// update the media count
-												searchResultsAlbumFinal.numMediaInSubTree += searchResultsAlbumFinal.subalbums[i].numMediaInSubTree;
+												searchResultsAlbumFinal.numMediaInSubTree += searchResultsAlbumFinal.subalbums[indexSubalbums].numMediaInSubTree;
 												// add the points from the subalbums
 
 												// the subalbum could still have no positionsAndMediaInTree array, get it
