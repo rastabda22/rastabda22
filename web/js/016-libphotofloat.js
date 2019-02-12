@@ -764,40 +764,37 @@
 											searchResultsAlbumFinal.numMediaInAlbum = searchResultsAlbumFinal.media.length;
 
 											var numSubalbumsProcessed = 0;
-											searchResultsAlbumFinal.numMediaInSubTree = searchResultsAlbumFinal.media.length;
-											for (var indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
-												// update the media count
-												searchResultsAlbumFinal.numMediaInSubTree += searchResultsAlbumFinal.subalbums[indexSubalbums].numMediaInSubTree;
-												// add the points from the subalbums
+											searchResultsAlbumFinal.numMediaInSubTree = searchResultsAlbumFinal.numMediaInAlbum;
+											if (searchResultsAlbumFinal.subalbums.length) {
+												for (var indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
+													// update the media count
+													searchResultsAlbumFinal.numMediaInSubTree += searchResultsAlbumFinal.subalbums[indexSubalbums].numMediaInSubTree;
+													// add the points from the subalbums
 
-												// the subalbum could still have no positionsAndMediaInTree array, get it
-												if (! searchResultsAlbumFinal.subalbums[indexSubalbums].hasOwnProperty("positionsAndMediaInTree"))
-													searchResultsAlbumFinal.subalbums[indexSubalbums].positionsAndMediaInTree = [];
+													// the subalbum could still have no positionsAndMediaInTree array, get it
+													if (! searchResultsAlbumFinal.subalbums[indexSubalbums].hasOwnProperty("positionsAndMediaInTree"))
+														searchResultsAlbumFinal.subalbums[indexSubalbums].positionsAndMediaInTree = [];
 
-												PhotoFloat.getPositions(
-													searchResultsAlbumFinal.subalbums[indexSubalbums],
-													function(subalbum) {
-														searchResultsAlbumFinal.positionsAndMediaInTree = util.mergePoints(
-																		searchResultsAlbumFinal.positionsAndMediaInTree,
-																		subalbum.positionsAndMediaInTree
-														);
-														numSubalbumsProcessed ++;
-														if (numSubalbumsProcessed >= searchResultsAlbumFinal.subalbums.length) {
-															// now all the subalbums have the positionsAndMediaInTree array, we can go on
+													PhotoFloat.getPositions(
+														searchResultsAlbumFinal.subalbums[indexSubalbums],
+														function(subalbum) {
+															searchResultsAlbumFinal.positionsAndMediaInTree = util.mergePoints(
+																			searchResultsAlbumFinal.positionsAndMediaInTree,
+																			subalbum.positionsAndMediaInTree
+															);
+															numSubalbumsProcessed ++;
+															if (numSubalbumsProcessed >= searchResultsAlbumFinal.subalbums.length) {
+																// now all the subalbums have the positionsAndMediaInTree array, we can go on
 
-															// add the point count
-															searchResultsAlbumFinal.numPositionsInTree = searchResultsAlbumFinal.positionsAndMediaInTree.length;
-															// save in the cash array
-															if (! PhotoFloat.albumCache.hasOwnProperty(searchResultsAlbumFinal.cacheBase)) {
-																PhotoFloat.albumCache[searchResultsAlbumFinal.cacheBase] = searchResultsAlbumFinal;
-																PhotoFloat.albumCache[searchResultsAlbumFinal.cacheBase + ".positions"] = searchResultsAlbumFinal.positionsAndMediaInTree;
+																PhotoFloat.endPreparingSearchAlbumAndKeepOn(searchResultsAlbumFinal, mediaHash, callback);
 															}
-
-															PhotoFloat.selectMedia(searchResultsAlbumFinal, null, mediaHash, callback);
-														}
-													},
-													util.die
-												);
+														},
+														util.die
+													);
+												}
+											} else {
+												// no subalbums, call the exit function
+												PhotoFloat.endPreparingSearchAlbumAndKeepOn(searchResultsAlbumFinal, mediaHash, callback);
 											}
 										}
 									},
@@ -812,6 +809,19 @@
 				error
 			);
 		}
+	};
+
+	PhotoFloat.endPreparingSearchAlbumAndKeepOn = function(searchResultsAlbumFinal, mediaHash, callback) {
+		// add the point count
+		searchResultsAlbumFinal.numPositionsInTree = searchResultsAlbumFinal.positionsAndMediaInTree.length;
+		// save in the cash array
+		if (! PhotoFloat.albumCache.hasOwnProperty(searchResultsAlbumFinal.cacheBase)) {
+			PhotoFloat.albumCache[searchResultsAlbumFinal.cacheBase] = searchResultsAlbumFinal;
+			PhotoFloat.albumCache[searchResultsAlbumFinal.cacheBase + ".positions"] = searchResultsAlbumFinal.positionsAndMediaInTree;
+		}
+
+		PhotoFloat.selectMedia(searchResultsAlbumFinal, null, mediaHash, callback);
+
 	};
 
 	PhotoFloat.selectMedia = function(theAlbum, mediaFolderHash, mediaHash, callback) {
