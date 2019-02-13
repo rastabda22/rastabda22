@@ -603,14 +603,12 @@ class TreeWalker:
 		with open(stopwords_file, "r") as stopwords_p:
 			stopwords = json.load(stopwords_p)
 
-		next_level()
 		if language in stopwords:
 			phrase = " ".join(stopwords[language])
 			TreeWalker.lowercase_stopwords = frozenset(switch_to_lowercase(phrase).split())
-			message("stopwords loaded", "", 4)
+			indented_message("stopwords loaded", "", 4)
 		else:
-			message("stopwords: no stopwords for language", language, 4)
-		back_level()
+			indented_message("stopwords: no stopwords for language", language, 4)
 		back_level()
 		return
 
