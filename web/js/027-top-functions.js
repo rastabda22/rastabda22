@@ -243,17 +243,17 @@
           title += currentAlbum.media.length + " ";
           title += util._t(".title-media");
           if (currentAlbum.subalbums.length)
-            title += ", ";
+            title += " " + util._t(".title-and") + " ";
         }
         if (currentAlbum.subalbums.length) {
           title += currentAlbum.subalbums.length + " ";
           title += util._t(".title-albums");
         }
-        if (currentAlbum.media.length > 0 && currentAlbum.subalbums.length > 0) {
-          title += ", ";
-          title += util._t(".title-total") + " ";
-          title += currentAlbum.media.length + currentAlbum.subalbums.length;
-        }
+        // if (currentAlbum.media.length > 0 && currentAlbum.subalbums.length > 0) {
+        //   title += ", ";
+        //   title += util._t(".title-total") + " ";
+        //   title += currentAlbum.media.length + currentAlbum.subalbums.length;
+        // }
         title += ")</span>";
       }
 
