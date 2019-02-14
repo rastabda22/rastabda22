@@ -65,3 +65,9 @@ You can speed up the site enabling `json` compression in your web server. On `de
 ```
 
 For other web servers/distributions a solution can be found easily.
+
+#### Inexplicable malfunctions in web page due to browser cache
+
+Sometimes something inexplicable happens in javascript, and a common reason is the cache: some json files aren't still in the cache, and the correct ones aren't used. Cleaning the cache solves these problems.
+
+The cache can be the browser's one or the web server one.
