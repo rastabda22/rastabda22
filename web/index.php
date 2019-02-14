@@ -184,6 +184,7 @@
 ";
 	?>
 	<div id="no-search-string" class="search-failed"></div>
+	<div id="no-search-string-after-stopwords-removed" class="search-failed"></div>
 	<div id="no-results" class="search-failed"></div>
 	<div id="search-too-wide" class="search-failed"></div>
 	<div id="social">

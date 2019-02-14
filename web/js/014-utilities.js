@@ -244,16 +244,16 @@
 			return false;
 	};
 
-  Utilities.prototype.noResults = function(id) {
+  Utilities.prototype.noResults = function(selector) {
 		// no media found or other search fail, show the message
 		$("ul#right-menu").addClass("expand");
 		$("#album-view").addClass("hidden");
 		$("#media-view").addClass("hidden");
-		if (typeof id === "undefined")
-			id = 'no-results';
+		if (typeof selector === "undefined")
+			selector = '#no-results';
 		$(".search-failed").hide();
-		$("#" + id).stop().fadeIn(2000);
-		$("#" + id).fadeOut(4000);
+		$(selector).stop().fadeIn(2000);
+		$(selector).fadeOut(4000);
 	};
 
 	Utilities.prototype.stripHtmlAndReplaceEntities = function(htmlString) {
