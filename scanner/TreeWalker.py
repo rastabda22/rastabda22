@@ -45,7 +45,13 @@ class TreeWalker:
 		# 	message("options file mtime is", str(options_file_modification_time), 4)
 		# back_level()
 
+		random.seed()
+		self.all_json_files = ["options.json"]
+		self.all_json_files_by_subdir = {}
+
 		if (Options.config['use_stop_words']):
+			TreeWalker.stopwords_file = os.path.join(Options.config['cache_path'], 'stopwords.json')
+			self.all_json_files.append('stopwords.json')
 			self.get_lowercase_stopwords()
 
 		# # If nor the albums nor the cache have been modified after the last run,
@@ -65,10 +71,6 @@ class TreeWalker:
 		# 	message("no albums modification, no refresh needed", "We can safely end here", 4)
 		# else:
 		message("Browsing", "start!", 3)
-
-		random.seed()
-		self.all_json_files = ["options.json"]
-		self.all_json_files_by_subdir = {}
 
 		# be sure reduced_sizes array is correctly sorted
 		Options.config['reduced_sizes'].sort(reverse=True)
@@ -603,15 +605,25 @@ class TreeWalker:
 		with open(stopwords_file, "r") as stopwords_p:
 			stopwords = json.load(stopwords_p)
 
-		next_level()
 		if language in stopwords:
 			phrase = " ".join(stopwords[language])
 			TreeWalker.lowercase_stopwords = frozenset(switch_to_lowercase(phrase).split())
-			message("stopwords loaded", "", 4)
+			indented_message("stopwords loaded", "", 4)
+			TreeWalker.save_stopwords()
 		else:
-			message("stopwords: no stopwords for language", language, 4)
+			indented_message("stopwords: no stopwords for language", language, 4)
 		back_level()
-		back_level()
+		return
+
+	@staticmethod
+	def save_stopwords():
+		"""
+		Saves the list of stopwords for the user language into the cache directory
+		"""
+		message("saving stopwords to cache directory", TreeWalker.stopwords_file, 4)
+		with open(TreeWalker.stopwords_file, "w") as stopwords_p:
+			json.dump({'stopWords': list(TreeWalker.lowercase_stopwords)}, stopwords_p)
+		indented_message("stopwords saved!", "", 4)
 		return
 
 	@staticmethod

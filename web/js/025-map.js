@@ -306,6 +306,8 @@
 			var zoom = Math.min(19, parseInt(Math.log2((Math.min(windowWidth, windowHeight) / 2 * 0.95) * earthCircumference * Math.cos(util.degreesToRadians(center.lat)) / 256 / maxDistance)));
 
 			$('.map-container').show();
+      $(".map-container > div").css("min-height", $(window).height() * .90);
+      $(".map-container").css("display", "grid");
 			var markers = [];
       if (mapIsInitialized)
         mymap.remove();
