@@ -1,4 +1,5 @@
 * bug fixes in searches
+* fixed map not showing in mobile
 * javascript now knows the stop words and takes them into account
 
 ### version 3.7beta3 (February 2, 2019)
