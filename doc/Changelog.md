@@ -1,3 +1,5 @@
+### version 3.7beta4 (February 14, 2019)
+
 * bug fixes in searches
 * fixed map not showing in mobile
 * javascript now knows the stop words and takes them into account
