@@ -782,8 +782,6 @@
 												}
 												if (searchResultsAlbumFinal.media.length === 0 && searchResultsAlbumFinal.subalbums.length === 0) {
 													util.noResults();
-												} else if (searchResultsAlbumFinal.media.length > Options.big_virtual_folders_threshold) {
-													util.noResults('#search-too-wide');
 												} else {
 													$("#album-view").removeClass("hidden");
 													$(".search-failed").hide();
