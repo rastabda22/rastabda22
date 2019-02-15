@@ -535,8 +535,10 @@
 		} else {
 			// it's a search!
 			self = this;
+			var removedStopWords = [];
 
 			buildSearchResult = function() {
+				searchResultsAlbumFinal.removedStopWords = removedStopWords;
 				// has any word remained after stop words have been removed?
 				if (SearchWordsFromUser.length == 0) {
 					util.noResults('#no-search-string-after-stopwords-removed');
@@ -852,6 +854,7 @@
 			PhotoFloat.getStopWords(
 				function(stopWords) {
 					// remove the stop words from the search words lists
+
 					var SearchWordsFromUserWithoutStopWords = [];
 					var SearchWordsFromUserWithoutStopWordsNormalized = [];
 					var SearchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions = [];
@@ -866,6 +869,8 @@
 							SearchWordsFromUserWithoutStopWords.push(SearchWordsFromUser[i]);
 							SearchWordsFromUserWithoutStopWordsNormalized.push(SearchWordsFromUserNormalized[i]);
 							SearchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions.push(SearchWordsFromUserNormalizedAccordingToOptions[i]);
+						} else {
+							removedStopWords.push(SearchWordsFromUser[i]);
 						}
 					}
 

@@ -255,6 +255,17 @@
         //   title += util._t(".title-total") + " ";
         //   title += currentAlbum.media.length + currentAlbum.subalbums.length;
         // }
+
+        if (currentAlbum.hasOwnProperty("removedStopWords") && currentAlbum.removedStopWords.length) {
+          // say that some search word hasn't been used
+          title += " - " + currentAlbum.removedStopWords.length + " " + util._t("#removed-stopwords") + ": ";
+          for (i = 0; i < currentAlbum.removedStopWords.length; i ++) {
+            if (i)
+              title += ", ";
+            title += currentAlbum.removedStopWords[i];
+          }
+        }
+
         title += ")</span>";
       }
 
