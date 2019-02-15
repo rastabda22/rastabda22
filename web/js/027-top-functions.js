@@ -5,6 +5,7 @@
   var map = new MapFunctions();
   var pS = new PinchSwipe();
   var f = new Functions();
+  var numSubAlbumsReady = 0;
 
 	/* constructor */
 	function TopFunctions() {

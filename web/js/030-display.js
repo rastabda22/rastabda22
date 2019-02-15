@@ -60,7 +60,6 @@ $(document).ready(function() {
 	var tF = new TopFunctions();
 	var maxSize;
 	var language;
-	var numSubAlbumsReady;
 	var firstEscKey = true;
 	// var nextLink = "", prevLink = "";
 	var mediaLink = "";
