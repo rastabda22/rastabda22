@@ -6,6 +6,7 @@
   var pS = new PinchSwipe();
   var f = new Functions();
   var numSubAlbumsReady = 0;
+  var showTooBig = false;
 
 	/* constructor */
 	function TopFunctions() {
@@ -1295,14 +1296,23 @@
 			isVirtualAlbum = (util.isByDateCacheBase(currentAlbum.cacheBase) || util.isByGpsCacheBase(currentAlbum.cacheBase) || util.isSearchCacheBase(currentAlbum.cacheBase) );
 			tooBig = currentAlbum.path.split("/").length < 4 && currentAlbum.media.length > Options.big_virtual_folders_threshold;
 			if (populateMedia === true && isVirtualAlbum)
-				populateMedia = populateMedia && ! tooBig;
+				populateMedia = populateMedia && (! tooBig || showTooBig);
 
-			if (isVirtualAlbum && tooBig) {
+			if (isVirtualAlbum && tooBig && ! showTooBig) {
 				$("#thumbs").empty();
-				$("#error-too-many-images").html(
-					"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + currentAlbum.media.length +
-					" (<span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + Options.big_virtual_folders_threshold +  ")</span>"
-				).show();
+        var tooManyImagesText =
+          "<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + currentAlbum.media.length +
+          ", <span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + Options.big_virtual_folders_threshold +  "</span>, " +
+          "<span id='show-them'>" + util._t("#show-them") + "</span>";
+				$("#error-too-many-images").html(tooManyImagesText).show();
+        $("#show-them").on(
+          "click",
+          function(ev) {
+            $("#error-too-many-images").hide();
+            showTooBig = true;
+            TopFunctions.showAlbum(true);
+          }
+        );
 			} else if (
 				populateMedia === true ||
 				populateMedia == "refreshMedia" ||
