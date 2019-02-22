@@ -308,7 +308,11 @@
 			$('.map-container').show();
       $(".map-container > div").css("min-height", $(window).height() * .90);
       $(".map-container").css("display", "grid");
-			var markers = [];
+
+			// var markers = [];
+      // initialize the markers clusters
+      var markers = L.markerClusterGroup();
+
       if (mapIsInitialized)
         mymap.remove();
 
@@ -329,25 +333,29 @@
       var lastIndex = 0;
       var cacheBases;
       for (var iPoint = 0; iPoint < pointList.length; iPoint ++) {
+        console.log(iPoint + "/" + pointList.length);
         cacheBases = '';
 				for(var iPhoto = 0; iPhoto < pointList[iPoint].mediaNameList.length; iPhoto ++) {
 					// we must get the media corresponding to the name in the point
           if (cacheBases)
             cacheBases += br;
           cacheBases += pointList[iPoint].mediaNameList[iPhoto].cacheBase;
-
-          markers[iPoint] = L.marker([pointList[iPoint].lat, pointList[iPoint].long]).addTo(mymap);
-          // the tooltip
-          markers[iPoint].bindTooltip(cacheBases);
-          // make markers react to click like the other map points
-          markers[iPoint].on(
-            'click',
-            function(e) {
-              MapFunctions.mapClick(e, pointList, lastIndex);
-            }
-          );
         }
+
+        markers.addLayer(L.marker([pointList[iPoint].lat, pointList[iPoint].long]));
+        markers[iPoint] = L.marker([pointList[iPoint].lat, pointList[iPoint].long]).addTo(mymap);
+        // the tooltip
+        markers[iPoint].bindTooltip(cacheBases);
+        // make markers react to click like the other map points
+        markers[iPoint].on(
+          'click',
+          function(e) {
+            MapFunctions.mapClick(e, pointList, lastIndex);
+          }
+        );
       }
+
+      mymap.addLayer(markers);
 
       /**
        * Add a click handler to the map to render the popup.
