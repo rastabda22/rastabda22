@@ -311,7 +311,7 @@
 
 			var markers = [];
       // initialize the markers clusters
-      var pruneCluster = new PruneClusterForLeaflet();
+      var pruneCluster = new PruneClusterForLeaflet(40, 40);
 
       if (mapIsInitialized)
         mymap.remove();
@@ -324,7 +324,7 @@
         'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
         {
           attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
-          maxZoom: 25,
+          maxZoom: 21,
           id: 'mapbox.streets'
         }
       ).addTo(mymap);
@@ -344,6 +344,8 @@
 
         markers[iPoint] = new PruneCluster.Marker(pointList[iPoint].lat, pointList[iPoint].long);
         pruneCluster.RegisterMarker(markers[iPoint]);
+        markers[iPoint].data.tooltip = cacheBases;
+        markers[iPoint].data.photos = pointList[iPoint].mediaNameList;
 
         // // the tooltip
         // markers[iPoint].bindTooltip(cacheBases);
