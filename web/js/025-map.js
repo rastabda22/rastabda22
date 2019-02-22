@@ -335,18 +335,18 @@
           if (cacheBases)
             cacheBases += br;
           cacheBases += pointList[iPoint].mediaNameList[iPhoto].cacheBase;
-
-          markers[iPoint] = L.marker([pointList[iPoint].lat, pointList[iPoint].long]).addTo(mymap);
-          // the tooltip
-          markers[iPoint].bindTooltip(cacheBases);
-          // make markers react to click like the other map points
-          markers[iPoint].on(
-            'click',
-            function(e) {
-              MapFunctions.mapClick(e, pointList, lastIndex);
-            }
-          );
         }
+
+        markers[iPoint] = L.marker([pointList[iPoint].lat, pointList[iPoint].long]).addTo(mymap);
+        // the tooltip
+        markers[iPoint].bindTooltip(cacheBases);
+        // make markers react to click like the other map points
+        markers[iPoint].on(
+          'click',
+          function(e) {
+            MapFunctions.mapClick(e, pointList, lastIndex);
+          }
+        );
       }
 
       /**
