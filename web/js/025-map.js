@@ -62,14 +62,14 @@
 			MapFunctions.generateMap(pointList);
 	};
 
-  MapFunctions.mapClick = function(evt, pointList, lastIndex) {
+  MapFunctions.mapClick = function(evt, clusters, lastIndex) {
     var clickedPosition = evt.latlng, i;
-    // console.log(clickedPosition, pointList);
+    // console.log(clickedPosition, clusters);
 
     // decide what point is to be used: the nearest to the clicked position
     var minimumDistance = false, newMinimumDistance, distance, index;
-    for(i = 0; i < pointList.length; i ++) {
-    	distance = Math.abs(util.distanceBetweenCoordinatePoints({long: clickedPosition.lng, lat: clickedPosition.lat}, pointList[i]));
+    for(i = 0; i < clusters.length; i ++) {
+    	distance = Math.abs(util.distanceBetweenCoordinatePoints({long: clickedPosition.lng, lat: clickedPosition.lat}, {long: clusters[i].position.lng, lat: clusters[i].position.lat}));
     	// console.log(i, distance);
     	if (minimumDistance === false) {
     		minimumDistance = distance;
@@ -94,18 +94,24 @@
       lastIndex = 0;
     }
 
-    // console.log(index, clickedPosition, pointList[index], minimumDistance);
-    var coordinatesForPopup = [pointList[index].lat, pointList[index].long];
+    var currentCluster = clusters[index];
+    currentCluster.data.mediaNameList = [];
+    // build the cluster's media name list
+    for(i = 0; i < currentCluster._clusterMarkers.length; i ++) {
+      currentCluster.data.mediaNameList = currentCluster.data.mediaNameList.concat(currentCluster._clusterMarkers[i].data.mediaNameList);
+    }
+    // console.log(index, clickedPosition, currentCluster, minimumDistance);
+    var coordinatesForPopup = [currentCluster.position.lat, currentCluster.position.lng];
     var imagesGot = 0;
     var mediaHashes = [];
     var imagesString = '';
     if (evt.originalEvent.shiftKey || evt.originalEvent.ctrlKey)
       imagesString = $(".leaflet-popup-content").html();
 
-    for(i = 0; i < pointList[index].mediaNameList.length; i ++) {
+    for(i = 0; i < currentCluster.data.mediaNameList.length; i ++) {
     	// we must get the media corresponding to the name in the point
-    	var cacheBase = pointList[index].mediaNameList[i].cacheBase;
-    	var albumCacheBase = pointList[index].mediaNameList[i].albumCacheBase;
+    	var cacheBase = currentCluster.data.mediaNameList[i].cacheBase;
+    	var albumCacheBase = currentCluster.data.mediaNameList[i].albumCacheBase;
 
     	phFl.getAlbum(
     		albumCacheBase,
@@ -205,7 +211,7 @@
           }
   				imagesGot += 1;
 
-  				if (imagesGot == pointList[index].mediaNameList.length) {
+  				if (imagesGot == currentCluster.data.mediaNameList.length) {
 
             if (evt.originalEvent.ctrlKey)
               imagesString = $(".leaflet-popup-content").html();
@@ -254,7 +260,7 @@
   					}
 
   					// add the click events to every image
-  					for(var ii = 0; ii < pointList[index].mediaNameList.length; ii ++) {
+  					for(var ii = 0; ii < currentCluster.data.mediaNameList.length; ii ++) {
   						$("#popup-image-" + (ii + lastIndex)).on('click', {ii: ii}, function(ev) {
   							$('.leaflet-popup-close-button')[0].click();
   							// $('#popup #popup-content').html("");
@@ -262,7 +268,7 @@
   							window.location.href = mediaHashes[ev.data.ii];
   						});
   					}
-            lastIndex += pointList[index].mediaNameList.length;
+            lastIndex += currentCluster.data.mediaNameList.length;
   				}
     		},
     		util.die,
@@ -312,6 +318,25 @@
 			var markers = [];
       // initialize the markers clusters
       var pruneCluster = new PruneClusterForLeaflet(40, 40);
+      PruneCluster.Cluster.ENABLE_MARKERS_LIST = true;
+
+      // modify the prunecluster so that the click can be managed in order to show the photo popup
+      pruneCluster.BuildLeafletCluster = function (cluster, position) {
+        var _this = this;
+        var m = new L.Marker(position, {
+            icon: pruneCluster.BuildLeafletClusterIcon(cluster)
+        });
+        m._leafletClusterBounds = cluster.bounds;
+        m.on(
+          'click',
+          function(e) {
+              MapFunctions.mapClick(e, pruneCluster.Cluster._clusters, lastIndex);
+          }
+        );
+        return m;
+      };
+
+
 
       if (mapIsInitialized)
         mymap.remove();
@@ -345,7 +370,7 @@
         markers[iPoint] = new PruneCluster.Marker(pointList[iPoint].lat, pointList[iPoint].long);
         pruneCluster.RegisterMarker(markers[iPoint]);
         markers[iPoint].data.tooltip = cacheBases;
-        markers[iPoint].data.photos = pointList[iPoint].mediaNameList;
+        markers[iPoint].data.mediaNameList = pointList[iPoint].mediaNameList;
 
         // // the tooltip
         // markers[iPoint].bindTooltip(cacheBases);
@@ -366,7 +391,7 @@
       mymap.on(
         'click',
         function(e) {
-          MapFunctions.mapClick(e, pointList);
+          MapFunctions.mapClick(e, pruneCluster.Cluster._clusters);
         }
       );
 		}
