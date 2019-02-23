@@ -1,4 +1,5 @@
 * the user can now choose to show big virtual albums
+* markers in the map are now clustered
 
 ### version 3.7beta4 (February 14, 2019)
 
