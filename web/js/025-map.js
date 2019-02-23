@@ -315,7 +315,8 @@
 			// var thumbAndCaptionHeight = 0;
 
 			// default zoom is used for single media or media list with one point
-			var maxDistance = Options.photo_map_size;
+			var maxXDistance = Options.photo_map_size;
+			var maxYDistance = Options.photo_map_size;
 			if (pointList.length > 1) {
 				// calculate the maximum distance from the center
 				// it's needed in order to calculate the zoom level
