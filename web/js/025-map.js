@@ -85,6 +85,8 @@
 
 		// how much space is available horizontally for the thumbnails?
 		var maxWidthForThumbnails = parseInt($("#mapdiv").width() * 0.8);
+		if (Options.album_thumb_type == "square")
+			maxWidthForThumbnails = parseInt(maxWidthForThumbnails / Options.album_thumb_size) * Options.album_thumb_size;
 		var maxHeightForThumbnails = parseInt($("#mapdiv").height() * 0.8);
 		var indexMediaInDOM;
 
