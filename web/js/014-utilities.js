@@ -726,6 +726,17 @@
 		return degrees * (pi/180);
 	};
 
+	Utilities.xDistanceBetweenCoordinatePoints = function(point1, point2) {
+		return Math.max(
+			Utilities.distanceBetweenCoordinatePoints({"long": point1.long, "lat": point1.lat}, {"long": point2.long, "lat": point1.lat}),
+			Utilities.distanceBetweenCoordinatePoints({"long": point1.long, "lat": point2.lat}, {"long": point2.long, "lat": point2.lat}),
+		);
+	};
+
+	Utilities.yDistanceBetweenCoordinatePoints = function(point1, point2) {
+		return Utilities.distanceBetweenCoordinatePoints({"long": point1.long, "lat": point1.lat}, {"long": point1.long, "lat": point2.lat});
+	};
+
 	Utilities.distanceBetweenCoordinatePoints = function(point1, point2) {
 		// converted from Geonames.py
 		// Calculate the great circle distance in meters between two points on the earth (specified in decimal degrees)
@@ -855,6 +866,8 @@
 	Utilities.prototype.nextSize = Utilities.nextSize;
 	Utilities.prototype.isColliding = Utilities.isColliding;
 	Utilities.prototype.distanceBetweenCoordinatePoints = Utilities.distanceBetweenCoordinatePoints;
+	Utilities.prototype.xDistanceBetweenCoordinatePoints = Utilities.xDistanceBetweenCoordinatePoints;
+	Utilities.prototype.yDistanceBetweenCoordinatePoints = Utilities.yDistanceBetweenCoordinatePoints;
 	Utilities.prototype.degreesToRadians = Utilities.degreesToRadians;
 	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
 	Utilities.prototype.mediaBoxContainerHeight = Utilities.mediaBoxContainerHeight;

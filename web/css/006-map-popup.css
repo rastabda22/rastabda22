@@ -85,7 +85,14 @@
 
 .popup-mover {
     bottom: -20px;
+}
+
+.SE .popup-mover {
     left: -20px
+}
+
+.NW .popup-mover {
+    right: -20px
 }
 
 .SE .popup-mover::after {
@@ -182,4 +189,8 @@
 
 #mapdiv .leaflet-marker-pane {
   text-align: left;
+}
+
+#mapdiv .leaflet-popup-tip {
+  display: none;
 }
