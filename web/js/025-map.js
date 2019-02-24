@@ -150,9 +150,14 @@
 					var imgTitle = theAlbum.media[indexInAlbum].albumName;
 					calculatedHeight = Options.media_thumb_size;
 
+					var albumViewPadding = $("#album-view").css("padding");
+					if (! albumViewPadding)
+						albumViewPadding = 0;
+					else
+						albumViewPadding = parseInt(albumViewPadding);
 					calculatedWidth = Math.min(
 						calculatedWidth,
-						($(window).innerWidth() - 2 * parseInt($("#album-view").css("padding")))
+						$(window).innerWidth() - 2 * albumViewPadding
 					);
 					calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
