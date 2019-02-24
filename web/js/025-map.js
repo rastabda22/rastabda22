@@ -363,7 +363,7 @@
 			var zoom = Math.min(xZoom, yZoom);
 
 			$('.map-container').show();
-			$(".map-container > div").css("min-height", $(window).height() * 0.90);
+			$(".map-container").css("max-height", $(window).height() - 54).css("max-width", $(window).width() - 54).css("right", "44px").css("top", "24px");
 			$(".map-container").css("display", "grid");
 
 				var markers = [];
