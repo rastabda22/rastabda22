@@ -1587,7 +1587,7 @@
 								"' " +
 								"style='" +
 									"margin-right: " + Options.spacing + "px; " +
-									"margin-top: " + Options.spacing + "px; " +
+									"margin-bottom: " + Options.spacing + "px; " +
 									"height: " + buttonAndCaptionHeight + "px; " +
 									"width: " + util.albumButtonWidth(correctedAlbumThumbSize, buttonBorder) + "px; ";
 						if (Options.albums_slide_style)

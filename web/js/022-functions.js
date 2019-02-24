@@ -493,7 +493,7 @@
 			$(this).css("color", Options.title_color);
 		});
 		$(".media-name").css("color", Options.title_image_name_color);
-		$(".thumb-and-caption-container").css("margin-right", Options.spacing.toString() + "px");
+		$(".thumb-and-caption-container").css("margin-right", Options.spacing.toString() + "px").css("margin-bottom", Options.spacing.toString() + "px");
 
 		if (currentMedia !== null || ! Options.show_media_names_below_thumbs)
 			$(".media-caption").addClass("hidden");

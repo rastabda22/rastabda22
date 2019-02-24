@@ -2,6 +2,7 @@
 
 	var phFl = new PhotoFloat();
 	var util = new Utilities();
+	var f = new Functions();
 	var mapIsInitialized = false;
 	var mymap;
 
@@ -83,11 +84,6 @@
 			}
 		}
 
-		// how much space is available horizontally for the thumbnails?
-		var maxWidthForThumbnails = parseInt($("#mapdiv").width() * 0.8);
-		if (Options.album_thumb_type == "square")
-			maxWidthForThumbnails = parseInt(maxWidthForThumbnails / Options.album_thumb_size) * Options.album_thumb_size;
-		var maxHeightForThumbnails = parseInt($("#mapdiv").height() * 0.8);
 		var indexMediaInDOM;
 
 		if (! evt.originalEvent.shiftKey && ! evt.originalEvent.ctrlKey) {
@@ -182,8 +178,10 @@
 						indexMediaInDOM = i + lastIndex;
 						imagesString +=
 							"<div id='popup-image-" + indexMediaInDOM + "' class='thumb-and-caption-container " + codedHashClass + "' style='" +
-										"width: " + calculatedWidth + "px; " +
-									"'>" +
+										"width: " + calculatedWidth + "px;";
+						if (Options.spacing)
+							imagesString += " margin-right: " + Options.spacingToggle + "px; margin-bottom: " + Options.spacingToggle + "px;";
+						imagesString += "'>" +
 								"<div class='thumb-container' " + "style='" +
 										// "width: " + calculatedWidth + "px; " +
 										"width: " + calculatedWidth + "px; " +
@@ -220,6 +218,7 @@
 					if (imagesGot == currentCluster.data.mediaNameList.length) {
 						// all the images have been fetched and put in DOM: we can generate the popup,
 						// but before set a css value: position: absolute make the popup to be shown in a wrong position
+
 						if (evt.originalEvent.ctrlKey)
 							imagesString = $(".leaflet-popup-content").html();
 
@@ -227,11 +226,28 @@
 							return;
 
 						$(".leaflet-popup").remove();
+
+						// how much space is available horizontally for the thumbnails?
+						var maxWidthForThumbnails = parseInt($("#mapdiv").width() * 0.8);
+						// square thumbnails: set the value to a shorter one, in order to avoid right white space
+						if (Options.media_thumb_type == "square") {
+							var thumb_size = Options.media_thumb_size;
+							if (Options.spacing)
+								thumb_size += Options.spacingToggle;
+							maxWidthForThumbnails = parseInt(maxWidthForThumbnails / thumb_size) * thumb_size;
+							// add a constant for the scroller
+							maxWidthForThumbnails += 18;
+						}
+						// vertical popup size
+						var maxHeightForThumbnails = parseInt($("#mapdiv").height() * 0.8);
+
 						var popup = L.popup({maxWidth: maxWidthForThumbnails, maxHeight: maxHeightForThumbnails, autoPan: false})
 							.setLatLng(coordinatesForPopup)
 							.setContent(imagesString)
 							.openOn(mymap);
 
+						// set the proper options
+						f.setOptions();
 						// add the popup mover
 						$(".popup-mover").remove();
 						$(".leaflet-popup-close-button").after('<a id="popup-mover" class="popup-mover"></a>');

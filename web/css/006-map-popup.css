@@ -208,3 +208,11 @@
 	width: 25px;
 	text-align: center;
 }
+
+#mapdiv {
+	font-family: unset;
+}
+
+#mapdiv .media-caption {
+	font-size: 110%;
+}
