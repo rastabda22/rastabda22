@@ -55,7 +55,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 
 ### For Geotaggers
 
-- [x] Maps can be generated (in a popup, thanks to Leaflet) showing markers for the photos positions.
+- [x] Maps can be generated, in a popup, showing markers for the photos positions. [Leaflet](https://leafletjs.com/) is used.
 - [x] The map is clickable and the thumbnails for the nearest marker are shown.
 - [x] More photos can be added (with shift-click) and removed (with ctl-click) from the popup.
 - [x] Shown thumbnails are clickable.
