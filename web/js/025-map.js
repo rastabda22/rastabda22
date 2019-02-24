@@ -292,11 +292,13 @@
 						var mapHeight = $("#mapdiv").height();
 						if (popupPosition.x + popupWidth > mapWidth) {
 							mymap.panBy([(popupWidth - (mapWidth - popupPosition.x)), 0], {"animate": false});
-						}
+						} else if (popupPosition.x < 0)
+							mymap.panBy([popupPosition.x - 50, 0], {"animate": false});
 
 						if (popupPosition.y + popupHeight > mapHeight) {
 							mymap.panBy([0, (popupHeight - (mapHeight - popupPosition.y) + 50)], {"animate": false});
-						}
+						} else if (popupPosition.y < 0)
+							mymap.panBy([0, popupPosition.y - 20], {"animate": false});
 
 						// add the click events to every image
 						for(var ii = 0; ii < currentCluster.data.mediaNameList.length; ii ++) {
