@@ -103,7 +103,7 @@
 			currentCluster.data.mediaNameList = currentCluster.data.mediaNameList.concat(currentCluster._clusterMarkers[i].data.mediaNameList);
 		}
 		// console.log(index, clickedPosition, currentCluster, minimumDistance);
-		var coordinatesForPopup = currentCluster.position;
+		var coordinatesForPopup = currentCluster.averagePosition;
 		var imagesGot = 0;
 		var mediaHashes = [];
 		var imagesString = '';
