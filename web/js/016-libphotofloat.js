@@ -348,7 +348,7 @@
 						$("#by-gps-view").removeClass("hidden").addClass("active").on("click", function(ev) {
 							$(".search-failed").hide();
 							$("#album-view").removeClass("hidden");
-              window.location.href = link;
+							window.location.href = link;
 							return false;
 						});
 					}
@@ -937,7 +937,7 @@
 		else {
 			for (i = 0; i < hash.length; i++) {
 				chr = hash.charCodeAt(i);
-				codedHash  = ((codedHash << 5) - codedHash) + chr;
+				codedHash = ((codedHash << 5) - codedHash) + chr;
 				codedHash |= 0; // Convert to 32bit integer
 			}
 			return hash.replace(/\./g, '_') + '_' + codedHash;
