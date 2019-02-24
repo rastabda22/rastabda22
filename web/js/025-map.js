@@ -4,7 +4,7 @@
 	var util = new Utilities();
 	var f = new Functions();
 	var mapIsInitialized = false;
-	var mymap;
+	var mymap, popup;
 
 	/* constructor */
 	function MapFunctions() {
@@ -65,6 +65,7 @@
 
 	MapFunctions.mapClick = function(evt, clusters, lastIndex) {
 		var clickedPosition = evt.latlng, i;
+		var coordinatesForPopup;
 		// console.log(clickedPosition, clusters);
 
 		// decide what point is to be used: the nearest to the clicked position
@@ -99,7 +100,9 @@
 			currentCluster.data.mediaNameList = currentCluster.data.mediaNameList.concat(currentCluster._clusterMarkers[i].data.mediaNameList);
 		}
 		// console.log(index, clickedPosition, currentCluster, minimumDistance);
-		var coordinatesForPopup = currentCluster.averagePosition;
+		coordinatesForPopup = currentCluster.averagePosition;
+		// if (evt.originalEvent.ctrlKey && popup)
+		// 	coordinatesForPopup = popup._latlng;
 		var imagesGot = 0;
 		var mediaHashes = [];
 		var imagesString = '';
@@ -241,7 +244,7 @@
 						// vertical popup size
 						var maxHeightForThumbnails = parseInt($("#mapdiv").height() * 0.8);
 
-						var popup = L.popup({maxWidth: maxWidthForThumbnails, maxHeight: maxHeightForThumbnails, autoPan: false})
+						popup = L.popup({maxWidth: maxWidthForThumbnails, maxHeight: maxHeightForThumbnails, autoPan: false})
 							.setLatLng(coordinatesForPopup)
 							.setContent(imagesString)
 							.openOn(mymap);
