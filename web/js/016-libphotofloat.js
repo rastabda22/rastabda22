@@ -348,7 +348,7 @@
 						$("#by-gps-view").removeClass("hidden").addClass("active").on("click", function(ev) {
 							$(".search-failed").hide();
 							$("#album-view").removeClass("hidden");
-              window.location.href = link;
+							window.location.href = link;
 							return false;
 						});
 					}
@@ -535,8 +535,10 @@
 		} else {
 			// it's a search!
 			self = this;
+			var removedStopWords = [];
 
 			buildSearchResult = function() {
+				searchResultsAlbumFinal.removedStopWords = removedStopWords;
 				// has any word remained after stop words have been removed?
 				if (SearchWordsFromUser.length == 0) {
 					util.noResults('#no-search-string-after-stopwords-removed');
@@ -782,8 +784,6 @@
 												}
 												if (searchResultsAlbumFinal.media.length === 0 && searchResultsAlbumFinal.subalbums.length === 0) {
 													util.noResults();
-												} else if (searchResultsAlbumFinal.media.length > Options.big_virtual_folders_threshold) {
-													util.noResults('#search-too-wide');
 												} else {
 													$("#album-view").removeClass("hidden");
 													$(".search-failed").hide();
@@ -854,6 +854,7 @@
 			PhotoFloat.getStopWords(
 				function(stopWords) {
 					// remove the stop words from the search words lists
+
 					var SearchWordsFromUserWithoutStopWords = [];
 					var SearchWordsFromUserWithoutStopWordsNormalized = [];
 					var SearchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions = [];
@@ -868,6 +869,8 @@
 							SearchWordsFromUserWithoutStopWords.push(SearchWordsFromUser[i]);
 							SearchWordsFromUserWithoutStopWordsNormalized.push(SearchWordsFromUserNormalized[i]);
 							SearchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions.push(SearchWordsFromUserNormalizedAccordingToOptions[i]);
+						} else {
+							removedStopWords.push(SearchWordsFromUser[i]);
 						}
 					}
 
@@ -934,7 +937,7 @@
 		else {
 			for (i = 0; i < hash.length; i++) {
 				chr = hash.charCodeAt(i);
-				codedHash  = ((codedHash << 5) - codedHash) + chr;
+				codedHash = ((codedHash << 5) - codedHash) + chr;
 				codedHash |= 0; // Convert to 32bit integer
 			}
 			return hash.replace(/\./g, '_') + '_' + codedHash;

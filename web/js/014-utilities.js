@@ -58,11 +58,11 @@
 
 
 
-  Utilities.prototype.cloneObject = function(object) {
-    return Object.assign({}, object);
-  };
+	Utilities.prototype.cloneObject = function(object) {
+		return Object.assign({}, object);
+	};
 
-  Utilities.prototype.intersect = function(a, b) {
+	Utilities.prototype.intersect = function(a, b) {
 		if (b.length > a.length) {
 			// indexOf to loop over shorter
 			var t;
@@ -139,9 +139,9 @@
 		return union;
 	};
 
-  Utilities.prototype.normalizeAccordingToOptions = function(object) {
+	Utilities.prototype.normalizeAccordingToOptions = function(object) {
 		var string = object;
-		if (typeof object  === "object")
+		if (typeof object === "object")
 			string = string.join('|');
 
 		if (! Options.search_case_sensitive)
@@ -168,10 +168,10 @@
 		return resultString;
 	};
 
-  Utilities.pathJoin = function(pathArr) {
+	Utilities.pathJoin = function(pathArr) {
 		var result = '';
 		for (var i = 0; i < pathArr.length; ++i) {
-			if (i < pathArr.length - 1 &&  pathArr[i] && pathArr[i][pathArr[i].length - 1] != "/")
+			if (i < pathArr.length - 1 && pathArr[i] && pathArr[i][pathArr[i].length - 1] != "/")
 				pathArr[i] += '/';
 			if (i && pathArr[i] && pathArr[i][0] == "/")
 				pathArr[i] = pathArr[i].slice(1);
@@ -180,7 +180,7 @@
 		return result;
 	};
 
-  // see https://stackoverflow.com/questions/1069666/sorting-javascript-object-by-property-value
+	// see https://stackoverflow.com/questions/1069666/sorting-javascript-object-by-property-value
 	Utilities.prototype.sortBy = function(albumOrMediaList, field) {
 		return albumOrMediaList.sort(function(a,b) {
 			var aValue = a[field];
@@ -211,18 +211,18 @@
 		});
 	};
 
-  Utilities.prototype.trimExtension = function(name) {
+	Utilities.prototype.trimExtension = function(name) {
 		var index = name.lastIndexOf(".");
 		if (index !== -1)
 			return name.substring(0, index);
 		return name;
 	};
 
-  Utilities.isFolderCacheBase = function(string) {
+	Utilities.isFolderCacheBase = function(string) {
 		return string == Options.folders_string || string.indexOf(Options.foldersStringWithTrailingSeparator) === 0;
 	};
 
-  Utilities.prototype.isByDateCacheBase = function(string) {
+	Utilities.prototype.isByDateCacheBase = function(string) {
 		return string == Options.by_date_string || string.indexOf(Options.byDateStringWithTrailingSeparator) === 0;
 	};
 
@@ -244,7 +244,7 @@
 			return false;
 	};
 
-  Utilities.prototype.noResults = function(selector) {
+	Utilities.prototype.noResults = function(selector) {
 		// no media found or other search fail, show the message
 		$("ul#right-menu").addClass("expand");
 		$("#album-view").addClass("hidden");
@@ -726,6 +726,17 @@
 		return degrees * (pi/180);
 	};
 
+	Utilities.xDistanceBetweenCoordinatePoints = function(point1, point2) {
+		return Math.max(
+			Utilities.distanceBetweenCoordinatePoints({"long": point1.long, "lat": point1.lat}, {"long": point2.long, "lat": point1.lat}),
+			Utilities.distanceBetweenCoordinatePoints({"long": point1.long, "lat": point2.lat}, {"long": point2.long, "lat": point2.lat}),
+		);
+	};
+
+	Utilities.yDistanceBetweenCoordinatePoints = function(point1, point2) {
+		return Utilities.distanceBetweenCoordinatePoints({"long": point1.long, "lat": point1.lat}, {"long": point1.long, "lat": point2.lat});
+	};
+
 	Utilities.distanceBetweenCoordinatePoints = function(point1, point2) {
 		// converted from Geonames.py
 		// Calculate the great circle distance in meters between two points on the earth (specified in decimal degrees)
@@ -855,9 +866,11 @@
 	Utilities.prototype.nextSize = Utilities.nextSize;
 	Utilities.prototype.isColliding = Utilities.isColliding;
 	Utilities.prototype.distanceBetweenCoordinatePoints = Utilities.distanceBetweenCoordinatePoints;
+	Utilities.prototype.xDistanceBetweenCoordinatePoints = Utilities.xDistanceBetweenCoordinatePoints;
+	Utilities.prototype.yDistanceBetweenCoordinatePoints = Utilities.yDistanceBetweenCoordinatePoints;
 	Utilities.prototype.degreesToRadians = Utilities.degreesToRadians;
 	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
 	Utilities.prototype.mediaBoxContainerHeight = Utilities.mediaBoxContainerHeight;
 
-  window.Utilities = Utilities;
+	window.Utilities = Utilities;
 }());

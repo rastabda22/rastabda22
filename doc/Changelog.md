@@ -1,3 +1,9 @@
+### version v3.7rc1 (February 24, 2019)
+
+* the user can now choose to show big virtual albums
+* markers in the map are now clustered
+* single point markers have the photo number inside them like cluster markers
+
 ### version 3.7beta4 (February 14, 2019)
 
 * bug fixes in searches

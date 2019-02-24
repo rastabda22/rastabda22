@@ -489,6 +489,17 @@ video {
 	font-style: italic;
 	display: none;
 }
+
+#show-them {
+	font-weight: bold;
+	font-style: normal;
+	cursor: pointer;
+}
+
+#show-them:hover {
+	color: orange;
+}
+
 .video-unsupported {
 	background-image: url(../img/video-unsupported.png);
 	background-position: top center;

@@ -1,7 +1,7 @@
 (function() {
 
-  var phFl = new PhotoFloat();
-  var util = new Utilities();
+	var phFl = new PhotoFloat();
+	var util = new Utilities();
 	var pS = new PinchSwipe();
 
 	/* constructor */
@@ -478,44 +478,44 @@
 	};
 
 	Functions.prototype.setOptions = function() {
-    var albumThumbnailSize, mediaThumbnailSize;
-    albumThumbnailSize = Options.album_thumb_size;
-    mediaThumbnailSize = Options.media_thumb_size;
-    $("body").css("background-color", Options.background_color);
+		var albumThumbnailSize, mediaThumbnailSize;
+		albumThumbnailSize = Options.album_thumb_size;
+		mediaThumbnailSize = Options.media_thumb_size;
+		$("body").css("background-color", Options.background_color);
 
-    $(".title").css("font-size", Options.title_font_size);
-    $(".title-anchor").css("color", Options.title_color);
-    $(".title-anchor").hover(function() {
-      //mouse over
-      $(this).css("color", Options.title_color_hover);
-    }, function() {
-      //mouse out
-      $(this).css("color", Options.title_color);
-    });
-    $(".media-name").css("color", Options.title_image_name_color);
-    $(".thumb-and-caption-container").css("margin-right", Options.spacing.toString() + "px");
+		$(".title").css("font-size", Options.title_font_size);
+		$(".title-anchor").css("color", Options.title_color);
+		$(".title-anchor").hover(function() {
+			//mouse over
+			$(this).css("color", Options.title_color_hover);
+		}, function() {
+			//mouse out
+			$(this).css("color", Options.title_color);
+		});
+		$(".media-name").css("color", Options.title_image_name_color);
+		$(".thumb-and-caption-container").css("margin-right", Options.spacing.toString() + "px").css("margin-bottom", Options.spacing.toString() + "px");
 
-    if (currentMedia !== null || ! Options.show_media_names_below_thumbs)
-      $(".media-caption").addClass("hidden");
-    else
-      $(".media-caption").removeClass("hidden");
+		if (currentMedia !== null || ! Options.show_media_names_below_thumbs)
+			$(".media-caption").addClass("hidden");
+		else
+			$(".media-caption").removeClass("hidden");
 
-    if (Options.show_album_media_count)
-      $(".title-count").removeClass("hidden");
-    else
-      $(".title-count").addClass("hidden");
+		if (Options.show_album_media_count)
+			$(".title-count").removeClass("hidden");
+		else
+			$(".title-count").addClass("hidden");
 
-    if (Options.hide_title)
-      $(".title").addClass("hidden-by-option");
-    else
-      $(".title").removeClass("hidden-by-option");
+		if (Options.hide_title)
+			$(".title").addClass("hidden-by-option");
+		else
+			$(".title").removeClass("hidden-by-option");
 
-      if (Options.hide_bottom_thumbnails && (currentMedia != null || util.isAlbumWithOneMedia(currentAlbum))) {
-        $("#album-view").addClass("hidden-by-option");
-      } else {
-        $("#album-view").removeClass("hidden-by-option");
-      }
-  };
+		if (Options.hide_bottom_thumbnails && (currentMedia != null || util.isAlbumWithOneMedia(currentAlbum))) {
+			$("#album-view").addClass("hidden-by-option");
+		} else {
+			$("#album-view").removeClass("hidden-by-option");
+		}
+	};
 
 	Functions.prototype.pinchSwipeInitialization = function(containerHeight, containerWidth) {
 		pS.initialize();
