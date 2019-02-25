@@ -177,7 +177,7 @@
 		var mediaHashes = [];
 		var imagesString = '';
 		if (evt.originalEvent.shiftKey || evt.originalEvent.ctrlKey)
-			imagesString = $(".leaflet-popup-content").html();
+			imagesString = $("#popup-images-wrapper").html();
 		else
 			photoNumberInPopup = 0;
 
@@ -298,7 +298,7 @@
 						// all the popup content html has been prepared: we can generate the popup
 
 						if (evt.originalEvent.ctrlKey)
-							imagesString = $(".leaflet-popup-content").html();
+							imagesString = $("#popup-images-wrapper").html();
 
 						if (! imagesString)
 							return;
