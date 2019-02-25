@@ -65,8 +65,6 @@
 	};
 
 	MapFunctions.averagePosition = function(latLngArray) {
-		if (! latLngArray)
-			return [];
 		var averageLatLng = L.latLng(0, 0);
 		var lat, lng, count = 1, countTotal = 0;
 		for (var i = 0; i < latLngArray.length; i ++) {
