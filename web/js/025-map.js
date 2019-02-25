@@ -319,6 +319,9 @@
 						// vertical popup size
 						var maxHeightForThumbnails = parseInt($("#mapdiv").height() * 0.8);
 
+						// insert the images in a div in order to let the photo count out of scrolling area
+						imagesString = "<div id='popup-images-wrapper'>" + imagesString + "</div>";
+
 						popup = L.popup({maxWidth: maxWidthForThumbnails, maxHeight: maxHeightForThumbnails, autoPan: false})
 							.setLatLng(coordinatesForPopup)
 							.setContent(imagesString)
@@ -359,6 +362,7 @@
 						);
 
 						$(".leaflet-popup-content").css("max-height", parseInt(windowHeight * 0.8)).css("max-width", parseInt(windowWidth * 0.8));
+						$("#popup-images-wrapper").css("max-height", parseInt($(".leaflet-popup-content").css("max-height")) - 75);
 						if (
 							Options.available_map_popup_positions.every(
 								function(orientation) {
