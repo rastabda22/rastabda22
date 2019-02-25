@@ -72,13 +72,13 @@
 		for (var i = 0; i < latLngArray.length; i ++) {
 			lat = latLngArray[i].lat;
 			lng = latLngArray[i].lng;
-			if (latLngArray.hasOwnProperty("count")) {
+			if (latLngArray[i].hasOwnProperty("count")) {
 				lat *= latLngArray[i].count;
 				lng *= latLngArray[i].count;
 			}
 			averageLatLng.lat += lat;
 			averageLatLng.lng += lng;
-			if (latLngArray.hasOwnProperty("count"))
+			if (latLngArray[i].hasOwnProperty("count"))
 				countTotal += latLngArray[i].count;
 			else
 				countTotal += 1;
