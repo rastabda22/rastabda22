@@ -125,36 +125,47 @@
 		var currentCluster = clusters[index];
 		currentCluster.data.mediaNameList = [];
 		// build the cluster's media name list
+		var positionsAndCounts = [];
 		for(i = 0; i < currentCluster._clusterMarkers.length; i ++) {
 			currentCluster.data.mediaNameList = currentCluster.data.mediaNameList.concat(currentCluster._clusterMarkers[i].data.mediaNameList);
+			positionsAndCounts.push({"lat": currentCluster._clusterMarkers[i].position.lat, "lng": currentCluster._clusterMarkers[i].position.lng, "count": currentCluster._clusterMarkers[i].data.mediaNameList.length});
 		}
 		// console.log(index, clickedPosition, currentCluster, minimumDistance);
-
-		var positionAndCount = {"lat": currentCluster.averagePosition.lat, "lng": currentCluster.averagePosition.lng, "count": currentCluster.data.mediaNameList.length};
+		var indexPositions;
 		if (evt.originalEvent.ctrlKey) {
 		 	if (selectedPositions) {
-				var matchingIndex = -1;
-				var index = selectedPositions.some(
-					function(element, index) {
-						matchingIndex = index;
-						return matchPositionAndCount(positionAndCount, element)
-					}
-				);
-				if (matchingIndex !== -1)
-					selectedPositions.splice(matchingIndex, 1);
+				for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
+					var matchingIndex = -1;
+					if (
+						selectedPositions.some(
+							function(element, index) {
+								matchingIndex = index;
+								return matchPositionAndCount(positionsAndCounts[indexPositions], element)
+							}
+						)
+					)
+						selectedPositions.splice(matchingIndex, 1);
+				}
 			}
 		} else {
 			if (! selectedPositions || ! evt.originalEvent.shiftKey)
-				selectedPositions = [positionAndCount];
-			else if (
-				selectedPositions.every(
-					function(element) {
-						return ! matchPositionAndCount(positionAndCount, element)
-					}
-				)
-			)
-				selectedPositions.push(positionAndCount);
+				selectedPositions = positionsAndCounts;
+			else {
+				for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
+					if (
+						selectedPositions.every(
+							function(element) {
+								return ! matchPositionAndCount(positionsAndCounts[indexPositions], element)
+							}
+						)
+					)
+						selectedPositions.push(positionsAndCounts[indexPositions]);
+				}
+			}
 		}
+		if (! selectedPositions.length)
+			return;
+
 		coordinatesForPopup = MapFunctions.averagePosition(selectedPositions);
 
 		var imagesGot = 0;
