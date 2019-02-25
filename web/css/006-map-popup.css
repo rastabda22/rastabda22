@@ -127,6 +127,7 @@
 .leaflet-popup-content .thumb-and-caption-container {
   display: inline-block;
   vertical-align: top;
+  cursor: pointer;
 }
 
 /* .leaflet-popup {
@@ -215,4 +216,10 @@
 
 #mapdiv .media-caption {
 	font-size: 110%;
+}
+
+#popup-photo-count {
+	text-align: center;
+	font-size: 150%;
+	margin-bottom: 5px;
 }

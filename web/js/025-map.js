@@ -4,7 +4,7 @@
 	var util = new Utilities();
 	var f = new Functions();
 	var mapIsInitialized = false;
-	var mymap, popup;
+	var mymap, popup, photoNumberInPopup = 0;
 
 	/* constructor */
 	function MapFunctions() {
@@ -108,6 +108,8 @@
 		var imagesString = '';
 		if (evt.originalEvent.shiftKey || evt.originalEvent.ctrlKey)
 			imagesString = $(".leaflet-popup-content").html();
+		else
+			photoNumberInPopup = 0;
 
 		for(i = 0; i < currentCluster.data.mediaNameList.length; i ++) {
 			// we must get the media corresponding to the name in the point
@@ -167,6 +169,7 @@
 
 					if (evt.originalEvent.ctrlKey) {
 						if ($(codedHashClassSelector).length) {
+							photoNumberInPopup -= 1;
 							// ctrl-click removes the images from the popup
 							$(codedHashClassSelector).remove();
 							// close the popup if no image in it
@@ -178,6 +181,7 @@
 					} else if (evt.originalEvent.shiftKey && $(codedHashClassSelector).length) {
 						// shift click doesn't anything if the image is already there
 					} else {
+						photoNumberInPopup += 1;
 						indexMediaInDOM = i + lastIndex;
 						imagesString +=
 							"<div id='popup-image-" + indexMediaInDOM + "' class='thumb-and-caption-container " + codedHashClass + "' style='" +
@@ -248,6 +252,16 @@
 							.setLatLng(coordinatesForPopup)
 							.setContent(imagesString)
 							.openOn(mymap);
+
+						// update the photo count at the top of the popup
+						if ($("#popup-photo-count").length) {
+							// the count is already there: update it
+							$("#popup-photo-count-number").html(photoNumberInPopup);
+						} else {
+							// the count isn't there: insert it
+							$(".leaflet-popup-content")
+								.prepend('<div id="popup-photo-count"><span id="popup-photo-count-number">' + photoNumberInPopup + '</span> ' + util._t("#photos") + '</div>');
+						}
 
 						// set the proper options
 						f.setOptions();
