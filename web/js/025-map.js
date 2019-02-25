@@ -263,8 +263,9 @@
 										"<span class='helper'></span>" +
 										"<img title='" + imgTitle + "' " +
 											"alt='" + util.trimExtension(theAlbum.media[indexInAlbum].name) + "' " +
-											"src='" + encodeURI(thumbHash) + "' " +
-											"class='thumbnail" + "' " +
+											"data-src='" + encodeURI(thumbHash) + "' " +
+											"src='img/wait.png' " +
+											"class='lazyload-popup-media thumbnail" + "' " +
 											"height='" + thumbHeight + "' " +
 											"width='" + thumbWidth + "' " +
 											"style='" +
@@ -393,6 +394,9 @@
 							);
 						}
 						lastIndex += currentCluster.data.mediaNameList.length;
+
+						// get the images with lazyload
+						lazyload(document.querySelectorAll(".lazyload-popup-media"));
 					}
 				},
 				util.die,
