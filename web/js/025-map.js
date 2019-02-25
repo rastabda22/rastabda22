@@ -100,7 +100,12 @@
 		// decide what point is to be used: the nearest to the clicked position
 		var minimumDistance = false, newMinimumDistance, distance, index;
 		for(i = 0; i < clusters.length; i ++) {
-			distance = Math.abs(util.distanceBetweenCoordinatePoints({lng: clickedPosition.lng, lat: clickedPosition.lat}, {lng: clusters[i].position.lng, lat: clusters[i].position.lat}));
+			distance = Math.abs(
+				util.distanceBetweenCoordinatePoints(
+					{lng: clickedPosition.lng, lat: clickedPosition.lat},
+					{lng: clusters[i].averagePosition.lng, lat: clusters[i].averagePosition.lat}
+				)
+			);
 			// console.log(i, distance);
 			if (minimumDistance === false) {
 				minimumDistance = distance;
