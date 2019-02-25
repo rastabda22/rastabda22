@@ -188,7 +188,8 @@
 										"width: " + calculatedWidth + "px;";
 						if (Options.spacing)
 							imagesString += " margin-right: " + Options.spacingToggle + "px; margin-bottom: " + Options.spacingToggle + "px;";
-						imagesString += "'>" +
+						imagesString += "'>";
+						imagesString +=
 								"<div class='thumb-container' " + "style='" +
 										// "width: " + calculatedWidth + "px; " +
 										"width: " + calculatedWidth + "px; " +
@@ -223,8 +224,7 @@
 					imagesGot += 1;
 
 					if (imagesGot == currentCluster.data.mediaNameList.length) {
-						// all the images have been fetched and put in DOM: we can generate the popup,
-						// but before set a css value: position: absolute make the popup to be shown in a wrong position
+						// all the popup content html has been prepared: we can generate the popup
 
 						if (evt.originalEvent.ctrlKey)
 							imagesString = $(".leaflet-popup-content").html();
