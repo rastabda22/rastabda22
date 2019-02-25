@@ -25,7 +25,7 @@
 				for (iPosition = 0; iPosition < positions.length; ++ iPosition) {
 					position = {};
 					position.lat = positions[iPosition].lat;
-					position.long = positions[iPosition].long;
+					position.lng = positions[iPosition].lng;
 					position.mediaNameList = [];
 					for (iPhoto = 0; iPhoto < positions[iPosition].mediaNameList.length; ++ iPhoto) {
 						// add the photos belonging to this subalbum

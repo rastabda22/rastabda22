@@ -93,7 +93,7 @@
 
 	Utilities.prototype.addMediaToPoints = function(oldPoints, newMedia) {
 		var newPoint = {
-			'long': parseFloat(newMedia.metadata.longitude),
+			'lng': parseFloat(newMedia.metadata.longitude),
 			'lat' : parseFloat(newMedia.metadata.latitude),
 			'mediaNameList': [{
 				'cacheBase': newMedia.cacheBase,
@@ -105,7 +105,7 @@
 
 	Utilities.prototype.addPointToPoints = function(oldPoints, newPoint) {
 		for (var i = 0; i < oldPoints.length; i ++) {
-			if (newPoint.long == oldPoints[i].long && newPoint.lat == oldPoints[i].lat) {
+			if (newPoint.lng == oldPoints[i].lng && newPoint.lat == oldPoints[i].lat) {
 				oldPoints[i].mediaNameList.push(newPoint.mediaNameList[0]);
 				return oldPoints;
 			}
@@ -728,13 +728,13 @@
 
 	Utilities.xDistanceBetweenCoordinatePoints = function(point1, point2) {
 		return Math.max(
-			Utilities.distanceBetweenCoordinatePoints({"long": point1.long, "lat": point1.lat}, {"long": point2.long, "lat": point1.lat}),
-			Utilities.distanceBetweenCoordinatePoints({"long": point1.long, "lat": point2.lat}, {"long": point2.long, "lat": point2.lat}),
+			Utilities.distanceBetweenCoordinatePoints({"lng": point1.lng, "lat": point1.lat}, {"lng": point2.lng, "lat": point1.lat}),
+			Utilities.distanceBetweenCoordinatePoints({"lng": point1.lng, "lat": point2.lat}, {"lng": point2.lng, "lat": point2.lat}),
 		);
 	};
 
 	Utilities.yDistanceBetweenCoordinatePoints = function(point1, point2) {
-		return Utilities.distanceBetweenCoordinatePoints({"long": point1.long, "lat": point1.lat}, {"long": point1.long, "lat": point2.lat});
+		return Utilities.distanceBetweenCoordinatePoints({"lng": point1.lng, "lat": point1.lat}, {"lng": point1.lng, "lat": point2.lat});
 	};
 
 	Utilities.distanceBetweenCoordinatePoints = function(point1, point2) {
@@ -742,9 +742,9 @@
 		// Calculate the great circle distance in meters between two points on the earth (specified in decimal degrees)
 
 		// convert decimal degrees to radians
-		var r_lon1 = Utilities.degreesToRadians(point1.long);
+		var r_lon1 = Utilities.degreesToRadians(point1.lng);
 		var r_lat1 = Utilities.degreesToRadians(point1.lat);
-		var r_lon2 = Utilities.degreesToRadians(point2.long);
+		var r_lon2 = Utilities.degreesToRadians(point2.lng);
 		var r_lat2 = Utilities.degreesToRadians(point2.lat);
 		// haversine formula
 		var d_r_lon = r_lon2 - r_lon1;

@@ -260,7 +260,7 @@ class TreeWalker:
 		elif type_string == Options.config['by_gps_string']:
 			media_album_cache_base = media.gps_album_cache_base
 		position = {
-			'long': media.longitude,
+			'lng': media.longitude,
 			'lat' : media.latitude,
 			'mediaNameList': [{
 				'cacheBase': media.cache_base,
@@ -277,7 +277,7 @@ class TreeWalker:
 		else:
 			match = False
 			for index, _position in enumerate(positions):
-				if position['lat'] == _position['lat'] and position['long'] == _position['long']:
+				if position['lat'] == _position['lat'] and position['lng'] == _position['lng']:
 					positions[index]['mediaNameList'].extend(position['mediaNameList'])
 					match = True
 					break

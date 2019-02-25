@@ -18,7 +18,7 @@
 			ev.preventDefault();
 			var point =
 				{
-					'long': parseFloat(ev.data.media.metadata.longitude),
+					'lng': parseFloat(ev.data.media.metadata.longitude),
 					'lat' : parseFloat(ev.data.media.metadata.latitude),
 					'mediaNameList': [{
 						'name': ev.data.media.albumName,
@@ -47,7 +47,7 @@
 		if (currentMedia !== null && util.hasGpsData(currentMedia))
 			pointList = [
 				{
-					'long': parseFloat(currentMedia.metadata.longitude),
+					'lng': parseFloat(currentMedia.metadata.longitude),
 					'lat' : parseFloat(currentMedia.metadata.latitude),
 					'mediaNameList': [{
 						'name': currentMedia.albumName,
@@ -71,7 +71,7 @@
 		// decide what point is to be used: the nearest to the clicked position
 		var minimumDistance = false, newMinimumDistance, distance, index;
 		for(i = 0; i < clusters.length; i ++) {
-			distance = Math.abs(util.distanceBetweenCoordinatePoints({long: clickedPosition.lng, lat: clickedPosition.lat}, {long: clusters[i].position.lng, lat: clusters[i].position.lat}));
+			distance = Math.abs(util.distanceBetweenCoordinatePoints({lng: clickedPosition.lng, lat: clickedPosition.lat}, {lng: clusters[i].position.lng, lat: clusters[i].position.lat}));
 			// console.log(i, distance);
 			if (minimumDistance === false) {
 				minimumDistance = distance;
@@ -433,7 +433,7 @@
 			if (mapIsInitialized)
 				mymap.remove();
 
-			mymap = L.map('mapdiv').setView([center.lat, center.long], zoom);
+			mymap = L.map('mapdiv').setView([center.lat, center.lng], zoom);
 			mapIsInitialized = true;
 
 
@@ -461,7 +461,7 @@
 
 				markers[iPoint] = new PruneCluster.Marker(
 					pointList[iPoint].lat,
-					pointList[iPoint].long,
+					pointList[iPoint].lng,
 					{
 						icon:	new L.NumberedDivIcon({number: pointList[iPoint].mediaNameList.length})
 					}
