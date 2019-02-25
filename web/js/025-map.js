@@ -451,7 +451,7 @@
 
 				var markers = [];
 			// initialize the markers clusters
-			var pruneCluster = new PruneClusterForLeaflet(40, 40);
+			var pruneCluster = new PruneClusterForLeaflet(70, 70);
 			PruneCluster.Cluster.ENABLE_MARKERS_LIST = true;
 
 			// modify the prunecluster so that the click can be managed in order to show the photo popup
