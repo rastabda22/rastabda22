@@ -5,6 +5,7 @@
 	var f = new Functions();
 	var mapIsInitialized = false;
 	var mymap, popup, photoNumberInPopup = 0;
+	var selectedPositions = [];
 
 	/* constructor */
 	function MapFunctions() {
@@ -63,10 +64,40 @@
 			MapFunctions.generateMap(pointList);
 	};
 
+	MapFunctions.averagePosition = function(latLngArray) {
+		if (! latLngArray)
+			return [];
+		var averageLatLng = L.latLng(0, 0);
+		var lat, lng, count = 1, countTotal = 0;
+		for (var i = 0; i < latLngArray.length; i ++) {
+			lat = latLngArray[i].lat;
+			lng = latLngArray[i].lng;
+			if (latLngArray.hasOwnProperty("count")) {
+				lat *= latLngArray[i].count;
+				lng *= latLngArray[i].count;
+			}
+			averageLatLng.lat += lat;
+			averageLatLng.lng += lng;
+			if (latLngArray.hasOwnProperty("count"))
+				countTotal += latLngArray[i].count;
+			else
+				countTotal += 1;
+		}
+		averageLatLng.lat /= countTotal;
+		averageLatLng.lng /= countTotal;
+
+		return averageLatLng;
+	};
+
+
 	MapFunctions.mapClick = function(evt, clusters, lastIndex) {
 		var clickedPosition = evt.latlng, i;
 		var coordinatesForPopup;
 		// console.log(clickedPosition, clusters);
+
+		function matchPositionAndCount(reference, element) {
+			return JSON.stringify(reference) === JSON.stringify(element);
+		}
 
 		// decide what point is to be used: the nearest to the clicked position
 		var minimumDistance = false, newMinimumDistance, distance, index;
@@ -100,9 +131,34 @@
 			currentCluster.data.mediaNameList = currentCluster.data.mediaNameList.concat(currentCluster._clusterMarkers[i].data.mediaNameList);
 		}
 		// console.log(index, clickedPosition, currentCluster, minimumDistance);
-		coordinatesForPopup = currentCluster.averagePosition;
-		// if (evt.originalEvent.ctrlKey && popup)
-		// 	coordinatesForPopup = popup._latlng;
+
+		var positionAndCount = {"lat": currentCluster.averagePosition.lat, "lng": currentCluster.averagePosition.lng, "count": currentCluster.data.mediaNameList.length};
+		if (evt.originalEvent.ctrlKey) {
+		 	if (selectedPositions) {
+				var matchingIndex = -1;
+				var index = selectedPositions.some(
+					function(element, index) {
+						matchingIndex = index;
+						return matchPositionAndCount(positionAndCount, element)
+					}
+				);
+				if (matchingIndex !== -1)
+					selectedPositions.splice(matchingIndex, 1);
+			}
+		} else {
+			if (! selectedPositions || ! evt.originalEvent.shiftKey)
+				selectedPositions = [positionAndCount];
+			else if (
+				selectedPositions.every(
+					function(element) {
+						return ! matchPositionAndCount(positionAndCount, element)
+					}
+				)
+			)
+				selectedPositions.push(positionAndCount);
+		}
+		coordinatesForPopup = MapFunctions.averagePosition(selectedPositions);
+
 		var imagesGot = 0;
 		var mediaHashes = [];
 		var imagesString = '';
@@ -342,14 +398,9 @@
 
 		var i;
 		if(pointList) {
+			selectedPositions = [];
 			// calculate the center
-			var center = {'lat': 0, 'long': 0};
-			for (i = 0; i < pointList.length; ++i) {
-				center.lat += pointList[i].lat;
-				center.long += pointList[i].long;
-			}
-			center.lat /= pointList.length;
-			center.long /= pointList.length;
+			center = MapFunctions.averagePosition(pointList);
 
 			var br = '<br />';
 			// var thumbAndCaptionHeight = 0;
