@@ -95,7 +95,7 @@
 		// console.log(clickedPosition, clusters);
 
 		function matchPositionAndCount(reference, element) {
-			return JSON.stringify(reference) === JSON.stringify(element);
+			return JSON.stringify([reference.lat, reference.lng]) === JSON.stringify([element.lat, element.lng]);
 		}
 
 		// decide what point is to be used: the nearest to the clicked position
