@@ -6,6 +6,7 @@
 	var mapIsInitialized = false;
 	var mymap, popup, photoNumberInPopup = 0;
 	var selectedPositions = [];
+	var imagesString = "";
 
 	/* constructor */
 	function MapFunctions() {
@@ -66,7 +67,7 @@
 
 	MapFunctions.averagePosition = function(latLngArray) {
 		var averageLatLng = L.latLng(0, 0);
-		var lat, lng, count = 1, countTotal = 0;
+		var lat, lng, countTotal = 0;
 		for (var i = 0; i < latLngArray.length; i ++) {
 			lat = latLngArray[i].lat;
 			lng = latLngArray[i].lng;
@@ -145,11 +146,12 @@
 						selectedPositions.some(
 							function(element, index) {
 								matchingIndex = index;
-								return matchPositionAndCount(positionsAndCounts[indexPositions], element)
+								return matchPositionAndCount(positionsAndCounts[indexPositions], element);
 							}
 						)
-					)
+					) {
 						selectedPositions.splice(matchingIndex, 1);
+					}
 				}
 			}
 		} else {
@@ -160,7 +162,7 @@
 					if (
 						selectedPositions.every(
 							function(element) {
-								return ! matchPositionAndCount(positionsAndCounts[indexPositions], element)
+								return ! matchPositionAndCount(positionsAndCounts[indexPositions], element);
 							}
 						)
 					)
@@ -168,20 +170,25 @@
 				}
 			}
 		}
-		if (! selectedPositions.length)
+		if (! selectedPositions.length) {
+			$("#popup-images-wrapper").html("");
+			photoNumberInPopup = 0;
 			return;
+		}
 
 		coordinatesForPopup = MapFunctions.averagePosition(selectedPositions);
 
 		var imagesGot = 0;
 		var mediaHashes = [];
-		var imagesString = '';
-		if (evt.originalEvent.shiftKey || evt.originalEvent.ctrlKey)
+		if (evt.originalEvent.shiftKey || evt.originalEvent.ctrlKey) {
 			imagesString = $("#popup-images-wrapper").html();
-		else
+			if (typeof imagesString === "undefined")
+				imagesString = "";
+		} else
 			photoNumberInPopup = 0;
 
 		for(i = 0; i < currentCluster.data.mediaNameList.length; i ++) {
+			// console.log(i, currentCluster.data.mediaNameList.length);
 			// we must get the media corresponding to the name in the point
 			var cacheBase = currentCluster.data.mediaNameList[i].cacheBase;
 			var albumCacheBase = currentCluster.data.mediaNameList[i].albumCacheBase;
@@ -242,7 +249,7 @@
 							photoNumberInPopup -= 1;
 							// ctrl-click removes the images from the popup
 							$(codedHashClassSelector).remove();
-							// close the popup if no image in it
+							// close the popup and exit if no image in it
 							if (! $(".leaflet-popup .thumb-and-caption-container").length) {
 								$('.leaflet-popup-close-button')[0].click();
 								return;
@@ -285,10 +292,10 @@
 									"</span>" +
 								"</div>" +
 							"</div>";
-						// image = $(imageString);
+						// image = $(imagesString);
 						// image.get(0).media = theAlbum.media[indexInAlbum];
 
-						// $("#popup-content").append($(imageString));
+						// $("#popup-content").append($());
 						// thumbAndCaptionHeight = Math.max(thumbAndCaptionHeight, parseInt($("popup-image-" + indexMediaInDOM).height()));
 						// $("#popup-content .thumb-and-caption-container").height(thumbAndCaptionHeight + "px");
 					}
@@ -297,8 +304,11 @@
 					if (imagesGot == currentCluster.data.mediaNameList.length) {
 						// all the popup content html has been prepared: we can generate the popup
 
-						if (evt.originalEvent.ctrlKey)
+						if (evt.originalEvent.ctrlKey) {
 							imagesString = $("#popup-images-wrapper").html();
+							if (typeof imagesString === "undefined")
+								imagesString = "";
+						}
 
 						if (! imagesString)
 							return;
@@ -418,11 +428,12 @@
 	MapFunctions.generateMap = function(pointList) {
 		// pointList is an array of uniq points with a list of the media geolocated there
 
-		var i;
+		var i, lastIndex = 0;
+
 		if(pointList) {
 			selectedPositions = [];
 			// calculate the center
-			center = MapFunctions.averagePosition(pointList);
+			var center = MapFunctions.averagePosition(pointList);
 
 			var br = '<br />';
 			// var thumbAndCaptionHeight = 0;
@@ -520,7 +531,6 @@
 			).addTo(mymap);
 			L.control.scale().addTo(mymap);
 
-			var lastIndex = 0;
 			var cacheBases;
 			for (var iPoint = 0; iPoint < pointList.length; iPoint ++) {
 				// console.log(iPoint + "/" + pointList.length);
@@ -587,10 +597,10 @@
 
 		createIcon: function () {
 			var div = document.createElement('div');
-			var img = this._createImg(this.options['iconUrl']);
+			var img = this._createImg(this.options.iconUrl);
 			var numdiv = document.createElement('div');
 			numdiv.setAttribute ( "class", "number" );
-			numdiv.innerHTML = this.options['number'] || '';
+			numdiv.innerHTML = this.options.number || '';
 			div.appendChild ( img );
 			div.appendChild ( numdiv );
 			this._setIconStyles(div, 'icon');
