@@ -542,6 +542,7 @@
 				pruneCluster.RegisterMarker(markers[iPoint]);
 				markers[iPoint].data.tooltip = cacheBases;
 				markers[iPoint].data.mediaNameList = pointList[iPoint].mediaNameList;
+				markers[iPoint].weight = pointList[iPoint].mediaNameList.length;
 
 				// // the tooltip
 				// markers[iPoint].bindTooltip(cacheBases);
