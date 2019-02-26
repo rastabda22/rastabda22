@@ -154,6 +154,7 @@
 							}
 						)
 					) {
+						photoNumberInPopup -= positionsAndCounts[indexPositions].count;
 						selectedPositions.splice(matchingIndex, 1);
 					}
 				}
@@ -169,14 +170,18 @@
 								return ! matchPositionAndCount(positionsAndCounts[indexPositions], element);
 							}
 						)
-					)
+					) {
+						photoNumberInPopup += positionsAndCounts[indexPositions].count;
+						lastIndex += positionsAndCounts[indexPositions].count;
 						selectedPositions.push(positionsAndCounts[indexPositions]);
+					}
 				}
 			}
 		}
 		if (! selectedPositions.length) {
+			lastIndex = 0;
 			$("#popup-images-wrapper").html("");
-			photoNumberInPopup = 0;
+			imagesString = '';
 			return;
 		}
 
