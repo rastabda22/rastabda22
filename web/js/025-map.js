@@ -126,6 +126,10 @@
 			// reset the thumbnails if not shift- nor ctrl-clicking
 			// content.innerHTML = '';
 			lastIndex = 0;
+			selectedPositions = [];
+			photoNumberInPopup = 0;
+			$("#popup-images-wrapper").html("");
+			imagesString = '';
 		}
 
 		var currentCluster = clusters[index];
@@ -330,11 +334,11 @@
 						var maxHeightForThumbnails = parseInt($("#mapdiv").height() * 0.8);
 
 						// insert the images in a div in order to let the photo count out of scrolling area
-						imagesString = "<div id='popup-images-wrapper'>" + imagesString + "</div>";
+						var wrappedImagesString = "<div id='popup-images-wrapper'>" + imagesString + "</div>";
 
 						popup = L.popup({maxWidth: maxWidthForThumbnails, maxHeight: maxHeightForThumbnails, autoPan: false})
 							.setLatLng(coordinatesForPopup)
-							.setContent(imagesString)
+							.setContent(wrappedImagesString)
 							.openOn(mymap);
 
 						// update the photo count at the top of the popup
