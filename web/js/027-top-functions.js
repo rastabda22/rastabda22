@@ -1428,7 +1428,9 @@
 					$("#media-map-link-" + i).on('click', {media: currentAlbum.media[i], album: currentAlbum}, map.generateMapFromMedia);
 				}
 			}
-			lazyload(document.querySelectorAll(".lazyload-media"));
+			// lazyload(document.querySelectorAll(".lazyload-media"));
+			$("img.lazyload-media").Lazy();
+			console.log("lazy loaded");
 
 			if (currentMedia === null) {
 				if (fromEscKey && firstEscKey) {
@@ -1686,7 +1688,8 @@
 									$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName).attr("data-src", encodeURI(mediaSrc));
 									$("#" + id + " img.thumbnail").css("width", thumbWidth).css("height", thumbHeight);
 
-									lazyload(document.querySelectorAll(".lazyload-album-" + id));
+									// lazyload(document.querySelectorAll(".lazyload-album-" + id));
+									$("img.lazyload-album-" + id).Lazy();
 
 									numSubAlbumsReady ++;
 									if (numSubAlbumsReady >= theOriginalAlbumContainer.subalbums.length) {

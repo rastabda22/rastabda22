@@ -155,21 +155,21 @@
 			setPopupPosition();
 		}
 
-		function addClickEvents() {
-			// ad the click event to the added thumbnails
-			for(var i = 0; i < dataForClickEvents.length; i ++) {
-				$("#" + dataForClickEvents[i].codedHashId).on(
-					'click',
-					{"mediaHash": dataForClickEvents[i].mediaHash},
-					function(ev) {
-						$('.leaflet-popup-close-button')[0].click();
-						// $('#popup #popup-content').html("");
-						$('.map-close-button')[0].click();
-						window.location.href = ev.data.mediaHash;
-					}
-				);
-			}
-		}
+		// function addClickEvents() {
+			// // ad the click event to the added thumbnails
+			// for(var i = 0; i < dataForClickEvents.length; i ++) {
+			// 	$("#" + dataForClickEvents[i].codedHashId).on(
+			// 		'click',
+			// 		{"mediaHash": dataForClickEvents[i].mediaHash},
+			// 		function(ev) {
+			// 			$('.leaflet-popup-close-button')[0].click();
+			// 			// $('#popup #popup-content').html("");
+			// 			$('.map-close-button')[0].click();
+			// 			window.location.href = ev.data.mediaHash;
+			// 		}
+			// 	);
+			// }
+		// }
 
 		function setPhotoCountAndWidth() {
 			$("#popup-photo-count").css("width", maxWidthForThumbnails);
@@ -269,10 +269,12 @@
 									"<img title='" + imgTitle + "' " +
 										"alt='" + util.trimExtension(theAlbum.media[indexInAlbum].name) + "' " +
 										"data-src='" + encodeURI(thumbHash) + "' " +
-										"src='img/wait.png' " +
+										// "src='img/wait.png' " +
+										"src='' " +
 										"class='lazyload-popup-media thumbnail" + "' " +
 										"height='" + thumbHeight + "' " +
 										"width='" + thumbWidth + "' " +
+										"mediaHash='" + mediaHash + "' " +
 										"style='" +
 											 "width: " + calculatedWidth + "px; " +
 											 "height: " + calculatedHeight + "px;" +
@@ -496,11 +498,27 @@
 					setPopupPosition();
 
 					// get the images with lazyload
-					lazyload(document.querySelectorAll(".lazyload-popup-media"));
+					// lazyload(document.querySelectorAll(".lazyload-popup-media"));
+					$("img.lazyload-popup-media").Lazy(
+						{
+							afterLoad: function(element) {
+								element.on(
+									'click',
+									function() {
+										// called after an element was successfully handled
+										$('.leaflet-popup-close-button')[0].click();
+										// $('#popup #popup-content').html("");
+										$('.map-close-button')[0].click();
+										window.location.href = element.attr("mediaHash");
+									}
+								);
+							}
+						}
+					);
 
 					panMap();
 					addPopupMover();
-					addClickEvents();
+					// addClickEvents();
 				}
 			);
 		}
