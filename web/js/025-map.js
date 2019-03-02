@@ -195,7 +195,8 @@
 							console.log(element[0]);
 						},
 						chainable: false,
-						threshold: 2000
+						threshold: 20,
+						bind: 'event'
 					}
 				);
 			});
