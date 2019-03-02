@@ -1,5 +1,8 @@
+### version v3.7 (March 2, 2019)
+
 * the popup is now positioned in an average point among all the points that contribute their photos to the popup
 * bug fixes
+* lazy loader changed to jquery.lazy: it permits defining post-load actions
 
 ### version v3.7rc1 (February 24, 2019)
 
