@@ -1429,8 +1429,13 @@
 				}
 			}
 			// lazyload(document.querySelectorAll(".lazyload-media"));
-			$("img.lazyload-media").Lazy();
-			console.log("lazy loaded");
+			$(function() {
+				$("img.lazyload-media").Lazy(
+					{
+						chainable: false
+					}
+				);
+			});
 
 			if (currentMedia === null) {
 				if (fromEscKey && firstEscKey) {

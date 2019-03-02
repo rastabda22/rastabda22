@@ -94,7 +94,7 @@
 
 	MapFunctions.mapClick = function(evt, clusters) {
 		var clickedPosition = evt.latlng, i;
-		var coordinatesForPopup, maxWidthForThumbnails, maxHeightForThumbnails;
+		var maxWidthForThumbnails, maxHeightForThumbnails;
 		// console.log(clickedPosition, clusters);
 
 		function matchPositionAndCount(reference, element) {
@@ -151,29 +151,75 @@
 			);
 
 			$(".leaflet-popup-content").css("max-height", parseInt(windowHeight * 0.8)).css("max-width", parseInt(windowWidth * 0.8));
-			$("#popup-images-wrapper").css("max-height", parseInt($(".leaflet-popup-content").css("max-height")) - 75);
 			setPopupPosition();
 		}
 
-		// function addClickEvents() {
-			// // ad the click event to the added thumbnails
-			// for(var i = 0; i < dataForClickEvents.length; i ++) {
-			// 	$("#" + dataForClickEvents[i].codedHashId).on(
-			// 		'click',
-			// 		{"mediaHash": dataForClickEvents[i].mediaHash},
-			// 		function(ev) {
-			// 			$('.leaflet-popup-close-button')[0].click();
-			// 			// $('#popup #popup-content').html("");
-			// 			$('.map-close-button')[0].click();
-			// 			window.location.href = ev.data.mediaHash;
-			// 		}
-			// 	);
+		function updatePopup(images) {
+			popup.setContent(images);
+			getImagesWrapperSizes();
+			$("#popup-images-wrapper").css("max-height", parseInt($(".leaflet-popup-content").css("height")) - 35);
+			$("#popup-images-wrapper").css("max-width", maxWidthForThumbnails).css("width", maxWidthForThumbnails);
+			$("#popup-photo-count").css("max-width", maxWidthForThumbnails);
+ 			popup.setLatLng(MapFunctions.averagePosition(selectedPositions));
+
+			setPhotoCountAndWidth();
+
+			f.setOptions();
+			setPopupPosition();
+			panMap();
+			addLazy("img.lazyload-popup-media");
+			// $("[data-src]").attr("src", "");
+			// if ($("[data-src]").length) {
+			// 	addLazy($("[data-src]"));
 			// }
-		// }
+		}
+
+		function addLazy(selector) {
+			$(function() {
+				$(selector).Lazy(
+					{
+						afterLoad: function(element) {
+							element.parent().parent().on(
+								'click',
+								function() {
+									// called after an element was successfully handled
+									$('.leaflet-popup-close-button')[0].click();
+									// $('#popup #popup-content').html("");
+									$('.map-close-button')[0].click();
+									window.location.href = element.attr("mediaHash");
+								}
+							);
+						},
+						autoDestroy: true,
+						onError: function(element) {
+							console.log(element[0]);
+						},
+						chainable: false,
+						threshold: 2000
+					}
+				);
+			});
+		}
 
 		function setPhotoCountAndWidth() {
-			$("#popup-photo-count").css("width", maxWidthForThumbnails);
+			$("#popup-photo-count").css("max-width", maxWidthForThumbnails);
 			$("#popup-photo-count-number").html(photoNumberInPopup);
+		}
+
+		function getImagesWrapperSizes() {
+			// how much space is available horizontally for the thumbnails?
+			maxWidthForThumbnails = parseInt($("#mapdiv").width() * 0.8);
+			// square thumbnails: set the value to a shorter one, in order to avoid right white space
+			if (Options.media_thumb_type == "square") {
+				var thumb_size = Options.media_thumb_size;
+				if (Options.spacing)
+					thumb_size += Options.spacingToggle;
+				maxWidthForThumbnails = parseInt(maxWidthForThumbnails / thumb_size) * thumb_size;
+				// add a constant for the scroller
+				maxWidthForThumbnails += 18;
+			}
+			// vertical popup size
+			maxHeightForThumbnails = parseInt($("#mapdiv").height() * 0.8);
 		}
 
 		function panMap() {
@@ -354,7 +400,8 @@
 		// console.log(index, clickedPosition, currentCluster, minimumDistance);
 		var indexPositions;
 		if (evt.originalEvent.ctrlKey) {
-		 	if (selectedPositions) {
+			// control click
+		 	if (selectedPositions.length) {
 				for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
 					var matchingIndex = -1;
 					if (
@@ -372,58 +419,51 @@
 					}
 				}
 
-				var popupContent = $(".leaflet-popup-content").html();
-				// $(".leaflet-popup").remove();
-				// // set the proper options
-				// popup = L.popup({maxWidth: , maxHeight: maxHeightForThumbnails, autoPan: false})
-				// 	.setLatLng(MapFunctions.averagePosition(selectedPositions))
-				// 	.setContent(popupContent)
-				// 	.openOn(mymap);
-				popup.setContent(popupContent);
-				popup.setLatLng(MapFunctions.averagePosition(selectedPositions));
-
-				setPhotoCountAndWidth();
-				// f.setOptions();
-				setPopupPosition();
-				panMap();
+				if (! selectedPositions.length) {
+					popup.remove();
+					return;
+				} else {
+					updatePopup($(".leaflet-popup-content").html());
+				}
 			}
 		} else {
+			// not control click
 			imagesGot = 0;
 			imagesToAddString = "";
 			dataForClickEvents = [];
-			coordinatesForPopup = MapFunctions.averagePosition(positionsAndCounts);
 			imageLoadPromise = new Promise(
 				function(resolve, reject) {
 					promiseActivated = true;
-					if (! selectedPositions || ! evt.originalEvent.shiftKey) {
+					if (! selectedPositions.length || ! evt.originalEvent.shiftKey) {
+						// normal click or shift click without previous content
 
-						// how much space is available horizontally for the thumbnails?
-						var maxWidthForThumbnails = parseInt($("#mapdiv").width() * 0.8);
-						// square thumbnails: set the value to a shorter one, in order to avoid right white space
-						if (Options.media_thumb_type == "square") {
-							var thumb_size = Options.media_thumb_size;
-							if (Options.spacing)
-								thumb_size += Options.spacingToggle;
-							maxWidthForThumbnails = parseInt(maxWidthForThumbnails / thumb_size) * thumb_size;
-							// add a constant for the scroller
-							maxWidthForThumbnails += 18;
+						getImagesWrapperSizes();
+
+						selectedPositions = positionsAndCounts;
+						if (typeof popup !== "undefined") {
+							popup.remove();
+							$(".leaflet-popup").remove();
 						}
-						// vertical popup size
-						maxHeightForThumbnails = parseInt($("#mapdiv").height() * 0.8);
-
-						// if (! $(".leaflet-popup-pane").html())
 						popup = L.popup({maxWidth: maxWidthForThumbnails, maxHeight: maxHeightForThumbnails, autoPan: false})
-							.setLatLng(coordinatesForPopup)
 							.setContent(titleWrapper1.replace("maxWidthForThumbnails", maxWidthForThumbnails) + titleWrapper2)
+							.setLatLng(MapFunctions.averagePosition(selectedPositions))
 							.openOn(mymap);
 
-						setPhotoCountAndWidth();
-						setPopupPosition();
+						// f.setOptions();
+						// setPopupPosition();
+						// panMap();
+						// addPopupMover();
+						// getImagesWrapperSizes();
+						// $("#popup-images-wrapper").css("max-height", parseInt($(".leaflet-popup-content").css("max-height")) - 75);
+
 						photoNumberInPopup = 0;
-						selectedPositions = positionsAndCounts;
+
+						// how many images are we going to add?
 						imagesToGet = 0;
 						for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++)
 							imagesToGet += positionsAndCounts[indexPositions].mediaNameList.length;
+
+						// add the html code for the images to a string
 						for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
 							photoNumberInPopup += positionsAndCounts[indexPositions].count;
 							markerClass = getMarkerClass(positionsAndCounts[indexPositions]);
@@ -457,68 +497,14 @@
 				}
 			);
 		}
-		if (! selectedPositions.length) {
-			popup.remove();
-			return;
-		}
 
 		if (promiseActivated) {
 			imageLoadPromise.then(
 				function() {
 					promiseActivated = false;
-
-					// how much space is available horizontally for the thumbnails?
-					var maxWidthForThumbnails = parseInt($("#mapdiv").width() * 0.8);
-					// square thumbnails: set the value to a shorter one, in order to avoid right white space
-					if (Options.media_thumb_type == "square") {
-						var thumb_size = Options.media_thumb_size;
-						if (Options.spacing)
-							thumb_size += Options.spacingToggle;
-						maxWidthForThumbnails = parseInt(maxWidthForThumbnails / thumb_size) * thumb_size;
-						// add a constant for the scroller
-						maxWidthForThumbnails += 18;
-					}
-					// vertical popup size
-					maxHeightForThumbnails = parseInt($("#mapdiv").height() * 0.8);
-
 					var previousImagesString = $("#popup-images-wrapper").html();
 
-					// $(".leaflet-popup").remove();
-					// // set the proper options
-					// popup = L.popup({maxWidth: maxWidthForThumbnails, maxHeight: maxHeightForThumbnails, autoPan: false})
-					// 	.setLatLng(MapFunctions.averagePosition(selectedPositions))
-					// 	.setContent(titleWrapper1.replace("maxWidthForThumbnails", maxWidthForThumbnails) + previousImagesString + imagesToAddString + titleWrapper2)
-					// 	.openOn(mymap);
-					popup.setContent(titleWrapper1.replace("maxWidthForThumbnails", maxWidthForThumbnails) + previousImagesString + imagesToAddString + titleWrapper2);
-					popup.setLatLng(MapFunctions.averagePosition(selectedPositions));
-
-					setPhotoCountAndWidth();
-
-					f.setOptions();
-					setPopupPosition();
-
-					// get the images with lazyload
-					// lazyload(document.querySelectorAll(".lazyload-popup-media"));
-					$("img.lazyload-popup-media").Lazy(
-						{
-							afterLoad: function(element) {
-								element.on(
-									'click',
-									function() {
-										// called after an element was successfully handled
-										$('.leaflet-popup-close-button')[0].click();
-										// $('#popup #popup-content').html("");
-										$('.map-close-button')[0].click();
-										window.location.href = element.attr("mediaHash");
-									}
-								);
-							}
-						}
-					);
-
-					panMap();
-					addPopupMover();
-					// addClickEvents();
+					updatePopup(titleWrapper1.replace("maxWidthForThumbnails", maxWidthForThumbnails) + previousImagesString + imagesToAddString + titleWrapper2);
 				}
 			);
 		}
@@ -531,7 +517,7 @@
 
 		var i;
 		titleWrapper1 =
-			'<div id="popup-photo-count" style="width: maxWidthForThumbnailspx;">' +
+			'<div id="popup-photo-count" style="max-width: maxWidthForThumbnailspx;">' +
 				'<span id="popup-photo-count-number"></span> ' + util._t("#photos") +
 			'</div>' +
 			'<div id="popup-images-wrapper">';
