@@ -10,7 +10,7 @@
 	var imagesGot, imagesToGet, promiseActivated = false;
 	var titleWrapper1, titleWrapper2;
 	var pointList = [];
-	var hashParsed;
+	var hashParsed, lastAlbumIndex = 0;
 
 
 	/* constructor */
@@ -213,15 +213,9 @@
 			});
 		}
 
-		function pointListStringCompress(pointListString) {
-			return pointListString.substring(2, pointListString.length - 3).replace(/\]\,\[/g, '+');
-		}
-		function pointListStringDecompress(compressedPointListString) {
-			return '[[' + compressedPointListString.replace(/\+/g, '],[') + ']]';
-		}
 		function setPhotoCountAndWidth() {
-			$("#popup-photo-count-number").html(photoNumberInPopup);
 			$("#popup-photo-count").css("max-width", maxWidthForThumbnails);
+			$("#popup-photo-count-number").html(photoNumberInPopup);
 			// add the click event for showing the photos in the popup as an album
 			$("#popup-photo-count").on(
 				"click",
@@ -234,18 +228,19 @@
 					for (var i = 0; i < pointList.length; ++i) {
 						nudePointList.push([pointList[i].lat, pointList[i].lng]);
 					}
-					var mapAlbumHash = pointListStringCompress(JSON.stringify(nudePointList));
+					lastAlbumIndex ++;
+					mapAlbumHash = lastAlbumIndex;
 
 					// initialize the map album
-					var MapAlbum = {};
-					MapAlbum.positionsAndMediaInTree = pointList;
-					MapAlbum.media = [];
-					MapAlbum.subalbums = [];
-					MapAlbum.cacheBase = Options.by_map_string + Options.cache_folder_separator + mapAlbumHash + Options.cache_folder_separator + currentAlbum.cacheBase;
-					MapAlbum.parentCacheBase = Options.by_map_string;
-					MapAlbum.path = MapAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
-					MapAlbum.physicalPath = MapAlbum.path;
-					MapAlbum.searchInFolderCacheBase = currentAlbum.cacheBase;
+					var mapAlbum = {};
+					mapAlbum.positionsAndMediaInTree = pointList;
+					mapAlbum.media = [];
+					mapAlbum.subalbums = [];
+					mapAlbum.cacheBase = Options.by_map_string + Options.cache_folder_separator + mapAlbumHash + Options.cache_folder_separator + currentAlbum.cacheBase;
+					mapAlbum.parentCacheBase = Options.by_map_string;
+					mapAlbum.path = mapAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
+					mapAlbum.physicalPath = mapAlbum.path;
+					mapAlbum.searchInFolderCacheBase = currentAlbum.cacheBase;
 
 					// build the media list
 					// surely the albums are already in cache
@@ -257,18 +252,34 @@
 									PhotoFloat.albumCache[pointList[indexPositions].mediaNameList[iPhoto].albumCacheBase].media[iMedia].cacheBase ==
 									 	pointList[indexPositions].mediaNameList[iPhoto].cacheBase
 									) {
-									MapAlbum.media.push(PhotoFloat.albumCache[pointList[indexPositions].mediaNameList[iPhoto].albumCacheBase].media[iPhoto]);
+									mapAlbum.media.push(PhotoFloat.albumCache[pointList[indexPositions].mediaNameList[iPhoto].albumCacheBase].media[iPhoto]);
 									break;
 								}
 						}
 					}
-					MapAlbum.numMediaInAlbum = MapAlbum.media.length;
-					MapAlbum.numMediaInSubTree = MapAlbum.media.length;
+					mapAlbum.numMediaInAlbum = mapAlbum.media.length;
+					mapAlbum.numMediaInSubTree = mapAlbum.media.length;
+					mapAlbum.numPositionsInTree = pointList.length;
 					$('.leaflet-popup-close-button')[0].click();
 					// $('#popup #popup-content').html("");
 					$('.map-close-button')[0].click();
 
-					phFl.endPreparingAlbumAndKeepOn(MapAlbum, "", hashParsed);
+					// prepare the root of the map albums and put it in the cache
+					var rootMapAlbum;
+					if (PhotoFloat.albumCache.hasOwnProperty(Options.by_map_string)) {
+						rootMapAlbum = PhotoFloat.albumCache[Options.by_map_string];
+					} else {
+						rootMapAlbum = {};
+						rootMapAlbum.cacheBase = Options.by_map_string;
+						rootMapAlbum.subalbums = [];
+						rootMapAlbum.media = [];
+						rootMapAlbum.positionsAndMediaInTree = [];
+					}
+					rootMapAlbum.subalbums.push(mapAlbum);
+					rootMapAlbum.positionsAndMediaInTree = util.mergePoints(rootMapAlbum.positionsAndMediaInTree, pointList);
+					PhotoFloat.albumCache[Options.by_map_string] = rootMapAlbum;
+
+					phFl.endPreparingAlbumAndKeepOn(mapAlbum, "", hashParsed);
 				}
 			);
 
