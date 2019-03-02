@@ -1,3 +1,4 @@
+* new option `by_map_string` for albums built from map popup
 * the popup is now positioned in an average point among all the points that contribute their photos to the popup
 * bug fixes
 

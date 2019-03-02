@@ -498,7 +498,11 @@
 
 		// activate the map popup trigger in the title
 		$(".map-popup-trigger").off();
-		$(".map-popup-trigger").click(map.generateMapFromDefaults);
+		$(".map-popup-trigger").click(
+			function() {
+				map.generateMapFromDefaults(TopFunctions.hashParsed);
+			}
+		);
 
 
 
@@ -947,7 +951,7 @@
 
 	/* Entry point for most events */
 
-	TopFunctions.prototype.hashParsed = function(album, media, mediaIndex) {
+	TopFunctions.hashParsed = function(album, media, mediaIndex) {
 		var populateAlbum;
 		var currentAlbumPath, currentAlbumPathArray;
 
@@ -1425,7 +1429,13 @@
 				// generate the click event for the map for every media
 				for (i = 0; i < currentAlbum.media.length; ++i) {
 					$("#media-map-link-" + i).off();
-					$("#media-map-link-" + i).on('click', {media: currentAlbum.media[i], album: currentAlbum}, map.generateMapFromMedia);
+					$("#media-map-link-" + i).on(
+						'click',
+						{media: currentAlbum.media[i], album: currentAlbum},
+						function(ev) {
+							map.generateMapFromMedia(ev, TopFunctions.hashParsed);
+						}
+					);
 				}
 			}
 			// lazyload(document.querySelectorAll(".lazyload-media"));
@@ -1730,7 +1740,13 @@
 					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
 						$("#subalbum-map-link-" + i).off();
 						if (currentAlbum.subalbums[i].hasOwnProperty("positionsAndMediaInTree") && currentAlbum.subalbums[i].positionsAndMediaInTree.length)
-							$("#subalbum-map-link-" + i).on('click', {subalbum: currentAlbum.subalbums[i]}, map.generateMapFromSubalbum);
+							$("#subalbum-map-link-" + i).on(
+								'click',
+								{subalbum: currentAlbum.subalbums[i]},
+								function(ev) {
+									map.generateMapFromSubalbum(ev, TopFunctions.hashParsed);
+								}
+							);
 					}
 
 					$("#subalbums").show();
@@ -1872,6 +1888,7 @@
 	};
 
 	TopFunctions.prototype.goFullscreen = TopFunctions.goFullscreen;
+	TopFunctions.prototype.hashParsed = TopFunctions.hashParsed;
 
 	window.TopFunctions = TopFunctions;
 }());

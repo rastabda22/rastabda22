@@ -9,6 +9,8 @@
 	var imagesToAddString = "", dataForClickEvents = [];
 	var imagesGot, imagesToGet, promiseActivated = false;
 	var titleWrapper1, titleWrapper2;
+	var pointList = [];
+	var hashParsed;
 
 
 	/* constructor */
@@ -18,7 +20,10 @@
 	// MapFunctions.prototype. = function() {
 	// };
 
-	MapFunctions.prototype.generateMapFromMedia = function(ev) {
+	MapFunctions.prototype.generateMapFromMedia = function(ev, callback) {
+		// callback is the function to call after clicking on the map popup title
+		hashParsed = callback;
+
 		if (util.hasGpsData(ev.data.media)) {
 			ev.preventDefault();
 			var point =
@@ -35,7 +40,10 @@
 		}
 	};
 
-	MapFunctions.prototype.generateMapFromSubalbum = function(ev) {
+	MapFunctions.prototype.generateMapFromSubalbum = function(ev, callback) {
+		// callback is the function to call after clicking on the map popup title
+		hashParsed = callback;
+
 		if (ev.data.subalbum.positionsAndMediaInTree.length) {
 			ev.stopPropagation();
 			ev.preventDefault();
@@ -46,8 +54,9 @@
 		}
 	};
 
-	MapFunctions.prototype.generateMapFromDefaults = function() {
-		var pointList = [];
+	MapFunctions.prototype.generateMapFromDefaults = function(callback) {
+		// callback is the function to call after clicking on the map popup title
+		hashParsed = callback;
 
 		if (currentMedia !== null && util.hasGpsData(currentMedia))
 			pointList = [
@@ -203,9 +212,65 @@
 			});
 		}
 
+		function pointListStringCompress(pointListString) {
+			return pointListString.substring(2, pointListString.length - 3).replace(/\]\,\[/g, '+');
+		}
+		function pointListStringDecompress(compressedPointListString) {
+			return '[[' + compressedPointListString.replace(/\+/g, '],[') + ']]';
+		}
 		function setPhotoCountAndWidth() {
-			$("#popup-photo-count").css("max-width", maxWidthForThumbnails);
 			$("#popup-photo-count-number").html(photoNumberInPopup);
+			$("#popup-photo-count").css("max-width", maxWidthForThumbnails);
+			// add the click event for showing the photos in the popup as an album
+			$("#popup-photo-count").on(
+				"click",
+				{
+					"pointList": pointList
+				},
+				function(ev) {
+					// every album is identified by a string which is tied to the selected markers
+					var nudePointList = [], indexPositions, iPhoto, iMedia;
+					for (var i = 0; i < pointList.length; ++i) {
+						nudePointList.push([pointList[i].lat, pointList[i].lng]);
+					}
+					var mapAlbumHash = pointListStringCompress(JSON.stringify(nudePointList));
+
+					// initialize the map album
+					var MapAlbum = {};
+					MapAlbum.positionsAndMediaInTree = pointList;
+					MapAlbum.media = [];
+					MapAlbum.subalbums = [];
+					MapAlbum.cacheBase = Options.by_map_string + Options.cache_folder_separator + mapAlbumHash + Options.cache_folder_separator + currentAlbum.cacheBase;
+					MapAlbum.parentCacheBase = Options.by_map_string;
+					MapAlbum.path = MapAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
+					MapAlbum.physicalPath = MapAlbum.path;
+					MapAlbum.searchInFolderCacheBase = currentAlbum.cacheBase;
+
+					// build the media list
+					// surely the albums are already in cache
+					for (indexPositions = 0; indexPositions < pointList.length; indexPositions ++) {
+						photoNumberInPopup += pointList[indexPositions].count;
+						for (iPhoto = 0; iPhoto < pointList[indexPositions].mediaNameList.length; iPhoto ++) {
+							for (iMedia = 0; iMedia < PhotoFloat.albumCache[pointList[indexPositions].mediaNameList[iPhoto].albumCacheBase].media.length; iMedia ++)
+								if (
+									PhotoFloat.albumCache[pointList[indexPositions].mediaNameList[iPhoto].albumCacheBase].media[iMedia].cacheBase ==
+									 	pointList[indexPositions].mediaNameList[iPhoto].cacheBase
+									) {
+									MapAlbum.media.push(PhotoFloat.albumCache[pointList[indexPositions].mediaNameList[iPhoto].albumCacheBase].media[iPhoto]);
+									break;
+								}
+						}
+					}
+					MapAlbum.numMediaInAlbum = MapAlbum.media.length;
+					MapAlbum.numMediaInSubTree = MapAlbum.media.length;
+					$('.leaflet-popup-close-button')[0].click();
+					// $('#popup #popup-content').html("");
+					$('.map-close-button')[0].click();
+
+					phFl.endPreparingAlbumAndKeepOn(MapAlbum, "", hashParsed);
+				}
+			);
+
 		}
 
 		function getImagesWrapperSizes() {
