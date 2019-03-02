@@ -214,8 +214,8 @@
 		}
 
 		function setPhotoCountAndWidth() {
-			$("#popup-photo-count").css("max-width", maxWidthForThumbnails);
 			$("#popup-photo-count-number").html(photoNumberInPopup);
+			$("#popup-photo-count").css("max-width", maxWidthForThumbnails);
 			// add the click event for showing the photos in the popup as an album
 			$("#popup-photo-count").on(
 				"click",
@@ -263,6 +263,12 @@
 					$('.leaflet-popup-close-button')[0].click();
 					// $('#popup #popup-content').html("");
 					$('.map-close-button')[0].click();
+					// prepare the promise, otherways getAlbum cannot find the album in cache
+					PhotoFloat.promises[mapAlbum.cacheBase] = new Promise(
+						function(resolve, reject) {
+							resolve();
+						}
+					);
 
 					// prepare the root of the map albums and put it in the cache
 					var rootMapAlbum;
