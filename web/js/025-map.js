@@ -450,10 +450,11 @@
 							.setLatLng(MapFunctions.averagePosition(selectedPositions))
 							.openOn(mymap);
 
+						addPopupMover();
+
 						// f.setOptions();
 						// setPopupPosition();
 						// panMap();
-						// addPopupMover();
 						// getImagesWrapperSizes();
 						// $("#popup-images-wrapper").css("max-height", parseInt($(".leaflet-popup-content").css("max-height")) - 75);
 
