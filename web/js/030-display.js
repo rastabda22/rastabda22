@@ -332,6 +332,9 @@ $(document).ready(function() {
 		$("link[rel=image_src]").remove();
 		$("link[rel=video_src]").remove();
 		$("ul#right-menu").removeClass("expand");
+		if (util.isMapHash(location.hash))
+			// map albums are generated passing the data from the map, so here we must exit
+			return;
 		if (Object.keys(Options).length > 0)
 			f.parseHash(location.hash, tF.hashParsed, util.die);
 		else

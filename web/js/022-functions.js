@@ -765,6 +765,7 @@
 				Options.byDateStringWithTrailingSeparator = Options.by_date_string + Options.cache_folder_separator;
 				Options.byGpsStringWithTrailingSeparator = Options.by_gps_string + Options.cache_folder_separator;
 				Options.bySearchStringWithTrailingSeparator = Options.by_search_string + Options.cache_folder_separator;
+				Options.byMapStringWithTrailingSeparator = Options.by_map_string + Options.cache_folder_separator;
 
 				// phFl.parseHash(hash, callback, error);
 				Functions.parseHash(hash, callback, error);

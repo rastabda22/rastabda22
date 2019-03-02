@@ -51,6 +51,7 @@
 		isDateTitle = (components.length > 1 && components[1] == Options.by_date_string);
 		isGpsTitle = (components.length > 1 && components[1] == Options.by_gps_string);
 		isSearchTitle = (components.length > 1 && components[1] == Options.by_search_string);
+		isMapTitle = (components.length > 1 && components[1] == Options.by_map_string);
 
 		// 'textComponents = components' doesn't work: textComponents becomes a pointer to components
 		var textComponents = components.slice();
@@ -221,6 +222,73 @@
 					util._t("#by-search") +
 					"</a>";
 			}
+
+			title += "<span class='title-no-anchor'>(" + where + ")</span>";
+			where = util.stripHtmlAndReplaceEntities(where);
+
+			// do not show the options and the search words, they are visible in the menu
+			// show the image name, if it is there
+			if (media !== null) {
+				title += raquo;
+			}
+
+			title += fillInSpan;
+
+			if (
+				components.length > 2 &&
+				(media === null && ! util.isAlbumWithOneMedia(currentAlbum)) &&
+				(currentAlbum.media.length || currentAlbum.subalbums.length)
+			) {
+				title += " <span class='title-count'>(";
+				title += util._t(".title-found") + ' ';
+				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
+				if (currentAlbum.media.length) {
+					title += currentAlbum.media.length + " ";
+					title += util._t(".title-media");
+					if (currentAlbum.subalbums.length)
+						title += " " + util._t(".title-and") + " ";
+				}
+				if (currentAlbum.subalbums.length) {
+					title += currentAlbum.subalbums.length + " ";
+					title += util._t(".title-albums");
+				}
+				// if (currentAlbum.media.length > 0 && currentAlbum.subalbums.length > 0) {
+				//   title += ", ";
+				//   title += util._t(".title-total") + " ";
+				//   title += currentAlbum.media.length + currentAlbum.subalbums.length;
+				// }
+
+				if (currentAlbum.hasOwnProperty("removedStopWords") && currentAlbum.removedStopWords.length) {
+					// say that some search word hasn't been used
+					title += " - " + currentAlbum.removedStopWords.length + " " + util._t("#removed-stopwords") + ": ";
+					for (i = 0; i < currentAlbum.removedStopWords.length; i ++) {
+						if (i)
+							title += ", ";
+						title += currentAlbum.removedStopWords[i];
+					}
+				}
+
+				title += ")</span>";
+			}
+
+			if (setDocumentTitle) {
+				// build the html page title
+				documentTitle += " (" + where +") \u00ab " + components[0];
+				if (media !== null)
+					documentTitle = " \u00ab " + documentTitle;
+			}
+		} else if (isMapTitle) {
+			// i=0: title
+			// i=1: Options.by_search_string
+			// (optional) i=2: image cache or folder
+			// (optional) i=3 up: folder or image
+			// (optional) i=n: image
+			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>" + raquo;
+
+			where =
+				"<a class='search-link' href='#!/" + currentAlbum.cacheBase + "'>" +
+				util._t("#by-map") +
+				"</a>";
 
 			title += "<span class='title-no-anchor'>(" + where + ")</span>";
 			where = util.stripHtmlAndReplaceEntities(where);

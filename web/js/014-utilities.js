@@ -234,11 +234,25 @@
 		return string.indexOf(Options.bySearchStringWithTrailingSeparator) === 0;
 	};
 
+	Utilities.prototype.isMapCacheBase = function(string) {
+		return string.indexOf(Options.byMapStringWithTrailingSeparator) === 0;
+	};
+
 	Utilities.prototype.isSearchHash = function(hash) {
 		hash = PhotoFloat.cleanHash(hash);
 		var array = PhotoFloat.decodeHash(hash);
 		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
 		if (this.isSearchCacheBase(hash) || array[4] !== null)
+			return true;
+		else
+			return false;
+	};
+
+	Utilities.prototype.isMapHash = function(hash) {
+		hash = PhotoFloat.cleanHash(hash);
+		var array = PhotoFloat.decodeHash(hash);
+		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
+		if (this.isMapCacheBase(hash) || array[4] !== null)
 			return true;
 		else
 			return false;
