@@ -195,8 +195,9 @@
 							console.log(element[0]);
 						},
 						chainable: false,
-						threshold: 20,
-						bind: 'event'
+						threshold: Options.media_thumb_size,
+						bind: 'event',
+						removeAttribute: true
 					}
 				);
 			});

@@ -1432,7 +1432,10 @@
 			$(function() {
 				$("img.lazyload-media").Lazy(
 					{
-						chainable: false
+						chainable: false,
+						threshold: Options.media_thumb_size,
+						bind: 'event',
+						removeAttribute: true
 					}
 				);
 			});
@@ -1694,7 +1697,17 @@
 									$("#" + id + " img.thumbnail").css("width", thumbWidth).css("height", thumbHeight);
 
 									// lazyload(document.querySelectorAll(".lazyload-album-" + id));
-									$("img.lazyload-album-" + id).Lazy();
+									$(function() {
+										$("img.lazyload-album-" + id).Lazy(
+											{
+												chainable: false,
+												threshold: Options.media_thumb_size,
+												bind: 'event',
+												removeAttribute: true
+											}
+										);
+									});
+									// $("img.lazyload-album-" + id).Lazy();
 
 									numSubAlbumsReady ++;
 									if (numSubAlbumsReady >= theOriginalAlbumContainer.subalbums.length) {
