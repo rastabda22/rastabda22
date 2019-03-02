@@ -1,4 +1,4 @@
-# MyPhotoShare v3.7rc1 (February 24, 2019)
+# MyPhotoShare v3.7 (March 2, 2019)
 
 ### A Web Photo Gallery Done Right via Static JSON & Dynamic Javascript
 #### by Jason A. Donenfeld (<Jason@zx2c4.com>), Jerome Charaoui (jerome@riseup.net)  Joachim Tingvold (joachim@tingvold.com), Paolo Benvenuto (<paolobenve@gmail.com>), Pierre Métras (<p.metras@videotron.ca>)
@@ -55,10 +55,10 @@ Content (albums and media files) can be shared over some popular social plaforms
 
 ### For Geotaggers
 
-- [x] Maps can be generated (in a popup, thanks to Leaflet) showing markers for the photos positions.
+- [x] Maps can be generated, in a popup, showing markers for the photos positions. [Leaflet](https://leafletjs.com/) is used.
 - [x] The map is clickable and the thumbnails for the nearest marker are shown.
 - [x] More photos can be added (with shift-click) and removed (with ctl-click) from the popup.
-- [x] Shown thumbnails are clickable.
+- [x] Photos shown in the popup are clickable.
 - [x] Near markers are automatically clustered, and the photos number is shown in the cluster marker.
 
 ### Mobile Friendly
