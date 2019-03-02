@@ -839,7 +839,7 @@
 																if (numSubalbumsProcessed >= searchResultsAlbumFinal.subalbums.length) {
 																	// now all the subalbums have the positionsAndMediaInTree array, we can go on
 
-																	PhotoFloat.endPreparingSearchAlbumAndKeepOn(searchResultsAlbumFinal, mediaHash, callback);
+																	PhotoFloat.endPreparingAlbumAndKeepOn(searchResultsAlbumFinal, mediaHash, callback);
 																}
 															},
 															util.die
@@ -847,7 +847,7 @@
 													}
 												} else {
 													// no subalbums, call the exit function
-													PhotoFloat.endPreparingSearchAlbumAndKeepOn(searchResultsAlbumFinal, mediaHash, callback);
+													PhotoFloat.endPreparingAlbumAndKeepOn(searchResultsAlbumFinal, mediaHash, callback);
 												}
 											}
 										},
@@ -898,16 +898,16 @@
 		}
 	};
 
-	PhotoFloat.endPreparingSearchAlbumAndKeepOn = function(searchResultsAlbumFinal, mediaHash, callback) {
+	PhotoFloat.endPreparingAlbumAndKeepOn = function(resultsAlbumFinal, mediaHash, callback) {
 		// add the point count
-		searchResultsAlbumFinal.numPositionsInTree = searchResultsAlbumFinal.positionsAndMediaInTree.length;
+		resultsAlbumFinal.numPositionsInTree = resultsAlbumFinal.positionsAndMediaInTree.length;
 		// save in the cash array
-		if (! PhotoFloat.albumCache.hasOwnProperty(searchResultsAlbumFinal.cacheBase)) {
-			PhotoFloat.albumCache[searchResultsAlbumFinal.cacheBase] = searchResultsAlbumFinal;
-			PhotoFloat.albumCache[searchResultsAlbumFinal.cacheBase + ".positions"] = searchResultsAlbumFinal.positionsAndMediaInTree;
+		if (! PhotoFloat.albumCache.hasOwnProperty(resultsAlbumFinal.cacheBase)) {
+			PhotoFloat.albumCache[resultsAlbumFinal.cacheBase] = resultsAlbumFinal;
+			PhotoFloat.albumCache[resultsAlbumFinal.cacheBase + ".positions"] = resultsAlbumFinal.positionsAndMediaInTree;
 		}
 
-		PhotoFloat.selectMedia(searchResultsAlbumFinal, null, mediaHash, callback);
+		PhotoFloat.selectMedia(resultsAlbumFinal, null, mediaHash, callback);
 
 	};
 
@@ -1003,6 +1003,7 @@
 	PhotoFloat.prototype.decodeHash = PhotoFloat.decodeHash;
 	PhotoFloat.prototype.upHash = PhotoFloat.upHash;
 	PhotoFloat.prototype.hashCode = PhotoFloat.hashCode;
+	PhotoFloat.prototype.endPreparingAlbumAndKeepOn = PhotoFloat.endPreparingAlbumAndKeepOn;
 	/* expose class globally */
 	window.PhotoFloat = PhotoFloat;
 	PhotoFloat.searchAndSubalbumHash = this.searchAndSubalbumHash;
