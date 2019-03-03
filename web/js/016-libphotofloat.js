@@ -5,8 +5,6 @@
 	/* constructor */
 	function PhotoFloat() {
 		PhotoFloat.albumCache = [];
-		PhotoFloat.promises = [];
-
 		this.geotaggedPhotosFound = null;
 		this.searchWordsFromJsonFile = [];
 		this.searchAlbumCacheBaseFromJsonFile = [];
@@ -138,83 +136,71 @@
 		} else
 			cacheKey = thisAlbum.cacheBase;
 
-		// if (PhotoFloat.albumCache.hasOwnProperty(cacheKey) && PhotoFloat.promises.hasOwnProperty(cacheKey)) {
 		if (PhotoFloat.albumCache.hasOwnProperty(cacheKey)) {
-			PhotoFloat.promises[cacheKey].then(
-				function() {
-					var executeCallback = function() {
-						if (typeof thisIndexWords === "undefined" && typeof thisIndexAlbums === "undefined") {
-							callback(PhotoFloat.albumCache[cacheKey]);
-						} else {
-							callback(PhotoFloat.albumCache[cacheKey], thisIndexWords, thisIndexAlbums);
+			var executeCallback = function() {
+				if (typeof thisIndexWords === "undefined" && typeof thisIndexAlbums === "undefined") {
+					callback(PhotoFloat.albumCache[cacheKey]);
+				} else {
+					callback(PhotoFloat.albumCache[cacheKey], thisIndexWords, thisIndexAlbums);
+				}
+			};
+			if (! PhotoFloat.albumCache[cacheKey].numPositionsInTree || PhotoFloat.albumCache[cacheKey].hasOwnProperty("positionsAndMediaInTree")) {
+				executeCallback();
+			} else {
+				// the positions are missing, get them
+				PhotoFloat.getPositions(
+					thisAlbum,
+					executeCallback,
+					error
+				);
+			}
+		} else {
+			var cacheFile = util.pathJoin([Options.server_cache_path, cacheKey + ".json"]);
+			self = this;
+			ajaxOptions = {
+				type: "GET",
+				dataType: "json",
+				url: cacheFile,
+				success: function(theAlbum) {
+					var albumGot = function() {
+						var i;
+						if (cacheKey == Options.by_search_string) {
+							// root of search albums: build the word list
+							for (i = 0; i < theAlbum.subalbums.length; ++i) {
+								PhotoFloat.searchWordsFromJsonFile.push(theAlbum.subalbums[i].unicodeWords);
+								PhotoFloat.searchAlbumCacheBaseFromJsonFile.push(theAlbum.subalbums[i].cacheBase);
+							}
+						} else if (! util.isSearchCacheBase(cacheKey)) {
+							for (i = 0; i < theAlbum.subalbums.length; ++i)
+								theAlbum.subalbums[i].parent = theAlbum;
+							for (i = 0; i < theAlbum.media.length; ++i)
+								theAlbum.media[i].parent = theAlbum;
 						}
+
+						PhotoFloat.albumCache[cacheKey] = theAlbum;
+
+						if (typeof thisIndexWords === "undefined" && typeof thisIndexAlbums === "undefined")
+							callback(theAlbum);
+						else
+							callback(theAlbum, thisIndexWords, thisIndexAlbums);
 					};
-					if (! PhotoFloat.albumCache[cacheKey].numPositionsInTree || PhotoFloat.albumCache[cacheKey].hasOwnProperty("positionsAndMediaInTree")) {
-						executeCallback();
-					} else {
-						// the positions are missing, get them
+					if (theAlbum.numPositionsInTree)
 						PhotoFloat.getPositions(
-							thisAlbum,
-							executeCallback,
+							theAlbum,
+							albumGot,
 							error
 						);
-					}
+					else
+						albumGot();
 				}
-			)
-		} else {
-			PhotoFloat.albumCache[cacheKey] = false;
-			PhotoFloat.promises[cacheKey] = new Promise(
-				function(resolve, reject) {
-					var cacheFile = util.pathJoin([Options.server_cache_path, cacheKey + ".json"]);
-					self = this;
-					ajaxOptions = {
-						type: "GET",
-						dataType: "json",
-						url: cacheFile,
-						success: function(theAlbum) {
-							var albumGot = function() {
-								var i;
-								if (cacheKey == Options.by_search_string) {
-									// root of search albums: build the word list
-									for (i = 0; i < theAlbum.subalbums.length; ++i) {
-										PhotoFloat.searchWordsFromJsonFile.push(theAlbum.subalbums[i].unicodeWords);
-										PhotoFloat.searchAlbumCacheBaseFromJsonFile.push(theAlbum.subalbums[i].cacheBase);
-									}
-								} else if (! util.isSearchCacheBase(cacheKey)) {
-									for (i = 0; i < theAlbum.subalbums.length; ++i)
-										theAlbum.subalbums[i].parent = theAlbum;
-									for (i = 0; i < theAlbum.media.length; ++i)
-										theAlbum.media[i].parent = theAlbum;
-								}
-
-								PhotoFloat.albumCache[cacheKey] = theAlbum;
-
-								resolve();
-
-								if (typeof thisIndexWords === "undefined" && typeof thisIndexAlbums === "undefined")
-									callback(theAlbum);
-								else
-									callback(theAlbum, thisIndexWords, thisIndexAlbums);
-							};
-							if (theAlbum.numPositionsInTree)
-								PhotoFloat.getPositions(
-									theAlbum,
-									albumGot,
-									error
-								);
-							else
-								albumGot();
-						}
-					};
-					if (typeof error !== "undefined" && error !== null) {
-						ajaxOptions.error = function(jqXHR, textStatus, errorThrown) {
-							error(jqXHR.status);
-							reject();
-						};
-					}
-					$.ajax(ajaxOptions);
-				}
-			);
+			};
+			if (typeof error !== "undefined" && error !== null) {
+				ajaxOptions.error = function(jqXHR, textStatus, errorThrown) {
+					error(jqXHR.status);
+					reject();
+				};
+			}
+			$.ajax(ajaxOptions);
 		}
 	};
 
@@ -950,9 +936,7 @@
 		callback(theAlbum, media, i);
 		if (util.isSearchCacheBase(theAlbum.cacheBase) && (media === null && ! util.isAlbumWithOneMedia(theAlbum)))
 			$("ul#right-menu").addClass("expand");
-		if (util.isMapHash(theAlbum.cacheBase))
-			// map albums are generated from data passed from the map, but the hash has to be changed
-			window.location.href = "#!" + theAlbum.cacheBase;
+
 	};
 
 	PhotoFloat.hashCode = function(hash) {
