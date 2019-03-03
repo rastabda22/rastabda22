@@ -171,7 +171,7 @@
 			$("#popup-photo-count").css("max-width", maxWidthForThumbnails);
  			popup.setLatLng(MapFunctions.averagePosition(selectedPositions));
 
-			setPhotoCountAndWidth();
+			buildPopupHeader();
 
 			f.setOptions();
 			setPopupPosition();
@@ -213,7 +213,7 @@
 			});
 		}
 
-		function setPhotoCountAndWidth() {
+		function buildPopupHeader() {
 			$("#popup-photo-count-number").html(photoNumberInPopup);
 			$("#popup-photo-count").css("max-width", maxWidthForThumbnails);
 			// add the click event for showing the photos in the popup as an album
