@@ -271,20 +271,10 @@
 						}
 					);
 
-					// prepare the root of the map albums and put it in the cache
-					var rootMapAlbum;
-					if (PhotoFloat.albumCache.hasOwnProperty(Options.by_map_string)) {
-						rootMapAlbum = PhotoFloat.albumCache[Options.by_map_string];
-					} else {
-						rootMapAlbum = {};
-						rootMapAlbum.cacheBase = Options.by_map_string;
-						rootMapAlbum.subalbums = [];
-						rootMapAlbum.media = [];
-						rootMapAlbum.positionsAndMediaInTree = [];
-					}
-					rootMapAlbum.subalbums.push(mapAlbum);
-					rootMapAlbum.positionsAndMediaInTree = util.mergePoints(rootMapAlbum.positionsAndMediaInTree, selectedPositions);
-					PhotoFloat.albumCache[Options.by_map_string] = rootMapAlbum;
+					// update the map root album in cache
+					PhotoFloat.albumCache[Options.by_map_string].subalbums.push(mapAlbum);
+					PhotoFloat.albumCache[Options.by_map_string].positionsAndMediaInTree = util.mergePoints(PhotoFloat.albumCache[Options.by_map_string].positionsAndMediaInTree, selectedPositions);
+					PhotoFloat.albumCache[Options.by_map_string].numMediaInSubTree += mapAlbum.numMediaInSubTree;
 
 					phFl.endPreparingAlbumAndKeepOn(mapAlbum, null, function(a, b, c){return;});
 				}

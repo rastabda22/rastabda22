@@ -6,6 +6,7 @@
 	function PhotoFloat() {
 		PhotoFloat.albumCache = [];
 		PhotoFloat.promises = [];
+		
 		this.geotaggedPhotosFound = null;
 		this.searchWordsFromJsonFile = [];
 		this.searchAlbumCacheBaseFromJsonFile = [];
@@ -17,6 +18,17 @@
 	}
 
 	/* public member functions */
+	PhotoFloat.initializeMapRootAlbum = function() {
+		// prepare the root of the map albums and put it in the cache
+		var rootMapAlbum = {};
+		rootMapAlbum.cacheBase = Options.by_map_string;
+		rootMapAlbum.subalbums = [];
+		rootMapAlbum.media = [];
+		rootMapAlbum.positionsAndMediaInTree = [];
+
+		PhotoFloat.albumCache[rootMapAlbum.cacheBase] = rootMapAlbum;
+
+	}
 	PhotoFloat.addPositionsToSubalbums = function(thisAlbum) {
 		var iSubalbum, iPosition, iPhoto, position, subalbumCacheKey;
 		var positions = thisAlbum.positionsAndMediaInTree;

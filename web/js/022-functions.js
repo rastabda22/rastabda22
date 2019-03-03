@@ -767,6 +767,8 @@
 				Options.bySearchStringWithTrailingSeparator = Options.by_search_string + Options.cache_folder_separator;
 				Options.byMapStringWithTrailingSeparator = Options.by_map_string + Options.cache_folder_separator;
 
+				PhotoFloat.initializeMapRootAlbum();
+
 				// phFl.parseHash(hash, callback, error);
 				Functions.parseHash(hash, callback, error);
 			},
