@@ -519,9 +519,9 @@
 
 		if (util.isSearchCacheBase(albumHash)) {
 			albumHashToGet = albumHash;
-		// same conditions as before????????????????
-		} else if (util.isSearchCacheBase(albumHash)) {
-			albumHashToGet = util.pathJoin([albumHash, mediaFolderHash]);
+		// // same conditions as before????????????????
+		// } else if (util.isSearchCacheBase(albumHash)) {
+		// 	albumHashToGet = util.pathJoin([albumHash, mediaFolderHash]);
 		} else {
 			albumHashToGet = albumHash;
 		}
