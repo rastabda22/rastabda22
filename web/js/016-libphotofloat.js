@@ -457,7 +457,7 @@
 		if (albumHash) {
 			albumHash = decodeURI(albumHash);
 
-			if ([Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(albumHash) !== -1)
+			if ([Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(albumHash) !== -1)
 				$("ul#right-menu li#album-search").addClass("dimmed");
 
 			if (util.isSearchCacheBase(albumHash)) {

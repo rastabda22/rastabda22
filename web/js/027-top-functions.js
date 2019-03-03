@@ -1365,7 +1365,12 @@
 			thumbnailSize = Options.media_thumb_size;
 
 			populateMedia = populate;
-			isVirtualAlbum = (util.isByDateCacheBase(currentAlbum.cacheBase) || util.isByGpsCacheBase(currentAlbum.cacheBase) || util.isSearchCacheBase(currentAlbum.cacheBase) );
+			isVirtualAlbum = (
+				util.isByDateCacheBase(currentAlbum.cacheBase) ||
+				util.isByGpsCacheBase(currentAlbum.cacheBase) ||
+				util.isSearchCacheBase(currentAlbum.cacheBase) ||
+				util.isMapCacheBase(currentAlbum.cacheBase)
+			);
 			tooBig = currentAlbum.path.split("/").length < 4 && currentAlbum.media.length > Options.big_virtual_folders_threshold;
 			if (populateMedia === true && isVirtualAlbum)
 				populateMedia = populateMedia && (! tooBig || showTooBig);
