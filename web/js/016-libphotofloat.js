@@ -934,13 +934,12 @@
 				i = -1;
 			}
 		}
-		if (util.isMapHash(theAlbum.cacheBase))
-			// map albums are generated from data passed from the map, but the hash has to be changed
-			window.location.href = "#!" + theAlbum.cacheBase;
 		callback(theAlbum, media, i);
 		if (util.isSearchCacheBase(theAlbum.cacheBase) && (media === null && ! util.isAlbumWithOneMedia(theAlbum)))
 			$("ul#right-menu").addClass("expand");
-
+		if (util.isMapHash(theAlbum.cacheBase))
+			// map albums are generated from data passed from the map, but the hash has to be changed
+			window.location.href = "#!" + theAlbum.cacheBase;
 	};
 
 	PhotoFloat.hashCode = function(hash) {

@@ -285,7 +285,7 @@
 					rootMapAlbum.positionsAndMediaInTree = util.mergePoints(rootMapAlbum.positionsAndMediaInTree, pointList);
 					PhotoFloat.albumCache[Options.by_map_string] = rootMapAlbum;
 
-					phFl.endPreparingAlbumAndKeepOn(mapAlbum, null, hashParsed);
+					phFl.endPreparingAlbumAndKeepOn(mapAlbum, null, function(a, b, c){return;});
 				}
 			);
 
