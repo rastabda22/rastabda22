@@ -126,7 +126,8 @@
 		} else
 			cacheKey = thisAlbum.cacheBase;
 
-		if (PhotoFloat.albumCache.hasOwnProperty(cacheKey) && PhotoFloat.promises.hasOwnProperty(cacheKey)) {
+		// if (PhotoFloat.albumCache.hasOwnProperty(cacheKey) && PhotoFloat.promises.hasOwnProperty(cacheKey)) {
+		if (PhotoFloat.albumCache.hasOwnProperty(cacheKey)) {
 			PhotoFloat.promises[cacheKey].then(
 				function() {
 					var executeCallback = function() {
