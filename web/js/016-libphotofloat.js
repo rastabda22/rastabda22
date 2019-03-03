@@ -6,7 +6,7 @@
 	function PhotoFloat() {
 		PhotoFloat.albumCache = [];
 		PhotoFloat.promises = [];
-		
+
 		this.geotaggedPhotosFound = null;
 		this.searchWordsFromJsonFile = [];
 		this.searchAlbumCacheBaseFromJsonFile = [];
@@ -255,7 +255,7 @@
 
 		if (media !== null) {
 			// media hash
-			if (util.isFolderCacheBase(albumHash)) {
+			if (util.isFolderCacheBase(albumHash) || util.isMapCacheBase(albumHash)) {
 				if (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null)
 					// media in folders album, count = 2
 					hash = util.pathJoin([
@@ -432,7 +432,7 @@
 				else if (albumHash == Options.by_date_string || albumHash == Options.by_gps_string)
 					// go to folders root
 					resultHash = Options.folders_string;
-				else if (util.isSearchCacheBase(albumHash)) {
+				else if (util.isSearchCacheBase(albumHash) || util.isMapCacheBase(albumHash)) {
 					// the return folder must be extracted from the album hash
 					resultHash = albumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
 				} else {
