@@ -220,20 +220,20 @@
 			$("#popup-photo-count").on(
 				"click",
 				{
-					"pointList": pointList
+					"selectedPositions": selectedPositions
 				},
 				function(ev) {
 					// every album is identified by a string which is tied to the selected markers
 					var nudePointList = [], indexPositions, iPhoto, iMedia;
-					for (var i = 0; i < pointList.length; ++i) {
-						nudePointList.push([pointList[i].lat, pointList[i].lng]);
+					for (var i = 0; i < selectedPositions.length; ++i) {
+						nudePointList.push([selectedPositions[i].lat, selectedPositions[i].lng]);
 					}
 					lastAlbumIndex ++;
 					mapAlbumHash = lastAlbumIndex;
 
 					// initialize the map album
 					var mapAlbum = {};
-					mapAlbum.positionsAndMediaInTree = pointList;
+					mapAlbum.positionsAndMediaInTree = selectedPositions;
 					mapAlbum.media = [];
 					mapAlbum.subalbums = [];
 					mapAlbum.cacheBase = Options.by_map_string + Options.cache_folder_separator + mapAlbumHash + Options.cache_folder_separator + currentAlbum.cacheBase;
@@ -244,22 +244,23 @@
 
 					// build the media list
 					// surely the albums are already in cache
-					for (indexPositions = 0; indexPositions < pointList.length; indexPositions ++) {
-						photoNumberInPopup += pointList[indexPositions].count;
-						for (iPhoto = 0; iPhoto < pointList[indexPositions].mediaNameList.length; iPhoto ++) {
-							for (iMedia = 0; iMedia < PhotoFloat.albumCache[pointList[indexPositions].mediaNameList[iPhoto].albumCacheBase].media.length; iMedia ++)
-								if (
-									PhotoFloat.albumCache[pointList[indexPositions].mediaNameList[iPhoto].albumCacheBase].media[iMedia].cacheBase ==
-									 	pointList[indexPositions].mediaNameList[iPhoto].cacheBase
-									) {
-									mapAlbum.media.push(PhotoFloat.albumCache[pointList[indexPositions].mediaNameList[iPhoto].albumCacheBase].media[iPhoto]);
+					var mediaNameListElement, mediaElement;
+					for (indexPositions = 0; indexPositions < selectedPositions.length; indexPositions ++) {
+						photoNumberInPopup += selectedPositions[indexPositions].mediaNameList.length;
+						for (iPhoto = 0; iPhoto < selectedPositions[indexPositions].mediaNameList.length; iPhoto ++) {
+							mediaNameListElement = selectedPositions[indexPositions].mediaNameList[iPhoto];
+							for (iMedia = 0; iMedia < PhotoFloat.albumCache[mediaNameListElement.albumCacheBase].media.length; iMedia ++) {
+								mediaElement = PhotoFloat.albumCache[mediaNameListElement.albumCacheBase].media[iMedia];
+								if (mediaElement.cacheBase == mediaNameListElement.cacheBase) {
+									mapAlbum.media.push(mediaElement);
 									break;
 								}
+							}
 						}
 					}
 					mapAlbum.numMediaInAlbum = mapAlbum.media.length;
 					mapAlbum.numMediaInSubTree = mapAlbum.media.length;
-					mapAlbum.numPositionsInTree = pointList.length;
+					mapAlbum.numPositionsInTree = selectedPositions.length;
 					$('.leaflet-popup-close-button')[0].click();
 					// $('#popup #popup-content').html("");
 					$('.map-close-button')[0].click();
@@ -282,7 +283,7 @@
 						rootMapAlbum.positionsAndMediaInTree = [];
 					}
 					rootMapAlbum.subalbums.push(mapAlbum);
-					rootMapAlbum.positionsAndMediaInTree = util.mergePoints(rootMapAlbum.positionsAndMediaInTree, pointList);
+					rootMapAlbum.positionsAndMediaInTree = util.mergePoints(rootMapAlbum.positionsAndMediaInTree, selectedPositions);
 					PhotoFloat.albumCache[Options.by_map_string] = rootMapAlbum;
 
 					phFl.endPreparingAlbumAndKeepOn(mapAlbum, null, function(a, b, c){return;});
