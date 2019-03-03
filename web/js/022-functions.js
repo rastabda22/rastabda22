@@ -523,6 +523,12 @@
 		util.correctPrevNextPosition();
 	};
 
+	Functions.threeYears = function() {
+		// returns the expire interval for the cookies, in seconds
+		// = 1000 days, ~ 3 years
+		return 1000 * 24 * 60 * 60;
+	};
+
 	Functions.getBooleanCookie = function(key) {
 		var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
 		if (! keyValue)
@@ -531,12 +537,6 @@
 			return true;
 		else
 			return false;
-	};
-
-	Functions.threeYears = function() {
-		// returns the expire interval for the cookies, in seconds
-		// = 1000 days, ~ 3 years
-		return 1000 * 24 * 60 * 60;
 	};
 
 	Functions.setBooleanCookie = function(key, value) {
