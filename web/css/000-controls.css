@@ -596,6 +596,7 @@ ul#right-menu {
 	position: fixed;
 	top: 0;
 	right: 0;
+	z-index: 200;
 }
 
 ul#right-menu li {

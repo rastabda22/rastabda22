@@ -122,7 +122,7 @@ $(document).ready(function() {
 							// $('#popup #popup-content').html("");
 						} else
 							// we are in a map: close it
-							$('.map-close-button')[0].click();
+							$('.modal-close')[0].click();
 						return false;
 					} else if (pS.getCurrentZoom() > 1 || $(".title").hasClass("hidden-by-pinch")) {
 						pS.pinchOut();

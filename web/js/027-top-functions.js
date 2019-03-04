@@ -570,10 +570,8 @@
 			}
 		);
 
-
-
-		$('.map-close-button').click(function(){
-			$('.map-container').hide();
+		$('.modal-close').click(function(){
+			$("#my-modal.modal").css("display", "none");
 			$('#mapdiv').empty();
 		});
 

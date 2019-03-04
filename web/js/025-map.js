@@ -193,7 +193,7 @@
 									// called after an element was successfully handled
 									$('.leaflet-popup-close-button')[0].click();
 									// $('#popup #popup-content').html("");
-									$('.map-close-button')[0].click();
+									$('.modal-close')[0].click();
 									window.location.href = element.attr("mediaHash");
 								}
 							);
@@ -262,7 +262,7 @@
 					mapAlbum.numPositionsInTree = selectedPositions.length;
 					$('.leaflet-popup-close-button')[0].click();
 					// $('#popup #popup-content').html("");
-					$('.map-close-button')[0].click();
+					$('.modal-close')[0].click();
 					// // prepare the promise, otherways getAlbum cannot find the album in cache
 					// PhotoFloat.promises[mapAlbum.cacheBase] = new Promise(
 					// 	function(resolve, reject) {
@@ -618,6 +618,14 @@
 			'<div id="popup-images-wrapper">';
 		titleWrapper2 = '</div>';
 
+		$("#my-modal.modal").css("display", "block");
+		if (isMobile.any()) {
+			$("#my-modal .modal-content").css("width", (windowWidth - 12).toString() + "px").css("height", (windowHeight - 12).toString() + "px").css("padding", "5px");
+			$("#my-modal.modal").css("top", "0").css("padding-top", "0");
+			$("#my-modal.modal-close").css("top", "22px").css("right", "22px");
+		} else {
+			$("#my-modal .modal-content").css("width", (windowWidth - 55).toString() + "px").css("height", (windowHeight - 60).toString() + "px");
+		}
 
 		if(pointList) {
 			selectedPositions = [];

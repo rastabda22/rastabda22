@@ -217,10 +217,11 @@
 	<?php } ?>
 	</div>
 
-	<div class="map-container">
-		<span class="helper"></span>
-		<div>
-			<div class="map-close-button"></div>
+	<!-- The Modal -->
+	<div id="my-modal" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content">
+			<div class="modal-close"></div>
 			<div id="mapdiv"></div>
 		</div>
 	</div>
