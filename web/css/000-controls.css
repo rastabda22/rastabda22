@@ -586,6 +586,18 @@ video {
 /****************************/
 /* right menu */
 
+ul#right-menu {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	float: right;
+	max-width: 20em;
+	position: fixed;
+	top: 0;
+	right: 0;
+}
+
 ul#right-menu li {
 	padding: 0 .5em;
 	cursor: pointer;
@@ -594,18 +606,6 @@ ul#right-menu li {
 
 ul#right-menu li.caption, ul#right-menu li:not(.active) {
 	cursor: default;
-}
-
-ul#right-menu {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-	overflow: hidden;
-	float: right;
-	max-width: 20em;
-	position: absolute;
-	top: 0;
-	right: 0;
 }
 
 ul#right-menu li a#menu-icon:hover {
