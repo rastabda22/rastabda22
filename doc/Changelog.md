@@ -1,3 +1,6 @@
+* images collected by map clicks can now be shown as an album and browsed
+* bug fixes
+
 ### version v3.7 (March 2, 2019)
 
 * new option `by_map_string` for albums built from map popup

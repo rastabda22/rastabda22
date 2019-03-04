@@ -60,6 +60,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] More photos can be added (with shift-click) and removed (with ctl-click) from the popup.
 - [x] Photos shown in the popup are clickable.
 - [x] Near markers are automatically clustered, and the photos number is shown in the cluster marker.
+- [x] Images collected by map clicks can now be shown as an album and browsed
 
 ### Mobile Friendly
 
