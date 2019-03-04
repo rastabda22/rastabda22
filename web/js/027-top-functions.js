@@ -1461,6 +1461,7 @@
 									"<img title='" + imgTitle + "' " +
 										"alt='" + util.trimExtension(currentAlbum.media[i].name) + "' " +
 										"data-src='" + encodeURI(thumbHash) + "' " +
+										"src='img/image-placeholder.png' " +
 										"class='thumbnail lazyload-media" + "' " +
 										"height='" + thumbHeight + "' " +
 										"width='" + thumbWidth + "' " +
@@ -1711,7 +1712,7 @@
 														">" +
 												"</a>" +
 												"<span class='helper'></span>" +
-												"<img class='thumbnail lazyload-album-" + id + "'>" +
+												"<img src='img/image-placeholder.png' class='thumbnail lazyload-album-" + id + "'>" +
 											"</div>"
 										);
 						linkContainer.append(image);

@@ -395,7 +395,7 @@
 											"alt='" + util.trimExtension(selectedMedia.name) + "' " +
 											"data-src='" + encodeURI(thumbHash) + "' " +
 											// "src='img/wait.png' " +
-											"src='' " +
+											"src='img/image-placeholder.png' " +
 											"class='lazyload-popup-media thumbnail" + "' " +
 											"height='" + thumbHeight + "' " +
 											"width='" + thumbWidth + "' " +
