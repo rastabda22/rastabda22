@@ -1534,8 +1534,8 @@
 				$("img.lazyload-media").Lazy(
 					{
 						chainable: false,
+						autoDestroy: true,
 						threshold: Options.media_thumb_size,
-						bind: 'event',
 						removeAttribute: true
 					}
 				);

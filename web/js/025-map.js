@@ -204,7 +204,6 @@
 						},
 						chainable: false,
 						threshold: Options.media_thumb_size,
-						bind: 'event',
 						removeAttribute: true,
 						appendScroll: $('#popup-images-wrapper')
 					}
