@@ -104,9 +104,21 @@
 	};
 
 	Utilities.prototype.addPointToPoints = function(oldPoints, newPoint) {
-		for (var i = 0; i < oldPoints.length; i ++) {
-			if (newPoint.lng == oldPoints[i].lng && newPoint.lat == oldPoints[i].lat) {
-				oldPoints[i].mediaNameList.push(newPoint.mediaNameList[0]);
+		var oldPoint, newElement;
+		for (var iOld = 0; iOld < oldPoints.length; iOld ++) {
+			oldPoint = oldPoints[iOld];
+			if (newPoint.lng == oldPoint.lng && newPoint.lat == oldPoint.lat) {
+				for (var iNew = 0; iNew < newPoint.mediaNameList.length; iNew ++) {
+					newElement = newPoint.mediaNameList[iNew];
+					if (
+						oldPoint.mediaNameList.every(
+							function(element) {
+								return element.albumCacheBase != newElement.albumCacheBase && element.cacheBase != newElement.cacheBase;
+							}
+						)
+					)
+						oldPoints[iOld].mediaNameList.push(newPoint.mediaNameList[iNew]);
+				}
 				return oldPoints;
 			}
 		}
@@ -234,11 +246,25 @@
 		return string.indexOf(Options.bySearchStringWithTrailingSeparator) === 0;
 	};
 
+	Utilities.prototype.isMapCacheBase = function(string) {
+		return string.indexOf(Options.byMapStringWithTrailingSeparator) === 0;
+	};
+
 	Utilities.prototype.isSearchHash = function(hash) {
 		hash = PhotoFloat.cleanHash(hash);
 		var array = PhotoFloat.decodeHash(hash);
 		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
 		if (this.isSearchCacheBase(hash) || array[4] !== null)
+			return true;
+		else
+			return false;
+	};
+
+	Utilities.prototype.isMapHash = function(hash) {
+		hash = PhotoFloat.cleanHash(hash);
+		var array = PhotoFloat.decodeHash(hash);
+		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
+		if (this.isMapCacheBase(hash) || array[4] !== null)
 			return true;
 		else
 			return false;

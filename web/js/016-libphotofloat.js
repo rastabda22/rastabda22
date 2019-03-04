@@ -16,6 +16,17 @@
 	}
 
 	/* public member functions */
+	PhotoFloat.initializeMapRootAlbum = function() {
+		// prepare the root of the map albums and put it in the cache
+		var rootMapAlbum = {};
+		rootMapAlbum.cacheBase = Options.by_map_string;
+		rootMapAlbum.subalbums = [];
+		rootMapAlbum.media = [];
+		rootMapAlbum.positionsAndMediaInTree = [];
+
+		PhotoFloat.albumCache[rootMapAlbum.cacheBase] = rootMapAlbum;
+
+	}
 	PhotoFloat.addPositionsToSubalbums = function(thisAlbum) {
 		var iSubalbum, iPosition, iPhoto, position, subalbumCacheKey;
 		var positions = thisAlbum.positionsAndMediaInTree;
@@ -186,7 +197,8 @@
 			if (typeof error !== "undefined" && error !== null) {
 				ajaxOptions.error = function(jqXHR, textStatus, errorThrown) {
 					error(jqXHR.status);
-					reject();
+					if (typeof reject !== "undefined")
+						reject();
 				};
 			}
 			$.ajax(ajaxOptions);
@@ -248,7 +260,8 @@
 			} else if (
 				util.isByDateCacheBase(albumHash) ||
 				util.isByGpsCacheBase(albumHash) ||
-				util.isSearchCacheBase(albumHash) && (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null)
+				util.isSearchCacheBase(albumHash) && (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null) ||
+				util.isMapCacheBase(albumHash)
 			)
 				// media in date or gps album, count = 3
 				hash = util.pathJoin([
@@ -407,7 +420,7 @@
 				else if (albumHash == Options.by_date_string || albumHash == Options.by_gps_string)
 					// go to folders root
 					resultHash = Options.folders_string;
-				else if (util.isSearchCacheBase(albumHash)) {
+				else if (util.isSearchCacheBase(albumHash) || util.isMapCacheBase(albumHash)) {
 					// the return folder must be extracted from the album hash
 					resultHash = albumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
 				} else {
@@ -444,7 +457,7 @@
 		if (albumHash) {
 			albumHash = decodeURI(albumHash);
 
-			if ([Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(albumHash) !== -1)
+			if ([Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(albumHash) !== -1)
 				$("ul#right-menu li#album-search").addClass("dimmed");
 
 			if (util.isSearchCacheBase(albumHash)) {
@@ -507,9 +520,9 @@
 
 		if (util.isSearchCacheBase(albumHash)) {
 			albumHashToGet = albumHash;
-		// same conditions as before????????????????
-		} else if (util.isSearchCacheBase(albumHash)) {
-			albumHashToGet = util.pathJoin([albumHash, mediaFolderHash]);
+		// // same conditions as before????????????????
+		// } else if (util.isSearchCacheBase(albumHash)) {
+		// 	albumHashToGet = util.pathJoin([albumHash, mediaFolderHash]);
 		} else {
 			albumHashToGet = albumHash;
 		}

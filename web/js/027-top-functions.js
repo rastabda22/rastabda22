@@ -13,7 +13,7 @@
 	}
 
 	TopFunctions.setTitle = function(id, media) {
-		var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, originalTitle;
+		var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, isMapTitle, originalTitle;
 		var titleAnchorClasses, titleAnchorClassesItalics, hiddenTitle = "", albumTypeString, where, initialValue, searchFolderHash;
 		var beginLink, linksToLeave, numLinks, beginAt, latitude, longitude, arrayCoordinates, numMediaInSubAlbums, raquo = "&raquo;", lastRaquoPosition;
 		// gpsLevelNumber is the number of levels for the by gps tree
@@ -51,6 +51,7 @@
 		isDateTitle = (components.length > 1 && components[1] == Options.by_date_string);
 		isGpsTitle = (components.length > 1 && components[1] == Options.by_gps_string);
 		isSearchTitle = (components.length > 1 && components[1] == Options.by_search_string);
+		isMapTitle = (components.length > 1 && components[1] == Options.by_map_string);
 
 		// 'textComponents = components' doesn't work: textComponents becomes a pointer to components
 		var textComponents = components.slice();
@@ -221,6 +222,73 @@
 					util._t("#by-search") +
 					"</a>";
 			}
+
+			title += "<span class='title-no-anchor'>(" + where + ")</span>";
+			where = util.stripHtmlAndReplaceEntities(where);
+
+			// do not show the options and the search words, they are visible in the menu
+			// show the image name, if it is there
+			if (media !== null) {
+				title += raquo;
+			}
+
+			title += fillInSpan;
+
+			if (
+				components.length > 2 &&
+				(media === null && ! util.isAlbumWithOneMedia(currentAlbum)) &&
+				(currentAlbum.media.length || currentAlbum.subalbums.length)
+			) {
+				title += " <span class='title-count'>(";
+				title += util._t(".title-found") + ' ';
+				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
+				if (currentAlbum.media.length) {
+					title += currentAlbum.media.length + " ";
+					title += util._t(".title-media");
+					if (currentAlbum.subalbums.length)
+						title += " " + util._t(".title-and") + " ";
+				}
+				if (currentAlbum.subalbums.length) {
+					title += currentAlbum.subalbums.length + " ";
+					title += util._t(".title-albums");
+				}
+				// if (currentAlbum.media.length > 0 && currentAlbum.subalbums.length > 0) {
+				//   title += ", ";
+				//   title += util._t(".title-total") + " ";
+				//   title += currentAlbum.media.length + currentAlbum.subalbums.length;
+				// }
+
+				if (currentAlbum.hasOwnProperty("removedStopWords") && currentAlbum.removedStopWords.length) {
+					// say that some search word hasn't been used
+					title += " - " + currentAlbum.removedStopWords.length + " " + util._t("#removed-stopwords") + ": ";
+					for (i = 0; i < currentAlbum.removedStopWords.length; i ++) {
+						if (i)
+							title += ", ";
+						title += currentAlbum.removedStopWords[i];
+					}
+				}
+
+				title += ")</span>";
+			}
+
+			if (setDocumentTitle) {
+				// build the html page title
+				documentTitle += " (" + where +") \u00ab " + components[0];
+				if (media !== null)
+					documentTitle = " \u00ab " + documentTitle;
+			}
+		} else if (isMapTitle) {
+			// i=0: title
+			// i=1: Options.by_search_string
+			// (optional) i=2: image cache or folder
+			// (optional) i=3 up: folder or image
+			// (optional) i=n: image
+			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>" + raquo;
+
+			where =
+				"<a class='search-link' href='#!/" + currentAlbum.cacheBase + "'>" +
+				util._t("#by-map") +
+				"</a>";
 
 			title += "<span class='title-no-anchor'>(" + where + ")</span>";
 			where = util.stripHtmlAndReplaceEntities(where);
@@ -498,7 +566,11 @@
 
 		// activate the map popup trigger in the title
 		$(".map-popup-trigger").off();
-		$(".map-popup-trigger").click(map.generateMapFromDefaults);
+		$(".map-popup-trigger").click(
+			function() {
+				map.generateMapFromDefaults(TopFunctions.hashParsed);
+			}
+		);
 
 
 
@@ -947,7 +1019,7 @@
 
 	/* Entry point for most events */
 
-	TopFunctions.prototype.hashParsed = function(album, media, mediaIndex) {
+	TopFunctions.hashParsed = function(album, media, mediaIndex) {
 		var populateAlbum;
 		var currentAlbumPath, currentAlbumPathArray;
 
@@ -1293,7 +1365,12 @@
 			thumbnailSize = Options.media_thumb_size;
 
 			populateMedia = populate;
-			isVirtualAlbum = (util.isByDateCacheBase(currentAlbum.cacheBase) || util.isByGpsCacheBase(currentAlbum.cacheBase) || util.isSearchCacheBase(currentAlbum.cacheBase) );
+			isVirtualAlbum = (
+				util.isByDateCacheBase(currentAlbum.cacheBase) ||
+				util.isByGpsCacheBase(currentAlbum.cacheBase) ||
+				util.isSearchCacheBase(currentAlbum.cacheBase) ||
+				util.isMapCacheBase(currentAlbum.cacheBase)
+			);
 			tooBig = currentAlbum.path.split("/").length < 4 && currentAlbum.media.length > Options.big_virtual_folders_threshold;
 			if (populateMedia === true && isVirtualAlbum)
 				populateMedia = populateMedia && (! tooBig || showTooBig);
@@ -1384,6 +1461,7 @@
 									"<img title='" + imgTitle + "' " +
 										"alt='" + util.trimExtension(currentAlbum.media[i].name) + "' " +
 										"data-src='" + encodeURI(thumbHash) + "' " +
+										"src='img/image-placeholder.png' " +
 										"class='thumbnail lazyload-media" + "' " +
 										"height='" + thumbHeight + "' " +
 										"width='" + thumbWidth + "' " +
@@ -1425,7 +1503,13 @@
 				// generate the click event for the map for every media
 				for (i = 0; i < currentAlbum.media.length; ++i) {
 					$("#media-map-link-" + i).off();
-					$("#media-map-link-" + i).on('click', {media: currentAlbum.media[i], album: currentAlbum}, map.generateMapFromMedia);
+					$("#media-map-link-" + i).on(
+						'click',
+						{media: currentAlbum.media[i], album: currentAlbum},
+						function(ev) {
+							map.generateMapFromMedia(ev, TopFunctions.hashParsed);
+						}
+					);
 				}
 			}
 			// lazyload(document.querySelectorAll(".lazyload-media"));
@@ -1628,7 +1712,7 @@
 														">" +
 												"</a>" +
 												"<span class='helper'></span>" +
-												"<img class='thumbnail lazyload-album-" + id + "'>" +
+												"<img src='img/image-placeholder.png' class='thumbnail lazyload-album-" + id + "'>" +
 											"</div>"
 										);
 						linkContainer.append(image);
@@ -1730,7 +1814,13 @@
 					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
 						$("#subalbum-map-link-" + i).off();
 						if (currentAlbum.subalbums[i].hasOwnProperty("positionsAndMediaInTree") && currentAlbum.subalbums[i].positionsAndMediaInTree.length)
-							$("#subalbum-map-link-" + i).on('click', {subalbum: currentAlbum.subalbums[i]}, map.generateMapFromSubalbum);
+							$("#subalbum-map-link-" + i).on(
+								'click',
+								{subalbum: currentAlbum.subalbums[i]},
+								function(ev) {
+									map.generateMapFromSubalbum(ev, TopFunctions.hashParsed);
+								}
+							);
 					}
 
 					$("#subalbums").show();
@@ -1872,6 +1962,7 @@
 	};
 
 	TopFunctions.prototype.goFullscreen = TopFunctions.goFullscreen;
+	TopFunctions.prototype.hashParsed = TopFunctions.hashParsed;
 
 	window.TopFunctions = TopFunctions;
 }());
