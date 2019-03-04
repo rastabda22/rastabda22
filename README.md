@@ -132,7 +132,9 @@ MyPhotoShare features share buttons, and PHP permits to pass the shared image/vi
 It is, essentially, a slick and fast, minimal but still well-featured photo gallery app on the net, suitable for sharing your media with your friends.
 
 
-### Performance of scanner
+## Performance
+
+### Scanner
 
 As a term of comparizon, on my medium-sized pc, with the images on a NFS mounted NAS partition:
 
@@ -140,3 +142,9 @@ As a term of comparizon, on my medium-sized pc, with the images on a NFS mounted
 * re-scan of "all OK" tree of 36000 media files for a total size of 87 GB takes about 14 minutes (20 ms/media, 50 media/sec) if not using checksums, and about 90 minutes (110 ms/media, 9 media/sec) when using checksums.
 * scanning for the first time about 40000 photo with less than 100 videos takes about 5 hour with checksums enabled
 * scanning of videos takes a much longer time than photos, the bigger the video the greater the time.
+
+### Javascript code
+
+The javascript app il optimized and works fluently with 40,000 photos!
+
+However, showing an album or clicking on a marker with more than 1,000 photos, slowlyness is expected. Despite the slowlyness, everything seems coming to its correct end.
