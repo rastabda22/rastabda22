@@ -1,3 +1,6 @@
+* fixed bug with spurious text seen on mobile when loading
+* fixed map size on both pc and mobile (with css _modal_)
+
 ### version v3.8 (March 4, 2019)
 
 * images collected by map clicks can now be shown as an album and browsed
