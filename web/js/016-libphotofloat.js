@@ -5,7 +5,6 @@
 	/* constructor */
 	function PhotoFloat() {
 		PhotoFloat.albumCache = [];
-		PhotoFloat.promises = [];
 		this.geotaggedPhotosFound = null;
 		this.searchWordsFromJsonFile = [];
 		this.searchAlbumCacheBaseFromJsonFile = [];
@@ -17,6 +16,17 @@
 	}
 
 	/* public member functions */
+	PhotoFloat.initializeMapRootAlbum = function() {
+		// prepare the root of the map albums and put it in the cache
+		var rootMapAlbum = {};
+		rootMapAlbum.cacheBase = Options.by_map_string;
+		rootMapAlbum.subalbums = [];
+		rootMapAlbum.media = [];
+		rootMapAlbum.positionsAndMediaInTree = [];
+
+		PhotoFloat.albumCache[rootMapAlbum.cacheBase] = rootMapAlbum;
+
+	}
 	PhotoFloat.addPositionsToSubalbums = function(thisAlbum) {
 		var iSubalbum, iPosition, iPhoto, position, subalbumCacheKey;
 		var positions = thisAlbum.positionsAndMediaInTree;
@@ -126,82 +136,72 @@
 		} else
 			cacheKey = thisAlbum.cacheBase;
 
-		if (PhotoFloat.albumCache.hasOwnProperty(cacheKey) && PhotoFloat.promises.hasOwnProperty(cacheKey)) {
-			PhotoFloat.promises[cacheKey].then(
-				function() {
-					var executeCallback = function() {
-						if (typeof thisIndexWords === "undefined" && typeof thisIndexAlbums === "undefined") {
-							callback(PhotoFloat.albumCache[cacheKey]);
-						} else {
-							callback(PhotoFloat.albumCache[cacheKey], thisIndexWords, thisIndexAlbums);
+		if (PhotoFloat.albumCache.hasOwnProperty(cacheKey)) {
+			var executeCallback = function() {
+				if (typeof thisIndexWords === "undefined" && typeof thisIndexAlbums === "undefined") {
+					callback(PhotoFloat.albumCache[cacheKey]);
+				} else {
+					callback(PhotoFloat.albumCache[cacheKey], thisIndexWords, thisIndexAlbums);
+				}
+			};
+			if (! PhotoFloat.albumCache[cacheKey].numPositionsInTree || PhotoFloat.albumCache[cacheKey].hasOwnProperty("positionsAndMediaInTree")) {
+				executeCallback();
+			} else {
+				// the positions are missing, get them
+				PhotoFloat.getPositions(
+					thisAlbum,
+					executeCallback,
+					error
+				);
+			}
+		} else {
+			var cacheFile = util.pathJoin([Options.server_cache_path, cacheKey + ".json"]);
+			self = this;
+			ajaxOptions = {
+				type: "GET",
+				dataType: "json",
+				url: cacheFile,
+				success: function(theAlbum) {
+					var albumGot = function() {
+						var i;
+						if (cacheKey == Options.by_search_string) {
+							// root of search albums: build the word list
+							for (i = 0; i < theAlbum.subalbums.length; ++i) {
+								PhotoFloat.searchWordsFromJsonFile.push(theAlbum.subalbums[i].unicodeWords);
+								PhotoFloat.searchAlbumCacheBaseFromJsonFile.push(theAlbum.subalbums[i].cacheBase);
+							}
+						} else if (! util.isSearchCacheBase(cacheKey)) {
+							for (i = 0; i < theAlbum.subalbums.length; ++i)
+								theAlbum.subalbums[i].parent = theAlbum;
+							for (i = 0; i < theAlbum.media.length; ++i)
+								theAlbum.media[i].parent = theAlbum;
 						}
+
+						PhotoFloat.albumCache[cacheKey] = theAlbum;
+
+						if (typeof thisIndexWords === "undefined" && typeof thisIndexAlbums === "undefined")
+							callback(theAlbum);
+						else
+							callback(theAlbum, thisIndexWords, thisIndexAlbums);
 					};
-					if (! PhotoFloat.albumCache[cacheKey].numPositionsInTree || PhotoFloat.albumCache[cacheKey].hasOwnProperty("positionsAndMediaInTree")) {
-						executeCallback();
-					} else {
-						// the positions are missing, get them
+					if (theAlbum.numPositionsInTree)
 						PhotoFloat.getPositions(
-							thisAlbum,
-							executeCallback,
+							theAlbum,
+							albumGot,
 							error
 						);
-					}
+					else
+						albumGot();
 				}
-			)
-		} else {
-			PhotoFloat.albumCache[cacheKey] = false;
-			PhotoFloat.promises[cacheKey] = new Promise(
-				function(resolve, reject) {
-					var cacheFile = util.pathJoin([Options.server_cache_path, cacheKey + ".json"]);
-					self = this;
-					ajaxOptions = {
-						type: "GET",
-						dataType: "json",
-						url: cacheFile,
-						success: function(theAlbum) {
-							var albumGot = function() {
-								var i;
-								if (cacheKey == Options.by_search_string) {
-									// root of search albums: build the word list
-									for (i = 0; i < theAlbum.subalbums.length; ++i) {
-										PhotoFloat.searchWordsFromJsonFile.push(theAlbum.subalbums[i].unicodeWords);
-										PhotoFloat.searchAlbumCacheBaseFromJsonFile.push(theAlbum.subalbums[i].cacheBase);
-									}
-								} else if (! util.isSearchCacheBase(cacheKey)) {
-									for (i = 0; i < theAlbum.subalbums.length; ++i)
-										theAlbum.subalbums[i].parent = theAlbum;
-									for (i = 0; i < theAlbum.media.length; ++i)
-										theAlbum.media[i].parent = theAlbum;
-								}
-
-								PhotoFloat.albumCache[cacheKey] = theAlbum;
-
-								resolve();
-
-								if (typeof thisIndexWords === "undefined" && typeof thisIndexAlbums === "undefined")
-									callback(theAlbum);
-								else
-									callback(theAlbum, thisIndexWords, thisIndexAlbums);
-							};
-							if (theAlbum.numPositionsInTree)
-								PhotoFloat.getPositions(
-									theAlbum,
-									albumGot,
-									error
-								);
-							else
-								albumGot();
-						}
-					};
-					if (typeof error !== "undefined" && error !== null) {
-						ajaxOptions.error = function(jqXHR, textStatus, errorThrown) {
-							error(jqXHR.status);
-							reject();
-						};
-					}
-					$.ajax(ajaxOptions);
-				}
-			)
+			};
+			if (typeof error !== "undefined" && error !== null) {
+				ajaxOptions.error = function(jqXHR, textStatus, errorThrown) {
+					error(jqXHR.status);
+					if (typeof reject !== "undefined")
+						reject();
+				};
+			}
+			$.ajax(ajaxOptions);
 		}
 	};
 
@@ -260,7 +260,8 @@
 			} else if (
 				util.isByDateCacheBase(albumHash) ||
 				util.isByGpsCacheBase(albumHash) ||
-				util.isSearchCacheBase(albumHash) && (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null)
+				util.isSearchCacheBase(albumHash) && (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null) ||
+				util.isMapCacheBase(albumHash)
 			)
 				// media in date or gps album, count = 3
 				hash = util.pathJoin([
@@ -419,7 +420,7 @@
 				else if (albumHash == Options.by_date_string || albumHash == Options.by_gps_string)
 					// go to folders root
 					resultHash = Options.folders_string;
-				else if (util.isSearchCacheBase(albumHash)) {
+				else if (util.isSearchCacheBase(albumHash) || util.isMapCacheBase(albumHash)) {
 					// the return folder must be extracted from the album hash
 					resultHash = albumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
 				} else {
@@ -456,7 +457,7 @@
 		if (albumHash) {
 			albumHash = decodeURI(albumHash);
 
-			if ([Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(albumHash) !== -1)
+			if ([Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(albumHash) !== -1)
 				$("ul#right-menu li#album-search").addClass("dimmed");
 
 			if (util.isSearchCacheBase(albumHash)) {
@@ -519,9 +520,9 @@
 
 		if (util.isSearchCacheBase(albumHash)) {
 			albumHashToGet = albumHash;
-		// same conditions as before????????????????
-		} else if (util.isSearchCacheBase(albumHash)) {
-			albumHashToGet = util.pathJoin([albumHash, mediaFolderHash]);
+		// // same conditions as before????????????????
+		// } else if (util.isSearchCacheBase(albumHash)) {
+		// 	albumHashToGet = util.pathJoin([albumHash, mediaFolderHash]);
 		} else {
 			albumHashToGet = albumHash;
 		}
@@ -675,7 +676,8 @@
 																// check whether the media is inside the current album tree
 																theAlbum.media[indexMedia].foldersCacheBase.indexOf(Options.album_to_search_in) === 0 ||
 																theAlbum.media[indexMedia].hasOwnProperty("dayAlbumCacheBase") && theAlbum.media[indexMedia].dayAlbumCacheBase.indexOf(Options.album_to_search_in) === 0 ||
-																theAlbum.media[indexMedia].hasOwnProperty("gpsAlbumCacheBase") && theAlbum.media[indexMedia].gpsAlbumCacheBase.indexOf(Options.album_to_search_in) === 0
+																theAlbum.media[indexMedia].hasOwnProperty("gpsAlbumCacheBase") && theAlbum.media[indexMedia].gpsAlbumCacheBase.indexOf(Options.album_to_search_in) === 0 ||
+																util.isMapCacheBase(Options.album_to_search_in)
 															)
 														)
 													)

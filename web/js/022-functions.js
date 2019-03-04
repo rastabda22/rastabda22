@@ -247,6 +247,18 @@
 		}
 
 		if (
+			currentAlbum === null || ! currentAlbum.media.length | util.isFolderCacheBase(currentAlbum.cacheBase)
+		) {
+			$("ul#right-menu li.show-big-albums").addClass("hidden");
+		} else {
+			$("ul#right-menu li.show-big-albums").removeClass("hidden");
+			if (Options.show_big_virtual_folders)
+			 	$("ul#right-menu li.show-big-albums").addClass("selected");
+			else
+				$("ul#right-menu li.show-big-albums").removeClass("selected");
+		}
+
+		if (
 			$("ul#right-menu li.hide-title").hasClass("hidden") &&
 			$("ul#right-menu li.hide-bottom-thumbnails").hasClass("hidden") &&
 			$("ul#right-menu li.slide").hasClass("hidden") &&
@@ -255,7 +267,8 @@
 			$("ul#right-menu li.media-count").hasClass("hidden") &&
 			$("ul#right-menu li.media-names").hasClass("hidden") &&
 			$("ul#right-menu li.square-album-thumbnails").hasClass("hidden") &&
-			$("ul#right-menu li.square-media-thumbnails").hasClass("hidden")
+			$("ul#right-menu li.square-media-thumbnails").hasClass("hidden") &&
+			$("ul#right-menu li.show-big-albums").hasClass("hidden")
 		) {
 			$("ul#right-menu li.ui").addClass("hidden");
 		}
@@ -523,6 +536,12 @@
 		util.correctPrevNextPosition();
 	};
 
+	Functions.threeYears = function() {
+		// returns the expire interval for the cookies, in seconds
+		// = 1000 days, ~ 3 years
+		return 1000 * 24 * 60 * 60;
+	};
+
 	Functions.getBooleanCookie = function(key) {
 		var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
 		if (! keyValue)
@@ -533,15 +552,9 @@
 			return false;
 	};
 
-	Functions.expireInterval = function() {
-		// returns the expire interval for the cookies, in seconds
-		// = 1000 days, ~ 3 years
-		return 1000 * 24 * 60 * 60;
-	};
-
 	Functions.setBooleanCookie = function(key, value) {
 		var expires = new Date();
-		expires.setTime(expires.getTime() + Functions.expireInterval() * 1000);
+		expires.setTime(expires.getTime() + Functions.threeYears() * 1000);
 		if (value)
 			value = 1;
 		else
@@ -568,7 +581,7 @@
 
 	Functions.prototype.setCookie = function(key, value) {
 		var expires = new Date();
-		expires.setTime(expires.getTime() + Functions.expireInterval() * 1000);
+		expires.setTime(expires.getTime() + Functions.threeYears() * 1000);
 		document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
 		return true;
 	};
@@ -751,6 +764,11 @@
 				if (searchCurrentAlbumCookie !== null)
 					Options.search_current_album = searchCurrentAlbumCookie;
 
+				Options.show_big_virtual_folders = false;
+				var showBigVirtualFoldersCookie = Functions.getBooleanCookie("show_big_virtual_folders");
+				if (showBigVirtualFoldersCookie !== null)
+					Options.show_big_virtual_folders = showBigVirtualFoldersCookie;
+
 				// Options.search_refine = false;
 				// var searchRefineCookie = Functions.getBooleanCookie("search_refine");
 				// if (searchRefineCookie !== null)
@@ -765,6 +783,9 @@
 				Options.byDateStringWithTrailingSeparator = Options.by_date_string + Options.cache_folder_separator;
 				Options.byGpsStringWithTrailingSeparator = Options.by_gps_string + Options.cache_folder_separator;
 				Options.bySearchStringWithTrailingSeparator = Options.by_search_string + Options.cache_folder_separator;
+				Options.byMapStringWithTrailingSeparator = Options.by_map_string + Options.cache_folder_separator;
+
+				PhotoFloat.initializeMapRootAlbum();
 
 				// phFl.parseHash(hash, callback, error);
 				Functions.parseHash(hash, callback, error);

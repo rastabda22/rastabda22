@@ -1,5 +1,11 @@
+### version v3.8 (March 4, 2019)
+
+* images collected by map clicks can now be shown as an album and browsed
+* bug fixes
+
 ### version v3.7 (March 2, 2019)
 
+* new option `by_map_string` for albums built from map popup
 * the popup is now positioned in an average point among all the points that contribute their photos to the popup
 * bug fixes
 * lazy loader changed to jquery.lazy: it permits defining post-load actions

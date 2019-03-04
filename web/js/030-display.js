@@ -322,6 +322,7 @@ $(document).ready(function() {
 	$("ul#right-menu li.media-names").on('click', tF.toggleMediaNames);
 	$("ul#right-menu li.square-album-thumbnails").on('click', tF.toggleAlbumsSquare);
 	$("ul#right-menu li.square-media-thumbnails").on('click', tF.toggleMediaSquare);
+	$("ul#right-menu li.show-big-albums").on('click', tF.toggleBigAlbumsShow);
 	$("#menu-icon").off();
 	$("#menu-icon").on("click", f.toggleMenu);
 
@@ -332,6 +333,9 @@ $(document).ready(function() {
 		$("link[rel=image_src]").remove();
 		$("link[rel=video_src]").remove();
 		$("ul#right-menu").removeClass("expand");
+		// if (util.isMapHash(location.hash))
+		// 	// map albums are generated passing the data from the map, so here we must exit
+		// 	return;
 		if (Object.keys(Options).length > 0)
 			f.parseHash(location.hash, tF.hashParsed, util.die);
 		else

@@ -7,8 +7,9 @@
 	var mymap, popup, photoNumberInPopup = 0;
 	var selectedPositions = [];
 	var imagesToAddString = "", dataForClickEvents = [];
-	var imagesGot, imagesToGet, promiseActivated = false;
 	var titleWrapper1, titleWrapper2;
+	var pointList = [];
+	var hashParsed, lastAlbumIndex = 0;
 
 
 	/* constructor */
@@ -18,7 +19,10 @@
 	// MapFunctions.prototype. = function() {
 	// };
 
-	MapFunctions.prototype.generateMapFromMedia = function(ev) {
+	MapFunctions.prototype.generateMapFromMedia = function(ev, callback) {
+		// callback is the function to call after clicking on the map popup title
+		hashParsed = callback;
+
 		if (util.hasGpsData(ev.data.media)) {
 			ev.preventDefault();
 			var point =
@@ -35,7 +39,10 @@
 		}
 	};
 
-	MapFunctions.prototype.generateMapFromSubalbum = function(ev) {
+	MapFunctions.prototype.generateMapFromSubalbum = function(ev, callback) {
+		// callback is the function to call after clicking on the map popup title
+		hashParsed = callback;
+
 		if (ev.data.subalbum.positionsAndMediaInTree.length) {
 			ev.stopPropagation();
 			ev.preventDefault();
@@ -46,8 +53,9 @@
 		}
 	};
 
-	MapFunctions.prototype.generateMapFromDefaults = function() {
-		var pointList = [];
+	MapFunctions.prototype.generateMapFromDefaults = function(callback) {
+		// callback is the function to call after clicking on the map popup title
+		hashParsed = callback;
 
 		if (currentMedia !== null && util.hasGpsData(currentMedia))
 			pointList = [
@@ -162,7 +170,7 @@
 			$("#popup-photo-count").css("max-width", maxWidthForThumbnails);
  			popup.setLatLng(MapFunctions.averagePosition(selectedPositions));
 
-			setPhotoCountAndWidth();
+			buildPopupHeader();
 
 			f.setOptions();
 			setPopupPosition();
@@ -204,9 +212,76 @@
 			});
 		}
 
-		function setPhotoCountAndWidth() {
-			$("#popup-photo-count").css("max-width", maxWidthForThumbnails);
+		function buildPopupHeader() {
 			$("#popup-photo-count-number").html(photoNumberInPopup);
+			$("#popup-photo-count").css("max-width", maxWidthForThumbnails);
+			// add the click event for showing the photos in the popup as an album
+			$("#popup-photo-count").on(
+				"click",
+				{
+					"selectedPositions": selectedPositions
+				},
+				function(ev) {
+					// every album is identified by a string which is tied to the selected markers
+					var nudePointList = [], indexPositions, iPhoto, iMedia;
+					for (var i = 0; i < selectedPositions.length; ++i) {
+						nudePointList.push([selectedPositions[i].lat, selectedPositions[i].lng]);
+					}
+					lastAlbumIndex ++;
+					mapAlbumHash = lastAlbumIndex;
+
+					// initialize the map album
+					var mapAlbum = {};
+					mapAlbum.positionsAndMediaInTree = selectedPositions;
+					mapAlbum.media = [];
+					mapAlbum.subalbums = [];
+					mapAlbum.cacheBase = Options.by_map_string + Options.cache_folder_separator + mapAlbumHash + Options.cache_folder_separator + currentAlbum.cacheBase;
+					mapAlbum.parentCacheBase = Options.by_map_string;
+					mapAlbum.path = mapAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
+					mapAlbum.physicalPath = mapAlbum.path;
+					mapAlbum.searchInFolderCacheBase = currentAlbum.cacheBase;
+
+					// build the media list
+					// surely the albums are already in cache
+					var mediaNameListElement, mediaElement;
+					for (indexPositions = 0; indexPositions < selectedPositions.length; indexPositions ++) {
+						photoNumberInPopup += selectedPositions[indexPositions].mediaNameList.length;
+						for (iPhoto = 0; iPhoto < selectedPositions[indexPositions].mediaNameList.length; iPhoto ++) {
+							mediaNameListElement = selectedPositions[indexPositions].mediaNameList[iPhoto];
+							for (iMedia = 0; iMedia < PhotoFloat.albumCache[mediaNameListElement.albumCacheBase].media.length; iMedia ++) {
+								mediaElement = PhotoFloat.albumCache[mediaNameListElement.albumCacheBase].media[iMedia];
+								if (mediaElement.cacheBase == mediaNameListElement.cacheBase) {
+									mapAlbum.media.push(mediaElement);
+									break;
+								}
+							}
+						}
+					}
+					mapAlbum.numMediaInAlbum = mapAlbum.media.length;
+					mapAlbum.numMediaInSubTree = mapAlbum.media.length;
+					mapAlbum.numPositionsInTree = selectedPositions.length;
+					$('.leaflet-popup-close-button')[0].click();
+					// $('#popup #popup-content').html("");
+					$('.map-close-button')[0].click();
+					// // prepare the promise, otherways getAlbum cannot find the album in cache
+					// PhotoFloat.promises[mapAlbum.cacheBase] = new Promise(
+					// 	function(resolve, reject) {
+					// 		resolve();
+					// 	}
+					// );
+
+					// update the map root album in cache
+					PhotoFloat.albumCache[Options.by_map_string].subalbums.push(mapAlbum);
+					PhotoFloat.albumCache[Options.by_map_string].positionsAndMediaInTree = util.mergePoints(PhotoFloat.albumCache[Options.by_map_string].positionsAndMediaInTree, selectedPositions);
+					PhotoFloat.albumCache[Options.by_map_string].numMediaInSubTree += mapAlbum.numMediaInSubTree;
+
+					phFl.endPreparingAlbumAndKeepOn(mapAlbum, null,
+						 function(){
+							 window.location.href = "#!" + mapAlbum.cacheBase;
+						 }
+					 );
+				}
+			);
 		}
 
 		function getImagesWrapperSizes() {
@@ -245,112 +320,109 @@
 			mymap.panBy([panX, panY], {"animate": false});
 		}
 
-		function addThumbnailToString(mediaNameListElement, markerClass, resolve) {
+		// function addThumbnailToString(theAlbum, mediaNameListElement, markerClass) {
+		function addThumbnailsToString(theAlbum, photosInAlbum) {
 			// we must get the media corresponding to the name in the point
-			var cacheBase = mediaNameListElement.cacheBase;
-			var albumCacheBase = mediaNameListElement.albumCacheBase;
+			var mediaNameListElement, markerClass;
+			var albumCacheBase = theAlbum.cacheBase;
+			var mediaIndex, photoIndex;
+			var selectedMedia;
 
-			phFl.getAlbum(
-				albumCacheBase,
-				function(theAlbum, i, cacheBase) {
-					var j, indexInAlbum;
+			for(mediaIndex = 0; mediaIndex < theAlbum.media.length; mediaIndex ++) {
+				var photosInAlbumCopy = photosInAlbum.slice();
+				for(photoIndex = 0; photoIndex < photosInAlbumCopy.length; photoIndex ++) {
+					if (theAlbum.media[mediaIndex].cacheBase == photosInAlbumCopy[photoIndex].element.cacheBase) {
+						mediaNameListElement = photosInAlbumCopy[photoIndex].element;
+						markerClass = photosInAlbumCopy[photoIndex].markerClass;
+						selectedMedia = theAlbum.media[mediaIndex];
 
-					for(j = 0; j < theAlbum.media.length; j ++) {
-						if (theAlbum.media[j].cacheBase == cacheBase) {
-							indexInAlbum = j;
-							break;
+						var width = selectedMedia.metadata.size[0];
+						var height = selectedMedia.metadata.size[1];
+						var thumbnailSize = Options.media_thumb_size;
+						var thumbHash = util.chooseThumbnail(theAlbum, selectedMedia, thumbnailSize);
+						var thumbHeight, thumbWidth;
+
+						var calculatedWidth, calculatedHeight;
+						if (Options.media_thumb_type == "fixed_height") {
+							if (height < Options.media_thumb_size) {
+								thumbHeight = height;
+								thumbWidth = width;
+							} else {
+								thumbHeight = Options.media_thumb_size;
+								thumbWidth = thumbHeight * width / height;
+							}
+							calculatedWidth = thumbWidth;
+						} else if (Options.media_thumb_type == "square") {
+							thumbHeight = thumbnailSize;
+							thumbWidth = thumbnailSize;
+							calculatedWidth = Options.media_thumb_size;
 						}
-					}
-					var width = theAlbum.media[indexInAlbum].metadata.size[0];
-					var height = theAlbum.media[indexInAlbum].metadata.size[1];
-					var thumbnailSize = Options.media_thumb_size;
-					var thumbHash = util.chooseThumbnail(theAlbum, theAlbum.media[indexInAlbum], thumbnailSize);
-					var thumbHeight, thumbWidth;
+						var imgTitle = selectedMedia.albumName;
+						calculatedHeight = Options.media_thumb_size;
 
-					var calculatedWidth, calculatedHeight;
-					if (Options.media_thumb_type == "fixed_height") {
-						if (height < Options.media_thumb_size) {
-							thumbHeight = height;
-							thumbWidth = width;
-						} else {
-							thumbHeight = Options.media_thumb_size;
-							thumbWidth = thumbHeight * width / height;
-						}
-						calculatedWidth = thumbWidth;
-					} else if (Options.media_thumb_type == "square") {
-						thumbHeight = thumbnailSize;
-						thumbWidth = thumbnailSize;
-						calculatedWidth = Options.media_thumb_size;
-					}
-					var imgTitle = theAlbum.media[indexInAlbum].albumName;
-					calculatedHeight = Options.media_thumb_size;
+						var albumViewPadding = $("#album-view").css("padding");
+						if (! albumViewPadding)
+							albumViewPadding = 0;
+						else
+							albumViewPadding = parseInt(albumViewPadding);
+						calculatedWidth = Math.min(
+							calculatedWidth,
+							$(window).innerWidth() - 2 * albumViewPadding
+						);
+						calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
-					var albumViewPadding = $("#album-view").css("padding");
-					if (! albumViewPadding)
-						albumViewPadding = 0;
-					else
-						albumViewPadding = parseInt(albumViewPadding);
-					calculatedWidth = Math.min(
-						calculatedWidth,
-						$(window).innerWidth() - 2 * albumViewPadding
-					);
-					calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
+						mediaHash = phFl.encodeHash(theAlbum, selectedMedia);
+						var codedHashId = getCodedHashId(mediaNameListElement);
 
-					mediaHash = phFl.encodeHash(theAlbum, theAlbum.media[indexInAlbum]);
-					var codedHashId = getCodedHashId(mediaNameListElement);
-
-					var imageString =
-						"<div id='" + codedHashId + "' class='thumb-and-caption-container " + markerClass +"' " +
-							"style='" +
-								"width: " + calculatedWidth + "px;";
-					if (Options.spacing)
+						var imageString =
+							"<div id='" + codedHashId + "' class='thumb-and-caption-container " + markerClass +"' " +
+								"style='" +
+									"width: " + calculatedWidth + "px;";
+						if (Options.spacing)
+							imageString +=
+									" margin-right: " + Options.spacingToggle + "px;" +
+									" margin-bottom: " + Options.spacingToggle + "px;";
+						imageString += "'>";
 						imageString +=
-								" margin-right: " + Options.spacingToggle + "px;" +
-								" margin-bottom: " + Options.spacingToggle + "px;";
-					imageString += "'>";
-					imageString +=
-							"<div class='thumb-container' " + "style='" +
-									// "width: " + calculatedWidth + "px; " +
-									"width: " + calculatedWidth + "px; " +
-									"height: " + calculatedHeight + "px;" +
-								"'>" +
-									"<span class='helper'></span>" +
-									"<img title='" + imgTitle + "' " +
-										"alt='" + util.trimExtension(theAlbum.media[indexInAlbum].name) + "' " +
-										"data-src='" + encodeURI(thumbHash) + "' " +
-										// "src='img/wait.png' " +
-										"src='' " +
-										"class='lazyload-popup-media thumbnail" + "' " +
-										"height='" + thumbHeight + "' " +
-										"width='" + thumbWidth + "' " +
-										"mediaHash='" + mediaHash + "' " +
-										"style='" +
-											 "width: " + calculatedWidth + "px; " +
-											 "height: " + calculatedHeight + "px;" +
-											 "'" +
-										"/>" +
-							"</div>" +
-							"<div class='media-caption'>" +
-								"<span>" +
-								theAlbum.media[indexInAlbum].name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
-								"</span>" +
-							"</div>" +
-						"</div>";
+								"<div class='thumb-container' " + "style='" +
+										// "width: " + calculatedWidth + "px; " +
+										"width: " + calculatedWidth + "px; " +
+										"height: " + calculatedHeight + "px;" +
+									"'>" +
+										"<span class='helper'></span>" +
+										"<img title='" + imgTitle + "' " +
+											"alt='" + util.trimExtension(selectedMedia.name) + "' " +
+											"data-src='" + encodeURI(thumbHash) + "' " +
+											// "src='img/wait.png' " +
+											"src='img/image-placeholder.png' " +
+											"class='lazyload-popup-media thumbnail" + "' " +
+											"height='" + thumbHeight + "' " +
+											"width='" + thumbWidth + "' " +
+											"mediaHash='" + mediaHash + "' " +
+											"style='" +
+												 "width: " + calculatedWidth + "px; " +
+												 "height: " + calculatedHeight + "px;" +
+												 "'" +
+											"/>" +
+								"</div>" +
+								"<div class='media-caption'>" +
+									"<span>" +
+									selectedMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+									"</span>" +
+								"</div>" +
+							"</div>";
 
-					dataForClickEvents.push({"codedHashId": codedHashId, "mediaHash": mediaHash});
+						dataForClickEvents.push({"codedHashId": codedHashId, "mediaHash": mediaHash});
 
-					// $("#popup-images-wrapper").html(imageString);
-					imagesToAddString += imageString;
-					imagesGot ++;
-					if (imagesGot >= imagesToGet)
-						resolve();
+						// $("#popup-images-wrapper").html(imageString);
+						imagesToAddString += imageString;
 
-					return;
-				},
-				util.die,
-				i,
-				cacheBase
-			);
+						// reduce the photos array, so that next iteration in faster
+						photosInAlbumCopy = photosInAlbumCopy.splice(photoIndex, 1);
+						break
+					}
+				}
+			}
 		};
 
 		// decide what point is to be used: the nearest to the clicked position
@@ -431,12 +503,11 @@
 			}
 		} else {
 			// not control click
-			imagesGot = 0;
 			imagesToAddString = "";
 			dataForClickEvents = [];
 			imageLoadPromise = new Promise(
 				function(resolve, reject) {
-					promiseActivated = true;
+					var indexPositions, indexPhoto, photosByAlbum = {}, mediaNameListElement, photosInAlbum, albumCacheBase, positionsAndCountsElement;
 					if (! selectedPositions.length || ! evt.originalEvent.shiftKey) {
 						// normal click or shift click without previous content
 
@@ -461,51 +532,71 @@
 						// $("#popup-images-wrapper").css("max-height", parseInt($(".leaflet-popup-content").css("max-height")) - 75);
 
 						photoNumberInPopup = 0;
-
-						// how many images are we going to add?
-						imagesToGet = 0;
-						for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++)
-							imagesToGet += positionsAndCounts[indexPositions].mediaNameList.length;
-
-						// add the html code for the images to a string
-						for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
-							photoNumberInPopup += positionsAndCounts[indexPositions].count;
-							markerClass = getMarkerClass(positionsAndCounts[indexPositions]);
-							for (i = 0; i < positionsAndCounts[indexPositions].mediaNameList.length; i ++) {
-								addThumbnailToString(positionsAndCounts[indexPositions].mediaNameList[i], markerClass, resolve);
-							}
-						}
 					} else {
 						// shift-click with previous content
-						imagesToGet = 0;
-						for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++)
-							imagesToGet += positionsAndCounts[indexPositions].mediaNameList.length;
+						// determine what positions aren't yet in selectedPositions array
+						var missingPositions = [];
 						for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
+							positionsAndCountsElement = positionsAndCounts[indexPositions];
 							if (
 								selectedPositions.every(
 									function(element) {
-										return ! matchPositionAndCount(positionsAndCounts[indexPositions], element);
+										return ! matchPositionAndCount(positionsAndCountsElement, element);
 									}
 								)
 							) {
-								photoNumberInPopup += positionsAndCounts[indexPositions].count;
-								selectedPositions.push(positionsAndCounts[indexPositions]);
-								markerClass = getMarkerClass(positionsAndCounts[indexPositions]);
-								for (i = 0; i < positionsAndCounts[indexPositions].mediaNameList.length; i ++) {
-									addThumbnailToString(positionsAndCounts[indexPositions].mediaNameList[i], markerClass, resolve);
-								}
+								missingPositions.push(positionsAndCountsElement);
+								selectedPositions.push(positionsAndCountsElement);
 							}
 						}
+						positionsAndCounts = missingPositions;
+					}
+
+					// in order to add the html code for the images to a string,
+					// we group the photos by album: this way we rationalize the process of getting them
+					var albumsToGet = 0;
+					for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
+						positionsAndCountsElement = positionsAndCounts[indexPositions];
+						photoNumberInPopup += positionsAndCountsElement.count;
+						markerClass = getMarkerClass(positionsAndCountsElement);
+						for (indexPhoto = 0; indexPhoto < positionsAndCountsElement.mediaNameList.length; indexPhoto ++) {
+							mediaNameListElement = positionsAndCountsElement.mediaNameList[indexPhoto];
+							if (! photosByAlbum.hasOwnProperty(mediaNameListElement.albumCacheBase)) {
+								photosByAlbum[mediaNameListElement.albumCacheBase] = [];
+								albumsToGet ++;
+							}
+							photosByAlbum[mediaNameListElement.albumCacheBase].push(
+								{
+									"element": mediaNameListElement,
+									"markerClass": markerClass
+								}
+							);
+						}
+					}
+					// ok, now we can interate over the object we created
+					var albumsGot = 0;
+					for (albumCacheBase in photosByAlbum) {
+						photosInAlbum = photosByAlbum[albumCacheBase];
+						phFl.getAlbum(
+							albumCacheBase,
+							function(theAlbum, photosInAlbum) {
+								addThumbnailsToString(theAlbum, photosInAlbum);
+
+								albumsGot ++;
+								if (albumsGot == albumsToGet)
+									resolve();
+							},
+							util.die,
+							photosInAlbum,
+							null
+						);
 					}
 					// popup.setLatLng(MapFunctions.averagePosition(selectedPositions));
 				}
 			);
-		}
 
-		if (promiseActivated) {
 			imageLoadPromise.then(
 				function() {
-					promiseActivated = false;
 					var previousImagesString = $("#popup-images-wrapper").html();
 
 					updatePopup(titleWrapper1.replace("maxWidthForThumbnails", maxWidthForThumbnails) + previousImagesString + imagesToAddString + titleWrapper2);
@@ -564,7 +655,7 @@
 
 				var markers = [];
 			// initialize the markers clusters
-			var pruneCluster = new PruneClusterForLeaflet(70, 70);
+			var pruneCluster = new PruneClusterForLeaflet(150, 70);
 			PruneCluster.Cluster.ENABLE_MARKERS_LIST = true;
 
 			// modify the prunecluster so that the click can be managed in order to show the photo popup

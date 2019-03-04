@@ -327,6 +327,8 @@ class TreeWalker:
 					by_search_max_file_date = max(by_search_max_file_date, single_media_date)
 				else:
 					by_search_max_file_date = single_media_date
+				if single_media.has_gps_data:
+					word_album.positions_and_media_in_tree = self.add_media_to_position(word_album.positions_and_media_in_tree, single_media, Options.config['by_date_string'])
 			for single_album in media_and_album_words["album_words"]:
 				word_album.add_album(single_album)
 				word_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
