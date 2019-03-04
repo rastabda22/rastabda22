@@ -1,6 +1,6 @@
-# A Brief Tour of MyPhotoShare v3.4...
+# A Brief Tour of MyPhotoShare v3.8...
 
-Version 3.4 of MyPhotoShare brings new features usually not found in static photo galleries. We offer you a visual tour of some of them.
+MyPhotoShare has features usually not found in static photo galleries. We offer you a visual tour of some of them.
 
 ## A new look for each user
 
@@ -39,6 +39,10 @@ MyPhotoShare allows you to browse the media by album, by date or by location if 
 
 ![This picture was shot in Quebec](img/myphotoshare-3.4-show-location-osm.png)
 
+* Click on a marker to show the photos that were shot there. You can shift-click to add more photos to the popup, and control-click to remove photos. Clicking the heading of the popup, the popup photos are shown as they were a folder, and can be browsed, viewed, enlarged, etc.
+
+![Map with a popup activated clicking on a marker](img/myphotoshare-3.8-map-and-popup.png)
+
 
 ## Add metadata to your pictures
 
@@ -61,5 +65,7 @@ We kept the best for the last. Where is this photo you took a few years ago, wit
 
 ![Show me all pictures with a bear](img/myphotoshare-3.4-search-ours-fr.png)
 
+* You can search on the map, too: in the root album, click on the position icon on the top: you will be shown a map with all the (possibly clustered) markers of your geotagged photos! So if you want to find a photo shot in Albania, simply pan/enlarge the map till you are on that country, and then click!
 
-**These are only the tip of MyPhotoShare 3.4 features. Try and discover them by yourselves!**
+
+**These are only the tip of MyPhotoShare 3.8 features. Try and discover them by yourselves!**

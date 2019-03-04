@@ -1,4 +1,5 @@
-# MyPhotoShare v. 3.7beta3 (February 2, 2019)
+# MyPhotoShare v3.8 (March 4, 2019)
+
 ### A Web Photo Gallery Done Right via Static JSON & Dynamic Javascript
 #### by Jason A. Donenfeld (<Jason@zx2c4.com>), Jerome Charaoui (jerome@riseup.net)  Joachim Tingvold (joachim@tingvold.com), Paolo Benvenuto (<paolobenve@gmail.com>), Pierre Métras (<p.metras@videotron.ca>)
 
@@ -18,7 +19,9 @@ Content (albums and media files) can be shared over some popular social plaforms
 
 ![Screenshot](doc/img/myphotoshare-2.2-panorama.png)
 
-[What's great in version 3.4](doc/Features-3.4.md)
+![Screenshot](doc/img/myphotoshare-3.8-map-and-popup.png)
+
+[What's great in version 3.8](doc/Features-3.8.md)
 
 ## Read more
 
@@ -42,7 +45,6 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Media and folders can be sorted ascending/descending, by date or by name.
 - [x] Media can be searched by file/album name, title, description, tags; search may be whole word or inside words, considering accents and capitals or not, in current album (in virtual albums too) or in the whole tree.
 - [x] Thumbnails can be square (cropped, with optional face detection by [OpenCV](https://opencv.org/)) or full-content.
-- [x] Maps can be generated (in a popup, thanks to Leaflet) showing photos positions; the points are clickable and the thumbnails are shown; more photos can be added (with shift-click) and removed (with ctl-click) from the popup.
 
 ### For Photographers
 
@@ -52,6 +54,15 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Link to original media.
 - [x] Link for direct download.
 - [x] Allows enlarging the photo till 1:1 aspect.
+
+### For Geotaggers
+
+- [x] Maps can be generated, in a popup, showing markers for the photos positions. [Leaflet](https://leafletjs.com/) is used.
+- [x] The map is clickable and the thumbnails for the nearest marker are shown.
+- [x] More photos can be added (with shift-click) and removed (with ctl-click) from the popup.
+- [x] Photos shown in the popup are clickable.
+- [x] Near markers are automatically clustered, and the photos number is shown in the cluster marker.
+- [x] Images collected by map clicks can now be shown as an album and browsed
 
 ### Mobile Friendly
 

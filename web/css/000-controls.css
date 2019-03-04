@@ -489,6 +489,17 @@ video {
 	font-style: italic;
 	display: none;
 }
+
+#show-them {
+	font-weight: bold;
+	font-style: normal;
+	cursor: pointer;
+}
+
+#show-them:hover {
+	color: orange;
+}
+
 .video-unsupported {
 	background-image: url(../img/video-unsupported.png);
 	background-position: top center;
@@ -575,6 +586,18 @@ video {
 /****************************/
 /* right menu */
 
+ul#right-menu {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	float: right;
+	max-width: 20em;
+	position: fixed;
+	top: 0;
+	right: 0;
+}
+
 ul#right-menu li {
 	padding: 0 .5em;
 	cursor: pointer;
@@ -583,18 +606,6 @@ ul#right-menu li {
 
 ul#right-menu li.caption, ul#right-menu li:not(.active) {
 	cursor: default;
-}
-
-ul#right-menu {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-	overflow: hidden;
-	float: right;
-	max-width: 20em;
-	position: absolute;
-	top: 0;
-	right: 0;
 }
 
 ul#right-menu li a#menu-icon:hover {
@@ -689,7 +700,9 @@ ul#right-menu li:not(.active) {
 }
 ul#right-menu li.active:not(.caption):hover {
 	background-color: gray !important;
-	text-shadow: .15ex 0 white;
+	/* text-shadow: .15ex 0 white; */
+	font-weight: bold;
+	font-size: 80%;
 }
 
 ul#right-menu li:not(.caption) {

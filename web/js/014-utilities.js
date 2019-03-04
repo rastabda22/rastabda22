@@ -58,11 +58,11 @@
 
 
 
-  Utilities.prototype.cloneObject = function(object) {
-    return Object.assign({}, object);
-  };
+	Utilities.prototype.cloneObject = function(object) {
+		return Object.assign({}, object);
+	};
 
-  Utilities.prototype.intersect = function(a, b) {
+	Utilities.prototype.intersect = function(a, b) {
 		if (b.length > a.length) {
 			// indexOf to loop over shorter
 			var t;
@@ -93,7 +93,7 @@
 
 	Utilities.prototype.addMediaToPoints = function(oldPoints, newMedia) {
 		var newPoint = {
-			'long': parseFloat(newMedia.metadata.longitude),
+			'lng': parseFloat(newMedia.metadata.longitude),
 			'lat' : parseFloat(newMedia.metadata.latitude),
 			'mediaNameList': [{
 				'cacheBase': newMedia.cacheBase,
@@ -104,9 +104,21 @@
 	};
 
 	Utilities.prototype.addPointToPoints = function(oldPoints, newPoint) {
-		for (var i = 0; i < oldPoints.length; i ++) {
-			if (newPoint.long == oldPoints[i].long && newPoint.lat == oldPoints[i].lat) {
-				oldPoints[i].mediaNameList.push(newPoint.mediaNameList[0]);
+		var oldPoint, newElement;
+		for (var iOld = 0; iOld < oldPoints.length; iOld ++) {
+			oldPoint = oldPoints[iOld];
+			if (newPoint.lng == oldPoint.lng && newPoint.lat == oldPoint.lat) {
+				for (var iNew = 0; iNew < newPoint.mediaNameList.length; iNew ++) {
+					newElement = newPoint.mediaNameList[iNew];
+					if (
+						oldPoint.mediaNameList.every(
+							function(element) {
+								return element.albumCacheBase != newElement.albumCacheBase && element.cacheBase != newElement.cacheBase;
+							}
+						)
+					)
+						oldPoints[iOld].mediaNameList.push(newPoint.mediaNameList[iNew]);
+				}
 				return oldPoints;
 			}
 		}
@@ -139,9 +151,9 @@
 		return union;
 	};
 
-  Utilities.prototype.normalizeAccordingToOptions = function(object) {
+	Utilities.prototype.normalizeAccordingToOptions = function(object) {
 		var string = object;
-		if (typeof object  === "object")
+		if (typeof object === "object")
 			string = string.join('|');
 
 		if (! Options.search_case_sensitive)
@@ -168,10 +180,10 @@
 		return resultString;
 	};
 
-  Utilities.pathJoin = function(pathArr) {
+	Utilities.pathJoin = function(pathArr) {
 		var result = '';
 		for (var i = 0; i < pathArr.length; ++i) {
-			if (i < pathArr.length - 1 &&  pathArr[i] && pathArr[i][pathArr[i].length - 1] != "/")
+			if (i < pathArr.length - 1 && pathArr[i] && pathArr[i][pathArr[i].length - 1] != "/")
 				pathArr[i] += '/';
 			if (i && pathArr[i] && pathArr[i][0] == "/")
 				pathArr[i] = pathArr[i].slice(1);
@@ -180,7 +192,7 @@
 		return result;
 	};
 
-  // see https://stackoverflow.com/questions/1069666/sorting-javascript-object-by-property-value
+	// see https://stackoverflow.com/questions/1069666/sorting-javascript-object-by-property-value
 	Utilities.prototype.sortBy = function(albumOrMediaList, field) {
 		return albumOrMediaList.sort(function(a,b) {
 			var aValue = a[field];
@@ -211,18 +223,18 @@
 		});
 	};
 
-  Utilities.prototype.trimExtension = function(name) {
+	Utilities.prototype.trimExtension = function(name) {
 		var index = name.lastIndexOf(".");
 		if (index !== -1)
 			return name.substring(0, index);
 		return name;
 	};
 
-  Utilities.isFolderCacheBase = function(string) {
+	Utilities.isFolderCacheBase = function(string) {
 		return string == Options.folders_string || string.indexOf(Options.foldersStringWithTrailingSeparator) === 0;
 	};
 
-  Utilities.prototype.isByDateCacheBase = function(string) {
+	Utilities.prototype.isByDateCacheBase = function(string) {
 		return string == Options.by_date_string || string.indexOf(Options.byDateStringWithTrailingSeparator) === 0;
 	};
 
@@ -232,6 +244,10 @@
 
 	Utilities.prototype.isSearchCacheBase = function(string) {
 		return string.indexOf(Options.bySearchStringWithTrailingSeparator) === 0;
+	};
+
+	Utilities.prototype.isMapCacheBase = function(string) {
+		return string.indexOf(Options.byMapStringWithTrailingSeparator) === 0;
 	};
 
 	Utilities.prototype.isSearchHash = function(hash) {
@@ -244,16 +260,26 @@
 			return false;
 	};
 
-  Utilities.prototype.noResults = function(id) {
+	Utilities.prototype.isMapHash = function(hash) {
+		hash = PhotoFloat.cleanHash(hash);
+		var array = PhotoFloat.decodeHash(hash);
+		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
+		if (this.isMapCacheBase(hash) || array[4] !== null)
+			return true;
+		else
+			return false;
+	};
+
+	Utilities.prototype.noResults = function(selector) {
 		// no media found or other search fail, show the message
 		$("ul#right-menu").addClass("expand");
 		$("#album-view").addClass("hidden");
 		$("#media-view").addClass("hidden");
-		if (typeof id === "undefined")
-			id = 'no-results';
+		if (typeof selector === "undefined")
+			selector = '#no-results';
 		$(".search-failed").hide();
-		$("#" + id).stop().fadeIn(2000);
-		$("#" + id).fadeOut(4000);
+		$(selector).stop().fadeIn(2000);
+		$(selector).fadeOut(4000);
 	};
 
 	Utilities.prototype.stripHtmlAndReplaceEntities = function(htmlString) {
@@ -726,14 +752,25 @@
 		return degrees * (pi/180);
 	};
 
+	Utilities.xDistanceBetweenCoordinatePoints = function(point1, point2) {
+		return Math.max(
+			Utilities.distanceBetweenCoordinatePoints({"lng": point1.lng, "lat": point1.lat}, {"lng": point2.lng, "lat": point1.lat}),
+			Utilities.distanceBetweenCoordinatePoints({"lng": point1.lng, "lat": point2.lat}, {"lng": point2.lng, "lat": point2.lat}),
+		);
+	};
+
+	Utilities.yDistanceBetweenCoordinatePoints = function(point1, point2) {
+		return Utilities.distanceBetweenCoordinatePoints({"lng": point1.lng, "lat": point1.lat}, {"lng": point1.lng, "lat": point2.lat});
+	};
+
 	Utilities.distanceBetweenCoordinatePoints = function(point1, point2) {
 		// converted from Geonames.py
 		// Calculate the great circle distance in meters between two points on the earth (specified in decimal degrees)
 
 		// convert decimal degrees to radians
-		var r_lon1 = Utilities.degreesToRadians(point1.long);
+		var r_lon1 = Utilities.degreesToRadians(point1.lng);
 		var r_lat1 = Utilities.degreesToRadians(point1.lat);
-		var r_lon2 = Utilities.degreesToRadians(point2.long);
+		var r_lon2 = Utilities.degreesToRadians(point2.lng);
 		var r_lat2 = Utilities.degreesToRadians(point2.lat);
 		// haversine formula
 		var d_r_lon = r_lon2 - r_lon1;
@@ -855,9 +892,11 @@
 	Utilities.prototype.nextSize = Utilities.nextSize;
 	Utilities.prototype.isColliding = Utilities.isColliding;
 	Utilities.prototype.distanceBetweenCoordinatePoints = Utilities.distanceBetweenCoordinatePoints;
+	Utilities.prototype.xDistanceBetweenCoordinatePoints = Utilities.xDistanceBetweenCoordinatePoints;
+	Utilities.prototype.yDistanceBetweenCoordinatePoints = Utilities.yDistanceBetweenCoordinatePoints;
 	Utilities.prototype.degreesToRadians = Utilities.degreesToRadians;
 	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
 	Utilities.prototype.mediaBoxContainerHeight = Utilities.mediaBoxContainerHeight;
 
-  window.Utilities = Utilities;
+	window.Utilities = Utilities;
 }());

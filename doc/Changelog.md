@@ -1,3 +1,27 @@
+### version v3.8 (March 4, 2019)
+
+* images collected by map clicks can now be shown as an album and browsed
+* bug fixes
+
+### version v3.7 (March 2, 2019)
+
+* new option `by_map_string` for albums built from map popup
+* the popup is now positioned in an average point among all the points that contribute their photos to the popup
+* bug fixes
+* lazy loader changed to jquery.lazy: it permits defining post-load actions
+
+### version v3.7rc1 (February 24, 2019)
+
+* the user can now choose to show big virtual albums
+* markers in the map are now clustered
+* single point markers have the photo number inside them like cluster markers
+
+### version 3.7beta4 (February 14, 2019)
+
+* bug fixes in searches
+* fixed map not showing in mobile
+* javascript now knows the stop words and takes them into account
+
 ### version 3.7beta3 (February 2, 2019)
 
 * A position icon is added to album titles: opens an Leaflet map with the markers for all the media in the album and subalbums

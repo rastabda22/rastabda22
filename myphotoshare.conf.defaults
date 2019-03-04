@@ -218,6 +218,7 @@ folders_string = _f
 by_date_string = _bd
 by_gps_string = _bg
 by_search_string = _bs
+by_map_string = _bm
 cache_folder_separator = -
 search_options_separator = .
 
@@ -260,7 +261,7 @@ big_virtual_folders_threshold = 999
 ###########################################################
 
 # The map size in meters of the map for a single photo
-photo_map_size = 100
+photo_map_size = 1000
 
 # default map popup position
 # allowed values in ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'] (see options.py)

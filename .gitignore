@@ -8,5 +8,4 @@ venv/*
 Release.key
 web/albums
 web/cache
-*.md
 .vscode/*

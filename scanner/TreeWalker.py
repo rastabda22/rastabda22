@@ -45,7 +45,13 @@ class TreeWalker:
 		# 	message("options file mtime is", str(options_file_modification_time), 4)
 		# back_level()
 
+		random.seed()
+		self.all_json_files = ["options.json"]
+		self.all_json_files_by_subdir = {}
+
 		if (Options.config['use_stop_words']):
+			TreeWalker.stopwords_file = os.path.join(Options.config['cache_path'], 'stopwords.json')
+			self.all_json_files.append('stopwords.json')
 			self.get_lowercase_stopwords()
 
 		# # If nor the albums nor the cache have been modified after the last run,
@@ -65,10 +71,6 @@ class TreeWalker:
 		# 	message("no albums modification, no refresh needed", "We can safely end here", 4)
 		# else:
 		message("Browsing", "start!", 3)
-
-		random.seed()
-		self.all_json_files = ["options.json"]
-		self.all_json_files_by_subdir = {}
 
 		# be sure reduced_sizes array is correctly sorted
 		Options.config['reduced_sizes'].sort(reverse=True)
@@ -258,7 +260,7 @@ class TreeWalker:
 		elif type_string == Options.config['by_gps_string']:
 			media_album_cache_base = media.gps_album_cache_base
 		position = {
-			'long': media.longitude,
+			'lng': media.longitude,
 			'lat' : media.latitude,
 			'mediaNameList': [{
 				'cacheBase': media.cache_base,
@@ -275,7 +277,7 @@ class TreeWalker:
 		else:
 			match = False
 			for index, _position in enumerate(positions):
-				if position['lat'] == _position['lat'] and position['long'] == _position['long']:
+				if position['lat'] == _position['lat'] and position['lng'] == _position['lng']:
 					positions[index]['mediaNameList'].extend(position['mediaNameList'])
 					match = True
 					break
@@ -325,6 +327,8 @@ class TreeWalker:
 					by_search_max_file_date = max(by_search_max_file_date, single_media_date)
 				else:
 					by_search_max_file_date = single_media_date
+				if single_media.has_gps_data:
+					word_album.positions_and_media_in_tree = self.add_media_to_position(word_album.positions_and_media_in_tree, single_media, Options.config['by_date_string'])
 			for single_album in media_and_album_words["album_words"]:
 				word_album.add_album(single_album)
 				word_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
@@ -603,15 +607,25 @@ class TreeWalker:
 		with open(stopwords_file, "r") as stopwords_p:
 			stopwords = json.load(stopwords_p)
 
-		next_level()
 		if language in stopwords:
 			phrase = " ".join(stopwords[language])
 			TreeWalker.lowercase_stopwords = frozenset(switch_to_lowercase(phrase).split())
-			message("stopwords loaded", "", 4)
+			indented_message("stopwords loaded", "", 4)
+			TreeWalker.save_stopwords()
 		else:
-			message("stopwords: no stopwords for language", language, 4)
+			indented_message("stopwords: no stopwords for language", language, 4)
 		back_level()
-		back_level()
+		return
+
+	@staticmethod
+	def save_stopwords():
+		"""
+		Saves the list of stopwords for the user language into the cache directory
+		"""
+		message("saving stopwords to cache directory", TreeWalker.stopwords_file, 4)
+		with open(TreeWalker.stopwords_file, "w") as stopwords_p:
+			json.dump({'stopWords': list(TreeWalker.lowercase_stopwords)}, stopwords_p)
+		indented_message("stopwords saved!", "", 4)
 		return
 
 	@staticmethod
