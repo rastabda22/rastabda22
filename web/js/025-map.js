@@ -275,7 +275,11 @@
 					PhotoFloat.albumCache[Options.by_map_string].positionsAndMediaInTree = util.mergePoints(PhotoFloat.albumCache[Options.by_map_string].positionsAndMediaInTree, selectedPositions);
 					PhotoFloat.albumCache[Options.by_map_string].numMediaInSubTree += mapAlbum.numMediaInSubTree;
 
-					phFl.endPreparingAlbumAndKeepOn(mapAlbum, null, function(a, b, c){return;});
+					phFl.endPreparingAlbumAndKeepOn(mapAlbum, null,
+						 function(){
+							 window.location.href = "#!" + mapAlbum.cacheBase;
+						 }
+					 );
 				}
 			);
 

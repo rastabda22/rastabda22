@@ -242,7 +242,7 @@
 
 		if (media !== null) {
 			// media hash
-			if (util.isFolderCacheBase(albumHash) || util.isMapCacheBase(albumHash)) {
+			if (util.isFolderCacheBase(albumHash)) {
 				if (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null)
 					// media in folders album, count = 2
 					hash = util.pathJoin([
@@ -260,7 +260,8 @@
 			} else if (
 				util.isByDateCacheBase(albumHash) ||
 				util.isByGpsCacheBase(albumHash) ||
-				util.isSearchCacheBase(albumHash) && (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null)
+				util.isSearchCacheBase(albumHash) && (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null) ||
+				util.isMapCacheBase(albumHash)
 			)
 				// media in date or gps album, count = 3
 				hash = util.pathJoin([
