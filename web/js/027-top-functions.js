@@ -6,7 +6,6 @@
 	var pS = new PinchSwipe();
 	var f = new Functions();
 	var numSubAlbumsReady = 0;
-	var showTooBig = false;
 
 	/* constructor */
 	function TopFunctions() {
@@ -1337,6 +1336,19 @@
 		return false;
 	};
 
+	TopFunctions.prototype.toggleBigAlbumsShow = function(ev) {
+		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+			if ($("#error-too-many-images").is(":visible"))
+				$("#error-too-many-images").hide();
+			Options.show_big_virtual_folders = ! Options.show_big_virtual_folders;
+			f.setBooleanCookie("show_big_virtual_folders", Options.show_big_virtual_folders);
+			f.updateMenu();
+			TopFunctions.showAlbum("refreshMedia");
+			f.focusSearchField();
+		}
+		return false;
+	};
+
 
 	TopFunctions.showAlbum = function(populate) {
 		var i, imageLink, linkContainer, container, image, media, thumbsElement, subalbums, subalbumsElement, mediaHash, subfolderHash, thumbHash, thumbnailSize;
@@ -1373,23 +1385,26 @@
 			);
 			tooBig = currentAlbum.path.split("/").length < 4 && currentAlbum.media.length > Options.big_virtual_folders_threshold;
 			if (populateMedia === true && isVirtualAlbum)
-				populateMedia = populateMedia && (! tooBig || showTooBig);
+				populateMedia = populateMedia && (! tooBig || Options.show_big_virtual_folders);
 
-			if (isVirtualAlbum && tooBig && ! showTooBig) {
+			if (isVirtualAlbum && tooBig && ! Options.show_big_virtual_folders) {
 				$("#thumbs").empty();
 				var tooManyImagesText =
 					"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + currentAlbum.media.length +
 					", <span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + Options.big_virtual_folders_threshold + "</span>, " +
 					"<span id='show-them'>" + util._t("#show-them") + "</span>";
 				$("#error-too-many-images").html(tooManyImagesText).show();
-				$("#show-them").on(
-					"click",
-					function(ev) {
-						$("#error-too-many-images").hide();
-						showTooBig = true;
-						TopFunctions.showAlbum(true);
-					}
-				);
+				if (! $("ul#right-menu").hasClass("expand")) {
+					$("#show-them:hover").css("color", "").css("cursor", "");
+					$("#show-them").on(
+						"click",
+						function(ev) {
+							$("ul#right-menu").addClass("expand");
+						}
+					);
+				} else {
+					$("#show-them:hover").css("color", "inherit").css("cursor", "auto");
+				}
 			} else if (
 				populateMedia === true ||
 				populateMedia == "refreshMedia" ||

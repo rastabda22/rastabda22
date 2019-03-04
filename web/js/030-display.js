@@ -322,6 +322,7 @@ $(document).ready(function() {
 	$("ul#right-menu li.media-names").on('click', tF.toggleMediaNames);
 	$("ul#right-menu li.square-album-thumbnails").on('click', tF.toggleAlbumsSquare);
 	$("ul#right-menu li.square-media-thumbnails").on('click', tF.toggleMediaSquare);
+	$("ul#right-menu li.show-big-albums").on('click', tF.toggleBigAlbumsShow);
 	$("#menu-icon").off();
 	$("#menu-icon").on("click", f.toggleMenu);
 
