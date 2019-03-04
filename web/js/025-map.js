@@ -707,6 +707,7 @@
 				mymap.remove();
 
 			mymap = L.map('mapdiv', {'closePopupOnClick': false}).setView([center.lat, center.lng], zoom);
+			$(".map-container > div").css("min-height", (windowHeight -50).toString() + "px");
 			mapIsInitialized = true;
 
 
