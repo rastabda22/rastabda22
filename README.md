@@ -21,7 +21,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 
 ![Screenshot](doc/img/myphotoshare-3.8-map-and-popup.png)
 
-[What's great in version 3.4](doc/Features-3.8.md)
+[What's great in version 3.8](doc/Features-3.8.md)
 
 ## Read more
 
