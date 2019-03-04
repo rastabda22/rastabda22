@@ -263,12 +263,12 @@
 					$('.leaflet-popup-close-button')[0].click();
 					// $('#popup #popup-content').html("");
 					$('.map-close-button')[0].click();
-					// prepare the promise, otherways getAlbum cannot find the album in cache
-					PhotoFloat.promises[mapAlbum.cacheBase] = new Promise(
-						function(resolve, reject) {
-							resolve();
-						}
-					);
+					// // prepare the promise, otherways getAlbum cannot find the album in cache
+					// PhotoFloat.promises[mapAlbum.cacheBase] = new Promise(
+					// 	function(resolve, reject) {
+					// 		resolve();
+					// 	}
+					// );
 
 					// update the map root album in cache
 					PhotoFloat.albumCache[Options.by_map_string].subalbums.push(mapAlbum);
