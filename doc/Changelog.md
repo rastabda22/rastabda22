@@ -1,3 +1,5 @@
+### version v3.8 (March 4, 2019)
+
 * images collected by map clicks can now be shown as an album and browsed
 * bug fixes
 
