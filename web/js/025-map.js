@@ -504,13 +504,8 @@
 						phFl.getAlbum(
 							albumCacheBase,
 							function(theAlbum, photosInAlbum) {
-								// var element;
 								addThumbnailsToString(theAlbum, photosInAlbum);
-								// for (indexPhoto = 0; indexPhoto < photosInAlbum.length; indexPhoto ++) {
-								// 	photoElement = photosInAlbum[indexPhoto];
-								// 	addThumbnailToString(theAlbum, photoElement.element, photoElement.markerClass);
-								// 	console.log(1);
-								// }
+
 								albumsGot ++;
 								if (albumsGot == albumsToGet)
 									resolve();
