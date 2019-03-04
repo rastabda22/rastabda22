@@ -317,100 +317,109 @@
 			mymap.panBy([panX, panY], {"animate": false});
 		}
 
-		function addThumbnailToString(theAlbum, mediaNameListElement, markerClass) {
+		// function addThumbnailToString(theAlbum, mediaNameListElement, markerClass) {
+		function addThumbnailsToString(theAlbum, photosInAlbum) {
 			// we must get the media corresponding to the name in the point
-			var cacheBase = mediaNameListElement.cacheBase;
+			var mediaNameListElement, markerClass;
 			var albumCacheBase = theAlbum.cacheBase;
-			var j, indexInAlbum;
+			var mediaIndex, photoIndex;
+			var selectedMedia;
 
-			for(j = 0; j < theAlbum.media.length; j ++) {
-				if (theAlbum.media[j].cacheBase == cacheBase) {
-					indexInAlbum = j;
-					break;
-				}
-			}
-			var width = theAlbum.media[indexInAlbum].metadata.size[0];
-			var height = theAlbum.media[indexInAlbum].metadata.size[1];
-			var thumbnailSize = Options.media_thumb_size;
-			var thumbHash = util.chooseThumbnail(theAlbum, theAlbum.media[indexInAlbum], thumbnailSize);
-			var thumbHeight, thumbWidth;
+			for(mediaIndex = 0; mediaIndex < theAlbum.media.length; mediaIndex ++) {
+				var photosInAlbumCopy = photosInAlbum.slice();
+				for(photoIndex = 0; photoIndex < photosInAlbumCopy.length; photoIndex ++) {
+					if (theAlbum.media[mediaIndex].cacheBase == photosInAlbumCopy[photoIndex].element.cacheBase) {
+						mediaNameListElement = photosInAlbumCopy[photoIndex].element;
+						markerClass = photosInAlbumCopy[photoIndex].markerClass;
+						selectedMedia = theAlbum.media[mediaIndex];
 
-			var calculatedWidth, calculatedHeight;
-			if (Options.media_thumb_type == "fixed_height") {
-				if (height < Options.media_thumb_size) {
-					thumbHeight = height;
-					thumbWidth = width;
-				} else {
-					thumbHeight = Options.media_thumb_size;
-					thumbWidth = thumbHeight * width / height;
-				}
-				calculatedWidth = thumbWidth;
-			} else if (Options.media_thumb_type == "square") {
-				thumbHeight = thumbnailSize;
-				thumbWidth = thumbnailSize;
-				calculatedWidth = Options.media_thumb_size;
-			}
-			var imgTitle = theAlbum.media[indexInAlbum].albumName;
-			calculatedHeight = Options.media_thumb_size;
+						var width = selectedMedia.metadata.size[0];
+						var height = selectedMedia.metadata.size[1];
+						var thumbnailSize = Options.media_thumb_size;
+						var thumbHash = util.chooseThumbnail(theAlbum, selectedMedia, thumbnailSize);
+						var thumbHeight, thumbWidth;
 
-			var albumViewPadding = $("#album-view").css("padding");
-			if (! albumViewPadding)
-				albumViewPadding = 0;
-			else
-				albumViewPadding = parseInt(albumViewPadding);
-			calculatedWidth = Math.min(
-				calculatedWidth,
-				$(window).innerWidth() - 2 * albumViewPadding
-			);
-			calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
+						var calculatedWidth, calculatedHeight;
+						if (Options.media_thumb_type == "fixed_height") {
+							if (height < Options.media_thumb_size) {
+								thumbHeight = height;
+								thumbWidth = width;
+							} else {
+								thumbHeight = Options.media_thumb_size;
+								thumbWidth = thumbHeight * width / height;
+							}
+							calculatedWidth = thumbWidth;
+						} else if (Options.media_thumb_type == "square") {
+							thumbHeight = thumbnailSize;
+							thumbWidth = thumbnailSize;
+							calculatedWidth = Options.media_thumb_size;
+						}
+						var imgTitle = selectedMedia.albumName;
+						calculatedHeight = Options.media_thumb_size;
 
-			mediaHash = phFl.encodeHash(theAlbum, theAlbum.media[indexInAlbum]);
-			var codedHashId = getCodedHashId(mediaNameListElement);
+						var albumViewPadding = $("#album-view").css("padding");
+						if (! albumViewPadding)
+							albumViewPadding = 0;
+						else
+							albumViewPadding = parseInt(albumViewPadding);
+						calculatedWidth = Math.min(
+							calculatedWidth,
+							$(window).innerWidth() - 2 * albumViewPadding
+						);
+						calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
-			var imageString =
-				"<div id='" + codedHashId + "' class='thumb-and-caption-container " + markerClass +"' " +
-					"style='" +
-						"width: " + calculatedWidth + "px;";
-			if (Options.spacing)
-				imageString +=
-						" margin-right: " + Options.spacingToggle + "px;" +
-						" margin-bottom: " + Options.spacingToggle + "px;";
-			imageString += "'>";
-			imageString +=
-					"<div class='thumb-container' " + "style='" +
-							// "width: " + calculatedWidth + "px; " +
-							"width: " + calculatedWidth + "px; " +
-							"height: " + calculatedHeight + "px;" +
-						"'>" +
-							"<span class='helper'></span>" +
-							"<img title='" + imgTitle + "' " +
-								"alt='" + util.trimExtension(theAlbum.media[indexInAlbum].name) + "' " +
-								"data-src='" + encodeURI(thumbHash) + "' " +
-								// "src='img/wait.png' " +
-								"src='' " +
-								"class='lazyload-popup-media thumbnail" + "' " +
-								"height='" + thumbHeight + "' " +
-								"width='" + thumbWidth + "' " +
-								"mediaHash='" + mediaHash + "' " +
+						mediaHash = phFl.encodeHash(theAlbum, selectedMedia);
+						var codedHashId = getCodedHashId(mediaNameListElement);
+
+						var imageString =
+							"<div id='" + codedHashId + "' class='thumb-and-caption-container " + markerClass +"' " +
 								"style='" +
-									 "width: " + calculatedWidth + "px; " +
-									 "height: " + calculatedHeight + "px;" +
-									 "'" +
-								"/>" +
-					"</div>" +
-					"<div class='media-caption'>" +
-						"<span>" +
-						theAlbum.media[indexInAlbum].name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
-						"</span>" +
-					"</div>" +
-				"</div>";
+									"width: " + calculatedWidth + "px;";
+						if (Options.spacing)
+							imageString +=
+									" margin-right: " + Options.spacingToggle + "px;" +
+									" margin-bottom: " + Options.spacingToggle + "px;";
+						imageString += "'>";
+						imageString +=
+								"<div class='thumb-container' " + "style='" +
+										// "width: " + calculatedWidth + "px; " +
+										"width: " + calculatedWidth + "px; " +
+										"height: " + calculatedHeight + "px;" +
+									"'>" +
+										"<span class='helper'></span>" +
+										"<img title='" + imgTitle + "' " +
+											"alt='" + util.trimExtension(selectedMedia.name) + "' " +
+											"data-src='" + encodeURI(thumbHash) + "' " +
+											// "src='img/wait.png' " +
+											"src='' " +
+											"class='lazyload-popup-media thumbnail" + "' " +
+											"height='" + thumbHeight + "' " +
+											"width='" + thumbWidth + "' " +
+											"mediaHash='" + mediaHash + "' " +
+											"style='" +
+												 "width: " + calculatedWidth + "px; " +
+												 "height: " + calculatedHeight + "px;" +
+												 "'" +
+											"/>" +
+								"</div>" +
+								"<div class='media-caption'>" +
+									"<span>" +
+									selectedMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+									"</span>" +
+								"</div>" +
+							"</div>";
 
-			dataForClickEvents.push({"codedHashId": codedHashId, "mediaHash": mediaHash});
+						dataForClickEvents.push({"codedHashId": codedHashId, "mediaHash": mediaHash});
 
-			// $("#popup-images-wrapper").html(imageString);
-			imagesToAddString += imageString;
+						// $("#popup-images-wrapper").html(imageString);
+						imagesToAddString += imageString;
 
-			return;
+						// reduce the photos array, so that next iteration in faster
+						photosInAlbumCopy = photosInAlbumCopy.splice(photoIndex, 1);
+						break
+					}
+				}
+			}
 		};
 
 		// decide what point is to be used: the nearest to the clicked position
@@ -495,7 +504,7 @@
 			dataForClickEvents = [];
 			imageLoadPromise = new Promise(
 				function(resolve, reject) {
-					var indexPositions, indexPhoto, photosByAlbum = {}, mediaNameListElement, photosByAlbumElement, albumCacheBase, positionsAndCountsElement;
+					var indexPositions, indexPhoto, photosByAlbum = {}, mediaNameListElement, photosInAlbum, albumCacheBase, positionsAndCountsElement;
 					if (! selectedPositions.length || ! evt.originalEvent.shiftKey) {
 						// normal click or shift click without previous content
 
@@ -564,22 +573,23 @@
 					// ok, now we can interate over the object we created
 					var albumsGot = 0;
 					for (albumCacheBase in photosByAlbum) {
-						photosByAlbumElement = photosByAlbum[albumCacheBase];
+						photosInAlbum = photosByAlbum[albumCacheBase];
 						phFl.getAlbum(
 							albumCacheBase,
-							function(theAlbum, photosByAlbumElement) {
-								var element;
-								for (indexPhoto = 0; indexPhoto < photosByAlbumElement.length; indexPhoto ++) {
-									photoElement = photosByAlbumElement[indexPhoto];
-									addThumbnailToString(theAlbum, photoElement.element, photoElement.markerClass);
-									console.log(1);
-								}
+							function(theAlbum, photosInAlbum) {
+								// var element;
+								addThumbnailsToString(theAlbum, photosInAlbum);
+								// for (indexPhoto = 0; indexPhoto < photosInAlbum.length; indexPhoto ++) {
+								// 	photoElement = photosInAlbum[indexPhoto];
+								// 	addThumbnailToString(theAlbum, photoElement.element, photoElement.markerClass);
+								// 	console.log(1);
+								// }
 								albumsGot ++;
-								if (albumsGot >= albumsToGet)
+								if (albumsGot == albumsToGet)
 									resolve();
 							},
 							util.die,
-							photosByAlbumElement,
+							photosInAlbum,
 							null
 						);
 					}
