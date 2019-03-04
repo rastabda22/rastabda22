@@ -684,6 +684,7 @@
 			success: function(data) {
 				// for map zoom levels, see http://wiki.openstreetmap.org/wiki/Zoom_levels
 
+				$("#media-bar").hide();
 				for (var key in data)
 					if (data.hasOwnProperty(key))
 						Options[key] = data[key];
