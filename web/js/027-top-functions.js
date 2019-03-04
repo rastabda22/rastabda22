@@ -306,7 +306,6 @@
 				(currentAlbum.media.length || currentAlbum.subalbums.length)
 			) {
 				title += " <span class='title-count'>(";
-				title += util._t(".title-found") + ' ';
 				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
 				if (currentAlbum.media.length) {
 					title += currentAlbum.media.length + " ";
