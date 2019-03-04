@@ -1338,9 +1338,14 @@
 
 	TopFunctions.prototype.toggleBigAlbumsShow = function(ev) {
 		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-			if ($("#error-too-many-images").is(":visible"))
+			if ($("#error-too-many-images").is(":visible")) {
 				$("#error-too-many-images").hide();
+			}
 			Options.show_big_virtual_folders = ! Options.show_big_virtual_folders;
+			if (Options.show_big_virtual_folders)
+				$("#show-them:hover").css("color", "").css("cursor", "");
+			else
+				$("#show-them:hover").css("color", "inherit").css("cursor", "auto");
 			f.setBooleanCookie("show_big_virtual_folders", Options.show_big_virtual_folders);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
