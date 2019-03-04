@@ -197,7 +197,8 @@
 			if (typeof error !== "undefined" && error !== null) {
 				ajaxOptions.error = function(jqXHR, textStatus, errorThrown) {
 					error(jqXHR.status);
-					reject();
+					if (typeof reject !== "undefined")
+						reject();
 				};
 			}
 			$.ajax(ajaxOptions);
