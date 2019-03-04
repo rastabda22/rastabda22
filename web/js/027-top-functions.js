@@ -605,6 +605,8 @@
 		var savedSearchSubAlbumHash, savedSearchAlbumHash;
 		var previousMediaIndex, nextMediaIndex, array;
 
+		$(".media-bar").show();
+
 		if (id === "center")
 			$("#media-view").removeClass("hidden");
 
