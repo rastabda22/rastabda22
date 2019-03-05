@@ -111,6 +111,7 @@
 #mapdiv {
   height: 100%;
   cursor: pointer;
+  color: black !important;
 }
 
 /* Popup box END */
