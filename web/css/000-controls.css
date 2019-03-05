@@ -206,6 +206,7 @@ a.title-anchor.mobile {
 	opacity: .5;
 	top: 5px;
 	right: 5px;
+	height: 20px;
 }
 
 #thumbs .thumbnail-map-link:hover {
