@@ -214,7 +214,7 @@
 
 							element.attr("src", "img/image-placeholder-blank.png");
 							element.attr("height", thumbHeight);
-							element.attr("width", thumbHeight);
+							element.attr("width", thumbWidth);
 							element.css("width", calculatedWidth + "px");
 							element.parent().css("width", calculatedWidth + "px");
 							element.parent().css("height", calculatedHeight + "px");
@@ -357,7 +357,7 @@
 		// function addThumbnailToString(theAlbum, mediaNameListElement, markerClass) {
 		function addThumbnailsToString(theAlbum, photosInAlbum) {
 			// we must get the media corresponding to the name in the point
-			var mediaNameListElement, markerClass;
+			var markerClass;
 			var albumCacheBase = theAlbum.cacheBase;
 			var mediaIndex, photoIndex;
 			var selectedMedia;
@@ -373,12 +373,11 @@
 
 				for(photoIndex = 0; photoIndex < photosInAlbumCopy.length; photoIndex ++) {
 					if (theAlbum.media[mediaIndex].cacheBase == photosInAlbumCopy[photoIndex].element.cacheBase) {
-						mediaNameListElement = photosInAlbumCopy[photoIndex].element;
-						markerClass = mediaNameListElement.markerClass;
+						markerClass = photosInAlbumCopy[photoIndex].markerClass;
 						selectedMedia = theAlbum.media[mediaIndex];
 
 						mediaHash = phFl.encodeHash(theAlbum, selectedMedia);
-						var codedHashId = getCodedHashId(mediaNameListElement);
+						var codedHashId = getCodedHashId(photosInAlbumCopy[photoIndex].element);
 						var thumbHash = util.chooseThumbnail(theAlbum, selectedMedia, Options.media_thumb_size);
 						var imgTitle = selectedMedia.albumName;
 
