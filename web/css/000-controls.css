@@ -176,6 +176,8 @@ a.title-anchor.mobile {
 
 .album-button img, .thumb-container img {
 	vertical-align: middle;
+	max-width: 100%;
+	height: auto;
 }
 
 #thumbs .thumb-container img.thumbnail {

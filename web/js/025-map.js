@@ -101,7 +101,7 @@
 
 
 	MapFunctions.mapClick = function(evt, clusters) {
-		var clickedPosition = evt.latlng, i;
+		var clickedPosition = evt.latlng, i, albumViewPadding;
 		var maxWidthForThumbnails, maxHeightForThumbnails;
 		// console.log(clickedPosition, clusters);
 
@@ -176,25 +176,60 @@
 			setPopupPosition();
 			panMap();
 			addLazy("img.lazyload-popup-media");
-			// $("[data-src]").attr("src", "");
-			// if ($("[data-src]").length) {
-			// 	addLazy($("[data-src]"));
-			// }
 		}
 
 		function addLazy(selector) {
 			$(function() {
 				$(selector).Lazy(
 					{
+						beforeLoad: function(element) {
+							var thumbHeight, thumbWidth;
+
+							// calculate the width and height values
+							imgData = JSON.parse(element.attr("data"));
+							var width = imgData.width;
+							var height = imgData.height;
+
+							var calculatedWidth, calculatedHeight;
+							if (Options.media_thumb_type == "fixed_height") {
+								if (height < Options.media_thumb_size) {
+									thumbHeight = height;
+									thumbWidth = width;
+								} else {
+									thumbHeight = Options.media_thumb_size;
+									thumbWidth = thumbHeight * width / height;
+								}
+								calculatedWidth = thumbWidth;
+							} else if (Options.media_thumb_type == "square") {
+								thumbHeight = Options.media_thumb_size;
+								thumbWidth = Options.media_thumb_size;
+								calculatedWidth = Options.media_thumb_size;
+							}
+
+							calculatedWidth = Math.min(
+								calculatedWidth,
+								$(window).innerWidth() - 2 * albumViewPadding
+							);
+							calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
+
+							element.attr("src", "");
+							element.attr("height", thumbHeight);
+							element.attr("width", thumbHeight);
+							element.css("width", calculatedWidth + "px");
+							element.parent().css("width", calculatedWidth + "px");
+							element.parent().css("height", calculatedHeight + "px");
+							// element.parent().parent().css("width", calculatedWidth + "px");
+						},
 						afterLoad: function(element) {
 							element.parent().parent().on(
 								'click',
 								function() {
+									imgData = JSON.parse(element.attr("data"));
 									// called after an element was successfully handled
 									$('.leaflet-popup-close-button')[0].click();
 									// $('#popup #popup-content').html("");
 									$('.modal-close')[0].click();
-									window.location.href = element.attr("mediaHash");
+									window.location.href = imgData.mediaHash;
 								}
 							);
 						},
@@ -329,64 +364,40 @@
 
 			for(mediaIndex = 0; mediaIndex < theAlbum.media.length; mediaIndex ++) {
 				var photosInAlbumCopy = photosInAlbum.slice();
+
+				albumViewPadding = $("#album-view").css("padding");
+				if (! albumViewPadding)
+					albumViewPadding = 0;
+				else
+					albumViewPadding = parseInt(albumViewPadding);
+
 				for(photoIndex = 0; photoIndex < photosInAlbumCopy.length; photoIndex ++) {
 					if (theAlbum.media[mediaIndex].cacheBase == photosInAlbumCopy[photoIndex].element.cacheBase) {
 						mediaNameListElement = photosInAlbumCopy[photoIndex].element;
-						markerClass = photosInAlbumCopy[photoIndex].markerClass;
+						markerClass = mediaNameListElement.markerClass;
 						selectedMedia = theAlbum.media[mediaIndex];
-
-						var width = selectedMedia.metadata.size[0];
-						var height = selectedMedia.metadata.size[1];
-						var thumbnailSize = Options.media_thumb_size;
-						var thumbHash = util.chooseThumbnail(theAlbum, selectedMedia, thumbnailSize);
-						var thumbHeight, thumbWidth;
-
-						var calculatedWidth, calculatedHeight;
-						if (Options.media_thumb_type == "fixed_height") {
-							if (height < Options.media_thumb_size) {
-								thumbHeight = height;
-								thumbWidth = width;
-							} else {
-								thumbHeight = Options.media_thumb_size;
-								thumbWidth = thumbHeight * width / height;
-							}
-							calculatedWidth = thumbWidth;
-						} else if (Options.media_thumb_type == "square") {
-							thumbHeight = thumbnailSize;
-							thumbWidth = thumbnailSize;
-							calculatedWidth = Options.media_thumb_size;
-						}
-						var imgTitle = selectedMedia.albumName;
-						calculatedHeight = Options.media_thumb_size;
-
-						var albumViewPadding = $("#album-view").css("padding");
-						if (! albumViewPadding)
-							albumViewPadding = 0;
-						else
-							albumViewPadding = parseInt(albumViewPadding);
-						calculatedWidth = Math.min(
-							calculatedWidth,
-							$(window).innerWidth() - 2 * albumViewPadding
-						);
-						calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
 						mediaHash = phFl.encodeHash(theAlbum, selectedMedia);
 						var codedHashId = getCodedHashId(mediaNameListElement);
+						var thumbHash = util.chooseThumbnail(theAlbum, selectedMedia, Options.media_thumb_size);
+						var imgTitle = selectedMedia.albumName;
 
 						var imageString =
-							"<div id='" + codedHashId + "' class='thumb-and-caption-container " + markerClass +"' " +
-								"style='" +
-									"width: " + calculatedWidth + "px;";
+							"<div id='" + codedHashId + "' class='thumb-and-caption-container " + markerClass +"' ";
+								// "style='" +
+									// "width: " + calculatedWidth + "px;";
 						if (Options.spacing)
 							imageString +=
-									" margin-right: " + Options.spacingToggle + "px;" +
-									" margin-bottom: " + Options.spacingToggle + "px;";
+								"style='" +
+									"margin-right: " + Options.spacingToggle + "px; " +
+									"margin-bottom: " + Options.spacingToggle + "px;";
 						imageString += "'>";
 						imageString +=
-								"<div class='thumb-container' " + "style='" +
-										// "width: " + calculatedWidth + "px; " +
-										"width: " + calculatedWidth + "px; " +
-										"height: " + calculatedHeight + "px;" +
+								"<div class='thumb-container'" +
+								 	// " style='" +
+									// 	"width: " + calculatedWidth + "px; " +
+									// 	"height: " + calculatedHeight + "px;" +
+									// 	"'" +
 									"'>" +
 										"<span class='helper'></span>" +
 										"<img title='" + imgTitle + "' " +
@@ -394,14 +405,22 @@
 											"data-src='" + encodeURI(thumbHash) + "' " +
 											// "src='img/wait.png' " +
 											"src='img/image-placeholder.png' " +
+											"data='" +
+											JSON.stringify(
+												{
+													"width": selectedMedia.metadata.size[0],
+													"height": selectedMedia.metadata.size[1],
+													"mediaHash": mediaHash
+												}
+											) +
+											"' " +
 											"class='lazyload-popup-media thumbnail" + "' " +
-											"height='" + thumbHeight + "' " +
-											"width='" + thumbWidth + "' " +
-											"mediaHash='" + mediaHash + "' " +
-											"style='" +
-												 "width: " + calculatedWidth + "px; " +
-												 "height: " + calculatedHeight + "px;" +
-												 "'" +
+											// "height='" + thumbHeight + "' " +
+											// "width='" + thumbWidth + "' " +
+											// " style='" +
+												 // "width: " + calculatedWidth + "px; " +
+												 // "height: " + calculatedHeight + "px;" +
+												 // "'" +
 											"/>" +
 								"</div>" +
 								"<div class='media-caption'>" +
@@ -411,7 +430,7 @@
 								"</div>" +
 							"</div>";
 
-						dataForClickEvents.push({"codedHashId": codedHashId, "mediaHash": mediaHash});
+						// dataForClickEvents.push({"codedHashId": codedHashId, "mediaHash": mediaHash});
 
 						// $("#popup-images-wrapper").html(imageString);
 						imagesToAddString += imageString;
