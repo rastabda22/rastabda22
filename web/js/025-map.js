@@ -212,7 +212,7 @@
 							);
 							calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
-							element.attr("src", "");
+							element.attr("src", "img/image-placeholder-blank.png");
 							element.attr("height", thumbHeight);
 							element.attr("width", thumbHeight);
 							element.css("width", calculatedWidth + "px");
