@@ -184,44 +184,44 @@
 			$(function() {
 				$(selector).Lazy(
 					{
-						beforeLoad: function(element) {
-							var thumbHeight, thumbWidth;
-
-							// calculate the width and height values
-							imgData = JSON.parse(element.attr("data"));
-							var width = imgData.width;
-							var height = imgData.height;
-
-							var calculatedWidth, calculatedHeight;
-							if (Options.media_thumb_type == "fixed_height") {
-								if (height < Options.media_thumb_size) {
-									thumbHeight = height;
-									thumbWidth = width;
-								} else {
-									thumbHeight = Options.media_thumb_size;
-									thumbWidth = thumbHeight * width / height;
-								}
-								calculatedWidth = thumbWidth;
-							} else if (Options.media_thumb_type == "square") {
-								thumbHeight = Options.media_thumb_size;
-								thumbWidth = Options.media_thumb_size;
-								calculatedWidth = Options.media_thumb_size;
-							}
-
-							calculatedWidth = Math.min(
-								calculatedWidth,
-								$(window).innerWidth() - 2 * albumViewPadding
-							);
-							calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
-
-							element.attr("src", "img/image-placeholder-blank.png");
-							element.attr("height", thumbHeight);
-							element.attr("width", thumbWidth);
-							element.css("width", calculatedWidth + "px");
-							element.parent().css("width", calculatedWidth + "px");
-							element.parent().css("height", calculatedHeight + "px");
-							element.parent().parent().css("width", calculatedWidth + "px");
-						},
+						// beforeLoad: function(element) {
+						// 	var thumbHeight, thumbWidth;
+						//
+						// 	// calculate the width and height values
+						// 	imgData = JSON.parse(element.attr("data"));
+						// 	var width = imgData.width;
+						// 	var height = imgData.height;
+						//
+						// 	var calculatedWidth, calculatedHeight;
+						// 	if (Options.media_thumb_type == "fixed_height") {
+						// 		if (height < Options.media_thumb_size) {
+						// 			thumbHeight = height;
+						// 			thumbWidth = width;
+						// 		} else {
+						// 			thumbHeight = Options.media_thumb_size;
+						// 			thumbWidth = thumbHeight * width / height;
+						// 		}
+						// 		calculatedWidth = thumbWidth;
+						// 	} else if (Options.media_thumb_type == "square") {
+						// 		thumbHeight = Options.media_thumb_size;
+						// 		thumbWidth = Options.media_thumb_size;
+						// 		calculatedWidth = Options.media_thumb_size;
+						// 	}
+						//
+						// 	calculatedWidth = Math.min(
+						// 		calculatedWidth,
+						// 		$(window).innerWidth() - 2 * albumViewPadding
+						// 	);
+						// 	calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
+						//
+						// 	element.attr("src", "img/image-placeholder-blank.png");
+						// 	element.attr("height", thumbHeight);
+						// 	element.attr("width", thumbWidth);
+						// 	element.css("width", calculatedWidth + "px");
+						// 	element.parent().css("width", calculatedWidth + "px");
+						// 	element.parent().css("height", calculatedHeight + "px");
+						// 	element.parent().parent().css("width", calculatedWidth + "px");
+						// },
 						afterLoad: function(element) {
 							element.parent().parent().on(
 								'click',
