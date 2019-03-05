@@ -163,16 +163,18 @@
 		}
 
 		function updatePopup(images) {
-			popup.setContent(images);
+			$(".leaflet-popup-content").html(images);
+			f.setOptions();
+			popup.setContent($(".leaflet-popup-content").html());
 			getImagesWrapperSizes();
 			$("#popup-images-wrapper").css("max-height", parseInt($(".leaflet-popup-content").css("height")) - 35);
 			$("#popup-images-wrapper").css("max-width", maxWidthForThumbnails).css("width", maxWidthForThumbnails);
 			$("#popup-photo-count").css("max-width", maxWidthForThumbnails);
+			// $(".leaflet-popup-content").css("max-width", maxWidthForThumbnails).css("width", maxWidthForThumbnails);
  			popup.setLatLng(MapFunctions.averagePosition(selectedPositions));
-
 			buildPopupHeader();
 
-			f.setOptions();
+
 			setPopupPosition();
 			panMap();
 			addLazy("img.lazyload-popup-media");
@@ -218,7 +220,7 @@
 							element.css("width", calculatedWidth + "px");
 							element.parent().css("width", calculatedWidth + "px");
 							element.parent().css("height", calculatedHeight + "px");
-							// element.parent().parent().css("width", calculatedWidth + "px");
+							element.parent().parent().css("width", calculatedWidth + "px");
 						},
 						afterLoad: function(element) {
 							element.parent().parent().on(
@@ -381,10 +383,40 @@
 						var thumbHash = util.chooseThumbnail(theAlbum, selectedMedia, Options.media_thumb_size);
 						var imgTitle = selectedMedia.albumName;
 
+						var thumbHeight, thumbWidth;
+
+						// calculate the width and height values
+						// imgData = JSON.parse(element.attr("data"));
+						var width = selectedMedia.metadata.size[0];
+						var height = selectedMedia.metadata.size[1];
+
+						var calculatedWidth, calculatedHeight;
+						if (Options.media_thumb_type == "fixed_height") {
+							if (height < Options.media_thumb_size) {
+								thumbHeight = height;
+								thumbWidth = width;
+							} else {
+								thumbHeight = Options.media_thumb_size;
+								thumbWidth = thumbHeight * width / height;
+							}
+							calculatedWidth = thumbWidth;
+						} else if (Options.media_thumb_type == "square") {
+							thumbHeight = Options.media_thumb_size;
+							thumbWidth = Options.media_thumb_size;
+							calculatedWidth = Options.media_thumb_size;
+						}
+
+						calculatedWidth = Math.min(
+							calculatedWidth,
+							$(window).innerWidth() - 2 * albumViewPadding
+						);
+						calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
+
 						var imageString =
 							"<div id='" + codedHashId + "' class='thumb-and-caption-container " + markerClass +"' ";
-								// "style='" +
-									// "width: " + calculatedWidth + "px;";
+						imageString +=
+								"style='" +
+									"width: " + calculatedWidth + "px;";
 						if (Options.spacing)
 							imageString +=
 								"style='" +
@@ -393,10 +425,10 @@
 						imageString += "'>";
 						imageString +=
 								"<div class='thumb-container'" +
-								 	// " style='" +
-									// 	"width: " + calculatedWidth + "px; " +
-									// 	"height: " + calculatedHeight + "px;" +
-									// 	"'" +
+								 	" style='" +
+										"width: " + calculatedWidth + "px; " +
+										"height: " + calculatedHeight + "px;" +
+										"'" +
 									"'>" +
 										"<span class='helper'></span>" +
 										"<img title='" + imgTitle + "' " +
@@ -414,12 +446,12 @@
 											) +
 											"' " +
 											"class='lazyload-popup-media thumbnail" + "' " +
-											// "height='" + thumbHeight + "' " +
-											// "width='" + thumbWidth + "' " +
-											// " style='" +
-												 // "width: " + calculatedWidth + "px; " +
-												 // "height: " + calculatedHeight + "px;" +
-												 // "'" +
+											"height='" + thumbHeight + "' " +
+											"width='" + thumbWidth + "' " +
+											" style='" +
+												 "width: " + calculatedWidth + "px; " +
+												 "height: " + calculatedHeight + "px;" +
+												 "'" +
 											"/>" +
 								"</div>" +
 								"<div class='media-caption'>" +
