@@ -864,23 +864,26 @@
 			$(".media-box#" + id + " .menu-map-divider").hide();
 		}
 
+		var foldersViewLink, byDateViewLink, byGpsViewLink;
 		if (id === "center") {
-			var foldersViewLink = "#!/" + util.pathJoin([
-						currentMedia.foldersCacheBase,
-						currentMedia.cacheBase
-						]);
-			var byDateViewLink = "#!/" + util.pathJoin([
-						currentMedia.dayAlbumCacheBase,
-						currentMedia.foldersCacheBase,
-						currentMedia.cacheBase
-						]);
-			if (currentMedia.gpsAlbumCacheBase)
-				var byGpsViewLink = "#!/" + util.pathJoin([
-							currentMedia.gpsAlbumCacheBase,
-							currentMedia.foldersCacheBase,
-							currentMedia.cacheBase
-							]);
+			foldersViewLink = "#!/" + util.pathJoin([
+				currentMedia.foldersCacheBase,
+				currentMedia.cacheBase
+			]);
 
+			byDateViewLink = "#!/" + util.pathJoin([
+				currentMedia.dayAlbumCacheBase,
+				currentMedia.foldersCacheBase,
+				currentMedia.cacheBase
+			]);
+
+			if (currentMedia.gpsAlbumCacheBase) {
+				byGpsViewLink = "#!/" + util.pathJoin([
+					currentMedia.gpsAlbumCacheBase,
+					currentMedia.foldersCacheBase,
+					currentMedia.cacheBase
+				]);
+			}
 
 			$(".day-gps-folders-view").addClass("active").removeClass("hidden").removeClass("selected").off("click");
 			if (util.isFolderCacheBase(currentAlbum.cacheBase)) {
