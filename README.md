@@ -73,7 +73,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 
 ### Great User Experience
 
-- [x] Keyboard navigation: arrows, pageup/down, `[esc]`, `[f]` (fullscreen), `[d]` (download original), `[o]` (show original), `[s]` (map), `[m]` (metadata), `[e]` (open right menu), `[+]` (pinch in), `[-]` (pinch out), space/backspace (like in [Darktable](https://www.darktable.org/)).
+- [x] Keyboard navigation: arrows, pageup/down, `[esc]`, `[f]` (fullscreen), `[d]` (download original), `[o]` (show original), `[s]` (map), `[m]` (metadata), `[e]` (open right menu), `[+]` (pinch in), `[-]` (pinch out), space/backspace (like in [Darktable](https://www.darktable.org/)), `[>]`/`[<]` (rotation among browsing modes: folders -> by date -> by gps -> by search).
 - [x] Keyboard dragging when the photo is zoomed in.
 - [x] Mouse-wheel support, including for pinching (with ctrl or shift).
 - [x] Various user interface option can be changed by the user.
