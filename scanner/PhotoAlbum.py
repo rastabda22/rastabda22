@@ -1418,6 +1418,8 @@ class Media(object):
 			else:
 				message("thumbing for media...", "", 5)
 			start_image_copy.thumbnail((actual_thumb_size, actual_thumb_size), Image.ANTIALIAS)
+			if Options.config['copy_exif_into_reductions']:
+				exif = start_image.info['exif']
 			next_level()
 			if not mobile_bigger and original_thumb_size > Options.config['album_thumb_size'] or mobile_bigger and original_thumb_size > int(Options.config['album_thumb_size'] * Options.config['mobile_thumbnail_factor']):
 				message("size reduced (" + str(original_thumb_size) + ")", "", 4)
@@ -1465,14 +1467,20 @@ class Media(object):
 			if thumb_type:
 				# use maximum quality for album and media thumbnails
 				jpeg_quality = 100
-			start_image_copy_for_saving.save(thumb_path, "JPEG", quality=jpeg_quality)
+			if Options.config['copy_exif_into_reductions']:
+				start_image_copy_for_saving.save(thumb_path, "JPEG", quality=jpeg_quality, exif=exif)
+			else:
+				start_image_copy_for_saving.save(thumb_path, "JPEG", quality=jpeg_quality)
 			next_level()
 			if original_thumb_size > Options.config['album_thumb_size']:
-				message("reduced size image saved ", "", 4)
+				msg = "reduced size image saved"
 			elif original_thumb_size == Options.config['album_thumb_size']:
-				message("album thumbnail saved", "", 4)
+				msg = "album thumbnail saved"
 			else:
-				message("media thumbnail saved", "", 4)
+				msg = "media thumbnail saved"
+			if Options.config['copy_exif_into_reductions']:
+				msg += " with exif data"
+			message(msg, "", 4)
 			back_level()
 			back_level()
 			back_level()
@@ -1486,14 +1494,20 @@ class Media(object):
 		except IOError:
 			message("saving (2nd try)...", info_string, 5)
 			try:
-				start_image_copy_for_saving.convert('RGB').save(thumb_path, "JPEG", quality=Options.config['jpeg_quality'])
+				if Options.config['copy_exif_into_reductions']:
+					start_image_copy_for_saving.convert('RGB').save(thumb_path, "JPEG", quality=Options.config['jpeg_quality'], exif=exif)
+				else:
+					start_image_copy_for_saving.convert('RGB').save(thumb_path, "JPEG", quality=Options.config['jpeg_quality'])
 				next_level()
 				if original_thumb_size > Options.config['album_thumb_size']:
-					message("saved reduced (2nd try, " + str(original_thumb_size) + ")", "", 2)
+					msg = "saved reduced (2nd try, " + str(original_thumb_size) + ")"
 				elif original_thumb_size == Options.config['album_thumb_size']:
-					message("saved for subalbums (2nd try, " + str(original_thumb_size) + ")", "", 2)
+					msg = "saved for subalbums (2nd try, " + str(original_thumb_size) + ")"
 				else:
-					message("saved for media (2nd try, " + str(original_thumb_size) + ")", "", 2)
+					msg = "saved for media (2nd try, " + str(original_thumb_size) + ")"
+				if Options.config['copy_exif_into_reductions']:
+					msg += " with exif data"
+				message(msg, "", 2)
 				back_level()
 			except KeyboardInterrupt:
 				try:

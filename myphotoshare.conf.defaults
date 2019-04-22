@@ -175,6 +175,8 @@ metadata_tools_preference = ['exiftool', 'exifread', 'PIL']
 #   e.g., with 8 cores, you could set it to 4 or 2
 num_processors = 1
 
+# Should exif metadata (including copyright info) be copied into all the reductions and thumbnails?
+copy_exif_into_reductions = false
 
 ###########################################################
 # scanner and ui options
