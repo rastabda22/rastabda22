@@ -1,6 +1,7 @@
 * fixed bug with spurious text seen on mobile when loading
 * fixed map size on both pc and mobile (with css _modal_)
 * New option 'copy_exif_into_reductions' (defaults to _false_) in order to permit copying all the exif metadata (and particularly the copyright info) to every reductions/thumbnails
+* new shortcut _<_/_>_ for rotating among browsing modes: folders -> by date -> by gps -> by search
 
 ### version v3.8 (March 4, 2019)
 
