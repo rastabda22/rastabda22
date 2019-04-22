@@ -387,19 +387,7 @@
 		var savedSearchSubAlbumHash = array[3];
 		var savedSearchAlbumHash = array[4];
 
-		if (mediaHash !== null) {
-			// hash of a media: remove the media
-			if (savedSearchAlbumHash !== null || util.isFolderCacheBase(albumHash))
-				// media in found album or in one of its subalbum
-				// or
-				// media in folder hash:
-				// remove the trailing media
-				resultHash = util.pathJoin(hash.split("/").slice(1, -1));
-			else
-				// all the other cases
-				// remove the trailing media and the folder it's inside
-				resultHash = util.pathJoin(hash.split("/").slice(1, -2));
-		} else {
+		if (mediaHash === null || util.isAlbumWithOneMedia(currentAlbum)) {
 			// hash of an album: go up in the album tree
 			if (savedSearchAlbumHash !== null) {
 				if (albumHash == savedSearchSubAlbumHash)
@@ -428,6 +416,18 @@
 					resultHash = albumHash.split(Options.cache_folder_separator).slice(0, -1).join(Options.cache_folder_separator);
 				}
 			}
+		} else {
+			// hash of a media: remove the media
+			if (savedSearchAlbumHash !== null || util.isFolderCacheBase(albumHash))
+				// media in found album or in one of its subalbum
+				// or
+				// media in folder hash:
+				// remove the trailing media
+				resultHash = util.pathJoin(hash.split("/").slice(1, -1));
+			else
+				// all the other cases
+				// remove the trailing media and the folder it's inside
+				resultHash = util.pathJoin(hash.split("/").slice(1, -2));
 		}
 
 		return "#!/" + resultHash;
