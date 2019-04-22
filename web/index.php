@@ -253,6 +253,11 @@
 			</div>
 		</div>
 
+		<div id="folders-browsing" class="error"></div>
+		<div id="by-date-browsing" class="error"></div>
+		<div id="by-gps-browsing" class="error"></div>
+		<div id="by-search-browsing" class="error"></div>
+
 		<img id="prev" width="42" height="88" src="img/prev.png">
 		<img id="next" width="42" height="88" src="img/next.png">
 		<div id="pinch-container">

@@ -819,6 +819,10 @@
 		}
 	};
 
+	Utilities.prototype.HideId = function(id) {
+		$("#" + id).hide();
+	}
+
 	Utilities.correctPrevNextPosition = function() {
 		$("#prev").css("left", "");
 		if (! fullScreenStatus && currentAlbum.media.length > 1 && Utilities.lateralSocialButtons() && Utilities.isColliding($(".ssk-left"), $("#prev")))
