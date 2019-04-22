@@ -54,6 +54,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Link to original media.
 - [x] Link for direct download.
 - [x] Allows enlarging the photo till 1:1 aspect.
+- [x] Exif metadata (including copyright info) can be replicated into all the reductions/thumbnails
 
 ### For Geotaggers
 
