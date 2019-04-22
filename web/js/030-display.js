@@ -189,8 +189,8 @@ $(document).ready(function() {
 						currentMedia === null && currentAlbum.positionsAndMediaInTree.length
 					)
 				) {
-						$(".map-popup-trigger")[0].click();
-						return false;
+					$(".map-popup-trigger")[0].click();
+					return false;
 				}
 			}
 		}
