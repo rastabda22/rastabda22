@@ -2,6 +2,8 @@ var fullScreenStatus = false;
 var currentMedia = null;
 var currentAlbum = null;
 var nextMedia = null, prevMedia = null, upLink = "";
+var nextBrowsingModeLink = null, prevBrowsingModeLink = null, bySearchViewLink = null, isABrowsingModeChange = false;
+var nextBrowsingModeMessageId = null, prevBrowsingModeMessageId = null;
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
 var fromEscKey = false;
@@ -193,6 +195,32 @@ $(document).ready(function() {
 					return false;
 				}
 			}
+
+			// browsing mode switchers
+			if (
+				e.keyCode === 220 &&
+				//         > or <
+				currentMedia !== null &&
+				! isMap
+			) {
+				if (! e.shiftKey && prevBrowsingModeLink !== null) {
+					// it's a "<"
+					$(".error").stop().hide().css("opacity", 100);
+					$("#" + prevBrowsingModeMessageId).show();
+					$("#" + prevBrowsingModeMessageId).fadeOut(2500, function(){util.HideId(prevBrowsingModeMessageId)});
+					isABrowsingModeChange = true;
+					window.location.href = prevBrowsingModeLink;
+					return false;
+				} else if (e.shiftKey && nextBrowsingModeLink !== null) {
+					// it's a ">"
+					$(".error").stop().hide().css("opacity", 100);
+					$("#" + nextBrowsingModeMessageId).show();
+					$("#" + nextBrowsingModeMessageId).fadeOut(2500, function(){util.HideId(nextBrowsingModeMessageId)});
+					isABrowsingModeChange = true;
+					window.location.href = nextBrowsingModeLink;
+					return false;
+				}
+			}
 		}
 
 		if (
@@ -328,6 +356,11 @@ $(document).ready(function() {
 
 
 	$(window).hashchange(function() {
+		if (isABrowsingModeChange)
+			isABrowsingModeChange = false;
+		else
+			// the image has changed, reset the search link
+			bySearchViewLink = null;
 		$("#loading").show();
 		$("#album-view").removeClass("hidden");
 		$("link[rel=image_src]").remove();
