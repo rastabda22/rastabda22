@@ -217,9 +217,9 @@ class TreeWalker:
 							day_album.positions_and_media_in_tree = self.add_media_to_position(day_album.positions_and_media_in_tree, single_media, Options.config['by_date_string'])
 							month_album.positions_and_media_in_tree = self.add_media_to_position(month_album.positions_and_media_in_tree, single_media, Options.config['by_date_string'])
 							year_album.positions_and_media_in_tree = self.add_media_to_position(year_album.positions_and_media_in_tree, single_media, Options.config['by_date_string'])
-							by_date_album.positions_and_media_in_tree = self.add_media_to_position(by_date_album.positions_and_media_in_tree, single_media, Options.config['by_date_string'])
+							# by_date_album.positions_and_media_in_tree = self.add_media_to_position(by_date_album.positions_and_media_in_tree, single_media, Options.config['by_date_string'])
 
-						by_date_album.add_media(single_media)
+						# by_date_album.add_media(single_media)
 						by_date_album.num_media_in_sub_tree += 1
 						single_media_date = max(single_media.datetime_file, single_media.datetime_dir)
 						if day_max_file_date:
@@ -503,8 +503,8 @@ class TreeWalker:
 							country_album.positions_and_media_in_tree = self.add_media_to_position(country_album.positions_and_media_in_tree, single_media, Options.config['by_gps_string'])
 							country_album.add_media(single_media)
 							country_album.num_media_in_sub_tree += 1
-							by_geonames_album.positions_and_media_in_tree = self.add_media_to_position(by_geonames_album.positions_and_media_in_tree, single_media, Options.config['by_gps_string'])
-							by_geonames_album.add_media(single_media)
+							# by_geonames_album.positions_and_media_in_tree = self.add_media_to_position(by_geonames_album.positions_and_media_in_tree, single_media, Options.config['by_gps_string'])
+							# by_geonames_album.add_media(single_media)
 							by_geonames_album.num_media_in_sub_tree += 1
 
 							if place_album.center == {}:
