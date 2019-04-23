@@ -2,7 +2,7 @@ var fullScreenStatus = false;
 var currentMedia = null;
 var currentAlbum = null;
 var nextMedia = null, prevMedia = null, upLink = "";
-var nextBrowsingModeLink = null, prevBrowsingModeLink = null, bySearchViewLink = null, isABrowsingModeChange = false;
+var nextBrowsingModeLink = null, prevBrowsingModeLink = null, bySearchViewLink = null, byMapViewLink = null, isABrowsingModeChange = false;
 var nextBrowsingModeMessageId = null, prevBrowsingModeMessageId = null;
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
@@ -358,9 +358,11 @@ $(document).ready(function() {
 	$(window).hashchange(function() {
 		if (isABrowsingModeChange)
 			isABrowsingModeChange = false;
-		else
-			// the image has changed, reset the search link
+		else {
+			// the image has changed, reset the search and map link
 			bySearchViewLink = null;
+			byMapViewLink = null;
+		}
 		$("#loading").show();
 		$("#album-view").removeClass("hidden");
 		$("link[rel=image_src]").remove();

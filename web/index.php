@@ -257,6 +257,7 @@
 		<div id="by-date-browsing" class="error"></div>
 		<div id="by-gps-browsing" class="error"></div>
 		<div id="by-search-browsing" class="error"></div>
+		<div id="by-map-browsing" class="error"></div>
 
 		<img id="prev" width="42" height="88" src="img/prev.png">
 		<img id="next" width="42" height="88" src="img/next.png">
@@ -302,6 +303,8 @@
 		<li id="folders-view" class="day-gps-folders-view"></li>
 		<li id="by-date-view" class="day-gps-folders-view"></li>
 		<li id="by-gps-view" class="day-gps-folders-view"></li>
+		<li id="by-map-view" class="day-gps-folders-view"></li>
+		<li id="by-search-view" class="day-gps-folders-view"></li>
 
 		<li class="sort album-sort caption"></li>
 		<li class='sort album-sort by-date'></li>
