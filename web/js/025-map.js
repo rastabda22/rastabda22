@@ -272,7 +272,6 @@
 					mapAlbum.media = [];
 					mapAlbum.subalbums = [];
 					mapAlbum.cacheBase = Options.by_map_string + Options.cache_folder_separator + mapAlbumHash + Options.cache_folder_separator + currentAlbum.cacheBase;
-					mapAlbum.parentCacheBase = Options.by_map_string;
 					mapAlbum.path = mapAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
 					mapAlbum.physicalPath = mapAlbum.path;
 					mapAlbum.searchInFolderCacheBase = currentAlbum.cacheBase;

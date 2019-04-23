@@ -505,7 +505,6 @@
 				searchResultsAlbumFinal.numMediaInAlbum = 0;
 				searchResultsAlbumFinal.numMediaInSubTree = 0;
 				searchResultsAlbumFinal.cacheBase = albumHash;
-				searchResultsAlbumFinal.parentCacheBase = Options.by_search_string;
 				searchResultsAlbumFinal.path = searchResultsAlbumFinal.cacheBase.replace(Options.cache_folder_separator, "/");
 				searchResultsAlbumFinal.physicalPath = searchResultsAlbumFinal.path;
 				searchResultsAlbumFinal.searchInFolderCacheBase = mediaFolderHash;

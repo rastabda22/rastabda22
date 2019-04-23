@@ -434,8 +434,6 @@ class Album(object):
 		if self.cache_base == Options.config['folders_string']:
 			dictionary["numPoints"] = len(self.positions_and_media_in_tree)
 
-		if self.parent is not None:
-			dictionary["parentCacheBase"] = self.parent.cache_base
 		return dictionary
 
 
