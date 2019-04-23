@@ -420,10 +420,14 @@
 		}
 		$("#thumbs img.thumbnail").each(function() {
 			if (
-				(util.isFolderCacheBase(currentAlbum.cacheBase) || currentAlbum.cacheBase == Options.folders_string) && this.title === media.albumName ||
-				util.isByDateCacheBase(currentAlbum.cacheBase) && this.title === media.albumName ||
-				util.isByGpsCacheBase(currentAlbum.cacheBase) && this.title === media.albumName ||
-				util.isSearchCacheBase(currentAlbum.cacheBase) && this.title === media.albumName
+				this.title === media.albumName && (
+					util.isFolderCacheBase(currentAlbum.cacheBase) ||
+					currentAlbum.cacheBase == Options.folders_string ||
+					util.isByDateCacheBase(currentAlbum.cacheBase) ||
+					util.isByGpsCacheBase(currentAlbum.cacheBase) ||
+					util.isSearchCacheBase(currentAlbum.cacheBase) ||
+					util.isMapCacheBase(currentAlbum.cacheBase)
+				)
 			) {
 				thumb = $(this);
 				return false;
