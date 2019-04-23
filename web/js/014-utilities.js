@@ -75,13 +75,15 @@
 			// searched albums hasn't albumName property
 			property = 'path';
 
-		return a.filter(function (e) {
-			for (var i = 0; i < b.length; i ++) {
-				if (this.normalizeAccordingToOptions(b[i][property]) == this.normalizeAccordingToOptions(e[property]))
-					return true;
+		return a.filter(
+			function (e) {
+				for (var i = 0; i < b.length; i ++) {
+					if (this.normalizeAccordingToOptions(b[i][property]) == this.normalizeAccordingToOptions(e[property]))
+						return true;
+				}
+				return false;
 			}
-			return false;
-		});
+		);
 	};
 
 	Utilities.prototype.mergePoints = function(oldPoints, newPoints) {
