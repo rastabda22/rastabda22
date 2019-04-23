@@ -1267,7 +1267,6 @@
 			// $("#media-view .title").show();
 			TopFunctions.showMedia(currentAlbum, currentMedia, 'center');
 		} else {
-
 			// $("#album-view .title").show();
 			TopFunctions.setTitle("album", null);
 			// $("#media-view .title").hide();
@@ -1718,17 +1717,19 @@
 					);
 				}
 			}
-			// lazyload(document.querySelectorAll(".lazyload-media"));
-			$(function() {
-				$("img.lazyload-media").Lazy(
-					{
-						chainable: false,
-						autoDestroy: true,
-						threshold: Options.media_thumb_size,
-						removeAttribute: true
-					}
-				);
-			});
+
+			$("img.lazyload-media").Lazy(
+				{
+					// threshold: 2 * Options.media_thumb_size,
+					appendScroll: $(window)
+				}
+			);
+			$(".media-view-container img.lazyload-media").Lazy(
+				{
+					// threshold: 2 * Options.media_thumb_size,
+					appendScroll: $("#album-view")
+				}
+			);
 
 			if (currentMedia === null) {
 				if (fromEscKey && firstEscKey) {
@@ -2135,6 +2136,7 @@
 		f.setOptions();
 
 		if (! $("#album-view").hasClass("hidden"))
+			// f.scrollToThumb();
 			setTimeout(f.scrollToThumb, 1);
 	};
 
