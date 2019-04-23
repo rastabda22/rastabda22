@@ -420,7 +420,7 @@
 		}
 		$("#thumbs img.thumbnail").each(function() {
 			if (
-				this.title === media.albumName && (
+				this.title === util.pathJoin([media.albumName, media.name]) && (
 					util.isFolderCacheBase(currentAlbum.cacheBase) ||
 					currentAlbum.cacheBase == Options.folders_string ||
 					util.isByDateCacheBase(currentAlbum.cacheBase) ||

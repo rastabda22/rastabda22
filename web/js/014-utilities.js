@@ -78,7 +78,13 @@
 		return a.filter(
 			function (e) {
 				for (var i = 0; i < b.length; i ++) {
-					if (this.normalizeAccordingToOptions(b[i][property]) == this.normalizeAccordingToOptions(e[property]))
+					var first = b[i][property];
+					var second = e[property];
+					if (property == 'albumName') {
+						first = Utilities.pathJoin([first, b[i]['name']]);
+						second = Utilities.pathJoin([second, e['name']]);
+					}
+					if (this.normalizeAccordingToOptions(first) == this.normalizeAccordingToOptions(second))
 						return true;
 				}
 				return false;
@@ -145,7 +151,13 @@
 		for (var i = 0; i < b.length; i ++) {
 			if (! a.some(
 				function (e) {
-					return self.normalizeAccordingToOptions(b[i][property]) == self.normalizeAccordingToOptions(e[property]);
+					var first = b[i][property];
+					var second = e[property];
+					if (property == 'albumName') {
+						first = Utilities.pathJoin([first, b[i]['name']]);
+						second = Utilities.pathJoin([second, e['name']]);
+					}
+					return self.normalizeAccordingToOptions(first) == self.normalizeAccordingToOptions(second);
 				})
 			)
 				union.push(b[i]);
@@ -387,9 +399,9 @@
 		var container, mediaSrc;
 
 		if (media.mediaType == "video") {
-			if (fullScreenStatus && media.albumName.match(/\.avi$/) === null) {
+			if (fullScreenStatus && media.name.match(/\.avi$/) === null) {
 				// .avi videos are not played by browsers
-				mediaSrc = media.albumName;
+				mediaSrc = Utilities.pathJoin([media.albumName, media.name]);
 			} else {
 				mediaSrc = this.mediaPath(currentAlbum, media, "");
 			}
@@ -464,7 +476,7 @@
 			// it's already the original image
 			result = false;
 		else if (nextPhotoSize === 0)
-			result = currentMedia.albumName;
+			result = Utilities.pathJoin([currentMedia.albumName, currentMedia.name]);
 		else
 			result = Utilities.mediaPath(currentAlbum, currentMedia, nextPhotoSize);
 
@@ -480,9 +492,9 @@
 		var attrWidth = mediaWidth, attrHeight = mediaHeight;
 
 		if (media.mediaType == "video") {
-			if (fullScreenStatus && media.albumName.match(/\.avi$/) === null) {
+			if (fullScreenStatus && media.name.match(/\.avi$/) === null) {
 				// .avi videos are not played by browsers
-				mediaSrc = media.albumName;
+				mediaSrc = Utilities.pathJoin([media.albumName, media.name]);
 			} else {
 				mediaSrc = this.mediaPath(currentAlbum, media, "");
 			}
@@ -542,7 +554,7 @@
 	};
 
 	Utilities.originalMediaPath = function(media) {
-		return media.albumName;
+		return Utilities.pathJoin([media.albumName, media.name]);
 	};
 
 	Utilities.mediaPath = function(album, media, size) {

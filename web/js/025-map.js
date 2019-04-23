@@ -30,7 +30,7 @@
 					'lng': parseFloat(ev.data.media.metadata.longitude),
 					'lat' : parseFloat(ev.data.media.metadata.latitude),
 					'mediaNameList': [{
-						'name': ev.data.media.albumName,
+						'name': util.pathJoin([ev.data.media.albumName, ev.data.media.name]),
 						'cacheBase': ev.data.media.cacheBase,
 						'albumCacheBase': ev.data.album.cacheBase
 					}]
@@ -63,7 +63,7 @@
 					'lng': parseFloat(currentMedia.metadata.longitude),
 					'lat' : parseFloat(currentMedia.metadata.latitude),
 					'mediaNameList': [{
-						'name': currentMedia.albumName,
+						'name': util.pathJoin([currentMedia.albumName, currentMedia.name]),
 						'cacheBase': currentMedia.cacheBase,
 						'albumCacheBase': currentAlbum.cacheBase
 					}]
@@ -380,7 +380,7 @@
 						mediaHash = phFl.encodeHash(theAlbum, selectedMedia);
 						var codedHashId = getCodedHashId(photosInAlbumCopy[photoIndex].element);
 						var thumbHash = util.chooseThumbnail(theAlbum, selectedMedia, Options.media_thumb_size);
-						var imgTitle = selectedMedia.albumName;
+						var imgTitle = util.pathJoin([selectedMedia.albumName, selectedMedia.name]);
 
 						var thumbHeight, thumbWidth;
 

@@ -1989,8 +1989,7 @@ class Media(object):
 			media["checksum"] = self.checksum
 
 		# the following data don't belong properly to media, but to album, but they must be put here in order to work with date, gps and search structure
-		media["albumName"] = self.album_path
-		media["foldersAlbum"] = folders_album
+		media["albumName"] = self.album_path[:len(self.album_path) - len(self.name) - 1]
 		media["foldersCacheBase"] = self.album.cache_base
 		media["cacheSubdir"] = self.album.subdir
 		return media

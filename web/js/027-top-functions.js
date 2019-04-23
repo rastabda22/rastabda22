@@ -1624,7 +1624,7 @@
 						thumbWidth = thumbnailSize;
 						calculatedWidth = Options.media_thumb_size;
 					}
-					imgTitle = currentAlbum.media[i].albumName;
+					imgTitle = util.pathJoin([currentAlbum.media[i].albumName, currentAlbum.media[i].name]);
 					calculatedHeight = Options.media_thumb_size;
 
 					var albumViewPadding = $("#album-view").css("padding");
@@ -1975,10 +1975,10 @@
 												titleName = util.pathJoin([humanGeonames, randomMedia.name]);
 												// randomMediaLink = util.pathJoin(["#!", randomMedia.gpsAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
 											} else if (util.isSearchCacheBase(currentAlbum.cacheBase)) {
-												titleName = randomMedia.albumName;
+												titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
 												// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, currentAlbum.cacheBase + Options.cache_folder_separator + theSubalbum.cacheBase, randomMedia.cacheBase]);
 											} else {
-												titleName = randomMedia.albumName;
+												titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
 												// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, randomMedia.cacheBase]);
 											}
 											randomMediaLink = phFl.encodeHash(randomAlbum, randomMedia);
