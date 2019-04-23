@@ -163,7 +163,7 @@
 				url: cacheFile,
 				success: function(theAlbum) {
 					var albumGot = function() {
-						var i;
+						var i, j;
 						if (cacheKey == Options.by_search_string) {
 							// root of search albums: build the word list
 							for (i = 0; i < theAlbum.subalbums.length; ++i) {
@@ -173,8 +173,15 @@
 						} else if (! util.isSearchCacheBase(cacheKey)) {
 							for (i = 0; i < theAlbum.subalbums.length; ++i)
 								theAlbum.subalbums[i].parent = theAlbum;
-							for (i = 0; i < theAlbum.media.length; ++i)
+							for (i = 0; i < theAlbum.media.length; ++i) {
+								// remove unnecessary properties
+								var unnecessaryProperties = ['checksum', 'dateTimeDir', 'dateTimeFile'];
+								for (j = 0; j < unnecessaryProperties.length; j ++)
+									delete theAlbum.media[i][unnecessaryProperties[j]];
+
+								// add parent album
 								theAlbum.media[i].parent = theAlbum;
+							}
 						}
 
 						PhotoFloat.albumCache[cacheKey] = theAlbum;
