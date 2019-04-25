@@ -4,7 +4,9 @@
 
 	/* constructor */
 	function PhotoFloat() {
-		PhotoFloat.albumCache = [];
+		PhotoFloat.cache = {};
+		PhotoFloat.cache.albums = {};
+		PhotoFloat.cache.positions = {};
 		this.geotaggedPhotosFound = null;
 		this.searchWordsFromJsonFile = [];
 		this.searchAlbumCacheBaseFromJsonFile = [];
@@ -24,7 +26,7 @@
 		rootMapAlbum.media = [];
 		rootMapAlbum.positionsAndMediaInTree = [];
 
-		PhotoFloat.albumCache[rootMapAlbum.cacheBase] = rootMapAlbum;
+		PhotoFloat.cache.albums[rootMapAlbum.cacheBase] = rootMapAlbum;
 
 	}
 	PhotoFloat.addPositionsToSubalbums = function(thisAlbum) {
@@ -49,8 +51,8 @@
 				}
 
 				// save in the cache
-				subalbumCacheKey = thisAlbum.subalbums[iSubalbum].cacheBase + ".positions";
-				PhotoFloat.albumCache[subalbumCacheKey] = thisAlbum.subalbums[iSubalbum].positionsAndMediaInTree;
+				subalbumCacheKey = thisAlbum.subalbums[iSubalbum].cacheBase;
+				PhotoFloat.cache.positions[subalbumCacheKey] = thisAlbum.subalbums[iSubalbum].positionsAndMediaInTree;
 			}
 		}
 	};
@@ -59,9 +61,9 @@
 		var cacheFile = util.pathJoin([Options.server_cache_path, thisAlbum.cacheBase + ".positions.json"]);
 		var ajaxOptions;
 		// before getting the positions check whether it's in the cache
-		var cacheKey = thisAlbum.cacheBase + ".positions";
-		if (PhotoFloat.albumCache.hasOwnProperty(cacheKey)) {
-			thisAlbum.positionsAndMediaInTree = PhotoFloat.albumCache[cacheKey];
+		var cacheKey = thisAlbum.cacheBase;
+		if (PhotoFloat.cache.positions.hasOwnProperty(cacheKey)) {
+			thisAlbum.positionsAndMediaInTree = PhotoFloat.cache.positions[cacheKey];
 			// we must add the corresponding positions to every subalbum too
 			PhotoFloat.addPositionsToSubalbums(thisAlbum);
 			callback(thisAlbum);
@@ -76,7 +78,7 @@
 					// we must add the corresponding positions to every subalbums
 					PhotoFloat.addPositionsToSubalbums(thisAlbum);
 
-					PhotoFloat.albumCache[cacheKey] = positions;
+					PhotoFloat.cache.positions[cacheKey] = positions;
 
 					callback(thisAlbum);
 				}
@@ -94,8 +96,8 @@
 		if (! Options.search_inside_words && Options.use_stop_words) {
 			var stopWordsFileName = 'stopwords.json';
 			// before getting the file check whether it's in the cache
-			if (PhotoFloat.albumCache.hasOwnProperty(stopWordsFileName)) {
-				callback(PhotoFloat.albumCache[stopWordsFileName]);
+			if (PhotoFloat.cache.hasOwnProperty("stopWords")) {
+				callback(PhotoFloat.cache.stopWords);
 			} else {
 				// get the file
 				var stopWordsFile = util.pathJoin([Options.server_cache_path, stopWordsFileName]);
@@ -104,7 +106,7 @@
 					dataType: "json",
 					url: stopWordsFile,
 					success: function(stopWords) {
-						PhotoFloat.albumCache[stopWordsFileName] = stopWords['stopWords'];
+						PhotoFloat.cache.stopWords = stopWords['stopWords'];
 						callback(stopWords['stopWords']);
 					}
 				};
@@ -136,15 +138,15 @@
 		} else
 			cacheKey = thisAlbum.cacheBase;
 
-		if (PhotoFloat.albumCache.hasOwnProperty(cacheKey)) {
+		if (PhotoFloat.cache.albums.hasOwnProperty(cacheKey)) {
 			var executeCallback = function() {
 				if (typeof thisIndexWords === "undefined" && typeof thisIndexAlbums === "undefined") {
-					callback(PhotoFloat.albumCache[cacheKey]);
+					callback(PhotoFloat.cache.albums[cacheKey]);
 				} else {
-					callback(PhotoFloat.albumCache[cacheKey], thisIndexWords, thisIndexAlbums);
+					callback(PhotoFloat.cache.albums[cacheKey], thisIndexWords, thisIndexAlbums);
 				}
 			};
-			if (! PhotoFloat.albumCache[cacheKey].numPositionsInTree || PhotoFloat.albumCache[cacheKey].hasOwnProperty("positionsAndMediaInTree")) {
+			if (! PhotoFloat.cache.albums[cacheKey].numPositionsInTree || PhotoFloat.cache.albums[cacheKey].hasOwnProperty("positionsAndMediaInTree")) {
 				executeCallback();
 			} else {
 				// the positions are missing, get them
@@ -184,7 +186,7 @@
 							}
 						}
 
-						PhotoFloat.albumCache[cacheKey] = theAlbum;
+						PhotoFloat.cache.albums[cacheKey] = theAlbum;
 
 						if (typeof thisIndexWords === "undefined" && typeof thisIndexAlbums === "undefined")
 							callback(theAlbum);
@@ -540,10 +542,10 @@
 		if (PhotoFloat.searchAndSubalbumHash)
 			PhotoFloat.searchAndSubalbumHash = decodeURI(PhotoFloat.searchAndSubalbumHash);
 
-		if (PhotoFloat.albumCache.hasOwnProperty(albumHashToGet)) {
-			if (! PhotoFloat.albumCache[albumHashToGet].subalbums.length && ! PhotoFloat.albumCache[albumHashToGet].media.length)
+		if (PhotoFloat.cache.albums.hasOwnProperty(albumHashToGet)) {
+			if (! PhotoFloat.cache.albums[albumHashToGet].subalbums.length && ! PhotoFloat.cache.albums[albumHashToGet].media.length)
 				util.noResults();
-			PhotoFloat.selectMedia(PhotoFloat.albumCache[albumHashToGet], mediaFolderHash, mediaHash, callback);
+			PhotoFloat.selectMedia(PhotoFloat.cache.albums[albumHashToGet], mediaFolderHash, mediaHash, callback);
 		} else if (! util.isSearchCacheBase(albumHash) || SearchWordsFromUser.length === 0) {
 			this.getAlbum(
 				albumHashToGet,
@@ -910,9 +912,9 @@
 		// add the point count
 		resultsAlbumFinal.numPositionsInTree = resultsAlbumFinal.positionsAndMediaInTree.length;
 		// save in the cash array
-		if (! PhotoFloat.albumCache.hasOwnProperty(resultsAlbumFinal.cacheBase)) {
-			PhotoFloat.albumCache[resultsAlbumFinal.cacheBase] = resultsAlbumFinal;
-			PhotoFloat.albumCache[resultsAlbumFinal.cacheBase + ".positions"] = resultsAlbumFinal.positionsAndMediaInTree;
+		if (! PhotoFloat.cache.albums.hasOwnProperty(resultsAlbumFinal.cacheBase)) {
+			PhotoFloat.cache.albums[resultsAlbumFinal.cacheBase] = resultsAlbumFinal;
+			PhotoFloat.cache.positions[resultsAlbumFinal.cacheBase] = resultsAlbumFinal.positionsAndMediaInTree;
 		}
 
 		PhotoFloat.selectMedia(resultsAlbumFinal, null, mediaHash, callback);

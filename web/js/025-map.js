@@ -283,8 +283,8 @@
 						photoNumberInPopup += selectedPositions[indexPositions].mediaNameList.length;
 						for (iPhoto = 0; iPhoto < selectedPositions[indexPositions].mediaNameList.length; iPhoto ++) {
 							mediaNameListElement = selectedPositions[indexPositions].mediaNameList[iPhoto];
-							for (iMedia = 0; iMedia < PhotoFloat.albumCache[mediaNameListElement.albumCacheBase].media.length; iMedia ++) {
-								mediaElement = PhotoFloat.albumCache[mediaNameListElement.albumCacheBase].media[iMedia];
+							for (iMedia = 0; iMedia < PhotoFloat.cache.albums[mediaNameListElement.albumCacheBase].media.length; iMedia ++) {
+								mediaElement = PhotoFloat.cache.albums[mediaNameListElement.albumCacheBase].media[iMedia];
 								if (mediaElement.cacheBase == mediaNameListElement.cacheBase) {
 									mapAlbum.media.push(mediaElement);
 									break;
@@ -306,9 +306,9 @@
 					// );
 
 					// update the map root album in cache
-					PhotoFloat.albumCache[Options.by_map_string].subalbums.push(mapAlbum);
-					PhotoFloat.albumCache[Options.by_map_string].positionsAndMediaInTree = util.mergePoints(PhotoFloat.albumCache[Options.by_map_string].positionsAndMediaInTree, selectedPositions);
-					PhotoFloat.albumCache[Options.by_map_string].numMediaInSubTree += mapAlbum.numMediaInSubTree;
+					PhotoFloat.cache.albums[Options.by_map_string].subalbums.push(mapAlbum);
+					PhotoFloat.cache.albums[Options.by_map_string].positionsAndMediaInTree = util.mergePoints(PhotoFloat.cache.albums[Options.by_map_string].positionsAndMediaInTree, selectedPositions);
+					PhotoFloat.cache.albums[Options.by_map_string].numMediaInSubTree += mapAlbum.numMediaInSubTree;
 
 					phFl.endPreparingAlbumAndKeepOn(mapAlbum, null,
 						 function(){
