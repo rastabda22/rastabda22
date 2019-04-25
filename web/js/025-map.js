@@ -283,8 +283,9 @@
 						photoNumberInPopup += selectedPositions[indexPositions].mediaNameList.length;
 						for (iPhoto = 0; iPhoto < selectedPositions[indexPositions].mediaNameList.length; iPhoto ++) {
 							mediaNameListElement = selectedPositions[indexPositions].mediaNameList[iPhoto];
-							for (iMedia = 0; iMedia < phFl.getAlbumFromCache(mediaNameListElement.albumCacheBase).media.length; iMedia ++) {
-								mediaElement = phFl.getAlbumFromCache(mediaNameListElement.albumCacheBase).media[iMedia];
+							albumFromCache = phFl.getAlbumFromCache(mediaNameListElement.albumCacheBase);
+							for (iMedia = 0; iMedia < albumFromCache.media.length; iMedia ++) {
+								mediaElement = albumFromCache.media[iMedia];
 								if (mediaElement.cacheBase == mediaNameListElement.cacheBase) {
 									mapAlbum.media.push(mediaElement);
 									break;

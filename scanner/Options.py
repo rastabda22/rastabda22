@@ -197,6 +197,10 @@ def get_options():
 				config[option] = 1
 		else:
 			config[option] = usr_config.get('options', option)
+			if option in ('js_cache_levels'):
+				print(config[option])
+				config[option] = json.loads(config[option])
+
 
 		option_value = str(config[option])
 		option_length = len(option_value)
