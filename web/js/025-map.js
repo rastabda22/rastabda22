@@ -640,9 +640,9 @@
 								mapAlbum.positionsAndMediaInTree.push(positionsAndCountsElement);
 							}
 						}
+						MapFunctions.addMediaFromPositionsToMapAlbum(missingPositions, mapAlbum, resolve);
 					}
 
-					MapFunctions.addMediaFromPositionsToMapAlbum(missingPositions, mapAlbum, resolve);
 				}
 			);
 
