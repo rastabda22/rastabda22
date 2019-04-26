@@ -109,10 +109,10 @@
 			return JSON.stringify([reference.lat, reference.lng]) === JSON.stringify([element.lat, element.lng]);
 		}
 
-		function getCodedHashId(mediaNameListElement) {
-			var hash = mediaNameListElement.albumCacheBase + "--" + mediaNameListElement.cacheBase;
-			return "popup-img-" + phFl.hashCode(hash);
-		}
+		// function getCodedHashId(mediaNameListElement) {
+		// 	var hash = mediaNameListElement.albumCacheBase + "--" + mediaNameListElement.cacheBase;
+		// 	return "popup-img-" + phFl.hashCode(hash);
+		// }
 
 		function setPopupPosition() {
 			if (
@@ -175,49 +175,11 @@
 			$(function() {
 				$(selector).Lazy(
 					{
-						// beforeLoad: function(element) {
-						// 	var thumbHeight, thumbWidth;
-						//
-						// 	// calculate the width and height values
-						// 	imgData = JSON.parse(element.attr("data"));
-						// 	var width = imgData.width;
-						// 	var height = imgData.height;
-						//
-						// 	var calculatedWidth, calculatedHeight;
-						// 	if (Options.media_thumb_type == "fixed_height") {
-						// 		if (height < Options.media_thumb_size) {
-						// 			thumbHeight = height;
-						// 			thumbWidth = width;
-						// 		} else {
-						// 			thumbHeight = Options.media_thumb_size;
-						// 			thumbWidth = thumbHeight * width / height;
-						// 		}
-						// 		calculatedWidth = thumbWidth;
-						// 	} else if (Options.media_thumb_type == "square") {
-						// 		thumbHeight = Options.media_thumb_size;
-						// 		thumbWidth = Options.media_thumb_size;
-						// 		calculatedWidth = Options.media_thumb_size;
-						// 	}
-						//
-						// 	calculatedWidth = Math.min(
-						// 		calculatedWidth,
-						// 		$(window).innerWidth() - 2 * albumViewPadding
-						// 	);
-						// 	calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
-						//
-						// 	element.attr("src", "img/image-placeholder-blank.png");
-						// 	element.attr("height", thumbHeight);
-						// 	element.attr("width", thumbWidth);
-						// 	element.css("width", calculatedWidth + "px");
-						// 	element.parent().css("width", calculatedWidth + "px");
-						// 	element.parent().css("height", calculatedHeight + "px");
-						// 	element.parent().parent().css("width", calculatedWidth + "px");
-						// },
 						afterLoad: function(element) {
 							element.parent().parent().on(
 								'click',
 								function() {
-									imgData = JSON.parse(element.attr("data"));
+									var imgData = JSON.parse(element.attr("data"));
 									// called after an element was successfully handled
 									$('.leaflet-popup-close-button')[0].click();
 									// $('#popup #popup-content').html("");
@@ -301,8 +263,7 @@
 		function fillPopup(theAlbum) {
 			// we must get the media corresponding to the name in the point
 			// var markerClass;
-			var albumCacheBase = theAlbum.cacheBase;
-			var mediaIndex, photoIndex;
+			var mediaIndex, mediaHash;
 			var selectedMedia, images = "";
 
 			for(mediaIndex = 0; mediaIndex < theAlbum.media.length; mediaIndex ++) {
@@ -322,7 +283,6 @@
 				var thumbHeight, thumbWidth;
 
 				// calculate the width and height values
-				// imgData = JSON.parse(element.attr("data"));
 				var width = selectedMedia.metadata.size[0];
 				var height = selectedMedia.metadata.size[1];
 
@@ -402,112 +362,12 @@
 
 				// $("#popup-images-wrapper").html(imageString);
 				images += imageString;
-
-
-				// for(photoIndex = 0; photoIndex < photosInAlbumCopy.length; photoIndex ++) {
-				// 	if (theAlbum.media[mediaIndex].cacheBase == photosInAlbumCopy[photoIndex].element.cacheBase) {
-				// 		markerClass = photosInAlbumCopy[photoIndex].markerClass;
-				// 		selectedMedia = theAlbum.media[mediaIndex];
-				//
-				// 		mediaHash = phFl.encodeHash(theAlbum, selectedMedia);
-				// 		var codedHashId = getCodedHashId(photosInAlbumCopy[photoIndex].element);
-				// 		var thumbHash = util.chooseThumbnail(theAlbum, selectedMedia, Options.media_thumb_size);
-				// 		var imgTitle = util.pathJoin([selectedMedia.albumName, selectedMedia.name]);
-				//
-				// 		var thumbHeight, thumbWidth;
-				//
-				// 		// calculate the width and height values
-				// 		// imgData = JSON.parse(element.attr("data"));
-				// 		var width = selectedMedia.metadata.size[0];
-				// 		var height = selectedMedia.metadata.size[1];
-				//
-				// 		var calculatedWidth, calculatedHeight;
-				// 		if (Options.media_thumb_type == "fixed_height") {
-				// 			if (height < Options.media_thumb_size) {
-				// 				thumbHeight = height;
-				// 				thumbWidth = width;
-				// 			} else {
-				// 				thumbHeight = Options.media_thumb_size;
-				// 				thumbWidth = thumbHeight * width / height;
-				// 			}
-				// 			calculatedWidth = thumbWidth;
-				// 		} else if (Options.media_thumb_type == "square") {
-				// 			thumbHeight = Options.media_thumb_size;
-				// 			thumbWidth = Options.media_thumb_size;
-				// 			calculatedWidth = Options.media_thumb_size;
-				// 		}
-				//
-				// 		calculatedWidth = Math.min(
-				// 			calculatedWidth,
-				// 			$(window).innerWidth() - 2 * albumViewPadding
-				// 		);
-				// 		calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
-				//
-				// 		var imageString =
-				// 			"<div id='" + codedHashId + "' class='thumb-and-caption-container " + markerClass +"' ";
-				// 		imageString +=
-				// 				"style='" +
-				// 					"width: " + calculatedWidth + "px;";
-				// 		if (Options.spacing)
-				// 			imageString +=
-				// 				"style='" +
-				// 					"margin-right: " + Options.spacingToggle + "px; " +
-				// 					"margin-bottom: " + Options.spacingToggle + "px;";
-				// 		imageString += "'>";
-				// 		imageString +=
-				// 				"<div class='thumb-container'" +
-				// 				 	" style='" +
-				// 						"width: " + calculatedWidth + "px; " +
-				// 						"height: " + calculatedHeight + "px;" +
-				// 						"'" +
-				// 					"'>" +
-				// 						"<span class='helper'></span>" +
-				// 						"<img title='" + imgTitle + "' " +
-				// 							"alt='" + util.trimExtension(selectedMedia.name) + "' " +
-				// 							"data-src='" + encodeURI(thumbHash) + "' " +
-				// 							// "src='img/wait.png' " +
-				// 							"src='img/image-placeholder.png' " +
-				// 							"data='" +
-				// 							JSON.stringify(
-				// 								{
-				// 									"width": selectedMedia.metadata.size[0],
-				// 									"height": selectedMedia.metadata.size[1],
-				// 									"mediaHash": mediaHash
-				// 								}
-				// 							) +
-				// 							"' " +
-				// 							"class='lazyload-popup-media thumbnail" + "' " +
-				// 							"height='" + thumbHeight + "' " +
-				// 							"width='" + thumbWidth + "' " +
-				// 							" style='" +
-				// 								 "width: " + calculatedWidth + "px; " +
-				// 								 "height: " + calculatedHeight + "px;" +
-				// 								 "'" +
-				// 							"/>" +
-				// 				"</div>" +
-				// 				"<div class='media-caption'>" +
-				// 					"<span>" +
-				// 					selectedMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
-				// 					"</span>" +
-				// 				"</div>" +
-				// 			"</div>";
-				//
-				// 		// dataForClickEvents.push({"codedHashId": codedHashId, "mediaHash": mediaHash});
-				//
-				// 		// $("#popup-images-wrapper").html(imageString);
-				// 		imagesToAddString += imageString;
-				//
-				// 		// reduce the photos array, so that next iteration in faster
-				// 		photosInAlbumCopy = photosInAlbumCopy.splice(photoIndex, 1);
-				// 		break
-				// 	}
-				// }
 			}
 
 			return images;
 		}
 
-		function initializeMapAlbum() {
+		function initializeMapAlbum(mapAlbumHash) {
 			// initializes the map album
 			var mapAlbum = {};
 			mapAlbum.positionsAndMediaInTree = [];
@@ -524,7 +384,7 @@
 
 
 		// decide what point is to be used: the nearest to the clicked position
-		var minimumDistance = false, newMinimumDistance, distance, index;
+		var minimumDistance = false, newMinimumDistance, distance, index, iMediaPosition, iMediaAlbum;
 		for(i = 0; i < clusters.length; i ++) {
 			distance = Math.abs(
 				util.distanceBetweenCoordinatePoints(
@@ -551,14 +411,12 @@
 			selectedPositions = [];
 			photoNumberInPopup = 0;
 			$("#popup-images-wrapper").html("");
-			imagesString = '';
 		}
 
 		var currentCluster = clusters[index];
 		currentCluster.data.mediaNameList = [];
 		// build the cluster's media name list
 		var positionsAndCounts = [];
-		var markerClass;
 		for(i = 0; i < currentCluster._clusterMarkers.length; i ++) {
 			currentCluster.data.mediaNameList = currentCluster.data.mediaNameList.concat(currentCluster._clusterMarkers[i].data.mediaNameList);
 			positionsAndCounts.push(
@@ -611,16 +469,14 @@
 			// not control click: add (with shift) or replace (without shift) the positions
 			imagesToAddString = "";
 			dataForClickEvents = [];
-			imageLoadPromise = new Promise(
+			var imageLoadPromise = new Promise(
 				function(resolve, reject) {
-					var indexPositions, indexPhoto, mediaNameListElement, photosInAlbum, albumCacheBase, positionsAndCountsElement;
+					var indexPositions, positionsAndCountsElement;
 					if (jQuery.isEmptyObject(mapAlbum) || mapAlbum.media.length == 0 || ! evt.originalEvent.shiftKey) {
 						// normal click or shift click without previous content
 
 						lastAlbumIndex ++;
-						mapAlbumHash = lastAlbumIndex;
-
-						mapAlbum = initializeMapAlbum();
+						mapAlbum = initializeMapAlbum(lastAlbumIndex);
 
 						MapFunctions.addMediaFromPositionsToMapAlbum(positionsAndCounts, mapAlbum, resolve);
 					} else {
@@ -705,8 +561,8 @@
 			return imgClass;
 		}
 
-		var mediaNameListElement, mediaElement;
-		var albumsToGet = 0, albumsGot = 0, photosByAlbum = {};
+		var mediaNameListElement, indexPositions, indexPhoto, markerClass, photoIndex, mediaIndex;
+		var albumsToGet = 0, albumsGot = 0, photosByAlbum = {}, positionsAndCountsElement, photosInAlbum;
 
 		// in order to add the html code for the images to a string,
 		// we group the photos by album: this way we rationalize the process of getting them
@@ -730,27 +586,29 @@
 		}
 
 		// ok, now we can interate over the object we created and add the media to the map album
-		for (albumCacheBase in photosByAlbum) {
+		for (var albumCacheBase in photosByAlbum) {
+			if (photosByAlbum.hasOwnProperty(albumCacheBase)) {
 			photosInAlbum = photosByAlbum[albumCacheBase];
-			phFl.getAlbum(
-				albumCacheBase,
-				function(theAlbum, photosInAlbum) {
-					for(mediaIndex = 0; mediaIndex < theAlbum.media.length; mediaIndex ++) {
-						for(photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
-							if (theAlbum.media[mediaIndex].cacheBase == photosInAlbum[photoIndex].element.cacheBase) {
-								mapAlbum.media.push(theAlbum.media[mediaIndex]);
+				phFl.getAlbum(
+					albumCacheBase,
+					function(theAlbum, photosInAlbum) {
+						for(mediaIndex = 0; mediaIndex < theAlbum.media.length; mediaIndex ++) {
+							for(photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
+								if (theAlbum.media[mediaIndex].cacheBase == photosInAlbum[photoIndex].element.cacheBase) {
+									mapAlbum.media.push(theAlbum.media[mediaIndex]);
+								}
 							}
 						}
-					}
 
-					albumsGot ++;
-					if (albumsGot == albumsToGet)
-						resolve(mapAlbum);
-				},
-				util.die,
-				photosInAlbum,
-				null
-			);
+						albumsGot ++;
+						if (albumsGot == albumsToGet)
+							resolve(mapAlbum);
+					},
+					util.die,
+					photosInAlbum,
+					null
+				);
+			}
 		}
 	};
 
