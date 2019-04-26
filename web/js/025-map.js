@@ -240,7 +240,7 @@
 		}
 
 		function buildPopupHeader() {
-			$("#popup-photo-count-number").html(photoNumberInPopup);
+			$("#popup-photo-count-number").html(mapAlbum.media.length);
 			$("#popup-photo-count").css("max-width", maxWidthForThumbnails);
 			// add the click event for showing the photos in the popup as an album
 			$("#popup-photo-count").on(
@@ -249,59 +249,9 @@
 					"selectedPositions": selectedPositions
 				},
 				function(ev) {
-					// // every album is identified by a string which is tied to the selected markers
-					// var nudePointList = [], indexPositions, iPhoto, iMedia;
-					// for (var i = 0; i < selectedPositions.length; ++i) {
-					// 	nudePointList.push([selectedPositions[i].lat, selectedPositions[i].lng]);
-					// }
-					lastAlbumIndex ++;
-					mapAlbumHash = lastAlbumIndex;
-
-					// initialize the map album
-					mapAlbum = {};
-					mapAlbum.positionsAndMediaInTree = selectedPositions;
-					mapAlbum.media = [];
-					mapAlbum.subalbums = [];
-					mapAlbum.cacheBase = Options.by_map_string + Options.cache_folder_separator + mapAlbumHash + Options.cache_folder_separator + currentAlbum.cacheBase;
-					mapAlbum.path = mapAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
-					mapAlbum.physicalPath = mapAlbum.path;
-					mapAlbum.searchInFolderCacheBase = currentAlbum.cacheBase;
-
-					// build the media list
-					// surely the albums are already in cache
-					var mediaNameListElement, mediaElement;
-					for (indexPositions = 0; indexPositions < selectedPositions.length; indexPositions ++) {
-						photoNumberInPopup += selectedPositions[indexPositions].mediaNameList.length;
-						for (iPhoto = 0; iPhoto < selectedPositions[indexPositions].mediaNameList.length; iPhoto ++) {
-							mediaNameListElement = selectedPositions[indexPositions].mediaNameList[iPhoto];
-							albumFromCache = phFl.getAlbumFromCache(mediaNameListElement.albumCacheBase);
-							for (iMedia = 0; iMedia < albumFromCache.media.length; iMedia ++) {
-								mediaElement = albumFromCache.media[iMedia];
-								if (mediaElement.cacheBase == mediaNameListElement.cacheBase) {
-									mapAlbum.media.push(mediaElement);
-									break;
-								}
-							}
-						}
-					}
-					mapAlbum.numMediaInAlbum = mapAlbum.media.length;
-					mapAlbum.numMediaInSubTree = mapAlbum.media.length;
-					mapAlbum.numPositionsInTree = selectedPositions.length;
 					$('.leaflet-popup-close-button')[0].click();
 					// $('#popup #popup-content').html("");
 					$('.modal-close')[0].click();
-					// // prepare the promise, otherways getAlbum cannot find the album in cache
-					// PhotoFloat.promises[mapAlbum.cacheBase] = new Promise(
-					// 	function(resolve, reject) {
-					// 		resolve();
-					// 	}
-					// );
-
-					// update the map root album in cache
-					var rootMapAlbum = phFl.getAlbumFromCache(Options.by_map_string);
-					rootMapAlbum.subalbums.push(mapAlbum);
-					rootMapAlbum.positionsAndMediaInTree = util.mergePoints(rootMapAlbum.positionsAndMediaInTree, selectedPositions);
-					rootMapAlbum.numMediaInSubTree += mapAlbum.numMediaInSubTree;
 
 					phFl.endPreparingAlbumAndKeepOn(mapAlbum, null,
 						 function(){
@@ -348,122 +298,213 @@
 			mymap.panBy([panX, panY], {"animate": false});
 		}
 
-		// function addThumbnailToString(theAlbum, mediaNameListElement, markerClass) {
-		function addThumbnailsToString(theAlbum, photosInAlbum) {
+		function fillPopup(theAlbum) {
 			// we must get the media corresponding to the name in the point
-			var markerClass;
+			// var markerClass;
 			var albumCacheBase = theAlbum.cacheBase;
 			var mediaIndex, photoIndex;
-			var selectedMedia;
+			var selectedMedia, images = "";
 
 			for(mediaIndex = 0; mediaIndex < theAlbum.media.length; mediaIndex ++) {
-				var photosInAlbumCopy = photosInAlbum.slice();
-
 				albumViewPadding = $("#album-view").css("padding");
 				if (! albumViewPadding)
 					albumViewPadding = 0;
 				else
 					albumViewPadding = parseInt(albumViewPadding);
 
-				for(photoIndex = 0; photoIndex < photosInAlbumCopy.length; photoIndex ++) {
-					if (theAlbum.media[mediaIndex].cacheBase == photosInAlbumCopy[photoIndex].element.cacheBase) {
-						markerClass = photosInAlbumCopy[photoIndex].markerClass;
-						selectedMedia = theAlbum.media[mediaIndex];
+				selectedMedia = theAlbum.media[mediaIndex];
 
-						mediaHash = phFl.encodeHash(theAlbum, selectedMedia);
-						var codedHashId = getCodedHashId(photosInAlbumCopy[photoIndex].element);
-						var thumbHash = util.chooseThumbnail(theAlbum, selectedMedia, Options.media_thumb_size);
-						var imgTitle = util.pathJoin([selectedMedia.albumName, selectedMedia.name]);
+				mediaHash = phFl.encodeHash(theAlbum, selectedMedia);
+				// var codedHashId = getCodedHashId(photosInAlbumCopy[photoIndex].element);
+				var thumbHash = util.chooseThumbnail(theAlbum, selectedMedia, Options.media_thumb_size);
+				var imgTitle = util.pathJoin([selectedMedia.albumName, selectedMedia.name]);
 
-						var thumbHeight, thumbWidth;
+				var thumbHeight, thumbWidth;
 
-						// calculate the width and height values
-						// imgData = JSON.parse(element.attr("data"));
-						var width = selectedMedia.metadata.size[0];
-						var height = selectedMedia.metadata.size[1];
+				// calculate the width and height values
+				// imgData = JSON.parse(element.attr("data"));
+				var width = selectedMedia.metadata.size[0];
+				var height = selectedMedia.metadata.size[1];
 
-						var calculatedWidth, calculatedHeight;
-						if (Options.media_thumb_type == "fixed_height") {
-							if (height < Options.media_thumb_size) {
-								thumbHeight = height;
-								thumbWidth = width;
-							} else {
-								thumbHeight = Options.media_thumb_size;
-								thumbWidth = thumbHeight * width / height;
-							}
-							calculatedWidth = thumbWidth;
-						} else if (Options.media_thumb_type == "square") {
-							thumbHeight = Options.media_thumb_size;
-							thumbWidth = Options.media_thumb_size;
-							calculatedWidth = Options.media_thumb_size;
-						}
-
-						calculatedWidth = Math.min(
-							calculatedWidth,
-							$(window).innerWidth() - 2 * albumViewPadding
-						);
-						calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
-
-						var imageString =
-							"<div id='" + codedHashId + "' class='thumb-and-caption-container " + markerClass +"' ";
-						imageString +=
-								"style='" +
-									"width: " + calculatedWidth + "px;";
-						if (Options.spacing)
-							imageString +=
-								"style='" +
-									"margin-right: " + Options.spacingToggle + "px; " +
-									"margin-bottom: " + Options.spacingToggle + "px;";
-						imageString += "'>";
-						imageString +=
-								"<div class='thumb-container'" +
-								 	" style='" +
-										"width: " + calculatedWidth + "px; " +
-										"height: " + calculatedHeight + "px;" +
-										"'" +
-									"'>" +
-										"<span class='helper'></span>" +
-										"<img title='" + imgTitle + "' " +
-											"alt='" + util.trimExtension(selectedMedia.name) + "' " +
-											"data-src='" + encodeURI(thumbHash) + "' " +
-											// "src='img/wait.png' " +
-											"src='img/image-placeholder.png' " +
-											"data='" +
-											JSON.stringify(
-												{
-													"width": selectedMedia.metadata.size[0],
-													"height": selectedMedia.metadata.size[1],
-													"mediaHash": mediaHash
-												}
-											) +
-											"' " +
-											"class='lazyload-popup-media thumbnail" + "' " +
-											"height='" + thumbHeight + "' " +
-											"width='" + thumbWidth + "' " +
-											" style='" +
-												 "width: " + calculatedWidth + "px; " +
-												 "height: " + calculatedHeight + "px;" +
-												 "'" +
-											"/>" +
-								"</div>" +
-								"<div class='media-caption'>" +
-									"<span>" +
-									selectedMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
-									"</span>" +
-								"</div>" +
-							"</div>";
-
-						// dataForClickEvents.push({"codedHashId": codedHashId, "mediaHash": mediaHash});
-
-						// $("#popup-images-wrapper").html(imageString);
-						imagesToAddString += imageString;
-
-						// reduce the photos array, so that next iteration in faster
-						photosInAlbumCopy = photosInAlbumCopy.splice(photoIndex, 1);
-						break
+				var calculatedWidth, calculatedHeight;
+				if (Options.media_thumb_type == "fixed_height") {
+					if (height < Options.media_thumb_size) {
+						thumbHeight = height;
+						thumbWidth = width;
+					} else {
+						thumbHeight = Options.media_thumb_size;
+						thumbWidth = thumbHeight * width / height;
 					}
+					calculatedWidth = thumbWidth;
+				} else if (Options.media_thumb_type == "square") {
+					thumbHeight = Options.media_thumb_size;
+					thumbWidth = Options.media_thumb_size;
+					calculatedWidth = Options.media_thumb_size;
 				}
+
+				calculatedWidth = Math.min(
+					calculatedWidth,
+					$(window).innerWidth() - 2 * albumViewPadding
+				);
+				calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
+
+				var imageString =
+					// "<div id='" + codedHashId + "' class='thumb-and-caption-container " + markerClass +"' ";
+					"<div class='thumb-and-caption-container' ";
+				imageString +=
+						"style='" +
+							"width: " + calculatedWidth + "px;";
+				if (Options.spacing)
+					imageString +=
+						"style='" +
+							"margin-right: " + Options.spacingToggle + "px; " +
+							"margin-bottom: " + Options.spacingToggle + "px;";
+				imageString += "'>";
+				imageString +=
+						"<div class='thumb-container'" +
+							" style='" +
+								"width: " + calculatedWidth + "px; " +
+								"height: " + calculatedHeight + "px;" +
+								"'" +
+							"'>" +
+								"<span class='helper'></span>" +
+								"<img title='" + imgTitle + "' " +
+									"alt='" + util.trimExtension(selectedMedia.name) + "' " +
+									"data-src='" + encodeURI(thumbHash) + "' " +
+									// "src='img/wait.png' " +
+									"src='img/image-placeholder.png' " +
+									"data='" +
+									JSON.stringify(
+										{
+											"width": selectedMedia.metadata.size[0],
+											"height": selectedMedia.metadata.size[1],
+											"mediaHash": mediaHash
+										}
+									) +
+									"' " +
+									"class='lazyload-popup-media thumbnail" + "' " +
+									"height='" + thumbHeight + "' " +
+									"width='" + thumbWidth + "' " +
+									" style='" +
+										 "width: " + calculatedWidth + "px; " +
+										 "height: " + calculatedHeight + "px;" +
+										 "'" +
+									"/>" +
+						"</div>" +
+						"<div class='media-caption'>" +
+							"<span>" +
+							selectedMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+							"</span>" +
+						"</div>" +
+					"</div>";
+
+				// dataForClickEvents.push({"codedHashId": codedHashId, "mediaHash": mediaHash});
+
+				// $("#popup-images-wrapper").html(imageString);
+				images += imageString;
+
+
+				// for(photoIndex = 0; photoIndex < photosInAlbumCopy.length; photoIndex ++) {
+				// 	if (theAlbum.media[mediaIndex].cacheBase == photosInAlbumCopy[photoIndex].element.cacheBase) {
+				// 		markerClass = photosInAlbumCopy[photoIndex].markerClass;
+				// 		selectedMedia = theAlbum.media[mediaIndex];
+				//
+				// 		mediaHash = phFl.encodeHash(theAlbum, selectedMedia);
+				// 		var codedHashId = getCodedHashId(photosInAlbumCopy[photoIndex].element);
+				// 		var thumbHash = util.chooseThumbnail(theAlbum, selectedMedia, Options.media_thumb_size);
+				// 		var imgTitle = util.pathJoin([selectedMedia.albumName, selectedMedia.name]);
+				//
+				// 		var thumbHeight, thumbWidth;
+				//
+				// 		// calculate the width and height values
+				// 		// imgData = JSON.parse(element.attr("data"));
+				// 		var width = selectedMedia.metadata.size[0];
+				// 		var height = selectedMedia.metadata.size[1];
+				//
+				// 		var calculatedWidth, calculatedHeight;
+				// 		if (Options.media_thumb_type == "fixed_height") {
+				// 			if (height < Options.media_thumb_size) {
+				// 				thumbHeight = height;
+				// 				thumbWidth = width;
+				// 			} else {
+				// 				thumbHeight = Options.media_thumb_size;
+				// 				thumbWidth = thumbHeight * width / height;
+				// 			}
+				// 			calculatedWidth = thumbWidth;
+				// 		} else if (Options.media_thumb_type == "square") {
+				// 			thumbHeight = Options.media_thumb_size;
+				// 			thumbWidth = Options.media_thumb_size;
+				// 			calculatedWidth = Options.media_thumb_size;
+				// 		}
+				//
+				// 		calculatedWidth = Math.min(
+				// 			calculatedWidth,
+				// 			$(window).innerWidth() - 2 * albumViewPadding
+				// 		);
+				// 		calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
+				//
+				// 		var imageString =
+				// 			"<div id='" + codedHashId + "' class='thumb-and-caption-container " + markerClass +"' ";
+				// 		imageString +=
+				// 				"style='" +
+				// 					"width: " + calculatedWidth + "px;";
+				// 		if (Options.spacing)
+				// 			imageString +=
+				// 				"style='" +
+				// 					"margin-right: " + Options.spacingToggle + "px; " +
+				// 					"margin-bottom: " + Options.spacingToggle + "px;";
+				// 		imageString += "'>";
+				// 		imageString +=
+				// 				"<div class='thumb-container'" +
+				// 				 	" style='" +
+				// 						"width: " + calculatedWidth + "px; " +
+				// 						"height: " + calculatedHeight + "px;" +
+				// 						"'" +
+				// 					"'>" +
+				// 						"<span class='helper'></span>" +
+				// 						"<img title='" + imgTitle + "' " +
+				// 							"alt='" + util.trimExtension(selectedMedia.name) + "' " +
+				// 							"data-src='" + encodeURI(thumbHash) + "' " +
+				// 							// "src='img/wait.png' " +
+				// 							"src='img/image-placeholder.png' " +
+				// 							"data='" +
+				// 							JSON.stringify(
+				// 								{
+				// 									"width": selectedMedia.metadata.size[0],
+				// 									"height": selectedMedia.metadata.size[1],
+				// 									"mediaHash": mediaHash
+				// 								}
+				// 							) +
+				// 							"' " +
+				// 							"class='lazyload-popup-media thumbnail" + "' " +
+				// 							"height='" + thumbHeight + "' " +
+				// 							"width='" + thumbWidth + "' " +
+				// 							" style='" +
+				// 								 "width: " + calculatedWidth + "px; " +
+				// 								 "height: " + calculatedHeight + "px;" +
+				// 								 "'" +
+				// 							"/>" +
+				// 				"</div>" +
+				// 				"<div class='media-caption'>" +
+				// 					"<span>" +
+				// 					selectedMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+				// 					"</span>" +
+				// 				"</div>" +
+				// 			"</div>";
+				//
+				// 		// dataForClickEvents.push({"codedHashId": codedHashId, "mediaHash": mediaHash});
+				//
+				// 		// $("#popup-images-wrapper").html(imageString);
+				// 		imagesToAddString += imageString;
+				//
+				// 		// reduce the photos array, so that next iteration in faster
+				// 		photosInAlbumCopy = photosInAlbumCopy.splice(photoIndex, 1);
+				// 		break
+				// 	}
+				// }
 			}
+
+			return images;
 		}
 
 		function initializeMapAlbum() {
@@ -611,6 +652,9 @@
 					mapAlbum.numMediaInAlbum = mapAlbum.media.length;
 					mapAlbum.numMediaInSubTree = mapAlbum.media.length;
 					mapAlbum.numPositionsInTree = selectedPositions.length;
+					// media must be sorted according to options
+					 mapAlbum.media = util.sortByDate(mapAlbum.media);
+
 					// update the map root album in cache
 					var rootMapAlbum = phFl.getAlbumFromCache(Options.by_map_string);
 					rootMapAlbum.subalbums.push(mapAlbum);
@@ -631,19 +675,18 @@
 
 					addPopupMover();
 
-					$('.leaflet-popup-close-button')[0].click();
-					// $('#popup #popup-content').html("");
-					$('.modal-close')[0].click();
+					// $('.leaflet-popup-close-button')[0].click();
+					// // $('#popup #popup-content').html("");
+					// $('.modal-close')[0].click();
 
-					phFl.endPreparingAlbumAndKeepOn(mapAlbum, null,
-						 function(){
-							 window.location.href = "#!" + mapAlbum.cacheBase;
-						 }
+					phFl.endPreparingAlbumAndKeepOn(
+						mapAlbum,
+						null,
+						function() {
+							var images = fillPopup(mapAlbum);
+							updatePopup(titleWrapper1.replace("maxWidthForThumbnails", maxWidthForThumbnails) + images + titleWrapper2);
+						}
 					);
-
-					var previousImagesString = $("#popup-images-wrapper").html();
-
-					updatePopup(titleWrapper1.replace("maxWidthForThumbnails", maxWidthForThumbnails) + previousImagesString + imagesToAddString + titleWrapper2);
 				}
 			);
 		}
