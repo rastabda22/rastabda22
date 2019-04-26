@@ -5,11 +5,9 @@
 	var f = new Functions();
 	var mapIsInitialized = false;
 	var mymap, popup;
-	var selectedPositions = [];
 	var titleWrapper1, titleWrapper2;
 	var pointList = [];
 	var hashParsed, lastAlbumIndex = 0;
-	var mapAlbum;
 
 	/* constructor */
 	function MapFunctions() {
@@ -99,7 +97,7 @@
 	};
 
 
-	MapFunctions.mapClick = function(evt, clusters, mapAlbum) {
+	MapFunctions.mapClick = function(evt, clusters) {
 		var clickedPosition = evt.latlng, i, albumViewPadding;
 		var maxWidthForThumbnails, maxHeightForThumbnails;
 		// console.log(clickedPosition, clusters);
@@ -161,7 +159,7 @@
 			$("#popup-images-wrapper").css("max-width", maxWidthForThumbnails).css("width", maxWidthForThumbnails);
 			$("#popup-photo-count").css("max-width", maxWidthForThumbnails);
 			// $(".leaflet-popup-content").css("max-width", maxWidthForThumbnails).css("width", maxWidthForThumbnails);
- 			popup.setLatLng(MapFunctions.averagePosition(selectedPositions));
+ 			popup.setLatLng(MapFunctions.averagePosition(mapAlbum.positionsAndMediaInTree));
 			buildPopupHeader();
 
 
@@ -205,10 +203,10 @@
 			$("#popup-photo-count").css("max-width", maxWidthForThumbnails);
 			// add the click event for showing the photos in the popup as an album
 			$("#popup-photo-count").on(
-				"click",
-				{
-					"selectedPositions": selectedPositions
-				},
+				// "click",
+				// {
+				// 	"selectedPositions": selectedPositions
+				// },
 				function(ev) {
 					$('.leaflet-popup-close-button')[0].click();
 					// $('#popup #popup-content').html("");
@@ -364,16 +362,16 @@
 
 		function initializeMapAlbum(mapAlbumHash) {
 			// initializes the map album
-			var mapAlbum = {};
-			mapAlbum.positionsAndMediaInTree = [];
-			mapAlbum.media = [];
-			mapAlbum.subalbums = [];
-			mapAlbum.cacheBase = Options.by_map_string + Options.cache_folder_separator + mapAlbumHash + Options.cache_folder_separator + currentAlbum.cacheBase;
-			mapAlbum.path = mapAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
-			mapAlbum.physicalPath = mapAlbum.path;
-			mapAlbum.searchInFolderCacheBase = currentAlbum.cacheBase;
+			var album = {};
+			album.positionsAndMediaInTree = [];
+			album.media = [];
+			album.subalbums = [];
+			album.cacheBase = Options.by_map_string + Options.cache_folder_separator + mapAlbumHash + Options.cache_folder_separator + currentAlbum.cacheBase;
+			album.path = album.cacheBase.replace(Options.cache_folder_separator, "/");
+			album.physicalPath = album.path;
+			album.searchInFolderCacheBase = currentAlbum.cacheBase;
 
-			return mapAlbum;
+			return album;
 		}
 
 
@@ -403,7 +401,7 @@
 		if (! evt.originalEvent.shiftKey && ! evt.originalEvent.ctrlKey) {
 			// reset the thumbnails if not shift- nor ctrl-clicking
 			// content.innerHTML = '';
-			selectedPositions = [];
+			// selectedPositions = [];
 			$("#popup-images-wrapper").html("");
 		}
 
@@ -457,7 +455,7 @@
 				}
 			);
 
-			if (! selectedPositions.length) {
+			if (! mapAlbum.media.length) {
 				popup.remove();
 				return;
 			} else {
@@ -503,26 +501,27 @@
 
 					mapAlbum.numMediaInAlbum = mapAlbum.media.length;
 					mapAlbum.numMediaInSubTree = mapAlbum.media.length;
-					mapAlbum.numPositionsInTree = selectedPositions.length;
+					mapAlbum.numPositionsInTree = positionsAndCounts.length;
+					mapAlbum.positionsAndMediaInTree = positionsAndCounts;
 					// media must be sorted according to options
 					 mapAlbum.media = util.sortByDate(mapAlbum.media);
 
 					// update the map root album in cache
 					var rootMapAlbum = phFl.getAlbumFromCache(Options.by_map_string);
 					rootMapAlbum.subalbums.push(mapAlbum);
-					rootMapAlbum.positionsAndMediaInTree = util.mergePoints(rootMapAlbum.positionsAndMediaInTree, selectedPositions);
+					rootMapAlbum.positionsAndMediaInTree = util.mergePoints(rootMapAlbum.positionsAndMediaInTree, positionsAndCounts);
 					rootMapAlbum.numMediaInSubTree += mapAlbum.numMediaInSubTree;
 
 					getImagesWrapperSizes();
 
-					selectedPositions = positionsAndCounts;
+					// selectedPositions = positionsAndCounts;
 					if (typeof popup !== "undefined") {
 						popup.remove();
 						$(".leaflet-popup").remove();
 					}
 					popup = L.popup({maxWidth: maxWidthForThumbnails, maxHeight: maxHeightForThumbnails, autoPan: false})
 						.setContent(titleWrapper1.replace("maxWidthForThumbnails", maxWidthForThumbnails) + titleWrapper2)
-						.setLatLng(MapFunctions.averagePosition(selectedPositions))
+						.setLatLng(MapFunctions.averagePosition(positionsAndCounts))
 						.openOn(mymap);
 
 					addPopupMover();
@@ -598,7 +597,6 @@
 						albumsGot ++;
 						if (albumsGot == albumsToGet) {
 							resolve(mapAlbum);
-							return mapAlbum;
 						}
 					},
 					util.die,
@@ -630,7 +628,6 @@
 		}
 
 		if(pointList) {
-			selectedPositions = [];
 			// calculate the center
 			var center = MapFunctions.averagePosition(pointList);
 
@@ -677,7 +674,7 @@
 				m.on(
 					'click',
 					function(e) {
-						mapAlbum = MapFunctions.mapClick(e, pruneCluster.Cluster._clusters, mapAlbum);
+						MapFunctions.mapClick(e, pruneCluster.Cluster._clusters);
 					}
 				);
 				return m;
@@ -773,7 +770,7 @@
 			mymap.on(
 				'click',
 				function(e) {
-					mapAlbum = MapFunctions.mapClick(e, pruneCluster.Cluster._clusters, mapAlbum);
+					MapFunctions.mapClick(e, pruneCluster.Cluster._clusters);
 				}
 			);
 		}

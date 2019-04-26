@@ -8,6 +8,8 @@ var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
 var fromEscKey = false;
 var Options = {};
+var selectedPositions = [];
+var mapAlbum = {};
 var isMobile = {
 	Android: function() {
 		return navigator.userAgent.match(/Android/i);
