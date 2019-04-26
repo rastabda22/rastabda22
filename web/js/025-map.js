@@ -10,7 +10,7 @@
 	var titleWrapper1, titleWrapper2;
 	var pointList = [];
 	var hashParsed, lastAlbumIndex = 0;
-	var mapAlbum = {};
+	var mapAlbum;
 
 	/* constructor */
 	function MapFunctions() {
@@ -100,7 +100,7 @@
 	};
 
 
-	MapFunctions.mapClick = function(evt, clusters) {
+	MapFunctions.mapClick = function(evt, clusters, mapAlbum) {
 		var clickedPosition = evt.latlng, i, albumViewPadding;
 		var maxWidthForThumbnails, maxHeightForThumbnails;
 		// console.log(clickedPosition, clusters);
@@ -464,7 +464,23 @@
 					}
 				}
 			}
-		};
+		}
+
+		function initializeMapAlbum() {
+			// initializes the map album
+			var mapAlbum = {};
+			mapAlbum.positionsAndMediaInTree = [];
+			mapAlbum.media = [];
+			mapAlbum.subalbums = [];
+			mapAlbum.cacheBase = Options.by_map_string + Options.cache_folder_separator + mapAlbumHash + Options.cache_folder_separator + currentAlbum.cacheBase;
+			mapAlbum.path = mapAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
+			mapAlbum.physicalPath = mapAlbum.path;
+			mapAlbum.searchInFolderCacheBase = currentAlbum.cacheBase;
+
+			return mapAlbum;
+		}
+
+
 
 		// decide what point is to be used: the nearest to the clicked position
 		var minimumDistance = false, newMinimumDistance, distance, index;
@@ -542,7 +558,7 @@
 				}
 			}
 
-			MapFunctions.addMediaFromPositionsToMapAlbum([]);
+			MapFunctions.addMediaFromPositionsToMapAlbum([], mapAlbum, resolve);
 
 			if (! selectedPositions.length) {
 				popup.remove();
@@ -563,17 +579,9 @@
 						lastAlbumIndex ++;
 						mapAlbumHash = lastAlbumIndex;
 
-						// initialize the map album
-						var mapAlbum = {};
-						mapAlbum.positionsAndMediaInTree = [];
-						mapAlbum.media = [];
-						mapAlbum.subalbums = [];
-						mapAlbum.cacheBase = Options.by_map_string + Options.cache_folder_separator + mapAlbumHash + Options.cache_folder_separator + currentAlbum.cacheBase;
-						mapAlbum.path = mapAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
-						mapAlbum.physicalPath = mapAlbum.path;
-						mapAlbum.searchInFolderCacheBase = currentAlbum.cacheBase;
+						mapAlbum = initializeMapAlbum();
 
-						MapFunctions.addMediaFromPositionsToMapAlbum(positionsAndCounts);
+						MapFunctions.addMediaFromPositionsToMapAlbum(positionsAndCounts, mapAlbum, resolve);
 					} else {
 						// shift-click with previous content
 						// determine what positions aren't yet in selectedPositions array
@@ -593,7 +601,7 @@
 						}
 					}
 
-					MapFunctions.addMediaFromPositionsToMapAlbum(missingPositions);
+					MapFunctions.addMediaFromPositionsToMapAlbum(missingPositions, mapAlbum, resolve);
 				}
 			);
 
@@ -643,7 +651,7 @@
 		return;
 	};
 
-	MapFunctions.addMediaFromPositionsToMapAlbum = function(positionsAndCounts) {
+	MapFunctions.addMediaFromPositionsToMapAlbum = function(positionsAndCounts, mapAlbum, resolve) {
 
 		function getMarkerClass(positionAndCount) {
 			var imgClass =
@@ -771,7 +779,7 @@
 				m.on(
 					'click',
 					function(e) {
-						MapFunctions.mapClick(e, pruneCluster.Cluster._clusters);
+						MapFunctions.mapClick(e, pruneCluster.Cluster._clusters, mapAlbum);
 					}
 				);
 				return m;
@@ -867,7 +875,7 @@
 			mymap.on(
 				'click',
 				function(e) {
-					MapFunctions.mapClick(e, pruneCluster.Cluster._clusters);
+					MapFunctions.mapClick(e, pruneCluster.Cluster._clusters, mapAlbum);
 				}
 			);
 		}
