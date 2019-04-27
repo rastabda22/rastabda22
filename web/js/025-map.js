@@ -371,7 +371,12 @@
 			return album;
 		}
 
+		// end of subfunctions, begin function code
 
+		// reset the thumbnails if not shift- nor ctrl-clicking
+		if (! evt.originalEvent.shiftKey && ! evt.originalEvent.ctrlKey) {
+			$("#popup-images-wrapper").html("");
+		}
 
 		// decide what point is to be used: the nearest to the clicked position
 		var minimumDistance = false, newMinimumDistance, distance, index, iMediaPosition, iMediaAlbum;
@@ -394,16 +399,9 @@
 				}
 			}
 		}
-
-		if (! evt.originalEvent.shiftKey && ! evt.originalEvent.ctrlKey) {
-			// reset the thumbnails if not shift- nor ctrl-clicking
-			// content.innerHTML = '';
-			// selectedPositions = [];
-			$("#popup-images-wrapper").html("");
-		}
-
 		var currentCluster = clusters[index];
 		currentCluster.data.mediaNameList = [];
+
 		// build the cluster's media name list
 		var positionsAndCounts = [];
 		for(i = 0; i < currentCluster._clusterMarkers.length; i ++) {
@@ -417,38 +415,54 @@
 				}
 			);
 		}
-		// console.log(index, clickedPosition, currentCluster, minimumDistance);
-		var indexPositions, imageLoadPromise;
+
+		var indexPositions, imageLoadPromise, mediaNameListElement;
 		if (evt.originalEvent.ctrlKey && ! jQuery.isEmptyObject(mapAlbum) && mapAlbum.positionsAndMediaInTree.length) {
 			// control click: remove the points
+			var matchingIndex, matchingMedia, positionsAndCountsElement, albumCacheBase;
 			for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
-				var matchingIndex = -1;
+				positionsAndCountsElement = positionsAndCounts[indexPositions];
 				if (
 					mapAlbum.positionsAndMediaInTree.some(
 						function(element, index) {
 							matchingIndex = index;
-							return matchPositionAndCount(positionsAndCounts[indexPositions], element);
+							return matchPositionAndCount(positionsAndCountsElement, element);
 						}
 					)
 				) {
+					// the position was present: remove the position itself...
 					mapAlbum.positionsAndMediaInTree.splice(matchingIndex, 1);
 
-					// the photos are to be removed too from mapAlbum
-					for (iMediaPosition = 0; iMediaPosition < positionsAndCounts[indexPositions].mediaNameList.length; iMediaPosition ++) {
-						for (iMediaAlbum = 0; iMediaAlbum < mapAlbum.media.length; iMediaAlbum ++) {
-							if (
-								mapAlbum.media[iMediaAlbum].cacheBase == positionsAndCounts[indexPositions].mediaNameList[iMediaPosition].cacheBase &&
-								mapAlbum.media[iMediaAlbum].albumCacheBase == positionsAndCounts[indexPositions].mediaNameList[iMediaPosition].albumCacheBase
+					// ...and the corresponding photos
+					for (iMediaPosition = 0; iMediaPosition < positionsAndCountsElement.mediaNameList.length; iMediaPosition ++) {
+						mediaNameListElement = positionsAndCountsElement.mediaNameList[iMediaPosition];
+						if (
+							mapAlbum.media.some(
+								function(media, index) {
+									matchingMedia = index;
+
+									if (util.isFolderCacheBase(mediaNameListElement.albumCacheBase))
+										albumCacheBase = media.foldersCacheBase;
+									else if (util.isByDateCacheBase(mediaNameListElement.albumCacheBase))
+										albumCacheBase = media.dayAlbumCacheBase;
+									else if (util.isByGpsCacheBase(mediaNameListElement.albumCacheBase))
+										albumCacheBase = media.gpsAlbumCacheBase;
+									var match =
+									 	media.cacheBase == mediaNameListElement.cacheBase &&
+										albumCacheBase == mediaNameListElement.albumCacheBase;
+									return match;
+								}
 							)
-								mapAlbum.media.splice(iMediaAlbum, 1);
-						}
+						)
+							mapAlbum.media.splice(matchingMedia, 1);
 					}
 				}
 			}
 
 			imageLoadPromise = new Promise(
 				function(resolve, reject) {
-					MapFunctions.addMediaFromPositionsToMapAlbum([], mapAlbum, resolve);
+					resolve(mapAlbum);
+					// MapFunctions.addMediaFromPositionsToMapAlbum([], mapAlbum, resolve);
 				}
 			);
 
