@@ -29,7 +29,8 @@
 					'mediaNameList': [{
 						'name': util.pathJoin([ev.data.media.albumName, ev.data.media.name]),
 						'cacheBase': ev.data.media.cacheBase,
-						'albumCacheBase': ev.data.album.cacheBase
+						'albumCacheBase': ev.data.album.cacheBase,
+						'foldersCacheBase': ev.data.media.foldersCacheBase
 					}]
 				};
 			MapFunctions.generateMap([point]);
@@ -62,7 +63,8 @@
 					'mediaNameList': [{
 						'name': util.pathJoin([currentMedia.albumName, currentMedia.name]),
 						'cacheBase': currentMedia.cacheBase,
-						'albumCacheBase': currentAlbum.cacheBase
+						'albumCacheBase': currentAlbum.cacheBase,
+						'foldersCacheBase': currentMedia.foldersCacheBase
 					}]
 				}
 			];
@@ -440,16 +442,9 @@
 							mapAlbum.media.some(
 								function(media, index) {
 									matchingMedia = index;
-
-									if (util.isFolderCacheBase(mediaNameListElement.albumCacheBase))
-										albumCacheBase = media.foldersCacheBase;
-									else if (util.isByDateCacheBase(mediaNameListElement.albumCacheBase))
-										albumCacheBase = media.dayAlbumCacheBase;
-									else if (util.isByGpsCacheBase(mediaNameListElement.albumCacheBase))
-										albumCacheBase = media.gpsAlbumCacheBase;
 									var match =
 									 	media.cacheBase == mediaNameListElement.cacheBase &&
-										albumCacheBase == mediaNameListElement.albumCacheBase;
+										media.foldersCacheBase == mediaNameListElement.foldersCacheBase;
 									return match;
 								}
 							)

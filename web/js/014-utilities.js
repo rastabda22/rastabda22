@@ -105,7 +105,8 @@
 			'lat' : parseFloat(newMedia.metadata.latitude),
 			'mediaNameList': [{
 				'cacheBase': newMedia.cacheBase,
-				'albumCacheBase': newMedia.parent.cacheBase
+				'albumCacheBase': newMedia.parent.cacheBase,
+				'foldersCacheBase': newMedia.foldersCacheBase
 			}]
 		};
 		return this.addPointToPoints(oldPoints, newPoint);
