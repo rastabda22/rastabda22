@@ -203,10 +203,7 @@
 			$("#popup-photo-count").css("max-width", maxWidthForThumbnails);
 			// add the click event for showing the photos in the popup as an album
 			$("#popup-photo-count").on(
-				// "click",
-				// {
-				// 	"selectedPositions": selectedPositions
-				// },
+				"click",
 				function(ev) {
 					$('.leaflet-popup-close-button')[0].click();
 					// $('#popup #popup-content').html("");
