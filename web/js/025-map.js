@@ -527,7 +527,7 @@
 					}
 					popup = L.popup({maxWidth: maxWidthForThumbnails, maxHeight: maxHeightForThumbnails, autoPan: false})
 						.setContent(titleWrapper1.replace("maxWidthForThumbnails", maxWidthForThumbnails) + titleWrapper2)
-						.setLatLng(MapFunctions.averagePosition(positionsAndCounts))
+						.setLatLng(MapFunctions.averagePosition(mapAlbum.positionsAndMediaInTree))
 						.openOn(mymap);
 
 					addPopupMover();
@@ -602,6 +602,7 @@
 
 						albumsGot ++;
 						if (albumsGot == albumsToGet) {
+							positionsAndCounts = util.mergePoints(mapAlbum.positionsAndMediaInTree, positionsAndCounts);
 							resolve(mapAlbum);
 						}
 					},
