@@ -8,7 +8,7 @@
 	var titleWrapper1, titleWrapper2;
 	var pointList = [];
 	var hashParsed, lastAlbumIndex = 0;
-
+	var mapAlbum = {};
 	/* constructor */
 	function MapFunctions() {
 	}
@@ -373,6 +373,47 @@
 			return album;
 		}
 
+		function endPreparingMapAlbumAndUpdatePopup(mapAlbum) {
+
+			mapAlbum.numMediaInAlbum = mapAlbum.media.length;
+			mapAlbum.numMediaInSubTree = mapAlbum.media.length;
+			mapAlbum.numPositionsInTree = mapAlbum.positionsAndMediaInTree.length;
+			// media must be sorted according to options
+			mapAlbum.media = util.sortByDate(mapAlbum.media);
+
+			// update the map root album in cache
+			var rootMapAlbum = phFl.getAlbumFromCache(Options.by_map_string);
+			rootMapAlbum.subalbums.push(mapAlbum);
+			rootMapAlbum.positionsAndMediaInTree = util.mergePoints(rootMapAlbum.positionsAndMediaInTree, mapAlbum.positionsAndMediaInTree);
+			rootMapAlbum.numMediaInSubTree += mapAlbum.numMediaInSubTree;
+
+			getImagesWrapperSizes();
+
+			if (typeof popup !== "undefined") {
+				popup.remove();
+				$(".leaflet-popup").remove();
+			}
+			popup = L.popup({maxWidth: maxWidthForThumbnails, maxHeight: maxHeightForThumbnails, autoPan: false})
+				.setContent(titleWrapper1.replace("maxWidthForThumbnails", maxWidthForThumbnails) + titleWrapper2)
+				.setLatLng(MapFunctions.averagePosition(mapAlbum.positionsAndMediaInTree))
+				.openOn(mymap);
+
+			addPopupMover();
+
+			// $('.leaflet-popup-close-button')[0].click();
+			// // $('#popup #popup-content').html("");
+			// $('.modal-close')[0].click();
+
+			phFl.endPreparingAlbumAndKeepOn(
+				mapAlbum,
+				null,
+				function() {
+					var images = generateHtmlForImages(mapAlbum);
+					updatePopup(titleWrapper1.replace("maxWidthForThumbnails", maxWidthForThumbnails) + images + titleWrapper2);
+				}
+			);
+		}
+
 		// end of subfunctions, begin function code
 
 		// reset the thumbnails if not shift- nor ctrl-clicking
@@ -419,53 +460,48 @@
 		}
 
 		var indexPositions, imageLoadPromise, mediaNameListElement;
-		if (evt.originalEvent.ctrlKey && ! jQuery.isEmptyObject(mapAlbum) && mapAlbum.positionsAndMediaInTree.length) {
-			// control click: remove the points
-			var matchingIndex, matchingMedia, positionsAndCountsElement, albumCacheBase;
-			for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
-				positionsAndCountsElement = positionsAndCounts[indexPositions];
-				if (
-					mapAlbum.positionsAndMediaInTree.some(
-						function(element, index) {
-							matchingIndex = index;
-							return matchPositionAndCount(positionsAndCountsElement, element);
-						}
-					)
-				) {
-					// the position was present: remove the position itself...
-					mapAlbum.positionsAndMediaInTree.splice(matchingIndex, 1);
-
-					// ...and the corresponding photos
-					for (iMediaPosition = 0; iMediaPosition < positionsAndCountsElement.mediaNameList.length; iMediaPosition ++) {
-						mediaNameListElement = positionsAndCountsElement.mediaNameList[iMediaPosition];
-						if (
-							mapAlbum.media.some(
-								function(media, index) {
-									matchingMedia = index;
-									var match =
-									 	media.cacheBase == mediaNameListElement.cacheBase &&
-										media.foldersCacheBase == mediaNameListElement.foldersCacheBase;
-									return match;
-								}
-							)
+		if (evt.originalEvent.ctrlKey) {
+			if (! jQuery.isEmptyObject(mapAlbum)) {
+				// control click: remove the points
+				var matchingIndex, matchingMedia, positionsAndCountsElement, albumCacheBase;
+				for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
+					positionsAndCountsElement = positionsAndCounts[indexPositions];
+					if (
+						mapAlbum.positionsAndMediaInTree.some(
+							function(element, index) {
+								matchingIndex = index;
+								return matchPositionAndCount(positionsAndCountsElement, element);
+							}
 						)
-							mapAlbum.media.splice(matchingMedia, 1);
+					) {
+						// the position was present: remove the position itself...
+						mapAlbum.positionsAndMediaInTree.splice(matchingIndex, 1);
+
+						// ...and the corresponding photos
+						for (iMediaPosition = 0; iMediaPosition < positionsAndCountsElement.mediaNameList.length; iMediaPosition ++) {
+							mediaNameListElement = positionsAndCountsElement.mediaNameList[iMediaPosition];
+							if (
+								mapAlbum.media.some(
+									function(media, index) {
+										matchingMedia = index;
+										var match =
+										 	media.cacheBase == mediaNameListElement.cacheBase &&
+											media.foldersCacheBase == mediaNameListElement.foldersCacheBase;
+										return match;
+									}
+								)
+							)
+								mapAlbum.media.splice(matchingMedia, 1);
+						}
 					}
 				}
-			}
 
-			imageLoadPromise = new Promise(
-				function(resolve, reject) {
-					resolve(mapAlbum);
-					// MapFunctions.addMediaFromPositionsToMapAlbum([], mapAlbum, resolve);
+
+				if (! mapAlbum.media.length) {
+					popup.remove();
+				} else {
+					endPreparingMapAlbumAndUpdatePopup(mapAlbum);
 				}
-			);
-
-			if (! mapAlbum.media.length) {
-				popup.remove();
-				return;
-			} else {
-				updatePopup($(".leaflet-popup-content").html());
 			}
 		} else {
 			// not control click: add (with shift) or replace (without shift) the positions
@@ -496,54 +532,16 @@
 								mapAlbum.positionsAndMediaInTree.push(positionsAndCountsElement);
 							}
 						}
-						MapFunctions.addMediaFromPositionsToMapAlbum(missingPositions, mapAlbum, resolve);
+						positionsAndCounts = missingPositions;
+						MapFunctions.addMediaFromPositionsToMapAlbum(positionsAndCounts, mapAlbum, resolve);
 					}
 
 				}
 			);
 
 			imageLoadPromise.then(
-				function(mapAlbum) {
-
-					mapAlbum.numMediaInAlbum = mapAlbum.media.length;
-					mapAlbum.numMediaInSubTree = mapAlbum.media.length;
-					mapAlbum.numPositionsInTree = positionsAndCounts.length;
-					mapAlbum.positionsAndMediaInTree = positionsAndCounts;
-					// media must be sorted according to options
-					 mapAlbum.media = util.sortByDate(mapAlbum.media);
-
-					// update the map root album in cache
-					var rootMapAlbum = phFl.getAlbumFromCache(Options.by_map_string);
-					rootMapAlbum.subalbums.push(mapAlbum);
-					rootMapAlbum.positionsAndMediaInTree = util.mergePoints(rootMapAlbum.positionsAndMediaInTree, positionsAndCounts);
-					rootMapAlbum.numMediaInSubTree += mapAlbum.numMediaInSubTree;
-
-					getImagesWrapperSizes();
-
-					// selectedPositions = positionsAndCounts;
-					if (typeof popup !== "undefined") {
-						popup.remove();
-						$(".leaflet-popup").remove();
-					}
-					popup = L.popup({maxWidth: maxWidthForThumbnails, maxHeight: maxHeightForThumbnails, autoPan: false})
-						.setContent(titleWrapper1.replace("maxWidthForThumbnails", maxWidthForThumbnails) + titleWrapper2)
-						.setLatLng(MapFunctions.averagePosition(mapAlbum.positionsAndMediaInTree))
-						.openOn(mymap);
-
-					addPopupMover();
-
-					// $('.leaflet-popup-close-button')[0].click();
-					// // $('#popup #popup-content').html("");
-					// $('.modal-close')[0].click();
-
-					phFl.endPreparingAlbumAndKeepOn(
-						mapAlbum,
-						null,
-						function() {
-							var images = generateHtmlForImages(mapAlbum);
-							updatePopup(titleWrapper1.replace("maxWidthForThumbnails", maxWidthForThumbnails) + images + titleWrapper2);
-						}
-					);
+				function() {
+					endPreparingMapAlbumAndUpdatePopup(mapAlbum);
 				}
 			);
 		}
@@ -602,7 +600,7 @@
 
 						albumsGot ++;
 						if (albumsGot == albumsToGet) {
-							positionsAndCounts = util.mergePoints(mapAlbum.positionsAndMediaInTree, positionsAndCounts);
+							mapAlbum.positionsAndMediaInTree = util.mergePoints(mapAlbum.positionsAndMediaInTree, positionsAndCounts);
 							resolve(mapAlbum);
 						}
 					},
