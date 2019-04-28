@@ -81,8 +81,8 @@
 					var first = b[i][property];
 					var second = e[property];
 					if (property == 'albumName') {
-						first = Utilities.pathJoin([first, b[i]['name']]);
-						second = Utilities.pathJoin([second, e['name']]);
+						first = Utilities.pathJoin([first, b[i].name]);
+						second = Utilities.pathJoin([second, e.name]);
 					}
 					if (this.normalizeAccordingToOptions(first) == this.normalizeAccordingToOptions(second))
 						return true;
@@ -155,8 +155,8 @@
 					var first = b[i][property];
 					var second = e[property];
 					if (property == 'albumName') {
-						first = Utilities.pathJoin([first, b[i]['name']]);
-						second = Utilities.pathJoin([second, e['name']]);
+						first = Utilities.pathJoin([first, b[i].name]);
+						second = Utilities.pathJoin([second, e.name]);
 					}
 					return self.normalizeAccordingToOptions(first) == self.normalizeAccordingToOptions(second);
 				})
@@ -838,7 +838,7 @@
 
 	Utilities.prototype.HideId = function(id) {
 		$("#" + id).hide();
-	}
+	};
 
 	Utilities.correctPrevNextPosition = function() {
 		$("#prev").css("left", "");
