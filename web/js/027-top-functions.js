@@ -1718,19 +1718,6 @@
 				}
 			}
 
-			$("img.lazyload-media").Lazy(
-				{
-					// threshold: 2 * Options.media_thumb_size,
-					appendScroll: $(window)
-				}
-			);
-			$(".media-view-container img.lazyload-media").Lazy(
-				{
-					// threshold: 2 * Options.media_thumb_size,
-					appendScroll: $("#album-view")
-				}
-			);
-
 			if (currentMedia === null) {
 				if (fromEscKey && firstEscKey) {
 					// respect the existing mediaLink (you cannot do it more than once)
@@ -1990,7 +1977,6 @@
 											$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName).attr("data-src", encodeURI(mediaSrc));
 											$("#" + id + " img.thumbnail").css("width", thumbWidth).css("height", thumbHeight);
 
-											// lazyload(document.querySelectorAll(".lazyload-album-" + id));
 											$(function() {
 												$("img.lazyload-album-" + id).Lazy(
 													{
@@ -2001,7 +1987,6 @@
 													}
 												);
 											});
-											// $("img.lazyload-album-" + id).Lazy();
 
 											numSubAlbumsReady ++;
 											if (numSubAlbumsReady >= theOriginalAlbumContainer.subalbums.length) {
@@ -2064,6 +2049,19 @@
 			}
 
 		}
+
+		$("img.lazyload-media").Lazy(
+			{
+				// threshold: 2 * Options.media_thumb_size,
+				appendScroll: $(window)
+			}
+		);
+		$(".media-view-container img.lazyload-media").Lazy(
+			{
+				// threshold: 2 * Options.media_thumb_size,
+				appendScroll: $("#album-view")
+			}
+		);
 
 		if (currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)) {
 			$("#media-view").addClass("hidden");

@@ -35,8 +35,7 @@
 		rootMapAlbum.positionsAndMediaInTree = [];
 
 		PhotoFloat.putAlbumIntoCache(rootMapAlbum.cacheBase, rootMapAlbum);
-
-	}
+	};
 
 	PhotoFloat.putAlbumIntoCache = function(cacheKey, album) {
 		if (! Options.hasOwnProperty("js_cache_levels"))
@@ -78,24 +77,11 @@
 		if (! Options.hasOwnProperty("js_cache_levels"))
 			Options.js_cache_levels = PhotoFloat.js_cache_levels;
 
-		var level, j, cacheLevelsLength = Options.js_cache_levels.length;
 		if (PhotoFloat.cache.albums.index.hasOwnProperty(cacheKey)) {
 			var cacheLevel = PhotoFloat.cache.albums.index[cacheKey];
 			return PhotoFloat.cache.albums[cacheLevel][cacheKey];
 		} else
 			return false;
-
-		// for (level = 0; level < cacheLevelsLength; level ++) {
-		// 	if (PhotoFloat.cache.albums.hasOwnProperty(level))
-		// 		for (j = 0; j < PhotoFloat.cache.albums[level].length; j ++)
-		// 			if (PhotoFloat.cache.albums[level][j].key == cacheKey)
-		// 				return PhotoFloat.cache.albums[level][j][cacheKey];
-		// }
-		// if (PhotoFloat.cache.albums.hasOwnProperty(cacheLevelsLength))
-		// 	for (j = 0; j < PhotoFloat.cache.albums[cacheLevelsLength].length; j ++)
-		// 		if (PhotoFloat.cache.albums[cacheLevelsLength][j].key == cacheKey)
-		// 			return PhotoFloat.cache.albums[cacheLevelsLength][j].album;
-		// return false;
 	};
 
 	PhotoFloat.addPositionsToSubalbums = function(thisAlbum) {
@@ -175,8 +161,8 @@
 					dataType: "json",
 					url: stopWordsFile,
 					success: function(stopWords) {
-						PhotoFloat.cache.stopWords = stopWords['stopWords'];
-						callback(stopWords['stopWords']);
+						PhotoFloat.cache.stopWords = stopWords.stopWords;
+						callback(stopWords.stopWords);
 					}
 				};
 				if (typeof error !== "undefined" && error !== null) {
@@ -207,7 +193,7 @@
 		} else
 			cacheKey = thisAlbum.cacheBase;
 
-		albumFromCache = PhotoFloat.getAlbumFromCache(cacheKey);
+		var albumFromCache = PhotoFloat.getAlbumFromCache(cacheKey);
 		if (albumFromCache) {
 			var executeCallback = function() {
 				if (typeof thisIndexWords === "undefined" && typeof thisIndexAlbums === "undefined") {
@@ -612,7 +598,7 @@
 		if (PhotoFloat.searchAndSubalbumHash)
 			PhotoFloat.searchAndSubalbumHash = decodeURI(PhotoFloat.searchAndSubalbumHash);
 
-		albumFromCache = PhotoFloat.getAlbumFromCache(albumHashToGet)
+		var albumFromCache = PhotoFloat.getAlbumFromCache(albumHashToGet);
 		if (albumFromCache) {
 			if (! albumFromCache.subalbums.length && ! albumFromCache.media.length)
 				util.noResults();
@@ -630,7 +616,7 @@
 			self = this;
 			var removedStopWords = [];
 
-			buildSearchResult = function() {
+			function buildSearchResult() {
 				searchResultsAlbumFinal.removedStopWords = removedStopWords;
 				// has any word remained after stop words have been removed?
 				if (SearchWordsFromUser.length == 0) {
@@ -900,7 +886,7 @@
 												var numSubalbumsProcessed = 0;
 												searchResultsAlbumFinal.numMediaInSubTree = searchResultsAlbumFinal.numMediaInAlbum;
 												if (searchResultsAlbumFinal.subalbums.length) {
-													for (var indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
+													for (indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
 														// update the media count
 														searchResultsAlbumFinal.numMediaInSubTree += searchResultsAlbumFinal.subalbums[indexSubalbums].numMediaInSubTree;
 														// add the points from the subalbums
@@ -942,7 +928,7 @@
 					},
 					error
 				);
-			};
+			}
 
 			// possibly we need the stop words, because if some searched word is a stop word it must be removed from the search
 			PhotoFloat.getStopWords(

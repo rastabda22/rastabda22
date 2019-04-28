@@ -264,7 +264,8 @@ class TreeWalker:
 			'lat' : media.latitude,
 			'mediaNameList': [{
 				'cacheBase': media.cache_base,
-				'albumCacheBase': media_album_cache_base
+				'albumCacheBase': media_album_cache_base,
+				'foldersCacheBase': media.album.cache_base
 			}]
 		}
 		positions = self.add_position_to_positions(positions, position)
