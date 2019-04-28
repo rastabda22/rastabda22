@@ -529,9 +529,13 @@
 						for (i = 0; i <= lastIndex; i ++) {
 							wordHashes = [];
 							for (j = 0; j < PhotoFloat.searchWordsFromJsonFile.length; j ++) {
-								if (PhotoFloat.searchWordsFromJsonFile[j].some(function(word) {
-									return word.indexOf(SearchWordsFromUserNormalized[i]) > -1;
-								})) {
+								if (
+									PhotoFloat.searchWordsFromJsonFile[j].some(
+										function(word) {
+											return word.indexOf(SearchWordsFromUserNormalized[i]) > -1;
+										}
+									)
+								) {
 									wordHashes.push(PhotoFloat.searchAlbumCacheBaseFromJsonFile[j]);
 									numSubAlbumsToGet ++;
 								}
@@ -544,13 +548,17 @@
 					} else {
 						// whole words
 						for (i = 0; i <= lastIndex; i ++)
-							if (PhotoFloat.searchWordsFromJsonFile.some(function(words, index, searchWords) {
-								if (words.indexOf(SearchWordsFromUserNormalized[i]) > -1) {
-									albumHashes.push([PhotoFloat.searchAlbumCacheBaseFromJsonFile[index]]);
-									return true;
-								}
-								return false;
-							})) {
+							if (
+								PhotoFloat.searchWordsFromJsonFile.some(
+									function(words, index, searchWords) {
+										if (words.indexOf(SearchWordsFromUserNormalized[i]) > -1) {
+											albumHashes.push([PhotoFloat.searchAlbumCacheBaseFromJsonFile[index]]);
+											return true;
+										}
+										return false;
+									}
+								)
+							) {
 								numSubAlbumsToGet ++;
 							} else {
 								albumHashes.push([]);
@@ -704,17 +712,25 @@
 													if (! Options.search_inside_words) {
 														// whole word
 														normalizedWords = util.normalizeAccordingToOptions(searchResultsAlbumFinal.media[indexMedia].words);
-														if (SearchWordsFromUserNormalizedAccordingToOptions.some(function(element, index) {
-															return index > lastIndex && normalizedWords.indexOf(element) == -1;
-														}))
+														if (
+															SearchWordsFromUserNormalizedAccordingToOptions.some(
+																function(element, index) {
+																	return index > lastIndex && normalizedWords.indexOf(element) == -1;
+																}
+															)
+														)
 															match = false;
 													} else {
 														// inside words
 														for (indexWordsLeft = lastIndex + 1; indexWordsLeft < SearchWordsFromUser.length; indexWordsLeft ++) {
 															normalizedWords = util.normalizeAccordingToOptions(searchResultsAlbumFinal.media[indexMedia].words);
-															if (! normalizedWords.some(function(element) {
-																return element.indexOf(SearchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft]) > -1;
-															})) {
+															if (
+																! normalizedWords.some(
+																	function(element) {
+																		return element.indexOf(SearchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft]) > -1;
+																	}
+																)
+															) {
 																match = false;
 																break;
 															}
@@ -734,17 +750,25 @@
 													if (! Options.search_inside_words) {
 														// whole word
 														normalizedWords = util.normalizeAccordingToOptions(searchResultsAlbumFinal.subalbums[indexSubalbums].words);
-														if (SearchWordsFromUserNormalizedAccordingToOptions.some(function(element, index) {
-															return index > lastIndex && normalizedWords.indexOf(element) == -1;
-														}))
+														if (
+															SearchWordsFromUserNormalizedAccordingToOptions.some(
+																function(element, index) {
+																	return index > lastIndex && normalizedWords.indexOf(element) == -1;
+																}
+															)
+														)
 															match = false;
 													} else {
 														// inside words
 														for (indexWordsLeft = lastIndex + 1; indexWordsLeft < SearchWordsFromUser.length; indexWordsLeft ++) {
 															normalizedWords = util.normalizeAccordingToOptions(searchResultsAlbumFinal.subalbums[indexSubalbums].words);
-															if (! normalizedWords.some(function(element) {
-																return element.indexOf(SearchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft]) > -1;
-															})) {
+															if (
+																! normalizedWords.some(
+																	function(element) {
+																		return element.indexOf(SearchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft]) > -1;
+																	}
+																)
+															) {
 																match = false;
 																break;
 															}
