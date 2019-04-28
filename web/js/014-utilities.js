@@ -604,6 +604,8 @@
 				hash = hash.substring(Options.byGpsStringWithTrailingSeparator.length);
 			else if (this.isSearchCacheBase(hash))
 				hash = hash.substring(Options.bySearchStringWithTrailingSeparator.length);
+			else if (this.isMapCacheBase(hash))
+				hash = hash.substring(Options.byMapStringWithTrailingSeparator.length);
 		}
 		if (media.cacheSubdir)
 			return this.pathJoin([Options.server_cache_path, media.cacheSubdir, hash]);
