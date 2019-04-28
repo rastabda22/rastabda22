@@ -208,7 +208,12 @@ $(document).ready(function() {
 					// it's a "<"
 					$(".error").stop().hide().css("opacity", 100);
 					$("#" + prevBrowsingModeMessageId).show();
-					$("#" + prevBrowsingModeMessageId).fadeOut(2500, function(){util.HideId(prevBrowsingModeMessageId)});
+					$("#" + prevBrowsingModeMessageId).fadeOut(
+						2500,
+						function(){
+							util.HideId(prevBrowsingModeMessageId);
+						}
+					);
 					isABrowsingModeChange = true;
 					window.location.href = prevBrowsingModeLink;
 					return false;
@@ -216,7 +221,12 @@ $(document).ready(function() {
 					// it's a ">"
 					$(".error").stop().hide().css("opacity", 100);
 					$("#" + nextBrowsingModeMessageId).show();
-					$("#" + nextBrowsingModeMessageId).fadeOut(2500, function(){util.HideId(nextBrowsingModeMessageId)});
+					$("#" + nextBrowsingModeMessageId).fadeOut(
+						2500,
+						function(){
+							util.HideId(nextBrowsingModeMessageId);
+						}
+					);
 					isABrowsingModeChange = true;
 					window.location.href = nextBrowsingModeLink;
 					return false;

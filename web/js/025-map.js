@@ -422,7 +422,7 @@
 		}
 
 		// decide what point is to be used: the nearest to the clicked position
-		var minimumDistance = false, newMinimumDistance, distance, index, iMediaPosition, iMediaAlbum;
+		var minimumDistance = false, newMinimumDistance, distance, index, iMediaPosition;
 		for(i = 0; i < clusters.length; i ++) {
 			distance = Math.abs(
 				util.distanceBetweenCoordinatePoints(
@@ -463,7 +463,7 @@
 		if (evt.originalEvent.ctrlKey) {
 			if (! jQuery.isEmptyObject(mapAlbum)) {
 				// control click: remove the points
-				var matchingIndex, matchingMedia, positionsAndCountsElement, albumCacheBase;
+				var matchingIndex, matchingMedia, positionsAndCountsElement;
 				for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
 					positionsAndCountsElement = positionsAndCounts[indexPositions];
 					if (
