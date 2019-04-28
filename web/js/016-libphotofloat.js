@@ -532,7 +532,7 @@
 								if (
 									PhotoFloat.searchWordsFromJsonFile[j].some(
 										function(word) {
-											return word.indexOf(SearchWordsFromUserNormalized[i]) > -1;
+											return word.includes(SearchWordsFromUserNormalized[i]);
 										}
 									)
 								) {
@@ -551,7 +551,7 @@
 							if (
 								PhotoFloat.searchWordsFromJsonFile.some(
 									function(words, index, searchWords) {
-										if (words.indexOf(SearchWordsFromUserNormalized[i]) > -1) {
+										if (words.includes(SearchWordsFromUserNormalized[i])) {
 											albumHashes.push([PhotoFloat.searchAlbumCacheBaseFromJsonFile[index]]);
 											return true;
 										}
@@ -593,7 +593,7 @@
 											for (indexMedia = 0; indexMedia < theAlbum.media.length; indexMedia ++) {
 												ithMedia = theAlbum.media[indexMedia];
 												if (
-													util.normalizeAccordingToOptions(ithMedia.words).indexOf(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) > -1 && (
+													util.normalizeAccordingToOptions(ithMedia.words).includes(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) && (
 														! Options.search_current_album ||
 														[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) !== -1 || (
 															// check whether the media is inside the current album tree
@@ -613,7 +613,7 @@
 											}
 											for (indexSubalbums = 0; indexSubalbums < theAlbum.subalbums.length; indexSubalbums ++) {
 												if (
-													util.normalizeAccordingToOptions(theAlbum.subalbums[indexSubalbums].words).indexOf(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) > -1 &&
+													util.normalizeAccordingToOptions(theAlbum.subalbums[indexSubalbums].words).includes(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) &&
 													(
 														! Options.search_current_album ||
 														[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) !== -1 || (
@@ -633,7 +633,7 @@
 												if (
 													normalizedWords.some(
 														function(element) {
-															return element.indexOf(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) > -1;
+															return element.includes(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
 														}
 													) && (
 														! Options.search_current_album ||
@@ -658,7 +658,7 @@
 												if (
 													normalizedWords.some(
 														function(element) {
-															return element.indexOf(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) > -1;
+															return element.includes(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
 														}
 													) && (
 														! Options.search_current_album ||
@@ -727,7 +727,7 @@
 															if (
 																! normalizedWords.some(
 																	function(element) {
-																		return element.indexOf(SearchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft]) > -1;
+																		return element.includes(SearchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft]);
 																	}
 																)
 															) {
@@ -765,7 +765,7 @@
 															if (
 																! normalizedWords.some(
 																	function(element) {
-																		return element.indexOf(SearchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft]) > -1;
+																		return element.includes(SearchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft]);
 																	}
 																)
 															) {
@@ -890,12 +890,11 @@
 				var wordsStringNormalized = util.removeAccents(wordsStringOriginal.toLowerCase());
 				if (wordsAndOptions.length > 1) {
 					var searchOptions = wordsAndOptions.slice(0, -1);
-					Options.search_inside_words = searchOptions.indexOf('i') > -1;
-					Options.search_any_word = searchOptions.indexOf('n') > -1;
-					Options.search_case_sensitive = searchOptions.indexOf('c') > -1;
-					Options.search_accent_sensitive = searchOptions.indexOf('a') > -1;
-					Options.search_current_album = searchOptions.indexOf('o') > -1;
-					// Options.search_refine = searchOptions.indexOf('e') > -1;
+					Options.search_inside_words = searchOptions.includes('i');
+					Options.search_any_word = searchOptions.includes('n');
+					Options.search_case_sensitive = searchOptions.includes('c');
+					Options.search_accent_sensitive = searchOptions.includes('a');
+					Options.search_current_album = searchOptions.includes('o');
 				}
 
 				Options.album_to_search_in = splittedAlbumHash.slice(2).join(Options.cache_folder_separator);
