@@ -1,3 +1,5 @@
+### version v3.8.1 (April 29, 2019)
+
 * fixed bug with spurious text seen on mobile when loading
 * fixed map size on both pc and mobile (with css _modal_)
 * fixed bug with lazy load not working in bottom thumbnails

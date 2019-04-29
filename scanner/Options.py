@@ -75,7 +75,9 @@ config['available_map_popup_positions'] = ['SE', 'NW' ]
 # json_version = 3.6.4 since changed wrong album/media attributes
 # json_version = 3.7beta1 since added positions_and_media_in_tree to every json file
 # json_version = 3.7beta2 since mvoed positions_and_media_in_tree to a separate file to avoid duplication and to save download time
-json_version = "3.8"
+# json_version = 3.8
+# json_version = 3.8.1 since slightly rationalized json files content
+json_version = "3.8.1"
 
 def initialize_opencv():
 	global face_cascade, eye_cascade
