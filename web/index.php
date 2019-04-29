@@ -333,6 +333,7 @@
 	<div id="error-text-folder" class="error"></div>
 	<div id="error-root-folder" class="error"></div>
 	<div id="error-text-image" class="error"></div>
+	<div id="error-unexistent-map-album" class="error"></div>
 	<div id="warning-no-geolocated-media" class="error"></div>
 
 	<div id="auth-text"><form id="auth-form"><input id="password" type="password" /><input type="submit" value="Login" /></form></div>

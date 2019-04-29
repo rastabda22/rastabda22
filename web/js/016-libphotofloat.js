@@ -212,6 +212,17 @@
 					error
 				);
 			}
+		} else if (util.isMapCacheBase(cacheKey)) {
+			// map album are not on server, if they aren't in cache go to root album
+			if (typeof reject !== "undefined")
+				reject();
+			$("#error-unexistent-map-album").stop().fadeIn(200);
+			$("#error-unexistent-map-album").fadeOut(
+				2000,
+				function () {
+					window.location.href = "#!" + Options.folders_string;
+				}
+			);
 		} else {
 			var cacheFile = util.pathJoin([Options.server_cache_path, cacheKey + ".json"]);
 			self = this;
