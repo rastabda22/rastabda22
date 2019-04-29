@@ -1201,6 +1201,11 @@
 		// $("#media-view").removeClass("hidden");
 	};
 
+	TopFunctions.scrollBottomThumbs = function(e, delta) {
+		this.scrollLeft -= (delta * 40);
+		e.preventDefault();
+	};
+
 
 	/* Entry point for most events */
 
@@ -2129,6 +2134,8 @@
 			else
 				$("#album-view").removeClass("hidden");
 			$("#powered-by").hide();
+
+			$(".media-view-container").off('mousewheel').on('mousewheel', TopFunctions.scrollBottomThumbs);
 		}
 
 		f.setOptions();
