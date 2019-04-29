@@ -2,7 +2,7 @@
 
 	var phFl = new PhotoFloat();
 	var util = new Utilities();
-	var swipeSpeed = 800;
+	var swipeSpeed = 350;
 	var pinchSpeed = 500;
 	var dragSpeed = 500;
 	var mediaContainerSelector = ".media-box#center .media-box-inner";
