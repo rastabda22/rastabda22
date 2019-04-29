@@ -881,10 +881,14 @@
 				$("#powered-by").show();
 			} else {
 				$("#error-text-folder").stop().fadeIn(200);
-				$("#error-text-folder, #error-overlay, #auth-text").fadeOut(3500);
+				$("#error-text-folder, #error-overlay, #auth-text").fadeOut(
+					3500,
+					function() {
+						window.location.href = rootLink;
+					}
+				);
 				$("#album-view").stop().fadeOut(100).fadeIn(3500);
 				$("#media-view").stop().fadeOut(100).fadeIn(3500);
-				window.location.href = rootLink;
 			}
 		}
 		// $("#error-overlay").fadeTo(500, 0.8);

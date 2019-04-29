@@ -1027,32 +1027,44 @@
 	};
 
 	PhotoFloat.selectMedia = function(theAlbum, mediaFolderHash, mediaHash, callback) {
+
+		function keepOn() {
+			callback(theAlbum, media, i);
+			if (util.isSearchCacheBase(theAlbum.cacheBase) && (media === null && ! util.isAlbumWithOneMedia(theAlbum)))
+				$("ul#right-menu").addClass("expand");
+		}
+
 		var i = -1;
 		var media = null;
 		if (mediaHash !== null) {
-			for (i = 0; i < theAlbum.media.length; ++i) {
-				if (
-					theAlbum.media[i].cacheBase === mediaHash &&
-					(mediaFolderHash === null || theAlbum.media[i].foldersCacheBase === mediaFolderHash)
-				) {
-					media = theAlbum.media[i];
-					break;
+			i = theAlbum.media.findIndex(
+				function(thisMedia) {
+					var matches =
+						thisMedia.cacheBase === mediaHash &&
+						(mediaFolderHash === null || thisMedia.foldersCacheBase === mediaFolderHash);
+					return matches;
 				}
-			}
-			if (i >= theAlbum.media.length) {
-				$("#album-view").fadeOut(200);
+			);
+			if (i !== -1) {
+				media = theAlbum.media[i];
+			} else {
+				$("#album-view").fadeOut(200).fadeIn(3500);
 				$("#media-view").fadeOut(200);
-				$("#album-view").stop().fadeIn(3500);
+				// $("#album-view").stop().fadeIn(3500);
 				$("#error-text-image").stop().fadeIn(200);
-				$("#error-text-image, #error-overlay, #auth-text").fadeOut(2500);
-				window.location.href = "#!" + theAlbum.cacheBase;
-				i = -1;
+				$("#error-text-image, #error-overlay, #auth-text").fadeOut(
+					2500,
+					function() {
+						window.location.href = "#!" + theAlbum.cacheBase;
+						// i = -1;
+						// keepOn();
+						$("#media-view").fadeIn(100);
+					}
+				);
+				return;
 			}
 		}
-		callback(theAlbum, media, i);
-		if (util.isSearchCacheBase(theAlbum.cacheBase) && (media === null && ! util.isAlbumWithOneMedia(theAlbum)))
-			$("ul#right-menu").addClass("expand");
-
+		keepOn();
 	};
 
 	PhotoFloat.hashCode = function(hash) {
