@@ -331,17 +331,7 @@ $(document).ready(function() {
 	$("li#case-sensitive").on('click', f.toggleCaseSensitiveSearch);
 	$("li#accent-sensitive").on('click', f.toggleAccentSensitiveSearch);
 	$("li#album-search").on('click', f.toggleCurrentAbumSearch);
-	// $("li#refine-search").on('click', toggleRefineSearch);
-	// function toggleRefineSearch(ev) {
-	// 	f.Options.search_refine = ! Options.search_refine;
-	// 	f.setBooleanCookie("search_refine", Options.search_refine);
-	// 	f.updateMenu();
-	// 	if (false && $("#search-field").val().trim())
-	// 		$('#search-button').click();
-	// 	f.focusSearchField();
-	// }
 
-	// subalbums
 	// binds the click events to the sort buttons
 
 	$("li.album-sort.by-date").on('click', tF.sortAlbumsByDate);
