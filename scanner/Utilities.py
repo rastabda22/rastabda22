@@ -40,7 +40,7 @@ def message(category, text, verbose=0):
 	try:
 		message.max_verbose = Options.config['max_verbose']
 	except KeyError:
-		message.max_verbose = 10
+		message.max_verbose = 5
 	except AttributeError:
 		message.max_verbose = 0
 
@@ -133,15 +133,22 @@ def time_totals(time):
 		_total_time_unfolded = "= " + _total_time_unfolded
 	return (_total_time, _total_time_unfolded)
 
+
 def report_times(final):
 	"""
 	Print a report with the total time spent on each `message()` categories and the number of times
 	each category has been called. This report can be considered a poor man's profiler as it cumulates
 	the number of times the `message()` function has been called instead of the real excution time of
 	the code.
+	This report is printed only when tracing level >= 3 and more or less detailed depending on `final`.
 	The report includes a section at the end with the number of media processed by type and list the
 	albums where media is not geotagged or has no EXIF.
 	"""
+	# Print report for each album only when tracing level >= 4
+	if message.max_verbose < 3:
+		return
+	if not final and message.max_verbose < 4:
+		return
 
 	print()
 	print("message".rjust(50) + "total time".rjust(15) + "counter".rjust(15) + "average time".rjust(20))

@@ -206,7 +206,7 @@
 
 			if (
 				Options.search_current_album &&
-				[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(Options.album_to_search_in) == -1
+				[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) == -1
 			) {
 				searchFolderHash = albumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
 				where =
@@ -443,7 +443,7 @@
 				title += "<a class='map-popup-trigger'>" +
 					"<img class='title-img' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
 					"</a>";
-		} else if (title.indexOf(fillInSpan) > -1 && currentAlbum.numPositionsInTree) {
+		} else if (title.includes(fillInSpan) && currentAlbum.numPositionsInTree) {
 			title = title.replace(
 				fillInSpan,
 				"<a class='map-popup-trigger'>" +
@@ -570,10 +570,8 @@
 			}
 		);
 
-
-
-		$('.map-close-button').click(function(){
-			$('.map-container').hide();
+		$('.modal-close').click(function(){
+			$("#my-modal.modal").css("display", "none");
 			$('#mapdiv').empty();
 		});
 
@@ -606,6 +604,8 @@
 		var exposureTime, heightForMedia, heightForMediaAndTitle;
 		var savedSearchSubAlbumHash, savedSearchAlbumHash;
 		var previousMediaIndex, nextMediaIndex, array;
+
+		$(".media-bar").show();
 
 		if (id === "center")
 			$("#media-view").removeClass("hidden");
@@ -864,44 +864,84 @@
 			$(".media-box#" + id + " .menu-map-divider").hide();
 		}
 
+		var foldersViewLink, byDateViewLink, byGpsViewLink;
 		if (id === "center") {
-			var foldersViewLink = "#!/" + util.pathJoin([
-						currentMedia.foldersCacheBase,
-						currentMedia.cacheBase
-						]);
-			var byDateViewLink = "#!/" + util.pathJoin([
-						currentMedia.dayAlbumCacheBase,
-						currentMedia.foldersCacheBase,
-						currentMedia.cacheBase
-						]);
-			if (currentMedia.gpsAlbumCacheBase)
-				var byGpsViewLink = "#!/" + util.pathJoin([
-							currentMedia.gpsAlbumCacheBase,
-							currentMedia.foldersCacheBase,
-							currentMedia.cacheBase
-							]);
+			foldersViewLink = "#!/" + util.pathJoin([
+				currentMedia.foldersCacheBase,
+				currentMedia.cacheBase
+			]);
 
+			byDateViewLink = "#!/" + util.pathJoin([
+				currentMedia.dayAlbumCacheBase,
+				currentMedia.foldersCacheBase,
+				currentMedia.cacheBase
+			]);
+
+			if (currentMedia.gpsAlbumCacheBase) {
+				byGpsViewLink = "#!/" + util.pathJoin([
+					currentMedia.gpsAlbumCacheBase,
+					currentMedia.foldersCacheBase,
+					currentMedia.cacheBase
+				]);
+			}
 
 			$(".day-gps-folders-view").addClass("active").removeClass("hidden").removeClass("selected").off("click");
 			if (util.isFolderCacheBase(currentAlbum.cacheBase)) {
 				// folder album: change to by date or by gps view
 				$("#folders-view").removeClass("active").addClass("selected").off("click");
 				$("#by-date-view").on("click", function(ev) {
+					isABrowsingModeChange = true;
 					window.location.href = byDateViewLink;
 					return false;
 				});
-
 				if (! util.hasGpsData(currentMedia)) {
 					$("#by-gps-view").addClass("hidden");
 				} else {
 					$("#by-gps-view").on("click", function(ev) {
+						isABrowsingModeChange = true;
 						window.location.href = byGpsViewLink;
 						return false;
 					});
 				}
+				if (byMapViewLink === null) {
+					$("#by-map-view").addClass("hidden");
+				} else {
+					$("#by-map-view").on("click", function(ev) {
+						isABrowsingModeChange = true;
+						window.location.href = byMapViewLink;
+						return false;
+					});
+				}
+				if (bySearchViewLink === null) {
+					$("#by-search-view").addClass("hidden");
+				} else {
+					$("#by-search-view").on("click", function(ev) {
+						isABrowsingModeChange = true;
+						window.location.href = bySearchViewLink;
+						return false;
+					});
+				}
+
+				// add the browsing mode switcher links
+				nextBrowsingModeLink = byDateViewLink;
+				nextBrowsingModeMessageId = "by-date-browsing";
+				if (bySearchViewLink !== null) {
+					prevBrowsingModeLink = bySearchViewLink;
+					prevBrowsingModeMessageId = "by-search-browsing";
+				} else if (byMapViewLink !== null) {
+					prevBrowsingModeLink = byMapViewLink;
+					prevBrowsingModeMessageId = "by-map-browsing";
+				} else if (util.hasGpsData(currentMedia)) {
+					prevBrowsingModeLink = byGpsViewLink;
+					prevBrowsingModeMessageId = "by-gps-browsing";
+				} else {
+					prevBrowsingModeLink = byDateViewLink;
+					prevBrowsingModeMessageId = "by-date-browsing";
+				}
 			} else if (util.isByDateCacheBase(currentAlbum.cacheBase)) {
 				// by date album: change to folder or by gps view
 				$("#folders-view").on("click", function(ev) {
+					isABrowsingModeChange = true;
 					window.location.href = foldersViewLink;
 					return false;
 				});
@@ -910,28 +950,98 @@
 					$("#by-gps-view").addClass("hidden");
 				} else {
 					$("#by-gps-view").on("click", function(ev) {
+						isABrowsingModeChange = true;
 						window.location.href = byGpsViewLink;
 						return false;
 					});
 				}
+				if (byMapViewLink === null) {
+					$("#by-map-view").addClass("hidden");
+				} else {
+					$("#by-map-view").on("click", function(ev) {
+						isABrowsingModeChange = true;
+						window.location.href = byMapViewLink;
+						return false;
+					});
+				}
+				if (bySearchViewLink === null) {
+					$("#by-search-view").addClass("hidden");
+				} else {
+					$("#by-search-view").on("click", function(ev) {
+						isABrowsingModeChange = true;
+						window.location.href = bySearchViewLink;
+						return false;
+					});
+				}
+
+				// add the browsing mode switcher links
+				if (util.hasGpsData(currentMedia)) {
+					nextBrowsingModeLink = byGpsViewLink;
+					nextBrowsingModeMessageId = "by-gps-browsing";
+				} else if (byMapViewLink !== null) {
+					nextBrowsingModeLink = byMapViewLink;
+					nextBrowsingModeMessageId = "by-map-browsing";
+				} else if (bySearchViewLink !== null) {
+					nextBrowsingModeLink = bySearchViewLink;
+					nextBrowsingModeMessageId = "by-search-browsing";
+				} else {
+					nextBrowsingModeLink = foldersViewLink;
+					nextBrowsingModeMessageId = "folders-browsing";
+				}
+				prevBrowsingModeLink = foldersViewLink;
+				prevBrowsingModeMessageId = "folders-browsing";
 			} else if (util.isByGpsCacheBase(currentAlbum.cacheBase)) {
 				$("#folders-view").on("click", function(ev) {
+					isABrowsingModeChange = true;
 					window.location.href = foldersViewLink;
 					return false;
 				});
 				$("#by-date-view").on("click", function(ev) {
+					isABrowsingModeChange = true;
 					window.location.href = byDateViewLink;
 					return false;
 				});
-				// by gps album: change to folder or by day view
 				$("#by-gps-view").removeClass("active").addClass("selected").off("click");
-			} else if (util.isSearchCacheBase(currentAlbum.cacheBase)) {
-				// by search album: change to folder or by gps or by view
+				if (byMapViewLink === null) {
+					$("#by-map-view").addClass("hidden");
+				} else {
+					$("#by-map-view").on("click", function(ev) {
+						isABrowsingModeChange = true;
+						window.location.href = byMapViewLink;
+						return false;
+					});
+				}
+				if (bySearchViewLink === null) {
+					$("#by-search-view").addClass("hidden");
+				} else {
+					$("#by-search-view").on("click", function(ev) {
+						isABrowsingModeChange = true;
+						window.location.href = bySearchViewLink;
+						return false;
+					});
+				}
+
+				// add the browsing mode switcher links
+				if (byMapViewLink !== null) {
+					nextBrowsingModeLink = byMapViewLink;
+					nextBrowsingModeMessageId = "by-map-browsing";
+				} else if (bySearchViewLink !== null) {
+					nextBrowsingModeLink = bySearchViewLink;
+					nextBrowsingModeMessageId = "by-search-browsing";
+				} else {
+					nextBrowsingModeLink = foldersViewLink;
+					nextBrowsingModeMessageId = "folders-browsing";
+				}
+				prevBrowsingModeLink = byDateViewLink;
+				prevBrowsingModeMessageId = "by-date-browsing";
+			} else if (util.isMapCacheBase(currentAlbum.cacheBase)) {
 				$("#folders-view").on("click", function(ev) {
+					isABrowsingModeChange = true;
 					window.location.href = foldersViewLink;
 					return false;
 				});
 				$("#by-date-view").on("click", function(ev) {
+					isABrowsingModeChange = true;
 					window.location.href = byDateViewLink;
 					return false;
 				});
@@ -939,9 +1049,86 @@
 					$("#by-gps-view").addClass("hidden");
 				} else {
 					$("#by-gps-view").on("click", function(ev) {
+						isABrowsingModeChange = true;
 						window.location.href = byGpsViewLink;
 						return false;
 					});
+				}
+				$("#by-map-view").removeClass("active").addClass("selected").off("click");
+				if (bySearchViewLink === null) {
+					$("#by-search-view").addClass("hidden");
+				} else {
+					$("#by-search-view").on("click", function(ev) {
+						isABrowsingModeChange = true;
+						window.location.href = bySearchViewLink;
+						return false;
+					});
+				}
+
+				byMapViewLink = location.hash;
+
+				// add the browsing mode switcher links
+				if (bySearchViewLink !== null) {
+					nextBrowsingModeLink = bySearchViewLink;
+					nextBrowsingModeMessageId = "by-search-browsing";
+				} else {
+					nextBrowsingModeLink = foldersViewLink;
+					nextBrowsingModeMessageId = "folders-browsing";
+				}
+				if (util.hasGpsData(currentMedia)) {
+					prevBrowsingModeLink = byGpsViewLink;
+					prevBrowsingModeMessageId = "by-gps-browsing";
+				} else {
+					prevBrowsingModeLink = byDateViewLink;
+					prevBrowsingModeMessageId = "by-date-browsing";
+				}
+			} else if (util.isSearchCacheBase(currentAlbum.cacheBase)) {
+				// by search album: change to folder or by gps or by view
+				$("#folders-view").on("click", function(ev) {
+					isABrowsingModeChange = true;
+					window.location.href = foldersViewLink;
+					return false;
+				});
+				$("#by-date-view").on("click", function(ev) {
+					isABrowsingModeChange = true;
+					window.location.href = byDateViewLink;
+					return false;
+				});
+				if (! util.hasGpsData(currentMedia)) {
+					$("#by-gps-view").addClass("hidden");
+				} else {
+					$("#by-gps-view").on("click", function(ev) {
+						isABrowsingModeChange = true;
+						window.location.href = byGpsViewLink;
+						return false;
+					});
+				}
+				if (byMapViewLink === null) {
+					$("#by-map-view").addClass("hidden");
+				} else {
+					$("#by-map-view").on("click", function(ev) {
+						isABrowsingModeChange = true;
+						window.location.href = byMapViewLink;
+						return false;
+					});
+				}
+				$("#by-search-view").removeClass("active").addClass("selected").off("click");
+
+
+				bySearchViewLink = location.hash;
+
+				// add the browsing mode switcher links
+				nextBrowsingModeLink = foldersViewLink;
+				nextBrowsingModeMessageId = "folders-browsing";
+				if (byMapViewLink !== null) {
+					prevBrowsingModeLink = byMapViewLink;
+					prevBrowsingModeMessageId = "by-map-browsing";
+				} else if (util.hasGpsData(currentMedia)) {
+					prevBrowsingModeLink = byGpsViewLink;
+					prevBrowsingModeMessageId = "by-gps-browsing";
+				} else {
+					prevBrowsingModeLink = byDateViewLink;
+					prevBrowsingModeMessageId = "by-date-browsing";
 				}
 			}
 		}
@@ -1014,6 +1201,16 @@
 		// $("#media-view").removeClass("hidden");
 	};
 
+	TopFunctions.scrollBottomThumbs = function(e, delta) {
+		this.scrollLeft -= (delta * 80);
+		e.preventDefault();
+	};
+
+	TopFunctions.scrollAlbum = function(e, delta) {
+		this.scrollTop -= (delta * 80);
+		e.preventDefault();
+	};
+
 
 	/* Entry point for most events */
 
@@ -1080,7 +1277,6 @@
 			// $("#media-view .title").show();
 			TopFunctions.showMedia(currentAlbum, currentMedia, 'center');
 		} else {
-
 			// $("#album-view .title").show();
 			TopFunctions.setTitle("album", null);
 			// $("#media-view .title").hide();
@@ -1438,7 +1634,7 @@
 						thumbWidth = thumbnailSize;
 						calculatedWidth = Options.media_thumb_size;
 					}
-					imgTitle = currentAlbum.media[i].albumName;
+					imgTitle = util.pathJoin([currentAlbum.media[i].albumName, currentAlbum.media[i].name]);
 					calculatedHeight = Options.media_thumb_size;
 
 					var albumViewPadding = $("#album-view").css("padding");
@@ -1531,17 +1727,6 @@
 					);
 				}
 			}
-			// lazyload(document.querySelectorAll(".lazyload-media"));
-			$(function() {
-				$("img.lazyload-media").Lazy(
-					{
-						chainable: false,
-						threshold: Options.media_thumb_size,
-						bind: 'event',
-						removeAttribute: true
-					}
-				);
-			});
 
 			if (currentMedia === null) {
 				if (fromEscKey && firstEscKey) {
@@ -1787,10 +1972,10 @@
 												titleName = util.pathJoin([humanGeonames, randomMedia.name]);
 												// randomMediaLink = util.pathJoin(["#!", randomMedia.gpsAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
 											} else if (util.isSearchCacheBase(currentAlbum.cacheBase)) {
-												titleName = randomMedia.albumName;
+												titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
 												// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, currentAlbum.cacheBase + Options.cache_folder_separator + theSubalbum.cacheBase, randomMedia.cacheBase]);
 											} else {
-												titleName = randomMedia.albumName;
+												titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
 												// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, randomMedia.cacheBase]);
 											}
 											randomMediaLink = phFl.encodeHash(randomAlbum, randomMedia);
@@ -1802,7 +1987,6 @@
 											$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName).attr("data-src", encodeURI(mediaSrc));
 											$("#" + id + " img.thumbnail").css("width", thumbWidth).css("height", thumbHeight);
 
-											// lazyload(document.querySelectorAll(".lazyload-album-" + id));
 											$(function() {
 												$("img.lazyload-album-" + id).Lazy(
 													{
@@ -1813,7 +1997,6 @@
 													}
 												);
 											});
-											// $("img.lazyload-album-" + id).Lazy();
 
 											numSubAlbumsReady ++;
 											if (numSubAlbumsReady >= theOriginalAlbumContainer.subalbums.length) {
@@ -1877,6 +2060,19 @@
 
 		}
 
+		$("img.lazyload-media").Lazy(
+			{
+				// threshold: 2 * Options.media_thumb_size,
+				appendScroll: $(window)
+			}
+		);
+		$(".media-view-container img.lazyload-media").Lazy(
+			{
+				// threshold: 2 * Options.media_thumb_size,
+				appendScroll: $("#album-view")
+			}
+		);
+
 		if (currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)) {
 			$("#media-view").addClass("hidden");
 			$(".thumb-container").removeClass("current-thumb");
@@ -1933,7 +2129,7 @@
 			}
 			$("#powered-by").show();
 
-			// pS.addAlbumGesturesDetection();
+			$("html, body").off('mousewheel').on('mousewheel', TopFunctions.scrollAlbum);
 		} else {
 			// currentMedia !== null
 			$("#media-view").removeClass("hidden");
@@ -1943,11 +2139,14 @@
 			else
 				$("#album-view").removeClass("hidden");
 			$("#powered-by").hide();
+
+			$(".media-view-container").off('mousewheel').on('mousewheel', TopFunctions.scrollBottomThumbs);
 		}
 
 		f.setOptions();
 
 		if (! $("#album-view").hasClass("hidden"))
+			// f.scrollToThumb();
 			setTimeout(f.scrollToThumb, 1);
 	};
 

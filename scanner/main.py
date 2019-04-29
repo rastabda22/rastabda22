@@ -29,9 +29,30 @@ def main():
 	Options.get_options()
 
 	try:
+		# @python2
+		if sys.version_info >= (3, 4):
+			if Options.config['debug_memory']:
+				# Import the Debug module only if debugging is enabled
+				import Debug
+				Debug.memory_start()
+			if Options.config['debug_profile']:
+				import Debug
+				Debug.profile_start()
+		
 		os.umask(0o02)
 		TreeWalker()
 		report_times(True)
+
+		# @python2
+		if sys.version_info >= (3, 4):
+			if Options.config['debug_profile']:
+				Debug.profile_stop()
+			if Options.config['debug_memory']:
+				snapshot = Debug.memory_stop()
+				Debug.memory_dump(snapshot, key_type='lineno', limit=30)
+			if Options.config['debug_profile']:
+				Debug.profile_dump(cumulative=False)
+			
 		message("    The end!    ", "", 3)
 	except KeyboardInterrupt:
 		message("keyboard", "CTRL+C pressed, quitting.")

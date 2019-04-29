@@ -1,4 +1,4 @@
-# MyPhotoShare v3.8 (March 4, 2019)
+# MyPhotoShare v3.8.1 (April 29, 2019)
 
 ### A Web Photo Gallery Done Right via Static JSON & Dynamic Javascript
 #### by Jason A. Donenfeld (<Jason@zx2c4.com>), Jerome Charaoui (jerome@riseup.net)  Joachim Tingvold (joachim@tingvold.com), Paolo Benvenuto (<paolobenve@gmail.com>), Pierre Métras (<p.metras@videotron.ca>)
@@ -54,6 +54,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Link to original media.
 - [x] Link for direct download.
 - [x] Allows enlarging the photo till 1:1 aspect.
+- [x] Installer can decide whether to replicate all Exif metadata (including copyright info) into all the reductions/thumbnails or not
 
 ### For Geotaggers
 
@@ -72,7 +73,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 
 ### Great User Experience
 
-- [x] Keyboard navigation: arrows, pageup/down, `[esc]`, `[f]` (fullscreen), `[d]` (download original), `[o]` (show original), `[s]` (map), `[m]` (metadata), `[e]` (open right menu), `[+]` (pinch in), `[-]` (pinch out), space/backspace (like in [Darktable](https://www.darktable.org/)).
+- [x] Keyboard navigation: arrows, pageup/down, `[esc]`, `[f]` (fullscreen), `[d]` (download original), `[o]` (show original), `[s]` (map), `[m]` (metadata), `[e]` (open right menu), `[+]` (pinch in), `[-]` (pinch out), space/backspace (like in [Darktable](https://www.darktable.org/)), `[>]`/`[<]` (rotation among browsing modes: folders -> by date -> by gps -> by search).
 - [x] Keyboard dragging when the photo is zoomed in.
 - [x] Mouse-wheel support, including for pinching (with ctrl or shift).
 - [x] Various user interface option can be changed by the user.
@@ -132,11 +133,19 @@ MyPhotoShare features share buttons, and PHP permits to pass the shared image/vi
 It is, essentially, a slick and fast, minimal but still well-featured photo gallery app on the net, suitable for sharing your media with your friends.
 
 
-### Performance of scanner
+## Performance
+
+### Scanner
 
 As a term of comparizon, on my medium-sized pc, with the images on a NFS mounted NAS partition:
 
 * scanning with face detection for the first time a 692 photos directory tree for a total size of 2.3 GB takes about 700 seconds (about 1 sec/media, 1 media/sec); face detection takes about 267ms/photo.
 * re-scan of "all OK" tree of 36000 media files for a total size of 87 GB takes about 14 minutes (20 ms/media, 50 media/sec) if not using checksums, and about 90 minutes (110 ms/media, 9 media/sec) when using checksums.
 * scanning for the first time about 40000 photo with less than 100 videos takes about 5 hour with checksums enabled
-* scanning of videos takes a much longer time than photos, the bigger the video the greater the time.
+* scanning of videos takes a much longer time than photos, the bigger the videos the greater the time.
+
+### Javascript code
+
+The javascript app is optimized, and it works fluently with 40,000 media!
+
+However, showing an album or clicking on a marker with more than 1,000 photos, slowlyness is expected. Despite the slowlyness, everything seems coming to its correct end.

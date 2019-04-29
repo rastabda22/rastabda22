@@ -157,32 +157,17 @@
 				$("ul#right-menu li.slide").removeClass("selected");
 		}
 
-		if (
-			currentMedia !== null && ! $("#album-view").is(":visible") ||
-			util.isAlbumWithOneMedia(currentAlbum) ||
-			currentAlbum !== null && currentAlbum.subalbums.length <= 1 && currentAlbum.media.length <= 1
-		) {
-			$("ul#right-menu li.spaced").addClass("hidden");
-		} else {
-			$("ul#right-menu li.spaced").removeClass("hidden");
-			if (Options.spacing)
-				$("ul#right-menu li.spaced").addClass("selected");
-			else
-				$("ul#right-menu li.spaced").removeClass("selected");
-		}
+		$("ul#right-menu li.spaced").removeClass("hidden");
+		if (Options.spacing)
+			$("ul#right-menu li.spaced").addClass("selected");
+		else
+			$("ul#right-menu li.spaced").removeClass("selected");
 
-		if (
-			currentMedia !== null ||
-			util.isAlbumWithOneMedia(currentAlbum) ||
-			currentAlbum !== null && currentAlbum.subalbums.length === 0) {
-			$("ul#right-menu li.square-album-thumbnails").addClass("hidden");
-		} else {
-			$("ul#right-menu li.square-album-thumbnails").removeClass("hidden");
-			if (Options.album_thumb_type == "square")
-				$("ul#right-menu li.square-album-thumbnails").addClass("selected");
-			else
-				$("ul#right-menu li.square-album-thumbnails").removeClass("selected");
-		}
+		$("ul#right-menu li.square-album-thumbnails").removeClass("hidden");
+		if (Options.album_thumb_type == "square")
+			$("ul#right-menu li.square-album-thumbnails").addClass("selected");
+		else
+			$("ul#right-menu li.square-album-thumbnails").removeClass("selected");
 
 		if (
 			currentMedia !== null ||
@@ -229,22 +214,11 @@
 				$("ul#right-menu li.media-names").removeClass("selected");
 		}
 
-		if (
-			currentMedia !== null && ! $("#album-view").is(":visible") ||
-			util.isAlbumWithOneMedia(currentAlbum) ||
-			currentAlbum !== null && (
-				currentAlbum.media.length === 0 ||
-				! util.isFolderCacheBase(currentAlbum.cacheBase) && currentAlbum.media.length > Options.big_virtual_folders_threshold
-			)
-		) {
-			$("ul#right-menu li.square-media-thumbnails").addClass("hidden");
-		} else {
-			$("ul#right-menu li.square-media-thumbnails").removeClass("hidden");
-			if (Options.media_thumb_type == "square")
-			 	$("ul#right-menu li.square-media-thumbnails").addClass("selected");
-			else
-				$("ul#right-menu li.square-media-thumbnails").removeClass("selected");
-		}
+		$("ul#right-menu li.square-media-thumbnails").removeClass("hidden");
+		if (Options.media_thumb_type == "square")
+		 	$("ul#right-menu li.square-media-thumbnails").addClass("selected");
+		else
+			$("ul#right-menu li.square-media-thumbnails").removeClass("selected");
 
 		if (
 			currentAlbum === null || ! currentAlbum.media.length | util.isFolderCacheBase(currentAlbum.cacheBase)
@@ -446,10 +420,14 @@
 		}
 		$("#thumbs img.thumbnail").each(function() {
 			if (
-				(util.isFolderCacheBase(currentAlbum.cacheBase) || currentAlbum.cacheBase == Options.folders_string) && this.title === media.albumName ||
-				util.isByDateCacheBase(currentAlbum.cacheBase) && this.title === media.albumName ||
-				util.isByGpsCacheBase(currentAlbum.cacheBase) && this.title === media.albumName ||
-				util.isSearchCacheBase(currentAlbum.cacheBase) && this.title === media.albumName
+				this.title === util.pathJoin([media.albumName, media.name]) && (
+					util.isFolderCacheBase(currentAlbum.cacheBase) ||
+					currentAlbum.cacheBase == Options.folders_string ||
+					util.isByDateCacheBase(currentAlbum.cacheBase) ||
+					util.isByGpsCacheBase(currentAlbum.cacheBase) ||
+					util.isSearchCacheBase(currentAlbum.cacheBase) ||
+					util.isMapCacheBase(currentAlbum.cacheBase)
+				)
 			) {
 				thumb = $(this);
 				return false;
@@ -459,11 +437,9 @@
 			return;
 		if (currentMedia !== null) {
 			var scroller = $("#album-view");
-			scroller.stop().animate(
-				{ scrollLeft: thumb.parent().position().left + scroller.scrollLeft() - scroller.width() / 2 + thumb.width() / 2 }, "slow"
-			);
+			scroller.scrollLeft(thumb.parent().position().left + scroller.scrollLeft() - scroller.width() / 2 + thumb.width() / 2);
 		} else
-			$("html, body").stop().animate({ scrollTop: thumb.offset().top - $(window).height() / 2 + thumb.height() }, "slow");
+			$("html, body").scrollTop(thumb.offset().top - $(window).height() / 2 + thumb.height());
 
 		if (currentMedia !== null) {
 			$(".thumb-container").removeClass("current-thumb");

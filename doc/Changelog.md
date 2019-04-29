@@ -1,3 +1,13 @@
+### version v3.8.1 (April 29, 2019)
+
+* fixed bug with spurious text seen on mobile when loading
+* fixed map size on both pc and mobile (with css _modal_)
+* fixed bug with lazy load not working in bottom thumbnails
+* new option 'copy_exif_into_reductions' (defaults to _false_) in order to permit copying all the exif metadata (and particularly the copyright info) to every reductions/thumbnails
+* new shortcut _<_/_>_ for rotating among browsing modes: folders -> by date -> by gps -> by map -> by search
+* json files size has been slightly reduced removing unnecessary properties or property parts
+* permit scrolling bottom thumbnails with mouse wheel
+
 ### version v3.8 (March 4, 2019)
 
 * images collected by map clicks can now be shown as an album and browsed

@@ -38,8 +38,17 @@ num_video = 0
 num_video_processed = 0
 options_not_to_be_saved = ['cache_path', 'index_html_path', 'album_path']
 options_requiring_json_regeneration = ['geonames_language', 'unspecified_geonames_code', 'get_geonames_online', 'metadata_tools_preference', 'subdir_method', 'cache_folders_num_digits_array']
-options_requiring_reduced_images_regeneration = ['jpeg_quality']
-options_requiring_thumbnails_regeneration = ['face_cascade_scale_factor', 'small_square_crops_background_color', 'cv2_installed']
+# every option is given in a dictionary with a value which represent the pre-option default value
+options_requiring_reduced_images_regeneration = [
+	{'name': 'jpeg_quality', 'default': False},
+	{'name': 'copy_exif_into_reductions', 'default': False}
+]
+options_requiring_thumbnails_regeneration = [
+	{'name': 'face_cascade_scale_factor', 'default': False},
+	{'name': 'small_square_crops_background_color', 'default': False},
+	{'name': 'cv2_installed', 'default': False},
+	{'name': 'copy_exif_into_reductions', 'default': False}
+]
 
 # lets put here all unicode combining code points, in order to be sure to use the same in both python and js
 # from https://github.com/paulmillr/unicode-categories/blob/master/index.js
@@ -66,7 +75,9 @@ config['available_map_popup_positions'] = ['SE', 'NW' ]
 # json_version = 3.6.4 since changed wrong album/media attributes
 # json_version = 3.7beta1 since added positions_and_media_in_tree to every json file
 # json_version = 3.7beta2 since mvoed positions_and_media_in_tree to a separate file to avoid duplication and to save download time
-json_version = "3.7beta2"
+# json_version = 3.8
+# json_version = 3.8.1 since slightly rationalized json files content
+json_version = "3.8.1"
 
 def initialize_opencv():
 	global face_cascade, eye_cascade
@@ -167,10 +178,13 @@ def get_options():
 				'default_album_reverse_sort',
 				'default_media_reverse_sort',
 				'recreate_fixed_height_thumbnails',
+				'copy_exif_into_reductions',
 				'get_geonames_online',
 				'use_internal_modernizr',
 				'show_faces',
-				'use_stop_words'
+				'use_stop_words',
+				'debug_memory',
+				'debug_profile'
 		):
 			try:
 				config[option] = usr_config.getboolean('options', option)
@@ -185,6 +199,10 @@ def get_options():
 				config[option] = 1
 		else:
 			config[option] = usr_config.get('options', option)
+			if option in ('js_cache_levels'):
+				print(config[option])
+				config[option] = json.loads(config[option])
+
 
 		option_value = str(config[option])
 		option_length = len(option_value)
@@ -376,24 +394,34 @@ def get_options():
 		old_options = config
 
 	config['recreate_reduced_photos'] = False
-	for option in options_requiring_reduced_images_regeneration:
+	for option_dict in options_requiring_reduced_images_regeneration:
+		option = option_dict['name']
+		default_value = option_dict['default']
 		try:
 			if old_options[option] != config[option]:
 				config['recreate_reduced_photos'] = True
 				message("options", "'" + option + "' has changed from previous scanner run, forcing recreation of reduced size images", 3)
 		except KeyError:
-			config['recreate_reduced_photos'] = True
-			message("options", "'" + option + "' wasn't set on previous scanner run, forcing recreation of reduced size images", 3)
+			if config[option] != default_value:
+				config['recreate_reduced_photos'] = True
+				message("options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of reduced size images", 3)
+			else:
+				message("options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of reduced size images", 3)
 
 	config['recreate_thumbnails'] = False
-	for option in options_requiring_thumbnails_regeneration:
+	for option_dict in options_requiring_thumbnails_regeneration:
+		option = option_dict['name']
+		default_value = option_dict['default']
 		try:
 			if old_options[option] != config[option]:
 				config['recreate_thumbnails'] = True
 				message("options", "'" + option + "' has changed from previous scanner run, forcing recreation of thumbnails", 3)
 		except KeyError:
-			config['recreate_thumbnails'] = True
-			message("options", "'" + option + "' wasn't set on previous scanner run, forcing recreation of thumbnails", 3)
+			if config[option] != default_value:
+				config['recreate_thumbnails'] = True
+				message("options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of thumbnails", 3)
+			else:
+				message("options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of thumbnails", 3)
 
 
 	config['recreate_json_files'] = False

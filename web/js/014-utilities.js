@@ -75,13 +75,21 @@
 			// searched albums hasn't albumName property
 			property = 'path';
 
-		return a.filter(function (e) {
-			for (var i = 0; i < b.length; i ++) {
-				if (this.normalizeAccordingToOptions(b[i][property]) == this.normalizeAccordingToOptions(e[property]))
-					return true;
+		return a.filter(
+			function (e) {
+				for (var i = 0; i < b.length; i ++) {
+					var first = b[i][property];
+					var second = e[property];
+					if (property == 'albumName') {
+						first = Utilities.pathJoin([first, b[i].name]);
+						second = Utilities.pathJoin([second, e.name]);
+					}
+					if (this.normalizeAccordingToOptions(first) == this.normalizeAccordingToOptions(second))
+						return true;
+				}
+				return false;
 			}
-			return false;
-		});
+		);
 	};
 
 	Utilities.prototype.mergePoints = function(oldPoints, newPoints) {
@@ -97,7 +105,8 @@
 			'lat' : parseFloat(newMedia.metadata.latitude),
 			'mediaNameList': [{
 				'cacheBase': newMedia.cacheBase,
-				'albumCacheBase': newMedia.parent.cacheBase
+				'albumCacheBase': newMedia.parent.cacheBase,
+				'foldersCacheBase': newMedia.foldersCacheBase
 			}]
 		};
 		return this.addPointToPoints(oldPoints, newPoint);
@@ -143,7 +152,13 @@
 		for (var i = 0; i < b.length; i ++) {
 			if (! a.some(
 				function (e) {
-					return self.normalizeAccordingToOptions(b[i][property]) == self.normalizeAccordingToOptions(e[property]);
+					var first = b[i][property];
+					var second = e[property];
+					if (property == 'albumName') {
+						first = Utilities.pathJoin([first, b[i].name]);
+						second = Utilities.pathJoin([second, e.name]);
+					}
+					return self.normalizeAccordingToOptions(first) == self.normalizeAccordingToOptions(second);
 				})
 			)
 				union.push(b[i]);
@@ -385,9 +400,9 @@
 		var container, mediaSrc;
 
 		if (media.mediaType == "video") {
-			if (fullScreenStatus && media.albumName.match(/\.avi$/) === null) {
+			if (fullScreenStatus && media.name.match(/\.avi$/) === null) {
 				// .avi videos are not played by browsers
-				mediaSrc = media.albumName;
+				mediaSrc = Utilities.pathJoin([media.albumName, media.name]);
 			} else {
 				mediaSrc = this.mediaPath(currentAlbum, media, "");
 			}
@@ -462,7 +477,7 @@
 			// it's already the original image
 			result = false;
 		else if (nextPhotoSize === 0)
-			result = currentMedia.albumName;
+			result = Utilities.pathJoin([currentMedia.albumName, currentMedia.name]);
 		else
 			result = Utilities.mediaPath(currentAlbum, currentMedia, nextPhotoSize);
 
@@ -478,9 +493,9 @@
 		var attrWidth = mediaWidth, attrHeight = mediaHeight;
 
 		if (media.mediaType == "video") {
-			if (fullScreenStatus && media.albumName.match(/\.avi$/) === null) {
+			if (fullScreenStatus && media.name.match(/\.avi$/) === null) {
 				// .avi videos are not played by browsers
-				mediaSrc = media.albumName;
+				mediaSrc = Utilities.pathJoin([media.albumName, media.name]);
 			} else {
 				mediaSrc = this.mediaPath(currentAlbum, media, "");
 			}
@@ -540,7 +555,7 @@
 	};
 
 	Utilities.originalMediaPath = function(media) {
-		return media.albumName;
+		return Utilities.pathJoin([media.albumName, media.name]);
 	};
 
 	Utilities.mediaPath = function(album, media, size) {
@@ -589,6 +604,8 @@
 				hash = hash.substring(Options.byGpsStringWithTrailingSeparator.length);
 			else if (this.isSearchCacheBase(hash))
 				hash = hash.substring(Options.bySearchStringWithTrailingSeparator.length);
+			else if (this.isMapCacheBase(hash))
+				hash = hash.substring(Options.byMapStringWithTrailingSeparator.length);
 		}
 		if (media.cacheSubdir)
 			return this.pathJoin([Options.server_cache_path, media.cacheSubdir, hash]);
@@ -817,6 +834,10 @@
 				$(this).stop().fadeTo("fast", 0.4);
 			});
 		}
+	};
+
+	Utilities.prototype.HideId = function(id) {
+		$("#" + id).hide();
 	};
 
 	Utilities.correctPrevNextPosition = function() {

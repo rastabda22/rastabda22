@@ -52,7 +52,7 @@
     color: black !important;
 }
 
-.map-close-button, #mapdiv .leaflet-popup-close-button, .popup-mover {
+.modal-close, #mapdiv .leaflet-popup-close-button, .popup-mover {
     background-color: #fff;
     border: 3px solid #999;
     border-radius: 50px;
@@ -71,14 +71,14 @@
     z-index: 1;
 }
 
-.map-close-button, #mapdiv .leaflet-popup-close-button {
+.modal-close, #mapdiv .leaflet-popup-close-button {
     top: -20px;
 }
 
-.map-close-button::after, #mapdiv .leaflet-popup-close-button::after {
+.modal-close::after, #mapdiv .leaflet-popup-close-button::after {
   content: "✖";
 }
-.map-close-button::after, #mapdiv .leaflet-popup-close-button::after, .popup-mover::after {
+.modal-close::after, #mapdiv .leaflet-popup-close-button::after, .popup-mover::after {
   color: gray;
   font-size: 25px;
 }
@@ -103,7 +103,7 @@
   content: "⭨";
 }
 
-.map-close-button:hover, a.leaflet-popup-close-button:hover, a.popup-mover:hover {
+.modal-close:hover, a.leaflet-popup-close-button:hover, a.popup-mover:hover {
     background-color: #ccc;
     color: gray;
 }
@@ -111,6 +111,7 @@
 #mapdiv {
   height: 100%;
   cursor: pointer;
+  color: black !important;
 }
 
 /* Popup box END */
@@ -234,4 +235,49 @@
 
 #popup-photo-count:hover {
 	background-color: lightgray;
+}
+
+/* The Modal (background) */
+#my-modal.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 10px; /* Location of the box */
+  left: 0;
+  top: 10px;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+#my-modal .modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 10px;
+  border: 1px solid #888;
+  width: 90%;
+  height: 92%;
+  overflow: auto;
+}
+
+/* The Close Button */
+#my-modal .modal-close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  z-index: 500;
+}
+
+#my-modal .modal-close:hover, #my-modal .modal-close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+  background-color: lightgray
 }

@@ -2,7 +2,7 @@
 #
 # This file is imported through the ConfigParser standard module
 #       boolean values:
-#          1 = yes = = true;
+#          1 = yes = true;
 #          0 = no;
 # Do not use uppercase letters, they won't be detected properly somewhere
 #
@@ -67,6 +67,13 @@ max_verbose = 3
 # I'm getting it working if running in pyCharm, the scanner stops with a segfault if run from terminal. Why????
 show_faces = false
 
+# Memory profiling (Python >= 3.4)
+# Dumps the memory usage of scanner when indexing is completed.
+debug_memory = false
+
+# Execution profiling
+# Dumps function calls sorted by execution time
+debug_profile = false
 
 ###########################################################
 # minifying
@@ -168,6 +175,8 @@ metadata_tools_preference = ['exiftool', 'exifread', 'PIL']
 #   e.g., with 8 cores, you could set it to 4 or 2
 num_processors = 1
 
+# Should exif metadata (including copyright info) be copied into all the reductions and thumbnails?
+copy_exif_into_reductions = false
 
 ###########################################################
 # scanner and ui options
@@ -266,6 +275,16 @@ max_search_album_number = 100
 
 # should the internal Modernizr be used?
 use_internal_modernizr = true
+
+# set the javascript cache levels
+# every tuple in the array represents a pair of:
+# - minimum media number in album
+# - max number of albums to retain in this cache
+# The default values mean:
+# - keep in cache only one album with more than 1000 media
+# - keep in cache a maximum of 5 albums with 200-999 media
+# - keep in cache all the albums with less than 200 media
+js_cache_levels = [{"numMedia": 10000, "max": 1}, {"numMedia": 2000, "max": 2}, {"numMedia": 1000, "max": 4}, {"numMedia": 200, "max": 20}]
 
 ###########################################################
 # user interface options

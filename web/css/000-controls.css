@@ -68,7 +68,7 @@ a.title-anchor.mobile {
 	color: orange !important;
 }
 
-#loading {
+#loading, #folders-browsing, #by-date-browsing, #by-gps-browsing, #by-search-browsing {
 	display: none;
 }
 
@@ -176,6 +176,8 @@ a.title-anchor.mobile {
 
 .album-button img, .thumb-container img {
 	vertical-align: middle;
+	max-width: 100%;
+	height: auto;
 }
 
 #thumbs .thumb-container img.thumbnail {
@@ -204,6 +206,7 @@ a.title-anchor.mobile {
 	opacity: .5;
 	top: 5px;
 	right: 5px;
+	height: 20px;
 }
 
 #thumbs .thumbnail-map-link:hover {
@@ -360,6 +363,7 @@ video {
 	bottom: 0;
 	width: 100%;
 	text-align: center;
+	display: none;
 }
 
 .links {
@@ -596,6 +600,7 @@ ul#right-menu {
 	position: fixed;
 	top: 0;
 	right: 0;
+	z-index: 200;
 }
 
 ul#right-menu li {

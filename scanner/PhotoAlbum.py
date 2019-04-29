@@ -226,7 +226,7 @@ class Album(object):
 		get user defined metadata for the album and pictures.
 		"""
 		self.album_ini = configparser.ConfigParser(allow_no_value=True)
-		message("reading album.ini...", "", 5)
+		message("reading album.ini...", file_name, 5)
 		self.album_ini.read(file_name)
 		indented_message("album.ini read", file_name, 5)
 
@@ -279,8 +279,8 @@ class Album(object):
 			sys.exit(-97)
 		message("sorting album...", self.absolute_path, 5)
 		self.sort_subalbums_and_media()
-		indented_message("album sorted", "", 4)
-		message("saving album...", "", 5)
+		indented_message("album sorted", self.absolute_path, 4)
+		message("saving album...", self.absolute_path, 5)
 		with open(json_file_with_path, 'w') as filepath:
 			json.dump(self, filepath, cls=PhotoAlbumEncoder)
 		indented_message("album saved", "", 3)
@@ -292,20 +292,20 @@ class Album(object):
 	@staticmethod
 	def from_cache(path, album_cache_base):
 		next_level()
-		message("reading album...", "", 5)
+		message("reading album...", path, 5)
 		with open(path, "r") as filepath:
 			dictionary = json.load(filepath)
-		indented_message("album read", "", 5)
+		indented_message("album read", path, 5)
 		back_level()
 		# generate the album from the json file loaded
 		# subalbums are not generated yet
-		message("converting album to dict from json file...", "", 5)
+		message("converting album to dict from json file...", path, 5)
 		next_level()
 		dictionary = Album.from_dict(dictionary, album_cache_base)
 		if dictionary is not None:
-			message("album converted to dict from json file", "", 4)
+			message("album converted to dict from json file", path, 4)
 		else:
-			message("json version unexistent or old", "", 4)
+			message("json version unexistent or old", path, 4)
 		back_level()
 		return dictionary
 
@@ -434,8 +434,6 @@ class Album(object):
 		if self.cache_base == Options.config['folders_string']:
 			dictionary["numPoints"] = len(self.positions_and_media_in_tree)
 
-		if self.parent is not None:
-			dictionary["parentCacheBase"] = self.parent.cache_base
 		return dictionary
 
 
@@ -1418,6 +1416,8 @@ class Media(object):
 			else:
 				message("thumbing for media...", "", 5)
 			start_image_copy.thumbnail((actual_thumb_size, actual_thumb_size), Image.ANTIALIAS)
+			if Options.config['copy_exif_into_reductions']:
+				exif = start_image.info['exif']
 			next_level()
 			if not mobile_bigger and original_thumb_size > Options.config['album_thumb_size'] or mobile_bigger and original_thumb_size > int(Options.config['album_thumb_size'] * Options.config['mobile_thumbnail_factor']):
 				message("size reduced (" + str(original_thumb_size) + ")", "", 4)
@@ -1465,14 +1465,20 @@ class Media(object):
 			if thumb_type:
 				# use maximum quality for album and media thumbnails
 				jpeg_quality = 100
-			start_image_copy_for_saving.save(thumb_path, "JPEG", quality=jpeg_quality)
+			if Options.config['copy_exif_into_reductions']:
+				start_image_copy_for_saving.save(thumb_path, "JPEG", quality=jpeg_quality, exif=exif)
+			else:
+				start_image_copy_for_saving.save(thumb_path, "JPEG", quality=jpeg_quality)
 			next_level()
 			if original_thumb_size > Options.config['album_thumb_size']:
-				message("reduced size image saved ", "", 4)
+				msg = "reduced size image saved"
 			elif original_thumb_size == Options.config['album_thumb_size']:
-				message("album thumbnail saved", "", 4)
+				msg = "album thumbnail saved"
 			else:
-				message("media thumbnail saved", "", 4)
+				msg = "media thumbnail saved"
+			if Options.config['copy_exif_into_reductions']:
+				msg += " with exif data"
+			message(msg, "", 4)
 			back_level()
 			back_level()
 			back_level()
@@ -1486,14 +1492,20 @@ class Media(object):
 		except IOError:
 			message("saving (2nd try)...", info_string, 5)
 			try:
-				start_image_copy_for_saving.convert('RGB').save(thumb_path, "JPEG", quality=Options.config['jpeg_quality'])
+				if Options.config['copy_exif_into_reductions']:
+					start_image_copy_for_saving.convert('RGB').save(thumb_path, "JPEG", quality=Options.config['jpeg_quality'], exif=exif)
+				else:
+					start_image_copy_for_saving.convert('RGB').save(thumb_path, "JPEG", quality=Options.config['jpeg_quality'])
 				next_level()
 				if original_thumb_size > Options.config['album_thumb_size']:
-					message("saved reduced (2nd try, " + str(original_thumb_size) + ")", "", 2)
+					msg = "saved reduced (2nd try, " + str(original_thumb_size) + ")"
 				elif original_thumb_size == Options.config['album_thumb_size']:
-					message("saved for subalbums (2nd try, " + str(original_thumb_size) + ")", "", 2)
+					msg = "saved for subalbums (2nd try, " + str(original_thumb_size) + ")"
 				else:
-					message("saved for media (2nd try, " + str(original_thumb_size) + ")", "", 2)
+					msg = "saved for media (2nd try, " + str(original_thumb_size) + ")"
+				if Options.config['copy_exif_into_reductions']:
+					msg += " with exif data"
+				message(msg, "", 2)
 				back_level()
 			except KeyboardInterrupt:
 				try:
@@ -1977,8 +1989,7 @@ class Media(object):
 			media["checksum"] = self.checksum
 
 		# the following data don't belong properly to media, but to album, but they must be put here in order to work with date, gps and search structure
-		media["albumName"] = self.album_path
-		media["foldersAlbum"] = folders_album
+		media["albumName"] = self.album_path[:len(self.album_path) - len(self.name) - 1]
 		media["foldersCacheBase"] = self.album.cache_base
 		media["cacheSubdir"] = self.album.subdir
 		return media
