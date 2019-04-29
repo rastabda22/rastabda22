@@ -268,8 +268,6 @@ $(document).ready(function() {
 	$("#pinch-in").on("click", pS.pinchIn);
 	$("#pinch-out").on("click", pS.pinchOut);
 
-	// binds the click events to the sort buttons
-
 	// search
 	$('#search-button').on("click", function() {
 		var searchOptions = '';
@@ -344,6 +342,8 @@ $(document).ready(function() {
 	// }
 
 	// subalbums
+	// binds the click events to the sort buttons
+
 	$("li.album-sort.by-date").on('click', tF.sortAlbumsByDate);
 	$("li.album-sort.by-name").on('click', tF.sortAlbumsByName);
 	$("li.album-sort.sort-reverse").on('click', tF.sortAlbumsReverse);
