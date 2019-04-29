@@ -249,8 +249,6 @@ $(document).ready(function() {
 		return true;
 	});
 
-	// $("#album-view").on('mousewheel', pS.swipeOnWheel);
-
 	util.setLinksVisibility();
 	util.setNextPrevVisibility();
 

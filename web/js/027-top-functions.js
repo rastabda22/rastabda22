@@ -1201,6 +1201,16 @@
 		// $("#media-view").removeClass("hidden");
 	};
 
+	TopFunctions.scrollBottomThumbs = function(e, delta) {
+		this.scrollLeft -= (delta * 80);
+		e.preventDefault();
+	};
+
+	TopFunctions.scrollAlbum = function(e, delta) {
+		this.scrollTop -= (delta * 80);
+		e.preventDefault();
+	};
+
 
 	/* Entry point for most events */
 
@@ -2119,7 +2129,7 @@
 			}
 			$("#powered-by").show();
 
-			// pS.addAlbumGesturesDetection();
+			$("html, body").off('mousewheel').on('mousewheel', TopFunctions.scrollAlbum);
 		} else {
 			// currentMedia !== null
 			$("#media-view").removeClass("hidden");
@@ -2129,6 +2139,8 @@
 			else
 				$("#album-view").removeClass("hidden");
 			$("#powered-by").hide();
+
+			$(".media-view-container").off('mousewheel').on('mousewheel', TopFunctions.scrollBottomThumbs);
 		}
 
 		f.setOptions();
