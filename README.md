@@ -1,4 +1,4 @@
-# MyPhotoShare v3.8 (March 4, 2019)
+# MyPhotoShare v3.8.1 (April 29, 2019)
 
 ### A Web Photo Gallery Done Right via Static JSON & Dynamic Javascript
 #### by Jason A. Donenfeld (<Jason@zx2c4.com>), Jerome Charaoui (jerome@riseup.net)  Joachim Tingvold (joachim@tingvold.com), Paolo Benvenuto (<paolobenve@gmail.com>), Pierre Métras (<p.metras@videotron.ca>)
@@ -54,7 +54,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Link to original media.
 - [x] Link for direct download.
 - [x] Allows enlarging the photo till 1:1 aspect.
-- [x] Exif metadata (including copyright info) can be replicated into all the reductions/thumbnails
+- [x] Installer can decide whether to replicate all Exif metadata (including copyright info) into all the reductions/thumbnails or not
 
 ### For Geotaggers
 
