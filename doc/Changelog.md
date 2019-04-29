@@ -4,6 +4,7 @@
 * new option 'copy_exif_into_reductions' (defaults to _false_) in order to permit copying all the exif metadata (and particularly the copyright info) to every reductions/thumbnails
 * new shortcut _<_/_>_ for rotating among browsing modes: folders -> by date -> by gps -> by map -> by search
 * json files size has been slightly reduced removing unnecessary properties or property parts
+* permit scrolling bottom thumbnails with mouse wheel
 
 ### version v3.8 (March 4, 2019)
 
