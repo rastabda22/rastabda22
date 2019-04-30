@@ -378,24 +378,38 @@
 			currentAlbum.mediaNameSort = true;
 			currentAlbum.mediaNameReverseSort = false;
 			if (currentMedia !== null) {
-				for (m = 0; m < currentAlbum.media.length; m ++) {
-					if (currentAlbum.media[m].cacheBase == currentMedia.cacheBase && currentAlbum.media[m].foldersCacheBase == currentMedia.foldersCacheBase) {
-						currentMediaIndex = m;
-						break;
+				currentMediaIndex = currentAlbum.media.findIndex(
+					function(thisMedia) {
+						var matches =
+							thisMedia.cacheBase == currentMedia.cacheBase && thisMedia.foldersCacheBase == currentMedia.foldersCacheBase
+						return matches;
 					}
-				}
+				);
+				// for (m = 0; m < currentAlbum.media.length; m ++) {
+				// 	if (currentAlbum.media[m].cacheBase == currentMedia.cacheBase && currentAlbum.media[m].foldersCacheBase == currentMedia.foldersCacheBase) {
+				// 		currentMediaIndex = m;
+				// 		break;
+				// 	}
+				// }
 			}
 		} else if (Functions.needMediaDateSort()) {
 			currentAlbum.media = util.sortByDate(currentAlbum.media);
 			currentAlbum.mediaNameSort = false;
 			currentAlbum.mediaDateReverseSort = false;
 			if (currentMedia !== null) {
-				for (m = 0; m < currentAlbum.media.length; m ++) {
-					if (currentAlbum.media[m].cacheBase == currentMedia.cacheBase && currentAlbum.media[m].foldersCacheBase == currentMedia.foldersCacheBase) {
-						currentMediaIndex = m;
-						break;
+				currentMediaIndex = currentAlbum.media.findIndex(
+					function(thisMedia) {
+						var matches =
+							thisMedia.cacheBase == currentMedia.cacheBase && thisMedia.foldersCacheBase == currentMedia.foldersCacheBase
+						return matches;
 					}
-				}
+				);
+				// for (m = 0; m < currentAlbum.media.length; m ++) {
+				// 	if (currentAlbum.media[m].cacheBase == currentMedia.cacheBase && currentAlbum.media[m].foldersCacheBase == currentMedia.foldersCacheBase) {
+				// 		currentMediaIndex = m;
+				// 		break;
+				// 	}
+				// }
 			}
 		}
 		if (Functions.needMediaDateReverseSort() || Functions.needMediaNameReverseSort()) {
