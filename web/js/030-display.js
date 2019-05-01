@@ -4,6 +4,7 @@ var currentAlbum = null;
 var nextMedia = null, prevMedia = null, upLink = "";
 var nextBrowsingModeLink = null, prevBrowsingModeLink = null, bySearchViewLink = null, byMapViewLink = null, isABrowsingModeChange = false;
 var nextBrowsingModeMessageId = null, prevBrowsingModeMessageId = null;
+var titleWrapper1, titleWrapper2, maxWidthForThumbnails;
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
 var fromEscKey = false;
@@ -334,12 +335,6 @@ $(document).ready(function() {
 
 	// binds the click events to the sort buttons
 
-	$("li.album-sort.by-date").on('click', tF.sortAlbumsByDate);
-	$("li.album-sort.by-name").on('click', tF.sortAlbumsByName);
-	$("li.album-sort.sort-reverse").on('click', tF.sortAlbumsReverse);
-	$("li.media-sort.by-date").on('click', tF.sortMediaByDate);
-	$("li.media-sort.by-name").on('click', tF.sortMediaByName);
-	$("li.media-sort.sort-reverse").on('click', tF.sortMediaReverse);
 	$("ul#right-menu li.hide-title").on('click', tF.toggleTitle);
 	$("ul#right-menu li.hide-bottom-thumbnails").on('click', tF.toggleBottomThumbnails);
 	$("ul#right-menu li.slide").on('click', tF.toggleSlideMode);
