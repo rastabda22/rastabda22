@@ -1022,6 +1022,8 @@
 			PhotoFloat.cache.positions[resultsAlbumFinal.cacheBase] = resultsAlbumFinal.positionsAndMediaInTree;
 		}
 
+		
+
 		PhotoFloat.selectMedia(resultsAlbumFinal, null, mediaHash, callback);
 
 	};
