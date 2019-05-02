@@ -213,7 +213,7 @@
 			function(a,b) {
 				var aValue = a[field];
 				var bValue = b[field];
-				if (['name', 'altName'].indexOf(field) > -1) {
+				if (['name', 'altName', 'path'].indexOf(field) > -1) {
 					// make name search case insensitive
 					aValue = aValue.toLowerCase();
 					bValue = bValue.toLowerCase();
