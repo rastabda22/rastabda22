@@ -1,3 +1,5 @@
+* media shown in map popup are now albums, and can be sorted like regular albums
+
 ### version v3.8.1 (April 29, 2019)
 
 * fixed bug with spurious text seen on mobile when loading
