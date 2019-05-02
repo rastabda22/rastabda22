@@ -209,11 +209,18 @@
 
 	// see https://stackoverflow.com/questions/1069666/sorting-javascript-object-by-property-value
 	Utilities.prototype.sortBy = function(albumOrMediaList, field) {
-		return albumOrMediaList.sort(function(a,b) {
-			var aValue = a[field];
-			var bValue = b[field];
-			return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-		});
+		return albumOrMediaList.sort(
+			function(a,b) {
+				var aValue = a[field];
+				var bValue = b[field];
+				if (['name', 'altName'].indexOf(field) > -1) {
+					// make name search case insensitive
+					aValue = aValue.toLowerCase();
+					bValue = bValue.toLowerCase();
+				}
+				return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+			}
+		);
 	};
 
 	 Utilities.prototype.sortByName = function(mediaList) {
