@@ -221,13 +221,16 @@
 	};
 
 	Utilities.prototype.sortByPath = function(albumList) {
-		if (this.isByGpsCacheBase(albumList[0].cacheBase)) {
-			if (albumList[0].hasOwnProperty('altName'))
-				return this.sortBy(albumList, 'altName');
-			else
-				return this.sortBy(albumList, 'name');
-		} else
-			return this.sortBy(albumList, 'path');
+		if (albumList.length) {
+			if (this.isByGpsCacheBase(albumList[0].cacheBase)) {
+				if (albumList[0].hasOwnProperty('altName'))
+					return this.sortBy(albumList, 'altName');
+				else
+					return this.sortBy(albumList, 'name');
+			} else
+				return this.sortBy(albumList, 'path');
+		}
+		return albumList;
 	};
 
 	Utilities.prototype.sortByDate = function (albumOrMediaList) {

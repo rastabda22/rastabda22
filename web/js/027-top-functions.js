@@ -565,21 +565,10 @@
 		f.setOptions();
 
 		// activate the map popup trigger in the title
-		var mapPromise, date = new Date(), time = date.getTime();
 		$(".map-popup-trigger").off('click').on(
 			'click',
 			function(ev) {
-				mapPromise = new Promise(
-					function(mapResolve) {
-						TopFunctions.generateMapFromDefaults(TopFunctions.hashParsed, mapResolve);
-					}
-				);
-
-				mapPromise.then(
-					function(album) {
-						TopFunctions.bindSortEvents(album);
-					}
-				);
+				TopFunctions.generateMapFromDefaults(TopFunctions.hashParsed);
 			}
 		);
 
@@ -1631,7 +1620,6 @@
 		var mapLinkIcon, id;
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
 		var array, folderArray, folder, folderName, folderTitle, savedSearchSubAlbumHash, savedSearchAlbumHash;
-		var mapPromise = {}, date = new Date(), time;
 
 		phFl.subalbumIndex = 0;
 		numSubAlbumsReady = 0;
@@ -1792,19 +1780,9 @@
 				for (i = 0; i < currentAlbum.media.length; ++i) {
 					$("#media-map-link-" + i).off('click').on(
 						'click',
-						{media: currentAlbum.media[i], album: currentAlbum, time: time},
+						{media: currentAlbum.media[i], album: currentAlbum},
 						function(ev) {
-							mapPromise[ev.data.time] = new Promise(
-								function(mapResolve) {
-									TopFunctions.generateMapFromMedia(ev, TopFunctions.hashParsed, mapResolve);
-								}
-							);
-
-							mapPromise[ev.data.time].then(
-								function(album) {
-									TopFunctions.bindSortEvents(album);
-								}
-							);
+							TopFunctions.generateMapFromMedia(ev, TopFunctions.hashParsed);
 						}
 					);
 				}
@@ -2120,22 +2098,11 @@
 
 					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
 						if (currentAlbum.subalbums[i].hasOwnProperty("positionsAndMediaInTree") && currentAlbum.subalbums[i].positionsAndMediaInTree.length) {
-							time = date.getTime();
 							$("#subalbum-map-link-" + i).off('click').on(
 								'click',
-								{subalbum: currentAlbum.subalbums[i], time: time},
+								{subalbum: currentAlbum.subalbums[i]},
 								function(ev) {
-									mapPromise[ev.data.time] = new Promise(
-										function(mapResolve) {
-											TopFunctions.generateMapFromSubalbum(ev, TopFunctions.hashParsed, mapResolve);
-										}
-									);
-
-									mapPromise[ev.data.time].then(
-										function(album) {
-											TopFunctions.bindSortEvents(album);
-										}
-									);
+									TopFunctions.generateMapFromSubalbum(ev, TopFunctions.hashParsed);
 								}
 							);
 						}
@@ -2284,7 +2251,7 @@
 		}
 	};
 
-	TopFunctions.generateMapFromMedia = function(ev, callback, mapResolve) {
+	TopFunctions.generateMapFromMedia = function(ev, callback) {
 		// callback is the function to call after clicking on the map popup title
 		hashParsed = callback;
 
@@ -2301,25 +2268,25 @@
 						'foldersCacheBase': ev.data.media.foldersCacheBase
 					}]
 				};
-			TopFunctions.generateMap([point], mapResolve);
+			TopFunctions.generateMap([point]);
 		}
 	};
 
-	TopFunctions.generateMapFromSubalbum = function(ev, callback, mapResolve) {
+	TopFunctions.generateMapFromSubalbum = function(ev, callback) {
 		// callback is the function to call after clicking on the map popup title
 		hashParsed = callback;
 
 		if (ev.data.subalbum.positionsAndMediaInTree.length) {
 			ev.stopPropagation();
 			ev.preventDefault();
-			TopFunctions.generateMap(ev.data.subalbum.positionsAndMediaInTree, mapResolve);
+			TopFunctions.generateMap(ev.data.subalbum.positionsAndMediaInTree);
 		} else {
 			$("#warning-no-geolocated-media").stop().fadeIn(200);
 			$("#warning-no-geolocated-media").fadeOut(3000);
 		}
 	};
 
-	TopFunctions.generateMapFromDefaults = function(callback, mapResolve) {
+	TopFunctions.generateMapFromDefaults = function(callback) {
 		// callback is the function to call after clicking on the map popup title
 		hashParsed = callback;
 
@@ -2340,10 +2307,10 @@
 			pointList = currentAlbum.positionsAndMediaInTree;
 
 		if (pointList != [])
-			TopFunctions.generateMap(pointList, mapResolve);
+			TopFunctions.generateMap(pointList);
 	};
 
-	TopFunctions.generateMap = function(pointList, mapResolve) {
+	TopFunctions.generateMap = function(pointList) {
 		// pointList is an array of uniq points with a list of the media geolocated there
 
 		var i;
@@ -2410,7 +2377,7 @@
 				m.on(
 					'click',
 					function(e) {
-						TopFunctions.mapClick(e, pruneCluster.Cluster._clusters, mapResolve);
+						TopFunctions.mapClick(e, pruneCluster.Cluster._clusters);
 					}
 				);
 				return m;
@@ -2496,13 +2463,13 @@
 			MapFunctions.mymap.on(
 				'click',
 				function(e) {
-					TopFunctions.mapClick(e, pruneCluster.Cluster._clusters, mapResolve);
+					TopFunctions.mapClick(e, pruneCluster.Cluster._clusters);
 				}
 			);
 		}
 	};
 
-	TopFunctions.mapClick = function(evt, clusters, mapResolve) {
+	TopFunctions.mapClick = function(evt, clusters) {
 		var clickedPosition = evt.latlng, i, albumViewPadding;
 		var maxHeightForThumbnails;
 		// console.log(clickedPosition, clusters);
@@ -2525,7 +2492,7 @@
 			// mapAlbum.media = util.sortByDate(mapAlbum.media);
 			f.initializeSortPropertiesAndCookies(mapAlbum);
 			f.sortAlbumsMedia(mapAlbum);
-			mapResolve(mapAlbum);
+			TopFunctions.bindSortEvents(mapAlbum);
 
 			// update the map root album in cache
 			var rootMapAlbum = phFl.getAlbumFromCache(Options.by_map_string);
