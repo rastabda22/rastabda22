@@ -123,6 +123,7 @@ $(document).ready(function() {
 						if (isPopup) {
 							// the popup is there: close it
 							$('.leaflet-popup-close-button')[0].click();
+							MapFunctions.mapAlbum = {};
 							// $('#popup #popup-content').html("");
 						} else
 							// we are in a map: close it

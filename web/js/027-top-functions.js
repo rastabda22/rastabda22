@@ -2488,9 +2488,13 @@
 			mapAlbum.numMediaInAlbum = mapAlbum.media.length;
 			mapAlbum.numMediaInSubTree = mapAlbum.media.length;
 			mapAlbum.numPositionsInTree = mapAlbum.positionsAndMediaInTree.length;
-			// media must be sorted according to options
-			// mapAlbum.media = util.sortByDate(mapAlbum.media);
+			// media must be initially sorted by date not reverse, as json they are in albums
+			mapAlbum.media = util.sortByDate(mapAlbum.media);
+			mapAlbum.mediaNameSort = false;
+			mapAlbum.mediaDateReverseSort = false;
+			mapAlbum.mediaNameReverseSort = false;
 			f.initializeSortPropertiesAndCookies(mapAlbum);
+			// now sort them according to options
 			f.sortAlbumsMedia(mapAlbum);
 			TopFunctions.bindSortEvents(mapAlbum);
 
