@@ -248,6 +248,9 @@
 		});
 	};
 
+	Utilities.prototype.sortReverse = function(albumOrMediaList) {
+		return albumOrMediaList.reverse();
+	};
 	Utilities.prototype.trimExtension = function(name) {
 		var index = name.lastIndexOf(".");
 		if (index !== -1)

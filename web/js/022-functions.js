@@ -356,8 +356,6 @@
 		// album properties reflect the current sorting of album and media objects
 		// json files have subalbums and media sorted by date not reversed
 
-		var m;
-
 		if (Functions.needAlbumNameSort(thisAlbum)) {
 			thisAlbum.subalbums = util.sortByPath(thisAlbum.subalbums);
 			thisAlbum.albumNameSort = true;
@@ -370,7 +368,7 @@
 		}
 
 		if (Functions.needAlbumNameReverseSort(thisAlbum) || Functions.needAlbumDateReverseSort(thisAlbum)) {
-			thisAlbum.subalbums = thisAlbum.subalbums.reverse();
+			thisAlbum.subalbums = util.sortReverse(thisAlbum.subalbums);
 			if (Functions.needAlbumNameReverseSort(thisAlbum))
 				thisAlbum.albumNameReverseSort = ! thisAlbum.albumNameReverseSort;
 			else
@@ -405,7 +403,7 @@
 			}
 		}
 		if (Functions.needMediaDateReverseSort(thisAlbum) || Functions.needMediaNameReverseSort(thisAlbum)) {
-			thisAlbum.media = thisAlbum.media.reverse();
+			thisAlbum.media = util.sortReverse(thisAlbum.media);
 			if (Functions.needMediaNameReverseSort(thisAlbum))
 				thisAlbum.mediaNameReverseSort = ! thisAlbum.mediaNameReverseSort;
 			else
