@@ -389,12 +389,6 @@
 						return matches;
 					}
 				);
-				// for (m = 0; m < thisAlbum.media.length; m ++) {
-				// 	if (thisAlbum.media[m].cacheBase == currentMedia.cacheBase && thisAlbum.media[m].foldersCacheBase == currentMedia.foldersCacheBase) {
-				// 		currentMediaIndex = m;
-				// 		break;
-				// 	}
-				// }
 			}
 		} else if (Functions.needMediaDateSort(thisAlbum)) {
 			thisAlbum.media = util.sortByDate(thisAlbum.media);
@@ -408,12 +402,6 @@
 						return matches;
 					}
 				);
-				// for (m = 0; m < thisAlbum.media.length; m ++) {
-				// 	if (thisAlbum.media[m].cacheBase == currentMedia.cacheBase && thisAlbum.media[m].foldersCacheBase == currentMedia.foldersCacheBase) {
-				// 		currentMediaIndex = m;
-				// 		break;
-				// 	}
-				// }
 			}
 		}
 		if (Functions.needMediaDateReverseSort(thisAlbum) || Functions.needMediaNameReverseSort(thisAlbum)) {
