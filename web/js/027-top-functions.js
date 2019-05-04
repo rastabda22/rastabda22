@@ -1252,7 +1252,7 @@
 		if (currentMedia === null || typeof currentMedia === "object") {
 			f.initializeSortPropertiesAndCookies(currentAlbum);
 			$("#menu-icon").attr("title", util._t("#menu-icon-title"));
-			f.sortAlbumsMedia(currentAlbum);
+			util.sortAlbumsMedia(currentAlbum);
 			// f.updateMenu();
 		}
 
@@ -1364,7 +1364,7 @@
 		) {
 			f.setBooleanCookie("albumNameSortRequested", false);
 			f.setBooleanCookie("albumDateReverseSortRequested", thisAlbum.albumNameReverseSort);
-			f.sortAlbumsMedia(thisAlbum);
+			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
 			TopFunctions.showAlbum("refreshSubalbums");
 			f.focusSearchField();
@@ -1379,7 +1379,7 @@
 		) {
 			f.setBooleanCookie("albumNameSortRequested", true);
 			f.setBooleanCookie("albumNameReverseSortRequested", thisAlbum.albumDateReverseSort);
-			f.sortAlbumsMedia(thisAlbum);
+			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
 			TopFunctions.showAlbum("refreshSubalbums");
 			f.focusSearchField();
@@ -1395,7 +1395,7 @@
 				f.setBooleanCookie("albumNameReverseSortRequested", ! thisAlbum.albumNameReverseSort);
 			else
 				f.setBooleanCookie("albumDateReverseSortRequested", ! thisAlbum.albumDateReverseSort);
-			f.sortAlbumsMedia(thisAlbum);
+			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
 			TopFunctions.showAlbum("refreshSubalbums");
 			f.focusSearchField();
@@ -1411,7 +1411,7 @@
 		) {
 			f.setBooleanCookie("mediaNameSortRequested", false);
 			f.setBooleanCookie("mediaDateReverseSortRequested", f.getBooleanCookie("mediaDateReverseSortRequested"));
-			f.sortAlbumsMedia(thisAlbum);
+			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
 			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
 				TopFunctions.showAlbum("refreshMedia");
@@ -1433,7 +1433,7 @@
 		) {
 			f.setBooleanCookie("mediaNameSortRequested", true);
 			f.setBooleanCookie("mediaNameReverseSortRequested", f.getBooleanCookie("mediaNameReverseSortRequested"));
-			f.sortAlbumsMedia(thisAlbum);
+			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
 			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
 				TopFunctions.showAlbum("refreshMedia");
@@ -1454,7 +1454,7 @@
 			else
 				f.setBooleanCookie("mediaDateReverseSortRequested", ! f.getBooleanCookie("mediaDateReverseSortRequested"));
 
-			f.sortAlbumsMedia(thisAlbum);
+			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
 			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
 				TopFunctions.showAlbum("refreshMedia");
@@ -2495,7 +2495,7 @@
 			mapAlbum.mediaNameReverseSort = false;
 			f.initializeSortPropertiesAndCookies(mapAlbum);
 			// now sort them according to options
-			f.sortAlbumsMedia(mapAlbum);
+			util.sortAlbumsMedia(mapAlbum);
 			TopFunctions.bindSortEvents(mapAlbum);
 
 			// update the map root album in cache

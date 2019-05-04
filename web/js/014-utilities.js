@@ -208,7 +208,7 @@
 	};
 
 	// see https://stackoverflow.com/questions/1069666/sorting-javascript-object-by-property-value
-	Utilities.prototype.sortBy = function(albumOrMediaList, field) {
+	Utilities.sortBy = function(albumOrMediaList, field) {
 		return albumOrMediaList.sort(
 			function(a,b) {
 				var aValue = a[field];
@@ -223,13 +223,13 @@
 		);
 	};
 
-	 Utilities.prototype.sortByName = function(mediaList) {
+	 Utilities.sortByName = function(mediaList) {
 		return this.sortBy(mediaList, 'name');
 	};
 
-	Utilities.prototype.sortByPath = function(albumList) {
+	Utilities.sortByPath = function(albumList) {
 		if (albumList.length) {
-			if (this.isByGpsCacheBase(albumList[0].cacheBase)) {
+			if (Utilities.isByGpsCacheBase(albumList[0].cacheBase)) {
 				if (albumList[0].hasOwnProperty('altName'))
 					return this.sortBy(albumList, 'altName');
 				else
@@ -240,7 +240,7 @@
 		return albumList;
 	};
 
-	Utilities.prototype.sortByDate = function (albumOrMediaList) {
+	Utilities.sortByDate = function (albumOrMediaList) {
 		return albumOrMediaList.sort(function(a,b) {
 			var aValue = new Date(a.date);
 			var bValue = new Date(b.date);
@@ -248,7 +248,7 @@
 		});
 	};
 
-	Utilities.prototype.sortReverse = function(albumOrMediaList) {
+	Utilities.sortReverse = function(albumOrMediaList) {
 		return albumOrMediaList.reverse();
 	};
 	Utilities.prototype.trimExtension = function(name) {
@@ -266,7 +266,7 @@
 		return string == Options.by_date_string || string.indexOf(Options.byDateStringWithTrailingSeparator) === 0;
 	};
 
-	Utilities.prototype.isByGpsCacheBase = function(string) {
+	Utilities.isByGpsCacheBase = function(string) {
 		return string == Options.by_gps_string || string.indexOf(Options.byGpsStringWithTrailingSeparator) === 0;
 	};
 
@@ -917,7 +917,72 @@
 		return this.mediaPath(album, media, thumbnailSize);
 	};
 
+	Utilities.sortAlbumsMedia = function(thisAlbum) {
+		// this function applies the sorting on the media and subalbum lists
+		// and sets the album properties that attest the lists status
+
+		// album properties reflect the current sorting of album and media objects
+		// json files have subalbums and media sorted by date not reversed
+
+		if (Functions.needAlbumNameSort(thisAlbum)) {
+			thisAlbum.subalbums = Utilities.sortByPath(thisAlbum.subalbums);
+			thisAlbum.albumNameSort = true;
+			thisAlbum.albumNameReverseSort = false;
+			// $("li.album-sort.by-name").addClass("selected");
+		} else if (Functions.needAlbumDateSort(thisAlbum)) {
+			thisAlbum.subalbums = Utilities.sortByDate(thisAlbum.subalbums);
+			thisAlbum.albumNameSort = false;
+			thisAlbum.albumDateReverseSort = false;
+		}
+
+		if (Functions.needAlbumDateReverseSort(thisAlbum) || Functions.needAlbumNameReverseSort(thisAlbum)) {
+			thisAlbum.subalbums = Utilities.sortReverse(thisAlbum.subalbums);
+			if (Functions.needAlbumNameReverseSort(thisAlbum))
+				thisAlbum.albumNameReverseSort = ! thisAlbum.albumNameReverseSort;
+			else
+				thisAlbum.albumDateReverseSort = ! thisAlbum.albumDateReverseSort;
+		}
+
+		if (Functions.needMediaNameSort(thisAlbum)) {
+			thisAlbum.media = Utilities.sortByName(thisAlbum.media);
+			thisAlbum.mediaNameSort = true;
+			thisAlbum.mediaNameReverseSort = false;
+			if (currentMedia !== null) {
+				currentMediaIndex = thisAlbum.media.findIndex(
+					function(thisMedia) {
+						var matches =
+							thisMedia.cacheBase == currentMedia.cacheBase && thisMedia.foldersCacheBase == currentMedia.foldersCacheBase
+						return matches;
+					}
+				);
+			}
+		} else if (Functions.needMediaDateSort(thisAlbum)) {
+			thisAlbum.media = Utilities.sortByDate(thisAlbum.media);
+			thisAlbum.mediaNameSort = false;
+			thisAlbum.mediaDateReverseSort = false;
+			if (currentMedia !== null) {
+				currentMediaIndex = thisAlbum.media.findIndex(
+					function(thisMedia) {
+						var matches =
+							thisMedia.cacheBase == currentMedia.cacheBase && thisMedia.foldersCacheBase == currentMedia.foldersCacheBase
+						return matches;
+					}
+				);
+			}
+		}
+		if (Functions.needMediaDateReverseSort(thisAlbum) || Functions.needMediaNameReverseSort(thisAlbum)) {
+			thisAlbum.media = Utilities.sortReverse(thisAlbum.media);
+			if (Functions.needMediaNameReverseSort(thisAlbum))
+				thisAlbum.mediaNameReverseSort = ! thisAlbum.mediaNameReverseSort;
+			else
+				thisAlbum.mediaDateReverseSort = ! thisAlbum.mediaDateReverseSort;
+			if (currentMediaIndex !== undefined && currentMediaIndex != -1)
+				currentMediaIndex = thisAlbum.media.length - 1 - currentMediaIndex;
+		}
+	};
+
 	/* make static methods callable as member functions */
+	Utilities.prototype.sortAlbumsMedia = Utilities.sortAlbumsMedia;
 	Utilities.prototype.chooseReducedPhoto = Utilities.chooseReducedPhoto;
 	Utilities.prototype.originalMediaPath = Utilities.originalMediaPath;
 	Utilities.prototype.mediaPath = Utilities.mediaPath;
@@ -935,6 +1000,12 @@
 	Utilities.prototype.degreesToRadians = Utilities.degreesToRadians;
 	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
 	Utilities.prototype.mediaBoxContainerHeight = Utilities.mediaBoxContainerHeight;
+	Utilities.prototype.sortReverse = Utilities.sortReverse;
+	Utilities.prototype.sortByName = Utilities.sortByName;
+	Utilities.prototype.sortByDate = Utilities.sortByDate;
+	Utilities.prototype.sortByPath = Utilities.sortByPath;
+	Utilities.prototype.sortBy = Utilities.sortBy;
+	Utilities.prototype.isByGpsCacheBase = Utilities.isByGpsCacheBase;
 
 	window.Utilities = Utilities;
 }());

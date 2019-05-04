@@ -752,7 +752,8 @@
 												}
 												searchResultsAlbumFinal.media = matchingMedia;
 
-												// search albums need to conform to default behaviour of albums: json files have subalbums and media sorted by date not reversed
+												// search albums need to conform to default behaviour of albums:
+												// json files have subalbums and media sorted by date not reversed
 												searchResultsAlbumFinal.media = util.sortByDate(searchResultsAlbumFinal.media);
 
 												matchingSubalbums = [];
@@ -1022,10 +1023,7 @@
 			PhotoFloat.cache.positions[resultsAlbumFinal.cacheBase] = resultsAlbumFinal.positionsAndMediaInTree;
 		}
 
-		
-
 		PhotoFloat.selectMedia(resultsAlbumFinal, null, mediaHash, callback);
-
 	};
 
 	PhotoFloat.selectMedia = function(theAlbum, mediaFolderHash, mediaHash, callback) {
@@ -1035,6 +1033,8 @@
 			if (util.isSearchCacheBase(theAlbum.cacheBase) && (media === null && ! util.isAlbumWithOneMedia(theAlbum)))
 				$("ul#right-menu").addClass("expand");
 		}
+
+		Utilities.sortAlbumsMedia(theAlbum);
 
 		var i = -1;
 		var media = null;
