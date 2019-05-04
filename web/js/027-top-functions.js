@@ -1250,7 +1250,7 @@
 		f.setOptions();
 
 		if (currentMedia === null || typeof currentMedia === "object") {
-			f.initializeSortPropertiesAndCookies(currentAlbum);
+			util.initializeSortPropertiesAndCookies(currentAlbum);
 			$("#menu-icon").attr("title", util._t("#menu-icon-title"));
 			util.sortAlbumsMedia(currentAlbum);
 			// f.updateMenu();
@@ -2493,7 +2493,7 @@
 			mapAlbum.mediaNameSort = false;
 			mapAlbum.mediaDateReverseSort = false;
 			mapAlbum.mediaNameReverseSort = false;
-			f.initializeSortPropertiesAndCookies(mapAlbum);
+			util.initializeSortPropertiesAndCookies(mapAlbum);
 			// now sort them according to options
 			util.sortAlbumsMedia(mapAlbum);
 			TopFunctions.bindSortEvents(mapAlbum);

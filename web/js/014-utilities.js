@@ -981,6 +981,51 @@
 		}
 	};
 
+	Utilities.prototype.initializeSortPropertiesAndCookies = function(thisAlbum) {
+		// this function applies the sorting on the media and subalbum lists
+		// and sets the album properties that attest the lists status
+
+		// album properties reflect the current sorting of album and media objects
+		// json files have subalbums and media sorted by date not reversed
+
+		if (thisAlbum.albumNameSort === undefined) {
+			thisAlbum.albumNameSort = false;
+		}
+		if (thisAlbum.albumDateReverseSort === undefined){
+			thisAlbum.albumDateReverseSort = false;
+		}
+		if (thisAlbum.albumNameReverseSort === undefined){
+			thisAlbum.albumNameReverseSort = false;
+		}
+
+		if (thisAlbum.mediaNameSort === undefined) {
+			thisAlbum.mediaNameSort = false;
+		}
+		if (thisAlbum.mediaDateReverseSort === undefined){
+			thisAlbum.mediaDateReverseSort = false;
+		}
+		if (thisAlbum.mediaNameReverseSort === undefined)
+			thisAlbum.mediaNameReverseSort = false;
+
+		// cookies reflect the requested sorting in ui
+		// they remember the ui state when a change in sort is requested (via the top buttons) and when the hash changes
+		// if they are not set yet, they are set to default values
+
+		if (Functions.getBooleanCookie("albumNameSortRequested") === null)
+			Functions.setBooleanCookie("albumNameSortRequested", Options.default_album_name_sort);
+		if (Functions.getBooleanCookie("albumDateReverseSortRequested") === null)
+			Functions.setBooleanCookie("albumDateReverseSortRequested", Options.default_album_reverse_sort);
+		if (Functions.getBooleanCookie("albumNameReverseSortRequested") === null)
+			Functions.setBooleanCookie("albumNameReverseSortRequested", Options.default_album_reverse_sort);
+
+		if (Functions.getBooleanCookie("mediaNameSortRequested") === null)
+			Functions.setBooleanCookie("mediaNameSortRequested", Options.default_media_name_sort);
+		if (Functions.getBooleanCookie("mediaDateReverseSortRequested") === null)
+			Functions.setBooleanCookie("mediaDateReverseSortRequested", Options.default_media_reverse_sort);
+		if (Functions.getBooleanCookie("mediaNameReverseSortRequested") === null)
+			Functions.setBooleanCookie("mediaNameReverseSortRequested", Options.default_media_reverse_sort);
+	};
+
 	/* make static methods callable as member functions */
 	Utilities.prototype.sortAlbumsMedia = Utilities.sortAlbumsMedia;
 	Utilities.prototype.chooseReducedPhoto = Utilities.chooseReducedPhoto;

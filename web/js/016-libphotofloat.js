@@ -1034,7 +1034,8 @@
 				$("ul#right-menu").addClass("expand");
 		}
 
-		Utilities.sortAlbumsMedia(theAlbum);
+		util.initializeSortPropertiesAndCookies(theAlbum);
+		util.sortAlbumsMedia(theAlbum);
 
 		var i = -1;
 		var media = null;
