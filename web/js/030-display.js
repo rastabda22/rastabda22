@@ -202,7 +202,7 @@ $(document).ready(function() {
 			if ((currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)) && ! isMap) {
 				// browsing mode switchers
 				if (e.key === '<' && prevBrowsingModeLink !== null) {
-					$(".error").stop().hide().css("opacity", 100);
+					$(".browsing-mode-message").stop().hide().css("opacity", "");
 					$("#" + prevBrowsingModeMessageId).show();
 					$("#" + prevBrowsingModeMessageId).fadeOut(
 						2500,
@@ -215,7 +215,7 @@ $(document).ready(function() {
 					return false;
 				} else if (e.key === '>' && nextBrowsingModeLink !== null) {
 					// it's a ">"
-					$(".error").stop().hide().css("opacity", 100);
+					$(".browsing-mode-message").stop().hide().css("opacity", "");
 					$("#" + nextBrowsingModeMessageId).show();
 					$("#" + nextBrowsingModeMessageId).fadeOut(
 						2500,
@@ -271,7 +271,7 @@ $(document).ready(function() {
 					console.log("currentSortingIndex = ", currentSortingIndex);
 				}
 
-				$(".error").stop().hide().css("opacity", 100);
+				$(".sort-message").stop().hide().css("opacity", "");
 				if (['[', '{'].indexOf(e.key) !== -1) {
 					var prevSelectors = [".reverse", ".by-date", ".reverse", ".by-name", ];
 					prevSelector = prevSelectors[currentSortingIndex];

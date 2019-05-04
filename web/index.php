@@ -253,11 +253,11 @@
 			</div>
 		</div>
 
-		<div id="folders-browsing" class="error"></div>
-		<div id="by-date-browsing" class="error"></div>
-		<div id="by-gps-browsing" class="error"></div>
-		<div id="by-search-browsing" class="error"></div>
-		<div id="by-map-browsing" class="error"></div>
+		<div id="folders-browsing" class="browsing-mode-message"></div>
+		<div id="by-date-browsing" class="browsing-mode-message"></div>
+		<div id="by-gps-browsing" class="browsing-mode-message"></div>
+		<div id="by-search-browsing" class="browsing-mode-message"></div>
+		<div id="by-map-browsing" class="browsing-mode-message"></div>
 
 		<img id="prev" width="42" height="88" src="img/prev.png">
 		<img id="next" width="42" height="88" src="img/next.png">
@@ -336,14 +336,14 @@
 	<div id="error-unexistent-map-album" class="error"></div>
 	<div id="warning-no-geolocated-media" class="error"></div>
 
-	<div id="by-date-album-sorting" class="error"></div>
-	<div id="by-date-reverse-album-sorting" class="error"></div>
-	<div id="by-name-album-sorting" class="error"></div>
-	<div id="by-name-reverse-album-sorting" class="error"></div>
-	<div id="by-date-media-sorting" class="error"></div>
-	<div id="by-date-reverse-media-sorting" class="error"></div>
-	<div id="by-name-media-sorting" class="error"></div>
-	<div id="by-name-reverse-media-sorting" class="error"></div>
+	<div id="by-date-album-sorting" class="sort-message"></div>
+	<div id="by-date-reverse-album-sorting" class="sort-message"></div>
+	<div id="by-name-album-sorting" class="sort-message"></div>
+	<div id="by-name-reverse-album-sorting" class="sort-message"></div>
+	<div id="by-date-media-sorting" class="sort-message"></div>
+	<div id="by-date-reverse-media-sorting" class="sort-message"></div>
+	<div id="by-name-media-sorting" class="sort-message"></div>
+	<div id="by-name-reverse-media-sorting" class="sort-message"></div>
 
 	<div id="auth-text"><form id="auth-form"><input id="password" type="password" /><input type="submit" value="Login" /></form></div>
 </body>
