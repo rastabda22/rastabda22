@@ -199,15 +199,9 @@ $(document).ready(function() {
 				}
 			}
 
-			// browsing mode switchers
-			if (
-				e.keyCode === 220 &&
-				//         > or <
-				currentMedia !== null &&
-				! isMap
-			) {
-				if (! e.shiftKey && prevBrowsingModeLink !== null) {
-					// it's a "<"
+			if ((currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)) && ! isMap) {
+				// browsing mode switchers
+				if (e.key === '<' && prevBrowsingModeLink !== null) {
 					$(".error").stop().hide().css("opacity", 100);
 					$("#" + prevBrowsingModeMessageId).show();
 					$("#" + prevBrowsingModeMessageId).fadeOut(
@@ -219,7 +213,7 @@ $(document).ready(function() {
 					isABrowsingModeChange = true;
 					window.location.href = prevBrowsingModeLink;
 					return false;
-				} else if (e.shiftKey && nextBrowsingModeLink !== null) {
+				} else if (e.key === '>' && nextBrowsingModeLink !== null) {
 					// it's a ">"
 					$(".error").stop().hide().css("opacity", 100);
 					$("#" + nextBrowsingModeMessageId).show();
