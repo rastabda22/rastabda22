@@ -934,7 +934,6 @@
 			thisAlbum.albumNameSort = false;
 			thisAlbum.albumDateReverseSort = false;
 		}
-
 		if (Functions.needAlbumDateReverseSort(thisAlbum) || Functions.needAlbumNameReverseSort(thisAlbum)) {
 			thisAlbum.subalbums = Utilities.sortReverse(thisAlbum.subalbums);
 			if (Functions.needAlbumNameReverseSort(thisAlbum))
