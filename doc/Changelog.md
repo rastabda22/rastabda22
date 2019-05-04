@@ -1,4 +1,5 @@
 * media shown in map popup are now albums, and can be sorted like regular albums
+* new shortcuts for changing sort of albums (`[` - `]`) and media (`{` - `}`), in a rotative way: name -> name reverse -> date reverse - date
 
 ### version v3.8.1 (April 29, 2019)
 

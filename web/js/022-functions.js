@@ -367,7 +367,7 @@
 			thisAlbum.albumDateReverseSort = false;
 		}
 
-		if (Functions.needAlbumNameReverseSort(thisAlbum) || Functions.needAlbumDateReverseSort(thisAlbum)) {
+		if (Functions.needAlbumDateReverseSort(thisAlbum) || Functions.needAlbumNameReverseSort(thisAlbum)) {
 			thisAlbum.subalbums = util.sortReverse(thisAlbum.subalbums);
 			if (Functions.needAlbumNameReverseSort(thisAlbum))
 				thisAlbum.albumNameReverseSort = ! thisAlbum.albumNameReverseSort;

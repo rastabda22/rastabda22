@@ -236,6 +236,81 @@ $(document).ready(function() {
 			}
 		}
 
+		if (['[', ']', '{', '}'].indexOf(e.key) !== -1) {
+			if (currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)) {
+				// media and subalbums sort switcher
+
+				var mode;
+				var prevSortingModeMessageId, nextSortingModeMessageId;
+				// var sortingsFunctions = [util.sortByDate, util.sortReverse, util.sortByName, util.sortReverse];
+				var prevSelectors = [".sort-reverse", ".by-date", ".sort-reverse", ".by-name", ];
+				var nextSelectors = [".by-name", ".sort-reverse", ".by-date", ".sort-reverse"];
+				var sortingMessageIds = ['by-date', 'by-name', 'by-name-reverse', 'by-date-reverse'];
+				var currentSortingIndex, prevSortingIndex, nextSortingIndex;
+
+				if (['[', ']'].indexOf(e.key) !== -1) {
+					mode = 'album';
+				} else {
+					mode = 'media';
+				}
+
+				var nameSort = currentAlbum[mode + "NameSort"];
+				var nameReverseSort = currentAlbum[mode + "NameReverseSort"];
+				var dateReverseSort = currentAlbum[mode + "DateReverseSort"];
+
+				if (
+					$(".sort." + mode + "-sort.by-date").hasClass("selected") &&
+					! $(".sort." + mode + "-sort.sort-reverse").hasClass("selected")
+				) {
+				// if (! nameSort && ! dateReverseSort) {
+					currentSortingIndex = 0;
+					console.log("currentSortingIndex = ", currentSortingIndex);
+				} else if (
+					$(".sort." + mode + "-sort.by-name").hasClass("selected") &&
+					! $(".sort." + mode + "-sort.sort-reverse").hasClass("selected")
+				) {
+				// } else if (nameSort && ! nameReverseSort) {
+					currentSortingIndex = 1;
+					console.log("currentSortingIndex = ", currentSortingIndex);
+				} else if (
+					$(".sort." + mode + "-sort.by-name").hasClass("selected") &&
+					$(".sort." + mode + "-sort.sort-reverse").hasClass("selected")
+				) {
+				// } else if (nameSort && nameReverseSort) {
+					currentSortingIndex = 2;
+					console.log("currentSortingIndex = ", currentSortingIndex);
+				} else if (
+					$(".sort." + mode + "-sort.by-date").hasClass("selected") &&
+					$(".sort." + mode + "-sort.sort-reverse").hasClass("selected")
+				) {
+				// } else if (! nameSort && dateReverseSort) {
+					currentSortingIndex = 3;
+					console.log("currentSortingIndex = ", currentSortingIndex);
+				}
+
+				prevSelector = prevSelectors[currentSortingIndex];
+				nextSelector = nextSelectors[currentSortingIndex];
+
+				prevSortingIndex = (currentSortingIndex + 4 - 1) % 4;
+				nextSortingIndex = (currentSortingIndex + 1) % 4;
+				prevSortingModeMessageId = sortingMessageIds[prevSortingIndex] + "-" + mode + "-sorting";
+				nextSortingModeMessageId = sortingMessageIds[nextSortingIndex] + "-" + mode + "-sorting";
+				$(".error").stop().hide().css("opacity", 100);
+				if (['[', '{'].indexOf(e.key) !== -1) {
+					$("#" + prevSortingModeMessageId).show();
+					$("#" + prevSortingModeMessageId).fadeOut(2500);
+					$(".sort." + mode + "-sort" + prevSelector)[0].click();
+					console.log(".sort." + mode + "-sort" + prevSelector + " ------- " + prevSortingModeMessageId);
+				} else {
+					$("#" + nextSortingModeMessageId).show();
+					$("#" + nextSortingModeMessageId).fadeOut(2500);
+					$(".sort." + mode + "-sort" + nextSelector)[0].click();
+					console.log(".sort." + mode + "-sort" + nextSelector + " ------- " + nextSortingModeMessageId);
+				}
+				return false;
+			}
+		}
+
 		if (
 			(
 				e.target.tagName.toLowerCase() != 'input' && e.keyCode === 69 ||
