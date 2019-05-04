@@ -242,9 +242,10 @@
 
 	Utilities.sortByDate = function (albumOrMediaList) {
 		return albumOrMediaList.sort(function(a,b) {
-			var aValue = new Date(a.date);
-			var bValue = new Date(b.date);
-			return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+			return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
+			// var aValue = new Date(a.date);
+			// var bValue = new Date(b.date);
+			// return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
 		});
 	};
 
