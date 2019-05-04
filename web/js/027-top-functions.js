@@ -1363,7 +1363,7 @@
 			ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			f.setBooleanCookie("albumNameSortRequested", false);
-			f.setBooleanCookie("albumDateReverseSortRequested", thisAlbum.albumNameReverseSort);
+			f.setBooleanCookie("albumReverseSortRequested", thisAlbum.albumReverseSort);
 			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
 			TopFunctions.showAlbum("refreshSubalbums");
@@ -1378,7 +1378,7 @@
 			ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			f.setBooleanCookie("albumNameSortRequested", true);
-			f.setBooleanCookie("albumNameReverseSortRequested", thisAlbum.albumDateReverseSort);
+			f.setBooleanCookie("albumReverseSortRequested", thisAlbum.albumReverseSort);
 			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
 			TopFunctions.showAlbum("refreshSubalbums");
@@ -1391,10 +1391,7 @@
 		if (
 			ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
-			if (thisAlbum.albumNameSort)
-				f.setBooleanCookie("albumNameReverseSortRequested", ! thisAlbum.albumNameReverseSort);
-			else
-				f.setBooleanCookie("albumDateReverseSortRequested", ! thisAlbum.albumDateReverseSort);
+			f.setBooleanCookie("albumReverseSortRequested", ! thisAlbum.albumReverseSort);
 			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
 			TopFunctions.showAlbum("refreshSubalbums");
@@ -1410,7 +1407,7 @@
 			ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			f.setBooleanCookie("mediaNameSortRequested", false);
-			f.setBooleanCookie("mediaDateReverseSortRequested", thisAlbum.mediaNameReverseSort);
+			f.setBooleanCookie("mediaReverseSortRequested", thisAlbum.mediaReverseSort);
 			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
 			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
@@ -1432,7 +1429,7 @@
 			ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			f.setBooleanCookie("mediaNameSortRequested", true);
-			f.setBooleanCookie("mediaNameReverseSortRequested", thisAlbum.mediaDateReverseSort);
+			f.setBooleanCookie("mediaReverseSortRequested", thisAlbum.mediaReverseSort);
 			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
 			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
@@ -1449,10 +1446,7 @@
 
 	TopFunctions.sortMediaReverse = function(ev, thisAlbum) {
 		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-			if (thisAlbum.mediaNameSort)
-				f.setBooleanCookie("mediaNameReverseSortRequested", ! f.getBooleanCookie("mediaNameReverseSortRequested"));
-			else
-				f.setBooleanCookie("mediaDateReverseSortRequested", ! f.getBooleanCookie("mediaDateReverseSortRequested"));
+			f.setBooleanCookie("mediaReverseSortRequested", ! f.getBooleanCookie("mediaReverseSortRequested"));
 
 			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
@@ -2491,8 +2485,7 @@
 			// media must be initially sorted by date not reverse, as json they are in albums
 			mapAlbum.media = util.sortByDate(mapAlbum.media);
 			mapAlbum.mediaNameSort = false;
-			mapAlbum.mediaDateReverseSort = false;
-			mapAlbum.mediaNameReverseSort = false;
+			mapAlbum.mediaReverseSort = false;
 			util.initializeSortPropertiesAndCookies(mapAlbum);
 			// now sort them according to options
 			util.sortAlbumsMedia(mapAlbum);

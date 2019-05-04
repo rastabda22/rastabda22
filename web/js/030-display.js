@@ -236,9 +236,6 @@ $(document).ready(function() {
 
 				var mode;
 				var prevSortingModeMessageId, nextSortingModeMessageId;
-				// var sortingsFunctions = [util.sortByDate, util.sortReverse, util.sortByName, util.sortReverse];
-				var prevSelectors = [".sort-reverse", ".by-date", ".sort-reverse", ".by-name", ];
-				var nextSelectors = [".by-name", ".sort-reverse", ".by-date", ".sort-reverse"];
 				var sortingMessageIds = ['by-date', 'by-name', 'by-name-reverse', 'by-date-reverse'];
 				var currentSortingIndex, prevSortingIndex, nextSortingIndex;
 
@@ -248,60 +245,52 @@ $(document).ready(function() {
 					mode = 'media';
 				}
 
-				var nameSort = currentAlbum[mode + "NameSort"];
-				var nameReverseSort = currentAlbum[mode + "NameReverseSort"];
-				var dateReverseSort = currentAlbum[mode + "DateReverseSort"];
-
 				if (
 					$(".sort." + mode + "-sort.by-date").hasClass("selected") &&
 					! $(".sort." + mode + "-sort.sort-reverse").hasClass("selected")
 				) {
-				// if (! nameSort && ! dateReverseSort) {
 					currentSortingIndex = 0;
 					console.log("currentSortingIndex = ", currentSortingIndex);
 				} else if (
 					$(".sort." + mode + "-sort.by-name").hasClass("selected") &&
 					! $(".sort." + mode + "-sort.sort-reverse").hasClass("selected")
 				) {
-				// } else if (nameSort && ! nameReverseSort) {
 					currentSortingIndex = 1;
 					console.log("currentSortingIndex = ", currentSortingIndex);
 				} else if (
 					$(".sort." + mode + "-sort.by-name").hasClass("selected") &&
 					$(".sort." + mode + "-sort.sort-reverse").hasClass("selected")
 				) {
-				// } else if (nameSort && nameReverseSort) {
 					currentSortingIndex = 2;
 					console.log("currentSortingIndex = ", currentSortingIndex);
 				} else if (
 					$(".sort." + mode + "-sort.by-date").hasClass("selected") &&
 					$(".sort." + mode + "-sort.sort-reverse").hasClass("selected")
 				) {
-				// } else if (! nameSort && dateReverseSort) {
 					currentSortingIndex = 3;
 					console.log("currentSortingIndex = ", currentSortingIndex);
 				}
 
-				prevSelector = prevSelectors[currentSortingIndex];
-				nextSelector = nextSelectors[currentSortingIndex];
-
-				prevSortingIndex = (currentSortingIndex + 4 - 1) % 4;
-				nextSortingIndex = (currentSortingIndex + 1) % 4;
-				prevSortingModeMessageId = sortingMessageIds[prevSortingIndex] + "-" + mode + "-sorting";
-				nextSortingModeMessageId = sortingMessageIds[nextSortingIndex] + "-" + mode + "-sorting";
 				$(".error").stop().hide().css("opacity", 100);
 				if (['[', '{'].indexOf(e.key) !== -1) {
+					var prevSelectors = [".sort-reverse", ".by-date", ".sort-reverse", ".by-name", ];
+					prevSelector = prevSelectors[currentSortingIndex];
+					prevSortingIndex = (currentSortingIndex + 4 - 1) % 4;
+					prevSortingModeMessageId = sortingMessageIds[prevSortingIndex] + "-" + mode + "-sorting";
 					$("#" + prevSortingModeMessageId).show();
 					$("#" + prevSortingModeMessageId).fadeOut(2500);
 					$(".sort." + mode + "-sort" + prevSelector)[0].click();
 					console.log(".sort." + mode + "-sort" + prevSelector + " ------- " + prevSortingModeMessageId);
 				} else {
+					var nextSelectors = [".by-name", ".sort-reverse", ".by-date", ".sort-reverse"];
+					nextSelector = nextSelectors[currentSortingIndex];
+					nextSortingIndex = (currentSortingIndex + 1) % 4;
+					nextSortingModeMessageId = sortingMessageIds[nextSortingIndex] + "-" + mode + "-sorting";
 					$("#" + nextSortingModeMessageId).show();
 					$("#" + nextSortingModeMessageId).fadeOut(2500);
 					$(".sort." + mode + "-sort" + nextSelector)[0].click();
 					console.log(".sort." + mode + "-sort" + nextSelector + " ------- " + nextSortingModeMessageId);
 				}
-				return false;
 			}
 		}
 

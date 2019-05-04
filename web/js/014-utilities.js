@@ -928,25 +928,22 @@
 		if (Functions.needAlbumNameSort(thisAlbum)) {
 			thisAlbum.subalbums = Utilities.sortByPath(thisAlbum.subalbums);
 			thisAlbum.albumNameSort = true;
-			thisAlbum.albumNameReverseSort = false;
+			thisAlbum.albumReverseSort = false;
 			// $("li.album-sort.by-name").addClass("selected");
 		} else if (Functions.needAlbumDateSort(thisAlbum)) {
 			thisAlbum.subalbums = Utilities.sortByDate(thisAlbum.subalbums);
 			thisAlbum.albumNameSort = false;
-			thisAlbum.albumDateReverseSort = false;
+			thisAlbum.albumReverseSort = false;
 		}
 		if (Functions.needAlbumDateReverseSort(thisAlbum) || Functions.needAlbumNameReverseSort(thisAlbum)) {
 			thisAlbum.subalbums = Utilities.sortReverse(thisAlbum.subalbums);
-			if (Functions.needAlbumNameReverseSort(thisAlbum))
-				thisAlbum.albumNameReverseSort = ! thisAlbum.albumNameReverseSort;
-			else
-				thisAlbum.albumDateReverseSort = ! thisAlbum.albumDateReverseSort;
+			thisAlbum.albumReverseSort = ! thisAlbum.albumReverseSort;
 		}
 
 		if (Functions.needMediaNameSort(thisAlbum)) {
 			thisAlbum.media = Utilities.sortByName(thisAlbum.media);
 			thisAlbum.mediaNameSort = true;
-			thisAlbum.mediaNameReverseSort = false;
+			thisAlbum.mediaReverseSort = false;
 			if (currentMedia !== null) {
 				currentMediaIndex = thisAlbum.media.findIndex(
 					function(thisMedia) {
@@ -959,7 +956,7 @@
 		} else if (Functions.needMediaDateSort(thisAlbum)) {
 			thisAlbum.media = Utilities.sortByDate(thisAlbum.media);
 			thisAlbum.mediaNameSort = false;
-			thisAlbum.mediaDateReverseSort = false;
+			thisAlbum.mediaReverseSort = false;
 			if (currentMedia !== null) {
 				currentMediaIndex = thisAlbum.media.findIndex(
 					function(thisMedia) {
@@ -972,10 +969,7 @@
 		}
 		if (Functions.needMediaDateReverseSort(thisAlbum) || Functions.needMediaNameReverseSort(thisAlbum)) {
 			thisAlbum.media = Utilities.sortReverse(thisAlbum.media);
-			if (Functions.needMediaNameReverseSort(thisAlbum))
-				thisAlbum.mediaNameReverseSort = ! thisAlbum.mediaNameReverseSort;
-			else
-				thisAlbum.mediaDateReverseSort = ! thisAlbum.mediaDateReverseSort;
+			thisAlbum.mediaReverseSort = ! thisAlbum.mediaReverseSort;
 			if (typeof currentMediaIndex !== "undefined" && currentMediaIndex != -1)
 				currentMediaIndex = thisAlbum.media.length - 1 - currentMediaIndex;
 		}
@@ -988,24 +982,19 @@
 		// album properties reflect the current sorting of album and media objects
 		// json files have subalbums and media sorted by date not reversed
 
-		if (thisAlbum.albumNameSort === undefined) {
+		if (typeof thisAlbum.albumNameSort === "undefined") {
 			thisAlbum.albumNameSort = false;
 		}
-		if (thisAlbum.albumDateReverseSort === undefined){
-			thisAlbum.albumDateReverseSort = false;
-		}
-		if (thisAlbum.albumNameReverseSort === undefined){
-			thisAlbum.albumNameReverseSort = false;
+		if (typeof thisAlbum.albumReverseSort === "undefined"){
+			thisAlbum.albumReverseSort = false;
 		}
 
-		if (thisAlbum.mediaNameSort === undefined) {
+		if (typeof thisAlbum.mediaNameSort === "undefined") {
 			thisAlbum.mediaNameSort = false;
 		}
-		if (thisAlbum.mediaDateReverseSort === undefined){
-			thisAlbum.mediaDateReverseSort = false;
+		if (typeof thisAlbum.mediaReverseSort === "undefined"){
+			thisAlbum.mediaReverseSort = false;
 		}
-		if (thisAlbum.mediaNameReverseSort === undefined)
-			thisAlbum.mediaNameReverseSort = false;
 
 		// cookies reflect the requested sorting in ui
 		// they remember the ui state when a change in sort is requested (via the top buttons) and when the hash changes
@@ -1013,17 +1002,13 @@
 
 		if (Functions.getBooleanCookie("albumNameSortRequested") === null)
 			Functions.setBooleanCookie("albumNameSortRequested", Options.default_album_name_sort);
-		if (Functions.getBooleanCookie("albumDateReverseSortRequested") === null)
-			Functions.setBooleanCookie("albumDateReverseSortRequested", Options.default_album_reverse_sort);
-		if (Functions.getBooleanCookie("albumNameReverseSortRequested") === null)
-			Functions.setBooleanCookie("albumNameReverseSortRequested", Options.default_album_reverse_sort);
+		if (Functions.getBooleanCookie("albumReverseSortRequested") === null)
+			Functions.setBooleanCookie("albumReverseSortRequested", Options.default_album_reverse_sort);
 
 		if (Functions.getBooleanCookie("mediaNameSortRequested") === null)
 			Functions.setBooleanCookie("mediaNameSortRequested", Options.default_media_name_sort);
-		if (Functions.getBooleanCookie("mediaDateReverseSortRequested") === null)
-			Functions.setBooleanCookie("mediaDateReverseSortRequested", Options.default_media_reverse_sort);
-		if (Functions.getBooleanCookie("mediaNameReverseSortRequested") === null)
-			Functions.setBooleanCookie("mediaNameReverseSortRequested", Options.default_media_reverse_sort);
+		if (Functions.getBooleanCookie("mediaReverseSortRequested") === null)
+			Functions.setBooleanCookie("mediaReverseSortRequested", Options.default_media_reverse_sort);
 	};
 
 	/* make static methods callable as member functions */
