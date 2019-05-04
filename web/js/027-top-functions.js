@@ -1410,7 +1410,7 @@
 			ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			f.setBooleanCookie("mediaNameSortRequested", false);
-			f.setBooleanCookie("mediaDateReverseSortRequested", f.getBooleanCookie("mediaDateReverseSortRequested"));
+			f.setBooleanCookie("mediaDateReverseSortRequested", thisAlbum.mediaNameReverseSort);
 			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
 			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
@@ -1432,7 +1432,7 @@
 			ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			f.setBooleanCookie("mediaNameSortRequested", true);
-			f.setBooleanCookie("mediaNameReverseSortRequested", f.getBooleanCookie("mediaNameReverseSortRequested"));
+			f.setBooleanCookie("mediaNameReverseSortRequested", thisAlbum.mediaDateReverseSort);
 			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
 			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
