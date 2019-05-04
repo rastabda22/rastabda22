@@ -124,9 +124,9 @@
 					if (
 						thisAlbum[albumOrMedia + "ReverseSort"]
 					) {
-						$("#right-menu li." + albumOrMedia + "-sort.sort-reverse").addClass("selected");
+						$("#right-menu li." + albumOrMedia + "-sort.reverse").addClass("selected");
 					} else {
-						$("#right-menu li." + albumOrMedia + "-sort.sort-reverse").removeClass("selected");
+						$("#right-menu li." + albumOrMedia + "-sort.reverse").removeClass("selected");
 					}
 				}
 			}

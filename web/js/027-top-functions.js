@@ -1331,7 +1331,7 @@
 				TopFunctions.sortAlbumsByName(ev, thisAlbum);
 			}
 		);
-		$("li.album-sort.sort-reverse").off('click').on(
+		$("li.album-sort.reverse").off('click').on(
 			'click',
 			function(ev) {
 				TopFunctions.sortAlbumsReverse(ev, thisAlbum);
@@ -1349,7 +1349,7 @@
 				TopFunctions.sortMediaByName(ev, thisAlbum);
 			}
 		);
-		$("li.media-sort.sort-reverse").off('click').on(
+		$("li.media-sort.reverse").off('click').on(
 			'click',
 			function(ev) {
 				TopFunctions.sortMediaReverse(ev, thisAlbum);

@@ -247,25 +247,25 @@ $(document).ready(function() {
 
 				if (
 					$(".sort." + mode + "-sort.by-date").hasClass("selected") &&
-					! $(".sort." + mode + "-sort.sort-reverse").hasClass("selected")
+					! $(".sort." + mode + "-sort.reverse").hasClass("selected")
 				) {
 					currentSortingIndex = 0;
 					console.log("currentSortingIndex = ", currentSortingIndex);
 				} else if (
 					$(".sort." + mode + "-sort.by-name").hasClass("selected") &&
-					! $(".sort." + mode + "-sort.sort-reverse").hasClass("selected")
+					! $(".sort." + mode + "-sort.reverse").hasClass("selected")
 				) {
 					currentSortingIndex = 1;
 					console.log("currentSortingIndex = ", currentSortingIndex);
 				} else if (
 					$(".sort." + mode + "-sort.by-name").hasClass("selected") &&
-					$(".sort." + mode + "-sort.sort-reverse").hasClass("selected")
+					$(".sort." + mode + "-sort.reverse").hasClass("selected")
 				) {
 					currentSortingIndex = 2;
 					console.log("currentSortingIndex = ", currentSortingIndex);
 				} else if (
 					$(".sort." + mode + "-sort.by-date").hasClass("selected") &&
-					$(".sort." + mode + "-sort.sort-reverse").hasClass("selected")
+					$(".sort." + mode + "-sort.reverse").hasClass("selected")
 				) {
 					currentSortingIndex = 3;
 					console.log("currentSortingIndex = ", currentSortingIndex);
@@ -273,7 +273,7 @@ $(document).ready(function() {
 
 				$(".error").stop().hide().css("opacity", 100);
 				if (['[', '{'].indexOf(e.key) !== -1) {
-					var prevSelectors = [".sort-reverse", ".by-date", ".sort-reverse", ".by-name", ];
+					var prevSelectors = [".reverse", ".by-date", ".reverse", ".by-name", ];
 					prevSelector = prevSelectors[currentSortingIndex];
 					prevSortingIndex = (currentSortingIndex + 4 - 1) % 4;
 					prevSortingModeMessageId = sortingMessageIds[prevSortingIndex] + "-" + mode + "-sorting";
@@ -282,7 +282,7 @@ $(document).ready(function() {
 					$(".sort." + mode + "-sort" + prevSelector)[0].click();
 					console.log(".sort." + mode + "-sort" + prevSelector + " ------- " + prevSortingModeMessageId);
 				} else {
-					var nextSelectors = [".by-name", ".sort-reverse", ".by-date", ".sort-reverse"];
+					var nextSelectors = [".by-name", ".reverse", ".by-date", ".reverse"];
 					nextSelector = nextSelectors[currentSortingIndex];
 					nextSortingIndex = (currentSortingIndex + 1) % 4;
 					nextSortingModeMessageId = sortingMessageIds[nextSortingIndex] + "-" + mode + "-sorting";
