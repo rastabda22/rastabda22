@@ -976,7 +976,7 @@
 				thisAlbum.mediaNameReverseSort = ! thisAlbum.mediaNameReverseSort;
 			else
 				thisAlbum.mediaDateReverseSort = ! thisAlbum.mediaDateReverseSort;
-			if (currentMediaIndex !== undefined && currentMediaIndex != -1)
+			if (typeof currentMediaIndex !== "undefined" && currentMediaIndex != -1)
 				currentMediaIndex = thisAlbum.media.length - 1 - currentMediaIndex;
 		}
 	};
