@@ -477,7 +477,7 @@ video {
 .browsing-mode-message, .sort-message {
 	background-color: black;
 	z-index: 1000;
-	height: 30%;
+	height: auto;
 	opacity: .6;
 }
 #error-overlay {
