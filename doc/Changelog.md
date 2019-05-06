@@ -1,3 +1,5 @@
+* when showing a map album, `esc` takes back to the map and the popup
+
 ### version v3.8.2 (May 6, 2019)
 
 * media shown in map popup are now albums, and can be sorted like regular albums
