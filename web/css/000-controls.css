@@ -455,7 +455,7 @@ video {
 	color: #FFAD27;
 	margin-top: 20px;
 }
-.error, #error-overlay, #auth-text, .search-failed {
+.error, .browsing-mode-message, .sort-message, #error-overlay, #auth-text, .search-failed, #loading {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -463,17 +463,23 @@ video {
 	height: 100%;
 	display: none;
 }
-.error, #auth-text, .search-failed {
+.error, .browsing-mode-message, .sort-message, #auth-text, .search-failed, #loading {
 	margin-top: 20%;
 	text-align: center;
 }
 
-.error, .search-failed {
+.error, .browsing-mode-message, .sort-message, .search-failed, #loading {
 	font-size: 4em;
 	font-weight: bold;
 	font-style: italic;
 }
 
+.browsing-mode-message, .sort-message, #loading {
+	background-color: black;
+	z-index: 1000;
+	height: auto;
+	opacity: .6;
+}
 #error-overlay {
 	background-color: #000000;
 }

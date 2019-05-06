@@ -1,4 +1,4 @@
-# MyPhotoShare v3.8.1 (April 29, 2019)
+# MyPhotoShare v3.8.2 (May 6, 2019)
 
 ### A Web Photo Gallery Done Right via Static JSON & Dynamic Javascript
 #### by Jason A. Donenfeld (<Jason@zx2c4.com>), Jerome Charaoui (jerome@riseup.net)  Joachim Tingvold (joachim@tingvold.com), Paolo Benvenuto (<paolobenve@gmail.com>), Pierre Métras (<p.metras@videotron.ca>)
@@ -63,7 +63,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] More photos can be added (with shift-click) and removed (with ctl-click) from the popup.
 - [x] Photos shown in the popup are clickable.
 - [x] Near markers are automatically clustered, and the photos number is shown in the cluster marker.
-- [x] Images collected by map clicks can now be shown as an album and browsed
+- [x] Images collected by map clicks can now be shown as an album, browsed and sorted.
 
 ### Mobile Friendly
 
@@ -73,7 +73,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 
 ### Great User Experience
 
-- [x] Keyboard navigation: arrows, pageup/down, `[esc]`, `[f]` (fullscreen), `[d]` (download original), `[o]` (show original), `[s]` (map), `[m]` (metadata), `[e]` (open right menu), `[+]` (pinch in), `[-]` (pinch out), space/backspace (like in [Darktable](https://www.darktable.org/)), `[>]`/`[<]` (rotation among browsing modes: folders -> by date -> by gps -> by search).
+- [x] Keyboard navigation: arrows, pageup/down, `[esc]`, `[f]` (fullscreen), `[d]` (download original), `[o]` (show original), `[s]` (map), `[m]` (metadata), `[e]` (open right menu), `[+]` (pinch in), `[-]` (pinch out), space/backspace (like in [Darktable](https://www.darktable.org/)), `[>]`/`[<]` (rotation among browsing modes: folders -> by date -> by gps -> by search), `[`/`]` (changing sort of albums in a rotative way), `{`/`}` (changing sort of media in a rotative way).
 - [x] Keyboard dragging when the photo is zoomed in.
 - [x] Mouse-wheel support, including for pinching (with ctrl or shift).
 - [x] Various user interface option can be changed by the user.

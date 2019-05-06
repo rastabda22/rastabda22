@@ -4,6 +4,7 @@ var currentAlbum = null;
 var nextMedia = null, prevMedia = null, upLink = "";
 var nextBrowsingModeLink = null, prevBrowsingModeLink = null, bySearchViewLink = null, byMapViewLink = null, isABrowsingModeChange = false;
 var nextBrowsingModeMessageId = null, prevBrowsingModeMessageId = null;
+var titleWrapper1, titleWrapper2, maxWidthForThumbnails;
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
 var fromEscKey = false;
@@ -84,44 +85,39 @@ $(document).ready(function() {
 		var isMap = $('#mapdiv').html() ? 1 : 0;
 		var isPopup = $('.leaflet-popup').html() ? 1 : 0;
 		if (! $("#search-field").is(':focus')) {
-			if (! e.ctrlKey && ! e.shiftKey && ! e.altKey) {
-				if (e.keyCode === 9) {
-					//            tab
+			if (! e.ctrlKey && ! e.altKey) {
+				if (e.key === "Tab") {
 					e.preventDefault();
 					if (pS.getCurrentZoom() == 1) {
 						tF.toggleTitle(e);
 						tF.toggleBottomThumbnails(e);
 						return false;
 					}
-				} else if (e.keyCode === 39 && nextMedia && currentMedia !== null && ! isMap) {
-					//     arrow right
+				} else if (e.key === "ArrowRight" && nextMedia && currentMedia !== null && ! isMap) {
 					pS.swipeLeftOrDrag(nextMedia);
 					return false;
 				} else if (
-					(e.keyCode === 78 || e.keyCode === 13 || e.keyCode === 32) &&
-					//             n               return               space
+					(e.key === "n" || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
 					nextMedia && currentMedia !== null && ! isMap
 				) {
 					pS.swipeLeft(nextMedia);
 					return false;
 				} else if (
-					(e.keyCode === 80 || e.keyCode === 8) &&
-					//             p           backspace
+					(e.key === "p" || e.key === "Backspace" && ! e.shiftKey || (e.key === "Enter" || e.key === " ") && e.shiftKey) &&
 					prevMedia && currentMedia !== null && ! isMap
 				) {
 					pS.swipeRight(prevMedia);
 					return false;
-				} else if (e.keyCode === 37 && prevMedia && currentMedia !== null && ! isMap) {
-					//             arrow left
+				} else if (e.key === "ArrowLeft" && prevMedia && currentMedia !== null && ! isMap) {
 					pS.swipeRightOrDrag(prevMedia);
 					return false;
-				} else if (e.keyCode === 27) {
-					//                    esc
+				} else if (e.key === "Escape") {
 					// warning: modern browsers will always exit fullscreen when pressing esc
 					if (isMap) {
 						if (isPopup) {
 							// the popup is there: close it
 							$('.leaflet-popup-close-button')[0].click();
+							MapFunctions.mapAlbum = {};
 							// $('#popup #popup-content').html("");
 						} else
 							// we are in a map: close it
@@ -138,12 +134,10 @@ $(document).ready(function() {
 						pS.swipeDown(upLink);
 						return false;
 					}
-				} else if ((e.keyCode === 38 || e.keyCode === 33) && upLink && ! isMap) {
-					//                arrow up             page up
+				} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink && ! isMap) {
 					pS.swipeDownOrDrag(upLink);
 					return false;
-				} else if (e.keyCode === 40 || e.keyCode === 34 && ! isMap) {
-					//              arrow down           page down
+				} else if (e.key === "ArrowDown" || e.key === "PageDown" && ! isMap) {
 				 	if (mediaLink && currentMedia === null) {
 						pS.swipeUp(mediaLink);
 						return false;
@@ -151,32 +145,26 @@ $(document).ready(function() {
 						pS.swipeUpOrDrag(mediaLink);
 						return false;
 					}
-				} else if (e.keyCode === 68 && currentMedia !== null && ! isMap) {
-					//                      d
+				} else if (e.key === "d" && currentMedia !== null && ! isMap) {
 					$("#center .download-link")[0].click();
 					return false;
-				} else if (e.keyCode === 70 && currentMedia !== null && ! isMap) {
-					//                      f
+				} else if (e.key === "f" && currentMedia !== null && ! isMap) {
 					tF.goFullscreen(e);
 					return false;
-				} else if (e.keyCode === 77 && currentMedia !== null && ! isMap) {
-					//                      m
+				} else if (e.key === "m" && currentMedia !== null && ! isMap) {
 					f.toggleMetadata();
 					return false;
-				} else if (e.keyCode === 79 && currentMedia !== null && ! isMap) {
-					//                      o
+				} else if (e.key === "o" && currentMedia !== null && ! isMap) {
 					$("#center .original-link")[0].click();
 					return false;
-				} else if (e.keyCode === 107 || e.keyCode === 187) {
-					//             + on keypad                    +
+				} else if (e.key === "+") {
 					if (isMap) {
 						// return false;
 					} else if (currentMedia !== null) {
 						pS.pinchIn();
 						return false;
 					}
-				} else if (e.keyCode === 109 || e.keyCode === 189) {
-					//         - on keypad                    -
+				} else if (e.key === "-") {
 					if (isMap) {
 						// return false;
 					} else if (currentMedia !== null) {
@@ -184,8 +172,7 @@ $(document).ready(function() {
 						return false;
 					}
 				} else if (
-					e.keyCode === 83 &&
-					//             s
+					e.key === "s" &&
 					! isMap &&
 					(
 						currentMedia !== null && util.hasGpsData(currentMedia) ||
@@ -197,16 +184,10 @@ $(document).ready(function() {
 				}
 			}
 
-			// browsing mode switchers
-			if (
-				e.keyCode === 220 &&
-				//         > or <
-				currentMedia !== null &&
-				! isMap
-			) {
-				if (! e.shiftKey && prevBrowsingModeLink !== null) {
-					// it's a "<"
-					$(".error").stop().hide().css("opacity", 100);
+			if ((currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)) && ! isMap) {
+				// browsing mode switchers
+				if (e.key === '<' && prevBrowsingModeLink !== null) {
+					$(".browsing-mode-message").stop().hide().css("opacity", "");
 					$("#" + prevBrowsingModeMessageId).show();
 					$("#" + prevBrowsingModeMessageId).fadeOut(
 						2500,
@@ -217,9 +198,9 @@ $(document).ready(function() {
 					isABrowsingModeChange = true;
 					window.location.href = prevBrowsingModeLink;
 					return false;
-				} else if (e.shiftKey && nextBrowsingModeLink !== null) {
+				} else if (e.key === '>' && nextBrowsingModeLink !== null) {
 					// it's a ">"
-					$(".error").stop().hide().css("opacity", 100);
+					$(".browsing-mode-message").stop().hide().css("opacity", "");
 					$("#" + nextBrowsingModeMessageId).show();
 					$("#" + nextBrowsingModeMessageId).fadeOut(
 						2500,
@@ -235,11 +216,78 @@ $(document).ready(function() {
 		}
 
 		if (
+			['[', ']'].indexOf(e.key) !== -1 && ! isPopup ||
+			['{', '}'].indexOf(e.key) !== -1
+		) {
+			if (currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)) {
+				// media and subalbums sort switcher
+
+				var mode;
+				var prevSortingModeMessageId, nextSortingModeMessageId;
+				var sortingMessageIds = ['by-date', 'by-name', 'by-name-reverse', 'by-date-reverse'];
+				var currentSortingIndex, prevSortingIndex, nextSortingIndex;
+
+				if (['[', ']'].indexOf(e.key) !== -1) {
+					mode = 'album';
+				} else {
+					mode = 'media';
+				}
+
+				if (
+					$(".sort." + mode + "-sort.by-date").hasClass("selected") &&
+					! $(".sort." + mode + "-sort.reverse").hasClass("selected")
+				) {
+					currentSortingIndex = 0;
+					// console.log("currentSortingIndex = ", currentSortingIndex);
+				} else if (
+					$(".sort." + mode + "-sort.by-name").hasClass("selected") &&
+					! $(".sort." + mode + "-sort.reverse").hasClass("selected")
+				) {
+					currentSortingIndex = 1;
+					// console.log("currentSortingIndex = ", currentSortingIndex);
+				} else if (
+					$(".sort." + mode + "-sort.by-name").hasClass("selected") &&
+					$(".sort." + mode + "-sort.reverse").hasClass("selected")
+				) {
+					currentSortingIndex = 2;
+					// console.log("currentSortingIndex = ", currentSortingIndex);
+				} else if (
+					$(".sort." + mode + "-sort.by-date").hasClass("selected") &&
+					$(".sort." + mode + "-sort.reverse").hasClass("selected")
+				) {
+					currentSortingIndex = 3;
+					// console.log("currentSortingIndex = ", currentSortingIndex);
+				}
+
+				$(".sort-message").stop().hide().css("opacity", "");
+				if (['[', '{'].indexOf(e.key) !== -1) {
+					var prevSelectors = [".reverse", ".by-date", ".reverse", ".by-name", ];
+					prevSelector = prevSelectors[currentSortingIndex];
+					prevSortingIndex = (currentSortingIndex + 4 - 1) % 4;
+					prevSortingModeMessageId = sortingMessageIds[prevSortingIndex] + "-" + mode + "-sorting";
+					$("#" + prevSortingModeMessageId).show();
+					$("#" + prevSortingModeMessageId).fadeOut(2500);
+					$(".sort." + mode + "-sort" + prevSelector)[0].click();
+					// console.log(".sort." + mode + "-sort" + prevSelector + " ------- " + prevSortingModeMessageId);
+				} else {
+					var nextSelectors = [".by-name", ".reverse", ".by-date", ".reverse"];
+					nextSelector = nextSelectors[currentSortingIndex];
+					nextSortingIndex = (currentSortingIndex + 1) % 4;
+					nextSortingModeMessageId = sortingMessageIds[nextSortingIndex] + "-" + mode + "-sorting";
+					$("#" + nextSortingModeMessageId).show();
+					$("#" + nextSortingModeMessageId).fadeOut(2500);
+					$(".sort." + mode + "-sort" + nextSelector)[0].click();
+					// console.log(".sort." + mode + "-sort" + nextSelector + " ------- " + nextSortingModeMessageId);
+				}
+			}
+		}
+
+		if (
 			(
-				e.target.tagName.toLowerCase() != 'input' && e.keyCode === 69 ||
-				//                                                         e: opens (and closes, if focus in not in input field) the menu
-				$("ul#right-menu").hasClass("expand") && e.keyCode === 27
-				//                                                    esc: closes the menu
+				e.target.tagName.toLowerCase() != 'input' && e.key === "e" ||
+				// "e" opens the menu, and closes it if focus in not in input field
+				$("ul#right-menu").hasClass("expand") && e.key === "Escape"
+				// esc closes the menu
 			) &&
 		 	! e.ctrlKey && ! e.shiftKey && ! e.altKey
 		) {
@@ -267,8 +315,6 @@ $(document).ready(function() {
 	}
 	$("#pinch-in").on("click", pS.pinchIn);
 	$("#pinch-out").on("click", pS.pinchOut);
-
-	// binds the click events to the sort buttons
 
 	// search
 	$('#search-button').on("click", function() {
@@ -333,23 +379,9 @@ $(document).ready(function() {
 	$("li#case-sensitive").on('click', f.toggleCaseSensitiveSearch);
 	$("li#accent-sensitive").on('click', f.toggleAccentSensitiveSearch);
 	$("li#album-search").on('click', f.toggleCurrentAbumSearch);
-	// $("li#refine-search").on('click', toggleRefineSearch);
-	// function toggleRefineSearch(ev) {
-	// 	f.Options.search_refine = ! Options.search_refine;
-	// 	f.setBooleanCookie("search_refine", Options.search_refine);
-	// 	f.updateMenu();
-	// 	if (false && $("#search-field").val().trim())
-	// 		$('#search-button').click();
-	// 	f.focusSearchField();
-	// }
 
-	// subalbums
-	$("li.album-sort.by-date").on('click', tF.sortAlbumsByDate);
-	$("li.album-sort.by-name").on('click', tF.sortAlbumsByName);
-	$("li.album-sort.sort-reverse").on('click', tF.sortAlbumsReverse);
-	$("li.media-sort.by-date").on('click', tF.sortMediaByDate);
-	$("li.media-sort.by-name").on('click', tF.sortMediaByName);
-	$("li.media-sort.sort-reverse").on('click', tF.sortMediaReverse);
+	// binds the click events to the sort buttons
+
 	$("ul#right-menu li.hide-title").on('click', tF.toggleTitle);
 	$("ul#right-menu li.hide-bottom-thumbnails").on('click', tF.toggleBottomThumbnails);
 	$("ul#right-menu li.slide").on('click', tF.toggleSlideMode);

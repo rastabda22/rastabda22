@@ -253,11 +253,11 @@
 			</div>
 		</div>
 
-		<div id="folders-browsing" class="error"></div>
-		<div id="by-date-browsing" class="error"></div>
-		<div id="by-gps-browsing" class="error"></div>
-		<div id="by-search-browsing" class="error"></div>
-		<div id="by-map-browsing" class="error"></div>
+		<div id="folders-browsing" class="browsing-mode-message"></div>
+		<div id="by-date-browsing" class="browsing-mode-message"></div>
+		<div id="by-gps-browsing" class="browsing-mode-message"></div>
+		<div id="by-search-browsing" class="browsing-mode-message"></div>
+		<div id="by-map-browsing" class="browsing-mode-message"></div>
 
 		<img id="prev" width="42" height="88" src="img/prev.png">
 		<img id="next" width="42" height="88" src="img/next.png">
@@ -275,7 +275,6 @@
 
 		<div id="subalbums"></div>
 		<div id="thumbs">
-			<div id="loading"></div>
 		</div>
 		<div id="error-too-many-images"></div>
 		<div id="powered-by">
@@ -309,11 +308,11 @@
 		<li class="sort album-sort caption"></li>
 		<li class='sort album-sort by-date'></li>
 		<li class='sort album-sort by-name'></li>
-		<li class='sort album-sort sort-reverse active'></li>
+		<li class='sort album-sort reverse active'></li>
 		<li class="sort media-sort caption"></li>
 		<li class='sort media-sort by-date'></li>
 		<li class='sort media-sort by-name'></li>
-		<li class='sort media-sort sort-reverse active'></li>
+		<li class='sort media-sort reverse active'></li>
 
 		<li class='ui caption'></li>
 		<li class='ui hide-title active'></li>
@@ -328,12 +327,24 @@
 		<li class='ui show-big-albums active'></li>
 	</ul>
 
+	<div id="loading"></div>
+
 	<div id="error-overlay"></div>
 	<div id="error-options-file" class="error"></div>
 	<div id="error-text-folder" class="error"></div>
 	<div id="error-root-folder" class="error"></div>
 	<div id="error-text-image" class="error"></div>
+	<div id="error-unexistent-map-album" class="error"></div>
 	<div id="warning-no-geolocated-media" class="error"></div>
+
+	<div id="by-date-album-sorting" class="sort-message"></div>
+	<div id="by-date-reverse-album-sorting" class="sort-message"></div>
+	<div id="by-name-album-sorting" class="sort-message"></div>
+	<div id="by-name-reverse-album-sorting" class="sort-message"></div>
+	<div id="by-date-media-sorting" class="sort-message"></div>
+	<div id="by-date-reverse-media-sorting" class="sort-message"></div>
+	<div id="by-name-media-sorting" class="sort-message"></div>
+	<div id="by-name-reverse-media-sorting" class="sort-message"></div>
 
 	<div id="auth-text"><form id="auth-form"><input id="password" type="password" /><input type="submit" value="Login" /></form></div>
 </body>

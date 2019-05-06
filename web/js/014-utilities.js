@@ -208,36 +208,50 @@
 	};
 
 	// see https://stackoverflow.com/questions/1069666/sorting-javascript-object-by-property-value
-	Utilities.prototype.sortBy = function(albumOrMediaList, field) {
-		return albumOrMediaList.sort(function(a,b) {
-			var aValue = a[field];
-			var bValue = b[field];
-			return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-		});
+	Utilities.sortBy = function(albumOrMediaList, field) {
+		return albumOrMediaList.sort(
+			function(a,b) {
+				var aValue = a[field];
+				var bValue = b[field];
+				if (['name', 'altName', 'path'].indexOf(field) > -1) {
+					// make name search case insensitive
+					aValue = aValue.toLowerCase();
+					bValue = bValue.toLowerCase();
+				}
+				return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+			}
+		);
 	};
 
-	 Utilities.prototype.sortByName = function(mediaList) {
+	 Utilities.sortByName = function(mediaList) {
 		return this.sortBy(mediaList, 'name');
 	};
 
-	Utilities.prototype.sortByPath = function(albumList) {
-		if (this.isByGpsCacheBase(albumList[0].cacheBase)) {
-			if (albumList[0].hasOwnProperty('altName'))
-				return this.sortBy(albumList, 'altName');
-			else
-				return this.sortBy(albumList, 'name');
-		} else
-			return this.sortBy(albumList, 'path');
+	Utilities.sortByPath = function(albumList) {
+		if (albumList.length) {
+			if (Utilities.isByGpsCacheBase(albumList[0].cacheBase)) {
+				if (albumList[0].hasOwnProperty('altName'))
+					return this.sortBy(albumList, 'altName');
+				else
+					return this.sortBy(albumList, 'name');
+			} else
+				return this.sortBy(albumList, 'path');
+		}
+		return albumList;
 	};
 
-	Utilities.prototype.sortByDate = function (albumOrMediaList) {
+	Utilities.sortByDate = function (albumOrMediaList) {
 		return albumOrMediaList.sort(function(a,b) {
-			var aValue = new Date(a.date);
-			var bValue = new Date(b.date);
-			return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+			return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
+			// var aValue = new Date(a.date);
+			// var bValue = new Date(b.date);
+			// return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
 		});
 	};
 
+	Utilities.sortReverse = function(albumOrMediaList) {
+		return albumOrMediaList.reverse();
+	};
 	Utilities.prototype.trimExtension = function(name) {
 		var index = name.lastIndexOf(".");
 		if (index !== -1)
@@ -253,7 +267,7 @@
 		return string == Options.by_date_string || string.indexOf(Options.byDateStringWithTrailingSeparator) === 0;
 	};
 
-	Utilities.prototype.isByGpsCacheBase = function(string) {
+	Utilities.isByGpsCacheBase = function(string) {
 		return string == Options.by_gps_string || string.indexOf(Options.byGpsStringWithTrailingSeparator) === 0;
 	};
 
@@ -881,10 +895,14 @@
 				$("#powered-by").show();
 			} else {
 				$("#error-text-folder").stop().fadeIn(200);
-				$("#error-text-folder, #error-overlay, #auth-text").fadeOut(3500);
+				$("#error-text-folder, #error-overlay, #auth-text").fadeOut(
+					3500,
+					function() {
+						window.location.href = rootLink;
+					}
+				);
 				$("#album-view").stop().fadeOut(100).fadeIn(3500);
 				$("#media-view").stop().fadeOut(100).fadeIn(3500);
-				window.location.href = rootLink;
 			}
 		}
 		// $("#error-overlay").fadeTo(500, 0.8);
@@ -900,7 +918,101 @@
 		return this.mediaPath(album, media, thumbnailSize);
 	};
 
+	Utilities.sortAlbumsMedia = function(thisAlbum) {
+		// this function applies the sorting on the media and subalbum lists
+		// and sets the album properties that attest the lists status
+
+		// album properties reflect the current sorting of album and media objects
+		// json files have subalbums and media sorted by date not reversed
+
+		if (Functions.needAlbumNameSort(thisAlbum)) {
+			thisAlbum.subalbums = Utilities.sortByPath(thisAlbum.subalbums);
+			thisAlbum.albumNameSort = true;
+			thisAlbum.albumReverseSort = false;
+			// $("li.album-sort.by-name").addClass("selected");
+		} else if (Functions.needAlbumDateSort(thisAlbum)) {
+			thisAlbum.subalbums = Utilities.sortByDate(thisAlbum.subalbums);
+			thisAlbum.albumNameSort = false;
+			thisAlbum.albumReverseSort = false;
+		}
+		if (Functions.needAlbumDateReverseSort(thisAlbum) || Functions.needAlbumNameReverseSort(thisAlbum)) {
+			thisAlbum.subalbums = Utilities.sortReverse(thisAlbum.subalbums);
+			thisAlbum.albumReverseSort = ! thisAlbum.albumReverseSort;
+		}
+
+		if (Functions.needMediaNameSort(thisAlbum)) {
+			thisAlbum.media = Utilities.sortByName(thisAlbum.media);
+			thisAlbum.mediaNameSort = true;
+			thisAlbum.mediaReverseSort = false;
+			if (currentMedia !== null) {
+				currentMediaIndex = thisAlbum.media.findIndex(
+					function(thisMedia) {
+						var matches =
+							thisMedia.cacheBase == currentMedia.cacheBase && thisMedia.foldersCacheBase == currentMedia.foldersCacheBase
+						return matches;
+					}
+				);
+			}
+		} else if (Functions.needMediaDateSort(thisAlbum)) {
+			thisAlbum.media = Utilities.sortByDate(thisAlbum.media);
+			thisAlbum.mediaNameSort = false;
+			thisAlbum.mediaReverseSort = false;
+			if (currentMedia !== null) {
+				currentMediaIndex = thisAlbum.media.findIndex(
+					function(thisMedia) {
+						var matches =
+							thisMedia.cacheBase == currentMedia.cacheBase && thisMedia.foldersCacheBase == currentMedia.foldersCacheBase
+						return matches;
+					}
+				);
+			}
+		}
+		if (Functions.needMediaDateReverseSort(thisAlbum) || Functions.needMediaNameReverseSort(thisAlbum)) {
+			thisAlbum.media = Utilities.sortReverse(thisAlbum.media);
+			thisAlbum.mediaReverseSort = ! thisAlbum.mediaReverseSort;
+			if (typeof currentMediaIndex !== "undefined" && currentMediaIndex != -1)
+				currentMediaIndex = thisAlbum.media.length - 1 - currentMediaIndex;
+		}
+	};
+
+	Utilities.prototype.initializeSortPropertiesAndCookies = function(thisAlbum) {
+		// this function applies the sorting on the media and subalbum lists
+		// and sets the album properties that attest the lists status
+
+		// album properties reflect the current sorting of album and media objects
+		// json files have subalbums and media sorted by date not reversed
+
+		if (typeof thisAlbum.albumNameSort === "undefined") {
+			thisAlbum.albumNameSort = false;
+		}
+		if (typeof thisAlbum.albumReverseSort === "undefined"){
+			thisAlbum.albumReverseSort = false;
+		}
+
+		if (typeof thisAlbum.mediaNameSort === "undefined") {
+			thisAlbum.mediaNameSort = false;
+		}
+		if (typeof thisAlbum.mediaReverseSort === "undefined"){
+			thisAlbum.mediaReverseSort = false;
+		}
+
+		// cookies reflect the requested sorting in ui
+		// they remember the ui state when a change in sort is requested (via the top buttons) and when the hash changes
+		// if they are not set yet, they are set to default values
+
+		if (Functions.getBooleanCookie("albumNameSortRequested") === null)
+			Functions.setBooleanCookie("albumNameSortRequested", Options.default_album_name_sort);
+		if (Functions.getBooleanCookie("albumReverseSortRequested") === null)
+			Functions.setBooleanCookie("albumReverseSortRequested", Options.default_album_reverse_sort);
+
+		if (Functions.getBooleanCookie("mediaNameSortRequested") === null)
+			Functions.setBooleanCookie("mediaNameSortRequested", Options.default_media_name_sort);
+		if (Functions.getBooleanCookie("mediaReverseSortRequested") === null)
+			Functions.setBooleanCookie("mediaReverseSortRequested", Options.default_media_reverse_sort);
+	};
+
 	/* make static methods callable as member functions */
+	Utilities.prototype.sortAlbumsMedia = Utilities.sortAlbumsMedia;
 	Utilities.prototype.chooseReducedPhoto = Utilities.chooseReducedPhoto;
 	Utilities.prototype.originalMediaPath = Utilities.originalMediaPath;
 	Utilities.prototype.mediaPath = Utilities.mediaPath;
@@ -918,6 +1030,12 @@
 	Utilities.prototype.degreesToRadians = Utilities.degreesToRadians;
 	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
 	Utilities.prototype.mediaBoxContainerHeight = Utilities.mediaBoxContainerHeight;
+	Utilities.prototype.sortReverse = Utilities.sortReverse;
+	Utilities.prototype.sortByName = Utilities.sortByName;
+	Utilities.prototype.sortByDate = Utilities.sortByDate;
+	Utilities.prototype.sortByPath = Utilities.sortByPath;
+	Utilities.prototype.sortBy = Utilities.sortBy;
+	Utilities.prototype.isByGpsCacheBase = Utilities.isByGpsCacheBase;
 
 	window.Utilities = Utilities;
 }());
