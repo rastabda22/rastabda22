@@ -215,7 +215,10 @@ $(document).ready(function() {
 			}
 		}
 
-		if (['[', ']', '{', '}'].indexOf(e.key) !== -1) {
+		if (
+			['[', ']'].indexOf(e.key) !== -1 && ! isPopup ||
+			['{', '}'].indexOf(e.key) !== -1
+		) {
 			if (currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)) {
 				// media and subalbums sort switcher
 
