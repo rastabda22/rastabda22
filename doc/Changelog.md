@@ -1,5 +1,8 @@
+### version v3.8.2 (May 6, 2019)
+
 * media shown in map popup are now albums, and can be sorted like regular albums
 * new shortcuts for changing sort of albums (`[` - `]`) and media (`{` - `}`), in a rotative way: name -> name reverse -> date reverse - date
+* more javascript messages for potentially slow loading
 
 ### version v3.8.1 (April 29, 2019)
 
