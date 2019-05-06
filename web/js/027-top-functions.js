@@ -2522,11 +2522,14 @@
 						"maxWidthForThumbnails",
 						MapFunctions.titleWrapper) + MapFunctions.generateHtmlForImages(mapAlbum) + MapFunctions.titleWrapper2
 					);
+					$("#loading").hide();
 				}
 			);
 		}
 
 		// end of subfunctions, begin function code
+
+		$("#loading").show();
 
 		// reset the thumbnails if not shift- nor ctrl-clicking
 		if (! evt.originalEvent.shiftKey && ! evt.originalEvent.ctrlKey) {
@@ -2575,6 +2578,9 @@
 		if (evt.originalEvent.ctrlKey) {
 			if (! jQuery.isEmptyObject(MapFunctions.mapAlbum)) {
 				// control click: remove the points
+
+				// $("#loading").show();
+
 				var matchingIndex, matchingMedia, positionsAndCountsElement;
 				for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
 					positionsAndCountsElement = positionsAndCounts[indexPositions];
@@ -2609,6 +2615,7 @@
 				}
 
 				if (! MapFunctions.mapAlbum.media.length) {
+					$("#loading").hide();
 					MapFunctions.popup.remove();
 				} else {
 					endPreparingMapAlbumAndUpdatePopup(MapFunctions.mapAlbum);
@@ -2619,6 +2626,9 @@
 			imageLoadPromise = new Promise(
 				function(resolve, reject) {
 					var indexPositions, positionsAndCountsElement;
+
+					// $("#loading").show();
+
 					if (jQuery.isEmptyObject(MapFunctions.mapAlbum) || MapFunctions.mapAlbum.media.length == 0 || ! evt.originalEvent.shiftKey) {
 						// normal click or shift click without previous content
 
@@ -2644,7 +2654,10 @@
 							}
 						}
 						positionsAndCounts = missingPositions;
-						MapFunctions.addMediaFromPositionsToMapAlbum(positionsAndCounts, MapFunctions.mapAlbum, resolve);
+						if (missingPositions.length > 0)
+							MapFunctions.addMediaFromPositionsToMapAlbum(positionsAndCounts, MapFunctions.mapAlbum, resolve);
+						else
+							$("#loading").hide();
 					}
 
 				}
