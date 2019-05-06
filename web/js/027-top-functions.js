@@ -1234,10 +1234,11 @@
 
 		if (album === currentAlbum && media === currentMedia)
 			return;
-		if (album != currentAlbum)
+		if (album != currentAlbum) {
+			previousAlbum = currentAlbum;
 			currentAlbum = null;
+		}
 
-		previousAlbum = currentAlbum;
 		if (currentAlbum && util.isByDateCacheBase(currentAlbum.cacheBase) && media !== null) {
 			previousMedia = media;
 		} else {
