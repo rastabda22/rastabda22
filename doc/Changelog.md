@@ -1,4 +1,5 @@
 * when showing a map album, `esc` takes back to the map and the popup
+* right menu: bug fixes and better ordering of the options
 
 ### version v3.8.2 (May 6, 2019)
 
