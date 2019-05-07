@@ -7,7 +7,7 @@
 	var f = new Functions();
 	var numSubAlbumsReady = 0;
 	var mapIsInitialized = false;
-	var lastAlbumIndex = 0
+	var lastAlbumIndex = 0;
 
 	/* constructor */
 	function TopFunctions() {
@@ -1375,7 +1375,7 @@
 				TopFunctions.sortMediaReverse(ev, thisAlbum);
 			}
 		);
-	}
+	};
 
 	TopFunctions.sortAlbumsByDate = function(ev, thisAlbum) {
 		if (
@@ -2514,7 +2514,7 @@
 	};
 
 	TopFunctions.mapClick = function(evt, clusters, previousMapAlbum) {
-		var i, albumViewPadding;
+		var i;
 		var maxHeightForThumbnails;
 
 		function matchPositionAndCount(reference, element) {
@@ -2584,7 +2584,7 @@
 			// the map has been shown when coming from a map album, we must show the popup with the media it had when it was previously built
 			endPreparingMapAlbumAndUpdatePopup(previousMapAlbum);
 		} else {
-			var clickedPosition = evt.latlng
+			var clickedPosition = evt.latlng;
 
 			// reset the thumbnails if not shift- nor ctrl-clicking
 			if (! evt.originalEvent.shiftKey && ! evt.originalEvent.ctrlKey) {
