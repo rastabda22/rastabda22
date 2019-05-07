@@ -1545,7 +1545,13 @@
 				Options.spacing = Options.spacingToggle;
 			f.setCookie("spacing", Options.spacing);
 			f.updateMenu();
-			TopFunctions.showAlbum("refreshBoth");
+			if (currentAlbum.subalbums.length > 1 && currentAlbum.media.length > 1)
+				TopFunctions.showAlbum("refreshBoth");
+			else if (currentAlbum.subalbums.length > 1)
+				TopFunctions.showAlbum("refreshSubalbums");
+			else if (currentAlbum.media.length > 1)
+				TopFunctions.showAlbum("refreshMedia");
+
 			if ($('.leaflet-popup').html())
 				MapFunctions.updatePopup(
 					MapFunctions.titleWrapper1.replace(
