@@ -95,14 +95,14 @@
 			// showing a media, nothing to sort
 			$("#right-menu li.sort").addClass("hidden");
 		} else if (thisAlbum !== null) {
-			if (false && thisAlbum.subalbums.length <= 1) {
+			if (thisAlbum.subalbums.length <= 1 || isPopup) {
 				// no subalbums or one subalbum
 				$("ul#right-menu li.album-sort").addClass("hidden");
 			} else {
 				$("ul#right-menu li.album-sort").removeClass("hidden");
 			}
 
-			if (false && (thisAlbum.media.length <= 1 || thisAlbum.media.length > Options.big_virtual_folders_threshold)) {
+			if (thisAlbum.media.length <= 1 || thisAlbum.media.length > Options.big_virtual_folders_thresholds) {
 				// no media or one media or too many media
 				$("ul#right-menu li.media-sort").addClass("hidden");
 			} else {
