@@ -111,8 +111,9 @@
 					)
 				)
 			);
+			
 			// var hasGpsData = (currentMedia !== null || util.isAlbumWithOneMedia(thisAlbum)) && util.hasGpsData(currentMedia);
-			$(".browsing-mode-switcher").addClass("active").removeClass("hidden").removeClass("selected").off("click");
+			$(".browsing-mode-switcher").addClass("active").removeClass("hidden").removeClass("selected");
 			if (util.isFolderCacheBase(thisAlbum.cacheBase)) {
 				// folder album: change to by date or by gps view
 				$("#folders-view").removeClass("active").addClass("selected");

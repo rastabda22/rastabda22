@@ -407,20 +407,21 @@
 		return [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash];
 	};
 
-	PhotoFloat.prototype.addClickToByGpsButton = function(link) {
+	PhotoFloat.prototype.geotaggedPhotosExist = function() {
 		var self;
 		// this function returns true if the root album has the by gps subalbum
 		if (this.geotaggedPhotosFound !== null) {
 			if (this.geotaggedPhotosFound) {
-				$("#by-gps-view").off("click");
-				$("#by-gps-view").removeClass("hidden").addClass("active").on("click", function(ev) {
-					$(".search-failed").hide();
-					$("#album-view").removeClass("hidden");
-					window.location.href = link;
-					return false;
-				});
+				return true;
+				// $("#by-gps-view").off("click");
+				// $("#by-gps-view").removeClass("hidden").addClass("active").on("click", function(ev) {
+				// 	$(".search-failed").hide();
+				// 	$("#album-view").removeClass("hidden");
+				// 	window.location.href = link;
+				// 	return false;
+				// });
 			} else {
-				$("#by-gps-view").addClass("hidden");
+				return false;
 			}
 		} else {
 			self = this;
@@ -432,23 +433,26 @@
 					if (! foldersRootAlbum.numPoints) {
 						$("#by-gps-view").addClass("hidden");
 						self.geotaggedPhotosFound = false;
+						return false;
 					} else {
 						self.geotaggedPhotosFound = true;
-						$("#by-gps-view").off("click");
-						$("#by-gps-view").removeClass("hidden").addClass("active").on("click", function(ev) {
-							$(".search-failed").hide();
-							$("#album-view").removeClass("hidden");
-							window.location.href = link;
-							return false;
-						});
+						return true;
+						// $("#by-gps-view").off("click");
+						// $("#by-gps-view").removeClass("hidden").addClass("active").on("click", function(ev) {
+						// 	$(".search-failed").hide();
+						// 	$("#album-view").removeClass("hidden");
+						// 	window.location.href = link;
+						// 	return false;
+						// });
 					}
 				},
 				// error
 				// execution arrives here if no gps json file has been found
 				// (but gps json file must exist)
 				function() {
-					$("#by-gps-view").addClass("hidden");
+					// $("#by-gps-view").addClass("hidden");
 					self.geotaggedPhotosFound = false;
+					return false;
 				}
 			);
 		}
