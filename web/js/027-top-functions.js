@@ -1237,8 +1237,13 @@
 			}
 		);
 
-		if (album === currentAlbum && media === currentMedia)
-			return;
+		if (album === currentAlbum) {
+			previousAlbum = null;
+			if (media === currentMedia) {
+				return;
+			}
+		}
+
 		if (album != currentAlbum) {
 			previousAlbum = currentAlbum;
 			currentAlbum = null;
