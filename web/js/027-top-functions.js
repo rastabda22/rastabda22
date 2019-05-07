@@ -1278,37 +1278,38 @@
 	TopFunctions.bindSortEvents = function(thisAlbum) {
 		// binds the click events to the sort buttons
 
-		$("li.album-sort.by-date").off('click').on(
+		$("li.sort").off('click');
+		$("li.album-sort.by-date").on(
 			'click',
 			function(ev) {
 				TopFunctions.sortAlbumsByDate(ev, thisAlbum);
 			}
 		);
-		$("li.album-sort.by-name").off('click').on(
+		$("li.album-sort.by-name").on(
 			'click',
 			function(ev) {
 				TopFunctions.sortAlbumsByName(ev, thisAlbum);
 			}
 		);
-		$("li.album-sort.reverse").off('click').on(
+		$("li.album-sort.reverse").on(
 			'click',
 			function(ev) {
 				TopFunctions.sortAlbumsReverse(ev, thisAlbum);
 			}
 		);
-		$("li.media-sort.by-date").off('click').on(
+		$("li.media-sort.by-date").on(
 			'click',
 			function(ev) {
 				TopFunctions.sortMediaByDate(ev, thisAlbum);
 			}
 		);
-		$("li.media-sort.by-name").off('click').on(
+		$("li.media-sort.by-name").on(
 			'click',
 			function(ev) {
 				TopFunctions.sortMediaByName(ev, thisAlbum);
 			}
 		);
-		$("li.media-sort.reverse").off('click').on(
+		$("li.media-sort.reverse").on(
 			'click',
 			function(ev) {
 				TopFunctions.sortMediaReverse(ev, thisAlbum);
