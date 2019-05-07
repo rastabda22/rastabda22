@@ -1546,6 +1546,15 @@
 			f.setCookie("spacing", Options.spacing);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshBoth");
+			if ($('.leaflet-popup').html())
+				MapFunctions.updatePopup(
+					MapFunctions.titleWrapper1.replace(
+						"maxWidthForThumbnails",
+						MapFunctions.titleWrapper
+					) +
+					MapFunctions.generateHtmlForImages(MapFunctions.mapAlbum) +
+					MapFunctions.titleWrapper2
+				);
 			f.focusSearchField();
 		}
 		return false;
@@ -1601,6 +1610,15 @@
 			f.setCookie("media_thumb_type", Options.media_thumb_type);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
+			if ($('.leaflet-popup').html())
+				MapFunctions.updatePopup(
+					MapFunctions.titleWrapper1.replace(
+						"maxWidthForThumbnails",
+						MapFunctions.titleWrapper
+					) +
+					MapFunctions.generateHtmlForImages(MapFunctions.mapAlbum) +
+					MapFunctions.titleWrapper2
+				);
 			f.focusSearchField();
 		}
 		return false;
