@@ -91,6 +91,7 @@
 			thisAlbum = currentAlbum;
 
 		// add the correct classes to the menu sort buttons
+		// add the correct classes to the menu buttons
 		if (currentMedia !== null) {
 			// showing a media, nothing to sort
 			$("#right-menu li.sort").addClass("hidden");

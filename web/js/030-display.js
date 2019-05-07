@@ -82,8 +82,8 @@ $(document).ready(function() {
 	/* Event listeners */
 
 	$(document).on('keydown', function(e) {
-		var isMap = $('#mapdiv').html() ? 1 : 0;
-		var isPopup = $('.leaflet-popup').html() ? 1 : 0;
+		var isMap = $('#mapdiv').html() ? true : false;
+		var isPopup = $('.leaflet-popup').html() ? true : false;
 		if (! $("#search-field").is(':focus')) {
 			if (! e.ctrlKey && ! e.altKey) {
 				if (e.key === "Tab") {
