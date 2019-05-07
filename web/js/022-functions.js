@@ -213,8 +213,9 @@
 
 		if (
 			isPopup ||
-			currentMedia === null ||
-			util.isAlbumWithOneMedia(thisAlbum)
+			currentMedia !== null ||
+			util.isAlbumWithOneMedia(thisAlbum) ||
+			thisAlbum !== null && thisAlbum.subalbums.length === 0
 		) {
 			$("ul#right-menu li.square-album-thumbnails").addClass("hidden");
 		} else {
