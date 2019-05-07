@@ -631,12 +631,13 @@
 			} else {
 				$("#" + id + " .title").removeClass("hidden-by-option");
 			}
-				if (fullScreenStatus) {
-					$("#" + id + " .title").addClass("hidden-by-fullscreen");
-				} else {
-					$("#" + id + " .title").removeClass("hidden-by-fullscreen");
-				}
-				TopFunctions.setTitle(id, currentMedia);
+
+			if (fullScreenStatus) {
+				$("#" + id + " .title").addClass("hidden-by-fullscreen");
+			} else {
+				$("#" + id + " .title").removeClass("hidden-by-fullscreen");
+			}
+			TopFunctions.setTitle(id, currentMedia);
 
 			if (Options.hide_bottom_thumbnails) {
 				$("#album-view").addClass("hidden-by-option");
@@ -660,10 +661,11 @@
 				$("#album-view").css("height", (thumbnailSize + 22).toString() + "px");
 				$("#album-view").addClass("media-view-container");
 			}
-		} else if (id === "left")
+		} else if (id === "left") {
 			TopFunctions.setTitle(id, prevMedia);
-		else if (id === "right")
+		} else if (id === "right") {
 			TopFunctions.setTitle(id, nextMedia);
+		}
 
 		heightForMediaAndTitle = util.mediaBoxContainerHeight();
 
