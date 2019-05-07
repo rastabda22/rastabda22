@@ -574,12 +574,6 @@
 					TopFunctions.generateMapFromDefaults("fromTrigger");
 			}
 		);
-		if (
-			previousAlbum !== null &&
-			util.isMapCacheBase(previousAlbum.cacheBase) &&
-			currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)
-		)
-			$(".map-popup-trigger").trigger("click", ["fromTrigger"]);
 
 		$('.modal-close').click(function(){
 			$("#my-modal.modal").css("display", "none");
@@ -1288,6 +1282,15 @@
 			// $("#album-view .title").hide();
 			// $("#media-view .title").show();
 			TopFunctions.showMedia(currentAlbum, currentMedia, 'center');
+
+			// activate the map and the popup when coming back from a map album
+			if (
+				previousAlbum !== null &&
+				util.isMapCacheBase(previousAlbum.cacheBase)
+				// && currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)
+			) {
+				$(".map-popup-trigger").trigger("click", ["fromTrigger"]);
+			}
 		} else {
 			// $("#album-view .title").show();
 			TopFunctions.setTitle("album", null);
@@ -2210,6 +2213,14 @@
 		f.setOptions();
 
 		TopFunctions.bindSortEvents(currentAlbum);
+
+		// activate the map and the popup when coming back from a map album
+		if (
+			previousAlbum !== null &&
+			util.isMapCacheBase(previousAlbum.cacheBase)
+			// && currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)
+		)
+			$(".map-popup-trigger").trigger("click", ["fromTrigger"]);
 
 		if (! $("#album-view").hasClass("hidden"))
 			// f.scrollToThumb();
