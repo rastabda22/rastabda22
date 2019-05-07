@@ -183,7 +183,13 @@ $(document).ready(function() {
 				}
 			}
 
-			if ((currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)) && ! isMap) {
+			if (
+				(
+					[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string, Options.by_search_string].indexOf(currentAlbum.cacheBase) !== -1 ||
+					currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)
+				) &&
+				! isMap
+			) {
 				// browsing mode switchers
 				if (e.key === '<' && prevBrowsingModeLink !== null) {
 					$(".browsing-mode-message").stop().hide().css("opacity", "");
@@ -198,7 +204,6 @@ $(document).ready(function() {
 					window.location.href = prevBrowsingModeLink;
 					return false;
 				} else if (e.key === '>' && nextBrowsingModeLink !== null) {
-					// it's a ">"
 					$(".browsing-mode-message").stop().hide().css("opacity", "");
 					$("#" + nextBrowsingModeMessageId).show();
 					$("#" + nextBrowsingModeMessageId).fadeOut(

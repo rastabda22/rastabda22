@@ -583,6 +583,209 @@
 		return;
 	};
 
+	TopFunctions.bindChangeBrowsingEvents = function(thisAlbum) {
+		var foldersViewLink, byDateViewLink, byGpsViewLink;
+		if (currentMedia !== null) {
+			foldersViewLink = "#!/" + util.pathJoin([
+				currentMedia.foldersCacheBase,
+				currentMedia.cacheBase
+			]);
+
+			byDateViewLink = "#!/" + util.pathJoin([
+				currentMedia.dayAlbumCacheBase,
+				currentMedia.foldersCacheBase,
+				currentMedia.cacheBase
+			]);
+
+			if (currentMedia.gpsAlbumCacheBase) {
+				byGpsViewLink = "#!/" + util.pathJoin([
+					currentMedia.gpsAlbumCacheBase,
+					currentMedia.foldersCacheBase,
+					currentMedia.cacheBase
+				]);
+			}
+			hasGpsData = util.hasGpsData(currentMedia);
+		} else {
+			// we are in a root album
+			foldersViewLink = "#!/" + encodeURIComponent(Options.folders_string);
+
+			byDateViewLink = "#!/" + encodeURIComponent(Options.by_date_string);
+
+			hasGpsData = thisAlbum.numPositionsInTree;
+			if (hasGpsData) {
+				byGpsViewLink = "#!/" + encodeURIComponent(Options.by_gps_string);
+			}
+
+		}
+		$(".browsing-mode-switcher").off("click");
+
+		function changeToFoldersView() {
+			isABrowsingModeChange = true;
+			window.location.href = foldersViewLink;
+			return false;
+		}
+
+		function changeToByDateView() {
+			isABrowsingModeChange = true;
+			window.location.href = byDateViewLink;
+			return false;
+		}
+
+		function changeToByGpsView() {
+			isABrowsingModeChange = true;
+			window.location.href = byGpsViewLink;
+			return false;
+		}
+
+		function changeToByMapView() {
+			isABrowsingModeChange = true;
+			window.location.href = byMapViewLink;
+			return false;
+		}
+
+		function changeToBySearcView() {
+			isABrowsingModeChange = true;
+			window.location.href = bySearchViewLink;
+			return false;
+		}
+
+		if (util.isFolderCacheBase(thisAlbum.cacheBase)) {
+			// folder album: change to by date or by gps view
+			$("#by-date-view").on("click", changeToByDateView);
+			if (hasGpsData) {
+				$("#by-gps-view").on("click", changeToByGpsView);
+			}
+			if (byMapViewLink !== null) {
+				$("#by-map-view").on("click", changeToByMapView);
+			}
+			if (bySearchViewLink !== null) {
+				$("#by-search-view").on("click", changeToBySearcView);
+			}
+
+			// add the browsing mode switcher links
+			nextBrowsingModeLink = byDateViewLink;
+			nextBrowsingModeMessageId = "by-date-browsing";
+			if (bySearchViewLink !== null) {
+				prevBrowsingModeLink = bySearchViewLink;
+				prevBrowsingModeMessageId = "by-search-browsing";
+			} else if (byMapViewLink !== null) {
+				prevBrowsingModeLink = byMapViewLink;
+				prevBrowsingModeMessageId = "by-map-browsing";
+			} else if (hasGpsData) {
+				prevBrowsingModeLink = byGpsViewLink;
+				prevBrowsingModeMessageId = "by-gps-browsing";
+			} else {
+				prevBrowsingModeLink = byDateViewLink;
+				prevBrowsingModeMessageId = "by-date-browsing";
+			}
+		} else if (util.isByDateCacheBase(thisAlbum.cacheBase)) {
+			// by date album: change to folder or by gps view
+			$("#folders-view").on("click", changeToFoldersView);
+			if (hasGpsData) {
+				$("#by-gps-view").on("click", changeToByGpsView);
+			}
+			if (byMapViewLink !== null) {
+				$("#by-map-view").on("click", changeToByMapView);
+			}
+			if (bySearchViewLink !== null) {
+				$("#by-search-view").on("click", changeToBySearcView);
+			}
+
+			// add the browsing mode switcher links
+			if (hasGpsData) {
+				nextBrowsingModeLink = byGpsViewLink;
+				nextBrowsingModeMessageId = "by-gps-browsing";
+			} else if (byMapViewLink !== null) {
+				nextBrowsingModeLink = byMapViewLink;
+				nextBrowsingModeMessageId = "by-map-browsing";
+			} else if (bySearchViewLink !== null) {
+				nextBrowsingModeLink = bySearchViewLink;
+				nextBrowsingModeMessageId = "by-search-browsing";
+			} else {
+				nextBrowsingModeLink = foldersViewLink;
+				nextBrowsingModeMessageId = "folders-browsing";
+			}
+			prevBrowsingModeLink = foldersViewLink;
+			prevBrowsingModeMessageId = "folders-browsing";
+		} else if (util.isByGpsCacheBase(thisAlbum.cacheBase)) {
+			$("#folders-view").on("click", changeToFoldersView);
+			$("#by-date-view").on("click", changeToByDateView);
+			if (byMapViewLink !== null) {
+				$("#by-map-view").on("click", changeToByMapView);
+			}
+			if (bySearchViewLink !== null) {
+				$("#by-search-view").on("click", changeToBySearcView);
+			}
+
+			// add the browsing mode switcher links
+			if (byMapViewLink !== null) {
+				nextBrowsingModeLink = byMapViewLink;
+				nextBrowsingModeMessageId = "by-map-browsing";
+			} else if (bySearchViewLink !== null) {
+				nextBrowsingModeLink = bySearchViewLink;
+				nextBrowsingModeMessageId = "by-search-browsing";
+			} else {
+				nextBrowsingModeLink = foldersViewLink;
+				nextBrowsingModeMessageId = "folders-browsing";
+			}
+			prevBrowsingModeLink = byDateViewLink;
+			prevBrowsingModeMessageId = "by-date-browsing";
+		} else if (util.isMapCacheBase(thisAlbum.cacheBase)) {
+			$("#folders-view").on("click", changeToFoldersView);
+			$("#by-date-view").on("click", changeToByDateView);
+			if (hasGpsData) {
+				$("#by-gps-view").on("click", changeToByGpsView);
+			}
+			if (bySearchViewLink !== null) {
+				$("#by-search-view").on("click", changeToBySearcView);
+			}
+
+			byMapViewLink = location.hash;
+
+			// add the browsing mode switcher links
+			if (bySearchViewLink !== null) {
+				nextBrowsingModeLink = bySearchViewLink;
+				nextBrowsingModeMessageId = "by-search-browsing";
+			} else {
+				nextBrowsingModeLink = foldersViewLink;
+				nextBrowsingModeMessageId = "folders-browsing";
+			}
+			if (hasGpsData) {
+				prevBrowsingModeLink = byGpsViewLink;
+				prevBrowsingModeMessageId = "by-gps-browsing";
+			} else {
+				prevBrowsingModeLink = byDateViewLink;
+				prevBrowsingModeMessageId = "by-date-browsing";
+			}
+		} else if (util.isSearchCacheBase(thisAlbum.cacheBase)) {
+			// by search album: change to folder or by gps or by view
+			$("#folders-view").on("click", changeToFoldersView);
+			$("#by-date-view").on("click", changeToByDateView);
+			if (hasGpsData) {
+				$("#by-gps-view").on("click", changeToByGpsView);
+			}
+			if (byMapViewLink !== null) {
+				$("#by-map-view").on("click", changeToByMapView);
+			}
+
+			bySearchViewLink = location.hash;
+
+			// add the browsing mode switcher links
+			nextBrowsingModeLink = foldersViewLink;
+			nextBrowsingModeMessageId = "folders-browsing";
+			if (byMapViewLink !== null) {
+				prevBrowsingModeLink = byMapViewLink;
+				prevBrowsingModeMessageId = "by-map-browsing";
+			} else if (hasGpsData) {
+				prevBrowsingModeLink = byGpsViewLink;
+				prevBrowsingModeMessageId = "by-gps-browsing";
+			} else {
+				prevBrowsingModeLink = byDateViewLink;
+				prevBrowsingModeMessageId = "by-date-browsing";
+			}
+		}
+	};
+
 	TopFunctions.showMedia = function(album, media, id) {
 
 		function loadNextPrevMedia(containerHeight, containerWidth) {
@@ -871,273 +1074,9 @@
 			$(".media-box#" + id + " .menu-map-divider").hide();
 		}
 
-		var foldersViewLink, byDateViewLink, byGpsViewLink;
 		if (id === "center") {
-			foldersViewLink = "#!/" + util.pathJoin([
-				currentMedia.foldersCacheBase,
-				currentMedia.cacheBase
-			]);
-
-			byDateViewLink = "#!/" + util.pathJoin([
-				currentMedia.dayAlbumCacheBase,
-				currentMedia.foldersCacheBase,
-				currentMedia.cacheBase
-			]);
-
-			if (currentMedia.gpsAlbumCacheBase) {
-				byGpsViewLink = "#!/" + util.pathJoin([
-					currentMedia.gpsAlbumCacheBase,
-					currentMedia.foldersCacheBase,
-					currentMedia.cacheBase
-				]);
-			}
-
-			$(".day-gps-folders-view").addClass("active").removeClass("hidden").removeClass("selected").off("click");
-			if (util.isFolderCacheBase(currentAlbum.cacheBase)) {
-				// folder album: change to by date or by gps view
-				$("#folders-view").removeClass("active").addClass("selected").off("click");
-				$("#by-date-view").on("click", function(ev) {
-					isABrowsingModeChange = true;
-					window.location.href = byDateViewLink;
-					return false;
-				});
-				if (! util.hasGpsData(currentMedia)) {
-					$("#by-gps-view").addClass("hidden");
-				} else {
-					$("#by-gps-view").on("click", function(ev) {
-						isABrowsingModeChange = true;
-						window.location.href = byGpsViewLink;
-						return false;
-					});
-				}
-				if (byMapViewLink === null) {
-					$("#by-map-view").addClass("hidden");
-				} else {
-					$("#by-map-view").on("click", function(ev) {
-						isABrowsingModeChange = true;
-						window.location.href = byMapViewLink;
-						return false;
-					});
-				}
-				if (bySearchViewLink === null) {
-					$("#by-search-view").addClass("hidden");
-				} else {
-					$("#by-search-view").on("click", function(ev) {
-						isABrowsingModeChange = true;
-						window.location.href = bySearchViewLink;
-						return false;
-					});
-				}
-
-				// add the browsing mode switcher links
-				nextBrowsingModeLink = byDateViewLink;
-				nextBrowsingModeMessageId = "by-date-browsing";
-				if (bySearchViewLink !== null) {
-					prevBrowsingModeLink = bySearchViewLink;
-					prevBrowsingModeMessageId = "by-search-browsing";
-				} else if (byMapViewLink !== null) {
-					prevBrowsingModeLink = byMapViewLink;
-					prevBrowsingModeMessageId = "by-map-browsing";
-				} else if (util.hasGpsData(currentMedia)) {
-					prevBrowsingModeLink = byGpsViewLink;
-					prevBrowsingModeMessageId = "by-gps-browsing";
-				} else {
-					prevBrowsingModeLink = byDateViewLink;
-					prevBrowsingModeMessageId = "by-date-browsing";
-				}
-			} else if (util.isByDateCacheBase(currentAlbum.cacheBase)) {
-				// by date album: change to folder or by gps view
-				$("#folders-view").on("click", function(ev) {
-					isABrowsingModeChange = true;
-					window.location.href = foldersViewLink;
-					return false;
-				});
-				$("#by-date-view").removeClass("active").addClass("selected").off("click");
-				if (! util.hasGpsData(currentMedia)) {
-					$("#by-gps-view").addClass("hidden");
-				} else {
-					$("#by-gps-view").on("click", function(ev) {
-						isABrowsingModeChange = true;
-						window.location.href = byGpsViewLink;
-						return false;
-					});
-				}
-				if (byMapViewLink === null) {
-					$("#by-map-view").addClass("hidden");
-				} else {
-					$("#by-map-view").on("click", function(ev) {
-						isABrowsingModeChange = true;
-						window.location.href = byMapViewLink;
-						return false;
-					});
-				}
-				if (bySearchViewLink === null) {
-					$("#by-search-view").addClass("hidden");
-				} else {
-					$("#by-search-view").on("click", function(ev) {
-						isABrowsingModeChange = true;
-						window.location.href = bySearchViewLink;
-						return false;
-					});
-				}
-
-				// add the browsing mode switcher links
-				if (util.hasGpsData(currentMedia)) {
-					nextBrowsingModeLink = byGpsViewLink;
-					nextBrowsingModeMessageId = "by-gps-browsing";
-				} else if (byMapViewLink !== null) {
-					nextBrowsingModeLink = byMapViewLink;
-					nextBrowsingModeMessageId = "by-map-browsing";
-				} else if (bySearchViewLink !== null) {
-					nextBrowsingModeLink = bySearchViewLink;
-					nextBrowsingModeMessageId = "by-search-browsing";
-				} else {
-					nextBrowsingModeLink = foldersViewLink;
-					nextBrowsingModeMessageId = "folders-browsing";
-				}
-				prevBrowsingModeLink = foldersViewLink;
-				prevBrowsingModeMessageId = "folders-browsing";
-			} else if (util.isByGpsCacheBase(currentAlbum.cacheBase)) {
-				$("#folders-view").on("click", function(ev) {
-					isABrowsingModeChange = true;
-					window.location.href = foldersViewLink;
-					return false;
-				});
-				$("#by-date-view").on("click", function(ev) {
-					isABrowsingModeChange = true;
-					window.location.href = byDateViewLink;
-					return false;
-				});
-				$("#by-gps-view").removeClass("active").addClass("selected").off("click");
-				if (byMapViewLink === null) {
-					$("#by-map-view").addClass("hidden");
-				} else {
-					$("#by-map-view").on("click", function(ev) {
-						isABrowsingModeChange = true;
-						window.location.href = byMapViewLink;
-						return false;
-					});
-				}
-				if (bySearchViewLink === null) {
-					$("#by-search-view").addClass("hidden");
-				} else {
-					$("#by-search-view").on("click", function(ev) {
-						isABrowsingModeChange = true;
-						window.location.href = bySearchViewLink;
-						return false;
-					});
-				}
-
-				// add the browsing mode switcher links
-				if (byMapViewLink !== null) {
-					nextBrowsingModeLink = byMapViewLink;
-					nextBrowsingModeMessageId = "by-map-browsing";
-				} else if (bySearchViewLink !== null) {
-					nextBrowsingModeLink = bySearchViewLink;
-					nextBrowsingModeMessageId = "by-search-browsing";
-				} else {
-					nextBrowsingModeLink = foldersViewLink;
-					nextBrowsingModeMessageId = "folders-browsing";
-				}
-				prevBrowsingModeLink = byDateViewLink;
-				prevBrowsingModeMessageId = "by-date-browsing";
-			} else if (util.isMapCacheBase(currentAlbum.cacheBase)) {
-				$("#folders-view").on("click", function(ev) {
-					isABrowsingModeChange = true;
-					window.location.href = foldersViewLink;
-					return false;
-				});
-				$("#by-date-view").on("click", function(ev) {
-					isABrowsingModeChange = true;
-					window.location.href = byDateViewLink;
-					return false;
-				});
-				if (! util.hasGpsData(currentMedia)) {
-					$("#by-gps-view").addClass("hidden");
-				} else {
-					$("#by-gps-view").on("click", function(ev) {
-						isABrowsingModeChange = true;
-						window.location.href = byGpsViewLink;
-						return false;
-					});
-				}
-				$("#by-map-view").removeClass("active").addClass("selected").off("click");
-				if (bySearchViewLink === null) {
-					$("#by-search-view").addClass("hidden");
-				} else {
-					$("#by-search-view").on("click", function(ev) {
-						isABrowsingModeChange = true;
-						window.location.href = bySearchViewLink;
-						return false;
-					});
-				}
-
-				byMapViewLink = location.hash;
-
-				// add the browsing mode switcher links
-				if (bySearchViewLink !== null) {
-					nextBrowsingModeLink = bySearchViewLink;
-					nextBrowsingModeMessageId = "by-search-browsing";
-				} else {
-					nextBrowsingModeLink = foldersViewLink;
-					nextBrowsingModeMessageId = "folders-browsing";
-				}
-				if (util.hasGpsData(currentMedia)) {
-					prevBrowsingModeLink = byGpsViewLink;
-					prevBrowsingModeMessageId = "by-gps-browsing";
-				} else {
-					prevBrowsingModeLink = byDateViewLink;
-					prevBrowsingModeMessageId = "by-date-browsing";
-				}
-			} else if (util.isSearchCacheBase(currentAlbum.cacheBase)) {
-				// by search album: change to folder or by gps or by view
-				$("#folders-view").on("click", function(ev) {
-					isABrowsingModeChange = true;
-					window.location.href = foldersViewLink;
-					return false;
-				});
-				$("#by-date-view").on("click", function(ev) {
-					isABrowsingModeChange = true;
-					window.location.href = byDateViewLink;
-					return false;
-				});
-				if (! util.hasGpsData(currentMedia)) {
-					$("#by-gps-view").addClass("hidden");
-				} else {
-					$("#by-gps-view").on("click", function(ev) {
-						isABrowsingModeChange = true;
-						window.location.href = byGpsViewLink;
-						return false;
-					});
-				}
-				if (byMapViewLink === null) {
-					$("#by-map-view").addClass("hidden");
-				} else {
-					$("#by-map-view").on("click", function(ev) {
-						isABrowsingModeChange = true;
-						window.location.href = byMapViewLink;
-						return false;
-					});
-				}
-				$("#by-search-view").removeClass("active").addClass("selected").off("click");
-
-
-				bySearchViewLink = location.hash;
-
-				// add the browsing mode switcher links
-				nextBrowsingModeLink = foldersViewLink;
-				nextBrowsingModeMessageId = "folders-browsing";
-				if (byMapViewLink !== null) {
-					prevBrowsingModeLink = byMapViewLink;
-					prevBrowsingModeMessageId = "by-map-browsing";
-				} else if (util.hasGpsData(currentMedia)) {
-					prevBrowsingModeLink = byGpsViewLink;
-					prevBrowsingModeMessageId = "by-gps-browsing";
-				} else {
-					prevBrowsingModeLink = byDateViewLink;
-					prevBrowsingModeMessageId = "by-date-browsing";
-				}
-			}
+			TopFunctions.bindChangeBrowsingEvents(currentAlbum);
+			f.updateMenu(currentAlbum);
 		}
 
 		$(".media-box#" + id + " .metadata tr.gps").off('click');
@@ -2184,47 +2123,47 @@
 			// $("#media-box-inner").show().children().last().remove();
 			// $("#media-box").hide();
 			$("#album-view").removeClass("hidden");
-			var foldersViewLink = "#!/" + encodeURIComponent(Options.folders_string);
-			var byDateViewLink = "#!/" + encodeURIComponent(Options.by_date_string);
-			var byGpsViewLink = "#!/" + encodeURIComponent(Options.by_gps_string);
-			$(".day-gps-folders-view").removeClass("selected").addClass("active").removeClass("hidden").off("click");
-			if (currentAlbum.cacheBase == Options.folders_string) {
-				$("#folders-view").removeClass("active").addClass("selected");
-				$("#by-date-view").on("click", function(ev) {
-					window.location.href = byDateViewLink;
-				});
-				phFl.addClickToByGpsButton(byGpsViewLink);
-			} else if (currentAlbum.cacheBase == Options.by_date_string) {
-				$("#folders-view").on("click", function(ev) {
-					window.location.href = foldersViewLink;
-				});
-				$("#by-date-view").removeClass("active").addClass("selected");
-				phFl.addClickToByGpsButton(byGpsViewLink);
-			}	else if (currentAlbum.cacheBase == Options.by_gps_string) {
-				$("#folders-view").on("click", function(ev) {
-					window.location.href = foldersViewLink;
-				});
-				$("#by-date-view").on("click", function(ev) {
-					window.location.href = byDateViewLink;
-				});
-				$("#by-gps-view").removeClass("active").addClass("selected");
-			} else if (
-				util.isSearchCacheBase(currentAlbum.cacheBase) && currentAlbum.media.length === 0 && currentAlbum.subalbums.length === 0
-			) {
-				$("#folders-view").on("click", function(ev) {
-					$("#album-view").removeClass("hidden");
-					$(".search-failed").hide();
-					window.location.href = foldersViewLink;
-				});
-				$("#by-date-view").on("click", function(ev) {
-					$(".search-failed").hide();
-					$("#album-view").removeClass("hidden");
-					window.location.href = byDateViewLink;
-				});
-				phFl.addClickToByGpsButton(byGpsViewLink);
-			} else {
-				$(".day-gps-folders-view").addClass("hidden");
-			}
+			// var foldersViewLink = "#!/" + encodeURIComponent(Options.folders_string);
+			// var byDateViewLink = "#!/" + encodeURIComponent(Options.by_date_string);
+			// var byGpsViewLink = "#!/" + encodeURIComponent(Options.by_gps_string);
+			// $(".browsing-mode-switcher").removeClass("selected").addClass("active").removeClass("hidden").off("click");
+			// if (currentAlbum.cacheBase == Options.folders_string) {
+			// 	$("#folders-view").removeClass("active").addClass("selected");
+			// 	$("#by-date-view").on("click", function(ev) {
+			// 		window.location.href = byDateViewLink;
+			// 	});
+			// 	phFl.addClickToByGpsButton(byGpsViewLink);
+			// } else if (currentAlbum.cacheBase == Options.by_date_string) {
+			// 	$("#folders-view").on("click", function(ev) {
+			// 		window.location.href = foldersViewLink;
+			// 	});
+			// 	$("#by-date-view").removeClass("active").addClass("selected");
+			// 	phFl.addClickToByGpsButton(byGpsViewLink);
+			// }	else if (currentAlbum.cacheBase == Options.by_gps_string) {
+			// 	$("#folders-view").on("click", function(ev) {
+			// 		window.location.href = foldersViewLink;
+			// 	});
+			// 	$("#by-date-view").on("click", function(ev) {
+			// 		window.location.href = byDateViewLink;
+			// 	});
+			// 	$("#by-gps-view").removeClass("active").addClass("selected");
+			// } else if (
+			// 	util.isSearchCacheBase(currentAlbum.cacheBase) && currentAlbum.media.length === 0 && currentAlbum.subalbums.length === 0
+			// ) {
+			// 	$("#folders-view").on("click", function(ev) {
+			// 		$("#album-view").removeClass("hidden");
+			// 		$(".search-failed").hide();
+			// 		window.location.href = foldersViewLink;
+			// 	});
+			// 	$("#by-date-view").on("click", function(ev) {
+			// 		$(".search-failed").hide();
+			// 		$("#album-view").removeClass("hidden");
+			// 		window.location.href = byDateViewLink;
+			// 	});
+			// 	phFl.addClickToByGpsButton(byGpsViewLink);
+			// } else {
+			// 	$(".browsing-mode-switcher").addClass("hidden");
+			// }
 			$("#powered-by").show();
 
 			$("html, body").off('mousewheel').on('mousewheel', TopFunctions.scrollAlbum);
@@ -2244,6 +2183,7 @@
 		f.setOptions();
 
 		TopFunctions.bindSortEvents(currentAlbum);
+		TopFunctions.bindChangeBrowsingEvents(currentAlbum);
 
 		// activate the map and the popup when coming back from a map album
 		if (

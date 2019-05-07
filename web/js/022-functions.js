@@ -94,6 +94,76 @@
 		// add the correct classes to the menu buttons
 
 		if (
+			isPopup ||
+			thisAlbum === null ||
+			[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(thisAlbum.cacheBase) == -1 &&
+			(currentMedia === null && ! util.isAlbumWithOneMedia(thisAlbum))
+		) {
+			$(".browsing-mode-switcher").addClass("hidden");
+		} else {
+			var hideGpsEntry = (
+				thisAlbum === null || (
+					[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(thisAlbum.cacheBase) !== -1 &&
+					(
+						currentMedia === null && ! util.isAlbumWithOneMedia(thisAlbum) && thisAlbum.numPositionsInTree === 0 ||
+						currentMedia !== null && ! util.hasGpsData(currentMedia) ||
+						currentMedia === null && util.isAlbumWithOneMedia(thisAlbum) && ! util.hasGpsData(thisAlbum.media[0])
+					)
+				)
+			);
+			// var hasGpsData = (currentMedia !== null || util.isAlbumWithOneMedia(thisAlbum)) && util.hasGpsData(currentMedia);
+			$(".browsing-mode-switcher").addClass("active").removeClass("hidden").removeClass("selected").off("click");
+			if (util.isFolderCacheBase(thisAlbum.cacheBase)) {
+				// folder album: change to by date or by gps view
+				$("#folders-view").removeClass("active").addClass("selected");
+				if (hideGpsEntry) {
+					$("#by-gps-view").addClass("hidden");
+				}
+				if (byMapViewLink === null) {
+					$("#by-map-view").addClass("hidden");
+				}
+				if (bySearchViewLink === null) {
+					$("#by-search-view").addClass("hidden");
+				}
+			} else if (util.isByDateCacheBase(thisAlbum.cacheBase)) {
+				$("#by-date-view").removeClass("active").addClass("selected");
+				if (hideGpsEntry) {
+					$("#by-gps-view").addClass("hidden");
+				}
+				if (byMapViewLink === null) {
+					$("#by-map-view").addClass("hidden");
+				}
+				if (bySearchViewLink === null) {
+					$("#by-search-view").addClass("hidden");
+				}
+			} else if (util.isByGpsCacheBase(thisAlbum.cacheBase)) {
+				$("#by-gps-view").removeClass("active").addClass("selected");
+				if (byMapViewLink === null) {
+					$("#by-map-view").addClass("hidden");
+				}
+				if (bySearchViewLink === null) {
+					$("#by-search-view").addClass("hidden");
+				}
+			} else if (util.isMapCacheBase(thisAlbum.cacheBase)) {
+				if (hideGpsEntry) {
+					$("#by-gps-view").addClass("hidden");
+				}
+				$("#by-map-view").removeClass("active").addClass("selected");
+				if (bySearchViewLink === null) {
+					$("#by-search-view").addClass("hidden");
+				}
+			} else if (util.isSearchCacheBase(thisAlbum.cacheBase)) {
+				if (hideGpsEntry) {
+					$("#by-gps-view").addClass("hidden");
+				}
+				if (byMapViewLink === null) {
+					$("#by-map-view").addClass("hidden");
+				}
+				$("#by-search-view").removeClass("active").addClass("selected");
+			}
+		}
+
+		if (
 			thisAlbum !== null &&
 			(util.isSearchCacheBase(thisAlbum.cacheBase) || thisAlbum.cacheBase == Options.by_search_string)
 			||

@@ -298,12 +298,12 @@
 		<li id="album-search" class="search active"></li>
 		<!-- <li id="refine-search" class="search active"></li> -->
 
-		<li class="day-gps-folders-view caption"></li>
-		<li id="folders-view" class="day-gps-folders-view"></li>
-		<li id="by-date-view" class="day-gps-folders-view"></li>
-		<li id="by-gps-view" class="day-gps-folders-view"></li>
-		<li id="by-map-view" class="day-gps-folders-view"></li>
-		<li id="by-search-view" class="day-gps-folders-view"></li>
+		<li class="browsing-mode-switcher caption"></li>
+		<li id="folders-view" class="browsing-mode-switcher"></li>
+		<li id="by-date-view" class="browsing-mode-switcher"></li>
+		<li id="by-gps-view" class="browsing-mode-switcher"></li>
+		<li id="by-map-view" class="browsing-mode-switcher"></li>
+		<li id="by-search-view" class="browsing-mode-switcher"></li>
 
 		<li class="sort album-sort caption"></li>
 		<li class='sort album-sort by-date'></li>
