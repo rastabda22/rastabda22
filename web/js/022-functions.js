@@ -86,11 +86,11 @@
 
 	Functions.updateMenu = function(thisAlbum) {
 		var albumOrMedia;
+		var isPopup = $('.leaflet-popup').html() ? true : false;
 
 		if (typeof thisAlbum === "undefined")
 			thisAlbum = currentAlbum;
 
-		// add the correct classes to the menu sort buttons
 		// add the correct classes to the menu buttons
 		if (currentMedia !== null) {
 			// showing a media, nothing to sort
@@ -135,19 +135,33 @@
 
 		$("ul#right-menu li.ui").removeClass("hidden");
 
-		$("ul#right-menu li.hide-title").removeClass("hidden");
-		if (Options.hide_title)
-			$("ul#right-menu li.hide-title").addClass("selected");
-		else
-			$("ul#right-menu li.hide-title").removeClass("selected");
-
-		$("ul#right-menu li.hide-bottom-thumbnails").removeClass("hidden");
-		if (Options.hide_bottom_thumbnails)
-			$("ul#right-menu li.hide-bottom-thumbnails").addClass("selected");
-		else
-			$("ul#right-menu li.hide-bottom-thumbnails").removeClass("selected");
+		if (isPopup) {
+			$("ul#right-menu li.hide-title").addClass("hidden");
+		} else {
+			$("ul#right-menu li.hide-title").removeClass("hidden");
+			if (Options.hide_title)
+				$("ul#right-menu li.hide-title").addClass("selected");
+			else
+				$("ul#right-menu li.hide-title").removeClass("selected");
+		}
 
 		if (
+			isPopup ||
+			currentMedia === null && ! util.isAlbumWithOneMedia(thisAlbum)
+			// ||
+			// thisAlbum !== null && thisAlbum.subalbums.length === 0
+		) {
+			$("ul#right-menu li.hide-bottom-thumbnails").addClass("hidden");
+		} else {
+			$("ul#right-menu li.hide-bottom-thumbnails").removeClass("hidden");
+			if (Options.hide_bottom_thumbnails)
+				$("ul#right-menu li.hide-bottom-thumbnails").addClass("selected");
+			else
+				$("ul#right-menu li.hide-bottom-thumbnails").removeClass("selected");
+		}
+
+		if (
+			isPopup ||
 			currentMedia !== null ||
 			util.isAlbumWithOneMedia(thisAlbum) ||
 			thisAlbum !== null && thisAlbum.subalbums.length === 0
@@ -167,13 +181,8 @@
 		else
 			$("ul#right-menu li.spaced").removeClass("selected");
 
-		$("ul#right-menu li.square-album-thumbnails").removeClass("hidden");
-		if (Options.album_thumb_type == "square")
-			$("ul#right-menu li.square-album-thumbnails").addClass("selected");
-		else
-			$("ul#right-menu li.square-album-thumbnails").removeClass("selected");
-
 		if (
+			isPopup ||
 			currentMedia !== null ||
 			util.isAlbumWithOneMedia(thisAlbum) ||
 			thisAlbum !== null && (thisAlbum.subalbums.length === 0 || ! util.isFolderCacheBase(thisAlbum.cacheBase))
@@ -188,6 +197,7 @@
 		}
 
 		if (
+			isPopup ||
 			currentMedia !== null ||
 			util.isAlbumWithOneMedia(thisAlbum) ||
 			thisAlbum !== null && thisAlbum.subalbums.length === 0 && Options.hide_title
@@ -199,6 +209,20 @@
 				$("ul#right-menu li.media-count").addClass("selected");
 			else
 				$("ul#right-menu li.media-count").removeClass("selected");
+		}
+
+		if (
+			isPopup ||
+			currentMedia === null ||
+			util.isAlbumWithOneMedia(thisAlbum)
+		) {
+			$("ul#right-menu li.square-album-thumbnails").addClass("hidden");
+		} else {
+			$("ul#right-menu li.square-album-thumbnails").removeClass("hidden");
+			if (Options.album_thumb_type == "square")
+				$("ul#right-menu li.square-album-thumbnails").addClass("selected");
+			else
+				$("ul#right-menu li.square-album-thumbnails").removeClass("selected");
 		}
 
 		if (
