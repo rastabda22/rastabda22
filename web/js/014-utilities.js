@@ -851,7 +851,7 @@
 	};
 
 	Utilities.prototype.HideId = function(id) {
-		$("#" + id).hide();
+		$(id).hide();
 	};
 
 	Utilities.correctPrevNextPosition = function() {

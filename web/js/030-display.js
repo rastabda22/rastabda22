@@ -2,8 +2,7 @@ var fullScreenStatus = false;
 var currentMedia = null;
 var currentAlbum = null;
 var nextMedia = null, prevMedia = null, upLink = "";
-var nextBrowsingModeLink = null, prevBrowsingModeLink = null, bySearchViewLink = null, byMapViewLink = null, isABrowsingModeChange = false;
-var nextBrowsingModeMessageId = null, prevBrowsingModeMessageId = null;
+var bySearchViewLink = null, byMapViewLink = null, isABrowsingModeChange = false;
 var titleWrapper1, titleWrapper2, maxWidthForThumbnails;
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
@@ -191,13 +190,11 @@ $(document).ready(function() {
 				! isMap
 			) {
 				// browsing mode switchers
-				if (e.key === '<' && prevBrowsingModeLink !== null) {
-					tF.showBrowsingModeMessage("#" + prevBrowsingModeMessageId);
-					window.location.href = prevBrowsingModeLink;
+				if (e.key === '<' && nextBrowsingModeSelector !== null) {
+					$(nextBrowsingModeSelector)[0].click();
 					return false;
-				} else if (e.key === '>' && nextBrowsingModeLink !== null) {
-					tF.showBrowsingModeMessage("#" + nextBrowsingModeMessageId);
-					window.location.href = nextBrowsingModeLink;
+				} else if (e.key === '>' && prevBrowsingModeSelector !== null) {
+					$(prevBrowsingModeSelector)[0].click();
 					return false;
 				}
 			}
