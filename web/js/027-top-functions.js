@@ -587,32 +587,44 @@
 
 		function actuallyBind(thisAlbum, hasGpsData) {
 
-			function changeToFoldersView() {
+			function showMessage(selector) {
+				$(".browsing-mode-message").stop().hide().css("opacity", "");
+				$(selector).show();
+				$(selector).fadeOut(
+					2500,
+					function(){
+						util.HideId(selector);
+					}
+				);
 				isABrowsingModeChange = true;
+			}
+
+			function changeToFoldersView() {
+				showMessage("#folders-browsing");
 				window.location.href = foldersViewLink;
 				return false;
 			}
 
 			function changeToByDateView() {
-				isABrowsingModeChange = true;
+				showMessage("#by-date-browsing");
 				window.location.href = byDateViewLink;
 				return false;
 			}
 
 			function changeToByGpsView() {
-				isABrowsingModeChange = true;
+				showMessage("#by-gps-browsing");
 				window.location.href = byGpsViewLink;
 				return false;
 			}
 
 			function changeToByMapView() {
-				isABrowsingModeChange = true;
+				showMessage("#by-map-browsing");
 				window.location.href = byMapViewLink;
 				return false;
 			}
 
 			function changeToBySearcView() {
-				isABrowsingModeChange = true;
+				showMessage("#by-search-browsing");
 				window.location.href = bySearchViewLink;
 				return false;
 			}

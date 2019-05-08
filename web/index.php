@@ -253,12 +253,6 @@
 			</div>
 		</div>
 
-		<div id="folders-browsing" class="browsing-mode-message"></div>
-		<div id="by-date-browsing" class="browsing-mode-message"></div>
-		<div id="by-gps-browsing" class="browsing-mode-message"></div>
-		<div id="by-search-browsing" class="browsing-mode-message"></div>
-		<div id="by-map-browsing" class="browsing-mode-message"></div>
-
 		<img id="prev" width="42" height="88" src="img/prev.png">
 		<img id="next" width="42" height="88" src="img/next.png">
 		<div id="pinch-container">
@@ -328,6 +322,12 @@
 	</ul>
 
 	<div id="loading"></div>
+
+	<div id="folders-browsing" class="browsing-mode-message"></div>
+	<div id="by-date-browsing" class="browsing-mode-message"></div>
+	<div id="by-gps-browsing" class="browsing-mode-message"></div>
+	<div id="by-search-browsing" class="browsing-mode-message"></div>
+	<div id="by-map-browsing" class="browsing-mode-message"></div>
 
 	<div id="error-overlay"></div>
 	<div id="error-options-file" class="error"></div>
