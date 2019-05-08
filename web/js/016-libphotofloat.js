@@ -407,12 +407,12 @@
 		return [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash];
 	};
 
-	PhotoFloat.prototype.geotaggedPhotosExist = function() {
+	PhotoFloat.prototype.geotaggedPhotosExist = function(callback) {
 		var self;
 		// this function returns true if the root album has the by gps subalbum
 		if (this.geotaggedPhotosFound !== null) {
 			if (this.geotaggedPhotosFound) {
-				return true;
+				callback(true);
 				// $("#by-gps-view").off("click");
 				// $("#by-gps-view").removeClass("hidden").addClass("active").on("click", function(ev) {
 				// 	$(".search-failed").hide();
@@ -421,7 +421,7 @@
 				// 	return false;
 				// });
 			} else {
-				return false;
+				callback(false);
 			}
 		} else {
 			self = this;
@@ -431,12 +431,12 @@
 				// callback
 				function(foldersRootAlbum) {
 					if (! foldersRootAlbum.numPoints) {
-						$("#by-gps-view").addClass("hidden");
+						// $("#by-gps-view").addClass("hidden");
 						self.geotaggedPhotosFound = false;
-						return false;
+						callback(false);
 					} else {
 						self.geotaggedPhotosFound = true;
-						return true;
+						callback(true);
 						// $("#by-gps-view").off("click");
 						// $("#by-gps-view").removeClass("hidden").addClass("active").on("click", function(ev) {
 						// 	$(".search-failed").hide();
@@ -452,7 +452,7 @@
 				function() {
 					// $("#by-gps-view").addClass("hidden");
 					self.geotaggedPhotosFound = false;
-					return false;
+					callback(false);
 				}
 			);
 		}

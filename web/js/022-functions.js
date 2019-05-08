@@ -84,12 +84,21 @@
 		}
 	};
 
-	Functions.updateMenu = function(thisAlbum) {
+	Functions.updateMenu = function(thisAlbum, hasGpsData) {
 		var albumOrMedia;
 		var isPopup = $('.leaflet-popup').html() ? true : false;
 
 		if (typeof thisAlbum === "undefined")
 			thisAlbum = currentAlbum;
+
+		if (typeof hasGpsData === "undefined") {
+			if (currentMedia !== null)
+				hasGpsData = util.hasGpsData(currentMedia);
+			else if (currentMedia === null && util.isAlbumWithOneMedia(thisAlbum))
+				hasGpsData = util.hasGpsData(thisAlbum.media[0]);
+			else
+				hasGpsData = true;
+		}
 
 		// add the correct classes to the menu buttons
 
@@ -101,17 +110,8 @@
 		) {
 			$(".browsing-mode-switcher").addClass("hidden");
 		} else {
-			var hideGpsEntry = (
-				thisAlbum === null || (
-					[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(thisAlbum.cacheBase) !== -1 &&
-					(
-						currentMedia === null && ! util.isAlbumWithOneMedia(thisAlbum) && thisAlbum.numPositionsInTree === 0 ||
-						currentMedia !== null && ! util.hasGpsData(currentMedia) ||
-						currentMedia === null && util.isAlbumWithOneMedia(thisAlbum) && ! util.hasGpsData(thisAlbum.media[0])
-					)
-				)
-			);
-			
+			var hideGpsEntry = ! hasGpsData;
+
 			// var hasGpsData = (currentMedia !== null || util.isAlbumWithOneMedia(thisAlbum)) && util.hasGpsData(currentMedia);
 			$(".browsing-mode-switcher").addClass("active").removeClass("hidden").removeClass("selected");
 			if (util.isFolderCacheBase(thisAlbum.cacheBase)) {
