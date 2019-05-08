@@ -192,27 +192,11 @@ $(document).ready(function() {
 			) {
 				// browsing mode switchers
 				if (e.key === '<' && prevBrowsingModeLink !== null) {
-					$(".browsing-mode-message").stop().hide().css("opacity", "");
-					$("#" + prevBrowsingModeMessageId).show();
-					$("#" + prevBrowsingModeMessageId).fadeOut(
-						2500,
-						function(){
-							util.HideId(prevBrowsingModeMessageId);
-						}
-					);
-					isABrowsingModeChange = true;
+					tF.showBrowsingModeMessage("#" + prevBrowsingModeMessageId);
 					window.location.href = prevBrowsingModeLink;
 					return false;
 				} else if (e.key === '>' && nextBrowsingModeLink !== null) {
-					$(".browsing-mode-message").stop().hide().css("opacity", "");
-					$("#" + nextBrowsingModeMessageId).show();
-					$("#" + nextBrowsingModeMessageId).fadeOut(
-						2500,
-						function(){
-							util.HideId(nextBrowsingModeMessageId);
-						}
-					);
-					isABrowsingModeChange = true;
+					tF.showBrowsingModeMessage("#" + nextBrowsingModeMessageId);
 					window.location.href = nextBrowsingModeLink;
 					return false;
 				}
