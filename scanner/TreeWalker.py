@@ -753,6 +753,34 @@ class TreeWalker:
 		if Options.config['exclude_files_marker'] in listdir:
 			indented_message("files excluded by marker file", Options.config['exclude_files_marker'], 4)
 			skip_files = True
+		crypt_password = None
+		if len(Options.identifiers_and_passwords) and Options.config['passwords_marker'] in listdir:
+			next_level()
+			message(Options.config['passwords_marker'] + "file found", "reading it", 4)
+			pw_file = os.path.join(absolute_path, Options.config['passwords_marker'])
+			with open(pw_file, 'r') as passwords_file:
+				for line in passwords_file:
+					columns = line.split('\t')
+					if len(columns) == 0:
+						indented_message("empty line", "", 5)
+					if len(columns) == 1:
+						# it's a simple identifier: the album will be protected with the corresponding password
+						identifier = columns[0]
+						indexes = [index for index,value in enumerate(Options.identifiers_and_passwords) if value.identifier == identifier]
+						if len(indexes) == 1:
+							crypt_password = Options.identifiers_and_passwords[indexes[0]]
+							indented_message("protect the directory with password", "identifier: " + identifier, 3)
+						else:
+							indented_message("WARNING: the same identifier is used more than once", "not protecting the directory", 2)
+					elif len(columns) == 2:
+						# a file name or a relative path (possibly with file name) followed by a password identifier
+						file = columns[0]
+						identifier = columns[1]
+						indented_message("protect file(s) with password", "file: " + file + ", identifier: " + identifier, 3)
+						# TO DO
+					else:
+						indented_message("WARNING: line with too many fields, not using it", line, 2)
+
 		json_file = os.path.join(Options.config['cache_path'], album_cache_base) + ".json"
 		json_file_exists = os.path.exists(json_file)
 		json_file_mtime = None
