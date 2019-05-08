@@ -129,6 +129,12 @@ jpeg_quality = 95
 exclude_files_marker = .myphotoshare.exclude.files
 exclude_tree_marker = .myphotoshare.exclude.tree
 
+# marker for passwords
+passwords_marker = .myphotoshare.passwords
+
+# password file, relative to the directory of the configuration file
+passwords_file = myphotoshare.passwords
+
 # recreate fixed height media thumbnails if their ratio (width/height) is > 1,
 # in order to get rid of a past bug in thumbnail generator
 recreate_fixed_height_thumbnails = false
