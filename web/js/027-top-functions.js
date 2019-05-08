@@ -2121,47 +2121,7 @@
 			// $("#media-box-inner").show().children().last().remove();
 			// $("#media-box").hide();
 			$("#album-view").removeClass("hidden");
-			// var foldersViewLink = "#!/" + encodeURIComponent(Options.folders_string);
-			// var byDateViewLink = "#!/" + encodeURIComponent(Options.by_date_string);
-			// var byGpsViewLink = "#!/" + encodeURIComponent(Options.by_gps_string);
-			// $(".browsing-mode-switcher").removeClass("selected").addClass("active").removeClass("hidden").off("click");
-			// if (currentAlbum.cacheBase == Options.folders_string) {
-			// 	$("#folders-view").removeClass("active").addClass("selected");
-			// 	$("#by-date-view").on("click", function(ev) {
-			// 		window.location.href = byDateViewLink;
-			// 	});
-			// 	phFl.geotaggedPhotosExist(byGpsViewLink);
-			// } else if (currentAlbum.cacheBase == Options.by_date_string) {
-			// 	$("#folders-view").on("click", function(ev) {
-			// 		window.location.href = foldersViewLink;
-			// 	});
-			// 	$("#by-date-view").removeClass("active").addClass("selected");
-			// 	phFl.geotaggedPhotosExist(byGpsViewLink);
-			// }	else if (currentAlbum.cacheBase == Options.by_gps_string) {
-			// 	$("#folders-view").on("click", function(ev) {
-			// 		window.location.href = foldersViewLink;
-			// 	});
-			// 	$("#by-date-view").on("click", function(ev) {
-			// 		window.location.href = byDateViewLink;
-			// 	});
-			// 	$("#by-gps-view").removeClass("active").addClass("selected");
-			// } else if (
-			// 	util.isSearchCacheBase(currentAlbum.cacheBase) && currentAlbum.media.length === 0 && currentAlbum.subalbums.length === 0
-			// ) {
-			// 	$("#folders-view").on("click", function(ev) {
-			// 		$("#album-view").removeClass("hidden");
-			// 		$(".search-failed").hide();
-			// 		window.location.href = foldersViewLink;
-			// 	});
-			// 	$("#by-date-view").on("click", function(ev) {
-			// 		$(".search-failed").hide();
-			// 		$("#album-view").removeClass("hidden");
-			// 		window.location.href = byDateViewLink;
-			// 	});
-			// 	phFl.geotaggedPhotosExist(byGpsViewLink);
-			// } else {
-			// 	$(".browsing-mode-switcher").addClass("hidden");
-			// }
+
 			$("#powered-by").show();
 
 			$("html, body").off('mousewheel').on('mousewheel', TopFunctions.scrollAlbum);
