@@ -62,6 +62,7 @@ unicode_combining_marks_c = '\u0903\u093E\u093F\u0940\u0949\u094A\u094B\u094C\u0
 config['unicode_combining_marks'] = unicode_combining_marks_n + unicode_combining_marks_c
 
 thumbnail_types_and_sizes_list = None
+identifiers_and_passwords = []
 config['cv2_installed'] = True
 face_cascade = None
 eye_cascade = None
@@ -344,12 +345,12 @@ def get_options():
 
 	# read the password file
 	# it must exist and be readable, otherwise skip it
-	identifiers_and_passwords = []
 	if len(sys.argv) == 2:
 		# 1 arguments: the config files: the password file is in the same directory
 		passwords_file = os.path.join(os.path.dirname(sys.argv[1]), config['passwords_file'])
 		try:
 			with open(passwords_file, 'r') as password_lines:
+				indented_message("Reading passwords file", passwords_file, 3)
 				for line in password_lines:
 					# in each line is a password identifier is followed by the corresponding password
 					columns = line.split(' ')
@@ -357,8 +358,8 @@ def get_options():
 						"identifier": columns[0],
 						"crypt_password": hashlib.md5(columns[1]).hexdigest()
 					})
-		except OSError:
-			message("WARNING", passwords_file + " doesn't exist or unreadable, not using it", 2)
+		except IOError:
+			indented_message("WARNING", passwords_file + " doesn't exist or unreadable, not using it", 2)
 
 
 	# create the directory where php will put album composite images
