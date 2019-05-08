@@ -618,7 +618,7 @@
 			}
 
 			function changeToByMapView() {
-				TopFunctions.howBrowsingModeMessage("#by-map-browsing");
+				TopFunctions.showBrowsingModeMessage("#by-map-browsing");
 				window.location.href = byMapViewLink;
 				return false;
 			}
