@@ -598,7 +598,7 @@
 	TopFunctions.bindChangeBrowsingEvents = function(thisAlbum) {
 
 		function actuallyBind(thisAlbum, hasGpsData) {
-
+			// this function is called by bindChangeBrowsingEvents when an asyncronous function has ended
 			function changeToFoldersView() {
 				TopFunctions.showBrowsingModeMessage("#folders-browsing");
 				window.location.href = foldersViewLink;
@@ -1229,7 +1229,8 @@
 			// activate the map and the popup when coming back from a map album
 			if (
 				previousAlbum !== null &&
-				util.isMapCacheBase(previousAlbum.cacheBase)
+				util.isMapCacheBase(previousAlbum.cacheBase) &&
+				fromEscKey
 				// && currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)
 			) {
 				$(".map-popup-trigger").trigger("click", ["fromTrigger"]);
@@ -2146,7 +2147,8 @@
 		// activate the map and the popup when coming back from a map album
 		if (
 			previousAlbum !== null &&
-			util.isMapCacheBase(previousAlbum.cacheBase)
+			util.isMapCacheBase(previousAlbum.cacheBase) &&
+			fromEscKey
 			// && currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)
 		)
 			$(".map-popup-trigger").trigger("click", ["fromTrigger"]);
