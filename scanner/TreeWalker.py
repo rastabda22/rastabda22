@@ -737,7 +737,7 @@ class TreeWalker:
 		#~ if trimmed_path:
 			#~ absolute_path_with_marker = os.path.join(absolute_path_with_marker, trimmed_path)
 		max_file_date = file_mtime(absolute_path)
-		message(">>>>>>>>>>>  Walking", absolute_path, 3)
+		message(">>>>>>>>>>>  Entering directory", absolute_path, 3)
 		next_level()
 		message("cache base", album_cache_base, 4)
 		if not os.access(absolute_path, os.R_OK | os.X_OK):
@@ -751,10 +751,8 @@ class TreeWalker:
 			return [None, 0, [], None]
 		skip_files = False
 		if Options.config['exclude_files_marker'] in listdir:
-			next_level()
-			message("files excluded by marker file", Options.config['exclude_files_marker'], 4)
+			indented_message("files excluded by marker file", Options.config['exclude_files_marker'], 4)
 			skip_files = True
-			back_level()
 		json_file = os.path.join(Options.config['cache_path'], album_cache_base) + ".json"
 		json_file_exists = os.path.exists(json_file)
 		json_file_mtime = None
