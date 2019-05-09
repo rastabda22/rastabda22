@@ -151,6 +151,7 @@
 		f.setOptions();
 		MapFunctions.popup.setContent($(".leaflet-popup-content").html());
 		MapFunctions.getImagesWrapperSizes();
+		$(".leaflet-popup-content").css("max-width", MapFunctions.maxWidthForThumbnails).css("width", MapFunctions.maxWidthForThumbnails);
 		$("#popup-images-wrapper").css("max-height", parseInt($(".leaflet-popup-content").css("height")) - 35);
 		$("#popup-images-wrapper").css("max-width", MapFunctions.maxWidthForThumbnails).css("width", MapFunctions.maxWidthForThumbnails);
 		$("#popup-photo-count").css("max-width", MapFunctions.maxWidthForThumbnails);
