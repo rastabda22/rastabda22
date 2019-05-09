@@ -350,7 +350,8 @@ def get_options():
 		passwords_file = os.path.join(os.path.dirname(sys.argv[1]), config['passwords_file'])
 		try:
 			with open(passwords_file, 'r') as password_lines:
-				indented_message("Reading passwords file", passwords_file, 3)
+				message("Reading passwords file", passwords_file, 3)
+				num_password = 1
 				for line in password_lines:
 					# in each line is a password identifier is followed by the corresponding password
 					columns = line.split(' ')
@@ -358,6 +359,8 @@ def get_options():
 						"identifier": columns[0],
 						"crypt_password": hashlib.md5(columns[1]).hexdigest()
 					})
+					indented_message("Password read", str(num_password) + " - identifier: " + columns[0], 3)
+					num_password +=1
 		except IOError:
 			indented_message("WARNING", passwords_file + " doesn't exist or unreadable, not using it", 2)
 
