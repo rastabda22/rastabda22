@@ -423,7 +423,7 @@ $(document).ready(function() {
 		if (
 			currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)
 		)
-			passwordList = currentMedia.albumPasswords;
+			passwordList = currentMedia.passwords;
 		else
 			passwordList = currentAlbum.passwords;
 		if (

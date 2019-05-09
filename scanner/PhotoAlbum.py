@@ -1995,7 +1995,7 @@ class Media(object):
 		media["albumName"] = self.album_path[:len(self.album_path) - len(self.name) - 1]
 		media["foldersCacheBase"] = self.album.cache_base
 		media["cacheSubdir"] = self.album.subdir
-		media["albumPasswords"] = self.album_passwords
+		media["passwords"] = self.album_passwords
 		print("media to dict", self.album_passwords)
 		return media
 

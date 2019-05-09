@@ -1176,7 +1176,7 @@
 			if (currentAlbum.hasOwnProperty("passwords"))
 				passwordList = currentAlbum.passwords;
 		} else {
-			passwordList = currentMedia.albumPasswords;
+			passwordList = currentMedia.passwords;
 		}
 		// check if it's protected
 		if (
@@ -1707,8 +1707,14 @@
 									mapLinkIcon +
 									"<span class='helper'></span>" +
 									"<img title='" + imgTitle + "' " +
-										"alt='" + util.trimExtension(currentAlbum.media[i].name) + "' " +
-										"data-src='" + encodeURI(thumbHash) + "' " +
+										"alt='" + util.trimExtension(currentAlbum.media[i].name) + "' ";
+					if (
+						currentAlbum.media[i].passwords.length == 0 ||
+						currentAlbum.media[i].passwords.filter(value => PhotoFloat.guessedPasswords.includes(value)).length > 0
+					)
+						imageString +=
+										"data-src='" + encodeURI(thumbHash) + "' ";
+					imageString +=
 										"src='img/image-placeholder.png' " +
 										"class='thumbnail lazyload-media" + "' " +
 										"height='" + thumbHeight + "' " +
