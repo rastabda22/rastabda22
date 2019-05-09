@@ -8,6 +8,7 @@
 		PhotoFloat.cache.albums = {};
 		PhotoFloat.cache.albums.index = {};
 		PhotoFloat.cache.positions = {};
+		PhotoFloat.guessedPasswords = [];
 		this.geotaggedPhotosFound = null;
 		this.searchWordsFromJsonFile = [];
 		this.searchAlbumCacheBaseFromJsonFile = [];

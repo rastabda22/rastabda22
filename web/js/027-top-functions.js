@@ -1150,12 +1150,12 @@
 			}
 		);
 
-		if (album === currentAlbum) {
-			previousAlbum = null;
-			if (media === currentMedia) {
-				return;
-			}
-		}
+		// if (album === currentAlbum) {
+		// 	previousAlbum = null;
+		// 	if (media === currentMedia) {
+		// 		return;
+		// 	}
+		// }
 
 		if (album != currentAlbum) {
 			previousAlbum = currentAlbum;
@@ -1170,6 +1170,25 @@
 		currentAlbum = album;
 		currentMedia = media;
 		currentMediaIndex = mediaIndex;
+
+		var passwordList = null;
+		if (currentMedia == null && ! util.isAlbumWithOneMedia(currentAlbum)) {
+			if (currentAlbum.hasOwnProperty("passwords"))
+				passwordList = currentAlbum.passwords;
+		} else {
+			passwordList = currentMedia.albumPasswords;
+		}
+		// check if it's protected
+		if (
+			passwordList !== null &&
+			passwordList.length > 0 &&
+			passwordList.filter(value => PhotoFloat.guessedPasswords.includes(value)).length === 0
+		) {
+			$("#auth-text").stop().fadeIn(1000);
+			$("#password").focus();
+			return;
+		}
+
 
 		f.setOptions();
 

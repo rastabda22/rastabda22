@@ -483,6 +483,9 @@ video {
 #error-overlay {
 	background-color: #000000;
 }
+#auth-text {
+	z-index: 2000;
+}
 #auth-text input {
 	color: rgb(0, 0, 0);
 	background-color: rgb(200, 200, 200);

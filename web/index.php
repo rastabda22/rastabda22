@@ -82,6 +82,7 @@
 		<script type="text/javascript" src="js/009-leaflet-prunecluster.js"></script>
 		<script type="text/javascript" src="js/010-social.js"></script>
 		<script type="text/javascript" src="js/012-translations.js"></script>
+		<script type="text/javascript" src="js/013-md5.js"></script>
 		<script type="text/javascript" src="js/014-utilities.js"></script>
 		<script type="text/javascript" src="js/016-libphotofloat.js"></script>
 		<script type="text/javascript" src="js/018-pinch-swipe.js"></script>

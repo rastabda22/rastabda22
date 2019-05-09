@@ -405,16 +405,37 @@ $(document).ready(function() {
 	$(window).hashchange();
 
 	$("#auth-form").submit(function() {
+		function failure() {
+			password.css("background-color", "rgb(255, 64, 64)");
+		}
+		function success() {
+			password.css("background-color", "rgb(200, 200, 200)");
+			$("#auth-text").hide();
+			// currentAlbum.passwordOk = true;
+			PhotoFloat.guessedPasswords.push(encrypted_password);
+			$(window).hashchange();
+		}
+
 		var password = $("#password");
+		var passwordList;
 		password.css("background-color", "rgb(128, 128, 200)");
-		phFl.authenticate(password.val(), function(success) {
-			password.val("");
-			if (success) {
-				password.css("background-color", "rgb(200, 200, 200)");
-				$(window).hashchange();
-			} else
-				password.css("background-color", "rgb(255, 64, 64)");
-		});
+		encrypted_password = md5(password.val());
+		if (
+			currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)
+		)
+			passwordList = currentMedia.albumPasswords;
+		else
+			passwordList = currentAlbum.passwords;
+		if (
+			passwordList.some(
+				function(enc_password) {
+					return enc_password == encrypted_password;
+				}
+			)
+		)
+			success();
+		else
+			failure();
 		return false;
 	});
 });
