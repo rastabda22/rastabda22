@@ -202,7 +202,7 @@ def get_options():
 		else:
 			config[option] = usr_config.get('options', option)
 			if option in ('js_cache_levels'):
-				print(config[option])
+				# print(config[option])
 				config[option] = json.loads(config[option])
 
 
