@@ -82,202 +82,208 @@ $(document).ready(function() {
 	$(document).on('keydown', function(e) {
 		var isMap = $('#mapdiv').html() ? true : false;
 		var isPopup = $('.leaflet-popup').html() ? true : false;
-		if (! $("#search-field").is(':focus')) {
-			if (! e.ctrlKey && ! e.altKey) {
-				if (e.key === "Tab") {
-					e.preventDefault();
-					if (pS.getCurrentZoom() == 1) {
-						tF.toggleTitle(e);
-						tF.toggleBottomThumbnails(e);
+		var isAuth = $("#auth-text").is(":visible");
+		if (e.key === "Escape") {
+			// warning: modern browsers will always exit fullscreen when pressing esc
+			if (isAuth) {
+				$("#auth-text").hide();
+				return false;
+			} else if (isMap) {
+				if (isPopup) {
+					// the popup is there: close it
+					$('.leaflet-popup-close-button')[0].click();
+					MapFunctions.mapAlbum = {};
+					// $('#popup #popup-content').html("");
+				} else
+					// we are in a map: close it
+					$('.modal-close')[0].click();
+				return false;
+			} else if (pS.getCurrentZoom() > 1 || $(".title").hasClass("hidden-by-pinch")) {
+				pS.pinchOut();
+				return false;
+			} else if (! Modernizr.fullscreen && fullScreenStatus) {
+				tF.goFullscreen(e);
+				return false;
+			} else if (upLink) {
+				fromEscKey = true;
+				pS.swipeDown(upLink);
+				return false;
+			}
+		} else if (! isAuth) {
+			if (! $("#search-field").is(':focus')) {
+				if (! e.ctrlKey && ! e.altKey) {
+					if (e.key === "Tab") {
+						e.preventDefault();
+						if (pS.getCurrentZoom() == 1) {
+							tF.toggleTitle(e);
+							tF.toggleBottomThumbnails(e);
+							return false;
+						}
+					} else if (e.key === "ArrowRight" && nextMedia && currentMedia !== null && ! isMap) {
+						pS.swipeLeftOrDrag(nextMedia);
 						return false;
-					}
-				} else if (e.key === "ArrowRight" && nextMedia && currentMedia !== null && ! isMap) {
-					pS.swipeLeftOrDrag(nextMedia);
-					return false;
-				} else if (
-					(e.key === "n" || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
-					nextMedia && currentMedia !== null && ! isMap
-				) {
-					pS.swipeLeft(nextMedia);
-					return false;
-				} else if (
-					(e.key === "p" || e.key === "Backspace" && ! e.shiftKey || (e.key === "Enter" || e.key === " ") && e.shiftKey) &&
-					prevMedia && currentMedia !== null && ! isMap
-				) {
-					pS.swipeRight(prevMedia);
-					return false;
-				} else if (e.key === "ArrowLeft" && prevMedia && currentMedia !== null && ! isMap) {
-					pS.swipeRightOrDrag(prevMedia);
-					return false;
-				} else if (e.key === "Escape") {
-					// warning: modern browsers will always exit fullscreen when pressing esc
-					if (isMap) {
-						if (isPopup) {
-							// the popup is there: close it
-							$('.leaflet-popup-close-button')[0].click();
-							MapFunctions.mapAlbum = {};
-							// $('#popup #popup-content').html("");
-						} else
-							// we are in a map: close it
-							$('.modal-close')[0].click();
+					} else if (
+						(e.key === "n" || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
+						nextMedia && currentMedia !== null && ! isMap
+					) {
+						pS.swipeLeft(nextMedia);
 						return false;
-					} else if (pS.getCurrentZoom() > 1 || $(".title").hasClass("hidden-by-pinch")) {
-						pS.pinchOut();
+					} else if (
+						(e.key === "p" || e.key === "Backspace" && ! e.shiftKey || (e.key === "Enter" || e.key === " ") && e.shiftKey) &&
+						prevMedia && currentMedia !== null && ! isMap
+					) {
+						pS.swipeRight(prevMedia);
 						return false;
-					} else if (! Modernizr.fullscreen && fullScreenStatus) {
+					} else if (e.key === "ArrowLeft" && prevMedia && currentMedia !== null && ! isMap) {
+						pS.swipeRightOrDrag(prevMedia);
+						return false;
+					} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink && ! isMap) {
+						pS.swipeDownOrDrag(upLink);
+						return false;
+					} else if (e.key === "ArrowDown" || e.key === "PageDown" && ! isMap) {
+					 	if (mediaLink && currentMedia === null) {
+							pS.swipeUp(mediaLink);
+							return false;
+						} else if (pS.getCurrentZoom() > 1) {
+							pS.swipeUpOrDrag(mediaLink);
+							return false;
+						}
+					} else if (e.key === "d" && currentMedia !== null && ! isMap) {
+						$("#center .download-link")[0].click();
+						return false;
+					} else if (e.key === "f" && currentMedia !== null && ! isMap) {
 						tF.goFullscreen(e);
 						return false;
-					} else if (upLink) {
-						fromEscKey = true;
-						pS.swipeDown(upLink);
+					} else if (e.key === "m" && currentMedia !== null && ! isMap) {
+						f.toggleMetadata();
+						return false;
+					} else if (e.key === "o" && currentMedia !== null && ! isMap) {
+						$("#center .original-link")[0].click();
+						return false;
+					} else if (e.key === "+") {
+						if (isMap) {
+							// return false;
+						} else if (currentMedia !== null) {
+							pS.pinchIn();
+							return false;
+						}
+					} else if (e.key === "-") {
+						if (isMap) {
+							// return false;
+						} else if (currentMedia !== null) {
+							pS.pinchOut();
+							return false;
+						}
+					} else if (
+						e.key === "s" &&
+						! isMap &&
+						(
+							currentMedia !== null && util.hasGpsData(currentMedia) ||
+							currentMedia === null && currentAlbum.positionsAndMediaInTree.length
+						)
+					) {
+						$(".map-popup-trigger")[0].click();
 						return false;
 					}
-				} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink && ! isMap) {
-					pS.swipeDownOrDrag(upLink);
-					return false;
-				} else if (e.key === "ArrowDown" || e.key === "PageDown" && ! isMap) {
-				 	if (mediaLink && currentMedia === null) {
-						pS.swipeUp(mediaLink);
-						return false;
-					} else if (pS.getCurrentZoom() > 1) {
-						pS.swipeUpOrDrag(mediaLink);
-						return false;
-					}
-				} else if (e.key === "d" && currentMedia !== null && ! isMap) {
-					$("#center .download-link")[0].click();
-					return false;
-				} else if (e.key === "f" && currentMedia !== null && ! isMap) {
-					tF.goFullscreen(e);
-					return false;
-				} else if (e.key === "m" && currentMedia !== null && ! isMap) {
-					f.toggleMetadata();
-					return false;
-				} else if (e.key === "o" && currentMedia !== null && ! isMap) {
-					$("#center .original-link")[0].click();
-					return false;
-				} else if (e.key === "+") {
-					if (isMap) {
-						// return false;
-					} else if (currentMedia !== null) {
-						pS.pinchIn();
-						return false;
-					}
-				} else if (e.key === "-") {
-					if (isMap) {
-						// return false;
-					} else if (currentMedia !== null) {
-						pS.pinchOut();
-						return false;
-					}
-				} else if (
-					e.key === "s" &&
-					! isMap &&
+				}
+
+				if (
 					(
-						currentMedia !== null && util.hasGpsData(currentMedia) ||
-						currentMedia === null && currentAlbum.positionsAndMediaInTree.length
-					)
+						[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string, Options.by_search_string].indexOf(currentAlbum.cacheBase) !== -1 ||
+						currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)
+					) &&
+					! isMap
 				) {
-					$(".map-popup-trigger")[0].click();
-					return false;
+					// browsing mode switchers
+					if (e.key === '<' && nextBrowsingModeSelector !== null) {
+						$(nextBrowsingModeSelector)[0].click();
+						return false;
+					} else if (e.key === '>' && prevBrowsingModeSelector !== null) {
+						$(prevBrowsingModeSelector)[0].click();
+						return false;
+					}
+				}
+			}
+
+			if (
+				['[', ']'].indexOf(e.key) !== -1 && ! isPopup ||
+				['{', '}'].indexOf(e.key) !== -1
+			) {
+				if (currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)) {
+					// media and subalbums sort switcher
+
+					var mode;
+					var prevSortingModeMessageId, nextSortingModeMessageId;
+					var sortingMessageIds = ['by-date', 'by-name', 'by-name-reverse', 'by-date-reverse'];
+					var currentSortingIndex, prevSortingIndex, nextSortingIndex;
+
+					if (['[', ']'].indexOf(e.key) !== -1) {
+						mode = 'album';
+					} else {
+						mode = 'media';
+					}
+
+					if (
+						$(".sort." + mode + "-sort.by-date").hasClass("selected") &&
+						! $(".sort." + mode + "-sort.reverse").hasClass("selected")
+					) {
+						currentSortingIndex = 0;
+						// console.log("currentSortingIndex = ", currentSortingIndex);
+					} else if (
+						$(".sort." + mode + "-sort.by-name").hasClass("selected") &&
+						! $(".sort." + mode + "-sort.reverse").hasClass("selected")
+					) {
+						currentSortingIndex = 1;
+						// console.log("currentSortingIndex = ", currentSortingIndex);
+					} else if (
+						$(".sort." + mode + "-sort.by-name").hasClass("selected") &&
+						$(".sort." + mode + "-sort.reverse").hasClass("selected")
+					) {
+						currentSortingIndex = 2;
+						// console.log("currentSortingIndex = ", currentSortingIndex);
+					} else if (
+						$(".sort." + mode + "-sort.by-date").hasClass("selected") &&
+						$(".sort." + mode + "-sort.reverse").hasClass("selected")
+					) {
+						currentSortingIndex = 3;
+						// console.log("currentSortingIndex = ", currentSortingIndex);
+					}
+
+					$(".sort-message").stop().hide().css("opacity", "");
+					if (['[', '{'].indexOf(e.key) !== -1) {
+						var prevSelectors = [".reverse", ".by-date", ".reverse", ".by-name", ];
+						prevSelector = prevSelectors[currentSortingIndex];
+						prevSortingIndex = (currentSortingIndex + 4 - 1) % 4;
+						prevSortingModeMessageId = sortingMessageIds[prevSortingIndex] + "-" + mode + "-sorting";
+						$("#" + prevSortingModeMessageId).show();
+						$("#" + prevSortingModeMessageId).fadeOut(2500);
+						$(".sort." + mode + "-sort" + prevSelector)[0].click();
+						// console.log(".sort." + mode + "-sort" + prevSelector + " ------- " + prevSortingModeMessageId);
+					} else {
+						var nextSelectors = [".by-name", ".reverse", ".by-date", ".reverse"];
+						nextSelector = nextSelectors[currentSortingIndex];
+						nextSortingIndex = (currentSortingIndex + 1) % 4;
+						nextSortingModeMessageId = sortingMessageIds[nextSortingIndex] + "-" + mode + "-sorting";
+						$("#" + nextSortingModeMessageId).show();
+						$("#" + nextSortingModeMessageId).fadeOut(2500);
+						$(".sort." + mode + "-sort" + nextSelector)[0].click();
+						// console.log(".sort." + mode + "-sort" + nextSelector + " ------- " + nextSortingModeMessageId);
+					}
 				}
 			}
 
 			if (
 				(
-					[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string, Options.by_search_string].indexOf(currentAlbum.cacheBase) !== -1 ||
-					currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)
+					e.target.tagName.toLowerCase() != 'input' && e.key === "e" ||
+					// "e" opens the menu, and closes it if focus in not in input field
+					$("ul#right-menu").hasClass("expand") && e.key === "Escape"
+					// esc closes the menu
 				) &&
-				! isMap
+			 	! e.ctrlKey && ! e.shiftKey && ! e.altKey
 			) {
-				// browsing mode switchers
-				if (e.key === '<' && nextBrowsingModeSelector !== null) {
-					$(nextBrowsingModeSelector)[0].click();
-					return false;
-				} else if (e.key === '>' && prevBrowsingModeSelector !== null) {
-					$(prevBrowsingModeSelector)[0].click();
-					return false;
-				}
+				$("#menu-icon")[0].click();
+				return false;
 			}
-		}
-
-		if (
-			['[', ']'].indexOf(e.key) !== -1 && ! isPopup ||
-			['{', '}'].indexOf(e.key) !== -1
-		) {
-			if (currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)) {
-				// media and subalbums sort switcher
-
-				var mode;
-				var prevSortingModeMessageId, nextSortingModeMessageId;
-				var sortingMessageIds = ['by-date', 'by-name', 'by-name-reverse', 'by-date-reverse'];
-				var currentSortingIndex, prevSortingIndex, nextSortingIndex;
-
-				if (['[', ']'].indexOf(e.key) !== -1) {
-					mode = 'album';
-				} else {
-					mode = 'media';
-				}
-
-				if (
-					$(".sort." + mode + "-sort.by-date").hasClass("selected") &&
-					! $(".sort." + mode + "-sort.reverse").hasClass("selected")
-				) {
-					currentSortingIndex = 0;
-					// console.log("currentSortingIndex = ", currentSortingIndex);
-				} else if (
-					$(".sort." + mode + "-sort.by-name").hasClass("selected") &&
-					! $(".sort." + mode + "-sort.reverse").hasClass("selected")
-				) {
-					currentSortingIndex = 1;
-					// console.log("currentSortingIndex = ", currentSortingIndex);
-				} else if (
-					$(".sort." + mode + "-sort.by-name").hasClass("selected") &&
-					$(".sort." + mode + "-sort.reverse").hasClass("selected")
-				) {
-					currentSortingIndex = 2;
-					// console.log("currentSortingIndex = ", currentSortingIndex);
-				} else if (
-					$(".sort." + mode + "-sort.by-date").hasClass("selected") &&
-					$(".sort." + mode + "-sort.reverse").hasClass("selected")
-				) {
-					currentSortingIndex = 3;
-					// console.log("currentSortingIndex = ", currentSortingIndex);
-				}
-
-				$(".sort-message").stop().hide().css("opacity", "");
-				if (['[', '{'].indexOf(e.key) !== -1) {
-					var prevSelectors = [".reverse", ".by-date", ".reverse", ".by-name", ];
-					prevSelector = prevSelectors[currentSortingIndex];
-					prevSortingIndex = (currentSortingIndex + 4 - 1) % 4;
-					prevSortingModeMessageId = sortingMessageIds[prevSortingIndex] + "-" + mode + "-sorting";
-					$("#" + prevSortingModeMessageId).show();
-					$("#" + prevSortingModeMessageId).fadeOut(2500);
-					$(".sort." + mode + "-sort" + prevSelector)[0].click();
-					// console.log(".sort." + mode + "-sort" + prevSelector + " ------- " + prevSortingModeMessageId);
-				} else {
-					var nextSelectors = [".by-name", ".reverse", ".by-date", ".reverse"];
-					nextSelector = nextSelectors[currentSortingIndex];
-					nextSortingIndex = (currentSortingIndex + 1) % 4;
-					nextSortingModeMessageId = sortingMessageIds[nextSortingIndex] + "-" + mode + "-sorting";
-					$("#" + nextSortingModeMessageId).show();
-					$("#" + nextSortingModeMessageId).fadeOut(2500);
-					$(".sort." + mode + "-sort" + nextSelector)[0].click();
-					// console.log(".sort." + mode + "-sort" + nextSelector + " ------- " + nextSortingModeMessageId);
-				}
-			}
-		}
-
-		if (
-			(
-				e.target.tagName.toLowerCase() != 'input' && e.key === "e" ||
-				// "e" opens the menu, and closes it if focus in not in input field
-				$("ul#right-menu").hasClass("expand") && e.key === "Escape"
-				// esc closes the menu
-			) &&
-		 	! e.ctrlKey && ! e.shiftKey && ! e.altKey
-		) {
-			$("#menu-icon")[0].click();
-			return false;
 		}
 		return true;
 	});
