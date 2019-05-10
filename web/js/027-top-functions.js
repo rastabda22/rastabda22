@@ -1384,9 +1384,12 @@
 			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
 				TopFunctions.showAlbum("refreshMedia");
 			else
-				MapFunctions.updatePopup(MapFunctions.titleWrapper1.replace(
-					"maxWidthForThumbnails",
-					MapFunctions.maxWidthForThumbnails) + MapFunctions.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2
+				MapFunctions.updatePopup(
+					MapFunctions.titleWrapper1.replace(
+						"maxWidthForThumbnails",
+						MapFunctions.maxWidthForThumbnails
+					) +
+					MapFunctions.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2
 				);
 			f.focusSearchField();
 		}
@@ -1406,9 +1409,12 @@
 			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
 				TopFunctions.showAlbum("refreshMedia");
 			else
-				MapFunctions.updatePopup(MapFunctions.titleWrapper1.replace(
-					"maxWidthForThumbnails",
-					MapFunctions.maxWidthForThumbnails) + MapFunctions.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2
+				MapFunctions.updatePopup(
+					MapFunctions.titleWrapper1.replace(
+						"maxWidthForThumbnails",
+						MapFunctions.maxWidthForThumbnails
+					) +
+					MapFunctions.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2
 				);
 			f.focusSearchField();
 		}
@@ -1424,9 +1430,12 @@
 			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
 				TopFunctions.showAlbum("refreshMedia");
 			else
-				MapFunctions.updatePopup(MapFunctions.titleWrapper1.replace(
-					"maxWidthForThumbnails",
-					MapFunctions.maxWidthForThumbnails) + MapFunctions.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2
+				MapFunctions.updatePopup(
+					MapFunctions.titleWrapper1.replace(
+						"maxWidthForThumbnails",
+						MapFunctions.maxWidthForThumbnails
+					) +
+					MapFunctions.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2
 				);
 			f.focusSearchField();
 		}
@@ -2476,8 +2485,20 @@
 				MapFunctions.popup.remove();
 				$(".leaflet-popup").remove();
 			}
-			MapFunctions.popup = L.popup({maxWidth: MapFunctions.maxWidthForThumbnails, maxHeight: maxHeightForThumbnails, autoPan: false})
-				.setContent(MapFunctions.titleWrapper1.replace("maxWidthForThumbnails", MapFunctions.titleWrapper) + MapFunctions.titleWrapper2)
+			MapFunctions.popup = L.popup(
+				{
+					maxWidth: MapFunctions.maxWidthForThumbnails,
+					maxHeight: maxHeightForThumbnails,
+					autoPan: false
+				}
+			)
+				.setContent(
+					MapFunctions.titleWrapper1.replace(
+						"maxWidthForThumbnails",
+						MapFunctions.titleWrapper
+					) +
+					 MapFunctions.titleWrapper2
+				 )
 				.setLatLng(MapFunctions.averagePosition(mapAlbum.positionsAndMediaInTree))
 				.openOn(MapFunctions.mymap);
 
