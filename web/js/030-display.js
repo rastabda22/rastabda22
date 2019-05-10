@@ -87,6 +87,8 @@ $(document).ready(function() {
 			// warning: modern browsers will always exit fullscreen when pressing esc
 			if (isAuth) {
 				$("#auth-text").hide();
+				$("#album-view, #media-view").css("opacity", "");
+				window.history.back();
 				return false;
 			} else if (isMap) {
 				if (isPopup) {
@@ -392,6 +394,9 @@ $(document).ready(function() {
 
 
 	$(window).hashchange(function() {
+		$("#auth-text").hide();
+		$("#album-view, #media-view").css("opacity", "");
+
 		if (isABrowsingModeChange)
 			isABrowsingModeChange = false;
 		else {
@@ -420,7 +425,6 @@ $(document).ready(function() {
 		}
 		function success() {
 			password.css("background-color", "rgb(200, 200, 200)");
-			$("#auth-text").hide();
 			// currentAlbum.passwordOk = true;
 			PhotoFloat.guessedPasswords.push(encrypted_password);
 			$(window).hashchange();

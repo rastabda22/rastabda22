@@ -908,7 +908,19 @@
 		} else {
 			mediaSelector = ".media-box#" + id + " .media-box-inner img";
 			mediaSrc = util.chooseMediaReduction(media, id, fullScreenStatus);
-			mediaHtml = util.createMediaHtml(media, id, fullScreenStatus);
+			hideImage =
+				media.passwords.length > 0 &&
+				media.passwords.filter(value => PhotoFloat.guessedPasswords.includes(value)).length == 0;
+			if (hideImage) {
+				mediaHtml = $('<img src="img/image-placeholder.png">')
+					.attr("title", "placeholder")
+					.attr("width", 150)
+					.attr("height", 150)
+					.attr("ratio", 1)
+					.attr("alt", "placeholder");
+			} else
+				mediaHtml = util.createMediaHtml(media, id, fullScreenStatus);
+
 			triggerLoad = util.chooseTriggerEvent(media);
 
 			if (mediaBoxInnerElement.html() !== mediaHtml) {
@@ -1188,6 +1200,7 @@
 			passwordList.length > 0 &&
 			passwordList.filter(value => PhotoFloat.guessedPasswords.includes(value)).length === 0
 		) {
+			$("#album-view, #media-view").css("opacity", "0.2");
 			$("#auth-text").stop().fadeIn(1000);
 			$("#password").focus();
 			return;
