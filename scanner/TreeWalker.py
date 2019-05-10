@@ -97,7 +97,7 @@ class TreeWalker:
 		# self.origin_album.read_album_ini() # origin_album is not a physical one, it's the parent of the root physical tree and of the virtual albums
 		self.origin_album.cache_base = "root"
 		next_level()
-		[folders_album, num, positions, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], self.origin_album)
+		[folders_album, num, positions, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], self.origin_album)
 		back_level()
 		if folders_album is None:
 			message("WARNING", "ALBUMS ROOT EXCLUDED BY MARKER FILE", 2)
@@ -730,14 +730,19 @@ class TreeWalker:
 		mtime = lambda f: os.path.exists(os.path.join(path, f)) and os.stat(os.path.join(path, f)).st_mtime or time.mktime(datetime.now().timetuple())
 		return list(sorted(os.listdir(path), key=mtime))
 
+	@staticmethod
+	def _listdir_sorted_alphabetically(path):
+		# this function returns the directory listing sorted alphabetically
+		# it takes into account the fact that the file is a symlink to an unexistent file
+		return list(sorted(os.listdir(path)))
 
-	def walk(self, absolute_path, album_cache_base, parent_album=None):
-		#~ trimmed_path = trim_base_custom(absolute_path, Options.config['album_path'])
-		#~ absolute_path_with_marker = os.path.join(Options.config['album_path'], Options.config['folders_string'])
-		#~ if trimmed_path:
-			#~ absolute_path_with_marker = os.path.join(absolute_path_with_marker, trimmed_path)
+
+	# This functions is called recursively
+	# it works on a directory and produces the album for the directory
+	def walk(self, absolute_path, album_cache_base, passwords_argument, parent_album=None):
+		passwords = passwords_argument[:]
 		max_file_date = file_mtime(absolute_path)
-		message(">>>>>>>>>>>  Walking", absolute_path, 3)
+		message(">>>>>>>>>>>  Entering directory", absolute_path, 3)
 		next_level()
 		message("cache base", album_cache_base, 4)
 		if not os.access(absolute_path, os.R_OK | os.X_OK):
@@ -751,10 +756,43 @@ class TreeWalker:
 			return [None, 0, [], None]
 		skip_files = False
 		if Options.config['exclude_files_marker'] in listdir:
-			next_level()
-			message("files excluded by marker file", Options.config['exclude_files_marker'], 4)
+			indented_message("files excluded by marker file", Options.config['exclude_files_marker'], 4)
 			skip_files = True
-			back_level()
+		crypt_password = None
+		if len(Options.identifiers_and_passwords) and Options.config['passwords_marker'] in listdir:
+			next_level()
+			message(Options.config['passwords_marker'] + "file found", "reading it", 4)
+			pw_file = os.path.join(absolute_path, Options.config['passwords_marker'])
+			with open(pw_file, 'r') as passwords_file:
+				for line in passwords_file:
+					columns = line.split('\t')
+					if len(columns) == 0:
+						indented_message("empty line", "", 5)
+					if len(columns) == 1:
+						if columns[0] == '-':
+							# reset the passwords
+							passwords = []
+							indented_message("passwords reset", "-", 3)
+						else:
+							# it's a simple identifier: the album and all the subalbums will be protected with the corresponding password
+							identifier = columns[0]
+							indexes = [value['crypt_password'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
+							if len(indexes) == 1:
+								crypt_password = indexes[0]
+								passwords.append(crypt_password)
+								print("updated passwords", passwords)
+								indented_message("directory protected by password", "identifier: " + identifier, 3)
+							else:
+								indented_message("WARNING: the same identifier is used more than once", "not protecting the directory", 2)
+					elif len(columns) == 2:
+						# a file name or a relative path (possibly with file name) followed by a password identifier
+						identifier = columns[0]
+						file = columns[1]
+						indented_message("file(s) protected with password", "file: " + file + ", identifier: " + identifier, 3)
+						# TO DO
+					else:
+						indented_message("WARNING: line with too many fields, not using it", line, 2)
+
 		json_file = os.path.join(Options.config['cache_path'], album_cache_base) + ".json"
 		json_file_exists = os.path.exists(json_file)
 		json_file_mtime = None
@@ -845,6 +883,8 @@ class TreeWalker:
 		if parent_album is not None:
 			album.parent = parent_album
 		album.cache_base = album_cache_base
+		album.passwords = passwords
+		print("album passwords set for '" + absolute_path + "':", passwords)
 
 		#~ for entry in sorted(os.listdir(absolute_path)):
 		message("reading directory", absolute_path, 5)
@@ -861,7 +901,8 @@ class TreeWalker:
 		photos_without_exif_date_and_with_geotags_in_dir = []
 		photos_without_exif_date_or_geotags_in_dir = []
 		files_in_dir = []
-		for entry in self._listdir_sorted_by_time(absolute_path):
+		# for entry in self._listdir_sorted_by_time(absolute_path):
+		for entry in self._listdir_sorted_alphabetically(absolute_path):
 			try:
 				# @python2
 				if sys.version_info < (3, ):
@@ -896,7 +937,8 @@ class TreeWalker:
 				next_album_cache_base = album.generate_cache_base(entry_for_cache_base)
 				indented_message("cache base determined", "", 5)
 				back_level()
-				[next_walked_album, num, positions, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, album)
+				print(passwords)
+				[next_walked_album, num, positions, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, passwords, album)
 				if next_walked_album is not None:
 					max_file_date = max(max_file_date, sub_max_file_date)
 					album.num_media_in_sub_tree += num
@@ -1045,6 +1087,10 @@ class TreeWalker:
 				if media.has_gps_data:
 					album.positions_and_media_in_tree = self.add_media_to_position(album.positions_and_media_in_tree, media, Options.config['folders_string'])
 				album.num_media_in_album += 1
+
+				media.album_passwords = passwords
+				print("media passwords set for " + media.name, passwords)
+
 				if media.is_video:
 					num_video_in_dir += 1
 					if not cache_hit:

@@ -82,6 +82,7 @@
 		<script type="text/javascript" src="js/009-leaflet-prunecluster.js"></script>
 		<script type="text/javascript" src="js/010-social.js"></script>
 		<script type="text/javascript" src="js/012-translations.js"></script>
+		<script type="text/javascript" src="js/013-md5.js"></script>
 		<script type="text/javascript" src="js/014-utilities.js"></script>
 		<script type="text/javascript" src="js/016-libphotofloat.js"></script>
 		<script type="text/javascript" src="js/018-pinch-swipe.js"></script>
@@ -346,6 +347,13 @@
 	<div id="by-name-media-sorting" class="sort-message"></div>
 	<div id="by-name-reverse-media-sorting" class="sort-message"></div>
 
-	<div id="auth-text"><form id="auth-form"><input id="password" type="password" /><input type="submit" value="Login" /></form></div>
+	<div id="auth-text">
+		<form id="auth-form">
+			<div id="auth-question"></div>
+			<input id="password" type="password" />
+			<input type="submit" value="⏎" />
+		</form>
+	</div>
+
 </body>
 </html>

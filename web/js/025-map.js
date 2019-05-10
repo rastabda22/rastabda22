@@ -45,7 +45,7 @@
 	MapFunctions.generateHtmlForImages = function(theAlbum) {
 		// we must get the media corresponding to the name in the point
 		// var markerClass;
-		var mediaIndex, mediaHash, thumbHeight, thumbWidth, width, height;
+		var mediaIndex, mediaHash, thumbHeight, thumbWidth, width, height, hideThumbnail;
 		var selectedMedia, images = "", calculatedWidth, calculatedHeight, imageString, thumbHash, imgTitle;
 		albumViewPadding = $("#album-view").css("padding");
 		if (! albumViewPadding)
@@ -108,9 +108,14 @@
 						"'>" +
 							"<span class='helper'></span>" +
 							"<img title='" + imgTitle + "' " +
-								"alt='" + util.trimExtension(selectedMedia.name) + "' " +
-								"data-src='" + encodeURI(thumbHash) + "' " +
-								// "src='img/wait.png' " +
+								"alt='" + util.trimExtension(selectedMedia.name) + "' ";
+			hideThumbnail =
+				selectedMedia.passwords.length > 0 &&
+				selectedMedia.passwords.filter(value => PhotoFloat.guessedPasswords.includes(value)).length == 0;
+			if (! hideThumbnail)
+				imageString +=
+								"data-src='" + encodeURI(thumbHash) + "' ";
+			imageString +=
 								"src='img/image-placeholder.png' " +
 								"data='" +
 								JSON.stringify(
@@ -121,7 +126,11 @@
 									}
 								) +
 								"' " +
-								"class='lazyload-popup-media thumbnail" + "' " +
+								"class='lazyload-popup-media thumbnail";
+			if (hideThumbnail)
+				imageString += " add-click-immediately";
+			imageString +=
+								"' " +
 								"height='" + thumbHeight + "' " +
 								"width='" + thumbWidth + "' " +
 								" style='" +
@@ -151,18 +160,25 @@
 		f.setOptions();
 		MapFunctions.popup.setContent($(".leaflet-popup-content").html());
 		MapFunctions.getImagesWrapperSizes();
-		$(".leaflet-popup-content").css("max-width", MapFunctions.maxWidthForThumbnails).css("width", MapFunctions.maxWidthForThumbnails);
+		$(".leaflet-popup-content").css("max-width", MapFunctions.maxWidthForThumbnails);
+		// $(".leaflet-popup-content").css("width", MapFunctions.maxWidthForThumbnails);
 		$("#popup-images-wrapper").css("max-height", parseInt($(".leaflet-popup-content").css("height")) - 35);
-		$("#popup-images-wrapper").css("max-width", MapFunctions.maxWidthForThumbnails).css("width", MapFunctions.maxWidthForThumbnails);
+		$("#popup-images-wrapper").css("max-width", MapFunctions.maxWidthForThumbnails);
+		// $("#popup-images-wrapper").css("width", MapFunctions.maxWidthForThumbnails);
 		$("#popup-photo-count").css("max-width", MapFunctions.maxWidthForThumbnails);
 		// $(".leaflet-popup-content").css("max-width", MapFunctions.maxWidthForThumbnails).css("width", MapFunctions.maxWidthForThumbnails);
 		MapFunctions.popup.setLatLng(MapFunctions.averagePosition(MapFunctions.mapAlbum.positionsAndMediaInTree));
 		MapFunctions.buildPopupHeader();
 
-
 		MapFunctions.setPopupPosition();
 		MapFunctions.panMap();
 		MapFunctions.addLazy("img.lazyload-popup-media");
+		// add the click event to the protected thumbnails
+		$(".add-click-immediately").each(
+			function() {
+				MapFunctions.addClickToPopupPhoto($(this));
+			}
+		);
 	};
 
 	MapFunctions.getImagesWrapperSizes = function() {
@@ -215,23 +231,26 @@
 		}
 	};
 
+	MapFunctions.addClickToPopupPhoto = function(element) {
+		element.parent().parent().on(
+			'click',
+			function() {
+				var imgData = JSON.parse(element.attr("data"));
+				// called after an element was successfully handled
+				$('.leaflet-popup-close-button')[0].click();
+				// $('#popup #popup-content').html("");
+				$('.modal-close')[0].click();
+				window.location.href = imgData.mediaHash;
+			}
+		);
+
+	};
+
 	MapFunctions.addLazy = function(selector) {
 		$(function() {
 			$(selector).Lazy(
 				{
-					afterLoad: function(element) {
-						element.parent().parent().on(
-							'click',
-							function() {
-								var imgData = JSON.parse(element.attr("data"));
-								// called after an element was successfully handled
-								$('.leaflet-popup-close-button')[0].click();
-								// $('#popup #popup-content').html("");
-								$('.modal-close')[0].click();
-								window.location.href = imgData.mediaHash;
-							}
-						);
-					},
+					afterLoad: MapFunctions.addClickToPopupPhoto,
 					autoDestroy: true,
 					onError: function(element) {
 						console.log(element[0]);

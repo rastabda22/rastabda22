@@ -425,6 +425,9 @@ class Album(object):
 			# "positionsAndMediaInTree": self.positions_and_media_in_tree,
 			"jsonVersion": Options.json_version
 		}
+		if hasattr(self, "passwords"):
+			dictionary["passwords"] = self.passwords
+			print("album to dict", self.passwords)
 		if hasattr(self, "center"):
 			dictionary["center"] = self.center
 		if hasattr(self, "name"):
@@ -1992,6 +1995,8 @@ class Media(object):
 		media["albumName"] = self.album_path[:len(self.album_path) - len(self.name) - 1]
 		media["foldersCacheBase"] = self.album.cache_base
 		media["cacheSubdir"] = self.album.subdir
+		media["passwords"] = self.album_passwords
+		print("media to dict", self.album_passwords)
 		return media
 
 

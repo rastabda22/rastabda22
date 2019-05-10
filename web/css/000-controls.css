@@ -483,6 +483,17 @@ video {
 #error-overlay {
 	background-color: #000000;
 }
+#auth-text {
+	z-index: 2000;
+	border: 2px solid white;
+	height: auto;
+	padding: 1em;
+	width: 95%;
+}
+#auth-question {
+	font-size: 3em;
+	margin-bottom: 1em;
+}
 #auth-text input {
 	color: rgb(0, 0, 0);
 	background-color: rgb(200, 200, 200);
@@ -490,7 +501,10 @@ video {
 	font-family: inherit;
 	font-size: 2em;
 	font-weight: bold;
-	font-style: italic;
+	margin-right: auto;
+	margin-left: auto;
+	padding: .1em;
+	caret-color: red;
 }
 
 #error-too-many-images {

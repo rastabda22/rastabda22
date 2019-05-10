@@ -7,6 +7,7 @@ import sys
 import json
 import ast
 import math
+import hashlib
 
 # @python2
 try:
@@ -36,7 +37,7 @@ photos_without_exif_date_and_with_geotags = []
 photos_without_exif_date_or_geotags = []
 num_video = 0
 num_video_processed = 0
-options_not_to_be_saved = ['cache_path', 'index_html_path', 'album_path']
+options_not_to_be_saved = ['cache_path', 'index_html_path', 'album_path', 'passwords_marker', 'passwords_file']
 options_requiring_json_regeneration = ['geonames_language', 'unspecified_geonames_code', 'get_geonames_online', 'metadata_tools_preference', 'subdir_method', 'cache_folders_num_digits_array']
 # every option is given in a dictionary with a value which represent the pre-option default value
 options_requiring_reduced_images_regeneration = [
@@ -61,6 +62,7 @@ unicode_combining_marks_c = '\u0903\u093E\u093F\u0940\u0949\u094A\u094B\u094C\u0
 config['unicode_combining_marks'] = unicode_combining_marks_n + unicode_combining_marks_c
 
 thumbnail_types_and_sizes_list = None
+identifiers_and_passwords = []
 config['cv2_installed'] = True
 face_cascade = None
 eye_cascade = None
@@ -200,7 +202,7 @@ def get_options():
 		else:
 			config[option] = usr_config.get('options', option)
 			if option in ('js_cache_levels'):
-				print(config[option])
+				# print(config[option])
 				config[option] = json.loads(config[option])
 
 
@@ -341,6 +343,28 @@ def get_options():
 			message("FATAL ERROR", config['cache_path'] + " inexistent and couldn't be created, quitting", 0)
 			sys.exit(-97)
 
+	# read the password file
+	# it must exist and be readable, otherwise skip it
+	if len(sys.argv) == 2:
+		# 1 arguments: the config files: the password file is in the same directory
+		passwords_file = os.path.join(os.path.dirname(sys.argv[1]), config['passwords_file'])
+		try:
+			with open(passwords_file, 'r') as password_lines:
+				message("Reading passwords file", passwords_file, 3)
+				num_password = 1
+				for line in password_lines:
+					# in each line is a password identifier is followed by the corresponding password
+					columns = line.split(' ')
+					identifiers_and_passwords.append({
+						"identifier": columns[0],
+						"crypt_password": hashlib.md5(columns[1]).hexdigest()
+					})
+					indented_message("Password read", str(num_password) + " - identifier: " + columns[0], 3)
+					num_password +=1
+		except IOError:
+			indented_message("WARNING", passwords_file + " doesn't exist or unreadable, not using it", 2)
+
+
 	# create the directory where php will put album composite images
 	album_cache_dir = os.path.join(config['cache_path'], config['cache_album_subdir'])
 	try:
@@ -435,3 +459,6 @@ def get_options():
 			config['recreate_json_files'] = True
 			message("options", "'" + option + "' wasn't set on previous scanner run, forcing recreation of json files", 3)
 			break
+	if (len(identifiers_and_passwords) and not config['recreate_json_files']):
+		config['recreate_json_files'] = True
+		message("passwords", "a passwords file is used, forcing recreation of json files", 3)

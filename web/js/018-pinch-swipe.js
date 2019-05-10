@@ -457,7 +457,8 @@
 
 	PinchSwipe.prototype.swipeRightOrDrag = function(media) {
 		if (currentZoom == 1)
-			PinchSwipe.swipeRight(media);
+			$("#prev")[0].click();
+			// PinchSwipe.swipeRight(media);
 		else {
 			// drag
 			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 1, y: 0}, dragSpeed);
@@ -495,7 +496,8 @@
 
 	PinchSwipe.prototype.swipeLeftOrDrag = function(media) {
 		if (currentZoom == 1)
-			PinchSwipe.swipeLeft(media);
+			$("#next")[0].click();
+			// PinchSwipe.swipeLeft(media);
 		else {
 			// drag
 			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: -1, y: 0}, dragSpeed);

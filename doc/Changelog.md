@@ -1,3 +1,5 @@
+* new options for passwords management: `passwords_marker`, `passwords_file`
+
 * when showing a map album, `esc` takes back to the map and the popup
 * right menu: bug fixes and better ordering of the options
 
