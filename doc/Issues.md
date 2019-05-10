@@ -71,3 +71,7 @@ For other web servers/distributions a solution can be found easily.
 Sometimes something inexplicable happens in javascript, and a common reason is the cache: some json files aren't still in the cache, and the correct ones aren't used. Cleaning the cache solves these problems.
 
 The cache can be the browser's one or the web server one.
+
+#### Privacy concern with password implementation
+
+Although passwords can be used to protect content, a power user can still see the protected images using the browser developer tools.

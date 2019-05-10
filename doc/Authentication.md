@@ -1,80 +1,33 @@
-## Optional: Server-side Authentication
+## Content can be protected by password
 
-The JavaScript application uses a very simple API to determine if a photo can be viewed or not. If a JSON file returns error `403`, the album is hidden from view. To authenticate, `POST` a username and a password to `/auth`. If unsuccessful, `403` is returned. If successful, `200` is returned, and the previously denied json files may now be requested. If an unauthorized album is directly requested in a URL when the page loads, an authentication box is shown.
+Albums and media can be protected by password. Various passwords can be used for different albums/media.
 
-`myphotoshare` ships with an optional server side component called FloatApp to faciliate this, which lives in `scanner/floatapp`. It is a simple Flask-based Python web application.
+### Configuration
 
-#### Edit the app.cfg configuration file:
+The passwords cannot be in the album tree: the album tree will have _password_ files (the actual name is set by the option `passwords_marker`), whose lines may be:
 
-    $ cd scanner/floatapp
-    $ vim app.cfg
+* a _password identifier_: the album and all its subalbums will be protected by the password assigned to the identifier;
+* a _password identifier_ followed by a relative path (possibly with wildcards): the media matched by the path will be protected by the password assigned to the identifier;
+* a `-` (_minus sign_): it will stop the passwords from the parent albums propagate into it.
 
-Give this file a correct username and password, for both an admin user and a photo user, as well as a secret token. The admin user is allowed to call `/scan`, which automatically runs the scanner script mentioned in the previous section.
+The _password identifier_ is used to pick the password from a _passwords file_ whose name is set by option `password_file`. The _password file_ is needed because putting the passwords inside the albums would expose them.
 
-#### Decide which albums or photos are protected:
+The _passwords file_ has many lines, each one has with a _password identifier_ and the corresponding password separated by a _space_.
 
-    $ vim auth.txt
+### How the scanner manages the passwords
 
-This file takes one path per line. It restricts access to all photos in this path. If the path is a single photo, then that single photo is restricted.
+When the scanner finds a `.password` files inside an album, it applies the password specified by the identifier to the whole subtree/media. The shell wildcards are matched with the `fnmatch` library (https://docs.python.org/3/library/fnmatch.html).
 
-#### Configure nginx:
+The scanner encrypts the passwords and put them in the json files as an album and media `password` property.
 
-FloatApp makes use of `X-Accel-Buffering` and `X-Accel-Redirect` to force the server-side component to have minimal overhead. Here is an example nginx configuration that can be tweaked:
+### How the javascript manages the passwords
 
-    server {                                                                                                               
-            listen 80;                                                                                                     
-            server_name photos.jasondonenfeld.com;                                                                         
-            location / {
-                    index index.html;
-                    root /var/www/htdocs/photos.jasondonenfeld.com;
-            }
+When an album with password is requested, the authorization form is shown, and if the encrypted password entered by the user matches one of the album/media password, the album/media is show, otherwise the form keeps being showed, and user can use the ´back´ browser button or the `esc` key to go back to the previous position. The encrypted correct password is stored into an array of guessed passwords, which will remain there until the session is closed.
 
-            include uwsgi_params;
-            location /albums/ {
-                    uwsgi_pass unix:/var/run/uwsgi-apps/myphotoshare.socket;
-            }
-            location /cache/ {
-                    uwsgi_pass unix:/var/run/uwsgi-apps/myphotoshare.socket;
-            }
-            location /scan {
-                    uwsgi_pass unix:/var/run/uwsgi-apps/myphotoshare.socket;
-            }
-            location /auth {
-                    uwsgi_pass unix:/var/run/uwsgi-apps/myphotoshare.socket;
-            }
-            location /photos {
-                    uwsgi_pass unix:/var/run/uwsgi-apps/myphotoshare.socket;
-            }
+When an album with some protected media is requested, the album is shown, and the protected media thumbnails are replaced with fake ones. When the user wants to show a protected image, the password is requested.
 
-            location /internal-cache/ {
-                    internal;
-                    alias /var/www/uwsgi/myphotoshare/cache/;
-            }
-            location /internal-albums/ {
-                    internal;
-                    alias /var/www/uwsgi/myphotoshare/albums/;
-            }
-    }
-
-Note that the `internal-*` paths must match that of `app.cfg`. This makes use of uwsgi for execution:
-
-    metheny ~ # cat /etc/uwsgi.d/myphotoshare.ini
-    [uwsgi]
-    chdir = /var/www/uwsgi/%n
-    master = true
-    uid = %n
-    gid = %n
-    chmod-socket = 660
-    chown-socket = %n:nginx
-    socket = /var/run/uwsgi-apps/%n.socket
-    logto = /var/log/uwsgi/%n.log
-    processes = 4
-    idle = 1800
-    die-on-idle = true
-    plugins = python27
-    module = floatapp:app
+When another protected album or media is requested, the encrypted passwords are checked against the guessed passwords, and if they are already there then the album/media is shown without asking the password again.
 
 ## Optional: Deployment Makefiles
 
 Both the scanner and the webpage have a `make deploy` target, and the scanner has a `make scan` target, to automatically deploy assets to a remote server and run the scanner. For use, customize `deployment-config.mk` in the root of the project, and carefully read the `Makefile`s to learn what's happening.
-

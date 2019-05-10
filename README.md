@@ -94,6 +94,10 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Scanner uses recursive async randomized tree walking album thumbnail algorithm.
 - [x] HTML5 with minified CSS and JavaScript files for minimal load time.
 
+### Privacy
+
+- [x] Albums and photo can be protected by password.
+
 ### And More...
 
 - [x] Analytics with optional Google Analytics and Piwik integration.
