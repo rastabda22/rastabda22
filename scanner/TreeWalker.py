@@ -11,6 +11,7 @@ import re
 import time
 import random
 import math
+import fnmatch
 
 from datetime import datetime
 
@@ -765,7 +766,7 @@ class TreeWalker:
 			pw_file = os.path.join(absolute_path, Options.config['passwords_marker'])
 			with open(pw_file, 'r') as passwords_file:
 				for line in passwords_file:
-					columns = line.split('\t')
+					columns = line.split(' ')
 					if len(columns) == 0:
 						indented_message("empty line", "", 5)
 					if len(columns) == 1:
@@ -779,19 +780,32 @@ class TreeWalker:
 							indexes = [value['crypt_password'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
 							if len(indexes) == 1:
 								crypt_password = indexes[0]
-								passwords.append(crypt_password)
-								print("updated passwords", passwords)
+								passwords.append(
+									{
+										"selector": '*',
+										'encrypted_password': crypt_password
+									}
+								)
 								indented_message("directory protected by password", "identifier: " + identifier, 3)
 							else:
-								indented_message("WARNING: the same identifier is used more than once", "not protecting the directory", 2)
-					elif len(columns) == 2:
+								indented_message("WARNING: password identifier used more than once", identifier + ": not protecting the directory", 2)
+					else:
 						# a file name or a relative path (possibly with file name) followed by a password identifier
 						identifier = columns[0]
-						file = columns[1]
-						indented_message("file(s) protected with password", "file: " + file + ", identifier: " + identifier, 3)
-						# TO DO
-					else:
-						indented_message("WARNING: line with too many fields, not using it", line, 2)
+						indexes = [value['crypt_password'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
+						file_name = ' '.join(columns[1:])
+						if len(indexes) == 1:
+							crypt_password = indexes[0]
+							absolute_file_name = os.join(absolute_path, file_name)
+							passwords.append(
+								{
+									"selector": absolute_file_name,
+									'encrypted_password': crypt_password
+								}
+							)
+							indented_message("file(s) protected with password", "file: " + file_name + ", identifier: " + identifier, 3)
+						else:
+							indented_message("WARNING: password identifier used more than once", identifier + ": not protecting the directory", 2)
 
 		json_file = os.path.join(Options.config['cache_path'], album_cache_base) + ".json"
 		json_file_exists = os.path.exists(json_file)
@@ -883,8 +897,11 @@ class TreeWalker:
 		if parent_album is not None:
 			album.parent = parent_album
 		album.cache_base = album_cache_base
-		album.passwords = passwords
-		print("album passwords set for '" + absolute_path + "':", passwords)
+		album.passwords = []
+		for password in passwords:
+			if fnmatch.fnmatch(absolute_path, password['selector']):
+				album.passwords.append(password['encrypted_password'])
+				print("album passwords set", absolute_path + "' matching '" + password['selector'] + "': ", album.passwords)
 
 		#~ for entry in sorted(os.listdir(absolute_path)):
 		message("reading directory", absolute_path, 5)
@@ -937,7 +954,6 @@ class TreeWalker:
 				next_album_cache_base = album.generate_cache_base(entry_for_cache_base)
 				indented_message("cache base determined", "", 5)
 				back_level()
-				print(passwords)
 				[next_walked_album, num, positions, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, passwords, album)
 				if next_walked_album is not None:
 					max_file_date = max(max_file_date, sub_max_file_date)
@@ -1088,7 +1104,12 @@ class TreeWalker:
 					album.positions_and_media_in_tree = self.add_media_to_position(album.positions_and_media_in_tree, media, Options.config['folders_string'])
 				album.num_media_in_album += 1
 
-				media.album_passwords = passwords
+				media.passwords = []
+				for password in passwords:
+					if fnmatch.fnmatch(entry_with_path, password['selector']):
+						media.passwords.append(password['encrypted_password'])
+						print("album passwords set", entry_with_path + "' matching '" + password['selector'] + "': ", album.passwords)
+
 				print("media passwords set for " + media.name, passwords)
 
 				if media.is_video:

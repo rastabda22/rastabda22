@@ -427,7 +427,7 @@ class Album(object):
 		}
 		if hasattr(self, "passwords"):
 			dictionary["passwords"] = self.passwords
-			print("album to dict", self.passwords)
+			# print("album to dict", self.passwords)
 		if hasattr(self, "center"):
 			dictionary["center"] = self.center
 		if hasattr(self, "name"):
@@ -814,8 +814,6 @@ class Media(object):
 			Metadata.set_metadata_from_album_ini(self.name, self._attributes, self.album.album_ini)
 			indented_message("metadata values from album.ini added to photo...", "", 5)
 			back_level()
-
-		# pprint(self._attributes)
 
 
 	def _photo_metadata_by_PIL(self, image):
@@ -1995,8 +1993,8 @@ class Media(object):
 		media["albumName"] = self.album_path[:len(self.album_path) - len(self.name) - 1]
 		media["foldersCacheBase"] = self.album.cache_base
 		media["cacheSubdir"] = self.album.subdir
-		media["passwords"] = self.album_passwords
-		print("media to dict", self.album_passwords)
+		media["passwords"] = self.passwords
+		# print("media to dict", self.album_passwords)
 		return media
 
 
