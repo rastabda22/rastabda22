@@ -160,18 +160,20 @@
 		f.setOptions();
 		MapFunctions.popup.setContent($(".leaflet-popup-content").html());
 		MapFunctions.getImagesWrapperSizes();
-		$(".leaflet-popup-content").css("max-width", MapFunctions.maxWidthForThumbnails).css("width", MapFunctions.maxWidthForThumbnails);
+		$(".leaflet-popup-content").css("max-width", MapFunctions.maxWidthForThumbnails);
+		// $(".leaflet-popup-content").css("width", MapFunctions.maxWidthForThumbnails);
 		$("#popup-images-wrapper").css("max-height", parseInt($(".leaflet-popup-content").css("height")) - 35);
-		$("#popup-images-wrapper").css("max-width", MapFunctions.maxWidthForThumbnails).css("width", MapFunctions.maxWidthForThumbnails);
+		$("#popup-images-wrapper").css("max-width", MapFunctions.maxWidthForThumbnails);
+		// $("#popup-images-wrapper").css("width", MapFunctions.maxWidthForThumbnails);
 		$("#popup-photo-count").css("max-width", MapFunctions.maxWidthForThumbnails);
 		// $(".leaflet-popup-content").css("max-width", MapFunctions.maxWidthForThumbnails).css("width", MapFunctions.maxWidthForThumbnails);
 		MapFunctions.popup.setLatLng(MapFunctions.averagePosition(MapFunctions.mapAlbum.positionsAndMediaInTree));
 		MapFunctions.buildPopupHeader();
 
-
 		MapFunctions.setPopupPosition();
 		MapFunctions.panMap();
 		MapFunctions.addLazy("img.lazyload-popup-media");
+		// add the click event to the protected thumbnails
 		$(".add-click-immediately").each(
 			function() {
 				MapFunctions.addClickToPopupPhoto($(this));
