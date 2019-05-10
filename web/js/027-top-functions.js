@@ -814,7 +814,7 @@
 			} else {
 				$("#" + id + " .title").removeClass("hidden-by-fullscreen");
 			}
-			TopFunctions.setTitle(id, currentMedia);
+			TopFunctions.setTitle(id, media);
 
 			if (Options.hide_bottom_thumbnails) {
 				$("#album-view").addClass("hidden-by-option");
@@ -900,7 +900,7 @@
 		var mediaBoxInnerElement = $(".media-box#" + id + " .media-box-inner");
 		// empty the img container: another image will be put in there
 
-		if (currentMedia.mediaType == "video" && ! f.videoOK()) {
+		if (media.mediaType == "video" && ! f.videoOK()) {
 			mediaBoxInnerElement.empty();
 			addVideoUnsupportedMarker(id);
 			if (id === "center")
@@ -1033,10 +1033,10 @@
 			// $(".links").removeClass("hidden");
 		}
 
-		var originalMediaPath = encodeURI(util.originalMediaPath(currentMedia));
+		var originalMediaPath = encodeURI(util.originalMediaPath(media));
 		$(".media-box#" + id + " .original-link").attr("target", "_blank").attr("href", originalMediaPath);
 		$(".media-box#" + id + " .download-link").attr("href", originalMediaPath).attr("download", "");
-		if (util.hasGpsData(currentMedia)) {
+		if (util.hasGpsData(media)) {
 			$(".media-box#" + id + " .menu-map-link").on('click', function(ev) {
 				$(".map-popup-trigger")[0].click();
 			});
