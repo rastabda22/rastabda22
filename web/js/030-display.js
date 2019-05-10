@@ -115,8 +115,10 @@ $(document).ready(function() {
 					if (e.key === "Tab") {
 						e.preventDefault();
 						if (pS.getCurrentZoom() == 1) {
-							tF.toggleTitle(e);
-							tF.toggleBottomThumbnails(e);
+							$("ul#right-menu li.hide-title")[0].click();
+							$("ul#right-menu li.hide-bottom-thumbnails")[0].click();
+							// tF.toggleTitle(e);
+							// tF.toggleBottomThumbnails(e);
 							return false;
 						}
 					} else if (e.key === "ArrowRight" && nextMedia && currentMedia !== null && ! isMap) {
@@ -126,13 +128,15 @@ $(document).ready(function() {
 						(e.key === "n" || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
 						nextMedia && currentMedia !== null && ! isMap
 					) {
-						pS.swipeLeft(nextMedia);
+						$("#next")[0].click();
+						// pS.swipeLeft(nextMedia);
 						return false;
 					} else if (
 						(e.key === "p" || e.key === "Backspace" && ! e.shiftKey || (e.key === "Enter" || e.key === " ") && e.shiftKey) &&
 						prevMedia && currentMedia !== null && ! isMap
 					) {
-						pS.swipeRight(prevMedia);
+						$("#prev")[0].click();
+						// pS.swipeRight(prevMedia);
 						return false;
 					} else if (e.key === "ArrowLeft" && prevMedia && currentMedia !== null && ! isMap) {
 						pS.swipeRightOrDrag(prevMedia);
