@@ -2051,7 +2051,12 @@
 											goTo = util._t(".go-to") + " " + titleName;
 											$("#" + id + " .album-button a").attr("href", randomMediaLink);
 											$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
-											$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName).attr("data-src", encodeURI(mediaSrc));
+											$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName);
+											hideThumbnail =
+												randomMedia.passwords.length > 0 &&
+												randomMedia.passwords.filter(value => PhotoFloat.guessedPasswords.includes(value)).length == 0;
+											if (! hideThumbnail)
+												$("#" + id + " img.thumbnail").attr("data-src", encodeURI(mediaSrc));
 											$("#" + id + " img.thumbnail").css("width", thumbWidth).css("height", thumbHeight);
 
 											$(function() {
