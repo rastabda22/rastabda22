@@ -762,7 +762,7 @@ class TreeWalker:
 		crypt_password = None
 		if len(Options.identifiers_and_passwords) and Options.config['passwords_marker'] in listdir:
 			next_level()
-			message(Options.config['passwords_marker'] + "file found", "reading it", 4)
+			message(Options.config['passwords_marker'] + " file found", "reading it", 4)
 			pw_file = os.path.join(absolute_path, Options.config['passwords_marker'])
 			with open(pw_file, 'r') as passwords_file:
 				for line in passwords_file:
@@ -786,26 +786,27 @@ class TreeWalker:
 										'encrypted_password': crypt_password
 									}
 								)
-								indented_message("directory protected by password", "identifier: " + identifier, 3)
+								indented_message("Directory protection requested", "identifier: " + identifier, 3)
 							else:
 								indented_message("WARNING: password identifier used more than once", identifier + ": not protecting the directory", 2)
 					else:
 						# a file name or a relative path (possibly with file name) followed by a password identifier
 						identifier = columns[0]
 						indexes = [value['crypt_password'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
-						file_name = ' '.join(columns[1:])
+						selector = ' '.join(columns[1:])
 						if len(indexes) == 1:
 							crypt_password = indexes[0]
-							absolute_file_name = os.join(absolute_path, file_name)
+							# absolute_file_name = os.path.join(absolute_path, file_name)
 							passwords.append(
 								{
-									"selector": absolute_file_name,
+									"selector": selector,
 									'encrypted_password': crypt_password
 								}
 							)
-							indented_message("file(s) protected with password", "file: " + file_name + ", identifier: " + identifier, 3)
+							indented_message("file(s) protection requested", "selector: '" + selector + "', identifier: '" + identifier + "'", 3)
 						else:
 							indented_message("WARNING: password identifier used more than once", identifier + ": not protecting the directory", 2)
+			back_level()
 
 		json_file = os.path.join(Options.config['cache_path'], album_cache_base) + ".json"
 		json_file_exists = os.path.exists(json_file)
@@ -897,11 +898,14 @@ class TreeWalker:
 		if parent_album is not None:
 			album.parent = parent_album
 		album.cache_base = album_cache_base
-		album.passwords = []
-		for password in passwords:
-			if fnmatch.fnmatch(absolute_path, password['selector']):
-				album.passwords.append(password['encrypted_password'])
-				print("album passwords set", absolute_path + "' matching '" + password['selector'] + "': ", album.passwords)
+		if (album.cache_base != Options.config['folders_string']):
+			album.passwords = []
+			dir_name = os.path.basename(absolute_path)
+			for password in passwords:
+				if fnmatch.fnmatch(dir_name, password['selector']):
+					album.passwords.append(password['encrypted_password'])
+					indented_message("album password set", "'" + dir_name + "' matches '" + password['selector'] + "'", 3)
+					# print(str(album.passwords))
 
 		#~ for entry in sorted(os.listdir(absolute_path)):
 		message("reading directory", absolute_path, 5)
@@ -1105,12 +1109,12 @@ class TreeWalker:
 				album.num_media_in_album += 1
 
 				media.passwords = []
+				file_name = os.path.basename(entry_with_path)
 				for password in passwords:
-					if fnmatch.fnmatch(entry_with_path, password['selector']):
+					if fnmatch.fnmatch(file_name, password['selector']):
 						media.passwords.append(password['encrypted_password'])
-						print("album passwords set", entry_with_path + "' matching '" + password['selector'] + "': ", album.passwords)
-
-				print("media passwords set for " + media.name, passwords)
+						indented_message("media password set", "'" + file_name + "' matches '" + password['selector'], 3)
+						# print(str(media.passwords))
 
 				if media.is_video:
 					num_video_in_dir += 1

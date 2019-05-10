@@ -434,12 +434,13 @@ $(document).ready(function() {
 		var passwordList;
 		password.css("background-color", "rgb(128, 128, 200)");
 		encrypted_password = md5(password.val());
-		if (
-			currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)
-		)
+		if (currentMedia !== null)
 			passwordList = currentMedia.passwords;
+		else if (util.isAlbumWithOneMedia(currentAlbum))
+			passwordList = currentAlbum.media[0].passwords;
 		else
 			passwordList = currentAlbum.passwords;
+
 		if (
 			passwordList.some(
 				function(enc_password) {
