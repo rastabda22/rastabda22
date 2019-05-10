@@ -1754,8 +1754,16 @@
 									"/>" +
 								"</div>" +
 								"<div class='media-caption'>" +
-								"<span>" +
-								selectedMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+								"<span>";
+					if (! hideThumbnail)
+						imageString +=
+									selectedMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>");
+					else
+					imageString +=
+								"<em>" +
+								util._t(".protected-media-name").replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+								"</em>";
+					imageString +=
 								"</span>";
 					imageString += "</div>" +
 							"</div>";
