@@ -1172,9 +1172,13 @@
 		currentMediaIndex = mediaIndex;
 
 		var passwordList = null;
-		if (currentMedia == null && ! util.isAlbumWithOneMedia(currentAlbum)) {
-			if (currentAlbum.hasOwnProperty("passwords"))
-				passwordList = currentAlbum.passwords;
+		if (currentMedia == null) {
+			if (! util.isAlbumWithOneMedia(currentAlbum)) {
+				if (currentAlbum.hasOwnProperty("passwords"))
+					// virtual albums don't have the passwords property
+					passwordList = currentAlbum.passwords;
+			} else
+				passwordList = currentAlbum.media[0].passwords;
 		} else {
 			passwordList = currentMedia.passwords;
 		}
@@ -1709,11 +1713,11 @@
 									mapLinkIcon +
 									"<span class='helper'></span>" +
 									"<img title='" + imgTitle + "' " +
-										"alt='" + util.trimExtension(currentAlbum.media[i].name) + "' ";
-					if (
-						currentAlbum.media[i].passwords.length == 0 ||
-						currentAlbum.media[i].passwords.filter(value => PhotoFloat.guessedPasswords.includes(value)).length > 0
-					)
+										"alt='" + util.trimExtension(selectedMedia.name) + "' ";
+					hideThumbnail =
+						selectedMedia.passwords.length > 0 &&
+						selectedMedia.passwords.filter(value => PhotoFloat.guessedPasswords.includes(value)).length == 0;
+					if (! hideThumbnail)
 						imageString +=
 										"data-src='" + encodeURI(thumbHash) + "' ";
 					imageString +=
@@ -1970,6 +1974,7 @@
 								// add the clicks
 								container.off('click').css("cursor", "pointer").on('click', {hash: subfolderHash}, function(ev) {
 									window.location.href = ev.data.hash;
+									$(window).hashchange();
 								});
 
 								//////////////////// begin anonymous function /////////////////////
@@ -2065,10 +2070,12 @@
 							// when diving into search subalbum, the whole album path is showed and it can be lengthy
 							if (Options.show_album_names_below_thumbs) {
 								var maxHeight = null;
-								$('.album-caption').each(function() {
-									var thisHeight = $(this)[0].scrollHeight;
-									maxHeight = (thisHeight > maxHeight) ? thisHeight : maxHeight;
-								});
+								$('.album-caption').each(
+									function() {
+										var thisHeight = $(this)[0].scrollHeight;
+										maxHeight = (thisHeight > maxHeight) ? thisHeight : maxHeight;
+									}
+								);
 								var difference = maxHeight - parseFloat($(".album-caption").css("height"));
 								$(".album-button-and-caption").css("height", (parseInt($(".album-button-and-caption").css("height")) + difference) + 'px');
 								$(".album-caption").css("height", maxHeight + 'px');
