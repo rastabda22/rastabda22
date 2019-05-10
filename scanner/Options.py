@@ -459,6 +459,3 @@ def get_options():
 			config['recreate_json_files'] = True
 			message("options", "'" + option + "' wasn't set on previous scanner run, forcing recreation of json files", 3)
 			break
-	if (len(identifiers_and_passwords) and not config['recreate_json_files']):
-		config['recreate_json_files'] = True
-		message("passwords", "a passwords file is used, forcing recreation of json files", 3)
