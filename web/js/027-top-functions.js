@@ -1649,9 +1649,11 @@
 				// media loop
 				//
 				for (i = 0; i < currentAlbum.media.length; ++i) {
-					width = currentAlbum.media[i].metadata.size[0];
-					height = currentAlbum.media[i].metadata.size[1];
-					thumbHash = util.chooseThumbnail(currentAlbum, currentAlbum.media[i], thumbnailSize);
+					selectedMedia = currentAlbum.media[i];
+
+					width = selectedMedia.metadata.size[0];
+					height = selectedMedia.metadata.size[1];
+					thumbHash = util.chooseThumbnail(currentAlbum, selectedMedia, thumbnailSize);
 
 					if (Options.media_thumb_type == "fixed_height") {
 						if (height < Options.media_thumb_size) {
@@ -1667,7 +1669,7 @@
 						thumbWidth = thumbnailSize;
 						calculatedWidth = Options.media_thumb_size;
 					}
-					imgTitle = util.pathJoin([currentAlbum.media[i].albumName, currentAlbum.media[i].name]);
+					imgTitle = util.pathJoin([selectedMedia.albumName, selectedMedia.name]);
 					calculatedHeight = Options.media_thumb_size;
 
 					var albumViewPadding = $("#album-view").css("padding");
@@ -1682,7 +1684,7 @@
 					calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
 					mapLinkIcon = "";
-					if (util.hasGpsData(currentAlbum.media[i])) {
+					if (util.hasGpsData(selectedMedia)) {
 						mapLinkIcon =
 							"<a id='media-map-link-" + i + "'>" +
 								"<img " +
@@ -1727,17 +1729,17 @@
 								"</div>" +
 								"<div class='media-caption'>" +
 								"<span>" +
-								currentAlbum.media[i].name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+								selectedMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
 								"</span>";
 					imageString += "</div>" +
 							"</div>";
 					image = $(imageString);
 
-					image.get(0).media = currentAlbum.media[i];
+					image.get(0).media = selectedMedia;
 					if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
-						mediaHash = phFl.encodeHash(currentAlbum, currentAlbum.media[i], savedSearchSubAlbumHash, savedSearchAlbumHash);
+						mediaHash = phFl.encodeHash(currentAlbum, selectedMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
 					else
-						mediaHash = phFl.encodeHash(currentAlbum, currentAlbum.media[i]);
+						mediaHash = phFl.encodeHash(currentAlbum, selectedMedia);
 					imageLink = $("<a id='link-" + mediaHash + "' href='" + mediaHash + "'></a>");
 					imageLink.append(image);
 					media.push(imageLink);
@@ -1758,7 +1760,7 @@
 				for (i = 0; i < currentAlbum.media.length; ++i) {
 					$("#media-map-link-" + i).off('click').on(
 						'click',
-						{media: currentAlbum.media[i], album: currentAlbum},
+						{media: selectedMedia, album: currentAlbum},
 						function(ev) {
 							TopFunctions.generateMapFromMedia(ev);
 						}
