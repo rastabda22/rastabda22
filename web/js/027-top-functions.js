@@ -1966,28 +1966,28 @@
 								linkContainer = $(albumButtonAndCaptionHtml);
 
 								image = $(
-													"<div " +
-													 	"class='album-button' " +
-														"style='" +
-															"width:" + correctedAlbumThumbSize + "px; " +
-															"height:" + correctedAlbumThumbSize + "px; " +
-															"margin:" + margin + "px;" +
-														"'" +
-														">" +
-														"<a href=''>" +
-															"<img " +
-																"src='img/link-arrow.png' " +
-																"class='album-button-random-media-link' " +
-																"style='" +
-																	"width: 20px;" +
-																	" height: 20px;" +
-																	"'" +
-																">" +
-														"</a>" +
-														"<span class='helper'></span>" +
-														"<img src='img/image-placeholder.png' class='thumbnail lazyload-album-" + id + "'>" +
-													"</div>"
-												);
+									"<div " +
+									 	"class='album-button' " +
+										"style='" +
+											"width:" + correctedAlbumThumbSize + "px; " +
+											"height:" + correctedAlbumThumbSize + "px; " +
+											"margin:" + margin + "px;" +
+										"'" +
+										">" +
+										"<a href=''>" +
+											"<img " +
+												"src='img/link-arrow.png' " +
+												"class='album-button-random-media-link' " +
+												"style='" +
+													"width: 20px;" +
+													" height: 20px;" +
+													"'" +
+												">" +
+										"</a>" +
+										"<span class='helper'></span>" +
+										"<img src='img/image-placeholder.png' class='thumbnail lazyload-album-" + id + "'>" +
+									"</div>"
+								);
 								linkContainer.append(image);
 								linkContainer.append(caption);
 
