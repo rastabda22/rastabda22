@@ -503,6 +503,8 @@ video {
 	font-weight: bold;
 	margin-right: auto;
 	margin-left: auto;
+	padding: .1em;
+	caret-color: red;
 }
 
 #error-too-many-images {
