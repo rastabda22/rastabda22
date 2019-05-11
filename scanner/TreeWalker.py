@@ -764,48 +764,51 @@ class TreeWalker:
 			next_level()
 			message(Options.config['passwords_marker'] + " file found", "reading it", 4)
 			pw_file = os.path.join(absolute_path, Options.config['passwords_marker'])
-			with open(pw_file, 'r') as passwords_file:
-				for line in passwords_file:
-					columns = line.split(' ')
-					if len(columns) == 0:
-						indented_message("empty line", "", 5)
-					if len(columns) == 1:
-						if columns[0] == '-':
-							# reset the passwords
-							passwords = []
-							indented_message("passwords reset", "-", 3)
+			if not os.access(pw_file, os.R_OK):
+				indented_message("unreadable file", pw_file, 2)
+			else:
+				with open(pw_file, 'r') as passwords_file:
+					for line in passwords_file:
+						columns = line.split(' ')
+						if len(columns) == 0:
+							indented_message("empty line", "", 5)
+						if len(columns) == 1:
+							if columns[0] == '-':
+								# reset the passwords
+								passwords = []
+								indented_message("passwords reset", "-", 3)
+							else:
+								# it's a simple identifier: the album and all the subalbums will be protected with the corresponding password
+								identifier = columns[0]
+								indexes = [value['crypt_password'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
+								if len(indexes) == 1:
+									crypt_password = indexes[0]
+									passwords.append(
+										{
+											"selector": '*',
+											'encrypted_password': crypt_password
+										}
+									)
+									indented_message("Directory protection requested", "identifier: " + identifier, 3)
+								else:
+									indented_message("WARNING: password identifier used more than once", identifier + ": not protecting the directory", 2)
 						else:
-							# it's a simple identifier: the album and all the subalbums will be protected with the corresponding password
+							# a file name or a relative path (possibly with file name) followed by a password identifier
 							identifier = columns[0]
 							indexes = [value['crypt_password'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
+							selector = ' '.join(columns[1:])
 							if len(indexes) == 1:
 								crypt_password = indexes[0]
+								# absolute_file_name = os.path.join(absolute_path, file_name)
 								passwords.append(
 									{
-										"selector": '*',
+										"selector": selector,
 										'encrypted_password': crypt_password
 									}
 								)
-								indented_message("Directory protection requested", "identifier: " + identifier, 3)
+								indented_message("file(s) protection requested", "selector: '" + selector + "', identifier: '" + identifier + "'", 3)
 							else:
 								indented_message("WARNING: password identifier used more than once", identifier + ": not protecting the directory", 2)
-					else:
-						# a file name or a relative path (possibly with file name) followed by a password identifier
-						identifier = columns[0]
-						indexes = [value['crypt_password'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
-						selector = ' '.join(columns[1:])
-						if len(indexes) == 1:
-							crypt_password = indexes[0]
-							# absolute_file_name = os.path.join(absolute_path, file_name)
-							passwords.append(
-								{
-									"selector": selector,
-									'encrypted_password': crypt_password
-								}
-							)
-							indented_message("file(s) protection requested", "selector: '" + selector + "', identifier: '" + identifier + "'", 3)
-						else:
-							indented_message("WARNING: password identifier used more than once", identifier + ": not protecting the directory", 2)
 			back_level()
 
 		json_file = os.path.join(Options.config['cache_path'], album_cache_base) + ".json"
