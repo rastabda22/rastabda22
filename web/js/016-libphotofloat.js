@@ -92,6 +92,8 @@
 		if (PhotoFloat.cache.albums.index.hasOwnProperty(cacheKey)) {
 			var cacheLevel = PhotoFloat.cache.albums.index[cacheKey];
 			delete PhotoFloat.cache.albums[cacheLevel][cacheKey];
+			delete PhotoFloat.cache.albums.index[cacheKey];
+			PhotoFloat.cache.albums[cacheLevel].queue.splice(PhotoFloat.cache.albums[cacheLevel].queue.indexOf(cacheKey), 1);
 		} else
 			return false;
 	};
@@ -1043,9 +1045,10 @@
 				function(element) {
 					return ! PhotoFloat.guessedPasswords.includes(element);
 				}
-			)
+			);
 		return isProtected;
-	}
+	};
+	
 	PhotoFloat.endPreparingAlbumAndKeepOn = function(resultsAlbumFinal, mediaHash, callback) {
 		// add the point count
 		resultsAlbumFinal.numPositionsInTree = resultsAlbumFinal.positionsAndMediaInTree.length;

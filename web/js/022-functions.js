@@ -182,7 +182,7 @@
 			$("ul#right-menu li#case-sensitive").removeClass("hidden");
 			$("ul#right-menu li#accent-sensitive").removeClass("hidden");
 			$("ul#right-menu li#album-search").removeClass("hidden");
-			$("ul#right-menu li#search-protected").removeClass("hidden");
+			$("ul#right-menu li#unveil-protected-content").removeClass("hidden");
 			// $("ul#right-menu li#refine-search").removeClass("hidden");
 			if (Options.search_inside_words)
 				$("ul#right-menu li#inside-words").addClass("selected");
@@ -210,7 +210,7 @@
 			$("ul#right-menu li#case-sensitive").addClass("hidden");
 			$("ul#right-menu li#accent-sensitive").addClass("hidden");
 			$("ul#right-menu li#album-search").addClass("hidden");
-			$("ul#right-menu li#search-protected").addClass("hidden");
+			$("ul#right-menu li#unveil-protected-content").addClass("hidden");
 			// $("ul#right-menu li#refine-search").addClass("hidden");
 		}
 
@@ -822,7 +822,7 @@
 		Functions.focusSearchField();
 	};
 
-	Functions.prototype.toggleProtectedContentSearch = function(ev) {
+	Functions.prototype.unveilProtectedContent = function(ev) {
 		$("#album-view, #media-view").css("opacity", "0.2");
 		$("#auth-text").stop().fadeIn(1000);
 		$("#password").focus();

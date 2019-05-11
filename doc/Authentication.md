@@ -26,7 +26,9 @@ When an album with password is requested, the authorization form is shown, and i
 
 When an album with some protected media is requested, the album is shown, and the protected media thumbnails are replaced with fake ones. When the user wants to show a protected image, the password is requested.
 
-When another protected album or media is requested, the encrypted passwords are checked against the guessed passwords, and if they are already there then the album/media is shown without asking the password again.
+When another protected album or media is requested, the encrypted passwords are checked against the guessed passwords, and if they are already there, then the album/media is shown without asking the password again.
+
+When performing a search, protected content is not included in the results. A menu entry is available in the right menu, in order to give the password and include the protected content into the search.
 
 ## Optional: Deployment Makefiles
 

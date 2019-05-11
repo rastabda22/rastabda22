@@ -374,7 +374,7 @@ $(document).ready(function() {
 	$("li#case-sensitive").on('click', f.toggleCaseSensitiveSearch);
 	$("li#accent-sensitive").on('click', f.toggleAccentSensitiveSearch);
 	$("li#album-search").on('click', f.toggleCurrentAbumSearch);
-	$("li#search-protected").on('click', f.toggleProtectedContentSearch);
+	$("li#unveil-protected-content").on('click', f.unveilProtectedContent);
 
 	// binds the click events to the sort buttons
 
@@ -427,7 +427,10 @@ $(document).ready(function() {
 
 			// the search albume must be remove from cache,
 			// otherwise the new album won't be generated and the protected content won't be searched
-			if (util.isSearchCacheBase(currentAlbum.cacheBase)) {
+			if (
+				util.isSearchCacheBase(currentAlbum.cacheBase) ||
+				currentMedia === null
+			) {
 				phFl.removeAlbumFromCache(currentAlbum.cacheBase);
 			}
 			$(window).hashchange();
@@ -450,6 +453,7 @@ $(document).ready(function() {
 
 		if (
 			passwordList === null ||
+			passwordList.length == 0 ||
 			passwordList.some(
 				function(enc_password) {
 					return enc_password == encrypted_password;
