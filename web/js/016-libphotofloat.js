@@ -611,7 +611,7 @@
 									albumHashes[indexWords][indexAlbums],
 									// success:
 									function(theAlbum, thisIndexWords, thisIndexAlbums) {
-										var matchingMedia = [], matchingSubalbums = [], match, indexMedia, indexSubalbums, indexWordsLeft, resultAlbum, indexWords1, ithMedia;
+										var matchingMedia = [], matchingSubalbums = [], match, indexMedia, indexSubalbums, indexWordsLeft, resultAlbum, indexWords1, ithMedia, ithSubalbum;
 
 										resultAlbum = util.cloneObject(theAlbum);
 										// media in the album still has to be filtered according to search criteria
@@ -640,18 +640,19 @@
 													matchingMedia.push(ithMedia);
 											}
 											for (indexSubalbums = 0; indexSubalbums < theAlbum.subalbums.length; indexSubalbums ++) {
+												ithSubalbum = theAlbum.subalbums[indexSubalbums];
 												if (
-													util.normalizeAccordingToOptions(theAlbum.subalbums[indexSubalbums].words).includes(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) &&
-													(
+													util.normalizeAccordingToOptions(ithSubalbum.words).includes(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) &&
+													! PhotoFloat.isProtected(ithSubalbum) && (
 														! Options.search_current_album ||
 														[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) !== -1 || (
 															// check whether the media is inside the current album tree
-															theAlbum.subalbums[indexSubalbums].cacheBase.indexOf(Options.album_to_search_in) === 0 &&
-															theAlbum.subalbums[indexSubalbums].cacheBase != Options.album_to_search_in
+															ithSubalbum.cacheBase.indexOf(Options.album_to_search_in) === 0 &&
+															ithSubalbum.cacheBase != Options.album_to_search_in
 														)
 													)
 												)
-													matchingSubalbums.push(theAlbum.subalbums[indexSubalbums]);
+													matchingSubalbums.push(ithSubalbum);
 											}
 										} else {
 											// inside words
@@ -683,7 +684,8 @@
 													matchingMedia.push(ithMedia);
 											}
 											for (indexSubalbums = 0; indexSubalbums < theAlbum.subalbums.length; indexSubalbums ++) {
-												normalizedWords = util.normalizeAccordingToOptions(theAlbum.subalbums[indexSubalbums].words);
+												ithSubalbum = theAlbum.subalbums[indexSubalbums];
+												normalizedWords = util.normalizeAccordingToOptions(ithSubalbum.words);
 												if (
 													normalizedWords.some(
 														function(element) {
@@ -694,12 +696,12 @@
 														! Options.search_current_album ||
 														[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) !== -1 || (
 															// check whether the media is inside the current album tree
-															theAlbum.subalbums[indexSubalbums].cacheBase.indexOf(Options.album_to_search_in) === 0 &&
-															theAlbum.subalbums[indexSubalbums].cacheBase != Options.album_to_search_in
+															ithSubalbum.cacheBase.indexOf(Options.album_to_search_in) === 0 &&
+															ithSubalbum.cacheBase != Options.album_to_search_in
 														)
 													)
 												)
-													matchingSubalbums.push(theAlbum.subalbums[indexSubalbums]);
+													matchingSubalbums.push(ithSubalbum);
 											}
 										}
 										resultAlbum.media = matchingMedia;
