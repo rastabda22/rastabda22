@@ -948,7 +948,7 @@
 				currentMediaIndex = thisAlbum.media.findIndex(
 					function(thisMedia) {
 						var matches =
-							thisMedia.cacheBase == currentMedia.cacheBase && thisMedia.foldersCacheBase == currentMedia.foldersCacheBase
+							thisMedia.cacheBase == currentMedia.cacheBase && thisMedia.foldersCacheBase == currentMedia.foldersCacheBase;
 						return matches;
 					}
 				);
@@ -961,7 +961,7 @@
 				currentMediaIndex = thisAlbum.media.findIndex(
 					function(thisMedia) {
 						var matches =
-							thisMedia.cacheBase == currentMedia.cacheBase && thisMedia.foldersCacheBase == currentMedia.foldersCacheBase
+							thisMedia.cacheBase == currentMedia.cacheBase && thisMedia.foldersCacheBase == currentMedia.foldersCacheBase;
 						return matches;
 					}
 				);

@@ -3,8 +3,6 @@
 	var phFl = new PhotoFloat();
 	var util = new Utilities();
 	var f = new Functions();
-	var pointList = [];
-	var hashParsed;
 
 	/* constructor */
 	function MapFunctions() {
@@ -47,7 +45,7 @@
 		// var markerClass;
 		var mediaIndex, mediaHash, thumbHeight, thumbWidth, width, height, hideThumbnail;
 		var selectedMedia, images = "", calculatedWidth, calculatedHeight, imageString, thumbHash, imgTitle;
-		albumViewPadding = $("#album-view").css("padding");
+		var albumViewPadding = $("#album-view").css("padding");
 		if (! albumViewPadding)
 			albumViewPadding = 0;
 		else

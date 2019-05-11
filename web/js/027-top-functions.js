@@ -785,7 +785,7 @@
 		var text, thumbnailSize, triggerLoad, mediaHtml, mediaSelector, mediaSrc;
 		var exposureTime, heightForMedia, heightForMediaAndTitle;
 		var savedSearchSubAlbumHash, savedSearchAlbumHash;
-		var previousMediaIndex, nextMediaIndex, array;
+		var previousMediaIndex, nextMediaIndex, array, hideImage;
 
 		$(".media-bar").show();
 
@@ -902,7 +902,7 @@
 
 		if (media.mediaType == "video" && ! f.videoOK()) {
 			mediaBoxInnerElement.empty();
-			addVideoUnsupportedMarker(id);
+			f.addVideoUnsupportedMarker(id);
 			if (id === "center")
 				loadNextPrevMedia();
 		} else {
@@ -2269,7 +2269,7 @@
 	};
 
 	TopFunctions.generateMapFromDefaults = function(fromTrigger) {
-
+		var pointList;
 		if (currentMedia !== null && util.hasGpsData(currentMedia))
 			pointList = [
 				{

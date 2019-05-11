@@ -3,7 +3,7 @@ var currentMedia = null;
 var currentAlbum = null;
 var nextMedia = null, prevMedia = null, upLink = "";
 var bySearchViewLink = null, byMapViewLink = null, isABrowsingModeChange = false;
-var titleWrapper1, titleWrapper2, maxWidthForThumbnails;
+var titleWrapper1, titleWrapper2, maxWidthForThumbnails, nextBrowsingModeSelector, prevBrowsingModeSelector;
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
 var fromEscKey = false;
@@ -221,7 +221,7 @@ $(document).ready(function() {
 					var mode;
 					var prevSortingModeMessageId, nextSortingModeMessageId;
 					var sortingMessageIds = ['by-date', 'by-name', 'by-name-reverse', 'by-date-reverse'];
-					var currentSortingIndex, prevSortingIndex, nextSortingIndex;
+					var currentSortingIndex, prevSortingIndex, nextSortingIndex, prevSelector, nextSelector;
 
 					if (['[', ']'].indexOf(e.key) !== -1) {
 						mode = 'album';
@@ -443,7 +443,7 @@ $(document).ready(function() {
 		var password = $("#password");
 		var passwordList = null;
 		password.css("background-color", "rgb(128, 128, 200)");
-		encrypted_password = md5(password.val());
+		var encrypted_password = md5(password.val());
 		if (currentMedia !== null)
 			passwordList = currentMedia.passwords;
 		else if (util.isAlbumWithOneMedia(currentAlbum))
