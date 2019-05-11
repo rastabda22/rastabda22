@@ -908,9 +908,7 @@
 		} else {
 			mediaSelector = ".media-box#" + id + " .media-box-inner img";
 			mediaSrc = util.chooseMediaReduction(media, id, fullScreenStatus);
-			hideImage =
-				media.passwords.length > 0 &&
-				media.passwords.filter(value => PhotoFloat.guessedPasswords.includes(value)).length == 0;
+			hideImage = phFl.isProtected(media);
 			if (hideImage) {
 				mediaHtml = $('<img src="img/image-placeholder.png">')
 					.attr("title", "placeholder")
@@ -1736,9 +1734,7 @@
 									"<span class='helper'></span>" +
 									"<img title='" + imgTitle + "' " +
 										"alt='" + util.trimExtension(selectedMedia.name) + "' ";
-					hideThumbnail =
-						selectedMedia.passwords.length > 0 &&
-						selectedMedia.passwords.filter(value => PhotoFloat.guessedPasswords.includes(value)).length == 0;
+					hideThumbnail = phFl.isProtected(selectedMedia);
 					if (! hideThumbnail)
 						imageString +=
 										"data-src='" + encodeURI(thumbHash) + "' ";
@@ -2060,9 +2056,7 @@
 											$("#" + id + " .album-button a").attr("href", randomMediaLink);
 											$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
 											$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName);
-											hideThumbnail =
-												randomMedia.passwords.length > 0 &&
-												randomMedia.passwords.filter(value => PhotoFloat.guessedPasswords.includes(value)).length == 0;
+											hideThumbnail = phFl.isProtected(randomMedia);
 											if (! hideThumbnail)
 												$("#" + id + " img.thumbnail").attr("data-src", encodeURI(mediaSrc));
 											$("#" + id + " img.thumbnail").css("width", thumbWidth).css("height", thumbHeight);

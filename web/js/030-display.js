@@ -349,8 +349,6 @@ $(document).ready(function() {
 				searchOptions += 'a' + Options.search_options_separator;
 			if (Options.search_current_album)
 				searchOptions += 'o' + Options.search_options_separator;
-			// if (Options.search_refine)
-			// 	searchOptions += 'e' + Options.search_options_separator;
 			bySearchViewHash += searchOptions + searchTerms;
 		}
 
@@ -376,6 +374,7 @@ $(document).ready(function() {
 	$("li#case-sensitive").on('click', f.toggleCaseSensitiveSearch);
 	$("li#accent-sensitive").on('click', f.toggleAccentSensitiveSearch);
 	$("li#album-search").on('click', f.toggleCurrentAbumSearch);
+	$("li#search-protected").on('click', f.toggleProtectedContentSearch);
 
 	// binds the click events to the sort buttons
 
@@ -420,28 +419,37 @@ $(document).ready(function() {
 	$(window).hashchange();
 
 	$("#auth-form").submit(function() {
-		function failure() {
-			password.css("background-color", "rgb(255, 64, 64)");
-		}
 		function success() {
 			password.css("background-color", "rgb(200, 200, 200)");
 			// currentAlbum.passwordOk = true;
-			PhotoFloat.guessedPasswords.push(encrypted_password);
+			if (! PhotoFloat.guessedPasswords.includes(encrypted_password))
+				PhotoFloat.guessedPasswords.push(encrypted_password);
+
+			// the search albume must be remove from cache,
+			// otherwise the new album won't be generated and the protected content won't be searched
+			if (util.isSearchCacheBase(currentAlbum.cacheBase)) {
+				phFl.removeAlbumFromCache(currentAlbum.cacheBase);
+			}
 			$(window).hashchange();
 		}
 
+		function failure() {
+			password.css("background-color", "rgb(255, 64, 64)");
+		}
+
 		var password = $("#password");
-		var passwordList;
+		var passwordList = null;
 		password.css("background-color", "rgb(128, 128, 200)");
 		encrypted_password = md5(password.val());
 		if (currentMedia !== null)
 			passwordList = currentMedia.passwords;
 		else if (util.isAlbumWithOneMedia(currentAlbum))
 			passwordList = currentAlbum.media[0].passwords;
-		else
+		else if (currentAlbum.hasOwnProperty("passwords"))
 			passwordList = currentAlbum.passwords;
 
 		if (
+			passwordList === null ||
 			passwordList.some(
 				function(enc_password) {
 					return enc_password == encrypted_password;
@@ -451,6 +459,7 @@ $(document).ready(function() {
 			success();
 		else
 			failure();
+		password.val() = "";
 		return false;
 	});
 });

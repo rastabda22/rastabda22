@@ -109,9 +109,7 @@
 							"<span class='helper'></span>" +
 							"<img title='" + imgTitle + "' " +
 								"alt='" + util.trimExtension(selectedMedia.name) + "' ";
-			hideThumbnail =
-				selectedMedia.passwords.length > 0 &&
-				selectedMedia.passwords.filter(value => PhotoFloat.guessedPasswords.includes(value)).length == 0;
+			hideThumbnail = phFl.isProtected(selectedMedia);
 			if (! hideThumbnail)
 				imageString +=
 								"data-src='" + encodeURI(thumbHash) + "' ";

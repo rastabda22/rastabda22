@@ -85,6 +85,17 @@
 			return false;
 	};
 
+	PhotoFloat.prototype.removeAlbumFromCache = function(cacheKey) {
+		if (! Options.hasOwnProperty("js_cache_levels"))
+			Options.js_cache_levels = PhotoFloat.js_cache_levels;
+
+		if (PhotoFloat.cache.albums.index.hasOwnProperty(cacheKey)) {
+			var cacheLevel = PhotoFloat.cache.albums.index[cacheKey];
+			delete PhotoFloat.cache.albums[cacheLevel][cacheKey];
+		} else
+			return false;
+	};
+
 	PhotoFloat.addPositionsToSubalbums = function(thisAlbum) {
 		var iSubalbum, iPosition, iPhoto, position, subalbumCacheKey;
 		var positions = thisAlbum.positionsAndMediaInTree;
@@ -594,8 +605,8 @@
 							searchResultsMedia[indexWords] = [];
 							searchResultsSubalbums[indexWords] = [];
 							for (indexAlbums = 0; indexAlbums < albumHashes[indexWords].length; indexAlbums ++) {
-								// getAlbum is called here with 2 more parameters, indexAlbums and indexWords, in order to know their ValueError
-								// if they are not passed as arguments, the success function will see their values updates (getAlbum is an asyncronous function)
+								// getAlbum is called here with 2 more parameters, indexAlbums and indexWords, in order to use their value
+								// if they are not passed as arguments, the success function would see their values updates (getAlbum is an asyncronous function)
 								self.getAlbum(
 									albumHashes[indexWords][indexAlbums],
 									// success:
@@ -609,7 +620,8 @@
 											for (indexMedia = 0; indexMedia < theAlbum.media.length; indexMedia ++) {
 												ithMedia = theAlbum.media[indexMedia];
 												if (
-													util.normalizeAccordingToOptions(ithMedia.words).includes(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) && (
+													util.normalizeAccordingToOptions(ithMedia.words).includes(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) &&
+													! PhotoFloat.isProtected(ithMedia) && (
 														! Options.search_current_album ||
 														[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) !== -1 || (
 															// check whether the media is inside the current album tree
@@ -651,7 +663,8 @@
 														function(element) {
 															return element.includes(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
 														}
-													) && (
+													) &&
+													! PhotoFloat.isProtected(ithMedia) && (
 														! Options.search_current_album ||
 														[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) !== -1 || (
 															// check whether the media is inside the current album tree
@@ -676,7 +689,8 @@
 														function(element) {
 															return element.includes(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
 														}
-													) && (
+													) &&
+													! PhotoFloat.isProtected(ithSubalbum) && (
 														! Options.search_current_album ||
 														[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) !== -1 || (
 															// check whether the media is inside the current album tree
@@ -1019,6 +1033,17 @@
 		}
 	};
 
+	PhotoFloat.isProtected = function(albumOrMedia) {
+		var isProtected =
+			albumOrMedia.hasOwnProperty("passwords") &&
+			albumOrMedia.passwords.length > 0 &&
+			albumOrMedia.passwords.every(
+				function(element) {
+					return ! PhotoFloat.guessedPasswords.includes(element);
+				}
+			)
+		return isProtected;
+	}
 	PhotoFloat.endPreparingAlbumAndKeepOn = function(resultsAlbumFinal, mediaHash, callback) {
 		// add the point count
 		resultsAlbumFinal.numPositionsInTree = resultsAlbumFinal.positionsAndMediaInTree.length;
@@ -1139,6 +1164,7 @@
 	PhotoFloat.prototype.upHash = PhotoFloat.upHash;
 	PhotoFloat.prototype.hashCode = PhotoFloat.hashCode;
 	PhotoFloat.prototype.endPreparingAlbumAndKeepOn = PhotoFloat.endPreparingAlbumAndKeepOn;
+	PhotoFloat.prototype.isProtected = PhotoFloat.isProtected;
 	/* expose class globally */
 	window.PhotoFloat = PhotoFloat;
 	PhotoFloat.searchAndSubalbumHash = this.searchAndSubalbumHash;
