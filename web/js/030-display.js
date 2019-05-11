@@ -459,7 +459,7 @@ $(document).ready(function() {
 			success();
 		else
 			failure();
-		password.val() = "";
+		password.val("");
 		return false;
 	});
 });
