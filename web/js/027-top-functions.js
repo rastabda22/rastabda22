@@ -1856,22 +1856,24 @@
 					//
 					// subalbum loop
 					//
+					var ithSubalbum;
 					// The promise in order to know when everything has come to its end
 					var subalbumsPromise = new Promise(
 						function(resolve, reject) {
 							for (i = 0; i < currentAlbum.subalbums.length; ++i) {
+								ithSubalbum = currentAlbum.subalbums[i];
 								if (util.isSearchCacheBase(currentAlbum.cacheBase))
-									subfolderHash = phFl.encodeHash(currentAlbum.subalbums[i], null, currentAlbum.subalbums[i].cacheBase, currentAlbum.cacheBase);
+									subfolderHash = phFl.encodeHash(ithSubalbum, null, ithSubalbum.cacheBase, currentAlbum.cacheBase);
 								else {
 									if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
-										subfolderHash = phFl.encodeHash(currentAlbum.subalbums[i].cacheBase, null, savedSearchSubAlbumHash, savedSearchAlbumHash);
+										subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, savedSearchSubAlbumHash, savedSearchAlbumHash);
 									else
-										subfolderHash = phFl.encodeHash(currentAlbum.subalbums[i], null);
+										subfolderHash = phFl.encodeHash(ithSubalbum, null);
 								}
 
 								// generate the subalbum caption
 								if (util.isByDateCacheBase(currentAlbum.cacheBase)) {
-									folderArray = currentAlbum.subalbums[i].cacheBase.split(Options.cache_folder_separator);
+									folderArray = ithSubalbum.cacheBase.split(Options.cache_folder_separator);
 									folderName = "";
 									if (folderArray.length == 2) {
 										folderName += parseInt(folderArray[1]);
@@ -1883,23 +1885,23 @@
 								} else if (util.isByGpsCacheBase(currentAlbum.cacheBase)) {
 									folderName = '';
 									folderTitle = '';
-									if (currentAlbum.subalbums[i].name === '')
+									if (ithSubalbum.name === '')
 										folderName = util._t('.not-specified');
-									else if (currentAlbum.subalbums[i].hasOwnProperty('altName'))
-										folderName = util.transformAltPlaceName(currentAlbum.subalbums[i].altName);
+									else if (ithSubalbum.hasOwnProperty('altName'))
+										folderName = util.transformAltPlaceName(ithSubalbum.altName);
 									else
-										folderName = currentAlbum.subalbums[i].name;
+										folderName = ithSubalbum.name;
 									folderTitle = util._t('#place-icon-title') + folderName;
 
 								}
 								else {
-									folderName = currentAlbum.subalbums[i].path;
+									folderName = ithSubalbum.path;
 									folderTitle = folderName;
 								}
 
 								folder = "<span class='folder-name'>" +
 													folderName;
-								if (currentAlbum.subalbums[i].hasOwnProperty("positionsAndMediaInTree") && currentAlbum.subalbums[i].positionsAndMediaInTree.length)
+								if (ithSubalbum.hasOwnProperty("positionsAndMediaInTree") && ithSubalbum.positionsAndMediaInTree.length)
 									folder += "<a id='subalbum-map-link-" + i + "' >" +
 													"<img " +
 														"class='title-img' " +
@@ -1920,7 +1922,7 @@
 								captionHtml = "<div class='album-caption";
 								if (util.isFolderCacheBase(currentAlbum.cacheBase) && ! Options.show_album_names_below_thumbs)
 									captionHtml += " hidden";
-								captionHtml += "' id='album-caption-" + phFl.hashCode(currentAlbum.subalbums[i].cacheBase) + "' " +
+								captionHtml += "' id='album-caption-" + phFl.hashCode(ithSubalbum.cacheBase) + "' " +
 															"style='" +
 																"width: " + correctedAlbumThumbSize + "px; " +
 																"font-size: " + captionFontSize + "px; " +
@@ -1939,7 +1941,7 @@
 												"color: " + captionColor + ";" +
 											"'" +
 										">(";
-								captionHtml +=		currentAlbum.subalbums[i].numMediaInSubTree;
+								captionHtml +=		ithSubalbum.numMediaInSubTree;
 								captionHtml +=		" <span class='title-media'>";
 								captionHtml +=		util._t(".title-media");
 								captionHtml +=		"</span>";
@@ -1948,7 +1950,7 @@
 
 
 								// a dot could be present in a cache base, making $("#" + cacheBase) fail, beware...
-								id = phFl.hashCode(currentAlbum.subalbums[i].cacheBase);
+								id = phFl.hashCode(ithSubalbum.cacheBase);
 								albumButtonAndCaptionHtml =
 									"<div id='" + id + "' " +
 										"class='album-button-and-caption";
@@ -1996,7 +1998,7 @@
 								linkContainer.append(caption);
 
 								subalbumsElement.append(linkContainer);
-								container = $("#" + phFl.hashCode(currentAlbum.subalbums[i].cacheBase));
+								container = $("#" + phFl.hashCode(ithSubalbum.cacheBase));
 								// add the clicks
 								container.off('click').css("cursor", "pointer").on('click', {hash: subfolderHash}, function(ev) {
 									window.location.href = ev.data.hash;
@@ -2004,7 +2006,7 @@
 								});
 
 								//////////////////// begin anonymous function /////////////////////
-								//      })(currentAlbum.subalbums[i], image, container);
+								//      })(ithSubalbum, image, container);
 								(function(theSubalbum, theImage, theLink, id) {
 									// function(subalbum, container, callback, error)  ---  callback(album,   album.media[index], container,            subalbum);
 									phFl.pickRandomMedia(
@@ -2085,7 +2087,7 @@
 										}
 									);
 									i ++; i --;
-								})(currentAlbum.subalbums[i], image, container, id);
+								})(ithSubalbum, image, container, id);
 								//////////////////// end anonymous function /////////////////////
 							}
 						}
@@ -2113,10 +2115,11 @@
 					);
 
 					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
-						if (currentAlbum.subalbums[i].hasOwnProperty("positionsAndMediaInTree") && currentAlbum.subalbums[i].positionsAndMediaInTree.length) {
+						ithSubalbum = currentAlbum.subalbums[i];
+						if (ithSubalbum.hasOwnProperty("positionsAndMediaInTree") && ithSubalbum.positionsAndMediaInTree.length) {
 							$("#subalbum-map-link-" + i).off('click').on(
 								'click',
-								{subalbum: currentAlbum.subalbums[i]},
+								{subalbum: ithSubalbum},
 								function(ev) {
 									TopFunctions.generateMapFromSubalbum(ev);
 								}
