@@ -94,6 +94,9 @@
 			delete PhotoFloat.cache.albums[cacheLevel][cacheKey];
 			delete PhotoFloat.cache.albums.index[cacheKey];
 			PhotoFloat.cache.albums[cacheLevel].queue.splice(PhotoFloat.cache.albums[cacheLevel].queue.indexOf(cacheKey), 1);
+
+			// remove the positions too
+			delete PhotoFloat.cache.positions[cacheKey];
 		} else
 			return false;
 	};
@@ -126,7 +129,21 @@
 		}
 	};
 
+	PhotoFloat.filterProtectedContent = function(positions) {
+		return positions.filter(
+			function(ithPosition) {
+				ithPosition = ithPosition.mediaNameList.filter(
+					function(ithMedia) {
+						return ! PhotoFloat.isProtected(ithMedia);
+					}
+				);
+				return ithPosition.length > 0;
+			}
+		);
+	};
+
 	PhotoFloat.getPositions = function(thisAlbum, callback, error) {
+
 		var cacheFile = util.pathJoin([Options.server_cache_path, thisAlbum.cacheBase + ".positions.json"]);
 		var ajaxOptions;
 		// before getting the positions check whether it's in the cache
@@ -143,7 +160,7 @@
 				dataType: "json",
 				url: cacheFile,
 				success: function(positions) {
-					thisAlbum.positionsAndMediaInTree = positions;
+					thisAlbum.positionsAndMediaInTree = PhotoFloat.filterProtectedContent(positions);
 					// we must add the corresponding positions to every subalbums
 					PhotoFloat.addPositionsToSubalbums(thisAlbum);
 
@@ -1048,7 +1065,7 @@
 			);
 		return isProtected;
 	};
-	
+
 	PhotoFloat.endPreparingAlbumAndKeepOn = function(resultsAlbumFinal, mediaHash, callback) {
 		// add the point count
 		resultsAlbumFinal.numPositionsInTree = resultsAlbumFinal.positionsAndMediaInTree.length;
@@ -1170,7 +1187,8 @@
 	PhotoFloat.prototype.hashCode = PhotoFloat.hashCode;
 	PhotoFloat.prototype.endPreparingAlbumAndKeepOn = PhotoFloat.endPreparingAlbumAndKeepOn;
 	PhotoFloat.prototype.isProtected = PhotoFloat.isProtected;
+	PhotoFloat.prototype.searchAndSubalbumHash = PhotoFloat.searchAndSubalbumHash;
+	PhotoFloat.prototype.filterProtectedContent = PhotoFloat.filterProtectedContent;
 	/* expose class globally */
 	window.PhotoFloat = PhotoFloat;
-	PhotoFloat.searchAndSubalbumHash = this.searchAndSubalbumHash;
 }());

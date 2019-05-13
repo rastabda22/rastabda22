@@ -1605,6 +1605,26 @@
 	};
 
 
+	TopFunctions.goUpIfProtected = function(album, media) {
+		var ancestorCacheBase = album.ancestorsCacheBase[album.ancestorsCacheBase.length - 2];
+		if (media !== null && phFl.isProtected(media))
+			TopFunctions.goUpIfProtected(album, null);
+		else if (phFl.isProtected(album)) {
+			if (album.ancestorsCacheBase.length == 2)
+				return;
+			var ancestorCacheBase = album.ancestorsCacheBase[album.ancestorsCacheBase.length - 2];
+			phFl.getAlbum(
+				ancestorCacheBase,
+				function(parentAlbum) {
+					TopFunctions.goUpIfProtected(parentAlbum, null);
+				},
+				util.die
+			);
+		} else {
+			window.location.href = "#!" + album.cacheBase
+		}
+	};
+
 	TopFunctions.showAlbum = function(populate) {
 		var i, imageLink, linkContainer, container, image, media, thumbsElement, subalbums, subalbumsElement, mediaHash, thumbHash, thumbnailSize;
 		var width, height, thumbWidth, thumbHeight, imageString, calculatedWidth, calculatedHeight, populateMedia;
@@ -1706,7 +1726,7 @@
 					calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
 					mapLinkIcon = "";
-					if (util.hasGpsData(ithMedia)) {
+					if (util.hasGpsData(ithMedia) && ! phFl.isProtected(ithMedia)) {
 						mapLinkIcon =
 							"<a id='media-map-link-" + i + "'>" +
 								"<img " +
@@ -2723,6 +2743,7 @@
 	TopFunctions.prototype.goFullscreen = TopFunctions.goFullscreen;
 	TopFunctions.prototype.hashParsed = TopFunctions.hashParsed;
 	TopFunctions.prototype.showBrowsingModeMessage = TopFunctions.showBrowsingModeMessage;
+	TopFunctions.prototype.goUpIfProtected = TopFunctions.goUpIfProtected;
 
 	window.TopFunctions = TopFunctions;
 }());

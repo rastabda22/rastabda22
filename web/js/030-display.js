@@ -99,7 +99,7 @@ $(document).ready(function() {
 				// 	pS.swipeDown(upLink);
 				$("#auth-text").hide();
 				$("#album-view, #media-view, #my-modal").css("opacity", "");
-				// window.history.back();
+				TopFunctions.goUpIfProtected(currentAlbum, currentMedia);
 				return false;
 			} else if ($("ul#right-menu").hasClass("expand")) {
 				toggleMenu();
@@ -386,6 +386,7 @@ $(document).ready(function() {
 	$("li#album-search").on('click', f.toggleCurrentAbumSearch);
 
 	$("li#protected-content-unveil").on('click', util.showAuthForm);
+
 	$("li#protected-content-hide").on(
 		'click',
 		function() {
@@ -395,6 +396,8 @@ $(document).ready(function() {
 
 			if(isMap) {
 				// TO DO: the points which only have protected media must be removed from the map
+
+
 				if (isPopup) {
 					// the protected photos must be removed from the popup
 					map.removeProtectedContentFromMapAlbum();
@@ -422,7 +425,9 @@ $(document).ready(function() {
 				)
 			) {
 				pS.swipeDown(upLink);
-				return;
+				$("#subalbums, #thumbs").empty();
+				if (location.hash !== upLink)
+					return;
 			}
 
 			$(window).hashchange();
@@ -523,6 +528,8 @@ $(document).ready(function() {
 			passwordList = destMedia.passwords;
 		else if (destAlbum !== null && destAlbum.hasOwnProperty("passwords"))
 			passwordList = destAlbum.passwords;
+		destMedia = null;
+		destAlbum = null;
 
 		if (
 			passwordList === null ||
