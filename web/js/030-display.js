@@ -7,7 +7,9 @@ var titleWrapper1, titleWrapper2, maxWidthForThumbnails, nextBrowsingModeSelecto
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
 var fromEscKey = false;
-var destPage = null;
+var destHash = null;
+var destMedia = null;
+var destAlbum = null;
 var Options = {};
 var isMobile = {
 	Android: function() {
@@ -450,11 +452,11 @@ $(document).ready(function() {
 				currentMedia === null
 			)
 				phFl.removeAlbumFromCache(currentAlbum.cacheBase);
-			if (destPage !== null)
-				// destPage is set when clicking on a protected media or album
-				window.location.href = destPage;
+			if (destHash !== null)
+				// destHash is set when clicking on a protected media or album
+				window.location.href = destHash;
 			else
-				// if destPage is null, then a protected url has been requeste directly
+				// if destHash is null, then a protected url has been requeste directly
 				$(window).hashchange();
 		}
 
@@ -466,12 +468,10 @@ $(document).ready(function() {
 		var passwordList = null;
 		password.css("background-color", "rgb(128, 128, 200)");
 		var encrypted_password = md5(password.val());
-		if (currentMedia !== null)
-			passwordList = currentMedia.passwords;
-		else if (util.isAlbumWithOneMedia(currentAlbum))
-			passwordList = currentAlbum.media[0].passwords;
-		else if (currentAlbum.hasOwnProperty("passwords"))
-			passwordList = currentAlbum.passwords;
+		if (destMedia !== null)
+			passwordList = destMedia.passwords;
+		else if (destAlbum !== null && destAlbum.hasOwnProperty("passwords"))
+			passwordList = destAlbum.passwords;
 
 		if (
 			passwordList === null ||

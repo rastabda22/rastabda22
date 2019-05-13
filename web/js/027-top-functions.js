@@ -1781,7 +1781,9 @@
 						function(ev) {
 							if (phFl.isProtected(ithMedia)) {
 								util.showAuthForm();
-								destPage = ev.data.hash;
+								destHash = ev.data.hash;
+								destMedia = ithMedia;
+								destAlbum = null;
 								return;
 							} else {
 								window.location.href = ev.data.hash;
@@ -2097,7 +2099,9 @@
 
 													if (phFl.isProtected(subalbum)) {
 														util.showAuthForm();
-														destPage = subfolderHash;
+														destHash = subfolderHash;
+														destAlbum = subalbum;
+														destMedia = null;
 														return;
 													} else {
 														window.location.href = subfolderHash;
