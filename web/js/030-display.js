@@ -95,6 +95,8 @@ $(document).ready(function() {
 		if (e.key === "Escape") {
 			// warning: modern browsers will always exit fullscreen when pressing esc
 			if (isAuth) {
+				// if (upLink && (currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)))
+				// 	pS.swipeDown(upLink);
 				$("#auth-text").hide();
 				$("#album-view, #media-view, #my-modal").css("opacity", "");
 				// window.history.back();
@@ -392,7 +394,7 @@ $(document).ready(function() {
 			PhotoFloat.guessedPasswords = [];
 
 			if(isMap) {
-				// the point which only have protected media must be removed from the map
+				// TO DO: the points which only have protected media must be removed from the map
 				if (isPopup) {
 					// the protected photos must be removed from the popup
 					map.removeProtectedContentFromMapAlbum();
@@ -411,6 +413,18 @@ $(document).ready(function() {
 				currentMedia === null
 			)
 				phFl.removeAlbumFromCache(currentAlbum.cacheBase);
+
+			if (
+				upLink &&
+				(
+					(currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)) && phFl.isProtected(currentMedia) ||
+					currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum) && phFl.isProtected(currentAlbum)
+				)
+			) {
+				pS.swipeDown(upLink);
+				return;
+			}
+
 			$(window).hashchange();
 		}
 	);
