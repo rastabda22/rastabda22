@@ -489,6 +489,8 @@ video {
 	height: auto;
 	padding: 1em;
 	width: 95%;
+	background-color: black;
+	opacity: .6;
 }
 #auth-question {
 	font-size: 3em;

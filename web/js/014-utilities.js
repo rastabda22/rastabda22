@@ -875,7 +875,7 @@
 	};
 
 	Utilities.prototype.showAuthForm = function() {
-		$("#album-view, #media-view").css("opacity", "0.2");
+		$("#album-view, #media-view, #my-modal").css("opacity", "0.2");
 		$("#auth-text").stop().fadeIn(1000);
 		$("#password").focus();
 	};

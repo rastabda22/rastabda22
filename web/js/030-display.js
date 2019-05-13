@@ -95,7 +95,7 @@ $(document).ready(function() {
 			// warning: modern browsers will always exit fullscreen when pressing esc
 			if (isAuth) {
 				$("#auth-text").hide();
-				$("#album-view, #media-view").css("opacity", "");
+				$("#album-view, #media-view, #my-modal").css("opacity", "");
 				// window.history.back();
 				return false;
 			} else if ($("ul#right-menu").hasClass("expand")) {
@@ -414,7 +414,7 @@ $(document).ready(function() {
 
 	$(window).hashchange(function() {
 		$("#auth-text").hide();
-		$("#album-view, #media-view").css("opacity", "");
+		$("#album-view, #media-view, #my-modal").css("opacity", "");
 
 		if (isABrowsingModeChange)
 			isABrowsingModeChange = false;
