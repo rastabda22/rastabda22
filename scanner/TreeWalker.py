@@ -266,7 +266,8 @@ class TreeWalker:
 			'mediaNameList': [{
 				'cacheBase': media.cache_base,
 				'albumCacheBase': media_album_cache_base,
-				'foldersCacheBase': media.album.cache_base
+				'foldersCacheBase': media.album.cache_base,
+				'passwords': media.passwords
 			}]
 		}
 		positions = self.add_position_to_positions(positions, position)
@@ -1108,11 +1109,6 @@ class TreeWalker:
 					media._attributes["checksum"] = media_checksum
 
 			if media.is_valid:
-				album.num_media_in_sub_tree += 1
-				if media.has_gps_data:
-					album.positions_and_media_in_tree = self.add_media_to_position(album.positions_and_media_in_tree, media, Options.config['folders_string'])
-				album.num_media_in_album += 1
-
 				media.passwords = []
 				file_name = os.path.basename(entry_with_path)
 
@@ -1131,6 +1127,11 @@ class TreeWalker:
 							media.passwords.append(password['encrypted_password'])
 							indented_message("media password set", "'" + file_name + "' matches '" + password['selector'] + "': " + password['encrypted_password'], 3)
 						# print(str(media.passwords))
+
+				album.num_media_in_sub_tree += 1
+				if media.has_gps_data:
+					album.positions_and_media_in_tree = self.add_media_to_position(album.positions_and_media_in_tree, media, Options.config['folders_string'])
+				album.num_media_in_album += 1
 
 				if media.is_video:
 					num_video_in_dir += 1
