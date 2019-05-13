@@ -17,6 +17,14 @@
 	// MapFunctions.prototype. = function() {
 	// };
 
+	MapFunctions.removeProtectedContentFromMapAlbum = function() {
+		for (i = 0; i < TopFunctions.mapAlbum.media.length; ++i) {
+			if (phFl.isProtected(TopFunctions.mapAlbum.media[i])) {
+				TopFunctions.mapAlbum.media.splice(i, 1);
+			}
+		}
+	};
+
 	MapFunctions.averagePosition = function(latLngArray) {
 		var averageLatLng = L.latLng(0, 0);
 		var lat, lng, countTotal = 0;
@@ -136,8 +144,16 @@
 								"/>" +
 					"</div>" +
 					"<div class='media-caption'>" +
-						"<span>" +
+						"<span>";
+			if (! hideThumbnail)
+				imageString +=
 						ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>");
+			else
+				imageString +=
+						"<em>" +
+						util._t(".protected-media-name").replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+						"</em>";
+			imageString +=
 						"</span>" +
 					"</div>" +
 				"</div>";
