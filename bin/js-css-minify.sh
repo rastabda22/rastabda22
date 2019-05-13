@@ -61,7 +61,7 @@ case $MINIFY_JS in
 		fi
 	;;
 	jsmin2)
-		python2 -m jsmin > /dev/null 2>&1
+		python2 -c 'import jsmin' > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
 			( >&2 echo "'jsmin' for Python2 is not installed. Look for package 'python-jsmin' or 'https://github.com/tikitu/jsmin'" )
 			( >&2 echo "Aborting..." )
@@ -69,7 +69,7 @@ case $MINIFY_JS in
 		fi
 	;;
 	jsmin3)
-		python3 -m jsmin > /dev/null 2>&1
+		python3 -c 'import jsmin' > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
 			( >&2 echo "'jsmin' for Python3 is not installed. Look for package 'python3-jsmin' or 'https://github.com/tikitu/jsmin'" )
 			( >&2 echo "Aborting..." )
@@ -110,24 +110,22 @@ case $MINIFY_CSS in
 			exit 1
 		fi
 	;;
-	# rcssmin2)
-	# # rcssmin doesn't work: the following command never ends
-	# 	python2 -m rcssmin > /dev/null 2>&1
-	# 	if [ $? -ne 0 ]; then
-	# 		( >&2 echo "'rcssmin' for Python2 is not installed. Look for package 'python-rcssmin' or 'https://github.com/ndparker/rcssmin'" )
-	# 		( >&2 echo "Aborting..." )
-	# 		exit 1
-	# 	fi
-	# ;;
-	# rcssmin3)
-	# # rcssmin doesn't work: the following command never ends
-	# 	python3 -m rcssmin > /dev/null 2>&1
-	# 	if [ $? -ne 0 ]; then
-	# 		( >&2 echo "'rcssmin' for Python3 is not installed. Look for package 'python3-rcssmin' or 'https://github.com/ndparker/rcssmin'" )
-	# 		( >&2 echo "Aborting..." )
-	# 		exit 1
-	# 	fi
-	# ;;
+	rcssmin2)
+		python2 -c 'import rcssmin' > /dev/null 2>&1
+		if [ $? -ne 0 ]; then
+			( >&2 echo "'rcssmin' for Python2 is not installed. Look for package 'python-rcssmin' or 'https://github.com/ndparker/rcssmin'" )
+			( >&2 echo "Aborting..." )
+			exit 1
+		fi
+	;;
+	rcssmin3)
+		python3 -c 'import rcssmin' > /dev/null 2>&1
+		if [ $? -ne 0 ]; then
+			( >&2 echo "'rcssmin' for Python3 is not installed. Look for package 'python3-rcssmin' or 'https://github.com/ndparker/rcssmin'" )
+			( >&2 echo "Aborting..." )
+			exit 1
+		fi
+	;;
 esac
 
 # minify all .js-files
@@ -244,14 +242,14 @@ ls -1 *.css | grep -Ev "min.css$" | while read cssfile; do
 			cssmin < $cssfile > $newfile
 		;;
 
-		# rcssmin2)
-		# 	python2 -m rcssmin < $cssfile > $newfile
-		# ;;
-		#
-		# rcssmin3)
-		# 	python3 -m rcssmin < $cssfile > $newfile
-		# ;;
-		#
+		rcssmin2)
+			python2 -m rcssmin < $cssfile > $newfile
+		;;
+
+		rcssmin3)
+			python3 -m rcssmin < $cssfile > $newfile
+		;;
+
 		*)
 			( >&2 echo "Unsupported CSS minifier: $MINIFY_CSS. Check option 'css_minifier' in '$CONF'" )
 			( >&2 echo "Doing nothing on file $cssfile" )

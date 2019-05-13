@@ -83,9 +83,8 @@ debug_profile = false
 # permitted values:
 #    web_service : https://cssminifier.com/
 #    cssmin : cssmin (https://github.com/zacharyvoase/cssmin) (Default)
-#    NO rcssmin2: python-rcssmin (http://opensource.perlig.de/rcssmin/)
-#    NO rcssmin3: python3-rcssmin (http://opensource.perlig.de/rcssmin/)
-#    --> unfortunatly, rcssmin doesn't work!!!!!!!!
+#    rcssmin2: python-rcssmin (http://opensource.perlig.de/rcssmin/)
+#    rcssmin3: python3-rcssmin (http://opensource.perlig.de/rcssmin/)
 css_minifier = cssmin
 
 # JavaScript minifier
