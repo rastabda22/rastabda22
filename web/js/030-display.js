@@ -448,9 +448,8 @@ $(document).ready(function() {
 			if (
 				util.isSearchCacheBase(currentAlbum.cacheBase) ||
 				currentMedia === null
-			) {
+			)
 				phFl.removeAlbumFromCache(currentAlbum.cacheBase);
-			}
 			if (destPage !== null)
 				// destPage is set when clicking on a protected media or album
 				window.location.href = destPage;
