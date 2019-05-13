@@ -1753,7 +1753,7 @@
 						imageString +=
 									ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>");
 					else
-					imageString +=
+						imageString +=
 								"<em>" +
 								util._t(".protected-media-name").replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
 								"</em>";
