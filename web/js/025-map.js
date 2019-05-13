@@ -44,7 +44,7 @@
 		// we must get the media corresponding to the name in the point
 		// var markerClass;
 		var mediaIndex, mediaHash, thumbHeight, thumbWidth, width, height, hideThumbnail;
-		var selectedMedia, images = "", calculatedWidth, calculatedHeight, imageString, thumbHash, imgTitle;
+		var ithMedia, images = "", calculatedWidth, calculatedHeight, imageString, thumbHash, imgTitle;
 		var albumViewPadding = $("#album-view").css("padding");
 		if (! albumViewPadding)
 			albumViewPadding = 0;
@@ -53,16 +53,16 @@
 
 		for(mediaIndex = 0; mediaIndex < theAlbum.media.length; mediaIndex ++) {
 
-			selectedMedia = theAlbum.media[mediaIndex];
+			ithMedia = theAlbum.media[mediaIndex];
 
-			mediaHash = phFl.encodeHash(theAlbum, selectedMedia);
+			mediaHash = phFl.encodeHash(theAlbum, ithMedia);
 			// var codedHashId = getCodedHashId(photosInAlbumCopy[photoIndex].element);
-			thumbHash = util.chooseThumbnail(theAlbum, selectedMedia, Options.media_thumb_size);
-			imgTitle = util.pathJoin([selectedMedia.albumName, selectedMedia.name]);
+			thumbHash = util.chooseThumbnail(theAlbum, ithMedia, Options.media_thumb_size);
+			imgTitle = util.pathJoin([ithMedia.albumName, ithMedia.name]);
 
 			// calculate the width and height values
-			width = selectedMedia.metadata.size[0];
-			height = selectedMedia.metadata.size[1];
+			width = ithMedia.metadata.size[0];
+			height = ithMedia.metadata.size[1];
 
 			if (Options.media_thumb_type == "fixed_height") {
 				if (height < Options.media_thumb_size) {
@@ -106,8 +106,8 @@
 						"'>" +
 							"<span class='helper'></span>" +
 							"<img title='" + imgTitle + "' " +
-								"alt='" + util.trimExtension(selectedMedia.name) + "' ";
-			hideThumbnail = phFl.isProtected(selectedMedia);
+								"alt='" + util.trimExtension(ithMedia.name) + "' ";
+			hideThumbnail = phFl.isProtected(ithMedia);
 			if (! hideThumbnail)
 				imageString +=
 								"data-src='" + encodeURI(thumbHash) + "' ";
@@ -116,8 +116,8 @@
 								"data='" +
 								JSON.stringify(
 									{
-										"width": selectedMedia.metadata.size[0],
-										"height": selectedMedia.metadata.size[1],
+										"width": ithMedia.metadata.size[0],
+										"height": ithMedia.metadata.size[1],
 										"mediaHash": mediaHash
 									}
 								) +
@@ -137,7 +137,7 @@
 					"</div>" +
 					"<div class='media-caption'>" +
 						"<span>" +
-						selectedMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+						ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>");
 						"</span>" +
 					"</div>" +
 				"</div>";
