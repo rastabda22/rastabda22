@@ -1608,12 +1608,12 @@
 
 
 	TopFunctions.showAlbum = function(populate) {
-		var i, imageLink, linkContainer, container, image, media, thumbsElement, subalbums, subalbumsElement, mediaHash, subfolderHash, thumbHash, thumbnailSize;
+		var i, imageLink, linkContainer, container, image, media, thumbsElement, subalbums, subalbumsElement, mediaHash, thumbHash, thumbnailSize;
 		var width, height, thumbWidth, thumbHeight, imageString, calculatedWidth, calculatedHeight, populateMedia;
 		var albumViewWidth, correctedAlbumThumbSize = Options.album_thumb_size;
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
 		var tooBig = false, isVirtualAlbum = false;
-		var mapLinkIcon, id;
+		var mapLinkIcon, id, ithMedia, ithSubalbum, hideThumbnail;
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
 		var array, folderArray, folder, folderName, folderTitle, savedSearchSubAlbumHash, savedSearchAlbumHash;
 
@@ -1673,11 +1673,11 @@
 				// media loop
 				//
 				for (i = 0; i < currentAlbum.media.length; ++i) {
-					selectedMedia = currentAlbum.media[i];
+					ithMedia = currentAlbum.media[i];
 
-					width = selectedMedia.metadata.size[0];
-					height = selectedMedia.metadata.size[1];
-					thumbHash = util.chooseThumbnail(currentAlbum, selectedMedia, thumbnailSize);
+					width = ithMedia.metadata.size[0];
+					height = ithMedia.metadata.size[1];
+					thumbHash = util.chooseThumbnail(currentAlbum, ithMedia, thumbnailSize);
 
 					if (Options.media_thumb_type == "fixed_height") {
 						if (height < Options.media_thumb_size) {
@@ -1693,7 +1693,7 @@
 						thumbWidth = thumbnailSize;
 						calculatedWidth = Options.media_thumb_size;
 					}
-					imgTitle = util.pathJoin([selectedMedia.albumName, selectedMedia.name]);
+					imgTitle = util.pathJoin([ithMedia.albumName, ithMedia.name]);
 					calculatedHeight = Options.media_thumb_size;
 
 					var albumViewPadding = $("#album-view").css("padding");
@@ -1708,7 +1708,7 @@
 					calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
 					mapLinkIcon = "";
-					if (util.hasGpsData(selectedMedia)) {
+					if (util.hasGpsData(ithMedia)) {
 						mapLinkIcon =
 							"<a id='media-map-link-" + i + "'>" +
 								"<img " +
@@ -1733,8 +1733,8 @@
 									mapLinkIcon +
 									"<span class='helper'></span>" +
 									"<img title='" + imgTitle + "' " +
-										"alt='" + util.trimExtension(selectedMedia.name) + "' ";
-					hideThumbnail = phFl.isProtected(selectedMedia);
+										"alt='" + util.trimExtension(ithMedia.name) + "' ";
+					hideThumbnail = phFl.isProtected(ithMedia);
 					if (! hideThumbnail)
 						imageString +=
 										"data-src='" + encodeURI(thumbHash) + "' ";
@@ -1753,7 +1753,7 @@
 								"<span>";
 					if (! hideThumbnail)
 						imageString +=
-									selectedMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>");
+									ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>");
 					else
 					imageString +=
 								"<em>" +
@@ -1765,9 +1765,9 @@
 							"</div>";
 					image = $(imageString);
 
-					image.get(0).media = selectedMedia;
+					image.get(0).media = ithMedia;
 					if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
-						mediaHash = phFl.encodeHash(currentAlbum, selectedMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
+						mediaHash = phFl.encodeHash(currentAlbum, ithMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
 					else
 						mediaHash = phFl.encodeHash(currentAlbum, selectedMedia);
 					imageLink = $("<a id='link-" + mediaHash + "' href='" + mediaHash + "'></a>");
@@ -1790,7 +1790,7 @@
 				for (i = 0; i < currentAlbum.media.length; ++i) {
 					$("#media-map-link-" + i).off('click').on(
 						'click',
-						{media: selectedMedia, album: currentAlbum},
+						{media: ithMedia, album: currentAlbum},
 						function(ev) {
 							TopFunctions.generateMapFromMedia(ev);
 						}
@@ -1856,7 +1856,6 @@
 					//
 					// subalbum loop
 					//
-					var ithSubalbum;
 					// The promise in order to know when everything has come to its end
 					var subalbumsPromise = new Promise(
 						function(resolve, reject) {
