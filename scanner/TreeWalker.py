@@ -768,7 +768,7 @@ class TreeWalker:
 				indented_message("unreadable file", pw_file, 2)
 			else:
 				with open(pw_file, 'r') as passwords_file:
-					for line in passwords_file:
+					for line in passwords_file.read().splitlines():
 						columns = line.split(' ')
 						if len(columns) == 0:
 							indented_message("empty line", "", 5)

@@ -347,22 +347,23 @@ def get_options():
 	# it must exist and be readable, otherwise skip it
 	if len(sys.argv) == 2:
 		# 1 arguments: the config files: the password file is in the same directory
-		passwords_file = os.path.join(os.path.dirname(sys.argv[1]), config['passwords_file'])
+		passwords_file_name = os.path.join(os.path.dirname(sys.argv[1]), config['passwords_file'])
 		try:
-			with open(passwords_file, 'r') as password_lines:
-				message("Reading passwords file", passwords_file, 3)
+			with open(passwords_file_name, 'r') as passwords_file:
+				message("Reading passwords file", passwords_file_name, 3)
 				num_password = 1
-				for line in password_lines:
+				for line in passwords_file.read().splitlines():
 					# in each line is a password identifier is followed by the corresponding password
 					columns = line.split(' ')
+					crypt_password = hashlib.md5(columns[1]).hexdigest()
 					identifiers_and_passwords.append({
 						"identifier": columns[0],
-						"crypt_password": hashlib.md5(columns[1]).hexdigest()
+						"crypt_password": crypt_password
 					})
-					indented_message("Password read", str(num_password) + " - identifier: " + columns[0], 3)
+					indented_message("Password read", str(num_password) + " - identifier: " + columns[0] + ", encrypted password: " + crypt_password, 3)
 					num_password +=1
 		except IOError:
-			indented_message("WARNING", passwords_file + " doesn't exist or unreadable, not using it", 2)
+			indented_message("WARNING", passwords_file_name + " doesn't exist or unreadable, not using it", 2)
 
 
 	# create the directory where php will put album composite images
