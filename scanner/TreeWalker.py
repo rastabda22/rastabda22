@@ -1116,7 +1116,7 @@ class TreeWalker:
 				for password in passwords:
 					if fnmatch.fnmatch(file_name, password['selector']):
 						media.passwords.append(password['encrypted_password'])
-						indented_message("media password set", "'" + file_name + "' matches '" + password['selector'], 3)
+						indented_message("media password set", "'" + file_name + "' matches '" + password['selector'] + "'", 3)
 						# print(str(media.passwords))
 
 				if media.is_video:
