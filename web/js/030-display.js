@@ -385,6 +385,11 @@ $(document).ready(function() {
 		'click',
 		function() {
 			PhotoFloat.guessedPasswords = [];
+			if (
+				util.isSearchCacheBase(currentAlbum.cacheBase) ||
+				currentMedia === null
+			)
+				phFl.removeAlbumFromCache(currentAlbum.cacheBase);
 			$(window).hashchange();
 		}
 	);
