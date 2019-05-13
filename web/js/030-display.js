@@ -62,6 +62,7 @@ $(document).ready(function() {
 	var util = new Utilities();
 	var pS = new PinchSwipe();
 	var f = new Functions();
+	var map = new MapFunctions();
 	var tF = new TopFunctions();
 	var maxSize;
 	var language;
@@ -386,7 +387,25 @@ $(document).ready(function() {
 	$("li#protected-content-hide").on(
 		'click',
 		function() {
+			var isPopup = $('.leaflet-popup').html() ? true : false;
+			var isMap = $('#mapdiv').html() ? true : false;
 			PhotoFloat.guessedPasswords = [];
+
+			if(isMap) {
+				// the point which only have protected media must be removed from the map
+				if (isPopup) {
+					// the protected photos must be removed from the popup
+					map.removeProtectedContentFromMapAlbum();
+					map.updatePopup(
+						MapFunctions.titleWrapper1.replace(
+							"maxWidthForThumbnails",
+							MapFunctions.maxWidthForThumbnails
+						) +
+						map.generateHtmlForImages(MapFunctions.mapAlbum) + MapFunctions.titleWrapper2
+					);
+				}
+			}
+
 			if (
 				util.isSearchCacheBase(currentAlbum.cacheBase) ||
 				currentMedia === null
@@ -441,17 +460,35 @@ $(document).ready(function() {
 	$("#auth-form").submit(function() {
 		function success() {
 			password.css("background-color", "rgb(200, 200, 200)");
-			// currentAlbum.passwordOk = true;
 			if (! PhotoFloat.guessedPasswords.includes(encrypted_password))
 				PhotoFloat.guessedPasswords.push(encrypted_password);
 
-			// the search albume must be remove from cache,
-			// otherwise the new album won't be generated and the protected content won't be searched
 			if (
 				util.isSearchCacheBase(currentAlbum.cacheBase) ||
 				currentMedia === null
 			)
+				// the search album must be removed from cache,
+				// otherwise the new album won't be generated and the protected content won't be searched
 				phFl.removeAlbumFromCache(currentAlbum.cacheBase);
+
+			var isPopup = $('.leaflet-popup').html() ? true : false;
+			var isMap = $('#mapdiv').html() ? true : false;
+
+			if (isPopup) {
+				// the popup must be generated again
+				map.updatePopup(
+					MapFunctions.titleWrapper1.replace(
+						"maxWidthForThumbnails",
+						MapFunctions.maxWidthForThumbnails
+					) +
+					map.generateHtmlForImages(MapFunctions.mapAlbum) + MapFunctions.titleWrapper2
+				);
+				$("#auth-text").hide();
+				$("#album-view, #media-view, #my-modal").css("opacity", "");
+				f.updateMenu();
+				return;
+			}
+
 			if (destHash !== null)
 				// destHash is set when clicking on a protected media or album
 				window.location.href = destHash;

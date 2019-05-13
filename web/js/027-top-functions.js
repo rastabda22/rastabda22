@@ -1380,12 +1380,12 @@
 			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
 				TopFunctions.showAlbum("refreshMedia");
 			else
-				MapFunctions.updatePopup(
+				map.updatePopup(
 					MapFunctions.titleWrapper1.replace(
 						"maxWidthForThumbnails",
 						MapFunctions.maxWidthForThumbnails
 					) +
-					MapFunctions.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2
+					map.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2
 				);
 			f.focusSearchField();
 		}
@@ -1405,12 +1405,12 @@
 			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
 				TopFunctions.showAlbum("refreshMedia");
 			else
-				MapFunctions.updatePopup(
+				map.updatePopup(
 					MapFunctions.titleWrapper1.replace(
 						"maxWidthForThumbnails",
 						MapFunctions.maxWidthForThumbnails
 					) +
-					MapFunctions.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2
+					map.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2
 				);
 			f.focusSearchField();
 		}
@@ -1426,12 +1426,12 @@
 			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
 				TopFunctions.showAlbum("refreshMedia");
 			else
-				MapFunctions.updatePopup(
+				map.updatePopup(
 					MapFunctions.titleWrapper1.replace(
 						"maxWidthForThumbnails",
 						MapFunctions.maxWidthForThumbnails
 					) +
-					MapFunctions.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2
+					map.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2
 				);
 			f.focusSearchField();
 		}
@@ -1509,12 +1509,12 @@
 				TopFunctions.showAlbum("refreshMedia");
 
 			if ($('.leaflet-popup').html())
-				MapFunctions.updatePopup(
+				map.updatePopup(
 					MapFunctions.titleWrapper1.replace(
 						"maxWidthForThumbnails",
 						MapFunctions.titleWrapper
 					) +
-					MapFunctions.generateHtmlForImages(MapFunctions.mapAlbum) +
+					map.generateHtmlForImages(MapFunctions.mapAlbum) +
 					MapFunctions.titleWrapper2
 				);
 			f.focusSearchField();
@@ -1573,12 +1573,12 @@
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
 			if ($('.leaflet-popup').html())
-				MapFunctions.updatePopup(
+				map.updatePopup(
 					MapFunctions.titleWrapper1.replace(
 						"maxWidthForThumbnails",
 						MapFunctions.titleWrapper
 					) +
-					MapFunctions.generateHtmlForImages(MapFunctions.mapAlbum) +
+					map.generateHtmlForImages(MapFunctions.mapAlbum) +
 					MapFunctions.titleWrapper2
 				);
 			f.focusSearchField();
@@ -2558,9 +2558,9 @@
 				mapAlbum,
 				null,
 				function() {
-					MapFunctions.updatePopup(MapFunctions.titleWrapper1.replace(
+					map.updatePopup(MapFunctions.titleWrapper1.replace(
 						"maxWidthForThumbnails",
-						MapFunctions.titleWrapper) + MapFunctions.generateHtmlForImages(mapAlbum) + MapFunctions.titleWrapper2
+						MapFunctions.titleWrapper) + map.generateHtmlForImages(mapAlbum) + MapFunctions.titleWrapper2
 					);
 					$("#loading").hide();
 				}

@@ -17,10 +17,10 @@
 	// MapFunctions.prototype. = function() {
 	// };
 
-	MapFunctions.removeProtectedContentFromMapAlbum = function() {
-		for (i = 0; i < TopFunctions.mapAlbum.media.length; ++i) {
-			if (phFl.isProtected(TopFunctions.mapAlbum.media[i])) {
-				TopFunctions.mapAlbum.media.splice(i, 1);
+	MapFunctions.prototype.removeProtectedContentFromMapAlbum = function() {
+		for (i = 0; i < MapFunctions.mapAlbum.media.length; ++i) {
+			if (phFl.isProtected(MapFunctions.mapAlbum.media[i])) {
+				MapFunctions.mapAlbum.media.splice(i, 1);
 			}
 		}
 	};
@@ -48,7 +48,7 @@
 		return averageLatLng;
 	};
 
-	MapFunctions.generateHtmlForImages = function(theAlbum) {
+	MapFunctions.prototype.generateHtmlForImages = function(theAlbum) {
 		// we must get the media corresponding to the name in the point
 		// var markerClass;
 		var mediaIndex, mediaHash, thumbHeight, thumbWidth, width, height, hideThumbnail;
@@ -167,7 +167,7 @@
 	};
 
 
-	MapFunctions.updatePopup = function(images) {
+	MapFunctions.prototype.updatePopup = function(images) {
 		$(".leaflet-popup-content").html(images);
 		f.setOptions();
 		MapFunctions.popup.setContent($(".leaflet-popup-content").html());
@@ -434,7 +434,5 @@
 		}
 	});
 
-	MapFunctions.prototype.updatePopup = MapFunctions.prototype.updatePopup;
-	MapFunctions.prototype.generateHtmlForImages = MapFunctions.prototype.generateHtmlForImages;
 	window.MapFunctions = MapFunctions;
 }());
