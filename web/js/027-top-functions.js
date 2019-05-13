@@ -1906,7 +1906,7 @@
 								}
 								else {
 									if (phFl.isProtected(ithSubalbum)) {
-										folderName = util._t(".protected-album-name");
+										folderName = "<em>" + util._t(".protected-album-name") + "</em>";
 									} else {
 										folderName = ithSubalbum.path;
 									}
