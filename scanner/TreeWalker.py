@@ -901,14 +901,16 @@ class TreeWalker:
 		if parent_album is not None:
 			album.parent = parent_album
 		album.cache_base = album_cache_base
-		if (album.cache_base != Options.config['folders_string']):
-			album.passwords = []
-			dir_name = os.path.basename(absolute_path)
-			for password in passwords:
-				if fnmatch.fnmatch(dir_name, password['selector']):
+		# if (album.cache_base != Options.config['folders_string']):
+		album.passwords = []
+		dir_name = os.path.basename(absolute_path)
+		for password in passwords:
+			if fnmatch.fnmatch(dir_name, password['selector']):
+				if password['encrypted_password'] in album.passwords:
+					indented_message("album password not added, it's already there", "'" + dir_name + "' matches '" + password['selector'] + "'", 3)
+				else:
 					album.passwords.append(password['encrypted_password'])
-					indented_message("album password set", "'" + dir_name + "' matches '" + password['selector'] + "'", 3)
-					# print(str(album.passwords))
+					indented_message("album password set", "'" + dir_name + "' matches '" + password['selector']+ "': " + password['encrypted_password'], 3)
 
 		#~ for entry in sorted(os.listdir(absolute_path)):
 		message("reading directory", absolute_path, 5)
@@ -986,10 +988,10 @@ class TreeWalker:
 				# save the file name for the end of the cycle, so that subdirs are processed first
 				files_in_dir.append(entry_with_path)
 
-		message("working with files in dir", absolute_path, 5)
+		message("working with files in dir", absolute_path, 3)
 		next_level()
 		for entry_with_path in files_in_dir:
-			message("working with file", entry_with_path, 5)
+			message("working with file", entry_with_path, 3)
 			next_level()
 			cache_hit = True
 			dirname = os.path.dirname(entry_with_path)
@@ -1113,10 +1115,21 @@ class TreeWalker:
 
 				media.passwords = []
 				file_name = os.path.basename(entry_with_path)
+
+				for encrypted_password in album.passwords:
+					if encrypted_password in media.passwords:
+						indented_message("album password not added to media, it's already there", encrypted_password, 3)
+					else:
+						media.passwords.append(encrypted_password)
+						indented_message("album password added to media", encrypted_password, 3)
+
 				for password in passwords:
 					if fnmatch.fnmatch(file_name, password['selector']):
-						media.passwords.append(password['encrypted_password'])
-						indented_message("media password set", "'" + file_name + "' matches '" + password['selector'] + "'", 3)
+						if password['encrypted_password'] in media.passwords:
+							indented_message("media password not added, it's already there", "'" + file_name + "' matches '" + password['selector'] + "'", 3)
+						else:
+							media.passwords.append(password['encrypted_password'])
+							indented_message("media password set", "'" + file_name + "' matches '" + password['selector'] + "': " + password['encrypted_password'], 3)
 						# print(str(media.passwords))
 
 				if media.is_video:
