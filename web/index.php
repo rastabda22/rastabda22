@@ -291,7 +291,6 @@
 		<li id="case-sensitive" class="search active"></li>
 		<li id="accent-sensitive" class="search active"></li>
 		<li id="album-search" class="search active"></li>
-		<li id="unveil-protected-content" class="search active"></li>
 
 		<li class="browsing-mode-switcher caption"></li>
 		<li id="folders-view" class="browsing-mode-switcher"></li>
@@ -304,6 +303,7 @@
 		<li class='sort album-sort by-date'></li>
 		<li class='sort album-sort by-name'></li>
 		<li class='sort album-sort reverse active'></li>
+
 		<li class="sort media-sort caption"></li>
 		<li class='sort media-sort by-date'></li>
 		<li class='sort media-sort by-name'></li>
@@ -320,6 +320,10 @@
 		<li class='ui media-names active'></li>
 		<li class='ui hide-bottom-thumbnails active'></li>
 		<li class='ui show-big-albums active'></li>
+
+		<li class='protection caption'></li>
+		<li id="protected-content-unveil" class="protection active"></li>
+		<li id="protected-content-hide" class="protection active"></li>
 	</ul>
 
 	<div id="loading"></div>

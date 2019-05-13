@@ -353,6 +353,8 @@ class Album(object):
 						"numPositionsInTree": len(subalbum.positions_and_media_in_tree),
 						"numMediaInSubTree": subalbum.num_media_in_sub_tree
 					}
+					if hasattr(subalbum, "passwords"):
+						sub_dict["passwords"] = subalbum.passwords
 					if hasattr(subalbum, "center"):
 						sub_dict["center"] = subalbum.center
 					if hasattr(subalbum, "name"):

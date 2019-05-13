@@ -7,6 +7,7 @@ var titleWrapper1, titleWrapper2, maxWidthForThumbnails, nextBrowsingModeSelecto
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
 var fromEscKey = false;
+var destPage = null;
 var Options = {};
 var isMobile = {
 	Android: function() {
@@ -83,12 +84,20 @@ $(document).ready(function() {
 		var isMap = $('#mapdiv').html() ? true : false;
 		var isPopup = $('.leaflet-popup').html() ? true : false;
 		var isAuth = $("#auth-text").is(":visible");
+
+		function toggleMenu() {
+			$("#menu-icon")[0].click();
+		}
+
 		if (e.key === "Escape") {
 			// warning: modern browsers will always exit fullscreen when pressing esc
 			if (isAuth) {
 				$("#auth-text").hide();
 				$("#album-view, #media-view").css("opacity", "");
-				window.history.back();
+				// window.history.back();
+				return false;
+			} else if ($("ul#right-menu").hasClass("expand")) {
+				toggleMenu();
 				return false;
 			} else if (isMap) {
 				if (isPopup) {
@@ -279,18 +288,14 @@ $(document).ready(function() {
 			}
 
 			if (
-				(
-					e.target.tagName.toLowerCase() != 'input' && e.key === "e" ||
+				e.key === "e" && e.target.tagName.toLowerCase() != 'input' &&  ! e.shiftKey&&  ! e.ctrlKey&&  ! e.altKey
 					// "e" opens the menu, and closes it if focus in not in input field
-					$("ul#right-menu").hasClass("expand") && e.key === "Escape"
-					// esc closes the menu
-				) &&
-			 	! e.ctrlKey && ! e.shiftKey && ! e.altKey
 			) {
-				$("#menu-icon")[0].click();
+				toggleMenu();
 				return false;
 			}
 		}
+
 		return true;
 	});
 
@@ -374,7 +379,15 @@ $(document).ready(function() {
 	$("li#case-sensitive").on('click', f.toggleCaseSensitiveSearch);
 	$("li#accent-sensitive").on('click', f.toggleAccentSensitiveSearch);
 	$("li#album-search").on('click', f.toggleCurrentAbumSearch);
-	$("li#unveil-protected-content").on('click', f.unveilProtectedContent);
+
+	$("li#protected-content-unveil").on('click', util.showAuthForm);
+	$("li#protected-content-hide").on(
+		'click',
+		function() {
+			PhotoFloat.guessedPasswords = [];
+			$(window).hashchange();
+		}
+	);
 
 	// binds the click events to the sort buttons
 
@@ -433,7 +446,12 @@ $(document).ready(function() {
 			) {
 				phFl.removeAlbumFromCache(currentAlbum.cacheBase);
 			}
-			$(window).hashchange();
+			if (destPage !== null)
+				// destPage is set when clicking on a protected media or album
+				window.location.href = destPage;
+			else
+				// if destPage is null, then a protected url has been requeste directly
+				$(window).hashchange();
 		}
 
 		function failure() {

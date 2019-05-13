@@ -1198,9 +1198,7 @@
 			passwordList.length > 0 &&
 			passwordList.filter(value => PhotoFloat.guessedPasswords.includes(value)).length === 0
 		) {
-			$("#album-view, #media-view").css("opacity", "0.2");
-			$("#auth-text").stop().fadeIn(1000);
-			$("#password").focus();
+			util.showAuthForm();
 			return;
 		}
 
@@ -1769,10 +1767,29 @@
 					if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
 						mediaHash = phFl.encodeHash(currentAlbum, ithMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
 					else
-						mediaHash = phFl.encodeHash(currentAlbum, selectedMedia);
-					imageLink = $("<a id='link-" + mediaHash + "' href='" + mediaHash + "'></a>");
+						mediaHash = phFl.encodeHash(currentAlbum, ithMedia);
+					imageLink = $("<a id='link-" + ithMedia.cacheBase + "'></a>");
+					// imageLink = $("<a id='link-" + mediaHash + "' href='" + mediaHash + "'></a>");
 					imageLink.append(image);
 					media.push(imageLink);
+					//
+					// container = $("#link-" + mediaHash);
+					// add the click event
+					imageLink.off('click').css("cursor", "pointer").on(
+						'click',
+						{ithMedia: ithMedia, hash: mediaHash},
+						function(ev) {
+							if (phFl.isProtected(ithMedia)) {
+								util.showAuthForm();
+								destPage = ev.data.hash;
+								return;
+							} else {
+								window.location.href = ev.data.hash;
+								// $(window).hashchange();
+							}
+						}
+					);
+
 					(function(theLink, theImage) {
 						theImage.on("error", function() {
 							media.splice(media.indexOf(theLink), 1);
@@ -1861,14 +1878,6 @@
 						function(resolve, reject) {
 							for (i = 0; i < currentAlbum.subalbums.length; ++i) {
 								ithSubalbum = currentAlbum.subalbums[i];
-								if (util.isSearchCacheBase(currentAlbum.cacheBase))
-									subfolderHash = phFl.encodeHash(ithSubalbum, null, ithSubalbum.cacheBase, currentAlbum.cacheBase);
-								else {
-									if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
-										subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, savedSearchSubAlbumHash, savedSearchAlbumHash);
-									else
-										subfolderHash = phFl.encodeHash(ithSubalbum, null);
-								}
 
 								// generate the subalbum caption
 								if (util.isByDateCacheBase(currentAlbum.cacheBase)) {
@@ -1894,7 +1903,11 @@
 
 								}
 								else {
-									folderName = ithSubalbum.path;
+									if (phFl.isProtected(ithSubalbum)) {
+										folderName = util._t(".protected-album-name");
+									} else {
+										folderName = ithSubalbum.path;
+									}
 									folderTitle = folderName;
 								}
 
@@ -1997,12 +2010,6 @@
 								linkContainer.append(caption);
 
 								subalbumsElement.append(linkContainer);
-								container = $("#" + phFl.hashCode(ithSubalbum.cacheBase));
-								// add the clicks
-								container.off('click').css("cursor", "pointer").on('click', {hash: subfolderHash}, function(ev) {
-									window.location.href = ev.data.hash;
-									$(window).hashchange();
-								});
 
 								//////////////////// begin anonymous function /////////////////////
 								//      })(ithSubalbum, image, container);
@@ -2072,6 +2079,32 @@
 													}
 												);
 											});
+
+											container = $("#" + phFl.hashCode(subalbum.cacheBase));
+											// add the click event
+											container.off('click').css("cursor", "pointer").on(
+												'click',
+												function(ev) {
+													var subfolderHash;
+													if (util.isSearchCacheBase(currentAlbum.cacheBase))
+														subfolderHash = phFl.encodeHash(subalbum, null, subalbum.cacheBase, currentAlbum.cacheBase);
+													else {
+														if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
+															subfolderHash = phFl.encodeHash(subalbum.cacheBase, null, savedSearchSubAlbumHash, savedSearchAlbumHash);
+														else
+															subfolderHash = phFl.encodeHash(subalbum, null);
+													}
+
+													if (phFl.isProtected(subalbum)) {
+														util.showAuthForm();
+														destPage = subfolderHash;
+														return;
+													} else {
+														window.location.href = subfolderHash;
+														// $(window).hashchange();
+													}
+												}
+											);
 
 											numSubAlbumsReady ++;
 											if (numSubAlbumsReady >= theOriginalAlbumContainer.subalbums.length) {

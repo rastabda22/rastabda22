@@ -874,6 +874,12 @@
 		$(".media-box#" + id + " .metadata").css("display", $(".media-box#center .metadata").css("display"));
 	};
 
+	Utilities.prototype.showAuthForm = function() {
+		$("#album-view, #media-view").css("opacity", "0.2");
+		$("#auth-text").stop().fadeIn(1000);
+		$("#password").focus();
+	};
+
 	/* Error displays */
 	Utilities.prototype.die = function(error) {
 		if (error == 403) {
