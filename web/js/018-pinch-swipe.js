@@ -581,7 +581,10 @@
 				},
 				300,
 				function() {
-					window.location.href = dest;
+					if (window.location.hash == dest)
+						$(window).hashchange();
+					else
+						window.location.href = dest;
 					// $("#media-view").addClass("hidden");
 					$(mediaContainerSelector).css('top', "");
 				}
