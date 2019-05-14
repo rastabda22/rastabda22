@@ -262,7 +262,7 @@
 				dataType: "json",
 				url: cacheFile,
 				success: function(theAlbum) {
-					var albumGot = function() {
+					function albumGot() {
 						var i, j;
 						if (cacheKey == Options.by_search_string) {
 							// root of search albums: build the word list
@@ -271,16 +271,29 @@
 								PhotoFloat.searchAlbumCacheBaseFromJsonFile.push(theAlbum.subalbums[i].cacheBase);
 							}
 						} else if (! util.isSearchCacheBase(cacheKey)) {
-							for (i = 0; i < theAlbum.subalbums.length; ++i)
-								theAlbum.subalbums[i].parent = theAlbum;
-							for (i = 0; i < theAlbum.media.length; ++i) {
+							theAlbum.positionsAndMediaInTree = PhotoFloat.filterProtectedContent(theAlbum.positionsAndMediaInTree);
+							theAlbum.numPositionsInTree = theAlbum.positionsAndMediaInTree.length;
+							for (i = theAlbum.subalbums.length -1; i >= 0; i --) {
+								if (PhotoFloat.isProtected(theAlbum.subalbums[i])) {
+									theAlbum.numMediaInSubTree -= theAlbum.subalbums[i].numMediaInSubTree;
+									theAlbum.subalbums.splice(i, 1);
+								} else {
+									theAlbum.subalbums[i].parent = theAlbum;
+								}
+							}
+							for (i = theAlbum.media.length - 1; i >= 0; i --) {
 								// remove unnecessary properties
-								var unnecessaryProperties = ['checksum', 'dateTimeDir', 'dateTimeFile'];
-								for (j = 0; j < unnecessaryProperties.length; j ++)
-									delete theAlbum.media[i][unnecessaryProperties[j]];
+								if (PhotoFloat.isProtected(theAlbum.media[i])) {
+									theAlbum.numMediaInSubTree -= 1;
+									theAlbum.media.splice(i, 1);
+								} else {
+									var unnecessaryProperties = ['checksum', 'dateTimeDir', 'dateTimeFile'];
+									for (j = 0; j < unnecessaryProperties.length; j ++)
+										delete theAlbum.media[i][unnecessaryProperties[j]];
 
-								// add parent album
-								theAlbum.media[i].parent = theAlbum;
+									// add parent album
+									theAlbum.media[i].parent = theAlbum;
+								}
 							}
 						}
 
@@ -290,7 +303,8 @@
 							callback(theAlbum);
 						else
 							callback(theAlbum, thisIndexWords, thisIndexAlbums);
-					};
+					}
+
 					if (theAlbum.numPositionsInTree)
 						PhotoFloat.getPositions(
 							theAlbum,
