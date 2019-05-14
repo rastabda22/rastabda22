@@ -289,8 +289,12 @@
 							}
 						} else if (! util.isSearchCacheBase(cacheKey)) {
 							theAlbum.numMediaInOriginalSubTree = theAlbum.numMediaInSubTree;
-							theAlbum.positionsAndMediaInTree = PhotoFloat.filterProtectedContent(theAlbum.positionsAndMediaInTree);
-							theAlbum.numPositionsInTree = theAlbum.positionsAndMediaInTree.length;
+							if (theAlbum.hasOwnProperty("positionsAndMediaInTree")) {
+								theAlbum.positionsAndMediaInTree = PhotoFloat.filterProtectedContent(theAlbum.positionsAndMediaInTree);
+								theAlbum.numPositionsInTree = theAlbum.positionsAndMediaInTree.length;
+							} else {
+								theAlbum.numPositionsInTree = 0;
+							}
 							for (i = theAlbum.subalbums.length -1; i >= 0; i --) {
 								if (PhotoFloat.isProtected(theAlbum.subalbums[i])) {
 									theAlbum.numMediaInSubTree -= theAlbum.subalbums[i].numMediaInSubTree;
