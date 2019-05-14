@@ -449,33 +449,6 @@ $(document).ready(function() {
 	$("#menu-icon").off();
 	$("#menu-icon").on("click", f.toggleMenu);
 
-
-	$(window).hashchange(function() {
-		$("#auth-text").hide();
-		$("#album-view, #media-view, #my-modal").css("opacity", "");
-
-		if (isABrowsingModeChange)
-			isABrowsingModeChange = false;
-		else {
-			// the image has changed, reset the search and map link
-			bySearchViewLink = null;
-			byMapViewLink = null;
-		}
-		$("#loading").show();
-		$("#album-view").removeClass("hidden");
-		$("link[rel=image_src]").remove();
-		$("link[rel=video_src]").remove();
-		$("ul#right-menu").removeClass("expand");
-		// if (util.isMapHash(location.hash))
-		// 	// map albums are generated passing the data from the map, so here we must exit
-		// 	return;
-		if (Object.keys(Options).length > 0)
-			f.parseHash(location.hash, tF.hashParsed, util.die);
-		else
-			f.getOptions(location.hash, tF.hashParsed, util.die);
-	});
-	$(window).hashchange();
-
 	$("#auth-form").submit(function() {
 		function success() {
 			password.css("background-color", "rgb(200, 200, 200)");
@@ -546,4 +519,33 @@ $(document).ready(function() {
 		password.val("");
 		return false;
 	});
+
+	$(window).hashchange(function() {
+		$("#auth-text").hide();
+		$("#album-view, #media-view, #my-modal").css("opacity", "");
+
+		if (isABrowsingModeChange)
+			isABrowsingModeChange = false;
+		else {
+			// the image has changed, reset the search and map link
+			bySearchViewLink = null;
+			byMapViewLink = null;
+		}
+		$("#loading").show();
+		$("#album-view").removeClass("hidden");
+		$("link[rel=image_src]").remove();
+		$("link[rel=video_src]").remove();
+		$("ul#right-menu").removeClass("expand");
+		// if (util.isMapHash(location.hash))
+		// 	// map albums are generated passing the data from the map, so here we must exit
+		// 	return;
+		if (Object.keys(Options).length > 0)
+			f.parseHash(location.hash, tF.hashParsed, util.die);
+		else
+			f.getOptions(location.hash, tF.hashParsed, util.die);
+	});
+
+	// execution starts here
+	$(window).hashchange();
+
 });
