@@ -463,6 +463,8 @@ $(document).ready(function() {
 				// otherwise the new album won't be generated and the protected content won't be searched
 				phFl.removeAlbumFromCache(currentAlbum.cacheBase);
 
+			phFl.removeAllProtectedAlbumsFromCache();
+
 			var isPopup = $('.leaflet-popup').html() ? true : false;
 			var isMap = $('#mapdiv').html() ? true : false;
 
