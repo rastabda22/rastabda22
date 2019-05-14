@@ -323,7 +323,6 @@
 
 		<li class='protection caption'></li>
 		<li id="protected-content-unveil" class="protection active"></li>
-		<li id="protected-content-hide" class="protection active"></li>
 	</ul>
 
 	<div id="loading"></div>

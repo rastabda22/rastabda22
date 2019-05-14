@@ -213,9 +213,6 @@
 		}
 
 		$("ul#right-menu li.protection").removeClass("hidden");
-		if (PhotoFloat.guessedPasswords.length == 0) {
-			$("ul#right-menu li#protected-content-hide").addClass("hidden");
-		}
 
 		$("ul#right-menu li.ui").removeClass("hidden");
 
