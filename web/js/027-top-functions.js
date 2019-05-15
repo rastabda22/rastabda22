@@ -1612,7 +1612,7 @@
 		else if (phFl.isProtected(album)) {
 			if (album.ancestorsCacheBase.length == 2)
 				return;
-			var ancestorCacheBase = album.ancestorsCacheBase[album.ancestorsCacheBase.length - 2];
+			ancestorCacheBase = album.ancestorsCacheBase[album.ancestorsCacheBase.length - 2];
 			phFl.getAlbum(
 				ancestorCacheBase,
 				function(parentAlbum) {
@@ -1621,7 +1621,7 @@
 				util.die
 			);
 		} else {
-			window.location.href = "#!" + album.cacheBase
+			window.location.href = "#!" + album.cacheBase;
 		}
 	};
 
