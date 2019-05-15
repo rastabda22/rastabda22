@@ -68,6 +68,7 @@ class Album(object):
 		self.subalbums_list_is_sorted = True
 		self._subdir = ""
 		self.num_media_in_sub_tree = 0
+		self.nums_protected_media_in_sub_tree = {}
 		self.positions_and_media_in_tree = []
 		self.num_media_in_album = 0
 		self.parent = None
@@ -351,7 +352,8 @@ class Album(object):
 						"date": subalbum.date_string,
 						# "positionsAndMediaInTree": subalbum.positions_and_media_in_tree,
 						"numPositionsInTree": len(subalbum.positions_and_media_in_tree),
-						"numMediaInSubTree": subalbum.num_media_in_sub_tree
+						"numMediaInSubTree": subalbum.num_media_in_sub_tree,
+						"numsProtectedMediaInSubTree": subalbum.nums_protected_media_in_sub_tree
 					}
 					if hasattr(subalbum, "passwords"):
 						sub_dict["passwords"] = subalbum.passwords
@@ -422,6 +424,7 @@ class Album(object):
 			"ancestorsCenter": ancestors_center,
 			"physicalPath": path_without_folders_marker,
 			"numMediaInSubTree": self.num_media_in_sub_tree,
+			"numsProtectedMediaInSubTree": self.nums_protected_media_in_sub_tree,
 			"numMediaInAlbum": self.num_media_in_album,
 			"numPositionsInTree": len(self.positions_and_media_in_tree),
 			# "positionsAndMediaInTree": self.positions_and_media_in_tree,

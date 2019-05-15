@@ -98,7 +98,7 @@ class TreeWalker:
 		# self.origin_album.read_album_ini() # origin_album is not a physical one, it's the parent of the root physical tree and of the virtual albums
 		self.origin_album.cache_base = "root"
 		next_level()
-		[folders_album, num, positions, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], self.origin_album)
+		[folders_album, num, nums_protected, positions, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], self.origin_album)
 		back_level()
 		if folders_album is None:
 			message("WARNING", "ALBUMS ROOT EXCLUDED BY MARKER FILE", 2)
@@ -750,12 +750,12 @@ class TreeWalker:
 		if not os.access(absolute_path, os.R_OK | os.X_OK):
 			message("access denied to directory", os.path.basename(absolute_path), 1)
 			back_level()
-			return [None, 0, [], None]
+			return [None, 0, 0, [], None]
 		listdir = os.listdir(absolute_path)
 		if Options.config['exclude_tree_marker'] in listdir:
 			indented_message("excluded with subfolders by marker file", Options.config['exclude_tree_marker'], 4)
 			back_level()
-			return [None, 0, [], None]
+			return [None, 0, 0, [], None]
 		skip_files = False
 		if Options.config['exclude_files_marker'] in listdir:
 			indented_message("files excluded by marker file", Options.config['exclude_files_marker'], 4)
@@ -964,7 +964,11 @@ class TreeWalker:
 				next_album_cache_base = album.generate_cache_base(entry_for_cache_base)
 				indented_message("cache base determined", "", 5)
 				back_level()
-				[next_walked_album, num, positions, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, passwords, album)
+				[next_walked_album, num, nums_protected, positions, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, passwords, album)
+				for media_passwords in nums_protected:
+					if not media_passwords in album.nums_protected_media_in_sub_tree:
+						album.nums_protected_media_in_sub_tree[media_passwords] = 0
+					album.nums_protected_media_in_sub_tree[media_passwords] += nums_protected[media_passwords]
 				if next_walked_album is not None:
 					max_file_date = max(max_file_date, sub_max_file_date)
 					album.num_media_in_sub_tree += num
@@ -1112,6 +1116,7 @@ class TreeWalker:
 				media.passwords = []
 				file_name = os.path.basename(entry_with_path)
 
+				# apply the album passwords to the media
 				for encrypted_password in album.passwords:
 					if encrypted_password in media.passwords:
 						indented_message("album password not added to media, it's already there", encrypted_password, 3)
@@ -1119,6 +1124,7 @@ class TreeWalker:
 						media.passwords.append(encrypted_password)
 						indented_message("album password added to media", encrypted_password, 3)
 
+				# apply the file passwords to the media if they match the media name
 				for password in passwords:
 					if fnmatch.fnmatch(file_name, password['selector']):
 						if password['encrypted_password'] in media.passwords:
@@ -1126,7 +1132,13 @@ class TreeWalker:
 						else:
 							media.passwords.append(password['encrypted_password'])
 							indented_message("media password set", "'" + file_name + "' matches '" + password['selector'] + "': " + password['encrypted_password'], 3)
-						# print(str(media.passwords))
+
+				# update the protected media count according to the passwords
+				if len(media.passwords):
+					media_passwords = '-'.join(media.passwords)
+					if not media_passwords in album.nums_protected_media_in_sub_tree:
+						album.nums_protected_media_in_sub_tree[media_passwords] = 0
+					album.nums_protected_media_in_sub_tree[media_passwords] += 1
 
 				album.num_media_in_sub_tree += 1
 				if media.has_gps_data:
@@ -1248,7 +1260,7 @@ class TreeWalker:
 
 		report_times(False)
 
-		return [album, album.num_media_in_sub_tree, album.positions_and_media_in_tree, max_file_date]
+		return [album, album.num_media_in_sub_tree, album.nums_protected_media_in_sub_tree, album.positions_and_media_in_tree, max_file_date]
 
 
 	@staticmethod

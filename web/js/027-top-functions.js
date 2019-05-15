@@ -1792,9 +1792,7 @@
 					// imageLink = $("<a id='link-" + mediaHash + "' href='" + mediaHash + "'></a>");
 					imageLink.append(image);
 					media.push(imageLink);
-					//
-					// container = $("#link-" + mediaHash);
-					// add the click event
+
 					imageLink.off('click').css("cursor", "pointer").on(
 						'click',
 						{ithMedia: ithMedia, hash: mediaHash},
@@ -2034,7 +2032,7 @@
 								subalbumsElement.append(linkContainer);
 
 								//////////////////// begin anonymous function /////////////////////
-								//      })(ithSubalbum, image, container);
+								//      })(ithSubalbum, image, container, id);
 								(function(theSubalbum, theImage, theLink, id) {
 									// function(subalbum, container, callback, error)  ---  callback(album,   album.media[index], container,            subalbum);
 									phFl.pickRandomMedia(
@@ -2138,8 +2136,8 @@
 										},
 										function error() {
 											currentAlbum.subalbums.splice(currentAlbum.subalbums.indexOf(theSubalbum), 1);
-											theLink.remove();
-											subalbums.splice(subalbums.indexOf(theLink), 1);
+											theImage.parent().remove();
+											// subalbums.splice(subalbums.indexOf(theLink), 1);
 										}
 									);
 									i ++; i --;

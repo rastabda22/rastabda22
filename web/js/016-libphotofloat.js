@@ -146,10 +146,10 @@
 		}
 	};
 
-	PhotoFloat.filterProtectedContent = function(positions) {
+	PhotoFloat.filterOutProtectedContentFromPositions = function(positions) {
 		return positions.filter(
 			function(ithPosition) {
-				ithPosition = ithPosition.mediaNameList.filter(
+				ithPosition.mediaNameList = ithPosition.mediaNameList.filter(
 					function(ithMedia) {
 						return ! PhotoFloat.isProtected(ithMedia);
 					}
@@ -177,7 +177,7 @@
 				dataType: "json",
 				url: cacheFile,
 				success: function(positions) {
-					thisAlbum.positionsAndMediaInTree = PhotoFloat.filterProtectedContent(positions);
+					thisAlbum.positionsAndMediaInTree = PhotoFloat.filterOutProtectedContentFromPositions(positions);
 					// we must add the corresponding positions to every subalbums
 					PhotoFloat.addPositionsToSubalbums(thisAlbum);
 
@@ -280,6 +280,24 @@
 				url: cacheFile,
 				success: function(theAlbum) {
 					function albumGot() {
+						function correctNumMediaInSubTree(album) {
+							var mediaPasswords;
+							// remove the protected media from the media count
+							for (mediaPasswords in album.numsProtectedMediaInSubTree) {
+								if (album.numsProtectedMediaInSubTree.hasOwnProperty(mediaPasswords)) {
+									// correct count
+									if (
+										PhotoFloat.guessedPasswords.every(
+											function(guessedPassword) {
+												return mediaPasswords.indexOf(guessedPassword) == -1;
+											}
+										)
+									)
+										album.numMediaInSubTree -= album.numsProtectedMediaInSubTree[mediaPasswords];
+								}
+							}
+						}
+
 						var i, j;
 						if (cacheKey == Options.by_search_string) {
 							// root of search albums: build the word list
@@ -290,25 +308,31 @@
 						} else if (! util.isSearchCacheBase(cacheKey)) {
 							theAlbum.numMediaInOriginalSubTree = theAlbum.numMediaInSubTree;
 							if (theAlbum.hasOwnProperty("positionsAndMediaInTree")) {
-								theAlbum.positionsAndMediaInTree = PhotoFloat.filterProtectedContent(theAlbum.positionsAndMediaInTree);
-								theAlbum.numPositionsInTree = theAlbum.positionsAndMediaInTree.length;
+								theAlbum.positionsAndMediaInTree = PhotoFloat.filterOutProtectedContentFromPositions(theAlbum.positionsAndMediaInTree);
 							} else {
 								theAlbum.numPositionsInTree = 0;
 							}
+
+							correctNumMediaInSubTree(theAlbum);
+
+							// remove protected subalbums
 							for (i = theAlbum.subalbums.length -1; i >= 0; i --) {
 								if (PhotoFloat.isProtected(theAlbum.subalbums[i])) {
-									theAlbum.numMediaInSubTree -= theAlbum.subalbums[i].numMediaInSubTree;
+									// theAlbum.numMediaInSubTree -= theAlbum.subalbums[i].numMediaInSubTree;
 									theAlbum.subalbums.splice(i, 1);
 								} else {
+									correctNumMediaInSubTree(theAlbum.subalbums[i]);
 									theAlbum.subalbums[i].parent = theAlbum;
 								}
 							}
+
 							for (i = theAlbum.media.length - 1; i >= 0; i --) {
-								// remove unnecessary properties
 								if (PhotoFloat.isProtected(theAlbum.media[i])) {
-									theAlbum.numMediaInSubTree -= 1;
+									// remove protected media
+									// theAlbum.numMediaInSubTree -= 1;
 									theAlbum.media.splice(i, 1);
 								} else {
+									// remove unnecessary properties
 									var unnecessaryProperties = ['checksum', 'dateTimeDir', 'dateTimeFile'];
 									for (j = 0; j < unnecessaryProperties.length; j ++)
 										delete theAlbum.media[i][unnecessaryProperties[j]];
@@ -349,10 +373,14 @@
 	};
 
 	PhotoFloat.prototype.pickRandomMedia = function(subalbum, container, callback, error) {
-		var nextAlbum, self;
-		self = this;
-		nextAlbum = function(album) {
+		function nextAlbum(album) {
 			var index = Math.floor(Math.random() * (album.numMediaInSubTree));
+
+			if (album.numMediaInSubTree == 0) {
+				error();
+				return;
+			}
+
 			if (index >= album.media.length) {
 				index -= album.media.length;
 				for (var i = 0; i < album.subalbums.length; i ++) {
@@ -364,7 +392,10 @@
 				self.getAlbum(album.subalbums[i], nextAlbum, error);
 			} else
 				callback(album, album.media[index], container, subalbum);
-		};
+		}
+
+		var self = this;
+
 		if (typeof subalbum.media !== "undefined" && subalbum.media !== null)
 			nextAlbum(subalbum);
 		else
@@ -1224,7 +1255,7 @@
 	PhotoFloat.prototype.endPreparingAlbumAndKeepOn = PhotoFloat.endPreparingAlbumAndKeepOn;
 	PhotoFloat.prototype.isProtected = PhotoFloat.isProtected;
 	PhotoFloat.prototype.searchAndSubalbumHash = PhotoFloat.searchAndSubalbumHash;
-	PhotoFloat.prototype.filterProtectedContent = PhotoFloat.filterProtectedContent;
+	PhotoFloat.prototype.filterOutProtectedContentFromPositions = PhotoFloat.filterOutProtectedContentFromPositions;
 	PhotoFloat.prototype.removeAlbumFromCache = PhotoFloat.removeAlbumFromCache;
 	/* expose class globally */
 	window.PhotoFloat = PhotoFloat;
