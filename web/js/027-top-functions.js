@@ -1187,6 +1187,10 @@
 			currentAlbum = null;
 		}
 
+		if (typeof previousMedia !== "undefined" && previousMedia.mediaType == "video")
+			// stop the video, otherwise it will keep playing
+			$("#media-center")[0].pause();
+
 		if (currentAlbum && util.isByDateCacheBase(currentAlbum.cacheBase) && media !== null) {
 			previousMedia = media;
 		} else {
