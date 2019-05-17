@@ -16,7 +16,8 @@
 	TopFunctions.setTitle = function(id, media) {
 		var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, isMapTitle, originalTitle;
 		var titleAnchorClasses, titleAnchorClassesItalics, hiddenTitle = "", albumTypeString, where, initialValue, searchFolderHash;
-		var beginLink, linksToLeave, numLinks, beginAt, latitude, longitude, arrayCoordinates, numMediaInSubAlbums, raquo = "&raquo;", lastRaquoPosition;
+		var beginLink, linkCount = 0, linksToLeave = 1, numLinks, beginAt, latitude, longitude, arrayCoordinates, numMediaInSubAlbums;
+		var raquo = "&raquo;", lastRaquoPosition;
 		// gpsLevelNumber is the number of levels for the by gps tree
 		// current levels are country, region, place => 3
 		var gpsLevelNumber = 3;
@@ -462,31 +463,19 @@
 		if (isMobile.any()) {
 			// leave only the last link on mobile
 			// separate on "&raquo;""
-			if (title.indexOf("search-album-to-be-filled") !== -1)
-				beginAt = title.indexOf("search-album-to-be-filled");
-			else
-				beginAt = 0;
 
-			numLinks = (title.substring(beginAt).match(/<a class='title/g) || []).length;
-			linksToLeave = 1;
-			if (numLinks > linksToLeave) {
-				for (i = 1; i <= numLinks; i ++) {
-					beginLink = title.indexOf("<a class=", beginAt);
-					if (i <= linksToLeave) {
-						beginAt = beginLink + 1;
-					} else {
-						// be sure to separate on "&raquo;"
-						lastRaquoPosition = title.substring(0, beginLink).lastIndexOf(raquo);
-						if (lastRaquoPosition + raquo.length !== beginLink)
-							beginLink = lastRaquoPosition + raquo.length;
-						hiddenTitle += title.substring(0, beginLink);
-						title = title.substring(beginLink);
+			titleArray = title.split(raquo);
+
+			for (i = titleArray.length - 1; i >= 0; i --) {
+				if (titleArray[i].indexOf(" href='#!") != -1) {
+					linkCount ++;
+					if (linkCount > linksToLeave) {
+						title =
+							"<span class='dots-surroundings'><span class='title-no-anchor dots'>...</span>" + raquo +"</span>" +
+							" <span class='hidden-title'>" + titleArray.slice(0, i).join(raquo) + "</span> " + titleArray.slice(i + 1, ).join(raquo);
 						break;
 					}
 				}
-				title =
-					"<span class='dots-surroundings'><span class='title-no-anchor dots'>...</span>" + raquo +"</span>" +
-					" <span class='hidden-title'>" + hiddenTitle + "</span> " + title;
 			}
 		}
 
@@ -497,9 +486,7 @@
 
 
 		if (isMobile.any()) {
-			$(".dots").off();
-
-			$(".dots").on('click', function(ev) {
+			$(".dots").off('click').on('click', function(ev) {
 				if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 					$(".dots-surroundings").hide();
 					$(".hidden-title").show();
