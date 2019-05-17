@@ -771,9 +771,11 @@
 			$(mediaSelector).off(triggerLoad);
 
 			if (id === "center") {
-				pS.addMediaGesturesDetection();
-				pS.setPinchButtonsPosition(containerHeight, containerWidth);
-				util.correctPrevNextPosition();
+				if (media.mediaType == "photo") {
+					pS.addMediaGesturesDetection();
+					pS.setPinchButtonsPosition(containerHeight, containerWidth);
+					util.correctPrevNextPosition();
+				}
 
 				if (album.media.length > 1) {
 					TopFunctions.showMedia(album, prevMedia, 'left');
@@ -906,8 +908,12 @@
 			if (id === "center")
 				loadNextPrevMedia();
 		} else {
-			mediaSelector = ".media-box#" + id + " .media-box-inner img";
-			mediaSrc = util.chooseMediaReduction(media, id, fullScreenStatus);
+			if (media.mediaType == "video") {
+				mediaSelector = ".media-box#" + id + " .media-box-inner video";
+			} else {
+				mediaSelector = ".media-box#" + id + " .media-box-inner img";
+				mediaSrc = util.chooseMediaReduction(media, id, fullScreenStatus);
+			}
 			hideImage = phFl.isProtected(media);
 			if (hideImage) {
 				mediaHtml = $('<img src="img/image-placeholder.png">')
