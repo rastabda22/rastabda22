@@ -733,18 +733,18 @@
 				"top",
 				titleHeight + (mediaBoxInnerHeight - prevNextHeight) / 2
 			);
-			// position lateral social buttons near image bottom
-			if (Utilities.lateralSocialButtons()) {
-				var socialHeight = parseInt($(".ssk-left").outerHeight());
-				var mediaActualHeight = mediaElement.height();
-				$(".ssk-left").css(
-					"top",
-					// titleHeight + (mediaBoxInnerHeight - socialHeight) / 2 + socialHeight / 2
-					(titleHeight + mediaBoxInnerHeight - (mediaBoxInnerHeight - mediaActualHeight) / 2 - socialHeight / 2 - 15).toString() + "px"
-				);
-			} else {
-				$(".ssk-left").css("top", "");
-			}
+			// // position lateral social buttons near image bottom
+			// if (Utilities.lateralSocialButtons()) {
+			// 	var socialHeight = parseInt($(".ssk-left").outerHeight());
+			// 	var mediaActualHeight = mediaElement.height();
+			// 	$(".ssk-left").css(
+			// 		"top",
+			// 		// titleHeight + (mediaBoxInnerHeight - socialHeight) / 2 + socialHeight / 2
+			// 		(titleHeight + mediaBoxInnerHeight - (mediaBoxInnerHeight - mediaActualHeight) / 2 - socialHeight / 2 - 15).toString() + "px"
+			// 	);
+			// } else {
+			// 	$(".ssk-left").css("top", "");
+			// }
 
 			Utilities.setLinksVisibility();
 		}
