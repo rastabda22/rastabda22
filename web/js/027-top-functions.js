@@ -1187,7 +1187,7 @@
 			currentAlbum = null;
 		}
 
-		if (typeof previousMedia !== "undefined" && previousMedia.mediaType == "video")
+		if (previousMedia !== null && previousMedia.mediaType == "video")
 			// stop the video, otherwise it will keep playing
 			$("#media-center")[0].pause();
 
