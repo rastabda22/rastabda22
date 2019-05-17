@@ -539,6 +539,7 @@
 		}
 
 		mediaElement
+			.attr("id", "media-" + id)
 			.attr("width", attrWidth)
 			.attr("height", attrHeight)
 			.attr("ratio", mediaWidth / mediaHeight)
@@ -672,7 +673,10 @@
 		$(".media-box .media-box-inner").css("height", heightForMedia);
 		$(".media-box").show();
 
-		mediaElement = $(".media-box#" + id + " .media-box-inner img");
+		if (media.mediaType == "photo")
+			mediaElement = $(".media-box#" + id + " .media-box-inner img");
+		else if (media.mediaType == "video")
+			mediaElement = $(".media-box#" + id + " .media-box-inner video");
 
 		mediaWidth = media.metadata.size[0];
 		mediaHeight = media.metadata.size[1];
@@ -690,8 +694,8 @@
 		containerRatio = containerWidth / containerHeight;
 
 		if (media.mediaType == "photo") {
-			previousSrc = mediaElement.attr("src");
 			photoSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
+			previousSrc = mediaElement.attr("src");
 
 			if (encodeURI(photoSrc) != previousSrc && event.data.currentZoom === 1) {
 				// resizing had the effect that a different reduction has been choosed
@@ -709,7 +713,7 @@
 
 				$("link[rel=image_src]").remove();
 				$('link[rel="video_src"]').remove();
-				$("head").append("<link rel=\"image_src\" href=\"" + encodeURI(photoSrc) + "\" />");
+				$("head").append("<link rel='image_src' href='" + encodeURI(photoSrc) + "' />");
 				mediaElement
 					.attr("src", encodeURI(photoSrc))
 					.attr("width", attrWidth)
@@ -751,8 +755,9 @@
 		$(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
 
 		if (event.data.callback) {
-			if (event.data.callback.name !== "pinchSwipeInitialization" || id === "center")
+			if (event.data.callbackType !== "pinch" && id === "center") {
 				event.data.callback(containerHeight, containerWidth);
+			}
 		}
 	};
 

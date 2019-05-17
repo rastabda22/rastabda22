@@ -176,6 +176,7 @@
 				currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
 				zoomAfterFirstPinch = currentZoom;
 			};
+			event.data.callbackType = "pinch";
 			event.data.currentZoom = currentZoom;
 			pastMediaWidthOnScreen = $(mediaSelector)[0].width;
 			util.scaleMedia(event);
@@ -197,6 +198,7 @@
 				currentZoom = 1;
 				zoomAfterFirstPinch = currentZoom;
 			};
+			event.data.callbackType = "pinch";
 			event.data.currentZoom = currentZoom;
 			pastMediaWidthOnScreen = $(mediaSelector)[0].width;
 			util.scaleMedia(event);

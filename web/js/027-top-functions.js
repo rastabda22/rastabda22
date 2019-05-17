@@ -947,7 +947,8 @@
 					id: id,
 					media: media,
 					resize: false,
-					callback: loadNextPrevMedia
+					callback: loadNextPrevMedia,
+					callbackType: "load"
 				},
 				util.scaleMedia
 			);
@@ -967,6 +968,7 @@
 						event.data.id = "center";
 						event.data.media = media;
 						event.data.callback = f.pinchSwipeInitialization;
+						event.data.callbackType = "pinch";
 						event.data.currentZoom = pS.getCurrentZoom();
 						util.scaleMedia(event);
 
@@ -974,11 +976,13 @@
 							event.data.id = "left";
 							event.data.media = prevMedia;
 							event.data.callback = f.pinchSwipeInitialization;
+							event.data.callbackType = "pinch";
 							util.scaleMedia(event);
 
 							event.data.id = "right";
 							event.data.media = nextMedia;
 							event.data.callback = f.pinchSwipeInitialization;
+							event.data.callbackType = "pinch";
 							util.scaleMedia(event);
 						}
 					}

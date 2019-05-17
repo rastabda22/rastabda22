@@ -121,6 +121,9 @@ $(document).ready(function() {
 				tF.goFullscreen(e);
 				return false;
 			} else if (upLink) {
+				if (currentMedia.mediaType == "video")
+					// stop the video, otherwise it keeps playing
+					$("#media-center")[0].pause();
 				fromEscKey = true;
 				pS.swipeDown(upLink);
 				return false;

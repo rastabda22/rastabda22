@@ -323,7 +323,7 @@ video {
 	position: relative;
 }
 
-.media-box-inner img {
+.media-box-inner img, .media-box-inner video {
 	max-height: 100%;
 	max-width: 100%;
 	width: auto;
