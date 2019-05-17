@@ -1076,6 +1076,12 @@
 			$(".media-box#center .metadata-hide").off('click').on('click', f.toggleMetadataFromMouse);
 			$(".media-box#center .metadata").off('click').on('click', f.toggleMetadataFromMouse);
 			$(".media-box#center .fullscreen").off('click').on('click', TopFunctions.goFullscreenFromMouse);
+
+			// set social buttons events
+			if (currentMedia.mediaType == "video")
+				$("#media-center").on("loadstart", f.socialButtons);
+			else
+				$("#media-center").on("load", f.socialButtons);
 		}
 
 		$(".media-box#" + id + " .metadata tr.gps").off('click');
@@ -1281,11 +1287,6 @@
 		f.setOptions();
 		if (currentMedia !== null) {
 			// no subalbums, nothing to wait
-			// set social buttons events
-			if (currentMedia.mediaType == "video")
-				$("#media").on("loadstart", f.socialButtons);
-			else
-				$("#media").on("load", f.socialButtons);
 		} else if (
 			currentAlbum !== null && ! currentAlbum.subalbums.length ||
 			numSubAlbumsReady >= album.subalbums.length
