@@ -310,11 +310,6 @@ $(document).ready(function() {
 	util.setLinksVisibility();
 	util.setNextPrevVisibility();
 
-	$(".media-box#center .metadata-show").on('click', f.showMetadataFromMouse);
-	$(".media-box#center .metadata-hide").on('click', f.showMetadataFromMouse);
-	$(".media-box#center .metadata").on('click', f.showMetadataFromMouse);
-
-	$(".media-box#center .fullscreen").on('click', f.goFullscreenFromMouse);
 	$("#next").attr("title", util._t("#next-media-title")).attr("alt", util._t("#next-media-title"));
 	$("#prev").attr("title", util._t("#prev-media-title")).attr("alt", util._t("#prev-media-title"));
 	$("#pinch-in").attr("title", util._t("#pinch-in-title")).attr("alt", util._t("#pinch-in-title"));

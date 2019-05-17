@@ -1071,6 +1071,11 @@
 		if (id === "center") {
 			TopFunctions.bindChangeBrowsingEvents(currentAlbum);
 			f.updateMenu(currentAlbum);
+
+			$(".media-box#center .metadata-show").off('click').on('click', f.toggleMetadataFromMouse);
+			$(".media-box#center .metadata-hide").off('click').on('click', f.toggleMetadataFromMouse);
+			$(".media-box#center .metadata").off('click').on('click', f.toggleMetadataFromMouse);
+			$(".media-box#center .fullscreen").off('click').on('click', TopFunctions.goFullscreenFromMouse);
 		}
 
 		$(".media-box#" + id + " .metadata tr.gps").off('click');
@@ -2297,7 +2302,7 @@
 		}
 	};
 
-	TopFunctions.prototype.goFullscreenFromMouse = function(ev) {
+	TopFunctions.goFullscreenFromMouse = function(ev) {
 		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			TopFunctions.goFullscreen(ev);
 			return false;

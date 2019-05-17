@@ -430,13 +430,13 @@ video {
 	display: none;
 }
 
-.metadata-show {
+/* .metadata-show {
 	cursor: n-resize;
 }
 
 .metadata-hide {
 	cursor: s-resize;
-}
+} */
 
 .exit-fullscreen {
 	display: none;

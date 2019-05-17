@@ -762,7 +762,7 @@
 		$.ajax(ajaxOptions);
 	};
 
-	Functions.prototype.showMetadataFromMouse = function(ev) {
+	Functions.prototype.toggleMetadataFromMouse = function(ev) {
 		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			ev.stopPropagation();
 			Functions.toggleMetadata();
