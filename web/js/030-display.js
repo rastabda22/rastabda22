@@ -1,6 +1,9 @@
 var fullScreenStatus = false;
-var currentMedia = null;
 var currentAlbum = null;
+var currentMedia = null;
+var currentMediaIndex = -1;
+var previousAlbum = null;
+var previousMedia = null;
 var nextMedia = null, prevMedia = null, upLink = "";
 var bySearchViewLink = null, byMapViewLink = null, isABrowsingModeChange = false;
 var titleWrapper1, titleWrapper2, maxWidthForThumbnails, nextBrowsingModeSelector, prevBrowsingModeSelector;
@@ -55,9 +58,6 @@ $(document).ready(function() {
 
 	/* Globals */
 
-	var currentMediaIndex = -1;
-	var previousAlbum = null;
-	var previousMedia = null;
 	var phFl = new PhotoFloat();
 	var util = new Utilities();
 	var pS = new PinchSwipe();
