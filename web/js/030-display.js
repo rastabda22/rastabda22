@@ -104,6 +104,9 @@ $(document).ready(function() {
 			} else if ($("ul#right-menu").hasClass("expand")) {
 				toggleMenu();
 				return false;
+			} else if (currentMedia.mediaType == "video" && ! $("#media-center")[0].paused) {
+					// stop the video, otherwise it keeps playing
+					$("#media-center")[0].pause();
 			} else if (isMap) {
 				if (isPopup) {
 					// the popup is there: close it
@@ -143,6 +146,13 @@ $(document).ready(function() {
 					} else if (e.key === "ArrowRight" && nextMedia && currentMedia !== null && ! isMap) {
 						pS.swipeLeftOrDrag(nextMedia);
 						return false;
+					} else if (e.key === " " && currentMedia.mediaType == "video") {
+						if ($("#media-center")[0].paused)
+							// play the video
+							$("#media-center")[0].play();
+						else
+							// stop the video
+							$("#media-center")[0].pause();
 					} else if (
 						(e.key === "n" || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
 						nextMedia && currentMedia !== null && ! isMap
