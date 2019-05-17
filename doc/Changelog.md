@@ -1,7 +1,8 @@
-* albums can be protected with passwords, which aren't exposed neither in the album tree nor the cache
-* new options for passwords management: `passwords_marker`, `passwords_file`
+* albums and media can be protected with passwords: protected content isn't exposed in the album tree or the cache
+* new options for passwords management: `passwords_marker`, `passwords_file`: the latter is a file name where, in the album tree, the protected content is indicated
 * when showing a map album, `esc` takes back to the map and the popup
 * right menu: bug fixes and better ordering of the options
+* right menu: new entry that permits to unveil protected content
 
 ### version v3.8.2 (May 6, 2019)
 
