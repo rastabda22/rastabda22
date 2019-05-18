@@ -129,9 +129,11 @@ $(document).ready(function() {
 				if (currentMedia !== null && currentMedia.mediaType == "video")
 					// stop the video, otherwise it keeps playing
 					$("#media-center")[0].pause();
-				fromEscKey = true;
-				pS.swipeDown(upLink);
-				return false;
+				if (currentMedia !== null || currentAlbum.cacheBase !== Options.folders_string) {
+					fromEscKey = true;
+					pS.swipeDown(upLink);
+					return false;
+				}
 			}
 		} else if (! isAuth) {
 			if (! $("#search-field").is(':focus')) {
