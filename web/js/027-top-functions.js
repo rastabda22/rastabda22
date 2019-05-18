@@ -471,8 +471,8 @@
 					linkCount ++;
 					if (linkCount > linksToLeave) {
 						title =
-							"<span class='dots-surroundings'><span class='title-no-anchor dots'>...</span>" + raquo +"</span>" +
-							" <span class='hidden-title'>" + titleArray.slice(0, i).join(raquo) + "</span> " + titleArray.slice(i + 1, ).join(raquo);
+							"<span class='dots-surroundings'><span class='title-no-anchor dots'>...</span></span>" +
+							"<span class='hidden-title'>" + titleArray.slice(0, i + 1).join(raquo) + "</span>" + raquo + titleArray.slice(i + 1, ).join(raquo);
 						break;
 					}
 				}
