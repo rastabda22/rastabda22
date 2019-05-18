@@ -154,7 +154,7 @@
 						return ! PhotoFloat.isProtected(ithMedia);
 					}
 				);
-				return ithPosition.length > 0;
+				return ithPosition.mediaNameList.length > 0;
 			}
 		);
 	};
