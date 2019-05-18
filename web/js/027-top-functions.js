@@ -1836,6 +1836,7 @@
 						'click',
 						{media: ithMedia, album: currentAlbum},
 						function(ev) {
+							ev.stopPropagation();
 							TopFunctions.generateMapFromMedia(ev);
 						}
 					);
