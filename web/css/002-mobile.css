@@ -12,4 +12,15 @@
 		font-size: small;
 		z-index: 1;
 	}
+	.error, .browsing-mode-message, .sort-message, #auth-text, .search-failed, #loading {
+		margin-top: 5%;
+	}
+
+	#auth-question {
+		font-size: 1em;
+	}
+
+	ul#right-menu li#menu-icon {
+		font-size: 120%;
+	}
 }
