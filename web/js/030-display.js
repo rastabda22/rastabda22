@@ -11,6 +11,7 @@ var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
 var fromEscKey = false;
 var isMapRefresh = false;
+var typeOfPopupRefresh = "previousAlbum";
 var destHash = null;
 var destMedia = null;
 var destAlbum = null;
@@ -482,19 +483,13 @@ $(document).ready(function() {
 				isMapRefresh = true;
 
 				if (isPopup) {
-					// the popup must be generated again
-					map.updatePopup(
-						MapFunctions.titleWrapper1.replace(
-							"maxWidthForThumbnails",
-							MapFunctions.maxWidthForThumbnails
-						) +
-						map.generateHtmlForImages(MapFunctions.mapAlbum) + MapFunctions.titleWrapper2
-					);
-					$("#auth-text").hide();
-					$("#album-view, #media-view, #my-modal").css("opacity", "");
-					f.updateMenu();
-					return;
+					typeOfPopupRefresh = "mapAlbum";
+					$('.leaflet-popup-close-button')[0].click();
+				} else {
+					typeOfPopupRefresh = "None";
 				}
+				// close the map
+				$('.modal-close')[0].click();
 			}
 
 			if (destHash !== null)

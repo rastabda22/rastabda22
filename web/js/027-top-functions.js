@@ -1285,6 +1285,7 @@
 			// subalbums are present, we have to wait when all the random thumbnails will be loaded
 		}
 		fromEscKey = false;
+		isMapRefresh = false;
 
 		return;
 	};
@@ -2252,8 +2253,10 @@
 		// activate the map and the popup when coming back from a map album
 		if (
 			previousAlbum !== null &&
-			util.isMapCacheBase(previousAlbum.cacheBase) &&
-			fromEscKey
+			(
+				util.isMapCacheBase(previousAlbum.cacheBase) &&
+				fromEscKey
+			) || isMapRefresh
 			// && currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)
 		)
 			$(".map-popup-trigger").trigger("click", ["fromTrigger"]);
@@ -2513,8 +2516,12 @@
 			);
 
 			if (typeof fromTrigger !== "undefined") {
-				TopFunctions.mapClick(null, pruneCluster.Cluster._clusters, previousAlbum);
+				if (typeOfPopupRefresh == "previousAlbum")
+					TopFunctions.mapClick(null, pruneCluster.Cluster._clusters, previousAlbum);
+				else if (typeOfPopupRefresh == "mapAlbum")
+					TopFunctions.mapClick(null, pruneCluster.Cluster._clusters, MapFunctions.mapAlbum);
 			}
+			typeOfPopupRefresh = "previousAlbum";
 		}
 	};
 
@@ -2547,6 +2554,8 @@
 
 			// update the map root album in cache
 			var rootMapAlbum = phFl.getAlbumFromCache(Options.by_map_string);
+			if (! rootMapAlbum)
+				rootMapAlbum = PhotoFloat.initializeMapRootAlbum();
 			rootMapAlbum.subalbums.push(mapAlbum);
 			rootMapAlbum.positionsAndMediaInTree = util.mergePoints(rootMapAlbum.positionsAndMediaInTree, mapAlbum.positionsAndMediaInTree);
 			rootMapAlbum.numMediaInSubTree += mapAlbum.numMediaInSubTree;

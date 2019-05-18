@@ -36,6 +36,8 @@
 		rootMapAlbum.positionsAndMediaInTree = [];
 
 		PhotoFloat.putAlbumIntoCache(rootMapAlbum.cacheBase, rootMapAlbum);
+
+		return rootMapAlbum;
 	};
 
 	PhotoFloat.putAlbumIntoCache = function(cacheKey, album) {
