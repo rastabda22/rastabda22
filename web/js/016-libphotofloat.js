@@ -1171,20 +1171,39 @@
 			);
 			if (i !== -1) {
 				media = theAlbum.media[i];
+				perhapsIsAProtectedMedia = false;
 			} else {
-				$("#album-view").fadeOut(200).fadeIn(3500);
-				$("#media-view").fadeOut(200);
-				// $("#album-view").stop().fadeIn(3500);
-				$("#error-text-image").stop().fadeIn(200);
-				$("#error-text-image, #error-overlay, #auth-text").fadeOut(
-					2500,
-					function() {
-						window.location.href = "#!" + theAlbum.cacheBase;
-						// i = -1;
-						// keepOn();
-						$("#media-view").fadeIn(100);
-					}
-				);
+				$("#loading").stop().hide();
+
+				if (
+					! perhapsIsAProtectedMedia &&
+					! jQuery.isEmptyObject(theAlbum.numsProtectedMediaInSubTree) &&
+					(
+						theAlbum.subalbums.length == 0 ||
+						util.sumUpNumsProtectedMedia(theAlbum.numsProtectedMediaInSubTree) > util.sumUpNumsProtectedMedia(util.sumNumsProtectedMediaOfArray(theAlbum.subalbums))
+					)
+				) {
+					// the media not found could be a protected one, show the authentication dialog
+					perhapsIsAProtectedMedia = true;
+					util.showAuthForm();
+				} else {
+					// surely the media doesn't exist
+
+					perhapsIsAProtectedMedia = false;
+					$("#album-view").fadeOut(200).fadeIn(3500);
+					$("#media-view").fadeOut(200);
+					// $("#album-view").stop().fadeIn(3500);
+					$("#error-text-image").stop().fadeIn(200);
+					$("#error-text-image, #error-overlay, #auth-text").fadeOut(
+						2500,
+						function() {
+							window.location.href = "#!" + theAlbum.cacheBase;
+							// i = -1;
+							// keepOn();
+							$("#media-view").fadeIn(100);
+						}
+					);
+				}
 				return;
 			}
 		}

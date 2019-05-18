@@ -1614,6 +1614,9 @@
 
 
 	TopFunctions.goUpIfProtected = function(album, media) {
+		if (album === null) {
+			window.location.href = "#!" + Options.folders_string;
+		}
 		var ancestorCacheBase = album.ancestorsCacheBase[album.ancestorsCacheBase.length - 2];
 		if (media !== null && phFl.isProtected(media))
 			TopFunctions.goUpIfProtected(album, null);
