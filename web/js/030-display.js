@@ -423,76 +423,48 @@ $(document).ready(function() {
 	$("#menu-icon").on("click", f.toggleMenu);
 
 	$("#auth-form").submit(function() {
-		function success() {
-			password.css("background-color", "rgb(200, 200, 200)");
-			if (! PhotoFloat.guessedPasswords.includes(encrypted_password))
-				PhotoFloat.guessedPasswords.push(encrypted_password);
-
-			if (
-				currentAlbum !== null && (
-					util.isSearchCacheBase(currentAlbum.cacheBase) ||
-					currentMedia === null
-				)
-			)
-				// the search album must be removed from cache,
-				// otherwise the new album won't be generated and the protected content won't be searched
-				phFl.removeAlbumFromCache(currentAlbum.cacheBase);
-
-			phFl.removeAllProtectedAlbumsFromCache();
-
-			var isPopup = $('.leaflet-popup').html() ? true : false;
-			var isMap = $('#mapdiv').html() ? true : false;
-
-			if (isMap) {
-				// the map must be generated again including the points that only carry protected content
-				isMapRefresh = true;
-
-				if (isPopup) {
-					typeOfPopupRefresh = "mapAlbum";
-					$('.leaflet-popup-close-button')[0].click();
-				} else {
-					typeOfPopupRefresh = "None";
-				}
-				// close the map
-				$('.modal-close')[0].click();
-			}
-
-			if (destHash !== null)
-				// destHash is set when clicking on a protected media or album
-				window.location.href = destHash;
-			else
-				// if destHash is null, then a protected url has been requeste directly
-				$(window).hashchange();
-		}
-
-		function failure() {
-			password.css("background-color", "rgb(255, 64, 64)");
-		}
+		// This function doesn't actually check the password, because protected content isn't loaded until a valid password is in PhotoFloat.guessedPasswords array
+		// the user supplied password is inserted into PhotoFloat.guessedPasswords, and at the hash change the content unveiled by that password will be shown
+		// So PhotoFloat.guessedPasswords will be filled with whatever password the user writes, either matching or not something.
 
 		var password = $("#password");
-		var passwordList = null;
-		password.css("background-color", "rgb(128, 128, 200)");
 		var encrypted_password = md5(password.val());
-		if (destMedia !== null)
-			passwordList = destMedia.passwords;
-		else if (destAlbum !== null && destAlbum.hasOwnProperty("passwords"))
-			passwordList = destAlbum.passwords;
-		destMedia = null;
-		destAlbum = null;
+		password.val("");
+
+		if (! PhotoFloat.guessedPasswords.includes(encrypted_password))
+			PhotoFloat.guessedPasswords.push(encrypted_password);
 
 		if (
-			passwordList === null ||
-			passwordList.length == 0 ||
-			passwordList.some(
-				function(enc_password) {
-					return enc_password == encrypted_password;
-				}
+			currentAlbum !== null && (
+				util.isSearchCacheBase(currentAlbum.cacheBase) ||
+				currentMedia === null
 			)
 		)
-			success();
-		else
-			failure();
-		password.val("");
+			// the search album must be removed from cache,
+			// otherwise the new album won't be generated and the protected content won't be searched
+			phFl.removeAlbumFromCache(currentAlbum.cacheBase);
+
+		phFl.removeAllProtectedAlbumsFromCache();
+
+		var isPopup = $('.leaflet-popup').html() ? true : false;
+		var isMap = $('#mapdiv').html() ? true : false;
+
+		if (isMap) {
+			// the map must be generated again including the points that only carry protected content
+			isMapRefresh = true;
+
+			if (isPopup) {
+				typeOfPopupRefresh = "mapAlbum";
+				$('.leaflet-popup-close-button')[0].click();
+			} else {
+				typeOfPopupRefresh = "None";
+			}
+			// close the map
+			$('.modal-close')[0].click();
+		}
+
+		$(window).hashchange();
+
 		return false;
 	});
 
