@@ -284,11 +284,11 @@ class Album(object):
 		message("saving album...", self.absolute_path, 5)
 		with open(json_file_with_path, 'w') as filepath:
 			json.dump(self, filepath, cls=PhotoAlbumEncoder)
-		indented_message("album saved", "", 3)
+		indented_message("album saved", "", 4)
 		message("saving positions album...", "", 5)
 		with open(json_positions_file_with_path, 'w') as filepath:
 				json.dump(self.positions_and_media_in_tree, filepath, cls=PhotoAlbumEncoder)
-		indented_message("positions album saved", "", 3)
+		indented_message("positions album saved", "", 4)
 
 	@staticmethod
 	def from_cache(path, album_cache_base):

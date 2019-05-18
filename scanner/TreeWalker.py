@@ -1528,7 +1528,7 @@ class TreeWalker:
 					else:
 						cache_list = self.all_json_files
 					if cache_file not in cache_list:
-						message("removing stale cache file...", cache_file, 3)
+						message("removing stale cache file...", cache_file, 4)
 						file_to_delete = os.path.join(Options.config['cache_path'], subdir, cache_file)
 						os.unlink(file_to_delete)
 						indented_message("stale cache file removed", "", 5)
