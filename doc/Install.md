@@ -91,28 +91,14 @@ However, the "Debian's way" could be better:
 * Create a `cache` directory and make sure the scanner has write access to that directory.
 
 
-Important: If you want to run the full featured MyPhotoShare, configure your web server to use `index.php` instead of `index.html` as index page. The brutal way is to delete `index.html` file.
-
-
-## Apache server configuration
-
-After making the following changes please restart Apache to take into account them.
-
-```bash
-$ service apache2 restart
-```
-
-
-### Configure to use `index.php`
-
-In order to use the `index.php` file you can change the directive `DirectoryIndex` in the server configuration files, placing `index.php` before `index.html`, like for the global server directive below:
+Important: If you want to run the full featured MyPhotoShare, configure your web server to use `index.php` instead of `index.html` as index page. The brutal way is to delete `index.html` file. If you use Apache, you can change the directive `DirectoryIndex` in the server configuration files, placing `index.php` before `index.html`, like for the global server directive below:
 ```
 DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm
 ```
 It's recommended to have this directive only in the directory of MyPhotoShare gallery, not to break other web applications on the server.
 
-### Configure the web site
 
+## Apache server configuration
  Edit you domain configuration file in `/etc/apache2/sites-available/`, or use `/etc/apache2/sites-available/000-default.conf`:
 
 ```bash
@@ -129,10 +115,10 @@ $ sudo vi /etc/apache2/sites-available/000-default.conf
     <Directory /my/path/myphotoshare>
         Options FollowSymLinks
         Options -Indexes
-        AllowOverride All
-        Order allow,deny
-        allow from all
-    </Directory>
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        </Directory>
 </VirtualHost>
 ```
 
@@ -148,6 +134,11 @@ $ sudo a2enmod deflate
  * Add support for Header directive to manage the browser cache correctly with Mod_header.
 ```bash
 $ sudo a2enmod headers
+```
+
+ * Restart Apache to take into account the changes.
+```bash
+$ service apache2 restart
 ```
 
 
