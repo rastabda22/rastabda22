@@ -30,7 +30,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 * [Gallery of MyPhotoShare screenshots](doc/Gallery.md)
 * [Geotagging](doc/GPS.md)
 * [Tweaking metadata with `album.ini`](doc/Metadata.md)
-* [Make some albums private](doc/Authentication.md)
+* [Make some content private](doc/Authentication.md)
 * [Versions changelog](doc/Changelog.md)
 * [Known issues](doc/Issues.md)
 * [License](License.md)
