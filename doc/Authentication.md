@@ -7,10 +7,12 @@ Albums and media can be protected by password. Various passwords can be used for
 The passwords cannot be in the album tree: the album tree will have _password_ files (the actual name is set by the option `passwords_marker`), whose lines may be:
 
 * a _password identifier_: the album and all its subalbums will be protected by the password assigned to the identifier;
-* a _password identifier_ followed by a relative path (possibly with wildcards): the media matched by the path will be protected by the password assigned to the identifier;
+* a _password identifier_ followed by the _case sensitive/insensitive flag_ and a pattern (shell wildcards are understood): the subalbums/media matched by the pattern will be protected by the password assigned to the identifier;
 * a `-` (_minus sign_): it will stop the passwords from the parent albums propagate into it.
 
 The _password identifier_ is used to pick the password from a _passwords file_ whose name is set by option `password_file`. The _password file_ is needed because putting the passwords inside the albums would expose them.
+
+The _case sensitive/insensitive flag_ is either `cs` or `ci`.
 
 The _passwords file_ has many lines, each one has with a _password identifier_ and the corresponding password separated by a _space_.
 

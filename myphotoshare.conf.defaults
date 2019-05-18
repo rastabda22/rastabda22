@@ -131,7 +131,13 @@ jpeg_quality = 95
 exclude_files_marker = .myphotoshare.exclude.files
 exclude_tree_marker = .myphotoshare.exclude.tree
 
-# marker for passwords
+# marker for passwords: put it in the album you want to protect
+# every line is either:
+# - a password identifier: the album and all its subalbums will be protected by the password assigned to the identifier;
+# - a password identifier followed by the case sensitive/insensitive flag and a pattern (possibly with wildcards):
+#   the subalbums/media matched by the patter will be protected by the password assigned to the identifier
+# -  a "-" (minus sign): it will stop the passwords from the parent albums propagate into it.
+# The case sensitive/insensitive flag is either "cs" or "ci".
 passwords_marker = .myphotoshare.passwords
 
 # password file, relative to the directory of the configuration file

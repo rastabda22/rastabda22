@@ -787,6 +787,7 @@ class TreeWalker:
 									passwords.append(
 										{
 											"selector": '*',
+											"case_flag": 'ci',
 											'encrypted_password': crypt_password
 										}
 									)
@@ -794,20 +795,28 @@ class TreeWalker:
 								else:
 									indented_message("WARNING: password identifier used more than once", identifier + ": not protecting the directory", 2)
 						else:
-							# a file name or a relative path (possibly with file name) followed by a password identifier
+							# a password identifier followed by the case flag and a file pattern
 							identifier = columns[0]
+							case_flag = columns[1]
 							indexes = [value['crypt_password'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
-							selector = ' '.join(columns[1:])
+							selector = ' '.join(columns[2:])
 							if len(indexes) == 1:
 								crypt_password = indexes[0]
 								# absolute_file_name = os.path.join(absolute_path, file_name)
+								if case_flag == 'cs':
+									indented_message("file(s) protection requested", "identifier: '" + identifier + "', selector: '" + selector + "', case sensitive", 3)
+								elif case_flag == 'ci':
+									indented_message("file(s) protection requested", "identifier: '" + identifier + "', selector: '" + selector + "', case insensitive", 3)
+								else:
+									indented_message("file(s) protection requested", "identifier: '" + identifier + "', selector: '" + selector + "', case sensitive flag wrong, assuming case insensitive", 3)
+									case_flag = 'ci'
 								passwords.append(
 									{
 										"selector": selector,
+										"case_flag": case_flag,
 										'encrypted_password': crypt_password
 									}
 								)
-								indented_message("file(s) protection requested", "selector: '" + selector + "', identifier: '" + identifier + "'", 3)
 							else:
 								indented_message("WARNING: password identifier used more than once", identifier + ": not protecting the directory", 2)
 			back_level()
@@ -906,12 +915,19 @@ class TreeWalker:
 		album.passwords = []
 		dir_name = os.path.basename(absolute_path)
 		for password in passwords:
-			if fnmatch.fnmatch(dir_name, password['selector']):
+			if password['case_flag'] == 'cs':
+				match = fnmatch.fnmatchcase(dir_name, password['selector'])
+				case = "case sentitive"
+			else:
+				match = re.match(fnmatch.translate(password['selector']), dir_name, re.IGNORECASE)
+				case = "case insentitive"
+
+			if match:
 				if password['encrypted_password'] in album.passwords:
-					indented_message("album password not added, it's already there", "'" + dir_name + "' matches '" + password['selector'] + "'", 3)
+					indented_message("album password matches pattern, but not added, already there", "'" + dir_name + "' matches '" + password['selector'] + "' " + case, 3)
 				else:
 					album.passwords.append(password['encrypted_password'])
-					indented_message("album password set", "'" + dir_name + "' matches '" + password['selector']+ "': " + password['encrypted_password'], 3)
+					indented_message("album password set", "'" + dir_name + "' matches '" + password['selector'] + "' " + case + ": " + password['encrypted_password'], 3)
 
 		#~ for entry in sorted(os.listdir(absolute_path)):
 		message("reading directory", absolute_path, 5)
@@ -1126,12 +1142,19 @@ class TreeWalker:
 
 				# apply the file passwords to the media if they match the media name
 				for password in passwords:
-					if fnmatch.fnmatch(file_name, password['selector']):
+					if password['case_flag'] == 'cs':
+						match = fnmatch.fnmatchcase(file_name, password['selector'])
+						case = "case sentitive"
+					else:
+						match = re.match(fnmatch.translate(password['selector']), file_name, re.IGNORECASE)
+						case = "case insentitive"
+
+					if match:
 						if password['encrypted_password'] in media.passwords:
-							indented_message("media password not added, it's already there", "'" + file_name + "' matches '" + password['selector'] + "'", 3)
+							indented_message("media password not added, it's already there", "'" + file_name + "' matches '" + password['selector'] + "' " + case, 3)
 						else:
 							media.passwords.append(password['encrypted_password'])
-							indented_message("media password set", "'" + file_name + "' matches '" + password['selector'] + "': " + password['encrypted_password'], 3)
+							indented_message("media password set", "'" + file_name + "' matches '" + password['selector'] + "' " + case + ": " + password['encrypted_password'], 3)
 
 				# update the protected media count according to the passwords
 				if len(media.passwords):

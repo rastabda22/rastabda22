@@ -221,6 +221,11 @@ $(document).ready(function() {
 					) {
 						$(".map-popup-trigger")[0].click();
 						return false;
+					} else if (
+						e.key === "u"
+					) {
+						$("#protected-content-unveil")[0].click();
+						return false;
 					}
 				}
 
