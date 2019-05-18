@@ -222,7 +222,9 @@ $(document).ready(function() {
 						$(".map-popup-trigger")[0].click();
 						return false;
 					} else if (
-						e.key === "u"
+						e.key === "u" &&
+						currentAlbum !== null &&
+						! jQuery.isEmptyObject(currentAlbum.numsProtectedMediaInSubTree)
 					) {
 						$("#protected-content-unveil")[0].click();
 						return false;
