@@ -407,53 +407,6 @@ $(document).ready(function() {
 
 	$("li#protected-content-unveil").on('click', util.showAuthForm);
 
-	// $("li#protected-content-hide").on(
-	// 	'click',
-	// 	function() {
-	// 		var isPopup = $('.leaflet-popup').html() ? true : false;
-	// 		var isMap = $('#mapdiv').html() ? true : false;
-	// 		PhotoFloat.guessedPasswords = [];
-	//
-	// 		if(isMap) {
-	// 			// TO DO: the points which only have protected media must be removed from the map
-	//
-	//
-	// 			if (isPopup) {
-	// 				// the protected photos must be removed from the popup
-	// 				map.removeProtectedContentFromMapAlbum();
-	// 				map.updatePopup(
-	// 					MapFunctions.titleWrapper1.replace(
-	// 						"maxWidthForThumbnails",
-	// 						MapFunctions.maxWidthForThumbnails
-	// 					) +
-	// 					map.generateHtmlForImages(MapFunctions.mapAlbum) + MapFunctions.titleWrapper2
-	// 				);
-	// 			}
-	// 		}
-	//
-	// 		if (
-	// 			util.isSearchCacheBase(currentAlbum.cacheBase) ||
-	// 			currentMedia === null
-	// 		)
-	// 			phFl.removeAlbumFromCache(currentAlbum.cacheBase);
-	//
-	// 		if (
-	// 			upLink &&
-	// 			(
-	// 				(currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)) && phFl.isProtected(currentMedia) ||
-	// 				currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum) && phFl.isProtected(currentAlbum)
-	// 			)
-	// 		) {
-	// 			pS.swipeDown(upLink);
-	// 			$("#subalbums, #thumbs").empty();
-	// 			if (location.hash !== upLink)
-	// 				return;
-	// 		}
-	//
-	// 		$(window).hashchange();
-	// 	}
-	// );
-
 	// binds the click events to the sort buttons
 
 	$("ul#right-menu li.hide-title").on('click', tF.toggleTitle);
