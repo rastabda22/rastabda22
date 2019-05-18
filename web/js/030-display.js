@@ -475,8 +475,10 @@ $(document).ready(function() {
 				PhotoFloat.guessedPasswords.push(encrypted_password);
 
 			if (
-				util.isSearchCacheBase(currentAlbum.cacheBase) ||
-				currentMedia === null
+				currentAlbum !== null && (
+					util.isSearchCacheBase(currentAlbum.cacheBase) ||
+					currentMedia === null
+				)
 			)
 				// the search album must be removed from cache,
 				// otherwise the new album won't be generated and the protected content won't be searched
