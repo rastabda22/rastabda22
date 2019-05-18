@@ -354,7 +354,7 @@
 		<form id="auth-form">
 			<div id="auth-question"></div>
 			<input id="password" type="password" />
-			<input type="submit" value="⏎" />
+			<input type="submit" value="⏎" class="button"/>
 		</form>
 	</div>
 
