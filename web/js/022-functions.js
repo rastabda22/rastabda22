@@ -397,6 +397,11 @@
 				}
 			}
 		}
+
+		if (thisAlbum !== null && ! jQuery.isEmptyObject(thisAlbum.numsProtectedMediaInSubTree))
+			$(".protection").show();
+		else
+			$(".protection").hide();
 	};
 
 	Functions.prototype.scrollToThumb = function() {
