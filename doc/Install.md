@@ -91,14 +91,20 @@ However, the "Debian's way" could be better:
 * Create a `cache` directory and make sure the scanner has write access to that directory.
 
 
-Important: If you want to run the full featured MyPhotoShare, configure your web server to use `index.php` instead of `index.html` as index page. The brutal way is to delete `index.html` file. If you use Apache, you can change the directive `DirectoryIndex` in the server configuration files, placing `index.php` before `index.html`, like for the global server directive below:
+Important: If you want to run the full featured MyPhotoShare, configure your web server to use `index.php` instead of `index.html` as index page. The brutal way is to delete `index.html` file.
+
+
+## Apache server configuration
+
+### Configure to use `index.php`
+
+In order to use the `index.php` file you can change the directive `DirectoryIndex` in the server configuration files, placing `index.php` before `index.html`, like for the global server directive below:
 ```
 DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm
 ```
 It's recommended to have this directive only in the directory of MyPhotoShare gallery, not to break other web applications on the server.
 
-
-## Apache server configuration
+### Configure with `.htaccess`
 
 A default `.htaccess` file is provided in the `web` directory that can be used by Apache. If you're using a shared hosting, your Apache server is probably already configured to use `.htaccess` by default. But if that's not the case, you have to configure the web server yourself. The following instructions have been done on a Ubuntu 16.04 server:
 
@@ -112,13 +118,17 @@ $ sudo vi /etc/apache2/sites-available/000-default.conf
 	...
 
         <Directory /var/www/html/myphotoshare>
-                Options Indexes FollowSymLinks
+                Options FollowSymLinks
+                Options -Indexes
                 AllowOverride All
                 Order allow,deny
                 allow from all
         </Directory>
 </VirtualHost>
 ```
+
+The `Option -Indexes` line is important for security reasons, in order not to permit directory listings.
+
 
  * Compression of files must be enabled with Mod_deflate.
 ```bash
@@ -146,7 +156,7 @@ Go to the folder you cloned the repository in and execute:
     $ ./bin/js-css-minify.sh
 ```
 
-Obviously the scanner should be launched too.
+Obviously the scanner should be launched too; next section explains how you can do it.
 
 
 ## Run the scanner to generate the albums
