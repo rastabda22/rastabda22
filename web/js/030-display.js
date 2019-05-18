@@ -10,6 +10,7 @@ var titleWrapper1, titleWrapper2, maxWidthForThumbnails, nextBrowsingModeSelecto
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
 var fromEscKey = false;
+var isMapRefresh = false;
 var destHash = null;
 var destMedia = null;
 var destAlbum = null;
@@ -104,7 +105,7 @@ $(document).ready(function() {
 			} else if ($("ul#right-menu").hasClass("expand")) {
 				toggleMenu();
 				return false;
-			} else if (currentMedia.mediaType == "video" && ! $("#media-center")[0].paused) {
+			} else if (currentMedia !== null && currentMedia.mediaType == "video" && ! $("#media-center")[0].paused) {
 					// stop the video, otherwise it keeps playing
 					$("#media-center")[0].pause();
 			} else if (isMap) {
@@ -124,7 +125,7 @@ $(document).ready(function() {
 				tF.goFullscreen(e);
 				return false;
 			} else if (upLink) {
-				if (currentMedia.mediaType == "video")
+				if (currentMedia !== null && currentMedia.mediaType == "video")
 					// stop the video, otherwise it keeps playing
 					$("#media-center")[0].pause();
 				fromEscKey = true;
@@ -146,7 +147,7 @@ $(document).ready(function() {
 					} else if (e.key === "ArrowRight" && nextMedia && currentMedia !== null && ! isMap) {
 						pS.swipeLeftOrDrag(nextMedia);
 						return false;
-					} else if (e.key === " " && currentMedia.mediaType == "video") {
+					} else if (e.key === " " && currentMedia !== null && currentMedia.mediaType == "video") {
 						if ($("#media-center")[0].paused)
 							// play the video
 							$("#media-center")[0].play();
@@ -476,19 +477,24 @@ $(document).ready(function() {
 			var isPopup = $('.leaflet-popup').html() ? true : false;
 			var isMap = $('#mapdiv').html() ? true : false;
 
-			if (isPopup) {
-				// the popup must be generated again
-				map.updatePopup(
-					MapFunctions.titleWrapper1.replace(
-						"maxWidthForThumbnails",
-						MapFunctions.maxWidthForThumbnails
-					) +
-					map.generateHtmlForImages(MapFunctions.mapAlbum) + MapFunctions.titleWrapper2
-				);
-				$("#auth-text").hide();
-				$("#album-view, #media-view, #my-modal").css("opacity", "");
-				f.updateMenu();
-				return;
+			if (isMap) {
+				// the map must be generated again including the points that only carry protected content
+				isMapRefresh = true;
+
+				if (isPopup) {
+					// the popup must be generated again
+					map.updatePopup(
+						MapFunctions.titleWrapper1.replace(
+							"maxWidthForThumbnails",
+							MapFunctions.maxWidthForThumbnails
+						) +
+						map.generateHtmlForImages(MapFunctions.mapAlbum) + MapFunctions.titleWrapper2
+					);
+					$("#auth-text").hide();
+					$("#album-view, #media-view, #my-modal").css("opacity", "");
+					f.updateMenu();
+					return;
+				}
 			}
 
 			if (destHash !== null)
