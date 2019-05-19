@@ -6,6 +6,7 @@
 * when showing a map album, `esc` takes back to the map and the popup
 * right menu: bug fixes and better ordering of the options
 * right menu: new entry that permits to unveil protected content
+* right menu is now of accordion type in order to be always visible on mobile screens
 
 ### version v3.8.2 (May 6, 2019)
 
