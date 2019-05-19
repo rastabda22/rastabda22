@@ -871,13 +871,19 @@
 			$("#next, #prev").css("display", "inline").css("opacity", 0.5);
 		} else {
 			$("#next, #prev").off('mouseenter mouseleave');
-			$("#next, #prev").on('mouseenter', function() {
-				$(this).stop().fadeTo("fast", 1);
-			});
+			$("#next, #prev").on(
+				'mouseenter',
+				function() {
+					$(this).stop().fadeTo("fast", 1);
+				}
+			);
 
-			$("#next, #prev").on('mouseleave', function() {
-				$(this).stop().fadeTo("fast", 0.4);
-			});
+			$("#next, #prev").on(
+				'mouseleave',
+				function() {
+					$(this).stop().fadeTo("fast", 0.4);
+				}
+			);
 		}
 	};
 

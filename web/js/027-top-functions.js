@@ -486,13 +486,16 @@
 
 
 		if (isMobile.any()) {
-			$(".dots").off('click').on('click', function(ev) {
-				if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-					$(".dots-surroundings").hide();
-					$(".hidden-title").show();
-					return false;
+			$(".dots").off('click').on(
+				'click',
+				function(ev) {
+					if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+						$(".dots-surroundings").hide();
+						$(".hidden-title").show();
+						return false;
+					}
 				}
-			});
+			);
 		}
 
 		if (setDocumentTitle) {
@@ -562,10 +565,12 @@
 			}
 		);
 
-		$('.modal-close').click(function(){
-			$("#my-modal.modal").css("display", "none");
-			$('#mapdiv').empty();
-		});
+		$('.modal-close').click(
+			function() {
+				$("#my-modal.modal").css("display", "none");
+				$('#mapdiv').empty();
+			}
+		);
 
 		return;
 	};
@@ -750,10 +755,8 @@
 	TopFunctions.showMedia = function(album, media, id) {
 
 		function loadNextPrevMedia(containerHeight, containerWidth) {
-			$("#pinch-in").off("click");
-			$("#pinch-out").off("click");
-			$("#pinch-in").on("click", pS.pinchIn);
-			$("#pinch-out").on("click", pS.pinchOut);
+			$("#pinch-in").off("click").on("click", pS.pinchIn);
+			$("#pinch-out").off("click").on("click", pS.pinchOut);
 
 			$(mediaSelector).off(triggerLoad);
 
@@ -1017,11 +1020,17 @@
 						}
 					)
 					.on('mousewheel', pS.swipeOnWheel);
-					$(".media-box#center .media-box-inner .media-bar").on('click', function(ev) {
-						ev.stopPropagation();
-					}).on('contextmenu', function(ev) {
-						ev.stopPropagation();
-					});
+					$(".media-box#center .media-box-inner .media-bar").on(
+						'click',
+						function(ev) {
+							ev.stopPropagation();
+						}
+					).on(
+						'contextmenu',
+						function(ev) {
+							ev.stopPropagation();
+						}
+					);
 
 					$("#prev").on('click', function(ev) {
 						if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
@@ -1044,9 +1053,12 @@
 		$(".media-box#" + id + " .original-link").attr("target", "_blank").attr("href", originalMediaPath);
 		$(".media-box#" + id + " .download-link").attr("href", originalMediaPath).attr("download", "");
 		if (util.hasGpsData(media)) {
-			$(".media-box#" + id + " .menu-map-link").on('click', function(ev) {
-				$(".map-popup-trigger")[0].click();
-			});
+			$(".media-box#" + id + " .menu-map-link").on(
+				'click',
+				function(ev) {
+					$(".map-popup-trigger")[0].click();
+				}
+			);
 			$(".media-box#" + id + " .menu-map-link").show();
 			$(".media-box#" + id + " .menu-map-divider").show();
 		} else {
@@ -1129,9 +1141,12 @@
 		text += "</table>";
 		$(".media-box#" + id + " .metadata").html(text);
 		var linkTitle = util._t('#show-map');
-		$(".media-box#" + id + " .metadata tr.gps").attr("title", linkTitle).on('click', function(ev) {
-			$(".map-popup-trigger")[0].click();
-		});
+		$(".media-box#" + id + " .metadata tr.gps").attr("title", linkTitle).on(
+			'click',
+			function(ev) {
+				$(".map-popup-trigger")[0].click();
+			}
+		);
 
 		util.translate();
 
