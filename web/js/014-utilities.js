@@ -307,8 +307,8 @@
 		if (typeof selector === "undefined")
 			selector = '#no-results';
 		$(".search-failed").hide();
-		$(selector).stop().fadeIn(2000);
-		$(selector).fadeOut(4000);
+		$(selector).stop().fadeIn(1000);
+		// $(selector).fadeOut(4000);
 	};
 
 	Utilities.prototype.stripHtmlAndReplaceEntities = function(htmlString) {
