@@ -762,7 +762,7 @@
 	};
 
 	Utilities.prototype.sumUpNumsProtectedMedia = function(numsProtectedMediaInSubTree) {
-		var sum = 0;
+		var sum = 0, password;
 		for (password in numsProtectedMediaInSubTree) {
 			if (numsProtectedMediaInSubTree.hasOwnProperty(password)) {
 				sum += numsProtectedMediaInSubTree[password];
