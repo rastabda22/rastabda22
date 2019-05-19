@@ -588,12 +588,10 @@ video {
 	cursor: default;
 }
 
-.sort {
+/* .sort {
 	display: none;
-/*
 	white-space: nowrap;
-*/
-}
+} */
 
 #social, #social:hover {
 	opacity: 0.45;
@@ -614,6 +612,7 @@ video {
 
 ul#right-menu {
 	list-style-type: none;
+	list-style: none;
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
@@ -629,6 +628,9 @@ ul#right-menu li {
 	padding: 0 .5em;
 	cursor: pointer;
 	font-size: 90%;
+}
+ul#right-menu #search-field {
+	min-width: 14em;
 }
 
 ul#right-menu li.caption, ul#right-menu li:not(.active) {
@@ -657,12 +659,16 @@ ul#right-menu li#menu-icon, ul#right-menu.expand li {
 
 ul#right-menu {
 	opacity: 0.6;
+	min-width: 15em;
 }
 
 ul#right-menu.expand li {
 	display: list-item;
 	text-align: left;
 	font-style: italic;
+	cursor: pointer;
+	/* position: relative;
+	width: 13em; */
 }
 
 ul#right-menu.expand li#menu-icon {
@@ -722,20 +728,31 @@ ul#right-menu.expand li.dimmed {
 	opacity: 0.2;
 }
 
-ul#right-menu li:not(.active) {
+ul#right-menu.expand li:not(.active, .sub-menu) {
 	color: darkgray;
 }
-ul#right-menu li.active:not(.caption):hover {
+
+ul#right-menu.expand li.active:hover {
 	background-color: gray !important;
 	/* text-shadow: .15ex 0 white; */
-	font-weight: bold;
-	font-size: 80%;
+	/* font-weight: bold;
+	font-size: 80%; */
 }
 
-ul#right-menu li:not(.caption) {
-	padding-left: 1.7em;
-	padding-right: 2em;
+ul#right-menu.expand li:not(.caption) {
+	/* padding-left: 1.7em; */
+	/* padding-right: 2em; */
 }
+
+ul#right-menu.expand ul {
+	list-style: none;
+	padding-inline-start: 1em;
+}
+
+ul#right-menu .expandable ul {
+	display: none;
+}
+
 /* end right menu */
 
 /* from https://www.w3schools.com/css/tryit.asp?filename=trycss_buttons_animate3 */

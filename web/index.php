@@ -285,45 +285,65 @@
 				<input type="text" id="search-field" />
 				<img id="search-button" src="img/ic_search_black_48dp_2x.png" />
 			</form>
+			<ul>
+				<li id="inside-words" class="search active"></li>
+				<li id="any-word" class="search active"></li>
+				<li id="case-sensitive" class="search active"></li>
+				<li id="accent-sensitive" class="search active"></li>
+				<li id="album-search" class="search active"></li>
+			</ul>
 		</li>
-		<li id="inside-words" class="search active"></li>
-		<li id="any-word" class="search active"></li>
-		<li id="case-sensitive" class="search active"></li>
-		<li id="accent-sensitive" class="search active"></li>
-		<li id="album-search" class="search active"></li>
 
-		<li class="browsing-mode-switcher caption"></li>
-		<li id="folders-view" class="browsing-mode-switcher"></li>
-		<li id="by-date-view" class="browsing-mode-switcher"></li>
-		<li id="by-gps-view" class="browsing-mode-switcher"></li>
-		<li id="by-map-view" class="browsing-mode-switcher"></li>
-		<li id="by-search-view" class="browsing-mode-switcher"></li>
+		<li class="expandable browsing-mode-switcher active">
+			<a class="browsing-mode-switcher caption"></a>
+			<ul class="sub-menu">
+				<li id="folders-view" class="browsing-mode-switcher"></li>
+				<li id="by-date-view" class="browsing-mode-switcher"></li>
+				<li id="by-gps-view" class="browsing-mode-switcher"></li>
+				<li id="by-map-view" class="browsing-mode-switcher"></li>
+				<li id="by-search-view" class="browsing-mode-switcher"></li>
+			</ul>
+		</li>
 
-		<li class="sort album-sort caption"></li>
-		<li class='sort album-sort by-date'></li>
-		<li class='sort album-sort by-name'></li>
-		<li class='sort album-sort reverse active'></li>
+		<li class="expandable sort album-sort active">
+			<span class="sort album-sort caption"></span>
+			<ul class="sub-menu">
+				<li class='sort album-sort by-date'></li>
+				<li class='sort album-sort by-name'></li>
+				<li class='sort album-sort reverse active'></li>
+			</ul>
+		</li>
 
-		<li class="sort media-sort caption"></li>
-		<li class='sort media-sort by-date'></li>
-		<li class='sort media-sort by-name'></li>
-		<li class='sort media-sort reverse active'></li>
+		<li class="expandable sort media-sort active">
+			<span class="sort media-sort caption"></span>
+			<ul class="sub-menu">
+				<li class='sort media-sort by-date'></li>
+				<li class='sort media-sort by-name'></li>
+				<li class='sort media-sort reverse active'></li>
+			</ul>
+		</li>
 
-		<li class='ui caption'></li>
-		<li class='ui hide-title active'></li>
-		<li class='ui media-count active'></li>
-		<li class='ui spaced active'></li>
-		<li class='ui square-album-thumbnails active'></li>
-		<li class='ui slide active'></li>
-		<li class='ui album-names active'></li>
-		<li class='ui square-media-thumbnails active'></li>
-		<li class='ui media-names active'></li>
-		<li class='ui hide-bottom-thumbnails active'></li>
-		<li class='ui show-big-albums active'></li>
+		<li class='expandable ui active'>
+			<span class='ui caption'></span>
+			<ul class="sub-menu">
+				<li class='ui hide-title active'></li>
+				<li class='ui media-count active'></li>
+				<li class='ui spaced active'></li>
+				<li class='ui square-album-thumbnails active'></li>
+				<li class='ui slide active'></li>
+				<li class='ui album-names active'></li>
+				<li class='ui square-media-thumbnails active'></li>
+				<li class='ui media-names active'></li>
+				<li class='ui hide-bottom-thumbnails active'></li>
+				<li class='ui show-big-albums active'></li>
+			</ul>
+		</li>
 
-		<li class='protection caption'></li>
-		<li id="protected-content-unveil" class="protection active"></li>
+		<li class='protection active'>
+			<span id="protected-content-unveil" class='protection caption'></span>
+		</li>
 	</ul>
+
 
 	<div id="loading"></div>
 

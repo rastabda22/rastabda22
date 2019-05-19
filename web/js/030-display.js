@@ -81,8 +81,7 @@ $(document).ready(function() {
 
 	/* Displays */
 
-	$("#menu-icon").off();
-	$("#menu-icon").on("click", f.toggleMenu);
+	$("#menu-icon").off().on("click", f.toggleMenu);
 
 	/* Event listeners */
 
@@ -405,7 +404,7 @@ $(document).ready(function() {
 	$("li#accent-sensitive").on('click', f.toggleAccentSensitiveSearch);
 	$("li#album-search").on('click', f.toggleCurrentAbumSearch);
 
-	$("li#protected-content-unveil").on('click', util.showAuthForm);
+	$("#protected-content-unveil").on('click', util.showAuthForm);
 
 	// binds the click events to the sort buttons
 

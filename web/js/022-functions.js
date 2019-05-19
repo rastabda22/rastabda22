@@ -402,6 +402,16 @@
 			$(".protection").show();
 		else
 			$(".protection").hide();
+
+		// accordion effect on right menu
+		$("#right-menu li.expandable").off('click').on(
+			'click',
+			function() {
+				if (false == $("ul",this).is(':visible'))
+					$('#right-menu ul').slideUp(300);
+				$("ul",this).slideToggle(300);
+			}
+		);
 	};
 
 	Functions.prototype.scrollToThumb = function() {
@@ -776,10 +786,12 @@
 	};
 
 	Functions.focusSearchField = function() {
-		if (! isMobile.any())
+		if (! isMobile.any()) {
 			$("#search-field").focus();
-		else
+		} else {
 			$("#search-field").blur();
+		}
+		$("li.search ul").slideDown();
 	};
 
 	Functions.prototype.toggleInsideWordsSearch = function(ev) {
@@ -854,9 +866,10 @@
 
 	Functions.prototype.toggleMenu = function(ev) {
 		$("ul#right-menu").toggleClass("expand");
-		if ($("ul#right-menu").hasClass("expand"))
+		if ($("ul#right-menu").hasClass("expand")) {
 			Functions.focusSearchField();
-		Functions.updateMenu();
+			Functions.updateMenu();
+		}
 	};
 
 	Functions.prototype.parseHash = Functions.parseHash;
