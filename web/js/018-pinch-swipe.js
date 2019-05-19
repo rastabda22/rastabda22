@@ -175,6 +175,7 @@
 				mediaWidthOnScreen = $(mediaSelector)[0].width;
 				currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
 				zoomAfterFirstPinch = currentZoom;
+				PinchSwipe.setPinchButtonsVisibility();
 			};
 			event.data.callbackType = "pinch";
 			event.data.currentZoom = currentZoom;
@@ -197,6 +198,7 @@
 				// currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
 				currentZoom = 1;
 				zoomAfterFirstPinch = currentZoom;
+				PinchSwipe.setPinchButtonsVisibility();
 			};
 			event.data.callbackType = "pinch";
 			event.data.currentZoom = currentZoom;

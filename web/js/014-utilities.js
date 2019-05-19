@@ -755,7 +755,8 @@
 		$(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
 
 		if (event.data.callback) {
-			if (event.data.callbackType !== "pinch" && id === "center") {
+			if (id === "center") {
+			// if (event.data.callbackType !== "pinch" && id === "center") {
 				event.data.callback(containerHeight, containerWidth);
 			}
 		}
