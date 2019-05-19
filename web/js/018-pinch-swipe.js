@@ -225,149 +225,149 @@
 
 	// define the actions to be taken on pinch, swipe, tap, double tap
 	PinchSwipe.addMediaGesturesDetection = function() {
-	// swipe and drag gestures are detected on the media
-	// pinch gesture is detected on its container, .media-box-inner
-	// they must be separated because it seems that detecting drag and pinch on the same selector
-	// has troubles: start event is reported on pinch or on drag, but not on both
+		// swipe and drag gestures are detected on the media
+		// pinch gesture is detected on its container, .media-box-inner
+		// they must be separated because it seems that detecting drag and pinch on the same selector
+		// has troubles: start event is reported on pinch or on drag, but not on both
 
-	/**
-	 * Catch each phase of the swipe.
-	 * move : we drag the div
-	 * cancel : we animate back to where we were
-	 * end : we animate to the next image
-	 */
-	function swipeStatus(event, phase, direction, distance , duration , fingerCount) {
-		//If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
-		if (phase == "start")
-			isLongTap = false;
+		/**
+		 * Catch each phase of the swipe.
+		 * move : we drag the div
+		 * cancel : we animate back to where we were
+		 * end : we animate to the next image
+		 */
+		function swipeStatus(event, phase, direction, distance , duration , fingerCount) {
+			//If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
+			if (phase == "start")
+				isLongTap = false;
 
-		// when dragging with the mouse, fingerCount is 0
-		if (distance >= tapDistanceThreshold && fingerCount <= 1) {
-			if (currentZoom == 1) {
-				// zoom = 1: swipe
-				if (phase == "move") {
-					if (direction == "left") {
-						PinchSwipe.scrollMedia(windowWidth + distance);
-					} else if (direction == "right") {
-						PinchSwipe.scrollMedia(windowWidth - distance);
+			// when dragging with the mouse, fingerCount is 0
+			if (distance >= tapDistanceThreshold && fingerCount <= 1) {
+				if (currentZoom == 1) {
+					// zoom = 1: swipe
+					if (phase == "move") {
+						if (direction == "left") {
+							PinchSwipe.scrollMedia(windowWidth + distance);
+						} else if (direction == "right") {
+							PinchSwipe.scrollMedia(windowWidth - distance);
+						}
+					} else if (phase == "cancel") {
+						PinchSwipe.swipeMedia(windowWidth);
+					} else if (phase == "end") {
+						if (direction == "right") {
+							PinchSwipe.swipeRight(prevMedia);
+						} else if (direction == "left") {
+							PinchSwipe.swipeLeft(nextMedia);
+						} else if (direction == "down") {
+							PinchSwipe.swipeDown(upLink);
+						}
 					}
-				} else if (phase == "cancel") {
-					PinchSwipe.swipeMedia(windowWidth);
-				} else if (phase == "end") {
-					if (direction == "right") {
-						PinchSwipe.swipeRight(prevMedia);
-					} else if (direction == "left") {
-						PinchSwipe.swipeLeft(nextMedia);
-					} else if (direction == "down") {
-						PinchSwipe.swipeDown(upLink);
-					}
-				}
-			} else {
-				// zoom > 1: drag
-				if (
-					phase == "start" || phase == "end" || phase == "cancel" || distance == 0
-				) {
-					// distance = 0
-					baseTranslateX = currentTranslateX;
-					baseTranslateY = currentTranslateY;
 				} else {
-					// distance is the cumulative value from start
-					// dragVector is calculated by pinchStatus
-					PinchSwipe.drag(distance / currentZoom / devicePixelRatio, dragVector, 0);
+					// zoom > 1: drag
+					if (
+						phase == "start" || phase == "end" || phase == "cancel" || distance == 0
+					) {
+						// distance = 0
+						baseTranslateX = currentTranslateX;
+						baseTranslateY = currentTranslateY;
+					} else {
+						// distance is the cumulative value from start
+						// dragVector is calculated by pinchStatus
+						PinchSwipe.drag(distance / currentZoom / devicePixelRatio, dragVector, 0);
+					}
 				}
 			}
 		}
-	}
 
-	function pinchStatus(event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData) {
-		// the drag vector is calculated here for use in the swipeStatus function
-		// lamentably, swipeStatus doesn't return info about the swipt vector
-		var dragVectorX = fingerData[0].end.x - fingerData[0].start.x;
-		var dragVectorY = fingerData[0].end.y - fingerData[0].start.y;
-		var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
-		if (dragVectorLength)
-			// normalize the vector
-			dragVector = {
-				"x": dragVectorX / dragVectorLength,
-				"y": dragVectorY / dragVectorLength
-			};
-		else
-			dragVector = [0, 0];
+		function pinchStatus(event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData) {
+			// the drag vector is calculated here for use in the swipeStatus function
+			// lamentably, swipeStatus doesn't return info about the swipt vector
+			var dragVectorX = fingerData[0].end.x - fingerData[0].start.x;
+			var dragVectorY = fingerData[0].end.y - fingerData[0].start.y;
+			var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
+			if (dragVectorLength)
+				// normalize the vector
+				dragVector = {
+					"x": dragVectorX / dragVectorLength,
+					"y": dragVectorY / dragVectorLength
+				};
+			else
+				dragVector = [0, 0];
 
-		if (phase === "start") {
-			// distance = 0
-			baseZoom = currentZoom;
-		} else if (phase === "move" && fingerCount >= 2) {
-			// phase is "move"
-			PinchSwipe.pinchInOut(baseZoom, pinchZoom, duration);
-		}
-	}
-
-	function hold(event, target) {
-		isLongTap = true;
-	}
-
-	function tap(event, target) {
-		if (currentZoom == 1) {
-			if (event.which === 3) {
-				// right click
-				if (prevMedia !== null)
-					PinchSwipe.swipeRight(prevMedia);
-			} else if (! isLongTap) {
-				if (! fromResetZoom) {
-					if (nextMedia !== null)
-						PinchSwipe.swipeLeft(nextMedia);
-				} else
-					fromResetZoom = false;
+			if (phase === "start") {
+				// distance = 0
+				baseZoom = currentZoom;
+			} else if (phase === "move" && fingerCount >= 2) {
+				// phase is "move"
+				PinchSwipe.pinchInOut(baseZoom, pinchZoom, duration);
 			}
 		}
-	}
 
-	function longTap(event, target) {
-		PinchSwipe.swipeRight(prevMedia);
-	}
-
-	function doubleTap(event, target) {
-		if (currentZoom == 1) {
-			PinchSwipe.swipeRight(prevMedia);
-		} else {
-			// currentZoom > 1
-			// image scaled up, reduce it to base zoom
-			$(mediaSelector).css("transform", "scale(1)");
-			currentZoom = 1;
-			fromResetZoom = true;
+		function hold(event, target) {
+			isLongTap = true;
 		}
-	}
 
-	var tapDistanceThreshold = 2;
-	var isLongTap;
+		function tap(event, target) {
+			if (currentZoom == 1) {
+				if (event.which === 3) {
+					// right click
+					if (prevMedia !== null)
+						PinchSwipe.swipeRight(prevMedia);
+				} else if (! isLongTap) {
+					if (! fromResetZoom) {
+						if (nextMedia !== null)
+							PinchSwipe.swipeLeft(nextMedia);
+					} else
+						fromResetZoom = false;
+				}
+			}
+		}
 
-	var baseZoom = 1;
-	var fromResetZoom = false;
+		function longTap(event, target) {
+			PinchSwipe.swipeRight(prevMedia);
+		}
 
-	mediaWidth = parseInt($(mediaSelector).css("width"));
-	mediaHeight = parseInt($(mediaSelector).css("height"));
+		function doubleTap(event, target) {
+			if (currentZoom == 1) {
+				PinchSwipe.swipeRight(prevMedia);
+			} else {
+				// currentZoom > 1
+				// image scaled up, reduce it to base zoom
+				$(mediaSelector).css("transform", "scale(1)");
+				currentZoom = 1;
+				fromResetZoom = true;
+			}
+		}
 
-	currentZoom = 1;
-	baseTranslateX = 0;
-	baseTranslateY = 0;
-	currentTranslateX = 0;
-	currentTranslateY = 0;
+		var tapDistanceThreshold = 2;
+		var isLongTap;
 
-	$(mediaSelector).css("transition-duration", "0ms");
+		var baseZoom = 1;
+		var fromResetZoom = false;
 
-	var swipeOrDragOptions = {
-		triggerOnTouchEnd: true,
-		allowPageScroll: "none",
-		swipeStatus: swipeStatus,
-		tap: tap,
-		longTap: longTap,
-		doubleTap: doubleTap,
-		hold: hold,
-		// allowPageScroll: "vertical",
-		threshold: 75,
-		fingers: 1
-	};
+		mediaWidth = parseInt($(mediaSelector).css("width"));
+		mediaHeight = parseInt($(mediaSelector).css("height"));
+
+		currentZoom = 1;
+		baseTranslateX = 0;
+		baseTranslateY = 0;
+		currentTranslateX = 0;
+		currentTranslateY = 0;
+
+		$(mediaSelector).css("transition-duration", "0ms");
+
+		var swipeOrDragOptions = {
+			triggerOnTouchEnd: true,
+			allowPageScroll: "none",
+			swipeStatus: swipeStatus,
+			tap: tap,
+			longTap: longTap,
+			doubleTap: doubleTap,
+			hold: hold,
+			// allowPageScroll: "vertical",
+			threshold: 75,
+			fingers: 1
+		};
 
 		var pinchOptions = {
 			triggerOnTouchEnd: true,
