@@ -309,13 +309,15 @@
 
 	function tap(event, target) {
 		if (currentZoom == 1) {
-			if (event.which === 3)
+			if (event.which === 3) {
 				// right click
-				PinchSwipe.swipeRight(prevMedia);
-			else if (! isLongTap) {
-				if (! fromResetZoom)
-					PinchSwipe.swipeLeft(nextMedia);
-				else
+				if (prevMedia !== null)
+					PinchSwipe.swipeRight(prevMedia);
+			} else if (! isLongTap) {
+				if (! fromResetZoom) {
+					if (nextMedia !== null)
+						PinchSwipe.swipeLeft(nextMedia);
+				} else
 					fromResetZoom = false;
 			}
 		}
