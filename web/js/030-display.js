@@ -134,6 +134,10 @@ $(document).ready(function() {
 					pS.swipeDown(upLink);
 					return false;
 				}
+				if ($("#no-results").is(":visible")) {
+					window.location.href = upLink;
+					return false;
+				}
 			}
 		} else if (! isAuth) {
 			if (! $("#search-field").is(':focus')) {
