@@ -145,20 +145,37 @@
 		var mediaElement = $(".media-box#center .media-box-inner img");
 		var actualHeight = mediaElement.height();
 		var actualWidth = mediaElement.width();
+		var titleHeight, albumHeight;
+		if ($(".media-box#center .title").is(":visible"))
+			titleHeight = $(".media-box#center .title").height();
+		else
+			titleHeight = 0;
+		if ($("#album-view").is(":visible"))
+			albumHeight = $("#album-view").height();
+		else
+			albumHeight = 0;
 		var distanceFromImageBorder = 15;
-		var pinchBottom = Math.round((containerHeight - actualHeight) / 2 + distanceFromImageBorder);
-		var pinchRight = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
-		$("#pinch-container").css("right", pinchRight.toString() + "px").css("bottom", pinchBottom.toString() + "px");
+		// if (typeof containerHeight === "undefined") {
+		containerHeight = windowHeight - titleHeight - albumHeight;
+		containerWidth = windowWidth;
+		// }
+		var pinchTop = Math.round(titleHeight + (containerHeight - actualHeight) / 2 + distanceFromImageBorder);
+		// var pinchTop = Math.round((containerHeight - actualHeight) / 2 + distanceFromImageBorder);
+		var pinchLeft = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
+		$("#pinch-container").css("left", pinchLeft.toString() + "px").css("top", pinchTop.toString() + "px");
+		// var pinchBottom = Math.round((containerHeight - actualHeight) / 2 + distanceFromImageBorder);
+		// var pinchRight = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
+		// $("#pinch-container").css("right", pinchRight.toString() + "px").css("bottom", pinchBottom.toString() + "px");
 
-		if ($("#center .links").is(":visible")) {
-			while (util.isColliding($("#pinch-container"), $("#center .links")) || util.isColliding($("#pinch-container"), $(".ssk-group"))) {
-				// overlap with the links bar: move up the pinch buttons
-				pinchBottom += 5;
-				$("#pinch-container").css("bottom", pinchBottom.toString() + "px");
-			}
-			// add some more space
-			$("#pinch-container").css("bottom", (pinchBottom + distanceFromImageBorder).toString() + "px");
-		}
+		// if ($("#center .links").is(":visible")) {
+		// 	while (util.isColliding($("#pinch-container"), $("#center .links")) || util.isColliding($("#pinch-container"), $(".ssk-group"))) {
+		// 		// overlap with the links bar: move up the pinch buttons
+		// 		pinchBottom += 5;
+		// 		$("#pinch-container").css("bottom", pinchBottom.toString() + "px");
+		// 	}
+		// 	// add some more space
+		// 	$("#pinch-container").css("bottom", (pinchBottom + distanceFromImageBorder).toString() + "px");
+		// }
 	};
 
 	PinchSwipe.pinchIn = function() {
@@ -283,7 +300,8 @@
 					} else {
 						// distance is the cumulative value from start
 						// dragVector is calculated by pinchStatus
-						PinchSwipe.drag(distance / currentZoom / devicePixelRatio, dragVector, 0);
+						PinchSwipe.drag(distance / devicePixelRatio, dragVector, 0);
+						// PinchSwipe.drag(distance / currentZoom / devicePixelRatio, dragVector, 0);
 					}
 				}
 			}

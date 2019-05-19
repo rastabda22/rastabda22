@@ -513,7 +513,8 @@
 
 	Functions.prototype.pinchSwipeInitialization = function(containerHeight, containerWidth) {
 		pS.initialize();
-		pS.setPinchButtonsPosition(containerHeight, containerWidth);
+		pS.setPinchButtonsPosition();
+		// pS.setPinchButtonsPosition(containerHeight, containerWidth);
 		util.correctPrevNextPosition();
 	};
 

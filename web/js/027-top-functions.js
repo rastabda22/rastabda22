@@ -763,7 +763,8 @@
 			if (id === "center") {
 				if (media.mediaType == "photo") {
 					pS.addMediaGesturesDetection();
-					pS.setPinchButtonsPosition(containerHeight, containerWidth);
+					pS.setPinchButtonsPosition();
+					// pS.setPinchButtonsPosition(containerHeight, containerWidth);
 					util.correctPrevNextPosition();
 				}
 
