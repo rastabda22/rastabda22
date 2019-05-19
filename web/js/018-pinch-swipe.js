@@ -9,8 +9,6 @@
 	var mediaSelector = mediaContainerSelector + " img";
 	var currentZoom, zoomAfterFirstPinch, zoomIncrement = 1.5625, zoomDecrement = 1 / zoomIncrement;
 	var maxAllowedZoom;
-	// minAllowedZoom must be <=1
-	var minAllowedZoom = 1;
 	var currentTranslateX = 0;
 	var currentTranslateY = 0;
 	var nextSizeReduction = false;
@@ -68,7 +66,7 @@
 
 	PinchSwipe.pinchInOut = function(baseZoom, pinchZoom, duration) {
 		var nextSize, photoWidth, photoHeight, width, height;
-		currentZoom = Number(Math.max(Math.min((baseZoom * pinchZoom), maxAllowedZoom), minAllowedZoom).toFixed(2));
+		currentZoom = Number(Math.max(Math.min((baseZoom * pinchZoom), maxAllowedZoom), 1).toFixed(2));
 		if (pinchZoom < 1 && baseZoom > 1) {
 			// translation must be reduced too
 			currentTranslateX = Number((currentTranslateX * (currentZoom - 1) / (baseZoom - 1)).toFixed(2));
@@ -133,7 +131,7 @@
 		}
 
 		$("#pinch-out").off("click");
-		if (currentZoom == minAllowedZoom) {
+		if (currentZoom == 1 && ! $(".title").hasClass("hidden-by-pinch")) {
 			$("#pinch-out").addClass("disabled");
 		} else {
 			$("#pinch-out").on("click", PinchSwipe.pinchOut);
@@ -141,7 +139,7 @@
 		}
 	};
 
-	PinchSwipe.prototype.setPinchButtonsPosition = function(containerHeight, containerWidth) {
+	PinchSwipe.setPinchButtonsPosition = function(containerHeight, containerWidth) {
 		// calculate and set pinch buttons position
 
 		var mediaElement = $(".media-box#center .media-box-inner img");
@@ -173,9 +171,12 @@
 			event.data.media = currentMedia;
 			event.data.callback = function() {
 				mediaWidthOnScreen = $(mediaSelector)[0].width;
-				currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
-				zoomAfterFirstPinch = currentZoom;
+				// currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
+				// zoomAfterFirstPinch = currentZoom;
+				PinchSwipe.setPinchButtonsPosition();
 				PinchSwipe.setPinchButtonsVisibility();
+				mediaWidth = parseInt($(mediaSelector).css("width"));
+				mediaHeight = parseInt($(mediaSelector).css("height"));
 			};
 			event.data.callbackType = "pinch";
 			event.data.currentZoom = currentZoom;
@@ -186,7 +187,8 @@
 	};
 
 	PinchSwipe.pinchOut = function() {
-		if (currentZoom <= zoomAfterFirstPinch && $(".title").hasClass("hidden-by-pinch")) {
+		if (currentZoom <= 1 && $(".title").hasClass("hidden-by-pinch")) {
+		// if (currentZoom <= zoomAfterFirstPinch && $(".title").hasClass("hidden-by-pinch")) {
 			$(".title").removeClass("hidden-by-pinch");
 			$("#album-view").removeClass("hidden-by-pinch");
 			var event = {data: {}};
@@ -196,9 +198,12 @@
 			event.data.callback = function() {
 				mediaWidthOnScreen = $(mediaSelector)[0].width;
 				// currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
-				currentZoom = 1;
-				zoomAfterFirstPinch = currentZoom;
+				// currentZoom = 1;
+				// zoomAfterFirstPinch = currentZoom;
+				PinchSwipe.setPinchButtonsPosition();
 				PinchSwipe.setPinchButtonsVisibility();
+				mediaWidth = parseInt($(mediaSelector).css("width"));
+				mediaHeight = parseInt($(mediaSelector).css("height"));
 			};
 			event.data.callbackType = "pinch";
 			event.data.currentZoom = currentZoom;
@@ -212,6 +217,8 @@
 	PinchSwipe.drag = function(distance, dragVector, duration) {
 		$(mediaSelector).css("transition-duration", duration + "ms");
 
+		// currentTranslateX = Number(Math.max(Math.min(baseTranslateX + distance * dragVector.x, maxAllowedTranslateX * currentZoom), minAllowedTranslateX * currentZoom).toFixed(0));
+		// currentTranslateY = Number(Math.max(Math.min(baseTranslateY + distance * dragVector.y, maxAllowedTranslateY * currentZoom), minAllowedTranslateY * currentZoom).toFixed(0));
 		currentTranslateX = Number(Math.max(Math.min(baseTranslateX + distance * dragVector.x, maxAllowedTranslateX), minAllowedTranslateX).toFixed(0));
 		currentTranslateY = Number(Math.max(Math.min(baseTranslateY + distance * dragVector.y, maxAllowedTranslateY), minAllowedTranslateY).toFixed(0));
 
@@ -219,6 +226,7 @@
 		var yString = currentTranslateY.toString();
 		var zoomString = currentZoom.toString();
 
+		$(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + ")");
 		$(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + ")");
 		baseTranslateX = currentTranslateX;
 		baseTranslateY = currentTranslateY;
@@ -462,10 +470,11 @@
 	};
 
 	PinchSwipe.prototype.swipeRightOrDrag = function(media) {
-		if (currentZoom == 1)
-			$("#prev")[0].click();
+		if (currentZoom == 1) {
+			if (! $(".title").hasClass("hidden-by-pinch"))
+				$("#prev")[0].click();
 			// PinchSwipe.swipeRight(media);
-		else {
+		} else {
 			// drag
 			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 1, y: 0}, dragSpeed);
 		}
@@ -501,10 +510,11 @@
 	};
 
 	PinchSwipe.prototype.swipeLeftOrDrag = function(media) {
-		if (currentZoom == 1)
-			$("#next")[0].click();
+		if (currentZoom == 1) {
+			if (! $(".title").hasClass("hidden-by-pinch"))
+				$("#next")[0].click();
 			// PinchSwipe.swipeLeft(media);
-		else {
+		} else {
 			// drag
 			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: -1, y: 0}, dragSpeed);
 		}
@@ -543,9 +553,10 @@
 	};
 
 	PinchSwipe.prototype.swipeUpOrDrag = function(media) {
-		if (currentZoom == 1)
-			PinchSwipe.swipeUp(media);
-		else {
+		if (currentZoom == 1) {
+			if (! $(".title").hasClass("hidden-by-pinch"))
+				PinchSwipe.swipeUp(media);
+		} else {
 			// drag
 			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 0, y: -1}, dragSpeed);
 		}
@@ -570,9 +581,10 @@
 	};
 
 	PinchSwipe.prototype.swipeDownOrDrag = function(media) {
-		if (currentZoom == 1)
-			PinchSwipe.swipeDown(media);
-		else {
+		if (currentZoom == 1) {
+			if (! $(".title").hasClass("hidden-by-pinch"))
+				PinchSwipe.swipeDown(media);
+		} else {
 			// drag
 			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 0, y: 1}, dragSpeed);
 		}
@@ -609,6 +621,7 @@
 	PinchSwipe.prototype.setPinchButtonsVisibility = PinchSwipe.setPinchButtonsVisibility;
 	PinchSwipe.prototype.initialize = PinchSwipe.initialize;
 	PinchSwipe.prototype.swipeUp = PinchSwipe.swipeUp;
+	PinchSwipe.prototype.setPinchButtonsPosition = PinchSwipe.setPinchButtonsPosition;
 
 	window.PinchSwipe = PinchSwipe;
 }());
