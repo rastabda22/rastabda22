@@ -15,9 +15,9 @@
 
 	TopFunctions.setTitle = function(id, media) {
 		var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, isMapTitle, originalTitle;
-		var titleAnchorClasses, titleAnchorClassesItalics, hiddenTitle = "", albumTypeString, where, initialValue, searchFolderHash;
-		var beginLink, linkCount = 0, linksToLeave = 1, numLinks, beginAt, latitude, longitude, arrayCoordinates, numMediaInSubAlbums;
-		var raquo = "&raquo;", lastRaquoPosition;
+		var titleAnchorClasses, titleAnchorClassesItalics, albumTypeString, where, initialValue, searchFolderHash;
+		var linkCount = 0, linksToLeave = 1, latitude, longitude, arrayCoordinates, numMediaInSubAlbums;
+		var raquo = "&raquo;";
 		// gpsLevelNumber is the number of levels for the by gps tree
 		// current levels are country, region, place => 3
 		var gpsLevelNumber = 3;
@@ -464,7 +464,7 @@
 			// leave only the last link on mobile
 			// separate on "&raquo;""
 
-			titleArray = title.split(raquo);
+			var titleArray = title.split(raquo);
 
 			for (i = titleArray.length - 1; i >= 0; i --) {
 				if (titleArray[i].indexOf(" href='#!") != -1) {
@@ -472,7 +472,7 @@
 					if (linkCount > linksToLeave) {
 						title =
 							"<span class='dots-surroundings'><span class='title-no-anchor dots'>...</span></span>" +
-							"<span class='hidden-title'>" + titleArray.slice(0, i + 1).join(raquo) + "</span>" + raquo + titleArray.slice(i + 1, ).join(raquo);
+							"<span class='hidden-title'>" + titleArray.slice(0, i + 1).join(raquo) + "</span>" + raquo + titleArray.slice(i + 1).join(raquo);
 						break;
 					}
 				}
@@ -1224,7 +1224,7 @@
 			passwordList.length > 0 &&
 			passwordList.filter(
 				function(value) {
-					return PhotoFloat.guessedPasswordsCodes.includes(value)
+					return PhotoFloat.guessedPasswordsCodes.includes(value);
 				}
 			).length === 0
 		) {
@@ -2207,7 +2207,7 @@
 								'click',
 								{subalbum: ithSubalbum, clickedSelector: "#subalbum-map-link-" + i},
 								function(ev, from) {
-									selectorClickedToOpenTheMap = ev.data.clickedSelector
+									selectorClickedToOpenTheMap = ev.data.clickedSelector;
 									TopFunctions.generateMapFromSubalbum(ev, from);
 								}
 							);
@@ -2544,15 +2544,47 @@
 			if (typeof from !== "undefined") {
 				if (typeOfPopupRefresh == "previousAlbum")
 					TopFunctions.mapClick(null, pruneCluster.Cluster._clusters, previousAlbum);
-				else if (typeOfPopupRefresh == "mapAlbum")
-					TopFunctions.mapClick(null, pruneCluster.Cluster._clusters, MapFunctions.mapAlbum);
+				else if (typeOfPopupRefresh == "mapAlbum") {
+					function playClickElement(clickHistory, iClick) {
+						var clickHistoryElement = clickHistory[iClick];
+						var promise = new Promise(
+							function(playResolve) {
+								MapFunctions.mymap.setView(clickHistoryElement.center, clickHistoryElement.zoom, {animate: false});
+								ev = {
+									"latlng": clickHistoryElement.latlng,
+									"originalEvent": {
+										"shiftKey": clickHistoryElement.shiftKey,
+										"ctrlKey": clickHistoryElement.ctrlKey,
+									}
+								};
+								// return;
+								TopFunctions.mapClick(ev, pruneCluster.Cluster._clusters, null, playResolve);
+							}
+						);
+
+						promise.then(
+							function() {
+								if (iClick < clickHistory.length - 1)
+									playClickElement(clickHistory, iClick ++);
+								else
+									TopFunctions.mapClick(null, pruneCluster.Cluster._clusters, MapFunctions.mapAlbum);
+							}
+						);
+					}
+
+					var clickHistory = MapFunctions.mapAlbum.clickHistory;
+					delete MapFunctions.mapAlbum;
+					playClickElement(clickHistory, 0);
+
+				}
 			}
 			typeOfPopupRefresh = "previousAlbum";
 		}
 	};
 
-	TopFunctions.mapClick = function(evt, clusters, previousAlbum) {
+	TopFunctions.mapClick = function(evt, clusters, previousAlbum, playResolve) {
 		var i;
+		var clickHistoryElement;
 		var maxHeightForThumbnails;
 
 		function matchPositionAndCount(reference, element) {
@@ -2565,6 +2597,11 @@
 		// }
 
 		function endPreparingMapAlbumAndUpdatePopup(mapAlbum) {
+			if (typeof playResolve !== "undefined") {
+				playResolve();
+				return;
+			}
+
 			mapAlbum.numMediaInAlbum = mapAlbum.media.length;
 			mapAlbum.numMediaInSubTree = mapAlbum.media.length;
 			mapAlbum.numPositionsInTree = mapAlbum.positionsAndMediaInTree.length;
@@ -2630,7 +2667,17 @@
 
 		$("#loading").show();
 
-		if (typeof previousMapAlbum !== "undefined") {
+		if (evt !== null && typeof evt.latlng !== "undefined") {
+			clickHistoryElement = {
+					latlng: evt.latlng,
+					shiftKey: evt.originalEvent.shiftKey,
+					ctrlKey: evt.originalEvent.ctrlKey,
+					zoom: MapFunctions.mymap.getZoom(),
+					center: MapFunctions.mymap.getCenter()
+			};
+		}
+
+		if (typeof previousAlbum !== "undefined" && previousAlbum !== null) {
 			// the map has been shown when coming from a map album, we must show the popup with the media it had when it was previously built
 			endPreparingMapAlbumAndUpdatePopup(previousAlbum);
 		} else {
@@ -2684,6 +2731,7 @@
 				if (! jQuery.isEmptyObject(MapFunctions.mapAlbum)) {
 					// control click: remove the points
 
+					MapFunctions.mapAlbum.clickHistory.push(clickHistoryElement);
 					// $("#loading").show();
 
 					var matchingIndex, matchingMedia, positionsAndCountsElement;
@@ -2740,9 +2788,13 @@
 							lastAlbumIndex ++;
 							MapFunctions.mapAlbum = map.initializeMapAlbum(lastAlbumIndex);
 
+							MapFunctions.mapAlbum.clickHistory = [clickHistoryElement];
+
 							MapFunctions.addMediaFromPositionsToMapAlbum(positionsAndCounts, MapFunctions.mapAlbum, resolve);
 						} else {
 							// shift-click with previous content
+							MapFunctions.mapAlbum.clickHistory.push(clickHistoryElement);
+
 							// determine what positions aren't yet in selectedPositions array
 							var missingPositions = [];
 							for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {

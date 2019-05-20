@@ -333,6 +333,7 @@
 		album.path = album.cacheBase.replace(Options.cache_folder_separator, "/");
 		album.physicalPath = album.path;
 		album.searchInFolderCacheBase = currentAlbum.cacheBase;
+		album.clickHistory = [];
 
 		return album;
 	};
