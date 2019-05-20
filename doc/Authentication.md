@@ -20,19 +20,25 @@ The _passwords file_ has many lines, each one has with a _password identifier_ a
 
 ### How the scanner manages the passwords
 
-When the scanner finds a `.password` files inside an album, it applies the password specified by the identifier to the whole subtree/media. The shell wildcards are matched with the `fnmatch` library (https://docs.python.org/3/library/fnmatch.html).
+When the scanner finds a _password_ files inside an album, it reads it line by line:
 
-The scanner encrypts the passwords and put them in the json files as an album and media `password` property.
+* if the line is a single '-', all the passwords are reset for the subtree;
+* if the line is a nude identifier, it applies the password specified by it to the whole subtree/media;
+* if the line has more content, it reads the case flag and the pattern, and uses them to match the album name and the file names; the `fnmatch` library (https://docs.python.org/3/library/fnmatch.html) is used for the match.
+
+The encrypted passwords aren't included in any file: for each password, a random code is generated, and its value is included in the json album files.
+
+The encrpted password is saved as a file name in a `passwords_subdir` option, the scanner writes inside it the corresponding code.
 
 ### How the javascript manages the passwords
 
-When an album with password is requested, the authorization form is shown, and if the encrypted password entered by the user matches one of the album/media password, the album/media is show, otherwise the form keeps being showed, and user can use the ´back´ browser button or the `esc` key to go back to the previous position. The encrypted correct password is stored into an array of guessed passwords, which will remain there until the session is closed.
+When an album with password is requested, the authorization form is shown, and, if the encrypted password entered by the user matches the name of some file in the directory specified by `passwords_subdir`, the album/media is show; otherwise, the form keeps being showed, and user can use the ´back´ browser button or the `esc` key to go back to the previous position. The code got from the password file in `passwords_subdir` is stored into an array of guessed codes, which will remain there until the session is closed or the page is reloaded.
 
-When an album with some protected media is requested, the album is shown, and the protected media thumbnails are replaced with fake ones. When the user wants to show a protected image, the password is requested.
+When the hash of a protected album or media is requested, the password is requested.
 
-When another protected album or media is requested, the encrypted passwords are checked against the guessed passwords, and if they are already there, then the album/media is shown without asking the password again.
+When performing a search, protected content is not included in the results. A menu entry is available in the right menu, in order to unveil the protected content.
 
-When performing a search, protected content is not included in the results. A menu entry is available in the right menu, in order to give the password and include the protected content into the search.
+The maps don't include the point for the protected photos.
 
 ## Optional: Deployment Makefiles
 
