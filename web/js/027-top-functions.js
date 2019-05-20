@@ -563,9 +563,11 @@
 			}
 		);
 
-		$('.modal-close').click(
+		$('.modal-close').on(
+			'click',
 			function() {
 				$("#my-modal.modal").css("display", "none");
+				// popupRefreshType = "previousAlbum";
 				$('#mapdiv').empty();
 			}
 		);
@@ -1172,8 +1174,7 @@
 		util.undie();
 		$("#loading").hide();
 
-		$(window).off("resize");
-		$(window).on(
+		$(window).off("resize").on(
 			"resize",
 			function () {
 				windowWidth = $(window).outerWidth();
@@ -2577,7 +2578,7 @@
 
 				}
 			}
-			popupRefreshType = "previousAlbum";
+			// popupRefreshType = "previousAlbum";
 		}
 	};
 

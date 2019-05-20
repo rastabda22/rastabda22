@@ -116,9 +116,12 @@ $(document).ready(function() {
 					$('.leaflet-popup-close-button')[0].click();
 					MapFunctions.mapAlbum = {};
 					// $('#popup #popup-content').html("");
-				} else
+				} else {
 					// we are in a map: close it
 					$('.modal-close')[0].click();
+					popupRefreshType = "previousAlbum";
+					mapRefreshType = "none";
+				}
 				return false;
 			} else if (pS.getCurrentZoom() > 1 || $(".title").hasClass("hidden-by-pinch")) {
 				pS.pinchOut();

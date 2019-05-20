@@ -219,6 +219,8 @@
 				$('.leaflet-popup-close-button')[0].click();
 				// $('#popup #popup-content').html("");
 				$('.modal-close')[0].click();
+				popupRefreshType = "previousAlbum";
+				mapRefreshType = "none";
 
 				phFl.endPreparingAlbumAndKeepOn(MapFunctions.mapAlbum, null,
 					 function(){
@@ -252,6 +254,8 @@
 				$('.leaflet-popup-close-button')[0].click();
 				// $('#popup #popup-content').html("");
 				$('.modal-close')[0].click();
+				popupRefreshType = "previousAlbum";
+				mapRefreshType = "none";
 				window.location.href = imgData.mediaHash;
 			}
 		);
