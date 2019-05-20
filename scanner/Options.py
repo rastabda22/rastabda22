@@ -82,6 +82,7 @@ max_random = 1000000000
 # json_version = 3.7beta2 since mvoed positions_and_media_in_tree to a separate file to avoid duplication and to save download time
 # json_version = 3.8
 # json_version = 3.8.1 since slightly rationalized json files content
+# json_version = 3.99 since property passwords changed to passwordsCodes in json file
 json_version = "3.99"
 
 def initialize_opencv():
