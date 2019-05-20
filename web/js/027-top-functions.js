@@ -946,8 +946,7 @@
 				$(mediaSelector).trigger(triggerLoad);
 
 			if (id === "center") {
-				$(window).off("resize");
-				$(window).on(
+				$(window).off("resize").on(
 					"resize",
 					function () {
 						var event = {data: {}};
@@ -2542,9 +2541,9 @@
 			);
 
 			if (typeof from !== "undefined") {
-				if (typeOfPopupRefresh == "previousAlbum")
+				if (popupRefreshType == "previousAlbum")
 					TopFunctions.mapClick(null, pruneCluster.Cluster._clusters, previousAlbum);
-				else if (typeOfPopupRefresh == "mapAlbum") {
+				else if (popupRefreshType == "mapAlbum") {
 					function playClickElement(clickHistory, iClick) {
 						var clickHistoryElement = clickHistory[iClick];
 						var promise = new Promise(
@@ -2578,7 +2577,7 @@
 
 				}
 			}
-			typeOfPopupRefresh = "previousAlbum";
+			popupRefreshType = "previousAlbum";
 		}
 	};
 

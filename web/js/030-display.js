@@ -12,7 +12,7 @@ var windowHeight = $(window).outerHeight();
 var fromEscKey = false;
 var isMapRefresh = false;
 var selectorClickedToOpenTheMap = false;
-var typeOfPopupRefresh = "previousAlbum";
+var popupRefreshType = "previousAlbum";
 var destHash = null;
 var destMedia = null;
 var destAlbum = null;
@@ -465,10 +465,10 @@ $(document).ready(function() {
 					isMapRefresh = true;
 
 					if (isPopup) {
-						typeOfPopupRefresh = "mapAlbum";
+						popupRefreshType = "mapAlbum";
 						$('.leaflet-popup-close-button')[0].click();
 					} else {
-						typeOfPopupRefresh = "None";
+						popupRefreshType = "None";
 					}
 					// close the map
 					$('.modal-close')[0].click();
