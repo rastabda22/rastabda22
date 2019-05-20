@@ -2597,16 +2597,15 @@
 					maxHeight: maxHeightForThumbnails,
 					autoPan: false
 				}
-			)
-				.setContent(
-					MapFunctions.titleWrapper1.replace(
-						"maxWidthForThumbnails",
-						MapFunctions.titleWrapper
-					) +
-					 MapFunctions.titleWrapper2
-				 )
-				.setLatLng(MapFunctions.averagePosition(mapAlbum.positionsAndMediaInTree))
-				.openOn(MapFunctions.mymap);
+			).setContent(
+				MapFunctions.titleWrapper1.replace(
+					"maxWidthForThumbnails",
+					MapFunctions.titleWrapper
+				) +
+				 MapFunctions.titleWrapper2
+			 )
+			.setLatLng(MapFunctions.averagePosition(mapAlbum.positionsAndMediaInTree))
+			.openOn(MapFunctions.mymap);
 
 			map.addPopupMover();
 
