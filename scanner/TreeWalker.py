@@ -770,9 +770,12 @@ class TreeWalker:
 			else:
 				with open(pw_file, 'r') as passwords_file:
 					for line in passwords_file.read().splitlines():
+						# remove leading spaces
+						line = line.lstrip()
+						# lines beginning with # and space-only ones are ignored
+						if line[0:1] == "#" or line.strip() == "":
+							continue
 						columns = line.split(' ')
-						if len(columns) == 0:
-							indented_message("empty line", "", 5)
 						if len(columns) == 1:
 							if columns[0] == '-':
 								# reset the passwords
@@ -797,9 +800,11 @@ class TreeWalker:
 						else:
 							# a password identifier followed by the case flag and a file pattern
 							identifier = columns[0]
-							case_flag = columns[1]
-							indexes = [value['crypt_password'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
-							selector = ' '.join(columns[2:])
+							remaining_columns = " ".join(columns[1:]).lstrip().split()
+							case_flag = remaining_columns[0]
+							indexes = [value['num_password'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
+							# everything beginning with the first non-space character after the case flag till the end of line (including the traling spaces) is the pattern
+							pattern = " ".join(remaining_columns[1:]).lstrip()
 							if len(indexes) == 1:
 								crypt_password = indexes[0]
 								# absolute_file_name = os.path.join(absolute_path, file_name)

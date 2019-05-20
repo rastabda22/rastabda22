@@ -351,17 +351,31 @@ def get_options():
 		try:
 			with open(passwords_file_name, 'r') as passwords_file:
 				message("Reading passwords file", passwords_file_name, 3)
-				num_password = 1
+				num_password = 0
 				for line in passwords_file.read().splitlines():
+					# remove leading spaces
+					line = line.lstrip()
+					# lines beginning with # and space-only ones are ignored
+					if line[0:1] == "#" or line.strip() == "":
+						continue
 					# in each line is a password identifier is followed by the corresponding password
 					columns = line.split(' ')
-					crypt_password = hashlib.md5(columns[1]).hexdigest()
-					identifiers_and_passwords.append({
-						"identifier": columns[0],
-						"crypt_password": crypt_password
-					})
-					indented_message("Password read", str(num_password) + " - identifier: " + columns[0] + ", encrypted password: " + crypt_password, 3)
+					identifier = columns[0]
+					# everything beginning with the first non-space character till the end of line (including the traling spaces) is the password
+					password = " ".join(columns[1:]).lstrip()
+					if password == "":
+						indented_message("Missing password", "for identifier: '" + identifier + "'", 3)
+						continue
 					num_password +=1
+					crypt_password = hashlib.md5(password).hexdigest()
+					identifiers_and_passwords.append(
+						{
+							"num_password": str(num_password),
+							"identifier": identifier,
+							"crypt_password": crypt_password
+						}
+					)
+					indented_message("Password read", str(num_password) + ": identifier: " + identifier + ", encrypted password: " + crypt_password, 3)
 		except IOError:
 			indented_message("WARNING", passwords_file_name + " doesn't exist or unreadable, not using it", 2)
 
