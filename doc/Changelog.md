@@ -1,6 +1,7 @@
 * albums and media can be protected with passwords: protected content isn't exposed in the album tree or the cache
   * new option: `passwords_file`: a file which is read when the options file is read, it defines the passwords and their respective identifiers
   * new option: `passwords_marker`: the name of the files to put in the albums tree in order to protect albums and files
+  * new option: `passwords_subdir`: the cache subdir where the passwords files are written
   * new shortcut `u` to unveil protected content
 * new right menu entry: runs an authentication dialog to unveil the protected content
 * when showing a map album, `esc` takes back to the map and the popup

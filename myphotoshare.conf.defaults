@@ -143,6 +143,11 @@ passwords_marker = .myphotoshare.passwords
 # password file, relative to the directory of the configuration file
 passwords_file = myphotoshare.passwords
 
+# the cache subdir where the passwords files are stored by the scanner
+# changing it to a more complex value may suppose a stronger security,
+# but it's not so, because this value must be saved in the `options.json` file
+passwords_subdir = pwd
+
 # recreate fixed height media thumbnails if their ratio (width/height) is > 1,
 # in order to get rid of a past bug in thumbnail generator
 recreate_fixed_height_thumbnails = false

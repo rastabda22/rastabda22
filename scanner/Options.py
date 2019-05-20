@@ -69,7 +69,6 @@ face_cascade = None
 eye_cascade = None
 config['available_map_popup_positions'] = ['SE', 'NW' ]
 max_random = 1000000000
-config['passwords_subdir'] = 'pwd'
 
 
 # set this variable to a new value (previously was a number, now it may include letters) whenever the json files structure changes, it can be the app version
