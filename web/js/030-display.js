@@ -426,47 +426,60 @@ $(document).ready(function() {
 	$("#menu-icon").on("click", f.toggleMenu);
 
 	$("#auth-form").submit(function() {
-		// This function doesn't actually check the password, because protected content isn't loaded until a valid password is in PhotoFloat.guessedPasswords array
-		// the user supplied password is inserted into PhotoFloat.guessedPasswords, and at the hash change the content unveiled by that password will be shown
-		// So PhotoFloat.guessedPasswords will be filled with whatever password the user writes, either matching or not something.
+		// This function checks the password looking for a file with the encrypted password name in the passwords subdir
+		// the code in the found password file is inserted into PhotoFloat.guessedPasswordsCodes, and at the hash change the content unveiled by that password will be shown
 
 		var password = $("#password");
-		var encrypted_password = md5(password.val());
+		var encryptedPassword = md5(password.val());
 		password.val("");
 
-		if (! PhotoFloat.guessedPasswords.includes(encrypted_password))
-			PhotoFloat.guessedPasswords.push(encrypted_password);
+		var ajaxOptions = {
+			type: "GET",
+			dataType: "json",
+			url: util.pathJoin([Options.server_cache_path, Options.passwords_subdir, encryptedPassword]),
+			success: function(jsonCode) {
+				password.css("background-color", "rgb(200, 200, 200)");
+				var passwordCode = jsonCode.passwordCode;
 
-		if (
-			currentAlbum !== null && (
-				util.isSearchCacheBase(currentAlbum.cacheBase) ||
-				currentMedia === null
-			)
-		)
-			// the search album must be removed from cache,
-			// otherwise the new album won't be generated and the protected content won't be searched
-			phFl.removeAlbumFromCache(currentAlbum.cacheBase);
+				if (! PhotoFloat.guessedPasswordsCodes.includes(passwordCode))
+					PhotoFloat.guessedPasswordsCodes.push(passwordCode);
 
-		phFl.removeAllProtectedAlbumsFromCache();
+				if (
+					currentAlbum !== null && (
+						util.isSearchCacheBase(currentAlbum.cacheBase) ||
+						currentMedia === null
+					)
+				)
+					// the search album must be removed from cache,
+					// otherwise the new album won't be generated and the protected content won't be searched
+					phFl.removeAlbumFromCache(currentAlbum.cacheBase);
 
-		var isPopup = $('.leaflet-popup').html() ? true : false;
-		var isMap = $('#mapdiv').html() ? true : false;
+				phFl.removeAllProtectedAlbumsFromCache();
 
-		if (isMap) {
-			// the map must be generated again including the points that only carry protected content
-			isMapRefresh = true;
+				var isPopup = $('.leaflet-popup').html() ? true : false;
+				var isMap = $('#mapdiv').html() ? true : false;
 
-			if (isPopup) {
-				typeOfPopupRefresh = "mapAlbum";
-				$('.leaflet-popup-close-button')[0].click();
-			} else {
-				typeOfPopupRefresh = "None";
+				if (isMap) {
+					// the map must be generated again including the points that only carry protected content
+					isMapRefresh = true;
+
+					if (isPopup) {
+						typeOfPopupRefresh = "mapAlbum";
+						$('.leaflet-popup-close-button')[0].click();
+					} else {
+						typeOfPopupRefresh = "None";
+					}
+					// close the map
+					$('.modal-close')[0].click();
+				}
+
+				$(window).hashchange();
+			},
+			error: function() {
+				password.css("background-color", "rgb(255, 64, 64)");
 			}
-			// close the map
-			$('.modal-close')[0].click();
-		}
-
-		$(window).hashchange();
+		};
+		$.ajax(ajaxOptions);
 
 		return false;
 	});

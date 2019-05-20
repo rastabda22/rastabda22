@@ -8,7 +8,7 @@
 		PhotoFloat.cache.albums = {};
 		PhotoFloat.cache.albums.index = {};
 		PhotoFloat.cache.positions = {};
-		PhotoFloat.guessedPasswords = [];
+		PhotoFloat.guessedPasswordsCodes = [];
 		this.geotaggedPhotosFound = null;
 		this.searchWordsFromJsonFile = [];
 		this.searchAlbumCacheBaseFromJsonFile = [];
@@ -283,19 +283,19 @@
 				success: function(theAlbum) {
 					function albumGot() {
 						function correctNumMediaInSubTree(album) {
-							var mediaPasswords;
+							var passwordCode;
 							// remove the protected media from the media count
-							for (mediaPasswords in album.numsProtectedMediaInSubTree) {
-								if (album.numsProtectedMediaInSubTree.hasOwnProperty(mediaPasswords)) {
+							for (passwordCode in album.numsProtectedMediaInSubTree) {
+								if (album.numsProtectedMediaInSubTree.hasOwnProperty(passwordCode)) {
 									// correct count
 									if (
-										PhotoFloat.guessedPasswords.every(
-											function(guessedPassword) {
-												return mediaPasswords.indexOf(guessedPassword) == -1;
+										PhotoFloat.guessedPasswordsCodes.every(
+											function(guessedPasswordCode) {
+												return passwordCode.indexOf(guessedPasswordCode) == -1;
 											}
 										)
 									)
-										album.numMediaInSubTree -= album.numsProtectedMediaInSubTree[mediaPasswords];
+										album.numMediaInSubTree -= album.numsProtectedMediaInSubTree[passwordCode];
 								}
 							}
 						}
@@ -1125,12 +1125,15 @@
 
 	PhotoFloat.isProtected = function(albumOrMedia) {
 		var isProtected =
-			albumOrMedia.hasOwnProperty("passwords") &&
-			albumOrMedia.passwords.length > 0 &&
-			albumOrMedia.passwords.every(
-				function(element) {
-					return ! PhotoFloat.guessedPasswords.includes(element);
-				}
+			albumOrMedia.hasOwnProperty("passwordCodes") &&
+			albumOrMedia.passwordCodes.length > 0 &&
+			(
+				PhotoFloat.guessedPasswordsCodes.length == 0 ||
+				albumOrMedia.passwordCodes.every(
+					function(passwordCode) {
+						return ! PhotoFloat.guessedPasswordsCodes.includes(passwordCode);
+					}
+				)
 			);
 		return isProtected;
 	};

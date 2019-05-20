@@ -8,6 +8,7 @@ import json
 import ast
 import math
 import hashlib
+import random
 
 # @python2
 try:
@@ -67,6 +68,9 @@ config['cv2_installed'] = True
 face_cascade = None
 eye_cascade = None
 config['available_map_popup_positions'] = ['SE', 'NW' ]
+max_random = 1000000000
+config['passwords_subdir'] = 'pwd'
+
 
 # set this variable to a new value (previously was a number, now it may include letters) whenever the json files structure changes, it can be the app version
 # json_version = 0 is debug mode: json files are always considered invalid
@@ -79,7 +83,7 @@ config['available_map_popup_positions'] = ['SE', 'NW' ]
 # json_version = 3.7beta2 since mvoed positions_and_media_in_tree to a separate file to avoid duplication and to save download time
 # json_version = 3.8
 # json_version = 3.8.1 since slightly rationalized json files content
-json_version = "3.8.2"
+json_version = "3.99"
 
 def initialize_opencv():
 	global face_cascade, eye_cascade
@@ -347,11 +351,19 @@ def get_options():
 	# it must exist and be readable, otherwise skip it
 	if len(sys.argv) == 2:
 		# 1 arguments: the config files: the password file is in the same directory
+
+		# remove the old single password files
+		passwords_subdir_with_path = os.path.join(config['cache_path'], config['passwords_subdir'])
+		if not os.path.exists(passwords_subdir_with_path):
+			os.makedirs(passwords_subdir_with_path)
+		for password_file in sorted(os.listdir(passwords_subdir_with_path)):
+			os.unlink(os.path.join(passwords_subdir_with_path, password_file))
+		message("Old password files removed","", 5)
+
 		passwords_file_name = os.path.join(os.path.dirname(sys.argv[1]), config['passwords_file'])
 		try:
 			with open(passwords_file_name, 'r') as passwords_file:
 				message("Reading passwords file", passwords_file_name, 3)
-				num_password = 0
 				for line in passwords_file.read().splitlines():
 					# remove leading spaces
 					line = line.lstrip()
@@ -366,16 +378,23 @@ def get_options():
 					if password == "":
 						indented_message("Missing password", "for identifier: '" + identifier + "'", 3)
 						continue
-					num_password +=1
-					crypt_password = hashlib.md5(password).hexdigest()
+					password_code = random.randint(0, max_random)
+					while password_code in [value['password_code'] for index,value in enumerate(identifiers_and_passwords)]:
+						password_code = random.randint(0, max_random)
+					encrypted_password = hashlib.md5(password).hexdigest()
 					identifiers_and_passwords.append(
 						{
-							"num_password": str(num_password),
-							"identifier": identifier,
-							"crypt_password": crypt_password
+							"password_code": str(password_code),
+							"identifier": identifier
 						}
 					)
-					indented_message("Password read", str(num_password) + ": identifier: " + identifier + ", encrypted password: " + crypt_password, 3)
+					indented_message("Password read", "identifier: " + identifier + ", encrypted password: " + encrypted_password + ", password code = " + str(password_code), 3)
+
+					# create the new single password files
+					message("creating new password file", "", 4)
+					with open(os.path.join(passwords_subdir_with_path, encrypted_password), 'w') as password_file:
+						json.dump({"passwordCode": str(password_code)}, password_file)
+						indented_message("New password file created","", 3)
 		except IOError:
 			indented_message("WARNING", passwords_file_name + " doesn't exist or unreadable, not using it", 2)
 

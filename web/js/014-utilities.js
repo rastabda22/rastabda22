@@ -763,24 +763,24 @@
 	};
 
 	Utilities.prototype.sumUpNumsProtectedMedia = function(numsProtectedMediaInSubTree) {
-		var sum = 0, password;
-		for (password in numsProtectedMediaInSubTree) {
-			if (numsProtectedMediaInSubTree.hasOwnProperty(password)) {
-				sum += numsProtectedMediaInSubTree[password];
+		var sum = 0, passwordCode;
+		for (passwordCode in numsProtectedMediaInSubTree) {
+			if (numsProtectedMediaInSubTree.hasOwnProperty(passwordCode)) {
+				sum += numsProtectedMediaInSubTree[passwordCode];
 			}
 		}
 		return sum;
 	};
 	Utilities.prototype.sumNumsProtectedMediaOfArray = function(subalbums) {
-		var result = {}, i, album, password;
+		var result = {}, i, album, passwordCode;
 
 		for (i = 0; i < subalbums.length; i ++) {
 			album = subalbums[i];
-			for (password in album.numsProtectedMediaInSubTree) {
-				if (album.numsProtectedMediaInSubTree.hasOwnProperty(password)) {
-					if (! result.hasOwnProperty(password))
-						result[password] = 0;
-					result[password] += album.numsProtectedMediaInSubTree[password];
+			for (passwordCode in album.numsProtectedMediaInSubTree) {
+				if (album.numsProtectedMediaInSubTree.hasOwnProperty(passwordCode)) {
+					if (! result.hasOwnProperty(passwordCode))
+						result[passwordCode] = 0;
+					result[passwordCode] += album.numsProtectedMediaInSubTree[passwordCode];
 				}
 			}
 		}

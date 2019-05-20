@@ -1212,19 +1212,23 @@
 		var passwordList = null;
 		if (currentMedia == null) {
 			if (! util.isAlbumWithOneMedia(currentAlbum)) {
-				if (currentAlbum.hasOwnProperty("passwords"))
-					// virtual albums don't have the passwords property
-					passwordList = currentAlbum.passwords;
+				if (currentAlbum.hasOwnProperty(""))
+					// virtual albums don't have the passwordCodes property
+					passwordList = currentAlbum.passwordCodes;
 			} else
-				passwordList = currentAlbum.media[0].passwords;
+				passwordList = currentAlbum.media[0].passwordCodes;
 		} else {
-			passwordList = currentMedia.passwords;
+			passwordList = currentMedia.passwordCodes;
 		}
 		// check if it's protected
 		if (
 			passwordList !== null &&
 			passwordList.length > 0 &&
-			passwordList.filter(value => PhotoFloat.guessedPasswords.includes(value)).length === 0
+			passwordList.filter(
+				function(value) {
+					return PhotoFloat.guessedPasswordsCodes.includes(value)
+				}
+			).length === 0
 		) {
 			util.showAuthForm();
 			return;

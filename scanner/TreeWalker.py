@@ -267,7 +267,7 @@ class TreeWalker:
 				'cacheBase': media.cache_base,
 				'albumCacheBase': media_album_cache_base,
 				'foldersCacheBase': media.album.cache_base,
-				'passwords': media.passwords
+				'passwordCodes': media.passwords
 			}]
 		}
 		positions = self.add_position_to_positions(positions, position)
@@ -760,7 +760,6 @@ class TreeWalker:
 		if Options.config['exclude_files_marker'] in listdir:
 			indented_message("files excluded by marker file", Options.config['exclude_files_marker'], 4)
 			skip_files = True
-		crypt_password = None
 		if len(Options.identifiers_and_passwords) and Options.config['passwords_marker'] in listdir:
 			next_level()
 			message(Options.config['passwords_marker'] + " file found", "reading it", 4)
@@ -784,14 +783,14 @@ class TreeWalker:
 							else:
 								# it's a simple identifier: the album and all the subalbums will be protected with the corresponding password
 								identifier = columns[0]
-								indexes = [value['crypt_password'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
+								indexes = [value['password_code'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
 								if len(indexes) == 1:
-									crypt_password = indexes[0]
+									password_code = indexes[0]
 									passwords.append(
 										{
-											"selector": '*',
+											"pattern": '*',
 											"case_flag": 'ci',
-											'encrypted_password': crypt_password
+											'password_code': password_code
 										}
 									)
 									indented_message("Directory protection requested", "identifier: " + identifier, 3)
@@ -802,24 +801,24 @@ class TreeWalker:
 							identifier = columns[0]
 							remaining_columns = " ".join(columns[1:]).lstrip().split()
 							case_flag = remaining_columns[0]
-							indexes = [value['num_password'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
+							indexes = [value['password_code'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
 							# everything beginning with the first non-space character after the case flag till the end of line (including the traling spaces) is the pattern
 							pattern = " ".join(remaining_columns[1:]).lstrip()
 							if len(indexes) == 1:
-								crypt_password = indexes[0]
+								password_code = indexes[0]
 								# absolute_file_name = os.path.join(absolute_path, file_name)
 								if case_flag == 'cs':
-									indented_message("file(s) protection requested", "identifier: '" + identifier + "', selector: '" + selector + "', case sensitive", 3)
+									indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', case sensitive", 3)
 								elif case_flag == 'ci':
-									indented_message("file(s) protection requested", "identifier: '" + identifier + "', selector: '" + selector + "', case insensitive", 3)
+									indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', case insensitive", 3)
 								else:
-									indented_message("file(s) protection requested", "identifier: '" + identifier + "', selector: '" + selector + "', case sensitive flag wrong, assuming case insensitive", 3)
+									indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', case sensitive flag wrong, assuming case insensitive", 3)
 									case_flag = 'ci'
 								passwords.append(
 									{
-										"selector": selector,
+										"pattern": pattern,
 										"case_flag": case_flag,
-										'encrypted_password': crypt_password
+										'password_code': password_code
 									}
 								)
 							else:
@@ -921,18 +920,18 @@ class TreeWalker:
 		dir_name = os.path.basename(absolute_path)
 		for password in passwords:
 			if password['case_flag'] == 'cs':
-				match = fnmatch.fnmatchcase(dir_name, password['selector'])
+				match = fnmatch.fnmatchcase(dir_name, password['pattern'])
 				case = "case sentitive"
 			else:
-				match = re.match(fnmatch.translate(password['selector']), dir_name, re.IGNORECASE)
+				match = re.match(fnmatch.translate(password['pattern']), dir_name, re.IGNORECASE)
 				case = "case insentitive"
 
 			if match:
-				if password['encrypted_password'] in album.passwords:
-					indented_message("album password matches pattern, but not added, already there", "'" + dir_name + "' matches '" + password['selector'] + "' " + case, 3)
+				if password['password_code'] in album.passwords:
+					indented_message("password not added to album", dir_name + "' matches '" + password['pattern'] + "' " + case + ", but password code " + password['password_code'] + " is already there", 3)
 				else:
-					album.passwords.append(password['encrypted_password'])
-					indented_message("album password set", "'" + dir_name + "' matches '" + password['selector'] + "' " + case + ": " + password['encrypted_password'], 3)
+					album.passwords.append(password['password_code'])
+					indented_message("password added to album", "'" + dir_name + "' matches '" + password['pattern'] + "' " + case + ", password code = " + password['password_code'], 3)
 
 		#~ for entry in sorted(os.listdir(absolute_path)):
 		message("reading directory", absolute_path, 5)
@@ -1138,28 +1137,28 @@ class TreeWalker:
 				file_name = os.path.basename(entry_with_path)
 
 				# apply the album passwords to the media
-				for encrypted_password in album.passwords:
-					if encrypted_password in media.passwords:
-						indented_message("album password not added to media, it's already there", encrypted_password, 3)
+				for password_code in album.passwords:
+					if password_code in media.passwords:
+						indented_message("album password not added to media", "password code = " + password_code + " is already there", 3)
 					else:
-						media.passwords.append(encrypted_password)
-						indented_message("album password added to media", encrypted_password, 3)
+						media.passwords.append(password_code)
+						indented_message("album password added to media", "password code = " + password_code, 3)
 
 				# apply the file passwords to the media if they match the media name
 				for password in passwords:
 					if password['case_flag'] == 'cs':
-						match = fnmatch.fnmatchcase(file_name, password['selector'])
+						match = fnmatch.fnmatchcase(file_name, password['pattern'])
 						case = "case sentitive"
 					else:
-						match = re.match(fnmatch.translate(password['selector']), file_name, re.IGNORECASE)
+						match = re.match(fnmatch.translate(password['pattern']), file_name, re.IGNORECASE)
 						case = "case insentitive"
 
 					if match:
-						if password['encrypted_password'] in media.passwords:
-							indented_message("media password not added, it's already there", "'" + file_name + "' matches '" + password['selector'] + "' " + case, 3)
+						if password['password_code'] in media.passwords:
+							indented_message("password not added to media", file_name + "' matches '" + password['pattern'] + "' " + case + ", but password code " + password['password_code'] + " is already there", 3)
 						else:
-							media.passwords.append(password['encrypted_password'])
-							indented_message("media password set", "'" + file_name + "' matches '" + password['selector'] + "' " + case + ": " + password['encrypted_password'], 3)
+							media.passwords.append(password['password_code'])
+							indented_message("password added to media", "'" + file_name + "' matches '" + password['pattern'] + "' " + case + ", password code = " + password['password_code'], 3)
 
 				# update the protected media count according to the passwords
 				if len(media.passwords):
