@@ -96,7 +96,8 @@ Content (albums and media files) can be shared over some popular social plaforms
 
 ### Privacy
 
-- [x] Albums and photo can be protected by password.
+- [x] Albums and photo can be protected by password. Passwords may be specified for albums and files.
+- [x] Passwords aren't exposed in javascript, and sensitive data are extremely difficult to find in cache.
 
 ### And More...
 
