@@ -557,12 +557,9 @@
 		// activate the map popup trigger in the title
 		$(".map-popup-trigger").off('click').on(
 			'click',
-			function(ev, fromTrigger) {
+			function(ev, from) {
 				selectorClickedToOpenTheMap = ".map-popup-trigger";
-				if (typeof fromTrigger === "undefined")
-					TopFunctions.generateMapFromDefaults();
-				else
-					TopFunctions.generateMapFromDefaults("fromTrigger");
+				TopFunctions.generateMapFromDefaults(ev, from);
 			}
 		);
 
@@ -1268,6 +1265,7 @@
 			// $("#media-view .title").show();
 			TopFunctions.showMedia(currentAlbum, currentMedia, 'center');
 
+			// we are in showMedia
 			// activate the map and the popup when coming back from a map album
 			if (
 				previousAlbum !== null &&
@@ -1860,10 +1858,10 @@
 					$("#media-map-link-" + i).off('click').on(
 						'click',
 						{media: ithMedia, album: currentAlbum, clickedSelector: "#media-map-link-" + i},
-						function(ev) {
+						function(ev, from) {
 							selectorClickedToOpenTheMap = ev.data.clickedSelector;
 							ev.stopPropagation();
-							TopFunctions.generateMapFromMedia(ev);
+							TopFunctions.generateMapFromMedia(ev, from);
 						}
 					);
 				}
@@ -2208,9 +2206,9 @@
 							$("#subalbum-map-link-" + i).off('click').on(
 								'click',
 								{subalbum: ithSubalbum, clickedSelector: "#subalbum-map-link-" + i},
-								function(ev) {
+								function(ev, from) {
 									selectorClickedToOpenTheMap = ev.data.clickedSelector
-									TopFunctions.generateMapFromSubalbum(ev);
+									TopFunctions.generateMapFromSubalbum(ev, from);
 								}
 							);
 						}
@@ -2276,6 +2274,7 @@
 		TopFunctions.bindSortEvents(currentAlbum);
 		TopFunctions.bindChangeBrowsingEvents(currentAlbum);
 
+		// we are in showAlbum
 		// activate the map and the popup when coming back from a map album
 		if (
 			previousAlbum !== null &&
@@ -2331,7 +2330,7 @@
 		}
 	};
 
-	TopFunctions.generateMapFromMedia = function(ev) {
+	TopFunctions.generateMapFromMedia = function(ev, from) {
 
 		if (util.hasGpsData(ev.data.media)) {
 			ev.preventDefault();
@@ -2346,25 +2345,25 @@
 						'foldersCacheBase': ev.data.media.foldersCacheBase
 					}]
 				};
-			TopFunctions.generateMap([point]);
+			TopFunctions.generateMap(ev, [point], from);
 		}
 	};
 
-	TopFunctions.generateMapFromSubalbum = function(ev) {
+	TopFunctions.generateMapFromSubalbum = function(ev, from) {
 
 		if (ev.data.subalbum.positionsAndMediaInTree.length) {
 			ev.stopPropagation();
 			ev.preventDefault();
-			TopFunctions.generateMap(ev.data.subalbum.positionsAndMediaInTree);
+			TopFunctions.generateMap(ev, ev.data.subalbum.positionsAndMediaInTree, from);
 		} else {
 			$("#warning-no-geolocated-media").stop().fadeIn(200);
 			$("#warning-no-geolocated-media").fadeOut(3000);
 		}
 	};
 
-	TopFunctions.generateMapFromDefaults = function(fromTrigger) {
+	TopFunctions.generateMapFromDefaults = function(ev, from) {
 		var pointList;
-		if (currentMedia !== null && util.hasGpsData(currentMedia))
+		if (currentMedia !== null && util.hasGpsData(currentMedia)) {
 			pointList = [
 				{
 					'lng': parseFloat(currentMedia.metadata.longitude),
@@ -2377,14 +2376,15 @@
 					}]
 				}
 			];
-		else if (currentAlbum.positionsAndMediaInTree.length)
+		} else if (currentAlbum.positionsAndMediaInTree.length) {
 			pointList = currentAlbum.positionsAndMediaInTree;
+		}
 
-		if (pointList != [])
-			TopFunctions.generateMap(pointList, fromTrigger);
+		if (pointList.length > 0)
+			TopFunctions.generateMap(ev, pointList, from);
 	};
 
-	TopFunctions.generateMap = function(pointList, fromTrigger) {
+	TopFunctions.generateMap = function(ev, pointList, from) {
 		// pointList is an array of uniq points with a list of the media geolocated there
 
 		var i;
@@ -2450,8 +2450,8 @@
 				m._leafletClusterBounds = cluster.bounds;
 				m.on(
 					'click',
-					function(e) {
-						TopFunctions.mapClick(e, pruneCluster.Cluster._clusters);
+					function(ev) {
+						TopFunctions.mapClick(ev, pruneCluster.Cluster._clusters);
 					}
 				);
 				return m;
@@ -2536,12 +2536,12 @@
 			*/
 			MapFunctions.mymap.on(
 				'click',
-				function(e) {
-					TopFunctions.mapClick(e, pruneCluster.Cluster._clusters);
+				function(ev) {
+					TopFunctions.mapClick(ev, pruneCluster.Cluster._clusters);
 				}
 			);
 
-			if (typeof fromTrigger !== "undefined") {
+			if (typeof from !== "undefined") {
 				if (typeOfPopupRefresh == "previousAlbum")
 					TopFunctions.mapClick(null, pruneCluster.Cluster._clusters, previousAlbum);
 				else if (typeOfPopupRefresh == "mapAlbum")
@@ -2551,7 +2551,7 @@
 		}
 	};
 
-	TopFunctions.mapClick = function(evt, clusters, previousMapAlbum) {
+	TopFunctions.mapClick = function(evt, clusters, previousAlbum) {
 		var i;
 		var maxHeightForThumbnails;
 
@@ -2565,7 +2565,6 @@
 		// }
 
 		function endPreparingMapAlbumAndUpdatePopup(mapAlbum) {
-
 			mapAlbum.numMediaInAlbum = mapAlbum.media.length;
 			mapAlbum.numMediaInSubTree = mapAlbum.media.length;
 			mapAlbum.numPositionsInTree = mapAlbum.positionsAndMediaInTree.length;
@@ -2634,7 +2633,7 @@
 
 		if (typeof previousMapAlbum !== "undefined") {
 			// the map has been shown when coming from a map album, we must show the popup with the media it had when it was previously built
-			endPreparingMapAlbumAndUpdatePopup(previousMapAlbum);
+			endPreparingMapAlbumAndUpdatePopup(previousAlbum);
 		} else {
 			var clickedPosition = evt.latlng;
 
