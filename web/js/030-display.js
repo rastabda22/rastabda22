@@ -11,6 +11,7 @@ var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
 var fromEscKey = false;
 var isMapRefresh = false;
+var selectorClickedToOpenTheMap = false;
 var typeOfPopupRefresh = "previousAlbum";
 var destHash = null;
 var destMedia = null;

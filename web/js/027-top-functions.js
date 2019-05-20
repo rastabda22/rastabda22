@@ -558,6 +558,7 @@
 		$(".map-popup-trigger").off('click').on(
 			'click',
 			function(ev, fromTrigger) {
+				selectorClickedToOpenTheMap = ".map-popup-trigger";
 				if (typeof fromTrigger === "undefined")
 					TopFunctions.generateMapFromDefaults();
 				else
@@ -1858,8 +1859,9 @@
 				for (i = 0; i < currentAlbum.media.length; ++i) {
 					$("#media-map-link-" + i).off('click').on(
 						'click',
-						{media: ithMedia, album: currentAlbum},
+						{media: ithMedia, album: currentAlbum, clickedSelector: "#media-map-link-" + i},
 						function(ev) {
+							selectorClickedToOpenTheMap = ev.data.clickedSelector;
 							ev.stopPropagation();
 							TopFunctions.generateMapFromMedia(ev);
 						}
@@ -2205,8 +2207,9 @@
 						if (ithSubalbum.hasOwnProperty("positionsAndMediaInTree") && ithSubalbum.positionsAndMediaInTree.length) {
 							$("#subalbum-map-link-" + i).off('click').on(
 								'click',
-								{subalbum: ithSubalbum},
+								{subalbum: ithSubalbum, clickedSelector: "#subalbum-map-link-" + i},
 								function(ev) {
+									selectorClickedToOpenTheMap = ev.data.clickedSelector
 									TopFunctions.generateMapFromSubalbum(ev);
 								}
 							);
@@ -2282,7 +2285,7 @@
 			) || isMapRefresh
 			// && currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)
 		)
-			$(".map-popup-trigger").trigger("click", ["fromTrigger"]);
+			$(selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 
 		if (! $("#album-view").hasClass("hidden"))
 			// f.scrollToThumb();
