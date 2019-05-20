@@ -1275,7 +1275,7 @@
 				fromEscKey
 				// && currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)
 			) {
-				$(".map-popup-trigger").trigger("click", ["fromTrigger"]);
+				$(selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 			}
 		} else {
 			// $("#album-view .title").show();
