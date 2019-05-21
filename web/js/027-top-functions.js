@@ -2422,6 +2422,8 @@
 			// var minZoom = parseInt(Math.log2(Math.min(windowWidth, windowHeight) / 256));
 			var zoom = Math.min(xZoom, yZoom);
 
+			$("#loading").hide();
+
 			$('.map-container').show();
 			$(".map-container").css("max-height", $(window).height() - 54).css("max-width", $(window).width() - 54).css("right", "44px").css("top", "24px");
 			$(".map-container").css("display", "grid");
