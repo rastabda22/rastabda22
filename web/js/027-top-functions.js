@@ -1237,20 +1237,6 @@
 		} else {
 			passwordList = currentMedia.passwordCodes;
 		}
-		// check if it's protected
-		if (
-			passwordList !== null &&
-			passwordList.length > 0 &&
-			passwordList.filter(
-				function(value) {
-					return PhotoFloat.guessedPasswordsCodes.includes(value);
-				}
-			).length === 0
-		) {
-			util.showAuthForm();
-			return;
-		}
-
 
 		f.setOptions();
 
