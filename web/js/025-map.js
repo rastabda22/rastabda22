@@ -14,17 +14,6 @@
 		MapFunctions.mapAlbum = {};
 	}
 
-	// MapFunctions.prototype. = function() {
-	// };
-
-	MapFunctions.prototype.removeProtectedContentFromMapAlbum = function() {
-		for (i = 0; i < MapFunctions.mapAlbum.media.length; ++i) {
-			if (phFl.isProtected(MapFunctions.mapAlbum.media[i])) {
-				MapFunctions.mapAlbum.media.splice(i, 1);
-			}
-		}
-	};
-
 	MapFunctions.averagePosition = function(latLngArray) {
 		var averageLatLng = L.latLng(0, 0);
 		var lat, lng, countTotal = 0;
@@ -51,7 +40,7 @@
 	MapFunctions.prototype.generateHtmlForImages = function(theAlbum) {
 		// we must get the media corresponding to the name in the point
 		// var markerClass;
-		var mediaIndex, mediaHash, thumbHeight, thumbWidth, width, height, hideThumbnail;
+		var mediaIndex, mediaHash, thumbHeight, thumbWidth, width, height;
 		var ithMedia, images = "", calculatedWidth, calculatedHeight, imageString, thumbHash, imgTitle;
 		var albumViewPadding = $("#album-view").css("padding");
 		if (! albumViewPadding)
@@ -115,9 +104,7 @@
 							"<span class='helper'></span>" +
 							"<img title='" + imgTitle + "' " +
 								"alt='" + util.trimExtension(ithMedia.name) + "' ";
-			hideThumbnail = phFl.isProtected(ithMedia);
-			if (! hideThumbnail)
-				imageString +=
+			imageString +=
 								"data-src='" + encodeURI(thumbHash) + "' ";
 			imageString +=
 								"src='img/image-placeholder.png' " +
@@ -131,8 +118,6 @@
 								) +
 								"' " +
 								"class='lazyload-popup-media thumbnail";
-			if (hideThumbnail)
-				imageString += " add-click-immediately";
 			imageString +=
 								"' " +
 								"height='" + thumbHeight + "' " +
@@ -145,14 +130,8 @@
 					"</div>" +
 					"<div class='media-caption'>" +
 						"<span>";
-			if (! hideThumbnail)
-				imageString +=
+			imageString +=
 						ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>");
-			else
-				imageString +=
-						"<em>" +
-						util._t(".protected-media-name").replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
-						"</em>";
 			imageString +=
 						"</span>" +
 					"</div>" +
@@ -185,12 +164,6 @@
 		MapFunctions.setPopupPosition();
 		MapFunctions.panMap();
 		MapFunctions.addLazy("img.lazyload-popup-media");
-		// add the click event to the protected thumbnails
-		$(".add-click-immediately").each(
-			function() {
-				MapFunctions.addClickToPopupPhoto($(this));
-			}
-		);
 	};
 
 	MapFunctions.getImagesWrapperSizes = function() {

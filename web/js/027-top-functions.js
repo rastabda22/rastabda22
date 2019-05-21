@@ -958,15 +958,6 @@
 				mediaSelector = ".media-box#" + id + " .media-box-inner img";
 				mediaSrc = util.chooseMediaReduction(media, id, fullScreenStatus);
 			}
-			// hideImage = phFl.isProtected(media);
-			// if (hideImage) {
-			// 	mediaHtml = $('<img src="img/image-placeholder.png">')
-			// 		.attr("title", "placeholder")
-			// 		.attr("width", 150)
-			// 		.attr("height", 150)
-			// 		.attr("ratio", 1)
-			// 		.attr("alt", "placeholder");
-			// } else
 			mediaHtml = util.createMediaHtml(media, id, fullScreenStatus);
 
 			triggerLoad = util.chooseTriggerEvent(media);
@@ -1195,21 +1186,6 @@
 
 		util.undie();
 		$("#loading").hide();
-
-		// $(window).off("resize").on(
-		// 	"resize",
-		// 	function () {
-		// 		windowWidth = $(window).outerWidth();
-		// 		windowHeight = $(window).outerHeight();
-		// 	}
-		// );
-
-		// if (album === currentAlbum) {
-		// 	previousAlbum = null;
-		// 	if (media === currentMedia) {
-		// 		return;
-		// 	}
-		// }
 
 		if (album != currentAlbum) {
 			previousAlbum = currentAlbum;
@@ -1670,7 +1646,7 @@
 		var albumViewWidth, correctedAlbumThumbSize = Options.album_thumb_size;
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
 		var tooBig = false, isVirtualAlbum = false;
-		var mapLinkIcon, id, ithMedia, ithSubalbum, hideThumbnail;
+		var mapLinkIcon, id, ithMedia, ithSubalbum;
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
 		var array, folderArray, folder, folderName, folderTitle, savedSearchSubAlbumHash, savedSearchAlbumHash;
 
@@ -1765,7 +1741,7 @@
 					calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
 					mapLinkIcon = "";
-					if (util.hasGpsData(ithMedia) && ! phFl.isProtected(ithMedia)) {
+					if (util.hasGpsData(ithMedia)) {
 						mapLinkIcon =
 							"<a id='media-map-link-" + i + "'>" +
 								"<img " +
@@ -1791,9 +1767,7 @@
 									"<span class='helper'></span>" +
 									"<img title='" + imgTitle + "' " +
 										"alt='" + util.trimExtension(ithMedia.name) + "' ";
-					hideThumbnail = phFl.isProtected(ithMedia);
-					if (! hideThumbnail)
-						imageString +=
+					imageString +=
 										"data-src='" + encodeURI(thumbHash) + "' ";
 					imageString +=
 										"src='img/image-placeholder.png' " +
@@ -1808,14 +1782,8 @@
 								"</div>" +
 								"<div class='media-caption'>" +
 								"<span>";
-					if (! hideThumbnail)
-						imageString +=
+					imageString +=
 									ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>");
-					else
-						imageString +=
-								"<em>" +
-								util._t(".protected-media-name").replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
-								"</em>";
 					imageString +=
 								"</span>";
 					imageString += "</div>" +
@@ -1834,18 +1802,9 @@
 
 					imageLink.off('click').css("cursor", "pointer").on(
 						'click',
-						{ithMedia: ithMedia, hash: mediaHash},
+						{hash: mediaHash},
 						function(ev) {
-							if (phFl.isProtected(ithMedia)) {
-								util.showAuthForm();
-								destHash = ev.data.hash;
-								destMedia = ithMedia;
-								destAlbum = null;
-								return;
-							} else {
-								window.location.href = ev.data.hash;
-								// $(window).hashchange();
-							}
+							window.location.href = ev.data.hash;
 						}
 					);
 
@@ -1964,11 +1923,7 @@
 
 								}
 								else {
-									if (phFl.isProtected(ithSubalbum)) {
-										folderName = "<em>" + util._t(".protected-album-name") + "</em>";
-									} else {
-										folderName = ithSubalbum.path;
-									}
+									folderName = ithSubalbum.path;
 									folderTitle = folderName;
 								}
 
@@ -2125,9 +2080,7 @@
 											$("#" + id + " .album-button a").attr("href", randomMediaLink);
 											$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
 											$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName);
-											hideThumbnail = phFl.isProtected(randomMedia);
-											if (! hideThumbnail)
-												$("#" + id + " img.thumbnail").attr("data-src", encodeURI(mediaSrc));
+											$("#" + id + " img.thumbnail").attr("data-src", encodeURI(mediaSrc));
 											$("#" + id + " img.thumbnail").css("width", thumbWidth).css("height", thumbHeight);
 
 											$(function() {
@@ -2156,16 +2109,7 @@
 															subfolderHash = phFl.encodeHash(subalbum, null);
 													}
 
-													if (phFl.isProtected(subalbum)) {
-														util.showAuthForm();
-														destHash = subfolderHash;
-														destAlbum = subalbum;
-														destMedia = null;
-														return;
-													} else {
-														window.location.href = subfolderHash;
-														// $(window).hashchange();
-													}
+													window.location.href = subfolderHash;
 												}
 											);
 
