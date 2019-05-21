@@ -755,12 +755,13 @@
 	TopFunctions.showMedia = function(album, media, id) {
 
 		function loadNextPrevMedia(containerHeight, containerWidth) {
-			$("#pinch-in").off("click").on("click", pS.pinchIn);
-			$("#pinch-out").off("click").on("click", pS.pinchOut);
 
 			$(mediaSelector).off(triggerLoad);
 
 			if (id === "center") {
+				$("#pinch-in").off("click").on("click", pS.pinchIn);
+				$("#pinch-out").off("click").on("click", pS.pinchOut);
+
 				if (media.mediaType == "photo") {
 					pS.addMediaGesturesDetection();
 					pS.setPinchButtonsPosition();
@@ -905,16 +906,16 @@
 				mediaSelector = ".media-box#" + id + " .media-box-inner img";
 				mediaSrc = util.chooseMediaReduction(media, id, fullScreenStatus);
 			}
-			hideImage = phFl.isProtected(media);
-			if (hideImage) {
-				mediaHtml = $('<img src="img/image-placeholder.png">')
-					.attr("title", "placeholder")
-					.attr("width", 150)
-					.attr("height", 150)
-					.attr("ratio", 1)
-					.attr("alt", "placeholder");
-			} else
-				mediaHtml = util.createMediaHtml(media, id, fullScreenStatus);
+			// hideImage = phFl.isProtected(media);
+			// if (hideImage) {
+			// 	mediaHtml = $('<img src="img/image-placeholder.png">')
+			// 		.attr("title", "placeholder")
+			// 		.attr("width", 150)
+			// 		.attr("height", 150)
+			// 		.attr("ratio", 1)
+			// 		.attr("alt", "placeholder");
+			// } else
+			mediaHtml = util.createMediaHtml(media, id, fullScreenStatus);
 
 			triggerLoad = util.chooseTriggerEvent(media);
 
@@ -930,11 +931,10 @@
 
 			if (id === "center")
 				$(mediaBoxInnerElement).css("opacity", 1);
-			$(mediaSelector).off(triggerLoad);
-			$(mediaSelector).on(
+
+			$(mediaSelector).off(triggerLoad).on(
 				triggerLoad,
 				{
-					// id: mediaId,
 					id: id,
 					media: media,
 					resize: false,
@@ -2612,7 +2612,6 @@
 			util.initializeSortPropertiesAndCookies(mapAlbum);
 			// now sort them according to options
 			util.sortAlbumsMedia(mapAlbum);
-			TopFunctions.bindSortEvents(mapAlbum);
 
 			// update the map root album in cache
 			var rootMapAlbum = phFl.getAlbumFromCache(Options.by_map_string);
@@ -2622,7 +2621,7 @@
 			rootMapAlbum.positionsAndMediaInTree = util.mergePoints(rootMapAlbum.positionsAndMediaInTree, mapAlbum.positionsAndMediaInTree);
 			rootMapAlbum.numMediaInSubTree += mapAlbum.numMediaInSubTree;
 
-			MapFunctions.getImagesWrapperSizes();
+			TopFunctions.bindSortEvents(mapAlbum);
 
 			if (MapFunctions.popup) {
 				MapFunctions.popup.remove();
