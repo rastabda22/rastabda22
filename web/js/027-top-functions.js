@@ -777,6 +777,9 @@
 				$(window).off("resize").on(
 					"resize",
 					function () {
+						windowWidth = $(window).outerWidth();
+						windowHeight = $(window).outerHeight();
+
 						var event = {data: {}};
 
 						event.data.resize = true;
@@ -1193,13 +1196,13 @@
 		util.undie();
 		$("#loading").hide();
 
-		$(window).off("resize").on(
-			"resize",
-			function () {
-				windowWidth = $(window).outerWidth();
-				windowHeight = $(window).outerHeight();
-			}
-		);
+		// $(window).off("resize").on(
+		// 	"resize",
+		// 	function () {
+		// 		windowWidth = $(window).outerWidth();
+		// 		windowHeight = $(window).outerHeight();
+		// 	}
+		// );
 
 		// if (album === currentAlbum) {
 		// 	previousAlbum = null;
@@ -2295,6 +2298,37 @@
 		if (! $("#album-view").hasClass("hidden"))
 			// f.scrollToThumb();
 			setTimeout(f.scrollToThumb, 1);
+
+		$(window).off("resize").on(
+			"resize",
+			function () {
+				windowWidth = $(window).outerWidth();
+				windowHeight = $(window).outerHeight();
+
+				TopFunctions.showAlbum("refreshSubalbums");
+
+				var isPopup = $('.leaflet-popup').html() ? true : false;
+				var isMap = $('#mapdiv').html() ? true : false;
+				if (isMap) {
+					// the map must be generated again including the points that only carry protected content
+					mapRefreshType = "resize";
+
+					if (isPopup) {
+						popupRefreshType = "mapAlbum";
+						$('.leaflet-popup-close-button')[0].click();
+					} else {
+						popupRefreshType = "none";
+					}
+					// $(window).hashchange();
+
+					// close the map and reopen it
+					$('.modal-close')[0].click();
+					$(selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
+				}
+			}
+		);
+
+
 	};
 
 	TopFunctions.goFullscreen = function(e) {
