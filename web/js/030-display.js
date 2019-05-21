@@ -10,7 +10,7 @@ var titleWrapper1, titleWrapper2, maxWidthForThumbnails, nextBrowsingModeSelecto
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
 var fromEscKey = false;
-var isMapRefresh = false;
+var mapRefreshType = "none";
 var selectorClickedToOpenTheMap = false;
 var popupRefreshType = "previousAlbum";
 var destHash = null;
@@ -465,13 +465,13 @@ $(document).ready(function() {
 
 				if (isMap) {
 					// the map must be generated again including the points that only carry protected content
-					isMapRefresh = true;
+					mapRefreshType = "refresh";
 
 					if (isPopup) {
 						popupRefreshType = "mapAlbum";
 						$('.leaflet-popup-close-button')[0].click();
 					} else {
-						popupRefreshType = "None";
+						popupRefreshType = "none";
 					}
 					// close the map
 					$('.modal-close')[0].click();
