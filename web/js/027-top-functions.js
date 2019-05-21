@@ -814,11 +814,12 @@
 							} else {
 								popupRefreshType = "none";
 							}
-							// // close the map
-							// $('.modal-close')[0].click();
-						}
+							// $(window).hashchange();
 
-						$(window).hashchange();
+							// close the map and reopen it
+							$('.modal-close')[0].click();
+							$(selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
+						}
 					}
 				);
 			}
@@ -1283,12 +1284,13 @@
 			// $("#media-view .title").show();
 			TopFunctions.showMedia(currentAlbum, currentMedia, 'center');
 
-			// we are in showMedia
+			// we are in hashParsed
 			// activate the map and the popup when coming back from a map album
 			if (
 				previousAlbum !== null &&
 				util.isMapCacheBase(previousAlbum.cacheBase) &&
-				fromEscKey
+				// fromEscKey || mapRefreshType == "refresh"
+				fromEscKey || mapRefreshType !== "none"
 				// && currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)
 			) {
 				$(selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
@@ -1322,7 +1324,7 @@
 			// subalbums are present, we have to wait when all the random thumbnails will be loaded
 		}
 		fromEscKey = false;
-		mapRefreshType = "none";
+		// mapRefreshType = "none";
 
 		return;
 	};
