@@ -780,6 +780,8 @@
 						windowWidth = $(window).outerWidth();
 						windowHeight = $(window).outerHeight();
 
+						$("#loading").show();
+
 						var event = {data: {}};
 
 						event.data.resize = true;
@@ -1603,6 +1605,7 @@
 			if ($("#error-too-many-images").is(":visible")) {
 				$("#error-too-many-images").hide();
 			}
+			$("#loading").show();
 			Options.show_big_virtual_folders = ! Options.show_big_virtual_folders;
 			if (Options.show_big_virtual_folders)
 				$("#show-them:hover").css("color", "").css("cursor", "");
@@ -2248,6 +2251,8 @@
 			function () {
 				windowWidth = $(window).outerWidth();
 				windowHeight = $(window).outerHeight();
+
+				$("#loading").show();
 
 				TopFunctions.showAlbum("refreshSubalbums");
 

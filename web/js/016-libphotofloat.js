@@ -1148,6 +1148,8 @@
 		}
 
 		PhotoFloat.selectMedia(resultsAlbumFinal, null, mediaHash, callback);
+
+		$("#loading").hide();
 	};
 
 	PhotoFloat.selectMedia = function(theAlbum, mediaFolderHash, mediaHash, callback) {
