@@ -1022,43 +1022,45 @@
 				// prevLink = phFl.encodeHash(currentAlbum, prevMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
 				$("#next").show();
 				$("#prev").show();
-				mediaBoxInnerElement
-					.css('cursor', '')
-					.on(
-						'contextmenu',
-						function(ev) {
-							if (! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-								ev.preventDefault();
-								if (pS.getCurrentZoom() == 1)
-									pS.swipeRight(prevMedia);
-							}
+				mediaBoxInnerElement.css('cursor', '').on(
+					'contextmenu',
+					function(ev) {
+						if (! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+							ev.preventDefault();
+							if (pS.getCurrentZoom() == 1)
+								pS.swipeRight(prevMedia);
 						}
-					)
-					.on('mousewheel', pS.swipeOnWheel);
-					$(".media-box#center .media-box-inner .media-bar").on(
-						'click',
-						function(ev) {
-							ev.stopPropagation();
-						}
-					).on(
-						'contextmenu',
-						function(ev) {
-							ev.stopPropagation();
-						}
-					);
+					}
+				);
 
-					$("#prev").on('click', function(ev) {
-						if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-							pS.swipeRight(prevMedia);
-							return false;
-						}
-					});
-					$("#next").on('click', function(ev) {
-						if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-							pS.swipeLeft(nextMedia);
-							return false;
-						}
-					});
+				mediaBoxInnerElement.off('mousewheel');
+				if (media.mediaType == "photo")
+					mediaBoxInnerElement.on('mousewheel', pS.swipeOnWheel);
+
+				$(".media-box#center .media-box-inner .media-bar").on(
+					'click',
+					function(ev) {
+						ev.stopPropagation();
+					}
+				).on(
+					'contextmenu',
+					function(ev) {
+						ev.stopPropagation();
+					}
+				);
+
+				$("#prev").on('click', function(ev) {
+					if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+						pS.swipeRight(prevMedia);
+						return false;
+					}
+				});
+				$("#next").on('click', function(ev) {
+					if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+						pS.swipeLeft(nextMedia);
+						return false;
+					}
+				});
 			}
 
 			// $(".links").removeClass("hidden");
@@ -2287,6 +2289,7 @@
 			$("#album-view").addClass('hidden');
 			$("#media-view").fullScreen({
 				callback: function(isFullscreen) {
+					$("#loading").hide();
 					fullScreenStatus = isFullscreen;
 					$(".enter-fullscreen").toggle();
 					$(".exit-fullscreen").toggle();
