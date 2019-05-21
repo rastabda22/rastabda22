@@ -773,6 +773,54 @@
 					TopFunctions.showMedia(album, prevMedia, 'left');
 					TopFunctions.showMedia(album, nextMedia, 'right');
 				}
+
+				$(window).off("resize").on(
+					"resize",
+					function () {
+						var event = {data: {}};
+
+						event.data.resize = true;
+
+						event.data.id = "center";
+						event.data.media = media;
+						event.data.callback = f.pinchSwipeInitialization;
+						event.data.callbackType = "pinch";
+						event.data.currentZoom = pS.getCurrentZoom();
+						util.scaleMedia(event);
+
+						if (album.media.length > 1) {
+							event.data.id = "left";
+							event.data.media = prevMedia;
+							event.data.callback = f.pinchSwipeInitialization;
+							event.data.callbackType = "pinch";
+							util.scaleMedia(event);
+
+							event.data.id = "right";
+							event.data.media = nextMedia;
+							event.data.callback = f.pinchSwipeInitialization;
+							event.data.callbackType = "pinch";
+							util.scaleMedia(event);
+						}
+
+						var isPopup = $('.leaflet-popup').html() ? true : false;
+						var isMap = $('#mapdiv').html() ? true : false;
+						if (isMap) {
+							// the map must be generated again including the points that only carry protected content
+							mapRefreshType = "resize";
+
+							if (isPopup) {
+								popupRefreshType = "mapAlbum";
+								$('.leaflet-popup-close-button')[0].click();
+							} else {
+								popupRefreshType = "none";
+							}
+							// // close the map
+							// $('.modal-close')[0].click();
+						}
+
+						$(window).hashchange();
+					}
+				);
 			}
 		}
 
@@ -948,36 +996,6 @@
 				$(mediaSelector).trigger(triggerLoad);
 
 			if (id === "center") {
-				$(window).off("resize").on(
-					"resize",
-					function () {
-						var event = {data: {}};
-
-						event.data.resize = true;
-
-						event.data.id = "center";
-						event.data.media = media;
-						event.data.callback = f.pinchSwipeInitialization;
-						event.data.callbackType = "pinch";
-						event.data.currentZoom = pS.getCurrentZoom();
-						util.scaleMedia(event);
-
-						if (album.media.length > 1) {
-							event.data.id = "left";
-							event.data.media = prevMedia;
-							event.data.callback = f.pinchSwipeInitialization;
-							event.data.callbackType = "pinch";
-							util.scaleMedia(event);
-
-							event.data.id = "right";
-							event.data.media = nextMedia;
-							event.data.callback = f.pinchSwipeInitialization;
-							event.data.callbackType = "pinch";
-							util.scaleMedia(event);
-						}
-					}
-				);
-
 				if (! Options.persistent_metadata) {
 					$(".media-box .metadata").hide();
 					$(".media-box .metadata-show").show();
