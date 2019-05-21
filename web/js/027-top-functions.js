@@ -2518,6 +2518,7 @@
 				{
 					attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
 					maxZoom: 21,
+					maxNativeZoom: 18,
 					id: 'mapbox.streets'
 				}
 			).addTo(MapFunctions.mymap);
