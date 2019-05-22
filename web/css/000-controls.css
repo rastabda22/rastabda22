@@ -370,7 +370,7 @@ video {
 	background-color: #000000;
 	font-weight: bold;
 	height: 10px;
-	font-size: 70%;
+	font-size: 80%;
 	line-height: 7px;
 	padding-top: 3px;
 	padding-bottom: 3px;
@@ -388,6 +388,10 @@ video {
 
 .links.hidden {
 	display: none !important;
+}
+
+.link-button {
+	white-space: nowrap;
 }
 
 .metadata {

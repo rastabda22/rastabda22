@@ -9,6 +9,11 @@
 		line-height: 1.5em;
 	}
 
+	.links {
+		line-height: 29px;
+		font-size: 100%;
+	}
+
 	#album-view.media-view-container {
 		display: none;
 		height: 0;
