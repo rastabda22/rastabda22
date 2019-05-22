@@ -1008,8 +1008,6 @@
 
 			upLink = phFl.upHash(location.hash);
 			if (currentAlbum.media.length == 1) {
-				// nextLink = "";
-				// prevLink = "";
 				mediaBoxInnerElement.css('cursor', 'default');
 			} else {
 				array = phFl.decodeHash(location.hash);

@@ -223,7 +223,7 @@
 		 * cancel : we animate back to where we were
 		 * end : we animate to the next image
 		 */
-		function swipeStatus(event, phase, direction, distance , duration , fingerCount) {
+		function swipeStatus(event, phase, direction, distance, duration, fingerCount) {
 			//If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
 			if (phase == "start")
 				isLongTap = false;
@@ -269,7 +269,7 @@
 
 		function pinchStatus(event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData) {
 			// the drag vector is calculated here for use in the swipeStatus function
-			// lamentably, swipeStatus doesn't return info about the swipt vector
+			// lamentably, swipeStatus doesn't return info about the swipe vector
 			var dragVectorX = fingerData[0].end.x - fingerData[0].start.x;
 			var dragVectorY = fingerData[0].end.y - fingerData[0].start.y;
 			var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
