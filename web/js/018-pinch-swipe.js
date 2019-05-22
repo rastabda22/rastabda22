@@ -109,6 +109,9 @@
 			if (nextSizeReduction !== false) {
 				$.preloadImages(nextSizeReduction);
 			}
+			$(mediaSelector).css("cursor", "all-scroll");
+		} else {
+			$(mediaSelector).css("cursor", "");
 		}
 
 		maxAllowedTranslateX = Math.max(currentZoom * mediaWidth - mediaBoxInnerWidth, 0) / 2;
