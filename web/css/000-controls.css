@@ -722,7 +722,7 @@ ul#right-menu img#search-button {
 	top: 7px;
 }
 
-ul#right-menu.expand li.selected {
+ul#right-menu.expand .selected {
 	background-image: url(../img/ic_check_circle_black_24dp_1x.png);
 	background-repeat: no-repeat;
 	background-position: right;

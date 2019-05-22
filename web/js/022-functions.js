@@ -316,18 +316,6 @@
 		}
 
 		if (
-			thisAlbum === null || ! thisAlbum.media.length | util.isFolderCacheBase(thisAlbum.cacheBase)
-		) {
-			$("ul#right-menu li.show-big-albums").addClass("hidden");
-		} else {
-			$("ul#right-menu li.show-big-albums").removeClass("hidden");
-			if (Options.show_big_virtual_folders)
-			 	$("ul#right-menu li.show-big-albums").addClass("selected");
-			else
-				$("ul#right-menu li.show-big-albums").removeClass("selected");
-		}
-
-		if (
 			isPopup ||
 			currentMedia === null && ! util.isAlbumWithOneMedia(thisAlbum)
 			// ||
@@ -351,10 +339,23 @@
 			$("ul#right-menu li.album-names").hasClass("hidden") &&
 			$("ul#right-menu li.square-media-thumbnails").hasClass("hidden") &&
 			$("ul#right-menu li.media-names").hasClass("hidden") &&
-			$("ul#right-menu li.show-big-albums").hasClass("hidden") &&
 			$("ul#right-menu li.hide-bottom-thumbnails").hasClass("hidden")
 		) {
 			$("ul#right-menu li.ui").addClass("hidden");
+		}
+
+		if (
+			thisAlbum === null ||
+			thisAlbum.media.length < Options.big_virtual_folders_threshold ||
+			util.isFolderCacheBase(thisAlbum.cacheBase)
+		) {
+			$("ul#right-menu #show-big-albums").addClass("hidden");
+		} else {
+			$("ul#right-menu #show-big-albums").removeClass("hidden");
+			if (Options.show_big_virtual_folders)
+			 	$("ul#right-menu #show-big-albums").addClass("selected");
+			else
+				$("ul#right-menu #show-big-albums").removeClass("selected");
 		}
 
 		if (currentMedia !== null) {
