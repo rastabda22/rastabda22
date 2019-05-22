@@ -788,8 +788,8 @@
 		// }
 		var pinchTop = Math.round(titleHeight + (containerHeight - actualHeight) / 2 + distanceFromImageBorder);
 		// var pinchTop = Math.round((containerHeight - actualHeight) / 2 + distanceFromImageBorder);
-		var pinchLeft = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
-		$("#pinch-container").css("left", pinchLeft.toString() + "px").css("top", pinchTop.toString() + "px");
+		var pinchRight = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
+		$("#pinch-container").css("right", pinchRight.toString() + "px").css("top", pinchTop.toString() + "px");
 	};
 
 	Utilities.prototype.sumUpNumsProtectedMedia = function(numsProtectedMediaInSubTree) {
@@ -923,15 +923,21 @@
 	};
 
 	Utilities.correctPrevNextPosition = function() {
-		$("#prev").css("left", "");
-		if (! fullScreenStatus && currentAlbum.media.length > 1 && Utilities.lateralSocialButtons() && Utilities.isColliding($(".ssk-left"), $("#prev")))
-			// correct back arrow position when social buttons are on the left
-			$("#prev").css("left", $(".ssk").outerWidth().toString() + "px");
+		var correctionForPinch =
+			Utilities.isColliding($("#pinch-container"), $("#next")) ?
+				$("#pinch-container").outerWidth() + parseInt($("#pinch-container").css("right")) : 0;
+		var correctionForSocial =
+			Utilities.lateralSocialButtons() && Utilities.isColliding($(".ssk-left"), $("#prev")) ?
+				$(".ssk").outerWidth() : 0;
 
 		$("#next").css("right", "");
-		if (! fullScreenStatus && currentAlbum.media.length > 1 && Utilities.isColliding($("#pinch-container"), $("#next")))
-			// correct forward arrow position when they overlap with pinch buttons
-			$("#next").css("right", ($("#pinch-container").outerWidth() + parseInt($("#pinch-container").css("right"))).toString() + "px");
+		$("#prev").css("left", "");
+		if (! fullScreenStatus && currentAlbum.media.length > 1) {
+			// correct next button position when pinch buttons collide
+			$("#next").css("right", correctionForPinch.toString() + "px");
+			// correct prev button position when social buttons are on the left
+			$("#prev").css("left", correctionForSocial.toString() + "px");
+		}
 	};
 
 	Utilities.mediaBoxGenerator = function(id) {
