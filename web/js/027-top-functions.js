@@ -2182,6 +2182,8 @@
 				}
 			}
 
+			$("#loading").hide();
+
 		}
 
 		$("img.lazyload-media").Lazy(

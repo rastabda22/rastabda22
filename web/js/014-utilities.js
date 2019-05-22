@@ -760,6 +760,8 @@
 				event.data.callback(containerHeight, containerWidth);
 			}
 		}
+
+		$("#loading").hide();
 	};
 
 	Utilities.prototype.sumUpNumsProtectedMedia = function(numsProtectedMediaInSubTree) {
