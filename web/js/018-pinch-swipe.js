@@ -143,9 +143,23 @@
 	};
 
 	PinchSwipe.pinchIn = function() {
+		var keepPinching = true;
 		if (currentZoom == 1 && ! $(".title").hasClass("hidden-by-pinch") && ($(".title").is(":visible") || $("#album-view").is(":visible"))) {
+			keepPinching = false;
 			$(".title").addClass("hidden-by-pinch");
 			$("#album-view").addClass("hidden-by-pinch");
+
+			pastMediaWidthOnScreen = $(mediaSelector)[0].width;
+			pastMediaHeightOnScreen = $(mediaSelector)[0].height;
+			pastMediaRatioOnScreen = pastMediaWidthOnScreen / pastMediaHeightOnScreen;
+			windowRatio = windowWidth / windowHeight;
+
+			if (
+				pastMediaRatioOnScreen > windowRatio &&
+				$(".media-box#center .media-box-inner img").outerWidth() == windowWidth
+			)
+				keepPinching = true;
+
 			var event = {data: {}};
 			event.data.resize = true;
 			event.data.id = "center";
@@ -162,9 +176,10 @@
 			};
 			event.data.callbackType = "pinch";
 			event.data.currentZoom = currentZoom;
-			pastMediaWidthOnScreen = $(mediaSelector)[0].width;
+
 			util.scaleMedia(event);
-		} else
+		}
+		if (keepPinching)
 			PinchSwipe.pinchInOut(currentZoom, zoomIncrement, pinchSpeed);
 	};
 
