@@ -208,9 +208,6 @@
 
 		$(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + ")");
 		$(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + ")");
-		baseTranslateX = currentTranslateX;
-		baseTranslateY = currentTranslateY;
-
 	};
 
 	// define the actions to be taken on pinch, swipe, tap, double tap
