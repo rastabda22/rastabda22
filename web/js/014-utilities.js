@@ -762,6 +762,7 @@
 		}
 
 		$("#loading").hide();
+		pS.setPinchButtonsPosition();
 	};
 
 	Utilities.prototype.sumUpNumsProtectedMedia = function(numsProtectedMediaInSubTree) {
