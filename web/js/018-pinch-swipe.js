@@ -64,7 +64,7 @@
 		$("#media-box-container").css("transform", "translate(" + value + "px,0)");
 	};
 
-	PinchSwipe.pinchInOut = function(baseZoom, pinchZoom, duration) {
+	PinchSwipe.pinchInOut = function(baseZoom, pinchZoom, duration, callback) {
 		var nextSize, photoWidth, photoHeight, width, height;
 		currentZoom = Number(Math.max(Math.min((baseZoom * pinchZoom), maxAllowedZoom), 1).toFixed(2));
 		if (pinchZoom < 1 && baseZoom > 1) {
@@ -102,6 +102,10 @@
 
 		$(mediaSelector).css("transition-duration", duration + "ms");
 		$(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + ")");
+
+		if (currentZoom == 1 && typeof callback !== "undefined")
+			// callback is the function that possibly shows the title and the bottom thumbnails
+			window.setTimeout(callback, duration * 1.2);
 
 		if (pinchZoom > 1) {
 			// preload next size photo
@@ -184,8 +188,7 @@
 	};
 
 	PinchSwipe.pinchOut = function() {
-		if (currentZoom <= 1 && $(".title").hasClass("hidden-by-pinch")) {
-		// if (currentZoom <= zoomAfterFirstPinch && $(".title").hasClass("hidden-by-pinch")) {
+		function showTitleAndBottomThumbnails() {
 			$(".title").removeClass("hidden-by-pinch");
 			$("#album-view").removeClass("hidden-by-pinch");
 			var event = {data: {}};
@@ -207,8 +210,30 @@
 			event.data.currentZoom = currentZoom;
 			pastMediaWidthOnScreen = $(mediaSelector)[0].width;
 			util.scaleMedia(event);
+		}
+
+		if (currentZoom <= 1 && $(".title").hasClass("hidden-by-pinch")) {
+		// if (currentZoom <= zoomAfterFirstPinch && $(".title").hasClass("hidden-by-pinch")) {
+			showTitleAndBottomThumbnails();
 		} else {
-			PinchSwipe.pinchInOut(currentZoom, zoomDecrement, pinchSpeed);
+			PinchSwipe.pinchInOut(
+				currentZoom,
+				zoomDecrement,
+				pinchSpeed,
+				function () {
+					// check whether the final pinchout (re-establishing title and the bottom thumbnails) has to be performed
+					mediaWidthOnScreen = $(mediaSelector)[0].width;
+					mediaHeightOnScreen = $(mediaSelector)[0].height;
+					mediaRatioOnScreen = pastMediaWidthOnScreen / pastMediaHeightOnScreen;
+					windowRatio = windowWidth / windowHeight;
+
+					if (
+						mediaRatioOnScreen > windowRatio &&
+						$(".media-box#center .media-box-inner img").outerWidth() == windowWidth
+					)
+						showTitleAndBottomThumbnails();
+				}
+			);
 		}
 	};
 
