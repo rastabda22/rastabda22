@@ -885,7 +885,7 @@
 
 	Utilities.setLinksVisibility = function() {
 		if (isMobile.any()) {
-			$(".media-box .links").css("display", "inline").css("opacity", 0.5);
+			$(".media-box .links").css("display", "inline").css("opacity", 0.5).stop().fadeTo("slow", 0.25);
 		} else {
 			$("#media-view").off();
 			$("#media-view").on('mouseenter', function() {
