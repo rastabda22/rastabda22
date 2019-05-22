@@ -39,7 +39,11 @@ var isMobile = {
 	}
 };
 // this variable permits to take into account the real mobile device pixels when deciding the size of reduced size image which is going to be loaded
-var devicePixelRatio = window.devicePixelRatio || 1;
+var devicePixelRatio;
+if (isMobile.any())
+	devicePixelRatio =  window.devicePixelRatio || 1;
+else
+	devicePixelRatio = 1;
 
 $(document).ready(function() {
 
