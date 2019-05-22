@@ -762,7 +762,34 @@
 		}
 
 		$("#loading").hide();
-		pS.setPinchButtonsPosition();
+		Utilities.setPinchButtonsPosition();
+		Utilities.correctPrevNextPosition();
+	};
+
+	Utilities.setPinchButtonsPosition = function(containerHeight, containerWidth) {
+		// calculate and set pinch buttons position
+
+		var mediaElement = $(".media-box#center .media-box-inner img");
+		var actualHeight = mediaElement.height();
+		var actualWidth = mediaElement.width();
+		var titleHeight, albumHeight;
+		if ($(".media-box#center .title").is(":visible"))
+			titleHeight = $(".media-box#center .title").height();
+		else
+			titleHeight = 0;
+		if ($("#album-view").is(":visible"))
+			albumHeight = $("#album-view").height();
+		else
+			albumHeight = 0;
+		var distanceFromImageBorder = 15;
+		// if (typeof containerHeight === "undefined") {
+		containerHeight = windowHeight - titleHeight - albumHeight;
+		containerWidth = windowWidth;
+		// }
+		var pinchTop = Math.round(titleHeight + (containerHeight - actualHeight) / 2 + distanceFromImageBorder);
+		// var pinchTop = Math.round((containerHeight - actualHeight) / 2 + distanceFromImageBorder);
+		var pinchLeft = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
+		$("#pinch-container").css("left", pinchLeft.toString() + "px").css("top", pinchTop.toString() + "px");
 	};
 
 	Utilities.prototype.sumUpNumsProtectedMedia = function(numsProtectedMediaInSubTree) {
@@ -1083,6 +1110,7 @@
 	Utilities.prototype.sortByPath = Utilities.sortByPath;
 	Utilities.prototype.sortBy = Utilities.sortBy;
 	Utilities.prototype.isByGpsCacheBase = Utilities.isByGpsCacheBase;
+	Utilities.prototype.setPinchButtonsPosition = Utilities.setPinchButtonsPosition;
 
 	window.Utilities = Utilities;
 }());

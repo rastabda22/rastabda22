@@ -764,8 +764,7 @@
 
 				if (media.mediaType == "photo") {
 					pS.addMediaGesturesDetection();
-					pS.setPinchButtonsPosition();
-					// pS.setPinchButtonsPosition(containerHeight, containerWidth);
+					util.setPinchButtonsPosition();
 					util.correctPrevNextPosition();
 				}
 

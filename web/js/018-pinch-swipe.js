@@ -139,45 +139,6 @@
 		}
 	};
 
-	PinchSwipe.setPinchButtonsPosition = function(containerHeight, containerWidth) {
-		// calculate and set pinch buttons position
-
-		var mediaElement = $(".media-box#center .media-box-inner img");
-		var actualHeight = mediaElement.height();
-		var actualWidth = mediaElement.width();
-		var titleHeight, albumHeight;
-		if ($(".media-box#center .title").is(":visible"))
-			titleHeight = $(".media-box#center .title").height();
-		else
-			titleHeight = 0;
-		if ($("#album-view").is(":visible"))
-			albumHeight = $("#album-view").height();
-		else
-			albumHeight = 0;
-		var distanceFromImageBorder = 15;
-		// if (typeof containerHeight === "undefined") {
-		containerHeight = windowHeight - titleHeight - albumHeight;
-		containerWidth = windowWidth;
-		// }
-		var pinchTop = Math.round(titleHeight + (containerHeight - actualHeight) / 2 + distanceFromImageBorder);
-		// var pinchTop = Math.round((containerHeight - actualHeight) / 2 + distanceFromImageBorder);
-		var pinchLeft = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
-		$("#pinch-container").css("left", pinchLeft.toString() + "px").css("top", pinchTop.toString() + "px");
-		// var pinchBottom = Math.round((containerHeight - actualHeight) / 2 + distanceFromImageBorder);
-		// var pinchRight = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
-		// $("#pinch-container").css("right", pinchRight.toString() + "px").css("bottom", pinchBottom.toString() + "px");
-
-		// if ($("#center .links").is(":visible")) {
-		// 	while (util.isColliding($("#pinch-container"), $("#center .links")) || util.isColliding($("#pinch-container"), $(".ssk-group"))) {
-		// 		// overlap with the links bar: move up the pinch buttons
-		// 		pinchBottom += 5;
-		// 		$("#pinch-container").css("bottom", pinchBottom.toString() + "px");
-		// 	}
-		// 	// add some more space
-		// 	$("#pinch-container").css("bottom", (pinchBottom + distanceFromImageBorder).toString() + "px");
-		// }
-	};
-
 	PinchSwipe.pinchIn = function() {
 		if (currentZoom == 1 && ! $(".title").hasClass("hidden-by-pinch") && ($(".title").is(":visible") || $("#album-view").is(":visible"))) {
 			$(".title").addClass("hidden-by-pinch");
@@ -190,7 +151,8 @@
 				mediaWidthOnScreen = $(mediaSelector)[0].width;
 				// currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
 				// zoomAfterFirstPinch = currentZoom;
-				PinchSwipe.setPinchButtonsPosition();
+				util.setPinchButtonsPosition();
+				util.correctPrevNextPosition();
 				PinchSwipe.setPinchButtonsVisibility();
 				mediaWidth = parseInt($(mediaSelector).css("width"));
 				mediaHeight = parseInt($(mediaSelector).css("height"));
@@ -217,7 +179,8 @@
 				// currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
 				// currentZoom = 1;
 				// zoomAfterFirstPinch = currentZoom;
-				PinchSwipe.setPinchButtonsPosition();
+				util.setPinchButtonsPosition();
+				util.correctPrevNextPosition();
 				PinchSwipe.setPinchButtonsVisibility();
 				mediaWidth = parseInt($(mediaSelector).css("width"));
 				mediaHeight = parseInt($(mediaSelector).css("height"));
@@ -639,7 +602,6 @@
 	PinchSwipe.prototype.setPinchButtonsVisibility = PinchSwipe.setPinchButtonsVisibility;
 	PinchSwipe.prototype.initialize = PinchSwipe.initialize;
 	PinchSwipe.prototype.swipeUp = PinchSwipe.swipeUp;
-	PinchSwipe.prototype.setPinchButtonsPosition = PinchSwipe.setPinchButtonsPosition;
 
 	window.PinchSwipe = PinchSwipe;
 }());
