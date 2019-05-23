@@ -103,11 +103,11 @@ class TreeWalker:
 		if folders_album is None:
 			message("WARNING", "ALBUMS ROOT EXCLUDED BY MARKER FILE", 2)
 		else:
-			message("saving all media json file...", "", 4)
-			next_level()
-			self.save_all_media_json()
-			back_level()
-			indented_message("all media json file saved", "", 5)
+			# message("saving all media json file...", "", 4)
+			# next_level()
+			# self.save_all_media_json()
+			# back_level()
+			# indented_message("all media json file saved", "", 5)
 
 			self.all_json_files.append("all_media.json")
 
@@ -1425,19 +1425,19 @@ class TreeWalker:
 		back_level()
 
 
-	def save_all_media_json(self):
-		media_list = []
-		message("sorting all media list...", "", 5)
-		self.all_media.sort()
-		indented_message("all media list sorted", "", 5)
-		message("building media path list...", "", 5)
-		for media in self.all_media:
-			media_list.append(media.path)
-		indented_message("media path list built", "", 5)
-		message("caching all media path list...", "", 4)
-		with open(os.path.join(Options.config['cache_path'], "all_media.json"), 'w') as all_media_file:
-			json.dump(media_list, all_media_file, cls=PhotoAlbumEncoder)
-		indented_message("all media path list cached", "", 5)
+	# def save_all_media_json(self):
+	# 	media_list = []
+	# 	message("sorting all media list...", "", 5)
+	# 	self.all_media.sort()
+	# 	indented_message("all media list sorted", "", 5)
+	# 	message("building media path list...", "", 5)
+	# 	for media in self.all_media:
+	# 		media_list.append(media.path)
+	# 	indented_message("media path list built", "", 5)
+	# 	message("caching all media path list...", "", 4)
+	# 	with open(os.path.join(Options.config['cache_path'], "all_media.json"), 'w') as all_media_file:
+	# 		json.dump(media_list, all_media_file, cls=PhotoAlbumEncoder)
+	# 	indented_message("all media path list cached", "", 5)
 
 
 	@staticmethod
