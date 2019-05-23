@@ -362,8 +362,8 @@ def get_options():
 		message("Old password files removed","", 5)
 
 		passwords_file_name = os.path.join(os.path.dirname(sys.argv[1]), config['passwords_file'])
+		password_codes = []
 		try:
-			password_codes = []
 			with open(passwords_file_name, 'r') as passwords_file:
 				message("Reading passwords file", passwords_file_name, 3)
 				for line in passwords_file.read().splitlines():
@@ -381,27 +381,27 @@ def get_options():
 						indented_message("Missing password", "for identifier: '" + identifier + "'", 3)
 						continue
 					while True:
-						password_code = random.randint(0, max_random)
-						if not password_code in password_codes:
+						password_code = str(random.randint(0, max_random))
+						if password_code not in password_codes:
 							password_codes.append(password_code)
 							break
-					encrypted_password = hashlib.md5(password).hexdigest()
+					password_md5 = hashlib.md5(password).hexdigest()
 					identifiers_and_passwords.append(
 						{
-							"password_Md5": encrypted_password,
-							"identifier": identifier
+							"identifier": identifier,
+							"password_md5": password_md5,
+							"password_code": password_code
 						}
 					)
 					indented_message(
 						"Password read",
-						"identifier: " + identifier + ", encrypted password: " + encrypted_password,
-						# "identifier: " + identifier + ", encrypted password: " + encrypted_password + ", password code = " + str(password_code),
+						"identifier: " + identifier + ", encrypted password: " + password_md5 + ", password code = " + str(password_code),
 						3
 					)
 
 					# create the new single password files
 					message("creating new password file", "", 4)
-					with open(os.path.join(passwords_subdir_with_path, encrypted_password), 'w') as password_file:
+					with open(os.path.join(passwords_subdir_with_path, password_md5), 'w') as password_file:
 						json.dump({"passwordCode": str(password_code)}, password_file)
 						indented_message("New password file created","", 3)
 		except IOError:

@@ -286,17 +286,17 @@
 						function correctNumMediaInSubTree(album) {
 							var passwordMd5;
 							// remove the protected media from the media count
-							for (passwordMd5 in album.numsProtectedMediaInSubTree) {
-								if (album.numsProtectedMediaInSubTree.hasOwnProperty(passwordMd5)) {
+							for (passwordCodes in album.numsProtectedMediaInSubTree) {
+								if (album.numsProtectedMediaInSubTree.hasOwnProperty(passwordCodes)) {
 									// correct count
 									if (
-										PhotoFloat.guessedPasswordsMd5.every(
-											function(guessedPasswordMd5) {
-												return passwordMd5.indexOf(guessedPasswordMd5) == -1;
+										PhotoFloat.guessedPasswordCodes.every(
+											function(guessedPasswordCode) {
+												return passwordCodes.indexOf(guessedPasswordCode) == -1;
 											}
 										)
 									)
-										album.numMediaInSubTree -= album.numsProtectedMediaInSubTree[passwordMd5];
+										album.numMediaInSubTree -= album.numsProtectedMediaInSubTree[passwordCodes];
 								}
 							}
 						}
