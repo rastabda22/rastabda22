@@ -14,7 +14,7 @@ The _password identifier_ is used to pick the password from a _passwords file_ w
 
 The _case sensitive/insensitive flag_ is either `cs` or `ci`.
 
-The _pattern_ must match the entire file/album name: `jpg` will only match the `jpg` file (that is, probably nothing), in order to match files ending in `jpg` you must use `*.jpg`; in order to match `my journey.jpg` you can use a pattern like `*journey*`.
+The _pattern_ must match the entire file/album name: `jpg` will only match the `jpg` file (that is, probably nothing), in order to match files ending in `jpg` you must use `*.jpg`; in order to match `my journey.jpg` you can use a pattern like `*journey*`. The available patterns are documented at https://docs.python.org/3.4/library/fnmatch.html.
 
 The _passwords file_ has many lines, each one has with a _password identifier_ and the corresponding password separated by a _space_.
 
