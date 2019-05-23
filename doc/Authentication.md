@@ -16,7 +16,7 @@ The _case sensitive/insensitive flag_ is either `cs` or `ci`.
 
 The _pattern_ must match the entire file/album name: `jpg` will only match the `jpg` file (that is, probably nothing), in order to match files ending in `jpg` you must use `*.jpg`; in order to match `my journey.jpg` you can use a pattern like `*journey*`. The available patterns are documented at https://docs.python.org/3.4/library/fnmatch.html.
 
-The _passwords file_ has many lines, each one has with a _password identifier_ and the corresponding password separated by a _space_.
+The _passwords file_ has many lines, each one has with a _password identifier_ and the corresponding password separated by _spaces_. After the identifier and the following spaces, _everything_ till the end of line is the password, i.e., the password includes the trailing spaces, if any; this is a feature, it is intended to make more secure passwords.
 
 ### How the scanner manages the passwords
 
