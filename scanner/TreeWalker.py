@@ -115,6 +115,7 @@ class TreeWalker:
 			folders_album.positions_and_media_in_tree = positions
 			self.origin_album.add_album(folders_album)
 			self.all_json_files.append(Options.config['folders_string'] + ".json")
+			self.all_json_files.append(Options.config['folders_string'] + ".media.json")
 
 			message("generating by date albums...", "", 4)
 			by_date_album = self.generate_date_albums(self.origin_album)
@@ -140,23 +141,23 @@ class TreeWalker:
 			message("saving all albums to json files...", "", 4)
 			next_level()
 			try:
-				self.all_albums_to_json_file(folders_album, True, True)
+				self.whole_albums_to_json_file(folders_album)
 			except UnboundLocalError:
 				pass
 
 			try:
-				self.all_albums_to_json_file(by_date_album, True, True)
+				self.whole_albums_to_json_file(by_date_album)
 			except UnboundLocalError:
 				pass
 			try:
-				self.all_albums_to_json_file(by_geonames_album, True, True)
+				self.whole_albums_to_json_file(by_geonames_album)
 			except UnboundLocalError:
 				pass
 
 			# search albums in by_search_album has the normal albums as subalbums,
 			# and they are saved when folders_album is saved, avoid saving them multiple times
 			try:
-				self.all_albums_to_json_file(by_search_album, True, False)
+				self.whole_albums_to_json_file(by_search_album)
 			except UnboundLocalError:
 				pass
 
@@ -168,12 +169,15 @@ class TreeWalker:
 			self.remove_stale()
 			message("completed", "", 4)
 
-	def all_albums_to_json_file(self, album, save_subalbums, save_subsubalbums):
-		if save_subalbums:
-			for sub_album in album.subalbums_list:
-				self.all_albums_to_json_file(sub_album, save_subsubalbums, True)
+	def whole_albums_to_json_file(self, album):
 		album.to_json_file()
 
+	# def all_albums_to_json_file(self, album, save_subalbums, save_subsubalbums):
+	# 	if save_subalbums:
+	# 		for sub_album in album.subalbums_list:
+	# 			self.all_albums_to_json_file(sub_album, save_subsubalbums, True)
+	# 	album.to_json_file()
+	#
 	def generate_date_albums(self, origin_album):
 		next_level()
 		# convert the temporary structure where media are organized by year, month, date to a set of albums
@@ -1487,6 +1491,7 @@ class TreeWalker:
 
 			for album in self.all_albums:
 				self.all_json_files.append(album.json_file)
+				self.all_json_files.append(album.json_file_for_media)
 				self.all_json_files.append(album.positions_json_file)
 			for media in self.all_media:
 				album_subdir = media.album.subdir
@@ -1555,10 +1560,10 @@ class TreeWalker:
 					else:
 						cache_list = self.all_json_files
 					if cache_file not in cache_list:
-						message("removing stale cache file...", cache_file, 4)
+						message("removing stale cache file...", cache_file, 3)
 						file_to_delete = os.path.join(Options.config['cache_path'], subdir, cache_file)
 						os.unlink(file_to_delete)
-						indented_message("stale cache file removed", "", 5)
+						indented_message("stale cache file removed", "", 4)
 				else:
 					indented_message("not a stale cache file, keeping it", cache_file, 2)
 					back_level()

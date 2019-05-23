@@ -160,6 +160,10 @@ class Album(object):
 		return self.cache_base + ".json"
 
 	@property
+	def json_file_for_media(self):
+		return self.cache_base + ".media.json"
+
+	@property
 	def positions_json_file(self):
 		return self.cache_base + ".positions.json"
 
@@ -251,9 +255,19 @@ class Album(object):
 		self.subalbums_list_is_sorted = False
 
 	def sort_subalbums_and_media(self):
-		if not self.media_list_is_sorted:
-			self.media_list.sort()
-			self.media_list_is_sorted = True
+		if not self.subalbums_list_is_sorted:
+			self.subalbums_list.sort()
+			self.subalbums_list_is_sorted = True
+		if not self.subalbums_list_is_sorted:
+			self.subalbums_list.sort()
+			self.subalbums_list_is_sorted = True
+
+	def sort_subalbums(self):
+		if not self.subalbums_list_is_sorted:
+			self.subalbums_list.sort()
+			self.subalbums_list_is_sorted = True
+
+	def sort_media(self):
 		if not self.subalbums_list_is_sorted:
 			self.subalbums_list.sort()
 			self.subalbums_list_is_sorted = True
@@ -271,6 +285,7 @@ class Album(object):
 
 	def to_json_file(self):
 		json_file_with_path = os.path.join(Options.config['cache_path'], self.json_file)
+		json_file_with_path_for_media = os.path.join(Options.config['cache_path'], self.json_file_for_media)
 		if os.path.exists(json_file_with_path) and not os.access(json_file_with_path, os.W_OK):
 			message("FATAL ERROR", json_file_with_path + " not writable, quitting", 0)
 			sys.exit(-97)
@@ -278,17 +293,45 @@ class Album(object):
 		if os.path.exists(json_positions_file_with_path) and not os.access(json_positions_file_with_path, os.W_OK):
 			message("FATAL ERROR", json_positions_file_with_path + " not writable, quitting", 0)
 			sys.exit(-97)
-		message("sorting album...", self.absolute_path, 5)
-		self.sort_subalbums_and_media()
-		indented_message("album sorted", self.absolute_path, 4)
-		message("saving album...", self.absolute_path, 5)
+
+		message("sorting subalbums...", self.absolute_path, 4)
+		self.sort_subalbums()
+		indented_message("subalbum sorted", "", 5)
+
 		with open(json_file_with_path, 'w') as filepath:
-			json.dump(self, filepath, cls=PhotoAlbumEncoder)
-		indented_message("album saved", "", 4)
-		message("saving positions album...", "", 5)
+			message("saving album and all its subalbums...", self.absolute_path, 4)
+			json.dump(self, filepath, cls=PhotoAlbumEncoderWholeAlbum)
+			indented_message("album and all its subalbums saved", self.absolute_path, 5)
+
+		if self.cache_base == Options.config['folders_string']:
+			[num_media_saved, json_file_with_path_for_media] = self.save_media_from_album(json_file_with_path_for_media, 0)
+
+		message("saving positions album...", "", 4)
 		with open(json_positions_file_with_path, 'w') as filepath:
-				json.dump(self.positions_and_media_in_tree, filepath, cls=PhotoAlbumEncoder)
-		indented_message("positions album saved", "", 4)
+			json.dump(self.positions_and_media_in_tree, filepath, cls=PhotoAlbumEncoder)
+		indented_message("positions album saved", "", 5)
+
+
+	def save_media_from_album(self, json_file_with_path_for_media, num_media_saved):
+		with open(json_file_with_path_for_media, 'a+') as filepath:
+			message("saving media in album...", self.absolute_path, 4)
+			for _media in self.media:
+				json.dump(_media, filepath, cls=PhotoAlbumEncoderMedia)
+			indented_message("media in album saved", self.absolute_path, 5)
+			num_media_saved += len(self.media)
+		for subalbum in self.subalbums_list:
+			json_file_with_path_for_media_in_subalbum = os.path.join(Options.config['cache_path'], subalbum.json_file_for_media)
+			try:
+				os.unlink(json_file_with_path_for_media_in_subalbum)
+			except OSError:
+				pass
+			if num_media_saved > Options.config['big_virtual_folders_threshold']:
+				[num_media_saved, json_file_with_path_for_media] = subalbum.save_media_from_album(json_file_with_path_for_media_in_subalbum, 0)
+			else:
+				[num_media_saved, json_file_with_path_for_media] = subalbum.save_media_from_album(json_file_with_path_for_media, num_media_saved)
+				os.symlink(json_file_with_path_for_media, json_file_with_path_for_media_in_subalbum)
+		return [num_media_saved, json_file_with_path_for_media]
+
 
 	@staticmethod
 	def from_cache(path, album_cache_base):
@@ -322,10 +365,10 @@ class Album(object):
 		album = Album(os.path.join(Options.config['album_path'], path))
 		album.cache_base = album_cache_base
 		album.json_version = dictionary["jsonVersion"]
-		for media in dictionary["media"]:
-			new_media = Media.from_dict(album, media, os.path.join(Options.config['album_path'], remove_folders_marker(album.baseless_path)))
-			if new_media.is_valid:
-				album.add_media(new_media)
+		# for media in dictionary["media"]:
+		# 	new_media = Media.from_dict(album, media, os.path.join(Options.config['album_path'], remove_folders_marker(album.baseless_path)))
+		# 	if new_media.is_valid:
+		# 		album.add_media(new_media)
 
 		if not cripple:
 			# it looks like the following code is never executed
@@ -432,6 +475,84 @@ class Album(object):
 			# "positionsAndMediaInTree": self.positions_and_media_in_tree,
 			"jsonVersion": Options.json_version
 		}
+		if hasattr(self, "passwords_md5"):
+			dictionary["passwordsMd5"] = self.passwords_md5
+		if hasattr(self, "password_codes"):
+			dictionary["passwordCodes"] = self.password_codes
+			# print("album to dict", self.passwords)
+		if hasattr(self, "center"):
+			dictionary["center"] = self.center
+		if hasattr(self, "name"):
+			dictionary["name"] = self.name
+		if hasattr(self, "alt_name"):
+			dictionary["altName"] = self.alt_name
+		if self.cache_base == Options.config['folders_string']:
+			dictionary["numPoints"] = len(self.positions_and_media_in_tree)
+
+		return dictionary
+
+	def to_dict_with_whole_subalbums_without_media(self):
+		path_without_folders_marker = remove_folders_marker(self.path)
+
+		path_to_dict = self.path
+		folder_position = path_to_dict.find(Options.config['folders_string'])
+		by_date_position = path_to_dict.find(Options.config['by_date_string'])
+		by_gps_position = path_to_dict.find(Options.config['by_gps_string'])
+		by_search_position = path_to_dict.find(Options.config['by_search_string'])
+		if not path_to_dict:
+			path_to_dict = Options.config['folders_string']
+		elif path_to_dict and by_date_position == -1 and by_gps_position == -1 and by_search_position == -1 and self.cache_base != "root" and folder_position != 0:
+			path_to_dict = Options.config['folders_string'] + '/' + path_to_dict
+
+		ancestors_cache_base = list()
+		ancestors_names = list()
+		ancestors_center = list()
+		_parent = self
+		while True:
+			ancestors_cache_base.append(_parent.cache_base)
+
+			if hasattr(_parent, "alt_name"):
+				ancestors_names.append(_parent.alt_name)
+			elif hasattr(_parent, "name"):
+				ancestors_names.append(_parent.name)
+
+			if hasattr(_parent, "center"):
+				ancestors_center.append(_parent.center)
+			else:
+				ancestors_center.append("")
+
+			if _parent.parent is None:
+				break
+			_parent = _parent.parent
+		ancestors_cache_base.reverse()
+		ancestors_names.reverse()
+		ancestors_center.reverse()
+
+		dictionary = {
+			"name": self.name,
+			"path": path_to_dict,
+			"cacheSubdir": self._subdir,
+			"date": self.date_string,
+			"media": self.media_list,
+			"cacheBase": self.cache_base,
+			"ancestorsCacheBase": ancestors_cache_base,
+			"ancestorsNames": ancestors_names,
+			"ancestorsCenter": ancestors_center,
+			"physicalPath": path_without_folders_marker,
+			"numMediaInSubTree": self.num_media_in_sub_tree,
+			"numsProtectedMediaInSubTree": self.nums_protected_media_in_sub_tree,
+			"numMediaInAlbum": self.num_media_in_album,
+			"numPositionsInTree": len(self.positions_and_media_in_tree),
+			# "positionsAndMediaInTree": self.positions_and_media_in_tree,
+			"jsonVersion": Options.json_version
+		}
+		dictionary["subalbums"] = []
+		for subalbum in self.subalbums_list:
+			message("sorting subalbums...", subalbum.absolute_path, 4)
+			subalbum.sort_subalbums()
+			indented_message("subalbum sorted", "", 5)
+			dictionary["subalbums"].append(subalbum.to_dict_with_whole_subalbums_without_media())
+
 		if hasattr(self, "passwords_md5"):
 			dictionary["passwordsMd5"] = self.passwords_md5
 		if hasattr(self, "password_codes"):
@@ -2018,6 +2139,36 @@ class PhotoAlbumEncoder(json.JSONEncoder):
 			date = date + ' ' + str(obj.hour).zfill(2) + ':' + str(obj.minute).zfill(2) + ':' + str(obj.second).zfill(2)
 			return date
 		if isinstance(obj, Album) or isinstance(obj, Media):
+			return obj.to_dict()
+		return json.JSONEncoder.default(self, obj)
+
+
+class PhotoAlbumEncoderWholeAlbum(json.JSONEncoder):
+	def default(self, obj):
+		if isinstance(obj, datetime):
+			# there was the line:
+			# return obj.strftime("%Y-%m-%d %H:%M:%S")
+			# but strftime throws an exception in python2 if year < 1900
+			date = str(obj.year) + '-' + str(obj.month).zfill(2) + '-' + str(obj.day).zfill(2)
+			date = date + ' ' + str(obj.hour).zfill(2) + ':' + str(obj.minute).zfill(2) + ':' + str(obj.second).zfill(2)
+			return date
+		if isinstance(obj, Album):
+			return obj.to_dict_with_whole_subalbums_without_media()
+		if isinstance(obj, Media):
+			return os.path.join(obj.album.cache_base, obj.cache_base)
+		return json.JSONEncoder.default(self, obj)
+
+
+class PhotoAlbumEncoderMedia(json.JSONEncoder):
+	def default(self, obj):
+		if isinstance(obj, datetime):
+			# there was the line:
+			# return obj.strftime("%Y-%m-%d %H:%M:%S")
+			# but strftime throws an exception in python2 if year < 1900
+			date = str(obj.year) + '-' + str(obj.month).zfill(2) + '-' + str(obj.day).zfill(2)
+			date = date + ' ' + str(obj.hour).zfill(2) + ':' + str(obj.minute).zfill(2) + ':' + str(obj.second).zfill(2)
+			return date
+		if isinstance(obj, Media):
 			return obj.to_dict()
 		return json.JSONEncoder.default(self, obj)
 
