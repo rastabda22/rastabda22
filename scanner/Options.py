@@ -83,7 +83,8 @@ max_random = 1000000000
 # json_version = 3.8
 # json_version = 3.8.1 since slightly rationalized json files content
 # json_version = 3.99 since property passwords changed to passwordsCodes in json file
-json_version = "3.99"
+# json_version = 3.98 since property passwords changed to passwordsMd5 in json file
+json_version = "3.98"
 
 def initialize_opencv():
 	global face_cascade, eye_cascade
@@ -362,6 +363,7 @@ def get_options():
 
 		passwords_file_name = os.path.join(os.path.dirname(sys.argv[1]), config['passwords_file'])
 		try:
+			password_codes = []
 			with open(passwords_file_name, 'r') as passwords_file:
 				message("Reading passwords file", passwords_file_name, 3)
 				for line in passwords_file.read().splitlines():
@@ -378,17 +380,24 @@ def get_options():
 					if password == "":
 						indented_message("Missing password", "for identifier: '" + identifier + "'", 3)
 						continue
-					password_code = random.randint(0, max_random)
-					while password_code in [value['password_code'] for index,value in enumerate(identifiers_and_passwords)]:
+					while True:
 						password_code = random.randint(0, max_random)
+						if not password_code in password_codes:
+							password_codes.append(password_code)
+							break
 					encrypted_password = hashlib.md5(password).hexdigest()
 					identifiers_and_passwords.append(
 						{
-							"password_code": str(password_code),
+							"password_Md5": encrypted_password,
 							"identifier": identifier
 						}
 					)
-					indented_message("Password read", "identifier: " + identifier + ", encrypted password: " + encrypted_password + ", password code = " + str(password_code), 3)
+					indented_message(
+						"Password read",
+						"identifier: " + identifier + ", encrypted password: " + encrypted_password,
+						# "identifier: " + identifier + ", encrypted password: " + encrypted_password + ", password code = " + str(password_code),
+						3
+					)
 
 					# create the new single password files
 					message("creating new password file", "", 4)

@@ -356,7 +356,7 @@ class Album(object):
 						"numsProtectedMediaInSubTree": subalbum.nums_protected_media_in_sub_tree
 					}
 					if hasattr(subalbum, "passwords"):
-						sub_dict["passwordCodes"] = subalbum.passwords
+						sub_dict["passwordsMd5"] = subalbum.passwords
 					if hasattr(subalbum, "center"):
 						sub_dict["center"] = subalbum.center
 					if hasattr(subalbum, "name"):
@@ -431,7 +431,7 @@ class Album(object):
 			"jsonVersion": Options.json_version
 		}
 		if hasattr(self, "passwords"):
-			dictionary["passwordCodes"] = self.passwords
+			dictionary["passwordsMd5"] = self.passwords
 			# print("album to dict", self.passwords)
 		if hasattr(self, "center"):
 			dictionary["center"] = self.center
@@ -1998,7 +1998,7 @@ class Media(object):
 		media["albumName"] = self.album_path[:len(self.album_path) - len(self.name) - 1]
 		media["foldersCacheBase"] = self.album.cache_base
 		media["cacheSubdir"] = self.album.subdir
-		media["passwordCodes"] = self.passwords
+		media["passwordsMd5"] = self.passwords
 		# print("media to dict", self.album_passwords)
 		return media
 

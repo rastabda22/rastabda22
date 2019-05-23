@@ -8,7 +8,8 @@
 		PhotoFloat.cache.albums = {};
 		PhotoFloat.cache.albums.index = {};
 		PhotoFloat.cache.positions = {};
-		PhotoFloat.guessedPasswordsCodes = [];
+		PhotoFloat.guessedPasswordCodes = [];
+		PhotoFloat.guessedPasswordsMd5 = [];
 		this.geotaggedPhotosFound = null;
 		this.searchWordsFromJsonFile = [];
 		this.searchAlbumCacheBaseFromJsonFile = [];
@@ -283,19 +284,19 @@
 				success: function(theAlbum) {
 					function albumGot() {
 						function correctNumMediaInSubTree(album) {
-							var passwordCode;
+							var passwordMd5;
 							// remove the protected media from the media count
-							for (passwordCode in album.numsProtectedMediaInSubTree) {
-								if (album.numsProtectedMediaInSubTree.hasOwnProperty(passwordCode)) {
+							for (passwordMd5 in album.numsProtectedMediaInSubTree) {
+								if (album.numsProtectedMediaInSubTree.hasOwnProperty(passwordMd5)) {
 									// correct count
 									if (
-										PhotoFloat.guessedPasswordsCodes.every(
-											function(guessedPasswordCode) {
-												return passwordCode.indexOf(guessedPasswordCode) == -1;
+										PhotoFloat.guessedPasswordsMd5.every(
+											function(guessedPasswordMd5) {
+												return passwordMd5.indexOf(guessedPasswordMd5) == -1;
 											}
 										)
 									)
-										album.numMediaInSubTree -= album.numsProtectedMediaInSubTree[passwordCode];
+										album.numMediaInSubTree -= album.numsProtectedMediaInSubTree[passwordMd5];
 								}
 							}
 						}
@@ -1125,13 +1126,13 @@
 
 	PhotoFloat.isProtected = function(albumOrMedia) {
 		var isProtected =
-			albumOrMedia.hasOwnProperty("passwordCodes") &&
-			albumOrMedia.passwordCodes.length > 0 &&
+			albumOrMedia.hasOwnProperty("passwordsMd5") &&
+			albumOrMedia.passwordsMd5.length > 0 &&
 			(
-				PhotoFloat.guessedPasswordsCodes.length == 0 ||
-				albumOrMedia.passwordCodes.every(
-					function(passwordCode) {
-						return ! PhotoFloat.guessedPasswordsCodes.includes(passwordCode);
+				PhotoFloat.guessedPasswordsMd5.length == 0 ||
+				albumOrMedia.passwordsMd5.every(
+					function(passwordMd5) {
+						return ! PhotoFloat.guessedPasswordsMd5.includes(passwordMd5);
 					}
 				)
 			);

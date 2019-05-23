@@ -435,7 +435,7 @@ $(document).ready(function() {
 
 	$("#auth-form").submit(function() {
 		// This function checks the password looking for a file with the encrypted password name in the passwords subdir
-		// the code in the found password file is inserted into PhotoFloat.guessedPasswordsCodes, and at the hash change the content unveiled by that password will be shown
+		// the code in the found password file is inserted into PhotoFloat.guessedPasswordsMd5, and at the hash change the content unveiled by that password will be shown
 
 		var password = $("#password");
 		var encryptedPassword = md5(password.val());
@@ -449,8 +449,10 @@ $(document).ready(function() {
 				password.css("background-color", "rgb(200, 200, 200)");
 				var passwordCode = jsonCode.passwordCode;
 
-				if (! PhotoFloat.guessedPasswordsCodes.includes(passwordCode))
-					PhotoFloat.guessedPasswordsCodes.push(passwordCode);
+				if (! PhotoFloat.guessedPasswordCodes.includes(passwordCode))
+					PhotoFloat.guessedPasswordCodes.push(passwordCode);
+				if (! PhotoFloat.guessedPasswordsMd5.includes(encryptedPassword))
+					PhotoFloat.guessedPasswordsMd5.push(encryptedPassword);
 
 				if (
 					currentAlbum !== null && (

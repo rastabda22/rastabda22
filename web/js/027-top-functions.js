@@ -1210,12 +1210,12 @@
 		if (currentMedia == null) {
 			if (! util.isAlbumWithOneMedia(currentAlbum)) {
 				if (currentAlbum.hasOwnProperty(""))
-					// virtual albums don't have the passwordCodes property
-					passwordList = currentAlbum.passwordCodes;
+					// virtual albums don't have the passwordsMd5 property
+					passwordList = currentAlbum.passwordsMd5;
 			} else
-				passwordList = currentAlbum.media[0].passwordCodes;
+				passwordList = currentAlbum.media[0].passwordsMd5;
 		} else {
-			passwordList = currentMedia.passwordCodes;
+			passwordList = currentMedia.passwordsMd5;
 		}
 
 		f.setOptions();
