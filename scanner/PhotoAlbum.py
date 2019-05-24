@@ -1948,7 +1948,14 @@ class Media(object):
 
 	@staticmethod
 	def from_dict(album, dictionary, basepath):
-		del dictionary["date"]
+		try:
+			del dictionary["date"]
+		except TypeError:
+			# a json file for some test version could bring here
+			media = Media(album, basepath, None, dictionary)
+			media.is_valid = False
+			return
+
 		media_path = os.path.join(basepath, dictionary["name"])
 
 		del dictionary["name"]
