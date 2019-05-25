@@ -2640,7 +2640,6 @@
 				return;
 			}
 
-			MapFunctions.mapAlbum.numMediaInAlbum = MapFunctions.mapAlbum.media.length;
 			MapFunctions.mapAlbum.numMediaInSubTree = MapFunctions.mapAlbum.media.length;
 			MapFunctions.mapAlbum.numPositionsInTree = MapFunctions.mapAlbum.positionsAndMediaInTree.length;
 			// media must be initially sorted by date not reverse, as json they are in albums

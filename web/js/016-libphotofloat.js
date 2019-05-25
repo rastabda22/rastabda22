@@ -924,10 +924,8 @@
 														);
 											}
 
-											searchResultsAlbumFinal.numMediaInAlbum = searchResultsAlbumFinal.media.length;
-
 											var numSubalbumsProcessed = 0;
-											searchResultsAlbumFinal.numMediaInSubTree = searchResultsAlbumFinal.numMediaInAlbum;
+											searchResultsAlbumFinal.numMediaInSubTree = searchResultsAlbumFinal.media.length;
 											if (searchResultsAlbumFinal.subalbums.length) {
 												for (indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
 													// update the media count
@@ -1040,7 +1038,6 @@
 				searchResultsAlbumFinal.positionsAndMediaInTree = [];
 				searchResultsAlbumFinal.media = [];
 				searchResultsAlbumFinal.subalbums = [];
-				searchResultsAlbumFinal.numMediaInAlbum = 0;
 				searchResultsAlbumFinal.numMediaInSubTree = 0;
 				searchResultsAlbumFinal.cacheBase = albumHash;
 				searchResultsAlbumFinal.path = searchResultsAlbumFinal.cacheBase.replace(Options.cache_folder_separator, "/");

@@ -209,7 +209,6 @@ class TreeWalker:
 						single_media.day_album_cache_base = day_album.cache_base
 						day_album.add_media(single_media)
 						day_album.num_media_in_sub_tree += 1
-						day_album.num_media_in_album += 1
 						month_album.add_media(single_media)
 						month_album.num_media_in_sub_tree += 1
 						year_album.add_media(single_media)
@@ -319,7 +318,6 @@ class TreeWalker:
 				# word_album.positions_and_media_in_tree = self.add_media_to_position(word_album.positions_and_media_in_tree, single_media)
 				word_album.add_media(single_media)
 				word_album.num_media_in_sub_tree += 1
-				word_album.num_media_in_album += 1
 				by_search_album.num_media_in_sub_tree += 1
 				single_media_date = max(single_media.datetime_file, single_media.datetime_dir)
 				if word_max_file_date:
@@ -335,7 +333,6 @@ class TreeWalker:
 			for single_album in media_and_album_words["album_words"]:
 				word_album.add_album(single_album)
 				word_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
-				word_album.num_media_in_album += 1
 				by_search_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
 				if word_max_file_date:
 					word_max_file_date = max(word_max_file_date, single_album.date)
@@ -499,7 +496,6 @@ class TreeWalker:
 							place_album.positions_and_media_in_tree = self.add_media_to_position(place_album.positions_and_media_in_tree, single_media, Options.config['by_gps_string'])
 							place_album.add_media(single_media)
 							place_album.num_media_in_sub_tree += 1
-							place_album.num_media_in_album += 1
 							region_album.positions_and_media_in_tree = self.add_media_to_position(region_album.positions_and_media_in_tree, single_media, Options.config['by_gps_string'])
 							region_album.add_media(single_media)
 							region_album.num_media_in_sub_tree += 1
@@ -1193,7 +1189,6 @@ class TreeWalker:
 				album.num_media_in_sub_tree += 1
 				if media.has_gps_data:
 					album.positions_and_media_in_tree = self.add_media_to_position(album.positions_and_media_in_tree, media, Options.config['folders_string'])
-				album.num_media_in_album += 1
 
 				if media.is_video:
 					num_video_in_dir += 1

@@ -70,7 +70,6 @@ class Album(object):
 		self.num_media_in_sub_tree = 0
 		self.nums_protected_media_in_sub_tree = {}
 		self.positions_and_media_in_tree = []
-		self.num_media_in_album = 0
 		self.parent = None
 		self.album_ini = None
 		self._attributes = {}
@@ -427,7 +426,6 @@ class Album(object):
 			"physicalPath": path_without_folders_marker,
 			"numMediaInSubTree": self.num_media_in_sub_tree,
 			"numsProtectedMediaInSubTree": self.nums_protected_media_in_sub_tree,
-			"numMediaInAlbum": self.num_media_in_album,
 			"numPositionsInTree": len(self.positions_and_media_in_tree),
 			# "positionsAndMediaInTree": self.positions_and_media_in_tree,
 			"jsonVersion": Options.json_version
