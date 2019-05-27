@@ -283,23 +283,23 @@
 				url: cacheFile,
 				success: function(theAlbum) {
 					function albumGot() {
-						function correctNumMediaInSubTree(album) {
-							var passwordMd5;
-							// remove the protected media from the media count
-							for (passwordCodes in album.numsProtectedMediaInSubTree) {
-								if (album.numsProtectedMediaInSubTree.hasOwnProperty(passwordCodes)) {
-									// correct count
-									if (
-										PhotoFloat.guessedPasswordCodes.every(
-											function(guessedPasswordCode) {
-												return passwordCodes.indexOf(guessedPasswordCode) == -1;
-											}
-										)
-									)
-										album.numMediaInSubTree -= album.numsProtectedMediaInSubTree[passwordCodes];
-								}
-							}
-						}
+						// function correctNumMediaInSubTree(album) {
+						// 	var passwordMd5;
+						// 	// remove the protected media from the media count
+						// 	for (passwordCodes in album.numsProtectedMediaInSubTree) {
+						// 		if (album.numsProtectedMediaInSubTree.hasOwnProperty(passwordCodes)) {
+						// 			// correct count
+						// 			if (
+						// 				PhotoFloat.guessedPasswordCodes.every(
+						// 					function(guessedPasswordCode) {
+						// 						return passwordCodes.indexOf(guessedPasswordCode) == -1;
+						// 					}
+						// 				)
+						// 			)
+						// 				album.numMediaInSubTree -= album.numsProtectedMediaInSubTree[passwordCodes];
+						// 		}
+						// 	}
+						// }
 
 						var i, j;
 						if (cacheKey == Options.by_search_string) {
@@ -310,39 +310,41 @@
 							}
 						} else if (! util.isSearchCacheBase(cacheKey)) {
 							theAlbum.numMediaInOriginalSubTree = theAlbum.numMediaInSubTree;
-							if (theAlbum.hasOwnProperty("positionsAndMediaInTree")) {
-								theAlbum.positionsAndMediaInTree = PhotoFloat.filterOutProtectedContentFromPositions(theAlbum.positionsAndMediaInTree);
-							} else {
+							if (! theAlbum.hasOwnProperty("positionsAndMediaInTree"))
 								theAlbum.numPositionsInTree = 0;
-							}
+							// if (theAlbum.hasOwnProperty("positionsAndMediaInTree")) {
+							// 	theAlbum.positionsAndMediaInTree = PhotoFloat.filterOutProtectedContentFromPositions(theAlbum.positionsAndMediaInTree);
+							// } else {
+							// 	theAlbum.numPositionsInTree = 0;
+							// }
 
-							correctNumMediaInSubTree(theAlbum);
+							// correctNumMediaInSubTree(theAlbum);
 
-							// remove protected subalbums
-							for (i = theAlbum.subalbums.length -1; i >= 0; i --) {
-								if (PhotoFloat.isProtected(theAlbum.subalbums[i])) {
-									// theAlbum.numMediaInSubTree -= theAlbum.subalbums[i].numMediaInSubTree;
-									theAlbum.subalbums.splice(i, 1);
-								} else {
-									correctNumMediaInSubTree(theAlbum.subalbums[i]);
-									theAlbum.subalbums[i].parent = theAlbum;
-								}
-							}
+							// // remove protected subalbums
+							// for (i = theAlbum.subalbums.length -1; i >= 0; i --) {
+							// 	if (PhotoFloat.isProtected(theAlbum.subalbums[i])) {
+							// 		// theAlbum.numMediaInSubTree -= theAlbum.subalbums[i].numMediaInSubTree;
+							// 		theAlbum.subalbums.splice(i, 1);
+							// 	} else {
+							// 		correctNumMediaInSubTree(theAlbum.subalbums[i]);
+							// 		theAlbum.subalbums[i].parent = theAlbum;
+							// 	}
+							// }
 
 							for (i = theAlbum.media.length - 1; i >= 0; i --) {
-								if (PhotoFloat.isProtected(theAlbum.media[i])) {
-									// remove protected media
-									// theAlbum.numMediaInSubTree -= 1;
-									theAlbum.media.splice(i, 1);
-								} else {
-									// remove unnecessary properties
-									var unnecessaryProperties = ['checksum', 'dateTimeDir', 'dateTimeFile'];
-									for (j = 0; j < unnecessaryProperties.length; j ++)
-										delete theAlbum.media[i][unnecessaryProperties[j]];
+								// if (PhotoFloat.isProtected(theAlbum.media[i])) {
+								// 	// remove protected media
+								// 	// theAlbum.numMediaInSubTree -= 1;
+								// 	theAlbum.media.splice(i, 1);
+								// } else {
+								// remove unnecessary properties
+								var unnecessaryProperties = ['checksum', 'dateTimeDir', 'dateTimeFile'];
+								for (j = 0; j < unnecessaryProperties.length; j ++)
+									delete theAlbum.media[i][unnecessaryProperties[j]];
 
-									// add parent album
-									theAlbum.media[i].parent = theAlbum;
-								}
+								// add parent album
+								theAlbum.media[i].parent = theAlbum;
+								// }
 							}
 						}
 

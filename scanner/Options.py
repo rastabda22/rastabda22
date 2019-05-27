@@ -84,7 +84,16 @@ max_random = 1000000000
 # json_version = 3.8.1 since slightly rationalized json files content
 # json_version = 3.99 since property passwords changed to passwordsCodes in json file
 # json_version = 3.98 since property passwords changed to passwordsMd5 in json file
-json_version = "3.98"
+# json_version = 3.97 since passwords removed from json file
+json_version = "3.97"
+
+def convert_md5s_to_codes(passwords_md5):
+	password_codes = list()
+	for password_md5 in passwords_md5.split('-'):
+		password_code = next(x['password_code'] for x in identifiers_and_passwords if x['password_md5'] == password_md5)
+		password_codes.append(password_code)
+	return '-'.join(password_codes)
+
 
 def initialize_opencv():
 	global face_cascade, eye_cascade
@@ -363,6 +372,7 @@ def get_options():
 
 		passwords_file_name = os.path.join(os.path.dirname(sys.argv[1]), config['passwords_file'])
 		password_codes = []
+		passwords_md5 = []
 		try:
 			with open(passwords_file_name, 'r') as passwords_file:
 				message("Reading passwords file", passwords_file_name, 3)
@@ -382,10 +392,11 @@ def get_options():
 						continue
 					while True:
 						password_code = str(random.randint(0, max_random))
+						password_md5 = hashlib.md5(password).hexdigest()
 						if password_code not in password_codes:
 							password_codes.append(password_code)
+							passwords_md5.append(password_md5)
 							break
-					password_md5 = hashlib.md5(password).hexdigest()
 					identifiers_and_passwords.append(
 						{
 							"identifier": identifier,
@@ -406,7 +417,6 @@ def get_options():
 						indented_message("New password file created","", 3)
 		except IOError:
 			indented_message("WARNING", passwords_file_name + " doesn't exist or unreadable, not using it", 2)
-
 
 	# create the directory where php will put album composite images
 	album_cache_dir = os.path.join(config['cache_path'], config['cache_album_subdir'])

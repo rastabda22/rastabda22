@@ -11,6 +11,7 @@ import tempfile
 import hashlib
 import unicodedata
 import sys
+import copy
 from datetime import datetime
 from pprint import pprint
 
@@ -75,6 +76,8 @@ class Album(object):
 		self._attributes = {}
 		self._attributes["metadata"] = {}
 		self.json_version = ""
+		self.passwords_md5 = []
+		self.password_codes = []
 
 		if (
 			Options.config['subdir_method'] in ("md5", "folder") and
@@ -161,6 +164,12 @@ class Album(object):
 	@property
 	def positions_json_file(self):
 		return self.cache_base + ".positions.json"
+
+	def protected_json_file(self, password_md5):
+		return self.cache_base + "." + password_md5 + ".json"
+
+	def protected_positions_json_file(self, password_md5):
+		return self.cache_base + "." + password_md5 + ".positions.json"
 
 	@property
 	def subdir(self):
@@ -263,31 +272,106 @@ class Album(object):
 			return False
 		if len(self.subalbums_list) == 0:
 			return True
-		for album in self.subalbums_list:
-			if not album.empty:
+		for subalbum in self.subalbums:
+			if not subalbum.empty:
 				return False
 		return True
 
-	def to_json_file(self):
-		json_file_with_path = os.path.join(Options.config['cache_path'], self.json_file)
+	def used_passwords_permutations(self):
+		return self.nums_protected_media_in_sub_tree.keys()
+
+	def leave_only_unprotected_content(self):
+		self.is_protected = False
+		if len(self.passwords_md5) > 0:
+			# protected album, remove the media
+			self.media_list = list()
+			self.positions_and_media_in_tree = list()
+			# subalbums are not removed, because there may be some unprotected content up in the tree
+			# but the unprotected content up in the tree doesn't count here, and so the media number in the tree is zero
+
+			# set the protected flag
+			self.is_protected = True
+		else:
+			# the album isn't protected, but media or subalbums may be protected
+			self.media_list = [media for media in self.media if len(media.passwords_md5) == 0]
+
+			for position in self.positions_and_media_in_tree:
+				for media_name in position['mediaNameList']:
+					if len(media_name['passwordsMd5']) > 0:
+						position['mediaNameList'].remove(media_name)
+
+			# do not process albums in by search albums because they have been already processed
+			if (
+				self.cache_base.find(Options.config['by_search_string']) == -1 or
+				self.cache_base.find(Options.config['by_search_string']) == 0 and
+				len(self.cache_base) == len(Options.config['by_search_string'])
+			):
+				for subalbum in self.subalbums_list:
+					subalbum.leave_only_unprotected_content()
+		for key in self.nums_protected_media_in_sub_tree:
+			self.num_media_in_sub_tree -= self.nums_protected_media_in_sub_tree[key]
+		return
+
+	def leave_only_content_protected_by(self, passwords_list):
+		self.media_list = [media for media in self.media if set(passwords_list) == set(media.passwords_md5)]
+
+		for position in self.positions_and_media_in_tree:
+			for media_name in position['mediaNameList']:
+				if set(passwords_list) != set(media_name['passwordsMd5']):
+					position['mediaNameList'].remove(media_name)
+
+		for subalbum in self.subalbums_list:
+			# do not process by search album because its subalbums have been already processed
+			# if subalbum.name != Options.config['by_search_string']:
+			if (
+				subalbum.cache_base.find(Options.config['by_search_string']) == -1 or
+				subalbum.cache_base.find(Options.config['by_search_string']) == 0 and
+				len(subalbum.cache_base) == len(Options.config['by_search_string'])
+			):
+				subalbum.leave_only_content_protected_by(passwords_list)
+		passwords_combination = '-'.join(passwords_list)
+		if passwords_combination in self.nums_protected_media_in_sub_tree:
+			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree[passwords_combination]
+		return
+
+	def generate_protected_content_albums(self):
+		protected_albums = {}
+		for passwords_permutation in self.used_passwords_permutations():
+			passwords_permutation_list = passwords_permutation.split('-')
+			protected_albums[passwords_permutation] = copy.deepcopy(self)
+			protected_albums[passwords_permutation].leave_only_content_protected_by(passwords_permutation_list)
+		return protected_albums
+
+	def to_json_file(self, json_name, json_positions_name, password_md5 = None):
+		save_message_1 = "saving album..."
+		save_message_2 = "album saved"
+		save_message_3 = "saving positions album..."
+		save_message_4 = "positions album saved"
+		if password_md5 is not None:
+			save_message_1 = "saving  " + password_md5 + "..."
+			save_message_2 = "protected album for " + password_md5 + " saved"
+			save_message_3 = "saving protected positions album for " + password_md5 + "..."
+			save_message_4 = "protected positions album for " + password_md5 + " saved"
+
+		json_file_with_path = os.path.join(Options.config['cache_path'], json_name)
 		if os.path.exists(json_file_with_path) and not os.access(json_file_with_path, os.W_OK):
 			message("FATAL ERROR", json_file_with_path + " not writable, quitting", 0)
 			sys.exit(-97)
-		json_positions_file_with_path = os.path.join(Options.config['cache_path'], self.positions_json_file)
+		json_positions_file_with_path = os.path.join(Options.config['cache_path'], json_positions_name)
 		if os.path.exists(json_positions_file_with_path) and not os.access(json_positions_file_with_path, os.W_OK):
 			message("FATAL ERROR", json_positions_file_with_path + " not writable, quitting", 0)
 			sys.exit(-97)
-		message("sorting album...", self.absolute_path, 5)
+		message("sorting album and media...", self.absolute_path, 5)
 		self.sort_subalbums_and_media()
-		indented_message("album sorted", self.absolute_path, 4)
-		message("saving album...", self.absolute_path, 5)
+		indented_message("album and media sorted", self.absolute_path, 4)
+		message(save_message_1, self.absolute_path, 5)
 		with open(json_file_with_path, 'w') as filepath:
 			json.dump(self, filepath, cls=PhotoAlbumEncoder)
-		indented_message("album saved", "", 4)
-		message("saving positions album...", "", 5)
+		indented_message(save_message_2, "", 4)
+		message(save_message_3, "", 5)
 		with open(json_positions_file_with_path, 'w') as filepath:
 			json.dump(self.positions_and_media_in_tree, filepath, cls=PhotoAlbumEncoder)
-		indented_message("positions album saved", "", 4)
+		indented_message(save_message_4, "", 4)
 
 	@staticmethod
 	def from_cache(path, album_cache_base):
@@ -352,12 +436,14 @@ class Album(object):
 						# "positionsAndMediaInTree": subalbum.positions_and_media_in_tree,
 						"numPositionsInTree": len(subalbum.positions_and_media_in_tree),
 						"numMediaInSubTree": subalbum.num_media_in_sub_tree,
-						"numsProtectedMediaInSubTree": subalbum.nums_protected_media_in_sub_tree
+						# "numsProtectedMediaInSubTree": subalbum.nums_protected_media_in_sub_tree
 					}
-					if hasattr(subalbum, "passwords_md5"):
-						sub_dict["passwordsMd5"] = subalbum.passwords_md5
-					if hasattr(subalbum, "password_codes"):
-						sub_dict["passwordCodes"] = subalbum.password_codes
+					nums_protected_by_code = {}
+					for passwords_md5 in subalbum.nums_protected_media_in_sub_tree:
+						codes = Options.convert_md5s_to_codes(passwords_md5)
+						nums_protected_by_code[codes] = subalbum.nums_protected_media_in_sub_tree[passwords_md5]
+					sub_dict["numsProtectedMediaInSubTree"] = nums_protected_by_code
+
 					if hasattr(subalbum, "center"):
 						sub_dict["center"] = subalbum.center
 					if hasattr(subalbum, "name"):
@@ -385,7 +471,14 @@ class Album(object):
 		by_search_position = path_to_dict.find(Options.config['by_search_string'])
 		if not path_to_dict:
 			path_to_dict = Options.config['folders_string']
-		elif path_to_dict and by_date_position == -1 and by_gps_position == -1 and by_search_position == -1 and self.cache_base != "root" and folder_position != 0:
+		elif (
+			path_to_dict and
+			by_date_position == -1 and
+			by_gps_position == -1 and
+			by_search_position == -1 and
+			self.cache_base != "root" and
+			folder_position != 0
+		):
 			path_to_dict = Options.config['folders_string'] + '/' + path_to_dict
 
 		ancestors_cache_base = list()
@@ -425,16 +518,17 @@ class Album(object):
 			"ancestorsCenter": ancestors_center,
 			"physicalPath": path_without_folders_marker,
 			"numMediaInSubTree": self.num_media_in_sub_tree,
-			"numsProtectedMediaInSubTree": self.nums_protected_media_in_sub_tree,
+			# "numsProtectedMediaInSubTree": self.nums_protected_media_in_sub_tree,
 			"numPositionsInTree": len(self.positions_and_media_in_tree),
 			# "positionsAndMediaInTree": self.positions_and_media_in_tree,
 			"jsonVersion": Options.json_version
 		}
-		if hasattr(self, "passwords_md5"):
-			dictionary["passwordsMd5"] = self.passwords_md5
-		if hasattr(self, "password_codes"):
-			dictionary["passwordCodes"] = self.password_codes
-			# print("album to dict", self.passwords)
+		nums_protected_by_code = {}
+		for passwords_md5 in self.nums_protected_media_in_sub_tree:
+			codes = Options.convert_md5s_to_codes(passwords_md5)
+			nums_protected_by_code[codes] = self.nums_protected_media_in_sub_tree[passwords_md5]
+		dictionary["numsProtectedMediaInSubTree"] = nums_protected_by_code
+
 		if hasattr(self, "center"):
 			dictionary["center"] = self.center
 		if hasattr(self, "name"):
@@ -2007,9 +2101,8 @@ class Media(object):
 		media["albumName"] = self.album_path[:len(self.album_path) - len(self.name) - 1]
 		media["foldersCacheBase"] = self.album.cache_base
 		media["cacheSubdir"] = self.album.subdir
-		media["passwordsMd5"] = self.passwords_md5
-		media["passwordCodes"] = self.password_codes
-		# print("media to dict", self.album_passwords)
+		# media["passwordsMd5"] = self.passwords_md5
+		# media["passwordCodes"] = self.password_codes
 		return media
 
 
