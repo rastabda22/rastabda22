@@ -286,7 +286,7 @@ class Album(object):
 		indented_message("album saved", "", 4)
 		message("saving positions album...", "", 5)
 		with open(json_positions_file_with_path, 'w') as filepath:
-				json.dump(self.positions_and_media_in_tree, filepath, cls=PhotoAlbumEncoder)
+			json.dump(self.positions_and_media_in_tree, filepath, cls=PhotoAlbumEncoder)
 		indented_message("positions album saved", "", 4)
 
 	@staticmethod
