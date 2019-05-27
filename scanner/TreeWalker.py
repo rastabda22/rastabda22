@@ -310,6 +310,7 @@ class TreeWalker:
 			message("working with word album...", "", 5)
 			word_path = os.path.join(by_search_path, str(word))
 			word_album = Album(word_path)
+			word_album._name = str(word)
 			word_album.parent = by_search_album
 			word_album.cache_base = by_search_album.generate_cache_base(os.path.join(by_search_album.path, word))
 			word_max_file_date = None
