@@ -84,6 +84,9 @@ class TreeWalker:
 		self.tree_by_search = {}
 		self.media_with_geonames_list = list()
 		self.all_media = list()
+		self.symlinks = list()
+		self.position_symlinks = list()
+
 		self.all_album_composite_images = list()
 		self.album_cache_path = os.path.join(Options.config['cache_path'], Options.config['cache_album_subdir'])
 		if os.path.exists(self.album_cache_path):
@@ -162,21 +165,32 @@ class TreeWalker:
 			message("saving all albums to json files...", "", 4)
 			next_level()
 			for album in self.origin_album.subalbums:
-				try:
-					self.all_albums_to_json_file(album)
-				except UnboundLocalError:
-					pass
+				# try:
+				self.all_albums_to_json_file(album)
+				# except UnboundLocalError:
+				# 	pass
 
 			message("all albums saved to json files", "", 5)
 			back_level()
 
 			message("saving all protected albums to json files...", "", 4)
 			next_level()
-			for password_md5, album in self.protected_origin_album.items():
-				try:
-					self.all_albums_to_json_file(album, password_md5)
-				except UnboundLocalError:
-					pass
+
+			for md5 in [x['password_md5'] for x in Options.identifiers_and_passwords]:
+				absolute_md5_path = os.path.join(Options.config['cache_path'], md5)
+				Options.make_dir(absolute_md5_path, "protected password dir")
+				# symlinks in md5 dirs must be deleted
+				# because there isn't any simple way to know whether they are old or new
+				for entry in self._listdir_sorted_alphabetically(absolute_md5_path):
+					entry_with_path = os.path.join(absolute_md5_path, entry)
+					if os.path.islink(entry_with_path):
+						os.unlink(entry_with_path)
+
+			for passwords_md5, album in self.protected_origin_album.items():
+				# try:
+				self.all_albums_to_json_file(album, passwords_md5)
+				# except UnboundLocalError:
+				# 	pass
 
 			message("all protected albums saved to json files", "", 5)
 			back_level()
@@ -186,7 +200,7 @@ class TreeWalker:
 			self.remove_stale()
 			message("completed", "", 4)
 
-	def all_albums_to_json_file(self, album, password_md5 = None):
+	def all_albums_to_json_file(self, album, passwords_md5 = None):
 		# search albums in by_search_album has the normal albums as subalbums,
 		# and they are saved when folders_album is saved, avoid saving them multiple times
 		if (
@@ -195,10 +209,10 @@ class TreeWalker:
 			len(album.cache_base) == len(Options.config['by_search_string'])
 		):
 			for subalbum in album.subalbums:
-				self.all_albums_to_json_file(subalbum, password_md5)
+				self.all_albums_to_json_file(subalbum, passwords_md5)
 
 		if len(album.subalbums) == 0 and len(album.media) == 0:
-			if password_md5 is None:
+			if passwords_md5 is None:
 				indented_message("empty album, not saving it", album.name, 4)
 			else:
 				indented_message("empty protected album, not saving it", album.name + ", password codes = " + '-'.join(album.password_codes), 4)
@@ -206,15 +220,44 @@ class TreeWalker:
 
 		json_name = album.json_file
 		json_positions_name = album.positions_json_file
-		if password_md5 is not None:
-			json_name = album.protected_json_file(password_md5)
-			json_positions_name = album.protected_positions_json_file(password_md5)
-		for name in [json_name, json_positions_name]:
-			name = os.path.join(Options.config['cache_path'], name)
-		self.all_json_files.append(json_name)
-		self.all_json_files.append(json_positions_name)
+		symlinks = list()
+		position_symlinks = list()
+		if passwords_md5 is not None:
+			password_md5_list = passwords_md5.split('-')
+			first_md5 = password_md5_list[0]
+			json_name = os.path.join(first_md5, json_name)
+			json_positions_name = os.path.join(first_md5, json_positions_name)
 
-		album.to_json_file(json_name, json_positions_name, password_md5)
+			# more symlink must be added in order to get the files with 2 or more passwords
+			if (len(password_md5_list) > 1):
+				for md5 in password_md5_list[1:]:
+					symlink = os.path.join(md5, album.json_file)
+					symlink0 = symlink
+					n = 1
+					while symlink in self.symlinks:
+						new_name = symlink0[:-4] + str(n) + ".json"
+						symlink = os.path.join(md5, new_name)
+					symlinks.append(symlink)
+					self.symlinks.append(symlink)
+
+					position_symlink =  os.path.join(md5, album.positions_json_file)
+					position_symlink0 = position_symlink
+					n = 1
+					while position_symlink in self.symlinks:
+						new_name = position_symlink0[:-14] + str(n) + ".positions.json"
+						position_symlink = os.path.join(md5, new_name)
+					position_symlinks.append(position_symlink)
+					self.position_symlinks.append(position_symlink)
+
+				for symlink in symlinks:
+					self.all_json_files.append(symlink)
+				for symlink in position_symlinks:
+					self.all_json_files.append(position_symlinks)
+
+		self.all_json_files.append(os.path.join(Options.config['cache_path'], json_name))
+		self.all_json_files.append(os.path.join(Options.config['cache_path'], json_positions_name))
+
+		album.to_json_file(json_name, json_positions_name, symlinks, position_symlinks, passwords_md5)
 
 	def generate_date_albums(self, origin_album):
 		next_level()

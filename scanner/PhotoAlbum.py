@@ -167,11 +167,11 @@ class Album(object):
 	def positions_json_file(self):
 		return self.cache_base + ".positions.json"
 
-	def protected_json_file(self, password_md5):
-		return self.cache_base + "." + password_md5 + ".json"
-
-	def protected_positions_json_file(self, password_md5):
-		return self.cache_base + "." + password_md5 + ".positions.json"
+	# def protected_json_file(self, passwords_md5):
+	# 	return os.path.join(Options.config['cache_path'], passwords_md5) + self.cache_base ".json"
+	#
+	# def protected_positions_json_file(self, passwords_md5):
+	# 	return self.cache_base + "." + passwords_md5 + ".positions.json"
 
 	@property
 	def subdir(self):
@@ -344,16 +344,20 @@ class Album(object):
 			protected_albums[passwords_permutation].leave_only_content_protected_by(passwords_permutation_list)
 		return protected_albums
 
-	def to_json_file(self, json_name, json_positions_name, password_md5 = None):
+	def to_json_file(self, json_name, json_positions_name, symlinks, position_symlinks, passwords_md5 = None):
+		passwords_are_more_than_one = False
 		save_message_1 = "saving album..."
 		save_message_2 = "album saved"
 		save_message_3 = "saving positions album..."
 		save_message_4 = "positions album saved"
-		if password_md5 is not None:
-			save_message_1 = "saving  " + password_md5 + "..."
-			save_message_2 = "protected album for " + password_md5 + " saved"
-			save_message_3 = "saving protected positions album for " + password_md5 + "..."
-			save_message_4 = "protected positions album for " + password_md5 + " saved"
+		if passwords_md5 is not None:
+			save_message_1 = "saving  " + passwords_md5 + "..."
+			save_message_2 = "protected album for " + passwords_md5 + " saved"
+			save_message_3 = "saving protected positions album for " + passwords_md5 + "..."
+			save_message_4 = "protected positions album for " + passwords_md5 + " saved"
+
+			passwords_md5_list = passwords_md5.split('-')
+			passwords_are_more_than_one = (len(passwords_md5_list) > 1)
 
 		json_file_with_path = os.path.join(Options.config['cache_path'], json_name)
 		if os.path.exists(json_file_with_path) and not os.access(json_file_with_path, os.W_OK):
@@ -369,10 +373,16 @@ class Album(object):
 		message(save_message_1, self.absolute_path, 5)
 		with open(json_file_with_path, 'w') as filepath:
 			json.dump(self, filepath, cls=PhotoAlbumEncoder)
+		for symlink in symlinks:
+			symlink_with_path = os.path.join(Options.config['cache_path'], symlink)
+			os.symlink(json_file_with_path, symlink_with_path)
 		indented_message(save_message_2, "", 4)
 		message(save_message_3, "", 5)
 		with open(json_positions_file_with_path, 'w') as filepath:
 			json.dump(self.positions_and_media_in_tree, filepath, cls=PhotoAlbumEncoder)
+		for symlink in position_symlinks:
+			symlink_with_path = os.path.join(Options.config['cache_path'], symlink)
+			os.symlink(json_positions_file_with_path, symlink_with_path)
 		indented_message(save_message_4, "", 4)
 
 	@staticmethod
