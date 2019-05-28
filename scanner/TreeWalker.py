@@ -254,8 +254,8 @@ class TreeWalker:
 				for symlink in position_symlinks:
 					self.all_json_files.append(position_symlinks)
 
-		self.all_json_files.append(os.path.join(Options.config['cache_path'], json_name))
-		self.all_json_files.append(os.path.join(Options.config['cache_path'], json_positions_name))
+		self.all_json_files.append(json_name)
+		self.all_json_files.append(json_positions_name)
 
 		album.to_json_file(json_name, json_positions_name, symlinks, position_symlinks, passwords_md5)
 
