@@ -49,7 +49,7 @@ class TreeWalker:
 
 		random.seed()
 		self.all_json_files = ["options.json"]
-		self.all_json_files_by_subdir = {}
+		# self.all_json_files_by_subdir = {}
 
 		if (Options.config['use_stop_words']):
 			TreeWalker.stopwords_file = os.path.join(Options.config['cache_path'], 'stopwords.json')
@@ -201,12 +201,13 @@ class TreeWalker:
 			message("completed", "", 4)
 
 	def all_albums_to_json_file(self, album, passwords_md5 = None):
-		# search albums in by_search_album has the normal albums as subalbums,
+		# the subalbums of search albums in by_search_album are regular albums
 		# and they are saved when folders_album is saved, avoid saving them multiple times
 		if (
 			album.cache_base.find(Options.config['by_search_string']) == -1 or
-			album.cache_base.find(Options.config['by_search_string']) == 0 and
-			len(album.cache_base) == len(Options.config['by_search_string'])
+			# album.cache_base.find(Options.config['by_search_string']) == 0 and
+			# len(album.cache_base.split(Options.config['cache_folder_separator'])) < 2
+			album.cache_base == Options.config['by_search_string']
 		):
 			for subalbum in album.subalbums:
 				self.all_albums_to_json_file(subalbum, passwords_md5)
@@ -1599,7 +1600,8 @@ class TreeWalker:
 
 	def remove_stale(self, subdir=""):
 		# preparing files and directories lists
-		if not subdir:
+		md5_hash_re = r"[a-f0-9]{32}"
+		if not subdir or re.search(md5_hash_re, subdir):
 			message("cleaning up, be patient...", "", 3)
 			next_level()
 			message("building stale list...", "", 4)
@@ -1608,14 +1610,14 @@ class TreeWalker:
 			# 	self.all_json_files.append(album.json_file)
 			# 	self.all_json_files.append(album.positions_json_file)
 			for media in self.all_media:
-				album_subdir = media.album.subdir
 				for entry in media.image_caches:
-					entry_without_subdir = entry[len(album_subdir) + 1:]
-					try:
-						self.all_json_files_by_subdir[album_subdir].append(entry_without_subdir)
-					except KeyError:
-						self.all_json_files_by_subdir[album_subdir] = list()
-						self.all_json_files_by_subdir[album_subdir].append(entry_without_subdir)
+					entry_without_subdir = entry[len(media.album.subdir) + 1:]
+					self.all_json_files.append(os.path.join(media.album.subdir, entry_without_subdir))
+					# try:
+					# 	self.all_json_files_by_subdir[album_subdir].append(entry_without_subdir)
+					# except KeyError:
+					# 	self.all_json_files_by_subdir[album_subdir] = list()
+					# 	self.all_json_files_by_subdir[album_subdir].append(entry_without_subdir)
 			indented_message("stale list built", "", 5)
 			info = "in cache path"
 			deletable_files_re = r"\.json$"
@@ -1623,9 +1625,10 @@ class TreeWalker:
 		else:
 			# reduced sizes, thumbnails, old style thumbnails
 			if subdir == Options.config['cache_album_subdir']:
-				self.all_json_files_by_subdir[subdir] = list()
+				# self.all_json_files_by_subdir[subdir] = list()
 				for path in self.all_album_composite_images:
-					self.all_json_files_by_subdir[subdir].append(path)
+					self.all_json_files.append(os.path.join(subdir, path))
+					# self.all_json_files_by_subdir[subdir].append(path)
 				deletable_files_re = r"\.jpg$"
 			else:
 				deletable_files_re = r"(" + Options.config['cache_folder_separator'] + r"|_)" + \
@@ -1666,14 +1669,15 @@ class TreeWalker:
 						raise
 					#~ except:
 						#~ pass
-					if subdir:
-						if subdir in self.all_json_files_by_subdir:
-							cache_list = self.all_json_files_by_subdir[subdir]
-						else:
-							cache_list = list()
-					else:
-						cache_list = self.all_json_files
-					if cache_file not in cache_list:
+					# if subdir:
+					# 	if subdir in self.all_json_files_by_subdir:
+					# 		cache_list = self.all_json_files_by_subdir[subdir]
+					# 	else:
+					# 		cache_list = list()
+					# else:
+					# cache_list = self.all_json_files
+					if os.path.join(subdir, cache_file) not in self.all_json_files:
+					# if cache_file not in cache_list:
 						message("removing stale cache file...", cache_file, 4)
 						file_to_delete = os.path.join(Options.config['cache_path'], subdir, cache_file)
 						os.unlink(file_to_delete)

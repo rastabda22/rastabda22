@@ -301,15 +301,19 @@ class Album(object):
 				for media_name in position['mediaNameList']:
 					if len(media_name['passwordsMd5']) > 0:
 						position['mediaNameList'].remove(media_name)
+				if len(position['mediaNameList']) == 0:
+					self.positions_and_media_in_tree.remove(position)
 
-			# do not process albums in by search albums because they have been already processed
+			# do not process search albums subalbums because they have been already processed
 			if (
 				self.cache_base.find(Options.config['by_search_string']) == -1 or
-				self.cache_base.find(Options.config['by_search_string']) == 0 and
-				len(self.cache_base) == len(Options.config['by_search_string'])
+				# self.cache_base.find(Options.config['by_search_string']) == 0 and
+				self.cache_base == Options.config['by_search_string']
+				# self.cache_base.split(Options.config['cache_folder_separator']) < 3
 			):
 				for subalbum in self.subalbums_list:
 					subalbum.leave_only_unprotected_content()
+
 		for key in self.nums_protected_media_in_sub_tree:
 			self.num_media_in_sub_tree -= self.nums_protected_media_in_sub_tree[key]
 		return
@@ -321,19 +325,23 @@ class Album(object):
 			for media_name in position['mediaNameList']:
 				if set(passwords_list) != set(media_name['passwordsMd5']):
 					position['mediaNameList'].remove(media_name)
+			if len(position['mediaNameList']) == 0:
+				self.positions_and_media_in_tree.remove(position)
 
-		for subalbum in self.subalbums_list:
-			# do not process by search album because its subalbums have been already processed
-			# if subalbum.name != Options.config['by_search_string']:
-			if (
-				subalbum.cache_base.find(Options.config['by_search_string']) == -1 or
-				subalbum.cache_base.find(Options.config['by_search_string']) == 0 and
-				len(subalbum.cache_base) == len(Options.config['by_search_string'])
-			):
+		# do not process search albums subalbums because they have been already processed
+		if (
+			self.cache_base.find(Options.config['by_search_string']) == -1 or
+			# self.cache_base.find(Options.config['by_search_string']) == 0 and
+			self.cache_base == Options.config['by_search_string']
+			# self.cache_base.split(Options.config['cache_folder_separator']) < 2
+		):
+			for subalbum in self.subalbums_list:
 				subalbum.leave_only_content_protected_by(passwords_list)
+
 		passwords_combination = '-'.join(passwords_list)
 		if passwords_combination in self.nums_protected_media_in_sub_tree:
 			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree[passwords_combination]
+
 		return
 
 	def generate_protected_content_albums(self):
