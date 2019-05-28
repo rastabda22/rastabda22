@@ -17,12 +17,13 @@ from datetime import datetime
 
 from PIL import Image
 
-from CachePath import remove_album_path, file_mtime, last_modification_time, trim_base_custom, remove_folders_marker, checksum
+from CachePath import remove_album_path, file_mtime, last_modification_time, trim_base_custom, remove_folders_marker
+from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
+from CachePath import remove_digits, switch_to_lowercase, phrase_to_words, checksum
 from Utilities import message, indented_message, next_level, back_level, report_times
 from PhotoAlbum import Media, Album, PhotoAlbumEncoder
 from Geonames import Geonames
 import Options
-from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters, remove_digits, switch_to_lowercase, phrase_to_words
 
 class TreeWalker:
 	def __init__(self):
@@ -90,9 +91,10 @@ class TreeWalker:
 				message("FATAL ERROR", self.album_cache_path + " not writable, quitting")
 				sys.exit(-97)
 		else:
-			message("creating still unexistent album cache subdir", self.album_cache_path, 4)
-			os.makedirs(self.album_cache_path)
-			indented_message("still unexistent subdir created", "", 5)
+			Options.make_dir(Options.config['cache_album_subdir'], self.album_cache_path)
+			# message("creating still unexistent album cache subdir", self.album_cache_path, 4)
+			# os.makedirs(self.album_cache_path)
+			# indented_message("still unexistent subdir created", "", 5)
 
 		self.origin_album = Album(Options.config['album_path'])
 		# self.origin_album.read_album_ini() # origin_album is not a physical one, it's the parent of the root physical tree and of the virtual albums

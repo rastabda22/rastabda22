@@ -34,14 +34,16 @@ import math
 import numpy as np
 import exifread
 
-from CachePath import remove_album_path, remove_folders_marker, trim_base_custom, thumbnail_types_and_sizes, file_mtime, photo_cache_name, video_cache_name
+from CachePath import remove_album_path, remove_folders_marker, trim_base_custom
+from CachePath import thumbnail_types_and_sizes, file_mtime, photo_cache_name, video_cache_name
+from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
+from CachePath import remove_all_but_alphanumeric_chars_dashes_slashes_dots, switch_to_lowercase
 from Utilities import message, indented_message, next_level, back_level
 from Geonames import Geonames
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
 from VideoToolWrapper import VideoProbeWrapper, VideoTranscodeWrapper
 import Options
-from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters, remove_all_but_alphanumeric_chars_dashes_slashes_dots, switch_to_lowercase
 # WARNING: pyexiftool has been modified, do not overwrite with new versions unless you know what you are doing
 import PyExifTool
 # this is needed in order to avoid complains from exifread
@@ -1540,10 +1542,11 @@ class Media(object):
 			indented_message("filled", "", 5)
 
 		# the subdir hadn't been created when creating the album in order to avoid creation of empty directories
-		if not os.path.exists(thumbs_path_with_subdir):
-			message("creating unexistent subdir", "", 5)
-			os.makedirs(thumbs_path_with_subdir)
-			indented_message("unexistent subdir created", thumbs_path_with_subdir, 4)
+		Options.make_dir(thumbs_path_with_subdir, "unexistent cache subdir")
+		# if not os.path.exists(thumbs_path_with_subdir):
+		# 	message("creating unexistent subdir", "", 5)
+		# 	os.makedirs(thumbs_path_with_subdir)
+		# 	indented_message("unexistent subdir created", thumbs_path_with_subdir, 4)
 
 		if os.path.exists(thumb_path) and not os.access(thumb_path, os.W_OK):
 			message("FATAL ERROR", thumb_path + " not writable, quitting")
@@ -1693,9 +1696,10 @@ class Media(object):
 				message("FATAL ERROR", album_cache_path + " not writable, quitting")
 				sys.exit(-97)
 		else:
-			message("creating still unexistent album cache subdir", "", 5)
-			os.makedirs(album_cache_path)
-			indented_message("still unexistent subdir created", album_cache_path, 4)
+			Options.make_dir(album_cache_path, "unexistent albums cache subdir")
+			# message("creating still unexistent album cache subdir", "", 5)
+			# os.makedirs(album_cache_path)
+			# indented_message("still unexistent subdir created", album_cache_path, 4)
 
 		transcode_path = os.path.join(album_cache_path, album_prefix + video_cache_name(self))
 		# get number of cores on the system, and use all minus one

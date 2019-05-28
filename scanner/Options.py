@@ -87,6 +87,21 @@ max_random = 1000000000
 # json_version = 3.97 since passwords removed from json file
 json_version = "3.97"
 
+def make_dir(absolute_path, message_part):
+	# makes a subdir and manages errors
+	if not os.path.exists(absolute_path):
+		try:
+			message("creating " + message_part, "", 5)
+			os.makedirs(absolute_path)
+			indented_message(message_part + " created", absolute_path, 4)
+			os.chmod(absolute_path, 0o777)
+			message("permissions set", "", 5)
+		except OSError:
+			message("FATAL ERROR", "couldn't create " + absolute_path + " , quitting", 0)
+			sys.exit(-97)
+	else:
+		message(message_part + " already existent, not creating it", absolute_path, 5)
+
 def convert_md5s_to_codes(passwords_md5):
 	password_codes = list()
 	for password_md5 in passwords_md5.split('-'):
@@ -348,14 +363,13 @@ def get_options():
 			message("FATAL ERROR", config['cache_path'] + " not writable, quitting", 0)
 			sys.exit(-97)
 	except OSError:
-		try:
-			os.mkdir(config['cache_path'])
-			message("directory created", config['cache_path'], 4)
-			os.chmod(config['cache_path'], 0o777)
-			message("permissions set", config['cache_path'], 4)
-		except OSError:
-			message("FATAL ERROR", config['cache_path'] + " inexistent and couldn't be created, quitting", 0)
-			sys.exit(-97)
+		# try:
+		make_dir(config['cache_path'], "cache directory")
+			# os.mkdir(config['cache_path'])
+			# message("directory created", config['cache_path'], 4)
+		# except OSError:
+		# 	message("FATAL ERROR", config['cache_path'] + " inexistent and couldn't be created, quitting", 0)
+		# 	sys.exit(-97)
 
 	# read the password file
 	# it must exist and be readable, otherwise skip it
@@ -364,8 +378,9 @@ def get_options():
 
 		# remove the old single password files
 		passwords_subdir_with_path = os.path.join(config['cache_path'], config['passwords_subdir'])
-		if not os.path.exists(passwords_subdir_with_path):
-			os.makedirs(passwords_subdir_with_path)
+		make_dir(config['passwords_subdir'], passwords_subdir_with_path)
+		# if not os.path.exists(passwords_subdir_with_path):
+		# 	os.makedirs(passwords_subdir_with_path)
 		for password_file in sorted(os.listdir(passwords_subdir_with_path)):
 			os.unlink(os.path.join(passwords_subdir_with_path, password_file))
 		message("Old password files removed","", 5)
@@ -423,13 +438,14 @@ def get_options():
 	try:
 		os.stat(album_cache_dir)
 	except OSError:
-		try:
-			message("creating cache directory for composite images", album_cache_dir, 4)
-			os.mkdir(album_cache_dir)
-			os.chmod(album_cache_dir, 0o777)
-		except OSError:
-			message("FATAL ERROR", config['cache_path'] + " not writable, quitting", 0)
-			sys.exit(-97)
+		# try:
+		make_dir(album_cache_dir, "cache directory for composite images")
+		# 	message("creating cache directory for composite images", album_cache_dir, 4)
+		# 	os.mkdir(album_cache_dir)
+		# 	os.chmod(album_cache_dir, 0o777)
+		# except OSError:
+		# 	message("FATAL ERROR", config['cache_path'] + " not writable, quitting", 0)
+		# 	sys.exit(-97)
 
 	# calculate the number of media in the album tree: it will be used in order to guess the execution time
 	special_files = [config['exclude_tree_marker'], config['exclude_files_marker'], config['metadata_filename']]
