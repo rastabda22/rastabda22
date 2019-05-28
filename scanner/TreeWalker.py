@@ -114,7 +114,7 @@ class TreeWalker:
 			# back_level()
 			# indented_message("all media json file saved", "", 5)
 
-			self.all_json_files.append("all_media.json")
+			# self.all_json_files.append("all_media.json")
 
 			folders_album.num_media_in_sub_tree = num
 			folders_album.positions_and_media_in_tree = positions
