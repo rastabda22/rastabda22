@@ -244,7 +244,7 @@ class TreeWalker:
 					position_symlink =  os.path.join(md5, album.positions_json_file)
 					position_symlink0 = position_symlink
 					n = 1
-					while position_symlink in self.symlinks:
+					while position_symlink in self.position_symlinks:
 						new_name = position_symlink0[:-14] + str(n) + ".positions.json"
 						position_symlink = os.path.join(md5, new_name)
 					position_symlinks.append(position_symlink)
@@ -252,8 +252,8 @@ class TreeWalker:
 
 				for symlink in symlinks:
 					self.all_json_files.append(symlink)
-				for symlink in position_symlinks:
-					self.all_json_files.append(position_symlinks)
+				for position_symlink in position_symlinks:
+					self.all_json_files.append(position_symlink)
 
 		self.all_json_files.append(json_name)
 		self.all_json_files.append(json_positions_name)
