@@ -12,6 +12,7 @@ import time
 import random
 import math
 import fnmatch
+import shutil
 
 from datetime import datetime
 
@@ -254,11 +255,12 @@ class TreeWalker:
 			# more symlink must be added in order to get the files with 2 or more passwords
 			if (len(password_md5_list) > 1):
 				for md5 in password_md5_list[1:]:
-					symlink = self.determine_symlink_name(os.path.join(
+					symlink_with_path = self.determine_symlink_name(os.path.join(
 						Options.config['cache_path'],
 						Options.config['protected_directories_prefix'] + md5,
 						album.json_file
 					))
+					symlink = symlink_with_path[len(Options.config['cache_path']) + 1:]
 					# symlink = os.path.join(Options.config['protected_directories_prefix'] + md5, album.json_file)
 					# symlink0 = symlink
 					# n = 1
@@ -273,11 +275,12 @@ class TreeWalker:
 					# 	symlink = os.path.join(md5, new_name)
 					symlinks.append(symlink)
 
-					position_symlink =  self.determine_symlink_name(os.path.join(
+					position_symlink_with_path =  self.determine_symlink_name(os.path.join(
 						Options.config['cache_path'],
 						Options.config['protected_directories_prefix'] + md5,
 						album.positions_json_file
 					))
+					position_symlink = position_symlink_with_path[len(Options.config['cache_path']) + 1:]
 					# position_symlink0 = position_symlink
 					# n = 1
 					# while position_symlink in self.position_symlinks:
@@ -1710,6 +1713,9 @@ class TreeWalker:
 				next_level()
 				if cache_file in json_dict['dirs']:
 					self.remove_stale(os.path.join(subdir, cache_file), json_dict['dirs'][cache_file])
+				elif subdir == "":
+					# a protected content directory which doesn't is reported must be deleted with all its content
+					shutil.rmtree(Options.config['cache_path'], os.path.join(subdir, cache_file))
 				if not os.listdir(os.path.join(Options.config['cache_path'], subdir, cache_file)):
 					next_level()
 					message("empty subdir, deleting...", "", 4)
