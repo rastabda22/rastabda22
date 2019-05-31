@@ -629,7 +629,7 @@ ul#right-menu {
 }
 
 ul#right-menu li {
-	padding: 0 .5em;
+	/* padding: 0 .5em; */
 	cursor: pointer;
 	font-size: 90%;
 }
@@ -641,24 +641,38 @@ ul#right-menu li.caption, ul#right-menu li:not(.active) {
 	cursor: default;
 }
 
-ul#right-menu li a#menu-icon:hover {
+ul#right-menu span a#menu-icon:hover {
 	background-color: transparent;
 }
 
-ul#right-menu:not(.expand) li:not(#menu-icon) {
+ul#right-menu:not(.expand) li:not(#menu-and-padlock) {
 	display: none !important;
 }
 
-ul#right-menu li#menu-icon, ul#right-menu li#menu-line {
+ul#right-menu span#menu-icon, ul#right-menu li#menu-line {
 	/*float: right;*/
 	display: list-item;
 }
 
-ul#right-menu li#menu-icon, ul#right-menu.expand li {
+ul#right-menu span#menu-icon, ul#right-menu #padlock img, ul#right-menu.expand li {
 	float: none;
 	text-align: right;
 	background-color: black;
+}
+
+ul#right-menu.expand li:not(#menu-and-padlock) {
+	padding: .1em 0;
+}
+
+ul#right-menu span#menu-icon, ul#right-menu #padlock img {
 	padding: .1em .5em;
+}
+
+ul#right-menu #padlock {
+	float: right;
+	padding: 0;
+	background-color: black;
+	cursor: pointer;
 }
 
 ul#right-menu.expand {
@@ -675,9 +689,9 @@ ul#right-menu.expand li {
 	width: 13em; */
 }
 
-ul#right-menu.expand li#menu-icon {
+/* ul#right-menu.expand span#menu-icon {
 	padding: .3em .7em;
-}
+} */
 ul#right-menu.expand li.caption {
 	/*text-align: left;*/
 	padding-right: 2em;
@@ -686,11 +700,11 @@ ul#right-menu.expand li.caption {
 	font-style: normal;
 }
 
-ul#right-menu.expand li:not(#menu-icon) {
+ul#right-menu.expand li {
 	clear: both;
 }
 
-ul#right-menu li#menu-icon {
+ul#right-menu span#menu-icon {
 	width: 1em;
 	cursor: pointer;
 	float: right;
@@ -736,7 +750,7 @@ ul#right-menu.expand li:not(.active, .sub-menu) {
 	color: darkgray;
 }
 
-ul#right-menu.expand li.active:hover {
+ul#right-menu.expand li.active:hover, ul#right-menu #menu-icon:hover, ul#right-menu #padlock img:hover, ul#right-menu #padlock:hover {
 	background-color: gray !important;
 	/* text-shadow: .15ex 0 white; */
 	/* font-weight: bold;
