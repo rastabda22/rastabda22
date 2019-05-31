@@ -86,7 +86,6 @@ class TreeWalker:
 		self.tree_by_search = {}
 		self.media_with_geonames_list = list()
 		self.all_media = list()
-		self.position_symlinks = list()
 
 		self.all_album_composite_images = list()
 		self.album_cache_path = os.path.join(Options.config['cache_path'], Options.config['cache_album_subdir'])
@@ -179,7 +178,7 @@ class TreeWalker:
 			next_level()
 
 			for md5 in [x['password_md5'] for x in Options.identifiers_and_passwords]:
-				absolute_md5_path = os.path.join(Options.config['cache_path'], md5)
+				absolute_md5_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + md5)
 				Options.make_dir(absolute_md5_path, "protected password dir")
 				# symlinks in md5 dirs must be deleted
 				# because there isn't any simple way to know whether they are old or new
@@ -201,6 +200,26 @@ class TreeWalker:
 			self._save_json_options()
 			self.remove_stale("", self.all_json_files)
 			message("completed", "", 4)
+
+	@staticmethod
+	def determine_symlink_name(symlink):
+		symlink0 = symlink
+		n = 1
+		number_is_already_inside = False
+		symlink_list = symlink.split('.')
+		while (os.path.isfile(symlink)):
+			# symlink_mtime = file_mtime(symlink)
+			# if (symlink_mtime < self.time_of_album_saving):
+			# 	# it's an old one, remove it
+			# 	os.unlink(os.path.join(Options.config['cache_path'], symlink))
+			# 	break
+			if number_is_already_inside:
+				first_part = symlink_list[:-2]
+			else:
+				first_part = symlink_list[:-1]
+			symlink = '.'.join(first_part.append(str(n)).append(symlink_list[-1]))
+		return symlink
+
 
 	def all_albums_to_json_file(self, album, passwords_md5 = None):
 		# the subalbums of search albums in by_search_album are regular albums
@@ -228,34 +247,42 @@ class TreeWalker:
 		if passwords_md5 is not None:
 			password_md5_list = passwords_md5.split('-')
 			first_md5 = password_md5_list[0]
-			json_name = os.path.join(first_md5, json_name)
+			json_name = os.path.join(Options.config['protected_directories_prefix'] + first_md5, json_name)
 			json_positions_name = os.path.join(first_md5, json_positions_name)
 
 			# more symlink must be added in order to get the files with 2 or more passwords
 			if (len(password_md5_list) > 1):
 				for md5 in password_md5_list[1:]:
-					symlink = os.path.join(md5, album.json_file)
-					symlink0 = symlink
-					n = 1
-					while (os.path.isfile(os.path.join(Options.config['cache_path'], symlink))):
-						symlink_mtime = file_mtime(os.path.join(Options.config['cache_path'], symlink))
-						print(symlink_mtime)
-						if (symlink_mtime < self.time_of_album_saving):
-							# it's an old one, remove it
-							os.unlink(os.path.join(Options.config['cache_path'], symlink))
-							break
-						new_name = symlink0[:-4] + str(n) + ".json"
-						symlink = os.path.join(md5, new_name)
+					symlink = self.determine_symlink_name(os.path.join(
+						Options.config['cache_path'],
+						Options.config['protected_directories_prefix'] + md5,
+						album.json_file
+					))
+					# symlink = os.path.join(Options.config['protected_directories_prefix'] + md5, album.json_file)
+					# symlink0 = symlink
+					# n = 1
+					# while (os.path.isfile(os.path.join(Options.config['cache_path'], symlink))):
+					# 	symlink_mtime = file_mtime(os.path.join(Options.config['cache_path'], symlink))
+					# 	print(symlink_mtime)
+					# 	if (symlink_mtime < self.time_of_album_saving):
+					# 		# it's an old one, remove it
+					# 		os.unlink(os.path.join(Options.config['cache_path'], symlink))
+					# 		break
+					# 	new_name = symlink0[:-4] + str(n) + ".json"
+					# 	symlink = os.path.join(md5, new_name)
 					symlinks.append(symlink)
 
-					position_symlink =  os.path.join(md5, album.positions_json_file)
-					position_symlink0 = position_symlink
-					n = 1
-					while position_symlink in self.position_symlinks:
-						new_name = position_symlink0[:-14] + str(n) + ".positions.json"
-						position_symlink = os.path.join(md5, new_name)
+					position_symlink =  self.determine_symlink_name(os.path.join(
+						Options.config['cache_path'],
+						Options.config['protected_directories_prefix'] + md5,
+						album.positions_json_file
+					))
+					# position_symlink0 = position_symlink
+					# n = 1
+					# while position_symlink in self.position_symlinks:
+					# 	new_name = position_symlink0[:-14] + str(n) + ".positions.json"
+					# 	position_symlink = os.path.join(md5, new_name)
 					position_symlinks.append(position_symlink)
-					self.position_symlinks.append(position_symlink)
 
 				for symlink in symlinks:
 					self.all_json_files.append(symlink)
@@ -1624,7 +1651,7 @@ class TreeWalker:
 
 	def remove_stale(self, subdir, json_dict):
 		# preparing files and directories lists
-		md5_hash_re = r"[a-f0-9]{32}"
+		md5_hash_re = r"" + Options.config['protected_directories_prefix'] + "[a-f0-9]{32}"
 
 		if not subdir:
 			message("cleaning up, be patient...", "", 3)
@@ -1706,15 +1733,6 @@ class TreeWalker:
 							cache_file = os.fsdecode(cache_file)
 					except KeyboardInterrupt:
 						raise
-					#~ except:
-						#~ pass
-					# if subdir:
-					# 	if subdir in self.all_json_files_by_subdir:
-					# 		cache_list = self.all_json_files_by_subdir[subdir]
-					# 	else:
-					# 		cache_list = list()
-					# else:
-					# cache_list = json_dict
 					if cache_file not in json_dict['files']:
 					# if cache_file not in cache_list:
 						message("removing stale cache file...", cache_file, 4)

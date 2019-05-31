@@ -3,6 +3,7 @@
   * new option: `passwords_marker`: the name of the files to put in the albums tree in order to protect albums and files
   * new option: `passwords_subdir`: the cache subdir where the passwords files are written
   * new shortcut `u` to unveil protected content
+  * new option `protected_directories_prefix`: the prefix for the protected json files directories
 * new right menu entry: runs an authentication dialog to unveil the protected content
 * when showing a map album, `esc` takes back to the map and the popup
 * right menu: bug fixes and better ordering of the options

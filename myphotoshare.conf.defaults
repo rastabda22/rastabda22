@@ -148,6 +148,9 @@ passwords_file = myphotoshare.passwords
 # but it's not so, because this value must be saved in the `options.json` file
 passwords_subdir = pwd
 
+# the prefix for the protected directories where json files are stored
+protected_directories_prefix = json_
+
 # recreate fixed height media thumbnails if their ratio (width/height) is > 1,
 # in order to get rid of a past bug in thumbnail generator
 recreate_fixed_height_thumbnails = false
