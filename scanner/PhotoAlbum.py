@@ -353,7 +353,6 @@ class Album(object):
 		return protected_albums
 
 	def to_json_file(self, json_name, json_positions_name, symlinks, position_symlinks, passwords_md5 = None):
-		passwords_are_more_than_one = False
 		save_message_1 = "saving album..."
 		save_message_2 = "album saved"
 		save_message_3 = "saving positions album..."
@@ -365,7 +364,6 @@ class Album(object):
 			save_message_4 = "protected positions album for " + passwords_md5 + " saved"
 
 			passwords_md5_list = passwords_md5.split('-')
-			passwords_are_more_than_one = (len(passwords_md5_list) > 1)
 
 		json_file_with_path = os.path.join(Options.config['cache_path'], json_name)
 		if os.path.exists(json_file_with_path) and not os.access(json_file_with_path, os.W_OK):
