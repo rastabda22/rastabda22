@@ -376,11 +376,9 @@ def get_options():
 	if len(sys.argv) == 2:
 		# 1 arguments: the config files: the password file is in the same directory
 
-		# remove the old single password files
 		passwords_subdir_with_path = os.path.join(config['cache_path'], config['passwords_subdir'])
-		make_dir(config['passwords_subdir'], passwords_subdir_with_path)
-		# if not os.path.exists(passwords_subdir_with_path):
-		# 	os.makedirs(passwords_subdir_with_path)
+		make_dir(os.path.join(config['cache_path'], config['passwords_subdir']), passwords_subdir_with_path)
+		# remove the old single password files
 		for password_file in sorted(os.listdir(passwords_subdir_with_path)):
 			os.unlink(os.path.join(passwords_subdir_with_path, password_file))
 		message("Old password files removed","", 5)
