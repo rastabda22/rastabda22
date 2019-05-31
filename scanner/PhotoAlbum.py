@@ -379,15 +379,16 @@ class Album(object):
 		self.sort_subalbums_and_media()
 		indented_message("album and media sorted", self.absolute_path, 4)
 		message(save_message_1, self.absolute_path, 5)
-		with open(json_file_with_path, 'w') as filepath:
-			json.dump(self, filepath, cls=PhotoAlbumEncoder)
+		with open(json_file_with_path, 'w') as file:
+			json.dump(self, file, cls=PhotoAlbumEncoder)
 		for symlink in symlinks:
 			symlink_with_path = os.path.join(Options.config['cache_path'], symlink)
+			# print(json_file_with_path, symlink_with_path)
 			os.symlink(json_file_with_path, symlink_with_path)
 		indented_message(save_message_2, "", 4)
 		message(save_message_3, "", 5)
-		with open(json_positions_file_with_path, 'w') as filepath:
-			json.dump(self.positions_and_media_in_tree, filepath, cls=PhotoAlbumEncoder)
+		with open(json_positions_file_with_path, 'w') as positions:
+			json.dump(self.positions_and_media_in_tree, positions, cls=PhotoAlbumEncoder)
 		for symlink in position_symlinks:
 			symlink_with_path = os.path.join(Options.config['cache_path'], symlink)
 			os.symlink(json_positions_file_with_path, symlink_with_path)

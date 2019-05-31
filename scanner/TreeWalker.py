@@ -203,7 +203,6 @@ class TreeWalker:
 
 	@staticmethod
 	def determine_symlink_name(symlink):
-		symlink0 = symlink
 		n = 1
 		number_is_already_inside = False
 		symlink_list = symlink.split('.')
@@ -217,7 +216,9 @@ class TreeWalker:
 				first_part = symlink_list[:-2]
 			else:
 				first_part = symlink_list[:-1]
-			symlink = '.'.join(first_part.append(str(n)).append(symlink_list[-1]))
+				number_is_already_inside = True
+			symlink = '.'.join(first_part + [str(n)] + symlink_list[-1:])
+			n += 1
 		return symlink
 
 
@@ -248,7 +249,7 @@ class TreeWalker:
 			password_md5_list = passwords_md5.split('-')
 			first_md5 = password_md5_list[0]
 			json_name = os.path.join(Options.config['protected_directories_prefix'] + first_md5, json_name)
-			json_positions_name = os.path.join(first_md5, json_positions_name)
+			json_positions_name = os.path.join(Options.config['protected_directories_prefix'] + first_md5, json_positions_name)
 
 			# more symlink must be added in order to get the files with 2 or more passwords
 			if (len(password_md5_list) > 1):
@@ -1707,7 +1708,8 @@ class TreeWalker:
 		for cache_file in sorted(os.listdir(os.path.join(Options.config['cache_path'], subdir))):
 			if os.path.isdir(os.path.join(Options.config['cache_path'], subdir, cache_file)):
 				next_level()
-				self.remove_stale(os.path.join(subdir, cache_file), json_dict['dirs'][cache_file])
+				if cache_file in json_dict['dirs']:
+					self.remove_stale(os.path.join(subdir, cache_file), json_dict['dirs'][cache_file])
 				if not os.listdir(os.path.join(Options.config['cache_path'], subdir, cache_file)):
 					next_level()
 					message("empty subdir, deleting...", "", 4)
