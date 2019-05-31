@@ -49,6 +49,8 @@ class TreeWalker:
 
 		random.seed()
 		self.all_json_files = ["options.json"]
+		self.all_json_files_dict = {}
+		self.time_of_album_saving = None
 		# self.all_json_files_by_subdir = {}
 
 		if (Options.config['use_stop_words']):
@@ -84,7 +86,6 @@ class TreeWalker:
 		self.tree_by_search = {}
 		self.media_with_geonames_list = list()
 		self.all_media = list()
-		self.symlinks = list()
 		self.position_symlinks = list()
 
 		self.all_album_composite_images = list()
@@ -162,6 +163,7 @@ class TreeWalker:
 			self.protected_origin_album = self.origin_album.generate_protected_content_albums()
 			self.origin_album.leave_only_unprotected_content()
 
+			self.time_of_album_saving = datetime.now()
 			message("saving all albums to json files...", "", 4)
 			next_level()
 			for album in self.origin_album.subalbums:
@@ -183,7 +185,7 @@ class TreeWalker:
 				# because there isn't any simple way to know whether they are old or new
 				for entry in self._listdir_sorted_alphabetically(absolute_md5_path):
 					entry_with_path = os.path.join(absolute_md5_path, entry)
-					if os.path.islink(entry_with_path):
+					if not os.path.isdir(entry_with_path):
 						os.unlink(entry_with_path)
 
 			for passwords_md5, album in self.protected_origin_album.items():
@@ -197,7 +199,7 @@ class TreeWalker:
 
 			# options must be saved when json files have been saved, otherwise in case of error they may not reflect the json files situation
 			self._save_json_options()
-			self.remove_stale()
+			self.remove_stale("", self.all_json_files)
 			message("completed", "", 4)
 
 	def all_albums_to_json_file(self, album, passwords_md5 = None):
@@ -235,11 +237,16 @@ class TreeWalker:
 					symlink = os.path.join(md5, album.json_file)
 					symlink0 = symlink
 					n = 1
-					while symlink in self.symlinks:
+					while (os.path.isfile(os.path.join(Options.config['cache_path'], symlink))):
+						symlink_mtime = file_mtime(os.path.join(Options.config['cache_path'], symlink))
+						print(symlink_mtime)
+						if (symlink_mtime < self.time_of_album_saving):
+							# it's an old one, remove it
+							os.unlink(os.path.join(Options.config['cache_path'], symlink))
+							break
 						new_name = symlink0[:-4] + str(n) + ".json"
 						symlink = os.path.join(md5, new_name)
 					symlinks.append(symlink)
-					self.symlinks.append(symlink)
 
 					position_symlink =  os.path.join(md5, album.positions_json_file)
 					position_symlink0 = position_symlink
@@ -1456,8 +1463,8 @@ class TreeWalker:
 	def generate_composite_image(self, album, max_file_date):
 		next_level()
 		composite_image_name = album.cache_base + ".jpg"
-		self.all_album_composite_images.append(composite_image_name)
 		composite_image_path = os.path.join(self.album_cache_path, composite_image_name)
+		self.all_album_composite_images.append(os.path.join(Options.config['cache_album_subdir'], composite_image_name))
 		json_file_with_path = os.path.join(Options.config['cache_path'], album.json_file)
 		if (os.path.exists(composite_image_path) and
 			file_mtime(composite_image_path) > max_file_date and
@@ -1598,38 +1605,70 @@ class TreeWalker:
 		indented_message("saved json options file", "", 5)
 
 
-	def remove_stale(self, subdir=""):
+	def create_keys_for_directories(self, splitted_file_name, dict):
+		if len(splitted_file_name) == 0:
+			return
+
+		if len(splitted_file_name) == 1:
+			if 'files' not in dict:
+				dict['files'] = list()
+			dict['files'].append(splitted_file_name[0])
+		else:
+			if 'dirs' not in dict:
+				dict['dirs'] = {}
+			if splitted_file_name[0] not in dict['dirs']:
+				dict['dirs'][splitted_file_name[0]] = {}
+			self.create_keys_for_directories(splitted_file_name[1:], dict['dirs'][splitted_file_name[0]])
+		return dict
+
+
+	def remove_stale(self, subdir, json_dict):
 		# preparing files and directories lists
 		md5_hash_re = r"[a-f0-9]{32}"
-		if not subdir or re.search(md5_hash_re, subdir):
+
+		if not subdir:
 			message("cleaning up, be patient...", "", 3)
 			next_level()
 			message("building stale list...", "", 4)
 
-			# for album in self.all_albums:
-			# 	self.all_json_files.append(album.json_file)
-			# 	self.all_json_files.append(album.positions_json_file)
+			for password in Options.identifiers_and_passwords:
+				self.all_json_files.append(os.path.join(Options.config['passwords_subdir'], password['password_md5']))
+
+			# transform the all_json_files list into a dictionary by directories
+			for file_name in json_dict:
+				splitted_file_name = file_name.split('/')
+				# for dir in splitted_file_name[:-1]:
+				json_dict = self.create_keys_for_directories(splitted_file_name, self.all_json_files_dict)
+
+			for path in self.all_album_composite_images:
+				splitted_file_name = path.split('/')
+				json_dict = self.create_keys_for_directories(splitted_file_name, json_dict)
+
 			for media in self.all_media:
 				for entry in media.image_caches:
-					entry_without_subdir = entry[len(media.album.subdir) + 1:]
-					self.all_json_files.append(os.path.join(media.album.subdir, entry_without_subdir))
+					# entry_without_subdir = entry[len(media.album.subdir) + 1:]
+					splitted_file_name = entry.split('/')
+					json_dict = self.create_keys_for_directories(splitted_file_name, json_dict)
+					# json_dict['files'].append(os.path.join(media.album.subdir, entry_without_subdir))
 					# try:
 					# 	self.all_json_files_by_subdir[album_subdir].append(entry_without_subdir)
 					# except KeyError:
 					# 	self.all_json_files_by_subdir[album_subdir] = list()
 					# 	self.all_json_files_by_subdir[album_subdir].append(entry_without_subdir)
+
 			indented_message("stale list built", "", 5)
 			info = "in cache path"
-			deletable_files_re = r"\.json$"
 
+			deletable_files_re = r"\.json$"
 		else:
 			# reduced sizes, thumbnails, old style thumbnails
 			if subdir == Options.config['cache_album_subdir']:
 				# self.all_json_files_by_subdir[subdir] = list()
-				for path in self.all_album_composite_images:
-					self.all_json_files.append(os.path.join(subdir, path))
-					# self.all_json_files_by_subdir[subdir].append(path)
 				deletable_files_re = r"\.jpg$"
+			elif subdir == Options.config['passwords_subdir']:
+				deletable_files_re = md5_hash_re
+			elif re.search(md5_hash_re, subdir):
+				deletable_files_re = r"\.json$"
 			else:
 				deletable_files_re = r"(" + Options.config['cache_folder_separator'] + r"|_)" + \
 					r"transcoded(_([1-9][0-9]{0,3}[kKmM]|[1-9][0-9]{3,10})(_[1-5]?[0-9])?)?\.mp4$" + \
@@ -1641,7 +1680,7 @@ class TreeWalker:
 		for cache_file in sorted(os.listdir(os.path.join(Options.config['cache_path'], subdir))):
 			if os.path.isdir(os.path.join(Options.config['cache_path'], subdir, cache_file)):
 				next_level()
-				self.remove_stale(os.path.join(subdir, cache_file))
+				self.remove_stale(os.path.join(subdir, cache_file), json_dict['dirs'][cache_file])
 				if not os.listdir(os.path.join(Options.config['cache_path'], subdir, cache_file)):
 					next_level()
 					message("empty subdir, deleting...", "", 4)
@@ -1675,8 +1714,8 @@ class TreeWalker:
 					# 	else:
 					# 		cache_list = list()
 					# else:
-					# cache_list = self.all_json_files
-					if os.path.join(subdir, cache_file) not in self.all_json_files:
+					# cache_list = json_dict
+					if cache_file not in json_dict['files']:
 					# if cache_file not in cache_list:
 						message("removing stale cache file...", cache_file, 4)
 						file_to_delete = os.path.join(Options.config['cache_path'], subdir, cache_file)
