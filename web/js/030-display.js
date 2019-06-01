@@ -391,11 +391,11 @@ $(document).ready(function() {
 			if (Options.search_current_album)
 				searchOptions += 'o' + Options.search_options_separator;
 			bySearchViewHash += searchOptions + searchTerms;
+
+			bySearchViewHash += Options.cache_folder_separator + Options.album_to_search_in;
+
+			window.location.href = bySearchViewHash;
 		}
-
-		bySearchViewHash += Options.cache_folder_separator + Options.album_to_search_in;
-
-		window.location.href = bySearchViewHash;
 
 		f.focusSearchField();
 		return false;
