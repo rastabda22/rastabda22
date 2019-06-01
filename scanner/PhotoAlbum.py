@@ -298,21 +298,18 @@ class Album(object):
 			self.media_list = [media for media in self.media if len(media.passwords_md5) == 0]
 
 			for position in self.positions_and_media_in_tree:
-				for media_name in position['mediaNameList']:
-					if len(media_name['passwordsMd5']) > 0:
-						position['mediaNameList'].remove(media_name)
-				if len(position['mediaNameList']) == 0:
-					self.positions_and_media_in_tree.remove(position)
+				position['mediaNameList'] = [media_name for media_name in position['mediaNameList'] if len(media_name['passwordsMd5']) == 0]
+			self.positions_and_media_in_tree = [position for position in self.positions_and_media_in_tree if len(position['mediaNameList']) > 0]
 
-			# do not process search albums subalbums because they have been already processed
-			if (
-				self.cache_base.find(Options.config['by_search_string']) == -1 or
-				# self.cache_base.find(Options.config['by_search_string']) == 0 and
-				self.cache_base == Options.config['by_search_string']
-				# self.cache_base.split(Options.config['cache_folder_separator']) < 3
-			):
-				for subalbum in self.subalbums_list:
-					subalbum.leave_only_unprotected_content()
+		# do not process search albums subalbums because they have been already processed
+		if (
+			self.cache_base.find(Options.config['by_search_string']) == -1 or
+			# self.cache_base.find(Options.config['by_search_string']) == 0 and
+			self.cache_base == Options.config['by_search_string']
+			# self.cache_base.split(Options.config['cache_folder_separator']) < 3
+		):
+			for subalbum in self.subalbums_list:
+				subalbum.leave_only_unprotected_content()
 
 		for key in self.nums_protected_media_in_sub_tree:
 			self.num_media_in_sub_tree -= self.nums_protected_media_in_sub_tree[key]
@@ -322,11 +319,8 @@ class Album(object):
 		self.media_list = [media for media in self.media if set(passwords_list) == set(media.passwords_md5)]
 
 		for position in self.positions_and_media_in_tree:
-			for media_name in position['mediaNameList']:
-				if set(passwords_list) != set(media_name['passwordsMd5']):
-					position['mediaNameList'].remove(media_name)
-			if len(position['mediaNameList']) == 0:
-				self.positions_and_media_in_tree.remove(position)
+			position['mediaNameList'] = [media_name for media_name in position['mediaNameList'] if len(media_name['passwordsMd5']) == 0]
+		self.positions_and_media_in_tree = [position for position in self.positions_and_media_in_tree if len(position['mediaNameList']) > 0]
 
 		# do not process search albums subalbums because they have been already processed
 		if (
