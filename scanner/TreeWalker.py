@@ -205,20 +205,25 @@ class TreeWalker:
 	@staticmethod
 	def determine_symlink_name(symlink):
 		n = 1
+		file_name = os.path.basename(symlink)
 		symlink_list = symlink.split('.')
+		is_positions = (symlink_list[-2] == 'positions')
+		if is_positions:
+			subtract = 1
+			has_already_number_inside = (len(file_name.split('.')) > 3)
+		else:
+			subtract = 0
+			has_already_number_inside = (len(file_name.split('.')) > 2)
 		while (os.path.isfile(symlink)):
 			# symlink_mtime = file_mtime(symlink)
 			# if (symlink_mtime < self.time_of_album_saving):
 			# 	# it's an old one, remove it
 			# 	os.unlink(os.path.join(Options.config['cache_path'], symlink))
 			# 	break
-			subtract = 0
-			if symlink_list[-2] == 'positions':
-				subtract = 1
-			if n == 1:
-				first_part = symlink_list[:-1 - subtract]
-			else:
+			if has_already_number_inside:
 				first_part = symlink_list[:-2 - subtract]
+			else:
+				first_part = symlink_list[:-1 - subtract]
 			symlink = '.'.join(first_part + [str(n)] + symlink_list[-1 - subtract:])
 			n += 1
 		return symlink
@@ -250,8 +255,20 @@ class TreeWalker:
 		if passwords_md5 is not None:
 			password_md5_list = passwords_md5.split('-')
 			first_md5 = password_md5_list[0]
-			json_name = os.path.join(Options.config['protected_directories_prefix'] + first_md5, json_name)
-			json_positions_name = os.path.join(Options.config['protected_directories_prefix'] + first_md5, json_positions_name)
+
+			json_name_with_path = self.determine_symlink_name(os.path.join(
+				Options.config['cache_path'],
+				Options.config['protected_directories_prefix'] + first_md5,
+				json_name
+			))
+			json_name = json_name_with_path[len(Options.config['cache_path']) + 1:]
+
+			json_positions_name_with_path = self.determine_symlink_name(os.path.join(
+				Options.config['cache_path'],
+				Options.config['protected_directories_prefix'] + first_md5,
+				json_positions_name
+			))
+			json_positions_name = json_positions_name_with_path[len(Options.config['cache_path']) + 1:]
 
 			# more symlink must be added in order to get the files with 2 or more passwords
 			if (len(password_md5_list) > 1):
