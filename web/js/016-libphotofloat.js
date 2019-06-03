@@ -88,23 +88,23 @@
 		} else
 			return false;
 	};
-
-	PhotoFloat.prototype.removeAllProtectedAlbumsFromCache = function() {
-		if (! Options.hasOwnProperty("js_cache_levels"))
-			Options.js_cache_levels = PhotoFloat.js_cache_levels;
-
-		var level, queueIndex, cacheKey, album;
-		for (level = 0; level <= Options.js_cache_levels.length; level ++) {
-			if (typeof PhotoFloat.cache.albums[level] !== "undefined") {
-				for (queueIndex = PhotoFloat.cache.albums[level].queue.length - 1; queueIndex >= 0; queueIndex --) {
-					cacheKey = PhotoFloat.cache.albums[level].queue[queueIndex];
-					album = PhotoFloat.cache.albums[level][cacheKey];
-					if (album.numMediaInOriginalSubTree !== album.numMediaInSubTree)
-						PhotoFloat.removeAlbumFromCache(PhotoFloat.cache.albums[level].queue[queueIndex]);
-				}
-			}
-		}
-	};
+	
+	// PhotoFloat.prototype.removeAllProtectedAlbumsFromCache = function() {
+	// 	if (! Options.hasOwnProperty("js_cache_levels"))
+	// 		Options.js_cache_levels = PhotoFloat.js_cache_levels;
+	//
+	// 	var level, queueIndex, cacheKey, album;
+	// 	for (level = 0; level <= Options.js_cache_levels.length; level ++) {
+	// 		if (typeof PhotoFloat.cache.albums[level] !== "undefined") {
+	// 			for (queueIndex = PhotoFloat.cache.albums[level].queue.length - 1; queueIndex >= 0; queueIndex --) {
+	// 				cacheKey = PhotoFloat.cache.albums[level].queue[queueIndex];
+	// 				album = PhotoFloat.cache.albums[level][cacheKey];
+	// 				if (album.numMediaInOriginalSubTree !== album.numMediaInSubTree)
+	// 					PhotoFloat.removeAlbumFromCache(PhotoFloat.cache.albums[level].queue[queueIndex]);
+	// 			}
+	// 		}
+	// 	}
+	// };
 
 	PhotoFloat.removeAlbumFromCache = function(cacheKey) {
 		if (! Options.hasOwnProperty("js_cache_levels"))
