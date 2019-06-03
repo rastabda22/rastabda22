@@ -205,7 +205,6 @@ class TreeWalker:
 	@staticmethod
 	def determine_symlink_name(symlink):
 		n = 1
-		number_is_already_inside = False
 		symlink_list = symlink.split('.')
 		while (os.path.isfile(symlink)):
 			# symlink_mtime = file_mtime(symlink)
@@ -213,12 +212,14 @@ class TreeWalker:
 			# 	# it's an old one, remove it
 			# 	os.unlink(os.path.join(Options.config['cache_path'], symlink))
 			# 	break
-			if number_is_already_inside:
-				first_part = symlink_list[:-2]
+			subtract = 0
+			if symlink_list[-2] == 'positions':
+				subtract = 1
+			if n == 1:
+				first_part = symlink_list[:-1 - subtract]
 			else:
-				first_part = symlink_list[:-1]
-				number_is_already_inside = True
-			symlink = '.'.join(first_part + [str(n)] + symlink_list[-1:])
+				first_part = symlink_list[:-2 - subtract]
+			symlink = '.'.join(first_part + [str(n)] + symlink_list[-1 - subtract:])
 			n += 1
 		return symlink
 
