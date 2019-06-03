@@ -307,30 +307,30 @@
 		}
 
 		function passwordsToGet(album) {
-			var passwordToGet = [];
+			var thePasswordsToGet = [];
 			for (i = 0; i < PhotoFloat.guessedPasswordsMd5.length; i ++) {
 				guessedPassword = PhotoFloat.guessedPasswordsMd5[i];
 				if (album.protectedContentInside.indexOf(guessedPassword) == -1) {
-					passwordToGet.push(guessedPassword);
+					thePasswordsToGet.push(guessedPassword);
 				}
 			}
-			return passwordToGet;
+			return thePasswordsToGet;
 		}
 
 		function addProtectedContent(album) {
 			// prepare and get the protected content albums
-			var passwordToGet = passwordsToGet(album);
+			var thePasswordsToGet = passwordsToGet(album);
 			var i, j, key, numProtected;
-			if (passwordToGet.length == 0)
+			if (thePasswordsToGet.length == 0)
 				executeCallback(album);
 			else {
 				var index, passwordCode;
 
 				var n = 0;
-				for (i = 0; i < passwordToGet.length; i ++) {
+				for (i = 0; i < thePasswordsToGet.length; i ++) {
 					var j;
 					// check whether protected content exist for this md5
-					index = PhotoFloat.guessedPasswordsMd5.indexOf(passwordToGet[i]);
+					index = PhotoFloat.guessedPasswordsMd5.indexOf(thePasswordsToGet[i]);
 					passwordCode = PhotoFloat.guessedPasswordCodes[index];
 					numProtected = 0;
 					for (key in album.numsProtectedMediaInSubTree) {
