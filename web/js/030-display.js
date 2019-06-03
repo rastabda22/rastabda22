@@ -245,7 +245,13 @@ $(document).ready(function() {
 
 				if (
 					(
-						[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string, Options.by_search_string].indexOf(currentAlbum.cacheBase) !== -1 ||
+						[
+							Options.folders_string,
+							Options.by_date_string,
+							Options.by_gps_string,
+							Options.by_map_string,
+							Options.by_search_string
+						].indexOf(currentAlbum.cacheBase) !== -1 ||
 						currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)
 					) &&
 					! isMap
@@ -454,19 +460,19 @@ $(document).ready(function() {
 				if (! PhotoFloat.guessedPasswordsMd5.includes(encryptedPassword))
 					PhotoFloat.guessedPasswordsMd5.push(encryptedPassword);
 
-				if (
-					currentAlbum !== null && (
-						util.isSearchCacheBase(currentAlbum.cacheBase) ||
-						currentMedia === null
-					)
-				)
-					// the search album must be removed from cache,
-					// otherwise the new album won't be generated and the protected content won't be searched
-					phFl.removeAlbumFromCache(currentAlbum.cacheBase);
+				// if (
+				// 	currentAlbum !== null && (
+				// 		util.isSearchCacheBase(currentAlbum.cacheBase) ||
+				// 		currentMedia === null
+				// 	)
+				// )
+				// 	// the search album must be removed from cache,
+				// 	// otherwise the new album won't be generated and the protected content won't be searched
+				// 	phFl.removeAlbumFromCache(currentAlbum.cacheBase);
 
 				$("#loading").show();
 
-				phFl.removeAllProtectedAlbumsFromCache();
+				// phFl.removeAllProtectedAlbumsFromCache();
 
 				var isPopup = $('.leaflet-popup').html() ? true : false;
 				var isMap = $('#mapdiv').html() ? true : false;
