@@ -208,22 +208,20 @@ class TreeWalker:
 		file_name = os.path.basename(symlink)
 		symlink_list = symlink.split('.')
 		is_positions = (symlink_list[-2] == 'positions')
+
 		if is_positions:
 			subtract = 1
 			has_already_number_inside = (len(file_name.split('.')) > 3)
 		else:
 			subtract = 0
 			has_already_number_inside = (len(file_name.split('.')) > 2)
+
+		if has_already_number_inside:
+			first_part = symlink_list[:-2 - subtract]
+		else:
+			first_part = symlink_list[:-1 - subtract]
+
 		while (os.path.isfile(symlink)):
-			# symlink_mtime = file_mtime(symlink)
-			# if (symlink_mtime < self.time_of_album_saving):
-			# 	# it's an old one, remove it
-			# 	os.unlink(os.path.join(Options.config['cache_path'], symlink))
-			# 	break
-			if has_already_number_inside:
-				first_part = symlink_list[:-2 - subtract]
-			else:
-				first_part = symlink_list[:-1 - subtract]
 			symlink = '.'.join(first_part + [str(n)] + symlink_list[-1 - subtract:])
 			n += 1
 		return symlink
