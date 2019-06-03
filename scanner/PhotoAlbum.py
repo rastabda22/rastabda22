@@ -319,7 +319,7 @@ class Album(object):
 		self.media_list = [media for media in self.media if set(passwords_list) == set(media.passwords_md5)]
 
 		for position in self.positions_and_media_in_tree:
-			position['mediaNameList'] = [media_name for media_name in position['mediaNameList'] if len(media_name['passwordsMd5']) == 0]
+			position['mediaNameList'] = [media_name for media_name in position['mediaNameList'] if set(passwords_list) == set(media_name['passwordsMd5'])]
 		self.positions_and_media_in_tree = [position for position in self.positions_and_media_in_tree if len(position['mediaNameList']) > 0]
 
 		# do not process search albums subalbums because they have been already processed
