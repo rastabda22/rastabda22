@@ -335,6 +335,8 @@ class Album(object):
 		passwords_combination = '-'.join(passwords_list)
 		if passwords_combination in self.nums_protected_media_in_sub_tree:
 			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree[passwords_combination]
+		else:
+			self.num_media_in_sub_tree = 0
 
 		return
 
