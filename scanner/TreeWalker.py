@@ -13,6 +13,7 @@ import random
 import math
 import fnmatch
 import shutil
+import copy
 
 from datetime import datetime
 
@@ -1484,7 +1485,7 @@ class TreeWalker:
 
 		report_times(False)
 
-		return [album, album.num_media_in_sub_tree, album.nums_protected_media_in_sub_tree, album.positions_and_media_in_tree, max_file_date]
+		return [album, album.num_media_in_sub_tree, album.nums_protected_media_in_sub_tree, copy.deepcopy(album.positions_and_media_in_tree), max_file_date]
 
 
 	@staticmethod
