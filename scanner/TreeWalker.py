@@ -240,7 +240,8 @@ class TreeWalker:
 			for subalbum in album.subalbums:
 				self.all_albums_to_json_file(subalbum, passwords_md5)
 
-		if len(album.subalbums) == 0 and len(album.media) == 0:
+		if album.num_media_in_sub_tree == 0:
+		# if len(album.subalbums) == 0 and len(album.media) == 0:
 			if passwords_md5 is None:
 				indented_message("empty album, not saving it", album.name, 4)
 			else:
@@ -1035,6 +1036,8 @@ class TreeWalker:
 							message("maybe a cache hit", "working with '" + json_file + "' to import album...", 5)
 							# the following is the instruction which could raise the error
 							cached_album = Album.from_cache(json_file, album_cache_base)
+							# TO DO: the protected album must be read and summed up too
+
 							indented_message("json file imported", "", 5)
 							# if file_mtime(absolute_path) >= json_file_mtime:
 							# 	indented_message("invalid json file", "dir time > json file time", 4)
