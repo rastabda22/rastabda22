@@ -249,7 +249,7 @@
 		}
 	};
 
-	PhotoFloat.checkFileExistsInCache = function(url, yes, no, yesParameter) {
+	PhotoFloat.checkFileExistsInCacheFolder = function(url, yes, no, yesParameter) {
 		$.ajax({
 			url: util.pathJoin([Options.server_cache_path, url]),
 			type: 'HEAD',
@@ -284,8 +284,8 @@
 		// }
 
 		function getAlbumWithPositions(cacheKey, goOn, error) {
-			PhotoFloat.checkFileExistsInCache(
 				cacheKey + ".json",
+			PhotoFloat.checkFileExistsInCacheFolder(
 				function() {
 					PhotoFloat.getJsonFiles(
 						[cacheKey + ".json", cacheKey + ".positions.json"],
@@ -361,8 +361,8 @@
 						executeCallback(album);
 					} else {
 						protectedJsonAlbumsToGet = Options.protected_directories_prefix + guessedPassword + '/' + album.cacheBase
-						PhotoFloat.checkFileExistsInCache(
 							protectedJsonAlbumsToGet + '.json',
+						PhotoFloat.checkFileExistsInCacheFolder(
 							function(passwordMd5) {
 								getAlbumWithPositions(
 									protectedJsonAlbumsToGet,
@@ -405,8 +405,8 @@
 											else
 												nextCacheKey = cacheKey.split('.').slice(0, -1).join('.') + '.' + nLink;
 
-											PhotoFloat.checkFileExistsInCache(
 												nextCacheKey + '.json',
+											PhotoFloat.checkFileExistsInCacheFolder(
 												function() {
 													getAlbumWithPositions(
 														nextCacheKey,
