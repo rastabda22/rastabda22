@@ -286,8 +286,8 @@ class Album(object):
 		self.is_protected = False
 		if len(self.passwords_md5) > 0:
 			# protected album, remove the media
-			self.media_list = list()
-			self.positions_and_media_in_tree = list()
+			self.media_list = []
+			self.positions_and_media_in_tree = []
 			# subalbums are not removed, because there may be some unprotected content up in the tree
 			# but the unprotected content up in the tree doesn't count here, and so the media number in the tree is zero
 
