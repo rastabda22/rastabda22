@@ -1627,29 +1627,6 @@
 	};
 
 
-	TopFunctions.goUpIfProtected = function(album, media) {
-		if (album === null) {
-			window.location.href = "#!" + Options.folders_string;
-		}
-		var ancestorCacheBase = album.ancestorsCacheBase[album.ancestorsCacheBase.length - 2];
-		if (media !== null && phFl.isProtected(media))
-			TopFunctions.goUpIfProtected(album, null);
-		else if (phFl.isProtected(album)) {
-			if (album.ancestorsCacheBase.length == 2)
-				return;
-			ancestorCacheBase = album.ancestorsCacheBase[album.ancestorsCacheBase.length - 2];
-			phFl.getAlbum(
-				ancestorCacheBase,
-				function(parentAlbum) {
-					TopFunctions.goUpIfProtected(parentAlbum, null);
-				},
-				util.die
-			);
-		} else {
-			window.location.href = "#!" + album.cacheBase;
-		}
-	};
-
 	TopFunctions.showAlbum = function(populate) {
 		var i, imageLink, linkContainer, container, image, media, thumbsElement, subalbums, subalbumsElement, mediaHash, thumbHash, thumbnailSize;
 		var width, height, thumbWidth, thumbHeight, imageString, calculatedWidth, calculatedHeight, populateMedia;
@@ -2844,7 +2821,7 @@
 	TopFunctions.prototype.goFullscreen = TopFunctions.goFullscreen;
 	TopFunctions.prototype.hashParsed = TopFunctions.hashParsed;
 	TopFunctions.prototype.showBrowsingModeMessage = TopFunctions.showBrowsingModeMessage;
-	TopFunctions.prototype.goUpIfProtected = TopFunctions.goUpIfProtected;
+	// TopFunctions.prototype.goUpIfProtected = TopFunctions.goUpIfProtected;
 
 	window.TopFunctions = TopFunctions;
 }());

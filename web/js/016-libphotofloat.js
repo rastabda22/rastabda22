@@ -133,19 +133,6 @@
 		}
 	};
 
-	PhotoFloat.filterOutProtectedContentFromPositions = function(positions) {
-		return positions.filter(
-			function(ithPosition) {
-				ithPosition.mediaNameList = ithPosition.mediaNameList.filter(
-					function(ithMedia) {
-						return ! PhotoFloat.isProtected(ithMedia);
-					}
-				);
-				return ithPosition.mediaNameList.length > 0;
-			}
-		);
-	};
-
 	PhotoFloat.getPositions = function(thisAlbum, callback, error) {
 
 		var cacheFile = util.pathJoin([Options.server_cache_path, thisAlbum.cacheBase + ".positions.json"]);
@@ -887,8 +874,7 @@
 											for (indexMedia = 0; indexMedia < theAlbum.media.length; indexMedia ++) {
 												ithMedia = theAlbum.media[indexMedia];
 												if (
-													util.normalizeAccordingToOptions(ithMedia.words).includes(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) &&
-													! PhotoFloat.isProtected(ithMedia) && (
+													util.normalizeAccordingToOptions(ithMedia.words).includes(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) && (
 														! Options.search_current_album ||
 														[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) !== -1 || (
 															// check whether the media is inside the current album tree
@@ -909,8 +895,7 @@
 											for (indexSubalbums = 0; indexSubalbums < theAlbum.subalbums.length; indexSubalbums ++) {
 												ithSubalbum = theAlbum.subalbums[indexSubalbums];
 												if (
-													util.normalizeAccordingToOptions(ithSubalbum.words).includes(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) &&
-													! PhotoFloat.isProtected(ithSubalbum) && (
+													util.normalizeAccordingToOptions(ithSubalbum.words).includes(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) && (
 														! Options.search_current_album ||
 														[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) !== -1 || (
 															// check whether the media is inside the current album tree
@@ -931,8 +916,7 @@
 														function(element) {
 															return element.includes(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
 														}
-													) &&
-													! PhotoFloat.isProtected(ithMedia) && (
+													) && (
 														! Options.search_current_album ||
 														[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) !== -1 || (
 															// check whether the media is inside the current album tree
@@ -958,8 +942,7 @@
 														function(element) {
 															return element.includes(SearchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
 														}
-													) &&
-													! PhotoFloat.isProtected(ithSubalbum) && (
+													) && (
 														! Options.search_current_album ||
 														[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) !== -1 || (
 															// check whether the media is inside the current album tree
@@ -1299,21 +1282,6 @@
 		}
 	};
 
-	PhotoFloat.isProtected = function(albumOrMedia) {
-		var isProtected =
-			albumOrMedia.hasOwnProperty("passwordsMd5") &&
-			albumOrMedia.passwordsMd5.length > 0 &&
-			(
-				PhotoFloat.guessedPasswordsMd5.length == 0 ||
-				albumOrMedia.passwordsMd5.every(
-					function(passwordMd5) {
-						return ! PhotoFloat.guessedPasswordsMd5.includes(passwordMd5);
-					}
-				)
-			);
-		return isProtected;
-	};
-
 	PhotoFloat.endPreparingAlbumAndKeepOn = function(resultsAlbumFinal, mediaHash, callback) {
 		// add the point count
 		resultsAlbumFinal.numPositionsInTree = resultsAlbumFinal.positionsAndMediaInTree.length;
@@ -1456,9 +1424,7 @@
 	PhotoFloat.prototype.upHash = PhotoFloat.upHash;
 	PhotoFloat.prototype.hashCode = PhotoFloat.hashCode;
 	PhotoFloat.prototype.endPreparingAlbumAndKeepOn = PhotoFloat.endPreparingAlbumAndKeepOn;
-	PhotoFloat.prototype.isProtected = PhotoFloat.isProtected;
 	PhotoFloat.prototype.searchAndSubalbumHash = PhotoFloat.searchAndSubalbumHash;
-	PhotoFloat.prototype.filterOutProtectedContentFromPositions = PhotoFloat.filterOutProtectedContentFromPositions;
 	PhotoFloat.prototype.removeAlbumFromCache = PhotoFloat.removeAlbumFromCache;
 	/* expose class globally */
 	window.PhotoFloat = PhotoFloat;
