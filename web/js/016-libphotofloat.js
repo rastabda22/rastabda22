@@ -294,7 +294,8 @@
 					);
 				},
 				function() {
-					baseJsonFineExists = false;
+					// execution arrives here if the unprotected json file doesn't exist
+					baseJsonFileExists = false;
 					addProtectedContent(
 						{
 							"cacheBase": albumCacheBase,
@@ -342,7 +343,7 @@
 						if (key.split('-').indexOf(passwordCode) != 1)
 							numProtected += album.numsProtectedMediaInSubTree[key];
 					}
-					if (baseJsonFineExists && numProtected == 0) {
+					if (baseJsonFileExists && numProtected == 0) {
 						executeCallback(album);
 					} else {
 						protectedAlbumCacheBase = Options.protected_directories_prefix + guessedPassword + '/' + album.cacheBase;
@@ -493,7 +494,7 @@
 		// begin function code
 		///////////////////////////////////////////////////
 		var albumCacheBase, ajaxOptions, self;
-		var baseJsonFineExists = true;
+		var baseJsonFileExists = true;
 
 		if (typeof thisAlbum.media !== "undefined" && thisAlbum.media !== null) {
 			// we are viewing a media

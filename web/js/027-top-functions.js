@@ -1185,6 +1185,14 @@
 		var populateAlbum;
 		var currentAlbumPath, currentAlbumPathArray;
 
+		if (album.numMediaInSubTree == 0) {
+			// the album hasn't any content:
+			// either the hash is wrong or it's a protected content
+			// go up
+			util.goUpInHash(window.location.hash);
+			return;
+		}
+
 		util.undie();
 		$("#loading").hide();
 

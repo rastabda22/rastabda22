@@ -612,7 +612,7 @@
 	};
 
 	PinchSwipe.swipeDown = function(dest) {
-		if (dest) {
+		if (dest && window.location.hash !== dest) {
 			$(mediaContainerSelector).stop().animate(
 				{
 					top: "+=" + window.innerHeight,
@@ -620,10 +620,10 @@
 				},
 				300,
 				function() {
-					if (window.location.hash == dest)
-						$(window).hashchange();
-					else
-						window.location.href = dest;
+					// if (window.location.hash !== dest)
+					// 	$(window).hashchange();
+					// else
+					window.location.href = dest;
 					// $("#media-view").addClass("hidden");
 					$(mediaContainerSelector).css('top', "");
 				}

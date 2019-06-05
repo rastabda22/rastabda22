@@ -106,7 +106,7 @@ $(document).ready(function() {
 				// 	pS.swipeDown(upLink);
 				$("#auth-text").hide();
 				$("#album-view, #media-view, #my-modal").css("opacity", "");
-				TopFunctions.goUpIfProtected(currentAlbum, currentMedia);
+				util.goUpInHash();
 				return false;
 			} else if ($("ul#right-menu").hasClass("expand")) {
 				toggleMenu();

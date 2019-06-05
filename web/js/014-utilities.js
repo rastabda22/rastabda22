@@ -989,6 +989,17 @@
 		$("body, html").css("overflow", "hidden");
 	};
 
+	Utilities.prototype.goUpInHash = function() {
+		var hashList = window.location.hash.split(Options.cache_folder_separator);
+
+		if (hashList.length == 1) {
+			window.location.href = "#!";
+			return;
+		} else {
+			window.location.href = hashList.slice(0, -1).join(Options.cache_folder_separator);
+		}
+	};
+
 	Utilities.prototype.undie = function() {
 		$(".error, #error-overlay, #auth-text", ".search-failed").fadeOut(500);
 		$("body, html").css("overflow", "auto");
