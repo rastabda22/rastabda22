@@ -399,7 +399,12 @@
 			}
 		}
 
-		if (thisAlbum !== null && ! jQuery.isEmptyObject(thisAlbum.numsProtectedMediaInSubTree)) {
+		if (
+			thisAlbum !== null && (
+				! jQuery.isEmptyObject(thisAlbum.numsProtectedMediaInSubTree) ||
+				util.isSearchCacheBase(thisAlbum.cacheBase)
+			)
+		) {
 			$(".protection").show();
 			$("#padlock").off('click').on(
 				'click',

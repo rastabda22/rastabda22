@@ -235,8 +235,10 @@ $(document).ready(function() {
 						return false;
 					} else if (
 						e.key === "u" &&
-						currentAlbum !== null &&
-						! jQuery.isEmptyObject(currentAlbum.numsProtectedMediaInSubTree)
+						currentAlbum !== null && (
+							! jQuery.isEmptyObject(currentAlbum.numsProtectedMediaInSubTree) ||
+							util.isSearchCacheBase(currentAlbum.cacheBase)
+						)
 					) {
 						$("#protected-content-unveil")[0].click();
 						return false;

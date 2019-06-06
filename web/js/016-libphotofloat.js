@@ -330,7 +330,11 @@
 						if (key.split('-').indexOf(passwordCode) != 1)
 							numProtected += album.numsProtectedMediaInSubTree[key];
 					}
-					if (baseJsonFileExists && numProtected == 0) {
+					if (
+						baseJsonFileExists && numProtected == 0 &&
+						album.cacheBase !== Options.by_search_string &&
+						! util.isSearchCacheBase(album.cacheBase)
+					) {
 						executeCallback(album);
 					} else {
 						protectedAlbumCacheBase = Options.protected_directories_prefix + guessedPassword + '/' + album.cacheBase;

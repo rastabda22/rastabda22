@@ -1185,7 +1185,7 @@
 		var populateAlbum;
 		var currentAlbumPath, currentAlbumPathArray;
 
-		if (album.numMediaInSubTree == 0) {
+		if (album.numMediaInSubTree == 0 && ! util.isSearchCacheBase(album.cacheBase)) {
 			// the album hasn't any content:
 			// either the hash is wrong or it's a protected content
 			// go up
