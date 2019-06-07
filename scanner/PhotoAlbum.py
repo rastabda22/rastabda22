@@ -71,6 +71,7 @@ class Album(object):
 		self.subalbums_list_is_sorted = True
 		self._subdir = ""
 		self.num_media_in_sub_tree = 0
+		self.combination = ''
 		self.nums_protected_media_in_sub_tree = {}
 		self.positions_and_media_in_tree = []
 		self.parent = None
@@ -332,9 +333,10 @@ class Album(object):
 			for subalbum in self.subalbums_list:
 				subalbum.leave_only_content_protected_by(passwords_list)
 
-		passwords_combination = '-'.join(passwords_list)
-		if passwords_combination in self.nums_protected_media_in_sub_tree:
-			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree[passwords_combination]
+		combination = '-'.join(passwords_list)
+		if combination in self.nums_protected_media_in_sub_tree:
+			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree[combination]
+			self.combination = combination
 		else:
 			self.num_media_in_sub_tree = 0
 
@@ -540,9 +542,11 @@ class Album(object):
 		}
 		nums_protected_by_code = {}
 		for passwords_md5 in self.nums_protected_media_in_sub_tree:
-			codes = Options.convert_md5s_to_codes(passwords_md5)
-			nums_protected_by_code[codes] = self.nums_protected_media_in_sub_tree[passwords_md5]
+			password_codes = Options.convert_md5s_to_codes(passwords_md5)
+			nums_protected_by_code[password_codes] = self.nums_protected_media_in_sub_tree[passwords_md5]
 		dictionary["numsProtectedMediaInSubTree"] = nums_protected_by_code
+		if len(self.combination) > 0:
+			dictionary["combination"] = Options.convert_md5s_to_codes(self.combination)
 
 		if hasattr(self, "center"):
 			dictionary["center"] = self.center

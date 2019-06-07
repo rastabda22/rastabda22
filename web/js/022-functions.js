@@ -401,7 +401,8 @@
 
 		if (
 			thisAlbum !== null && (
-				! jQuery.isEmptyObject(thisAlbum.numsProtectedMediaInSubTree) ||
+				! jQuery.isEmptyObject(thisAlbum.numsProtectedMediaInSubTree) &&
+				(! thisAlbum.hasOwnProperty("includedCombinations") || thisAlbum.includedCombinations.length < Object.keys(thisAlbum.numsProtectedMediaInSubTree).length) ||
 				util.isSearchCacheBase(thisAlbum.cacheBase)
 			)
 		) {

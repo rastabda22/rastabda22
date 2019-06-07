@@ -236,7 +236,8 @@ $(document).ready(function() {
 					} else if (
 						e.key === "u" &&
 						currentAlbum !== null && (
-							! jQuery.isEmptyObject(currentAlbum.numsProtectedMediaInSubTree) ||
+							! jQuery.isEmptyObject(currentAlbum.numsProtectedMediaInSubTree) &&
+							(! currentAlbum.hasOwnProperty("includedCombinations") || currentAlbum.includedCombinations.length < Object.keys(currentAlbum.numsProtectedMediaInSubTree).length) ||
 							util.isSearchCacheBase(currentAlbum.cacheBase)
 						)
 					) {
