@@ -797,7 +797,7 @@
 			searchResultsAlbumFinal.removedStopWords = removedStopWords;
 			// has any word remained after stop words have been removed?
 			if (SearchWordsFromUser.length == 0) {
-				util.noResults('#no-search-string-after-stopwords-removed');
+				util.noResults(searchResultsAlbumFinal, '#no-search-string-after-stopwords-removed');
 				callback(searchResultsAlbumFinal, null, -1);
 				return;
 			}
@@ -859,10 +859,10 @@
 					}
 
 					if (numSubAlbumsToGet === 0) {
-						util.noResults();
+						util.noResults(searchResultsAlbumFinal);
 						callback(searchResultsAlbumFinal, null, -1);
 					} else if (numSubAlbumsToGet > Options.max_search_album_number) {
-						util.noResults('#search-too-wide');
+						util.noResults(searchResultsAlbumFinal, '#search-too-wide');
 						callback(searchResultsAlbumFinal, null, -1);
 					} else {
 						$("#album-view").removeClass("hidden");
@@ -1079,7 +1079,7 @@
 												searchResultsAlbumFinal.subalbums = util.sortByDate(searchResultsAlbumFinal.subalbums);
 											}
 											if (searchResultsAlbumFinal.media.length === 0 && searchResultsAlbumFinal.subalbums.length === 0) {
-												util.noResults();
+												util.noResults(searchResultsAlbumFinal);
 											} else {
 												$("#album-view").removeClass("hidden");
 												$(".search-failed").hide();
@@ -1218,7 +1218,7 @@
 				searchResultsAlbumFinal.searchInFolderCacheBase = mediaFolderHash;
 
 				if (albumHash == Options.by_search_string) {
-					util.noResults('#no-search-string');
+					util.noResults(searchResultsAlbumFinal, '#no-search-string');
 					callback(searchResultsAlbumFinal, null, -1);
 					return;
 				}
@@ -1244,7 +1244,7 @@
 		var albumFromCache = PhotoFloat.getAlbumFromCache(albumHashToGet);
 		if (albumFromCache && ! PhotoFloat.passwordsToGet(albumFromCache).length) {
 			if (! albumFromCache.subalbums.length && ! albumFromCache.media.length)
-				util.noResults();
+				util.noResults(null);
 			PhotoFloat.selectMedia(albumFromCache, mediaFolderHash, mediaHash, callback);
 		} else if (! util.isSearchCacheBase(albumHash) || SearchWordsFromUser.length === 0) {
 			PhotoFloat.getAlbum(

@@ -299,10 +299,12 @@
 			return false;
 	};
 
-	Utilities.prototype.noResults = function(selector) {
+	Utilities.prototype.noResults = function(album, selector) {
 		// no media found or other search fail, show the message
+		currentAlbum = album;
+		TopFunctions.setTitle("album", null);
 		$("ul#right-menu").addClass("expand");
-		$("#album-view").addClass("hidden");
+		$("#album-view #subalbums, #album-view #thumbs").addClass("hidden");
 		$("#media-view").addClass("hidden");
 		$("#loading").hide();
 		if (typeof selector === "undefined")
