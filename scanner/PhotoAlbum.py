@@ -73,7 +73,7 @@ class Album(object):
 		self.num_media_in_sub_tree = 0
 		self.combination = ''
 		self.nums_protected_media_in_sub_tree = {}
-		self.positions_and_media_in_tree = []
+		self.positions_and_media_in_tree = Positions(None)
 		self.parent = None
 		self.album_ini = None
 		self._attributes = {}
@@ -288,7 +288,7 @@ class Album(object):
 		if len(self.passwords_md5) > 0:
 			# protected album, remove the media
 			self.media_list = []
-			self.positions_and_media_in_tree = []
+			self.positions_and_media_in_tree = Positions(None)
 			# subalbums are not removed, because there may be some unprotected content up in the tree
 			# but the unprotected content up in the tree doesn't count here, and so the media number in the tree is zero
 
@@ -298,9 +298,9 @@ class Album(object):
 			# the album isn't protected, but media or subalbums may be protected
 			self.media_list = [media for media in self.media if len(media.passwords_md5) == 0]
 
-			for position in self.positions_and_media_in_tree:
-				position['mediaNameList'] = [media_name for media_name in position['mediaNameList'] if len(media_name['passwordsMd5']) == 0]
-			self.positions_and_media_in_tree = [position for position in self.positions_and_media_in_tree if len(position['mediaNameList']) > 0]
+			for position in self.positions_and_media_in_tree.positions:
+				position.mediaNameList = [single_media for single_media in position.mediaNameList if len(single_media.passwords_md5) == 0]
+			self.positions_and_media_in_tree.remove_empty_positions()
 
 		# do not process search albums subalbums because they have been already processed
 		if (
@@ -319,9 +319,9 @@ class Album(object):
 	def leave_only_content_protected_by(self, passwords_list):
 		self.media_list = [media for media in self.media if set(passwords_list) == set(media.passwords_md5)]
 
-		for position in self.positions_and_media_in_tree:
-			position['mediaNameList'] = [media_name for media_name in position['mediaNameList'] if set(passwords_list) == set(media_name['passwordsMd5'])]
-		self.positions_and_media_in_tree = [position for position in self.positions_and_media_in_tree if len(position['mediaNameList']) > 0]
+		for position in self.positions_and_media_in_tree.positions:
+			position.mediaNameList = [single_media for single_media in position.mediaNameList if set(passwords_list) == set(single_media.passwords_md5)]
+		self.positions_and_media_in_tree.remove_empty_positions()
 
 		# do not process search albums subalbums because they have been already processed
 		if (
@@ -451,7 +451,7 @@ class Album(object):
 						"cacheBase": subalbum.cache_base,
 						"date": subalbum.date_string,
 						# "positionsAndMediaInTree": subalbum.positions_and_media_in_tree,
-						"numPositionsInTree": len(subalbum.positions_and_media_in_tree),
+						"numPositionsInTree": len(subalbum.positions_and_media_in_tree.positions),
 						"numMediaInSubTree": subalbum.num_media_in_sub_tree,
 						# "numsProtectedMediaInSubTree": subalbum.nums_protected_media_in_sub_tree
 					}
@@ -536,7 +536,7 @@ class Album(object):
 			"physicalPath": path_without_folders_marker,
 			"numMediaInSubTree": self.num_media_in_sub_tree,
 			# "numsProtectedMediaInSubTree": self.nums_protected_media_in_sub_tree,
-			"numPositionsInTree": len(self.positions_and_media_in_tree),
+			"numPositionsInTree": len(self.positions_and_media_in_tree.positions),
 			# "positionsAndMediaInTree": self.positions_and_media_in_tree,
 			"jsonVersion": Options.json_version
 		}
@@ -555,7 +555,7 @@ class Album(object):
 		if hasattr(self, "alt_name"):
 			dictionary["altName"] = self.alt_name
 		if self.cache_base == Options.config['folders_string']:
-			dictionary["numPoints"] = len(self.positions_and_media_in_tree)
+			dictionary["numPoints"] = len(self.positions_and_media_in_tree.positions)
 
 		return dictionary
 
@@ -630,6 +630,87 @@ class Album(object):
 					break
 
 		return subalbum_or_media_path
+
+
+class Position(object):
+	def __init__(self, single_media):
+		self.lng = single_media.longitude
+		self.lat = single_media.latitude
+		self.mediaNameList = [single_media]
+
+	def belongs(self, single_media):
+		# checks whether the single media given as argument can belong to the position
+		return self.lng == single_media.longitude and self.lat == single_media.latitude
+
+	def add(self, single_media):
+		# the media to add is supposed to have the same lat and lng as the position
+		self.mediaNameList.append(single_media)
+
+	def deep_copy(self):
+		new_position = Position(self.mediaNameList[0])
+		new_position.mediaNameList = self.mediaNameList
+		return new_position
+
+
+class Positions(object):
+	def __init__(self, single_media, positions = None):
+		self.positions = []
+		if single_media is not None:
+			self.add_media(single_media)
+		elif positions is not None:
+			self.merge(positions)
+
+	def add_position(self, position):
+		match = False
+		for index, _position in enumerate(self.positions):
+			if position.lat == _position.lat and position.lng == _position.lng:
+				self.positions[index].mediaNameList.extend(position.mediaNameList)
+				match = True
+				break
+		if not match:
+			self.positions.append(position.deep_copy())
+
+	def merge(self, positions):
+		# adds the media position and name to the positions list received as second argument
+		for position in positions.positions:
+			self.add_position(position)
+
+	def add_media(self, single_media):
+		added = False
+		for position in self.positions:
+			if position.belongs(single_media):
+				position.add(single_media)
+				added = True
+				break
+		if not added:
+			self.add_position(Position(single_media))
+
+	def remove_empty_positions(self):
+		self.positions = [position for position in self.positions if len(position.mediaNameList) > 0]
+
+	def to_dict(self, type_string = None):
+		positions = []
+		for position in self.positions:
+			position_dict = {
+				'lat': position.lat,
+				'lng': position.lng,
+				'mediaNameList': []
+			}
+			for single_media in position.mediaNameList:
+				media_album_cache_base = single_media.album.cache_base
+				if type_string == Options.config['by_date_string']:
+					media_album_cache_base = single_media.day_album_cache_base
+				elif type_string == Options.config['by_gps_string']:
+					media_album_cache_base = single_media.gps_album_cache_base
+				position_dict['mediaNameList'].append({
+					'cacheBase': single_media.cache_base,
+					'albumCacheBase': media_album_cache_base,
+					'foldersCacheBase': single_media.album.cache_base,
+					'passwordsMd5': single_media.passwords_md5
+				})
+			positions.append(position_dict)
+
+		return positions
 
 
 class Media(object):
