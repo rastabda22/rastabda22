@@ -471,6 +471,8 @@ class TreeWalker:
 		next_level()
 		# convert the temporary structure where media are organized by words to a set of albums
 
+		uniq_media = []
+
 		by_search_path = os.path.join(Options.config['album_path'], Options.config['by_search_string'])
 		by_search_album = Album(by_search_path)
 		by_search_album.parent = origin_album
@@ -488,10 +490,11 @@ class TreeWalker:
 			word_max_file_date = None
 			by_search_album.add_album(word_album)
 			for single_media in media_and_album_words["media_words"]:
-				# word_album.positions_and_media_in_tree = self.add_media_to_position(word_album.positions_and_media_in_tree, single_media)
 				word_album.add_media(single_media)
-				word_album.num_media_in_sub_tree += 1
-				by_search_album.num_media_in_sub_tree += 1
+				if single_media not in uniq_media:
+					word_album.num_media_in_sub_tree += 1
+					by_search_album.num_media_in_sub_tree += 1
+					uniq_media.append(single_media)
 				single_media_date = max(single_media.datetime_file, single_media.datetime_dir)
 				if word_max_file_date:
 					word_max_file_date = max(word_max_file_date, single_media_date)
