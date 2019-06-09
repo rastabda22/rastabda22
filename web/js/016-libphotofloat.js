@@ -250,6 +250,9 @@
 
 	PhotoFloat.passwordsToGet = function(album) {
 		var thePasswordsToGet = [], i, guessedPassword;
+		if (! album.hasOwnProperty("protectedContentInside"))
+			return PhotoFloat.guessedPasswordsMd5;
+
 		for (i = 0; i < PhotoFloat.guessedPasswordsMd5.length; i ++) {
 			guessedPassword = PhotoFloat.guessedPasswordsMd5[i];
 			if (album.protectedContentInside.indexOf(guessedPassword) == -1) {

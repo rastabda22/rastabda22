@@ -383,8 +383,9 @@ class Album(object):
 			os.symlink(json_file_with_path, symlink_with_path)
 		indented_message(save_message_2, "", 4)
 		message(save_message_3, "", 5)
-		with open(json_positions_file_with_path, 'w') as positions:
-			json.dump(self.positions_and_media_in_tree, positions, cls=PhotoAlbumEncoder)
+		with open(json_positions_file_with_path, 'w') as positions_file:
+			cache_base_root = self.cache_base.split(Options.config['cache_folder_separator'])[0]
+			json.dump(self.positions_and_media_in_tree, positions_file, type = cache_base_root, cls=PhotoAlbumEncoder)
 		for symlink in position_symlinks:
 			symlink_with_path = os.path.join(Options.config['cache_path'], symlink)
 			os.symlink(json_positions_file_with_path, symlink_with_path)
@@ -2209,6 +2210,11 @@ class Media(object):
 
 
 class PhotoAlbumEncoder(json.JSONEncoder):
+	# the _init_ function is in order to pass an argument in json.dumps
+	def __init__(self, type = None, **kwargs):
+		super(PhotoAlbumEncoder, self).__init__(**kwargs)
+		self.type = type
+
 	def default(self, obj):
 		if isinstance(obj, datetime):
 			# there was the line:
@@ -2219,6 +2225,8 @@ class PhotoAlbumEncoder(json.JSONEncoder):
 			return date
 		if isinstance(obj, Album) or isinstance(obj, Media):
 			return obj.to_dict()
+		if isinstance(obj, Positions):
+			return obj.to_dict(self.type)
 		return json.JSONEncoder.default(self, obj)
 
 
