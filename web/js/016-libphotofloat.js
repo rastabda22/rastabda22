@@ -459,8 +459,10 @@
 			if (theAlbum.cacheBase == Options.by_search_string) {
 				// root of search albums: build the word list
 				for (i = 0; i < theAlbum.subalbums.length; ++i) {
-					PhotoFloat.searchWordsFromJsonFile.push(theAlbum.subalbums[i].unicodeWords);
-					PhotoFloat.searchAlbumCacheBaseFromJsonFile.push(theAlbum.subalbums[i].cacheBase);
+					if (PhotoFloat.searchWordsFromJsonFile.indexOf(theAlbum.subalbums[i].unicodeWords) == -1) {
+						PhotoFloat.searchWordsFromJsonFile.push(theAlbum.subalbums[i].unicodeWords);
+						PhotoFloat.searchAlbumCacheBaseFromJsonFile.push(theAlbum.subalbums[i].cacheBase);
+					}
 				}
 			} else if (! util.isSearchCacheBase(theAlbum.cacheBase)) {
 				if (! theAlbum.hasOwnProperty("positionsAndMediaInTree"))
@@ -813,6 +815,9 @@
 					var lastIndex, i, j, wordHashes, numSearchAlbumsReady = 0, numSubAlbumsToGet = 0, normalizedWords;
 					var searchResultsMedia = [];
 					var searchResultsSubalbums = [];
+
+					PhotoFloat.putAlbumIntoCache(Options.by_search_string, bySearchRootAlbum);
+
 					searchResultsAlbumFinal.ancestorsCacheBase = bySearchRootAlbum.ancestorsCacheBase.slice();
 					searchResultsAlbumFinal.ancestorsCacheBase.push(wordsWithOptionsString);
 					if (! Options.search_any_word)
@@ -881,6 +886,8 @@
 									// success:
 									function(theAlbum, thisIndexWords, thisIndexAlbums) {
 										var matchingMedia = [], matchingSubalbums = [], match, indexMedia, indexSubalbums, indexWordsLeft, resultAlbum, indexWords1, ithMedia, ithSubalbum;
+
+										PhotoFloat.putAlbumIntoCache(albumHashes[thisIndexWords][thisIndexAlbums], theAlbum);
 
 										resultAlbum = util.cloneObject(theAlbum);
 										// media in the album still has to be filtered according to search criteria

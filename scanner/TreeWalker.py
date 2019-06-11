@@ -471,8 +471,6 @@ class TreeWalker:
 		next_level()
 		# convert the temporary structure where media are organized by words to a set of albums
 
-		uniq_media = []
-
 		by_search_path = os.path.join(Options.config['album_path'], Options.config['by_search_string'])
 		by_search_album = Album(by_search_path)
 		by_search_album.parent = origin_album
@@ -491,10 +489,11 @@ class TreeWalker:
 			by_search_album.add_album(word_album)
 			for single_media in media_and_album_words["media_words"]:
 				word_album.add_media(single_media)
-				if single_media not in uniq_media:
-					word_album.num_media_in_sub_tree += 1
-					by_search_album.num_media_in_sub_tree += 1
-					uniq_media.append(single_media)
+				word_album.positions_and_media_in_tree.add_media(single_media)
+				word_album.num_media_in_sub_tree += 1
+				# actually, this counter for the search root album is not significant
+				by_search_album.num_media_in_sub_tree += 1
+
 				single_media_date = max(single_media.datetime_file, single_media.datetime_dir)
 				if word_max_file_date:
 					word_max_file_date = max(word_max_file_date, single_media_date)
@@ -506,23 +505,15 @@ class TreeWalker:
 					by_search_max_file_date = single_media_date
 				if single_media.has_gps_data:
 					word_album.positions_and_media_in_tree.add_media(single_media)
-					# word_album.positions_and_media_in_tree = self.add_media_to_position(
-					# 	word_album.positions_and_media_in_tree,
-					# 	single_media,
-					# 	Options.config['by_search_string']
-					# )
-					# by_search_album.positions_and_media_in_tree.add_media(single_media)
-					# by_search_album.positions_and_media_in_tree = self.add_media_to_position(
-					# 	by_search_album.positions_and_media_in_tree,
-					# 	single_media,
-					# 	Options.config['by_date_string']
-					# )
+					# actually, this counter for the search root album is not significant
+					by_search_album.positions_and_media_in_tree.add_media(single_media)
 
 				if len(single_media.passwords_md5) > 0:
 					combination = ('-').join(single_media.passwords_md5)
 					if not combination in word_album.nums_protected_media_in_sub_tree:
 						word_album.nums_protected_media_in_sub_tree[combination] = 0
 					word_album.nums_protected_media_in_sub_tree[combination] += 1
+					# nums_protected_media_in_sub_tree matters for the search root albums!
 					if not combination in by_search_album.nums_protected_media_in_sub_tree:
 						by_search_album.nums_protected_media_in_sub_tree[combination] = 0
 					by_search_album.nums_protected_media_in_sub_tree[combination] += 1
@@ -530,6 +521,7 @@ class TreeWalker:
 			for single_album in media_and_album_words["album_words"]:
 				word_album.add_album(single_album)
 				word_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
+				# actually, this counter for the search root album is not significant
 				by_search_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
 				if word_max_file_date:
 					word_max_file_date = max(word_max_file_date, single_album.date)
@@ -539,6 +531,7 @@ class TreeWalker:
 					by_search_max_file_date = max(by_search_max_file_date, single_album.date)
 				else:
 					by_search_max_file_date = single_album.date
+
 			word_album.unicode_words = media_and_album_words["unicode_words"]
 			self.all_albums.append(word_album)
 			# self.generate_composite_image(word_album, word_max_file_date)
@@ -890,7 +883,6 @@ class TreeWalker:
 				if media not in self.tree_by_search[word]["media_words"]:
 					self.tree_by_search[word]["media_words"].append(media)
 				if unicode_word not in self.tree_by_search[word]["unicode_words"]:
-					# if not any(media.media_file_name == _media.media_file_name for _media in self.tree_by_search[word]["unicode_words"]):
 					self.tree_by_search[word]["unicode_words"].append(unicode_word)
 
 	def add_album_to_tree_by_search(self, album):
