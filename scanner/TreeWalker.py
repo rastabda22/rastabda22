@@ -487,7 +487,7 @@ class TreeWalker:
 			word_album.cache_base = by_search_album.generate_cache_base(os.path.join(by_search_album.path, word))
 			word_max_file_date = None
 			by_search_album.add_album(word_album)
-			for single_media in media_and_album_words["media_words"]:
+			for single_media in media_and_album_words["media_list"]:
 				word_album.add_media(single_media)
 				word_album.positions_and_media_in_tree.add_media(single_media)
 				word_album.num_media_in_sub_tree += 1
@@ -518,7 +518,7 @@ class TreeWalker:
 						by_search_album.nums_protected_media_in_sub_tree[combination] = 0
 					by_search_album.nums_protected_media_in_sub_tree[combination] += 1
 
-			for single_album in media_and_album_words["album_words"]:
+			for single_album in media_and_album_words["albums_list"]:
 				word_album.add_album(single_album)
 				word_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
 				# actually, this counter for the search root album is not significant
@@ -879,9 +879,9 @@ class TreeWalker:
 			unicode_word = unicode_words[word_index]
 			if word:
 				if word not in list(self.tree_by_search.keys()):
-					self.tree_by_search[word] = {"media_words": [], "album_words": [], "unicode_words": []}
-				if media not in self.tree_by_search[word]["media_words"]:
-					self.tree_by_search[word]["media_words"].append(media)
+					self.tree_by_search[word] = {"media_list": [], "albums_list": [], "unicode_words": []}
+				if media not in self.tree_by_search[word]["media_list"]:
+					self.tree_by_search[word]["media_list"].append(media)
 				if unicode_word not in self.tree_by_search[word]["unicode_words"]:
 					self.tree_by_search[word]["unicode_words"].append(unicode_word)
 
@@ -893,9 +893,9 @@ class TreeWalker:
 			unicode_word = unicode_words[word_index]
 			if word:
 				if word not in list(self.tree_by_search.keys()):
-					self.tree_by_search[word] = {"media_words": [], "album_words": [], "unicode_words": []}
-				if album not in self.tree_by_search[word]["album_words"]:
-					self.tree_by_search[word]["album_words"].append(album)
+					self.tree_by_search[word] = {"media_list": [], "albums_list": [], "unicode_words": []}
+				if album not in self.tree_by_search[word]["albums_list"]:
+					self.tree_by_search[word]["albums_list"].append(album)
 					if unicode_word not in self.tree_by_search[word]["unicode_words"]:
 						self.tree_by_search[word]["unicode_words"].append(unicode_word)
 
