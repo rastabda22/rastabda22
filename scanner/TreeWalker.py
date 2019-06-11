@@ -16,6 +16,7 @@ import shutil
 import copy
 
 from datetime import datetime
+from pprint import pprint
 
 from PIL import Image
 
@@ -159,6 +160,7 @@ class TreeWalker:
 					if not combination in self.origin_album.nums_protected_media_in_sub_tree:
 						self.origin_album.nums_protected_media_in_sub_tree[combination] = 0
 					self.origin_album.nums_protected_media_in_sub_tree[combination] += by_search_album.nums_protected_media_in_sub_tree[combination]
+
 
 			self.protected_origin_album = self.origin_album.generate_protected_content_albums()
 			self.origin_album.leave_only_unprotected_content()
@@ -477,7 +479,8 @@ class TreeWalker:
 		by_search_album.cache_base = Options.config['by_search_string']
 		by_search_max_file_date = None
 		message("working with word albums...", "", 5)
-		for word, media_and_album_words in self.tree_by_search.items():
+		for word, media_album_and_words in self.tree_by_search.items():
+			pprint(["AAAAA", media_album_and_words])
 			next_level()
 			message("working with word album...", "", 5)
 			word_path = os.path.join(by_search_path, str(word))
@@ -487,7 +490,7 @@ class TreeWalker:
 			word_album.cache_base = by_search_album.generate_cache_base(os.path.join(by_search_album.path, word))
 			word_max_file_date = None
 			by_search_album.add_album(word_album)
-			for single_media in media_and_album_words["media_list"]:
+			for single_media in media_album_and_words["media_list"]:
 				word_album.add_media(single_media)
 				word_album.positions_and_media_in_tree.add_media(single_media)
 				word_album.num_media_in_sub_tree += 1
@@ -518,7 +521,7 @@ class TreeWalker:
 						by_search_album.nums_protected_media_in_sub_tree[combination] = 0
 					by_search_album.nums_protected_media_in_sub_tree[combination] += 1
 
-			for single_album in media_and_album_words["albums_list"]:
+			for single_album in media_album_and_words["albums_list"]:
 				word_album.add_album(single_album)
 				word_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
 				# actually, this counter for the search root album is not significant
@@ -532,7 +535,20 @@ class TreeWalker:
 				else:
 					by_search_max_file_date = single_album.date
 
-			word_album.unicode_words = media_and_album_words["unicode_words"]
+				# if len(single_album.passwords_md5) > 0:
+				# 	# subalbums protected content count has to be added manually too
+				# 	combination = ('-').join(single_album.passwords_md5)
+				# 	if not combination in word_album.nums_protected_media_in_sub_tree:
+				# 		word_album.nums_protected_media_in_sub_tree[combination] = 0
+				# 	word_album.nums_protected_media_in_sub_tree[combination] += single_album.nums_protected_media_in_sub_tree[combination]
+				# 	# nums_protected_media_in_sub_tree matters for the search root albums!
+				# 	if not combination in by_search_album.nums_protected_media_in_sub_tree:
+				# 		by_search_album.nums_protected_media_in_sub_tree[combination] = 0
+				# 	by_search_album.nums_protected_media_in_sub_tree[combination] += single_album.nums_protected_media_in_sub_tree[combination]
+				word_album.merge_nums_protected(single_album)
+				by_search_album.merge_nums_protected(single_album)
+
+			word_album.unicode_words = media_album_and_words["unicode_words"]
 			self.all_albums.append(word_album)
 			# self.generate_composite_image(word_album, word_max_file_date)
 			indented_message("word album worked out", word, 4)
@@ -894,8 +910,9 @@ class TreeWalker:
 			if word:
 				if word not in list(self.tree_by_search.keys()):
 					self.tree_by_search[word] = {"media_list": [], "albums_list": [], "unicode_words": []}
-				if album not in self.tree_by_search[word]["albums_list"]:
-					self.tree_by_search[word]["albums_list"].append(album)
+				if not album.copy_in_tree_by_search(self.tree_by_search[word]):
+				# if album not in self.tree_by_search[word]["albums_list"]:
+					self.tree_by_search[word]["albums_list"].append(album.copy())
 					if unicode_word not in self.tree_by_search[word]["unicode_words"]:
 						self.tree_by_search[word]["unicode_words"].append(unicode_word)
 
@@ -1001,7 +1018,9 @@ class TreeWalker:
 								# it's a simple identifier: the album and all the subalbums will be protected with the corresponding password
 								identifier = columns[0]
 								indexes = [{'md5': value['password_md5'], 'code': value['password_code']} for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
-								if len(indexes) == 1:
+								if len(indexes) == 0:
+									indented_message("WARNING: using an unknown password identifier", identifier + ": not protecting the directory", 2)
+								elif len(indexes) == 1:
 									password_md5 = indexes[0]['md5']
 									password_code = indexes[0]['code']
 									passwords.append(
@@ -1023,7 +1042,9 @@ class TreeWalker:
 							indexes = [{'md5': value['password_md5'], 'code': value['password_code']} for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
 							# everything beginning with the first non-space character after the case flag till the end of line (including the traling spaces) is the pattern
 							pattern = " ".join(remaining_columns[1:]).lstrip()
-							if len(indexes) == 1:
+							if len(indexes) == 0:
+								indented_message("WARNING: using an unknown password identifier", identifier + ": not protecting the directory", 2)
+							elif len(indexes) == 1:
 								password_md5 = indexes[0]['md5']
 								password_code = indexes[0]['code']
 								# absolute_file_name = os.path.join(absolute_path, file_name)
@@ -1222,10 +1243,8 @@ class TreeWalker:
 					album.num_media_in_sub_tree += next_walked_album.num_media_in_sub_tree
 					album.positions_and_media_in_tree.merge(next_walked_album.positions_and_media_in_tree)
 					# album.positions_and_media_in_tree = self.merge_positions(album.positions_and_media_in_tree, next_walked_album.positions_and_media_in_tree)
-					for combination in next_walked_album.nums_protected_media_in_sub_tree:
-						if not combination in album.nums_protected_media_in_sub_tree:
-							album.nums_protected_media_in_sub_tree[combination] = 0
-						album.nums_protected_media_in_sub_tree[combination] += next_walked_album.nums_protected_media_in_sub_tree[combination]
+					album.merge_nums_protected(next_walked_album)
+
 					album.add_album(next_walked_album)
 					next_level()
 					message("adding album to search tree...", "", 5)

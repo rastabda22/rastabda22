@@ -85,7 +85,7 @@ max_random = 1000000000
 # json_version = 3.99 since property passwords changed to passwordsCodes in json file
 # json_version = 3.98 since property passwords changed to passwordsMd5 in json file
 # json_version = 3.97 since passwords removed from json file
-json_version = "3.97"
+json_version = "3.96"
 
 def make_dir(absolute_path, message_part):
 	# makes a subdir and manages errors
@@ -108,6 +108,14 @@ def convert_md5s_to_codes(passwords_md5):
 		password_code = next(x['password_code'] for x in identifiers_and_passwords if x['password_md5'] == password_md5)
 		password_codes.append(password_code)
 	return '-'.join(password_codes)
+
+
+def convert_md5s_list_to_identifiers(md5_list):
+	identifiers = list()
+	for password_md5 in md5_list:
+		identifier = next(x['identifier'] for x in identifiers_and_passwords if x['password_md5'] == password_md5)
+		identifiers.append(identifier)
+	return '-'.join(identifiers)
 
 
 def initialize_opencv():

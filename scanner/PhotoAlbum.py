@@ -248,6 +248,9 @@ class Album(object):
 		indented_message("metadata values from album.ini added to album...", "", 5)
 		back_level()
 
+	def copy_in_tree_by_search(self, tree_by_search_word):
+		album_list = tree_by_search_word["albums_list"]
+		return len([album for album in album_list if self.cache_base == album.cache_base]) == 1
 
 
 	def add_media(self, media):
@@ -283,8 +286,28 @@ class Album(object):
 	def used_passwords_permutations(self):
 		return self.nums_protected_media_in_sub_tree.keys()
 
+	def copy(self):
+		return copy.deepcopy(self)
+
+	def merge_nums_protected(self, album1):
+		for combination in album1.nums_protected_media_in_sub_tree:
+			if not combination in self.nums_protected_media_in_sub_tree:
+				self.nums_protected_media_in_sub_tree[combination] = 0
+			self.nums_protected_media_in_sub_tree[combination] += album1.nums_protected_media_in_sub_tree[combination]
+
 	def leave_only_unprotected_content(self):
+		print()
+		pprint(["BEFORE, UNPROTECTED", self.name, self.to_dict()])
 		self.is_protected = False
+		# # search albums:
+		# # - do not process subalbums because they have been already processed
+		# # - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
+		# if (
+		# 	self.cache_base.find(Options.config['by_search_string']) == -1 or
+		# 	# self.cache_base.find(Options.config['by_search_string']) == 0 and
+		# 	self.cache_base == Options.config['by_search_string']
+		# 	# len(self.cache_base.split(Options.config['cache_folder_separator'])) < 3
+		# ):
 		if len(self.passwords_md5) > 0:
 			# protected album, remove the media
 			self.media_list = []
@@ -302,36 +325,54 @@ class Album(object):
 				position.mediaNameList = [single_media for single_media in position.mediaNameList if len(single_media.passwords_md5) == 0]
 			self.positions_and_media_in_tree.remove_empty_positions()
 
-		# do not process search albums subalbums because they have been already processed
-		if (
-			self.cache_base.find(Options.config['by_search_string']) == -1 or
-			# self.cache_base.find(Options.config['by_search_string']) == 0 and
-			self.cache_base == Options.config['by_search_string']
-			# self.cache_base.split(Options.config['cache_folder_separator']) < 3
-		):
-			for subalbum in self.subalbums_list:
-				subalbum.leave_only_unprotected_content()
+		for subalbum in self.subalbums_list:
+			subalbum.leave_only_unprotected_content()
+		# elif (
+		# 	self.cache_base.split(Options.config['cache_folder_separator'])[0] == Options.config['by_search_string'] and
+		# 	len(self.cache_base.split(Options.config['cache_folder_separator'])) == 2
+		# ):
+		# 	for subalbum in self.subalbums_list:
+		# 		if len(subalbum.passwords_md5) > 0:
+		# 			# protected album, remove the subalbum
+		# 			self.nums_protected_media_in_sub_tree = remove_positions(self.nums_protected_media_in_sub_tree, subalbum.nums_protected_media_in_sub_tree)
+		# 			self.subalbums_list.remove(subalbum)
 
 		for key in self.nums_protected_media_in_sub_tree:
 			self.num_media_in_sub_tree -= self.nums_protected_media_in_sub_tree[key]
-		return
+
+		print()
+		pprint(["AFTER, UNPROTECTED", self.name, self.to_dict()])
+
 
 	def leave_only_content_protected_by(self, passwords_list):
+		print()
+		pprint(["BEFORE, PROTECTED", self.name, Options.convert_md5s_list_to_identifiers(passwords_list), self.to_dict()])
+		# # search albums:
+		# # - do not process subalbums because they have been already processed
+		# # - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
+		# if (
+		# 	self.cache_base.find(Options.config['by_search_string']) == -1 or
+		# 	# self.cache_base.find(Options.config['by_search_string']) == 0 and
+		# 	self.cache_base == Options.config['by_search_string']
+		# 	# self.cache_base.split(Options.config['cache_folder_separator']) < 2
+		# ):
 		self.media_list = [media for media in self.media if set(passwords_list) == set(media.passwords_md5)]
 
 		for position in self.positions_and_media_in_tree.positions:
 			position.mediaNameList = [single_media for single_media in position.mediaNameList if set(passwords_list) == set(single_media.passwords_md5)]
 		self.positions_and_media_in_tree.remove_empty_positions()
 
-		# do not process search albums subalbums because they have been already processed
-		if (
-			self.cache_base.find(Options.config['by_search_string']) == -1 or
-			# self.cache_base.find(Options.config['by_search_string']) == 0 and
-			self.cache_base == Options.config['by_search_string']
-			# self.cache_base.split(Options.config['cache_folder_separator']) < 2
-		):
-			for subalbum in self.subalbums_list:
-				subalbum.leave_only_content_protected_by(passwords_list)
+		for subalbum in self.subalbums_list:
+			subalbum.leave_only_content_protected_by(passwords_list)
+		# elif (
+		# 	self.cache_base.split(Options.config['cache_folder_separator'])[0] == Options.config['by_search_string'] and
+		# 	len(self.cache_base.split(Options.config['cache_folder_separator'])) == 2
+		# ):
+		# 	for subalbum in self.subalbums_list:
+		# 		if len(subalbum.passwords_md5) == 0 or set(passwords_list) != set(subalbum.passwords_md5):
+		# 			# unprotected album or album protected by other combination, remove it
+		# 			self.nums_protected_media_in_sub_tree = remove_positions(self.nums_protected_media_in_sub_tree, subalbum.nums_protected_media_in_sub_tree)
+		# 			self.subalbums_list.remove(subalbum)
 
 		combination = '-'.join(passwords_list)
 		if combination in self.nums_protected_media_in_sub_tree:
@@ -340,7 +381,8 @@ class Album(object):
 		else:
 			self.num_media_in_sub_tree = 0
 
-		return
+		print()
+		pprint(["AFTER, PROTECTED", self.name, Options.convert_md5s_list_to_identifiers(passwords_list), self.to_dict()])
 
 	def generate_protected_content_albums(self):
 		protected_albums = {}
@@ -647,7 +689,7 @@ class Position(object):
 		# the media to add is supposed to have the same lat and lng as the position
 		self.mediaNameList.append(single_media)
 
-	def deep_copy(self):
+	def copy(self):
 		new_position = Position(self.mediaNameList[0])
 		new_position.mediaNameList = self.mediaNameList
 		return new_position
@@ -669,7 +711,7 @@ class Positions(object):
 				match = True
 				break
 		if not match:
-			self.positions.append(position.deep_copy())
+			self.positions.append(position.copy())
 
 	def merge(self, positions):
 		# adds the media position and name to the positions list received as second argument

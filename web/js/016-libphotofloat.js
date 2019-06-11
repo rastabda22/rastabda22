@@ -798,6 +798,42 @@
 
 	PhotoFloat.prototype.parseHash = function(hash, callback, error) {
 
+		function subalbumsAbsentOrGot(searchResultsAlbumFinal) {
+			var indexMedia;
+			if (searchResultsAlbumFinal.media.length === 0 && searchResultsAlbumFinal.subalbums.length === 0) {
+				util.noResults(searchResultsAlbumFinal);
+			} else {
+				$("#album-view").removeClass("hidden");
+				$(".search-failed").hide();
+			}
+
+			for (indexMedia = 0; indexMedia < searchResultsAlbumFinal.media.length; indexMedia ++) {
+				// add the parent to the media
+				searchResultsAlbumFinal.media[indexMedia].parent = searchResultsAlbumFinal;
+				if (util.hasGpsData(searchResultsAlbumFinal.media[indexMedia]))
+					// add the media position
+					searchResultsAlbumFinal.positionsAndMediaInTree =
+						util.addMediaToPoints(
+							searchResultsAlbumFinal.positionsAndMediaInTree,
+							searchResultsAlbumFinal.media[indexMedia]
+						);
+			}
+
+			searchResultsAlbumFinal.numMediaInSubTree = searchResultsAlbumFinal.media.length;
+			if (searchResultsAlbumFinal.subalbums.length) {
+				for (indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
+					// update the media count
+					searchResultsAlbumFinal.numMediaInSubTree += searchResultsAlbumFinal.subalbums[indexSubalbums].numMediaInSubTree;
+					// add the points from the subalbums
+
+					// the subalbum could still have no positionsAndMediaInTree array, get it
+					if (! searchResultsAlbumFinal.subalbums[indexSubalbums].hasOwnProperty("positionsAndMediaInTree"))
+						searchResultsAlbumFinal.subalbums[indexSubalbums].positionsAndMediaInTree = [];
+				}
+			}
+			PhotoFloat.endPreparingAlbumAndKeepOn(searchResultsAlbumFinal, mediaHash, callback);
+		}
+
 		function buildSearchResult() {
 			searchResultsAlbumFinal.removedStopWords = removedStopWords;
 			// has any word remained after stop words have been removed?
@@ -1085,61 +1121,31 @@
 
 												searchResultsAlbumFinal.subalbums = matchingSubalbums;
 
-												// search albums need to conform to default behaviour of albums: json files have subalbums and media sorted by date not reversed
-												searchResultsAlbumFinal.subalbums = util.sortByDate(searchResultsAlbumFinal.subalbums);
-											}
-											if (searchResultsAlbumFinal.media.length === 0 && searchResultsAlbumFinal.subalbums.length === 0) {
-												util.noResults(searchResultsAlbumFinal);
-											} else {
-												$("#album-view").removeClass("hidden");
-												$(".search-failed").hide();
-											}
-
-											for (indexMedia = 0; indexMedia < searchResultsAlbumFinal.media.length; indexMedia ++) {
-												// add the parent to the media
-												searchResultsAlbumFinal.media[indexMedia].parent = searchResultsAlbumFinal;
-												if (util.hasGpsData(searchResultsAlbumFinal.media[indexMedia]))
-													// add the media position
-													searchResultsAlbumFinal.positionsAndMediaInTree =
-														util.addMediaToPoints(
-															searchResultsAlbumFinal.positionsAndMediaInTree,
-															searchResultsAlbumFinal.media[indexMedia]
+												if (searchResultsAlbumFinal.subalbums.length) {
+													// search albums need to conform to default behaviour of albums: json files have subalbums and media sorted by date not reversed
+													searchResultsAlbumFinal.subalbums = util.sortByDate(searchResultsAlbumFinal.subalbums);
+													// because of (possibly absent) protected content, subalbums need to be got
+													var nSubalbumsGot = 0;
+													for (indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
+														PhotoFloat.getAlbum(
+															searchResultsAlbumFinal.subalbums[indexSubalbums].cacheBase,
+															function(theAlbum, indexSubalbums, fakeVar) {
+																searchResultsAlbumFinal.subalbums[indexSubalbums] = theAlbum;
+																nSubalbumsGot ++;
+																if (nSubalbumsGot >= searchResultsAlbumFinal.subalbums.length){
+																	// all the subalbums has been got
+																	subalbumsAbsentOrGot(searchResultsAlbumFinal);
+																}
+															},
+															util.die,
+															indexSubalbums,
+															null
 														);
-											}
-
-											var numSubalbumsProcessed = 0;
-											searchResultsAlbumFinal.numMediaInSubTree = searchResultsAlbumFinal.media.length;
-											if (searchResultsAlbumFinal.subalbums.length) {
-												for (indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
-													// update the media count
-													searchResultsAlbumFinal.numMediaInSubTree += searchResultsAlbumFinal.subalbums[indexSubalbums].numMediaInSubTree;
-													// add the points from the subalbums
-
-													// the subalbum could still have no positionsAndMediaInTree array, get it
-													if (! searchResultsAlbumFinal.subalbums[indexSubalbums].hasOwnProperty("positionsAndMediaInTree"))
-														searchResultsAlbumFinal.subalbums[indexSubalbums].positionsAndMediaInTree = [];
-
-													PhotoFloat.getPositions(
-														searchResultsAlbumFinal.subalbums[indexSubalbums],
-														function(subalbum) {
-															searchResultsAlbumFinal.positionsAndMediaInTree = util.mergePoints(
-																			searchResultsAlbumFinal.positionsAndMediaInTree,
-																			subalbum.positionsAndMediaInTree
-															);
-															numSubalbumsProcessed ++;
-															if (numSubalbumsProcessed >= searchResultsAlbumFinal.subalbums.length) {
-																// now all the subalbums have the positionsAndMediaInTree array, we can go on
-
-																PhotoFloat.endPreparingAlbumAndKeepOn(searchResultsAlbumFinal, mediaHash, callback);
-															}
-														},
-														util.die
-													);
+													}
+													return;
 												}
-											} else {
-												// no subalbums, call the exit function
-												PhotoFloat.endPreparingAlbumAndKeepOn(searchResultsAlbumFinal, mediaHash, callback);
 											}
+											subalbumsAbsentOrGot(searchResultsAlbumFinal);
 										}
 									},
 									error,
