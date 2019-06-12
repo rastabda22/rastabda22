@@ -9,6 +9,7 @@
 		MapFunctions.titleWrapper1 = "";
 		MapFunctions.titleWrapper2 = "";
 		MapFunctions.maxWidthForThumbnails = 0;
+		MapFunctions.maxHeightForThumbnails = 0;
 		MapFunctions.mymap = null;
 		MapFunctions.popup = null;
 		MapFunctions.mapAlbum = {};
@@ -179,7 +180,7 @@
 			MapFunctions.maxWidthForThumbnails += 18;
 		}
 		// vertical popup size
-		maxHeightForThumbnails = parseInt($("#mapdiv").height() * 0.8);
+		MapFunctions.maxHeightForThumbnails = parseInt($("#mapdiv").height() * 0.8);
 	};
 
 	MapFunctions.buildPopupHeader = function() {

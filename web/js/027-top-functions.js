@@ -2574,7 +2574,7 @@
 		MapFunctions.popup = L.popup(
 			{
 				maxWidth: MapFunctions.maxWidthForThumbnails,
-				maxHeight: maxHeightForThumbnails,
+				maxHeight: MapFunctions.maxHeightForThumbnails,
 				autoPan: false
 			}
 		).setContent(
@@ -2609,7 +2609,6 @@
 	TopFunctions.updateMapAlbumOnMapClick = function(evt, clusters, callback, playResolve) {
 		var i;
 		var clickHistoryElement;
-		var maxHeightForThumbnails;
 
 		function matchPositionAndCount(reference, element) {
 			return JSON.stringify([reference.lat, reference.lng]) === JSON.stringify([element.lat, element.lng]);
