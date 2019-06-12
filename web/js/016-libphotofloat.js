@@ -388,6 +388,7 @@
 											album.subalbums = mergeSubalbums(album, protectedAlbum);
 											album.path = protectedAlbum.path;
 											album.ancestorsCacheBase = protectedAlbum.ancestorsCacheBase;
+											album.ancestorsNames = protectedAlbum.ancestorsNames;
 											album.includedCombinations.push(protectedAlbum.combination);
 
 											album.positionsAndMediaInTree = util.mergePoints(
