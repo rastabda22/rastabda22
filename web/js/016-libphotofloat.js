@@ -800,7 +800,7 @@
 	PhotoFloat.prototype.parseHash = function(hash, callback, error) {
 
 		function subalbumsAbsentOrGot(searchResultsAlbumFinal) {
-			var indexMedia;
+			var indexMedia, indexSubalbums;
 			if (searchResultsAlbumFinal.media.length === 0 && searchResultsAlbumFinal.subalbums.length === 0) {
 				util.noResults(searchResultsAlbumFinal);
 			} else {
