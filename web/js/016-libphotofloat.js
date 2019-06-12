@@ -803,7 +803,7 @@
 			if (searchResultsAlbumFinal.media.length === 0 && searchResultsAlbumFinal.subalbums.length === 0) {
 				util.noResults(searchResultsAlbumFinal);
 			} else {
-				$("#album-view").removeClass("hidden");
+				$("#album-view, #album-view #subalbums, #album-view #thumbs").removeClass("hidden");
 				$(".search-failed").hide();
 			}
 
@@ -909,7 +909,7 @@
 						util.noResults(searchResultsAlbumFinal, '#search-too-wide');
 						callback(searchResultsAlbumFinal, null, -1);
 					} else {
-						$("#album-view").removeClass("hidden");
+						$("#album-view, #album-view #subalbums").removeClass("hidden");
 						$(".search-failed").hide();
 						for (indexWords = 0; indexWords <= lastIndex; indexWords ++) {
 							searchResultsMedia[indexWords] = [];
@@ -1124,25 +1124,25 @@
 												if (searchResultsAlbumFinal.subalbums.length) {
 													// search albums need to conform to default behaviour of albums: json files have subalbums and media sorted by date not reversed
 													searchResultsAlbumFinal.subalbums = util.sortByDate(searchResultsAlbumFinal.subalbums);
-													// because of (possibly absent) protected content, subalbums need to be got
-													var nSubalbumsGot = 0;
-													for (indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
-														PhotoFloat.getAlbum(
-															searchResultsAlbumFinal.subalbums[indexSubalbums].cacheBase,
-															function(theAlbum, indexSubalbums, fakeVar) {
-																searchResultsAlbumFinal.subalbums[indexSubalbums] = theAlbum;
-																nSubalbumsGot ++;
-																if (nSubalbumsGot >= searchResultsAlbumFinal.subalbums.length){
-																	// all the subalbums has been got
-																	subalbumsAbsentOrGot(searchResultsAlbumFinal);
-																}
-															},
-															util.die,
-															indexSubalbums,
-															null
-														);
-													}
-													return;
+													// // because of (possibly absent) protected content, subalbums need to be got
+													// var nSubalbumsGot = 0;
+													// for (indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
+													// 	PhotoFloat.getAlbum(
+													// 		searchResultsAlbumFinal.subalbums[indexSubalbums].cacheBase,
+													// 		function(theAlbum, indexSubalbums, fakeVar) {
+													// 			searchResultsAlbumFinal.subalbums[indexSubalbums] = theAlbum;
+													// 			nSubalbumsGot ++;
+													// 			if (nSubalbumsGot >= searchResultsAlbumFinal.subalbums.length){
+													// 				// all the subalbums has been got
+													//
+													// 			}
+													// 		},
+													// 		util.die,
+													// 		indexSubalbums,
+													// 		null
+													// 	);
+													// }
+													// return;
 												}
 											}
 											subalbumsAbsentOrGot(searchResultsAlbumFinal);

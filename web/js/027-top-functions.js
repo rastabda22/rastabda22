@@ -872,7 +872,7 @@
 			if (currentAlbum.media.length == 1) {
 				$("#album-view").addClass("hidden");
 			} else {
-				$("#album-view").removeClass("hidden");
+				$("#album-view, #album-view #subalbums").removeClass("hidden");
 			}
 
 			if (fullScreenStatus) {
@@ -1214,17 +1214,18 @@
 		currentMedia = media;
 		currentMediaIndex = mediaIndex;
 
-		var passwordList = null;
-		if (currentMedia == null) {
-			if (! util.isAlbumWithOneMedia(currentAlbum)) {
-				if (currentAlbum.hasOwnProperty(""))
-					// virtual albums don't have the passwordsMd5 property
-					passwordList = currentAlbum.passwordsMd5;
-			} else
-				passwordList = currentAlbum.media[0].passwordsMd5;
-		} else {
-			passwordList = currentMedia.passwordsMd5;
-		}
+		var isAlbumWithOneMedia = util.isAlbumWithOneMedia(currentAlbum);
+		// var passwordList = null;
+		// if (currentMedia == null) {
+		// 	if (! isAlbumWithOneMedia) {
+		// 		if (currentAlbum.hasOwnProperty("passwordsMd5"))
+		// 			// virtual albums don't have the passwordsMd5 property
+		// 			passwordList = currentAlbum.passwordsMd5;
+		// 	} else
+		// 		passwordList = currentAlbum.media[0].passwordsMd5;
+		// } else {
+		// 	passwordList = currentMedia.passwordsMd5;
+		// }
 
 		f.setOptions();
 
@@ -1242,7 +1243,7 @@
 
 		$("#album-search").attr('title', util._t("#current-album-is") + '"'+ currentAlbumPath + '"');
 
-		var isAlbumWithOneMedia = util.isAlbumWithOneMedia(currentAlbum);
+
 		if (currentMedia !== null || isAlbumWithOneMedia) {
 			if (isAlbumWithOneMedia) {
 				currentMedia = currentAlbum.media[0];
@@ -2193,7 +2194,7 @@
 			$("#album-view").removeClass("no-bottom-space");
 			// $("#media-box-inner").show().children().last().remove();
 			// $("#media-box").hide();
-			$("#album-view").removeClass("hidden");
+			$("#album-view, #album-view #subalbums").removeClass("hidden");
 
 			$("#powered-by").show();
 
@@ -2205,7 +2206,7 @@
 			if (currentAlbum.media.length == 1)
 				$("#album-view").addClass("hidden");
 			else
-				$("#album-view").removeClass("hidden");
+				$("#album-view, #album-view #subalbums").removeClass("hidden");
 			$("#powered-by").hide();
 
 			$(".media-view-container").off('mousewheel').on('mousewheel', TopFunctions.scrollBottomThumbs);
