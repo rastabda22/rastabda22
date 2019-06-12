@@ -148,8 +148,8 @@
 			}
 
 			for (i = 2; i < components.length; ++i) {
-				var currentAlbumPath = currentAlbum.ancestorsNames;
-				gpsName = currentAlbumPath[i];
+				// var currentAlbumPath = currentAlbum.ancestorsNames;
+				gpsName = currentAlbum.ancestorsNames[i];
 
 				if (gpsName === '')
 					gpsName = util._t('.not-specified');
