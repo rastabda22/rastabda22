@@ -9,6 +9,7 @@ import ast
 import math
 import hashlib
 import random
+from pprint import pprint
 
 # @python2
 try:
@@ -89,18 +90,19 @@ json_version = "3.96"
 
 def make_dir(absolute_path, message_part):
 	# makes a subdir and manages errors
+	relative_path = absolute_path[len(config['index_html_path']) + 1:]
 	if not os.path.exists(absolute_path):
 		try:
 			message("creating " + message_part, "", 5)
 			os.makedirs(absolute_path)
-			indented_message(message_part + " created", absolute_path, 4)
+			indented_message(message_part + " created", relative_path, 4)
 			os.chmod(absolute_path, 0o777)
 			message("permissions set", "", 5)
 		except OSError:
-			message("FATAL ERROR", "couldn't create " + absolute_path + " , quitting", 0)
+			message("FATAL ERROR", "couldn't create " + message_part, "('" + relative_path + "')' quitting", 0)
 			sys.exit(-97)
 	else:
-		message(message_part + " already existent, not creating it", absolute_path, 5)
+		message(message_part + " already existent, not creating it", relative_path, 5)
 
 def convert_md5s_to_codes(passwords_md5):
 	password_codes = list()
@@ -385,7 +387,7 @@ def get_options():
 		# 1 arguments: the config files: the password file is in the same directory
 
 		passwords_subdir_with_path = os.path.join(config['cache_path'], config['passwords_subdir'])
-		make_dir(os.path.join(config['cache_path'], config['passwords_subdir']), passwords_subdir_with_path)
+		make_dir(passwords_subdir_with_path, "passwords subdir")
 		# remove the old single password files
 		for password_file in sorted(os.listdir(passwords_subdir_with_path)):
 			os.unlink(os.path.join(passwords_subdir_with_path, password_file))

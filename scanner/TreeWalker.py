@@ -97,7 +97,7 @@ class TreeWalker:
 				message("FATAL ERROR", self.album_cache_path + " not writable, quitting")
 				sys.exit(-97)
 		else:
-			Options.make_dir(Options.config['cache_album_subdir'], self.album_cache_path)
+			Options.make_dir(Options.config['cache_album_subdir'], "cache album subdir")
 			# message("creating still unexistent album cache subdir", self.album_cache_path, 4)
 			# os.makedirs(self.album_cache_path)
 			# indented_message("still unexistent subdir created", "", 5)
@@ -182,7 +182,7 @@ class TreeWalker:
 
 			for md5 in [x['password_md5'] for x in Options.identifiers_and_passwords]:
 				absolute_md5_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + md5)
-				Options.make_dir(absolute_md5_path, "protected password dir")
+				Options.make_dir(absolute_md5_path, "protected pwd dir")
 				# symlinks in md5 dirs must be deleted
 				# because there isn't any simple way to know whether they are old or new
 				for entry in self._listdir_sorted_alphabetically(absolute_md5_path):

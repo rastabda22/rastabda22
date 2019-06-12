@@ -398,10 +398,11 @@ class Album(object):
 		save_message_3 = "saving positions album..."
 		save_message_4 = "positions album saved"
 		if passwords_md5 is not None:
-			save_message_1 = "saving  " + passwords_md5 + "..."
-			save_message_2 = "protected album for " + passwords_md5 + " saved"
-			save_message_3 = "saving protected positions album for " + passwords_md5 + "..."
-			save_message_4 = "protected positions album for " + passwords_md5 + " saved"
+			identifiers = Options.convert_md5s_list_to_identifiers(passwords_md5.split('-'))
+			save_message_1 = "saving  " + identifiers + "..."
+			save_message_2 = "protected album for " + identifiers + " saved"
+			save_message_3 = "saving protected positions album for " + identifiers + "..."
+			save_message_4 = "protected positions album for " + identifiers + " saved"
 
 			passwords_md5_list = passwords_md5.split('-')
 
