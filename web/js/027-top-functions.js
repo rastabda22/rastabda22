@@ -832,7 +832,7 @@
 		var text, thumbnailSize, triggerLoad, mediaHtml, mediaSelector, mediaSrc;
 		var exposureTime, heightForMedia, heightForMediaAndTitle;
 		var savedSearchSubAlbumHash, savedSearchAlbumHash;
-		var previousMediaIndex, nextMediaIndex, array, hideImage;
+		var previousMediaIndex, nextMediaIndex, array;
 
 		$(".media-bar").show();
 
