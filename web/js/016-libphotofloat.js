@@ -804,7 +804,6 @@
 			if (searchResultsAlbumFinal.media.length === 0 && searchResultsAlbumFinal.subalbums.length === 0) {
 				util.noResults(searchResultsAlbumFinal);
 			} else {
-				$("#album-view, #album-view #subalbums, #album-view #thumbs").removeClass("hidden");
 				$(".search-failed").hide();
 			}
 
@@ -910,7 +909,6 @@
 						util.noResults(searchResultsAlbumFinal, '#search-too-wide');
 						callback(searchResultsAlbumFinal, null, -1);
 					} else {
-						$("#album-view, #album-view #subalbums").removeClass("hidden");
 						$(".search-failed").hide();
 						for (indexWords = 0; indexWords <= lastIndex; indexWords ++) {
 							searchResultsMedia[indexWords] = [];
@@ -1176,6 +1174,7 @@
 		var mediaFolderHash = array[2];
 		$("ul#right-menu li#album-search").removeClass("dimmed");
 		$("ul#right-menu li#any-word").removeClass("dimmed");
+		$("#album-view, #album-view #subalbums, #album-view #thumbs").removeClass("hidden");
 
 		albumHashes = [];
 		SearchWordsFromUser = [];
@@ -1261,7 +1260,7 @@
 		var albumFromCache = PhotoFloat.getAlbumFromCache(albumHashToGet);
 		if (albumFromCache && ! PhotoFloat.passwordsToGet(albumFromCache).length) {
 			if (! albumFromCache.subalbums.length && ! albumFromCache.media.length)
-				util.noResults(null);
+				util.noResults(albumFromCache);
 			PhotoFloat.selectMedia(albumFromCache, mediaFolderHash, mediaHash, callback);
 		} else if (! util.isSearchCacheBase(albumHash) || SearchWordsFromUser.length === 0) {
 			PhotoFloat.getAlbum(

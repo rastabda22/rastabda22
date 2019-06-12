@@ -206,24 +206,25 @@
 			// (optional) i=3 up: folder or image
 			// (optional) i=n: image
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>" + raquo;
+			if (
+				Options.search_current_album &&
+				[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) == -1
+			) {
+				title += " <span id='search-album-to-be-filled'></span> " + raquo;
+			}
+			var searchClass = "search-link";
 
 			if (
 				Options.search_current_album &&
 				[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) == -1
 			) {
+				searchClass = "main-search-link";
 				searchFolderHash = albumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
-				where =
-					"<a class='main-search-link' href='#!/" + currentAlbum.cacheBase + "'>" +
-					util._t("#by-search") +
-					"</a> " +
-					util._t("#in") +
-					" <span id='search-album-to-be-filled'></span>";
-			} else {
-				where =
-					"<a class='search-link' href='#!/" + currentAlbum.cacheBase + "'>" +
-					util._t("#by-search") +
-					"</a>";
 			}
+			where =
+				"<a class='" + searchClass + "' href='#!/" + currentAlbum.cacheBase + "'>" +
+				util._t("#by-search") +
+				"</a>";
 
 			title += "<span class='title-no-anchor'>(" + where + ")</span>";
 			where = util.stripHtmlAndReplaceEntities(where);
