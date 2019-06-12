@@ -296,8 +296,8 @@ class Album(object):
 			self.nums_protected_media_in_sub_tree[combination] += album1.nums_protected_media_in_sub_tree[combination]
 
 	def leave_only_unprotected_content(self):
-		print()
-		pprint(["BEFORE, UNPROTECTED", self.name, self.to_dict()])
+		# print()
+		# pprint(["BEFORE, UNPROTECTED", self.name, self.to_dict()])
 		self.is_protected = False
 		# # search albums:
 		# # - do not process subalbums because they have been already processed
@@ -340,13 +340,13 @@ class Album(object):
 		for key in self.nums_protected_media_in_sub_tree:
 			self.num_media_in_sub_tree -= self.nums_protected_media_in_sub_tree[key]
 
-		print()
-		pprint(["AFTER, UNPROTECTED", self.name, self.to_dict()])
+		# print()
+		# pprint(["AFTER, UNPROTECTED", self.name, self.to_dict()])
 
 
 	def leave_only_content_protected_by(self, passwords_list):
-		print()
-		pprint(["BEFORE, PROTECTED", self.name, Options.convert_md5s_list_to_identifiers(passwords_list), self.to_dict()])
+		# print()
+		# pprint(["BEFORE, PROTECTED", self.name, Options.convert_md5s_list_to_identifiers(passwords_list), self.to_dict()])
 		# # search albums:
 		# # - do not process subalbums because they have been already processed
 		# # - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
@@ -381,8 +381,8 @@ class Album(object):
 		else:
 			self.num_media_in_sub_tree = 0
 
-		print()
-		pprint(["AFTER, PROTECTED", self.name, Options.convert_md5s_list_to_identifiers(passwords_list), self.to_dict()])
+		# print()
+		# pprint(["AFTER, PROTECTED", self.name, Options.convert_md5s_list_to_identifiers(passwords_list), self.to_dict()])
 
 	def generate_protected_content_albums(self):
 		protected_albums = {}
@@ -583,6 +583,7 @@ class Album(object):
 			# "positionsAndMediaInTree": self.positions_and_media_in_tree,
 			"jsonVersion": Options.json_version
 		}
+		# pprint(dictionary)
 		nums_protected_by_code = {}
 		for passwords_md5 in self.nums_protected_media_in_sub_tree:
 			password_codes = Options.convert_md5s_to_codes(passwords_md5)

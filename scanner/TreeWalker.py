@@ -480,7 +480,7 @@ class TreeWalker:
 		by_search_max_file_date = None
 		message("working with word albums...", "", 5)
 		for word, media_album_and_words in self.tree_by_search.items():
-			pprint(["AAAAA", media_album_and_words])
+			# pprint(["AAAAA", media_album_and_words])
 			next_level()
 			message("working with word album...", "", 5)
 			word_path = os.path.join(by_search_path, str(word))
