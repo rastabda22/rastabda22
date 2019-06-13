@@ -35,10 +35,11 @@ import numpy as np
 import exifread
 
 from CachePath import remove_album_path, remove_folders_marker, trim_base_custom
-from CachePath import thumbnail_types_and_sizes, file_mtime, photo_cache_name, video_cache_name
+from CachePath import thumbnail_types_and_sizes, photo_cache_name, video_cache_name
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_all_but_alphanumeric_chars_dashes_slashes_dots, switch_to_lowercase
-from Utilities import message, indented_message, next_level, back_level
+from Utilities import message, indented_message, next_level, back_level, file_mtime, json_files_and_mtime
+from Utilities import merge_dictionaries_from_cache, convert_md5s_to_codes, convert_md5s_list_to_identifiers
 from Geonames import Geonames
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
@@ -346,7 +347,7 @@ class Album(object):
 
 	def leave_only_content_protected_by(self, passwords_list):
 		# print()
-		# pprint(["BEFORE, PROTECTED", self.name, Options.convert_md5s_list_to_identifiers(passwords_list), self.to_dict()])
+		# pprint(["BEFORE, PROTECTED", self.name, convert_md5s_list_to_identifiers(passwords_list), self.to_dict()])
 		# # search albums:
 		# # - do not process subalbums because they have been already processed
 		# # - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
@@ -382,7 +383,7 @@ class Album(object):
 			self.num_media_in_sub_tree = 0
 
 		# print()
-		# pprint(["AFTER, PROTECTED", self.name, Options.convert_md5s_list_to_identifiers(passwords_list), self.to_dict()])
+		# pprint(["AFTER, PROTECTED", self.name, convert_md5s_list_to_identifiers(passwords_list), self.to_dict()])
 
 	def generate_protected_content_albums(self):
 		protected_albums = {}
@@ -398,7 +399,7 @@ class Album(object):
 		save_message_3 = "saving positions album..."
 		save_message_4 = "positions album saved"
 		if passwords_md5 is not None:
-			identifiers = Options.convert_md5s_list_to_identifiers(passwords_md5.split('-'))
+			identifiers = convert_md5s_list_to_identifiers(passwords_md5.split('-'))
 			save_message_1 = "saving  " + identifiers + "..."
 			save_message_2 = "protected album for " + identifiers + " saved"
 			save_message_3 = "saving protected positions album for " + identifiers + "..."
@@ -435,12 +436,28 @@ class Album(object):
 		indented_message(save_message_4, "", 4)
 
 	@staticmethod
-	def from_cache(path, album_cache_base):
+	def from_cache(path, album_cache_base, old_password_codes):
+		# TO DO: the positions, both unprotected and protected, must be read and included too
 		next_level()
-		message("reading album...", path, 5)
-		with open(path, "r") as filepath:
-			dictionary = json.load(filepath)
-		indented_message("album read", path, 5)
+		message("reading album from json files...", path, 5)
+		json_files, mtime = json_files_and_mtime(album_cache_base)
+		# json_files is the list of the existing files for that cache base
+		dictionary = None
+		for json_file in json_files:
+			with open(json_file, "r") as filepath:
+				dictionary = merge_dictionaries_from_cache(dictionary, json.load(filepath), old_password_codes)
+					
+		indented_message("album read from json files", path, 5)
+		# message("reading protected albums...", path, 5)
+		# md5_list = [x['password_md5'] for x in Options.identifiers_and_passwords]
+		# for md5 in md5_list:
+		# 	protected_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + md5, album_cache_base) + ".json"
+		# 	with open(protected_path, "r") as filepath:
+		# 		protected_dictionary = json.load(filepath)
+		# 	dictionary = merge_dictionaries_from_cache(dictionary, protected_dictionary, old_password_codes)
+		# 	if dictionary is None:
+		# 		return None
+		# indented_message("protected albums read and merged", path, 5)
 		back_level()
 		# generate the album from the json file loaded
 		# subalbums are not generated yet
@@ -501,7 +518,7 @@ class Album(object):
 					}
 					nums_protected_by_code = {}
 					for passwords_md5 in subalbum.nums_protected_media_in_sub_tree:
-						codes = Options.convert_md5s_to_codes(passwords_md5)
+						codes = convert_md5s_to_codes(passwords_md5)
 						nums_protected_by_code[codes] = subalbum.nums_protected_media_in_sub_tree[passwords_md5]
 					sub_dict["numsProtectedMediaInSubTree"] = nums_protected_by_code
 
@@ -587,11 +604,11 @@ class Album(object):
 		# pprint(dictionary)
 		nums_protected_by_code = {}
 		for passwords_md5 in self.nums_protected_media_in_sub_tree:
-			password_codes = Options.convert_md5s_to_codes(passwords_md5)
+			password_codes = convert_md5s_to_codes(passwords_md5)
 			nums_protected_by_code[password_codes] = self.nums_protected_media_in_sub_tree[passwords_md5]
 		dictionary["numsProtectedMediaInSubTree"] = nums_protected_by_code
 		if len(self.combination) > 0:
-			dictionary["combination"] = Options.convert_md5s_to_codes(self.combination)
+			dictionary["combination"] = convert_md5s_to_codes(self.combination)
 
 		if hasattr(self, "center"):
 			dictionary["center"] = self.center
@@ -599,8 +616,6 @@ class Album(object):
 			dictionary["name"] = self.name
 		if hasattr(self, "alt_name"):
 			dictionary["altName"] = self.alt_name
-		if self.cache_base == Options.config['folders_string']:
-			dictionary["numPoints"] = len(self.positions_and_media_in_tree.positions)
 
 		return dictionary
 
@@ -1395,7 +1410,8 @@ class Media(object):
 		thumb_path = os.path.join(thumbs_path_with_subdir, album_prefix + photo_cache_name(self, thumb_size, thumb_type, mobile_bigger))
 		# if the reduced image/thumbnail is there and is valid, exit immediately
 		json_file = os.path.join(thumbs_path, self.album.json_file)
-		json_file_exists = os.path.exists(json_file)
+		json_file_list, json_file_mtime = json_files_and_mtime(self.cache_base)
+		# json_files_and_mtime = os.path.exists(json_file)
 		_is_thumbnail = Media.is_thumbnail(thumb_type)
 		next_level()
 		message("checking reduction/thumbnail", thumb_path, 5)
@@ -1403,7 +1419,7 @@ class Media(object):
 			os.path.exists(thumbs_path_with_subdir) and
 			os.path.exists(thumb_path) and
 			file_mtime(thumb_path) >= self.datetime_file and
-			(not json_file_exists or file_mtime(thumb_path) < file_mtime(json_file)) and
+			(len(json_file_list) == 0 or file_mtime(thumb_path) < file_mtime(json_file)) and
 			(
 				not _is_thumbnail and not Options.config['recreate_reduced_photos'] or
 				_is_thumbnail and not Options.config['recreate_thumbnails']
@@ -1422,10 +1438,10 @@ class Media(object):
 			message("unexistent reduction/thumbnail", thumb_path, 5)
 		elif file_mtime(thumb_path) < self.datetime_file:
 			message("reduction/thumbnail older than media date time", thumb_path, 5)
-		elif not json_file_exists:
-			message("unexistent json file", json_file, 5)
-		elif file_mtime(thumb_path) >= file_mtime(json_file):
-			message("reduction/thumbnail newer than json file", thumb_path + ", " + json_file, 5)
+		elif len(json_file_list) == 0:
+			message("unexistent json files", json_file, 5)
+		elif file_mtime(thumb_path) >= json_file_mtime:
+			message("reduction/thumbnail newer than json files", thumb_path + ", " + json_file, 5)
 		elif not (
 			not _is_thumbnail and not Options.config['recreate_reduced_photos'] or
 			_is_thumbnail and not Options.config['recreate_thumbnails']

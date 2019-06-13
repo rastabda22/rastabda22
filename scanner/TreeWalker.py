@@ -20,10 +20,12 @@ from pprint import pprint
 
 from PIL import Image
 
-from CachePath import remove_album_path, file_mtime, last_modification_time, trim_base_custom, remove_folders_marker
+from CachePath import remove_album_path, last_modification_time, trim_base_custom
+from CachePath import remove_folders_marker
+from Utilities import get_old_password_codes, save_password_codes, json_files_and_mtime
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_digits, switch_to_lowercase, phrase_to_words, checksum
-from Utilities import message, indented_message, next_level, back_level, report_times
+from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, next_file_name
 from PhotoAlbum import Media, Album, PhotoAlbumEncoder, Position, Positions
 from Geonames import Geonames
 import Options
@@ -105,6 +107,7 @@ class TreeWalker:
 		self.origin_album = Album(Options.config['album_path'])
 		# self.origin_album.read_album_ini() # origin_album is not a physical one, it's the parent of the root physical tree and of the virtual albums
 		self.origin_album.cache_base = "root"
+		self.old_password_codes = get_old_password_codes()
 		next_level()
 		[folders_album, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], self.origin_album)
 		# [folders_album, num, nums_protected, positions, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], self.origin_album)
@@ -168,6 +171,7 @@ class TreeWalker:
 			self.time_of_album_saving = datetime.now()
 			message("saving all albums to json files...", "", 4)
 			next_level()
+			save_password_codes()
 			for album in self.origin_album.subalbums:
 				# try:
 				self.all_albums_to_json_file(album)
@@ -206,26 +210,27 @@ class TreeWalker:
 
 	@staticmethod
 	def determine_symlink_name(symlink):
-		n = 1
-		file_name = os.path.basename(symlink)
-		symlink_list = symlink.split('.')
-		is_positions = (symlink_list[-2] == 'positions')
-
-		if is_positions:
-			subtract = 1
-			has_already_number_inside = (len(file_name.split('.')) > 3)
-		else:
-			subtract = 0
-			has_already_number_inside = (len(file_name.split('.')) > 2)
-
-		if has_already_number_inside:
-			first_part = symlink_list[:-2 - subtract]
-		else:
-			first_part = symlink_list[:-1 - subtract]
+		# n = 1
+		# file_name = os.path.basename(symlink)
+		# symlink_list = symlink.split('.')
+		# is_positions = (symlink_list[-2] == 'positions')
+		#
+		# if is_positions:
+		# 	subtract = 1
+		# 	has_already_number_inside = (len(file_name.split('.')) > 3)
+		# else:
+		# 	subtract = 0
+		# 	has_already_number_inside = (len(file_name.split('.')) > 2)
+		#
+		# if has_already_number_inside:
+		# 	first_part = symlink_list[:-2 - subtract]
+		# else:
+		# 	first_part = symlink_list[:-1 - subtract]
 
 		while (os.path.isfile(symlink)):
-			symlink = '.'.join(first_part + [str(n)] + symlink_list[-1 - subtract:])
-			n += 1
+			# symlink = '.'.join(first_part + [str(n)] + symlink_list[-1 - subtract:])
+			symlink = next_file_name(symlink)
+			# n += 1
 		return symlink
 
 
@@ -1068,10 +1073,7 @@ class TreeWalker:
 			back_level()
 
 		json_file = os.path.join(Options.config['cache_path'], album_cache_base) + ".json"
-		json_file_exists = os.path.exists(json_file)
-		json_file_mtime = None
-		if json_file_exists:
-			json_file_mtime = file_mtime(json_file)
+		json_file_list, json_file_mtime = json_files_and_mtime(album_cache_base)
 		album_ini_file = os.path.join(absolute_path, Options.config['metadata_filename'])
 		album_ini_good = False
 		must_process_album_ini = False
@@ -1090,11 +1092,11 @@ class TreeWalker:
 			message("not an album cache hit", "forced json file recreation, some sensible option has changed", 3)
 		else:
 			try:
-				if json_file_exists:
-					if not os.access(json_file, os.R_OK):
-						message("not an album cache hit", "json file unreadable", 1)
-					elif not os.access(json_file, os.W_OK):
-						message("not an album cache hit", "json file unwritable", 1)
+				if len(json_file_list) > 0:
+					if not all([os.access(json, os.R_OK) for json in json_file_list]):
+						message("not an album cache hit", "some json file unreadable", 1)
+					elif not all([os.access(json, os.W_OK) for json in json_file_list]):
+						message("not an album cache hit", "some json file unwritable", 1)
 					else:
 						if album_ini_good and file_mtime(album_ini_file) > json_file_mtime:
 							# a check on album_ini_file content would have been good:
@@ -1102,12 +1104,13 @@ class TreeWalker:
 							message("not an album cache hit", "album.ini newer than json file, recreating json file taking into account album.ini", 4)
 							must_process_album_ini = True
 						elif file_mtime(absolute_path) >= json_file_mtime:
-							indented_message("not an album cache hit", "dir time > json file time", 4)
+							indented_message("not an album cache hit", "album dir newer than json file", 4)
+						elif Options.passwords_file_mtime is not None and Options.passwords_file_mtime >= json_file_mtime:
+							indented_message("not an album cache hit", "passwords file newer than json file", 4)
 						else:
 							message("maybe a cache hit", "working with '" + json_file + "' to import album...", 5)
 							# the following is the instruction which could raise the error
-							cached_album = Album.from_cache(json_file, album_cache_base)
-							# TO DO: the protected album must be read and summed up too
+							cached_album = Album.from_cache(json_file, album_cache_base, self.old_password_codes)
 
 							indented_message("json file imported", "", 5)
 							# if file_mtime(absolute_path) >= json_file_mtime:
@@ -1138,10 +1141,10 @@ class TreeWalker:
 				indented_message("not an album cache hit", "json file unexistent", 4)
 				album_cache_hit = False
 			# is the following exception needed? it surely catched date errors...
-			except (ValueError, AttributeError, KeyError):
-				indented_message("not an album cache hit", "ValueError, AttributeError or KeyError somewhere", 4)
-				album_cache_hit = False
-				cached_album = None
+			# except (ValueError, AttributeError, KeyError):
+			# 	indented_message("not an album cache hit", "ValueError, AttributeError or KeyError somewhere", 4)
+			# 	album_cache_hit = False
+			# 	cached_album = None
 
 		if not album_cache_hit:
 			message("generating void album...", "", 5)

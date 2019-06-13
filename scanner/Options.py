@@ -17,7 +17,7 @@ try:
 except ImportError:
 	import ConfigParser as configparser
 
-from Utilities import message, indented_message, next_level, back_level, find, find_in_usr_share
+from Utilities import message, indented_message, next_level, back_level, find, find_in_usr_share, make_dir, file_mtime
 
 config = {}
 date_time_format = "%Y-%m-%d %H:%M:%S"
@@ -65,6 +65,7 @@ config['unicode_combining_marks'] = unicode_combining_marks_n + unicode_combinin
 
 thumbnail_types_and_sizes_list = None
 identifiers_and_passwords = []
+passwords_file_mtime = None
 config['cv2_installed'] = True
 face_cascade = None
 eye_cascade = None
@@ -87,38 +88,6 @@ max_random = 1000000000
 # json_version = 3.98 since property passwords changed to passwordsMd5 in json file
 # json_version = 3.97 since passwords removed from json file
 json_version = "3.96"
-
-def make_dir(absolute_path, message_part):
-	# makes a subdir and manages errors
-	relative_path = absolute_path[len(config['index_html_path']) + 1:]
-	if not os.path.exists(absolute_path):
-		try:
-			message("creating " + message_part, "", 5)
-			os.makedirs(absolute_path)
-			indented_message(message_part + " created", relative_path, 4)
-			os.chmod(absolute_path, 0o777)
-			message("permissions set", "", 5)
-		except OSError:
-			message("FATAL ERROR", "couldn't create " + message_part, "('" + relative_path + "')' quitting", 0)
-			sys.exit(-97)
-	else:
-		message(message_part + " already existent, not creating it", relative_path, 5)
-
-def convert_md5s_to_codes(passwords_md5):
-	password_codes = list()
-	for password_md5 in passwords_md5.split('-'):
-		password_code = next(x['password_code'] for x in identifiers_and_passwords if x['password_md5'] == password_md5)
-		password_codes.append(password_code)
-	return '-'.join(password_codes)
-
-
-def convert_md5s_list_to_identifiers(md5_list):
-	identifiers = list()
-	for password_md5 in md5_list:
-		identifier = next(x['identifier'] for x in identifiers_and_passwords if x['password_md5'] == password_md5)
-		identifiers.append(identifier)
-	return '-'.join(identifiers)
-
 
 def initialize_opencv():
 	global face_cascade, eye_cascade
@@ -159,6 +128,7 @@ def initialize_opencv():
 		message("importer", "No opencv library available, not using it", 2)
 
 def get_options():
+	global passwords_file_mtime
 	project_dir = os.path.dirname(os.path.realpath(os.path.join(__file__, "..")))
 	default_config_file = os.path.join(project_dir, "myphotoshare.conf.defaults")
 	default_config = configparser.ConfigParser()
@@ -388,16 +358,13 @@ def get_options():
 
 		passwords_subdir_with_path = os.path.join(config['cache_path'], config['passwords_subdir'])
 		make_dir(passwords_subdir_with_path, "passwords subdir")
-		# remove the old single password files
-		for password_file in sorted(os.listdir(passwords_subdir_with_path)):
-			os.unlink(os.path.join(passwords_subdir_with_path, password_file))
-		message("Old password files removed","", 5)
-
 		passwords_file_name = os.path.join(os.path.dirname(sys.argv[1]), config['passwords_file'])
 		password_codes = []
 		passwords_md5 = []
+
 		try:
 			with open(passwords_file_name, 'r') as passwords_file:
+				# Get the old file contents, they are needed in order to evalutate the numsProtectedMediaInSubTree dictionary in json file
 				message("Reading passwords file", passwords_file_name, 3)
 				for line in passwords_file.read().splitlines():
 					# remove leading spaces
@@ -432,12 +399,8 @@ def get_options():
 						"identifier: " + identifier + ", encrypted password: " + password_md5 + ", password code = " + str(password_code),
 						3
 					)
-
-					# create the new single password files
-					message("creating new password file", "", 4)
-					with open(os.path.join(passwords_subdir_with_path, password_md5), 'w') as password_file:
-						json.dump({"passwordCode": str(password_code)}, password_file)
-						indented_message("New password file created","", 3)
+			if len(identifiers_and_passwords) > 0:
+				passwords_file_mtime = file_mtime(passwords_file_name)
 		except IOError:
 			indented_message("WARNING", passwords_file_name + " doesn't exist or unreadable, not using it", 2)
 
