@@ -714,7 +714,7 @@
 				Options.folders_string,
 				// callback
 				function(foldersRootAlbum) {
-					if (! foldersRootAlbum.numPoints) {
+					if (! foldersRootAlbum.numPositionsInTree) {
 						// $("#by-gps-view").addClass("hidden");
 						self.geotaggedPhotosFound = false;
 						callback(false);
