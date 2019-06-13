@@ -42,7 +42,7 @@ When performing a search, protected content is not included in the results: actu
 
 Similarly, the maps don't include the point for the protected photos.
 
-#### Privacy considerations
+### Privacy considerations
 
 It's important that the directory listing feature of `apache` (or the equivalent of other _web server_) be disabled; otherwise, requesting the `cache` or `albums` directory would show all the content.
 
