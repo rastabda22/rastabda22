@@ -32,13 +32,23 @@ The encrpted password is saved as a file name in a `passwords_subdir` option, th
 
 ### How the javascript manages the passwords
 
-When an album with password is requested, the authorization form is shown, and, if the encrypted password entered by the user matches the name of some file in the directory specified by `passwords_subdir`, the album/media is show; otherwise, the form keeps being showed, and user can use the ´back´ browser button or the `esc` key to go back to the previous position. The code got from the password file in `passwords_subdir` is stored into an array of guessed codes, which will remain there until the session is closed or the page is reloaded.
+When no password has been entered and matched yet, only the unprotected albums are loaded. An (optional) padlock is shown aside the right menu icon, telling the user that some protected content is available in the subalbum tree.
 
-When the hash of a protected album or media is requested, the password is requested.
+Clicking on the padlock or the equivalent right menu entry or hitting the _u_ ("unlock") key, the authorization form is shown, and, if the md5 of the password entered by the user matches the md5 of some password, the protected content unlocked by that password is added.
 
-When performing a search, protected content is not included in the results. A menu entry is available in the right menu, in order to unveil the protected content.
+If a direct link of a protected content is requested, the the authorization form is shown, and, on match, the content is shown.
 
-The maps don't include the point for the protected photos.
+When performing a search, protected content is not included in the results: actually, the javascript code doesn't know it until it loades the protected content json files, which will happen when a matching password is entered.
+
+Similarly, the maps don't include the point for the protected photos.
+
+#### Privacy considerations
+
+It's important that the directory listing feature of `apache` (or the equivalent of other _web server_) be disabled; otherwise, requesting the `cache` or `albums` directory would show all the content.
+
+However, `myphotoshares` doesn't change anything in the albums tree, so a protected media or directory name could be guessed if my similar to the unprotected ones. For a higher privacy, protected media/directories should have unguessable names.
+
+Using the browser developer tools, the only information that could be retrieved is the album property _numsProtectedMediaInSubTree_, which lists the number of protected media in the tree by password codes (random numbers) combinations. So a malicious user would only know that some protected content is inside the album.
 
 ## Optional: Deployment Makefiles
 
