@@ -445,7 +445,13 @@ class Album(object):
 		dictionary = None
 		for json_file in json_files:
 			with open(json_file, "r") as filepath:
-				dictionary = merge_dictionaries_from_cache(dictionary, json.load(filepath), old_password_codes)
+				try:
+					json_file_dict = json.load(filepath)
+				except ValueError:
+					indented_message("json file empty: why???", json_file, 4)
+					back_level()
+					return None
+				dictionary = merge_dictionaries_from_cache(dictionary, json_file_dict, old_password_codes)
 
 		indented_message("album read from json files", path, 5)
 		back_level()
@@ -453,11 +459,12 @@ class Album(object):
 		# subalbums are not generated yet
 		if dictionary is None:
 			indented_message("json file no usable as a cache hit", path, 4)
+			return None
 		else:
 			message("converting album to dict from json file...", path, 5)
-			dictionary = Album.from_dict(dictionary, album_cache_base)
+			album = Album.from_dict(dictionary, album_cache_base)
 			indented_message("album converted to dict from json file", path, 4)
-		return dictionary
+			return album
 
 	@staticmethod
 	def from_dict(dictionary, album_cache_base, cripple=True):

@@ -999,14 +999,16 @@ class TreeWalker:
 		if Options.config['exclude_files_marker'] in listdir:
 			indented_message("files excluded by marker file", Options.config['exclude_files_marker'], 4)
 			skip_files = True
+		pwd_file_mtime = None
 		if len(Options.identifiers_and_passwords) and Options.config['passwords_marker'] in listdir:
 			next_level()
 			message(Options.config['passwords_marker'] + " file found", "reading it", 4)
-			pw_file = os.path.join(absolute_path, Options.config['passwords_marker'])
-			if not os.access(pw_file, os.R_OK):
-				indented_message("unreadable file", pw_file, 2)
+			pwd_file = os.path.join(absolute_path, Options.config['passwords_marker'])
+			pwd_file_mtime = file_mtime(pwd_file)
+			if not os.access(pwd_file, os.R_OK):
+				indented_message("unreadable file", pwd_file, 2)
 			else:
-				with open(pw_file, 'r') as passwords_file:
+				with open(pwd_file, 'r') as passwords_file:
 					for line in passwords_file.read().splitlines():
 						# remove leading spaces
 						line = line.lstrip()
@@ -1107,8 +1109,10 @@ class TreeWalker:
 							indented_message("not an album cache hit", "album dir newer than json file", 4)
 						elif Options.passwords_file_mtime is not None and Options.passwords_file_mtime >= json_file_mtime:
 							indented_message("not an album cache hit", "passwords file newer than json file", 4)
+						elif len(passwords) > 0 and pwd_file_mtime is not None and pwd_file_mtime >= json_file_mtime:
+							indented_message("not an album cache hit", Options.config['passwords_marker'] + " newer than json file", 4)
 						else:
-							message("maybe a cache hit", "working with '" + json_file + "' to import album...", 5)
+							message("maybe a cache hit", "trying to import album from '" + json_file + "'", 5)
 							# the following is the instruction which could raise the error
 							cached_album = Album.from_cache(json_file, album_cache_base, self.old_password_codes)
 
@@ -1136,10 +1140,10 @@ class TreeWalker:
 					must_process_album_ini = True
 			except KeyboardInterrupt:
 				raise
-			except IOError:
-				# will execution never come here?
-				indented_message("not an album cache hit", "json file unexistent", 4)
-				album_cache_hit = False
+			# except IOError:
+			# 	# will execution never come here?
+			# 	indented_message("not an album cache hit", "json file unexistent", 4)
+			# 	album_cache_hit = False
 			# is the following exception needed? it surely catched date errors...
 			# except (ValueError, AttributeError, KeyError):
 			# 	indented_message("not an album cache hit", "ValueError, AttributeError or KeyError somewhere", 4)

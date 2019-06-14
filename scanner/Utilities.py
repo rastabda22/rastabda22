@@ -125,30 +125,30 @@ def save_password_codes():
 			json.dump({"passwordCode": password_code}, password_file)
 		indented_message("New password file created", password_md5, 4)
 
-def merge_dictionaries_from_cache(dict, protected_dict, old_password_codes):
+def merge_dictionaries_from_cache(dict, dict1, old_password_codes):
 	if dict is None:
-		return protected_dict
-	if protected_dict is None:
+		return dict1
+	if dict1 is None:
 		return dict
-	dict['numMediaInSubTree'] += protected_dict['numMediaInSubTree']
+	dict['numMediaInSubTree'] += dict1['numMediaInSubTree']
 	old_md5_list = []
 	for codes in dict['numsProtectedMediaInSubTree']:
 		for code in codes.split('-'):
 			try:
-				if old_password_codes[code] not in old_md5_list:
+				if len(old_password_codes) > 0 and old_password_codes[code] not in old_md5_list:
 					old_md5_list.append(old_password_codes[code])
 			except KeyError:
 				return None
 	# if set(old_md5_list) != set([x['password_md5'] for x in Options.identifiers_and_passwords]):
 	# 	return None
 
-	dict['media'].extend(protected_dict['media'])
+	dict['media'].extend(dict1['media'])
 	subalbums_cache_bases = [subalbum['cacheBase'] for subalbum in dict['subalbums']]
-	dict['subalbums'].extend([subalbum for subalbum in protected_dict['subalbums'] if subalbum['cacheBase'] not in subalbums_cache_bases])
-	for key in protected_dict['numsProtectedMediaInSubTree']:
+	dict['subalbums'].extend([subalbum for subalbum in dict1['subalbums'] if subalbum['cacheBase'] not in subalbums_cache_bases])
+	for key in dict1['numsProtectedMediaInSubTree']:
 		if key not in dict['numsProtectedMediaInSubTree']:
 			dict['numsProtectedMediaInSubTree'][key] = 0
-		dict['numsProtectedMediaInSubTree'][key] += protected_dict['numsProtectedMediaInSubTree'][key]
+		dict['numsProtectedMediaInSubTree'][key] += dict1['numsProtectedMediaInSubTree'][key]
 	return dict
 
 def message(category, text, verbose=0):
