@@ -446,29 +446,17 @@ class Album(object):
 		for json_file in json_files:
 			with open(json_file, "r") as filepath:
 				dictionary = merge_dictionaries_from_cache(dictionary, json.load(filepath), old_password_codes)
-					
+
 		indented_message("album read from json files", path, 5)
-		# message("reading protected albums...", path, 5)
-		# md5_list = [x['password_md5'] for x in Options.identifiers_and_passwords]
-		# for md5 in md5_list:
-		# 	protected_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + md5, album_cache_base) + ".json"
-		# 	with open(protected_path, "r") as filepath:
-		# 		protected_dictionary = json.load(filepath)
-		# 	dictionary = merge_dictionaries_from_cache(dictionary, protected_dictionary, old_password_codes)
-		# 	if dictionary is None:
-		# 		return None
-		# indented_message("protected albums read and merged", path, 5)
 		back_level()
 		# generate the album from the json file loaded
 		# subalbums are not generated yet
-		message("converting album to dict from json file...", path, 5)
-		next_level()
-		dictionary = Album.from_dict(dictionary, album_cache_base)
-		if dictionary is not None:
-			message("album converted to dict from json file", path, 4)
+		if dictionary is None:
+			indented_message("json file no usable as a cache hit", path, 4)
 		else:
-			message("json version unexistent or old", path, 4)
-		back_level()
+			message("converting album to dict from json file...", path, 5)
+			dictionary = Album.from_dict(dictionary, album_cache_base)
+			indented_message("album converted to dict from json file", path, 4)
 		return dictionary
 
 	@staticmethod
