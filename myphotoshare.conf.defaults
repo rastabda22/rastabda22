@@ -128,6 +128,11 @@ video_crf = 20
 jpeg_quality = 95
 
 # markers that permit not to scan files in folder or whole trees
+################################################################################
+# BEWARE:
+# if you use this feature and don't change this options, the user can know what files you are hiding,
+# and therefore could try to access them in the `/albums/` tree
+################################################################################
 exclude_files_marker = .myphotoshare.exclude.files
 exclude_tree_marker = .myphotoshare.exclude.tree
 
@@ -138,6 +143,11 @@ exclude_tree_marker = .myphotoshare.exclude.tree
 #   the subalbums/media matched by the patter will be protected by the password assigned to the identifier
 # -  a "-" (minus sign): it will stop the passwords from the parent albums propagate into it.
 # The case sensitive/insensitive flag is either "cs" or "ci".
+################################################################################
+# BEWARE:
+# if you have protected content and don't change this option, the user can know what files you are protecting,
+# and therefore could try to access them in the `/albums/` tree
+################################################################################
 passwords_marker = .myphotoshare.passwords
 
 # password file, relative to the directory of the configuration file

@@ -44,11 +44,19 @@ Similarly, the maps don't include the point for the protected photos.
 
 ### Privacy considerations
 
+Using the browser developer tools, the only information a user could retrieve is the album property _numsProtectedMediaInSubTree_, which lists the number of protected media in the tree by password codes (random numbers) combinations. So a malicious user would only know that some protected content is inside the album.
+
+#### Do not allow listing of directories content
+
 It's important that the directory listing feature of `apache` (or the equivalent of other _web server_) be disabled; otherwise, requesting the `cache` or `albums` directory would show all the content.
 
-However, `myphotoshares` doesn't change anything in the albums tree, so a protected media or directory name could be guessed if my similar to the unprotected ones. For a higher privacy, protected media/directories should have unguessable names.
+#### Beware of guessable media names
 
-Using the browser developer tools, the only information that could be retrieved is the album property _numsProtectedMediaInSubTree_, which lists the number of protected media in the tree by password codes (random numbers) combinations. So a malicious user would only know that some protected content is inside the album.
+`myphotoshares` doesn't change anything in the albums tree, so a protected media or directory name could be guessed if my similar to the unprotected ones. For a higher privacy, protected media/directories should have unguessable names.
+
+#### Change the password marker file name
+
+The option `passwords_marker` must be changed in the config file; otherwise a malicious user could access it and know what you are protecting: from the marker content he/she could find the protected content in the `/albums/ tree.`
 
 ## Optional: Deployment Makefiles
 
