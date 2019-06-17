@@ -138,6 +138,7 @@ def merge_dictionaries_from_cache(dict, dict1, old_password_codes):
 				if len(old_password_codes) > 0 and old_password_codes[code] not in old_md5_list:
 					old_md5_list.append(old_password_codes[code])
 			except KeyError:
+				indented_message("not an album cache hit", "key error in password codes", 4)
 				return None
 	# if set(old_md5_list) != set([x['password_md5'] for x in Options.identifiers_and_passwords]):
 	# 	return None
@@ -164,7 +165,7 @@ def message(category, text, verbose=0):
 	  |    |                                   |                text
 	  |    |                                   indented category
       |    date and time
-	  microseconds
+	  microseconds from last message
 	```
 
 	Elapsed time for each category is cumulated and can be printed with `report_times`.

@@ -458,7 +458,7 @@ class Album(object):
 		# generate the album from the json file loaded
 		# subalbums are not generated yet
 		if dictionary is None:
-			indented_message("json file no usable as a cache hit", path, 4)
+			indented_message("json file not usable as a cache hit", path, 4)
 			return None
 		else:
 			message("converting album to dict from json file...", path, 5)
@@ -474,6 +474,7 @@ class Album(object):
 			path = dictionary["path"]
 		# Don't use cache if version has changed
 		if Options.json_version == 0 or "jsonVersion" not in dictionary or dictionary["jsonVersion"] != Options.json_version:
+			indented_message("not an album cache hit", "unexistent/old json_version", 4)
 			return None
 		album = Album(os.path.join(Options.config['album_path'], path))
 		album.cache_base = album_cache_base
