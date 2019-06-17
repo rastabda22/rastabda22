@@ -481,7 +481,6 @@ class TreeWalker:
 			by_search_album.add_album(word_album)
 			for single_media in media_album_and_words["media_list"]:
 				word_album.add_media(single_media)
-				word_album.positions_and_media_in_tree.add_media(single_media)
 				word_album.num_media_in_sub_tree += 1
 				# actually, this counter for the search root album is not significant
 				by_search_album.num_media_in_sub_tree += 1
