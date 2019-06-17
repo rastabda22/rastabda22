@@ -915,7 +915,7 @@ class TreeWalker:
 			if word:
 				if word not in list(self.tree_by_search.keys()):
 					self.tree_by_search[word] = {"media_list": [], "albums_list": [], "unicode_words": []}
-				if not album.copy_in_tree_by_search(self.tree_by_search[word]):
+				if not album.is_already_in_tree_by_search(self.tree_by_search[word]):
 				# if album not in self.tree_by_search[word]["albums_list"]:
 					self.tree_by_search[word]["albums_list"].append(album.copy())
 					if unicode_word not in self.tree_by_search[word]["unicode_words"]:

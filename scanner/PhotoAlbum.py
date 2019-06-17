@@ -249,9 +249,9 @@ class Album(object):
 		indented_message("metadata values from album.ini added to album...", "", 5)
 		back_level()
 
-	def copy_in_tree_by_search(self, tree_by_search_word):
-		album_list = tree_by_search_word["albums_list"]
-		return len([album for album in album_list if self.cache_base == album.cache_base]) == 1
+	def is_already_in_tree_by_search(self, tree_by_search_word):
+		albums_list = tree_by_search_word["albums_list"]
+		return len([album for album in albums_list if self.cache_base == album.cache_base]) == 1
 
 
 	def add_media(self, media):
