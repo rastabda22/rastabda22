@@ -417,7 +417,7 @@ class Album(object):
 		save_message_4 = "positions album saved"
 		if passwords_md5 is not None:
 			identifiers = convert_md5s_list_to_identifiers(passwords_md5.split('-'))
-			save_message_1 = "saving  " + identifiers + "..."
+			save_message_1 = "saving protected album for " + identifiers + "..."
 			save_message_2 = "protected album for " + identifiers + " saved"
 			save_message_3 = "saving protected positions album for " + identifiers + "..."
 			save_message_4 = "protected positions album for " + identifiers + " saved"
@@ -1288,7 +1288,7 @@ class Media(object):
 				mirror = image.transpose(Image.ROTATE_90)
 			image = mirror
 		except IOError:
-			# https://github.com/paolobenve/myphotoshare/issues/46: some image may raise this exception
+			# https://gitlab.com/paolobenve/myphotoshare/issues/46: some image may raise this exception
 			message("WARNING: Photo couldn't be trasposed", photo_path, 2)
 
 		self._photo_thumbnails_cascade(image, photo_path, thumbs_path)
