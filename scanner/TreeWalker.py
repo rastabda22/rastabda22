@@ -317,21 +317,33 @@ class TreeWalker:
 		by_date_album.parent_cache_base = origin_album.cache_base
 		by_date_album.cache_base = Options.config['by_date_string']
 		by_date_max_file_date = None
-		for year, _ in self.tree_by_date.items():
+
+		years = list(self.tree_by_date.keys())
+		years.sort()
+		for year in years:
 			year_path = os.path.join(by_date_path, str(year))
 			year_album = Album(year_path)
 			year_album.parent_cache_base = by_date_album.cache_base
 			year_album.cache_base = by_date_album.cache_base + Options.config['cache_folder_separator'] + year
 			year_max_file_date = None
 			by_date_album.add_album(year_album)
-			for month, _ in self.tree_by_date[year].items():
+
+			months = list(self.tree_by_date[year].keys())
+			months.sort()
+			for month in months:
+			# for month, _ in self.tree_by_date[year].items():
 				month_path = os.path.join(year_path, str(month))
 				month_album = Album(month_path)
 				month_album.parent_cache_base = year_album.cache_base
 				month_album.cache_base = year_album.cache_base + Options.config['cache_folder_separator'] + month
 				month_max_file_date = None
 				year_album.add_album(month_album)
-				for day, media in self.tree_by_date[year][month].items():
+
+				days = list(self.tree_by_date[year][month].keys())
+				days.sort()
+				for day in self.tree_by_date[year][month]:
+				# for day, media in self.tree_by_date[year][month].items():
+					media = self.tree_by_date[year][month][day]
 					message("working with day album...", "", 5)
 					day_path = os.path.join(month_path, str(day))
 					day_album = Album(day_path)
@@ -470,7 +482,11 @@ class TreeWalker:
 		by_search_album.cache_base = Options.config['by_search_string']
 		by_search_max_file_date = None
 		message("working with word albums...", "", 5)
-		for word, media_album_and_words in self.tree_by_search.items():
+		keys = list(self.tree_by_search.keys())
+		keys.sort()
+		for word in keys:
+		# for word, media_album_and_words in self.tree_by_search.items():
+			media_album_and_words = self.tree_by_search[word]
 			# pprint(["AAAAA", media_album_and_words])
 			next_level()
 			message("working with word album...", "", 5)
@@ -557,7 +573,11 @@ class TreeWalker:
 		by_geonames_album.parent_cache_base = origin_album.cache_base
 		by_geonames_album.cache_base = Options.config['by_gps_string']
 		by_geonames_max_file_date = None
-		for country_code, _ in self.tree_by_geonames.items():
+
+		country_codes = list(self.tree_by_geonames.keys())
+		country_codes.sort()
+		for country_code in country_codes:
+		# for country_code, _ in self.tree_by_geonames.items():
 			country_path = os.path.join(by_geonames_path, str(country_code))
 			country_album = Album(country_path)
 			country_album.center = {}
@@ -565,7 +585,11 @@ class TreeWalker:
 			country_album.cache_base = by_geonames_album.generate_cache_base(os.path.join(by_geonames_album.path, country_code))
 			country_max_file_date = None
 			by_geonames_album.add_album(country_album)
-			for region_code, _ in self.tree_by_geonames[country_code].items():
+
+			region_codes = list(self.tree_by_geonames[country_code].keys())
+			region_codes.sort()
+			for region_code in region_codes:
+			# for region_code, _ in self.tree_by_geonames[country_code].items():
 				region_path = os.path.join(country_path, str(region_code))
 				region_album = Album(region_path)
 				region_album.center = {}
@@ -573,7 +597,14 @@ class TreeWalker:
 				region_album.cache_base = country_album.generate_cache_base(os.path.join(country_album.path, region_code))
 				region_max_file_date = None
 				country_album.add_album(region_album)
-				for place_code, media_list in self.tree_by_geonames[country_code][region_code].items():
+
+				place_codes = list(self.tree_by_geonames[country_code][region_code].keys())
+				place_names = [self.tree_by_geonames[country_code][region_code][place_code][0].place_name for place_code in self.tree_by_geonames[country_code][region_code]]
+				# sort the codes according to the place names, https://stackoverflow.com/questions/6618515/sorting-list-based-on-values-from-another-list#answer-6618543
+				place_codes = [place_code for _, place_code in sorted(zip(place_names, place_codes))]
+				for place_code in place_codes:
+				# for place_code, media_list in self.tree_by_geonames[country_code][region_code].items():
+					media_list = self.tree_by_geonames[country_code][region_code][place_code]
 					place_code = str(place_code)
 					place_name = media_list[0].place_name
 					message("working with place album...", media_list[0].country_name + "-" + media_list[0].region_name + "-" + place_name, 4)
@@ -902,7 +933,8 @@ class TreeWalker:
 					self.tree_by_search[word] = {"media_list": [], "albums_list": [], "unicode_words": []}
 				if not album.is_already_in_tree_by_search(self.tree_by_search[word]):
 				# if album not in self.tree_by_search[word]["albums_list"]:
-					self.tree_by_search[word]["albums_list"].append(album.copy())
+					self.tree_by_search[word]["albums_list"].append(album)
+					# self.tree_by_search[word]["albums_list"].append(album.copy())
 					if unicode_word not in self.tree_by_search[word]["unicode_words"]:
 						self.tree_by_search[word]["unicode_words"].append(unicode_word)
 
