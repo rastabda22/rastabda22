@@ -25,7 +25,7 @@ from CachePath import remove_folders_marker
 from Utilities import get_old_password_codes, save_password_codes, json_files_and_mtime
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_digits, switch_to_lowercase, phrase_to_words, checksum
-from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, next_file_name
+from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, next_file_name, convert_md5s_list_to_identifiers
 from PhotoAlbum import Media, Album, PhotoAlbumEncoder, Position, Positions
 from Geonames import Geonames
 import Options
@@ -252,7 +252,7 @@ class TreeWalker:
 			if passwords_md5 is None:
 				indented_message("empty album, not saving it", album.name, 4)
 			else:
-				indented_message("empty protected album, not saving it", album.name + ", password codes = " + '-'.join(album.password_codes), 4)
+				indented_message("empty protected album, not saving it", album.name + ", identifiers = " + convert_md5s_list_to_identifiers(passwords_md5.split('-')), 4)
 			return
 
 		json_name = album.json_file

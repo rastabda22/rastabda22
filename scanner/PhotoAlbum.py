@@ -61,59 +61,60 @@ class Album(object):
 			#~ path = remove_album_path(path)
 			#~ path = trim_base_custom(path, Options.config['album_path'])
 			#~ path = os.join(Options.config['album_path'], path)
-		if path[-1:] == '/':
-			path = path[0:-1]
-		self.absolute_path = path
-		self.baseless_path = remove_album_path(path)
-		self.cache_base = ""
-		self.media_list = list()
-		self.subalbums_list = list()
-		self.media_list_is_sorted = True
-		self.subalbums_list_is_sorted = True
-		self._subdir = ""
-		self.num_media_in_sub_tree = 0
-		self.combination = ''
-		self.nums_protected_media_in_sub_tree = {}
-		self.positions_and_media_in_tree = Positions(None)
-		self.parent = None
-		self.album_ini = None
-		self._attributes = {}
-		self._attributes["metadata"] = {}
-		self.json_version = ""
-		self.passwords_md5 = []
-		self.password_codes = []
+		if path is not None:
+			if path[-1:] == '/':
+				path = path[0:-1]
+			self.absolute_path = path
+			self.baseless_path = remove_album_path(path)
+			self.cache_base = ""
+			self.media_list = []
+			self.subalbums_list = []
+			self.media_list_is_sorted = True
+			self.subalbums_list_is_sorted = True
+			self._subdir = ""
+			self.num_media_in_sub_tree = 0
+			self.combination = ''
+			self.nums_protected_media_in_sub_tree = {}
+			self.positions_and_media_in_tree = Positions(None)
+			self.parent = None
+			self.album_ini = None
+			self._attributes = {}
+			self._attributes["metadata"] = {}
+			self.json_version = ""
+			self.passwords_md5 = []
+			self.password_codes = []
 
-		if (
-			Options.config['subdir_method'] in ("md5", "folder") and
-			(
-				self.baseless_path.find(Options.config['by_date_string']) != 0 or
-				self.baseless_path.find(Options.config['by_gps_string']) != 0 or
-				self.baseless_path.find(Options.config['by_search_string']) != 0
-			)
-		):
-			if Options.config['subdir_method'] == "md5":
-				if Options.config['cache_folders_num_digits_array'] == []:
-					self._subdir = Options.config['default_cache_album']
-				else:
-					# @python2
-					if sys.version_info < (3, ):
-						hash = hashlib.md5(path).hexdigest()
+			if (
+				Options.config['subdir_method'] in ("md5", "folder") and
+				(
+					self.baseless_path.find(Options.config['by_date_string']) != 0 or
+					self.baseless_path.find(Options.config['by_gps_string']) != 0 or
+					self.baseless_path.find(Options.config['by_search_string']) != 0
+				)
+			):
+				if Options.config['subdir_method'] == "md5":
+					if Options.config['cache_folders_num_digits_array'] == []:
+						self._subdir = Options.config['default_cache_album']
 					else:
-						hash = hashlib.md5(os.fsencode(path)).hexdigest()
-					self._subdir = ''
-					previous_digits = 0
-					for digits in Options.config['cache_folders_num_digits_array']:
-						if self._subdir:
-							self._subdir += '/'
-						self._subdir += hash[previous_digits:previous_digits + digits]
-						previous_digits = digits
-			elif Options.config['subdir_method'] == "folder":
-				if path.find("/") == -1:
-					self._subdir = "__"
-				else:
-					self._subdir = path[path.rfind("/") + 1:][:2].replace(" ", "_")
-					if len(self._subdir) == 1:
-						self._subdir += "_"
+						# @python2
+						if sys.version_info < (3, ):
+							hash = hashlib.md5(path).hexdigest()
+						else:
+							hash = hashlib.md5(os.fsencode(path)).hexdigest()
+						self._subdir = ''
+						previous_digits = 0
+						for digits in Options.config['cache_folders_num_digits_array']:
+							if self._subdir:
+								self._subdir += '/'
+							self._subdir += hash[previous_digits:previous_digits + digits]
+							previous_digits = digits
+				elif Options.config['subdir_method'] == "folder":
+					if path.find("/") == -1:
+						self._subdir = "__"
+					else:
+						self._subdir = path[path.rfind("/") + 1:][:2].replace(" ", "_")
+						if len(self._subdir) == 1:
+							self._subdir += "_"
 
 	@property
 	def name(self):
@@ -288,7 +289,23 @@ class Album(object):
 		return self.nums_protected_media_in_sub_tree.keys()
 
 	def copy(self):
-		return copy.deepcopy(self)
+		album = Album(None)
+		for key, value in self.__dict__.items():
+			if key == "subalbums_list":
+				# subalbus must be new objects
+				# album[key] = [subalbum.copy() for subalbum in value]
+				setattr(album, key, [subalbum.copy() for subalbum in value])
+			elif isinstance(value, list):
+				# media are the same object, but the list is a copy
+				setattr(album, key, value[:])
+				# album[key] = value[:]
+			elif isinstance(key, object):
+				setattr(album, key, copy.deepcopy(value))
+				# album[key] = copy.deepcopy(value)
+			else:
+				setattr(album, key, value)
+
+		return album
 
 	def merge_nums_protected(self, album1):
 		for combination in album1.nums_protected_media_in_sub_tree:
