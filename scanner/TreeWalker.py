@@ -286,18 +286,6 @@ class TreeWalker:
 						album.json_file
 					))
 					symlink = symlink_with_path[len(Options.config['cache_path']) + 1:]
-					# symlink = os.path.join(Options.config['protected_directories_prefix'] + md5, album.json_file)
-					# symlink0 = symlink
-					# n = 1
-					# while (os.path.isfile(os.path.join(Options.config['cache_path'], symlink))):
-					# 	symlink_mtime = file_mtime(os.path.join(Options.config['cache_path'], symlink))
-					# 	print(symlink_mtime)
-					# 	if (symlink_mtime < self.time_of_album_saving):
-					# 		# it's an old one, remove it
-					# 		os.unlink(os.path.join(Options.config['cache_path'], symlink))
-					# 		break
-					# 	new_name = symlink0[:-4] + str(n) + ".json"
-					# 	symlink = os.path.join(md5, new_name)
 					symlinks.append(symlink)
 
 					position_symlink_with_path =  self.determine_symlink_name(os.path.join(
@@ -306,11 +294,6 @@ class TreeWalker:
 						album.positions_json_file
 					))
 					position_symlink = position_symlink_with_path[len(Options.config['cache_path']) + 1:]
-					# position_symlink0 = position_symlink
-					# n = 1
-					# while position_symlink in self.position_symlinks:
-					# 	new_name = position_symlink0[:-14] + str(n) + ".positions.json"
-					# 	position_symlink = os.path.join(md5, new_name)
 					position_symlinks.append(position_symlink)
 
 				for symlink in symlinks:
