@@ -406,7 +406,7 @@ class Album(object):
 		protected_albums = {}
 		for passwords_permutation in self.used_passwords_permutations():
 			passwords_permutation_list = passwords_permutation.split('-')
-			protected_albums[passwords_permutation] = copy.deepcopy(self)
+			protected_albums[passwords_permutation] = self.copy()
 			protected_albums[passwords_permutation].leave_only_content_protected_by(passwords_permutation_list)
 		return protected_albums
 
@@ -723,7 +723,7 @@ class Position(object):
 
 	def copy(self):
 		new_position = Position(self.mediaNameList[0])
-		new_position.mediaNameList = self.mediaNameList
+		new_position.mediaNameList = self.mediaNameList[:]
 		return new_position
 
 
@@ -786,6 +786,11 @@ class Positions(object):
 			positions.append(position_dict)
 
 		return positions
+
+	def copy(self):
+		new_positions = Positions(None)
+		new_positions.positions = [position.copy() for position in self.positions]
+		return new_positions
 
 
 class Media(object):
