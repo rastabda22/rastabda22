@@ -108,6 +108,9 @@ class TreeWalker:
 		# self.origin_album.read_album_ini() # origin_album is not a physical one, it's the parent of the root physical tree and of the virtual albums
 		self.origin_album.cache_base = "root"
 		self.old_password_codes = get_old_password_codes()
+
+		message("Browsing", "start!", 3)
+
 		next_level()
 		[folders_album, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], self.origin_album)
 		# [folders_album, num, nums_protected, positions, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], self.origin_album)
@@ -840,22 +843,22 @@ class TreeWalker:
 		The list of stopwords comes from https://github.com/stopwords-iso/stopwords-iso
 		"""
 		language = Options.config['language'] if Options.config['language'] != '' else os.getenv('LANG')[:2]
-		message("working with stopwords", "Using language " + language, 4)
+		message("PRE working with stopwords", "Using language " + language, 4)
 
 		stopwords = []
 		stopwords_file = os.path.join(os.path.dirname(__file__), "resources/stopwords-iso.json")
 		next_level()
-		message("loading stopwords...", stopwords_file, 4)
+		message("PRE loading stopwords...", stopwords_file, 4)
 		with open(stopwords_file, "r") as stopwords_p:
 			stopwords = json.load(stopwords_p)
 
 		if language in stopwords:
 			phrase = " ".join(stopwords[language])
 			TreeWalker.lowercase_stopwords = frozenset(switch_to_lowercase(phrase).split())
-			indented_message("stopwords loaded", "", 4)
+			indented_message("PRE stopwords loaded", "", 4)
 			TreeWalker.save_stopwords()
 		else:
-			indented_message("stopwords: no stopwords for language", language, 4)
+			indented_message("PRE stopwords: no stopwords for language", language, 4)
 		back_level()
 		return
 
@@ -864,10 +867,10 @@ class TreeWalker:
 		"""
 		Saves the list of stopwords for the user language into the cache directory
 		"""
-		message("saving stopwords to cache directory", TreeWalker.stopwords_file, 4)
+		message("PRE saving stopwords to cache directory", TreeWalker.stopwords_file, 4)
 		with open(TreeWalker.stopwords_file, "w") as stopwords_p:
 			json.dump({'stopWords': list(TreeWalker.lowercase_stopwords)}, stopwords_p)
-		indented_message("stopwords saved!", "", 4)
+		indented_message("PRE stopwords saved!", "", 4)
 		return
 
 	@staticmethod

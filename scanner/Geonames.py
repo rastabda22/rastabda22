@@ -41,7 +41,7 @@ class Geonames(object):
 			Geonames._base_nearby_url = "{}findNearbyJSON?lat={{}}&lng={{}}&featureClass=P&username={}&lang={}".format(self.GEONAMES_API, Options.config['geonames_user'], Options.config['geonames_language'])
 		if self.cities == []:
 			next_level()
-			message("reading and processing local geonames files", "", 5)
+			message("PRE reading and processing local geonames files", "", 5)
 			territories_file = os.path.join(os.path.dirname(__file__), 'geonames/territories.json')
 			countries_file = os.path.join(os.path.dirname(__file__), 'geonames/countries.json')
 			cities_file = os.path.join(os.path.dirname(__file__), 'geonames/cities1000.txt')
@@ -75,7 +75,7 @@ class Geonames(object):
 						'longitude': float(col[5])
 					}
 					self.cities.append(city_line)
-			indented_message("local geonames files read and processed", "", 5)
+			indented_message("PRE local geonames files read and processed", "", 5)
 			back_level()
 
 

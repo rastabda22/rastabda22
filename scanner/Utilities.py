@@ -97,7 +97,7 @@ def convert_md5s_list_to_identifiers(md5_list):
 	return '-'.join(identifiers)
 
 def get_old_password_codes():
-	message("Getting old passwords and codes...","", 5)
+	message("PRE Getting old passwords and codes...","", 5)
 	passwords_subdir_with_path = os.path.join(Options.config['cache_path'], Options.config['passwords_subdir'])
 	old_md5_and_codes = {}
 	for password_md5 in sorted(os.listdir(passwords_subdir_with_path)):
@@ -105,7 +105,7 @@ def get_old_password_codes():
 			# print(os.path.join(passwords_subdir_with_path, password_md5))
 			code_dict = json.load(filepath)
 			old_md5_and_codes[code_dict["passwordCode"]] = password_md5
-	message("Old passwords and codes got","", 4)
+	indented_message("PRE Old passwords and codes got","", 4)
 	return old_md5_and_codes
 
 def save_password_codes():
@@ -295,10 +295,16 @@ def report_times(final):
 	print("message".rjust(50) + "total time".rjust(15) + "counter".rjust(15) + "average time".rjust(20))
 	print()
 	time_till_now = 0
+	time_till_now_pre = 0
+	time_till_now_browsing = 0
 	for category in sorted(Options.elapsed_times, key=Options.elapsed_times.get, reverse=True):
 		time = int(round(Options.elapsed_times[category]))
 		(_time, _time_unfolded) = time_totals(time)
 
+		if category[0:4] == "PRE ":
+			time_till_now_pre += time
+		else:
+			time_till_now_browsing += time
 		time_till_now += time
 
 		counter = str(Options.elapsed_times_counter[category]) + " times"
@@ -315,6 +321,8 @@ def report_times(final):
 		print(category.rjust(50) + _time.rjust(18) + counter.rjust(15) + _average_time.rjust(20))
 
 	(_time_till_now, _time_till_now_unfolded) = time_totals(time_till_now)
+	(_time_till_now_pre, _time_till_now_unfolded_pre) = time_totals(time_till_now_pre)
+	(_time_till_now_browsing, _time_till_now_unfolded_browsing) = time_totals(time_till_now_browsing)
 	print()
 	print("time taken till now".rjust(50) + _time_till_now.rjust(18) + "     " + _time_till_now_unfolded)
 	num_media = Options.num_video + Options.num_photo
@@ -324,7 +332,7 @@ def report_times(final):
 	if num_media > 0 and Options.config['num_media_in_tree'] > 0:
 		# normal run, print final report about photos, videos, geotags, exif dates
 		try:
-			time_missing = time_till_now / num_media * Options.config['num_media_in_tree'] - time_till_now
+			time_missing = time_till_now_browsing / num_media * Options.config['num_media_in_tree'] - time_till_now_browsing
 			if time_missing >= 0:
 				(_time_missing, _time_missing_unfolded) = time_totals(time_missing)
 				print("total time missing".rjust(50) + _time_missing.rjust(18) + "     " + _time_missing_unfolded)
