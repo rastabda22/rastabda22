@@ -76,7 +76,7 @@ class Album(object):
 			self.combination = ''
 			self.nums_protected_media_in_sub_tree = {}
 			self.positions_and_media_in_tree = Positions(None)
-			self.parent = None
+			self.parent_cache_base = None
 			self.album_ini = None
 			self._attributes = {}
 			self._attributes["metadata"] = {}
@@ -293,7 +293,6 @@ class Album(object):
 		for key, value in self.__dict__.items():
 			if key == "subalbums_list":
 				# subalbus must be new objects
-				# album[key] = [subalbum.copy() for subalbum in value]
 				setattr(album, key, [subalbum.copy() for subalbum in value])
 			elif isinstance(value, list):
 				# media are the same object, but the list is a copy
@@ -301,7 +300,6 @@ class Album(object):
 				# album[key] = value[:]
 			elif isinstance(key, object):
 				setattr(album, key, copy.deepcopy(value))
-				# album[key] = copy.deepcopy(value)
 			else:
 				setattr(album, key, value)
 
@@ -589,9 +587,10 @@ class Album(object):
 			else:
 				ancestors_center.append("")
 
-			if _parent.parent is None:
+			parents_list = [album for album in Options.all_albums if album.cache_base == _parent.parent_cache_base]
+			if _parent.parent_cache_base is None or len(parents_list) == 0:
 				break
-			_parent = _parent.parent
+			_parent = parents_list[0]
 		ancestors_cache_base.reverse()
 		ancestors_names.reverse()
 		ancestors_center.reverse()

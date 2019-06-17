@@ -20,6 +20,7 @@ except ImportError:
 from Utilities import message, indented_message, next_level, back_level, find, find_in_usr_share, make_dir, file_mtime
 
 config = {}
+all_albums = []
 date_time_format = "%Y-%m-%d %H:%M:%S"
 exif_date_time_format = "%Y:%m:%d %H:%M:%S"
 video_date_time_format = "%Y-%m-%d %H:%M:%S"
