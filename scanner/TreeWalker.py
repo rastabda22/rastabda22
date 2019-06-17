@@ -164,9 +164,12 @@ class TreeWalker:
 						self.origin_album.nums_protected_media_in_sub_tree[combination] = 0
 					self.origin_album.nums_protected_media_in_sub_tree[combination] += by_search_album.nums_protected_media_in_sub_tree[combination]
 
-
+			message("generating protected content albums...", "", 5)
 			self.protected_origin_album = self.origin_album.generate_protected_content_albums()
+			indented_message("protected content albums generated", "", 4)
+			message("reducing unprotected content albums...", "", 4)
 			self.origin_album.leave_only_unprotected_content()
+			message("unprotected content albums reduced", "", 5)
 
 			self.time_of_album_saving = datetime.now()
 			message("saving all albums to json files...", "", 4)
@@ -596,7 +599,7 @@ class TreeWalker:
 							cluster_list = Geonames.find_centers(media_list, K)
 							max_cluster_length = max([len(cluster) for cluster in cluster_list])
 							if max_cluster_length <= Options.config['big_virtual_folders_threshold']:
-								indented_message("clustered with k-means algorithm", "OK!", 5)
+								indented_message("clustered with k-means algorithm", "biggest cluster has " + str(max_cluster_length) + " photos", 5)
 								break
 							# detect no convergence
 							max_cluster_length_list.append(max_cluster_length)
