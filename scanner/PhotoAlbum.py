@@ -298,7 +298,9 @@ class Album(object):
 				# media are the same object, but the list is a copy
 				setattr(album, key, value[:])
 				# album[key] = value[:]
-			elif isinstance(key, object):
+			elif isinstance(value, Positions):
+				setattr(album, key, value.copy())
+			elif isinstance(value, dict):
 				setattr(album, key, copy.deepcopy(value))
 			else:
 				setattr(album, key, value)
