@@ -198,8 +198,14 @@ class TreeWalker:
 						os.unlink(entry_with_path)
 
 			for passwords_md5, album in self.protected_origin_album.items():
+				next_level()
+				message("saving albums for identifiers...", "identifiers = " + convert_md5s_list_to_identifiers(passwords_md5.split('-')) + ", md5's = " + passwords_md5, 4)
+				next_level()
 				# try:
 				self.all_albums_to_json_file(album, passwords_md5)
+				back_level()
+				message("albums saved for identifiers", "identifiers = " + convert_md5s_list_to_identifiers(passwords_md5.split('-')) + ", md5's = " + passwords_md5, 4)
+				back_level()
 				# except UnboundLocalError:
 				# 	pass
 
@@ -254,7 +260,7 @@ class TreeWalker:
 			if passwords_md5 is None:
 				indented_message("empty album, not saving it", album.name, 4)
 			else:
-				indented_message("empty protected album, not saving it", album.name + ", identifiers = " + convert_md5s_list_to_identifiers(passwords_md5.split('-')), 4)
+				indented_message("empty protected album, not saving it", album.name, 4)
 			return
 
 		json_name = album.json_file

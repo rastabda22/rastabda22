@@ -405,9 +405,13 @@ class Album(object):
 	def generate_protected_content_albums(self):
 		protected_albums = {}
 		for passwords_permutation in self.used_passwords_permutations():
+			next_level()
+			message("working with permutation...", passwords_permutation, 4)
 			passwords_permutation_list = passwords_permutation.split('-')
 			protected_albums[passwords_permutation] = self.copy()
 			protected_albums[passwords_permutation].leave_only_content_protected_by(passwords_permutation_list)
+			indented_message("permutation worked out!", passwords_permutation, 5)
+			back_level()
 		return protected_albums
 
 	def to_json_file(self, json_name, json_positions_name, symlinks, position_symlinks, passwords_md5 = None):
@@ -417,10 +421,10 @@ class Album(object):
 		save_message_4 = "positions album saved"
 		if passwords_md5 is not None:
 			identifiers = convert_md5s_list_to_identifiers(passwords_md5.split('-'))
-			save_message_1 = "saving protected album for " + identifiers + "..."
-			save_message_2 = "protected album for " + identifiers + " saved"
-			save_message_3 = "saving protected positions album for " + identifiers + "..."
-			save_message_4 = "protected positions album for " + identifiers + " saved"
+			save_message_1 = "saving protected album..."
+			save_message_2 = "protected album saved"
+			save_message_3 = "saving protected positions album..."
+			save_message_4 = "protected positions album  saved"
 
 			passwords_md5_list = passwords_md5.split('-')
 
