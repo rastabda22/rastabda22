@@ -79,8 +79,6 @@ class TreeWalker:
 		# ):
 		# 	message("no albums modification, no refresh needed", "We can safely end here", 4)
 		# else:
-		message("Browsing", "start!", 3)
-
 		# be sure reduced_sizes array is correctly sorted
 		Options.config['reduced_sizes'].sort(reverse=True)
 
@@ -1298,6 +1296,7 @@ class TreeWalker:
 				cached_media = None
 				absolute_cache_file_exists = False
 
+			# checksum is needed for all media, calculate it anyway
 			if Options.config['checksum']:
 				message("calculating checksum...", "", 5)
 				with open(entry_with_path, 'rb') as media_path_pointer:
@@ -1326,15 +1325,15 @@ class TreeWalker:
 				if cache_hit and Options.config['checksum']:
 					try:
 						cached_media._attributes['checksum']
-					except KeyError:
-						message("not a cache hit", "no checksum in json file", 5)
-						cache_hit = False
-					else:
+
 						if cached_media._attributes['checksum'] == media_checksum:
 							indented_message("checksum OK!", "", 5)
 						else:
 							indented_message("not a cache hit", "bad checksum!", 5)
 							cache_hit = False
+					except KeyError:
+						message("not a cache hit", "no checksum in json file", 5)
+						cache_hit = False
 
 				if cache_hit and cached_media:
 					if mtime != cached_media.datetime_file:
