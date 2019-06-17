@@ -587,10 +587,11 @@ class Album(object):
 			else:
 				ancestors_center.append("")
 
-			parents_list = [album for album in Options.all_albums if album.cache_base == _parent.parent_cache_base]
-			if _parent.parent_cache_base is None or len(parents_list) == 0:
+			if _parent.parent_cache_base is None:
 				break
-			_parent = parents_list[0]
+			_parent = next((album for album in Options.all_albums if album.cache_base == _parent.parent_cache_base), None)
+			if _parent is None:
+				break
 		ancestors_cache_base.reverse()
 		ancestors_names.reverse()
 		ancestors_center.reverse()
