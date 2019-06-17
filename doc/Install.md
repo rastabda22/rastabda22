@@ -42,7 +42,7 @@ Be sure you installed `avconv` / `ffmpeg` if you have videos.
 ### Download the source code from the git repository:
 
 ```bash
-    $ git clone https://github.com/paolobenve/myphotoshare.git
+    $ git clone https://gitlab.com/paolobenve/myphotoshare.git
     $ cd myphotoshare
 ```
 
@@ -148,7 +148,7 @@ When MyPhotoShare code is updated, update your `myphotoshare` directory.
 
 Go to the folder you cloned the repository in and execute:
 ```bash
-    $ git pull https://github.com/paolobenve/myphotoshare.git
+    $ git pull https://gitlab.com/paolobenve/myphotoshare.git
     $ ./bin/js-css-minify.sh
 ```
 

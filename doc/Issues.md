@@ -50,10 +50,6 @@ Oriental languages like chinese do not define easily word separation, so whole w
 
 Due to a bug in PIL `_getexif()`,  since version 3.4beta9 `exifread` (`python3-exifread` package in `debian`) and `exiftool` are used too in order to get the exif metadata from the photos. However, `python3-exifread` is not packaged for `debian jessie`, so we must stick on python2 for the scanner: if you have been able to install `exifread` for python3, simply change "python2" to "python3" in the first line of `scanner/main.py`.
 
-#### Bad dragging of enlarged photos
-
-If a photo is enlarged, dragging works, but in a very rough manner.
-
 #### Slow web site
 
 If there are many images in the album (say > 1000) you may experience slowlyness in the web site. This is expecially true when the photos are geotagged.
@@ -74,4 +70,4 @@ The cache can be the browser's one or the web server one.
 
 #### Privacy concern with password implementation
 
-Although passwords can be used to protect content, a power user can still see the protected images using the browser developer tools.
+Passwords can be used to protect content, but carefully read the [explication and warnings](Authentication.md).
