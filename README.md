@@ -151,7 +151,7 @@ As a term of comparizon, on a medium-sized pc, with the images on a NFS mounted 
 
 #### Memory needs
 
-Scanning 40.000 media requires no more than 1GB/2GB of resident/virtual memory.
+Scanning 45.000 media requires no more than 1.5GB/2.1GB of resident/virtual memory.
 
 ### Javascript code
 
