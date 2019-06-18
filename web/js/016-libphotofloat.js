@@ -284,7 +284,8 @@
 
 					theAlbum.positionsAndMediaInTree = positions;
 					// we must add the corresponding positions to every subalbums
-					PhotoFloat.addPositionsToSubalbums(theAlbum);
+					if (albumCacheBase != Options.by_search_string)
+						PhotoFloat.addPositionsToSubalbums(theAlbum);
 					goOn(theAlbum);
 				},
 				error
