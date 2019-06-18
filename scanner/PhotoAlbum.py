@@ -436,10 +436,10 @@ class Album(object):
 		if os.path.exists(json_positions_file_with_path) and not os.access(json_positions_file_with_path, os.W_OK):
 			message("FATAL ERROR", json_positions_file_with_path + " not writable, quitting", 0)
 			sys.exit(-97)
-		message("sorting album and media...", self.absolute_path, 5)
+		message("sorting album and media...", "", 5)
 		self.sort_subalbums_and_media()
 		indented_message("album and media sorted", self.absolute_path, 4)
-		message(save_message_1, self.absolute_path, 5)
+		message(save_message_1, "", 5)
 		with open(json_file_with_path, 'w') as file:
 			json.dump(self, file, cls=PhotoAlbumEncoder)
 		for symlink in symlinks:
