@@ -22,7 +22,7 @@ from PIL import Image
 
 from CachePath import remove_album_path, last_modification_time, trim_base_custom
 from CachePath import remove_folders_marker
-from Utilities import get_old_password_codes, save_password_codes, json_files_and_mtime
+from Utilities import get_old_password_codes, save_password_codes, json_files_and_mtime, report_mem
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_digits, switch_to_lowercase, phrase_to_words, checksum
 from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, next_file_name, convert_md5s_list_to_identifiers
@@ -141,6 +141,7 @@ class TreeWalker:
 					if not combination in self.origin_album.nums_protected_media_in_sub_tree:
 						self.origin_album.nums_protected_media_in_sub_tree[combination] = 0
 					self.origin_album.nums_protected_media_in_sub_tree[combination] += by_date_album.nums_protected_media_in_sub_tree[combination]
+			report_mem()
 
 			message("generating by geonames albums...", "", 4)
 			by_geonames_album = self.generate_by_geonames_albums(self.origin_album)
@@ -152,6 +153,7 @@ class TreeWalker:
 					if not combination in self.origin_album.nums_protected_media_in_sub_tree:
 						self.origin_album.nums_protected_media_in_sub_tree[combination] = 0
 					self.origin_album.nums_protected_media_in_sub_tree[combination] += by_geonames_album.nums_protected_media_in_sub_tree[combination]
+			report_mem()
 
 			message("generating by search albums...", "", 4)
 			by_search_album = self.generate_by_search_albums(self.origin_album)
@@ -163,13 +165,17 @@ class TreeWalker:
 					if not combination in self.origin_album.nums_protected_media_in_sub_tree:
 						self.origin_album.nums_protected_media_in_sub_tree[combination] = 0
 					self.origin_album.nums_protected_media_in_sub_tree[combination] += by_search_album.nums_protected_media_in_sub_tree[combination]
+			report_mem()
 
 			message("generating protected content albums...", "", 5)
 			self.protected_origin_album = self.origin_album.generate_protected_content_albums()
 			indented_message("protected content albums generated", "", 4)
+			report_mem()
+
 			message("reducing unprotected content albums...", "", 4)
 			self.origin_album.leave_only_unprotected_content()
 			message("unprotected content albums reduced", "", 5)
+			report_mem()
 
 			self.time_of_album_saving = datetime.now()
 			message("saving all albums to json files...", "", 4)
@@ -183,6 +189,7 @@ class TreeWalker:
 
 			message("all albums saved to json files", "", 5)
 			back_level()
+			report_mem()
 
 			message("saving all protected albums to json files...", "", 4)
 			next_level()
@@ -211,10 +218,12 @@ class TreeWalker:
 
 			message("all protected albums saved to json files", "", 5)
 			back_level()
+			report_mem()
 
 			# options must be saved when json files have been saved, otherwise in case of error they may not reflect the json files situation
 			self._save_json_options()
 			self.remove_stale("", self.all_json_files)
+			report_mem()
 			message("completed", "", 4)
 
 	@staticmethod
@@ -1589,6 +1598,8 @@ class TreeWalker:
 		back_level()
 
 		report_times(False)
+
+		report_mem()
 
 		return [album, max_file_date]
 		# return [album, album.num_media_in_sub_tree, album.nums_protected_media_in_sub_tree, copy.deepcopy(album.positions_and_media_in_tree), max_file_date]
