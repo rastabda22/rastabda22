@@ -494,8 +494,14 @@ class Album(object):
 		else:
 			path = dictionary["path"]
 		# Don't use cache if version has changed
-		if Options.json_version == 0 or "jsonVersion" not in dictionary or dictionary["jsonVersion"] != Options.json_version:
-			indented_message("not an album cache hit", "unexistent/old json_version", 4)
+		if Options.json_version == 0:
+			indented_message("not an album cache hit", "json_version == 0 (debug mode)", 4)
+			return None
+		elif "jsonVersion" not in dictionary:
+			indented_message("not an album cache hit", "unexistent json_version", 4)
+			return None
+		elif dictionary["jsonVersion"] != Options.json_version:
+			indented_message("not an album cache hit", "old json_version", 4)
 			return None
 		album = Album(os.path.join(Options.config['album_path'], path))
 		album.cache_base = album_cache_base
