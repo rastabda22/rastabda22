@@ -23,6 +23,7 @@ from PIL import Image
 from CachePath import remove_album_path, last_modification_time, trim_base_custom
 from CachePath import remove_folders_marker
 from Utilities import get_old_password_codes, save_password_codes, json_files_and_mtime, report_mem
+from Utilities import convert_identifiers_list_to_codes_list, convert_identifiers_list_to_md5s_list, convert_md5s_to_codes
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_digits, switch_to_lowercase, phrase_to_words, checksum
 from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, next_file_name, convert_md5s_list_to_identifiers
@@ -109,7 +110,7 @@ class TreeWalker:
 		message("Browsing", "start!", 3)
 
 		next_level()
-		[folders_album, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], None, self.origin_album)
+		[folders_album, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], None, [], self.origin_album)
 		# [folders_album, num, nums_protected, positions, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], self.origin_album)
 		back_level()
 		if folders_album is None:
@@ -1012,8 +1013,8 @@ class TreeWalker:
 
 	# This functions is called recursively
 	# it works on a directory and produces the album for the directory
-	def walk(self, absolute_path, album_cache_base, pattners_and_passwords, ancestors_passwords_mtime, parent_album=None):
-		pattners_and_passwords = pattners_and_passwords[:]
+	def walk(self, absolute_path, album_cache_base, patterns_and_passwords, passwords_marker_mtime, inherited_passwords_identifiers, parent_album=None):
+		patterns_and_passwords = copy.deepcopy(patterns_and_passwords)
 		max_file_date = file_mtime(absolute_path)
 		message(">>>>>>>>>>>  Entering directory", absolute_path, 3)
 		next_level()
@@ -1037,8 +1038,8 @@ class TreeWalker:
 			message(Options.config['passwords_marker'] + " file found", "reading it", 4)
 			pwd_file = os.path.join(absolute_path, Options.config['passwords_marker'])
 			pwd_file_mtime = file_mtime(pwd_file)
-			if ancestors_passwords_mtime is not None:
-				pwd_file_mtime = max(file_mtime(pwd_file), ancestors_passwords_mtime)
+			if passwords_marker_mtime is not None:
+				pwd_file_mtime = max(file_mtime(pwd_file), passwords_marker_mtime)
 			if not os.access(pwd_file, os.R_OK):
 				indented_message("unreadable file", pwd_file, 2)
 			else:
@@ -1053,7 +1054,7 @@ class TreeWalker:
 						if len(columns) == 1:
 							if columns[0] == '-':
 								# reset the passwords
-								pattners_and_passwords = []
+								patterns_and_passwords = []
 								indented_message("passwords reset", "-", 3)
 							else:
 								# it's a simple identifier: the album and all the subalbums will be protected with the corresponding password
@@ -1064,7 +1065,7 @@ class TreeWalker:
 								elif len(indexes) == 1:
 									password_md5 = indexes[0]['md5']
 									password_code = indexes[0]['code']
-									pattners_and_passwords.append(
+									patterns_and_passwords.append(
 										{
 											"pattern": '*',
 											"case_flag": 'ci',
@@ -1096,7 +1097,7 @@ class TreeWalker:
 								else:
 									indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', case sensitive flag wrong, assuming case insensitive", 3)
 									case_flag = 'ci'
-								pattners_and_passwords.append(
+								patterns_and_passwords.append(
 									{
 										"pattern": pattern,
 										"case_flag": case_flag,
@@ -1143,7 +1144,7 @@ class TreeWalker:
 							indented_message("not an album cache hit", "album dir newer than json file", 4)
 						elif Options.passwords_file_mtime is not None and Options.passwords_file_mtime >= json_file_mtime:
 							indented_message("not an album cache hit", "passwords file newer than json file", 4)
-						elif len(pattners_and_passwords) > 0 and pwd_file_mtime is not None and pwd_file_mtime >= json_file_mtime:
+						elif len(patterns_and_passwords) > 0 and pwd_file_mtime is not None and pwd_file_mtime >= json_file_mtime:
 							indented_message("not an album cache hit", Options.config['passwords_marker'] + " newer than json file", 4)
 						else:
 							message("maybe a cache hit", "trying to import album from '" + json_file + "'", 5)
@@ -1202,30 +1203,35 @@ class TreeWalker:
 		album.cache_base = album_cache_base
 
 		dir_name = os.path.basename(absolute_path)
+		# start with the inherited passwords
+		album.password_identifiers = copy.deepcopy(inherited_passwords_identifiers)
+		album.passwords_md5 = convert_identifiers_list_to_md5s_list(album.password_identifiers)
+		album.password_codes = convert_identifiers_list_to_codes_list(album.password_identifiers)
 		# get the matching passwords
-		for pattner_and_password in pattners_and_passwords:
-			if pattner_and_password['case_flag'] == 'cs':
-				match = fnmatch.fnmatchcase(dir_name, pattner_and_password['pattern'])
+		for pattern_and_password in patterns_and_passwords:
+			if pattern_and_password['case_flag'] == 'cs':
+				match = fnmatch.fnmatchcase(dir_name, pattern_and_password['pattern'])
 				case = "case sentitive"
 			else:
-				match = re.match(fnmatch.translate(pattner_and_password['pattern']), dir_name, re.IGNORECASE)
+				match = re.match(fnmatch.translate(pattern_and_password['pattern']), dir_name, re.IGNORECASE)
 				case = "case insentitive"
 
+			# add the matching patterns
 			if match:
-				if pattner_and_password['password_md5'] not in album.passwords_md5:
-					identifier = convert_md5s_list_to_identifiers([pattner_and_password['password_md5']])
-					album.passwords_md5.append(pattner_and_password['password_md5'])
-					album.password_codes.append(pattner_and_password['password_code'])
+				if pattern_and_password['password_md5'] not in album.passwords_md5:
+					identifier = convert_md5s_list_to_identifiers([pattern_and_password['password_md5']])
+					album.passwords_md5.append(pattern_and_password['password_md5'])
+					album.password_codes.append(pattern_and_password['password_code'])
 					album.password_identifiers.append(identifier)
 					indented_message(
 						"password added to album",
-						"'" + dir_name + "' matches '" + pattner_and_password['pattern'] + "' " + case + ", encrypted password = " + pattner_and_password['password_md5'] + ", identifier = " + identifier,
+						"'" + dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", encrypted password = " + pattern_and_password['password_md5'] + ", identifier = " + identifier,
 						3
 					)
 				else:
 					indented_message(
 						"password not added to album",
-						dir_name + "' matches '" + pattner_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "' is already there",
+						dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "' is already there",
 						3
 					)
 		album.passwords_md5.sort()
@@ -1280,7 +1286,7 @@ class TreeWalker:
 				next_album_cache_base = album.generate_cache_base(entry_for_cache_base)
 				indented_message("cache base determined", "", 5)
 				back_level()
-				[next_walked_album, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, pattners_and_passwords, pwd_file_mtime, album)
+				[next_walked_album, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, patterns_and_passwords, pwd_file_mtime, album.password_identifiers, album)
 				if next_walked_album is not None:
 					max_file_date = max(max_file_date, sub_max_file_date)
 					album.num_media_in_sub_tree += next_walked_album.num_media_in_sub_tree
@@ -1445,34 +1451,31 @@ class TreeWalker:
 					else:
 						indented_message("album password not added to media", "identifier '" + identifier + "' is already there", 3)
 
-				# for password_code in album.password_codes:
-				# 	if password_code not in media.password_codes:
-				# 		media.password_codes.append(password_code)
 
 				# apply the file passwords_md5 and password codes to the media if they match the media name
-				for pattner_and_password in pattners_and_passwords:
-					if pattner_and_password['case_flag'] == 'cs':
-						match = fnmatch.fnmatchcase(file_name, pattner_and_password['pattern'])
+				for pattern_and_password in patterns_and_passwords:
+					if pattern_and_password['case_flag'] == 'cs':
+						match = fnmatch.fnmatchcase(file_name, pattern_and_password['pattern'])
 						case = "case sentitive"
 					else:
-						match = re.match(fnmatch.translate(pattner_and_password['pattern']), file_name, re.IGNORECASE)
+						match = re.match(fnmatch.translate(pattern_and_password['pattern']), file_name, re.IGNORECASE)
 						case = "case insentitive"
 
 					if match:
-						if pattner_and_password['password_md5'] not in media.passwords_md5:
-							identifier = convert_md5s_list_to_identifiers([pattner_and_password['password_md5']])
-							media.passwords_md5.append(pattner_and_password['password_md5'])
-							media.password_codes.append(pattner_and_password['password_code'])
+						if pattern_and_password['password_md5'] not in media.passwords_md5:
+							identifier = convert_md5s_list_to_identifiers([pattern_and_password['password_md5']])
+							media.passwords_md5.append(pattern_and_password['password_md5'])
+							media.password_codes.append(pattern_and_password['password_code'])
 							media.password_identifiers.append(identifier)
 							indented_message(
 								"password and code added to media",
-								"'" + file_name + "' matches '" + pattner_and_password['pattern'] + "' " + case + ", identifier = " + identifier + ", encrypted password = " + pattner_and_password['password_md5'],
+								"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", identifier = " + identifier + ", encrypted password = " + pattern_and_password['password_md5'],
 								3
 							)
 						else:
 							indented_message(
 								"password and code not added to media",
-								"'" + file_name + "' matches '" + pattner_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "' is already there",
+								"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "' is already there",
 								3
 							)
 

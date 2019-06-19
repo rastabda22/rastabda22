@@ -92,6 +92,20 @@ def convert_codes_to_md5s(password_codes_list):
 	return md5_list
 
 
+def convert_identifiers_list_to_md5s_list(identifiers_list):
+	md5_list = []
+	for identifier in identifiers_list:
+		md5 = [x['password_md5'] for x in Options.identifiers_and_passwords if x['identifier'] == identifier][0]
+		md5_list.append(md5)
+	return md5_list
+
+def convert_identifiers_list_to_codes_list(identifiers_list):
+	codes_list = []
+	for identifier in identifiers_list:
+		code = [x['password_code'] for x in Options.identifiers_and_passwords if x['identifier'] == identifier][0]
+		codes_list.append(code)
+	return codes_list
+
 def convert_md5s_list_to_identifiers(md5_list):
 	identifiers = list()
 	for password_md5 in md5_list:

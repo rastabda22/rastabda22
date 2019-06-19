@@ -327,6 +327,11 @@ class Album(object):
 		# 	self.cache_base == Options.config['by_search_string']
 		# 	# len(self.cache_base.split(Options.config['cache_folder_separator'])) < 3
 		# ):
+		self.positions_and_media_in_tree = Positions(None)
+		for subalbum in self.subalbums_list:
+			subalbum.leave_only_unprotected_content()
+			self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
+
 		if len(self.passwords_md5) > 0:
 			# protected album, remove the media
 			self.media_list = []
@@ -337,15 +342,9 @@ class Album(object):
 			# set the protected flag
 			self.is_protected = True
 		else:
-			# the album isn't protected, but media or subalbums may be protected
+			# the album isn't protected, but media and subalbums may be protected
 			self.media_list = [media for media in self.media if len(media.passwords_md5) == 0]
 
-			for position in self.positions_and_media_in_tree.positions:
-				position.mediaNameList = [single_media for single_media in position.mediaNameList if len(single_media.passwords_md5) == 0]
-			self.positions_and_media_in_tree.remove_empty_positions()
-
-		for subalbum in self.subalbums_list:
-			subalbum.leave_only_unprotected_content()
 		# elif (
 		# 	self.cache_base.split(Options.config['cache_folder_separator'])[0] == Options.config['by_search_string'] and
 		# 	len(self.cache_base.split(Options.config['cache_folder_separator'])) == 2
@@ -355,6 +354,8 @@ class Album(object):
 		# 			# protected album, remove the subalbum
 		# 			self.nums_protected_media_in_sub_tree = remove_positions(self.nums_protected_media_in_sub_tree, subalbum.nums_protected_media_in_sub_tree)
 		# 			self.subalbums_list.remove(subalbum)
+		for single_media in self.media_list:
+			self.positions_and_media_in_tree.add_media(single_media)
 
 		for key in self.nums_protected_media_in_sub_tree:
 			self.num_media_in_sub_tree -= self.nums_protected_media_in_sub_tree[key]
@@ -375,12 +376,7 @@ class Album(object):
 		# 	self.cache_base == Options.config['by_search_string']
 		# 	# self.cache_base.split(Options.config['cache_folder_separator']) < 2
 		# ):
-		self.media_list = [media for media in self.media if set(passwords_list) == set(media.passwords_md5)]
-
-		for position in self.positions_and_media_in_tree.positions:
-			position.mediaNameList = [single_media for single_media in position.mediaNameList if set(passwords_list) == set(single_media.passwords_md5)]
-		self.positions_and_media_in_tree.remove_empty_positions()
-
+		self.positions_and_media_in_tree = Positions(None)
 		for subalbum in self.subalbums_list:
 			subalbum.leave_only_content_protected_by(passwords_list)
 		# elif (
@@ -392,6 +388,7 @@ class Album(object):
 		# 			# unprotected album or album protected by other combination, remove it
 		# 			self.nums_protected_media_in_sub_tree = remove_positions(self.nums_protected_media_in_sub_tree, subalbum.nums_protected_media_in_sub_tree)
 		# 			self.subalbums_list.remove(subalbum)
+			self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
 		combination = '-'.join(passwords_list)
 		if combination in self.nums_protected_media_in_sub_tree:
@@ -399,6 +396,15 @@ class Album(object):
 			self.combination = combination
 		else:
 			self.num_media_in_sub_tree = 0
+
+		if set(passwords_list) != set(self.passwords_md5):
+			# the album (and all its subalbums) isn't protected by the given combination
+			# no media are to be included
+			self.media_list = []
+		else:
+			self.media_list = [single_media for single_media in self.media if set(passwords_list) == set(single_media.passwords_md5)]
+			for single_media in self.media_list:
+				self.positions_and_media_in_tree.add_media(single_media)
 
 		# print()
 		# pprint(["AFTER, PROTECTED", self.name, convert_md5s_list_to_identifiers(passwords_list), self.to_dict()])
