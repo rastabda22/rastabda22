@@ -109,7 +109,7 @@ class TreeWalker:
 		message("Browsing", "start!", 3)
 
 		next_level()
-		[folders_album, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], self.origin_album)
+		[folders_album, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], None, self.origin_album)
 		# [folders_album, num, nums_protected, positions, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], self.origin_album)
 		back_level()
 		if folders_album is None:
@@ -1012,8 +1012,9 @@ class TreeWalker:
 
 	# This functions is called recursively
 	# it works on a directory and produces the album for the directory
-	def walk(self, absolute_path, album_cache_base, passwords_argument, parent_album=None):
-		passwords = passwords_argument[:]
+	def walk(self, absolute_path, album_cache_base, ancestors_passwords, ancestors_passwords_mtime, parent_album=None):
+		passwords = ancestors_passwords[:]
+		passwords_mtime = copy.deepcopy(ancestors_passwords_mtime)
 		max_file_date = file_mtime(absolute_path)
 		message(">>>>>>>>>>>  Entering directory", absolute_path, 3)
 		next_level()
@@ -1037,6 +1038,8 @@ class TreeWalker:
 			message(Options.config['passwords_marker'] + " file found", "reading it", 4)
 			pwd_file = os.path.join(absolute_path, Options.config['passwords_marker'])
 			pwd_file_mtime = file_mtime(pwd_file)
+			if passwords_mtime is not None:
+				pwd_file_mtime = max(file_mtime(pwd_file), passwords_mtime)
 			if not os.access(pwd_file, os.R_OK):
 				indented_message("unreadable file", pwd_file, 2)
 			else:
@@ -1278,7 +1281,7 @@ class TreeWalker:
 				next_album_cache_base = album.generate_cache_base(entry_for_cache_base)
 				indented_message("cache base determined", "", 5)
 				back_level()
-				[next_walked_album, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, passwords, album)
+				[next_walked_album, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, passwords, pwd_file_mtime, album)
 				if next_walked_album is not None:
 					max_file_date = max(max_file_date, sub_max_file_date)
 					album.num_media_in_sub_tree += next_walked_album.num_media_in_sub_tree
@@ -1464,7 +1467,7 @@ class TreeWalker:
 							media.identifiers.append(identifier)
 							indented_message(
 								"password and code added to media",
-								"'" + file_name + "' matches '" + password['pattern'] + "' " + case + "identifier = " + identifier + ", encrypted password = " + password['password_md5'],
+								"'" + file_name + "' matches '" + password['pattern'] + "' " + case + ", identifier = " + identifier + ", encrypted password = " + password['password_md5'],
 								3
 							)
 						else:
