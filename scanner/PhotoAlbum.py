@@ -372,14 +372,14 @@ class Album(object):
 			subalbum.leave_only_content_protected_by(passwords_list)
 			self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
-		if set(passwords_list) != set(self.passwords_md5):
-			# the album (and all its subalbums) isn't protected by the given combination
-			# no media are to be included
-			self.media_list = []
-		else:
-			self.media_list = [single_media for single_media in self.media if set(passwords_list) == set(single_media.passwords_md5)]
-			for single_media in self.media_list:
-				self.positions_and_media_in_tree.add_media(single_media)
+		# if set(passwords_list) != set(self.passwords_md5):
+		# 	# the album (and all its subalbums) isn't protected by the given combination
+		# 	# no media are to be included
+		# 	self.media_list = []
+		# else:
+		self.media_list = [single_media for single_media in self.media if set(passwords_list) == set(single_media.passwords_md5)]
+		for single_media in self.media_list:
+			self.positions_and_media_in_tree.add_media(single_media)
 
 		self.combination = '-'.join(passwords_list)
 		if self.combination in self.nums_protected_media_in_sub_tree:
