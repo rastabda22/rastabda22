@@ -81,7 +81,7 @@ class Album(object):
 			self._attributes = {}
 			self._attributes["metadata"] = {}
 			self.json_version = ""
-			self.identifiers = []
+			self.password_identifiers = []
 			self.passwords_md5 = []
 			self.password_codes = []
 

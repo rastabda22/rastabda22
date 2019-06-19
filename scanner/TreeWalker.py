@@ -1217,7 +1217,7 @@ class TreeWalker:
 					identifier = convert_md5s_list_to_identifiers([password['password_md5']])
 					album.passwords_md5.append(password['password_md5'])
 					album.password_codes.append(password['password_code'])
-					album.identifiers.append(identifier)
+					album.password_identifiers.append(identifier)
 					indented_message(
 						"password added to album",
 						"'" + dir_name + "' matches '" + password['pattern'] + "' " + case + ", encrypted password = " + password['password_md5'] + ", identifier = " + identifier,
@@ -1430,7 +1430,7 @@ class TreeWalker:
 					media._attributes["checksum"] = media_checksum
 
 			if media.is_valid:
-				media.identifiers = []
+				media.password_identifiers = []
 				media.passwords_md5 = []
 				media.password_codes = []
 				file_name = os.path.basename(entry_with_path)
@@ -1441,7 +1441,7 @@ class TreeWalker:
 						identifier = convert_md5s_list_to_identifiers([password_md5])
 						media.passwords_md5.append(password_md5)
 						media.password_codes.append(convert_md5s_to_codes(password_md5))
-						media.identifiers.append(identifier)
+						media.password_identifiers.append(identifier)
 						indented_message("album password added to media", "identifier = " + identifier + ", encrypted password = " + password_md5, 3)
 					else:
 						indented_message("album password not added to media", "identifier '" + identifier + "' is already there", 3)
@@ -1464,7 +1464,7 @@ class TreeWalker:
 							identifier = convert_md5s_list_to_identifiers([password['password_md5']])
 							media.passwords_md5.append(password['password_md5'])
 							media.password_codes.append(password['password_code'])
-							media.identifiers.append(identifier)
+							media.password_identifiers.append(identifier)
 							indented_message(
 								"password and code added to media",
 								"'" + file_name + "' matches '" + password['pattern'] + "' " + case + ", identifier = " + identifier + ", encrypted password = " + password['password_md5'],
