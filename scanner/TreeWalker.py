@@ -1005,6 +1005,8 @@ class TreeWalker:
 	# it works on a directory and produces the album for the directory
 	def walk(self, absolute_path, album_cache_base, patterns_and_passwords, passwords_marker_mtime, inherited_passwords_identifiers, parent_album=None):
 		patterns_and_passwords = copy.deepcopy(patterns_and_passwords)
+		inherited_passwords_identifiers = copy.deepcopy(inherited_passwords_identifiers)
+		passwords_marker_mtime = copy.deepcopy(passwords_marker_mtime)
 		max_file_date = file_mtime(absolute_path)
 		message(">>>>>>>>>>>  Entering directory", absolute_path, 3)
 		next_level()
@@ -1045,6 +1047,8 @@ class TreeWalker:
 							if columns[0] == '-':
 								# reset the passwords
 								patterns_and_passwords = []
+								passwords_marker_mtime = None
+								inherited_passwords_identifiers = []
 								indented_message("passwords reset", "-", 3)
 							else:
 								# it's a simple identifier: the album and all the subalbums will be protected with the corresponding password
@@ -1194,7 +1198,7 @@ class TreeWalker:
 
 		dir_name = os.path.basename(absolute_path)
 		# start with the inherited passwords
-		album.password_identifiers = copy.deepcopy(inherited_passwords_identifiers)
+		album.password_identifiers = inherited_passwords_identifiers
 		album.passwords_md5 = convert_identifiers_list_to_md5s_list(album.password_identifiers)
 		album.password_codes = convert_identifiers_list_to_codes_list(album.password_identifiers)
 		# get the matching passwords
@@ -1431,12 +1435,12 @@ class TreeWalker:
 				file_name = os.path.basename(entry_with_path)
 
 				# apply the album passwords_md5 and password codes to the media
-				for password_md5 in album.passwords_md5:
-					if password_md5 not in media.passwords_md5:
-						identifier = convert_md5s_list_to_identifiers([password_md5])
-						media.passwords_md5.append(password_md5)
-						media.password_codes.append(convert_md5s_to_codes(password_md5))
+				for identifier in album.password_identifiers:
+					if identifier not in media.password_identifiers:
+						password_md5 = convert_identifiers_list_to_md5s_list([identifier])[0]
 						media.password_identifiers.append(identifier)
+						media.passwords_md5.append(password_md5)
+						media.password_codes.append(convert_identifiers_list_to_codes_list([identifier])[0])
 						indented_message("album password added to media", "identifier = " + identifier + ", encrypted password = " + password_md5, 3)
 					else:
 						indented_message("album password not added to media", "identifier '" + identifier + "' is already there", 3)
