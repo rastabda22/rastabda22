@@ -1012,8 +1012,8 @@ class TreeWalker:
 
 	# This functions is called recursively
 	# it works on a directory and produces the album for the directory
-	def walk(self, absolute_path, album_cache_base, ancestors_passwords, ancestors_passwords_mtime, parent_album=None):
-		passwords = ancestors_passwords[:]
+	def walk(self, absolute_path, album_cache_base, pattners_and_passwords, ancestors_passwords_mtime, parent_album=None):
+		pattners_and_passwords = pattners_and_passwords[:]
 		max_file_date = file_mtime(absolute_path)
 		message(">>>>>>>>>>>  Entering directory", absolute_path, 3)
 		next_level()
@@ -1053,7 +1053,7 @@ class TreeWalker:
 						if len(columns) == 1:
 							if columns[0] == '-':
 								# reset the passwords
-								passwords = []
+								pattners_and_passwords = []
 								indented_message("passwords reset", "-", 3)
 							else:
 								# it's a simple identifier: the album and all the subalbums will be protected with the corresponding password
@@ -1064,7 +1064,7 @@ class TreeWalker:
 								elif len(indexes) == 1:
 									password_md5 = indexes[0]['md5']
 									password_code = indexes[0]['code']
-									passwords.append(
+									pattners_and_passwords.append(
 										{
 											"pattern": '*',
 											"case_flag": 'ci',
@@ -1096,7 +1096,7 @@ class TreeWalker:
 								else:
 									indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', case sensitive flag wrong, assuming case insensitive", 3)
 									case_flag = 'ci'
-								passwords.append(
+								pattners_and_passwords.append(
 									{
 										"pattern": pattern,
 										"case_flag": case_flag,
@@ -1143,7 +1143,7 @@ class TreeWalker:
 							indented_message("not an album cache hit", "album dir newer than json file", 4)
 						elif Options.passwords_file_mtime is not None and Options.passwords_file_mtime >= json_file_mtime:
 							indented_message("not an album cache hit", "passwords file newer than json file", 4)
-						elif len(passwords) > 0 and pwd_file_mtime is not None and pwd_file_mtime >= json_file_mtime:
+						elif len(pattners_and_passwords) > 0 and pwd_file_mtime is not None and pwd_file_mtime >= json_file_mtime:
 							indented_message("not an album cache hit", Options.config['passwords_marker'] + " newer than json file", 4)
 						else:
 							message("maybe a cache hit", "trying to import album from '" + json_file + "'", 5)
@@ -1203,29 +1203,29 @@ class TreeWalker:
 
 		dir_name = os.path.basename(absolute_path)
 		# get the matching passwords
-		for password in passwords:
-			if password['case_flag'] == 'cs':
-				match = fnmatch.fnmatchcase(dir_name, password['pattern'])
+		for pattner_and_password in pattners_and_passwords:
+			if pattner_and_password['case_flag'] == 'cs':
+				match = fnmatch.fnmatchcase(dir_name, pattner_and_password['pattern'])
 				case = "case sentitive"
 			else:
-				match = re.match(fnmatch.translate(password['pattern']), dir_name, re.IGNORECASE)
+				match = re.match(fnmatch.translate(pattner_and_password['pattern']), dir_name, re.IGNORECASE)
 				case = "case insentitive"
 
 			if match:
-				if password['password_md5'] not in album.passwords_md5:
-					identifier = convert_md5s_list_to_identifiers([password['password_md5']])
-					album.passwords_md5.append(password['password_md5'])
-					album.password_codes.append(password['password_code'])
+				if pattner_and_password['password_md5'] not in album.passwords_md5:
+					identifier = convert_md5s_list_to_identifiers([pattner_and_password['password_md5']])
+					album.passwords_md5.append(pattner_and_password['password_md5'])
+					album.password_codes.append(pattner_and_password['password_code'])
 					album.password_identifiers.append(identifier)
 					indented_message(
 						"password added to album",
-						"'" + dir_name + "' matches '" + password['pattern'] + "' " + case + ", encrypted password = " + password['password_md5'] + ", identifier = " + identifier,
+						"'" + dir_name + "' matches '" + pattner_and_password['pattern'] + "' " + case + ", encrypted password = " + pattner_and_password['password_md5'] + ", identifier = " + identifier,
 						3
 					)
 				else:
 					indented_message(
 						"password not added to album",
-						dir_name + "' matches '" + password['pattern'] + "' " + case + ", but identifier '" + identifier + "' is already there",
+						dir_name + "' matches '" + pattner_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "' is already there",
 						3
 					)
 		album.passwords_md5.sort()
@@ -1280,7 +1280,7 @@ class TreeWalker:
 				next_album_cache_base = album.generate_cache_base(entry_for_cache_base)
 				indented_message("cache base determined", "", 5)
 				back_level()
-				[next_walked_album, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, passwords, pwd_file_mtime, album)
+				[next_walked_album, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, pattners_and_passwords, pwd_file_mtime, album)
 				if next_walked_album is not None:
 					max_file_date = max(max_file_date, sub_max_file_date)
 					album.num_media_in_sub_tree += next_walked_album.num_media_in_sub_tree
@@ -1450,29 +1450,29 @@ class TreeWalker:
 				# 		media.password_codes.append(password_code)
 
 				# apply the file passwords_md5 and password codes to the media if they match the media name
-				for password in passwords:
-					if password['case_flag'] == 'cs':
-						match = fnmatch.fnmatchcase(file_name, password['pattern'])
+				for pattner_and_password in pattners_and_passwords:
+					if pattner_and_password['case_flag'] == 'cs':
+						match = fnmatch.fnmatchcase(file_name, pattner_and_password['pattern'])
 						case = "case sentitive"
 					else:
-						match = re.match(fnmatch.translate(password['pattern']), file_name, re.IGNORECASE)
+						match = re.match(fnmatch.translate(pattner_and_password['pattern']), file_name, re.IGNORECASE)
 						case = "case insentitive"
 
 					if match:
-						if password['password_md5'] not in media.passwords_md5:
-							identifier = convert_md5s_list_to_identifiers([password['password_md5']])
-							media.passwords_md5.append(password['password_md5'])
-							media.password_codes.append(password['password_code'])
+						if pattner_and_password['password_md5'] not in media.passwords_md5:
+							identifier = convert_md5s_list_to_identifiers([pattner_and_password['password_md5']])
+							media.passwords_md5.append(pattner_and_password['password_md5'])
+							media.password_codes.append(pattner_and_password['password_code'])
 							media.password_identifiers.append(identifier)
 							indented_message(
 								"password and code added to media",
-								"'" + file_name + "' matches '" + password['pattern'] + "' " + case + ", identifier = " + identifier + ", encrypted password = " + password['password_md5'],
+								"'" + file_name + "' matches '" + pattner_and_password['pattern'] + "' " + case + ", identifier = " + identifier + ", encrypted password = " + pattner_and_password['password_md5'],
 								3
 							)
 						else:
 							indented_message(
 								"password and code not added to media",
-								"'" + file_name + "' matches '" + password['pattern'] + "' " + case + ", but identifier '" + identifier + "' is already there",
+								"'" + file_name + "' matches '" + pattner_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "' is already there",
 								3
 							)
 
@@ -1806,8 +1806,8 @@ class TreeWalker:
 			next_level()
 			message("building stale list...", "", 4)
 
-			for password in Options.identifiers_and_passwords:
-				self.all_json_files.append(os.path.join(Options.config['passwords_subdir'], password['password_md5']))
+			for identifier_and_password in Options.identifiers_and_passwords:
+				self.all_json_files.append(os.path.join(Options.config['passwords_subdir'], identifier_and_password['password_md5']))
 
 			# transform the all_json_files list into a dictionary by directories
 			for file_name in json_dict:
