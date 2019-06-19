@@ -372,13 +372,6 @@ class Album(object):
 			subalbum.leave_only_content_protected_by(passwords_list)
 			self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
-		combination = '-'.join(passwords_list)
-		if combination in self.nums_protected_media_in_sub_tree:
-			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree[combination]
-			self.combination = combination
-		else:
-			self.num_media_in_sub_tree = 0
-
 		if set(passwords_list) != set(self.passwords_md5):
 			# the album (and all its subalbums) isn't protected by the given combination
 			# no media are to be included
@@ -387,6 +380,12 @@ class Album(object):
 			self.media_list = [single_media for single_media in self.media if set(passwords_list) == set(single_media.passwords_md5)]
 			for single_media in self.media_list:
 				self.positions_and_media_in_tree.add_media(single_media)
+
+		self.combination = '-'.join(passwords_list)
+		if self.combination in self.nums_protected_media_in_sub_tree:
+			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree[self.combination]
+		else:
+			self.num_media_in_sub_tree = 0
 
 		# print()
 		# pprint(["AFTER, PROTECTED", self.name, convert_md5s_list_to_identifiers(passwords_list), self.to_dict()])
