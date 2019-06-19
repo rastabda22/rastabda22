@@ -557,16 +557,6 @@ class TreeWalker:
 				else:
 					by_search_max_file_date = single_album.date
 
-				# if len(single_album.passwords_md5) > 0:
-				# 	# subalbums protected content count has to be added manually too
-				# 	combination = ('-').join(single_album.passwords_md5)
-				# 	if not combination in word_album.nums_protected_media_in_sub_tree:
-				# 		word_album.nums_protected_media_in_sub_tree[combination] = 0
-				# 	word_album.nums_protected_media_in_sub_tree[combination] += single_album.nums_protected_media_in_sub_tree[combination]
-				# 	# nums_protected_media_in_sub_tree matters for the search root albums!
-				# 	if not combination in by_search_album.nums_protected_media_in_sub_tree:
-				# 		by_search_album.nums_protected_media_in_sub_tree[combination] = 0
-				# 	by_search_album.nums_protected_media_in_sub_tree[combination] += single_album.nums_protected_media_in_sub_tree[combination]
 				word_album.merge_nums_protected(single_album)
 				by_search_album.merge_nums_protected(single_album)
 
