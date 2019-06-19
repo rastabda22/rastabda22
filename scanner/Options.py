@@ -74,7 +74,8 @@ config['available_map_popup_positions'] = ['SE', 'NW' ]
 max_random = 1000000000
 
 
-# set this variable to a new value (previously was a number, now it may include letters) whenever the json files structure changes, it can be the app version
+# set this variable to a new value (previously was a number, now it may include letters)
+# whenever the json files structure changes (the app version can be used)
 # json_version = 0 is debug mode: json files are always considered invalid
 # json_version = 1 since ...
 # json_version = 2 since checksums have been added
