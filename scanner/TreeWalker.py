@@ -1014,7 +1014,6 @@ class TreeWalker:
 	# it works on a directory and produces the album for the directory
 	def walk(self, absolute_path, album_cache_base, ancestors_passwords, ancestors_passwords_mtime, parent_album=None):
 		passwords = ancestors_passwords[:]
-		passwords_mtime = copy.deepcopy(ancestors_passwords_mtime)
 		max_file_date = file_mtime(absolute_path)
 		message(">>>>>>>>>>>  Entering directory", absolute_path, 3)
 		next_level()
@@ -1038,8 +1037,8 @@ class TreeWalker:
 			message(Options.config['passwords_marker'] + " file found", "reading it", 4)
 			pwd_file = os.path.join(absolute_path, Options.config['passwords_marker'])
 			pwd_file_mtime = file_mtime(pwd_file)
-			if passwords_mtime is not None:
-				pwd_file_mtime = max(file_mtime(pwd_file), passwords_mtime)
+			if ancestors_passwords_mtime is not None:
+				pwd_file_mtime = max(file_mtime(pwd_file), ancestors_passwords_mtime)
 			if not os.access(pwd_file, os.R_OK):
 				indented_message("unreadable file", pwd_file, 2)
 			else:
