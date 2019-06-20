@@ -283,9 +283,9 @@
 					}
 
 					theAlbum.positionsAndMediaInTree = positions;
-					// we must add the corresponding positions to every subalbums
-					if (albumCacheBase != Options.by_search_string)
-						PhotoFloat.addPositionsToSubalbums(theAlbum);
+					// // we must add the corresponding positions to every subalbums
+					// if (albumCacheBase != Options.by_search_string)
+					// 	PhotoFloat.addPositionsToSubalbums(theAlbum);
 					goOn(theAlbum);
 				},
 				error
