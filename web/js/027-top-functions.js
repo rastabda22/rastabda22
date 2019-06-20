@@ -2170,12 +2170,15 @@
 
 		}
 
-			{
-				// threshold: 2 * Options.media_thumb_size,
-				appendScroll: $(window)
-			}
-		);
-		$(".media-view-container img.lazyload-media").Lazy(
+		if (! $("#album-view").hasClass("media-view-container"))
+			$("img.lazyload-media").Lazy(
+				{
+					// threshold: 2 * Options.media_thumb_size,
+					appendScroll: $(window)
+				}
+			);
+		// if (currentMedia !== null && previousMedia === null)
+		$("#album-view.media-view-container img.lazyload-media").Lazy(
 			{
 				// threshold: 2 * Options.media_thumb_size,
 				appendScroll: $("#album-view")
