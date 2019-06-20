@@ -2238,8 +2238,12 @@
 			$(window).off("resize").on(
 				"resize",
 				function () {
+					var previousWindowWidth = windowWidth;
 					windowWidth = $(window).outerWidth();
 					windowHeight = $(window).outerHeight();
+					if (windowWidth == previousWindowWidth)
+						// avoid considering a resize when the mobile browser shows/hides the location bar
+						return;
 
 					$("#loading").show();
 
