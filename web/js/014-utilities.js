@@ -122,7 +122,7 @@
 					if (
 						oldPoint.mediaNameList.every(
 							function(element) {
-								return element.albumCacheBase != newElement.albumCacheBase && element.cacheBase != newElement.cacheBase;
+								return element.albumCacheBase != newElement.albumCacheBase || element.cacheBase != newElement.cacheBase;
 							}
 						)
 					)
