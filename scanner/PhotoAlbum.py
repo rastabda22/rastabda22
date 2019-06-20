@@ -440,7 +440,6 @@ class Album(object):
 		message(save_message_3, "", 5)
 		with open(json_positions_file_with_path, 'w') as positions_file:
 			cache_base_root = self.cache_base.split(Options.config['cache_folder_separator'])[0]
-			pprint(self.positions_and_media_in_tree.to_dict())
 			json.dump(self.positions_and_media_in_tree, positions_file, type = cache_base_root, cls=PhotoAlbumEncoder)
 		for symlink in position_symlinks:
 			symlink_with_path = os.path.join(Options.config['cache_path'], symlink)
