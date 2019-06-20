@@ -448,7 +448,9 @@
 									executeCallback
 								);
 							},
-							executeCallback,
+							function() {
+								executeCallback(album)
+							},
 							{"passwordMd5": thePasswordsToGet[iPassword], "protectedAlbumCacheBase": protectedAlbumCacheBase}
 						);
 					}
