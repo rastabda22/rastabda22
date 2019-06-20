@@ -346,7 +346,8 @@ class Album(object):
 			self.media_list = [media for media in self.media if len(media.passwords_md5) == 0]
 
 		for single_media in self.media_list:
-			self.positions_and_media_in_tree.add_media(single_media)
+			if single_media.has_gps_data:
+				self.positions_and_media_in_tree.add_media(single_media)
 
 		for key in self.nums_protected_media_in_sub_tree:
 			self.num_media_in_sub_tree -= self.nums_protected_media_in_sub_tree[key]
@@ -379,7 +380,8 @@ class Album(object):
 		# else:
 		self.media_list = [single_media for single_media in self.media if set(passwords_list) == single_media.passwords_md5]
 		for single_media in self.media_list:
-			self.positions_and_media_in_tree.add_media(single_media)
+			if single_media.has_gps_data:
+				self.positions_and_media_in_tree.add_media(single_media)
 
 		self.combination = '-'.join(passwords_list)
 		if self.combination in self.nums_protected_media_in_sub_tree:
