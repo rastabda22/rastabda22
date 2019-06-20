@@ -10,6 +10,7 @@ from datetime import datetime
 import hashlib
 import unicodedata
 import unidecode
+from pprint import pprint
 
 import Options
 
@@ -22,6 +23,15 @@ def trim_base_custom(path, base):
 
 def remove_album_path(path):
 	return trim_base_custom(path, Options.config['album_path'])
+
+# def remove_positions(nums_positions_1, nums_positions_2):
+# 	for index_1, num_position_1 in enumerate(nums_positions_1):
+# 		for index_2, num_position_2 in enumerate(nums_positions_2):
+# 			if num_position_1.lat == num_position_2.lat and num_position_1.lng == num_position_2.lng:
+# 				num_position_1.mediaNameList = [_media for _media in num_position_1.mediaNameList if _media not in num_position_2.mediaNameList]
+# 	nums_positions_1 = [{index_1: num_position_1} for index_1, num_position_1 in enumerate(nums_positions_1) if len(num_position_1.mediaNameList) > 0]
+#
+# 	return nums_positions_1
 
 def remove_folders_marker(path):
 	marker_position = path.find(Options.config['folders_string'])
@@ -125,9 +135,6 @@ def photo_cache_name(photo, size, thumb_type="", mobile_bigger=False):
 
 def video_cache_name(video):
 	return video.cache_base + Options.config['cache_folder_separator'] + "transcoded_" + Options.config['video_transcode_bitrate'] + "_" + str(Options.config['video_crf']) + ".mp4"
-
-def file_mtime(path):
-	return datetime.fromtimestamp(int(os.path.getmtime(path)))
 
 def last_modification_time(path):
 	maximum = 0

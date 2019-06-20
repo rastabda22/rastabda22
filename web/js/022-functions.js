@@ -399,10 +399,23 @@
 			}
 		}
 
-		if (thisAlbum !== null && ! jQuery.isEmptyObject(thisAlbum.numsProtectedMediaInSubTree))
+		if (
+			thisAlbum !== null && (
+				! jQuery.isEmptyObject(thisAlbum.numsProtectedMediaInSubTree) &&
+				(! thisAlbum.hasOwnProperty("includedCombinations") || thisAlbum.includedCombinations.length < Object.keys(thisAlbum.numsProtectedMediaInSubTree).length) ||
+				util.isSearchCacheBase(thisAlbum.cacheBase)
+			)
+		) {
 			$(".protection").show();
-		else
+			$("#padlock").off('click').on(
+				'click',
+				function() {
+					$("#protected-content-unveil")[0].click();
+				}
+			);
+		} else {
 			$(".protection").hide();
+		}
 
 		// accordion effect on right menu
 		$("#right-menu li.expandable").off('click').on(

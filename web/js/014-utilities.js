@@ -92,6 +92,30 @@
 		);
 	};
 
+	Utilities.prototype.addPointToPoints = function(oldPoints, newPoint) {
+		var oldPoint, newElement;
+		for (var iOld = 0; iOld < oldPoints.length; iOld ++) {
+			oldPoint = oldPoints[iOld];
+			if (newPoint.lng == oldPoint.lng && newPoint.lat == oldPoint.lat) {
+				for (var iNew = 0; iNew < newPoint.mediaNameList.length; iNew ++) {
+					newElement = newPoint.mediaNameList[iNew];
+					// the following check is needed for searches only?
+					if (
+						oldPoint.mediaNameList.every(
+							function(element) {
+								return element.albumCacheBase != newElement.albumCacheBase || element.cacheBase != newElement.cacheBase;
+							}
+						)
+					)
+						oldPoints[iOld].mediaNameList.push(newPoint.mediaNameList[iNew]);
+				}
+				return oldPoints;
+			}
+		}
+		oldPoints.push(newPoint);
+		return oldPoints;
+	};
+
 	Utilities.prototype.mergePoints = function(oldPoints, newPoints) {
 		for (var i = 0; i < newPoints.length; i ++) {
 			oldPoints = this.addPointToPoints(oldPoints, newPoints[i]);
@@ -110,29 +134,6 @@
 			}]
 		};
 		return this.addPointToPoints(oldPoints, newPoint);
-	};
-
-	Utilities.prototype.addPointToPoints = function(oldPoints, newPoint) {
-		var oldPoint, newElement;
-		for (var iOld = 0; iOld < oldPoints.length; iOld ++) {
-			oldPoint = oldPoints[iOld];
-			if (newPoint.lng == oldPoint.lng && newPoint.lat == oldPoint.lat) {
-				for (var iNew = 0; iNew < newPoint.mediaNameList.length; iNew ++) {
-					newElement = newPoint.mediaNameList[iNew];
-					if (
-						oldPoint.mediaNameList.every(
-							function(element) {
-								return element.albumCacheBase != newElement.albumCacheBase && element.cacheBase != newElement.cacheBase;
-							}
-						)
-					)
-						oldPoints[iOld].mediaNameList.push(newPoint.mediaNameList[iNew]);
-				}
-				return oldPoints;
-			}
-		}
-		oldPoints.push(newPoint);
-		return oldPoints;
 	};
 
 	Utilities.prototype.union = function(a, b) {
@@ -299,11 +300,14 @@
 			return false;
 	};
 
-	Utilities.prototype.noResults = function(selector) {
+	Utilities.prototype.noResults = function(album, selector) {
 		// no media found or other search fail, show the message
+		currentAlbum = album;
+		TopFunctions.setTitle("album", null);
 		$("ul#right-menu").addClass("expand");
-		$("#album-view").addClass("hidden");
+		$("#album-view #subalbums, #album-view #thumbs").addClass("hidden");
 		$("#media-view").addClass("hidden");
+		$("#loading").hide();
 		if (typeof selector === "undefined")
 			selector = '#no-results';
 		$(".search-failed").hide();
@@ -949,7 +953,7 @@
 	};
 
 	Utilities.prototype.showAuthForm = function() {
-		$("#album-view, #media-view, #my-modal").css("opacity", "0.2");
+		$("#album-view, #media-view, #my-modal, #no-results").css("opacity", "0.2");
 		$("#auth-text").stop().fadeIn(1000);
 		$("#password").focus();
 	};
@@ -987,6 +991,17 @@
 		}
 		// $("#error-overlay").fadeTo(500, 0.8);
 		$("body, html").css("overflow", "hidden");
+	};
+
+	Utilities.prototype.goUpInHash = function() {
+		var hashList = window.location.hash.split(Options.cache_folder_separator);
+
+		if (hashList.length == 1) {
+			window.location.href = "#!";
+			return;
+		} else {
+			window.location.href = hashList.slice(0, -1).join(Options.cache_folder_separator);
+		}
 	};
 
 	Utilities.prototype.undie = function() {

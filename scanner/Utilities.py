@@ -7,9 +7,159 @@ from __future__ import division
 
 from datetime import datetime
 import os
+import json
 
 import Options
+# from CachePath import file_mtime
 
+def file_mtime(path):
+	return datetime.fromtimestamp(int(os.path.getmtime(path)))
+
+def report_mem():
+	print("MEM total, code, data >>>> " + os.popen("ps -p " + str(os.getpid()) + " -o rss,trs,drs|grep -v DRS").read())
+
+def make_dir(absolute_path, message_part):
+	# makes a subdir and manages errors
+	relative_path = absolute_path[len(Options.config['index_html_path']) + 1:]
+	if not os.path.exists(absolute_path):
+		try:
+			message("creating " + message_part, "", 5)
+			os.makedirs(absolute_path)
+			indented_message(message_part + " created", relative_path, 4)
+			os.chmod(absolute_path, 0o777)
+			message("permissions set", "", 5)
+		except OSError:
+			message("FATAL ERROR", "couldn't create " + message_part, "('" + relative_path + "')' quitting", 0)
+			sys.exit(-97)
+	else:
+		message(message_part + " already existent, not creating it", relative_path, 5)
+
+def next_file_name(file_name_with_path):
+	file_name_with_path_list = file_name_with_path.split('.')
+	file_name = os.path.basename(file_name_with_path)
+	file_name_list = file_name.split('.')
+	is_positions = (file_name_list[-2] == 'positions')
+	if is_positions:
+		subtract = 1
+	else:
+		subtract = 0
+	has_already_number_inside = (len(file_name_list) == 3 + subtract)
+	if has_already_number_inside:
+		next_number = int(file_name_list[-2 - subtract]) + 1
+	else:
+		next_number = 1
+	if has_already_number_inside:
+		first_part = file_name_with_path_list[:-2 - subtract]
+	else:
+		first_part = file_name_with_path_list[:-1 - subtract]
+	return '.'.join(first_part + [str(next_number)] + file_name_list[-1 - subtract:])
+
+def json_files_and_mtime(cache_base):
+	json_file_list = []
+	global_mtime = None
+	json_file_with_path = os.path.join(Options.config['cache_path'], cache_base) + ".json"
+	if os.path.exists(json_file_with_path):
+		json_file_list.append(json_file_with_path)
+		global_mtime = file_mtime(json_file_with_path)
+
+	for md5 in [x['password_md5'] for x in Options.identifiers_and_passwords]:
+		protected_json_file_with_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + md5, cache_base) + ".json"
+		while os.path.exists(protected_json_file_with_path):
+			if not os.path.islink(protected_json_file_with_path):
+				json_file_list.append(protected_json_file_with_path)
+				mtime = file_mtime(protected_json_file_with_path)
+				if global_mtime is None:
+					global_mtime = mtime
+				else:
+					global_mtime = max(global_mtime, mtime)
+			protected_json_file_with_path = next_file_name(protected_json_file_with_path)
+
+	return [json_file_list, global_mtime]
+
+def convert_md5s_to_codes(passwords_md5):
+	codes_set = set()
+	for password_md5 in passwords_md5.split('-'):
+		password_code = next(x['password_code'] for x in Options.identifiers_and_passwords if x['password_md5'] == password_md5)
+		codes_set.add(password_code)
+	return '-'.join(codes_set)
+
+
+def convert_identifiers_set_to_md5s_set(identifiers_set):
+	md5s_set = set()
+	for identifier in identifiers_set:
+		md5 = next(x['password_md5'] for x in Options.identifiers_and_passwords if x['identifier'] == identifier)
+		md5s_set.add(md5)
+	return md5s_set
+
+def convert_identifiers_set_to_codes_set(identifiers_set):
+	codes_set = set()
+	for identifier in identifiers_set:
+		code = next(x['password_code'] for x in Options.identifiers_and_passwords if x['identifier'] == identifier)
+		codes_set.add(code)
+	return codes_set
+
+def convert_md5s_set_to_identifiers(md5s_set):
+	identifiers_set = set()
+	for password_md5 in md5s_set:
+		identifier = next(x['identifier'] for x in Options.identifiers_and_passwords if x['password_md5'] == password_md5)
+		identifiers_set.add(identifier)
+	return '-'.join(identifiers_set)
+
+def get_old_password_codes():
+	message("PRE Getting old passwords and codes...","", 5)
+	passwords_subdir_with_path = os.path.join(Options.config['cache_path'], Options.config['passwords_subdir'])
+	old_md5_and_codes = {}
+	for password_md5 in sorted(os.listdir(passwords_subdir_with_path)):
+		with open(os.path.join(passwords_subdir_with_path, password_md5), "r") as filepath:
+			# print(os.path.join(passwords_subdir_with_path, password_md5))
+			code_dict = json.load(filepath)
+			old_md5_and_codes[code_dict["passwordCode"]] = password_md5
+	indented_message("PRE Old passwords and codes got","", 4)
+	return old_md5_and_codes
+
+def save_password_codes():
+	# remove the old single password files
+	passwords_subdir_with_path = os.path.join(Options.config['cache_path'], Options.config['passwords_subdir'])
+	message("Removing old password files...","", 5)
+	for password_file in sorted(os.listdir(passwords_subdir_with_path)):
+		os.unlink(os.path.join(passwords_subdir_with_path, password_file))
+	message("Old password files removed","", 4)
+
+	# create the new single password files
+	for md5_and_code in [{'md5': x['password_md5'], 'code': x['password_code']} for x in Options.identifiers_and_passwords]:
+		password_md5 = md5_and_code['md5']
+		password_code = md5_and_code['code']
+		message("creating new password file", "", 5)
+		with open(os.path.join(passwords_subdir_with_path, password_md5), 'w') as password_file:
+			json.dump({"passwordCode": password_code}, password_file)
+		indented_message("New password file created", password_md5, 4)
+
+def merge_dictionaries_from_cache(dict, dict1, old_password_codes):
+	if dict is None:
+		return dict1
+	if dict1 is None:
+		return dict
+	dict['numMediaInSubTree'] += dict1['numMediaInSubTree']
+	old_md5s_set = set()
+	for codes in dict['numsProtectedMediaInSubTree']:
+		for code in codes.split('-'):
+			try:
+				if len(old_password_codes) > 0 and old_password_codes[code] not in old_md5s_set:
+					old_md5s_set.add(old_password_codes[code])
+			except KeyError:
+				indented_message("not an album cache hit", "key error in password codes", 4)
+				return None
+	# if set(old_md5_list) != set([x['password_md5'] for x in Options.identifiers_and_passwords]):
+	# 	return None
+
+	dict['media'].extend(dict1['media'])
+	subalbums_cache_bases = [subalbum['cacheBase'] for subalbum in dict['subalbums']]
+	dict['subalbums'].extend([subalbum for subalbum in dict1['subalbums'] if subalbum['cacheBase'] not in subalbums_cache_bases])
+	for key in dict1['numsProtectedMediaInSubTree']:
+		if key not in dict['numsProtectedMediaInSubTree']:
+			dict['numsProtectedMediaInSubTree'][key] = 0
+		dict['numsProtectedMediaInSubTree'][key] += dict1['numsProtectedMediaInSubTree'][key]
+	return dict
 
 def message(category, text, verbose=0):
 	"""
@@ -24,7 +174,7 @@ def message(category, text, verbose=0):
 	  |    |                                   |                text
 	  |    |                                   indented category
       |    date and time
-	  microseconds
+	  microseconds from last message
 	```
 
 	Elapsed time for each category is cumulated and can be printed with `report_times`.
@@ -154,10 +304,16 @@ def report_times(final):
 	print("message".rjust(50) + "total time".rjust(15) + "counter".rjust(15) + "average time".rjust(20))
 	print()
 	time_till_now = 0
+	time_till_now_pre = 0
+	time_till_now_browsing = 0
 	for category in sorted(Options.elapsed_times, key=Options.elapsed_times.get, reverse=True):
 		time = int(round(Options.elapsed_times[category]))
 		(_time, _time_unfolded) = time_totals(time)
 
+		if category[0:4] == "PRE ":
+			time_till_now_pre += time
+		else:
+			time_till_now_browsing += time
 		time_till_now += time
 
 		counter = str(Options.elapsed_times_counter[category]) + " times"
@@ -174,6 +330,8 @@ def report_times(final):
 		print(category.rjust(50) + _time.rjust(18) + counter.rjust(15) + _average_time.rjust(20))
 
 	(_time_till_now, _time_till_now_unfolded) = time_totals(time_till_now)
+	(_time_till_now_pre, _time_till_now_unfolded_pre) = time_totals(time_till_now_pre)
+	(_time_till_now_browsing, _time_till_now_unfolded_browsing) = time_totals(time_till_now_browsing)
 	print()
 	print("time taken till now".rjust(50) + _time_till_now.rjust(18) + "     " + _time_till_now_unfolded)
 	num_media = Options.num_video + Options.num_photo
@@ -183,7 +341,7 @@ def report_times(final):
 	if num_media > 0 and Options.config['num_media_in_tree'] > 0:
 		# normal run, print final report about photos, videos, geotags, exif dates
 		try:
-			time_missing = time_till_now / num_media * Options.config['num_media_in_tree'] - time_till_now
+			time_missing = time_till_now_browsing / num_media * Options.config['num_media_in_tree'] - time_till_now_browsing
 			if time_missing >= 0:
 				(_time_missing, _time_missing_unfolded) = time_totals(time_missing)
 				print("total time missing".rjust(50) + _time_missing.rjust(18) + "     " + _time_missing_unfolded)

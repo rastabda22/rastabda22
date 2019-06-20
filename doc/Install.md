@@ -21,7 +21,7 @@ MyPhotoShare needs:
 * `python-opencv` if found, face detection is used when cropping images to square.
 * OpenCV libraries and data (`opencv-data`)
 * `cssmin` (`https://github.com/zacharyvoase/cssmin`, debian/ubuntu packages `cssmin`), unless using external web service
-* `jsmin` (`https://github.com/tikitu/jsmin`, debian/ubuntu package `python-jsmin`) or `uglifyjs` (`https://github.com/mishoo/UglifyJS`, debian/ubuntu package `uglifyjs`), unless using external web service
+* `jsmin` (`https://github.com/tikitu/jsmin`, debian/ubuntu package `python-jsmin`) or `uglifyjs` (`https://github.com/mishoo/UglifyJS`, debian/ubuntu package `uglifyjs`, but `node-buble` is requiered too, and is not available in _debian stable_ yet), unless using external web service
 
 
 ### Why PHP? Isn't it enough with JavaScript?
@@ -42,7 +42,7 @@ Be sure you installed `avconv` / `ffmpeg` if you have videos.
 ### Download the source code from the git repository:
 
 ```bash
-    $ git clone https://github.com/paolobenve/myphotoshare.git
+    $ git clone https://gitlab.com/paolobenve/myphotoshare.git
     $ cd myphotoshare
 ```
 
@@ -148,7 +148,7 @@ When MyPhotoShare code is updated, update your `myphotoshare` directory.
 
 Go to the folder you cloned the repository in and execute:
 ```bash
-    $ git pull https://github.com/paolobenve/myphotoshare.git
+    $ git pull https://gitlab.com/paolobenve/myphotoshare.git
     $ ./bin/js-css-minify.sh
 ```
 

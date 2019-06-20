@@ -106,7 +106,7 @@ $(document).ready(function() {
 				// 	pS.swipeDown(upLink);
 				$("#auth-text").hide();
 				$("#album-view, #media-view, #my-modal").css("opacity", "");
-				TopFunctions.goUpIfProtected(currentAlbum, currentMedia);
+				util.goUpInHash();
 				return false;
 			} else if ($("ul#right-menu").hasClass("expand")) {
 				toggleMenu();
@@ -235,8 +235,11 @@ $(document).ready(function() {
 						return false;
 					} else if (
 						e.key === "u" &&
-						currentAlbum !== null &&
-						! jQuery.isEmptyObject(currentAlbum.numsProtectedMediaInSubTree)
+						currentAlbum !== null && (
+							! jQuery.isEmptyObject(currentAlbum.numsProtectedMediaInSubTree) &&
+							(! currentAlbum.hasOwnProperty("includedCombinations") || currentAlbum.includedCombinations.length < Object.keys(currentAlbum.numsProtectedMediaInSubTree).length) ||
+							util.isSearchCacheBase(currentAlbum.cacheBase)
+						)
 					) {
 						$("#protected-content-unveil")[0].click();
 						return false;
@@ -245,7 +248,13 @@ $(document).ready(function() {
 
 				if (
 					(
-						[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string, Options.by_search_string].indexOf(currentAlbum.cacheBase) !== -1 ||
+						[
+							Options.folders_string,
+							Options.by_date_string,
+							Options.by_gps_string,
+							Options.by_map_string,
+							Options.by_search_string
+						].indexOf(currentAlbum.cacheBase) !== -1 ||
 						currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)
 					) &&
 					! isMap
@@ -391,11 +400,11 @@ $(document).ready(function() {
 			if (Options.search_current_album)
 				searchOptions += 'o' + Options.search_options_separator;
 			bySearchViewHash += searchOptions + searchTerms;
+
+			bySearchViewHash += Options.cache_folder_separator + Options.album_to_search_in;
+
+			window.location.href = bySearchViewHash;
 		}
-
-		bySearchViewHash += Options.cache_folder_separator + Options.album_to_search_in;
-
-		window.location.href = bySearchViewHash;
 
 		f.focusSearchField();
 		return false;
@@ -435,7 +444,7 @@ $(document).ready(function() {
 
 	$("#auth-form").submit(function() {
 		// This function checks the password looking for a file with the encrypted password name in the passwords subdir
-		// the code in the found password file is inserted into PhotoFloat.guessedPasswordsCodes, and at the hash change the content unveiled by that password will be shown
+		// the code in the found password file is inserted into PhotoFloat.guessedPasswordsMd5, and at the hash change the content unveiled by that password will be shown
 
 		var password = $("#password");
 		var encryptedPassword = md5(password.val());
@@ -449,22 +458,24 @@ $(document).ready(function() {
 				password.css("background-color", "rgb(200, 200, 200)");
 				var passwordCode = jsonCode.passwordCode;
 
-				if (! PhotoFloat.guessedPasswordsCodes.includes(passwordCode))
-					PhotoFloat.guessedPasswordsCodes.push(passwordCode);
+				if (! PhotoFloat.guessedPasswordCodes.includes(passwordCode))
+					PhotoFloat.guessedPasswordCodes.push(passwordCode);
+				if (! PhotoFloat.guessedPasswordsMd5.includes(encryptedPassword))
+					PhotoFloat.guessedPasswordsMd5.push(encryptedPassword);
 
-				if (
-					currentAlbum !== null && (
-						util.isSearchCacheBase(currentAlbum.cacheBase) ||
-						currentMedia === null
-					)
-				)
-					// the search album must be removed from cache,
-					// otherwise the new album won't be generated and the protected content won't be searched
-					phFl.removeAlbumFromCache(currentAlbum.cacheBase);
+				// if (
+				// 	currentAlbum !== null && (
+				// 		util.isSearchCacheBase(currentAlbum.cacheBase) ||
+				// 		currentMedia === null
+				// 	)
+				// )
+				// 	// the search album must be removed from cache,
+				// 	// otherwise the new album won't be generated and the protected content won't be searched
+				// 	phFl.removeAlbumFromCache(currentAlbum.cacheBase);
 
 				$("#loading").show();
 
-				phFl.removeAllProtectedAlbumsFromCache();
+				// phFl.removeAllProtectedAlbumsFromCache();
 
 				var isPopup = $('.leaflet-popup').html() ? true : false;
 				var isMap = $('#mapdiv').html() ? true : false;
