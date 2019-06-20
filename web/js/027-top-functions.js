@@ -1255,7 +1255,7 @@
 				$("#media-view").css("cursor", "ew-resize");
 			}
 			nextMedia = null;
-			previousMedia = null;
+			prevMedia = null;
 			// $("#album-view .title").hide();
 			// $("#media-view .title").show();
 			TopFunctions.showMedia(currentAlbum, currentMedia, 'center');
@@ -2170,7 +2170,6 @@
 
 		}
 
-		$("img.lazyload-media").Lazy(
 			{
 				// threshold: 2 * Options.media_thumb_size,
 				appendScroll: $(window)
