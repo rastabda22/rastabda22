@@ -779,8 +779,8 @@ class Positions(object):
 				position_dict['mediaNameList'].append({
 					'cacheBase': single_media.cache_base,
 					'albumCacheBase': media_album_cache_base,
-					'foldersCacheBase': single_media.album.cache_base,
-					'passwordsMd5': list(single_media.passwords_md5)
+					'foldersCacheBase': single_media.album.cache_base
+					# 'passwordsMd5': list(single_media.passwords_md5)
 				})
 			positions.append(position_dict)
 
