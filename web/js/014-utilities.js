@@ -92,6 +92,30 @@
 		);
 	};
 
+	Utilities.prototype.addPointToPoints = function(oldPoints, newPoint) {
+		var oldPoint, newElement;
+		for (var iOld = 0; iOld < oldPoints.length; iOld ++) {
+			oldPoint = oldPoints[iOld];
+			if (newPoint.lng == oldPoint.lng && newPoint.lat == oldPoint.lat) {
+				for (var iNew = 0; iNew < newPoint.mediaNameList.length; iNew ++) {
+					newElement = newPoint.mediaNameList[iNew];
+					// the following check is needed for searches only?
+					if (
+						oldPoint.mediaNameList.every(
+							function(element) {
+								return element.albumCacheBase != newElement.albumCacheBase || element.cacheBase != newElement.cacheBase;
+							}
+						)
+					)
+						oldPoints[iOld].mediaNameList.push(newPoint.mediaNameList[iNew]);
+				}
+				return oldPoints;
+			}
+		}
+		oldPoints.push(newPoint);
+		return oldPoints;
+	};
+
 	Utilities.prototype.mergePoints = function(oldPoints, newPoints) {
 		for (var i = 0; i < newPoints.length; i ++) {
 			oldPoints = this.addPointToPoints(oldPoints, newPoints[i]);
@@ -110,29 +134,6 @@
 			}]
 		};
 		return this.addPointToPoints(oldPoints, newPoint);
-	};
-
-	Utilities.prototype.addPointToPoints = function(oldPoints, newPoint) {
-		var oldPoint, newElement;
-		for (var iOld = 0; iOld < oldPoints.length; iOld ++) {
-			oldPoint = oldPoints[iOld];
-			if (newPoint.lng == oldPoint.lng && newPoint.lat == oldPoint.lat) {
-				for (var iNew = 0; iNew < newPoint.mediaNameList.length; iNew ++) {
-					newElement = newPoint.mediaNameList[iNew];
-					if (
-						oldPoint.mediaNameList.every(
-							function(element) {
-								return element.albumCacheBase != newElement.albumCacheBase || element.cacheBase != newElement.cacheBase;
-							}
-						)
-					)
-						oldPoints[iOld].mediaNameList.push(newPoint.mediaNameList[iNew]);
-				}
-				return oldPoints;
-			}
-		}
-		oldPoints.push(newPoint);
-		return oldPoints;
 	};
 
 	Utilities.prototype.union = function(a, b) {
