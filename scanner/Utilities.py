@@ -77,41 +77,33 @@ def json_files_and_mtime(cache_base):
 	return [json_file_list, global_mtime]
 
 def convert_md5s_to_codes(passwords_md5):
-	password_codes = list()
+	codes_set = set()
 	for password_md5 in passwords_md5.split('-'):
 		password_code = next(x['password_code'] for x in Options.identifiers_and_passwords if x['password_md5'] == password_md5)
-		password_codes.append(password_code)
-	return '-'.join(password_codes)
+		codes_set.add(password_code)
+	return '-'.join(codes_set)
 
 
-def convert_codes_to_md5s(password_codes_list):
-	md5_list = []
-	for password_code in password_codes_list:
-		md5 = [x['password_md5'] for x in Options.identifiers_and_passwords if x['password_code'] == password_code][0]
-		md5_list.append(md5)
-	return md5_list
+def convert_identifiers_set_to_md5s_set(identifiers_set):
+	md5s_set = set()
+	for identifier in identifiers_set:
+		md5 = next(x['password_md5'] for x in Options.identifiers_and_passwords if x['identifier'] == identifier)
+		md5s_set.add(md5)
+	return md5s_set
 
+def convert_identifiers_set_to_codes_set(identifiers_set):
+	codes_set = set()
+	for identifier in identifiers_set:
+		code = next(x['password_code'] for x in Options.identifiers_and_passwords if x['identifier'] == identifier)
+		codes_set.add(code)
+	return codes_set
 
-def convert_identifiers_list_to_md5s_list(identifiers_list):
-	md5_list = []
-	for identifier in identifiers_list:
-		md5 = [x['password_md5'] for x in Options.identifiers_and_passwords if x['identifier'] == identifier][0]
-		md5_list.append(md5)
-	return md5_list
-
-def convert_identifiers_list_to_codes_list(identifiers_list):
-	codes_list = []
-	for identifier in identifiers_list:
-		code = [x['password_code'] for x in Options.identifiers_and_passwords if x['identifier'] == identifier][0]
-		codes_list.append(code)
-	return codes_list
-
-def convert_md5s_list_to_identifiers(md5_list):
-	identifiers = list()
-	for password_md5 in md5_list:
-		identifier = [x['identifier'] for x in Options.identifiers_and_passwords if x['password_md5'] == password_md5][0]
-		identifiers.append(identifier)
-	return '-'.join(identifiers)
+def convert_md5s_set_to_identifiers(md5s_set):
+	identifiers_set = set()
+	for password_md5 in md5s_set:
+		identifier = next(x['identifier'] for x in Options.identifiers_and_passwords if x['password_md5'] == password_md5)
+		identifiers_set.add(identifier)
+	return '-'.join(identifiers_set)
 
 def get_old_password_codes():
 	message("PRE Getting old passwords and codes...","", 5)
@@ -148,12 +140,12 @@ def merge_dictionaries_from_cache(dict, dict1, old_password_codes):
 	if dict1 is None:
 		return dict
 	dict['numMediaInSubTree'] += dict1['numMediaInSubTree']
-	old_md5_list = []
+	old_md5s_set = set()
 	for codes in dict['numsProtectedMediaInSubTree']:
 		for code in codes.split('-'):
 			try:
-				if len(old_password_codes) > 0 and old_password_codes[code] not in old_md5_list:
-					old_md5_list.append(old_password_codes[code])
+				if len(old_password_codes) > 0 and old_password_codes[code] not in old_md5s_set:
+					old_md5s_set.add(old_password_codes[code])
 			except KeyError:
 				indented_message("not an album cache hit", "key error in password codes", 4)
 				return None

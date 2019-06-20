@@ -39,7 +39,7 @@ from CachePath import thumbnail_types_and_sizes, photo_cache_name, video_cache_n
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_all_but_alphanumeric_chars_dashes_slashes_dots, switch_to_lowercase
 from Utilities import message, indented_message, next_level, back_level, file_mtime, json_files_and_mtime
-from Utilities import merge_dictionaries_from_cache, convert_md5s_to_codes, convert_md5s_list_to_identifiers
+from Utilities import merge_dictionaries_from_cache, convert_md5s_to_codes, convert_md5s_set_to_identifiers
 from Geonames import Geonames
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
@@ -81,9 +81,9 @@ class Album(object):
 			self._attributes = {}
 			self._attributes["metadata"] = {}
 			self.json_version = ""
-			self.password_identifiers = []
-			self.passwords_md5 = []
-			self.password_codes = []
+			self.password_identifiers = set()
+			self.passwords_md5 = set()
+			self.password_codes = set()
 
 			if (
 				Options.config['subdir_method'] in ("md5", "folder") and
@@ -357,7 +357,7 @@ class Album(object):
 
 	def leave_only_content_protected_by(self, passwords_list):
 		# print()
-		# pprint(["BEFORE, PROTECTED", self.name, convert_md5s_list_to_identifiers(passwords_list), self.to_dict()])
+		# pprint(["BEFORE, PROTECTED", self.name, convert_md5s_set_to_identifiers(passwords_list), self.to_dict()])
 		# # search albums:
 		# # - do not process subalbums because they have been already processed
 		# # - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
@@ -377,7 +377,7 @@ class Album(object):
 		# 	# no media are to be included
 		# 	self.media_list = []
 		# else:
-		self.media_list = [single_media for single_media in self.media if set(passwords_list) == set(single_media.passwords_md5)]
+		self.media_list = [single_media for single_media in self.media if set(passwords_list) == single_media.passwords_md5]
 		for single_media in self.media_list:
 			self.positions_and_media_in_tree.add_media(single_media)
 
@@ -388,7 +388,7 @@ class Album(object):
 			self.num_media_in_sub_tree = 0
 
 		# print()
-		# pprint(["AFTER, PROTECTED", self.name, convert_md5s_list_to_identifiers(passwords_list), self.to_dict()])
+		# pprint(["AFTER, PROTECTED", self.name, convert_md5s_set_to_identifiers(passwords_list), self.to_dict()])
 
 	def generate_protected_content_albums(self):
 		protected_albums = {}
@@ -408,7 +408,7 @@ class Album(object):
 		save_message_3 = "saving positions album..."
 		save_message_4 = "positions album saved"
 		if passwords_md5 is not None:
-			identifiers = convert_md5s_list_to_identifiers(passwords_md5.split('-'))
+			identifiers = convert_md5s_set_to_identifiers(passwords_md5.split('-'))
 			save_message_1 = "saving protected album..."
 			save_message_2 = "protected album saved"
 			save_message_3 = "saving protected positions album..."
@@ -438,6 +438,7 @@ class Album(object):
 		message(save_message_3, "", 5)
 		with open(json_positions_file_with_path, 'w') as positions_file:
 			cache_base_root = self.cache_base.split(Options.config['cache_folder_separator'])[0]
+			pprint(self.positions_and_media_in_tree.to_dict())
 			json.dump(self.positions_and_media_in_tree, positions_file, type = cache_base_root, cls=PhotoAlbumEncoder)
 		for symlink in position_symlinks:
 			symlink_with_path = os.path.join(Options.config['cache_path'], symlink)
@@ -779,7 +780,7 @@ class Positions(object):
 					'cacheBase': single_media.cache_base,
 					'albumCacheBase': media_album_cache_base,
 					'foldersCacheBase': single_media.album.cache_base,
-					'passwordsMd5': single_media.passwords_md5
+					'passwordsMd5': list(single_media.passwords_md5)
 				})
 			positions.append(position_dict)
 

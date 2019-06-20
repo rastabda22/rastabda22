@@ -23,10 +23,10 @@ from PIL import Image
 from CachePath import remove_album_path, last_modification_time, trim_base_custom
 from CachePath import remove_folders_marker
 from Utilities import get_old_password_codes, save_password_codes, json_files_and_mtime, report_mem
-from Utilities import convert_identifiers_list_to_codes_list, convert_identifiers_list_to_md5s_list, convert_md5s_to_codes
+from Utilities import convert_identifiers_set_to_codes_set, convert_identifiers_set_to_md5s_set, convert_md5s_to_codes
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_digits, switch_to_lowercase, phrase_to_words, checksum
-from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, next_file_name, convert_md5s_list_to_identifiers
+from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, next_file_name, convert_md5s_set_to_identifiers
 from PhotoAlbum import Media, Album, PhotoAlbumEncoder, Position, Positions
 from Geonames import Geonames
 import Options
@@ -110,7 +110,7 @@ class TreeWalker:
 		message("Browsing", "start!", 3)
 
 		next_level()
-		[folders_album, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], None, [], self.origin_album)
+		[folders_album, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], None, set(), self.origin_album)
 		# [folders_album, num, nums_protected, positions, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], self.origin_album)
 		back_level()
 		if folders_album is None:
@@ -207,12 +207,12 @@ class TreeWalker:
 
 			for passwords_md5, album in self.protected_origin_album.items():
 				next_level()
-				message("saving albums for identifiers...", "identifiers = " + convert_md5s_list_to_identifiers(passwords_md5.split('-')) + ", md5's = " + passwords_md5, 4)
+				message("saving albums for identifiers...", "identifiers = " + convert_md5s_set_to_identifiers(passwords_md5.split('-')) + ", md5's = " + passwords_md5, 4)
 				next_level()
 				# try:
 				self.all_albums_to_json_file(album, passwords_md5)
 				back_level()
-				message("albums saved for identifiers", "identifiers = " + convert_md5s_list_to_identifiers(passwords_md5.split('-')) + ", md5's = " + passwords_md5, 4)
+				message("albums saved for identifiers", "identifiers = " + convert_md5s_set_to_identifiers(passwords_md5.split('-')) + ", md5's = " + passwords_md5, 4)
 				back_level()
 				# except UnboundLocalError:
 				# 	pass
@@ -1048,7 +1048,7 @@ class TreeWalker:
 								# reset the passwords
 								patterns_and_passwords = []
 								passwords_marker_mtime = None
-								inherited_passwords_identifiers = []
+								inherited_passwords_identifiers = set()
 								indented_message("passwords reset", "-", 3)
 							else:
 								# it's a simple identifier: the album and all the subalbums will be protected with the corresponding password
@@ -1199,8 +1199,8 @@ class TreeWalker:
 		dir_name = os.path.basename(absolute_path)
 		# start with the inherited passwords
 		album.password_identifiers = inherited_passwords_identifiers
-		album.passwords_md5 = convert_identifiers_list_to_md5s_list(album.password_identifiers)
-		album.password_codes = convert_identifiers_list_to_codes_list(album.password_identifiers)
+		album.passwords_md5 = convert_identifiers_set_to_md5s_set(album.password_identifiers)
+		album.password_codes = convert_identifiers_set_to_codes_set(album.password_identifiers)
 		# get the matching passwords
 		for pattern_and_password in patterns_and_passwords:
 			if pattern_and_password['case_flag'] == 'cs':
@@ -1212,11 +1212,11 @@ class TreeWalker:
 
 			# add the matching patterns
 			if match:
+				identifier = convert_md5s_set_to_identifiers([pattern_and_password['password_md5']])
 				if pattern_and_password['password_md5'] not in album.passwords_md5:
-					identifier = convert_md5s_list_to_identifiers([pattern_and_password['password_md5']])
-					album.passwords_md5.append(pattern_and_password['password_md5'])
-					album.password_codes.append(pattern_and_password['password_code'])
-					album.password_identifiers.append(identifier)
+					album.passwords_md5.add(pattern_and_password['password_md5'])
+					album.password_codes.add(pattern_and_password['password_code'])
+					album.password_identifiers.add(identifier)
 					indented_message(
 						"password added to album",
 						"'" + dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", encrypted password = " + pattern_and_password['password_md5'] + ", identifier = " + identifier,
@@ -1225,10 +1225,10 @@ class TreeWalker:
 				else:
 					indented_message(
 						"password not added to album",
-						dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "' is already there",
+						dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "' already protects the album",
 						3
 					)
-		album.passwords_md5.sort()
+		# album.passwords_md5.sort()
 
 		message("reading directory", absolute_path, 5)
 		message("subdir for cache files", " " + album.subdir, 3)
@@ -1429,21 +1429,21 @@ class TreeWalker:
 					media._attributes["checksum"] = media_checksum
 
 			if media.is_valid:
-				media.password_identifiers = []
-				media.passwords_md5 = []
-				media.password_codes = []
+				media.password_identifiers = set()
+				media.passwords_md5 = set()
+				media.password_codes = set()
 				file_name = os.path.basename(entry_with_path)
 
 				# apply the album passwords_md5 and password codes to the media
 				for identifier in album.password_identifiers:
 					if identifier not in media.password_identifiers:
-						password_md5 = convert_identifiers_list_to_md5s_list([identifier])[0]
-						media.password_identifiers.append(identifier)
-						media.passwords_md5.append(password_md5)
-						media.password_codes.append(convert_identifiers_list_to_codes_list([identifier])[0])
+						password_md5 = convert_identifiers_set_to_md5s_set({identifier}).pop()
+						media.password_identifiers.add(identifier)
+						media.passwords_md5.add(password_md5)
+						media.password_codes.add(convert_identifiers_set_to_codes_set({identifier}).pop())
 						indented_message("album password added to media", "identifier = " + identifier + ", encrypted password = " + password_md5, 3)
 					else:
-						indented_message("album password not added to media", "identifier '" + identifier + "' is already there", 3)
+						indented_message("album password not added to media", "identifier '" + identifier + "' already protects this media", 3)
 
 
 				# apply the file passwords_md5 and password codes to the media if they match the media name
@@ -1456,11 +1456,11 @@ class TreeWalker:
 						case = "case insentitive"
 
 					if match:
+						identifier = convert_md5s_set_to_identifiers([pattern_and_password['password_md5']])
 						if pattern_and_password['password_md5'] not in media.passwords_md5:
-							identifier = convert_md5s_list_to_identifiers([pattern_and_password['password_md5']])
-							media.passwords_md5.append(pattern_and_password['password_md5'])
-							media.password_codes.append(pattern_and_password['password_code'])
-							media.password_identifiers.append(identifier)
+							media.passwords_md5.add(pattern_and_password['password_md5'])
+							media.password_codes.add(pattern_and_password['password_code'])
+							media.password_identifiers.add(identifier)
 							indented_message(
 								"password and code added to media",
 								"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", identifier = " + identifier + ", encrypted password = " + pattern_and_password['password_md5'],
@@ -1469,11 +1469,11 @@ class TreeWalker:
 						else:
 							indented_message(
 								"password and code not added to media",
-								"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "' is already there",
+								"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "'  already protects the media",
 								3
 							)
 
-				media.passwords_md5.sort()
+				# media.passwords_md5.sort()
 
 				# update the protected media count according for the passwords' md5
 				if len(media.passwords_md5) > 0:
