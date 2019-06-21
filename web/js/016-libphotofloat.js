@@ -7,7 +7,6 @@
 		PhotoFloat.cache = {};
 		PhotoFloat.cache.albums = {};
 		PhotoFloat.cache.albums.index = {};
-		PhotoFloat.cache.positions = {};
 		PhotoFloat.guessedPasswordCodes = [];
 		PhotoFloat.guessedPasswordsMd5 = [];
 		this.geotaggedPhotosFound = null;
@@ -1301,7 +1300,7 @@
 		// save in the cash array
 		if (! PhotoFloat.getAlbumFromCache(resultsAlbumFinal.cacheBase)) {
 			PhotoFloat.putAlbumIntoCache(resultsAlbumFinal.cacheBase, resultsAlbumFinal);
-			PhotoFloat.cache.positions[resultsAlbumFinal.cacheBase] = resultsAlbumFinal.positionsAndMediaInTree;
+			// PhotoFloat.cache.positions[resultsAlbumFinal.cacheBase] = resultsAlbumFinal.positionsAndMediaInTree;
 		}
 
 		PhotoFloat.selectMedia(resultsAlbumFinal, null, mediaHash, callback);
