@@ -270,23 +270,24 @@
 		function getAlbumWithPositions(albumCacheBase, goOn, error) {
 			var jsonFile = albumCacheBase + ".json";
 			var positionJsonFile = albumCacheBase + '.positions.json';
-			PhotoFloat.getJsonFiles(
-				[jsonFile, positionJsonFile],
-				function(jsonContents) {
-					var theAlbum, positions;
-					if (jsonContents[0]. hasOwnProperty('media')) {
-						theAlbum = jsonContents[0];
-						positions = jsonContents[1];
+			PhotoFloat.getJsonFile(
+				jsonFile,
+				function(theAlbum) {
+					if (theAlbum.hasOwnProperty("positionsAndMediaInTree")) {
+						goOn(theAlbum);
 					} else {
-						theAlbum = jsonContents[1];
-						positions = jsonContents[0];
+						PhotoFloat.getJsonFile(
+							positionJsonFile,
+							function(positions) {
+								theAlbum.positionsAndMediaInTree = positions;
+								// // we must add the corresponding positions to every subalbums
+								if (albumCacheBase != Options.by_search_string)
+									PhotoFloat.addPositionsToSubalbums(theAlbum);
+								goOn(theAlbum);
+							},
+							error
+						);
 					}
-
-					theAlbum.positionsAndMediaInTree = positions;
-					// // we must add the corresponding positions to every subalbums
-					// if (albumCacheBase != Options.by_search_string)
-					// 	PhotoFloat.addPositionsToSubalbums(theAlbum);
-					goOn(theAlbum);
 				},
 				error
 			);
