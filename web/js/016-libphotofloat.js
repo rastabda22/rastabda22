@@ -106,11 +106,12 @@
 	};
 
 	PhotoFloat.addPositionsToSubalbums = function(thisAlbum) {
-		var iSubalbum, iPosition, iPhoto, position, subalbumCacheKey;
+		var iSubalbum, iPosition, iPhoto, position, subalbumCacheKey, subalbum;
 		var positions = thisAlbum.positionsAndMediaInTree;
 		if (thisAlbum.hasOwnProperty("subalbums")) {
 			for (iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; ++ iSubalbum) {
-				thisAlbum.subalbums[iSubalbum].positionsAndMediaInTree = [];
+				subalbum = thisAlbum.subalbums[iSubalbum];
+				subalbum.positionsAndMediaInTree = [];
 				for (iPosition = 0; iPosition < positions.length; ++ iPosition) {
 					position = {};
 					position.lat = positions[iPosition].lat;
@@ -118,12 +119,12 @@
 					position.mediaNameList = [];
 					for (iPhoto = 0; iPhoto < positions[iPosition].mediaNameList.length; ++ iPhoto) {
 						// add the photos belonging to this subalbum
-						if (positions[iPosition].mediaNameList[iPhoto].albumCacheBase.indexOf(thisAlbum.subalbums[iSubalbum].cacheBase) == 0) {
+						if (positions[iPosition].mediaNameList[iPhoto].albumCacheBase.indexOf(subalbum.cacheBase) == 0) {
 							position.mediaNameList.push(positions[iPosition].mediaNameList[iPhoto]);
 						}
 					}
 					if (position.mediaNameList.length)
-						thisAlbum.subalbums[iSubalbum].positionsAndMediaInTree.push(position);
+						subalbum.positionsAndMediaInTree.push(position);
 				}
 
 				// save in the cache
