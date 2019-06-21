@@ -149,14 +149,14 @@
 
 			for (i = 2; i < components.length; ++i) {
 				// var currentAlbumPath = currentAlbum.ancestorsNames;
-				gpsName = currentAlbum.ancestorsNames[i];
+				gpsName = currentAlbum.ancestorsNames[i - 1];
 
 				if (gpsName === '')
 					gpsName = util._t('.not-specified');
 				gpsHtmlTitle = util._t("#place-icon-title") + gpsName;
 
 				if (i < components.length - 1 || media !== null) {
-					title += "<a class='" + titleAnchorClasses + "' href='#!/" + encodeURI(currentAlbum.ancestorsCacheBase[i]) + "'";
+					title += "<a class='" + titleAnchorClasses + "' href='#!/" + encodeURI(currentAlbum.ancestorsCacheBase[i - 1]) + "'";
 					title += " title='" + util._t("#place-icon-title") + gpsName + util._t("#place-icon-title-end") + "'";
 					title += ">";
 				} else
