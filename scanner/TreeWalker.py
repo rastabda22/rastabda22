@@ -1857,15 +1857,19 @@ class TreeWalker:
 				elif subdir == "":
 					# a protected content directory which doesn't is reported must be deleted with all its content
 					shutil.rmtree(Options.config['cache_path'], os.path.join(subdir, cache_file))
-				if not os.listdir(os.path.join(Options.config['cache_path'], subdir, cache_file)):
-					next_level()
-					message("empty subdir, deleting...", "", 4)
-					file_to_delete = os.path.join(Options.config['cache_path'], subdir, cache_file)
-					next_level()
-					os.rmdir(os.path.join(Options.config['cache_path'], file_to_delete))
-					message("empty subdir, deleted", "", 5)
-					back_level()
-					back_level()
+				try:
+					if not os.listdir(os.path.join(Options.config['cache_path'], subdir, cache_file)):
+						next_level()
+						message("empty subdir, deleting...", "", 4)
+						file_to_delete = os.path.join(Options.config['cache_path'], subdir, cache_file)
+						next_level()
+						os.rmdir(os.path.join(Options.config['cache_path'], file_to_delete))
+						message("empty subdir, deleted", "", 5)
+						back_level()
+						back_level()
+				except OSError:
+					# no protected content
+					pass
 				back_level()
 			else:
 				# only delete json's, transcoded videos, reduced images and thumbnails
