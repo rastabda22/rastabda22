@@ -327,9 +327,10 @@
 			// prepare and get the protected content albums
 			var thePasswordsToGet = PhotoFloat.passwordsToGet(album);
 			var iPassword, key, numProtected, protectedAlbumCacheBase;
-			if (thePasswordsToGet.length == 0)
+			if (thePasswordsToGet.length == 0) {
+				PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
 				executeCallback(album);
-			else {
+			} else {
 				var index, passwordCode;
 
 				var nPassword = 0, guessedPassword;
