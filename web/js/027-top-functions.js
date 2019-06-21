@@ -1638,6 +1638,95 @@
 
 
 	TopFunctions.showAlbum = function(populate) {
+		function insertRandomImage(randomAlbum, randomMedia, subalbum, id, resolve) {
+			var titleName, randomMediaLink, goTo, humanGeonames;
+			var mediaSrc = util.chooseThumbnail(randomAlbum, randomMedia, Options.album_thumb_size);
+
+			phFl.subalbumIndex ++;
+			mediaWidth = randomMedia.metadata.size[0];
+			mediaHeight = randomMedia.metadata.size[1];
+			if (Options.album_thumb_type == "fit") {
+				if (mediaWidth < correctedAlbumThumbSize && mediaHeight < correctedAlbumThumbSize) {
+					thumbWidth = mediaWidth;
+					thumbHeight = mediaHeight;
+				} else {
+					if (mediaWidth > mediaHeight) {
+						thumbWidth = correctedAlbumThumbSize;
+						thumbHeight = Math.floor(correctedAlbumThumbSize * mediaHeight / mediaWidth);
+					} else {
+						thumbWidth = Math.floor(correctedAlbumThumbSize * mediaWidth / mediaHeight);
+						thumbHeight = correctedAlbumThumbSize;
+					}
+				}
+			} else if (Options.album_thumb_type == "square") {
+				thumbWidth = correctedAlbumThumbSize;
+				thumbHeight = correctedAlbumThumbSize;
+			}
+
+			if (util.isByDateCacheBase(currentAlbum.cacheBase)) {
+				titleName = util.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
+				// randomMediaLink = util.pathJoin(["#!", randomMedia.dayAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
+			} else if (util.isByGpsCacheBase(currentAlbum.cacheBase)) {
+				humanGeonames = util.pathJoin([Options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
+				titleName = util.pathJoin([humanGeonames, randomMedia.name]);
+				// randomMediaLink = util.pathJoin(["#!", randomMedia.gpsAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
+			} else if (util.isSearchCacheBase(currentAlbum.cacheBase)) {
+				titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
+				// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, currentAlbum.cacheBase + Options.cache_folder_separator + theSubalbum.cacheBase, randomMedia.cacheBase]);
+			} else {
+				titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
+				// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, randomMedia.cacheBase]);
+			}
+			randomMediaLink = phFl.encodeHash(randomAlbum, randomMedia);
+
+			titleName = titleName.substr(titleName.indexOf('/') + 1);
+			goTo = util._t(".go-to") + " " + titleName;
+			$("#" + id + " .album-button a").attr("href", randomMediaLink);
+			$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
+			$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName);
+			$("#" + id + " img.thumbnail").attr("data-src", encodeURI(mediaSrc));
+			$("#" + id + " img.thumbnail").css("width", thumbWidth).css("height", thumbHeight);
+
+			$(function() {
+				$("img.lazyload-album-" + id).Lazy(
+					{
+						chainable: false,
+						threshold: Options.media_thumb_size,
+						bind: 'event',
+						removeAttribute: true
+					}
+				);
+			});
+
+			container = $("#" + phFl.hashCode(subalbum.cacheBase));
+			// add the click event
+			container.off('click').on(
+			// container.off('click').css("cursor", "pointer").on(
+				'click',
+				function(ev) {
+					var subfolderHash;
+					if (util.isSearchCacheBase(currentAlbum.cacheBase))
+						subfolderHash = phFl.encodeHash(subalbum, null, subalbum.cacheBase, currentAlbum.cacheBase);
+					else {
+						if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
+							subfolderHash = phFl.encodeHash(subalbum.cacheBase, null, savedSearchSubAlbumHash, savedSearchAlbumHash);
+						else
+							subfolderHash = phFl.encodeHash(subalbum, null);
+					}
+
+					window.location.href = subfolderHash;
+				}
+			);
+
+			numSubAlbumsReady ++;
+			if (numSubAlbumsReady >= currentAlbum.subalbums.length) {
+				// now all the subalbums random thumbnails has been loaded
+				resolve();
+			}
+		}
+		// end of insertRandomImage function
+
+
 		var i, imageLink, linkContainer, container, image, media, thumbsElement, subalbums, subalbumsElement, mediaHash, thumbHash, thumbnailSize;
 		var width, height, thumbWidth, thumbHeight, imageString, calculatedWidth, calculatedHeight, populateMedia;
 		var albumViewWidth, correctedAlbumThumbSize = Options.album_thumb_size;
@@ -2031,92 +2120,9 @@
 									// function(subalbum, container, callback, error)  ---  callback(album,   album.media[index], container,            subalbum);
 									phFl.pickRandomMedia(
 										theSubalbum,
-										function(randomAlbum, randomMedia, subalbum) {
-											var titleName, randomMediaLink, goTo, humanGeonames;
-											var mediaSrc = util.chooseThumbnail(randomAlbum, randomMedia, Options.album_thumb_size);
-
-											phFl.subalbumIndex ++;
-											mediaWidth = randomMedia.metadata.size[0];
-											mediaHeight = randomMedia.metadata.size[1];
-											if (Options.album_thumb_type == "fit") {
-												if (mediaWidth < correctedAlbumThumbSize && mediaHeight < correctedAlbumThumbSize) {
-													thumbWidth = mediaWidth;
-													thumbHeight = mediaHeight;
-												} else {
-													if (mediaWidth > mediaHeight) {
-														thumbWidth = correctedAlbumThumbSize;
-														thumbHeight = Math.floor(correctedAlbumThumbSize * mediaHeight / mediaWidth);
-													} else {
-														thumbWidth = Math.floor(correctedAlbumThumbSize * mediaWidth / mediaHeight);
-														thumbHeight = correctedAlbumThumbSize;
-													}
-												}
-											} else if (Options.album_thumb_type == "square") {
-												thumbWidth = correctedAlbumThumbSize;
-												thumbHeight = correctedAlbumThumbSize;
-											}
-
-											if (util.isByDateCacheBase(currentAlbum.cacheBase)) {
-												titleName = util.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
-												// randomMediaLink = util.pathJoin(["#!", randomMedia.dayAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
-											} else if (util.isByGpsCacheBase(currentAlbum.cacheBase)) {
-												humanGeonames = util.pathJoin([Options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
-												titleName = util.pathJoin([humanGeonames, randomMedia.name]);
-												// randomMediaLink = util.pathJoin(["#!", randomMedia.gpsAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
-											} else if (util.isSearchCacheBase(currentAlbum.cacheBase)) {
-												titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
-												// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, currentAlbum.cacheBase + Options.cache_folder_separator + theSubalbum.cacheBase, randomMedia.cacheBase]);
-											} else {
-												titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
-												// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, randomMedia.cacheBase]);
-											}
-											randomMediaLink = phFl.encodeHash(randomAlbum, randomMedia);
-
-											titleName = titleName.substr(titleName.indexOf('/') + 1);
-											goTo = util._t(".go-to") + " " + titleName;
-											$("#" + id + " .album-button a").attr("href", randomMediaLink);
-											$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
-											$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName);
-											$("#" + id + " img.thumbnail").attr("data-src", encodeURI(mediaSrc));
-											$("#" + id + " img.thumbnail").css("width", thumbWidth).css("height", thumbHeight);
-
-											$(function() {
-												$("img.lazyload-album-" + id).Lazy(
-													{
-														chainable: false,
-														threshold: Options.media_thumb_size,
-														bind: 'event',
-														removeAttribute: true
-													}
-												);
-											});
-
-											container = $("#" + phFl.hashCode(subalbum.cacheBase));
-											// add the click event
-											container.off('click').on(
-											// container.off('click').css("cursor", "pointer").on(
-												'click',
-												function(ev) {
-													var subfolderHash;
-													if (util.isSearchCacheBase(currentAlbum.cacheBase))
-														subfolderHash = phFl.encodeHash(subalbum, null, subalbum.cacheBase, currentAlbum.cacheBase);
-													else {
-														if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
-															subfolderHash = phFl.encodeHash(subalbum.cacheBase, null, savedSearchSubAlbumHash, savedSearchAlbumHash);
-														else
-															subfolderHash = phFl.encodeHash(subalbum, null);
-													}
-
-													window.location.href = subfolderHash;
-												}
-											);
-
-											numSubAlbumsReady ++;
-											if (numSubAlbumsReady >= currentAlbum.subalbums.length) {
-												// now all the subalbums random thumbnails has been loaded
-												resolve();
-											}
-										},
+										resolve,
+										id,
+										insertRandomImage,
 										function error() {
 											currentAlbum.subalbums.splice(currentAlbum.subalbums.indexOf(theSubalbum), 1);
 											theImage.parent().remove();
