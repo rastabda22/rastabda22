@@ -133,41 +133,41 @@
 		}
 	};
 
-	PhotoFloat.getPositions = function(thisAlbum, callback, error) {
-
-		var cacheFile = util.pathJoin([Options.server_cache_path, thisAlbum.cacheBase + ".positions.json"]);
-		var ajaxOptions;
-		// before getting the positions check whether it's in the cache
-		var albumCacheBase = thisAlbum.cacheBase;
-		if (PhotoFloat.cache.positions.hasOwnProperty(albumCacheBase)) {
-			thisAlbum.positionsAndMediaInTree = PhotoFloat.cache.positions[albumCacheBase];
-			// we must add the corresponding positions to every subalbum too
-			PhotoFloat.addPositionsToSubalbums(thisAlbum);
-			callback(thisAlbum);
-		} else {
-			// get the file
-			ajaxOptions = {
-				type: "GET",
-				dataType: "json",
-				url: cacheFile,
-				success: function(positions) {
-					thisAlbum.positionsAndMediaInTree = positions;
-					// we must add the corresponding positions to every subalbums
-					PhotoFloat.addPositionsToSubalbums(thisAlbum);
-
-					PhotoFloat.cache.positions[albumCacheBase] = positions;
-
-					callback(thisAlbum);
-				}
-			};
-			if (typeof error !== "undefined" && error !== null) {
-				ajaxOptions.error = function(jqXHR, textStatus, errorThrown) {
-					error(jqXHR.status);
-				};
-			}
-			$.ajax(ajaxOptions);
-		}
-	};
+	// PhotoFloat.getPositions = function(thisAlbum, callback, error) {
+	//
+	// 	var cacheFile = util.pathJoin([Options.server_cache_path, thisAlbum.cacheBase + ".positions.json"]);
+	// 	var ajaxOptions;
+	// 	// before getting the positions check whether it's in the cache
+	// 	var albumCacheBase = thisAlbum.cacheBase;
+	// 	if (PhotoFloat.cache.positions.hasOwnProperty(albumCacheBase)) {
+	// 		thisAlbum.positionsAndMediaInTree = PhotoFloat.cache.positions[albumCacheBase];
+	// 		// we must add the corresponding positions to every subalbum too
+	// 		PhotoFloat.addPositionsToSubalbums(thisAlbum);
+	// 		callback(thisAlbum);
+	// 	} else {
+	// 		// get the file
+	// 		ajaxOptions = {
+	// 			type: "GET",
+	// 			dataType: "json",
+	// 			url: cacheFile,
+	// 			success: function(positions) {
+	// 				thisAlbum.positionsAndMediaInTree = positions;
+	// 				// we must add the corresponding positions to every subalbums
+	// 				PhotoFloat.addPositionsToSubalbums(thisAlbum);
+	//
+	// 				PhotoFloat.cache.positions[albumCacheBase] = positions;
+	//
+	// 				callback(thisAlbum);
+	// 			}
+	// 		};
+	// 		if (typeof error !== "undefined" && error !== null) {
+	// 			ajaxOptions.error = function(jqXHR, textStatus, errorThrown) {
+	// 				error(jqXHR.status);
+	// 			};
+	// 		}
+	// 		$.ajax(ajaxOptions);
+	// 	}
+	// };
 
 	PhotoFloat.getStopWords = function(callback, error) {
 		if (! Options.search_inside_words && Options.use_stop_words) {
@@ -489,23 +489,6 @@
 				getAlbumCallback(theAlbum, thisIndexWords, thisIndexAlbums);
 			}
 		}
-
-		// function putPositionsIntoAlbum(jsonContents) {
-		// 	var theAlbum, positions;
-		// 	if (jsonContents[0]. hasOwnProperty('media')) {
-		// 		theAlbum = jsonContents[0];
-		// 		positions = jsonContents[1];
-		// 	} else {
-		// 		theAlbum = jsonContents[1];
-		// 		positions = jsonContents[0];
-		// 	}
-		//
-		// 	theAlbum.positionsAndMediaInTree = positions;
-		// 	// we must add the corresponding positions to every subalbums
-		// 	PhotoFloat.addPositionsToSubalbums(theAlbum);
-		//
-		// 	return theAlbum;
-		// }
 
 		///////////////////////////////////////////////////
 		// begin function code
