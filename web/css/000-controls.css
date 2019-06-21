@@ -579,9 +579,15 @@ video {
 	font-size: 70%;
 }
 
+
+.media-box .menu-map-link {
+	cursor: pointer;
+}
+
 #thumbs a {
 	display: inline-flex;
 	text-decoration: none;
+	cursor: pointer;
 }
 
 .sort img.opaque {

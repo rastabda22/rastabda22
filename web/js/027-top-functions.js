@@ -1077,7 +1077,8 @@
 			$(".media-box#" + id + " .menu-map-link").show();
 			$(".media-box#" + id + " .menu-map-divider").show();
 		} else {
-			$(".media-box#" + id + " .menu-map-link").removeAttr("href").css("cursor","pointer");
+			$(".media-box#" + id + " .menu-map-link").removeAttr("href");
+			// $(".media-box#" + id + " .menu-map-link").removeAttr("href").css("cursor", "pointer");
 			$(".media-box#" + id + " .menu-map-link").hide();
 			$(".media-box#" + id + " .menu-map-divider").hide();
 		}
@@ -1792,7 +1793,8 @@
 					imageLink.append(image);
 					media.push(imageLink);
 
-					imageLink.off('click').css("cursor", "pointer").on(
+					imageLink.off('click').on(
+					// imageLink.off('click').css("cursor", "pointer").on(
 						'click',
 						{hash: mediaHash},
 						function(ev) {
@@ -2088,7 +2090,8 @@
 
 											container = $("#" + phFl.hashCode(subalbum.cacheBase));
 											// add the click event
-											container.off('click').css("cursor", "pointer").on(
+											container.off('click').on(
+											// container.off('click').css("cursor", "pointer").on(
 												'click',
 												function(ev) {
 													var subfolderHash;
