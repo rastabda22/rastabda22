@@ -1281,7 +1281,10 @@
 		// if (! isAlbumWithOneMedia || $("#album-view").is(":visible")) {
 		if ($("#album-view").is(":visible")) {
 			populateAlbum =
-			 	previousAlbum !== currentAlbum || previousMedia !== currentMedia;
+				previousAlbum === null ||
+			 	previousAlbum.cacheBase !== currentAlbum.cacheBase ||
+				currentMedia === null && previousMedia !== null;
+			 	// previousAlbum !== currentAlbum || previousMedia !== currentMedia;
 			TopFunctions.showAlbum(populateAlbum);
 		}
 
@@ -2167,23 +2170,23 @@
 			}
 
 			$("#loading").hide();
-
 		}
 
-		if (! $("#album-view").hasClass("media-view-container"))
-			$("img.lazyload-media").Lazy(
-				{
-					// threshold: 2 * Options.media_thumb_size,
-					appendScroll: $(window)
-				}
-			);
-		// if (currentMedia !== null && previousMedia === null)
-		$("#album-view.media-view-container img.lazyload-media").Lazy(
-			{
-				// threshold: 2 * Options.media_thumb_size,
-				appendScroll: $("#album-view")
-			}
-		);
+		if (populateMedia) {
+			if (! $("#album-view").hasClass("media-view-container"))
+				$("img.lazyload-media").Lazy(
+					{
+						// threshold: 2 * Options.media_thumb_size,
+						appendScroll: $(window)
+					}
+				);
+				$("#album-view.media-view-container img.lazyload-media").Lazy(
+					{
+						// threshold: 2 * Options.media_thumb_size,
+						appendScroll: $("#album-view")
+					}
+				);
+		}
 
 		if (currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)) {
 			$("#media-view").addClass("hidden");
