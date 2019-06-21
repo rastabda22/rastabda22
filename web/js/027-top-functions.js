@@ -171,7 +171,7 @@
 					latitude = media.metadata.latitude;
 					longitude = media.metadata.longitude;
 				} else {
-					arrayCoordinates = currentAlbum.ancestorsCenter[i];
+					arrayCoordinates = currentAlbum.ancestorsCenter[i - 1];
 					latitude = arrayCoordinates.latitude;
 					longitude = arrayCoordinates.longitude;
 				}
