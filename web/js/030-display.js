@@ -463,16 +463,6 @@ $(document).ready(function() {
 				if (! PhotoFloat.guessedPasswordsMd5.includes(encryptedPassword))
 					PhotoFloat.guessedPasswordsMd5.push(encryptedPassword);
 
-				// if (
-				// 	currentAlbum !== null && (
-				// 		util.isSearchCacheBase(currentAlbum.cacheBase) ||
-				// 		currentMedia === null
-				// 	)
-				// )
-				// 	// the search album must be removed from cache,
-				// 	// otherwise the new album won't be generated and the protected content won't be searched
-				// 	phFl.removeAlbumFromCache(currentAlbum.cacheBase);
-
 				$("#loading").show();
 
 				// phFl.removeAllProtectedAlbumsFromCache();
