@@ -89,21 +89,21 @@
 			return false;
 	};
 
-	PhotoFloat.removeAlbumFromCache = function(albumCacheBase) {
-		if (! Options.hasOwnProperty("js_cache_levels"))
-			Options.js_cache_levels = PhotoFloat.js_cache_levels;
-
-		if (PhotoFloat.cache.albums.index.hasOwnProperty(albumCacheBase)) {
-			var cacheLevel = PhotoFloat.cache.albums.index[albumCacheBase];
-			delete PhotoFloat.cache.albums[cacheLevel][albumCacheBase];
-			delete PhotoFloat.cache.albums.index[albumCacheBase];
-			PhotoFloat.cache.albums[cacheLevel].queue.splice(PhotoFloat.cache.albums[cacheLevel].queue.indexOf(albumCacheBase), 1);
-
-			// remove the positions too
-			delete PhotoFloat.cache.positions[albumCacheBase];
-		} else
-			return false;
-	};
+	// PhotoFloat.removeAlbumFromCache = function(albumCacheBase) {
+	// 	if (! Options.hasOwnProperty("js_cache_levels"))
+	// 		Options.js_cache_levels = PhotoFloat.js_cache_levels;
+	//
+	// 	if (PhotoFloat.cache.albums.index.hasOwnProperty(albumCacheBase)) {
+	// 		var cacheLevel = PhotoFloat.cache.albums.index[albumCacheBase];
+	// 		delete PhotoFloat.cache.albums[cacheLevel][albumCacheBase];
+	// 		delete PhotoFloat.cache.albums.index[albumCacheBase];
+	// 		PhotoFloat.cache.albums[cacheLevel].queue.splice(PhotoFloat.cache.albums[cacheLevel].queue.indexOf(albumCacheBase), 1);
+	//
+	// 		// remove the positions too
+	// 		delete PhotoFloat.cache.positions[albumCacheBase];
+	// 	} else
+	// 		return false;
+	// };
 
 	PhotoFloat.addPositionsToSubalbums = function(thisAlbum) {
 		var iSubalbum, iPosition, iPhoto, position, subalbumCacheKey, subalbum;
@@ -1438,7 +1438,7 @@
 	PhotoFloat.prototype.hashCode = PhotoFloat.hashCode;
 	PhotoFloat.prototype.endPreparingAlbumAndKeepOn = PhotoFloat.endPreparingAlbumAndKeepOn;
 	PhotoFloat.prototype.searchAndSubalbumHash = PhotoFloat.searchAndSubalbumHash;
-	PhotoFloat.prototype.removeAlbumFromCache = PhotoFloat.removeAlbumFromCache;
+	// PhotoFloat.prototype.removeAlbumFromCache = PhotoFloat.removeAlbumFromCache;
 	/* expose class globally */
 	window.PhotoFloat = PhotoFloat;
 }());
