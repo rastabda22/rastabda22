@@ -539,7 +539,7 @@
 		}
 	};
 
-	PhotoFloat.prototype.pickRandomMedia = function(subalbum, container, callback, error) {
+	PhotoFloat.prototype.pickRandomMedia = function(subalbum, callback, error) {
 		function nextAlbum(album) {
 			var index = Math.floor(Math.random() * (album.numMediaInSubTree));
 			var found = false, i;
@@ -561,7 +561,7 @@
 				}
 				PhotoFloat.getAlbum(album.subalbums[i].cacheBase, nextAlbum, error);
 			} else
-				callback(album, album.media[index], container, subalbum);
+				callback(album, album.media[index], subalbum);
 		}
 
 		// var self = this;

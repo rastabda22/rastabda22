@@ -2031,8 +2031,7 @@
 									// function(subalbum, container, callback, error)  ---  callback(album,   album.media[index], container,            subalbum);
 									phFl.pickRandomMedia(
 										theSubalbum,
-										currentAlbum,
-										function(randomAlbum, randomMedia, theOriginalAlbumContainer, subalbum) {
+										function(randomAlbum, randomMedia, subalbum) {
 											var titleName, randomMediaLink, goTo, humanGeonames;
 											var mediaSrc = util.chooseThumbnail(randomAlbum, randomMedia, Options.album_thumb_size);
 
@@ -2113,7 +2112,7 @@
 											);
 
 											numSubAlbumsReady ++;
-											if (numSubAlbumsReady >= theOriginalAlbumContainer.subalbums.length) {
+											if (numSubAlbumsReady >= currentAlbum.subalbums.length) {
 												// now all the subalbums random thumbnails has been loaded
 												resolve();
 											}
