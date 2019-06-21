@@ -126,10 +126,6 @@
 					if (position.mediaNameList.length)
 						subalbum.positionsAndMediaInTree.push(position);
 				}
-
-				// save in the cache
-				subalbumCacheKey = thisAlbum.subalbums[iSubalbum].cacheBase;
-				PhotoFloat.cache.positions[subalbumCacheKey] = thisAlbum.subalbums[iSubalbum].positionsAndMediaInTree;
 			}
 		}
 	};
