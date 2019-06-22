@@ -285,7 +285,10 @@ class Album(object):
 		return True
 
 	def used_password_identifiers(self):
-		return self.nums_protected_media_in_sub_tree.keys()
+		keys = self.nums_protected_media_in_sub_tree.keys()
+		keys = sorted(sorted(keys), key = lambda single_key: len(single_key.split('-')))
+
+		return keys
 
 	def copy(self):
 		album = Album(None)

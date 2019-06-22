@@ -339,8 +339,7 @@ class TreeWalker:
 		by_date_album.cache_base = Options.config['by_date_string']
 		by_date_max_file_date = None
 
-		years = list(self.tree_by_date.keys())
-		years.sort()
+		years = sorted(list(self.tree_by_date.keys()))
 		for year in years:
 			year_path = os.path.join(by_date_path, str(year))
 			year_album = Album(year_path)
@@ -349,8 +348,7 @@ class TreeWalker:
 			year_max_file_date = None
 			by_date_album.add_album(year_album)
 
-			months = list(self.tree_by_date[year].keys())
-			months.sort()
+			months = sorted(list(self.tree_by_date[year].keys()))
 			for month in months:
 			# for month, _ in self.tree_by_date[year].items():
 				month_path = os.path.join(year_path, str(month))
@@ -360,8 +358,7 @@ class TreeWalker:
 				month_max_file_date = None
 				year_album.add_album(month_album)
 
-				days = list(self.tree_by_date[year][month].keys())
-				days.sort()
+				days = sorted(list(self.tree_by_date[year][month].keys()))
 				for day in self.tree_by_date[year][month]:
 				# for day, media in self.tree_by_date[year][month].items():
 					media = self.tree_by_date[year][month][day]
@@ -503,8 +500,7 @@ class TreeWalker:
 		by_search_album.cache_base = Options.config['by_search_string']
 		by_search_max_file_date = None
 		message("working with word albums...", "", 5)
-		keys = list(self.tree_by_search.keys())
-		keys.sort()
+		keys = sorted(list(self.tree_by_search.keys()))
 		for word in keys:
 		# for word, media_album_and_words in self.tree_by_search.items():
 			media_album_and_words = self.tree_by_search[word]
@@ -585,8 +581,7 @@ class TreeWalker:
 		by_geonames_album.cache_base = Options.config['by_gps_string']
 		by_geonames_max_file_date = None
 
-		country_codes = list(self.tree_by_geonames.keys())
-		country_codes.sort()
+		country_codes = sorted(list(self.tree_by_geonames.keys()))
 		for country_code in country_codes:
 		# for country_code, _ in self.tree_by_geonames.items():
 			country_path = os.path.join(by_geonames_path, str(country_code))
@@ -597,8 +592,7 @@ class TreeWalker:
 			country_max_file_date = None
 			by_geonames_album.add_album(country_album)
 
-			region_codes = list(self.tree_by_geonames[country_code].keys())
-			region_codes.sort()
+			region_codes = sorted(list(self.tree_by_geonames[country_code].keys()))
 			for region_code in region_codes:
 			# for region_code, _ in self.tree_by_geonames[country_code].items():
 				region_path = os.path.join(country_path, str(region_code))
