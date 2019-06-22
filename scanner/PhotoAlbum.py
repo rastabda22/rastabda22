@@ -39,7 +39,7 @@ from CachePath import thumbnail_types_and_sizes, photo_cache_name, video_cache_n
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_all_but_alphanumeric_chars_dashes_slashes_dots, switch_to_lowercase
 from Utilities import message, indented_message, next_level, back_level, file_mtime, json_files_and_mtime
-from Utilities import merge_dictionaries_from_cache, convert_md5s_to_codes, convert_md5s_set_to_identifiers
+from Utilities import merge_dictionaries_from_cache, convert_md5s_to_codes, convert_md5s_set_to_identifiers, convert_identifiers_set_to_codes_set
 from Geonames import Geonames
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
@@ -82,8 +82,6 @@ class Album(object):
 			self._attributes["metadata"] = {}
 			self.json_version = ""
 			self.password_identifiers = set()
-			self.passwords_md5 = set()
-			self.password_codes = set()
 
 			if (
 				Options.config['subdir_method'] in ("md5", "folder") and
@@ -286,7 +284,7 @@ class Album(object):
 				return False
 		return True
 
-	def used_passwords_permutations(self):
+	def used_password_identifiers(self):
 		return self.nums_protected_media_in_sub_tree.keys()
 
 	def copy(self):
@@ -332,7 +330,7 @@ class Album(object):
 			subalbum.leave_only_unprotected_content()
 			self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
-		if len(self.passwords_md5) > 0:
+		if len(self.password_identifiers) > 0:
 			# protected album, remove the media
 			self.media_list = []
 			self.positions_and_media_in_tree = Positions(None)
@@ -343,7 +341,7 @@ class Album(object):
 			self.is_protected = True
 		else:
 			# the album isn't protected, but media and subalbums may be protected
-			self.media_list = [media for media in self.media if len(media.passwords_md5) == 0]
+			self.media_list = [media for media in self.media if len(media.password_identifiers) == 0]
 
 		for single_media in self.media_list:
 			if single_media.has_gps_data:
@@ -356,7 +354,7 @@ class Album(object):
 		# pprint(["AFTER, UNPROTECTED", self.name, self.to_dict()])
 
 
-	def leave_only_content_protected_by(self, passwords_list):
+	def leave_only_content_protected_by(self, identifiers_set):
 		# print()
 		# pprint(["BEFORE, PROTECTED", self.name, convert_md5s_set_to_identifiers(passwords_list), self.to_dict()])
 		# # search albums:
@@ -370,20 +368,20 @@ class Album(object):
 		# ):
 		self.positions_and_media_in_tree = Positions(None)
 		for subalbum in self.subalbums_list:
-			subalbum.leave_only_content_protected_by(passwords_list)
+			subalbum.leave_only_content_protected_by(identifiers_set)
 			self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
-		# if set(passwords_list) != set(self.passwords_md5):
+		# if set(identifiers_set) != set(self.passwords_md5):
 		# 	# the album (and all its subalbums) isn't protected by the given combination
 		# 	# no media are to be included
 		# 	self.media_list = []
 		# else:
-		self.media_list = [single_media for single_media in self.media if set(passwords_list) == single_media.passwords_md5]
+		self.media_list = [single_media for single_media in self.media if set(identifiers_set) == single_media.password_identifiers]
 		for single_media in self.media_list:
 			if single_media.has_gps_data:
 				self.positions_and_media_in_tree.add_media(single_media)
 
-		self.combination = '-'.join(passwords_list)
+		self.combination = '-'.join(sorted(identifiers_set))
 		if self.combination in self.nums_protected_media_in_sub_tree:
 			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree[self.combination]
 		else:
@@ -394,29 +392,30 @@ class Album(object):
 
 	def generate_protected_content_albums(self):
 		protected_albums = {}
-		for passwords_permutation in self.used_passwords_permutations():
+		for indentifiers_combination in self.used_password_identifiers():
 			next_level()
-			message("working with permutation...", passwords_permutation, 4)
-			passwords_permutation_list = passwords_permutation.split('-')
-			protected_albums[passwords_permutation] = self.copy()
-			protected_albums[passwords_permutation].leave_only_content_protected_by(passwords_permutation_list)
-			indented_message("permutation worked out!", passwords_permutation, 5)
+			message("working with combination...", indentifiers_combination, 4)
+			indentifiers_combination_set = set(indentifiers_combination.split('-'))
+			protected_albums[indentifiers_combination] = self.copy()
+			protected_albums[indentifiers_combination].leave_only_content_protected_by(indentifiers_combination_set)
+			indented_message("permutation worked out!", indentifiers_combination, 5)
 			back_level()
 		return protected_albums
 
-	def to_json_file(self, json_name, json_positions_name, symlinks, position_symlinks, passwords_md5 = None):
+	def to_json_file(self, json_name, json_positions_name, symlinks, position_symlinks, indentifiers_combination = None):
 		save_message_1 = "saving album..."
 		save_message_2 = "album saved"
 		save_message_3 = "saving positions album..."
 		save_message_4 = "positions album saved"
-		if passwords_md5 is not None:
-			identifiers = convert_md5s_set_to_identifiers(passwords_md5.split('-'))
+		if indentifiers_combination is not None:
+			# identifiers = convert_md5s_set_to_identifiers(passwords_md5.split('-'))
 			save_message_1 = "saving protected album..."
 			save_message_2 = "protected album saved"
 			save_message_3 = "saving protected positions album..."
 			save_message_4 = "protected positions album  saved"
 
-			passwords_md5_list = passwords_md5.split('-')
+			# identifiers_set = set(indentifiers_combination.split('-'))
+			# passwords_md5_list = passwords_md5.split('-')
 
 		json_file_with_path = os.path.join(Options.config['cache_path'], json_name)
 		if os.path.exists(json_file_with_path) and not os.access(json_file_with_path, os.W_OK):
@@ -530,9 +529,9 @@ class Album(object):
 						# "numsProtectedMediaInSubTree": subalbum.nums_protected_media_in_sub_tree
 					}
 					nums_protected_by_code = {}
-					for passwords_md5 in subalbum.nums_protected_media_in_sub_tree:
-						codes = convert_md5s_to_codes(passwords_md5)
-						nums_protected_by_code[codes] = subalbum.nums_protected_media_in_sub_tree[passwords_md5]
+					for identifiers in subalbum.nums_protected_media_in_sub_tree:
+						codes = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(identifiers.split('-')))))
+						nums_protected_by_code[codes] = subalbum.nums_protected_media_in_sub_tree[identifiers]
 					sub_dict["numsProtectedMediaInSubTree"] = nums_protected_by_code
 
 					if hasattr(subalbum, "center"):
@@ -618,12 +617,12 @@ class Album(object):
 		}
 		# pprint(dictionary)
 		nums_protected_by_code = {}
-		for passwords_md5 in self.nums_protected_media_in_sub_tree:
-			password_codes = convert_md5s_to_codes(passwords_md5)
-			nums_protected_by_code[password_codes] = self.nums_protected_media_in_sub_tree[passwords_md5]
+		for identifiers in self.nums_protected_media_in_sub_tree:
+			codes = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(identifiers.split('-')))))
+			nums_protected_by_code[codes] = self.nums_protected_media_in_sub_tree[identifiers]
 		dictionary["numsProtectedMediaInSubTree"] = nums_protected_by_code
 		if len(self.combination) > 0:
-			dictionary["combination"] = convert_md5s_to_codes(self.combination)
+			dictionary["combination"] = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(self.combination.split('-')))))
 
 		if hasattr(self, "center"):
 			dictionary["center"] = self.center
