@@ -275,6 +275,15 @@ class TreeWalker:
 				indented_message("empty protected album, not saving it", album.name, 4)
 			return
 
+		if indentifiers_combination is not None and len(album.password_identifiers) > 0:
+			identifiers_set = set(indentifiers_combination.split("-"))
+			if (
+				album.password_identifiers != identifiers_set and
+				len(album.password_identifiers.intersection(identifiers_set)) == 0
+			):
+				indented_message("protected album, not saving it", album.name, 4)
+				return
+
 		json_name = album.json_file
 		json_positions_name = album.positions_json_file
 		symlinks = list()
