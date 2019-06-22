@@ -109,6 +109,8 @@
 					if (position.mediaNameList.length)
 						subalbum.positionsAndMediaInTree.push(position);
 				}
+				// go up recursively
+				PhotoFloat.addPositionsToSubalbums(subalbum);
 			}
 		}
 	};
