@@ -1840,8 +1840,10 @@ class TreeWalker:
 				if cache_file in json_dict['dirs']:
 					self.remove_stale(os.path.join(subdir, cache_file), json_dict['dirs'][cache_file])
 				elif subdir == "":
-					# a protected content directory which doesn't is reported must be deleted with all its content
-					shutil.rmtree(Options.config['cache_path'], os.path.join(subdir, cache_file))
+					# a protected content directory which is'n reported must be deleted with all its content
+					message("deleting protected content subdir not reported...", "", 5)
+					shutil.rmtree(os.path.join(Options.config['cache_path'], subdir, cache_file))
+					message("protected content subdir not reported deleted...", os.path.join(Options.config['cache_path'], subdir, cache_file), 4)
 				try:
 					if not os.listdir(os.path.join(Options.config['cache_path'], subdir, cache_file)):
 						next_level()
