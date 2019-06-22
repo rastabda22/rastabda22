@@ -1786,17 +1786,18 @@ class TreeWalker:
 		return dict
 
 
-	def remove_stale(self, subdir, json_dict):
+	def remove_stale(self, subdir, json_list_or_dict):
 		# preparing files and directories lists
 		md5_hash_re = r"" + Options.config['protected_directories_prefix'] + "[a-f0-9]{32}"
 
 		if not subdir:
+			json_list = json_list_or_dict
 			message("cleaning up, be patient...", "", 3)
 			next_level()
 			message("building stale list...", "", 4)
 
 			# transform the all_json_files list into a dictionary by directories
-			for file_name in json_dict:
+			for file_name in json_list:
 				splitted_file_name = file_name.split('/')
 				# for dir in splitted_file_name[:-1]:
 				json_dict = self.create_keys_for_directories(splitted_file_name, self.all_json_files_dict)
@@ -1816,6 +1817,7 @@ class TreeWalker:
 
 			deletable_files_re = r"\.json$"
 		else:
+			json_dict = json_list_or_dict
 			# reduced sizes, thumbnails, old style thumbnails
 			if subdir == Options.config['cache_album_subdir']:
 				# self.all_json_files_by_subdir[subdir] = list()
