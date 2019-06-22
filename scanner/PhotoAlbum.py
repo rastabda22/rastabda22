@@ -377,7 +377,7 @@ class Album(object):
 		# 	# no media are to be included
 		# 	self.media_list = []
 		# else:
-		self.media_list = [single_media for single_media in self.media if set(identifiers_set) == single_media.password_identifiers]
+		self.media_list = [single_media for single_media in self.media if identifiers_set == single_media.password_identifiers]
 		for single_media in self.media_list:
 			if single_media.has_gps_data:
 				self.positions_and_media_in_tree.add_media(single_media)
