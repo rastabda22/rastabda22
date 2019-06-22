@@ -101,6 +101,7 @@ a.title-anchor.mobile {
 	float: left;
 	height: 250px;
 	width: 200px;
+	cursor: pointer;
 }
 .album-button-and-caption.slide {
 	border: 3px solid gray;
