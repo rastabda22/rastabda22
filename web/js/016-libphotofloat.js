@@ -88,22 +88,6 @@
 			return false;
 	};
 
-	// PhotoFloat.removeAlbumFromCache = function(albumCacheBase) {
-	// 	if (! Options.hasOwnProperty("js_cache_levels"))
-	// 		Options.js_cache_levels = PhotoFloat.js_cache_levels;
-	//
-	// 	if (PhotoFloat.cache.albums.index.hasOwnProperty(albumCacheBase)) {
-	// 		var cacheLevel = PhotoFloat.cache.albums.index[albumCacheBase];
-	// 		delete PhotoFloat.cache.albums[cacheLevel][albumCacheBase];
-	// 		delete PhotoFloat.cache.albums.index[albumCacheBase];
-	// 		PhotoFloat.cache.albums[cacheLevel].queue.splice(PhotoFloat.cache.albums[cacheLevel].queue.indexOf(albumCacheBase), 1);
-	//
-	// 		// remove the positions too
-	// 		delete PhotoFloat.cache.positions[albumCacheBase];
-	// 	} else
-	// 		return false;
-	// };
-
 	PhotoFloat.addPositionsToSubalbums = function(thisAlbum) {
 		var iSubalbum, iPosition, iPhoto, position, subalbumCacheKey, subalbum;
 		var positions = thisAlbum.positionsAndMediaInTree;
@@ -128,42 +112,6 @@
 			}
 		}
 	};
-
-	// PhotoFloat.getPositions = function(thisAlbum, callback, error) {
-	//
-	// 	var cacheFile = util.pathJoin([Options.server_cache_path, thisAlbum.cacheBase + ".positions.json"]);
-	// 	var ajaxOptions;
-	// 	// before getting the positions check whether it's in the cache
-	// 	var albumCacheBase = thisAlbum.cacheBase;
-	// 	if (PhotoFloat.cache.positions.hasOwnProperty(albumCacheBase)) {
-	// 		thisAlbum.positionsAndMediaInTree = PhotoFloat.cache.positions[albumCacheBase];
-	// 		// we must add the corresponding positions to every subalbum too
-	// 		PhotoFloat.addPositionsToSubalbums(thisAlbum);
-	// 		callback(thisAlbum);
-	// 	} else {
-	// 		// get the file
-	// 		ajaxOptions = {
-	// 			type: "GET",
-	// 			dataType: "json",
-	// 			url: cacheFile,
-	// 			success: function(positions) {
-	// 				thisAlbum.positionsAndMediaInTree = positions;
-	// 				// we must add the corresponding positions to every subalbums
-	// 				PhotoFloat.addPositionsToSubalbums(thisAlbum);
-	//
-	// 				PhotoFloat.cache.positions[albumCacheBase] = positions;
-	//
-	// 				callback(thisAlbum);
-	// 			}
-	// 		};
-	// 		if (typeof error !== "undefined" && error !== null) {
-	// 			ajaxOptions.error = function(jqXHR, textStatus, errorThrown) {
-	// 				error(jqXHR.status);
-	// 			};
-	// 		}
-	// 		$.ajax(ajaxOptions);
-	// 	}
-	// };
 
 	PhotoFloat.getStopWords = function(callback, error) {
 		if (! Options.search_inside_words && Options.use_stop_words) {
@@ -259,9 +207,6 @@
 	};
 
 	PhotoFloat.getAlbum = function(albumCacheBase, getAlbumCallback, error, thisIndexWords, thisIndexAlbums) {
-		// function addPositionsToAlbum(jsonContents) {
-		// 	return album;
-		// }
 
 		function getAlbumWithPositions(albumCacheBase, goOn, error) {
 			var jsonFile = albumCacheBase + ".json";
@@ -494,26 +439,6 @@
 		// var albumCacheBase;
 		var baseJsonFileExists = true;
 
-		// if (typeof thisAlbum.media !== "undefined" && thisAlbum.media !== null) {
-		// 	// we are viewing a media
-		// 	// maybe the album must be updated with the protected content
-		// 	if (PhotoFloat.passwordsToGet(thisAlbum).length == 0) {
-		// 		executeCallback(thisAlbum);
-		// 	} else {
-		// 		addProtectedContent(theAlbum);
-		// 	}
-		//
-		// 	return;
-		// }
-
-		// if (Object.prototype.toString.call(thisAlbum).slice(8, -1) === "String") {
-		// 	if (util.isSearchCacheBase(thisAlbum) && thisAlbum.indexOf('/') != -1)
-		// 		albumCacheBase = thisAlbum.substr(0, thisAlbum.indexOf('/'));
-		// 	else
-		// 		albumCacheBase = thisAlbum;
-		// } else
-		// 	albumCacheBase = thisAlbum.cacheBase;
-
 		var albumFromCache = PhotoFloat.getAlbumFromCache(albumCacheBase);
 		if (albumFromCache) {
 			// maybe the album must be updated with the protected content
@@ -705,13 +630,6 @@
 					} else {
 						self.geotaggedPhotosFound = true;
 						callback(true);
-						// $("#by-gps-view").off("click");
-						// $("#by-gps-view").removeClass("hidden").addClass("active").on("click", function(ev) {
-						// 	$(".search-failed").hide();
-						// 	$("#album-view").removeClass("hidden");
-						// 	window.location.href = link;
-						// 	return false;
-						// });
 					}
 				},
 				// error
@@ -1107,25 +1025,6 @@
 												if (searchResultsAlbumFinal.subalbums.length) {
 													// search albums need to conform to default behaviour of albums: json files have subalbums and media sorted by date not reversed
 													searchResultsAlbumFinal.subalbums = util.sortByDate(searchResultsAlbumFinal.subalbums);
-													// // because of (possibly absent) protected content, subalbums need to be got
-													// var nSubalbumsGot = 0;
-													// for (indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
-													// 	PhotoFloat.getAlbum(
-													// 		searchResultsAlbumFinal.subalbums[indexSubalbums].cacheBase,
-													// 		function(theAlbum, indexSubalbums, fakeVar) {
-													// 			searchResultsAlbumFinal.subalbums[indexSubalbums] = theAlbum;
-													// 			nSubalbumsGot ++;
-													// 			if (nSubalbumsGot >= searchResultsAlbumFinal.subalbums.length){
-													// 				// all the subalbums has been got
-													//
-													// 			}
-													// 		},
-													// 		util.die,
-													// 		indexSubalbums,
-													// 		null
-													// 	);
-													// }
-													// return;
 												}
 											}
 											subalbumsAbsentOrGot(searchResultsAlbumFinal);
