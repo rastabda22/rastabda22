@@ -227,6 +227,12 @@ class TreeWalker:
 
 			# options must be saved when json files have been saved, otherwise in case of error they may not reflect the json files situation
 			self._save_json_options()
+
+			for identifier_and_password in Options.identifiers_and_passwords:
+				identifier = identifier_and_password['identifier']
+				md5 = convert_identifiers_set_to_md5s_set(set([identifier])).pop()
+				self.all_json_files.append(os.path.join(Options.config['passwords_subdir'], md5))
+
 			self.remove_stale("", self.all_json_files)
 			report_mem()
 			message("completed", "", 4)
@@ -1787,9 +1793,6 @@ class TreeWalker:
 			message("cleaning up, be patient...", "", 3)
 			next_level()
 			message("building stale list...", "", 4)
-
-			for identifier_and_password in Options.identifiers_and_passwords:
-				self.all_json_files.append(os.path.join(Options.config['passwords_subdir'], identifier_and_password['password_md5']))
 
 			# transform the all_json_files list into a dictionary by directories
 			for file_name in json_dict:
