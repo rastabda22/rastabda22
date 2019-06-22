@@ -358,8 +358,6 @@ class Album(object):
 
 
 	def leave_only_content_protected_by(self, identifiers_set):
-		# print()
-		# pprint(["BEFORE, PROTECTED", self.name, convert_md5s_set_to_identifiers(passwords_list), self.to_dict()])
 		# # search albums:
 		# # - do not process subalbums because they have been already processed
 		# # - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
@@ -389,9 +387,6 @@ class Album(object):
 			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree[self.combination]
 		else:
 			self.num_media_in_sub_tree = 0
-
-		# print()
-		# pprint(["AFTER, PROTECTED", self.name, convert_md5s_set_to_identifiers(passwords_list), self.to_dict()])
 
 	def generate_protected_content_albums(self):
 		protected_albums = {}

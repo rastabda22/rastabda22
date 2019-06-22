@@ -116,14 +116,6 @@ class TreeWalker:
 		if folders_album is None:
 			message("WARNING", "ALBUMS ROOT EXCLUDED BY MARKER FILE", 2)
 		else:
-			# message("saving all media json file...", "", 4)
-			# next_level()
-			# self.save_all_media_json()
-			# back_level()
-			# indented_message("all media json file saved", "", 5)
-
-			# self.all_json_files.append("all_media.json")
-
 			for combination in folders_album.nums_protected_media_in_sub_tree:
 				if not combination in self.origin_album.nums_protected_media_in_sub_tree:
 					self.origin_album.nums_protected_media_in_sub_tree[combination] = 0
@@ -1809,12 +1801,6 @@ class TreeWalker:
 					# entry_without_subdir = entry[len(media.album.subdir) + 1:]
 					splitted_file_name = entry.split('/')
 					json_dict = self.create_keys_for_directories(splitted_file_name, json_dict)
-					# json_dict['files'].append(os.path.join(media.album.subdir, entry_without_subdir))
-					# try:
-					# 	self.all_json_files_by_subdir[album_subdir].append(entry_without_subdir)
-					# except KeyError:
-					# 	self.all_json_files_by_subdir[album_subdir] = list()
-					# 	self.all_json_files_by_subdir[album_subdir].append(entry_without_subdir)
 
 			indented_message("stale list built", "", 5)
 			info = "in cache path"
