@@ -368,7 +368,7 @@ class TreeWalker:
 				days = sorted(list(self.tree_by_date[year][month].keys()))
 				for day in self.tree_by_date[year][month]:
 				# for day, media in self.tree_by_date[year][month].items():
-					single_media = self.tree_by_date[year][month][day]
+					media_list = self.tree_by_date[year][month][day]
 					message("working with day album...", "", 5)
 					day_path = os.path.join(month_path, str(day))
 					day_album = Album(day_path)
@@ -376,7 +376,7 @@ class TreeWalker:
 					day_album.cache_base = month_album.cache_base + Options.config['cache_folder_separator'] + day
 					day_max_file_date = None
 					month_album.add_album(day_album)
-					for single_media in single_media:
+					for single_media in media_list:
 						single_media.day_album_cache_base = day_album.cache_base
 						day_album.add_media(single_media)
 						day_album.num_media_in_sub_tree += 1
@@ -442,7 +442,7 @@ class TreeWalker:
 							by_date_max_file_date = single_media_date
 					Options.all_albums.append(day_album)
 					self.generate_composite_image(day_album, day_max_file_date)
-					indented_message("day album worked out", single_media[0].year + "-" + single_media[0].month + "-" + single_media[0].day, 4)
+					indented_message("day album worked out", media_list[0].year + "-" + media_list[0].month + "-" + media_list[0].day, 4)
 				Options.all_albums.append(month_album)
 				self.generate_composite_image(month_album, month_max_file_date)
 			Options.all_albums.append(year_album)
