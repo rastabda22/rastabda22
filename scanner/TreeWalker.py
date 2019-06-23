@@ -268,7 +268,7 @@ class TreeWalker:
 				self.all_albums_to_json_file(subalbum, indentifiers_combination)
 
 		if album.num_media_in_sub_tree == 0:
-		# if len(album.subalbums) == 0 and len(album.media) == 0:
+		# if len(album.subalbums) == 0 and len(album.media_list) == 0:
 			if indentifiers_combination is None:
 				indented_message("empty album, not saving it", album.name, 4)
 			else:
@@ -368,7 +368,7 @@ class TreeWalker:
 				days = sorted(list(self.tree_by_date[year][month].keys()))
 				for day in self.tree_by_date[year][month]:
 				# for day, media in self.tree_by_date[year][month].items():
-					media = self.tree_by_date[year][month][day]
+					single_media = self.tree_by_date[year][month][day]
 					message("working with day album...", "", 5)
 					day_path = os.path.join(month_path, str(day))
 					day_album = Album(day_path)
@@ -376,7 +376,7 @@ class TreeWalker:
 					day_album.cache_base = month_album.cache_base + Options.config['cache_folder_separator'] + day
 					day_max_file_date = None
 					month_album.add_album(day_album)
-					for single_media in media:
+					for single_media in single_media:
 						single_media.day_album_cache_base = day_album.cache_base
 						day_album.add_media(single_media)
 						day_album.num_media_in_sub_tree += 1
@@ -442,7 +442,7 @@ class TreeWalker:
 							by_date_max_file_date = single_media_date
 					Options.all_albums.append(day_album)
 					self.generate_composite_image(day_album, day_max_file_date)
-					indented_message("day album worked out", media[0].year + "-" + media[0].month + "-" + media[0].day, 4)
+					indented_message("day album worked out", single_media[0].year + "-" + single_media[0].month + "-" + single_media[0].day, 4)
 				Options.all_albums.append(month_album)
 				self.generate_composite_image(month_album, month_max_file_date)
 			Options.all_albums.append(year_album)
@@ -907,30 +907,30 @@ class TreeWalker:
 		if TreeWalker.lowercase_stopwords == {}:
 			TreeWalker.load_stopwords()
 
-	def add_media_to_tree_by_date(self, media):
+	def add_media_to_tree_by_date(self, single_media):
 		# add the given media to a temporary structure where media are organized by year, month, date
 
-		if media.year not in list(self.tree_by_date.keys()):
-			self.tree_by_date[media.year] = {}
-		if media.month not in list(self.tree_by_date[media.year].keys()):
-			self.tree_by_date[media.year][media.month] = {}
-		if media.day not in list(self.tree_by_date[media.year][media.month].keys()):
-			self.tree_by_date[media.year][media.month][media.day] = list()
-		if not any(media.media_file_name == _media.media_file_name for _media in self.tree_by_date[media.year][media.month][media.day]):
-		#~ if not media in self.tree_by_date[media.year][media.month][media.day]:
-			self.tree_by_date[media.year][media.month][media.day].append(media)
+		if single_media.year not in list(self.tree_by_date.keys()):
+			self.tree_by_date[single_media.year] = {}
+		if single_media.month not in list(self.tree_by_date[single_media.year].keys()):
+			self.tree_by_date[single_media.year][single_media.month] = {}
+		if single_media.day not in list(self.tree_by_date[single_media.year][single_media.month].keys()):
+			self.tree_by_date[single_media.year][single_media.month][single_media.day] = list()
+		if not any(single_media.media_file_name == _media.media_file_name for _media in self.tree_by_date[single_media.year][single_media.month][single_media.day]):
+		#~ if not single_media in self.tree_by_date[single_media.year][single_media.month][single_media.day]:
+			self.tree_by_date[single_media.year][single_media.month][single_media.day].append(single_media)
 
-	def add_media_to_tree_by_search(self, media):
-		words_for_word_list, unicode_words, words_for_search_album_name = self.prepare_for_tree_by_search(media)
-		media.words = words_for_word_list
+	def add_media_to_tree_by_search(self, single_media):
+		words_for_word_list, unicode_words, words_for_search_album_name = self.prepare_for_tree_by_search(single_media)
+		single_media.words = words_for_word_list
 		for word_index in range(len(words_for_search_album_name)):
 			word = words_for_search_album_name[word_index]
 			unicode_word = unicode_words[word_index]
 			if word:
 				if word not in list(self.tree_by_search.keys()):
 					self.tree_by_search[word] = {"media_list": [], "albums_list": [], "unicode_words": []}
-				if media not in self.tree_by_search[word]["media_list"]:
-					self.tree_by_search[word]["media_list"].append(media)
+				if single_media not in self.tree_by_search[word]["media_list"]:
+					self.tree_by_search[word]["media_list"].append(single_media)
 				if unicode_word not in self.tree_by_search[word]["unicode_words"]:
 					self.tree_by_search[word]["unicode_words"].append(unicode_word)
 
@@ -980,17 +980,17 @@ class TreeWalker:
 		return alphabetic_words, search_normalized_words, ascii_words
 
 
-	def add_media_to_tree_by_geonames(self, media):
+	def add_media_to_tree_by_geonames(self, single_media):
 		# add the given media to a temporary structure where media are organized by country, region/state, place
 
-		if media.country_code not in list(self.tree_by_geonames.keys()):
-			self.tree_by_geonames[media.country_code] = {}
-		if media.region_code not in list(self.tree_by_geonames[media.country_code].keys()):
-			self.tree_by_geonames[media.country_code][media.region_code] = {}
-		if media.place_code not in list(self.tree_by_geonames[media.country_code][media.region_code].keys()):
-			self.tree_by_geonames[media.country_code][media.region_code][media.place_code] = list()
-		if not any(media.media_file_name == _media.media_file_name for _media in self.tree_by_geonames[media.country_code][media.region_code][media.place_code]):
-			self.tree_by_geonames[media.country_code][media.region_code][media.place_code].append(media)
+		if single_media.country_code not in list(self.tree_by_geonames.keys()):
+			self.tree_by_geonames[single_media.country_code] = {}
+		if single_media.region_code not in list(self.tree_by_geonames[single_media.country_code].keys()):
+			self.tree_by_geonames[single_media.country_code][single_media.region_code] = {}
+		if single_media.place_code not in list(self.tree_by_geonames[single_media.country_code][single_media.region_code].keys()):
+			self.tree_by_geonames[single_media.country_code][single_media.region_code][single_media.place_code] = list()
+		if not any(single_media.media_file_name == _media.media_file_name for _media in self.tree_by_geonames[single_media.country_code][single_media.region_code][single_media.place_code]):
+			self.tree_by_geonames[single_media.country_code][single_media.region_code][single_media.place_code].append(single_media)
 
 
 	@staticmethod
@@ -1325,7 +1325,7 @@ class TreeWalker:
 				continue
 			else:
 				max_file_date = max(max_file_date, mtime)
-				media = None
+				single_media = None
 				cached_media = None
 				absolute_cache_file_exists = False
 
@@ -1415,29 +1415,30 @@ class TreeWalker:
 				back_level()
 
 			if single_media_cache_hit:
-				media = cached_media
-				if media.is_video:
+				single_media = cached_media
+				if single_media.is_video:
 					message("cache hit!", "transcoded video and thumbnails OK", 4)
 				else:
 					message("cache hit!", "reduced size images and thumbnails OK", 4)
 			else:
 				message("processing media from file", "", 5)
-				media = Media(album, entry_with_path, Options.config['cache_path'], None)
+				single_media = Media(album, entry_with_path, Options.config['cache_path'], None)
 				if Options.config['checksum']:
-					media._attributes["checksum"] = media_checksum
+					single_media._attributes["checksum"] = media_checksum
 
-			if media.is_valid:
-				media.password_identifiers = set()
-				file_name = os.path.basename(entry_with_path)
+			if single_media.is_valid:
+				if not passwords_ok:
+					single_media.password_identifiers = set()
+					file_name = os.path.basename(entry_with_path)
 
-				# apply the album passwords_md5 and password codes to the media
-				for identifier in sorted(album.password_identifiers):
-					media.password_identifiers.add(identifier)
-					if identifier not in media.password_identifiers:
-						password_md5 = convert_identifiers_set_to_md5s_set(set([identifier])).pop()
-						indented_message("album password added to media", "identifier = " + identifier + ", encrypted password = " + password_md5, 3)
-					else:
-						indented_message("album password not added to media", "identifier '" + identifier + "' already protects this media", 3)
+					# apply the album passwords_md5 and password codes to the media
+					for identifier in sorted(album.password_identifiers):
+						single_media.password_identifiers.add(identifier)
+						if identifier not in single_media.password_identifiers:
+							password_md5 = convert_identifiers_set_to_md5s_set(set([identifier])).pop()
+							indented_message("album password added to media", "identifier = " + identifier + ", encrypted password = " + password_md5, 3)
+						else:
+							indented_message("album password not added to media", "identifier '" + identifier + "' already protects this media", 3)
 
 
 				# apply the file passwords_md5 and password codes to the media if they match the media name
@@ -1475,15 +1476,15 @@ class TreeWalker:
 					album.nums_protected_media_in_sub_tree[combination] += 1
 
 				album.num_media_in_sub_tree += 1
-				if media.has_gps_data:
-					album.positions_and_media_in_tree.add_media(media)
+				if single_media.has_gps_data:
+					album.positions_and_media_in_tree.add_media(single_media)
 					# album.positions_and_media_in_tree = self.add_media_to_position(
 					# 	album.positions_and_media_in_tree,
-					# 	media,
+					# 	single_media,
 					# 	Options.config['folders_string']
 					# )
 
-				if media.is_video:
+				if single_media.is_video:
 					num_video_in_dir += 1
 					if not single_media_cache_hit:
 						num_video_processed_in_dir += 1
@@ -1492,53 +1493,53 @@ class TreeWalker:
 					if not single_media_cache_hit:
 						num_photo_processed_in_dir += 1
 
-					if media.has_exif_date:
+					if single_media.has_exif_date:
 						num_photo_with_exif_date_in_dir += 1
-					if media.has_gps_data:
+					if single_media.has_gps_data:
 						num_photo_with_geotags_in_dir += 1
 
-					if media.has_exif_date:
-						if media.has_gps_data:
+					if single_media.has_exif_date:
+						if single_media.has_gps_data:
 							num_photo_with_exif_date_and_geotags_in_dir += 1
 						else:
 							photos_with_exif_date_and_without_geotags_in_dir.append("      " + entry_with_path)
 					else:
-						if media.has_gps_data:
+						if single_media.has_gps_data:
 							photos_without_exif_date_and_with_geotags_in_dir.append("      " + entry_with_path)
 						else:
 							photos_without_exif_date_or_geotags_in_dir.append(      "      " + entry_with_path)
 
-				if not any(media.media_file_name == _media.media_file_name for _media in self.all_media):
+				if not any(single_media.media_file_name == _media.media_file_name for _media in self.all_media):
 					next_level()
 					message("adding media to dates tree...", "", 5)
 					# the following function has a check on media already present
-					self.add_media_to_tree_by_date(media)
+					self.add_media_to_tree_by_date(single_media)
 					indented_message("media added to dates tree!", "", 5)
 
-					if media.has_gps_data:
+					if single_media.has_gps_data:
 						message("adding media to geonames tree...", "", 5)
 						# the following function has a check on media already present
-						self.add_media_to_tree_by_geonames(media)
+						self.add_media_to_tree_by_geonames(single_media)
 						indented_message("media added to geonames tree!", "", 5)
 
 					message("adding media to search tree...", "", 5)
 					# the following function has a check on media already present
-					self.add_media_to_tree_by_search(media)
+					self.add_media_to_tree_by_search(single_media)
 					indented_message("media added to search tree", "", 5)
 
 					message("adding media to album...", "", 5)
-					album.add_media(media)
+					album.add_media(single_media)
 					indented_message("media added to album", "", 5)
 
 					message("adding media to all media list...", "", 5)
-					self.all_media.append(media)
+					self.all_media.append(single_media)
 					indented_message("media added to all media list", "", 5)
 
 					back_level()
 				else:
 					indented_message("media not added to anything...", "it was already there", 5)
 
-			elif not media.is_valid:
+			elif not single_media.is_valid:
 				indented_message("not image nor video", "", 1)
 			back_level()
 		back_level()
@@ -1671,8 +1672,8 @@ class TreeWalker:
 		while True:
 			if i >= good_media_number:
 				break
-			if len(album.media) and num_random_thumbnails == 1:
-				random_media = album.media[0]
+			if len(album.media_list) and num_random_thumbnails == 1:
+				random_media = album.media_list[0]
 			else:
 				while True:
 					random_number = random.randint(0, album.num_media_in_sub_tree - 1)
@@ -1806,9 +1807,9 @@ class TreeWalker:
 				splitted_file_name = path.split('/')
 				json_dict = self.create_keys_for_directories(splitted_file_name, json_dict)
 
-			for media in self.all_media:
-				for entry in media.image_caches:
-					# entry_without_subdir = entry[len(media.album.subdir) + 1:]
+			for single_media in self.all_media:
+				for entry in single_media.image_caches:
+					# entry_without_subdir = entry[len(single_media.album.subdir) + 1:]
 					splitted_file_name = entry.split('/')
 					json_dict = self.create_keys_for_directories(splitted_file_name, json_dict)
 
