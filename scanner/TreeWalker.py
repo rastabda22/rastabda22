@@ -1030,6 +1030,10 @@ class TreeWalker:
 		if Options.config['exclude_files_marker'] in listdir:
 			indented_message("files excluded by marker file", Options.config['exclude_files_marker'], 4)
 			skip_files = True
+
+		############################################################
+		# look for password marker and manage it
+		############################################################
 		pwd_file_mtime = None
 		if len(Options.identifiers_and_passwords) and Options.config['passwords_marker'] in listdir:
 			next_level()
@@ -1105,6 +1109,9 @@ class TreeWalker:
 								indented_message("WARNING: password identifier used more than once", identifier + ": not protecting the directory", 2)
 			back_level()
 
+		############################################################
+		# look for album json file and check its validity
+		############################################################
 		json_file = os.path.join(Options.config['cache_path'], album_cache_base) + ".json"
 		json_file_list, json_file_mtime = json_files_and_mtime(album_cache_base)
 		album_ini_file = os.path.join(absolute_path, Options.config['metadata_filename'])
