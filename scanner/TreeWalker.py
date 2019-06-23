@@ -1311,7 +1311,7 @@ class TreeWalker:
 		for entry_with_path in files_in_dir:
 			message("working with file", entry_with_path, 3)
 			next_level()
-			cache_hit = True
+			single_media_cache_hit = True
 			dirname = os.path.dirname(entry_with_path)
 			try:
 				message("reading file and dir times...", "", 5)
@@ -1338,24 +1338,24 @@ class TreeWalker:
 
 			if not album_cache_hit:
 				indented_message("not a cache hit", "json file invalid", 5)
-				cache_hit = False
+				single_media_cache_hit = False
 
-			if album_cache_hit and cache_hit:
+			if album_cache_hit and single_media_cache_hit:
 				next_level()
 				message("getting media from cached album...", "", 5)
 				cached_media = cached_album.media_from_path(entry_with_path)
 				if cached_media is None:
 					indented_message("no such media in cached album", "not a cache hit", 5)
-					cache_hit = False
+					single_media_cache_hit = False
 				else:
 					indented_message("cached media got!", "", 5)
 				# cached_media._attributes["dateTimeDir"] = dir_mtime
 
-				if cache_hit and cached_media._attributes["dateTimeFile"] != mtime:
+				if single_media_cache_hit and cached_media._attributes["dateTimeFile"] != mtime:
 					indented_message("modification time different", "not a cache hit", 5)
-					cache_hit = False
+					single_media_cache_hit = False
 
-				if cache_hit and Options.config['checksum']:
+				if single_media_cache_hit and Options.config['checksum']:
 					try:
 						cached_media._attributes['checksum']
 
@@ -1363,15 +1363,15 @@ class TreeWalker:
 							indented_message("checksum OK!", "", 5)
 						else:
 							indented_message("not a cache hit", "bad checksum!", 5)
-							cache_hit = False
+							single_media_cache_hit = False
 					except KeyError:
 						message("not a cache hit", "no checksum in json file", 5)
-						cache_hit = False
+						single_media_cache_hit = False
 
-				if cache_hit and cached_media:
+				if single_media_cache_hit and cached_media:
 					if mtime != cached_media.datetime_file:
 						message("not a cache hit", "file datetime different from cache one", 5)
-						cache_hit = False
+						single_media_cache_hit = False
 					else:
 						cache_files = cached_media.image_caches
 						# check if the cache files actually exist and are not old
@@ -1394,27 +1394,27 @@ class TreeWalker:
 
 							if not absolute_cache_file_exists:
 								indented_message("not a cache hit", "unexistent reduction/thumbnail", 4)
-								cache_hit = False
+								single_media_cache_hit = False
 								break
 							if file_mtime(absolute_cache_file) < cached_media.datetime_file:
 								indented_message("not a cache hit", "reduction/thumbnail older than cached media", 4)
-								cache_hit = False
+								single_media_cache_hit = False
 								break
 							if file_mtime(absolute_cache_file) > json_file_mtime:
 								indented_message("not a cache hit", "reduction/thumbnail newer than json file", 4)
-								cache_hit = False
+								single_media_cache_hit = False
 								break
 							if Options.config['recreate_reduced_photos']:
 								indented_message("not a cache hit", "reduced photo recreation requested", 4)
-								cache_hit = False
+								single_media_cache_hit = False
 								break
 							if Options.config['recreate_thumbnails']:
 								indented_message("not a cache hit", "thumbnail recreation requested", 4)
-								cache_hit = False
+								single_media_cache_hit = False
 								break
 				back_level()
 
-			if cache_hit:
+			if single_media_cache_hit:
 				media = cached_media
 				if media.is_video:
 					message("cache hit!", "transcoded video and thumbnails OK", 4)
@@ -1485,11 +1485,11 @@ class TreeWalker:
 
 				if media.is_video:
 					num_video_in_dir += 1
-					if not cache_hit:
+					if not single_media_cache_hit:
 						num_video_processed_in_dir += 1
 				else:
 					num_photo_in_dir += 1
-					if not cache_hit:
+					if not single_media_cache_hit:
 						num_photo_processed_in_dir += 1
 
 					if media.has_exif_date:
