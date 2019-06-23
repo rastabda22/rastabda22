@@ -792,6 +792,7 @@ class Positions(object):
 
 class Media(object):
 	def __init__(self, album, media_path, thumbs_path=None, attributes=None):
+		self.password_identifiers = set()
 		if attributes is not None:
 			# media generation from file
 			self.generate_media_from_cache(album, media_path, attributes)
