@@ -1210,33 +1210,49 @@ class TreeWalker:
 		album.cache_base = album_cache_base
 
 		dir_name = os.path.basename(absolute_path)
-		# start with the inherited passwords
-		album.password_identifiers = inherited_passwords_identifiers
-		# get the matching passwords
-		for pattern_and_password in patterns_and_passwords:
-			if pattern_and_password['case_flag'] == 'cs':
-				match = fnmatch.fnmatchcase(dir_name, pattern_and_password['pattern'])
-				case = "case sentitive"
-			else:
-				match = re.match(fnmatch.translate(pattern_and_password['pattern']), dir_name, re.IGNORECASE)
-				case = "case insentitive"
 
-			# add the matching patterns
-			if match:
-				identifier = pattern_and_password['identifier']
-				album.password_identifiers.add(identifier)
-				if identifier not in album.password_identifiers:
-					indented_message(
-						"password added to album",
-						"'" + dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", identifier = " + identifier,
-						3
-					)
+		############################################################
+		# check passwords validity
+		############################################################
+		passwords_ok = True
+		if Options.passwords_file_mtime is not None and Options.passwords_file_mtime >= json_file_mtime:
+			indented_message("not an album cache hit", "passwords file newer than json file", 4)
+			passwords_ok = False
+		if len(patterns_and_passwords) > 0 and pwd_file_mtime is not None and pwd_file_mtime >= json_file_mtime:
+			indented_message("not an album cache hit", Options.config['passwords_marker'] + " newer than json file", 4)
+			passwords_ok = False
+
+		# check album name against passwords
+		if not passwords_ok:
+			# restart with the inherited passwords
+			album.password_identifiers = inherited_passwords_identifiers
+			# get the matching passwords
+			for pattern_and_password in patterns_and_passwords:
+				if pattern_and_password['case_flag'] == 'cs':
+					match = fnmatch.fnmatchcase(dir_name, pattern_and_password['pattern'])
+					case = "case sentitive"
 				else:
-					indented_message(
-						"password not added to album",
-						dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "' already protects the album",
-						3
-					)
+					match = re.match(fnmatch.translate(pattern_and_password['pattern']), dir_name, re.IGNORECASE)
+					case = "case insentitive"
+
+				# add the matching patterns
+				if match:
+					identifier = pattern_and_password['identifier']
+					album.password_identifiers.add(identifier)
+					if identifier not in album.password_identifiers:
+						indented_message(
+							"password added to album",
+							"'" + dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", identifier = " + identifier,
+							3
+						)
+					else:
+						indented_message(
+							"password not added to album",
+							dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "' already protects the album",
+							3
+						)
+			# reset the protected media counts
+			album.nums_protected_media_in_sub_tree = {}
 		# album.passwords_md5.sort()
 
 		message("reading directory", absolute_path, 5)
@@ -1350,8 +1366,7 @@ class TreeWalker:
 			if not album_cache_hit:
 				indented_message("not a cache hit", "json file invalid", 5)
 				single_media_cache_hit = False
-
-			if album_cache_hit and single_media_cache_hit:
+			else:
 				next_level()
 				message("getting media from cached album...", "", 5)
 				cached_media = cached_album.media_from_path(entry_with_path)
@@ -1452,39 +1467,39 @@ class TreeWalker:
 							indented_message("album password not added to media", "identifier '" + identifier + "' already protects this media", 3)
 
 
-				# apply the file passwords_md5 and password codes to the media if they match the media name
-				for pattern_and_password in patterns_and_passwords:
-					if pattern_and_password['case_flag'] == 'cs':
-						match = fnmatch.fnmatchcase(file_name, pattern_and_password['pattern'])
-						case = "case sentitive"
-					else:
-						match = re.match(fnmatch.translate(pattern_and_password['pattern']), file_name, re.IGNORECASE)
-						case = "case insentitive"
-
-					if match:
-						identifier = pattern_and_password['identifier']
-						media.password_identifiers.add(identifier)
-						if identifier not in media.password_identifiers:
-							indented_message(
-								"password and code added to media",
-								"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", identifier = " + identifier,
-								3
-							)
+					# apply the file passwords_md5 and password codes to the media if they match the media name
+					for pattern_and_password in patterns_and_passwords:
+						if pattern_and_password['case_flag'] == 'cs':
+							match = fnmatch.fnmatchcase(file_name, pattern_and_password['pattern'])
+							case = "case sentitive"
 						else:
-							indented_message(
-								"password and code not added to media",
-								"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "'  already protects the media",
-								3
-							)
+							match = re.match(fnmatch.translate(pattern_and_password['pattern']), file_name, re.IGNORECASE)
+							case = "case insentitive"
 
-				# media.passwords_md5.sort()
+						if match:
+							identifier = pattern_and_password['identifier']
+							single_media.password_identifiers.add(identifier)
+							if identifier not in single_media.password_identifiers:
+								indented_message(
+									"password and code added to media",
+									"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", identifier = " + identifier,
+									3
+								)
+							else:
+								indented_message(
+									"password and code not added to media",
+									"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "'  already protects the media",
+									3
+								)
 
-				# update the protected media count according for the passwords' md5
-				if len(media.password_identifiers) > 0:
-					combination = '-'.join(sorted(media.password_identifiers))
-					if not combination in album.nums_protected_media_in_sub_tree:
-						album.nums_protected_media_in_sub_tree[combination] = 0
-					album.nums_protected_media_in_sub_tree[combination] += 1
+					# media.passwords_md5.sort()
+
+					# update the protected media count according for the passwords' md5
+					if len(single_media.password_identifiers) > 0:
+						combination = '-'.join(sorted(single_media.password_identifiers))
+						if not combination in album.nums_protected_media_in_sub_tree:
+							album.nums_protected_media_in_sub_tree[combination] = 0
+						album.nums_protected_media_in_sub_tree[combination] += 1
 
 				album.num_media_in_sub_tree += 1
 				if single_media.has_gps_data:
