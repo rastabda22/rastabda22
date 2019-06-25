@@ -113,6 +113,11 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Consistent hash URL format.
 
 
+## Python version
+
+The python code (basically the _scanner_) can be run with `python3`, but on _debian 9_ (_stretch_) `opencv` isn't available for `python3`. This is the reason why `python2` is used.
+
+
 ## Community
 
 Report bugs through [GitLab Issues](https://gitlab.com/paolobenve/myphotoshare/issues).
