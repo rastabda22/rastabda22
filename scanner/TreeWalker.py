@@ -962,10 +962,10 @@ class TreeWalker:
 
 	# This functions is called recursively
 	# it works on a directory and produces the album for the directory
-	def walk(self, absolute_path, album_cache_base, patterns_and_passwords, passwords_marker_mtime, inherited_passwords_identifiers, parent_album=None):
+	def walk(self, absolute_path, album_cache_base, patterns_and_passwords, inherited_passwords_mtime, inherited_passwords_identifiers, parent_album=None):
 		patterns_and_passwords = copy.deepcopy(patterns_and_passwords)
 		inherited_passwords_identifiers = copy.deepcopy(inherited_passwords_identifiers)
-		passwords_marker_mtime = copy.deepcopy(passwords_marker_mtime)
+		inherited_passwords_mtime = copy.deepcopy(inherited_passwords_mtime)
 		max_file_date = file_mtime(absolute_path)
 		message(">>>>>>>>>>>  Entering directory", absolute_path, 3)
 		next_level()
@@ -987,18 +987,18 @@ class TreeWalker:
 		############################################################
 		# look for password marker and manage it
 		############################################################
-		pwd_file_mtime = None
+		passwords_marker_mtime = None
+		passwords_marker = os.path.join(absolute_path, Options.config['passwords_marker'])
 		if len(Options.identifiers_and_passwords) and Options.config['passwords_marker'] in listdir:
 			next_level()
 			message(Options.config['passwords_marker'] + " file found", "reading it", 4)
-			pwd_file = os.path.join(absolute_path, Options.config['passwords_marker'])
-			pwd_file_mtime = file_mtime(pwd_file)
-			if passwords_marker_mtime is not None:
-				pwd_file_mtime = max(file_mtime(pwd_file), passwords_marker_mtime)
-			if not os.access(pwd_file, os.R_OK):
-				indented_message("unreadable file", pwd_file, 2)
+			passwords_marker_mtime = file_mtime(passwords_marker)
+			if inherited_passwords_mtime is not None:
+				passwords_marker_mtime = max(passwords_marker_mtime, inherited_passwords_mtime)
+			if not os.access(passwords_marker, os.R_OK):
+				indented_message("unreadable file", passwords_marker, 2)
 			else:
-				with open(pwd_file, 'r') as passwords_file:
+				with open(passwords_marker, 'r') as passwords_file:
 					for line in passwords_file.read().splitlines():
 						# remove leading spaces
 						line = line.lstrip()
