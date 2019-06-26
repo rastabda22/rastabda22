@@ -1065,10 +1065,9 @@ class TreeWalker:
 		############################################################
 		# look for album.ini file in order to check json file validity against it
 		############################################################
-		json_file = os.path.join(Options.config['cache_path'], album_cache_base) + ".json"
-		json_file_list, json_file_mtime = json_files_and_mtime(album_cache_base)
 		album_ini_file = os.path.join(absolute_path, Options.config['metadata_filename'])
 		album_ini_good = False
+
 		must_process_album_ini = False
 		if os.path.exists(album_ini_file):
 			if not os.access(album_ini_file, os.R_OK):
@@ -1081,6 +1080,8 @@ class TreeWalker:
 		############################################################
 		# look for album json files and check their validity
 		############################################################
+		json_file = os.path.join(Options.config['cache_path'], album_cache_base) + ".json"
+		json_file_list, json_file_mtime = json_files_and_mtime(album_cache_base)
 		cached_album = None
 		album_cache_hit = False
 		json_message = json_file
