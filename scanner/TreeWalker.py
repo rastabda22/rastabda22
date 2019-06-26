@@ -119,7 +119,7 @@ class TreeWalker:
 				if not combination in self.origin_album.nums_protected_media_in_sub_tree:
 					self.origin_album.nums_protected_media_in_sub_tree[combination] = 0
 				self.origin_album.nums_protected_media_in_sub_tree[combination] += folders_album.nums_protected_media_in_sub_tree[combination]
-			self.origin_album.add_album(folders_album)
+			self.origin_album.add_subalbum(folders_album)
 
 			self.all_json_files.append(Options.config['folders_string'] + ".json")
 
@@ -128,7 +128,7 @@ class TreeWalker:
 			indented_message("by date albums generated", "", 5)
 			if by_date_album is not None and not by_date_album.empty:
 				self.all_json_files.append(Options.config['by_date_string'] + ".json")
-				self.origin_album.add_album(by_date_album)
+				self.origin_album.add_subalbum(by_date_album)
 				for combination in by_date_album.nums_protected_media_in_sub_tree:
 					if not combination in self.origin_album.nums_protected_media_in_sub_tree:
 						self.origin_album.nums_protected_media_in_sub_tree[combination] = 0
@@ -140,7 +140,7 @@ class TreeWalker:
 			indented_message("by geonames albums generated", "", 5)
 			if by_geonames_album is not None and not by_geonames_album.empty:
 				self.all_json_files.append(Options.config['by_gps_string'] + ".json")
-				self.origin_album.add_album(by_geonames_album)
+				self.origin_album.add_subalbum(by_geonames_album)
 				for combination in by_geonames_album.nums_protected_media_in_sub_tree:
 					if not combination in self.origin_album.nums_protected_media_in_sub_tree:
 						self.origin_album.nums_protected_media_in_sub_tree[combination] = 0
@@ -152,7 +152,7 @@ class TreeWalker:
 			indented_message("by search albums generated", "", 5)
 			if by_search_album is not None and not by_search_album.empty:
 				self.all_json_files.append(Options.config['by_search_string'] + ".json")
-				self.origin_album.add_album(by_search_album)
+				self.origin_album.add_subalbum(by_search_album)
 				for combination in by_search_album.nums_protected_media_in_sub_tree:
 					if not combination in self.origin_album.nums_protected_media_in_sub_tree:
 						self.origin_album.nums_protected_media_in_sub_tree[combination] = 0
@@ -352,7 +352,7 @@ class TreeWalker:
 			year_album.parent_cache_base = by_date_album.cache_base
 			year_album.cache_base = by_date_album.cache_base + Options.config['cache_folder_separator'] + year
 			year_max_file_date = None
-			by_date_album.add_album(year_album)
+			by_date_album.add_subalbum(year_album)
 
 			months = sorted(list(self.tree_by_date[year].keys()))
 			for month in months:
@@ -362,7 +362,7 @@ class TreeWalker:
 				month_album.parent_cache_base = year_album.cache_base
 				month_album.cache_base = year_album.cache_base + Options.config['cache_folder_separator'] + month
 				month_max_file_date = None
-				year_album.add_album(month_album)
+				year_album.add_subalbum(month_album)
 
 				days = sorted(list(self.tree_by_date[year][month].keys()))
 				for day in self.tree_by_date[year][month]:
@@ -374,7 +374,7 @@ class TreeWalker:
 					day_album.parent_cache_base = month_album.cache_base
 					day_album.cache_base = month_album.cache_base + Options.config['cache_folder_separator'] + day
 					day_max_file_date = None
-					month_album.add_album(day_album)
+					month_album.add_subalbum(day_album)
 					for single_media in media_list:
 						single_media.day_album_cache_base = day_album.cache_base
 						day_album.add_media(single_media)
@@ -519,7 +519,7 @@ class TreeWalker:
 			word_album.parent_cache_base = by_search_album.cache_base
 			word_album.cache_base = by_search_album.generate_cache_base(os.path.join(by_search_album.path, word))
 			word_max_file_date = None
-			by_search_album.add_album(word_album)
+			by_search_album.add_subalbum(word_album)
 			for single_media in media_album_and_words["media_list"]:
 				word_album.add_media(single_media)
 				word_album.num_media_in_sub_tree += 1
@@ -551,7 +551,7 @@ class TreeWalker:
 					by_search_album.nums_protected_media_in_sub_tree[combination] += 1
 
 			for single_album in media_album_and_words["albums_list"]:
-				word_album.add_album(single_album)
+				word_album.add_subalbum(single_album)
 				word_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
 				# actually, this counter for the search root album is not significant
 				by_search_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
@@ -596,7 +596,7 @@ class TreeWalker:
 			country_album.parent_cache_base = by_geonames_album.cache_base
 			country_album.cache_base = by_geonames_album.generate_cache_base(os.path.join(by_geonames_album.path, country_code))
 			country_max_file_date = None
-			by_geonames_album.add_album(country_album)
+			by_geonames_album.add_subalbum(country_album)
 
 			region_codes = sorted(list(self.tree_by_geonames[country_code].keys()))
 			for region_code in region_codes:
@@ -607,7 +607,7 @@ class TreeWalker:
 				region_album.parent_cache_base = country_album.cache_base
 				region_album.cache_base = country_album.generate_cache_base(os.path.join(country_album.path, region_code))
 				region_max_file_date = None
-				country_album.add_album(region_album)
+				country_album.add_subalbum(region_album)
 
 				place_codes = list(self.tree_by_geonames[country_code][region_code].keys())
 				place_names = [self.tree_by_geonames[country_code][region_code][place_code][0].place_name for place_code in self.tree_by_geonames[country_code][region_code]]
@@ -725,7 +725,7 @@ class TreeWalker:
 						place_album.parent_cache_base = region_album.cache_base
 						place_album.cache_base = region_album.generate_cache_base(os.path.join(region_album.path, place_code))
 						place_max_file_date = None
-						region_album.add_album(place_album)
+						region_album.add_subalbum(place_album)
 						for j, single_media in enumerate(cluster):
 							single_media.gps_album_cache_base = place_album.cache_base
 							cluster[j].gps_path = remove_album_path(place_path)
@@ -1312,7 +1312,7 @@ class TreeWalker:
 					# album.positions_and_media_in_tree = self.merge_positions(album.positions_and_media_in_tree, next_walked_album.positions_and_media_in_tree)
 					album.merge_nums_protected(next_walked_album)
 
-					album.add_album(next_walked_album)
+					album.add_subalbum(next_walked_album)
 					next_level()
 					message("adding album to search tree...", "", 5)
 					self.add_album_to_tree_by_search(next_walked_album)

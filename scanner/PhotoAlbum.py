@@ -261,7 +261,7 @@ class Album(object):
 		self.media_list.append(media)
 		self.media_list_is_sorted = False
 
-	def add_album(self, album):
+	def add_subalbum(self, album):
 		self.subalbums_list.append(album)
 		self.subalbums_list_is_sorted = False
 
