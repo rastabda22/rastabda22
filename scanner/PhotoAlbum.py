@@ -35,11 +35,12 @@ import numpy as np
 import exifread
 
 from CachePath import remove_album_path, remove_folders_marker, trim_base_custom
+# from CachePath import remove_album_path, remove_cache_path, remove_folders_marker, trim_base_custom
 from CachePath import thumbnail_types_and_sizes, photo_cache_name, video_cache_name
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_all_but_alphanumeric_chars_dashes_slashes_dots, switch_to_lowercase
 from Utilities import message, indented_message, next_level, back_level, file_mtime, json_files_and_mtime
-from Utilities import merge_dictionaries_from_cache, convert_md5s_to_codes, convert_md5s_set_to_identifiers, convert_identifiers_set_to_codes_set
+from Utilities import merge_albums_dictionaries_from_json_files, convert_md5s_to_codes, convert_md5s_set_to_identifiers, convert_identifiers_set_to_codes_set, convert_old_codes_set_to_identifiers_set
 from Geonames import Geonames
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
@@ -451,7 +452,6 @@ class Album(object):
 	def from_json_files(json_files, album_cache_base):
 		# TO DO: the positions, both unprotected and protected, must be read and included too
 		next_level()
-		json_files, mtime = json_files_and_mtime(album_cache_base)
 		files = "'" + json_files[0] + "' and others"
 		message("reading album from json files...", files, 5)
 		# json_files is the list of the existing files for that cache base
@@ -464,7 +464,26 @@ class Album(object):
 					indented_message("json file empty: why???", json_file, 4)
 					back_level()
 					return None
-				dictionary = merge_dictionaries_from_cache(dictionary, json_file_dict, old_password_codes)
+				codes_combinations = json_file_dict['numsProtectedMediaInSubTree'].keys()
+				if len(codes_combinations) != len(json_files):
+					indented_message("not an album cache hit", "some protected or unprotected json file is missing", 4)
+					back_level()
+					return None
+				# try:
+				# 	identifiers_set_from_dict = convert_old_codes_set_to_identifiers_set(set(codes_combinations))
+				# except KeyError, StopIteration:
+				# 	indented_message("not an album cache hit", "error in some protected json file", 4)
+				# 	back_level()
+				# 	return None
+				if "combination" in json_file_dict:
+					for i in range(len(json_file_dict['media'])):
+						identifiers_set = convert_old_codes_set_to_identifiers_set(set(json_file_dict['combination'].split('-')))
+						if identifiers_set is None:
+							indented_message("not an album cache hit", "error in going up from code to identifier", 4)
+							back_level()
+							return None
+						json_file_dict['media'][i]['password_identifiers'] = '-'.join(sorted(identifiers_set))
+				dictionary = merge_albums_dictionaries_from_json_files(dictionary, json_file_dict)
 
 		indented_message("album read from json files", files, 5)
 		back_level()
@@ -498,13 +517,21 @@ class Album(object):
 		album = Album(os.path.join(Options.config['album_path'], path))
 		album.cache_base = dictionary["cacheBase"]
 		album.json_version = dictionary["jsonVersion"]
-		for media in dictionary["media"]:
-			new_media = Media.from_dict(album, media, os.path.join(Options.config['album_path'], remove_folders_marker(album.baseless_path)))
+		if "combination" in dictionary:
+			album.password_identifiers = convert_old_codes_set_to_identifiers_set(set(dictionary["combination"].split('-')))
+		for single_media_dict in dictionary["media"]:
+			new_media = Media.from_dict(album, single_media_dict, os.path.join(Options.config['album_path'], remove_folders_marker(album.baseless_path)))
 			if new_media.is_valid:
 				album.add_media(new_media)
 
+		album.cache_base = dictionary["cacheBase"]
 		album.album_ini_mtime = dictionary["albumIniMTime"]
 		album.passwords_marker_mtime = dictionary["passwordMarkerMTime"]
+		# if "combination" in dictionary:
+		# else:
+		# 	album.password_identifiers = set()
+		# album.nums_protected_media_in_sub_tree = {}
+		# for codes in dictionary["numsProtectedMediaInSubTree"]:
 		# 	identifiers = '-'.join(sorted(convert_old_codes_set_to_identifiers_set(set(codes.split('-')))))
 		# 	album.nums_protected_media_in_sub_tree[identifiers] = dictionary["numsProtectedMediaInSubTree"][codes]
 
@@ -808,7 +835,7 @@ class Media(object):
 			 # media generation from json cache
 			 self.generate_media_from_file(album, media_path, thumbs_path)
 
-	def generate_media_from_cache(self, album, media_path, attributes):
+	def generate_media_from_cache(self, album, media_path, dictionary):
 		self.album = album
 		self.media_path = media_path
 		self.media_file_name = remove_album_path(media_path)
@@ -816,10 +843,11 @@ class Media(object):
 		self.folders = remove_album_path(dirname)
 		self.album_path = os.path.join('albums', self.media_file_name)
 		self.cache_base = album.generate_cache_base(trim_base_custom(media_path, album.absolute_path), self.media_file_name)
+		self.password_identifiers = convert_old_codes_set_to_identifiers_set(set(album.combination.split('-')))
 
 		self.is_valid = True
 
-		self._attributes = attributes
+		self._attributes = dictionary
 		return
 
 	def generate_media_from_file(self, album, media_path, thumbs_path):
@@ -2285,6 +2313,7 @@ class Media(object):
 			media["words"] = self.words
 		if Options.config['checksum']:
 			media["checksum"] = self.checksum
+		# media["combination"] = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(self.combination.split('-')))))
 
 		# the following data don't belong properly to media, but to album, but they must be put here in order to work with date, gps and search structure
 		media["albumName"] = self.album_path[:len(self.album_path) - len(self.name) - 1]
