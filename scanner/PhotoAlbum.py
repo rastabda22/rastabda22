@@ -474,8 +474,8 @@ class Album(object):
 			indented_message("json files not usable as a cache hit", files, 4)
 			return None
 		else:
-			album = Album.from_dict(dictionary, album_cache_base)
 			message("converting album to dict from json files...", files, 5)
+			album = Album.from_dict(dictionary)
 			indented_message("album converted to dict from json files", files, 4)
 			return album
 
@@ -496,7 +496,7 @@ class Album(object):
 			indented_message("not an album cache hit", "old json_version", 4)
 			return None
 		album = Album(os.path.join(Options.config['album_path'], path))
-		album.cache_base = album_cache_base
+		album.cache_base = dictionary["cacheBase"]
 		album.json_version = dictionary["jsonVersion"]
 		for media in dictionary["media"]:
 			new_media = Media.from_dict(album, media, os.path.join(Options.config['album_path'], remove_folders_marker(album.baseless_path)))
