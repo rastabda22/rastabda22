@@ -446,7 +446,7 @@ class Album(object):
 		indented_message(save_message_4, "", 4)
 
 	@staticmethod
-	def from_cache(path, album_cache_base, old_password_codes):
+	def from_json_files(json_files, album_cache_base):
 		# TO DO: the positions, both unprotected and protected, must be read and included too
 		next_level()
 		message("reading album from json files...", path, 5)

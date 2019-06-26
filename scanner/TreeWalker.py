@@ -1104,7 +1104,7 @@ class TreeWalker:
 					else:
 						message("maybe a cache hit", "trying to import album from '" + json_file + "'", 5)
 						# the following is the instruction which could raise the error
-						cached_album = Album.from_cache(json_file, album_cache_base, self.old_password_codes)
+						cached_album = Album.from_json_files(json_file_list, album_cache_base)
 
 						indented_message("json file imported", "", 5)
 						# if file_mtime(absolute_path) >= json_file_mtime:
