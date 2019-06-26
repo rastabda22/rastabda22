@@ -407,20 +407,19 @@ class TreeWalker:
 							# by_date_album.positions_and_media_in_tree = Positions(single_media)
 							# by_date_album.positions_and_media_in_tree = self.add_media_to_position(by_date_album.positions_and_media_in_tree, single_media, Options.config['by_date_string'])
 
-						if len(single_media.password_identifiers) > 0:
-							combination = ('-').join(sorted(single_media.password_identifiers))
-							if not combination in day_album.nums_protected_media_in_sub_tree:
-								day_album.nums_protected_media_in_sub_tree[combination] = 0
-							day_album.nums_protected_media_in_sub_tree[combination] += 1
-							if not combination in month_album.nums_protected_media_in_sub_tree:
-								month_album.nums_protected_media_in_sub_tree[combination] = 0
-							month_album.nums_protected_media_in_sub_tree[combination] += 1
-							if not combination in year_album.nums_protected_media_in_sub_tree:
-								year_album.nums_protected_media_in_sub_tree[combination] = 0
-							year_album.nums_protected_media_in_sub_tree[combination] += 1
-							if not combination in by_date_album.nums_protected_media_in_sub_tree:
-								by_date_album.nums_protected_media_in_sub_tree[combination] = 0
-							by_date_album.nums_protected_media_in_sub_tree[combination] += 1
+						combination = ('-').join(sorted(single_media.password_identifiers))
+						if not combination in day_album.nums_protected_media_in_sub_tree:
+							day_album.nums_protected_media_in_sub_tree[combination] = 0
+						day_album.nums_protected_media_in_sub_tree[combination] += 1
+						if not combination in month_album.nums_protected_media_in_sub_tree:
+							month_album.nums_protected_media_in_sub_tree[combination] = 0
+						month_album.nums_protected_media_in_sub_tree[combination] += 1
+						if not combination in year_album.nums_protected_media_in_sub_tree:
+							year_album.nums_protected_media_in_sub_tree[combination] = 0
+						year_album.nums_protected_media_in_sub_tree[combination] += 1
+						if not combination in by_date_album.nums_protected_media_in_sub_tree:
+							by_date_album.nums_protected_media_in_sub_tree[combination] = 0
+						by_date_album.nums_protected_media_in_sub_tree[combination] += 1
 
 						single_media_date = max(single_media.datetime_file, single_media.datetime_dir)
 						if day_max_file_date:
@@ -497,15 +496,14 @@ class TreeWalker:
 					# actually, this counter for the search root album is not significant
 					by_search_album.positions_and_media_in_tree.add_media(single_media)
 
-				if len(single_media.password_identifiers) > 0:
-					combination = ('-').join(sorted(single_media.password_identifiers))
-					if not combination in word_album.nums_protected_media_in_sub_tree:
-						word_album.nums_protected_media_in_sub_tree[combination] = 0
-					word_album.nums_protected_media_in_sub_tree[combination] += 1
-					# nums_protected_media_in_sub_tree matters for the search root albums!
-					if not combination in by_search_album.nums_protected_media_in_sub_tree:
-						by_search_album.nums_protected_media_in_sub_tree[combination] = 0
-					by_search_album.nums_protected_media_in_sub_tree[combination] += 1
+				combination = ('-').join(sorted(single_media.password_identifiers))
+				if not combination in word_album.nums_protected_media_in_sub_tree:
+					word_album.nums_protected_media_in_sub_tree[combination] = 0
+				word_album.nums_protected_media_in_sub_tree[combination] += 1
+				# nums_protected_media_in_sub_tree matters for the search root albums!
+				if not combination in by_search_album.nums_protected_media_in_sub_tree:
+					by_search_album.nums_protected_media_in_sub_tree[combination] = 0
+				by_search_album.nums_protected_media_in_sub_tree[combination] += 1
 
 			for single_album in media_album_and_words["albums_list"]:
 				word_album.add_subalbum(single_album)
@@ -760,20 +758,19 @@ class TreeWalker:
 							else:
 								by_geonames_max_file_date = single_media_date
 
-							if len(single_media.password_identifiers) > 0:
-								combination = ('-').join(sorted(single_media.password_identifiers))
-								if not combination in place_album.nums_protected_media_in_sub_tree:
-									place_album.nums_protected_media_in_sub_tree[combination] = 0
-								place_album.nums_protected_media_in_sub_tree[combination] += 1
-								if not combination in region_album.nums_protected_media_in_sub_tree:
-									region_album.nums_protected_media_in_sub_tree[combination] = 0
-								region_album.nums_protected_media_in_sub_tree[combination] += 1
-								if not combination in country_album.nums_protected_media_in_sub_tree:
-									country_album.nums_protected_media_in_sub_tree[combination] = 0
-								country_album.nums_protected_media_in_sub_tree[combination] += 1
-								if not combination in by_geonames_album.nums_protected_media_in_sub_tree:
-									by_geonames_album.nums_protected_media_in_sub_tree[combination] = 0
-								by_geonames_album.nums_protected_media_in_sub_tree[combination] += 1
+							combination = ('-').join(sorted(single_media.password_identifiers))
+							if not combination in place_album.nums_protected_media_in_sub_tree:
+								place_album.nums_protected_media_in_sub_tree[combination] = 0
+							place_album.nums_protected_media_in_sub_tree[combination] += 1
+							if not combination in region_album.nums_protected_media_in_sub_tree:
+								region_album.nums_protected_media_in_sub_tree[combination] = 0
+							region_album.nums_protected_media_in_sub_tree[combination] += 1
+							if not combination in country_album.nums_protected_media_in_sub_tree:
+								country_album.nums_protected_media_in_sub_tree[combination] = 0
+							country_album.nums_protected_media_in_sub_tree[combination] += 1
+							if not combination in by_geonames_album.nums_protected_media_in_sub_tree:
+								by_geonames_album.nums_protected_media_in_sub_tree[combination] = 0
+							by_geonames_album.nums_protected_media_in_sub_tree[combination] += 1
 
 						Options.all_albums.append(place_album)
 						self.generate_composite_image(place_album, place_max_file_date)

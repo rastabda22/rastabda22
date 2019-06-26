@@ -87,23 +87,32 @@ def convert_md5s_to_codes(passwords_md5):
 def convert_identifiers_set_to_md5s_set(identifiers_set):
 	md5s_set = set()
 	for identifier in identifiers_set:
-		md5 = next(x['password_md5'] for x in Options.identifiers_and_passwords if x['identifier'] == identifier)
-		md5s_set.add(md5)
+		try:
+			md5 = next(x['password_md5'] for x in Options.identifiers_and_passwords if x['identifier'] == identifier)
+			md5s_set.add(md5)
+		except StopIteration:
+			# the identifier was u''
+			pass
 	return md5s_set
 
 def convert_identifiers_set_to_codes_set(identifiers_set):
 	codes_set = set()
 	for identifier in identifiers_set:
-		code = next(x['password_code'] for x in Options.identifiers_and_passwords if x['identifier'] == identifier)
-		codes_set.add(code)
+		if identifier != '':
+			code = next(x['password_code'] for x in Options.identifiers_and_passwords if x['identifier'] == identifier)
+			codes_set.add(code)
 	return codes_set
 
 def convert_old_codes_set_to_identifiers_set(codes_set):
 	identifiers_set = set()
 	for code in codes_set:
-		md5 = Options.old_password_codes[code]
-		identifier = convert_md5s_set_to_identifiers(set([md5]))
-		identifiers_set.add(identifier)
+		if code != '':
+			try:
+				md5 = Options.old_password_codes[code]
+				identifier = convert_md5s_set_to_identifiers(set([md5]))
+				identifiers_set.add(identifier)
+			except KeyError:
+				return None
 	return identifiers_set
 
 def convert_md5s_set_to_identifiers(md5s_set):
@@ -138,13 +147,14 @@ def merge_dictionaries_from_cache(dict, dict1, old_password_codes):
 	dict['numMediaInSubTree'] += dict1['numMediaInSubTree']
 	old_md5s_set = set()
 	for codes in dict['numsProtectedMediaInSubTree']:
-		for code in codes.split('-'):
-			try:
-				if len(Options.old_password_codes) > 0 and Options.old_password_codes[code] not in old_md5s_set:
-					old_md5s_set.add(Options.old_password_codes[code])
-			except KeyError:
-				indented_message("not an album cache hit", "key error in password codes", 4)
-				return None
+		if codes != '':
+			for code in codes.split('-'):
+				try:
+					if len(Options.old_password_codes) > 0 and Options.old_password_codes[code] not in old_md5s_set:
+						old_md5s_set.add(Options.old_password_codes[code])
+				except KeyError:
+					indented_message("not an album cache hit", "key error in password codes", 4)
+					return None
 	# if set(old_md5_list) != set([x['password_md5'] for x in Options.identifiers_and_passwords]):
 	# 	return None
 

@@ -285,7 +285,7 @@ class Album(object):
 		return True
 
 	def used_password_identifiers(self):
-		keys = self.nums_protected_media_in_sub_tree.keys()
+		keys = [key for key in self.nums_protected_media_in_sub_tree.keys() if key != '']
 		keys = sorted(sorted(keys), key = lambda single_key: len(single_key.split('-')))
 
 		return keys
@@ -311,9 +311,10 @@ class Album(object):
 
 	def merge_nums_protected(self, album1):
 		for combination in album1.nums_protected_media_in_sub_tree:
-			if not combination in self.nums_protected_media_in_sub_tree:
-				self.nums_protected_media_in_sub_tree[combination] = 0
-			self.nums_protected_media_in_sub_tree[combination] += album1.nums_protected_media_in_sub_tree[combination]
+			if combination != '':
+				if combination not in self.nums_protected_media_in_sub_tree:
+					self.nums_protected_media_in_sub_tree[combination] = 0
+				self.nums_protected_media_in_sub_tree[combination] += album1.nums_protected_media_in_sub_tree[combination]
 
 	def leave_only_unprotected_content(self):
 		# print()
@@ -351,7 +352,8 @@ class Album(object):
 				self.positions_and_media_in_tree.add_media(single_media)
 
 		for key in self.nums_protected_media_in_sub_tree:
-			self.num_media_in_sub_tree -= self.nums_protected_media_in_sub_tree[key]
+			if key != '':
+				self.num_media_in_sub_tree -= self.nums_protected_media_in_sub_tree[key]
 
 		# print()
 		# pprint(["AFTER, UNPROTECTED", self.name, self.to_dict()])
@@ -616,10 +618,13 @@ class Album(object):
 		# pprint(dictionary)
 		nums_protected_by_code = {}
 		for identifiers in self.nums_protected_media_in_sub_tree:
-			codes = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(identifiers.split('-')))))
-			nums_protected_by_code[codes] = self.nums_protected_media_in_sub_tree[identifiers]
+			if identifiers == '':
+				nums_protected_by_code[''] = self.nums_protected_media_in_sub_tree[identifiers]
+			else:
+				codes = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(identifiers.split('-')))))
+				nums_protected_by_code[codes] = self.nums_protected_media_in_sub_tree[identifiers]
 		dictionary["numsProtectedMediaInSubTree"] = nums_protected_by_code
-		if len(self.combination) > 0:
+		if self.combination != '':
 			dictionary["combination"] = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(self.combination.split('-')))))
 
 		if hasattr(self, "center"):
