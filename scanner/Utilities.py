@@ -139,12 +139,15 @@ def save_password_codes():
 			json.dump({"passwordCode": password_code}, password_file)
 		indented_message("New password file created", password_md5, 4)
 
-def merge_dictionaries_from_cache(dict, dict1, old_password_codes):
+
+def merge_albums_dictionaries_from_json_files(dict, dict1):
 	if dict is None:
 		return dict1
+		# return add_combination_to_dict(dict1)
 	if dict1 is None:
 		return dict
-	dict['numMediaInSubTree'] += dict1['numMediaInSubTree']
+		# return add_combination_to_dict(dict)
+	# dict['numMediaInSubTree'] += dict1['numMediaInSubTree']
 	old_md5s_set = set()
 	for codes in dict['numsProtectedMediaInSubTree']:
 		if codes != '':
