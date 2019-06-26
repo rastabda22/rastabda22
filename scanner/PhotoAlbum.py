@@ -842,8 +842,12 @@ class Media(object):
 		dirname = os.path.dirname(media_path)
 		self.folders = remove_album_path(dirname)
 		self.album_path = os.path.join('albums', self.media_file_name)
-		self.cache_base = album.generate_cache_base(trim_base_custom(media_path, album.absolute_path), self.media_file_name)
-		self.password_identifiers = convert_old_codes_set_to_identifiers_set(set(album.combination.split('-')))
+		self.cache_base = dictionary['cacheBase']
+		# self.cache_base = album.generate_cache_base(trim_base_custom(media_path, album.absolute_path), self.media_file_name)
+		if "password_identifiers" in dictionary:
+			self.password_identifiers = set(dictionary['password_identifiers'].split('-'))
+		else:
+			self.password_identifiers = set()
 
 		self.is_valid = True
 
