@@ -1173,7 +1173,7 @@ class TreeWalker:
 				must_process_passwords = True
 
 		# check album name against passwords
-		if not passwords_ok:
+		if must_process_passwords:
 			# restart with the inherited passwords
 			album.password_identifiers = inherited_passwords_identifiers
 			# get the matching passwords
@@ -1403,7 +1403,7 @@ class TreeWalker:
 					single_media._attributes["checksum"] = media_checksum
 
 			if single_media.is_valid:
-				if not passwords_ok:
+				if must_process_passwords:
 					single_media.password_identifiers = set()
 					file_name = os.path.basename(entry_with_path)
 
