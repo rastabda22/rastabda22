@@ -1063,7 +1063,7 @@ class TreeWalker:
 			back_level()
 
 		############################################################
-		# look for album json file and check its validity
+		# look for album.ini file in order to check json file validity against it
 		############################################################
 		json_file = os.path.join(Options.config['cache_path'], album_cache_base) + ".json"
 		json_file_list, json_file_mtime = json_files_and_mtime(album_cache_base)
@@ -1078,6 +1078,9 @@ class TreeWalker:
 			else:
 				album_ini_good = True
 
+		############################################################
+		# look for album json files and check their validity
+		############################################################
 		cached_album = None
 		album_cache_hit = False
 		json_message = json_file
@@ -1102,7 +1105,7 @@ class TreeWalker:
 					# elif len(patterns_and_passwords) > 0 and passwords_marker_mtime is not None and passwords_marker_mtime >= json_file_mtime:
 					# 	indented_message("not an album cache hit", Options.config['passwords_marker'] + " newer than json file", 4)
 					else:
-						message("maybe a cache hit", "trying to import album from '" + json_file + "'", 5)
+						message("maybe a cache hit", "trying to import album from '" + json_file_list[0] + "' and others", 5)
 						# the following is the instruction which could raise the error
 						cached_album = Album.from_json_files(json_file_list, album_cache_base)
 

@@ -451,8 +451,9 @@ class Album(object):
 	def from_json_files(json_files, album_cache_base):
 		# TO DO: the positions, both unprotected and protected, must be read and included too
 		next_level()
-		message("reading album from json files...", path, 5)
 		json_files, mtime = json_files_and_mtime(album_cache_base)
+		files = "'" + json_files[0] + "' and others"
+		message("reading album from json files...", files, 5)
 		# json_files is the list of the existing files for that cache base
 		dictionary = None
 		for json_file in json_files:
@@ -465,17 +466,17 @@ class Album(object):
 					return None
 				dictionary = merge_dictionaries_from_cache(dictionary, json_file_dict, old_password_codes)
 
-		indented_message("album read from json files", path, 5)
+		indented_message("album read from json files", files, 5)
 		back_level()
 		# generate the album from the json file loaded
 		# subalbums are not generated yet
 		if dictionary is None:
-			indented_message("json file not usable as a cache hit", path, 4)
+			indented_message("json files not usable as a cache hit", files, 4)
 			return None
 		else:
-			message("converting album to dict from json file...", path, 5)
 			album = Album.from_dict(dictionary, album_cache_base)
-			indented_message("album converted to dict from json file", path, 4)
+			message("converting album to dict from json files...", files, 5)
+			indented_message("album converted to dict from json files", files, 4)
 			return album
 
 	@staticmethod
@@ -2260,7 +2261,7 @@ class Media(object):
 								# year < 1000 incorrectly inserted in json file ("31" instead of "0031")
 								value1 = "0" + value1
 
-		message("processing media from cached album", media_path, 5)
+		indented_message("processing media from cached album", media_path, 5)
 		return Media(album, media_path, None, dictionary)
 
 
