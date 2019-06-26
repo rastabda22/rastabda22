@@ -200,14 +200,14 @@ class TreeWalker:
 			keys = sorted(sorted(keys), key = lambda single_key: len(single_key.split('-')))
 			for indentifiers_combination in keys:
 				album = self.protected_origin_album[indentifiers_combination]
-				md5s = '-'.join(sorted(convert_identifiers_set_to_md5s_set(set(indentifiers_combination.split('-')))))
+				md5_combination = '-'.join(sorted(convert_identifiers_set_to_md5s_set(set(indentifiers_combination.split('-')))))
 				next_level()
-				message("saving protected albums for identifiers...", "identifiers = " + indentifiers_combination + ", md5's = " + md5s, 4)
+				message("saving protected albums for identifiers...", "identifiers = " + indentifiers_combination + ", md5's = " + md5_combination, 4)
 				next_level()
 				# try:
 				self.all_albums_to_json_file(album, indentifiers_combination)
 				back_level()
-				message("protected albums saved for identifiers", "identifiers = " + indentifiers_combination + ", md5's = " + md5s, 4)
+				message("protected albums saved for identifiers", "identifiers = " + indentifiers_combination + ", md5's = " + md5_combination, 4)
 				back_level()
 				# except UnboundLocalError:
 				# 	pass
