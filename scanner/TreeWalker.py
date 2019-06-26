@@ -1800,7 +1800,7 @@ class TreeWalker:
 				# self.all_json_files_by_subdir[subdir] = list()
 				deletable_files_re = r"\.jpg$"
 			elif subdir == Options.config['passwords_subdir']:
-				deletable_files_re = md5_hash_re
+				deletable_files_re = r"[a-f0-9]{32}"
 			elif re.search(md5_hash_re, subdir):
 				deletable_files_re = r"\.json$"
 			else:
