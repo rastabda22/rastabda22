@@ -452,49 +452,6 @@ class TreeWalker:
 		back_level()
 		return by_date_album
 
-	# def add_media_to_position(self, positions, media, type_string):
-	# 	# adds the media position and name to the positions list received as second argument
-	# 	# if type_string == Options.config['folders_string']:
-	# 	media_album_cache_base = media.album.cache_base
-	# 	if type_string == Options.config['by_date_string']:
-	# 		media_album_cache_base = media.day_album_cache_base
-	# 	elif type_string == Options.config['by_gps_string']:
-	# 		media_album_cache_base = media.gps_album_cache_base
-	# 	position = {
-	# 		'lng': media.longitude,
-	# 		'lat' : media.latitude,
-	# 		'mediaNameList': [{
-	# 			'cacheBase': media.cache_base,
-	# 			'albumCacheBase': media_album_cache_base,
-	# 			'foldersCacheBase': media.album.cache_base,
-	# 			'passwordsMd5': media.passwords_md5
-	# 		}]
-	# 	}
-	# 	positions = self.add_position_to_positions(positions, position)
-	# 	return positions
-
-	# def add_position_to_positions(self, positions, position):
-	# 	# adds the given position to the positions list received as second argument
-	# 	if positions == []:
-	# 		positions = [copy.deepcopy(position)]
-	# 	else:
-	# 		match = False
-	# 		for index, _position in enumerate(positions):
-	# 			if position['lat'] == _position['lat'] and position['lng'] == _position['lng']:
-	# 				positions[index]['mediaNameList'].extend(position['mediaNameList'])
-	# 				match = True
-	# 				break
-	# 		if not match:
-	# 			positions.append(copy.deepcopy(position))
-	# 	return positions
-
-	# def merge_positions(self, positions, positions1):
-	# 	# adds the media position and name to the positions list received as second argument
-	# 	for position in positions1:
-	# 		positions = self.add_position_to_positions(positions, position)
-	#
-	# 	return positions
-
 
 	def generate_by_search_albums(self, origin_album):
 		next_level()
