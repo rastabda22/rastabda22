@@ -1110,7 +1110,6 @@ class TreeWalker:
 						# the following is the instruction which could raise the error
 						cached_album = Album.from_json_files(json_file_list, album_cache_base)
 
-						indented_message("json file imported", "", 5)
 						# if file_mtime(absolute_path) >= json_file_mtime:
 						# 	indented_message("invalid json file", "dir time > json file time", 4)
 						# 	cached_album = None
@@ -1144,17 +1143,30 @@ class TreeWalker:
 			# 	album_cache_hit = False
 			# 	cached_album = None
 
+		if not os.path.exists(album_ini_file) and album_cache_hit and album.album_ini_mtime is not None:
+			# album.ini was used to create json files but has been removed
+			message("not an album cache hit", "album.ini absent, but values from it are in json file", 2)
+			album_cache_hit = False
+			album_ini_good = False
+
+		if not os.path.exists(passwords_marker) and album_cache_hit and album.passwords_marker_mtime is not None:
+			# a password marker were used in the last scanner run but has been removed
+			message("not an album cache hit", "password marker absent, but in was used in the last scanner run", 2)
+			album_cache_hit = False
+
 		if not album_cache_hit:
 			message("generating void album...", "", 5)
 			album = Album(absolute_path)
 			indented_message("void album generated", "", 5)
 
-		if album_ini_good:
+		if album_cache_hit and album_ini_good:
 			if not must_process_album_ini:
 				message("album.ini values already in json file", "", 2)
 			else:
 				message("reading album.ini...", "", 2)
 				album.read_album_ini(album_ini_file)
+				# save the album.ini mtime: it help know whether the file has been removed
+				album.album_ini_mtime = file_mtime(album_ini_file)
 				indented_message("album.ini read!", "", 2)
 
 		if parent_album is not None:
@@ -1448,12 +1460,11 @@ class TreeWalker:
 
 					# media.passwords_md5.sort()
 
-					# update the protected media count according for the passwords' md5
-					if len(single_media.password_identifiers) > 0:
-						combination = '-'.join(sorted(single_media.password_identifiers))
-						if not combination in album.nums_protected_media_in_sub_tree:
-							album.nums_protected_media_in_sub_tree[combination] = 0
-						album.nums_protected_media_in_sub_tree[combination] += 1
+				# update the protected media count according for the passwords' md5
+				combination = '-'.join(sorted(single_media.password_identifiers))
+				if not combination in album.nums_protected_media_in_sub_tree:
+					album.nums_protected_media_in_sub_tree[combination] = 0
+				album.nums_protected_media_in_sub_tree[combination] += 1
 
 				album.num_media_in_sub_tree += 1
 				if single_media.has_gps_data:
