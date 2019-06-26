@@ -66,6 +66,7 @@ config['unicode_combining_marks'] = unicode_combining_marks_n + unicode_combinin
 
 thumbnail_types_and_sizes_list = None
 identifiers_and_passwords = []
+old_password_codes = {}
 passwords_file_mtime = None
 config['cv2_installed'] = True
 face_cascade = None
@@ -90,6 +91,17 @@ max_random = 1000000000
 # json_version = 3.98 since property passwords changed to passwordsMd5 in json file
 # json_version = 3.97 since passwords removed from json file
 json_version = "3.96"
+def get_old_password_codes():
+	message("PRE Getting old passwords and codes...","", 5)
+	passwords_subdir_with_path = os.path.join(config['cache_path'], config['passwords_subdir'])
+	old_md5_and_codes = {}
+	for password_md5 in sorted(os.listdir(passwords_subdir_with_path)):
+		with open(os.path.join(passwords_subdir_with_path, password_md5), "r") as filepath:
+			# print(os.path.join(passwords_subdir_with_path, password_md5))
+			code_dict = json.load(filepath)
+			old_md5_and_codes[code_dict["passwordCode"]] = password_md5
+	indented_message("PRE Old passwords and codes got","", 4)
+	return old_md5_and_codes
 
 def initialize_opencv():
 	global face_cascade, eye_cascade
@@ -130,7 +142,7 @@ def initialize_opencv():
 		message("PRE importer", "No opencv library available, not using it", 2)
 
 def get_options():
-	global passwords_file_mtime
+	global passwords_file_mtime, old_password_codes
 	project_dir = os.path.dirname(os.path.realpath(os.path.join(__file__, "..")))
 	default_config_file = os.path.join(project_dir, "myphotoshare.conf.defaults")
 	default_config = configparser.ConfigParser()
@@ -405,6 +417,8 @@ def get_options():
 				passwords_file_mtime = file_mtime(passwords_file_name)
 		except IOError:
 			indented_message("PRE WARNING", passwords_file_name + " doesn't exist or unreadable, not using it", 2)
+
+	old_password_codes = get_old_password_codes()
 
 	# create the directory where php will put album composite images
 	album_cache_dir = os.path.join(config['cache_path'], config['cache_album_subdir'])

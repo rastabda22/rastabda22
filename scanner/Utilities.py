@@ -98,24 +98,20 @@ def convert_identifiers_set_to_codes_set(identifiers_set):
 		codes_set.add(code)
 	return codes_set
 
+def convert_old_codes_set_to_identifiers_set(codes_set):
+	identifiers_set = set()
+	for code in codes_set:
+		md5 = Options.old_password_codes[code]
+		identifier = convert_md5s_set_to_identifiers(set([md5]))
+		identifiers_set.add(identifier)
+	return identifiers_set
+
 def convert_md5s_set_to_identifiers(md5s_set):
 	identifiers_set = set()
 	for password_md5 in md5s_set:
 		identifier = next(x['identifier'] for x in Options.identifiers_and_passwords if x['password_md5'] == password_md5)
 		identifiers_set.add(identifier)
-	return '-'.join(identifiers_set)
-
-def get_old_password_codes():
-	message("PRE Getting old passwords and codes...","", 5)
-	passwords_subdir_with_path = os.path.join(Options.config['cache_path'], Options.config['passwords_subdir'])
-	old_md5_and_codes = {}
-	for password_md5 in sorted(os.listdir(passwords_subdir_with_path)):
-		with open(os.path.join(passwords_subdir_with_path, password_md5), "r") as filepath:
-			# print(os.path.join(passwords_subdir_with_path, password_md5))
-			code_dict = json.load(filepath)
-			old_md5_and_codes[code_dict["passwordCode"]] = password_md5
-	indented_message("PRE Old passwords and codes got","", 4)
-	return old_md5_and_codes
+	return '-'.join(sorted(identifiers_set))
 
 def save_password_codes():
 	# remove the old single password files
@@ -144,8 +140,8 @@ def merge_dictionaries_from_cache(dict, dict1, old_password_codes):
 	for codes in dict['numsProtectedMediaInSubTree']:
 		for code in codes.split('-'):
 			try:
-				if len(old_password_codes) > 0 and old_password_codes[code] not in old_md5s_set:
-					old_md5s_set.add(old_password_codes[code])
+				if len(Options.old_password_codes) > 0 and Options.old_password_codes[code] not in old_md5s_set:
+					old_md5s_set.add(Options.old_password_codes[code])
 			except KeyError:
 				indented_message("not an album cache hit", "key error in password codes", 4)
 				return None

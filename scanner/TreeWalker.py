@@ -22,7 +22,7 @@ from PIL import Image
 
 from CachePath import remove_album_path, last_modification_time, trim_base_custom
 from CachePath import remove_folders_marker
-from Utilities import get_old_password_codes, save_password_codes, json_files_and_mtime, report_mem
+from Utilities import save_password_codes, json_files_and_mtime, report_mem
 from Utilities import convert_identifiers_set_to_codes_set, convert_identifiers_set_to_md5s_set, convert_md5s_to_codes
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_digits, switch_to_lowercase, phrase_to_words, checksum
@@ -105,7 +105,6 @@ class TreeWalker:
 		self.origin_album = Album(Options.config['album_path'])
 		# self.origin_album.read_album_ini() # origin_album is not a physical one, it's the parent of the root physical tree and of the virtual albums
 		self.origin_album.cache_base = "root"
-		self.old_password_codes = get_old_password_codes()
 
 		message("Browsing", "start!", 3)
 
