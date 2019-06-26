@@ -477,7 +477,7 @@ class Album(object):
 			return album
 
 	@staticmethod
-	def from_dict(dictionary, album_cache_base, cripple=True):
+	def from_dict(dictionary):
 		if "physicalPath" in dictionary:
 			path = dictionary["physicalPath"]
 		else:
@@ -500,57 +500,50 @@ class Album(object):
 			if new_media.is_valid:
 				album.add_media(new_media)
 
-		if not cripple:
-			# it looks like the following code is never executed
-			for subalbum in dictionary["subalbums"]:
-				album.add_album(Album.from_dict(subalbum, cripple))
 		album.sort_subalbums_and_media()
 
 		return album
 
 
-	def to_dict(self, cripple=True):
+	def to_dict(self):
 		self.sort_subalbums_and_media()
 		subalbums = []
-		if cripple:
-			for subalbum in self.subalbums_list:
-				if not subalbum.empty:
-					path_to_dict = trim_base_custom(subalbum.path, self.baseless_path)
-					if path_to_dict == "":
-						path_to_dict = Options.config['folders_string']
 
-					sub_dict = {
-						"path": path_to_dict,
-						"cacheBase": subalbum.cache_base,
-						"date": subalbum.date_string,
-						# "positionsAndMediaInTree": subalbum.positions_and_media_in_tree,
-						"numPositionsInTree": len(subalbum.positions_and_media_in_tree.positions),
-						"numMediaInSubTree": subalbum.num_media_in_sub_tree,
-						# "numsProtectedMediaInSubTree": subalbum.nums_protected_media_in_sub_tree
-					}
-					nums_protected_by_code = {}
-					for identifiers in subalbum.nums_protected_media_in_sub_tree:
+		for subalbum in self.subalbums_list:
+			if not subalbum.empty:
+				path_to_dict = trim_base_custom(subalbum.path, self.baseless_path)
+				if path_to_dict == "":
+					path_to_dict = Options.config['folders_string']
+
+				sub_dict = {
+					"path": path_to_dict,
+					"cacheBase": subalbum.cache_base,
+					"date": subalbum.date_string,
+					# "positionsAndMediaInTree": subalbum.positions_and_media_in_tree,
+					"numPositionsInTree": len(subalbum.positions_and_media_in_tree.positions),
+					"numMediaInSubTree": subalbum.num_media_in_sub_tree,
+					# "numsProtectedMediaInSubTree": subalbum.nums_protected_media_in_sub_tree
+				}
+				nums_protected_by_code = {}
+				for identifiers in subalbum.nums_protected_media_in_sub_tree:
+					if identifiers == '':
+						nums_protected_by_code[''] = subalbum.nums_protected_media_in_sub_tree[identifiers]
+					else:
 						codes = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(identifiers.split('-')))))
 						nums_protected_by_code[codes] = subalbum.nums_protected_media_in_sub_tree[identifiers]
-					sub_dict["numsProtectedMediaInSubTree"] = nums_protected_by_code
+				sub_dict["numsProtectedMediaInSubTree"] = nums_protected_by_code
 
-					if hasattr(subalbum, "center"):
-						sub_dict["center"] = subalbum.center
-					if hasattr(subalbum, "name"):
-						sub_dict["name"] = subalbum.name
-					if hasattr(subalbum, "alt_name"):
-						sub_dict["altName"] = subalbum.alt_name
-					if hasattr(subalbum, "words"):
-						sub_dict["words"] = subalbum.words
-					if hasattr(subalbum, "unicode_words"):
-						sub_dict["unicodeWords"] = subalbum.unicode_words
-					subalbums.append(sub_dict)
-
-		else:
-			# it looks like the following code is never executed
-			for subalbum in self.subalbums_list:
-				if not subalbum.empty:
-					subalbums.append(subalbum)
+				if hasattr(subalbum, "center"):
+					sub_dict["center"] = subalbum.center
+				if hasattr(subalbum, "name"):
+					sub_dict["name"] = subalbum.name
+				if hasattr(subalbum, "alt_name"):
+					sub_dict["altName"] = subalbum.alt_name
+				if hasattr(subalbum, "words"):
+					sub_dict["words"] = subalbum.words
+				if hasattr(subalbum, "unicode_words"):
+					sub_dict["unicodeWords"] = subalbum.unicode_words
+				subalbums.append(sub_dict)
 
 		path_without_folders_marker = remove_folders_marker(self.path)
 
