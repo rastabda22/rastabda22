@@ -1099,7 +1099,7 @@ class TreeWalker:
 						indented_message("not an album cache hit", "album dir newer than json file", 4)
 					# elif Options.passwords_file_mtime is not None and Options.passwords_file_mtime >= json_file_mtime:
 					# 	indented_message("not an album cache hit", "passwords file newer than json file", 4)
-					# elif len(patterns_and_passwords) > 0 and pwd_file_mtime is not None and pwd_file_mtime >= json_file_mtime:
+					# elif len(patterns_and_passwords) > 0 and passwords_marker_mtime is not None and passwords_marker_mtime >= json_file_mtime:
 					# 	indented_message("not an album cache hit", Options.config['passwords_marker'] + " newer than json file", 4)
 					else:
 						message("maybe a cache hit", "trying to import album from '" + json_file + "'", 5)
@@ -1162,13 +1162,15 @@ class TreeWalker:
 		############################################################
 		# check passwords validity
 		############################################################
-		passwords_ok = True
-		if Options.passwords_file_mtime is not None and Options.passwords_file_mtime >= json_file_mtime:
-			indented_message("not an album cache hit", "passwords file newer than json file", 4)
-			passwords_ok = False
-		if len(patterns_and_passwords) > 0 and pwd_file_mtime is not None and pwd_file_mtime >= json_file_mtime:
-			indented_message("not an album cache hit", Options.config['passwords_marker'] + " newer than json file", 4)
-			passwords_ok = False
+		must_process_passwords = True
+		if json_file_mtime is not None and album_cache_hit:
+			must_process_passwords = False
+			if Options.passwords_file_mtime is not None and Options.passwords_file_mtime >= json_file_mtime:
+				indented_message("passwords must be processed", "passwords file newer than json file or absent", 4)
+				must_process_passwords = True
+			if len(patterns_and_passwords) > 0 and passwords_marker_mtime is not None and passwords_marker_mtime >= json_file_mtime:
+				indented_message("passwords must be processed", "'" + Options.config['passwords_marker'] + "'' newer than json file or absent", 4)
+				must_process_passwords = True
 
 		# check album name against passwords
 		if not passwords_ok:
@@ -1253,7 +1255,7 @@ class TreeWalker:
 				next_album_cache_base = album.generate_cache_base(entry_for_cache_base)
 				indented_message("cache base determined", "", 5)
 				back_level()
-				[next_walked_album, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, patterns_and_passwords, pwd_file_mtime, album.password_identifiers, album)
+				[next_walked_album, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, patterns_and_passwords, passwords_marker_mtime, album.password_identifiers, album)
 				if next_walked_album is not None:
 					max_file_date = max(max_file_date, sub_max_file_date)
 					album.num_media_in_sub_tree += next_walked_album.num_media_in_sub_tree

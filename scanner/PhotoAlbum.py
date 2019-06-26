@@ -82,6 +82,8 @@ class Album(object):
 			self._attributes["metadata"] = {}
 			self.json_version = ""
 			self.password_identifiers = set()
+			self.passwords_marker_mtime = None
+			self.album_ini_mtime = None
 
 			if (
 				Options.config['subdir_method'] in ("md5", "folder") and
@@ -500,6 +502,11 @@ class Album(object):
 			if new_media.is_valid:
 				album.add_media(new_media)
 
+		album.album_ini_mtime = dictionary["albumIniMTime"]
+		album.passwords_marker_mtime = dictionary["passwordMarkerMTime"]
+		# 	identifiers = '-'.join(sorted(convert_old_codes_set_to_identifiers_set(set(codes.split('-')))))
+		# 	album.nums_protected_media_in_sub_tree[identifiers] = dictionary["numsProtectedMediaInSubTree"][codes]
+
 		album.sort_subalbums_and_media()
 
 		return album
@@ -606,6 +613,8 @@ class Album(object):
 			# "numsProtectedMediaInSubTree": self.nums_protected_media_in_sub_tree,
 			"numPositionsInTree": len(self.positions_and_media_in_tree.positions),
 			# "positionsAndMediaInTree": self.positions_and_media_in_tree,
+			"albumIniMTime": self.album_ini_mtime,
+			"passwordMarkerMTime": self.passwords_marker_mtime,
 			"jsonVersion": Options.json_version
 		}
 		# pprint(dictionary)
