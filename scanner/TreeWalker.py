@@ -143,7 +143,7 @@ class TreeWalker:
 			message("saving all protected albums to json files...", "", 4)
 			next_level()
 
-			for md5 in [x['password_md5'] for x in Options.identifiers_and_passwords]:
+			for md5 in [identifier_and_password['password_md5'] for identifier_and_password in Options.identifiers_and_passwords]:
 				absolute_md5_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + md5)
 				Options.make_dir(absolute_md5_path, "protected pwd dir")
 				# symlinks in md5 dirs must be deleted
