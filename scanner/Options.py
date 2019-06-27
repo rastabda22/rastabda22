@@ -91,6 +91,13 @@ max_random = 1000000000
 # json_version = 3.98 since property passwords changed to passwordsMd5 in json file
 # json_version = 3.97 since passwords removed from json file
 json_version = "3.96"
+def mark_identifier_as_used(identifier):
+	global identifiers_and_passwords
+	for i, value in enumerate(identifiers_and_passwords):
+		if identifiers_and_passwords[i]['identifier'] == identifier:
+			identifiers_and_passwords[i]['used'] = True
+			break
+
 def get_old_password_codes():
 	message("PRE Getting old passwords and codes...","", 5)
 	passwords_subdir_with_path = os.path.join(config['cache_path'], config['passwords_subdir'])
@@ -401,9 +408,10 @@ def get_options():
 							break
 					identifiers_and_passwords.append(
 						{
-							"identifier": identifier,
-							"password_md5": password_md5,
-							"password_code": password_code
+							'identifier': identifier,
+							'password_md5': password_md5,
+							'password_code': password_code,
+							'used': False
 						}
 					)
 					indented_message(

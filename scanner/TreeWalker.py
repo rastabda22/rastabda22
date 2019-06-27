@@ -143,15 +143,22 @@ class TreeWalker:
 			message("saving all protected albums to json files...", "", 4)
 			next_level()
 
-			for md5 in [identifier_and_password['password_md5'] for identifier_and_password in Options.identifiers_and_passwords]:
+			for identifier_and_password in Options.identifiers_and_passwords:
+				md5 = identifier_and_password['password_md5']
 				absolute_md5_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + md5)
-				Options.make_dir(absolute_md5_path, "protected pwd dir")
-				# symlinks in md5 dirs must be deleted
-				# because there isn't any simple way to know whether they are old or new
-				for entry in self._listdir_sorted_alphabetically(absolute_md5_path):
-					entry_with_path = os.path.join(absolute_md5_path, entry)
-					if not os.path.isdir(entry_with_path):
+				if identifier_and_password['used']:
+					Options.make_dir(absolute_md5_path, "protected pwd dir")
+					# symlinks in md5 dirs must be deleted
+					# because there isn't any simple way to know whether they are old or new
+					for entry in self._listdir_sorted_alphabetically(absolute_md5_path):
+						entry_with_path = os.path.join(absolute_md5_path, entry)
+						# if not os.path.isdir(entry_with_path):
 						os.unlink(entry_with_path)
+				else:
+					try:
+						shutil.rmtree(absolute_md5_path)
+					except OSError:
+						pass
 
 			keys = self.protected_origin_album.keys()
 			keys = sorted(sorted(keys), key = lambda single_key: len(single_key.split('-')))
@@ -177,9 +184,10 @@ class TreeWalker:
 			self._save_json_options()
 
 			for identifier_and_password in Options.identifiers_and_passwords:
-				identifier = identifier_and_password['identifier']
-				md5 = convert_identifiers_set_to_md5s_set(set([identifier])).pop()
-				self.all_json_files.append(os.path.join(Options.config['passwords_subdir'], md5))
+				if identifier_and_password['used']:
+					identifier = identifier_and_password['identifier']
+					md5 = convert_identifiers_set_to_md5s_set(set([identifier])).pop()
+					self.all_json_files.append(os.path.join(Options.config['passwords_subdir'], md5))
 
 			self.remove_stale("", self.all_json_files)
 			report_mem()
@@ -1092,6 +1100,7 @@ class TreeWalker:
 				# add the matching patterns
 				if match:
 					identifier = pattern_and_password['identifier']
+					Options.mark_identifier_as_used(identifier)
 					album.password_identifiers.add(identifier)
 					if identifier not in album.password_identifiers:
 						indented_message(
@@ -1105,8 +1114,12 @@ class TreeWalker:
 							dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "' already protects the album",
 							3
 						)
-			# reset the protected media counts
-			album.nums_protected_media_in_sub_tree = {}
+		else:
+			for identifier in album.password_identifiers:
+				Options.mark_identifier_as_used(identifier)
+
+		# reset the protected media counts
+		album.nums_protected_media_in_sub_tree = {}
 
 		message("reading directory", absolute_path, 5)
 		message("subdir for cache files", " " + album.subdir, 3)
@@ -1324,6 +1337,7 @@ class TreeWalker:
 
 						if match:
 							identifier = pattern_and_password['identifier']
+							Options.mark_identifier_as_used(identifier)
 							single_media.password_identifiers.add(identifier)
 							if identifier not in single_media.password_identifiers:
 								indented_message(
@@ -1337,6 +1351,10 @@ class TreeWalker:
 									"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "'  already protects the media",
 									3
 								)
+				else:
+					for identifier in single_media.password_identifiers:
+						Options.mark_identifier_as_used(identifier)
+
 
 
 				# update the protected media count according for the passwords' md5

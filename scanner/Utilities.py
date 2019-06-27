@@ -130,13 +130,14 @@ def save_password_codes():
 	message("Old password files removed","", 4)
 
 	# create the new single password files
-	for md5_and_code in [{'md5': identifier_and_password['password_md5'], 'code': identifier_and_password['password_code']} for identifier_and_password in Options.identifiers_and_passwords]:
-		password_md5 = md5_and_code['md5']
-		password_code = md5_and_code['code']
-		message("creating new password file", "", 5)
-		with open(os.path.join(passwords_subdir_with_path, password_md5), 'w') as password_file:
-			json.dump({"passwordCode": password_code}, password_file)
-		indented_message("New password file created", password_md5, 4)
+	for identifier_and_password in Options.identifiers_and_passwords:
+		if identifier_and_password['used']:
+			password_md5 = identifier_and_password['password_md5']
+			password_code = identifier_and_password['password_code']
+			message("creating new password file", "", 5)
+			with open(os.path.join(passwords_subdir_with_path, password_md5), 'w') as password_file:
+				json.dump({"passwordCode": password_code}, password_file)
+			indented_message("New password file created", password_md5, 4)
 
 
 def merge_albums_dictionaries_from_json_files(dict, dict1):

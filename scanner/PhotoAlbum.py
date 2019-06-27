@@ -448,9 +448,9 @@ class Album(object):
 			message("converting album to dict from json files...", files, 5)
 			[album, must_process_passwords] = Album.from_dict(dictionary)
 			indented_message("album converted to dict from json files", files, 4)
-			if album.password_identifiers is None:
-				album.password_identifiers = set()
-				must_process_passwords = True
+			# if album.password_identifiers is None:
+			# 	album.password_identifiers = set()
+			# 	must_process_passwords = True
 			return [album, must_process_passwords]
 
 	@staticmethod
@@ -463,21 +463,21 @@ class Album(object):
 		# Don't use cache if version has changed
 		if Options.json_version == 0:
 			indented_message("not an album cache hit", "json_version == 0 (debug mode)", 4)
-			return None
+			return [None, True]
 		elif "jsonVersion" not in dictionary:
+			return [None, True]
 			indented_message("not an album cache hit", "unexistent json_version", 4)
-			return None
 		elif dictionary["jsonVersion"] != Options.json_version:
 			indented_message("not an album cache hit", "old json_version", 4)
-			return None
+			return [None, True]
 		album = Album(os.path.join(Options.config['album_path'], path))
 		album.cache_base = dictionary["cacheBase"]
 		album.json_version = dictionary["jsonVersion"]
 		if "combination" in dictionary:
 			album.password_identifiers = convert_old_codes_set_to_identifiers_set(set(dictionary["combination"].split('-')))
-			if album.password_identifiers is None:
-				indented_message("passwords must be processed", "error in going up from code to identifier", 4)
-				must_process_passwords = True
+		if album.password_identifiers is None:
+			indented_message("passwords must be processed", "error in going up from code to identifier", 4)
+			must_process_passwords = True
 
 		for single_media_dict in dictionary["media"]:
 			new_media = Media.from_dict(album, single_media_dict, os.path.join(Options.config['album_path'], remove_folders_marker(album.baseless_path)))
