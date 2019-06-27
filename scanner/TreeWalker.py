@@ -996,6 +996,8 @@ class TreeWalker:
 		json_message = json_file
 		if Options.config['recreate_json_files']:
 			message("not an album cache hit", "forced json file recreation, some sensible option has changed", 3)
+		elif Options.obsolete_json_version:
+			message("not an album cache hit", "obsolete json_version value", 3)
 		else:
 			if len(json_file_list) > 0:
 				if not all([os.access(json, os.R_OK) for json in json_file_list]):
@@ -1016,7 +1018,7 @@ class TreeWalker:
 						[cached_album, must_process_passwords] = Album.from_json_files(json_file_list, album_cache_base)
 
 						if cached_album is None:
-							indented_message("not an album cache hit", "null cached album, perhaps because of unexistent/old json_version", 4)
+							indented_message("not an album cache hit", "null cached album", 4)
 						else:
 							indented_message("json file imported", "", 5)
 							if not hasattr(cached_album, "absolute_path"):

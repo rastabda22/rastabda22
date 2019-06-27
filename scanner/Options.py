@@ -67,6 +67,7 @@ config['unicode_combining_marks'] = unicode_combining_marks_n + unicode_combinin
 thumbnail_types_and_sizes_list = None
 identifiers_and_passwords = []
 old_password_codes = {}
+obsolete_json_version = False
 passwords_file_mtime = None
 config['cv2_installed'] = True
 face_cascade = None
@@ -91,6 +92,11 @@ max_random = 1000000000
 # json_version = 3.98 since property passwords changed to passwordsMd5 in json file
 # json_version = 3.97 since passwords removed from json file
 json_version = "3.96"
+def set_obsolete_json_version_flag():
+	global obsolete_json_version
+	obsolete_json_version = True
+
+
 def mark_identifier_as_used(identifier):
 	global identifiers_and_passwords
 	for i, value in enumerate(identifiers_and_passwords):

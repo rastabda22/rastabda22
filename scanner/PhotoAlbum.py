@@ -463,12 +463,15 @@ class Album(object):
 		# Don't use cache if version has changed
 		if Options.json_version == 0:
 			indented_message("not an album cache hit", "json_version == 0 (debug mode)", 4)
+			Options.set_obsolete_json_version_flag()
 			return [None, True]
 		elif "jsonVersion" not in dictionary:
-			return [None, True]
 			indented_message("not an album cache hit", "unexistent json_version", 4)
+			Options.set_obsolete_json_version_flag()
+			return [None, True]
 		elif dictionary["jsonVersion"] != Options.json_version:
-			indented_message("not an album cache hit", "old json_version", 4)
+			indented_message("not an album cache hit", "old json_version value", 4)
+			Options.set_obsolete_json_version_flag()
 			return [None, True]
 		album = Album(os.path.join(Options.config['album_path'], path))
 		album.cache_base = dictionary["cacheBase"]
