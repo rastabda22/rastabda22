@@ -431,7 +431,6 @@ class Album(object):
 						identifiers_set = convert_old_codes_set_to_identifiers_set(set(json_file_dict['combination'].split('-')))
 						if identifiers_set is None:
 							indented_message("passwords must be processed", "error in going up from code to identifier", 4)
-							back_level()
 							must_process_passwords = True
 							break
 						else:
@@ -447,12 +446,16 @@ class Album(object):
 			return [None, True]
 		else:
 			message("converting album to dict from json files...", files, 5)
-			album = Album.from_dict(dictionary)
+			[album, must_process_passwords] = Album.from_dict(dictionary)
 			indented_message("album converted to dict from json files", files, 4)
+			if album.password_identifiers is None:
+				album.password_identifiers = set()
+				must_process_passwords = True
 			return [album, must_process_passwords]
 
 	@staticmethod
 	def from_dict(dictionary):
+		must_process_passwords = False
 		if "physicalPath" in dictionary:
 			path = dictionary["physicalPath"]
 		else:
@@ -472,6 +475,10 @@ class Album(object):
 		album.json_version = dictionary["jsonVersion"]
 		if "combination" in dictionary:
 			album.password_identifiers = convert_old_codes_set_to_identifiers_set(set(dictionary["combination"].split('-')))
+			if album.password_identifiers is None:
+				indented_message("passwords must be processed", "error in going up from code to identifier", 4)
+				must_process_passwords = True
+
 		for single_media_dict in dictionary["media"]:
 			new_media = Media.from_dict(album, single_media_dict, os.path.join(Options.config['album_path'], remove_folders_marker(album.baseless_path)))
 			if new_media.is_valid:
@@ -483,7 +490,7 @@ class Album(object):
 
 		album.sort_subalbums_and_media()
 
-		return album
+		return [album, must_process_passwords]
 
 
 	def to_dict(self):
