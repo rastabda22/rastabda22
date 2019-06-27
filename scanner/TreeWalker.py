@@ -971,6 +971,7 @@ class TreeWalker:
 								indented_message("WARNING: password identifier used more than once", identifier + ": not protecting the directory", 2)
 			back_level()
 
+
 		############################################################
 		# look for album.ini file in order to check json file validity against it
 		############################################################
@@ -1002,6 +1003,7 @@ class TreeWalker:
 			if len(json_file_list) > 0:
 				if not all([os.access(json, os.R_OK) for json in json_file_list]):
 					message("not an album cache hit", "some json file unreadable", 1)
+
 				elif not all([os.access(json, os.W_OK) for json in json_file_list]):
 					message("not an album cache hit", "some json file unwritable", 1)
 				else:
@@ -1051,7 +1053,7 @@ class TreeWalker:
 
 		if not os.path.exists(passwords_marker) and album_cache_hit and album.passwords_marker_mtime is not None:
 			# a password marker were used in the last scanner run but has been removed
-			message("not an album cache hit", "password marker absent, but in was used in the last scanner run", 2)
+			message("not an album cache hit", "password marker absent, but was used in the last scanner run", 2)
 			album_cache_hit = False
 
 		if not album_cache_hit:
@@ -1078,6 +1080,8 @@ class TreeWalker:
 		############################################################
 		# check passwords validity
 		############################################################
+		if not album_cache_hit:
+			must_process_passwords = True
 		if not must_process_passwords and json_file_mtime is not None and album_cache_hit:
 			if Options.passwords_file_mtime is not None and Options.passwords_file_mtime >= json_file_mtime:
 				indented_message("passwords must be processed", "passwords file newer than json file or absent", 4)
@@ -1356,8 +1360,6 @@ class TreeWalker:
 				else:
 					for identifier in single_media.password_identifiers:
 						Options.mark_identifier_as_used(identifier)
-
-
 
 				# update the protected media count according for the passwords' md5
 				combination = '-'.join(sorted(single_media.password_identifiers))
