@@ -33,54 +33,16 @@ import Options
 
 class TreeWalker:
 	def __init__(self):
-		# # check whether the albums or the cache has been modified after the last run, actually comparing with options file modification time
-		# # use the same method as in file_mtime:
-		# # datetime.fromtimestamp(int(os.path.getmtime(path)))
-		# message("getting albums last mtime...", "be patient, x time is needed!", 4)
-		# last_album_modification_time = last_modification_time(Options.config['album_path'])
-		# next_level()
-		# message("albums last mtime got", str(last_album_modification_time), 4)
-		# back_level()
-
-		# message("getting cache last mtime...", "be even more patient, 12x time could be needed!", 4)
-		# last_cache_modification_time = last_modification_time(Options.config['cache_path'])
-		# next_level()
-		# message("cache last mtime got", str(last_cache_modification_time), 4)
-		# json_options_file_modification_time = file_mtime(os.path.join(Options.config['cache_path'], "options.json"))
-		# message("json options file mtime is", str(json_options_file_modification_time), 4)
-		# if len(sys.argv) == 2:
-		# 	options_file_modification_time = file_mtime(sys.argv[1])
-		# 	message("options file mtime is", str(options_file_modification_time), 4)
-		# back_level()
-
 		random.seed()
 		self.all_json_files = ["options.json"]
 		self.all_json_files_dict = {}
 		self.time_of_album_saving = None
-		# self.all_json_files_by_subdir = {}
 
 		if (Options.config['use_stop_words']):
 			TreeWalker.stopwords_file = os.path.join(Options.config['cache_path'], 'stopwords.json')
 			self.all_json_files.append('stopwords.json')
 			self.get_lowercase_stopwords()
 
-		# # If nor the albums nor the cache have been modified after the last run,
-		# # and if sensitive options haven't changed,
-		# # we can avoid browsing the albums
-		# if (
-		# 	# the cache must be newer than albums
-		# 	last_album_modification_time < json_options_file_modification_time and
-		# 	# the json options file must be newer than albums
-		# 	last_album_modification_time < last_cache_modification_time and
-		# 	# the cache must be newer than the supplied options file too: physical paths could have been changed
-		# 	(len(sys.argv) == 2 and options_file_modification_time < last_cache_modification_time) and
-		# 	not Options.config['recreate_json_files'] and
-		# 	not Options.config['recreate_reduced_photos'] and
-		# 	not Options.config['recreate_thumbnails']
-		# ):
-		# 	message("no albums modification, no refresh needed", "We can safely end here", 4)
-		# else:
-		# be sure reduced_sizes array is correctly sorted
 		Options.config['reduced_sizes'].sort(reverse=True)
 
 		geonames = Geonames()
@@ -98,19 +60,14 @@ class TreeWalker:
 				sys.exit(-97)
 		else:
 			Options.make_dir(Options.config['cache_album_subdir'], "cache album subdir")
-			# message("creating still unexistent album cache subdir", self.album_cache_path, 4)
-			# os.makedirs(self.album_cache_path)
-			# indented_message("still unexistent subdir created", "", 5)
 
 		self.origin_album = Album(Options.config['album_path'])
-		# self.origin_album.read_album_ini() # origin_album is not a physical one, it's the parent of the root physical tree and of the virtual albums
 		self.origin_album.cache_base = "root"
 
 		message("Browsing", "start!", 3)
 
 		next_level()
 		[folders_album, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], None, set(), self.origin_album)
-		# [folders_album, num, nums_protected, positions, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], self.origin_album)
 		back_level()
 		if folders_album is None:
 			message("WARNING", "ALBUMS ROOT EXCLUDED BY MARKER FILE", 2)
@@ -230,23 +187,6 @@ class TreeWalker:
 
 	@staticmethod
 	def determine_symlink_name(symlink):
-		# n = 1
-		# file_name = os.path.basename(symlink)
-		# symlink_list = symlink.split('.')
-		# is_positions = (symlink_list[-2] == 'positions')
-		#
-		# if is_positions:
-		# 	subtract = 1
-		# 	has_already_number_inside = (len(file_name.split('.')) > 3)
-		# else:
-		# 	subtract = 0
-		# 	has_already_number_inside = (len(file_name.split('.')) > 2)
-		#
-		# if has_already_number_inside:
-		# 	first_part = symlink_list[:-2 - subtract]
-		# else:
-		# 	first_part = symlink_list[:-1 - subtract]
-
 		while (os.path.isfile(symlink)):
 			# symlink = '.'.join(first_part + [str(n)] + symlink_list[-1 - subtract:])
 			symlink = next_file_name(symlink)
@@ -356,7 +296,6 @@ class TreeWalker:
 
 			months = sorted(list(self.tree_by_date[year].keys()))
 			for month in months:
-			# for month, _ in self.tree_by_date[year].items():
 				month_path = os.path.join(year_path, str(month))
 				month_album = Album(month_path)
 				month_album.parent_cache_base = year_album.cache_base
@@ -366,7 +305,6 @@ class TreeWalker:
 
 				days = sorted(list(self.tree_by_date[year][month].keys()))
 				for day in self.tree_by_date[year][month]:
-				# for day, media in self.tree_by_date[year][month].items():
 					media_list = self.tree_by_date[year][month][day]
 					message("working with day album...", "", 5)
 					day_path = os.path.join(month_path, str(day))
@@ -383,29 +321,11 @@ class TreeWalker:
 						month_album.num_media_in_sub_tree += 1
 						year_album.add_single_media(single_media)
 						year_album.num_media_in_sub_tree += 1
-						# by_date_album.add_single_media(single_media)
 						by_date_album.num_media_in_sub_tree += 1
 						if single_media.has_gps_data:
 							day_album.positions_and_media_in_tree.add_single_media(single_media)
-							# day_album.positions_and_media_in_tree = self.add_media_to_position(
-							# 	day_album.positions_and_media_in_tree,
-							# 	single_media,
-							# 	Options.config['by_date_string']
-							# )
 							month_album.positions_and_media_in_tree.add_single_media(single_media)
-							# month_album.positions_and_media_in_tree = self.add_media_to_position(
-							# 	month_album.positions_and_media_in_tree,
-							# 	single_media,
-							# 	Options.config['by_date_string']
-							# )
 							year_album.positions_and_media_in_tree.add_single_media(single_media)
-							# year_album.positions_and_media_in_tree = self.add_media_to_position(
-							# 	year_album.positions_and_media_in_tree,
-							# 	single_media,
-							# 	Options.config['by_date_string']
-							# )
-							# by_date_album.positions_and_media_in_tree = Positions(single_media)
-							# by_date_album.positions_and_media_in_tree = self.add_media_to_position(by_date_album.positions_and_media_in_tree, single_media, Options.config['by_date_string'])
 
 						combination = ('-').join(sorted(single_media.password_identifiers))
 						if not combination in day_album.nums_protected_media_in_sub_tree:
@@ -466,7 +386,6 @@ class TreeWalker:
 		for word in keys:
 		# for word, media_album_and_words in self.tree_by_search.items():
 			media_album_and_words = self.tree_by_search[word]
-			# pprint(["AAAAA", media_album_and_words])
 			next_level()
 			message("working with word album...", "", 5)
 			word_path = os.path.join(by_search_path, str(word))
@@ -524,7 +443,6 @@ class TreeWalker:
 
 			word_album.unicode_words = media_album_and_words["unicode_words"]
 			Options.all_albums.append(word_album)
-			# self.generate_composite_image(word_album, word_max_file_date)
 			indented_message("word album worked out", word, 4)
 			back_level()
 		Options.all_albums.append(by_search_album)
@@ -544,7 +462,6 @@ class TreeWalker:
 
 		country_codes = sorted(list(self.tree_by_geonames.keys()))
 		for country_code in country_codes:
-		# for country_code, _ in self.tree_by_geonames.items():
 			country_path = os.path.join(by_geonames_path, str(country_code))
 			country_album = Album(country_path)
 			country_album.center = {}
@@ -555,7 +472,6 @@ class TreeWalker:
 
 			region_codes = sorted(list(self.tree_by_geonames[country_code].keys()))
 			for region_code in region_codes:
-			# for region_code, _ in self.tree_by_geonames[country_code].items():
 				region_path = os.path.join(country_path, str(region_code))
 				region_album = Album(region_path)
 				region_album.center = {}
@@ -569,7 +485,6 @@ class TreeWalker:
 				# sort the codes according to the place names, https://stackoverflow.com/questions/6618515/sorting-list-based-on-values-from-another-list#answer-6618543
 				place_codes = [place_code for _, place_code in sorted(zip(place_names, place_codes))]
 				for place_code in place_codes:
-				# for place_code, media_list in self.tree_by_geonames[country_code][region_code].items():
 					media_list = self.tree_by_geonames[country_code][region_code][place_code]
 					place_code = str(place_code)
 					place_name = media_list[0].place_name
@@ -686,33 +601,19 @@ class TreeWalker:
 							cluster[j].gps_path = remove_album_path(place_path)
 							cluster[j].place_name = place_name
 							cluster[j].alt_place_name = alt_place_name
+
 							place_album.positions_and_media_in_tree.add_single_media(single_media)
-							# place_album.positions_and_media_in_tree = self.add_media_to_position(
-							# 	place_album.positions_and_media_in_tree,
-							# 	single_media,
-							# 	Options.config['by_gps_string']
-							# )
 							place_album.add_single_media(single_media)
 							place_album.num_media_in_sub_tree += 1
+
 							region_album.positions_and_media_in_tree.add_single_media(single_media)
-							# region_album.positions_and_media_in_tree = self.add_media_to_position(
-							# 	region_album.positions_and_media_in_tree,
-							# 	single_media,
-							# 	Options.config['by_gps_string']
-							# )
 							region_album.add_single_media(single_media)
 							region_album.num_media_in_sub_tree += 1
+
 							country_album.positions_and_media_in_tree.add_single_media(single_media)
-							# country_album.positions_and_media_in_tree = self.add_media_to_position(
-							# 	country_album.positions_and_media_in_tree,
-							# 	single_media,
-							# 	Options.config['by_gps_string']
-							# )
 							country_album.add_single_media(single_media)
 							country_album.num_media_in_sub_tree += 1
-							# by_geonames_album.positions_and_media_in_tree = Positions(single_media)
-							# by_geonames_album.positions_and_media_in_tree = self.add_media_to_position(by_geonames_album.positions_and_media_in_tree, single_media, Options.config['by_gps_string'])
-							# by_geonames_album.add_single_media(single_media)
+
 							by_geonames_album.num_media_in_sub_tree += 1
 
 							if place_album.center == {}:
@@ -956,7 +857,6 @@ class TreeWalker:
 	@staticmethod
 	def _listdir_sorted_alphabetically(path):
 		# this function returns the directory listing sorted alphabetically
-		# it takes into account the fact that the file is a symlink to an unexistent file
 		return list(sorted(os.listdir(path)))
 
 
@@ -1101,18 +1001,11 @@ class TreeWalker:
 						must_process_album_ini = True
 					elif file_mtime(absolute_path) >= json_file_mtime:
 						indented_message("not an album cache hit", "album dir newer than json file", 4)
-					# elif Options.passwords_file_mtime is not None and Options.passwords_file_mtime >= json_file_mtime:
-					# 	indented_message("not an album cache hit", "passwords file newer than json file", 4)
-					# elif len(patterns_and_passwords) > 0 and passwords_marker_mtime is not None and passwords_marker_mtime >= json_file_mtime:
-					# 	indented_message("not an album cache hit", Options.config['passwords_marker'] + " newer than json file", 4)
 					else:
 						message("maybe a cache hit", "trying to import album from '" + json_file_list[0] + "' and others", 5)
 						# the following is the instruction which could raise the error
 						cached_album = Album.from_json_files(json_file_list, album_cache_base)
 
-						# if file_mtime(absolute_path) >= json_file_mtime:
-						# 	indented_message("invalid json file", "dir time > json file time", 4)
-						# 	cached_album = None
 						if cached_album is None:
 							indented_message("not an album cache hit", "null cached album, perhaps because of unexistent/old json_version", 4)
 						else:
@@ -1123,10 +1016,6 @@ class TreeWalker:
 							elif cached_album.absolute_path != absolute_path:
 								indented_message("not an album cache hit", "cached album's absolute_path != absolute_path", 4)
 								cached_album = None
-							# the next commented-out check isn't needed because the same condition is checked in Album() and None is returned
-							# elif Options.json_version == 0 or not hasattr(cached_album, "json_version") or not cached_album.json_version == Options.json_version:
-							# 	indented_message("not an album cache hit", "unexistent or old json_version", 4)
-							# 	cached_album = None
 							else:
 								indented_message("album cache hit!", "", 4)
 								album = cached_album
@@ -1219,7 +1108,6 @@ class TreeWalker:
 						)
 			# reset the protected media counts
 			album.nums_protected_media_in_sub_tree = {}
-		# album.passwords_md5.sort()
 
 		message("reading directory", absolute_path, 5)
 		message("subdir for cache files", " " + album.subdir, 3)
@@ -1235,7 +1123,6 @@ class TreeWalker:
 		photos_without_exif_date_and_with_geotags_in_dir = []
 		photos_without_exif_date_or_geotags_in_dir = []
 		files_in_dir = []
-		# for entry in self._listdir_sorted_by_time(absolute_path):
 		for entry in self._listdir_sorted_alphabetically(absolute_path):
 			try:
 				# @python2
@@ -1276,7 +1163,6 @@ class TreeWalker:
 					max_file_date = max(max_file_date, sub_max_file_date)
 					album.num_media_in_sub_tree += next_walked_album.num_media_in_sub_tree
 					album.positions_and_media_in_tree.merge(next_walked_album.positions_and_media_in_tree)
-					# album.positions_and_media_in_tree = self.merge_positions(album.positions_and_media_in_tree, next_walked_album.positions_and_media_in_tree)
 					album.merge_nums_protected(next_walked_album)
 
 					album.add_subalbum(next_walked_album)
@@ -1291,10 +1177,6 @@ class TreeWalker:
 					continue
 				if os.path.islink(entry_with_path) and Options.config['follow_symlinks']:
 					indented_message("symlink to file, following it as per 'follow_symlinks' option", entry_with_path, 3)
-
-				# if any(remove_album_path(entry_with_path) == _media.media_file_name for _media in self.all_media):
-				# 	# do not process the media twice
-				# 	continue
 
 				# save the file name for the end of the cycle, so that subdirs are processed first
 				files_in_dir.append(entry_with_path)
@@ -1341,7 +1223,6 @@ class TreeWalker:
 					single_media_cache_hit = False
 				else:
 					indented_message("cached media got!", "", 5)
-				# cached_media._attributes["dateTimeDir"] = dir_mtime
 
 				if single_media_cache_hit and cached_media._attributes["dateTimeFile"] != mtime:
 					indented_message("modification time different", "not a cache hit", 5)
@@ -1458,7 +1339,6 @@ class TreeWalker:
 									3
 								)
 
-					# media.passwords_md5.sort()
 
 				# update the protected media count according for the passwords' md5
 				combination = '-'.join(sorted(single_media.password_identifiers))
@@ -1469,11 +1349,6 @@ class TreeWalker:
 				album.num_media_in_sub_tree += 1
 				if single_media.has_gps_data:
 					album.positions_and_media_in_tree.add_single_media(single_media)
-					# album.positions_and_media_in_tree = self.add_media_to_position(
-					# 	album.positions_and_media_in_tree,
-					# 	single_media,
-					# 	Options.config['folders_string']
-					# )
 
 				if single_media.is_video:
 					num_video_in_dir += 1
@@ -1593,7 +1468,6 @@ class TreeWalker:
 		report_mem()
 
 		return [album, max_file_date]
-		# return [album, album.num_media_in_sub_tree, album.nums_protected_media_in_sub_tree, copy.deepcopy(album.positions_and_media_in_tree), max_file_date]
 
 
 	@staticmethod
@@ -1729,21 +1603,6 @@ class TreeWalker:
 		img.save(composite_image_path, "JPEG", quality=Options.config['jpeg_quality'])
 		indented_message("composite image generated", "", 5)
 		back_level()
-
-
-	# def save_all_media_json(self):
-	# 	media_list = []
-	# 	message("sorting all media list...", "", 5)
-	# 	self.all_media.sort()
-	# 	indented_message("all media list sorted", "", 5)
-	# 	message("building media path list...", "", 5)
-	# 	for media in self.all_media:
-	# 		media_list.append(media.path)
-	# 	indented_message("media path list built", "", 5)
-	# 	message("caching all media path list...", "", 4)
-	# 	with open(os.path.join(Options.config['cache_path'], "all_media.json"), 'w') as all_media_file:
-	# 		json.dump(media_list, all_media_file, cls=PhotoAlbumEncoder)
-	# 	indented_message("all media path list cached", "", 5)
 
 
 	@staticmethod

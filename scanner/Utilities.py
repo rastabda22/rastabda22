@@ -10,7 +10,6 @@ import os
 import json
 
 import Options
-# from CachePath import file_mtime
 
 def file_mtime(path):
 	return datetime.fromtimestamp(int(os.path.getmtime(path)))
@@ -147,7 +146,6 @@ def merge_albums_dictionaries_from_json_files(dict, dict1):
 	if dict1 is None:
 		return dict
 		# return add_combination_to_dict(dict)
-	# dict['numMediaInSubTree'] += dict1['numMediaInSubTree']
 	old_md5s_set = set()
 	for codes in dict['numsProtectedMediaInSubTree']:
 		if codes != '':
@@ -158,8 +156,6 @@ def merge_albums_dictionaries_from_json_files(dict, dict1):
 				except KeyError:
 					indented_message("not an album cache hit", "key error in password codes", 4)
 					return None
-	# if set(old_md5_list) != set([x['password_md5'] for x in Options.identifiers_and_passwords]):
-	# 	return None
 
 	dict['media'].extend(dict1['media'])
 	subalbums_cache_bases = [subalbum['cacheBase'] for subalbum in dict['subalbums']]

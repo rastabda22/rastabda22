@@ -225,7 +225,6 @@ def get_options():
 		else:
 			config[option] = usr_config.get('options', option)
 			if option in ('js_cache_levels'):
-				# print(config[option])
 				config[option] = json.loads(config[option])
 
 
@@ -357,13 +356,7 @@ def get_options():
 			message("PRE FATAL ERROR", config['cache_path'] + " not writable, quitting", 0)
 			sys.exit(-97)
 	except OSError:
-		# try:
 		make_dir(config['cache_path'], "cache directory")
-			# os.mkdir(config['cache_path'])
-			# message("PRE directory created", config['cache_path'], 4)
-		# except OSError:
-		# 	message("PRE FATAL ERROR", config['cache_path'] + " inexistent and couldn't be created, quitting", 0)
-		# 	sys.exit(-97)
 
 	# read the password file
 	# it must exist and be readable, otherwise skip it
@@ -425,14 +418,7 @@ def get_options():
 	try:
 		os.stat(album_cache_dir)
 	except OSError:
-		# try:
 		make_dir(album_cache_dir, "cache directory for composite images")
-		# 	message("PRE creating cache directory for composite images", album_cache_dir, 4)
-		# 	os.mkdir(album_cache_dir)
-		# 	os.chmod(album_cache_dir, 0o777)
-		# except OSError:
-		# 	message("PRE FATAL ERROR", config['cache_path'] + " not writable, quitting", 0)
-		# 	sys.exit(-97)
 
 	# calculate the number of media in the album tree: it will be used in order to guess the execution time
 	special_files = [config['exclude_tree_marker'], config['exclude_files_marker'], config['metadata_filename']]
