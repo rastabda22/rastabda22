@@ -377,28 +377,28 @@ class TreeWalker:
 					month_album.add_subalbum(day_album)
 					for single_media in media_list:
 						single_media.day_album_cache_base = day_album.cache_base
-						day_album.add_media(single_media)
+						day_album.add_single_media(single_media)
 						day_album.num_media_in_sub_tree += 1
-						month_album.add_media(single_media)
+						month_album.add_single_media(single_media)
 						month_album.num_media_in_sub_tree += 1
-						year_album.add_media(single_media)
+						year_album.add_single_media(single_media)
 						year_album.num_media_in_sub_tree += 1
-						# by_date_album.add_media(single_media)
+						# by_date_album.add_single_media(single_media)
 						by_date_album.num_media_in_sub_tree += 1
 						if single_media.has_gps_data:
-							day_album.positions_and_media_in_tree.add_media(single_media)
+							day_album.positions_and_media_in_tree.add_single_media(single_media)
 							# day_album.positions_and_media_in_tree = self.add_media_to_position(
 							# 	day_album.positions_and_media_in_tree,
 							# 	single_media,
 							# 	Options.config['by_date_string']
 							# )
-							month_album.positions_and_media_in_tree.add_media(single_media)
+							month_album.positions_and_media_in_tree.add_single_media(single_media)
 							# month_album.positions_and_media_in_tree = self.add_media_to_position(
 							# 	month_album.positions_and_media_in_tree,
 							# 	single_media,
 							# 	Options.config['by_date_string']
 							# )
-							year_album.positions_and_media_in_tree.add_media(single_media)
+							year_album.positions_and_media_in_tree.add_single_media(single_media)
 							# year_album.positions_and_media_in_tree = self.add_media_to_position(
 							# 	year_album.positions_and_media_in_tree,
 							# 	single_media,
@@ -477,7 +477,7 @@ class TreeWalker:
 			word_max_file_date = None
 			by_search_album.add_subalbum(word_album)
 			for single_media in media_album_and_words["media_list"]:
-				word_album.add_media(single_media)
+				word_album.add_single_media(single_media)
 				word_album.num_media_in_sub_tree += 1
 				# actually, this counter for the search root album is not significant
 				by_search_album.num_media_in_sub_tree += 1
@@ -492,9 +492,9 @@ class TreeWalker:
 				else:
 					by_search_max_file_date = single_media_date
 				if single_media.has_gps_data:
-					word_album.positions_and_media_in_tree.add_media(single_media)
+					word_album.positions_and_media_in_tree.add_single_media(single_media)
 					# actually, this counter for the search root album is not significant
-					by_search_album.positions_and_media_in_tree.add_media(single_media)
+					by_search_album.positions_and_media_in_tree.add_single_media(single_media)
 
 				combination = ('-').join(sorted(single_media.password_identifiers))
 				if not combination in word_album.nums_protected_media_in_sub_tree:
@@ -686,33 +686,33 @@ class TreeWalker:
 							cluster[j].gps_path = remove_album_path(place_path)
 							cluster[j].place_name = place_name
 							cluster[j].alt_place_name = alt_place_name
-							place_album.positions_and_media_in_tree.add_media(single_media)
+							place_album.positions_and_media_in_tree.add_single_media(single_media)
 							# place_album.positions_and_media_in_tree = self.add_media_to_position(
 							# 	place_album.positions_and_media_in_tree,
 							# 	single_media,
 							# 	Options.config['by_gps_string']
 							# )
-							place_album.add_media(single_media)
+							place_album.add_single_media(single_media)
 							place_album.num_media_in_sub_tree += 1
-							region_album.positions_and_media_in_tree.add_media(single_media)
+							region_album.positions_and_media_in_tree.add_single_media(single_media)
 							# region_album.positions_and_media_in_tree = self.add_media_to_position(
 							# 	region_album.positions_and_media_in_tree,
 							# 	single_media,
 							# 	Options.config['by_gps_string']
 							# )
-							region_album.add_media(single_media)
+							region_album.add_single_media(single_media)
 							region_album.num_media_in_sub_tree += 1
-							country_album.positions_and_media_in_tree.add_media(single_media)
+							country_album.positions_and_media_in_tree.add_single_media(single_media)
 							# country_album.positions_and_media_in_tree = self.add_media_to_position(
 							# 	country_album.positions_and_media_in_tree,
 							# 	single_media,
 							# 	Options.config['by_gps_string']
 							# )
-							country_album.add_media(single_media)
+							country_album.add_single_media(single_media)
 							country_album.num_media_in_sub_tree += 1
 							# by_geonames_album.positions_and_media_in_tree = Positions(single_media)
 							# by_geonames_album.positions_and_media_in_tree = self.add_media_to_position(by_geonames_album.positions_and_media_in_tree, single_media, Options.config['by_gps_string'])
-							# by_geonames_album.add_media(single_media)
+							# by_geonames_album.add_single_media(single_media)
 							by_geonames_album.num_media_in_sub_tree += 1
 
 							if place_album.center == {}:
@@ -860,7 +860,7 @@ class TreeWalker:
 		if TreeWalker.lowercase_stopwords == {}:
 			TreeWalker.load_stopwords()
 
-	def add_media_to_tree_by_date(self, single_media):
+	def add_single_media_to_tree_by_date(self, single_media):
 		# add the given media to a temporary structure where media are organized by year, month, date
 
 		if single_media.year not in list(self.tree_by_date.keys()):
@@ -873,7 +873,7 @@ class TreeWalker:
 		#~ if not single_media in self.tree_by_date[single_media.year][single_media.month][single_media.day]:
 			self.tree_by_date[single_media.year][single_media.month][single_media.day].append(single_media)
 
-	def add_media_to_tree_by_search(self, single_media):
+	def add_single_media_to_tree_by_search(self, single_media):
 		words_for_word_list, unicode_words, words_for_search_album_name = self.prepare_for_tree_by_search(single_media)
 		single_media.words = words_for_word_list
 		for word_index in range(len(words_for_search_album_name)):
@@ -933,7 +933,7 @@ class TreeWalker:
 		return alphabetic_words, search_normalized_words, ascii_words
 
 
-	def add_media_to_tree_by_geonames(self, single_media):
+	def add_single_media_to_tree_by_geonames(self, single_media):
 		# add the given media to a temporary structure where media are organized by country, region/state, place
 
 		if single_media.country_code not in list(self.tree_by_geonames.keys()):
@@ -1468,7 +1468,7 @@ class TreeWalker:
 
 				album.num_media_in_sub_tree += 1
 				if single_media.has_gps_data:
-					album.positions_and_media_in_tree.add_media(single_media)
+					album.positions_and_media_in_tree.add_single_media(single_media)
 					# album.positions_and_media_in_tree = self.add_media_to_position(
 					# 	album.positions_and_media_in_tree,
 					# 	single_media,
@@ -1504,22 +1504,22 @@ class TreeWalker:
 					next_level()
 					message("adding media to dates tree...", "", 5)
 					# the following function has a check on media already present
-					self.add_media_to_tree_by_date(single_media)
+					self.add_single_media_to_tree_by_date(single_media)
 					indented_message("media added to dates tree!", "", 5)
 
 					if single_media.has_gps_data:
 						message("adding media to geonames tree...", "", 5)
 						# the following function has a check on media already present
-						self.add_media_to_tree_by_geonames(single_media)
+						self.add_single_media_to_tree_by_geonames(single_media)
 						indented_message("media added to geonames tree!", "", 5)
 
 					message("adding media to search tree...", "", 5)
 					# the following function has a check on media already present
-					self.add_media_to_tree_by_search(single_media)
+					self.add_single_media_to_tree_by_search(single_media)
 					indented_message("media added to search tree", "", 5)
 
 					message("adding media to album...", "", 5)
-					album.add_media(single_media)
+					album.add_single_media(single_media)
 					indented_message("media added to album", "", 5)
 
 					message("adding media to all media list...", "", 5)

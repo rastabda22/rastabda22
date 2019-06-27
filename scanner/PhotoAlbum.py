@@ -257,7 +257,7 @@ class Album(object):
 		return len([album for album in albums_list if self.cache_base == album.cache_base]) == 1
 
 
-	def add_media(self, media):
+	def add_single_media(self, media):
 		# before adding the media, remove any media with the same file name
 		# it could be there because the album was a cache hit but the media wasn't
 		self.media_list = [_media for _media in self.media_list if media.media_file_name != _media.media_file_name]
@@ -352,7 +352,7 @@ class Album(object):
 
 		for single_media in self.media_list:
 			if single_media.has_gps_data:
-				self.positions_and_media_in_tree.add_media(single_media)
+				self.positions_and_media_in_tree.add_single_media(single_media)
 
 		for key in self.nums_protected_media_in_sub_tree:
 			if key != '':
@@ -385,7 +385,7 @@ class Album(object):
 		self.media_list = [single_media for single_media in self.media if identifiers_set == single_media.password_identifiers]
 		for single_media in self.media_list:
 			if single_media.has_gps_data:
-				self.positions_and_media_in_tree.add_media(single_media)
+				self.positions_and_media_in_tree.add_single_media(single_media)
 
 		self.combination = '-'.join(sorted(identifiers_set))
 		if self.combination in self.nums_protected_media_in_sub_tree:
@@ -522,7 +522,7 @@ class Album(object):
 		for single_media_dict in dictionary["media"]:
 			new_media = Media.from_dict(album, single_media_dict, os.path.join(Options.config['album_path'], remove_folders_marker(album.baseless_path)))
 			if new_media.is_valid:
-				album.add_media(new_media)
+				album.add_single_media(new_media)
 
 		album.cache_base = dictionary["cacheBase"]
 		album.album_ini_mtime = dictionary["albumIniMTime"]
@@ -763,7 +763,7 @@ class Positions(object):
 	def __init__(self, single_media, positions = None):
 		self.positions = []
 		if single_media is not None:
-			self.add_media(single_media)
+			self.add_single_media(single_media)
 		elif positions is not None:
 			self.merge(positions)
 
@@ -782,7 +782,7 @@ class Positions(object):
 		for position in positions.positions:
 			self.add_position(position)
 
-	def add_media(self, single_media):
+	def add_single_media(self, single_media):
 		added = False
 		for position in self.positions:
 			if position.belongs(single_media):
