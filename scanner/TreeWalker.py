@@ -887,6 +887,7 @@ class TreeWalker:
 		############################################################
 		# look for password marker and manage it
 		############################################################
+		must_process_passwords = False
 		passwords_marker_mtime = None
 		passwords_marker = os.path.join(absolute_path, Options.config['passwords_marker'])
 		if len(Options.identifiers_and_passwords) and Options.config['passwords_marker'] in listdir:
@@ -1004,7 +1005,7 @@ class TreeWalker:
 					else:
 						message("maybe a cache hit", "trying to import album from '" + json_file_list[0] + "' and others", 5)
 						# the following is the instruction which could raise the error
-						cached_album = Album.from_json_files(json_file_list, album_cache_base)
+						[cached_album, must_process_passwords] = Album.from_json_files(json_file_list, album_cache_base)
 
 						if cached_album is None:
 							indented_message("not an album cache hit", "null cached album, perhaps because of unexistent/old json_version", 4)
@@ -1067,9 +1068,7 @@ class TreeWalker:
 		############################################################
 		# check passwords validity
 		############################################################
-		must_process_passwords = True
-		if json_file_mtime is not None and album_cache_hit:
-			must_process_passwords = False
+		if not must_process_passwords and json_file_mtime is not None and album_cache_hit:
 			if Options.passwords_file_mtime is not None and Options.passwords_file_mtime >= json_file_mtime:
 				indented_message("passwords must be processed", "passwords file newer than json file or absent", 4)
 				must_process_passwords = True

@@ -412,6 +412,7 @@ class Album(object):
 		message("reading album from json files...", files, 5)
 		# json_files is the list of the existing files for that cache base
 		dictionary = None
+		must_process_passwords = False
 		for json_file in json_files:
 			with open(json_file, "r") as filepath:
 				try:
@@ -419,20 +420,22 @@ class Album(object):
 				except ValueError:
 					indented_message("json file empty: why???", json_file, 4)
 					back_level()
-					return None
+					return [None, True]
 				codes_combinations = json_file_dict['numsProtectedMediaInSubTree'].keys()
 				if len(codes_combinations) != len(json_files):
 					indented_message("not an album cache hit", "some protected or unprotected json file is missing", 4)
 					back_level()
-					return None
+					return [None, True]
 				if "combination" in json_file_dict:
 					for i in range(len(json_file_dict['media'])):
 						identifiers_set = convert_old_codes_set_to_identifiers_set(set(json_file_dict['combination'].split('-')))
 						if identifiers_set is None:
-							indented_message("not an album cache hit", "error in going up from code to identifier", 4)
+							indented_message("passwords must be processed", "error in going up from code to identifier", 4)
 							back_level()
-							return None
-						json_file_dict['media'][i]['password_identifiers'] = '-'.join(sorted(identifiers_set))
+							must_process_passwords = True
+							break
+						else:
+							json_file_dict['media'][i]['password_identifiers'] = '-'.join(sorted(identifiers_set))
 				dictionary = merge_albums_dictionaries_from_json_files(dictionary, json_file_dict)
 
 		indented_message("album read from json files", files, 5)
@@ -441,12 +444,12 @@ class Album(object):
 		# subalbums are not generated yet
 		if dictionary is None:
 			indented_message("json files not usable as a cache hit", files, 4)
-			return None
+			return [None, True]
 		else:
 			message("converting album to dict from json files...", files, 5)
 			album = Album.from_dict(dictionary)
 			indented_message("album converted to dict from json files", files, 4)
-			return album
+			return [album, must_process_passwords]
 
 	@staticmethod
 	def from_dict(dictionary):
