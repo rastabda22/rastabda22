@@ -130,27 +130,19 @@ class TreeWalker:
 			back_level()
 			report_mem()
 
+			message("deleting old protected content directories...", "", 5)
+			for entry in self._listdir_sorted_alphabetically(Options.config['cache_path']):
+				entry_with_path = os.path.join(Options.config['cache_path'], entry)
+				if not os.path.isdir(entry_with_path):
+					continue
+				if entry.find(Options.config['protected_directories_prefix']) != 0:
+					continue
+				# entry_with_path is one of the protected content directories: remove it with all its content
+				shutil.rmtree(entry_with_path)
+			indented_message("old protected content directories deleted!", Options.config['protected_directories_prefix'] + "*/*", 4)
+
 			message("saving all protected albums to json files...", "", 4)
 			next_level()
-s
-			for identifier_and_password in Options.identifiers_and_passwords:
-				md5 = identifier_and_password['password_md5']
-				absolute_md5_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + md5)
-				if identifier_and_password['used']:
-					make_dir(absolute_md5_path, "protected pwd dir")
-					# symlinks in md5 dirs must be deleted
-					# because there isn't any simple way to know whether they are old or new
-					for entry in self._listdir_sorted_alphabetically(absolute_md5_path):
-						entry_with_path = os.path.join(absolute_md5_path, entry)
-						# if not os.path.isdir(entry_with_path):
-						os.unlink(entry_with_path)
-				else:
-					try:
-						shutil.rmtree(absolute_md5_path)
-					except OSError:
-						pass
-
-
 
 			keys = self.protected_origin_album.keys()
 			keys = sorted(sorted(keys), key = lambda single_key: len(single_key.split('-')))
