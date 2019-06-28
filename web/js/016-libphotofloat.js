@@ -251,130 +251,150 @@
 		function addProtectedContent(album) {
 			// prepare and get the protected content albums
 			var thePasswordsToGet = PhotoFloat.passwordsToGet(album);
-			var iPassword, key, numProtected, protectedAlbumCacheBase;
 			if (thePasswordsToGet.length == 0) {
 				PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
 				executeCallback(album);
 			} else {
-				var index, passwordCode;
-
+				var iPassword, iAlbumPassword, key, numProtected, protectedAlbumCacheBase, iComplex;
+				var index, albumIndex, passwordCode;
 				var nPassword = 0, guessedPassword;
-				for (iPassword = 0; iPassword < thePasswordsToGet.length; iPassword ++) {
-					guessedPassword = thePasswordsToGet[iPassword];
-					index = PhotoFloat.guessedPasswordsMd5.indexOf(thePasswordsToGet[iPassword]);
-					passwordCode = PhotoFloat.guessedPasswordCodes[index];
-					numProtected = 0;
-					for (key in album.numsProtectedMediaInSubTree) {
-						if (key.split('-').indexOf(passwordCode) != -1)
-							numProtected += album.numsProtectedMediaInSubTree[key];
-					}
-					if (
-						baseJsonFileExists && numProtected == 0 &&
-						album.cacheBase !== Options.by_search_string &&
-						! util.isSearchCacheBase(album.cacheBase)
-					) {
-						// no need to get any protected content for this md5
-						executeCallback(album);
-					} else {
-						protectedAlbumCacheBase = Options.protected_directories_prefix + guessedPassword + '/' + album.cacheBase;
-						var data = {"passwordMd5": thePasswordsToGet[iPassword], "protectedAlbumCacheBase": protectedAlbumCacheBase};
-						getAlbumWithPositions(
-							protectedAlbumCacheBase,
-							function(protectedAlbum, data) {
-								function mergeSubalbums(album1, album2) {
-									var cacheBases = [], i, subalbum2;
-									album1.subalbums.forEach(
-										function(subalbum1) {
-											cacheBases.push(subalbum1.cacheBase);
-										}
-									);
-									for (i = 0; i < album2.subalbums.length; i ++) {
-										subalbum2 = album2.subalbums[i];
-										if (cacheBases.indexOf(subalbum2.cacheBase) == -1)
-											album1.subalbums.push(subalbum2);
-										else
+				var albumPasswordCode, albumCodes, mediaCodes, complexPassword, thereIsAnAlbumPassword;
+
+				for (iAlbumPassword = 0; iAlbumPassword < thePasswordsToGet.length; iAlbumPassword ++) {
+					for (iPassword = 0; iPassword < thePasswordsToGet.length; iPassword ++) {
+						guessedPassword = thePasswordsToGet[iPassword];
+						index = PhotoFloat.guessedPasswordsMd5.indexOf(thePasswordsToGet[iPassword]);
+						passwordCode = PhotoFloat.guessedPasswordCodes[index];
+						albumIndex = PhotoFloat.guessedPasswordsMd5.indexOf(thePasswordsToGet[iAlbumPassword]);
+						albumPasswordCode = PhotoFloat.guessedPasswordCodes[albumIndex];
+
+						numProtected = 0;
+						for (key in album.numsProtectedMediaInSubTree) {
+							if (key == '')
+								continue;
+							thereIsAnAlbumPassword = (key.indexOf(',') != -1);
+							if (thereIsAnAlbumPassword) {
+								albumCodes = key.split(',')[0].split('-');
+								mediaCodes = key.split(',')[1].split('-');
+							 	if (albumCodes.indexOf(albumPasswordCode) != -1 && mediaCodes.indexOf(passwordCode) != -1)
+									numProtected += album.numsProtectedMediaInSubTree[key];
+							} else {
+								if (key.split('-').indexOf(passwordCode) != -1)
+									numProtected += album.numsProtectedMediaInSubTree[key];
+							}
+						}
+
+						if (
+							baseJsonFileExists && numProtected == 0 &&
+							album.cacheBase !== Options.by_search_string &&
+							! util.isSearchCacheBase(album.cacheBase)
+						) {
+							// no need to get any protected content for this md5
+							executeCallback(album);
+						} else {
+							complexPasswordMd5List = [thePasswordsToGet[iAlbumPassword] + ',' + guessedPassword, guessedPassword];
+							for (iComplex = 0; iComplex < 2; iComplex ++) {
+								protectedAlbumCacheBase = Options.protected_directories_prefix + complexPasswordMd5List[iComplex] + '/' + album.cacheBase;
+								var data = {"complexPasswordMd5": complexPasswordMd5List[iComplex], "protectedAlbumCacheBase": protectedAlbumCacheBase};
+								getAlbumWithPositions(
+									protectedAlbumCacheBase,
+									function(protectedAlbum, data) {
+										function mergeSubalbums(album1, album2) {
+											var cacheBases = [], i, subalbum2;
 											album1.subalbums.forEach(
 												function(subalbum1) {
-													if (subalbum1.cacheBase == subalbum2.cacheBase)
-														subalbum1.numMediaInSubTree += subalbum2.numMediaInSubTree;
+													cacheBases.push(subalbum1.cacheBase);
 												}
 											);
-									}
-									return album1.subalbums;
-								}
-
-								function mergeProtectedContent(protectedAlbum) {
-									// add the protected album content to the unprotected one
-									album.media = album.media.concat(protectedAlbum.media);
-
-									album.numMediaInSubTree += protectedAlbum.numMediaInSubTree;
-
-									album.subalbums = mergeSubalbums(album, protectedAlbum);
-									album.includedCombinations.push(protectedAlbum.combination);
-
-									album.positionsAndMediaInTree = util.mergePoints(
-										album.positionsAndMediaInTree,
-										protectedAlbum.positionsAndMediaInTree
-									);
-								}
-
-								function getNextSymLinks(albumCacheBase, noMoreAlbumsForThisPassword) {
-									var symlinkCacheBase;
-									nLink ++;
-									if (nLink == 1)
-										symlinkCacheBase = albumCacheBase + '.' + nLink;
-									else
-										symlinkCacheBase = albumCacheBase.split('.').slice(0, -1).join('.') + '.' + nLink;
-
-									getAlbumWithPositions(
-										symlinkCacheBase,
-										function(nextAlbum) {
-										// function(nextAlbum, symlinkCacheBase) {
-											if (! album.hasOwnProperty("includedCombinations") || album.includedCombinations.indexOf(nextAlbum.combination) == -1)
-												mergeProtectedContent(nextAlbum);
-											getNextSymLinks(symlinkCacheBase, noMoreAlbumsForThisPassword);
-										},
-										noMoreAlbumsForThisPassword
-									);
-								}
-
-								var passwordMd5 = data.passwordMd5;
-								var protectedAlbumCacheBase = data.protectedAlbumCacheBase;
-
-								if (! album.hasOwnProperty("includedCombinations"))
-									album.includedCombinations = [];
-								if (album.includedCombinations.indexOf(protectedAlbum.combination) == -1)
-									mergeProtectedContent(protectedAlbum);
-
-								// get the symlinks
-								var nLink = 0;
-								getNextSymLinks(
-									protectedAlbumCacheBase,
-									function() {
-										album.protectedContentInside.push(passwordMd5);
-										nPassword ++;
-										if (nPassword >= thePasswordsToGet.length) {
-											// all the protected content has been included in the album
-											PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
-											executeCallback(album);
-											// goOn(album);
+											for (i = 0; i < album2.subalbums.length; i ++) {
+												subalbum2 = album2.subalbums[i];
+												if (cacheBases.indexOf(subalbum2.cacheBase) == -1)
+													album1.subalbums.push(subalbum2);
+												else
+													album1.subalbums.forEach(
+														function(subalbum1) {
+															if (subalbum1.cacheBase == subalbum2.cacheBase)
+																subalbum1.numMediaInSubTree += subalbum2.numMediaInSubTree;
+														}
+													);
+											}
+											return album1.subalbums;
 										}
-									}
+
+										function mergeProtectedContent(protectedAlbum) {
+											// add the protected album content to the unprotected one
+											album.media = album.media.concat(protectedAlbum.media);
+
+											album.numMediaInSubTree += protectedAlbum.numMediaInSubTree;
+
+											album.subalbums = mergeSubalbums(album, protectedAlbum);
+											album.includedCombinations.push(protectedAlbum.combination);
+
+											album.positionsAndMediaInTree = util.mergePoints(
+												album.positionsAndMediaInTree,
+												protectedAlbum.positionsAndMediaInTree
+											);
+										}
+
+										function getNextSymLinks(albumCacheBase, noMoreAlbumsForThisPassword) {
+											var symlinkCacheBase;
+											nLink ++;
+											if (nLink == 1)
+												symlinkCacheBase = albumCacheBase + '.' + nLink;
+											else
+												symlinkCacheBase = albumCacheBase.split('.').slice(0, -1).join('.') + '.' + nLink;
+
+											getAlbumWithPositions(
+												symlinkCacheBase,
+												function(nextAlbum) {
+												// function(nextAlbum, symlinkCacheBase) {
+													if (! album.hasOwnProperty("includedCombinations") || album.includedCombinations.indexOf(nextAlbum.combination) == -1)
+														mergeProtectedContent(nextAlbum);
+													getNextSymLinks(symlinkCacheBase, noMoreAlbumsForThisPassword);
+												},
+												noMoreAlbumsForThisPassword
+											);
+										}
+
+										var complexPasswordMd5 = data.complexPasswordMd5;
+										var protectedAlbumCacheBase = data.protectedAlbumCacheBase;
+
+										if (! album.hasOwnProperty("includedCombinations"))
+											album.includedCombinations = [];
+										if (album.includedCombinations.indexOf(protectedAlbum.combination) == -1)
+											mergeProtectedContent(protectedAlbum);
+
+										// get the symlinks
+										var nLink = 0;
+										getNextSymLinks(
+											protectedAlbumCacheBase,
+											function() {
+												album.protectedContentInside.push(complexPasswordMd5);
+												nPassword ++;
+												if (nPassword >= 2 * thePasswordsToGet.length * thePasswordsToGet.length) {
+													// all the protected content has been included in the album
+													PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
+													executeCallback(album);
+													// goOn(album);
+												}
+											}
+										);
+									},
+									function() {
+										// execution arrives here when a protected album is not found
+									},
+									data
 								);
-							},
-							function() {
-								executeCallback(album)
-							},
-							data
-						);
-							// 		executeCallback
-							// 	);
-							// },
-							// function() {
-							// 	executeCallback(album)
-							// },
-							// {"passwordMd5": thePasswordsToGet[iPassword], "protectedAlbumCacheBase": protectedAlbumCacheBase}
-						// );
+									// 		executeCallback
+									// 	);
+									// },
+									// function() {
+									// 	executeCallback(album)
+									// },
+									// {"passwordMd5": thePasswordsToGet[iPassword], "protectedAlbumCacheBase": protectedAlbumCacheBase}
+								// );
+							}
+						}
 					}
 				}
 			}
@@ -415,7 +435,6 @@
 		///////////////////////////////////////////////////
 		// begin getAlbum function code
 		///////////////////////////////////////////////////
-		// var albumCacheBase;
 		var baseJsonFileExists = true;
 
 		var albumFromCache = PhotoFloat.getAlbumFromCache(albumCacheBase);

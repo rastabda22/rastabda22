@@ -331,19 +331,17 @@ class Album(object):
 			subalbum.leave_only_content_protected_by(album_identifiers_set, identifiers_set)
 			self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
-		self.album_combination = '-'.join(sorted(album_identifiers_set))
-		self.combination = '-'.join(sorted(identifiers_set))
 		self.num_media_in_sub_tree = 0
 
 		if self.password_identifiers == set() or self.password_identifiers == album_identifiers_set:
 			self.media_list = [single_media for single_media in self.media if identifiers_set == single_media.password_identifiers]
 
 			if album_identifiers_set == set():
-				complex_combination = self.combination
+				self.combination = '-'.join(sorted(identifiers_set))
 			else:
-				complex_combination = ','.join([self.album_combination, self.combination])
-			if complex_combination in self.nums_protected_media_in_sub_tree.keys():
-				self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(complex_combination)
+				self.combination = ','.join(['-'.join(sorted(album_identifiers_set)), '-'.join(sorted(identifiers_set))])
+			if self.combination in self.nums_protected_media_in_sub_tree.keys():
+				self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.combination)
 		else:
 			self.media_list = []
 
@@ -634,7 +632,14 @@ class Album(object):
 				nums_protected_by_code[complex_codes_combination] = self.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 		dictionary["numsProtectedMediaInSubTree"] = nums_protected_by_code
 		if self.combination != '':
-			dictionary["combination"] = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(self.combination.split('-')))))
+			if self.combination.find(',') != -1:
+				album_identifiers_combination = self.combination.split(',')[0]
+				identifiers_combination = self.combination.split(',')[1]
+				album_codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(album_identifiers_combination.split('-')))))
+				codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(identifiers_combination.split('-')))))
+				dictionary["combination"] = ','.join([album_codes_combination, codes_combination])
+			else:
+				dictionary["combination"] = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(self.combination.split('-')))))
 
 		if hasattr(self, "center"):
 			dictionary["center"] = self.center
