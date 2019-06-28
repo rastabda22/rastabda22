@@ -89,7 +89,7 @@
 	};
 
 	PhotoFloat.addPositionsToSubalbums = function(thisAlbum) {
-		var iSubalbum, iPosition, iPhoto, position, subalbumCacheKey, subalbum;
+		var iSubalbum, iPosition, iPhoto, position, subalbum;
 		var positions = thisAlbum.positionsAndMediaInTree;
 		if (thisAlbum.hasOwnProperty("subalbums")) {
 			for (iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; ++ iSubalbum) {
@@ -413,7 +413,7 @@
 		}
 
 		///////////////////////////////////////////////////
-		// begin function code
+		// begin getAlbum function code
 		///////////////////////////////////////////////////
 		// var albumCacheBase;
 		var baseJsonFileExists = true;
