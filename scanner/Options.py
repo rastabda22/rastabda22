@@ -91,8 +91,10 @@ max_random = 1000000000
 # json_version = 3.99 since property passwords changed to passwordsCodes in json file
 # json_version = 3.98 since property passwords changed to passwordsMd5 in json file
 # json_version = 3.97 since passwords removed from json file
-json_version = "3.96"
 # json_version = 3.98 since passwordMarkerMTime and albumIniMTime was added to json files
+json_version = 0
+
+
 def set_obsolete_json_version_flag():
 	global obsolete_json_version
 	obsolete_json_version = True
