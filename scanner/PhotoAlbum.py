@@ -39,7 +39,7 @@ from CachePath import remove_album_path, remove_folders_marker, trim_base_custom
 from CachePath import thumbnail_types_and_sizes, photo_cache_name, video_cache_name
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_all_but_alphanumeric_chars_dashes_slashes_dots, switch_to_lowercase
-from Utilities import message, indented_message, next_level, back_level, file_mtime, json_files_and_mtime
+from Utilities import message, indented_message, next_level, back_level, file_mtime, json_files_and_mtime, make_dir
 from Utilities import merge_albums_dictionaries_from_json_files, convert_md5s_to_codes, convert_md5s_set_to_identifiers, convert_identifiers_set_to_codes_set, convert_old_codes_set_to_identifiers_set
 from Geonames import Geonames
 from PIL import Image
@@ -270,12 +270,6 @@ class Album(object):
 				return False
 		return True
 
-	def used_password_identifiers(self):
-		keys = self.nums_protected_media_in_sub_tree.non_trivial_keys()
-		keys = sorted(sorted(keys), key = lambda single_key: len(single_key.split('-')))
-
-		return keys
-
 	def copy(self):
 		album = Album(None)
 		for key, value in self.__dict__.items():
@@ -286,7 +280,7 @@ class Album(object):
 				# media are the same object, but the list is a copy
 				setattr(album, key, value[:])
 				# album[key] = value[:]
-			elif isinstance(value, Positions):
+			elif isinstance(value, Positions) or isinstance(value, NumsProtected):
 				setattr(album, key, value.copy())
 			elif isinstance(value, dict):
 				setattr(album, key, copy.deepcopy(value))
@@ -328,44 +322,61 @@ class Album(object):
 			self.num_media_in_sub_tree = 0
 
 
-	def leave_only_content_protected_by(self, identifiers_set):
+	def leave_only_content_protected_by(self, album_identifiers_set, identifiers_set):
 		# # search albums:
 		# # - do not process subalbums because they have been already processed
 		# # - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
 		self.positions_and_media_in_tree = Positions(None)
 		for subalbum in self.subalbums_list:
-			subalbum.leave_only_content_protected_by(identifiers_set)
+			subalbum.leave_only_content_protected_by(album_identifiers_set, identifiers_set)
 			self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
-		self.media_list = [single_media for single_media in self.media if identifiers_set == single_media.password_identifiers]
+		self.album_combination = '-'.join(sorted(album_identifiers_set))
+		self.combination = '-'.join(sorted(identifiers_set))
+		self.num_media_in_sub_tree = 0
+
+		if self.password_identifiers == set() or self.password_identifiers == album_identifiers_set:
+			self.media_list = [single_media for single_media in self.media if identifiers_set == single_media.password_identifiers]
+
+			if self.album_combination == '':
+				if self.combination in self.nums_protected_media_in_sub_tree.keys():
+					self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.combination)
+			else:
+				if self.combination in self.nums_protected_media_in_sub_tree.subs(self.album_combination).keys():
+					self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.subs(self.album_combination).value(self.combination)
+		else:
+			self.media_list = []
+
 		for single_media in self.media_list:
 			if single_media.has_gps_data:
 				self.positions_and_media_in_tree.add_single_media(single_media)
 
-		self.combination = '-'.join(sorted(identifiers_set))
-		if self.combination in self.nums_protected_media_in_sub_tree:
-			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree[self.combination]
-		else:
-			self.num_media_in_sub_tree = 0
 
 	def generate_protected_content_albums(self):
 		protected_albums = {}
-		for indentifiers_combination in self.used_password_identifiers():
+		for complex_identifiers_combination in self.nums_protected_media_in_sub_tree.used_password_identifiers():
 			next_level()
-			message("working with combination...", indentifiers_combination, 4)
-			indentifiers_combination_set = set(indentifiers_combination.split('-'))
-			protected_albums[indentifiers_combination] = self.copy()
-			protected_albums[indentifiers_combination].leave_only_content_protected_by(indentifiers_combination_set)
-			indented_message("permutation worked out!", indentifiers_combination, 5)
+			try:
+				album_identifiers_combination, identifiers_combination = complex_identifiers_combination.split(',')
+			except ValueError:
+				album_identifiers_combination = ''
+				identifiers_combination = complex_identifiers_combination
+
+			message("working with combination...", "album combination = " + album_identifiers_combination + ", combination = " + identifiers_combination, 4)
+			album_identifiers_combination_set = set(album_identifiers_combination.split('-'))
+			identifiers_combination_set = set(identifiers_combination.split('-'))
+			protected_albums[complex_identifiers_combination] = self.copy()
+			protected_albums[complex_identifiers_combination].leave_only_content_protected_by(album_identifiers_combination_set, identifiers_combination_set)
+			indented_message("permutation worked out!", "album combination = " + album_identifiers_combination + ", combination = " + identifiers_combination, 5)
 			back_level()
 		return protected_albums
 
-	def to_json_file(self, json_name, json_positions_name, symlinks, position_symlinks, indentifiers_combination = None):
+	def to_json_file(self, json_name, json_positions_name, symlinks, position_symlinks, complex_identifiers_combination = None):
 		save_message_1 = "saving album..."
 		save_message_2 = "album saved"
 		save_message_3 = "saving positions album..."
 		save_message_4 = "positions album saved"
-		if indentifiers_combination is not None:
+		if complex_identifiers_combination is not None:
 			# identifiers = convert_md5s_set_to_identifiers(passwords_md5.split('-'))
 			save_message_1 = "saving protected album..."
 			save_message_2 = "protected album saved"
@@ -779,34 +790,65 @@ class NumsProtected(object):
 
 	def increment(self, identifiers_combination):
 		try:
-			self.nums_protected[identifiers_combination] += 1
+			self.nums_protected[identifiers_combination]['value'] += 1
 		except KeyError:
-			self.nums_protected[identifiers_combination] = 0
-			self.nums_protected[identifiers_combination] += 1
+			self.nums_protected[identifiers_combination] = {'value': 0, 'subs': NumsProtected()}
+			self.nums_protected[identifiers_combination]['value'] += 1
 
 	def value(self, identifiers_combination):
-		return self.nums_protected[identifiers_combination]
+		return self.nums_protected[identifiers_combination]['value']
+
+	def subs(self, identifiers_combination):
+		try:
+			return self.nums_protected[identifiers_combination]['subs']
+		except KeyError:
+			return NumsProtected()
 
 	def keys(self):
 		return self.nums_protected.keys()
 
 	def non_trivial_keys(self):
-		return [key for key in self.nums_protected.keys() if key != '']
+		return [key for key in self.keys() if key != '']
 
-	# def has_combination(self, identifiers_combination):
-	# 	return identifiers_combination in self.nums_protected
-	#
-	# def add_combination(self, identifiers_combination):
-	# 	self.nums_protected[identifiers_combination] = 0
+	def increment_sub(self, album_identifiers_combination, identifiers_combination):
+		try:
+			self.nums_protected[album_identifiers_combination]
+		except KeyError:
+			self.nums_protected[album_identifiers_combination] = {'value': 0, 'subs': NumsProtected()}
+		self.nums_protected[album_identifiers_combination]['subs'].increment(identifiers_combination)
 
-	def merge(self, nums_protected_1):
-		for identifiers_combination in nums_protected_1.keys():
+	def merge(self, nums_protected):
+		for identifiers_combination in nums_protected.keys():
 			try:
-				self.nums_protected[identifiers_combination] += nums_protected_1.nums_protected[identifiers_combination]
+				self.nums_protected[identifiers_combination]['value'] += nums_protected.nums_protected[identifiers_combination]['value']
 			except KeyError:
-				self.nums_protected[identifiers_combination] = 0
-				self.nums_protected[identifiers_combination] += nums_protected_1.nums_protected[identifiers_combination]
+				self.nums_protected[identifiers_combination] = {'value': 0, 'subs': NumsProtected()}
+				self.nums_protected[identifiers_combination]['value'] += nums_protected.nums_protected[identifiers_combination]['value']
+			self.nums_protected[identifiers_combination]['subs'].merge(nums_protected.nums_protected[identifiers_combination]['subs'])
 
+	def used_password_identifiers(self):
+		keys = self.non_trivial_keys()
+		keys = sorted(sorted(keys), key = lambda single_key: len(single_key.split('-')))
+		# manage sub passwords
+		for identifiers_combination in keys:
+			identifiers_combination_set = set(identifiers_combination.split('-'))
+			sub_keys = self.subs(identifiers_combination).non_trivial_keys()
+			for sub_identifiers_combination in sub_keys:
+				# sub_identifiers_combination = '-'.join(sorted(set(sub_identifiers_combination.split('-')) - identifiers_combination_set))
+				# if sub_identifiers_combination == '':
+				# 	if identifiers_combination not in keys:
+				# 		keys.append(identifiers_combination)
+				# else:
+				keys.append(identifiers_combination + ',' + sub_identifiers_combination)
+
+		return keys
+
+	def copy(self):
+		new = NumsProtected()
+		for identifiers_combination in self.keys():
+			new.nums_protected[identifiers_combination] = {'value': self.value(identifiers_combination)}
+			new.nums_protected[identifiers_combination]['subs'] = self.subs(identifiers_combination).copy()
+		return new
 
 
 class Media(object):
@@ -1717,7 +1759,7 @@ class Media(object):
 			indented_message("filled", "", 5)
 
 		# the subdir hadn't been created when creating the album in order to avoid creation of empty directories
-		Options.make_dir(thumbs_path_with_subdir, "unexistent cache subdir")
+		make_dir(thumbs_path_with_subdir, "unexistent cache subdir")
 
 		if os.path.exists(thumb_path) and not os.access(thumb_path, os.W_OK):
 			message("FATAL ERROR", thumb_path + " not writable, quitting")
@@ -1867,7 +1909,7 @@ class Media(object):
 				message("FATAL ERROR", album_cache_path + " not writable, quitting")
 				sys.exit(-97)
 		else:
-			Options.make_dir(album_cache_path, "unexistent albums cache subdir")
+			make_dir(album_cache_path, "unexistent albums cache subdir")
 
 		transcode_path = os.path.join(album_cache_path, album_prefix + video_cache_name(self))
 		# get number of cores on the system, and use all minus one

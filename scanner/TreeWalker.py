@@ -26,7 +26,7 @@ from Utilities import save_password_codes, json_files_and_mtime, report_mem
 from Utilities import convert_identifiers_set_to_codes_set, convert_identifiers_set_to_md5s_set, convert_md5s_to_codes
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_digits, switch_to_lowercase, phrase_to_words, checksum
-from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, next_file_name, convert_md5s_set_to_identifiers
+from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, next_file_name, convert_md5s_set_to_identifiers, make_dir
 from PhotoAlbum import Media, Album, PhotoAlbumEncoder, Position, Positions, NumsProtected
 from Geonames import Geonames
 import Options
@@ -52,6 +52,8 @@ class TreeWalker:
 		self.media_with_geonames_list = list()
 		self.all_media = list()
 
+		self.created_dirs = []
+
 		self.all_album_composite_images = list()
 		self.album_cache_path = os.path.join(Options.config['cache_path'], Options.config['cache_album_subdir'])
 		if os.path.exists(self.album_cache_path):
@@ -59,7 +61,7 @@ class TreeWalker:
 				message("FATAL ERROR", self.album_cache_path + " not writable, quitting")
 				sys.exit(-97)
 		else:
-			Options.make_dir(Options.config['cache_album_subdir'], "cache album subdir")
+			make_dir(Options.config['cache_album_subdir'], "cache album subdir")
 
 		self.origin_album = Album(Options.config['album_path'])
 		self.origin_album.cache_base = "root"
@@ -130,12 +132,12 @@ class TreeWalker:
 
 			message("saving all protected albums to json files...", "", 4)
 			next_level()
-
+s
 			for identifier_and_password in Options.identifiers_and_passwords:
 				md5 = identifier_and_password['password_md5']
 				absolute_md5_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + md5)
 				if identifier_and_password['used']:
-					Options.make_dir(absolute_md5_path, "protected pwd dir")
+					make_dir(absolute_md5_path, "protected pwd dir")
 					# symlinks in md5 dirs must be deleted
 					# because there isn't any simple way to know whether they are old or new
 					for entry in self._listdir_sorted_alphabetically(absolute_md5_path):
@@ -148,18 +150,34 @@ class TreeWalker:
 					except OSError:
 						pass
 
+
+
 			keys = self.protected_origin_album.keys()
 			keys = sorted(sorted(keys), key = lambda single_key: len(single_key.split('-')))
-			for indentifiers_combination in keys:
-				album = self.protected_origin_album[indentifiers_combination]
-				md5_combination = '-'.join(sorted(convert_identifiers_set_to_md5s_set(set(indentifiers_combination.split('-')))))
+			for complex_identifiers_combination in keys:
+				album = self.protected_origin_album[complex_identifiers_combination]
+				try:
+					album_identifiers_combination, identifiers_combination = complex_identifiers_combination.split(',')
+					album_md5_combination = '-'.join(sorted(convert_identifiers_set_to_md5s_set(set(album_identifiers_combination.split('-')))))
+					md5_combination = '-'.join(sorted(convert_identifiers_set_to_md5s_set(set(identifiers_combination.split('-')))))
+					total_md5_combination = ','.join([album_md5_combination, md5_combination])
+				except ValueError:
+					identifiers_combination = complex_identifiers_combination
+					album_identifiers_combination = None
+					total_md5_combination = '-'.join(sorted(convert_identifiers_set_to_md5s_set(set(identifiers_combination.split('-')))))
 				next_level()
-				message("saving protected albums for identifiers...", "identifiers = " + indentifiers_combination + ", md5's = " + md5_combination, 4)
+				if album_identifiers_combination is None:
+					message("saving protected albums for identifiers...", "identifiers = " + identifiers_combination + ", md5's = " + total_md5_combination, 4)
+				else:
+					message("saving protected albums for identifiers...", "album identifiers = " + album_identifiers_combination + ", identifiers = " + identifiers_combination + ", md5's = " + total_md5_combination, 4)
 				next_level()
 				# try:
-				self.all_albums_to_json_file(album, indentifiers_combination)
+				self.all_albums_to_json_file(album, complex_identifiers_combination)
 				back_level()
-				message("protected albums saved for identifiers", "identifiers = " + indentifiers_combination + ", md5's = " + md5_combination, 4)
+				if album_identifiers_combination is None:
+					message("protected albums saved for identifiers", "identifiers = " + identifiers_combination + ", md5's = " + total_md5_combination, 4)
+				else:
+					message("protected albums saved for identifiers", "album identifiers = " + album_identifiers_combination + ", identifiers = " + identifiers_combination + ", md5's = " + total_md5_combination, 4)
 				back_level()
 				# except UnboundLocalError:
 				# 	pass
@@ -190,7 +208,7 @@ class TreeWalker:
 		return symlink
 
 
-	def all_albums_to_json_file(self, album, indentifiers_combination = None):
+	def all_albums_to_json_file(self, album, complex_identifiers_combination = None):
 		# the subalbums of search albums in by_search_album are regular albums
 		# and they are saved when folders_album is saved, avoid saving them multiple times
 		if (
@@ -200,62 +218,92 @@ class TreeWalker:
 			album.cache_base == Options.config['by_search_string']
 		):
 			for subalbum in album.subalbums:
-				self.all_albums_to_json_file(subalbum, indentifiers_combination)
+				self.all_albums_to_json_file(subalbum, complex_identifiers_combination)
 
 		if album.num_media_in_sub_tree == 0:
 		# if len(album.subalbums) == 0 and len(album.media_list) == 0:
-			if indentifiers_combination is None:
+			if complex_identifiers_combination is None:
 				indented_message("empty album, not saving it", album.name, 4)
 			else:
 				indented_message("empty protected album, not saving it", album.name, 4)
 			return
 
-		if indentifiers_combination is not None and len(album.password_identifiers) > 0:
-			identifiers_set = set(indentifiers_combination.split("-"))
-			if (
-				album.password_identifiers != identifiers_set and
-				len(album.password_identifiers.intersection(identifiers_set)) == 0
-			):
-				indented_message("protected album, not saving it", album.name, 4)
-				return
+		if complex_identifiers_combination is not None:
+			try:
+				album_identifiers_combination, identifiers_combination = complex_identifiers_combination.split(',')
+			except ValueError:
+				album_identifiers_combination = None
+				identifiers_combination = complex_identifiers_combination
+
+			if album_identifiers_combination is not None:
+				if album_identifiers_combination is not None and len(album.password_identifiers) > 0:
+					if album.password_identifiers != set(album_identifiers_combination.split("-")):
+					# if identifiers_combination is not None and len(album.password_identifiers) > 0:
+					# 	identifiers_set = set(identifiers_combination.split("-"))
+					# 	if (
+					# 		album.password_identifiers != identifiers_set and
+					# 		len(album.password_identifiers.intersection(identifiers_set)) == 0
+					# 	):
+						indented_message("album protected by album password, not saving it", album.name, 4)
+						return
 
 		json_name = album.json_file
 		json_positions_name = album.positions_json_file
 		symlinks = list()
 		position_symlinks = list()
-		if indentifiers_combination is not None:
-			identifiers_set = set(indentifiers_combination.split('-'))
-			password_md5_list = list(convert_identifiers_set_to_md5s_set(identifiers_set))
-			first_md5 = password_md5_list[0]
+
+		if complex_identifiers_combination is not None:
+			password_md5_list = sorted(convert_identifiers_set_to_md5s_set(set(identifiers_combination.split('-'))))
+			if album_identifiers_combination is None:
+				md5_product_list = password_md5_list
+			else:
+				album_password_md5_list = sorted(convert_identifiers_set_to_md5s_set(set(album_identifiers_combination.split('-'))))
+				md5_product_list = []
+				for couple in ((x,y) for x in album_password_md5_list for y in password_md5_list):
+					md5_product_list.append(','.join(couple))
+			first_md5_product = md5_product_list[0]
+
+			first_dir = os.path.join(
+				Options.config['cache_path'],
+				Options.config['protected_directories_prefix'] + first_md5_product
+			)
+			if first_dir not in self.created_dirs:
+				make_dir(first_dir, "protected content directory")
+				self.created_dirs.append(first_dir)
 
 			json_name_with_path = self.determine_symlink_name(os.path.join(
-				Options.config['cache_path'],
-				Options.config['protected_directories_prefix'] + first_md5,
+				first_dir,
 				json_name
 			))
 			json_name = json_name_with_path[len(Options.config['cache_path']) + 1:]
 
 			json_positions_name_with_path = self.determine_symlink_name(os.path.join(
-				Options.config['cache_path'],
-				Options.config['protected_directories_prefix'] + first_md5,
+				first_dir,
 				json_positions_name
 			))
 			json_positions_name = json_positions_name_with_path[len(Options.config['cache_path']) + 1:]
 
 			# more symlink must be added in order to get the files with 2 or more passwords
-			if (len(password_md5_list) > 1):
-				for md5 in password_md5_list[1:]:
-					symlink_with_path = self.determine_symlink_name(os.path.join(
+			if (len(md5_product_list) > 1):
+				for complex_md5 in md5_product_list[1:]:
+					complex_dir = os.path.join(
 						Options.config['cache_path'],
-						Options.config['protected_directories_prefix'] + md5,
+						Options.config['protected_directories_prefix'] + complex_md5
+					)
+
+					if complex_dir not in self.created_dirs:
+						make_dir(complex_dir, "protected content directory")
+						self.created_dirs.append(complex_dir)
+
+					symlink_with_path = self.determine_symlink_name(os.path.join(
+						complex_dir,
 						album.json_file
 					))
 					symlink = symlink_with_path[len(Options.config['cache_path']) + 1:]
 					symlinks.append(symlink)
 
 					position_symlink_with_path =  self.determine_symlink_name(os.path.join(
-						Options.config['cache_path'],
-						Options.config['protected_directories_prefix'] + md5,
+						complex_dir,
 						album.positions_json_file
 					))
 					position_symlink = position_symlink_with_path[len(Options.config['cache_path']) + 1:]
@@ -269,7 +317,7 @@ class TreeWalker:
 		self.all_json_files.append(json_name)
 		self.all_json_files.append(json_positions_name)
 
-		album.to_json_file(json_name, json_positions_name, symlinks, position_symlinks, indentifiers_combination)
+		album.to_json_file(json_name, json_positions_name, symlinks, position_symlinks, complex_identifiers_combination)
 
 	def generate_by_date_albums(self, origin_album):
 		next_level()
@@ -1330,8 +1378,12 @@ class TreeWalker:
 						Options.mark_identifier_as_used(identifier)
 
 				# update the protected media count according for the passwords' md5
-				identifiers_combination = '-'.join(sorted(single_media.password_identifiers))
-				album.nums_protected_media_in_sub_tree.increment(identifiers_combination)
+				media_identifiers_combination = '-'.join(sorted(single_media.password_identifiers))
+				if len(album.password_identifiers) > 0:
+					album_identifiers_combination = '-'.join(sorted(album.password_identifiers))
+					album.nums_protected_media_in_sub_tree.increment_sub(album_identifiers_combination, media_identifiers_combination)
+				else:
+					album.nums_protected_media_in_sub_tree.increment(media_identifiers_combination)
 
 				album.num_media_in_sub_tree += 1
 				if single_media.has_gps_data:
@@ -1380,13 +1432,8 @@ class TreeWalker:
 					self.add_single_media_to_tree_by_search(single_media)
 					indented_message("media added to search tree", "", 5)
 
-					message("adding media to album...", "", 5)
 					album.add_single_media(single_media)
-					indented_message("media added to album", "", 5)
-
-					message("adding media to all media list...", "", 5)
 					self.all_media.append(single_media)
-					indented_message("media added to all media list", "", 5)
 
 					back_level()
 				else:
