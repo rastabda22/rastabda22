@@ -117,7 +117,7 @@ class TreeWalker:
 			report_mem()
 
 			self.time_of_album_saving = datetime.now()
-			message("saving all albums to json files...", "", 4)
+			message("saving all unprotected albums to json files...", "", 4)
 			next_level()
 			save_password_codes()
 			for album in self.origin_album.subalbums:
@@ -126,7 +126,7 @@ class TreeWalker:
 				# except UnboundLocalError:
 				# 	pass
 
-			message("all albums saved to json files", "", 5)
+			message("all unprotected albums saved to json files", "", 5)
 			back_level()
 			report_mem()
 
