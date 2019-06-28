@@ -265,7 +265,7 @@
 					passwordCode = PhotoFloat.guessedPasswordCodes[index];
 					numProtected = 0;
 					for (key in album.numsProtectedMediaInSubTree) {
-						if (key.split('-').indexOf(passwordCode) != 1)
+						if (key.split('-').indexOf(passwordCode) != -1)
 							numProtected += album.numsProtectedMediaInSubTree[key];
 					}
 					if (
