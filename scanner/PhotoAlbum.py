@@ -526,12 +526,19 @@ class Album(object):
 					# "numsProtectedMediaInSubTree": subalbum.nums_protected_media_in_sub_tree
 				}
 				nums_protected_by_code = {}
-				for identifiers_combination in subalbum.nums_protected_media_in_sub_tree.keys():
-					if identifiers_combination == '':
-						nums_protected_by_code[''] = subalbum.nums_protected_media_in_sub_tree.value(identifiers_combination)
+				for complex_identifiers_combination in subalbum.nums_protected_media_in_sub_tree.keys():
+					if complex_identifiers_combination == '':
+						nums_protected_by_code[''] = subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 					else:
-						codes = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(identifiers_combination.split('-')))))
-						nums_protected_by_code[codes] = subalbum.nums_protected_media_in_sub_tree.value(identifiers_combination)
+						if complex_identifiers_combination.find(',') == -1:
+							complex_codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(complex_identifiers_combination.split('-')))))
+						else:
+							album_identifiers_combination = complex_identifiers_combination.split(',')[0]
+							identifiers_combination = complex_identifiers_combination.split(',')[1]
+							album_codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(album_identifiers_combination.split('-')))))
+							codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(identifiers_combination.split('-')))))
+							complex_codes_combination = ','.join([album_codes_combination, codes_combination])
+						nums_protected_by_code[complex_codes_combination] = subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 				sub_dict["numsProtectedMediaInSubTree"] = nums_protected_by_code
 
 				if hasattr(subalbum, "center"):
@@ -612,12 +619,19 @@ class Album(object):
 			"jsonVersion": Options.json_version
 		}
 		nums_protected_by_code = {}
-		for identifiers_combination in self.nums_protected_media_in_sub_tree.keys():
-			if identifiers_combination == '':
-				nums_protected_by_code[''] = self.nums_protected_media_in_sub_tree.value(identifiers_combination)
+		for complex_identifiers_combination in self.nums_protected_media_in_sub_tree.keys():
+			if complex_identifiers_combination == '':
+				nums_protected_by_code[''] = self.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 			else:
-				codes = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(identifiers_combination.split('-')))))
-				nums_protected_by_code[codes] = self.nums_protected_media_in_sub_tree.value(identifiers_combination)
+				if complex_identifiers_combination.find(',') == -1:
+					complex_codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(complex_identifiers_combination.split('-')))))
+				else:
+					album_identifiers_combination = complex_identifiers_combination.split(',')[0]
+					identifiers_combination = complex_identifiers_combination.split(',')[1]
+					album_codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(album_identifiers_combination.split('-')))))
+					codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(identifiers_combination.split('-')))))
+					complex_codes_combination = ','.join([album_codes_combination, codes_combination])
+				nums_protected_by_code[complex_codes_combination] = self.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 		dictionary["numsProtectedMediaInSubTree"] = nums_protected_by_code
 		if self.combination != '':
 			dictionary["combination"] = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(self.combination.split('-')))))
