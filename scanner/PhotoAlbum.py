@@ -296,11 +296,11 @@ class Album(object):
 		return album
 
 	def merge_nums_protected(self, album1):
-		for combination in album1.nums_protected_media_in_sub_tree:
-			if combination != '':
-				if combination not in self.nums_protected_media_in_sub_tree:
-					self.nums_protected_media_in_sub_tree[combination] = 0
-				self.nums_protected_media_in_sub_tree[combination] += album1.nums_protected_media_in_sub_tree[combination]
+		for identifiers_combination in album1.nums_protected_media_in_sub_tree:
+			if identifiers_combination != '':
+				if identifiers_combination not in self.nums_protected_media_in_sub_tree:
+					self.nums_protected_media_in_sub_tree[identifiers_combination] = 0
+				self.nums_protected_media_in_sub_tree[identifiers_combination] += album1.nums_protected_media_in_sub_tree[identifiers_combination]
 
 	def leave_only_unprotected_content(self):
 		self.is_protected = False
