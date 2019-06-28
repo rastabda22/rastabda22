@@ -1372,8 +1372,8 @@ class TreeWalker:
 				# update the protected media count according for the passwords' md5
 				media_identifiers_combination = '-'.join(sorted(single_media.password_identifiers))
 				if len(album.password_identifiers) > 0:
-					album_identifiers_combination = '-'.join(sorted(album.password_identifiers))
-					album.nums_protected_media_in_sub_tree.increment_sub(album_identifiers_combination, media_identifiers_combination)
+					complex_identifiers_combination = ','.join(['-'.join(sorted(album.password_identifiers)), media_identifiers_combination])
+					album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
 				else:
 					album.nums_protected_media_in_sub_tree.increment(media_identifiers_combination)
 

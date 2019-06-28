@@ -338,12 +338,12 @@ class Album(object):
 		if self.password_identifiers == set() or self.password_identifiers == album_identifiers_set:
 			self.media_list = [single_media for single_media in self.media if identifiers_set == single_media.password_identifiers]
 
-			if self.album_combination == '':
-				if self.combination in self.nums_protected_media_in_sub_tree.keys():
-					self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.combination)
+			if album_identifiers_set == set():
+				complex_combination = self.combination
 			else:
-				if self.combination in self.nums_protected_media_in_sub_tree.subs(self.album_combination).keys():
-					self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.subs(self.album_combination).value(self.combination)
+				complex_combination = ','.join([self.album_combination, self.combination])
+			if complex_combination in self.nums_protected_media_in_sub_tree.keys():
+				self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(complex_combination)
 		else:
 			self.media_list = []
 
@@ -358,16 +358,21 @@ class Album(object):
 			next_level()
 			try:
 				album_identifiers_combination, identifiers_combination = complex_identifiers_combination.split(',')
+				album_identifiers_combination_set = set(album_identifiers_combination.split('-'))
+				message("working with combination...", "album combination = " + album_identifiers_combination + ", combination = " + identifiers_combination, 4)
 			except ValueError:
-				album_identifiers_combination = ''
+				album_identifiers_combination = None
+				album_identifiers_combination_set = set()
 				identifiers_combination = complex_identifiers_combination
+				message("working with combination...", "combination = " + identifiers_combination, 4)
 
-			message("working with combination...", "album combination = " + album_identifiers_combination + ", combination = " + identifiers_combination, 4)
-			album_identifiers_combination_set = set(album_identifiers_combination.split('-'))
 			identifiers_combination_set = set(identifiers_combination.split('-'))
 			protected_albums[complex_identifiers_combination] = self.copy()
 			protected_albums[complex_identifiers_combination].leave_only_content_protected_by(album_identifiers_combination_set, identifiers_combination_set)
-			indented_message("permutation worked out!", "album combination = " + album_identifiers_combination + ", combination = " + identifiers_combination, 5)
+			if album_identifiers_combination is None:
+				indented_message("permutation worked out!", "combination = " + identifiers_combination, 5)
+			else:
+				indented_message("permutation worked out!", "album combination = " + album_identifiers_combination + ", combination = " + identifiers_combination, 5)
 			back_level()
 		return protected_albums
 
@@ -788,21 +793,15 @@ class NumsProtected(object):
 	def __init__(self):
 		self.nums_protected = {}
 
-	def increment(self, identifiers_combination):
+	def increment(self, complex_identifiers_combination):
 		try:
-			self.nums_protected[identifiers_combination]['value'] += 1
+			self.nums_protected[complex_identifiers_combination] += 1
 		except KeyError:
-			self.nums_protected[identifiers_combination] = {'value': 0, 'subs': NumsProtected()}
-			self.nums_protected[identifiers_combination]['value'] += 1
+			self.nums_protected[complex_identifiers_combination] = 0
+			self.nums_protected[complex_identifiers_combination] += 1
 
-	def value(self, identifiers_combination):
-		return self.nums_protected[identifiers_combination]['value']
-
-	def subs(self, identifiers_combination):
-		try:
-			return self.nums_protected[identifiers_combination]['subs']
-		except KeyError:
-			return NumsProtected()
+	def value(self, complex_identifiers_combination):
+		return self.nums_protected[complex_identifiers_combination]
 
 	def keys(self):
 		return self.nums_protected.keys()
@@ -810,45 +809,21 @@ class NumsProtected(object):
 	def non_trivial_keys(self):
 		return [key for key in self.keys() if key != '']
 
-	def increment_sub(self, album_identifiers_combination, identifiers_combination):
-		try:
-			self.nums_protected[album_identifiers_combination]
-		except KeyError:
-			self.nums_protected[album_identifiers_combination] = {'value': 0, 'subs': NumsProtected()}
-		self.nums_protected[album_identifiers_combination]['subs'].increment(identifiers_combination)
-
 	def merge(self, nums_protected):
-		for identifiers_combination in nums_protected.keys():
+		for complex_identifiers_combination in nums_protected.keys():
 			try:
-				self.nums_protected[identifiers_combination]['value'] += nums_protected.nums_protected[identifiers_combination]['value']
+				self.nums_protected[complex_identifiers_combination] += nums_protected.nums_protected[complex_identifiers_combination]
 			except KeyError:
-				self.nums_protected[identifiers_combination] = {'value': 0, 'subs': NumsProtected()}
-				self.nums_protected[identifiers_combination]['value'] += nums_protected.nums_protected[identifiers_combination]['value']
-			self.nums_protected[identifiers_combination]['subs'].merge(nums_protected.nums_protected[identifiers_combination]['subs'])
+				self.nums_protected[complex_identifiers_combination] = 0
+				self.nums_protected[complex_identifiers_combination] += nums_protected.nums_protected[complex_identifiers_combination]
 
 	def used_password_identifiers(self):
 		keys = self.non_trivial_keys()
 		keys = sorted(sorted(keys), key = lambda single_key: len(single_key.split('-')))
-		# manage sub passwords
-		for identifiers_combination in keys:
-			identifiers_combination_set = set(identifiers_combination.split('-'))
-			sub_keys = self.subs(identifiers_combination).non_trivial_keys()
-			for sub_identifiers_combination in sub_keys:
-				# sub_identifiers_combination = '-'.join(sorted(set(sub_identifiers_combination.split('-')) - identifiers_combination_set))
-				# if sub_identifiers_combination == '':
-				# 	if identifiers_combination not in keys:
-				# 		keys.append(identifiers_combination)
-				# else:
-				keys.append(identifiers_combination + ',' + sub_identifiers_combination)
-
 		return keys
 
 	def copy(self):
-		new = NumsProtected()
-		for identifiers_combination in self.keys():
-			new.nums_protected[identifiers_combination] = {'value': self.value(identifiers_combination)}
-			new.nums_protected[identifiers_combination]['subs'] = self.subs(identifiers_combination).copy()
-		return new
+		return copy.deepcopy(self)
 
 
 class Media(object):
