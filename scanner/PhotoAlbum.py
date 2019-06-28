@@ -70,7 +70,7 @@ class Album(object):
 			self._subdir = ""
 			self.num_media_in_sub_tree = 0
 			self.combination = ''
-			self.nums_protected_media_in_sub_tree = {}
+			self.nums_protected_media_in_sub_tree = NumsProtected()
 			self.positions_and_media_in_tree = Positions(None)
 			self.parent_cache_base = None
 			self.album_ini = None
@@ -271,7 +271,7 @@ class Album(object):
 		return True
 
 	def used_password_identifiers(self):
-		keys = [key for key in self.nums_protected_media_in_sub_tree.keys() if key != '']
+		keys = self.nums_protected_media_in_sub_tree.non_trivial_keys()
 		keys = sorted(sorted(keys), key = lambda single_key: len(single_key.split('-')))
 
 		return keys
@@ -294,13 +294,6 @@ class Album(object):
 				setattr(album, key, value)
 
 		return album
-
-	def merge_nums_protected(self, album1):
-		for identifiers_combination in album1.nums_protected_media_in_sub_tree:
-			if identifiers_combination != '':
-				if identifiers_combination not in self.nums_protected_media_in_sub_tree:
-					self.nums_protected_media_in_sub_tree[identifiers_combination] = 0
-				self.nums_protected_media_in_sub_tree[identifiers_combination] += album1.nums_protected_media_in_sub_tree[identifiers_combination]
 
 	def leave_only_unprotected_content(self):
 		self.is_protected = False
@@ -329,9 +322,10 @@ class Album(object):
 			if single_media.has_gps_data:
 				self.positions_and_media_in_tree.add_single_media(single_media)
 
-		for key in self.nums_protected_media_in_sub_tree:
-			if key != '':
-				self.num_media_in_sub_tree -= self.nums_protected_media_in_sub_tree[key]
+		if '' in self.nums_protected_media_in_sub_tree.keys():
+			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value('')
+		else:
+			self.num_media_in_sub_tree = 0
 
 
 	def leave_only_content_protected_by(self, identifiers_set):
@@ -516,12 +510,12 @@ class Album(object):
 					# "numsProtectedMediaInSubTree": subalbum.nums_protected_media_in_sub_tree
 				}
 				nums_protected_by_code = {}
-				for identifiers in subalbum.nums_protected_media_in_sub_tree:
-					if identifiers == '':
-						nums_protected_by_code[''] = subalbum.nums_protected_media_in_sub_tree[identifiers]
+				for identifiers_combination in subalbum.nums_protected_media_in_sub_tree.keys():
+					if identifiers_combination == '':
+						nums_protected_by_code[''] = subalbum.nums_protected_media_in_sub_tree.value(identifiers_combination)
 					else:
-						codes = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(identifiers.split('-')))))
-						nums_protected_by_code[codes] = subalbum.nums_protected_media_in_sub_tree[identifiers]
+						codes = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(identifiers_combination.split('-')))))
+						nums_protected_by_code[codes] = subalbum.nums_protected_media_in_sub_tree.value(identifiers_combination)
 				sub_dict["numsProtectedMediaInSubTree"] = nums_protected_by_code
 
 				if hasattr(subalbum, "center"):
@@ -602,12 +596,12 @@ class Album(object):
 			"jsonVersion": Options.json_version
 		}
 		nums_protected_by_code = {}
-		for identifiers in self.nums_protected_media_in_sub_tree:
-			if identifiers == '':
-				nums_protected_by_code[''] = self.nums_protected_media_in_sub_tree[identifiers]
+		for identifiers_combination in self.nums_protected_media_in_sub_tree.keys():
+			if identifiers_combination == '':
+				nums_protected_by_code[''] = self.nums_protected_media_in_sub_tree.value(identifiers_combination)
 			else:
-				codes = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(identifiers.split('-')))))
-				nums_protected_by_code[codes] = self.nums_protected_media_in_sub_tree[identifiers]
+				codes = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(identifiers_combination.split('-')))))
+				nums_protected_by_code[codes] = self.nums_protected_media_in_sub_tree.value(identifiers_combination)
 		dictionary["numsProtectedMediaInSubTree"] = nums_protected_by_code
 		if self.combination != '':
 			dictionary["combination"] = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(self.combination.split('-')))))
@@ -777,6 +771,42 @@ class Positions(object):
 		new_positions = Positions(None)
 		new_positions.positions = [position.copy() for position in self.positions]
 		return new_positions
+
+
+class NumsProtected(object):
+	def __init__(self):
+		self.nums_protected = {}
+
+	def increment(self, identifiers_combination):
+		try:
+			self.nums_protected[identifiers_combination] += 1
+		except KeyError:
+			self.nums_protected[identifiers_combination] = 0
+			self.nums_protected[identifiers_combination] += 1
+
+	def value(self, identifiers_combination):
+		return self.nums_protected[identifiers_combination]
+
+	def keys(self):
+		return self.nums_protected.keys()
+
+	def non_trivial_keys(self):
+		return [key for key in self.nums_protected.keys() if key != '']
+
+	# def has_combination(self, identifiers_combination):
+	# 	return identifiers_combination in self.nums_protected
+	#
+	# def add_combination(self, identifiers_combination):
+	# 	self.nums_protected[identifiers_combination] = 0
+
+	def merge(self, nums_protected_1):
+		for identifiers_combination in nums_protected_1.keys():
+			try:
+				self.nums_protected[identifiers_combination] += nums_protected_1.nums_protected[identifiers_combination]
+			except KeyError:
+				self.nums_protected[identifiers_combination] = 0
+				self.nums_protected[identifiers_combination] += nums_protected_1.nums_protected[identifiers_combination]
+
 
 
 class Media(object):
