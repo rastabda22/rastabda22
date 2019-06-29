@@ -61,14 +61,17 @@ def json_files_and_mtime(cache_base):
 		json_file_list.append(json_file_with_path)
 		global_mtime = file_mtime(json_file_with_path)
 
-	all_json_files = [
+	all_complex_combinations = [
 		identifier_and_password_1['password_md5'] + ',' + identifier_and_password_2['password_md5']
 		for identifier_and_password_1 in Options.identifiers_and_passwords
 		for identifier_and_password_2 in Options.identifiers_and_passwords
 	]
-	all_json_files += [identifier_and_password['password_md5'] for identifier_and_password in Options.identifiers_and_passwords]
-	for md5 in all_json_files:
-		protected_json_file_with_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + md5, cache_base) + ".json"
+	complex_combinations = [identifier_and_password['password_md5'] for identifier_and_password in Options.identifiers_and_passwords]
+	all_complex_combinations += [',' + complex_combination for complex_combination in complex_combinations]
+	all_complex_combinations += [complex_combination + ',' for complex_combination in complex_combinations]
+	all_complex_combinations += [',']
+	for complex_combination in all_complex_combinations:
+		protected_json_file_with_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + complex_combination, cache_base) + ".json"
 		while os.path.exists(protected_json_file_with_path):
 			if not os.path.islink(protected_json_file_with_path):
 				json_file_list.append(protected_json_file_with_path)
