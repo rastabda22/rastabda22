@@ -61,7 +61,13 @@ def json_files_and_mtime(cache_base):
 		json_file_list.append(json_file_with_path)
 		global_mtime = file_mtime(json_file_with_path)
 
-	for md5 in [identifier_and_password['password_md5'] for identifier_and_password in Options.identifiers_and_passwords]:
+	all_json_files = [
+		identifier_and_password_1['password_md5'] + ',' + identifier_and_password_2['password_md5']
+		for identifier_and_password_1 in Options.identifiers_and_passwords
+		for identifier_and_password_2 in Options.identifiers_and_passwords
+	]
+	all_json_files += [identifier_and_password['password_md5'] for identifier_and_password in Options.identifiers_and_passwords]
+	for md5 in all_json_files:
 		protected_json_file_with_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + md5, cache_base) + ".json"
 		while os.path.exists(protected_json_file_with_path):
 			if not os.path.islink(protected_json_file_with_path):
@@ -147,24 +153,27 @@ def merge_albums_dictionaries_from_json_files(dict, dict1):
 	if dict1 is None:
 		return dict
 		# return add_combination_to_dict(dict)
-	old_md5s_set = set()
-	for codes in dict['numsProtectedMediaInSubTree']:
-		if codes != '':
-			for code in codes.split('-'):
-				try:
-					if len(Options.old_password_codes) > 0 and Options.old_password_codes[code] not in old_md5s_set:
-						old_md5s_set.add(Options.old_password_codes[code])
-				except KeyError:
-					indented_message("not an album cache hit", "key error in password codes", 4)
-					return None
+	# old_md5s_set = set()
+	# for codes in dict['numsProtectedMediaInSubTree']:
+	# 	if codes != '':
+	# 		for code in codes.split('-'):
+	# 			try:
+	# 				if len(Options.old_password_codes) > 0 and Options.old_password_codes[code] not in old_md5s_set:
+	# 					old_md5s_set.add(Options.old_password_codes[code])
+	# 			except KeyError:
+	# 				indented_message("not an album cache hit", "key error in password codes", 4)
+	# 				return None
+
+	if 'password_identifiers' not in dict and 'password_identifiers' in dict1:
+		dict['password_identifiers'] = dict1['password_identifiers']
 
 	dict['media'].extend(dict1['media'])
 	subalbums_cache_bases = [subalbum['cacheBase'] for subalbum in dict['subalbums']]
 	dict['subalbums'].extend([subalbum for subalbum in dict1['subalbums'] if subalbum['cacheBase'] not in subalbums_cache_bases])
-	for key in dict1['numsProtectedMediaInSubTree']:
-		if key not in dict['numsProtectedMediaInSubTree']:
-			dict['numsProtectedMediaInSubTree'][key] = 0
-		dict['numsProtectedMediaInSubTree'][key] += dict1['numsProtectedMediaInSubTree'][key]
+	# for key in dict1['numsProtectedMediaInSubTree']:
+	# 	if key not in dict['numsProtectedMediaInSubTree']:
+	# 		dict['numsProtectedMediaInSubTree'][key] = 0
+	# 	dict['numsProtectedMediaInSubTree'][key] += dict1['numsProtectedMediaInSubTree'][key]
 	return dict
 
 def message(category, text, verbose=0):
