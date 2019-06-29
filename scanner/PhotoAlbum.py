@@ -414,7 +414,7 @@ class Album(object):
 		indented_message(save_message_4, "", 4)
 
 	@staticmethod
-	def from_json_files(json_files, album_cache_base):
+	def from_json_files(json_files):
 		next_level()
 		files = "'" + json_files[0] + "' and others"
 		message("reading album from json files...", files, 5)
