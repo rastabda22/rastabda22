@@ -77,7 +77,7 @@ class Album(object):
 			self._attributes = {}
 			self._attributes["metadata"] = {}
 			self.json_version = ""
-			self.password_identifiers = set()
+			self.password_identifiers_set = set()
 			self.passwords_marker_mtime = None
 			self.album_ini_mtime = None
 
@@ -299,7 +299,7 @@ class Album(object):
 			subalbum.leave_only_unprotected_content()
 			self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
-		if len(self.password_identifiers) > 0:
+		if len(self.password_identifiers_set) > 0:
 			# protected album, remove the media
 			self.media_list = []
 			self.positions_and_media_in_tree = Positions(None)
@@ -310,7 +310,7 @@ class Album(object):
 			self.is_protected = True
 		else:
 			# the album isn't protected, but media and subalbums may be protected
-			self.media_list = [media for media in self.media if len(media.password_identifiers) == 0]
+			self.media_list = [media for media in self.media if len(media.password_identifiers_set) == 0]
 
 		for single_media in self.media_list:
 			if single_media.has_gps_data:
@@ -333,8 +333,8 @@ class Album(object):
 
 		self.num_media_in_sub_tree = 0
 
-		if self.password_identifiers == set() or self.password_identifiers == album_identifiers_set:
-			self.media_list = [single_media for single_media in self.media if identifiers_set == single_media.password_identifiers]
+		if self.password_identifiers_set == set() or self.password_identifiers_set == album_identifiers_set:
+			self.media_list = [single_media for single_media in self.media if identifiers_set == single_media.password_identifiers_set]
 
 			if album_identifiers_set == set():
 				self.combination = '-'.join(sorted(identifiers_set))
@@ -355,22 +355,22 @@ class Album(object):
 		for complex_identifiers_combination in self.nums_protected_media_in_sub_tree.used_password_identifiers():
 			next_level()
 			try:
-				album_identifiers_combination, identifiers_combination = complex_identifiers_combination.split(',')
+				album_identifiers_combination, media_identifiers_combination = complex_identifiers_combination.split(',')
 				album_identifiers_combination_set = set(album_identifiers_combination.split('-'))
-				message("working with combination...", "album combination = " + album_identifiers_combination + ", combination = " + identifiers_combination, 4)
+				message("working with combination...", "album combination = " + album_identifiers_combination + ", combination = " + media_identifiers_combination, 4)
 			except ValueError:
 				album_identifiers_combination = None
 				album_identifiers_combination_set = set()
-				identifiers_combination = complex_identifiers_combination
-				message("working with combination...", "combination = " + identifiers_combination, 4)
+				media_identifiers_combination = complex_identifiers_combination
+				message("working with combination...", "combination = " + media_identifiers_combination, 4)
 
-			identifiers_combination_set = set(identifiers_combination.split('-'))
+			identifiers_combination_set = set(media_identifiers_combination.split('-'))
 			protected_albums[complex_identifiers_combination] = self.copy()
 			protected_albums[complex_identifiers_combination].leave_only_content_protected_by(album_identifiers_combination_set, identifiers_combination_set)
 			if album_identifiers_combination is None:
-				indented_message("permutation worked out!", "combination = " + identifiers_combination, 5)
+				indented_message("permutation worked out!", "combination = " + media_identifiers_combination, 5)
 			else:
-				indented_message("permutation worked out!", "album combination = " + album_identifiers_combination + ", combination = " + identifiers_combination, 5)
+				indented_message("permutation worked out!", "album combination = " + album_identifiers_combination + ", combination = " + media_identifiers_combination, 5)
 			back_level()
 		return protected_albums
 
@@ -450,12 +450,12 @@ class Album(object):
 							must_process_passwords = True
 							break
 						else:
-							json_file_dict['media'][i]['password_identifiers'] = identifiers_set
-							json_file_dict['password_identifiers'] = album_identifiers_set
+							json_file_dict['password_identifiers_set'] = album_identifiers_set
+							json_file_dict['media'][i]['password_identifiers_set'] = media_identifiers_set
 				else:
 					for i in range(len(json_file_dict['media'])):
-						json_file_dict['media'][i]['password_identifiers'] = set()
-					json_file_dict['password_identifiers'] = set()
+						json_file_dict['media'][i]['password_identifiers_set'] = set()
+					json_file_dict['password_identifiers_set'] = set()
 				dictionary = merge_albums_dictionaries_from_json_files(dictionary, json_file_dict)
 
 		indented_message("album read from json files", files, 5)
@@ -469,8 +469,8 @@ class Album(object):
 			message("converting album to dict from json files...", files, 5)
 			album = Album.from_dict(dictionary)
 			indented_message("album converted to dict from json files", files, 4)
-			# if album.password_identifiers is None:
-			# 	album.password_identifiers = set()
+			# if album.password_identifiers_set is None:
+			# 	album.password_identifiers_set = set()
 			# 	must_process_passwords = True
 			return [album, must_process_passwords]
 
@@ -497,8 +497,8 @@ class Album(object):
 		album = Album(os.path.join(Options.config['album_path'], path))
 		album.cache_base = dictionary["cacheBase"]
 		album.json_version = dictionary["jsonVersion"]
-		if "password_identifiers" in dictionary:
-			album.password_identifiers = dictionary["password_identifiers"]
+		if "password_identifiers_set" in dictionary:
+			album.password_identifiers_set = dictionary["password_identifiers_set"]
 
 		for single_media_dict in dictionary["media"]:
 			new_media = Media.from_dict(album, single_media_dict, os.path.join(Options.config['album_path'], remove_folders_marker(album.baseless_path)))
@@ -857,7 +857,7 @@ class NumsProtected(object):
 
 class Media(object):
 	def __init__(self, album, media_path, thumbs_path=None, attributes=None):
-		self.password_identifiers = set()
+		self.password_identifiers_set = set()
 		if attributes is not None:
 			# media generation from file
 			self.generate_media_from_cache(album, media_path, attributes)
@@ -873,10 +873,10 @@ class Media(object):
 		self.folders = remove_album_path(dirname)
 		self.album_path = os.path.join('albums', self.media_file_name)
 		self.cache_base = dictionary['cacheBase']
-		if "password_identifiers" in dictionary:
-			self.password_identifiers = dictionary['password_identifiers']
+		if "password_identifiers_set" in dictionary:
+			self.password_identifiers_set = dictionary['password_identifiers_set']
 		else:
-			self.password_identifiers = set()
+			self.password_identifiers_set = set()
 
 		self.is_valid = True
 

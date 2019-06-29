@@ -159,17 +159,17 @@ class TreeWalker:
 					total_md5_combination = '-'.join(sorted(convert_identifiers_set_to_md5s_set(set(identifiers_combination.split('-')))))
 				next_level()
 				if album_identifiers_combination is None:
-					message("saving protected albums for identifiers...", "identifiers = " + identifiers_combination + ", md5's = " + total_md5_combination, 4)
+					message("saving protected albums for identifiers...", "identifiers = " + media_identifiers_combination + ", md5's = " + total_md5_combination, 4)
 				else:
-					message("saving protected albums for identifiers...", "album identifiers = " + album_identifiers_combination + ", identifiers = " + identifiers_combination + ", md5's = " + total_md5_combination, 4)
+					message("saving protected albums for identifiers...", "album identifiers = " + album_identifiers_combination + ", identifiers = " + media_identifiers_combination + ", md5's = '" + total_md5_combination + "'", 4)
 				next_level()
 				# try:
 				self.all_albums_to_json_file(album, complex_identifiers_combination)
 				back_level()
 				if album_identifiers_combination is None:
-					message("protected albums saved for identifiers", "identifiers = " + identifiers_combination + ", md5's = " + total_md5_combination, 4)
+					message("protected albums saved for identifiers", "identifiers = " + media_identifiers_combination + ", md5's = " + total_md5_combination, 4)
 				else:
-					message("protected albums saved for identifiers", "album identifiers = " + album_identifiers_combination + ", identifiers = " + identifiers_combination + ", md5's = " + total_md5_combination, 4)
+					message("protected albums saved for identifiers", "album identifiers = " + album_identifiers_combination + ", identifiers = " + media_identifiers_combination + ", md5's = '" + total_md5_combination + "'", 4)
 				back_level()
 				# except UnboundLocalError:
 				# 	pass
@@ -443,10 +443,10 @@ class TreeWalker:
 					# actually, this counter for the search root album is not significant
 					by_search_album.positions_and_media_in_tree.add_single_media(single_media)
 
-				identifiers_combination = ('-').join(sorted(single_media.password_identifiers))
-				word_album.nums_protected_media_in_sub_tree.increment(identifiers_combination)
+				media_identifiers_combination = ',' + ('-').join(sorted(single_media.password_identifiers_set))
+				word_album.nums_protected_media_in_sub_tree.increment(media_identifiers_combination)
 				# nums_protected_media_in_sub_tree matters for the search root albums!
-				by_search_album.nums_protected_media_in_sub_tree.increment(identifiers_combination)
+				by_search_album.nums_protected_media_in_sub_tree.increment(media_identifiers_combination)
 
 			for single_album in media_album_and_words["albums_list"]:
 				word_album.add_subalbum(single_album)
@@ -1101,7 +1101,7 @@ class TreeWalker:
 		# check album name against passwords
 		if must_process_passwords:
 			# restart with the inherited passwords
-			album.password_identifiers = inherited_passwords_identifiers
+			album.password_identifiers_set = inherited_passwords_identifiers
 			# get the matching passwords
 			for pattern_and_password in patterns_and_passwords:
 				if pattern_and_password['case_flag'] == 'cs':
@@ -1115,8 +1115,8 @@ class TreeWalker:
 				if match:
 					identifier = pattern_and_password['identifier']
 					Options.mark_identifier_as_used(identifier)
-					album.password_identifiers.add(identifier)
-					if identifier not in album.password_identifiers:
+					album.password_identifiers_set.add(identifier)
+					if identifier not in album.password_identifiers_set:
 						indented_message(
 							"password added to album",
 							"'" + dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", identifier = " + identifier,
@@ -1129,7 +1129,7 @@ class TreeWalker:
 							3
 						)
 		else:
-			for identifier in album.password_identifiers:
+			for identifier in album.password_identifiers_set:
 				Options.mark_identifier_as_used(identifier)
 
 		# reset the protected media counts
@@ -1184,7 +1184,7 @@ class TreeWalker:
 				next_album_cache_base = album.generate_cache_base(entry_for_cache_base)
 				indented_message("cache base determined", "", 5)
 				back_level()
-				[next_walked_album, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, patterns_and_passwords, passwords_marker_mtime, album.password_identifiers, album)
+				[next_walked_album, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, patterns_and_passwords, passwords_marker_mtime, album.password_identifiers_set, album)
 				if next_walked_album is not None:
 					max_file_date = max(max_file_date, sub_max_file_date)
 					album.num_media_in_sub_tree += next_walked_album.num_media_in_sub_tree
@@ -1327,7 +1327,7 @@ class TreeWalker:
 
 			if single_media.is_valid:
 				if must_process_passwords:
-					single_media.password_identifiers = set()
+					single_media.password_identifiers_set = set()
 					file_name = os.path.basename(entry_with_path)
 
 					# apply the album passwords_md5 and password codes to the media
@@ -1352,8 +1352,8 @@ class TreeWalker:
 						if match:
 							identifier = pattern_and_password['identifier']
 							Options.mark_identifier_as_used(identifier)
-							single_media.password_identifiers.add(identifier)
-							if identifier not in single_media.password_identifiers:
+							single_media.password_identifiers_set.add(identifier)
+							if identifier not in single_media.password_identifiers_set:
 								indented_message(
 									"password and code added to media",
 									"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", identifier = " + identifier,
@@ -1366,7 +1366,7 @@ class TreeWalker:
 									3
 								)
 				else:
-					for identifier in single_media.password_identifiers:
+					for identifier in single_media.password_identifiers_set:
 						Options.mark_identifier_as_used(identifier)
 
 				# update the protected media count according for the passwords' md5

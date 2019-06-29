@@ -164,8 +164,8 @@ def merge_albums_dictionaries_from_json_files(dict, dict1):
 	# 				indented_message("not an album cache hit", "key error in password codes", 4)
 	# 				return None
 
-	if 'password_identifiers' not in dict and 'password_identifiers' in dict1:
-		dict['password_identifiers'] = dict1['password_identifiers']
+	if 'password_identifiers_set' not in dict and 'password_identifiers_set' in dict1:
+		dict['password_identifiers_set'] = dict1['password_identifiers_set']
 
 	dict['media'].extend(dict1['media'])
 	subalbums_cache_bases = [subalbum['cacheBase'] for subalbum in dict['subalbums']]
