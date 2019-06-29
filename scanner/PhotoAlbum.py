@@ -436,13 +436,26 @@ class Album(object):
 					return [None, True]
 				if "combination" in json_file_dict:
 					for i in range(len(json_file_dict['media'])):
-						identifiers_set = convert_old_codes_set_to_identifiers_set(set(json_file_dict['combination'].split('-')))
+						if json_file_dict['combination'].find(',') != -1:
+							album_codes_combination = json_file_dict['combination'].split(',')[0]
+							codes_combination = json_file_dict['combination'].split(',')[1]
+							album_identifiers_set = convert_old_codes_set_to_identifiers_set(set(album_codes_combination.split('-')))
+						else:
+							album_codes_combination = None
+							codes_combination = json_file_dict['combination']
+							album_identifiers_set = set()
+						identifiers_set = convert_old_codes_set_to_identifiers_set(set(codes_combination.split('-')))
 						if identifiers_set is None:
 							indented_message("passwords must be processed", "error in going up from code to identifier", 4)
 							must_process_passwords = True
 							break
 						else:
-							json_file_dict['media'][i]['password_identifiers'] = '-'.join(sorted(identifiers_set))
+							json_file_dict['media'][i]['password_identifiers'] = identifiers_set
+							json_file_dict['password_identifiers'] = album_identifiers_set
+				else:
+					for i in range(len(json_file_dict['media'])):
+						json_file_dict['media'][i]['password_identifiers'] = set()
+					json_file_dict['password_identifiers'] = set()
 				dictionary = merge_albums_dictionaries_from_json_files(dictionary, json_file_dict)
 
 		indented_message("album read from json files", files, 5)
@@ -484,11 +497,8 @@ class Album(object):
 		album = Album(os.path.join(Options.config['album_path'], path))
 		album.cache_base = dictionary["cacheBase"]
 		album.json_version = dictionary["jsonVersion"]
-		if "combination" in dictionary:
-			album.password_identifiers = convert_old_codes_set_to_identifiers_set(set(dictionary["combination"].split('-')))
-		if album.password_identifiers is None:
-			indented_message("passwords must be processed", "error in going up from code to identifier", 4)
-			must_process_passwords = True
+		if "password_identifiers" in dictionary:
+			album.password_identifiers = dictionary["password_identifiers"]
 
 		for single_media_dict in dictionary["media"]:
 			new_media = Media.from_dict(album, single_media_dict, os.path.join(Options.config['album_path'], remove_folders_marker(album.baseless_path)))
@@ -864,7 +874,7 @@ class Media(object):
 		self.album_path = os.path.join('albums', self.media_file_name)
 		self.cache_base = dictionary['cacheBase']
 		if "password_identifiers" in dictionary:
-			self.password_identifiers = set(dictionary['password_identifiers'].split('-'))
+			self.password_identifiers = dictionary['password_identifiers']
 		else:
 			self.password_identifiers = set()
 
@@ -2320,6 +2330,8 @@ class PhotoAlbumEncoder(json.JSONEncoder):
 			return obj.to_dict()
 		if isinstance(obj, Positions):
 			return obj.to_dict(self.type)
+		if isinstance(obj, set):
+			return list(obj)
 		return json.JSONEncoder.default(self, obj)
 
 
