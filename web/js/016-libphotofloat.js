@@ -249,6 +249,16 @@
 		}
 
 		function addProtectedContent(album) {
+			function incrementCounterAndGoOnIfReachedTheEnd() {
+				nPassword ++;
+				if (nPassword >= 2 * thePasswordsToGet.length * thePasswordsToGet.length) {
+					// all the protected content has been included in the album
+					PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
+					executeCallback(album);
+					// goOn(album);
+				}
+			}
+			
 			// prepare and get the protected content albums
 			var thePasswordsToGet = PhotoFloat.passwordsToGet(album);
 			if (thePasswordsToGet.length == 0) {
@@ -370,19 +380,11 @@
 											protectedAlbumCacheBase,
 											function() {
 												album.protectedContentInside.push(complexPasswordMd5);
-												nPassword ++;
-												if (nPassword >= 2 * thePasswordsToGet.length * thePasswordsToGet.length) {
-													// all the protected content has been included in the album
-													PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
-													executeCallback(album);
-													// goOn(album);
-												}
+												incrementCounterAndGoOnIfReachedTheEnd();
 											}
 										);
 									},
-									function() {
-										// execution arrives here when a protected album is not found
-									},
+									incrementCounterAndGoOnIfReachedTheEnd,
 									data
 								);
 									// 		executeCallback
