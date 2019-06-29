@@ -454,7 +454,7 @@ class Album(object):
 			return [None, True]
 		else:
 			message("converting album to dict from json files...", files, 5)
-			[album, must_process_passwords] = Album.from_dict(dictionary)
+			album = Album.from_dict(dictionary)
 			indented_message("album converted to dict from json files", files, 4)
 			# if album.password_identifiers is None:
 			# 	album.password_identifiers = set()
@@ -501,7 +501,7 @@ class Album(object):
 
 		album.sort_subalbums_and_media()
 
-		return [album, must_process_passwords]
+		return album
 
 
 	def to_dict(self):
