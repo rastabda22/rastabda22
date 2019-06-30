@@ -32,6 +32,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 * [Tweaking metadata with `album.ini`](doc/Metadata.md)
 * [Make some content private](doc/Authentication.md)
 * [Versions changelog](doc/Changelog.md)
+* [Debugging memory usage](doc/Debugging.md)
 * [Known issues](doc/Issues.md)
 * [License](License.md)
 
