@@ -84,51 +84,43 @@ def json_files_and_mtime(cache_base):
 
 	return [json_file_list, global_mtime]
 
-def convert_md5s_to_codes(passwords_md5):
-	codes_set = set()
-	for password_md5 in passwords_md5.split('-'):
-		password_code = next(identifier_and_password['password_code'] for identifier_and_password in Options.identifiers_and_passwords if identifier_and_password['password_md5'] == password_md5)
-		codes_set.add(password_code)
-	return '-'.join(codes_set)
+def convert_combination_to_set(combination):
+	if combination == '':
+		return set()
+	return set(combination.split('-'))
 
 
 def convert_identifiers_set_to_md5s_set(identifiers_set):
+	if identifiers_set == set():
+		return set()
 	md5s_set = set()
 	for identifier in identifiers_set:
-		try:
-			md5 = next(identifier_and_password['password_md5'] for identifier_and_password in Options.identifiers_and_passwords if identifier_and_password['identifier'] == identifier)
-			md5s_set.add(md5)
-		except StopIteration:
-			# the identifier was u''
-			pass
+		md5 = next(identifier_and_password['password_md5'] for identifier_and_password in Options.identifiers_and_passwords if identifier_and_password['identifier'] == identifier)
+		md5s_set.add(md5)
 	return md5s_set
 
 def convert_identifiers_set_to_codes_set(identifiers_set):
+	if identifiers_set == set():
+		return set()
 	codes_set = set()
 	for identifier in identifiers_set:
-		if identifier != '':
-			code = next(identifier_and_password['password_code'] for identifier_and_password in Options.identifiers_and_passwords if identifier_and_password['identifier'] == identifier)
-			codes_set.add(code)
+		code = next(identifier_and_password['password_code'] for identifier_and_password in Options.identifiers_and_passwords if identifier_and_password['identifier'] == identifier)
+		codes_set.add(code)
 	return codes_set
 
 def convert_old_codes_set_to_identifiers_set(codes_set):
+	if codes_set == set():
+		return set()
 	identifiers_set = set()
 	for code in codes_set:
-		if code != '':
-			try:
-				md5 = Options.old_password_codes[code]
-				identifier = convert_md5s_set_to_identifiers(set([md5]))
-				identifiers_set.add(identifier)
-			except KeyError:
-				return None
+		md5 = Options.old_password_codes[code]
+		identifier = convert_md5_to_identifier(md5)
+		identifiers_set.add(identifier)
 	return identifiers_set
 
-def convert_md5s_set_to_identifiers(md5s_set):
-	identifiers_set = set()
-	for password_md5 in md5s_set:
-		identifier = next(identifier_and_password['identifier'] for identifier_and_password in Options.identifiers_and_passwords if identifier_and_password['password_md5'] == password_md5)
-		identifiers_set.add(identifier)
-	return '-'.join(sorted(identifiers_set))
+def convert_md5_to_identifier(md5):
+	identifier = next(identifier_and_password['identifier'] for identifier_and_password in Options.identifiers_and_passwords if identifier_and_password['password_md5'] == md5)
+	return identifier
 
 def save_password_codes():
 	# remove the old single password files

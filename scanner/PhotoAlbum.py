@@ -40,7 +40,8 @@ from CachePath import thumbnail_types_and_sizes, photo_cache_name, video_cache_n
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_all_but_alphanumeric_chars_dashes_slashes_dots, switch_to_lowercase
 from Utilities import message, indented_message, next_level, back_level, file_mtime, json_files_and_mtime, make_dir
-from Utilities import merge_albums_dictionaries_from_json_files, convert_md5s_to_codes, convert_md5s_set_to_identifiers, convert_identifiers_set_to_codes_set, convert_old_codes_set_to_identifiers_set
+from Utilities import merge_albums_dictionaries_from_json_files
+from Utilities import convert_combination_to_set, convert_identifiers_set_to_codes_set, convert_old_codes_set_to_identifiers_set
 from Geonames import Geonames
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
@@ -310,36 +311,33 @@ class Album(object):
 			self.is_protected = True
 		else:
 			# the album isn't protected, but media and subalbums may be protected
-			self.media_list = [media for media in self.media if len(media.password_identifiers_set) == 0]
+			self.media_list = [single_media for single_media in self.media if len(single_media.password_identifiers_set) == 0]
 
 		for single_media in self.media_list:
 			if single_media.has_gps_data:
 				self.positions_and_media_in_tree.add_single_media(single_media)
 
-		if '' in self.nums_protected_media_in_sub_tree.keys():
-			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value('')
+		if ',' in self.nums_protected_media_in_sub_tree.keys():
+			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(',')
 		else:
 			self.num_media_in_sub_tree = 0
 
 
-	def leave_only_content_protected_by(self, album_identifiers_set, identifiers_set):
+	def leave_only_content_protected_by(self, album_identifiers_set, media_identifiers_set):
 		# # search albums:
 		# # - do not process subalbums because they have been already processed
 		# # - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
 		self.positions_and_media_in_tree = Positions(None)
 		for subalbum in self.subalbums_list:
-			subalbum.leave_only_content_protected_by(album_identifiers_set, identifiers_set)
+			subalbum.leave_only_content_protected_by(album_identifiers_set, media_identifiers_set)
 			self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
 		self.num_media_in_sub_tree = 0
 
 		if self.password_identifiers_set == set() or self.password_identifiers_set == album_identifiers_set:
-			self.media_list = [single_media for single_media in self.media if identifiers_set == single_media.password_identifiers_set]
+			self.media_list = [single_media for single_media in self.media if media_identifiers_set == single_media.password_identifiers_set]
 
-			if album_identifiers_set == set():
-				self.combination = '-'.join(sorted(identifiers_set))
-			else:
-				self.combination = ','.join(['-'.join(sorted(album_identifiers_set)), '-'.join(sorted(identifiers_set))])
+			self.combination = ','.join(['-'.join(sorted(album_identifiers_set)), '-'.join(sorted(media_identifiers_set))])
 			if self.combination in self.nums_protected_media_in_sub_tree.keys():
 				self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.combination)
 		else:
@@ -354,23 +352,14 @@ class Album(object):
 		protected_albums = {}
 		for complex_identifiers_combination in self.nums_protected_media_in_sub_tree.used_password_identifiers():
 			next_level()
-			try:
-				album_identifiers_combination, media_identifiers_combination = complex_identifiers_combination.split(',')
-				album_identifiers_combination_set = set(album_identifiers_combination.split('-'))
-				message("working with combination...", "album combination = " + album_identifiers_combination + ", combination = " + media_identifiers_combination, 4)
-			except ValueError:
-				album_identifiers_combination = None
-				album_identifiers_combination_set = set()
-				media_identifiers_combination = complex_identifiers_combination
-				message("working with combination...", "combination = " + media_identifiers_combination, 4)
+			album_identifiers_combination, media_identifiers_combination = complex_identifiers_combination.split(',')
+			album_identifiers_combination_set = convert_combination_to_set(album_identifiers_combination)
+			message("working with combination...", album_identifiers_combination + "," + media_identifiers_combination, 5)
 
-			identifiers_combination_set = set(media_identifiers_combination.split('-'))
+			identifiers_combination_set = convert_combination_to_set(media_identifiers_combination)
 			protected_albums[complex_identifiers_combination] = self.copy()
 			protected_albums[complex_identifiers_combination].leave_only_content_protected_by(album_identifiers_combination_set, identifiers_combination_set)
-			if album_identifiers_combination is None:
-				indented_message("permutation worked out!", "combination = " + media_identifiers_combination, 5)
-			else:
-				indented_message("permutation worked out!", "album combination = " + album_identifiers_combination + ", combination = " + media_identifiers_combination, 5)
+			indented_message("permutation worked out!", album_identifiers_combination + "," + media_identifiers_combination, 4)
 			back_level()
 		return protected_albums
 
@@ -380,7 +369,6 @@ class Album(object):
 		save_message_3 = "saving positions album..."
 		save_message_4 = "positions album saved"
 		if complex_identifiers_combination is not None:
-			# identifiers = convert_md5s_set_to_identifiers(passwords_md5.split('-'))
 			save_message_1 = "saving protected album..."
 			save_message_2 = "protected album saved"
 			save_message_3 = "saving protected positions album..."
@@ -434,27 +422,34 @@ class Album(object):
 					indented_message("not an album cache hit", "some protected or unprotected json file is missing", 4)
 					back_level()
 					return [None, True]
+
+				if "jsonVersion" not in json_file_dict:
+					indented_message("not an album cache hit", "unexistent json_version", 4)
+					Options.set_obsolete_json_version_flag()
+					return [None, True]
+				elif json_file_dict["jsonVersion"] != Options.json_version:
+					indented_message("not an album cache hit", "old json_version value", 4)
+					Options.set_obsolete_json_version_flag()
+					return [None, True]
+
 				if "combination" in json_file_dict:
 					for i in range(len(json_file_dict['media'])):
-						if json_file_dict['combination'].find(',') != -1:
-							album_codes_combination = json_file_dict['combination'].split(',')[0]
-							codes_combination = json_file_dict['combination'].split(',')[1]
-							album_identifiers_set = convert_old_codes_set_to_identifiers_set(set(album_codes_combination.split('-')))
-						else:
-							album_codes_combination = None
-							codes_combination = json_file_dict['combination']
-							album_identifiers_set = set()
-						identifiers_set = convert_old_codes_set_to_identifiers_set(set(codes_combination.split('-')))
-						if identifiers_set is None:
+						album_codes_combination = json_file_dict['combination'].split(',')[0]
+						media_codes_combination = json_file_dict['combination'].split(',')[1]
+						album_identifiers_set = convert_old_codes_set_to_identifiers_set(convert_combination_to_set(album_codes_combination))
+						media_identifiers_set = convert_old_codes_set_to_identifiers_set(convert_combination_to_set(media_codes_combination))
+						if media_identifiers_set is None:
 							indented_message("passwords must be processed", "error in going up from code to identifier", 4)
 							must_process_passwords = True
 							break
 						else:
 							json_file_dict['password_identifiers_set'] = album_identifiers_set
 							json_file_dict['media'][i]['password_identifiers_set'] = media_identifiers_set
+							json_file_dict['media'][i]['album_identifiers_set'] = album_identifiers_set
 				else:
 					for i in range(len(json_file_dict['media'])):
 						json_file_dict['media'][i]['password_identifiers_set'] = set()
+						json_file_dict['media'][i]['album_identifiers_set'] = set()
 					json_file_dict['password_identifiers_set'] = set()
 				dictionary = merge_albums_dictionaries_from_json_files(dictionary, json_file_dict)
 
@@ -469,9 +464,6 @@ class Album(object):
 			message("converting album to dict from json files...", files, 5)
 			album = Album.from_dict(dictionary)
 			indented_message("album converted to dict from json files", files, 4)
-			# if album.password_identifiers_set is None:
-			# 	album.password_identifiers_set = set()
-			# 	must_process_passwords = True
 			return [album, must_process_passwords]
 
 	@staticmethod
@@ -482,18 +474,6 @@ class Album(object):
 		else:
 			path = dictionary["path"]
 		# Don't use cache if version has changed
-		if Options.json_version == 0:
-			indented_message("not an album cache hit", "json_version == 0 (debug mode)", 4)
-			Options.set_obsolete_json_version_flag()
-			return [None, True]
-		elif "jsonVersion" not in dictionary:
-			indented_message("not an album cache hit", "unexistent json_version", 4)
-			Options.set_obsolete_json_version_flag()
-			return [None, True]
-		elif dictionary["jsonVersion"] != Options.json_version:
-			indented_message("not an album cache hit", "old json_version value", 4)
-			Options.set_obsolete_json_version_flag()
-			return [None, True]
 		album = Album(os.path.join(Options.config['album_path'], path))
 		album.cache_base = dictionary["cacheBase"]
 		album.json_version = dictionary["jsonVersion"]
@@ -535,17 +515,14 @@ class Album(object):
 				}
 				nums_protected_by_code = {}
 				for complex_identifiers_combination in subalbum.nums_protected_media_in_sub_tree.keys():
-					if complex_identifiers_combination == '':
+					if complex_identifiers_combination == ',':
 						nums_protected_by_code[''] = subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 					else:
-						if complex_identifiers_combination.find(',') == -1:
-							complex_codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(complex_identifiers_combination.split('-')))))
-						else:
-							album_identifiers_combination = complex_identifiers_combination.split(',')[0]
-							identifiers_combination = complex_identifiers_combination.split(',')[1]
-							album_codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(album_identifiers_combination.split('-')))))
-							codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(identifiers_combination.split('-')))))
-							complex_codes_combination = ','.join([album_codes_combination, codes_combination])
+						album_identifiers_combination = complex_identifiers_combination.split(',')[0]
+						media_identifiers_combination = complex_identifiers_combination.split(',')[1]
+						album_codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination))))
+						codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(convert_combination_to_set(media_identifiers_combination))))
+						complex_codes_combination = ','.join([album_codes_combination, codes_combination])
 						nums_protected_by_code[complex_codes_combination] = subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 				sub_dict["numsProtectedMediaInSubTree"] = nums_protected_by_code
 
@@ -628,28 +605,22 @@ class Album(object):
 		}
 		nums_protected_by_code = {}
 		for complex_identifiers_combination in self.nums_protected_media_in_sub_tree.keys():
-			if complex_identifiers_combination == '':
+			if complex_identifiers_combination == ',':
 				nums_protected_by_code[''] = self.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 			else:
-				if complex_identifiers_combination.find(',') == -1:
-					complex_codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(complex_identifiers_combination.split('-')))))
-				else:
-					album_identifiers_combination = complex_identifiers_combination.split(',')[0]
-					identifiers_combination = complex_identifiers_combination.split(',')[1]
-					album_codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(album_identifiers_combination.split('-')))))
-					codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(identifiers_combination.split('-')))))
-					complex_codes_combination = ','.join([album_codes_combination, codes_combination])
+				album_identifiers_combination = complex_identifiers_combination.split(',')[0]
+				media_identifiers_combination = complex_identifiers_combination.split(',')[1]
+				album_codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination))))
+				codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(convert_combination_to_set(media_identifiers_combination))))
+				complex_codes_combination = ','.join([album_codes_combination, codes_combination])
 				nums_protected_by_code[complex_codes_combination] = self.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 		dictionary["numsProtectedMediaInSubTree"] = nums_protected_by_code
 		if self.combination != '':
-			if self.combination.find(',') != -1:
-				album_identifiers_combination = self.combination.split(',')[0]
-				identifiers_combination = self.combination.split(',')[1]
-				album_codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(album_identifiers_combination.split('-')))))
-				codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(identifiers_combination.split('-')))))
-				dictionary["combination"] = ','.join([album_codes_combination, codes_combination])
-			else:
-				dictionary["combination"] = '-'.join(sorted(convert_identifiers_set_to_codes_set(set(self.combination.split('-')))))
+			album_identifiers_combination = self.combination.split(',')[0]
+			media_identifiers_combination = self.combination.split(',')[1]
+			album_codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination))))
+			codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(convert_combination_to_set(media_identifiers_combination))))
+			dictionary["combination"] = ','.join([album_codes_combination, codes_combination])
 
 		if hasattr(self, "center"):
 			dictionary["center"] = self.center
@@ -836,7 +807,7 @@ class NumsProtected(object):
 		return self.nums_protected.keys()
 
 	def non_trivial_keys(self):
-		return [key for key in self.keys() if key != '']
+		return [key for key in self.keys() if key != ',']
 
 	def merge(self, nums_protected):
 		for complex_identifiers_combination in nums_protected.keys():
@@ -856,14 +827,16 @@ class NumsProtected(object):
 
 
 class Media(object):
-	def __init__(self, album, media_path, thumbs_path=None, attributes=None):
+	def __init__(self, album, media_path, thumbs_path = None, dictionary = None):
 		self.password_identifiers_set = set()
-		if attributes is not None:
+		self.album_identifiers_set = set()
+		if dictionary is not None:
 			# media generation from file
-			self.generate_media_from_cache(album, media_path, attributes)
+			self.generate_media_from_cache(album, media_path, dictionary)
 		else:
 			 # media generation from json cache
 			 self.generate_media_from_file(album, media_path, thumbs_path)
+
 
 	def generate_media_from_cache(self, album, media_path, dictionary):
 		self.album = album
@@ -877,11 +850,15 @@ class Media(object):
 			self.password_identifiers_set = dictionary['password_identifiers_set']
 		else:
 			self.password_identifiers_set = set()
+		if "album_identifiers_set" in dictionary:
+			self.album_identifiers_set = dictionary['album_identifiers_set']
+		else:
+			self.album_identifiers_set = set()
 
 		self.is_valid = True
 
 		self._attributes = dictionary
-		return
+
 
 	def generate_media_from_file(self, album, media_path, thumbs_path):
 		next_level()
