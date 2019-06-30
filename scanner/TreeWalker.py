@@ -69,11 +69,19 @@ class TreeWalker:
 		message("Browsing", "start!", 3)
 
 		next_level()
-		[folders_album, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], None, set(), self.origin_album)
+		[folders_album, _, passwords_or_album_ini_processed] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], None, set(), self.origin_album)
 		back_level()
 		if folders_album is None:
 			message("WARNING", "ALBUMS ROOT EXCLUDED BY MARKER FILE", 2)
 		else:
+			# maybe nothing has changed and everything could end up here
+			if not passwords_or_album_ini_processed and not Options.num_photo_processed and not Options.num_video_processed:
+				message("nothing has changed in the album tree!", "Execution may end up here", 3)
+				return
+
+			message("changes has been in the album tree", "I must keep working!", 3)
+			next_level()
+
 			self.origin_album.nums_protected_media_in_sub_tree.merge(folders_album.nums_protected_media_in_sub_tree)
 			self.origin_album.add_subalbum(folders_album)
 
@@ -185,6 +193,7 @@ class TreeWalker:
 
 			self.remove_stale("", self.all_json_files)
 			report_mem()
+			back_level()
 			message("completed", "", 4)
 
 	@staticmethod
@@ -874,6 +883,7 @@ class TreeWalker:
 		patterns_and_passwords = copy.deepcopy(patterns_and_passwords)
 		inherited_passwords_identifiers = copy.deepcopy(inherited_passwords_identifiers)
 		inherited_passwords_mtime = copy.deepcopy(inherited_passwords_mtime)
+		passwords_or_album_ini_processed = False
 		max_file_date = file_mtime(absolute_path)
 		message(">>>>>>>>>>>  Entering directory", absolute_path, 3)
 		next_level()
@@ -881,12 +891,12 @@ class TreeWalker:
 		if not os.access(absolute_path, os.R_OK | os.X_OK):
 			message("access denied to directory", os.path.basename(absolute_path), 1)
 			back_level()
-			return [None, None]
+			return [None, None, None]
 		listdir = os.listdir(absolute_path)
 		if Options.config['exclude_tree_marker'] in listdir:
 			indented_message("excluded with subfolders by marker file", Options.config['exclude_tree_marker'], 4)
 			back_level()
-			return [None, None]
+			return [None, None, None]
 		skip_files = False
 		if Options.config['exclude_files_marker'] in listdir:
 			indented_message("files excluded by marker file", Options.config['exclude_files_marker'], 4)
@@ -1064,14 +1074,14 @@ class TreeWalker:
 			indented_message("void album generated", "", 5)
 
 		if album_cache_hit and album_ini_good:
-			if not must_process_album_ini:
-				message("album.ini values already in json file", "", 2)
-			else:
+			if must_process_album_ini:
 				message("reading album.ini...", "", 2)
 				album.read_album_ini(album_ini_file)
 				# save the album.ini mtime: it help know whether the file has been removed
 				album.album_ini_mtime = file_mtime(album_ini_file)
 				indented_message("album.ini read!", "", 2)
+			else:
+				message("album.ini values already in json file", "", 2)
 
 		if parent_album is not None:
 			album.parent_cache_base = parent_album.cache_base
@@ -1183,7 +1193,8 @@ class TreeWalker:
 				next_album_cache_base = album.generate_cache_base(entry_for_cache_base)
 				indented_message("cache base determined", "", 5)
 				back_level()
-				[next_walked_album, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, patterns_and_passwords, passwords_marker_mtime, album.password_identifiers_set, album)
+				[next_walked_album, sub_max_file_date, _passwords_or_album_ini_processed] = self.walk(entry_with_path, next_album_cache_base, patterns_and_passwords, passwords_marker_mtime, album.password_identifiers_set, album)
+				passwords_or_album_ini_processed = passwords_or_album_ini_processed or _passwords_or_album_ini_processed
 				if next_walked_album is not None:
 					max_file_date = max(max_file_date, sub_max_file_date)
 					album.num_media_in_sub_tree += next_walked_album.num_media_in_sub_tree
@@ -1494,7 +1505,9 @@ class TreeWalker:
 
 		report_mem()
 
-		return [album, max_file_date]
+		passwords_or_album_ini_processed = passwords_or_album_ini_processed or must_process_passwords or must_process_album_ini
+
+		return [album, max_file_date, passwords_or_album_ini_processed]
 
 
 	@staticmethod
