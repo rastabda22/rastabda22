@@ -1139,7 +1139,7 @@ class TreeWalker:
 			message("passwords for album processed!", "", 4)
 			back_level()
 		else:
-			indented_message("no need to process passwords for album", "(it's an album cache hit)", 5)
+			indented_message("no need to process passwords for album", "", 5)
 			for identifier in album.password_identifiers_set:
 				Options.mark_identifier_as_used(identifier)
 
@@ -1383,7 +1383,7 @@ class TreeWalker:
 					indented_message("passwords for single media processed!", "", 5)
 					back_level()
 				else:
-					indented_message("no need to process passwords for media", "(it's a single media cache hit)", 5)
+					indented_message("no need to process passwords for media", "", 5)
 					for identifier in single_media.password_identifiers_set:
 						Options.mark_identifier_as_used(identifier)
 
