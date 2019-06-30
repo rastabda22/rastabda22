@@ -906,14 +906,16 @@ class TreeWalker:
 		# look for password marker and manage it
 		############################################################
 		must_process_passwords = False
-		passwords_marker_mtime = None
+		passwords_marker_mtime = inherited_passwords_mtime
 		passwords_marker = os.path.join(absolute_path, Options.config['passwords_marker'])
 		if len(Options.identifiers_and_passwords) and Options.config['passwords_marker'] in listdir:
 			next_level()
 			message(Options.config['passwords_marker'] + " file found", "reading it", 4)
-			passwords_marker_mtime = file_mtime(passwords_marker)
-			if inherited_passwords_mtime is not None:
-				passwords_marker_mtime = max(passwords_marker_mtime, inherited_passwords_mtime)
+			new_passwords_marker_mtime = file_mtime(passwords_marker)
+			if passwords_marker_mtime is not None:
+				passwords_marker_mtime = max(passwords_marker_mtime, new_passwords_marker_mtime)
+			else:
+				passwords_marker_mtime = new_passwords_marker_mtime
 			if not os.access(passwords_marker, os.R_OK):
 				indented_message("unreadable file", passwords_marker, 2)
 			else:
