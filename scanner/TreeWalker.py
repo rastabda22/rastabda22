@@ -1094,6 +1094,8 @@ class TreeWalker:
 
 		# check album name against passwords
 		if must_process_passwords:
+			next_level()
+			message("processing passwords for album...", "", 4)
 			# restart with the inherited passwords
 			album.password_identifiers_set = inherited_passwords_identifiers
 			# get the matching passwords
@@ -1122,7 +1124,10 @@ class TreeWalker:
 							dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "' already protects the album",
 							3
 						)
+			message("passwords for album processed!", "", 4)
+			back_level()
 		else:
+			indented_message("no need to process passwords for album", "(it's an album cache hit)", 5)
 			for identifier in album.password_identifiers_set:
 				Options.mark_identifier_as_used(identifier)
 
@@ -1321,6 +1326,8 @@ class TreeWalker:
 
 			if single_media.is_valid:
 				if not single_media_cache_hit or must_process_passwords:
+					next_level()
+					message("processing passwords for single media...", "", 4)
 					single_media.password_identifiers_set = set()
 					single_media.album_identifiers_set = set()
 					file_name = os.path.basename(entry_with_path)
@@ -1360,8 +1367,10 @@ class TreeWalker:
 									"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "'  already protects the media",
 									3
 								)
+					indented_message("passwords for single media processed!", "", 5)
+					back_level()
 				else:
-					indented_message("no need to process passwords for media", "", 5)
+					indented_message("no need to process passwords for media", "(it's a single media cache hit)", 5)
 					for identifier in single_media.password_identifiers_set:
 						Options.mark_identifier_as_used(identifier)
 
