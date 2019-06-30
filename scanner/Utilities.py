@@ -79,7 +79,7 @@ def json_files_and_mtime(cache_base):
 				if global_mtime is None:
 					global_mtime = mtime
 				else:
-					global_mtime = max(global_mtime, mtime)
+					global_mtime = min(global_mtime, mtime)
 			protected_json_file_with_path = next_file_name(protected_json_file_with_path)
 
 	return [json_file_list, global_mtime]
@@ -88,6 +88,14 @@ def convert_combination_to_set(combination):
 	if combination == '':
 		return set()
 	return set(combination.split('-'))
+
+def convert_set_to_combination(this_set):
+	if this_set == set():
+		return ''
+	return '-'.join(sorted(this_set))
+
+def complex_combination(album_combination, media_combination):
+	return ','.join([album_combination, media_combination])
 
 
 def convert_identifiers_set_to_md5s_set(identifiers_set):

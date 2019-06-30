@@ -41,7 +41,8 @@ from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabet
 from CachePath import remove_all_but_alphanumeric_chars_dashes_slashes_dots, switch_to_lowercase
 from Utilities import message, indented_message, next_level, back_level, file_mtime, json_files_and_mtime, make_dir
 from Utilities import merge_albums_dictionaries_from_json_files
-from Utilities import convert_combination_to_set, convert_identifiers_set_to_codes_set, convert_old_codes_set_to_identifiers_set
+from Utilities import convert_identifiers_set_to_codes_set, convert_old_codes_set_to_identifiers_set
+from Utilities import convert_combination_to_set, convert_set_to_combination, complex_combination
 from Geonames import Geonames
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
@@ -337,7 +338,7 @@ class Album(object):
 		if self.password_identifiers_set == set() or self.password_identifiers_set == album_identifiers_set:
 			self.media_list = [single_media for single_media in self.media if media_identifiers_set == single_media.password_identifiers_set]
 
-			self.combination = ','.join(['-'.join(sorted(album_identifiers_set)), '-'.join(sorted(media_identifiers_set))])
+			self.combination = complex_combination(convert_set_to_combination(album_identifiers_set), convert_set_to_combination(media_identifiers_set))
 			if self.combination in self.nums_protected_media_in_sub_tree.keys():
 				self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.combination)
 		else:
@@ -438,7 +439,7 @@ class Album(object):
 						media_codes_combination = json_file_dict['combination'].split(',')[1]
 						album_identifiers_set = convert_old_codes_set_to_identifiers_set(convert_combination_to_set(album_codes_combination))
 						media_identifiers_set = convert_old_codes_set_to_identifiers_set(convert_combination_to_set(media_codes_combination))
-						if media_identifiers_set is None:
+						if media_identifiers_set is None or album_identifiers_set is None:
 							indented_message("passwords must be processed", "error in going up from code to identifier", 4)
 							must_process_passwords = True
 							break
@@ -520,9 +521,9 @@ class Album(object):
 					else:
 						album_identifiers_combination = complex_identifiers_combination.split(',')[0]
 						media_identifiers_combination = complex_identifiers_combination.split(',')[1]
-						album_codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination))))
-						codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(convert_combination_to_set(media_identifiers_combination))))
-						complex_codes_combination = ','.join([album_codes_combination, codes_combination])
+						album_codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination)))
+						codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(media_identifiers_combination)))
+						complex_codes_combination = complex_combination(album_codes_combination, codes_combination)
 						nums_protected_by_code[complex_codes_combination] = subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 				sub_dict["numsProtectedMediaInSubTree"] = nums_protected_by_code
 
@@ -610,17 +611,17 @@ class Album(object):
 			else:
 				album_identifiers_combination = complex_identifiers_combination.split(',')[0]
 				media_identifiers_combination = complex_identifiers_combination.split(',')[1]
-				album_codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination))))
-				codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(convert_combination_to_set(media_identifiers_combination))))
-				complex_codes_combination = ','.join([album_codes_combination, codes_combination])
+				album_codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination)))
+				codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(media_identifiers_combination)))
+				complex_codes_combination = complex_combination(album_codes_combination, codes_combination)
 				nums_protected_by_code[complex_codes_combination] = self.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 		dictionary["numsProtectedMediaInSubTree"] = nums_protected_by_code
 		if self.combination != '':
 			album_identifiers_combination = self.combination.split(',')[0]
 			media_identifiers_combination = self.combination.split(',')[1]
-			album_codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination))))
-			codes_combination = '-'.join(sorted(convert_identifiers_set_to_codes_set(convert_combination_to_set(media_identifiers_combination))))
-			dictionary["combination"] = ','.join([album_codes_combination, codes_combination])
+			album_codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination)))
+			codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(media_identifiers_combination)))
+			dictionary["combination"] = complex_combination(album_codes_combination, codes_combination)
 
 		if hasattr(self, "center"):
 			dictionary["center"] = self.center
@@ -1450,7 +1451,7 @@ class Media(object):
 		thumb_path = os.path.join(thumbs_path_with_subdir, album_prefix + photo_cache_name(self, thumb_size, thumb_type, mobile_bigger))
 		# if the reduced image/thumbnail is there and is valid, exit immediately
 		json_file = os.path.join(thumbs_path, self.album.json_file)
-		json_file_list, json_file_mtime = json_files_and_mtime(self.cache_base)
+		json_file_list, json_files_min_mtime = json_files_and_mtime(self.cache_base)
 		_is_thumbnail = Media.is_thumbnail(thumb_type)
 		next_level()
 		message("checking reduction/thumbnail", thumb_path, 5)
@@ -1479,7 +1480,7 @@ class Media(object):
 			message("reduction/thumbnail older than media date time", thumb_path, 5)
 		elif len(json_file_list) == 0:
 			message("unexistent json files", json_file, 5)
-		elif file_mtime(thumb_path) >= json_file_mtime:
+		elif file_mtime(thumb_path) >= json_files_min_mtime:
 			message("reduction/thumbnail newer than json files", thumb_path + ", " + json_file, 5)
 		elif not (
 			not _is_thumbnail and not Options.config['recreate_reduced_photos'] or

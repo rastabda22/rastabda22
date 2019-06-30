@@ -23,7 +23,8 @@ from PIL import Image
 from CachePath import remove_album_path, last_modification_time, trim_base_custom
 from CachePath import remove_folders_marker
 from Utilities import save_password_codes, json_files_and_mtime, report_mem
-from Utilities import convert_identifiers_set_to_codes_set, convert_identifiers_set_to_md5s_set, convert_combination_to_set
+from Utilities import convert_identifiers_set_to_codes_set, convert_identifiers_set_to_md5s_set
+from Utilities import convert_combination_to_set, convert_set_to_combination, complex_combination
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_digits, switch_to_lowercase, phrase_to_words, checksum
 from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, next_file_name, make_dir
@@ -157,9 +158,9 @@ class TreeWalker:
 			for complex_identifiers_combination in keys:
 				album = self.protected_origin_album[complex_identifiers_combination]
 				album_identifiers_combination, media_identifiers_combination = complex_identifiers_combination.split(',')
-				album_md5_combination = '-'.join(sorted(convert_identifiers_set_to_md5s_set(convert_combination_to_set(album_identifiers_combination))))
-				md5_combination = '-'.join(sorted(convert_identifiers_set_to_md5s_set(convert_combination_to_set(media_identifiers_combination))))
-				total_md5_combination = ','.join([album_md5_combination, md5_combination])
+				album_md5_combination = convert_set_to_combination(convert_identifiers_set_to_md5s_set(convert_combination_to_set(album_identifiers_combination)))
+				md5_combination = convert_set_to_combination(convert_identifiers_set_to_md5s_set(convert_combination_to_set(media_identifiers_combination)))
+				total_md5_combination = complex_combination(album_md5_combination, md5_combination)
 
 				next_level()
 				if album_identifiers_combination == '':
@@ -250,10 +251,10 @@ class TreeWalker:
 					md5_product_list.append(','.join(couple))
 			elif len(album_password_md5_list) > 0:
 				for md5 in album_password_md5_list:
-					md5_product_list.append(','.join([md5, '']))
+					md5_product_list.append(complex_combination(md5, ''))
 			else:
 				for md5 in password_md5_list:
-					md5_product_list.append(','.join(['', md5]))
+					md5_product_list.append(complex_combination('', md5))
 			first_md5_product = md5_product_list[0]
 
 			first_dir = os.path.join(
@@ -364,7 +365,7 @@ class TreeWalker:
 							month_album.positions_and_media_in_tree.add_single_media(single_media)
 							year_album.positions_and_media_in_tree.add_single_media(single_media)
 
-						complex_identifiers_combination = ','.join([('-').join(sorted(single_media.album_identifiers_set)), ('-').join(sorted(single_media.password_identifiers_set))])
+						complex_identifiers_combination = complex_combination(convert_set_to_combination(single_media.album_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
 						day_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
 						month_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
 						year_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
@@ -444,7 +445,7 @@ class TreeWalker:
 					# actually, this counter for the search root album is not significant
 					by_search_album.positions_and_media_in_tree.add_single_media(single_media)
 
-				complex_identifiers_combination = ','.join([('-').join(sorted(single_media.album_identifiers_set)), ('-').join(sorted(single_media.password_identifiers_set))])
+				complex_identifiers_combination = complex_combination(convert_set_to_combination(single_media.album_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
 				word_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
 				# nums_protected_media_in_sub_tree matters for the search root albums!
 				by_search_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
@@ -684,7 +685,7 @@ class TreeWalker:
 							else:
 								by_geonames_max_file_date = single_media_date
 
-							complex_identifiers_combination = ','.join([('-').join(sorted(single_media.album_identifiers_set)), ('-').join(sorted(single_media.password_identifiers_set))])
+							complex_identifiers_combination = complex_combination(convert_set_to_combination(single_media.album_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
 							place_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
 							region_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
 							country_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
@@ -1002,11 +1003,9 @@ class TreeWalker:
 		############################################################
 		# look for album json files and check their validity
 		############################################################
-		json_file = os.path.join(Options.config['cache_path'], album_cache_base) + ".json"
-		json_file_list, json_file_mtime = json_files_and_mtime(album_cache_base)
+		json_file_list, json_files_min_mtime = json_files_and_mtime(album_cache_base)
 		cached_album = None
 		album_cache_hit = False
-		json_message = json_file
 		if Options.config['recreate_json_files']:
 			message("not an album cache hit", "forced json file recreation, some sensible option has changed", 3)
 		elif Options.json_version == 0:
@@ -1021,12 +1020,12 @@ class TreeWalker:
 				elif not all([os.access(json, os.W_OK) for json in json_file_list]):
 					message("not an album cache hit", "some json file unwritable", 1)
 				else:
-					if album_ini_good and file_mtime(album_ini_file) > json_file_mtime:
+					if album_ini_good and file_mtime(album_ini_file) > json_files_min_mtime:
 						# a check on album_ini_file content would have been good:
 						# execution comes here even if album.ini hasn't anything significant
 						message("not an album cache hit", "album.ini newer than json file, recreating json file taking into account album.ini", 4)
 						must_process_album_ini = True
-					elif file_mtime(absolute_path) >= json_file_mtime:
+					elif file_mtime(absolute_path) >= json_files_min_mtime:
 						indented_message("not an album cache hit", "album dir newer than json file", 4)
 					else:
 						message("maybe an album cache hit", "trying to import album from '" + json_file_list[0] + "' and others", 5)
@@ -1094,13 +1093,17 @@ class TreeWalker:
 		############################################################
 		# check passwords validity
 		############################################################
-		if not album_cache_hit:
-			must_process_passwords = True
-		if not must_process_passwords and json_file_mtime is not None and album_cache_hit:
-			if Options.passwords_file_mtime is not None and Options.passwords_file_mtime >= json_file_mtime:
+		if not must_process_passwords:
+			if json_files_min_mtime is None:
+				indented_message("passwords must be processed", "json files doesn't exist", 4)
+				must_process_passwords = True
+			elif not album_cache_hit:
+				indented_message("passwords must be processed", "album isn't a cache hit", 4)
+				must_process_passwords = True
+			elif Options.passwords_file_mtime is not None and Options.passwords_file_mtime >= json_files_min_mtime:
 				indented_message("passwords must be processed", "passwords file newer than json file or absent", 4)
 				must_process_passwords = True
-			if len(patterns_and_passwords) > 0 and passwords_marker_mtime is not None and passwords_marker_mtime >= json_file_mtime:
+			elif len(patterns_and_passwords) > 0 and passwords_marker_mtime is not None and passwords_marker_mtime >= json_files_min_mtime:
 				indented_message("passwords must be processed", "'" + Options.config['passwords_marker'] + "'' newer than json file or absent", 4)
 				must_process_passwords = True
 
@@ -1111,6 +1114,7 @@ class TreeWalker:
 			# restart with the inherited passwords
 			album.password_identifiers_set = inherited_passwords_identifiers
 			# get the matching passwords
+			next_level()
 			for pattern_and_password in patterns_and_passwords:
 				if pattern_and_password['case_flag'] == 'cs':
 					match = fnmatch.fnmatchcase(dir_name, pattern_and_password['pattern'])
@@ -1136,7 +1140,8 @@ class TreeWalker:
 							dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "' already protects the album",
 							3
 						)
-			message("passwords for album processed!", "", 4)
+			back_level()
+			indented_message("passwords for album processed!", "", 4)
 			back_level()
 		else:
 			indented_message("no need to process passwords for album", "", 5)
@@ -1291,7 +1296,7 @@ class TreeWalker:
 							absolute_cache_file_exists = os.path.exists(absolute_cache_file)
 							if (
 								Options.config['recreate_fixed_height_thumbnails'] and
-								absolute_cache_file_exists and file_mtime(absolute_cache_file) < json_file_mtime
+								absolute_cache_file_exists and file_mtime(absolute_cache_file) < json_files_min_mtime
 							):
 								# remove wide images, in order not to have blurred thumbnails
 								fixed_height_thumbnail_re = "_" + str(Options.config['media_thumb_size']) + r"tf\.jpg$"
@@ -1311,7 +1316,7 @@ class TreeWalker:
 								indented_message("not a single media cache hit", "reduction/thumbnail older than cached media", 4)
 								single_media_cache_hit = False
 								break
-							if file_mtime(absolute_cache_file) > json_file_mtime:
+							if file_mtime(absolute_cache_file) > json_files_min_mtime:
 								indented_message("not a single media cache hit", "reduction/thumbnail newer than json file", 4)
 								single_media_cache_hit = False
 								break
@@ -1388,7 +1393,7 @@ class TreeWalker:
 						Options.mark_identifier_as_used(identifier)
 
 				# update the protected media count according for the passwords' md5
-				complex_identifiers_combination = ','.join(['-'.join(sorted(album.password_identifiers_set)), '-'.join(sorted(single_media.password_identifiers_set))])
+				complex_identifiers_combination = complex_combination(convert_set_to_combination(album.password_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
 				album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
 
 				album.num_media_in_sub_tree += 1

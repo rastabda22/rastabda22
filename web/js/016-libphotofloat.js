@@ -251,14 +251,14 @@
 		function addProtectedContent(album) {
 			function incrementCounterAndGoOnIfReachedTheEnd() {
 				nPassword ++;
-				if (nPassword >= 2 * thePasswordsToGet.length * thePasswordsToGet.length) {
+				if (nPassword >= 3 * thePasswordsToGet.length * thePasswordsToGet.length) {
 					// all the protected content has been included in the album
 					PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
 					executeCallback(album);
 					// goOn(album);
 				}
 			}
-			
+
 			// prepare and get the protected content albums
 			var thePasswordsToGet = PhotoFloat.passwordsToGet(album);
 			if (thePasswordsToGet.length == 0) {
@@ -268,11 +268,12 @@
 				var iPassword, iAlbumPassword, key, numProtected, protectedAlbumCacheBase, iComplex;
 				var index, albumIndex, passwordCode;
 				var nPassword = 0, guessedPassword;
-				var albumPasswordCode, albumCodes, mediaCodes, complexPassword, thereIsAnAlbumPassword;
+				var albumPasswordCode, albumCombination, albumCodes, mediaCombination, mediaCodes, complexPassword, thereIsAnAlbumPassword;
 
 				for (iAlbumPassword = 0; iAlbumPassword < thePasswordsToGet.length; iAlbumPassword ++) {
 					for (iPassword = 0; iPassword < thePasswordsToGet.length; iPassword ++) {
 						guessedPassword = thePasswordsToGet[iPassword];
+						albumGuessedPassword = thePasswordsToGet[iAlbumPassword];
 						index = PhotoFloat.guessedPasswordsMd5.indexOf(thePasswordsToGet[iPassword]);
 						passwordCode = PhotoFloat.guessedPasswordCodes[index];
 						albumIndex = PhotoFloat.guessedPasswordsMd5.indexOf(thePasswordsToGet[iAlbumPassword]);
@@ -282,16 +283,15 @@
 						for (key in album.numsProtectedMediaInSubTree) {
 							if (key == '')
 								continue;
-							thereIsAnAlbumPassword = (key.indexOf(',') != -1);
-							if (thereIsAnAlbumPassword) {
-								albumCodes = key.split(',')[0].split('-');
-								mediaCodes = key.split(',')[1].split('-');
-							 	if (albumCodes.indexOf(albumPasswordCode) != -1 && mediaCodes.indexOf(passwordCode) != -1)
-									numProtected += album.numsProtectedMediaInSubTree[key];
-							} else {
-								if (key.split('-').indexOf(passwordCode) != -1)
-									numProtected += album.numsProtectedMediaInSubTree[key];
-							}
+							albumCombination = key.split(',')[0];
+							mediaCombination = key.split(',')[1];
+							albumCodes = albumCombination.split('-');
+							mediaCodes = mediaCombination.split('-');
+						 	if (
+								(albumCombination == "" || albumCodes.indexOf(albumPasswordCode) != -1) &&
+								(mediaCombination == "" || mediaCodes.indexOf(passwordCode) != -1)
+							)
+								numProtected += album.numsProtectedMediaInSubTree[key];
 						}
 
 						if (
@@ -302,8 +302,8 @@
 							// no need to get any protected content for this md5
 							executeCallback(album);
 						} else {
-							complexPasswordMd5List = [thePasswordsToGet[iAlbumPassword] + ',' + guessedPassword, guessedPassword];
-							for (iComplex = 0; iComplex < 2; iComplex ++) {
+							complexPasswordMd5List = [albumGuessedPassword + ',' + guessedPassword, albumGuessedPassword + ',', ',' + guessedPassword];
+							for (iComplex = 0; iComplex < complexPasswordMd5List.length; iComplex ++) {
 								protectedAlbumCacheBase = Options.protected_directories_prefix + complexPasswordMd5List[iComplex] + '/' + album.cacheBase;
 								var data = {"complexPasswordMd5": complexPasswordMd5List[iComplex], "protectedAlbumCacheBase": protectedAlbumCacheBase};
 								getAlbumWithPositions(
