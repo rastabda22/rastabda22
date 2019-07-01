@@ -241,7 +241,7 @@
 						"media": [],
 						"numMediaInSubTree": 0,
 						"positionsAndMediaInTree": [],
-						"protectedContentInside": []
+						"empty": true
 					};
 					addProtectedContent(emptyAlbum);
 				}
@@ -280,22 +280,23 @@
 						albumPasswordCode = PhotoFloat.guessedPasswordCodes[albumIndex];
 
 						numProtected = 0;
-						for (key in album.numsProtectedMediaInSubTree) {
-							if (key == '')
-								continue;
-							albumCombination = key.split(',')[0];
-							mediaCombination = key.split(',')[1];
-							albumCodes = albumCombination.split('-');
-							mediaCodes = mediaCombination.split('-');
-						 	if (
-								(albumCombination == "" || albumCodes.indexOf(albumPasswordCode) != -1) &&
-								(mediaCombination == "" || mediaCodes.indexOf(passwordCode) != -1)
-							)
-								numProtected += album.numsProtectedMediaInSubTree[key];
-						}
+						if (! album.hasOwnProperty("empty"))
+							for (key in album.numsProtectedMediaInSubTree) {
+								if (key == '')
+									continue;
+								albumCombination = key.split(',')[0];
+								mediaCombination = key.split(',')[1];
+								albumCodes = albumCombination.split('-');
+								mediaCodes = mediaCombination.split('-');
+							 	if (
+									(albumCombination == "" || albumCodes.indexOf(albumPasswordCode) != -1) &&
+									(mediaCombination == "" || mediaCodes.indexOf(passwordCode) != -1)
+								)
+									numProtected += album.numsProtectedMediaInSubTree[key];
+							}
 
 						if (
-							baseJsonFileExists && numProtected == 0 &&
+							baseJsonFileExists && ! album.hasOwnProperty("empty") && numProtected == 0 &&
 							album.cacheBase !== Options.by_search_string &&
 							! util.isSearchCacheBase(album.cacheBase)
 						) {
@@ -371,8 +372,14 @@
 
 										if (! album.hasOwnProperty("includedCombinations"))
 											album.includedCombinations = [];
-										if (album.includedCombinations.indexOf(protectedAlbum.combination) == -1)
-											mergeProtectedContent(protectedAlbum);
+										if (album.includedCombinations.indexOf(protectedAlbum.combination) == -1) {
+											if (! album.hasOwnProperty("empty"))
+												mergeProtectedContent(protectedAlbum);
+											else {
+												album = protectedAlbum;
+												album.protectedContentInside = [];
+											}
+										}
 
 										// get the symlinks
 										var nLink = 0;
