@@ -267,7 +267,7 @@
 			} else {
 				var iPassword, iAlbumPassword, key, numProtected, protectedAlbumCacheBase, iComplex;
 				var index, albumIndex, passwordCode;
-				var nPassword = 0, guessedPassword;
+				var nPassword = 0, guessedPassword, albumGuessedPassword;
 				var albumPasswordCode, albumCombination, albumCodes, mediaCombination, mediaCodes, complexPassword, thereIsAnAlbumPassword;
 
 				for (iAlbumPassword = 0; iAlbumPassword < thePasswordsToGet.length; iAlbumPassword ++) {
