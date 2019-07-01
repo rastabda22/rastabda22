@@ -292,7 +292,6 @@ class Album(object):
 		return album
 
 	def leave_only_unprotected_content(self):
-		self.is_protected = False
 		# # search albums:
 		# # - do not process subalbums because they have been already processed
 		# # - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
@@ -307,9 +306,6 @@ class Album(object):
 			self.positions_and_media_in_tree = Positions(None)
 			# subalbums are not removed, because there may be some unprotected content up in the tree
 			# but the unprotected content up in the tree doesn't count here, and so the media number in the tree is zero
-
-			# set the protected flag
-			self.is_protected = True
 		else:
 			# the album isn't protected, but media and subalbums may be protected
 			self.media_list = [single_media for single_media in self.media if len(single_media.password_identifiers_set) == 0]
