@@ -331,8 +331,8 @@ class Album(object):
 
 		self.num_media_in_sub_tree = 0
 
-		if self.password_identifiers_set == set() or self.password_identifiers_set == album_identifiers_set:
-			self.media_list = [single_media for single_media in self.media if media_identifiers_set == single_media.password_identifiers_set]
+		if self.password_identifiers_set == album_identifiers_set:
+			self.media_list = [single_media for single_media in self.media if single_media.password_identifiers_set == media_identifiers_set]
 
 			self.combination = complex_combination(convert_set_to_combination(album_identifiers_set), convert_set_to_combination(media_identifiers_set))
 			if self.combination in self.nums_protected_media_in_sub_tree.keys():
