@@ -809,12 +809,12 @@
 		var result = {}, i, album, passwordCode;
 
 		for (i = 0; i < subalbums.length; i ++) {
-			album = subalbums[i];
-			for (passwordCode in album.numsProtectedMediaInSubTree) {
-				if (album.numsProtectedMediaInSubTree.hasOwnProperty(passwordCode)) {
+			subalbum = subalbums[i];
+			for (passwordCode in subalbum.numsProtectedMediaInSubTree) {
+				if (subalbum.numsProtectedMediaInSubTree.hasOwnProperty(passwordCode)) {
 					if (! result.hasOwnProperty(passwordCode))
 						result[passwordCode] = 0;
-					result[passwordCode] += album.numsProtectedMediaInSubTree[passwordCode];
+					result[passwordCode] += subalbum.numsProtectedMediaInSubTree[passwordCode];
 				}
 			}
 		}
