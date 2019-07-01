@@ -92,6 +92,7 @@ max_random = 1000000000
 # json_version = 3.98 since property passwords changed to passwordsMd5 in json file
 # json_version = 3.97 since passwords removed from json file
 # json_version = 3.98 since passwordMarkerMTime and albumIniMTime was added to json files
+# json_version = 3.99 since album passwords added to every media separately from media passwords
 json_version = 0
 
 
