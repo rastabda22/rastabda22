@@ -292,27 +292,29 @@ class Album(object):
 		return album
 
 	def leave_only_unprotected_content(self):
-		# # search albums:
-		# # - do not process subalbums because they have been already processed
-		# # - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
 		self.positions_and_media_in_tree = Positions(None)
-		for subalbum in self.subalbums_list:
-			subalbum.leave_only_unprotected_content()
-			self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
-
-		if len(self.password_identifiers_set) > 0:
+		if len(self.password_identifiers_set) == 0:
+			# the album isn't protected, but media and subalbums may be protected
+			# besides that, for virtual media the physical album password is included in the media and must be taken into account
+			self.media_list = [single_media for single_media in self.media if len(single_media.album_identifiers_set) ==  0 and len(single_media.password_identifiers_set) == 0]
+			for single_media in self.media_list:
+				if single_media.has_gps_data:
+					self.positions_and_media_in_tree.add_single_media(single_media)
+		else:
 			# protected album, remove the media
 			self.media_list = []
-			self.positions_and_media_in_tree = Positions(None)
 			# subalbums are not removed, because there may be some unprotected content up in the tree
-			# but the unprotected content up in the tree doesn't count here, and so the media number in the tree is zero
-		else:
-			# the album isn't protected, but media and subalbums may be protected
-			self.media_list = [single_media for single_media in self.media if len(single_media.password_identifiers_set) == 0]
 
-		for single_media in self.media_list:
-			if single_media.has_gps_data:
-				self.positions_and_media_in_tree.add_single_media(single_media)
+		# search albums:
+		# - do not process subalbums because they have been already processed
+		# - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
+		if (
+			self.cache_base.find(Options.config['by_search_string']) == -1 or
+			self.cache_base == Options.config['by_search_string']
+		):
+			for subalbum in self.subalbums_list:
+				subalbum.leave_only_unprotected_content()
+				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
 		if ',' in self.nums_protected_media_in_sub_tree.keys():
 			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(',')
@@ -321,28 +323,30 @@ class Album(object):
 
 
 	def leave_only_content_protected_by(self, album_identifiers_set, media_identifiers_set):
-		# # search albums:
-		# # - do not process subalbums because they have been already processed
-		# # - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
 		self.positions_and_media_in_tree = Positions(None)
-		for subalbum in self.subalbums_list:
-			subalbum.leave_only_content_protected_by(album_identifiers_set, media_identifiers_set)
-			self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
+		self.combination = complex_combination(convert_set_to_combination(album_identifiers_set), convert_set_to_combination(media_identifiers_set))
 
-		self.num_media_in_sub_tree = 0
-
-		if self.password_identifiers_set == album_identifiers_set:
-			self.media_list = [single_media for single_media in self.media if single_media.password_identifiers_set == media_identifiers_set]
-
-			self.combination = complex_combination(convert_set_to_combination(album_identifiers_set), convert_set_to_combination(media_identifiers_set))
-			if self.combination in self.nums_protected_media_in_sub_tree.keys():
-				self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.combination)
-		else:
-			self.media_list = []
-
+		# for virtual media the physical album password is included in the media, and must be taken into account
+		self.media_list = [single_media for single_media in self.media if single_media.album_identifiers_set == album_identifiers_set and single_media.password_identifiers_set == media_identifiers_set]
 		for single_media in self.media_list:
 			if single_media.has_gps_data:
 				self.positions_and_media_in_tree.add_single_media(single_media)
+
+		# search albums:
+		# - do not process subalbums because they have been already processed
+		# - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
+		if (
+			self.cache_base.find(Options.config['by_search_string']) == -1 or
+			self.cache_base == Options.config['by_search_string']
+		):
+			for subalbum in self.subalbums_list:
+				subalbum.leave_only_content_protected_by(album_identifiers_set, media_identifiers_set)
+				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
+
+		if self.combination in self.nums_protected_media_in_sub_tree.keys():
+			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.combination)
+		else:
+			self.num_media_in_sub_tree = 0
 
 
 	def generate_protected_content_albums(self):

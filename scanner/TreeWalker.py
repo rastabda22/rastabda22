@@ -1350,14 +1350,14 @@ class TreeWalker:
 					single_media.album_identifiers_set = set()
 					file_name = os.path.basename(entry_with_path)
 
-					# # apply the album passwords_md5 and password codes to the media
-					# for album_identifier in sorted(album.password_identifiers_set):
-					# 	if album_identifier not in single_media.album_identifiers_set:
-					# 		single_media.album_identifiers_set.add(album_identifier)
-					# 		password_md5 = convert_identifiers_set_to_md5s_set(set([album_identifier])).pop()
-					# 		indented_message("album password added to media", "identifier = " + album_identifier + ", encrypted password = " + password_md5, 3)
-					# 	else:
-					# 		indented_message("album password not added to media", "identifier '" + album_identifier + "' already protects this media", 3)
+					# apply the album passwords_md5 to the media
+					for album_identifier in sorted(album.password_identifiers_set):
+						if album_identifier not in single_media.album_identifiers_set:
+							single_media.album_identifiers_set.add(album_identifier)
+							password_md5 = convert_identifiers_set_to_md5s_set(set([album_identifier])).pop()
+							indented_message("album password added to media", "identifier = " + album_identifier + ", encrypted password = " + password_md5, 3)
+						else:
+							indented_message("album password not added to media", "identifier '" + album_identifier + "' already protects this media", 3)
 
 					# apply the file passwords_md5 and password codes to the media if they match the media name
 					for pattern_and_password in patterns_and_passwords:
