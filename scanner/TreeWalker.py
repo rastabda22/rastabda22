@@ -25,6 +25,7 @@ from CachePath import remove_folders_marker
 from Utilities import save_password_codes, json_files_and_mtime, report_mem
 from Utilities import convert_identifiers_set_to_codes_set, convert_identifiers_set_to_md5s_set
 from Utilities import convert_combination_to_set, convert_set_to_combination, complex_combination
+from Utilities import calculate_media_file_name, determine_symlink_name
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_digits, switch_to_lowercase, phrase_to_words, checksum
 from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, next_file_name, make_dir
@@ -197,15 +198,6 @@ class TreeWalker:
 			back_level()
 			message("completed", "", 4)
 
-	@staticmethod
-	def determine_symlink_name(symlink):
-		while (os.path.isfile(symlink)):
-			# symlink = '.'.join(first_part + [str(n)] + symlink_list[-1 - subtract:])
-			symlink = next_file_name(symlink)
-			# n += 1
-		return symlink
-
-
 	def all_albums_to_json_file(self, album, complex_identifiers_combination = None):
 		# the subalbums of search albums in by_search_album are regular albums
 		# and they are saved when folders_album is saved, avoid saving them multiple times
@@ -239,8 +231,10 @@ class TreeWalker:
 
 		json_name = album.json_file
 		json_positions_name = album.positions_json_file
-		symlinks = list()
-		position_symlinks = list()
+		json_media_name = album.media_json_file
+		symlinks = []
+		positions_symlinks = []
+		media_symlinks = []
 
 		if complex_identifiers_combination is not None:
 			password_md5_list = sorted(convert_identifiers_set_to_md5s_set(convert_combination_to_set(media_identifiers_combination)))
@@ -265,17 +259,23 @@ class TreeWalker:
 				make_dir(first_dir, "protected content directory")
 				self.created_dirs.append(first_dir)
 
-			json_name_with_path = self.determine_symlink_name(os.path.join(
+			json_name_with_path = determine_symlink_name(os.path.join(
 				first_dir,
 				json_name
 			))
 			json_name = json_name_with_path[len(Options.config['cache_path']) + 1:]
 
-			json_positions_name_with_path = self.determine_symlink_name(os.path.join(
+			json_positions_name_with_path = determine_symlink_name(os.path.join(
 				first_dir,
 				json_positions_name
 			))
 			json_positions_name = json_positions_name_with_path[len(Options.config['cache_path']) + 1:]
+
+			json_media_name_with_path = determine_symlink_name(os.path.join(
+				first_dir,
+				json_media_name
+			))
+			json_media_name = json_media_name_with_path[len(Options.config['cache_path']) + 1:]
 
 			# more symlink must be added in order to get the files with 2 or more passwords
 			if (len(md5_product_list) > 1):
@@ -289,29 +289,48 @@ class TreeWalker:
 						make_dir(complex_dir, "protected content directory")
 						self.created_dirs.append(complex_dir)
 
-					symlink_with_path = self.determine_symlink_name(os.path.join(
+					symlink_with_path = determine_symlink_name(os.path.join(
 						complex_dir,
 						album.json_file
 					))
 					symlink = symlink_with_path[len(Options.config['cache_path']) + 1:]
 					symlinks.append(symlink)
 
-					position_symlink_with_path =  self.determine_symlink_name(os.path.join(
+					positions_symlink_with_path =  determine_symlink_name(os.path.join(
 						complex_dir,
 						album.positions_json_file
 					))
-					position_symlink = position_symlink_with_path[len(Options.config['cache_path']) + 1:]
-					position_symlinks.append(position_symlink)
+					positions_symlink = positions_symlink_with_path[len(Options.config['cache_path']) + 1:]
+					positions_symlinks.append(positions_symlink)
+
+					media_symlink_with_path =  determine_symlink_name(os.path.join(
+						complex_dir,
+						album.media_json_file
+					))
+					media_symlink = media_symlink_with_path[len(Options.config['cache_path']) + 1:]
+					media_symlinks.append(media_symlink)
 
 				for symlink in symlinks:
 					self.all_json_files.append(symlink)
-				for position_symlink in position_symlinks:
-					self.all_json_files.append(position_symlink)
+				for positions_symlink in positions_symlinks:
+					self.all_json_files.append(positions_symlink)
+				for media_symlink in media_symlinks:
+					self.all_json_files.append(media_symlink)
 
 		self.all_json_files.append(json_name)
 		self.all_json_files.append(json_positions_name)
+		self.all_json_files.append(json_media_name)
 
-		album.to_json_file(json_name, json_positions_name, symlinks, position_symlinks, complex_identifiers_combination)
+		album.to_json_file(
+			json_name,
+			json_positions_name,
+			json_media_name,
+			symlinks,
+			positions_symlinks,
+			media_symlinks,
+			complex_identifiers_combination
+		)
+
 
 	def generate_by_date_albums(self, origin_album):
 		next_level()

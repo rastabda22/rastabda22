@@ -170,6 +170,10 @@ class Album(object):
 		return self.cache_base + ".positions.json"
 
 	@property
+	def media_json_file(self):
+		return self.cache_base + ".media.json"
+
+	@property
 	def subdir(self):
 		return self._subdir
 
@@ -364,43 +368,74 @@ class Album(object):
 			back_level()
 		return protected_albums
 
-	def to_json_file(self, json_name, json_positions_name, symlinks, position_symlinks, complex_identifiers_combination = None):
-		save_message_1 = "saving album..."
-		save_message_2 = "album saved"
-		save_message_3 = "saving positions album..."
-		save_message_4 = "positions album saved"
+	def to_json_file(self, json_name, positions_json_name, media_json_name, symlinks, positions_symlinks, media_symlinks, complex_identifiers_combination = None):
+		save_begin = "saving album..."
+		save_end = "album saved"
+		save_positions_begin = "saving positions album..."
+		save_positions_end = "positions album saved"
+		save_media_begin = "saving media album..."
+		save_media_end = "media album saved"
 		if complex_identifiers_combination is not None:
-			save_message_1 = "saving protected album..."
-			save_message_2 = "protected album saved"
-			save_message_3 = "saving protected positions album..."
-			save_message_4 = "protected positions album  saved"
+			save_begin = "saving protected album..."
+			save_end = "protected album saved"
+			save_positions_begin = "saving protected positions album..."
+			save_positions_end = "protected positions album  saved"
+			save_media_begin = "saving protected media album..."
+			save_media_end = "protected media album  saved"
+
+		message("sorting album and media...", "", 5)
+		self.sort_subalbums_and_media()
+		indented_message("album and media sorted", self.absolute_path, 4)
+
+		# media and positions: if few, they can be saved inside the normal json file
+		# otherwise, save them in its own files
+
+		separate_positions = False
+		if self.positions_and_media_in_tree.count_media() > Options.max_media_from_positions_in_json_file:
+			separate_positions = True
+		separate_media = False
+		if len(self.media) > Options.max_media_in_json_file:
+			separate_media = True
 
 		json_file_with_path = os.path.join(Options.config['cache_path'], json_name)
 		if os.path.exists(json_file_with_path) and not os.access(json_file_with_path, os.W_OK):
 			message("FATAL ERROR", json_file_with_path + " not writable, quitting", 0)
 			sys.exit(-97)
-		json_positions_file_with_path = os.path.join(Options.config['cache_path'], json_positions_name)
-		if os.path.exists(json_positions_file_with_path) and not os.access(json_positions_file_with_path, os.W_OK):
-			message("FATAL ERROR", json_positions_file_with_path + " not writable, quitting", 0)
-			sys.exit(-97)
-		message("sorting album and media...", "", 5)
-		self.sort_subalbums_and_media()
-		indented_message("album and media sorted", self.absolute_path, 4)
-		message(save_message_1, "", 5)
+		message(save_begin, "", 5)
 		with open(json_file_with_path, 'w') as file:
-			json.dump(self, file, cls=PhotoAlbumEncoder)
+			json.dump(self, file, sep_pos = separate_positions, sep_media = separate_media, cls = PhotoAlbumEncoder)
 		for symlink in symlinks:
 			symlink_with_path = os.path.join(Options.config['cache_path'], symlink)
 			os.symlink(json_file_with_path, symlink_with_path)
-		indented_message(save_message_2, "", 4)
-		message(save_message_3, "", 5)
-		with open(json_positions_file_with_path, 'w') as positions_file:
-			cache_base_root = self.cache_base.split(Options.config['cache_folder_separator'])[0]
-			json.dump(self.positions_and_media_in_tree, positions_file, type = cache_base_root, cls=PhotoAlbumEncoder)
-		for symlink in position_symlinks:
-			symlink_with_path = os.path.join(Options.config['cache_path'], symlink)
-			os.symlink(json_positions_file_with_path, symlink_with_path)
-		indented_message(save_message_4, "", 4)
+		indented_message(save_end, "", 4)
+
+		if separate_positions:
+			json_positions_file_with_path = os.path.join(Options.config['cache_path'], positions_json_name)
+			if os.path.exists(json_positions_file_with_path) and not os.access(json_positions_file_with_path, os.W_OK):
+				message("FATAL ERROR", json_positions_file_with_path + " not writable, quitting", 0)
+				sys.exit(-97)
+			message(save_positions_begin, "", 5)
+			with open(json_positions_file_with_path, 'w') as positions_file:
+				cache_base_root = self.cache_base.split(Options.config['cache_folder_separator'])[0]
+				json.dump(self.positions_and_media_in_tree, positions_file, type = cache_base_root, cls = PhotoAlbumEncoder)
+			for symlink in position_symlinks:
+				symlink_with_path = os.path.join(Options.config['cache_path'], symlink)
+				os.symlink(json_positions_file_with_path, symlink_with_path)
+			indented_message(save_positions_end, "", 4)
+
+		if separate_media:
+			json_media_file_with_path = os.path.join(Options.config['cache_path'], media_json_name)
+			if os.path.exists(json_media_file_with_path) and not os.access(json_media_file_with_path, os.W_OK):
+				message("FATAL ERROR", json_media_file_with_path + " not writable, quitting", 0)
+				sys.exit(-97)
+			message(save_media_begin, "", 5)
+			with open(json_media_file_with_path, 'w') as media_file:
+				cache_base_root = self.cache_base.split(Options.config['cache_folder_separator'])[0]
+				json.dump(self.positions_and_media_in_tree, media_file, type = cache_base_root, cls = PhotoAlbumEncoder)
+			for symlink in position_symlinks:
+				symlink_with_path = os.path.join(Options.config['cache_path'], symlink)
+				os.symlink(json_media_file_with_path, symlink_with_path)
+			indented_message(save_media_end, "", 4)
 
 	@staticmethod
 	def from_json_files(json_files):
@@ -412,47 +447,52 @@ class Album(object):
 		must_process_passwords = False
 		for json_file in json_files:
 			with open(json_file, "r") as filepath:
-				try:
-					json_file_dict = json.load(filepath)
-				except ValueError:
-					indented_message("json file empty: why???", json_file, 4)
-					back_level()
-					return [None, True]
-				codes_combinations = json_file_dict['numsProtectedMediaInSubTree'].keys()
-				if len(codes_combinations) != len(json_files):
-					indented_message("not an album cache hit", "some protected or unprotected json file is missing", 4)
-					back_level()
-					return [None, True]
+				# try:
+				json_file_dict = json.load(filepath)
+				# except ValueError:
+				# 	indented_message("json file empty: why???", json_file, 4)
+				# 	back_level()
+				# 	return [None, True]
+			codes_combinations = json_file_dict['numsProtectedMediaInSubTree'].keys()
+			if len(codes_combinations) != len(json_files):
+				indented_message("not an album cache hit", "some protected or unprotected json file is missing", 4)
+				back_level()
+				return [None, True]
 
-				if "jsonVersion" not in json_file_dict:
-					indented_message("not an album cache hit", "unexistent json_version", 4)
-					Options.set_obsolete_json_version_flag()
-					return [None, True]
-				elif json_file_dict["jsonVersion"] != Options.json_version:
-					indented_message("not an album cache hit", "old json_version value", 4)
-					Options.set_obsolete_json_version_flag()
-					return [None, True]
+			if "jsonVersion" not in json_file_dict:
+				indented_message("not an album cache hit", "unexistent json_version", 4)
+				Options.set_obsolete_json_version_flag()
+				return [None, True]
+			elif json_file_dict["jsonVersion"] != Options.json_version:
+				indented_message("not an album cache hit", "old json_version value", 4)
+				Options.set_obsolete_json_version_flag()
+				return [None, True]
 
-				if "combination" in json_file_dict:
-					for i in range(len(json_file_dict['media'])):
-						album_codes_combination = json_file_dict['combination'].split(',')[0]
-						media_codes_combination = json_file_dict['combination'].split(',')[1]
-						album_identifiers_set = convert_old_codes_set_to_identifiers_set(convert_combination_to_set(album_codes_combination))
-						media_identifiers_set = convert_old_codes_set_to_identifiers_set(convert_combination_to_set(media_codes_combination))
-						if media_identifiers_set is None or album_identifiers_set is None:
-							indented_message("passwords must be processed", "error in going up from code to identifier", 4)
-							must_process_passwords = True
-							break
-						else:
-							json_file_dict['password_identifiers_set'] = album_identifiers_set
-							json_file_dict['media'][i]['password_identifiers_set'] = media_identifiers_set
-							json_file_dict['media'][i]['album_identifiers_set'] = album_identifiers_set
-				else:
-					for i in range(len(json_file_dict['media'])):
-						json_file_dict['media'][i]['password_identifiers_set'] = set()
-						json_file_dict['media'][i]['album_identifiers_set'] = set()
-					json_file_dict['password_identifiers_set'] = set()
-				dictionary = merge_albums_dictionaries_from_json_files(dictionary, json_file_dict)
+			if "media" not in json_file_dict:
+				media_json_file = calculate_media_file_name(json_file)
+				with open(media_json_file, "r") as media_filepath:
+					json_file_dict["media"] = json.load(media_filepath)
+
+			if "combination" in json_file_dict:
+				for i in range(len(json_file_dict['media'])):
+					album_codes_combination = json_file_dict['combination'].split(',')[0]
+					media_codes_combination = json_file_dict['combination'].split(',')[1]
+					album_identifiers_set = convert_old_codes_set_to_identifiers_set(convert_combination_to_set(album_codes_combination))
+					media_identifiers_set = convert_old_codes_set_to_identifiers_set(convert_combination_to_set(media_codes_combination))
+					if media_identifiers_set is None or album_identifiers_set is None:
+						indented_message("passwords must be processed", "error in going up from code to identifier", 4)
+						must_process_passwords = True
+						break
+					else:
+						json_file_dict['password_identifiers_set'] = album_identifiers_set
+						json_file_dict['media'][i]['password_identifiers_set'] = media_identifiers_set
+						json_file_dict['media'][i]['album_identifiers_set'] = album_identifiers_set
+			else:
+				for i in range(len(json_file_dict['media'])):
+					json_file_dict['media'][i]['password_identifiers_set'] = set()
+					json_file_dict['media'][i]['album_identifiers_set'] = set()
+				json_file_dict['password_identifiers_set'] = set()
+			dictionary = merge_albums_dictionaries_from_json_files(dictionary, json_file_dict)
 
 		indented_message("album read from json files", files, 5)
 		back_level()
@@ -495,7 +535,7 @@ class Album(object):
 		return album
 
 
-	def to_dict(self):
+	def to_dict(self, separate_positions, separate_media):
 		self.sort_subalbums_and_media()
 		subalbums = []
 
@@ -590,7 +630,6 @@ class Album(object):
 			"cacheSubdir": self._subdir,
 			"date": self.date_string,
 			"subalbums": subalbums,
-			"media": self.media_list,
 			"cacheBase": self.cache_base,
 			"ancestorsCacheBase": ancestors_cache_base,
 			"ancestorsNames": ancestors_names,
@@ -599,7 +638,6 @@ class Album(object):
 			"numMediaInSubTree": self.num_media_in_sub_tree,
 			# "numsProtectedMediaInSubTree": self.nums_protected_media_in_sub_tree,
 			"numPositionsInTree": len(self.positions_and_media_in_tree.positions),
-			# "positionsAndMediaInTree": self.positions_and_media_in_tree,
 			"albumIniMTime": self.album_ini_mtime,
 			"passwordMarkerMTime": self.passwords_marker_mtime,
 			"jsonVersion": Options.json_version
@@ -622,6 +660,12 @@ class Album(object):
 			album_codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination)))
 			codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(media_identifiers_combination)))
 			dictionary["combination"] = complex_combination(album_codes_combination, codes_combination)
+		if not separate_positions:
+			dictionary["positionsAndMediaInTree"] = self.positions_and_media_in_tree
+		if not separate_media:
+			dictionary["media"] = self.media_list
+		else:
+			dictionary["numMedia"] = len(self.media_list)
 
 		if hasattr(self, "center"):
 			dictionary["center"] = self.center
@@ -788,6 +832,12 @@ class Positions(object):
 		new_positions = Positions(None)
 		new_positions.positions = [position.copy() for position in self.positions]
 		return new_positions
+
+	def count_media(self):
+		count = 0
+		for position in self.positions:
+			count += len(position.mediaNameList)
+		return count
 
 
 class NumsProtected(object):
@@ -2292,9 +2342,11 @@ class Media(object):
 
 class PhotoAlbumEncoder(json.JSONEncoder):
 	# the _init_ function is in order to pass an argument in json.dumps
-	def __init__(self, type = None, **kwargs):
+	def __init__(self, sep_pos = False, sep_media = False, type = None, **kwargs):
 		super(PhotoAlbumEncoder, self).__init__(**kwargs)
 		self.type = type
+		self.separate_positions = sep_pos
+		self.separate_media = sep_media
 
 	def default(self, obj):
 		if isinstance(obj, datetime):
@@ -2304,7 +2356,9 @@ class PhotoAlbumEncoder(json.JSONEncoder):
 			date = str(obj.year) + '-' + str(obj.month).zfill(2) + '-' + str(obj.day).zfill(2)
 			date = date + ' ' + str(obj.hour).zfill(2) + ':' + str(obj.minute).zfill(2) + ':' + str(obj.second).zfill(2)
 			return date
-		if isinstance(obj, Album) or isinstance(obj, Media):
+		if isinstance(obj, Album):
+			return obj.to_dict(self.separate_positions, self.separate_media)
+		if isinstance(obj, Media):
 			return obj.to_dict()
 		if isinstance(obj, Positions):
 			return obj.to_dict(self.type)

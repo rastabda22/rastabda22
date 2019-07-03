@@ -74,6 +74,8 @@ face_cascade = None
 eye_cascade = None
 config['available_map_popup_positions'] = ['SE', 'NW' ]
 max_random = 1000000000
+max_media_in_json_file = 20
+max_media_from_positions_in_json_file = 20
 
 
 # set this variable to a new value (previously was a number, now it may include letters)

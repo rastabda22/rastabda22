@@ -37,7 +37,7 @@ def next_file_name(file_name_with_path):
 	file_name_with_path_list = file_name_with_path.split('.')
 	file_name = os.path.basename(file_name_with_path)
 	file_name_list = file_name.split('.')
-	is_positions = (file_name_list[-2] == 'positions')
+	is_positions = (file_name_list[-2] == 'positions' or file_name_list[-2] == 'media')
 	if is_positions:
 		subtract = 1
 	else:
@@ -83,6 +83,17 @@ def json_files_and_mtime(cache_base):
 			protected_json_file_with_path = next_file_name(protected_json_file_with_path)
 
 	return [json_file_list, global_mtime]
+
+def determine_symlink_name(symlink):
+	while (os.path.isfile(symlink)):
+		# symlink = '.'.join(first_part + [str(n)] + symlink_list[-1 - subtract:])
+		symlink = next_file_name(symlink)
+		# n += 1
+	return symlink
+
+def calculate_media_file_name(json_file_name):
+	splitted_json_file_name = json_file_name.split('.')
+	return '.'.join(splitted_json_file_name[:-1]) + ".media.json"
 
 def convert_combination_to_set(combination):
 	if combination == '':
