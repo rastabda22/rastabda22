@@ -523,6 +523,11 @@
 			// we must use getAlbum() because the album could not be in the cache yet (as when ctl-r is pressed)
 			phFl.getAlbum(
 				searchFolderHash,
+				// getPositions
+				true,
+				// getMedia
+				true,
+				// success
 				function(theAlbum) {
 					var whereLinks = '', thisCacheBase, name, documentTitle;
 
@@ -1638,9 +1643,9 @@
 
 
 	TopFunctions.showAlbum = function(populate) {
-		function insertRandomImage(randomAlbum, randomMedia, subalbum, id, resolve) {
+		function insertRandomImage(randomSubAlbum, randomMedia, subalbum, id, resolve) {
 			var titleName, randomMediaLink, goTo, humanGeonames;
-			var mediaSrc = util.chooseThumbnail(randomAlbum, randomMedia, Options.album_thumb_size);
+			var mediaSrc = util.chooseThumbnail(randomSubAlbum, randomMedia, Options.album_thumb_size);
 
 			phFl.subalbumIndex ++;
 			mediaWidth = randomMedia.metadata.size[0];
@@ -1677,7 +1682,7 @@
 				titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
 				// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, randomMedia.cacheBase]);
 			}
-			randomMediaLink = phFl.encodeHash(randomAlbum, randomMedia);
+			randomMediaLink = phFl.encodeHash(randomSubAlbum, randomMedia);
 
 			titleName = titleName.substr(titleName.indexOf('/') + 1);
 			goTo = util._t(".go-to") + " " + titleName;

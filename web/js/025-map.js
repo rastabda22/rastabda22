@@ -356,6 +356,11 @@
 				photosInAlbum = photosByAlbum[albumCacheBase];
 				phFl.getAlbum(
 					albumCacheBase,
+					// getPositions
+					true,
+					// getMedia
+					true,
+					// success
 					function(theAlbum, photosInAlbum) {
 						for(mediaIndex = 0; mediaIndex < theAlbum.media.length; mediaIndex ++) {
 							for(photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
