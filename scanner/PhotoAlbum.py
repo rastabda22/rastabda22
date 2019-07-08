@@ -418,7 +418,7 @@ class Album(object):
 			with open(json_positions_file_with_path, 'w') as positions_file:
 				cache_base_root = self.cache_base.split(Options.config['cache_folder_separator'])[0]
 				json.dump(self.positions_and_media_in_tree, positions_file, type = cache_base_root, cls = PhotoAlbumEncoder)
-			for symlink in position_symlinks:
+			for symlink in positions_symlinks:
 				symlink_with_path = os.path.join(Options.config['cache_path'], symlink)
 				os.symlink(json_positions_file_with_path, symlink_with_path)
 			indented_message(save_positions_end, "", 4)
@@ -432,7 +432,7 @@ class Album(object):
 			with open(json_media_file_with_path, 'w') as media_file:
 				cache_base_root = self.cache_base.split(Options.config['cache_folder_separator'])[0]
 				json.dump(self.positions_and_media_in_tree, media_file, type = cache_base_root, cls = PhotoAlbumEncoder)
-			for symlink in position_symlinks:
+			for symlink in media_symlinks:
 				symlink_with_path = os.path.join(Options.config['cache_path'], symlink)
 				os.symlink(json_media_file_with_path, symlink_with_path)
 			indented_message(save_media_end, "", 4)
