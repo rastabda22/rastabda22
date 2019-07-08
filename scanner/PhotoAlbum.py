@@ -431,7 +431,7 @@ class Album(object):
 			message(save_media_begin, "", 5)
 			with open(json_media_file_with_path, 'w') as media_file:
 				cache_base_root = self.cache_base.split(Options.config['cache_folder_separator'])[0]
-				json.dump(self.positions_and_media_in_tree, media_file, type = cache_base_root, cls = PhotoAlbumEncoder)
+				json.dump(self.media, media_file, type = cache_base_root, cls = PhotoAlbumEncoder)
 			for symlink in media_symlinks:
 				symlink_with_path = os.path.join(Options.config['cache_path'], symlink)
 				os.symlink(json_media_file_with_path, symlink_with_path)
