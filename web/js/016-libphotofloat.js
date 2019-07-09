@@ -305,7 +305,7 @@
 							for (iComplex = 0; iComplex < complexPasswordMd5List.length; iComplex ++) {
 								if (album.includedProtectedDirectories.indexOf(complexPasswordMd5List[iComplex]) !== -1) {
 									if (iComplex == complexPasswordMd5List.length - 1)
-										incrementCounterAndGoOnIfEndReached()
+										incrementCounterAndGoOnIfEndReached();
 									continue;
 								}
 								protectedAlbumCacheBase = Options.protected_directories_prefix + complexPasswordMd5List[iComplex] + '/' + album.cacheBase;
