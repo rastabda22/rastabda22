@@ -45,24 +45,26 @@
 			Options.js_cache_levels = PhotoFloat.js_cache_levels;
 
 		var done = false, level, cacheLevelsLength = Options.js_cache_levels.length, firstKey;
-		for (level = 0; level < cacheLevelsLength; level ++) {
-	 		if (album.media.length >= Options.js_cache_levels[level].numMedia) {
-				if (! PhotoFloat.cache.albums.hasOwnProperty(level)) {
-					PhotoFloat.cache.albums[level] = [];
-					PhotoFloat.cache.albums[level].queue = [];
+		if (album.hasOwnProperty("media")) {
+			for (level = 0; level < cacheLevelsLength; level ++) {
+		 		if (album.media.length >= Options.js_cache_levels[level].numMedia) {
+					if (! PhotoFloat.cache.albums.hasOwnProperty(level)) {
+						PhotoFloat.cache.albums[level] = [];
+						PhotoFloat.cache.albums[level].queue = [];
+					}
+					if (PhotoFloat.cache.albums[level].queue.length >= Options.js_cache_levels[level].max) {
+						// remove the first element
+						firstKey = PhotoFloat.cache.albums[level].queue[0];
+						PhotoFloat.cache.albums[level].queue.shift();
+						delete PhotoFloat.cache.albums.index[firstKey];
+						delete PhotoFloat.cache.albums[level][firstKey];
+					}
+					PhotoFloat.cache.albums.index[albumCacheBase] = level;
+					PhotoFloat.cache.albums[level].queue.push(albumCacheBase);
+					PhotoFloat.cache.albums[level][albumCacheBase] = album;
+					done = true;
+					break;
 				}
-				if (PhotoFloat.cache.albums[level].queue.length >= Options.js_cache_levels[level].max) {
-					// remove the first element
-					firstKey = PhotoFloat.cache.albums[level].queue[0];
-					PhotoFloat.cache.albums[level].queue.shift();
-					delete PhotoFloat.cache.albums.index[firstKey];
-					delete PhotoFloat.cache.albums[level][firstKey];
-				}
-				PhotoFloat.cache.albums.index[albumCacheBase] = level;
-				PhotoFloat.cache.albums[level].queue.push(albumCacheBase);
-				PhotoFloat.cache.albums[level][albumCacheBase] = album;
-				done = true;
-				break;
 			}
 		}
 		if (! done) {
@@ -215,7 +217,7 @@
 			);
 		}
 
-		function getAlbumFromCacheBaseWithPositionsAndMedia(albumCacheBase, goOn, error, data) {
+		function getAlbumFromFileSystem(albumCacheBase, goOn, error, data) {
 			// this function is needed - without getting the protected content - in order to get the protected albums too
 			var jsonFile = albumCacheBase + ".json";
 			PhotoFloat.getJsonFile(
@@ -242,15 +244,6 @@
 			);
 		}
 
-		function getAlbumFromCacheBaseWithPositionsAndMediaAndProtectedContent(albumCacheBase, next) {
-			getAlbumFromCacheBaseWithPositionsAndMedia(
-				albumCacheBase,
-				function(theAlbum) {
-					addProtectedContent(theAlbum, next);
-				}
-			);
-		}
-
 		function addProtectedContent(album, next, data) {
 			function incrementCounterAndGoOnIfEndReached() {
 				nPassword ++;
@@ -261,8 +254,9 @@
 			}
 
 			var thePasswordsToGet = [];
-			thePasswordsToGet = PhotoFloat.passwordsToGet(album);
-			if (thePasswordsToGet.length == 0) {
+			thePasswordsToGet = PhotoFloat.guessedPasswordsMd5;
+			// thePasswordsToGet = PhotoFloat.passwordsToGet(album);
+			if (thePasswordsToGet.length == 0 && ! album.hasOwnProperty("empty")) {
 				PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
 				next(album, data);
 			} else {
@@ -315,7 +309,7 @@
 									"albumGuessedPassword": albumGuessedPassword,
 									"guessedPassword": guessedPassword
 								};
-								getAlbumFromCacheBaseWithPositionsAndMedia(
+								getAlbumFromFileSystem(
 									protectedAlbumCacheBase,
 									function(protectedAlbum, data) {
 										function mergeSubalbums(album1, album2) {
@@ -364,7 +358,7 @@
 											else
 												symlinkCacheBase = albumCacheBase.split('.').slice(0, -1).join('.') + '.' + nLink;
 
-											getAlbumFromCacheBaseWithPositionsAndMedia(
+											getAlbumFromFileSystem(
 												symlinkCacheBase,
 												function(nextAlbum) {
 													if (nextAlbum === false) {
@@ -446,14 +440,16 @@
 				if (! theAlbum.hasOwnProperty("positionsAndMediaInTree"))
 					theAlbum.numPositionsInTree = 0;
 
-				for (i = theAlbum.media.length - 1; i >= 0; i --) {
-					// remove unnecessary properties
-					var unnecessaryProperties = ['checksum', 'dateTimeDir', 'dateTimeFile'];
-					for (j = 0; j < unnecessaryProperties.length; j ++)
-						delete theAlbum.media[i][unnecessaryProperties[j]];
+				if (theAlbum.hasOwnProperty("media")) {
+					for (i = theAlbum.media.length - 1; i >= 0; i --) {
+						// remove unnecessary properties
+						var unnecessaryProperties = ['checksum', 'dateTimeDir', 'dateTimeFile'];
+						for (j = 0; j < unnecessaryProperties.length; j ++)
+							delete theAlbum.media[i][unnecessaryProperties[j]];
 
-					// add parent album
-					theAlbum.media[i].parent = theAlbum;
+						// add parent album
+						theAlbum.media[i].parent = theAlbum;
+					}
 				}
 			}
 
@@ -502,6 +498,7 @@
 		}
 		///////////////////////////////////////////////////
 		// begin getAlbum function code
+		// PhotoFloat.getAlbum = function(albumCacheBase, getPositions, getMedia, getAlbumCallback, error, thisIndexWords, thisIndexAlbums) {
 		///////////////////////////////////////////////////
 		var baseJsonFileExists = true;
 
@@ -525,7 +522,13 @@
 				}
 			);
 		} else {
-			getAlbumFromCacheBaseWithPositionsAndMediaAndProtectedContent(albumCacheBase, executeCallback);
+			getAlbumFromFileSystem(
+				albumCacheBase,
+				function(theAlbum) {
+					addProtectedContent(theAlbum, executeCallback);
+				}
+			);
+
 		}
 	};
 
