@@ -1035,38 +1035,40 @@
 			thisAlbum.albumReverseSort = ! thisAlbum.albumReverseSort;
 		}
 
-		if (Functions.needMediaNameSort(thisAlbum)) {
-			thisAlbum.media = Utilities.sortByName(thisAlbum.media);
-			thisAlbum.mediaNameSort = true;
-			thisAlbum.mediaReverseSort = false;
-			if (currentMedia !== null) {
-				currentMediaIndex = thisAlbum.media.findIndex(
-					function(thisMedia) {
-						var matches =
-							thisMedia.cacheBase == currentMedia.cacheBase && thisMedia.foldersCacheBase == currentMedia.foldersCacheBase;
-						return matches;
-					}
-				);
+		if (thisAlbum.hasOwnProperty("media")) {
+			if (Functions.needMediaNameSort(thisAlbum)) {
+				thisAlbum.media = Utilities.sortByName(thisAlbum.media);
+				thisAlbum.mediaNameSort = true;
+				thisAlbum.mediaReverseSort = false;
+				if (currentMedia !== null) {
+					currentMediaIndex = thisAlbum.media.findIndex(
+						function(thisMedia) {
+							var matches =
+								thisMedia.cacheBase == currentMedia.cacheBase && thisMedia.foldersCacheBase == currentMedia.foldersCacheBase;
+							return matches;
+						}
+					);
+				}
+			} else if (Functions.needMediaDateSort(thisAlbum)) {
+				thisAlbum.media = Utilities.sortByDate(thisAlbum.media);
+				thisAlbum.mediaNameSort = false;
+				thisAlbum.mediaReverseSort = false;
+				if (currentMedia !== null) {
+					currentMediaIndex = thisAlbum.media.findIndex(
+						function(thisMedia) {
+							var matches =
+								thisMedia.cacheBase == currentMedia.cacheBase && thisMedia.foldersCacheBase == currentMedia.foldersCacheBase;
+							return matches;
+						}
+					);
+				}
 			}
-		} else if (Functions.needMediaDateSort(thisAlbum)) {
-			thisAlbum.media = Utilities.sortByDate(thisAlbum.media);
-			thisAlbum.mediaNameSort = false;
-			thisAlbum.mediaReverseSort = false;
-			if (currentMedia !== null) {
-				currentMediaIndex = thisAlbum.media.findIndex(
-					function(thisMedia) {
-						var matches =
-							thisMedia.cacheBase == currentMedia.cacheBase && thisMedia.foldersCacheBase == currentMedia.foldersCacheBase;
-						return matches;
-					}
-				);
+			if (Functions.needMediaDateReverseSort(thisAlbum) || Functions.needMediaNameReverseSort(thisAlbum)) {
+				thisAlbum.media = Utilities.sortReverse(thisAlbum.media);
+				thisAlbum.mediaReverseSort = ! thisAlbum.mediaReverseSort;
+				if (typeof currentMediaIndex !== "undefined" && currentMediaIndex != -1)
+					currentMediaIndex = thisAlbum.media.length - 1 - currentMediaIndex;
 			}
-		}
-		if (Functions.needMediaDateReverseSort(thisAlbum) || Functions.needMediaNameReverseSort(thisAlbum)) {
-			thisAlbum.media = Utilities.sortReverse(thisAlbum.media);
-			thisAlbum.mediaReverseSort = ! thisAlbum.mediaReverseSort;
-			if (typeof currentMediaIndex !== "undefined" && currentMediaIndex != -1)
-				currentMediaIndex = thisAlbum.media.length - 1 - currentMediaIndex;
 		}
 	};
 
@@ -1080,14 +1082,14 @@
 		if (typeof thisAlbum.albumNameSort === "undefined") {
 			thisAlbum.albumNameSort = false;
 		}
-		if (typeof thisAlbum.albumReverseSort === "undefined"){
+		if (typeof thisAlbum.albumReverseSort === "undefined") {
 			thisAlbum.albumReverseSort = false;
 		}
 
 		if (typeof thisAlbum.mediaNameSort === "undefined") {
 			thisAlbum.mediaNameSort = false;
 		}
-		if (typeof thisAlbum.mediaReverseSort === "undefined"){
+		if (typeof thisAlbum.mediaReverseSort === "undefined") {
 			thisAlbum.mediaReverseSort = false;
 		}
 
