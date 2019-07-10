@@ -1283,13 +1283,13 @@ class TreeWalker:
 				message("calculating checksum...", "", 5)
 				with open(entry_with_path, 'rb') as media_path_pointer:
 					media_checksum = checksum(media_path_pointer)
-				indented_message("checksum calculated", "", 5)
+				indented_message("checksum calculated!", "", 5)
 
 			if not album_cache_hit:
 				indented_message("not a single media cache hit", "json file invalid", 5)
 				single_media_cache_hit = False
 			else:
-				next_level()
+				# next_level()
 				message("getting media from cached album...", "", 5)
 				cached_media = cached_album.media_from_path(entry_with_path)
 				if cached_media is None:
@@ -1359,7 +1359,7 @@ class TreeWalker:
 								indented_message("not a single media cache hit", "thumbnail recreation requested", 4)
 								single_media_cache_hit = False
 								break
-				back_level()
+				# back_level()
 
 			if single_media_cache_hit:
 				single_media = cached_media
@@ -1528,7 +1528,7 @@ class TreeWalker:
 			next_level()
 			message("adding album to albums list...", "", 5)
 			Options.all_albums.append(album)
-			indented_message("album added to albums list", "", 4)
+			indented_message("album added to albums list!", "", 4)
 			back_level()
 		else:
 			message("VOID: no media in this directory", os.path.basename(absolute_path), 4)
