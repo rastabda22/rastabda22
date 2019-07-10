@@ -359,33 +359,33 @@ class Album(object):
 			next_level()
 			album_identifiers_combination, media_identifiers_combination = complex_identifiers_combination.split(',')
 			album_identifiers_combination_set = convert_combination_to_set(album_identifiers_combination)
-			message("working with combination...", album_identifiers_combination + "," + media_identifiers_combination, 5)
+			message("working with complex combination...", album_identifiers_combination + "," + media_identifiers_combination, 5)
 
 			identifiers_combination_set = convert_combination_to_set(media_identifiers_combination)
 			protected_albums[complex_identifiers_combination] = self.copy()
 			protected_albums[complex_identifiers_combination].leave_only_content_protected_by(album_identifiers_combination_set, identifiers_combination_set)
-			indented_message("permutation worked out!", album_identifiers_combination + "," + media_identifiers_combination, 4)
+			indented_message("complex combination worked out!", album_identifiers_combination + "," + media_identifiers_combination, 4)
 			back_level()
 		return protected_albums
 
 	def to_json_file(self, json_name, positions_json_name, media_json_name, symlinks, positions_symlinks, media_symlinks, complex_identifiers_combination = None):
 		save_begin = "saving album..."
-		save_end = "album saved"
+		save_end = "album saved!"
 		save_positions_begin = "saving positions album..."
-		save_positions_end = "positions album saved"
+		save_positions_end = "positions album saved!"
 		save_media_begin = "saving media album..."
-		save_media_end = "media album saved"
+		save_media_end = "media album saved!"
 		if complex_identifiers_combination is not None:
 			save_begin = "saving protected album..."
-			save_end = "protected album saved"
+			save_end = "protected album saved!"
 			save_positions_begin = "saving protected positions album..."
-			save_positions_end = "protected positions album  saved"
+			save_positions_end = "protected positions album  saved!"
 			save_media_begin = "saving protected media album..."
-			save_media_end = "protected media album  saved"
+			save_media_end = "protected media album  saved!"
 
-		message("sorting album and media...", "", 5)
+		message("sorting album and media...", self.absolute_path, 4)
 		self.sort_subalbums_and_media()
-		indented_message("album and media sorted", self.absolute_path, 4)
+		indented_message("album and media sorted!", "", 5)
 
 		# media and positions: if few, they can be saved inside the normal json file
 		# otherwise, save them in its own files

@@ -27,7 +27,7 @@ def make_dir(absolute_path, message_part):
 			os.makedirs(absolute_path)
 			indented_message(message_part + " created", relative_path, 4)
 			os.chmod(absolute_path, 0o777)
-			message("permissions set", "", 5)
+			indented_message("permissions set", "", 5)
 		except OSError:
 			message("FATAL ERROR", "couldn't create " + message_part, "('" + relative_path + "')' quitting", 0)
 			sys.exit(-97)
@@ -143,12 +143,14 @@ def convert_md5_to_identifier(md5):
 	return identifier
 
 def save_password_codes():
+	message("Working with password files...", "", 3)
+	next_level()
 	# remove the old single password files
 	passwords_subdir_with_path = os.path.join(Options.config['cache_path'], Options.config['passwords_subdir'])
-	message("Removing old password files...","", 5)
+	message("Removing old password files...", "", 5)
 	for password_file in sorted(os.listdir(passwords_subdir_with_path)):
 		os.unlink(os.path.join(passwords_subdir_with_path, password_file))
-	message("Old password files removed","", 4)
+	indented_message("Old password files removed", "", 4)
 
 	# create the new single password files
 	for identifier_and_password in Options.identifiers_and_passwords:
@@ -159,6 +161,8 @@ def save_password_codes():
 			with open(os.path.join(passwords_subdir_with_path, password_md5), 'w') as password_file:
 				json.dump({"passwordCode": password_code}, password_file)
 			indented_message("New password file created", password_md5, 4)
+	back_level()
+	message("Password files worked!", "", 3)
 
 
 def merge_albums_dictionaries_from_json_files(dict, dict1):

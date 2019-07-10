@@ -123,7 +123,7 @@ class TreeWalker:
 
 			message("reducing unprotected content albums...", "", 4)
 			self.origin_album.leave_only_unprotected_content()
-			message("unprotected content albums reduced", "", 5)
+			indented_message("unprotected content albums reduced!", "", 5)
 			report_mem()
 
 			self.time_of_album_saving = datetime.now()
@@ -136,8 +136,8 @@ class TreeWalker:
 				# except UnboundLocalError:
 				# 	pass
 
-			message("all unprotected albums saved to json files", "", 5)
 			back_level()
+			message("all unprotected albums saved to json files!", "", 5)
 			report_mem()
 
 			message("deleting old protected content directories...", "", 5)
@@ -163,25 +163,14 @@ class TreeWalker:
 				md5_combination = convert_set_to_combination(convert_identifiers_set_to_md5s_set(convert_combination_to_set(media_identifiers_combination)))
 				total_md5_combination = complex_combination(album_md5_combination, md5_combination)
 
+				message("saving protected albums for identifiers...", "album ident. = " + album_identifiers_combination + ", media ident. = " + media_identifiers_combination + ", md5's = '" + total_md5_combination + "'", 4)
 				next_level()
-				if album_identifiers_combination == '':
-					message("saving protected albums for identifiers...", "identifiers = " + media_identifiers_combination + ", md5's = " + total_md5_combination, 4)
-				else:
-					message("saving protected albums for identifiers...", "album identifiers = " + album_identifiers_combination + ", identifiers = " + media_identifiers_combination + ", md5's = '" + total_md5_combination + "'", 4)
-				next_level()
-				# try:
 				self.all_albums_to_json_file(album, complex_identifiers_combination)
 				back_level()
-				if album_identifiers_combination == '':
-					message("protected albums saved for identifiers", "identifiers = " + media_identifiers_combination + ", md5's = " + total_md5_combination, 4)
-				else:
-					message("protected albums saved for identifiers", "album identifiers = " + album_identifiers_combination + ", identifiers = " + media_identifiers_combination + ", md5's = '" + total_md5_combination + "'", 4)
-				back_level()
-				# except UnboundLocalError:
-				# 	pass
+				message("protected albums saved for identifiers!", "album identif. = " + album_identifiers_combination + ", media ident. = " + media_identifiers_combination + ", md5's = '" + total_md5_combination + "'", 4)
 
-			message("all protected albums saved to json files", "", 5)
 			back_level()
+			message("all protected albums saved to json files", "", 5)
 			report_mem()
 
 			# options must be saved when json files have been saved, otherwise in case of error they may not reflect the json files situation
@@ -199,6 +188,19 @@ class TreeWalker:
 			message("completed", "", 4)
 
 	def all_albums_to_json_file(self, album, complex_identifiers_combination = None):
+		if album.cache_base == Options.config['folders_string']:
+			message("saving all physical albums to json files...", "", 3)
+			next_level()
+		elif album.cache_base == Options.config['by_date_string']:
+			message("saving all by date albums to json files...", "", 3)
+			next_level()
+		elif album.cache_base == Options.config['by_gps_string']:
+			message("saving all by gps albums to json files...", "", 3)
+			next_level()
+		elif album.cache_base == Options.config['by_search_string']:
+			message("saving all search albums to json files...", "", 3)
+			next_level()
+
 		# the subalbums of search albums in by_search_album are regular albums
 		# and they are saved when folders_album is saved, avoid saving them multiple times
 		if (
@@ -213,9 +215,9 @@ class TreeWalker:
 		if album.num_media_in_sub_tree == 0:
 		# if len(album.subalbums) == 0 and len(album.media_list) == 0:
 			if complex_identifiers_combination is None:
-				indented_message("empty album, not saving it", album.name, 4)
+				message("empty album, not saving it", album.absolute_path, 4)
 			else:
-				indented_message("empty protected album, not saving it", album.name, 4)
+				message("empty protected album, not saving it", album.absolute_path, 4)
 			return
 
 		if complex_identifiers_combination is not None:
@@ -226,7 +228,7 @@ class TreeWalker:
 				len(album.password_identifiers_set) > 0 and
 				set(album_identifiers_combination.split("-")) != album.password_identifiers_set
 			):
-				indented_message("album protected by album password, not saving it", album.name, 4)
+				message("album protected by album password, not saving it", album.absolute_path, 4)
 				return
 
 		json_name = album.json_file
@@ -330,6 +332,18 @@ class TreeWalker:
 			media_symlinks,
 			complex_identifiers_combination
 		)
+		if album.cache_base == Options.config['folders_string']:
+			back_level()
+			message("all physical albums saved to json files!", "", 3)
+		elif album.cache_base == Options.config['by_date_string']:
+			back_level()
+			message("all by date albums saved to json files!", "", 3)
+		elif album.cache_base == Options.config['by_gps_string']:
+			back_level()
+			message("all by gps albums saved to json files!", "", 3)
+		elif album.cache_base == Options.config['by_search_string']:
+			back_level()
+			message("all by search albums saved to json files!", "", 3)
 
 
 	def generate_by_date_albums(self, origin_album):
@@ -1682,7 +1696,7 @@ class TreeWalker:
 
 		with open(json_options_file, 'w') as options_file:
 			json.dump(options_to_save, options_file)
-		indented_message("saved json options file", "", 5)
+		indented_message("json options file saved!", "", 5)
 
 
 	def create_keys_for_directories(self, splitted_file_name, dict):
@@ -1708,7 +1722,7 @@ class TreeWalker:
 
 		if not subdir:
 			json_list = json_list_or_dict
-			message("cleaning up, be patient...", "", 3)
+			message("cleaning up...", "", 3)
 			next_level()
 			message("building stale list...", "", 4)
 
@@ -1728,7 +1742,7 @@ class TreeWalker:
 					splitted_file_name = entry.split('/')
 					json_dict = self.create_keys_for_directories(splitted_file_name, json_dict)
 
-			indented_message("stale list built", "", 5)
+			indented_message("stale list built!", "", 5)
 			info = "in cache path"
 
 			deletable_files_re = r"\.json$"
@@ -1801,6 +1815,6 @@ class TreeWalker:
 					continue
 				back_level()
 		if not subdir:
-			message("cleaned", "", 5)
 			back_level()
+			message("cleaned up!", "", 5)
 			back_level()
