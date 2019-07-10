@@ -15,6 +15,7 @@ def file_mtime(path):
 	return datetime.fromtimestamp(int(os.path.getmtime(path)))
 
 def report_mem():
+	return
 	print("MEM total, code, data >>>> " + os.popen("ps -p " + str(os.getpid()) + " -o rss,trs,drs|grep -v DRS").read())
 
 def make_dir(absolute_path, message_part):
