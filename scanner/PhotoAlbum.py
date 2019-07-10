@@ -71,7 +71,7 @@ class Album(object):
 			self.subalbums_list_is_sorted = True
 			self._subdir = ""
 			self.num_media_in_sub_tree = 0
-			self.combination = ''
+			self.complex_combination = ''
 			self.nums_protected_media_in_sub_tree = NumsProtected()
 			self.positions_and_media_in_tree = Positions(None)
 			self.parent_cache_base = None
@@ -328,7 +328,7 @@ class Album(object):
 
 	def leave_only_content_protected_by(self, album_identifiers_set, media_identifiers_set):
 		self.positions_and_media_in_tree = Positions(None)
-		self.combination = complex_combination(convert_set_to_combination(album_identifiers_set), convert_set_to_combination(media_identifiers_set))
+		self.complex_combination = complex_combination(convert_set_to_combination(album_identifiers_set), convert_set_to_combination(media_identifiers_set))
 
 		# for virtual media the physical album password is included in the media, and must be taken into account
 		self.media_list = [single_media for single_media in self.media if single_media.album_identifiers_set == album_identifiers_set and single_media.password_identifiers_set == media_identifiers_set]
@@ -347,8 +347,8 @@ class Album(object):
 				subalbum.leave_only_content_protected_by(album_identifiers_set, media_identifiers_set)
 				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
-		if self.combination in self.nums_protected_media_in_sub_tree.keys():
-			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.combination)
+		if self.complex_combination in self.nums_protected_media_in_sub_tree.keys():
+			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.complex_combination)
 		else:
 			self.num_media_in_sub_tree = 0
 
@@ -473,10 +473,10 @@ class Album(object):
 				with open(media_json_file, "r") as media_filepath:
 					json_file_dict["media"] = json.load(media_filepath)
 
-			if "combination" in json_file_dict:
+			if "complexCombination" in json_file_dict:
 				for i in range(len(json_file_dict['media'])):
-					album_codes_combination = json_file_dict['combination'].split(',')[0]
-					media_codes_combination = json_file_dict['combination'].split(',')[1]
+					album_codes_combination = json_file_dict['complexCombination'].split(',')[0]
+					media_codes_combination = json_file_dict['complexCombination'].split(',')[1]
 					album_identifiers_set = convert_old_codes_set_to_identifiers_set(convert_combination_to_set(album_codes_combination))
 					media_identifiers_set = convert_old_codes_set_to_identifiers_set(convert_combination_to_set(media_codes_combination))
 					if media_identifiers_set is None or album_identifiers_set is None:
@@ -654,12 +654,12 @@ class Album(object):
 				complex_codes_combination = complex_combination(album_codes_combination, codes_combination)
 				nums_protected_by_code[complex_codes_combination] = self.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 		dictionary["numsProtectedMediaInSubTree"] = nums_protected_by_code
-		if self.combination != '':
-			album_identifiers_combination = self.combination.split(',')[0]
-			media_identifiers_combination = self.combination.split(',')[1]
+		if self.complex_combination != '':
+			album_identifiers_combination = self.complex_combination.split(',')[0]
+			media_identifiers_combination = self.complex_combination.split(',')[1]
 			album_codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination)))
 			codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(media_identifiers_combination)))
-			dictionary["combination"] = complex_combination(album_codes_combination, codes_combination)
+			dictionary["complexCombination"] = complex_combination(album_codes_combination, codes_combination)
 		if not separate_positions:
 			dictionary["positionsAndMediaInTree"] = self.positions_and_media_in_tree
 		if not separate_media:

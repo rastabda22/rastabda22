@@ -412,7 +412,7 @@
 													album.positionsAndMediaInTree,
 													protectedAlbum.positionsAndMediaInTree
 												);
-											album.includedCombinations.push(protectedAlbum.combination);
+											album.includedComplexCombinations.push(protectedAlbum.complexCombination);
 										}
 
 										function getNextSymLinks(albumCacheBase, noMoreAlbumsForThisPassword) {
@@ -430,7 +430,7 @@
 														// unexistent file
 														incrementCounterAndGoOnIfEndReached();
 													} else {
-														if (! album.hasOwnProperty("includedCombinations") || album.includedCombinations.indexOf(nextAlbum.combination) == -1)
+														if (! album.hasOwnProperty("includedComplexCombinations") || album.includedComplexCombinations.indexOf(nextAlbum.complexCombination) == -1)
 															mergeProtectedContent(nextAlbum);
 													}
 													getNextSymLinks(symlinkCacheBase, noMoreAlbumsForThisPassword);
@@ -443,13 +443,13 @@
 										var albumGuessedPassword = passwordData.albumGuessedPassword;
 										var guessedPassword = passwordData.guessedPassword;
 
-										if (! album.hasOwnProperty("includedCombinations"))
-											album.includedCombinations = [];
+										if (! album.hasOwnProperty("includedComplexCombinations"))
+											album.includedComplexCombinations = [];
 
-										if (album.includedCombinations.indexOf(protectedAlbum.combination) == -1) {
+										if (album.includedComplexCombinations.indexOf(protectedAlbum.complexCombination) == -1) {
 											if (album.hasOwnProperty("empty")) {
 												album = protectedAlbum;
-												album.includedCombinations = [protectedAlbum.combination];
+												album.includedComplexCombinations = [protectedAlbum.complexCombination];
 											} else {
 												mergeProtectedContent(protectedAlbum);
 											}

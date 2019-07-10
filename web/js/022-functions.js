@@ -402,7 +402,7 @@
 		if (
 			thisAlbum !== null && (
 				! jQuery.isEmptyObject(thisAlbum.numsProtectedMediaInSubTree) &&
-				(! thisAlbum.hasOwnProperty("includedCombinations") || thisAlbum.includedCombinations.length < this.numProtectedKeys(thisAlbum)) ||
+				(! thisAlbum.hasOwnProperty("includedComplexCombinations") || thisAlbum.includedComplexCombinations.length < this.numProtectedKeys(thisAlbum)) ||
 				util.isSearchCacheBase(thisAlbum.cacheBase)
 			)
 		) {
