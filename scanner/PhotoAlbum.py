@@ -40,7 +40,7 @@ from CachePath import thumbnail_types_and_sizes, photo_cache_name, video_cache_n
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_all_but_alphanumeric_chars_dashes_slashes_dots, switch_to_lowercase
 from Utilities import message, indented_message, next_level, back_level, file_mtime, json_files_and_mtime, make_dir
-from Utilities import merge_albums_dictionaries_from_json_files
+from Utilities import merge_albums_dictionaries_from_json_files, calculate_media_file_name
 from Utilities import convert_identifiers_set_to_codes_set, convert_old_codes_set_to_identifiers_set
 from Utilities import convert_combination_to_set, convert_set_to_combination, complex_combination
 from Geonames import Geonames

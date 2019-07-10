@@ -25,7 +25,7 @@ from CachePath import remove_folders_marker
 from Utilities import save_password_codes, json_files_and_mtime, report_mem
 from Utilities import convert_identifiers_set_to_codes_set, convert_identifiers_set_to_md5s_set
 from Utilities import convert_combination_to_set, convert_set_to_combination, complex_combination
-from Utilities import calculate_media_file_name, determine_symlink_name
+from Utilities import determine_symlink_name
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_digits, switch_to_lowercase, phrase_to_words, checksum
 from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, next_file_name, make_dir
