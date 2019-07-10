@@ -221,6 +221,7 @@ def message(category, text, verbose=0):
 	- 4 = add more info
 	"""
 
+	sep = "   "
 	try:
 		message.max_verbose = Options.config['max_verbose']
 	except KeyError:
@@ -229,10 +230,6 @@ def message(category, text, verbose=0):
 		message.max_verbose = 0
 
 	if verbose <= message.max_verbose:
-		if message.level <= 0:
-			sep = "  "
-		else:
-			sep = "--"
 		now = datetime.now()
 		time_elapsed = now - Options.last_time
 		Options.last_time = now
@@ -247,7 +244,8 @@ def message(category, text, verbose=0):
 				Options.elapsed_times[category] = microseconds
 				Options.elapsed_times_counter[category] = 1
 			_microseconds = str(microseconds)
-		print(_microseconds.rjust(9), "%s %s%s[%s]%s%s" % (now.isoformat(' '), max(0, message.level) * "  |", sep, str(category), max(1, (45 - len(str(category)))) * " ", str(text)))
+		print(_microseconds.rjust(9), "%s %s[%s]%s%s" % (now.isoformat(' '), max(0, message.level) * "   ", str(category), max(1, (45 - len(str(category)))) * " ", str(text)))
+		# print(_microseconds.rjust(9), "%s %s%s[%s]%s%s" % (now.isoformat(' '), max(0, message.level) * "  |", sep, str(category), max(1, (45 - len(str(category)))) * " ", str(text)))
 
 
 """
