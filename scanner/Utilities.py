@@ -38,8 +38,8 @@ def next_file_name(file_name_with_path):
 	file_name_with_path_list = file_name_with_path.split('.')
 	file_name = os.path.basename(file_name_with_path)
 	file_name_list = file_name.split('.')
-	is_positions = (file_name_list[-2] == 'positions' or file_name_list[-2] == 'media')
-	if is_positions:
+	is_positions_or_media = (file_name_list[-2] == 'positions' or file_name_list[-2] == 'media')
+	if is_positions_or_media:
 		subtract = 1
 	else:
 		subtract = 0
