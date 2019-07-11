@@ -196,22 +196,22 @@
 		$.ajax(ajaxOptions);
 	};
 
-	PhotoFloat.passwordsToGet = function(album) {
-		if (album.hasOwnProperty("empty"))
-			return PhotoFloat.guessedPasswordsMd5;
-
-		var thePasswordsToGet = [], i, guessedPassword;
-		if (! album.hasOwnProperty("protectedContentInside"))
-			return PhotoFloat.guessedPasswordsMd5;
-
-		for (i = 0; i < PhotoFloat.guessedPasswordsMd5.length; i ++) {
-			guessedPassword = PhotoFloat.guessedPasswordsMd5[i];
-			if (album.protectedContentInside.indexOf(guessedPassword) == -1) {
-				thePasswordsToGet.push(guessedPassword);
-			}
-		}
-		return thePasswordsToGet;
-	};
+	// PhotoFloat.passwordsToGet = function(album) {
+	// 	if (album.hasOwnProperty("empty"))
+	// 		return PhotoFloat.guessedPasswordsMd5;
+	//
+	// 	var thePasswordsToGet = [], i, guessedPassword;
+	// 	if (! album.hasOwnProperty("protectedContentInside"))
+	// 		return PhotoFloat.guessedPasswordsMd5;
+	//
+	// 	for (i = 0; i < PhotoFloat.guessedPasswordsMd5.length; i ++) {
+	// 		guessedPassword = PhotoFloat.guessedPasswordsMd5[i];
+	// 		if (album.protectedContentInside.indexOf(guessedPassword) == -1) {
+	// 			thePasswordsToGet.push(guessedPassword);
+	// 		}
+	// 	}
+	// 	return thePasswordsToGet;
+	// };
 
 	PhotoFloat.addPositionsAndMedia = function(theAlbum, getPositions, getMedia, goOn, error, data) {
 		function addPositions(album, next) {
@@ -277,7 +277,7 @@
 					// execution arrives here if the json file doesn't exist
 					if (albumCacheBase.indexOf(Options.protected_directories_prefix) == 0) {
 						// protected album: do not do anything, i.e. another protected cache base will be processed
-						error();
+						error(data);
 					} else {
 						// unprotected album: look for a protected album
 						baseJsonFileExists = false;
@@ -293,198 +293,226 @@
 		}
 
 		function addProtectedContent(album, next, data) {
-			function incrementCounterAndGoOnIfEndReached() {
-				nPassword ++;
-				if (nPassword >= 3 * thePasswordsToGet.length * thePasswordsToGet.length) {
+			function protectedDirectoriesToGet(album) {
+				var iAlbumPassword, iMediaPassword, albumGuessedPassword, mediaGuessedPassword, protectedDirectory;
+				var theProtectedDirectoriesToGet = [];
+
+				for (iAlbumPassword = 0; iAlbumPassword < PhotoFloat.guessedPasswordsMd5.length; iAlbumPassword ++) {
+					for (iMediaPassword = 0; iMediaPassword < PhotoFloat.guessedPasswordsMd5.length; iMediaPassword ++) {
+						albumGuessedPassword = PhotoFloat.guessedPasswordsMd5[iAlbumPassword];
+						mediaGuessedPassword = PhotoFloat.guessedPasswordsMd5[iMediaPassword];
+						protectedDirectory = Options.protected_directories_prefix + albumGuessedPassword + ',';
+						if (album.hasOwnProperty("empty") || album.includedProtectedDirectories.indexOf(protectedDirectory) == -1 && theProtectedDirectoriesToGet.indexOf(protectedDirectory) == -1)
+							theProtectedDirectoriesToGet.push(protectedDirectory);
+						protectedDirectory = Options.protected_directories_prefix + ',' + mediaGuessedPassword;
+						if (album.hasOwnProperty("empty") || album.includedProtectedDirectories.indexOf(protectedDirectory) == -1 && theProtectedDirectoriesToGet.indexOf(protectedDirectory) == -1)
+							theProtectedDirectoriesToGet.push(protectedDirectory);
+						protectedDirectory = Options.protected_directories_prefix + albumGuessedPassword + ',' + mediaGuessedPassword;
+						if (album.hasOwnProperty("empty") || album.includedProtectedDirectories.indexOf(protectedDirectory) == -1 && theProtectedDirectoriesToGet.indexOf(protectedDirectory) == -1)
+							theProtectedDirectoriesToGet.push(protectedDirectory);
+					}
+				}
+				return theProtectedDirectoriesToGet;
+			}
+
+			function complexCombinationsToGet(album) {
+				var iAlbumPassword, iMediaPassword, iComplex, albumGuessedPassword, mediaGuessedPassword, complexPasswordMd5List;
+				var theComplexCombinationsToGet = [];
+
+				for (iAlbumPassword = 0; iAlbumPassword < PhotoFloat.guessedPasswordsMd5.length; iAlbumPassword ++) {
+					for (iMediaPassword = 0; iMediaPassword < PhotoFloat.guessedPasswordsMd5.length; iMediaPassword ++) {
+						albumGuessedPassword = PhotoFloat.guessedPasswordsMd5[iAlbumPassword];
+						mediaGuessedPassword = PhotoFloat.guessedPasswordsMd5[iMediaPassword];
+						complexPasswordMd5List = [albumGuessedPassword + ',' + mediaGuessedPassword, albumGuessedPassword + ',', ',' + mediaGuessedPassword];
+						for (iComplex = 0; iComplex < complexPasswordMd5List.length; iComplex ++) {
+							if (album.hasOwnProperty("empty") || album.includedComplexCombinations.indexOf(complexPasswordMd5List[iComplex]) == -1)
+								theComplexCombinationsToGet.push(complexPasswordMd5List[iComplex]);
+						}
+					}
+				}
+				return theComplexCombinationsToGet;
+			}
+
+			function nextDirectoryAndGoOnIfEnded(protectedDirectory) {
+				nProtectedDirectory ++;
+				if (nProtectedDirectory >= theProtectedDirectoriesToGet.length) {
 					// execution arrives here when all the protected json has been loaded and processed
+					album.includedComplexCombinations = album.includedComplexCombinations.concat(theComplexCombinationsToGet);
+					album.includedProtectedDirectories = album.includedProtectedDirectories.concat(theProtectedDirectoriesToGet);
 					next(album, data);
 				}
 			}
 
-			var thePasswordsToGet = PhotoFloat.guessedPasswordsMd5;
-			// thePasswordsToGet = PhotoFloat.passwordsToGet(album);
-			if (thePasswordsToGet.length == 0 && ! album.hasOwnProperty("empty")) {
+			function convertComplexCombinationsIntoLists(complexCombination) {
+				var albumCombinationList, mediaCombinationList;
+				var albumCombination = complexCombination.split(',')[0];
+				if (albumCombination == "")
+					albumCombinationList = [];
+				else
+					albumCombinationList = albumCombination.split('-');
+				var mediaCombination = complexCombination.split(',')[1];
+				if (mediaCombination == "")
+					mediaCombinationList = [];
+				else
+					mediaCombinationList = mediaCombination.split('-');
+				return [albumCombinationList, mediaCombinationList];
+			}
+
+			///// begin function addProtectedContent(album, next, data) ///////////////
+			var theProtectedDirectoriesToGet, theComplexCombinationsToGet;
+			var key, numProtected, protectedCacheBase, iComplex, complexCombination, iDirectory;
+			var index, albumIndex, passwordCode, iAlbum, iMedia, fileSystemCombinations;
+			var nProtectedDirectory = 0, albumGuessedPassword, mediaGuessedPassword;
+			var albumPasswordCode, albumCombinationsList, mediaCombinationList, albumCombination, albumCodes, mediaCombination, mediaCodes;
+
+			if (! album.hasOwnProperty("empty")) {
+				if (! album.hasOwnProperty("includedProtectedDirectories"))
+					album.includedProtectedDirectories = [];
+				if (! album.hasOwnProperty("includedComplexCombinations"))
+					album.includedComplexCombinations = [];
+			}
+			theProtectedDirectoriesToGet = protectedDirectoriesToGet(album);
+			if (! album.hasOwnProperty("empty") && theProtectedDirectoriesToGet.length == 0) {
 				PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
 				next(album, data);
 			} else {
-				// prepare and get the protected content albums
-				var complexPasswordMd5List;
-				var iPassword, iAlbumPassword, key, numProtected, protectedAlbumCacheBase, iComplex;
-				var index, albumIndex, passwordCode;
-				var nPassword = 0, guessedPassword, albumGuessedPassword;
-				var albumPasswordCode, albumCombination, albumCodes, mediaCombination, mediaCodes;
-				if (! album.hasOwnProperty("includedProtectedDirectories"))
-					album.includedProtectedDirectories = [];
+				// prepare and get the protected content from the protected directories
+				numProtected = 0;
+				theComplexCombinationsToGet = complexCombinationsToGet(album);
+				if (baseJsonFileExists) {
+					for (iComplex = 0; iComplex < theComplexCombinationsToGet.length; iComplex ++) {
+						complexCombination = theComplexCombinationsToGet[iComplex];
+						codesComplexCombination = util.convertComplexCombinationToComplexCodesCombination(complexCombination);
+						if (codesComplexCombination in album.numsProtectedMediaInSubTree)
+							numProtected += album.numsProtectedMediaInSubTree[codesComplexCombination];
+					}
+				}
 
-				for (iAlbumPassword = 0; iAlbumPassword < thePasswordsToGet.length; iAlbumPassword ++) {
-					for (iPassword = 0; iPassword < thePasswordsToGet.length; iPassword ++) {
-						guessedPassword = thePasswordsToGet[iPassword];
-						albumGuessedPassword = thePasswordsToGet[iAlbumPassword];
-						index = PhotoFloat.guessedPasswordsMd5.indexOf(thePasswordsToGet[iPassword]);
-						passwordCode = PhotoFloat.guessedPasswordCodes[index];
-						albumIndex = PhotoFloat.guessedPasswordsMd5.indexOf(thePasswordsToGet[iAlbumPassword]);
-						albumPasswordCode = PhotoFloat.guessedPasswordCodes[albumIndex];
-
-						numProtected = 0;
-						if (! album.hasOwnProperty("empty")) {
-							for (key in album.numsProtectedMediaInSubTree) {
-								if (key == '')
-									continue;
-								albumCombination = key.split(',')[0];
-								mediaCombination = key.split(',')[1];
-								albumCodes = albumCombination.split('-');
-								mediaCodes = mediaCombination.split('-');
-							 	if (
-									(albumCombination == "" || albumCodes.indexOf(albumPasswordCode) != -1) &&
-									(mediaCombination == "" || mediaCodes.indexOf(passwordCode) != -1)
-								)
-									numProtected += album.numsProtectedMediaInSubTree[key];
-							}
-						}
-
-						if (
-							baseJsonFileExists && ! album.hasOwnProperty("empty") && numProtected == 0 &&
-							album.cacheBase !== Options.by_search_string &&
-							! util.isSearchCacheBase(album.cacheBase)
-						) {
-							// no need to get any protected content for this md5
-							next(album, data);
-						} else {
-							complexPasswordMd5List = [albumGuessedPassword + ',' + guessedPassword, albumGuessedPassword + ',', ',' + guessedPassword];
-							for (iComplex = 0; iComplex < complexPasswordMd5List.length; iComplex ++) {
-								if (album.includedProtectedDirectories.indexOf(complexPasswordMd5List[iComplex]) !== -1) {
-									if (iComplex == complexPasswordMd5List.length - 1)
-										incrementCounterAndGoOnIfEndReached();
-									continue;
-								}
-								protectedAlbumCacheBase = Options.protected_directories_prefix + complexPasswordMd5List[iComplex] + '/' + album.cacheBase;
-								var passwordData = {
-									"protectedAlbumCacheBase": protectedAlbumCacheBase,
-									"albumGuessedPassword": albumGuessedPassword,
-									"guessedPassword": guessedPassword
-								};
-								getAlbumFromFileSystem(
-									protectedAlbumCacheBase,
-									function(protectedAlbum, passwordData) {
-										function mergeSubalbums(album1, album2) {
-											var cacheBases = [], i, subalbum2;
+				if (
+					baseJsonFileExists && numProtected == 0 &&
+					album.cacheBase !== Options.by_search_string &&
+					! util.isSearchCacheBase(album.cacheBase)
+				) {
+					// no need to get any protected content for this md5
+					next(album, data);
+				} else {
+					for (iDirectory = 0; iDirectory < theProtectedDirectoriesToGet.length; iDirectory ++) {
+						protectedCacheBase = theProtectedDirectoriesToGet[iDirectory] + '/' + album.cacheBase;
+						var passwordData = {
+							"protectedCacheBase": protectedCacheBase,
+							"protectedDirectory": theProtectedDirectoriesToGet[iDirectory]
+							// "theComplexCombinationsToGet": theComplexCombinationsToGet
+						};
+						getAlbumFromFileSystem(
+							protectedCacheBase,
+							function(protectedAlbum, passwordData) {
+								function mergeSubalbums(album1, album2) {
+									var cacheBases1 = [], i, subalbum2;
+									album1.subalbums.forEach(
+										function(subalbum1) {
+											cacheBases1.push(subalbum1.cacheBase);
+										}
+									);
+									for (i = 0; i < album2.subalbums.length; i ++) {
+										subalbum2 = album2.subalbums[i];
+										if (cacheBases1.indexOf(subalbum2.cacheBase) == -1)
+											album1.subalbums.push(subalbum2);
+										else
 											album1.subalbums.forEach(
 												function(subalbum1) {
-													cacheBases.push(subalbum1.cacheBase);
+													if (subalbum1.cacheBase == subalbum2.cacheBase)
+														subalbum1.numMediaInSubTree += subalbum2.numMediaInSubTree;
 												}
 											);
-											for (i = 0; i < album2.subalbums.length; i ++) {
-												subalbum2 = album2.subalbums[i];
-												if (cacheBases.indexOf(subalbum2.cacheBase) == -1)
-													album1.subalbums.push(subalbum2);
-												else
-													album1.subalbums.forEach(
-														function(subalbum1) {
-															if (subalbum1.cacheBase == subalbum2.cacheBase)
-																subalbum1.numMediaInSubTree += subalbum2.numMediaInSubTree;
-														}
-													);
-											}
-											return album1.subalbums;
-										}
+									}
+									return album1.subalbums;
+								}
 
-										function mergeProtectedContent(protectedAlbum) {
-											// add the protected album content to the unprotected one
-											if (protectedAlbum.hasOwnProperty("media"))
-												album.media = album.media.concat(protectedAlbum.media);
-											if (album.hasOwnProperty("media")) {
-												album.media = Utilities.sortByDate(album.media);
-												album.mediaNameSort = false;
-												album.mediaReverseSort = false;
-											}
+								function mergeProtectedContent(album, protectedAlbum) {
+									// add the protected album content to the unprotected one
+									if (protectedAlbum.hasOwnProperty("media"))
+										album.media = album.media.concat(protectedAlbum.media);
+									if (album.hasOwnProperty("media")) {
+										album.media = Utilities.sortByDate(album.media);
+										album.mediaNameSort = false;
+										album.mediaReverseSort = false;
+									}
 
-											album.numMediaInSubTree += protectedAlbum.numMediaInSubTree;
+									album.numMediaInSubTree += protectedAlbum.numMediaInSubTree;
 
-											album.subalbums = mergeSubalbums(album, protectedAlbum);
-											album.subalbums = Utilities.sortByDate(album.subalbums);
-											album.albumNameSort = false;
-											album.albumReverseSort = false;
+									album.subalbums = mergeSubalbums(album, protectedAlbum);
+									album.subalbums = Utilities.sortByDate(album.subalbums);
+									album.albumNameSort = false;
+									album.albumReverseSort = false;
 
-											util.sortAlbumsMedia(album);
+									util.sortAlbumsMedia(album);
 
-											if (album.hasOwnProperty("positionsAndMediaInTree") && protectedAlbum.hasOwnProperty("positionsAndMediaInTree"))
-												album.positionsAndMediaInTree = util.mergePoints(
-													album.positionsAndMediaInTree,
-													protectedAlbum.positionsAndMediaInTree
-												);
-											album.includedComplexCombinations.push(protectedAlbum.complexCombination);
-										}
-
-										function getNextSymLinks(albumCacheBase, noMoreAlbumsForThisPassword) {
-											var symlinkCacheBase;
-											nLink ++;
-											if (nLink == 1)
-												symlinkCacheBase = albumCacheBase + '.' + nLink;
-											else
-												symlinkCacheBase = albumCacheBase.split('.').slice(0, -1).join('.') + '.' + nLink;
-
-											getAlbumFromFileSystem(
-												symlinkCacheBase,
-												function(nextAlbum) {
-													if (nextAlbum === false) {
-														// unexistent file
-														incrementCounterAndGoOnIfEndReached();
-													} else {
-														if (! album.hasOwnProperty("includedComplexCombinations") || album.includedComplexCombinations.indexOf(nextAlbum.complexCombination) == -1)
-															mergeProtectedContent(nextAlbum);
-													}
-													getNextSymLinks(symlinkCacheBase, noMoreAlbumsForThisPassword);
-												},
-												noMoreAlbumsForThisPassword
-											);
-										}
-
-										var protectedAlbumCacheBase = passwordData.protectedAlbumCacheBase;
-										var albumGuessedPassword = passwordData.albumGuessedPassword;
-										var guessedPassword = passwordData.guessedPassword;
-
-										if (! album.hasOwnProperty("includedComplexCombinations"))
-											album.includedComplexCombinations = [];
-
-										if (album.includedComplexCombinations.indexOf(protectedAlbum.complexCombination) == -1) {
-											if (album.hasOwnProperty("empty")) {
-												album = protectedAlbum;
-												album.includedComplexCombinations = [protectedAlbum.complexCombination];
-											} else {
-												mergeProtectedContent(protectedAlbum);
-											}
-										}
-
-										// get the symlinks
-										var nLink = 0;
-										getNextSymLinks(
-											protectedAlbumCacheBase,
-											function() {
-												var i, array;
-												if (! album.hasOwnProperty("protectedContentInside"))
-													album.protectedContentInside = [];
-												array = [albumGuessedPassword, guessedPassword]	;
-												for (i = 0; i < array.length; i ++) {
-													if (album.protectedContentInside.indexOf(array[i]) == -1)
-														album.protectedContentInside.push(array[i]);
-												}
-												incrementCounterAndGoOnIfEndReached();
-											}
+									if (album.hasOwnProperty("positionsAndMediaInTree") && protectedAlbum.hasOwnProperty("positionsAndMediaInTree"))
+										album.positionsAndMediaInTree = util.mergePoints(
+											album.positionsAndMediaInTree,
+											protectedAlbum.positionsAndMediaInTree
 										);
-									},
-									incrementCounterAndGoOnIfEndReached,
-									passwordData
+									// album.includedComplexCombinations.push(protectedAlbum.complexCombination);
+
+									return album;
+								}
+
+								function getNextSymLinks(albumCacheBase, noMoreAlbumsForThisPassword) {
+									var symlinkCacheBase;
+									nLink ++;
+									if (nLink == 1)
+										symlinkCacheBase = albumCacheBase + '.' + nLink;
+									else
+										symlinkCacheBase = albumCacheBase.split('.').slice(0, -1).join('.') + '.' + nLink;
+
+									getAlbumFromFileSystem(
+										symlinkCacheBase,
+										function(nextAlbum) {
+											if (nextAlbum === false) {
+												// unexistent file
+												nextDirectoryAndGoOnIfEnded(protectedDirectory);
+											} else {
+												// if (album.includedComplexCombinations.indexOf(nextAlbum.complexCombination) == -1)
+												album = mergeProtectedContent(album, nextAlbum);
+											}
+											getNextSymLinks(symlinkCacheBase, noMoreAlbumsForThisPassword);
+										},
+										noMoreAlbumsForThisPassword
+									);
+								}
+
+								///////// begin function code /////////////
+								var protectedCacheBase = passwordData.protectedCacheBase;
+								var protectedDirectory = passwordData.protectedDirectory;
+
+								if (util.convertComplexCombinationsToComplexCodesCombinations(theComplexCombinationsToGet).indexOf(protectedAlbum.complexCombination) == -1) {
+									// the gotten album has a wrong complex combination, don't do anything with it
+								} else {
+									if (album.hasOwnProperty("empty")) {
+										album = protectedAlbum;
+										album.includedProtectedDirectories = [];
+										album.includedComplexCombinations = [];
+										// album.includedComplexCombinations = [protectedAlbum.complexCombination];
+									} else {
+									// } else if (album.includedComplexCombinations.indexOf(protectedAlbum.complexCombination) == -1) {
+										album = mergeProtectedContent(album, protectedAlbum);
+									}
+								}
+
+								// get the symlinks
+								var nLink = 0;
+								getNextSymLinks(
+									protectedCacheBase,
+									function() {
+										nextDirectoryAndGoOnIfEnded(protectedDirectory);
+									}
 								);
-									// 		executeCallback
-									// 	);
-									// },
-									// function() {
-									// 	executeCallback(album)
-									// },
-									// {"passwordMd5": thePasswordsToGet[iPassword], "protectedAlbumCacheBase": protectedAlbumCacheBase}
-								// );
-							}
-						}
+							},
+							function(passwordData) {
+								nextDirectoryAndGoOnIfEnded(passwordData.protectedDirectory);
+							},
+							passwordData
+						);
 					}
 				}
 			}
@@ -1265,7 +1293,8 @@
 			PhotoFloat.searchAndSubalbumHash = decodeURI(PhotoFloat.searchAndSubalbumHash);
 
 		var albumFromCache = PhotoFloat.getAlbumFromCache(albumHashToGet);
-		if (albumFromCache && ! PhotoFloat.passwordsToGet(albumFromCache).length) {
+		if (albumFromCache && ! PhotoFloat.guessedPasswordsMd5.length) {
+		// if (albumFromCache && ! PhotoFloat.passwordsToGet(albumFromCache).length) {
 			if (! albumFromCache.subalbums.length && ! albumFromCache.media.length)
 				util.noResults(albumFromCache);
 			PhotoFloat.selectMedia(albumFromCache, mediaFolderHash, mediaHash, callback);
