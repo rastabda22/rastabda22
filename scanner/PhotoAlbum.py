@@ -38,7 +38,7 @@ from CachePath import remove_album_path, remove_folders_marker, trim_base_custom
 # from CachePath import remove_album_path, remove_cache_path, remove_folders_marker, trim_base_custom
 from CachePath import thumbnail_types_and_sizes, photo_cache_name, video_cache_name
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
-from CachePath import remove_all_but_alphanumeric_chars_dashes_slashes_dots, switch_to_lowercase
+from CachePath import remove_all_but_alphanumeric_chars_dashes_slashes, switch_to_lowercase
 from Utilities import message, indented_message, next_level, back_level, file_mtime, json_files_and_mtime, make_dir
 from Utilities import merge_albums_dictionaries_from_json_files, calculate_media_file_name
 from Utilities import convert_identifiers_set_to_codes_set, convert_old_codes_set_to_identifiers_set
@@ -700,7 +700,7 @@ class Album(object):
 					break
 
 		# respect alphanumeric characters, substitute non-alphanumeric (but not slashes) with underscore
-		subalbum_or_media_path = switch_to_lowercase(remove_accents(remove_all_but_alphanumeric_chars_dashes_slashes_dots(subalbum_or_media_path)))
+		subalbum_or_media_path = switch_to_lowercase(remove_accents(remove_all_but_alphanumeric_chars_dashes_slashes(subalbum_or_media_path)))
 
 		# subalbums: convert the character which is used as slash replacement
 		if media_file_name is None:
