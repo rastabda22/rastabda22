@@ -199,9 +199,13 @@
 
 	PhotoFloat.addPositionsAndMedia = function(theAlbum, getPositions, getMedia, goOn, error, data) {
 		function addPositions(album, next) {
+			var positionJsonFile;
 			// are positions still missing?
 			if (getPositions && ! album.hasOwnProperty("positionsAndMediaInTree")) {
-				var positionJsonFile = album.cacheBase + '.positions.json';
+				if (album.hasOwnProperty("cacheBaseToGet"))
+					positionJsonFile = album.cacheBaseToGet + '.positions.json';
+				else
+					positionJsonFile = album.cacheBase + '.positions.json';
 				PhotoFloat.getJsonFile(
 					positionJsonFile,
 					function(positions) {
@@ -219,9 +223,13 @@
 		}
 
 		function addMedia(album, next) {
+			var mediaJsonFile;
 			// are media still missing?
 			if (getMedia && ! album.hasOwnProperty("media")) {
-				var mediaJsonFile = album.cacheBase + '.media.json';
+				if (album.hasOwnProperty("cacheBaseToGet"))
+					mediaJsonFile = album.cacheBaseToGet + '.media.json';
+				else
+					mediaJsonFile = album.cacheBase + '.media.json';
 				PhotoFloat.getJsonFile(
 					mediaJsonFile,
 					function(media) {
@@ -241,6 +249,7 @@
 				addMedia(
 					theAlbum,
 					function() {
+						delete theAlbum.cacheBaseToGet;
 						goOn(theAlbum, data);
 					}
 				);
@@ -263,6 +272,7 @@
 							// the protected album is already included, pass a null album so that nothing is done with it
 							goOn(null, data);
 						} else {
+							theAlbum.cacheBaseToGet = albumCacheBase;
 							PhotoFloat.addPositionsAndMedia(theAlbum, getPositions, getMedia, goOn, error, data);
 						}
 					} else {
@@ -367,11 +377,14 @@
 				return theCodesComplexCombinationsToGet;
 			}
 
-			function nextDirectoryAndGoOnIfEnded() {
+			function nextDirectoryAndGoOnIfEnded(album) {
 				nProtectedDirectory ++;
 				if (nProtectedDirectory >= theCodesComplexCombinationsToGet.length) {
 					// execution arrives here when all the protected json has been loaded and processed
-					album.includedCodesComplexCombinations = album.includedCodesComplexCombinations.concat(theCodesComplexCombinationsToGet);
+
+					// if media or positions are missing the combination must not be reported as included
+					if (album.hasOwnProperty("media") && album.hasOwnProperty("positionsAndMediaInTree"))
+						album.includedCodesComplexCombinations = album.includedCodesComplexCombinations.concat(theCodesComplexCombinationsToGet);
 					// album.includedProtectedDirectories = album.includedProtectedDirectories.concat(theProtectedDirectoriesToGet);
 					next(album, data);
 				}
@@ -450,10 +463,12 @@
 
 							if (album.includedProtectedDirectories.indexOf(protectedDirectory) != -1) {
 								// the directory has already been included
-								nextDirectoryAndGoOnIfEnded();
+								nextDirectoryAndGoOnIfEnded(album);
 								continue;
 							}
-							album.includedProtectedDirectories.push(protectedDirectory);
+							// if media or positions are missing the protected directories must not be reported as included
+							if (album.hasOwnProperty("media") && album.hasOwnProperty("positionsAndMediaInTree"))
+								album.includedProtectedDirectories.push(protectedDirectory);
 
 							protectedCacheBase = protectedDirectory + '/' + album.cacheBase;
 							var passwordData = {
@@ -479,7 +494,8 @@
 											subalbum2 = album2.subalbums[i];
 											if (cacheBases.indexOf(subalbum2.cacheBase) == -1)
 												album.subalbums.push(subalbum2);
-											else
+											// if media or positions are missing the combination must not be reported as included
+											else if (album.hasOwnProperty("media") && album.hasOwnProperty("positionsAndMediaInTree"))
 												album.subalbums.forEach(
 													function(subalbum) {
 														if (subalbum.cacheBase == subalbum2.cacheBase)
@@ -491,10 +507,15 @@
 
 									function mergeProtectedContent(protectedAlbum) {
 										// add the protected album content to the unprotected one
-										if (! album.hasOwnProperty("media") || ! protectedAlbum.hasOwnProperty("media"))
-											album.numMedia += protectedAlbum.numMedia;
-										else
-											album.media = album.media.concat(protectedAlbum.media);
+										if (protectedAlbum.hasOwnProperty("media")) {
+											if (album.hasOwnProperty("media")) {
+												album.media = album.media.concat(protectedAlbum.media);
+												album.numMediaInSubTree += protectedAlbum.numMediaInSubTree;
+											} else
+												album.media = protectedAlbum.media;
+
+										}
+										// 	album.numMedia += protectedAlbum.numMedia;
 
 										if (album.hasOwnProperty("media")) {
 											album.media = Utilities.sortByDate(album.media);
@@ -502,7 +523,6 @@
 											album.mediaReverseSort = false;
 										}
 
-										album.numMediaInSubTree += protectedAlbum.numMediaInSubTree;
 
 										mergeSubalbums(protectedAlbum);
 										album.subalbums = Utilities.sortByDate(album.subalbums);
@@ -511,14 +531,18 @@
 
 										util.sortAlbumsMedia(album);
 
-										if (album.hasOwnProperty("positionsAndMediaInTree") && protectedAlbum.hasOwnProperty("positionsAndMediaInTree"))
-											album.positionsAndMediaInTree = util.mergePoints(
-												album.positionsAndMediaInTree,
-												protectedAlbum.positionsAndMediaInTree
-											);
+										if (protectedAlbum.hasOwnProperty("positionsAndMediaInTree")) {
+											if (album.hasOwnProperty("positionsAndMediaInTree"))
+												album.positionsAndMediaInTree = util.mergePoints(
+													album.positionsAndMediaInTree,
+													protectedAlbum.positionsAndMediaInTree
+												);
+											else
+												album.positionsAndMediaInTree = protectedAlbum.positionsAndMediaInTree;
+										}
 									}
 
-									function getNextSymLinks(albumCacheBase, noMoreAlbumsForThisPassword) {
+									function getNextSymLinks(albumCacheBase) {
 										var symlinkCacheBase;
 										nLink ++;
 										if (nLink == 1)
@@ -533,14 +557,16 @@
 											function(nextAlbum) {
 												if (nextAlbum === false) {
 													// unexistent file
-													nextDirectoryAndGoOnIfEnded();
+													nextDirectoryAndGoOnIfEnded(album);
 												} else {
 													// if (album.includedCodesComplexCombinations.indexOf(nextAlbum.complexCombination) == -1)
 													mergeProtectedContent(nextAlbum);
 												}
-												getNextSymLinks(symlinkCacheBase, noMoreAlbumsForThisPassword);
+												getNextSymLinks(symlinkCacheBase);
 											},
-											noMoreAlbumsForThisPassword,
+											function() {
+												nextDirectoryAndGoOnIfEnded(album)
+											},
 											{"album": album}
 										);
 									}
@@ -552,6 +578,7 @@
 									if (protectedAlbum !== null) {
 										if (isEmpty(album)) {
 											delete album.empty;
+											album.hasntUnprotectedConted = true;
 											for (var property in protectedAlbum) {
 												if (protectedAlbum.hasOwnProperty(property))
 													album[property] = protectedAlbum[property];
@@ -661,18 +688,21 @@
 
 		var albumFromCache = PhotoFloat.getAlbumFromCache(albumCacheBase);
 		if (albumFromCache) {
-			PhotoFloat.addPositionsAndMedia(
-				albumFromCache,
-				getPositions,
-				getMedia,
-				function() {
-					if (hasProtectedContent(albumFromCache))
-						addProtectedContent(albumFromCache, executeCallback);
-					else
-						executeCallback(albumFromCache);
-				},
-				error
-			);
+			if (albumFromCache.hasOwnProperty("hasntUnprotectedConted"))
+				addProtectedContent(albumFromCache, executeCallback);
+			else
+				PhotoFloat.addPositionsAndMedia(
+					albumFromCache,
+					getPositions,
+					getMedia,
+					function() {
+						if (hasProtectedContent(albumFromCache))
+							addProtectedContent(albumFromCache, executeCallback);
+						else
+							executeCallback(albumFromCache);
+					},
+					error
+				);
 		} else if (util.isMapCacheBase(albumCacheBase)) {
 			// map album are not on server, if they aren't in cache go to root album
 			if (typeof reject !== "undefined")
@@ -734,6 +764,7 @@
 						callback(album, album.media[index], theSubalbum, id, resolve);
 					},
 					function() {
+						console.log(album, index);
 						console.trace();
 					}
 				);
