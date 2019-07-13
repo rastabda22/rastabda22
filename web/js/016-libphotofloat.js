@@ -338,7 +338,7 @@
 			function codesComplexCombinationsToGet(album) {
 				var iAlbumPassword, iMediaPassword, albumGuessedPassword, mediaGuessedPassword;
 				var albumCode, mediaCode, lists, albumCodesComplexCombinationList, mediaCodesComplexCombinationList;
-				var complexCombinationsInAlbum = [], codesComplexCombination, codesComplexCombinationInAlbum, splittedCodesComplexCombinationInAlbum;
+				var codesComplexCombinationInAlbum;
 				// for (codesComplexCombination in album.numsProtectedMediaInSubTree)
 				// 	if (album.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombination) && codesComplexCombination != "")
 				// 		complexCombinationsInAlbum.push(util.convertCodesComplexCombinationToComplexCombination(codesComplexCombination));
@@ -596,7 +596,7 @@
 			///// begin function addProtectedContent(album, next, data) ///////////////
 			var theProtectedDirectoriesToGet, theCodesComplexCombinationsToGet, codesComplexCombination;
 			var codesCombinationsLists, albumMd5CombinationsList, mediaMd5CombinationList;
-			var numProtected, protectedCacheBase, iComplex, iDirectory;
+			var numProtected, protectedCacheBase, iComplex;
 			var nProtectedDirectory = 0, protectedDirectory;
 
 			if (! isEmpty(album)) {
