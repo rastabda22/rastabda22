@@ -379,7 +379,7 @@
 				return theCodesComplexCombinationsToGet;
 			}
 
-			function nextDirectoryAndGoOnIfEnded(album) {
+			function nextDirectoryAndGoOnIfEnded() {
 				nProtectedDirectory ++;
 				if (nProtectedDirectory >= theCodesComplexCombinationsToGet.length) {
 					// execution arrives here when all the protected json has been loaded and processed
@@ -498,7 +498,7 @@
 										return album1.subalbums;
 									}
 
-									function mergeProtectedContent(album, protectedAlbum) {
+									function mergeProtectedContent(protectedAlbum) {
 										// add the protected album content to the unprotected one
 										if (protectedAlbum.hasOwnProperty("media"))
 											album.media = album.media.concat(protectedAlbum.media);
@@ -522,12 +522,9 @@
 												album.positionsAndMediaInTree,
 												protectedAlbum.positionsAndMediaInTree
 											);
-										// album.includedCodesComplexCombinations.push(protectedAlbum.complexCombination);
-
-										return album;
 									}
 
-									function getNextSymLinks(albumCacheBase, album, noMoreAlbumsForThisPassword) {
+									function getNextSymLinks(albumCacheBase, noMoreAlbumsForThisPassword) {
 										var symlinkCacheBase;
 										nLink ++;
 										if (nLink == 1)
@@ -543,20 +540,17 @@
 													nextDirectoryAndGoOnIfEnded();
 												} else {
 													// if (album.includedCodesComplexCombinations.indexOf(nextAlbum.complexCombination) == -1)
-													album = mergeProtectedContent(album, nextAlbum);
+													mergeProtectedContent(nextAlbum);
 												}
-												getNextSymLinks(symlinkCacheBase, album, noMoreAlbumsForThisPassword);
+												getNextSymLinks(symlinkCacheBase, noMoreAlbumsForThisPassword);
 											},
-											function () {
-												noMoreAlbumsForThisPassword(album);
-											},
+											noMoreAlbumsForThisPassword,
 											{"album": album}
 										);
 									}
 
 									///////// begin function function(protectedAlbum, passwordData) /////////////
 									var protectedCacheBase = passwordData.protectedCacheBase;
-									var protectedDirectory = passwordData.protectedDirectory;
 									var album = passwordData.album;
 
 									if (protectedAlbum !== null) {
@@ -571,7 +565,7 @@
 											// album.includedCodesComplexCombinations = [protectedAlbum.complexCombination];
 										} else {
 										// } else if (album.includedCodesComplexCombinations.indexOf(protectedAlbum.complexCombination) == -1) {
-											album = mergeProtectedContent(album, protectedAlbum);
+											mergeProtectedContent(protectedAlbum);
 										}
 									}
 
@@ -579,13 +573,10 @@
 									var nLink = 0;
 									getNextSymLinks(
 										protectedCacheBase,
-										album,
 										nextDirectoryAndGoOnIfEnded
 									);
 								},
-								function(passwordData) {
-									nextDirectoryAndGoOnIfEnded(album);
-								},
+								nextDirectoryAndGoOnIfEnded,
 								passwordData
 							);
 						}
