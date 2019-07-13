@@ -397,7 +397,7 @@
 					function(protectedAlbum) {
 						if (typeof protectedAlbum !== "undefined") {
 							album.numsProtectedMediaInSubTree = protectedAlbum.numsProtectedMediaInSubTree;
-							keepOn(album, next, data);
+							keepOn(next, data);
 						}
 					},
 					function() {
@@ -422,7 +422,7 @@
 				return [albumCombinationList, mediaCombinationList];
 			}
 
-			function numsProtectedMediaInSubTreeIsInTheAlbum(album, next, data) {
+			function numsProtectedMediaInSubTreeIsInTheAlbum(next, data) {
 				theCodesComplexCombinationsToGet = codesComplexCombinationsToGet(album);
 
 				if (! theCodesComplexCombinationsToGet.length) {
@@ -476,26 +476,25 @@
 							getSingleCacheBase(
 								protectedCacheBase,
 								function(protectedAlbum, passwordData) {
-									function mergeSubalbums(album1, album2) {
-										var cacheBases1 = [], i, subalbum2;
-										album1.subalbums.forEach(
-											function(subalbum1) {
-												cacheBases1.push(subalbum1.cacheBase);
+									function mergeSubalbums(album2) {
+										var cacheBases = [], i, subalbum2;
+										album.subalbums.forEach(
+											function(subalbum) {
+												cacheBases.push(subalbum.cacheBase);
 											}
 										);
 										for (i = 0; i < album2.subalbums.length; i ++) {
 											subalbum2 = album2.subalbums[i];
-											if (cacheBases1.indexOf(subalbum2.cacheBase) == -1)
-												album1.subalbums.push(subalbum2);
+											if (cacheBases.indexOf(subalbum2.cacheBase) == -1)
+												album.subalbums.push(subalbum2);
 											else
-												album1.subalbums.forEach(
-													function(subalbum1) {
-														if (subalbum1.cacheBase == subalbum2.cacheBase)
-															subalbum1.numMediaInSubTree += subalbum2.numMediaInSubTree;
+												album.subalbums.forEach(
+													function(subalbum) {
+														if (subalbum.cacheBase == subalbum2.cacheBase)
+															subalbum.numMediaInSubTree += subalbum2.numMediaInSubTree;
 													}
 												);
 										}
-										return album1.subalbums;
 									}
 
 									function mergeProtectedContent(protectedAlbum) {
@@ -510,7 +509,7 @@
 
 										album.numMediaInSubTree += protectedAlbum.numMediaInSubTree;
 
-										album.subalbums = mergeSubalbums(album, protectedAlbum);
+										mergeSubalbums(protectedAlbum);
 										album.subalbums = Utilities.sortByDate(album.subalbums);
 										album.albumNameSort = false;
 										album.albumReverseSort = false;
@@ -551,7 +550,7 @@
 
 									///////// begin function function(protectedAlbum, passwordData) /////////////
 									var protectedCacheBase = passwordData.protectedCacheBase;
-									var album = passwordData.album;
+									// var album = passwordData.album;
 
 									if (protectedAlbum !== null) {
 										if (isEmpty(album)) {
@@ -595,7 +594,7 @@
 					album.includedProtectedDirectories = [];
 				if (! album.hasOwnProperty("includedCodesComplexCombinations"))
 					album.includedCodesComplexCombinations = [];
-				numsProtectedMediaInSubTreeIsInTheAlbum(album, next, data);
+				numsProtectedMediaInSubTreeIsInTheAlbum(next, data);
 			} else {
 				// a protected album must be loaded in order to know the complex combinations
 				theProtectedDirectoriesToGet = protectedDirectoriesToGet();
