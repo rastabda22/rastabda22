@@ -806,7 +806,7 @@
 		return sum;
 	};
 	Utilities.prototype.sumNumsProtectedMediaOfArray = function(subalbums) {
-		var result = {}, i, album, passwordCode;
+		var result = {}, i, passwordCode, subalbum;
 
 		for (i = 0; i < subalbums.length; i ++) {
 			subalbum = subalbums[i];
@@ -852,7 +852,7 @@
 	Utilities.xDistanceBetweenCoordinatePoints = function(point1, point2) {
 		return Math.max(
 			Utilities.distanceBetweenCoordinatePoints({"lng": point1.lng, "lat": point1.lat}, {"lng": point2.lng, "lat": point1.lat}),
-			Utilities.distanceBetweenCoordinatePoints({"lng": point1.lng, "lat": point2.lat}, {"lng": point2.lng, "lat": point2.lat}),
+			Utilities.distanceBetweenCoordinatePoints({"lng": point1.lng, "lat": point2.lat}, {"lng": point2.lng, "lat": point2.lat})
 		);
 	};
 
@@ -1004,17 +1004,18 @@
 		}
 	};
 
-	Utilities.prototype.convertComplexCombinationsToComplexCodesCombinations = function(complexCombinationList) {
-		codesComplexCombinationList = [];
-		for (var i = 0; i < complexCombinationList.length; i ++) {
-			codesComplexCombinationList.push(Utilities.convertComplexCombinationToComplexCodesCombination(complexCombinationList[i]));
-		}
-		return codesComplexCombinationList;
-	};
-	Utilities.convertComplexCombinationToComplexCodesCombination = function(complexCombination) {
+	// Utilities.prototype.convertComplexCombinationsToCodesComplexCombinations = function(complexCombinationList) {
+	// 	var codesComplexCombinationList = [];
+	// 	for (var i = 0; i < complexCombinationList.length; i ++) {
+	// 		codesComplexCombinationList.push(Utilities.convertComplexCombinationToCodesComplexCombination(complexCombinationList[i]));
+	// 	}
+	// 	return codesComplexCombinationList;
+	// };
+
+	Utilities.convertComplexCombinationToCodesComplexCombination = function(complexCombination) {
 		var albumCombinationsList = complexCombination.split(',')[0].split('-');
 		var mediaCombinationsList = complexCombination.split(',')[1].split('-');
-		var i, index;
+		var i, index, code;
 
 		var albumCodesCombinationsList = [];
 		for (i = 0; i < albumCombinationsList.length; i ++) {
@@ -1030,6 +1031,51 @@
 		}
 
 		return [albumCodesCombinationsList.join('-'), mediaCodesCombinationsList.join('-')].join(',');
+	};
+
+	Utilities.prototype.convertMd5ToCode = function(md5) {
+		var index = PhotoFloat.guessedPasswordsMd5.indexOf(md5);
+		return PhotoFloat.guessedPasswordCodes[index];
+	};
+
+	Utilities.prototype.convertCodesListToMd5sList = function(codesList) {
+		var i, index, md5sList = [];
+		for (i = 0; i < codesList.length; i ++) {
+			index = PhotoFloat.guessedPasswordCodes.indexOf(codesList[i]);
+			if (index != -1) {
+				md5sList.push(PhotoFloat.guessedPasswordsMd5[index]);
+			}
+		}
+		return md5sList;
+	};
+
+	Utilities.prototype.convertCodesComplexCombinationToComplexCombination = function(codesComplexCombination) {
+		var albumCodesCombinationsList = codesComplexCombination.split(',')[0].split('-');
+		var mediaCodesCombinationsList = codesComplexCombination.split(',')[1].split('-');
+		var i, index, md5;
+
+		var albumCombinationsList = [];
+		for (i = 0; i < albumCodesCombinationsList.length; i ++) {
+			index = PhotoFloat.guessedPasswordCodes.indexOf(albumCodesCombinationsList[i]);
+			if (index != -1) {
+				md5 = PhotoFloat.guessedPasswordsMd5[index];
+				albumCombinationsList.push(md5);
+			} else {
+				albumCombinationsList.push('...');
+			}
+		}
+		var mediaCombinationsList = [];
+		for (i = 0; i < mediaCodesCombinationsList.length; i ++) {
+			index = PhotoFloat.guessedPasswordCodes.indexOf(mediaCodesCombinationsList[i]);
+			if (index != -1) {
+				md5 = PhotoFloat.guessedPasswordsMd5[index];
+				mediaCombinationsList.push(md5);
+			} else {
+				albumCombinationsList.push('...');
+			}
+		}
+
+		return [albumCombinationsList.join('-'), mediaCombinationsList.join('-')].join(',');
 	};
 
 	Utilities.prototype.undie = function() {
@@ -1137,7 +1183,7 @@
 	};
 
 	/* make static methods callable as member functions */
-	Utilities.prototype.convertComplexCombinationToComplexCodesCombination = Utilities.convertComplexCombinationToComplexCodesCombination;
+	Utilities.prototype.convertComplexCombinationToCodesComplexCombination = Utilities.convertComplexCombinationToCodesComplexCombination;
 	Utilities.prototype.sortAlbumsMedia = Utilities.sortAlbumsMedia;
 	Utilities.prototype.chooseReducedPhoto = Utilities.chooseReducedPhoto;
 	Utilities.prototype.originalMediaPath = Utilities.originalMediaPath;
