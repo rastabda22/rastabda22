@@ -285,18 +285,28 @@
 						// protected album: do not do anything, i.e. another protected cache base will be processed
 						error(data);
 					} else {
-						// unprotected album: look for a protected album
-						baseJsonFileExists = false;
-						var cacheBase = albumCacheBase.substring(albumCacheBase.lastIndexOf('/') + 1);
+						// unprotected album
 						var emptyAlbum = {
-							"cacheBase": cacheBase,
+							"cacheBase": albumCacheBase,
 							"includedProtectedDirectories": [],
 							"includedCodesComplexCombinations": [],
 							"includedCodesComplexCombinationsCounts": [],
 							"empty": true
 						};
-						var data = {"album": emptyAlbum};
-						addProtectedContent(emptyAlbum, goOn, data);
+						if (! PhotoFloat.guessedPasswordsMd5.length) {
+							emptyAlbum.media = [];
+							emptyAlbum.subalbums = [];
+							emptyAlbum.path = albumCacheBase.replace(Options.cache_folder_separator, "/");
+							if (util.isSearchCacheBase(albumCacheBase))
+								util.noResults(emptyAlbum);
+						} else {
+							// look for a protected album
+							baseJsonFileExists = false;
+							var cacheBase = albumCacheBase.substring(albumCacheBase.lastIndexOf('/') + 1);
+							emptyAlbum.cacheBase = cacheBase;
+							var data = {"album": emptyAlbum};
+							addProtectedContent(emptyAlbum, goOn, data);
+						}
 					}
 				},
 				{"getPositions": getPositions, "getMedia": getMedia}
