@@ -300,7 +300,8 @@ class Album(object):
 		if len(self.password_identifiers_set) == 0:
 			# the album isn't protected, but media and subalbums may be protected
 			# besides that, for virtual media the physical album password is included in the media and must be taken into account
-			self.media_list = [single_media for single_media in self.media if len(single_media.album_identifiers_set) ==  0 and len(single_media.password_identifiers_set) == 0]
+			self.media_list = [single_media for single_media in self.media if
+							   		len(single_media.album_identifiers_set) ==  0 and len(single_media.password_identifiers_set) == 0]
 			for single_media in self.media_list:
 				if single_media.has_gps_data:
 					self.positions_and_media_in_tree.add_single_media(single_media)
@@ -331,7 +332,8 @@ class Album(object):
 		self.complex_combination = complex_combination(convert_set_to_combination(album_identifiers_set), convert_set_to_combination(media_identifiers_set))
 
 		# for virtual media the physical album password is included in the media, and must be taken into account
-		self.media_list = [single_media for single_media in self.media if single_media.album_identifiers_set == album_identifiers_set and single_media.password_identifiers_set == media_identifiers_set]
+		self.media_list = [single_media for single_media in self.media if
+							single_media.album_identifiers_set == album_identifiers_set and single_media.password_identifiers_set == media_identifiers_set]
 		for single_media in self.media_list:
 			if single_media.has_gps_data:
 				self.positions_and_media_in_tree.add_single_media(single_media)
