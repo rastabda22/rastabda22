@@ -320,6 +320,11 @@ class Album(object):
 			for subalbum in self.subalbums_list:
 				subalbum.leave_only_unprotected_content()
 				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
+		elif self.cache_base.find(Options.config['by_search_string']) == 0:
+			self.subalbums_list = [subalbum for subalbum in self.subalbums_list if
+								   len(subalbum.password_identifiers_set) == 0]
+			for subalbum in self.subalbums_list:
+				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
 		if ',' in self.nums_protected_media_in_sub_tree.keys():
 			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(',')
@@ -347,6 +352,11 @@ class Album(object):
 		):
 			for subalbum in self.subalbums_list:
 				subalbum.leave_only_content_protected_by(album_identifiers_set, media_identifiers_set)
+				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
+		elif self.cache_base.find(Options.config['by_search_string']) == 0:
+			self.subalbums_list = [subalbum for subalbum in self.subalbums_list if
+									subalbum.password_identifiers_set == album_identifiers_set]
+			for subalbum in self.subalbums_list:
 				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
 		if self.complex_combination in self.nums_protected_media_in_sub_tree.keys():
