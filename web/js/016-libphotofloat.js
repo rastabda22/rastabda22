@@ -290,8 +290,9 @@
 						var cacheBase = albumCacheBase.substring(albumCacheBase.lastIndexOf('/') + 1);
 						var emptyAlbum = {
 							"cacheBase": cacheBase,
-							"includedCodesComplexCombinations": [],
 							"includedProtectedDirectories": [],
+							"includedCodesComplexCombinations": [],
+							"includedCodesComplexCombinationsCounts": [],
 							"empty": true
 						};
 						var data = {"album": emptyAlbum};
@@ -492,16 +493,24 @@
 										);
 										for (i = 0; i < album2.subalbums.length; i ++) {
 											subalbum2 = album2.subalbums[i];
-											if (cacheBases.indexOf(subalbum2.cacheBase) == -1)
+											if (cacheBases.indexOf(subalbum2.cacheBase) == -1) {
 												album.subalbums.push(subalbum2);
-											// if media or positions are missing the combination must not be reported as included
-											else if (album.hasOwnProperty("media") && album.hasOwnProperty("positionsAndMediaInTree"))
+											// // if media or positions are missing the combination must not be reported as included
+											// } else if (album.hasOwnProperty("media") && album.hasOwnProperty("positionsAndMediaInTree")) {
+											} else {
 												album.subalbums.forEach(
 													function(subalbum) {
-														if (subalbum.cacheBase == subalbum2.cacheBase)
+														if (
+															subalbum.cacheBase == subalbum2.cacheBase &&
+															album.includedCodesComplexCombinationsCounts.indexOf(codesComplexCombination) == -1
+														) {
 															subalbum.numMediaInSubTree += subalbum2.numMediaInSubTree;
+															subalbum.numPositionsInTree += subalbum2.numPositionsInTree;
+															subalbum.words = util.arrayUnion(subalbum.words, subalbum2.words);
+														}
 													}
 												);
+											}
 										}
 									}
 
@@ -510,13 +519,10 @@
 										if (protectedAlbum.hasOwnProperty("media")) {
 											if (album.hasOwnProperty("media")) {
 												album.media = album.media.concat(protectedAlbum.media);
-												album.numMediaInSubTree += protectedAlbum.numMediaInSubTree;
-											} else
+											} else {
 												album.media = protectedAlbum.media;
-
+											}
 										}
-										// 	album.numMedia += protectedAlbum.numMedia;
-
 										if (album.hasOwnProperty("media")) {
 											album.media = Utilities.sortByDate(album.media);
 											album.mediaNameSort = false;
@@ -528,8 +534,14 @@
 										album.subalbums = Utilities.sortByDate(album.subalbums);
 										album.albumNameSort = false;
 										album.albumReverseSort = false;
-
 										util.sortAlbumsMedia(album);
+
+										if (album.includedCodesComplexCombinationsCounts.indexOf(codesComplexCombination) == -1) {
+											album.numMedia += protectedAlbum.numMedia;
+											album.numMediaInSubTree += protectedAlbum.numMediaInSubTree;
+											album.numPositionsInTree += protectedAlbum.numPositionsInTree;
+											album.includedCodesComplexCombinationsCounts.push(codesComplexCombination)
+										}
 
 										if (protectedAlbum.hasOwnProperty("positionsAndMediaInTree")) {
 											if (album.hasOwnProperty("positionsAndMediaInTree"))
@@ -573,18 +585,20 @@
 
 									///////// begin function function(protectedAlbum, passwordData) /////////////
 									var protectedCacheBase = passwordData.protectedCacheBase;
+									var codesComplexCombination = passwordData.codesComplexCombination;
 									// var album = passwordData.album;
 
 									if (protectedAlbum !== null) {
 										if (isEmpty(album)) {
 											delete album.empty;
-											album.hasntUnprotectedConted = true;
+											album.hasntUnprotectedContent = true;
 											for (var property in protectedAlbum) {
 												if (protectedAlbum.hasOwnProperty(property))
 													album[property] = protectedAlbum[property];
 											}
 											album.includedProtectedDirectories = [];
 											album.includedCodesComplexCombinations = [];
+											album.includedCodesComplexCombinationsCounts = [];
 											// album.includedCodesComplexCombinations = [protectedAlbum.complexCombination];
 										} else {
 										// } else if (album.includedCodesComplexCombinations.indexOf(protectedAlbum.complexCombination) == -1) {
@@ -618,6 +632,8 @@
 					album.includedProtectedDirectories = [];
 				if (! album.hasOwnProperty("includedCodesComplexCombinations"))
 					album.includedCodesComplexCombinations = [];
+				if (! album.hasOwnProperty("includedCodesComplexCombinationsCounts"))
+					album.includedCodesComplexCombinationsCounts = [];
 				numsProtectedMediaInSubTreeIsInTheAlbum(next, data);
 			} else {
 				// a protected album must be loaded in order to know the complex combinations
@@ -688,7 +704,7 @@
 
 		var albumFromCache = PhotoFloat.getAlbumFromCache(albumCacheBase);
 		if (albumFromCache) {
-			if (albumFromCache.hasOwnProperty("hasntUnprotectedConted"))
+			if (albumFromCache.hasOwnProperty("hasntUnprotectedContent"))
 				addProtectedContent(albumFromCache, executeCallback);
 			else
 				PhotoFloat.addPositionsAndMedia(

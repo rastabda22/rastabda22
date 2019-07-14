@@ -167,6 +167,22 @@
 		return union;
 	};
 
+	Utilities.prototype.arrayUnion = function(a, b) {
+		var self = this;
+		if (a === [])
+			return b;
+		if (b === [])
+			return a;
+		// begin cloning the first array
+		var union = a.slice(0);
+
+		for (var i = 0; i < b.length; i ++) {
+			if (union.indexOf(b[i]) == -1)
+				union.push(b[i]);
+		}
+		return union;
+	};
+
 	Utilities.prototype.normalizeAccordingToOptions = function(object) {
 		var string = object;
 		if (typeof object === "object")
