@@ -386,7 +386,7 @@
 					// if media or positions are missing the combination must not be reported as included
 					if (album.hasOwnProperty("media") && album.hasOwnProperty("positionsAndMediaInTree"))
 						album.includedCodesComplexCombinations = album.includedCodesComplexCombinations.concat(theCodesComplexCombinationsToGet);
-					// album.includedProtectedDirectories = album.includedProtectedDirectories.concat(theProtectedDirectoriesToGet);
+					album.includedCodesComplexCombinationsCounts = util.arrayUnion(album.includedCodesComplexCombinationsCounts, theCodesComplexCombinationsToGet);
 					next(album, data);
 				}
 			}
@@ -540,7 +540,6 @@
 											album.numMedia += protectedAlbum.numMedia;
 											album.numMediaInSubTree += protectedAlbum.numMediaInSubTree;
 											album.numPositionsInTree += protectedAlbum.numPositionsInTree;
-											album.includedCodesComplexCombinationsCounts.push(codesComplexCombination)
 										}
 
 										if (protectedAlbum.hasOwnProperty("positionsAndMediaInTree")) {
