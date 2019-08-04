@@ -56,7 +56,11 @@
 		return language;
 	};
 
-
+	Utilities.prototype.numProtectedKeys = function(album) {
+		var numsProtected = JSON.parse(JSON.stringify(album.numsProtectedMediaInSubTree));
+		delete numsProtected[''];
+		return Object.keys(numsProtected).length;
+	};
 
 	Utilities.prototype.cloneObject = function(object) {
 		return Object.assign({}, object);

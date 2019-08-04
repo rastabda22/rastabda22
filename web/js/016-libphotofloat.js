@@ -257,6 +257,21 @@
 		);
 	};
 
+	PhotoFloat.convertComplexCombinationsIntoLists = function(complexCombination) {
+		var albumCombinationList, mediaCombinationList;
+		var albumCombination = complexCombination.split(',')[0];
+		if (albumCombination == "")
+			albumCombinationList = [];
+		else
+			albumCombinationList = albumCombination.split('-');
+		var mediaCombination = complexCombination.split(',')[1];
+		if (mediaCombination == "")
+			mediaCombinationList = [];
+		else
+			mediaCombinationList = mediaCombination.split('-');
+		return [albumCombinationList, mediaCombinationList];
+	}
+
 	PhotoFloat.getAlbum = function(albumCacheBase, getPositions, getMedia, getAlbumCallback, error, thisIndexWords, thisIndexAlbums) {
 		function getSingleCacheBase(albumCacheBase, getPositions, getMedia, goOn, error, data) {
 			// this function is needed - without getting the protected content - in order to get the protected albums too
@@ -361,7 +376,7 @@
 						mediaCode = util.convertMd5ToCode(mediaGuessedPassword);
 						for (codesComplexCombinationInAlbum in album.numsProtectedMediaInSubTree) {
 							if (album.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombinationInAlbum) && codesComplexCombinationInAlbum != "") {
-								lists = convertComplexCombinationsIntoLists(codesComplexCombinationInAlbum);
+								lists = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationInAlbum);
 								albumCodesComplexCombinationList = lists[0];
 								mediaCodesComplexCombinationList = lists[1];
 								if (
@@ -421,21 +436,6 @@
 				);
 			}
 
-			function convertComplexCombinationsIntoLists(complexCombination) {
-				var albumCombinationList, mediaCombinationList;
-				var albumCombination = complexCombination.split(',')[0];
-				if (albumCombination == "")
-					albumCombinationList = [];
-				else
-					albumCombinationList = albumCombination.split('-');
-				var mediaCombination = complexCombination.split(',')[1];
-				if (mediaCombination == "")
-					mediaCombinationList = [];
-				else
-					mediaCombinationList = mediaCombination.split('-');
-				return [albumCombinationList, mediaCombinationList];
-			}
-
 			function numsProtectedMediaInSubTreeIsInTheAlbum(next, data) {
 				theCodesComplexCombinationsToGet = codesComplexCombinationsToGet(album);
 
@@ -462,7 +462,7 @@
 						// for (iDirectory = 0; iDirectory < theProtectedDirectoriesToGet.length; iDirectory ++) {
 						for (iComplex = 0; iComplex < theCodesComplexCombinationsToGet.length; iComplex ++) {
 							codesComplexCombination = theCodesComplexCombinationsToGet[iComplex];
-							codesCombinationsLists = convertComplexCombinationsIntoLists(codesComplexCombination);
+							codesCombinationsLists = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombination);
 							albumMd5CombinationsList = util.convertCodesListToMd5sList(codesCombinationsLists[0]);
 							mediaMd5CombinationList = util.convertCodesListToMd5sList(codesCombinationsLists[1]);
 							protectedDirectory = Options.protected_directories_prefix;
@@ -1559,7 +1559,8 @@
 
 				if (
 					! perhapsIsAProtectedMedia &&
-					! jQuery.isEmptyObject(theAlbum.numsProtectedMediaInSubTree) &&
+					util.numProtectedKeys(theAlbum) &&
+					// ! jQuery.isEmptyObject(theAlbum.numsProtectedMediaInSubTree) &&
 					(
 						theAlbum.subalbums.length == 0 ||
 						util.sumUpNumsProtectedMedia(theAlbum.numsProtectedMediaInSubTree) > util.sumUpNumsProtectedMedia(util.sumNumsProtectedMediaOfArray(theAlbum.subalbums))

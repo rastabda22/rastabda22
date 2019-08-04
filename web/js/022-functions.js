@@ -401,8 +401,12 @@
 
 		if (
 			thisAlbum !== null && (
-				! jQuery.isEmptyObject(thisAlbum.numsProtectedMediaInSubTree) &&
-				(! thisAlbum.hasOwnProperty("includedCodesComplexCombinations") || thisAlbum.includedCodesComplexCombinations.length < this.numProtectedKeys(thisAlbum)) ||
+				util.numProtectedKeys(thisAlbum) &&
+				// ! jQuery.isEmptyObject(thisAlbum.numsProtectedMediaInSubTree) &&
+				(
+					! thisAlbum.hasOwnProperty("includedCodesComplexCombinations") ||
+					thisAlbum.includedCodesComplexCombinations.length < util.numProtectedKeys(thisAlbum)
+				) ||
 				util.isSearchCacheBase(thisAlbum.cacheBase)
 			)
 		) {
@@ -426,12 +430,6 @@
 				$("ul",this).slideToggle(300);
 			}
 		);
-	};
-
-	Functions.numProtectedKeys = function(album) {
-		var numsProtected = JSON.parse(JSON.stringify(album.numsProtectedMediaInSubTree));
-		delete numsProtected[''];
-		return Object.keys(numsProtected).length;
 	};
 
 	Functions.prototype.scrollToThumb = function() {
@@ -899,7 +897,6 @@
 	Functions.prototype.updateMenu = Functions.updateMenu;
 	Functions.prototype.focusSearchField = Functions.focusSearchField;
 	Functions.prototype.toggleMetadata = Functions.toggleMetadata;
-	Functions.prototype.numProtectedKeys = Functions.numProtectedKeys;
 
 	window.Functions = Functions;
 }());

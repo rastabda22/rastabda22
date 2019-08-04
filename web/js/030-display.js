@@ -237,7 +237,7 @@ $(document).ready(function() {
 						e.key === "u" &&
 						currentAlbum !== null && (
 							! jQuery.isEmptyObject(currentAlbum.numsProtectedMediaInSubTree) &&
-							(! currentAlbum.hasOwnProperty("includedCombinations") || currentAlbum.includedCombinations.length < f.numProtectedKeys(currentAlbum)) ||
+							(! currentAlbum.hasOwnProperty("includedCombinations") || currentAlbum.includedCombinations.length < util.numProtectedKeys(currentAlbum)) ||
 							util.isSearchCacheBase(currentAlbum.cacheBase)
 						)
 					) {
