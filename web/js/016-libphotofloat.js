@@ -1610,20 +1610,20 @@
 		}
 	};
 
-	PhotoFloat.prototype.authenticate = function(password, result) {
-		var ajaxOptions = {
-			type: "GET",
-			dataType: "text",
-			url: "auth?username=photos&password=" + password,
-			success: function() {
-				result(true);
-			},
-			error: function() {
-				result(false);
-			}
-		};
-		$.ajax(ajaxOptions);
-	};
+	// PhotoFloat.prototype.authenticate = function(password, result) {
+	// 	var ajaxOptions = {
+	// 		type: "GET",
+	// 		dataType: "text",
+	// 		url: "auth?username=photos&password=" + password,
+	// 		success: function() {
+	// 			result(true);
+	// 		},
+	// 		error: function() {
+	// 			result(false);
+	// 		}
+	// 	};
+	// 	$.ajax(ajaxOptions);
+	// };
 
 	PhotoFloat.mediaHash = function(album, media) {
 		return media.cacheBase;
