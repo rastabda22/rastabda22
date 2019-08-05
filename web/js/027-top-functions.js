@@ -521,13 +521,15 @@
 		if ($("#search-album-to-be-filled").length) {
 			// for searches in current folder we must get the names from the album
 			// we must use getAlbum() because the album could not be in the cache yet (as when ctl-r is pressed)
-			phFl.getAlbum(
+			var promise = phFl.getAlbum(
 				searchFolderHash,
 				// getPositions
 				true,
 				// getMedia
 				true,
-				// success
+				util.die
+			);
+			promise.then(
 				function(theAlbum) {
 					var whereLinks = '', thisCacheBase, name, documentTitle;
 
@@ -557,8 +559,7 @@
 						);
 						document.title = documentTitle;
 					}
-				},
-				util.die
+				}
 			);
 		}
 
@@ -1643,11 +1644,16 @@
 
 
 	TopFunctions.showAlbum = function(populate) {
-		function insertRandomImage(randomSubAlbum, randomMedia, subalbum, id, resolve) {
+		function insertRandomImage(randomSubAlbum) {
+			var index = randomSubAlbum.randomMediaIndex;
+			delete randomSubAlbum.randomMediaIndex;
+			var subalbum = randomSubAlbum.theSubalbum;
+			delete randomSubAlbum.theSubalbum;
 			var titleName, randomMediaLink, goTo, humanGeonames;
+			var randomMedia = randomSubAlbum.media[index];
+			var id = phFl.hashCode(subalbum.cacheBase)
 			var mediaSrc = util.chooseThumbnail(randomSubAlbum, randomMedia, Options.album_thumb_size);
 
-			phFl.subalbumIndex ++;
 			mediaWidth = randomMedia.metadata.size[0];
 			mediaHeight = randomMedia.metadata.size[1];
 			if (Options.album_thumb_type == "fit") {
@@ -1722,12 +1728,6 @@
 					window.location.href = subfolderHash;
 				}
 			);
-
-			numSubAlbumsReady ++;
-			if (numSubAlbumsReady >= currentAlbum.subalbums.length) {
-				// now all the subalbums random thumbnails has been loaded
-				resolve();
-			}
 		}
 		// end of insertRandomImage function
 
@@ -1741,7 +1741,6 @@
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
 		var array, folderArray, folder, folderName, folderTitle, savedSearchSubAlbumHash, savedSearchAlbumHash;
 
-		phFl.subalbumIndex = 0;
 		numSubAlbumsReady = 0;
 
 		array = phFl.decodeHash(location.hash);
@@ -1986,9 +1985,10 @@
 					// subalbum loop
 					//
 					// The promise in order to know when everything has come to its end
-					var subalbumsPromise = new Promise(
-						function(resolve, reject) {
-							for (i = 0; i < currentAlbum.subalbums.length; ++i) {
+					var subalbumsPromises = [];
+					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
+						let subalbumsPromise = new Promise(
+							function(resolve) {
 								ithSubalbum = currentAlbum.subalbums[i];
 
 								// generate the subalbum caption
@@ -2121,27 +2121,31 @@
 
 								//////////////////// begin anonymous function /////////////////////
 								//      })(ithSubalbum, image, container, id);
-								(function(theSubalbum, theImage, theLink, id) {
+								(function(theSubalbum, theImage) {
 									// function(subalbum, container, callback, error)  ---  callback(album,   album.media[index], container,            subalbum);
-									phFl.pickRandomMedia(
+									var promise = phFl.pickRandomMedia(
 										theSubalbum,
-										resolve,
-										id,
-										insertRandomImage,
 										function error() {
 											currentAlbum.subalbums.splice(currentAlbum.subalbums.indexOf(theSubalbum), 1);
 											theImage.parent().remove();
 											// subalbums.splice(subalbums.indexOf(theLink), 1);
 										}
 									);
-									i ++; i --;
-								})(ithSubalbum, image, container, id);
+									promise.then(
+										function(album, index, theSubalbum) {
+											insertRandomImage(album, index, theSubalbum);
+											resolve();
+										}
+									);
+								})(ithSubalbum, image);
 								//////////////////// end anonymous function /////////////////////
 							}
-						}
-					);
-					subalbumsPromise.then(
-						function() {
+						);
+						subalbumsPromises.push(subalbumsPromise);
+					}
+
+					Promise.all(subalbumsPromises).then(
+						function allRandomImagesGot() {
 							// we can run the function that prepare the stuffs for sharing
 							f.socialButtons();
 

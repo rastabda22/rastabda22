@@ -514,10 +514,16 @@ $(document).ready(function() {
 		// if (util.isMapHash(location.hash))
 		// 	// map albums are generated passing the data from the map, so here we must exit
 		// 	return;
-		if (Object.keys(Options).length > 0)
+		if (Object.keys(Options).length > 0) {
 			f.parseHash(location.hash, tF.hashParsed, util.die);
-		else
-			f.getOptions(location.hash, tF.hashParsed, util.die);
+		} else {
+			var promise = f.getOptions();
+			promise.then(
+				function() {
+					f.parseHash(location.hash, tF.hashParsed, util.die);
+				}
+			)
+		}
 	});
 
 	// execution starts here
