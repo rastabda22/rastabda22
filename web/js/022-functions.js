@@ -490,9 +490,6 @@
 	};
 
 	Functions.prototype.setOptions = function() {
-		var albumThumbnailSize, mediaThumbnailSize;
-		albumThumbnailSize = Options.album_thumb_size;
-		mediaThumbnailSize = Options.media_thumb_size;
 		$("body").css("background-color", Options.background_color);
 
 		$(".title").css("font-size", Options.title_font_size);
@@ -529,7 +526,7 @@
 		}
 	};
 
-	Functions.prototype.pinchSwipeInitialization = function(containerHeight, containerWidth) {
+	Functions.prototype.pinchSwipeInitialization = function() {
 		pS.initialize();
 		util.setPinchButtonsPosition();
 		util.correctPrevNextPosition();
@@ -820,7 +817,7 @@
 		$("li.search ul").slideDown();
 	};
 
-	Functions.prototype.toggleInsideWordsSearch = function(ev) {
+	Functions.prototype.toggleInsideWordsSearch = function() {
 		Options.search_inside_words = ! Options.search_inside_words;
 		Functions.setBooleanCookie("search_inside_words", Options.search_inside_words);
 		Functions.updateMenu();
@@ -829,7 +826,7 @@
 		Functions.focusSearchField();
 	};
 
-	Functions.prototype.toggleAnyWordSearch = function(ev) {
+	Functions.prototype.toggleAnyWordSearch = function() {
 		Options.search_any_word = ! Options.search_any_word;
 		Functions.setBooleanCookie("search_any_word", Options.search_any_word);
 		Functions.updateMenu();
@@ -838,7 +835,7 @@
 		Functions.focusSearchField();
 	};
 
-	Functions.prototype.toggleCaseSensitiveSearch = function(ev) {
+	Functions.prototype.toggleCaseSensitiveSearch = function() {
 		Options.search_case_sensitive = ! Options.search_case_sensitive;
 		Functions.setBooleanCookie("search_case_sensitive", Options.search_case_sensitive);
 		Functions.updateMenu();
@@ -847,7 +844,7 @@
 		Functions.focusSearchField();
 
 	};
-	Functions.prototype.toggleAccentSensitiveSearch = function(ev) {
+	Functions.prototype.toggleAccentSensitiveSearch = function() {
 		Options.search_accent_sensitive = ! Options.search_accent_sensitive;
 		Functions.setBooleanCookie("search_accent_sensitive", Options.search_accent_sensitive);
 		Functions.updateMenu();
@@ -856,7 +853,7 @@
 		Functions.focusSearchField();
 	};
 
-	Functions.prototype.toggleCurrentAbumSearch = function(ev) {
+	Functions.prototype.toggleCurrentAbumSearch = function() {
 		Options.search_current_album = ! Options.search_current_album;
 		Functions.setBooleanCookie("search_current_album", Options.search_current_album);
 		Functions.updateMenu();
@@ -890,7 +887,7 @@
 		}
 	};
 
-	Functions.prototype.toggleMenu = function(ev) {
+	Functions.prototype.toggleMenu = function() {
 		$("ul#right-menu").toggleClass("expand");
 		if ($("ul#right-menu").hasClass("expand")) {
 			Functions.focusSearchField();

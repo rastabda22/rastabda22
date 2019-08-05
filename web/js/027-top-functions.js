@@ -15,14 +15,13 @@
 
 	TopFunctions.setTitle = function(id, media) {
 		var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, isMapTitle, originalTitle;
-		var titleAnchorClasses, titleAnchorClassesItalics, albumTypeString, where, initialValue, searchFolderHash;
+		var titleAnchorClasses, where, initialValue, searchFolderHash;
 		var linkCount = 0, linksToLeave = 1, latitude, longitude, arrayCoordinates, numMediaInSubAlbums;
 		var raquo = "&raquo;";
 		// gpsLevelNumber is the number of levels for the by gps tree
 		// current levels are country, region, place => 3
 		var gpsLevelNumber = 3;
 		var gpsName = '';
-		var gpsHtmlTitle;
 		var setDocumentTitle = (id === "center" || id === "album");
 
 		f.updateMenu();
@@ -1080,7 +1079,7 @@
 		if (util.hasGpsData(media)) {
 			$(".media-box#" + id + " .menu-map-link").on(
 				'click',
-				function(ev) {
+				function() {
 					$(".map-popup-trigger")[0].click();
 				}
 			);
@@ -1169,7 +1168,7 @@
 		var linkTitle = util._t('#show-map');
 		$(".media-box#" + id + " .metadata tr.gps").attr("title", linkTitle).on(
 			'click',
-			function(ev) {
+			function() {
 				$(".map-popup-trigger")[0].click();
 			}
 		);
@@ -1714,7 +1713,7 @@
 			container.off('click').on(
 			// container.off('click').css("cursor", "pointer").on(
 				'click',
-				function(ev) {
+				function() {
 					var subfolderHash;
 					if (util.isSearchCacheBase(currentAlbum.cacheBase))
 						subfolderHash = phFl.encodeHash(subalbum, null, subalbum.cacheBase, currentAlbum.cacheBase);
@@ -1732,7 +1731,7 @@
 		// end of insertRandomImage function
 
 
-		var i, imageLink, linkContainer, container, image, media, thumbsElement, subalbums, subalbumsElement, mediaHash, thumbHash, thumbnailSize;
+		var i, imageLink, linkContainer, container, image, media, thumbsElement, subalbumsElement, mediaHash, thumbHash, thumbnailSize;
 		var width, height, thumbWidth, thumbHeight, imageString, calculatedWidth, calculatedHeight, populateMedia;
 		var albumViewWidth, correctedAlbumThumbSize = Options.album_thumb_size;
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
@@ -1778,7 +1777,7 @@
 					$("#show-them:hover").css("color", "").css("cursor", "");
 					$("#show-them").on(
 						"click",
-						function(ev) {
+						function() {
 							$("ul#right-menu").addClass("expand");
 						}
 					);
@@ -2795,7 +2794,7 @@
 		} else {
 			// not control click: add (with shift) or replace (without shift) the positions
 			imageLoadPromise = new Promise(
-				function(resolve, reject) {
+				function(resolve) {
 					var indexPositions, positionsAndCountsElement;
 
 					// $("#loading").show();

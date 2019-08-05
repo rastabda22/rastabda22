@@ -1129,7 +1129,7 @@
 						for (i = 0; i <= lastIndex; i ++)
 							if (
 								PhotoFloat.searchWordsFromJsonFile.some(
-									function(words, index, searchWords) {
+									function(words, index) {
 										if (words.includes(SearchWordsFromUserNormalized[i])) {
 											albumHashes.push([PhotoFloat.searchAlbumCacheBaseFromJsonFile[index]]);
 											return true;
@@ -1390,7 +1390,7 @@
 			);
 		}
 
-		var self, albumHashToGet, albumHashes;
+		var albumHashToGet, albumHashes;
 		var SearchWordsFromUser, SearchWordsFromUserNormalized, SearchWordsFromUserNormalizedAccordingToOptions;
 		var indexWords, indexAlbums, wordsWithOptionsString;
 		// this vars are defined here and not at the beginning of the file because the options must have been read

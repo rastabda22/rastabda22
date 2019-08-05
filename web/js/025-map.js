@@ -189,7 +189,7 @@
 		// add the click event for showing the photos in the popup as an album
 		$("#popup-photo-count").on(
 			"click",
-			function(ev) {
+			function() {
 				$('.leaflet-popup-close-button')[0].click();
 				// $('#popup #popup-content').html("");
 				$('.modal-close')[0].click();

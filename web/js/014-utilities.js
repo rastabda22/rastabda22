@@ -193,7 +193,6 @@
 	};
 
 	Utilities.prototype.arrayUnion = function(a, b) {
-		var self = this;
 		if (a === [])
 			return b;
 		if (b === [])
@@ -689,10 +688,10 @@
 		// this function works on the img tag identified by event.data.id
 		// it adjusts width, height and position so that it fits in its parent (<div class="bedia-box-inner">, or the whole window)
 		// and centers vertically
-		var media = event.data.media, mediaElement, container, containerRatio, photoSrc, previousSrc;
+		var media = event.data.media, mediaElement, container, photoSrc, previousSrc;
 		var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth();
 		var mediaBarBottom = 0;
-		var mediaWidth, mediaHeight, attrWidth, attrHeight, ratio;
+		var mediaWidth, mediaHeight, attrWidth, attrHeight;
 		var id = event.data.id;
 		var heightForMedia, heightForMediaAndTitle, titleHeight;
 
