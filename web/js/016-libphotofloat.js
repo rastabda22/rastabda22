@@ -697,11 +697,11 @@
 
 					PhotoFloat.putAlbumIntoCache(theAlbum.cacheBase, theAlbum);
 
-					if (typeof thisIndexWords === "undefined")
-						thisIndexWords = null;
-					if (typeof thisIndexAlbums === "undefined")
-						thisIndexAlbums = null;
-					resolve(theAlbum, thisIndexWords, thisIndexAlbums);
+					if (typeof thisIndexWords !== "undefined")
+						theAlbum.thisIndexWords = thisIndexWords;
+					if (typeof thisIndexAlbums !== "undefined")
+						theAlbum.thisIndexAlbums = thisIndexAlbums;
+					resolve(theAlbum);
 				}
 
 				function hasProtectedContent(album) {
@@ -722,7 +722,7 @@
 
 				///////////////////////////////////////////////////
 				// begin getAlbum function code
-				// definition: PhotoFloat.getAlbum = function(albumCacheBase, getPositions, getMedia, getAlbumCallback, error, thisIndexWords, thisIndexAlbums) {
+				// definition: PhotoFloat.getAlbum = function(albumCacheBase, getPositions, getMedia, error, thisIndexWords, thisIndexAlbums) {
 				///////////////////////////////////////////////////
 				// var baseJsonFileExists = true;
 
@@ -1169,7 +1169,11 @@
 									indexAlbums
 								);
 								promise.then(
-									function(theAlbum, thisIndexWords, thisIndexAlbums) {
+									function(theAlbum) {
+										var thisIndexWords = theAlbum.thisIndexWords;
+										delete theAlbum.thisIndexWords;
+										var thisIndexAlbums = theAlbum.thisIndexAlbums;
+										delete theAlbum.thisIndexAlbums;
 										var matchingMedia = [], matchingSubalbums = [], match, indexMedia, indexSubalbums, indexWordsLeft, resultAlbum, indexWords1, ithMedia, ithSubalbum;
 
 										PhotoFloat.putAlbumIntoCache(albumHashes[thisIndexWords][thisIndexAlbums], theAlbum);
