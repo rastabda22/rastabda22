@@ -753,7 +753,8 @@
 			actuallyBind(thisAlbum, util.hasGpsData(currentMedia));
 		} else {
 			// we are in a root album
-			phFl.geotaggedPhotosExist(
+			var promise = phFl.geotaggedPhotosExist();
+			promise.then(
 				function(hasGpsData) {
 					actuallyBind(thisAlbum, hasGpsData);
 				}
