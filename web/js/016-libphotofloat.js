@@ -163,24 +163,29 @@
 		);
 	};
 
-	// PhotoFloat.getJsonFiles = function(albumList, callback, error) {
-	// 	function anotherAlbumGot(album, i) {
-	// 		resultAlbums.push(album);
-	// 		nFile ++;
-	// 		if (nFile >= albumList.length) {
-	// 			callback(resultAlbums);
-	// 		}
-	// 	}
-	//
-	// 	var nFile = 0, resultAlbums = [];
-	// 	if (albumList.length == 0) {
-	// 		callback([]);
-	// 	} else {
-	// 		for (var i = 0; i < albumList.length; i ++) {
-	// 			PhotoFloat.getJsonFile(albumList[i], anotherAlbumGot, error);
-	// 		}
-	// 	}
-	// };
+	PhotoFloat.getJsonFile = function(jsonRelativeFileName) {
+		return new Promise(
+			function(resolve, reject) {
+				var ajaxOptions = {
+					url: util.pathJoin([Options.server_cache_path, jsonRelativeFileName]),
+					type: "GET",
+					dataType: "json",
+					success: function(album) {
+						resolve(album);
+					},
+					error: reject
+				};
+				// if (typeof error !== "undefined" && error !== null) {
+				// 	ajaxOptions.error = function(jqXHR, textStatus, errorThrown) {
+				// 		error(jqXHR.status);
+				// 		if (typeof reject !== "undefined")
+				// 			reject();
+				// 	};
+				// }
+				$.ajax(ajaxOptions);
+			}
+		);
+	};
 
 	// PhotoFloat.passwordsToGet = function(album) {
 	// 	if (isEmpty(album))
