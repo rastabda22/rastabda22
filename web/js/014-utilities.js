@@ -56,7 +56,32 @@
 		return language;
 	};
 
+	Utilities.prototype.numProtectedKeys = function(album) {
+		if (album.hasOwnProperty("numsProtectedMediaInSubTree")) {
+			var numsProtected = JSON.parse(JSON.stringify(album.numsProtectedMediaInSubTree));
+			delete numsProtected[''];
+			return Object.keys(numsProtected).length;
+		} else {
+			return false;
+		}
+	};
 
+	// Utilities.prototype.numPasswords = function(album) {
+	// 	var numsProtected = JSON.parse(JSON.stringify(album.numsProtectedMediaInSubTree));
+	// 	delete numsProtected[''];
+	// 	var passwordCodes = [];
+	// 	for (key in Object.keys(numsProtected)) {
+	// 		codesArrays = phFl.convertComplexCombinationsIntoLists(key);
+	// 		passwordCodes = passwordCodes.concat(codesArrays[0]).concat(codesArrays[1]);
+	// 	}
+	// 	// reduce to unique values
+	// 	passwordCodes = passwordCodes.filter(
+	// 		function (x, i, a) {
+	// 			return a.indexOf(x) == i;
+	// 		}
+	// 	);
+	// 	return passwordCodes.length;
+	// };
 
 	Utilities.prototype.cloneObject = function(object) {
 		return Object.assign({}, object);
@@ -162,6 +187,21 @@
 					return self.normalizeAccordingToOptions(first) == self.normalizeAccordingToOptions(second);
 				})
 			)
+				union.push(b[i]);
+		}
+		return union;
+	};
+
+	Utilities.prototype.arrayUnion = function(a, b) {
+		if (a === [])
+			return b;
+		if (b === [])
+			return a;
+		// begin cloning the first array
+		var union = a.slice(0);
+
+		for (var i = 0; i < b.length; i ++) {
+			if (union.indexOf(b[i]) == -1)
 				union.push(b[i]);
 		}
 		return union;
@@ -648,10 +688,10 @@
 		// this function works on the img tag identified by event.data.id
 		// it adjusts width, height and position so that it fits in its parent (<div class="bedia-box-inner">, or the whole window)
 		// and centers vertically
-		var media = event.data.media, mediaElement, container, containerRatio, photoSrc, previousSrc;
+		var media = event.data.media, mediaElement, container, photoSrc, previousSrc;
 		var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth();
 		var mediaBarBottom = 0;
-		var mediaWidth, mediaHeight, attrWidth, attrHeight, ratio;
+		var mediaWidth, mediaHeight, attrWidth, attrHeight;
 		var id = event.data.id;
 		var heightForMedia, heightForMediaAndTitle, titleHeight;
 
@@ -810,15 +850,15 @@
 		return sum;
 	};
 	Utilities.prototype.sumNumsProtectedMediaOfArray = function(subalbums) {
-		var result = {}, i, album, passwordCode;
+		var result = {}, i, passwordCode, subalbum;
 
 		for (i = 0; i < subalbums.length; i ++) {
-			album = subalbums[i];
-			for (passwordCode in album.numsProtectedMediaInSubTree) {
-				if (album.numsProtectedMediaInSubTree.hasOwnProperty(passwordCode)) {
+			subalbum = subalbums[i];
+			for (passwordCode in subalbum.numsProtectedMediaInSubTree) {
+				if (subalbum.numsProtectedMediaInSubTree.hasOwnProperty(passwordCode)) {
 					if (! result.hasOwnProperty(passwordCode))
 						result[passwordCode] = 0;
-					result[passwordCode] += album.numsProtectedMediaInSubTree[passwordCode];
+					result[passwordCode] += subalbum.numsProtectedMediaInSubTree[passwordCode];
 				}
 			}
 		}
@@ -856,7 +896,7 @@
 	Utilities.xDistanceBetweenCoordinatePoints = function(point1, point2) {
 		return Math.max(
 			Utilities.distanceBetweenCoordinatePoints({"lng": point1.lng, "lat": point1.lat}, {"lng": point2.lng, "lat": point1.lat}),
-			Utilities.distanceBetweenCoordinatePoints({"lng": point1.lng, "lat": point2.lat}, {"lng": point2.lng, "lat": point2.lat}),
+			Utilities.distanceBetweenCoordinatePoints({"lng": point1.lng, "lat": point2.lat}, {"lng": point2.lng, "lat": point2.lat})
 		);
 	};
 
@@ -1008,6 +1048,80 @@
 		}
 	};
 
+	// Utilities.prototype.convertComplexCombinationsToCodesComplexCombinations = function(complexCombinationList) {
+	// 	var codesComplexCombinationList = [];
+	// 	for (var i = 0; i < complexCombinationList.length; i ++) {
+	// 		codesComplexCombinationList.push(Utilities.convertComplexCombinationToCodesComplexCombination(complexCombinationList[i]));
+	// 	}
+	// 	return codesComplexCombinationList;
+	// };
+
+	Utilities.convertComplexCombinationToCodesComplexCombination = function(complexCombination) {
+		var albumCombinationsList = complexCombination.split(',')[0].split('-');
+		var mediaCombinationsList = complexCombination.split(',')[1].split('-');
+		var i, index, code;
+
+		var albumCodesCombinationsList = [];
+		for (i = 0; i < albumCombinationsList.length; i ++) {
+			index = PhotoFloat.guessedPasswordsMd5.indexOf(albumCombinationsList[i]);
+			code = PhotoFloat.guessedPasswordCodes[index];
+			albumCodesCombinationsList.push(code);
+		}
+		var mediaCodesCombinationsList = [];
+		for (i = 0; i < mediaCombinationsList.length; i ++) {
+			index = PhotoFloat.guessedPasswordsMd5.indexOf(mediaCombinationsList[i]);
+			code = PhotoFloat.guessedPasswordCodes[index];
+			mediaCodesCombinationsList.push(code);
+		}
+
+		return [albumCodesCombinationsList.join('-'), mediaCodesCombinationsList.join('-')].join(',');
+	};
+
+	Utilities.prototype.convertMd5ToCode = function(md5) {
+		var index = PhotoFloat.guessedPasswordsMd5.indexOf(md5);
+		return PhotoFloat.guessedPasswordCodes[index];
+	};
+
+	Utilities.prototype.convertCodesListToMd5sList = function(codesList) {
+		var i, index, md5sList = [];
+		for (i = 0; i < codesList.length; i ++) {
+			index = PhotoFloat.guessedPasswordCodes.indexOf(codesList[i]);
+			if (index != -1) {
+				md5sList.push(PhotoFloat.guessedPasswordsMd5[index]);
+			}
+		}
+		return md5sList;
+	};
+
+	Utilities.prototype.convertCodesComplexCombinationToComplexCombination = function(codesComplexCombination) {
+		var albumCodesCombinationsList = codesComplexCombination.split(',')[0].split('-');
+		var mediaCodesCombinationsList = codesComplexCombination.split(',')[1].split('-');
+		var i, index, md5;
+
+		var albumCombinationsList = [];
+		for (i = 0; i < albumCodesCombinationsList.length; i ++) {
+			index = PhotoFloat.guessedPasswordCodes.indexOf(albumCodesCombinationsList[i]);
+			if (index != -1) {
+				md5 = PhotoFloat.guessedPasswordsMd5[index];
+				albumCombinationsList.push(md5);
+			} else {
+				albumCombinationsList.push('...');
+			}
+		}
+		var mediaCombinationsList = [];
+		for (i = 0; i < mediaCodesCombinationsList.length; i ++) {
+			index = PhotoFloat.guessedPasswordCodes.indexOf(mediaCodesCombinationsList[i]);
+			if (index != -1) {
+				md5 = PhotoFloat.guessedPasswordsMd5[index];
+				mediaCombinationsList.push(md5);
+			} else {
+				albumCombinationsList.push('...');
+			}
+		}
+
+		return [albumCombinationsList.join('-'), mediaCombinationsList.join('-')].join(',');
+	};
+
 	Utilities.prototype.undie = function() {
 		$(".error, #error-overlay, #auth-text", ".search-failed").fadeOut(500);
 		$("body, html").css("overflow", "auto");
@@ -1039,38 +1153,40 @@
 			thisAlbum.albumReverseSort = ! thisAlbum.albumReverseSort;
 		}
 
-		if (Functions.needMediaNameSort(thisAlbum)) {
-			thisAlbum.media = Utilities.sortByName(thisAlbum.media);
-			thisAlbum.mediaNameSort = true;
-			thisAlbum.mediaReverseSort = false;
-			if (currentMedia !== null) {
-				currentMediaIndex = thisAlbum.media.findIndex(
-					function(thisMedia) {
-						var matches =
-							thisMedia.cacheBase == currentMedia.cacheBase && thisMedia.foldersCacheBase == currentMedia.foldersCacheBase;
-						return matches;
-					}
-				);
+		if (thisAlbum.hasOwnProperty("media")) {
+			if (Functions.needMediaNameSort(thisAlbum)) {
+				thisAlbum.media = Utilities.sortByName(thisAlbum.media);
+				thisAlbum.mediaNameSort = true;
+				thisAlbum.mediaReverseSort = false;
+				if (currentMedia !== null) {
+					currentMediaIndex = thisAlbum.media.findIndex(
+						function(thisMedia) {
+							var matches =
+								thisMedia.cacheBase == currentMedia.cacheBase && thisMedia.foldersCacheBase == currentMedia.foldersCacheBase;
+							return matches;
+						}
+					);
+				}
+			} else if (Functions.needMediaDateSort(thisAlbum)) {
+				thisAlbum.media = Utilities.sortByDate(thisAlbum.media);
+				thisAlbum.mediaNameSort = false;
+				thisAlbum.mediaReverseSort = false;
+				if (currentMedia !== null) {
+					currentMediaIndex = thisAlbum.media.findIndex(
+						function(thisMedia) {
+							var matches =
+								thisMedia.cacheBase == currentMedia.cacheBase && thisMedia.foldersCacheBase == currentMedia.foldersCacheBase;
+							return matches;
+						}
+					);
+				}
 			}
-		} else if (Functions.needMediaDateSort(thisAlbum)) {
-			thisAlbum.media = Utilities.sortByDate(thisAlbum.media);
-			thisAlbum.mediaNameSort = false;
-			thisAlbum.mediaReverseSort = false;
-			if (currentMedia !== null) {
-				currentMediaIndex = thisAlbum.media.findIndex(
-					function(thisMedia) {
-						var matches =
-							thisMedia.cacheBase == currentMedia.cacheBase && thisMedia.foldersCacheBase == currentMedia.foldersCacheBase;
-						return matches;
-					}
-				);
+			if (Functions.needMediaDateReverseSort(thisAlbum) || Functions.needMediaNameReverseSort(thisAlbum)) {
+				thisAlbum.media = Utilities.sortReverse(thisAlbum.media);
+				thisAlbum.mediaReverseSort = ! thisAlbum.mediaReverseSort;
+				if (typeof currentMediaIndex !== "undefined" && currentMediaIndex != -1)
+					currentMediaIndex = thisAlbum.media.length - 1 - currentMediaIndex;
 			}
-		}
-		if (Functions.needMediaDateReverseSort(thisAlbum) || Functions.needMediaNameReverseSort(thisAlbum)) {
-			thisAlbum.media = Utilities.sortReverse(thisAlbum.media);
-			thisAlbum.mediaReverseSort = ! thisAlbum.mediaReverseSort;
-			if (typeof currentMediaIndex !== "undefined" && currentMediaIndex != -1)
-				currentMediaIndex = thisAlbum.media.length - 1 - currentMediaIndex;
 		}
 	};
 
@@ -1084,14 +1200,14 @@
 		if (typeof thisAlbum.albumNameSort === "undefined") {
 			thisAlbum.albumNameSort = false;
 		}
-		if (typeof thisAlbum.albumReverseSort === "undefined"){
+		if (typeof thisAlbum.albumReverseSort === "undefined") {
 			thisAlbum.albumReverseSort = false;
 		}
 
 		if (typeof thisAlbum.mediaNameSort === "undefined") {
 			thisAlbum.mediaNameSort = false;
 		}
-		if (typeof thisAlbum.mediaReverseSort === "undefined"){
+		if (typeof thisAlbum.mediaReverseSort === "undefined") {
 			thisAlbum.mediaReverseSort = false;
 		}
 
@@ -1111,6 +1227,7 @@
 	};
 
 	/* make static methods callable as member functions */
+	Utilities.prototype.convertComplexCombinationToCodesComplexCombination = Utilities.convertComplexCombinationToCodesComplexCombination;
 	Utilities.prototype.sortAlbumsMedia = Utilities.sortAlbumsMedia;
 	Utilities.prototype.chooseReducedPhoto = Utilities.chooseReducedPhoto;
 	Utilities.prototype.originalMediaPath = Utilities.originalMediaPath;

@@ -6,7 +6,7 @@ Albums and media can be protected by password. Various passwords can be used for
 
 The passwords cannot be in the album tree: the album tree will have _password_ files (the actual name is set by the option `passwords_marker`), whose lines may be:
 
-* a _password identifier_: the album and all its subalbums will be protected by the password assigned to the identifier;
+* a _password identifier_: the album and all its subalbums will be protected by the password assigned to the identifier; can consist of every non-space character except '-' (dash) and ',' (comma);
 * a _password identifier_ followed by the _case sensitive/insensitive flag_ and a _pattern_ (shell wildcards are understood): the subalbums/media matched by the pattern will be protected by the password assigned to the identifier;
 * a `-` (_minus sign_): it will stop the passwords from the parent albums propagate into it.
 

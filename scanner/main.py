@@ -38,7 +38,7 @@ def main():
 			if Options.config['debug_profile']:
 				import Debug
 				Debug.profile_start()
-		
+
 		os.umask(0o02)
 		TreeWalker()
 		report_times(True)
@@ -52,7 +52,7 @@ def main():
 				Debug.memory_dump(snapshot, key_type='lineno', limit=30)
 			if Options.config['debug_profile']:
 				Debug.profile_dump(cumulative=False)
-			
+
 		message("    The end!    ", "", 3)
 	except KeyboardInterrupt:
 		message("keyboard", "CTRL+C pressed, quitting.")

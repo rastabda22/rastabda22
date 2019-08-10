@@ -10,12 +10,12 @@ import os
 import json
 
 import Options
-# from CachePath import file_mtime
 
 def file_mtime(path):
 	return datetime.fromtimestamp(int(os.path.getmtime(path)))
 
 def report_mem():
+	return
 	print("MEM total, code, data >>>> " + os.popen("ps -p " + str(os.getpid()) + " -o rss,trs,drs|grep -v DRS").read())
 
 def make_dir(absolute_path, message_part):
@@ -27,7 +27,7 @@ def make_dir(absolute_path, message_part):
 			os.makedirs(absolute_path)
 			indented_message(message_part + " created", relative_path, 4)
 			os.chmod(absolute_path, 0o777)
-			message("permissions set", "", 5)
+			indented_message("permissions set", "", 5)
 		except OSError:
 			message("FATAL ERROR", "couldn't create " + message_part, "('" + relative_path + "')' quitting", 0)
 			sys.exit(-97)
@@ -38,8 +38,8 @@ def next_file_name(file_name_with_path):
 	file_name_with_path_list = file_name_with_path.split('.')
 	file_name = os.path.basename(file_name_with_path)
 	file_name_list = file_name.split('.')
-	is_positions = (file_name_list[-2] == 'positions')
-	if is_positions:
+	is_positions_or_media = (file_name_list[-2] == 'positions' or file_name_list[-2] == 'media')
+	if is_positions_or_media:
 		subtract = 1
 	else:
 		subtract = 0
@@ -62,8 +62,17 @@ def json_files_and_mtime(cache_base):
 		json_file_list.append(json_file_with_path)
 		global_mtime = file_mtime(json_file_with_path)
 
-	for md5 in [x['password_md5'] for x in Options.identifiers_and_passwords]:
-		protected_json_file_with_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + md5, cache_base) + ".json"
+	all_complex_combinations = [
+		identifier_and_password_1['password_md5'] + ',' + identifier_and_password_2['password_md5']
+		for identifier_and_password_1 in Options.identifiers_and_passwords
+		for identifier_and_password_2 in Options.identifiers_and_passwords
+	]
+	complex_combinations = [identifier_and_password['password_md5'] for identifier_and_password in Options.identifiers_and_passwords]
+	all_complex_combinations += [',' + complex_combination for complex_combination in complex_combinations]
+	all_complex_combinations += [complex_combination + ',' for complex_combination in complex_combinations]
+	all_complex_combinations += [',']
+	for complex_combination in all_complex_combinations:
+		protected_json_file_with_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + complex_combination, cache_base) + ".json"
 		while os.path.exists(protected_json_file_with_path):
 			if not os.path.islink(protected_json_file_with_path):
 				json_file_list.append(protected_json_file_with_path)
@@ -71,94 +80,119 @@ def json_files_and_mtime(cache_base):
 				if global_mtime is None:
 					global_mtime = mtime
 				else:
-					global_mtime = max(global_mtime, mtime)
+					global_mtime = min(global_mtime, mtime)
 			protected_json_file_with_path = next_file_name(protected_json_file_with_path)
 
 	return [json_file_list, global_mtime]
 
-def convert_md5s_to_codes(passwords_md5):
-	codes_set = set()
-	for password_md5 in passwords_md5.split('-'):
-		password_code = next(x['password_code'] for x in Options.identifiers_and_passwords if x['password_md5'] == password_md5)
-		codes_set.add(password_code)
-	return '-'.join(codes_set)
+def determine_symlink_name(symlink):
+	while (os.path.isfile(symlink)):
+		# symlink = '.'.join(first_part + [str(n)] + symlink_list[-1 - subtract:])
+		symlink = next_file_name(symlink)
+		# n += 1
+	return symlink
+
+def calculate_media_file_name(json_file_name):
+	splitted_json_file_name = json_file_name.split('.')
+	return '.'.join(splitted_json_file_name[:-1]) + ".media.json"
+
+def convert_combination_to_set(combination):
+	if combination == '':
+		return set()
+	return set(combination.split('-'))
+
+def convert_set_to_combination(this_set):
+	if this_set == set():
+		return ''
+	return '-'.join(sorted(this_set))
+
+def complex_combination(album_combination, media_combination):
+	return ','.join([album_combination, media_combination])
 
 
 def convert_identifiers_set_to_md5s_set(identifiers_set):
+	if identifiers_set == set():
+		return set()
 	md5s_set = set()
 	for identifier in identifiers_set:
-		md5 = next(x['password_md5'] for x in Options.identifiers_and_passwords if x['identifier'] == identifier)
+		md5 = next(identifier_and_password['password_md5'] for identifier_and_password in Options.identifiers_and_passwords if identifier_and_password['identifier'] == identifier)
 		md5s_set.add(md5)
 	return md5s_set
 
 def convert_identifiers_set_to_codes_set(identifiers_set):
+	if identifiers_set == set():
+		return set()
 	codes_set = set()
 	for identifier in identifiers_set:
-		code = next(x['password_code'] for x in Options.identifiers_and_passwords if x['identifier'] == identifier)
+		code = next(identifier_and_password['password_code'] for identifier_and_password in Options.identifiers_and_passwords if identifier_and_password['identifier'] == identifier)
 		codes_set.add(code)
 	return codes_set
 
-def convert_md5s_set_to_identifiers(md5s_set):
+def convert_old_codes_set_to_identifiers_set(codes_set):
+	if codes_set == set():
+		return set()
 	identifiers_set = set()
-	for password_md5 in md5s_set:
-		identifier = next(x['identifier'] for x in Options.identifiers_and_passwords if x['password_md5'] == password_md5)
+	for code in codes_set:
+		md5 = Options.old_password_codes[code]
+		identifier = convert_md5_to_identifier(md5)
 		identifiers_set.add(identifier)
-	return '-'.join(identifiers_set)
+	return identifiers_set
 
-def get_old_password_codes():
-	message("PRE Getting old passwords and codes...","", 5)
-	passwords_subdir_with_path = os.path.join(Options.config['cache_path'], Options.config['passwords_subdir'])
-	old_md5_and_codes = {}
-	for password_md5 in sorted(os.listdir(passwords_subdir_with_path)):
-		with open(os.path.join(passwords_subdir_with_path, password_md5), "r") as filepath:
-			# print(os.path.join(passwords_subdir_with_path, password_md5))
-			code_dict = json.load(filepath)
-			old_md5_and_codes[code_dict["passwordCode"]] = password_md5
-	indented_message("PRE Old passwords and codes got","", 4)
-	return old_md5_and_codes
+def convert_md5_to_identifier(md5):
+	identifier = next(identifier_and_password['identifier'] for identifier_and_password in Options.identifiers_and_passwords if identifier_and_password['password_md5'] == md5)
+	return identifier
 
 def save_password_codes():
+	message("Working with password files...", "", 3)
+	next_level()
 	# remove the old single password files
 	passwords_subdir_with_path = os.path.join(Options.config['cache_path'], Options.config['passwords_subdir'])
-	message("Removing old password files...","", 5)
+	message("Removing old password files...", "", 5)
 	for password_file in sorted(os.listdir(passwords_subdir_with_path)):
 		os.unlink(os.path.join(passwords_subdir_with_path, password_file))
-	message("Old password files removed","", 4)
+	indented_message("Old password files removed", "", 4)
 
 	# create the new single password files
-	for md5_and_code in [{'md5': x['password_md5'], 'code': x['password_code']} for x in Options.identifiers_and_passwords]:
-		password_md5 = md5_and_code['md5']
-		password_code = md5_and_code['code']
-		message("creating new password file", "", 5)
-		with open(os.path.join(passwords_subdir_with_path, password_md5), 'w') as password_file:
-			json.dump({"passwordCode": password_code}, password_file)
-		indented_message("New password file created", password_md5, 4)
+	for identifier_and_password in Options.identifiers_and_passwords:
+		if identifier_and_password['used']:
+			password_md5 = identifier_and_password['password_md5']
+			password_code = identifier_and_password['password_code']
+			message("creating new password file", "", 5)
+			with open(os.path.join(passwords_subdir_with_path, password_md5), 'w') as password_file:
+				json.dump({"passwordCode": password_code}, password_file)
+			indented_message("New password file created", password_md5, 4)
+	back_level()
+	message("Password files worked!", "", 3)
 
-def merge_dictionaries_from_cache(dict, dict1, old_password_codes):
+
+def merge_albums_dictionaries_from_json_files(dict, dict1):
 	if dict is None:
 		return dict1
+		# return add_combination_to_dict(dict1)
 	if dict1 is None:
 		return dict
-	dict['numMediaInSubTree'] += dict1['numMediaInSubTree']
-	old_md5s_set = set()
-	for codes in dict['numsProtectedMediaInSubTree']:
-		for code in codes.split('-'):
-			try:
-				if len(old_password_codes) > 0 and old_password_codes[code] not in old_md5s_set:
-					old_md5s_set.add(old_password_codes[code])
-			except KeyError:
-				indented_message("not an album cache hit", "key error in password codes", 4)
-				return None
-	# if set(old_md5_list) != set([x['password_md5'] for x in Options.identifiers_and_passwords]):
-	# 	return None
+		# return add_combination_to_dict(dict)
+	# old_md5s_set = set()
+	# for codes in dict['numsProtectedMediaInSubTree']:
+	# 	if codes != '':
+	# 		for code in codes.split('-'):
+	# 			try:
+	# 				if len(Options.old_password_codes) > 0 and Options.old_password_codes[code] not in old_md5s_set:
+	# 					old_md5s_set.add(Options.old_password_codes[code])
+	# 			except KeyError:
+	# 				indented_message("not an album cache hit", "key error in password codes", 4)
+	# 				return None
+
+	if 'password_identifiers_set' not in dict and 'password_identifiers_set' in dict1:
+		dict['password_identifiers_set'] = dict1['password_identifiers_set']
 
 	dict['media'].extend(dict1['media'])
 	subalbums_cache_bases = [subalbum['cacheBase'] for subalbum in dict['subalbums']]
 	dict['subalbums'].extend([subalbum for subalbum in dict1['subalbums'] if subalbum['cacheBase'] not in subalbums_cache_bases])
-	for key in dict1['numsProtectedMediaInSubTree']:
-		if key not in dict['numsProtectedMediaInSubTree']:
-			dict['numsProtectedMediaInSubTree'][key] = 0
-		dict['numsProtectedMediaInSubTree'][key] += dict1['numsProtectedMediaInSubTree'][key]
+	# for key in dict1['numsProtectedMediaInSubTree']:
+	# 	if key not in dict['numsProtectedMediaInSubTree']:
+	# 		dict['numsProtectedMediaInSubTree'][key] = 0
+	# 	dict['numsProtectedMediaInSubTree'][key] += dict1['numsProtectedMediaInSubTree'][key]
 	return dict
 
 def message(category, text, verbose=0):
@@ -187,6 +221,7 @@ def message(category, text, verbose=0):
 	- 4 = add more info
 	"""
 
+	sep = "   "
 	try:
 		message.max_verbose = Options.config['max_verbose']
 	except KeyError:
@@ -195,10 +230,6 @@ def message(category, text, verbose=0):
 		message.max_verbose = 0
 
 	if verbose <= message.max_verbose:
-		if message.level <= 0:
-			sep = "  "
-		else:
-			sep = "--"
 		now = datetime.now()
 		time_elapsed = now - Options.last_time
 		Options.last_time = now
@@ -213,7 +244,8 @@ def message(category, text, verbose=0):
 				Options.elapsed_times[category] = microseconds
 				Options.elapsed_times_counter[category] = 1
 			_microseconds = str(microseconds)
-		print(_microseconds.rjust(9), "%s %s%s[%s]%s%s" % (now.isoformat(' '), max(0, message.level) * "  |", sep, str(category), max(1, (45 - len(str(category)))) * " ", str(text)))
+		print(_microseconds.rjust(9), "%s %s[%s]%s%s" % (now.isoformat(' '), max(0, message.level) * "   ", str(category), max(1, (45 - len(str(category)))) * " ", str(text)))
+		# print(_microseconds.rjust(9), "%s %s%s[%s]%s%s" % (now.isoformat(' '), max(0, message.level) * "  |", sep, str(category), max(1, (45 - len(str(category)))) * " ", str(text)))
 
 
 """

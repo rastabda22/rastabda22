@@ -66,12 +66,18 @@ config['unicode_combining_marks'] = unicode_combining_marks_n + unicode_combinin
 
 thumbnail_types_and_sizes_list = None
 identifiers_and_passwords = []
+old_password_codes = {}
+obsolete_json_version = False
 passwords_file_mtime = None
 config['cv2_installed'] = True
 face_cascade = None
 eye_cascade = None
 config['available_map_popup_positions'] = ['SE', 'NW' ]
 max_random = 1000000000
+# max_media_in_json_file = 1
+# max_media_from_positions_in_json_file = 1
+max_media_in_json_file = 20
+max_media_from_positions_in_json_file = 20
 
 
 # set this variable to a new value (previously was a number, now it may include letters)
@@ -89,7 +95,41 @@ max_random = 1000000000
 # json_version = 3.99 since property passwords changed to passwordsCodes in json file
 # json_version = 3.98 since property passwords changed to passwordsMd5 in json file
 # json_version = 3.97 since passwords removed from json file
-json_version = "3.96"
+# json_version = 3.98 since passwordMarkerMTime and albumIniMTime was added to json files
+# json_version = 3.99 since album passwords added to every media separately from media passwords
+# json_version = 3.991 since media and position remain in json file for small numbers
+# json_version = 3.992 since combination renamed to complexCombination
+# json_version = 0
+json_version = 3.992
+
+
+def set_obsolete_json_version_flag():
+	global obsolete_json_version
+	obsolete_json_version = True
+
+
+def mark_identifier_as_used(identifier):
+	global identifiers_and_passwords
+	for i, value in enumerate(identifiers_and_passwords):
+		if identifiers_and_passwords[i]['identifier'] == identifier:
+			identifiers_and_passwords[i]['used'] = True
+			break
+
+def get_old_password_codes():
+	message("PRE Getting old passwords and codes...","", 5)
+	passwords_subdir_with_path = os.path.join(config['cache_path'], config['passwords_subdir'])
+	old_md5_and_codes = {}
+	try:
+		for password_md5 in sorted(os.listdir(passwords_subdir_with_path)):
+			with open(os.path.join(passwords_subdir_with_path, password_md5), "r") as filepath:
+				# print(os.path.join(passwords_subdir_with_path, password_md5))
+				code_dict = json.load(filepath)
+				old_md5_and_codes[code_dict["passwordCode"]] = password_md5
+		indented_message("PRE Old passwords and codes got","", 4)
+	except OSError:
+		# the directory doesn't exist
+		pass
+	return old_md5_and_codes
 
 def initialize_opencv():
 	global face_cascade, eye_cascade
@@ -130,7 +170,7 @@ def initialize_opencv():
 		message("PRE importer", "No opencv library available, not using it", 2)
 
 def get_options():
-	global passwords_file_mtime
+	global passwords_file_mtime, old_password_codes
 	project_dir = os.path.dirname(os.path.realpath(os.path.join(__file__, "..")))
 	default_config_file = os.path.join(project_dir, "myphotoshare.conf.defaults")
 	default_config = configparser.ConfigParser()
@@ -213,7 +253,6 @@ def get_options():
 		else:
 			config[option] = usr_config.get('options', option)
 			if option in ('js_cache_levels'):
-				# print(config[option])
 				config[option] = json.loads(config[option])
 
 
@@ -345,18 +384,13 @@ def get_options():
 			message("PRE FATAL ERROR", config['cache_path'] + " not writable, quitting", 0)
 			sys.exit(-97)
 	except OSError:
-		# try:
 		make_dir(config['cache_path'], "cache directory")
-			# os.mkdir(config['cache_path'])
-			# message("PRE directory created", config['cache_path'], 4)
-		# except OSError:
-		# 	message("PRE FATAL ERROR", config['cache_path'] + " inexistent and couldn't be created, quitting", 0)
-		# 	sys.exit(-97)
 
 	# read the password file
 	# it must exist and be readable, otherwise skip it
 	if len(sys.argv) == 2:
 		# 1 arguments: the config files: the password file is in the same directory
+		old_password_codes = get_old_password_codes()
 
 		passwords_subdir_with_path = os.path.join(config['cache_path'], config['passwords_subdir'])
 		make_dir(passwords_subdir_with_path, "passwords subdir")
@@ -391,9 +425,10 @@ def get_options():
 							break
 					identifiers_and_passwords.append(
 						{
-							"identifier": identifier,
-							"password_md5": password_md5,
-							"password_code": password_code
+							'identifier': identifier,
+							'password_md5': password_md5,
+							'password_code': password_code,
+							'used': False
 						}
 					)
 					indented_message(
@@ -411,14 +446,7 @@ def get_options():
 	try:
 		os.stat(album_cache_dir)
 	except OSError:
-		# try:
 		make_dir(album_cache_dir, "cache directory for composite images")
-		# 	message("PRE creating cache directory for composite images", album_cache_dir, 4)
-		# 	os.mkdir(album_cache_dir)
-		# 	os.chmod(album_cache_dir, 0o777)
-		# except OSError:
-		# 	message("PRE FATAL ERROR", config['cache_path'] + " not writable, quitting", 0)
-		# 	sys.exit(-97)
 
 	# calculate the number of media in the album tree: it will be used in order to guess the execution time
 	special_files = [config['exclude_tree_marker'], config['exclude_files_marker'], config['metadata_filename']]

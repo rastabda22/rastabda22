@@ -159,7 +159,7 @@ passwords_file = myphotoshare.passwords
 passwords_subdir = pwd
 
 # the prefix for the protected directories where json files are stored
-protected_directories_prefix = json_
+protected_directories_prefix = protected_
 
 # recreate fixed height media thumbnails if their ratio (width/height) is > 1,
 # in order to get rid of a past bug in thumbnail generator
