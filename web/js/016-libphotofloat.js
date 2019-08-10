@@ -146,24 +146,24 @@
 		}
 	};
 
-	PhotoFloat.getJsonFiles = function(albumList, callback, error) {
-		function anotherAlbumGot(album, i) {
-			resultAlbums.push(album);
-			nFile ++;
-			if (nFile >= albumList.length) {
-				callback(resultAlbums);
-			}
-		}
-
-		var nFile = 0, resultAlbums = [];
-		if (albumList.length == 0) {
-			callback([]);
-		} else {
-			for (var i = 0; i < albumList.length; i ++) {
-				PhotoFloat.getJsonFile(albumList[i], anotherAlbumGot, error);
-			}
-		}
-	};
+	// PhotoFloat.getJsonFiles = function(albumList, callback, error) {
+	// 	function anotherAlbumGot(album, i) {
+	// 		resultAlbums.push(album);
+	// 		nFile ++;
+	// 		if (nFile >= albumList.length) {
+	// 			callback(resultAlbums);
+	// 		}
+	// 	}
+	//
+	// 	var nFile = 0, resultAlbums = [];
+	// 	if (albumList.length == 0) {
+	// 		callback([]);
+	// 	} else {
+	// 		for (var i = 0; i < albumList.length; i ++) {
+	// 			PhotoFloat.getJsonFile(albumList[i], anotherAlbumGot, error);
+	// 		}
+	// 	}
+	// };
 
 	PhotoFloat.getJsonFile = function(jsonRelativeFileName, callback, error) {
 		var ajaxOptions = {
