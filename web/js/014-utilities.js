@@ -759,7 +759,11 @@
 		$(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
 
 		if (event.data.callback) {
-			if (id === "center" && media.mediaType == "photo") {
+			if (id === "center" && (
+					media.mediaType == "photo" ||
+					event.data.callbackType == "load"
+				)
+			) {
 			// if (event.data.callbackType !== "pinch" && id === "center") {
 				event.data.callback(containerHeight, containerWidth);
 			}
