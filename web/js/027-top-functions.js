@@ -968,8 +968,9 @@
 				mediaSelector = ".media-box#" + id + " .media-box-inner video";
 			} else {
 				mediaSelector = ".media-box#" + id + " .media-box-inner img";
-				mediaSrc = util.chooseMediaReduction(media, id, fullScreenStatus);
 			}
+			// is the following line correct for videos?
+			mediaSrc = util.chooseMediaReduction(media, id, fullScreenStatus);
 			mediaHtml = util.createMediaHtml(media, id, fullScreenStatus);
 
 			triggerLoad = util.chooseTriggerEvent(media);
@@ -979,8 +980,10 @@
 				mediaBoxInnerElement.empty();
 				mediaBoxInnerElement.show().append(mediaHtml);
 
-				$("link[rel=image_src]").remove();
-				$('link[rel="video_src"]').remove();
+				if (id === "center") {
+					$("link[rel=image_src]").remove();
+					$('link[rel="video_src"]').remove();
+				}
 				$("head").append(util.createMediaLinkTag(media, mediaSrc));
 			}
 
