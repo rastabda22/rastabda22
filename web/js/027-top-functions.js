@@ -1216,15 +1216,16 @@
 			currentAlbum = null;
 		}
 
-		if (previousMedia !== null && previousMedia.mediaType == "video")
-			// stop the video, otherwise it will keep playing
-			$("#media-center")[0].pause();
-
 		if (currentAlbum && util.isByDateCacheBase(currentAlbum.cacheBase) && media !== null) {
 			previousMedia = media;
 		} else {
 			previousMedia = currentMedia;
 		}
+
+		if (previousMedia !== null && previousMedia.mediaType == "video")
+			// stop the video, otherwise it will keep playing
+			$("#media-center")[0].pause();
+
 		currentAlbum = album;
 		currentMedia = media;
 		currentMediaIndex = mediaIndex;
