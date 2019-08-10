@@ -467,10 +467,10 @@
 	};
 
 	Functions.prototype.videoOK = function() {
-	if (! Modernizr.video || ! Modernizr.video.h264)
-		return false;
-	else
-		return true;
+		if (! Modernizr.video || ! Modernizr.video.h264)
+			return false;
+		else
+			return true;
 	};
 
 	Functions.prototype.addVideoUnsupportedMarker = function(id) {
