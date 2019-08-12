@@ -480,66 +480,77 @@
 		// returns the pixel size of the photo in DOM
 		// returns 0 if it's the original image
 
-		var result;
 		var currentReduction = $(".media-box#center .media-box-inner img").attr("src");
-
-		// default: it's the original image
-		result = 0;
 
 		// check if it's a reduction
 		for (var i = 0; i < Options.reduced_sizes.length; i ++) {
 			if (currentReduction === Utilities.mediaPath(currentAlbum, currentMedia, Options.reduced_sizes[i])) {
-				result = Options.reduced_sizes[i];
-				break;
+				return Options.reduced_sizes[i];
 			}
 		}
-		return result;
+
+		// default: it's the original image
+		return 0;
+	};
+
+	Utilities.properSizeIndex = function(size) {
+		// returns the reduction size index to be used for the size given as argument;
+		// a return value of len(Options.reduced_sizes) means the original image
+
+		for (var i = 0; i < Options.reduced_sizes.length; i ++) {
+			if (size < Options.reduced_sizes[i]) {
+				return i;
+			}
+		}
+
+		return len(Options.reduced_sizes);
 	};
 
 	Utilities.nextSize = function() {
-		// returns the next bigger size of photo in DOM
-		// returns 0 if the image in the DOM is the biggest available reduction
+		// returns the next bigger image size than that of the photo in DOM
+		// returns 0 if the next bigger image is the original image
 		// returns false if in the DOM there is the original image
 
-		var result;
-		var currentPhotoSize = Utilities.currentSize();
+		theNextSizeIndex = Utilities.nextSizeIndex();
 
-		if (currentPhotoSize === 0)
-			// default: it's already the original image
-			result = false;
-		else if (currentPhotoSize === Options.reduced_sizes[0])
-			result = 0;
-		else {
-			for (var i = 1; i < Options.reduced_sizes.length; i ++) {
+		if (theNextSizeIndex === false)
+			return false;
+		else if (theNextSizeIndex === Options.reduced_sizes.length)
+			return 0;
+		else
+			return Options.reduced_sizes[theNextSizeIndex];
+	};
+
+	Utilities.nextSizeIndex = function() {
+		// returns the index of the next bigger reduction size than that of the photo in DOM
+		// returns 0 if the next bigger image is the original image
+		// returns false if in the DOM there is the original image
+
+		var currentPhotoSize = Utilities.currentSize();
+		if (currentPhotoSize == 0) {
+			return false;
+		} else {
+			for (var i = 0; i < Options.reduced_sizes.length - 1; i ++) {
 				if (currentPhotoSize === Options.reduced_sizes[i]) {
-					result = Options.reduced_sizes[i - 1];
-					break;
+					return i + 1;
 				}
 			}
 		}
-
-		// return the original image size if the reduction size is bigger than image size
-		if (result > Math.max(currentMedia.metadata.size[0], currentMedia.metadata.size[1]))
-			result = 0;
-
-		return result;
+		return 0;
 	};
 
 	Utilities.prototype.nextSizeReduction = function() {
 		// returns the file name of the reduction with the next bigger size than the reduction in DOM
 
-		var result;
 		var nextPhotoSize = Utilities.nextSize();
 
 		if (nextPhotoSize === false)
 			// it's already the original image
-			result = false;
+			return false;
 		else if (nextPhotoSize === 0)
-			result = Utilities.pathJoin([currentMedia.albumName, currentMedia.name]);
+			return Utilities.pathJoin([currentMedia.albumName, currentMedia.name]);
 		else
-			result = Utilities.mediaPath(currentAlbum, currentMedia, nextPhotoSize);
-
-		return result;
+			return Utilities.mediaPath(currentAlbum, currentMedia, nextPhotoSize);
 	};
 
 	Utilities.prototype.createMediaHtml = function(media, id, fullScreenStatus) {

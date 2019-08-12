@@ -209,6 +209,20 @@ $(document).ready(function() {
 					} else if (e.key === "o" && currentMedia !== null && ! isMap) {
 						$("#center .original-link")[0].click();
 						return false;
+					} else if (e.key === "1") {
+						if (isMap) {
+							// return false;
+						} else if (currentMedia !== null) {
+							pS.pinchIn(1);
+							return false;
+						}
+					} else if (e.key === "2") {
+						if (isMap) {
+							// return false;
+						} else if (currentMedia !== null) {
+							pS.pinchIn(2);
+							return false;
+						}
 					} else if (e.key === "+") {
 						if (isMap) {
 							// return false;
