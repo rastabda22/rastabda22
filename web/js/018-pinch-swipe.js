@@ -77,7 +77,7 @@
 			if (nextSizeReduction !== false) {
 				nextSize = util.nextSize();
 				if (nextSize !== false) {
-					if (nextSize === 0)
+					if (true || nextSize === 0)
 						// util.nextSize() returns zero for the original image
 						nextSize = Math.max(currentMedia.metadata.size[0], currentMedia.metadata.size[1]);
 					photoWidth = currentMedia.metadata.size[0];
@@ -146,7 +146,20 @@
 		}
 	};
 
-	PinchSwipe.pinchIn = function() {
+	PinchSwipe.pinchIn = function(requiredZoom) {
+		if (typeof requiredZoom !== "undefined") {
+			PinchSwipe.pinchInOut(
+				currentZoom,
+				maxAllowedZoom / currentZoom,
+				pinchSpeed,
+				function () {
+					if (requiredZoom == 2) {
+						PinchSwipe.pinchInOut(currentZoom, 2, pinchSpeed);
+					}
+				}
+			);
+			return;
+		}
 		var keepPinching = true;
 		if (currentZoom == 1 && ! $(".title").hasClass("hidden-by-pinch") && ($(".title").is(":visible") || $("#album-view").is(":visible"))) {
 			keepPinching = false;
@@ -433,7 +446,8 @@
 			pastCurrentZoom = currentZoom;
 		}
 		initialMediaWidthOnScreen = $(mediaSelector)[0].width;
-		maxAllowedZoom = Number(($(mediaSelector).attr("width") / initialMediaWidthOnScreen).toFixed(2));
+		maxAllowedZoom = Number(($(mediaSelector)[0].width / initialMediaWidthOnScreen).toFixed(2));
+		// maxAllowedZoom = Number(($(mediaSelector).attr("width") / initialMediaWidthOnScreen).toFixed(2));
 		if (currentZoom > 1) {
 			// change zoom so that the photo looks like before
 			currentZoom = currentZoom / initialMediaWidthOnScreen * pastInitialMediaWidthOnScreen;
