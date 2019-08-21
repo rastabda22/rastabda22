@@ -189,7 +189,7 @@
 		// add the click event for showing the photos in the popup as an album
 		$("#popup-photo-count").on(
 			"click",
-			function(ev) {
+			function() {
 				$('.leaflet-popup-close-button')[0].click();
 				// $('#popup #popup-content').html("");
 				$('.modal-close')[0].click();
@@ -354,13 +354,17 @@
 		for (var albumCacheBase in photosByAlbum) {
 			if (photosByAlbum.hasOwnProperty(albumCacheBase)) {
 				photosInAlbum = photosByAlbum[albumCacheBase];
-				phFl.getAlbum(
+				var promise = phFl.getAlbum(
 					albumCacheBase,
 					// getPositions
 					true,
 					// getMedia
 					true,
-					// success
+					util.die,
+					photosInAlbum,
+					null
+				);
+				promise.then(
 					function(theAlbum, photosInAlbum) {
 						for(mediaIndex = 0; mediaIndex < theAlbum.media.length; mediaIndex ++) {
 							for(photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
@@ -375,10 +379,7 @@
 							mapAlbum.positionsAndMediaInTree = util.mergePoints(mapAlbum.positionsAndMediaInTree, positionsAndCounts);
 							resolve(mapAlbum);
 						}
-					},
-					util.die,
-					photosInAlbum,
-					null
+					}
 				);
 			}
 		}

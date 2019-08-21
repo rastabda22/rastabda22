@@ -56,7 +56,32 @@
 		return language;
 	};
 
+	Utilities.prototype.numProtectedKeys = function(album) {
+		if (album.hasOwnProperty("numsProtectedMediaInSubTree")) {
+			var numsProtected = JSON.parse(JSON.stringify(album.numsProtectedMediaInSubTree));
+			delete numsProtected[''];
+			return Object.keys(numsProtected).length;
+		} else {
+			return false;
+		}
+	};
 
+	// Utilities.prototype.numPasswords = function(album) {
+	// 	var numsProtected = JSON.parse(JSON.stringify(album.numsProtectedMediaInSubTree));
+	// 	delete numsProtected[''];
+	// 	var passwordCodes = [];
+	// 	for (key in Object.keys(numsProtected)) {
+	// 		codesArrays = phFl.convertComplexCombinationsIntoLists(key);
+	// 		passwordCodes = passwordCodes.concat(codesArrays[0]).concat(codesArrays[1]);
+	// 	}
+	// 	// reduce to unique values
+	// 	passwordCodes = passwordCodes.filter(
+	// 		function (x, i, a) {
+	// 			return a.indexOf(x) == i;
+	// 		}
+	// 	);
+	// 	return passwordCodes.length;
+	// };
 
 	Utilities.prototype.cloneObject = function(object) {
 		return Object.assign({}, object);
@@ -162,6 +187,21 @@
 					return self.normalizeAccordingToOptions(first) == self.normalizeAccordingToOptions(second);
 				})
 			)
+				union.push(b[i]);
+		}
+		return union;
+	};
+
+	Utilities.prototype.arrayUnion = function(a, b) {
+		if (a === [])
+			return b;
+		if (b === [])
+			return a;
+		// begin cloning the first array
+		var union = a.slice(0);
+
+		for (var i = 0; i < b.length; i ++) {
+			if (union.indexOf(b[i]) == -1)
 				union.push(b[i]);
 		}
 		return union;
@@ -440,66 +480,77 @@
 		// returns the pixel size of the photo in DOM
 		// returns 0 if it's the original image
 
-		var result;
 		var currentReduction = $(".media-box#center .media-box-inner img").attr("src");
-
-		// default: it's the original image
-		result = 0;
 
 		// check if it's a reduction
 		for (var i = 0; i < Options.reduced_sizes.length; i ++) {
 			if (currentReduction === Utilities.mediaPath(currentAlbum, currentMedia, Options.reduced_sizes[i])) {
-				result = Options.reduced_sizes[i];
-				break;
+				return Options.reduced_sizes[i];
 			}
 		}
-		return result;
+
+		// default: it's the original image
+		return 0;
+	};
+
+	Utilities.properSizeIndex = function(size) {
+		// returns the reduction size index to be used for the size given as argument;
+		// a return value of len(Options.reduced_sizes) means the original image
+
+		for (var i = 0; i < Options.reduced_sizes.length; i ++) {
+			if (size < Options.reduced_sizes[i]) {
+				return i;
+			}
+		}
+
+		return len(Options.reduced_sizes);
 	};
 
 	Utilities.nextSize = function() {
-		// returns the next bigger size of photo in DOM
-		// returns 0 if the image in the DOM is the biggest available reduction
+		// returns the next bigger image size than that of the photo in DOM
+		// returns 0 if the next bigger image is the original image
 		// returns false if in the DOM there is the original image
 
-		var result;
-		var currentPhotoSize = Utilities.currentSize();
+		theNextSizeIndex = Utilities.nextSizeIndex();
 
-		if (currentPhotoSize === 0)
-			// default: it's already the original image
-			result = false;
-		else if (currentPhotoSize === Options.reduced_sizes[0])
-			result = 0;
-		else {
-			for (var i = 1; i < Options.reduced_sizes.length; i ++) {
+		if (theNextSizeIndex === false)
+			return false;
+		else if (theNextSizeIndex === Options.reduced_sizes.length)
+			return 0;
+		else
+			return Options.reduced_sizes[theNextSizeIndex];
+	};
+
+	Utilities.nextSizeIndex = function() {
+		// returns the index of the next bigger reduction size than that of the photo in DOM
+		// returns 0 if the next bigger image is the original image
+		// returns false if in the DOM there is the original image
+
+		var currentPhotoSize = Utilities.currentSize();
+		if (currentPhotoSize == 0) {
+			return false;
+		} else {
+			for (var i = 0; i < Options.reduced_sizes.length - 1; i ++) {
 				if (currentPhotoSize === Options.reduced_sizes[i]) {
-					result = Options.reduced_sizes[i - 1];
-					break;
+					return i + 1;
 				}
 			}
 		}
-
-		// return the original image size if the reduction size is bigger than image size
-		if (result > Math.max(currentMedia.metadata.size[0], currentMedia.metadata.size[1]))
-			result = 0;
-
-		return result;
+		return 0;
 	};
 
 	Utilities.prototype.nextSizeReduction = function() {
 		// returns the file name of the reduction with the next bigger size than the reduction in DOM
 
-		var result;
 		var nextPhotoSize = Utilities.nextSize();
 
 		if (nextPhotoSize === false)
 			// it's already the original image
-			result = false;
+			return false;
 		else if (nextPhotoSize === 0)
-			result = Utilities.pathJoin([currentMedia.albumName, currentMedia.name]);
+			return Utilities.pathJoin([currentMedia.albumName, currentMedia.name]);
 		else
-			result = Utilities.mediaPath(currentAlbum, currentMedia, nextPhotoSize);
-
-		return result;
+			return Utilities.mediaPath(currentAlbum, currentMedia, nextPhotoSize);
 	};
 
 	Utilities.prototype.createMediaHtml = function(media, id, fullScreenStatus) {
@@ -648,10 +699,10 @@
 		// this function works on the img tag identified by event.data.id
 		// it adjusts width, height and position so that it fits in its parent (<div class="bedia-box-inner">, or the whole window)
 		// and centers vertically
-		var media = event.data.media, mediaElement, container, containerRatio, photoSrc, previousSrc;
+		var media = event.data.media, mediaElement, container, photoSrc, previousSrc;
 		var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth();
 		var mediaBarBottom = 0;
-		var mediaWidth, mediaHeight, attrWidth, attrHeight, ratio;
+		var mediaWidth, mediaHeight, attrWidth, attrHeight;
 		var id = event.data.id;
 		var heightForMedia, heightForMediaAndTitle, titleHeight;
 
@@ -759,7 +810,11 @@
 		$(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
 
 		if (event.data.callback) {
-			if (id === "center" && media.mediaType == "photo") {
+			if (id === "center" && (
+					media.mediaType == "photo" ||
+					event.data.callbackType == "load"
+				)
+			) {
 			// if (event.data.callbackType !== "pinch" && id === "center") {
 				event.data.callback(containerHeight, containerWidth);
 			}
@@ -806,7 +861,7 @@
 		return sum;
 	};
 	Utilities.prototype.sumNumsProtectedMediaOfArray = function(subalbums) {
-		var result = {}, i, album, passwordCode;
+		var result = {}, i, passwordCode, subalbum;
 
 		for (i = 0; i < subalbums.length; i ++) {
 			subalbum = subalbums[i];
@@ -852,7 +907,7 @@
 	Utilities.xDistanceBetweenCoordinatePoints = function(point1, point2) {
 		return Math.max(
 			Utilities.distanceBetweenCoordinatePoints({"lng": point1.lng, "lat": point1.lat}, {"lng": point2.lng, "lat": point1.lat}),
-			Utilities.distanceBetweenCoordinatePoints({"lng": point1.lng, "lat": point2.lat}, {"lng": point2.lng, "lat": point2.lat}),
+			Utilities.distanceBetweenCoordinatePoints({"lng": point1.lng, "lat": point2.lat}, {"lng": point2.lng, "lat": point2.lat})
 		);
 	};
 
@@ -1004,17 +1059,18 @@
 		}
 	};
 
-	Utilities.prototype.convertComplexCombinationsToComplexCodesCombinations = function(complexCombinationList) {
-		codesComplexCombinationList = [];
-		for (var i = 0; i < complexCombinationList.length; i ++) {
-			codesComplexCombinationList.push(Utilities.convertComplexCombinationToComplexCodesCombination(complexCombinationList[i]));
-		}
-		return codesComplexCombinationList;
-	};
-	Utilities.convertComplexCombinationToComplexCodesCombination = function(complexCombination) {
+	// Utilities.prototype.convertComplexCombinationsToCodesComplexCombinations = function(complexCombinationList) {
+	// 	var codesComplexCombinationList = [];
+	// 	for (var i = 0; i < complexCombinationList.length; i ++) {
+	// 		codesComplexCombinationList.push(Utilities.convertComplexCombinationToCodesComplexCombination(complexCombinationList[i]));
+	// 	}
+	// 	return codesComplexCombinationList;
+	// };
+
+	Utilities.convertComplexCombinationToCodesComplexCombination = function(complexCombination) {
 		var albumCombinationsList = complexCombination.split(',')[0].split('-');
 		var mediaCombinationsList = complexCombination.split(',')[1].split('-');
-		var i, index;
+		var i, index, code;
 
 		var albumCodesCombinationsList = [];
 		for (i = 0; i < albumCombinationsList.length; i ++) {
@@ -1030,6 +1086,51 @@
 		}
 
 		return [albumCodesCombinationsList.join('-'), mediaCodesCombinationsList.join('-')].join(',');
+	};
+
+	Utilities.prototype.convertMd5ToCode = function(md5) {
+		var index = PhotoFloat.guessedPasswordsMd5.indexOf(md5);
+		return PhotoFloat.guessedPasswordCodes[index];
+	};
+
+	Utilities.prototype.convertCodesListToMd5sList = function(codesList) {
+		var i, index, md5sList = [];
+		for (i = 0; i < codesList.length; i ++) {
+			index = PhotoFloat.guessedPasswordCodes.indexOf(codesList[i]);
+			if (index != -1) {
+				md5sList.push(PhotoFloat.guessedPasswordsMd5[index]);
+			}
+		}
+		return md5sList;
+	};
+
+	Utilities.prototype.convertCodesComplexCombinationToComplexCombination = function(codesComplexCombination) {
+		var albumCodesCombinationsList = codesComplexCombination.split(',')[0].split('-');
+		var mediaCodesCombinationsList = codesComplexCombination.split(',')[1].split('-');
+		var i, index, md5;
+
+		var albumCombinationsList = [];
+		for (i = 0; i < albumCodesCombinationsList.length; i ++) {
+			index = PhotoFloat.guessedPasswordCodes.indexOf(albumCodesCombinationsList[i]);
+			if (index != -1) {
+				md5 = PhotoFloat.guessedPasswordsMd5[index];
+				albumCombinationsList.push(md5);
+			} else {
+				albumCombinationsList.push('...');
+			}
+		}
+		var mediaCombinationsList = [];
+		for (i = 0; i < mediaCodesCombinationsList.length; i ++) {
+			index = PhotoFloat.guessedPasswordCodes.indexOf(mediaCodesCombinationsList[i]);
+			if (index != -1) {
+				md5 = PhotoFloat.guessedPasswordsMd5[index];
+				mediaCombinationsList.push(md5);
+			} else {
+				albumCombinationsList.push('...');
+			}
+		}
+
+		return [albumCombinationsList.join('-'), mediaCombinationsList.join('-')].join(',');
 	};
 
 	Utilities.prototype.undie = function() {
@@ -1137,7 +1238,7 @@
 	};
 
 	/* make static methods callable as member functions */
-	Utilities.prototype.convertComplexCombinationToComplexCodesCombination = Utilities.convertComplexCombinationToComplexCodesCombination;
+	Utilities.prototype.convertComplexCombinationToCodesComplexCombination = Utilities.convertComplexCombinationToCodesComplexCombination;
 	Utilities.prototype.sortAlbumsMedia = Utilities.sortAlbumsMedia;
 	Utilities.prototype.chooseReducedPhoto = Utilities.chooseReducedPhoto;
 	Utilities.prototype.originalMediaPath = Utilities.originalMediaPath;

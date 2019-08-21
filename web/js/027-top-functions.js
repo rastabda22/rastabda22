@@ -15,14 +15,13 @@
 
 	TopFunctions.setTitle = function(id, media) {
 		var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, isMapTitle, originalTitle;
-		var titleAnchorClasses, titleAnchorClassesItalics, albumTypeString, where, initialValue, searchFolderHash;
+		var titleAnchorClasses, where, initialValue, searchFolderHash;
 		var linkCount = 0, linksToLeave = 1, latitude, longitude, arrayCoordinates, numMediaInSubAlbums;
 		var raquo = "&raquo;";
 		// gpsLevelNumber is the number of levels for the by gps tree
 		// current levels are country, region, place => 3
 		var gpsLevelNumber = 3;
 		var gpsName = '';
-		var gpsHtmlTitle;
 		var setDocumentTitle = (id === "center" || id === "album");
 
 		f.updateMenu();
@@ -89,7 +88,7 @@
 
 			for (i = 2; i < components.length; ++i) {
 				if (i < components.length - 1 || media !== null)
-					title += "<a class='" + titleAnchorClasses + "' href='#!/" + encodeURI(currentAlbum.ancestorsCacheBase[i]) + "'>";
+					title += "<a class='" + titleAnchorClasses + "' href='#!/" + encodeURI(currentAlbum.ancestorsCacheBase[i - 1]) + "'>";
 				else
 					title += "<span class='title-no-anchor'>";
 
@@ -394,7 +393,7 @@
 			}
 			for (i = initialValue; i < components.length; ++i) {
 				if (i < components.length - 1 || media !== null)
-					title += "<a class='" + titleAnchorClasses + "' href='#!/" + encodeURI(currentAlbum.ancestorsCacheBase[i]) + "'>";
+					title += "<a class='" + titleAnchorClasses + "' href='#!/" + encodeURI(currentAlbum.ancestorsCacheBase[i - 1]) + "'>";
 				else
 					title += "<span class='title-no-anchor'>";
 
@@ -521,13 +520,15 @@
 		if ($("#search-album-to-be-filled").length) {
 			// for searches in current folder we must get the names from the album
 			// we must use getAlbum() because the album could not be in the cache yet (as when ctl-r is pressed)
-			phFl.getAlbum(
+			var promise = phFl.getAlbum(
 				searchFolderHash,
 				// getPositions
 				true,
 				// getMedia
 				true,
-				// success
+				util.die
+			);
+			promise.then(
 				function(theAlbum) {
 					var whereLinks = '', thisCacheBase, name, documentTitle;
 
@@ -557,8 +558,7 @@
 						);
 						document.title = documentTitle;
 					}
-				},
-				util.die
+				}
 			);
 		}
 
@@ -753,7 +753,8 @@
 			actuallyBind(thisAlbum, util.hasGpsData(currentMedia));
 		} else {
 			// we are in a root album
-			phFl.geotaggedPhotosExist(
+			var promise = phFl.geotaggedPhotosExist();
+			promise.then(
 				function(hasGpsData) {
 					actuallyBind(thisAlbum, hasGpsData);
 				}
@@ -967,8 +968,9 @@
 				mediaSelector = ".media-box#" + id + " .media-box-inner video";
 			} else {
 				mediaSelector = ".media-box#" + id + " .media-box-inner img";
-				mediaSrc = util.chooseMediaReduction(media, id, fullScreenStatus);
 			}
+			// is the following line correct for videos?
+			mediaSrc = util.chooseMediaReduction(media, id, fullScreenStatus);
 			mediaHtml = util.createMediaHtml(media, id, fullScreenStatus);
 
 			triggerLoad = util.chooseTriggerEvent(media);
@@ -978,8 +980,10 @@
 				mediaBoxInnerElement.empty();
 				mediaBoxInnerElement.show().append(mediaHtml);
 
-				$("link[rel=image_src]").remove();
-				$('link[rel="video_src"]').remove();
+				if (id === "center") {
+					$("link[rel=image_src]").remove();
+					$('link[rel="video_src"]').remove();
+				}
 				$("head").append(util.createMediaLinkTag(media, mediaSrc));
 			}
 
@@ -1079,7 +1083,7 @@
 		if (util.hasGpsData(media)) {
 			$(".media-box#" + id + " .menu-map-link").on(
 				'click',
-				function(ev) {
+				function() {
 					$(".map-popup-trigger")[0].click();
 				}
 			);
@@ -1168,7 +1172,7 @@
 		var linkTitle = util._t('#show-map');
 		$(".media-box#" + id + " .metadata tr.gps").attr("title", linkTitle).on(
 			'click',
-			function(ev) {
+			function() {
 				$(".map-popup-trigger")[0].click();
 			}
 		);
@@ -1212,15 +1216,16 @@
 			currentAlbum = null;
 		}
 
-		if (previousMedia !== null && previousMedia.mediaType == "video")
-			// stop the video, otherwise it will keep playing
-			$("#media-center")[0].pause();
-
 		if (currentAlbum && util.isByDateCacheBase(currentAlbum.cacheBase) && media !== null) {
 			previousMedia = media;
 		} else {
 			previousMedia = currentMedia;
 		}
+
+		if (previousMedia !== null && previousMedia.mediaType == "video")
+			// stop the video, otherwise it will keep playing
+			$("#media-center")[0].pause();
+
 		currentAlbum = album;
 		currentMedia = media;
 		currentMediaIndex = mediaIndex;
@@ -1643,11 +1648,16 @@
 
 
 	TopFunctions.showAlbum = function(populate) {
-		function insertRandomImage(randomSubAlbum, randomMedia, subalbum, id, resolve) {
+		function insertRandomImage(randomSubAlbum) {
+			var index = randomSubAlbum.randomMediaIndex;
+			delete randomSubAlbum.randomMediaIndex;
+			var subalbum = randomSubAlbum.theSubalbum;
+			delete randomSubAlbum.theSubalbum;
 			var titleName, randomMediaLink, goTo, humanGeonames;
+			var randomMedia = randomSubAlbum.media[index];
+			var id = phFl.hashCode(subalbum.cacheBase)
 			var mediaSrc = util.chooseThumbnail(randomSubAlbum, randomMedia, Options.album_thumb_size);
 
-			phFl.subalbumIndex ++;
 			mediaWidth = randomMedia.metadata.size[0];
 			mediaHeight = randomMedia.metadata.size[1];
 			if (Options.album_thumb_type == "fit") {
@@ -1708,7 +1718,7 @@
 			container.off('click').on(
 			// container.off('click').css("cursor", "pointer").on(
 				'click',
-				function(ev) {
+				function() {
 					var subfolderHash;
 					if (util.isSearchCacheBase(currentAlbum.cacheBase))
 						subfolderHash = phFl.encodeHash(subalbum, null, subalbum.cacheBase, currentAlbum.cacheBase);
@@ -1722,17 +1732,11 @@
 					window.location.href = subfolderHash;
 				}
 			);
-
-			numSubAlbumsReady ++;
-			if (numSubAlbumsReady >= currentAlbum.subalbums.length) {
-				// now all the subalbums random thumbnails has been loaded
-				resolve();
-			}
 		}
 		// end of insertRandomImage function
 
 
-		var i, imageLink, linkContainer, container, image, media, thumbsElement, subalbums, subalbumsElement, mediaHash, thumbHash, thumbnailSize;
+		var i, imageLink, linkContainer, container, image, media, thumbsElement, subalbumsElement, mediaHash, thumbHash, thumbnailSize;
 		var width, height, thumbWidth, thumbHeight, imageString, calculatedWidth, calculatedHeight, populateMedia;
 		var albumViewWidth, correctedAlbumThumbSize = Options.album_thumb_size;
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
@@ -1741,7 +1745,6 @@
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
 		var array, folderArray, folder, folderName, folderTitle, savedSearchSubAlbumHash, savedSearchAlbumHash;
 
-		phFl.subalbumIndex = 0;
 		numSubAlbumsReady = 0;
 
 		array = phFl.decodeHash(location.hash);
@@ -1779,7 +1782,7 @@
 					$("#show-them:hover").css("color", "").css("cursor", "");
 					$("#show-them").on(
 						"click",
-						function(ev) {
+						function() {
 							$("ul#right-menu").addClass("expand");
 						}
 					);
@@ -1986,9 +1989,10 @@
 					// subalbum loop
 					//
 					// The promise in order to know when everything has come to its end
-					var subalbumsPromise = new Promise(
-						function(resolve, reject) {
-							for (i = 0; i < currentAlbum.subalbums.length; ++i) {
+					var subalbumsPromises = [];
+					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
+						let subalbumsPromise = new Promise(
+							function(resolve) {
 								ithSubalbum = currentAlbum.subalbums[i];
 
 								// generate the subalbum caption
@@ -2121,27 +2125,31 @@
 
 								//////////////////// begin anonymous function /////////////////////
 								//      })(ithSubalbum, image, container, id);
-								(function(theSubalbum, theImage, theLink, id) {
+								(function(theSubalbum, theImage) {
 									// function(subalbum, container, callback, error)  ---  callback(album,   album.media[index], container,            subalbum);
-									phFl.pickRandomMedia(
+									var promise = phFl.pickRandomMedia(
 										theSubalbum,
-										resolve,
-										id,
-										insertRandomImage,
 										function error() {
 											currentAlbum.subalbums.splice(currentAlbum.subalbums.indexOf(theSubalbum), 1);
 											theImage.parent().remove();
 											// subalbums.splice(subalbums.indexOf(theLink), 1);
 										}
 									);
-									i ++; i --;
-								})(ithSubalbum, image, container, id);
+									promise.then(
+										function(album, index, theSubalbum) {
+											insertRandomImage(album, index, theSubalbum);
+											resolve();
+										}
+									);
+								})(ithSubalbum, image);
 								//////////////////// end anonymous function /////////////////////
 							}
-						}
-					);
-					subalbumsPromise.then(
-						function() {
+						);
+						subalbumsPromises.push(subalbumsPromise);
+					}
+
+					Promise.all(subalbumsPromises).then(
+						function allRandomImagesGot() {
 							// we can run the function that prepare the stuffs for sharing
 							f.socialButtons();
 
@@ -2791,7 +2799,7 @@
 		} else {
 			// not control click: add (with shift) or replace (without shift) the positions
 			imageLoadPromise = new Promise(
-				function(resolve, reject) {
+				function(resolve) {
 					var indexPositions, positionsAndCountsElement;
 
 					// $("#loading").show();
