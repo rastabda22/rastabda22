@@ -2221,7 +2221,7 @@
 
 			$("#powered-by").show();
 
-			// $("html, body").off('mousewheel').on('mousewheel', TopFunctions.scrollAlbum);
+			$("body").off('mousewheel').on('mousewheel', TopFunctions.scrollAlbum);
 		} else {
 			// currentMedia !== null
 			$("#media-view").removeClass("hidden");
