@@ -32,7 +32,9 @@ except ImportError:
 
 import math
 import numpy as np
-import exifread
+
+if 'exifread' in Options.config['metadata_tools_preference']:
+	import exifread
 
 from CachePath import remove_album_path, remove_folders_marker, trim_base_custom
 # from CachePath import remove_album_path, remove_cache_path, remove_folders_marker, trim_base_custom
