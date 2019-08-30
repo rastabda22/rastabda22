@@ -604,6 +604,8 @@
 
 							if (nextAlbum !== null && album.includedCodesComplexCombinations.indexOf(nextAlbum.codesComplexCombination) === -1) {
 								PhotoFloat.mergeProtectedContent(album, nextAlbum, {"getPositions": getPositions, "getMedia": getMedia, "codesComplexCombination": codesComplexCombination});
+								album.includedCodesComplexCombinations.push(nextAlbum.codesComplexCombination);
+							}
 						}
 					);
 					promise.catch(
@@ -712,9 +714,9 @@
 														album.includedProtectedDirectories = [];
 														album.includedCodesComplexCombinations = [];
 														album.includedCodesComplexCombinationsCounts = [];
-														// album.includedCodesComplexCombinations = [protectedAlbum.complexCombination];
 													} else if (album.includedCodesComplexCombinations.indexOf(protectedAlbum.complexCombination) === -1) {
 														PhotoFloat.mergeProtectedContent(album, protectedAlbum, codesComplexCombination);
+														album.includedCodesComplexCombinations.push(protectedAlbum.complexCombination);
 													}
 												}
 
@@ -747,8 +749,8 @@
 								// execution arrives here when all the protected json has been loaded and processed
 
 								// if media or positions are missing the combination must not be reported as included
-								if (album.hasOwnProperty("media") && album.hasOwnProperty("positionsAndMediaInTree"))
-									album.includedCodesComplexCombinations = album.includedCodesComplexCombinations.concat(theCodesComplexCombinationsToGet);
+								// if (album.hasOwnProperty("media") && album.hasOwnProperty("positionsAndMediaInTree"))
+								// 	album.includedCodesComplexCombinations = album.includedCodesComplexCombinations.concat(theCodesComplexCombinationsToGet);
 								album.includedCodesComplexCombinationsCounts = util.arrayUnion(album.includedCodesComplexCombinationsCounts, theCodesComplexCombinationsToGet);
 								// resolve_addProtectedContent(album, {"getPositions": getPositions, "getMedia": getMedia});
 								resolve_numsProtectedMediaInSubTreeIsInTheAlbum(album);
