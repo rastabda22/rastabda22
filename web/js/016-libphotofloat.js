@@ -751,14 +751,9 @@
 								// if media or positions are missing the combination must not be reported as included
 								// if (album.hasOwnProperty("media") && album.hasOwnProperty("positionsAndMediaInTree"))
 								// 	album.includedCodesComplexCombinations = album.includedCodesComplexCombinations.concat(theCodesComplexCombinationsToGet);
-								// resolve_addProtectedContent(album, {"getPositions": getPositions, "getMedia": getMedia});
 								// album.includedCodesComplexCombinationsCounts = util.arrayUnion(album.includedCodesComplexCombinationsCounts, theCodesComplexCombinationsToGet);
 								resolve_numsProtectedMediaInSubTreeIsInTheAlbum(album);
 							}
-						// ).catch(
-						// 	function(album) {
-						// 		console.trace();
-						// 	}
 						);
 					}
 				}
