@@ -375,23 +375,23 @@
 				var promise = PhotoFloat.getJsonFile(jsonFile);
 				promise.then(
 					function fileExists(protectedAlbum) {
-						if (album.includedCodesComplexCombinations.indexOf(protectedAlbum.codesComplexCombination) !== -1) {
-							// the protected album is already included, pass a null album so that nothing is done with it
-							resolve_getSingleProtectedCacheBase(null);
-						} else {
-							protectedAlbum.cacheBaseToGet = protectedCacheBase;
-							var promise = PhotoFloat.addPositionsAndMedia(protectedAlbum);
-							promise.then(
-								function(protectedAlbum) {
-									resolve_getSingleProtectedCacheBase(protectedAlbum);
-								}
-							);
-							promise.catch(
-								function(album) {
-									console.trace();
-								}
-							);
-						}
+						// if (album.includedCodesComplexCombinations.indexOf(protectedAlbum.codesComplexCombination) !== -1) {
+						// 	// the protected album is already included, pass a null album so that nothing is done with it
+						// 	resolve_getSingleProtectedCacheBase(null);
+						// } else {
+						protectedAlbum.cacheBaseToGet = protectedCacheBase;
+						var promise = PhotoFloat.addPositionsAndMedia(protectedAlbum);
+						promise.then(
+							function(protectedAlbum) {
+								resolve_getSingleProtectedCacheBase(protectedAlbum);
+							}
+						);
+						promise.catch(
+							function(album) {
+								console.trace();
+							}
+						);
+						// }
 					}
 				);
 				promise.catch(
