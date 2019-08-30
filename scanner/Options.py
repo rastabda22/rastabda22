@@ -99,8 +99,9 @@ max_media_from_positions_in_json_file = 20
 # json_version = 3.99 since album passwords added to every media separately from media passwords
 # json_version = 3.991 since media and position remain in json file for small numbers
 # json_version = 3.992 since combination renamed to complexCombination
+# json_version = 3.993 since complexCombination renamed to codesComplexCombination
 # json_version = 0
-json_version = 3.992
+json_version = 3.993
 
 
 def set_obsolete_json_version_flag():

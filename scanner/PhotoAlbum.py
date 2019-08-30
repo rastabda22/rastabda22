@@ -488,10 +488,10 @@ class Album(object):
 				with open(media_json_file, "r") as media_filepath:
 					json_file_dict["media"] = json.load(media_filepath)
 
-			if "complexCombination" in json_file_dict:
+			if "codesComplexCombination" in json_file_dict:
 				for i in range(len(json_file_dict['media'])):
-					album_codes_combination = json_file_dict['complexCombination'].split(',')[0]
-					media_codes_combination = json_file_dict['complexCombination'].split(',')[1]
+					album_codes_combination = json_file_dict['codesComplexCombination'].split(',')[0]
+					media_codes_combination = json_file_dict['codesComplexCombination'].split(',')[1]
 					album_identifiers_set = convert_old_codes_set_to_identifiers_set(convert_combination_to_set(album_codes_combination))
 					media_identifiers_set = convert_old_codes_set_to_identifiers_set(convert_combination_to_set(media_codes_combination))
 					if media_identifiers_set is None or album_identifiers_set is None:
@@ -674,7 +674,7 @@ class Album(object):
 			media_identifiers_combination = self.complex_combination.split(',')[1]
 			album_codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination)))
 			codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(media_identifiers_combination)))
-			dictionary["complexCombination"] = complex_combination(album_codes_combination, codes_combination)
+			dictionary["codesComplexCombination"] = complex_combination(album_codes_combination, codes_combination)
 		if not separate_positions:
 			dictionary["positionsAndMediaInTree"] = self.positions_and_media_in_tree
 		if not separate_media:
@@ -1520,39 +1520,36 @@ class Media(object):
 		_is_thumbnail = Media.is_thumbnail(thumb_type)
 		next_level()
 		message("checking reduction/thumbnail", thumb_path, 5)
-		if (
-			os.path.exists(thumbs_path_with_subdir) and
-			os.path.exists(thumb_path) and
-			file_mtime(thumb_path) >= self.datetime_file and
-			(len(json_file_list) == 0 or file_mtime(thumb_path) < file_mtime(json_file)) and
-			(
-				not _is_thumbnail and not Options.config['recreate_reduced_photos'] or
-				_is_thumbnail and not Options.config['recreate_thumbnails']
-			)
+		if not os.path.exists(thumbs_path_with_subdir):
+			indented_message("unexistent subdir", thumbs_path_with_subdir, 5)
+		elif not os.path.exists(thumb_path):
+			indented_message("unexistent reduction/thumbnail", thumb_path, 5)
+		elif file_mtime(thumb_path) < self.datetime_file:
+			indented_message("reduction/thumbnail older than original media", thumb_path, 5)
+		elif len(json_file_list) > 0 and file_mtime(thumb_path) >= json_files_min_mtime:
+			indented_message("reduction/thumbnail newer than json files", thumb_path + ", " + json_file, 5)
+		elif not (
+			not _is_thumbnail and not Options.config['recreate_reduced_photos'] or
+			_is_thumbnail and not Options.config['recreate_thumbnails']
 		):
+			indented_message("some option change requests recreation", "", 5)
+		# if (
+		# 	os.path.exists(thumbs_path_with_subdir) and
+		# 	os.path.exists(thumb_path) and
+		# 	file_mtime(thumb_path) >= self.datetime_file and
+		# 	(len(json_file_list) == 0 or file_mtime(thumb_path) < json_files_min_mtime) and
+		# 	(
+		# 		not _is_thumbnail and not Options.config['recreate_reduced_photos'] or
+		# 		_is_thumbnail and not Options.config['recreate_thumbnails']
+		# 	)
+		# ):
+		else:
 			indented_message("reduction/thumbnail OK, skipping", "", 5)
 			back_level()
 			return start_image
 
 		next_level()
-		message("reduction/thumbnail not OK, creating", "", 5)
-		next_level()
-		if not os.path.exists(thumbs_path_with_subdir):
-			message("unexistent subdir", thumbs_path_with_subdir, 5)
-		elif not os.path.exists(thumb_path):
-			message("unexistent reduction/thumbnail", thumb_path, 5)
-		elif file_mtime(thumb_path) < self.datetime_file:
-			message("reduction/thumbnail older than media date time", thumb_path, 5)
-		elif len(json_file_list) == 0:
-			message("unexistent json files", json_file, 5)
-		elif file_mtime(thumb_path) >= json_files_min_mtime:
-			message("reduction/thumbnail newer than json files", thumb_path + ", " + json_file, 5)
-		elif not (
-			not _is_thumbnail and not Options.config['recreate_reduced_photos'] or
-			_is_thumbnail and not Options.config['recreate_thumbnails']
-		):
-			message("some option change requests recreation", "", 5)
-		back_level()
+		message("creating reduction/thumbnail", "", 5)
 
 		original_thumb_size = actual_thumb_size
 		info_string = str(original_thumb_size)
