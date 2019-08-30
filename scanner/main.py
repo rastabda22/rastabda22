@@ -11,9 +11,8 @@ try:
 except ImportError:
 	pass
 
-from TreeWalker import TreeWalker
-from Utilities import report_times, message
 import Options
+from Utilities import report_times, message
 
 
 def main():
@@ -27,6 +26,8 @@ def main():
 
 	Options.initialize_opencv()
 	Options.get_options()
+
+	from TreeWalker import TreeWalker
 
 	try:
 		# @python2

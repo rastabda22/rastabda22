@@ -32,7 +32,6 @@ except ImportError:
 
 import math
 import numpy as np
-import exifread
 
 from CachePath import remove_album_path, remove_folders_marker, trim_base_custom
 # from CachePath import remove_album_path, remove_cache_path, remove_folders_marker, trim_base_custom
@@ -50,6 +49,10 @@ from VideoToolWrapper import VideoProbeWrapper, VideoTranscodeWrapper
 import Options
 # WARNING: pyexiftool has been modified, do not overwrite with new versions unless you know what you are doing
 import PyExifTool
+
+if 'exifread' in Options.config['metadata_tools_preference']:
+	import exifread
+
 # this is needed in order to avoid complains from exifread
 import logging
 
