@@ -375,26 +375,16 @@
 				var promise = PhotoFloat.getJsonFile(jsonFile);
 				promise.then(
 					function fileExists(protectedAlbum) {
-						// function fileExists(protectedAlbum, getJsonData) {
-						// var getPositions = getJsonData.getPositions;
-						// var getMedia = getJsonData.getMedia;
 						var promise;
 						if (album.includedCodesComplexCombinations.indexOf(protectedAlbum.codesComplexCombination) != -1) {
 							// the protected album is already included, pass a null album so that nothing is done with it
-							resolve_getSingleProtectedCacheBase([null, {"getPositions": getPositions, "getMedia": getMedia, "protectedCacheBase": protectedCacheBase}]);
+							resolve_getSingleProtectedCacheBase(null);
 						} else {
 							protectedAlbum.cacheBaseToGet = protectedCacheBase;
-							promise = PhotoFloat.addPositionsAndMedia(
-								protectedAlbum
-							);
+							promise = PhotoFloat.addPositionsAndMedia(protectedAlbum);
 							promise.then(
 								function(protectedAlbum) {
-									resolve_getSingleProtectedCacheBase(
-										[
-											protectedAlbum,
-											{"getPositions": getPositions, "getMedia": getMedia, "protectedCacheBase": protectedCacheBase, "codesComplexCombination": codesComplexCombination}
-										]
-									);
+									resolve_getSingleProtectedCacheBase(protectedAlbum);
 								}
 							);
 							promise.catch(
@@ -412,7 +402,7 @@
 					function FileDoesntExist() {
 						// execution arrives here if the json file doesn't exist
 						// do not do anything, i.e. another protected cache base will be processed
-						reject_getSingleProtectedCacheBase({"getPositions": getPositions, "getMedia": getMedia, "protectedCacheBase": protectedCacheBase});
+						reject_getSingleProtectedCacheBase();
 					}
 				);
 			}
@@ -496,9 +486,7 @@
 			function(resolve_getNumsProtectedMediaInSubTree) {
 				var promise = PhotoFloat.getSingleProtectedCacheBase(protectedCacheBase, album, {"getPositions": getPositions, "getMedia": getMedia});
 				promise.then(
-					function(returnValue) {
-					// function getSingleProtectedCacheBase_resolved(protectedAlbum) {
-						var [protectedAlbum] = returnValue;
+					function(protectedAlbum) {
 						if (typeof protectedAlbum !== "undefined") {
 							album.numsProtectedMediaInSubTree = protectedAlbum.numsProtectedMediaInSubTree;
 							resolve_getNumsProtectedMediaInSubTree({"getPositions": getPositions, "getMedia": getMedia});
@@ -613,10 +601,9 @@
 
 					var promise = PhotoFloat.getSingleProtectedCacheBase(numberedCacheBase, album, {"getPositions": getPositions, "getMedia": getMedia, "codesComplexCombination": codesComplexCombination});
 					promise.then(
-						function(returnValue) {
+						function(nextAlbum) {
 							getNextNumberedCacheBases();
 
-							var nextAlbum = returnValue[0];
 							if (nextAlbum !== null)
 								PhotoFloat.mergeProtectedContent(album, nextAlbum, {"getPositions": getPositions, "getMedia": getMedia, "codesComplexCombination": codesComplexCombination});
 						}
@@ -708,9 +695,7 @@
 											);
 										}
 										promise.then(
-											function(returnValue) {
-											// function getSingleProtectedCacheBase_resolved(album, stringyfiedProtectedAlbum, otherArguments) {
-												let [protectedAlbum, otherArguments] = returnValue;
+											function(protectedAlbum) {
 												if (typeof protectedAlbum === "undefined")
 													protectedAlbum = null;
 
