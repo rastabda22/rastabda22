@@ -665,6 +665,11 @@
 					phFl.parseHash(hash, callback, error);
 				}
 			);
+			promise.catch(
+				function(album) {
+					console.trace();
+				}
+			);
 		}
 		// phFl.parseHash(hash, callback, error);
 	};

@@ -536,7 +536,12 @@ $(document).ready(function() {
 				function() {
 					f.parseHash(location.hash, tF.hashParsed, util.die);
 				}
-			)
+			);
+			promise.catch(
+				function(album) {
+					console.trace();
+				}
+			);
 		}
 	});
 

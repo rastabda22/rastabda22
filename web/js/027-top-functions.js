@@ -520,16 +520,10 @@
 		if ($("#search-album-to-be-filled").length) {
 			// for searches in current folder we must get the names from the album
 			// we must use getAlbum() because the album could not be in the cache yet (as when ctl-r is pressed)
-			var promise = phFl.getAlbum(
-				searchFolderHash,
-				// getPositions
-				true,
-				// getMedia
-				true,
-				util.die
-			);
+			var promise = phFl.getAlbum(searchFolderHash, util.die, {"getPositions": true, "getMedia": true});
 			promise.then(
-				function(theAlbum) {
+				function(returnValue) {
+					var theAlbum = returnValue[0];
 					var whereLinks = '', thisCacheBase, name, documentTitle;
 
 					if (theAlbum.hasOwnProperty('ancestorsNames')) {
@@ -558,6 +552,11 @@
 						);
 						document.title = documentTitle;
 					}
+				}
+			);
+			promise.catch(
+				function(album) {
+					console.trace();
 				}
 			);
 		}
@@ -757,6 +756,11 @@
 			promise.then(
 				function(hasGpsData) {
 					actuallyBind(thisAlbum, hasGpsData);
+				}
+			);
+			promise.catch(
+				function(album) {
+					console.trace();
 				}
 			);
 		}
@@ -1991,8 +1995,8 @@
 					// The promise in order to know when everything has come to its end
 					var subalbumsPromises = [];
 					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
-						let subalbumsPromise = new Promise(
-							function(resolve) {
+						let subalbumPromise = new Promise(
+							function(resolve_subalbumPromise) {
 								ithSubalbum = currentAlbum.subalbums[i];
 
 								// generate the subalbum caption
@@ -2132,20 +2136,27 @@
 										function error() {
 											currentAlbum.subalbums.splice(currentAlbum.subalbums.indexOf(theSubalbum), 1);
 											theImage.parent().remove();
+											resolve_subalbumPromise();
 											// subalbums.splice(subalbums.indexOf(theLink), 1);
 										}
 									);
 									promise.then(
-										function(album, index, theSubalbum) {
+										function(returnValue) {
+											var [album, index] = returnValue;
 											insertRandomImage(album, index, theSubalbum);
-											resolve();
+											resolve_subalbumPromise();
+										}
+									);
+									promise.catch(
+										function(album) {
+											console.trace();
 										}
 									);
 								})(ithSubalbum, image);
 								//////////////////// end anonymous function /////////////////////
 							}
 						);
-						subalbumsPromises.push(subalbumsPromise);
+						subalbumsPromises.push(subalbumPromise);
 					}
 
 					Promise.all(subalbumsPromises).then(
@@ -2168,6 +2179,10 @@
 								$(".album-caption").css("height", maxHeight + 'px');
 							}
 						}
+					// ).catch(
+					// 	function(album) {
+					// 		console.trace();
+					// 	}
 					);
 
 					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
@@ -2587,6 +2602,11 @@
 									// TopFunctions.updateMapAlbumOnMapClick(null, pruneCluster.Cluster._clusters, TopFunctions.prepareAndDoPopupUpdate);
 							}
 						);
+						promise.catch(
+							function(album) {
+								console.trace();
+							}
+						);
 					}
 
 					var clickHistory = MapFunctions.mapAlbum.clickHistory;
@@ -2845,6 +2865,11 @@
 			imageLoadPromise.then(
 				function() {
 					endPreparingMapAlbumAndUpdatePopup();
+				}
+			);
+			imageLoadPromise.catch(
+				function(album) {
+					console.trace();
 				}
 			);
 			// }

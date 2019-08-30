@@ -356,18 +356,14 @@
 				photosInAlbum = photosByAlbum[albumCacheBase];
 				var promise = phFl.getAlbum(
 					albumCacheBase,
-					// getPositions
-					true,
-					// getMedia
-					true,
 					util.die,
-					photosInAlbum,
-					null
+					{"getPositions": true, "getMedia": true, "thisIndexWords": photosInAlbum, "thisIndexAlbums": null}
 				);
 				promise.then(
-					function(theAlbum, photosInAlbum) {
-						for(mediaIndex = 0; mediaIndex < theAlbum.media.length; mediaIndex ++) {
-							for(photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
+					function(returnValue) {
+						var [theAlbum, photosInAlbum] = returnValue;
+						for (mediaIndex = 0; mediaIndex < theAlbum.media.length; mediaIndex ++) {
+							for (photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
 								if (theAlbum.media[mediaIndex].cacheBase == photosInAlbum[photoIndex].element.cacheBase) {
 									mapAlbum.media.push(theAlbum.media[mediaIndex]);
 								}
@@ -379,6 +375,11 @@
 							mapAlbum.positionsAndMediaInTree = util.mergePoints(mapAlbum.positionsAndMediaInTree, positionsAndCounts);
 							resolve(mapAlbum);
 						}
+					}
+				);
+				promise.catch(
+					function(album) {
+						console.trace();
 					}
 				);
 			}
