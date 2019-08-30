@@ -14,6 +14,22 @@
 	}
 
 	TopFunctions.setTitle = function(id, media) {
+
+		function generateAncestorsCacheBase(album) {
+			if (! album.hasOwnProperty("ancestorsCacheBase")) {
+				var ancestorsCacheBase = [], i;
+				var splittedCacheBase = album.cacheBase.split(Options.cache_folder_separator);
+				ancestorsCacheBase[0] = splittedCacheBase[0];
+				for (i = 1; i < splittedCacheBase.length; i ++) {
+					ancestorsCacheBase[i] = [ancestorsCacheBase[i - 1], splittedCacheBase[i]].join(Options.cache_folder_separator);
+				}
+
+				album.ancestorsCacheBase = ancestorsCacheBase;
+			}
+
+			return;
+		}
+
 		var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, isMapTitle, originalTitle;
 		var titleAnchorClasses, where, initialValue, searchFolderHash;
 		var linkCount = 0, linksToLeave = 1, latitude, longitude, arrayCoordinates, numMediaInSubAlbums;
@@ -75,6 +91,7 @@
 		if (isDateTitle) {
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>";
 			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_date_string + "'>(" + util._t("#by-date") + ")</a>";
+		generateAncestorsCacheBase(currentAlbum);
 
 			if (components.length > 2 || media !== null)
 				title += raquo;

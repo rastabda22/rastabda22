@@ -618,7 +618,7 @@ class Album(object):
 		ancestors_center = list()
 		_parent = self
 		while True:
-			ancestors_cache_base.append(_parent.cache_base)
+			# ancestors_cache_base.append(_parent.cache_base)
 
 			if hasattr(_parent, "alt_name"):
 				ancestors_names.append(_parent.alt_name)
@@ -646,7 +646,7 @@ class Album(object):
 			"date": self.date_string,
 			"subalbums": subalbums,
 			"cacheBase": self.cache_base,
-			"ancestorsCacheBase": ancestors_cache_base,
+			# "ancestorsCacheBase": ancestors_cache_base,
 			"ancestorsNames": ancestors_names,
 			"ancestorsCenter": ancestors_center,
 			"physicalPath": path_without_folders_marker,
