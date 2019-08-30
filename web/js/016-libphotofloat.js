@@ -375,13 +375,12 @@
 				var promise = PhotoFloat.getJsonFile(jsonFile);
 				promise.then(
 					function fileExists(protectedAlbum) {
-						var promise;
-						if (album.includedCodesComplexCombinations.indexOf(protectedAlbum.codesComplexCombination) != -1) {
+						if (album.includedCodesComplexCombinations.indexOf(protectedAlbum.codesComplexCombination) !== -1) {
 							// the protected album is already included, pass a null album so that nothing is done with it
 							resolve_getSingleProtectedCacheBase(null);
 						} else {
 							protectedAlbum.cacheBaseToGet = protectedCacheBase;
-							promise = PhotoFloat.addPositionsAndMedia(protectedAlbum);
+							var promise = PhotoFloat.addPositionsAndMedia(protectedAlbum);
 							promise.then(
 								function(protectedAlbum) {
 									resolve_getSingleProtectedCacheBase(protectedAlbum);
@@ -392,9 +391,6 @@
 									console.trace();
 								}
 							);
-							// promise.catch(
-							// 	reject
-							// );
 						}
 					}
 				);
