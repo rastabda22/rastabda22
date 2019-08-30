@@ -529,7 +529,7 @@
 		album.albumReverseSort = false;
 		util.sortAlbumsMedia(album);
 
-		if (album.includedCodesComplexCombinationsCounts.indexOf(codesComplexCombination) == -1) {
+		if (album.includedCodesComplexCombinations.indexOf(codesComplexCombination) === -1) {
 			if (! album.hasOwnProperty("numMedia"))
 				album.numMedia = album.media.length;
 			if (! protectedAlbum.hasOwnProperty("numMedia"))
@@ -555,7 +555,7 @@
 	PhotoFloat.mergeSubalbum = function(album, subalbum, subalbum2, codesComplexCombination) {
 		if (
 			subalbum.cacheBase == subalbum2.cacheBase &&
-			album.includedCodesComplexCombinationsCounts.indexOf(codesComplexCombination) == -1
+			album.includedCodesComplexCombinations.indexOf(codesComplexCombination) === -1
 		) {
 			subalbum.numMediaInSubTree += subalbum2.numMediaInSubTree;
 			subalbum.numPositionsInTree += subalbum2.numPositionsInTree;
