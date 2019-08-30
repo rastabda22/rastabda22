@@ -541,6 +541,8 @@
 			album.numMedia += protectedAlbum.numMedia;
 			album.numMediaInSubTree += protectedAlbum.numMediaInSubTree;
 			album.numPositionsInTree += protectedAlbum.numPositionsInTree;
+			if (! album.hasOwnProperty("path"))
+				album.path = protectedAlbum.path;
 		}
 
 		if (protectedAlbum.hasOwnProperty("positionsAndMediaInTree")) {
