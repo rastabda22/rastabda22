@@ -261,7 +261,7 @@ $(document).ready(function() {
 				}
 
 				if (
-					(
+					currentAlbum !== null && (
 						[
 							Options.folders_string,
 							Options.by_date_string,
@@ -270,8 +270,7 @@ $(document).ready(function() {
 							Options.by_search_string
 						].indexOf(currentAlbum.cacheBase) !== -1 ||
 						currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)
-					) &&
-					! isMap
+					) && ! isMap
 				) {
 					// browsing mode switchers
 					if (e.key === '<' && nextBrowsingModeSelector !== null) {
