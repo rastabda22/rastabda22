@@ -992,17 +992,12 @@
 	};
 
 	PhotoFloat.prototype.pickRandomMedia = function(theSubalbum, error) {
-		// var self = this;
-
-		// if (typeof subalbum.media !== "undefined" && subalbum.media !== null)
-		// 	nextAlbum(subalbum);
-		// else
 		return new Promise(
 			function(resolve_pickRandomMedia) {
 				var promise = PhotoFloat.getAlbum(theSubalbum.cacheBase, error, {"getPositions": false, "getMedia": false});
 				promise.then(
-					function(returnValue) {
-						nextAlbum(returnValue[0]);
+					function([album]) {
+						nextAlbum(album);
 					}
 				);
 				promise.catch(
@@ -1010,6 +1005,7 @@
 						console.trace();
 					}
 				);
+				//// end of function pickRandomMedia ////////////////////
 
 				function nextAlbum(album) {
 					var index = Math.floor(Math.random() * (album.numMediaInSubTree));
