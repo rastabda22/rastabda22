@@ -326,7 +326,7 @@
 							"numPositionsInTree": 0,
 							"includedProtectedDirectories": [],
 							"includedCodesComplexCombinations": [],
-							"includedCodesComplexCombinationsCounts": [],
+							// "includedCodesComplexCombinationsCounts": [],
 							"empty": true
 						};
 
@@ -713,7 +713,7 @@
 														}
 														album.includedProtectedDirectories = [];
 														album.includedCodesComplexCombinations = [];
-														album.includedCodesComplexCombinationsCounts = [];
+														// album.includedCodesComplexCombinationsCounts = [];
 													} else if (album.includedCodesComplexCombinations.indexOf(protectedAlbum.complexCombination) === -1) {
 														PhotoFloat.mergeProtectedContent(album, protectedAlbum, codesComplexCombination);
 														album.includedCodesComplexCombinations.push(protectedAlbum.complexCombination);
@@ -751,8 +751,8 @@
 								// if media or positions are missing the combination must not be reported as included
 								// if (album.hasOwnProperty("media") && album.hasOwnProperty("positionsAndMediaInTree"))
 								// 	album.includedCodesComplexCombinations = album.includedCodesComplexCombinations.concat(theCodesComplexCombinationsToGet);
-								album.includedCodesComplexCombinationsCounts = util.arrayUnion(album.includedCodesComplexCombinationsCounts, theCodesComplexCombinationsToGet);
 								// resolve_addProtectedContent(album, {"getPositions": getPositions, "getMedia": getMedia});
+								// album.includedCodesComplexCombinationsCounts = util.arrayUnion(album.includedCodesComplexCombinationsCounts, theCodesComplexCombinationsToGet);
 								resolve_numsProtectedMediaInSubTreeIsInTheAlbum(album);
 							}
 						// ).catch(
@@ -779,8 +779,8 @@
 						album.includedProtectedDirectories = [];
 					if (! album.hasOwnProperty("includedCodesComplexCombinations"))
 						album.includedCodesComplexCombinations = [];
-					if (! album.hasOwnProperty("includedCodesComplexCombinationsCounts"))
-						album.includedCodesComplexCombinationsCounts = [];
+					// if (! album.hasOwnProperty("includedCodesComplexCombinationsCounts"))
+						// album.includedCodesComplexCombinationsCounts = [];
 
 					numsPromise = PhotoFloat.numsProtectedMediaInSubTreeIsInTheAlbum(album, {"getPositions": getPositions, "getMedia": getMedia});
 					numsPromise.then(
