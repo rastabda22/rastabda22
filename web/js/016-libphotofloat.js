@@ -602,7 +602,7 @@
 						function(nextAlbum) {
 							getNextNumberedCacheBases();
 
-							if (nextAlbum !== null)
+							if (nextAlbum !== null && album.includedCodesComplexCombinations.indexOf(nextAlbum.codesComplexCombination) === -1) {
 								PhotoFloat.mergeProtectedContent(album, nextAlbum, {"getPositions": getPositions, "getMedia": getMedia, "codesComplexCombination": codesComplexCombination});
 						}
 					);
@@ -713,8 +713,7 @@
 														album.includedCodesComplexCombinations = [];
 														album.includedCodesComplexCombinationsCounts = [];
 														// album.includedCodesComplexCombinations = [protectedAlbum.complexCombination];
-													} else {
-													// } else if (album.includedCodesComplexCombinations.indexOf(protectedAlbum.complexCombination) == -1) {
+													} else if (album.includedCodesComplexCombinations.indexOf(protectedAlbum.complexCombination) === -1) {
 														PhotoFloat.mergeProtectedContent(album, protectedAlbum, codesComplexCombination);
 													}
 												}
