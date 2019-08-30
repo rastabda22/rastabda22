@@ -614,16 +614,16 @@ class Album(object):
 			path_to_dict = Options.config['folders_string'] + '/' + path_to_dict
 
 		ancestors_cache_base = list()
-		ancestors_names = list()
+		# ancestors_names = list()
 		ancestors_center = list()
 		_parent = self
 		while True:
 			# ancestors_cache_base.append(_parent.cache_base)
 
-			if hasattr(_parent, "alt_name"):
-				ancestors_names.append(_parent.alt_name)
-			elif hasattr(_parent, "name"):
-				ancestors_names.append(_parent.name)
+			# if hasattr(_parent, "alt_name"):
+			# 	ancestors_names.append(_parent.alt_name)
+			# elif hasattr(_parent, "name"):
+			# 	ancestors_names.append(_parent.name)
 
 			if hasattr(_parent, "center"):
 				ancestors_center.append(_parent.center)
@@ -636,7 +636,7 @@ class Album(object):
 			if _parent is None:
 				break
 		ancestors_cache_base.reverse()
-		ancestors_names.reverse()
+		# ancestors_names.reverse()
 		ancestors_center.reverse()
 
 		dictionary = {
@@ -647,7 +647,7 @@ class Album(object):
 			"subalbums": subalbums,
 			"cacheBase": self.cache_base,
 			# "ancestorsCacheBase": ancestors_cache_base,
-			"ancestorsNames": ancestors_names,
+			# "ancestorsNames": ancestors_names,
 			"ancestorsCenter": ancestors_center,
 			"physicalPath": path_without_folders_marker,
 			"numMediaInSubTree": self.num_media_in_sub_tree,
