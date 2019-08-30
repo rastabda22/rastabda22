@@ -488,10 +488,10 @@ class Album(object):
 				with open(media_json_file, "r") as media_filepath:
 					json_file_dict["media"] = json.load(media_filepath)
 
-			if "complexCombination" in json_file_dict:
+			if "codesComplexCombination" in json_file_dict:
 				for i in range(len(json_file_dict['media'])):
-					album_codes_combination = json_file_dict['complexCombination'].split(',')[0]
-					media_codes_combination = json_file_dict['complexCombination'].split(',')[1]
+					album_codes_combination = json_file_dict['codesComplexCombination'].split(',')[0]
+					media_codes_combination = json_file_dict['codesComplexCombination'].split(',')[1]
 					album_identifiers_set = convert_old_codes_set_to_identifiers_set(convert_combination_to_set(album_codes_combination))
 					media_identifiers_set = convert_old_codes_set_to_identifiers_set(convert_combination_to_set(media_codes_combination))
 					if media_identifiers_set is None or album_identifiers_set is None:
@@ -674,7 +674,7 @@ class Album(object):
 			media_identifiers_combination = self.complex_combination.split(',')[1]
 			album_codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination)))
 			codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(media_identifiers_combination)))
-			dictionary["complexCombination"] = complex_combination(album_codes_combination, codes_combination)
+			dictionary["codesComplexCombination"] = complex_combination(album_codes_combination, codes_combination)
 		if not separate_positions:
 			dictionary["positionsAndMediaInTree"] = self.positions_and_media_in_tree
 		if not separate_media:
