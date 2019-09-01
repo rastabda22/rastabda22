@@ -357,7 +357,7 @@
 				var promise = phFl.getAlbum(
 					albumCacheBase,
 					util.die,
-					{"getPositions": true, "getMedia": true, "thisIndexWords": photosInAlbum, "thisIndexAlbums": null}
+					{"getMedia": true, "getPositions": true, "thisIndexWords": photosInAlbum, "thisIndexAlbums": null}
 				);
 				promise.then(
 					function([theAlbum, photosInAlbum]) {

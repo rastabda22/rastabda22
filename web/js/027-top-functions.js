@@ -40,7 +40,7 @@
 
 					function getNextAncestorNames() {
 						i --;
-						var promise = phFl.getAlbum(originalAlbum.ancestorsCacheBase[i], util.die, {"getPositions": false, "getMedia": false});
+						var promise = phFl.getAlbum(originalAlbum.ancestorsCacheBase[i], util.die, {"getMedia": false, "getPositions": false});
 						promise.then(
 							function([album]) {
 								if (originalAlbum.hasOwnProperty("altName"))
@@ -575,7 +575,7 @@
 				if ($("#search-album-to-be-filled").length) {
 					// for searches in current folder we must get the names from the album
 					// we must use getAlbum() because the album could not be in the cache yet (as when ctl-r is pressed)
-					var promise = phFl.getAlbum(searchFolderHash, util.die, {"getPositions": true, "getMedia": true});
+					var promise = phFl.getAlbum(searchFolderHash, util.die, {"getMedia": true, "getPositions": true});
 					promise.then(
 						function([theAlbum]) {
 							var whereLinks = '', thisCacheBase, name, documentTitle;

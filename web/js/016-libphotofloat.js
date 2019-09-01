@@ -181,7 +181,7 @@
 		);
 	};
 
-	PhotoFloat.addPositionsAndMedia = function(theAlbum, {getPositions = false, getMedia = false, protectedCacheBase = null} = {}) {
+	PhotoFloat.addPositionsAndMedia = function(theAlbum, {getMedia = false, getPositions = false, protectedCacheBase = null} = {}) {
 
 		var positionsPromise = addPositions(theAlbum);
 		var mediaPromise = addMedia(theAlbum);
@@ -201,6 +201,35 @@
 		// end of function addPositionsAndMedia
 
 		// auxiliary functions
+		function addMedia(album) {
+			return new Promise(
+				function(resolve_addMedia, internalReject) {
+					var mediaJsonFile;
+					// are media still missing?
+					if (getMedia && ! album.hasOwnProperty("media")) {
+						if (protectedCacheBase)
+							mediaJsonFile = album.protectedCacheBase + '.media.json';
+						else
+							mediaJsonFile = album.cacheBase + '.media.json';
+						var promise = PhotoFloat.getJsonFile(mediaJsonFile);
+						promise.then(
+							function(media) {
+								album.media = media;
+								resolve_addMedia();
+							}
+						);
+						promise.catch(
+							function() {
+								resolve_addMedia();
+							}
+						);
+					} else {
+						resolve_addMedia(album);
+					}
+				}
+			);
+		}
+
 		function addPositions(album) {
 			return new Promise(
 				function(resolve_addPositions, reject_addPositionsAndMedia) {
@@ -232,35 +261,6 @@
 				}
 			);
 		}
-
-		function addMedia(album) {
-			return new Promise(
-				function(resolve_addMedia, internalReject) {
-					var mediaJsonFile;
-					// are media still missing?
-					if (getMedia && ! album.hasOwnProperty("media")) {
-						if (protectedCacheBase)
-							mediaJsonFile = album.protectedCacheBase + '.media.json';
-						else
-							mediaJsonFile = album.cacheBase + '.media.json';
-						var promise = PhotoFloat.getJsonFile(mediaJsonFile);
-						promise.then(
-							function(media) {
-								album.media = media;
-								resolve_addMedia();
-							}
-						);
-						promise.catch(
-							function() {
-								resolve_addMedia();
-							}
-						);
-					} else {
-						resolve_addMedia(album);
-					}
-				}
-			);
-		}
 	};
 
 	PhotoFloat.convertComplexCombinationsIntoLists = function(codesComplexCombination) {
@@ -282,7 +282,7 @@
 		return albumCacheBase.indexOf(Options.protected_directories_prefix) == 0;
 	};
 
-	PhotoFloat.getSingleUnprotectedCacheBase = function(albumCacheBase, {getPositions = false, getMedia = false} = {}) {
+	PhotoFloat.getSingleUnprotectedCacheBase = function(albumCacheBase, {getMedia = false, getPositions = false} = {}) {
 		// this function is needed in order to get a single json file, either protected or not
 		//
 		// album only makes sense if albumCacheBase is a protected one
@@ -294,14 +294,11 @@
 				var promise = PhotoFloat.getJsonFile(jsonFile);
 				promise.then(
 					function fileExists(theAlbum) {
-						// function fileExists(theAlbum, getJsonData) {
-						// var getPositions = getJsonData.getPositions;
-						// var getMedia = getJsonData.getMedia;
 						var promise;
-						if (! getPositions && ! getMedia) {
+						if (! getMedia && ! getPositions) {
 							resolve_getSingleUnprotectedCacheBase(theAlbum);
 						} else {
-							promise = PhotoFloat.addPositionsAndMedia(theAlbum, {"getPositions": getPositions, "getMedia": getMedia});
+							promise = PhotoFloat.addPositionsAndMedia(theAlbum, {"getMedia": getMedia, "getPositions": getPositions});
 							promise.then(
 								function(theAlbum) {
 									resolve_getSingleUnprotectedCacheBase(theAlbum);
@@ -341,7 +338,7 @@
 							// baseJsonFileExists = false;
 							var cacheBase = albumCacheBase.substring(albumCacheBase.lastIndexOf('/') + 1);
 							emptyAlbum.cacheBase = cacheBase;
-							var promise = PhotoFloat.addProtectedContent(emptyAlbum, {"getPositions": getPositions, "getMedia": getMedia});
+							var promise = PhotoFloat.addProtectedContent(emptyAlbum, {"getMedia": getMedia, "getPositions": getPositions});
 							promise.then(
 								function() {
 									resolve_getSingleUnprotectedCacheBase(emptyAlbum);
@@ -359,7 +356,7 @@
 		);
 	};
 
-	PhotoFloat.getSingleProtectedCacheBase = function(protectedCacheBase, album, {getPositions = false, getMedia = false} = {}) {
+	PhotoFloat.getSingleProtectedCacheBase = function(protectedCacheBase, album, {getMedia = false, getPositions = false} = {}) {
 		var protectedDirectory = protectedCacheBase.substring(0, protectedCacheBase.indexOf('/'));
 
 		// this function is needed in order to get a single json file, either protected or not
@@ -371,14 +368,10 @@
 				var promise = PhotoFloat.getJsonFile(jsonFile);
 				promise.then(
 					function fileExists(protectedAlbum) {
-						// if (album.includedCodesComplexCombinations.indexOf(protectedAlbum.codesComplexCombination) !== -1) {
-						// 	// the protected album is already included, pass a null album so that nothing is done with it
-						// 	resolve_getSingleProtectedCacheBase(null);
-						// } else {
-						if (! getPositions && ! getMedia) {
+						if (! getMedia && ! getPositions) {
 							resolve_getSingleProtectedCacheBase(protectedAlbum);
 						} else {
-							var promise = PhotoFloat.addPositionsAndMedia(protectedAlbum, {"getPositions": getPositions, "getMedia": getMedia, "protectedCacheBase": protectedCacheBase});
+							var promise = PhotoFloat.addPositionsAndMedia(protectedAlbum, {"getMedia": getMedia, "getPositions": getPositions, "protectedCacheBase": protectedCacheBase});
 							promise.then(
 								function(protectedAlbum) {
 									resolve_getSingleProtectedCacheBase(protectedAlbum);
@@ -471,13 +464,13 @@
 		return result;
 	};
 
-	PhotoFloat.getNumsProtectedMediaInSubTree = function(album, theProtectedDirectoriesToGet, iDirectory, {getPositions = false, getMedia = false} = {}) {
+	PhotoFloat.getNumsProtectedMediaInSubTree = function(album, theProtectedDirectoriesToGet, iDirectory, {getMedia = false, getPositions = false} = {}) {
 
 		var protectedDirectory = theProtectedDirectoriesToGet[iDirectory];
 		var protectedCacheBase = protectedDirectory + '/' + album.cacheBase;
 		return new Promise(
 			function(resolve_getNumsProtectedMediaInSubTree) {
-				var promise = PhotoFloat.getSingleProtectedCacheBase(protectedCacheBase, album, {"getPositions": getPositions, "getMedia": getMedia});
+				var promise = PhotoFloat.getSingleProtectedCacheBase(protectedCacheBase, album, {"getMedia": getMedia, "getPositions": getPositions});
 				promise.then(
 					function(protectedAlbum) {
 						if (typeof protectedAlbum !== "undefined") {
@@ -488,7 +481,7 @@
 				);
 				promise.catch(
 					function getSingleProtectedCacheBase_rejected() {
-						var promise = PhotoFloat.getNumsProtectedMediaInSubTree(album, theProtectedDirectoriesToGet, iDirectory + 1, {"getPositions": getPositions, "getMedia": getMedia});
+						var promise = PhotoFloat.getNumsProtectedMediaInSubTree(album, theProtectedDirectoriesToGet, iDirectory + 1, {"getMedia": getMedia, "getPositions": getPositions});
 						promise.then(
 							function() {
 								resolve_getNumsProtectedMediaInSubTree();
@@ -580,7 +573,7 @@
 		}
 	};
 
-	PhotoFloat.getNumberedCacheBases = function(album, protectedCacheBase, {getPositions, getMedia, codesComplexCombination}) {
+	PhotoFloat.getNumberedCacheBases = function(album, protectedCacheBase, {getMedia, getPositions, codesComplexCombination}) {
 		var nLink = 0;
 		return new Promise(
 			function(resolve_getNumberedCacheBases, reject_getNumberedCacheBases) {
@@ -590,7 +583,7 @@
 					nLink ++;
 					var numberedCacheBase = protectedCacheBase + '.' + nLink;
 
-					var promise = PhotoFloat.getSingleProtectedCacheBase(numberedCacheBase, album, {"getPositions": getPositions, "getMedia": getMedia, "codesComplexCombination": codesComplexCombination});
+					var promise = PhotoFloat.getSingleProtectedCacheBase(numberedCacheBase, album, {"getMedia": getMedia, "getPositions": getPositions, "codesComplexCombination": codesComplexCombination});
 					promise.then(
 						function(numberedAlbum) {
 							getRemainingNumberedCacheBases();
@@ -612,7 +605,7 @@
 	};
 
 
-	PhotoFloat.addProtectedContent = function(album, {getPositions = false, getMedia = false} = {}) {
+	PhotoFloat.addProtectedContent = function(album, {getMedia = false, getPositions = false} = {}) {
 
 		return new Promise(
 			function(resolve_addProtectedContent, reject) {
@@ -628,7 +621,7 @@
 					numsPromise = continueAddProtectedContent(album);
 					numsPromise.then(
 						function(album) {
-							resolve_addProtectedContent({"getPositions": getPositions, "getMedia": getMedia});
+							resolve_addProtectedContent({"getMedia": getMedia, "getPositions": getPositions});
 						}
 					);
 					numsPromise.catch(
@@ -641,16 +634,16 @@
 					var theProtectedDirectoriesToGet = PhotoFloat.protectedDirectoriesToGet();
 					if (! theProtectedDirectoriesToGet.length) {
 						// executions shouldn't arrive here
-						resolve_addProtectedContent({"getPositions": getPositions, "getMedia": getMedia});
+						resolve_addProtectedContent({"getMedia": getMedia, "getPositions": getPositions});
 					} else {
 						// declaration: PhotoFloat.getNumsProtectedMediaInSubTree = function(album, theProtectedDirectoriesToGet, iDirectory, otherArguments)
-						var promise = PhotoFloat.getNumsProtectedMediaInSubTree(album, theProtectedDirectoriesToGet, 0, {"getPositions": getPositions, "getMedia": getMedia});
+						var promise = PhotoFloat.getNumsProtectedMediaInSubTree(album, theProtectedDirectoriesToGet, 0, {"getMedia": getMedia, "getPositions": getPositions});
 						promise.then(
 							function() {
 								numsPromise = continueAddProtectedContent(album);
 								numsPromise.then(
 									function(album) {
-										resolve_addProtectedContent({"getPositions": getPositions, "getMedia": getMedia});
+										resolve_addProtectedContent({"getMedia": getMedia, "getPositions": getPositions});
 									}
 								);
 								numsPromise.catch(
@@ -736,8 +729,8 @@
 											protectedCacheBase,
 											album,
 											{
-												"getPositions": getPositions,
 												"getMedia": getMedia,
+												"getPositions": getPositions,
 												"codesComplexCombination": codesComplexCombination
 											}
 										);
@@ -763,11 +756,11 @@
 													}
 												}
 
-												// get the symlinks
+												// get the other files in the same protected directory which only differ for a number
 												let nextPromise = PhotoFloat.getNumberedCacheBases(
 													album,
 													protectedCacheBase,
-													{"getPositions": getPositions, "getMedia": getMedia, "codesComplexCombination": codesComplexCombination}
+													{"getMedia": getMedia, "getPositions": getPositions, "codesComplexCombination": codesComplexCombination}
 												);
 												nextPromise.then(
 													resolve_ithPromise
@@ -826,7 +819,7 @@
 	// 	return album.hasOwnProperty("hasntUnprotectedContent");
 	// };
 
-	PhotoFloat.getAlbum = function(albumCacheBase, error, {getPositions = false, getMedia = false, thisIndexWords = false, thisIndexAlbums = false} = {}) {
+	PhotoFloat.getAlbum = function(albumCacheBase, error, {getMedia = false, getPositions = false, thisIndexWords = false, thisIndexAlbums = false} = {}) {
 		// error is executed when in no way the album can be retrieved:
 		// either it doesn't exist or it could be a protected one
 
@@ -835,7 +828,7 @@
 				var albumFromCache = PhotoFloat.getAlbumFromCache(albumCacheBase);
 				var promise;
 				if (albumFromCache) {
-					promise = PhotoFloat.addPositionsAndMedia(albumFromCache, {"getPositions": getPositions, "getMedia": getMedia});
+					promise = PhotoFloat.addPositionsAndMedia(albumFromCache, {"getMedia": getMedia, "getPositions": getPositions});
 					promise.then(
 						function(albumFromCache) {
 							if (PhotoFloat.hasProtectedContent(albumFromCache)) {
@@ -900,7 +893,7 @@
 						}
 					);
 				} else {
-					promise = PhotoFloat.getSingleUnprotectedCacheBase(albumCacheBase, {"getPositions": getPositions, "getMedia": getMedia});
+					promise = PhotoFloat.getSingleUnprotectedCacheBase(albumCacheBase, {"getMedia": getMedia, "getPositions": getPositions});
 					promise.then(
 						function(album) {
 							if (PhotoFloat.isEmpty(album) || PhotoFloat.hasProtectedContent(album)) {
@@ -966,7 +959,7 @@
 	PhotoFloat.prototype.pickRandomMedia = function(theSubalbum, error) {
 		return new Promise(
 			function(resolve_pickRandomMedia) {
-				var promise = PhotoFloat.getAlbum(theSubalbum.cacheBase, error, {"getPositions": false, "getMedia": false});
+				var promise = PhotoFloat.getAlbum(theSubalbum.cacheBase, error, {"getMedia": false, "getPositions": false});
 				promise.then(
 					function([album]) {
 						nextAlbum(album);
@@ -1007,7 +1000,7 @@
 						if (! found) {
 							error();
 						} else {
-							var promise = PhotoFloat.getAlbum(subalbum.cacheBase, error, {"getPositions": false, "getMedia": false});
+							var promise = PhotoFloat.getAlbum(subalbum.cacheBase, error, {"getMedia": false, "getPositions": false});
 							promise.then(
 								function([subalbum]) {
 									nextAlbum(subalbum);
@@ -1020,7 +1013,7 @@
 							);
 						}
 					} else {
-						var lastPromise = PhotoFloat.getAlbum(album.cacheBase, error, {"getPositions": true, "getMedia": true});
+						var lastPromise = PhotoFloat.getAlbum(album.cacheBase, error, {"getMedia": true, "getPositions": true});
 						lastPromise.then(
 							function([randomSubAlbum]) {
 								randomSubAlbum.randomMediaIndex = index;
@@ -1173,7 +1166,7 @@
 							self.geotaggedPhotosFound = false;
 							resolveGeotaggedPhotosExist(false);
 						},
-						{"getPositions": true, "getMedia": false}
+						{"getMedia": false, "getPositions": true}
 					);
 					promise.then(
 						function([foldersRootAlbum]) {
@@ -1300,7 +1293,7 @@
 			}
 
 			// get the search root album before getting the search words ones
-			var promise = PhotoFloat.getAlbum(Options.by_search_string, error, {"getPositions": true, "getMedia": true});
+			var promise = PhotoFloat.getAlbum(Options.by_search_string, error, {"getMedia": true, "getPositions": true});
 			promise.then(
 				function([bySearchRootAlbum]) {
 					var lastIndex, i, j, wordHashes, numSearchAlbumsReady = 0, numSubAlbumsToGet = 0, normalizedWords;
@@ -1374,7 +1367,7 @@
 								var promise = PhotoFloat.getAlbum(
 									albumHashes[indexWords][indexAlbums],
 									error,
-									{"getPositions": true, "getMedia": true, "thisIndexWords": indexWords, "thisIndexAlbums": indexAlbums}
+									{"getMedia": true, "getPositions": true, "thisIndexWords": indexWords, "thisIndexAlbums": indexAlbums}
 								);
 								promise.then(
 									function([theAlbum, {thisIndexWords, thisIndexAlbums}]) {
@@ -1712,7 +1705,7 @@
 				util.noResults(albumFromCache);
 			PhotoFloat.selectMedia(albumFromCache, mediaFolderHash, mediaHash, hashParsed);
 		} else if (! util.isSearchCacheBase(albumHash) || searchWordsFromUser.length === 0) {
-			promise = PhotoFloat.getAlbum(albumHashToGet, error, {"getPositions": true, "getMedia": true});
+			promise = PhotoFloat.getAlbum(albumHashToGet, error, {"getMedia": true, "getPositions": true});
 			promise.then(
 				function([theAlbum]) {
 					PhotoFloat.selectMedia(theAlbum, mediaFolderHash, mediaHash, hashParsed);
