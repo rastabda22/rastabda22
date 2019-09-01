@@ -360,8 +360,7 @@
 					{"getPositions": true, "getMedia": true, "thisIndexWords": photosInAlbum, "thisIndexAlbums": null}
 				);
 				promise.then(
-					function(returnValue) {
-						var [theAlbum, photosInAlbum] = returnValue;
+					function([theAlbum, photosInAlbum]) {
 						for (mediaIndex = 0; mediaIndex < theAlbum.media.length; mediaIndex ++) {
 							for (photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
 								if (theAlbum.media[mediaIndex].cacheBase == photosInAlbum[photoIndex].element.cacheBase) {

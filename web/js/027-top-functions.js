@@ -42,7 +42,7 @@
 						i --;
 						var promise = phFl.getAlbum(originalAlbum.ancestorsCacheBase[i], util.die, {"getPositions": false, "getMedia": false});
 						promise.then(
-							function(album) {
+							function([album]) {
 								if (originalAlbum.hasOwnProperty("altName"))
 									originalAlbum.ancestorsNames[i] = album.altName;
 								else
@@ -1722,11 +1722,11 @@
 
 
 	TopFunctions.showAlbum = function(populate) {
-		function insertRandomImage(randomSubAlbum) {
-			var index = randomSubAlbum.randomMediaIndex;
-			delete randomSubAlbum.randomMediaIndex;
-			var subalbum = randomSubAlbum.theSubalbum;
-			delete randomSubAlbum.theSubalbum;
+		function insertRandomImage(randomSubAlbum, index, subalbum) {
+			// var index = randomSubAlbum.randomMediaIndex;
+			// delete randomSubAlbum.randomMediaIndex;
+			// var subalbum = randomSubAlbum.theSubalbum;
+			// delete randomSubAlbum.theSubalbum;
 			var titleName, randomMediaLink, goTo, humanGeonames;
 			var randomMedia = randomSubAlbum.media[index];
 			var id = phFl.hashCode(subalbum.cacheBase)
@@ -2211,8 +2211,7 @@
 										}
 									);
 									promise.then(
-										function(returnValue) {
-											var [album, index] = returnValue;
+										function([album, index]) {
 											insertRandomImage(album, index, theSubalbum);
 											resolve_subalbumPromise();
 										}
