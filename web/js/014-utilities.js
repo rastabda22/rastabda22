@@ -1059,34 +1059,26 @@
 		}
 	};
 
-	// Utilities.prototype.convertComplexCombinationsToCodesComplexCombinations = function(complexCombinationList) {
-	// 	var codesComplexCombinationList = [];
-	// 	for (var i = 0; i < complexCombinationList.length; i ++) {
-	// 		codesComplexCombinationList.push(Utilities.convertComplexCombinationToCodesComplexCombination(complexCombinationList[i]));
+	// Utilities.convertComplexCombinationToCodesComplexCombination = function(complexCombination) {
+	// 	var albumCombinationsList = complexCombination.split(',')[0].split('-');
+	// 	var mediaCombinationsList = complexCombination.split(',')[1].split('-');
+	// 	var i, index, code;
+	//
+	// 	var albumCodesCombinationsList = [];
+	// 	for (i = 0; i < albumCombinationsList.length; i ++) {
+	// 		index = PhotoFloat.guessedPasswordsMd5.indexOf(albumCombinationsList[i]);
+	// 		code = PhotoFloat.guessedPasswordCodes[index];
+	// 		albumCodesCombinationsList.push(code);
 	// 	}
-	// 	return codesComplexCombinationList;
+	// 	var mediaCodesCombinationsList = [];
+	// 	for (i = 0; i < mediaCombinationsList.length; i ++) {
+	// 		index = PhotoFloat.guessedPasswordsMd5.indexOf(mediaCombinationsList[i]);
+	// 		code = PhotoFloat.guessedPasswordCodes[index];
+	// 		mediaCodesCombinationsList.push(code);
+	// 	}
+	//
+	// 	return [albumCodesCombinationsList.join('-'), mediaCodesCombinationsList.join('-')].join(',');
 	// };
-
-	Utilities.convertComplexCombinationToCodesComplexCombination = function(complexCombination) {
-		var albumCombinationsList = complexCombination.split(',')[0].split('-');
-		var mediaCombinationsList = complexCombination.split(',')[1].split('-');
-		var i, index, code;
-
-		var albumCodesCombinationsList = [];
-		for (i = 0; i < albumCombinationsList.length; i ++) {
-			index = PhotoFloat.guessedPasswordsMd5.indexOf(albumCombinationsList[i]);
-			code = PhotoFloat.guessedPasswordCodes[index];
-			albumCodesCombinationsList.push(code);
-		}
-		var mediaCodesCombinationsList = [];
-		for (i = 0; i < mediaCombinationsList.length; i ++) {
-			index = PhotoFloat.guessedPasswordsMd5.indexOf(mediaCombinationsList[i]);
-			code = PhotoFloat.guessedPasswordCodes[index];
-			mediaCodesCombinationsList.push(code);
-		}
-
-		return [albumCodesCombinationsList.join('-'), mediaCodesCombinationsList.join('-')].join(',');
-	};
 
 	Utilities.prototype.convertMd5ToCode = function(md5) {
 		var index = PhotoFloat.guessedPasswordsMd5.indexOf(md5);
@@ -1238,7 +1230,7 @@
 	};
 
 	/* make static methods callable as member functions */
-	Utilities.prototype.convertComplexCombinationToCodesComplexCombination = Utilities.convertComplexCombinationToCodesComplexCombination;
+	// Utilities.prototype.convertComplexCombinationToCodesComplexCombination = Utilities.convertComplexCombinationToCodesComplexCombination;
 	Utilities.prototype.sortAlbumsMedia = Utilities.sortAlbumsMedia;
 	Utilities.prototype.chooseReducedPhoto = Utilities.chooseReducedPhoto;
 	Utilities.prototype.originalMediaPath = Utilities.originalMediaPath;
