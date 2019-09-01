@@ -996,8 +996,8 @@
 						}
 						var promise = PhotoFloat.getAlbum(subalbum.cacheBase, error, {"getPositions": false, "getMedia": false});
 						promise.then(
-							function(returnValue) {
-								nextAlbum(returnValue[0]);
+							function([subalbum]) {
+								nextAlbum(subalbum);
 							}
 						);
 						promise.catch(
@@ -1008,11 +1008,10 @@
 					} else {
 						var lastPromise = PhotoFloat.getAlbum(album.cacheBase, error, {"getPositions": true, "getMedia": true});
 						lastPromise.then(
-							function(returnValue) {
-								var album = returnValue[0];
-								album.randomMediaIndex = index;
-								album.theSubalbum = theSubalbum;
-								resolve_pickRandomMedia([album, index]);
+							function([randomSubAlbum]) {
+								randomSubAlbum.randomMediaIndex = index;
+								randomSubAlbum.theSubalbum = theSubalbum;
+								resolve_pickRandomMedia([randomSubAlbum, index]);
 							}
 						);
 						lastPromise.catch(
@@ -1163,8 +1162,7 @@
 						{"getPositions": true, "getMedia": false}
 					);
 					promise.then(
-						function(returnValue) {
-							var foldersRootAlbum = returnValue[0];
+						function([foldersRootAlbum]) {
 							if (! foldersRootAlbum.numPositionsInTree) {
 								// $("#by-gps-view").addClass("hidden");
 								self.geotaggedPhotosFound = false;
@@ -1290,8 +1288,7 @@
 			// get the search root album before getting the search words ones
 			var promise = PhotoFloat.getAlbum(Options.by_search_string, error, {"getPositions": true, "getMedia": true});
 			promise.then(
-				function(returnValue) {
-					var bySearchRootAlbum = returnValue[0];
+				function([bySearchRootAlbum]) {
 					var lastIndex, i, j, wordHashes, numSearchAlbumsReady = 0, numSubAlbumsToGet = 0, normalizedWords;
 					var searchResultsMedia = [];
 					var searchResultsSubalbums = [];
@@ -1703,8 +1700,7 @@
 		} else if (! util.isSearchCacheBase(albumHash) || searchWordsFromUser.length === 0) {
 			promise = PhotoFloat.getAlbum(albumHashToGet, error, {"getPositions": true, "getMedia": true});
 			promise.then(
-				function(returnValue) {
-					var theAlbum = returnValue[0];
+				function([theAlbum]) {
 					PhotoFloat.selectMedia(theAlbum, mediaFolderHash, mediaHash, hashParsed);
 				}
 			);
