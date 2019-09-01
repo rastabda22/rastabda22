@@ -695,6 +695,8 @@
 						} else {
 							// for (iDirectory = 0; iDirectory < theProtectedDirectoriesToGet.length; iDirectory ++) {
 							var promises = [];
+
+							// loop on the complex combinations, i.e. on the protected directories
 							for (iComplex = 0; iComplex < theCodesComplexCombinationsToGet.length; iComplex ++) {
 								let ithPromise = new Promise(
 									function(resolve_ithPromise, reject) {
@@ -729,6 +731,8 @@
 												"getPositions": getPositions,
 												"getMedia": getMedia,
 												"codesComplexCombination": codesComplexCombination
+											}
+										);
 										promise.then(
 											function(protectedAlbum) {
 												if (typeof protectedAlbum === "undefined")
