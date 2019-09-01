@@ -986,14 +986,18 @@
 						numMedia = album.numMedia;
 					if (index >= numMedia) {
 						index -= numMedia;
+						let found = false;
 						for (i = 0; i < album.subalbums.length; i ++) {
 							if (index >= album.subalbums[i].numMediaInSubTree)
 								index -= album.subalbums[i].numMediaInSubTree;
 							else {
 								subalbum = album.subalbums[i];
+								found = true;
 								break;
 							}
 						}
+						if (! found)
+							error();
 						var promise = PhotoFloat.getAlbum(subalbum.cacheBase, error, {"getPositions": false, "getMedia": false});
 						promise.then(
 							function([subalbum]) {
