@@ -371,8 +371,8 @@
 						// 	// the protected album is already included, pass a null album so that nothing is done with it
 						// 	resolve_getSingleProtectedCacheBase(null);
 						// } else {
-						var promise = PhotoFloat.addPositionsAndMedia(protectedAlbum);
 						protectedAlbum.protectedCacheBase = protectedCacheBase;
+						var promise = PhotoFloat.addPositionsAndMedia(protectedAlbum, {"getPositions": getPositions, "getMedia": getMedia});
 						promise.then(
 							function(protectedAlbum) {
 								resolve_getSingleProtectedCacheBase(protectedAlbum);
