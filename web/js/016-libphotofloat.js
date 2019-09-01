@@ -261,14 +261,14 @@
 		}
 	};
 
-	PhotoFloat.convertComplexCombinationsIntoLists = function(complexCombination) {
+	PhotoFloat.convertComplexCombinationsIntoLists = function(codesComplexCombination) {
 		var albumCombinationList, mediaCombinationList;
-		var albumCombination = complexCombination.split(',')[0];
+		var albumCombination = codesComplexCombination.split(',')[0];
 		if (albumCombination == "")
 			albumCombinationList = [];
 		else
 			albumCombinationList = albumCombination.split('-');
-		var mediaCombination = complexCombination.split(',')[1];
+		var mediaCombination = codesComplexCombination.split(',')[1];
 		if (mediaCombination == "")
 			mediaCombinationList = [];
 		else
@@ -550,23 +550,24 @@
 		}
 	};
 
-	PhotoFloat.mergeSubalbums = function(album, album2, codesComplexCombination) {
-		var cacheBases = [], i, subalbum2;
+	PhotoFloat.mergeProtectedSubalbums = function(album, protectedAlbum, codesComplexCombination) {
+		var cacheBases = [], i, protectedSubalbum;
 		album.subalbums.forEach(
 			function(subalbum) {
 				cacheBases.push(subalbum.cacheBase);
 			}
 		);
-		for (i = 0; i < album2.subalbums.length; i ++) {
-			subalbum2 = album2.subalbums[i];
-			if (cacheBases.indexOf(subalbum2.cacheBase) == -1) {
-				album.subalbums.push(subalbum2);
+		for (i = 0; i < protectedAlbum.subalbums.length; i ++) {
+			protectedSubalbum = protectedAlbum.subalbums[i];
+			if (cacheBases.indexOf(protectedSubalbum.cacheBase) == -1) {
+				album.subalbums.push(protectedSubalbum);
 			// // if media or positions are missing the combination must not be reported as included
 			// } else if (album.hasOwnProperty("media") && album.hasOwnProperty("positionsAndMediaInTree")) {
 			} else {
 				album.subalbums.forEach(
 					function(subalbum) {
-						PhotoFloat.mergeSubalbum(album, subalbum, subalbum2, codesComplexCombination);
+						if (subalbum.cacheBase == protectedSubalbum.cacheBase)
+							PhotoFloat.mergeProtectedSubalbum(subalbum, protectedSubalbum, codesComplexCombination);
 					}
 				);
 			}
@@ -577,16 +578,16 @@
 		var nLink = 0;
 		return new Promise(
 			function(resolve_getNumberedCacheBases, reject_getNumberedCacheBases) {
-				getNumberedCacheBases();
+				getRemainingNumberedCacheBases();
 
-				function getNumberedCacheBases() {
+				function getRemainingNumberedCacheBases() {
 					nLink ++;
 					var numberedCacheBase = protectedCacheBase + '.' + nLink;
 
 					var promise = PhotoFloat.getSingleProtectedCacheBase(numberedCacheBase, album, {"getPositions": getPositions, "getMedia": getMedia, "codesComplexCombination": codesComplexCombination});
 					promise.then(
 						function(numberedAlbum) {
-							getNumberedCacheBases();
+							getRemainingNumberedCacheBases();
 
 							if (numberedAlbum !== null && album.includedCodesComplexCombinations.indexOf(numberedAlbum.codesComplexCombination) === -1) {
 								PhotoFloat.mergeProtectedAlbum(album, numberedAlbum, {"getPositions": getPositions, "getMedia": getMedia, "codesComplexCombination": codesComplexCombination});
@@ -757,9 +758,9 @@
 														// album.includedProtectedDirectories = [];
 														album.includedCodesComplexCombinations = [];
 														// album.includedCodesComplexCombinationsCounts = [];
-													} else if (album.includedCodesComplexCombinations.indexOf(protectedAlbum.complexCombination) === -1) {
+													} else if (album.includedCodesComplexCombinations.indexOf(protectedAlbum.codesComplexCombination) === -1) {
 														PhotoFloat.mergeProtectedAlbum(album, protectedAlbum, codesComplexCombination);
-														album.includedCodesComplexCombinations.push(protectedAlbum.complexCombination);
+														album.includedCodesComplexCombinations.push(protectedAlbum.codesComplexCombination);
 													}
 												}
 
