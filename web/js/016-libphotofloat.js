@@ -668,7 +668,7 @@
 			// it is called when numsProtectedMediaInSubTree is in the album
 
 			var theCodesComplexCombinationsToGet = PhotoFloat.codesComplexCombinationsToGet(album);
-			var codesComplexCombination, numProtected, iComplex, protectedCacheBase;
+			var codesComplexCombination, numProtected, iComplex;
 
 			return new Promise(
 				function(resolve_continueAddProtectedContent) {
@@ -700,6 +700,7 @@
 									function(resolve_ithPromise, reject) {
 
 										let index = iComplex;
+										let protectedCacheBase;
 										let codesComplexCombination = theCodesComplexCombinationsToGet[iComplex];
 										let codesCombinationsLists = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombination);
 										let albumMd5CombinationsList = util.convertCodesListToMd5sList(codesCombinationsLists[0]);
