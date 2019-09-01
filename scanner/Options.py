@@ -73,7 +73,10 @@ config['cv2_installed'] = True
 face_cascade = None
 eye_cascade = None
 config['available_map_popup_positions'] = ['SE', 'NW' ]
-max_random = 1000000000
+# the minimum and maximum values to use for random password codes
+# min_random ensures that all the codes has the same length
+min_random = 100000000
+max_random = 999999999
 # max_media_in_json_file = 1
 # max_media_from_positions_in_json_file = 1
 max_media_in_json_file = 20
@@ -418,7 +421,7 @@ def get_options():
 						indented_message("PRE Missing password", "for identifier: '" + identifier + "'", 3)
 						continue
 					while True:
-						password_code = str(random.randint(0, max_random))
+						password_code = str(random.randint(min_random, max_random))
 						password_md5 = hashlib.md5(password).hexdigest()
 						if password_code not in password_codes:
 							password_codes.append(password_code)
