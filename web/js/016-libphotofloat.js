@@ -511,11 +511,14 @@
 			album.mediaReverseSort = false;
 		}
 
-		PhotoFloat.mergeSubalbums(album, protectedAlbum, codesComplexCombination);
-		album.subalbums = Utilities.sortByDate(album.subalbums);
-		album.albumNameSort = false;
-		album.albumReverseSort = false;
-		util.sortAlbumsMedia(album);
+		if (protectedAlbum.subalbums.length) {
+			PhotoFloat.mergeProtectedSubalbums(album, protectedAlbum, codesComplexCombination);
+			album.subalbums = Utilities.sortByDate(album.subalbums);
+			album.albumNameSort = false;
+			album.albumReverseSort = false;
+		}
+		if (album.hasOwnProperty("media") || protectedAlbum.subalbums.length)
+			util.sortAlbumsMedia(album);
 
 		if (! album.hasOwnProperty("numMedia"))
 			album.numMedia = album.media.length;
@@ -538,16 +541,10 @@
 		}
 	};
 
-	PhotoFloat.mergeSubalbum = function(album, subalbum, subalbum2, codesComplexCombination) {
-		if (
-			subalbum.cacheBase == subalbum2.cacheBase
-			// subalbum.cacheBase == subalbum2.cacheBase &&
-			// album.includedCodesComplexCombinations.indexOf(codesComplexCombination) === -1
-		) {
-			subalbum.numMediaInSubTree += subalbum2.numMediaInSubTree;
-			subalbum.numPositionsInTree += subalbum2.numPositionsInTree;
-			subalbum.words = util.arrayUnion(subalbum.words, subalbum2.words);
-		}
+	PhotoFloat.mergeProtectedSubalbum = function(subalbum, protectedSubalbum, codesComplexCombination) {
+		subalbum.numMediaInSubTree += protectedSubalbum.numMediaInSubTree;
+		subalbum.numPositionsInTree += protectedSubalbum.numPositionsInTree;
+		subalbum.words = util.arrayUnion(subalbum.words, protectedSubalbum.words);
 	};
 
 	PhotoFloat.mergeProtectedSubalbums = function(album, protectedAlbum, codesComplexCombination) {
@@ -724,24 +721,13 @@
 
 										protectedCacheBase = protectedDirectory + '/' + album.cacheBase;
 										let promise;
-										if (typeof getPositions !== "undefined") {
-											promise = PhotoFloat.getSingleProtectedCacheBase(
-												protectedCacheBase,
-												album,
-												{
-													"getPositions": getPositions,
-													"getMedia": getMedia,
-													"codesComplexCombination": codesComplexCombination
-												}
-											);
-										} else {
-											promise = PhotoFloat.getSingleProtectedCacheBase(
-												protectedCacheBase,
-												album,
-												{"codesComplexCombination": codesComplexCombination}
-
-											);
-										}
+										promise = PhotoFloat.getSingleProtectedCacheBase(
+											protectedCacheBase,
+											album,
+											{
+												"getPositions": getPositions,
+												"getMedia": getMedia,
+												"codesComplexCombination": codesComplexCombination
 										promise.then(
 											function(protectedAlbum) {
 												if (typeof protectedAlbum === "undefined")
