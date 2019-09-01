@@ -917,7 +917,7 @@
 						}
 					);
 				} else {
-					promise = PhotoFloat.getSingleUnprotectedCacheBase(albumCacheBase);
+					promise = PhotoFloat.getSingleUnprotectedCacheBase(albumCacheBase, {"getPositions": getPositions, "getMedia": getMedia});
 					promise.then(
 						function(album) {
 							if (PhotoFloat.isEmpty(album) || PhotoFloat.hasProtectedContent(album)) {
