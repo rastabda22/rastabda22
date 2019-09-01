@@ -667,19 +667,18 @@
 			// this function keeps on the job of addProtectedContent
 			// it is called when numsProtectedMediaInSubTree is in the album
 
-			var theCodesComplexCombinationsToGet = PhotoFloat.codesComplexCombinationsToGet(album);
-			var codesComplexCombination, numProtected, iComplex;
-
 			return new Promise(
 				function(resolve_continueAddProtectedContent) {
+					var theCodesComplexCombinationsToGet = PhotoFloat.codesComplexCombinationsToGet(album);
 					if (! theCodesComplexCombinationsToGet.length) {
 						PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
 						// resolve_addProtectedContent(album, {"getPositions": getPositions, "getMedia": getMedia});
 						resolve_continueAddProtectedContent(album);
 					} else {
 						// prepare and get the protected content from the protected directories
-						numProtected = 0;
-						for (iComplex = 0; iComplex < theCodesComplexCombinationsToGet.length; iComplex ++) {
+						let numProtected = 0;
+						let codesComplexCombination;
+						for (let iComplex = 0; iComplex < theCodesComplexCombinationsToGet.length; iComplex ++) {
 							codesComplexCombination = theCodesComplexCombinationsToGet[iComplex];
 							// if (codesComplexCombination in album.numsProtectedMediaInSubTree)
 							numProtected += album.numsProtectedMediaInSubTree[codesComplexCombination];
@@ -697,7 +696,7 @@
 							var promises = [];
 
 							// loop on the complex combinations, i.e. on the protected directories
-							for (iComplex = 0; iComplex < theCodesComplexCombinationsToGet.length; iComplex ++) {
+							for (let iComplex = 0; iComplex < theCodesComplexCombinationsToGet.length; iComplex ++) {
 								let ithPromise = new Promise(
 									function(resolve_ithPromise, reject) {
 
