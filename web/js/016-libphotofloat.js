@@ -742,7 +742,7 @@
 												if (protectedAlbum !== null) {
 													if (PhotoFloat.isEmpty(album)) {
 														delete album.empty;
-														album.hasntUnprotectedContent = true;
+														// album.hasntUnprotectedContent = true;
 														for (var property in Object.keys(protectedAlbum)) {
 															if (protectedAlbum.hasOwnProperty(property))
 																album[property] = protectedAlbum[property];
@@ -814,9 +814,9 @@
 		return album.hasOwnProperty("empty");
 	};
 
-	PhotoFloat.hasntUnprotectedContent = function(album) {
-		return album.hasOwnProperty("hasntUnprotectedContent");
-	};
+	// PhotoFloat.hasntUnprotectedContent = function(album) {
+	// 	return album.hasOwnProperty("hasntUnprotectedContent");
+	// };
 
 	PhotoFloat.getAlbum = function(albumCacheBase, error, {getPositions = false, getMedia = false, thisIndexWords = false, thisIndexAlbums = false} = {}) {
 		// error is executed when in no way the album can be retrieved:
