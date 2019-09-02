@@ -1028,7 +1028,72 @@
 				}
 			}
 
-			PhotoFloat.putAlbumIntoCache(theAlbum.cacheBase, theAlbum);
+			generateAncestorsCacheBase(theAlbum);
+			var ancestorsPromise = getAncestorNames(theAlbum);
+			ancestorsPromise.then(
+				function() {
+					PhotoFloat.putAlbumIntoCache(theAlbum.cacheBase, theAlbum);
+				}
+			);
+			ancestorsPromise.catch(
+				function(album) {
+					console.trace();
+				}
+			);
+
+		}
+		//////// end of goOnTowardResolvingGetAlbum function
+
+		// auxiliary functions
+		function generateAncestorsCacheBase(album) {
+			if (! album.hasOwnProperty("ancestorsCacheBase")) {
+				var i;
+				album.ancestorsCacheBase = [];
+				var splittedCacheBase = album.cacheBase.split(Options.cache_folder_separator);
+				album.ancestorsCacheBase[0] = splittedCacheBase[0];
+				for (i = 1; i < splittedCacheBase.length; i ++) {
+					album.ancestorsCacheBase[i] = [album.ancestorsCacheBase[i - 1], splittedCacheBase[i]].join(Options.cache_folder_separator);
+				}
+			}
+
+			return;
+		}
+
+		function getAncestorNames(originalAlbum) {
+			return new Promise(
+				function(resolve_getAncestorNames) {
+					if (originalAlbum.hasOwnProperty("ancestorsNames")) {
+						resolve_getAncestorNames();
+					} else {
+						originalAlbum.ancestorsNames = []; i = originalAlbum.ancestorsCacheBase.length;
+						getNextAncestorNames();
+					}
+
+					function getNextAncestorNames() {
+						i --;
+						var promise = PhotoFloat.getAlbum(originalAlbum.ancestorsCacheBase[i], util.die, {"getMedia": false, "getPositions": false});
+						promise.then(
+							function([album]) {
+								if (originalAlbum.hasOwnProperty("altName"))
+									originalAlbum.ancestorsNames[i] = album.altName;
+								else
+									originalAlbum.ancestorsNames[i] = album.name;
+
+								if (i == 0) {
+									resolve_getAncestorNames();
+								} else {
+									getNextAncestorNames();
+								}
+							}
+						);
+						promise.catch(
+							function(album) {
+								console.trace();
+							}
+						);
+					}
+				}
+			);
 		}
 	};
 
