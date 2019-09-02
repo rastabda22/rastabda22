@@ -506,7 +506,7 @@
 	PhotoFloat.mergeProtectedAlbum = function(album, protectedAlbum, {getMedia, getPositions, mediaAndSubalbumsOnly = false}) {
 		// add the protected album content to the unprotected one
 
-		if (getMedia) {
+		if (getMedia && ! album.includedCodesComplexCombinations[protectedAlbum.codesComplexCombination].getMedia) {
 			if (album.hasOwnProperty("media")) {
 				album.media = album.media.concat(protectedAlbum.media);
 			} else {
@@ -520,7 +520,7 @@
 			}
 		}
 
-		if (getPositions) {
+		if (getPositions && ! album.includedCodesComplexCombinations[protectedAlbum.codesComplexCombination].getPositions) {
 			if (album.hasOwnProperty("positionsAndMediaInTree")) {
 				album.positionsAndMediaInTree = util.mergePoints(
 					album.positionsAndMediaInTree,
