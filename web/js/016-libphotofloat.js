@@ -779,6 +779,7 @@
 															if (protectedAlbum.hasOwnProperty(property))
 																album[property] = protectedAlbum[property];
 														}
+														album.includedCodesComplexCombinations[protectedAlbum.codesComplexCombination] = {"getMedia": getMedia, "getPositions": getPositions};
 														// album.includedProtectedDirectories = [];
 													} else if (! (protectedAlbum.codesComplexCombination in album.includedCodesComplexCombinations)) {
 														PhotoFloat.mergeProtectedAlbum(album, protectedAlbum, {"getMedia": getMedia, "getPositions": getPositions});
