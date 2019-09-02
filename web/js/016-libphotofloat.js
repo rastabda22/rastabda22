@@ -1057,8 +1057,6 @@
 						var lastPromise = PhotoFloat.getAlbum(album.cacheBase, error, {"getMedia": true, "getPositions": true});
 						lastPromise.then(
 							function([randomSubAlbum]) {
-								randomSubAlbum.randomMediaIndex = index;
-								randomSubAlbum.theSubalbum = theSubalbum;
 								resolve_pickRandomMedia([randomSubAlbum, index]);
 							}
 						);
