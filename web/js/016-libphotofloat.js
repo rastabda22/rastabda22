@@ -455,7 +455,7 @@
 							mediaCodesComplexCombinationList.indexOf(mediaCode) != -1
 						) {
 							if (
-								! (codesComplexCombinationInAlbum in Object.keys(album.includedCodesComplexCombinations)) ||
+								! (codesComplexCombinationInAlbum in album.includedCodesComplexCombinations) ||
 								getMedia && ! album.includedCodesComplexCombinations[codesComplexCombinationInAlbum].getMedia ||
 								getPositions && ! album.includedCodesComplexCombinations[codesComplexCombinationInAlbum].getPositions
 							) {
@@ -601,7 +601,7 @@
 					promise.then(
 						function(numberedAlbum) {
 							if (numberedAlbum !== null) {
-								if (! (numberedAlbum.codesComplexCombination in Object.keys(album.includedCodesComplexCombinations))) {
+								if (! (numberedAlbum.codesComplexCombination in album.includedCodesComplexCombinations)) {
 									PhotoFloat.mergeProtectedAlbum(
 										album,
 										numberedAlbum,
@@ -774,12 +774,13 @@
 													if (PhotoFloat.isEmpty(album)) {
 														delete album.empty;
 														// album.hasntUnprotectedContent = true;
-														for (var property in Object.keys(protectedAlbum)) {
+														for (var property in protectedAlbum) {
+														// for (var property in Object.keys(protectedAlbum)) {
 															if (protectedAlbum.hasOwnProperty(property))
 																album[property] = protectedAlbum[property];
 														}
 														// album.includedProtectedDirectories = [];
-													} else if (! (protectedAlbum.codesComplexCombination in Object.keys(album.includedCodesComplexCombinations))) {
+													} else if (! (protectedAlbum.codesComplexCombination in album.includedCodesComplexCombinations)) {
 														PhotoFloat.mergeProtectedAlbum(album, protectedAlbum, {"getMedia": getMedia, "getPositions": getPositions});
 														album.includedCodesComplexCombinations[protectedAlbum.codesComplexCombination] = {"getMedia": getMedia, "getPositions": getPositions};
 													} else if (
