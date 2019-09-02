@@ -477,7 +477,7 @@
 			function(resolve_getNumsProtectedMediaInSubTree) {
 				var promise = PhotoFloat.getSingleProtectedCacheBase(protectedCacheBase, album, {"getMedia": getMedia, "getPositions": getPositions});
 				promise.then(
-					function(protectedAlbum) {
+					function getSingleProtectedCacheBase_resolved(protectedAlbum) {
 						if (typeof protectedAlbum !== "undefined") {
 							album.numsProtectedMediaInSubTree = protectedAlbum.numsProtectedMediaInSubTree;
 							resolve_getNumsProtectedMediaInSubTree();
@@ -714,7 +714,6 @@
 						let codesComplexCombination;
 						for (let iComplex = 0; iComplex < theCodesComplexCombinationsToGet.length; iComplex ++) {
 							codesComplexCombination = theCodesComplexCombinationsToGet[iComplex];
-							// if (codesComplexCombination in album.numsProtectedMediaInSubTree)
 							numProtected += album.numsProtectedMediaInSubTree[codesComplexCombination];
 						}
 						if (
@@ -759,11 +758,7 @@
 										promise = PhotoFloat.getSingleProtectedCacheBase(
 											protectedCacheBase,
 											album,
-											{
-												"getMedia": getMedia,
-												"getPositions": getPositions,
-												"codesComplexCombination": codesComplexCombination
-											}
+											{"getMedia": getMedia, "getPositions": getPositions, "codesComplexCombination": codesComplexCombination}
 										);
 										promise.then(
 											function(protectedAlbum) {
