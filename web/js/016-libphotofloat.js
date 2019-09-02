@@ -506,17 +506,14 @@
 	PhotoFloat.mergeProtectedAlbum = function(album, protectedAlbum, {getMedia, getPositions, mediaAndSubalbumsOnly = false}) {
 		// add the protected album content to the unprotected one
 
+		var formerMediaLength = album.media.length;
+		var formerSubalbumLength = album.subalbums.length;
+
 		if (getMedia && ! album.includedCodesComplexCombinations[protectedAlbum.codesComplexCombination].getMedia) {
 			if (album.hasOwnProperty("media")) {
 				album.media = album.media.concat(protectedAlbum.media);
 			} else {
 				album.media = protectedAlbum.media;
-			}
-
-			if (protectedAlbum.media.length) {
-				album.media = Utilities.sortByDate(album.media);
-				album.mediaNameSort = false;
-				album.mediaReverseSort = false;
 			}
 		}
 
@@ -534,9 +531,6 @@
 		if (! mediaAndSubalbumsOnly) {
 			if (protectedAlbum.subalbums.length) {
 				PhotoFloat.mergeProtectedSubalbums(album, protectedAlbum);
-				album.subalbums = Utilities.sortByDate(album.subalbums);
-				album.albumNameSort = false;
-				album.albumReverseSort = false;
 			}
 
 			album.numMediaInSubTree += protectedAlbum.numMediaInSubTree;
@@ -551,7 +545,19 @@
 		if (album.hasOwnProperty("media"))
 			album.numMedia = album.media.length;
 
-		if (protectedAlbum.media.length || protectedAlbum.subalbums.length) {
+		if (formerMediaLength !== album.media.length || formerSubalbumLength !== album.subalbums.length) {
+			if (formerMediaLength !== album.media.length) {
+				album.media = Utilities.sortByDate(album.media);
+				album.mediaNameSort = false;
+				album.mediaReverseSort = false;
+			}
+
+			if (formerSubalbumLength !== album.subalbums.length) {
+				album.subalbums = Utilities.sortByDate(album.subalbums);
+				album.albumNameSort = false;
+				album.albumReverseSort = false;
+			}
+
 			util.sortAlbumsMedia(album);
 		}
 
