@@ -586,7 +586,7 @@
 	PhotoFloat.mergeProtectedSubalbum = function(subalbum, protectedSubalbum) {
 		subalbum.numMediaInSubTree += protectedSubalbum.numMediaInSubTree;
 		subalbum.numPositionsInTree += protectedSubalbum.numPositionsInTree;
-		subalbum.words = util.arrayUnion(subalbum.words, protectedSubalbum.words);
+		// subalbum.words = util.arrayUnion(subalbum.words, protectedSubalbum.words);
 	};
 
 	PhotoFloat.mergeProtectedSubalbums = function(album, protectedAlbum) {
@@ -1505,6 +1505,7 @@
 						for (indexWords = 0; indexWords <= lastIndex; indexWords ++) {
 							searchResultsMedia[indexWords] = [];
 							searchResultsSubalbums[indexWords] = [];
+							searchResultsAlbumFinal.numsProtectedMediaInSubTree = util.sumNumsProtectedMediaOfArray(albumHashes[indexWords]);
 							for (indexAlbums = 0; indexAlbums < albumHashes[indexWords].length; indexAlbums ++) {
 								// getAlbum is called here with 2 more parameters, indexAlbums and indexWords, in order to use their value
 								// if they are not passed as arguments, the success function would see their values updates (getAlbum is an asyncronous function)
@@ -1817,6 +1818,7 @@
 				searchResultsAlbumFinal.path = searchResultsAlbumFinal.cacheBase.replace(Options.cache_folder_separator, "/");
 				searchResultsAlbumFinal.physicalPath = searchResultsAlbumFinal.path;
 				searchResultsAlbumFinal.searchInFolderCacheBase = mediaFolderHash;
+				searchResultsAlbumFinal.numsProtectedMediaInSubTree = {};
 
 				if (albumHash == Options.by_search_string) {
 					util.noResults(searchResultsAlbumFinal, '#no-search-string');
