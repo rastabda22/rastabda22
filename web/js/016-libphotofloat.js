@@ -776,7 +776,7 @@
 														// album.hasntUnprotectedContent = true;
 														for (var property in protectedAlbum) {
 														// for (var property in Object.keys(protectedAlbum)) {
-															if (protectedAlbum.hasOwnProperty(property))
+															if (protectedAlbum.hasOwnProperty(property) && property !== "codesComplexCombination")
 																album[property] = protectedAlbum[property];
 														}
 														album.includedCodesComplexCombinations[protectedAlbum.codesComplexCombination] = {"getMedia": getMedia, "getPositions": getPositions};
