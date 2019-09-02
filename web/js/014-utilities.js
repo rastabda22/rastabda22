@@ -192,17 +192,31 @@
 		return union;
 	};
 
-	Utilities.prototype.arrayUnion = function(a, b) {
-		if (a === [])
+	Utilities.prototype.arrayUnion = function(a, b, equalityFunction) {
+		if (! a.length)
 			return b;
-		if (b === [])
+		if (! b.length)
 			return a;
 		// begin cloning the first array
 		var union = a.slice(0);
+		var i;
 
-		for (var i = 0; i < b.length; i ++) {
-			if (union.indexOf(b[i]) == -1)
-				union.push(b[i]);
+		if (typeof equalityFunction === "undefined") {
+			for (i = 0; i < b.length; i ++) {
+				if (union.indexOf(b[i]) == -1)
+					union.push(b[i]);
+			}
+		} else {
+			for (i = 0; i < b.length; i ++) {
+				if (
+					a.every(
+						function(element) {
+							return ! equalityFunction(element, b[i]);
+						}
+					)
+				)
+					union.push(b[i]);
+			}
 		}
 		return union;
 	};
