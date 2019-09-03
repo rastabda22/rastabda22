@@ -196,12 +196,14 @@
 				popupRefreshType = "previousAlbum";
 				mapRefreshType = "none";
 
-				phFl.endPreparingAlbumAndKeepOn(MapFunctions.mapAlbum, null,
-					 function(){
-						 $("#album-view").addClass("hidden");
-						 $("#loading").show();
-						 window.location.href = "#!" + MapFunctions.mapAlbum.cacheBase;
-					 }
+				phFl.endPreparingAlbumAndKeepOn(
+					MapFunctions.mapAlbum,
+					null,
+					function(){
+						$("#album-view").addClass("hidden");
+						$("#loading").show();
+						window.location.href = "#!" + MapFunctions.mapAlbum.cacheBase;
+					}
 				);
 			}
 		);

@@ -1924,7 +1924,7 @@
 		// add the point count
 		resultsAlbumFinal.numPositionsInTree = resultsAlbumFinal.positionsAndMediaInTree.length;
 		// save in the cash array
-			PhotoFloat.putAlbumIntoCache(resultsAlbumFinal.cacheBase, resultsAlbumFinal);
+		PhotoFloat.putAlbumIntoCache(resultsAlbumFinal.cacheBase, resultsAlbumFinal);
 
 		PhotoFloat.selectMedia(resultsAlbumFinal, null, mediaHash, hashParsed);
 
@@ -2061,7 +2061,7 @@
 	PhotoFloat.prototype.hashCode = PhotoFloat.hashCode;
 	PhotoFloat.prototype.endPreparingAlbumAndKeepOn = PhotoFloat.endPreparingAlbumAndKeepOn;
 	PhotoFloat.prototype.searchAndSubalbumHash = PhotoFloat.searchAndSubalbumHash;
-	// PhotoFloat.prototype.removeAlbumFromCache = PhotoFloat.removeAlbumFromCache;
+
 	/* expose class globally */
 	window.PhotoFloat = PhotoFloat;
 }());
