@@ -31,9 +31,13 @@
 		// prepare the root of the map albums and put it in the cache
 		var rootMapAlbum = {};
 		rootMapAlbum.cacheBase = Options.by_map_string;
-		rootMapAlbum.subalbums = [];
 		rootMapAlbum.media = [];
+		rootMapAlbum.numMedia = 0;
+		rootMapAlbum.numMediaInSubTree = 0;
+		rootMapAlbum.subalbums = [];
 		rootMapAlbum.positionsAndMediaInTree = [];
+		rootMapAlbum.numPositionsInTree = 0;
+		rootMapAlbum.numsProtectedMediaInSubTree = {"": 0};
 
 		PhotoFloat.putAlbumIntoCache(rootMapAlbum.cacheBase, rootMapAlbum);
 

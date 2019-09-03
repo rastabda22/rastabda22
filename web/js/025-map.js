@@ -304,14 +304,18 @@
 	MapFunctions.prototype.initializeMapAlbum = function(mapAlbumHash) {
 		// initializes the map album
 		var album = {};
-		album.positionsAndMediaInTree = [];
 		album.media = [];
+		album.numMedia = 0;
+		album.numMediaInSubTree = 0;
 		album.subalbums = [];
+		album.positionsAndMediaInTree = [];
+		album.numPositionsInTree = 0;
 		album.cacheBase = Options.by_map_string + Options.cache_folder_separator + mapAlbumHash + Options.cache_folder_separator + currentAlbum.cacheBase;
 		album.path = album.cacheBase.replace(Options.cache_folder_separator, "/");
 		album.physicalPath = album.path;
 		album.searchInFolderCacheBase = currentAlbum.cacheBase;
 		album.clickHistory = [];
+		album.numsProtectedMediaInSubTree = {"": 0};
 
 		return album;
 	};
