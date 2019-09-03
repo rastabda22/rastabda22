@@ -526,43 +526,32 @@
 				function([theAlbum]) {
 					var whereLinks = '', thisCacheBase, name, documentTitle;
 
-					generateAncestorsCacheBase(theAlbum);
-					var ancestorsPromise = getAncestorNames(currentAlbum);
-					ancestorsPromise.then(
-						function() {
-							if (theAlbum.hasOwnProperty('')) {
-								albumTypeString = "<a href='#!/" + Options.by_gps_string + "'" + util._t('#by-gps') + ']</a> ' + ' ' + raquo + ' ';
-								for (var i = 2; i < theAlbum.ancestorsNames.length; i ++) {
-									name = theAlbum.ancestorsNames[i];
-									if (i == 3 && util.isByDateCacheBase(Options.album_to_search_in))
-										// convert the month number to localized month name
-										name = util._t("#month-" + name);
-									thisCacheBase = "#!/" + theAlbum.ancestorsCacheBase.slice(2, i + 1).join(Options.cache_folder_separator);
-									if (i > 2)
-										whereLinks += ' ' + raquo + ' ';
-									whereLinks += "<a class='search-link' href='" + thisCacheBase + "'>" + name + "</a>";
-								}
-							}
-
-							// insert the album tree links in DOM (if )
-							$("#search-album-to-be-filled").replaceWith(whereLinks);
-
-							if (setDocumentTitle) {
-								// correct the page title too
-								documentTitle = $(document).attr('title');
-								documentTitle = documentTitle.replace(
-									util._t("#by-search") + ' ' + util._t("#-in") + ' ',
-									util._t("#by-search") + ' ' + util._t("#-in") + ' ' + util.stripHtmlAndReplaceEntities(whereLinks)
-								);
-								document.title = documentTitle;
-							}
+					if (theAlbum.hasOwnProperty('')) {
+						albumTypeString = "<a href='#!/" + Options.by_gps_string + "'" + util._t('#by-gps') + ']</a> ' + ' ' + raquo + ' ';
+						for (var i = 2; i < theAlbum.ancestorsNames.length; i ++) {
+							name = theAlbum.ancestorsNames[i];
+							if (i == 3 && util.isByDateCacheBase(Options.album_to_search_in))
+								// convert the month number to localized month name
+								name = util._t("#month-" + name);
+							thisCacheBase = "#!/" + theAlbum.ancestorsCacheBase.slice(2, i + 1).join(Options.cache_folder_separator);
+							if (i > 2)
+								whereLinks += ' ' + raquo + ' ';
+							whereLinks += "<a class='search-link' href='" + thisCacheBase + "'>" + name + "</a>";
 						}
-					);
-					ancestorsPromise.catch(
-						function(album) {
-							console.trace();
-						}
-					);
+					}
+
+					// insert the album tree links in DOM (if )
+					$("#search-album-to-be-filled").replaceWith(whereLinks);
+
+					if (setDocumentTitle) {
+						// correct the page title too
+						documentTitle = $(document).attr('title');
+						documentTitle = documentTitle.replace(
+							util._t("#by-search") + ' ' + util._t("#-in") + ' ',
+							util._t("#by-search") + ' ' + util._t("#-in") + ' ' + util.stripHtmlAndReplaceEntities(whereLinks)
+						);
+						document.title = documentTitle;
+					}
 				}
 			);
 			promise.catch(
