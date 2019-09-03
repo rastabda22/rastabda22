@@ -1039,18 +1039,22 @@
 				}
 			}
 
-			generateAncestorsCacheBase(theAlbum);
-			var ancestorsPromise = getAncestorNames(theAlbum);
-			ancestorsPromise.then(
-				function() {
-					PhotoFloat.putAlbumIntoCache(theAlbum.cacheBase, theAlbum);
-				}
-			);
-			ancestorsPromise.catch(
-				function(album) {
-					console.trace();
-				}
-			);
+			if (! util.isMapCacheBase(theAlbum.cacheBase)) {
+				generateAncestorsCacheBase(theAlbum);
+				var ancestorsPromise = getAncestorNames(theAlbum);
+				ancestorsPromise.then(
+					function() {
+						PhotoFloat.putAlbumIntoCache(theAlbum.cacheBase, theAlbum);
+					}
+				);
+				ancestorsPromise.catch(
+					function(album) {
+						console.trace();
+					}
+				);
+			} else {
+				PhotoFloat.putAlbumIntoCache(theAlbum.cacheBase, theAlbum);
+			}
 
 		}
 		//////// end of goOnTowardResolvingGetAlbum function
