@@ -316,7 +316,7 @@ use_internal_modernizr = true
 # - keep in cache only one album with more than 1000 media
 # - keep in cache a maximum of 5 albums with 200-999 media
 # - keep in cache all the albums with less than 200 media
-js_cache_levels = [{"numMedia": 10000, "max": 1}, {"numMedia": 2000, "max": 2}, {"numMedia": 1000, "max": 4}, {"numMedia": 200, "max": 20}]
+js_cache_levels = [{"mediaThreshold": 10000, "max": 1}, {"mediaThreshold": 2000, "max": 2}, {"mediaThreshold": 1000, "max": 4}, {"mediaThreshold": 200, "max": 20}]
 
 ###########################################################
 # user interface options
