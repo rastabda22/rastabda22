@@ -318,15 +318,6 @@
 
 	MapFunctions.addMediaFromPositionsToMapAlbum = function(positionsAndCounts, mapAlbum, resolve) {
 
-		function getMarkerClass(positionAndCount) {
-			var imgClass =
-				"popup-img-" +
-				(positionAndCount.lat / 1000).toString().replace('.', '') +
-				'-' +
-				(positionAndCount.lng / 1000).toString().replace('.', '');
-			return imgClass;
-		}
-
 		var mediaNameListElement, indexPositions, indexPhoto, markerClass, photoIndex, mediaIndex;
 		var albumsToGet = 0, albumsGot = 0, photosByAlbum = {}, positionsAndCountsElement, photosInAlbum;
 
@@ -382,6 +373,16 @@
 					}
 				);
 			}
+		}
+		// end of function addMediaFromPositionsToMapAlbum body
+
+		function getMarkerClass(positionAndCount) {
+			var imgClass =
+				"popup-img-" +
+				(positionAndCount.lat / 1000).toString().replace('.', '') +
+				'-' +
+				(positionAndCount.lng / 1000).toString().replace('.', '');
+			return imgClass;
 		}
 	};
 
