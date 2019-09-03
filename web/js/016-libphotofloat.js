@@ -1105,11 +1105,13 @@
 	};
 
 	PhotoFloat.prototype.pickRandomMedia = function(theSubalbum, error) {
+		var index;
 		return new Promise(
 			function(resolve_pickRandomMedia) {
 				var promise = PhotoFloat.getAlbum(theSubalbum.cacheBase, error, {"getMedia": false, "getPositions": false});
 				promise.then(
 					function([album]) {
+						index = Math.floor(Math.random() * (album.numMediaInSubTree));
 						nextAlbum(album);
 					}
 				);
@@ -1121,7 +1123,7 @@
 				//// end of function pickRandomMedia ////////////////////
 
 				function nextAlbum(album) {
-					var index = Math.floor(Math.random() * (album.numMediaInSubTree));
+
 					var i, numMedia, subalbum;
 
 					if (album.numMediaInSubTree == 0) {
