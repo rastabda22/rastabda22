@@ -106,6 +106,12 @@
 	PhotoFloat.addPositionsToSubalbums = function(thisAlbum) {
 		var iSubalbum, iPosition, iPhoto, position, subalbum;
 		var positions = thisAlbum.positionsAndMediaInTree;
+		if (! thisAlbum.hasOwnProperty("subalbums")) {
+			albumFromCache = PhotoFloat.getAlbumFromCache(thisAlbum.cacheBase);
+			if (albumFromCache)
+				thisAlbum = albumFromCache;
+		}
+
 		if (thisAlbum.hasOwnProperty("subalbums")) {
 			for (iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; ++ iSubalbum) {
 				subalbum = thisAlbum.subalbums[iSubalbum];
@@ -127,6 +133,7 @@
 				// go up recursively
 				PhotoFloat.addPositionsToSubalbums(subalbum);
 			}
+			PhotoFloat.putAlbumIntoCache(thisAlbum.cacheBase, thisAlbum);
 		}
 	};
 
