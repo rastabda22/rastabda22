@@ -56,7 +56,7 @@
 
 		if (album.hasOwnProperty("media")) {
 			for (level = 0; level < cacheLevelsLength; level ++) {
-		 		if (album.media.length >= Options.js_cache_levels[level].numMedia) {
+		 		if (album.media.length >= Options.js_cache_levels[level].mediaThreshold) {
 					if (! PhotoFloat.cache.albums.hasOwnProperty(level)) {
 						PhotoFloat.cache.albums[level] = [];
 						PhotoFloat.cache.albums[level].queue = [];
@@ -293,15 +293,16 @@
 
 				var promise = PhotoFloat.getJsonFile(jsonFile);
 				promise.then(
-					function fileExists(theAlbum) {
-						var promise;
+					function unprotectedFileExists(unprotectedAlbum) {
+						if (unprotectedAlbum.hasOwnProperty("media"))
+							unprotectedAlbum.numMedia = unprotectedAlbum.media.length;
 						if (! getMedia && ! getPositions) {
-							resolve_getSingleUnprotectedCacheBase(theAlbum);
+							resolve_getSingleUnprotectedCacheBase(unprotectedAlbum);
 						} else {
-							promise = PhotoFloat.addPositionsAndMedia(theAlbum, {"getMedia": getMedia, "getPositions": getPositions});
+							var promise = PhotoFloat.addPositionsAndMedia(unprotectedAlbum, {"getMedia": getMedia, "getPositions": getPositions});
 							promise.then(
-								function(theAlbum) {
-									resolve_getSingleUnprotectedCacheBase(theAlbum);
+								function(unprotectedAlbum) {
+									resolve_getSingleUnprotectedCacheBase(unprotectedAlbum);
 								}
 							);
 							promise.catch(
@@ -313,7 +314,7 @@
 					}
 				);
 				promise.catch(
-					function FileDoesntExist() {
+					function unprotectedFileDoesntExist() {
 						// execution arrives here if the json file doesn't exist
 						var emptyAlbum = {
 							"cacheBase": albumCacheBase,
@@ -367,7 +368,9 @@
 
 				var promise = PhotoFloat.getJsonFile(jsonFile);
 				promise.then(
-					function fileExists(protectedAlbum) {
+					function protectedFileExists(protectedAlbum) {
+						if (protectedAlbum.hasOwnProperty("media"))
+							protectedAlbum.numMedia = protectedAlbum.media.length;
 						if (! getMedia && ! getPositions) {
 							resolve_getSingleProtectedCacheBase(protectedAlbum);
 						} else {
@@ -387,7 +390,7 @@
 					}
 				);
 				promise.catch(
-					function FileDoesntExist() {
+					function protectedFileDoesntExist() {
 						// execution arrives here if the json file doesn't exist
 						// do not do anything, i.e. another protected cache base will be processed
 						reject_getSingleProtectedCacheBase();
@@ -510,7 +513,7 @@
 		if (album.hasOwnProperty("media"))
 			formerMediaLength = album.media.length;
 		else
-			formerMediaLength = album.numMedia;
+			formerMediaLength = null;
 		var formerSubalbumLength = album.subalbums.length;
 
 		if (
@@ -550,6 +553,7 @@
 				PhotoFloat.mergeProtectedSubalbums(album, protectedAlbum);
 			}
 
+			album.numMedia += protectedAlbum.numMedia;
 			album.numMediaInSubTree += protectedAlbum.numMediaInSubTree;
 			album.numPositionsInTree += protectedAlbum.numPositionsInTree;
 			if (! album.hasOwnProperty("path"))
@@ -559,12 +563,15 @@
 		if (getMedia && ! protectedAlbum.hasOwnProperty("numMedia"))
 			protectedAlbum.numMedia = protectedAlbum.media.length;
 
-		if (album.hasOwnProperty("media"))
-			album.numMedia = album.media.length;
+		// if (album.hasOwnProperty("media"))
+		// 	album.numMedia = album.media.length;
 
 		var differentMediaLength = false;
 		if (album.hasOwnProperty("media"))
-			differentMediaLength = formerMediaLength !== album.media.length;
+			if (formerMediaLength === null)
+				differentMediaLength = true;
+			else
+				differentMediaLength = (formerMediaLength !== album.media.length);
 		if (differentMediaLength || formerSubalbumLength !== album.subalbums.length) {
 			if (differentMediaLength) {
 				album.media = Utilities.sortByDate(album.media);
