@@ -2475,7 +2475,13 @@
 				m.on(
 					'click',
 					function(ev) {
-						TopFunctions.updateMapAlbumOnMapClick(ev, pruneCluster.Cluster._clusters, TopFunctions.prepareAndDoPopupUpdate);
+						var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, pruneCluster.Cluster._clusters);
+						updatePromise.then(TopFunctions.prepareAndDoPopupUpdate);
+						updatePromise.catch(
+							function() {
+								console.trace();
+							}
+						);
 					}
 				);
 				return m;
@@ -2562,7 +2568,14 @@
 			MapFunctions.mymap.on(
 				'click',
 				function(ev) {
-					TopFunctions.updateMapAlbumOnMapClick(ev, pruneCluster.Cluster._clusters, TopFunctions.prepareAndDoPopupUpdate);
+					var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, pruneCluster.Cluster._clusters);
+					updatePromise.then(TopFunctions.prepareAndDoPopupUpdate);
+					updatePromise.catch(
+						function() {
+							console.trace();
+						}
+					);
+
 				}
 			);
 
@@ -2574,7 +2587,7 @@
 					function playClickElement(clickHistory, iClick) {
 						var clickHistoryElement = clickHistory[iClick];
 						var promise = new Promise(
-							function(playResolve) {
+							function(resolve_playClickElement) {
 								MapFunctions.mymap.setView(clickHistoryElement.center, clickHistoryElement.zoom, {animate: false});
 								ev = {
 									"latlng": clickHistoryElement.latlng,
@@ -2584,7 +2597,18 @@
 									}
 								};
 								// return;
-								TopFunctions.updateMapAlbumOnMapClick(ev, pruneCluster.Cluster._clusters, null, playResolve);
+								var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, pruneCluster.Cluster._clusters, false);
+								updatePromise.then(
+									function() {
+										resolve_playClickElement();
+									}
+								);
+								updatePromise.catch(
+									function() {
+										console.trace();
+									}
+								);
+
 							}
 						);
 
@@ -2656,221 +2680,221 @@
 		);
 	};
 
-	TopFunctions.updateMapAlbumOnMapClick = function(evt, clusters, callback, playResolve) {
-		var i;
-		var clickHistoryElement;
+	TopFunctions.updateMapAlbumOnMapClick = function(evt, clusters, updateMapAlbum = true) {
 
-		function matchPositionAndCount(reference, element) {
-			return JSON.stringify([reference.lat, reference.lng]) === JSON.stringify([element.lat, element.lng]);
-		}
+		return new Promise(
+			function(resolve_updateMapAlbumOnMapClick, reject_updateMapAlbumOnMapClick) {
+				var i;
+				var clickHistoryElement;
 
-		// function getCodedHashId(mediaNameListElement) {
-		// 	var hash = mediaNameListElement.albumCacheBase + "--" + mediaNameListElement.cacheBase;
-		// 	return "popup-img-" + phFl.hashCode(hash);
-		// }
+				$("#loading").show();
 
-		function endPreparingMapAlbumAndUpdatePopup() {
-			if (typeof playResolve !== "undefined") {
-				playResolve();
-				return;
-			}
-
-			MapFunctions.mapAlbum.numMediaInSubTree = MapFunctions.mapAlbum.media.length;
-			MapFunctions.mapAlbum.numPositionsInTree = MapFunctions.mapAlbum.positionsAndMediaInTree.length;
-			// media must be initially sorted by date not reverse, as json they are in albums
-			MapFunctions.mapAlbum.media = util.sortByDate(MapFunctions.mapAlbum.media);
-			MapFunctions.mapAlbum.mediaNameSort = false;
-			MapFunctions.mapAlbum.mediaReverseSort = false;
-			util.initializeSortPropertiesAndCookies(MapFunctions.mapAlbum);
-			// now sort them according to options
-			util.sortAlbumsMedia(MapFunctions.mapAlbum);
-
-			// update the map root album in cache
-			var rootMapAlbum = phFl.getAlbumFromCache(Options.by_map_string);
-			if (! rootMapAlbum)
-				rootMapAlbum = PhotoFloat.initializeMapRootAlbum();
-			rootMapAlbum.subalbums.push(MapFunctions.mapAlbum);
-			rootMapAlbum.positionsAndMediaInTree = util.mergePoints(rootMapAlbum.positionsAndMediaInTree, MapFunctions.mapAlbum.positionsAndMediaInTree);
-			rootMapAlbum.numMediaInSubTree += MapFunctions.mapAlbum.numMediaInSubTree;
-
-			TopFunctions.bindSortEvents(MapFunctions.mapAlbum);
-
-			if (callback !== null)
-				callback();
-
-		}
-
-		// end of subfunctions, begin function code
-
-		$("#loading").show();
-
-		if (evt !== null && typeof evt.latlng !== "undefined") {
-			clickHistoryElement = {
-					latlng: evt.latlng,
-					shiftKey: evt.originalEvent.shiftKey,
-					ctrlKey: evt.originalEvent.ctrlKey,
-					zoom: MapFunctions.mymap.getZoom(),
-					center: MapFunctions.mymap.getCenter()
-			};
-		}
-
-		// if (typeof previousAlbum !== "undefined" && previousAlbum !== null) {
-		// 	// the map has been shown when coming from a map album, we must show the popup with the media it had when it was previously built
-		// 	endPreparingMapAlbumAndUpdatePopup(previousAlbum);
-		// } else {
-		var clickedPosition = evt.latlng;
-
-		// reset the thumbnails if not shift- nor ctrl-clicking
-		if (! evt.originalEvent.shiftKey && ! evt.originalEvent.ctrlKey) {
-			$("#popup-images-wrapper").html("");
-		}
-
-		// decide what point is to be used: the nearest to the clicked position
-		var minimumDistance = false, newMinimumDistance, distance, index, iMediaPosition;
-		for(i = 0; i < clusters.length; i ++) {
-			distance = Math.abs(
-				util.distanceBetweenCoordinatePoints(
-					{lng: clickedPosition.lng, lat: clickedPosition.lat},
-					{lng: clusters[i].averagePosition.lng, lat: clusters[i].averagePosition.lat}
-				)
-			);
-			// console.log(i, distance);
-			if (minimumDistance === false) {
-				minimumDistance = distance;
-				index = i;
-			} else {
-				newMinimumDistance = Math.min(minimumDistance, distance);
-				if (newMinimumDistance != minimumDistance) {
-					minimumDistance = newMinimumDistance;
-					index = i;
+				if (evt !== null && typeof evt.latlng !== "undefined") {
+					clickHistoryElement = {
+							latlng: evt.latlng,
+							shiftKey: evt.originalEvent.shiftKey,
+							ctrlKey: evt.originalEvent.ctrlKey,
+							zoom: MapFunctions.mymap.getZoom(),
+							center: MapFunctions.mymap.getCenter()
+					};
 				}
-			}
-		}
-		var currentCluster = clusters[index];
-		currentCluster.data.mediaNameList = [];
 
-		// build the cluster's media name list
-		var positionsAndCounts = [];
-		for(i = 0; i < currentCluster._clusterMarkers.length; i ++) {
-			currentCluster.data.mediaNameList = currentCluster.data.mediaNameList.concat(currentCluster._clusterMarkers[i].data.mediaNameList);
-			positionsAndCounts.push(
-				{
-					"lat": currentCluster._clusterMarkers[i].position.lat,
-					"lng": currentCluster._clusterMarkers[i].position.lng,
-					"mediaNameList": currentCluster._clusterMarkers[i].data.mediaNameList,
-					"count": currentCluster._clusterMarkers[i].data.mediaNameList.length
+				// if (typeof previousAlbum !== "undefined" && previousAlbum !== null) {
+				// 	// the map has been shown when coming from a map album, we must show the popup with the media it had when it was previously built
+				// 	endPreparingMapAlbumAndUpdatePopup(previousAlbum);
+				// } else {
+				var clickedPosition = evt.latlng;
+
+				// reset the thumbnails if not shift- nor ctrl-clicking
+				if (! evt.originalEvent.shiftKey && ! evt.originalEvent.ctrlKey) {
+					$("#popup-images-wrapper").html("");
 				}
-			);
-		}
 
-		var indexPositions, imageLoadPromise, mediaNameListElement;
-		if (evt.originalEvent.ctrlKey) {
-			if (! jQuery.isEmptyObject(MapFunctions.mapAlbum)) {
-				// control click: remove the points
-
-				MapFunctions.mapAlbum.clickHistory.push(clickHistoryElement);
-				// $("#loading").show();
-
-				var matchingIndex, matchingMedia, positionsAndCountsElement;
-				for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
-					positionsAndCountsElement = positionsAndCounts[indexPositions];
-					if (
-						MapFunctions.mapAlbum.positionsAndMediaInTree.some(
-							function(element, index) {
-								matchingIndex = index;
-								return matchPositionAndCount(positionsAndCountsElement, element);
-							}
+				// decide what point is to be used: the nearest to the clicked position
+				var minimumDistance = false, newMinimumDistance, distance, index, iMediaPosition;
+				for(i = 0; i < clusters.length; i ++) {
+					distance = Math.abs(
+						util.distanceBetweenCoordinatePoints(
+							{lng: clickedPosition.lng, lat: clickedPosition.lat},
+							{lng: clusters[i].averagePosition.lng, lat: clusters[i].averagePosition.lat}
 						)
-					) {
-						// the position was present: remove the position itself...
-						MapFunctions.mapAlbum.positionsAndMediaInTree.splice(matchingIndex, 1);
-
-						// ...and the corresponding photos
-						for (iMediaPosition = 0; iMediaPosition < positionsAndCountsElement.mediaNameList.length; iMediaPosition ++) {
-							mediaNameListElement = positionsAndCountsElement.mediaNameList[iMediaPosition];
-							if (
-								MapFunctions.mapAlbum.media.some(
-									function(media, index) {
-										matchingMedia = index;
-										var match =
-										 	media.cacheBase == mediaNameListElement.cacheBase &&
-											media.foldersCacheBase == mediaNameListElement.foldersCacheBase;
-										return match;
-									}
-								)
-							)
-								MapFunctions.mapAlbum.media.splice(matchingMedia, 1);
+					);
+					// console.log(i, distance);
+					if (minimumDistance === false) {
+						minimumDistance = distance;
+						index = i;
+					} else {
+						newMinimumDistance = Math.min(minimumDistance, distance);
+						if (newMinimumDistance != minimumDistance) {
+							minimumDistance = newMinimumDistance;
+							index = i;
 						}
 					}
 				}
+				var currentCluster = clusters[index];
+				currentCluster.data.mediaNameList = [];
 
-				if (! MapFunctions.mapAlbum.media.length) {
-					$("#loading").hide();
-					MapFunctions.popup.remove();
-				} else {
-					endPreparingMapAlbumAndUpdatePopup();
+				// build the cluster's media name list
+				var positionsAndCounts = [];
+				for(i = 0; i < currentCluster._clusterMarkers.length; i ++) {
+					currentCluster.data.mediaNameList = currentCluster.data.mediaNameList.concat(currentCluster._clusterMarkers[i].data.mediaNameList);
+					positionsAndCounts.push(
+						{
+							"lat": currentCluster._clusterMarkers[i].position.lat,
+							"lng": currentCluster._clusterMarkers[i].position.lng,
+							"mediaNameList": currentCluster._clusterMarkers[i].data.mediaNameList,
+							"count": currentCluster._clusterMarkers[i].data.mediaNameList.length
+						}
+					);
 				}
-			}
-		} else {
-			// not control click: add (with shift) or replace (without shift) the positions
-			imageLoadPromise = new Promise(
-				function(resolve) {
-					var indexPositions, positionsAndCountsElement;
 
-					// $("#loading").show();
+				var indexPositions, imageLoadPromise, mediaNameListElement;
+				if (evt.originalEvent.ctrlKey) {
+					if (! jQuery.isEmptyObject(MapFunctions.mapAlbum)) {
+						// control click: remove the points
 
-					if (jQuery.isEmptyObject(MapFunctions.mapAlbum) || MapFunctions.mapAlbum.media.length == 0 || ! evt.originalEvent.shiftKey) {
-						// normal click or shift click without previous content
-
-						lastAlbumIndex ++;
-						MapFunctions.mapAlbum = map.initializeMapAlbum(lastAlbumIndex);
-
-						MapFunctions.mapAlbum.clickHistory = [clickHistoryElement];
-
-						MapFunctions.addMediaFromPositionsToMapAlbum(positionsAndCounts, MapFunctions.mapAlbum, resolve);
-					} else {
-						// shift-click with previous content
 						MapFunctions.mapAlbum.clickHistory.push(clickHistoryElement);
+						// $("#loading").show();
 
-						// determine what positions aren't yet in selectedPositions array
-						var missingPositions = [];
+						var matchingIndex, matchingMedia, positionsAndCountsElement;
 						for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
 							positionsAndCountsElement = positionsAndCounts[indexPositions];
 							if (
-								MapFunctions.mapAlbum.positionsAndMediaInTree.every(
-									function(element) {
-										return ! matchPositionAndCount(positionsAndCountsElement, element);
+								MapFunctions.mapAlbum.positionsAndMediaInTree.some(
+									function(element, index) {
+										matchingIndex = index;
+										return matchPositionAndCount(positionsAndCountsElement, element);
 									}
 								)
 							) {
-								missingPositions.push(positionsAndCountsElement);
-								MapFunctions.mapAlbum.positionsAndMediaInTree.push(positionsAndCountsElement);
+								// the position was present: remove the position itself...
+								MapFunctions.mapAlbum.positionsAndMediaInTree.splice(matchingIndex, 1);
+
+								// ...and the corresponding photos
+								for (iMediaPosition = 0; iMediaPosition < positionsAndCountsElement.mediaNameList.length; iMediaPosition ++) {
+									mediaNameListElement = positionsAndCountsElement.mediaNameList[iMediaPosition];
+									if (
+										MapFunctions.mapAlbum.media.some(
+											function(media, index) {
+												matchingMedia = index;
+												var match =
+												 	media.cacheBase == mediaNameListElement.cacheBase &&
+													media.foldersCacheBase == mediaNameListElement.foldersCacheBase;
+												return match;
+											}
+										)
+									)
+										MapFunctions.mapAlbum.media.splice(matchingMedia, 1);
+								}
 							}
 						}
-						positionsAndCounts = missingPositions;
-						if (missingPositions.length > 0)
-							MapFunctions.addMediaFromPositionsToMapAlbum(positionsAndCounts, MapFunctions.mapAlbum, resolve);
-						else
+
+						if (! MapFunctions.mapAlbum.media.length) {
 							$("#loading").hide();
+							MapFunctions.popup.remove();
+						} else {
+							endPreparingMapAlbumAndUpdatePopup();
+						}
 					}
+				} else {
+					// not control click: add (with shift) or replace (without shift) the positions
+					imageLoadPromise = new Promise(
+						function(resolve_imageLoad) {
+							var indexPositions, positionsAndCountsElement;
 
-				}
-			);
+							// $("#loading").show();
 
-			imageLoadPromise.then(
-				function() {
-					endPreparingMapAlbumAndUpdatePopup();
-				}
-			);
-			imageLoadPromise.catch(
-				function(album) {
-					console.trace();
-				}
-			);
-			// }
-		}
+							if (jQuery.isEmptyObject(MapFunctions.mapAlbum) || MapFunctions.mapAlbum.media.length == 0 || ! evt.originalEvent.shiftKey) {
+								// normal click or shift click without previous content
 
-		return;
+								lastAlbumIndex ++;
+								MapFunctions.mapAlbum = map.initializeMapAlbum(lastAlbumIndex);
+
+								MapFunctions.mapAlbum.clickHistory = [clickHistoryElement];
+
+								MapFunctions.addMediaFromPositionsToMapAlbum(positionsAndCounts, MapFunctions.mapAlbum, resolve_imageLoad);
+							} else {
+								// shift-click with previous content
+								MapFunctions.mapAlbum.clickHistory.push(clickHistoryElement);
+
+								// determine what positions aren't yet in selectedPositions array
+								var missingPositions = [];
+								for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
+									positionsAndCountsElement = positionsAndCounts[indexPositions];
+									if (
+										MapFunctions.mapAlbum.positionsAndMediaInTree.every(
+											function(element) {
+												return ! matchPositionAndCount(positionsAndCountsElement, element);
+											}
+										)
+									) {
+										missingPositions.push(positionsAndCountsElement);
+										MapFunctions.mapAlbum.positionsAndMediaInTree.push(positionsAndCountsElement);
+									}
+								}
+								positionsAndCounts = missingPositions;
+								if (missingPositions.length > 0)
+									MapFunctions.addMediaFromPositionsToMapAlbum(positionsAndCounts, MapFunctions.mapAlbum, resolve_imageLoad);
+								else
+									$("#loading").hide();
+							}
+
+						}
+					);
+
+					imageLoadPromise.then(
+						function() {
+							endPreparingMapAlbumAndUpdatePopup();
+						}
+					);
+					imageLoadPromise.catch(
+						function(album) {
+							console.trace();
+						}
+					);
+					// }
+				}
+				// end of function updateMapAlbumOnMapClick body
+
+				function matchPositionAndCount(reference, element) {
+					return (JSON.stringify([reference.lat, reference.lng]) === JSON.stringify([element.lat, element.lng]));
+				}
+
+				// function getCodedHashId(mediaNameListElement) {
+				// 	var hash = mediaNameListElement.albumCacheBase + "--" + mediaNameListElement.cacheBase;
+				// 	return "popup-img-" + phFl.hashCode(hash);
+				// }
+
+				function endPreparingMapAlbumAndUpdatePopup() {
+					if (updateMapAlbum) {
+						MapFunctions.mapAlbum.numMedia = MapFunctions.mapAlbum.media.length;
+						MapFunctions.mapAlbum.numMediaInSubTree = MapFunctions.mapAlbum.media.length;
+						MapFunctions.mapAlbum.numPositionsInTree = MapFunctions.mapAlbum.positionsAndMediaInTree.length;
+						MapFunctions.mapAlbum.numsProtectedMediaInSubTree = {"": MapFunctions.mapAlbum.numMedia};
+						// media must be initially sorted by date not reverse, as json they are in albums
+						MapFunctions.mapAlbum.media = util.sortByDate(MapFunctions.mapAlbum.media);
+						MapFunctions.mapAlbum.mediaNameSort = false;
+						MapFunctions.mapAlbum.mediaReverseSort = false;
+						util.initializeSortPropertiesAndCookies(MapFunctions.mapAlbum);
+						// now sort them according to options
+						util.sortAlbumsMedia(MapFunctions.mapAlbum);
+
+						// update the map root album in cache
+						var rootMapAlbum = phFl.getAlbumFromCache(Options.by_map_string);
+						if (! rootMapAlbum)
+							rootMapAlbum = PhotoFloat.initializeMapRootAlbum();
+						rootMapAlbum.numMediaInSubTree += MapFunctions.mapAlbum.numMediaInSubTree;
+						rootMapAlbum.subalbums.push(MapFunctions.mapAlbum);
+						rootMapAlbum.positionsAndMediaInTree = util.mergePoints(rootMapAlbum.positionsAndMediaInTree, MapFunctions.mapAlbum.positionsAndMediaInTree);
+						rootMapAlbum.numPositionsInTree += MapFunctions.mapAlbum.numPositionsInTree;
+						rootMapAlbum.numsProtectedMediaInSubTree[""] += MapFunctions.mapAlbum.numsProtectedMediaInSubTree[""];
+
+						TopFunctions.bindSortEvents(MapFunctions.mapAlbum);
+					}
+					resolve_updateMapAlbumOnMapClick();
+				}
+			}
+		);
 	};
 
 	TopFunctions.prototype.goFullscreen = TopFunctions.goFullscreen;
