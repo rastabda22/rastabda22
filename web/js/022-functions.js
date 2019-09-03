@@ -676,7 +676,7 @@
 
 	Functions.getOptions = function() {
 		return new Promise(
-			function(resolve) {
+			function(resolve_getOptions) {
 				var ajaxOptions = {
 					type: "GET",
 					dataType: "json",
@@ -787,7 +787,7 @@
 
 						PhotoFloat.initializeMapRootAlbum();
 
-						resolve();
+						resolve_getOptions();
 					},
 					error: function(jqXHR, textStatus, errorThrown) {
 						if (errorThrown == "Not Found") {
