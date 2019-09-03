@@ -1131,10 +1131,10 @@
 						return;
 					}
 
-					if (album.hasOwnProperty("media"))
-						numMedia = album.media.length;
-					else
-						numMedia = album.numMedia;
+					// if (album.hasOwnProperty("media"))
+					// 	numMedia = album.media.length;
+					// else
+					numMedia = album.numMedia;
 					if (index >= numMedia) {
 						index -= numMedia;
 						let found = false;
