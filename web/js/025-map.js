@@ -357,10 +357,10 @@
 				var promise = phFl.getAlbum(
 					albumCacheBase,
 					util.die,
-					{"getMedia": true, "getPositions": true, "thisIndexWords": photosInAlbum, "thisIndexAlbums": null}
+					{"getMedia": true, "getPositions": true, "photosInAlbum": photosInAlbum}
 				);
 				promise.then(
-					function([theAlbum, photosInAlbum]) {
+					function([theAlbum, {photosInAlbum}]) {
 						for (mediaIndex = 0; mediaIndex < theAlbum.media.length; mediaIndex ++) {
 							for (photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
 								if (theAlbum.media[mediaIndex].cacheBase == photosInAlbum[photoIndex].element.cacheBase) {

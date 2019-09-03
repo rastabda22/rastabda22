@@ -895,7 +895,7 @@
 	// 	return album.hasOwnProperty("hasntUnprotectedContent");
 	// };
 
-	PhotoFloat.getAlbum = function(albumCacheBase, error, {getMedia = false, getPositions = false, thisIndexWords = false, thisIndexAlbums = false} = {}) {
+	PhotoFloat.getAlbum = function(albumCacheBase, error, {getMedia = false, getPositions = false, thisIndexWords = false, thisIndexAlbums = false, photosInAlbum = []} = {}) {
 		// error is executed when in no way the album can be retrieved:
 		// either it doesn't exist or it could be a protected one
 
@@ -912,7 +912,7 @@
 								promise.then(
 									function() {
 										goOnTowardResolvingGetAlbum(albumFromCache, {"thisIndexWords": thisIndexWords, "thisIndexAlbums": thisIndexAlbums});
-										resolve_getAlbum([albumFromCache, {"thisIndexWords": thisIndexWords, "thisIndexAlbums": thisIndexAlbums}]);
+										resolve_getAlbum([albumFromCache, {"thisIndexWords": thisIndexWords, "thisIndexAlbums": thisIndexAlbums, "photosInAlbum": photosInAlbum}]);
 									}
 								);
 								promise.catch(
@@ -922,7 +922,7 @@
 								);
 							} else {
 								goOnTowardResolvingGetAlbum(albumFromCache, {"thisIndexWords": thisIndexWords, "thisIndexAlbums": thisIndexAlbums});
-								resolve_getAlbum([albumFromCache, {"thisIndexWords": thisIndexWords, "thisIndexAlbums": thisIndexAlbums}]);
+								resolve_getAlbum([albumFromCache, {"thisIndexWords": thisIndexWords, "thisIndexAlbums": thisIndexAlbums, "photosInAlbum": photosInAlbum}]);
 							}
 						}
 					);
@@ -977,7 +977,7 @@
 								promise.then(
 									function() {
 										goOnTowardResolvingGetAlbum(album, {"thisIndexWords": thisIndexWords, "thisIndexAlbums": thisIndexAlbums});
-										resolve_getAlbum([album, {"thisIndexWords": thisIndexWords, "thisIndexAlbums": thisIndexAlbums}]);
+										resolve_getAlbum([album, {"thisIndexWords": thisIndexWords, "thisIndexAlbums": thisIndexAlbums, "photosInAlbum": photosInAlbum}]);
 									}
 								);
 								promise.catch(
@@ -987,7 +987,7 @@
 								);
 							} else {
 								goOnTowardResolvingGetAlbum(album, {"thisIndexWords": thisIndexWords, "thisIndexAlbums": thisIndexAlbums});
-								resolve_getAlbum([album, {"thisIndexWords": thisIndexWords, "thisIndexAlbums": thisIndexAlbums}]);
+								resolve_getAlbum([album, {"thisIndexWords": thisIndexWords, "thisIndexAlbums": thisIndexAlbums, "photosInAlbum": photosInAlbum}]);
 							}
 						}
 					);
