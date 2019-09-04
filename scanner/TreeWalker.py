@@ -1144,6 +1144,9 @@ class TreeWalker:
 
 		# check album name against passwords
 		if must_process_passwords:
+			# if passwords are to be processed, this invalidates the cache albums
+			album_cache_hit = False
+			
 			next_level()
 			message("processing passwords for album...", "", 4)
 			# restart with the inherited passwords
