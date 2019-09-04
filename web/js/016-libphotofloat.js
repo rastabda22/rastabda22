@@ -256,8 +256,8 @@
 							function(positions) {
 								album.positionsAndMediaInTree = positions;
 								// // we must add the corresponding positions to every subalbums
-								if (album.cacheBase != Options.by_search_string)
-									PhotoFloat.addPositionsToSubalbums(album);
+								// if (album.cacheBase != Options.by_search_string)
+								// 	PhotoFloat.addPositionsToSubalbums(album);
 								resolve_addPositions();
 							}
 						);
