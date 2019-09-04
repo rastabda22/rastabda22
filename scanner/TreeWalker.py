@@ -1126,7 +1126,7 @@ class TreeWalker:
 		############################################################
 		if not must_process_passwords:
 			if json_files_min_mtime is None:
-				indented_message("passwords must be processed", "json files doesn't exist", 4)
+				indented_message("passwords must be processed", "json files don't exist", 4)
 				must_process_passwords = True
 			elif not album_cache_hit:
 				indented_message("passwords must be processed", "album isn't a cache hit", 4)
