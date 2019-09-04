@@ -765,6 +765,17 @@ ul#right-menu.expand li.active:hover, ul#right-menu #menu-icon:hover, ul#right-m
 	font-size: 80%; */
 }
 
+ul#right-menu #padlock img:hover {
+	width: 18px;
+	height: 23px;
+	float: right;
+	padding-bottom: 10px;
+}
+ul#right-menu #padlock:hover {
+	margin-left: 1em;
+	padding-bottom: 0;
+}
+
 ul#right-menu.expand li:not(.caption) {
 	/* padding-left: 1.7em; */
 	/* padding-right: 2em; */

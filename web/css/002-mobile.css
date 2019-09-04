@@ -23,7 +23,7 @@
 		z-index: 1;
 	}
 	.error, .browsing-mode-message, .sort-message, #auth-text, .search-failed, #loading {
-		margin-top: 5%;
+		margin-top: 15%;
 	}
 
 	#auth-question {
@@ -32,5 +32,24 @@
 
 	ul#right-menu li#menu-icon {
 		font-size: 120%;
+	}
+
+	ul#right-menu #padlock img {
+		width: 18px;
+		height: 23px;
+		float: right;
+		padding-bottom: 10px;
+	}
+	ul#right-menu #padlock {
+		margin-left: 1em;
+		padding-bottom: 0;
+	}
+	ul#right-menu #menu-and-padlock {
+		margin-left: ;
+		padding-bottom: 0;
+	}
+
+	#my-modal .modal-close {
+	    top: 35px !important;
 	}
 }
