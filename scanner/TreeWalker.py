@@ -1134,6 +1134,10 @@ class TreeWalker:
 			elif Options.passwords_file_mtime is not None and Options.passwords_file_mtime >= json_files_min_mtime:
 				indented_message("passwords must be processed", "passwords file newer than json file or absent", 4)
 				must_process_passwords = True
+			elif Options.old_password_codes == {} and Options.passwords_file_mtime is not None:
+				# execution comes here when the password file has been renamed without modifying it
+				indented_message("passwords must be processed", "passwords file didn't exist in previous scanner run", 4)
+				must_process_passwords = True
 			elif len(patterns_and_passwords) > 0 and passwords_marker_mtime is not None and passwords_marker_mtime >= json_files_min_mtime:
 				indented_message("passwords must be processed", "'" + Options.config['passwords_marker'] + "'' newer than json file or absent", 4)
 				must_process_passwords = True
