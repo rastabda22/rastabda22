@@ -1741,7 +1741,7 @@
 		var albumViewWidth, correctedAlbumThumbSize = Options.album_thumb_size;
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
 		var tooBig = false, isVirtualAlbum = false;
-		var mapLinkIcon, id, ithMedia, ithSubalbum;
+		var mapLinkIcon, id, ithMedia;
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
 		var array, folderArray, folder, folderName, folderTitle, savedSearchSubAlbumHash, savedSearchAlbumHash;
 
@@ -1993,7 +1993,7 @@
 					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
 						let subalbumPromise = new Promise(
 							function(resolve_subalbumPromise) {
-								ithSubalbum = currentAlbum.subalbums[i];
+								var ithSubalbum = currentAlbum.subalbums[i];
 
 								// generate the subalbum caption
 								if (util.isByDateCacheBase(currentAlbum.cacheBase)) {
@@ -2025,7 +2025,8 @@
 
 								folder = "<span class='folder-name'>" +
 													folderName;
-								if (ithSubalbum.hasOwnProperty("positionsAndMediaInTree") && ithSubalbum.positionsAndMediaInTree.length)
+								if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree)
+								// if (ithSubalbum.hasOwnProperty("positionsAndMediaInTree") && ithSubalbum.positionsAndMediaInTree.length)
 									folder += "<a id='subalbum-map-link-" + i + "' >" +
 													"<img " +
 														"class='title-img' " +
@@ -2181,8 +2182,8 @@
 					);
 
 					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
-						ithSubalbum = currentAlbum.subalbums[i];
-						if (ithSubalbum.hasOwnProperty("positionsAndMediaInTree") && ithSubalbum.positionsAndMediaInTree.length) {
+						let ithSubalbum = currentAlbum.subalbums[i];
+						if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
 							$("#subalbum-map-link-" + i).off('click').on(
 								'click',
 								{subalbum: ithSubalbum, clickedSelector: "#subalbum-map-link-" + i},
@@ -2373,14 +2374,24 @@
 
 	TopFunctions.generateMapFromSubalbum = function(ev, from) {
 
-		if (ev.data.subalbum.positionsAndMediaInTree.length) {
-			ev.stopPropagation();
-			ev.preventDefault();
-			TopFunctions.generateMap(ev, ev.data.subalbum.positionsAndMediaInTree, from);
-		} else {
-			$("#warning-no-geolocated-media").stop().fadeIn(200);
-			$("#warning-no-geolocated-media").fadeOut(3000);
-		}
+		var subalbumPromise = phFl.getAlbum(ev.data.subalbum.cacheBase, util.die, {"getMedia": false, "getPositions": true});
+		subalbumPromise.then(
+			function([subalbum]) {
+				if (subalbum.positionsAndMediaInTree.length) {
+					ev.stopPropagation();
+					ev.preventDefault();
+					TopFunctions.generateMap(ev, subalbum.positionsAndMediaInTree, from);
+				} else {
+					$("#warning-no-geolocated-media").stop().fadeIn(200);
+					$("#warning-no-geolocated-media").fadeOut(3000);
+				}
+			}
+		);
+		subalbumPromise.catch(
+			function() {
+				console.trace();
+			}
+		);
 	};
 
 	TopFunctions.generateMapFromDefaults = function(ev, from) {
