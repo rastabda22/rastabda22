@@ -1842,7 +1842,7 @@
 				searchResultsAlbumFinal.path = searchResultsAlbumFinal.cacheBase.replace(Options.cache_folder_separator, "/");
 				searchResultsAlbumFinal.physicalPath = searchResultsAlbumFinal.path;
 				searchResultsAlbumFinal.searchInFolderCacheBase = mediaFolderHash;
-				searchResultsAlbumFinal.numsProtectedMediaInSubTree = {};
+				searchResultsAlbumFinal.numsProtectedMediaInSubTree = {"": 0};
 
 				if (albumHash == Options.by_search_string) {
 					util.noResults(searchResultsAlbumFinal, '#no-search-string');
