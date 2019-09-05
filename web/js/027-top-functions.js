@@ -64,13 +64,7 @@
 			titleAnchorClasses += ' mobile';
 		titleAnchorClassesItalics = titleAnchorClasses + ' italic';
 
-		var array = phFl.decodeHash(location.hash);
-		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-		var albumHash = array[0];
-		// var mediaHash = array[1];
-		// var mediaFolderHash = array[2];
-		// var savedSearchSubAlbumHash = array[3];
-		var savedSearchAlbumHash = array[4];
+		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 		var fillInSpan = "<span id='fill-in-map-link'></span>";
 
 		if (isDateTitle) {
@@ -852,10 +846,7 @@
 		if (id === "center")
 			$("#media-view").removeClass("hidden");
 
-		array = phFl.decodeHash(location.hash);
-		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-		savedSearchSubAlbumHash = array[3];
-		savedSearchAlbumHash = array[4];
+		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
 		mediaLink = phFl.encodeHash(currentAlbum, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
 		firstEscKey = true;
@@ -1026,10 +1017,7 @@
 			if (currentAlbum.numMedia == 1) {
 				mediaBoxInnerElement.css('cursor', 'default');
 			} else {
-				array = phFl.decodeHash(location.hash);
-				// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-				savedSearchSubAlbumHash = array[3];
-				savedSearchAlbumHash = array[4];
+				var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
 				// nextLink = phFl.encodeHash(currentAlbum, nextMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
 				// prevLink = phFl.encodeHash(currentAlbum, prevMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
@@ -1747,10 +1735,7 @@
 
 		numSubAlbumsReady = 0;
 
-		array = phFl.decodeHash(location.hash);
-		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-		savedSearchSubAlbumHash = array[3];
-		savedSearchAlbumHash = array[4];
+		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
 		if (Options.albums_slide_style)
 			slideBorder = 3;

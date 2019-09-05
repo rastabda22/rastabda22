@@ -519,7 +519,7 @@
 		$("#media-box-container").on(
 			'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
 			function() {
-				var array, savedSearchSubAlbumHash, savedSearchAlbumHash;
+				var savedSearchSubAlbumHash, savedSearchAlbumHash;
 
 				$("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
 				$("#media-box-container").css("transition-duration", "0s");
@@ -532,10 +532,7 @@
 				util.mediaBoxGenerator('left');
 				$(".media-box#left").css("width", $(".media-box#center").attr('width')).css("height", $(".media-box#center").attr('height'));
 
-				array = phFl.decodeHash(location.hash);
-				// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-				savedSearchSubAlbumHash = array[3];
-				savedSearchAlbumHash = array[4];
+				var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 				window.location.href = phFl.encodeHash(currentAlbum, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
 			}
 		);
@@ -559,7 +556,7 @@
 		$("#media-box-container").on(
 			'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
 			function() {
-				var array, savedSearchSubAlbumHash, savedSearchAlbumHash;
+				var savedSearchSubAlbumHash, savedSearchAlbumHash;
 
 				$("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
 				$("#media-box-container").css("transition-duration", "0s");
@@ -575,10 +572,7 @@
 				// if (! isMobile(any))
 				$("#media-box-container").css("transform", "translate(-" + windowWidth + "px, 0px)");
 
-				array = phFl.decodeHash(location.hash);
-				// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-				savedSearchSubAlbumHash = array[3];
-				savedSearchAlbumHash = array[4];
+				var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 				window.location.href = phFl.encodeHash(currentAlbum, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
 			}
 		);

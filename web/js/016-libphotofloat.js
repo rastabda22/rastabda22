@@ -1353,12 +1353,8 @@
 
 	PhotoFloat.upHash = function(hash) {
 		var resultHash;
-		var array = PhotoFloat.decodeHash(hash);
-		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-		var albumHash = array[0];
-		var mediaHash = array[1];
-		var savedSearchSubAlbumHash = array[3];
-		var savedSearchAlbumHash = array[4];
+		var hash = window.location.hash;
+		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
 
 		if (mediaHash === null || util.isAlbumWithOneMedia(currentAlbum)) {
 			// hash of an album: go up in the album tree
@@ -1771,11 +1767,7 @@
 		$("#error-too-many-images").hide();
 		$(".search-failed").hide();
 		// $("#media-view").removeClass("hidden");
-		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-		var array = PhotoFloat.decodeHash(hash);
-		var albumHash = array[0];
-		var mediaHash = array[1];
-		var mediaFolderHash = array[2];
+		var [albumHash, mediaHash, mediaFolderHash] = PhotoFloat.decodeHash(hash);
 		$("ul#right-menu li#album-search").removeClass("dimmed");
 		$("ul#right-menu li#any-word").removeClass("dimmed");
 		$("#album-view, #album-view #subalbums, #album-view #thumbs").removeClass("hidden");

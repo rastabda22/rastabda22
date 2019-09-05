@@ -336,9 +336,8 @@
 
 	Utilities.prototype.isSearchHash = function(hash) {
 		hash = PhotoFloat.cleanHash(hash);
-		var array = PhotoFloat.decodeHash(hash);
-		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-		if (this.isSearchCacheBase(hash) || array[4] !== null)
+		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
+		if (this.isSearchCacheBase(hash) || savedSearchAlbumHash !== null)
 			return true;
 		else
 			return false;
@@ -346,9 +345,8 @@
 
 	Utilities.prototype.isMapHash = function(hash) {
 		hash = PhotoFloat.cleanHash(hash);
-		var array = PhotoFloat.decodeHash(hash);
-		// array is [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash]
-		if (this.isMapCacheBase(hash) || array[4] !== null)
+		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
+		if (this.isMapCacheBase(hash) || savedSearchAlbumHash !== null)
 			return true;
 		else
 			return false;

@@ -380,8 +380,7 @@ $(document).ready(function() {
 	// search
 	$('#search-button').on("click", function() {
 		var searchOptions = '';
-		var array = phFl.decodeHash(location.hash);
-		var albumHash = array[0];
+		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
 		// save the current hash in order to come back there when exiting from search
 		if (util.isSearchCacheBase(albumHash)) {
