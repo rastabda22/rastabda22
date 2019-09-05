@@ -103,8 +103,10 @@ max_media_from_positions_in_json_file = 20
 # json_version = 3.991 since media and position remain in json file for small numbers
 # json_version = 3.992 since combination renamed to complexCombination
 # json_version = 3.994 since complexCombination renamed to codesComplexCombination
+# json_version = 3.995 since removed ancestorsCacheBase and unnecessary ancestorsCenter
+
 # json_version = 0
-json_version = 3.994
+json_version = 3.995
 
 
 def set_obsolete_json_version_flag():

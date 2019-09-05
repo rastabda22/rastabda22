@@ -1051,23 +1051,9 @@
 				}
 			}
 
-			if (! util.isMapCacheBase(theAlbum.cacheBase)) {
+			if (! util.isMapCacheBase(theAlbum.cacheBase))
 				generateAncestorsCacheBase(theAlbum);
-				var ancestorsPromise = getAncestorsNames(theAlbum);
-				ancestorsPromise.then(
-					function() {
-						PhotoFloat.putAlbumIntoCache(theAlbum.cacheBase, theAlbum);
-					}
-				);
-				ancestorsPromise.catch(
-					function(album) {
-						console.trace();
-					}
-				);
-			} else {
-				PhotoFloat.putAlbumIntoCache(theAlbum.cacheBase, theAlbum);
-			}
-
+			PhotoFloat.putAlbumIntoCache(theAlbum.cacheBase, theAlbum);
 		}
 		//////// end of goOnTowardResolvingGetAlbum function
 
@@ -1086,42 +1072,44 @@
 			return;
 		}
 
-		function getAncestorsNames(originalAlbum) {
-			return new Promise(
-				function(resolve_getAncestorsNames) {
-					if (originalAlbum.hasOwnProperty("ancestorsNames")) {
-						resolve_getAncestorsNames();
-					} else {
-						originalAlbum.ancestorsNames = []; i = originalAlbum.ancestorsCacheBase.length;
-						getNextAncestorsNames();
-					}
-
-					function getNextAncestorsNames() {
-						i --;
-						var promise = PhotoFloat.getAlbum(originalAlbum.ancestorsCacheBase[i], util.die, {"getMedia": false, "getPositions": false});
-						promise.then(
-							function([album]) {
-								if (originalAlbum.hasOwnProperty("altName"))
-									originalAlbum.ancestorsNames[i] = album.altName;
-								else
-									originalAlbum.ancestorsNames[i] = album.name;
-
-								if (i == 0) {
-									resolve_getAncestorsNames();
-								} else {
-									getNextAncestorsNames();
-								}
-							}
-						);
-						promise.catch(
-							function(album) {
-								console.trace();
-							}
-						);
-					}
-				}
-			);
-		}
+		// function getAncestorsNames(originalAlbum) {
+		// 	return new Promise(
+		// 		function(resolve_getAncestorsNames) {
+		// 			if (originalAlbum.hasOwnProperty("ancestorsNames")) {
+		// 				resolve_getAncestorsNames();
+		// 			} else {
+		// 				originalAlbum.ancestorsNames = [];
+		// 				var i = -1;
+		// 				getNextAncestorsNames([]);
+		// 			}
+		//
+		// 			function getNextAncestorsNames(upAncestorsNames) {
+		// 				i ++;
+		// 				if (i < originalAlbum.ancestorsCacheBase.length) {
+		// 					var promise = PhotoFloat.getAlbum(originalAlbum.ancestorsCacheBase[i], util.die, {"getMedia": false, "getPositions": false});
+		// 					promise.then(
+		// 						function([album]) {
+		// 							var name = album.name;
+		// 							if (album.hasOwnProperty("altName"))
+		// 								name = album.altName;
+		// 							originalAlbum.ancestorsNames = upAncestorsNames.slice(0);
+		// 							originalAlbum.ancestorsNames.push(name);
+		//
+		// 							getNextAncestorsNames(originalAlbum.ancestorsNames);
+		// 						}
+		// 					);
+		// 					promise.catch(
+		// 						function(album) {
+		// 							console.trace();
+		// 						}
+		// 					);
+		// 				} else {
+		// 					resolve_getAncestorsNames();
+		// 				}
+		// 			}
+		// 		}
+		// 	);
+		// }
 	};
 
 	PhotoFloat.prototype.pickRandomMedia = function(theSubalbum, error) {

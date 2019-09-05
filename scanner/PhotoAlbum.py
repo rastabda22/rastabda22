@@ -613,31 +613,31 @@ class Album(object):
 		):
 			path_to_dict = Options.config['folders_string'] + '/' + path_to_dict
 
-		ancestors_cache_base = list()
-		# ancestors_names = list()
-		ancestors_center = list()
+		# ancestors_cache_base = list()
+		ancestors_names = list()
+		ancestors_centers = list()
 		_parent = self
 		while True:
 			# ancestors_cache_base.append(_parent.cache_base)
 
-			# if hasattr(_parent, "alt_name"):
-			# 	ancestors_names.append(_parent.alt_name)
-			# elif hasattr(_parent, "name"):
-			# 	ancestors_names.append(_parent.name)
+			if hasattr(_parent, "alt_name"):
+				ancestors_names.append(_parent.alt_name)
+			elif hasattr(_parent, "name"):
+				ancestors_names.append(_parent.name)
 
 			if hasattr(_parent, "center"):
-				ancestors_center.append(_parent.center)
+				ancestors_centers.append(_parent.center)
 			else:
-				ancestors_center.append("")
+				ancestors_centers.append("")
 
 			if _parent.parent_cache_base is None:
 				break
 			_parent = next((album for album in Options.all_albums if album.cache_base == _parent.parent_cache_base), None)
 			if _parent is None:
 				break
-		ancestors_cache_base.reverse()
-		# ancestors_names.reverse()
-		ancestors_center.reverse()
+		# ancestors_cache_base.reverse()
+		ancestors_names.reverse()
+		ancestors_centers.reverse()
 
 		dictionary = {
 			"name": self.name,
@@ -647,8 +647,7 @@ class Album(object):
 			"subalbums": subalbums,
 			"cacheBase": self.cache_base,
 			# "ancestorsCacheBase": ancestors_cache_base,
-			# "ancestorsNames": ancestors_names,
-			"ancestorsCenter": ancestors_center,
+			"ancestorsNames": ancestors_names,
 			"physicalPath": path_without_folders_marker,
 			"numMediaInSubTree": self.num_media_in_sub_tree,
 			# "numsProtectedMediaInSubTree": self.nums_protected_media_in_sub_tree,
@@ -688,6 +687,8 @@ class Album(object):
 			dictionary["name"] = self.name
 		if hasattr(self, "alt_name"):
 			dictionary["altName"] = self.alt_name
+		if self.cache_base.find(Options.config['by_gps_string']) == 0:
+			dictionary["ancestorsCenters"] = ancestors_centers
 
 		return dictionary
 
