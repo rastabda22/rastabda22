@@ -1024,7 +1024,7 @@
 		$("#auth-text").stop().fadeIn(1000);
 		$("#password").focus();
 
-		$('#auth-close').on(
+		$('#auth-close').off('click').on(
 			'click',
 			function() {
 				$("#auth-text").hide();
