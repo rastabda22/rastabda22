@@ -1019,7 +1019,7 @@
 		$(".media-box#" + id + " .metadata").css("display", $(".media-box#center .metadata").css("display"));
 	};
 
-	Utilities.prototype.showAuthForm = function() {
+	Utilities.prototype.showAuthForm = function(maybeProtectedContent = false) {
 		$("#album-view, #media-view, #my-modal, #no-results").css("opacity", "0.2");
 		$("#auth-text").stop().fadeIn(1000);
 		$("#password").focus();
@@ -1029,7 +1029,9 @@
 			function() {
 				$("#auth-text").hide();
 				$("#album-view, #media-view, #my-modal").css("opacity", "");
-				Utilities.goUpInHash();
+				if (maybeProtectedContent)
+					window.location.href = PhotoFloat.upHash();
+					// Utilities.goUpInHash();
 			}
 		);
 	};
@@ -1069,16 +1071,18 @@
 		$("body, html").css("overflow", "hidden");
 	};
 
-	Utilities.goUpInHash = function() {
-		var hashList = window.location.hash.split(Options.cache_folder_separator);
-
-		if (hashList.length == 1) {
-			window.location.href = "#!";
-			return;
-		} else {
-			window.location.href = hashList.slice(0, -1).join(Options.cache_folder_separator);
-		}
-	};
+	// Utilities.prototype.goUpInHash = function() {
+	// 	var hashList = window.location.hash.split('/');
+	// 	if (hashList.lenght === 3)
+	// 		hashList = hashList[1].split(Options.cache_folder_separator);
+	//
+	// 	if (hashList.length == 1) {
+	// 		window.location.href = "#!";
+	// 		return;
+	// 	} else {
+	// 		window.location.href = hashList.slice(0, -1).join(Options.cache_folder_separator);
+	// 	}
+	// };
 
 	// Utilities.convertComplexCombinationToCodesComplexCombination = function(complexCombination) {
 	// 	var albumCombinationsList = complexCombination.split(',')[0].split('-');
@@ -1277,7 +1281,6 @@
 	Utilities.prototype.sortBy = Utilities.sortBy;
 	Utilities.prototype.isByGpsCacheBase = Utilities.isByGpsCacheBase;
 	Utilities.prototype.setPinchButtonsPosition = Utilities.setPinchButtonsPosition;
-	Utilities.prototype.goUpInHash = Utilities.goUpInHash;
 
 	window.Utilities = Utilities;
 }());

@@ -348,7 +348,7 @@
 							else {
 								// wrong hash: it might be the hash of a protected content
 								$("#loading").hide();
-								util.showAuthForm();
+								util.showAuthForm(true);
 							}
 						} else {
 							// look for a protected album
@@ -1351,7 +1351,7 @@
 		);
 	};
 
-	PhotoFloat.upHash = function(hash) {
+	PhotoFloat.upHash = function() {
 		var resultHash;
 		var hash = window.location.hash;
 		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
@@ -1967,7 +1967,7 @@
 				) {
 					// the media not found could be a protected one, show the authentication dialog
 					perhapsIsAProtectedMedia = true;
-					util.showAuthForm();
+					util.showAuthForm(true);
 				} else {
 					// surely the media doesn't exist
 

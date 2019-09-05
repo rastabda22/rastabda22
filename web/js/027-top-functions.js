@@ -1013,7 +1013,7 @@
 			$("#next").off();
 			$("#prev").off();
 
-			upLink = phFl.upHash(location.hash);
+			upLink = phFl.upHash();
 			if (currentAlbum.numMedia == 1) {
 				mediaBoxInnerElement.css('cursor', 'default');
 			} else {
@@ -1192,9 +1192,10 @@
 
 		if (album.numMediaInSubTree == 0 && ! util.isSearchCacheBase(album.cacheBase)) {
 			// the album hasn't any content:
-			// either the hash is wrong or it's a protected content
+			// either the hash is wrong or it's a protected content album
 			// go up
-			util.goUpInHash(window.location.hash);
+			window.location.href = PhotoFloat.upHash();
+			// util.goUpInHash(window.location.hash);
 			return;
 		}
 
@@ -1929,7 +1930,7 @@
 					firstEscKey = true;
 				}
 
-				upLink = phFl.upHash(location.hash);
+				upLink = phFl.upHash();
 
 				if (
 					populate === true ||
