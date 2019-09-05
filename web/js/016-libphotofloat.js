@@ -1053,7 +1053,7 @@
 
 			if (! util.isMapCacheBase(theAlbum.cacheBase)) {
 				generateAncestorsCacheBase(theAlbum);
-				var ancestorsPromise = getAncestorNames(theAlbum);
+				var ancestorsPromise = getAncestorsNames(theAlbum);
 				ancestorsPromise.then(
 					function() {
 						PhotoFloat.putAlbumIntoCache(theAlbum.cacheBase, theAlbum);
@@ -1086,17 +1086,17 @@
 			return;
 		}
 
-		function getAncestorNames(originalAlbum) {
+		function getAncestorsNames(originalAlbum) {
 			return new Promise(
-				function(resolve_getAncestorNames) {
+				function(resolve_getAncestorsNames) {
 					if (originalAlbum.hasOwnProperty("ancestorsNames")) {
-						resolve_getAncestorNames();
+						resolve_getAncestorsNames();
 					} else {
 						originalAlbum.ancestorsNames = []; i = originalAlbum.ancestorsCacheBase.length;
-						getNextAncestorNames();
+						getNextAncestorsNames();
 					}
 
-					function getNextAncestorNames() {
+					function getNextAncestorsNames() {
 						i --;
 						var promise = PhotoFloat.getAlbum(originalAlbum.ancestorsCacheBase[i], util.die, {"getMedia": false, "getPositions": false});
 						promise.then(
@@ -1107,9 +1107,9 @@
 									originalAlbum.ancestorsNames[i] = album.name;
 
 								if (i == 0) {
-									resolve_getAncestorNames();
+									resolve_getAncestorsNames();
 								} else {
-									getNextAncestorNames();
+									getNextAncestorsNames();
 								}
 							}
 						);
