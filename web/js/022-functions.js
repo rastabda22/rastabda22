@@ -28,7 +28,7 @@
 		folders = location.pathname;
 		folders = folders.substring(0, folders.lastIndexOf('/'));
 		url += folders;
-		if (currentMedia === null || currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1) {
+		if (currentMedia === null || currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.numMedia == 1) {
 			mediaParameter = util.pathJoin([
 				Options.server_cache_path,
 				Options.cache_album_subdir,
@@ -302,8 +302,8 @@
 			currentMedia !== null ||
 			util.isAlbumWithOneMedia(thisAlbum) ||
 			thisAlbum !== null && (
-				thisAlbum.media.length === 0 ||
-				! util.isFolderCacheBase(thisAlbum.cacheBase) && thisAlbum.media.length > Options.big_virtual_folders_threshold
+				thisAlbum.numMedia === 0 ||
+				! util.isFolderCacheBase(thisAlbum.cacheBase) && thisAlbum.numMedia > Options.big_virtual_folders_threshold
 			)
 		) {
 			$("ul#right-menu li.media-names").addClass("hidden");
@@ -346,7 +346,7 @@
 
 		if (
 			thisAlbum === null ||
-			thisAlbum.media.length < Options.big_virtual_folders_threshold ||
+			thisAlbum.numMedia < Options.big_virtual_folders_threshold ||
 			util.isFolderCacheBase(thisAlbum.cacheBase)
 		) {
 			$("ul#right-menu #show-big-albums").addClass("hidden");
@@ -369,7 +369,7 @@
 				$("ul#right-menu li.album-sort").removeClass("hidden");
 			}
 
-			if (thisAlbum.media.length <= 1 || thisAlbum.media.length > Options.big_virtual_folders_thresholds) {
+			if (thisAlbum.numMedia <= 1 || thisAlbum.numMedia > Options.big_virtual_folders_thresholds) {
 				// no media or one media or too many media
 				$("ul#right-menu li.media-sort").addClass("hidden");
 			} else {

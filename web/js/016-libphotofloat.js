@@ -60,7 +60,7 @@
 
 		if (album.hasOwnProperty("media")) {
 			for (level = 0; level < cacheLevelsLength; level ++) {
-		 		if (album.media.length >= Options.js_cache_levels[level].mediaThreshold) {
+		 		if (album.numMedia >= Options.js_cache_levels[level].mediaThreshold) {
 					if (! PhotoFloat.cache.albums.hasOwnProperty(level)) {
 						PhotoFloat.cache.albums[level] = [];
 						PhotoFloat.cache.albums[level].queue = [];
@@ -1147,7 +1147,7 @@
 					}
 
 					// if (album.hasOwnProperty("media"))
-					// 	numMedia = album.media.length;
+					// 	numMedia = album.numMedia;
 					// else
 					numMedia = album.numMedia;
 					if (index >= numMedia) {
@@ -1437,6 +1437,7 @@
 			}
 
 			searchResultsAlbumFinal.numMediaInSubTree = searchResultsAlbumFinal.media.length;
+
 			if (searchResultsAlbumFinal.subalbums.length) {
 				for (indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
 					// update the media count

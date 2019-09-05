@@ -413,7 +413,7 @@
 	};
 
 	Utilities.prototype.isAlbumWithOneMedia = function(currentAlbum) {
-		return currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1;
+		return currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.numMedia == 1;
 	};
 
 	Utilities.chooseReducedPhoto = function(media, container, fullScreenStatus) {
@@ -1005,7 +1005,7 @@
 
 		$("#next").css("right", "");
 		$("#prev").css("left", "");
-		if (! fullScreenStatus && currentAlbum.media.length > 1) {
+		if (! fullScreenStatus && currentAlbum.numMedia > 1) {
 			// correct next button position when pinch buttons collide
 			$("#next").css("right", correctionForPinch.toString() + "px");
 			// correct prev button position when social buttons are on the left
@@ -1202,7 +1202,7 @@
 				thisAlbum.media = Utilities.sortReverse(thisAlbum.media);
 				thisAlbum.mediaReverseSort = ! thisAlbum.mediaReverseSort;
 				if (typeof currentMediaIndex !== "undefined" && currentMediaIndex != -1)
-					currentMediaIndex = thisAlbum.media.length - 1 - currentMediaIndex;
+					currentMediaIndex = thisAlbum.numMedia - 1 - currentMediaIndex;
 			}
 		}
 	};

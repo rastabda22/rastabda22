@@ -123,7 +123,7 @@
 			if (components.length > 1 && media === null) {
 				if (! isMobile.any()) {
 					title += " <span class='title-count'>(";
-					title += currentAlbum.media.length + " ";
+					title += currentAlbum.numMedia + " ";
 					title += util._t(".title-media") + " ";
 					if (components.length >= 5)
 						title += util._t(".title-in-day-album");
@@ -195,7 +195,7 @@
 
 			if (components.length > 1 && media === null) {
 				title += " <span class='title-count'>(";
-				title += currentAlbum.media.length + " ";
+				title += currentAlbum.numMedia + " ";
 				title += util._t(".title-media") + " ";
 				if (components.length >= gpsLevelNumber + 2)
 					title += util._t(".title-in-gps-album");
@@ -244,13 +244,13 @@
 			if (
 				components.length > 2 &&
 				(media === null && ! util.isAlbumWithOneMedia(currentAlbum)) &&
-				(currentAlbum.media.length || currentAlbum.subalbums.length)
+				(currentAlbum.numMedia || currentAlbum.subalbums.length)
 			) {
 				title += " <span class='title-count'>(";
 				title += util._t(".title-found") + ' ';
-				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
-				if (currentAlbum.media.length) {
-					title += currentAlbum.media.length + " ";
+				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.numMedia;
+				if (currentAlbum.numMedia) {
+					title += currentAlbum.numMedia + " ";
 					title += util._t(".title-media");
 					if (currentAlbum.subalbums.length)
 						title += " " + util._t(".title-and") + " ";
@@ -259,10 +259,10 @@
 					title += currentAlbum.subalbums.length + " ";
 					title += util._t(".title-albums");
 				}
-				// if (currentAlbum.media.length > 0 && currentAlbum.subalbums.length > 0) {
+				// if (currentAlbum.numMedia > 0 && currentAlbum.subalbums.length > 0) {
 				//   title += ", ";
 				//   title += util._t(".title-total") + " ";
-				//   title += currentAlbum.media.length + currentAlbum.subalbums.length;
+				//   title += currentAlbum.numMedia + currentAlbum.subalbums.length;
 				// }
 
 				if (currentAlbum.hasOwnProperty("removedStopWords") && currentAlbum.removedStopWords.length) {
@@ -311,12 +311,12 @@
 			if (
 				components.length > 2 &&
 				(media === null && ! util.isAlbumWithOneMedia(currentAlbum)) &&
-				(currentAlbum.media.length || currentAlbum.subalbums.length)
+				(currentAlbum.numMedia || currentAlbum.subalbums.length)
 			) {
 				title += " <span class='title-count'>(";
-				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
-				if (currentAlbum.media.length) {
-					title += currentAlbum.media.length + " ";
+				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.numMedia;
+				if (currentAlbum.numMedia) {
+					title += currentAlbum.numMedia + " ";
 					title += util._t(".title-media");
 					if (currentAlbum.subalbums.length)
 						title += " " + util._t(".title-and") + " ";
@@ -325,10 +325,10 @@
 					title += currentAlbum.subalbums.length + " ";
 					title += util._t(".title-albums");
 				}
-				// if (currentAlbum.media.length > 0 && currentAlbum.subalbums.length > 0) {
+				// if (currentAlbum.numMedia > 0 && currentAlbum.subalbums.length > 0) {
 				//   title += ", ";
 				//   title += util._t(".title-total") + " ";
-				//   title += currentAlbum.media.length + currentAlbum.subalbums.length;
+				//   title += currentAlbum.numMedia + currentAlbum.subalbums.length;
 				// }
 
 				if (currentAlbum.hasOwnProperty("removedStopWords") && currentAlbum.removedStopWords.length) {
@@ -413,9 +413,9 @@
 
 			if (components.length > 1 && media === null) {
 				title += " <span class='title-count'>(";
-				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.media.length;
-				if (currentAlbum.media.length) {
-					title += currentAlbum.media.length + " ";
+				numMediaInSubAlbums = currentAlbum.numMediaInSubTree - currentAlbum.numMedia;
+				if (currentAlbum.numMedia) {
+					title += currentAlbum.numMedia + " ";
 					title += util._t(".title-media") + " ";
 					title += util._t(".title-in-album");
 					if (numMediaInSubAlbums)
@@ -423,14 +423,14 @@
 				}
 				if (numMediaInSubAlbums) {
 					title += numMediaInSubAlbums + " ";
-					if (! currentAlbum.media.length)
+					if (! currentAlbum.numMedia)
 						title += util._t(".title-media") + " ";
 					title += util._t(".title-in-subalbums");
 				}
-				if (currentAlbum.media.length > 0 && numMediaInSubAlbums > 0) {
+				if (currentAlbum.numMedia > 0 && numMediaInSubAlbums > 0) {
 					title += ", ";
 					title += util._t(".title-total") + " ";
-					title += currentAlbum.media.length + numMediaInSubAlbums;
+					title += currentAlbum.numMedia + numMediaInSubAlbums;
 				}
 				title += ")</span>";
 			}
@@ -507,14 +507,14 @@
 			// keep generating the html page title
 			if (media !== null)
 				documentTitle = util.trimExtension(media.name) + documentTitle;
-			else if (currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1)
+			else if (currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.numMedia == 1)
 				documentTitle = util.trimExtension(currentAlbum.media[0].name) + " \u00ab " + documentTitle;
 
 			document.title = documentTitle;
 		}
 
 
-		if (media === null && currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1) {
+		if (media === null && currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.numMedia == 1) {
 			title += " " + raquo + "<span class='media-name'>" + util.trimExtension(currentAlbum.media[0].name) + "</span>";
 		}
 
@@ -781,7 +781,7 @@
 					util.correctPrevNextPosition();
 				}
 
-				if (album.media.length > 1) {
+				if (album.numMedia > 1) {
 					TopFunctions.showMedia(album, prevMedia, 'left');
 					TopFunctions.showMedia(album, nextMedia, 'right');
 				}
@@ -805,7 +805,7 @@
 						event.data.currentZoom = pS.getCurrentZoom();
 						util.scaleMedia(event);
 
-						if (album.media.length > 1) {
+						if (album.numMedia > 1) {
 							event.data.id = "left";
 							event.data.media = prevMedia;
 							event.data.callback = f.pinchSwipeInitialization;
@@ -882,7 +882,7 @@
 				$("#album-view").removeClass("hidden-by-option");
 			}
 
-			if (currentAlbum.media.length == 1) {
+			if (currentAlbum.numMedia == 1) {
 				$("#album-view").addClass("hidden");
 			} else {
 				$("#album-view, #album-view #subalbums").removeClass("hidden");
@@ -916,7 +916,7 @@
 			// $(".links").addClass("hidden");
 			$(".media-box").show();
 
-			if (currentAlbum.media.length == 1) {
+			if (currentAlbum.numMedia == 1) {
 				$("#next").hide();
 				$("#prev").hide();
 				// $("#media-view").addClass("no-bottom-space");
@@ -936,10 +936,10 @@
 
 			nextMedia = null;
 			prevMedia = null;
-			if (currentAlbum.media.length > 1) {
+			if (currentAlbum.numMedia > 1) {
 				// prepare for previous media
 				previousMediaIndex = (currentMediaIndex === 0 ?
-										currentAlbum.media.length - 1 :
+										currentAlbum.numMedia - 1 :
 										currentMediaIndex - 1);
 				prevMedia = currentAlbum.media[previousMediaIndex];
 				prevMedia.byDateName = util.pathJoin([prevMedia.dayAlbum, prevMedia.name]);
@@ -947,7 +947,7 @@
 					prevMedia.byGpsName = util.pathJoin([prevMedia.gpsAlbum, prevMedia.name]);
 
 				// prepare for next media
-				nextMediaIndex = (currentMediaIndex === currentAlbum.media.length - 1 ?
+				nextMediaIndex = (currentMediaIndex === currentAlbum.numMedia - 1 ?
 									0 :
 									currentMediaIndex + 1);
 				nextMedia = currentAlbum.media[nextMediaIndex];
@@ -1023,7 +1023,7 @@
 			$("#prev").off();
 
 			upLink = phFl.upHash(location.hash);
-			if (currentAlbum.media.length == 1) {
+			if (currentAlbum.numMedia == 1) {
 				mediaBoxInnerElement.css('cursor', 'default');
 			} else {
 				array = phFl.decodeHash(location.hash);
@@ -1542,11 +1542,11 @@
 				Options.spacing = Options.spacingToggle;
 			f.setCookie("spacing", Options.spacing);
 			f.updateMenu();
-			if (currentAlbum.subalbums.length > 1 && currentAlbum.media.length > 1)
+			if (currentAlbum.subalbums.length > 1 && currentAlbum.numMedia > 1)
 				TopFunctions.showAlbum("refreshBoth");
 			else if (currentAlbum.subalbums.length > 1)
 				TopFunctions.showAlbum("refreshSubalbums");
-			else if (currentAlbum.media.length > 1)
+			else if (currentAlbum.numMedia > 1)
 				TopFunctions.showAlbum("refreshMedia");
 
 			if ($('.leaflet-popup').html())
@@ -1767,14 +1767,14 @@
 				util.isSearchCacheBase(currentAlbum.cacheBase) ||
 				util.isMapCacheBase(currentAlbum.cacheBase)
 			);
-			tooBig = currentAlbum.path.split("/").length < 4 && currentAlbum.media.length > Options.big_virtual_folders_threshold;
+			tooBig = currentAlbum.path.split("/").length < 4 && currentAlbum.numMedia > Options.big_virtual_folders_threshold;
 			if (populateMedia === true && isVirtualAlbum)
 				populateMedia = populateMedia && (! tooBig || Options.show_big_virtual_folders);
 
 			if (isVirtualAlbum && tooBig && ! Options.show_big_virtual_folders) {
 				$("#thumbs").empty();
 				var tooManyImagesText =
-					"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + currentAlbum.media.length +
+					"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + currentAlbum.numMedia +
 					", <span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + Options.big_virtual_folders_threshold + "</span>, " +
 					"<span id='show-them'>" + util._t("#show-them") + "</span>";
 				$("#error-too-many-images").html(tooManyImagesText).show();
@@ -1799,7 +1799,7 @@
 				//
 				// media loop
 				//
-				for (i = 0; i < currentAlbum.media.length; ++i) {
+				for (i = 0; i < currentAlbum.numMedia; ++i) {
 					ithMedia = currentAlbum.media[i];
 
 					width = ithMedia.metadata.size[0];
@@ -1917,7 +1917,7 @@
 				thumbsElement.append.apply(thumbsElement, media);
 
 				// generate the click event for the map for every media
-				for (i = 0; i < currentAlbum.media.length; ++i) {
+				for (i = 0; i < currentAlbum.numMedia; ++i) {
 					$("#media-map-link-" + i).off('click').on(
 						'click',
 						{media: ithMedia, album: currentAlbum, clickedSelector: "#media-map-link-" + i},
@@ -1936,7 +1936,7 @@
 					firstEscKey = false;
 				} else {
 					// reset mediaLink
-					if (currentAlbum.media.length)
+					if (currentAlbum.numMedia)
 						mediaLink = phFl.encodeHash(currentAlbum, currentAlbum.media[0], savedSearchSubAlbumHash, savedSearchAlbumHash);
 					else
 						mediaLink = "#!/" + currentAlbum.cacheBase;
@@ -2245,7 +2245,7 @@
 			// currentMedia !== null
 			$("#media-view").removeClass("hidden");
 
-			if (currentAlbum.media.length == 1)
+			if (currentAlbum.numMedia == 1)
 				$("#album-view").addClass("hidden");
 			else
 				$("#album-view, #album-view #subalbums").removeClass("hidden");
@@ -2800,7 +2800,7 @@
 							}
 						}
 
-						if (! MapFunctions.mapAlbum.media.length) {
+						if (! MapFunctions.mapAlbum.numMedia) {
 							$("#loading").hide();
 							MapFunctions.popup.remove();
 						} else {
@@ -2815,7 +2815,7 @@
 
 							// $("#loading").show();
 
-							if (jQuery.isEmptyObject(MapFunctions.mapAlbum) || MapFunctions.mapAlbum.media.length == 0 || ! evt.originalEvent.shiftKey) {
+							if (jQuery.isEmptyObject(MapFunctions.mapAlbum) || MapFunctions.mapAlbum.numMedia == 0 || ! evt.originalEvent.shiftKey) {
 								// normal click or shift click without previous content
 
 								lastAlbumIndex ++;
@@ -2879,7 +2879,7 @@
 				function endPreparingMapAlbumAndUpdatePopup() {
 					if (updateMapAlbum) {
 						MapFunctions.mapAlbum.numMedia = MapFunctions.mapAlbum.media.length;
-						MapFunctions.mapAlbum.numMediaInSubTree = MapFunctions.mapAlbum.media.length;
+						MapFunctions.mapAlbum.numMediaInSubTree = MapFunctions.mapAlbum.numMedia;
 						MapFunctions.mapAlbum.numPositionsInTree = MapFunctions.mapAlbum.positionsAndMediaInTree.length;
 						MapFunctions.mapAlbum.numsProtectedMediaInSubTree = {"": MapFunctions.mapAlbum.numMedia};
 						// media must be initially sorted by date not reverse, as json they are in albums
