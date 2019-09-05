@@ -345,6 +345,11 @@
 							emptyAlbum.path = albumCacheBase.replace(Options.cache_folder_separator, "/");
 							if (util.isSearchCacheBase(albumCacheBase))
 								util.noResults(emptyAlbum);
+							else {
+								// wrong hash: it might be the hash of a protected content
+								$("#loading").hide();
+								util.showAuthForm();
+							}
 						} else {
 							// look for a protected album
 							// baseJsonFileExists = false;
