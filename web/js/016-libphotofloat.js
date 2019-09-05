@@ -340,12 +340,12 @@
 						};
 
 						if (! PhotoFloat.guessedPasswordsMd5.length) {
-							emptyAlbum.media = [];
-							emptyAlbum.subalbums = [];
-							emptyAlbum.path = albumCacheBase.replace(Options.cache_folder_separator, "/");
-							if (util.isSearchCacheBase(albumCacheBase))
+							if (util.isSearchCacheBase(albumCacheBase)) {
+								emptyAlbum.media = [];
+								emptyAlbum.subalbums = [];
+								emptyAlbum.path = albumCacheBase.replace(Options.cache_folder_separator, "/");
 								util.noResults(emptyAlbum);
-							else {
+							} else {
 								// wrong hash: it might be the hash of a protected content
 								$("#loading").hide();
 								util.showAuthForm(true);
