@@ -16,7 +16,7 @@ var popupRefreshType = "previousAlbum";
 var destHash = null;
 var destMedia = null;
 var destAlbum = null;
-var perhapsIsAProtectedMedia = false;
+// var perhapsIsAProtectedMedia = false;
 var Options = {};
 var isMobile = {
 	Android: function() {
