@@ -104,9 +104,10 @@ $(document).ready(function() {
 			if (isAuth) {
 				// if (upLink && (currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)))
 				// 	pS.swipeDown(upLink);
-				$("#auth-text").hide();
-				$("#album-view, #media-view, #my-modal").css("opacity", "");
-				util.goUpInHash();
+				$('#auth-close')[0].click();
+				// $("#auth-text").hide();
+				// $("#album-view, #media-view, #my-modal").css("opacity", "");
+				// util.goUpInHash();
 				return false;
 			} else if ($("ul#right-menu").hasClass("expand")) {
 				toggleMenu();

@@ -392,6 +392,7 @@
 	<div id="by-name-reverse-media-sorting" class="sort-message"></div>
 
 	<div id="auth-text">
+		<div id="auth-close" style="top: 22px; right: 22px;"></div>
 		<form id="auth-form">
 			<div id="auth-question"></div>
 			<input id="password" type="password" />

@@ -1025,6 +1025,15 @@
 		$("#album-view, #media-view, #my-modal, #no-results").css("opacity", "0.2");
 		$("#auth-text").stop().fadeIn(1000);
 		$("#password").focus();
+
+		$('#auth-close').on(
+			'click',
+			function() {
+				$("#auth-text").hide();
+				$("#album-view, #media-view, #my-modal").css("opacity", "");
+				Utilities.goUpInHash();
+			}
+		);
 	};
 
 	/* Error displays */
@@ -1062,7 +1071,7 @@
 		$("body, html").css("overflow", "hidden");
 	};
 
-	Utilities.prototype.goUpInHash = function() {
+	Utilities.goUpInHash = function() {
 		var hashList = window.location.hash.split(Options.cache_folder_separator);
 
 		if (hashList.length == 1) {
@@ -1270,6 +1279,7 @@
 	Utilities.prototype.sortBy = Utilities.sortBy;
 	Utilities.prototype.isByGpsCacheBase = Utilities.isByGpsCacheBase;
 	Utilities.prototype.setPinchButtonsPosition = Utilities.setPinchButtonsPosition;
+	Utilities.prototype.goUpInHash = Utilities.goUpInHash;
 
 	window.Utilities = Utilities;
 }());
