@@ -1139,14 +1139,14 @@ class TreeWalker:
 				indented_message("passwords must be processed", "passwords file didn't exist in previous scanner run", 4)
 				must_process_passwords = True
 			elif len(patterns_and_passwords) > 0 and passwords_marker_mtime is not None and passwords_marker_mtime >= json_files_min_mtime:
-				indented_message("passwords must be processed", "'" + Options.config['passwords_marker'] + "'' newer than json file or absent", 4)
+				indented_message("passwords must be processed", "'" + Options.config['passwords_marker'] + "' newer than json file or absent", 4)
 				must_process_passwords = True
 
 		# check album name against passwords
 		if must_process_passwords:
 			# if passwords are to be processed, this invalidates the cache albums
 			album_cache_hit = False
-			
+
 			next_level()
 			message("processing passwords for album...", "", 4)
 			# restart with the inherited passwords
