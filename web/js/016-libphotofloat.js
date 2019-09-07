@@ -194,8 +194,8 @@
 
 	PhotoFloat.addPositionsAndMedia = function(theAlbum, {getMedia = false, getPositions = false, protectedCacheBase = null} = {}) {
 
-		var positionsPromise = addPositions(theAlbum);
 		var mediaPromise = addMedia(theAlbum);
+		var positionsPromise = addPositions(theAlbum);
 		return new Promise(
 			function(resolve_AddPositionsAndMedia) {
 				Promise.all([positionsPromise, mediaPromise]).then(
@@ -217,7 +217,7 @@
 				function(resolve_addMedia, internalReject) {
 					var mediaJsonFile;
 					// are media still missing?
-					if (getMedia && ! album.hasOwnProperty("media")) {
+					if (getMedia && (! album.hasOwnProperty("media") || album.media.length !== numMedia)) {
 						if (protectedCacheBase)
 							mediaJsonFile = protectedCacheBase + '.media.json';
 						else
@@ -246,7 +246,7 @@
 				function(resolve_addPositions, reject_addPositionsAndMedia) {
 					var positionJsonFile;
 					// are positions still missing?
-					if (getPositions && ! album.hasOwnProperty("positionsAndMediaInTree")) {
+					if (getPositions && (! album.hasOwnProperty("positionsAndMediaInTree") || album.positionsAndMediaInTree.length !== numPositionsInTree)) {
 						if (protectedCacheBase)
 							positionJsonFile = protectedCacheBase + '.positions.json';
 						else
