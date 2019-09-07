@@ -10,6 +10,7 @@ import os.path
 import tempfile
 import hashlib
 import unicodedata
+import magic
 import sys
 import copy
 from datetime import datetime
@@ -948,49 +949,53 @@ class Media(object):
 		self._attributes["dateTimeDir"] = dir_mtime
 		self._attributes["mediaType"] = "photo"
 
-		message("opening media file...", "", 5)
-		media_path_pointer = open(media_path, 'rb')
-		indented_message("media file opened!", "", 5)
+		mime_type = magic.from_file(media_path)
 
-		image = None
-		try:
+		if mime_type.find("image/") == 0:
+			indented_message("it's an image!", "", 5)
+			message("opening image file...", "", 5)
+			media_path_pointer = open(media_path, 'rb')
 			next_level()
-			message("opening media with PIL...", "", 5)
-			image = Image.open(media_path_pointer)
-		except KeyboardInterrupt:
-			raise
-		except IOError:
-			indented_message("Image.open() raised IOError, could be a video", "", 5)
-		except ValueError:
-			# PIL cannot read this file (seen for .xpm file)
-			# next lines will detect that the image is invalid
-			indented_message("ValueError when Image.open(), could be a video", "", 5)
-		else:
-			indented_message("media opened with PIL!", "", 5)
+			message("opening the image with PIL...", "", 5)
+			try:
+				image = None
+				image = Image.open(media_path_pointer)
+			except IOError:
+				indented_message("PIL IOError opening the image", "", 5)
+				self.is_valid = False
+			except ValueError:
+				# PIL cannot read this file (seen for .xpm file)
+				# next lines will detect that the image is invalid
+				indented_message("PIL ValueError opening the image", "", 5)
+				self.is_valid = False
+			else:
+				indented_message("media opened with PIL!", "", 5)
 
-		if self.is_valid:
 			if isinstance(image, Image.Image):
 				self._photo_metadata(image)
 				self._photo_thumbnails(image, media_path, Options.config['cache_path'])
 				if self.has_gps_data:
 					message("looking for geonames...", "", 5)
 					self.get_geonames()
-			else:
-				# try with video detection
-				self._video_metadata(media_path)
-				if self.is_video:
-					self._video_transcode(thumbs_path, media_path)
-					if self.is_valid:
-						self._video_thumbnails(thumbs_path, media_path)
+			back_level()
+			media_path_pointer.close()
+		elif mime_type.find("video/") == 0:
+			# try with video detection
+			self._video_metadata(media_path)
+			if self.is_video:
+				self._video_transcode(thumbs_path, media_path)
+				if self.is_valid:
+					self._video_thumbnails(thumbs_path, media_path)
 
-						if self.has_gps_data:
-							message("looking for geonames...", "", 5)
-							self.get_geonames()
-				else:
-					indented_message("error transcodind, not a video?", "", 5)
-					self.is_valid = False
-		back_level()
-		media_path_pointer.close()
+					if self.has_gps_data:
+						message("looking for geonames...", "", 5)
+						self.get_geonames()
+			else:
+				indented_message("error transcoding, not a video?", "", 5)
+				self.is_valid = False
+		else:
+			indented_message("not an image nor a video", "", 5)
+			self.is_valid = False
 		back_level()
 		return
 
