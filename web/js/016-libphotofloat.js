@@ -217,7 +217,7 @@
 				function(resolve_addMedia, internalReject) {
 					var mediaJsonFile;
 					// are media still missing?
-					if (getMedia && (! album.hasOwnProperty("media") || album.media.length !== numMedia)) {
+					if (getMedia && (! album.hasOwnProperty("media") || album.media.length !== album.numMedia)) {
 						if (protectedCacheBase)
 							mediaJsonFile = protectedCacheBase + '.media.json';
 						else
@@ -246,7 +246,7 @@
 				function(resolve_addPositions, reject_addPositionsAndMedia) {
 					var positionJsonFile;
 					// are positions still missing?
-					if (getPositions && (! album.hasOwnProperty("positionsAndMediaInTree") || album.positionsAndMediaInTree.length !== numPositionsInTree)) {
+					if (getPositions && (! album.hasOwnProperty("positionsAndMediaInTree") || album.positionsAndMediaInTree.length !== album.numPositionsInTree)) {
 						if (protectedCacheBase)
 							positionJsonFile = protectedCacheBase + '.positions.json';
 						else
