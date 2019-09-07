@@ -8,13 +8,14 @@ MyPhotoShare needs:
 * the web server `php` module installed (optional if accepting degraded mode, see below)
 * `php5-gd` in order to create albums share images (optional if accepting degraded mode, see below)
 * `python3`
-* `python-numpy`
-* `python-requests`
-* `python-pil`
-* `python-unidecode`
+* `python3-magic`
+* `python3-numpy`
+* `python3-requests`
+* `python3-pil`
+* `python3-unidecode`
+* `python3-exif`
 * `avconv` / `ffmpeg` in order to be able to manage videos
 * `curl`, used by minify script
-* `python-exif`
 * `exiftool`
 
 ### Optional
