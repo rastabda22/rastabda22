@@ -62,7 +62,6 @@
 		titleAnchorClasses = 'title-anchor';
 		if (isMobile.any())
 			titleAnchorClasses += ' mobile';
-		titleAnchorClassesItalics = titleAnchorClasses + ' italic';
 
 		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 		var fillInSpan = "<span id='fill-in-map-link'></span>";
@@ -521,7 +520,7 @@
 					var whereLinks = '', thisCacheBase, name, documentTitle;
 
 					if (theAlbum.hasOwnProperty('')) {
-						albumTypeString = "<a href='#!/" + Options.by_gps_string + "'" + util._t('#by-gps') + ']</a> ' + ' ' + raquo + ' ';
+						// var albumTypeString = "<a href='#!/" + Options.by_gps_string + "'" + util._t('#by-gps') + ']</a> ' + ' ' + raquo + ' ';
 						for (var i = 2; i < theAlbum.ancestorsNames.length; i ++) {
 							name = theAlbum.ancestorsNames[i];
 							if (i == 3 && util.isByDateCacheBase(Options.album_to_search_in))
@@ -838,8 +837,7 @@
 
 		var text, thumbnailSize, triggerLoad, mediaHtml, mediaSelector, mediaSrc;
 		var exposureTime, heightForMedia, heightForMediaAndTitle;
-		var savedSearchSubAlbumHash, savedSearchAlbumHash;
-		var previousMediaIndex, nextMediaIndex, array;
+		var previousMediaIndex, nextMediaIndex;
 
 		$(".media-bar").show();
 
@@ -1017,7 +1015,7 @@
 			if (currentAlbum.numMedia == 1) {
 				mediaBoxInnerElement.css('cursor', 'default');
 			} else {
-				var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+				[albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
 				// nextLink = phFl.encodeHash(currentAlbum, nextMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
 				// prevLink = phFl.encodeHash(currentAlbum, prevMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
@@ -1644,7 +1642,7 @@
 			// delete randomSubAlbum.theSubalbum;
 			var titleName, randomMediaLink, goTo, humanGeonames;
 			var randomMedia = randomSubAlbum.media[index];
-			var id = phFl.hashCode(subalbum.cacheBase)
+			var id = phFl.hashCode(subalbum.cacheBase);
 			var mediaSrc = util.chooseThumbnail(randomSubAlbum, randomMedia, Options.album_thumb_size);
 
 			mediaWidth = randomMedia.metadata.size[0];
@@ -1725,14 +1723,14 @@
 		// end of insertRandomImage function
 
 
-		var i, imageLink, linkContainer, container, image, media, thumbsElement, subalbumsElement, mediaHash, thumbHash, thumbnailSize;
+		var i, imageLink, linkContainer, container, image, media, thumbsElement, subalbumsElement, thumbHash, thumbnailSize;
 		var width, height, thumbWidth, thumbHeight, imageString, calculatedWidth, calculatedHeight, populateMedia;
 		var albumViewWidth, correctedAlbumThumbSize = Options.album_thumb_size;
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
 		var tooBig = false, isVirtualAlbum = false;
 		var mapLinkIcon, id, ithMedia;
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
-		var array, folderArray, folder, folderName, folderTitle, savedSearchSubAlbumHash, savedSearchAlbumHash;
+		var folderArray, folder, folderName, folderTitle;
 
 		numSubAlbumsReady = 0;
 
@@ -1937,7 +1935,7 @@
 					populate == "refreshSubalbums" ||
 					populateMedia == "refreshBoth"
 				) {
-					subalbums = [];
+					// var subalbums = [];
 
 					// resize down the album buttons if they are too wide
 					albumViewWidth = $("body").width() -

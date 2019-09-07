@@ -104,7 +104,7 @@
 	};
 
 	PhotoFloat.addPositionsToSubalbums = function(thisAlbum) {
-		var iSubalbum, iPosition, iPhoto, position, subalbum;
+		var iSubalbum, iPosition, iPhoto, position, subalbum, albumFromCache;
 		var positions = thisAlbum.positionsAndMediaInTree;
 		if (! thisAlbum.hasOwnProperty("subalbums")) {
 			albumFromCache = PhotoFloat.getAlbumFromCache(thisAlbum.cacheBase);
@@ -374,7 +374,7 @@
 	};
 
 	PhotoFloat.getSingleProtectedCacheBase = function(protectedCacheBase, album, {getMedia = false, getPositions = false} = {}) {
-		var protectedDirectory = protectedCacheBase.substring(0, protectedCacheBase.indexOf('/'));
+		// var protectedDirectory = protectedCacheBase.substring(0, protectedCacheBase.indexOf('/'));
 
 		// this function is needed in order to get a single json file, either protected or not
 
@@ -802,7 +802,7 @@
 								let ithPromise = new Promise(
 									function(resolve_ithPromise, reject) {
 
-										let index = iComplex;
+										// let index = iComplex;
 										let protectedCacheBase;
 										let codesComplexCombination = theCodesComplexCombinationsToGet[iComplex];
 										let codesCombinationsLists = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombination);
@@ -1149,7 +1149,7 @@
 
 				function nextAlbum(album) {
 
-					var i, numMedia, subalbum;
+					var i, numMedia;
 
 					if (album.numMediaInSubTree == 0) {
 						error();

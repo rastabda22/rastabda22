@@ -505,25 +505,12 @@
 		return 0;
 	};
 
-	Utilities.properSizeIndex = function(size) {
-		// returns the reduction size index to be used for the size given as argument;
-		// a return value of len(Options.reduced_sizes) means the original image
-
-		for (var i = 0; i < Options.reduced_sizes.length; i ++) {
-			if (size < Options.reduced_sizes[i]) {
-				return i;
-			}
-		}
-
-		return len(Options.reduced_sizes);
-	};
-
 	Utilities.nextSize = function() {
 		// returns the next bigger image size than that of the photo in DOM
 		// returns 0 if the next bigger image is the original image
 		// returns false if in the DOM there is the original image
 
-		theNextSizeIndex = Utilities.nextSizeIndex();
+		var theNextSizeIndex = Utilities.nextSizeIndex();
 
 		if (theNextSizeIndex === false)
 			return false;
@@ -712,7 +699,7 @@
 		// it adjusts width, height and position so that it fits in its parent (<div class="bedia-box-inner">, or the whole window)
 		// and centers vertically
 		var media = event.data.media, mediaElement, container, photoSrc, previousSrc;
-		var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth();
+		var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth(), containerRatio;
 		var mediaBarBottom = 0;
 		var mediaWidth, mediaHeight, attrWidth, attrHeight;
 		var id = event.data.id;
@@ -749,7 +736,6 @@
 		mediaHeight = media.metadata.size[1];
 		attrWidth = mediaWidth;
 		attrHeight = mediaHeight;
-		ratio = mediaWidth / mediaHeight;
 
 		if (fullScreenStatus && Modernizr.fullscreen)
 			container = $(window);
@@ -939,7 +925,7 @@
 		// haversine formula
 		var d_r_lon = r_lon2 - r_lon1;
 		var d_r_lat = r_lat2 - r_lat1;
-		var a = Math.sin(d_r_lat / 2) ** 2 + Math.cos(r_lat1) * Math.cos(r_lat2) * Math.sin(d_r_lon / 2) ** 2;
+		var a = Math.pow(Math.sin(d_r_lat / 2), 2) + Math.cos(r_lat1) * Math.cos(r_lat2) * Math.pow(Math.sin(d_r_lon / 2), 2);
 		var c = 2 * Math.asin(Math.sqrt(a));
 		var earth_radius = 6371000;  // radius of the earth in m
 		var dist = earth_radius * c;

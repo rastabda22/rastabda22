@@ -80,9 +80,9 @@ $(document).ready(function() {
 
 	// triplicate the #mediaview content in order to swipe the media
 	var titleContent = $("#album-view").clone().children().first();
+	$(".media-box#center").prepend(titleContent[0].outerHTML);
 	util.mediaBoxGenerator('left');
 	util.mediaBoxGenerator('right');
-	$(".media-box#center").prepend(titleContent)[0].outerHTML;
 
 	/* Displays */
 

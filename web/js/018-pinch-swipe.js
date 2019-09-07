@@ -7,7 +7,7 @@
 	var dragSpeed = 500;
 	var mediaContainerSelector = ".media-box#center .media-box-inner";
 	var mediaSelector = mediaContainerSelector + " img";
-	var currentZoom, zoomAfterFirstPinch, zoomIncrement = 1.5625, zoomDecrement = 1 / zoomIncrement;
+	var currentZoom, zoomIncrement = 1.5625, zoomDecrement = 1 / zoomIncrement;
 	var maxAllowedZoom;
 	var currentTranslateX = 0;
 	var currentTranslateY = 0;
@@ -21,8 +21,7 @@
 	var baseTranslateX = 0, baseTranslateY = 0;
 
 	var dragVector;
-
-
+	var pastMediaWidthOnScreen, pastMediaHeightOnScreen, pastMediaRatioOnScreen;
 
 	/* constructor */
 	function PinchSwipe() {
@@ -147,6 +146,8 @@
 	};
 
 	PinchSwipe.pinchIn = function(requiredZoom) {
+		var windowRatio;
+		var mediaWidthOnScreen;
 		if (typeof requiredZoom !== "undefined") {
 			PinchSwipe.pinchInOut(
 				currentZoom,
@@ -201,29 +202,7 @@
 	};
 
 	PinchSwipe.pinchOut = function() {
-		function showTitleAndBottomThumbnails() {
-			$(".title").removeClass("hidden-by-pinch");
-			$("#album-view").removeClass("hidden-by-pinch");
-			var event = {data: {}};
-			event.data.resize = true;
-			event.data.id = "center";
-			event.data.media = currentMedia;
-			event.data.callback = function() {
-				mediaWidthOnScreen = $(mediaSelector)[0].width;
-				// currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
-				// currentZoom = 1;
-				// zoomAfterFirstPinch = currentZoom;
-				util.setPinchButtonsPosition();
-				util.correctPrevNextPosition();
-				PinchSwipe.setPinchButtonsVisibility();
-				mediaWidth = parseInt($(mediaSelector).css("width"));
-				mediaHeight = parseInt($(mediaSelector).css("height"));
-			};
-			event.data.callbackType = "pinch";
-			event.data.currentZoom = currentZoom;
-			pastMediaWidthOnScreen = $(mediaSelector)[0].width;
-			util.scaleMedia(event);
-		}
+		var mediaWidthOnScreen, mediaHeightOnScreen, mediaRatioOnScreen, windowRatio;
 
 		if (currentZoom <= 1 && $(".title").hasClass("hidden-by-pinch")) {
 		// if (currentZoom <= zoomAfterFirstPinch && $(".title").hasClass("hidden-by-pinch")) {
@@ -247,6 +226,31 @@
 						showTitleAndBottomThumbnails();
 				}
 			);
+		}
+		// end of function body
+
+		function showTitleAndBottomThumbnails() {
+			$(".title").removeClass("hidden-by-pinch");
+			$("#album-view").removeClass("hidden-by-pinch");
+			var event = {data: {}};
+			event.data.resize = true;
+			event.data.id = "center";
+			event.data.media = currentMedia;
+			event.data.callback = function() {
+				mediaWidthOnScreen = $(mediaSelector)[0].width;
+				// currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
+				// currentZoom = 1;
+				// zoomAfterFirstPinch = currentZoom;
+				util.setPinchButtonsPosition();
+				util.correctPrevNextPosition();
+				PinchSwipe.setPinchButtonsVisibility();
+				mediaWidth = parseInt($(mediaSelector).css("width"));
+				mediaHeight = parseInt($(mediaSelector).css("height"));
+			};
+			event.data.callbackType = "pinch";
+			event.data.currentZoom = currentZoom;
+			pastMediaWidthOnScreen = $(mediaSelector)[0].width;
+			util.scaleMedia(event);
 		}
 	};
 
@@ -519,8 +523,6 @@
 		$("#media-box-container").on(
 			'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
 			function() {
-				var savedSearchSubAlbumHash, savedSearchAlbumHash;
-
 				$("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
 				$("#media-box-container").css("transition-duration", "0s");
 
@@ -556,8 +558,6 @@
 		$("#media-box-container").on(
 			'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
 			function() {
-				var savedSearchSubAlbumHash, savedSearchAlbumHash;
-
 				$("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
 				$("#media-box-container").css("transition-duration", "0s");
 
