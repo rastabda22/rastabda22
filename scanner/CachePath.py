@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 # do not remove previous line: it's not a comment!
 
-# @python2
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import os.path
 from datetime import datetime
 import hashlib

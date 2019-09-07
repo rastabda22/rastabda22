@@ -7,7 +7,7 @@ MyPhotoShare needs:
 * a working web server (e.g. `apache`, `nginx`, etc.)
 * the web server `php` module installed (optional if accepting degraded mode, see below)
 * `php5-gd` in order to create albums share images (optional if accepting degraded mode, see below)
-* `python2`; running it with Python 3 is possible, replace `python2` by `python3` in the first line in `scanner/main.py` and install the corresponding Python 3 dependencies; on debian jessie and stretch systems, however, python3-opencv isn't available yet, so you won't get face detection
+* `python3`
 * `python-numpy`
 * `python-requests`
 * `python-pil`
@@ -186,8 +186,6 @@ Instead or running `myphotoshare` as `root`, you can use whatever user that have
 When creating square thumbnail, MyPhotoShare can use [OpenCV](https://opencv.org/) to locate faces on a photo and crop the thumbnail centering the face.
 
 First check that MyPhotoShare dependencies on OpenCV are satisfied.
-
-On Debian Jessie or Ubuntu 16.04, Python 3 binding for OpenCV is not yet available. You'll have to run MyPhotoShare with Python 2. To do that, change `python3` to `python2` in the first line of `scanner/main.py`.
 
 When running the scanner with a verbose level of at least 3, the scanner will print if it can load OpenCV and use it.
 

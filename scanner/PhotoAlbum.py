@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, division
+
 
 # gps code got from https://gist.github.com/erans/983821
 
@@ -20,15 +20,8 @@ try:
 except:
 	pass
 
-# @python2
-try:
-	import configparser
-except ImportError:
-	import ConfigParser as configparser
-try:
-	from configparser import NoOptionError
-except ImportError:
-	from ConfigParser import NoOptionError
+import configparser
+from configparser import NoOptionError
 
 import math
 import numpy as np
@@ -98,11 +91,7 @@ class Album(object):
 					if Options.config['cache_folders_num_digits_array'] == []:
 						self._subdir = Options.config['default_cache_album']
 					else:
-						# @python2
-						if sys.version_info < (3, ):
-							hash = hashlib.md5(path).hexdigest()
-						else:
-							hash = hashlib.md5(os.fsencode(path)).hexdigest()
+						hash = hashlib.md5(os.fsencode(path)).hexdigest()
 						self._subdir = ''
 						previous_digits = 0
 						for digits in Options.config['cache_folders_num_digits_array']:
@@ -281,7 +270,7 @@ class Album(object):
 
 	def copy(self):
 		album = Album(None)
-		for key, value in self.__dict__.items():
+		for key, value in list(self.__dict__.items()):
 			if key == "subalbums_list":
 				# subalbus must be new objects
 				setattr(album, key, [subalbum.copy() for subalbum in value])
@@ -329,7 +318,7 @@ class Album(object):
 			for subalbum in self.subalbums_list:
 				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
-		if ',' in self.nums_protected_media_in_sub_tree.keys():
+		if ',' in list(self.nums_protected_media_in_sub_tree.keys()):
 			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(',')
 		else:
 			self.num_media_in_sub_tree = 0
@@ -362,7 +351,7 @@ class Album(object):
 			for subalbum in self.subalbums_list:
 				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
-		if self.complex_combination in self.nums_protected_media_in_sub_tree.keys():
+		if self.complex_combination in list(self.nums_protected_media_in_sub_tree.keys()):
 			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.complex_combination)
 		else:
 			self.num_media_in_sub_tree = 0
@@ -477,7 +466,7 @@ class Album(object):
 				Options.set_obsolete_json_version_flag()
 				return [None, True]
 
-			codes_combinations = json_file_dict['numsProtectedMediaInSubTree'].keys()
+			codes_combinations = list(json_file_dict['numsProtectedMediaInSubTree'].keys())
 			if len(codes_combinations) != len(json_files):
 				indented_message("not an album cache hit", "some protected or unprotected json file is missing", 4)
 				back_level()
@@ -570,7 +559,7 @@ class Album(object):
 					# "numsProtectedMediaInSubTree": subalbum.nums_protected_media_in_sub_tree
 				}
 				nums_protected_by_code = {}
-				for complex_identifiers_combination in subalbum.nums_protected_media_in_sub_tree.keys():
+				for complex_identifiers_combination in list(subalbum.nums_protected_media_in_sub_tree.keys()):
 					if complex_identifiers_combination == ',':
 						nums_protected_by_code[''] = subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 					else:
@@ -657,7 +646,7 @@ class Album(object):
 			"jsonVersion": Options.json_version
 		}
 		nums_protected_by_code = {}
-		for complex_identifiers_combination in self.nums_protected_media_in_sub_tree.keys():
+		for complex_identifiers_combination in list(self.nums_protected_media_in_sub_tree.keys()):
 			if complex_identifiers_combination == ',':
 				nums_protected_by_code[''] = self.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 			else:
@@ -871,13 +860,13 @@ class NumsProtected(object):
 		return self.nums_protected[complex_identifiers_combination]
 
 	def keys(self):
-		return self.nums_protected.keys()
+		return list(self.nums_protected.keys())
 
 	def non_trivial_keys(self):
-		return [key for key in self.keys() if key != ',']
+		return [key for key in list(self.keys()) if key != ',']
 
 	def merge(self, nums_protected):
-		for complex_identifiers_combination in nums_protected.keys():
+		for complex_identifiers_combination in list(nums_protected.keys()):
 			try:
 				self.nums_protected[complex_identifiers_combination] += nums_protected.nums_protected[complex_identifiers_combination]
 			except KeyError:
@@ -1299,13 +1288,13 @@ class Media(object):
 			# if k not in ['JPEGThumbnail', 'TIFFThumbnail', 'Filename', 'EXIF MakerNote']:
 			if k not in ['JPEGThumbnail', 'TIFFThumbnail'] and k[0:10] != 'Thumbnail ':
 				# remove the first word in the key, so that the key has no prefix as with PIL
-				k_modified = unicode(k)
+				k_modified = str(k)
 				for prefix in ['EXIF ', 'GPS ', 'Image ', 'Interoperability ', 'MakerNote ']:
 					if k[0:len(prefix)] == prefix:
-						k_modified = unicode(k[len(prefix):])
+						k_modified = str(k[len(prefix):])
 						break
 				try:
-					exif[k_modified] = unicode(exif_all_tags[k])
+					exif[k_modified] = str(exif_all_tags[k])
 					# exifread returs some value as a fraction, convert it to a float
 					position = exif[k_modified].find('/')
 					if position > -1:
@@ -2403,9 +2392,6 @@ class Metadata(object):
 
 		# With Python2, section names are string. As we retrieve file names as unicode,
 		# we can't find them in the ConfigParser dictionary
-		# @python2
-		if sys.version_info < (3,):
-			name = str(name)
 
 		# Title
 		if album_ini.has_section(name):

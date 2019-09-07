@@ -1,3 +1,4 @@
+* `python3` is now used in scanner
 * albums and media can be protected with passwords: protected content isn't exposed in the album tree or the cache
   * new option: `passwords_file`: a file which is read when the options file is read, it defines the passwords and their respective identifiers
   * new option: `passwords_marker`: the name of the files to put in the albums tree in order to specify the passwords for albums and files

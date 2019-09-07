@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 from datetime import datetime
 import os
@@ -11,11 +10,7 @@ import hashlib
 import random
 from pprint import pprint
 
-# @python2
-try:
-	import configparser
-except ImportError:
-	import ConfigParser as configparser
+import configparser
 
 from Utilities import message, indented_message, next_level, back_level, find, find_in_usr_share, make_dir, file_mtime
 
@@ -301,21 +296,12 @@ def get_options():
 	# values that have type != string
 	back_level()
 
-	# @python2
-	if sys.version_info < (3, ):
-		if config['index_html_path']:
-			config['index_html_path'] = os.path.abspath(config['index_html_path']).decode(sys.getfilesystemencoding())
-		if config['album_path']:
-			config['album_path'] = os.path.abspath(config['album_path']).decode(sys.getfilesystemencoding())
-		if config['cache_path']:
-			config['cache_path'] = os.path.abspath(config['cache_path']).decode(sys.getfilesystemencoding())
-	else:
-		if config['index_html_path']:
-			config['index_html_path'] = os.fsdecode(os.path.abspath(config['index_html_path']))
-		if config['album_path']:
-			config['album_path'] = os.fsdecode(os.path.abspath(config['album_path']))
-		if config['cache_path']:
-			config['cache_path'] = os.fsdecode(os.path.abspath(config['cache_path']))
+	if config['index_html_path']:
+		config['index_html_path'] = os.fsdecode(os.path.abspath(config['index_html_path']))
+	if config['album_path']:
+		config['album_path'] = os.fsdecode(os.path.abspath(config['album_path']))
+	if config['cache_path']:
+		config['cache_path'] = os.fsdecode(os.path.abspath(config['cache_path']))
 
 	# try to guess value not given
 	guessed_index_dir = False
@@ -424,7 +410,7 @@ def get_options():
 						continue
 					while True:
 						password_code = str(random.randint(min_random, max_random))
-						password_md5 = hashlib.md5(password).hexdigest()
+						password_md5 = hashlib.md5(password.encode('utf-8')).hexdigest()
 						if password_code not in password_codes:
 							password_codes.append(password_code)
 							passwords_md5.append(password_md5)

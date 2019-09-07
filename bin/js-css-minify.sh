@@ -60,14 +60,6 @@ case $MINIFY_JS in
 			exit 1
 		fi
 	;;
-	jsmin2)
-		python2 -c 'import jsmin' > /dev/null 2>&1
-		if [ $? -ne 0 ]; then
-			( >&2 echo "'jsmin' for Python2 is not installed. Look for package 'python-jsmin' or 'https://github.com/tikitu/jsmin'" )
-			( >&2 echo "Aborting..." )
-			exit 1
-		fi
-	;;
 	jsmin3)
 		python3 -c 'import jsmin' > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
@@ -106,14 +98,6 @@ case $MINIFY_CSS in
 		cssmin -h > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
 			( >&2 echo "'cssmin' is not installed. Look for package 'cssmin' or 'https://github.com/zacharyvoase/cssmin'" )
-			( >&2 echo "Aborting..." )
-			exit 1
-		fi
-	;;
-	rcssmin2)
-		python2 -c 'import rcssmin' > /dev/null 2>&1
-		if [ $? -ne 0 ]; then
-			( >&2 echo "'rcssmin' for Python2 is not installed. Look for package 'python-rcssmin' or 'https://github.com/ndparker/rcssmin'" )
 			( >&2 echo "Aborting..." )
 			exit 1
 		fi
@@ -193,10 +177,6 @@ while read jsfile; do
 			curl -X POST -s --data-urlencode "input@$jsfile" https://javascript-minifier.com/raw > $newfile
 		;;
 
-		jsmin2)
-			python2 -m jsmin $jsfile > $newfile
-		;;
-
 		jsmin3)
 			python3 -m jsmin $jsfile > $newfile
 		;;
@@ -240,10 +220,6 @@ ls -1 *.css | grep -Ev "min.css$" | while read cssfile; do
 
 		cssmin)
 			cssmin < $cssfile > $newfile
-		;;
-
-		rcssmin2)
-			python2 -m rcssmin < $cssfile > $newfile
 		;;
 
 		rcssmin3)

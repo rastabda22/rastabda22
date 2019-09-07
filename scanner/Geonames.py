@@ -100,12 +100,11 @@ class Geonames(object):
 				return result
 		indented_message("geonames not found in cache", "", 5)
 
-		# python2 and 3 versions of json.loads (used inside _decode_nearby_place()) throw different exception, be prepared
-		# see https://stackoverflow.com/questions/53355389/python-2-3-compatibility-issue-with-exception
-		try:
-		    json_parse_exception = json.decoder.JSONDecodeError # Python3
-		except AttributeError:  # Python2
-		    json_parse_exception = ValueError
+		# # python2 and 3 versions of json.loads (used inside _decode_nearby_place()) throw different exception, be prepared
+		# # see https://stackoverflow.com/questions/53355389/python-2-3-compatibility-issue-with-exception
+		# json_parse_exception = json.decoder.JSONDecodeError
+		# print("--------------------", json_parse_exception)
+		# quit()
 
 		got = False
 		if Options.config['get_geonames_online']:
@@ -129,9 +128,10 @@ class Geonames(object):
 						# result is a number, which means that the request to geonames.org produced  an error
 						try_number += 1
 						indented_message("geonames.org returned error code, retrying...", "try = " + str(try_number) + ", error code = " + str(result), 5)
-				except json_parse_exception:
+				except JSONDecodeError:
+				# except json_parse_exception:
 					# error when decoding
-					# json.loads() function inside _decode_nearby_place() can throwed JSONDecodeError (python3) or ValueError (python2):
+					# json.loads() function inside _decode_nearby_place() can throw JSONDecodeError (python3) or ValueError (python2):
 					try_number += 1
 					if try_number <= 3:
 						indented_message("error deconding geonames.org response, retrying...", "try = " + str(try_number), 5)
@@ -302,5 +302,5 @@ class Geonames(object):
 			mu = Geonames.reevaluate_centers(clusters)
 			if first_time:
 				first_time = False
-		cluster_list = [cluster for key, cluster in clusters.items()]
+		cluster_list = [cluster for key, cluster in list(clusters.items())]
 		return cluster_list

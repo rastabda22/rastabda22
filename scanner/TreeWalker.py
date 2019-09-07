@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# @python2
-from __future__ import unicode_literals
-
 import os
 import os.path
 import sys
@@ -152,7 +149,7 @@ class TreeWalker:
 			message("saving all protected albums to json files...", "", 4)
 			next_level()
 
-			keys = self.protected_origin_album.keys()
+			keys = list(self.protected_origin_album.keys())
 			keys = sorted(sorted(keys), key = lambda single_key: len(single_key.split('-')))
 			for complex_identifiers_combination in keys:
 				album = self.protected_origin_album[complex_identifiers_combination]
@@ -864,7 +861,7 @@ class TreeWalker:
 			# remove the extension
 			media_or_album_name = os.path.splitext(media_or_album_name)[0]
 		elements = [media_or_album.title, media_or_album.description, " ".join(media_or_album.tags), media_or_album_name]
-		phrase = ' '.join(filter(None, elements))
+		phrase = ' '.join([_f for _f in elements if _f])
 
 		alphabetic_phrase = remove_non_alphabetic_characters(remove_digits(phrase))
 		lowercase_phrase = switch_to_lowercase(alphabetic_phrase)
@@ -1061,22 +1058,26 @@ class TreeWalker:
 					else:
 						message("maybe an album cache hit", "trying to import album from '" + json_file_list[0] + "' and others", 5)
 						# the following is the instruction which could raise the error
-						[cached_album, must_process_passwords] = Album.from_json_files(json_file_list)
-
-						if cached_album is None:
-							indented_message("not an album cache hit", "null cached album", 4)
-						else:
-							indented_message("json file imported", "", 5)
-							if not hasattr(cached_album, "absolute_path"):
-								indented_message("not an album cache hit", "cached album hasn't absolute_path", 4)
-								cached_album = None
-							elif cached_album.absolute_path != absolute_path:
-								indented_message("not an album cache hit", "cached album's absolute_path != absolute_path", 4)
-								cached_album = None
+						try:
+							[cached_album, must_process_passwords] = Album.from_json_files(json_file_list)
+							if cached_album is None:
+								indented_message("not an album cache hit", "null cached album", 4)
 							else:
-								indented_message("album cache hit!", "", 4)
-								album = cached_album
-								album_cache_hit = True
+								indented_message("json file imported", "", 5)
+								if not hasattr(cached_album, "absolute_path"):
+									indented_message("not an album cache hit", "cached album hasn't absolute_path", 4)
+									cached_album = None
+								elif cached_album.absolute_path != absolute_path:
+									indented_message("not an album cache hit", "cached album's absolute_path != absolute_path", 4)
+									cached_album = None
+								else:
+									indented_message("album cache hit!", "", 4)
+									album = cached_album
+									album_cache_hit = True
+						except KeyError:
+							indented_message("not an album cache hit", "error in passwords codes", 4)
+							cached_album = None
+							must_process_passwords = True
 			else:
 				must_process_album_ini = True
 			# except IOError:
@@ -1205,11 +1206,7 @@ class TreeWalker:
 		files_in_dir = []
 		for entry in self._listdir_sorted_alphabetically(absolute_path):
 			try:
-				# @python2
-				if sys.version_info < (3, ):
-					entry = entry.decode(sys.getfilesystemencoding())
-				else:
-					entry = os.fsdecode(entry)
+				entry = os.fsdecode(entry)
 			except KeyboardInterrupt:
 				raise
 			except:
@@ -1801,11 +1798,7 @@ class TreeWalker:
 				indented_message("decided whether to keep a cache file", cache_file, 6)
 				if match:
 					try:
-						# @python2
-						if sys.version_info < (3, ):
-							cache_file = cache_file.decode(sys.getfilesystemencoding())
-						else:
-							cache_file = os.fsdecode(cache_file)
+						cache_file = os.fsdecode(cache_file)
 					except KeyboardInterrupt:
 						raise
 					if cache_file not in json_dict['files']:

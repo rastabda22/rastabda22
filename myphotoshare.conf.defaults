@@ -83,14 +83,12 @@ debug_profile = false
 # permitted values:
 #    web_service : https://cssminifier.com/
 #    cssmin : cssmin (https://github.com/zacharyvoase/cssmin) (Default)
-#    rcssmin2: python-rcssmin (http://opensource.perlig.de/rcssmin/)
 #    rcssmin3: python3-rcssmin (http://opensource.perlig.de/rcssmin/)
 css_minifier = cssmin
 
 # JavaScript minifier
 # permitted values:
 #    web_service : https://javascript-minifier.com/
-#    jsmin2 : python-jsmin (https://github.com/tikitu/jsmin)
 #    jsmin3 : python3-jsmin (https://github.com/tikitu/jsmin) (Default)
 #    uglifyjs: node-uglify (http://lisperator.net/uglifyjs/)
 js_minifier = jsmin3

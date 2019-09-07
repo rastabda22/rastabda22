@@ -56,7 +56,7 @@ Example usage::
                                          d["EXIF:DateTimeOriginal"]))
 """
 
-from __future__ import unicode_literals
+
 
 import sys
 import subprocess
@@ -66,9 +66,9 @@ import warnings
 import codecs
 
 try:        # Py3k compatibility
-    basestring
+    str
 except NameError:
-    basestring = (bytes, str)
+    str = (bytes, str)
 
 executable = "exiftool"
 """The name of the executable to run.
@@ -252,7 +252,7 @@ class ExifTool(object):
         respective Python version – as raw strings in Python 2.x and
         as Unicode strings in Python 3.x.
         """
-        params = map(fsencode, params)
+        params = list(map(fsencode, params))
         return json.loads(self.execute(b"-j", b"-n", *params).decode("utf-8"))
 
     def execute_json_values(self, *params):
@@ -277,7 +277,7 @@ class ExifTool(object):
         respective Python version – as raw strings in Python 2.x and
         as Unicode strings in Python 3.x.
         """
-        params = map(fsencode, params)
+        params = list(map(fsencode, params))
         return json.loads(self.execute(b"-j", *params).decode("utf-8"))
 
     def get_metadata_batch(self, filenames):
@@ -317,10 +317,10 @@ class ExifTool(object):
         """
         # Explicitly ruling out strings here because passing in a
         # string would lead to strange and hard-to-find errors
-        if isinstance(tags, basestring):
+        if isinstance(tags, str):
             raise TypeError("The argument 'tags' must be "
                             "an iterable of strings")
-        if isinstance(filenames, basestring):
+        if isinstance(filenames, str):
             raise TypeError("The argument 'filenames' must be "
                             "an iterable of strings")
         params = ["-" + t for t in tags]
@@ -350,7 +350,7 @@ class ExifTool(object):
         result = []
         for d in data:
             d.pop("SourceFile")
-            result.append(next(iter(d.values()), None))
+            result.append(next(iter(list(d.values())), None))
         return result
 
     def get_tag(self, tag, filename):
