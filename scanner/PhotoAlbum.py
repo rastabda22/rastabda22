@@ -949,7 +949,7 @@ class Media(object):
 		self._attributes["dateTimeDir"] = dir_mtime
 		self._attributes["mediaType"] = "photo"
 
-		mime_type = magic.from_file(media_path)
+		mime_type = magic.from_file(media_path, mime = True)
 
 		if mime_type.find("image/") == 0:
 			indented_message("it's an image!", "", 5)
