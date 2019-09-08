@@ -1795,7 +1795,7 @@ class TreeWalker:
 				next_level()
 				message("deciding whether to keep a cache file...", "", 7)
 				match = re.search(deletable_files_re, cache_file)
-				indented_message("decided whether to keep a cache file", cache_file, 6)
+				indented_message("deciding whether to keep cache file", cache_file, 6)
 				if match:
 					try:
 						cache_file = os.fsdecode(cache_file)

@@ -1392,13 +1392,13 @@ class Media(object):
 			thumb_type == "fixed_height" and
 			image_width > image_height
 		):
-			verdict = (corrected_thumb_size < image_height)
+			veredict = (corrected_thumb_size < image_height)
 		elif thumb_type == "square":
 			min_image_size = min(image_width, image_height)
-			verdict = (corrected_thumb_size < min_image_size)
+			veredict = (corrected_thumb_size < min_image_size)
 		else:
-			verdict = (corrected_thumb_size < max_image_size)
-		return verdict
+			veredict = (corrected_thumb_size < max_image_size)
+		return veredict
 
 
 	def generate_all_thumbnails(self, reduced_size_images, photo_path, thumbs_path):
