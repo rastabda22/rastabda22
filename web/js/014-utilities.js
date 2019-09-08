@@ -471,9 +471,9 @@
 
 		if (media.mediaType == "video") {
 			if (fullScreenStatus && media.name.match(/\.avi$/) === null) {
-				// .avi videos are not played by browsers
-				mediaSrc = Utilities.pathJoin([media.albumName, media.name]);
+				mediaSrc = Utilities.originalMediaPath(media);
 			} else {
+				// .avi videos are not played by browsers, use the transcoded one
 				mediaSrc = this.mediaPath(currentAlbum, media, "");
 			}
 		} else if (media.mediaType == "photo") {
@@ -562,9 +562,9 @@
 
 		if (media.mediaType == "video") {
 			if (fullScreenStatus && media.name.match(/\.avi$/) === null) {
-				// .avi videos are not played by browsers
-				mediaSrc = Utilities.pathJoin([media.albumName, media.name]);
+				mediaSrc = Utilities.originalMediaPath(media);
 			} else {
+				// .avi videos are not played by browsers, use the transcoded one
 				mediaSrc = this.mediaPath(currentAlbum, media, "");
 			}
 
@@ -624,7 +624,10 @@
 	};
 
 	Utilities.originalMediaPath = function(media) {
-		return Utilities.pathJoin([media.albumName, media.name]);
+		if (Options.browser_unsupported_mime_types.includes(media.mimeType))
+			return Utilities.pathJoin([Options.server_cache_path, media.convertedPath]);
+		else
+			return Utilities.pathJoin([media.albumName, media.name]);
 	};
 
 	Utilities.mediaPath = function(album, media, size) {

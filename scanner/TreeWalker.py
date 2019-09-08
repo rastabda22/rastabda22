@@ -1761,7 +1761,9 @@ class TreeWalker:
 			else:
 				deletable_files_re = r"(" + Options.config['cache_folder_separator'] + r"|_)" + \
 					r"transcoded(_([1-9][0-9]{0,3}[kKmM]|[1-9][0-9]{3,10})(_[1-5]?[0-9])?)?\.mp4$" + \
-					r"|(" + Options.config['cache_folder_separator'] + r"|_)[1-9][0-9]{1,4}(a|t|s|[at][sf])?\.jpg$"
+					r"|(" + Options.config['cache_folder_separator'] + r"|_)[1-9][0-9]{1,4}(a|t|s|[at][sf])?\.jpg$" + \
+					r"|" + Options.config['cache_folder_separator'] + r"original\.(jpg|png)$"
+				# deletable_files_re = r(-|_)transcoded(_([1-9][0-9]{0,3}[kKmM]|[1-9][0-9]{3,10})(_[1-5]?[0-9])?)?\.mp4$|(-|_)[1-9][0-9]{1,4}(a|t|s|[at][sf])?\.jpg$"
 			info = "in subdir " + subdir
 
 		message("searching for stale cache files", info, 4)
@@ -1808,7 +1810,7 @@ class TreeWalker:
 						os.unlink(file_to_delete)
 						indented_message("stale cache file removed", "", 5)
 				else:
-					indented_message("not a stale cache file, keeping it", cache_file, 2)
+					indented_message("not a stale cache file, keeping it", "", 2)
 					back_level()
 					continue
 				back_level()

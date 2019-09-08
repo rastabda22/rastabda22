@@ -77,6 +77,9 @@ max_random = 999999999
 max_media_in_json_file = 20
 max_media_from_positions_in_json_file = 20
 
+# svg is not in the following list because Pillow doesn't support it
+config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x-tga']
+
 
 # set this variable to a new value (previously was a number, now it may include letters)
 # whenever the json files structure changes (the app version can be used)
@@ -99,9 +102,10 @@ max_media_from_positions_in_json_file = 20
 # json_version = 3.992 since combination renamed to complexCombination
 # json_version = 3.994 since complexCombination renamed to codesComplexCombination
 # json_version = 3.995 since removed ancestorsCacheBase and unnecessary ancestorsCenter
+# json_version = 3.996 since mimeType and convertedPath added as media properties
 
-# json_version = 0
-json_version = 3.995
+json_version = 0
+# json_version = 3.996
 
 
 def set_obsolete_json_version_flag():

@@ -957,8 +957,8 @@ class Media(object):
 			media_path_pointer = open(media_path, 'rb')
 			next_level()
 			message("opening the image with PIL...", "", 5)
+			image = None
 			try:
-				image = None
 				image = Image.open(media_path_pointer)
 			except IOError:
 				indented_message("PIL IOError opening the image", "", 5)
@@ -968,10 +968,21 @@ class Media(object):
 				# next lines will detect that the image is invalid
 				indented_message("PIL ValueError opening the image", "", 5)
 				self.is_valid = False
+			except OSError:
+				# PIL throws this exceptcion with svg files
+				indented_message("PIL OSError opening the image", "is it an svg image?", 5)
+				self.is_valid = False
 			else:
 				indented_message("media opened with PIL!", "", 5)
 
 			if isinstance(image, Image.Image):
+				self.mime_type = mime_type
+				if Options.config['copy_exif_into_reductions']:
+					try:
+						self.exif_by_PIL = image.info['exif']
+					except KeyError:
+						pass
+
 				self._photo_metadata(image)
 				self._photo_thumbnails(image, media_path, Options.config['cache_path'])
 				if self.has_gps_data:
@@ -985,6 +996,7 @@ class Media(object):
 			if self.is_video:
 				self._video_transcode(thumbs_path, media_path)
 				if self.is_valid:
+					self.mime_type = mime_type
 					self._video_thumbnails(thumbs_path, media_path)
 
 					if self.has_gps_data:
@@ -1381,6 +1393,40 @@ class Media(object):
 
 		self._photo_thumbnails_cascade(image, photo_path, thumbs_path)
 
+		if self.mime_type in Options.config['browser_unsupported_mime_types']:
+			# convert the original image to jpg because the browser won't be able to show it
+			message("browser unsupported mime type", "", 4)
+			next_level()
+			album_prefix = remove_folders_marker(self.album.cache_base) + Options.config["cache_folder_separator"]
+			if album_prefix == Options.config["cache_folder_separator"]:
+				album_prefix = ""
+			thumbs_path_with_subdir = os.path.join(thumbs_path, self.album.subdir)
+			converted_path_without_cache_path = os.path.join(self.album.subdir, album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.jpg")
+			converted_path = os.path.join(thumbs_path_with_subdir, album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.jpg")
+
+			image_jpg = image.convert('RGB')
+			try:
+				message("saving the original image as jpg...", converted_path_without_cache_path, 4)
+				if hasattr(image, 'exif_by_PIL'):
+					image.save(converted_path, quality=95, exif=exif)
+				else:
+					image.save(converted_path, quality=95)
+				indented_message("original image saved as jpg!", "", 4)
+			except OSError:
+				indented_message("error saving the original image as jpg", "", 4)
+				# this is when the image has transparecy, jpg cannot handel it -> save as png
+				# note: png doesn't know exif data
+				converted_path_without_cache_path = os.path.join(self.album.subdir, album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.png")
+				message("saving the original image as png...", converted_path_without_cache_path, 4)
+				converted_path = os.path.join(thumbs_path_with_subdir, album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.png")
+				if hasattr(image, 'exif_by_PIL'):
+					image.save(converted_path, compress_level = 9, exif=exif)
+				else:
+					image.save(converted_path, compress_level = 9)
+				indented_message("original image saved as png!", "", 4)
+			self.converted_path = converted_path_without_cache_path
+			back_level()
+
 
 	@staticmethod
 	def _thumbnail_is_smaller_than(image, thumb_size, thumb_type="", mobile_bigger=False):
@@ -1416,8 +1462,6 @@ class Media(object):
 						thumb = self.reduce_size_or_make_thumbnail(thumb_or_reduced_size_image, photo_path, thumbs_path, thumb_size, thumb_type, mobile_bigger)
 						thumbs_and_reduced_size_images = [thumb] + thumbs_and_reduced_size_images
 						break
-
-
 
 	def _photo_thumbnails_cascade(self, image, photo_path, thumbs_path):
 		# this function calls self.reduce_size_or_make_thumbnail() with the proper image self.reduce_size_or_make_thumbnail() needs
@@ -1497,6 +1541,7 @@ class Media(object):
 
 
 	def reduce_size_or_make_thumbnail(self, start_image, original_path, thumbs_path, thumb_size, thumb_type="", mobile_bigger=False):
+
 		album_prefix = remove_folders_marker(self.album.cache_base) + Options.config["cache_folder_separator"]
 		if album_prefix == Options.config["cache_folder_separator"]:
 			album_prefix = ""
@@ -1779,8 +1824,6 @@ class Media(object):
 			else:
 				message("thumbing for media...", "", 5)
 			start_image_copy.thumbnail((actual_thumb_size, actual_thumb_size), Image.ANTIALIAS)
-			if Options.config['copy_exif_into_reductions']:
-				exif = start_image.info['exif']
 			next_level()
 			if not mobile_bigger and original_thumb_size > Options.config['album_thumb_size'] or mobile_bigger and original_thumb_size > int(Options.config['album_thumb_size'] * Options.config['mobile_thumbnail_factor']):
 				message("size reduced (" + str(original_thumb_size) + ")", "", 4)
@@ -1824,8 +1867,8 @@ class Media(object):
 			jpeg_quality = Options.config['jpeg_quality']
 			if thumb_type:
 				# use maximum quality for album and media thumbnails
-				jpeg_quality = 100
-			if Options.config['copy_exif_into_reductions']:
+				jpeg_quality = 95
+			if hasattr(start_image, 'exif_by_PIL'):
 				start_image_copy_for_saving.save(thumb_path, "JPEG", quality=jpeg_quality, exif=exif)
 			else:
 				start_image_copy_for_saving.save(thumb_path, "JPEG", quality=jpeg_quality)
@@ -1836,7 +1879,7 @@ class Media(object):
 				msg = "album thumbnail saved"
 			else:
 				msg = "media thumbnail saved"
-			if Options.config['copy_exif_into_reductions']:
+			if hasattr(start_image, 'exif_by_PIL'):
 				msg += " with exif data"
 			message(msg, "", 4)
 			back_level()
@@ -1852,7 +1895,7 @@ class Media(object):
 		except IOError:
 			message("saving (2nd try)...", info_string, 5)
 			try:
-				if Options.config['copy_exif_into_reductions']:
+				if hasattr(start_image, 'exif_by_PIL'):
 					start_image_copy_for_saving.convert('RGB').save(thumb_path, "JPEG", quality=Options.config['jpeg_quality'], exif=exif)
 				else:
 					start_image_copy_for_saving.convert('RGB').save(thumb_path, "JPEG", quality=Options.config['jpeg_quality'])
@@ -1863,7 +1906,7 @@ class Media(object):
 					msg = "saved for subalbums (2nd try, " + str(original_thumb_size) + ")"
 				else:
 					msg = "saved for media (2nd try, " + str(original_thumb_size) + ")"
-				if Options.config['copy_exif_into_reductions']:
+				if hasattr(start_image, 'exif_by_PIL'):
 					msg += " with exif data"
 				message(msg, "", 2)
 				back_level()
@@ -1875,8 +1918,9 @@ class Media(object):
 			back_level()
 			back_level()
 			return start_image_copy
-		except:
-			indented_message(str(original_thumb_size) + " thumbnail", "save failure to " + os.path.basename(thumb_path), 1)
+		except Exception as e:
+			print(e)
+			indented_message("thumbnail save failure with error: " + e, str(original_thumb_size) + " -> " + os.path.basename(thumb_path), 2)
 			try:
 				os.unlink(thumb_path)
 			except OSError:
@@ -2122,6 +2166,8 @@ class Media(object):
 						)
 					)
 				)
+		if hasattr(self, "converted_path"):
+			caches.append(self.converted_path)
 		return caches
 
 	@property
@@ -2347,6 +2393,11 @@ class Media(object):
 		media["albumName"] = self.album_path[:len(self.album_path) - len(self.name) - 1]
 		media["foldersCacheBase"] = self.album.cache_base
 		media["cacheSubdir"] = self.album.subdir
+		media["mimeType"] = self.mime_type
+
+		if hasattr(self, "converted_path"):
+			media["convertedPath"] = self.converted_path
+
 		return media
 
 
