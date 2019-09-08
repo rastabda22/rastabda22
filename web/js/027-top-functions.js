@@ -1066,8 +1066,9 @@
 		}
 
 		var originalMediaPath = encodeURI(util.originalMediaPath(media));
+		var trueOriginalMediaPath = encodeURI(util.trueOriginalMediaPath(media));
 		$(".media-box#" + id + " .original-link").attr("target", "_blank").attr("href", originalMediaPath);
-		$(".media-box#" + id + " .download-link").attr("href", originalMediaPath).attr("download", "");
+		$(".media-box#" + id + " .download-link").attr("href", trueOriginalMediaPath).attr("download", "");
 		if (util.hasGpsData(media)) {
 			$(".media-box#" + id + " .menu-map-link").on(
 				'click',

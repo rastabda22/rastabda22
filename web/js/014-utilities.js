@@ -627,7 +627,11 @@
 		if (Options.browser_unsupported_mime_types.includes(media.mimeType))
 			return Utilities.pathJoin([Options.server_cache_path, media.convertedPath]);
 		else
-			return Utilities.pathJoin([media.albumName, media.name]);
+			return Utilities.trueOriginalMediaPath(media);
+	};
+
+	Utilities.prototype.trueOriginalMediaPath = function(media) {
+		return Utilities.pathJoin([media.albumName, media.name]);
 	};
 
 	Utilities.mediaPath = function(album, media, size) {
