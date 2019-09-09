@@ -539,7 +539,7 @@
 
 	};
 
-	PhotoFloat.mergeProtectedAlbum = function(album, protectedAlbum, {getMedia, getPositions, mediaAndSubalbumsOnly = false}) {
+	PhotoFloat.mergeProtectedAlbum = function(album, protectedAlbum, {getMedia, getPositions, mediaAndPositionsOnly = false}) {
 		// add the protected album content to the unprotected one
 
 		var formerMediaLength;
@@ -581,7 +581,7 @@
 			}
 		}
 
-		if (! mediaAndSubalbumsOnly) {
+		if (! mediaAndPositionsOnly) {
 			if (protectedAlbum.subalbums.length) {
 				PhotoFloat.mergeProtectedSubalbums(album, protectedAlbum);
 			}
@@ -681,7 +681,7 @@
 									PhotoFloat.mergeProtectedAlbum(
 										album,
 										numberedAlbum,
-										{"getMedia": getMedia, "getPositions": getPositions, "mediaAndSubalbumsOnly": true}
+										{"getMedia": getMedia, "getPositions": getPositions, "mediaAndPositionsOnly": true}
 									);
 									// if (getMedia && ! album.includedCodesComplexCombinations[numberedAlbum.codesComplexCombination].hasMedia)
 									// 	album.includedCodesComplexCombinations[numberedAlbum.codesComplexCombination].hasMedia = true;
@@ -862,7 +862,7 @@
 														PhotoFloat.mergeProtectedAlbum(
 															album,
 															protectedAlbum,
-															{"getMedia": getMedia, "getPositions": getPositions, "mediaAndSubalbumsOnly": true}
+															{"getMedia": getMedia, "getPositions": getPositions, "mediaAndPositionsOnly": true}
 														);
 														// if (getMedia && ! album.includedCodesComplexCombinations[protectedAlbum.codesComplexCombination].hasMedia)
 														// 	album.includedCodesComplexCombinations[protectedAlbum.codesComplexCombination].hasMedia = true;
