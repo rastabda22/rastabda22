@@ -443,7 +443,7 @@ class Album(object):
 			indented_message(save_media_end, "", 4)
 
 	@staticmethod
-	def from_json_files(json_files):
+	def from_json_files(json_files, json_files_min_mtime):
 		next_level()
 		files = "'" + json_files[0] + "' and others"
 		message("reading album from json files...", files, 5)
@@ -508,7 +508,6 @@ class Album(object):
 			return [None, True]
 		else:
 			message("converting album to dict from json files...", files, 5)
-			json_file_list, json_files_min_mtime = json_files_and_mtime(self.album.cache_base)
 			album = Album.from_dict(dictionary, json_files_min_mtime)
 			indented_message("album converted to dict from json files", files, 4)
 			return [album, must_process_passwords]
