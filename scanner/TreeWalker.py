@@ -537,7 +537,8 @@ class TreeWalker:
 				place_codes = list(self.tree_by_geonames[country_code][region_code].keys())
 				place_names = [self.tree_by_geonames[country_code][region_code][place_code][0].place_name for place_code in self.tree_by_geonames[country_code][region_code]]
 				# sort the codes according to the place names, https://stackoverflow.com/questions/6618515/sorting-list-based-on-values-from-another-list#answer-6618543
-				place_codes = [place_code for _, place_code in sorted(zip(place_names, place_codes))]
+				place_codes = [place_code for _, place_code in sorted(zip(place_names, place_codes), key = lambda t: t[0])]
+				# place_codes = [place_code for _, place_code in sorted(zip(place_names, place_codes))]
 				for place_code in place_codes:
 					media_list = self.tree_by_geonames[country_code][region_code][place_code]
 					place_code = str(place_code)
