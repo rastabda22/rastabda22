@@ -66,23 +66,6 @@
 		}
 	};
 
-	// Utilities.prototype.numPasswords = function(album) {
-	// 	var numsProtected = JSON.parse(JSON.stringify(album.numsProtectedMediaInSubTree));
-	// 	delete numsProtected[''];
-	// 	var passwordCodes = [];
-	// 	for (key in Object.keys(numsProtected)) {
-	// 		codesArrays = phFl.convertComplexCombinationsIntoLists(key);
-	// 		passwordCodes = passwordCodes.concat(codesArrays[0]).concat(codesArrays[1]);
-	// 	}
-	// 	// reduce to unique values
-	// 	passwordCodes = passwordCodes.filter(
-	// 		function (x, i, a) {
-	// 			return a.indexOf(x) == i;
-	// 		}
-	// 	);
-	// 	return passwordCodes.length;
-	// };
-
 	Utilities.prototype.cloneObject = function(object) {
 		return Object.assign({}, object);
 	};

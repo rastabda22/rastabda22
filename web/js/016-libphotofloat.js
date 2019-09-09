@@ -202,10 +202,6 @@
 					function() {
 						resolve_AddPositionsAndMedia(theAlbum);
 					}
-				// ).catch(
-				// 	function(album) {
-				// 		console.trace();
-				// 	}
 				);
 			}
 		);
