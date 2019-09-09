@@ -844,6 +844,8 @@
 															if (protectedAlbum.hasOwnProperty(property) && property !== "codesComplexCombination")
 																album[property] = protectedAlbum[property];
 														}
+														if (album.hasOwnProperty("media") && ! album.hasOwnProperty("numMedia"))
+															album.numMedia = album.media.length;
 														let hasMedia = getMedia;
 														if (protectedAlbum.hasOwnProperty("media"))
 															hasMedia = true;
