@@ -630,7 +630,7 @@
 			return Utilities.trueOriginalMediaPath(media);
 	};
 
-	Utilities.prototype.trueOriginalMediaPath = function(media) {
+	Utilities.trueOriginalMediaPath = function(media) {
 		return Utilities.pathJoin([media.albumName, media.name]);
 	};
 
@@ -1252,6 +1252,7 @@
 	Utilities.prototype.sortAlbumsMedia = Utilities.sortAlbumsMedia;
 	Utilities.prototype.chooseReducedPhoto = Utilities.chooseReducedPhoto;
 	Utilities.prototype.originalMediaPath = Utilities.originalMediaPath;
+	Utilities.prototype.trueOriginalMediaPath = Utilities.trueOriginalMediaPath;
 	Utilities.prototype.mediaPath = Utilities.mediaPath;
 	Utilities.prototype.isFolderCacheBase = Utilities.isFolderCacheBase;
 	Utilities.prototype.pathJoin = Utilities.pathJoin;
