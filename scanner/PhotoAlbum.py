@@ -1554,44 +1554,34 @@ class Media(object):
 			media_thumb_size = int(round(media_thumb_size * Options.config['mobile_thumbnail_factor']))
 			album_thumb_size = int(round(album_thumb_size * Options.config['mobile_thumbnail_factor']))
 		thumb_path = os.path.join(thumbs_path_with_subdir, album_prefix + photo_cache_name(self, thumb_size, thumb_type, mobile_bigger))
-		# if the reduced image/thumbnail is there and is valid, exit immediately
 		json_file = os.path.join(thumbs_path, self.album.json_file)
-		json_file_list, json_files_min_mtime = json_files_and_mtime(self.cache_base)
+		json_file_list, json_files_min_mtime = json_files_and_mtime(self.album.cache_base)
 		_is_thumbnail = Media.is_thumbnail(thumb_type)
 		next_level()
-		message("checking reduction/thumbnail", thumb_path, 5)
-		if (
-			os.path.exists(thumbs_path_with_subdir) and
-			os.path.exists(thumb_path) and
-			file_mtime(thumb_path) >= self.datetime_file and
-			(len(json_file_list) == 0 or file_mtime(thumb_path) < file_mtime(json_file)) and
-			(
-				not _is_thumbnail and not Options.config['recreate_reduced_photos'] or
-				_is_thumbnail and not Options.config['recreate_thumbnails']
-			)
+		message("checking reduction/thumbnail...", thumb_path, 5)
+		if not os.path.exists(thumbs_path_with_subdir):
+			indented_message("unexistent thumbnails subdir", thumbs_path_with_subdir, 5)
+		elif not os.path.exists(thumb_path):
+			indented_message("unexistent reduction/thumbnail", thumb_path, 5)
+		elif file_mtime(thumb_path) < self.datetime_file:
+			indented_message("reduction/thumbnail older than media date time", thumb_path, 5)
+		elif json_files_min_mtime is not None and file_mtime(thumb_path) >= json_files_min_mtime:
+			indented_message("reduction/thumbnail newer than json files", thumb_path + ", " + json_file, 5)
+		elif (
+			_is_thumbnail and Options.config['recreate_reduced_photos'] or
+			not _is_thumbnail and Options.config['recreate_thumbnails']
 		):
+			indented_message("some option change requests recreation", "", 5)
+		else:
+			# the reduced image/thumbnail is there and is valid, exit immediately
 			indented_message("reduction/thumbnail OK, skipping", "", 5)
 			back_level()
 			return start_image
 
 		next_level()
-		message("reduction/thumbnail not OK, creating", "", 5)
+		message("so the reduction/thumbnail is not OK, creating it!", "", 5)
 		next_level()
-		if not os.path.exists(thumbs_path_with_subdir):
-			message("unexistent subdir", thumbs_path_with_subdir, 5)
-		elif not os.path.exists(thumb_path):
-			message("unexistent reduction/thumbnail", thumb_path, 5)
-		elif file_mtime(thumb_path) < self.datetime_file:
-			message("reduction/thumbnail older than media date time", thumb_path, 5)
-		elif len(json_file_list) == 0:
-			message("unexistent json files", json_file, 5)
-		elif file_mtime(thumb_path) >= json_files_min_mtime:
-			message("reduction/thumbnail newer than json files", thumb_path + ", " + json_file, 5)
-		elif not (
-			not _is_thumbnail and not Options.config['recreate_reduced_photos'] or
-			_is_thumbnail and not Options.config['recreate_thumbnails']
-		):
-			message("some option change requests recreation", "", 5)
+
 		back_level()
 
 		original_thumb_size = actual_thumb_size
