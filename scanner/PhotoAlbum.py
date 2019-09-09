@@ -1580,9 +1580,6 @@ class Media(object):
 
 		next_level()
 		message("so the reduction/thumbnail is not OK, creating it!", "", 5)
-		next_level()
-
-		back_level()
 
 		original_thumb_size = actual_thumb_size
 		info_string = str(original_thumb_size)
