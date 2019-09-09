@@ -508,12 +508,13 @@ class Album(object):
 			return [None, True]
 		else:
 			message("converting album to dict from json files...", files, 5)
-			album = Album.from_dict(dictionary)
+			json_file_list, json_files_min_mtime = json_files_and_mtime(self.album.cache_base)
+			album = Album.from_dict(dictionary, json_files_min_mtime)
 			indented_message("album converted to dict from json files", files, 4)
 			return [album, must_process_passwords]
 
 	@staticmethod
-	def from_dict(dictionary):
+	def from_dict(dictionary, json_files_min_mtime):
 		must_process_passwords = False
 		if "physicalPath" in dictionary:
 			path = dictionary["physicalPath"]
@@ -527,7 +528,7 @@ class Album(object):
 			album.password_identifiers_set = dictionary["password_identifiers_set"]
 
 		for single_media_dict in dictionary["media"]:
-			new_media = Media.from_dict(album, single_media_dict, os.path.join(Options.config['album_path'], remove_folders_marker(album.baseless_path)))
+			new_media = Media.from_dict(album, single_media_dict, os.path.join(Options.config['album_path'], remove_folders_marker(album.baseless_path)), json_files_min_mtime)
 			if new_media.is_valid:
 				album.add_single_media(new_media)
 
@@ -884,7 +885,7 @@ class NumsProtected(object):
 
 
 class Media(object):
-	def __init__(self, album, media_path, thumbs_path = None, dictionary = None):
+	def __init__(self, album, media_path, json_files_min_mtime, thumbs_path = None, dictionary = None):
 		self.password_identifiers_set = set()
 		self.album_identifiers_set = set()
 		if dictionary is not None:
@@ -892,7 +893,7 @@ class Media(object):
 			self.generate_media_from_cache(album, media_path, dictionary)
 		else:
 			 # media generation from json cache
-			 self.generate_media_from_file(album, media_path, thumbs_path)
+			 self.generate_media_from_file(album, media_path, thumbs_path, json_files_min_mtime)
 
 
 	def generate_media_from_cache(self, album, media_path, dictionary):
@@ -917,7 +918,7 @@ class Media(object):
 		self._attributes = dictionary
 
 
-	def generate_media_from_file(self, album, media_path, thumbs_path):
+	def generate_media_from_file(self, album, media_path, thumbs_path, json_files_min_mtime):
 		next_level()
 		message("entered Media init", "", 5)
 		self.album = album
@@ -984,7 +985,7 @@ class Media(object):
 						pass
 
 				self._photo_metadata(image)
-				self._photo_thumbnails(image, media_path, Options.config['cache_path'])
+				self._photo_thumbnails(image, media_path, Options.config['cache_path'], json_files_min_mtime)
 				if self.has_gps_data:
 					message("looking for geonames...", "", 5)
 					self.get_geonames()
@@ -997,7 +998,7 @@ class Media(object):
 				self._video_transcode(thumbs_path, media_path)
 				if self.is_valid:
 					self.mime_type = mime_type
-					self._video_thumbnails(thumbs_path, media_path)
+					self._video_thumbnails(thumbs_path, media_path, json_files_min_mtime)
 
 					if self.has_gps_data:
 						message("looking for geonames...", "", 5)
@@ -1361,7 +1362,7 @@ class Media(object):
 
 
 
-	def _photo_thumbnails(self, image, photo_path, thumbs_path):
+	def _photo_thumbnails(self, image, photo_path, thumbs_path, json_files_min_mtime):
 		# give image the correct orientation
 		try:
 			mirror = image
@@ -1391,7 +1392,7 @@ class Media(object):
 			# https://gitlab.com/paolobenve/myphotoshare/issues/46: some image may raise this exception
 			message("WARNING: Photo couldn't be trasposed", photo_path, 2)
 
-		self._photo_thumbnails_cascade(image, photo_path, thumbs_path)
+		self._photo_thumbnails_cascade(image, photo_path, thumbs_path, json_files_min_mtime)
 
 		if self.mime_type in Options.config['browser_unsupported_mime_types']:
 			# convert the original image to jpg because the browser won't be able to show it
@@ -1447,7 +1448,7 @@ class Media(object):
 		return veredict
 
 
-	def generate_all_thumbnails(self, reduced_size_images, photo_path, thumbs_path):
+	def generate_all_thumbnails(self, reduced_size_images, photo_path, thumbs_path, json_files_min_mtime):
 		if Options.thumbnail_types_and_sizes_list is None:
 			Options.thumbnail_types_and_sizes_list = list(thumbnail_types_and_sizes().items())
 
@@ -1459,24 +1460,24 @@ class Media(object):
 				for thumb_or_reduced_size_image in thumbs_and_reduced_size_images:
 					index += 1
 					if index == last_index or Media._thumbnail_is_smaller_than(thumb_or_reduced_size_image, thumb_size, thumb_type, mobile_bigger):
-						thumb = self.reduce_size_or_make_thumbnail(thumb_or_reduced_size_image, photo_path, thumbs_path, thumb_size, thumb_type, mobile_bigger)
+						thumb = self.reduce_size_or_make_thumbnail(thumb_or_reduced_size_image, photo_path, thumbs_path, thumb_size, json_files_min_mtime, thumb_type, mobile_bigger)
 						thumbs_and_reduced_size_images = [thumb] + thumbs_and_reduced_size_images
 						break
 
-	def _photo_thumbnails_cascade(self, image, photo_path, thumbs_path):
-		# this function calls self.reduce_size_or_make_thumbnail() with the proper image self.reduce_size_or_make_thumbnail() needs
+	def _photo_thumbnails_cascade(self, image, photo_path, thumbs_path, json_files_min_mtime):
+		# this function calls self.reduce_size_or_make_thumbnail() with the proper image needed by self.reduce_size_or_make_thumbnail()
 		# so that the thumbnail doesn't get blurred
 		reduced_size_image = image
 		reduced_size_images = []
 
 		message("checking reduced sizes", "", 5)
 		for thumb_size in Options.config['reduced_sizes']:
-			reduced_size_image = self.reduce_size_or_make_thumbnail(reduced_size_image, photo_path, thumbs_path, thumb_size)
+			reduced_size_image = self.reduce_size_or_make_thumbnail(reduced_size_image, photo_path, thumbs_path, thumb_size, json_files_min_mtime)
 			reduced_size_images = [reduced_size_image] + reduced_size_images
 		indented_message("reduced sizes checked!", "", 5)
 
 		message("checking thumbnails", "", 5)
-		self.generate_all_thumbnails(reduced_size_images, photo_path, thumbs_path)
+		self.generate_all_thumbnails(reduced_size_images, photo_path, thumbs_path, json_files_min_mtime)
 		indented_message("thumbnails checked!", "", 5)
 
 
@@ -1540,7 +1541,7 @@ class Media(object):
 					return np.mean(np.asarray(positions)).tolist()
 
 
-	def reduce_size_or_make_thumbnail(self, start_image, original_path, thumbs_path, thumb_size, thumb_type="", mobile_bigger=False):
+	def reduce_size_or_make_thumbnail(self, start_image, original_path, thumbs_path, thumb_size, json_files_min_mtime, thumb_type="", mobile_bigger=False):
 
 		album_prefix = remove_folders_marker(self.album.cache_base) + Options.config["cache_folder_separator"]
 		if album_prefix == Options.config["cache_folder_separator"]:
@@ -1554,8 +1555,7 @@ class Media(object):
 			media_thumb_size = int(round(media_thumb_size * Options.config['mobile_thumbnail_factor']))
 			album_thumb_size = int(round(album_thumb_size * Options.config['mobile_thumbnail_factor']))
 		thumb_path = os.path.join(thumbs_path_with_subdir, album_prefix + photo_cache_name(self, thumb_size, thumb_type, mobile_bigger))
-		json_file = os.path.join(thumbs_path, self.album.json_file)
-		json_file_list, json_files_min_mtime = json_files_and_mtime(self.album.cache_base)
+
 		_is_thumbnail = Media.is_thumbnail(thumb_type)
 		next_level()
 		message("checking reduction/thumbnail...", thumb_path, 5)
@@ -1566,6 +1566,7 @@ class Media(object):
 		elif file_mtime(thumb_path) < self.datetime_file:
 			indented_message("reduction/thumbnail older than media date time", thumb_path, 5)
 		elif json_files_min_mtime is not None and file_mtime(thumb_path) >= json_files_min_mtime:
+			json_file = os.path.join(thumbs_path, self.album.json_file)
 			indented_message("reduction/thumbnail newer than json files", thumb_path + ", " + json_file, 5)
 		elif (
 			_is_thumbnail and Options.config['recreate_reduced_photos'] or
@@ -1917,7 +1918,7 @@ class Media(object):
 			return start_image
 
 
-	def _video_thumbnails(self, thumbs_path, original_path):
+	def _video_thumbnails(self, thumbs_path, original_path, json_files_min_mtime):
 		(_, tfn) = tempfile.mkstemp()
 		return_code = VideoTranscodeWrapper().call(
 			'-i', original_path,    # original file to extract thumbs from
@@ -1963,7 +1964,7 @@ class Media(object):
 				mirror = image.transpose(Image.ROTATE_90)
 
 		# generate the thumbnails
-		self.generate_all_thumbnails([mirror], original_path, thumbs_path)
+		self.generate_all_thumbnails([mirror], original_path, thumbs_path, json_files_min_mtime)
 
 		try:
 			os.unlink(tfn)
@@ -2318,12 +2319,12 @@ class Media(object):
 
 
 	@staticmethod
-	def from_dict(album, dictionary, basepath):
+	def from_dict(album, dictionary, basepath, json_files_min_mtime):
 		try:
 			del dictionary["date"]
 		except TypeError:
 			# a json file for some test version could bring here
-			media = Media(album, basepath, None, dictionary)
+			media = Media(album, basepath, json_files_min_mtime, None, dictionary)
 			media.is_valid = False
 			return
 
@@ -2352,7 +2353,7 @@ class Media(object):
 								value1 = "0" + value1
 
 		indented_message("processing media from cached album", media_path, 5)
-		return Media(album, media_path, None, dictionary)
+		return Media(album, media_path, json_files_min_mtime, None, dictionary)
 
 
 	def to_dict(self):
