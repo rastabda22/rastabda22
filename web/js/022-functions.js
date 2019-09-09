@@ -403,10 +403,7 @@
 			thisAlbum !== null && (
 				util.numProtectedKeys(thisAlbum) &&
 				// ! jQuery.isEmptyObject(thisAlbum.numsProtectedMediaInSubTree) &&
-				(
-					! thisAlbum.hasOwnProperty("includedCodesComplexCombinations") ||
-					Object.keys(thisAlbum.includedCodesComplexCombinations).length < util.numProtectedKeys(thisAlbum)
-				) ||
+				Object.keys(thisAlbum.includedCodesComplexCombinations).length - 1 < util.numProtectedKeys(thisAlbum) ||
 				util.isSearchCacheBase(thisAlbum.cacheBase)
 			)
 		) {

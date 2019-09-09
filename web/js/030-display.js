@@ -252,7 +252,10 @@ $(document).ready(function() {
 						e.key === "u" &&
 						currentAlbum !== null && (
 							! jQuery.isEmptyObject(currentAlbum.numsProtectedMediaInSubTree) &&
-							(! currentAlbum.hasOwnProperty("includedCodesComplexCombinations") || Object.keys(currentAlbum.includedCodesComplexCombinations).length < util.numProtectedKeys(currentAlbum)) ||
+							(
+								! currentAlbum.hasOwnProperty("includedCodesComplexCombinations") ||
+								Object.keys(currentAlbum.includedCodesComplexCombinations).length - 1 < util.numProtectedKeys(currentAlbum)
+							) ||
 							util.isSearchCacheBase(currentAlbum.cacheBase)
 						)
 					) {

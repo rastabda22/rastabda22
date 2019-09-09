@@ -57,13 +57,9 @@
 	};
 
 	Utilities.prototype.numProtectedKeys = function(album) {
-		if (album.hasOwnProperty("numsProtectedMediaInSubTree")) {
-			var numsProtected = JSON.parse(JSON.stringify(album.numsProtectedMediaInSubTree));
-			delete numsProtected[''];
-			return Object.keys(numsProtected).length;
-		} else {
-			return false;
-		}
+		var numsProtected = JSON.parse(JSON.stringify(album.numsProtectedMediaInSubTree));
+		delete numsProtected[''];
+		return Object.keys(numsProtected).length;
 	};
 
 	Utilities.prototype.cloneObject = function(object) {
