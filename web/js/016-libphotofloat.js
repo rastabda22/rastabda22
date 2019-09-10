@@ -347,7 +347,7 @@
 							"numMediaInSubTree": 0,
 							"numPositionsInTree": 0,
 							// "includedProtectedDirectories": [],
-							"includedCodesComplexCombinations": {},
+							"includedCodesComplexCombinations": {"": false},
 							// "includedCodesComplexCombinationsCounts": [],
 							"empty": true
 						};
@@ -963,20 +963,23 @@
 				var albumFromCache = PhotoFloat.getAlbumFromCache(albumCacheBase);
 				var promise;
 				if (albumFromCache) {
-					var mustGetMedia = getMedia && (
-						Object.keys(albumFromCache.includedCodesComplexCombinations).some(
-							function(codesComplexCombination) {
-								return ! albumFromCache.includedCodesComplexCombinations[codesComplexCombination].hasMedia;
-							}
-						)
-					);
-					var mustGetPositions = getPositions && (
-						Object.keys(albumFromCache.includedCodesComplexCombinations).some(
-							function(codesComplexCombination) {
-								return ! albumFromCache.includedCodesComplexCombinations[codesComplexCombination].hasPositions;
-							}
-						)
-					);
+					var mustGetMedia = getMedia && albumFromCache.includedCodesComplexCombinations[""] !== false && ! albumFromCache.includedCodesComplexCombinations[""].hasMedia;
+					var mustGetPositions = getPositions && albumFromCache.includedCodesComplexCombinations[""] !== false && ! albumFromCache.includedCodesComplexCombinations[""].hasPositions;
+					// var mustGetMedia = getMedia && (
+					// 	Object.keys(albumFromCache.includedCodesComplexCombinations).some(
+					// 		function(codesComplexCombination) {
+					// 			return ! albumFromCache.includedCodesComplexCombinations[codesComplexCombination].hasMedia;
+					// 		}
+					// 	)
+					// );
+					// var mustGetPositions = getPositions && (
+					// 	Object.keys(albumFromCache.includedCodesComplexCombinations).some(
+					// 		function(codesComplexCombination) {
+					// 			return ! albumFromCache.includedCodesComplexCombinations[codesComplexCombination].hasPositions;
+					// 		}
+					// 	)
+					// );
+					// this call to addPositionsAndMedia adds positions and media for the unprotected album
 					promise = PhotoFloat.addPositionsAndMedia(albumFromCache, {"mustGetMedia": mustGetMedia, "mustGetPositions": mustGetPositions});
 					promise.then(
 						function(albumFromCache) {
