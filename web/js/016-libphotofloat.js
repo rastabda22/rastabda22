@@ -306,10 +306,16 @@
 					function unprotectedFileExists(unprotectedAlbum) {
 						if (unprotectedAlbum.hasOwnProperty("media"))
 							unprotectedAlbum.numMedia = unprotectedAlbum.media.length;
+						let hasMedia = getMedia, hasPositions = getPositions;
+						if (unprotectedAlbum.hasOwnProperty("media"))
+							hasMedia = true;
+						if (unprotectedAlbum.hasOwnProperty("positionsAndMediaInTree"))
+							hasPositions = true;
+
 						unprotectedAlbum.includedCodesComplexCombinations = {
 							"": {
-								hasMedia: getMedia,
-								hasPositions: getPositions,
+								hasMedia: hasMedia,
+								hasPositions: hasPositions,
 							}
 						};
 						var mustGetMedia = getMedia && ! unprotectedAlbum.hasOwnProperty("media");
