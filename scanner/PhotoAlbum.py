@@ -1568,8 +1568,8 @@ class Media(object):
 			json_file = os.path.join(thumbs_path, self.album.json_file)
 			indented_message("reduction/thumbnail newer than json files", thumb_path + ", " + json_file, 5)
 		elif (
-			_is_thumbnail and Options.config['recreate_reduced_photos'] or
-			not _is_thumbnail and Options.config['recreate_thumbnails']
+			not _is_thumbnail and Options.config['recreate_reduced_photos'] or
+			_is_thumbnail and Options.config['recreate_thumbnails']
 		):
 			indented_message("some option change requests recreation", "", 5)
 		else:
