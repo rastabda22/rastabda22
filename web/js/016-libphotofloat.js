@@ -317,7 +317,7 @@
 						if (! mustGetMedia && ! mustGetPositions) {
 							resolve_getSingleUnprotectedCacheBase(unprotectedAlbum);
 						} else {
-							var promise = PhotoFloat.addPositionsAndMedia(unprotectedAlbum, {"getMedia": mustGetMedia,"getPositions": mustGetPositions});
+							var promise = PhotoFloat.addPositionsAndMedia(unprotectedAlbum, {"mustGetMedia": mustGetMedia,"mustGetPositions": mustGetPositions});
 							promise.then(
 								function(unprotectedAlbum) {
 									resolve_getSingleUnprotectedCacheBase(unprotectedAlbum);
@@ -407,7 +407,7 @@
 						if (! mustGetMedia && ! mustGetPositions) {
 							resolve_getSingleProtectedCacheBase(protectedAlbum);
 						} else {
-							var promise = PhotoFloat.addPositionsAndMedia(protectedAlbum, {"getMedia": mustGetMedia, "getPositions": mustGetPositions, "protectedCacheBase": protectedCacheBase});
+							var promise = PhotoFloat.addPositionsAndMedia(protectedAlbum, {"mustGetMedia": mustGetMedia, "mustGetPositions": mustGetPositions, "protectedCacheBase": protectedCacheBase});
 							promise.then(
 								function(protectedAlbum) {
 									resolve_getSingleProtectedCacheBase(protectedAlbum);
@@ -971,7 +971,7 @@
 							}
 						)
 					);
-					promise = PhotoFloat.addPositionsAndMedia(albumFromCache, {"getMedia": mustGetMedia, "getPositions": mustGetPositions});
+					promise = PhotoFloat.addPositionsAndMedia(albumFromCache, {"mustGetMedia": mustGetMedia, "mustGetPositions": mustGetPositions});
 					promise.then(
 						function(albumFromCache) {
 							// if (mustGetProtectedContent) {
