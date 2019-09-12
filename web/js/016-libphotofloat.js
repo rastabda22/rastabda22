@@ -960,20 +960,24 @@
 					var mediaCodesComplexCombinationListFromObject = listsFromObject[1];
 
 					if (
+						albumCodesComplexCombinationList.length &&
+						albumCodesComplexCombinationListFromObject.length &&
+						mediaCodesComplexCombinationList.length &&
+						mediaCodesComplexCombinationListFromObject.length &&
+						albumCodesComplexCombinationListFromObject.indexOf(albumCodesComplexCombinationList[0]) !== -1 &&
+						mediaCodesComplexCombinationListFromObject.indexOf(mediaCodesComplexCombinationList[0]) !== -1
+						||
 						! albumCodesComplexCombinationList.length &&
 						! albumCodesComplexCombinationListFromObject.length &&
-						util.arrayIntersect(mediaCodesComplexCombinationList, mediaCodesComplexCombinationListFromObject).length > 0 ||
-
+						mediaCodesComplexCombinationList.length &&
+						mediaCodesComplexCombinationListFromObject.length &&
+						mediaCodesComplexCombinationListFromObject.indexOf(mediaCodesComplexCombinationList[0]) !== -1
+						||
+						albumCodesComplexCombinationList.length &&
+						albumCodesComplexCombinationListFromObject.length &&
 						! mediaCodesComplexCombinationList.length &&
 						! mediaCodesComplexCombinationListFromObject.length &&
-						util.arrayIntersect(albumCodesComplexCombinationList, albumCodesComplexCombinationListFromObject).length > 0 ||
-
-						! albumCodesComplexCombinationList.length &&
-						! albumCodesComplexCombinationListFromObject.length &&
-						! mediaCodesComplexCombinationList.length &&
-						! mediaCodesComplexCombinationListFromObject.length &&
-						util.arrayIntersect(albumCodesComplexCombinationList, albumCodesComplexCombinationListFromObject).length > 0 &&
-						util.arrayIntersect(mediaCodesComplexCombinationList, mediaCodesComplexCombinationListFromObject).length > 0
+						albumCodesComplexCombinationListFromObject.indexOf(albumCodesComplexCombinationList[0]) !== -1
 					)
 						count ++;
 				}
