@@ -1380,7 +1380,7 @@ class TreeWalker:
 					message("single media cache hit!", "reduced size images and thumbnails OK", 4)
 			else:
 				message("processing media from file", "", 5)
-				single_media = Media(album, entry_with_path, json_files_min_mtime, Options.config['cache_path'], None)
+				single_media = Media(album, entry_with_path, json_file_list, json_files_min_mtime, Options.config['cache_path'], None)
 				if Options.config['checksum']:
 					single_media._attributes["checksum"] = media_checksum
 
