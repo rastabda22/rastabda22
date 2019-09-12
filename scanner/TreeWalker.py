@@ -1041,52 +1041,49 @@ class TreeWalker:
 		json_file_list, json_files_min_mtime = json_files_and_mtime(album_cache_base)
 		cached_album = None
 		album_cache_hit = False
+
 		if Options.config['recreate_json_files']:
 			message("not an album cache hit", "forced json file recreation, some sensible option has changed", 3)
 		elif Options.json_version == 0:
 			indented_message("not an album cache hit", "json_version == 0 (debug mode)", 4)
 		elif Options.obsolete_json_version:
 			message("not an album cache hit", "obsolete json_version value", 3)
+		elif len(json_file_list) == 0:
+			message("not an album cache hit", "json files not found in cache dir", 3)
+		elif not all([os.access(json, os.R_OK) for json in json_file_list]):
+			message("not an album cache hit", "some json file unreadable", 1)
+		elif not all([os.access(json, os.W_OK) for json in json_file_list]):
+			message("not an album cache hit", "some json file unwritable", 1)
 		else:
-			if len(json_file_list) > 0:
-				if not all([os.access(json, os.R_OK) for json in json_file_list]):
-					message("not an album cache hit", "some json file unreadable", 1)
-
-				elif not all([os.access(json, os.W_OK) for json in json_file_list]):
-					message("not an album cache hit", "some json file unwritable", 1)
-				else:
-					if album_ini_good and file_mtime(album_ini_file) > json_files_min_mtime:
-						# a check on album_ini_file content would have been good:
-						# execution comes here even if album.ini hasn't anything significant
-						message("not an album cache hit", "album.ini newer than json file, recreating json file taking into account album.ini", 4)
-						must_process_album_ini = True
-					elif file_mtime(absolute_path) >= json_files_min_mtime:
-						indented_message("not an album cache hit", "album dir newer than json file", 4)
-					else:
-						message("maybe an album cache hit", "trying to import album from '" + json_file_list[0] + "' and others", 5)
-						# the following is the instruction which could raise the error
-						try:
-							[cached_album, must_process_passwords] = Album.from_json_files(json_file_list, json_files_min_mtime)
-							if cached_album is None:
-								indented_message("not an album cache hit", "null cached album", 4)
-							else:
-								indented_message("json file imported", "", 5)
-								if not hasattr(cached_album, "absolute_path"):
-									indented_message("not an album cache hit", "cached album hasn't absolute_path", 4)
-									cached_album = None
-								elif cached_album.absolute_path != absolute_path:
-									indented_message("not an album cache hit", "cached album's absolute_path != absolute_path", 4)
-									cached_album = None
-								else:
-									indented_message("album cache hit!", "", 4)
-									album = cached_album
-									album_cache_hit = True
-						except KeyError:
-							indented_message("not an album cache hit", "error in passwords codes", 4)
-							cached_album = None
-							must_process_passwords = True
+			if album_ini_good and file_mtime(album_ini_file) > json_files_min_mtime:
+				# a check on album_ini_file content would have been good:
+				# execution comes here even if album.ini hasn't anything significant
+				message("not an album cache hit", "album.ini newer than json file, recreating json file taking into account album.ini", 4)
+			elif file_mtime(absolute_path) >= json_files_min_mtime:
+				indented_message("not an album cache hit", "album dir newer than json file", 4)
 			else:
-				must_process_album_ini = True
+				message("maybe an album cache hit", "trying to import album from '" + json_file_list[0] + "' and others", 5)
+				# the following is the instruction which could raise the error
+				try:
+					[cached_album, must_process_passwords] = Album.from_json_files(json_file_list, json_files_min_mtime)
+					if cached_album is None:
+						indented_message("not an album cache hit", "null cached album", 4)
+					else:
+						indented_message("json file imported", "", 5)
+						if not hasattr(cached_album, "absolute_path"):
+							indented_message("not an album cache hit", "cached album hasn't absolute_path", 4)
+							cached_album = None
+						elif cached_album.absolute_path != absolute_path:
+							indented_message("not an album cache hit", "cached album's absolute_path != absolute_path", 4)
+							cached_album = None
+						else:
+							indented_message("album cache hit!", "", 4)
+							album = cached_album
+							album_cache_hit = True
+				except KeyError:
+					indented_message("not an album cache hit", "error in passwords codes", 4)
+					cached_album = None
+					must_process_passwords = True
 			# except IOError:
 			# 	# will execution never come here?
 			# 	indented_message("not an album cache hit", "json file unexistent", 4)
@@ -1096,6 +1093,9 @@ class TreeWalker:
 			# 	indented_message("not an album cache hit", "ValueError, AttributeError or KeyError somewhere", 4)
 			# 	album_cache_hit = False
 			# 	cached_album = None
+
+		if not album_cache_hit:
+			must_process_album_ini = True
 
 		if not os.path.exists(album_ini_file) and album_cache_hit and album.album_ini_mtime is not None:
 			# album.ini was used to create json files but has been removed
