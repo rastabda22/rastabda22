@@ -59,7 +59,7 @@ def json_files_and_mtime(cache_base):
 	complex_combinations = [identifier_and_password['password_md5'] for identifier_and_password in Options.identifiers_and_passwords]
 	all_complex_combinations += [',' + complex_combination for complex_combination in complex_combinations]
 	all_complex_combinations += [complex_combination + ',' for complex_combination in complex_combinations]
-	all_complex_combinations += [',']
+	# all_complex_combinations += [',']
 	for complex_combination in all_complex_combinations:
 		protected_json_file_with_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + complex_combination, cache_base) + ".0.json"
 		while os.path.exists(protected_json_file_with_path):
