@@ -223,7 +223,7 @@ class TreeWalker:
 				len(album.password_identifiers_set) > 0 and
 				set(album_identifiers_combination.split("-")) != album.password_identifiers_set
 			):
-				message("album protected by album password, not saving it", album.absolute_path, 4)
+				message("album protected by another password combination, not saving it", album.absolute_path, 4)
 				return
 
 		if complex_identifiers_combination is None:
