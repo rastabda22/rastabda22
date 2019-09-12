@@ -66,13 +66,25 @@
 		return Object.assign({}, object);
 	};
 
+	Utilities.prototype.arrayIntersect = function(a, b) {
+		if (b.length > a.length) {
+			// indexOf to loop over shorter
+			[a, b] = [b, a];
+		}
+
+		intersection = [];
+		for (i = 0; i < b.length; i ++) {
+			if (a.indexOf(b[i]) !== -1)
+				intersection.push(b[i]);
+		}
+
+		return intersection;
+	};
+
 	Utilities.prototype.intersect = function(a, b) {
 		if (b.length > a.length) {
 			// indexOf to loop over shorter
-			var t;
-			t = b;
-			b = a;
-			a = t;
+			[a, b] = [b, a];
 		}
 		var property = 'albumName';
 		if (a.length && ! a[0].hasOwnProperty('albumName'))
