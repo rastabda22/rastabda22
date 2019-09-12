@@ -455,7 +455,7 @@ class Album(object):
 				try:
 					json_file_dict = json.load(filepath)
 				except json.decoder.JSONDecodeError:
-					indented_message("not a valid json file: perhaps an interrupted scanner run", json_file, 4)
+					indented_message("not a valid json file: corrupted", json_file, 4)
 					back_level()
 					return [None, True]
 			if "jsonVersion" not in json_file_dict:
@@ -476,7 +476,13 @@ class Album(object):
 			if "media" not in json_file_dict:
 				media_json_file = calculate_media_file_name(json_file)
 				with open(media_json_file, "r") as media_filepath:
-					json_file_dict["media"] = json.load(media_filepath)
+					try:
+						json_file_dict["media"] = json.load(media_filepath)
+					except json.decoder.JSONDecodeError:
+						indented_message("not an album cache hit: media json file corrupted", media_filepath, 4)
+						back_level()
+						return [None, True]
+
 
 			if "codesComplexCombination" in json_file_dict:
 				for i in range(len(json_file_dict['media'])):
