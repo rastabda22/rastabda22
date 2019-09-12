@@ -1562,7 +1562,7 @@ class Media(object):
 		thumb_path = os.path.join(thumbs_path_with_subdir, album_prefix + photo_cache_name(self, thumb_size, thumb_type, mobile_bigger))
 
 		_is_thumbnail = Media.is_thumbnail(thumb_type)
-		files = "'" + json_files[0] + "' and others"
+			
 		next_level()
 		message("checking reduction/thumbnail...", thumb_path, 5)
 		if not os.path.exists(thumbs_path_with_subdir):
@@ -1572,6 +1572,7 @@ class Media(object):
 		elif file_mtime(thumb_path) < self.datetime_file:
 			indented_message("reduction/thumbnail older than media date time", thumb_path, 5)
 		elif json_files_min_mtime is not None and file_mtime(thumb_path) >= json_files_min_mtime:
+			files = "'" + json_files[0] + "' and others"
 			json_file = os.path.join(thumbs_path, self.album.json_file)
 			indented_message("reduction/thumbnail newer than json files", thumb_path + ", " + files, 5)
 		elif (
