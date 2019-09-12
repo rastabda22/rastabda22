@@ -452,12 +452,12 @@ class Album(object):
 		must_process_passwords = False
 		for json_file in json_files:
 			with open(json_file, "r") as filepath:
-				# try:
-				json_file_dict = json.load(filepath)
-				# except ValueError:
-				# 	indented_message("json file empty: why???", json_file, 4)
-				# 	back_level()
-				# 	return [None, True]
+				try:
+					json_file_dict = json.load(filepath)
+				except json.decoder.JSONDecodeError:
+					indented_message("not a valid json file: perhaps an interrupted scanner run", json_file, 4)
+					back_level()
+					return [None, True]
 			if "jsonVersion" not in json_file_dict:
 				indented_message("not an album cache hit", "unexistent json_version", 4)
 				Options.set_obsolete_json_version_flag()
