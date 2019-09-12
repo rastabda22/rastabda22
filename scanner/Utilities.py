@@ -39,15 +39,8 @@ def next_file_name(file_name_with_path):
 		subtract = 1
 	else:
 		subtract = 0
-	has_already_number_inside = (len(file_name_list) == 3 + subtract)
-	if has_already_number_inside:
-		next_number = int(file_name_list[-2 - subtract]) + 1
-	else:
-		next_number = 1
-	if has_already_number_inside:
-		first_part = file_name_with_path_list[:-2 - subtract]
-	else:
-		first_part = file_name_with_path_list[:-1 - subtract]
+	next_number = int(file_name_list[-2 - subtract]) + 1
+	first_part = file_name_with_path_list[:-2 - subtract]
 	return '.'.join(first_part + [str(next_number)] + file_name_list[-1 - subtract:])
 
 def json_files_and_mtime(cache_base):
@@ -68,7 +61,7 @@ def json_files_and_mtime(cache_base):
 	all_complex_combinations += [complex_combination + ',' for complex_combination in complex_combinations]
 	all_complex_combinations += [',']
 	for complex_combination in all_complex_combinations:
-		protected_json_file_with_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + complex_combination, cache_base) + ".json"
+		protected_json_file_with_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + complex_combination, cache_base) + ".0.json"
 		while os.path.exists(protected_json_file_with_path):
 			if not os.path.islink(protected_json_file_with_path):
 				json_file_list.append(protected_json_file_with_path)

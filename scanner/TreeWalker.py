@@ -226,9 +226,15 @@ class TreeWalker:
 				message("album protected by album password, not saving it", album.absolute_path, 4)
 				return
 
-		json_name = album.json_file
-		json_positions_name = album.positions_json_file
-		json_media_name = album.media_json_file
+		if complex_identifiers_combination is None:
+			json_name = album.json_file
+			json_positions_name = album.positions_json_file
+			json_media_name = album.media_json_file
+		else:
+			json_name = album.cache_base + ".0.json"
+			json_positions_name = album.cache_base + ".0.positions.json"
+			json_media_name = album.cache_base + ".0.media.json"
+
 		symlinks = []
 		positions_symlinks = []
 		media_symlinks = []
@@ -288,21 +294,21 @@ class TreeWalker:
 
 					symlink_with_path = determine_symlink_name(os.path.join(
 						complex_dir,
-						album.json_file
+						album.cache_base + ".0.json"
 					))
 					symlink = symlink_with_path[len(Options.config['cache_path']) + 1:]
 					symlinks.append(symlink)
 
 					positions_symlink_with_path =  determine_symlink_name(os.path.join(
 						complex_dir,
-						album.positions_json_file
+						album.cache_base + ".0.positions.json"
 					))
 					positions_symlink = positions_symlink_with_path[len(Options.config['cache_path']) + 1:]
 					positions_symlinks.append(positions_symlink)
 
 					media_symlink_with_path =  determine_symlink_name(os.path.join(
 						complex_dir,
-						album.media_json_file
+						album.cache_base + ".0.media.json"
 					))
 					media_symlink = media_symlink_with_path[len(Options.config['cache_path']) + 1:]
 					media_symlinks.append(media_symlink)
