@@ -1573,7 +1573,7 @@ class Media(object):
 		thumb_path = os.path.join(thumbs_path_with_subdir, album_prefix + photo_cache_name(self, thumb_size, thumb_type, mobile_bigger))
 
 		_is_thumbnail = Media.is_thumbnail(thumb_type)
-			
+
 		next_level()
 		message("checking reduction/thumbnail...", thumb_path, 5)
 		if not os.path.exists(thumbs_path_with_subdir):
@@ -2144,6 +2144,8 @@ class Media(object):
 		album_prefix = remove_folders_marker(self.album.cache_base) + Options.config["cache_folder_separator"]
 		if album_prefix == Options.config["cache_folder_separator"]:
 			album_prefix = ""
+		# TO DO: the converted image for unsupported browser image types is missing
+
 		if self.is_video:
 			# transcoded video path
 			caches.append(os.path.join(self.album.subdir, album_prefix + video_cache_name(self)))
