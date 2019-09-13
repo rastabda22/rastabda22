@@ -4,12 +4,12 @@
 import sys
 import os
 
-# @python2
-# Builtins removed in Python3
-try:
-	from imp import reload
-except ImportError:
-	pass
+# # @python2
+# # Builtins removed in Python3
+# try:
+# 	from imp import reload
+# except ImportError:
+# 	pass
 
 import Options
 from Utilities import report_times, message
