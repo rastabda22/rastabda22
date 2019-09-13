@@ -1055,6 +1055,11 @@ class TreeWalker:
 		elif not all([os.access(json, os.W_OK) for json in json_file_list]):
 			message("not an album cache hit", "some json file unwritable", 1)
 		else:
+			if len(json_file_list) == 1:
+				files = "'" + json_file_list[0] + "'"
+			else:
+				files = "'" + json_file_list[0] + "' and others"
+
 			if album_ini_good and file_mtime(album_ini_file) > json_files_min_mtime:
 				# a check on album_ini_file content would have been good:
 				# execution comes here even if album.ini hasn't anything significant
@@ -1062,7 +1067,7 @@ class TreeWalker:
 			elif file_mtime(absolute_path) >= json_files_min_mtime:
 				indented_message("not an album cache hit", "album dir newer than json file", 4)
 			else:
-				message("maybe an album cache hit", "trying to import album from '" + json_file_list[0] + "' and others", 5)
+				message("maybe an album cache hit", "trying to import album from '" + files, 5)
 				# the following is the instruction which could raise the error
 				try:
 					[cached_album, must_process_passwords] = Album.from_json_files(json_file_list, json_files_min_mtime)
