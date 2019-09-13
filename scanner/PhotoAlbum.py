@@ -445,7 +445,10 @@ class Album(object):
 	@staticmethod
 	def from_json_files(json_files, json_files_min_mtime):
 		next_level()
-		files = "'" + json_files[0] + "' and others"
+		if len(json_files) == 1:
+			files = "'" + json_files[0] + "'"
+		else:
+			files = "'" + json_files[0] + "' and others"
 		message("reading album from json files...", files, 5)
 		# json_files is the list of the existing files for that cache base
 		dictionary = None
