@@ -454,9 +454,9 @@ class Album(object):
 		dictionary = None
 		must_process_passwords = False
 		for json_file in json_files:
-			with open(json_file, "r") as filepath:
+			with open(json_file, "r") as file_pointer:
 				try:
-					json_file_dict = json.load(filepath)
+					json_file_dict = json.load(file_pointer)
 				except json.decoder.JSONDecodeError:
 					indented_message("not a valid json file: corrupted", json_file, 4)
 					back_level()
@@ -479,17 +479,17 @@ class Album(object):
 			if "media" not in json_file_dict:
 				media_json_file = calculate_media_file_name(json_file)
 				if os.path.exists(media_json_file):
-					message("opening and importing media json file...", media_filepath, 4)
-					with open(media_json_file, "r") as media_filepath:
+					message("opening and importing media json file...", media_json_file, 4)
+					with open(media_json_file, "r") as media_file_pointer:
 						try:
-							json_file_dict["media"] = json.load(media_filepath)
+							json_file_dict["media"] = json.load(media_file_pointer)
 							message("media json file imported!", "", 4)
 						except json.decoder.JSONDecodeError:
-							indented_message("not an album cache hit: media json file corrupted", media_filepath, 4)
+							indented_message("not an album cache hit: media json file corrupted", media_json_file, 4)
 							back_level()
 							return [None, True]
 				else:
-					message("not an album cache hit: media json file unexisting", media_filepath, 4)
+					message("not an album cache hit: media json file unexisting", media_json_file, 4)
 					back_level()
 					return [None, True]
 
