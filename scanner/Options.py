@@ -447,7 +447,11 @@ def get_options():
 	# calculate the number of media in the album tree: it will be used in order to guess the execution time
 	special_files = [config['exclude_tree_marker'], config['exclude_files_marker'], config['metadata_filename']]
 	message("PRE counting media in albums...", "", 4)
-	config['num_media_in_tree'] = sum([len([file for file in files if file[:1] != '.' and file not in special_files]) for dirpath, dirs, files in os.walk(config['album_path']) if dirpath.find('/.') == -1])
+	config['num_media_in_tree'] = 0
+	for dirpath, dirs, files in os.walk(config['album_path'], topdown=True):
+		dirs[:] = [d for d in dirs if d != config['exclude_tree_marker']]
+		if dirpath.find('/.') == -1 and config['exclude_files_marker'] not in files and config['exclude_tree_marker'] not in files:
+			config['num_media_in_tree'] += sum([len([file for file in files if file[:1] != '.' and file not in special_files])])
 	indented_message("PRE media in albums counted", str(config['num_media_in_tree']), 4)
 
 	config['cache_folders_num_digits_array'] = []
