@@ -478,13 +478,20 @@ class Album(object):
 
 			if "media" not in json_file_dict:
 				media_json_file = calculate_media_file_name(json_file)
-				with open(media_json_file, "r") as media_filepath:
-					try:
-						json_file_dict["media"] = json.load(media_filepath)
-					except json.decoder.JSONDecodeError:
-						indented_message("not an album cache hit: media json file corrupted", media_filepath, 4)
-						back_level()
-						return [None, True]
+				if os.path.exists(media_json_file):
+					message("opening and importing media json file...", media_filepath, 4)
+					with open(media_json_file, "r") as media_filepath:
+						try:
+							json_file_dict["media"] = json.load(media_filepath)
+							message("media json file imported!", "", 4)
+						except json.decoder.JSONDecodeError:
+							indented_message("not an album cache hit: media json file corrupted", media_filepath, 4)
+							back_level()
+							return [None, True]
+				else:
+					message("not an album cache hit: media json file unexisting", media_filepath, 4)
+					back_level()
+					return [None, True]
 
 
 			if "codesComplexCombination" in json_file_dict:
