@@ -919,6 +919,7 @@ class Media(object):
 		self.folders = remove_album_path(dirname)
 		self.album_path = os.path.join('albums', self.media_file_name)
 		self.cache_base = dictionary['cacheBase']
+		self.mime_type = dictionary['mimeType']
 		if "password_identifiers_set" in dictionary:
 			self.password_identifiers_set = dictionary['password_identifiers_set']
 		else:
