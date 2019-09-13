@@ -445,7 +445,7 @@ def get_options():
 		make_dir(album_cache_dir, "cache directory for composite images")
 
 	# calculate the number of media in the album tree: it will be used in order to guess the execution time
-	special_files = [config['exclude_tree_marker'], config['exclude_files_marker'], config['metadata_filename']]
+	special_files = [config['exclude_tree_marker'], config['exclude_files_marker'], config['metadata_filename'], config['config['metadata_filename']']
 	message("PRE counting media in albums...", "", 4)
 	config['num_media_in_tree'] = 0
 	for dirpath, dirs, files in os.walk(config['album_path'], topdown=True):
