@@ -1326,6 +1326,8 @@
 					} else {
 						var lastPromise = PhotoFloat.getAlbum(album, error, {"getMedia": true, "getPositions": true});
 						lastPromise.then(
+							function([album]) {
+								resolve_pickRandomMedia([album, index]);
 							}
 						);
 						lastPromise.catch(
