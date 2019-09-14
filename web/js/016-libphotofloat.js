@@ -385,7 +385,7 @@
 					album.includedCodesComplexCombinations.hasOwnProperty(codesComplexCombination) &&
 					album.includedCodesComplexCombinations[codesComplexCombination].hasOwnProperty(protectedCacheBase)
 				) {
-					if (album.includedCodesComplexCombinations[protectedAlbumcodesComplexCombination][protectedCacheBase] === false) {
+					if (album.includedCodesComplexCombinations[protectedAlbum.codesComplexCombination][protectedCacheBase] === false) {
 						// the json file doesn't exist
 						reject_getSingleProtectedCacheBase();
 					} else {
