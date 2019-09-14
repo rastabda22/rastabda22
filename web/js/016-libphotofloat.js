@@ -744,7 +744,10 @@
 		return new Promise(
 			function(resolve_addProtectedContent, reject) {
 				var numsPromise;
-				if (! PhotoFloat.isEmpty(album)) {
+				if (
+					! PhotoFloat.hasntUnprotectedContent(album) ||
+					Object.keys(album.includedCodesComplexCombinations).length > 1
+				) {
 					// if (! album.hasOwnProperty("includedProtectedDirectories"))
 					// 	album.includedProtectedDirectories = [];
 					// if (! album.hasOwnProperty("includedCodesComplexCombinations"))
@@ -1001,13 +1004,12 @@
 	};
 
 	PhotoFloat.isEmpty = function(album) {
-		// return album.hasOwnProperty("empty");
-		return album.includedCodesComplexCombinations[""] === false;
+		return album.hasOwnProperty("empty");
 	};
 
-	// PhotoFloat.hasntUnprotectedContent = function(album) {
-	// 	return album.hasOwnProperty("hasntUnprotectedContent");
-	// };
+	PhotoFloat.hasntUnprotectedContent = function(album) {
+		return album.includedCodesComplexCombinations[""] === false;
+	};
 
 	PhotoFloat.getAlbum = function(albumOrCacheBase, error, {getMedia = false, getPositions = false, thisIndexWords = false, thisIndexAlbums = false, photosInAlbum = []} = {}) {
 		// error is executed when in no way the album can be retrieved:
@@ -1117,7 +1119,7 @@
 					promise = PhotoFloat.getSingleUnprotectedCacheBase(albumCacheBase, {"getMedia": getMedia, "getPositions": getPositions});
 					promise.then(
 						function(album) {
-							if (! PhotoFloat.isEmpty(album)) {
+							if (! PhotoFloat.hasntUnprotectedContent(album)) {
 								let hasMedia = false, hasPositions = false;
 								if (album.hasOwnProperty("media"))
 									hasMedia = true;
@@ -1130,7 +1132,7 @@
 								};
 							}
 
-							if (PhotoFloat.isEmpty(album) || PhotoFloat.hasProtectedContent(album)) {
+							if (PhotoFloat.hasntUnprotectedContent(album) || PhotoFloat.hasProtectedContent(album)) {
 								var promise = PhotoFloat.addProtectedContent(album, {"getMedia": getMedia, "getPositions": getPositions});
 								promise.then(
 									function() {
