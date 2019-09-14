@@ -1044,7 +1044,7 @@
 				var promise;
 				if (album) {
 					if (album.includedCodesComplexCombinations[""] === false) {
-						// the album hasn't unprotected content => go immediately to promise.then
+						// the album hasn't unprotected content => not adding media/positions  => go immediately to promise.then
 						promise = new Promise(
 							function(resolve) {
 								resolve();
