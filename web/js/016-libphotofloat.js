@@ -224,7 +224,16 @@
 						var promise = PhotoFloat.getJsonFile(mediaJsonFile);
 						promise.then(
 							function(media) {
-								album.media = media;
+								if (! album.hasOwnProperty("media"))
+									album.media = media;
+								else
+									album.media = util.arrayUnion(
+										album.media,
+										media,
+										function(singleMedia1, singleMedia2) {
+											return singleMedia1.album.cacheBase == singleMedia2.album.cacheBase && singleMedia1.cacheBase == singleMedia2.cacheBase;
+										}
+									);
 								resolve_addMedia();
 							}
 						);
@@ -254,7 +263,10 @@
 						var promise = PhotoFloat.getJsonFile(positionJsonFile);
 						promise.then(
 							function(positions) {
-								album.positionsAndMediaInTree = positions;
+								if (! album.hasOwnProperty("positionsAndMediaInTree"))
+									album.positionsAndMediaInTree = positions;
+								else
+									album.positionsAndMediaInTree = util.mergePoints(album.positionsAndMediaInTree, positions);
 								// // we must add the corresponding positions to every subalbums
 								// if (album.cacheBase != Options.by_search_string)
 								// 	PhotoFloat.addPositionsToSubalbums(album);
