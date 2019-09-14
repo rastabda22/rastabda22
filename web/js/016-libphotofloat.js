@@ -484,12 +484,12 @@
 						if (
 							! albumCodesComplexCombinationList.length &&
 							mediaCodesComplexCombinationList.length &&
-							mediaCodesComplexCombinationList.indexOf(mediaCode) != -1 ||
-
+							mediaCodesComplexCombinationList.indexOf(mediaCode) != -1
+							||
 							albumCodesComplexCombinationList.length &&
 							albumCodesComplexCombinationList.indexOf(albumCode) != -1 &&
-							! mediaCodesComplexCombinationList.length ||
-
+							! mediaCodesComplexCombinationList.length
+							||
 							albumCodesComplexCombinationList.length &&
 							mediaCodesComplexCombinationList.length &&
 							albumCodesComplexCombinationList.indexOf(albumCode) != -1 &&
