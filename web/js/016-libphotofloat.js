@@ -317,7 +317,7 @@
 							}
 						);
 						promise.catch(
-							function(album) {
+							function() {
 								console.trace();
 							}
 						);
@@ -360,7 +360,7 @@
 								}
 							);
 							promise.catch(
-								function(album) {
+								function() {
 									console.trace();
 								}
 							);
@@ -419,7 +419,7 @@
 						}
 					);
 					promise.catch(
-						function(album) {
+						function() {
 							console.trace();
 						}
 					);
@@ -757,7 +757,7 @@
 						}
 					);
 					numsPromise.catch(
-						function(album) {
+						function() {
 							console.trace();
 						}
 					);
@@ -778,14 +778,14 @@
 									}
 								);
 								numsPromise.catch(
-									function(album) {
+									function() {
 										console.trace();
 									}
 								);
 							}
 						);
 						promise.catch(
-							function(album) {
+							function() {
 								console.trace();
 							}
 						);
@@ -1054,7 +1054,7 @@
 								}
 							);
 							promise.catch(
-								function(album) {
+								function() {
 									console.trace();
 								}
 							);
@@ -1065,7 +1065,7 @@
 						}
 					);
 					promise.catch(
-						function(album) {
+						function() {
 							console.trace();
 						}
 					);
@@ -1132,7 +1132,7 @@
 									}
 								);
 								promise.catch(
-									function(album) {
+									function() {
 										console.trace();
 									}
 								);
@@ -1143,7 +1143,7 @@
 						}
 					);
 					promise.catch(
-						function(album) {
+						function() {
 							console.trace();
 						}
 					);
@@ -1252,7 +1252,7 @@
 					}
 				);
 				promise.catch(
-					function(album) {
+					function() {
 						console.trace();
 					}
 				);
@@ -1298,7 +1298,7 @@
 								}
 							);
 							promise.catch(
-								function(album) {
+								function() {
 									console.trace();
 								}
 							);
@@ -1311,7 +1311,7 @@
 							}
 						);
 						lastPromise.catch(
-							function(album) {
+							function() {
 								console.trace();
 							}
 						);
@@ -1470,7 +1470,7 @@
 						}
 					);
 					promise.catch(
-						function(album) {
+						function() {
 							console.trace();
 						}
 					);
@@ -1868,7 +1868,7 @@
 									}
 								);
 								promise.catch(
-									function(album) {
+									function() {
 										console.trace();
 									}
 								);
@@ -1878,7 +1878,7 @@
 				}
 			);
 			promise.catch(
-				function(album) {
+				function() {
 					console.trace();
 				}
 			);
@@ -1996,7 +1996,7 @@
 				}
 			);
 			promise.catch(
-				function(album) {
+				function() {
 					console.trace();
 				}
 			);
@@ -2038,7 +2038,7 @@
 				}
 			);
 			promise.catch(
-				function(album) {
+				function() {
 					console.trace();
 				}
 			);
