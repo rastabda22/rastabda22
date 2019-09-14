@@ -522,10 +522,15 @@
 
 		return new Promise(
 			function(resolve_getNumsProtectedMediaInSubTree, reject_getNumsProtectedMediaInSubTree) {
-				var iDirectory = -1;
-				var getNumsProtectedMediaInSubTreePromise = getNextProtectedDirectory();
-				getNumsProtectedMediaInSubTreePromise.then(resolve_getNumsProtectedMediaInSubTree);
-				getNumsProtectedMediaInSubTreePromise.catch(reject_getNumsProtectedMediaInSubTree);
+				if (album.hasOwnProperty("numsProtectedMediaInSubTree")) {
+					resolve_getNextProtectedDirectory();
+				} else {
+					var iDirectory = -1;
+					var getNumsProtectedMediaInSubTreePromise = getNextProtectedDirectory();
+					getNumsProtectedMediaInSubTreePromise.then(resolve_getNumsProtectedMediaInSubTree);
+					getNumsProtectedMediaInSubTreePromise.catch(reject_getNumsProtectedMediaInSubTree);
+				}
+				// end of getNumsProtectedMediaInSubTree function body
 
 				function getNextProtectedDirectory() {
 					return new Promise(
