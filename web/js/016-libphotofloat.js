@@ -404,6 +404,14 @@
 					promise.catch(
 						function protectedFileDoesntExist() {
 							// execution arrives here if the json file doesn't exist
+
+							if (codesComplexCombination !== null) {
+								// save the info that the protected cache base doesn't exist
+								if (! album.includedCodesComplexCombinations.hasOwnProperty(codesComplexCombination))
+									album.includedCodesComplexCombinations[codesComplexCombination] = {};
+								album.includedCodesComplexCombinations[codesComplexCombination][protectedCacheBase] = false;
+							}
+
 							// do not do anything, i.e. another protected cache base will be processed
 							reject_getSingleProtectedCacheBase();
 						}
@@ -931,11 +939,6 @@
 											promise.catch(
 												// the protected cache base doesn't exist, keep on
 												function() {
-													// save the info that the protected cache base doesn't exist
-													if (! album.includedCodesComplexCombinations.hasOwnProperty(protectedAlbum.codesComplexCombination))
-														album.includedCodesComplexCombinations[protectedAlbum.codesComplexCombination] = {};
-													album.includedCodesComplexCombinations[protectedAlbum.codesComplexCombination][protectedCacheBase] = false;
-
 													resolve_ithPromise();
 												}
 											);
