@@ -508,7 +508,7 @@
 		return result;
 	};
 
-	PhotoFloat.getNumsProtectedMediaInSubTree = function(album, theProtectedDirectoriesToGet, {getMedia = false, getPositions = false} = {}) {
+	PhotoFloat.getNumsProtectedMediaInSubTree = function(album, theProtectedDirectoriesToGet) {
 
 		return new Promise(
 			function(resolve_getNumsProtectedMediaInSubTree, reject_getNumsProtectedMediaInSubTree) {
@@ -530,7 +530,7 @@
 								// if (! album.includedCodesComplexCombinations.hasOwnProperty(codesComplexCombination))
 								// 	album.includedCodesComplexCombinations[codesComplexCombination] = {};
 
-								var promise = PhotoFloat.getSingleProtectedCacheBase(protectedCacheBase, album, {"getMedia": getMedia, "getPositions": getPositions});
+								var promise = PhotoFloat.getSingleProtectedCacheBase(protectedCacheBase, album, {"getMedia": false, "getPositions": false});
 								promise.then(
 									function getSingleProtectedCacheBase_resolved(protectedAlbum) {
 										if (typeof protectedAlbum !== "undefined") {
@@ -752,7 +752,7 @@
 
 					numsPromise = continueAddProtectedContent(album);
 					numsPromise.then(
-						function(album) {
+						function() {
 							resolve_addProtectedContent({"getMedia": getMedia, "getPositions": getPositions});
 						}
 					);
@@ -768,12 +768,12 @@
 						// executions shouldn't arrive here
 						resolve_addProtectedContent({"getMedia": getMedia, "getPositions": getPositions});
 					} else {
-						var promise = PhotoFloat.getNumsProtectedMediaInSubTree(album, theProtectedDirectoriesToGet, {"getMedia": getMedia, "getPositions": getPositions});
+						var promise = PhotoFloat.getNumsProtectedMediaInSubTree(album, theProtectedDirectoriesToGet);
 						promise.then(
 							function() {
 								numsPromise = continueAddProtectedContent(album);
 								numsPromise.then(
-									function(album) {
+									function() {
 										resolve_addProtectedContent({"getMedia": getMedia, "getPositions": getPositions});
 									}
 								);
@@ -1001,7 +1001,8 @@
 	};
 
 	PhotoFloat.isEmpty = function(album) {
-		return album.hasOwnProperty("empty");
+		// return album.hasOwnProperty("empty");
+		return album.includedCodesComplexCombinations[""] === false;
 	};
 
 	// PhotoFloat.hasntUnprotectedContent = function(album) {
@@ -1246,8 +1247,7 @@
 				var promise = PhotoFloat.getAlbum(theSubalbum.cacheBase, error, {"getMedia": false, "getPositions": false});
 				promise.then(
 					function([album]) {
-						index = 0;
-						// index = Math.floor(Math.random() * (album.numMediaInSubTree));
+						index = Math.floor(Math.random() * (album.numMediaInSubTree));
 						nextAlbum(album);
 					}
 				);
