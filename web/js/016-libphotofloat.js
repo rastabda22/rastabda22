@@ -293,14 +293,11 @@
 		return albumCacheBase.indexOf(Options.protected_directories_prefix) == 0;
 	};
 
-	PhotoFloat.getSingleUnprotectedCacheBase = function(albumCacheBase, {getMedia, getPositions}) {
-		// this function is needed in order to get a single json file, either protected or not
-		//
-		// album only makes sense if albumCacheBase is a protected one
+	PhotoFloat.getSingleUnprotectedCacheBase = function(unprotectedCacheBase, {getMedia, getPositions}) {
 
 		return new Promise(
 			function(resolve_getSingleUnprotectedCacheBase) {
-				var jsonFile = albumCacheBase + ".json";
+				var jsonFile = unprotectedCacheBase + ".json";
 
 				var promise = PhotoFloat.getJsonFile(jsonFile);
 				promise.then(
@@ -327,7 +324,7 @@
 					function unprotectedFileDoesntExist() {
 						// execution arrives here if the json file doesn't exist
 						var emptyAlbum = {
-							"cacheBase": albumCacheBase,
+							"cacheBase": unprotectedCacheBase,
 							"subalbums": [],
 							"numMedia": 0,
 							"numMediaInSubTree": 0,
@@ -338,10 +335,10 @@
 						emptyAlbum.includedCodesComplexCombinations = {"": false};
 
 						if (! PhotoFloat.guessedPasswordsMd5.length) {
-							if (util.isSearchCacheBase(albumCacheBase)) {
+							if (util.isSearchCacheBase(unprotectedCacheBase)) {
 								emptyAlbum.media = [];
 								emptyAlbum.subalbums = [];
-								emptyAlbum.path = albumCacheBase.replace(Options.cache_folder_separator, "/");
+								emptyAlbum.path = unprotectedCacheBase.replace(Options.cache_folder_separator, "/");
 								util.noResults(emptyAlbum);
 							} else {
 								// wrong hash: it might be the hash of a protected content
@@ -351,7 +348,7 @@
 						} else {
 							// look for a protected album
 							// baseJsonFileExists = false;
-							var cacheBase = albumCacheBase.substring(albumCacheBase.lastIndexOf('/') + 1);
+							var cacheBase = unprotectedCacheBase.substring(unprotectedCacheBase.lastIndexOf('/') + 1);
 							emptyAlbum.cacheBase = cacheBase;
 							var promise = PhotoFloat.addProtectedContent(emptyAlbum, {"getMedia": getMedia, "getPositions": getPositions});
 							promise.then(
