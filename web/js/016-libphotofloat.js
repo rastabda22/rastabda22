@@ -385,9 +385,14 @@
 					album.includedCodesComplexCombinations.hasOwnProperty(codesComplexCombination) &&
 					album.includedCodesComplexCombinations[codesComplexCombination].hasOwnProperty(protectedCacheBase)
 				) {
-					// the cache base has been already fetched
-					let protectedAlbum = album.includedCodesComplexCombinations[codesComplexCombination][protectedCacheBase].album;
-					addMediaAndPositionsToProtectedAlbum(protectedAlbum);
+					if (album.includedCodesComplexCombinations[protectedAlbumcodesComplexCombination][protectedCacheBase] === false) {
+						// the json file doesn't exist
+						reject_getSingleProtectedCacheBase();
+					} else {
+						// the cache base has been already fetched
+						let protectedAlbum = album.includedCodesComplexCombinations[codesComplexCombination][protectedCacheBase].album;
+						addMediaAndPositionsToProtectedAlbum(protectedAlbum);
+					}
 				} else {
 					var jsonFile = protectedCacheBase + ".json";
 
@@ -765,6 +770,7 @@
 						}
 					);
 				} else {
+					// the album hasn't unprotected content:
 					// a protected album must be loaded in order to know the complex combinations
 					var theProtectedDirectoriesToGet = PhotoFloat.protectedDirectoriesToGet();
 					if (! theProtectedDirectoriesToGet.length) {
@@ -928,6 +934,11 @@
 											promise.catch(
 												// the protected cache base doesn't exist, keep on
 												function() {
+													// save the info that the protected cache base doesn't exist
+													if (! album.includedCodesComplexCombinations.hasOwnProperty(protectedAlbum.codesComplexCombination))
+														album.includedCodesComplexCombinations[protectedAlbum.codesComplexCombination] = {};
+													album.includedCodesComplexCombinations[protectedAlbum.codesComplexCombination][protectedCacheBase] = false;
+
 													resolve_ithPromise();
 												}
 											);
