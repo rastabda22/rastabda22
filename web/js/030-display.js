@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 var fullScreenStatus = false;
 var currentAlbum = null;
 var currentMedia = null;
