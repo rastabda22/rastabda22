@@ -306,7 +306,7 @@ class Album(object):
 		# - do not process subalbums because they have been already processed
 		# - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
 		if (
-			self.cache_base.find(Options.config['by_search_string']) == -1 or
+			self.cache_base.find(Options.config['by_search_string']) != 0 or
 			self.cache_base == Options.config['by_search_string']
 		):
 			for subalbum in self.subalbums_list:
