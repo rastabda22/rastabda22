@@ -313,9 +313,10 @@ class Album(object):
 				subalbum.leave_only_unprotected_content()
 				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 		elif self.cache_base.find(Options.config['by_search_string']) == 0:
-			for subalbum in self.subalbums_list:
-				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 			self.subalbums_list = [subalbum for subalbum in self.subalbums_list if len(subalbum.password_identifiers_set) == 0]
+			# next lines commented out because contained media don't belong to this album
+			# for subalbum in self.subalbums_list:
+			# 	self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
 		if ',' in list(self.nums_protected_media_in_sub_tree.keys()):
 			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(',')
