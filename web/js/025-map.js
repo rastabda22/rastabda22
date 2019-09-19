@@ -326,7 +326,7 @@
 	MapFunctions.addMediaFromPositionsToMapAlbum = function(positionsAndCounts, mapAlbum, resolve) {
 
 		var mediaNameListElement, indexPositions, indexPhoto, markerClass, photoIndex, mediaIndex;
-		var albumsToGet = 0, albumsGot = 0, photosByAlbum = {}, positionsAndCountsElement, photosInAlbum;
+		var albumsToGet = 0, albumsGot = 0, photosByAlbum = {}, positionsAndCountsElement;
 
 		// in order to add the html code for the images to a string,
 		// we group the photos by album: this way we rationalize the process of getting them
@@ -351,14 +351,14 @@
 		// ok, now we can interate over the object we created and add the media to the map album
 		for (var albumCacheBase in photosByAlbum) {
 			if (photosByAlbum.hasOwnProperty(albumCacheBase)) {
-				photosInAlbum = photosByAlbum[albumCacheBase];
+				let photosInAlbum = photosByAlbum[albumCacheBase];
 				var promise = phFl.getAlbum(
 					albumCacheBase,
 					util.die,
-					{"getMedia": true, "getPositions": true, "photosInAlbum": photosInAlbum}
+					{"getMedia": true, "getPositions": true}
 				);
 				promise.then(
-					function([theAlbum, {photosInAlbum}]) {
+					function([theAlbum]) {
 						for (mediaIndex = 0; mediaIndex < theAlbum.numMedia; mediaIndex ++) {
 							for (photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
 								if (theAlbum.media[mediaIndex].cacheBase == photosInAlbum[photoIndex].element.cacheBase) {
@@ -375,7 +375,7 @@
 					}
 				);
 				promise.catch(
-					function(album) {
+					function() {
 						console.trace();
 					}
 				);

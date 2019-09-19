@@ -254,8 +254,8 @@ $(document).ready(function() {
 						currentAlbum !== null && (
 							! jQuery.isEmptyObject(currentAlbum.numsProtectedMediaInSubTree) &&
 							(
-								! currentAlbum.hasOwnProperty("includedCodesComplexCombinations") ||
-								Object.keys(currentAlbum.includedCodesComplexCombinations).length - 1 < util.numProtectedKeys(currentAlbum)
+								! currentAlbum.hasOwnProperty("includedCodesSimpleCombinations") ||
+								Object.keys(currentAlbum.includedCodesSimpleCombinations).length - 1 < util.numProtectedKeys(currentAlbum)
 							) ||
 							util.isSearchCacheBase(currentAlbum.cacheBase)
 						)

@@ -549,7 +549,7 @@
 				}
 			);
 			promise.catch(
-				function(album) {
+				function() {
 					console.trace();
 				}
 			);

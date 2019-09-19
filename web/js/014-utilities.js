@@ -23,6 +23,19 @@
 			return translations.en[id];
 	};
 
+	Utilities.prototype.convertProtectedCacheBaseToCodesSimpleCombination = function(protectedCacheBase) {
+		var protectedDirectory = protectedCacheBase.split("/")[0];
+		var [albumMd5, mediaMd5] = protectedDirectory.substring(Options.protected_directories_prefix.length).split(',');
+		if (albumMd5 && mediaMd5)
+			return [Utilities.convertMd5ToCode(albumMd5), Utilities.convertMd5ToCode(mediaMd5)].join(',');
+		else if (albumMd5)
+			return [Utilities.convertMd5ToCode(albumMd5), ''].join(',');
+		else if (mediaMd5)
+			return ['', Utilities.convertMd5ToCode(mediaMd5)].join(',');
+		else
+			return "";
+	};
+
 	Utilities.prototype.translate = function() {
 		var selector, keyLanguage;
 
@@ -1090,7 +1103,7 @@
 	// 	return [albumCodesCombinationsList.join('-'), mediaCodesCombinationsList.join('-')].join(',');
 	// };
 
-	Utilities.prototype.convertMd5ToCode = function(md5) {
+	Utilities.convertMd5ToCode = function(md5) {
 		var index = PhotoFloat.guessedPasswordsMd5.indexOf(md5);
 		return PhotoFloat.guessedPasswordCodes[index];
 	};
@@ -1267,6 +1280,7 @@
 	Utilities.prototype.sortBy = Utilities.sortBy;
 	Utilities.prototype.isByGpsCacheBase = Utilities.isByGpsCacheBase;
 	Utilities.prototype.setPinchButtonsPosition = Utilities.setPinchButtonsPosition;
+	Utilities.prototype.convertMd5ToCode = Utilities.convertMd5ToCode;
 
 	window.Utilities = Utilities;
 }());

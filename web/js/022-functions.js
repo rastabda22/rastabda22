@@ -404,7 +404,7 @@
 			thisAlbum !== null && (
 				util.numProtectedKeys(thisAlbum) &&
 				// ! jQuery.isEmptyObject(thisAlbum.numsProtectedMediaInSubTree) &&
-				Object.keys(thisAlbum.includedCodesComplexCombinations).length - 1 < util.numProtectedKeys(thisAlbum) ||
+				Object.keys(thisAlbum.includedFilesByCodesSimpleCombination).length - 1 < util.numProtectedKeys(thisAlbum) ||
 				util.isSearchCacheBase(thisAlbum.cacheBase)
 			)
 		) {
