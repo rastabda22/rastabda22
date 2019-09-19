@@ -549,6 +549,8 @@ class Album(object):
 		album.cache_base = dictionary["cacheBase"]
 		album.album_ini_mtime = dictionary["albumIniMTime"]
 		album.passwords_marker_mtime = dictionary["passwordMarkerMTime"]
+		if "symlinkCodesAndNumbers" in dictionary:
+			album.symlink_codes_and_numbers = dictionary["symlinkCodesAndNumbers"]
 
 		album.sort_subalbums_and_media()
 
@@ -685,7 +687,8 @@ class Album(object):
 			dictionary["media"] = self.media_list
 		else:
 			dictionary["numMedia"] = len(self.media_list)
-
+		if hasattr(self, "symlink_codes_and_numbers"):
+			dictionary["symlinkCodesAndNumbers"] = self.symlink_codes_and_numbers
 		if hasattr(self, "center"):
 			dictionary["center"] = self.center
 		if hasattr(self, "name"):

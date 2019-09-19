@@ -21,11 +21,11 @@ from CachePath import remove_album_path, last_modification_time, trim_base_custo
 from CachePath import remove_folders_marker
 from Utilities import save_password_codes, json_files_and_mtime, report_mem
 from Utilities import convert_identifiers_set_to_codes_set, convert_identifiers_set_to_md5s_set
-from Utilities import convert_combination_to_set, convert_set_to_combination, complex_combination
-from Utilities import determine_symlink_name
+from Utilities import convert_combination_to_set, convert_set_to_combination, convert_md5_to_code, convert_simple_md5_combination_to_simple_codes_combination, complex_combination
+from Utilities import determine_symlink_number_and_name
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_digits, switch_to_lowercase, phrase_to_words, checksum
-from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, next_file_name, make_dir
+from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, make_dir
 from PhotoAlbum import Media, Album, PhotoAlbumEncoder, Position, Positions, NumsProtected
 from Geonames import Geonames
 import Options
@@ -238,10 +238,14 @@ class TreeWalker:
 		symlinks = []
 		positions_symlinks = []
 		media_symlinks = []
+		symlink_codes_and_numbers = []
 
 		if complex_identifiers_combination is not None:
 			password_md5_list = sorted(convert_identifiers_set_to_md5s_set(convert_combination_to_set(media_identifiers_combination)))
 			album_password_md5_list = sorted(convert_identifiers_set_to_md5s_set(convert_combination_to_set(album_identifiers_combination)))
+			album_codes_set = convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination))
+			media_codes_set = convert_identifiers_set_to_codes_set(convert_combination_to_set(media_identifiers_combination))
+			codes_complex_combination = complex_combination(convert_set_to_combination(album_codes_set), convert_set_to_combination(media_codes_set))
 			md5_product_list = []
 			if len(album_password_md5_list) > 0 and len(password_md5_list) > 0:
 				for couple in ((x,y) for x in album_password_md5_list for y in password_md5_list):
@@ -262,23 +266,24 @@ class TreeWalker:
 				make_dir(first_dir, "protected content directory")
 				self.created_dirs.append(first_dir)
 
-			json_name_with_path = determine_symlink_name(os.path.join(
+			number, json_name_with_path = determine_symlink_number_and_name(os.path.join(
 				first_dir,
-				json_name
+				album.cache_base
 			))
 			json_name = json_name_with_path[len(Options.config['cache_path']) + 1:]
-
-			json_positions_name_with_path = determine_symlink_name(os.path.join(
-				first_dir,
-				json_positions_name
-			))
-			json_positions_name = json_positions_name_with_path[len(Options.config['cache_path']) + 1:]
-
-			json_media_name_with_path = determine_symlink_name(os.path.join(
-				first_dir,
-				json_media_name
-			))
-			json_media_name = json_media_name_with_path[len(Options.config['cache_path']) + 1:]
+			json_media_name = os.path.join(
+				Options.config['protected_directories_prefix'] + first_md5_product,
+				album.cache_base + "." + str(number) + ".media.json"
+			)
+			json_positions_name = os.path.join(
+				Options.config['protected_directories_prefix'] + first_md5_product,
+				album.cache_base + "." + str(number) + ".positions.json"
+			)
+			symlink_codes_and_numbers.append({
+				'codesSimpleCombination': convert_simple_md5_combination_to_simple_codes_combination(first_md5_product),
+				'codesComplexCombination': codes_complex_combination,
+				'number': number
+			})
 
 			# more symlink must be added in order to get the files with 2 or more passwords
 			if (len(md5_product_list) > 1):
@@ -292,26 +297,24 @@ class TreeWalker:
 						make_dir(complex_dir, "protected content directory")
 						self.created_dirs.append(complex_dir)
 
-					symlink_with_path = determine_symlink_name(os.path.join(
+					number, symlink_with_path = determine_symlink_number_and_name(os.path.join(
 						complex_dir,
-						album.cache_base + ".0.json"
+						album.cache_base
 					))
 					symlink = symlink_with_path[len(Options.config['cache_path']) + 1:]
+					media_symlink = os.path.join(
+						Options.config['protected_directories_prefix'] + complex_md5,
+						album.cache_base + "." + str(number) + ".media.json"
+					)
+					positions_symlink = os.path.join(
+						Options.config['protected_directories_prefix'] + complex_md5,
+						album.cache_base + "." + str(number) + ".positions.json"
+					)
+
 					symlinks.append(symlink)
-
-					positions_symlink_with_path =  determine_symlink_name(os.path.join(
-						complex_dir,
-						album.cache_base + ".0.positions.json"
-					))
-					positions_symlink = positions_symlink_with_path[len(Options.config['cache_path']) + 1:]
-					positions_symlinks.append(positions_symlink)
-
-					media_symlink_with_path =  determine_symlink_name(os.path.join(
-						complex_dir,
-						album.cache_base + ".0.media.json"
-					))
-					media_symlink = media_symlink_with_path[len(Options.config['cache_path']) + 1:]
 					media_symlinks.append(media_symlink)
+					positions_symlinks.append(positions_symlink)
+					symlink_codes_and_numbers.append({'codesCombination': convert_simple_md5_combination_to_simple_codes_combination(complex_md5), 'number': number})
 
 				for symlink in symlinks:
 					self.all_json_files.append(symlink)
@@ -319,6 +322,8 @@ class TreeWalker:
 					self.all_json_files.append(positions_symlink)
 				for media_symlink in media_symlinks:
 					self.all_json_files.append(media_symlink)
+			album.symlink_codes_and_numbers = symlink_codes_and_numbers
+
 
 		self.all_json_files.append(json_name)
 		self.all_json_files.append(json_positions_name)

@@ -104,9 +104,10 @@ config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x
 # json_version = 3.995 since removed ancestorsCacheBase and unnecessary ancestorsCenter
 # json_version = 3.996 since mimeType and convertedPath added as media properties
 # json_version = 3.997 since corrected bug with positions in search albums
+# json_version = 3.998 since symlinkCodesAndNumbers added as album property
 
 # json_version = 0
-json_version = 3.997
+json_version = 3.998
 
 
 def set_obsolete_json_version_flag():

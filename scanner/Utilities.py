@@ -30,19 +30,6 @@ def make_dir(absolute_path, message_part):
 	else:
 		message(message_part + " already existent, not creating it", relative_path, 5)
 
-def next_file_name(file_name_with_path):
-	file_name_with_path_list = file_name_with_path.split('.')
-	file_name = os.path.basename(file_name_with_path)
-	file_name_list = file_name.split('.')
-	is_positions_or_media = (file_name_list[-2] == 'positions' or file_name_list[-2] == 'media')
-	if is_positions_or_media:
-		subtract = 1
-	else:
-		subtract = 0
-	next_number = int(file_name_list[-2 - subtract]) + 1
-	first_part = file_name_with_path_list[:-2 - subtract]
-	return '.'.join(first_part + [str(next_number)] + file_name_list[-1 - subtract:])
-
 def json_files_and_mtime(cache_base):
 	json_file_list = []
 	global_mtime = None
@@ -61,7 +48,8 @@ def json_files_and_mtime(cache_base):
 	all_complex_combinations += [complex_combination + ',' for complex_combination in complex_combinations]
 	# all_complex_combinations += [',']
 	for complex_combination in all_complex_combinations:
-		protected_json_file_with_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + complex_combination, cache_base) + ".0.json"
+		number = 0
+		protected_json_file_with_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + complex_combination, cache_base) + "." + str(number) + ".json"
 		while os.path.exists(protected_json_file_with_path):
 			if not os.path.islink(protected_json_file_with_path):
 				json_file_list.append(protected_json_file_with_path)
@@ -70,16 +58,18 @@ def json_files_and_mtime(cache_base):
 					global_mtime = mtime
 				else:
 					global_mtime = min(global_mtime, mtime)
-			protected_json_file_with_path = next_file_name(protected_json_file_with_path)
+			number += 1
+			protected_json_file_with_path = os.path.join(Options.config['cache_path'], Options.config['protected_directories_prefix'] + complex_combination, cache_base) + "." + str(number) + ".json"
 
 	return [json_file_list, global_mtime]
 
-def determine_symlink_name(symlink):
-	while (os.path.isfile(symlink)):
-		# symlink = '.'.join(first_part + [str(n)] + symlink_list[-1 - subtract:])
-		symlink = next_file_name(symlink)
-		# n += 1
-	return symlink
+def determine_symlink_number_and_name(cache_base_with_path):
+	number = 0
+	symlink = cache_base_with_path + "." + str(number) + ".json"
+	while os.path.isfile(symlink):
+		number += 1
+		symlink = cache_base_with_path + "." + str(number) + ".json"
+	return [number, symlink]
 
 def calculate_media_file_name(json_file_name):
 	splitted_json_file_name = json_file_name.split('.')
@@ -128,8 +118,20 @@ def convert_old_codes_set_to_identifiers_set(codes_set):
 	return identifiers_set
 
 def convert_md5_to_identifier(md5):
-	identifier = next(identifier_and_password['identifier'] for identifier_and_password in Options.identifiers_and_passwords if identifier_and_password['password_md5'] == md5)
-	return identifier
+	if md5 == '':
+		return ''
+	identifiers_list = [identifier_and_password['identifier'] for identifier_and_password in Options.identifiers_and_passwords if identifier_and_password['password_md5'] == md5]
+	return identifiers_list[0]
+
+def convert_md5_to_code(md5):
+	if md5 == '':
+		return ''
+	code_list = [identifier_and_password['password_code'] for identifier_and_password in Options.identifiers_and_passwords if identifier_and_password['password_md5'] == md5]
+	return code_list[0]
+
+def convert_simple_md5_combination_to_simple_codes_combination(md5_simple_complex_combination):
+	splitted_md5_simple_complex_combination = md5_simple_complex_combination.split(',')
+	return ','.join([convert_md5_to_code(splitted_md5_simple_complex_combination[0]), convert_md5_to_code(splitted_md5_simple_complex_combination[1])])
 
 def save_password_codes():
 	message("Working with password files...", "", 3)
