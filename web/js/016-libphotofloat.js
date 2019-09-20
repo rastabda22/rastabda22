@@ -579,9 +579,8 @@
 				mediaCode = util.convertMd5ToCode(mediaGuessedPassword);
 				for (codesComplexCombinationInAlbum in album.numsProtectedMediaInSubTree) {
 					if (album.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombinationInAlbum) && codesComplexCombinationInAlbum != "") {
-						lists = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationInAlbum);
-						albumCodesComplexCombinationList = lists[0];
-						mediaCodesComplexCombinationList = lists[1];
+						let [albumCodesComplexCombinationList, mediaCodesComplexCombinationList] = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationInAlbum);
+						let codesSimpleCombinationInAlbum = util.convertCodesComplexCombinationToCodesSimpleCombination(codesComplexCombinationInAlbum);
 						if (
 							! albumCodesComplexCombinationList.length &&
 							mediaCodesComplexCombinationList.length &&
@@ -597,24 +596,20 @@
 							mediaCodesComplexCombinationList.indexOf(mediaCode) != -1
 						) {
 							if (
-								! (codesComplexCombinationInAlbum in album.includedFilesByCodesSimpleCombination) ||
-								getMedia && Object.keys(album.includedFilesByCodesSimpleCombination[codesComplexCombinationInAlbum]).some(
-									function(protectedCacheBase) {
-										var codesSimpleCombination = util.convertProtectedCacheBaseToCodesSimpleCombination(protectedCacheBase);
-										var result =
-											! album.includedFilesByCodesSimpleCombination[codesComplexCombinationInAlbum].hasOwnProperty(codesSimpleCombination) ||
-											codesSimpleCombination !== "" &&
-											! album.includedFilesByCodesSimpleCombination[codesComplexCombinationInAlbum][codesSimpleCombination].album.hasOwnProperty("mediaGot");
+								! (codesSimpleCombinationInAlbum in album.includedFilesByCodesSimpleCombination)
+								||
+								getMedia && Object.keys(album.includedFilesByCodesSimpleCombination[codesSimpleCombinationInAlbum]).some(
+									function(number) {
+										number = parseInt(number);
+										var result = ! album.includedFilesByCodesSimpleCombination[codesSimpleCombinationInAlbum][number].album.hasOwnProperty("mediaGot");
 										return result;
 									}
-								) ||
-								getPositions && Object.keys(album.includedFilesByCodesSimpleCombination[codesComplexCombinationInAlbum]).some(
-									function(protectedCacheBase) {
-										var codesSimpleCombination = util.convertProtectedCacheBaseToCodesSimpleCombination(protectedCacheBase);
-										var result =
-											! album.includedFilesByCodesSimpleCombination[codesComplexCombinationInAlbum].hasOwnProperty(codesSimpleCombination) ||
-											codesSimpleCombination !== "" &&
-											! album.includedFilesByCodesSimpleCombination[codesComplexCombinationInAlbum][codesSimpleCombination].album.hasOwnProperty("positionsGot");
+								)
+								||
+								getPositions && Object.keys(album.includedFilesByCodesSimpleCombination[codesSimpleCombinationInAlbum]).some(
+									function(number) {
+										number = parseInt(number);
+										var result = ! album.includedFilesByCodesSimpleCombination[codesSimpleCombinationInAlbum][number].album.hasOwnProperty("positionsGot");
 
 										return result;
 									}
@@ -869,15 +864,15 @@
 							protectedDirectory += ',';
 							if (mediaMd5CombinationList.length)
 								protectedDirectory += mediaMd5CombinationList[0];
-							if (! album.includedFilesByCodesSimpleCombination.hasOwnProperty(codesComplexCombination))
-								album.includedFilesByCodesSimpleCombination[codesComplexCombination] = {};
+							let codesSimpleCombination = util.convertProtectedDirectoryToCodesSimpleCombination(protectedDirectory);
+							if (! album.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination))
+								album.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
 
 							// we can know how many files/symlinks we have to get in the protected directory
 							let numProtectedCacheBases = getNumProtectedCacheBases(album.numsProtectedMediaInSubTree, codesComplexCombination);
 							for (let iCacheBase = 0; iCacheBase < numProtectedCacheBases; iCacheBase ++) {
 								let number = iCacheBase;
 								let protectedCacheBase = protectedDirectory + '/' + album.cacheBase + '.' + iCacheBase;
-								let codesSimpleCombination = util.convertProtectedCacheBaseToCodesSimpleCombination(protectedCacheBase);
 								if (! album.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination))
 									album.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
 								if (codesSimpleCombination != "" && ! album.includedFilesByCodesSimpleCombination[codesSimpleCombination].hasOwnProperty(number)) {
@@ -928,16 +923,13 @@
 		}
 
 		function getNumProtectedCacheBases(numsProtectedMediaInSubTree, codesComplexCombination) {
-			var lists = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombination);
-			var albumCodesComplexCombinationList = lists[0];
-			var mediaCodesComplexCombinationList = lists[1];
+			var [albumCodesComplexCombinationList, mediaCodesComplexCombinationList] = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombination);
 
 			var count = 0;
 			for (var codesComplexCombinationFromObject in numsProtectedMediaInSubTree) {
 				if (numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombinationFromObject) && codesComplexCombinationFromObject !== "") {
-					var listsFromObject = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationFromObject);
-					var albumCodesComplexCombinationListFromObject = listsFromObject[0];
-					var mediaCodesComplexCombinationListFromObject = listsFromObject[1];
+					var [albumCodesComplexCombinationListFromObject, mediaCodesComplexCombinationListFromObject] =
+					 	PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationFromObject);
 
 					if (
 						albumCodesComplexCombinationList.length &&

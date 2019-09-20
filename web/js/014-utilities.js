@@ -36,6 +36,18 @@
 			return "";
 	};
 
+	Utilities.prototype.convertProtectedDirectoryToCodesSimpleCombination = function(protectedDirectory) {
+		var [albumMd5, mediaMd5] = protectedDirectory.substring(Options.protected_directories_prefix.length).split(',');
+		if (albumMd5 && mediaMd5)
+			return [Utilities.convertMd5ToCode(albumMd5), Utilities.convertMd5ToCode(mediaMd5)].join(',');
+		else if (albumMd5)
+			return [Utilities.convertMd5ToCode(albumMd5), ''].join(',');
+		else if (mediaMd5)
+			return ['', Utilities.convertMd5ToCode(mediaMd5)].join(',');
+		else
+			return "";
+	};
+
 	Utilities.prototype.translate = function() {
 		var selector, keyLanguage;
 
@@ -1119,34 +1131,46 @@
 		return md5sList;
 	};
 
-	Utilities.prototype.convertCodesComplexCombinationToComplexCombination = function(codesComplexCombination) {
-		var albumCodesCombinationsList = codesComplexCombination.split(',')[0].split('-');
-		var mediaCodesCombinationsList = codesComplexCombination.split(',')[1].split('-');
-		var i, index, md5;
-
-		var albumCombinationsList = [];
-		for (i = 0; i < albumCodesCombinationsList.length; i ++) {
-			index = PhotoFloat.guessedPasswordCodes.indexOf(albumCodesCombinationsList[i]);
-			if (index != -1) {
-				md5 = PhotoFloat.guessedPasswordsMd5[index];
-				albumCombinationsList.push(md5);
-			} else {
-				albumCombinationsList.push('...');
-			}
-		}
-		var mediaCombinationsList = [];
-		for (i = 0; i < mediaCodesCombinationsList.length; i ++) {
-			index = PhotoFloat.guessedPasswordCodes.indexOf(mediaCodesCombinationsList[i]);
-			if (index != -1) {
-				md5 = PhotoFloat.guessedPasswordsMd5[index];
-				mediaCombinationsList.push(md5);
-			} else {
-				albumCombinationsList.push('...');
-			}
-		}
-
-		return [albumCombinationsList.join('-'), mediaCombinationsList.join('-')].join(',');
+	Utilities.prototype.convertCodesComplexCombinationToCodesSimpleCombination = function(codesComplexCombination) {
+		let [albumCodesComplexCombinationList, mediaCodesComplexCombinationList] = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombination);
+		if (albumCodesComplexCombinationList.length && mediaCodesComplexCombinationList.length)
+			return [albumCodesComplexCombinationList[0], mediaCodesComplexCombinationList[0]].join (',');
+		else if (albumCodesComplexCombinationList.length && ! mediaCodesComplexCombinationList.length)
+			return [albumCodesComplexCombinationList[0], ''].join (',');
+		else if (! albumCodesComplexCombinationList.length && mediaCodesComplexCombinationList.length)
+			return ['', mediaCodesComplexCombinationList[0]].join (',');
+		else
+			return '';
 	};
+
+	// Utilities.prototype.convertCodesComplexCombinationToComplexCombination = function(codesComplexCombination) {
+	// 	var albumCodesCombinationsList = codesComplexCombination.split(',')[0].split('-');
+	// 	var mediaCodesCombinationsList = codesComplexCombination.split(',')[1].split('-');
+	// 	var i, index, md5;
+	//
+	// 	var albumCombinationsList = [];
+	// 	for (i = 0; i < albumCodesCombinationsList.length; i ++) {
+	// 		index = PhotoFloat.guessedPasswordCodes.indexOf(albumCodesCombinationsList[i]);
+	// 		if (index != -1) {
+	// 			md5 = PhotoFloat.guessedPasswordsMd5[index];
+	// 			albumCombinationsList.push(md5);
+	// 		} else {
+	// 			albumCombinationsList.push('...');
+	// 		}
+	// 	}
+	// 	var mediaCombinationsList = [];
+	// 	for (i = 0; i < mediaCodesCombinationsList.length; i ++) {
+	// 		index = PhotoFloat.guessedPasswordCodes.indexOf(mediaCodesCombinationsList[i]);
+	// 		if (index != -1) {
+	// 			md5 = PhotoFloat.guessedPasswordsMd5[index];
+	// 			mediaCombinationsList.push(md5);
+	// 		} else {
+	// 			albumCombinationsList.push('...');
+	// 		}
+	// 	}
+	//
+	// 	return [albumCombinationsList.join('-'), mediaCombinationsList.join('-')].join(',');
+	// };
 
 	Utilities.prototype.undie = function() {
 		$(".error, #error-overlay, #auth-text", ".search-failed").fadeOut(500);
