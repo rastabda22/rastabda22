@@ -432,6 +432,7 @@
 											}
 										)
 									) {
+										// actually add the pointer
 										if (! album.includedFilesByCodesSimpleCombination.hasOwnProperty(symlinkCodesAndNumbersItem.codesSimpleCombination))
 											album.includedFilesByCodesSimpleCombination[symlinkCodesAndNumbersItem.codesSimpleCombination] = {};
 										if (! album.includedFilesByCodesSimpleCombination[symlinkCodesAndNumbersItem.codesSimpleCombination].hasOwnProperty(symlinkCodesAndNumbersItem.number))
@@ -692,7 +693,6 @@
 				}
 			}
 		);
-
 	};
 
 
