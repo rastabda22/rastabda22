@@ -314,7 +314,11 @@ class TreeWalker:
 					symlinks.append(symlink)
 					media_symlinks.append(media_symlink)
 					positions_symlinks.append(positions_symlink)
-					symlink_codes_and_numbers.append({'codesCombination': convert_simple_md5_combination_to_simple_codes_combination(complex_md5), 'number': number})
+					symlink_codes_and_numbers.append({
+						'codesSimpleCombination': convert_simple_md5_combination_to_simple_codes_combination(complex_md5),
+						'codesComplexCombination': codes_complex_combination,
+						'number': number
+					})
 
 				for symlink in symlinks:
 					self.all_json_files.append(symlink)
