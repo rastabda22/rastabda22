@@ -1076,7 +1076,7 @@ class TreeWalker:
 			elif file_mtime(absolute_path) >= json_files_min_mtime:
 				indented_message("not an album cache hit", "album dir newer than json file", 4)
 			else:
-				message("maybe an album cache hit", "trying to import album from '" + files, 5)
+				message("maybe an album cache hit", "trying to import album from " + files, 5)
 				# the following is the instruction which could raise the error
 				try:
 					[cached_album, must_process_passwords] = Album.from_json_files(json_file_list, json_files_min_mtime)
