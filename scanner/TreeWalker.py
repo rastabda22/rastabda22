@@ -73,10 +73,10 @@ class TreeWalker:
 		if folders_album is None:
 			message("WARNING", "ALBUMS ROOT EXCLUDED BY MARKER FILE", 2)
 		else:
-			# maybe nothing has changed and everything could end up here
-			if not passwords_or_album_ini_processed and not Options.num_photo_processed and not Options.num_video_processed:
-				message("nothing has changed in the album tree!", "Execution may end up here", 3)
-				return
+			# # maybe nothing has changed and everything could end up here
+			# if not passwords_or_album_ini_processed and not Options.num_photo_processed and not Options.num_video_processed:
+			# 	message("nothing has changed in the album tree!", "Execution may end up here", 3)
+			# 	return
 
 			message("changes has been in the album tree", "I must keep working!", 3)
 			next_level()
