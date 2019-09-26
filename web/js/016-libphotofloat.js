@@ -566,16 +566,17 @@
 		var codesComplexCombinationInAlbum;
 
 		var result = [];
-		for (iAlbumPassword = 0; iAlbumPassword < PhotoFloat.guessedPasswordsMd5.length; iAlbumPassword ++) {
-			for (iMediaPassword = 0; iMediaPassword < PhotoFloat.guessedPasswordsMd5.length; iMediaPassword ++) {
-				albumGuessedPassword = PhotoFloat.guessedPasswordsMd5[iAlbumPassword];
-				albumCode = util.convertMd5ToCode(albumGuessedPassword);
-				mediaGuessedPassword = PhotoFloat.guessedPasswordsMd5[iMediaPassword];
-				mediaCode = util.convertMd5ToCode(mediaGuessedPassword);
-				for (codesComplexCombinationInAlbum in album.numsProtectedMediaInSubTree) {
-					if (album.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombinationInAlbum) && codesComplexCombinationInAlbum != "") {
+		for (codesComplexCombinationInAlbum in album.numsProtectedMediaInSubTree) {
+			if (album.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombinationInAlbum) && codesComplexCombinationInAlbum != "") {
+				for (iAlbumPassword = 0; iAlbumPassword < PhotoFloat.guessedPasswordsMd5.length; iAlbumPassword ++) {
+					for (iMediaPassword = 0; iMediaPassword < PhotoFloat.guessedPasswordsMd5.length; iMediaPassword ++) {
+						albumGuessedPassword = PhotoFloat.guessedPasswordsMd5[iAlbumPassword];
+						albumCode = util.convertMd5ToCode(albumGuessedPassword);
+						mediaGuessedPassword = PhotoFloat.guessedPasswordsMd5[iMediaPassword];
+						mediaCode = util.convertMd5ToCode(mediaGuessedPassword);
 						let [albumCodesComplexCombinationList, mediaCodesComplexCombinationList] = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationInAlbum);
 						let codesSimpleCombinationInAlbum = util.convertCodesComplexCombinationToCodesSimpleCombination(codesComplexCombinationInAlbum);
+						let numProtectedCacheBases = PhotoFloat.getNumProtectedCacheBases(album.numsProtectedMediaInSubTree, codesComplexCombinationInAlbum);
 						if (
 							! albumCodesComplexCombinationList.length &&
 							mediaCodesComplexCombinationList.length &&
@@ -593,6 +594,8 @@
 							if (
 								! (codesSimpleCombinationInAlbum in album.includedFilesByCodesSimpleCombination)
 								||
+								Object.keys(album.includedFilesByCodesSimpleCombination[codesSimpleCombinationInAlbum]).length < numProtectedCacheBases
+								||
 								getMedia && Object.keys(album.includedFilesByCodesSimpleCombination[codesSimpleCombinationInAlbum]).some(
 									function(number) {
 										number = parseInt(number);
@@ -605,7 +608,6 @@
 									function(number) {
 										number = parseInt(number);
 										var result = ! album.includedFilesByCodesSimpleCombination[codesSimpleCombinationInAlbum][number].album.hasOwnProperty("positionsGot");
-
 										return result;
 									}
 								)
@@ -864,7 +866,7 @@
 								album.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
 
 							// we can know how many files/symlinks we have to get in the protected directory
-							let numProtectedCacheBases = getNumProtectedCacheBases(album.numsProtectedMediaInSubTree, codesComplexCombination);
+							let numProtectedCacheBases = PhotoFloat.getNumProtectedCacheBases(album.numsProtectedMediaInSubTree, codesComplexCombination);
 							for (let iCacheBase = 0; iCacheBase < numProtectedCacheBases; iCacheBase ++) {
 								let number = iCacheBase;
 								let protectedCacheBase = protectedDirectory + '/' + album.cacheBase + '.' + iCacheBase;
@@ -916,42 +918,42 @@
 				}
 			);
 		}
+	};
 
-		function getNumProtectedCacheBases(numsProtectedMediaInSubTree, codesComplexCombination) {
-			var [albumCodesComplexCombinationList, mediaCodesComplexCombinationList] = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombination);
+	PhotoFloat.getNumProtectedCacheBases = function(numsProtectedMediaInSubTree, codesComplexCombination) {
+		var [albumCodesComplexCombinationList, mediaCodesComplexCombinationList] = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombination);
 
-			var count = 0;
-			for (var codesComplexCombinationFromObject in numsProtectedMediaInSubTree) {
-				if (numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombinationFromObject) && codesComplexCombinationFromObject !== "") {
-					var [albumCodesComplexCombinationListFromObject, mediaCodesComplexCombinationListFromObject] =
-					 	PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationFromObject);
+		var count = 0;
+		for (var codesComplexCombinationFromObject in numsProtectedMediaInSubTree) {
+			if (numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombinationFromObject) && codesComplexCombinationFromObject !== "") {
+				var [albumCodesComplexCombinationListFromObject, mediaCodesComplexCombinationListFromObject] =
+					PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationFromObject);
 
-					if (
-						albumCodesComplexCombinationList.length &&
-						albumCodesComplexCombinationListFromObject.length &&
-						mediaCodesComplexCombinationList.length &&
-						mediaCodesComplexCombinationListFromObject.length &&
-						albumCodesComplexCombinationListFromObject.indexOf(albumCodesComplexCombinationList[0]) !== -1 &&
-						mediaCodesComplexCombinationListFromObject.indexOf(mediaCodesComplexCombinationList[0]) !== -1
-						||
-						! albumCodesComplexCombinationList.length &&
-						! albumCodesComplexCombinationListFromObject.length &&
-						mediaCodesComplexCombinationList.length &&
-						mediaCodesComplexCombinationListFromObject.length &&
-						mediaCodesComplexCombinationListFromObject.indexOf(mediaCodesComplexCombinationList[0]) !== -1
-						||
-						albumCodesComplexCombinationList.length &&
-						albumCodesComplexCombinationListFromObject.length &&
-						! mediaCodesComplexCombinationList.length &&
-						! mediaCodesComplexCombinationListFromObject.length &&
-						albumCodesComplexCombinationListFromObject.indexOf(albumCodesComplexCombinationList[0]) !== -1
-					)
-						count ++;
-				}
+				if (
+					albumCodesComplexCombinationList.length &&
+					albumCodesComplexCombinationListFromObject.length &&
+					mediaCodesComplexCombinationList.length &&
+					mediaCodesComplexCombinationListFromObject.length &&
+					albumCodesComplexCombinationListFromObject.indexOf(albumCodesComplexCombinationList[0]) !== -1 &&
+					mediaCodesComplexCombinationListFromObject.indexOf(mediaCodesComplexCombinationList[0]) !== -1
+					||
+					! albumCodesComplexCombinationList.length &&
+					! albumCodesComplexCombinationListFromObject.length &&
+					mediaCodesComplexCombinationList.length &&
+					mediaCodesComplexCombinationListFromObject.length &&
+					mediaCodesComplexCombinationListFromObject.indexOf(mediaCodesComplexCombinationList[0]) !== -1
+					||
+					albumCodesComplexCombinationList.length &&
+					albumCodesComplexCombinationListFromObject.length &&
+					! mediaCodesComplexCombinationList.length &&
+					! mediaCodesComplexCombinationListFromObject.length &&
+					albumCodesComplexCombinationListFromObject.indexOf(albumCodesComplexCombinationList[0]) !== -1
+				)
+					count ++;
 			}
-
-			return count;
 		}
+
+		return count;
 	};
 
 	PhotoFloat.hasProtectedContent = function(album) {
