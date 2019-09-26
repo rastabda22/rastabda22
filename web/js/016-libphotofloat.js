@@ -386,7 +386,7 @@
 					// possibly the external media and positions are still missing
 					let addMediaAndPositionsPromise = addExternalMediaAndPositionsFromProtectedAlbum();
 					addMediaAndPositionsPromise.then(
-						function mediaAndPositionsAdded() {
+						function externalMediaAndPositionsAdded() {
 							resolve_getSingleProtectedCacheBase();
 						}
 					);
@@ -465,7 +465,7 @@
 
 							let addMediaAndPositionsPromise = addExternalMediaAndPositionsFromProtectedAlbum();
 							addMediaAndPositionsPromise.then(
-								function mediaAndPositionsAdded() {
+								function externalMediaAndPositionsAdded() {
 									resolve_getSingleProtectedCacheBase();
 								}
 							);
