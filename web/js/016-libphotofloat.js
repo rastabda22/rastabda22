@@ -1,4 +1,4 @@
-/*jshint esversion: 6 */
+/* jshint esversion: 6 */
 (function() {
 
 	var util = new Utilities();
@@ -384,7 +384,7 @@
 				} else if (album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("protectedAlbumGot")) {
 					// the protected cache base has been already fetched
 					// possibly the external media and positions are still missing
-					addMediaAndPositionsPromise = addExternalMediaAndPositionsFromProtectedAlbum();
+					let addMediaAndPositionsPromise = addExternalMediaAndPositionsFromProtectedAlbum();
 					addMediaAndPositionsPromise.then(
 						function mediaAndPositionsAdded() {
 							resolve_getSingleProtectedCacheBase();
@@ -422,7 +422,7 @@
 									if (! album.hasOwnProperty("media"))
 										album.media = protectedAlbum.media;
 									else
-										album.media = album.media.concat(protectedAlbum.media)
+										album.media = album.media.concat(protectedAlbum.media);
 									album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.mediaGot = true;
 								}
 
@@ -430,7 +430,7 @@
 									if (! album.hasOwnProperty("positionsAndMediaInTree"))
 										album.positionsAndMediaInTree = protectedAlbum.positionsAndMediaInTree;
 									else
-										album.positionsAndMediaInTree = util.mergePoints(album.positionsAndMediaInTree, protectedAlbum.positionsAndMediaInTree);;
+										album.positionsAndMediaInTree = util.mergePoints(album.positionsAndMediaInTree, protectedAlbum.positionsAndMediaInTree);
 									album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.positionsGot = true;
 								}
 
@@ -463,7 +463,7 @@
 								}
 							}
 
-							addMediaAndPositionsPromise = addExternalMediaAndPositionsFromProtectedAlbum();
+							let addMediaAndPositionsPromise = addExternalMediaAndPositionsFromProtectedAlbum();
 							addMediaAndPositionsPromise.then(
 								function mediaAndPositionsAdded() {
 									resolve_getSingleProtectedCacheBase();
@@ -528,7 +528,7 @@
 								);
 							}
 						}
-					)
+					);
 				}
 			}
 		);
@@ -562,7 +562,7 @@
 
 	PhotoFloat.codesComplexCombinationsToGet = function(album, {getMedia, getPositions}) {
 		var iAlbumPassword, iMediaPassword, albumGuessedPassword, mediaGuessedPassword;
-		var albumCode, mediaCode, lists, albumCodesComplexCombinationList, mediaCodesComplexCombinationList;
+		var albumCode, mediaCode;
 		var codesComplexCombinationInAlbum;
 
 		var result = [];
@@ -1032,7 +1032,7 @@
 								if (! album.hasOwnProperty("positionsAndMediaInTree") || ! album.positionsAndMediaInTree.length)
 									album.positionsAndMediaInTree = positionsGot;
 								else
-									album.positionsAndMediaInTree = util.mergePoints(album.positionsAndMediaInTree, positions);
+									album.positionsAndMediaInTree = util.mergePoints(album.positionsAndMediaInTree, positionsGot);
 								album.includedFilesByCodesSimpleCombination[""].positionsGot = true;
 							}
 
