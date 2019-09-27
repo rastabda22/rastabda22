@@ -402,15 +402,15 @@
 								// this is needed when getSingleProtectedCacheBaseWithExternalMediaAndPositions() is called by getNumsProtectedMediaInSubTreeProperty()
 								album.numsProtectedMediaInSubTree = protectedAlbum.numsProtectedMediaInSubTree;
 
-							if (protectedAlbum.subalbums.length)
-								PhotoFloat.mergeProtectedSubalbums(album, protectedAlbum);
-
 							album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].codesComplexCombination = protectedAlbum.codesComplexCombination;
 
 							if (! protectedAlbum.hasOwnProperty("numMedia"))
 								protectedAlbum.numMedia = protectedAlbum.media.length;
 
 							if (! album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("protectedAlbumGot")) {
+								if (protectedAlbum.subalbums.length)
+									PhotoFloat.mergeProtectedSubalbums(album, protectedAlbum);
+
 								album.numMedia += protectedAlbum.numMedia;
 								album.numMediaInSubTree += protectedAlbum.numMediaInSubTree;
 								album.numPositionsInTree += protectedAlbum.numPositionsInTree;
@@ -692,7 +692,8 @@
 									}
 								)
 							) {
-								result.push(codesSimpleCombination);
+								if (! result.includes(codesSimpleCombination))
+									result.push(codesSimpleCombination);
 							}
 						}
 					}
@@ -775,23 +776,23 @@
 	};
 
 	PhotoFloat.mergeProtectedSubalbums = function(album, protectedAlbum) {
-		var cacheBases = [], i, protectedSubalbum;
+		var cacheBases = [], i, ithProtectedSubalbum;
 		album.subalbums.forEach(
 			function(subalbum) {
 				cacheBases.push(subalbum.cacheBase);
 			}
 		);
 		for (i = 0; i < protectedAlbum.subalbums.length; i ++) {
-			protectedSubalbum = protectedAlbum.subalbums[i];
-			if (cacheBases.indexOf(protectedSubalbum.cacheBase) == -1) {
-				album.subalbums.push(protectedSubalbum);
+			ithProtectedSubalbum = protectedAlbum.subalbums[i];
+			if (cacheBases.indexOf(ithProtectedSubalbum.cacheBase) == -1) {
+				album.subalbums.push(ithProtectedSubalbum);
 			// // if media or positions are missing the combination must not be reported as included
 			// } else if (album.hasOwnProperty("media") && album.hasOwnProperty("positionsAndMediaInTree")) {
 			} else {
 				album.subalbums.forEach(
 					function(subalbum) {
-						if (subalbum.cacheBase == protectedSubalbum.cacheBase)
-							PhotoFloat.mergeProtectedSubalbum(subalbum, protectedSubalbum);
+						if (subalbum.cacheBase == ithProtectedSubalbum.cacheBase)
+							PhotoFloat.mergeProtectedSubalbum(subalbum, ithProtectedSubalbum);
 					}
 				);
 			}
@@ -918,9 +919,7 @@
 							for (let iCacheBase = 0; iCacheBase < numProtectedCacheBases; iCacheBase ++) {
 								let number = iCacheBase;
 								let protectedCacheBase = protectedDirectory + '/' + album.cacheBase + '.' + iCacheBase;
-								if (! album.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination))
-									album.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
-								if (codesSimpleCombination != "" && ! album.includedFilesByCodesSimpleCombination[codesSimpleCombination].hasOwnProperty(number)) {
+								if (! album.includedFilesByCodesSimpleCombination[codesSimpleCombination].hasOwnProperty(number)) {
 									album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number] = {};
 									album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album = {};
 								}
@@ -928,7 +927,7 @@
 								let ithPromise = new Promise(
 									function(resolve_ithPromise, reject) {
 										if (
-											album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("") &&
+											album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("protectedAlbumGot") &&
 											! getMedia || album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("mediaGot") &&
 											! getPositions || album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("positionsGot")
 										) {
@@ -945,6 +944,7 @@
 											);
 											promise.catch(
 												// the protected cache base doesn't exist, keep on
+												// execution shouldn't arrive here
 												function() {
 													resolve_ithPromise();
 												}
