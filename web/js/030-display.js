@@ -538,10 +538,8 @@ $(document).ready(function() {
 			promise.then(
 				function() {
 					f.parseHash(location.hash, tF.hashParsed, util.die);
-				}
-			);
-			promise.catch(
-				function(album) {
+				},
+				function() {
 					console.trace();
 				}
 			);

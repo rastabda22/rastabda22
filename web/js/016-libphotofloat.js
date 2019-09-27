@@ -221,9 +221,7 @@
 						promise.then(
 							function(media) {
 								resolve_getMedia(media);
-							}
-						);
-						promise.catch(
+							},
 							function() {
 								resolve_getMedia(false);
 							}
@@ -246,9 +244,7 @@
 						promise.then(
 							function(positions) {
 								resolve_getPositions(positions);
-							}
-						);
-						promise.catch(
+							},
 							function() {
 								resolve_getPositions(false);
 							}
@@ -315,16 +311,12 @@
 								}
 
 								resolve_getSingleUnprotectedCacheBase(album);
-							}
-						);
-						promise.catch(
+							},
 							function() {
 								console.trace();
 							}
 						);
-					}
-				);
-				promise.catch(
+					},
 					function unprotectedFileDoesntExist() {
 						// execution arrives here if the json file doesn't exist
 						var emptyAlbum = {
@@ -467,16 +459,12 @@
 							addMediaAndPositionsPromise.then(
 								function externalMediaAndPositionsAdded() {
 									resolve_getSingleProtectedCacheBase();
-								}
-							);
-							addMediaAndPositionsPromise.catch(
+								},
 								function() {
 									console.trace();
 								}
 							);
-						}
-					);
-					promise.catch(
+						},
 						function protectedFileDoesntExist() {
 							if (codesSimpleCombination !== null)
 								// save the info that the protected cache base doesn't exist
@@ -519,9 +507,7 @@
 										}
 
 										resolve_addExternalMediaAndPositionsFromProtectedAlbum();
-									}
-								);
-								promise.catch(
+									},
 									function() {
 										console.trace();
 									}
@@ -737,21 +723,17 @@
 										// ok, we got what we were looking for:
 										// numsProtectedMediaInSubTree property has already been added by getSingleProtectedCacheBaseWithExternalMediaAndPositions()
 
-
+										// TO DO: sort subalbums and media
 										PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
 
 										resolve_getNextProtectedDirectory();
-									}
-								);
-								promise.catch(
+									},
 									function getSingleProtectedCacheBaseWithExternalMediaAndPositions_rejected() {
 										var promise = getNextProtectedDirectory();
 										promise.then(
 											function() {
 												resolve_getNextProtectedDirectory();
-											}
-										);
-										promise.catch(
+											},
 											function() {
 												reject_getNextProtectedDirectory();
 											}
@@ -809,9 +791,7 @@
 					numsPromise.then(
 						function() {
 							resolve_addProtectedContent();
-						}
-					);
-					numsPromise.catch(
+						},
 						function() {
 							console.trace();
 						}
@@ -831,16 +811,12 @@
 								numsPromise.then(
 									function() {
 										resolve_addProtectedContent();
-									}
-								);
-								numsPromise.catch(
+									},
 									function() {
 										console.trace();
 									}
 								);
-							}
-						);
-						promise.catch(
+							},
 							function() {
 								console.trace();
 							}
@@ -938,12 +914,10 @@
 													if (PhotoFloat.isEmpty(album))
 														delete album.empty;
 													resolve_ithPromise();
-												}
-											);
-											promise.catch(
-												// the protected cache base doesn't exist, keep on
-												// execution shouldn't arrive here
+												},
 												function() {
+													// the protected cache base doesn't exist, keep on!
+													// execution shouldn't arrive here
 													resolve_ithPromise();
 												}
 											);
@@ -957,6 +931,9 @@
 						Promise.all(protectedPromises).then(
 							function() {
 								// execution arrives here when all the protected json has been loaded and processed
+
+								// TO DO: sort subalbums and media
+
 								resolve_continueAddProtectedContent();
 							}
 						);
@@ -1119,16 +1096,12 @@
 								function() {
 									goOnTowardResolvingGetAlbum(album);
 									resolve_getAlbum([album]);
-								}
-							);
-							promise.catch(
+								},
 								function() {
 									console.trace();
 								}
 							);
-						}
-					);
-					promise.catch(
+						},
 						function() {
 							console.trace();
 						}
@@ -1155,9 +1128,7 @@
 									function() {
 										goOnTowardResolvingGetAlbum(album);
 										resolve_getAlbum([album]);
-									}
-								);
-								promise.catch(
+									},
 									function() {
 										console.trace();
 									}
@@ -1166,9 +1137,7 @@
 								goOnTowardResolvingGetAlbum(album);
 								resolve_getAlbum([album]);
 							}
-						}
-					);
-					promise.catch(
+						},
 						function unprotectedAlbumUnexisting(emptyAlbum) {
 							// look for a protected album: something must be there
 							var promise = PhotoFloat.addProtectedContent(emptyAlbum, {"getMedia": getMedia, "getPositions": getPositions});
@@ -1176,9 +1145,7 @@
 								function() {
 									goOnTowardResolvingGetAlbum(emptyAlbum);
 									resolve_getAlbum([emptyAlbum]);
-								}
-							);
-							promise.catch(
+								},
 								function() {
 									console.trace();
 								}
@@ -1250,9 +1217,7 @@
 						// index = 0;
 						index = Math.floor(Math.random() * (album.numMediaInSubTree));
 						nextAlbum(album);
-					}
-				);
-				promise.catch(
+					},
 					function() {
 						console.trace();
 					}
@@ -1296,9 +1261,7 @@
 							promise.then(
 								function([subalbum]) {
 									nextAlbum(subalbum);
-								}
-							);
-							promise.catch(
+								},
 								function() {
 									console.trace();
 								}
@@ -1309,9 +1272,7 @@
 						lastPromise.then(
 							function([album]) {
 								resolve_pickRandomMedia([album, index]);
-							}
-						);
-						lastPromise.catch(
+							},
 							function() {
 								console.trace();
 							}
@@ -1468,9 +1429,7 @@
 								self.geotaggedPhotosFound = true;
 								resolveGeotaggedPhotosExist(true);
 							}
-						}
-					);
-					promise.catch(
+						},
 						function() {
 							console.trace();
 						}
@@ -1867,9 +1826,7 @@
 											}
 											subalbumsAbsentOrGot();
 										}
-									}
-								);
-								promise.catch(
+									},
 									function() {
 										console.trace();
 									}
@@ -1877,9 +1834,7 @@
 							}
 						}
 					}
-				}
-			);
-			promise.catch(
+				},
 				function() {
 					console.trace();
 				}
@@ -1995,9 +1950,7 @@
 			promise.then(
 				function([theAlbum]) {
 					PhotoFloat.selectMedia(theAlbum, mediaFolderHash, mediaHash, hashParsed);
-				}
-			);
-			promise.catch(
+				},
 				function() {
 					console.trace();
 				}
@@ -2037,9 +1990,7 @@
 					searchWordsFromUserNormalizedAccordingToOptions = searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions;
 
 					buildSearchResult();
-				}
-			);
-			promise.catch(
+				},
 				function() {
 					console.trace();
 				}

@@ -372,9 +372,7 @@
 							mapAlbum.positionsAndMediaInTree = util.mergePoints(mapAlbum.positionsAndMediaInTree, positionsAndCounts);
 							resolve(mapAlbum);
 						}
-					}
-				);
-				promise.catch(
+					},
 					function() {
 						console.trace();
 					}

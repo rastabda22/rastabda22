@@ -661,9 +661,7 @@
 			promise.then(
 				function() {
 					phFl.parseHash(hash, callback, error);
-				}
-			);
-			promise.catch(
+				},
 				function(album) {
 					console.trace();
 				}

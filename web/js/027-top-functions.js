@@ -546,9 +546,7 @@
 						);
 						document.title = documentTitle;
 					}
-				}
-			);
-			promise.catch(
+				},
 				function() {
 					console.trace();
 				}
@@ -748,9 +746,7 @@
 			promise.then(
 				function(hasGpsData) {
 					actuallyBind(thisAlbum, hasGpsData);
-				}
-			);
-			promise.catch(
+				},
 				function(album) {
 					console.trace();
 				}
@@ -2127,9 +2123,7 @@
 										function([album, index]) {
 											insertRandomImage(album, index, theSubalbum);
 											resolve_subalbumPromise();
-										}
-									);
-									promise.catch(
+										},
 										function(album) {
 											console.trace();
 										}
@@ -2160,11 +2154,10 @@
 								$(".album-button-and-caption").css("height", (parseInt($(".album-button-and-caption").css("height")) + difference) + 'px');
 								$(".album-caption").css("height", maxHeight + 'px');
 							}
+						},
+						function() {
+							console.trace();
 						}
-					// ).catch(
-					// 	function(album) {
-					// 		console.trace();
-					// 	}
 					);
 
 					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
@@ -2371,9 +2364,7 @@
 					$("#warning-no-geolocated-media").stop().fadeIn(200);
 					$("#warning-no-geolocated-media").fadeOut(3000);
 				}
-			}
-		);
-		subalbumPromise.catch(
+			},
 			function() {
 				console.trace();
 			}
@@ -2473,8 +2464,8 @@
 					'click',
 					function(ev) {
 						var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, pruneCluster.Cluster._clusters);
-						updatePromise.then(TopFunctions.prepareAndDoPopupUpdate);
-						updatePromise.catch(
+						updatePromise.then(
+							TopFunctions.prepareAndDoPopupUpdate,
 							function() {
 								console.trace();
 							}
@@ -2566,8 +2557,8 @@
 				'click',
 				function(ev) {
 					var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, pruneCluster.Cluster._clusters);
-					updatePromise.then(TopFunctions.prepareAndDoPopupUpdate);
-					updatePromise.catch(
+					updatePromise.then(
+						TopFunctions.prepareAndDoPopupUpdate,
 						function() {
 							console.trace();
 						}
@@ -2596,11 +2587,7 @@
 								// return;
 								var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, pruneCluster.Cluster._clusters, false);
 								updatePromise.then(
-									function() {
-										resolve_playClickElement();
-									}
-								);
-								updatePromise.catch(
+									resolve_playClickElement,
 									function() {
 										console.trace();
 									}
@@ -2616,9 +2603,7 @@
 								else
 									TopFunctions.prepareAndDoPopupUpdate();
 									// TopFunctions.updateMapAlbumOnMapClick(null, pruneCluster.Cluster._clusters, TopFunctions.prepareAndDoPopupUpdate);
-							}
-						);
-						promise.catch(
+							},
 							function(album) {
 								console.trace();
 							}
@@ -2840,12 +2825,8 @@
 					);
 
 					imageLoadPromise.then(
+						endPreparingMapAlbumAndUpdatePopup,
 						function() {
-							endPreparingMapAlbumAndUpdatePopup();
-						}
-					);
-					imageLoadPromise.catch(
-						function(album) {
 							console.trace();
 						}
 					);
