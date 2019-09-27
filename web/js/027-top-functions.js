@@ -2850,7 +2850,7 @@
 						MapFunctions.mapAlbum.numPositionsInTree = MapFunctions.mapAlbum.positionsAndMediaInTree.length;
 						MapFunctions.mapAlbum.numsProtectedMediaInSubTree = {"": MapFunctions.mapAlbum.numMedia};
 						// media must be initially sorted by date not reverse, as json they are in albums
-						MapFunctions.mapAlbum.media = util.sortByDate(MapFunctions.mapAlbum.media);
+						util.sortByDate(MapFunctions.mapAlbum.media);
 						MapFunctions.mapAlbum.mediaNameSort = false;
 						MapFunctions.mapAlbum.mediaReverseSort = false;
 						util.initializeSortPropertiesAndCookies(MapFunctions.mapAlbum);

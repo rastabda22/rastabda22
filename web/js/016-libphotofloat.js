@@ -1781,7 +1781,7 @@
 
 												// search albums need to conform to default behaviour of albums:
 												// json files have subalbums and media sorted by date not reversed
-												searchResultsAlbumFinal.media = util.sortByDate(searchResultsAlbumFinal.media);
+												util.sortByDate(searchResultsAlbumFinal.media);
 
 												matchingSubalbums = [];
 												for (indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
@@ -1821,7 +1821,7 @@
 
 												if (searchResultsAlbumFinal.subalbums.length) {
 													// search albums need to conform to default behaviour of albums: json files have subalbums and media sorted by date not reversed
-													searchResultsAlbumFinal.subalbums = util.sortByDate(searchResultsAlbumFinal.subalbums);
+													util.sortByDate(searchResultsAlbumFinal.subalbums);
 												}
 											}
 											subalbumsAbsentOrGot();

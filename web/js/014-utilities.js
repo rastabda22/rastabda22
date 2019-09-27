@@ -296,36 +296,24 @@
 	};
 
 	 Utilities.sortByName = function(mediaList) {
-		var sortedAlbum = this.sortBy(mediaList, 'name');
-		sortedAlbum.mediaNameSort = true;
-		sortedAlbum.mediaReverseSort = false;
-
-		return sortedAlbum;
+		mediaList = this.sortBy(mediaList, 'name');
 	};
 
 	Utilities.sortByPath = function(albumList) {
-		var sortedAlbum;
 		if (albumList.length) {
 			if (Utilities.isByGpsCacheBase(albumList[0].cacheBase)) {
 				if (albumList[0].hasOwnProperty('altName'))
-					sortedAlbum = this.sortBy(albumList, 'altName');
+					albumList = this.sortBy(albumList, 'altName');
 				else
-					sortedAlbum = this.sortBy(albumList, 'name');
+					albumList = this.sortBy(albumList, 'name');
 			} else {
-				sortedAlbum = this.sortBy(albumList, 'path');
+				albumList = this.sortBy(albumList, 'path');
 			}
-		} else {
-			sortedAlbum = albumList;
 		}
-
-		sortedAlbum.albumNameSort = true;
-		sortedAlbum.albumReverseSort = false;
-
-		return sortedAlbum;
 	};
 
 	Utilities.sortByDate = function (albumOrMediaList) {
-		var sortedAlbum = albumOrMediaList.sort(
+		albumOrMediaList = albumOrMediaList.sort(
 			function(a,b) {
 				return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
 				// var aValue = new Date(a.date);
@@ -333,8 +321,6 @@
 				// return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
 			}
 		);
-
-		return sortedAlbum;
 	};
 
 	Utilities.sortReverse = function(albumOrMediaList) {
@@ -1211,10 +1197,12 @@
 		// json files have subalbums and media sorted by date not reversed
 
 		if (Functions.needAlbumNameSort(thisAlbum)) {
-			thisAlbum.subalbums = Utilities.sortByPath(thisAlbum.subalbums);
+			Utilities.sortByPath(thisAlbum.subalbums);
+			thisAlbum.albumNameSort = true;
+			thisAlbum.albumReverseSort = false;
 			// $("li.album-sort.by-name").addClass("selected");
 		} else if (Functions.needAlbumDateSort(thisAlbum)) {
-			thisAlbum.subalbums = Utilities.sortByDate(thisAlbum.subalbums);
+			Utilities.sortByDate(thisAlbum.subalbums);
 			thisAlbum.albumNameSort = false;
 			thisAlbum.albumReverseSort = false;
 		}
@@ -1225,7 +1213,9 @@
 
 		if (thisAlbum.hasOwnProperty("media")) {
 			if (Functions.needMediaNameSort(thisAlbum)) {
-				thisAlbum.media = Utilities.sortByName(thisAlbum.media);
+				Utilities.sortByName(thisAlbum.media);
+				thisAlbum.mediaNameSort = true;
+				thisAlbum.mediaReverseSort = false;
 				if (currentMedia !== null) {
 					currentMediaIndex = thisAlbum.media.findIndex(
 						function(thisMedia) {
@@ -1236,7 +1226,7 @@
 					);
 				}
 			} else if (Functions.needMediaDateSort(thisAlbum)) {
-				thisAlbum.media = Utilities.sortByDate(thisAlbum.media);
+				Utilities.sortByDate(thisAlbum.media);
 				thisAlbum.mediaNameSort = false;
 				thisAlbum.mediaReverseSort = false;
 				if (currentMedia !== null) {
