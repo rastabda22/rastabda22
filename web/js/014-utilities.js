@@ -296,34 +296,53 @@
 	};
 
 	 Utilities.sortByName = function(mediaList) {
-		return this.sortBy(mediaList, 'name');
+		var sortedAlbum = this.sortBy(mediaList, 'name');
+		sortedAlbum.mediaNameSort = true;
+		sortedAlbum.mediaReverseSort = false;
+
+		return sortedAlbum;
 	};
 
 	Utilities.sortByPath = function(albumList) {
+		var sortedAlbum;
 		if (albumList.length) {
 			if (Utilities.isByGpsCacheBase(albumList[0].cacheBase)) {
 				if (albumList[0].hasOwnProperty('altName'))
-					return this.sortBy(albumList, 'altName');
+					sortedAlbum = this.sortBy(albumList, 'altName');
 				else
-					return this.sortBy(albumList, 'name');
-			} else
-				return this.sortBy(albumList, 'path');
+					sortedAlbum = this.sortBy(albumList, 'name');
+			} else {
+				sortedAlbum = this.sortBy(albumList, 'path');
+			}
+		} else {
+			sortedAlbum = albumList;
 		}
-		return albumList;
+
+		sortedAlbum.albumNameSort = true;
+		sortedAlbum.albumReverseSort = false;
+
+		return sortedAlbum;
 	};
 
 	Utilities.sortByDate = function (albumOrMediaList) {
-		return albumOrMediaList.sort(function(a,b) {
-			return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
-			// var aValue = new Date(a.date);
-			// var bValue = new Date(b.date);
-			// return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-		});
+		var sortedAlbum = albumOrMediaList.sort(
+			function(a,b) {
+				return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
+				// var aValue = new Date(a.date);
+				// var bValue = new Date(b.date);
+				// return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+			}
+		);
+
+		return sortedAlbum;
 	};
 
 	Utilities.sortReverse = function(albumOrMediaList) {
-		return albumOrMediaList.reverse();
+		var sortedAlbum = albumOrMediaList.reverse();
+
+		return sortedAlbum;
 	};
+
 	Utilities.prototype.trimExtension = function(name) {
 		var index = name.lastIndexOf(".");
 		if (index !== -1)
@@ -1193,8 +1212,6 @@
 
 		if (Functions.needAlbumNameSort(thisAlbum)) {
 			thisAlbum.subalbums = Utilities.sortByPath(thisAlbum.subalbums);
-			thisAlbum.albumNameSort = true;
-			thisAlbum.albumReverseSort = false;
 			// $("li.album-sort.by-name").addClass("selected");
 		} else if (Functions.needAlbumDateSort(thisAlbum)) {
 			thisAlbum.subalbums = Utilities.sortByDate(thisAlbum.subalbums);
@@ -1209,8 +1226,6 @@
 		if (thisAlbum.hasOwnProperty("media")) {
 			if (Functions.needMediaNameSort(thisAlbum)) {
 				thisAlbum.media = Utilities.sortByName(thisAlbum.media);
-				thisAlbum.mediaNameSort = true;
-				thisAlbum.mediaReverseSort = false;
 				if (currentMedia !== null) {
 					currentMediaIndex = thisAlbum.media.findIndex(
 						function(thisMedia) {
