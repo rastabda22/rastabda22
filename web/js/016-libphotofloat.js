@@ -724,21 +724,19 @@
 							if (iDirectory >= theProtectedDirectoriesToGet.length) {
 								reject_getNextProtectedDirectory();
 							} else {
+								// since numsProtectedMediaInSubTree isn't in the album,
+								// there is no way to know if a protected directory will have the searched content:
+								// so we must try until a protected directory has the protected album we need
+
 								var protectedDirectory = theProtectedDirectoriesToGet[iDirectory];
 								var protectedCacheBase = protectedDirectory + '/' + album.cacheBase + '.0';
-								// var codesSimpleCombination = util.convertProtectedCacheBaseToCodesSimpleCombination(protectedCacheBase);
-
-								// if (! album.includedFilesByCodesSimpleCombination.hasOwnProperty(codesComplexCombination))
-								// 	album.includedFilesByCodesSimpleCombination[codesComplexCombination] = {};
 
 								var promise = PhotoFloat.getSingleProtectedCacheBaseWithExternalMediaAndPositions(protectedCacheBase, album, {"getMedia": false, "getPositions": false});
 								promise.then(
 									function getSingleProtectedCacheBaseWithExternalMediaAndPositions_resolved() {
-										// ok, we got what we were looking for!
+										// ok, we got what we were looking for:
 										// numsProtectedMediaInSubTree property has already been added by getSingleProtectedCacheBaseWithExternalMediaAndPositions()
 
-										// since a protected cache base has been fetched, keep merging it into the album
-										// getSingleProtectedCacheBaseWithExternalMediaAndPositions_resolved() has already done something
 
 										PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
 
