@@ -723,7 +723,16 @@
 										// ok, we got what we were looking for:
 										// numsProtectedMediaInSubTree property has already been added by getSingleProtectedCacheBaseWithExternalMediaAndPositions()
 
-										// TO DO: sort subalbums and media
+										if (album.hasOwnProperty("media")) {
+											util.sortByDate(album.media);
+											album.mediaNameSort = false;
+											album.mediaReverseSort = false;
+										}
+										util.sortByDate(album.subalbums);
+										album.albumNameSort = false;
+										album.albumReverseSort = false;
+										util.sortAlbumsMedia(album);
+
 										PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
 
 										resolve_getNextProtectedDirectory();
@@ -932,7 +941,15 @@
 							function() {
 								// execution arrives here when all the protected json has been loaded and processed
 
-								// TO DO: sort subalbums and media
+								if (album.hasOwnProperty("media")) {
+									util.sortByDate(album.media);
+									album.mediaNameSort = false;
+									album.mediaReverseSort = false;
+								}
+								util.sortByDate(album.subalbums);
+								album.albumNameSort = false;
+								album.albumReverseSort = false;
+								util.sortAlbumsMedia(album);
 
 								resolve_continueAddProtectedContent();
 							}
