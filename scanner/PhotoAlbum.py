@@ -394,12 +394,12 @@ class Album(object):
 		# media and positions: if few, they can be saved inside the normal json file
 		# otherwise, save them in its own files
 
-		separate_positions = False
-		if self.positions_and_media_in_tree.count_media() > Options.max_media_from_positions_in_json_file:
-			separate_positions = True
 		separate_media = False
-		if len(self.media) > Options.max_media_in_json_file:
+		if Options.config['max_media_in_json_file'] > 0 and len(self.media) > Options.config['max_media_in_json_file']:
 			separate_media = True
+		separate_positions = False
+		if Options.config['max_media_from_positions_in_json_file'] > 0 and self.positions_and_media_in_tree.count_media() > Options.config['max_media_from_positions_in_json_file']:
+			separate_positions = True
 
 		json_file_with_path = os.path.join(Options.config['cache_path'], json_name)
 		if os.path.exists(json_file_with_path) and not os.access(json_file_with_path, os.W_OK):

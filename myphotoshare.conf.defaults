@@ -129,7 +129,7 @@ jpeg_quality = 95
 ################################################################################
 # BEWARE:
 # if you use this feature and don't change this options, the user can know what files you are hiding,
-# and therefore could try to access them in the `/albums/` tree
+# and therefore the user could try to access them in the `/albums/` tree
 ################################################################################
 exclude_files_marker = .myphotoshare.exclude.files
 exclude_tree_marker = .myphotoshare.exclude.tree
@@ -207,6 +207,13 @@ num_processors = 1
 
 # Should exif metadata (including copyright info) be copied into all the reductions and thumbnails?
 copy_exif_into_reductions = false
+
+# What is the maximum number of media that will be put in the album json files?
+# 0 = never separate media file
+max_media_in_json_file = 20
+# What is the maximum number of media in positions that will make positions be put in the album json files?
+# 0 = never separate positions file
+max_media_from_positions_in_json_file = 20
 
 ###########################################################
 # scanner and ui options

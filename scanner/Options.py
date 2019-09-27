@@ -35,8 +35,25 @@ photos_without_exif_date_and_with_geotags = []
 photos_without_exif_date_or_geotags = []
 num_video = 0
 num_video_processed = 0
-options_not_to_be_saved = ['cache_path', 'index_html_path', 'album_path', 'passwords_marker', 'passwords_file']
-options_requiring_json_regeneration = ['geonames_language', 'unspecified_geonames_code', 'get_geonames_online', 'metadata_tools_preference', 'subdir_method', 'cache_folders_num_digits_array']
+options_not_to_be_saved = [
+	'cache_path',
+	'index_html_path',
+	'album_path',
+	'passwords_marker',
+	'passwords_file',
+	'max_media_in_json_file',
+	'max_media_from_positions_in_json_file'
+]
+options_requiring_json_regeneration = [
+	'geonames_language',
+	'unspecified_geonames_code',
+	'get_geonames_online',
+	'metadata_tools_preference',
+	'subdir_method',
+	'cache_folders_num_digits_array',
+	'max_media_in_json_file',
+	'max_media_from_positions_in_json_file'
+]
 # every option is given in a dictionary with a value which represent the pre-option default value
 options_requiring_reduced_images_regeneration = [
 	{'name': 'jpeg_quality', 'default': False},
@@ -72,10 +89,6 @@ config['available_map_popup_positions'] = ['SE', 'NW' ]
 # min_random ensures that all the codes has the same length
 min_random = 100000000
 max_random = 999999999
-# max_media_in_json_file = 1
-# max_media_from_positions_in_json_file = 1
-max_media_in_json_file = 20
-max_media_from_positions_in_json_file = 20
 
 # svg is not in the following list because Pillow doesn't support it
 config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x-tga']
@@ -207,6 +220,8 @@ def get_options():
 				'album_thumb_size',
 				'media_thumb_size',
 				'big_virtual_folders_threshold',
+				'max_media_in_json_file',
+				'max_media_from_positions_in_json_file',
 				'max_search_album_number',
 				# the following option will be converted to integer further on
 				'num_processors',

@@ -1,3 +1,6 @@
+* when an album has many media/positions, they are saved to a separate json file
+  * new option: `max_media_in_json_file`
+  * new option: `max_media_from_positions_in_json_file`
 * `python3` is now used in scanner
 * `python3-magic` is used to detect file types
 * albums and media can be protected with passwords: protected content isn't exposed in the album tree or the cache
