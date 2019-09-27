@@ -360,7 +360,7 @@
 		);
 	};
 
-	PhotoFloat.getSingleProtectedCacheBaseWithExternalMediaAndPositions = function(protectedCacheBase, album, {getMedia, getPositions, codesComplexCombination = null}) {
+	PhotoFloat.getSingleProtectedCacheBaseWithExternalMediaAndPositions = function(protectedCacheBase, album, {getMedia, getPositions}) {
 		// this function gets a single protected json file
 
 		var splittedProtectedCacheBase = protectedCacheBase.split('.');
@@ -478,7 +478,7 @@
 					);
 					promise.catch(
 						function protectedFileDoesntExist() {
-							if (codesComplexCombination !== null)
+							if (codesSimpleCombination !== null)
 								// save the info that the protected cache base doesn't exist
 								album.includedFilesByCodesSimpleCombination[codesSimpleCombination] = false;
 
@@ -613,6 +613,86 @@
 								)
 							) {
 								result.push(codesComplexCombinationInAlbum);
+							}
+						}
+					}
+				}
+			}
+		}
+		return result;
+	};
+
+	PhotoFloat.codesSimpleCombinationsToGet = function(album, {getMedia, getPositions}) {
+		var iAlbumPassword, iMediaPassword, albumGuessedPassword, mediaGuessedPassword;
+		var albumCode, mediaCode;
+		var codesComplexCombinationInAlbum;
+
+		var result = [];
+		for (iAlbumPassword = 0; iAlbumPassword <= PhotoFloat.guessedPasswordsMd5.length; iAlbumPassword ++) {
+			if (iAlbumPassword === PhotoFloat.guessedPasswordsMd5.length) {
+				albumCode = '';
+			} else {
+				albumGuessedPassword = PhotoFloat.guessedPasswordsMd5[iAlbumPassword];
+				albumCode = util.convertMd5ToCode(albumGuessedPassword);
+			}
+			for (iMediaPassword = 0; iMediaPassword <= PhotoFloat.guessedPasswordsMd5.length; iMediaPassword ++) {
+				if (iMediaPassword === PhotoFloat.guessedPasswordsMd5.length) {
+					mediaCode = '';
+				} else {
+					mediaGuessedPassword = PhotoFloat.guessedPasswordsMd5[iMediaPassword];
+					mediaCode = util.convertMd5ToCode(mediaGuessedPassword);
+				}
+				if (! albumCode && ! mediaCode)
+					continue;
+				let codesSimpleCombination = albumCode + ',' + mediaCode;
+
+				for (codesComplexCombinationInAlbum in album.numsProtectedMediaInSubTree) {
+					if (album.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombinationInAlbum) && codesComplexCombinationInAlbum != "") {
+						let [albumCodesComplexCombinationList, mediaCodesComplexCombinationList] = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationInAlbum);
+
+						if (
+							! albumCodesComplexCombinationList.length &&
+							! albumCode &&
+							mediaCodesComplexCombinationList.length &&
+							mediaCode &&
+							mediaCodesComplexCombinationList.indexOf(mediaCode) != -1
+							||
+							albumCodesComplexCombinationList.length &&
+							albumCode &&
+							albumCodesComplexCombinationList.indexOf(albumCode) != -1 &&
+							! mediaCodesComplexCombinationList.length &&
+							! mediaCode
+							||
+							albumCodesComplexCombinationList.length &&
+							albumCode &&
+							albumCodesComplexCombinationList.indexOf(albumCode) != -1 &&
+							mediaCodesComplexCombinationList.length &&
+							mediaCode &&
+							mediaCodesComplexCombinationList.indexOf(mediaCode) != -1
+						) {
+							let numProtectedCacheBases = PhotoFloat.getNumProtectedCacheBases(album.numsProtectedMediaInSubTree, codesComplexCombinationInAlbum);
+							if (
+								! (codesSimpleCombination in album.includedFilesByCodesSimpleCombination)
+								||
+								Object.keys(album.includedFilesByCodesSimpleCombination[codesSimpleCombination]).length < numProtectedCacheBases
+								||
+								getMedia && Object.keys(album.includedFilesByCodesSimpleCombination[codesSimpleCombination]).some(
+									function(number) {
+										number = parseInt(number);
+										var result = ! album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("mediaGot");
+										return result;
+									}
+								)
+								||
+								getPositions && Object.keys(album.includedFilesByCodesSimpleCombination[codesSimpleCombination]).some(
+									function(number) {
+										number = parseInt(number);
+										var result = ! album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("positionsGot");
+										return result;
+									}
+								)
+							) {
+								result.push(codesSimpleCombination);
 							}
 						}
 					}
@@ -779,8 +859,8 @@
 
 			return new Promise(
 				function(resolve_continueAddProtectedContent) {
-					var theCodesComplexCombinationsToGet = PhotoFloat.codesComplexCombinationsToGet(album, {"getMedia": getMedia, "getPositions": getPositions});
-					if (! theCodesComplexCombinationsToGet.length) {
+					var theCodesSimpleCombinationsToGet = PhotoFloat.codesSimpleCombinationsToGet(album, {"getMedia": getMedia, "getPositions": getPositions});
+					if (! theCodesSimpleCombinationsToGet.length) {
 						if (! PhotoFloat.getAlbumFromCache(album.cacheBase))
 							PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
 						resolve_continueAddProtectedContent();
@@ -802,71 +882,39 @@
 						// 	resolve_continueAddProtectedContent(album);
 						// } else {
 						let protectedPromises = [];
-						let codesComplexCombinationsGot = [];
+						// let codesSimpleCombinationGot = [];
 
-						// loop on the complex combinations, i.e. on the protected directories
-						for (let iComplex = 0; iComplex < theCodesComplexCombinationsToGet.length; iComplex ++) {
-							let codesComplexCombination = theCodesComplexCombinationsToGet[iComplex];
-							let codesCombinationsLists = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombination);
-							let albumCodesCombinationsList = codesCombinationsLists[0];
-							let mediaCodesCombinationList = codesCombinationsLists[1];
-							let albumMd5CombinationsList = util.convertCodesListToMd5sList(albumCodesCombinationsList);
-							let mediaMd5CombinationList = util.convertCodesListToMd5sList(mediaCodesCombinationList);
-							codesComplexCombinationsGot.push(codesComplexCombination);
+						// loop on the simple combinations, i.e. on the protected directories
+						for (let iSimple = 0; iSimple < theCodesSimpleCombinationsToGet.length; iSimple ++) {
+							let codesSimpleCombination = theCodesSimpleCombinationsToGet[iSimple];
+							// let codesCombinationsLists = PhotoFloat.convertComplexCombinationsIntoLists(codesSimpleCombination);
+							let [albumMd5, mediaMd5] = util.convertCodesListToMd5sList(codesSimpleCombination.split(','));
+							// codesSimpleCombinationGot.push(codesSimpleCombination);
 
-							function isEquivalent(codesComplexCombination, codesComplexCombinationGot) {
-								let codesCombinationsLists = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombination);
-								let albumCodesCombinationsList = codesCombinationsLists[0];
-								let mediaCodesCombinationList = codesCombinationsLists[1];
-								let codesCombinationsListsGot = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationGot);
-								let albumCodesCombinationsListGot = codesCombinationsListsGot[0];
-								let mediaCodesCombinationListGot = codesCombinationsListsGot[1];
-								var result =
-									! albumCodesCombinationsList.length &&
-									! albumCodesCombinationsListGot.length &&
-									mediaCodesCombinationList.length &&
-									mediaCodesCombinationListGot.length &&
-									util.arrayIntersect(mediaCodesCombinationList, mediaCodesCombinationListGot).length
-									||
-									albumCodesCombinationsList.length &&
-									albumCodesCombinationsListGot.length &&
-									! mediaCodesCombinationList.length &&
-									! mediaCodesCombinationListGot.length &&
-									util.arrayIntersect(albumCodesCombinationsList, albumCodesCombinationsListGot).length
-									||
-									albumCodesCombinationsList.length &&
-									albumCodesCombinationsListGot.length &&
-									mediaCodesCombinationList.length &&
-									mediaCodesCombinationListGot.length &&
-									util.arrayIntersect(albumCodesCombinationsList, albumCodesCombinationsListGot).length &&
-									util.arrayIntersect(mediaCodesCombinationList, mediaCodesCombinationListGot).length;
-								// result == true means that the combination is equivalent to the got one
-								return result;
-							}
-							// check if the combination is equivalent to a got one
-							if (
-								codesComplexCombinationsGot.some(
-									function(codesComplexCombinationGot) {
-										return codesComplexCombination !== codesComplexCombinationGot && isEquivalent(codesComplexCombination, codesComplexCombinationGot);
-									}
-								)
-							) {
-								// is equivalent to one of the got codesComplexCombination's
-								continue;
-							}
+							// // check if the combination is equivalent to a got one
+							// if (
+							// 	codesSimpleCombinationGot.some(
+							// 		function(codesComplexCombinationGot) {
+							// 			return codesSimpleCombination !== codesComplexCombinationGot && isEquivalent(codesSimpleCombination, codesComplexCombinationGot);
+							// 		}
+							// 	)
+							// ) {
+							// 	// is equivalent to one of the got codesSimpleCombination's
+							// 	continue;
+							// }
 
 							let protectedDirectory = Options.protected_directories_prefix;
-							if (albumMd5CombinationsList.length)
-								protectedDirectory += albumMd5CombinationsList[0];
+							if (albumMd5)
+								protectedDirectory += albumMd5;
 							protectedDirectory += ',';
-							if (mediaMd5CombinationList.length)
-								protectedDirectory += mediaMd5CombinationList[0];
-							let codesSimpleCombination = util.convertProtectedDirectoryToCodesSimpleCombination(protectedDirectory);
+							if (mediaMd5)
+								protectedDirectory += mediaMd5;
+							// let codesSimpleCombination = util.convertProtectedDirectoryToCodesSimpleCombination(protectedDirectory);
 							if (! album.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination))
 								album.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
 
 							// we can know how many files/symlinks we have to get in the protected directory
-							let numProtectedCacheBases = PhotoFloat.getNumProtectedCacheBases(album.numsProtectedMediaInSubTree, codesComplexCombination);
+							let numProtectedCacheBases = PhotoFloat.getNumProtectedCacheBases(album.numsProtectedMediaInSubTree, codesSimpleCombination);
 							for (let iCacheBase = 0; iCacheBase < numProtectedCacheBases; iCacheBase ++) {
 								let number = iCacheBase;
 								let protectedCacheBase = protectedDirectory + '/' + album.cacheBase + '.' + iCacheBase;
@@ -884,10 +932,10 @@
 											! getMedia || album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("mediaGot") &&
 											! getPositions || album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("positionsGot")
 										) {
-											// this cache base has been already loaded and media/positions are already there or aren't needed now
+											// this cache base has been already loaded and either media/positions are already there or aren't needed now
 											resolve_ithPromise();
 										} else {
-											let promise = PhotoFloat.getSingleProtectedCacheBaseWithExternalMediaAndPositions(protectedCacheBase, album, {"getMedia": getMedia, "getPositions": getPositions, "codesComplexCombination": codesComplexCombination});
+											let promise = PhotoFloat.getSingleProtectedCacheBaseWithExternalMediaAndPositions(protectedCacheBase, album, {"getMedia": getMedia, "getPositions": getPositions});
 											promise.then(
 												function() {
 													if (PhotoFloat.isEmpty(album))
@@ -917,6 +965,36 @@
 					}
 				}
 			);
+		}
+
+		function isEquivalent(codesSimpleCombination, codesComplexCombinationGot) {
+			let codesCombinationsLists = PhotoFloat.convertComplexCombinationsIntoLists(codesSimpleCombination);
+			let albumCodesCombinationsList = codesCombinationsLists[0];
+			let mediaCodesCombinationList = codesCombinationsLists[1];
+			let codesCombinationsListsGot = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationGot);
+			let albumCodesCombinationsListGot = codesCombinationsListsGot[0];
+			let mediaCodesCombinationListGot = codesCombinationsListsGot[1];
+			var result =
+				! albumCodesCombinationsList.length &&
+				! albumCodesCombinationsListGot.length &&
+				mediaCodesCombinationList.length &&
+				mediaCodesCombinationListGot.length &&
+				util.arrayIntersect(mediaCodesCombinationList, mediaCodesCombinationListGot).length
+				||
+				albumCodesCombinationsList.length &&
+				albumCodesCombinationsListGot.length &&
+				! mediaCodesCombinationList.length &&
+				! mediaCodesCombinationListGot.length &&
+				util.arrayIntersect(albumCodesCombinationsList, albumCodesCombinationsListGot).length
+				||
+				albumCodesCombinationsList.length &&
+				albumCodesCombinationsListGot.length &&
+				mediaCodesCombinationList.length &&
+				mediaCodesCombinationListGot.length &&
+				util.arrayIntersect(albumCodesCombinationsList, albumCodesCombinationsListGot).length &&
+				util.arrayIntersect(mediaCodesCombinationList, mediaCodesCombinationListGot).length;
+			// result == true means that the combination is equivalent to the got one
+			return result;
 		}
 	};
 

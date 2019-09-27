@@ -1123,9 +1123,12 @@
 	Utilities.prototype.convertCodesListToMd5sList = function(codesList) {
 		var i, index, md5sList = [];
 		for (i = 0; i < codesList.length; i ++) {
-			index = PhotoFloat.guessedPasswordCodes.indexOf(codesList[i]);
-			if (index != -1) {
-				md5sList.push(PhotoFloat.guessedPasswordsMd5[index]);
+			if (! codesList[i]) {
+				md5sList.push('');
+			} else {
+				index = PhotoFloat.guessedPasswordCodes.indexOf(codesList[i]);
+				if (index != -1)
+					md5sList.push(PhotoFloat.guessedPasswordsMd5[index]);
 			}
 		}
 		return md5sList;
