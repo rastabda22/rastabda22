@@ -289,6 +289,8 @@ class Album(object):
 		return album
 
 	def leave_only_unprotected_content(self):
+		next_level()
+		message("working with album...", self.cache_base, 5)
 		self.positions_and_media_in_tree = Positions(None)
 		if len(self.password_identifiers_set) == 0:
 			# the album isn't protected, but media and subalbums may be protected
@@ -309,6 +311,7 @@ class Album(object):
 			self.cache_base.find(Options.config['by_search_string']) != 0 or
 			self.cache_base == Options.config['by_search_string']
 		):
+			# process subalbums
 			for subalbum in self.subalbums_list:
 				subalbum.leave_only_unprotected_content()
 				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
@@ -322,9 +325,13 @@ class Album(object):
 			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(',')
 		else:
 			self.num_media_in_sub_tree = 0
+		message("album worked!", self.cache_base, 5)
+		back_level()
 
 
 	def leave_only_content_protected_by(self, album_identifiers_set, media_identifiers_set):
+		next_level()
+		message("working with album...", self.cache_base, 5)
 		self.positions_and_media_in_tree = Positions(None)
 		self.complex_combination = complex_combination(convert_set_to_combination(album_identifiers_set), convert_set_to_combination(media_identifiers_set))
 
@@ -342,6 +349,7 @@ class Album(object):
 			self.cache_base.find(Options.config['by_search_string']) != 0 or
 			self.cache_base == Options.config['by_search_string']
 		):
+			# process subalbums
 			for subalbum in self.subalbums_list:
 				subalbum.leave_only_content_protected_by(album_identifiers_set, media_identifiers_set)
 				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
@@ -355,6 +363,8 @@ class Album(object):
 			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.complex_combination)
 		else:
 			self.num_media_in_sub_tree = 0
+		message("album worked!", self.cache_base, 5)
+		back_level()
 
 
 	def generate_protected_content_albums(self):
