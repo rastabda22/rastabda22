@@ -1509,6 +1509,159 @@
 
 
 	PhotoFloat.prototype.parseHash = function(hash, hashParsed, error) {
+		var albumHashToGet, albumHashes;
+		var searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions;
+		var indexWords, indexAlbums, wordsWithOptionsString;
+		// this vars are defined here and not at the beginning of the file because the options must have been read
+
+		$("#error-too-many-images").hide();
+		$(".search-failed").hide();
+		// $("#media-view").removeClass("hidden");
+		var [albumHash, mediaHash, mediaFolderHash] = PhotoFloat.decodeHash(hash);
+		$("ul#right-menu li#album-search").removeClass("dimmed");
+		$("ul#right-menu li#any-word").removeClass("dimmed");
+		$("#album-view, #album-view #subalbums, #album-view #thumbs").removeClass("hidden");
+
+		albumHashes = [];
+		searchWordsFromUser = [];
+		searchWordsFromUserNormalized = [];
+		searchWordsFromUserNormalizedAccordingToOptions = [];
+		if (albumHash) {
+			albumHash = decodeURI(albumHash);
+
+			if ([Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(albumHash) !== -1)
+				$("ul#right-menu li#album-search").addClass("dimmed");
+
+			if (util.isSearchCacheBase(albumHash)) {
+				var splittedAlbumHash = albumHash.split(Options.cache_folder_separator);
+
+				// wordsWithOptionsString = albumHash.substring(Options.by_search_string.length + 1);
+				wordsWithOptionsString = splittedAlbumHash[1];
+				var wordsAndOptions = wordsWithOptionsString.split(Options.search_options_separator);
+				var wordsString = wordsAndOptions[wordsAndOptions.length - 1];
+				var wordsStringOriginal = wordsString.replace(/_/g, ' ');
+				// the normalized words are needed in order to compare with the search cache json files names, which are normalized
+				var wordsStringNormalizedAccordingToOptions = util.normalizeAccordingToOptions(wordsStringOriginal);
+				var wordsStringNormalized = util.removeAccents(wordsStringOriginal.toLowerCase());
+				if (wordsAndOptions.length > 1) {
+					var searchOptions = wordsAndOptions.slice(0, -1);
+					Options.search_inside_words = searchOptions.includes('i');
+					Options.search_any_word = searchOptions.includes('n');
+					Options.search_case_sensitive = searchOptions.includes('c');
+					Options.search_accent_sensitive = searchOptions.includes('a');
+					Options.search_current_album = searchOptions.includes('o');
+				}
+
+				Options.album_to_search_in = splittedAlbumHash.slice(2).join(Options.cache_folder_separator);
+
+				if ([Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) !== -1)
+					$("ul#right-menu li#album-search").addClass("dimmed");
+
+				// if (util.isSearchHash(location.hash) && Options.search_refine)
+				// 	Options.album_to_search_in = albumHash;
+
+				$("ul#right-menu #search-field").attr("value", wordsStringOriginal);
+				wordsString = util.normalizeAccordingToOptions(wordsString);
+				searchWordsFromUser = wordsString.split('_');
+				searchWordsFromUserNormalizedAccordingToOptions = wordsStringNormalizedAccordingToOptions.split(' ');
+				searchWordsFromUserNormalized = wordsStringNormalized.split(' ');
+
+				if (searchWordsFromUser.length == 1)
+					$("ul#right-menu li#any-word").addClass("dimmed");
+
+				var searchResultsAlbumFinal = {};
+				searchResultsAlbumFinal.positionsAndMediaInTree = [];
+				searchResultsAlbumFinal.media = [];
+				searchResultsAlbumFinal.subalbums = [];
+				searchResultsAlbumFinal.numMediaInSubTree = 0;
+				searchResultsAlbumFinal.cacheBase = albumHash;
+				searchResultsAlbumFinal.path = searchResultsAlbumFinal.cacheBase.replace(Options.cache_folder_separator, "/");
+				searchResultsAlbumFinal.physicalPath = searchResultsAlbumFinal.path;
+				searchResultsAlbumFinal.searchInFolderCacheBase = mediaFolderHash;
+				searchResultsAlbumFinal.numsProtectedMediaInSubTree = {"": 0};
+
+				if (albumHash == Options.by_search_string) {
+					util.noResults(searchResultsAlbumFinal, '#no-search-string');
+					hashParsed(searchResultsAlbumFinal, null, -1);
+					return;
+				}
+			}
+		}
+
+		if (util.isSearchCacheBase(albumHash)) {
+			albumHashToGet = albumHash;
+		// // same conditions as before????????????????
+		// } else if (util.isSearchCacheBase(albumHash)) {
+		// 	albumHashToGet = util.pathJoin([albumHash, mediaFolderHash]);
+		} else {
+			albumHashToGet = albumHash;
+		}
+
+		if (mediaHash)
+			mediaHash = decodeURI(mediaHash);
+		if (mediaFolderHash)
+			mediaFolderHash = decodeURI(mediaFolderHash);
+		if (PhotoFloat.searchAndSubalbumHash)
+			PhotoFloat.searchAndSubalbumHash = decodeURI(PhotoFloat.searchAndSubalbumHash);
+
+		var albumFromCache = PhotoFloat.getAlbumFromCache(albumHashToGet), promise;
+		if (albumFromCache && ! PhotoFloat.guessedPasswordsMd5.length) {
+		// if (albumFromCache && ! PhotoFloat.passwordsToGet(albumFromCache).length) {
+			if (! albumFromCache.subalbums.length && ! albumFromCache.media.length)
+				util.noResults(albumFromCache);
+			PhotoFloat.selectMedia(albumFromCache, mediaFolderHash, mediaHash, hashParsed);
+		} else if (! util.isSearchCacheBase(albumHash) || searchWordsFromUser.length === 0) {
+			promise = PhotoFloat.getAlbum(albumHashToGet, error, {"getMedia": true, "getPositions": true});
+			promise.then(
+				function([theAlbum]) {
+					PhotoFloat.selectMedia(theAlbum, mediaFolderHash, mediaHash, hashParsed);
+				},
+				function() {
+					console.trace();
+				}
+			);
+		} else {
+			// it's a search!
+			// self = this;
+			var removedStopWords = [];
+
+			// possibly we need the stop words, because if some searched word is a stop word it must be removed from the search
+			promise = PhotoFloat.getStopWords(util.die);
+			promise.then(
+				function removeStopWords(stopWords) {
+					// remove the stop words from the search words lists
+
+					var searchWordsFromUserWithoutStopWords = [];
+					var searchWordsFromUserWithoutStopWordsNormalized = [];
+					var searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions = [];
+					for (var i = 0; i < searchWordsFromUser.length; i ++) {
+						if (
+							stopWords.every(
+								function(word) {
+									return word !== searchWordsFromUserNormalized[i];
+								}
+							)
+						) {
+							searchWordsFromUserWithoutStopWords.push(searchWordsFromUser[i]);
+							searchWordsFromUserWithoutStopWordsNormalized.push(searchWordsFromUserNormalized[i]);
+							searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions.push(searchWordsFromUserNormalizedAccordingToOptions[i]);
+						} else {
+							removedStopWords.push(searchWordsFromUser[i]);
+						}
+					}
+
+					searchWordsFromUser = searchWordsFromUserWithoutStopWords;
+					searchWordsFromUserNormalized = searchWordsFromUserWithoutStopWordsNormalized;
+					searchWordsFromUserNormalizedAccordingToOptions = searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions;
+
+					buildSearchResult();
+				},
+				function() {
+					console.trace();
+				}
+			);
+		}
+		// end of body of parseHash
 
 		function subalbumsAbsentOrGot() {
 			var indexMedia, indexSubalbums;
@@ -1851,162 +2004,6 @@
 							}
 						}
 					}
-				},
-				function() {
-					console.trace();
-				}
-			);
-		}
-
-
-		// begin body of parseHash = function(hash, hashParsed, error) {
-
-		var albumHashToGet, albumHashes;
-		var searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions;
-		var indexWords, indexAlbums, wordsWithOptionsString;
-		// this vars are defined here and not at the beginning of the file because the options must have been read
-
-		$("#error-too-many-images").hide();
-		$(".search-failed").hide();
-		// $("#media-view").removeClass("hidden");
-		var [albumHash, mediaHash, mediaFolderHash] = PhotoFloat.decodeHash(hash);
-		$("ul#right-menu li#album-search").removeClass("dimmed");
-		$("ul#right-menu li#any-word").removeClass("dimmed");
-		$("#album-view, #album-view #subalbums, #album-view #thumbs").removeClass("hidden");
-
-		albumHashes = [];
-		searchWordsFromUser = [];
-		searchWordsFromUserNormalized = [];
-		searchWordsFromUserNormalizedAccordingToOptions = [];
-		if (albumHash) {
-			albumHash = decodeURI(albumHash);
-
-			if ([Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(albumHash) !== -1)
-				$("ul#right-menu li#album-search").addClass("dimmed");
-
-			if (util.isSearchCacheBase(albumHash)) {
-				var splittedAlbumHash = albumHash.split(Options.cache_folder_separator);
-
-				// wordsWithOptionsString = albumHash.substring(Options.by_search_string.length + 1);
-				wordsWithOptionsString = splittedAlbumHash[1];
-				var wordsAndOptions = wordsWithOptionsString.split(Options.search_options_separator);
-				var wordsString = wordsAndOptions[wordsAndOptions.length - 1];
-				var wordsStringOriginal = wordsString.replace(/_/g, ' ');
-				// the normalized words are needed in order to compare with the search cache json files names, which are normalized
-				var wordsStringNormalizedAccordingToOptions = util.normalizeAccordingToOptions(wordsStringOriginal);
-				var wordsStringNormalized = util.removeAccents(wordsStringOriginal.toLowerCase());
-				if (wordsAndOptions.length > 1) {
-					var searchOptions = wordsAndOptions.slice(0, -1);
-					Options.search_inside_words = searchOptions.includes('i');
-					Options.search_any_word = searchOptions.includes('n');
-					Options.search_case_sensitive = searchOptions.includes('c');
-					Options.search_accent_sensitive = searchOptions.includes('a');
-					Options.search_current_album = searchOptions.includes('o');
-				}
-
-				Options.album_to_search_in = splittedAlbumHash.slice(2).join(Options.cache_folder_separator);
-
-				if ([Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) !== -1)
-					$("ul#right-menu li#album-search").addClass("dimmed");
-
-				// if (util.isSearchHash(location.hash) && Options.search_refine)
-				// 	Options.album_to_search_in = albumHash;
-
-				$("ul#right-menu #search-field").attr("value", wordsStringOriginal);
-				wordsString = util.normalizeAccordingToOptions(wordsString);
-				searchWordsFromUser = wordsString.split('_');
-				searchWordsFromUserNormalizedAccordingToOptions = wordsStringNormalizedAccordingToOptions.split(' ');
-				searchWordsFromUserNormalized = wordsStringNormalized.split(' ');
-
-				if (searchWordsFromUser.length == 1)
-					$("ul#right-menu li#any-word").addClass("dimmed");
-
-				var searchResultsAlbumFinal = {};
-				searchResultsAlbumFinal.positionsAndMediaInTree = [];
-				searchResultsAlbumFinal.media = [];
-				searchResultsAlbumFinal.subalbums = [];
-				searchResultsAlbumFinal.numMediaInSubTree = 0;
-				searchResultsAlbumFinal.cacheBase = albumHash;
-				searchResultsAlbumFinal.path = searchResultsAlbumFinal.cacheBase.replace(Options.cache_folder_separator, "/");
-				searchResultsAlbumFinal.physicalPath = searchResultsAlbumFinal.path;
-				searchResultsAlbumFinal.searchInFolderCacheBase = mediaFolderHash;
-				searchResultsAlbumFinal.numsProtectedMediaInSubTree = {"": 0};
-
-				if (albumHash == Options.by_search_string) {
-					util.noResults(searchResultsAlbumFinal, '#no-search-string');
-					hashParsed(searchResultsAlbumFinal, null, -1);
-					return;
-				}
-			}
-		}
-
-		if (util.isSearchCacheBase(albumHash)) {
-			albumHashToGet = albumHash;
-		// // same conditions as before????????????????
-		// } else if (util.isSearchCacheBase(albumHash)) {
-		// 	albumHashToGet = util.pathJoin([albumHash, mediaFolderHash]);
-		} else {
-			albumHashToGet = albumHash;
-		}
-
-		if (mediaHash)
-			mediaHash = decodeURI(mediaHash);
-		if (mediaFolderHash)
-			mediaFolderHash = decodeURI(mediaFolderHash);
-		if (PhotoFloat.searchAndSubalbumHash)
-			PhotoFloat.searchAndSubalbumHash = decodeURI(PhotoFloat.searchAndSubalbumHash);
-
-		var albumFromCache = PhotoFloat.getAlbumFromCache(albumHashToGet), promise;
-		if (albumFromCache && ! PhotoFloat.guessedPasswordsMd5.length) {
-		// if (albumFromCache && ! PhotoFloat.passwordsToGet(albumFromCache).length) {
-			if (! albumFromCache.subalbums.length && ! albumFromCache.media.length)
-				util.noResults(albumFromCache);
-			PhotoFloat.selectMedia(albumFromCache, mediaFolderHash, mediaHash, hashParsed);
-		} else if (! util.isSearchCacheBase(albumHash) || searchWordsFromUser.length === 0) {
-			promise = PhotoFloat.getAlbum(albumHashToGet, error, {"getMedia": true, "getPositions": true});
-			promise.then(
-				function([theAlbum]) {
-					PhotoFloat.selectMedia(theAlbum, mediaFolderHash, mediaHash, hashParsed);
-				},
-				function() {
-					console.trace();
-				}
-			);
-		} else {
-			// it's a search!
-			// self = this;
-			var removedStopWords = [];
-
-			// possibly we need the stop words, because if some searched word is a stop word it must be removed from the search
-			promise = PhotoFloat.getStopWords(util.die);
-			promise.then(
-				function removeStopWords(stopWords) {
-					// remove the stop words from the search words lists
-
-					var searchWordsFromUserWithoutStopWords = [];
-					var searchWordsFromUserWithoutStopWordsNormalized = [];
-					var searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions = [];
-					for (var i = 0; i < searchWordsFromUser.length; i ++) {
-						if (
-							stopWords.every(
-								function(word) {
-									return word !== searchWordsFromUserNormalized[i];
-								}
-							)
-						) {
-							searchWordsFromUserWithoutStopWords.push(searchWordsFromUser[i]);
-							searchWordsFromUserWithoutStopWordsNormalized.push(searchWordsFromUserNormalized[i]);
-							searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions.push(searchWordsFromUserNormalizedAccordingToOptions[i]);
-						} else {
-							removedStopWords.push(searchWordsFromUser[i]);
-						}
-					}
-
-					searchWordsFromUser = searchWordsFromUserWithoutStopWords;
-					searchWordsFromUserNormalized = searchWordsFromUserWithoutStopWordsNormalized;
-					searchWordsFromUserNormalizedAccordingToOptions = searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions;
-
-					buildSearchResult();
 				},
 				function() {
 					console.trace();
