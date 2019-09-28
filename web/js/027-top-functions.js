@@ -1871,8 +1871,8 @@
 						mediaHash = phFl.encodeHash(currentAlbum, ithMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
 					else
 						mediaHash = phFl.encodeHash(currentAlbum, ithMedia);
-					imageLink = $("<a id='link-" + ithMedia.cacheBase + "'></a>");
-					// imageLink = $("<a id='link-" + mediaHash + "' href='" + mediaHash + "'></a>");
+					// imageLink = $("<a id='link-" + ithMedia.cacheBase + "'></a>");
+					imageLink = $("<a id='link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase + "'></a>");
 					imageLink.append(image);
 					media.push(imageLink);
 
