@@ -1089,7 +1089,8 @@
 								if (! album.hasOwnProperty("media") || ! album.media.length)
 									album.media = mediaGot;
 								else
-									// TO DO: a concat should be enough
+									// TO DO: verify that concat is be enough
+									// album.media = album.media.concat(mediaGot);
 									album.media = util.arrayUnion(
 										album.media,
 										mediaGot,
@@ -1684,6 +1685,7 @@
 			}
 
 			searchResultsAlbumFinal.numMediaInSubTree = searchResultsAlbumFinal.media.length;
+			searchResultsAlbumFinal.numMedia = searchResultsAlbumFinal.media.length;
 
 			if (searchResultsAlbumFinal.subalbums.length) {
 				for (indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
