@@ -315,7 +315,7 @@ class Album(object):
 			for subalbum in self.subalbums_list:
 				subalbum.leave_only_unprotected_content()
 				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
-		elif self.cache_base.find(Options.config['by_search_string']) == 0:
+		else:
 			self.subalbums_list = [subalbum for subalbum in self.subalbums_list if len(subalbum.password_identifiers_set) == 0]
 			# next lines commented out because contained media don't belong to this album
 			# for subalbum in self.subalbums_list:
@@ -353,7 +353,7 @@ class Album(object):
 			for subalbum in self.subalbums_list:
 				subalbum.leave_only_content_protected_by(album_identifiers_set, media_identifiers_set)
 				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
-		elif self.cache_base.find(Options.config['by_search_string']) == 0:
+		else:
 			self.subalbums_list = [subalbum for subalbum in self.subalbums_list if
 									subalbum.password_identifiers_set == album_identifiers_set]
 			for subalbum in self.subalbums_list:
