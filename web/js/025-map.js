@@ -200,6 +200,7 @@
 				phFl.endPreparingAlbumAndKeepOn(
 					MapFunctions.mapAlbum,
 					null,
+					null,
 					function(){
 						$("#album-view").addClass("hidden");
 						$("#loading").show();

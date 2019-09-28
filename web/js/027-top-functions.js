@@ -2652,6 +2652,7 @@
 		phFl.endPreparingAlbumAndKeepOn(
 			MapFunctions.mapAlbum,
 			null,
+			null,
 			function() {
 				map.updatePopup(MapFunctions.titleWrapper1.replace(
 					"maxWidthForThumbnails",

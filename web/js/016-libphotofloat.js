@@ -1695,7 +1695,7 @@
 						searchResultsAlbumFinal.subalbums[indexSubalbums].positionsAndMediaInTree = [];
 				}
 			}
-			PhotoFloat.endPreparingAlbumAndKeepOn(searchResultsAlbumFinal, mediaHash, hashParsed);
+			PhotoFloat.endPreparingAlbumAndKeepOn(searchResultsAlbumFinal, mediaHash, mediaFolderHash, hashParsed);
 		}
 
 		function buildSearchResult() {
@@ -2011,7 +2011,7 @@
 		}
 	};
 
-	PhotoFloat.endPreparingAlbumAndKeepOn = function(resultsAlbumFinal, mediaHash, hashParsed) {
+	PhotoFloat.endPreparingAlbumAndKeepOn = function(resultsAlbumFinal, mediaHash, mediaFolderHash, hashParsed) {
 		// add the various counts
 		resultsAlbumFinal.numMediaInSubTree = resultsAlbumFinal.media.length;
 		resultsAlbumFinal.numMedia = resultsAlbumFinal.media.length;
@@ -2019,7 +2019,7 @@
 		// save in the cache array
 		PhotoFloat.putAlbumIntoCache(resultsAlbumFinal.cacheBase, resultsAlbumFinal);
 
-		PhotoFloat.selectMedia(resultsAlbumFinal, null, mediaHash, hashParsed);
+		PhotoFloat.selectMedia(resultsAlbumFinal, mediaFolderHash, mediaHash, hashParsed);
 
 		$("#loading").hide();
 	};
