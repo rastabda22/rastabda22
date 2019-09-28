@@ -40,9 +40,7 @@ options_not_to_be_saved = [
 	'index_html_path',
 	'album_path',
 	'passwords_marker',
-	'passwords_file',
-	'max_media_in_json_file',
-	'max_media_from_positions_in_json_file'
+	'passwords_file'
 ]
 options_requiring_json_regeneration = [
 	'geonames_language',
