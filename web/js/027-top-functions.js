@@ -1285,8 +1285,8 @@
 			populateAlbum =
 				previousAlbum === null ||
 			 	previousAlbum.cacheBase !== currentAlbum.cacheBase ||
+				previousAlbum.numMediaInSubTree !== currentAlbum.numMediaInSubTree ||
 				currentMedia === null && previousMedia !== null;
-			 	// previousAlbum !== currentAlbum || previousMedia !== currentMedia;
 			TopFunctions.showAlbum(populateAlbum);
 		}
 
