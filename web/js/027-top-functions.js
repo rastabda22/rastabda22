@@ -2759,9 +2759,7 @@
 										MapFunctions.mapAlbum.media.some(
 											function(media, index) {
 												matchingMedia = index;
-												var match =
-												 	media.cacheBase == mediaNameListElement.cacheBase &&
-													media.foldersCacheBase == mediaNameListElement.foldersCacheBase;
+												var match = (media.cacheBase == mediaNameListElement.cacheBase && media.foldersCacheBase == mediaNameListElement.foldersCacheBase);
 												return match;
 											}
 										)
