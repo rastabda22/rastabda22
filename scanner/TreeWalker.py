@@ -475,14 +475,14 @@ class TreeWalker:
 				by_search_album.num_media_in_sub_tree += 1
 
 				single_media_date = max(single_media.datetime_file, single_media.datetime_dir)
-				if word_max_file_date:
-					word_max_file_date = max(word_max_file_date, single_media_date)
-				else:
-					word_max_file_date = single_media_date
-				if by_search_max_file_date:
-					by_search_max_file_date = max(by_search_max_file_date, single_media_date)
-				else:
-					by_search_max_file_date = single_media_date
+				# if word_max_file_date:
+				# 	word_max_file_date = max(word_max_file_date, single_media_date)
+				# else:
+				# 	word_max_file_date = single_media_date
+				# if by_search_max_file_date:
+				# 	by_search_max_file_date = max(by_search_max_file_date, single_media_date)
+				# else:
+				# 	by_search_max_file_date = single_media_date
 				if single_media.has_gps_data:
 					word_album.positions_and_media_in_tree.add_single_media(single_media)
 					# actually, this counter for the search root album is not significant
@@ -498,14 +498,15 @@ class TreeWalker:
 				word_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
 				# actually, this counter for the search root album is not significant
 				by_search_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
-				if word_max_file_date:
-					word_max_file_date = max(word_max_file_date, single_album.date)
-				else:
-					word_max_file_date = single_album.date
-				if by_search_max_file_date:
-					by_search_max_file_date = max(by_search_max_file_date, single_album.date)
-				else:
-					by_search_max_file_date = single_album.date
+				# by_search_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
+				# if word_max_file_date:
+				# 	word_max_file_date = max(word_max_file_date, single_album.date)
+				# else:
+				# 	word_max_file_date = single_album.date
+				# if by_search_max_file_date:
+				# 	by_search_max_file_date = max(by_search_max_file_date, single_album.date)
+				# else:
+				# 	by_search_max_file_date = single_album.date
 
 				word_album.nums_protected_media_in_sub_tree.merge(single_album.nums_protected_media_in_sub_tree)
 				by_search_album.nums_protected_media_in_sub_tree.merge(single_album.nums_protected_media_in_sub_tree)
