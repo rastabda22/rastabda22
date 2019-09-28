@@ -495,9 +495,8 @@ class TreeWalker:
 
 			for single_album in media_album_and_words["albums_list"]:
 				word_album.add_subalbum(single_album)
-				word_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
+				# word_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
 				# actually, this counter for the search root album is not significant
-				by_search_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
 				# by_search_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
 				# if word_max_file_date:
 				# 	word_max_file_date = max(word_max_file_date, single_album.date)
@@ -508,8 +507,8 @@ class TreeWalker:
 				# else:
 				# 	by_search_max_file_date = single_album.date
 
-				word_album.nums_protected_media_in_sub_tree.merge(single_album.nums_protected_media_in_sub_tree)
-				by_search_album.nums_protected_media_in_sub_tree.merge(single_album.nums_protected_media_in_sub_tree)
+				# word_album.nums_protected_media_in_sub_tree.merge(single_album.nums_protected_media_in_sub_tree)
+				# by_search_album.nums_protected_media_in_sub_tree.merge(single_album.nums_protected_media_in_sub_tree)
 
 			word_album.unicode_words = media_album_and_words["unicode_words"]
 			Options.all_albums.append(word_album)
