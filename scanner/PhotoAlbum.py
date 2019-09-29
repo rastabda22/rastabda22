@@ -342,22 +342,31 @@ class Album(object):
 			if single_media.has_gps_data:
 				self.positions_and_media_in_tree.add_single_media(single_media)
 
-		# search albums:
-		# - do not process subalbums because they have been already processed
-		# - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
-		if (
-			self.cache_base.find(Options.config['by_search_string']) != 0 or
-			self.cache_base == Options.config['by_search_string']
-		):
-			# process subalbums
-			for subalbum in self.subalbums_list:
-				subalbum.leave_only_content_protected_by(album_identifiers_set, media_identifiers_set)
+		# process subalbums
+		for subalbum in self.subalbums_list:
+			subalbum.leave_only_content_protected_by(album_identifiers_set, media_identifiers_set)
+			if (
+				self.cache_base.find(Options.config['by_search_string']) != 0 or
+				self.cache_base == Options.config['by_search_string']
+			):
 				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
-		else:
-			self.subalbums_list = [subalbum for subalbum in self.subalbums_list if
-									subalbum.password_identifiers_set == album_identifiers_set]
-			for subalbum in self.subalbums_list:
-				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
+		# # search albums:
+		# # - do not process subalbums because they have been already processed
+		# # - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
+		# if (
+		# 	self.cache_base.find(Options.config['by_search_string']) != 0 or
+		# 	self.cache_base == Options.config['by_search_string']
+		# ):
+		# 	# process subalbums
+		# 	for subalbum in self.subalbums_list:
+		# 		subalbum.leave_only_content_protected_by(album_identifiers_set, media_identifiers_set)
+		# 		self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
+		# else:
+		# 	# it's a search album
+		# 	self.subalbums_list = [subalbum for subalbum in self.subalbums_list if
+		# 							subalbum.password_identifiers_set == album_identifiers_set]
+		# 	for subalbum in self.subalbums_list:
+		# 		self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
 		if self.complex_combination in list(self.nums_protected_media_in_sub_tree.keys()):
 			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.complex_combination)
