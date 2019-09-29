@@ -1095,7 +1095,7 @@
 										album.media,
 										mediaGot,
 										function(singleMedia1, singleMedia2) {
-											return singleMedia1.album.cacheBase == singleMedia2.album.cacheBase && singleMedia1.cacheBase == singleMedia2.cacheBase;
+											return singleMedia1.foldersCacheBase == singleMedia2.foldersCacheBase && singleMedia1.cacheBase == singleMedia2.cacheBase;
 										}
 									);
 								album.includedFilesByCodesSimpleCombination[""].mediaGot = true;
