@@ -304,22 +304,30 @@ class Album(object):
 			self.media_list = []
 			# subalbums are not removed, because there may be some unprotected content up in the tree
 
-		# search albums:
-		# - do not process subalbums because they have been already processed
-		# - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
-		if (
-			self.cache_base.find(Options.config['by_search_string']) != 0 or
-			self.cache_base == Options.config['by_search_string']
-		):
-			# process subalbums
-			for subalbum in self.subalbums_list:
-				subalbum.leave_only_unprotected_content()
+		# process subalbums
+		for subalbum in self.subalbums_list:
+			subalbum.leave_only_unprotected_content()
+			if (
+				self.cache_base.find(Options.config['by_search_string']) != 0 or
+				self.cache_base == Options.config['by_search_string']
+			):
 				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
-		else:
-			self.subalbums_list = [subalbum for subalbum in self.subalbums_list if len(subalbum.password_identifiers_set) == 0]
-			# next lines commented out because contained media don't belong to this album
-			# for subalbum in self.subalbums_list:
-			# 	self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
+		# # search albums:
+		# # - do not process subalbums because they have been already processed
+		# # - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
+		# if (
+		# 	self.cache_base.find(Options.config['by_search_string']) != 0 or
+		# 	self.cache_base == Options.config['by_search_string']
+		# ):
+		# 	# process subalbums
+		# 	for subalbum in self.subalbums_list:
+		# 		subalbum.leave_only_unprotected_content()
+		# 		self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
+		# else:
+		# 	self.subalbums_list = [subalbum for subalbum in self.subalbums_list if len(subalbum.password_identifiers_set) == 0]
+		# 	# next lines commented out because contained media don't belong to this album
+		# 	# for subalbum in self.subalbums_list:
+		# 	# 	self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
 		if ',' in list(self.nums_protected_media_in_sub_tree.keys()):
 			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(',')
