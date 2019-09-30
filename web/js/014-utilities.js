@@ -610,8 +610,11 @@
 				}
 			}
 
-			mediaElement = $('<img/>')
-				.attr("title", media.date);
+			mediaElement = $('<img/>');
+			if (this.isFolderCacheBase(currentAlbum.cacheBase))
+				mediaElement.attr("title", media.date);
+			else
+				mediaElement.attr("title", this.pathJoin([media.albumName, media.name]));
 		}
 
 		mediaElement
