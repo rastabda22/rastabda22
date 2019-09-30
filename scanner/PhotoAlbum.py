@@ -999,7 +999,7 @@ class Media(object):
 
 		# temporary fix for "ISO Media, MPEG-4 (.MP4) for SonyPSP" files whose mime type is incorrectly reported as audio/mp4
 		if self.mime_type == "audio/mp4":
-			self.mime_type == "video/mp4"
+			self.mime_type = "video/mp4"
 
 		if self.mime_type.find("image/") == 0:
 			indented_message("it's an image!", "", 5)
@@ -1054,7 +1054,7 @@ class Media(object):
 				indented_message("error transcoding, not a video?", "", 5)
 				self.is_valid = False
 		else:
-			indented_message("not an image nor a video", "", 5)
+			indented_message("not an image nor a video", "mime type = " + self.mime_type, 5)
 			self.is_valid = False
 		back_level()
 		return
