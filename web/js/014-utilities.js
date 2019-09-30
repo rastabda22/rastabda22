@@ -209,7 +209,7 @@
 		return union;
 	};
 
-	Utilities.prototype.arrayUnion = function(a, b, equalityFunction) {
+	Utilities.prototype.arrayUnion = function(a, b, equalityFunction = null) {
 		if (! a.length)
 			return b;
 		if (! b.length)
@@ -218,7 +218,7 @@
 		var union = a.slice(0);
 		var i;
 
-		if (typeof equalityFunction === "undefined") {
+		if (equalityFunction === null) {
 			for (i = 0; i < b.length; i ++) {
 				if (union.indexOf(b[i]) == -1)
 					union.push(b[i]);
@@ -227,7 +227,7 @@
 			for (i = 0; i < b.length; i ++) {
 				if (
 					a.every(
-						function(element) {
+						function notEqual(element) {
 							return ! equalityFunction(element, b[i]);
 						}
 					)
