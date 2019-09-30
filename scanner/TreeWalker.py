@@ -1225,6 +1225,7 @@ class TreeWalker:
 		photos_without_exif_date_and_with_geotags_in_dir = []
 		photos_without_exif_date_or_geotags_in_dir = []
 		files_in_dir = []
+		unrecognized_files_in_dir = []
 		for entry in self._listdir_sorted_alphabetically(absolute_path):
 			try:
 				entry = os.fsdecode(entry)
@@ -1507,6 +1508,7 @@ class TreeWalker:
 
 			elif not single_media.is_valid:
 				indented_message("not image nor video", "", 1)
+				unrecognized_files_in_dir.append("      " + entry_with_path + "      mime type: " + single_media.mime_type )
 			back_level()
 		back_level()
 
@@ -1548,6 +1550,11 @@ class TreeWalker:
 			elif len(photos_without_exif_date_or_geotags_in_dir):
 				Options.photos_without_exif_date_or_geotags.append(str(len(photos_without_exif_date_or_geotags_in_dir)).rjust(max_digit) + _some_photo_in_path)
 				Options.photos_without_exif_date_or_geotags.extend(photos_without_exif_date_or_geotags_in_dir)
+
+			if len(unrecognized_files_in_dir):
+				Options.num_unrecognized_files += len(unrecognized_files_in_dir)
+				Options.unrecognized_files.append(str(len(unrecognized_files_in_dir)).rjust(max_digit) + " photos in " + absolute_path + ":")
+				Options.unrecognized_files.extend(unrecognized_files_in_dir)
 
 		if not album.empty:
 			next_level()

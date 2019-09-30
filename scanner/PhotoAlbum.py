@@ -995,9 +995,9 @@ class Media(object):
 		self._attributes["dateTimeDir"] = dir_mtime
 		self._attributes["mediaType"] = "photo"
 
-		mime_type = magic.from_file(media_path, mime = True)
+		self.mime_type = magic.from_file(media_path, mime = True)
 
-		if mime_type.find("image/") == 0:
+		if self.mime_type.find("image/") == 0:
 			indented_message("it's an image!", "", 5)
 			message("opening image file...", "", 5)
 			media_path_pointer = open(media_path, 'rb')
@@ -1022,7 +1022,6 @@ class Media(object):
 				indented_message("media opened with PIL!", "", 5)
 
 			if isinstance(image, Image.Image):
-				self.mime_type = mime_type
 				if Options.config['copy_exif_into_reductions']:
 					try:
 						self.exif_by_PIL = image.info['exif']
@@ -1036,13 +1035,12 @@ class Media(object):
 					self.get_geonames()
 			back_level()
 			media_path_pointer.close()
-		elif mime_type.find("video/") == 0:
+		elif self.mime_type.find("video/") == 0:
 			# try with video detection
 			self._video_metadata(media_path)
 			if self.is_video:
 				self._video_transcode(thumbs_path, media_path)
 				if self.is_valid:
-					self.mime_type = mime_type
 					self._video_thumbnails(thumbs_path, media_path, json_files, json_files_min_mtime)
 
 					if self.has_gps_data:

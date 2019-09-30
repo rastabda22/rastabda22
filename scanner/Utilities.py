@@ -389,6 +389,7 @@ def report_times(final):
 		_num_photo_without_exif_date_or_geotags = str(Options.num_photo_without_exif_date_or_geotags)
 		_num_video = str(Options.num_video)
 		_num_video_processed = str(Options.num_video_processed)
+		_num_unrecognized_files = str(Options.num_unrecognized_files)
 		max_digit = len(_num_media)
 
 		media_count_and_time = "Media    " + _num_media.rjust(max_digit) + ' / ' + str(Options.config['num_media_in_tree']) + ' (' + str(int(num_media * 1000 / Options.config['num_media_in_tree']) / 10) + '%)'
@@ -433,4 +434,11 @@ def report_times(final):
 			for photo in Options.photos_without_exif_date_or_geotags:
 				print("                                      - " + photo)
 			print()
+
+		print("- Unrecognized files " + _num_unrecognized_files.rjust(max_digit))
+		if final:
+			for file in Options.unrecognized_files:
+				print("                                      - " + file)
+			print()
+
 		print()
