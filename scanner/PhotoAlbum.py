@@ -998,6 +998,7 @@ class Media(object):
 		self.mime_type = magic.from_file(media_path, mime = True)
 
 		# temporary fix for "ISO Media, MPEG-4 (.MP4) for SonyPSP" files whose mime type is incorrectly reported as audio/mp4
+		# TO DO: remove when libmagic1's Bug#941420 is fixed
 		if self.mime_type == "audio/mp4":
 			self.mime_type = "video/mp4"
 
