@@ -254,10 +254,10 @@ $(document).ready(function() {
 						currentAlbum !== null && (
 							! jQuery.isEmptyObject(currentAlbum.numsProtectedMediaInSubTree) &&
 							(
-								! currentAlbum.hasOwnProperty("includedCodesSimpleCombinations") ||
-								Object.keys(currentAlbum.includedCodesSimpleCombinations).length - 1 < util.numProtectedKeys(currentAlbum)
-							) ||
-							util.isSearchCacheBase(currentAlbum.cacheBase)
+								// ! currentAlbum.hasOwnProperty("includedCodesSimpleCombinations") ||
+								PhotoFloat.guessedPasswordCodes.length < util.numPasswords(currentAlbum)
+							)
+							// util.isSearchCacheBase(currentAlbum.cacheBase)
 						)
 					) {
 						$("#protected-content-unveil")[0].click();

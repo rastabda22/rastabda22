@@ -2054,7 +2054,7 @@
 
 				if (
 					! perhapsIsAProtectedMedia &&
-					util.numProtectedKeys(theAlbum) &&
+					util.numPasswords(theAlbum) &&
 					// ! jQuery.isEmptyObject(theAlbum.numsProtectedMediaInSubTree) &&
 					(
 						theAlbum.subalbums.length == 0 ||

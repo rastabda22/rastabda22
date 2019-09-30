@@ -402,10 +402,10 @@
 
 		if (
 			thisAlbum !== null && (
-				util.numProtectedKeys(thisAlbum) &&
-				// ! jQuery.isEmptyObject(thisAlbum.numsProtectedMediaInSubTree) &&
-				Object.keys(thisAlbum.includedFilesByCodesSimpleCombination).length - 1 < util.numProtectedKeys(thisAlbum) ||
-				util.isSearchCacheBase(thisAlbum.cacheBase)
+				util.numPasswords(thisAlbum) && (
+					PhotoFloat.guessedPasswordCodes.length < util.numPasswords(thisAlbum)
+					// util.isSearchCacheBase(thisAlbum.cacheBase)
+				)
 			)
 		) {
 			$(".protection").show();

@@ -82,10 +82,22 @@
 		return language;
 	};
 
-	Utilities.prototype.numProtectedKeys = function(album) {
-		var numsProtected = JSON.parse(JSON.stringify(album.numsProtectedMediaInSubTree));
-		delete numsProtected[''];
-		return Object.keys(numsProtected).length;
+	Utilities.prototype.numPasswords = function(album) {
+		var codes = [];
+		for (let codesComplexCombination in album.numsProtectedMediaInSubTree) {
+			if (album.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombination)) {
+				var albumCombination = codesComplexCombination.split(',')[0];
+				var mediaCombination = codesComplexCombination.split(',')[1];
+				if (albumCombination)
+					codes = this.arrayUnion(codes, albumCombination.split('-'));
+				if (mediaCombination)
+					codes = this.arrayUnion(codes, mediaCombination.split('-'));
+			}
+		}
+		return codes.length;
+		// var numsProtected = JSON.parse(JSON.stringify(album.numsProtectedMediaInSubTree));
+		// delete numsProtected[''];
+		// return Object.keys(numsProtected).length;
 	};
 
 	Utilities.prototype.cloneObject = function(object) {
