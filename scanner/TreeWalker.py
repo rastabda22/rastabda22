@@ -1553,7 +1553,7 @@ class TreeWalker:
 
 			if len(unrecognized_files_in_dir):
 				Options.num_unrecognized_files += len(unrecognized_files_in_dir)
-				Options.unrecognized_files.append(str(len(unrecognized_files_in_dir)).rjust(max_digit) + " photos in " + absolute_path + ":")
+				Options.unrecognized_files.append(str(len(unrecognized_files_in_dir)).rjust(max_digit) + " files in " + absolute_path + ":")
 				Options.unrecognized_files.extend(unrecognized_files_in_dir)
 
 		if not album.empty:
