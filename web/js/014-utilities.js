@@ -894,24 +894,24 @@
 	};
 
 	Utilities.prototype.sumUpNumsProtectedMedia = function(numsProtectedMediaInSubTree) {
-		var sum = 0, passwordCode;
-		for (passwordCode in numsProtectedMediaInSubTree) {
-			if (numsProtectedMediaInSubTree.hasOwnProperty(passwordCode)) {
-				sum += numsProtectedMediaInSubTree[passwordCode];
+		var sum = 0, codesComplexcombination;
+		for (codesComplexcombination in numsProtectedMediaInSubTree) {
+			if (numsProtectedMediaInSubTree.hasOwnProperty(codesComplexcombination) && codesComplexcombination !== "") {
+				sum += numsProtectedMediaInSubTree[codesComplexcombination];
 			}
 		}
 		return sum;
 	};
-	Utilities.prototype.sumNumsProtectedMediaOfArray = function(subalbums) {
-		var result = {}, i, passwordCode, subalbum;
+	Utilities.prototype.sumNumsProtectedMediaOfArray = function(arrayOfAlbumsOrSubalbunms) {
+		var result = {}, i, codesComplexcombination, albumOrSubalbum;
 
-		for (i = 0; i < subalbums.length; i ++) {
-			subalbum = subalbums[i];
-			for (passwordCode in subalbum.numsProtectedMediaInSubTree) {
-				if (subalbum.numsProtectedMediaInSubTree.hasOwnProperty(passwordCode)) {
-					if (! result.hasOwnProperty(passwordCode))
-						result[passwordCode] = 0;
-					result[passwordCode] += subalbum.numsProtectedMediaInSubTree[passwordCode];
+		for (i = 0; i < arrayOfAlbumsOrSubalbunms.length; i ++) {
+			albumOrSubalbum = arrayOfAlbumsOrSubalbunms[i];
+			for (codesComplexcombination in albumOrSubalbum.numsProtectedMediaInSubTree) {
+				if (albumOrSubalbum.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexcombination)) {
+					if (! result.hasOwnProperty(codesComplexcombination))
+						result[codesComplexcombination] = 0;
+					result[codesComplexcombination] += albumOrSubalbum.numsProtectedMediaInSubTree[codesComplexcombination];
 				}
 			}
 		}

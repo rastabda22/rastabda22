@@ -12,11 +12,11 @@
 		PhotoFloat.guessedPasswordsMd5 = [];
 		this.geotaggedPhotosFound = null;
 		this.searchWordsFromJsonFile = [];
-		this.searchAlbumCacheBaseFromJsonFile = [];
+		this.searchAlbumCacheBasesFromJsonFile = [];
 
 		PhotoFloat.searchAndSubalbumHash = '';
 		PhotoFloat.searchWordsFromJsonFile = this.searchWordsFromJsonFile;
-		PhotoFloat.searchAlbumCacheBaseFromJsonFile = this.searchAlbumCacheBaseFromJsonFile;
+		PhotoFloat.searchAlbumCacheBasesFromJsonFile = this.searchAlbumCacheBasesFromJsonFile;
 
 		// temporary, will be removed later
 		PhotoFloat.js_cache_levels = [
@@ -1182,7 +1182,7 @@
 				for (i = 0; i < theAlbum.subalbums.length; ++i) {
 					if (PhotoFloat.searchWordsFromJsonFile.indexOf(theAlbum.subalbums[i].unicodeWords) == -1) {
 						PhotoFloat.searchWordsFromJsonFile.push(theAlbum.subalbums[i].unicodeWords);
-						PhotoFloat.searchAlbumCacheBaseFromJsonFile.push(theAlbum.subalbums[i].cacheBase);
+						PhotoFloat.searchAlbumCacheBasesFromJsonFile.push(theAlbum.subalbums[i].cacheBase);
 					}
 				}
 			} else if (! util.isSearchCacheBase(theAlbum.cacheBase)) {
@@ -1736,7 +1736,7 @@
 										}
 									)
 								) {
-									wordHashes.push(PhotoFloat.searchAlbumCacheBaseFromJsonFile[j]);
+									wordHashes.push(PhotoFloat.searchAlbumCacheBasesFromJsonFile[j]);
 									numSubAlbumsToGet ++;
 								}
 							}
@@ -1752,7 +1752,7 @@
 								PhotoFloat.searchWordsFromJsonFile.some(
 									function(words, index) {
 										if (words.includes(searchWordsFromUserNormalized[i])) {
-											albumHashes.push([PhotoFloat.searchAlbumCacheBaseFromJsonFile[index]]);
+											albumHashes.push([PhotoFloat.searchAlbumCacheBasesFromJsonFile[index]]);
 											return true;
 										}
 										return false;
