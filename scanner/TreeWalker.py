@@ -507,7 +507,7 @@ class TreeWalker:
 				# else:
 				# 	by_search_max_file_date = single_album.date
 
-				# word_album.nums_protected_media_in_sub_tree.merge(single_album.nums_protected_media_in_sub_tree)
+				word_album.nums_protected_media_in_sub_tree.merge(single_album.nums_protected_media_in_sub_tree)
 				# by_search_album.nums_protected_media_in_sub_tree.merge(single_album.nums_protected_media_in_sub_tree)
 
 			word_album.unicode_words = media_album_and_words["unicode_words"]
