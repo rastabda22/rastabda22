@@ -13,10 +13,12 @@
 		this.geotaggedPhotosFound = null;
 		this.searchWordsFromJsonFile = [];
 		this.searchAlbumCacheBasesFromJsonFile = [];
+		this.searchAlbumSubalbumsFromJsonFile = [];
 
 		PhotoFloat.searchAndSubalbumHash = '';
 		PhotoFloat.searchWordsFromJsonFile = this.searchWordsFromJsonFile;
 		PhotoFloat.searchAlbumCacheBasesFromJsonFile = this.searchAlbumCacheBasesFromJsonFile;
+		PhotoFloat.searchAlbumSubalbumsFromJsonFile = this.searchAlbumSubalbumsFromJsonFile;
 
 		// temporary, will be removed later
 		PhotoFloat.js_cache_levels = [
@@ -1183,6 +1185,7 @@
 					if (PhotoFloat.searchWordsFromJsonFile.indexOf(theAlbum.subalbums[i].unicodeWords) == -1) {
 						PhotoFloat.searchWordsFromJsonFile.push(theAlbum.subalbums[i].unicodeWords);
 						PhotoFloat.searchAlbumCacheBasesFromJsonFile.push(theAlbum.subalbums[i].cacheBase);
+						PhotoFloat.searchAlbumSubalbumsFromJsonFile.push(theAlbum.subalbums[i]);
 					}
 				}
 			} else if (! util.isSearchCacheBase(theAlbum.cacheBase)) {
@@ -1510,7 +1513,7 @@
 
 
 	PhotoFloat.prototype.parseHash = function(hash, hashParsed, error) {
-		var albumHashToGet, albumHashes;
+		var albumHashToGet, albumHashes, wordSubalbums;
 		var searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions;
 		var indexWords, indexAlbums, wordsWithOptionsString;
 		// this vars are defined here and not at the beginning of the file because the options must have been read
@@ -1524,6 +1527,7 @@
 		$("#album-view, #album-view #subalbums, #album-view #thumbs").removeClass("hidden");
 
 		albumHashes = [];
+		wordSubalbums = [];
 		searchWordsFromUser = [];
 		searchWordsFromUserNormalized = [];
 		searchWordsFromUserNormalizedAccordingToOptions = [];
@@ -1737,6 +1741,7 @@
 									)
 								) {
 									wordHashes.push(PhotoFloat.searchAlbumCacheBasesFromJsonFile[j]);
+									wordSubalbums.push(PhotoFloat.searchAlbumSubalbumsFromJsonFile[j]);
 									numSubAlbumsToGet ++;
 								}
 							}
@@ -1753,6 +1758,7 @@
 									function(words, index) {
 										if (words.includes(searchWordsFromUserNormalized[i])) {
 											albumHashes.push([PhotoFloat.searchAlbumCacheBasesFromJsonFile[index]]);
+											wordSubalbums.push(PhotoFloat.searchAlbumSubalbumsFromJsonFile[index]);
 											return true;
 										}
 										return false;
@@ -1773,16 +1779,16 @@
 						hashParsed(searchResultsAlbumFinal, null, -1);
 					} else {
 						$(".search-failed").hide();
+						searchResultsAlbumFinal.numsProtectedMediaInSubTree = util.sumNumsProtectedMediaOfArray(wordSubalbums);
 						for (indexWords = 0; indexWords <= lastIndex; indexWords ++) {
 							searchResultsMedia[indexWords] = [];
 							searchResultsSubalbums[indexWords] = [];
-							searchResultsAlbumFinal.numsProtectedMediaInSubTree = util.sumNumsProtectedMediaOfArray(albumHashes[indexWords]);
 							for (indexAlbums = 0; indexAlbums < albumHashes[indexWords].length; indexAlbums ++) {
 								let thisIndexWords = indexWords, thisIndexAlbums = indexAlbums;
 								// getAlbum is called here with 2 more parameters, indexAlbums and indexWords, in order to use their value
 								// if they are not passed as arguments, the success function would see their values updates (getAlbum is an asyncronous function)
 								var promise = PhotoFloat.getAlbum(
-									albumHashes[indexWords][indexAlbums],
+									albumHashes[thisIndexWords][thisIndexAlbums],
 									error,
 									{"getMedia": true, "getPositions": true}
 								);
