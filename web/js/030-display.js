@@ -141,6 +141,7 @@ $(document).ready(function() {
 					$("#media-center")[0].pause();
 				if (currentMedia !== null || currentAlbum.cacheBase !== Options.folders_string) {
 					fromEscKey = true;
+					$("#loading").show();
 					pS.swipeDown(upLink);
 					return false;
 				}
