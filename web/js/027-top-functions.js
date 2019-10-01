@@ -440,7 +440,7 @@
 		}
 
 		if (media !== null) {
-			title += "<span class='media-name'>" + util.trimExtension(media.name) + "</span>";
+			title += "<span class='media-name'>" + media.name + "</span>";
 			if (util.hasGpsData(currentMedia))
 				title += "<a class='map-popup-trigger'>" +
 					"<img class='title-img' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
@@ -500,7 +500,7 @@
 		if (setDocumentTitle) {
 			// keep generating the html page title
 			if (media !== null)
-				documentTitle = util.trimExtension(media.name) + documentTitle;
+				documentTitle = media.name + documentTitle;
 			else if (currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.numMedia == 1)
 				documentTitle = util.trimExtension(currentAlbum.media[0].name) + " \u00ab " + documentTitle;
 
