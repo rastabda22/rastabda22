@@ -894,6 +894,7 @@ class Positions(object):
 class NumsProtected(object):
 	def __init__(self):
 		self.nums_protected = {}
+		self.nums_protected[','] = 0
 
 	def increment(self, complex_identifiers_combination):
 		try:

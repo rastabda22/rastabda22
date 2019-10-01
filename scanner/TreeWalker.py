@@ -199,7 +199,7 @@ class TreeWalker:
 		# the subalbums of search albums in by_search_album are regular albums
 		# and they are saved when folders_album is saved, avoid saving them multiple times
 		if (
-			album.cache_base.find(Options.config['by_search_string']) == -1 or
+			album.cache_base.find(Options.config['by_search_string']) != 0 or
 			# album.cache_base.find(Options.config['by_search_string']) == 0 and
 			# len(album.cache_base.split(Options.config['cache_folder_separator'])) < 2
 			album.cache_base == Options.config['by_search_string']
@@ -207,7 +207,7 @@ class TreeWalker:
 			for subalbum in album.subalbums:
 				self.all_albums_to_json_file(subalbum, complex_identifiers_combination)
 
-		if album.num_media_in_sub_tree == 0:
+		if album.num_media_in_sub_tree == 0 and album.cache_base.find(Options.config['by_search_string']) != 0:
 		# if len(album.subalbums) == 0 and len(album.media_list) == 0:
 			if complex_identifiers_combination is None:
 				message("empty album, not saving it", album.absolute_path, 4)
