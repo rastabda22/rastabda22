@@ -517,7 +517,7 @@
 			// we must use getAlbum() because the album could not be in the cache yet (as when ctl-r is pressed)
 			var promise = phFl.getAlbum(searchFolderHash, util.die, {"getMedia": true, "getPositions": true});
 			promise.then(
-				function([theAlbum]) {
+				function(theAlbum) {
 					var whereLinks = '', thisCacheBase, name, documentTitle;
 
 					if (theAlbum.hasOwnProperty('')) {
@@ -2355,7 +2355,7 @@
 
 		var subalbumPromise = phFl.getAlbum(ev.data.subalbum.cacheBase, util.die, {"getMedia": false, "getPositions": true});
 		subalbumPromise.then(
-			function([subalbum]) {
+			function(subalbum) {
 				if (subalbum.positionsAndMediaInTree.length) {
 					ev.stopPropagation();
 					ev.preventDefault();

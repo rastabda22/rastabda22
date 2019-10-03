@@ -359,7 +359,7 @@
 					{"getMedia": true, "getPositions": true}
 				);
 				promise.then(
-					function([theAlbum]) {
+					function(theAlbum) {
 						for (mediaIndex = 0; mediaIndex < theAlbum.numMedia; mediaIndex ++) {
 							for (photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
 								if (theAlbum.media[mediaIndex].cacheBase == photosInAlbum[photoIndex].element.cacheBase) {

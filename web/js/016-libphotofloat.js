@@ -1115,7 +1115,7 @@
 							promise.then(
 								function() {
 									goOnTowardResolvingGetAlbum(album);
-									resolve_getAlbum([album]);
+									resolve_getAlbum(album);
 								},
 								function() {
 									console.trace();
@@ -1147,7 +1147,7 @@
 								promise.then(
 									function() {
 										goOnTowardResolvingGetAlbum(album);
-										resolve_getAlbum([album]);
+										resolve_getAlbum(album);
 									},
 									function() {
 										console.trace();
@@ -1155,7 +1155,7 @@
 								);
 							} else {
 								goOnTowardResolvingGetAlbum(album);
-								resolve_getAlbum([album]);
+								resolve_getAlbum(album);
 							}
 						},
 						function unprotectedAlbumUnexisting(emptyAlbum) {
@@ -1164,7 +1164,7 @@
 							promise.then(
 								function() {
 									goOnTowardResolvingGetAlbum(emptyAlbum);
-									resolve_getAlbum([emptyAlbum]);
+									resolve_getAlbum(emptyAlbum);
 								},
 								function() {
 									console.trace();
@@ -1234,7 +1234,7 @@
 			function(resolve_pickRandomMedia) {
 				var promise = PhotoFloat.getAlbum(theSubalbum.cacheBase, error, {"getMedia": false, "getPositions": false});
 				promise.then(
-					function([album]) {
+					function(album) {
 						// index = 0;
 						index = Math.floor(Math.random() * (album.numMediaInSubTree));
 						nextAlbum(album);
@@ -1280,7 +1280,7 @@
 						} else {
 							var promise = PhotoFloat.getAlbum(targetCacheBase, error, {"getMedia": false, "getPositions": false});
 							promise.then(
-								function([subalbum]) {
+								function(subalbum) {
 									nextAlbum(subalbum);
 								},
 								function() {
@@ -1291,7 +1291,7 @@
 					} else {
 						var lastPromise = PhotoFloat.getAlbum(album, error, {"getMedia": true, "getPositions": true});
 						lastPromise.then(
-							function([album]) {
+							function(album) {
 								resolve_pickRandomMedia([album, index]);
 							},
 							function() {
@@ -1441,7 +1441,7 @@
 						{"getMedia": false, "getPositions": true}
 					);
 					promise.then(
-						function([foldersRootAlbum]) {
+						function(foldersRootAlbum) {
 							if (! foldersRootAlbum.numPositionsInTree) {
 								// $("#by-gps-view").addClass("hidden");
 								self.geotaggedPhotosFound = false;
@@ -1618,7 +1618,7 @@
 		} else if (! util.isSearchCacheBase(albumHash) || searchWordsFromUser.length === 0) {
 			promise = PhotoFloat.getAlbum(albumHashToGet, error, {"getMedia": true, "getPositions": true});
 			promise.then(
-				function([theAlbum]) {
+				function(theAlbum) {
 					PhotoFloat.selectMedia(theAlbum, mediaFolderHash, mediaHash, hashParsed);
 				},
 				function() {
@@ -1714,7 +1714,7 @@
 			// get the search root album before getting the search words ones
 			var promise = PhotoFloat.getAlbum(Options.by_search_string, error, {"getMedia": true, "getPositions": true});
 			promise.then(
-				function([bySearchRootAlbum]) {
+				function(bySearchRootAlbum) {
 					var lastIndex, i, j, wordHashes, numSearchAlbumsReady = 0, numSubAlbumsToGet = 0, normalizedWords;
 					var searchResultsMedia = [];
 					var searchResultsSubalbums = [];
@@ -1793,7 +1793,7 @@
 									{"getMedia": true, "getPositions": true}
 								);
 								promise.then(
-									function([theAlbum]) {
+									function(theAlbum) {
 										var matchingMedia = [], matchingSubalbums = [], match, indexMedia, indexSubalbums, indexWordsLeft, resultAlbum, indexWords1, ithMedia, ithSubalbum;
 
 										PhotoFloat.putAlbumIntoCache(albumHashes[thisIndexWords][thisIndexAlbums], theAlbum);
