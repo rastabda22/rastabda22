@@ -400,24 +400,27 @@
 			}
 		}
 
-		var numPasswords;
-		if (util.isSearchCacheBase(thisAlbum.cacheBase))
-			numPasswords = util.numPasswords(phFl.getAlbumFromCache(thisAlbum.ancestorsCacheBase[0]));
-		else
-			numPasswords = util.numPasswords(thisAlbum);
+		if (thisAlbum !== null) {
+			let numPasswords;
+			if (util.isSearchCacheBase(thisAlbum.cacheBase))
+				numPasswords = util.numPasswords(phFl.getAlbumFromCache(thisAlbum.ancestorsCacheBase[0]));
+			else
+				numPasswords = util.numPasswords(thisAlbum);
 
-		if (
-			thisAlbum !== null &&
-			numPasswords
-			&& PhotoFloat.guessedPasswordCodes.length < numPasswords
-		) {
-			$(".protection").show();
-			$("#padlock").off('click').on(
-				'click',
-				function() {
-					$("#protected-content-unveil")[0].click();
-				}
-			);
+			if (
+				numPasswords
+				&& PhotoFloat.guessedPasswordCodes.length < numPasswords
+			) {
+				$(".protection").show();
+				$("#padlock").off('click').on(
+					'click',
+					function() {
+						$("#protected-content-unveil")[0].click();
+					}
+				);
+			} else {
+				$(".protection").hide();
+			}
 		} else {
 			$(".protection").hide();
 		}
