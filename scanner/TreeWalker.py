@@ -199,10 +199,10 @@ class TreeWalker:
 		# the subalbums of search albums in by_search_album are regular albums
 		# and they are saved when folders_album is saved, avoid saving them multiple times
 		if (
-			album.cache_base.find(Options.config['by_search_string']) != 0 or
+			album.cache_base == Options.config['by_search_string'] or
+			album.cache_base.find(Options.config['by_search_string']) != 0
 			# album.cache_base.find(Options.config['by_search_string']) == 0 and
 			# len(album.cache_base.split(Options.config['cache_folder_separator'])) < 2
-			album.cache_base == Options.config['by_search_string']
 		):
 			for subalbum in album.subalbums:
 				self.all_albums_to_json_file(subalbum, complex_identifiers_combination)

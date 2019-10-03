@@ -308,8 +308,8 @@ class Album(object):
 		for subalbum in self.subalbums_list:
 			subalbum.leave_only_unprotected_content()
 			if (
-				self.cache_base.find(Options.config['by_search_string']) != 0 or
-				self.cache_base == Options.config['by_search_string']
+				self.cache_base == Options.config['by_search_string'] or
+				self.cache_base.find(Options.config['by_search_string']) != 0
 			):
 				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 		# # search albums:
@@ -354,8 +354,8 @@ class Album(object):
 		for subalbum in self.subalbums_list:
 			subalbum.leave_only_content_protected_by(album_identifiers_set, media_identifiers_set)
 			if (
-				self.cache_base.find(Options.config['by_search_string']) != 0 or
-				self.cache_base == Options.config['by_search_string']
+				self.cache_base == Options.config['by_search_string'] or
+				self.cache_base.find(Options.config['by_search_string']) != 0
 			):
 				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 		# # search albums:
