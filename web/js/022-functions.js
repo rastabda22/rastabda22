@@ -400,13 +400,16 @@
 			}
 		}
 
+		var numPasswords;
+		if (util.isSearchCacheBase(thisAlbum.cacheBase))
+			numPasswords = util.numPasswords(phFl.getAlbumFromCache(thisAlbum.ancestorsCacheBase[0]));
+		else
+			numPasswords = util.numPasswords(thisAlbum);
+
 		if (
-			thisAlbum !== null && (
-				util.numPasswords(thisAlbum) && (
-					PhotoFloat.guessedPasswordCodes.length < util.numPasswords(thisAlbum)
-					// util.isSearchCacheBase(thisAlbum.cacheBase)
-				)
-			)
+			thisAlbum !== null &&
+			numPasswords
+			&& PhotoFloat.guessedPasswordCodes.length < numPasswords
 		) {
 			$(".protection").show();
 			$("#padlock").off('click').on(

@@ -252,17 +252,21 @@ $(document).ready(function() {
 						return false;
 					} else if (
 						e.key === "u" &&
-						currentAlbum !== null && (
-							! jQuery.isEmptyObject(currentAlbum.numsProtectedMediaInSubTree) &&
-							(
-								// ! currentAlbum.hasOwnProperty("includedCodesSimpleCombinations") ||
-								PhotoFloat.guessedPasswordCodes.length < util.numPasswords(currentAlbum)
-							)
-							// util.isSearchCacheBase(currentAlbum.cacheBase)
-						)
+						currentAlbum !== null
 					) {
-						$("#protected-content-unveil")[0].click();
-						return false;
+						var numPasswords;
+						if (util.isSearchCacheBase(currentAlbum.cacheBase))
+							numPasswords = util.numPasswords(phFl.getAlbumFromCache(currentAlbum.ancestorsCacheBase[0]));
+						else
+							numPasswords = util.numPasswords(currentAlbum);
+
+						if (
+							numPasswords
+							&& PhotoFloat.guessedPasswordCodes.length < numPasswords
+						) {
+							$("#protected-content-unveil")[0].click();
+							return false;
+						}
 					}
 				}
 
