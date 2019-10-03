@@ -1189,8 +1189,8 @@
 					}
 				}
 			} else if (! util.isSearchCacheBase(theAlbum.cacheBase)) {
-				if (! theAlbum.hasOwnProperty("positionsAndMediaInTree"))
-					theAlbum.numPositionsInTree = 0;
+				// if (! theAlbum.hasOwnProperty("positionsAndMediaInTree"))
+				// 	theAlbum.numPositionsInTree = 0;
 
 				if (theAlbum.hasOwnProperty("media")) {
 					for (i = theAlbum.media.length - 1; i >= 0; i --) {
