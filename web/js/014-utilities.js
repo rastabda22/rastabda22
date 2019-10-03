@@ -85,7 +85,7 @@
 	Utilities.prototype.numPasswords = function(album) {
 		var codes = [];
 		for (let codesComplexCombination in album.numsProtectedMediaInSubTree) {
-			if (album.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombination)) {
+			if (album.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombination) && codesComplexCombination !== "") {
 				var albumCombination = codesComplexCombination.split(',')[0];
 				var mediaCombination = codesComplexCombination.split(',')[1];
 				if (albumCombination)
@@ -95,9 +95,6 @@
 			}
 		}
 		return codes.length;
-		// var numsProtected = JSON.parse(JSON.stringify(album.numsProtectedMediaInSubTree));
-		// delete numsProtected[''];
-		// return Object.keys(numsProtected).length;
 	};
 
 	Utilities.prototype.cloneObject = function(object) {
