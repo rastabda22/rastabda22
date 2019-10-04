@@ -231,14 +231,24 @@ class TreeWalker:
 				message("album protected by another password combination, not saving it", album.absolute_path, 4)
 				return
 
+		json_media_name = ""
+		json_positions_name = ""
+
+		separate_media = album.must_separate_media
+		separate_positions = album.must_separate_positions
+
 		if complex_identifiers_combination is None:
 			json_name = album.json_file
-			json_positions_name = album.positions_json_file
-			json_media_name = album.media_json_file
+			if separate_media:
+				json_media_name = album.media_json_file
+			if separate_positions:
+				json_positions_name = album.positions_json_file
 		else:
 			json_name = album.cache_base + ".0.json"
-			json_positions_name = album.cache_base + ".0.positions.json"
-			json_media_name = album.cache_base + ".0.media.json"
+			if separate_media:
+				json_media_name = album.cache_base + ".0.media.json"
+			if separate_positions:
+				json_positions_name = album.cache_base + ".0.positions.json"
 
 		symlinks = []
 		positions_symlinks = []
@@ -276,14 +286,16 @@ class TreeWalker:
 				album.cache_base
 			))
 			json_name = json_name_with_path[len(Options.config['cache_path']) + 1:]
-			json_media_name = os.path.join(
-				Options.config['protected_directories_prefix'] + first_md5_product,
-				album.cache_base + "." + str(number) + ".media.json"
-			)
-			json_positions_name = os.path.join(
-				Options.config['protected_directories_prefix'] + first_md5_product,
-				album.cache_base + "." + str(number) + ".positions.json"
-			)
+			if separate_media:
+				json_media_name = os.path.join(
+					Options.config['protected_directories_prefix'] + first_md5_product,
+					album.cache_base + "." + str(number) + ".media.json"
+				)
+			if separate_positions:
+				json_positions_name = os.path.join(
+					Options.config['protected_directories_prefix'] + first_md5_product,
+					album.cache_base + "." + str(number) + ".positions.json"
+				)
 			symlink_codes_and_numbers.append({
 				'codesSimpleCombination': convert_simple_md5_combination_to_simple_codes_combination(first_md5_product),
 				'codesComplexCombination': codes_complex_combination,
@@ -307,18 +319,20 @@ class TreeWalker:
 						album.cache_base
 					))
 					symlink = symlink_with_path[len(Options.config['cache_path']) + 1:]
-					media_symlink = os.path.join(
-						Options.config['protected_directories_prefix'] + complex_md5,
-						album.cache_base + "." + str(number) + ".media.json"
-					)
-					positions_symlink = os.path.join(
-						Options.config['protected_directories_prefix'] + complex_md5,
-						album.cache_base + "." + str(number) + ".positions.json"
-					)
+					if separate_media:
+						media_symlink = os.path.join(
+							Options.config['protected_directories_prefix'] + complex_md5,
+							album.cache_base + "." + str(number) + ".media.json"
+						)
+						media_symlinks.append(media_symlink)
+					if separate_positions:
+						positions_symlink = os.path.join(
+							Options.config['protected_directories_prefix'] + complex_md5,
+							album.cache_base + "." + str(number) + ".positions.json"
+						)
+						positions_symlinks.append(positions_symlink)
 
 					symlinks.append(symlink)
-					media_symlinks.append(media_symlink)
-					positions_symlinks.append(positions_symlink)
 					symlink_codes_and_numbers.append({
 						'codesSimpleCombination': convert_simple_md5_combination_to_simple_codes_combination(complex_md5),
 						'codesComplexCombination': codes_complex_combination,
@@ -327,16 +341,20 @@ class TreeWalker:
 
 				for symlink in symlinks:
 					self.all_json_files.append(symlink)
-				for positions_symlink in positions_symlinks:
-					self.all_json_files.append(positions_symlink)
-				for media_symlink in media_symlinks:
-					self.all_json_files.append(media_symlink)
+				if separate_media:
+					for media_symlink in media_symlinks:
+						self.all_json_files.append(media_symlink)
+				if separate_positions:
+					for positions_symlink in positions_symlinks:
+						self.all_json_files.append(positions_symlink)
 			album.symlink_codes_and_numbers = symlink_codes_and_numbers
 
 
 		self.all_json_files.append(json_name)
-		self.all_json_files.append(json_positions_name)
-		self.all_json_files.append(json_media_name)
+		if separate_media:
+			self.all_json_files.append(json_media_name)
+		if separate_positions:
+			self.all_json_files.append(json_positions_name)
 
 		album.to_json_file(
 			json_name,
