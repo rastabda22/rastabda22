@@ -210,7 +210,7 @@ class TreeWalker:
 		if (
 			album.num_media_in_sub_tree == 0 and (
 				album.cache_base.find(Options.config['by_search_string']) != 0  or
-				album.cache_base.find(Options.config['by_search_string']) == 0  and len(album.subalbums_list) == 0
+				len(album.subalbums) == 0
 			)
 		):
 		# if len(album.subalbums) == 0 and len(album.media_list) == 0:
