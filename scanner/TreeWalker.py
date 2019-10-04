@@ -390,7 +390,7 @@ class TreeWalker:
 				year_album.add_subalbum(month_album)
 
 				days = sorted(list(self.tree_by_date[year][month].keys()))
-				for day in self.tree_by_date[year][month]:
+				for day in days:
 					media_list = self.tree_by_date[year][month][day]
 					message("working with day album...", "", 5)
 					day_path = os.path.join(month_path, str(day))
