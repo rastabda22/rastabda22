@@ -1137,6 +1137,7 @@
 					);
 				} else if (util.isMapCacheBase(albumCacheBase)) {
 					// map album are not on server, if they aren't in cache go to root album
+					$("#loading").hide();
 					$("#error-unexistent-map-album").stop().fadeIn(200);
 					$("#error-unexistent-map-album").fadeOut(
 						2000,
