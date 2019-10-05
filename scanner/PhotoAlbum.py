@@ -477,7 +477,7 @@ class Album(object):
 			files = "'" + json_files[0] + "'"
 		else:
 			files = "'" + json_files[0] + "' and others"
-		message("reading album from various json files...", files, 5)
+		message("reading album from " + str(len(json_files)) + " json files...", files, 5)
 		# json_files is the list of the existing files for that cache base
 		dictionary = None
 		must_process_passwords = False
@@ -500,8 +500,10 @@ class Album(object):
 				return [None, True]
 
 			codes_combinations = list(json_file_dict['numsProtectedMediaInSubTree'].keys())
+			if '' in codes_combinations and json_file_dict['numsProtectedMediaInSubTree'][''] == 0 and len(codes_combinations) > 0:
+				codes_combinations.pop()
 			if len(codes_combinations) != len(json_files):
-				indented_message("not an album cache hit", "some protected or unprotected json file is missing", 4)
+				indented_message("not an album cache hit", "json files number different from numsProtectedMediaInSubTree keys number", 4)
 				back_level()
 				return [None, True]
 
