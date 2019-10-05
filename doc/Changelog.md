@@ -1,5 +1,5 @@
 * scanner now reports unrecognized file with their mime types
-* when an album has many media/positions, they are saved to a separate json file
+* when an album has many (according to the corresponding new options) media/positions, they are saved to a separate json file
   * new option: `max_media_in_json_file`
   * new option: `max_media_from_positions_in_json_file`
 * `python3` is now used in scanner
