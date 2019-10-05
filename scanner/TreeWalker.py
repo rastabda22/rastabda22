@@ -210,7 +210,17 @@ class TreeWalker:
 		if (
 			album.num_media_in_sub_tree == 0 and (
 				album.cache_base.find(Options.config['by_search_string']) != 0  or
-				len(album.subalbums) == 0
+				album.cache_base != Options.config['by_search_string'] and
+				(
+					complex_identifiers_combination is None and
+					all(subalbum.nums_protected_media_in_sub_tree.value(',') == 0 for subalbum in album.subalbums)
+					or
+					complex_identifiers_combination is not None and
+					all(
+						complex_identifiers_combination in subalbum.nums_protected_media_in_sub_tree.non_trivial_keys() and
+						subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination) == 0
+						for subalbum in album.subalbums)
+				)
 			)
 		):
 		# if len(album.subalbums) == 0 and len(album.media_list) == 0:
