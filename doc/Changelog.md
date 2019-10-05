@@ -1,4 +1,4 @@
-* unrecognized file are now reported with their mime type
+* scanner now reports unrecognized file with their mime types
 * when an album has many media/positions, they are saved to a separate json file
   * new option: `max_media_in_json_file`
   * new option: `max_media_from_positions_in_json_file`
