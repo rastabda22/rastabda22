@@ -1024,7 +1024,7 @@ class TreeWalker:
 									patterns_and_passwords.append(
 										{
 											"pattern": '*',
-											"case_flag": 'ci',
+											"case_flags": ['ci', 'part'],
 											"identifier": identifier
 										}
 									)
@@ -1032,10 +1032,17 @@ class TreeWalker:
 								else:
 									indented_message("WARNING: password identifier used more than once", identifier + ": not protecting the directory", 2)
 						else:
-							# a password identifier followed by the case flag and a file pattern
+							# a password identifier followed by the flags and a file pattern
 							identifier = columns[0]
 							remaining_columns = " ".join(columns[1:]).lstrip().split()
-							case_flag = remaining_columns[0]
+							flags = remaining_columns[0]
+							flag_list = flags.split(',')
+							case_flag = 'ci'
+							if 'cs' in flag_list:
+								case_flag = 'cs'
+							whole_flag = 'part'
+							if 'whole' in flag_list:
+								whole_flag = 'whole'
 							indexes = [value['identifier'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
 							# everything beginning with the first non-space character after the case flag till the end of line (including the traling spaces) is the pattern
 							pattern = " ".join(remaining_columns[1:]).lstrip()
@@ -1044,16 +1051,20 @@ class TreeWalker:
 							elif len(indexes) == 1:
 								# absolute_file_name = os.path.join(absolute_path, file_name)
 								if case_flag == 'cs':
-									indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', case sensitive", 3)
-								elif case_flag == 'ci':
-									indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', case insensitive", 3)
+									if whole_flag == 'whole':
+										indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', case sensitive, whole name", 3)
+									else:
+										indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', case sensitive, part of name", 3)
 								else:
-									indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', case sensitive flag wrong, assuming case insensitive", 3)
-									case_flag = 'ci'
+									if whole_flag == 'whole':
+										indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', case insensitive, whole name", 3)
+									else:
+										indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', case insensitive, part of name", 3)
 								patterns_and_passwords.append(
 									{
 										"pattern": pattern,
 										"case_flag": case_flag,
+										"whole_flag": whole_flag,
 										"identifier": identifier
 									}
 								)
@@ -1209,12 +1220,21 @@ class TreeWalker:
 			# get the matching passwords
 			next_level()
 			for pattern_and_password in patterns_and_passwords:
+				case = "case insentitive"
+				whole = "part of name"
 				if pattern_and_password['case_flag'] == 'cs':
-					match = fnmatch.fnmatchcase(dir_name, pattern_and_password['pattern'])
+					if pattern_and_password['whole_flag'] == 'whole':
+						match = fnmatch.fnmatchcase(dir_name, pattern_and_password['pattern'])
+						whole = "whole name"
+					else:
+						match = fnmatch.fnmatchcase(dir_name, "*" + pattern_and_password['pattern'] + "*")
 					case = "case sentitive"
 				else:
-					match = re.match(fnmatch.translate(pattern_and_password['pattern']), dir_name, re.IGNORECASE)
-					case = "case insentitive"
+					if pattern_and_password['whole_flag'] == 'whole':
+						match = re.match(fnmatch.translate(pattern_and_password['pattern']), dir_name, re.IGNORECASE)
+						whole = "whole name"
+					else:
+						match = re.match(fnmatch.translate("*" + pattern_and_password['pattern'] + "*"), dir_name, re.IGNORECASE)
 
 				# add the matching patterns
 				if match:
@@ -1224,13 +1244,13 @@ class TreeWalker:
 						album.password_identifiers_set.add(identifier)
 						indented_message(
 							"password added to album",
-							"'" + dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", identifier = " + identifier,
+							"'" + dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", identifier = " + identifier,
 							3
 						)
 					else:
 						indented_message(
 							"password not added to album",
-							dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "' already protects the album",
+							dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", but identifier '" + identifier + "' already protects the album",
 							3
 						)
 			back_level()
@@ -1451,12 +1471,21 @@ class TreeWalker:
 
 					# apply the file passwords_md5 and password codes to the media if they match the media name
 					for pattern_and_password in patterns_and_passwords:
+						case = "case insentitive"
+						whole = "part of name"
 						if pattern_and_password['case_flag'] == 'cs':
-							match = fnmatch.fnmatchcase(file_name, pattern_and_password['pattern'])
+							if pattern_and_password['whole_flag'] == 'whole':
+								match = fnmatch.fnmatchcase(file_name, pattern_and_password['pattern'])
+								whole = "whole name"
+							else:
+								match = fnmatch.fnmatchcase(file_name, "*" + pattern_and_password['pattern'] + "*")
 							case = "case sentitive"
 						else:
-							match = re.match(fnmatch.translate(pattern_and_password['pattern']), file_name, re.IGNORECASE)
-							case = "case insentitive"
+							if pattern_and_password['whole_flag'] == 'whole':
+								match = re.match(fnmatch.translate(pattern_and_password['pattern']), file_name, re.IGNORECASE)
+								whole = "whole name"
+							else:
+								match = re.match(fnmatch.translate("*" + pattern_and_password['pattern'] + "*"), file_name, re.IGNORECASE)
 
 						if match:
 							identifier = pattern_and_password['identifier']
@@ -1465,13 +1494,13 @@ class TreeWalker:
 								single_media.password_identifiers_set.add(identifier)
 								indented_message(
 									"password and code added to media",
-									"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", identifier = " + identifier,
+									"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", identifier = " + identifier,
 									3
 								)
 							else:
 								indented_message(
 									"password and code not added to media",
-									"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", but identifier '" + identifier + "'  already protects the media",
+									"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", but identifier '" + identifier + "'  already protects the media",
 									3
 								)
 					indented_message("passwords for single media processed!", "", 5)

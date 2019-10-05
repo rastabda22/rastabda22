@@ -7,12 +7,13 @@ Albums and media can be protected by password. Various passwords can be used for
 The passwords cannot be in the album tree: the album tree will have _password_ files (the actual name is set by the option `passwords_marker`), whose lines may be:
 
 * a _password identifier_: the album and all its subalbums will be protected by the password assigned to the identifier; can consist of every non-space character except '-' (dash) and ',' (comma);
-* a _password identifier_ followed by the _case sensitive/insensitive flag_ and a _pattern_ (shell wildcards are understood): the subalbums/media matched by the pattern will be protected by the password assigned to the identifier;
-* a `-` (_minus sign_): it will stop the passwords from the parent albums propagate into it.
+* a _password identifier_ followed by the some and a _pattern_ (shell wildcards are understood): the subalbums/media matched by the pattern will be protected by the password assigned to the identifier;
 
 The _password identifier_ is used to pick the password from a _passwords file_ whose name is set by option `password_file`. The _password file_ is needed because putting the passwords inside the albums would expose them.
 
-The _case sensitive/insensitive flag_ is either `cs` or `ci`.
+The flags are a sequence of at least one of various comma-separated individual flags, without any space withing them:
+* _case sensitive/insensitive_ flag: is either `cs` or `ci`  (default)
+* _whole name/part_ flag: is either `whole` or `part` (default)
 
 The _pattern_ must match the entire file/album name: `jpg` will only match the `jpg` file (that is, probably nothing), in order to match files ending in `jpg` you must use `*.jpg`; in order to match `my journey.jpg` you can use a pattern like `*journey*`. The available patterns are documented at https://docs.python.org/3.4/library/fnmatch.html.
 
@@ -52,12 +53,14 @@ It's important that the directory listing feature of `apache` (or the equivalent
 
 #### Beware of guessable media names
 
-`myphotoshares` doesn't change anything in the albums tree, so a protected media or directory name could be guessed if my similar to the unprotected ones. For a higher privacy, protected media/directories should have unguessable names.
+`myphotoshares` doesn't change anything in the albums tree, so a protected media or directory name could be guessed if muy similar to the unprotected ones. For a higher privacy, protected media/directories should have unguessable names.
 
 #### Change the password marker file name
 
-The option `passwords_marker` must be changed in the config file; otherwise a malicious user could access it and know what you are protecting: from the marker content he/she could find the protected content in the `/albums/ tree.`
+The option `passwords_marker` must be changed in the config file; otherwise a malicious user could access it and know what you are protecting: from the marker content he/she could guess something of the protected content in the albums tree.
 
 ## Optional: Deployment Makefiles
 
 Both the scanner and the webpage have a `make deploy` target, and the scanner has a `make scan` target, to automatically deploy assets to a remote server and run the scanner. For use, customize `deployment-config.mk` in the root of the project, and carefully read the `Makefile`s to learn what's happening.
+
+This is a feature from original Jason's `photofloat`, very probably it won't work.
