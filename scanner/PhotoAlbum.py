@@ -477,11 +477,12 @@ class Album(object):
 			files = "'" + json_files[0] + "'"
 		else:
 			files = "'" + json_files[0] + "' and others"
-		message("reading album from json files...", files, 5)
+		message("reading album from various json files...", files, 5)
 		# json_files is the list of the existing files for that cache base
 		dictionary = None
 		must_process_passwords = False
 		for json_file in json_files:
+			indented_message("reading json file", json_file)
 			with open(json_file, "r") as file_pointer:
 				try:
 					json_file_dict = json.load(file_pointer)
