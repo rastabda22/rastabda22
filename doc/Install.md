@@ -7,21 +7,22 @@ MyPhotoShare needs:
 * a working web server (e.g. `apache`, `nginx`, etc.)
 * the web server `php` module installed (optional if accepting degraded mode, see below)
 * `php5-gd` in order to create albums share images (optional if accepting degraded mode, see below)
-* `python2`; running it with Python 3 is possible, replace `python2` by `python3` in the first line in `scanner/main.py` and install the corresponding Python 3 dependencies; on debian jessie and stretch systems, however, python3-opencv isn't available yet, so you won't get face detection
-* `python-numpy`
-* `python-requests`
-* `python-pil`
-* `python-unidecode`
+* `python3`
+* `python3-magic`
+* `python3-numpy`
+* `python3-requests`
+* `python3-pil`
+* `python3-unidecode`
+* `python3-exif`
 * `avconv` / `ffmpeg` in order to be able to manage videos
 * `curl`, used by minify script
-* `python-exif`
 * `exiftool`
 
 ### Optional
 * `python-opencv` if found, face detection is used when cropping images to square.
 * OpenCV libraries and data (`opencv-data`)
 * `cssmin` (`https://github.com/zacharyvoase/cssmin`, debian/ubuntu packages `cssmin`), unless using external web service
-* `jsmin` (`https://github.com/tikitu/jsmin`, debian/ubuntu package `python-jsmin`) or `uglifyjs` (`https://github.com/mishoo/UglifyJS`, debian/ubuntu package `uglifyjs`), unless using external web service
+* `jsmin` (`https://github.com/tikitu/jsmin`, debian/ubuntu package `python-jsmin`) or `uglifyjs` (`https://github.com/mishoo/UglifyJS`, debian/ubuntu package `uglifyjs`, but `node-buble` is requiered too, and is not available in _debian stable_ yet), unless using external web service
 
 
 ### Why PHP? Isn't it enough with JavaScript?
@@ -42,7 +43,7 @@ Be sure you installed `avconv` / `ffmpeg` if you have videos.
 ### Download the source code from the git repository:
 
 ```bash
-    $ git clone https://github.com/paolobenve/myphotoshare.git
+    $ git clone https://gitlab.com/paolobenve/myphotoshare.git
     $ cd myphotoshare
 ```
 
@@ -99,26 +100,32 @@ It's recommended to have this directive only in the directory of MyPhotoShare ga
 
 
 ## Apache server configuration
+ Edit you domain configuration file in `/etc/apache2/sites-available/`, or use `/etc/apache2/sites-available/000-default.conf`:
 
-A default `.htaccess` file is provided in the `web` directory that can be used by Apache. If you're using a shared hosting, your Apache server is probably already configured to use `.htaccess` by default. But if that's not the case, you have to configure the web server yourself. The following instructions have been done on a Ubuntu 16.04 server:
-
- * The server must read `.htaccess` files. Edit you domain configuration file in `/etc/apache2/sites-available` or `/etc/apache2/sites-available/000-default.conf` if you want to change the whole configuration.
 ```bash
 $ sudo vi /etc/apache2/sites-available/000-default.conf
+
 ```
+
  Add the following lines in the `<VirtualHost>` section:
 ```apache
 <VirtualHost *:80>
-	...
-
-        <Directory /var/www/html/myphotoshare>
-                Options Indexes FollowSymLinks
+    ServerAdmin myemail@myprovider.com
+    ServerName myserver.com
+    DocumentRoot /my/path/myphotoshare
+    <Directory /my/path/myphotoshare>
+        Options FollowSymLinks
+        Options -Indexes
                 AllowOverride All
                 Order allow,deny
                 allow from all
         </Directory>
 </VirtualHost>
 ```
+
+The `Option -Indexes` line is important for security reasons, in order not to permit directory listings.
+
+### Other tweakings
 
  * Compression of files must be enabled with Mod_deflate.
 ```bash
@@ -142,11 +149,11 @@ When MyPhotoShare code is updated, update your `myphotoshare` directory.
 
 Go to the folder you cloned the repository in and execute:
 ```bash
-    $ git pull https://github.com/paolobenve/myphotoshare.git
+    $ git pull https://gitlab.com/paolobenve/myphotoshare.git
     $ ./bin/js-css-minify.sh
 ```
 
-Obviously the scanner should be launched too.
+Obviously the scanner should be launched too; next section explains how you can do it.
 
 
 ## Run the scanner to generate the albums
@@ -180,8 +187,6 @@ Instead or running `myphotoshare` as `root`, you can use whatever user that have
 When creating square thumbnail, MyPhotoShare can use [OpenCV](https://opencv.org/) to locate faces on a photo and crop the thumbnail centering the face.
 
 First check that MyPhotoShare dependencies on OpenCV are satisfied.
-
-On Debian Jessie or Ubuntu 16.04, Python 3 binding for OpenCV is not yet available. You'll have to run MyPhotoShare with Python 2. To do that, change `python3` to `python2` in the first line of `scanner/main.py`.
 
 When running the scanner with a verbose level of at least 3, the scanner will print if it can load OpenCV and use it.
 

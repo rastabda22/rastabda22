@@ -5,9 +5,6 @@
 # Usage:
 # ./get_alternate_names.py language_code1 language_code2 language_code3 ...
 
-# @python2
-from __future__ import print_function
-
 from fileinput import input
 import requests, zipfile, io
 import json

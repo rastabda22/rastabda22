@@ -327,10 +327,10 @@ var SocialShareKit = (function() {
 			shareUrlEnc = encodeURIComponent(shareUrl);
 		switch (network) {
 			case 'whatsapp':
-				url = 'https://graph.facebook.com/?id=' + shareUrlEnc;
-				parseFunc = function(r) {
-					return onReady(r.share ? r.share.share_count : 0);
-				};
+				// url = 'https://graph.facebook.com/?id=' + shareUrlEnc;
+				// parseFunc = function(r) {
+				// 	return onReady(r.share ? r.share.share_count : 0);
+				// };
 				break;
 			case 'facebook':
 				url = 'https://graph.facebook.com/?id=' + shareUrlEnc;

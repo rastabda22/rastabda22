@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 from datetime import datetime
 import os
@@ -7,16 +6,16 @@ import sys
 import json
 import ast
 import math
+import hashlib
+import random
+from pprint import pprint
 
-# @python2
-try:
-	import configparser
-except ImportError:
-	import ConfigParser as configparser
+import configparser
 
-from Utilities import message, indented_message, next_level, back_level, find, find_in_usr_share
+from Utilities import message, indented_message, next_level, back_level, find, find_in_usr_share, make_dir, file_mtime
 
 config = {}
+all_albums = []
 date_time_format = "%Y-%m-%d %H:%M:%S"
 exif_date_time_format = "%Y:%m:%d %H:%M:%S"
 video_date_time_format = "%Y-%m-%d %H:%M:%S"
@@ -34,10 +33,27 @@ num_photo_without_exif_date_or_geotags = 0
 photos_with_exif_date_and_without_geotags = []
 photos_without_exif_date_and_with_geotags = []
 photos_without_exif_date_or_geotags = []
+num_unrecognized_files = 0
+unrecognized_files = []
 num_video = 0
 num_video_processed = 0
-options_not_to_be_saved = ['cache_path', 'index_html_path', 'album_path']
-options_requiring_json_regeneration = ['geonames_language', 'unspecified_geonames_code', 'get_geonames_online', 'metadata_tools_preference', 'subdir_method', 'cache_folders_num_digits_array']
+options_not_to_be_saved = [
+	'cache_path',
+	'index_html_path',
+	'album_path',
+	'passwords_marker',
+	'passwords_file'
+]
+options_requiring_json_regeneration = [
+	'geonames_language',
+	'unspecified_geonames_code',
+	'get_geonames_online',
+	'metadata_tools_preference',
+	'subdir_method',
+	'cache_folders_num_digits_array',
+	'max_media_in_json_file',
+	'max_media_from_positions_in_json_file'
+]
 # every option is given in a dictionary with a value which represent the pre-option default value
 options_requiring_reduced_images_regeneration = [
 	{'name': 'jpeg_quality', 'default': False},
@@ -61,12 +77,25 @@ unicode_combining_marks_c = '\u0903\u093E\u093F\u0940\u0949\u094A\u094B\u094C\u0
 config['unicode_combining_marks'] = unicode_combining_marks_n + unicode_combining_marks_c
 
 thumbnail_types_and_sizes_list = None
+identifiers_and_passwords = []
+old_password_codes = {}
+obsolete_json_version = False
+passwords_file_mtime = None
 config['cv2_installed'] = True
 face_cascade = None
 eye_cascade = None
 config['available_map_popup_positions'] = ['SE', 'NW' ]
+# the minimum and maximum values to use for random password codes
+# min_random ensures that all the codes has the same length
+min_random = 100000000
+max_random = 999999999
 
-# set this variable to a new value (previously was a number, now it may include letters) whenever the json files structure changes, it can be the app version
+# svg is not in the following list because Pillow doesn't support it
+config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x-tga']
+
+
+# set this variable to a new value (previously was a number, now it may include letters)
+# whenever the json files structure changes (the app version can be used)
 # json_version = 0 is debug mode: json files are always considered invalid
 # json_version = 1 since ...
 # json_version = 2 since checksums have been added
@@ -77,7 +106,50 @@ config['available_map_popup_positions'] = ['SE', 'NW' ]
 # json_version = 3.7beta2 since mvoed positions_and_media_in_tree to a separate file to avoid duplication and to save download time
 # json_version = 3.8
 # json_version = 3.8.1 since slightly rationalized json files content
-json_version = "3.8.1"
+# json_version = 3.99 since property passwords changed to passwordsCodes in json file
+# json_version = 3.98 since property passwords changed to passwordsMd5 in json file
+# json_version = 3.97 since passwords removed from json file
+# json_version = 3.98 since passwordMarkerMTime and albumIniMTime was added to json files
+# json_version = 3.99 since album passwords added to every media separately from media passwords
+# json_version = 3.991 since media and position remain in json file for small numbers
+# json_version = 3.992 since combination renamed to complexCombination
+# json_version = 3.994 since complexCombination renamed to codesComplexCombination
+# json_version = 3.995 since removed ancestorsCacheBase and unnecessary ancestorsCenter
+# json_version = 3.996 since mimeType and convertedPath added as media properties
+# json_version = 3.997 since corrected bug with positions in search albums
+# json_version = 3.998 since symlinkCodesAndNumbers added as album property
+
+# json_version = 0
+json_version = 4.0RC1
+
+
+def set_obsolete_json_version_flag():
+	global obsolete_json_version
+	obsolete_json_version = True
+
+
+def mark_identifier_as_used(identifier):
+	global identifiers_and_passwords
+	for i, value in enumerate(identifiers_and_passwords):
+		if identifiers_and_passwords[i]['identifier'] == identifier:
+			identifiers_and_passwords[i]['used'] = True
+			break
+
+def get_old_password_codes():
+	message("PRE Getting old passwords and codes...","", 5)
+	passwords_subdir_with_path = os.path.join(config['cache_path'], config['passwords_subdir'])
+	old_md5_and_codes = {}
+	try:
+		for password_md5 in sorted(os.listdir(passwords_subdir_with_path)):
+			with open(os.path.join(passwords_subdir_with_path, password_md5), "r") as filepath:
+				# print(os.path.join(passwords_subdir_with_path, password_md5))
+				code_dict = json.load(filepath)
+				old_md5_and_codes[code_dict["passwordCode"]] = password_md5
+		indented_message("PRE Old passwords and codes got","", 4)
+	except OSError:
+		# the directory doesn't exist
+		pass
+	return old_md5_and_codes
 
 def initialize_opencv():
 	global face_cascade, eye_cascade
@@ -85,39 +157,40 @@ def initialize_opencv():
 	try:
 		import cv2
 
-		message("importer", "opencv library available, using it!", 3)
+		message("PRE importer", "opencv library available, using it!", 3)
 		next_level()
 		FACE_CONFIG_FILE = "haarcascade_frontalface_default.xml"
-		message("looking for file...", FACE_CONFIG_FILE + " in /usr/share", 5)
+		message("PRE looking for file...", FACE_CONFIG_FILE + " in /usr/share", 5)
 		face_config_file_with_path = find_in_usr_share(FACE_CONFIG_FILE)
 		if not face_config_file_with_path:
-			message("face xml file not found", FACE_CONFIG_FILE + " not found in /usr/share", 5)
-			message("looking for file...", FACE_CONFIG_FILE + " in /", 5)
+			message("PRE face xml file not found", FACE_CONFIG_FILE + " not found in /usr/share", 5)
+			message("PRE looking for file...", FACE_CONFIG_FILE + " in /", 5)
 			face_config_file_with_path = find(FACE_CONFIG_FILE)
 		if not face_config_file_with_path:
-			indented_message("face xml file not found", FACE_CONFIG_FILE, 5)
+			indented_message("PRE face xml file not found", FACE_CONFIG_FILE, 5)
 			config['cv2_installed'] = False
 		else:
 			face_cascade = cv2.CascadeClassifier(face_config_file_with_path)
 
-			indented_message("face xml file found and initialized:", face_config_file_with_path, 5)
+			indented_message("PRE face xml file found and initialized:", face_config_file_with_path, 5)
 			EYE_CONFIG_FILE = "haarcascade_eye.xml"
-			message("looking for file...", EYE_CONFIG_FILE, 5)
+			message("PRE looking for file...", EYE_CONFIG_FILE, 5)
 			eye_config_file_with_path = find_in_usr_share(EYE_CONFIG_FILE)
 			if not eye_config_file_with_path:
 				eye_config_file_with_path = find(EYE_CONFIG_FILE)
 			if not eye_config_file_with_path:
-				indented_message("eyes xml file not found", EYE_CONFIG_FILE, 5)
+				indented_message("PRE eyes xml file not found", EYE_CONFIG_FILE, 5)
 				config['cv2_installed'] = False
 			else:
 				eye_cascade = cv2.CascadeClassifier(eye_config_file_with_path)
-				indented_message("found and initialized:", eye_config_file_with_path, 5)
+				indented_message("PRE found and initialized:", eye_config_file_with_path, 5)
 		back_level()
 	except ImportError:
 		config['cv2_installed'] = False
-		message("importer", "No opencv library available, not using it", 2)
+		message("PRE importer", "No opencv library available, not using it", 2)
 
 def get_options():
+	global passwords_file_mtime, old_password_codes
 	project_dir = os.path.dirname(os.path.realpath(os.path.join(__file__, "..")))
 	default_config_file = os.path.join(project_dir, "myphotoshare.conf.defaults")
 	default_config = configparser.ConfigParser()
@@ -135,7 +208,7 @@ def get_options():
 		usr_config.set('options', 'album_path', sys.argv[1])
 		usr_config.set('options', 'cache_path', sys.argv[2])
 
-	message("Options", "asterisk denotes options changed by config file", 0)
+	message("PRE Options", "asterisk denotes options changed by config file", 0)
 	next_level()
 	# pass config values to a dict, because ConfigParser objects are not reliable
 	for option in default_config.options('options'):
@@ -147,6 +220,8 @@ def get_options():
 				'album_thumb_size',
 				'media_thumb_size',
 				'big_virtual_folders_threshold',
+				'max_media_in_json_file',
+				'max_media_from_positions_in_json_file',
 				'max_search_album_number',
 				# the following option will be converted to integer further on
 				'num_processors',
@@ -161,7 +236,7 @@ def get_options():
 				else:
 					config[option] = ""
 			except configparser.Error:
-				indented_message("WARNING: option " + option + " in user config file", "is not integer, using default value", 2)
+				indented_message("PRE WARNING: option " + option + " in user config file", "is not integer, using default value", 2)
 				config[option] = default_config.getint('options', option)
 		elif option in ('follow_symlinks',
 				'checksum',
@@ -189,7 +264,7 @@ def get_options():
 			try:
 				config[option] = usr_config.getboolean('options', option)
 			except ValueError:
-				indented_message("WARNING: option " + option + " in user config file", "is not boolean, using default value", 2)
+				indented_message("PRE WARNING: option " + option + " in user config file", "is not boolean, using default value", 2)
 				config[option] = default_config.getboolean('options', option)
 		elif option in ('reduced_sizes', 'metadata_tools_preference'):
 			config[option] = ast.literal_eval(usr_config.get('options', option))
@@ -200,7 +275,6 @@ def get_options():
 		else:
 			config[option] = usr_config.get('options', option)
 			if option in ('js_cache_levels'):
-				print(config[option])
 				config[option] = json.loads(config[option])
 
 
@@ -222,7 +296,7 @@ def get_options():
 		else:
 			option_value = "* " + option_value + spaces + "DEFAULT: " + default_option_value
 
-		message("option value", option.ljust(45) + ": " + option_value, 0)
+		message("PRE option value", option.ljust(45) + ": " + option_value, 0)
 
 	# all cache names are lower case => bit rate must be lower case too
 	config['video_transcode_bitrate'] = config['video_transcode_bitrate'].lower()
@@ -231,33 +305,24 @@ def get_options():
 	if config['geonames_language'] == '':
 		if config['language'] != '':
 			config['geonames_language'] = config['language']
-			message("geonames_language option unset", "using language value: " + config['language'], 3)
+			message("PRE geonames_language option unset", "using language value: " + config['language'], 3)
 		else:
 			config['geonames_language'] = os.getenv('LANG')[:2]
-			message("geonames_language and language options unset", "using system language (" + config['geonames_language'] + ") for geonames_language option", 3)
+			message("PRE geonames_language and language options unset", "using system language (" + config['geonames_language'] + ") for geonames_language option", 3)
 	if config['get_geonames_online']:
 		# warn if using demo geonames user
 		if config['geonames_user'] == str(default_config.get('options', 'geonames_user')):
-			message("WARNING!", "You are using the myphotoshare demo geonames user, get and use your own user as soon as possible", 0)
+			message("PRE WARNING!", "You are using the myphotoshare demo geonames user, get and use your own user as soon as possible", 0)
 
 	# values that have type != string
 	back_level()
 
-	# @python2
-	if sys.version_info < (3, ):
-		if config['index_html_path']:
-			config['index_html_path'] = os.path.abspath(config['index_html_path']).decode(sys.getfilesystemencoding())
-		if config['album_path']:
-			config['album_path'] = os.path.abspath(config['album_path']).decode(sys.getfilesystemencoding())
-		if config['cache_path']:
-			config['cache_path'] = os.path.abspath(config['cache_path']).decode(sys.getfilesystemencoding())
-	else:
-		if config['index_html_path']:
-			config['index_html_path'] = os.fsdecode(os.path.abspath(config['index_html_path']))
-		if config['album_path']:
-			config['album_path'] = os.fsdecode(os.path.abspath(config['album_path']))
-		if config['cache_path']:
-			config['cache_path'] = os.fsdecode(os.path.abspath(config['cache_path']))
+	if config['index_html_path']:
+		config['index_html_path'] = os.fsdecode(os.path.abspath(config['index_html_path']))
+	if config['album_path']:
+		config['album_path'] = os.fsdecode(os.path.abspath(config['album_path']))
+	if config['cache_path']:
+		config['cache_path'] = os.fsdecode(os.path.abspath(config['cache_path']))
 
 	# try to guess value not given
 	guessed_index_dir = False
@@ -268,7 +333,7 @@ def get_options():
 		not config['album_path'] and
 		not config['cache_path']
 	):
-		message("options", "neither index_html_path nor album_path or cache_path have been defined, assuming default positions", 3)
+		message("PRE options", "neither index_html_path nor album_path or cache_path have been defined, assuming default positions", 3)
 		# default position for index_html_path is script_path/../web
 		# default position for album path is script_path/../web/albums
 		# default position for cache path is script_path/../web/cache
@@ -284,7 +349,7 @@ def get_options():
 		not config['album_path'] and
 		not config['cache_path']
 	):
-		message("options", "only index_html_path is given, using its subfolder 'albums' for album_path and 'cache' for cache_path", 3)
+		message("PRE options", "only index_html_path is given, using its subfolder 'albums' for album_path and 'cache' for cache_path", 3)
 		config['album_path'] = os.path.join(config['index_html_path'], "albums")
 		config['cache_path'] = os.path.join(config['index_html_path'], "cache")
 		guessed_album_dir = True
@@ -297,72 +362,118 @@ def get_options():
 			.rfind("/")] == config['cache_path'][:config['cache_path'].rfind("/")]
 	):
 		guessed_index_dir = True
-		message("options", "only album_path or cache_path has been given, using their common parent folder for index_html_path", 3)
+		message("PRE options", "only album_path or cache_path has been given, using their common parent folder for index_html_path", 3)
 		config['index_html_path'] = config['album_path'][:config['album_path'].rfind("/")]
 	elif not (
 		config['index_html_path'] and
 		config['album_path'] and
 		config['cache_path']
 	):
-		message("options", "you must define at least some of index_html_path, album_path and cache_path, and correctly; quitting", 0)
+		message("PRE options", "you must define at least some of index_html_path, album_path and cache_path, and correctly; quitting", 0)
 		sys.exit(-97)
 
 	if guessed_index_dir or guessed_album_dir or guessed_cache_dir:
-		message("options", "guessed value(s):", 2)
+		message("PRE options", "guessed value(s):", 2)
 		next_level()
 		if guessed_index_dir:
-			message('guessed directory', 'index_html_path' + '=' + config['index_html_path'], 2)
+			message("PRE guessed directory", "index_html_path" + "=" + config['index_html_path'], 2)
 		if guessed_album_dir:
-			message('guessed directory', 'album_path' + '=' + config['album_path'], 2)
+			message("PRE guessed directory", "album_path" + "=" + config['album_path'], 2)
 		if guessed_cache_dir:
-			message('guessed directory', 'cache_path' + '=' + config['cache_path'], 2)
+			message("PRE guessed directory", "cache_path" + "=" + config['cache_path'], 2)
 		back_level()
 
 	# the album directory must exist and be readable
 	try:
 		os.stat(config['album_path'])
 	except OSError:
-		message("FATAL ERROR", config['album_path'] + " doesn't exist or unreadable, quitting", 0)
+		message("PRE FATAL ERROR", config['album_path'] + " doesn't exist or unreadable, quitting", 0)
 		sys.exit(-97)
 
 	# the cache directory must exist and be writable, or we'll try to create it
 	try:
 		os.stat(config['cache_path'])
 		if not os.access(config['cache_path'], os.W_OK):
-			message("FATAL ERROR", config['cache_path'] + " not writable, quitting", 0)
+			message("PRE FATAL ERROR", config['cache_path'] + " not writable, quitting", 0)
 			sys.exit(-97)
 	except OSError:
+		make_dir(config['cache_path'], "cache directory")
+
+	# read the password file
+	# it must exist and be readable, otherwise skip it
+	if len(sys.argv) == 2:
+		# 1 arguments: the config files: the password file is in the same directory
+		old_password_codes = get_old_password_codes()
+
+		passwords_subdir_with_path = os.path.join(config['cache_path'], config['passwords_subdir'])
+		make_dir(passwords_subdir_with_path, "passwords subdir")
+		passwords_file_name = os.path.join(os.path.dirname(sys.argv[1]), config['passwords_file'])
+		password_codes = []
+		passwords_md5 = []
+
 		try:
-			os.mkdir(config['cache_path'])
-			message("directory created", config['cache_path'], 4)
-			os.chmod(config['cache_path'], 0o777)
-			message("permissions set", config['cache_path'], 4)
-		except OSError:
-			message("FATAL ERROR", config['cache_path'] + " inexistent and couldn't be created, quitting", 0)
-			sys.exit(-97)
+			with open(passwords_file_name, 'r') as passwords_file:
+				# Get the old file contents, they are needed in order to evalutate the numsProtectedMediaInSubTree dictionary in json file
+				message("PRE Reading passwords file", passwords_file_name, 3)
+				for line in passwords_file.read().splitlines():
+					# remove leading spaces
+					line = line.lstrip()
+					# lines beginning with # and space-only ones are ignored
+					if line[0:1] == "#" or line.strip() == "":
+						continue
+					# in each line is a password identifier is followed by the corresponding password
+					columns = line.split(' ')
+					identifier = columns[0]
+					# everything beginning with the first non-space character till the end of line (including the traling spaces) is the password
+					password = " ".join(columns[1:]).lstrip()
+					if password == "":
+						indented_message("PRE Missing password", "for identifier: '" + identifier + "'", 3)
+						continue
+					while True:
+						password_code = str(random.randint(min_random, max_random))
+						password_md5 = hashlib.md5(password.encode('utf-8')).hexdigest()
+						if password_code not in password_codes:
+							password_codes.append(password_code)
+							passwords_md5.append(password_md5)
+							break
+					identifiers_and_passwords.append(
+						{
+							'identifier': identifier,
+							'password_md5': password_md5,
+							'password_code': password_code,
+							'used': False
+						}
+					)
+					indented_message(
+						"PRE Password read",
+						"identifier: " + identifier + ", encrypted password: " + password_md5 + ", password code = " + str(password_code),
+						3
+					)
+			if len(identifiers_and_passwords) > 0:
+				passwords_file_mtime = file_mtime(passwords_file_name)
+		except IOError:
+			indented_message("PRE WARNING", passwords_file_name + " doesn't exist or unreadable, not using it", 2)
 
 	# create the directory where php will put album composite images
 	album_cache_dir = os.path.join(config['cache_path'], config['cache_album_subdir'])
 	try:
 		os.stat(album_cache_dir)
 	except OSError:
-		try:
-			message("creating cache directory for composite images", album_cache_dir, 4)
-			os.mkdir(album_cache_dir)
-			os.chmod(album_cache_dir, 0o777)
-		except OSError:
-			message("FATAL ERROR", config['cache_path'] + " not writable, quitting", 0)
-			sys.exit(-97)
+		make_dir(album_cache_dir, "cache directory for composite images")
 
 	# calculate the number of media in the album tree: it will be used in order to guess the execution time
-	special_files = [config['exclude_tree_marker'], config['exclude_files_marker'], config['metadata_filename']]
-	message("counting media in albums...", "", 4)
-	config['num_media_in_tree'] = sum([len([file for file in files if file[:1] != '.' and file not in special_files]) for dirpath, dirs, files in os.walk(config['album_path']) if dirpath.find('/.') == -1])
-	indented_message("media in albums counted", str(config['num_media_in_tree']), 4)
+	special_files = [config['exclude_tree_marker'], config['exclude_files_marker'], config['metadata_filename'], config['passwords_marker']]
+	message("PRE counting media in albums...", "", 4)
+	config['num_media_in_tree'] = 0
+	for dirpath, dirs, files in os.walk(config['album_path'], topdown=True):
+		dirs[:] = [d for d in dirs if d != config['exclude_tree_marker'] and config['exclude_tree_marker'] not in files]
+		if dirpath.find('/.') == -1 and config['exclude_files_marker'] not in files and config['exclude_tree_marker'] not in files:
+			config['num_media_in_tree'] += sum([len([file for file in files if file[:1] != '.' and file not in special_files])])
+	indented_message("PRE media in albums counted", str(config['num_media_in_tree']), 4)
 
 	config['cache_folders_num_digits_array'] = []
 	if config['subdir_method'] == "md5":
-		message("determining cache folders schema...", "", 4)
+		message("PRE determining cache folders schema...", "", 4)
 		# let's use a variable schema for cache subfolders, so that every directory has no more than 32 media (about 400 files)
 		try:
 			cache_folders_num_digits = int(math.log(config['num_media_in_tree'] / 2, 16))
@@ -380,9 +491,9 @@ def get_options():
 			cache_folders_string += "a/"
 		next_level()
 		if cache_folders_string:
-			message("cache folders schema determined", "using the schema: " + cache_folders_string, 4)
+			message("PRE cache folders schema determined", "using the schema: " + cache_folders_string, 4)
 		else:
-			message("cache folders schema determined", "few media, using default subdir: " + config['default_cache_album'], 4)
+			message("PRE cache folders schema determined", "few media, using default subdir: " + config['default_cache_album'], 4)
 		back_level()
 
 	# get old options: they are revised in order to decide whether to recreate something
@@ -400,13 +511,13 @@ def get_options():
 		try:
 			if old_options[option] != config[option]:
 				config['recreate_reduced_photos'] = True
-				message("options", "'" + option + "' has changed from previous scanner run, forcing recreation of reduced size images", 3)
+				message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of reduced size images", 3)
 		except KeyError:
 			if config[option] != default_value:
 				config['recreate_reduced_photos'] = True
-				message("options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of reduced size images", 3)
+				message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of reduced size images", 3)
 			else:
-				message("options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of reduced size images", 3)
+				message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of reduced size images", 3)
 
 	config['recreate_thumbnails'] = False
 	for option_dict in options_requiring_thumbnails_regeneration:
@@ -415,13 +526,13 @@ def get_options():
 		try:
 			if old_options[option] != config[option]:
 				config['recreate_thumbnails'] = True
-				message("options", "'" + option + "' has changed from previous scanner run, forcing recreation of thumbnails", 3)
+				message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of thumbnails", 3)
 		except KeyError:
 			if config[option] != default_value:
 				config['recreate_thumbnails'] = True
-				message("options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of thumbnails", 3)
+				message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of thumbnails", 3)
 			else:
-				message("options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of thumbnails", 3)
+				message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of thumbnails", 3)
 
 
 	config['recreate_json_files'] = False
@@ -429,9 +540,9 @@ def get_options():
 		try:
 			if old_options[option] != config[option]:
 				config['recreate_json_files'] = True
-				message("options", "'" + option + "' has changed from previous scanner run, forcing recreation of json files", 3)
+				message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of json files", 3)
 				break
 		except KeyError:
 			config['recreate_json_files'] = True
-			message("options", "'" + option + "' wasn't set on previous scanner run, forcing recreation of json files", 3)
+			message("PRE options", "'" + option + "' wasn't set on previous scanner run, forcing recreation of json files", 3)
 			break

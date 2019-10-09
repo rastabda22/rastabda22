@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# @python2
-from __future__ import unicode_literals
-
 import os
 import os.path
 import sys
@@ -11,77 +8,51 @@ import re
 import time
 import random
 import math
+import fnmatch
+import shutil
+import copy
 
 from datetime import datetime
+from pprint import pprint
 
 from PIL import Image
 
-from CachePath import remove_album_path, file_mtime, last_modification_time, trim_base_custom, remove_folders_marker, checksum
-from Utilities import message, indented_message, next_level, back_level, report_times
-from PhotoAlbum import Media, Album, PhotoAlbumEncoder
+from CachePath import remove_album_path, last_modification_time, trim_base_custom
+from CachePath import remove_folders_marker
+from Utilities import save_password_codes, json_files_and_mtime, report_mem
+from Utilities import convert_identifiers_set_to_codes_set, convert_identifiers_set_to_md5s_set
+from Utilities import convert_combination_to_set, convert_set_to_combination, convert_md5_to_code, convert_simple_md5_combination_to_simple_codes_combination, complex_combination
+from Utilities import determine_symlink_number_and_name
+from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
+from CachePath import remove_digits, switch_to_lowercase, phrase_to_words, checksum
+from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, make_dir
+from PhotoAlbum import Media, Album, PhotoAlbumEncoder, Position, Positions, NumsProtected
 from Geonames import Geonames
 import Options
-from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters, remove_digits, switch_to_lowercase, phrase_to_words
 
 class TreeWalker:
 	def __init__(self):
-		# # check whether the albums or the cache has been modified after the last run, actually comparing with options file modification time
-		# # use the same method as in file_mtime:
-		# # datetime.fromtimestamp(int(os.path.getmtime(path)))
-		# message("getting albums last mtime...", "be patient, x time is needed!", 4)
-		# last_album_modification_time = last_modification_time(Options.config['album_path'])
-		# next_level()
-		# message("albums last mtime got", str(last_album_modification_time), 4)
-		# back_level()
-
-		# message("getting cache last mtime...", "be even more patient, 12x time could be needed!", 4)
-		# last_cache_modification_time = last_modification_time(Options.config['cache_path'])
-		# next_level()
-		# message("cache last mtime got", str(last_cache_modification_time), 4)
-		# json_options_file_modification_time = file_mtime(os.path.join(Options.config['cache_path'], "options.json"))
-		# message("json options file mtime is", str(json_options_file_modification_time), 4)
-		# if len(sys.argv) == 2:
-		# 	options_file_modification_time = file_mtime(sys.argv[1])
-		# 	message("options file mtime is", str(options_file_modification_time), 4)
-		# back_level()
-
 		random.seed()
 		self.all_json_files = ["options.json"]
-		self.all_json_files_by_subdir = {}
+		self.all_json_files_dict = {}
+		self.time_of_album_saving = None
 
 		if (Options.config['use_stop_words']):
 			TreeWalker.stopwords_file = os.path.join(Options.config['cache_path'], 'stopwords.json')
 			self.all_json_files.append('stopwords.json')
 			self.get_lowercase_stopwords()
 
-		# # If nor the albums nor the cache have been modified after the last run,
-		# # and if sensitive options haven't changed,
-		# # we can avoid browsing the albums
-		# if (
-		# 	# the cache must be newer than albums
-		# 	last_album_modification_time < json_options_file_modification_time and
-		# 	# the json options file must be newer than albums
-		# 	last_album_modification_time < last_cache_modification_time and
-		# 	# the cache must be newer than the supplied options file too: physical paths could have been changed
-		# 	(len(sys.argv) == 2 and options_file_modification_time < last_cache_modification_time) and
-		# 	not Options.config['recreate_json_files'] and
-		# 	not Options.config['recreate_reduced_photos'] and
-		# 	not Options.config['recreate_thumbnails']
-		# ):
-		# 	message("no albums modification, no refresh needed", "We can safely end here", 4)
-		# else:
-		message("Browsing", "start!", 3)
-
-		# be sure reduced_sizes array is correctly sorted
 		Options.config['reduced_sizes'].sort(reverse=True)
 
 		geonames = Geonames()
-		self.all_albums = list()
 		self.tree_by_date = {}
 		self.tree_by_geonames = {}
 		self.tree_by_search = {}
 		self.media_with_geonames_list = list()
 		self.all_media = list()
+
+		self.created_dirs = []
+
 		self.all_album_composite_images = list()
 		self.album_cache_path = os.path.join(Options.config['cache_path'], Options.config['cache_album_subdir'])
 		if os.path.exists(self.album_cache_path):
@@ -89,138 +60,393 @@ class TreeWalker:
 				message("FATAL ERROR", self.album_cache_path + " not writable, quitting")
 				sys.exit(-97)
 		else:
-			message("creating still unexistent album cache subdir", self.album_cache_path, 4)
-			os.makedirs(self.album_cache_path)
-			indented_message("still unexistent subdir created", "", 5)
+			make_dir(Options.config['cache_album_subdir'], "cache album subdir")
 
 		self.origin_album = Album(Options.config['album_path'])
-		# self.origin_album.read_album_ini() # origin_album is not a physical one, it's the parent of the root physical tree and of the virtual albums
 		self.origin_album.cache_base = "root"
+
+		message("Browsing", "start!", 3)
+
 		next_level()
-		[folders_album, num, positions, _] = self.walk(Options.config['album_path'], Options.config['folders_string'], self.origin_album)
+		[folders_album, _, passwords_or_album_ini_processed] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], None, set(), self.origin_album)
 		back_level()
 		if folders_album is None:
 			message("WARNING", "ALBUMS ROOT EXCLUDED BY MARKER FILE", 2)
 		else:
-			message("saving all media json file...", "", 4)
+			# # maybe nothing has changed and everything could end up here
+			# if not passwords_or_album_ini_processed and not Options.num_photo_processed and not Options.num_video_processed:
+			# 	message("nothing has changed in the album tree!", "Execution may end up here", 3)
+			# 	return
+
+			message("changes has been in the album tree", "I must keep working!", 3)
 			next_level()
-			self.save_all_media_json()
-			back_level()
-			indented_message("all media json file saved", "", 5)
 
-			self.all_json_files.append("all_media.json")
+			self.origin_album.nums_protected_media_in_sub_tree.merge(folders_album.nums_protected_media_in_sub_tree)
+			self.origin_album.add_subalbum(folders_album)
 
-			folders_album.num_media_in_sub_tree = num
-			folders_album.positions_and_media_in_tree = positions
-			self.origin_album.add_album(folders_album)
 			self.all_json_files.append(Options.config['folders_string'] + ".json")
 
 			message("generating by date albums...", "", 4)
-			by_date_album = self.generate_date_albums(self.origin_album)
+			by_date_album = self.generate_by_date_albums(self.origin_album)
 			indented_message("by date albums generated", "", 5)
 			if by_date_album is not None and not by_date_album.empty:
 				self.all_json_files.append(Options.config['by_date_string'] + ".json")
-				self.origin_album.add_album(by_date_album)
+				self.origin_album.nums_protected_media_in_sub_tree.merge(by_date_album.nums_protected_media_in_sub_tree)
+				self.origin_album.add_subalbum(by_date_album)
+			report_mem()
 
 			message("generating by geonames albums...", "", 4)
-			by_geonames_album = self.generate_geonames_albums(self.origin_album)
+			by_geonames_album = self.generate_by_geonames_albums(self.origin_album)
 			indented_message("by geonames albums generated", "", 5)
 			if by_geonames_album is not None and not by_geonames_album.empty:
 				self.all_json_files.append(Options.config['by_gps_string'] + ".json")
-				self.origin_album.add_album(by_geonames_album)
+				self.origin_album.nums_protected_media_in_sub_tree.merge(by_geonames_album.nums_protected_media_in_sub_tree)
+				self.origin_album.add_subalbum(by_geonames_album)
+			report_mem()
 
 			message("generating by search albums...", "", 4)
 			by_search_album = self.generate_by_search_albums(self.origin_album)
 			indented_message("by search albums generated", "", 5)
 			if by_search_album is not None and not by_search_album.empty:
 				self.all_json_files.append(Options.config['by_search_string'] + ".json")
-				self.origin_album.add_album(by_search_album)
+				self.origin_album.nums_protected_media_in_sub_tree.merge(by_search_album.nums_protected_media_in_sub_tree)
+				self.origin_album.add_subalbum(by_search_album)
+			report_mem()
 
-			message("saving all albums to json files...", "", 4)
+			message("generating protected content albums...", "", 5)
+			self.protected_origin_album = self.origin_album.generate_protected_content_albums()
+			indented_message("protected content albums generated", "", 4)
+			report_mem()
+
+			message("reducing unprotected content albums...", "", 4)
+			self.origin_album.leave_only_unprotected_content()
+			indented_message("unprotected content albums reduced!", "", 5)
+			report_mem()
+
+			self.time_of_album_saving = datetime.now()
+			message("saving all unprotected albums to json files...", "", 4)
 			next_level()
-			try:
-				self.all_albums_to_json_file(folders_album, True, True)
-			except UnboundLocalError:
-				pass
+			save_password_codes()
 
-			try:
-				self.all_albums_to_json_file(by_date_album, True, True)
-			except UnboundLocalError:
-				pass
-			try:
-				self.all_albums_to_json_file(by_geonames_album, True, True)
-			except UnboundLocalError:
-				pass
+			for album in self.origin_album.subalbums:
+				self.all_albums_to_json_file(album)
 
-			# search albums in by_search_album has the normal albums as subalbums,
-			# and they are saved when folders_album is saved, avoid saving them multiple times
-			try:
-				self.all_albums_to_json_file(by_search_album, True, False)
-			except UnboundLocalError:
-				pass
-
-			message("all albums saved to json files", "", 5)
 			back_level()
+			message("all unprotected albums saved to json files!", "", 5)
+			report_mem()
+
+			message("deleting old protected content directories...", "", 5)
+			for entry in self._listdir_sorted_alphabetically(Options.config['cache_path']):
+				entry_with_path = os.path.join(Options.config['cache_path'], entry)
+				if not os.path.isdir(entry_with_path):
+					continue
+				if entry.find(Options.config['protected_directories_prefix']) != 0:
+					continue
+				# entry_with_path is one of the protected content directories: remove it with all its content
+				shutil.rmtree(entry_with_path)
+			indented_message("old protected content directories deleted!", Options.config['protected_directories_prefix'] + "*/*", 4)
+
+			message("saving all protected albums to json files...", "", 4)
+			next_level()
+
+			keys = list(self.protected_origin_album.keys())
+			keys = sorted(sorted(keys), key = lambda single_key: len(single_key.split('-')))
+			for complex_identifiers_combination in keys:
+				album = self.protected_origin_album[complex_identifiers_combination]
+				album_identifiers_combination, media_identifiers_combination = complex_identifiers_combination.split(',')
+				album_md5_combination = convert_set_to_combination(convert_identifiers_set_to_md5s_set(convert_combination_to_set(album_identifiers_combination)))
+				md5_combination = convert_set_to_combination(convert_identifiers_set_to_md5s_set(convert_combination_to_set(media_identifiers_combination)))
+				total_md5_combination = complex_combination(album_md5_combination, md5_combination)
+
+				message("saving protected albums for identifiers...", "album ident. = " + album_identifiers_combination + ", media ident. = " + media_identifiers_combination + ", md5's = '" + total_md5_combination + "'", 4)
+				next_level()
+				self.all_albums_to_json_file(album, complex_identifiers_combination)
+				back_level()
+				message("protected albums saved for identifiers!", "album identif. = " + album_identifiers_combination + ", media ident. = " + media_identifiers_combination + ", md5's = '" + total_md5_combination + "'", 4)
+
+			back_level()
+			message("all protected albums saved to json files", "", 5)
+			report_mem()
 
 			# options must be saved when json files have been saved, otherwise in case of error they may not reflect the json files situation
 			self._save_json_options()
-			self.remove_stale()
+
+			for identifier_and_password in Options.identifiers_and_passwords:
+				if identifier_and_password['used']:
+					identifier = identifier_and_password['identifier']
+					md5 = convert_identifiers_set_to_md5s_set(set([identifier])).pop()
+					self.all_json_files.append(os.path.join(Options.config['passwords_subdir'], md5))
+
+			self.remove_stale("", self.all_json_files)
+			report_mem()
+			back_level()
 			message("completed", "", 4)
 
-	def all_albums_to_json_file(self, album, save_subalbums, save_subsubalbums):
-		if save_subalbums:
-			for sub_album in album.subalbums_list:
-				self.all_albums_to_json_file(sub_album, save_subsubalbums, True)
-		album.to_json_file()
+	def all_albums_to_json_file(self, album, complex_identifiers_combination = None):
+		if album.cache_base == Options.config['folders_string']:
+			message("saving all physical albums to json files...", "", 3)
+			next_level()
+		elif album.cache_base == Options.config['by_date_string']:
+			message("saving all by date albums to json files...", "", 3)
+			next_level()
+		elif album.cache_base == Options.config['by_gps_string']:
+			message("saving all by gps albums to json files...", "", 3)
+			next_level()
+		elif album.cache_base == Options.config['by_search_string']:
+			message("saving all search albums to json files...", "", 3)
+			next_level()
 
-	def generate_date_albums(self, origin_album):
+		# the subalbums of search albums in by_search_album are regular albums
+		# and they are saved when folders_album is saved, avoid saving them multiple times
+		if (
+			album.cache_base == Options.config['by_search_string'] or
+			album.cache_base.find(Options.config['by_search_string']) != 0
+			# album.cache_base.find(Options.config['by_search_string']) == 0 and
+			# len(album.cache_base.split(Options.config['cache_folder_separator'])) < 2
+		):
+			for subalbum in album.subalbums:
+				self.all_albums_to_json_file(subalbum, complex_identifiers_combination)
+
+		if (
+			album.num_media_in_sub_tree == 0 and (
+				album.cache_base.find(Options.config['by_search_string']) != 0  or
+				album.cache_base != Options.config['by_search_string'] and
+				(
+					complex_identifiers_combination is None and
+					all(subalbum.nums_protected_media_in_sub_tree.value(',') == 0 for subalbum in album.subalbums)
+					or
+					complex_identifiers_combination is not None and
+					all(
+						complex_identifiers_combination in subalbum.nums_protected_media_in_sub_tree.non_trivial_keys() and
+						subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination) == 0
+						for subalbum in album.subalbums)
+				)
+			)
+		):
+		# if len(album.subalbums) == 0 and len(album.media_list) == 0:
+			if complex_identifiers_combination is None:
+				message("empty album, not saving it", album.absolute_path, 4)
+			else:
+				message("empty protected album, not saving it", album.absolute_path, 4)
+			return
+
+		if complex_identifiers_combination is not None:
+			album_identifiers_combination, media_identifiers_combination = complex_identifiers_combination.split(',')
+
+			if (
+				album_identifiers_combination != '' and
+				len(album.password_identifiers_set) > 0 and
+				set(album_identifiers_combination.split("-")) != album.password_identifiers_set
+			):
+				message("album protected by another password combination, not saving it", album.absolute_path, 4)
+				return
+
+		json_media_name = ""
+		json_positions_name = ""
+
+		separate_media = album.must_separate_media
+		separate_positions = album.must_separate_positions
+
+		if complex_identifiers_combination is None:
+			json_name = album.json_file
+			if separate_media:
+				json_media_name = album.media_json_file
+			if separate_positions:
+				json_positions_name = album.positions_json_file
+		else:
+			json_name = album.cache_base + ".0.json"
+			if separate_media:
+				json_media_name = album.cache_base + ".0.media.json"
+			if separate_positions:
+				json_positions_name = album.cache_base + ".0.positions.json"
+
+		symlinks = []
+		positions_symlinks = []
+		media_symlinks = []
+		symlink_codes_and_numbers = []
+
+		if complex_identifiers_combination is not None:
+			password_md5_list = sorted(convert_identifiers_set_to_md5s_set(convert_combination_to_set(media_identifiers_combination)))
+			album_password_md5_list = sorted(convert_identifiers_set_to_md5s_set(convert_combination_to_set(album_identifiers_combination)))
+			album_codes_set = convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination))
+			media_codes_set = convert_identifiers_set_to_codes_set(convert_combination_to_set(media_identifiers_combination))
+			codes_complex_combination = complex_combination(convert_set_to_combination(album_codes_set), convert_set_to_combination(media_codes_set))
+			md5_product_list = []
+			if len(album_password_md5_list) > 0 and len(password_md5_list) > 0:
+				for couple in ((x,y) for x in album_password_md5_list for y in password_md5_list):
+					md5_product_list.append(','.join(couple))
+			elif len(album_password_md5_list) > 0:
+				for md5 in album_password_md5_list:
+					md5_product_list.append(complex_combination(md5, ''))
+			else:
+				for md5 in password_md5_list:
+					md5_product_list.append(complex_combination('', md5))
+			first_md5_product = md5_product_list[0]
+
+			first_dir = os.path.join(
+				Options.config['cache_path'],
+				Options.config['protected_directories_prefix'] + first_md5_product
+			)
+			if first_dir not in self.created_dirs:
+				make_dir(first_dir, "protected content directory")
+				self.created_dirs.append(first_dir)
+
+			number, json_name_with_path = determine_symlink_number_and_name(os.path.join(
+				first_dir,
+				album.cache_base
+			))
+			json_name = json_name_with_path[len(Options.config['cache_path']) + 1:]
+			if separate_media:
+				json_media_name = os.path.join(
+					Options.config['protected_directories_prefix'] + first_md5_product,
+					album.cache_base + "." + str(number) + ".media.json"
+				)
+			if separate_positions:
+				json_positions_name = os.path.join(
+					Options.config['protected_directories_prefix'] + first_md5_product,
+					album.cache_base + "." + str(number) + ".positions.json"
+				)
+			symlink_codes_and_numbers.append({
+				'codesSimpleCombination': convert_simple_md5_combination_to_simple_codes_combination(first_md5_product),
+				'codesComplexCombination': codes_complex_combination,
+				'number': number
+			})
+
+			# more symlink must be added in order to get the files with 2 or more passwords
+			if (len(md5_product_list) > 1):
+				for complex_md5 in md5_product_list[1:]:
+					complex_dir = os.path.join(
+						Options.config['cache_path'],
+						Options.config['protected_directories_prefix'] + complex_md5
+					)
+
+					if complex_dir not in self.created_dirs:
+						make_dir(complex_dir, "protected content directory")
+						self.created_dirs.append(complex_dir)
+
+					number, symlink_with_path = determine_symlink_number_and_name(os.path.join(
+						complex_dir,
+						album.cache_base
+					))
+					symlink = symlink_with_path[len(Options.config['cache_path']) + 1:]
+					if separate_media:
+						media_symlink = os.path.join(
+							Options.config['protected_directories_prefix'] + complex_md5,
+							album.cache_base + "." + str(number) + ".media.json"
+						)
+						media_symlinks.append(media_symlink)
+					if separate_positions:
+						positions_symlink = os.path.join(
+							Options.config['protected_directories_prefix'] + complex_md5,
+							album.cache_base + "." + str(number) + ".positions.json"
+						)
+						positions_symlinks.append(positions_symlink)
+
+					symlinks.append(symlink)
+					symlink_codes_and_numbers.append({
+						'codesSimpleCombination': convert_simple_md5_combination_to_simple_codes_combination(complex_md5),
+						'codesComplexCombination': codes_complex_combination,
+						'number': number
+					})
+
+				for symlink in symlinks:
+					self.all_json_files.append(symlink)
+				if separate_media:
+					for media_symlink in media_symlinks:
+						self.all_json_files.append(media_symlink)
+				if separate_positions:
+					for positions_symlink in positions_symlinks:
+						self.all_json_files.append(positions_symlink)
+			album.symlink_codes_and_numbers = symlink_codes_and_numbers
+
+
+		self.all_json_files.append(json_name)
+		if separate_media:
+			self.all_json_files.append(json_media_name)
+		if separate_positions:
+			self.all_json_files.append(json_positions_name)
+
+		album.to_json_file(
+			json_name,
+			json_positions_name,
+			json_media_name,
+			symlinks,
+			positions_symlinks,
+			media_symlinks,
+			complex_identifiers_combination
+		)
+		if album.cache_base == Options.config['folders_string']:
+			back_level()
+			message("all physical albums saved to json files!", "", 3)
+		elif album.cache_base == Options.config['by_date_string']:
+			back_level()
+			message("all by date albums saved to json files!", "", 3)
+		elif album.cache_base == Options.config['by_gps_string']:
+			back_level()
+			message("all by gps albums saved to json files!", "", 3)
+		elif album.cache_base == Options.config['by_search_string']:
+			back_level()
+			message("all by search albums saved to json files!", "", 3)
+
+
+	def generate_by_date_albums(self, origin_album):
 		next_level()
 		# convert the temporary structure where media are organized by year, month, date to a set of albums
 
 		by_date_path = os.path.join(Options.config['album_path'], Options.config['by_date_string'])
 		by_date_album = Album(by_date_path)
-		by_date_album.parent = origin_album
+		by_date_album.parent_cache_base = origin_album.cache_base
 		by_date_album.cache_base = Options.config['by_date_string']
 		by_date_max_file_date = None
-		for year, _ in self.tree_by_date.items():
+
+		years = sorted(list(self.tree_by_date.keys()))
+		for year in years:
 			year_path = os.path.join(by_date_path, str(year))
 			year_album = Album(year_path)
-			year_album.parent = by_date_album
+			year_album.parent_cache_base = by_date_album.cache_base
 			year_album.cache_base = by_date_album.cache_base + Options.config['cache_folder_separator'] + year
 			year_max_file_date = None
-			by_date_album.add_album(year_album)
-			for month, _ in self.tree_by_date[year].items():
+			by_date_album.add_subalbum(year_album)
+
+			months = sorted(list(self.tree_by_date[year].keys()))
+			for month in months:
 				month_path = os.path.join(year_path, str(month))
 				month_album = Album(month_path)
-				month_album.parent = year_album
+				month_album.parent_cache_base = year_album.cache_base
 				month_album.cache_base = year_album.cache_base + Options.config['cache_folder_separator'] + month
 				month_max_file_date = None
-				year_album.add_album(month_album)
-				for day, media in self.tree_by_date[year][month].items():
+				year_album.add_subalbum(month_album)
+
+				days = sorted(list(self.tree_by_date[year][month].keys()))
+				for day in days:
+					media_list = self.tree_by_date[year][month][day]
 					message("working with day album...", "", 5)
 					day_path = os.path.join(month_path, str(day))
 					day_album = Album(day_path)
-					day_album.parent = month_album
+					day_album.parent_cache_base = month_album.cache_base
 					day_album.cache_base = month_album.cache_base + Options.config['cache_folder_separator'] + day
 					day_max_file_date = None
-					month_album.add_album(day_album)
-					for single_media in media:
+					month_album.add_subalbum(day_album)
+					for single_media in media_list:
 						single_media.day_album_cache_base = day_album.cache_base
-						day_album.add_media(single_media)
+						day_album.add_single_media(single_media)
 						day_album.num_media_in_sub_tree += 1
-						day_album.num_media_in_album += 1
-						month_album.add_media(single_media)
+						month_album.add_single_media(single_media)
 						month_album.num_media_in_sub_tree += 1
-						year_album.add_media(single_media)
+						year_album.add_single_media(single_media)
 						year_album.num_media_in_sub_tree += 1
-						if single_media.has_gps_data:
-							day_album.positions_and_media_in_tree = self.add_media_to_position(day_album.positions_and_media_in_tree, single_media, Options.config['by_date_string'])
-							month_album.positions_and_media_in_tree = self.add_media_to_position(month_album.positions_and_media_in_tree, single_media, Options.config['by_date_string'])
-							year_album.positions_and_media_in_tree = self.add_media_to_position(year_album.positions_and_media_in_tree, single_media, Options.config['by_date_string'])
-							# by_date_album.positions_and_media_in_tree = self.add_media_to_position(by_date_album.positions_and_media_in_tree, single_media, Options.config['by_date_string'])
-
-						# by_date_album.add_media(single_media)
 						by_date_album.num_media_in_sub_tree += 1
+						if single_media.has_gps_data:
+							day_album.positions_and_media_in_tree.add_single_media(single_media)
+							month_album.positions_and_media_in_tree.add_single_media(single_media)
+							year_album.positions_and_media_in_tree.add_single_media(single_media)
+
+						complex_identifiers_combination = complex_combination(convert_set_to_combination(single_media.album_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
+						day_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
+						month_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
+						year_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
+						by_date_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
+
 						single_media_date = max(single_media.datetime_file, single_media.datetime_dir)
 						if day_max_file_date:
 							day_max_file_date = max(day_max_file_date, single_media_date)
@@ -238,60 +464,18 @@ class TreeWalker:
 							by_date_max_file_date = max(by_date_max_file_date, single_media_date)
 						else:
 							by_date_max_file_date = single_media_date
-					self.all_albums.append(day_album)
+					Options.all_albums.append(day_album)
 					self.generate_composite_image(day_album, day_max_file_date)
-					indented_message("day album worked out", media[0].year + "-" + media[0].month + "-" + media[0].day, 4)
-				self.all_albums.append(month_album)
+					indented_message("day album worked out", media_list[0].year + "-" + media_list[0].month + "-" + media_list[0].day, 4)
+				Options.all_albums.append(month_album)
 				self.generate_composite_image(month_album, month_max_file_date)
-			self.all_albums.append(year_album)
+			Options.all_albums.append(year_album)
 			self.generate_composite_image(year_album, year_max_file_date)
-		self.all_albums.append(by_date_album)
+		Options.all_albums.append(by_date_album)
 		if by_date_album.num_media_in_sub_tree > 0:
 			self.generate_composite_image(by_date_album, by_date_max_file_date)
 		back_level()
 		return by_date_album
-
-	def add_media_to_position(self, positions, media, type_string):
-		# adds the media position and name to the positions list received as second argument
-		if type_string == Options.config['folders_string']:
-			media_album_cache_base = media.album.cache_base
-		elif type_string == Options.config['by_date_string']:
-			media_album_cache_base = media.day_album_cache_base
-		elif type_string == Options.config['by_gps_string']:
-			media_album_cache_base = media.gps_album_cache_base
-		position = {
-			'lng': media.longitude,
-			'lat' : media.latitude,
-			'mediaNameList': [{
-				'cacheBase': media.cache_base,
-				'albumCacheBase': media_album_cache_base,
-				'foldersCacheBase': media.album.cache_base
-			}]
-		}
-		positions = self.add_position_to_positions(positions, position)
-		return positions
-
-	def add_position_to_positions(self, positions, position):
-		# adds the given position to the positions list received as second argument
-		if positions == []:
-			positions = [position]
-		else:
-			match = False
-			for index, _position in enumerate(positions):
-				if position['lat'] == _position['lat'] and position['lng'] == _position['lng']:
-					positions[index]['mediaNameList'].extend(position['mediaNameList'])
-					match = True
-					break
-			if not match:
-				positions.append(position)
-		return positions
-
-	def merge_positions(self, positions, positions1):
-		# adds the media position and name to the positions list received as second argument
-		for position in positions1:
-			positions = self.add_position_to_positions(positions, position)
-
-		return positions
 
 
 	def generate_by_search_albums(self, origin_album):
@@ -300,85 +484,111 @@ class TreeWalker:
 
 		by_search_path = os.path.join(Options.config['album_path'], Options.config['by_search_string'])
 		by_search_album = Album(by_search_path)
-		by_search_album.parent = origin_album
+		by_search_album.parent_cache_base = origin_album.cache_base
 		by_search_album.cache_base = Options.config['by_search_string']
 		by_search_max_file_date = None
 		message("working with word albums...", "", 5)
-		for word, media_and_album_words in self.tree_by_search.items():
+		keys = sorted(list(self.tree_by_search.keys()))
+		for word in keys:
+		# for word, media_album_and_words in self.tree_by_search.items():
+			media_album_and_words = self.tree_by_search[word]
 			next_level()
 			message("working with word album...", "", 5)
 			word_path = os.path.join(by_search_path, str(word))
 			word_album = Album(word_path)
-			word_album.parent = by_search_album
+			word_album._name = str(word)
+			word_album.parent_cache_base = by_search_album.cache_base
 			word_album.cache_base = by_search_album.generate_cache_base(os.path.join(by_search_album.path, word))
 			word_max_file_date = None
-			by_search_album.add_album(word_album)
-			for single_media in media_and_album_words["media_words"]:
-				# word_album.positions_and_media_in_tree = self.add_media_to_position(word_album.positions_and_media_in_tree, single_media)
-				word_album.add_media(single_media)
+			by_search_album.add_subalbum(word_album)
+			for single_media in media_album_and_words["media_list"]:
+				word_album.add_single_media(single_media)
 				word_album.num_media_in_sub_tree += 1
-				word_album.num_media_in_album += 1
+				# actually, this counter for the search root album is not significant
 				by_search_album.num_media_in_sub_tree += 1
+
 				single_media_date = max(single_media.datetime_file, single_media.datetime_dir)
-				if word_max_file_date:
-					word_max_file_date = max(word_max_file_date, single_media_date)
-				else:
-					word_max_file_date = single_media_date
-				if by_search_max_file_date:
-					by_search_max_file_date = max(by_search_max_file_date, single_media_date)
-				else:
-					by_search_max_file_date = single_media_date
+				# if word_max_file_date:
+				# 	word_max_file_date = max(word_max_file_date, single_media_date)
+				# else:
+				# 	word_max_file_date = single_media_date
+				# if by_search_max_file_date:
+				# 	by_search_max_file_date = max(by_search_max_file_date, single_media_date)
+				# else:
+				# 	by_search_max_file_date = single_media_date
 				if single_media.has_gps_data:
-					word_album.positions_and_media_in_tree = self.add_media_to_position(word_album.positions_and_media_in_tree, single_media, Options.config['by_date_string'])
-			for single_album in media_and_album_words["album_words"]:
-				word_album.add_album(single_album)
-				word_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
-				word_album.num_media_in_album += 1
-				by_search_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
-				if word_max_file_date:
-					word_max_file_date = max(word_max_file_date, single_album.date)
-				else:
-					word_max_file_date = single_album.date
-				if by_search_max_file_date:
-					by_search_max_file_date = max(by_search_max_file_date, single_album.date)
-				else:
-					by_search_max_file_date = single_album.date
-			word_album.unicode_words = media_and_album_words["unicode_words"]
-			self.all_albums.append(word_album)
-			# self.generate_composite_image(word_album, word_max_file_date)
+					word_album.positions_and_media_in_tree.add_single_media(single_media)
+					# actually, this counter for the search root album is not significant
+					by_search_album.positions_and_media_in_tree.add_single_media(single_media)
+
+				complex_identifiers_combination = complex_combination(convert_set_to_combination(single_media.album_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
+				word_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
+				# nums_protected_media_in_sub_tree matters for the search root albums!
+				by_search_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
+
+			for single_album in media_album_and_words["albums_list"]:
+				word_album.add_subalbum(single_album)
+				# word_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
+				# actually, this counter for the search root album is not significant
+				# by_search_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
+				# if word_max_file_date:
+				# 	word_max_file_date = max(word_max_file_date, single_album.date)
+				# else:
+				# 	word_max_file_date = single_album.date
+				# if by_search_max_file_date:
+				# 	by_search_max_file_date = max(by_search_max_file_date, single_album.date)
+				# else:
+				# 	by_search_max_file_date = single_album.date
+
+				word_album.nums_protected_media_in_sub_tree.merge(single_album.nums_protected_media_in_sub_tree)
+				# by_search_album.nums_protected_media_in_sub_tree.merge(single_album.nums_protected_media_in_sub_tree)
+
+			word_album.unicode_words = media_album_and_words["unicode_words"]
+			Options.all_albums.append(word_album)
 			indented_message("word album worked out", word, 4)
 			back_level()
-		self.all_albums.append(by_search_album)
+		Options.all_albums.append(by_search_album)
 		back_level()
 		return by_search_album
 
 
-	def generate_geonames_albums(self, origin_album):
+	def generate_by_geonames_albums(self, origin_album):
 		next_level()
 		# convert the temporary structure where media are organized by country_code, region_code, place_code to a set of albums
 
 		by_geonames_path = os.path.join(Options.config['album_path'], Options.config['by_gps_string'])
 		by_geonames_album = Album(by_geonames_path)
-		by_geonames_album.parent = origin_album
+		by_geonames_album.parent_cache_base = origin_album.cache_base
 		by_geonames_album.cache_base = Options.config['by_gps_string']
 		by_geonames_max_file_date = None
-		for country_code, _ in self.tree_by_geonames.items():
+
+		country_codes = sorted(list(self.tree_by_geonames.keys()))
+		for country_code in country_codes:
 			country_path = os.path.join(by_geonames_path, str(country_code))
 			country_album = Album(country_path)
 			country_album.center = {}
-			country_album.parent = by_geonames_album
+			country_album.parent_cache_base = by_geonames_album.cache_base
 			country_album.cache_base = by_geonames_album.generate_cache_base(os.path.join(by_geonames_album.path, country_code))
 			country_max_file_date = None
-			by_geonames_album.add_album(country_album)
-			for region_code, _ in self.tree_by_geonames[country_code].items():
+			by_geonames_album.add_subalbum(country_album)
+
+			region_codes = sorted(list(self.tree_by_geonames[country_code].keys()))
+			for region_code in region_codes:
 				region_path = os.path.join(country_path, str(region_code))
 				region_album = Album(region_path)
 				region_album.center = {}
-				region_album.parent = country_album
+				region_album.parent_cache_base = country_album.cache_base
 				region_album.cache_base = country_album.generate_cache_base(os.path.join(country_album.path, region_code))
 				region_max_file_date = None
-				country_album.add_album(region_album)
-				for place_code, media_list in self.tree_by_geonames[country_code][region_code].items():
+				country_album.add_subalbum(region_album)
+
+				place_codes = list(self.tree_by_geonames[country_code][region_code].keys())
+				place_names = [self.tree_by_geonames[country_code][region_code][place_code][0].place_name for place_code in self.tree_by_geonames[country_code][region_code]]
+				# sort the codes according to the place names, https://stackoverflow.com/questions/6618515/sorting-list-based-on-values-from-another-list#answer-6618543
+				place_codes = [place_code for _, place_code in sorted(zip(place_names, place_codes), key = lambda t: t[0])]
+				# place_codes = [place_code for _, place_code in sorted(zip(place_names, place_codes))]
+				for place_code in place_codes:
+					media_list = self.tree_by_geonames[country_code][region_code][place_code]
 					place_code = str(place_code)
 					place_name = media_list[0].place_name
 					message("working with place album...", media_list[0].country_name + "-" + media_list[0].region_name + "-" + place_name, 4)
@@ -404,7 +614,7 @@ class TreeWalker:
 							cluster_list = Geonames.find_centers(media_list, K)
 							max_cluster_length = max([len(cluster) for cluster in cluster_list])
 							if max_cluster_length <= Options.config['big_virtual_folders_threshold']:
-								indented_message("clustered with k-means algorithm", "OK!", 5)
+								indented_message("clustered with k-means algorithm", "biggest cluster has " + str(max_cluster_length) + " photos", 5)
 								break
 							# detect no convergence
 							max_cluster_length_list.append(max_cluster_length)
@@ -485,27 +695,28 @@ class TreeWalker:
 						place_path = os.path.join(region_path, str(alt_place_code))
 						place_album = Album(place_path)
 						place_album.center = {}
-						place_album.parent = region_album
+						place_album.parent_cache_base = region_album.cache_base
 						place_album.cache_base = region_album.generate_cache_base(os.path.join(region_album.path, place_code))
 						place_max_file_date = None
-						region_album.add_album(place_album)
+						region_album.add_subalbum(place_album)
 						for j, single_media in enumerate(cluster):
 							single_media.gps_album_cache_base = place_album.cache_base
 							cluster[j].gps_path = remove_album_path(place_path)
 							cluster[j].place_name = place_name
 							cluster[j].alt_place_name = alt_place_name
-							place_album.positions_and_media_in_tree = self.add_media_to_position(place_album.positions_and_media_in_tree, single_media, Options.config['by_gps_string'])
-							place_album.add_media(single_media)
+
+							place_album.positions_and_media_in_tree.add_single_media(single_media)
+							place_album.add_single_media(single_media)
 							place_album.num_media_in_sub_tree += 1
-							place_album.num_media_in_album += 1
-							region_album.positions_and_media_in_tree = self.add_media_to_position(region_album.positions_and_media_in_tree, single_media, Options.config['by_gps_string'])
-							region_album.add_media(single_media)
+
+							region_album.positions_and_media_in_tree.add_single_media(single_media)
+							region_album.add_single_media(single_media)
 							region_album.num_media_in_sub_tree += 1
-							country_album.positions_and_media_in_tree = self.add_media_to_position(country_album.positions_and_media_in_tree, single_media, Options.config['by_gps_string'])
-							country_album.add_media(single_media)
+
+							country_album.positions_and_media_in_tree.add_single_media(single_media)
+							country_album.add_single_media(single_media)
 							country_album.num_media_in_sub_tree += 1
-							# by_geonames_album.positions_and_media_in_tree = self.add_media_to_position(by_geonames_album.positions_and_media_in_tree, single_media, Options.config['by_gps_string'])
-							# by_geonames_album.add_media(single_media)
+
 							by_geonames_album.num_media_in_sub_tree += 1
 
 							if place_album.center == {}:
@@ -550,7 +761,14 @@ class TreeWalker:
 								by_geonames_max_file_date = max(by_geonames_max_file_date, single_media_date)
 							else:
 								by_geonames_max_file_date = single_media_date
-						self.all_albums.append(place_album)
+
+							complex_identifiers_combination = complex_combination(convert_set_to_combination(single_media.album_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
+							place_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
+							region_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
+							country_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
+							by_geonames_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
+
+						Options.all_albums.append(place_album)
 						self.generate_composite_image(place_album, place_max_file_date)
 						if set_alt_place:
 							indented_message("cluster worked out", str(i) + "-th cluster: " + cluster[0].country_code + "-" + cluster[0].region_code + "-" + alt_place_name, 4)
@@ -564,11 +782,11 @@ class TreeWalker:
 						message("place album worked out", cluster_list[0][0].country_code + "-" + cluster_list[0][0].region_code + "-" + place_name, 4)
 						# back_level()
 					back_level()
-				self.all_albums.append(region_album)
+				Options.all_albums.append(region_album)
 				self.generate_composite_image(region_album, region_max_file_date)
-			self.all_albums.append(country_album)
+			Options.all_albums.append(country_album)
 			self.generate_composite_image(country_album, country_max_file_date)
-		self.all_albums.append(by_geonames_album)
+		Options.all_albums.append(by_geonames_album)
 		if by_geonames_album.num_media_in_sub_tree > 0:
 			self.generate_composite_image(by_geonames_album, by_geonames_max_file_date)
 		back_level()
@@ -599,22 +817,22 @@ class TreeWalker:
 		The list of stopwords comes from https://github.com/stopwords-iso/stopwords-iso
 		"""
 		language = Options.config['language'] if Options.config['language'] != '' else os.getenv('LANG')[:2]
-		message("working with stopwords", "Using language " + language, 4)
+		message("PRE working with stopwords", "Using language " + language, 4)
 
 		stopwords = []
 		stopwords_file = os.path.join(os.path.dirname(__file__), "resources/stopwords-iso.json")
 		next_level()
-		message("loading stopwords...", stopwords_file, 4)
+		message("PRE loading stopwords...", stopwords_file, 4)
 		with open(stopwords_file, "r") as stopwords_p:
 			stopwords = json.load(stopwords_p)
 
 		if language in stopwords:
 			phrase = " ".join(stopwords[language])
 			TreeWalker.lowercase_stopwords = frozenset(switch_to_lowercase(phrase).split())
-			indented_message("stopwords loaded", "", 4)
+			indented_message("PRE stopwords loaded", "", 4)
 			TreeWalker.save_stopwords()
 		else:
-			indented_message("stopwords: no stopwords for language", language, 4)
+			indented_message("PRE stopwords: no stopwords for language", language, 4)
 		back_level()
 		return
 
@@ -623,10 +841,10 @@ class TreeWalker:
 		"""
 		Saves the list of stopwords for the user language into the cache directory
 		"""
-		message("saving stopwords to cache directory", TreeWalker.stopwords_file, 4)
+		message("PRE saving stopwords to cache directory", TreeWalker.stopwords_file, 4)
 		with open(TreeWalker.stopwords_file, "w") as stopwords_p:
 			json.dump({'stopWords': list(TreeWalker.lowercase_stopwords)}, stopwords_p)
-		indented_message("stopwords saved!", "", 4)
+		indented_message("PRE stopwords saved!", "", 4)
 		return
 
 	@staticmethod
@@ -638,32 +856,31 @@ class TreeWalker:
 		if TreeWalker.lowercase_stopwords == {}:
 			TreeWalker.load_stopwords()
 
-	def add_media_to_tree_by_date(self, media):
+	def add_single_media_to_tree_by_date(self, single_media):
 		# add the given media to a temporary structure where media are organized by year, month, date
 
-		if media.year not in list(self.tree_by_date.keys()):
-			self.tree_by_date[media.year] = {}
-		if media.month not in list(self.tree_by_date[media.year].keys()):
-			self.tree_by_date[media.year][media.month] = {}
-		if media.day not in list(self.tree_by_date[media.year][media.month].keys()):
-			self.tree_by_date[media.year][media.month][media.day] = list()
-		if not any(media.media_file_name == _media.media_file_name for _media in self.tree_by_date[media.year][media.month][media.day]):
-		#~ if not media in self.tree_by_date[media.year][media.month][media.day]:
-			self.tree_by_date[media.year][media.month][media.day].append(media)
+		if single_media.year not in list(self.tree_by_date.keys()):
+			self.tree_by_date[single_media.year] = {}
+		if single_media.month not in list(self.tree_by_date[single_media.year].keys()):
+			self.tree_by_date[single_media.year][single_media.month] = {}
+		if single_media.day not in list(self.tree_by_date[single_media.year][single_media.month].keys()):
+			self.tree_by_date[single_media.year][single_media.month][single_media.day] = list()
+		if not any(single_media.media_file_name == _media.media_file_name for _media in self.tree_by_date[single_media.year][single_media.month][single_media.day]):
+		#~ if not single_media in self.tree_by_date[single_media.year][single_media.month][single_media.day]:
+			self.tree_by_date[single_media.year][single_media.month][single_media.day].append(single_media)
 
-	def add_media_to_tree_by_search(self, media):
-		words_for_word_list, unicode_words, words_for_search_album_name = self.prepare_for_tree_by_search(media)
-		media.words = words_for_word_list
+	def add_single_media_to_tree_by_search(self, single_media):
+		words_for_word_list, unicode_words, words_for_search_album_name = self.prepare_for_tree_by_search(single_media)
+		single_media.words = words_for_word_list
 		for word_index in range(len(words_for_search_album_name)):
 			word = words_for_search_album_name[word_index]
 			unicode_word = unicode_words[word_index]
 			if word:
 				if word not in list(self.tree_by_search.keys()):
-					self.tree_by_search[word] = {"media_words": [], "album_words": [], "unicode_words": []}
-				if media not in self.tree_by_search[word]["media_words"]:
-					self.tree_by_search[word]["media_words"].append(media)
+					self.tree_by_search[word] = {"media_list": [], "albums_list": [], "unicode_words": []}
+				if single_media not in self.tree_by_search[word]["media_list"]:
+					self.tree_by_search[word]["media_list"].append(single_media)
 				if unicode_word not in self.tree_by_search[word]["unicode_words"]:
-					# if not any(media.media_file_name == _media.media_file_name for _media in self.tree_by_search[word]["unicode_words"]):
 					self.tree_by_search[word]["unicode_words"].append(unicode_word)
 
 	def add_album_to_tree_by_search(self, album):
@@ -674,9 +891,11 @@ class TreeWalker:
 			unicode_word = unicode_words[word_index]
 			if word:
 				if word not in list(self.tree_by_search.keys()):
-					self.tree_by_search[word] = {"media_words": [], "album_words": [], "unicode_words": []}
-				if album not in self.tree_by_search[word]["album_words"]:
-					self.tree_by_search[word]["album_words"].append(album)
+					self.tree_by_search[word] = {"media_list": [], "albums_list": [], "unicode_words": []}
+				if not album.is_already_in_tree_by_search(self.tree_by_search[word]):
+				# if album not in self.tree_by_search[word]["albums_list"]:
+					# self.tree_by_search[word]["albums_list"].append(album)
+					self.tree_by_search[word]["albums_list"].append(album.copy())
 					if unicode_word not in self.tree_by_search[word]["unicode_words"]:
 						self.tree_by_search[word]["unicode_words"].append(unicode_word)
 
@@ -691,7 +910,7 @@ class TreeWalker:
 			# remove the extension
 			media_or_album_name = os.path.splitext(media_or_album_name)[0]
 		elements = [media_or_album.title, media_or_album.description, " ".join(media_or_album.tags), media_or_album_name]
-		phrase = ' '.join(filter(None, elements))
+		phrase = ' '.join([_f for _f in elements if _f])
 
 		alphabetic_phrase = remove_non_alphabetic_characters(remove_digits(phrase))
 		lowercase_phrase = switch_to_lowercase(alphabetic_phrase)
@@ -710,17 +929,17 @@ class TreeWalker:
 		return alphabetic_words, search_normalized_words, ascii_words
 
 
-	def add_media_to_tree_by_geonames(self, media):
+	def add_single_media_to_tree_by_geonames(self, single_media):
 		# add the given media to a temporary structure where media are organized by country, region/state, place
 
-		if media.country_code not in list(self.tree_by_geonames.keys()):
-			self.tree_by_geonames[media.country_code] = {}
-		if media.region_code not in list(self.tree_by_geonames[media.country_code].keys()):
-			self.tree_by_geonames[media.country_code][media.region_code] = {}
-		if media.place_code not in list(self.tree_by_geonames[media.country_code][media.region_code].keys()):
-			self.tree_by_geonames[media.country_code][media.region_code][media.place_code] = list()
-		if not any(media.media_file_name == _media.media_file_name for _media in self.tree_by_geonames[media.country_code][media.region_code][media.place_code]):
-			self.tree_by_geonames[media.country_code][media.region_code][media.place_code].append(media)
+		if single_media.country_code not in list(self.tree_by_geonames.keys()):
+			self.tree_by_geonames[single_media.country_code] = {}
+		if single_media.region_code not in list(self.tree_by_geonames[single_media.country_code].keys()):
+			self.tree_by_geonames[single_media.country_code][single_media.region_code] = {}
+		if single_media.place_code not in list(self.tree_by_geonames[single_media.country_code][single_media.region_code].keys()):
+			self.tree_by_geonames[single_media.country_code][single_media.region_code][single_media.place_code] = list()
+		if not any(single_media.media_file_name == _media.media_file_name for _media in self.tree_by_geonames[single_media.country_code][single_media.region_code][single_media.place_code]):
+			self.tree_by_geonames[single_media.country_code][single_media.region_code][single_media.place_code].append(single_media)
 
 
 	@staticmethod
@@ -730,38 +949,200 @@ class TreeWalker:
 		mtime = lambda f: os.path.exists(os.path.join(path, f)) and os.stat(os.path.join(path, f)).st_mtime or time.mktime(datetime.now().timetuple())
 		return list(sorted(os.listdir(path), key=mtime))
 
+	@staticmethod
+	def _listdir_sorted_alphabetically(path):
+		# this function returns the directory listing sorted alphabetically
+		return list(sorted(os.listdir(path)))
 
-	def walk(self, absolute_path, album_cache_base, parent_album=None):
-		#~ trimmed_path = trim_base_custom(absolute_path, Options.config['album_path'])
-		#~ absolute_path_with_marker = os.path.join(Options.config['album_path'], Options.config['folders_string'])
-		#~ if trimmed_path:
-			#~ absolute_path_with_marker = os.path.join(absolute_path_with_marker, trimmed_path)
+
+	# This functions is called recursively
+	# it works on a directory and produces the album for the directory
+	def walk(self, absolute_path, album_cache_base, patterns_and_passwords, inherited_passwords_mtime, inherited_passwords_identifiers, parent_album=None):
+		patterns_and_passwords = copy.deepcopy(patterns_and_passwords)
+		inherited_passwords_identifiers = copy.deepcopy(inherited_passwords_identifiers)
+		inherited_passwords_mtime = copy.deepcopy(inherited_passwords_mtime)
+		passwords_or_album_ini_processed = False
 		max_file_date = file_mtime(absolute_path)
-		message(">>>>>>>>>>>  Walking", absolute_path, 3)
+		message(">>>>>>>>>>>  Entering directory", absolute_path, 3)
 		next_level()
 		message("cache base", album_cache_base, 4)
 		if not os.access(absolute_path, os.R_OK | os.X_OK):
 			message("access denied to directory", os.path.basename(absolute_path), 1)
 			back_level()
-			return [None, 0, [], None]
+			return [None, None, None]
 		listdir = os.listdir(absolute_path)
 		if Options.config['exclude_tree_marker'] in listdir:
 			indented_message("excluded with subfolders by marker file", Options.config['exclude_tree_marker'], 4)
 			back_level()
-			return [None, 0, [], None]
+			return [None, None, None]
 		skip_files = False
 		if Options.config['exclude_files_marker'] in listdir:
-			next_level()
-			message("files excluded by marker file", Options.config['exclude_files_marker'], 4)
+			indented_message("files excluded by marker file", Options.config['exclude_files_marker'], 4)
 			skip_files = True
+
+		############################################################
+		# look for password marker and manage it
+		############################################################
+		must_process_passwords = False
+		passwords_marker_mtime = inherited_passwords_mtime
+		passwords_marker = os.path.join(absolute_path, Options.config['passwords_marker'])
+		if len(Options.identifiers_and_passwords) and Options.config['passwords_marker'] in listdir:
+			next_level()
+			message(Options.config['passwords_marker'] + " file found", "reading it", 4)
+			new_passwords_marker_mtime = file_mtime(passwords_marker)
+			if passwords_marker_mtime is not None:
+				passwords_marker_mtime = max(passwords_marker_mtime, new_passwords_marker_mtime)
+			else:
+				passwords_marker_mtime = new_passwords_marker_mtime
+			if not os.access(passwords_marker, os.R_OK):
+				indented_message("unreadable file", passwords_marker, 2)
+			else:
+				with open(passwords_marker, 'r') as passwords_file:
+					for line in passwords_file.read().splitlines():
+						# remove leading spaces
+						line = line.lstrip()
+						# lines beginning with # and space-only ones are ignored
+						if line[0:1] == "#" or line.strip() == "":
+							continue
+						columns = line.split(' ')
+						if len(columns) == 1:
+							# it's a simple identifier: the album and all the subalbums will be protected with the corresponding password
+							identifier = columns[0]
+							indexes = [value['identifier'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
+							if len(indexes) == 0:
+								indented_message("WARNING: using an unknown password identifier", identifier + ": not protecting the directory", 2)
+							elif len(indexes) == 1:
+								password_md5 = indexes[0]['md5']
+								password_code = indexes[0]['code']
+								patterns_and_passwords.append(
+									{
+										"pattern": '*',
+										"case_flag": 'ci',
+										"whole_flag": 'whole',
+										"what_flag": 'both',
+										"identifier": identifier
+									}
+								)
+								indented_message("Directory protection requested", "identifier: " + identifier, 3)
+							else:
+								indented_message("WARNING: password identifier used more than once", identifier + ": not protecting the directory", 2)
+						else:
+							# a password identifier followed by the flags and a file pattern
+							identifier = columns[0]
+							remaining_columns = " ".join(columns[1:]).lstrip().split()
+							flags = remaining_columns[0]
+							case_flag = 'ci'
+							whole_flag = 'part'
+							what_flag = 'both'
+							case = 'case insensitive'
+							whole = 'part of name'
+							what = "files and dirs"
+							if flags != '-':
+								flag_list = flags.split(',')
+								try:
+									index_ci = flag_list.index('ci')
+								except:
+									index_ci = -1
+								try:
+									index_cs = flag_list.index('cs')
+								except:
+									index_cs = -2
+								try:
+									flag_list.remove('cs')
+								except:
+									pass
+								try:
+									flag_list.remove('ci')
+								except:
+									pass
+
+								try:
+									index_whole = flag_list.index('whole')
+								except:
+									index_whole = -2
+								try:
+									index_part = flag_list.index('part')
+								except:
+									index_part = -1
+								try:
+									flag_list.remove('whole')
+								except:
+									pass
+								try:
+									flag_list.remove('part')
+								except:
+									pass
+
+								try:
+									index_filesonly = flag_list.index('filesonly')
+								except:
+									index_filesonly = -3
+								try:
+									index_dirsonly = flag_list.index('dirsonly')
+								except:
+									index_dirsonly = -2
+								try:
+									index_both = flag_list.index('both')
+								except:
+									index_both = -1
+								try:
+									flag_list.remove('filesonly')
+								except:
+									pass
+								try:
+									flag_list.remove('dirsonly')
+								except:
+									pass
+								try:
+									flag_list.remove('both')
+								except:
+									pass
+
+								if index_cs > index_ci:
+									case_flag = 'cs'
+									case = 'case sensitive'
+
+								if index_whole > index_part:
+									whole_flag = 'whole'
+									whole = 'whole name'
+
+								if index_filesonly > index_dirsonly and index_filesonly > index_both:
+									what_flag = 'filesonly'
+									what = 'files only'
+								elif index_dirsonly > index_filesonly and index_dirsonly > index_both:
+									what_flag = 'dirsonly'
+									what = 'dirs only'
+
+								if len(flag_list) > 0:
+									indented_message("WARNING: unknown password flags", ','.join(flag_list), 3)
+							indexes = [value['identifier'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
+							# everything beginning with the first non-space character after the case flag till the end of line (including the traling spaces) is the pattern
+							pattern = " ".join(remaining_columns[1:]).lstrip()
+							if len(indexes) == 0:
+								indented_message("WARNING: using an unknown password identifier", identifier + ": not protecting the directory", 2)
+							elif len(indexes) == 1:
+								flags_string = case + ', ' + whole + ', ' + what
+								indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', " + flags_string, 3)
+								patterns_and_passwords.append(
+									{
+										"pattern": pattern,
+										"case_flag": case_flag,
+										"whole_flag": whole_flag,
+										"what_flag": what_flag,
+										"identifier": identifier
+									}
+								)
+							else:
+								indented_message("WARNING: password identifier used more than once", identifier + ": not using it here", 2)
 			back_level()
-		json_file = os.path.join(Options.config['cache_path'], album_cache_base) + ".json"
-		json_file_exists = os.path.exists(json_file)
-		json_file_mtime = None
-		if json_file_exists:
-			json_file_mtime = file_mtime(json_file)
+
+
+		############################################################
+		# look for album.ini file in order to check json file validity against it
+		############################################################
 		album_ini_file = os.path.join(absolute_path, Options.config['metadata_filename'])
 		album_ini_good = False
+
 		must_process_album_ini = False
 		if os.path.exists(album_ini_file):
 			if not os.access(album_ini_file, os.R_OK):
@@ -771,82 +1152,185 @@ class TreeWalker:
 			else:
 				album_ini_good = True
 
+		############################################################
+		# look for album json files and check their validity
+		############################################################
+		json_file_list, json_files_min_mtime = json_files_and_mtime(album_cache_base)
 		cached_album = None
 		album_cache_hit = False
-		json_message = json_file
+
 		if Options.config['recreate_json_files']:
 			message("not an album cache hit", "forced json file recreation, some sensible option has changed", 3)
+		elif Options.json_version == 0:
+			indented_message("not an album cache hit", "json_version == 0 (debug mode)", 4)
+		elif Options.obsolete_json_version:
+			message("not an album cache hit", "obsolete json_version value", 3)
+		elif len(json_file_list) == 0:
+			message("not an album cache hit", "json files not found in cache dir", 3)
+		elif not all([os.access(json, os.R_OK) for json in json_file_list]):
+			message("not an album cache hit", "some json file unreadable", 1)
+		elif not all([os.access(json, os.W_OK) for json in json_file_list]):
+			message("not an album cache hit", "some json file unwritable", 1)
 		else:
-			try:
-				if json_file_exists:
-					if not os.access(json_file, os.R_OK):
-						message("not an album cache hit", "json file unreadable", 1)
-					elif not os.access(json_file, os.W_OK):
-						message("not an album cache hit", "json file unwritable", 1)
+			if len(json_file_list) == 1:
+				files = "'" + json_file_list[0] + "'"
+			else:
+				files = "'" + json_file_list[0] + "' and others"
+
+			if album_ini_good and file_mtime(album_ini_file) > json_files_min_mtime:
+				# a check on album_ini_file content would have been good:
+				# execution comes here even if album.ini hasn't anything significant
+				message("not an album cache hit", "album.ini newer than json file, recreating json file taking into account album.ini", 4)
+			elif file_mtime(absolute_path) >= json_files_min_mtime:
+				indented_message("not an album cache hit", "album dir newer than json file", 4)
+			else:
+				message("maybe an album cache hit", "trying to import album from " + files, 5)
+				# the following is the instruction which could raise the error
+				try:
+					[cached_album, must_process_passwords] = Album.from_json_files(json_file_list, json_files_min_mtime)
+					if cached_album is None:
+						indented_message("not an album cache hit", "null cached album", 4)
 					else:
-						if album_ini_good and file_mtime(album_ini_file) > json_file_mtime:
-							# a check on album_ini_file content would have been good:
-							# execution comes here even if album.ini hasn't anything significant
-							message("not an album cache hit", "album.ini newer than json file, recreating json file taking into account album.ini", 4)
-							must_process_album_ini = True
-						elif file_mtime(absolute_path) >= json_file_mtime:
-							indented_message("not an album cache hit", "dir time > json file time", 4)
+						indented_message("json file imported", "", 5)
+						if not hasattr(cached_album, "absolute_path"):
+							indented_message("not an album cache hit", "cached album hasn't absolute_path", 4)
+							cached_album = None
+						elif cached_album.absolute_path != absolute_path:
+							indented_message("not an album cache hit", "cached album's absolute_path != absolute_path", 4)
+							cached_album = None
 						else:
-							message("maybe a cache hit", "working with '" + json_file + "' to import album...", 5)
-							# the following is the instruction which could raise the error
-							cached_album = Album.from_cache(json_file, album_cache_base)
-							indented_message("json file imported", "", 5)
-							# if file_mtime(absolute_path) >= json_file_mtime:
-							# 	indented_message("invalid json file", "dir time > json file time", 4)
-							# 	cached_album = None
-							if cached_album is None:
-								indented_message("not an album cache hit", "null cached album, perhaps because of unexistent/old json_version", 4)
-							elif not hasattr(cached_album, "absolute_path"):
-								indented_message("not an album cache hit", "cached album hasn't absolute_path", 4)
-								cached_album = None
-							elif cached_album.absolute_path != absolute_path:
-								indented_message("not an album cache hit", "cached album's absolute_path != absolute_path", 4)
-								cached_album = None
-							# the next commented-out check isn't needed because the same condition is checked in Album() and None is returned
-							# elif Options.json_version == 0 or not hasattr(cached_album, "json_version") or not cached_album.json_version == Options.json_version:
-							# 	indented_message("not an album cache hit", "unexistent or old json_version", 4)
-							# 	cached_album = None
-							else:
-								indented_message("album cache hit!", "", 4)
-								album = cached_album
-								album_cache_hit = True
-				else:
-					must_process_album_ini = True
-			except KeyboardInterrupt:
-				raise
-			except IOError:
-				# will execution never come here?
-				indented_message("not an album cache hit", "json file unexistent", 4)
-				album_cache_hit = False
+							indented_message("album cache hit!", "", 4)
+							album = cached_album
+							album_cache_hit = True
+				except KeyError:
+					indented_message("not an album cache hit", "error in passwords codes", 4)
+					cached_album = None
+					must_process_passwords = True
+			# except IOError:
+			# 	# will execution never come here?
+			# 	indented_message("not an album cache hit", "json file unexistent", 4)
+			# 	album_cache_hit = False
 			# is the following exception needed? it surely catched date errors...
-			except (ValueError, AttributeError, KeyError):
-				indented_message("not an album cache hit", "ValueError, AttributeError or KeyError somewhere", 4)
-				album_cache_hit = False
-				cached_album = None
+			# except (ValueError, AttributeError, KeyError):
+			# 	indented_message("not an album cache hit", "ValueError, AttributeError or KeyError somewhere", 4)
+			# 	album_cache_hit = False
+			# 	cached_album = None
+
+		if not album_cache_hit:
+			must_process_album_ini = True
+
+		if not os.path.exists(album_ini_file) and album_cache_hit and album.album_ini_mtime is not None:
+			# album.ini was used to create json files but has been removed
+			message("not an album cache hit", "album.ini absent, but values from it are in json file", 2)
+			album_cache_hit = False
+			album_ini_good = False
+
+		if not os.path.exists(passwords_marker) and album_cache_hit and album.passwords_marker_mtime is not None:
+			# a password marker were used in the last scanner run but has been removed
+			message("not an album cache hit", "password marker absent, but was used in the last scanner run", 2)
+			album_cache_hit = False
 
 		if not album_cache_hit:
 			message("generating void album...", "", 5)
 			album = Album(absolute_path)
 			indented_message("void album generated", "", 5)
 
-		if album_ini_good:
-			if not must_process_album_ini:
-				message("album.ini values already in json file", "", 2)
-			else:
+		if album_cache_hit and album_ini_good:
+			if must_process_album_ini:
 				message("reading album.ini...", "", 2)
 				album.read_album_ini(album_ini_file)
+				# save the album.ini mtime: it help know whether the file has been removed
+				album.album_ini_mtime = file_mtime(album_ini_file)
 				indented_message("album.ini read!", "", 2)
+			else:
+				message("album.ini values already in json file", "", 2)
 
 		if parent_album is not None:
-			album.parent = parent_album
+			album.parent_cache_base = parent_album.cache_base
 		album.cache_base = album_cache_base
 
-		#~ for entry in sorted(os.listdir(absolute_path)):
+		dir_name = os.path.basename(absolute_path)
+
+		############################################################
+		# check passwords validity
+		############################################################
+		if not must_process_passwords:
+			if json_files_min_mtime is None:
+				indented_message("passwords must be processed", "json files don't exist", 4)
+				must_process_passwords = True
+			elif not album_cache_hit:
+				indented_message("passwords must be processed", "album isn't a cache hit", 4)
+				must_process_passwords = True
+			elif Options.passwords_file_mtime is not None and Options.passwords_file_mtime >= json_files_min_mtime:
+				indented_message("passwords must be processed", "passwords file newer than json file or absent", 4)
+				must_process_passwords = True
+			elif Options.old_password_codes == {} and Options.passwords_file_mtime is not None:
+				# execution comes here when the password file has been renamed without modifying it
+				indented_message("passwords must be processed", "passwords file didn't exist in previous scanner run", 4)
+				must_process_passwords = True
+			elif len(patterns_and_passwords) > 0 and passwords_marker_mtime is not None and passwords_marker_mtime >= json_files_min_mtime:
+				indented_message("passwords must be processed", "'" + Options.config['passwords_marker'] + "' newer than json file or absent", 4)
+				must_process_passwords = True
+
+		# check album name against passwords
+		if must_process_passwords:
+			# if passwords are to be processed, this invalidates the cache albums
+			album_cache_hit = False
+
+			next_level()
+			message("processing passwords for album...", "", 4)
+			# restart with the inherited passwords
+			album.password_identifiers_set = inherited_passwords_identifiers
+			# get the matching passwords
+			next_level()
+			for pattern_and_password in patterns_and_passwords:
+				if pattern_and_password['what_flag'] == 'filesonly':
+					indented_message("password not added to album", "flag 'filesonly' prevents applying this pattern to dir names", 3)
+				else:
+					case = "case insentitive"
+					whole = "part of name"
+					if pattern_and_password['case_flag'] == 'cs':
+						if pattern_and_password['whole_flag'] == 'whole':
+							match = fnmatch.fnmatchcase(dir_name, pattern_and_password['pattern'])
+							whole = "whole name"
+						else:
+							match = fnmatch.fnmatchcase(dir_name, "*" + pattern_and_password['pattern'] + "*")
+						case = "case sentitive"
+					else:
+						if pattern_and_password['whole_flag'] == 'whole':
+							match = re.match(fnmatch.translate(pattern_and_password['pattern']), dir_name, re.IGNORECASE)
+							whole = "whole name"
+						else:
+							match = re.match(fnmatch.translate("*" + pattern_and_password['pattern'] + "*"), dir_name, re.IGNORECASE)
+
+					# add the matching patterns
+					if match:
+						identifier = pattern_and_password['identifier']
+						Options.mark_identifier_as_used(identifier)
+						if identifier not in album.password_identifiers_set:
+							album.password_identifiers_set.add(identifier)
+							indented_message(
+								"password added to album",
+								"'" + dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", identifier = " + identifier,
+								3
+							)
+						else:
+							indented_message(
+								"password not added to album",
+								dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", but identifier '" + identifier + "' already protects the album",
+								3
+							)
+			back_level()
+			indented_message("passwords for album processed!", "", 4)
+			back_level()
+		else:
+			indented_message("no need to process passwords for album", "", 5)
+			for identifier in album.password_identifiers_set:
+				Options.mark_identifier_as_used(identifier)
+
+		# reset the protected media counts
+		album.nums_protected_media_in_sub_tree = NumsProtected()
+
 		message("reading directory", absolute_path, 5)
 		message("subdir for cache files", " " + album.subdir, 3)
 
@@ -861,13 +1345,10 @@ class TreeWalker:
 		photos_without_exif_date_and_with_geotags_in_dir = []
 		photos_without_exif_date_or_geotags_in_dir = []
 		files_in_dir = []
-		for entry in self._listdir_sorted_by_time(absolute_path):
+		unrecognized_files_in_dir = []
+		for entry in self._listdir_sorted_alphabetically(absolute_path):
 			try:
-				# @python2
-				if sys.version_info < (3, ):
-					entry = entry.decode(sys.getfilesystemencoding())
-				else:
-					entry = os.fsdecode(entry)
+				entry = os.fsdecode(entry)
 			except KeyboardInterrupt:
 				raise
 			except:
@@ -896,12 +1377,15 @@ class TreeWalker:
 				next_album_cache_base = album.generate_cache_base(entry_for_cache_base)
 				indented_message("cache base determined", "", 5)
 				back_level()
-				[next_walked_album, num, positions, sub_max_file_date] = self.walk(entry_with_path, next_album_cache_base, album)
+				[next_walked_album, sub_max_file_date, _passwords_or_album_ini_processed] = self.walk(entry_with_path, next_album_cache_base, patterns_and_passwords, passwords_marker_mtime, album.password_identifiers_set, album)
+				passwords_or_album_ini_processed = passwords_or_album_ini_processed or _passwords_or_album_ini_processed
 				if next_walked_album is not None:
 					max_file_date = max(max_file_date, sub_max_file_date)
-					album.num_media_in_sub_tree += num
-					album.positions_and_media_in_tree = self.merge_positions(album.positions_and_media_in_tree, positions)
-					album.add_album(next_walked_album)
+					album.num_media_in_sub_tree += next_walked_album.num_media_in_sub_tree
+					album.positions_and_media_in_tree.merge(next_walked_album.positions_and_media_in_tree)
+					album.nums_protected_media_in_sub_tree.merge(next_walked_album.nums_protected_media_in_sub_tree)
+
+					album.add_subalbum(next_walked_album)
 					next_level()
 					message("adding album to search tree...", "", 5)
 					self.add_album_to_tree_by_search(next_walked_album)
@@ -914,19 +1398,15 @@ class TreeWalker:
 				if os.path.islink(entry_with_path) and Options.config['follow_symlinks']:
 					indented_message("symlink to file, following it as per 'follow_symlinks' option", entry_with_path, 3)
 
-				# if any(remove_album_path(entry_with_path) == _media.media_file_name for _media in self.all_media):
-				# 	# do not process the media twice
-				# 	continue
-
 				# save the file name for the end of the cycle, so that subdirs are processed first
 				files_in_dir.append(entry_with_path)
 
-		message("working with files in dir", absolute_path, 5)
+		message("working with files in dir", absolute_path, 3)
 		next_level()
 		for entry_with_path in files_in_dir:
-			message("working with file", entry_with_path, 5)
+			message("working with file", entry_with_path, 3)
 			next_level()
-			cache_hit = True
+			single_media_cache_hit = True
 			dirname = os.path.dirname(entry_with_path)
 			try:
 				message("reading file and dir times...", "", 5)
@@ -940,52 +1420,51 @@ class TreeWalker:
 				continue
 			else:
 				max_file_date = max(max_file_date, mtime)
-				media = None
+				single_media = None
 				cached_media = None
 				absolute_cache_file_exists = False
 
+			# checksum is needed for all media, calculate it anyway
 			if Options.config['checksum']:
 				message("calculating checksum...", "", 5)
 				with open(entry_with_path, 'rb') as media_path_pointer:
 					media_checksum = checksum(media_path_pointer)
-				indented_message("checksum calculated", "", 5)
+				indented_message("checksum calculated!", "", 5)
 
 			if not album_cache_hit:
-				indented_message("not a cache hit", "json file invalid", 5)
-				cache_hit = False
-
-			if album_cache_hit and cache_hit:
-				next_level()
+				indented_message("not a single media cache hit", "json file invalid", 5)
+				single_media_cache_hit = False
+			else:
+				# next_level()
 				message("getting media from cached album...", "", 5)
 				cached_media = cached_album.media_from_path(entry_with_path)
 				if cached_media is None:
-					indented_message("no such media in cached album", "not a cache hit", 5)
-					cache_hit = False
+					indented_message("not a single media cache hit", "no such media in cached album",5)
+					single_media_cache_hit = False
 				else:
 					indented_message("cached media got!", "", 5)
-				# cached_media._attributes["dateTimeDir"] = dir_mtime
 
-				if cache_hit and cached_media._attributes["dateTimeFile"] != mtime:
-					indented_message("modification time different", "not a cache hit", 5)
-					cache_hit = False
+				if single_media_cache_hit and cached_media._attributes["dateTimeFile"] != mtime:
+					indented_message("not a single media cache hit", "modification time different", 5)
+					single_media_cache_hit = False
 
-				if cache_hit and Options.config['checksum']:
+				if single_media_cache_hit and Options.config['checksum']:
 					try:
 						cached_media._attributes['checksum']
-					except KeyError:
-						message("not a cache hit", "no checksum in json file", 5)
-						cache_hit = False
-					else:
+
 						if cached_media._attributes['checksum'] == media_checksum:
 							indented_message("checksum OK!", "", 5)
 						else:
-							indented_message("not a cache hit", "bad checksum!", 5)
-							cache_hit = False
+							indented_message("not a single media cache hit", "bad checksum!", 5)
+							single_media_cache_hit = False
+					except KeyError:
+						message("not a single media cache hit", "no checksum in json file", 5)
+						single_media_cache_hit = False
 
-				if cache_hit and cached_media:
+				if single_media_cache_hit and cached_media:
 					if mtime != cached_media.datetime_file:
-						message("not a cache hit", "file datetime different from cache one", 5)
-						cache_hit = False
+						message("not a single media cache hit", "file datetime different from cache one", 5)
+						single_media_cache_hit = False
 					else:
 						cache_files = cached_media.image_caches
 						# check if the cache files actually exist and are not old
@@ -994,7 +1473,7 @@ class TreeWalker:
 							absolute_cache_file_exists = os.path.exists(absolute_cache_file)
 							if (
 								Options.config['recreate_fixed_height_thumbnails'] and
-								absolute_cache_file_exists and file_mtime(absolute_cache_file) < json_file_mtime
+								absolute_cache_file_exists and file_mtime(absolute_cache_file) < json_files_min_mtime
 							):
 								# remove wide images, in order not to have blurred thumbnails
 								fixed_height_thumbnail_re = "_" + str(Options.config['media_thumb_size']) + r"tf\.jpg$"
@@ -1007,101 +1486,161 @@ class TreeWalker:
 										message("error deleting fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 1)
 
 							if not absolute_cache_file_exists:
-								indented_message("not a cache hit", "unexistent reduction/thumbnail", 4)
-								cache_hit = False
+								indented_message("not a single media cache hit", "unexistent reduction/thumbnail", 4)
+								single_media_cache_hit = False
 								break
 							if file_mtime(absolute_cache_file) < cached_media.datetime_file:
-								indented_message("not a cache hit", "reduction/thumbnail older than cached media", 4)
-								cache_hit = False
+								indented_message("not a single media cache hit", "reduction/thumbnail older than cached media", 4)
+								single_media_cache_hit = False
 								break
-							if file_mtime(absolute_cache_file) > json_file_mtime:
-								indented_message("not a cache hit", "reduction/thumbnail newer than json file", 4)
-								cache_hit = False
+							if file_mtime(absolute_cache_file) > json_files_min_mtime:
+								indented_message("not a single media cache hit", "reduction/thumbnail newer than json file", 4)
+								single_media_cache_hit = False
 								break
 							if Options.config['recreate_reduced_photos']:
-								indented_message("not a cache hit", "reduced photo recreation requested", 4)
-								cache_hit = False
+								indented_message("not a single media cache hit", "reduced photo recreation requested", 4)
+								single_media_cache_hit = False
 								break
 							if Options.config['recreate_thumbnails']:
-								indented_message("not a cache hit", "thumbnail recreation requested", 4)
-								cache_hit = False
+								indented_message("not a single media cache hit", "thumbnail recreation requested", 4)
+								single_media_cache_hit = False
 								break
-				back_level()
+				# back_level()
 
-			if cache_hit:
-				media = cached_media
-				if media.is_video:
-					message("cache hit!", "transcoded video and thumbnails OK", 4)
+			if single_media_cache_hit:
+				single_media = cached_media
+				if single_media.is_video:
+					message("single media cache hit!", "transcoded video and thumbnails OK", 4)
 				else:
-					message("cache hit!", "reduced size images and thumbnails OK", 4)
+					message("single media cache hit!", "reduced size images and thumbnails OK", 4)
 			else:
 				message("processing media from file", "", 5)
-				media = Media(album, entry_with_path, Options.config['cache_path'], None)
+				single_media = Media(album, entry_with_path, json_file_list, json_files_min_mtime, Options.config['cache_path'], None)
 				if Options.config['checksum']:
-					media._attributes["checksum"] = media_checksum
+					single_media._attributes["checksum"] = media_checksum
 
-			if media.is_valid:
+			if single_media.is_valid:
+				if not single_media_cache_hit or must_process_passwords:
+					next_level()
+					message("processing passwords for single media...", "", 4)
+					single_media.password_identifiers_set = set()
+					single_media.album_identifiers_set = set()
+					file_name = os.path.basename(entry_with_path)
+
+					# apply the album passwords_md5 to the media
+					for album_identifier in sorted(album.password_identifiers_set):
+						if album_identifier not in single_media.album_identifiers_set:
+							single_media.album_identifiers_set.add(album_identifier)
+							password_md5 = convert_identifiers_set_to_md5s_set(set([album_identifier])).pop()
+							indented_message("album password added to media", "identifier = " + album_identifier + ", encrypted password = " + password_md5, 3)
+						else:
+							indented_message("album password not added to media", "identifier '" + album_identifier + "' already protects this media", 3)
+
+					# apply the file passwords_md5 and password codes to the media if they match the media name
+					for pattern_and_password in patterns_and_passwords:
+						if pattern_and_password['what_flag'] == 'dirsonly':
+							indented_message("password not added to media", "flag 'dirsonly' prevents applying this pattern to file names", 3)
+						else:
+							case = "case insentitive"
+							whole = "part of name"
+							if pattern_and_password['case_flag'] == 'cs':
+								if pattern_and_password['whole_flag'] == 'whole':
+									match = fnmatch.fnmatchcase(file_name, pattern_and_password['pattern'])
+									whole = "whole name"
+								else:
+									match = fnmatch.fnmatchcase(file_name, "*" + pattern_and_password['pattern'] + "*")
+								case = "case sentitive"
+							else:
+								if pattern_and_password['whole_flag'] == 'whole':
+									match = re.match(fnmatch.translate(pattern_and_password['pattern']), file_name, re.IGNORECASE)
+									whole = "whole name"
+								else:
+									match = re.match(fnmatch.translate("*" + pattern_and_password['pattern'] + "*"), file_name, re.IGNORECASE)
+
+							if match:
+								identifier = pattern_and_password['identifier']
+								Options.mark_identifier_as_used(identifier)
+								if identifier not in single_media.password_identifiers_set:
+									single_media.password_identifiers_set.add(identifier)
+									indented_message(
+										"password and code added to media",
+										"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", identifier = " + identifier,
+										3
+									)
+								else:
+									indented_message(
+										"password and code not added to media",
+										"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", but identifier '" + identifier + "'  already protects the media",
+										3
+									)
+					indented_message("passwords for single media processed!", "", 5)
+					back_level()
+				else:
+					indented_message("no need to process passwords for media", "", 5)
+					for identifier in single_media.password_identifiers_set:
+						Options.mark_identifier_as_used(identifier)
+
+				# update the protected media count according to the album and single media passwords
+				complex_identifiers_combination = complex_combination(convert_set_to_combination(album.password_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
+				album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
+
 				album.num_media_in_sub_tree += 1
-				if media.has_gps_data:
-					album.positions_and_media_in_tree = self.add_media_to_position(album.positions_and_media_in_tree, media, Options.config['folders_string'])
-				album.num_media_in_album += 1
-				if media.is_video:
+				if single_media.has_gps_data:
+					album.positions_and_media_in_tree.add_single_media(single_media)
+
+				if single_media.is_video:
 					num_video_in_dir += 1
-					if not cache_hit:
+					if not single_media_cache_hit:
 						num_video_processed_in_dir += 1
 				else:
 					num_photo_in_dir += 1
-					if not cache_hit:
+					if not single_media_cache_hit:
 						num_photo_processed_in_dir += 1
 
-					if media.has_exif_date:
+					if single_media.has_exif_date:
 						num_photo_with_exif_date_in_dir += 1
-					if media.has_gps_data:
+					if single_media.has_gps_data:
 						num_photo_with_geotags_in_dir += 1
 
-					if media.has_exif_date:
-						if media.has_gps_data:
+					if single_media.has_exif_date:
+						if single_media.has_gps_data:
 							num_photo_with_exif_date_and_geotags_in_dir += 1
 						else:
 							photos_with_exif_date_and_without_geotags_in_dir.append("      " + entry_with_path)
 					else:
-						if media.has_gps_data:
+						if single_media.has_gps_data:
 							photos_without_exif_date_and_with_geotags_in_dir.append("      " + entry_with_path)
 						else:
 							photos_without_exif_date_or_geotags_in_dir.append(      "      " + entry_with_path)
 
-				if not any(media.media_file_name == _media.media_file_name for _media in self.all_media):
+				if not any(single_media.media_file_name == _media.media_file_name for _media in self.all_media):
 					next_level()
 					message("adding media to dates tree...", "", 5)
 					# the following function has a check on media already present
-					self.add_media_to_tree_by_date(media)
+					self.add_single_media_to_tree_by_date(single_media)
 					indented_message("media added to dates tree!", "", 5)
 
-					if media.has_gps_data:
+					if single_media.has_gps_data:
 						message("adding media to geonames tree...", "", 5)
 						# the following function has a check on media already present
-						self.add_media_to_tree_by_geonames(media)
+						self.add_single_media_to_tree_by_geonames(single_media)
 						indented_message("media added to geonames tree!", "", 5)
 
 					message("adding media to search tree...", "", 5)
 					# the following function has a check on media already present
-					self.add_media_to_tree_by_search(media)
+					self.add_single_media_to_tree_by_search(single_media)
 					indented_message("media added to search tree", "", 5)
 
-					message("adding media to album...", "", 5)
-					album.add_media(media)
-					indented_message("media added to album", "", 5)
-
-					message("adding media to all media list...", "", 5)
-					self.all_media.append(media)
-					indented_message("media added to all media list", "", 5)
+					album.add_single_media(single_media)
+					self.all_media.append(single_media)
 
 					back_level()
 				else:
 					indented_message("media not added to anything...", "it was already there", 5)
 
-			elif not media.is_valid:
+			elif not single_media.is_valid:
 				indented_message("not image nor video", "", 1)
+				unrecognized_files_in_dir.append("      " + entry_with_path + "      mime type: " + single_media.mime_type )
 			back_level()
 		back_level()
 
@@ -1144,11 +1683,17 @@ class TreeWalker:
 				Options.photos_without_exif_date_or_geotags.append(str(len(photos_without_exif_date_or_geotags_in_dir)).rjust(max_digit) + _some_photo_in_path)
 				Options.photos_without_exif_date_or_geotags.extend(photos_without_exif_date_or_geotags_in_dir)
 
+			if len(unrecognized_files_in_dir):
+				Options.num_unrecognized_files += len(unrecognized_files_in_dir)
+				Options.unrecognized_files.append(str(len(unrecognized_files_in_dir)).rjust(max_digit) + " files in " + absolute_path + ":")
+				Options.unrecognized_files.extend(unrecognized_files_in_dir)
+				Options.config['num_media_in_tree'] -= len(unrecognized_files_in_dir)
+
 		if not album.empty:
 			next_level()
 			message("adding album to albums list...", "", 5)
-			self.all_albums.append(album)
-			indented_message("album added to albums list", "", 4)
+			Options.all_albums.append(album)
+			indented_message("album added to albums list!", "", 4)
 			back_level()
 		else:
 			message("VOID: no media in this directory", os.path.basename(absolute_path), 4)
@@ -1160,7 +1705,11 @@ class TreeWalker:
 
 		report_times(False)
 
-		return [album, album.num_media_in_sub_tree, album.positions_and_media_in_tree, max_file_date]
+		report_mem()
+
+		passwords_or_album_ini_processed = passwords_or_album_ini_processed or must_process_passwords or must_process_album_ini
+
+		return [album, max_file_date, passwords_or_album_ini_processed]
 
 
 	@staticmethod
@@ -1186,8 +1735,8 @@ class TreeWalker:
 	def generate_composite_image(self, album, max_file_date):
 		next_level()
 		composite_image_name = album.cache_base + ".jpg"
-		self.all_album_composite_images.append(composite_image_name)
 		composite_image_path = os.path.join(self.album_cache_path, composite_image_name)
+		self.all_album_composite_images.append(os.path.join(Options.config['cache_album_subdir'], composite_image_name))
 		json_file_with_path = os.path.join(Options.config['cache_path'], album.json_file)
 		if (os.path.exists(composite_image_path) and
 			file_mtime(composite_image_path) > max_file_date and
@@ -1230,8 +1779,8 @@ class TreeWalker:
 		while True:
 			if i >= good_media_number:
 				break
-			if len(album.media) and num_random_thumbnails == 1:
-				random_media = album.media[0]
+			if len(album.media_list) and num_random_thumbnails == 1:
+				random_media = album.media_list[0]
 			else:
 				while True:
 					random_number = random.randint(0, album.num_media_in_sub_tree - 1)
@@ -1298,21 +1847,6 @@ class TreeWalker:
 		back_level()
 
 
-	def save_all_media_json(self):
-		media_list = []
-		message("sorting all media list...", "", 5)
-		self.all_media.sort()
-		indented_message("all media list sorted", "", 5)
-		message("building media path list...", "", 5)
-		for media in self.all_media:
-			media_list.append(media.path)
-		indented_message("media path list built", "", 5)
-		message("caching all media path list...", "", 4)
-		with open(os.path.join(Options.config['cache_path'], "all_media.json"), 'w') as all_media_file:
-			json.dump(media_list, all_media_file, cls=PhotoAlbumEncoder)
-		indented_message("all media path list cached", "", 5)
-
-
 	@staticmethod
 	def _save_json_options():
 		json_options_file = os.path.join(Options.config['cache_path'], 'options.json')
@@ -1325,43 +1859,72 @@ class TreeWalker:
 
 		with open(json_options_file, 'w') as options_file:
 			json.dump(options_to_save, options_file)
-		indented_message("saved json options file", "", 5)
+		indented_message("json options file saved!", "", 5)
 
 
-	def remove_stale(self, subdir=""):
+	def create_keys_for_directories(self, splitted_file_name, dict):
+		if len(splitted_file_name) == 0:
+			return
+
+		if len(splitted_file_name) == 1:
+			if 'files' not in dict:
+				dict['files'] = list()
+			dict['files'].append(splitted_file_name[0])
+		else:
+			if 'dirs' not in dict:
+				dict['dirs'] = {}
+			if splitted_file_name[0] not in dict['dirs']:
+				dict['dirs'][splitted_file_name[0]] = {}
+			self.create_keys_for_directories(splitted_file_name[1:], dict['dirs'][splitted_file_name[0]])
+		return dict
+
+
+	def remove_stale(self, subdir, json_list_or_dict):
 		# preparing files and directories lists
+		protected_directory_re = r"" + Options.config['protected_directories_prefix'] + "([a-f0-9]{32})?,([a-f0-9]{32})?"
+
 		if not subdir:
-			message("cleaning up, be patient...", "", 3)
+			json_list = json_list_or_dict
+			message("cleaning up...", "", 3)
 			next_level()
 			message("building stale list...", "", 4)
 
-			for album in self.all_albums:
-				self.all_json_files.append(album.json_file)
-				self.all_json_files.append(album.positions_json_file)
-			for media in self.all_media:
-				album_subdir = media.album.subdir
-				for entry in media.image_caches:
-					entry_without_subdir = entry[len(album_subdir) + 1:]
-					try:
-						self.all_json_files_by_subdir[album_subdir].append(entry_without_subdir)
-					except KeyError:
-						self.all_json_files_by_subdir[album_subdir] = list()
-						self.all_json_files_by_subdir[album_subdir].append(entry_without_subdir)
-			indented_message("stale list built", "", 5)
-			info = "in cache path"
-			deletable_files_re = r"\.json$"
+			# transform the all_json_files list into a dictionary by directories
+			for file_name in json_list:
+				splitted_file_name = file_name.split('/')
+				# for dir in splitted_file_name[:-1]:
+				json_dict = self.create_keys_for_directories(splitted_file_name, self.all_json_files_dict)
 
+			for path in self.all_album_composite_images:
+				splitted_file_name = path.split('/')
+				json_dict = self.create_keys_for_directories(splitted_file_name, json_dict)
+
+			for single_media in self.all_media:
+				for entry in single_media.image_caches:
+					# entry_without_subdir = entry[len(single_media.album.subdir) + 1:]
+					splitted_file_name = entry.split('/')
+					json_dict = self.create_keys_for_directories(splitted_file_name, json_dict)
+
+			indented_message("stale list built!", "", 5)
+			info = "in cache path"
+
+			deletable_files_re = r"\.json$"
 		else:
+			json_dict = json_list_or_dict
 			# reduced sizes, thumbnails, old style thumbnails
 			if subdir == Options.config['cache_album_subdir']:
-				self.all_json_files_by_subdir[subdir] = list()
-				for path in self.all_album_composite_images:
-					self.all_json_files_by_subdir[subdir].append(path)
+				# self.all_json_files_by_subdir[subdir] = list()
 				deletable_files_re = r"\.jpg$"
+			elif subdir == Options.config['passwords_subdir']:
+				deletable_files_re = r"[a-f0-9]{32}"
+			elif re.search(protected_directory_re, subdir):
+				deletable_files_re = r"\.json$"
 			else:
 				deletable_files_re = r"(" + Options.config['cache_folder_separator'] + r"|_)" + \
 					r"transcoded(_([1-9][0-9]{0,3}[kKmM]|[1-9][0-9]{3,10})(_[1-5]?[0-9])?)?\.mp4$" + \
-					r"|(" + Options.config['cache_folder_separator'] + r"|_)[1-9][0-9]{1,4}(a|t|s|[at][sf])?\.jpg$"
+					r"|(" + Options.config['cache_folder_separator'] + r"|_)[1-9][0-9]{1,4}(a|t|s|[at][sf])?\.jpg$" + \
+					r"|" + Options.config['cache_folder_separator'] + r"original\.(jpg|png)$"
+				# deletable_files_re = r(-|_)transcoded(_([1-9][0-9]{0,3}[kKmM]|[1-9][0-9]{3,10})(_[1-5]?[0-9])?)?\.mp4$|(-|_)[1-9][0-9]{1,4}(a|t|s|[at][sf])?\.jpg$"
 			info = "in subdir " + subdir
 
 		message("searching for stale cache files", info, 4)
@@ -1369,52 +1932,50 @@ class TreeWalker:
 		for cache_file in sorted(os.listdir(os.path.join(Options.config['cache_path'], subdir))):
 			if os.path.isdir(os.path.join(Options.config['cache_path'], subdir, cache_file)):
 				next_level()
-				self.remove_stale(os.path.join(subdir, cache_file))
-				if not os.listdir(os.path.join(Options.config['cache_path'], subdir, cache_file)):
-					next_level()
-					message("empty subdir, deleting...", "", 4)
-					file_to_delete = os.path.join(Options.config['cache_path'], subdir, cache_file)
-					next_level()
-					os.rmdir(os.path.join(Options.config['cache_path'], file_to_delete))
-					message("empty subdir, deleted", "", 5)
-					back_level()
-					back_level()
+				if cache_file in json_dict['dirs']:
+					self.remove_stale(os.path.join(subdir, cache_file), json_dict['dirs'][cache_file])
+				elif subdir == "":
+					# a protected content directory which is'n reported must be deleted with all its content
+					message("deleting protected content subdir not reported...", "", 5)
+					shutil.rmtree(os.path.join(Options.config['cache_path'], subdir, cache_file))
+					message("protected content subdir not reported deleted...", os.path.join(Options.config['cache_path'], subdir, cache_file), 4)
+				try:
+					if not os.listdir(os.path.join(Options.config['cache_path'], subdir, cache_file)):
+						next_level()
+						message("empty subdir, deleting...", "", 4)
+						file_to_delete = os.path.join(Options.config['cache_path'], subdir, cache_file)
+						next_level()
+						os.rmdir(os.path.join(Options.config['cache_path'], file_to_delete))
+						message("empty subdir, deleted", "", 5)
+						back_level()
+						back_level()
+				except OSError:
+					# no protected content
+					pass
 				back_level()
 			else:
 				# only delete json's, transcoded videos, reduced images and thumbnails
 				next_level()
 				message("deciding whether to keep a cache file...", "", 7)
 				match = re.search(deletable_files_re, cache_file)
-				indented_message("decided whether to keep a cache file", cache_file, 6)
+				indented_message("deciding whether to keep cache file", cache_file, 6)
 				if match:
 					try:
-						# @python2
-						if sys.version_info < (3, ):
-							cache_file = cache_file.decode(sys.getfilesystemencoding())
-						else:
-							cache_file = os.fsdecode(cache_file)
+						cache_file = os.fsdecode(cache_file)
 					except KeyboardInterrupt:
 						raise
-					#~ except:
-						#~ pass
-					if subdir:
-						if subdir in self.all_json_files_by_subdir:
-							cache_list = self.all_json_files_by_subdir[subdir]
-						else:
-							cache_list = list()
-					else:
-						cache_list = self.all_json_files
-					if cache_file not in cache_list:
-						message("removing stale cache file...", cache_file, 3)
+					if cache_file not in json_dict['files']:
+					# if cache_file not in cache_list:
+						message("removing stale cache file...", cache_file, 4)
 						file_to_delete = os.path.join(Options.config['cache_path'], subdir, cache_file)
 						os.unlink(file_to_delete)
 						indented_message("stale cache file removed", "", 5)
 				else:
-					indented_message("not a stale cache file, keeping it", cache_file, 2)
+					indented_message("not a stale cache file, keeping it", "", 2)
 					back_level()
 					continue
 				back_level()
 		if not subdir:
-			message("cleaned", "", 5)
 			back_level()
+			message("cleaned up!", "", 5)
 			back_level()

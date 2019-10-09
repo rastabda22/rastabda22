@@ -52,7 +52,7 @@
     color: black !important;
 }
 
-.modal-close, #mapdiv .leaflet-popup-close-button, .popup-mover {
+.modal-close, #mapdiv .leaflet-popup-close-button, .popup-mover, #auth-close {
     background-color: #fff;
     border: 3px solid #999;
     border-radius: 50px;
@@ -71,14 +71,14 @@
     z-index: 1;
 }
 
-.modal-close, #mapdiv .leaflet-popup-close-button {
+.modal-close, #mapdiv .leaflet-popup-close-button, #auth-close {
     top: -20px;
 }
 
-.modal-close::after, #mapdiv .leaflet-popup-close-button::after {
+.modal-close::after, #mapdiv .leaflet-popup-close-button::after, #auth-close::after {
   content: "✖";
 }
-.modal-close::after, #mapdiv .leaflet-popup-close-button::after, .popup-mover::after {
+.modal-close::after, #mapdiv .leaflet-popup-close-button::after, .popup-mover::after, #auth-close::after {
   color: gray;
   font-size: 25px;
 }
@@ -103,7 +103,7 @@
   content: "⭨";
 }
 
-.modal-close:hover, a.leaflet-popup-close-button:hover, a.popup-mover:hover {
+.modal-close:hover, a.leaflet-popup-close-button:hover, a.popup-mover:hover, #auth-close:hover {
     background-color: #ccc;
     color: gray;
 }
@@ -241,7 +241,7 @@
 #my-modal.modal {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
+  z-index: 11; /* Sit on top */
   padding-top: 10px; /* Location of the box */
   left: 0;
   top: 10px;
@@ -264,7 +264,7 @@
 }
 
 /* The Close Button */
-#my-modal .modal-close {
+#my-modal .modal-close, #auth-close {
   color: #aaaaaa;
   float: right;
   font-size: 28px;
@@ -275,7 +275,7 @@
   z-index: 500;
 }
 
-#my-modal .modal-close:hover, #my-modal .modal-close:focus {
+#my-modal .modal-close:hover, #my-modal .modal-close:focus, #auth-close:hover, #auth-close:focus {
   color: #000;
   text-decoration: none;
   cursor: pointer;

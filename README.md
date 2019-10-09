@@ -1,4 +1,4 @@
-# MyPhotoShare v3.8.2 (May 6, 2019)
+# MyPhotoShare v4.0RC1 (Oct 9, 2019)
 
 ### A Web Photo Gallery Done Right via Static JSON & Dynamic Javascript
 #### by Jason A. Donenfeld (<Jason@zx2c4.com>), Jerome Charaoui (jerome@riseup.net)  Joachim Tingvold (joachim@tingvold.com), Paolo Benvenuto (<paolobenve@gmail.com>), Pierre Métras (<p.metras@videotron.ca>)
@@ -30,8 +30,9 @@ Content (albums and media files) can be shared over some popular social plaforms
 * [Gallery of MyPhotoShare screenshots](doc/Gallery.md)
 * [Geotagging](doc/GPS.md)
 * [Tweaking metadata with `album.ini`](doc/Metadata.md)
-* [Make some albums private](doc/Authentication.md)
+* [Make some content private](doc/Authentication.md)
 * [Versions changelog](doc/Changelog.md)
+* [Debugging memory usage](doc/Debugging.md)
 * [Known issues](doc/Issues.md)
 * [License](License.md)
 
@@ -63,7 +64,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] More photos can be added (with shift-click) and removed (with ctl-click) from the popup.
 - [x] Photos shown in the popup are clickable.
 - [x] Near markers are automatically clustered, and the photos number is shown in the cluster marker.
-- [x] Images collected by map clicks can now be shown as an album, browsed and sorted.
+- [x] Images collected by map clicks can be shown as an album, browsed and sorted.
 
 ### Mobile Friendly
 
@@ -94,10 +95,15 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Scanner uses recursive async randomized tree walking album thumbnail algorithm.
 - [x] HTML5 with minified CSS and JavaScript files for minimal load time.
 
+### Privacy (_new_ in v4.0)
+
+- [x] Albums and photo can be protected by passwords. Passwords may be specified for albums, for files, for both.
+- [x] Patterns are defined in album tree and specify what should every password protect; allowed matching modes: case sensitive/insensitive, whole/part of dir/file name, dir only/files only/both.
+- [x] Passwords aren't exposed in javascript, and sensitive data and media are extremely difficult to find in cache.
+
 ### And More...
 
 - [x] Analytics with optional Google Analytics and Piwik integration.
-- [x] Optional server-side authentication support.
 - [x] Many customizations available through config file.
 - [x] Cache folder can be managed with subdirs: useful for large repositories.
 - [x] Source albums server folders can be anywhere on the server.
@@ -108,9 +114,14 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Consistent hash URL format.
 
 
+## Python version
+
+The python code (basically the _scanner_) is run with `python3`.
+
+
 ## Community
 
-Report bugs through [GitHub Issues](https://github.com/paolobenve/MyPhotoShare/issues).
+Report bugs through [GitLab Issues](https://gitlab.com/paolobenve/myphotoshare/issues).
 
 You can fork MyPhotoShare and submit pull requests, too! We're open to adding more features!
 
@@ -137,12 +148,16 @@ It is, essentially, a slick and fast, minimal but still well-featured photo gall
 
 ### Scanner
 
-As a term of comparizon, on my medium-sized pc, with the images on a NFS mounted NAS partition:
+As a term of comparizon, on a medium-sized pc, with the images on a NFS mounted NAS partition:
 
 * scanning with face detection for the first time a 692 photos directory tree for a total size of 2.3 GB takes about 700 seconds (about 1 sec/media, 1 media/sec); face detection takes about 267ms/photo.
 * re-scan of "all OK" tree of 36000 media files for a total size of 87 GB takes about 14 minutes (20 ms/media, 50 media/sec) if not using checksums, and about 90 minutes (110 ms/media, 9 media/sec) when using checksums.
 * scanning for the first time about 40000 photo with less than 100 videos takes about 5 hour with checksums enabled
 * scanning of videos takes a much longer time than photos, the bigger the videos the greater the time.
+
+#### Memory needs
+
+Scanning 45.000 media requires no more than 1.5GB/2.1GB of resident/virtual memory.
 
 ### Javascript code
 

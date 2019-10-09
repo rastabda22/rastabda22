@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, division
+
 
 # gps code got from https://gist.github.com/erans/983821
 
@@ -10,7 +10,9 @@ import os.path
 import tempfile
 import hashlib
 import unicodedata
+import magic
 import sys
+import copy
 from datetime import datetime
 from pprint import pprint
 
@@ -19,30 +21,32 @@ try:
 except:
 	pass
 
-# @python2
-try:
-	import configparser
-except ImportError:
-	import ConfigParser as configparser
-try:
-	from configparser import NoOptionError
-except ImportError:
-	from ConfigParser import NoOptionError
+import configparser
+from configparser import NoOptionError
 
 import math
 import numpy as np
-import exifread
 
-from CachePath import remove_album_path, remove_folders_marker, trim_base_custom, thumbnail_types_and_sizes, file_mtime, photo_cache_name, video_cache_name
-from Utilities import message, indented_message, next_level, back_level
+from CachePath import remove_album_path, remove_folders_marker, trim_base_custom
+# from CachePath import remove_album_path, remove_cache_path, remove_folders_marker, trim_base_custom
+from CachePath import thumbnail_types_and_sizes, photo_cache_name, video_cache_name
+from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
+from CachePath import remove_all_but_alphanumeric_chars_dashes_slashes, switch_to_lowercase
+from Utilities import message, indented_message, next_level, back_level, file_mtime, json_files_and_mtime, make_dir
+from Utilities import merge_albums_dictionaries_from_json_files, calculate_media_file_name
+from Utilities import convert_identifiers_set_to_codes_set, convert_old_codes_set_to_identifiers_set
+from Utilities import convert_combination_to_set, convert_set_to_combination, complex_combination
 from Geonames import Geonames
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
 from VideoToolWrapper import VideoProbeWrapper, VideoTranscodeWrapper
 import Options
-from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters, remove_all_but_alphanumeric_chars_dashes_slashes_dots, switch_to_lowercase
 # WARNING: pyexiftool has been modified, do not overwrite with new versions unless you know what you are doing
 import PyExifTool
+# this is needed in order to avoid complains from exifread
+if 'exifread' in Options.config['metadata_tools_preference']:
+	import exifread
+
 # this is needed in order to avoid complains from exifread
 import logging
 
@@ -51,62 +55,58 @@ locale.setlocale(locale.LC_ALL, '')
 logging.basicConfig()
 
 class Album(object):
-	#~ def __init__(self, path, path_has_folder_marker):
 	def __init__(self, path):
-		#~ if path_has_folder_marker:
-			#~ path = remove_album_path(path)
-			#~ path = trim_base_custom(path, Options.config['album_path'])
-			#~ path = os.join(Options.config['album_path'], path)
-		if path[-1:] == '/':
-			path = path[0:-1]
-		self.absolute_path = path
-		self.baseless_path = remove_album_path(path)
-		self.cache_base = ""
-		self.media_list = list()
-		self.subalbums_list = list()
-		self.media_list_is_sorted = True
-		self.subalbums_list_is_sorted = True
-		self._subdir = ""
-		self.num_media_in_sub_tree = 0
-		self.positions_and_media_in_tree = []
-		self.num_media_in_album = 0
-		self.parent = None
-		self.album_ini = None
-		self._attributes = {}
-		self._attributes["metadata"] = {}
-		self.json_version = ""
+		if path is not None:
+			if path[-1:] == '/':
+				path = path[0:-1]
+			self.absolute_path = path
+			self.baseless_path = remove_album_path(path)
+			self.cache_base = ""
+			self.media_list = []
+			self.subalbums_list = []
+			self.media_list_is_sorted = True
+			self.subalbums_list_is_sorted = True
+			self._subdir = ""
+			self.num_media_in_sub_tree = 0
+			self.complex_combination = ''
+			self.nums_protected_media_in_sub_tree = NumsProtected()
+			self.positions_and_media_in_tree = Positions(None)
+			self.parent_cache_base = None
+			self.album_ini = None
+			self._attributes = {}
+			self._attributes["metadata"] = {}
+			self.json_version = ""
+			self.password_identifiers_set = set()
+			self.passwords_marker_mtime = None
+			self.album_ini_mtime = None
 
-		if (
-			Options.config['subdir_method'] in ("md5", "folder") and
-			(
-				self.baseless_path.find(Options.config['by_date_string']) != 0 or
-				self.baseless_path.find(Options.config['by_gps_string']) != 0 or
-				self.baseless_path.find(Options.config['by_search_string']) != 0
-			)
-		):
-			if Options.config['subdir_method'] == "md5":
-				if Options.config['cache_folders_num_digits_array'] == []:
-					self._subdir = Options.config['default_cache_album']
-				else:
-					# @python2
-					if sys.version_info < (3, ):
-						hash = hashlib.md5(path).hexdigest()
+			if (
+				Options.config['subdir_method'] in ("md5", "folder") and
+				(
+					self.baseless_path.find(Options.config['by_date_string']) != 0 or
+					self.baseless_path.find(Options.config['by_gps_string']) != 0 or
+					self.baseless_path.find(Options.config['by_search_string']) != 0
+				)
+			):
+				if Options.config['subdir_method'] == "md5":
+					if Options.config['cache_folders_num_digits_array'] == []:
+						self._subdir = Options.config['default_cache_album']
 					else:
 						hash = hashlib.md5(os.fsencode(path)).hexdigest()
-					self._subdir = ''
-					previous_digits = 0
-					for digits in Options.config['cache_folders_num_digits_array']:
-						if self._subdir:
-							self._subdir += '/'
-						self._subdir += hash[previous_digits:previous_digits + digits]
-						previous_digits = digits
-			elif Options.config['subdir_method'] == "folder":
-				if path.find("/") == -1:
-					self._subdir = "__"
-				else:
-					self._subdir = path[path.rfind("/") + 1:][:2].replace(" ", "_")
-					if len(self._subdir) == 1:
-						self._subdir += "_"
+						self._subdir = ''
+						previous_digits = 0
+						for digits in Options.config['cache_folders_num_digits_array']:
+							if self._subdir:
+								self._subdir += '/'
+							self._subdir += hash[previous_digits:previous_digits + digits]
+							previous_digits = digits
+				elif Options.config['subdir_method'] == "folder":
+					if path.find("/") == -1:
+						self._subdir = "__"
+					else:
+						self._subdir = path[path.rfind("/") + 1:][:2].replace(" ", "_")
+						if len(self._subdir) == 1:
+							self._subdir += "_"
 
 	@property
 	def name(self):
@@ -163,6 +163,10 @@ class Album(object):
 		return self.cache_base + ".positions.json"
 
 	@property
+	def media_json_file(self):
+		return self.cache_base + ".media.json"
+
+	@property
 	def subdir(self):
 		return self._subdir
 
@@ -183,12 +187,6 @@ class Album(object):
 		while len(date_str) < 19:
 			date_str = "0" + date_str
 		return date_str
-
-	# def __cmp__(self, other):
-	# 	try:
-	# 		return cmp(self.date, other.date)
-	# 	except TypeError:
-	# 		return 1
 
 	def __eq__(self, other):
 		return self.path == other.path
@@ -236,16 +234,19 @@ class Album(object):
 		indented_message("metadata values from album.ini added to album...", "", 5)
 		back_level()
 
+	def is_already_in_tree_by_search(self, tree_by_search_word):
+		albums_list = tree_by_search_word["albums_list"]
+		return len([album for album in albums_list if self.cache_base == album.cache_base]) == 1
 
 
-	def add_media(self, media):
+	def add_single_media(self, media):
 		# before adding the media, remove any media with the same file name
 		# it could be there because the album was a cache hit but the media wasn't
 		self.media_list = [_media for _media in self.media_list if media.media_file_name != _media.media_file_name]
 		self.media_list.append(media)
 		self.media_list_is_sorted = False
 
-	def add_album(self, album):
+	def add_subalbum(self, album):
 		self.subalbums_list.append(album)
 		self.subalbums_list_is_sorted = False
 
@@ -263,113 +264,374 @@ class Album(object):
 			return False
 		if len(self.subalbums_list) == 0:
 			return True
-		for album in self.subalbums_list:
-			if not album.empty:
+		for subalbum in self.subalbums:
+			if not subalbum.empty:
 				return False
 		return True
 
-	def to_json_file(self):
-		json_file_with_path = os.path.join(Options.config['cache_path'], self.json_file)
+	def copy(self):
+		album = Album(None)
+		for key, value in list(self.__dict__.items()):
+			if key == "subalbums_list":
+				# subalbus must be new objects
+				setattr(album, key, [subalbum.copy() for subalbum in value])
+			elif isinstance(value, list):
+				# media are the same object, but the list is a copy
+				setattr(album, key, value[:])
+				# album[key] = value[:]
+			elif isinstance(value, Positions) or isinstance(value, NumsProtected):
+				setattr(album, key, value.copy())
+			elif isinstance(value, dict):
+				setattr(album, key, copy.deepcopy(value))
+			else:
+				setattr(album, key, value)
+
+		return album
+
+	def leave_only_unprotected_content(self):
+		next_level()
+		message("working with album...", self.cache_base, 5)
+		self.positions_and_media_in_tree = Positions(None)
+		if len(self.password_identifiers_set) == 0:
+			# the album isn't protected, but media and subalbums may be protected
+			# besides that, for virtual media the physical album password is included in the media and must be taken into account
+			self.media_list = [single_media for single_media in self.media if len(single_media.album_identifiers_set) ==  0 and len(single_media.password_identifiers_set) == 0]
+			for single_media in self.media_list:
+				if single_media.has_gps_data:
+					self.positions_and_media_in_tree.add_single_media(single_media)
+		else:
+			# protected album, remove the media
+			self.media_list = []
+			# subalbums are not removed, because there may be some unprotected content up in the tree
+
+		# process subalbums
+		for subalbum in self.subalbums_list:
+			subalbum.leave_only_unprotected_content()
+			if (
+				self.cache_base == Options.config['by_search_string'] or
+				self.cache_base.find(Options.config['by_search_string']) != 0
+			):
+				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
+		# # search albums:
+		# # - do not process subalbums because they have been already processed
+		# # - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
+		# if (
+		# 	self.cache_base.find(Options.config['by_search_string']) != 0 or
+		# 	self.cache_base == Options.config['by_search_string']
+		# ):
+		# 	# process subalbums
+		# 	for subalbum in self.subalbums_list:
+		# 		subalbum.leave_only_unprotected_content()
+		# 		self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
+		# else:
+		# 	self.subalbums_list = [subalbum for subalbum in self.subalbums_list if len(subalbum.password_identifiers_set) == 0]
+		# 	# next lines commented out because contained media don't belong to this album
+		# 	# for subalbum in self.subalbums_list:
+		# 	# 	self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
+
+		if ',' in list(self.nums_protected_media_in_sub_tree.keys()):
+			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(',')
+		else:
+			self.num_media_in_sub_tree = 0
+		message("album worked!", self.cache_base, 5)
+		back_level()
+
+
+	def leave_only_content_protected_by(self, album_identifiers_set, media_identifiers_set):
+		next_level()
+		message("working with album...", self.cache_base, 5)
+		self.positions_and_media_in_tree = Positions(None)
+		self.complex_combination = complex_combination(convert_set_to_combination(album_identifiers_set), convert_set_to_combination(media_identifiers_set))
+
+		# for virtual media the physical album password is included in the media, and must be taken into account
+		self.media_list = [single_media for single_media in self.media if
+							single_media.album_identifiers_set == album_identifiers_set and single_media.password_identifiers_set == media_identifiers_set]
+		for single_media in self.media_list:
+			if single_media.has_gps_data:
+				self.positions_and_media_in_tree.add_single_media(single_media)
+
+		# process subalbums
+		for subalbum in self.subalbums_list:
+			subalbum.leave_only_content_protected_by(album_identifiers_set, media_identifiers_set)
+			if (
+				self.cache_base == Options.config['by_search_string'] or
+				self.cache_base.find(Options.config['by_search_string']) != 0
+			):
+				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
+		# # search albums:
+		# # - do not process subalbums because they have been already processed
+		# # - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
+		# if (
+		# 	self.cache_base.find(Options.config['by_search_string']) != 0 or
+		# 	self.cache_base == Options.config['by_search_string']
+		# ):
+		# 	# process subalbums
+		# 	for subalbum in self.subalbums_list:
+		# 		subalbum.leave_only_content_protected_by(album_identifiers_set, media_identifiers_set)
+		# 		self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
+		# else:
+		# 	# it's a search album
+		# 	self.subalbums_list = [subalbum for subalbum in self.subalbums_list if
+		# 							subalbum.password_identifiers_set == album_identifiers_set]
+		# 	for subalbum in self.subalbums_list:
+		# 		self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
+
+		if self.complex_combination in list(self.nums_protected_media_in_sub_tree.keys()):
+			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.complex_combination)
+		else:
+			self.num_media_in_sub_tree = 0
+		message("album worked!", self.cache_base, 5)
+		back_level()
+
+
+	def generate_protected_content_albums(self):
+		protected_albums = {}
+		for complex_identifiers_combination in self.nums_protected_media_in_sub_tree.used_password_identifiers():
+			next_level()
+			album_identifiers_combination, media_identifiers_combination = complex_identifiers_combination.split(',')
+			album_identifiers_combination_set = convert_combination_to_set(album_identifiers_combination)
+			message("working with complex combination...", album_identifiers_combination + "," + media_identifiers_combination, 5)
+
+			identifiers_combination_set = convert_combination_to_set(media_identifiers_combination)
+			protected_albums[complex_identifiers_combination] = self.copy()
+			protected_albums[complex_identifiers_combination].leave_only_content_protected_by(album_identifiers_combination_set, identifiers_combination_set)
+			indented_message("complex combination worked out!", album_identifiers_combination + "," + media_identifiers_combination, 4)
+			back_level()
+		return protected_albums
+
+	def must_separate_media(self):
+		return Options.config['max_media_in_json_file'] > 0 and len(self.media) > Options.config['max_media_in_json_file']
+
+	def must_separate_positions(self):
+		return Options.config['max_media_from_positions_in_json_file'] > 0 and self.positions_and_media_in_tree.count_media() > Options.config['max_media_from_positions_in_json_file']
+
+	def to_json_file(self, json_name, positions_json_name, media_json_name, symlinks, positions_symlinks, media_symlinks, complex_identifiers_combination = None):
+		save_begin = "saving album..."
+		save_end = "album saved!"
+		save_positions_begin = "saving positions album..."
+		save_positions_end = "positions album saved!"
+		save_media_begin = "saving media album..."
+		save_media_end = "media album saved!"
+		if complex_identifiers_combination is not None:
+			save_begin = "saving protected album..."
+			save_end = "protected album saved!"
+			save_positions_begin = "saving protected positions album..."
+			save_positions_end = "protected positions album  saved!"
+			save_media_begin = "saving protected media album..."
+			save_media_end = "protected media album  saved!"
+
+		message("sorting album and media...", self.absolute_path, 4)
+		self.sort_subalbums_and_media()
+		indented_message("album and media sorted!", "", 5)
+
+		# media and positions: if few, they can be saved inside the normal json file
+		# otherwise, save them in its own files
+
+		separate_media = self.must_separate_media
+		separate_positions = self.must_separate_positions
+
+		json_file_with_path = os.path.join(Options.config['cache_path'], json_name)
 		if os.path.exists(json_file_with_path) and not os.access(json_file_with_path, os.W_OK):
 			message("FATAL ERROR", json_file_with_path + " not writable, quitting", 0)
 			sys.exit(-97)
-		json_positions_file_with_path = os.path.join(Options.config['cache_path'], self.positions_json_file)
-		if os.path.exists(json_positions_file_with_path) and not os.access(json_positions_file_with_path, os.W_OK):
-			message("FATAL ERROR", json_positions_file_with_path + " not writable, quitting", 0)
-			sys.exit(-97)
-		message("sorting album...", self.absolute_path, 5)
-		self.sort_subalbums_and_media()
-		indented_message("album sorted", self.absolute_path, 4)
-		message("saving album...", self.absolute_path, 5)
-		with open(json_file_with_path, 'w') as filepath:
-			json.dump(self, filepath, cls=PhotoAlbumEncoder)
-		indented_message("album saved", "", 3)
-		message("saving positions album...", "", 5)
-		with open(json_positions_file_with_path, 'w') as filepath:
-				json.dump(self.positions_and_media_in_tree, filepath, cls=PhotoAlbumEncoder)
-		indented_message("positions album saved", "", 3)
+		message(save_begin, "", 5)
+		with open(json_file_with_path, 'w') as file:
+			json.dump(self, file, sep_pos = separate_positions, sep_media = separate_media, cls = PhotoAlbumEncoder)
+		for symlink in symlinks:
+			symlink_with_path = os.path.join(Options.config['cache_path'], symlink)
+			os.symlink(json_file_with_path, symlink_with_path)
+		indented_message(save_end, "", 4)
+
+		if separate_positions:
+			json_positions_file_with_path = os.path.join(Options.config['cache_path'], positions_json_name)
+			if os.path.exists(json_positions_file_with_path) and not os.access(json_positions_file_with_path, os.W_OK):
+				message("FATAL ERROR", json_positions_file_with_path + " not writable, quitting", 0)
+				sys.exit(-97)
+			message(save_positions_begin, "", 5)
+			with open(json_positions_file_with_path, 'w') as positions_file:
+				cache_base_root = self.cache_base.split(Options.config['cache_folder_separator'])[0]
+				json.dump(self.positions_and_media_in_tree, positions_file, type = cache_base_root, cls = PhotoAlbumEncoder)
+			for symlink in positions_symlinks:
+				symlink_with_path = os.path.join(Options.config['cache_path'], symlink)
+				os.symlink(json_positions_file_with_path, symlink_with_path)
+			indented_message(save_positions_end, "", 4)
+
+		if separate_media:
+			json_media_file_with_path = os.path.join(Options.config['cache_path'], media_json_name)
+			if os.path.exists(json_media_file_with_path) and not os.access(json_media_file_with_path, os.W_OK):
+				message("FATAL ERROR", json_media_file_with_path + " not writable, quitting", 0)
+				sys.exit(-97)
+			message(save_media_begin, "", 5)
+			with open(json_media_file_with_path, 'w') as media_file:
+				cache_base_root = self.cache_base.split(Options.config['cache_folder_separator'])[0]
+				json.dump(self.media, media_file, type = cache_base_root, cls = PhotoAlbumEncoder)
+			for symlink in media_symlinks:
+				symlink_with_path = os.path.join(Options.config['cache_path'], symlink)
+				os.symlink(json_media_file_with_path, symlink_with_path)
+			indented_message(save_media_end, "", 4)
 
 	@staticmethod
-	def from_cache(path, album_cache_base):
+	def from_json_files(json_files, json_files_min_mtime):
 		next_level()
-		message("reading album...", path, 5)
-		with open(path, "r") as filepath:
-			dictionary = json.load(filepath)
-		indented_message("album read", path, 5)
+		if len(json_files) == 1:
+			files = "'" + json_files[0] + "'"
+		else:
+			files = "'" + json_files[0] + "' and others"
+		message("reading album from " + str(len(json_files)) + " json files...", files, 5)
+		# json_files is the list of the existing files for that cache base
+		dictionary = None
+		must_process_passwords = False
+		for json_file in json_files:
+			indented_message("reading json file", json_file)
+			with open(json_file, "r") as file_pointer:
+				try:
+					json_file_dict = json.load(file_pointer)
+				except json.decoder.JSONDecodeError:
+					indented_message("not a valid json file: corrupted", json_file, 4)
+					back_level()
+					return [None, True]
+			if "jsonVersion" not in json_file_dict:
+				indented_message("not an album cache hit", "unexistent json_version", 4)
+				Options.set_obsolete_json_version_flag()
+				return [None, True]
+			elif json_file_dict["jsonVersion"] != Options.json_version:
+				indented_message("not an album cache hit", "old json_version value", 4)
+				Options.set_obsolete_json_version_flag()
+				return [None, True]
+
+			codes_combinations = list(json_file_dict['numsProtectedMediaInSubTree'].keys())
+			if '' in codes_combinations and json_file_dict['numsProtectedMediaInSubTree'][''] == 0 and len(codes_combinations) > 0:
+				codes_combinations.pop()
+			if len(codes_combinations) != len(json_files):
+				indented_message("not an album cache hit", "json files number different from numsProtectedMediaInSubTree keys number", 4)
+				back_level()
+				return [None, True]
+
+			if "media" not in json_file_dict:
+				media_json_file = calculate_media_file_name(json_file)
+				if os.path.exists(media_json_file):
+					message("opening and importing media json file...", media_json_file, 4)
+					with open(media_json_file, "r") as media_file_pointer:
+						try:
+							json_file_dict["media"] = json.load(media_file_pointer)
+							message("media json file imported!", "", 4)
+						except json.decoder.JSONDecodeError:
+							indented_message("not an album cache hit: media json file corrupted", media_json_file, 4)
+							back_level()
+							return [None, True]
+				else:
+					message("not an album cache hit: media json file unexisting", media_json_file, 4)
+					back_level()
+					return [None, True]
+
+
+			if "codesComplexCombination" in json_file_dict:
+				for i in range(len(json_file_dict['media'])):
+					album_codes_combination = json_file_dict['codesComplexCombination'].split(',')[0]
+					media_codes_combination = json_file_dict['codesComplexCombination'].split(',')[1]
+					album_identifiers_set = convert_old_codes_set_to_identifiers_set(convert_combination_to_set(album_codes_combination))
+					media_identifiers_set = convert_old_codes_set_to_identifiers_set(convert_combination_to_set(media_codes_combination))
+					if media_identifiers_set is None or album_identifiers_set is None:
+						indented_message("passwords must be processed", "error in going up from code to identifier", 4)
+						must_process_passwords = True
+						break
+					else:
+						json_file_dict['password_identifiers_set'] = album_identifiers_set
+						json_file_dict['media'][i]['password_identifiers_set'] = media_identifiers_set
+						json_file_dict['media'][i]['album_identifiers_set'] = album_identifiers_set
+			else:
+				for i in range(len(json_file_dict['media'])):
+					json_file_dict['media'][i]['password_identifiers_set'] = set()
+					json_file_dict['media'][i]['album_identifiers_set'] = set()
+				json_file_dict['password_identifiers_set'] = set()
+			dictionary = merge_albums_dictionaries_from_json_files(dictionary, json_file_dict)
+
+		indented_message("album read from json files", files, 5)
 		back_level()
 		# generate the album from the json file loaded
 		# subalbums are not generated yet
-		message("converting album to dict from json file...", path, 5)
-		next_level()
-		dictionary = Album.from_dict(dictionary, album_cache_base)
-		if dictionary is not None:
-			message("album converted to dict from json file", path, 4)
+		if dictionary is None:
+			indented_message("json files not usable as a cache hit", files, 4)
+			return [None, True]
 		else:
-			message("json version unexistent or old", path, 4)
-		back_level()
-		return dictionary
+			message("converting album to dict from json files...", files, 5)
+			album = Album.from_dict(dictionary, json_files, json_files_min_mtime)
+			indented_message("album converted to dict from json files", files, 4)
+			return [album, must_process_passwords]
 
 	@staticmethod
-	def from_dict(dictionary, album_cache_base, cripple=True):
+	def from_dict(dictionary, json_files, json_files_min_mtime):
+		must_process_passwords = False
 		if "physicalPath" in dictionary:
 			path = dictionary["physicalPath"]
 		else:
 			path = dictionary["path"]
 		# Don't use cache if version has changed
-		if Options.json_version == 0 or "jsonVersion" not in dictionary or dictionary["jsonVersion"] != Options.json_version:
-			return None
 		album = Album(os.path.join(Options.config['album_path'], path))
-		album.cache_base = album_cache_base
+		album.cache_base = dictionary["cacheBase"]
 		album.json_version = dictionary["jsonVersion"]
-		for media in dictionary["media"]:
-			new_media = Media.from_dict(album, media, os.path.join(Options.config['album_path'], remove_folders_marker(album.baseless_path)))
-			if new_media.is_valid:
-				album.add_media(new_media)
+		if "password_identifiers_set" in dictionary:
+			album.password_identifiers_set = dictionary["password_identifiers_set"]
 
-		if not cripple:
-			# it looks like the following code is never executed
-			for subalbum in dictionary["subalbums"]:
-				album.add_album(Album.from_dict(subalbum, cripple))
+		for single_media_dict in dictionary["media"]:
+			new_media = Media.from_dict(album, single_media_dict, os.path.join(Options.config['album_path'], remove_folders_marker(album.baseless_path)), json_files, json_files_min_mtime)
+			if new_media.is_valid:
+				album.add_single_media(new_media)
+
+		album.cache_base = dictionary["cacheBase"]
+		album.album_ini_mtime = dictionary["albumIniMTime"]
+		album.passwords_marker_mtime = dictionary["passwordMarkerMTime"]
+		if "symlinkCodesAndNumbers" in dictionary:
+			album.symlink_codes_and_numbers = dictionary["symlinkCodesAndNumbers"]
+
 		album.sort_subalbums_and_media()
 
 		return album
 
 
-	def to_dict(self, cripple=True):
+	def to_dict(self, separate_positions, separate_media):
 		self.sort_subalbums_and_media()
 		subalbums = []
-		if cripple:
-			for subalbum in self.subalbums_list:
-				if not subalbum.empty:
-					path_to_dict = trim_base_custom(subalbum.path, self.baseless_path)
-					if path_to_dict == "":
-						path_to_dict = Options.config['folders_string']
 
-					sub_dict = {
-						"path": path_to_dict,
-						"cacheBase": subalbum.cache_base,
-						"date": subalbum.date_string,
-						# "positionsAndMediaInTree": subalbum.positions_and_media_in_tree,
-						"numPositionsInTree": len(subalbum.positions_and_media_in_tree),
-						"numMediaInSubTree": subalbum.num_media_in_sub_tree
-					}
-					if hasattr(subalbum, "center"):
-						sub_dict["center"] = subalbum.center
-					if hasattr(subalbum, "name"):
-						sub_dict["name"] = subalbum.name
-					if hasattr(subalbum, "alt_name"):
-						sub_dict["altName"] = subalbum.alt_name
-					if hasattr(subalbum, "words"):
-						sub_dict["words"] = subalbum.words
-					if hasattr(subalbum, "unicode_words"):
-						sub_dict["unicodeWords"] = subalbum.unicode_words
-					subalbums.append(sub_dict)
+		for subalbum in self.subalbums_list:
+			if not subalbum.empty:
+				path_to_dict = trim_base_custom(subalbum.path, self.baseless_path)
+				if path_to_dict == "":
+					path_to_dict = Options.config['folders_string']
 
-		else:
-			# it looks like the following code is never executed
-			for subalbum in self.subalbums_list:
-				if not subalbum.empty:
-					subalbums.append(subalbum)
+				sub_dict = {
+					"path": path_to_dict,
+					"cacheBase": subalbum.cache_base,
+					"date": subalbum.date_string,
+					# "positionsAndMediaInTree": subalbum.positions_and_media_in_tree,
+					"numPositionsInTree": len(subalbum.positions_and_media_in_tree.positions),
+					"numMediaInSubTree": subalbum.num_media_in_sub_tree,
+					# "numsProtectedMediaInSubTree": subalbum.nums_protected_media_in_sub_tree
+				}
+				nums_protected_by_code = {}
+				for complex_identifiers_combination in list(subalbum.nums_protected_media_in_sub_tree.keys()):
+					if complex_identifiers_combination == ',':
+						nums_protected_by_code[''] = subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
+					else:
+						album_identifiers_combination = complex_identifiers_combination.split(',')[0]
+						media_identifiers_combination = complex_identifiers_combination.split(',')[1]
+						album_codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination)))
+						codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(media_identifiers_combination)))
+						complex_codes_combination = complex_combination(album_codes_combination, codes_combination)
+						nums_protected_by_code[complex_codes_combination] = subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
+				sub_dict["numsProtectedMediaInSubTree"] = nums_protected_by_code
+
+				if hasattr(subalbum, "center"):
+					sub_dict["center"] = subalbum.center
+				if hasattr(subalbum, "name"):
+					sub_dict["name"] = subalbum.name
+				if hasattr(subalbum, "alt_name"):
+					sub_dict["altName"] = subalbum.alt_name
+				if hasattr(subalbum, "words"):
+					sub_dict["words"] = subalbum.words
+				if hasattr(subalbum, "unicode_words"):
+					sub_dict["unicodeWords"] = subalbum.unicode_words
+				subalbums.append(sub_dict)
 
 		path_without_folders_marker = remove_folders_marker(self.path)
 
@@ -380,15 +642,22 @@ class Album(object):
 		by_search_position = path_to_dict.find(Options.config['by_search_string'])
 		if not path_to_dict:
 			path_to_dict = Options.config['folders_string']
-		elif path_to_dict and by_date_position == -1 and by_gps_position == -1 and by_search_position == -1 and self.cache_base != "root" and folder_position != 0:
+		elif (
+			path_to_dict and
+			by_date_position == -1 and
+			by_gps_position == -1 and
+			by_search_position == -1 and
+			self.cache_base != "root" and
+			folder_position != 0
+		):
 			path_to_dict = Options.config['folders_string'] + '/' + path_to_dict
 
-		ancestors_cache_base = list()
+		# ancestors_cache_base = list()
 		ancestors_names = list()
-		ancestors_center = list()
+		ancestors_centers = list()
 		_parent = self
 		while True:
-			ancestors_cache_base.append(_parent.cache_base)
+			# ancestors_cache_base.append(_parent.cache_base)
 
 			if hasattr(_parent, "alt_name"):
 				ancestors_names.append(_parent.alt_name)
@@ -396,16 +665,18 @@ class Album(object):
 				ancestors_names.append(_parent.name)
 
 			if hasattr(_parent, "center"):
-				ancestors_center.append(_parent.center)
+				ancestors_centers.append(_parent.center)
 			else:
-				ancestors_center.append("")
+				ancestors_centers.append("")
 
-			if _parent.parent is None:
+			if _parent.parent_cache_base is None:
 				break
-			_parent = _parent.parent
-		ancestors_cache_base.reverse()
+			_parent = next((album for album in Options.all_albums if album.cache_base == _parent.parent_cache_base), None)
+			if _parent is None:
+				break
+		# ancestors_cache_base.reverse()
 		ancestors_names.reverse()
-		ancestors_center.reverse()
+		ancestors_centers.reverse()
 
 		dictionary = {
 			"name": self.name,
@@ -413,26 +684,51 @@ class Album(object):
 			"cacheSubdir": self._subdir,
 			"date": self.date_string,
 			"subalbums": subalbums,
-			"media": self.media_list,
 			"cacheBase": self.cache_base,
-			"ancestorsCacheBase": ancestors_cache_base,
+			# "ancestorsCacheBase": ancestors_cache_base,
 			"ancestorsNames": ancestors_names,
-			"ancestorsCenter": ancestors_center,
 			"physicalPath": path_without_folders_marker,
 			"numMediaInSubTree": self.num_media_in_sub_tree,
-			"numMediaInAlbum": self.num_media_in_album,
-			"numPositionsInTree": len(self.positions_and_media_in_tree),
-			# "positionsAndMediaInTree": self.positions_and_media_in_tree,
+			# "numsProtectedMediaInSubTree": self.nums_protected_media_in_sub_tree,
+			"numPositionsInTree": len(self.positions_and_media_in_tree.positions),
+			"albumIniMTime": self.album_ini_mtime,
+			"passwordMarkerMTime": self.passwords_marker_mtime,
 			"jsonVersion": Options.json_version
 		}
+		nums_protected_by_code = {}
+		for complex_identifiers_combination in list(self.nums_protected_media_in_sub_tree.keys()):
+			if complex_identifiers_combination == ',':
+				nums_protected_by_code[''] = self.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
+			else:
+				album_identifiers_combination = complex_identifiers_combination.split(',')[0]
+				media_identifiers_combination = complex_identifiers_combination.split(',')[1]
+				album_codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination)))
+				codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(media_identifiers_combination)))
+				complex_codes_combination = complex_combination(album_codes_combination, codes_combination)
+				nums_protected_by_code[complex_codes_combination] = self.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
+		dictionary["numsProtectedMediaInSubTree"] = nums_protected_by_code
+		if self.complex_combination != '':
+			album_identifiers_combination = self.complex_combination.split(',')[0]
+			media_identifiers_combination = self.complex_combination.split(',')[1]
+			album_codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination)))
+			codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(media_identifiers_combination)))
+			dictionary["codesComplexCombination"] = complex_combination(album_codes_combination, codes_combination)
+		if not separate_positions:
+			dictionary["positionsAndMediaInTree"] = self.positions_and_media_in_tree
+		if not separate_media:
+			dictionary["media"] = self.media_list
+		else:
+			dictionary["numMedia"] = len(self.media_list)
+		if hasattr(self, "symlink_codes_and_numbers"):
+			dictionary["symlinkCodesAndNumbers"] = self.symlink_codes_and_numbers
 		if hasattr(self, "center"):
 			dictionary["center"] = self.center
 		if hasattr(self, "name"):
 			dictionary["name"] = self.name
 		if hasattr(self, "alt_name"):
 			dictionary["altName"] = self.alt_name
-		if self.cache_base == Options.config['folders_string']:
-			dictionary["numPoints"] = len(self.positions_and_media_in_tree)
+		if self.cache_base.find(Options.config['by_gps_string']) == 0:
+			dictionary["ancestorsCenters"] = ancestors_centers
 
 		return dictionary
 
@@ -460,8 +756,7 @@ class Album(object):
 					break
 
 		# respect alphanumeric characters, substitute non-alphanumeric (but not slashes) with underscore
-		# subalbum_or_media_path = "".join([c if c.isalnum() or c in ['/', '-', '.'] else "_" for c in subalbum_or_media_path])
-		subalbum_or_media_path = switch_to_lowercase(remove_accents(remove_all_but_alphanumeric_chars_dashes_slashes_dots(subalbum_or_media_path)))
+		subalbum_or_media_path = switch_to_lowercase(remove_accents(remove_all_but_alphanumeric_chars_dashes_slashes(subalbum_or_media_path)))
 
 		# subalbums: convert the character which is used as slash replacement
 		if media_file_name is None:
@@ -509,30 +804,172 @@ class Album(object):
 		return subalbum_or_media_path
 
 
+class Position(object):
+	def __init__(self, single_media):
+		self.lng = single_media.longitude
+		self.lat = single_media.latitude
+		self.mediaNameList = [single_media]
+
+	def belongs(self, single_media):
+		# checks whether the single media given as argument can belong to the position
+		return self.lng == single_media.longitude and self.lat == single_media.latitude
+
+	def add(self, single_media):
+		# the media to add is supposed to have the same lat and lng as the position
+		self.mediaNameList.append(single_media)
+
+	def copy(self):
+		new_position = Position(self.mediaNameList[0])
+		new_position.mediaNameList = self.mediaNameList[:]
+		return new_position
+
+
+class Positions(object):
+	def __init__(self, single_media, positions = None):
+		self.positions = []
+		if single_media is not None:
+			self.add_single_media(single_media)
+		elif positions is not None:
+			self.merge(positions)
+
+	def add_position(self, position):
+		match = False
+		for index, _position in enumerate(self.positions):
+			if position.lat == _position.lat and position.lng == _position.lng:
+				self.positions[index].mediaNameList.extend(position.mediaNameList)
+				match = True
+				break
+		if not match:
+			self.positions.append(position.copy())
+
+	def merge(self, positions):
+		# adds the media position and name to the positions list received as second argument
+		for position in positions.positions:
+			self.add_position(position)
+
+	def add_single_media(self, single_media):
+		added = False
+		for position in self.positions:
+			if position.belongs(single_media):
+				position.add(single_media)
+				added = True
+				break
+		if not added:
+			self.add_position(Position(single_media))
+
+	def remove_empty_positions(self):
+		self.positions = [position for position in self.positions if len(position.mediaNameList) > 0]
+
+	def to_dict(self, type_string = None):
+		positions = []
+		for position in self.positions:
+			position_dict = {
+				'lat': position.lat,
+				'lng': position.lng,
+				'mediaNameList': []
+			}
+			for single_media in position.mediaNameList:
+				media_album_cache_base = single_media.album.cache_base
+				if type_string == Options.config['by_date_string']:
+					media_album_cache_base = single_media.day_album_cache_base
+				elif type_string == Options.config['by_gps_string']:
+					media_album_cache_base = single_media.gps_album_cache_base
+				position_dict['mediaNameList'].append({
+					'cacheBase': single_media.cache_base,
+					'albumCacheBase': media_album_cache_base,
+					'foldersCacheBase': single_media.album.cache_base
+					# 'passwordsMd5': list(single_media.passwords_md5)
+				})
+			positions.append(position_dict)
+
+		return positions
+
+	def copy(self):
+		new_positions = Positions(None)
+		new_positions.positions = [position.copy() for position in self.positions]
+		return new_positions
+
+	def count_media(self):
+		count = 0
+		for position in self.positions:
+			count += len(position.mediaNameList)
+		return count
+
+
+class NumsProtected(object):
+	def __init__(self):
+		self.nums_protected = {}
+		self.nums_protected[','] = 0
+
+	def increment(self, complex_identifiers_combination):
+		try:
+			self.nums_protected[complex_identifiers_combination] += 1
+		except KeyError:
+			self.nums_protected[complex_identifiers_combination] = 0
+			self.nums_protected[complex_identifiers_combination] += 1
+
+	def value(self, complex_identifiers_combination):
+		return self.nums_protected[complex_identifiers_combination]
+
+	def keys(self):
+		return list(self.nums_protected.keys())
+
+	def non_trivial_keys(self):
+		return [key for key in list(self.keys()) if key != ',']
+
+	def merge(self, nums_protected):
+		for complex_identifiers_combination in list(nums_protected.keys()):
+			try:
+				self.nums_protected[complex_identifiers_combination] += nums_protected.nums_protected[complex_identifiers_combination]
+			except KeyError:
+				self.nums_protected[complex_identifiers_combination] = 0
+				self.nums_protected[complex_identifiers_combination] += nums_protected.nums_protected[complex_identifiers_combination]
+
+	def used_password_identifiers(self):
+		keys = self.non_trivial_keys()
+		keys = sorted(sorted(keys), key = lambda single_key: len(single_key.split('-')))
+		return keys
+
+	def copy(self):
+		return copy.deepcopy(self)
+
+
 class Media(object):
-	def __init__(self, album, media_path, thumbs_path=None, attributes=None):
-		if attributes is not None:
+	def __init__(self, album, media_path, json_files, json_files_min_mtime, thumbs_path = None, dictionary = None):
+		self.password_identifiers_set = set()
+		self.album_identifiers_set = set()
+		if dictionary is not None:
 			# media generation from file
-			self.generate_media_from_cache(album, media_path, attributes)
+			self.generate_media_from_cache(album, media_path, dictionary)
 		else:
 			 # media generation from json cache
-			 self.generate_media_from_file(album, media_path, thumbs_path)
+			 self.generate_media_from_file(album, media_path, thumbs_path, json_files, json_files_min_mtime)
 
-	def generate_media_from_cache(self, album, media_path, attributes):
+
+	def generate_media_from_cache(self, album, media_path, dictionary):
 		self.album = album
 		self.media_path = media_path
 		self.media_file_name = remove_album_path(media_path)
 		dirname = os.path.dirname(media_path)
 		self.folders = remove_album_path(dirname)
 		self.album_path = os.path.join('albums', self.media_file_name)
-		self.cache_base = album.generate_cache_base(trim_base_custom(media_path, album.absolute_path), self.media_file_name)
+		self.cache_base = dictionary['cacheBase']
+		self.mime_type = dictionary['mimeType']
+		if "password_identifiers_set" in dictionary:
+			self.password_identifiers_set = dictionary['password_identifiers_set']
+		else:
+			self.password_identifiers_set = set()
+		if "album_identifiers_set" in dictionary:
+			self.album_identifiers_set = dictionary['album_identifiers_set']
+		else:
+			self.album_identifiers_set = set()
 
 		self.is_valid = True
 
-		self._attributes = attributes
-		return
+		self._attributes = dictionary
 
-	def generate_media_from_file(self, album, media_path, thumbs_path):
+
+	def generate_media_from_file(self, album, media_path, thumbs_path, json_files, json_files_min_mtime):
 		next_level()
 		message("entered Media init", "", 5)
 		self.album = album
@@ -564,49 +1001,68 @@ class Media(object):
 		self._attributes["dateTimeDir"] = dir_mtime
 		self._attributes["mediaType"] = "photo"
 
-		message("opening media file...", "", 5)
-		media_path_pointer = open(media_path, 'rb')
-		indented_message("media file opened!", "", 5)
+		self.mime_type = magic.from_file(media_path, mime = True)
 
-		image = None
-		try:
+		# temporary fix for "ISO Media, MPEG-4 (.MP4) for SonyPSP" files whose mime type is incorrectly reported as audio/mp4
+		# TO DO: remove when libmagic1's Bug#941420 is fixed
+		if self.mime_type == "audio/mp4":
+			self.mime_type = "video/mp4"
+
+		if self.mime_type.find("image/") == 0:
+			indented_message("it's an image!", "", 5)
+			message("opening image file...", "", 5)
+			media_path_pointer = open(media_path, 'rb')
 			next_level()
-			message("opening media with PIL...", "", 5)
-			image = Image.open(media_path_pointer)
-		except KeyboardInterrupt:
-			raise
-		except IOError:
-			indented_message("Image.open() raised IOError, could be a video", "", 5)
-		except ValueError:
-			# PIL cannot read this file (seen for .xpm file)
-			# next lines will detect that the image is invalid
-			indented_message("ValueError when Image.open(), could be a video", "", 5)
-		else:
-			indented_message("media opened with PIL!", "", 5)
+			message("opening the image with PIL...", "", 5)
+			image = None
+			try:
+				image = Image.open(media_path_pointer)
+			except IOError:
+				indented_message("PIL IOError opening the image", "", 5)
+				self.is_valid = False
+			except ValueError:
+				# PIL cannot read this file (seen for .xpm file)
+				# next lines will detect that the image is invalid
+				indented_message("PIL ValueError opening the image", "", 5)
+				self.is_valid = False
+			except OSError:
+				# PIL throws this exceptcion with svg files
+				indented_message("PIL OSError opening the image", "is it an svg image?", 5)
+				self.is_valid = False
+			else:
+				indented_message("media opened with PIL!", "", 5)
 
-		if self.is_valid:
 			if isinstance(image, Image.Image):
+				if Options.config['copy_exif_into_reductions']:
+					try:
+						self.exif_by_PIL = image.info['exif']
+					except KeyError:
+						pass
+
 				self._photo_metadata(image)
-				self._photo_thumbnails(image, media_path, Options.config['cache_path'])
+				self._photo_thumbnails(image, media_path, Options.config['cache_path'], json_files, json_files_min_mtime)
 				if self.has_gps_data:
 					message("looking for geonames...", "", 5)
 					self.get_geonames()
-			else:
-				# try with video detection
-				self._video_metadata(media_path)
-				if self.is_video:
-					self._video_transcode(thumbs_path, media_path)
-					if self.is_valid:
-						self._video_thumbnails(thumbs_path, media_path)
+			back_level()
+			media_path_pointer.close()
+		elif self.mime_type.find("video/") == 0:
+			# try with video detection
+			self._video_metadata(media_path)
+			if self.is_video:
+				self._video_transcode(thumbs_path, media_path)
+				if self.is_valid:
+					self._video_thumbnails(thumbs_path, media_path, json_files, json_files_min_mtime)
 
-						if self.has_gps_data:
-							message("looking for geonames...", "", 5)
-							self.get_geonames()
-				else:
-					indented_message("error transcodind, not a video?", "", 5)
-					self.is_valid = False
-		back_level()
-		media_path_pointer.close()
+					if self.has_gps_data:
+						message("looking for geonames...", "", 5)
+						self.get_geonames()
+			else:
+				indented_message("error transcoding, not a video?", "", 5)
+				self.is_valid = False
+		else:
+			indented_message("not an image nor a video", "mime type = " + self.mime_type, 5)
+			self.is_valid = False
 		back_level()
 		return
 
@@ -637,26 +1093,6 @@ class Media(object):
 
 		self._attributes["metadata"]["size"] = image.size
 		self._orientation = 1
-
-		# try:
-		# 	_exif_exiftool = self._photo_metadata_by_exiftool(image)
-		# 	print('exiftool')
-		# 	print(json.dumps(_exif_exiftool, indent = 2))
-		# except:
-		# 	pass
-		#
-		# try:
-		# 	print('exifread')
-		# 	_exif_exifread = self._photo_metadata_by_exifread(image)
-		# 	print(json.dumps(_exif_exifread, indent = 2))
-		# except:
-		# 	pass
-		#
-		#
-		# _exif_PIL = self._photo_metadata_by_PIL(image)
-		# print('PIL')
-		# _exif_PIL["MakerNote"] = ""
-		# print(json.dumps(_exif_PIL, indent = 2))
 
 		_exif = {}
 		used_tool = ""
@@ -812,8 +1248,6 @@ class Media(object):
 			indented_message("metadata values from album.ini added to photo...", "", 5)
 			back_level()
 
-		# pprint(self._attributes)
-
 
 	def _photo_metadata_by_PIL(self, image):
 		try:
@@ -859,15 +1293,11 @@ class Media(object):
 				if gps_latitude and gps_latitude_ref and gps_longitude and gps_longitude_ref:
 					exif["GPSLatitude"] = Metadata.convert_tuple_to_degrees_decimal(gps_latitude, gps_latitude_ref)
 					exif["GPSLatitudeRef"] = gps_latitude_ref
-					# exif["GPSLatitudeMS"] = Metadata.convert_to_degrees_minutes_seconds(gps_latitude, gps_latitude_ref)
 					exif["GPSLongitude"] = Metadata.convert_tuple_to_degrees_decimal(gps_longitude, gps_longitude_ref)
 					exif["GPSLongitudeRef"] = gps_longitude_ref
-					# exif["GPSLongitudeMS"] = Metadata.convert_to_degrees_minutes_seconds(gps_longitude, gps_longitude_ref)
 			else:
 				_exif[decoded] = value
 				exif[decoded] = _exif[decoded]
-				# if "Orientation" in _exif and _exif["Orientation"] - 1 < len(self._photo_metadata.orientation_list):
-				# 	exif["Orientation"] = self._photo_metadata.orientation_list[_exif["Orientation"] - 1]
 				if "ExposureProgram" in _exif and _exif["ExposureProgram"] < len(self._photo_metadata.exposure_list):
 					exif["ExposureProgram"] = self._photo_metadata.exposure_list[_exif["ExposureProgram"]]
 				if "SpectralSensitivity" in _exif:
@@ -930,13 +1360,13 @@ class Media(object):
 			# if k not in ['JPEGThumbnail', 'TIFFThumbnail', 'Filename', 'EXIF MakerNote']:
 			if k not in ['JPEGThumbnail', 'TIFFThumbnail'] and k[0:10] != 'Thumbnail ':
 				# remove the first word in the key, so that the key has no prefix as with PIL
-				k_modified = unicode(k)
+				k_modified = str(k)
 				for prefix in ['EXIF ', 'GPS ', 'Image ', 'Interoperability ', 'MakerNote ']:
 					if k[0:len(prefix)] == prefix:
-						k_modified = unicode(k[len(prefix):])
+						k_modified = str(k[len(prefix):])
 						break
 				try:
-					exif[k_modified] = unicode(exif_all_tags[k])
+					exif[k_modified] = str(exif_all_tags[k])
 					# exifread returs some value as a fraction, convert it to a float
 					position = exif[k_modified].find('/')
 					if position > -1:
@@ -986,7 +1416,7 @@ class Media(object):
 
 
 
-	def _photo_thumbnails(self, image, photo_path, thumbs_path):
+	def _photo_thumbnails(self, image, photo_path, thumbs_path, json_files, json_files_min_mtime):
 		# give image the correct orientation
 		try:
 			mirror = image
@@ -1013,10 +1443,44 @@ class Media(object):
 				mirror = image.transpose(Image.ROTATE_90)
 			image = mirror
 		except IOError:
-			# https://github.com/paolobenve/myphotoshare/issues/46: some image may raise this exception
+			# https://gitlab.com/paolobenve/myphotoshare/issues/46: some image may raise this exception
 			message("WARNING: Photo couldn't be trasposed", photo_path, 2)
 
-		self._photo_thumbnails_cascade(image, photo_path, thumbs_path)
+		self._photo_thumbnails_cascade(image, photo_path, thumbs_path, json_files, json_files_min_mtime)
+
+		if self.mime_type in Options.config['browser_unsupported_mime_types']:
+			# convert the original image to jpg because the browser won't be able to show it
+			message("browser unsupported mime type", "", 4)
+			next_level()
+			album_prefix = remove_folders_marker(self.album.cache_base) + Options.config["cache_folder_separator"]
+			if album_prefix == Options.config["cache_folder_separator"]:
+				album_prefix = ""
+			thumbs_path_with_subdir = os.path.join(thumbs_path, self.album.subdir)
+			converted_path_without_cache_path = os.path.join(self.album.subdir, album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.jpg")
+			converted_path = os.path.join(thumbs_path_with_subdir, album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.jpg")
+
+			image_jpg = image.convert('RGB')
+			try:
+				message("saving the original image as jpg...", converted_path_without_cache_path, 4)
+				if hasattr(image, 'exif_by_PIL'):
+					image.save(converted_path, quality=95, exif=exif)
+				else:
+					image.save(converted_path, quality=95)
+				indented_message("original image saved as jpg!", "", 4)
+			except OSError:
+				indented_message("error saving the original image as jpg", "", 4)
+				# this is when the image has transparecy, jpg cannot handel it -> save as png
+				# note: png doesn't know exif data
+				converted_path_without_cache_path = os.path.join(self.album.subdir, album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.png")
+				message("saving the original image as png...", converted_path_without_cache_path, 4)
+				converted_path = os.path.join(thumbs_path_with_subdir, album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.png")
+				if hasattr(image, 'exif_by_PIL'):
+					image.save(converted_path, compress_level = 9, exif=exif)
+				else:
+					image.save(converted_path, compress_level = 9)
+				indented_message("original image saved as png!", "", 4)
+			self.converted_path = converted_path_without_cache_path
+			back_level()
 
 
 	@staticmethod
@@ -1029,16 +1493,16 @@ class Media(object):
 			thumb_type == "fixed_height" and
 			image_width > image_height
 		):
-			verdict = (corrected_thumb_size < image_height)
+			veredict = (corrected_thumb_size < image_height)
 		elif thumb_type == "square":
 			min_image_size = min(image_width, image_height)
-			verdict = (corrected_thumb_size < min_image_size)
+			veredict = (corrected_thumb_size < min_image_size)
 		else:
-			verdict = (corrected_thumb_size < max_image_size)
-		return verdict
+			veredict = (corrected_thumb_size < max_image_size)
+		return veredict
 
 
-	def generate_all_thumbnails(self, reduced_size_images, photo_path, thumbs_path):
+	def generate_all_thumbnails(self, reduced_size_images, photo_path, thumbs_path, json_files, json_files_min_mtime):
 		if Options.thumbnail_types_and_sizes_list is None:
 			Options.thumbnail_types_and_sizes_list = list(thumbnail_types_and_sizes().items())
 
@@ -1050,26 +1514,24 @@ class Media(object):
 				for thumb_or_reduced_size_image in thumbs_and_reduced_size_images:
 					index += 1
 					if index == last_index or Media._thumbnail_is_smaller_than(thumb_or_reduced_size_image, thumb_size, thumb_type, mobile_bigger):
-						thumb = self.reduce_size_or_make_thumbnail(thumb_or_reduced_size_image, photo_path, thumbs_path, thumb_size, thumb_type, mobile_bigger)
+						thumb = self.reduce_size_or_make_thumbnail(thumb_or_reduced_size_image, photo_path, thumbs_path, thumb_size, json_files, json_files_min_mtime, thumb_type, mobile_bigger)
 						thumbs_and_reduced_size_images = [thumb] + thumbs_and_reduced_size_images
 						break
 
-
-
-	def _photo_thumbnails_cascade(self, image, photo_path, thumbs_path):
-		# this function calls self.reduce_size_or_make_thumbnail() with the proper image self.reduce_size_or_make_thumbnail() needs
+	def _photo_thumbnails_cascade(self, image, photo_path, thumbs_path, json_files, json_files_min_mtime):
+		# this function calls self.reduce_size_or_make_thumbnail() with the proper image needed by self.reduce_size_or_make_thumbnail()
 		# so that the thumbnail doesn't get blurred
 		reduced_size_image = image
 		reduced_size_images = []
 
 		message("checking reduced sizes", "", 5)
 		for thumb_size in Options.config['reduced_sizes']:
-			reduced_size_image = self.reduce_size_or_make_thumbnail(reduced_size_image, photo_path, thumbs_path, thumb_size)
+			reduced_size_image = self.reduce_size_or_make_thumbnail(reduced_size_image, photo_path, thumbs_path, thumb_size, json_files, json_files_min_mtime)
 			reduced_size_images = [reduced_size_image] + reduced_size_images
 		indented_message("reduced sizes checked!", "", 5)
 
 		message("checking thumbnails", "", 5)
-		self.generate_all_thumbnails(reduced_size_images, photo_path, thumbs_path)
+		self.generate_all_thumbnails(reduced_size_images, photo_path, thumbs_path, json_files, json_files_min_mtime)
 		indented_message("thumbnails checked!", "", 5)
 
 
@@ -1133,7 +1595,8 @@ class Media(object):
 					return np.mean(np.asarray(positions)).tolist()
 
 
-	def reduce_size_or_make_thumbnail(self, start_image, original_path, thumbs_path, thumb_size, thumb_type="", mobile_bigger=False):
+	def reduce_size_or_make_thumbnail(self, start_image, original_path, thumbs_path, thumb_size, json_files, json_files_min_mtime, thumb_type="", mobile_bigger=False):
+
 		album_prefix = remove_folders_marker(self.album.cache_base) + Options.config["cache_folder_separator"]
 		if album_prefix == Options.config["cache_folder_separator"]:
 			album_prefix = ""
@@ -1146,45 +1609,34 @@ class Media(object):
 			media_thumb_size = int(round(media_thumb_size * Options.config['mobile_thumbnail_factor']))
 			album_thumb_size = int(round(album_thumb_size * Options.config['mobile_thumbnail_factor']))
 		thumb_path = os.path.join(thumbs_path_with_subdir, album_prefix + photo_cache_name(self, thumb_size, thumb_type, mobile_bigger))
-		# if the reduced image/thumbnail is there and is valid, exit immediately
-		json_file = os.path.join(thumbs_path, self.album.json_file)
-		json_file_exists = os.path.exists(json_file)
+
 		_is_thumbnail = Media.is_thumbnail(thumb_type)
+
 		next_level()
-		message("checking reduction/thumbnail", thumb_path, 5)
-		if (
-			os.path.exists(thumbs_path_with_subdir) and
-			os.path.exists(thumb_path) and
-			file_mtime(thumb_path) >= self.datetime_file and
-			(not json_file_exists or file_mtime(thumb_path) < file_mtime(json_file)) and
-			(
-				not _is_thumbnail and not Options.config['recreate_reduced_photos'] or
-				_is_thumbnail and not Options.config['recreate_thumbnails']
-			)
+		message("checking reduction/thumbnail...", thumb_path, 5)
+		if not os.path.exists(thumbs_path_with_subdir):
+			indented_message("unexistent thumbnails subdir", thumbs_path_with_subdir, 5)
+		elif not os.path.exists(thumb_path):
+			indented_message("unexistent reduction/thumbnail", thumb_path, 5)
+		elif file_mtime(thumb_path) < self.datetime_file:
+			indented_message("reduction/thumbnail older than media date time", thumb_path, 5)
+		elif json_files_min_mtime is not None and file_mtime(thumb_path) >= json_files_min_mtime:
+			files = "'" + json_files[0] + "' and others"
+			json_file = os.path.join(thumbs_path, self.album.json_file)
+			indented_message("reduction/thumbnail newer than json files", thumb_path + ", " + files, 5)
+		elif (
+			not _is_thumbnail and Options.config['recreate_reduced_photos'] or
+			_is_thumbnail and Options.config['recreate_thumbnails']
 		):
+			indented_message("some option change requests recreation", "", 5)
+		else:
+			# the reduced image/thumbnail is there and is valid, exit immediately
 			indented_message("reduction/thumbnail OK, skipping", "", 5)
 			back_level()
 			return start_image
 
 		next_level()
-		message("reduction/thumbnail not OK, creating", "", 5)
-		next_level()
-		if not os.path.exists(thumbs_path_with_subdir):
-			message("unexistent subdir", thumbs_path_with_subdir, 5)
-		elif not os.path.exists(thumb_path):
-			message("unexistent reduction/thumbnail", thumb_path, 5)
-		elif file_mtime(thumb_path) < self.datetime_file:
-			message("reduction/thumbnail older than media date time", thumb_path, 5)
-		elif not json_file_exists:
-			message("unexistent json file", json_file, 5)
-		elif file_mtime(thumb_path) >= file_mtime(json_file):
-			message("reduction/thumbnail newer than json file", thumb_path + ", " + json_file, 5)
-		elif not (
-			not _is_thumbnail and not Options.config['recreate_reduced_photos'] or
-			_is_thumbnail and not Options.config['recreate_thumbnails']
-		):
-			message("some option change requests recreation", "", 5)
-		back_level()
+		message("so the reduction/thumbnail is not OK, creating it!", "", 5)
 
 		original_thumb_size = actual_thumb_size
 		info_string = str(original_thumb_size)
@@ -1416,8 +1868,6 @@ class Media(object):
 			else:
 				message("thumbing for media...", "", 5)
 			start_image_copy.thumbnail((actual_thumb_size, actual_thumb_size), Image.ANTIALIAS)
-			if Options.config['copy_exif_into_reductions']:
-				exif = start_image.info['exif']
 			next_level()
 			if not mobile_bigger and original_thumb_size > Options.config['album_thumb_size'] or mobile_bigger and original_thumb_size > int(Options.config['album_thumb_size'] * Options.config['mobile_thumbnail_factor']):
 				message("size reduced (" + str(original_thumb_size) + ")", "", 4)
@@ -1438,10 +1888,7 @@ class Media(object):
 			indented_message("filled", "", 5)
 
 		# the subdir hadn't been created when creating the album in order to avoid creation of empty directories
-		if not os.path.exists(thumbs_path_with_subdir):
-			message("creating unexistent subdir", "", 5)
-			os.makedirs(thumbs_path_with_subdir)
-			indented_message("unexistent subdir created", thumbs_path_with_subdir, 4)
+		make_dir(thumbs_path_with_subdir, "unexistent cache subdir")
 
 		if os.path.exists(thumb_path) and not os.access(thumb_path, os.W_OK):
 			message("FATAL ERROR", thumb_path + " not writable, quitting")
@@ -1464,8 +1911,8 @@ class Media(object):
 			jpeg_quality = Options.config['jpeg_quality']
 			if thumb_type:
 				# use maximum quality for album and media thumbnails
-				jpeg_quality = 100
-			if Options.config['copy_exif_into_reductions']:
+				jpeg_quality = 95
+			if hasattr(start_image, 'exif_by_PIL'):
 				start_image_copy_for_saving.save(thumb_path, "JPEG", quality=jpeg_quality, exif=exif)
 			else:
 				start_image_copy_for_saving.save(thumb_path, "JPEG", quality=jpeg_quality)
@@ -1476,7 +1923,7 @@ class Media(object):
 				msg = "album thumbnail saved"
 			else:
 				msg = "media thumbnail saved"
-			if Options.config['copy_exif_into_reductions']:
+			if hasattr(start_image, 'exif_by_PIL'):
 				msg += " with exif data"
 			message(msg, "", 4)
 			back_level()
@@ -1492,7 +1939,7 @@ class Media(object):
 		except IOError:
 			message("saving (2nd try)...", info_string, 5)
 			try:
-				if Options.config['copy_exif_into_reductions']:
+				if hasattr(start_image, 'exif_by_PIL'):
 					start_image_copy_for_saving.convert('RGB').save(thumb_path, "JPEG", quality=Options.config['jpeg_quality'], exif=exif)
 				else:
 					start_image_copy_for_saving.convert('RGB').save(thumb_path, "JPEG", quality=Options.config['jpeg_quality'])
@@ -1503,7 +1950,7 @@ class Media(object):
 					msg = "saved for subalbums (2nd try, " + str(original_thumb_size) + ")"
 				else:
 					msg = "saved for media (2nd try, " + str(original_thumb_size) + ")"
-				if Options.config['copy_exif_into_reductions']:
+				if hasattr(start_image, 'exif_by_PIL'):
 					msg += " with exif data"
 				message(msg, "", 2)
 				back_level()
@@ -1515,8 +1962,9 @@ class Media(object):
 			back_level()
 			back_level()
 			return start_image_copy
-		except:
-			indented_message(str(original_thumb_size) + " thumbnail", "save failure to " + os.path.basename(thumb_path), 1)
+		except Exception as e:
+			print(e)
+			indented_message("thumbnail save failure with error: " + e, str(original_thumb_size) + " -> " + os.path.basename(thumb_path), 2)
 			try:
 				os.unlink(thumb_path)
 			except OSError:
@@ -1526,7 +1974,7 @@ class Media(object):
 			return start_image
 
 
-	def _video_thumbnails(self, thumbs_path, original_path):
+	def _video_thumbnails(self, thumbs_path, original_path, json_files, json_files_min_mtime):
 		(_, tfn) = tempfile.mkstemp()
 		return_code = VideoTranscodeWrapper().call(
 			'-i', original_path,    # original file to extract thumbs from
@@ -1572,7 +2020,7 @@ class Media(object):
 				mirror = image.transpose(Image.ROTATE_90)
 
 		# generate the thumbnails
-		self.generate_all_thumbnails([mirror], original_path, thumbs_path)
+		self.generate_all_thumbnails([mirror], original_path, thumbs_path, json_files, json_files_min_mtime)
 
 		try:
 			os.unlink(tfn)
@@ -1591,9 +2039,7 @@ class Media(object):
 				message("FATAL ERROR", album_cache_path + " not writable, quitting")
 				sys.exit(-97)
 		else:
-			message("creating still unexistent album cache subdir", "", 5)
-			os.makedirs(album_cache_path)
-			indented_message("still unexistent subdir created", album_cache_path, 4)
+			make_dir(album_cache_path, "unexistent albums cache subdir")
 
 		transcode_path = os.path.join(album_cache_path, album_prefix + video_cache_name(self))
 		# get number of cores on the system, and use all minus one
@@ -1722,7 +2168,6 @@ class Media(object):
 
 	def __str__(self):
 		return self.name
-		# return self.name + ":\n" + str(self.__class__) + ":\n" + str(self.__dict__)
 
 	@property
 	def path(self):
@@ -1737,6 +2182,8 @@ class Media(object):
 		album_prefix = remove_folders_marker(self.album.cache_base) + Options.config["cache_folder_separator"]
 		if album_prefix == Options.config["cache_folder_separator"]:
 			album_prefix = ""
+		# TO DO: the converted image for unsupported browser image types is missing
+
 		if self.is_video:
 			# transcoded video path
 			caches.append(os.path.join(self.album.subdir, album_prefix + video_cache_name(self)))
@@ -1765,6 +2212,8 @@ class Media(object):
 						)
 					)
 				)
+		if hasattr(self, "converted_path"):
+			caches.append(self.converted_path)
 		return caches
 
 	@property
@@ -1886,15 +2335,6 @@ class Media(object):
 		else:
 			return ""
 
-	# def __cmp__(self, other):
-	# 	try:
-	# 		date_compare = cmp(self.date, other.date)
-	# 	except TypeError:
-	# 		date_compare = 1
-	# 	if date_compare == 0:
-	# 		return cmp(self.name, other.name)
-	# 	return date_compare
-
 	def __eq__(self, other):
 		return self.path == other.path
 
@@ -1937,8 +2377,15 @@ class Media(object):
 
 
 	@staticmethod
-	def from_dict(album, dictionary, basepath):
-		del dictionary["date"]
+	def from_dict(album, dictionary, basepath, json_files, json_files_min_mtime):
+		try:
+			del dictionary["date"]
+		except TypeError:
+			# a json file for some test version could bring here
+			media = Media(album, basepath, json_files, json_files_min_mtime, None, dictionary)
+			media.is_valid = False
+			return
+
 		media_path = os.path.join(basepath, dictionary["name"])
 
 		del dictionary["name"]
@@ -1963,8 +2410,8 @@ class Media(object):
 								# year < 1000 incorrectly inserted in json file ("31" instead of "0031")
 								value1 = "0" + value1
 
-		message("processing media from cached album", media_path, 5)
-		return Media(album, media_path, None, dictionary)
+		indented_message("processing media from cached album", media_path, 5)
+		return Media(album, media_path, json_files, json_files_min_mtime, None, dictionary)
 
 
 	def to_dict(self):
@@ -1992,10 +2439,22 @@ class Media(object):
 		media["albumName"] = self.album_path[:len(self.album_path) - len(self.name) - 1]
 		media["foldersCacheBase"] = self.album.cache_base
 		media["cacheSubdir"] = self.album.subdir
+		media["mimeType"] = self.mime_type
+
+		if hasattr(self, "converted_path"):
+			media["convertedPath"] = self.converted_path
+
 		return media
 
 
 class PhotoAlbumEncoder(json.JSONEncoder):
+	# the _init_ function is in order to pass an argument in json.dumps
+	def __init__(self, sep_pos = False, sep_media = False, type = None, **kwargs):
+		super(PhotoAlbumEncoder, self).__init__(**kwargs)
+		self.type = type
+		self.separate_positions = sep_pos
+		self.separate_media = sep_media
+
 	def default(self, obj):
 		if isinstance(obj, datetime):
 			# there was the line:
@@ -2004,8 +2463,14 @@ class PhotoAlbumEncoder(json.JSONEncoder):
 			date = str(obj.year) + '-' + str(obj.month).zfill(2) + '-' + str(obj.day).zfill(2)
 			date = date + ' ' + str(obj.hour).zfill(2) + ':' + str(obj.minute).zfill(2) + ':' + str(obj.second).zfill(2)
 			return date
-		if isinstance(obj, Album) or isinstance(obj, Media):
+		if isinstance(obj, Album):
+			return obj.to_dict(self.separate_positions, self.separate_media)
+		if isinstance(obj, Media):
 			return obj.to_dict()
+		if isinstance(obj, Positions):
+			return obj.to_dict(self.type)
+		if isinstance(obj, set):
+			return list(obj)
 		return json.JSONEncoder.default(self, obj)
 
 
@@ -2029,9 +2494,6 @@ class Metadata(object):
 
 		# With Python2, section names are string. As we retrieve file names as unicode,
 		# we can't find them in the ConfigParser dictionary
-		# @python2
-		if sys.version_info < (3,):
-			name = str(name)
 
 		# Title
 		if album_ini.has_section(name):

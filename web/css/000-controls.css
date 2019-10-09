@@ -101,6 +101,7 @@ a.title-anchor.mobile {
 	float: left;
 	height: 250px;
 	width: 200px;
+	cursor: pointer;
 }
 .album-button-and-caption.slide {
 	border: 3px solid gray;
@@ -241,8 +242,8 @@ a.title-anchor.mobile {
 }
 
 #pinch-container {
-	top: unset;
-	bottom: 15px;
+	top: 15px;
+	bottom: unset;
 	left: unset;
 	right: 15px;
 	position: absolute;
@@ -323,7 +324,7 @@ video {
 	position: relative;
 }
 
-.media-box-inner img {
+.media-box-inner img, .media-box-inner video {
 	max-height: 100%;
 	max-width: 100%;
 	width: auto;
@@ -370,7 +371,7 @@ video {
 	background-color: #000000;
 	font-weight: bold;
 	height: 10px;
-	font-size: 70%;
+	font-size: 80%;
 	line-height: 7px;
 	padding-top: 3px;
 	padding-bottom: 3px;
@@ -388,6 +389,10 @@ video {
 
 .links.hidden {
 	display: none !important;
+}
+
+.link-button {
+	white-space: nowrap;
 }
 
 .metadata {
@@ -430,13 +435,13 @@ video {
 	display: none;
 }
 
-.metadata-show {
+/* .metadata-show {
 	cursor: n-resize;
 }
 
 .metadata-hide {
 	cursor: s-resize;
-}
+} */
 
 .exit-fullscreen {
 	display: none;
@@ -483,6 +488,19 @@ video {
 #error-overlay {
 	background-color: #000000;
 }
+#auth-text {
+	z-index: 2000;
+	border: 2px solid white;
+	height: auto;
+	padding: 1em;
+	width: 95%;
+	background-color: black;
+	opacity: .6;
+}
+#auth-question {
+	font-size: 3em;
+	margin-bottom: 1em;
+}
 #auth-text input {
 	color: rgb(0, 0, 0);
 	background-color: rgb(200, 200, 200);
@@ -490,7 +508,10 @@ video {
 	font-family: inherit;
 	font-size: 2em;
 	font-weight: bold;
-	font-style: italic;
+	margin-right: auto;
+	margin-left: auto;
+	padding: .1em;
+	caret-color: red;
 }
 
 #error-too-many-images {
@@ -559,9 +580,15 @@ video {
 	font-size: 70%;
 }
 
+
+.media-box .menu-map-link {
+	cursor: pointer;
+}
+
 #thumbs a {
 	display: inline-flex;
 	text-decoration: none;
+	cursor: pointer;
 }
 
 .sort img.opaque {
@@ -572,12 +599,10 @@ video {
 	cursor: default;
 }
 
-.sort {
+/* .sort {
 	display: none;
-/*
 	white-space: nowrap;
-*/
-}
+} */
 
 #social, #social:hover {
 	opacity: 0.45;
@@ -598,6 +623,7 @@ video {
 
 ul#right-menu {
 	list-style-type: none;
+	list-style: none;
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
@@ -610,48 +636,70 @@ ul#right-menu {
 }
 
 ul#right-menu li {
-	padding: 0 .5em;
+	/* padding: 0 .5em; */
 	cursor: pointer;
 	font-size: 90%;
+}
+ul#right-menu.expand #search-field {
+	min-width: 14em;
 }
 
 ul#right-menu li.caption, ul#right-menu li:not(.active) {
 	cursor: default;
 }
 
-ul#right-menu li a#menu-icon:hover {
+ul#right-menu span a#menu-icon:hover {
 	background-color: transparent;
 }
 
-ul#right-menu:not(.expand) li:not(#menu-icon) {
+ul#right-menu:not(.expand) li:not(#menu-and-padlock) {
 	display: none !important;
 }
 
-ul#right-menu li#menu-icon, ul#right-menu li#menu-line {
+ul#right-menu span#menu-icon, ul#right-menu li#menu-line {
 	/*float: right;*/
 	display: list-item;
 }
 
-ul#right-menu li#menu-icon, ul#right-menu.expand li {
+ul#right-menu span#menu-icon, ul#right-menu #padlock img, ul#right-menu.expand li {
 	float: none;
 	text-align: right;
 	background-color: black;
+}
+
+ul#right-menu.expand li:not(#menu-and-padlock) {
+	padding: .1em 0;
+}
+
+ul#right-menu span#menu-icon, ul#right-menu #padlock img {
 	padding: .1em .5em;
 }
 
-ul#right-menu {
+ul#right-menu #padlock {
+	float: right;
+	padding: 0;
+	background-color: black;
+	cursor: pointer;
+	display: none;
+}
+
+ul#right-menu.expand {
 	opacity: 0.6;
+	min-width: 15em;
 }
 
 ul#right-menu.expand li {
 	display: list-item;
 	text-align: left;
 	font-style: italic;
+	cursor: pointer;
+	/* position: relative;
+	width: 13em; */
 }
 
-ul#right-menu.expand li#menu-icon {
+/* ul#right-menu.expand span#menu-icon {
 	padding: .3em .7em;
-}
+} */
 ul#right-menu.expand li.caption {
 	/*text-align: left;*/
 	padding-right: 2em;
@@ -660,11 +708,11 @@ ul#right-menu.expand li.caption {
 	font-style: normal;
 }
 
-ul#right-menu.expand li:not(#menu-icon) {
+ul#right-menu.expand li {
 	clear: both;
 }
 
-ul#right-menu li#menu-icon {
+ul#right-menu span#menu-icon {
 	width: 1em;
 	cursor: pointer;
 	float: right;
@@ -696,7 +744,7 @@ ul#right-menu img#search-button {
 	top: 7px;
 }
 
-ul#right-menu.expand li.selected {
+ul#right-menu.expand .selected {
 	background-image: url(../img/ic_check_circle_black_24dp_1x.png);
 	background-repeat: no-repeat;
 	background-position: right;
@@ -706,18 +754,64 @@ ul#right-menu.expand li.dimmed {
 	opacity: 0.2;
 }
 
-ul#right-menu li:not(.active) {
+ul#right-menu.expand li:not(.active, .sub-menu) {
 	color: darkgray;
 }
-ul#right-menu li.active:not(.caption):hover {
+
+ul#right-menu.expand li.active:hover, ul#right-menu #menu-icon:hover, ul#right-menu #padlock img:hover, ul#right-menu #padlock:hover {
 	background-color: gray !important;
 	/* text-shadow: .15ex 0 white; */
-	font-weight: bold;
-	font-size: 80%;
+	/* font-weight: bold;
+	font-size: 80%; */
 }
 
-ul#right-menu li:not(.caption) {
-	padding-left: 1.7em;
-	padding-right: 2em;
+ul#right-menu #padlock img:hover {
+	width: 18px;
+	height: 23px;
+	float: right;
+	padding-bottom: 10px;
 }
+ul#right-menu #padlock:hover {
+	margin-left: 1em;
+	padding-bottom: 0;
+}
+
+ul#right-menu.expand li:not(.caption) {
+	/* padding-left: 1.7em; */
+	/* padding-right: 2em; */
+}
+
+ul#right-menu.expand ul {
+	list-style: none;
+	padding-inline-start: 1em;
+}
+
+ul#right-menu .expandable ul {
+	display: none;
+}
+
 /* end right menu */
+
+/* from https://www.w3schools.com/css/tryit.asp?filename=trycss_buttons_animate3 */
+.button {
+  display: inline-block;
+  padding: 15px 25px;
+  font-size: 24px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
+.button:hover {background-color: #3e8e41}
+
+.button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}

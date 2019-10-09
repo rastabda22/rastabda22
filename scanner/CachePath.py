@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 # do not remove previous line: it's not a comment!
 
-# @python2
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import os.path
 from datetime import datetime
 import hashlib
 import unicodedata
 import unidecode
+from pprint import pprint
 
 import Options
 
@@ -43,13 +40,14 @@ def remove_non_alphabetic_characters(phrase):
 
 	return phrase
 
-def remove_all_but_alphanumeric_chars_dashes_slashes_dots(phrase):
+def remove_all_but_alphanumeric_chars_dashes_slashes(phrase):
 	# normalize unicode, see https://stackoverflow.com/questions/16467479/normalizing-unicode
 	phrase = unicodedata.normalize('NFC', phrase)
 	# convert non-alphabetic characters to spaces
 	new_phrase = ''
 	for c in phrase:
-		new_phrase += c if (c in ['-', '/', '.'] or c.isalpha() or c.isdecimal() or c in Options.config['unicode_combining_marks']) else " "
+		new_phrase += c if (c in ['-', '/'] or c.isalpha() or c.isdecimal() or c in Options.config['unicode_combining_marks']) else " "
+		# new_phrase += c if (c in ['-', '/', '.'] or c.isalpha() or c.isdecimal() or c in Options.config['unicode_combining_marks']) else " "
 	# normalize multiple, leading and trailing spaces
 	phrase = ' '.join(new_phrase.split())
 
@@ -125,9 +123,6 @@ def photo_cache_name(photo, size, thumb_type="", mobile_bigger=False):
 
 def video_cache_name(video):
 	return video.cache_base + Options.config['cache_folder_separator'] + "transcoded_" + Options.config['video_transcode_bitrate'] + "_" + str(Options.config['video_crf']) + ".mp4"
-
-def file_mtime(path):
-	return datetime.fromtimestamp(int(os.path.getmtime(path)))
 
 def last_modification_time(path):
 	maximum = 0

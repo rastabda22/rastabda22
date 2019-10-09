@@ -45,8 +45,8 @@ DEFAULT_MINIFY_CSS="$(sed -nr 's/^\s*css_minifier\s*=\s*(\w+)\s*.*$/\1/p' $DEFAU
 MINIFY_CSS=${MINIFY_CSS:-$DEFAULT_MINIFY_CSS}
 
 echo
-echo Using "$MINIFY_CSS" as CSS minifier
-echo Using "$MINIFY_JS" as JS minifier
+echo "$MINIFY_CSS" set as CSS minifier in $CONF
+echo "$MINIFY_JS" set as JS minifier in $CONF
 
 unixseconds=$(date +%s)
 
@@ -60,16 +60,8 @@ case $MINIFY_JS in
 			exit 1
 		fi
 	;;
-	jsmin2)
-		python2 -m jsmin > /dev/null 2>&1
-		if [ $? -ne 0 ]; then
-			( >&2 echo "'jsmin' for Python2 is not installed. Look for package 'python-jsmin' or 'https://github.com/tikitu/jsmin'" )
-			( >&2 echo "Aborting..." )
-			exit 1
-		fi
-	;;
 	jsmin3)
-		python3 -m jsmin > /dev/null 2>&1
+		python3 -c 'import jsmin' > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
 			( >&2 echo "'jsmin' for Python3 is not installed. Look for package 'python3-jsmin' or 'https://github.com/tikitu/jsmin'" )
 			( >&2 echo "Aborting..." )
@@ -90,6 +82,7 @@ case $MINIFY_JS in
 			( >&2 echo "Aborting..." )
 			exit 1
 		fi
+	;;
 esac
 
 case $MINIFY_CSS in
@@ -109,12 +102,20 @@ case $MINIFY_CSS in
 			exit 1
 		fi
 	;;
+	rcssmin3)
+		python3 -c 'import rcssmin' > /dev/null 2>&1
+		if [ $? -ne 0 ]; then
+			( >&2 echo "'rcssmin' for Python3 is not installed. Look for package 'python3-rcssmin' or 'https://github.com/ndparker/rcssmin'" )
+			( >&2 echo "Aborting..." )
+			exit 1
+		fi
+	;;
 esac
 
 # minify all .js-files
 cd "$PROJECT_DIR/web/js"
 echo
-echo == Minifying js files in js directory ==
+echo == Minifying js files in js directory with $MINIFY_JS ==
 echo
 CAT_LIST=""
 rm -f *.min.js
@@ -135,7 +136,7 @@ while read jsfile; do
 			continue
 		fi
 		;;
-		
+
 		003-mousewheel*)
 		if [ -e /usr/share/javascript/jquery-mousewheel/jquery.mousewheel.min.js ]; then
 			CAT_LIST="$CAT_LIST /usr/share/javascript/jquery-mousewheel/jquery.mousewheel.min.js"
@@ -143,7 +144,7 @@ while read jsfile; do
 			continue
 		fi
 		;;
-		
+
 		004-fullscreen*)
 		# Currently, there is no minified library in the Debian package... So this test is
 		# skipped and will be used in future Debian versions
@@ -176,10 +177,6 @@ while read jsfile; do
 			curl -X POST -s --data-urlencode "input@$jsfile" https://javascript-minifier.com/raw > $newfile
 		;;
 
-		jsmin2)
-			python2 -m jsmin $jsfile > $newfile
-		;;
-
 		jsmin3)
 			python3 -m jsmin $jsfile > $newfile
 		;;
@@ -206,7 +203,7 @@ cat $CAT_LIST > scripts.min.js
 # minify all .css-files
 cd "$PROJECT_DIR/web/css"
 echo
-echo == Minifying css files in css directory ==
+echo == Minifying css files in css directory with $MINIFY_CSS ==
 echo
 rm -f *.min.css
 if [ $? -ne 0 ]; then
@@ -223,6 +220,10 @@ ls -1 *.css | grep -Ev "min.css$" | while read cssfile; do
 
 		cssmin)
 			cssmin < $cssfile > $newfile
+		;;
+
+		rcssmin3)
+			python3 -m rcssmin < $cssfile > $newfile
 		;;
 
 		*)

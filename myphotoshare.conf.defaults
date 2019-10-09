@@ -83,12 +83,12 @@ debug_profile = false
 # permitted values:
 #    web_service : https://cssminifier.com/
 #    cssmin : cssmin (https://github.com/zacharyvoase/cssmin) (Default)
+#    rcssmin3: python3-rcssmin (http://opensource.perlig.de/rcssmin/)
 css_minifier = cssmin
 
 # JavaScript minifier
 # permitted values:
 #    web_service : https://javascript-minifier.com/
-#    jsmin2 : python-jsmin (https://github.com/tikitu/jsmin)
 #    jsmin3 : python3-jsmin (https://github.com/tikitu/jsmin) (Default)
 #    uglifyjs: node-uglify (http://lisperator.net/uglifyjs/)
 js_minifier = jsmin3
@@ -126,8 +126,40 @@ video_crf = 20
 jpeg_quality = 95
 
 # markers that permit not to scan files in folder or whole trees
+################################################################################
+# BEWARE:
+# if you use this feature and don't change this options, the user can know what files you are hiding,
+# and therefore the user could try to access them in the `/albums/` tree
+################################################################################
 exclude_files_marker = .myphotoshare.exclude.files
 exclude_tree_marker = .myphotoshare.exclude.tree
+
+# marker for passwords: put it in the album you want to protect
+# every line is either:
+# - a password identifier: the album and all its subalbums will be protected by the password assigned to the identifier;
+# - a password identifier followed by some of the available flags, comma-separated (or a dash if none), and a pattern (shell wildcards are recognized):
+#     the subalbums/media matched by the pattern will be protected by the password assigned to the identifier
+# The flags:
+# - "ci/cs": case sensitive/insensitive (default: ci)
+# - "part/whole": whole name/part o it (default: part)
+# - "filesonly/dirsonly/both": only check against file names/dir names (default: both)
+################################################################################
+# BEWARE:
+# if you have protected content and don't change this option, the user can know what files you are protecting,
+# and therefore could try to access them in the `/albums/` tree
+################################################################################
+passwords_marker = .myphotoshare.passwords
+
+# password file, relative to the directory of the configuration file
+passwords_file = myphotoshare.passwords
+
+# the cache subdir where the passwords files are stored by the scanner
+# changing it to a more complex value may suppose a stronger security,
+# but it's not so, because this value must be saved in the `options.json` file
+passwords_subdir = pwd
+
+# the prefix for the protected directories where json files are stored
+protected_directories_prefix = protected_
 
 # recreate fixed height media thumbnails if their ratio (width/height) is > 1,
 # in order to get rid of a past bug in thumbnail generator
@@ -177,6 +209,13 @@ num_processors = 1
 
 # Should exif metadata (including copyright info) be copied into all the reductions and thumbnails?
 copy_exif_into_reductions = false
+
+# What is the maximum number of media that will be put in the album json files?
+# 0 = never separate media file
+max_media_in_json_file = 100
+# What is the maximum number of media in positions that will make positions be put in the album json files?
+# 0 = never separate positions file
+max_media_from_positions_in_json_file = 100
 
 ###########################################################
 # scanner and ui options
@@ -284,7 +323,7 @@ use_internal_modernizr = true
 # - keep in cache only one album with more than 1000 media
 # - keep in cache a maximum of 5 albums with 200-999 media
 # - keep in cache all the albums with less than 200 media
-js_cache_levels = [{"numMedia": 10000, "max": 1}, {"numMedia": 2000, "max": 2}, {"numMedia": 1000, "max": 4}, {"numMedia": 200, "max": 20}]
+js_cache_levels = [{"mediaThreshold": 10000, "max": 1}, {"mediaThreshold": 2000, "max": 2}, {"mediaThreshold": 1000, "max": 4}, {"mediaThreshold": 200, "max": 20}]
 
 ###########################################################
 # user interface options

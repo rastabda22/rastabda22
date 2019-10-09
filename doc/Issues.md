@@ -46,14 +46,6 @@ As a result of a pillow bug, exif data could not be read for some photos which h
 
 Oriental languages like chinese do not define easily word separation, so whole word search could thrown no results, try inside word search.
 
-#### python3-exif not present in debian Jessie, still stuck with python2
-
-Due to a bug in PIL `_getexif()`,  since version 3.4beta9 `exifread` (`python3-exifread` package in `debian`) and `exiftool` are used too in order to get the exif metadata from the photos. However, `python3-exifread` is not packaged for `debian jessie`, so we must stick on python2 for the scanner: if you have been able to install `exifread` for python3, simply change "python2" to "python3" in the first line of `scanner/main.py`.
-
-#### Bad dragging of enlarged photos
-
-If a photo is enlarged, dragging works, but in a very rough manner.
-
 #### Slow web site
 
 If there are many images in the album (say > 1000) you may experience slowlyness in the web site. This is expecially true when the photos are geotagged.
@@ -71,3 +63,7 @@ For other web servers/distributions a solution can be found easily.
 Sometimes something inexplicable happens in javascript, and a common reason is the cache: some json files aren't still in the cache, and the correct ones aren't used. Cleaning the cache solves these problems.
 
 The cache can be the browser's one or the web server one.
+
+#### Privacy concern with password implementation
+
+Passwords can be used to protect content, but carefully read the [explication and warnings](Authentication.md).

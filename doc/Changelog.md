@@ -1,3 +1,24 @@
+### version v4.0RC1 (Oct 9, 2019)
+
+* scanner now reports unrecognized file with their mime types
+* when an album has many (according to the corresponding new options) media/positions, they are saved to a separate json file
+  * new option: `max_media_in_json_file`
+  * new option: `max_media_from_positions_in_json_file`
+* `python3` is now used in scanner
+* `python3-magic` is used to detect file types
+* albums and media can be protected with passwords: protected content isn't exposed in the album tree or the cache
+  * new option: `passwords_file`: a file which is read when the options file is read, it defines the passwords and their respective identifiers
+  * new option: `passwords_marker`: the name of the files to put in the albums tree in order to specify the passwords for albums and files
+    * directory and file names can be matched case sensitive/insentitive, whole name/part of it
+  * new option: `passwords_subdir`: the cache subdir where the passwords files are written
+  * new shortcut `u` to unveil protected content
+  * new option `protected_directories_prefix`: the prefix for the protected json files directories
+* new right menu entry: runs an authentication dialog to unveil the protected content; a padlock left to the right menu is shown too
+* when showing a map album, `esc` takes back to the map and the popup
+* right menu: bug fixes and better ordering of the options
+* right menu: new entry that permits to unveil protected content
+* right menu is now of accordion type in order to be always visible on mobile screens
+
 ### version v3.8.2 (May 6, 2019)
 
 * media shown in map popup are now albums, and can be sorted like regular albums
