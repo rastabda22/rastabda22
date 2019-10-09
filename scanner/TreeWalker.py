@@ -1285,7 +1285,7 @@ class TreeWalker:
 			next_level()
 			for pattern_and_password in patterns_and_passwords:
 				if pattern_and_password['what_flag'] == 'filesonly':
-					indented_message("password not added to album", "flags set it for files protections only", 3)
+					indented_message("password not added to album", "flag 'filesonly' prevents applying this pattern to dir names", 3)
 				else:
 					case = "case insentitive"
 					whole = "part of name"
@@ -1539,7 +1539,7 @@ class TreeWalker:
 					# apply the file passwords_md5 and password codes to the media if they match the media name
 					for pattern_and_password in patterns_and_passwords:
 						if pattern_and_password['what_flag'] == 'dirsonly':
-							indented_message("password not added to media", "flags set it for dirs protections only", 3)
+							indented_message("password not added to media", "flag 'dirsonly' prevents applying this pattern to file names", 3)
 						else:
 							case = "case insentitive"
 							whole = "part of name"
