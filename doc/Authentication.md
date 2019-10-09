@@ -7,15 +7,16 @@ Albums and media can be protected by password. Various passwords can be used for
 The passwords cannot be in the album tree: the album tree will have _password_ files (the actual name is set by the option `passwords_marker`), whose lines may be:
 
 * a _password identifier_: the album and all its subalbums will be protected by the password assigned to the identifier; can consist of every non-space character except '-' (dash) and ',' (comma);
-* a _password identifier_ followed by the some and a _pattern_ (shell wildcards are understood): the subalbums/media matched by the pattern will be protected by the password assigned to the identifier;
+* a _password identifier_ followed by the some flag (or a dash if none) and a _pattern_ (shell wildcards are understood): the subalbums/media matched by the pattern will be protected by the password assigned to the identifier;
 
 The _password identifier_ is used to pick the password from a _passwords file_ whose name is set by option `password_file`. The _password file_ is needed because putting the passwords inside the albums would expose them.
 
-The flags are a sequence of at least one of various comma-separated individual flags, without any space withing them:
-* _case sensitive/insensitive_ flag: is either `cs` or `ci`  (default)
-* _whole name/part_ flag: is either `whole` or `part` (default)
+The flags are some of the available flags, comma-separated (or a dash if none), without any space withing them:
+- "ci/cs": case sensitive/insensitive (default: ci)
+- "part/whole": whole name/part o it (default: part)
+- "filesonly/dirsonly/both": only check against file names/dir names (default: both)
 
-The _pattern_ must match the entire file/album name: `jpg` will only match the `jpg` file (that is, probably nothing), in order to match files ending in `jpg` you must use `*.jpg`; in order to match `my journey.jpg` you can use a pattern like `*journey*`. The available patterns are documented at https://docs.python.org/3.4/library/fnmatch.html.
+The _pattern_ will match the entire file/album name or a part of it, according to the "part/whole" flag: if "whole", `jpg` will only match the `jpg` file (that is, probably nothing), in order to match files ending in `jpg` you must use `*.jpg`; if "part", `jpg` will match all the files which begin, contain or end with "jpg";. The available wildcards are documented at https://docs.python.org/3.4/library/fnmatch.html.
 
 The _passwords file_ has many lines, each one has with a _password identifier_ and the corresponding password separated by _spaces_. After the identifier and the following spaces, _everything_ till the end of line is the password, i.e., the password includes the trailing spaces, if any; this is a feature, it is intended to make more secure passwords.
 

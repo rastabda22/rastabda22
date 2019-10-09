@@ -1006,70 +1006,134 @@ class TreeWalker:
 							continue
 						columns = line.split(' ')
 						if len(columns) == 1:
-							if columns[0] == '-':
-								# reset the passwords
-								patterns_and_passwords = []
-								passwords_marker_mtime = None
-								inherited_passwords_identifiers = set()
-								indented_message("passwords reset", "-", 3)
+							# it's a simple identifier: the album and all the subalbums will be protected with the corresponding password
+							identifier = columns[0]
+							indexes = [value['identifier'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
+							if len(indexes) == 0:
+								indented_message("WARNING: using an unknown password identifier", identifier + ": not protecting the directory", 2)
+							elif len(indexes) == 1:
+								password_md5 = indexes[0]['md5']
+								password_code = indexes[0]['code']
+								patterns_and_passwords.append(
+									{
+										"pattern": '*',
+										"case_flag": 'ci',
+										"whole_flag": 'whole',
+										"what_flag": 'both',
+										"identifier": identifier
+									}
+								)
+								indented_message("Directory protection requested", "identifier: " + identifier, 3)
 							else:
-								# it's a simple identifier: the album and all the subalbums will be protected with the corresponding password
-								identifier = columns[0]
-								indexes = [value['identifier'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
-								if len(indexes) == 0:
-									indented_message("WARNING: using an unknown password identifier", identifier + ": not protecting the directory", 2)
-								elif len(indexes) == 1:
-									password_md5 = indexes[0]['md5']
-									password_code = indexes[0]['code']
-									patterns_and_passwords.append(
-										{
-											"pattern": '*',
-											"case_flags": ['ci', 'part'],
-											"identifier": identifier
-										}
-									)
-									indented_message("Directory protection requested", "identifier: " + identifier, 3)
-								else:
-									indented_message("WARNING: password identifier used more than once", identifier + ": not protecting the directory", 2)
+								indented_message("WARNING: password identifier used more than once", identifier + ": not protecting the directory", 2)
 						else:
 							# a password identifier followed by the flags and a file pattern
 							identifier = columns[0]
 							remaining_columns = " ".join(columns[1:]).lstrip().split()
 							flags = remaining_columns[0]
-							flag_list = flags.split(',')
 							case_flag = 'ci'
-							if 'cs' in flag_list:
-								case_flag = 'cs'
 							whole_flag = 'part'
-							if 'whole' in flag_list:
-								whole_flag = 'whole'
+							what_flag = 'both'
+							case = 'case insensitive'
+							whole = 'part of name'
+							what = "files and dirs"
+							if flags != '-':
+								flag_list = flags.split(',')
+								try:
+									index_ci = flag_list.index('ci')
+								except:
+									index_ci = -1
+								try:
+									index_cs = flag_list.index('cs')
+								except:
+									index_cs = -2
+								try:
+									flag_list.remove('cs')
+								except:
+									pass
+								try:
+									flag_list.remove('ci')
+								except:
+									pass
+
+								try:
+									index_whole = flag_list.index('whole')
+								except:
+									index_whole = -2
+								try:
+									index_part = flag_list.index('part')
+								except:
+									index_part = -1
+								try:
+									flag_list.remove('whole')
+								except:
+									pass
+								try:
+									flag_list.remove('part')
+								except:
+									pass
+
+								try:
+									index_filesonly = flag_list.index('filesonly')
+								except:
+									index_filesonly = -3
+								try:
+									index_dirsonly = flag_list.index('dirsonly')
+								except:
+									index_dirsonly = -2
+								try:
+									index_both = flag_list.index('both')
+								except:
+									index_both = -1
+								try:
+									flag_list.remove('filesonly')
+								except:
+									pass
+								try:
+									flag_list.remove('dirsonly')
+								except:
+									pass
+								try:
+									flag_list.remove('both')
+								except:
+									pass
+
+								if index_cs > index_ci:
+									case_flag = 'cs'
+									case = 'case sensitive'
+
+								if index_whole > index_part:
+									whole_flag = 'whole'
+									whole = 'whole name'
+
+								if index_filesonly > index_dirsonly and index_filesonly > index_both:
+									what_flag = 'filesonly'
+									what = 'files only'
+								elif index_dirsonly > index_filesonly and index_dirsonly > index_both:
+									what_flag = 'dirsonly'
+									what = 'dirs only'
+
+								if len(flag_list) > 0:
+									indented_message("WARNING: unknown password flags", ','.join(flag_list), 3)
 							indexes = [value['identifier'] for index,value in enumerate(Options.identifiers_and_passwords) if value['identifier'] == identifier]
 							# everything beginning with the first non-space character after the case flag till the end of line (including the traling spaces) is the pattern
 							pattern = " ".join(remaining_columns[1:]).lstrip()
 							if len(indexes) == 0:
 								indented_message("WARNING: using an unknown password identifier", identifier + ": not protecting the directory", 2)
 							elif len(indexes) == 1:
-								# absolute_file_name = os.path.join(absolute_path, file_name)
-								if case_flag == 'cs':
-									if whole_flag == 'whole':
-										indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', case sensitive, whole name", 3)
-									else:
-										indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', case sensitive, part of name", 3)
-								else:
-									if whole_flag == 'whole':
-										indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', case insensitive, whole name", 3)
-									else:
-										indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', case insensitive, part of name", 3)
+								flags_string = case + ', ' + whole + ', ' + what
+								indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', " + flags_string, 3)
 								patterns_and_passwords.append(
 									{
 										"pattern": pattern,
 										"case_flag": case_flag,
 										"whole_flag": whole_flag,
+										"what_flag": what_flag,
 										"identifier": identifier
 									}
 								)
 							else:
-								indented_message("WARNING: password identifier used more than once", identifier + ": not protecting the directory", 2)
+								indented_message("WARNING: password identifier used more than once", identifier + ": not using it here", 2)
 			back_level()
 
 
@@ -1220,39 +1284,42 @@ class TreeWalker:
 			# get the matching passwords
 			next_level()
 			for pattern_and_password in patterns_and_passwords:
-				case = "case insentitive"
-				whole = "part of name"
-				if pattern_and_password['case_flag'] == 'cs':
-					if pattern_and_password['whole_flag'] == 'whole':
-						match = fnmatch.fnmatchcase(dir_name, pattern_and_password['pattern'])
-						whole = "whole name"
-					else:
-						match = fnmatch.fnmatchcase(dir_name, "*" + pattern_and_password['pattern'] + "*")
-					case = "case sentitive"
+				if pattern_and_password['what_flag'] == 'filesonly':
+					indented_message("password not added to album", "flags set it for files protections only", 3)
 				else:
-					if pattern_and_password['whole_flag'] == 'whole':
-						match = re.match(fnmatch.translate(pattern_and_password['pattern']), dir_name, re.IGNORECASE)
-						whole = "whole name"
+					case = "case insentitive"
+					whole = "part of name"
+					if pattern_and_password['case_flag'] == 'cs':
+						if pattern_and_password['whole_flag'] == 'whole':
+							match = fnmatch.fnmatchcase(dir_name, pattern_and_password['pattern'])
+							whole = "whole name"
+						else:
+							match = fnmatch.fnmatchcase(dir_name, "*" + pattern_and_password['pattern'] + "*")
+						case = "case sentitive"
 					else:
-						match = re.match(fnmatch.translate("*" + pattern_and_password['pattern'] + "*"), dir_name, re.IGNORECASE)
+						if pattern_and_password['whole_flag'] == 'whole':
+							match = re.match(fnmatch.translate(pattern_and_password['pattern']), dir_name, re.IGNORECASE)
+							whole = "whole name"
+						else:
+							match = re.match(fnmatch.translate("*" + pattern_and_password['pattern'] + "*"), dir_name, re.IGNORECASE)
 
-				# add the matching patterns
-				if match:
-					identifier = pattern_and_password['identifier']
-					Options.mark_identifier_as_used(identifier)
-					if identifier not in album.password_identifiers_set:
-						album.password_identifiers_set.add(identifier)
-						indented_message(
-							"password added to album",
-							"'" + dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", identifier = " + identifier,
-							3
-						)
-					else:
-						indented_message(
-							"password not added to album",
-							dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", but identifier '" + identifier + "' already protects the album",
-							3
-						)
+					# add the matching patterns
+					if match:
+						identifier = pattern_and_password['identifier']
+						Options.mark_identifier_as_used(identifier)
+						if identifier not in album.password_identifiers_set:
+							album.password_identifiers_set.add(identifier)
+							indented_message(
+								"password added to album",
+								"'" + dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", identifier = " + identifier,
+								3
+							)
+						else:
+							indented_message(
+								"password not added to album",
+								dir_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", but identifier '" + identifier + "' already protects the album",
+								3
+							)
 			back_level()
 			indented_message("passwords for album processed!", "", 4)
 			back_level()
@@ -1471,38 +1538,41 @@ class TreeWalker:
 
 					# apply the file passwords_md5 and password codes to the media if they match the media name
 					for pattern_and_password in patterns_and_passwords:
-						case = "case insentitive"
-						whole = "part of name"
-						if pattern_and_password['case_flag'] == 'cs':
-							if pattern_and_password['whole_flag'] == 'whole':
-								match = fnmatch.fnmatchcase(file_name, pattern_and_password['pattern'])
-								whole = "whole name"
-							else:
-								match = fnmatch.fnmatchcase(file_name, "*" + pattern_and_password['pattern'] + "*")
-							case = "case sentitive"
+						if pattern_and_password['what_flag'] == 'dirsonly':
+							indented_message("password not added to media", "flags set it for dirs protections only", 3)
 						else:
-							if pattern_and_password['whole_flag'] == 'whole':
-								match = re.match(fnmatch.translate(pattern_and_password['pattern']), file_name, re.IGNORECASE)
-								whole = "whole name"
+							case = "case insentitive"
+							whole = "part of name"
+							if pattern_and_password['case_flag'] == 'cs':
+								if pattern_and_password['whole_flag'] == 'whole':
+									match = fnmatch.fnmatchcase(file_name, pattern_and_password['pattern'])
+									whole = "whole name"
+								else:
+									match = fnmatch.fnmatchcase(file_name, "*" + pattern_and_password['pattern'] + "*")
+								case = "case sentitive"
 							else:
-								match = re.match(fnmatch.translate("*" + pattern_and_password['pattern'] + "*"), file_name, re.IGNORECASE)
+								if pattern_and_password['whole_flag'] == 'whole':
+									match = re.match(fnmatch.translate(pattern_and_password['pattern']), file_name, re.IGNORECASE)
+									whole = "whole name"
+								else:
+									match = re.match(fnmatch.translate("*" + pattern_and_password['pattern'] + "*"), file_name, re.IGNORECASE)
 
-						if match:
-							identifier = pattern_and_password['identifier']
-							Options.mark_identifier_as_used(identifier)
-							if identifier not in single_media.password_identifiers_set:
-								single_media.password_identifiers_set.add(identifier)
-								indented_message(
-									"password and code added to media",
-									"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", identifier = " + identifier,
-									3
-								)
-							else:
-								indented_message(
-									"password and code not added to media",
-									"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", but identifier '" + identifier + "'  already protects the media",
-									3
-								)
+							if match:
+								identifier = pattern_and_password['identifier']
+								Options.mark_identifier_as_used(identifier)
+								if identifier not in single_media.password_identifiers_set:
+									single_media.password_identifiers_set.add(identifier)
+									indented_message(
+										"password and code added to media",
+										"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", identifier = " + identifier,
+										3
+									)
+								else:
+									indented_message(
+										"password and code not added to media",
+										"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", but identifier '" + identifier + "'  already protects the media",
+										3
+									)
 					indented_message("passwords for single media processed!", "", 5)
 					back_level()
 				else:
