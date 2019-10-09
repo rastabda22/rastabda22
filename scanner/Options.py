@@ -120,7 +120,7 @@ config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x
 # json_version = 3.998 since symlinkCodesAndNumbers added as album property
 
 # json_version = 0
-json_version = 3.998
+json_version = 4.0RC1
 
 
 def set_obsolete_json_version_flag():

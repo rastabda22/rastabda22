@@ -1,4 +1,4 @@
-# MyPhotoShare v3.8.2 (May 6, 2019)
+# MyPhotoShare v4.0RC1 (Oct 9, 2019)
 
 ### A Web Photo Gallery Done Right via Static JSON & Dynamic Javascript
 #### by Jason A. Donenfeld (<Jason@zx2c4.com>), Jerome Charaoui (jerome@riseup.net)  Joachim Tingvold (joachim@tingvold.com), Paolo Benvenuto (<paolobenve@gmail.com>), Pierre Métras (<p.metras@videotron.ca>)
@@ -64,7 +64,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] More photos can be added (with shift-click) and removed (with ctl-click) from the popup.
 - [x] Photos shown in the popup are clickable.
 - [x] Near markers are automatically clustered, and the photos number is shown in the cluster marker.
-- [x] Images collected by map clicks can now be shown as an album, browsed and sorted.
+- [x] Images collected by map clicks can be shown as an album, browsed and sorted.
 
 ### Mobile Friendly
 
@@ -95,15 +95,15 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Scanner uses recursive async randomized tree walking album thumbnail algorithm.
 - [x] HTML5 with minified CSS and JavaScript files for minimal load time.
 
-### Privacy
+### Privacy (_new_ in v4.0)
 
-- [x] Albums and photo can be protected by password. Passwords may be specified for albums and files.
-- [x] Passwords aren't exposed in javascript, and sensitive data are extremely difficult to find in cache.
+- [x] Albums and photo can be protected by passwords. Passwords may be specified for albums, for files, for both.
+- [x] Patterns are defined in album tree and specify what should every password protect; allowed matching modes: case sensitive/insensitive, whole/part of dir/file name, dir only/files only/both.
+- [x] Passwords aren't exposed in javascript, and sensitive data and media are extremely difficult to find in cache.
 
 ### And More...
 
 - [x] Analytics with optional Google Analytics and Piwik integration.
-- [x] Optional server-side authentication support.
 - [x] Many customizations available through config file.
 - [x] Cache folder can be managed with subdirs: useful for large repositories.
 - [x] Source albums server folders can be anywhere on the server.
