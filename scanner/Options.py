@@ -466,7 +466,7 @@ def get_options():
 	message("PRE counting media in albums...", "", 4)
 	config['num_media_in_tree'] = 0
 	for dirpath, dirs, files in os.walk(config['album_path'], topdown=True):
-		dirs[:] = [d for d in dirs if d != config['exclude_tree_marker']]
+		dirs[:] = [d for d in dirs if d != config['exclude_tree_marker'] and config['exclude_tree_marker'] not in files]
 		if dirpath.find('/.') == -1 and config['exclude_files_marker'] not in files and config['exclude_tree_marker'] not in files:
 			config['num_media_in_tree'] += sum([len([file for file in files if file[:1] != '.' and file not in special_files])])
 	indented_message("PRE media in albums counted", str(config['num_media_in_tree']), 4)
