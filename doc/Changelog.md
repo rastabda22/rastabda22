@@ -1,3 +1,5 @@
+### version v4.0RC1 (Oct 9, 2019)
+
 * scanner now reports unrecognized file with their mime types
 * when an album has many (according to the corresponding new options) media/positions, they are saved to a separate json file
   * new option: `max_media_in_json_file`
