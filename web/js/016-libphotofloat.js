@@ -10,7 +10,7 @@
 		PhotoFloat.cache.albums.index = {};
 		PhotoFloat.guessedPasswordCodes = [];
 		PhotoFloat.guessedPasswordsMd5 = [];
-		this.geotaggedPhotosFound = null;
+		PhotoFloat.geotaggedPhotosFound = null;
 		this.searchWordsFromJsonFile = [];
 		this.searchAlbumCacheBasesFromJsonFile = [];
 		this.searchAlbumSubalbumsFromJsonFile = [];
@@ -1420,8 +1420,8 @@
 			function(resolveGeotaggedPhotosExist) {
 				var self;
 				// this function returns true if the root album has the by gps subalbum
-				if (this.geotaggedPhotosFound !== null) {
-					if (this.geotaggedPhotosFound) {
+				if (PhotoFloat.geotaggedPhotosFound !== null) {
+					if (PhotoFloat.geotaggedPhotosFound) {
 						resolveGeotaggedPhotosExist(true);
 						// $("#by-gps-view").off("click");
 						// $("#by-gps-view").removeClass("hidden").addClass("active").on("click", function(ev) {
@@ -1443,7 +1443,7 @@
 						// (but gps json file must exist)
 						function() {
 							// $("#by-gps-view").addClass("hidden");
-							self.geotaggedPhotosFound = false;
+							PhotoFloat.geotaggedPhotosFound = false;
 							resolveGeotaggedPhotosExist(false);
 						},
 						{"getMedia": false, "getPositions": true}
@@ -1452,10 +1452,10 @@
 						function(foldersRootAlbum) {
 							if (! foldersRootAlbum.numPositionsInTree) {
 								// $("#by-gps-view").addClass("hidden");
-								self.geotaggedPhotosFound = false;
+								PhotoFloat.geotaggedPhotosFound = false;
 								resolveGeotaggedPhotosExist(false);
 							} else {
-								self.geotaggedPhotosFound = true;
+								PhotoFloat.geotaggedPhotosFound = true;
 								resolveGeotaggedPhotosExist(true);
 							}
 						},
