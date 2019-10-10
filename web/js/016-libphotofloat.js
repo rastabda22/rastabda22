@@ -1072,8 +1072,8 @@
 				var promise;
 				if (album) {
 					if (
-						// map albums are already has all the media and positions
-						util.isMapCacheBase(album.cacheBase) ||
+						// map albums and search albums already have all the media and positions
+						util.isMapCacheBase(album.cacheBase) || util.isSearchCacheBase(album.cacheBase) ||
 						// the album hasn't unprotected content => not adding media/positions  => go immediately to promise.then
 						album.includedFilesByCodesSimpleCombination[""] === false
 					) {
