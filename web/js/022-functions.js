@@ -87,7 +87,9 @@
 
 	Functions.updateMenu = function(thisAlbum, hasGpsData) {
 		var albumOrMedia;
+		var isMap = $('#mapdiv').html() ? true : false;
 		var isPopup = $('.leaflet-popup').html() ? true : false;
+		var isMapOrPopup = isMap || isPopup;
 
 		if (typeof thisAlbum === "undefined")
 			thisAlbum = currentAlbum;
@@ -104,7 +106,7 @@
 		// add the correct classes to the menu buttons
 
 		if (
-			isPopup ||
+			isMapOrPopup ||
 			thisAlbum === null ||
 			[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(thisAlbum.cacheBase) == -1 &&
 			(currentMedia === null && ! util.isAlbumWithOneMedia(thisAlbum))
@@ -217,7 +219,7 @@
 
 		$("ul#right-menu li.ui").removeClass("hidden");
 
-		if (isPopup) {
+		if (isMapOrPopup) {
 			$("ul#right-menu li.hide-title").addClass("hidden");
 		} else {
 			$("ul#right-menu li.hide-title").removeClass("hidden");
@@ -228,7 +230,7 @@
 		}
 
 		if (
-			isPopup ||
+			isMapOrPopup ||
 			currentMedia !== null ||
 			util.isAlbumWithOneMedia(thisAlbum) ||
 			thisAlbum !== null && thisAlbum.subalbums.length === 0 && Options.hide_title
@@ -242,14 +244,22 @@
 				$("ul#right-menu li.media-count").removeClass("selected");
 		}
 
-		$("ul#right-menu li.spaced").removeClass("hidden");
+
+		if (
+			isMap && (
+				! isPopup || MapFunctions.mapAlbum.media.length <= 1
+			)
+		)
+			$("ul#right-menu li.spaced").addClass("hidden");
+		else
+			$("ul#right-menu li.spaced").removeClass("hidden");
 		if (Options.spacing)
 			$("ul#right-menu li.spaced").addClass("selected");
 		else
 			$("ul#right-menu li.spaced").removeClass("selected");
 
 		if (
-			isPopup ||
+			isMapOrPopup ||
 			currentMedia !== null ||
 			util.isAlbumWithOneMedia(thisAlbum) ||
 			thisAlbum !== null && thisAlbum.subalbums.length === 0
@@ -264,7 +274,7 @@
 		}
 
 		if (
-			isPopup ||
+			isMapOrPopup ||
 			currentMedia !== null ||
 			util.isAlbumWithOneMedia(thisAlbum) ||
 			thisAlbum !== null && thisAlbum.subalbums.length === 0
@@ -279,7 +289,7 @@
 		}
 
 		if (
-			isPopup ||
+			isMapOrPopup ||
 			currentMedia !== null ||
 			util.isAlbumWithOneMedia(thisAlbum) ||
 			thisAlbum !== null && (thisAlbum.subalbums.length === 0 || ! util.isFolderCacheBase(thisAlbum.cacheBase))
@@ -293,18 +303,24 @@
 				$("ul#right-menu li.album-names").removeClass("selected");
 		}
 
-		$("ul#right-menu li.square-media-thumbnails").removeClass("hidden");
+		if (isMapOrPopup)
+			$("ul#right-menu li.square-media-thumbnails").addClass("hidden");
+		else
+			$("ul#right-menu li.square-media-thumbnails").removeClass("hidden");
 		if (Options.media_thumb_type == "square")
 		 	$("ul#right-menu li.square-media-thumbnails").addClass("selected");
 		else
 			$("ul#right-menu li.square-media-thumbnails").removeClass("selected");
 
 		if (
-			currentMedia !== null ||
-			util.isAlbumWithOneMedia(thisAlbum) ||
-			thisAlbum !== null && (
-				thisAlbum.numMedia === 0 ||
-				! util.isFolderCacheBase(thisAlbum.cacheBase) && thisAlbum.numMedia > Options.big_virtual_folders_threshold
+			isMap && ! isPopup ||
+			! isMapOrPopup && (
+				currentMedia !== null ||
+				util.isAlbumWithOneMedia(thisAlbum) ||
+				thisAlbum !== null && (
+					thisAlbum.numMedia === 0 ||
+					! util.isFolderCacheBase(thisAlbum.cacheBase) && thisAlbum.numMedia > Options.big_virtual_folders_threshold
+				)
 			)
 		) {
 			$("ul#right-menu li.media-names").addClass("hidden");
@@ -317,7 +333,7 @@
 		}
 
 		if (
-			isPopup ||
+			isMapOrPopup ||
 			currentMedia === null && ! util.isAlbumWithOneMedia(thisAlbum)
 			// ||
 			// thisAlbum !== null && thisAlbum.subalbums.length === 0
@@ -359,11 +375,14 @@
 				$("ul#right-menu #show-big-albums").removeClass("selected");
 		}
 
-		if (currentMedia !== null) {
-			// showing a media, nothing to sort
+		if (
+			! isMapOrPopup && currentMedia !== null ||
+			isPopup && MapFunctions.mapAlbum.media.length <= 1
+		) {
+			// showing a media or a map or a popup on the map, nothing to sort
 			$("#right-menu li.sort").addClass("hidden");
 		} else if (thisAlbum !== null) {
-			if (thisAlbum.subalbums.length <= 1 || isPopup) {
+			if (thisAlbum.subalbums.length <= 1 || isMapOrPopup) {
 				// no subalbums or one subalbum
 				$("ul#right-menu li.album-sort").addClass("hidden");
 			} else {
