@@ -323,7 +323,7 @@
 		return album;
 	};
 
-	MapFunctions.addMediaFromPositionsToMapAlbum = function(positionsAndCounts, mapAlbum, resolve) {
+	MapFunctions.addMediaFromPositionsToMapAlbum = function(positionsAndCounts, mapAlbum, resolve_imageLoad) {
 
 		var mediaNameListElement, indexPositions, indexPhoto, markerClass, photoIndex, mediaIndex;
 		var albumsToGet = 0, albumsGot = 0, photosByAlbum = {}, positionsAndCountsElement;
@@ -370,7 +370,6 @@
 						albumsGot ++;
 						if (albumsGot == albumsToGet) {
 							mapAlbum.positionsAndMediaInTree = util.mergePoints(mapAlbum.positionsAndMediaInTree, positionsAndCounts);
-							resolve(mapAlbum);
 						}
 					},
 					function() {
@@ -379,6 +378,7 @@
 				);
 			}
 		}
+				resolve_imageLoad(mapAlbum);
 		// end of function addMediaFromPositionsToMapAlbum body
 
 		function getMarkerClass(positionAndCount) {
