@@ -349,36 +349,43 @@
 		}
 
 		// ok, now we can interate over the object we created and add the media to the map album
+		var cacheBasesPromises = [];
 		for (var albumCacheBase in photosByAlbum) {
 			if (photosByAlbum.hasOwnProperty(albumCacheBase)) {
-				let photosInAlbum = photosByAlbum[albumCacheBase];
-				var promise = phFl.getAlbum(
-					albumCacheBase,
-					util.die,
-					{"getMedia": true, "getPositions": true}
-				);
-				promise.then(
-					function(theAlbum) {
-						for (mediaIndex = 0; mediaIndex < theAlbum.numMedia; mediaIndex ++) {
-							for (photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
-								if (theAlbum.media[mediaIndex].cacheBase == photosInAlbum[photoIndex].element.cacheBase) {
-									mapAlbum.media.push(theAlbum.media[mediaIndex]);
+				let cacheBasePromise = new Promise(
+					function(resolve_cacheBasePromise) {
+						let photosInAlbum = photosByAlbum[albumCacheBase];
+						var getAlbumPromise = phFl.getAlbum(
+							albumCacheBase,
+							util.die,
+							{"getMedia": true, "getPositions": true}
+						);
+						getAlbumPromise.then(
+							function(theAlbum) {
+								for (mediaIndex = 0; mediaIndex < theAlbum.numMedia; mediaIndex ++) {
+									for (photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
+										if (theAlbum.media[mediaIndex].cacheBase == photosInAlbum[photoIndex].element.cacheBase) {
+											mapAlbum.media.push(theAlbum.media[mediaIndex]);
+										}
+									}
 								}
+								resolve_cacheBasePromise();
+							},
+							function() {
+								console.trace();
 							}
-						}
-
-						albumsGot ++;
-						if (albumsGot == albumsToGet) {
-							mapAlbum.positionsAndMediaInTree = util.mergePoints(mapAlbum.positionsAndMediaInTree, positionsAndCounts);
-						}
-					},
-					function() {
-						console.trace();
+						);
 					}
 				);
+				cacheBasesPromises.push(cacheBasePromise);
 			}
 		}
+		Promise.all(cacheBasesPromises).then(
+			function() {
+				mapAlbum.positionsAndMediaInTree = util.mergePoints(mapAlbum.positionsAndMediaInTree, positionsAndCounts);
 				resolve_imageLoad(mapAlbum);
+			}
+		);
 		// end of function addMediaFromPositionsToMapAlbum body
 
 		function getMarkerClass(positionAndCount) {
