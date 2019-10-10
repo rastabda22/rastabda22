@@ -2,7 +2,7 @@
 
 MyPhotoShare has features usually not found in static photo galleries. We offer you a visual tour of some of them.
 
-## *New in v4.0* Permit password protection of specific content
+## *New in v4.0* - Permit password protection of specific content
 
 Suppose you have some media or subalbums that only certain users must be able to see: you can leave them absolutely hidden for everyone, and give your selected users a password that unveils the protected content. A typical use case is when you want to protect your children's photos from prying eyes; they must be viewable only by your family and friends.
 
