@@ -155,7 +155,7 @@
 		MapFunctions.calculateImagesWrapperSizes();
 		$(".leaflet-popup-content").css("max-width", MapFunctions.maxWidthForThumbnails);
 		// $(".leaflet-popup-content").css("width", MapFunctions.maxWidthForThumbnails);
-		$("#popup-images-wrapper").css("max-height", parseInt($(".leaflet-popup-content").css("height")) - 35);
+		$("#popup-images-wrapper").css("max-height", parseInt($(".leaflet-popup-content").css("height")) - 30);
 		$("#popup-images-wrapper").css("max-width", MapFunctions.maxWidthForThumbnails);
 		// $("#popup-images-wrapper").css("width", MapFunctions.maxWidthForThumbnails);
 		$("#popup-photo-count").css("max-width", MapFunctions.maxWidthForThumbnails);
