@@ -9,8 +9,9 @@
 	function MapFunctions() {
 		MapFunctions.titleWrapper1 = "";
 		MapFunctions.titleWrapper2 = "";
-		MapFunctions.maxWidthForThumbnails = 0;
-		MapFunctions.maxHeightForThumbnails = 0;
+		MapFunctions.maxWidthForPopupContent = 0;
+		MapFunctions.maxWidthForImagesInPopup = 0;
+		MapFunctions.maxHeightForPopupContent = 0;
 		MapFunctions.mymap = null;
 		MapFunctions.popup = null;
 		MapFunctions.mapAlbum = {};
@@ -152,14 +153,14 @@
 		$(".leaflet-popup-content").html(images);
 		f.setOptions();
 		MapFunctions.popup.setContent($(".leaflet-popup-content").html());
-		MapFunctions.calculateImagesWrapperSizes();
-		$(".leaflet-popup-content").css("max-width", MapFunctions.maxWidthForThumbnails);
-		// $(".leaflet-popup-content").css("width", MapFunctions.maxWidthForThumbnails);
-		$("#popup-images-wrapper").css("max-height", parseInt($(".leaflet-popup-content").css("height")) - 30);
-		$("#popup-images-wrapper").css("max-width", MapFunctions.maxWidthForThumbnails);
-		// $("#popup-images-wrapper").css("width", MapFunctions.maxWidthForThumbnails);
-		$("#popup-photo-count").css("max-width", MapFunctions.maxWidthForThumbnails);
-		// $(".leaflet-popup-content").css("max-width", MapFunctions.maxWidthForThumbnails).css("width", MapFunctions.maxWidthForThumbnails);
+		MapFunctions.calculatePopupSizes();
+		$(".leaflet-popup-content").css("max-width", MapFunctions.maxWidthForPopupContent + "px");
+		// $(".leaflet-popup-content").css("width", MapFunctions.);
+		$("#popup-images-wrapper").css("max-height", ($(".leaflet-popup-content").outerHeight() - $("#popup-photo-count").outerHeight(true)) + "px");
+		$("#popup-images-wrapper").css("max-width", MapFunctions.maxWidthForImagesInPopup + "px");
+		// $("#popup-images-wrapper").css("width", MapFunctions.maxWidthForImagesInPopup);
+		$("#popup-photo-count").css("max-width", MapFunctions.maxWidthForPopupContent + "px");
+		// $(".leaflet-popup-content").css("max-width", MapFunctions.maxWidthForImagesInPopup).css("width", MapFunctions.maxWidthForImagesInPopup);
 		MapFunctions.popup.setLatLng(MapFunctions.averagePosition(MapFunctions.mapAlbum.positionsAndMediaInTree));
 		MapFunctions.buildPopupHeader();
 
@@ -168,24 +169,38 @@
 		MapFunctions.addLazy("img.lazyload-popup-media");
 	};
 
-	MapFunctions.calculateImagesWrapperSizes = function() {
-		var scrollerSize = 20;
+	MapFunctions.calculatePopupSizes = function() {
+		var scrollerSize = scrollbarWidth;
+		if ($("#popup-images-wrapper")[0]) {
+			var popupHasScrollBar = ($("#popup-images-wrapper")[0].offsetWidth !== $("#popup-images-wrapper")[0].clientWidth);
+			if (popupHasScrollBar)
+				scrollerSize = scrollbarWidth;
+		}
+
 		// how much space is available horizontally for the thumbnails?
-		MapFunctions.maxWidthForThumbnails = parseInt($("#mapdiv").width() * 0.8);
+		MapFunctions.maxWidthForPopupContent = parseInt($("#mapdiv").width() * 0.85);
+		// the space for the images: remove the margin
+		MapFunctions.maxWidthForImagesInPopup = MapFunctions.maxWidthForPopupContent - 15 - 15;
 		// square thumbnails: set the value to a shorter one, in order to avoid right white space
 		if (Options.media_thumb_type == "square") {
-			var thumb_size = Options.media_thumb_size;
+			var thumbSize = Options.media_thumb_size;
+			var spacing = 0;
 			if (Options.spacing)
-				thumb_size += Options.spacingToggle + 1;
-			MapFunctions.maxWidthForThumbnails = parseInt((MapFunctions.maxWidthForThumbnails - scrollerSize) / thumb_size) * thumb_size + scrollerSize;
+				spacing = Math.ceil(Options.spacingToggle);
+			var numThumbnailsInLine = parseInt((MapFunctions.maxWidthForImagesInPopup - scrollerSize + spacing) / (thumbSize + spacing));
+			if (numThumbnailsInLine === 1)
+				MapFunctions.maxWidthForImagesInPopup = thumbSize + 1;
+			else
+				MapFunctions.maxWidthForImagesInPopup = numThumbnailsInLine * thumbSize + numThumbnailsInLine * spacing + scrollerSize;
+			MapFunctions.maxWidthForPopupContent = MapFunctions.maxWidthForImagesInPopup + 15 + 15;
 		}
 		// vertical popup size
-		MapFunctions.maxHeightForThumbnails = parseInt($("#mapdiv").height() * 0.8);
+		MapFunctions.maxHeightForPopupContent = parseInt($("#mapdiv").height() * 0.85);
 	};
 
 	MapFunctions.buildPopupHeader = function() {
 		$("#popup-photo-count-number").html(MapFunctions.mapAlbum.numMedia);
-		$("#popup-photo-count").css("max-width", MapFunctions.maxWidthForThumbnails);
+		$("#popup-photo-count").css("max-width", MapFunctions.maxWidthForPopupContent);
 		// add the click event for showing the photos in the popup as an album
 		$("#popup-photo-count").on(
 			"click",

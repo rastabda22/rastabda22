@@ -7,7 +7,7 @@ var previousAlbum = null;
 var previousMedia = null;
 var nextMedia = null, prevMedia = null, upLink = "";
 var bySearchViewLink = null, byMapViewLink = null, isABrowsingModeChange = false;
-var titleWrapper1, titleWrapper2, maxWidthForThumbnails, nextBrowsingModeSelector, prevBrowsingModeSelector;
+var nextBrowsingModeSelector, prevBrowsingModeSelector;
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
 var fromEscKey = false;
@@ -17,6 +17,7 @@ var popupRefreshType = "previousAlbum";
 var destHash = null;
 var destMedia = null;
 var destAlbum = null;
+var scrollbarWidth;
 // var perhapsIsAProtectedMedia = false;
 var Options = {};
 var isMobile = {
@@ -516,6 +517,8 @@ $(document).ready(function() {
 
 		return false;
 	});
+
+	scrollbarWidth = util.detectScrollbarWidth();
 
 	$(window).hashchange(function() {
 		$("#auth-text").hide();
