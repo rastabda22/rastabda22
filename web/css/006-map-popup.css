@@ -117,6 +117,10 @@
 /* Popup box END */
 
 
+.leaflet-popup-content {
+  margin: 15px;
+}
+
 .leaflet-popup-content .media-caption {
   color: black;
 }
@@ -280,4 +284,13 @@
   text-decoration: none;
   cursor: pointer;
   background-color: lightgray
+}
+
+/* this class is needed in order to calculate the scrollbar width */
+.scrollbar-measure {
+	width: 100px;
+	height: 100px;
+	overflow: scroll;
+	position: absolute;
+	top: -9999px;
 }
