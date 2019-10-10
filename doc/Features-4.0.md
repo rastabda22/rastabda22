@@ -1,6 +1,14 @@
-# A Brief Tour of MyPhotoShare v3.8...
+# A Brief Tour of MyPhotoShare v4.0...
 
 MyPhotoShare has features usually not found in static photo galleries. We offer you a visual tour of some of them.
+
+## *New in v4.0* - Permit password protection of specific content
+
+Suppose you have some media or subalbums that only certain users must be able to see: you can leave them absolutely hidden for everyone, and give your selected users a password that unveils the protected content. A typical use case is when you want to protect your children's photos from prying eyes; they must be viewable only by your family and friends.
+
+How is this achieved in `MyPhotoShare`? simply, you set a file that defines your password(s) (typically in '/etc/myphotosare'), then you add one or more _password markers_ to your albums tree: they will instruct the scanner about protected content. Next, you give your family/friends the password together with the album/subalbum/media link.
+
+More details in the [authentication page](doc/Authentication.md).
 
 ## A new look for each user
 
@@ -68,4 +76,4 @@ We kept the best for the last. Where is this photo you took a few years ago, wit
 * You can search on the map, too: in the root album, click on the position icon on the top: you will be shown a map with all the (possibly clustered) markers of your geotagged photos! So if you want to find a photo shot in Albania, simply pan/enlarge the map till you are on that country, and then click!
 
 
-**These are only the tip of MyPhotoShare 3.8 features. Try and discover them by yourselves!**
+**These are only the tip of MyPhotoShare 4.0 features. Try and discover them by yourselves!**
