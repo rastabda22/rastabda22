@@ -152,10 +152,10 @@
 		$(".leaflet-popup-content").html(images);
 		f.setOptions();
 		MapFunctions.popup.setContent($(".leaflet-popup-content").html());
-		MapFunctions.getImagesWrapperSizes();
+		MapFunctions.calculateImagesWrapperSizes();
 		$(".leaflet-popup-content").css("max-width", MapFunctions.maxWidthForThumbnails);
 		// $(".leaflet-popup-content").css("width", MapFunctions.maxWidthForThumbnails);
-		$("#popup-images-wrapper").css("max-height", parseInt($(".leaflet-popup-content").css("height")) - 35);
+		$("#popup-images-wrapper").css("max-height", parseInt($(".leaflet-popup-content").css("height")) - 30);
 		$("#popup-images-wrapper").css("max-width", MapFunctions.maxWidthForThumbnails);
 		// $("#popup-images-wrapper").css("width", MapFunctions.maxWidthForThumbnails);
 		$("#popup-photo-count").css("max-width", MapFunctions.maxWidthForThumbnails);
@@ -168,17 +168,16 @@
 		MapFunctions.addLazy("img.lazyload-popup-media");
 	};
 
-	MapFunctions.getImagesWrapperSizes = function() {
+	MapFunctions.calculateImagesWrapperSizes = function() {
+		var scrollerSize = 20;
 		// how much space is available horizontally for the thumbnails?
 		MapFunctions.maxWidthForThumbnails = parseInt($("#mapdiv").width() * 0.8);
 		// square thumbnails: set the value to a shorter one, in order to avoid right white space
 		if (Options.media_thumb_type == "square") {
 			var thumb_size = Options.media_thumb_size;
 			if (Options.spacing)
-				thumb_size += Options.spacingToggle;
-			MapFunctions.maxWidthForThumbnails = parseInt(MapFunctions.maxWidthForThumbnails / thumb_size) * thumb_size;
-			// add a constant for the scroller
-			MapFunctions.maxWidthForThumbnails += 18;
+				thumb_size += Options.spacingToggle + 1;
+			MapFunctions.maxWidthForThumbnails = parseInt((MapFunctions.maxWidthForThumbnails - scrollerSize) / thumb_size) * thumb_size + scrollerSize;
 		}
 		// vertical popup size
 		MapFunctions.maxHeightForThumbnails = parseInt($("#mapdiv").height() * 0.8);

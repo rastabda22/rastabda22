@@ -1538,7 +1538,7 @@
 				map.updatePopup(
 					MapFunctions.titleWrapper1.replace(
 						"maxWidthForThumbnails",
-						MapFunctions.titleWrapper
+						MapFunctions.maxWidthForThumbnails
 					) +
 					map.generateHtmlForImages(MapFunctions.mapAlbum) +
 					MapFunctions.titleWrapper2
@@ -1602,7 +1602,7 @@
 				map.updatePopup(
 					MapFunctions.titleWrapper1.replace(
 						"maxWidthForThumbnails",
-						MapFunctions.titleWrapper
+						MapFunctions.maxWidthForThumbnails
 					) +
 					map.generateHtmlForImages(MapFunctions.mapAlbum) +
 					MapFunctions.titleWrapper2
@@ -2399,7 +2399,7 @@
 
 		var i;
 		MapFunctions.titleWrapper1 =
-			'<div id="popup-photo-count" style="max-width: ' + MapFunctions.titleWrapper + 'px;">' +
+			'<div id="popup-photo-count" style="max-width: ' + MapFunctions.maxWidthForThumbnails + 'px;">' +
 				'<span id="popup-photo-count-number"></span> ' + util._t("#photos") +
 			'</div>' +
 			'<div id="popup-images-wrapper">';
@@ -2621,7 +2621,7 @@
 	};
 
 	TopFunctions.prepareAndDoPopupUpdate = function() {
-		MapFunctions.getImagesWrapperSizes();
+		MapFunctions.calculateImagesWrapperSizes();
 
 		if (MapFunctions.popup) {
 			MapFunctions.popup.remove();
@@ -2636,7 +2636,7 @@
 		).setContent(
 			MapFunctions.titleWrapper1.replace(
 				"maxWidthForThumbnails",
-				MapFunctions.titleWrapper
+				MapFunctions.maxWidthForThumbnails
 			) +
 			 MapFunctions.titleWrapper2
 		 )
@@ -2656,7 +2656,7 @@
 			function() {
 				map.updatePopup(MapFunctions.titleWrapper1.replace(
 					"maxWidthForThumbnails",
-					MapFunctions.titleWrapper) + map.generateHtmlForImages(MapFunctions.mapAlbum) + MapFunctions.titleWrapper2
+					MapFunctions.maxWidthForThumbnails) + map.generateHtmlForImages(MapFunctions.mapAlbum) + MapFunctions.titleWrapper2
 				);
 				$("#loading").hide();
 			}
