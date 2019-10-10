@@ -152,7 +152,7 @@
 		$(".leaflet-popup-content").html(images);
 		f.setOptions();
 		MapFunctions.popup.setContent($(".leaflet-popup-content").html());
-		MapFunctions.getImagesWrapperSizes();
+		MapFunctions.calculateImagesWrapperSizes();
 		$(".leaflet-popup-content").css("max-width", MapFunctions.maxWidthForThumbnails);
 		// $(".leaflet-popup-content").css("width", MapFunctions.maxWidthForThumbnails);
 		$("#popup-images-wrapper").css("max-height", parseInt($(".leaflet-popup-content").css("height")) - 35);
@@ -168,7 +168,7 @@
 		MapFunctions.addLazy("img.lazyload-popup-media");
 	};
 
-	MapFunctions.getImagesWrapperSizes = function() {
+	MapFunctions.calculateImagesWrapperSizes = function() {
 		// how much space is available horizontally for the thumbnails?
 		MapFunctions.maxWidthForThumbnails = parseInt($("#mapdiv").width() * 0.8);
 		// square thumbnails: set the value to a shorter one, in order to avoid right white space

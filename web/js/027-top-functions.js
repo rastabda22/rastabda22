@@ -2621,7 +2621,7 @@
 	};
 
 	TopFunctions.prepareAndDoPopupUpdate = function() {
-		MapFunctions.getImagesWrapperSizes();
+		MapFunctions.calculateImagesWrapperSizes();
 
 		if (MapFunctions.popup) {
 			MapFunctions.popup.remove();
