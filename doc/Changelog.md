@@ -1,3 +1,7 @@
+### version v4.0RC5 (Oct 11, 2019)
+
+* fixed bug with albums already in cache
+
 ### version v4.0RC4 (Oct 11, 2019)
 
 * bug fixes: in search albums
