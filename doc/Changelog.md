@@ -1,3 +1,9 @@
+### version v4.0RC4 (Oct 11, 2019)
+
+* bug fixes: in search albums
+* popups now have correct width/height
+* correct menu entries visibility
+
 ### version v4.0RC1 (Oct 9, 2019)
 
 * scanner now reports unrecognized file with their mime types
