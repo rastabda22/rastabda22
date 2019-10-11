@@ -510,7 +510,14 @@ $(document).ready(function() {
 				$(window).hashchange();
 			},
 			error: function() {
-				password.css("background-color", "rgb(255, 64, 64)");
+				password.css("background-color", "red");
+				password.on(
+					'input',
+					function() {
+						password.css("background-color", "");
+						password.off('input');
+					}
+				);
 			}
 		};
 		$.ajax(ajaxOptions);
