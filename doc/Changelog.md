@@ -1,3 +1,6 @@
+* fixed bug with album not scrollable
+* shortcut are now case insensitive
+
 ### version v4.0RC5 (Oct 11, 2019)
 
 * fixed bug with albums already in cache
