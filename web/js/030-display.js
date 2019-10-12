@@ -174,14 +174,14 @@ $(document).ready(function() {
 							// stop the video
 							$("#media-center")[0].pause();
 					} else if (
-						(e.key === "n" || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
+						(e.key.toLowerCase() === "n" || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
 						nextMedia && currentMedia !== null && ! isMap
 					) {
 						$("#next")[0].click();
 						// pS.swipeLeft(nextMedia);
 						return false;
 					} else if (
-						(e.key === "p" || e.key === "Backspace" && ! e.shiftKey || (e.key === "Enter" || e.key === " ") && e.shiftKey) &&
+						(e.key.toLowerCase() === "p" || e.key === "Backspace" && ! e.shiftKey || (e.key === "Enter" || e.key === " ") && e.shiftKey) &&
 						prevMedia && currentMedia !== null && ! isMap
 					) {
 						$("#prev")[0].click();
@@ -201,16 +201,16 @@ $(document).ready(function() {
 							pS.swipeUpOrDrag(mediaLink);
 							return false;
 						}
-					} else if (e.key === "d" && currentMedia !== null && ! isMap) {
+					} else if (e.key.toLowerCase() === "d" && currentMedia !== null && ! isMap) {
 						$("#center .download-link")[0].click();
 						return false;
-					} else if (e.key === "f" && currentMedia !== null && ! isMap) {
+					} else if (e.key.toLowerCase() === "f" && currentMedia !== null && ! isMap) {
 						tF.goFullscreen(e);
 						return false;
-					} else if (e.key === "m" && currentMedia !== null && ! isMap) {
+					} else if (e.key.toLowerCase() === "m" && currentMedia !== null && ! isMap) {
 						f.toggleMetadata();
 						return false;
-					} else if (e.key === "o" && currentMedia !== null && ! isMap) {
+					} else if (e.key.toLowerCase() === "o" && currentMedia !== null && ! isMap) {
 						$("#center .original-link")[0].click();
 						return false;
 					} else if (e.key === "1") {
@@ -242,7 +242,7 @@ $(document).ready(function() {
 							return false;
 						}
 					} else if (
-						e.key === "s" &&
+						e.key.toLowerCase() === "s" &&
 						! isMap &&
 						(
 							currentMedia !== null && util.hasGpsData(currentMedia) ||
@@ -252,7 +252,7 @@ $(document).ready(function() {
 						$(".map-popup-trigger")[0].click();
 						return false;
 					} else if (
-						e.key === "u" &&
+						e.key.toLowerCase() === "u" &&
 						currentAlbum !== null
 					) {
 						var numPasswords;
@@ -362,7 +362,7 @@ $(document).ready(function() {
 			}
 
 			if (
-				e.key === "e" && e.target.tagName.toLowerCase() != 'input' &&  ! e.shiftKey&&  ! e.ctrlKey&&  ! e.altKey
+				e.key.toLowerCase() === "e" && e.target.tagName.toLowerCase() != 'input' &&  ! e.shiftKey&&  ! e.ctrlKey&&  ! e.altKey
 					// "e" opens the menu, and closes it if focus in not in input field
 			) {
 				toggleMenu();
