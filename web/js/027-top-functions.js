@@ -1705,6 +1705,8 @@
 		if (Options.albums_slide_style)
 			slideBorder = 3;
 
+		if (currentMedia === null)
+			$("#album-view").off('mousewheel');
 		if (currentMedia === null && previousMedia === null)
 			$("html, body").stop().animate({ scrollTop: 0 }, "slow");
 		if (populate) {
