@@ -1,3 +1,6 @@
+### version v4.0.0 (Oct 13, 2019)
+
+* fixed bug with map size
 * fixed bug with album not scrollable
 * shortcut are now case insensitive
 
