@@ -220,6 +220,7 @@ def get_options():
 				'album_thumb_size',
 				'media_thumb_size',
 				'big_virtual_folders_threshold',
+				'photo_map_size',
 				'max_media_in_json_file',
 				'max_media_from_positions_in_json_file',
 				'max_search_album_number',
