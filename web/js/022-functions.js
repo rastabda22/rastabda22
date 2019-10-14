@@ -85,6 +85,36 @@
 		}
 	};
 
+	Functions.getAlbumNameFromAlbumHash = function(hash) {
+		return new Promise(
+			function(resolve_getAlbumNameFromAlbumHash) {
+				getAlbumPromise = PhotoFloat.getAlbum(hash, util.die, {"getMedia": false, "getPositions": false});
+				getAlbumPromise.then(
+					function(theAlbum) {
+						var path;
+						var splittedPath = theAlbum.path.split('/');
+						if (splittedPath[0] === Options.folders_string)
+							splittedPath[0] = "";
+						else if (splittedPath[0] === Options.by_date_string)
+							splittedPath[0] = "(" + util._t("#by-date") + ")";
+						else if (splittedPath[0] === Options.by_gps_string) {
+							splittedPath = theAlbum.ancestorsNames;
+							splittedPath[0] = "(" + util._t("#by-gps") + ")";
+						else if (splittedPath[0] === Options.by_map_string)
+							splittedPath = ["(" + util._t("#by-map") + ")"];
+						path = splittedPath.join('/');
+
+						resolve_getAlbumNameFromAlbumHash(path);
+					},
+					function() {
+						console.trace();
+					}
+				);
+			}
+		);
+	};
+
+
 	Functions.updateMenu = function(thisAlbum, hasGpsData) {
 		var albumOrMedia;
 		var isMap = $('#mapdiv').html() ? true : false;
@@ -206,6 +236,13 @@
 				$("ul#right-menu li#album-search").addClass("dimmed").off("click");
 			} else {
 				$("ul#right-menu li#album-search").removeClass("dimmed");
+				let albumNamePromise = Functions.getAlbumNameFromAlbumHash(Options.cache_base_to_search_in);
+				albumNamePromise.then(
+					function(path) {
+						$("#album-search").attr('title', util._t("#current-album-is") + '"' + path + '"');
+					}
+				);
+
 				if (Options.search_current_album)
 					$("ul#right-menu li#album-search").addClass("selected");
 				else
