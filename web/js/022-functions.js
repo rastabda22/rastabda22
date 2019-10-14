@@ -202,10 +202,15 @@
 				$("ul#right-menu li#accent-sensitive").addClass("selected");
 			else
 				$("ul#right-menu li#accent-sensitive").removeClass("selected");
-			if (Options.search_current_album)
-				$("ul#right-menu li#album-search").addClass("selected");
-			else
-				$("ul#right-menu li#album-search").removeClass("selected");
+			if (util.isAnyRootHash(Options.cache_base_to_search_in)) {
+				$("ul#right-menu li#album-search").addClass("hidden");
+			} else {
+				$("ul#right-menu li#album-search").removeClass("hidden");
+				if (Options.search_current_album)
+					$("ul#right-menu li#album-search").addClass("selected");
+				else
+					$("ul#right-menu li#album-search").removeClass("selected");
+			}
 		} else {
 			$("ul#right-menu li#inside-words").addClass("hidden");
 			$("ul#right-menu li#any-word").addClass("hidden");
