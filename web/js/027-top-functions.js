@@ -254,11 +254,6 @@
 					title += currentAlbum.subalbums.length + " ";
 					title += util._t(".title-albums");
 				}
-				// if (currentAlbum.numMedia > 0 && currentAlbum.subalbums.length > 0) {
-				//   title += ", ";
-				//   title += util._t(".title-total") + " ";
-				//   title += currentAlbum.numMedia + currentAlbum.subalbums.length;
-				// }
 
 				if (currentAlbum.hasOwnProperty("removedStopWords") && currentAlbum.removedStopWords.length) {
 					// say that some search word hasn't been used
@@ -320,11 +315,6 @@
 					title += currentAlbum.subalbums.length + " ";
 					title += util._t(".title-albums");
 				}
-				// if (currentAlbum.numMedia > 0 && currentAlbum.subalbums.length > 0) {
-				//   title += ", ";
-				//   title += util._t(".title-total") + " ";
-				//   title += currentAlbum.numMedia + currentAlbum.subalbums.length;
-				// }
 
 				if (currentAlbum.hasOwnProperty("removedStopWords") && currentAlbum.removedStopWords.length) {
 					// say that some search word hasn't been used
@@ -522,9 +512,7 @@
 					var whereLinks = '', thisCacheBase, name, documentTitle;
 
 					if (theAlbum.hasOwnProperty('ancestorsNames')) {
-						// var albumTypeString = "<a href='#!/" + Options.by_gps_string + "'" + util._t('#by-gps') + ']</a> ' + ' ' + raquo + ' ';
 						for (var i = 0; i < theAlbum.ancestorsNames.length; i ++) {
-						// for (var i = 2; i < theAlbum.ancestorsNames.length; i ++) {
 							name = theAlbum.ancestorsNames[i];
 							if (i === 0) {
 								if (name == Options.by_date_string)
@@ -831,7 +819,6 @@
 							} else {
 								popupRefreshType = "none";
 							}
-							// $(window).hashchange();
 
 							// close the map and reopen it
 							$('.modal-close')[0].click();
@@ -909,19 +896,14 @@
 			$("#media-box-container").css("transform", "translate(-" + windowWidth + "px, 0px)");
 			$(".media-box").css("width", windowWidth).css("height", heightForMediaAndTitle);
 			$(".media-box .media-box-inner").css("width", windowWidth).css("height", heightForMedia);
-			// $(".links").addClass("hidden");
 			$(".media-box").show();
 
 			if (currentAlbum.numMedia == 1) {
 				$("#next").hide();
 				$("#prev").hide();
-				// $("#media-view").addClass("no-bottom-space");
-				// $("#album-view").addClass("no-bottom-space");
 			} else {
 				$("#next").show();
 				$("#prev").show();
-				// $("#media-view").removeClass("no-bottom-space");
-				// $("#album-view").removeClass("no-bottom-space");
 			}
 
 			currentAlbum.media[currentMediaIndex].byDateName =
@@ -1024,8 +1006,6 @@
 			} else {
 				[albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
-				// nextLink = phFl.encodeHash(currentAlbum, nextMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
-				// prevLink = phFl.encodeHash(currentAlbum, prevMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
 				$("#next").show();
 				$("#prev").show();
 				mediaBoxInnerElement.css('cursor', '').on(
@@ -1068,8 +1048,6 @@
 					}
 				});
 			}
-
-			// $(".links").removeClass("hidden");
 		}
 
 		var originalMediaPath = encodeURI(util.originalMediaPath(media));
@@ -1176,7 +1154,6 @@
 		util.translate();
 
 		$("#subalbums").hide();
-		// $("#media-view").removeClass("hidden");
 	};
 
 	TopFunctions.scrollBottomThumbs = function(e, delta) {
@@ -1201,7 +1178,6 @@
 			// either the hash is wrong or it's a protected content album
 			// go up
 			window.location.href = PhotoFloat.upHash();
-			// util.goUpInHash(window.location.hash);
 			return;
 		}
 
@@ -1228,17 +1204,6 @@
 		currentMediaIndex = mediaIndex;
 
 		var isAlbumWithOneMedia = util.isAlbumWithOneMedia(currentAlbum);
-		// var passwordList = null;
-		// if (currentMedia == null) {
-		// 	if (! isAlbumWithOneMedia) {
-		// 		if (currentAlbum.hasOwnProperty("passwordsMd5"))
-		// 			// virtual albums don't have the passwordsMd5 property
-		// 			passwordList = currentAlbum.passwordsMd5;
-		// 	} else
-		// 		passwordList = currentAlbum.media[0].passwordsMd5;
-		// } else {
-		// 	passwordList = currentMedia.passwordsMd5;
-		// }
 
 		f.setOptions();
 
@@ -1246,16 +1211,7 @@
 			util.initializeSortPropertiesAndCookies(currentAlbum);
 			$("#menu-icon").attr("title", util._t("#menu-icon-title"));
 			util.sortAlbumsMedia(currentAlbum);
-			// f.updateMenu();
 		}
-
-		// if (util.isSearchCacheBase(currentAlbum.cacheBase)) {
-		// 	currentAlbumPathArray = currentAlbum.path.split('/').slice(1);
-			// if (util.isByGpsCacheBase(currentAlbum.cacheBase))
-			// 	currentAlbumPathArray = currentAlbum.ancestorsNames.slice(2);
-			// currentAlbumPath = currentAlbumPathArray.join('/');
-		// 	$("#album-search").attr('title', util._t("#current-album-is") + '"' + currentAlbumPath + '"');
-		// }
 
 		if (currentMedia !== null || isAlbumWithOneMedia) {
 			if (isAlbumWithOneMedia) {
@@ -1268,8 +1224,6 @@
 			}
 			nextMedia = null;
 			prevMedia = null;
-			// $("#album-view .title").hide();
-			// $("#media-view .title").show();
 			TopFunctions.showMedia(currentAlbum, currentMedia, 'center');
 
 			// we are in hashParsed
@@ -1277,20 +1231,15 @@
 			if (
 				previousAlbum !== null &&
 				util.isMapCacheBase(previousAlbum.cacheBase) &&
-				// fromEscKey || mapRefreshType == "refresh"
 				fromEscKey || mapRefreshType !== "none"
-				// && currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)
 			) {
 				$(selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 			}
 		} else {
-			// $("#album-view .title").show();
 			TopFunctions.setTitle("album", null);
-			// $("#media-view .title").hide();
 			$("#album-view").removeClass("media-view-container");
 		}
 
-		// if (! isAlbumWithOneMedia || $("#album-view").is(":visible")) {
 		if ($("#album-view").is(":visible")) {
 			populateAlbum =
 				previousAlbum === null ||
@@ -1315,7 +1264,6 @@
 			// subalbums are present, we have to wait when all the random thumbnails will be loaded
 		}
 		fromEscKey = false;
-		// mapRefreshType = "none";
 	};
 
 	TopFunctions.bindSortEvents = function(thisAlbum) {
@@ -1612,10 +1560,6 @@
 
 	TopFunctions.showAlbum = function(populate) {
 		function insertRandomImage(randomSubAlbum, index, subalbum) {
-			// var index = randomSubAlbum.randomMediaIndex;
-			// delete randomSubAlbum.randomMediaIndex;
-			// var subalbum = randomSubAlbum.theSubalbum;
-			// delete randomSubAlbum.theSubalbum;
 			var titleName, randomMediaLink, goTo, humanGeonames;
 			var randomMedia = randomSubAlbum.media[index];
 			var id = phFl.hashCode(subalbum.cacheBase);
@@ -1643,17 +1587,13 @@
 
 			if (util.isByDateCacheBase(currentAlbum.cacheBase)) {
 				titleName = util.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
-				// randomMediaLink = util.pathJoin(["#!", randomMedia.dayAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
 			} else if (util.isByGpsCacheBase(currentAlbum.cacheBase)) {
 				humanGeonames = util.pathJoin([Options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
 				titleName = util.pathJoin([humanGeonames, randomMedia.name]);
-				// randomMediaLink = util.pathJoin(["#!", randomMedia.gpsAlbumCacheBase, randomMedia.foldersCacheBase, randomMedia.cacheBase]);
 			} else if (util.isSearchCacheBase(currentAlbum.cacheBase)) {
 				titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
-				// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, currentAlbum.cacheBase + Options.cache_folder_separator + theSubalbum.cacheBase, randomMedia.cacheBase]);
 			} else {
 				titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
-				// randomMediaLink = util.pathJoin(["#!", randomMedia.foldersCacheBase, randomMedia.cacheBase]);
 			}
 			randomMediaLink = phFl.encodeHash(randomSubAlbum, randomMedia);
 
@@ -1851,7 +1791,7 @@
 						mediaHash = phFl.encodeHash(currentAlbum, ithMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
 					else
 						mediaHash = phFl.encodeHash(currentAlbum, ithMedia);
-					// imageLink = $("<a id='link-" + ithMedia.cacheBase + "'></a>");
+
 					imageLink = $("<a id='link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase + "'></a>");
 					imageLink.append(image);
 					media.push(imageLink);
@@ -1913,8 +1853,6 @@
 					populate == "refreshSubalbums" ||
 					populateMedia == "refreshBoth"
 				) {
-					// var subalbums = [];
-
 					// resize down the album buttons if they are too wide
 					albumViewWidth = $("body").width() -
 							parseInt($("#album-view").css("padding-left")) -
@@ -1988,7 +1926,6 @@
 								folder = "<span class='folder-name'>" +
 													folderName;
 								if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree)
-								// if (ithSubalbum.hasOwnProperty("positionsAndMediaInTree") && ithSubalbum.positionsAndMediaInTree.length)
 									folder += "<a id='subalbum-map-link-" + i + "' >" +
 													"<img " +
 														"class='title-img' " +
@@ -2193,8 +2130,6 @@
 				$("#subalbums").hide();
 			$("#media-view").removeClass("no-bottom-space");
 			$("#album-view").removeClass("no-bottom-space");
-			// $("#media-box-inner").show().children().last().remove();
-			// $("#media-box").hide();
 			$("#album-view, #album-view #subalbums").removeClass("hidden");
 
 			$("#powered-by").show();
@@ -2226,12 +2161,10 @@
 				util.isMapCacheBase(previousAlbum.cacheBase) &&
 				fromEscKey
 			) || mapRefreshType == "refresh"
-			// && currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)
 		)
 			$(selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 
 		if (! $("#album-view").hasClass("hidden"))
-			// f.scrollToThumb();
 			setTimeout(f.scrollToThumb, 1);
 
 		if (! $("#album-view").hasClass("media-view-container")) {
@@ -2261,7 +2194,6 @@
 						} else {
 							popupRefreshType = "none";
 						}
-						// $(window).hashchange();
 
 						// close the map and reopen it
 						$('.modal-close')[0].click();
@@ -2273,7 +2205,6 @@
 	};
 
 	TopFunctions.goFullscreen = function(e) {
-		// $("#media").off();
 		if (Modernizr.fullscreen) {
 			e.preventDefault();
 			$("#album-view").addClass('hidden');
@@ -2287,7 +2218,6 @@
 				}
 			});
 		} else {
-			// $("#media").off();
 			if (! fullScreenStatus) {
 				$(".title").addClass("hidden-by-fullscreen");
 				$("#album-view").addClass('hidden-by-fullscreen');
@@ -2420,7 +2350,6 @@
 			var earthCircumference = 40075016;
 			var xZoom = Math.min(19, parseInt(Math.log2((windowWidth / 2 * 0.9) * earthCircumference * Math.cos(util.degreesToRadians(center.lat)) / 256 / maxXDistance)));
 			var yZoom = Math.min(19, parseInt(Math.log2((windowHeight / 2 * 0.9) * earthCircumference * Math.cos(util.degreesToRadians(center.lat)) / 256 / maxYDistance)));
-			// var minZoom = parseInt(Math.log2(Math.min(windowWidth, windowHeight) / 256));
 			var zoom = Math.min(xZoom, yZoom);
 
 			$("#loading").hide();
@@ -2492,7 +2421,6 @@
 			$(".map-container > div").css("min-height", (windowHeight -50).toString() + "px");
 			mapIsInitialized = true;
 
-
 			L.tileLayer(
 				'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 				{
@@ -2506,7 +2434,6 @@
 
 			var cacheBases;
 			for (var iPoint = 0; iPoint < pointList.length; iPoint ++) {
-				// console.log(iPoint + "/" + pointList.length);
 				cacheBases = '';
 						for(var iPhoto = 0; iPhoto < pointList[iPoint].mediaNameList.length; iPhoto ++) {
 							// we must get the media corresponding to the name in the point
@@ -2550,7 +2477,6 @@
 			if (typeof from !== "undefined") {
 				if (popupRefreshType == "previousAlbum")
 					TopFunctions.prepareAndDoPopupUpdate();
-					// TopFunctions.updateMapAlbumOnMapClick(null, pruneCluster.Cluster._clusters, TopFunctions.prepareAndDoPopupUpdate, previousAlbum);
 				else if (popupRefreshType == "mapAlbum") {
 					function playClickElement(clickHistory, iClick) {
 						var clickHistoryElement = clickHistory[iClick];
@@ -2564,7 +2490,6 @@
 										"ctrlKey": clickHistoryElement.ctrlKey,
 									}
 								};
-								// return;
 								var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, pruneCluster.Cluster._clusters, false);
 								updatePromise.then(
 									resolve_playClickElement,
@@ -2582,7 +2507,6 @@
 									playClickElement(clickHistory, iClick + 1);
 								else
 									TopFunctions.prepareAndDoPopupUpdate();
-									// TopFunctions.updateMapAlbumOnMapClick(null, pruneCluster.Cluster._clusters, TopFunctions.prepareAndDoPopupUpdate);
 							},
 							function(album) {
 								console.trace();
@@ -2596,7 +2520,6 @@
 
 				}
 			}
-			// popupRefreshType = "previousAlbum";
 		}
 	};
 
@@ -2618,10 +2541,6 @@
 		.openOn(MapFunctions.mymap);
 
 		map.addPopupMover();
-
-		// $('.leaflet-popup-close-button')[0].click();
-		// // $('#popup #popup-content').html("");
-		// $('.modal-close')[0].click();
 
 		phFl.endPreparingAlbumAndKeepOn(
 			MapFunctions.mapAlbum,
@@ -2653,10 +2572,6 @@
 					};
 				}
 
-				// if (typeof previousAlbum !== "undefined" && previousAlbum !== null) {
-				// 	// the map has been shown when coming from a map album, we must show the popup with the media it had when it was previously built
-				// 	endPreparingMapAlbumAndUpdatePopup(previousAlbum);
-				// } else {
 				var clickedPosition = evt.latlng;
 
 				// reset the thumbnails if not shift- nor ctrl-clicking
@@ -2708,7 +2623,6 @@
 						// control click: remove the points
 
 						MapFunctions.mapAlbum.clickHistory.push(clickHistoryElement);
-						// $("#loading").show();
 
 						var matchingIndex, matchingMedia, positionsAndCountsElement;
 						for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
@@ -2753,8 +2667,6 @@
 					imageLoadPromise = new Promise(
 						function(resolve_imageLoad) {
 							var indexPositions, positionsAndCountsElement;
-
-							// $("#loading").show();
 
 							if (jQuery.isEmptyObject(MapFunctions.mapAlbum) || MapFunctions.mapAlbum.numMedia == 0 || ! evt.originalEvent.shiftKey) {
 								// normal click or shift click without previous content
@@ -2807,11 +2719,6 @@
 				function matchPositionAndCount(reference, element) {
 					return (JSON.stringify([reference.lat, reference.lng]) === JSON.stringify([element.lat, element.lng]));
 				}
-
-				// function getCodedHashId(mediaNameListElement) {
-				// 	var hash = mediaNameListElement.albumCacheBase + "--" + mediaNameListElement.cacheBase;
-				// 	return "popup-img-" + phFl.hashCode(hash);
-				// }
 
 				function endPreparingMapAlbumAndUpdatePopup() {
 					if (updateMapAlbum) {
