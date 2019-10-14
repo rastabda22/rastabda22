@@ -843,18 +843,6 @@
 				"top",
 				titleHeight + (mediaBoxInnerHeight - prevNextHeight) / 2
 			);
-			// // position lateral social buttons near image bottom
-			// if (Utilities.lateralSocialButtons()) {
-			// 	var socialHeight = parseInt($(".ssk-left").outerHeight());
-			// 	var mediaActualHeight = mediaElement.height();
-			// 	$(".ssk-left").css(
-			// 		"top",
-			// 		// titleHeight + (mediaBoxInnerHeight - socialHeight) / 2 + socialHeight / 2
-			// 		(titleHeight + mediaBoxInnerHeight - (mediaBoxInnerHeight - mediaActualHeight) / 2 - socialHeight / 2 - 15).toString() + "px"
-			// 	);
-			// } else {
-			// 	$(".ssk-left").css("top", "");
-			// }
 
 			Utilities.setLinksVisibility();
 		}
@@ -870,7 +858,6 @@
 					event.data.callbackType == "load"
 				)
 			) {
-			// if (event.data.callbackType !== "pinch" && id === "center") {
 				event.data.callback(containerHeight, containerWidth);
 			}
 		}
@@ -1114,40 +1101,6 @@
 		$("body, html").css("overflow", "hidden");
 	};
 
-	// Utilities.prototype.goUpInHash = function() {
-	// 	var hashList = window.location.hash.split('/');
-	// 	if (hashList.lenght === 3)
-	// 		hashList = hashList[1].split(Options.cache_folder_separator);
-	//
-	// 	if (hashList.length == 1) {
-	// 		window.location.href = "#!";
-	// 		return;
-	// 	} else {
-	// 		window.location.href = hashList.slice(0, -1).join(Options.cache_folder_separator);
-	// 	}
-	// };
-
-	// Utilities.convertComplexCombinationToCodesComplexCombination = function(complexCombination) {
-	// 	var albumCombinationsList = complexCombination.split(',')[0].split('-');
-	// 	var mediaCombinationsList = complexCombination.split(',')[1].split('-');
-	// 	var i, index, code;
-	//
-	// 	var albumCodesCombinationsList = [];
-	// 	for (i = 0; i < albumCombinationsList.length; i ++) {
-	// 		index = PhotoFloat.guessedPasswordsMd5.indexOf(albumCombinationsList[i]);
-	// 		code = PhotoFloat.guessedPasswordCodes[index];
-	// 		albumCodesCombinationsList.push(code);
-	// 	}
-	// 	var mediaCodesCombinationsList = [];
-	// 	for (i = 0; i < mediaCombinationsList.length; i ++) {
-	// 		index = PhotoFloat.guessedPasswordsMd5.indexOf(mediaCombinationsList[i]);
-	// 		code = PhotoFloat.guessedPasswordCodes[index];
-	// 		mediaCodesCombinationsList.push(code);
-	// 	}
-	//
-	// 	return [albumCodesCombinationsList.join('-'), mediaCodesCombinationsList.join('-')].join(',');
-	// };
-
 	Utilities.convertMd5ToCode = function(md5) {
 		var index = PhotoFloat.guessedPasswordsMd5.indexOf(md5);
 		return PhotoFloat.guessedPasswordCodes[index];
@@ -1178,35 +1131,6 @@
 		else
 			return '';
 	};
-
-	// Utilities.prototype.convertCodesComplexCombinationToComplexCombination = function(codesComplexCombination) {
-	// 	var albumCodesCombinationsList = codesComplexCombination.split(',')[0].split('-');
-	// 	var mediaCodesCombinationsList = codesComplexCombination.split(',')[1].split('-');
-	// 	var i, index, md5;
-	//
-	// 	var albumCombinationsList = [];
-	// 	for (i = 0; i < albumCodesCombinationsList.length; i ++) {
-	// 		index = PhotoFloat.guessedPasswordCodes.indexOf(albumCodesCombinationsList[i]);
-	// 		if (index != -1) {
-	// 			md5 = PhotoFloat.guessedPasswordsMd5[index];
-	// 			albumCombinationsList.push(md5);
-	// 		} else {
-	// 			albumCombinationsList.push('...');
-	// 		}
-	// 	}
-	// 	var mediaCombinationsList = [];
-	// 	for (i = 0; i < mediaCodesCombinationsList.length; i ++) {
-	// 		index = PhotoFloat.guessedPasswordCodes.indexOf(mediaCodesCombinationsList[i]);
-	// 		if (index != -1) {
-	// 			md5 = PhotoFloat.guessedPasswordsMd5[index];
-	// 			mediaCombinationsList.push(md5);
-	// 		} else {
-	// 			albumCombinationsList.push('...');
-	// 		}
-	// 	}
-	//
-	// 	return [albumCombinationsList.join('-'), mediaCombinationsList.join('-')].join(',');
-	// };
 
 	Utilities.prototype.undie = function() {
 		$(".error, #error-overlay, #auth-text", ".search-failed").fadeOut(500);
