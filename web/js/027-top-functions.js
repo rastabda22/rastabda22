@@ -1249,13 +1249,13 @@
 			// f.updateMenu();
 		}
 
-		currentAlbumPathArray = currentAlbum.path.split('/').slice(1);
-		if (util.isByGpsCacheBase(currentAlbum.cacheBase))
-			currentAlbumPathArray = currentAlbum.ancestorsNames.slice(2);
-		currentAlbumPath = currentAlbumPathArray.join('/');
-
-		$("#album-search").attr('title', util._t("#current-album-is") + '"'+ currentAlbumPath + '"');
-
+		// if (util.isSearchCacheBase(currentAlbum.cacheBase)) {
+		// 	currentAlbumPathArray = currentAlbum.path.split('/').slice(1);
+			// if (util.isByGpsCacheBase(currentAlbum.cacheBase))
+			// 	currentAlbumPathArray = currentAlbum.ancestorsNames.slice(2);
+			// currentAlbumPath = currentAlbumPathArray.join('/');
+		// 	$("#album-search").attr('title', util._t("#current-album-is") + '"' + currentAlbumPath + '"');
+		// }
 
 		if (currentMedia !== null || isAlbumWithOneMedia) {
 			if (isAlbumWithOneMedia) {
