@@ -207,7 +207,7 @@
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>" + raquo;
 			if (
 				Options.search_current_album &&
-				! util.isAnyRootHash(Options.album_to_search_in)
+				! util.isAnyRootHash(Options.cache_base_to_search_in)
 			) {
 				title += " <span id='search-album-to-be-filled'></span> " + raquo;
 			}
@@ -215,7 +215,7 @@
 
 			if (
 				Options.search_current_album &&
-				! util.isAnyRootHash(Options.album_to_search_in)
+				! util.isAnyRootHash(Options.cache_base_to_search_in)
 			) {
 				searchClass = "main-search-link";
 				searchFolderHash = albumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
@@ -533,7 +533,7 @@
 									name = "(" + util._t("#by-gps") + ")";
 								if (name == Options.by_map_string)
 									name = "(" + util._t("#by-map") + ")";
-							} else if (i === 2 && util.isByDateCacheBase(Options.album_to_search_in))
+							} else if (i === 2 && util.isByDateCacheBase(Options.cache_base_to_search_in))
 								// convert the month number to localized month name
 								name = util._t("#month-" + name);
 							thisCacheBase = "#!/" + theAlbum.ancestorsCacheBase[i];

@@ -1565,7 +1565,7 @@
 					Options.search_current_album = searchOptions.includes('o');
 				}
 
-				Options.album_to_search_in = splittedAlbumHash.slice(2).join(Options.cache_folder_separator);
+				Options.cache_base_to_search_in = splittedAlbumHash.slice(2).join(Options.cache_folder_separator);
 
 				// if (util.isAnyRootHash(Options.cache_base_to_search_in))
 				// 	$("ul#right-menu li#album-search").addClass("hidden");
@@ -1815,13 +1815,13 @@
 												if (
 													util.normalizeAccordingToOptions(ithMedia.words).includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) && (
 														! Options.search_current_album ||
-														util.isAnyRootHash(Options.album_to_search_in) || (
+														util.isAnyRootHash(Options.cache_base_to_search_in) || (
 															// check whether the media is inside the current album tree
-															ithMedia.foldersCacheBase.indexOf(Options.album_to_search_in) === 0 ||
-															ithMedia.hasOwnProperty("dayAlbumCacheBase") && ithMedia.dayAlbumCacheBase.indexOf(Options.album_to_search_in) === 0 ||
-															ithMedia.hasOwnProperty("gpsAlbumCacheBase") && ithMedia.gpsAlbumCacheBase.indexOf(Options.album_to_search_in) === 0 ||
-															util.isMapCacheBase(Options.album_to_search_in) &&
-															PhotoFloat.getAlbumFromCache(Options.album_to_search_in).media.some(
+															ithMedia.foldersCacheBase.indexOf(Options.cache_base_to_search_in) === 0 ||
+															ithMedia.hasOwnProperty("dayAlbumCacheBase") && ithMedia.dayAlbumCacheBase.indexOf(Options.cache_base_to_search_in) === 0 ||
+															ithMedia.hasOwnProperty("gpsAlbumCacheBase") && ithMedia.gpsAlbumCacheBase.indexOf(Options.cache_base_to_search_in) === 0 ||
+															util.isMapCacheBase(Options.cache_base_to_search_in) &&
+															PhotoFloat.getAlbumFromCache(Options.cache_base_to_search_in).media.some(
 																function(media) {
 																	return media.cacheBase == ithMedia.cacheBase && media.foldersCacheBase == ithMedia.foldersCacheBase;
 																}
@@ -1836,10 +1836,10 @@
 												if (
 													util.normalizeAccordingToOptions(ithSubalbum.words).includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) && (
 														! Options.search_current_album ||
-														util.isAnyRootHash(Options.album_to_search_in) || (
+														util.isAnyRootHash(Options.cache_base_to_search_in) || (
 															// check whether the media is inside the current album tree
-															ithSubalbum.cacheBase.indexOf(Options.album_to_search_in) === 0 &&
-															ithSubalbum.cacheBase != Options.album_to_search_in
+															ithSubalbum.cacheBase.indexOf(Options.cache_base_to_search_in) === 0 &&
+															ithSubalbum.cacheBase != Options.cache_base_to_search_in
 														)
 													)
 												)
@@ -1857,13 +1857,13 @@
 														}
 													) && (
 														! Options.search_current_album ||
-														util.isAnyRootHash(Options.album_to_search_in) || (
+														util.isAnyRootHash(Options.cache_base_to_search_in) || (
 															// check whether the media is inside the current album tree
-															ithMedia.foldersCacheBase.indexOf(Options.album_to_search_in) === 0 ||
-															ithMedia.hasOwnProperty("dayAlbumCacheBase") && ithMedia.dayAlbumCacheBase.indexOf(Options.album_to_search_in) === 0 ||
-															ithMedia.hasOwnProperty("gpsAlbumCacheBase") && ithMedia.gpsAlbumCacheBase.indexOf(Options.album_to_search_in) === 0 ||
-															util.isMapCacheBase(Options.album_to_search_in) &&
-															PhotoFloat.getAlbumFromCache(Options.album_to_search_in).media.some(
+															ithMedia.foldersCacheBase.indexOf(Options.cache_base_to_search_in) === 0 ||
+															ithMedia.hasOwnProperty("dayAlbumCacheBase") && ithMedia.dayAlbumCacheBase.indexOf(Options.cache_base_to_search_in) === 0 ||
+															ithMedia.hasOwnProperty("gpsAlbumCacheBase") && ithMedia.gpsAlbumCacheBase.indexOf(Options.cache_base_to_search_in) === 0 ||
+															util.isMapCacheBase(Options.cache_base_to_search_in) &&
+															PhotoFloat.getAlbumFromCache(Options.cache_base_to_search_in).media.some(
 																function(media) {
 																	return media.cacheBase == ithMedia.cacheBase && media.foldersCacheBase == ithMedia.foldersCacheBase;
 																}
@@ -1883,10 +1883,10 @@
 														}
 													) && (
 														! Options.search_current_album ||
-														util.isAnyRootHash(Options.album_to_search_in) || (
+														util.isAnyRootHash(Options.cache_base_to_search_in) || (
 															// check whether the media is inside the current album tree
-															ithSubalbum.cacheBase.indexOf(Options.album_to_search_in) === 0 &&
-															ithSubalbum.cacheBase != Options.album_to_search_in
+															ithSubalbum.cacheBase.indexOf(Options.cache_base_to_search_in) === 0 &&
+															ithSubalbum.cacheBase != Options.cache_base_to_search_in
 														)
 													)
 												)

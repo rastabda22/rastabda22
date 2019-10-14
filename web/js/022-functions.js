@@ -675,10 +675,10 @@
 		if (Object.keys(Options).length > 0) {
 			if (! util.isSearchHash(hash))
 				// reset the return link from search
-				Options.album_to_search_in = phFl.cleanHash(hash);
+				Options.cache_base_to_search_in = phFl.cleanHash(hash);
 			//
-			// if (! Options.hasOwnProperty('album_to_search_in') || ! Options.album_to_search_in)
-			// 	Options.album_to_search_in = Options.folders_string;
+			// if (! Options.hasOwnProperty('album_to_search_in') || ! Options.cache_base_to_search_in)
+			// 	Options.cache_base_to_search_in = Options.folders_string;
 
 			phFl.parseHash(hash, callback, error);
 		} else {
@@ -795,8 +795,8 @@
 						// if (searchRefineCookie !== null)
 						// 	Options.search_refine = searchRefineCookie;
 
-						if (! Options.hasOwnProperty('album_to_search_in') || ! Options.album_to_search_in)
-							Options.album_to_search_in = Options.folders_string;
+						if (! Options.hasOwnProperty('album_to_search_in') || ! Options.cache_base_to_search_in)
+							Options.cache_base_to_search_in = Options.folders_string;
 						if (! Options.hasOwnProperty('saved_album_to_search_in') || ! Options.saved_album_to_search_in)
 							Options.saved_album_to_search_in = Options.folders_string;
 

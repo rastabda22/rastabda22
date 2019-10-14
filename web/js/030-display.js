@@ -395,16 +395,16 @@ $(document).ready(function() {
 		// save the current hash in order to come back there when exiting from search
 		if (util.isSearchCacheBase(albumHash)) {
 			// a plain search: get the folder to search in from the search album hash
-			Options.album_to_search_in = albumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
+			Options.cache_base_to_search_in = albumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
 		} else {
 			// it's a subalbum of a search or it's not a search hash: use the current album hash
-			Options.album_to_search_in = albumHash;
+			Options.cache_base_to_search_in = albumHash;
 
-			Options.saved_album_to_search_in = Options.album_to_search_in;
+			Options.saved_album_to_search_in = Options.cache_base_to_search_in;
 		}
 
-		if (! Options.hasOwnProperty('album_to_search_in') || ! Options.album_to_search_in)
-			Options.album_to_search_in = Options.folders_string;
+		if (! Options.hasOwnProperty('album_to_search_in') || ! Options.cache_base_to_search_in)
+			Options.cache_base_to_search_in = Options.folders_string;
 
 		var bySearchViewHash = "#!/" + Options.by_search_string;
 
@@ -424,7 +424,7 @@ $(document).ready(function() {
 				searchOptions += 'o' + Options.search_options_separator;
 			bySearchViewHash += searchOptions + searchTerms;
 
-			bySearchViewHash += Options.cache_folder_separator + Options.album_to_search_in;
+			bySearchViewHash += Options.cache_folder_separator + Options.cache_base_to_search_in;
 
 			window.location.href = bySearchViewHash;
 		}
