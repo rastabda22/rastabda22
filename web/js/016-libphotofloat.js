@@ -1530,7 +1530,7 @@
 		$(".search-failed").hide();
 		// $("#media-view").removeClass("hidden");
 		var [albumHash, mediaHash, mediaFolderHash] = PhotoFloat.decodeHash(hash);
-		$("ul#right-menu li#album-search").removeClass("dimmed");
+		// $("ul#right-menu li#album-search").removeClass("hidden");
 		$("ul#right-menu li#any-word").removeClass("dimmed");
 		$("#album-view, #album-view #subalbums, #album-view #thumbs").removeClass("hidden");
 
@@ -1542,8 +1542,8 @@
 		if (albumHash) {
 			albumHash = decodeURI(albumHash);
 
-			if (util.isAnyRootHash(albumHash))
-				$("ul#right-menu li#album-search").addClass("dimmed");
+			// if (util.isAnyRootHash(albumHash))
+			// 	$("ul#right-menu li#album-search").addClass("hidden");
 
 			if (util.isSearchCacheBase(albumHash)) {
 				var splittedAlbumHash = albumHash.split(Options.cache_folder_separator);
@@ -1567,11 +1567,11 @@
 
 				Options.album_to_search_in = splittedAlbumHash.slice(2).join(Options.cache_folder_separator);
 
-				if (util.isAnyRootHash(Options.album_to_search_in))
-					$("ul#right-menu li#album-search").addClass("dimmed");
+				// if (util.isAnyRootHash(Options.cache_base_to_search_in))
+				// 	$("ul#right-menu li#album-search").addClass("hidden");
 
 				// if (util.isSearchHash(location.hash) && Options.search_refine)
-				// 	Options.album_to_search_in = albumHash;
+				// 	Options.cache_base_to_search_in = albumHash;
 
 				$("ul#right-menu #search-field").attr("value", wordsStringOriginal);
 				wordsString = util.normalizeAccordingToOptions(wordsString);
