@@ -1,3 +1,8 @@
+### version v4.0.2 (Oct 14, 2019)
+
+* fix incorrect tooltip for album searched in
+* better managing of dimmed menu entries
+
 ### version v4.0.1 (Oct 14, 2019)
 
 * fixed js bugs in title
