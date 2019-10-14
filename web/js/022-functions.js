@@ -108,7 +108,7 @@
 		if (
 			isMapOrPopup ||
 			thisAlbum === null ||
-			[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(thisAlbum.cacheBase) == -1 &&
+			! util.isAnyRootHash(thisAlbum.cacheBase) &&
 			(currentMedia === null && ! util.isAlbumWithOneMedia(thisAlbum))
 		) {
 			$(".browsing-mode-switcher").addClass("hidden");
