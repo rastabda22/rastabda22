@@ -354,6 +354,10 @@
 		return sortedAlbum;
 	};
 
+	Utilities.prototype.isAnyRootHash = function(hash) {
+		return [Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(hash) !== -1;
+	};
+
 	Utilities.prototype.trimExtension = function(name) {
 		var index = name.lastIndexOf(".");
 		if (index !== -1)

@@ -1530,7 +1530,7 @@
 		$(".search-failed").hide();
 		// $("#media-view").removeClass("hidden");
 		var [albumHash, mediaHash, mediaFolderHash] = PhotoFloat.decodeHash(hash);
-		$("ul#right-menu li#album-search").removeClass("dimmed");
+		// $("ul#right-menu li#album-search").removeClass("hidden");
 		$("ul#right-menu li#any-word").removeClass("dimmed");
 		$("#album-view, #album-view #subalbums, #album-view #thumbs").removeClass("hidden");
 
@@ -1542,8 +1542,8 @@
 		if (albumHash) {
 			albumHash = decodeURI(albumHash);
 
-			if ([Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(albumHash) !== -1)
-				$("ul#right-menu li#album-search").addClass("dimmed");
+			// if (util.isAnyRootHash(albumHash))
+			// 	$("ul#right-menu li#album-search").addClass("hidden");
 
 			if (util.isSearchCacheBase(albumHash)) {
 				var splittedAlbumHash = albumHash.split(Options.cache_folder_separator);
@@ -1567,11 +1567,11 @@
 
 				Options.album_to_search_in = splittedAlbumHash.slice(2).join(Options.cache_folder_separator);
 
-				if ([Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) !== -1)
-					$("ul#right-menu li#album-search").addClass("dimmed");
+				// if (util.isAnyRootHash(Options.cache_base_to_search_in))
+				// 	$("ul#right-menu li#album-search").addClass("hidden");
 
 				// if (util.isSearchHash(location.hash) && Options.search_refine)
-				// 	Options.album_to_search_in = albumHash;
+				// 	Options.cache_base_to_search_in = albumHash;
 
 				$("ul#right-menu #search-field").attr("value", wordsStringOriginal);
 				wordsString = util.normalizeAccordingToOptions(wordsString);
@@ -1815,7 +1815,7 @@
 												if (
 													util.normalizeAccordingToOptions(ithMedia.words).includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) && (
 														! Options.search_current_album ||
-														[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) !== -1 || (
+														util.isAnyRootHash(Options.album_to_search_in) || (
 															// check whether the media is inside the current album tree
 															ithMedia.foldersCacheBase.indexOf(Options.album_to_search_in) === 0 ||
 															ithMedia.hasOwnProperty("dayAlbumCacheBase") && ithMedia.dayAlbumCacheBase.indexOf(Options.album_to_search_in) === 0 ||
@@ -1836,7 +1836,7 @@
 												if (
 													util.normalizeAccordingToOptions(ithSubalbum.words).includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) && (
 														! Options.search_current_album ||
-														[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) !== -1 || (
+														util.isAnyRootHash(Options.album_to_search_in) || (
 															// check whether the media is inside the current album tree
 															ithSubalbum.cacheBase.indexOf(Options.album_to_search_in) === 0 &&
 															ithSubalbum.cacheBase != Options.album_to_search_in
@@ -1857,7 +1857,7 @@
 														}
 													) && (
 														! Options.search_current_album ||
-														[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) !== -1 || (
+														util.isAnyRootHash(Options.album_to_search_in) || (
 															// check whether the media is inside the current album tree
 															ithMedia.foldersCacheBase.indexOf(Options.album_to_search_in) === 0 ||
 															ithMedia.hasOwnProperty("dayAlbumCacheBase") && ithMedia.dayAlbumCacheBase.indexOf(Options.album_to_search_in) === 0 ||
@@ -1883,7 +1883,7 @@
 														}
 													) && (
 														! Options.search_current_album ||
-														[Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(Options.album_to_search_in) !== -1 || (
+														util.isAnyRootHash(Options.album_to_search_in) || (
 															// check whether the media is inside the current album tree
 															ithSubalbum.cacheBase.indexOf(Options.album_to_search_in) === 0 &&
 															ithSubalbum.cacheBase != Options.album_to_search_in
