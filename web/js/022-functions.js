@@ -203,9 +203,9 @@
 			else
 				$("ul#right-menu li#accent-sensitive").removeClass("selected");
 			if (util.isAnyRootHash(Options.cache_base_to_search_in)) {
-				$("ul#right-menu li#album-search").addClass("hidden");
+				$("ul#right-menu li#album-search").addClass("dimmed").off("click");
 			} else {
-				$("ul#right-menu li#album-search").removeClass("hidden");
+				$("ul#right-menu li#album-search").removeClass("dimmed");
 				if (Options.search_current_album)
 					$("ul#right-menu li#album-search").addClass("selected");
 				else

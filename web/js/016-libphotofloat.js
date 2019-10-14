@@ -1580,7 +1580,7 @@
 				searchWordsFromUserNormalized = wordsStringNormalized.split(' ');
 
 				if (searchWordsFromUser.length == 1)
-					$("ul#right-menu li#any-word").addClass("dimmed");
+					$("ul#right-menu li#any-word").addClass("dimmed").off("click");
 
 				var searchResultsAlbumFinal = {};
 				searchResultsAlbumFinal.positionsAndMediaInTree = [];

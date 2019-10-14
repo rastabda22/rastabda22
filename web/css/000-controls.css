@@ -752,6 +752,7 @@ ul#right-menu.expand .selected {
 
 ul#right-menu.expand li.dimmed {
 	opacity: 0.2;
+	cursor: auto;
 }
 
 ul#right-menu.expand li:not(.active, .sub-menu) {
