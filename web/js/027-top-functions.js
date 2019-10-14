@@ -68,7 +68,7 @@
 		var fillInSpan = "<span id='fill-in-map-link'></span>";
 
 		if (isDateTitle) {
-			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>";
+			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>" + raquo;
 			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_date_string + "'>(" + util._t("#by-date") + ")</a>";
 
 			if (components.length > 2 || media !== null)
@@ -128,7 +128,7 @@
 				title += "</span>";
 			}
 		} else if (isGpsTitle) {
-			title = "<a class='" + titleAnchorClasses + "' href='#!/'>" + components[0] + "</a>";
+			title = "<a class='" + titleAnchorClasses + "' href='#!/'>" + components[0] + "</a>" + raquo;
 			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_gps_string + "'>(" + util._t("#by-gps") + ")</a>";
 
 			if (components.length > 2 || media !== null)
@@ -203,6 +203,7 @@
 			// (optional) i=2: image cache or folder
 			// (optional) i=3 up: folder or image
 			// (optional) i=n: image
+
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>" + raquo;
 			if (
 				Options.search_current_album &&
@@ -520,17 +521,26 @@
 				function(theAlbum) {
 					var whereLinks = '', thisCacheBase, name, documentTitle;
 
-					if (theAlbum.hasOwnProperty('')) {
+					if (theAlbum.hasOwnProperty('ancestorsNames')) {
 						// var albumTypeString = "<a href='#!/" + Options.by_gps_string + "'" + util._t('#by-gps') + ']</a> ' + ' ' + raquo + ' ';
-						for (var i = 2; i < theAlbum.ancestorsNames.length; i ++) {
+						for (var i = 0; i < theAlbum.ancestorsNames.length; i ++) {
+						// for (var i = 2; i < theAlbum.ancestorsNames.length; i ++) {
 							name = theAlbum.ancestorsNames[i];
-							if (i == 3 && util.isByDateCacheBase(Options.album_to_search_in))
+							if (i === 0) {
+								if (name == Options.by_date_string)
+									name = "(" + util._t("#by-date") + ")";
+								else if (name == Options.by_gps_string)
+									name = "(" + util._t("#by-gps") + ")";
+								if (name == Options.by_map_string)
+									name = "(" + util._t("#by-map") + ")";
+							} else if (i === 2 && util.isByDateCacheBase(Options.album_to_search_in))
 								// convert the month number to localized month name
 								name = util._t("#month-" + name);
-							thisCacheBase = "#!/" + theAlbum.ancestorsCacheBase.slice(2, i + 1).join(Options.cache_folder_separator);
-							if (i > 2)
+							thisCacheBase = "#!/" + theAlbum.ancestorsCacheBase[i];
+							if (i > 0 && (i !== 1 || theAlbum.ancestorsNames[0] !== ""))
 								whereLinks += ' ' + raquo + ' ';
-							whereLinks += "<a class='search-link' href='" + thisCacheBase + "'>" + name + "</a>";
+							if (name)
+								whereLinks += "<a class='search-link' href='" + thisCacheBase + "'>" + name + "</a>";
 						}
 					}
 
