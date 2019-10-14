@@ -400,10 +400,10 @@ $(document).ready(function() {
 			// it's a subalbum of a search or it's not a search hash: use the current album hash
 			Options.cache_base_to_search_in = albumHash;
 
-			Options.saved_album_to_search_in = Options.cache_base_to_search_in;
+			Options.saved_cache_base_to_search_in = Options.cache_base_to_search_in;
 		}
 
-		if (! Options.hasOwnProperty('album_to_search_in') || ! Options.cache_base_to_search_in)
+		if (! Options.hasOwnProperty('cache_base_to_search_in') || ! Options.cache_base_to_search_in)
 			Options.cache_base_to_search_in = Options.folders_string;
 
 		var bySearchViewHash = "#!/" + Options.by_search_string;

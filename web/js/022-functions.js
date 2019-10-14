@@ -682,7 +682,7 @@
 				// reset the return link from search
 				Options.cache_base_to_search_in = phFl.cleanHash(hash);
 			//
-			// if (! Options.hasOwnProperty('album_to_search_in') || ! Options.cache_base_to_search_in)
+			// if (! Options.hasOwnProperty('cache_base_to_search_in') || ! Options.cache_base_to_search_in)
 			// 	Options.cache_base_to_search_in = Options.folders_string;
 
 			phFl.parseHash(hash, callback, error);
@@ -800,10 +800,10 @@
 						// if (searchRefineCookie !== null)
 						// 	Options.search_refine = searchRefineCookie;
 
-						if (! Options.hasOwnProperty('album_to_search_in') || ! Options.cache_base_to_search_in)
+						if (! Options.hasOwnProperty('cache_base_to_search_in') || ! Options.cache_base_to_search_in)
 							Options.cache_base_to_search_in = Options.folders_string;
-						if (! Options.hasOwnProperty('saved_album_to_search_in') || ! Options.saved_album_to_search_in)
-							Options.saved_album_to_search_in = Options.folders_string;
+						if (! Options.hasOwnProperty('saved_cache_base_to_search_in') || ! Options.saved_cache_base_to_search_in)
+							Options.saved_cache_base_to_search_in = Options.folders_string;
 
 						Options.foldersStringWithTrailingSeparator = Options.folders_string + Options.cache_folder_separator;
 						Options.byDateStringWithTrailingSeparator = Options.by_date_string + Options.cache_folder_separator;
