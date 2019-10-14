@@ -1,3 +1,7 @@
+### version v4.0.1 (Oct 14, 2019)
+
+* fixed js bugs in title
+
 ### version v4.0.0 (Oct 13, 2019)
 
 * fixed bug with map size
