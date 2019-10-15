@@ -93,15 +93,16 @@
 					function(theAlbum) {
 						var path;
 						var splittedPath = theAlbum.path.split('/');
-						if (splittedPath[0] === Options.folders_string)
+						if (splittedPath[0] === Options.folders_string) {
 							splittedPath[0] = "";
-						else if (splittedPath[0] === Options.by_date_string)
+						} else if (splittedPath[0] === Options.by_date_string) {
 							splittedPath[0] = "(" + util._t("#by-date") + ")";
-						else if (splittedPath[0] === Options.by_gps_string) {
+						} else if (splittedPath[0] === Options.by_gps_string) {
 							splittedPath = theAlbum.ancestorsNames;
 							splittedPath[0] = "(" + util._t("#by-gps") + ")";
-						else if (splittedPath[0] === Options.by_map_string)
+						} else if (splittedPath[0] === Options.by_map_string) {
 							splittedPath = ["(" + util._t("#by-map") + ")"];
+						}
 						path = splittedPath.join('/');
 
 						resolve_getAlbumNameFromAlbumHash(path);
