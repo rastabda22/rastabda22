@@ -724,9 +724,11 @@
 		}
 
 		if (Object.keys(Options).length > 0) {
-			if (! util.isSearchHash(hash))
+			if (! util.isSearchHash(hash)) {
 				// reset the return link from search
-				Options.cache_base_to_search_in = phFl.cleanHash(hash);
+				var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
+				Options.cache_base_to_search_in = phFl.cleanHash(albumHash);
+			}
 			//
 			// if (! Options.hasOwnProperty('cache_base_to_search_in') || ! Options.cache_base_to_search_in)
 			// 	Options.cache_base_to_search_in = Options.folders_string;
