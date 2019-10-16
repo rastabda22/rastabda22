@@ -199,17 +199,13 @@
 		}
 
 		if (
-			thisAlbum !== null &&
-			(util.isSearchCacheBase(thisAlbum.cacheBase) || thisAlbum.cacheBase == Options.by_search_string)
-			||
-			Options.search_inside_words ||
-			Options.search_any_word ||
-			Options.search_case_sensitive ||
-			Options.search_accent_sensitive ||
-			// Options.search_refine ||
-			$("ul#right-menu li#no-search-string").is(":visible") ||
-			$("ul#right-menu li#no-results").is(":visible") ||
-			$("ul#right-menu li#search-too-wide").is(":visible")
+			thisAlbum !== null
+			// thisAlbum !== null &&
+			// (util.isSearchCacheBase(thisAlbum.cacheBase) || thisAlbum.cacheBase == Options.by_search_string)
+			// ||
+			// $("ul#right-menu li#no-search-string").is(":visible") ||
+			// $("ul#right-menu li#no-results").is(":visible") ||
+			// $("ul#right-menu li#search-too-wide").is(":visible")
 		) {
 			$("ul#right-menu li#inside-words").removeClass("hidden");
 			$("ul#right-menu li#any-word").removeClass("hidden");
@@ -494,6 +490,18 @@
 				if (false == $("ul",this).is(':visible'))
 					$('#right-menu ul').slideUp(300);
 				$("ul",this).slideToggle(300);
+			}
+		);
+
+		$("#search-field").off("focus").on(
+			"focus",
+			function() {
+				$("#right-menu li.search ul").show();
+			}
+		).off("blur").on(
+			"blur",
+			function() {
+				$("#right-menu li.search ul").hide();
 			}
 		);
 	};

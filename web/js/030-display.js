@@ -434,6 +434,7 @@ $(document).ready(function() {
 	});
 
 	$('#search-field').keypress(function(ev) {
+		$("#right-menu li.search ul").show();
 		if (ev.which == 13) {
 			//Enter key pressed, trigger search button click event
 			$('#search-button').click();
