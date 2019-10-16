@@ -2138,6 +2138,9 @@
 			else
 				break;
 		}
+
+		if (! hash)
+			hash = Options.folders_string;
 		return hash;
 	};
 
