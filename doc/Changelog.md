@@ -1,3 +1,5 @@
+* show search options when and only when search field has focus
+
 ### version v4.0.2 (Oct 14, 2019)
 
 * fix incorrect tooltip for album searched in
