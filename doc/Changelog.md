@@ -1,3 +1,6 @@
+### version v4.0.3 (Oct 16, 2019)
+
+* fix authentication dialog appearing when has was the void string
 * show search options when and only when search field has focus
 
 ### version v4.0.2 (Oct 14, 2019)
