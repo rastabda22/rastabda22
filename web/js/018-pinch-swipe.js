@@ -175,7 +175,7 @@
 
 			if (
 				pastMediaRatioOnScreen > windowRatio &&
-				$(".media-box#center .media-box-inner img").outerWidth() == windowWidth
+				$(mediaSelector).outerWidth() == windowWidth
 			)
 				keepPinching = true;
 
@@ -222,7 +222,7 @@
 
 					if (
 						mediaRatioOnScreen > windowRatio &&
-						$(".media-box#center .media-box-inner img").outerWidth() == windowWidth
+						$(mediaSelector).outerWidth() == windowWidth
 					)
 						showTitleAndBottomThumbnails();
 				}
