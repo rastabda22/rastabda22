@@ -539,70 +539,82 @@
 		return mediaSrc;
 	};
 
-	Utilities.currentSize = function() {
-		// returns the pixel size of the photo in DOM
-		// returns 0 if it's the original image
+	Utilities.currentSizeAndIndex = function() {
+		// Returns the pixel size of the photo in DOM and the corresponding reduction index
+		// If the original photo is in the DOM, returns its size and -1
 
 		var currentReduction = $(".media-box#center .media-box-inner img").attr("src");
 
 		// check if it's a reduction
 		for (var i = 0; i < Options.reduced_sizes.length; i ++) {
 			if (currentReduction === Utilities.mediaPath(currentAlbum, currentMedia, Options.reduced_sizes[i])) {
-				return Options.reduced_sizes[i];
+				return [Options.reduced_sizes[i], i];
 			}
 		}
 
 		// default: it's the original image
-		return 0;
+		return [Math.max(currentMedia.metadata.size[0], currentMedia.metadata.size[1]), -1];
 	};
 
-	Utilities.nextSize = function() {
-		// returns the next bigger image size than that of the photo in DOM
-		// returns 0 if the next bigger image is the original image
-		// returns false if in the DOM there is the original image
+	Utilities.nextSizeAndIndex = function() {
+		// Returns the size of the reduction immediately bigger than that in the DOM and its reduction index
+		// Returns the original photo size and -1 if the reduction in the DOM is the biggest one
+		// Returns [false, false] if the original image is already in the DOM
 
-		var theNextSizeIndex = Utilities.nextSizeIndex();
+		var [currentReductionSize, currentReductionIndex] = Utilities.currentSizeAndIndex();
+		if (currentReductionIndex === -1)
+			return [false, false];
 
-		if (theNextSizeIndex === false)
-			return false;
-		else if (theNextSizeIndex === -1)
-			return 0;
-		else
-			return Options.reduced_sizes[theNextSizeIndex];
+		if (currentReductionIndex === 0)
+			return [Math.max(currentMedia.metadata.size[0], currentMedia.metadata.size[1]), -1];
+
+		return [Options.reduced_sizes[currentReductionIndex - 1], currentReductionIndex - 1];
+
+
+		// var theNextSizeIndex = Utilities.nextSizeIndex();
+		//
+		// if (theNextSizeIndex === false)
+		// 	return false;
+		// else if (theNextSizeIndex === -1)
+		// 	return 0;
+		// else
+		// 	return Options.reduced_sizes[theNextSizeIndex];
 	};
 
-	Utilities.nextSizeIndex = function() {
-		// returns the index of the next bigger reduction size than that of the photo in DOM
-		// returns -1 if the next bigger image is the original image
-		// returns false if in the DOM there is the original image
+	// Utilities.nextSizeIndex = function() {
+	// 	// returns the index of the next bigger reduction size than that of the photo in DOM
+	// 	// returns -1 if the next bigger image is the original image
+	// 	// returns false if in the DOM there is the original image
+	//
+	// 	var currentPhotoSize = Utilities.currentSize();
+	// 	if (currentPhotoSize == 0) {
+	// 		return false;
+	// 	} else {
+	// 		if (currentPhotoSize === Options.reduced_sizes[0])
+	// 			return -1;
+	// 		for (var i = 1; i < Options.reduced_sizes.length - 1; i ++) {
+	// 			if (currentPhotoSize === Options.reduced_sizes[i]) {
+	// 				return i - 1;
+	// 			}
+	// 		}
+	// 	}
+	// 	return 0;
+	// };
 
-		var currentPhotoSize = Utilities.currentSize();
-		if (currentPhotoSize == 0) {
-			return false;
-		} else {
-			if (currentPhotoSize === Options.reduced_sizes[0])
-				return -1;
-			for (var i = 1; i < Options.reduced_sizes.length - 1; i ++) {
-				if (currentPhotoSize === Options.reduced_sizes[i]) {
-					return i - 1;
-				}
-			}
-		}
-		return 0;
-	};
+	Utilities.prototype.nextReduction = function() {
+		// Returns the file name of the reduction with the next bigger size than the reduction in DOM,
+		// possibly the original photo
+		// Returns false if the original photo is already in the DOM
 
-	Utilities.prototype.nextSizeReduction = function() {
-		// returns the file name of the reduction with the next bigger size than the reduction in DOM
+		var [nextReductionSize, nextReductionIndex] = Utilities.nextSizeAndIndex();
 
-		var nextPhotoSize = Utilities.nextSize();
-
-		if (nextPhotoSize === false)
+		if (nextReductionIndex === false)
 			// it's already the original image
 			return false;
-		else if (nextPhotoSize === 0)
+		if (nextReductionIndex === -1)
 			return Utilities.pathJoin([currentMedia.albumName, currentMedia.name]);
-		else
-			return Utilities.mediaPath(currentAlbum, currentMedia, nextPhotoSize);
+
+		return Utilities.mediaPath(currentAlbum, currentMedia, nextReductionSize);
 	};
 
 	Utilities.prototype.createMediaHtml = function(media, id, fullScreenStatus) {
@@ -813,7 +825,7 @@
 			photoSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
 			previousSrc = mediaElement.attr("src");
 
-			if (encodeURI(photoSrc) != previousSrc && event.data.currentZoom === 1) {
+			if (encodeURI(photoSrc) != previousSrc && event.data.currentZoom === event.data.initialZoom) {
 				// resizing had the effect that a different reduction has been choosed
 
 				// chooseReducedPhoto() sets maxSize to 0 if it returns the original media
@@ -1254,8 +1266,8 @@
 	Utilities.prototype.setLinksVisibility = Utilities.setLinksVisibility;
 	Utilities.prototype.mediaBoxGenerator = Utilities.mediaBoxGenerator;
 	Utilities.prototype.originalMediaBoxContainerContent = Utilities.originalMediaBoxContainerContent;
-	Utilities.prototype.currentSize = Utilities.currentSize;
-	Utilities.prototype.nextSize = Utilities.nextSize;
+	Utilities.prototype.currentSizeAndIndex = Utilities.currentSizeAndIndex;
+	Utilities.prototype.nextSizeAndIndex = Utilities.nextSizeAndIndex;
 	Utilities.prototype.isColliding = Utilities.isColliding;
 	Utilities.prototype.distanceBetweenCoordinatePoints = Utilities.distanceBetweenCoordinatePoints;
 	Utilities.prototype.xDistanceBetweenCoordinatePoints = Utilities.xDistanceBetweenCoordinatePoints;

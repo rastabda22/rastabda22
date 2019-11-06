@@ -18,6 +18,7 @@ var destHash = null;
 var destMedia = null;
 var destAlbum = null;
 var scrollbarWidth;
+var contextMenu = false;
 // var perhapsIsAProtectedMedia = false;
 var Options = {};
 var isMobile = {
@@ -130,7 +131,7 @@ $(document).ready(function() {
 					mapRefreshType = "none";
 				}
 				return false;
-			} else if (pS.getCurrentZoom() > 1 || $(".title").hasClass("hidden-by-pinch")) {
+			} else if (pS.getCurrentZoom() > pS.getInitialZoom() || $(".title").hasClass("hidden-by-pinch")) {
 				pS.pinchOut();
 				return false;
 			} else if (! Modernizr.fullscreen && fullScreenStatus) {
@@ -156,7 +157,7 @@ $(document).ready(function() {
 				if (! e.ctrlKey && ! e.altKey) {
 					if (e.key === "Tab") {
 						e.preventDefault();
-						if (pS.getCurrentZoom() == 1) {
+						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
 							$("ul#right-menu li.hide-title")[0].click();
 							$("ul#right-menu li.hide-bottom-thumbnails")[0].click();
 							// tF.toggleTitle(e);
@@ -197,7 +198,7 @@ $(document).ready(function() {
 					 	if (mediaLink && currentMedia === null) {
 							pS.swipeUp(mediaLink);
 							return false;
-						} else if (pS.getCurrentZoom() > 1) {
+						} else if (pS.getCurrentZoom() > pS.getInitialZoom()) {
 							pS.swipeUpOrDrag(mediaLink);
 							return false;
 						}
@@ -217,28 +218,28 @@ $(document).ready(function() {
 						if (isMap) {
 							// return false;
 						} else if (currentMedia !== null) {
-							pS.pinchIn(1);
+							pS.pinchIn(null, 1);
 							return false;
 						}
 					} else if (e.key === "2") {
 						if (isMap) {
 							// return false;
 						} else if (currentMedia !== null) {
-							pS.pinchIn(2);
+							pS.pinchIn(null, 2);
 							return false;
 						}
 					} else if (e.key === "+") {
 						if (isMap) {
 							// return false;
 						} else if (currentMedia !== null) {
-							pS.pinchIn();
+							pS.pinchIn(null);
 							return false;
 						}
 					} else if (e.key === "-") {
 						if (isMap) {
 							// return false;
 						} else if (currentMedia !== null) {
-							pS.pinchOut();
+							pS.pinchOut(null);
 							return false;
 						}
 					} else if (
@@ -262,8 +263,7 @@ $(document).ready(function() {
 							numPasswords = util.numPasswords(currentAlbum);
 
 						if (
-							numPasswords
-							&& PhotoFloat.guessedPasswordCodes.length < numPasswords
+							numPasswords && PhotoFloat.guessedPasswordCodes.length < numPasswords
 						) {
 							$("#protected-content-unveil")[0].click();
 							return false;
@@ -384,8 +384,8 @@ $(document).ready(function() {
 		$("#pinch-in").css("width", "30px").css("height", "30px");
 		$("#pinch-out").css("width", "30px").css("height", "30px");
 	}
-	$("#pinch-in").on("click", pS.pinchIn);
-	$("#pinch-out").on("click", pS.pinchOut);
+	// $("#pinch-in").on("click", pS.pinchIn);
+	// $("#pinch-out").on("click", pS.pinchOut);
 
 	// search
 	$('#search-button').on("click", function() {
