@@ -183,10 +183,11 @@
 					mediaWidth = parseInt($(mediaSelector).css("width"));
 					mediaHeight = parseInt($(mediaSelector).css("height"));
 					currentZoom = initialZoom;
-				}
-
-				if (typeof finalZoom === "undefined")
+					finalZoom = currentZoom;
+				} else if (typeof finalZoom === "undefined") {
 					finalZoom = currentZoom * zoomIncrement;
+				}
+					// finalZoom = currentZoom * zoomIncrement;
 				PinchSwipe.pinchInOut(currentZoom, finalZoom, pinchSpeed);
 			};
 
