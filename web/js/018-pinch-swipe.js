@@ -581,7 +581,7 @@
 
 	PinchSwipe.prototype.swipeRightOrDrag = function(media) {
 		if (currentZoom == initialZoom) {
-			// if (! $("#center .title").hasClass("hidden-by-pinch"))
+			$("#album-view.media-view-container").removeClass("hidden-by-pinch");
 			$("#prev")[0].click();
 			// PinchSwipe.swipeRight(media);
 		} else {
@@ -616,7 +616,7 @@
 
 	PinchSwipe.prototype.swipeLeftOrDrag = function(media) {
 		if (currentZoom == initialZoom) {
-			// if (! $("#center .title").hasClass("hidden-by-pinch"))
+			$("#album-view.media-view-container").removeClass("hidden-by-pinch");
 			$("#next")[0].click();
 			// PinchSwipe.swipeLeft(media);
 		} else {

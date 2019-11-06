@@ -178,6 +178,7 @@ $(document).ready(function() {
 						(e.key.toLowerCase() === "n" || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
 						nextMedia && currentMedia !== null && ! isMap
 					) {
+						$("#album-view.media-view-container").removeClass("hidden-by-pinch");
 						$("#next")[0].click();
 						// pS.swipeLeft(nextMedia);
 						return false;
@@ -185,6 +186,7 @@ $(document).ready(function() {
 						(e.key.toLowerCase() === "p" || e.key === "Backspace" && ! e.shiftKey || (e.key === "Enter" || e.key === " ") && e.shiftKey) &&
 						prevMedia && currentMedia !== null && ! isMap
 					) {
+						$("#album-view.media-view-container").removeClass("hidden-by-pinch");
 						$("#prev")[0].click();
 						// pS.swipeRight(prevMedia);
 						return false;
