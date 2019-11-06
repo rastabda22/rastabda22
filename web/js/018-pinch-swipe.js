@@ -136,21 +136,6 @@
 	PinchSwipe.pinchIn = function(event, finalZoom) {
 		var windowRatio;
 		var mediaWidthOnScreen;
-		// if (typeof finalZoom !== "undefined") {
-		// 	// finalZoom is 1 or 2
-		// 	PinchSwipe.pinchInOut(
-		// 		currentZoom,
-		// 		1,
-		// 		pinchSpeed,
-		// 		function () {
-		// 			if (finalZoom == 2) {
-		// 				PinchSwipe.pinchInOut(currentZoom, 2, pinchSpeed);
-		// 			}
-		// 		}
-		// 	);
-		// 	return;
-		// }
-		// var keepPinching = true;
 		if (
 			currentZoom == initialZoom &&
 			! $("#album-view.media-view-container").hasClass("hidden-by-pinch") && (
@@ -168,11 +153,11 @@
 			$("#center .title").addClass("hidden-by-pinch");
 			$("#album-view.media-view-container").addClass("hidden-by-pinch");
 
-			if (
-				pastMediaRatioOnScreen > mediaBoxInnerRatio && $(mediaSelector).outerWidth() == windowWidth ||
-				typeof finalZoom !== "undefined"
-			)
-				keepPinching = true;
+			// if (
+			// 	pastMediaRatioOnScreen > mediaBoxInnerRatio && $(mediaSelector).outerWidth() == windowWidth ||
+			// 	typeof finalZoom !== "undefined"
+			// )
+			// 	keepPinching = true;
 
 			if (event === null)
 				var event = {};
