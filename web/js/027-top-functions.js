@@ -890,7 +890,12 @@
 
 		heightForMediaAndTitle = util.mediaBoxContainerHeight();
 
-		heightForMedia = heightForMediaAndTitle - $(".media-box#" + id + " .title").outerHeight();
+		if ($(".media-box#" + id + " .title").is(":visible"))
+			titleHeight = $(".media-box#" + id + " .title").outerHeight();
+		else
+			titleHeight = 0;
+
+		heightForMedia = heightForMediaAndTitle - titleHeight;
 
 		if (id === "center") {
 			$("#media-box-container").css("width", windowWidth * 3).css("height", heightForMediaAndTitle);
