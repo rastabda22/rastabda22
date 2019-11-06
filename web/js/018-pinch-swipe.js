@@ -15,11 +15,11 @@
 	// var initialMediaWidthOnScreen;
 	var initialZoom;
 
-	var maxAllowedTranslateX, minAllowedTranslateX, maxAllowedTranslateY, minAllowedTranslateY;
+	var maxAllowedTranslateX, maxAllowedTranslateY;
 	var mediaWidth, mediaHeight;
 	var mediaBoxInnerWidth, mediaBoxInnerHeight;
+	var photoWidth, photoHeight;
 
-	var baseTranslateX = 0, baseTranslateY = 0;
 
 	var dragVector;
 	var pastMediaWidthOnScreen, pastMediaHeightOnScreen, pastMediaRatioOnScreen;
@@ -66,39 +66,46 @@
 
 	PinchSwipe.pinchInOut = function(startZoom, finalZoom, duration, callback) {
 		var [currentReductionSize, currentReductionIndex] = util.currentSizeAndIndex();
-		var photoWidth, photoHeight, width, height;
+		var width, height;
 		var photoSize = Math.max(currentMedia.metadata.size[0], currentMedia.metadata.size[1]);
 		// scaleZoom is the value we must give to the scale part of the transform css property.
 		// In css("transform", ...), scale(1) means that the image fits into the given width/height values
 		var htmlSize = Math.max(Number($(mediaSelector).attr("width")), Number($(mediaSelector).attr("height")));
 		var scaleZoom = finalZoom / initialZoom;
-		var xString = currentTranslateX.toFixed(0).toString();
-		var yString = currentTranslateY.toFixed(0).toString();
-		var scaleString = scaleZoom.toFixed(2).toString();
-		var currentCssTransformScale = 1;
-		if ($(mediaSelector).css("transform") !== "none")
-			currentCssTransformScale = parseFloat($(mediaSelector).css("transform").split("(")[1].split(",")[0]);
 
-		if (finalZoom < startZoom && finalZoom > initialZoom) {
-			// translation must be reduced too
-			currentTranslateX = Number(currentTranslateX * (finalZoom - 1) / (startZoom - 1));
-			currentTranslateY = Number(currentTranslateY * (finalZoom - 1) / (startZoom - 1));
-			baseTranslateX = currentTranslateX;
-			baseTranslateY = currentTranslateY;
+		var cssTransformTranslateX = 0;
+		var cssTransformTranslateY = 0;
+		if ($(mediaSelector).css("transform") !== "none") {
+			cssTransformTranslateX = parseFloat($(mediaSelector).css("transform").split("(")[1].split(",")[4]);
+			cssTransformTranslateY = parseFloat($(mediaSelector).css("transform").split("(")[1].split(",")[5].split(")")[0]);
 		}
 
-		// currentCssTransformScale = currentCssTransformScale * finalZoom / startZoom;
+		var cssTransformScale = 1;
+		if ($(mediaSelector).css("transform") !== "none")
+			cssTransformScale = parseFloat($(mediaSelector).css("transform").split("(")[1].split(",")[0]);
+
+		if (finalZoom < startZoom) {
+			// translation must be reduced too
+			cssTransformTranslateX = parseInt(cssTransformTranslateX * (finalZoom - initialZoom) / (startZoom - initialZoom));
+			cssTransformTranslateY = parseInt(cssTransformTranslateY * (finalZoom - initialZoom) / (startZoom - initialZoom));
+		} else {
+			// adjust translation so that the photo is zoomed with respect to the screen center
+			cssTransformTranslateX = parseInt(cssTransformTranslateX / startZoom * finalZoom);
+			cssTransformTranslateY = parseInt(cssTransformTranslateY / startZoom * finalZoom);
+		}
+
+		// cssTransformScale = cssTransformScale * finalZoom / startZoom;
+		var cssTranslateXString = parseInt(cssTransformTranslateX).toString();
+		var cssTranslateYString = parseInt(cssTransformTranslateY).toString();
+		var cssScale = scaleZoom.toFixed(2);
 
 		$(mediaSelector).css("transition-duration", duration + "ms");
-		$(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + scaleString + ")");
-		currentZoom = finalZoom;
+		$(mediaSelector).css("transform", "translate(" + cssTranslateXString + "px," + cssTranslateYString + "px) scale(" + cssScale + ")");
 
 		if (finalZoom > startZoom) {
 			var [nextReductionSize, nextReductionIndex] = util.nextSizeAndIndex();
 			if (nextReductionIndex !== false && photoSize * finalZoom >= currentReductionSize) {
 				// use next size reduction
-				photoWidth = currentMedia.metadata.size[0];
-				photoHeight = currentMedia.metadata.size[1];
 				if (photoWidth > photoHeight) {
 					width = nextReductionSize;
 					height = parseInt(nextReductionSize / photoWidth * photoHeight);
@@ -125,12 +132,9 @@
 			$(mediaSelector).css("cursor", "");
 		}
 
-		maxAllowedTranslateX = Math.max(finalZoom * mediaWidth - mediaBoxInnerWidth, 0) / 2;
-		minAllowedTranslateX = - maxAllowedTranslateX;
-		maxAllowedTranslateY = Math.max(currentZoom * mediaHeight - mediaBoxInnerHeight, 0) / 2;
-		minAllowedTranslateY = - maxAllowedTranslateY;
-
 		PinchSwipe.setPinchButtonsVisibility();
+
+		currentZoom = finalZoom;
 	};
 
 	PinchSwipe.pinchIn = function(event, finalZoom) {
@@ -182,6 +186,12 @@
 					PinchSwipe.setPinchButtonsVisibility();
 					mediaWidth = parseInt($(mediaSelector).css("width"));
 					mediaHeight = parseInt($(mediaSelector).css("height"));
+					mediaBoxInnerWidth = parseInt($(mediaContainerSelector).css("width"));
+					mediaBoxInnerHeight = parseInt($(mediaContainerSelector).css("height"));
+					// the following values are expressed in terms of the orginal photo sizes
+					maxAllowedTranslateX = Math.ceil(Math.abs(photoWidth - mediaBoxInnerWidth) / 2);
+					maxAllowedTranslateY = Math.ceil(Math.abs(photoHeight - mediaBoxInnerHeight) / 2);
+
 					currentZoom = initialZoom;
 					finalZoom = currentZoom;
 				} else if (typeof finalZoom === "undefined") {
@@ -215,6 +225,8 @@
 					mediaHeightOnScreen = $(mediaSelector)[0].height;
 					mediaRatioOnScreen = pastMediaWidthOnScreen / pastMediaHeightOnScreen;
 					windowRatio = windowWidth / windowHeight;
+					mediaBoxInnerWidth = parseInt($(mediaContainerSelector).css("width"));
+					mediaBoxInnerHeight = parseInt($(mediaContainerSelector).css("height"));
 
 					if (
 						mediaRatioOnScreen > windowRatio &&
@@ -297,20 +309,34 @@
 		}
 	};
 
-	PinchSwipe.drag = function(distance, dragVector, duration) {
+	PinchSwipe.drag = function(absoluteDistance, dragVector, duration) {
 		$(mediaSelector).css("transition-duration", duration + "ms");
 
-		// currentTranslateX = Number(Math.max(Math.min(baseTranslateX + distance * dragVector.x, maxAllowedTranslateX * currentZoom), minAllowedTranslateX * currentZoom).toFixed(0));
-		// currentTranslateY = Number(Math.max(Math.min(baseTranslateY + distance * dragVector.y, maxAllowedTranslateY * currentZoom), minAllowedTranslateY * currentZoom).toFixed(0));
-		currentTranslateX = Number(Math.max(Math.min(baseTranslateX + distance * dragVector.x, maxAllowedTranslateX), minAllowedTranslateX).toFixed(0));
-		currentTranslateY = Number(Math.max(Math.min(baseTranslateY + distance * dragVector.y, maxAllowedTranslateY), minAllowedTranslateY).toFixed(0));
+		var cssTransformTranslateX = 0;
+		var cssTransformTranslateY = 0;
+		if ($(mediaSelector).css("transform") !== "none") {
+			cssTransformTranslateX = parseFloat($(mediaSelector).css("transform").split("(")[1].split(",")[4]);
+			cssTransformTranslateY = parseFloat($(mediaSelector).css("transform").split("(")[1].split(",")[5].split(")")[0]);
+		}
 
-		var xString = currentTranslateX.toString();
-		var yString = currentTranslateY.toString();
-		var scaleString = currentZoom.toString();
+		var cssTransformScale = 1;
+		if ($(mediaSelector).css("transform") !== "none")
+			cssTransformScale = parseFloat($(mediaSelector).css("transform").split("(")[1].split(",")[0]);
 
-		$(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + scaleString + ")");
-		$(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + scaleString + ")");
+		var absoluteCssTransformTranslateX = cssTransformTranslateX / cssTransformScale / mediaBoxInnerWidth * photoWidth;
+		var absoluteCssTransformTranslateY = cssTransformTranslateY / cssTransformScale / mediaBoxInnerHeight * photoHeight;
+
+		var updatedTranslateX = absoluteCssTransformTranslateX + absoluteDistance * dragVector.x;
+		var updatedTranslateY = absoluteCssTransformTranslateY + absoluteDistance * dragVector.y;
+		var limitedTranslateX = parseInt(Math.max(Math.min(updatedTranslateX, maxAllowedTranslateX), - maxAllowedTranslateX));
+		var limitedTranslateY = parseInt(Math.max(Math.min(updatedTranslateY, maxAllowedTranslateY), - maxAllowedTranslateY));
+		var cssTranslateX = limitedTranslateX / photoWidth * mediaBoxInnerWidth * cssTransformScale;
+		var cssTranslateY = limitedTranslateY / photoHeight * mediaBoxInnerHeight * cssTransformScale;
+
+		var cssTranslateXString = cssTranslateX.toString();
+		var cssTranslateYString = cssTranslateY.toString();
+
+		$(mediaSelector).css("transform", "translate(" + cssTranslateXString + "px," + cssTranslateYString + "px) scale(" + cssTransformScale + ")");
 	};
 
 	// define the actions to be taken on pinch, swipe, tap, double tap
@@ -362,12 +388,12 @@
 						phase == "start" || phase == "end" || phase == "cancel" || distance == 0
 					) {
 						// distance = 0
-						baseTranslateX = currentTranslateX;
-						baseTranslateY = currentTranslateY;
+						// baseTranslateX = currentTranslateX;
+						// baseTranslateY = currentTranslateY;
 					} else {
 						// distance is the cumulative value from start
 						// dragVector is calculated by pinchStatus
-						PinchSwipe.drag(distance / devicePixelRatio, dragVector, 0);
+						PinchSwipe.drag(distance / devicePixelRatio / currentZoom, dragVector, 0);
 						// PinchSwipe.drag(distance / currentZoom / devicePixelRatio, dragVector, 0);
 					}
 				}
@@ -454,8 +480,6 @@
 		mediaHeight = parseInt($(mediaSelector).css("height"));
 
 		currentZoom = initialZoom;
-		baseTranslateX = 0;
-		baseTranslateY = 0;
 		currentTranslateX = 0;
 		currentTranslateY = 0;
 
@@ -517,22 +541,11 @@
 
 		mediaBoxInnerWidth = parseInt($(mediaContainerSelector).css("width"));
 		mediaBoxInnerHeight = parseInt($(mediaContainerSelector).css("height"));
+		photoWidth = currentMedia.metadata.size[0];
+		photoHeight = currentMedia.metadata.size[1];
 
 		initialZoom = PinchSwipe.screenZoom();
 		currentZoom = initialZoom
-		// if (currentZoom > initialZoom) {
-		// 	pastInitialMediaWidthOnScreen = initialMediaWidthOnScreen;
-		// // }
-		// // if (currentZoom > initialZoom) {
-		// 	// change zoom so that the photo looks like before
-		// 	newZoom = currentZoom / initialMediaWidthOnScreen * pastInitialMediaWidthOnScreen;
-		// 	PinchSwipe.pinchInOut(currentZoom, newZoom / currentZoom, 0);
-		//
-		// 	maxAllowedTranslateX = Math.max(newZoom * mediaWidth - mediaBoxInnerWidth, 0) / 2;
-		// 	minAllowedTranslateX = - maxAllowedTranslateX;
-		// 	maxAllowedTranslateY = Math.max(newZoom * mediaHeight - mediaBoxInnerHeight, 0) / 2;
-		// 	minAllowedTranslateY = - maxAllowedTranslateY;
-		// }
 
 		PinchSwipe.setPinchButtonsVisibility();
 	};
@@ -553,16 +566,16 @@
 			} else {
 				// drag
 				if (event.deltaY < 0) {
-					PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 0, y: -1}, dragSpeed);
+					PinchSwipe.drag(photoHeight / 8, {x: 0, y: -1}, dragSpeed);
 					return false;
 				} else if (event.deltaY > 0) {
-					PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 0, y: 1}, dragSpeed);
+					PinchSwipe.drag(photoHeight / 8, {x: 0, y: 1}, dragSpeed);
 					return false;
 				} else if (event.deltaX < 0) {
-					PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 1, y: 0}, dragSpeed);
+					PinchSwipe.drag(photoWidth / 8, {x: 1, y: 0}, dragSpeed);
 					return false;
 				} else if (event.deltaX > 0) {
-					PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: -1, y: 0}, dragSpeed);
+					PinchSwipe.drag(photoWidth / 8, {x: -1, y: 0}, dragSpeed);
 					return false;
 				}
 			}
@@ -586,7 +599,7 @@
 			// PinchSwipe.swipeRight(media);
 		} else {
 			// drag
-			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 1, y: 0}, dragSpeed);
+			PinchSwipe.drag(photoWidth  / currentZoom / 10, {x: 1, y: 0}, dragSpeed);
 		}
 	};
 
@@ -621,7 +634,7 @@
 			// PinchSwipe.swipeLeft(media);
 		} else {
 			// drag
-			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: -1, y: 0}, dragSpeed);
+			PinchSwipe.drag(photoWidth  / currentZoom / 10, {x: -1, y: 0}, dragSpeed);
 		}
 	};
 
@@ -658,7 +671,7 @@
 				PinchSwipe.swipeUp(media);
 		} else {
 			// drag
-			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 0, y: -1}, dragSpeed);
+			PinchSwipe.drag(photoHeight  / currentZoom / 10, {x: 0, y: -1}, dragSpeed);
 		}
 	};
 
@@ -686,7 +699,7 @@
 				PinchSwipe.swipeDown(media);
 		} else {
 			// drag
-			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 0, y: 1}, dragSpeed);
+			PinchSwipe.drag(photoHeight  / currentZoom / 10, {x: 0, y: 1}, dragSpeed);
 		}
 	};
 
