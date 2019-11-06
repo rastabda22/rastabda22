@@ -581,8 +581,8 @@
 
 	PinchSwipe.prototype.swipeRightOrDrag = function(media) {
 		if (currentZoom == initialZoom) {
-			if (! $("#center .title").hasClass("hidden-by-pinch"))
-				$("#prev")[0].click();
+			// if (! $("#center .title").hasClass("hidden-by-pinch"))
+			$("#prev")[0].click();
 			// PinchSwipe.swipeRight(media);
 		} else {
 			// drag
@@ -616,8 +616,8 @@
 
 	PinchSwipe.prototype.swipeLeftOrDrag = function(media) {
 		if (currentZoom == initialZoom) {
-			if (! $("#center .title").hasClass("hidden-by-pinch"))
-				$("#next")[0].click();
+			// if (! $("#center .title").hasClass("hidden-by-pinch"))
+			$("#next")[0].click();
 			// PinchSwipe.swipeLeft(media);
 		} else {
 			// drag
