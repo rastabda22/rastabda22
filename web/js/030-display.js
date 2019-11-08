@@ -164,8 +164,16 @@ $(document).ready(function() {
 							// tF.toggleBottomThumbnails(e);
 							return false;
 						}
-					} else if (e.key === "ArrowRight" && nextMedia && currentMedia !== null && ! isMap) {
-						pS.swipeLeftOrDrag(nextMedia);
+					} else if (e.key === "ArrowRight" && (pS.getCurrentZoom() !== pS.getInitialZoom() || prevMedia) && currentMedia !== null && ! isMap) {
+						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
+							$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+							$("#next")[0].click();
+							// PinchSwipe.swipeLeft(media);
+						} else {
+							// drag
+							pS.drag(windowWidth / 3, {x: -1, y: 0});
+						}
+						// pS.swipeLeftOrDrag(nextMedia);
 						return false;
 					} else if (e.key === " " && currentMedia !== null && currentMedia.mediaType == "video") {
 						if ($("#media-center")[0].paused)
@@ -190,18 +198,33 @@ $(document).ready(function() {
 						$("#prev")[0].click();
 						// pS.swipeRight(prevMedia);
 						return false;
-					} else if (e.key === "ArrowLeft" && prevMedia && currentMedia !== null && ! isMap) {
-						pS.swipeRightOrDrag(prevMedia);
+					} else if (e.key === "ArrowLeft" && (pS.getCurrentZoom() !== pS.getInitialZoom() || prevMedia) && currentMedia !== null && ! isMap) {
+						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
+							$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+							$("#prev")[0].click();
+							// PinchSwipe.swipeRight(media);
+						} else {
+							// drag
+							pS.drag(windowWidth / 3, {x: 1, y: 0});
+						}
+						// pS.swipeRightOrDrag(prevMedia);
 						return false;
 					} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink && ! isMap) {
-						pS.swipeDownOrDrag(upLink);
+						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
+							if (! $("#center .title").hasClass("hidden-by-pinch"))
+								pS.swipeDown(upLink);
+						} else {
+							// drag
+							pS.drag(windowHeight / 3, {x: 0, y: 1});
+						}
+						// pS.swipeDownOrDrag(upLink);
 						return false;
 					} else if (e.key === "ArrowDown" || e.key === "PageDown" && ! isMap) {
 					 	if (mediaLink && currentMedia === null) {
 							pS.swipeUp(mediaLink);
 							return false;
 						} else if (pS.getCurrentZoom() > pS.getInitialZoom()) {
-							pS.swipeUpOrDrag(mediaLink);
+							PinchSwipe.drag(windowHeight / 3, {x: 0, y: -1});
 							return false;
 						}
 					} else if (e.key.toLowerCase() === "d" && currentMedia !== null && ! isMap) {
