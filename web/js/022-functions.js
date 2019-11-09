@@ -487,21 +487,25 @@
 		$("#right-menu li.expandable").off('click').on(
 			'click',
 			function() {
-				if (false == $("ul",this).is(':visible'))
+				if ($("ul", this).is(':hidden'))
 					$('#right-menu ul').slideUp(300);
-				$("ul",this).slideToggle(300);
+				$("ul", this).slideToggle(300);
 			}
 		);
 
-		$("#search-field").off("focus").on(
+		$("#search-field, #search-button").off("blur").on(
+			"blur",
+			function() {
+				if (! $("#search-field").is(":focus") && ! $("#search-button").is(":focus") && ! $("#search ul li").is(":focus"))
+					$("#right-menu li.search ul").hide();
+			}
+		).off("focus").on(
 			"focus",
 			function() {
 				$("#right-menu li.search ul").show();
-			}
-		).off("blur").on(
-			"blur",
-			function() {
-				$("#right-menu li.search ul").hide();
+				if ($("ul", this).is(':hidden'))
+					$('#right-menu ul').slideUp(300);
+				$("ul", this).slideToggle(300);
 			}
 		);
 	};
