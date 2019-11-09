@@ -791,19 +791,20 @@
 						event.data.callback = f.pinchSwipeInitialization;
 						event.data.callbackType = "pinch";
 						event.data.currentZoom = pS.getCurrentZoom();
+						event.data.initialZoom = pS.getInitialZoom();
 						util.scaleMedia(event);
 
 						if (album.numMedia > 1) {
 							event.data.id = "left";
 							event.data.media = prevMedia;
-							event.data.callback = f.pinchSwipeInitialization;
-							event.data.callbackType = "pinch";
+							// event.data.callback = f.pinchSwipeInitialization;
+							// event.data.callbackType = "pinch";
 							util.scaleMedia(event);
 
 							event.data.id = "right";
 							event.data.media = nextMedia;
-							event.data.callback = f.pinchSwipeInitialization;
-							event.data.callbackType = "pinch";
+							// event.data.callback = f.pinchSwipeInitialization;
+							// event.data.callbackType = "pinch";
 							util.scaleMedia(event);
 						}
 
@@ -889,7 +890,12 @@
 
 		heightForMediaAndTitle = util.mediaBoxContainerHeight();
 
-		heightForMedia = heightForMediaAndTitle - $(".media-box#" + id + " .title").outerHeight();
+		if ($(".media-box#" + id + " .title").is(":visible"))
+			titleHeight = $(".media-box#" + id + " .title").outerHeight();
+		else
+			titleHeight = 0;
+
+		heightForMedia = heightForMediaAndTitle - titleHeight;
 
 		if (id === "center") {
 			$("#media-box-container").css("width", windowWidth * 3).css("height", heightForMediaAndTitle);
@@ -1013,9 +1019,13 @@
 					function(ev) {
 						if (! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 							ev.preventDefault();
-							if (pS.getCurrentZoom() == 1)
+							if (pS.getCurrentZoom() == 1) {
 								pS.swipeRight(prevMedia);
+								return false;
+							}
 						}
+						contextMenu = true;
+						return true;
 					}
 				);
 
@@ -1040,12 +1050,14 @@
 						pS.swipeRight(prevMedia);
 						return false;
 					}
+					return true;
 				});
 				$("#next").on('click', function(ev) {
 					if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 						pS.swipeLeft(nextMedia);
 						return false;
 					}
+					return true;
 				});
 			}
 		}

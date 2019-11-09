@@ -9,17 +9,17 @@
 	var mediaContainerSelector = ".media-box#center .media-box-inner";
 	var mediaSelector = mediaContainerSelector + " img";
 	var currentZoom, zoomIncrement = 1.5625, zoomDecrement = 1 / zoomIncrement;
-	var maxAllowedZoom;
 	var currentTranslateX = 0;
 	var currentTranslateY = 0;
-	var nextSizeReduction = false;
-	var initialMediaWidthOnScreen;
+	// var nextReduction = false;
+	// var initialMediaWidthOnScreen;
+	var initialZoom;
 
-	var maxAllowedTranslateX, minAllowedTranslateX, maxAllowedTranslateY, minAllowedTranslateY;
+	var maxAllowedTranslateX, maxAllowedTranslateY;
 	var mediaWidth, mediaHeight;
 	var mediaBoxInnerWidth, mediaBoxInnerHeight;
+	var photoWidth, photoHeight;
 
-	var baseTranslateX = 0, baseTranslateY = 0;
 
 	var dragVector;
 	var pastMediaWidthOnScreen, pastMediaHeightOnScreen, pastMediaRatioOnScreen;
@@ -64,154 +64,155 @@
 		$("#media-box-container").css("transform", "translate(" + value + "px,0)");
 	};
 
-	PinchSwipe.pinchInOut = function(baseZoom, pinchZoom, duration, callback) {
-		var nextSize, photoWidth, photoHeight, width, height;
-		currentZoom = Number(Math.max(Math.min((baseZoom * pinchZoom), maxAllowedZoom), 1).toFixed(2));
-		if (pinchZoom < 1 && baseZoom > 1) {
-			// translation must be reduced too
-			currentTranslateX = Number((currentTranslateX * (currentZoom - 1) / (baseZoom - 1)).toFixed(2));
-			currentTranslateY = Number((currentTranslateY * (currentZoom - 1) / (baseZoom - 1)).toFixed(2));
-			baseTranslateX = currentTranslateX;
-			baseTranslateY = currentTranslateY;
-		} else if (currentZoom == maxAllowedZoom) {
-			if (nextSizeReduction !== false) {
-				nextSize = util.nextSize();
-				if (nextSize !== false) {
-					if (nextSize === 0)
-						// util.nextSize() returns zero for the original image
-						nextSize = Math.max(currentMedia.metadata.size[0], currentMedia.metadata.size[1]);
-					photoWidth = currentMedia.metadata.size[0];
-					photoHeight = currentMedia.metadata.size[1];
-					if (photoWidth > photoHeight) {
-						width = nextSize;
-						height = Number((nextSize / photoWidth * photoHeight).toFixed(0));
-					} else {
-						height = nextSize;
-						width = Number((nextSize / photoHeight * photoWidth).toFixed(0));
-					}
-					$(mediaSelector).attr("width", width).attr("height", height).attr("src", nextSizeReduction);
-					maxAllowedZoom = Number(($(mediaSelector).attr("width") / initialMediaWidthOnScreen).toFixed(2));
-				}
-			}
-			baseZoom = maxAllowedZoom;
+	PinchSwipe.pinchInOut = function(startZoom, finalZoom, duration, callback) {
+		var [currentReductionSize, currentReductionIndex] = util.currentSizeAndIndex();
+		var width, height;
+		var photoSize = Math.max(currentMedia.metadata.size[0], currentMedia.metadata.size[1]);
+		// scaleZoom is the value we must give to the scale part of the transform css property.
+		// In css("transform", ...), scale(1) means that the image fits into the given width/height values
+		var scaleZoom = finalZoom / initialZoom;
+
+		var cssTransformTranslateX = 0;
+		var cssTransformTranslateY = 0;
+		var cssTransformScale = 1;
+		if ($(mediaSelector).css("transform") !== "none") {
+			cssTransformTranslateX = parseFloat($(mediaSelector).css("transform").split("(")[1].split(",")[4]);
+			cssTransformTranslateY = parseFloat($(mediaSelector).css("transform").split("(")[1].split(",")[5].split(")")[0]);
+			cssTransformScale = parseFloat($(mediaSelector).css("transform").split("(")[1].split(",")[0]);
 		}
 
-		var xString = currentTranslateX.toString();
-		var yString = currentTranslateY.toString();
-		var zoomString = currentZoom.toString();
+		if (finalZoom < startZoom) {
+			// translation must be reduced too
+			cssTransformTranslateX = cssTransformTranslateX * (finalZoom - initialZoom) / (startZoom - initialZoom);
+			cssTransformTranslateY = cssTransformTranslateY * (finalZoom - initialZoom) / (startZoom - initialZoom);
+		} else {
+			// adjust translation so that the photo is zoomed with respect to the screen center
+			cssTransformTranslateX = cssTransformTranslateX / startZoom * finalZoom;
+			cssTransformTranslateY = cssTransformTranslateY / startZoom * finalZoom;
+		}
+
+		// cssTransformScale = cssTransformScale * finalZoom / startZoom;
+		var cssTranslateXString = cssTransformTranslateX.toString();
+		var cssTranslateYString = cssTransformTranslateY.toString();
+		var cssScale = scaleZoom.toString();
 
 		$(mediaSelector).css("transition-duration", duration + "ms");
-		$(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + ")");
+		$(mediaSelector).css("transform", "translate(" + cssTranslateXString + "px," + cssTranslateYString + "px) scale(" + cssScale + ")");
 
-		if (currentZoom == 1 && typeof callback !== "undefined")
+		if (finalZoom > startZoom) {
+			var [nextReductionSize, nextReductionIndex] = util.nextSizeAndIndex();
+			if (nextReductionIndex !== false && photoSize * finalZoom >= currentReductionSize) {
+				// use next size reduction
+				if (photoWidth > photoHeight) {
+					width = nextReductionSize;
+					height = parseInt(nextReductionSize / photoWidth * photoHeight);
+				} else {
+					height = nextReductionSize;
+					width = parseInt(nextReductionSize / photoHeight * photoWidth);
+				}
+				$(mediaSelector).attr("width", width).attr("height", height).attr("src", util.nextReduction());
+			}
+		}
+
+		if (finalZoom <= initialZoom && typeof callback !== "undefined")
 			// callback is the function that possibly shows the title and the bottom thumbnails
 			window.setTimeout(callback, duration * 1.2);
 
-		if (pinchZoom > 1) {
+		if (finalZoom > startZoom) {
 			// preload next size photo
-			nextSizeReduction = util.nextSizeReduction();
-			if (nextSizeReduction !== false) {
-				$.preloadImages(nextSizeReduction);
+			let nextReduction = util.nextReduction();
+			if (nextReduction !== false) {
+				$.preloadImages(nextReduction);
 			}
 			$(mediaSelector).css("cursor", "all-scroll");
 		} else {
 			$(mediaSelector).css("cursor", "");
 		}
 
-		maxAllowedTranslateX = Math.max(currentZoom * mediaWidth - mediaBoxInnerWidth, 0) / 2;
-		minAllowedTranslateX = - maxAllowedTranslateX;
-		maxAllowedTranslateY = Math.max(currentZoom * mediaHeight - mediaBoxInnerHeight, 0) / 2;
-		minAllowedTranslateY = - maxAllowedTranslateY;
+		// the following values are expressed in terms of the current zoom sizes
+		maxAllowedTranslateX = 0;
+		if (photoWidth * finalZoom > windowWidth)
+			maxAllowedTranslateX = Math.ceil((photoWidth * finalZoom - windowWidth) / 2);
+		maxAllowedTranslateY = 0;
+		if (photoHeight * finalZoom > windowHeight)
+			maxAllowedTranslateY = Math.ceil((photoHeight * finalZoom - windowHeight) / 2);
 
 		PinchSwipe.setPinchButtonsVisibility();
+
+		currentZoom = finalZoom;
 	};
 
-	PinchSwipe.setPinchButtonsVisibility = function() {
-		$("#pinch-container").removeClass("hidden");
-
-		$("#pinch-in").off("click");
-		if (currentZoom == maxAllowedZoom) {
-			$("#pinch-in").addClass("disabled");
-		} else {
-			$("#pinch-in").on("click", PinchSwipe.pinchIn);
-			$("#pinch-in").removeClass("disabled");
-		}
-
-		$("#pinch-out").off("click");
-		if (currentZoom == 1 && ! $(".title").hasClass("hidden-by-pinch")) {
-			$("#pinch-out").addClass("disabled");
-		} else {
-			$("#pinch-out").on("click", PinchSwipe.pinchOut);
-			$("#pinch-out").removeClass("disabled");
-		}
-	};
-
-	PinchSwipe.pinchIn = function(requiredZoom) {
+	PinchSwipe.pinchIn = function(event, finalZoom) {
 		var windowRatio;
 		var mediaWidthOnScreen;
-		if (typeof requiredZoom !== "undefined") {
-			PinchSwipe.pinchInOut(
-				currentZoom,
-				maxAllowedZoom / currentZoom,
-				pinchSpeed,
-				function () {
-					if (requiredZoom == 2) {
-						PinchSwipe.pinchInOut(currentZoom, 2, pinchSpeed);
-					}
-				}
-			);
-			return;
-		}
-		var keepPinching = true;
-		if (currentZoom == 1 && ! $(".title").hasClass("hidden-by-pinch") && ($(".title").is(":visible") || $("#album-view").is(":visible"))) {
-			keepPinching = false;
-			$(".title").addClass("hidden-by-pinch");
-			$("#album-view").addClass("hidden-by-pinch");
+		if (
+			currentZoom == initialZoom &&
+			! $("#album-view.media-view-container").hasClass("hidden-by-pinch") && (
+				$("#center .title").is(":visible") || $("#album-view.media-view-container").is(":visible")
+			)
+		) {
+			// hide the title and the bottom thumbnails
 
 			pastMediaWidthOnScreen = $(mediaSelector)[0].width;
 			pastMediaHeightOnScreen = $(mediaSelector)[0].height;
 			pastMediaRatioOnScreen = pastMediaWidthOnScreen / pastMediaHeightOnScreen;
 			windowRatio = windowWidth / windowHeight;
 
-			if (
-				pastMediaRatioOnScreen > windowRatio &&
-				$(".media-box#center .media-box-inner img").outerWidth() == windowWidth
-			)
-				keepPinching = true;
+			$("#center .title").addClass("hidden-by-pinch");
+			$("#album-view.media-view-container").addClass("hidden-by-pinch");
 
-			var event = {data: {}};
+			if (event === null)
+				event = {};
+			event.data = {};
 			event.data.resize = true;
 			event.data.id = "center";
 			event.data.media = currentMedia;
-			event.data.callback = function() {
-				mediaWidthOnScreen = $(mediaSelector)[0].width;
-				// currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
-				// zoomAfterFirstPinch = currentZoom;
-				util.setPinchButtonsPosition();
-				util.correctPrevNextPosition();
-				PinchSwipe.setPinchButtonsVisibility();
-				mediaWidth = parseInt($(mediaSelector).css("width"));
-				mediaHeight = parseInt($(mediaSelector).css("height"));
-			};
-			event.data.callbackType = "pinch";
 			event.data.currentZoom = currentZoom;
+			event.data.initialZoom = initialZoom;
+			event.data.callbackType = "pinch";
+			event.data.callback = function() {
+				var newInitialZoom = PinchSwipe.screenZoom();
+				if (newInitialZoom !== initialZoom) {
+					// hiding the bottom thumbnails has resized the image
+					initialZoom = newInitialZoom;
+
+					mediaWidthOnScreen = $(mediaSelector)[0].width;
+					// currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
+					// zoomAfterFirstPinch = currentZoom;
+					util.setPinchButtonsPosition();
+					util.correctPrevNextPosition();
+					PinchSwipe.setPinchButtonsVisibility();
+					mediaWidth = parseInt($(mediaSelector).css("width"));
+					mediaHeight = parseInt($(mediaSelector).css("height"));
+					mediaBoxInnerWidth = parseInt($(mediaContainerSelector).css("width"));
+					mediaBoxInnerHeight = parseInt($(mediaContainerSelector).css("height"));
+
+					currentZoom = initialZoom;
+					finalZoom = currentZoom;
+				} else if (typeof finalZoom === "undefined") {
+					finalZoom = currentZoom * zoomIncrement;
+				}
+					// finalZoom = currentZoom * zoomIncrement;
+				PinchSwipe.pinchInOut(currentZoom, finalZoom, pinchSpeed);
+			};
 
 			util.scaleMedia(event);
+		} else {
+			if (typeof finalZoom === "undefined")
+				finalZoom = currentZoom * zoomIncrement;
+			PinchSwipe.pinchInOut(currentZoom, finalZoom, pinchSpeed);
 		}
-		if (keepPinching)
-			PinchSwipe.pinchInOut(currentZoom, zoomIncrement, pinchSpeed);
 	};
 
-	PinchSwipe.pinchOut = function() {
+	PinchSwipe.pinchOut = function(event) {
 		var mediaWidthOnScreen, mediaHeightOnScreen, mediaRatioOnScreen, windowRatio;
-
-		if (currentZoom <= 1 && $(".title").hasClass("hidden-by-pinch")) {
-		// if (currentZoom <= zoomAfterFirstPinch && $(".title").hasClass("hidden-by-pinch")) {
-			showTitleAndBottomThumbnails();
-		} else {
+		var finalZoom = currentZoom * zoomDecrement;
+		if (currentZoom > initialZoom) {
+			if (finalZoom < initialZoom)
+				finalZoom = initialZoom;
 			PinchSwipe.pinchInOut(
 				currentZoom,
-				zoomDecrement,
+				finalZoom,
 				pinchSpeed,
 				function () {
 					// check whether the final pinchout (re-establishing title and the bottom thumbnails) has to be performed
@@ -219,20 +220,33 @@
 					mediaHeightOnScreen = $(mediaSelector)[0].height;
 					mediaRatioOnScreen = pastMediaWidthOnScreen / pastMediaHeightOnScreen;
 					windowRatio = windowWidth / windowHeight;
+					mediaBoxInnerWidth = parseInt($(mediaContainerSelector).css("width"));
+					mediaBoxInnerHeight = parseInt($(mediaContainerSelector).css("height"));
 
 					if (
 						mediaRatioOnScreen > windowRatio &&
-						$(".media-box#center .media-box-inner img").outerWidth() == windowWidth
+						$(mediaSelector).outerWidth() == windowWidth || (
+							$("#center .title").hasClass("hidden") ||
+							$("#center .title").hasClass("hidden-by-option") ||
+							$("#center .title").hasClass("hidden-by-fullscreen")
+						) && (
+							$("#album-view.media-view-container").hasClass("hidden") ||
+							$("#album-view.media-view-container").hasClass("hidden-by-option") ||
+							$("#album-view.media-view-container").hasClass("hidden-by-fullscreen")
+						)
 					)
 						showTitleAndBottomThumbnails();
 				}
 			);
+		} else {
+			showTitleAndBottomThumbnails();
 		}
 		// end of function body
 
 		function showTitleAndBottomThumbnails() {
-			$(".title").removeClass("hidden-by-pinch");
-			$("#album-view").removeClass("hidden-by-pinch");
+			$("#center .title").removeClass("hidden-by-pinch");
+			$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+			$(mediaSelector).css("transform", "scale(1)");
 			var event = {data: {}};
 			event.data.resize = true;
 			event.data.id = "center";
@@ -247,32 +261,74 @@
 				PinchSwipe.setPinchButtonsVisibility();
 				mediaWidth = parseInt($(mediaSelector).css("width"));
 				mediaHeight = parseInt($(mediaSelector).css("height"));
+				initialZoom = PinchSwipe.screenZoom();
+				currentZoom = initialZoom;
 			};
 			event.data.callbackType = "pinch";
 			event.data.currentZoom = currentZoom;
+			event.data.initialZoom = initialZoom;
 			pastMediaWidthOnScreen = $(mediaSelector)[0].width;
 			util.scaleMedia(event);
 		}
 	};
 
-	PinchSwipe.drag = function(distance, dragVector, duration) {
+	PinchSwipe.setPinchButtonsVisibility = function() {
+		$("#pinch-container").removeClass("hidden");
+
+		if (currentMedia.mimeType.indexOf("video") === 0) {
+			$("#pinch-container").hide();
+		} else {
+			$("#pinch-container").show();
+
+			$("#pinch-in").off("click");
+			$("#pinch-in").on(
+				"click",
+				function(ev) {
+					PinchSwipe.pinchIn(null);
+				}
+			);
+			$("#pinch-in").removeClass("disabled");
+
+			$("#pinch-out").off("click");
+			if (currentZoom === initialZoom && ! $("#center .title").hasClass("hidden-by-pinch")) {
+				$("#pinch-out").addClass("disabled");
+			} else {
+				$("#pinch-out").on(
+					"click",
+					function(ev) {
+						PinchSwipe.pinchOut(null);
+					}
+				);
+				$("#pinch-out").removeClass("disabled");
+			}
+		}
+	};
+
+	PinchSwipe.drag = function(distance, dragVector, duration = dragSpeed) {
 		$(mediaSelector).css("transition-duration", duration + "ms");
 
-		// currentTranslateX = Number(Math.max(Math.min(baseTranslateX + distance * dragVector.x, maxAllowedTranslateX * currentZoom), minAllowedTranslateX * currentZoom).toFixed(0));
-		// currentTranslateY = Number(Math.max(Math.min(baseTranslateY + distance * dragVector.y, maxAllowedTranslateY * currentZoom), minAllowedTranslateY * currentZoom).toFixed(0));
-		currentTranslateX = Number(Math.max(Math.min(baseTranslateX + distance * dragVector.x, maxAllowedTranslateX), minAllowedTranslateX).toFixed(0));
-		currentTranslateY = Number(Math.max(Math.min(baseTranslateY + distance * dragVector.y, maxAllowedTranslateY), minAllowedTranslateY).toFixed(0));
+		var cssTransformTranslateX = 0;
+		var cssTransformTranslateY = 0;
+		var cssTransformScale = 1;
+		if ($(mediaSelector).css("transform") !== "none") {
+			cssTransformTranslateX = parseFloat($(mediaSelector).css("transform").split("(")[1].split(",")[4]);
+			cssTransformTranslateY = parseFloat($(mediaSelector).css("transform").split("(")[1].split(",")[5].split(")")[0]);
+			cssTransformScale = parseFloat($(mediaSelector).css("transform").split("(")[1].split(",")[0]);
+		}
 
-		var xString = currentTranslateX.toString();
-		var yString = currentTranslateY.toString();
-		var zoomString = currentZoom.toString();
+		var updatedTranslateX = cssTransformTranslateX + distance * dragVector.x;
+		var updatedTranslateY = cssTransformTranslateY + distance * dragVector.y;
+		var limitedTranslateX = Math.max(Math.min(updatedTranslateX, maxAllowedTranslateX), - maxAllowedTranslateX);
+		var limitedTranslateY = Math.max(Math.min(updatedTranslateY, maxAllowedTranslateY), - maxAllowedTranslateY);
 
-		$(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + ")");
-		$(mediaSelector).css("transform", "translate(" + xString + "px," + yString + "px) scale(" + zoomString + ")");
+		var cssTranslateXString = limitedTranslateX.toString();
+		var cssTranslateYString = limitedTranslateY.toString();
+
+		$(mediaSelector).css("transform", "translate(" + cssTranslateXString + "px," + cssTranslateYString + "px) scale(" + cssTransformScale + ")");
 	};
 
 	// define the actions to be taken on pinch, swipe, tap, double tap
-	PinchSwipe.addMediaGesturesDetection = function() {
+	PinchSwipe.prototype.addMediaGesturesDetection = function() {
 		// swipe and drag gestures are detected on the media
 		// pinch gesture is detected on its container, .media-box-inner
 		// they must be separated because it seems that detecting drag and pinch on the same selector
@@ -286,12 +342,16 @@
 		 */
 		function swipeStatus(event, phase, direction, distance, duration, fingerCount) {
 			//If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
+			if (event.which === 3 && (event.shiftKey || event.ctrlKey || event.altKey)) {
+				return;
+			}
+
 			if (phase == "start")
 				isLongTap = false;
 
 			// when dragging with the mouse, fingerCount is 0
 			if (distance >= tapDistanceThreshold && fingerCount <= 1) {
-				if (currentZoom == 1) {
+				if (currentZoom == initialZoom) {
 					// zoom = 1: swipe
 					if (phase == "move") {
 						if (direction == "left") {
@@ -316,13 +376,20 @@
 						phase == "start" || phase == "end" || phase == "cancel" || distance == 0
 					) {
 						// distance = 0
-						baseTranslateX = currentTranslateX;
-						baseTranslateY = currentTranslateY;
+						// baseTranslateX = currentTranslateX;
+						// baseTranslateY = currentTranslateY;
 					} else {
-						// distance is the cumulative value from start
-						// dragVector is calculated by pinchStatus
-						PinchSwipe.drag(distance / devicePixelRatio, dragVector, 0);
-						// PinchSwipe.drag(distance / currentZoom / devicePixelRatio, dragVector, 0);
+						var dragVectorLength = Math.sqrt(event.movementX * event.movementX + event.movementY * event.movementY);
+						if (dragVectorLength)
+							// normalize the vector
+							dragVector = {
+								"x": event.movementX / dragVectorLength,
+								"y": event.movementY / dragVectorLength
+							};
+						else
+							dragVector = [0, 0];
+
+						PinchSwipe.drag(20, dragVector, 0);
 					}
 				}
 			}
@@ -331,6 +398,11 @@
 		function pinchStatus(event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData) {
 			// the drag vector is calculated here for use in the swipeStatus function
 			// lamentably, swipeStatus doesn't return info about the swipe vector
+
+			if (event.which === 3 && (event.shiftKey || event.ctrlKey || event.altKey)) {
+				return;
+			}
+
 			var dragVectorX = fingerData[0].end.x - fingerData[0].start.x;
 			var dragVectorY = fingerData[0].end.y - fingerData[0].start.y;
 			var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
@@ -357,19 +429,24 @@
 		}
 
 		function tap(event, target) {
-			if (currentZoom == 1) {
+			if (currentZoom == initialZoom) {
 				if (event.which === 3) {
 					// right click
-					if (prevMedia !== null)
+					if (prevMedia !== null) {
 						PinchSwipe.swipeRight(prevMedia);
+						return false;
+					}
 				} else if (! isLongTap) {
 					if (! fromResetZoom) {
-						if (nextMedia !== null)
+						if (nextMedia !== null) {
 							PinchSwipe.swipeLeft(nextMedia);
+							return false;
+						}
 					} else
 						fromResetZoom = false;
 				}
 			}
+			return true;
 		}
 
 		function longTap(event, target) {
@@ -377,13 +454,13 @@
 		}
 
 		function doubleTap(event, target) {
-			if (currentZoom == 1) {
+			if (currentZoom == initialZoom) {
 				PinchSwipe.swipeRight(prevMedia);
 			} else {
-				// currentZoom > 1
+				// currentZoom > initialZoom
 				// image scaled up, reduce it to base zoom
 				$(mediaSelector).css("transform", "scale(1)");
-				currentZoom = 1;
+				currentZoom = initialZoom;
 				fromResetZoom = true;
 			}
 		}
@@ -391,15 +468,13 @@
 		var tapDistanceThreshold = 2;
 		var isLongTap;
 
-		var baseZoom = 1;
+		initialZoom = PinchSwipe.screenZoom();
 		var fromResetZoom = false;
 
 		mediaWidth = parseInt($(mediaSelector).css("width"));
 		mediaHeight = parseInt($(mediaSelector).css("height"));
 
-		currentZoom = 1;
-		baseTranslateX = 0;
-		baseTranslateY = 0;
+		currentZoom = initialZoom;
 		currentTranslateX = 0;
 		currentTranslateY = 0;
 
@@ -428,41 +503,44 @@
 			fingers: 2
 		};
 
-		nextSizeReduction = util.nextSizeReduction();
+		// nextReduction = util.nextReduction();
 		PinchSwipe.initialize();
 
 		$(mediaContainerSelector).swipe(swipeOrDragOptions);
 		$(mediaSelector).swipe(pinchOptions);
 	};
 
+	PinchSwipe.screenZoom = function() {
+		var imageRatio = currentMedia.metadata.size[0] / currentMedia.metadata.size[1];
+		var mediaBoxInnerRatio = $("#center .media-box-inner").css("width") / $("#center .media-box-inner").css("height");
+		if (imageRatio > mediaBoxInnerRatio)
+			return $(mediaSelector)[0].width / currentMedia.metadata.size[0];
+		else
+			return $(mediaSelector)[0].height / currentMedia.metadata.size[1];
+		// if (imageRatio > mediaBoxInnerRatio)
+		// 	return $(mediaSelector)[0].width / parseInt($("#center .media-box-inner").css("width"));
+		// else
+		// 	return $(mediaSelector)[0].height / parseInt($("#center .media-box-inner").css("height"));
+	};
+
 	PinchSwipe.prototype.getCurrentZoom = function () {
 		return currentZoom;
+	};
+
+	PinchSwipe.prototype.getInitialZoom = function () {
+		return initialZoom;
 	};
 
 	PinchSwipe.initialize = function () {
 		// $('#album-view').swipe('destroy');
 
-		var pastInitialMediaWidthOnScreen, pastCurrentZoom;
 		mediaBoxInnerWidth = parseInt($(mediaContainerSelector).css("width"));
 		mediaBoxInnerHeight = parseInt($(mediaContainerSelector).css("height"));
+		photoWidth = currentMedia.metadata.size[0];
+		photoHeight = currentMedia.metadata.size[1];
 
-		if (currentZoom > 1) {
-			pastInitialMediaWidthOnScreen = initialMediaWidthOnScreen;
-			pastCurrentZoom = currentZoom;
-		}
-		initialMediaWidthOnScreen = $(mediaSelector)[0].width;
-		//maxAllowedZoom = Number(($(mediaSelector).attr("width") / initialMediaWidthOnScreen).toFixed(2));
-		maxAllowedZoom = Number((currentMedia.metadata.size[0] / initialMediaWidthOnScreen).toFixed(2));
-		if (currentZoom > 1) {
-			// change zoom so that the photo looks like before
-			currentZoom = currentZoom / initialMediaWidthOnScreen * pastInitialMediaWidthOnScreen;
-			PinchSwipe.pinchInOut(pastCurrentZoom, currentZoom / pastCurrentZoom, 0);
-
-			maxAllowedTranslateX = Math.max(currentZoom * mediaWidth - mediaBoxInnerWidth, 0) / 2;
-			minAllowedTranslateX = - maxAllowedTranslateX;
-			maxAllowedTranslateY = Math.max(currentZoom * mediaHeight - mediaBoxInnerHeight, 0) / 2;
-			minAllowedTranslateY = - maxAllowedTranslateY;
-		}
+		initialZoom = PinchSwipe.screenZoom();
+		currentZoom = initialZoom;
 
 		PinchSwipe.setPinchButtonsVisibility();
 	};
@@ -471,7 +549,7 @@
 		if (currentMedia === null)
 			return true;
 		if (! event.shiftKey && ! event.altKey && ! event.ctrlKey) {
-			if (currentZoom == 1) {
+			if (currentMedia.mimeType.indexOf("video") === 0 || currentMedia.mimeType.indexOf("image") === 0 && currentZoom == initialZoom) {
 				// mouse wheel with no key: swipe
 				if (delta < 0) {
 					PinchSwipe.swipeLeft(nextMedia);
@@ -483,26 +561,26 @@
 			} else {
 				// drag
 				if (event.deltaY < 0) {
-					PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 0, y: -1}, dragSpeed);
+					PinchSwipe.drag(photoHeight / 5, {x: 0, y: -1});
 					return false;
 				} else if (event.deltaY > 0) {
-					PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 0, y: 1}, dragSpeed);
+					PinchSwipe.drag(photoHeight / 5, {x: 0, y: 1});
 					return false;
 				} else if (event.deltaX < 0) {
-					PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 1, y: 0}, dragSpeed);
+					PinchSwipe.drag(photoWidth / 5, {x: 1, y: 0});
 					return false;
 				} else if (event.deltaX > 0) {
-					PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: -1, y: 0}, dragSpeed);
+					PinchSwipe.drag(photoWidth / 5, {x: -1, y: 0});
 					return false;
 				}
 			}
-		} else {
+		} else if (currentMedia.mimeType.indexOf("image") === 0) {
 			// mouse wheel with shift/control/alt key: pinch
 			if (delta < 0) {
-				PinchSwipe.pinchOut();
+				PinchSwipe.pinchOut(event);
 				return false;
 			} else if (delta > 0) {
-				PinchSwipe.pinchIn();
+				PinchSwipe.pinchIn(event);
 				return false;
 			}
 		}
@@ -510,13 +588,13 @@
 	};
 
 	PinchSwipe.prototype.swipeRightOrDrag = function(media) {
-		if (currentZoom == 1) {
-			if (! $(".title").hasClass("hidden-by-pinch"))
-				$("#prev")[0].click();
+		if (currentZoom == initialZoom && prevMedia) {
+			$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+			$("#prev")[0].click();
 			// PinchSwipe.swipeRight(media);
 		} else {
 			// drag
-			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 1, y: 0}, dragSpeed);
+			PinchSwipe.drag(windowWidth / 3, {x: 1, y: 0});
 		}
 	};
 
@@ -545,13 +623,13 @@
 	};
 
 	PinchSwipe.prototype.swipeLeftOrDrag = function(media) {
-		if (currentZoom == 1) {
-			if (! $(".title").hasClass("hidden-by-pinch"))
-				$("#next")[0].click();
+		if (currentZoom == initialZoom && nextMedia) {
+			$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+			$("#next")[0].click();
 			// PinchSwipe.swipeLeft(media);
 		} else {
 			// drag
-			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: -1, y: 0}, dragSpeed);
+			PinchSwipe.drag(windowWidth / 3, {x: -1, y: 0});
 		}
 	};
 
@@ -583,12 +661,12 @@
 	};
 
 	PinchSwipe.prototype.swipeUpOrDrag = function(media) {
-		if (currentZoom == 1) {
-			if (! $(".title").hasClass("hidden-by-pinch"))
+		if (currentZoom == initialZoom) {
+			if (! $("#center .title").hasClass("hidden-by-pinch"))
 				PinchSwipe.swipeUp(media);
 		} else {
 			// drag
-			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 0, y: -1}, dragSpeed);
+			PinchSwipe.drag(windowHeight / 3, {x: 0, y: -1});
 		}
 	};
 
@@ -611,12 +689,12 @@
 	};
 
 	PinchSwipe.prototype.swipeDownOrDrag = function(media) {
-		if (currentZoom == 1) {
-			if (! $(".title").hasClass("hidden-by-pinch"))
+		if (currentZoom == initialZoom) {
+			if (! $("#center .title").hasClass("hidden-by-pinch"))
 				PinchSwipe.swipeDown(media);
 		} else {
 			// drag
-			PinchSwipe.drag(mediaBoxInnerWidth / 10, {x: 0, y: 1}, dragSpeed);
+			PinchSwipe.drag(windowHeight / 3, {x: 0, y: 1});
 		}
 	};
 
@@ -644,13 +722,13 @@
 	PinchSwipe.prototype.swipeLeft = PinchSwipe.swipeLeft;
 	PinchSwipe.prototype.swipeRight = PinchSwipe.swipeRight;
 	PinchSwipe.prototype.swipeDown = PinchSwipe.swipeDown;
+	PinchSwipe.prototype.drag = PinchSwipe.drag;
 	PinchSwipe.prototype.pinchIn = PinchSwipe.pinchIn;
 	PinchSwipe.prototype.pinchOut = PinchSwipe.pinchOut;
-	PinchSwipe.prototype.addMediaGesturesDetection = PinchSwipe.addMediaGesturesDetection;
 	PinchSwipe.prototype.addAlbumGesturesDetection = PinchSwipe.addAlbumGesturesDetection;
 	PinchSwipe.prototype.setPinchButtonsVisibility = PinchSwipe.setPinchButtonsVisibility;
-	PinchSwipe.prototype.initialize = PinchSwipe.initialize;
 	PinchSwipe.prototype.swipeUp = PinchSwipe.swipeUp;
+	PinchSwipe.prototype.initialize = PinchSwipe.initialize;
 
 	window.PinchSwipe = PinchSwipe;
 }());

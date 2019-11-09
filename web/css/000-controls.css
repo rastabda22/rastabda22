@@ -27,6 +27,10 @@ a:hover {
 	display: none;
 }
 
+#media-view .title, #album-view.media-view-container {
+	z-index: -1;
+}
+
 #album-view .title {
 	padding-left: 0;
 	padding-top: 0;
