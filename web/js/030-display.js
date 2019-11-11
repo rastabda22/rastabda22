@@ -115,7 +115,7 @@ $(document).ready(function() {
 			} else if ($("ul#right-menu").hasClass("expand")) {
 				toggleMenu();
 				return false;
-			} else if (currentMedia !== null && currentMedia.mediaType == "video" && ! $("#media-center")[0].paused) {
+			} else if (currentMedia !== null && currentMedia.mimeType.indexOf("video") === 0 && ! $("#media-center")[0].paused) {
 					// stop the video, otherwise it keeps playing
 					$("#media-center")[0].pause();
 			} else if (isMap) {
@@ -138,7 +138,7 @@ $(document).ready(function() {
 				tF.goFullscreen(e);
 				return false;
 			} else if (upLink) {
-				if (currentMedia !== null && currentMedia.mediaType == "video")
+				if (currentMedia !== null && currentMedia.mimeType.indexOf("video") === 0)
 					// stop the video, otherwise it keeps playing
 					$("#media-center")[0].pause();
 				if (currentMedia !== null || currentAlbum.cacheBase !== Options.folders_string) {
@@ -174,7 +174,7 @@ $(document).ready(function() {
 							pS.drag(windowWidth / 3, {x: -1, y: 0});
 						}
 						return false;
-					} else if (e.key === " " && currentMedia !== null && currentMedia.mediaType == "video") {
+					} else if (e.key === " " && currentMedia !== null && currentMedia.mimeType.indexOf("video") === 0) {
 						if ($("#media-center")[0].paused)
 							// play the video
 							$("#media-center")[0].play();

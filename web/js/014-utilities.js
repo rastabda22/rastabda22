@@ -462,7 +462,7 @@
 	};
 
 	Utilities.prototype.hasGpsData = function(media) {
-		return media.mediaType == "photo" && typeof media.metadata.latitude !== "undefined";
+		return media.mimeType.indexOf("image") === 0 && typeof media.metadata.latitude !== "undefined";
 	};
 
 	Utilities.prototype.em2px = function(selector, em) {
@@ -529,14 +529,14 @@
 		// chooses the proper reduction to use depending on the container size
 		var container, mediaSrc;
 
-		if (media.mediaType == "video") {
+		if (media.mimeType.indexOf("video") === 0) {
 			if (fullScreenStatus && media.name.match(/\.avi$/) === null) {
 				mediaSrc = Utilities.originalMediaPath(media);
 			} else {
 				// .avi videos are not played by browsers, use the transcoded one
 				mediaSrc = this.mediaPath(currentAlbum, media, "");
 			}
-		} else if (media.mediaType == "photo") {
+		} else if (media.mimeType.indexOf("image") === 0) {
 			if (fullScreenStatus && Modernizr.fullscreen)
 				container = $(window);
 			else
@@ -634,7 +634,7 @@
 		var mediaSrc, mediaElement, container;
 		var attrWidth = mediaWidth, attrHeight = mediaHeight;
 
-		if (media.mediaType == "video") {
+		if (media.mimeType.indexOf("video") === 0) {
 			if (fullScreenStatus && media.name.match(/\.avi$/) === null) {
 				mediaSrc = Utilities.originalMediaPath(media);
 			} else {
@@ -643,7 +643,7 @@
 			}
 
 			mediaElement = $('<video/>', {controls: true });
-		} else if (media.mediaType == "photo") {
+		} else if (media.mimeType.indexOf("image") === 0) {
 			if (fullScreenStatus && Modernizr.fullscreen)
 				container = $(window);
 			else
@@ -683,9 +683,9 @@
 	Utilities.prototype.createMediaLinkTag = function(media, mediaSrc) {
 		// creates a link tag to be inserted in <head>
 
-		if (media.mediaType == "video") {
+		if (media.mimeType.indexOf("video") === 0) {
 			return '<link rel="video_src" href="' + encodeURI(mediaSrc) + '" />';
-		} else if (media.mediaType == "photo") {
+		} else if (media.mimeType.indexOf("image") === 0) {
 			return '<link rel="image_src" href="' + encodeURI(mediaSrc) + '" />';
 		}
 	};
@@ -693,9 +693,9 @@
 	Utilities.prototype.chooseTriggerEvent = function(media) {
 		// choose the event that must trigger the scaleMedia function
 
-		if (media.mediaType == "video") {
+		if (media.mimeType.indexOf("video") === 0) {
 			return "loadstart";
-		} else if (media.mediaType == "photo") {
+		} else if (media.mimeType.indexOf("image") === 0) {
 			return "load";
 		}
 	};
@@ -714,8 +714,8 @@
 	Utilities.mediaPath = function(album, media, size) {
 		var suffix = Options.cache_folder_separator, hash, rootString = "root-";
 		if (
-			media.mediaType == "photo" ||
-			media.mediaType == "video" && [Options.album_thumb_size, Options.media_thumb_size].indexOf(size) != -1
+			media.mimeType.indexOf("image") === 0 ||
+			media.mimeType.indexOf("video") === 0 && [Options.album_thumb_size, Options.media_thumb_size].indexOf(size) != -1
 		) {
 			var actualSize = size;
 			var albumThumbSize = Options.album_thumb_size;
@@ -741,7 +741,7 @@
 					suffix += "f";
 			}
 			suffix += ".jpg";
-		} else if (media.mediaType == "video") {
+		} else if (media.mimeType.indexOf("video") === 0) {
 			suffix += "transcoded_" + Options.video_transcode_bitrate + "_" + Options.video_crf + ".mp4";
 		}
 
@@ -811,9 +811,9 @@
 		$(".media-box .media-box-inner").css("height", heightForMedia);
 		$(".media-box").show();
 
-		if (media.mediaType == "photo")
+		if (media.mimeType.indexOf("image") === 0)
 			mediaElement = $(".media-box#" + id + " .media-box-inner img");
-		else if (media.mediaType == "video")
+		else if (media.mimeType.indexOf("video") === 0)
 			mediaElement = $(".media-box#" + id + " .media-box-inner video");
 
 		mediaWidth = media.metadata.size[0];
@@ -830,7 +830,7 @@
 		containerHeight = heightForMedia;
 		containerRatio = containerWidth / containerHeight;
 
-		if (media.mediaType == "photo") {
+		if (media.mimeType.indexOf("image") === 0) {
 			photoSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
 			previousSrc = mediaElement.attr("src");
 
@@ -881,7 +881,7 @@
 
 		if (event.data.callback) {
 			if (id === "center" && (
-					media.mediaType == "photo" ||
+					media.mimeType.indexOf("image") === 0 ||
 					event.data.callbackType == "load"
 				)
 			) {

@@ -763,7 +763,7 @@
 				$("#pinch-in").off("click").on("click", pS.pinchIn);
 				$("#pinch-out").off("click").on("click", pS.pinchOut);
 
-				if (media.mediaType == "photo") {
+				if (media.mimeType.indexOf("image") === 0) {
 					pS.addMediaGesturesDetection();
 					util.setPinchButtonsPosition();
 					util.correctPrevNextPosition();
@@ -944,13 +944,13 @@
 		var mediaBoxInnerElement = $(".media-box#" + id + " .media-box-inner");
 		// empty the img container: another image will be put in there
 
-		if (media.mediaType == "video" && ! f.videoOK()) {
+		if (media.mimeType.indexOf("video") === 0 && ! f.videoOK()) {
 			mediaBoxInnerElement.empty();
 			f.addVideoUnsupportedMarker(id);
 			if (id === "center")
 				loadNextPrevMedia();
 		} else {
-			if (media.mediaType == "video") {
+			if (media.mimeType.indexOf("video") === 0) {
 				mediaSelector = ".media-box#" + id + " .media-box-inner video";
 			} else {
 				mediaSelector = ".media-box#" + id + " .media-box-inner img";
@@ -1009,7 +1009,7 @@
 			upLink = phFl.upHash();
 
 			mediaBoxInnerElement.off('mousewheel');
-			if (media.mediaType == "photo")
+			if (media.mimeType.indexOf("image") === 0)
 				mediaBoxInnerElement.on('mousewheel', pS.swipeOnWheel);
 
 			$(".media-box#center .media-box-inner .media-bar").on(
@@ -1093,7 +1093,7 @@
 			$(".media-box#center .fullscreen").off('click').on('click', TopFunctions.goFullscreenFromMouse);
 
 			// set social buttons events
-			if (currentMedia.mediaType == "video")
+			if (currentMedia.mimeType.indexOf("video") === 0)
 				$("#media-center").on("loadstart", f.socialButtons);
 			else
 				$("#media-center").on("load", f.socialButtons);
@@ -1208,7 +1208,7 @@
 			previousMedia = currentMedia;
 		}
 
-		if (previousMedia !== null && previousMedia.mediaType == "video")
+		if (previousMedia !== null && previousMedia.mimeType.indexOf("video") === 0)
 			// stop the video, otherwise it will keep playing
 			$("#media-center")[0].pause();
 

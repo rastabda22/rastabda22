@@ -999,7 +999,7 @@ class Media(object):
 		self._attributes["metadata"] = {}
 		self._attributes["dateTimeFile"] = mtime
 		self._attributes["dateTimeDir"] = dir_mtime
-		self._attributes["mediaType"] = "photo"
+		# self._attributes["mediaType"] = "photo"
 
 		self.mime_type = magic.from_file(media_path, mime = True)
 
@@ -1396,7 +1396,7 @@ class Media(object):
 			if 'codec_type' in s:
 				indented_message("debug: s[codec_type]", s['codec_type'], 5)
 			if 'codec_type' in s and s['codec_type'] == 'video':
-				self._attributes["mediaType"] = "video"
+				# self._attributes["mediaType"] = "video"
 				self._attributes["metadata"]["size"] = (int(s["width"]), int(s["height"]))
 				if "duration" in s:
 					self._attributes["metadata"]["duration"] = int(round(float(s["duration"]) * 10) / 10)
@@ -2164,7 +2164,8 @@ class Media(object):
 
 	@property
 	def is_video(self):
-		return "mediaType" in self._attributes and self._attributes["mediaType"] == "video"
+		return self.mime_type.find("video/") == 0
+		# return "mediaType" in self._attributes and self._attributes["mediaType"] == "video"
 
 	def __str__(self):
 		return self.name
