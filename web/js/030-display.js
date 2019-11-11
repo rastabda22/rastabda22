@@ -236,18 +236,15 @@ $(document).ready(function() {
 					} else if (e.key.toLowerCase() === "o" && currentMedia !== null && ! isMap) {
 						$("#center .original-link")[0].click();
 						return false;
-					} else if (e.key === "1") {
+					} else if (["1", "2", "3", "4", "5", "6", "7", "8", "9"].indexOf(e.key) > -1) {
 						if (isMap) {
 							// return false;
 						} else if (currentMedia !== null) {
-							pS.pinchIn(null, 1);
-							return false;
-						}
-					} else if (e.key === "2") {
-						if (isMap) {
-							// return false;
-						} else if (currentMedia !== null) {
-							pS.pinchIn(null, 2);
+							let number = parseInt(e.key);
+							if (number > pS.getCurrentZoom())
+								pS.pinchIn(null, number);
+							else
+								pS.pinchOut(null, number);
 							return false;
 						}
 					} else if (e.key === "+") {
