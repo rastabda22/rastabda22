@@ -19,6 +19,7 @@
 	var mediaWidth, mediaHeight;
 	var mediaBoxInnerWidth, mediaBoxInnerHeight;
 	var photoWidth, photoHeight;
+	var previousFingerEnd;
 
 
 	var dragVector;
@@ -351,7 +352,7 @@
 
 			// when dragging with the mouse, fingerCount is 0
 			if (distance >= tapDistanceThreshold && fingerCount <= 1) {
-				if (currentZoom == initialZoom) {
+				if (currentZoom === initialZoom) {
 					// zoom = 1: swipe
 					if (phase == "move") {
 						if (direction == "left") {
@@ -379,17 +380,23 @@
 						// baseTranslateX = currentTranslateX;
 						// baseTranslateY = currentTranslateY;
 					} else {
-						var dragVectorLength = Math.sqrt(event.movementX * event.movementX + event.movementY * event.movementY);
-						if (dragVectorLength)
-							// normalize the vector
-							dragVector = {
-								"x": event.movementX / dragVectorLength,
-								"y": event.movementY / dragVectorLength
-							};
-						else
-							dragVector = [0, 0];
+						if (typeof event.movementX !== "undefined") {
+							var dragVectorX = event.movementX;
+							var dragVectorY = event.movementY;
+							var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
+							if (dragVectorLength)
+								// normalize the vector
+								dragVector = {
+									"x": dragVectorX / dragVectorLength,
+									"y": dragVectorY / dragVectorLength
+								};
+							else
+								dragVector = [0, 0];
+						} else {
+							// the dragVector calculated by pinchStatus is used
+						}
 
-						PinchSwipe.drag(20, dragVector, 0);
+						PinchSwipe.drag(10, dragVector, 0);
 					}
 				}
 			}
@@ -403,8 +410,18 @@
 				return;
 			}
 
-			var dragVectorX = fingerData[0].end.x - fingerData[0].start.x;
-			var dragVectorY = fingerData[0].end.y - fingerData[0].start.y;
+			if (phase === "start") {
+				// distance = 0
+				baseZoom = currentZoom;
+				previousFingerEnd = {x: fingerData[0].start.x, y: fingerData[0].start.y};
+			} else if (phase === "move" && fingerCount >= 2) {
+				// phase is "move"
+				PinchSwipe.pinchInOut(baseZoom, baseZoom * pinchZoom, duration);
+			}
+
+			var dragVectorX = fingerData[0].end.x - previousFingerEnd.x;
+			var dragVectorY = fingerData[0].end.y - previousFingerEnd.y;
+			previousFingerEnd = {x: fingerData[0].end.x, y: fingerData[0].end.y};
 			var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
 			if (dragVectorLength)
 				// normalize the vector
@@ -414,14 +431,6 @@
 				};
 			else
 				dragVector = [0, 0];
-
-			if (phase === "start") {
-				// distance = 0
-				baseZoom = currentZoom;
-			} else if (phase === "move" && fingerCount >= 2) {
-				// phase is "move"
-				PinchSwipe.pinchInOut(baseZoom, pinchZoom, duration);
-			}
 		}
 
 		function hold(event, target) {
