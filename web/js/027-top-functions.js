@@ -1007,6 +1007,23 @@
 			$("#prev").off();
 
 			upLink = phFl.upHash();
+
+			mediaBoxInnerElement.off('mousewheel');
+			if (media.mediaType == "photo")
+				mediaBoxInnerElement.on('mousewheel', pS.swipeOnWheel);
+
+			$(".media-box#center .media-box-inner .media-bar").on(
+				'click',
+				function(ev) {
+					ev.stopPropagation();
+				}
+			).on(
+				'contextmenu',
+				function(ev) {
+					ev.stopPropagation();
+				}
+			);
+
 			if (currentAlbum.numMedia == 1) {
 				mediaBoxInnerElement.css('cursor', 'default');
 			} else {
@@ -1026,22 +1043,6 @@
 						}
 						contextMenu = true;
 						return true;
-					}
-				);
-
-				mediaBoxInnerElement.off('mousewheel');
-				if (media.mediaType == "photo")
-					mediaBoxInnerElement.on('mousewheel', pS.swipeOnWheel);
-
-				$(".media-box#center .media-box-inner .media-bar").on(
-					'click',
-					function(ev) {
-						ev.stopPropagation();
-					}
-				).on(
-					'contextmenu',
-					function(ev) {
-						ev.stopPropagation();
 					}
 				);
 
