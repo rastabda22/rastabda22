@@ -454,7 +454,7 @@ $(document).ready(function() {
 			window.location.href = bySearchViewHash;
 		}
 
-		f.focusSearchField();
+		util.focusSearchField();
 		return false;
 	});
 
@@ -463,7 +463,7 @@ $(document).ready(function() {
 		if (ev.which == 13) {
 			//Enter key pressed, trigger search button click event
 			$('#search-button').click();
-			f.focusSearchField();
+			util.focusSearchField();
 			return false;
 		}
 	});

@@ -1330,7 +1330,7 @@
 			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
 			TopFunctions.showAlbum("refreshSubalbums");
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1345,7 +1345,7 @@
 			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
 			TopFunctions.showAlbum("refreshSubalbums");
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1358,7 +1358,7 @@
 			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
 			TopFunctions.showAlbum("refreshSubalbums");
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1377,7 +1377,7 @@
 				TopFunctions.showAlbum("refreshMedia");
 			else
 				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2);
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1396,7 +1396,7 @@
 				TopFunctions.showAlbum("refreshMedia");
 			else
 				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2);
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1411,7 +1411,7 @@
 				TopFunctions.showAlbum("refreshMedia");
 			else
 				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2);
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1433,7 +1433,7 @@
 				TopFunctions.showMedia(currentAlbum, prevMedia, 'left');
 			} else
 				TopFunctions.showAlbum(false);
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1455,7 +1455,7 @@
 				TopFunctions.showMedia(currentAlbum, prevMedia, 'left');
 			} else
 				TopFunctions.showAlbum(false);
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1466,7 +1466,7 @@
 			f.setBooleanCookie("albums_slide_style", Options.albums_slide_style);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1488,7 +1488,7 @@
 
 			if ($('.leaflet-popup').html())
 				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(MapFunctions.mapAlbum) + MapFunctions.titleWrapper2);
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1499,7 +1499,7 @@
 			f.setBooleanCookie("show_album_names_below_thumbs", Options.show_album_names_below_thumbs);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1510,7 +1510,7 @@
 			f.setBooleanCookie("show_album_media_count", Options.show_album_media_count);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1521,7 +1521,7 @@
 			f.setBooleanCookie("show_media_names_below_thumbs", Options.show_media_names_below_thumbs);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1532,7 +1532,7 @@
 			f.setCookie("album_thumb_type", Options.album_thumb_type);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1545,7 +1545,7 @@
 			TopFunctions.showAlbum("refreshMedia");
 			if ($('.leaflet-popup').html())
 				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(MapFunctions.mapAlbum) + MapFunctions.titleWrapper2);
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1564,7 +1564,7 @@
 			f.setBooleanCookie("show_big_virtual_folders", Options.show_big_virtual_folders);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};

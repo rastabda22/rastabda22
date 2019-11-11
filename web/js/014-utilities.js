@@ -418,6 +418,15 @@
 		// $(selector).fadeOut(4000);
 	};
 
+	Utilities.prototype.focusSearchField = function() {
+		if (! isMobile.any()) {
+			$("#search-field").focus();
+		} else {
+			$("#search-field").blur();
+		}
+		$("li.search ul").show();
+	};
+
 	Utilities.prototype.stripHtmlAndReplaceEntities = function(htmlString) {
 		// converto for for html page title
 		// strip html (https://stackoverflow.com/questions/822452/strip-html-from-text-javascript#822464)

@@ -891,22 +891,13 @@
 		}
 	};
 
-	Functions.focusSearchField = function() {
-		if (! isMobile.any()) {
-			$("#search-field").focus();
-		} else {
-			$("#search-field").blur();
-		}
-		$("li.search ul").slideDown();
-	};
-
 	Functions.prototype.toggleInsideWordsSearch = function() {
 		Options.search_inside_words = ! Options.search_inside_words;
 		Functions.setBooleanCookie("search_inside_words", Options.search_inside_words);
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		Functions.focusSearchField();
+		util.focusSearchField();
 	};
 
 	Functions.prototype.toggleAnyWordSearch = function() {
@@ -915,7 +906,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		Functions.focusSearchField();
+		util.focusSearchField();
 	};
 
 	Functions.prototype.toggleCaseSensitiveSearch = function() {
@@ -924,7 +915,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		Functions.focusSearchField();
+		util.focusSearchField();
 
 	};
 	Functions.prototype.toggleAccentSensitiveSearch = function() {
@@ -933,7 +924,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		Functions.focusSearchField();
+		util.focusSearchField();
 	};
 
 	Functions.prototype.toggleCurrentAbumSearch = function() {
@@ -942,7 +933,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		Functions.focusSearchField();
+		util.focusSearchField();
 	};
 
 	Functions.toggleMetadata = function() {
@@ -973,7 +964,7 @@
 	Functions.prototype.toggleMenu = function() {
 		$("ul#right-menu").toggleClass("expand");
 		if ($("ul#right-menu").hasClass("expand")) {
-			Functions.focusSearchField();
+			util.focusSearchField();
 			Functions.updateMenu();
 		}
 	};
