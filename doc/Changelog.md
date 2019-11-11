@@ -1,3 +1,7 @@
+* simplify and fix menu behaviour
+* fixed image zoom
+* zoom now has now limit
+
 ### version v4.0.3 (Oct 16, 2019)
 
 * fix authentication dialog appearing when has was the void string
