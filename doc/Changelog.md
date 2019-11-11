@@ -1,3 +1,5 @@
+### version v4.0.4 (Nov 11, 2019)
+
 * simplify and fix menu behaviour
 * fixed image zoom
 * zoom now has now limit
