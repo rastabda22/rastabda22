@@ -298,7 +298,7 @@
 				<img  width="12px" height="16px" src="img/padlock.png" />
 			</span>
 		</li>
-		<li class="search">
+		<li class="expandable search">
 			<form>
 				<input type="text" id="search-field" />
 				<img id="search-button" src="img/ic_search_black_48dp_2x.png" />

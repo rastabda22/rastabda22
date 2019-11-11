@@ -2042,8 +2042,13 @@
 
 		function keepOn() {
 			hashParsed(theAlbum, media, i);
-			if (util.isSearchCacheBase(theAlbum.cacheBase) && (media === null && ! util.isAlbumWithOneMedia(theAlbum)))
+			if (
+				util.isSearchCacheBase(theAlbum.cacheBase)
+				// && (media === null && ! util.isAlbumWithOneMedia(theAlbum))
+			) {
 				$("ul#right-menu").addClass("expand");
+				util.focusSearchField();
+			}
 		}
 
 		util.initializeSortPropertiesAndCookies(theAlbum);
