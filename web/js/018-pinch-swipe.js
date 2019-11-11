@@ -396,7 +396,7 @@
 							// the dragVector calculated by pinchStatus is used
 						}
 
-						PinchSwipe.drag(10, dragVector, 0);
+						PinchSwipe.drag(20 / devicePixelRatio, dragVector, 0);
 					}
 				}
 			}
