@@ -587,17 +587,6 @@
 		return true;
 	};
 
-	PinchSwipe.prototype.swipeRightOrDrag = function(media) {
-		if (currentZoom == initialZoom && prevMedia) {
-			$("#album-view.media-view-container").removeClass("hidden-by-pinch");
-			$("#prev")[0].click();
-			// PinchSwipe.swipeRight(media);
-		} else {
-			// drag
-			PinchSwipe.drag(windowWidth / 3, {x: 1, y: 0});
-		}
-	};
-
 	PinchSwipe.swipeRight = function(media) {
 		$("#media-box-container").on(
 			'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
@@ -620,17 +609,6 @@
 
 		$("#pinch-container").addClass("hidden");
 		PinchSwipe.swipeMedia(0);
-	};
-
-	PinchSwipe.prototype.swipeLeftOrDrag = function(media) {
-		if (currentZoom == initialZoom && nextMedia) {
-			$("#album-view.media-view-container").removeClass("hidden-by-pinch");
-			$("#next")[0].click();
-			// PinchSwipe.swipeLeft(media);
-		} else {
-			// drag
-			PinchSwipe.drag(windowWidth / 3, {x: -1, y: 0});
-		}
 	};
 
 	PinchSwipe.swipeLeft = function(media) {
@@ -660,16 +638,6 @@
 		PinchSwipe.swipeMedia(windowWidth * 2);
 	};
 
-	PinchSwipe.prototype.swipeUpOrDrag = function(media) {
-		if (currentZoom == initialZoom) {
-			if (! $("#center .title").hasClass("hidden-by-pinch"))
-				PinchSwipe.swipeUp(media);
-		} else {
-			// drag
-			PinchSwipe.drag(windowHeight / 3, {x: 0, y: -1});
-		}
-	};
-
 	PinchSwipe.swipeUp = function(dest) {
 		// Actually swiping up is passing from an album to a media, so there is no animation
 		// ...or... the media could be let enter from below, as in horizontal swipe... TO DO
@@ -685,16 +653,6 @@
 					$(mediaContainerSelector).hide().css('top', "");
 				}
 			);
-		}
-	};
-
-	PinchSwipe.prototype.swipeDownOrDrag = function(media) {
-		if (currentZoom == initialZoom) {
-			if (! $("#center .title").hasClass("hidden-by-pinch"))
-				PinchSwipe.swipeDown(media);
-		} else {
-			// drag
-			PinchSwipe.drag(windowHeight / 3, {x: 0, y: 1});
 		}
 	};
 

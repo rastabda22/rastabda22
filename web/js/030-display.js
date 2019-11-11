@@ -173,7 +173,6 @@ $(document).ready(function() {
 							// drag
 							pS.drag(windowWidth / 3, {x: -1, y: 0});
 						}
-						// pS.swipeLeftOrDrag(nextMedia);
 						return false;
 					} else if (e.key === " " && currentMedia !== null && currentMedia.mediaType == "video") {
 						if ($("#media-center")[0].paused)
@@ -207,7 +206,6 @@ $(document).ready(function() {
 							// drag
 							pS.drag(windowWidth / 3, {x: 1, y: 0});
 						}
-						// pS.swipeRightOrDrag(prevMedia);
 						return false;
 					} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink && ! isMap) {
 						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
@@ -217,7 +215,6 @@ $(document).ready(function() {
 							// drag
 							pS.drag(windowHeight / 3, {x: 0, y: 1});
 						}
-						// pS.swipeDownOrDrag(upLink);
 						return false;
 					} else if (e.key === "ArrowDown" || e.key === "PageDown" && ! isMap) {
 					 	if (mediaLink && currentMedia === null) {
