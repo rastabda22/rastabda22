@@ -418,6 +418,15 @@
 		// $(selector).fadeOut(4000);
 	};
 
+	Utilities.prototype.focusSearchField = function() {
+		if (! isMobile.any()) {
+			$("#search-field").focus();
+		} else {
+			$("#search-field").blur();
+		}
+		$("li.search ul").show();
+	};
+
 	Utilities.prototype.stripHtmlAndReplaceEntities = function(htmlString) {
 		// converto for for html page title
 		// strip html (https://stackoverflow.com/questions/822452/strip-html-from-text-javascript#822464)
@@ -453,7 +462,7 @@
 	};
 
 	Utilities.prototype.hasGpsData = function(media) {
-		return media.mediaType == "photo" && typeof media.metadata.latitude !== "undefined";
+		return media.mimeType.indexOf("image") === 0 && typeof media.metadata.latitude !== "undefined";
 	};
 
 	Utilities.prototype.em2px = function(selector, em) {
@@ -520,14 +529,14 @@
 		// chooses the proper reduction to use depending on the container size
 		var container, mediaSrc;
 
-		if (media.mediaType == "video") {
+		if (media.mimeType.indexOf("video") === 0) {
 			if (fullScreenStatus && media.name.match(/\.avi$/) === null) {
 				mediaSrc = Utilities.originalMediaPath(media);
 			} else {
 				// .avi videos are not played by browsers, use the transcoded one
 				mediaSrc = this.mediaPath(currentAlbum, media, "");
 			}
-		} else if (media.mediaType == "photo") {
+		} else if (media.mimeType.indexOf("image") === 0) {
 			if (fullScreenStatus && Modernizr.fullscreen)
 				container = $(window);
 			else
@@ -539,68 +548,82 @@
 		return mediaSrc;
 	};
 
-	Utilities.currentSize = function() {
-		// returns the pixel size of the photo in DOM
-		// returns 0 if it's the original image
+	Utilities.currentSizeAndIndex = function() {
+		// Returns the pixel size of the photo in DOM and the corresponding reduction index
+		// If the original photo is in the DOM, returns its size and -1
 
 		var currentReduction = $(".media-box#center .media-box-inner img").attr("src");
 
 		// check if it's a reduction
 		for (var i = 0; i < Options.reduced_sizes.length; i ++) {
 			if (currentReduction === Utilities.mediaPath(currentAlbum, currentMedia, Options.reduced_sizes[i])) {
-				return Options.reduced_sizes[i];
+				return [Options.reduced_sizes[i], i];
 			}
 		}
 
 		// default: it's the original image
-		return 0;
+		return [Math.max(currentMedia.metadata.size[0], currentMedia.metadata.size[1]), -1];
 	};
 
-	Utilities.nextSize = function() {
-		// returns the next bigger image size than that of the photo in DOM
-		// returns 0 if the next bigger image is the original image
-		// returns false if in the DOM there is the original image
+	Utilities.nextSizeAndIndex = function() {
+		// Returns the size of the reduction immediately bigger than that in the DOM and its reduction index
+		// Returns the original photo size and -1 if the reduction in the DOM is the biggest one
+		// Returns [false, false] if the original image is already in the DOM
 
-		var theNextSizeIndex = Utilities.nextSizeIndex();
+		var [currentReductionSize, currentReductionIndex] = Utilities.currentSizeAndIndex();
+		if (currentReductionIndex === -1)
+			return [false, false];
 
-		if (theNextSizeIndex === false)
-			return false;
-		else if (theNextSizeIndex === Options.reduced_sizes.length)
-			return 0;
-		else
-			return Options.reduced_sizes[theNextSizeIndex];
+		if (currentReductionIndex === 0)
+			return [Math.max(currentMedia.metadata.size[0], currentMedia.metadata.size[1]), -1];
+
+		return [Options.reduced_sizes[currentReductionIndex - 1], currentReductionIndex - 1];
+
+
+		// var theNextSizeIndex = Utilities.nextSizeIndex();
+		//
+		// if (theNextSizeIndex === false)
+		// 	return false;
+		// else if (theNextSizeIndex === -1)
+		// 	return 0;
+		// else
+		// 	return Options.reduced_sizes[theNextSizeIndex];
 	};
 
-	Utilities.nextSizeIndex = function() {
-		// returns the index of the next bigger reduction size than that of the photo in DOM
-		// returns 0 if the next bigger image is the original image
-		// returns false if in the DOM there is the original image
+	// Utilities.nextSizeIndex = function() {
+	// 	// returns the index of the next bigger reduction size than that of the photo in DOM
+	// 	// returns -1 if the next bigger image is the original image
+	// 	// returns false if in the DOM there is the original image
+	//
+	// 	var currentPhotoSize = Utilities.currentSize();
+	// 	if (currentPhotoSize == 0) {
+	// 		return false;
+	// 	} else {
+	// 		if (currentPhotoSize === Options.reduced_sizes[0])
+	// 			return -1;
+	// 		for (var i = 1; i < Options.reduced_sizes.length - 1; i ++) {
+	// 			if (currentPhotoSize === Options.reduced_sizes[i]) {
+	// 				return i - 1;
+	// 			}
+	// 		}
+	// 	}
+	// 	return 0;
+	// };
 
-		var currentPhotoSize = Utilities.currentSize();
-		if (currentPhotoSize == 0) {
-			return false;
-		} else {
-			for (var i = 0; i < Options.reduced_sizes.length - 1; i ++) {
-				if (currentPhotoSize === Options.reduced_sizes[i]) {
-					return i + 1;
-				}
-			}
-		}
-		return 0;
-	};
+	Utilities.prototype.nextReduction = function() {
+		// Returns the file name of the reduction with the next bigger size than the reduction in DOM,
+		// possibly the original photo
+		// Returns false if the original photo is already in the DOM
 
-	Utilities.prototype.nextSizeReduction = function() {
-		// returns the file name of the reduction with the next bigger size than the reduction in DOM
+		var [nextReductionSize, nextReductionIndex] = Utilities.nextSizeAndIndex();
 
-		var nextPhotoSize = Utilities.nextSize();
-
-		if (nextPhotoSize === false)
+		if (nextReductionIndex === false)
 			// it's already the original image
 			return false;
-		else if (nextPhotoSize === 0)
+		if (nextReductionIndex === -1)
 			return Utilities.pathJoin([currentMedia.albumName, currentMedia.name]);
-		else
-			return Utilities.mediaPath(currentAlbum, currentMedia, nextPhotoSize);
+
+		return Utilities.mediaPath(currentAlbum, currentMedia, nextReductionSize);
 	};
 
 	Utilities.prototype.createMediaHtml = function(media, id, fullScreenStatus) {
@@ -611,7 +634,7 @@
 		var mediaSrc, mediaElement, container;
 		var attrWidth = mediaWidth, attrHeight = mediaHeight;
 
-		if (media.mediaType == "video") {
+		if (media.mimeType.indexOf("video") === 0) {
 			if (fullScreenStatus && media.name.match(/\.avi$/) === null) {
 				mediaSrc = Utilities.originalMediaPath(media);
 			} else {
@@ -620,7 +643,7 @@
 			}
 
 			mediaElement = $('<video/>', {controls: true });
-		} else if (media.mediaType == "photo") {
+		} else if (media.mimeType.indexOf("image") === 0) {
 			if (fullScreenStatus && Modernizr.fullscreen)
 				container = $(window);
 			else
@@ -660,9 +683,9 @@
 	Utilities.prototype.createMediaLinkTag = function(media, mediaSrc) {
 		// creates a link tag to be inserted in <head>
 
-		if (media.mediaType == "video") {
+		if (media.mimeType.indexOf("video") === 0) {
 			return '<link rel="video_src" href="' + encodeURI(mediaSrc) + '" />';
-		} else if (media.mediaType == "photo") {
+		} else if (media.mimeType.indexOf("image") === 0) {
 			return '<link rel="image_src" href="' + encodeURI(mediaSrc) + '" />';
 		}
 	};
@@ -670,9 +693,9 @@
 	Utilities.prototype.chooseTriggerEvent = function(media) {
 		// choose the event that must trigger the scaleMedia function
 
-		if (media.mediaType == "video") {
+		if (media.mimeType.indexOf("video") === 0) {
 			return "loadstart";
-		} else if (media.mediaType == "photo") {
+		} else if (media.mimeType.indexOf("image") === 0) {
 			return "load";
 		}
 	};
@@ -691,8 +714,8 @@
 	Utilities.mediaPath = function(album, media, size) {
 		var suffix = Options.cache_folder_separator, hash, rootString = "root-";
 		if (
-			media.mediaType == "photo" ||
-			media.mediaType == "video" && [Options.album_thumb_size, Options.media_thumb_size].indexOf(size) != -1
+			media.mimeType.indexOf("image") === 0 ||
+			media.mimeType.indexOf("video") === 0 && [Options.album_thumb_size, Options.media_thumb_size].indexOf(size) != -1
 		) {
 			var actualSize = size;
 			var albumThumbSize = Options.album_thumb_size;
@@ -718,7 +741,7 @@
 					suffix += "f";
 			}
 			suffix += ".jpg";
-		} else if (media.mediaType == "video") {
+		} else if (media.mimeType.indexOf("video") === 0) {
 			suffix += "transcoded_" + Options.video_transcode_bitrate + "_" + Options.video_crf + ".mp4";
 		}
 
@@ -788,9 +811,9 @@
 		$(".media-box .media-box-inner").css("height", heightForMedia);
 		$(".media-box").show();
 
-		if (media.mediaType == "photo")
+		if (media.mimeType.indexOf("image") === 0)
 			mediaElement = $(".media-box#" + id + " .media-box-inner img");
-		else if (media.mediaType == "video")
+		else if (media.mimeType.indexOf("video") === 0)
 			mediaElement = $(".media-box#" + id + " .media-box-inner video");
 
 		mediaWidth = media.metadata.size[0];
@@ -807,11 +830,11 @@
 		containerHeight = heightForMedia;
 		containerRatio = containerWidth / containerHeight;
 
-		if (media.mediaType == "photo") {
+		if (media.mimeType.indexOf("image") === 0) {
 			photoSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
 			previousSrc = mediaElement.attr("src");
 
-			if (encodeURI(photoSrc) != previousSrc && event.data.currentZoom === 1) {
+			if (encodeURI(photoSrc) != previousSrc && event.data.currentZoom === event.data.initialZoom) {
 				// resizing had the effect that a different reduction has been choosed
 
 				// chooseReducedPhoto() sets maxSize to 0 if it returns the original media
@@ -858,7 +881,7 @@
 
 		if (event.data.callback) {
 			if (id === "center" && (
-					media.mediaType == "photo" ||
+					media.mimeType.indexOf("image") === 0 ||
 					event.data.callbackType == "load"
 				)
 			) {
@@ -1252,8 +1275,8 @@
 	Utilities.prototype.setLinksVisibility = Utilities.setLinksVisibility;
 	Utilities.prototype.mediaBoxGenerator = Utilities.mediaBoxGenerator;
 	Utilities.prototype.originalMediaBoxContainerContent = Utilities.originalMediaBoxContainerContent;
-	Utilities.prototype.currentSize = Utilities.currentSize;
-	Utilities.prototype.nextSize = Utilities.nextSize;
+	Utilities.prototype.currentSizeAndIndex = Utilities.currentSizeAndIndex;
+	Utilities.prototype.nextSizeAndIndex = Utilities.nextSizeAndIndex;
 	Utilities.prototype.isColliding = Utilities.isColliding;
 	Utilities.prototype.distanceBetweenCoordinatePoints = Utilities.distanceBetweenCoordinatePoints;
 	Utilities.prototype.xDistanceBetweenCoordinatePoints = Utilities.xDistanceBetweenCoordinatePoints;

@@ -42,12 +42,12 @@
 			var prefix = util.removeFolderMarker(currentMedia.foldersCacheBase);
 			if (prefix)
 				prefix += Options.cache_folder_separator;
-			if (currentMedia.mediaType == "video") {
+			if (currentMedia.mimeType.indexOf("video") === 0) {
 				mediaParameter = util.pathJoin([
 					Options.server_cache_path,
 					currentMedia.cacheSubdir,
 				]) + prefix + currentMedia.cacheBase + Options.cache_folder_separator + "transcoded_" + Options.video_transcode_bitrate + "_" + Options.video_crf + ".mp4";
-			} else if (currentMedia.mediaType == "photo") {
+			} else if (currentMedia.mimeType.indexOf("image") === 0) {
 				mediaParameter = util.pathJoin([
 					Options.server_cache_path,
 					currentMedia.cacheSubdir,
@@ -487,21 +487,19 @@
 		$("#right-menu li.expandable").off('click').on(
 			'click',
 			function() {
-				if (false == $("ul",this).is(':visible'))
-					$('#right-menu ul').slideUp(300);
-				$("ul",this).slideToggle(300);
+				$("#right-menu li ul").hide();
+				$("ul", this).show();
 			}
 		);
 
-		$("#search-field").off("focus").on(
+		$(".search").off("focus").on(
 			"focus",
 			function() {
+				$("#right-menu li.expandable ul").hide();
 				$("#right-menu li.search ul").show();
-			}
-		).off("blur").on(
-			"blur",
-			function() {
-				$("#right-menu li.search ul").hide();
+				// if ($("ul", this).is(':hidden'))
+				// 	$('#right-menu ul').slideUp(300);
+				// $("ul", this).slideToggle(300);
 			}
 		);
 	};
@@ -887,22 +885,13 @@
 		}
 	};
 
-	Functions.focusSearchField = function() {
-		if (! isMobile.any()) {
-			$("#search-field").focus();
-		} else {
-			$("#search-field").blur();
-		}
-		$("li.search ul").slideDown();
-	};
-
 	Functions.prototype.toggleInsideWordsSearch = function() {
 		Options.search_inside_words = ! Options.search_inside_words;
 		Functions.setBooleanCookie("search_inside_words", Options.search_inside_words);
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		Functions.focusSearchField();
+		util.focusSearchField();
 	};
 
 	Functions.prototype.toggleAnyWordSearch = function() {
@@ -911,7 +900,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		Functions.focusSearchField();
+		util.focusSearchField();
 	};
 
 	Functions.prototype.toggleCaseSensitiveSearch = function() {
@@ -920,7 +909,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		Functions.focusSearchField();
+		util.focusSearchField();
 
 	};
 	Functions.prototype.toggleAccentSensitiveSearch = function() {
@@ -929,7 +918,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		Functions.focusSearchField();
+		util.focusSearchField();
 	};
 
 	Functions.prototype.toggleCurrentAbumSearch = function() {
@@ -938,7 +927,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		Functions.focusSearchField();
+		util.focusSearchField();
 	};
 
 	Functions.toggleMetadata = function() {
@@ -969,7 +958,7 @@
 	Functions.prototype.toggleMenu = function() {
 		$("ul#right-menu").toggleClass("expand");
 		if ($("ul#right-menu").hasClass("expand")) {
-			Functions.focusSearchField();
+			util.focusSearchField();
 			Functions.updateMenu();
 		}
 	};

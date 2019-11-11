@@ -763,7 +763,7 @@
 				$("#pinch-in").off("click").on("click", pS.pinchIn);
 				$("#pinch-out").off("click").on("click", pS.pinchOut);
 
-				if (media.mediaType == "photo") {
+				if (media.mimeType.indexOf("image") === 0) {
 					pS.addMediaGesturesDetection();
 					util.setPinchButtonsPosition();
 					util.correctPrevNextPosition();
@@ -791,19 +791,20 @@
 						event.data.callback = f.pinchSwipeInitialization;
 						event.data.callbackType = "pinch";
 						event.data.currentZoom = pS.getCurrentZoom();
+						event.data.initialZoom = pS.getInitialZoom();
 						util.scaleMedia(event);
 
 						if (album.numMedia > 1) {
 							event.data.id = "left";
 							event.data.media = prevMedia;
-							event.data.callback = f.pinchSwipeInitialization;
-							event.data.callbackType = "pinch";
+							// event.data.callback = f.pinchSwipeInitialization;
+							// event.data.callbackType = "pinch";
 							util.scaleMedia(event);
 
 							event.data.id = "right";
 							event.data.media = nextMedia;
-							event.data.callback = f.pinchSwipeInitialization;
-							event.data.callbackType = "pinch";
+							// event.data.callback = f.pinchSwipeInitialization;
+							// event.data.callbackType = "pinch";
 							util.scaleMedia(event);
 						}
 
@@ -889,7 +890,12 @@
 
 		heightForMediaAndTitle = util.mediaBoxContainerHeight();
 
-		heightForMedia = heightForMediaAndTitle - $(".media-box#" + id + " .title").outerHeight();
+		if ($(".media-box#" + id + " .title").is(":visible"))
+			titleHeight = $(".media-box#" + id + " .title").outerHeight();
+		else
+			titleHeight = 0;
+
+		heightForMedia = heightForMediaAndTitle - titleHeight;
 
 		if (id === "center") {
 			$("#media-box-container").css("width", windowWidth * 3).css("height", heightForMediaAndTitle);
@@ -938,13 +944,13 @@
 		var mediaBoxInnerElement = $(".media-box#" + id + " .media-box-inner");
 		// empty the img container: another image will be put in there
 
-		if (media.mediaType == "video" && ! f.videoOK()) {
+		if (media.mimeType.indexOf("video") === 0 && ! f.videoOK()) {
 			mediaBoxInnerElement.empty();
 			f.addVideoUnsupportedMarker(id);
 			if (id === "center")
 				loadNextPrevMedia();
 		} else {
-			if (media.mediaType == "video") {
+			if (media.mimeType.indexOf("video") === 0) {
 				mediaSelector = ".media-box#" + id + " .media-box-inner video";
 			} else {
 				mediaSelector = ".media-box#" + id + " .media-box-inner img";
@@ -1001,6 +1007,23 @@
 			$("#prev").off();
 
 			upLink = phFl.upHash();
+
+			mediaBoxInnerElement.off('mousewheel');
+			if (media.mimeType.indexOf("image") === 0)
+				mediaBoxInnerElement.on('mousewheel', pS.swipeOnWheel);
+
+			$(".media-box#center .media-box-inner .media-bar").on(
+				'click',
+				function(ev) {
+					ev.stopPropagation();
+				}
+			).on(
+				'contextmenu',
+				function(ev) {
+					ev.stopPropagation();
+				}
+			);
+
 			if (currentAlbum.numMedia == 1) {
 				mediaBoxInnerElement.css('cursor', 'default');
 			} else {
@@ -1013,25 +1036,13 @@
 					function(ev) {
 						if (! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 							ev.preventDefault();
-							if (pS.getCurrentZoom() == 1)
+							if (pS.getCurrentZoom() == 1) {
 								pS.swipeRight(prevMedia);
+								return false;
+							}
 						}
-					}
-				);
-
-				mediaBoxInnerElement.off('mousewheel');
-				if (media.mediaType == "photo")
-					mediaBoxInnerElement.on('mousewheel', pS.swipeOnWheel);
-
-				$(".media-box#center .media-box-inner .media-bar").on(
-					'click',
-					function(ev) {
-						ev.stopPropagation();
-					}
-				).on(
-					'contextmenu',
-					function(ev) {
-						ev.stopPropagation();
+						contextMenu = true;
+						return true;
 					}
 				);
 
@@ -1040,12 +1051,14 @@
 						pS.swipeRight(prevMedia);
 						return false;
 					}
+					return true;
 				});
 				$("#next").on('click', function(ev) {
 					if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 						pS.swipeLeft(nextMedia);
 						return false;
 					}
+					return true;
 				});
 			}
 		}
@@ -1080,7 +1093,7 @@
 			$(".media-box#center .fullscreen").off('click').on('click', TopFunctions.goFullscreenFromMouse);
 
 			// set social buttons events
-			if (currentMedia.mediaType == "video")
+			if (currentMedia.mimeType.indexOf("video") === 0)
 				$("#media-center").on("loadstart", f.socialButtons);
 			else
 				$("#media-center").on("load", f.socialButtons);
@@ -1195,7 +1208,7 @@
 			previousMedia = currentMedia;
 		}
 
-		if (previousMedia !== null && previousMedia.mediaType == "video")
+		if (previousMedia !== null && previousMedia.mimeType.indexOf("video") === 0)
 			// stop the video, otherwise it will keep playing
 			$("#media-center")[0].pause();
 
@@ -1318,7 +1331,7 @@
 			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
 			TopFunctions.showAlbum("refreshSubalbums");
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1333,7 +1346,7 @@
 			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
 			TopFunctions.showAlbum("refreshSubalbums");
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1346,7 +1359,7 @@
 			util.sortAlbumsMedia(thisAlbum);
 			f.updateMenu(thisAlbum);
 			TopFunctions.showAlbum("refreshSubalbums");
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1365,7 +1378,7 @@
 				TopFunctions.showAlbum("refreshMedia");
 			else
 				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2);
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1384,7 +1397,7 @@
 				TopFunctions.showAlbum("refreshMedia");
 			else
 				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2);
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1399,7 +1412,7 @@
 				TopFunctions.showAlbum("refreshMedia");
 			else
 				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2);
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1421,7 +1434,7 @@
 				TopFunctions.showMedia(currentAlbum, prevMedia, 'left');
 			} else
 				TopFunctions.showAlbum(false);
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1443,7 +1456,7 @@
 				TopFunctions.showMedia(currentAlbum, prevMedia, 'left');
 			} else
 				TopFunctions.showAlbum(false);
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1454,7 +1467,7 @@
 			f.setBooleanCookie("albums_slide_style", Options.albums_slide_style);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1476,7 +1489,7 @@
 
 			if ($('.leaflet-popup').html())
 				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(MapFunctions.mapAlbum) + MapFunctions.titleWrapper2);
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1487,7 +1500,7 @@
 			f.setBooleanCookie("show_album_names_below_thumbs", Options.show_album_names_below_thumbs);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1498,7 +1511,7 @@
 			f.setBooleanCookie("show_album_media_count", Options.show_album_media_count);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1509,7 +1522,7 @@
 			f.setBooleanCookie("show_media_names_below_thumbs", Options.show_media_names_below_thumbs);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1520,7 +1533,7 @@
 			f.setCookie("album_thumb_type", Options.album_thumb_type);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1533,7 +1546,7 @@
 			TopFunctions.showAlbum("refreshMedia");
 			if ($('.leaflet-popup').html())
 				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(MapFunctions.mapAlbum) + MapFunctions.titleWrapper2);
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1552,7 +1565,7 @@
 			f.setBooleanCookie("show_big_virtual_folders", Options.show_big_virtual_folders);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
-			f.focusSearchField();
+			util.focusSearchField();
 		}
 		return false;
 	};
