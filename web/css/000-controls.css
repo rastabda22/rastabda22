@@ -72,7 +72,7 @@ a.title-anchor.mobile {
 	color: orange !important;
 }
 
-#loading, #download-preparing, #folders-browsing, #by-date-browsing, #by-gps-browsing, #by-search-browsing {
+#loading, #folders-browsing, #by-date-browsing, #by-gps-browsing, #by-search-browsing, #download-preparing {
 	display: none;
 }
 

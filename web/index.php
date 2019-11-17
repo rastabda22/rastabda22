@@ -363,8 +363,12 @@
 			<span id='show-big-albums' class="big-albums caption"></span>
 		</li>
 
-		<li class='download-album active'>
-			<span id="download-album" class='download-album caption'></span>
+		<li class='expandable download-album active'>
+			<span class='download-album caption'></span>
+			<ul class="sub-menu">
+				<li class='download-album media-only active'></li>
+				<li class='download-album everything active'></li>
+			</ul>
 		</li>
 
 		<li class='protection active'>
