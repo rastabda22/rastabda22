@@ -39,7 +39,7 @@
 		<link href="css/010-leaflet-prunecluster.css" rel="stylesheet" type="text/css" />
 	<?php	}
 
-			if (strcasecmp($options['debug_js'], "false") == 0 || $options['debug_js'] == "0") { ?>
+	if (strcasecmp($options['debug_js'], "false") == 0 || $options['debug_js'] == "0") { ?>
 		<script type="text/javascript" src="js/scripts.min.js"></script>
 	<?php	} else {
 			// Use system wide jQuery if available
@@ -81,15 +81,18 @@
 		<script type="text/javascript" src="js/008-leaflet.js"></script>
 		<script type="text/javascript" src="js/009-leaflet-prunecluster.js"></script>
 		<script type="text/javascript" src="js/010-social.js"></script>
-		<script type="text/javascript" src="js/012-translations.js"></script>
+		<script type="text/javascript" src="js/011-jszip.js"></script>
+		<script type="text/javascript" src="js/012-jszip-utils.js"></script>
 		<script type="text/javascript" src="js/013-md5.js"></script>
-		<script type="text/javascript" src="js/014-utilities.js"></script>
-		<script type="text/javascript" src="js/016-libphotofloat.js"></script>
-		<script type="text/javascript" src="js/018-pinch-swipe.js"></script>
-		<script type="text/javascript" src="js/022-functions.js"></script>
-		<script type="text/javascript" src="js/025-map.js"></script>
-		<script type="text/javascript" src="js/027-top-functions.js"></script>
-		<script type="text/javascript" src="js/030-display.js"></script>
+		<script type="text/javascript" src="js/014-file-saver.js"></script>
+		<script type="text/javascript" src="js/031-translations.js"></script>
+		<script type="text/javascript" src="js/033-utilities.js"></script>
+		<script type="text/javascript" src="js/034-libphotofloat.js"></script>
+		<script type="text/javascript" src="js/035-pinch-swipe.js"></script>
+		<script type="text/javascript" src="js/036-functions.js"></script>
+		<script type="text/javascript" src="js/037-map.js"></script>
+		<script type="text/javascript" src="js/038-top-functions.js"></script>
+		<script type="text/javascript" src="js/039-display.js"></script>
 
 	<?php } ?>
 
@@ -360,6 +363,10 @@
 			<span id='show-big-albums' class="big-albums caption"></span>
 		</li>
 
+		<li class='download-album active'>
+			<span id="download-album" class='download-album caption'></span>
+		</li>
+
 		<li class='protection active'>
 			<span id="protected-content-unveil" class='protection caption'></span>
 		</li>
@@ -367,6 +374,7 @@
 
 
 	<div id="loading"></div>
+	<div id="download-preparing"></div>
 
 	<div id="folders-browsing" class="browsing-mode-message"></div>
 	<div id="by-date-browsing" class="browsing-mode-message"></div>

@@ -838,6 +838,7 @@
 		var previousMediaIndex, nextMediaIndex;
 
 		$(".media-bar").show();
+		$("#download-preparing").hide();
 
 		if (id === "center")
 			$("#media-view").removeClass("hidden");
@@ -1589,6 +1590,8 @@
 			var randomMedia = randomSubAlbum.media[index];
 			var id = phFl.hashCode(subalbum.cacheBase);
 			var mediaSrc = util.chooseThumbnail(randomSubAlbum, randomMedia, Options.album_thumb_size);
+
+			$("#download-preparing").hide();
 
 			mediaWidth = randomMedia.metadata.size[0];
 			mediaHeight = randomMedia.metadata.size[1];

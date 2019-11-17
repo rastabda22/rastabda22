@@ -240,8 +240,11 @@ $(document).ready(function() {
 								PinchSwipe.drag(windowHeight / 3, {x: 0, y: -1});
 							return false;
 						}
-					} else if (e.key.toLowerCase() === "d" && currentMedia !== null && ! isMap) {
-						$("#center .download-link")[0].click();
+					} else if (e.key.toLowerCase() === "d" && ! isMap) {
+						if (currentMedia !== null && e.key === "d")
+							$("#center .download-link")[0].click();
+						else if (currentAlbum.media.length && e.key === "D")
+							$("#download-album")[0].click();
 						return false;
 					} else if (e.key.toLowerCase() === "f" && currentMedia !== null && ! isMap) {
 						tF.goFullscreen(e);
@@ -483,6 +486,8 @@ $(document).ready(function() {
 	$("li#case-sensitive").on('click', f.toggleCaseSensitiveSearch);
 	$("li#accent-sensitive").on('click', f.toggleAccentSensitiveSearch);
 	$("li#album-search").on('click', f.toggleCurrentAbumSearch);
+
+	$("#download-album").on('click', util.downloadAlbum);
 
 	$("#protected-content-unveil").on('click', util.showAuthForm);
 

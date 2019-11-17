@@ -888,6 +888,45 @@
 		);
 	};
 
+	Utilities.prototype.downloadAlbum = function() {
+		// adapted from https://gist.github.com/c4software/981661f1f826ad34c2a5dc11070add0f
+		var zip = new JSZip();
+		var count = 0;
+		var zipFilename = "myphotoshare-album.zip";
+		var urls = [];
+		for (let iMedia = 0; iMedia < currentAlbum.media.length; iMedia ++) {
+			urls.push([encodeURI(Utilities.trueOriginalMediaPath(currentAlbum.media[iMedia])), currentAlbum.media[iMedia].name]);
+		}
+
+		$("#download-preparing").show();
+
+		urls.forEach(
+			function([url, name]) {
+				var filename = name;
+				// loading a file and add it in a zip file
+				JSZipUtils.getBinaryContent(
+					url,
+					function (err, data) {
+						if (err) {
+							throw err; // or handle the error
+						}
+						zip.file(filename, data, {binary:true});
+						count ++;
+						if (count == urls.length) {
+							zip.generateAsync({type:'blob'}).then(
+								function(content) {
+									saveAs(content, zipFilename);
+									$("#download-preparing").hide();
+								}
+							);
+						}
+					}
+				);
+			}
+		);
+	};
+
+
 	Utilities.setPinchButtonsPosition = function(containerHeight, containerWidth) {
 		// calculate and set pinch buttons position
 

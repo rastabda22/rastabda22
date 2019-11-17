@@ -458,6 +458,12 @@
 			}
 		}
 
+		$("#download-album").addClass("hidden");
+		if (thisAlbum !== null && thisAlbum.numMedia) {
+			$("#download-album").removeClass("hidden");
+			$("#download-album").attr('title', util._t("#downloading") + " " + thisAlbum.numMedia + " " + util._t("#media-without-subalbums"));
+		}
+
 		if (thisAlbum !== null) {
 			let numPasswords;
 			if (util.isSearchCacheBase(thisAlbum.cacheBase))
