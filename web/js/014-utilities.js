@@ -782,116 +782,113 @@
 		// this function works on the img tag identified by event.data.id
 		// it adjusts width, height and position so that it fits in its parent (<div class="bedia-box-inner">, or the whole window)
 		// and centers vertically
-		var media = event.data.media, mediaElement, container, photoSrc, previousSrc;
-		var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth(), containerRatio;
-		var mediaBarBottom = 0;
-		var mediaWidth, mediaHeight, attrWidth, attrHeight;
-		var id = event.data.id;
-		var heightForMedia, heightForMediaAndTitle, titleHeight;
+		return new Promise(
+			function(resolve_scaleMedia) {
+				var media = event.data.media, mediaElement, container, photoSrc, previousSrc;
+				var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth(), containerRatio;
+				var mediaBarBottom = 0;
+				var mediaWidth, mediaHeight, attrWidth, attrHeight;
+				var id = event.data.id;
+				var heightForMedia, heightForMediaAndTitle, titleHeight;
 
-		windowWidth = $(window).innerWidth();
-		heightForMediaAndTitle = Utilities.mediaBoxContainerHeight();
+				windowWidth = $(window).innerWidth();
+				heightForMediaAndTitle = Utilities.mediaBoxContainerHeight();
 
-		// widths must be set before calculating title height
-		if (event.data.resize && id === "center") {
-			// this is executed only when resizing, it's not needed when first scaling
-			$("#media-box-container").css("width", windowWidth * 3).css("transform", "translate(-" + windowWidth + "px, 0px)");
-			$(".media-box").css("width", windowWidth);
-			$(".media-box .media-box-inner").css("width", windowWidth);
-			$(".media-box").show();
-		}
-		if ($(".media-box#" + id + " .title").is(":visible"))
-			titleHeight = $(".media-box#" + id + " .title").outerHeight();
-		else
-			titleHeight = 0;
+				// widths must be set before calculating title height
+				if (event.data.resize && id === "center") {
+					// this is executed only when resizing, it's not needed when first scaling
+					$("#media-box-container").css("width", windowWidth * 3).css("transform", "translate(-" + windowWidth + "px, 0px)");
+					$(".media-box").css("width", windowWidth);
+					$(".media-box .media-box-inner").css("width", windowWidth);
+					$(".media-box").show();
+				}
+				if ($(".media-box#" + id + " .title").is(":visible"))
+					titleHeight = $(".media-box#" + id + " .title").outerHeight();
+				else
+					titleHeight = 0;
 
-		heightForMedia = heightForMediaAndTitle - titleHeight;
-		$("#media-box-container").css("height", heightForMediaAndTitle);
-		$(".media-box").css("height", heightForMediaAndTitle);
-		$(".media-box .media-box-inner").css("height", heightForMedia);
-		$(".media-box").show();
+				heightForMedia = heightForMediaAndTitle - titleHeight;
+				$("#media-box-container").css("height", heightForMediaAndTitle);
+				$(".media-box").css("height", heightForMediaAndTitle);
+				$(".media-box .media-box-inner").css("height", heightForMedia);
+				$(".media-box").show();
 
-		if (media.mimeType.indexOf("image") === 0)
-			mediaElement = $(".media-box#" + id + " .media-box-inner img");
-		else if (media.mimeType.indexOf("video") === 0)
-			mediaElement = $(".media-box#" + id + " .media-box-inner video");
+				if (media.mimeType.indexOf("image") === 0)
+					mediaElement = $(".media-box#" + id + " .media-box-inner img");
+				else if (media.mimeType.indexOf("video") === 0)
+					mediaElement = $(".media-box#" + id + " .media-box-inner video");
 
-		mediaWidth = media.metadata.size[0];
-		mediaHeight = media.metadata.size[1];
-		attrWidth = mediaWidth;
-		attrHeight = mediaHeight;
+				mediaWidth = media.metadata.size[0];
+				mediaHeight = media.metadata.size[1];
+				attrWidth = mediaWidth;
+				attrHeight = mediaHeight;
 
-		if (fullScreenStatus && Modernizr.fullscreen)
-			container = $(window);
-		else {
-			container = $(".media-box#" + id + " .media-box-inner");
-		}
+				if (fullScreenStatus && Modernizr.fullscreen)
+					container = $(window);
+				else {
+					container = $(".media-box#" + id + " .media-box-inner");
+				}
 
-		containerHeight = heightForMedia;
-		containerRatio = containerWidth / containerHeight;
+				containerHeight = heightForMedia;
+				containerRatio = containerWidth / containerHeight;
 
-		if (media.mimeType.indexOf("image") === 0) {
-			photoSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
-			previousSrc = mediaElement.attr("src");
+				if (media.mimeType.indexOf("image") === 0) {
+					photoSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
+					previousSrc = mediaElement.attr("src");
 
-			if (encodeURI(photoSrc) != previousSrc && event.data.currentZoom === event.data.initialZoom) {
-				// resizing had the effect that a different reduction has been choosed
+					if (encodeURI(photoSrc) != previousSrc && event.data.currentZoom === event.data.initialZoom) {
+						// resizing had the effect that a different reduction has been choosed
 
-				// chooseReducedPhoto() sets maxSize to 0 if it returns the original media
-				if (maxSize) {
-					if (mediaWidth > mediaHeight) {
-						attrWidth = maxSize;
-						attrHeight = Math.round(mediaHeight / mediaWidth * attrWidth);
-					} else {
-						attrHeight = maxSize;
-						attrWidth = Math.round(mediaWidth / mediaHeight * attrHeight);
+						// chooseReducedPhoto() sets maxSize to 0 if it returns the original media
+						if (maxSize) {
+							if (mediaWidth > mediaHeight) {
+								attrWidth = maxSize;
+								attrHeight = Math.round(mediaHeight / mediaWidth * attrWidth);
+							} else {
+								attrHeight = maxSize;
+								attrWidth = Math.round(mediaWidth / mediaHeight * attrHeight);
+							}
+						}
+
+						$("link[rel=image_src]").remove();
+						$('link[rel="video_src"]').remove();
+						$("head").append("<link rel='image_src' href='" + encodeURI(photoSrc) + "' />");
+						mediaElement
+							.attr("src", encodeURI(photoSrc))
+							.attr("width", attrWidth)
+							.attr("height", attrHeight);
 					}
 				}
 
-				$("link[rel=image_src]").remove();
-				$('link[rel="video_src"]').remove();
-				$("head").append("<link rel='image_src' href='" + encodeURI(photoSrc) + "' />");
-				mediaElement
-					.attr("src", encodeURI(photoSrc))
-					.attr("width", attrWidth)
-					.attr("height", attrHeight);
+				mediaElement.show();
+				// $("#media-view").removeClass("hidden");
+
+				if (id === "center") {
+					// position next/prev buttons verticallly centered in media-box-inner
+					var mediaBoxInnerHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
+					titleHeight = parseInt($(".media-box#center .title").css("height"));
+					var prevNextHeight = parseInt($("#next").outerHeight());
+					$("#next, #prev").css(
+						"top",
+						titleHeight + (mediaBoxInnerHeight - prevNextHeight) / 2
+					);
+
+					Utilities.setLinksVisibility();
+				}
+
+				if (Utilities.bottomSocialButtons()) {
+					mediaBarBottom = $(".ssk").outerHeight();
+				}
+				$(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
+
+				if (id === "center")
+					resolve_scaleMedia();
+
+				$("#loading").hide();
+				Utilities.setPinchButtonsPosition();
+				Utilities.correctPrevNextPosition();
 			}
-		}
-
-		mediaElement.show();
-		// $("#media-view").removeClass("hidden");
-
-		if (id === "center") {
-			// position next/prev buttons verticallly centered in media-box-inner
-			var mediaBoxInnerHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
-			titleHeight = parseInt($(".media-box#center .title").css("height"));
-			var prevNextHeight = parseInt($("#next").outerHeight());
-			$("#next, #prev").css(
-				"top",
-				titleHeight + (mediaBoxInnerHeight - prevNextHeight) / 2
-			);
-
-			Utilities.setLinksVisibility();
-		}
-
-		if (Utilities.bottomSocialButtons()) {
-			mediaBarBottom = $(".ssk").outerHeight();
-		}
-		$(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
-
-		if (event.data.callback) {
-			if (id === "center" && (
-					media.mimeType.indexOf("image") === 0 ||
-					event.data.callbackType == "load"
-				)
-			) {
-				event.data.callback(containerHeight, containerWidth);
-			}
-		}
-
-		$("#loading").hide();
-		Utilities.setPinchButtonsPosition();
-		Utilities.correctPrevNextPosition();
+		);
 	};
 
 	Utilities.setPinchButtonsPosition = function(containerHeight, containerWidth) {

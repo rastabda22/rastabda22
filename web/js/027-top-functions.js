@@ -788,11 +788,16 @@
 
 						event.data.id = "center";
 						event.data.media = media;
-						event.data.callback = f.pinchSwipeInitialization;
-						event.data.callbackType = "pinch";
 						event.data.currentZoom = pS.getCurrentZoom();
 						event.data.initialZoom = pS.getInitialZoom();
-						util.scaleMedia(event);
+						let scaleMediaPromise = util.scaleMedia(event);
+						scaleMediaPromise.then(
+							function() {
+								if (media.mimeType.indexOf("image") === 0) {
+									f.pinchSwipeInitialization();
+								}
+							}
+						);
 
 						if (album.numMedia > 1) {
 							event.data.id = "left";
@@ -982,10 +987,17 @@
 					id: id,
 					media: media,
 					resize: false,
-					callback: loadNextPrevMedia,
-					callbackType: "load"
 				},
-				util.scaleMedia
+				function (event) {
+					let scaleMediaPromise = util.scaleMedia(event);
+					scaleMediaPromise.then(
+						function() {
+							if (media.mimeType.indexOf("image") === 0) {
+								loadNextPrevMedia(containerHeight, containerWidth);
+							}
+						}
+					);
+				}
 			);
 			// in case the image has been already loaded, trigger the event
 			if ($(mediaSelector)[0].complete)

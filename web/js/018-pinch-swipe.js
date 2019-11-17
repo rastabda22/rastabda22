@@ -178,33 +178,34 @@
 			event.data.media = currentMedia;
 			event.data.currentZoom = currentZoom;
 			event.data.initialZoom = initialZoom;
-			event.data.callbackType = "pinch";
-			event.data.callback = function() {
-				var newInitialZoom = PinchSwipe.screenZoom();
-				if (newInitialZoom !== initialZoom) {
-					// hiding the bottom thumbnails has resized the image
-					initialZoom = newInitialZoom;
 
-					mediaWidthOnScreen = $(mediaSelector)[0].width;
-					// currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
-					// zoomAfterFirstPinch = currentZoom;
-					util.setPinchButtonsPosition();
-					util.correctPrevNextPosition();
-					PinchSwipe.setPinchButtonsVisibility();
-					mediaWidth = parseInt($(mediaSelector).css("width"));
-					mediaHeight = parseInt($(mediaSelector).css("height"));
-					mediaBoxInnerWidth = parseInt($(mediaContainerSelector).css("width"));
-					mediaBoxInnerHeight = parseInt($(mediaContainerSelector).css("height"));
+			let scaleMediaPromise = util.scaleMedia(event);
+			scaleMediaPromise.then(
+				function() {
+					var newInitialZoom = PinchSwipe.screenZoom();
+					if (newInitialZoom !== initialZoom) {
+						// hiding the bottom thumbnails has resized the image
+						initialZoom = newInitialZoom;
 
-					currentZoom = initialZoom;
-					finalZoom = currentZoom;
-				} else if (finalZoom === null || typeof finalZoom === "undefined") {
-					finalZoom = currentZoom * zoomIncrement;
+						mediaWidthOnScreen = $(mediaSelector)[0].width;
+						// currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
+						// zoomAfterFirstPinch = currentZoom;
+						util.setPinchButtonsPosition();
+						util.correctPrevNextPosition();
+						PinchSwipe.setPinchButtonsVisibility();
+						mediaWidth = parseInt($(mediaSelector).css("width"));
+						mediaHeight = parseInt($(mediaSelector).css("height"));
+						mediaBoxInnerWidth = parseInt($(mediaContainerSelector).css("width"));
+						mediaBoxInnerHeight = parseInt($(mediaContainerSelector).css("height"));
+
+						currentZoom = initialZoom;
+						finalZoom = currentZoom;
+					} else if (finalZoom === null || typeof finalZoom === "undefined") {
+						finalZoom = currentZoom * zoomIncrement;
+					}
+					PinchSwipe.pinchInOut(currentZoom, finalZoom, duration);
 				}
-				PinchSwipe.pinchInOut(currentZoom, finalZoom, duration);
-			};
-
-			util.scaleMedia(event);
+			);
 		} else {
 			if (finalZoom === null || typeof finalZoom === "undefined")
 				finalZoom = currentZoom * zoomIncrement;
@@ -260,24 +261,25 @@
 			event.data.resize = true;
 			event.data.id = "center";
 			event.data.media = currentMedia;
-			event.data.callback = function() {
-				mediaWidthOnScreen = $(mediaSelector)[0].width;
-				// currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
-				// currentZoom = 1;
-				// zoomAfterFirstPinch = currentZoom;
-				util.setPinchButtonsPosition();
-				util.correctPrevNextPosition();
-				PinchSwipe.setPinchButtonsVisibility();
-				mediaWidth = parseInt($(mediaSelector).css("width"));
-				mediaHeight = parseInt($(mediaSelector).css("height"));
-				initialZoom = PinchSwipe.screenZoom();
-				currentZoom = initialZoom;
-			};
-			event.data.callbackType = "pinch";
 			event.data.currentZoom = currentZoom;
 			event.data.initialZoom = initialZoom;
 			pastMediaWidthOnScreen = $(mediaSelector)[0].width;
-			util.scaleMedia(event);
+			let scaleMediaPromise = util.scaleMedia(event);
+			scaleMediaPromise.then(
+				function() {
+					mediaWidthOnScreen = $(mediaSelector)[0].width;
+					// currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
+					// currentZoom = 1;
+					// zoomAfterFirstPinch = currentZoom;
+					util.setPinchButtonsPosition();
+					util.correctPrevNextPosition();
+					PinchSwipe.setPinchButtonsVisibility();
+					mediaWidth = parseInt($(mediaSelector).css("width"));
+					mediaHeight = parseInt($(mediaSelector).css("height"));
+					initialZoom = PinchSwipe.screenZoom();
+					currentZoom = initialZoom;
+				}
+			);
 		}
 	};
 
