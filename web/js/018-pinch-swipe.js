@@ -67,9 +67,13 @@
 		$("#media-box-container").css("transform", "translate(" + value + "px,0)");
 	};
 
-	PinchSwipe.pinchInOut = function(startZoom, finalZoom, duration) {
+	PinchSwipe.pinchInOut = function(startZoom, finalZoom, duration, center = null) {
 		return new Promise(
 			function(resolve_pinchInOut) {
+				var windowCenter = {x: windowWidth / 2, y: windowHeight / 2};
+				if (center === null)
+					center = windowCenter;
+				centersDifference = {x: center.x - windowCenter.x, y: center.y - windowCenter.y}
 				var [currentReductionSize, currentReductionIndex] = util.currentSizeAndIndex();
 				var width, height;
 				var photoSize = Math.max(currentMedia.metadata.size[0], currentMedia.metadata.size[1]);
@@ -88,8 +92,8 @@
 
 				if (startZoom > initialZoom) {
 					// translation must be changed accordingly
-					cssTransformTranslateX = cssTransformTranslateX * (finalZoom - initialZoom) / (startZoom - initialZoom);
-					cssTransformTranslateY = cssTransformTranslateY * (finalZoom - initialZoom) / (startZoom - initialZoom);
+					cssTransformTranslateX = (cssTransformTranslateX - centersDifference.x) * (finalZoom - initialZoom) / (startZoom - initialZoom) + centersDifference.x;
+					cssTransformTranslateY = (cssTransformTranslateY - centersDifference.y) * (finalZoom - initialZoom) / (startZoom - initialZoom) + centersDifference.y;
 				}
 
 				// the following values are expressed in terms of the current zoom sizes
@@ -164,7 +168,7 @@
 		);
 	};
 
-	PinchSwipe.pinchIn = function(event, finalZoom, duration = pinchSpeed) {
+	PinchSwipe.pinchIn = function(event, finalZoom, duration = pinchSpeed, center = null) {
 		var windowRatio;
 		var mediaWidthOnScreen;
 		if (
@@ -216,7 +220,7 @@
 					} else if (finalZoom === null || typeof finalZoom === "undefined") {
 						finalZoom = currentZoom * zoomIncrement;
 					}
-					let pinchInOutPromise = PinchSwipe.pinchInOut(currentZoom, finalZoom, duration);
+					let pinchInOutPromise = PinchSwipe.pinchInOut(currentZoom, finalZoom, duration, center);
 					pinchInOutPromise.then(
 						function() {
 							// do nothing
@@ -227,7 +231,7 @@
 		} else {
 			if (finalZoom === null || typeof finalZoom === "undefined")
 				finalZoom = currentZoom * zoomIncrement;
-			let pinchInOutPromise = PinchSwipe.pinchInOut(currentZoom, finalZoom, duration);
+			let pinchInOutPromise = PinchSwipe.pinchInOut(currentZoom, finalZoom, duration, center);
 			pinchInOutPromise.then(
 				function() {
 					// do nothing
@@ -457,6 +461,7 @@
 			// the drag vector is calculated here for use in the swipeStatus function
 			// lamentably, swipeStatus doesn't return info about the swipe vector
 
+			pinchZoom = parseFloat(pinchZoom);
 			if (event.which === 3 && (event.shiftKey || event.ctrlKey || event.altKey)) {
 				return;
 			}
@@ -468,16 +473,16 @@
 					previousFingerEnd = {x: fingerData[0].start.x, y: fingerData[0].start.y};
 			} else if (phase === "move" && fingerCount >= 2) {
 				// phase is "move"
-				let centerX = 0, centerY = 0;
+				let center = {x: 0, y: 0};
 				for (let i = 0; i < event.touches.length; i ++) {
-					centerX += event.touches[i].clientX / event.touches.length;
-					centerY += event.touches[i].clientY / event.touches.length;
+					center.x += event.touches[i].clientX / event.touches.length;
+					center.y += event.touches[i].clientY / event.touches.length;
 				}
 
-				let finalZoom = baseZoom * parseFloat(pinchZoom);
+				let finalZoom = baseZoom * pinchZoom;
 				// currentZoom = baseZoom;
 				if (pinchZoom > 1) {
-					PinchSwipe.pinchIn(event, finalZoom, 0);
+					PinchSwipe.pinchIn(event, finalZoom, 0, center);
 				} else {
 					PinchSwipe.pinchOut(event, finalZoom, 0);
 				}
