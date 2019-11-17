@@ -804,14 +804,10 @@
 						if (album.numMedia > 1) {
 							event.data.id = "left";
 							event.data.media = prevMedia;
-							// event.data.callback = f.pinchSwipeInitialization;
-							// event.data.callbackType = "pinch";
 							util.scaleMedia(event);
 
 							event.data.id = "right";
 							event.data.media = nextMedia;
-							// event.data.callback = f.pinchSwipeInitialization;
-							// event.data.callbackType = "pinch";
 							util.scaleMedia(event);
 						}
 
@@ -2055,7 +2051,7 @@
 								//////////////////// begin anonymous function /////////////////////
 								//      })(ithSubalbum, image, container, id);
 								(function(theSubalbum, theImage) {
-									// function(subalbum, container, callback, error)  ---  callback(album,   album.media[index], container,            subalbum);
+									// function(subalbum, error)
 									var promise = phFl.pickRandomMedia(
 										theSubalbum,
 										function error() {

@@ -168,7 +168,7 @@
 						$.ajax(ajaxOptions);
 					}
 				} else {
-					// stop words aren't used, pass to callback a void list
+					// stop words aren't used, resolve with a void list
 					resolve_getStopWords([]);
 				}
 			}

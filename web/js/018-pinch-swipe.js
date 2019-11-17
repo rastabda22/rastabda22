@@ -126,7 +126,7 @@
 				}
 
 				if (finalZoom <= initialZoom)
-					// callback is the function that possibly shows the title and the bottom thumbnails
+					// resolving will possibly show the title and the bottom thumbnails
 					window.setTimeout(resolve_pinchInOut, duration * 1.2);
 
 				if (finalZoom > startZoom) {
