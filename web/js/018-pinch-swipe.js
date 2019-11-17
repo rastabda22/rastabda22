@@ -104,18 +104,21 @@
 				if (photoHeight * finalZoom > windowHeight)
 					maxAllowedTranslateY = Math.ceil((photoHeight * finalZoom - windowHeight) / 2);
 
-				if (maxAllowedTranslateX) {
-					if (cssTransformTranslateX > maxAllowedTranslateX)
-						cssTransformTranslateX = maxAllowedTranslateX;
-					if (cssTransformTranslateX < - maxAllowedTranslateX)
-						cssTransformTranslateX = - maxAllowedTranslateX;
-				}
-				if (maxAllowedTranslateY) {
-					if (cssTransformTranslateY > maxAllowedTranslateY)
-						cssTransformTranslateY = maxAllowedTranslateY;
-					if (cssTransformTranslateY < - maxAllowedTranslateY)
-						cssTransformTranslateY = - maxAllowedTranslateY;
-				}
+				cssTransformTranslateX = Math.max(Math.min(cssTransformTranslateX, maxAllowedTranslateX), - maxAllowedTranslateX);
+				cssTransformTranslateY = Math.max(Math.min(cssTransformTranslateY, maxAllowedTranslateY), - maxAllowedTranslateY);
+
+				// if (maxAllowedTranslateX) {
+				// 	if (cssTransformTranslateX > maxAllowedTranslateX)
+				// 		cssTransformTranslateX = maxAllowedTranslateX;
+				// 	if (cssTransformTranslateX < - maxAllowedTranslateX)
+				// 		cssTransformTranslateX = - maxAllowedTranslateX;
+				// }
+				// if (maxAllowedTranslateY) {
+				// 	if (cssTransformTranslateY > maxAllowedTranslateY)
+				// 		cssTransformTranslateY = maxAllowedTranslateY;
+				// 	if (cssTransformTranslateY < - maxAllowedTranslateY)
+				// 		cssTransformTranslateY = - maxAllowedTranslateY;
+				// }
 
 				// cssTransformScale = cssTransformScale * finalZoom / startZoom;
 				var cssTranslateXString = cssTransformTranslateX.toString();
@@ -349,13 +352,13 @@
 			cssTransformScale = parseFloat($(mediaSelector).css("transform").split("(")[1].split(",")[0]);
 		}
 
-		var updatedTranslateX = cssTransformTranslateX + distance * dragVector.x;
-		var updatedTranslateY = cssTransformTranslateY + distance * dragVector.y;
-		var limitedTranslateX = Math.max(Math.min(updatedTranslateX, maxAllowedTranslateX), - maxAllowedTranslateX);
-		var limitedTranslateY = Math.max(Math.min(updatedTranslateY, maxAllowedTranslateY), - maxAllowedTranslateY);
+		cssTransformTranslateX = cssTransformTranslateX + distance * dragVector.x;
+		cssTransformTranslateY = cssTransformTranslateY + distance * dragVector.y;
+		cssTransformTranslateX = Math.max(Math.min(cssTransformTranslateX, maxAllowedTranslateX), - maxAllowedTranslateX);
+		cssTransformTranslateY = Math.max(Math.min(cssTransformTranslateY, maxAllowedTranslateY), - maxAllowedTranslateY);
 
-		var cssTranslateXString = limitedTranslateX.toString();
-		var cssTranslateYString = limitedTranslateY.toString();
+		var cssTranslateXString = cssTransformTranslateX.toString();
+		var cssTranslateYString = cssTransformTranslateY.toString();
 
 		$(mediaSelector).css("transform", "translate(" + cssTranslateXString + "px," + cssTranslateYString + "px) scale(" + cssTransformScale + ")");
 	};
