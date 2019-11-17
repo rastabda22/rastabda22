@@ -11,6 +11,8 @@
 	var currentZoom, zoomIncrement = 1.5625, zoomDecrement = 1 / zoomIncrement;
 	var currentTranslateX = 0;
 	var currentTranslateY = 0;
+	var previousClientX;
+	var previousClientY;
 	// var nextReduction = false;
 	// var initialMediaWidthOnScreen;
 	var initialZoom;
@@ -377,12 +379,14 @@
 				return;
 			}
 
+			var clientX, clientY;
+
 			if (phase == "start") {
 				isLongTap = false;
 			}
 
 			// when dragging with the mouse, fingerCount is 0
-			if (distance >= tapDistanceThreshold && fingerCount <= 1) {
+			if (typeof event.touches === "undefined" || fingerCount === 1) {
 				if (currentZoom === initialZoom) {
 					// zoom = 1: swipe
 					if (phase == "move") {
@@ -404,30 +408,46 @@
 					}
 				} else {
 					// zoom > 1: drag
-					if (
-						phase == "start" || phase == "end" || phase == "cancel" || distance == 0
-					) {
+					if (typeof event.clientX !== "undefined") {
+						clientX = event.clientX;
+						clientY = event.clientY;
+					} else if (typeof event.touches !== "undefined" && event.touches.length > 0) {
+						clientX = event.touches[0].clientX;
+						clientY = event.touches[0].clientY;
+					} else if (typeof event.changedTouches !== "undefined" && event.changedTouches.length > 0) {
+						clientX = event.changedTouches[0].clientX;
+						clientY = event.changedTouches[0].clientY;
+					}
+					if (phase == "start" || phase == "end" || phase == "cancel" || distance == 0) {
+						if (phase == "start") {
+							previousClientX = clientX;
+							previousClientY = clientY;
+						}
 						// distance = 0
 						// baseTranslateX = currentTranslateX;
 						// baseTranslateY = currentTranslateY;
 					} else {
-						if (typeof event.movementX !== "undefined") {
-							var dragVectorX = event.movementX;
-							var dragVectorY = event.movementY;
-							var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
-							if (dragVectorLength)
-								// normalize the vector
-								dragVector = {
-									"x": dragVectorX / dragVectorLength,
-									"y": dragVectorY / dragVectorLength
-								};
-							else
-								dragVector = [0, 0];
-						} else {
-							// the dragVector calculated by pinchStatus is used
-						}
+						var dragVectorX = clientX - previousClientX;
+						var dragVectorY = clientY - previousClientY;
+						previousClientX = clientX;
+						previousClientY = clientY;
+						// var dragVectorX = event.movementX;
+						// var dragVectorY = event.movementY;
+						var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
+						if (dragVectorLength)
+							// normalize the vector
+							dragVector = {
+								"x": dragVectorX / dragVectorLength,
+								"y": dragVectorY / dragVectorLength
+							};
+						else
+							dragVector = [0, 0];
+						// } else {
+						// 	// the dragVector calculated by pinchStatus is used
+						// }
 
-						PinchSwipe.drag(10 / devicePixelRatio, dragVector, 0);
+						// PinchSwipe.drag(dragVectorLength / devicePixelRatio, dragVector, 0);
+						PinchSwipe.drag(dragVectorLength, dragVector, 0);
 					}
 				}
 			}
