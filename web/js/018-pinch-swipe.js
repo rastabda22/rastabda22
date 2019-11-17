@@ -90,6 +90,14 @@
 			// adjust translation so that the photo is zoomed with respect to the screen center
 			cssTransformTranslateX = cssTransformTranslateX / startZoom * finalZoom;
 			cssTransformTranslateY = cssTransformTranslateY / startZoom * finalZoom;
+			if (cssTransformTranslateX > maxAllowedTranslateX)
+				cssTransformTranslateX = maxAllowedTranslateX;
+			if (cssTransformTranslateX < - maxAllowedTranslateX)
+				cssTransformTranslateX = - maxAllowedTranslateX;
+			if (cssTransformTranslateY > maxAllowedTranslateY)
+				cssTransformTranslateY = maxAllowedTranslateY;
+			if (cssTransformTranslateY < - maxAllowedTranslateY)
+				cssTransformTranslateY = - maxAllowedTranslateY;
 		}
 
 		// cssTransformScale = cssTransformScale * finalZoom / startZoom;
@@ -143,7 +151,7 @@
 		currentZoom = finalZoom;
 	};
 
-	PinchSwipe.pinchIn = function(event, finalZoom) {
+	PinchSwipe.pinchIn = function(event, finalZoom, duration = pinchSpeed) {
 		var windowRatio;
 		var mediaWidthOnScreen;
 		if (
@@ -190,31 +198,31 @@
 
 					currentZoom = initialZoom;
 					finalZoom = currentZoom;
-				} else if (typeof finalZoom === "undefined") {
+				} else if (finalZoom === null || typeof finalZoom === "undefined") {
 					finalZoom = currentZoom * zoomIncrement;
 				}
-					// finalZoom = currentZoom * zoomIncrement;
-				PinchSwipe.pinchInOut(currentZoom, finalZoom, pinchSpeed);
+				PinchSwipe.pinchInOut(currentZoom, finalZoom, duration);
 			};
 
 			util.scaleMedia(event);
 		} else {
-			if (typeof finalZoom === "undefined")
+			if (finalZoom === null || typeof finalZoom === "undefined")
 				finalZoom = currentZoom * zoomIncrement;
-			PinchSwipe.pinchInOut(currentZoom, finalZoom, pinchSpeed);
+			PinchSwipe.pinchInOut(currentZoom, finalZoom, duration);
 		}
 	};
 
-	PinchSwipe.pinchOut = function(event) {
+	PinchSwipe.pinchOut = function(event, finalZoom = null, duration = pinchSpeed) {
 		var mediaWidthOnScreen, mediaHeightOnScreen, mediaRatioOnScreen, windowRatio;
-		var finalZoom = currentZoom * zoomDecrement;
+		if (finalZoom === null || typeof finalZoom === "undefined")
+			var finalZoom = currentZoom * zoomDecrement;
 		if (currentZoom > initialZoom) {
 			if (finalZoom < initialZoom)
 				finalZoom = initialZoom;
 			PinchSwipe.pinchInOut(
 				currentZoom,
 				finalZoom,
-				pinchSpeed,
+				duration,
 				function () {
 					// check whether the final pinchout (re-establishing title and the bottom thumbnails) has to be performed
 					mediaWidthOnScreen = $(mediaSelector)[0].width;
@@ -285,7 +293,7 @@
 			$("#pinch-in").on(
 				"click",
 				function(ev) {
-					PinchSwipe.pinchIn(null);
+					PinchSwipe.pinchIn(null, null);
 				}
 			);
 			$("#pinch-in").removeClass("disabled");
@@ -297,7 +305,7 @@
 				$("#pinch-out").on(
 					"click",
 					function(ev) {
-						PinchSwipe.pinchOut(null);
+						PinchSwipe.pinchOut(null, null);
 					}
 				);
 				$("#pinch-out").removeClass("disabled");
@@ -347,8 +355,9 @@
 				return;
 			}
 
-			if (phase == "start")
+			if (phase == "start") {
 				isLongTap = false;
+			}
 
 			// when dragging with the mouse, fingerCount is 0
 			if (distance >= tapDistanceThreshold && fingerCount <= 1) {
@@ -396,7 +405,7 @@
 							// the dragVector calculated by pinchStatus is used
 						}
 
-						PinchSwipe.drag(20 / devicePixelRatio, dragVector, 0);
+						PinchSwipe.drag(10 / devicePixelRatio, dragVector, 0);
 					}
 				}
 			}
@@ -413,24 +422,40 @@
 			if (phase === "start") {
 				// distance = 0
 				baseZoom = currentZoom;
-				previousFingerEnd = {x: fingerData[0].start.x, y: fingerData[0].start.y};
+				if (fingerCount < 2)
+					previousFingerEnd = {x: fingerData[0].start.x, y: fingerData[0].start.y};
 			} else if (phase === "move" && fingerCount >= 2) {
 				// phase is "move"
-				PinchSwipe.pinchInOut(baseZoom, baseZoom * pinchZoom, duration);
+				let centerX = 0, centerY = 0;
+				for (let i = 0; i < event.touches.length; i ++) {
+					centerX += event.touches[i].clientX / event.touches.length;
+					centerY += event.touches[i].clientY / event.touches.length;
+				}
+
+				let finalZoom = baseZoom * pinchZoom;
+				currentZoom = baseZoom;
+				if (pinchZoom > 1) {
+					PinchSwipe.pinchIn(event, finalZoom, 0);
+				} else {
+					PinchSwipe.pinchOut(event, finalZoom, 0);
+				}
 			}
 
-			var dragVectorX = fingerData[0].end.x - previousFingerEnd.x;
-			var dragVectorY = fingerData[0].end.y - previousFingerEnd.y;
-			previousFingerEnd = {x: fingerData[0].end.x, y: fingerData[0].end.y};
-			var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
-			if (dragVectorLength)
-				// normalize the vector
-				dragVector = {
-					"x": dragVectorX / dragVectorLength,
-					"y": dragVectorY / dragVectorLength
-				};
-			else
-				dragVector = [0, 0];
+			if (fingerCount < 2) {
+				// calculate the dragVector for dragging
+				var dragVectorX = fingerData[0].end.x - previousFingerEnd.x;
+				var dragVectorY = fingerData[0].end.y - previousFingerEnd.y;
+				previousFingerEnd = {x: fingerData[0].end.x, y: fingerData[0].end.y};
+				var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
+				if (dragVectorLength)
+					// normalize the vector
+					dragVector = {
+						"x": dragVectorX / dragVectorLength,
+						"y": dragVectorY / dragVectorLength
+					};
+				else
+					dragVector = [0, 0];
+			}
 		}
 
 		function hold(event, target) {
@@ -586,10 +611,10 @@
 		} else if (currentMedia.mimeType.indexOf("image") === 0) {
 			// mouse wheel with shift/control/alt key: pinch
 			if (delta < 0) {
-				PinchSwipe.pinchOut(event);
+				PinchSwipe.pinchOut(event, currentZoom * 0.95, 0);
 				return false;
 			} else if (delta > 0) {
-				PinchSwipe.pinchIn(event);
+				PinchSwipe.pinchIn(event, currentZoom * 1.05, 0);
 				return false;
 			}
 		}

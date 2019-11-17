@@ -132,7 +132,7 @@ $(document).ready(function() {
 				}
 				return false;
 			} else if (pS.getCurrentZoom() > pS.getInitialZoom() || $(".title").hasClass("hidden-by-pinch")) {
-				pS.pinchOut();
+				pS.pinchOut(null, null);
 				return false;
 			} else if (! Modernizr.fullscreen && fullScreenStatus) {
 				tF.goFullscreen(e);
@@ -258,7 +258,7 @@ $(document).ready(function() {
 						if (isMap) {
 							// return false;
 						} else if (currentMedia !== null) {
-							pS.pinchOut(null);
+							pS.pinchOut(null, null);
 							return false;
 						}
 					} else if (
