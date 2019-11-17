@@ -171,7 +171,11 @@ $(document).ready(function() {
 							// PinchSwipe.swipeLeft(media);
 						} else {
 							// drag
-							pS.drag(windowWidth / 3, {x: -1, y: 0});
+							if (! e.shiftKey)
+								pS.drag(windowWidth / 10, {x: -1, y: 0});
+							else
+								// faster
+								pS.drag(windowWidth / 3, {x: -1, y: 0});
 						}
 						return false;
 					} else if (e.key === " " && currentMedia !== null && currentMedia.mimeType.indexOf("video") === 0) {
@@ -204,7 +208,11 @@ $(document).ready(function() {
 							// PinchSwipe.swipeRight(media);
 						} else {
 							// drag
-							pS.drag(windowWidth / 3, {x: 1, y: 0});
+							if (! e.shiftKey)
+								pS.drag(windowWidth / 10, {x: 1, y: 0});
+							else
+								// faster
+								pS.drag(windowWidth / 3, {x: 1, y: 0});
 						}
 						return false;
 					} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink && ! isMap) {
@@ -213,7 +221,11 @@ $(document).ready(function() {
 								pS.swipeDown(upLink);
 						} else {
 							// drag
-							pS.drag(windowHeight / 3, {x: 0, y: 1});
+							if (! e.shiftKey)
+								pS.drag(windowHeight / 10, {x: 0, y: 1});
+							else
+								// faster
+								pS.drag(windowHeight / 3, {x: 0, y: 1});
 						}
 						return false;
 					} else if (e.key === "ArrowDown" || e.key === "PageDown" && ! isMap) {
@@ -221,7 +233,11 @@ $(document).ready(function() {
 							pS.swipeUp(mediaLink);
 							return false;
 						} else if (pS.getCurrentZoom() > pS.getInitialZoom()) {
-							PinchSwipe.drag(windowHeight / 3, {x: 0, y: -1});
+							if (! e.shiftKey)
+								PinchSwipe.drag(windowHeight / 10, {x: 0, y: -1});
+							else
+								// faster
+								PinchSwipe.drag(windowHeight / 3, {x: 0, y: -1});
 							return false;
 						}
 					} else if (e.key.toLowerCase() === "d" && currentMedia !== null && ! isMap) {
