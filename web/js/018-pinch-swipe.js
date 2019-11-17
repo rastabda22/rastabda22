@@ -15,7 +15,7 @@
 	var previousClientY;
 	// var nextReduction = false;
 	// var initialMediaWidthOnScreen;
-	var initialZoom;
+	var initialZoom, baseZoom;
 
 	var maxAllowedTranslateX, maxAllowedTranslateY;
 	var mediaWidth, mediaHeight;
@@ -87,22 +87,19 @@
 				}
 
 				if (startZoom > initialZoom) {
-					// translation must be reduced too
+					// translation must be changed accordingly
 					cssTransformTranslateX = cssTransformTranslateX * (finalZoom - initialZoom) / (startZoom - initialZoom);
 					cssTransformTranslateY = cssTransformTranslateY * (finalZoom - initialZoom) / (startZoom - initialZoom);
-				} else {
-					// adjust translation so that the photo is zoomed with respect to the screen center
-					cssTransformTranslateX = cssTransformTranslateX / startZoom * finalZoom;
-					cssTransformTranslateY = cssTransformTranslateY / startZoom * finalZoom;
 				}
 
 				// the following values are expressed in terms of the current zoom sizes
-				maxAllowedTranslateX = 0;
-				if (photoWidth * finalZoom > windowWidth)
-					maxAllowedTranslateX = Math.ceil((photoWidth * finalZoom - windowWidth) / 2);
-				maxAllowedTranslateY = 0;
-				if (photoHeight * finalZoom > windowHeight)
-					maxAllowedTranslateY = Math.ceil((photoHeight * finalZoom - windowHeight) / 2);
+
+				maxAllowedTranslateX = (photoWidth * finalZoom - windowWidth) / 2;
+				if (maxAllowedTranslateX < 0)
+					maxAllowedTranslateX = 0;
+				maxAllowedTranslateY = (photoHeight * finalZoom - windowHeight) / 2;
+				if (maxAllowedTranslateY < 0)
+					maxAllowedTranslateY = 0;
 
 				cssTransformTranslateX = Math.max(Math.min(cssTransformTranslateX, maxAllowedTranslateX), - maxAllowedTranslateX);
 				cssTransformTranslateY = Math.max(Math.min(cssTransformTranslateY, maxAllowedTranslateY), - maxAllowedTranslateY);
@@ -477,8 +474,8 @@
 					centerY += event.touches[i].clientY / event.touches.length;
 				}
 
-				let finalZoom = baseZoom * pinchZoom;
-				currentZoom = baseZoom;
+				let finalZoom = baseZoom * parseFloat(pinchZoom);
+				// currentZoom = baseZoom;
 				if (pinchZoom > 1) {
 					PinchSwipe.pinchIn(event, finalZoom, 0);
 				} else {
