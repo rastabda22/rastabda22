@@ -30,19 +30,19 @@
 	}
 
 	PinchSwipe.cssWidth = function(mediaSelector) {
-		return parseInt($(mediaSelector).css("width"));
+		return $(mediaSelector).css("width");
 	};
 
 	PinchSwipe.cssHeight = function(mediaSelector) {
-		return parseInt($(mediaSelector).css("height"));
+		return $(mediaSelector).css("height");
 	};
 
 	PinchSwipe.reductionWidth = function(mediaSelector) {
-		return parseInt($(mediaSelector).attr("width"));
+		return $(mediaSelector).attr("width");
 	};
 
 	PinchSwipe.reductionHeight = function(mediaSelector) {
-		return parseInt($(mediaSelector).attr("height"));
+		return $(mediaSelector).attr("height");
 	};
 
 	PinchSwipe.pinched = function(mediaSelector, initialCssWidth) {
@@ -84,7 +84,7 @@
 					cssTransformScale = parseFloat($(mediaSelector).css("transform").split("(")[1].split(",")[0]);
 				}
 
-				if (finalZoom < startZoom) {
+				if (startZoom > initialZoom) {
 					// translation must be reduced too
 					cssTransformTranslateX = cssTransformTranslateX * (finalZoom - initialZoom) / (startZoom - initialZoom);
 					cssTransformTranslateY = cssTransformTranslateY * (finalZoom - initialZoom) / (startZoom - initialZoom);
@@ -92,10 +92,23 @@
 					// adjust translation so that the photo is zoomed with respect to the screen center
 					cssTransformTranslateX = cssTransformTranslateX / startZoom * finalZoom;
 					cssTransformTranslateY = cssTransformTranslateY / startZoom * finalZoom;
+				}
+
+				// the following values are expressed in terms of the current zoom sizes
+				maxAllowedTranslateX = 0;
+				if (photoWidth * finalZoom > windowWidth)
+					maxAllowedTranslateX = Math.ceil((photoWidth * finalZoom - windowWidth) / 2);
+				maxAllowedTranslateY = 0;
+				if (photoHeight * finalZoom > windowHeight)
+					maxAllowedTranslateY = Math.ceil((photoHeight * finalZoom - windowHeight) / 2);
+
+				if (maxAllowedTranslateX) {
 					if (cssTransformTranslateX > maxAllowedTranslateX)
 						cssTransformTranslateX = maxAllowedTranslateX;
 					if (cssTransformTranslateX < - maxAllowedTranslateX)
 						cssTransformTranslateX = - maxAllowedTranslateX;
+				}
+				if (maxAllowedTranslateY) {
 					if (cssTransformTranslateY > maxAllowedTranslateY)
 						cssTransformTranslateY = maxAllowedTranslateY;
 					if (cssTransformTranslateY < - maxAllowedTranslateY)
@@ -139,14 +152,6 @@
 				} else {
 					$(mediaSelector).css("cursor", "");
 				}
-
-				// the following values are expressed in terms of the current zoom sizes
-				maxAllowedTranslateX = 0;
-				if (photoWidth * finalZoom > windowWidth)
-					maxAllowedTranslateX = Math.ceil((photoWidth * finalZoom - windowWidth) / 2);
-				maxAllowedTranslateY = 0;
-				if (photoHeight * finalZoom > windowHeight)
-					maxAllowedTranslateY = Math.ceil((photoHeight * finalZoom - windowHeight) / 2);
 
 				Utilities.setPinchButtonsPosition();
 				PinchSwipe.setPinchButtonsVisibility();
@@ -199,10 +204,10 @@
 						util.setPinchButtonsPosition();
 						util.correctPrevNextPosition();
 						PinchSwipe.setPinchButtonsVisibility();
-						mediaWidth = parseInt($(mediaSelector).css("width"));
-						mediaHeight = parseInt($(mediaSelector).css("height"));
-						mediaBoxInnerWidth = parseInt($(mediaContainerSelector).css("width"));
-						mediaBoxInnerHeight = parseInt($(mediaContainerSelector).css("height"));
+						mediaWidth = $(mediaSelector).css("width");
+						mediaHeight = $(mediaSelector).css("height");
+						mediaBoxInnerWidth = $(mediaContainerSelector).css("width");
+						mediaBoxInnerHeight = $(mediaContainerSelector).css("height");
 
 						currentZoom = initialZoom;
 						finalZoom = currentZoom;
@@ -244,8 +249,8 @@
 					mediaHeightOnScreen = $(mediaSelector)[0].height;
 					mediaRatioOnScreen = pastMediaWidthOnScreen / pastMediaHeightOnScreen;
 					windowRatio = windowWidth / windowHeight;
-					mediaBoxInnerWidth = parseInt($(mediaContainerSelector).css("width"));
-					mediaBoxInnerHeight = parseInt($(mediaContainerSelector).css("height"));
+					mediaBoxInnerWidth = $(mediaContainerSelector).css("width");
+					mediaBoxInnerHeight = $(mediaContainerSelector).css("height");
 
 					if (
 						mediaRatioOnScreen > windowRatio &&
@@ -289,8 +294,8 @@
 					util.setPinchButtonsPosition();
 					util.correctPrevNextPosition();
 					PinchSwipe.setPinchButtonsVisibility();
-					mediaWidth = parseInt($(mediaSelector).css("width"));
-					mediaHeight = parseInt($(mediaSelector).css("height"));
+					mediaWidth = $(mediaSelector).css("width");
+					mediaHeight = $(mediaSelector).css("height");
 					initialZoom = PinchSwipe.screenZoom();
 					currentZoom = initialZoom;
 				}
@@ -522,8 +527,8 @@
 		initialZoom = PinchSwipe.screenZoom();
 		var fromResetZoom = false;
 
-		mediaWidth = parseInt($(mediaSelector).css("width"));
-		mediaHeight = parseInt($(mediaSelector).css("height"));
+		mediaWidth = $(mediaSelector).css("width");
+		mediaHeight = $(mediaSelector).css("height");
 
 		currentZoom = initialZoom;
 		currentTranslateX = 0;
@@ -585,8 +590,8 @@
 	PinchSwipe.initialize = function () {
 		// $('#album-view').swipe('destroy');
 
-		mediaBoxInnerWidth = parseInt($(mediaContainerSelector).css("width"));
-		mediaBoxInnerHeight = parseInt($(mediaContainerSelector).css("height"));
+		mediaBoxInnerWidth = $(mediaContainerSelector).css("width");
+		mediaBoxInnerHeight = $(mediaContainerSelector).css("height");
 		photoWidth = currentMedia.metadata.size[0];
 		photoHeight = currentMedia.metadata.size[1];
 
