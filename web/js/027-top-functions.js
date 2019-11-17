@@ -795,6 +795,8 @@
 							function() {
 								if (media.mimeType.indexOf("image") === 0) {
 									f.pinchSwipeInitialization();
+									Utilities.setPinchButtonsPosition();
+									Utilities.correctPrevNextPosition();
 								}
 							}
 						);
@@ -992,6 +994,8 @@
 					let scaleMediaPromise = util.scaleMedia(event);
 					scaleMediaPromise.then(
 						function() {
+							Utilities.setPinchButtonsPosition();
+							Utilities.correctPrevNextPosition();
 							if (media.mimeType.indexOf("image") === 0) {
 								loadNextPrevMedia(containerHeight, containerWidth);
 							}

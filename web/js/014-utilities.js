@@ -885,8 +885,8 @@
 					resolve_scaleMedia();
 
 				$("#loading").hide();
-				Utilities.setPinchButtonsPosition();
-				Utilities.correctPrevNextPosition();
+				// Utilities.setPinchButtonsPosition();
+				// Utilities.correctPrevNextPosition();
 			}
 		);
 	};
