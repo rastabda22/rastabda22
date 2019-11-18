@@ -799,6 +799,10 @@ ul#right-menu .expandable ul {
 	display: none;
 }
 
+.download-album.media-only:not(.clickable) {
+	color: red;
+	cursor: auto !important;
+}
 /* end right menu */
 
 /* from https://www.w3schools.com/css/tryit.asp?filename=trycss_buttons_animate3 */
