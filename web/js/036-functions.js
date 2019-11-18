@@ -462,8 +462,13 @@
 		if (thisAlbum !== null) {
 			$(".download-album").removeClass("hidden");
 			$(".download-album.media-only").addClass("hidden");
-			if (thisAlbum.numMedia)
+			if (thisAlbum.numMedia) {
 				$(".download-album.media-only").removeClass("hidden");
+				// reset the html
+				$(".download-album.media-only").html(util._t(".download-album.media-only"));
+				// add the download size
+				$(".download-album.media-only").append(" (" + Functions.humanFileSize(currentAlbum.sizeOfAlbum) + ")");
+			}
 		}
 
 		if (thisAlbum !== null) {
@@ -510,6 +515,12 @@
 				// $("ul", this).slideToggle(300);
 			}
 		);
+	};
+
+	Functions.humanFileSize = function(size) {
+		// from https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
+	    var i = Math.floor(Math.log(size) / Math.log(1024));
+	    return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
 	};
 
 	Functions.prototype.scrollToThumb = function() {
