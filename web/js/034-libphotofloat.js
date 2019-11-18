@@ -407,6 +407,8 @@
 
 								album.numMedia += protectedAlbum.numMedia;
 								album.numMediaInSubTree += protectedAlbum.numMediaInSubTree;
+								album.sizeOfSubTree += protectedAlbum.sizeOfSubTree;
+								album.sizeOfAlbum += protectedAlbum.sizeOfAlbum;
 								album.numPositionsInTree += protectedAlbum.numPositionsInTree;
 								if (! album.hasOwnProperty("path"))
 									album.path = protectedAlbum.path;
@@ -762,6 +764,8 @@
 
 	PhotoFloat.mergeProtectedSubalbum = function(subalbum, protectedSubalbum) {
 		subalbum.numMediaInSubTree += protectedSubalbum.numMediaInSubTree;
+		subalbum.sizeOfSubTree += protectedSubalbum.sizeOfSubTree;
+		subalbum.sizeOfAlbum += protectedSubalbum.sizeOfAlbum;
 		subalbum.numPositionsInTree += protectedSubalbum.numPositionsInTree;
 		// subalbum.words = util.arrayUnion(subalbum.words, protectedSubalbum.words);
 	};
@@ -1700,6 +1704,9 @@
 				for (indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
 					// update the media count
 					searchResultsAlbumFinal.numMediaInSubTree += searchResultsAlbumFinal.subalbums[indexSubalbums].numMediaInSubTree;
+					// update the size totals
+					searchResultsAlbumFinal.sizeOfSubTree += searchResultsAlbumFinal.subalbums[indexSubalbums].sizeOfSubTree;
+					searchResultsAlbumFinal.sizeOfAlbum += searchResultsAlbumFinal.subalbums[indexSubalbums].sizeOfAlbum;
 					// add the points from the subalbums
 
 					// the subalbum could still have no positionsAndMediaInTree array, get it
