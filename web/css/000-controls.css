@@ -652,6 +652,10 @@ ul#right-menu li.caption, ul#right-menu li:not(.active) {
 	cursor: default;
 }
 
+ul#right-menu li.caption, ul#right-menu li.active {
+	cursor: pointer;
+}
+
 ul#right-menu span a#menu-icon:hover {
 	background-color: transparent;
 }
