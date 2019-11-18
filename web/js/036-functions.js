@@ -459,9 +459,11 @@
 		}
 
 		$(".download-album").addClass("hidden");
-		if (thisAlbum !== null && thisAlbum.numMedia) {
+		if (thisAlbum !== null) {
 			$(".download-album").removeClass("hidden");
-			$(".download-album.caption").attr('title', util._t("#downloading") + " " + thisAlbum.numMedia + " " + util._t("#media-without-subalbums"));
+			$(".download-album.media-only").addClass("hidden");
+			if (thisAlbum.numMedia)
+				$(".download-album.media-only").removeClass("hidden");
 		}
 
 		if (thisAlbum !== null) {
