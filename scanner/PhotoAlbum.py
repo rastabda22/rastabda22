@@ -983,14 +983,15 @@ class Media(object):
 		self.is_valid = True
 
 		try:
-			message("reading file and dir times...", "", 5)
+			message("reading file time and size, and dir time...", "", 5)
 			mtime = file_mtime(media_path)
+			file_size = os.path.getsize(media_path)
 			dir_mtime = file_mtime(dirname)
 			indented_message("file and dir times read!", "", 5)
 		except KeyboardInterrupt:
 			raise
 		except OSError:
-			indented_message("could not read file or dir mtime", "", 5)
+			indented_message("could not read file time or size or dir mtime", "", 5)
 			self.is_valid = False
 			back_level()
 			return
@@ -998,6 +999,7 @@ class Media(object):
 		self._attributes = {}
 		self._attributes["metadata"] = {}
 		self._attributes["dateTimeFile"] = mtime
+		self._attributes["fileSize"] = file_size
 		self._attributes["dateTimeDir"] = dir_mtime
 		# self._attributes["mediaType"] = "photo"
 
@@ -1069,6 +1071,10 @@ class Media(object):
 	@property
 	def datetime_file(self):
 		return self._attributes["dateTimeFile"]
+
+	@property
+	def file_size(self):
+		return self._attributes["fileSize"]
 
 	@property
 	def datetime_dir(self):

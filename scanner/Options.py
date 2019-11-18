@@ -119,9 +119,10 @@ config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x
 # json_version = 3.997 since corrected bug with positions in search albums
 # json_version = 3.998 since symlinkCodesAndNumbers added as album property
 # json_version = 4.0 for new release
+# json_version = 4.1 since media file size added
 
 # json_version = 0
-json_version = 4.0
+json_version = 4.1
 
 
 def set_obsolete_json_version_flag():

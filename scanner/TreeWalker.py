@@ -1409,10 +1409,13 @@ class TreeWalker:
 			single_media_cache_hit = True
 			dirname = os.path.dirname(entry_with_path)
 			try:
-				message("reading file and dir times...", "", 5)
+				message("reading file time and size...", "", 5)
 				mtime = file_mtime(entry_with_path)
+				file_size = os.path.getsize(entry_with_path)
+				indented_message("file time and size read!", "", 5)
+				message("reading dir time...", "", 5)
 				dir_mtime = file_mtime(dirname)
-				indented_message("file and dir times read!", "", 5)
+				indented_message("dir time read!", "", 5)
 			except KeyboardInterrupt:
 				raise
 			except OSError:
@@ -1446,6 +1449,10 @@ class TreeWalker:
 
 				if single_media_cache_hit and cached_media._attributes["dateTimeFile"] != mtime:
 					indented_message("not a single media cache hit", "modification time different", 5)
+					single_media_cache_hit = False
+
+				if single_media_cache_hit and cached_media._attributes["fileSize"] != file_size:
+					indented_message("not a single media cache hit", "file size different", 5)
 					single_media_cache_hit = False
 
 				if single_media_cache_hit and Options.config['checksum']:
