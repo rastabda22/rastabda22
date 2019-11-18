@@ -1009,7 +1009,6 @@ class Media(object):
 		self.album_path = os.path.join('albums', self.media_file_name)
 		self.cache_base = dictionary['cacheBase']
 		self.mime_type = dictionary['mimeType']
-		self.file_size = dictionary['fileSize']
 		if "password_identifiers_set" in dictionary:
 			self.password_identifiers_set = dictionary['password_identifiers_set']
 		else:
