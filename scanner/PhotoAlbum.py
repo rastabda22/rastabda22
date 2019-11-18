@@ -1009,6 +1009,7 @@ class Media(object):
 		self.album_path = os.path.join('albums', self.media_file_name)
 		self.cache_base = dictionary['cacheBase']
 		self.mime_type = dictionary['mimeType']
+		self.file_size = dictionary['fileSize']
 		if "password_identifiers_set" in dictionary:
 			self.password_identifiers_set = dictionary['password_identifiers_set']
 		else:
@@ -2484,6 +2485,7 @@ class Media(object):
 		media["name"] = self.name
 		media["cacheBase"] = self.cache_base
 		media["date"] = self.date_string
+		media["fileSize"] = self.file_size
 		# media["yearAlbum"] = self.year_album_path
 		# media["monthAlbum"] = self.month_album_path
 		media["dayAlbum"] = self.day_album_path
