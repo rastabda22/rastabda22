@@ -241,7 +241,7 @@
 					<div class="links">
 						<span class="link-button">
 							<a class="metadata-show"></a>
-						<a class="metadata-hide"></a>
+							<a class="metadata-hide"></a>
 						</span>
 						|
 						<span class="link-button">
