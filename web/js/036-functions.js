@@ -474,8 +474,8 @@
 				numPasswords = util.numPasswords(thisAlbum);
 
 			if (
-				numPasswords
-				&& PhotoFloat.guessedPasswordCodes.length < numPasswords
+				numPasswords &&
+				PhotoFloat.guessedPasswordCodes.length < numPasswords
 			) {
 				$(".protection").show();
 				$("#padlock").off('click').on(
