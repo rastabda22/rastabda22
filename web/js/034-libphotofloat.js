@@ -345,7 +345,7 @@
 							} else {
 								// wrong hash: it might be the hash of a protected content
 								$("#loading").hide();
-								util.showAuthForm(true);
+								util.showAuthForm(null, true);
 							}
 						}
 					}
@@ -2082,7 +2082,7 @@
 				) {
 					// the media not found could be a protected one, show the authentication dialog
 					perhapsIsAProtectedMedia = true;
-					util.showAuthForm(true);
+					util.showAuthForm(null, true);
 				} else {
 					// surely the media doesn't exist
 
