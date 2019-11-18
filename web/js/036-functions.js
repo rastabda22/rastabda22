@@ -989,6 +989,7 @@
 	Functions.prototype.updateMenu = Functions.updateMenu;
 	Functions.prototype.focusSearchField = Functions.focusSearchField;
 	Functions.prototype.toggleMetadata = Functions.toggleMetadata;
+	Functions.prototype.humanFileSize = Functions.humanFileSize;
 
 	window.Functions = Functions;
 }());
