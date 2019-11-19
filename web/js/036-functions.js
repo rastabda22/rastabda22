@@ -463,7 +463,7 @@
 			$(".download-album").removeClass("hidden");
 
 			// reset the html
-			$(".download-album.everything").html(util._t(".download-album.media-only"));
+			$(".download-album.everything").html(util._t(".download-album.everything"));
 
 			$(".download-album.everything").append(" (" + Functions.humanFileSize(currentAlbum.sizeOfSubTree) + ")");
 			if (currentAlbum.sizeOfSubTree < 500000000) {

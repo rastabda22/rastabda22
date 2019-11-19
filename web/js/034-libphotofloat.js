@@ -37,6 +37,8 @@
 		rootMapAlbum.media = [];
 		rootMapAlbum.numMedia = 0;
 		rootMapAlbum.numMediaInSubTree = 0;
+		rootMapAlbum.sizeOfAlbum = 0;
+		rootMapAlbum.sizeOfSubTree = 0;
 		rootMapAlbum.subalbums = [];
 		rootMapAlbum.positionsAndMediaInTree = [];
 		rootMapAlbum.numPositionsInTree = 0;
@@ -326,6 +328,8 @@
 							"subalbums": [],
 							"numMedia": 0,
 							"numMediaInSubTree": 0,
+							"sizeOfAlbum": 0,
+							"sizeOfSubTree": 0,
 							"numPositionsInTree": 0,
 							// "includedProtectedDirectories": [],
 							"empty": true
@@ -1591,6 +1595,8 @@
 				searchResultsAlbumFinal.media = [];
 				searchResultsAlbumFinal.subalbums = [];
 				searchResultsAlbumFinal.numMediaInSubTree = 0;
+				searchResultsAlbumFinal.sizeOfAlbum = 0;
+				searchResultsAlbumFinal.sizeOfSubTree = 0;
 				searchResultsAlbumFinal.cacheBase = albumHash;
 				searchResultsAlbumFinal.path = searchResultsAlbumFinal.cacheBase.replace(Options.cache_folder_separator, "/");
 				searchResultsAlbumFinal.physicalPath = searchResultsAlbumFinal.path;
