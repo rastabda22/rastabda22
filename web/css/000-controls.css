@@ -799,7 +799,7 @@ ul#right-menu .expandable ul {
 	display: none;
 }
 
-.download-album.media-only:not(.clickable) {
+.download-album.media-only:not(.clickable), .download-album.everything:not(.clickable) {
 	color: red;
 	cursor: auto !important;
 }

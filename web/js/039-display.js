@@ -487,7 +487,8 @@ $(document).ready(function() {
 	$("li#accent-sensitive").on('click', f.toggleAccentSensitiveSearch);
 	$("li#album-search").on('click', f.toggleCurrentAbumSearch);
 
-	$(".download-album.media-only").on('click', util.downloadAlbum);
+	$(".download-album.media-only").on('click', util.downloadMediaOnly);
+	$(".download-album.everything").on('click', util.downloadEverything);
 
 	$("#protected-content-unveil").on('click', util.showAuthForm);
 

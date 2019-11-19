@@ -888,41 +888,98 @@
 		);
 	};
 
-	Utilities.prototype.downloadAlbum = function() {
+	Utilities.prototype.downloadMediaOnly = function() {
+		if ($(".download-album.media-only").hasClass("clickable")) {
+			Utilities.downloadAlbum();
+		}
+	};
+
+	Utilities.prototype.downloadEverything = function() {
+		if ($(".download-album.everything").hasClass("clickable")) {
+			Utilities.downloadAlbum(true);
+		}
+	};
+
+	Utilities.downloadAlbum = function(everything = false) {
 		// adapted from https://gist.github.com/c4software/981661f1f826ad34c2a5dc11070add0f
 		//
-		// this functino must be converted to streams, example at https://jimmywarting.github.io/StreamSaver.js/examples/saving-multiple-files.html
-		if ($(".download-album.media-only").hasClass("clickable")) {
-			var zip = new JSZip();
-			var count = 0;
-			var zipFilename = "myphotoshare-album.zip";
-			var urls = [];
-			for (let iMedia = 0; iMedia < currentAlbum.media.length; iMedia ++) {
-				urls.push([encodeURI(Utilities.trueOriginalMediaPath(currentAlbum.media[iMedia])), currentAlbum.media[iMedia].name]);
+		// this function must be converted to streams, example at https://jimmywarting.github.io/StreamSaver.js/examples/saving-multiple-files.html
+		$("#download-preparing").show();
+
+		var zip = new JSZip();
+		var zipFilename = currentAlbum.name;
+		if (everything)
+			zipFilename += ".tree";
+		else
+			zipFilename += ".media";
+		zipFilename += ".zip";
+
+		var addMediaPromise = addMediaFromAlbum(currentAlbum);
+		addMediaPromise.then(
+			// the zip can be saved
+			function() {
+				zip.generateAsync({type:'blob'}).then(
+					function(content) {
+						saveAs(content, zipFilename);
+						$("#download-preparing").hide();
+					}
+				);
 			}
+		);
+		// end of function
 
-			$("#download-preparing").show();
+		function addMediaFromAlbum(currentAlbum, subalbum = "") {
+			return new Promise(
+				function(resolve_addMediaFromAlbum) {
+					var albumPromises = [];
 
-			urls.forEach(
-				function([url, name]) {
-					var filename = name;
-					// loading a file and add it in a zip file
-					JSZipUtils.getBinaryContent(
-						url,
-						function (err, data) {
-							if (err) {
-								throw err; // or handle the error
-							}
-							zip.file(filename, data, {binary:true});
-							count ++;
-							if (count == urls.length) {
-								zip.generateAsync({type:'blob'}).then(
-									function(content) {
-										saveAs(content, zipFilename);
-										$("#download-preparing").hide();
+					for (let iMedia = 0; iMedia < currentAlbum.media.length; iMedia ++) {
+						let urlPromise = new Promise(
+							function(resolveUrlPromise) {
+								let url = encodeURI(Utilities.trueOriginalMediaPath(currentAlbum.media[iMedia]));
+								let name = currentAlbum.media[iMedia].name;
+								// load a file and add it to the zip file
+								JSZipUtils.getBinaryContent(
+									url,
+									function (err, data) {
+										if (err) {
+											throw err; // or handle the error
+										}
+										zip.file(subalbum + "/" + name, data, {binary:true});
+										resolveUrlPromise();
 									}
 								);
 							}
+						);
+						albumPromises.push(urlPromise);
+					}
+
+					if (everything) {
+						for (let iSubalbum = 0; iSubalbum < currentAlbum.subalbums.length; iSubalbum ++) {
+							let subalbumPromise = new Promise(
+								function(resolveSubalbumPromise) {
+									let ithSubalbum = currentAlbum.subalbums[iSubalbum];
+									let getAlbumPromise = PhotoFloat.getAlbum(ithSubalbum.cacheBase, null, {"getMedia": true, "getPositions": false});
+									getAlbumPromise.then(
+										function(subalbum) {
+											let addMediaPromise = addMediaFromAlbum(subalbum, subalbum.name);
+											addMediaPromise.then(
+												function() {
+													resolveSubalbumPromise();
+												}
+											);
+										}
+									);
+								}
+							);
+							albumPromises.push(subalbumPromise);
+						}
+					}
+
+
+					Promise.all(albumPromises).then(
+						function() {
+							resolve_addMediaFromAlbum();
 						}
 					);
 				}
