@@ -462,8 +462,10 @@
 		if (thisAlbum !== null) {
 			$(".download-album").removeClass("hidden");
 
+			let showDownloadEverything = false;
+
 			$(".download-album.everything").addClass("hidden");
-			if (thisAlbum.subalbums.length) {
+			if (thisAlbum.subalbums.length && ! util.isByDateCacheBase(thisAlbum.cacheBase) && ! util.isByGpsCacheBase(thisAlbum.cacheBase)) {
 				$(".download-album.everything").removeClass("hidden");
 				// reset the html
 				$(".download-album.everything").html(util._t(".download-album.everything"));
@@ -481,17 +483,21 @@
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
 					// It may happen that the files are collected but nothing is saved
-					$(".download-album.everything").addClass("clickable");
+					$(".download-album.everything").addClass("clickable").attr("title", "");
 				} else {
-					$(".download-album.everything").removeClass("clickable");
+					$(".download-album.everything").removeClass("clickable").attr("title", util._t("#cant-download"));
 				}
+				showDownloadEverything = true;
 			}
 
 			$(".download-album.media-only").addClass("hidden");
 			if (thisAlbum.numMedia) {
 				$(".download-album.media-only").removeClass("hidden");
 				// reset the html
-				$(".download-album.media-only").html(util._t(".download-album.media-only"));
+				if (showDownloadEverything)
+					$(".download-album.media-only").html(util._t(".download-album.media-only"));
+				else
+					$(".download-album.media-only").html(util._t(".download-album.simple"));
 
 				// add the download size
 				$(".download-album.media-only").append(" (" + thisAlbum.numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(thisAlbum.sizeOfAlbum) + ")");
@@ -500,10 +506,10 @@
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
 					// It may happen that the files are collected but nothing is saved
-					$(".download-album.media-only").addClass("clickable");
+					$(".download-album.media-only").addClass("clickable").attr("title", "");
 					$(".download-album.media-only").append(" " + util._t(".download-album.media-only-accelerator"));
 				} else {
-					$(".download-album.media-only").removeClass("clickable");
+					$(".download-album.media-only").removeClass("clickable").attr("title", util._t("#cant-download"));
 				}
 			}
 		}

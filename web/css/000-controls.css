@@ -672,7 +672,6 @@ ul#right-menu span#menu-icon, ul#right-menu li#menu-line {
 ul#right-menu span#menu-icon, ul#right-menu #padlock img, ul#right-menu.expand li {
 	float: none;
 	text-align: right;
-	background-color: black;
 }
 
 ul#right-menu.expand li:not(#menu-and-padlock) {
@@ -692,7 +691,7 @@ ul#right-menu #padlock {
 }
 
 ul#right-menu.expand {
-	opacity: 0.6;
+	background-color:rgba(0, 0, 0, 0.6);
 	min-width: 15em;
 }
 
@@ -759,7 +758,7 @@ ul#right-menu.expand .selected {
 }
 
 ul#right-menu.expand li.dimmed {
-	opacity: 0.2;
+	background-color:rgba(0, 0, 0, 0.2);
 	cursor: auto;
 }
 
@@ -802,6 +801,7 @@ ul#right-menu .expandable ul {
 .download-album.media-only:not(.clickable), .download-album.everything:not(.clickable) {
 	color: red;
 	cursor: auto !important;
+	font-weight: bold;
 }
 /* end right menu */
 

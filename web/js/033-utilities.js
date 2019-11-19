@@ -15,8 +15,8 @@
 		);
 	}
 
-	Utilities.prototype._t = function(id) {
-		language = this.getLanguage();
+	Utilities._t = function(id) {
+		language = Utilities.getLanguage();
 		if (translations[language][id])
 			return translations[language][id];
 		else
@@ -51,7 +51,7 @@
 	Utilities.prototype.translate = function() {
 		var selector, keyLanguage;
 
-		language = this.getLanguage();
+		language = Utilities.getLanguage();
 		for (var key in translations.en) {
 			if (translations[language].hasOwnProperty(key) || translations.en.hasOwnProperty(key)) {
 				keyLanguage = language;
@@ -69,7 +69,7 @@
 		}
 	};
 
-	Utilities.prototype.getLanguage = function() {
+	Utilities.getLanguage = function() {
 		language = "en";
 		if (Options.language && translations[Options.language] !== undefined)
 			language = Options.language;
@@ -369,7 +369,7 @@
 		return string == Options.folders_string || string.indexOf(Options.foldersStringWithTrailingSeparator) === 0;
 	};
 
-	Utilities.prototype.isByDateCacheBase = function(string) {
+	Utilities.isByDateCacheBase = function(string) {
 		return string == Options.by_date_string || string.indexOf(Options.byDateStringWithTrailingSeparator) === 0;
 	};
 
@@ -377,7 +377,7 @@
 		return string == Options.by_gps_string || string.indexOf(Options.byGpsStringWithTrailingSeparator) === 0;
 	};
 
-	Utilities.prototype.isSearchCacheBase = function(string) {
+	Utilities.isSearchCacheBase = function(string) {
 		return string.indexOf(Options.bySearchStringWithTrailingSeparator) === 0;
 	};
 
@@ -439,7 +439,7 @@
 		if (underscoreIndex != -1) {
 			var number = altPlaceName.substring(underscoreIndex + 1);
 			var base = altPlaceName.substring(0, underscoreIndex);
-			return base + ' (' + this._t('.subalbum') + parseInt(number) + ')';
+			return base + ' (' + Utilities._t('.subalbum') + parseInt(number) + ')';
 		} else {
 			return altPlaceName;
 		}
@@ -907,11 +907,27 @@
 		$("#download-preparing").show();
 
 		var zip = new JSZip();
-		var zipFilename = currentAlbum.name;
-		if (everything)
-			zipFilename += ".tree";
-		else
-			zipFilename += ".media";
+		var zipFilename;
+		var basePath = currentAlbum.path;
+		zipFilename = Options.page_title + '.';
+		if (Utilities.isSearchCacheBase(currentAlbum.cacheBase)) {
+			zipFilename += Utilities._t("#by-search") + " '" + $("#search-field").val() + "'";
+		} else if (Utilities.isByDateCacheBase(currentAlbum.cacheBase)) {
+			let textComponents = currentAlbum.path.split("/").splice(1);
+			if (textComponents.length > 1)
+				textComponents[1] = Utilities._t("#month-" + textComponents[1]);
+
+			zipFilename += textComponents.join('-');
+		} else if (Utilities.isByGpsCacheBase(currentAlbum.cacheBase)) {
+			zipFilename += currentAlbum.ancestorsNames.splice(1).join('-');
+		} else
+			zipFilename += currentAlbum.name;
+		if (! Utilities.isByDateCacheBase(currentAlbum.cacheBase) && ! Utilities.isByGpsCacheBase(currentAlbum.cacheBase)) {
+			if (everything)
+				zipFilename += ".tree";
+			else
+				zipFilename += ".media";
+		}
 		zipFilename += ".zip";
 
 		var addMediaPromise = addMediaFromAlbum(currentAlbum);
@@ -962,7 +978,13 @@
 									let getAlbumPromise = PhotoFloat.getAlbum(ithSubalbum.cacheBase, null, {"getMedia": true, "getPositions": false});
 									getAlbumPromise.then(
 										function(subalbum) {
-											let addMediaPromise = addMediaFromAlbum(subalbum, subalbum.name);
+											let albumPath = subalbum.path;
+											if (Utilities.isSearchCacheBase(currentAlbum.cacheBase))
+												// remove the leading folders/date/gps/map string
+												albumPath = albumPath.split('/').splice(1).join('/');
+											else
+												albumPath = albumPath.substring(basePath.length + 1);
+											let addMediaPromise = addMediaFromAlbum(subalbum, albumPath);
 											addMediaPromise.then(
 												function() {
 													resolveSubalbumPromise();
@@ -1383,9 +1405,13 @@
 	Utilities.prototype.sortByDate = Utilities.sortByDate;
 	Utilities.prototype.sortByPath = Utilities.sortByPath;
 	Utilities.prototype.sortBy = Utilities.sortBy;
+	Utilities.prototype.isByDateCacheBase = Utilities.isByDateCacheBase;
 	Utilities.prototype.isByGpsCacheBase = Utilities.isByGpsCacheBase;
+	Utilities.prototype.isSearchCacheBase = Utilities.isSearchCacheBase;
 	Utilities.prototype.setPinchButtonsPosition = Utilities.setPinchButtonsPosition;
 	Utilities.prototype.convertMd5ToCode = Utilities.convertMd5ToCode;
+	Utilities.prototype._t = Utilities._t;
+	Utilities.prototype.getLanguage = Utilities.getLanguage;
 
 	window.Utilities = Utilities;
 }());
