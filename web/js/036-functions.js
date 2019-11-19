@@ -88,7 +88,7 @@
 	Functions.getAlbumNameFromAlbumHash = function(hash) {
 		return new Promise(
 			function(resolve_getAlbumNameFromAlbumHash) {
-				getAlbumPromise = PhotoFloat.getAlbum(hash, util.die, {"getMedia": false, "getPositions": false});
+				let getAlbumPromise = PhotoFloat.getAlbum(hash, util.die, {"getMedia": false, "getPositions": false});
 				getAlbumPromise.then(
 					function(theAlbum) {
 						var path;
@@ -458,6 +458,44 @@
 			}
 		}
 
+		$(".download-album").addClass("hidden");
+		if (thisAlbum !== null) {
+			$(".download-album").removeClass("hidden");
+
+			// reset the html
+			$(".download-album.everything").html(util._t(".download-album.everything"));
+
+			$(".download-album.everything").append(" (" + currentAlbum.numMediaInSubTree + " " + util._t(".title-media") + ", " + Functions.humanFileSize(currentAlbum.sizeOfSubTree) + ")");
+			if (currentAlbum.sizeOfSubTree < 500000000) {
+				// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
+				// actually it can be less (Chrome on Android)
+				// It may happen that the files are collected but nothing is saved
+				$(".download-album.everything").addClass("clickable");
+			} else {
+				$(".download-album.everything").removeClass("clickable");
+			}
+
+			$(".download-album.media-only").addClass("hidden");
+			if (thisAlbum.numMedia) {
+				$(".download-album.media-only").removeClass("hidden");
+				// reset the html
+				$(".download-album.media-only").html(util._t(".download-album.media-only"));
+
+				// add the download size
+				$(".download-album.media-only").append(" (" + currentAlbum.numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(currentAlbum.sizeOfAlbum) + ")");
+				// check the size and decide if they can be downloaded
+				if (currentAlbum.sizeOfAlbum < 500000000) {
+					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
+					// actually it can be less (Chrome on Android)
+					// It may happen that the files are collected but nothing is saved
+					$(".download-album.media-only").addClass("clickable");
+					$(".download-album.media-only").append(" " + util._t(".download-album.media-only-accelerator"));
+				} else {
+					$(".download-album.media-only").removeClass("clickable");
+				}
+			}
+		}
+
 		if (thisAlbum !== null) {
 			let numPasswords;
 			if (util.isSearchCacheBase(thisAlbum.cacheBase))
@@ -466,8 +504,8 @@
 				numPasswords = util.numPasswords(thisAlbum);
 
 			if (
-				numPasswords
-				&& PhotoFloat.guessedPasswordCodes.length < numPasswords
+				numPasswords &&
+				PhotoFloat.guessedPasswordCodes.length < numPasswords
 			) {
 				$(".protection").show();
 				$("#padlock").off('click').on(
@@ -502,6 +540,12 @@
 				// $("ul", this).slideToggle(300);
 			}
 		);
+	};
+
+	Functions.humanFileSize = function(size) {
+		// from https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
+	    var i = Math.floor(Math.log(size) / Math.log(1024));
+	    return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
 	};
 
 	Functions.prototype.scrollToThumb = function() {
@@ -970,6 +1014,7 @@
 	Functions.prototype.updateMenu = Functions.updateMenu;
 	Functions.prototype.focusSearchField = Functions.focusSearchField;
 	Functions.prototype.toggleMetadata = Functions.toggleMetadata;
+	Functions.prototype.humanFileSize = Functions.humanFileSize;
 
 	window.Functions = Functions;
 }());

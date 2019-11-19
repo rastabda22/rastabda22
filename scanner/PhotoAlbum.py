@@ -70,6 +70,8 @@ class Album(object):
 			self.num_media_in_sub_tree = 0
 			self.complex_combination = ''
 			self.nums_protected_media_in_sub_tree = NumsProtected()
+			self.sizes_protected_media_in_album = SizesProtected()
+			self.sizes_protected_media_in_sub_tree = SizesProtected()
 			self.positions_and_media_in_tree = Positions(None)
 			self.parent_cache_base = None
 			self.album_ini = None
@@ -331,8 +333,14 @@ class Album(object):
 
 		if ',' in list(self.nums_protected_media_in_sub_tree.keys()):
 			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(',')
+			self.size_of_sub_tree = self.sizes_protected_media_in_sub_tree.value(',')
 		else:
 			self.num_media_in_sub_tree = 0
+			self.size_of_sub_tree = 0
+		if ',' in list(self.sizes_protected_media_in_album.keys()):
+			self.size_of_album = self.sizes_protected_media_in_album.value(',')
+		else:
+			self.size_of_album = 0
 		message("album worked!", self.cache_base, 5)
 		back_level()
 
@@ -378,8 +386,14 @@ class Album(object):
 
 		if self.complex_combination in list(self.nums_protected_media_in_sub_tree.keys()):
 			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.complex_combination)
+			self.size_of_sub_tree = self.sizes_protected_media_in_sub_tree.value(self.complex_combination)
 		else:
 			self.num_media_in_sub_tree = 0
+			self.size_of_sub_tree = 0
+		if self.complex_combination in list(self.sizes_protected_media_in_album.keys()):
+			self.size_of_album = self.sizes_protected_media_in_album.value(self.complex_combination)
+		else:
+			self.size_of_album = 0
 		message("album worked!", self.cache_base, 5)
 		back_level()
 
@@ -606,7 +620,8 @@ class Album(object):
 					# "positionsAndMediaInTree": subalbum.positions_and_media_in_tree,
 					"numPositionsInTree": len(subalbum.positions_and_media_in_tree.positions),
 					"numMediaInSubTree": subalbum.num_media_in_sub_tree,
-					# "numsProtectedMediaInSubTree": subalbum.nums_protected_media_in_sub_tree
+					"sizeOfSubTree": subalbum.size_of_sub_tree,
+					"sizeOfAlbum": subalbum.size_of_album,
 				}
 				nums_protected_by_code = {}
 				for complex_identifiers_combination in list(subalbum.nums_protected_media_in_sub_tree.keys()):
@@ -689,7 +704,8 @@ class Album(object):
 			"ancestorsNames": ancestors_names,
 			"physicalPath": path_without_folders_marker,
 			"numMediaInSubTree": self.num_media_in_sub_tree,
-			# "numsProtectedMediaInSubTree": self.nums_protected_media_in_sub_tree,
+			"sizeOfSubTree": self.size_of_sub_tree,
+			"sizeOfAlbum": self.size_of_album,
 			"numPositionsInTree": len(self.positions_and_media_in_tree.positions),
 			"albumIniMTime": self.album_ini_mtime,
 			"passwordMarkerMTime": self.passwords_marker_mtime,
@@ -934,6 +950,44 @@ class NumsProtected(object):
 		return copy.deepcopy(self)
 
 
+class SizesProtected(object):
+	def __init__(self):
+		self.sizes_protected = {}
+		self.sizes_protected[','] = 0
+
+	def sum(self, complex_identifiers_combination, value):
+		try:
+			self.sizes_protected[complex_identifiers_combination] += value
+		except KeyError:
+			self.sizes_protected[complex_identifiers_combination] = 0
+			self.sizes_protected[complex_identifiers_combination] += value
+
+	def value(self, complex_identifiers_combination):
+		return self.sizes_protected[complex_identifiers_combination]
+
+	def keys(self):
+		return list(self.sizes_protected.keys())
+
+	def non_trivial_keys(self):
+		return [key for key in list(self.keys()) if key != ',']
+
+	def merge(self, sizes_protected):
+		for complex_identifiers_combination in list(sizes_protected.keys()):
+			try:
+				self.sizes_protected[complex_identifiers_combination] += sizes_protected.sizes_protected[complex_identifiers_combination]
+			except KeyError:
+				self.sizes_protected[complex_identifiers_combination] = 0
+				self.sizes_protected[complex_identifiers_combination] += sizes_protected.sizes_protected[complex_identifiers_combination]
+
+	def used_password_identifiers(self):
+		keys = self.non_trivial_keys()
+		keys = sorted(sorted(keys), key = lambda single_key: len(single_key.split('-')))
+		return keys
+
+	def copy(self):
+		return copy.deepcopy(self)
+
+
 class Media(object):
 	def __init__(self, album, media_path, json_files, json_files_min_mtime, thumbs_path = None, dictionary = None):
 		self.password_identifiers_set = set()
@@ -983,14 +1037,15 @@ class Media(object):
 		self.is_valid = True
 
 		try:
-			message("reading file and dir times...", "", 5)
+			message("reading file time and size, and dir time...", "", 5)
 			mtime = file_mtime(media_path)
+			file_size = os.path.getsize(media_path)
 			dir_mtime = file_mtime(dirname)
 			indented_message("file and dir times read!", "", 5)
 		except KeyboardInterrupt:
 			raise
 		except OSError:
-			indented_message("could not read file or dir mtime", "", 5)
+			indented_message("could not read file time or size or dir mtime", "", 5)
 			self.is_valid = False
 			back_level()
 			return
@@ -998,6 +1053,7 @@ class Media(object):
 		self._attributes = {}
 		self._attributes["metadata"] = {}
 		self._attributes["dateTimeFile"] = mtime
+		self._attributes["fileSize"] = file_size
 		self._attributes["dateTimeDir"] = dir_mtime
 		# self._attributes["mediaType"] = "photo"
 
@@ -1069,6 +1125,10 @@ class Media(object):
 	@property
 	def datetime_file(self):
 		return self._attributes["dateTimeFile"]
+
+	@property
+	def file_size(self):
+		return self._attributes["fileSize"]
 
 	@property
 	def datetime_dir(self):
@@ -2424,6 +2484,7 @@ class Media(object):
 		media["name"] = self.name
 		media["cacheBase"] = self.cache_base
 		media["date"] = self.date_string
+		media["fileSize"] = self.file_size
 		# media["yearAlbum"] = self.year_album_path
 		# media["monthAlbum"] = self.month_album_path
 		media["dayAlbum"] = self.day_album_path

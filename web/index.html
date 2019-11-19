@@ -47,7 +47,7 @@
 					<div class="links">
 						<span class="link-button">
 							<a class="metadata-show"></a>
-						<a class="metadata-hide"></a>
+							<a class="metadata-hide"></a>
 						</span>
 						|
 						<span class="link-button">
@@ -169,12 +169,22 @@
 			<span id='show-big-albums' class="big-albums caption"></span>
 		</li>
 
+		<li class='expandable download-album active'>
+			<span class='download-album caption'></span>
+			<ul class="sub-menu">
+				<li class='download-album media-only active'></li>
+				<li class='download-album everything active'></li>
+			</ul>
+		</li>
+
 		<li class='protection active'>
 			<span id="protected-content-unveil" class='protection caption'></span>
 		</li>
 	</ul>
 
+
 	<div id="loading"></div>
+	<div id="download-preparing"></div>
 
 	<div id="folders-browsing" class="browsing-mode-message"></div>
 	<div id="by-date-browsing" class="browsing-mode-message"></div>

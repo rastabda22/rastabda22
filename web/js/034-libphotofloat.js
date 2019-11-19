@@ -37,6 +37,8 @@
 		rootMapAlbum.media = [];
 		rootMapAlbum.numMedia = 0;
 		rootMapAlbum.numMediaInSubTree = 0;
+		rootMapAlbum.sizeOfAlbum = 0;
+		rootMapAlbum.sizeOfSubTree = 0;
 		rootMapAlbum.subalbums = [];
 		rootMapAlbum.positionsAndMediaInTree = [];
 		rootMapAlbum.numPositionsInTree = 0;
@@ -326,6 +328,8 @@
 							"subalbums": [],
 							"numMedia": 0,
 							"numMediaInSubTree": 0,
+							"sizeOfAlbum": 0,
+							"sizeOfSubTree": 0,
 							"numPositionsInTree": 0,
 							// "includedProtectedDirectories": [],
 							"empty": true
@@ -345,7 +349,7 @@
 							} else {
 								// wrong hash: it might be the hash of a protected content
 								$("#loading").hide();
-								util.showAuthForm(true);
+								util.showAuthForm(null, true);
 							}
 						}
 					}
@@ -407,6 +411,8 @@
 
 								album.numMedia += protectedAlbum.numMedia;
 								album.numMediaInSubTree += protectedAlbum.numMediaInSubTree;
+								album.sizeOfSubTree += protectedAlbum.sizeOfSubTree;
+								album.sizeOfAlbum += protectedAlbum.sizeOfAlbum;
 								album.numPositionsInTree += protectedAlbum.numPositionsInTree;
 								if (! album.hasOwnProperty("path"))
 									album.path = protectedAlbum.path;
@@ -762,6 +768,8 @@
 
 	PhotoFloat.mergeProtectedSubalbum = function(subalbum, protectedSubalbum) {
 		subalbum.numMediaInSubTree += protectedSubalbum.numMediaInSubTree;
+		subalbum.sizeOfSubTree += protectedSubalbum.sizeOfSubTree;
+		subalbum.sizeOfAlbum += protectedSubalbum.sizeOfAlbum;
 		subalbum.numPositionsInTree += protectedSubalbum.numPositionsInTree;
 		// subalbum.words = util.arrayUnion(subalbum.words, protectedSubalbum.words);
 	};
@@ -1587,6 +1595,8 @@
 				searchResultsAlbumFinal.media = [];
 				searchResultsAlbumFinal.subalbums = [];
 				searchResultsAlbumFinal.numMediaInSubTree = 0;
+				searchResultsAlbumFinal.sizeOfAlbum = 0;
+				searchResultsAlbumFinal.sizeOfSubTree = 0;
 				searchResultsAlbumFinal.cacheBase = albumHash;
 				searchResultsAlbumFinal.path = searchResultsAlbumFinal.cacheBase.replace(Options.cache_folder_separator, "/");
 				searchResultsAlbumFinal.physicalPath = searchResultsAlbumFinal.path;
@@ -1700,6 +1710,9 @@
 				for (indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
 					// update the media count
 					searchResultsAlbumFinal.numMediaInSubTree += searchResultsAlbumFinal.subalbums[indexSubalbums].numMediaInSubTree;
+					// update the size totals
+					searchResultsAlbumFinal.sizeOfSubTree += searchResultsAlbumFinal.subalbums[indexSubalbums].sizeOfSubTree;
+					searchResultsAlbumFinal.sizeOfAlbum += searchResultsAlbumFinal.subalbums[indexSubalbums].sizeOfAlbum;
 					// add the points from the subalbums
 
 					// the subalbum could still have no positionsAndMediaInTree array, get it
@@ -2082,7 +2095,7 @@
 				) {
 					// the media not found could be a protected one, show the authentication dialog
 					perhapsIsAProtectedMedia = true;
-					util.showAuthForm(true);
+					util.showAuthForm(null, true);
 				} else {
 					// surely the media doesn't exist
 
