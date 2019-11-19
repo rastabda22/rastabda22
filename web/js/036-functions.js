@@ -465,7 +465,7 @@
 			// reset the html
 			$(".download-album.everything").html(util._t(".download-album.everything"));
 
-			$(".download-album.everything").append(" (" + Functions.humanFileSize(currentAlbum.sizeOfSubTree) + ")");
+			$(".download-album.everything").append(" (" + currentAlbum.numMediaInSubTree + " " + util._t(".title-media") + ", " + Functions.humanFileSize(currentAlbum.sizeOfSubTree) + ")");
 			if (currentAlbum.sizeOfSubTree < 500000000) {
 				// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 				// actually it can be less (Chrome on Android)
@@ -482,7 +482,7 @@
 				$(".download-album.media-only").html(util._t(".download-album.media-only"));
 
 				// add the download size
-				$(".download-album.media-only").append(" (" + Functions.humanFileSize(currentAlbum.sizeOfAlbum) + ")");
+				$(".download-album.media-only").append(" (" + currentAlbum.numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(currentAlbum.sizeOfAlbum) + ")");
 				// check the size and decide if they can be downloaded
 				if (currentAlbum.sizeOfAlbum < 500000000) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
