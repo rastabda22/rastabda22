@@ -2354,6 +2354,8 @@
 		}
 
 		if(pointList) {
+			// maximum OSM zoom is 19
+			const maxOSMZoom = 19;
 			// calculate the center
 			var center = MapFunctions.averagePosition(pointList);
 
@@ -2375,10 +2377,9 @@
 			}
 			// calculate the zoom level needed in order to have all the points inside the map
 			// see https://wiki.openstreetmap.org/wiki/Zoom_levels
-			// maximum OSM zoom is 19
 			var earthCircumference = 40075016;
-			var xZoom = Math.min(19, parseInt(Math.log2((windowWidth / 2 * 0.9) * earthCircumference * Math.cos(util.degreesToRadians(center.lat)) / 256 / maxXDistance)));
-			var yZoom = Math.min(19, parseInt(Math.log2((windowHeight / 2 * 0.9) * earthCircumference * Math.cos(util.degreesToRadians(center.lat)) / 256 / maxYDistance)));
+			var xZoom = Math.min(maxOSMZoom, parseInt(Math.log2((windowWidth / 2 * 0.9) * earthCircumference * Math.cos(util.degreesToRadians(center.lat)) / 256 / maxXDistance)));
+			var yZoom = Math.min(maxOSMZoom, parseInt(Math.log2((windowHeight / 2 * 0.9) * earthCircumference * Math.cos(util.degreesToRadians(center.lat)) / 256 / maxYDistance)));
 			var zoom = Math.min(xZoom, yZoom);
 
 			$("#loading").hide();
@@ -2455,7 +2456,7 @@
 				{
 					attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
 					maxZoom: 21,
-					maxNativeZoom: 18,
+					maxNativeZoom: maxOSMZoom,
 					id: 'mapbox.streets'
 				}
 			).addTo(MapFunctions.mymap);
