@@ -54,7 +54,8 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] EXIF, IPTC and XMP Metadata display.
 - [x] Link to original media.
 - [x] Link for direct download.
-- [x] Allows enlarging the photo till 1:1 aspect.
+- [x] Menu entries for direct download of whole album, with or without its subalbums.
+- [x] Allows enlarging the photo without any limit.
 - [x] Installer can decide whether to replicate all Exif metadata (including copyright info) into all the reductions/thumbnails or not
 
 ### For Geotaggers
