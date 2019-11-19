@@ -1257,8 +1257,9 @@
 			// activate the map and the popup when coming back from a map album
 			if (
 				previousAlbum !== null &&
-				util.isMapCacheBase(previousAlbum.cacheBase) &&
-				fromEscKey || mapRefreshType !== "none"
+				util.isMapCacheBase(previousAlbum.cacheBase) && previousMedia === null &&
+				fromEscKey ||
+				mapRefreshType !== "none"
 			) {
 				$(selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 			}
@@ -2186,10 +2187,9 @@
 		// activate the map and the popup when coming back from a map album
 		if (
 			previousAlbum !== null &&
-			(
-				util.isMapCacheBase(previousAlbum.cacheBase) &&
-				fromEscKey
-			) || mapRefreshType == "refresh"
+			util.isMapCacheBase(previousAlbum.cacheBase) && previousMedia === null &&
+			fromEscKey ||
+			mapRefreshType == "refresh"
 		)
 			$(selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 
