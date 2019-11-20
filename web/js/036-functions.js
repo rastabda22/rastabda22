@@ -485,9 +485,9 @@
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
 					// It may happen that the files are collected but nothing is saved
-					$(".download-album.everything").addClass("clickable").attr("title", "");
+					$(".download-album.everything").addClass("clickable").addClass("active").attr("title", "");
 				} else {
-					$(".download-album.everything").removeClass("clickable").attr("title", util._t("#cant-download"));
+					$(".download-album.everything").removeClass("clickable").removeClass("active").attr("title", util._t("#cant-download"));
 				}
 				showDownloadEverything = true;
 			}
@@ -508,9 +508,9 @@
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
 					// It may happen that the files are collected but nothing is saved
-					$(".download-album.media-only.all").addClass("clickable").attr("title", "");
+					$(".download-album.media-only.all").addClass("clickable").addClass("active").attr("title", "");
 				} else {
-					$(".download-album.media-only.all").removeClass("clickable").attr("title", util._t("#cant-download"));
+					$(".download-album.media-only.all").removeClass("clickable").removeClass("active").attr("title", util._t("#cant-download"));
 				}
 			}
 
@@ -544,9 +544,9 @@
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
 					// It may happen that the files are collected but nothing is saved
-					$(".download-album.media-only.images").addClass("clickable").attr("title", "");
+					$(".download-album.media-only.images").addClass("clickable").addClass("active").attr("title", "");
 				} else {
-					$(".download-album.media-only.images").removeClass("clickable").attr("title", util._t("#cant-download"));
+					$(".download-album.media-only.images").removeClass("clickable").removeClass("active").attr("title", util._t("#cant-download"));
 				}
 			}
 
@@ -566,9 +566,9 @@
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
 					// It may happen that the files are collected but nothing is saved
-					$(".download-album.media-only.videos").addClass("clickable").attr("title", "");
+					$(".download-album.media-only.videos").addClass("clickable").addClass("active").attr("title", "");
 				} else {
-					$(".download-album.media-only.videos").removeClass("clickable").attr("title", util._t("#cant-download"));
+					$(".download-album.media-only.videos").removeClass("clickable").removeClass("active").attr("title", util._t("#cant-download"));
 				}
 			}
 		}

@@ -766,11 +766,12 @@ ul#right-menu.expand li:not(.active, .sub-menu) {
 	color: darkgray;
 }
 
-ul#right-menu.expand li.active:hover, ul#right-menu #menu-icon:hover, ul#right-menu #padlock img:hover, ul#right-menu #padlock:hover {
+ul#right-menu.expand li .caption:hover, ul#right-menu.expand ul li.active:hover, ul#right-menu #menu-icon:hover, ul#right-menu #padlock img:hover, ul#right-menu #padlock:hover {
 	background-color: gray !important;
-	/* text-shadow: .15ex 0 white; */
-	/* font-weight: bold;
-	font-size: 80%; */
+}
+
+ul#right-menu.expand ul li:not(.active):hover  {
+	background-color: black !important;
 }
 
 ul#right-menu #padlock img:hover {
