@@ -2339,7 +2339,7 @@
 		var i;
 		MapFunctions.titleWrapper1 =
 			'<div id="popup-photo-count" style="max-width: ' + MapFunctions.maxWidthForPopupContent + 'px;">' +
-				'<span id="popup-photo-count-number"></span> ' + util._t("#photos") +
+				'<span id="popup-photo-count-number"></span> ' + util._t("#images") +
 			'</div>' +
 			'<div id="popup-images-wrapper">';
 		MapFunctions.titleWrapper2 = '</div>';

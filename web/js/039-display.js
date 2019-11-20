@@ -487,8 +487,38 @@ $(document).ready(function() {
 	$("li#accent-sensitive").on('click', f.toggleAccentSensitiveSearch);
 	$("li#album-search").on('click', f.toggleCurrentAbumSearch);
 
-	$(".download-album.media-only").on('click', util.downloadMediaOnly);
-	$(".download-album.everything").on('click', util.downloadEverything);
+	$(".download-album.media-only.all").on(
+		'click',
+		function() {
+			if ($(".download-album.media-only.all").hasClass("clickable")) {
+				Utilities.downloadAlbum(false);
+			}
+		}
+	);
+	$(".download-album.media-only.images").on(
+		'click',
+		function() {
+			if ($(".download-album.media-only.images").hasClass("clickable")) {
+				Utilities.downloadAlbum(false, "photos");
+			}
+		}
+	);
+	$(".download-album.media-only.videos").on(
+		'click',
+		function() {
+			if ($(".download-album.media-only.videos").hasClass("clickable")) {
+				Utilities.downloadAlbum(false, "videos");
+			}
+		}
+	);
+	$(".download-album.everything").on(
+		'click',
+		function() {
+			if ($(".download-album.everything").hasClass("clickable")) {
+				Utilities.downloadAlbum(true);
+			}
+		}
+	);
 
 	$("#protected-content-unveil").on('click', util.showAuthForm);
 

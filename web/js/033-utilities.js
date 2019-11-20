@@ -381,7 +381,7 @@
 		return string.indexOf(Options.bySearchStringWithTrailingSeparator) === 0;
 	};
 
-	Utilities.prototype.isMapCacheBase = function(string) {
+	Utilities.isMapCacheBase = function(string) {
 		return string.indexOf(Options.byMapStringWithTrailingSeparator) === 0;
 	};
 
@@ -888,22 +888,13 @@
 		);
 	};
 
-	Utilities.prototype.downloadMediaOnly = function() {
-		if ($(".download-album.media-only").hasClass("clickable")) {
-			Utilities.downloadAlbum();
-		}
-	};
-
-	Utilities.prototype.downloadEverything = function() {
-		if ($(".download-album.everything").hasClass("clickable")) {
-			Utilities.downloadAlbum(true);
-		}
-	};
-
-	Utilities.downloadAlbum = function(everything = false) {
+	Utilities.downloadAlbum = function(everything = false, what = "all") {
 		// adapted from https://gist.github.com/c4software/981661f1f826ad34c2a5dc11070add0f
 		//
 		// this function must be converted to streams, example at https://jimmywarting.github.io/StreamSaver.js/examples/saving-multiple-files.html
+		//
+		// what is one of "all", "photos" or "videos"
+
 		$("#download-preparing").show();
 
 		var zip = new JSZip();
@@ -920,14 +911,11 @@
 			zipFilename += textComponents.join('-');
 		} else if (Utilities.isByGpsCacheBase(currentAlbum.cacheBase)) {
 			zipFilename += currentAlbum.ancestorsNames.splice(1).join('-');
+		} else if (Utilities.isMapCacheBase(currentAlbum.cacheBase)) {
+			zipFilename += Utilities._t("#from-map");
 		} else
 			zipFilename += currentAlbum.name;
-		if (! Utilities.isByDateCacheBase(currentAlbum.cacheBase) && ! Utilities.isByGpsCacheBase(currentAlbum.cacheBase)) {
-			if (everything)
-				zipFilename += ".tree";
-			else
-				zipFilename += ".media";
-		}
+
 		zipFilename += ".zip";
 
 		var addMediaPromise = addMediaFromAlbum(currentAlbum);
@@ -950,6 +938,12 @@
 					var albumPromises = [];
 
 					for (let iMedia = 0; iMedia < currentAlbum.media.length; iMedia ++) {
+						if (
+							currentAlbum.media[iMedia].mimeType.indexOf("image") === 0 && what === "videos" ||
+							currentAlbum.media[iMedia].mimeType.indexOf("video") === 0 && what === "photos"
+						)
+							continue;
+						
 						let urlPromise = new Promise(
 							function(resolveUrlPromise) {
 								let url = encodeURI(Utilities.trueOriginalMediaPath(currentAlbum.media[iMedia]));
@@ -1408,6 +1402,7 @@
 	Utilities.prototype.isByDateCacheBase = Utilities.isByDateCacheBase;
 	Utilities.prototype.isByGpsCacheBase = Utilities.isByGpsCacheBase;
 	Utilities.prototype.isSearchCacheBase = Utilities.isSearchCacheBase;
+	Utilities.prototype.isMapCacheBase = Utilities.isMapCacheBase;
 	Utilities.prototype.setPinchButtonsPosition = Utilities.setPinchButtonsPosition;
 	Utilities.prototype.convertMd5ToCode = Utilities.convertMd5ToCode;
 	Utilities.prototype._t = Utilities._t;

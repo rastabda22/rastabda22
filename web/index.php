@@ -366,7 +366,9 @@
 		<li class='expandable download-album active'>
 			<span class='download-album caption'></span>
 			<ul class="sub-menu">
-				<li class='download-album media-only active'></li>
+				<li class='download-album media-only all active'></li>
+				<li class='download-album media-only images active'></li>
+				<li class='download-album media-only videos active'></li>
 				<li class='download-album everything active'></li>
 			</ul>
 		</li>
