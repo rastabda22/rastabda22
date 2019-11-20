@@ -37,8 +37,8 @@
 		rootMapAlbum.media = [];
 		rootMapAlbum.numMedia = 0;
 		rootMapAlbum.numMediaInSubTree = 0;
-		rootMapAlbum.sizeOfAlbum = 0;
-		rootMapAlbum.sizeOfSubTree = 0;
+		rootMapAlbum.sizesOfAlbum = initialSizes;
+		rootMapAlbum.sizesOfSubTree = initialSizes;
 		rootMapAlbum.subalbums = [];
 		rootMapAlbum.positionsAndMediaInTree = [];
 		rootMapAlbum.numPositionsInTree = 0;
@@ -328,8 +328,8 @@
 							"subalbums": [],
 							"numMedia": 0,
 							"numMediaInSubTree": 0,
-							"sizeOfAlbum": 0,
-							"sizeOfSubTree": 0,
+							"sizesOfAlbum": initialSizes,
+							"sizesOfSubTree": initialSizes,
 							"numPositionsInTree": 0,
 							// "includedProtectedDirectories": [],
 							"empty": true
@@ -411,8 +411,8 @@
 
 								album.numMedia += protectedAlbum.numMedia;
 								album.numMediaInSubTree += protectedAlbum.numMediaInSubTree;
-								album.sizeOfSubTree += protectedAlbum.sizeOfSubTree;
-								album.sizeOfAlbum += protectedAlbum.sizeOfAlbum;
+								album.sizesOfSubTree = util.sumSizes(album.sizesOfSubTree, protectedAlbum.sizesOfSubTree);
+								album.sizesOfAlbum = util.sumSizes(album.sizesOfAlbum, protectedAlbum.sizesOfAlbum);
 								album.numPositionsInTree += protectedAlbum.numPositionsInTree;
 								if (! album.hasOwnProperty("path"))
 									album.path = protectedAlbum.path;
@@ -768,8 +768,8 @@
 
 	PhotoFloat.mergeProtectedSubalbum = function(subalbum, protectedSubalbum) {
 		subalbum.numMediaInSubTree += protectedSubalbum.numMediaInSubTree;
-		subalbum.sizeOfSubTree += protectedSubalbum.sizeOfSubTree;
-		subalbum.sizeOfAlbum += protectedSubalbum.sizeOfAlbum;
+		subalbum.sizesOfSubTree = util.sumSizes(subalbum.sizesOfSubTree, protectedSubalbum.sizesOfSubTree);
+		subalbum.sizesOfAlbum = util.sumSizes(subalbum.sizesOfAlbum, protectedSubalbum.sizesOfAlbum);
 		subalbum.numPositionsInTree += protectedSubalbum.numPositionsInTree;
 		// subalbum.words = util.arrayUnion(subalbum.words, protectedSubalbum.words);
 	};
@@ -1595,8 +1595,8 @@
 				searchResultsAlbumFinal.media = [];
 				searchResultsAlbumFinal.subalbums = [];
 				searchResultsAlbumFinal.numMediaInSubTree = 0;
-				searchResultsAlbumFinal.sizeOfAlbum = 0;
-				searchResultsAlbumFinal.sizeOfSubTree = 0;
+				searchResultsAlbumFinal.sizesOfAlbum = initialSizes;
+				searchResultsAlbumFinal.sizesOfSubTree = initialSizes;
 				searchResultsAlbumFinal.cacheBase = albumHash;
 				searchResultsAlbumFinal.path = searchResultsAlbumFinal.cacheBase.replace(Options.cache_folder_separator, "/");
 				searchResultsAlbumFinal.physicalPath = searchResultsAlbumFinal.path;
@@ -1711,8 +1711,8 @@
 					// update the media count
 					searchResultsAlbumFinal.numMediaInSubTree += searchResultsAlbumFinal.subalbums[indexSubalbums].numMediaInSubTree;
 					// update the size totals
-					searchResultsAlbumFinal.sizeOfSubTree += searchResultsAlbumFinal.subalbums[indexSubalbums].sizeOfSubTree;
-					searchResultsAlbumFinal.sizeOfAlbum += searchResultsAlbumFinal.subalbums[indexSubalbums].sizeOfAlbum;
+					searchResultsAlbumFinal.sizesOfSubTree = util.sumSizes(searchResultsAlbumFinal.sizesOfSubTree, searchResultsAlbumFinal.subalbums[indexSubalbums].sizesOfSubTree);
+					searchResultsAlbumFinal.sizesOfAlbum = util.sumSizes(earchResultsAlbumFinal.sizesOfAlbum, searchResultsAlbumFinal.subalbums[indexSubalbums].sizesOfAlbum);
 					// add the points from the subalbums
 
 					// the subalbum could still have no positionsAndMediaInTree array, get it

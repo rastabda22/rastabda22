@@ -26,7 +26,7 @@ from Utilities import determine_symlink_number_and_name
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_digits, switch_to_lowercase, phrase_to_words, checksum
 from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, make_dir
-from PhotoAlbum import Media, Album, PhotoAlbumEncoder, Position, Positions, NumsProtected, SizesProtected
+from PhotoAlbum import Media, Album, PhotoAlbumEncoder, Position, Positions, NumsProtected, Sizes, SizesProtected
 from Geonames import Geonames
 import Options
 
@@ -451,15 +451,15 @@ class TreeWalker:
 						year_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
 						by_date_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
 
-						day_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_size)
-						month_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_size)
-						year_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_size)
-						by_date_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_size)
+						day_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+						month_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+						year_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+						by_date_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
 
-						day_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_size)
-						month_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_size)
-						year_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_size)
-						by_date_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_size)
+						day_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+						month_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+						year_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+						by_date_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 
 						single_media_date = max(single_media.datetime_file, single_media.datetime_dir)
 						if day_max_file_date:
@@ -541,11 +541,11 @@ class TreeWalker:
 				# nums_protected_media_in_sub_tree matters for the search root albums!
 				by_search_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
 
-				word_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_size)
-				by_search_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_size)
+				word_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+				by_search_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
 
-				word_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_size)
-				by_search_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_size)
+				word_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+				by_search_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 
 			for single_album in media_album_and_words["albums_list"]:
 				word_album.add_subalbum(single_album)
@@ -790,15 +790,15 @@ class TreeWalker:
 							country_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
 							by_geonames_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
 
-							place_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_size)
-							region_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_size)
-							country_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_size)
-							by_geonames_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_size)
+							place_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+							region_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+							country_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+							by_geonames_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
 
-							place_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_size)
-							region_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_size)
-							country_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_size)
-							by_geonames_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_size)
+							place_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+							region_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+							country_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+							by_geonames_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 
 						Options.all_albums.append(place_album)
 						self.generate_composite_image(place_album, place_max_file_date)
@@ -1447,6 +1447,8 @@ class TreeWalker:
 				message("reading file time and size...", "", 5)
 				mtime = file_mtime(entry_with_path)
 				file_size = os.path.getsize(entry_with_path)
+				file_sizes = Sizes()
+				file_sizes.set(0, file_size)
 				indented_message("file time and size read!", "", 5)
 				message("reading dir time...", "", 5)
 				dir_mtime = file_mtime(dirname)
@@ -1486,7 +1488,7 @@ class TreeWalker:
 					indented_message("not a single media cache hit", "modification time different", 5)
 					single_media_cache_hit = False
 
-				if single_media_cache_hit and cached_media._attributes["fileSize"] != file_size:
+				if single_media_cache_hit and cached_media._attributes["fileSizes"].size(0) != file_size:
 					indented_message("not a single media cache hit", "file size different", 5)
 					single_media_cache_hit = False
 
@@ -1625,8 +1627,8 @@ class TreeWalker:
 				# update the protected media count according to the album and single media passwords
 				complex_identifiers_combination = complex_combination(convert_set_to_combination(album.password_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
 				album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
-				album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_size)
-				album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_size)
+				album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+				album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 
 				album.num_media_in_sub_tree += 1
 				if single_media.has_gps_data:

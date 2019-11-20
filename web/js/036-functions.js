@@ -480,8 +480,8 @@
 					}
 				}
 
-				$(".download-album.everything").append(" (" + numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(thisAlbum.sizeOfSubTree) + ")");
-				if (thisAlbum.sizeOfSubTree < maximumZipSize) {
+				$(".download-album.everything").append(" (" + numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[0]) + ")");
+				if (thisAlbum.sizesOfSubTree[0] < maximumZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
 					// It may happen that the files are collected but nothing is saved
@@ -502,9 +502,9 @@
 					$(".download-album.media-only.all").html(util._t(".download-album.simple.all"));
 
 				// add the download size
-				$(".download-album.media-only.all").append(" (" + thisAlbum.numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(thisAlbum.sizeOfAlbum) + ")");
+				$(".download-album.media-only.all").append(" (" + thisAlbum.numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[0]) + ")");
 				// check the size and decide if they can be downloaded
-				if (thisAlbum.sizeOfAlbum < maximumZipSize) {
+				if (thisAlbum.sizesOfAlbum[0] < maximumZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
 					// It may happen that the files are collected but nothing is saved
@@ -515,16 +515,16 @@
 			}
 
 			let numPhotos = 0;
-			let sizePhotos = 0;
+			let sizesPhotos = initialSizes;
 			let numVideos = 0;
-			let sizeVideos = 0;
+			let sizesVideos = initialSizes;
 			for (let iMedia = 0; iMedia < thisAlbum.media.length; iMedia ++) {
 				if (thisAlbum.media[iMedia].mimeType.indexOf("image") === 0) {
 					numPhotos ++;
-					sizePhotos += thisAlbum.media[iMedia].fileSize;
+					sizesPhotos = util.sumSizes(sizesPhotos, thisAlbum.media[iMedia].fileSizes);
 				} else {
 					numVideos ++;
-					sizeVideos += thisAlbum.media[iMedia].fileSize;
+					sizesVideos = util.sumSizes(sizesVideos, thisAlbum.media[iMedia].fileSizes);
 				}
 			}
 
@@ -538,9 +538,9 @@
 					$(".download-album.media-only.images").html(util._t(".download-album.simple.images"));
 
 				// add the download size
-				$(".download-album.media-only.images").append(" (" + numPhotos + " " + util._t(".title-images") + ", " + Functions.humanFileSize(sizePhotos) + ")");
+				$(".download-album.media-only.images").append(" (" + numPhotos + " " + util._t(".title-images") + ", " + Functions.humanFileSize(sizesPhotos[0]) + ")");
 				// check the size and decide if they can be downloaded
-				if (sizePhotos < maximumZipSize) {
+				if (sizesPhotos[0] < maximumZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
 					// It may happen that the files are collected but nothing is saved
@@ -560,9 +560,9 @@
 					$(".download-album.media-only.videos").html(util._t(".download-album.simple.videos"));
 
 				// add the download size
-				$(".download-album.media-only.videos").append(" (" + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(sizeVideos) + ")");
+				$(".download-album.media-only.videos").append(" (" + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(sizesVideos[0]) + ")");
 				// check the size and decide if they can be downloaded
-				if (sizeVideos < maximumZipSize) {
+				if (sizesVideos[0] < maximumZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
 					// It may happen that the files are collected but nothing is saved
@@ -979,6 +979,11 @@
 						Options.byMapStringWithTrailingSeparator = Options.by_map_string + Options.cache_folder_separator;
 
 						PhotoFloat.initializeMapRootAlbum();
+
+						for (let i = 0; i < Options.reduced_sizes.length; i++) {
+							initialSizes[Options.reduced_sizes[i]] = 0;
+						}
+
 
 						resolve_getOptions();
 					},

@@ -1122,7 +1122,7 @@
 			text += "<tr><td class='metadata-data-tags'></td><td>" + media.metadata.tags + "</td></tr>";
 		if (typeof media.date !== "undefined")
 			text += "<tr><td class='metadata-data-date'></td><td>" + media.date + "</td></tr>";
-		text += "<tr><td class='metadata-data-file-size'></td><td>" + f.humanFileSize(media.fileSize) + "</td></tr>";
+		text += "<tr><td class='metadata-data-file-size'></td><td>" + f.humanFileSize(media.fileSizes[0]) + "</td></tr>";
 		if (typeof media.metadata.size !== "undefined")
 			text += "<tr><td class='metadata-data-size'></td><td>" + media.metadata.size[0] + " x " + media.metadata.size[1] + "</td></tr>";
 		if (typeof media.metadata.make !== "undefined")

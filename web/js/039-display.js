@@ -19,6 +19,9 @@ var destMedia = null;
 var destAlbum = null;
 var scrollbarWidth;
 var contextMenu = false;
+var initialSizes = {};
+initialSizes[0] = 0;
+
 // var perhapsIsAProtectedMedia = false;
 var Options = {};
 var isMobile = {

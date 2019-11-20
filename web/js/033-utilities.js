@@ -548,6 +548,14 @@
 		return mediaSrc;
 	};
 
+	Utilities.prototype.sumSizes = function(sizes1, sizes2) {
+		var result = {};
+		var keys = Object.keys(sizes1);
+		for (var i = 0; i < keys.length; i++)
+			result[keys[i]] = sizes1[keys[i]] + sizes2[keys[i]]
+		return result;
+	};
+
 	Utilities.currentSizeAndIndex = function() {
 		// Returns the pixel size of the photo in DOM and the corresponding reduction index
 		// If the original photo is in the DOM, returns its size and -1
@@ -943,7 +951,7 @@
 							currentAlbum.media[iMedia].mimeType.indexOf("video") === 0 && what === "photos"
 						)
 							continue;
-						
+
 						let urlPromise = new Promise(
 							function(resolveUrlPromise) {
 								let url = encodeURI(Utilities.trueOriginalMediaPath(currentAlbum.media[iMedia]));

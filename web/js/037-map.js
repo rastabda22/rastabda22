@@ -325,8 +325,8 @@
 		album.media = [];
 		album.numMedia = 0;
 		album.numMediaInSubTree = 0;
-		album.sizeOfAlbum = 0;
-		album.sizeOfSubTree = 0;
+		album.sizesOfAlbum = initialSizes;
+		album.sizesOfSubTree = initialSizes;
 		album.subalbums = [];
 		album.positionsAndMediaInTree = [];
 		album.numPositionsInTree = 0;
@@ -383,8 +383,8 @@
 									for (photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
 										if (theAlbum.media[mediaIndex].cacheBase == photosInAlbum[photoIndex].element.cacheBase) {
 											mapAlbum.media.push(theAlbum.media[mediaIndex]);
-											mapAlbum.sizeOfAlbum += theAlbum.media[mediaIndex].fileSize;
-											mapAlbum.sizeOfSubTree += theAlbum.media[mediaIndex].fileSize;
+											mapAlbum.sizesOfAlbum = util.sumSizes(mapAlbum.sizesOfAlbum, theAlbum.media[mediaIndex].fileSizes);
+											mapAlbum.sizesOfSubTree = util.sumSizes(mapAlbum.sizesOfSubTree, theAlbum.media[mediaIndex].fileSizes);
 										}
 									}
 								}
