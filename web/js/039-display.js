@@ -241,10 +241,8 @@ $(document).ready(function() {
 							return false;
 						}
 					} else if (e.key.toLowerCase() === "d" && ! isMap) {
-						if (currentMedia !== null && e.key === "d")
+						if (currentMedia !== null)
 							$("#center .download-link")[0].click();
-						else if (currentAlbum.media.length && e.key === "D")
-							$(".download-album.media-only")[0].click();
 						return false;
 					} else if (e.key.toLowerCase() === "f" && currentMedia !== null && ! isMap) {
 						tF.goFullscreen(e);

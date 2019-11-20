@@ -1,4 +1,4 @@
-* give the user the chance to download the album, either with or without its subalbums (shortcut _D_ added)
+* give the user the chance to download the album, either with or without its subalbums, possibly images only or videos only
 * added 3-9 enlargments by shortcut
 
 
