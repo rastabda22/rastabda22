@@ -805,6 +805,9 @@ ul#right-menu .expandable ul {
 
 .download-album.red {
 	color: red;
+}
+
+.download-album.red:not(.active) {
 	font-weight: bold;
 }
 

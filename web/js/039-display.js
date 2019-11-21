@@ -488,15 +488,23 @@ $(document).ready(function() {
 	$("li#accent-sensitive").on('click', f.toggleAccentSensitiveSearch);
 	$("li#album-search").on('click', f.toggleCurrentAbumSearch);
 
-	$(".download-album.media-only.all").on(
+	$(".download-album.media-only.all.full").on(
 		'click',
 		function() {
 			if ($(".download-album.media-only.all").hasClass("active")) {
-				Utilities.downloadAlbum(false);
+				Utilities.downloadAlbum(false, "all");
 			}
 		}
 	);
-	$(".download-album.media-only.images").on(
+	$(".download-album.media-only.all.sized").on(
+		'click',
+		function() {
+			if ($(".download-album.media-only.all.sized").hasClass("active")) {
+				Utilities.downloadAlbum(false, "all", $(".download-album.media-only.all.sized").attr("size"));
+			}
+		}
+	);
+	$(".download-album.media-only.images.full").on(
 		'click',
 		function() {
 			if ($(".download-album.media-only.images").hasClass("active")) {
@@ -504,7 +512,15 @@ $(document).ready(function() {
 			}
 		}
 	);
-	$(".download-album.media-only.videos").on(
+	$(".download-album.media-only.images.sized").on(
+		'click',
+		function() {
+			if ($(".download-album.media-only.images.sized").hasClass("active")) {
+				Utilities.downloadAlbum(false, "photos", $(".download-album.media-only.images.sized").attr("size"));
+			}
+		}
+	);
+	$(".download-album.media-only.videos.full").on(
 		'click',
 		function() {
 			if ($(".download-album.media-only.videos").hasClass("active")) {
@@ -512,11 +528,27 @@ $(document).ready(function() {
 			}
 		}
 	);
-	$(".download-album.everything").on(
+	$(".download-album.media-only.videos.sized").on(
+		'click',
+		function() {
+			if ($(".download-album.media-only.videos.sized").hasClass("active")) {
+				Utilities.downloadAlbum(false, "videos", $(".download-album.media-only.videos.sized").attr("size"));
+			}
+		}
+	);
+	$(".download-album.everything.full").on(
 		'click',
 		function() {
 			if ($(".download-album.everything").hasClass("active")) {
 				Utilities.downloadAlbum(true);
+			}
+		}
+	);
+	$(".download-album.everything.sized").on(
+		'click',
+		function() {
+			if ($(".download-album.everything.sized").hasClass("active")) {
+				Utilities.downloadAlbum(true, "all", $(".download-album.everything.sized").attr("size"));
 			}
 		}
 	);

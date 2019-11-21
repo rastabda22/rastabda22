@@ -896,7 +896,7 @@
 		);
 	};
 
-	Utilities.downloadAlbum = function(everything = false, what = "all") {
+	Utilities.downloadAlbum = function(everything = false, what = "all", size = 0) {
 		// adapted from https://gist.github.com/c4software/981661f1f826ad34c2a5dc11070add0f
 		//
 		// this function must be converted to streams, example at https://jimmywarting.github.io/StreamSaver.js/examples/saving-multiple-files.html
@@ -904,6 +904,7 @@
 		// what is one of "all", "photos" or "videos"
 
 		$("#download-preparing").show();
+		var size = parseInt(size);
 
 		var zip = new JSZip();
 		var zipFilename;
@@ -954,7 +955,11 @@
 
 						let urlPromise = new Promise(
 							function(resolveUrlPromise) {
-								let url = encodeURI(Utilities.trueOriginalMediaPath(currentAlbum.media[iMedia]));
+								let url;
+								if (size === 0)
+									url = encodeURI(Utilities.trueOriginalMediaPath(currentAlbum.media[iMedia]));
+								else
+									url = encodeURI(Utilities.mediaPath(currentAlbum, currentAlbum.media[iMedia], size));
 								let name = currentAlbum.media[iMedia].name;
 								// load a file and add it to the zip file
 								JSZipUtils.getBinaryContent(
