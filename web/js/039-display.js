@@ -491,7 +491,7 @@ $(document).ready(function() {
 	$(".download-album.media-only.all").on(
 		'click',
 		function() {
-			if ($(".download-album.media-only.all").hasClass("clickable")) {
+			if ($(".download-album.media-only.all").hasClass("active")) {
 				Utilities.downloadAlbum(false);
 			}
 		}
@@ -499,7 +499,7 @@ $(document).ready(function() {
 	$(".download-album.media-only.images").on(
 		'click',
 		function() {
-			if ($(".download-album.media-only.images").hasClass("clickable")) {
+			if ($(".download-album.media-only.images").hasClass("active")) {
 				Utilities.downloadAlbum(false, "photos");
 			}
 		}
@@ -507,7 +507,7 @@ $(document).ready(function() {
 	$(".download-album.media-only.videos").on(
 		'click',
 		function() {
-			if ($(".download-album.media-only.videos").hasClass("clickable")) {
+			if ($(".download-album.media-only.videos").hasClass("active")) {
 				Utilities.downloadAlbum(false, "videos");
 			}
 		}
@@ -515,7 +515,7 @@ $(document).ready(function() {
 	$(".download-album.everything").on(
 		'click',
 		function() {
-			if ($(".download-album.everything").hasClass("clickable")) {
+			if ($(".download-album.everything").hasClass("active")) {
 				Utilities.downloadAlbum(true);
 			}
 		}

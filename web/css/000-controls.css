@@ -799,10 +799,17 @@ ul#right-menu .expandable ul {
 	display: none;
 }
 
-.download-album.media-only:not(.clickable), .download-album.everything:not(.clickable) {
+.download-album.active {
+	cursor: pointer;
+}
+
+.download-album.red {
 	color: red;
-	cursor: auto !important;
 	font-weight: bold;
+}
+
+.download-album.red:not(.active) {
+	cursor: auto !important;
 }
 /* end right menu */
 

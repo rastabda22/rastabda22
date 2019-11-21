@@ -458,15 +458,15 @@
 			}
 		}
 
-		const maximumZipSize = 500000000;
+		const maximumZipSize = 2000000000;
+		const bigZipSize = 500000000;
 
-		$(".download-album").addClass("hidden");
+		$(".download-album").addClass("hidden").removeClass("red").addClass("active");
 		if (thisAlbum !== null) {
 			$(".download-album").removeClass("hidden");
 
 			let showDownloadEverything = false;
 
-			$(".download-album.everything").addClass("hidden");
 			if (thisAlbum.subalbums.length && ! util.isByDateCacheBase(thisAlbum.cacheBase) && ! util.isByGpsCacheBase(thisAlbum.cacheBase)) {
 				$(".download-album.everything").removeClass("hidden");
 				// reset the html
@@ -481,18 +481,19 @@
 				}
 
 				$(".download-album.everything").append(" (" + numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[0]) + ")");
-				if (thisAlbum.sizesOfSubTree[0] < maximumZipSize) {
+				if (thisAlbum.sizesOfSubTree[0] < bigZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
 					// It may happen that the files are collected but nothing is saved
-					$(".download-album.everything").addClass("clickable").addClass("active").attr("title", "");
+					$(".download-album.everything").attr("title", "");
+				} else if (thisAlbum.sizesOfAlbum[0] < maximumZipSize) {
+					$(".download-album.everything").addClass("red").attr("title", util._t("#download-difficult"));
 				} else {
-					$(".download-album.everything").removeClass("clickable").removeClass("active").attr("title", util._t("#cant-download"));
+					$(".download-album.everything").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
 				}
 				showDownloadEverything = true;
 			}
 
-			$(".download-album.media-only.all").addClass("hidden");
 			if (thisAlbum.numMedia) {
 				$(".download-album.media-only.all").removeClass("hidden");
 				// reset the html
@@ -504,13 +505,15 @@
 				// add the download size
 				$(".download-album.media-only.all").append(" (" + thisAlbum.numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[0]) + ")");
 				// check the size and decide if they can be downloaded
-				if (thisAlbum.sizesOfAlbum[0] < maximumZipSize) {
+				if (thisAlbum.sizesOfAlbum[0] < bigZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
 					// It may happen that the files are collected but nothing is saved
-					$(".download-album.media-only.all").addClass("clickable").addClass("active").attr("title", "");
+					$(".download-album.media-only.all").attr("title", "");
+				} else if (thisAlbum.sizesOfAlbum[0] < maximumZipSize) {
+					$(".download-album.media-only.all").addClass("red").attr("title", util._t("#download-difficult"));
 				} else {
-					$(".download-album.media-only.all").removeClass("clickable").removeClass("active").attr("title", util._t("#cant-download"));
+					$(".download-album.media-only.all").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
 				}
 			}
 
@@ -528,7 +531,6 @@
 				}
 			}
 
-			$(".download-album.media-only.images").addClass("hidden");
 			if (numPhotos && numPhotos !== thisAlbum.numMedia) {
 				$(".download-album.media-only.images").removeClass("hidden");
 				// reset the html
@@ -540,17 +542,18 @@
 				// add the download size
 				$(".download-album.media-only.images").append(" (" + numPhotos + " " + util._t(".title-images") + ", " + Functions.humanFileSize(sizesPhotos[0]) + ")");
 				// check the size and decide if they can be downloaded
-				if (sizesPhotos[0] < maximumZipSize) {
+				if (sizesPhotos[0] < bigZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
 					// It may happen that the files are collected but nothing is saved
-					$(".download-album.media-only.images").addClass("clickable").addClass("active").attr("title", "");
+					$(".download-album.media-only.images").attr("title", "");
+				} else if (sizesPhotos[0] < maximumZipSize) {
+					$(".download-album.media-only.images").addClass("red").attr("title", util._t("#download-difficult"));
 				} else {
-					$(".download-album.media-only.images").removeClass("clickable").removeClass("active").attr("title", util._t("#cant-download"));
+					$(".download-album.media-only.images").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
 				}
 			}
 
-			$(".download-album.media-only.videos").addClass("hidden");
 			if (numVideos && numVideos !== thisAlbum.numMedia) {
 				$(".download-album.media-only.videos").removeClass("hidden");
 				// reset the html
@@ -562,13 +565,15 @@
 				// add the download size
 				$(".download-album.media-only.videos").append(" (" + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(sizesVideos[0]) + ")");
 				// check the size and decide if they can be downloaded
-				if (sizesVideos[0] < maximumZipSize) {
+				if (sizesVideos[0] < bigZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
 					// It may happen that the files are collected but nothing is saved
-					$(".download-album.media-only.videos").addClass("clickable").addClass("active").attr("title", "");
+					$(".download-album.media-only.videos").attr("title", "");
+				} else if (sizesVideos[0] < maximumZipSize) {
+					$(".download-album.media-only.videos").addClass("red").attr("title", util._t("#download-difficult"));
 				} else {
-					$(".download-album.media-only.videos").removeClass("clickable").removeClass("active").attr("title", util._t("#cant-download"));
+					$(".download-album.media-only.videos").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
 				}
 			}
 		}
