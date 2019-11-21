@@ -482,25 +482,27 @@
 					}
 				}
 
-				$(".download-album.everything.full").append(" (" + numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[0]) + ")");
-				if (thisAlbum.sizesOfSubTree[0] < bigZipSize) {
+				let treeSize = thisAlbum.sizesOfSubTree[0].images + thisAlbum.sizesOfSubTree[0].videos;
+				$(".download-album.everything.full").append(" (" + numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(treeSize) + ")");
+				if (treeSize < bigZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
 					// It may happen that the files are collected but nothing is saved
 					$(".download-album.everything.full").attr("title", "");
-				} else if (thisAlbum.sizesOfSubTree[0] < maximumZipSize) {
+				} else if (treeSize < maximumZipSize) {
 					$(".download-album.everything.full").addClass("red").attr("title", util._t("#download-difficult"));
 				} else {
 					$(".download-album.everything.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
 				}
 
-				if (thisAlbum.sizesOfSubTree[0] >= bigZipSize) {
+				if (treeSize >= bigZipSize) {
 					// propose to download the resized media
 					for (let i = 0; i < Options.reduced_sizes.length; i++) {
-						let reduced_size = Options.reduced_sizes[i];
-						if (thisAlbum.sizesOfSubTree[reduced_size] < bigZipSize) {
-							$(".download-album.everything.sized").append(", " + reduced_size + "px  (" + numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reduced_size]) + ")");
-							$(".download-album.everything.sized").attr("size", reduced_size);
+						let reducedSize = Options.reduced_sizes[i];
+						treeSize = thisAlbum.sizesOfSubTree[reducedSize].images + thisAlbum.sizesOfSubTree[reducedSize].videos;
+						if (treeSize < bigZipSize) {
+							$(".download-album.everything.sized").append(", " + reducedSize + "px  (" + numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(treeSize) + ")");
+							$(".download-album.everything.sized").attr("size", reducedSize);
 							$(".download-album.everything.sized").removeClass("hidden");
 							break;
 						}
@@ -518,26 +520,28 @@
 					$(".download-album.media-only.all").html(util._t(".download-album.simple.all"));
 
 				// add the download size
-				$(".download-album.media-only.all.full").append(" (" + thisAlbum.numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[0]) + ")");
+				let treeSize = thisAlbum.sizesOfAlbum[0].images + thisAlbum.sizesOfAlbum[0].videos;
+				$(".download-album.media-only.all.full").append(" (" + thisAlbum.numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(treeSize) + ")");
 				// check the size and decide if they can be downloaded
-				if (thisAlbum.sizesOfAlbum[0] < bigZipSize) {
+				if (treeSize < bigZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
 					// It may happen that the files are collected but nothing is saved
 					$(".download-album.media-only.all.full").attr("title", "");
-				} else if (thisAlbum.sizesOfAlbum[0] < maximumZipSize) {
+				} else if (treeSize < maximumZipSize) {
 					$(".download-album.media-only.all.full").addClass("red").attr("title", util._t("#download-difficult"));
 				} else {
 					$(".download-album.media-only.all.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
 				}
 
-				if (thisAlbum.sizesOfAlbum[0] >= bigZipSize) {
+				if (treeSize >= bigZipSize) {
 					// propose to download the resized media
 					for (let i = 0; i < Options.reduced_sizes.length; i++) {
-						let reduced_size = Options.reduced_sizes[i];
-						if (thisAlbum.sizesOfAlbum[reduced_size] < bigZipSize) {
-							$(".download-album.media-only.all.sized").append(", " + reduced_size + "px  (" + thisAlbum.numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reduced_size]) + ")");
-							$(".download-album.media-only.all.sized").attr("size", reduced_size);
+						let reducedSize = Options.reduced_sizes[i];
+						treeSize = thisAlbum.sizesOfAlbum[reducedSize].images + thisAlbum.sizesOfAlbum[reducedSize].videos;
+						if (treeSize < bigZipSize) {
+							$(".download-album.media-only.all.sized").append(", " + reducedSize + "px  (" + thisAlbum.numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(treeSize) + ")");
+							$(".download-album.media-only.all.sized").attr("size", reducedSize);
 							$(".download-album.media-only.all.sized").removeClass("hidden");
 							break;
 						}
@@ -546,13 +550,13 @@
 			}
 
 			let numPhotos = 0;
-			let sizesPhotos = initialSizes;
+			let sizesImages = initialSizes;
 			let numVideos = 0;
 			let sizesVideos = initialSizes;
 			for (let iMedia = 0; iMedia < thisAlbum.media.length; iMedia ++) {
 				if (thisAlbum.media[iMedia].mimeType.indexOf("image") === 0) {
 					numPhotos ++;
-					sizesPhotos = util.sumSizes(sizesPhotos, thisAlbum.media[iMedia].fileSizes);
+					sizesImages = util.sumSizes(sizesImages, thisAlbum.media[iMedia].fileSizes);
 				} else {
 					numVideos ++;
 					sizesVideos = util.sumSizes(sizesVideos, thisAlbum.media[iMedia].fileSizes);
@@ -568,26 +572,26 @@
 					$(".download-album.media-only.images").html(util._t(".download-album.simple.images"));
 
 				// add the download size
-				$(".download-album.media-only.images.full").append(" (" + numPhotos + ", " + Functions.humanFileSize(sizesPhotos[0]) + ")");
+				$(".download-album.media-only.images.full").append(" (" + numPhotos + ", " + Functions.humanFileSize(sizesImages[0].images) + ")");
 				// check the size and decide if they can be downloaded
-				if (sizesPhotos[0] < bigZipSize) {
+				if (sizesImages[0].images < bigZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
 					// It may happen that the files are collected but nothing is saved
 					$(".download-album.media-only.images.full").attr("title", "");
-				} else if (sizesPhotos[0] < maximumZipSize) {
+				} else if (sizesImages[0].images < maximumZipSize) {
 					$(".download-album.media-only.images.full").addClass("red").attr("title", util._t("#download-difficult"));
 				} else {
 					$(".download-album.media-only.images.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
 				}
 
-				if (sizesPhotos[0] >= bigZipSize) {
+				if (sizesImages[0].images >= bigZipSize) {
 					// propose to download the resized media
 					for (let i = 0; i < Options.reduced_sizes.length; i++) {
-						let reduced_size = Options.reduced_sizes[i];
-						if (sizesPhotos[reduced_size] < bigZipSize) {
-							$(".download-album.media-only.images.sized").append(", " + reduced_size + "px  (" + numPhotos + ", " + Functions.humanFileSize(sizesPhotos[reduced_size]) + ")");
-							$(".download-album.media-only.images.sized").attr("size", reduced_size);
+						let reducedSize = Options.reduced_sizes[i];
+						if (sizesImages[reducedSize].images < bigZipSize) {
+							$(".download-album.media-only.images.sized").append(", " + reducedSize + "px  (" + numPhotos + ", " + Functions.humanFileSize(sizesImages[reducedSize].images) + ")");
+							$(".download-album.media-only.images.sized").attr("size", reducedSize);
 							$(".download-album.media-only.images.sized").removeClass("hidden");
 							break;
 						}
@@ -604,26 +608,26 @@
 					$(".download-album.media-only.videos").html(util._t(".download-album.simple.videos"));
 
 				// add the download size
-				$(".download-album.media-only.videos.full").append(" (" + numVideos + ", " + Functions.humanFileSize(sizesVideos[0]) + ")");
+				$(".download-album.media-only.videos.full").append(" (" + numVideos + ", " + Functions.humanFileSize(sizesVideos[0].videos) + ")");
 				// check the size and decide if they can be downloaded
-				if (sizesVideos[0] < bigZipSize) {
+				if (sizesVideos[0].videos < bigZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
 					// It may happen that the files are collected but nothing is saved
 					$(".download-album.media-only.videos.full").attr("title", "");
-				} else if (sizesVideos[0] < maximumZipSize) {
+				} else if (sizesVideos[0].videos < maximumZipSize) {
 					$(".download-album.media-only.videos.full").addClass("red").attr("title", util._t("#download-difficult"));
 				} else {
 					$(".download-album.media-only.videos.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
 				}
 
-				if (sizesVideos[0] >= bigZipSize) {
+				if (sizesVideos[0].videos >= bigZipSize) {
 					// propose to download the resized media
 					for (let i = 0; i < Options.reduced_sizes.length; i++) {
-						let reduced_size = Options.reduced_sizes[i];
-						if (sizesVideos[reduced_size] < bigZipSize) {
-							$(".download-album.media-only.videos.sized").append(", " + reduced_size + "px  (" + numVideos + ", " + Functions.humanFileSize(sizesVideos[reduced_size]) + ")");
-							$(".download-album.media-only.videos.sized").attr("size", reduced_size);
+						let reducedSize = Options.reduced_sizes[i];
+						if (sizesVideos[reducedSize].videos < bigZipSize) {
+							$(".download-album.media-only.videos.sized").append(", " + reducedSize + "px  (" + numVideos + ", " + Functions.humanFileSize(sizesVideos[reducedSize].videos) + ")");
+							$(".download-album.media-only.videos.sized").attr("size", reducedSize);
 							$(".download-album.media-only.videos.sized").removeClass("hidden");
 							break;
 						}
@@ -1040,7 +1044,7 @@
 						PhotoFloat.initializeMapRootAlbum();
 
 						for (let i = 0; i < Options.reduced_sizes.length; i++) {
-							initialSizes[Options.reduced_sizes[i]] = 0;
+							initialSizes[Options.reduced_sizes[i]] = {"images": 0, "videos": 0};
 						}
 
 

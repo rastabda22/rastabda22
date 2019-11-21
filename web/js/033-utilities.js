@@ -552,7 +552,10 @@
 		var result = {};
 		var keys = Object.keys(sizes1);
 		for (var i = 0; i < keys.length; i++)
-			result[keys[i]] = sizes1[keys[i]] + sizes2[keys[i]]
+			result[keys[i]] = {
+				"images": sizes1[keys[i]].images + sizes2[keys[i]].images,
+				"videos": sizes1[keys[i]].videos + sizes2[keys[i]].videos
+			};
 		return result;
 	};
 

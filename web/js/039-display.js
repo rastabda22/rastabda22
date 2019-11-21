@@ -20,7 +20,7 @@ var destAlbum = null;
 var scrollbarWidth;
 var contextMenu = false;
 var initialSizes = {};
-initialSizes[0] = 0;
+initialSizes[0] = {"images": 0, "videos": 0};
 
 // var perhapsIsAProtectedMedia = false;
 var Options = {};

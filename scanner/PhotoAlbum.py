@@ -952,19 +952,33 @@ class NumsProtected(object):
 class Sizes(object):
 	def __init__(self):
 		self.sizes = {}
-		self.sizes[0] = 0
+		self.sizes[0] = {"images": 0, "videos": 0}
 		for thumb_size in Options.config['reduced_sizes']:
-			self.sizes[thumb_size] = 0
+			self.sizes[thumb_size] = {"images": 0, "videos": 0}
 
 	def sum(self, other):
 		if other is not None:
-			self.sizes = {k: self.sizes.get(k, 0) + other.sizes.get(k, 0) for k in set(self.sizes)}
+			self.sizes = {k: {"images": self.sizes.get(k)["images"] + other.sizes.get(k)["images"], "videos": self.sizes.get(k)["videos"] + other.sizes.get(k)["videos"]} for k in set(self.sizes)}
 
 	def copy(self):
 		return copy.deepcopy(self)
 
-	def set(self, key, value):
-		self.sizes[key] = value
+	def setImage(self, key, value):
+		self.sizes[key] = {"images": value, "videos": 0}
+
+	def setVideo(self, key, value):
+		self.sizes[key] = {"images": 0, "videos": value}
+
+	def getImagesSize(self, key):
+		return self.sizes[key]["images"]
+
+	def getVideosSize(self, key):
+		return self.sizes[key]["videos"]
+
+	def from_dict(self, dict):
+		for key in dict:
+			key_int = int(key)
+			self.sizes[key_int] = dict[key]
 
 	def to_dict(self):
 		return self.sizes
@@ -1005,10 +1019,10 @@ class Media(object):
 		self.password_identifiers_set = set()
 		self.album_identifiers_set = set()
 		if dictionary is not None:
-			# media generation from file
+			# media generation from json cache
 			self.generate_media_from_cache(album, media_path, dictionary)
 		else:
-			 # media generation from json cache
+			 # media generation from file
 			 self.generate_media_from_file(album, media_path, thumbs_path, json_files, json_files_min_mtime)
 
 
@@ -1033,6 +1047,9 @@ class Media(object):
 		self.is_valid = True
 
 		self._attributes = dictionary
+		file_sizes_dict = self._attributes["fileSizes"]
+		self._attributes["fileSizes"] = Sizes()
+		self._attributes["fileSizes"].from_dict(file_sizes_dict)
 
 
 	def generate_media_from_file(self, album, media_path, thumbs_path, json_files, json_files_min_mtime):
@@ -1052,8 +1069,6 @@ class Media(object):
 			message("reading file time and size, and dir time...", "", 5)
 			mtime = file_mtime(media_path)
 			# file_size = os.path.getsize(media_path)
-			file_sizes = Sizes()
-			file_sizes.set(0, os.path.getsize(media_path))
 			dir_mtime = file_mtime(dirname)
 			indented_message("file and dir times read!", "", 5)
 		except KeyboardInterrupt:
@@ -1067,10 +1082,7 @@ class Media(object):
 		self._attributes = {}
 		self._attributes["metadata"] = {}
 		self._attributes["dateTimeFile"] = mtime
-		# self._attributes["fileSize"] = file_size
-		self._attributes["fileSizes"] = file_sizes
 		self._attributes["dateTimeDir"] = dir_mtime
-		# self._attributes["mediaType"] = "photo"
 
 		self.mime_type = magic.from_file(media_path, mime = True)
 
@@ -1102,6 +1114,8 @@ class Media(object):
 				self.is_valid = False
 			else:
 				indented_message("media opened with PIL!", "", 5)
+				self._attributes["fileSizes"] = Sizes()
+				self._attributes["fileSizes"].setImage(0, os.path.getsize(media_path))
 
 			if isinstance(image, Image.Image):
 				if Options.config['copy_exif_into_reductions']:
@@ -1116,6 +1130,7 @@ class Media(object):
 					message("looking for geonames...", "", 5)
 					self.get_geonames()
 			back_level()
+
 			media_path_pointer.close()
 		elif self.mime_type.find("video/") == 0:
 			# try with video detection
@@ -1123,9 +1138,11 @@ class Media(object):
 			if self.is_video:
 				transcode_path = self._video_transcode(thumbs_path, media_path)
 				if self.is_valid:
+					self._attributes["fileSizes"] = Sizes()
+					self._attributes["fileSizes"].setVideo(0, os.path.getsize(media_path))
 					# let set all the reduction sizes to the same value
 					for thumb_size in Options.config['reduced_sizes']:
-						self.file_sizes.set(thumb_size, os.path.getsize(transcode_path))
+						self.file_sizes.setVideo(thumb_size, os.path.getsize(transcode_path))
 					self._video_thumbnails(thumbs_path, media_path, json_files, json_files_min_mtime)
 
 					if self.has_gps_data:
@@ -1609,7 +1626,7 @@ class Media(object):
 		message("checking reduced sizes", "", 5)
 		for thumb_size in Options.config['reduced_sizes']:
 			[reduced_size_image, thumb_path] = self.reduce_size_or_make_thumbnail(reduced_size_image, photo_path, thumbs_path, thumb_size, json_files, json_files_min_mtime)
-			self.file_sizes.set(thumb_size, os.path.getsize(thumb_path))
+			self.file_sizes.setImage(thumb_size, os.path.getsize(thumb_path))
 			reduced_size_images = [reduced_size_image] + reduced_size_images
 		indented_message("reduced sizes checked!", "", 5)
 

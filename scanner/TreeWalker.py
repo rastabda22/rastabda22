@@ -1447,8 +1447,8 @@ class TreeWalker:
 				message("reading file time and size...", "", 5)
 				mtime = file_mtime(entry_with_path)
 				file_size = os.path.getsize(entry_with_path)
-				file_sizes = Sizes()
-				file_sizes.set(0, file_size)
+				# file_sizes = Sizes()
+				# file_sizes.set(0, file_size)
 				indented_message("file time and size read!", "", 5)
 				message("reading dir time...", "", 5)
 				dir_mtime = file_mtime(dirname)
@@ -1488,7 +1488,12 @@ class TreeWalker:
 					indented_message("not a single media cache hit", "modification time different", 5)
 					single_media_cache_hit = False
 
-				if single_media_cache_hit and cached_media._attributes["fileSizes"].size(0) != file_size:
+				if (
+					single_media_cache_hit and (
+						cached_media.is_video and cached_media._attributes["fileSizes"].getVideosSize(0) != file_size or
+						not cached_media.is_video and cached_media._attributes["fileSizes"].getImagesSize(0) != file_size
+					)
+				):
 					indented_message("not a single media cache hit", "file size different", 5)
 					single_media_cache_hit = False
 
