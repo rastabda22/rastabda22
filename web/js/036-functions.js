@@ -486,7 +486,7 @@
 					// actually it can be less (Chrome on Android)
 					// It may happen that the files are collected but nothing is saved
 					$(".download-album.everything").attr("title", "");
-				} else if (thisAlbum.sizesOfAlbum[0] < maximumZipSize) {
+				} else if (thisAlbum.sizesOfSubTree[0] < maximumZipSize) {
 					$(".download-album.everything").addClass("red").attr("title", util._t("#download-difficult"));
 				} else {
 					$(".download-album.everything").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
