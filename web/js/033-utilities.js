@@ -929,10 +929,11 @@
 
 		var addMediaPromise = addMediaFromAlbum(currentAlbum);
 		addMediaPromise.then(
-			// the zip can be saved
+			// the complete zip can be generated...
 			function() {
 				zip.generateAsync({type:'blob'}).then(
 					function(content) {
+						// ... and saved
 						saveAs(content, zipFilename);
 						$("#download-preparing").hide();
 					}

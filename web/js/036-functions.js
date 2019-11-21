@@ -536,7 +536,7 @@
 					for (let i = 0; i < Options.reduced_sizes.length; i++) {
 						let reduced_size = Options.reduced_sizes[i];
 						if (thisAlbum.sizesOfAlbum[reduced_size] < bigZipSize) {
-							$(".download-album.everything.sized").append(", " + reduced_size + "px  (" + numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reduced_size]) + ")");
+							$(".download-album.everything.sized").append(", " + reduced_size + "px  (" + thisAlbum.numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reduced_size]) + ")");
 							$(".download-album.everything.sized").attr("size", reduced_size);
 							$(".download-album.everything.sized").removeClass("hidden");
 							break;
@@ -586,7 +586,7 @@
 					for (let i = 0; i < Options.reduced_sizes.length; i++) {
 						let reduced_size = Options.reduced_sizes[i];
 						if (sizesPhotos[reduced_size] < bigZipSize) {
-							$(".download-album.everything.sized").append(", " + reduced_size + "px  (" + numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(sizesPhotos[reduced_size]) + ")");
+							$(".download-album.everything.sized").append(", " + reduced_size + "px  (" + numPhotos + ", " + Functions.humanFileSize(sizesPhotos[reduced_size]) + ")");
 							$(".download-album.everything.sized").attr("size", reduced_size);
 							$(".download-album.everything.sized").removeClass("hidden");
 							break;
@@ -622,7 +622,7 @@
 					for (let i = 0; i < Options.reduced_sizes.length; i++) {
 						let reduced_size = Options.reduced_sizes[i];
 						if (sizesVideos[reduced_size] < bigZipSize) {
-							$(".download-album.everything.sized").append(", " + reduced_size + "px  (" + numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(sizesVideos[reduced_size]) + ")");
+							$(".download-album.everything.sized").append(", " + reduced_size + "px  (" + numVideos + ", " + Functions.humanFileSize(sizesVideos[reduced_size]) + ")");
 							$(".download-album.everything.sized").attr("size", reduced_size);
 							$(".download-album.everything.sized").removeClass("hidden");
 							break;
