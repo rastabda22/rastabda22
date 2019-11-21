@@ -513,9 +513,9 @@
 				$(".download-album.media-only.all.full").removeClass("hidden");
 				// reset the html
 				if (showDownloadEverything)
-					$(".download-album.media-only.all.full").html(util._t(".download-album.media-only.all"));
+					$(".download-album.media-only.all").html(util._t(".download-album.media-only.all"));
 				else
-					$(".download-album.media-only.all.full").html(util._t(".download-album.simple.all"));
+					$(".download-album.media-only.all").html(util._t(".download-album.simple.all"));
 
 				// add the download size
 				$(".download-album.media-only.all.full").append(" (" + thisAlbum.numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[0]) + ")");
@@ -536,9 +536,9 @@
 					for (let i = 0; i < Options.reduced_sizes.length; i++) {
 						let reduced_size = Options.reduced_sizes[i];
 						if (thisAlbum.sizesOfAlbum[reduced_size] < bigZipSize) {
-							$(".download-album.everything.sized").append(", " + reduced_size + "px  (" + numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reduced_size]) + ")");
-							$(".download-album.everything.sized").attr("size", reduced_size);
-							$(".download-album.everything.sized").removeClass("hidden");
+							$(".download-album.media-only.all.sized").append(", " + reduced_size + "px  (" + thisAlbum.numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reduced_size]) + ")");
+							$(".download-album.media-only.all.sized").attr("size", reduced_size);
+							$(".download-album.media-only.all.sized").removeClass("hidden");
 							break;
 						}
 					}
@@ -563,9 +563,9 @@
 				$(".download-album.media-only.images.full").removeClass("hidden");
 				// reset the html
 				if (showDownloadEverything)
-					$(".download-album.media-only.images.full").html(util._t(".download-album.media-only.images"));
+					$(".download-album.media-only.images").html(util._t(".download-album.media-only.images"));
 				else
-					$(".download-album.media-only.images.full").html(util._t(".download-album.simple.images"));
+					$(".download-album.media-only.images").html(util._t(".download-album.simple.images"));
 
 				// add the download size
 				$(".download-album.media-only.images.full").append(" (" + numPhotos + ", " + Functions.humanFileSize(sizesPhotos[0]) + ")");
@@ -586,9 +586,9 @@
 					for (let i = 0; i < Options.reduced_sizes.length; i++) {
 						let reduced_size = Options.reduced_sizes[i];
 						if (sizesPhotos[reduced_size] < bigZipSize) {
-							$(".download-album.everything.sized").append(", " + reduced_size + "px  (" + numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(sizesPhotos[reduced_size]) + ")");
-							$(".download-album.everything.sized").attr("size", reduced_size);
-							$(".download-album.everything.sized").removeClass("hidden");
+							$(".download-album.media-only.images.sized").append(", " + reduced_size + "px  (" + numPhotos + ", " + Functions.humanFileSize(sizesPhotos[reduced_size]) + ")");
+							$(".download-album.media-only.images.sized").attr("size", reduced_size);
+							$(".download-album.media-only.images.sized").removeClass("hidden");
 							break;
 						}
 					}
@@ -599,9 +599,9 @@
 				$(".download-album.media-only.videos.full").removeClass("hidden");
 				// reset the html
 				if (showDownloadEverything)
-					$(".download-album.media-only.videos.full").html(util._t(".download-album.media-only.videos"));
+					$(".download-album.media-only.videos").html(util._t(".download-album.media-only.videos"));
 				else
-					$(".download-album.media-only.videos.full").html(util._t(".download-album.simple.videos"));
+					$(".download-album.media-only.videos").html(util._t(".download-album.simple.videos"));
 
 				// add the download size
 				$(".download-album.media-only.videos.full").append(" (" + numVideos + ", " + Functions.humanFileSize(sizesVideos[0]) + ")");
@@ -622,9 +622,9 @@
 					for (let i = 0; i < Options.reduced_sizes.length; i++) {
 						let reduced_size = Options.reduced_sizes[i];
 						if (sizesVideos[reduced_size] < bigZipSize) {
-							$(".download-album.everything.sized").append(", " + reduced_size + "px  (" + numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(sizesVideos[reduced_size]) + ")");
-							$(".download-album.everything.sized").attr("size", reduced_size);
-							$(".download-album.everything.sized").removeClass("hidden");
+							$(".download-album.media-only.videos.sized").append(", " + reduced_size + "px  (" + numVideos + ", " + Functions.humanFileSize(sizesVideos[reduced_size]) + ")");
+							$(".download-album.media-only.videos.sized").attr("size", reduced_size);
+							$(".download-album.media-only.videos.sized").removeClass("hidden");
 							break;
 						}
 					}
