@@ -510,24 +510,24 @@
 				}
 				showDownloadEverything = true;
 
-				let numPhotos = 0;
+				let numImages = 0;
 				let numVideos = 0;
 				for (let iMedia = 0; iMedia < thisAlbum.media.length; iMedia ++) {
 					if (thisAlbum.media[iMedia].mimeType.indexOf("image") === 0) {
-						numPhotos ++;
+						numImages ++;
 					} else {
 						numVideos ++;
 					}
 				}
 
-				if (numPhotos && numPhotos !== thisAlbum.numMedia) {
+				if (numImages && numImages !== thisAlbum.numMedia) {
 					$(".download-album.everything.images.full").removeClass("hidden");
 					// reset the html
 					$(".download-album.everything.images").html(util._t(".download-album.everything.images"));
 
 					// add the download size
 					let imagesSize = thisAlbum.sizesOfSubTree[0].images;
-					$(".download-album.everything.images.full").append(" (" + numPhotos + ", " + Functions.humanFileSize(imagesSize) + ")");
+					$(".download-album.everything.images.full").append(" (" + numImages + ", " + Functions.humanFileSize(imagesSize) + ")");
 					// check the size and decide if they can be downloaded
 					if (imagesSize < bigZipSize) {
 						// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
@@ -545,7 +545,7 @@
 						for (let i = 0; i < Options.reduced_sizes.length; i++) {
 							let reducedSize = Options.reduced_sizes[i];
 							if (thisAlbum.sizesOfSubTree[reducedSize].images < bigZipSize) {
-								$(".download-album.everything.images.sized").append(", " + reducedSize + "px  (" + numPhotos + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].images) + ")");
+								$(".download-album.everything.images.sized").append(", " + reducedSize + "px  (" + numImages + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].images) + ")");
 								$(".download-album.everything.images.sized").attr("size", reducedSize);
 								$(".download-album.everything.images.sized").removeClass("hidden");
 								break;
@@ -627,17 +627,17 @@
 				}
 			}
 
-			let numPhotos = 0;
+			let numImages = 0;
 			let numVideos = 0;
 			for (let iMedia = 0; iMedia < thisAlbum.media.length; iMedia ++) {
 				if (thisAlbum.media[iMedia].mimeType.indexOf("image") === 0) {
-					numPhotos ++;
+					numImages ++;
 				} else {
 					numVideos ++;
 				}
 			}
 
-			if (numPhotos && numPhotos !== thisAlbum.numMedia) {
+			if (numImages && numImages !== thisAlbum.numMedia) {
 				$(".download-album.media-only.images.full").removeClass("hidden");
 				// reset the html
 				if (showDownloadEverything)
@@ -647,7 +647,7 @@
 
 				// add the download size
 				let imagesSize = thisAlbum.sizesOfAlbum[0].images;
-				$(".download-album.media-only.images.full").append(" (" + numPhotos + ", " + Functions.humanFileSize(imagesSize) + ")");
+				$(".download-album.media-only.images.full").append(" (" + numImages + ", " + Functions.humanFileSize(imagesSize) + ")");
 				// check the size and decide if they can be downloaded
 				if (imagesSize < bigZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
@@ -665,7 +665,7 @@
 					for (let i = 0; i < Options.reduced_sizes.length; i++) {
 						let reducedSize = Options.reduced_sizes[i];
 						if (thisAlbum.sizesOfAlbum[reducedSize].images < bigZipSize) {
-							$(".download-album.media-only.images.sized").append(", " + reducedSize + "px  (" + numPhotos + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reducedSize].images) + ")");
+							$(".download-album.media-only.images.sized").append(", " + reducedSize + "px  (" + numImages + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reducedSize].images) + ")");
 							$(".download-album.media-only.images.sized").attr("size", reducedSize);
 							$(".download-album.media-only.images.sized").removeClass("hidden");
 							break;
