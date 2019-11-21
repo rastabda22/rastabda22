@@ -123,8 +123,8 @@
 			[a, b] = [b, a];
 		}
 
-		intersection = [];
-		for (i = 0; i < b.length; i ++) {
+		let intersection = [];
+		for (let i = 0; i < b.length; i ++) {
 			if (a.indexOf(b[i]) !== -1)
 				intersection.push(b[i]);
 		}
@@ -904,9 +904,9 @@
 		//
 		// this function must be converted to streams, example at https://jimmywarting.github.io/StreamSaver.js/examples/saving-multiple-files.html
 		//
-		// what is one of "all", "photos" or "videos"
+		// what is one of "all", "images" or "videos"
 
-		$("#download-preparing").show();
+		$("#downloading-media").show();
 		var size = parseInt(size);
 
 		var zip = new JSZip();
@@ -925,7 +925,7 @@
 			zipFilename += currentAlbum.ancestorsNames.splice(1).join('-');
 		} else if (Utilities.isMapCacheBase(currentAlbum.cacheBase)) {
 			zipFilename += Utilities._t("#from-map");
-		} else
+		} else if (currentAlbum.cacheBase !== Options.folders_string)
 			zipFilename += currentAlbum.name;
 
 		zipFilename += ".zip";
@@ -934,11 +934,13 @@
 		addMediaPromise.then(
 			// the complete zip can be generated...
 			function() {
+				$("#downloading-media").hide();
+				$("#preparing-zip").show();
 				zip.generateAsync({type:'blob'}).then(
 					function(content) {
 						// ... and saved
 						saveAs(content, zipFilename);
-						$("#download-preparing").hide();
+						$("#preparing-zip").hide();
 					}
 				);
 			}
@@ -953,7 +955,7 @@
 					for (let iMedia = 0; iMedia < currentAlbum.media.length; iMedia ++) {
 						if (
 							currentAlbum.media[iMedia].mimeType.indexOf("image") === 0 && what === "videos" ||
-							currentAlbum.media[iMedia].mimeType.indexOf("video") === 0 && what === "photos"
+							currentAlbum.media[iMedia].mimeType.indexOf("video") === 0 && what === "images"
 						)
 							continue;
 
@@ -972,7 +974,10 @@
 										if (err) {
 											throw err; // or handle the error
 										}
-										zip.file(subalbum + "/" + name, data, {binary:true});
+										let fileName = name;
+										if (subalbum)
+											fileName = subalbum + "/" + fileName;
+										zip.file(fileName, data, {binary:true});
 										resolveUrlPromise();
 									}
 								);

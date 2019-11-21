@@ -72,7 +72,7 @@ a.title-anchor.mobile {
 	color: orange !important;
 }
 
-#loading, #folders-browsing, #by-date-browsing, #by-gps-browsing, #by-search-browsing, #download-preparing {
+#loading, #folders-browsing, #by-date-browsing, #by-gps-browsing, #by-search-browsing, #downloading-media, #preparing-zip {
 	display: none;
 }
 
@@ -464,7 +464,7 @@ video {
 	color: #FFAD27;
 	margin-top: 20px;
 }
-.error, .browsing-mode-message, .sort-message, #error-overlay, #auth-text, .search-failed, #loading, #download-preparing {
+.error, .browsing-mode-message, .sort-message, #error-overlay, #auth-text, .search-failed, #loading, #downloading-media, #preparing-zip {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -472,18 +472,18 @@ video {
 	height: 100%;
 	display: none;
 }
-.error, .browsing-mode-message, .sort-message, #auth-text, .search-failed, #loading, #download-preparing {
+.error, .browsing-mode-message, .sort-message, #auth-text, .search-failed, #loading, #downloading-media, #preparing-zip {
 	margin-top: 20%;
 	text-align: center;
 }
 
-.error, .browsing-mode-message, .sort-message, .search-failed, #loading, #download-preparing {
+.error, .browsing-mode-message, .sort-message, .search-failed, #loading, #downloading-media, #preparing-zip {
 	font-size: 4em;
 	font-weight: bold;
 	font-style: italic;
 }
 
-.browsing-mode-message, .sort-message, #loading, #download-preparing {
+.browsing-mode-message, .sort-message, #loading, #downloading-media, #preparing-zip {
 	background-color: black;
 	z-index: 1000;
 	height: auto;

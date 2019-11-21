@@ -343,7 +343,7 @@
 	MapFunctions.addMediaFromPositionsToMapAlbum = function(positionsAndCounts, mapAlbum, resolve_imageLoad) {
 
 		var mediaNameListElement, indexPositions, indexPhoto, markerClass, photoIndex, mediaIndex;
-		var albumsToGet = 0, albumsGot = 0, photosByAlbum = {}, positionsAndCountsElement;
+		var photosByAlbum = {}, positionsAndCountsElement;
 
 		// in order to add the html code for the images to a string,
 		// we group the photos by album: this way we rationalize the process of getting them
@@ -354,7 +354,6 @@
 				mediaNameListElement = positionsAndCountsElement.mediaNameList[indexPhoto];
 				if (! photosByAlbum.hasOwnProperty(mediaNameListElement.albumCacheBase)) {
 					photosByAlbum[mediaNameListElement.albumCacheBase] = [];
-					albumsToGet ++;
 				}
 				photosByAlbum[mediaNameListElement.albumCacheBase].push(
 					{
