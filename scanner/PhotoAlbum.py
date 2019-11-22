@@ -949,39 +949,71 @@ class NumsProtected(object):
 	def copy(self):
 		return copy.deepcopy(self)
 
-class Sizes(object):
+class ImageAndVideo(object):
 	def __init__(self):
-		self.sizes = {}
-		self.sizes[0] = {"images": 0, "videos": 0}
-		for thumb_size in Options.config['reduced_sizes']:
-			self.sizes[thumb_size] = {"images": 0, "videos": 0}
+		self.sizes = {"images": 0, "videos": 0}
 
 	def sum(self, other):
 		if other is not None:
-			self.sizes = {k: {"images": self.sizes.get(k)["images"] + other.sizes.get(k)["images"], "videos": self.sizes.get(k)["videos"] + other.sizes.get(k)["videos"]} for k in set(self.sizes)}
+			self.sizes = {"images": self.sizes["images"] + other.sizes["images"], "videos": self.sizes["videos"] + other.sizes["videos"]}
+
+	def copy(self):
+		return copy.deepcopy(self)
+
+	def setImage(self, value):
+		self.sizes = {"images": value, "videos": 0}
+
+	def setVideo(self, value):
+		self.sizes = {"images": 0, "videos": value}
+
+	def getImagesSize(self):
+		return self.sizes["images"]
+
+	def getVideosSize(self):
+		return self.sizes["videos"]
+
+	def from_dict(self, dict):
+		self.sizes = dict
+
+	def to_dict(self):
+		return self.sizes
+
+
+class Sizes(object):
+	def __init__(self):
+		self.sizes = {}
+		self.sizes[0] = ImageAndVideo()
+		for thumb_size in Options.config['reduced_sizes']:
+			self.sizes[thumb_size] = ImageAndVideo()
+
+	def sum(self, other):
+		if other is not None:
+			for k in set(self.sizes):
+				self.sizes[k].sum(other.sizes[k])
+			# self.sizes = {k: self.sizes[k].sum(other.sizes[k]) for k in set(self.sizes)}
 
 	def copy(self):
 		return copy.deepcopy(self)
 
 	def setImage(self, key, value):
-		self.sizes[key] = {"images": value, "videos": 0}
+		self.sizes[key].setImage(value)
 
 	def setVideo(self, key, value):
-		self.sizes[key] = {"images": 0, "videos": value}
+		self.sizes[key].setVideo(value)
 
 	def getImagesSize(self, key):
-		return self.sizes[key]["images"]
+		return self.sizes[key].getImagesSize()
 
 	def getVideosSize(self, key):
-		return self.sizes[key]["videos"]
+		return self.sizes[key].getVideosSize()
 
 	def from_dict(self, dict):
 		for key in dict:
 			key_int = int(key)
-			self.sizes[key_int] = dict[key]
+			self.sizes[key_int].from_dict(dict[key])
 
 	def to_dict(self):
-		return self.sizes
+		return {k: self.sizes[k].to_dict() for k in set(self.sizes)}
 
 
 class SizesProtected(object):
@@ -1140,9 +1172,9 @@ class Media(object):
 				if self.is_valid:
 					self._attributes["fileSizes"] = Sizes()
 					self._attributes["fileSizes"].setVideo(0, os.path.getsize(media_path))
-					# let set all the reduction sizes to the same value
+					# let us set all the reduction sizes to the value of the transcoded video
 					for thumb_size in Options.config['reduced_sizes']:
-						self.file_sizes.setVideo(thumb_size, os.path.getsize(transcode_path))
+						self._attributes["fileSizes"].setVideo(thumb_size, os.path.getsize(transcode_path))
 					self._video_thumbnails(thumbs_path, media_path, json_files, json_files_min_mtime)
 
 					if self.has_gps_data:
@@ -2573,6 +2605,8 @@ class PhotoAlbumEncoder(json.JSONEncoder):
 		if isinstance(obj, Positions):
 			return obj.to_dict(self.type)
 		if isinstance(obj, Sizes):
+			return obj.to_dict()
+		if isinstance(obj, ImageAndVideo):
 			return obj.to_dict()
 		if isinstance(obj, set):
 			return list(obj)

@@ -1629,42 +1629,42 @@ class TreeWalker:
 					for identifier in single_media.password_identifiers_set:
 						Options.mark_identifier_as_used(identifier)
 
-				# update the protected media count according to the album and single media passwords
-				complex_identifiers_combination = complex_combination(convert_set_to_combination(album.password_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
-				album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
-				album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
-				album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
-
-				album.num_media_in_sub_tree += 1
-				if single_media.has_gps_data:
-					album.positions_and_media_in_tree.add_single_media(single_media)
-
-				if single_media.is_video:
-					num_video_in_dir += 1
-					if not single_media_cache_hit:
-						num_video_processed_in_dir += 1
-				else:
-					num_photo_in_dir += 1
-					if not single_media_cache_hit:
-						num_photo_processed_in_dir += 1
-
-					if single_media.has_exif_date:
-						num_photo_with_exif_date_in_dir += 1
-					if single_media.has_gps_data:
-						num_photo_with_geotags_in_dir += 1
-
-					if single_media.has_exif_date:
-						if single_media.has_gps_data:
-							num_photo_with_exif_date_and_geotags_in_dir += 1
-						else:
-							photos_with_exif_date_and_without_geotags_in_dir.append("      " + entry_with_path)
-					else:
-						if single_media.has_gps_data:
-							photos_without_exif_date_and_with_geotags_in_dir.append("      " + entry_with_path)
-						else:
-							photos_without_exif_date_or_geotags_in_dir.append(      "      " + entry_with_path)
-
 				if not any(single_media.media_file_name == _media.media_file_name for _media in self.all_media):
+					# update the protected media count according to the album and single media passwords
+					complex_identifiers_combination = complex_combination(convert_set_to_combination(album.password_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
+					album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
+					album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+					album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+
+					album.num_media_in_sub_tree += 1
+					if single_media.has_gps_data:
+						album.positions_and_media_in_tree.add_single_media(single_media)
+
+					if single_media.is_video:
+						num_video_in_dir += 1
+						if not single_media_cache_hit:
+							num_video_processed_in_dir += 1
+					else:
+						num_photo_in_dir += 1
+						if not single_media_cache_hit:
+							num_photo_processed_in_dir += 1
+
+						if single_media.has_exif_date:
+							num_photo_with_exif_date_in_dir += 1
+						if single_media.has_gps_data:
+							num_photo_with_geotags_in_dir += 1
+
+						if single_media.has_exif_date:
+							if single_media.has_gps_data:
+								num_photo_with_exif_date_and_geotags_in_dir += 1
+							else:
+								photos_with_exif_date_and_without_geotags_in_dir.append("      " + entry_with_path)
+						else:
+							if single_media.has_gps_data:
+								photos_without_exif_date_and_with_geotags_in_dir.append("      " + entry_with_path)
+							else:
+								photos_without_exif_date_or_geotags_in_dir.append(      "      " + entry_with_path)
+
 					next_level()
 					message("adding media to dates tree...", "", 5)
 					# the following function has a check on media already present
