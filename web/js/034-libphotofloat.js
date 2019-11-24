@@ -1712,7 +1712,7 @@
 					searchResultsAlbumFinal.numMediaInSubTree += searchResultsAlbumFinal.subalbums[indexSubalbums].numMediaInSubTree;
 					// update the size totals
 					searchResultsAlbumFinal.sizesOfSubTree = util.sumSizes(searchResultsAlbumFinal.sizesOfSubTree, searchResultsAlbumFinal.subalbums[indexSubalbums].sizesOfSubTree);
-					searchResultsAlbumFinal.sizesOfAlbum = util.sumSizes(earchResultsAlbumFinal.sizesOfAlbum, searchResultsAlbumFinal.subalbums[indexSubalbums].sizesOfAlbum);
+					searchResultsAlbumFinal.sizesOfAlbum = util.sumSizes(searchResultsAlbumFinal.sizesOfAlbum, searchResultsAlbumFinal.subalbums[indexSubalbums].sizesOfAlbum);
 					// add the points from the subalbums
 
 					// the subalbum could still have no positionsAndMediaInTree array, get it
