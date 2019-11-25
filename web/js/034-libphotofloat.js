@@ -1271,11 +1271,11 @@
 					}
 
 					// if (album.hasOwnProperty("media"))
-					// 	numMedia = album.numMedia;
+					// 	numMediaInAlbum = album.numMedia;
 					// else
-					numMedia = util.imagesAndVideosTotal(util.imagesAndVideosCount(album.media));
-					if (index >= numMedia) {
-						index -= numMedia;
+					numMediaInAlbum = util.imagesAndVideosTotal(util.imagesAndVideosCount(album.media));
+					if (index >= numMediaInAlbum) {
+						index -= numMediaInAlbum;
 						let found = false;
 						let targetCacheBase;
 						// if (! album.subalbums.length) {
