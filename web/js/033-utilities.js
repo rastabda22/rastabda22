@@ -471,7 +471,7 @@
 	};
 
 	Utilities.prototype.isAlbumWithOneMedia = function(currentAlbum) {
-		return currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.numMedia == 1;
+		return currentAlbum !== null && ! currentAlbum.subalbums.length && Utilities.imagesAndVideosTotal(currentAlbum.numMedia) == 1;
 	};
 
 	Utilities.chooseReducedPhoto = function(media, container, fullScreenStatus) {
@@ -722,11 +722,11 @@
 		return Utilities.pathJoin([media.albumName, media.name]);
 	};
 
-	Utilities.mediaPath = function(album, media, size) {
+	Utilities.mediaPath = function(album, singleMedia, size) {
 		var suffix = Options.cache_folder_separator, hash, rootString = "root-";
 		if (
-			media.mimeType.indexOf("image") === 0 ||
-			media.mimeType.indexOf("video") === 0 && [Options.album_thumb_size, Options.media_thumb_size].indexOf(size) != -1
+			singleMedia.mimeType.indexOf("image") === 0 ||
+			singleMedia.mimeType.indexOf("video") === 0 && [Options.album_thumb_size, Options.media_thumb_size].indexOf(size) != -1
 		) {
 			var actualSize = size;
 			var albumThumbSize = Options.album_thumb_size;
@@ -752,11 +752,11 @@
 					suffix += "f";
 			}
 			suffix += ".jpg";
-		} else if (media.mimeType.indexOf("video") === 0) {
+		} else if (singleMedia.mimeType.indexOf("video") === 0) {
 			suffix += "transcoded_" + Options.video_transcode_bitrate + "_" + Options.video_crf + ".mp4";
 		}
 
-		hash = media.foldersCacheBase + Options.cache_folder_separator + media.cacheBase + suffix;
+		hash = singleMedia.foldersCacheBase + Options.cache_folder_separator + singleMedia.cacheBase + suffix;
 		if (hash.indexOf(rootString) === 0)
 			hash = hash.substring(rootString.length);
 		else {
@@ -771,8 +771,8 @@
 			else if (this.isMapCacheBase(hash))
 				hash = hash.substring(Options.byMapStringWithTrailingSeparator.length);
 		}
-		if (media.cacheSubdir)
-			return this.pathJoin([Options.server_cache_path, media.cacheSubdir, hash]);
+		if (singleMedia.cacheSubdir)
+			return this.pathJoin([Options.server_cache_path, singleMedia.cacheSubdir, hash]);
 		else
 			return this.pathJoin([Options.server_cache_path, hash]);
 	};
@@ -898,6 +898,28 @@
 			}
 		);
 	};
+
+	Utilities.imagesAndVideosTotal = function(imagesAndVideos) {
+		return imagesAndVideos.images + imagesAndVideos.videos;
+	};
+
+	Utilities.prototype.imagesAndVideosSum = function(imagesAndVideos1, imagesAndVideos2) {
+		var result = JSON.parse(JSON.stringify(imagesAndVideos0));
+		result.images = imagesAndVideos1.images + imagesAndVideos2.images;
+		result.videos = imagesAndVideos1.videos + imagesAndVideos2.videos;
+		return result;
+	};
+
+	Utilities.prototype.imagesAndVideosCount = function(mediaList) {
+		var result = JSON.parse(JSON.stringify(imagesAndVideos0));
+		for (let i = 0; i < mediaList.length; i ++) {
+			if (mediaList[i].mimeType.indexOf("image/") === 0)
+				result.images += 1;
+			else
+				result.videos += 1;
+		}
+		return result;
+	}
 
 	Utilities.downloadAlbum = function(everything = false, what = "all", size = 0) {
 		// adapted from https://gist.github.com/c4software/981661f1f826ad34c2a5dc11070add0f
@@ -1053,10 +1075,10 @@
 	};
 
 	Utilities.prototype.sumUpNumsProtectedMedia = function(numsProtectedMediaInSubTree) {
-		var sum = 0, codesComplexcombination;
+		var sum = imagesAndVideos0, codesComplexcombination;
 		for (codesComplexcombination in numsProtectedMediaInSubTree) {
 			if (numsProtectedMediaInSubTree.hasOwnProperty(codesComplexcombination) && codesComplexcombination !== "") {
-				sum += numsProtectedMediaInSubTree[codesComplexcombination];
+				sum = Utilities.imagesAndVideosSum(sum, numsProtectedMediaInSubTree[codesComplexcombination]);
 			}
 		}
 		return sum;
@@ -1070,7 +1092,7 @@
 				if (albumOrSubalbum.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexcombination)) {
 					if (! result.hasOwnProperty(codesComplexcombination))
 						result[codesComplexcombination] = 0;
-					result[codesComplexcombination] += albumOrSubalbum.numsProtectedMediaInSubTree[codesComplexcombination];
+					result[codesComplexcombination] = Utilities.imagesAndVideosSum(result[codesComplexcombination], albumOrSubalbum.numsProtectedMediaInSubTree[codesComplexcombination]);
 				}
 			}
 		}
@@ -1192,7 +1214,7 @@
 
 		$("#next").css("right", "");
 		$("#prev").css("left", "");
-		if (! fullScreenStatus && currentAlbum.numMedia > 1) {
+		if (! fullScreenStatus && Utilities.imagesAndVideosTotal(currentAlbum.numMedia) > 1) {
 			// correct next button position when pinch buttons collide
 			$("#next").css("right", correctionForPinch.toString() + "px");
 			// correct prev button position when social buttons are on the left
@@ -1296,8 +1318,8 @@
 		$("body, html").css("overflow", "auto");
 	};
 
-	Utilities.prototype.chooseThumbnail	= function(album, media, thumbnailSize) {
-		return this.mediaPath(album, media, thumbnailSize);
+	Utilities.prototype.chooseThumbnail	= function(album, singleMedia, thumbnailSize) {
+		return this.mediaPath(album, singleMedia, thumbnailSize);
 	};
 
 	Utilities.sortAlbumsMedia = function(thisAlbum) {
@@ -1354,7 +1376,7 @@
 				thisAlbum.media = Utilities.sortReverse(thisAlbum.media);
 				thisAlbum.mediaReverseSort = ! thisAlbum.mediaReverseSort;
 				if (typeof currentMediaIndex !== "undefined" && currentMediaIndex != -1)
-					currentMediaIndex = thisAlbum.numMedia - 1 - currentMediaIndex;
+					currentMediaIndex = Utilities.imagesAndVideosTotal(thisAlbum.numMedia) - 1 - currentMediaIndex;
 			}
 		}
 	};
@@ -1429,6 +1451,7 @@
 	Utilities.prototype.convertMd5ToCode = Utilities.convertMd5ToCode;
 	Utilities.prototype._t = Utilities._t;
 	Utilities.prototype.getLanguage = Utilities.getLanguage;
+	Utilities.prototype.imagesAndVideosTotal = Utilities.imagesAndVideosTotal;
 
 	window.Utilities = Utilities;
 }());

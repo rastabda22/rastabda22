@@ -67,8 +67,8 @@ class Album(object):
 			self.media_list_is_sorted = True
 			self.subalbums_list_is_sorted = True
 			self._subdir = ""
-			self.num_media_in_sub_tree = 0
-			self.complex_combination = ''
+			self.num_media_in_sub_tree = ImageAndVideo()
+			self.complex_combination = ','
 			self.nums_protected_media_in_sub_tree = NumsProtected()
 			self.sizes_protected_media_in_album = SizesProtected()
 			self.sizes_protected_media_in_sub_tree = SizesProtected()
@@ -335,7 +335,7 @@ class Album(object):
 			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(',')
 			self.sizes_of_sub_tree = self.sizes_protected_media_in_sub_tree.sizes(',')
 		else:
-			self.num_media_in_sub_tree = 0
+			self.num_media_in_sub_tree = ImageAndVideo()
 			self.sizes_of_sub_tree = Sizes()
 		if ',' in list(self.sizes_protected_media_in_album.keys()):
 			self.sizes_of_album = self.sizes_protected_media_in_album.sizes(',')
@@ -388,7 +388,7 @@ class Album(object):
 			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.complex_combination)
 			self.sizes_of_sub_tree = self.sizes_protected_media_in_sub_tree.sizes(self.complex_combination)
 		else:
-			self.num_media_in_sub_tree = 0
+			self.num_media_in_sub_tree = ImageAndVideo()
 			self.sizes_of_sub_tree = Sizes()
 		if self.complex_combination in list(self.sizes_protected_media_in_album.keys()):
 			self.sizes_of_album = self.sizes_protected_media_in_album.sizes(self.complex_combination)
@@ -516,7 +516,7 @@ class Album(object):
 				return [None, True]
 
 			codes_combinations = list(json_file_dict['numsProtectedMediaInSubTree'].keys())
-			if '' in codes_combinations and json_file_dict['numsProtectedMediaInSubTree'][''] == 0 and len(codes_combinations) > 0:
+			if ',' in codes_combinations and json_file_dict['numsProtectedMediaInSubTree'][',']['images'] == 0 and json_file_dict['numsProtectedMediaInSubTree'][',']['videos'] == 0 and len(codes_combinations) > 0:
 				codes_combinations.pop()
 			if len(codes_combinations) != len(json_files):
 				indented_message("not an album cache hit", "json files number different from numsProtectedMediaInSubTree keys number", 4)
@@ -628,7 +628,7 @@ class Album(object):
 				nums_protected_by_code = {}
 				for complex_identifiers_combination in list(subalbum.nums_protected_media_in_sub_tree.keys()):
 					if complex_identifiers_combination == ',':
-						nums_protected_by_code[''] = subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
+						nums_protected_by_code[','] = subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 					else:
 						album_identifiers_combination = complex_identifiers_combination.split(',')[0]
 						media_identifiers_combination = complex_identifiers_combination.split(',')[1]
@@ -716,7 +716,7 @@ class Album(object):
 		nums_protected_by_code = {}
 		for complex_identifiers_combination in list(self.nums_protected_media_in_sub_tree.keys()):
 			if complex_identifiers_combination == ',':
-				nums_protected_by_code[''] = self.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
+				nums_protected_by_code[','] = self.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 			else:
 				album_identifiers_combination = complex_identifiers_combination.split(',')[0]
 				media_identifiers_combination = complex_identifiers_combination.split(',')[1]
@@ -725,7 +725,7 @@ class Album(object):
 				complex_codes_combination = complex_combination(album_codes_combination, codes_combination)
 				nums_protected_by_code[complex_codes_combination] = self.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 		dictionary["numsProtectedMediaInSubTree"] = nums_protected_by_code
-		if self.complex_combination != '':
+		if self.complex_combination != ',':
 			album_identifiers_combination = self.complex_combination.split(',')[0]
 			media_identifiers_combination = self.complex_combination.split(',')[1]
 			album_codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination)))
@@ -736,7 +736,9 @@ class Album(object):
 		if not separate_media:
 			dictionary["media"] = self.media_list
 		else:
-			dictionary["numMedia"] = len(self.media_list)
+			dictionary["numMedia"] = ImageAndVideo();
+			dictionary["numMedia"].setImage(len([_media for _media in self.media_list if _media.is_image]))
+			dictionary["numMedia"].setVideo(len([_media for _media in self.media_list if _media.is_video]))
 		if hasattr(self, "symlink_codes_and_numbers"):
 			dictionary["symlinkCodesAndNumbers"] = self.symlink_codes_and_numbers
 		if hasattr(self, "center"):
@@ -917,14 +919,24 @@ class Positions(object):
 class NumsProtected(object):
 	def __init__(self):
 		self.nums_protected = {}
-		self.nums_protected[','] = 0
+		self.nums_protected[','] = ImageAndVideo()
 
-	def increment(self, complex_identifiers_combination):
+	def incrementImages(self, complex_identifiers_combination):
 		try:
-			self.nums_protected[complex_identifiers_combination] += 1
+			self.nums_protected[complex_identifiers_combination].incrementImages()
 		except KeyError:
-			self.nums_protected[complex_identifiers_combination] = 0
-			self.nums_protected[complex_identifiers_combination] += 1
+			self.nums_protected[complex_identifiers_combination] = ImageAndVideo()
+			self.nums_protected[complex_identifiers_combination].incrementImages()
+
+	def incrementVideos(self, complex_identifiers_combination):
+		try:
+			self.nums_protected[complex_identifiers_combination].incrementVideos()
+		except KeyError:
+			self.nums_protected[complex_identifiers_combination] = ImageAndVideo()
+			self.nums_protected[complex_identifiers_combination].incrementVideos()
+
+	def total(self, complex_identifiers_combination):
+		return self.nums_protected[complex_identifiers_combination].getImagesSize() + self.nums_protected[complex_identifiers_combination].getVideosSize()
 
 	def value(self, complex_identifiers_combination):
 		return self.nums_protected[complex_identifiers_combination]
@@ -938,10 +950,10 @@ class NumsProtected(object):
 	def merge(self, nums_protected):
 		for complex_identifiers_combination in list(nums_protected.keys()):
 			try:
-				self.nums_protected[complex_identifiers_combination] += nums_protected.nums_protected[complex_identifiers_combination]
+				self.nums_protected[complex_identifiers_combination].sum(nums_protected.nums_protected[complex_identifiers_combination])
 			except KeyError:
-				self.nums_protected[complex_identifiers_combination] = 0
-				self.nums_protected[complex_identifiers_combination] += nums_protected.nums_protected[complex_identifiers_combination]
+				self.nums_protected[complex_identifiers_combination] = ImageAndVideo()
+				self.nums_protected[complex_identifiers_combination].sum(nums_protected.nums_protected[complex_identifiers_combination])
 
 	def used_password_identifiers(self):
 		keys = self.non_trivial_keys()
@@ -950,6 +962,9 @@ class NumsProtected(object):
 
 	def copy(self):
 		return copy.deepcopy(self)
+
+	def to_dict(self):
+		return {k: self.nums_protected[k].to_dict() for k in set(self.nums_protected)}
 
 class ImageAndVideo(object):
 	def __init__(self):
@@ -967,6 +982,15 @@ class ImageAndVideo(object):
 
 	def setVideo(self, value):
 		self.sizes = {"images": 0, "videos": value}
+
+	def total(self):
+		return self.sizes["images"] + self.sizes["videos"]
+
+	def incrementImages(self):
+		self.sizes = {"images": self.sizes["images"] + 1, "videos": self.sizes["videos"]}
+
+	def incrementVideos(self):
+		self.sizes = {"images": self.sizes["images"], "videos": self.sizes["videos"] + 1}
 
 	def getImagesSize(self):
 		return self.sizes["images"]
@@ -1125,7 +1149,7 @@ class Media(object):
 		if self.mime_type == "audio/mp4":
 			self.mime_type = "video/mp4"
 
-		if self.mime_type.find("image/") == 0:
+		if self.is_image:
 			indented_message("it's an image!", "", 5)
 			message("opening image file...", "", 5)
 			media_path_pointer = open(media_path, 'rb')
@@ -1166,7 +1190,7 @@ class Media(object):
 			back_level()
 
 			media_path_pointer.close()
-		elif self.mime_type.find("video/") == 0:
+		elif self.is_video:
 			# try with video detection
 			self._video_metadata(media_path)
 			if self.is_video:
@@ -1529,7 +1553,6 @@ class Media(object):
 			if 'codec_type' in s:
 				indented_message("debug: s[codec_type]", s['codec_type'], 5)
 			if 'codec_type' in s and s['codec_type'] == 'video':
-				# self._attributes["mediaType"] = "video"
 				self._attributes["metadata"]["size"] = (int(s["width"]), int(s["height"]))
 				if "duration" in s:
 					self._attributes["metadata"]["duration"] = int(round(float(s["duration"]) * 10) / 10)
@@ -2298,9 +2321,12 @@ class Media(object):
 		return self._attributes["metadata"]["size"]
 
 	@property
+	def is_image(self):
+		return self.mime_type.find("image/") == 0
+
+	@property
 	def is_video(self):
 		return self.mime_type.find("video/") == 0
-		# return "mediaType" in self._attributes and self._attributes["mediaType"] == "video"
 
 	def __str__(self):
 		return self.name
@@ -2609,6 +2635,8 @@ class PhotoAlbumEncoder(json.JSONEncoder):
 		if isinstance(obj, Sizes):
 			return obj.to_dict()
 		if isinstance(obj, ImageAndVideo):
+			return obj.to_dict()
+		if isinstance(obj, NumsProtected):
 			return obj.to_dict()
 		if isinstance(obj, set):
 			return list(obj)

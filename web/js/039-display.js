@@ -19,8 +19,9 @@ var destMedia = null;
 var destAlbum = null;
 var scrollbarWidth;
 var contextMenu = false;
+var imagesAndVideos0 = {"images": 0, "videos": 0};
 var initialSizes = {};
-initialSizes[0] = {"images": 0, "videos": 0};
+initialSizes[0] = JSON.parse(JSON.stringify(imagesAndVideos0));
 
 // var perhapsIsAProtectedMedia = false;
 var Options = {};

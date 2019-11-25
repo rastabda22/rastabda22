@@ -29,7 +29,7 @@
 		folders = location.pathname;
 		folders = folders.substring(0, folders.lastIndexOf('/'));
 		url += folders;
-		if (currentMedia === null || currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.numMedia == 1) {
+		if (currentMedia === null || currentAlbum !== null && ! currentAlbum.subalbums.length && util.imagesAndVideosTotal(currentAlbum.numMedia) == 1) {
 			mediaParameter = util.pathJoin([
 				Options.server_cache_path,
 				Options.cache_album_subdir,
@@ -357,8 +357,8 @@
 				currentMedia !== null ||
 				util.isAlbumWithOneMedia(thisAlbum) ||
 				thisAlbum !== null && (
-					thisAlbum.numMedia === 0 ||
-					! util.isFolderCacheBase(thisAlbum.cacheBase) && thisAlbum.numMedia > Options.big_virtual_folders_threshold
+					util.imagesAndVideosTotal(thisAlbum.numMedia) === 0 ||
+					! util.isFolderCacheBase(thisAlbum.cacheBase) && util.imagesAndVideosTotal(thisAlbum.numMedia) > Options.big_virtual_folders_threshold
 				)
 			)
 		) {
@@ -402,7 +402,7 @@
 
 		if (
 			thisAlbum === null ||
-			thisAlbum.numMedia < Options.big_virtual_folders_threshold ||
+			util.imagesAndVideosTotal(thisAlbum.numMedia) < Options.big_virtual_folders_threshold ||
 			util.isFolderCacheBase(thisAlbum.cacheBase)
 		) {
 			$("ul#right-menu #show-big-albums").addClass("hidden");
@@ -428,7 +428,7 @@
 				$("ul#right-menu li.album-sort").removeClass("hidden");
 			}
 
-			if (thisAlbum.numMedia <= 1 || thisAlbum.numMedia > Options.big_virtual_folders_thresholds) {
+			if (util.imagesAndVideosTotal(thisAlbum.numMedia) <= 1 || util.imagesAndVideosTotal(thisAlbum.numMedia) > Options.big_virtual_folders_thresholds) {
 				// no media or one media or too many media
 				$("ul#right-menu li.media-sort").addClass("hidden");
 			} else {
@@ -474,11 +474,11 @@
 				// reset the html
 				$(".download-album.everything.all").html(util._t(".download-album.everything.all"));
 
-				let numMedia = thisAlbum.numMediaInSubTree;
+				let numMedia = util.imagesAndVideosTotal(thisAlbum.numMediaInSubTree);
 				if (util.isSearchCacheBase(thisAlbum.cacheBase) && thisAlbum.subalbums.length) {
 					// in search albums, numMediaInSubTree doesn't include the media in the albums found, the values that goes into the DOm must be update by code here
 					for (let iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; iSubalbum ++) {
-						numMedia += thisAlbum.subalbums[iSubalbum].numMediaInSubTree;
+						numMedia += util.imagesAndVideosTotal(thisAlbum.subalbums[iSubalbum].numMediaInSubTree);
 					}
 				}
 
@@ -499,7 +499,7 @@
 					// propose to download the resized media
 					for (let i = 0; i < Options.reduced_sizes.length; i++) {
 						let reducedSize = Options.reduced_sizes[i];
-						treeSize = thisAlbum.sizesOfSubTree[reducedSize].images + thisAlbum.sizesOfSubTree[reducedSize].videos;
+						treeSize = util.imagesAndVideosTotal(thisAlbum.sizesOfSubTree[reducedSize]);
 						if (treeSize < bigZipSize) {
 							$(".download-album.everything.all.sized").append(", " + reducedSize + "px  (" + numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(treeSize) + ")");
 							$(".download-album.everything.all.sized").attr("size", reducedSize);
@@ -520,7 +520,7 @@
 					}
 				}
 
-				if (numImages && numImages !== thisAlbum.numMedia) {
+				if (numImages && numImages !== util.imagesAndVideosTotal(thisAlbum.numMedia)) {
 					$(".download-album.everything.images.full").removeClass("hidden");
 					// reset the html
 					$(".download-album.everything.images").html(util._t(".download-album.everything.images"));
@@ -554,7 +554,7 @@
 					}
 				}
 
-				if (numVideos && numVideos !== thisAlbum.numMedia) {
+				if (numVideos && numVideos !== util.imagesAndVideosTotal(thisAlbum.numMedia)) {
 					$(".download-album.everything.videos.full").removeClass("hidden");
 					// reset the html
 					$(".download-album.everything.videos").html(util._t(".download-album.everything.videos"));
@@ -589,7 +589,7 @@
 				}
 			}
 
-			if (thisAlbum.numMedia) {
+			if (util.imagesAndVideosTotal(thisAlbum.numMedia)) {
 				$(".download-album.media-only.all.full").removeClass("hidden");
 				// reset the html
 				if (showDownloadEverything)
@@ -598,8 +598,8 @@
 					$(".download-album.media-only.all").html(util._t(".download-album.simple.all"));
 
 				// add the download size
-				let albumSize = thisAlbum.sizesOfAlbum[0].images + thisAlbum.sizesOfAlbum[0].videos;
-				$(".download-album.media-only.all.full").append(" (" + thisAlbum.numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(albumSize) + ")");
+				let albumSize = util.imagesAndVideosTotal(thisAlbum.sizesOfAlbum[0]);
+				$(".download-album.media-only.all.full").append(" (" + util.imagesAndVideosTotal(thisAlbum.numMedia) + " " + util._t(".title-media") + ", " + Functions.humanFileSize(albumSize) + ")");
 				// check the size and decide if they can be downloaded
 				if (albumSize < bigZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
@@ -618,7 +618,7 @@
 						let reducedSize = Options.reduced_sizes[i];
 						albumSize = thisAlbum.sizesOfAlbum[reducedSize].images + thisAlbum.sizesOfAlbum[reducedSize].videos;
 						if (albumSize < bigZipSize) {
-							$(".download-album.media-only.all.sized").append(", " + reducedSize + "px  (" + thisAlbum.numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(albumSize) + ")");
+							$(".download-album.media-only.all.sized").append(", " + reducedSize + "px  (" + util.imagesAndVideosTotal(thisAlbum.numMedia) + " " + util._t(".title-media") + ", " + Functions.humanFileSize(albumSize) + ")");
 							$(".download-album.media-only.all.sized").attr("size", reducedSize);
 							$(".download-album.media-only.all.sized").removeClass("hidden");
 							break;
@@ -637,7 +637,7 @@
 				}
 			}
 
-			if (numImages && numImages !== thisAlbum.numMedia) {
+			if (numImages && numImages !== util.imagesAndVideosTotal(thisAlbum.numMedia)) {
 				$(".download-album.media-only.images.full").removeClass("hidden");
 				// reset the html
 				if (showDownloadEverything)
@@ -674,7 +674,7 @@
 				}
 			}
 
-			if (numVideos && numVideos !== thisAlbum.numMedia) {
+			if (numVideos && numVideos !== util.imagesAndVideosTotal(thisAlbum.numMedia)) {
 				$(".download-album.media-only.videos.full").removeClass("hidden");
 				// reset the html
 				if (showDownloadEverything)
@@ -1120,7 +1120,7 @@
 						PhotoFloat.initializeMapRootAlbum();
 
 						for (let i = 0; i < Options.reduced_sizes.length; i++) {
-							initialSizes[Options.reduced_sizes[i]] = {"images": 0, "videos": 0};
+							initialSizes[Options.reduced_sizes[i]] = JSON.parse(JSON.stringify(imagesAndVideos0));
 						}
 
 

@@ -212,7 +212,7 @@ class TreeWalker:
 				self.all_albums_to_json_file(subalbum, complex_identifiers_combination)
 
 		if (
-			album.num_media_in_sub_tree == 0 and (
+			album.num_media_in_sub_tree.total() == 0 and (
 				album.cache_base.find(Options.config['by_search_string']) != 0  or
 				album.cache_base != Options.config['by_search_string'] and
 				(
@@ -434,22 +434,34 @@ class TreeWalker:
 					for single_media in media_list:
 						single_media.day_album_cache_base = day_album.cache_base
 						day_album.add_single_media(single_media)
-						day_album.num_media_in_sub_tree += 1
 						month_album.add_single_media(single_media)
-						month_album.num_media_in_sub_tree += 1
 						year_album.add_single_media(single_media)
-						year_album.num_media_in_sub_tree += 1
-						by_date_album.num_media_in_sub_tree += 1
+						if single_media.is_image:
+							day_album.num_media_in_sub_tree.incrementImages()
+							month_album.num_media_in_sub_tree.incrementImages()
+							year_album.num_media_in_sub_tree.incrementImages()
+							by_date_album.num_media_in_sub_tree.incrementImages()
+						else:
+							day_album.num_media_in_sub_tree.incrementVideos()
+							month_album.num_media_in_sub_tree.incrementVideos()
+							year_album.num_media_in_sub_tree.incrementVideos()
+							by_date_album.num_media_in_sub_tree.incrementVideos()
 						if single_media.has_gps_data:
 							day_album.positions_and_media_in_tree.add_single_media(single_media)
 							month_album.positions_and_media_in_tree.add_single_media(single_media)
 							year_album.positions_and_media_in_tree.add_single_media(single_media)
 
 						complex_identifiers_combination = complex_combination(convert_set_to_combination(single_media.album_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
-						day_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
-						month_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
-						year_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
-						by_date_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
+						if single_media.is_image:
+							day_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+							month_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+							year_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+							by_date_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+						else:
+							day_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+							month_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+							year_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+							by_date_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
 
 						day_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
 						month_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
@@ -486,7 +498,7 @@ class TreeWalker:
 			Options.all_albums.append(year_album)
 			self.generate_composite_image(year_album, year_max_file_date)
 		Options.all_albums.append(by_date_album)
-		if by_date_album.num_media_in_sub_tree > 0:
+		if by_date_album.num_media_in_sub_tree.total() > 0:
 			self.generate_composite_image(by_date_album, by_date_max_file_date)
 		back_level()
 		return by_date_album
@@ -517,9 +529,14 @@ class TreeWalker:
 			by_search_album.add_subalbum(word_album)
 			for single_media in media_album_and_words["media_list"]:
 				word_album.add_single_media(single_media)
-				word_album.num_media_in_sub_tree += 1
-				# actually, this counter for the search root album is not significant
-				by_search_album.num_media_in_sub_tree += 1
+				if single_media.is_image:
+					word_album.num_media_in_sub_tree.incrementImages()
+					# actually, this counter for the search root album is not significant
+					by_search_album.num_media_in_sub_tree.incrementImages()
+				else:
+					word_album.num_media_in_sub_tree.incrementVideos()
+					# actually, this counter for the search root album is not significant
+					by_search_album.num_media_in_sub_tree.incrementVideos()
 
 				single_media_date = max(single_media.datetime_file, single_media.datetime_dir)
 				# if word_max_file_date:
@@ -537,9 +554,13 @@ class TreeWalker:
 
 				complex_identifiers_combination = complex_combination(convert_set_to_combination(single_media.album_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
 
-				word_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
-				# nums_protected_media_in_sub_tree matters for the search root albums!
-				by_search_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
+				if single_media.is_image:
+					word_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+					# nums_protected_media_in_sub_tree matters for the search root albums!
+					by_search_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+				else:
+					word_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+					by_search_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
 
 				word_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
 				by_search_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
@@ -728,18 +749,21 @@ class TreeWalker:
 							cluster[j].alt_place_name = alt_place_name
 
 							place_album.positions_and_media_in_tree.add_single_media(single_media)
-							place_album.add_single_media(single_media)
-							place_album.num_media_in_sub_tree += 1
-
 							region_album.positions_and_media_in_tree.add_single_media(single_media)
-							region_album.add_single_media(single_media)
-							region_album.num_media_in_sub_tree += 1
-
 							country_album.positions_and_media_in_tree.add_single_media(single_media)
+							place_album.add_single_media(single_media)
+							region_album.add_single_media(single_media)
 							country_album.add_single_media(single_media)
-							country_album.num_media_in_sub_tree += 1
-
-							by_geonames_album.num_media_in_sub_tree += 1
+							if single_media.is_image:
+								place_album.num_media_in_sub_tree.incrementImages()
+								region_album.num_media_in_sub_tree.incrementImages()
+								country_album.num_media_in_sub_tree.incrementImages()
+								by_geonames_album.num_media_in_sub_tree.incrementImages()
+							else:
+								place_album.num_media_in_sub_tree.incrementVideos()
+								region_album.num_media_in_sub_tree.incrementVideos()
+								country_album.num_media_in_sub_tree.incrementVideos()
+								by_geonames_album.num_media_in_sub_tree.incrementVideos()
 
 							if place_album.center == {}:
 								place_album.center['latitude'] = single_media.latitude
@@ -785,10 +809,16 @@ class TreeWalker:
 								by_geonames_max_file_date = single_media_date
 
 							complex_identifiers_combination = complex_combination(convert_set_to_combination(single_media.album_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
-							place_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
-							region_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
-							country_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
-							by_geonames_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
+							if single_media.is_image:
+								place_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+								region_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+								country_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+								by_geonames_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+							else:
+								place_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+								region_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+								country_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+								by_geonames_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
 
 							place_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
 							region_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
@@ -819,7 +849,7 @@ class TreeWalker:
 			Options.all_albums.append(country_album)
 			self.generate_composite_image(country_album, country_max_file_date)
 		Options.all_albums.append(by_geonames_album)
-		if by_geonames_album.num_media_in_sub_tree > 0:
+		if by_geonames_album.num_media_in_sub_tree.total() > 0:
 			self.generate_composite_image(by_geonames_album, by_geonames_max_file_date)
 		back_level()
 		return by_geonames_album
@@ -1415,7 +1445,7 @@ class TreeWalker:
 				passwords_or_album_ini_processed = passwords_or_album_ini_processed or _passwords_or_album_ini_processed
 				if next_walked_album is not None:
 					max_file_date = max(max_file_date, sub_max_file_date)
-					album.num_media_in_sub_tree += next_walked_album.num_media_in_sub_tree
+					album.num_media_in_sub_tree.sum(next_walked_album.num_media_in_sub_tree)
 					album.positions_and_media_in_tree.merge(next_walked_album.positions_and_media_in_tree)
 					album.nums_protected_media_in_sub_tree.merge(next_walked_album.nums_protected_media_in_sub_tree)
 					album.sizes_protected_media_in_sub_tree.merge(next_walked_album.sizes_protected_media_in_sub_tree)
@@ -1632,11 +1662,17 @@ class TreeWalker:
 				if not any(single_media.media_file_name == _media.media_file_name for _media in self.all_media):
 					# update the protected media count according to the album and single media passwords
 					complex_identifiers_combination = complex_combination(convert_set_to_combination(album.password_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
-					album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
+					if single_media.is_image:
+						album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+					else:
+						album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
 					album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
 					album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 
-					album.num_media_in_sub_tree += 1
+					if single_media.is_image:
+						album.num_media_in_sub_tree.incrementImages()
+					else:
+						album.num_media_in_sub_tree.incrementVideos()
 					if single_media.has_gps_data:
 						album.positions_and_media_in_tree.add_single_media(single_media)
 
@@ -1749,7 +1785,7 @@ class TreeWalker:
 		else:
 			message("VOID: no media in this directory", os.path.basename(absolute_path), 4)
 
-		if album.num_media_in_sub_tree:
+		if album.num_media_in_sub_tree.total():
 			# generate the album composite image for sharing
 			self.generate_composite_image(album, max_file_date)
 		back_level()
@@ -1776,11 +1812,11 @@ class TreeWalker:
 		else:
 			random_number -= len(album.media_list)
 			for subalbum in album.subalbums_list:
-				if random_number < subalbum.num_media_in_sub_tree:
+				if random_number < subalbum.num_media_in_sub_tree.total():
 					[picked_image, random_number] = self.pick_random_image(subalbum, random_number)
 					if picked_image:
 						return [picked_image, random_number]
-				random_number -= subalbum.num_media_in_sub_tree
+				random_number -= subalbum.num_media_in_sub_tree.total()
 		return [None, random_number]
 
 	def generate_composite_image(self, album, max_file_date):
@@ -1789,7 +1825,8 @@ class TreeWalker:
 		composite_image_path = os.path.join(self.album_cache_path, composite_image_name)
 		self.all_album_composite_images.append(os.path.join(Options.config['cache_album_subdir'], composite_image_name))
 		json_file_with_path = os.path.join(Options.config['cache_path'], album.json_file)
-		if (os.path.exists(composite_image_path) and
+		if (
+			os.path.exists(composite_image_path) and
 			file_mtime(composite_image_path) > max_file_date and
 			os.path.exists(json_file_with_path) and
 			file_mtime(json_file_with_path) < file_mtime(composite_image_path)
@@ -1807,15 +1844,15 @@ class TreeWalker:
 		# and generate a square composite image
 
 		# determine the number of images to use
-		if album.num_media_in_sub_tree == 1 or Options.config['max_album_share_thumbnails_number'] == 1:
+		if album.num_media_in_sub_tree.total() == 1 or Options.config['max_album_share_thumbnails_number'] == 1:
 			max_thumbnail_number = 1
-		elif album.num_media_in_sub_tree < 9 or Options.config['max_album_share_thumbnails_number'] == 4:
+		elif album.num_media_in_sub_tree.total() < 9 or Options.config['max_album_share_thumbnails_number'] == 4:
 			max_thumbnail_number = 4
-		elif album.num_media_in_sub_tree < 16 or Options.config['max_album_share_thumbnails_number'] == 9:
+		elif album.num_media_in_sub_tree.total() < 16 or Options.config['max_album_share_thumbnails_number'] == 9:
 			max_thumbnail_number = 9
-		elif album.num_media_in_sub_tree < 25 or Options.config['max_album_share_thumbnails_number'] == 16:
+		elif album.num_media_in_sub_tree.total() < 25 or Options.config['max_album_share_thumbnails_number'] == 16:
 			max_thumbnail_number = 16
-		elif album.num_media_in_sub_tree < 36 or Options.config['max_album_share_thumbnails_number'] == 25:
+		elif album.num_media_in_sub_tree.total() < 36 or Options.config['max_album_share_thumbnails_number'] == 25:
 			max_thumbnail_number = 25
 		else:
 			max_thumbnail_number = Options.config['max_album_share_thumbnails_number']
@@ -1824,9 +1861,9 @@ class TreeWalker:
 		random_thumbnails = list()
 		random_list = list()
 		bad_list = list()
-		num_random_thumbnails = min(max_thumbnail_number, album.num_media_in_sub_tree)
+		num_random_thumbnails = min(max_thumbnail_number, album.num_media_in_sub_tree.total())
 		i = 0
-		good_media_number = album.num_media_in_sub_tree
+		good_media_number = album.num_media_in_sub_tree.total()
 		while True:
 			if i >= good_media_number:
 				break
@@ -1834,7 +1871,7 @@ class TreeWalker:
 				random_media = album.media_list[0]
 			else:
 				while True:
-					random_number = random.randint(0, album.num_media_in_sub_tree - 1)
+					random_number = random.randint(0, album.num_media_in_sub_tree.total() - 1)
 					if random_number not in random_list and random_number not in bad_list:
 						break
 				random_list.append(random_number)
