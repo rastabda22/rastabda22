@@ -413,9 +413,11 @@ class Album(object):
 			back_level()
 		return protected_albums
 
+	@property
 	def must_separate_media(self):
 		return Options.config['max_media_in_json_file'] > 0 and len(self.media) > Options.config['max_media_in_json_file']
 
+	@property
 	def must_separate_positions(self):
 		return Options.config['max_media_from_positions_in_json_file'] > 0 and self.positions_and_media_in_tree.count_media() > Options.config['max_media_from_positions_in_json_file']
 
