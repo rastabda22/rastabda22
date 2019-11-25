@@ -1594,6 +1594,7 @@
 				searchResultsAlbumFinal.positionsAndMediaInTree = [];
 				searchResultsAlbumFinal.media = [];
 				searchResultsAlbumFinal.subalbums = [];
+				searchResultsAlbumFinal.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
 				searchResultsAlbumFinal.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
 				searchResultsAlbumFinal.sizesOfAlbum = initialSizes;
 				searchResultsAlbumFinal.sizesOfSubTree = initialSizes;
@@ -2041,7 +2042,7 @@
 	PhotoFloat.endPreparingAlbumAndKeepOn = function(resultsAlbumFinal, mediaHash, mediaFolderHash, hashParsed) {
 		// add the various counts
 		resultsAlbumFinal.numMediaInSubTree = resultsAlbumFinal.media.length;
-		resultsAlbumFinal.numMedia = imagesAndVideosCount(resultsAlbumFinal.media);
+		resultsAlbumFinal.numMedia = util.imagesAndVideosCount(resultsAlbumFinal.media);
 		resultsAlbumFinal.numPositionsInTree = resultsAlbumFinal.positionsAndMediaInTree.length;
 		// save in the cache array
 		PhotoFloat.putAlbumIntoCache(resultsAlbumFinal.cacheBase, resultsAlbumFinal);

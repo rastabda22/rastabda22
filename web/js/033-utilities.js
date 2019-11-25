@@ -903,7 +903,7 @@
 		return imagesAndVideos.images + imagesAndVideos.videos;
 	};
 
-	Utilities.prototype.imagesAndVideosSum = function(imagesAndVideos1, imagesAndVideos2) {
+	Utilities.imagesAndVideosSum = function(imagesAndVideos1, imagesAndVideos2) {
 		var result = JSON.parse(JSON.stringify(imagesAndVideos0));
 		result.images = imagesAndVideos1.images + imagesAndVideos2.images;
 		result.videos = imagesAndVideos1.videos + imagesAndVideos2.videos;
@@ -1452,6 +1452,7 @@
 	Utilities.prototype._t = Utilities._t;
 	Utilities.prototype.getLanguage = Utilities.getLanguage;
 	Utilities.prototype.imagesAndVideosTotal = Utilities.imagesAndVideosTotal;
+	Utilities.prototype.imagesAndVideosSum = Utilities.imagesAndVideosSum;
 
 	window.Utilities = Utilities;
 }());
