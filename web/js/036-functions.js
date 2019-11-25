@@ -474,16 +474,16 @@
 				// reset the html
 				$(".download-album.everything.all").html(util._t(".download-album.everything.all"));
 
-				let numMedia = util.imagesAndVideosTotal(thisAlbum.numMediaInSubTree);
+				let numMediaInSubTree = util.imagesAndVideosTotal(thisAlbum.numMediaInSubTree);
 				if (util.isSearchCacheBase(thisAlbum.cacheBase) && thisAlbum.subalbums.length) {
 					// in search albums, numMediaInSubTree doesn't include the media in the albums found, the values that goes into the DOm must be update by code here
 					for (let iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; iSubalbum ++) {
-						numMedia += util.imagesAndVideosTotal(thisAlbum.subalbums[iSubalbum].numMediaInSubTree);
+						numMediaInSubTree += util.imagesAndVideosTotal(thisAlbum.subalbums[iSubalbum].numMediaInSubTree);
 					}
 				}
 
 				let treeSize = thisAlbum.sizesOfSubTree[0].images + thisAlbum.sizesOfSubTree[0].videos;
-				$(".download-album.everything.all.full").append(" (" + numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(treeSize) + ")");
+				$(".download-album.everything.all.full").append(" (" + numMediaInSubTree + " " + util._t(".title-media") + ", " + Functions.humanFileSize(treeSize) + ")");
 				if (treeSize < bigZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
@@ -510,17 +510,21 @@
 				}
 				showDownloadEverything = true;
 
-				let numImages = 0;
-				let numVideos = 0;
-				for (let iMedia = 0; iMedia < thisAlbum.media.length; iMedia ++) {
-					if (thisAlbum.media[iMedia].mimeType.indexOf("image") === 0) {
-						numImages ++;
-					} else {
-						numVideos ++;
-					}
-				}
+				let numImages = thisAlbum.numMediaInSubTree.images;
+				let numVideos = thisAlbum.numMediaInSubTree.videos;
+				// let numImages = 0;
+				// let numVideos = 0;
+				// for (let iMedia = 0; iMedia < thisAlbum.media.length; iMedia ++) {
+				// 	if (thisAlbum.media[iMedia].mimeType.indexOf("image") === 0) {
+				// 		numImages ++;
+				// 	} else {
+				// 		numVideos ++;
+				// 	}
+				// }
 
-				if (numImages && numImages !== util.imagesAndVideosTotal(thisAlbum.numMedia)) {
+				let mediaInThisAlbum = util.imagesAndVideosTotal(thisAlbum.numMedia);
+				let mediaInThisTree = util.imagesAndVideosTotal(thisAlbum.numMediaInSubTree);
+				if (numImages && numImages !== mediaInThisAlbum && numImages !== mediaInThisTree && mediaInThisAlbum !== mediaInThisTree) {
 					$(".download-album.everything.images.full").removeClass("hidden");
 					// reset the html
 					$(".download-album.everything.images").html(util._t(".download-album.everything.images"));
@@ -554,7 +558,7 @@
 					}
 				}
 
-				if (numVideos && numVideos !== util.imagesAndVideosTotal(thisAlbum.numMedia)) {
+				if (numVideos && numVideos !== mediaInThisAlbum && numVideos !== mediaInThisTree && mediaInThisAlbum !== mediaInThisTree) {
 					$(".download-album.everything.videos.full").removeClass("hidden");
 					// reset the html
 					$(".download-album.everything.videos").html(util._t(".download-album.everything.videos"));
