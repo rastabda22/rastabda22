@@ -1263,7 +1263,7 @@
 
 				function nextAlbum(album) {
 
-					var i, numMedia;
+					var i, numMediaInAlbum;
 
 					if (util.imagesAndVideosTotal(album.numMediaInSubTree) == 0) {
 						error();
