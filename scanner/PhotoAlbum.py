@@ -978,10 +978,10 @@ class ImageAndVideo(object):
 		return copy.deepcopy(self)
 
 	def setImage(self, value):
-		self.sizes = {"images": value, "videos": 0}
+		self.sizes = {"images": value, "videos": self.sizes["videos"]}
 
 	def setVideo(self, value):
-		self.sizes = {"images": 0, "videos": value}
+		self.sizes = {"images": self.sizes["images"], "videos": value}
 
 	def total(self):
 		return self.sizes["images"] + self.sizes["videos"]
