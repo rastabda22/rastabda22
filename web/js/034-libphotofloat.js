@@ -974,35 +974,35 @@
 			);
 		}
 
-		function isEquivalent(codesSimpleCombination, codesComplexCombinationGot) {
-			let codesCombinationsLists = PhotoFloat.convertComplexCombinationsIntoLists(codesSimpleCombination);
-			let albumCodesCombinationsList = codesCombinationsLists[0];
-			let mediaCodesCombinationList = codesCombinationsLists[1];
-			let codesCombinationsListsGot = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationGot);
-			let albumCodesCombinationsListGot = codesCombinationsListsGot[0];
-			let mediaCodesCombinationListGot = codesCombinationsListsGot[1];
-			var result =
-				! albumCodesCombinationsList.length &&
-				! albumCodesCombinationsListGot.length &&
-				mediaCodesCombinationList.length &&
-				mediaCodesCombinationListGot.length &&
-				util.arrayIntersect(mediaCodesCombinationList, mediaCodesCombinationListGot).length
-				||
-				albumCodesCombinationsList.length &&
-				albumCodesCombinationsListGot.length &&
-				! mediaCodesCombinationList.length &&
-				! mediaCodesCombinationListGot.length &&
-				util.arrayIntersect(albumCodesCombinationsList, albumCodesCombinationsListGot).length
-				||
-				albumCodesCombinationsList.length &&
-				albumCodesCombinationsListGot.length &&
-				mediaCodesCombinationList.length &&
-				mediaCodesCombinationListGot.length &&
-				util.arrayIntersect(albumCodesCombinationsList, albumCodesCombinationsListGot).length &&
-				util.arrayIntersect(mediaCodesCombinationList, mediaCodesCombinationListGot).length;
-			// result == true means that the combination is equivalent to the got one
-			return result;
-		}
+		// function isEquivalent(codesSimpleCombination, codesComplexCombinationGot) {
+		// 	let codesCombinationsLists = PhotoFloat.convertComplexCombinationsIntoLists(codesSimpleCombination);
+		// 	let albumCodesCombinationsList = codesCombinationsLists[0];
+		// 	let mediaCodesCombinationList = codesCombinationsLists[1];
+		// 	let codesCombinationsListsGot = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationGot);
+		// 	let albumCodesCombinationsListGot = codesCombinationsListsGot[0];
+		// 	let mediaCodesCombinationListGot = codesCombinationsListsGot[1];
+		// 	var result =
+		// 		! albumCodesCombinationsList.length &&
+		// 		! albumCodesCombinationsListGot.length &&
+		// 		mediaCodesCombinationList.length &&
+		// 		mediaCodesCombinationListGot.length &&
+		// 		util.arrayIntersect(mediaCodesCombinationList, mediaCodesCombinationListGot).length
+		// 		||
+		// 		albumCodesCombinationsList.length &&
+		// 		albumCodesCombinationsListGot.length &&
+		// 		! mediaCodesCombinationList.length &&
+		// 		! mediaCodesCombinationListGot.length &&
+		// 		util.arrayIntersect(albumCodesCombinationsList, albumCodesCombinationsListGot).length
+		// 		||
+		// 		albumCodesCombinationsList.length &&
+		// 		albumCodesCombinationsListGot.length &&
+		// 		mediaCodesCombinationList.length &&
+		// 		mediaCodesCombinationListGot.length &&
+		// 		util.arrayIntersect(albumCodesCombinationsList, albumCodesCombinationsListGot).length &&
+		// 		util.arrayIntersect(mediaCodesCombinationList, mediaCodesCombinationListGot).length;
+		// 	// result == true means that the combination is equivalent to the got one
+		// 	return result;
+		// }
 	};
 
 	PhotoFloat.getNumProtectedCacheBases = function(numsProtectedMediaInSubTree, codesComplexCombination) {

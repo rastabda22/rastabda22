@@ -927,7 +927,7 @@
 				result.videos += 1;
 		}
 		return result;
-	}
+	};
 
 	Utilities.downloadAlbum = function(everything = false, what = "all", size = 0) {
 		// adapted from https://gist.github.com/c4software/981661f1f826ad34c2a5dc11070add0f
@@ -937,7 +937,7 @@
 		// what is one of "all", "images" or "videos"
 
 		$("#downloading-media").show();
-		var size = parseInt(size);
+		size = parseInt(size);
 
 		var zip = new JSZip();
 		var zipFilename;
