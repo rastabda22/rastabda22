@@ -348,17 +348,6 @@
 					title += " " + currentAlbum.subalbums.length;
 					title += " " + util._t(".title-albums");
 				}
-
-				if (currentAlbum.hasOwnProperty("removedStopWords") && currentAlbum.removedStopWords.length) {
-					// say that some search word hasn't been used
-					title += " - " + currentAlbum.removedStopWords.length + " " + util._t("#removed-stopwords") + ": ";
-					for (i = 0; i < currentAlbum.removedStopWords.length; i ++) {
-						if (i)
-							title += ", ";
-						title += currentAlbum.removedStopWords[i];
-					}
-				}
-
 				title += ")</span>";
 			}
 
@@ -448,10 +437,10 @@
 					title += util._t(".title-media") + " ";
 					title += util._t(".title-in-subalbums");
 				}
-				if (util.imagesAndVideosTotal(currentAlbum.numMedia) > 0 && numMediaInSubAlbums > 0) {
+				if (mediaTotalInAlbum && numMediaInSubAlbums) {
 					title += ", ";
 					title += util._t(".title-total") + " ";
-					title += util.imagesAndVideosTotal(currentAlbum.numMedia) + numMediaInSubAlbums;
+					title += mediaTotalInAlbum + numMediaInSubAlbums;
 				}
 				title += ")</span>";
 			}
