@@ -899,6 +899,14 @@
 		);
 	};
 
+	Utilities.prototype.imagesTotal = function(imagesAndVideos) {
+		return imagesAndVideos.images;
+	};
+
+	Utilities.prototype.videosTotal = function(imagesAndVideos) {
+		return imagesAndVideos.videos;
+	};
+
 	Utilities.imagesAndVideosTotal = function(imagesAndVideos) {
 		return imagesAndVideos.images + imagesAndVideos.videos;
 	};

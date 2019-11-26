@@ -67,6 +67,14 @@
 		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 		var fillInSpan = "<span id='fill-in-map-link'></span>";
 
+		var mediaTotalInAlbum, imagesTotalInAlbum, videosTotalInAlbum;
+		if (media === null) {
+			mediaTotalInAlbum = util.imagesAndVideosTotal(currentAlbum.numMedia);
+			imagesTotalInAlbum = util.imagesTotal(currentAlbum.numMedia);
+			videosTotalInAlbum = util.videosTotal(currentAlbum.numMedia);
+			numMediaInSubAlbums = util.imagesAndVideosTotal(currentAlbum.numMediaInSubTree) - util.imagesAndVideosTotal(currentAlbum.numMedia);
+		}
+
 		if (isDateTitle) {
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>" + raquo;
 			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_date_string + "'>(" + util._t("#by-date") + ")</a>";
@@ -114,18 +122,23 @@
 
 			title += fillInSpan;
 
-			if (components.length > 1 && media === null) {
-				if (! isMobile.any()) {
-					title += " <span class='title-count'>(";
-					title += util.imagesAndVideosTotal(currentAlbum.numMedia) + " ";
-					title += util._t(".title-media") + " ";
-					if (components.length >= 5)
-						title += util._t(".title-in-day-album");
-					else
-						title += util._t(".title-in-date-album");
-					title += ")</span>";
-				}
-				title += "</span>";
+			if (components.length > 1 && media === null && ! isMobile.any()) {
+				title += " <span class='title-count'>(";
+				if (components.length === 2)
+					title += numMediaInSubAlbums + " ";
+				else
+					title += mediaTotalInAlbum + " ";
+				if (! imagesTotalInAlbum && videosTotalInAlbum)
+					title += util._t(".title-videos");
+				else if (imagesTotalInAlbum && ! videosTotalInAlbum)
+					title += util._t(".title-images");
+				else
+					title += util._t(".title-media");
+				if (components.length >= 5)
+					title += " " + util._t(".title-in-day-album");
+				else if (components.length >= 3)
+					title += " " + util._t(".title-in-date-album");
+				title += ")</span>";
 			}
 		} else if (isGpsTitle) {
 			title = "<a class='" + titleAnchorClasses + "' href='#!/'>" + components[0] + "</a>" + raquo;
@@ -187,14 +200,22 @@
 
 			title += fillInSpan;
 
-			if (components.length > 1 && media === null) {
+			if (components.length > 1 && media === null && ! isMobile.any()) {
 				title += " <span class='title-count'>(";
-				title += util.imagesAndVideosTotal(currentAlbum.numMedia) + " ";
-				title += util._t(".title-media") + " ";
-				if (components.length >= gpsLevelNumber + 2)
-					title += util._t(".title-in-gps-album");
+				if (components.length === 2)
+					title += numMediaInSubAlbums + " ";
 				else
-					title += util._t(".title-in-gpss-album");
+					title += mediaTotalInAlbum + " ";
+				if (! imagesTotalInAlbum && videosTotalInAlbum)
+					title += util._t(".title-videos");
+				else if (imagesTotalInAlbum && ! videosTotalInAlbum)
+					title += util._t(".title-images");
+				else
+					title += " " + util._t(".title-media");
+				if (components.length >= gpsLevelNumber + 2)
+					title += " " + util._t(".title-in-gps-album");
+				else if (components.length >= 3)
+					title += " " + util._t(".title-in-gpss-album");
 				title += ")</span>";
 			}
 		} else if (isSearchTitle) {
@@ -239,20 +260,26 @@
 			if (
 				components.length > 2 &&
 				(media === null && ! util.isAlbumWithOneMedia(currentAlbum)) &&
-				(util.imagesAndVideosTotal(currentAlbum.numMedia) || currentAlbum.subalbums.length)
+				(util.imagesAndVideosTotal(currentAlbum.numMedia) || currentAlbum.subalbums.length) &&
+				! isMobile.any()
 			) {
 				title += " <span class='title-count'>(";
 				title += util._t(".title-found") + ' ';
 				numMediaInSubAlbums = util.imagesAndVideosTotal(currentAlbum.numMediaInSubTree) - util.imagesAndVideosTotal(currentAlbum.numMedia);
 				if (util.imagesAndVideosTotal(currentAlbum.numMedia)) {
-					title += util.imagesAndVideosTotal(currentAlbum.numMedia) + " ";
-					title += util._t(".title-media");
+					title += mediaTotalInAlbum + " ";
+					if (! imagesTotalInAlbum && videosTotalInAlbum)
+						title += util._t(".title-videos");
+					else if (imagesTotalInAlbum && ! videosTotalInAlbum)
+						title += util._t(".title-images");
+					else
+						title += util._t(".title-media");
 					if (currentAlbum.subalbums.length)
-						title += " " + util._t(".title-and") + " ";
+						title += " " + util._t(".title-and");
 				}
 				if (currentAlbum.subalbums.length) {
-					title += currentAlbum.subalbums.length + " ";
-					title += util._t(".title-albums");
+					title += " " + currentAlbum.subalbums.length;
+					title += " " + util._t(".title-albums");
 				}
 
 				if (currentAlbum.hasOwnProperty("removedStopWords") && currentAlbum.removedStopWords.length) {
@@ -301,19 +328,25 @@
 			if (
 				components.length > 2 &&
 				(media === null && ! util.isAlbumWithOneMedia(currentAlbum)) &&
-				(util.imagesAndVideosTotal(currentAlbum.numMedia) || currentAlbum.subalbums.length)
+				(util.imagesAndVideosTotal(currentAlbum.numMedia) || currentAlbum.subalbums.length) &&
+				! isMobile.any()
 			) {
 				title += " <span class='title-count'>(";
 				numMediaInSubAlbums = util.imagesAndVideosTotal(currentAlbum.numMediaInSubTree) - util.imagesAndVideosTotal(currentAlbum.numMedia);
 				if (util.imagesAndVideosTotal(currentAlbum.numMedia)) {
-					title += util.imagesAndVideosTotal(currentAlbum.numMedia) + " ";
-					title += util._t(".title-media");
+					title += mediaTotalInAlbum + " ";
+					if (! imagesTotalInAlbum && videosTotalInAlbum)
+						title += util._t(".title-videos");
+					else if (imagesTotalInAlbum && ! videosTotalInAlbum)
+						title += util._t(".title-images");
+					else
+						title += util._t(".title-media");
 					if (currentAlbum.subalbums.length)
-						title += " " + util._t(".title-and") + " ";
+						title += " " + util._t(".title-and");
 				}
 				if (currentAlbum.subalbums.length) {
-					title += currentAlbum.subalbums.length + " ";
-					title += util._t(".title-albums");
+					title += " " + currentAlbum.subalbums.length;
+					title += " " + util._t(".title-albums");
 				}
 
 				if (currentAlbum.hasOwnProperty("removedStopWords") && currentAlbum.removedStopWords.length) {
@@ -396,20 +429,23 @@
 
 			title += fillInSpan;
 
-			if (components.length > 1 && media === null) {
+			if (components.length > 1 && media === null && ! isMobile.any()) {
 				title += " <span class='title-count'>(";
-				numMediaInSubAlbums = util.imagesAndVideosTotal(currentAlbum.numMediaInSubTree) - util.imagesAndVideosTotal(currentAlbum.numMedia);
 				if (util.imagesAndVideosTotal(currentAlbum.numMedia)) {
-					title += util.imagesAndVideosTotal(currentAlbum.numMedia) + " ";
-					title += util._t(".title-media") + " ";
+					title += mediaTotalInAlbum + " ";
+					if (! imagesTotalInAlbum && videosTotalInAlbum)
+						title += util._t(".title-videos") + " ";
+					else if (imagesTotalInAlbum && ! videosTotalInAlbum)
+						title += util._t(".title-images") + " ";
+					else
+						title += util._t(".title-media") + " ";
 					title += util._t(".title-in-album");
 					if (numMediaInSubAlbums)
 						title += ", ";
 				}
 				if (numMediaInSubAlbums) {
 					title += numMediaInSubAlbums + " ";
-					if (! util.imagesAndVideosTotal(currentAlbum.numMedia))
-						title += util._t(".title-media") + " ";
+					title += util._t(".title-media") + " ";
 					title += util._t(".title-in-subalbums");
 				}
 				if (util.imagesAndVideosTotal(currentAlbum.numMedia) > 0 && numMediaInSubAlbums > 0) {
