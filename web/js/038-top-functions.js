@@ -14,7 +14,7 @@
 	function TopFunctions() {
 	}
 
-	TopFunctions.setTitle = function(id, media) {
+	TopFunctions.setTitle = function(id, singleMedia) {
 
 		var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, isMapTitle, originalTitle;
 		var titleAnchorClasses, where, initialValue, searchFolderHash;
@@ -68,7 +68,7 @@
 		var fillInSpan = "<span id='fill-in-map-link'></span>";
 
 		var mediaTotalInAlbum, imagesTotalInAlbum, videosTotalInAlbum;
-		if (media === null) {
+		if (singleMedia === null) {
 			mediaTotalInAlbum = util.imagesAndVideosTotal(currentAlbum.numMedia);
 			imagesTotalInAlbum = util.imagesTotal(currentAlbum.numMedia);
 			videosTotalInAlbum = util.videosTotal(currentAlbum.numMedia);
@@ -79,18 +79,18 @@
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>" + raquo;
 			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_date_string + "'>(" + util._t("#by-date") + ")</a>";
 
-			if (components.length > 2 || media !== null)
+			if (components.length > 2 || singleMedia !== null)
 				title += raquo;
 
 			if (setDocumentTitle) {
 				documentTitle += components[0];
-				if (components.length > 2 || media !== null)
+				if (components.length > 2 || singleMedia !== null)
 					documentTitle = " \u00ab " + documentTitle;
 				documentTitle += " (" + util._t("#by-date") + ")";
 			}
 
 			for (i = 2; i < components.length; ++i) {
-				if (i < components.length - 1 || media !== null)
+				if (i < components.length - 1 || singleMedia !== null)
 					title += "<a class='" + titleAnchorClasses + "' href='#!/" + encodeURI(currentAlbum.ancestorsCacheBase[i - 1]) + "'>";
 				else
 					title += "<span class='title-no-anchor'>";
@@ -105,24 +105,24 @@
 					title += textComponents[i];
 
 
-				if (i < components.length - 1 || media !== null)
+				if (i < components.length - 1 || singleMedia !== null)
 					title += "</a>";
 				else
 					title += "</span>";
-				if (i < components.length - 1 || media !== null)
+				if (i < components.length - 1 || singleMedia !== null)
 					title += raquo;
 
 				if (setDocumentTitle) {
 					// keep building the html page title
 					documentTitle = textComponents[i] + documentTitle;
-					if (i < components.length - 1 || media !== null)
+					if (i < components.length - 1 || singleMedia !== null)
 						documentTitle = " \u00ab " + documentTitle;
 				}
 			}
 
 			title += fillInSpan;
 
-			if (components.length > 1 && media === null && ! isMobile.any()) {
+			if (components.length > 1 && singleMedia === null && ! isMobile.any()) {
 				title += " <span class='title-count'>(";
 				if (components.length === 2)
 					title += numMediaInSubAlbums + " ";
@@ -144,12 +144,12 @@
 			title = "<a class='" + titleAnchorClasses + "' href='#!/'>" + components[0] + "</a>" + raquo;
 			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_gps_string + "'>(" + util._t("#by-gps") + ")</a>";
 
-			if (components.length > 2 || media !== null)
+			if (components.length > 2 || singleMedia !== null)
 				title += raquo;
 
 			if (setDocumentTitle) {
 				documentTitle += components[0];
-				if (components.length > 2 || media !== null)
+				if (components.length > 2 || singleMedia !== null)
 					documentTitle = " \u00ab " + documentTitle;
 				documentTitle += " (" + util._t("#by-gps") + ")";
 			}
@@ -166,41 +166,41 @@
 					gpsName = util._t('.not-specified');
 				gpsHtmlTitle = util._t("#place-icon-title") + gpsName;
 
-				if (i < components.length - 1 || media !== null) {
+				if (i < components.length - 1 || singleMedia !== null) {
 					title += "<a class='" + titleAnchorClasses + "' href='#!/" + encodeURI(currentAlbum.ancestorsCacheBase[i - 1]) + "'";
 					title += " title='" + util._t("#place-icon-title") + gpsName + util._t("#place-icon-title-end") + "'";
 					title += ">";
 				} else
 					title += "<span class='title-no-anchor'>";
 				title += gpsName;
-				if (i < components.length - 1 || media !== null)
+				if (i < components.length - 1 || singleMedia !== null)
 					title += "</a>";
 				else
 					title += "</span>";
 
-				if (media !== null) {
-					latitude = media.metadata.latitude;
-					longitude = media.metadata.longitude;
+				if (singleMedia !== null) {
+					latitude = singleMedia.metadata.latitude;
+					longitude = singleMedia.metadata.longitude;
 				} else {
 					arrayCoordinates = currentAlbum.ancestorsCenters[i - 1];
 					latitude = arrayCoordinates.latitude;
 					longitude = arrayCoordinates.longitude;
 				}
 
-				if (i < components.length - 1 || media !== null)
+				if (i < components.length - 1 || singleMedia !== null)
 					title += raquo;
 
 				if (setDocumentTitle) {
 					// keep buildimg the html page title
 					documentTitle = gpsName + documentTitle;
-					if (i < components.length - 1 || media !== null)
+					if (i < components.length - 1 || singleMedia !== null)
 						documentTitle = " \u00ab " + documentTitle;
 				}
 			}
 
 			title += fillInSpan;
 
-			if (components.length > 1 && media === null && ! isMobile.any()) {
+			if (components.length > 1 && singleMedia === null && ! isMobile.any()) {
 				title += " <span class='title-count'>(";
 				if (components.length === 2)
 					title += numMediaInSubAlbums + " ";
@@ -251,7 +251,7 @@
 
 			// do not show the options and the search words, they are visible in the menu
 			// show the image name, if it is there
-			if (media !== null) {
+			if (singleMedia !== null) {
 				title += raquo;
 			}
 
@@ -259,7 +259,7 @@
 
 			if (
 				components.length > 2 &&
-				(media === null && ! util.isAlbumWithOneMedia(currentAlbum)) &&
+				(singleMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)) &&
 				(util.imagesAndVideosTotal(currentAlbum.numMedia) || currentAlbum.subalbums.length) &&
 				! isMobile.any()
 			) {
@@ -298,7 +298,7 @@
 			if (setDocumentTitle) {
 				// build the html page title
 				documentTitle += " (" + where +") \u00ab " + components[0];
-				if (media !== null)
+				if (singleMedia !== null)
 					documentTitle = " \u00ab " + documentTitle;
 			}
 		} else if (isMapTitle) {
@@ -319,7 +319,7 @@
 
 			// do not show the options and the search words, they are visible in the menu
 			// show the image name, if it is there
-			if (media !== null) {
+			if (singleMedia !== null) {
 				title += raquo;
 			}
 
@@ -327,7 +327,7 @@
 
 			if (
 				components.length > 2 &&
-				(media === null && ! util.isAlbumWithOneMedia(currentAlbum)) &&
+				(singleMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)) &&
 				(util.imagesAndVideosTotal(currentAlbum.numMedia) || currentAlbum.subalbums.length) &&
 				! isMobile.any()
 			) {
@@ -354,13 +354,13 @@
 			if (setDocumentTitle) {
 				// build the html page title
 				documentTitle += " (" + where +") \u00ab " + components[0];
-				if (media !== null)
+				if (singleMedia !== null)
 					documentTitle = " \u00ab " + documentTitle;
 			}
 		} else {
 			// folders title
 			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>";
-			if (components.length > 2 || media !== null)
+			if (components.length > 2 || singleMedia !== null)
 				title += raquo;
 
 			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
@@ -390,7 +390,7 @@
 
 			if (setDocumentTitle) {
 				documentTitle += components[0];
-				if (components.length > 2 || media !== null)
+				if (components.length > 2 || singleMedia !== null)
 					documentTitle = " \u00ab " + documentTitle;
 			}
 
@@ -400,25 +400,25 @@
 				initialValue = savedSearchAlbumHash.split(Options.cache_folder_separator).slice(2).length + 1;
 			}
 			for (i = initialValue; i < components.length; ++i) {
-				if (i < components.length - 1 || media !== null)
+				if (i < components.length - 1 || singleMedia !== null)
 					title += "<a class='" + titleAnchorClasses + "' href='#!/" + encodeURI(currentAlbum.ancestorsCacheBase[i - 1]) + "'>";
 				else
 					title += "<span class='title-no-anchor'>";
 
 				title += textComponents[i];
 
-				if (i < components.length - 1 || media !== null)
+				if (i < components.length - 1 || singleMedia !== null)
 					title += "</a>";
 				else
 					title += "</span>";
 
-				if (i < components.length - 1 || media !== null)
+				if (i < components.length - 1 || singleMedia !== null)
 					title += raquo;
 			}
 
 			title += fillInSpan;
 
-			if (components.length > 1 && media === null && ! isMobile.any()) {
+			if (components.length > 1 && singleMedia === null && ! isMobile.any()) {
 				title += " <span class='title-count'>(";
 				if (util.imagesAndVideosTotal(currentAlbum.numMedia)) {
 					title += mediaTotalInAlbum + " ";
@@ -449,14 +449,14 @@
 				for (i = initialValue; i < components.length; ++i) {
 					// keep building the html page title
 					documentTitle = textComponents[i] + documentTitle;
-					if (i < components.length - 1 || media !== null)
+					if (i < components.length - 1 || singleMedia !== null)
 						documentTitle = " \u00ab " + documentTitle;
 				}
 			}
 		}
 
-		if (media !== null) {
-			title += "<span class='media-name'>" + media.name + "</span>";
+		if (singleMedia !== null) {
+			title += "<span class='media-name'>" + singleMedia.name + "</span>";
 			if (util.hasGpsData(currentMedia))
 				title += "<a class='map-popup-trigger'>" +
 					"<img class='title-img' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
@@ -515,8 +515,8 @@
 
 		if (setDocumentTitle) {
 			// keep generating the html page title
-			if (media !== null)
-				documentTitle = media.name + documentTitle;
+			if (singleMedia !== null)
+				documentTitle = singleMedia.name + documentTitle;
 			else if (currentAlbum !== null && ! currentAlbum.subalbums.length && util.imagesAndVideosTotal(currentAlbum.numMedia) == 1)
 				documentTitle = util.trimExtension(currentAlbum.media[0].name) + " \u00ab " + documentTitle;
 
@@ -524,7 +524,7 @@
 		}
 
 
-		if (media === null && currentAlbum !== null && ! currentAlbum.subalbums.length && util.imagesAndVideosTotal(currentAlbum.numMedia) == 1) {
+		if (singleMedia === null && currentAlbum !== null && ! currentAlbum.subalbums.length && util.imagesAndVideosTotal(currentAlbum.numMedia) == 1) {
 			title += " " + raquo + "<span class='media-name'>" + util.trimExtension(currentAlbum.media[0].name) + "</span>";
 		}
 
@@ -778,7 +778,7 @@
 
 	};
 
-	TopFunctions.showMedia = function(album, media, id) {
+	TopFunctions.showMedia = function(album, singleMedia, id) {
 
 		function loadNextPrevMedia(containerHeight, containerWidth) {
 
@@ -788,7 +788,7 @@
 				$("#pinch-in").off("click").on("click", pS.pinchIn);
 				$("#pinch-out").off("click").on("click", pS.pinchOut);
 
-				if (media.mimeType.indexOf("image") === 0) {
+				if (singleMedia.mimeType.indexOf("image") === 0) {
 					pS.addMediaGesturesDetection();
 					util.setPinchButtonsPosition();
 					util.correctPrevNextPosition();
@@ -812,13 +812,13 @@
 						event.data.resize = true;
 
 						event.data.id = "center";
-						event.data.media = media;
+						event.data.media = singleMedia;
 						event.data.currentZoom = pS.getCurrentZoom();
 						event.data.initialZoom = pS.getInitialZoom();
 						let scaleMediaPromise = util.scaleMedia(event);
 						scaleMediaPromise.then(
 							function() {
-								if (media.mimeType.indexOf("image") === 0) {
+								if (singleMedia.mimeType.indexOf("image") === 0) {
 									f.pinchSwipeInitialization();
 									Utilities.setPinchButtonsPosition();
 									Utilities.correctPrevNextPosition();
@@ -870,7 +870,7 @@
 
 		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
-		mediaLink = phFl.encodeHash(currentAlbum, media, savedSearchSubAlbumHash, savedSearchAlbumHash);
+		mediaLink = phFl.encodeHash(currentAlbum, singleMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
 		firstEscKey = true;
 
 		thumbnailSize = Options.media_thumb_size;
@@ -887,7 +887,7 @@
 			} else {
 				$("#" + id + " .title").removeClass("hidden-by-fullscreen");
 			}
-			TopFunctions.setTitle(id, media);
+			TopFunctions.setTitle(id, singleMedia);
 
 			if (Options.hide_bottom_thumbnails) {
 				$("#album-view").addClass("hidden-by-option");
@@ -973,22 +973,22 @@
 		var mediaBoxInnerElement = $(".media-box#" + id + " .media-box-inner");
 		// empty the img container: another image will be put in there
 
-		if (media.mimeType.indexOf("video") === 0 && ! f.videoOK()) {
+		if (singleMedia.mimeType.indexOf("video") === 0 && ! f.videoOK()) {
 			mediaBoxInnerElement.empty();
 			f.addVideoUnsupportedMarker(id);
 			if (id === "center")
 				loadNextPrevMedia();
 		} else {
-			if (media.mimeType.indexOf("video") === 0) {
+			if (singleMedia.mimeType.indexOf("video") === 0) {
 				mediaSelector = ".media-box#" + id + " .media-box-inner video";
 			} else {
 				mediaSelector = ".media-box#" + id + " .media-box-inner img";
 			}
 			// is the following line correct for videos?
-			mediaSrc = util.chooseMediaReduction(media, id, fullScreenStatus);
-			mediaHtml = util.createMediaHtml(media, id, fullScreenStatus);
+			mediaSrc = util.chooseMediaReduction(singleMedia, id, fullScreenStatus);
+			mediaHtml = util.createMediaHtml(singleMedia, id, fullScreenStatus);
 
-			triggerLoad = util.chooseTriggerEvent(media);
+			triggerLoad = util.chooseTriggerEvent(singleMedia);
 
 			if (mediaBoxInnerElement.html() !== mediaHtml) {
 				// only replace the media-box-inner content if it's not yet there
@@ -999,7 +999,7 @@
 					$("link[rel=image_src]").remove();
 					$('link[rel="video_src"]').remove();
 				}
-				$("head").append(util.createMediaLinkTag(media, mediaSrc));
+				$("head").append(util.createMediaLinkTag(singleMedia, mediaSrc));
 			}
 
 			if (id === "center")
@@ -1009,7 +1009,7 @@
 				triggerLoad,
 				{
 					id: id,
-					media: media,
+					media: singleMedia,
 					resize: false,
 				},
 				function (event) {
@@ -1018,7 +1018,7 @@
 						function() {
 							Utilities.setPinchButtonsPosition();
 							Utilities.correctPrevNextPosition();
-							if (media.mimeType.indexOf("image") === 0) {
+							if (singleMedia.mimeType.indexOf("image") === 0) {
 								loadNextPrevMedia(containerHeight, containerWidth);
 							}
 						}
@@ -1047,7 +1047,7 @@
 			upLink = phFl.upHash();
 
 			mediaBoxInnerElement.off('mousewheel');
-			if (media.mimeType.indexOf("image") === 0)
+			if (singleMedia.mimeType.indexOf("image") === 0)
 				mediaBoxInnerElement.on('mousewheel', pS.swipeOnWheel);
 
 			$(".media-box#center .media-box-inner .media-bar").on(
@@ -1101,11 +1101,11 @@
 			}
 		}
 
-		var originalMediaPath = encodeURI(util.originalMediaPath(media));
-		var trueOriginalMediaPath = encodeURI(util.trueOriginalMediaPath(media));
+		var originalMediaPath = encodeURI(util.originalMediaPath(singleMedia));
+		var trueOriginalMediaPath = encodeURI(util.trueOriginalMediaPath(singleMedia));
 		$(".media-box#" + id + " .original-link").attr("target", "_blank").attr("href", originalMediaPath);
 		$(".media-box#" + id + " .download-link").attr("href", trueOriginalMediaPath).attr("download", "");
-		if (util.hasGpsData(media)) {
+		if (util.hasGpsData(singleMedia)) {
 			$(".media-box#" + id + " .menu-map-link").on(
 				'click',
 				function() {
@@ -1139,63 +1139,63 @@
 
 		$(".media-box#" + id + " .metadata tr.gps").off('click');
 		text = "<table>";
-		if (typeof media.metadata.title !== "undefined")
-			text += "<tr><td class='metadata-data-title'></td><td>" + media.metadata.title.replace(/\n/g, "<br>") + "</td></tr>";
-		if (typeof media.metadata.description !== "undefined")
-			text += "<tr><td class='metadata-data-description'></td><td>" + media.metadata.description.replace(/\n/g, "<br>") + "</td></tr>";
-		if (typeof media.metadata.tags !== "undefined")
-			text += "<tr><td class='metadata-data-tags'></td><td>" + media.metadata.tags + "</td></tr>";
-		if (typeof media.date !== "undefined")
-			text += "<tr><td class='metadata-data-date'></td><td>" + media.date + "</td></tr>";
-		var fileSize = media.fileSizes[0].images;
-		if (media.mimeType.indexOf("video") === 0)
-			fileSize = media.fileSizes[0].videos;
+		if (typeof singleMedia.metadata.title !== "undefined")
+			text += "<tr><td class='metadata-data-title'></td><td>" + singleMedia.metadata.title.replace(/\n/g, "<br>") + "</td></tr>";
+		if (typeof singleMedia.metadata.description !== "undefined")
+			text += "<tr><td class='metadata-data-description'></td><td>" + singleMedia.metadata.description.replace(/\n/g, "<br>") + "</td></tr>";
+		if (typeof singleMedia.metadata.tags !== "undefined")
+			text += "<tr><td class='metadata-data-tags'></td><td>" + singleMedia.metadata.tags + "</td></tr>";
+		if (typeof singleMedia.date !== "undefined")
+			text += "<tr><td class='metadata-data-date'></td><td>" + singleMedia.date + "</td></tr>";
+		var fileSize = singleMedia.fileSizes[0].images;
+		if (singleMedia.mimeType.indexOf("video") === 0)
+			fileSize = singleMedia.fileSizes[0].videos;
 		text += "<tr><td class='metadata-data-file-size'></td><td>" + f.humanFileSize(fileSize) + "</td></tr>";
-		if (typeof media.metadata.size !== "undefined")
-			text += "<tr><td class='metadata-data-size'></td><td>" + media.metadata.size[0] + " x " + media.metadata.size[1] + "</td></tr>";
-		if (typeof media.metadata.make !== "undefined")
-			text += "<tr><td class='metadata-data-make'></td><td>" + media.metadata.make + "</td></tr>";
-		if (typeof media.metadata.model !== "undefined")
-			text += "<tr><td class='metadata-data-model'></td><td>" + media.metadata.model + "</td></tr>";
-		if (typeof media.metadata.aperture !== "undefined")
-			text += "<tr><td class='metadata-data-aperture'></td><td> f/" + media.metadata.aperture + "</td></tr>";
-		if (typeof media.metadata.focalLength !== "undefined")
-			text += "<tr><td class='metadata-data-focalLength'></td><td>" + media.metadata.focalLength + " mm</td></tr>";
-		if (typeof media.metadata.subjectDistanceRange !== "undefined")
-			text += "<tr><td class='metadata-data-subjectDistanceRange'></td><td>" + media.metadata.subjectDistanceRange + "</td></tr>";
-		if (typeof media.metadata.iso !== "undefined")
-			text += "<tr><td class='metadata-data-iso'></td><td>" + media.metadata.iso + "</td></tr>";
-		if (typeof media.metadata.sceneCaptureType !== "undefined")
-			text += "<tr><td class='metadata-data-sceneCaptureType'></td><td>" + media.metadata.sceneCaptureType + "</td></tr>";
-		if (typeof media.metadata.exposureTime !== "undefined") {
-			if (typeof media.metadata.exposureTime === "string")
-				exposureTime = media.metadata.exposureTime;
-			else if (media.metadata.exposureTime > 0.3)
-				exposureTime = Math.round(media.metadata.exposureTime * 10 ) / 10;
+		if (typeof singleMedia.metadata.size !== "undefined")
+			text += "<tr><td class='metadata-data-size'></td><td>" + singleMedia.metadata.size[0] + " x " + singleMedia.metadata.size[1] + "</td></tr>";
+		if (typeof singleMedia.metadata.make !== "undefined")
+			text += "<tr><td class='metadata-data-make'></td><td>" + singleMedia.metadata.make + "</td></tr>";
+		if (typeof singleMedia.metadata.model !== "undefined")
+			text += "<tr><td class='metadata-data-model'></td><td>" + singleMedia.metadata.model + "</td></tr>";
+		if (typeof singleMedia.metadata.aperture !== "undefined")
+			text += "<tr><td class='metadata-data-aperture'></td><td> f/" + singleMedia.metadata.aperture + "</td></tr>";
+		if (typeof singleMedia.metadata.focalLength !== "undefined")
+			text += "<tr><td class='metadata-data-focalLength'></td><td>" + singleMedia.metadata.focalLength + " mm</td></tr>";
+		if (typeof singleMedia.metadata.subjectDistanceRange !== "undefined")
+			text += "<tr><td class='metadata-data-subjectDistanceRange'></td><td>" + singleMedia.metadata.subjectDistanceRange + "</td></tr>";
+		if (typeof singleMedia.metadata.iso !== "undefined")
+			text += "<tr><td class='metadata-data-iso'></td><td>" + singleMedia.metadata.iso + "</td></tr>";
+		if (typeof singleMedia.metadata.sceneCaptureType !== "undefined")
+			text += "<tr><td class='metadata-data-sceneCaptureType'></td><td>" + singleMedia.metadata.sceneCaptureType + "</td></tr>";
+		if (typeof singleMedia.metadata.exposureTime !== "undefined") {
+			if (typeof singleMedia.metadata.exposureTime === "string")
+				exposureTime = singleMedia.metadata.exposureTime;
+			else if (singleMedia.metadata.exposureTime > 0.3)
+				exposureTime = Math.round(singleMedia.metadata.exposureTime * 10 ) / 10;
 			else
-				exposureTime = "1/" + Math.round(1 / media.metadata.exposureTime);
+				exposureTime = "1/" + Math.round(1 / singleMedia.metadata.exposureTime);
 			text += "<tr><td class='metadata-data-exposureTime'></td><td>" + exposureTime + " sec</td></tr>";
 		}
-		if (typeof media.metadata.exposureProgram !== "undefined")
-			text += "<tr><td class='metadata-data-exposureProgram'></td><td>" + media.metadata.exposureProgram + "</td></tr>";
-		if (typeof media.metadata.exposureCompensation !== "undefined")
-			text += "<tr><td class='metadata-data-exposureCompensation'></td><td>" + media.metadata.exposureCompensation + "</td></tr>";
-		if (typeof media.metadata.spectralSensitivity !== "undefined")
-			text += "<tr><td class='metadata-data-spectralSensitivity'></td><td>" + media.metadata.spectralSensitivity + "</td></tr>";
-		if (typeof media.metadata.sensingMethod !== "undefined")
-			text += "<tr><td class='metadata-data-sensingMethod'></td><td>" + media.metadata.sensingMethod + "</td></tr>";
-		if (typeof media.metadata.lightSource !== "undefined")
-			text += "<tr><td class='metadata-data-lightSource'></td><td>" + media.metadata.lightSource + "</td></tr>";
-		if (typeof media.metadata.flash !== "undefined")
-			text += "<tr><td class='metadata-data-flash'></td><td>" + media.metadata.flash + "</td></tr>";
-		if (typeof media.metadata.orientationText !== "undefined")
-			text += "<tr><td class='metadata-data-orientation'></td><td>" + media.metadata.orientationText + "</td></tr>";
-		if (typeof media.metadata.duration !== "undefined")
-			text += "<tr><td class='metadata-data-duration'></td><td>" + media.metadata.duration + " sec</td></tr>";
-		if (typeof media.metadata.latitude !== "undefined")
-			text += "<tr class='map-link' class='gps'><td class='metadata-data-latitude'></td><td>" + media.metadata.latitudeMS + " </td></tr>";
-		if (typeof media.metadata.longitude !== "undefined")
-			text += "<tr class='gps'><td class='metadata-data-longitude'></td><td>" + media.metadata.longitudeMS + " </td></tr>";
+		if (typeof singleMedia.metadata.exposureProgram !== "undefined")
+			text += "<tr><td class='metadata-data-exposureProgram'></td><td>" + singleMedia.metadata.exposureProgram + "</td></tr>";
+		if (typeof singleMedia.metadata.exposureCompensation !== "undefined")
+			text += "<tr><td class='metadata-data-exposureCompensation'></td><td>" + singleMedia.metadata.exposureCompensation + "</td></tr>";
+		if (typeof singleMedia.metadata.spectralSensitivity !== "undefined")
+			text += "<tr><td class='metadata-data-spectralSensitivity'></td><td>" + singleMedia.metadata.spectralSensitivity + "</td></tr>";
+		if (typeof singleMedia.metadata.sensingMethod !== "undefined")
+			text += "<tr><td class='metadata-data-sensingMethod'></td><td>" + singleMedia.metadata.sensingMethod + "</td></tr>";
+		if (typeof singleMedia.metadata.lightSource !== "undefined")
+			text += "<tr><td class='metadata-data-lightSource'></td><td>" + singleMedia.metadata.lightSource + "</td></tr>";
+		if (typeof singleMedia.metadata.flash !== "undefined")
+			text += "<tr><td class='metadata-data-flash'></td><td>" + singleMedia.metadata.flash + "</td></tr>";
+		if (typeof singleMedia.metadata.orientationText !== "undefined")
+			text += "<tr><td class='metadata-data-orientation'></td><td>" + singleMedia.metadata.orientationText + "</td></tr>";
+		if (typeof singleMedia.metadata.duration !== "undefined")
+			text += "<tr><td class='metadata-data-duration'></td><td>" + singleMedia.metadata.duration + " sec</td></tr>";
+		if (typeof singleMedia.metadata.latitude !== "undefined")
+			text += "<tr class='map-link' class='gps'><td class='metadata-data-latitude'></td><td>" + singleMedia.metadata.latitudeMS + " </td></tr>";
+		if (typeof singleMedia.metadata.longitude !== "undefined")
+			text += "<tr class='gps'><td class='metadata-data-longitude'></td><td>" + singleMedia.metadata.longitudeMS + " </td></tr>";
 		text += "</table>";
 		$(".media-box#" + id + " .metadata").html(text);
 		var linkTitle = util._t('#show-map');
@@ -1224,7 +1224,7 @@
 
 	/* Entry point for most events */
 
-	TopFunctions.hashParsed = function(album, media, mediaIndex) {
+	TopFunctions.hashParsed = function(album, singleMedia, mediaIndex) {
 		var populateAlbum;
 		var currentAlbumPath, currentAlbumPathArray;
 
@@ -1244,8 +1244,8 @@
 			currentAlbum = null;
 		}
 
-		if (currentAlbum && util.isByDateCacheBase(currentAlbum.cacheBase) && media !== null) {
-			previousMedia = media;
+		if (currentAlbum && util.isByDateCacheBase(currentAlbum.cacheBase) && singleMedia !== null) {
+			previousMedia = singleMedia;
 		} else {
 			previousMedia = currentMedia;
 		}
@@ -1255,7 +1255,7 @@
 			$("#media-center")[0].pause();
 
 		currentAlbum = album;
-		currentMedia = media;
+		currentMedia = singleMedia;
 		currentMediaIndex = mediaIndex;
 
 		var isAlbumWithOneMedia = util.isAlbumWithOneMedia(currentAlbum);
