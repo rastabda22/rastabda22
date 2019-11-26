@@ -1273,7 +1273,7 @@
 					// if (album.hasOwnProperty("media"))
 					// 	numMediaInAlbum = album.numMedia;
 					// else
-					numMediaInAlbum = util.imagesAndVideosTotal(util.imagesAndVideosCount(album.media));
+					numMediaInAlbum = util.imagesAndVideosTotal(album.numMedia);
 					if (index >= numMediaInAlbum) {
 						index -= numMediaInAlbum;
 						let found = false;
