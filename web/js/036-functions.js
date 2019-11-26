@@ -501,7 +501,7 @@
 						let reducedSize = Options.reduced_sizes[i];
 						treeSize = util.imagesAndVideosTotal(thisAlbum.sizesOfSubTree[reducedSize]);
 						if (treeSize < bigZipSize) {
-							$(".download-album.everything.all.sized").append(", " + reducedSize + "px  (" + numMedia + " " + util._t(".title-media") + ", " + Functions.humanFileSize(treeSize) + ")");
+							$(".download-album.everything.all.sized").append(", " + reducedSize + "px  (" + util.imagesAndVideosTotal(thisAlbum.numMedia) + " " + util._t(".title-media") + ", " + Functions.humanFileSize(treeSize) + ")");
 							$(".download-album.everything.all.sized").attr("size", reducedSize);
 							$(".download-album.everything.all.sized").removeClass("hidden");
 							break;
