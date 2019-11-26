@@ -18,7 +18,7 @@
 
 		var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, isMapTitle, originalTitle;
 		var titleAnchorClasses, where, initialValue, searchFolderHash;
-		var linkCount = 0, linksToLeave = 1, latitude, longitude, arrayCoordinates, numMediaInSubAlbums;
+		var linkCount = 0, linksToLeave = 1, latitude, longitude, arrayCoordinates;
 		var raquo = "&raquo;";
 		// gpsLevelNumber is the number of levels for the by gps tree
 		// current levels are country, region, place => 3
@@ -67,12 +67,19 @@
 		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 		var fillInSpan = "<span id='fill-in-map-link'></span>";
 
-		var mediaTotalInAlbum, imagesTotalInAlbum, videosTotalInAlbum;
+		var mediaTotalInAlbum, imagesTotalInAlbum, videosTotalInAlbum, numMediaInSubTree;
+		var mediaTotalInSubTree, imagesTotalInSubTree, videosTotalInSubTree;
+		var mediaTotalInSubAlbums, imagesTotalInSubAlbums, videosTotalInSubAlbums;
 		if (singleMedia === null) {
 			mediaTotalInAlbum = util.imagesAndVideosTotal(currentAlbum.numMedia);
 			imagesTotalInAlbum = util.imagesTotal(currentAlbum.numMedia);
 			videosTotalInAlbum = util.videosTotal(currentAlbum.numMedia);
-			numMediaInSubAlbums = util.imagesAndVideosTotal(currentAlbum.numMediaInSubTree) - util.imagesAndVideosTotal(currentAlbum.numMedia);
+			mediaTotalInSubTree = util.imagesAndVideosTotal(currentAlbum.numMediaInSubTree);
+			imagesTotalInSubTree = util.imagesTotal(currentAlbum.numMediaInSubTree);
+			videosTotalInSubTree = util.videosTotal(currentAlbum.numMediaInSubTree);
+			mediaTotalInSubAlbums = mediaTotalInSubTree - mediaTotalInAlbum;
+			imagesTotalInSubAlbums = imagesTotalInSubTree - imagesTotalInAlbum;
+			videosTotalInSubAlbums = videosTotalInSubTree - videosTotalInAlbum;
 		}
 
 		if (isDateTitle) {
@@ -125,15 +132,23 @@
 			if (components.length > 1 && singleMedia === null && ! isMobile.any()) {
 				title += " <span class='title-count'>(";
 				if (components.length === 2)
-					title += numMediaInSubAlbums + " ";
+					title += mediaTotalInSubAlbums + " ";
 				else
 					title += mediaTotalInAlbum + " ";
 				if (! imagesTotalInAlbum && videosTotalInAlbum)
 					title += util._t(".title-videos");
 				else if (imagesTotalInAlbum && ! videosTotalInAlbum)
 					title += util._t(".title-images");
-				else
+				else {
+					title += "<span class='title-count-detail' title='";
+					if (components.length === 2)
+						title += imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos");
+					else
+						title += imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos");
+					title += "'>";
 					title += util._t(".title-media");
+					title += "</span>";
+				}
 				if (components.length >= 5)
 					title += " " + util._t(".title-in-day-album");
 				else if (components.length >= 3)
@@ -203,15 +218,23 @@
 			if (components.length > 1 && singleMedia === null && ! isMobile.any()) {
 				title += " <span class='title-count'>(";
 				if (components.length === 2)
-					title += numMediaInSubAlbums + " ";
+					title += mediaTotalInSubAlbums + " ";
 				else
 					title += mediaTotalInAlbum + " ";
 				if (! imagesTotalInAlbum && videosTotalInAlbum)
 					title += util._t(".title-videos");
 				else if (imagesTotalInAlbum && ! videosTotalInAlbum)
 					title += util._t(".title-images");
-				else
-					title += " " + util._t(".title-media");
+				else {
+					title += "<span class='title-count-detail' title='";
+					if (components.length === 2)
+						title += imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos");
+					else
+						title += imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos");
+					title += "'>";
+					title += util._t(".title-media");
+					title += "</span>";
+				}
 				if (components.length >= gpsLevelNumber + 2)
 					title += " " + util._t(".title-in-gps-album");
 				else if (components.length >= 3)
@@ -265,7 +288,6 @@
 			) {
 				title += " <span class='title-count'>(";
 				title += util._t(".title-found") + ' ';
-				numMediaInSubAlbums = util.imagesAndVideosTotal(currentAlbum.numMediaInSubTree) - util.imagesAndVideosTotal(currentAlbum.numMedia);
 				if (util.imagesAndVideosTotal(currentAlbum.numMedia)) {
 					title += mediaTotalInAlbum + " ";
 					if (! imagesTotalInAlbum && videosTotalInAlbum)
@@ -332,7 +354,6 @@
 				! isMobile.any()
 			) {
 				title += " <span class='title-count'>(";
-				numMediaInSubAlbums = util.imagesAndVideosTotal(currentAlbum.numMediaInSubTree) - util.imagesAndVideosTotal(currentAlbum.numMedia);
 				if (util.imagesAndVideosTotal(currentAlbum.numMedia)) {
 					title += mediaTotalInAlbum + " ";
 					if (! imagesTotalInAlbum && videosTotalInAlbum)
@@ -426,21 +447,43 @@
 						title += util._t(".title-videos") + " ";
 					else if (imagesTotalInAlbum && ! videosTotalInAlbum)
 						title += util._t(".title-images") + " ";
-					else
-						title += util._t(".title-media") + " ";
+					else {
+						title += "<span class='title-count-detail' title='";
+						if (components.length === 2)
+							title += imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos");
+						else
+							title += imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos");
+						title += "'>";
+						title += util._t(".title-media");
+						title += "</span>";
+					}
 					title += util._t(".title-in-album");
-					if (numMediaInSubAlbums)
+					if (mediaTotalInSubAlbums)
 						title += ", ";
 				}
-				if (numMediaInSubAlbums) {
-					title += numMediaInSubAlbums + " ";
-					title += util._t(".title-media") + " ";
-					title += util._t(".title-in-subalbums");
+				if (mediaTotalInSubAlbums) {
+					title += mediaTotalInSubAlbums + " ";
+					if (! imagesTotalInSubAlbums && videosTotalInSubAlbums)
+						title += util._t(".title-videos");
+					else if (imagesTotalInSubAlbums && ! videosTotalInSubAlbums)
+						title += util._t(".title-images");
+					else {
+						title += "<span class='title-count-detail' title='";
+						title += imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos");
+						title += "'>";
+						title += util._t(".title-media");
+						title += "</span>";
+					}
+					title += " " + util._t(".title-in-subalbums");
 				}
-				if (mediaTotalInAlbum && numMediaInSubAlbums) {
+				if (mediaTotalInAlbum && mediaTotalInSubAlbums) {
 					title += ", ";
+					title += "<span class='title-count-detail' title='";
+					title += imagesTotalInSubTree + " " + util._t(".title-images") + ", " + videosTotalInSubTree + " " + util._t(".title-videos");
+					title += "'>";
 					title += util._t(".title-total") + " ";
-					title += mediaTotalInAlbum + numMediaInSubAlbums;
+					title += mediaTotalInSubTree;
+					title += "</span> ";
 				}
 				title += ")</span>";
 			}

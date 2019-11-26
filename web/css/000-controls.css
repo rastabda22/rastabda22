@@ -48,6 +48,10 @@ a:hover {
 	filter: alpha(opacity=70); /* For IE8 and earlier */
 }
 
+.title-count-detail {
+	cursor: pointer;
+}
+
 .hidden, .hidden-by-option, .hidden-by-fullscreen, .hidden-by-pinch {
 	display: none !important;
 }
