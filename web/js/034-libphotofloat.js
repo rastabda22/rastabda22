@@ -1625,7 +1625,7 @@
 			PhotoFloat.searchAndSubalbumHash = decodeURI(PhotoFloat.searchAndSubalbumHash);
 
 		var albumFromCache = PhotoFloat.getAlbumFromCache(albumHashToGet), promise;
-		if (albumFromCache && ! PhotoFloat.guessedPasswordsMd5.length && albumFromCache.hasOwnProperty("subalbums") && albumFromCache.hasOwnProperty("media")) {
+		if (albumFromCache && ! PhotoFloat.guessedPasswordsMd5.length && albumFromCache.hasOwnProperty("subalbums") && albumFromCache.hasOwnProperty("media") && albumFromCache.hasOwnProperty("positionsAndMediaInTree")) {
 		// if (albumFromCache && ! PhotoFloat.passwordsToGet(albumFromCache).length) {
 			if (! albumFromCache.subalbums.length && ! albumFromCache.media.length)
 				util.noResults(albumFromCache);
