@@ -1443,14 +1443,10 @@
 					}
 				} else {
 					self = this;
+					// error is executed if no gps json file has been found (but gps json file must exist)
 					var promise = PhotoFloat.getAlbum(
-						// thisAlbum
 						Options.folders_string,
-						// error
-						// execution arrives here if no gps json file has been found
-						// (but gps json file must exist)
 						function() {
-							// $("#by-gps-view").addClass("hidden");
 							PhotoFloat.geotaggedPhotosFound = false;
 							resolveGeotaggedPhotosExist(false);
 						},
@@ -1807,13 +1803,7 @@
 							searchResultsSubalbums[indexWords] = [];
 							for (indexAlbums = 0; indexAlbums < albumHashes[indexWords].length; indexAlbums ++) {
 								let thisIndexWords = indexWords, thisIndexAlbums = indexAlbums;
-								// getAlbum is called here with 2 more parameters, indexAlbums and indexWords, in order to use their value
-								// if they are not passed as arguments, the success function would see their values updates (getAlbum is an asyncronous function)
-								var promise = PhotoFloat.getAlbum(
-									albumHashes[thisIndexWords][thisIndexAlbums],
-									error,
-									{"getMedia": true, "getPositions": true}
-								);
+								var promise = PhotoFloat.getAlbum(albumHashes[thisIndexWords][thisIndexAlbums], error, {"getMedia": true, "getPositions": true});
 								promise.then(
 									function(theAlbum) {
 										var matchingMedia = [], matchingSubalbums = [], match, indexMedia, indexSubalbums, indexWordsLeft, resultAlbum, indexWords1, ithMedia, ithSubalbum;

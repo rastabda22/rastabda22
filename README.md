@@ -78,12 +78,12 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Keyboard navigation: arrows, pageup/down, `[esc]`, `[f]` (fullscreen), `[d]` (download original), `[o]` (show original), `[s]` (map), `[m]` (metadata), `[e]` (open right menu), `[+]` (pinch in), `[-]` (pinch out), space/backspace (like in [Darktable](https://www.darktable.org/)), `[>]`/`[<]` (rotation among browsing modes: folders -> by date -> by gps -> by search), `[`/`]` (changing sort of albums in a rotative way), `{`/`}` (changing sort of media in a rotative way).
 - [x] Keyboard dragging when the photo is zoomed in.
 - [x] Mouse-wheel support, including for pinching (with ctrl or shift).
-- [x] Various user interface option can be changed by the user.
+- [x] Various user interface options can be changed by the user.
 - [x] Animations to make the interface feel nice.
 - [x] Separate album view and photo view.
 - [x] Media animation when passing to next/previous media.
 - [x] Available in English, Italian, Spanish, French. User interface translated via separate translation file. Add your language!
-- [x] Lazy loading thumbnail for a faster page load
+- [x] Lazy loading thumbnail for a faster page load.
 
 ### Social
 
