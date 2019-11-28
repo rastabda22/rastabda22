@@ -424,7 +424,7 @@
 		} else {
 			$("#search-field").blur();
 		}
-		$("li.search ul").show();
+		$("ul#right-menu li.search ul").removeClass("hidden");
 	};
 
 	Utilities.prototype.stripHtmlAndReplaceEntities = function(htmlString) {

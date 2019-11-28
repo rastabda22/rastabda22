@@ -306,7 +306,7 @@
 				<input type="text" id="search-field" />
 				<img id="search-button" src="img/ic_search_black_48dp_2x.png" />
 			</form>
-			<ul>
+			<ul class="hidden">
 				<li id="inside-words" class="search active"></li>
 				<li id="any-word" class="search active"></li>
 				<li id="case-sensitive" class="search active"></li>
@@ -317,7 +317,7 @@
 
 		<li class="expandable browsing-mode-switcher active">
 			<a class="browsing-mode-switcher caption"></a>
-			<ul class="sub-menu">
+			<ul class="sub-menu hidden">
 				<li id="folders-view" class="browsing-mode-switcher"></li>
 				<li id="by-date-view" class="browsing-mode-switcher"></li>
 				<li id="by-gps-view" class="browsing-mode-switcher"></li>
@@ -328,7 +328,7 @@
 
 		<li class="expandable sort album-sort active">
 			<span class="sort album-sort caption"></span>
-			<ul class="sub-menu">
+			<ul class="sub-menu hidden">
 				<li class='sort album-sort by-date'></li>
 				<li class='sort album-sort by-name'></li>
 				<li class='sort album-sort reverse active'></li>
@@ -337,7 +337,7 @@
 
 		<li class="expandable sort media-sort active">
 			<span class="sort media-sort caption"></span>
-			<ul class="sub-menu">
+			<ul class="sub-menu hidden">
 				<li class='sort media-sort by-date'></li>
 				<li class='sort media-sort by-name'></li>
 				<li class='sort media-sort reverse active'></li>
@@ -346,7 +346,7 @@
 
 		<li class='expandable ui active'>
 			<span class='ui caption'></span>
-			<ul class="sub-menu">
+			<ul class="sub-menu hidden">
 				<li class='ui hide-title active'></li>
 				<li class='ui media-count active'></li>
 				<li class='ui spaced active'></li>
@@ -365,7 +365,7 @@
 
 		<li class='expandable download-album active'>
 			<span class='download-album caption'></span>
-			<ul class="sub-menu">
+			<ul class="sub-menu hidden">
 				<li class='download-album everything all full active'></li>
 				<li class='download-album everything all sized active'></li>
 				<li class='download-album everything images full active'></li>

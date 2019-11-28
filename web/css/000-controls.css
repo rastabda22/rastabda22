@@ -799,10 +799,6 @@ ul#right-menu.expand ul {
 	padding-inline-start: 1em;
 }
 
-ul#right-menu .expandable ul {
-	display: none;
-}
-
 .download-album.active {
 	cursor: pointer;
 }

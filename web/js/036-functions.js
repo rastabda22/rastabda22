@@ -202,7 +202,7 @@
 		}
 
 		if (
-			thisAlbum !== null
+			thisAlbum !== null && ! $(".sub-menu:not(.hidden)").length
 			// thisAlbum !== null &&
 			// (util.isSearchCacheBase(thisAlbum.cacheBase) || thisAlbum.cacheBase == Options.by_search_string)
 			// ||
@@ -210,7 +210,7 @@
 			// $("ul#right-menu li#no-results").is(":visible") ||
 			// $("ul#right-menu li#search-too-wide").is(":visible")
 		) {
-			$("ul#right-menu li.search ul li").removeClass("hidden");
+			$("ul#right-menu li.search ul").removeClass("hidden");
 			// $("ul#right-menu li#refine-search").removeClass("hidden");
 			if (Options.search_inside_words)
 				$("ul#right-menu li#inside-words").addClass("selected");
@@ -245,7 +245,7 @@
 					$("ul#right-menu li#album-search").removeClass("selected");
 			}
 		} else {
-			$("ul#right-menu li.search ul li").addClass("hidden");
+			$("ul#right-menu li.search ul").addClass("hidden");
 			// $("ul#right-menu li#refine-search").addClass("hidden");
 		}
 
@@ -740,16 +740,16 @@
 		$("#right-menu li.expandable").off('click').on(
 			'click',
 			function() {
-				$("#right-menu li ul").hide();
-				$("ul", this).show();
+				$("#right-menu li ul").addClass("hidden");
+				$("ul", this).removeClass("hidden");
 			}
 		);
 
-		$(".search").off("focus").on(
+		$("#search-field").off("focus").on(
 			"focus",
 			function() {
-				$("#right-menu li.expandable ul").hide();
-				$("#right-menu li.search ul").show();
+				$(".sub-menu").addClass("hidden");
+				$("#right-menu li.search ul").removeClass("hidden");
 				// if ($("ul", this).is(':hidden'))
 				// 	$('#right-menu ul').slideUp(300);
 				// $("ul", this).slideToggle(300);
@@ -1222,7 +1222,8 @@
 	Functions.prototype.toggleMenu = function() {
 		$("ul#right-menu").toggleClass("expand");
 		if ($("ul#right-menu").hasClass("expand")) {
-			util.focusSearchField();
+			if (! $(".sub-menu:not(.hidden)").length)
+				util.focusSearchField();
 			Functions.updateMenu();
 		}
 	};
