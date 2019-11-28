@@ -2094,7 +2094,7 @@ class Media(object):
 				pass
 			raise
 		except IOError:
-			message("saving (2nd try)...", info_string, 5)
+			message("saving (2nd try)...", "", 5)
 			try:
 				if hasattr(start_image, 'exif_by_PIL'):
 					start_image_copy_for_saving.convert('RGB').save(thumb_path, "JPEG", quality=Options.config['jpeg_quality'], exif=exif)
@@ -2109,7 +2109,7 @@ class Media(object):
 					msg = "saved for media (2nd try, " + str(original_thumb_size) + ")"
 				if hasattr(start_image, 'exif_by_PIL'):
 					msg += " with exif data"
-				message(msg, "", 2)
+				message(msg, info_string, 2)
 				back_level()
 			except KeyboardInterrupt:
 				try:

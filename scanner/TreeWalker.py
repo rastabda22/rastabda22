@@ -65,7 +65,7 @@ class TreeWalker:
 		self.origin_album = Album(Options.config['album_path'])
 		self.origin_album.cache_base = "root"
 
-		message("Browsing", "start!", 3)
+		message("Browsing", "start!", 1)
 
 		next_level()
 		[folders_album, _, passwords_or_album_ini_processed] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], None, set(), self.origin_album)
@@ -128,7 +128,7 @@ class TreeWalker:
 			report_mem()
 
 			self.time_of_album_saving = datetime.now()
-			message("saving all unprotected albums to json files...", "", 4)
+			message("saving all unprotected albums to json files...", "", 3)
 			next_level()
 			save_password_codes()
 
@@ -136,7 +136,7 @@ class TreeWalker:
 				self.all_albums_to_json_file(album)
 
 			back_level()
-			message("all unprotected albums saved to json files!", "", 5)
+			indented_message("all unprotected albums saved to json files!", "", 4)
 			report_mem()
 
 			message("deleting old protected content directories...", "", 5)
@@ -150,7 +150,7 @@ class TreeWalker:
 				shutil.rmtree(entry_with_path)
 			indented_message("old protected content directories deleted!", Options.config['protected_directories_prefix'] + "*/*", 4)
 
-			message("saving all protected albums to json files...", "", 4)
+			message("saving all protected albums to json files...", "", 3)
 			next_level()
 
 			keys = list(self.protected_origin_album.keys())
@@ -162,14 +162,14 @@ class TreeWalker:
 				md5_combination = convert_set_to_combination(convert_identifiers_set_to_md5s_set(convert_combination_to_set(media_identifiers_combination)))
 				total_md5_combination = complex_combination(album_md5_combination, md5_combination)
 
-				message("saving protected albums for identifiers...", "album ident. = " + album_identifiers_combination + ", media ident. = " + media_identifiers_combination + ", md5's = '" + total_md5_combination + "'", 4)
+				message("saving protected albums for identifiers...", "album ident. = " + album_identifiers_combination + ", media ident. = " + media_identifiers_combination + ", md5's = '" + total_md5_combination + "'", 3)
 				next_level()
 				self.all_albums_to_json_file(album, complex_identifiers_combination)
 				back_level()
 				message("protected albums saved for identifiers!", "album identif. = " + album_identifiers_combination + ", media ident. = " + media_identifiers_combination + ", md5's = '" + total_md5_combination + "'", 4)
 
 			back_level()
-			message("all protected albums saved to json files", "", 5)
+			message("all protected albums saved to json files", "", 4)
 			report_mem()
 
 			# options must be saved when json files have been saved, otherwise in case of error they may not reflect the json files situation
@@ -181,9 +181,9 @@ class TreeWalker:
 					md5 = convert_identifiers_set_to_md5s_set(set([identifier])).pop()
 					self.all_json_files.append(os.path.join(Options.config['passwords_subdir'], md5))
 
+			back_level()
 			self.remove_stale("", self.all_json_files)
 			report_mem()
-			back_level()
 			message("completed", "", 4)
 
 	def all_albums_to_json_file(self, album, complex_identifiers_combination = None):
@@ -197,7 +197,7 @@ class TreeWalker:
 			message("saving all by gps albums to json files...", "", 3)
 			next_level()
 		elif album.cache_base == Options.config['by_search_string']:
-			message("saving all search albums to json files...", "", 3)
+			message("saving all by search albums to json files...", "", 3)
 			next_level()
 
 		# the subalbums of search albums in by_search_album are regular albums
@@ -229,9 +229,9 @@ class TreeWalker:
 		):
 		# if len(album.subalbums) == 0 and len(album.media_list) == 0:
 			if complex_identifiers_combination is None:
-				message("empty album, not saving it", album.absolute_path, 4)
+				indented_message("empty album, not saving it", album.absolute_path, 4)
 			else:
-				message("empty protected album, not saving it", album.absolute_path, 4)
+				indented_message("empty protected album, not saving it", album.absolute_path, 4)
 			return
 
 		if complex_identifiers_combination is not None:
@@ -381,16 +381,16 @@ class TreeWalker:
 		)
 		if album.cache_base == Options.config['folders_string']:
 			back_level()
-			message("all physical albums saved to json files!", "", 3)
+			indented_message("all physical albums saved to json files!", "", 4)
 		elif album.cache_base == Options.config['by_date_string']:
 			back_level()
-			message("all by date albums saved to json files!", "", 3)
+			indented_message("all by date albums saved to json files!", "", 4)
 		elif album.cache_base == Options.config['by_gps_string']:
 			back_level()
-			message("all by gps albums saved to json files!", "", 3)
+			indented_message("all by gps albums saved to json files!", "", 4)
 		elif album.cache_base == Options.config['by_search_string']:
 			back_level()
-			message("all by search albums saved to json files!", "", 3)
+			indented_message("all by search albums saved to json files!", "", 4)
 
 
 	def generate_by_date_albums(self, origin_album):
@@ -1025,7 +1025,7 @@ class TreeWalker:
 		inherited_passwords_mtime = copy.deepcopy(inherited_passwords_mtime)
 		passwords_or_album_ini_processed = False
 		max_file_date = file_mtime(absolute_path)
-		message(">>>>>>>>>>>  Entering directory", absolute_path, 3)
+		message(">>>>>>>>>>>  Entering directory", absolute_path, 1)
 		next_level()
 		message("cache base", album_cache_base, 4)
 		if not os.access(absolute_path, os.R_OK | os.X_OK):
@@ -1184,7 +1184,7 @@ class TreeWalker:
 								indented_message("WARNING: using an unknown password identifier", identifier + ": not protecting the directory", 2)
 							elif len(indexes) == 1:
 								flags_string = case + ', ' + whole + ', ' + what
-								indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', " + flags_string, 3)
+								indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', " + flags_string, 4)
 								patterns_and_passwords.append(
 									{
 										"pattern": pattern,
@@ -1396,7 +1396,7 @@ class TreeWalker:
 		album.sizes_protected_media_in_album = SizesProtected()
 
 		message("reading directory", absolute_path, 5)
-		message("subdir for cache files", " " + album.subdir, 3)
+		message("subdir for cache files", " " + album.subdir, 4)
 
 		num_video_in_dir = 0
 		num_video_processed_in_dir = 0
@@ -1644,7 +1644,7 @@ class TreeWalker:
 									indented_message(
 										"password and code added to media",
 										"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", identifier = " + identifier,
-										3
+										4
 									)
 								else:
 									indented_message(
@@ -1726,7 +1726,7 @@ class TreeWalker:
 					indented_message("media not added to anything...", "it was already there", 5)
 
 			elif not single_media.is_valid:
-				indented_message("not image nor video", "", 1)
+				indented_message("not image nor video", entry_with_path, 3)
 				unrecognized_files_in_dir.append("      " + entry_with_path + "      mime type: " + single_media.mime_type )
 			back_level()
 		back_level()
@@ -1978,7 +1978,7 @@ class TreeWalker:
 
 		if not subdir:
 			json_list = json_list_or_dict
-			message("cleaning up...", "", 3)
+			message("cleaning up...", "", 1)
 			next_level()
 			message("building stale list...", "", 4)
 
@@ -2029,9 +2029,9 @@ class TreeWalker:
 					self.remove_stale(os.path.join(subdir, cache_file), json_dict['dirs'][cache_file])
 				elif subdir == "":
 					# a protected content directory which is'n reported must be deleted with all its content
-					message("deleting protected content subdir not reported...", "", 5)
+					message("deleting non-reported protected content subdir...", "", 5)
 					shutil.rmtree(os.path.join(Options.config['cache_path'], subdir, cache_file))
-					message("protected content subdir not reported deleted...", os.path.join(Options.config['cache_path'], subdir, cache_file), 4)
+					message("non-reported protected content subdir deleted!", os.path.join(Options.config['cache_path'], subdir, cache_file), 4)
 				try:
 					if not os.listdir(os.path.join(Options.config['cache_path'], subdir, cache_file)):
 						next_level()
