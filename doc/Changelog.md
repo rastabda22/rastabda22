@@ -1,5 +1,6 @@
-* give the user the chance to download the album, either with or without its subalbums, images only or videos only too
+* give the user the chance to download the album, either with or without its subalbums; download can include everything, or images only, or videos only
 * added 3-9 enlargments by shortcut
+* many bug fixes
 
 
 ### version v4.0.4 (Nov 11, 2019)
