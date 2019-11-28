@@ -208,11 +208,7 @@
 			// $("ul#right-menu li#no-results").is(":visible") ||
 			// $("ul#right-menu li#search-too-wide").is(":visible")
 		) {
-			$("ul#right-menu li#inside-words").removeClass("hidden");
-			$("ul#right-menu li#any-word").removeClass("hidden");
-			$("ul#right-menu li#case-sensitive").removeClass("hidden");
-			$("ul#right-menu li#accent-sensitive").removeClass("hidden");
-			$("ul#right-menu li#album-search").removeClass("hidden");
+			$("ul#right-menu li.search ul li").removeClass("hidden");
 			// $("ul#right-menu li#refine-search").removeClass("hidden");
 			if (Options.search_inside_words)
 				$("ul#right-menu li#inside-words").addClass("selected");
@@ -247,11 +243,7 @@
 					$("ul#right-menu li#album-search").removeClass("selected");
 			}
 		} else {
-			$("ul#right-menu li#inside-words").addClass("hidden");
-			$("ul#right-menu li#any-word").addClass("hidden");
-			$("ul#right-menu li#case-sensitive").addClass("hidden");
-			$("ul#right-menu li#accent-sensitive").addClass("hidden");
-			$("ul#right-menu li#album-search").addClass("hidden");
+			$("ul#right-menu li.search ul li").addClass("hidden");
 			// $("ul#right-menu li#refine-search").addClass("hidden");
 		}
 
