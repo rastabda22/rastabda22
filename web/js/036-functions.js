@@ -57,7 +57,8 @@
 		}
 
 		myShareUrl = url + '?';
-		myShareUrl += 'm=' + mediaParameter;
+		// disable the image parameter, because of issue #169
+		// myShareUrl += 'm=' + mediaParameter;
 		hash = location.hash;
 		if (hash)
 			myShareUrl += '#' + hash.substring(1);

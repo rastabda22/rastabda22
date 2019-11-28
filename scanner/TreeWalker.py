@@ -1820,6 +1820,11 @@ class TreeWalker:
 		return [None, random_number]
 
 	def generate_composite_image(self, album, max_file_date):
+
+		# I'm short-circuiting this function because of issue #169
+		# remove the following return when the issue has been solved
+		return
+
 		next_level()
 		composite_image_name = album.cache_base + ".jpg"
 		composite_image_path = os.path.join(self.album_cache_path, composite_image_name)
