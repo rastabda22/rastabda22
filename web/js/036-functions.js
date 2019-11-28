@@ -137,6 +137,8 @@
 
 		// add the correct classes to the menu buttons
 
+		// if ($("ul#right-menu li ul#sub-menu"))
+
 		if (
 			isMapOrPopup ||
 			thisAlbum === null ||
