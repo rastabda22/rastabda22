@@ -1626,11 +1626,12 @@
 
 		var albumFromCache = PhotoFloat.getAlbumFromCache(albumHashToGet), promise;
 		if (albumFromCache && ! PhotoFloat.guessedPasswordsMd5.length && albumFromCache.hasOwnProperty("subalbums") && albumFromCache.hasOwnProperty("media") && albumFromCache.hasOwnProperty("positionsAndMediaInTree")) {
-		// if (albumFromCache && ! PhotoFloat.passwordsToGet(albumFromCache).length) {
-			if (! albumFromCache.subalbums.length && ! albumFromCache.media.length)
+			if (util.isSearchCacheBase(albumHash) && ! albumFromCache.subalbums.length && ! albumFromCache.media.length)
+				// it's a search with no results
 				util.noResults(albumFromCache);
 			PhotoFloat.selectMedia(albumFromCache, mediaFolderHash, mediaHash, hashParsed);
 		} else if (! util.isSearchCacheBase(albumHash) || searchWordsFromUser.length === 0) {
+			// something is missing, getAlbum must be called
 			promise = PhotoFloat.getAlbum(albumHashToGet, error, {"getMedia": true, "getPositions": true});
 			promise.then(
 				function(theAlbum) {
