@@ -600,6 +600,10 @@ class Album(object):
 		if "symlinkCodesAndNumbers" in dictionary:
 			album.symlink_codes_and_numbers = dictionary["symlinkCodesAndNumbers"]
 
+		album._attributes["metadata"]["title"] = dictionary["title"]
+		album._attributes["metadata"]["description"] = dictionary["description"]
+		album._attributes["metadata"]["tags"] = dictionary["tags"]
+
 		album.sort_subalbums_and_media()
 
 		return album
@@ -711,7 +715,10 @@ class Album(object):
 			"numPositionsInTree": len(self.positions_and_media_in_tree.positions),
 			"albumIniMTime": self.album_ini_mtime,
 			"passwordMarkerMTime": self.passwords_marker_mtime,
-			"jsonVersion": Options.json_version
+			"jsonVersion": Options.json_version,
+			"title": self.title,
+			"description": self.description,
+			"tags": self.tags
 		}
 		nums_protected_by_code = {}
 		for complex_identifiers_combination in list(self.nums_protected_media_in_sub_tree.keys()):
