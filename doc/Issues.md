@@ -67,3 +67,11 @@ The cache can be the browser's one or the web server one.
 #### Privacy concern with password implementation
 
 Passwords can be used to protect content, but carefully read the [explication and warnings](Authentication.md).
+
+#### Album download limitations
+
+Downloading a whole album is permitted only if the total content is less than a given amount (now, 500MB), because the current code needs to generated the zip file in ram before saving it to the disk.
+
+Actually, the limit is browser and ram dependent, so the user can get a notice of preparing the download, but it doesn't ever get an end.
+
+A different approach should be used, saving the zip file while is created.

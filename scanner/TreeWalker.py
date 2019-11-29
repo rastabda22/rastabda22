@@ -26,7 +26,7 @@ from Utilities import determine_symlink_number_and_name
 from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_digits, switch_to_lowercase, phrase_to_words, checksum
 from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, make_dir
-from PhotoAlbum import Media, Album, PhotoAlbumEncoder, Position, Positions, NumsProtected
+from PhotoAlbum import Media, Album, PhotoAlbumEncoder, Position, Positions, NumsProtected, Sizes, SizesProtected
 from Geonames import Geonames
 import Options
 
@@ -65,7 +65,7 @@ class TreeWalker:
 		self.origin_album = Album(Options.config['album_path'])
 		self.origin_album.cache_base = "root"
 
-		message("Browsing", "start!", 3)
+		message("Browsing", "start!", 1)
 
 		next_level()
 		[folders_album, _, passwords_or_album_ini_processed] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], None, set(), self.origin_album)
@@ -82,6 +82,7 @@ class TreeWalker:
 			next_level()
 
 			self.origin_album.nums_protected_media_in_sub_tree.merge(folders_album.nums_protected_media_in_sub_tree)
+			self.origin_album.sizes_protected_media_in_sub_tree.merge(folders_album.sizes_protected_media_in_sub_tree)
 			self.origin_album.add_subalbum(folders_album)
 
 			self.all_json_files.append(Options.config['folders_string'] + ".json")
@@ -92,6 +93,7 @@ class TreeWalker:
 			if by_date_album is not None and not by_date_album.empty:
 				self.all_json_files.append(Options.config['by_date_string'] + ".json")
 				self.origin_album.nums_protected_media_in_sub_tree.merge(by_date_album.nums_protected_media_in_sub_tree)
+				self.origin_album.sizes_protected_media_in_sub_tree.merge(by_date_album.sizes_protected_media_in_sub_tree)
 				self.origin_album.add_subalbum(by_date_album)
 			report_mem()
 
@@ -101,6 +103,7 @@ class TreeWalker:
 			if by_geonames_album is not None and not by_geonames_album.empty:
 				self.all_json_files.append(Options.config['by_gps_string'] + ".json")
 				self.origin_album.nums_protected_media_in_sub_tree.merge(by_geonames_album.nums_protected_media_in_sub_tree)
+				self.origin_album.sizes_protected_media_in_sub_tree.merge(by_geonames_album.sizes_protected_media_in_sub_tree)
 				self.origin_album.add_subalbum(by_geonames_album)
 			report_mem()
 
@@ -110,6 +113,7 @@ class TreeWalker:
 			if by_search_album is not None and not by_search_album.empty:
 				self.all_json_files.append(Options.config['by_search_string'] + ".json")
 				self.origin_album.nums_protected_media_in_sub_tree.merge(by_search_album.nums_protected_media_in_sub_tree)
+				self.origin_album.sizes_protected_media_in_sub_tree.merge(by_search_album.sizes_protected_media_in_sub_tree)
 				self.origin_album.add_subalbum(by_search_album)
 			report_mem()
 
@@ -124,7 +128,7 @@ class TreeWalker:
 			report_mem()
 
 			self.time_of_album_saving = datetime.now()
-			message("saving all unprotected albums to json files...", "", 4)
+			message("saving all unprotected albums to json files...", "", 3)
 			next_level()
 			save_password_codes()
 
@@ -132,7 +136,7 @@ class TreeWalker:
 				self.all_albums_to_json_file(album)
 
 			back_level()
-			message("all unprotected albums saved to json files!", "", 5)
+			indented_message("all unprotected albums saved to json files!", "", 4)
 			report_mem()
 
 			message("deleting old protected content directories...", "", 5)
@@ -146,7 +150,7 @@ class TreeWalker:
 				shutil.rmtree(entry_with_path)
 			indented_message("old protected content directories deleted!", Options.config['protected_directories_prefix'] + "*/*", 4)
 
-			message("saving all protected albums to json files...", "", 4)
+			message("saving all protected albums to json files...", "", 3)
 			next_level()
 
 			keys = list(self.protected_origin_album.keys())
@@ -158,14 +162,14 @@ class TreeWalker:
 				md5_combination = convert_set_to_combination(convert_identifiers_set_to_md5s_set(convert_combination_to_set(media_identifiers_combination)))
 				total_md5_combination = complex_combination(album_md5_combination, md5_combination)
 
-				message("saving protected albums for identifiers...", "album ident. = " + album_identifiers_combination + ", media ident. = " + media_identifiers_combination + ", md5's = '" + total_md5_combination + "'", 4)
+				message("saving protected albums for identifiers...", "album ident. = " + album_identifiers_combination + ", media ident. = " + media_identifiers_combination + ", md5's = '" + total_md5_combination + "'", 3)
 				next_level()
 				self.all_albums_to_json_file(album, complex_identifiers_combination)
 				back_level()
 				message("protected albums saved for identifiers!", "album identif. = " + album_identifiers_combination + ", media ident. = " + media_identifiers_combination + ", md5's = '" + total_md5_combination + "'", 4)
 
 			back_level()
-			message("all protected albums saved to json files", "", 5)
+			message("all protected albums saved to json files", "", 4)
 			report_mem()
 
 			# options must be saved when json files have been saved, otherwise in case of error they may not reflect the json files situation
@@ -177,9 +181,9 @@ class TreeWalker:
 					md5 = convert_identifiers_set_to_md5s_set(set([identifier])).pop()
 					self.all_json_files.append(os.path.join(Options.config['passwords_subdir'], md5))
 
+			back_level()
 			self.remove_stale("", self.all_json_files)
 			report_mem()
-			back_level()
 			message("completed", "", 4)
 
 	def all_albums_to_json_file(self, album, complex_identifiers_combination = None):
@@ -193,7 +197,7 @@ class TreeWalker:
 			message("saving all by gps albums to json files...", "", 3)
 			next_level()
 		elif album.cache_base == Options.config['by_search_string']:
-			message("saving all search albums to json files...", "", 3)
+			message("saving all by search albums to json files...", "", 3)
 			next_level()
 
 		# the subalbums of search albums in by_search_album are regular albums
@@ -208,7 +212,7 @@ class TreeWalker:
 				self.all_albums_to_json_file(subalbum, complex_identifiers_combination)
 
 		if (
-			album.num_media_in_sub_tree == 0 and (
+			album.num_media_in_sub_tree.total() == 0 and (
 				album.cache_base.find(Options.config['by_search_string']) != 0  or
 				album.cache_base != Options.config['by_search_string'] and
 				(
@@ -225,9 +229,9 @@ class TreeWalker:
 		):
 		# if len(album.subalbums) == 0 and len(album.media_list) == 0:
 			if complex_identifiers_combination is None:
-				message("empty album, not saving it", album.absolute_path, 4)
+				indented_message("empty album, not saving it", album.absolute_path, 4)
 			else:
-				message("empty protected album, not saving it", album.absolute_path, 4)
+				indented_message("empty protected album, not saving it", album.absolute_path, 4)
 			return
 
 		if complex_identifiers_combination is not None:
@@ -377,16 +381,16 @@ class TreeWalker:
 		)
 		if album.cache_base == Options.config['folders_string']:
 			back_level()
-			message("all physical albums saved to json files!", "", 3)
+			indented_message("all physical albums saved to json files!", "", 4)
 		elif album.cache_base == Options.config['by_date_string']:
 			back_level()
-			message("all by date albums saved to json files!", "", 3)
+			indented_message("all by date albums saved to json files!", "", 4)
 		elif album.cache_base == Options.config['by_gps_string']:
 			back_level()
-			message("all by gps albums saved to json files!", "", 3)
+			indented_message("all by gps albums saved to json files!", "", 4)
 		elif album.cache_base == Options.config['by_search_string']:
 			back_level()
-			message("all by search albums saved to json files!", "", 3)
+			indented_message("all by search albums saved to json files!", "", 4)
 
 
 	def generate_by_date_albums(self, origin_album):
@@ -430,22 +434,44 @@ class TreeWalker:
 					for single_media in media_list:
 						single_media.day_album_cache_base = day_album.cache_base
 						day_album.add_single_media(single_media)
-						day_album.num_media_in_sub_tree += 1
 						month_album.add_single_media(single_media)
-						month_album.num_media_in_sub_tree += 1
 						year_album.add_single_media(single_media)
-						year_album.num_media_in_sub_tree += 1
-						by_date_album.num_media_in_sub_tree += 1
+						if single_media.is_image:
+							day_album.num_media_in_sub_tree.incrementImages()
+							month_album.num_media_in_sub_tree.incrementImages()
+							year_album.num_media_in_sub_tree.incrementImages()
+							by_date_album.num_media_in_sub_tree.incrementImages()
+						else:
+							day_album.num_media_in_sub_tree.incrementVideos()
+							month_album.num_media_in_sub_tree.incrementVideos()
+							year_album.num_media_in_sub_tree.incrementVideos()
+							by_date_album.num_media_in_sub_tree.incrementVideos()
 						if single_media.has_gps_data:
 							day_album.positions_and_media_in_tree.add_single_media(single_media)
 							month_album.positions_and_media_in_tree.add_single_media(single_media)
 							year_album.positions_and_media_in_tree.add_single_media(single_media)
 
 						complex_identifiers_combination = complex_combination(convert_set_to_combination(single_media.album_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
-						day_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
-						month_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
-						year_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
-						by_date_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
+						if single_media.is_image:
+							day_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+							month_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+							year_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+							by_date_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+						else:
+							day_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+							month_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+							year_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+							by_date_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+
+						day_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+						month_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+						year_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+						by_date_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+
+						day_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+						month_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+						year_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+						by_date_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 
 						single_media_date = max(single_media.datetime_file, single_media.datetime_dir)
 						if day_max_file_date:
@@ -472,7 +498,7 @@ class TreeWalker:
 			Options.all_albums.append(year_album)
 			self.generate_composite_image(year_album, year_max_file_date)
 		Options.all_albums.append(by_date_album)
-		if by_date_album.num_media_in_sub_tree > 0:
+		if by_date_album.num_media_in_sub_tree.total() > 0:
 			self.generate_composite_image(by_date_album, by_date_max_file_date)
 		back_level()
 		return by_date_album
@@ -503,9 +529,14 @@ class TreeWalker:
 			by_search_album.add_subalbum(word_album)
 			for single_media in media_album_and_words["media_list"]:
 				word_album.add_single_media(single_media)
-				word_album.num_media_in_sub_tree += 1
-				# actually, this counter for the search root album is not significant
-				by_search_album.num_media_in_sub_tree += 1
+				if single_media.is_image:
+					word_album.num_media_in_sub_tree.incrementImages()
+					# actually, this counter for the search root album is not significant
+					by_search_album.num_media_in_sub_tree.incrementImages()
+				else:
+					word_album.num_media_in_sub_tree.incrementVideos()
+					# actually, this counter for the search root album is not significant
+					by_search_album.num_media_in_sub_tree.incrementVideos()
 
 				single_media_date = max(single_media.datetime_file, single_media.datetime_dir)
 				# if word_max_file_date:
@@ -522,9 +553,20 @@ class TreeWalker:
 					by_search_album.positions_and_media_in_tree.add_single_media(single_media)
 
 				complex_identifiers_combination = complex_combination(convert_set_to_combination(single_media.album_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
-				word_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
-				# nums_protected_media_in_sub_tree matters for the search root albums!
-				by_search_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
+
+				if single_media.is_image:
+					word_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+					# nums_protected_media_in_sub_tree matters for the search root albums!
+					by_search_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+				else:
+					word_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+					by_search_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+
+				word_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+				by_search_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+
+				word_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+				by_search_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 
 			for single_album in media_album_and_words["albums_list"]:
 				word_album.add_subalbum(single_album)
@@ -541,7 +583,8 @@ class TreeWalker:
 				# 	by_search_max_file_date = single_album.date
 
 				word_album.nums_protected_media_in_sub_tree.merge(single_album.nums_protected_media_in_sub_tree)
-				# by_search_album.nums_protected_media_in_sub_tree.merge(single_album.nums_protected_media_in_sub_tree)
+				word_album.sizes_protected_media_in_sub_tree.merge(single_album.sizes_protected_media_in_sub_tree)
+				word_album.sizes_protected_media_in_album.merge(single_album.sizes_protected_media_in_album)
 
 			word_album.unicode_words = media_album_and_words["unicode_words"]
 			Options.all_albums.append(word_album)
@@ -706,18 +749,21 @@ class TreeWalker:
 							cluster[j].alt_place_name = alt_place_name
 
 							place_album.positions_and_media_in_tree.add_single_media(single_media)
-							place_album.add_single_media(single_media)
-							place_album.num_media_in_sub_tree += 1
-
 							region_album.positions_and_media_in_tree.add_single_media(single_media)
-							region_album.add_single_media(single_media)
-							region_album.num_media_in_sub_tree += 1
-
 							country_album.positions_and_media_in_tree.add_single_media(single_media)
+							place_album.add_single_media(single_media)
+							region_album.add_single_media(single_media)
 							country_album.add_single_media(single_media)
-							country_album.num_media_in_sub_tree += 1
-
-							by_geonames_album.num_media_in_sub_tree += 1
+							if single_media.is_image:
+								place_album.num_media_in_sub_tree.incrementImages()
+								region_album.num_media_in_sub_tree.incrementImages()
+								country_album.num_media_in_sub_tree.incrementImages()
+								by_geonames_album.num_media_in_sub_tree.incrementImages()
+							else:
+								place_album.num_media_in_sub_tree.incrementVideos()
+								region_album.num_media_in_sub_tree.incrementVideos()
+								country_album.num_media_in_sub_tree.incrementVideos()
+								by_geonames_album.num_media_in_sub_tree.incrementVideos()
 
 							if place_album.center == {}:
 								place_album.center['latitude'] = single_media.latitude
@@ -763,10 +809,26 @@ class TreeWalker:
 								by_geonames_max_file_date = single_media_date
 
 							complex_identifiers_combination = complex_combination(convert_set_to_combination(single_media.album_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
-							place_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
-							region_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
-							country_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
-							by_geonames_album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
+							if single_media.is_image:
+								place_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+								region_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+								country_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+								by_geonames_album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+							else:
+								place_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+								region_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+								country_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+								by_geonames_album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+
+							place_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+							region_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+							country_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+							by_geonames_album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+
+							place_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+							region_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+							country_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+							by_geonames_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 
 						Options.all_albums.append(place_album)
 						self.generate_composite_image(place_album, place_max_file_date)
@@ -787,7 +849,7 @@ class TreeWalker:
 			Options.all_albums.append(country_album)
 			self.generate_composite_image(country_album, country_max_file_date)
 		Options.all_albums.append(by_geonames_album)
-		if by_geonames_album.num_media_in_sub_tree > 0:
+		if by_geonames_album.num_media_in_sub_tree.total() > 0:
 			self.generate_composite_image(by_geonames_album, by_geonames_max_file_date)
 		back_level()
 		return by_geonames_album
@@ -963,7 +1025,7 @@ class TreeWalker:
 		inherited_passwords_mtime = copy.deepcopy(inherited_passwords_mtime)
 		passwords_or_album_ini_processed = False
 		max_file_date = file_mtime(absolute_path)
-		message(">>>>>>>>>>>  Entering directory", absolute_path, 3)
+		message(">>>>>>>>>>>  Entering directory", absolute_path, 1)
 		next_level()
 		message("cache base", album_cache_base, 4)
 		if not os.access(absolute_path, os.R_OK | os.X_OK):
@@ -1122,7 +1184,7 @@ class TreeWalker:
 								indented_message("WARNING: using an unknown password identifier", identifier + ": not protecting the directory", 2)
 							elif len(indexes) == 1:
 								flags_string = case + ', ' + whole + ', ' + what
-								indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', " + flags_string, 3)
+								indented_message("file(s) protection requested", "identifier: '" + identifier + "', pattern: '" + pattern + "', " + flags_string, 4)
 								patterns_and_passwords.append(
 									{
 										"pattern": pattern,
@@ -1235,7 +1297,7 @@ class TreeWalker:
 			album = Album(absolute_path)
 			indented_message("void album generated", "", 5)
 
-		if album_cache_hit and album_ini_good:
+		if not album_cache_hit and album_ini_good:
 			if must_process_album_ini:
 				message("reading album.ini...", "", 2)
 				album.read_album_ini(album_ini_file)
@@ -1330,9 +1392,11 @@ class TreeWalker:
 
 		# reset the protected media counts
 		album.nums_protected_media_in_sub_tree = NumsProtected()
+		album.sizes_protected_media_in_sub_tree = SizesProtected()
+		album.sizes_protected_media_in_album = SizesProtected()
 
 		message("reading directory", absolute_path, 5)
-		message("subdir for cache files", " " + album.subdir, 3)
+		message("subdir for cache files", " " + album.subdir, 4)
 
 		num_video_in_dir = 0
 		num_video_processed_in_dir = 0
@@ -1381,9 +1445,10 @@ class TreeWalker:
 				passwords_or_album_ini_processed = passwords_or_album_ini_processed or _passwords_or_album_ini_processed
 				if next_walked_album is not None:
 					max_file_date = max(max_file_date, sub_max_file_date)
-					album.num_media_in_sub_tree += next_walked_album.num_media_in_sub_tree
+					album.num_media_in_sub_tree.sum(next_walked_album.num_media_in_sub_tree)
 					album.positions_and_media_in_tree.merge(next_walked_album.positions_and_media_in_tree)
 					album.nums_protected_media_in_sub_tree.merge(next_walked_album.nums_protected_media_in_sub_tree)
+					album.sizes_protected_media_in_sub_tree.merge(next_walked_album.sizes_protected_media_in_sub_tree)
 
 					album.add_subalbum(next_walked_album)
 					next_level()
@@ -1409,10 +1474,15 @@ class TreeWalker:
 			single_media_cache_hit = True
 			dirname = os.path.dirname(entry_with_path)
 			try:
-				message("reading file and dir times...", "", 5)
+				message("reading file time and size...", "", 5)
 				mtime = file_mtime(entry_with_path)
+				file_size = os.path.getsize(entry_with_path)
+				# file_sizes = Sizes()
+				# file_sizes.set(0, file_size)
+				indented_message("file time and size read!", "", 5)
+				message("reading dir time...", "", 5)
 				dir_mtime = file_mtime(dirname)
-				indented_message("file and dir times read!", "", 5)
+				indented_message("dir time read!", "", 5)
 			except KeyboardInterrupt:
 				raise
 			except OSError:
@@ -1446,6 +1516,15 @@ class TreeWalker:
 
 				if single_media_cache_hit and cached_media._attributes["dateTimeFile"] != mtime:
 					indented_message("not a single media cache hit", "modification time different", 5)
+					single_media_cache_hit = False
+
+				if (
+					single_media_cache_hit and (
+						cached_media.is_video and cached_media._attributes["fileSizes"].getVideosSize(0) != file_size or
+						not cached_media.is_video and cached_media._attributes["fileSizes"].getImagesSize(0) != file_size
+					)
+				):
+					indented_message("not a single media cache hit", "file size different", 5)
 					single_media_cache_hit = False
 
 				if single_media_cache_hit and Options.config['checksum']:
@@ -1565,7 +1644,7 @@ class TreeWalker:
 									indented_message(
 										"password and code added to media",
 										"'" + file_name + "' matches '" + pattern_and_password['pattern'] + "' " + case + ", " + whole + ", identifier = " + identifier,
-										3
+										4
 									)
 								else:
 									indented_message(
@@ -1580,40 +1659,48 @@ class TreeWalker:
 					for identifier in single_media.password_identifiers_set:
 						Options.mark_identifier_as_used(identifier)
 
-				# update the protected media count according to the album and single media passwords
-				complex_identifiers_combination = complex_combination(convert_set_to_combination(album.password_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
-				album.nums_protected_media_in_sub_tree.increment(complex_identifiers_combination)
-
-				album.num_media_in_sub_tree += 1
-				if single_media.has_gps_data:
-					album.positions_and_media_in_tree.add_single_media(single_media)
-
-				if single_media.is_video:
-					num_video_in_dir += 1
-					if not single_media_cache_hit:
-						num_video_processed_in_dir += 1
-				else:
-					num_photo_in_dir += 1
-					if not single_media_cache_hit:
-						num_photo_processed_in_dir += 1
-
-					if single_media.has_exif_date:
-						num_photo_with_exif_date_in_dir += 1
-					if single_media.has_gps_data:
-						num_photo_with_geotags_in_dir += 1
-
-					if single_media.has_exif_date:
-						if single_media.has_gps_data:
-							num_photo_with_exif_date_and_geotags_in_dir += 1
-						else:
-							photos_with_exif_date_and_without_geotags_in_dir.append("      " + entry_with_path)
-					else:
-						if single_media.has_gps_data:
-							photos_without_exif_date_and_with_geotags_in_dir.append("      " + entry_with_path)
-						else:
-							photos_without_exif_date_or_geotags_in_dir.append(      "      " + entry_with_path)
-
 				if not any(single_media.media_file_name == _media.media_file_name for _media in self.all_media):
+					# update the protected media count according to the album and single media passwords
+					complex_identifiers_combination = complex_combination(convert_set_to_combination(album.password_identifiers_set), convert_set_to_combination(single_media.password_identifiers_set))
+					if single_media.is_image:
+						album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
+					else:
+						album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+					album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
+					album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+
+					if single_media.is_image:
+						album.num_media_in_sub_tree.incrementImages()
+					else:
+						album.num_media_in_sub_tree.incrementVideos()
+					if single_media.has_gps_data:
+						album.positions_and_media_in_tree.add_single_media(single_media)
+
+					if single_media.is_video:
+						num_video_in_dir += 1
+						if not single_media_cache_hit:
+							num_video_processed_in_dir += 1
+					else:
+						num_photo_in_dir += 1
+						if not single_media_cache_hit:
+							num_photo_processed_in_dir += 1
+
+						if single_media.has_exif_date:
+							num_photo_with_exif_date_in_dir += 1
+						if single_media.has_gps_data:
+							num_photo_with_geotags_in_dir += 1
+
+						if single_media.has_exif_date:
+							if single_media.has_gps_data:
+								num_photo_with_exif_date_and_geotags_in_dir += 1
+							else:
+								photos_with_exif_date_and_without_geotags_in_dir.append("      " + entry_with_path)
+						else:
+							if single_media.has_gps_data:
+								photos_without_exif_date_and_with_geotags_in_dir.append("      " + entry_with_path)
+							else:
+								photos_without_exif_date_or_geotags_in_dir.append(      "      " + entry_with_path)
+
 					next_level()
 					message("adding media to dates tree...", "", 5)
 					# the following function has a check on media already present
@@ -1639,7 +1726,7 @@ class TreeWalker:
 					indented_message("media not added to anything...", "it was already there", 5)
 
 			elif not single_media.is_valid:
-				indented_message("not image nor video", "", 1)
+				indented_message("not image nor video", entry_with_path, 3)
 				unrecognized_files_in_dir.append("      " + entry_with_path + "      mime type: " + single_media.mime_type )
 			back_level()
 		back_level()
@@ -1698,7 +1785,7 @@ class TreeWalker:
 		else:
 			message("VOID: no media in this directory", os.path.basename(absolute_path), 4)
 
-		if album.num_media_in_sub_tree:
+		if album.num_media_in_sub_tree.total():
 			# generate the album composite image for sharing
 			self.generate_composite_image(album, max_file_date)
 		back_level()
@@ -1725,20 +1812,26 @@ class TreeWalker:
 		else:
 			random_number -= len(album.media_list)
 			for subalbum in album.subalbums_list:
-				if random_number < subalbum.num_media_in_sub_tree:
+				if random_number < subalbum.num_media_in_sub_tree.total():
 					[picked_image, random_number] = self.pick_random_image(subalbum, random_number)
 					if picked_image:
 						return [picked_image, random_number]
-				random_number -= subalbum.num_media_in_sub_tree
+				random_number -= subalbum.num_media_in_sub_tree.total()
 		return [None, random_number]
 
 	def generate_composite_image(self, album, max_file_date):
+
+		# I'm short-circuiting this function because of issue #169
+		# remove the following return when the issue has been solved
+		return
+
 		next_level()
 		composite_image_name = album.cache_base + ".jpg"
 		composite_image_path = os.path.join(self.album_cache_path, composite_image_name)
 		self.all_album_composite_images.append(os.path.join(Options.config['cache_album_subdir'], composite_image_name))
 		json_file_with_path = os.path.join(Options.config['cache_path'], album.json_file)
-		if (os.path.exists(composite_image_path) and
+		if (
+			os.path.exists(composite_image_path) and
 			file_mtime(composite_image_path) > max_file_date and
 			os.path.exists(json_file_with_path) and
 			file_mtime(json_file_with_path) < file_mtime(composite_image_path)
@@ -1756,15 +1849,15 @@ class TreeWalker:
 		# and generate a square composite image
 
 		# determine the number of images to use
-		if album.num_media_in_sub_tree == 1 or Options.config['max_album_share_thumbnails_number'] == 1:
+		if album.num_media_in_sub_tree.total() == 1 or Options.config['max_album_share_thumbnails_number'] == 1:
 			max_thumbnail_number = 1
-		elif album.num_media_in_sub_tree < 9 or Options.config['max_album_share_thumbnails_number'] == 4:
+		elif album.num_media_in_sub_tree.total() < 9 or Options.config['max_album_share_thumbnails_number'] == 4:
 			max_thumbnail_number = 4
-		elif album.num_media_in_sub_tree < 16 or Options.config['max_album_share_thumbnails_number'] == 9:
+		elif album.num_media_in_sub_tree.total() < 16 or Options.config['max_album_share_thumbnails_number'] == 9:
 			max_thumbnail_number = 9
-		elif album.num_media_in_sub_tree < 25 or Options.config['max_album_share_thumbnails_number'] == 16:
+		elif album.num_media_in_sub_tree.total() < 25 or Options.config['max_album_share_thumbnails_number'] == 16:
 			max_thumbnail_number = 16
-		elif album.num_media_in_sub_tree < 36 or Options.config['max_album_share_thumbnails_number'] == 25:
+		elif album.num_media_in_sub_tree.total() < 36 or Options.config['max_album_share_thumbnails_number'] == 25:
 			max_thumbnail_number = 25
 		else:
 			max_thumbnail_number = Options.config['max_album_share_thumbnails_number']
@@ -1773,9 +1866,9 @@ class TreeWalker:
 		random_thumbnails = list()
 		random_list = list()
 		bad_list = list()
-		num_random_thumbnails = min(max_thumbnail_number, album.num_media_in_sub_tree)
+		num_random_thumbnails = min(max_thumbnail_number, album.num_media_in_sub_tree.total())
 		i = 0
-		good_media_number = album.num_media_in_sub_tree
+		good_media_number = album.num_media_in_sub_tree.total()
 		while True:
 			if i >= good_media_number:
 				break
@@ -1783,7 +1876,7 @@ class TreeWalker:
 				random_media = album.media_list[0]
 			else:
 				while True:
-					random_number = random.randint(0, album.num_media_in_sub_tree - 1)
+					random_number = random.randint(0, album.num_media_in_sub_tree.total() - 1)
 					if random_number not in random_list and random_number not in bad_list:
 						break
 				random_list.append(random_number)
@@ -1885,7 +1978,7 @@ class TreeWalker:
 
 		if not subdir:
 			json_list = json_list_or_dict
-			message("cleaning up...", "", 3)
+			message("cleaning up...", "", 1)
 			next_level()
 			message("building stale list...", "", 4)
 
@@ -1936,9 +2029,9 @@ class TreeWalker:
 					self.remove_stale(os.path.join(subdir, cache_file), json_dict['dirs'][cache_file])
 				elif subdir == "":
 					# a protected content directory which is'n reported must be deleted with all its content
-					message("deleting protected content subdir not reported...", "", 5)
+					message("deleting non-reported protected content subdir...", "", 5)
 					shutil.rmtree(os.path.join(Options.config['cache_path'], subdir, cache_file))
-					message("protected content subdir not reported deleted...", os.path.join(Options.config['cache_path'], subdir, cache_file), 4)
+					message("non-reported protected content subdir deleted!", os.path.join(Options.config['cache_path'], subdir, cache_file), 4)
 				try:
 					if not os.listdir(os.path.join(Options.config['cache_path'], subdir, cache_file)):
 						next_level()

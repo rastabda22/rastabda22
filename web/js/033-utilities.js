@@ -15,8 +15,8 @@
 		);
 	}
 
-	Utilities.prototype._t = function(id) {
-		language = this.getLanguage();
+	Utilities._t = function(id) {
+		language = Utilities.getLanguage();
 		if (translations[language][id])
 			return translations[language][id];
 		else
@@ -51,7 +51,7 @@
 	Utilities.prototype.translate = function() {
 		var selector, keyLanguage;
 
-		language = this.getLanguage();
+		language = Utilities.getLanguage();
 		for (var key in translations.en) {
 			if (translations[language].hasOwnProperty(key) || translations.en.hasOwnProperty(key)) {
 				keyLanguage = language;
@@ -69,7 +69,7 @@
 		}
 	};
 
-	Utilities.prototype.getLanguage = function() {
+	Utilities.getLanguage = function() {
 		language = "en";
 		if (Options.language && translations[Options.language] !== undefined)
 			language = Options.language;
@@ -123,8 +123,8 @@
 			[a, b] = [b, a];
 		}
 
-		intersection = [];
-		for (i = 0; i < b.length; i ++) {
+		let intersection = [];
+		for (let i = 0; i < b.length; i ++) {
 			if (a.indexOf(b[i]) !== -1)
 				intersection.push(b[i]);
 		}
@@ -369,7 +369,7 @@
 		return string == Options.folders_string || string.indexOf(Options.foldersStringWithTrailingSeparator) === 0;
 	};
 
-	Utilities.prototype.isByDateCacheBase = function(string) {
+	Utilities.isByDateCacheBase = function(string) {
 		return string == Options.by_date_string || string.indexOf(Options.byDateStringWithTrailingSeparator) === 0;
 	};
 
@@ -377,11 +377,11 @@
 		return string == Options.by_gps_string || string.indexOf(Options.byGpsStringWithTrailingSeparator) === 0;
 	};
 
-	Utilities.prototype.isSearchCacheBase = function(string) {
+	Utilities.isSearchCacheBase = function(string) {
 		return string.indexOf(Options.bySearchStringWithTrailingSeparator) === 0;
 	};
 
-	Utilities.prototype.isMapCacheBase = function(string) {
+	Utilities.isMapCacheBase = function(string) {
 		return string.indexOf(Options.byMapStringWithTrailingSeparator) === 0;
 	};
 
@@ -424,7 +424,7 @@
 		} else {
 			$("#search-field").blur();
 		}
-		$("li.search ul").show();
+		$("ul#right-menu li.search ul").removeClass("hidden");
 	};
 
 	Utilities.prototype.stripHtmlAndReplaceEntities = function(htmlString) {
@@ -439,7 +439,7 @@
 		if (underscoreIndex != -1) {
 			var number = altPlaceName.substring(underscoreIndex + 1);
 			var base = altPlaceName.substring(0, underscoreIndex);
-			return base + ' (' + this._t('.subalbum') + parseInt(number) + ')';
+			return base + ' (' + Utilities._t('.subalbum') + parseInt(number) + ')';
 		} else {
 			return altPlaceName;
 		}
@@ -471,7 +471,7 @@
 	};
 
 	Utilities.prototype.isAlbumWithOneMedia = function(currentAlbum) {
-		return currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.numMedia == 1;
+		return currentAlbum !== null && ! currentAlbum.subalbums.length && Utilities.imagesAndVideosTotal(currentAlbum.numMedia) == 1;
 	};
 
 	Utilities.chooseReducedPhoto = function(media, container, fullScreenStatus) {
@@ -546,6 +546,17 @@
 		}
 
 		return mediaSrc;
+	};
+
+	Utilities.prototype.sumSizes = function(sizes1, sizes2) {
+		var result = {};
+		var keys = Object.keys(sizes1);
+		for (var i = 0; i < keys.length; i++)
+			result[keys[i]] = {
+				"images": sizes1[keys[i]].images + sizes2[keys[i]].images,
+				"videos": sizes1[keys[i]].videos + sizes2[keys[i]].videos
+			};
+		return result;
 	};
 
 	Utilities.currentSizeAndIndex = function() {
@@ -711,11 +722,11 @@
 		return Utilities.pathJoin([media.albumName, media.name]);
 	};
 
-	Utilities.mediaPath = function(album, media, size) {
+	Utilities.mediaPath = function(album, singleMedia, size) {
 		var suffix = Options.cache_folder_separator, hash, rootString = "root-";
 		if (
-			media.mimeType.indexOf("image") === 0 ||
-			media.mimeType.indexOf("video") === 0 && [Options.album_thumb_size, Options.media_thumb_size].indexOf(size) != -1
+			singleMedia.mimeType.indexOf("image") === 0 ||
+			singleMedia.mimeType.indexOf("video") === 0 && [Options.album_thumb_size, Options.media_thumb_size].indexOf(size) != -1
 		) {
 			var actualSize = size;
 			var albumThumbSize = Options.album_thumb_size;
@@ -741,11 +752,11 @@
 					suffix += "f";
 			}
 			suffix += ".jpg";
-		} else if (media.mimeType.indexOf("video") === 0) {
+		} else if (singleMedia.mimeType.indexOf("video") === 0) {
 			suffix += "transcoded_" + Options.video_transcode_bitrate + "_" + Options.video_crf + ".mp4";
 		}
 
-		hash = media.foldersCacheBase + Options.cache_folder_separator + media.cacheBase + suffix;
+		hash = singleMedia.foldersCacheBase + Options.cache_folder_separator + singleMedia.cacheBase + suffix;
 		if (hash.indexOf(rootString) === 0)
 			hash = hash.substring(rootString.length);
 		else {
@@ -760,8 +771,8 @@
 			else if (this.isMapCacheBase(hash))
 				hash = hash.substring(Options.byMapStringWithTrailingSeparator.length);
 		}
-		if (media.cacheSubdir)
-			return this.pathJoin([Options.server_cache_path, media.cacheSubdir, hash]);
+		if (singleMedia.cacheSubdir)
+			return this.pathJoin([Options.server_cache_path, singleMedia.cacheSubdir, hash]);
 		else
 			return this.pathJoin([Options.server_cache_path, hash]);
 	};
@@ -782,117 +793,268 @@
 		// this function works on the img tag identified by event.data.id
 		// it adjusts width, height and position so that it fits in its parent (<div class="bedia-box-inner">, or the whole window)
 		// and centers vertically
-		var media = event.data.media, mediaElement, container, photoSrc, previousSrc;
-		var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth(), containerRatio;
-		var mediaBarBottom = 0;
-		var mediaWidth, mediaHeight, attrWidth, attrHeight;
-		var id = event.data.id;
-		var heightForMedia, heightForMediaAndTitle, titleHeight;
+		return new Promise(
+			function(resolve_scaleMedia) {
+				var media = event.data.media, mediaElement, container, photoSrc, previousSrc;
+				var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth(), containerRatio;
+				var mediaBarBottom = 0;
+				var mediaWidth, mediaHeight, attrWidth, attrHeight;
+				var id = event.data.id;
+				var heightForMedia, heightForMediaAndTitle, titleHeight;
 
-		windowWidth = $(window).innerWidth();
-		heightForMediaAndTitle = Utilities.mediaBoxContainerHeight();
+				windowWidth = $(window).innerWidth();
+				heightForMediaAndTitle = Utilities.mediaBoxContainerHeight();
 
-		// widths must be set before calculating title height
-		if (event.data.resize && id === "center") {
-			// this is executed only when resizing, it's not needed when first scaling
-			$("#media-box-container").css("width", windowWidth * 3).css("transform", "translate(-" + windowWidth + "px, 0px)");
-			$(".media-box").css("width", windowWidth);
-			$(".media-box .media-box-inner").css("width", windowWidth);
-			$(".media-box").show();
-		}
-		if ($(".media-box#" + id + " .title").is(":visible"))
-			titleHeight = $(".media-box#" + id + " .title").outerHeight();
-		else
-			titleHeight = 0;
+				// widths must be set before calculating title height
+				if (event.data.resize && id === "center") {
+					// this is executed only when resizing, it's not needed when first scaling
+					$("#media-box-container").css("width", windowWidth * 3).css("transform", "translate(-" + windowWidth + "px, 0px)");
+					$(".media-box").css("width", windowWidth);
+					$(".media-box .media-box-inner").css("width", windowWidth);
+					$(".media-box").show();
+				}
+				if ($(".media-box#" + id + " .title").is(":visible"))
+					titleHeight = $(".media-box#" + id + " .title").outerHeight();
+				else
+					titleHeight = 0;
 
-		heightForMedia = heightForMediaAndTitle - titleHeight;
-		$("#media-box-container").css("height", heightForMediaAndTitle);
-		$(".media-box").css("height", heightForMediaAndTitle);
-		$(".media-box .media-box-inner").css("height", heightForMedia);
-		$(".media-box").show();
+				heightForMedia = heightForMediaAndTitle - titleHeight;
+				$("#media-box-container").css("height", heightForMediaAndTitle);
+				$(".media-box").css("height", heightForMediaAndTitle);
+				$(".media-box .media-box-inner").css("height", heightForMedia);
+				$(".media-box").show();
 
-		if (media.mimeType.indexOf("image") === 0)
-			mediaElement = $(".media-box#" + id + " .media-box-inner img");
-		else if (media.mimeType.indexOf("video") === 0)
-			mediaElement = $(".media-box#" + id + " .media-box-inner video");
+				if (media.mimeType.indexOf("image") === 0)
+					mediaElement = $(".media-box#" + id + " .media-box-inner img");
+				else if (media.mimeType.indexOf("video") === 0)
+					mediaElement = $(".media-box#" + id + " .media-box-inner video");
 
-		mediaWidth = media.metadata.size[0];
-		mediaHeight = media.metadata.size[1];
-		attrWidth = mediaWidth;
-		attrHeight = mediaHeight;
+				mediaWidth = media.metadata.size[0];
+				mediaHeight = media.metadata.size[1];
+				attrWidth = mediaWidth;
+				attrHeight = mediaHeight;
 
-		if (fullScreenStatus && Modernizr.fullscreen)
-			container = $(window);
-		else {
-			container = $(".media-box#" + id + " .media-box-inner");
-		}
+				if (fullScreenStatus && Modernizr.fullscreen)
+					container = $(window);
+				else {
+					container = $(".media-box#" + id + " .media-box-inner");
+				}
 
-		containerHeight = heightForMedia;
-		containerRatio = containerWidth / containerHeight;
+				containerHeight = heightForMedia;
+				containerRatio = containerWidth / containerHeight;
 
-		if (media.mimeType.indexOf("image") === 0) {
-			photoSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
-			previousSrc = mediaElement.attr("src");
+				if (media.mimeType.indexOf("image") === 0) {
+					photoSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
+					previousSrc = mediaElement.attr("src");
 
-			if (encodeURI(photoSrc) != previousSrc && event.data.currentZoom === event.data.initialZoom) {
-				// resizing had the effect that a different reduction has been choosed
+					if (encodeURI(photoSrc) != previousSrc && event.data.currentZoom === event.data.initialZoom) {
+						// resizing had the effect that a different reduction has been choosed
 
-				// chooseReducedPhoto() sets maxSize to 0 if it returns the original media
-				if (maxSize) {
-					if (mediaWidth > mediaHeight) {
-						attrWidth = maxSize;
-						attrHeight = Math.round(mediaHeight / mediaWidth * attrWidth);
-					} else {
-						attrHeight = maxSize;
-						attrWidth = Math.round(mediaWidth / mediaHeight * attrHeight);
+						// chooseReducedPhoto() sets maxSize to 0 if it returns the original media
+						if (maxSize) {
+							if (mediaWidth > mediaHeight) {
+								attrWidth = maxSize;
+								attrHeight = Math.round(mediaHeight / mediaWidth * attrWidth);
+							} else {
+								attrHeight = maxSize;
+								attrWidth = Math.round(mediaWidth / mediaHeight * attrHeight);
+							}
+						}
+
+						$("link[rel=image_src]").remove();
+						$('link[rel="video_src"]').remove();
+						$("head").append("<link rel='image_src' href='" + encodeURI(photoSrc) + "' />");
+						mediaElement
+							.attr("src", encodeURI(photoSrc))
+							.attr("width", attrWidth)
+							.attr("height", attrHeight);
 					}
 				}
 
-				$("link[rel=image_src]").remove();
-				$('link[rel="video_src"]').remove();
-				$("head").append("<link rel='image_src' href='" + encodeURI(photoSrc) + "' />");
-				mediaElement
-					.attr("src", encodeURI(photoSrc))
-					.attr("width", attrWidth)
-					.attr("height", attrHeight);
+				mediaElement.show();
+				// $("#media-view").removeClass("hidden");
+
+				if (id === "center") {
+					// position next/prev buttons verticallly centered in media-box-inner
+					var mediaBoxInnerHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
+					titleHeight = parseInt($(".media-box#center .title").css("height"));
+					var prevNextHeight = parseInt($("#next").outerHeight());
+					$("#next, #prev").css("top", titleHeight + (mediaBoxInnerHeight - prevNextHeight) / 2);
+
+					Utilities.setLinksVisibility();
+				}
+
+				if (Utilities.bottomSocialButtons()) {
+					mediaBarBottom = $(".ssk").outerHeight();
+				}
+				$(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
+
+				if (id === "center")
+					resolve_scaleMedia();
+
+				$("#loading").hide();
+				// Utilities.setPinchButtonsPosition();
+				// Utilities.correctPrevNextPosition();
 			}
-		}
-
-		mediaElement.show();
-		// $("#media-view").removeClass("hidden");
-
-		if (id === "center") {
-			// position next/prev buttons verticallly centered in media-box-inner
-			var mediaBoxInnerHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
-			titleHeight = parseInt($(".media-box#center .title").css("height"));
-			var prevNextHeight = parseInt($("#next").outerHeight());
-			$("#next, #prev").css(
-				"top",
-				titleHeight + (mediaBoxInnerHeight - prevNextHeight) / 2
-			);
-
-			Utilities.setLinksVisibility();
-		}
-
-		if (Utilities.bottomSocialButtons()) {
-			mediaBarBottom = $(".ssk").outerHeight();
-		}
-		$(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
-
-		if (event.data.callback) {
-			if (id === "center" && (
-					media.mimeType.indexOf("image") === 0 ||
-					event.data.callbackType == "load"
-				)
-			) {
-				event.data.callback(containerHeight, containerWidth);
-			}
-		}
-
-		$("#loading").hide();
-		Utilities.setPinchButtonsPosition();
-		Utilities.correctPrevNextPosition();
+		);
 	};
+
+	Utilities.prototype.imagesTotal = function(imagesAndVideos) {
+		return imagesAndVideos.images;
+	};
+
+	Utilities.prototype.videosTotal = function(imagesAndVideos) {
+		return imagesAndVideos.videos;
+	};
+
+	Utilities.imagesAndVideosTotal = function(imagesAndVideos) {
+		return imagesAndVideos.images + imagesAndVideos.videos;
+	};
+
+	Utilities.imagesAndVideosSum = function(imagesAndVideos1, imagesAndVideos2) {
+		var result = JSON.parse(JSON.stringify(imagesAndVideos0));
+		result.images = imagesAndVideos1.images + imagesAndVideos2.images;
+		result.videos = imagesAndVideos1.videos + imagesAndVideos2.videos;
+		return result;
+	};
+
+	Utilities.prototype.imagesAndVideosCount = function(mediaList) {
+		var result = JSON.parse(JSON.stringify(imagesAndVideos0));
+		for (let i = 0; i < mediaList.length; i ++) {
+			if (mediaList[i].mimeType.indexOf("image/") === 0)
+				result.images += 1;
+			else
+				result.videos += 1;
+		}
+		return result;
+	};
+
+	Utilities.downloadAlbum = function(everything = false, what = "all", size = 0) {
+		// adapted from https://gist.github.com/c4software/981661f1f826ad34c2a5dc11070add0f
+		//
+		// this function must be converted to streams, example at https://jimmywarting.github.io/StreamSaver.js/examples/saving-multiple-files.html
+		//
+		// what is one of "all", "images" or "videos"
+
+		$("#downloading-media").show();
+		size = parseInt(size);
+
+		var zip = new JSZip();
+		var zipFilename;
+		var basePath = currentAlbum.path;
+		zipFilename = Options.page_title + '.';
+		if (Utilities.isSearchCacheBase(currentAlbum.cacheBase)) {
+			zipFilename += Utilities._t("#by-search") + " '" + $("#search-field").val() + "'";
+		} else if (Utilities.isByDateCacheBase(currentAlbum.cacheBase)) {
+			let textComponents = currentAlbum.path.split("/").splice(1);
+			if (textComponents.length > 1)
+				textComponents[1] = Utilities._t("#month-" + textComponents[1]);
+
+			zipFilename += textComponents.join('-');
+		} else if (Utilities.isByGpsCacheBase(currentAlbum.cacheBase)) {
+			zipFilename += currentAlbum.ancestorsNames.splice(1).join('-');
+		} else if (Utilities.isMapCacheBase(currentAlbum.cacheBase)) {
+			zipFilename += Utilities._t("#from-map");
+		} else if (currentAlbum.cacheBase !== Options.folders_string)
+			zipFilename += currentAlbum.name;
+
+		zipFilename += ".zip";
+
+		var addMediaPromise = addMediaFromAlbum(currentAlbum);
+		addMediaPromise.then(
+			// the complete zip can be generated...
+			function() {
+				$("#downloading-media").hide();
+				$("#preparing-zip").show();
+				zip.generateAsync({type:'blob'}).then(
+					function(content) {
+						// ... and saved
+						saveAs(content, zipFilename);
+						$("#preparing-zip").hide();
+					}
+				);
+			}
+		);
+		// end of function
+
+		function addMediaFromAlbum(currentAlbum, subalbum = "") {
+			return new Promise(
+				function(resolve_addMediaFromAlbum) {
+					var albumPromises = [];
+
+					for (let iMedia = 0; iMedia < currentAlbum.media.length; iMedia ++) {
+						if (
+							currentAlbum.media[iMedia].mimeType.indexOf("image") === 0 && what === "videos" ||
+							currentAlbum.media[iMedia].mimeType.indexOf("video") === 0 && what === "images"
+						)
+							continue;
+
+						let urlPromise = new Promise(
+							function(resolveUrlPromise) {
+								let url;
+								if (size === 0)
+									url = encodeURI(Utilities.trueOriginalMediaPath(currentAlbum.media[iMedia]));
+								else
+									url = encodeURI(Utilities.mediaPath(currentAlbum, currentAlbum.media[iMedia], size));
+								let name = currentAlbum.media[iMedia].name;
+								// load a file and add it to the zip file
+								JSZipUtils.getBinaryContent(
+									url,
+									function (err, data) {
+										if (err) {
+											throw err; // or handle the error
+										}
+										let fileName = name;
+										if (subalbum)
+											fileName = subalbum + "/" + fileName;
+										zip.file(fileName, data, {binary:true});
+										resolveUrlPromise();
+									}
+								);
+							}
+						);
+						albumPromises.push(urlPromise);
+					}
+
+					if (everything) {
+						for (let iSubalbum = 0; iSubalbum < currentAlbum.subalbums.length; iSubalbum ++) {
+							let subalbumPromise = new Promise(
+								function(resolveSubalbumPromise) {
+									let ithSubalbum = currentAlbum.subalbums[iSubalbum];
+									let getAlbumPromise = PhotoFloat.getAlbum(ithSubalbum.cacheBase, null, {"getMedia": true, "getPositions": false});
+									getAlbumPromise.then(
+										function(subalbum) {
+											let albumPath = subalbum.path;
+											if (Utilities.isSearchCacheBase(currentAlbum.cacheBase))
+												// remove the leading folders/date/gps/map string
+												albumPath = albumPath.split('/').splice(1).join('/');
+											else
+												albumPath = albumPath.substring(basePath.length + 1);
+											let addMediaPromise = addMediaFromAlbum(subalbum, albumPath);
+											addMediaPromise.then(
+												function() {
+													resolveSubalbumPromise();
+												}
+											);
+										}
+									);
+								}
+							);
+							albumPromises.push(subalbumPromise);
+						}
+					}
+
+
+					Promise.all(albumPromises).then(
+						function() {
+							resolve_addMediaFromAlbum();
+						}
+					);
+				}
+			);
+		}
+	};
+
 
 	Utilities.setPinchButtonsPosition = function(containerHeight, containerWidth) {
 		// calculate and set pinch buttons position
@@ -921,10 +1083,10 @@
 	};
 
 	Utilities.prototype.sumUpNumsProtectedMedia = function(numsProtectedMediaInSubTree) {
-		var sum = 0, codesComplexcombination;
+		var sum = imagesAndVideos0, codesComplexcombination;
 		for (codesComplexcombination in numsProtectedMediaInSubTree) {
 			if (numsProtectedMediaInSubTree.hasOwnProperty(codesComplexcombination) && codesComplexcombination !== "") {
-				sum += numsProtectedMediaInSubTree[codesComplexcombination];
+				sum = Utilities.imagesAndVideosSum(sum, numsProtectedMediaInSubTree[codesComplexcombination]);
 			}
 		}
 		return sum;
@@ -938,7 +1100,7 @@
 				if (albumOrSubalbum.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexcombination)) {
 					if (! result.hasOwnProperty(codesComplexcombination))
 						result[codesComplexcombination] = 0;
-					result[codesComplexcombination] += albumOrSubalbum.numsProtectedMediaInSubTree[codesComplexcombination];
+					result[codesComplexcombination] = Utilities.imagesAndVideosSum(result[codesComplexcombination], albumOrSubalbum.numsProtectedMediaInSubTree[codesComplexcombination]);
 				}
 			}
 		}
@@ -1060,7 +1222,7 @@
 
 		$("#next").css("right", "");
 		$("#prev").css("left", "");
-		if (! fullScreenStatus && currentAlbum.numMedia > 1) {
+		if (! fullScreenStatus && Utilities.imagesAndVideosTotal(currentAlbum.numMedia) > 1) {
 			// correct next button position when pinch buttons collide
 			$("#next").css("right", correctionForPinch.toString() + "px");
 			// correct prev button position when social buttons are on the left
@@ -1076,7 +1238,7 @@
 		$(".media-box#" + id + " .metadata").css("display", $(".media-box#center .metadata").css("display"));
 	};
 
-	Utilities.prototype.showAuthForm = function(maybeProtectedContent = false) {
+	Utilities.prototype.showAuthForm = function(event, maybeProtectedContent = false) {
 		$("#album-view, #media-view, #my-modal, #no-results").css("opacity", "0.2");
 		$("#auth-text").stop().fadeIn(1000);
 		$("#password").focus();
@@ -1164,8 +1326,8 @@
 		$("body, html").css("overflow", "auto");
 	};
 
-	Utilities.prototype.chooseThumbnail	= function(album, media, thumbnailSize) {
-		return this.mediaPath(album, media, thumbnailSize);
+	Utilities.prototype.chooseThumbnail	= function(album, singleMedia, thumbnailSize) {
+		return this.mediaPath(album, singleMedia, thumbnailSize);
 	};
 
 	Utilities.sortAlbumsMedia = function(thisAlbum) {
@@ -1222,7 +1384,7 @@
 				thisAlbum.media = Utilities.sortReverse(thisAlbum.media);
 				thisAlbum.mediaReverseSort = ! thisAlbum.mediaReverseSort;
 				if (typeof currentMediaIndex !== "undefined" && currentMediaIndex != -1)
-					currentMediaIndex = thisAlbum.numMedia - 1 - currentMediaIndex;
+					currentMediaIndex = Utilities.imagesAndVideosTotal(thisAlbum.numMedia) - 1 - currentMediaIndex;
 			}
 		}
 	};
@@ -1289,9 +1451,16 @@
 	Utilities.prototype.sortByDate = Utilities.sortByDate;
 	Utilities.prototype.sortByPath = Utilities.sortByPath;
 	Utilities.prototype.sortBy = Utilities.sortBy;
+	Utilities.prototype.isByDateCacheBase = Utilities.isByDateCacheBase;
 	Utilities.prototype.isByGpsCacheBase = Utilities.isByGpsCacheBase;
+	Utilities.prototype.isSearchCacheBase = Utilities.isSearchCacheBase;
+	Utilities.prototype.isMapCacheBase = Utilities.isMapCacheBase;
 	Utilities.prototype.setPinchButtonsPosition = Utilities.setPinchButtonsPosition;
 	Utilities.prototype.convertMd5ToCode = Utilities.convertMd5ToCode;
+	Utilities.prototype._t = Utilities._t;
+	Utilities.prototype.getLanguage = Utilities.getLanguage;
+	Utilities.prototype.imagesAndVideosTotal = Utilities.imagesAndVideosTotal;
+	Utilities.prototype.imagesAndVideosSum = Utilities.imagesAndVideosSum;
 
 	window.Utilities = Utilities;
 }());

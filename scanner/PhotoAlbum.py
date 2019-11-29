@@ -67,9 +67,11 @@ class Album(object):
 			self.media_list_is_sorted = True
 			self.subalbums_list_is_sorted = True
 			self._subdir = ""
-			self.num_media_in_sub_tree = 0
-			self.complex_combination = ''
+			self.num_media_in_sub_tree = ImageAndVideo()
+			self.complex_combination = ','
 			self.nums_protected_media_in_sub_tree = NumsProtected()
+			self.sizes_protected_media_in_album = SizesProtected()
+			self.sizes_protected_media_in_sub_tree = SizesProtected()
 			self.positions_and_media_in_tree = Positions(None)
 			self.parent_cache_base = None
 			self.album_ini = None
@@ -331,8 +333,14 @@ class Album(object):
 
 		if ',' in list(self.nums_protected_media_in_sub_tree.keys()):
 			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(',')
+			self.sizes_of_sub_tree = self.sizes_protected_media_in_sub_tree.sizes(',')
 		else:
-			self.num_media_in_sub_tree = 0
+			self.num_media_in_sub_tree = ImageAndVideo()
+			self.sizes_of_sub_tree = Sizes()
+		if ',' in list(self.sizes_protected_media_in_album.keys()):
+			self.sizes_of_album = self.sizes_protected_media_in_album.sizes(',')
+		else:
+			self.sizes_of_album = Sizes()
 		message("album worked!", self.cache_base, 5)
 		back_level()
 
@@ -378,8 +386,14 @@ class Album(object):
 
 		if self.complex_combination in list(self.nums_protected_media_in_sub_tree.keys()):
 			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.complex_combination)
+			self.sizes_of_sub_tree = self.sizes_protected_media_in_sub_tree.sizes(self.complex_combination)
 		else:
-			self.num_media_in_sub_tree = 0
+			self.num_media_in_sub_tree = ImageAndVideo()
+			self.sizes_of_sub_tree = Sizes()
+		if self.complex_combination in list(self.sizes_protected_media_in_album.keys()):
+			self.sizes_of_album = self.sizes_protected_media_in_album.sizes(self.complex_combination)
+		else:
+			self.sizes_of_album = Sizes()
 		message("album worked!", self.cache_base, 5)
 		back_level()
 
@@ -399,9 +413,11 @@ class Album(object):
 			back_level()
 		return protected_albums
 
+	@property
 	def must_separate_media(self):
 		return Options.config['max_media_in_json_file'] > 0 and len(self.media) > Options.config['max_media_in_json_file']
 
+	@property
 	def must_separate_positions(self):
 		return Options.config['max_media_from_positions_in_json_file'] > 0 and self.positions_and_media_in_tree.count_media() > Options.config['max_media_from_positions_in_json_file']
 
@@ -500,7 +516,7 @@ class Album(object):
 				return [None, True]
 
 			codes_combinations = list(json_file_dict['numsProtectedMediaInSubTree'].keys())
-			if '' in codes_combinations and json_file_dict['numsProtectedMediaInSubTree'][''] == 0 and len(codes_combinations) > 0:
+			if ',' in codes_combinations and json_file_dict['numsProtectedMediaInSubTree'][',']['images'] == 0 and json_file_dict['numsProtectedMediaInSubTree'][',']['videos'] == 0 and len(codes_combinations) > 0:
 				codes_combinations.pop()
 			if len(codes_combinations) != len(json_files):
 				indented_message("not an album cache hit", "json files number different from numsProtectedMediaInSubTree keys number", 4)
@@ -584,6 +600,10 @@ class Album(object):
 		if "symlinkCodesAndNumbers" in dictionary:
 			album.symlink_codes_and_numbers = dictionary["symlinkCodesAndNumbers"]
 
+		album._attributes["metadata"]["title"] = dictionary["title"]
+		album._attributes["metadata"]["description"] = dictionary["description"]
+		album._attributes["metadata"]["tags"] = dictionary["tags"]
+
 		album.sort_subalbums_and_media()
 
 		return album
@@ -606,12 +626,13 @@ class Album(object):
 					# "positionsAndMediaInTree": subalbum.positions_and_media_in_tree,
 					"numPositionsInTree": len(subalbum.positions_and_media_in_tree.positions),
 					"numMediaInSubTree": subalbum.num_media_in_sub_tree,
-					# "numsProtectedMediaInSubTree": subalbum.nums_protected_media_in_sub_tree
+					"sizesOfSubTree": subalbum.sizes_of_sub_tree,
+					"sizesOfAlbum": subalbum.sizes_of_album,
 				}
 				nums_protected_by_code = {}
 				for complex_identifiers_combination in list(subalbum.nums_protected_media_in_sub_tree.keys()):
 					if complex_identifiers_combination == ',':
-						nums_protected_by_code[''] = subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
+						nums_protected_by_code[','] = subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 					else:
 						album_identifiers_combination = complex_identifiers_combination.split(',')[0]
 						media_identifiers_combination = complex_identifiers_combination.split(',')[1]
@@ -689,16 +710,20 @@ class Album(object):
 			"ancestorsNames": ancestors_names,
 			"physicalPath": path_without_folders_marker,
 			"numMediaInSubTree": self.num_media_in_sub_tree,
-			# "numsProtectedMediaInSubTree": self.nums_protected_media_in_sub_tree,
+			"sizesOfSubTree": self.sizes_of_sub_tree,
+			"sizesOfAlbum": self.sizes_of_album,
 			"numPositionsInTree": len(self.positions_and_media_in_tree.positions),
 			"albumIniMTime": self.album_ini_mtime,
 			"passwordMarkerMTime": self.passwords_marker_mtime,
-			"jsonVersion": Options.json_version
+			"jsonVersion": Options.json_version,
+			"title": self.title,
+			"description": self.description,
+			"tags": self.tags
 		}
 		nums_protected_by_code = {}
 		for complex_identifiers_combination in list(self.nums_protected_media_in_sub_tree.keys()):
 			if complex_identifiers_combination == ',':
-				nums_protected_by_code[''] = self.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
+				nums_protected_by_code[','] = self.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 			else:
 				album_identifiers_combination = complex_identifiers_combination.split(',')[0]
 				media_identifiers_combination = complex_identifiers_combination.split(',')[1]
@@ -707,7 +732,7 @@ class Album(object):
 				complex_codes_combination = complex_combination(album_codes_combination, codes_combination)
 				nums_protected_by_code[complex_codes_combination] = self.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 		dictionary["numsProtectedMediaInSubTree"] = nums_protected_by_code
-		if self.complex_combination != '':
+		if self.complex_combination != ',':
 			album_identifiers_combination = self.complex_combination.split(',')[0]
 			media_identifiers_combination = self.complex_combination.split(',')[1]
 			album_codes_combination = convert_set_to_combination(convert_identifiers_set_to_codes_set(convert_combination_to_set(album_identifiers_combination)))
@@ -718,7 +743,9 @@ class Album(object):
 		if not separate_media:
 			dictionary["media"] = self.media_list
 		else:
-			dictionary["numMedia"] = len(self.media_list)
+			dictionary["numMedia"] = ImageAndVideo();
+			dictionary["numMedia"].setImage(len([_media for _media in self.media_list if _media.is_image]))
+			dictionary["numMedia"].setVideo(len([_media for _media in self.media_list if _media.is_video]))
 		if hasattr(self, "symlink_codes_and_numbers"):
 			dictionary["symlinkCodesAndNumbers"] = self.symlink_codes_and_numbers
 		if hasattr(self, "center"):
@@ -899,14 +926,24 @@ class Positions(object):
 class NumsProtected(object):
 	def __init__(self):
 		self.nums_protected = {}
-		self.nums_protected[','] = 0
+		self.nums_protected[','] = ImageAndVideo()
 
-	def increment(self, complex_identifiers_combination):
+	def incrementImages(self, complex_identifiers_combination):
 		try:
-			self.nums_protected[complex_identifiers_combination] += 1
+			self.nums_protected[complex_identifiers_combination].incrementImages()
 		except KeyError:
-			self.nums_protected[complex_identifiers_combination] = 0
-			self.nums_protected[complex_identifiers_combination] += 1
+			self.nums_protected[complex_identifiers_combination] = ImageAndVideo()
+			self.nums_protected[complex_identifiers_combination].incrementImages()
+
+	def incrementVideos(self, complex_identifiers_combination):
+		try:
+			self.nums_protected[complex_identifiers_combination].incrementVideos()
+		except KeyError:
+			self.nums_protected[complex_identifiers_combination] = ImageAndVideo()
+			self.nums_protected[complex_identifiers_combination].incrementVideos()
+
+	def total(self, complex_identifiers_combination):
+		return self.nums_protected[complex_identifiers_combination].getImagesSize() + self.nums_protected[complex_identifiers_combination].getVideosSize()
 
 	def value(self, complex_identifiers_combination):
 		return self.nums_protected[complex_identifiers_combination]
@@ -920,15 +957,123 @@ class NumsProtected(object):
 	def merge(self, nums_protected):
 		for complex_identifiers_combination in list(nums_protected.keys()):
 			try:
-				self.nums_protected[complex_identifiers_combination] += nums_protected.nums_protected[complex_identifiers_combination]
+				self.nums_protected[complex_identifiers_combination].sum(nums_protected.nums_protected[complex_identifiers_combination])
 			except KeyError:
-				self.nums_protected[complex_identifiers_combination] = 0
-				self.nums_protected[complex_identifiers_combination] += nums_protected.nums_protected[complex_identifiers_combination]
+				self.nums_protected[complex_identifiers_combination] = ImageAndVideo()
+				self.nums_protected[complex_identifiers_combination].sum(nums_protected.nums_protected[complex_identifiers_combination])
 
 	def used_password_identifiers(self):
 		keys = self.non_trivial_keys()
 		keys = sorted(sorted(keys), key = lambda single_key: len(single_key.split('-')))
 		return keys
+
+	def copy(self):
+		return copy.deepcopy(self)
+
+	def to_dict(self):
+		return {k: self.nums_protected[k].to_dict() for k in set(self.nums_protected)}
+
+class ImageAndVideo(object):
+	def __init__(self):
+		self.sizes = {"images": 0, "videos": 0}
+
+	def sum(self, other):
+		if other is not None:
+			self.sizes = {"images": self.sizes["images"] + other.sizes["images"], "videos": self.sizes["videos"] + other.sizes["videos"]}
+
+	def copy(self):
+		return copy.deepcopy(self)
+
+	def setImage(self, value):
+		self.sizes = {"images": value, "videos": self.sizes["videos"]}
+
+	def setVideo(self, value):
+		self.sizes = {"images": self.sizes["images"], "videos": value}
+
+	def total(self):
+		return self.sizes["images"] + self.sizes["videos"]
+
+	def incrementImages(self):
+		self.sizes = {"images": self.sizes["images"] + 1, "videos": self.sizes["videos"]}
+
+	def incrementVideos(self):
+		self.sizes = {"images": self.sizes["images"], "videos": self.sizes["videos"] + 1}
+
+	def getImagesSize(self):
+		return self.sizes["images"]
+
+	def getVideosSize(self):
+		return self.sizes["videos"]
+
+	def from_dict(self, dict):
+		self.sizes = dict
+
+	def to_dict(self):
+		return self.sizes
+
+
+class Sizes(object):
+	def __init__(self):
+		self.sizes = {}
+		self.sizes[0] = ImageAndVideo()
+		for thumb_size in Options.config['reduced_sizes']:
+			self.sizes[thumb_size] = ImageAndVideo()
+
+	def sum(self, other):
+		if other is not None:
+			for k in set(self.sizes):
+				self.sizes[k].sum(other.sizes[k])
+			# self.sizes = {k: self.sizes[k].sum(other.sizes[k]) for k in set(self.sizes)}
+
+	def copy(self):
+		return copy.deepcopy(self)
+
+	def setImage(self, key, value):
+		self.sizes[key].setImage(value)
+
+	def setVideo(self, key, value):
+		self.sizes[key].setVideo(value)
+
+	def getImagesSize(self, key):
+		return self.sizes[key].getImagesSize()
+
+	def getVideosSize(self, key):
+		return self.sizes[key].getVideosSize()
+
+	def from_dict(self, dict):
+		for key in dict:
+			key_int = int(key)
+			self.sizes[key_int].from_dict(dict[key])
+
+	def to_dict(self):
+		return {k: self.sizes[k].to_dict() for k in set(self.sizes)}
+
+
+class SizesProtected(object):
+	def __init__(self):
+		self.sizes_protected = {}
+		self.sizes_protected[','] = Sizes()
+
+	def sum(self, complex_identifiers_combination, sizes):
+		if complex_identifiers_combination not in self.sizes_protected:
+			self.sizes_protected[complex_identifiers_combination] = Sizes()
+		self.sizes_protected[complex_identifiers_combination].sum(sizes)
+
+	def sizes(self, complex_identifiers_combination):
+		return self.sizes_protected[complex_identifiers_combination]
+
+	def keys(self):
+		return list(self.sizes_protected.keys())
+
+	def non_trivial_keys(self):
+		return [key for key in list(self.keys()) if key != ',']
+
+	def merge(self, sizes_protected):
+		if sizes_protected is not None:
+			for complex_identifiers_combination in list(sizes_protected.keys()):
+				if complex_identifiers_combination not in self.sizes_protected:
+					self.sizes_protected[complex_identifiers_combination] = Sizes()
+				self.sizes_protected[complex_identifiers_combination].sum(sizes_protected.sizes_protected[complex_identifiers_combination])
 
 	def copy(self):
 		return copy.deepcopy(self)
@@ -939,10 +1084,10 @@ class Media(object):
 		self.password_identifiers_set = set()
 		self.album_identifiers_set = set()
 		if dictionary is not None:
-			# media generation from file
+			# media generation from json cache
 			self.generate_media_from_cache(album, media_path, dictionary)
 		else:
-			 # media generation from json cache
+			 # media generation from file
 			 self.generate_media_from_file(album, media_path, thumbs_path, json_files, json_files_min_mtime)
 
 
@@ -967,6 +1112,9 @@ class Media(object):
 		self.is_valid = True
 
 		self._attributes = dictionary
+		file_sizes_dict = self._attributes["fileSizes"]
+		self._attributes["fileSizes"] = Sizes()
+		self._attributes["fileSizes"].from_dict(file_sizes_dict)
 
 
 	def generate_media_from_file(self, album, media_path, thumbs_path, json_files, json_files_min_mtime):
@@ -983,14 +1131,15 @@ class Media(object):
 		self.is_valid = True
 
 		try:
-			message("reading file and dir times...", "", 5)
+			message("reading file time and size, and dir time...", "", 5)
 			mtime = file_mtime(media_path)
+			# file_size = os.path.getsize(media_path)
 			dir_mtime = file_mtime(dirname)
 			indented_message("file and dir times read!", "", 5)
 		except KeyboardInterrupt:
 			raise
 		except OSError:
-			indented_message("could not read file or dir mtime", "", 5)
+			indented_message("could not read file time or size or dir mtime", "", 5)
 			self.is_valid = False
 			back_level()
 			return
@@ -999,7 +1148,6 @@ class Media(object):
 		self._attributes["metadata"] = {}
 		self._attributes["dateTimeFile"] = mtime
 		self._attributes["dateTimeDir"] = dir_mtime
-		# self._attributes["mediaType"] = "photo"
 
 		self.mime_type = magic.from_file(media_path, mime = True)
 
@@ -1008,7 +1156,7 @@ class Media(object):
 		if self.mime_type == "audio/mp4":
 			self.mime_type = "video/mp4"
 
-		if self.mime_type.find("image/") == 0:
+		if self.is_image:
 			indented_message("it's an image!", "", 5)
 			message("opening image file...", "", 5)
 			media_path_pointer = open(media_path, 'rb')
@@ -1031,6 +1179,8 @@ class Media(object):
 				self.is_valid = False
 			else:
 				indented_message("media opened with PIL!", "", 5)
+				self._attributes["fileSizes"] = Sizes()
+				self._attributes["fileSizes"].setImage(0, os.path.getsize(media_path))
 
 			if isinstance(image, Image.Image):
 				if Options.config['copy_exif_into_reductions']:
@@ -1045,13 +1195,19 @@ class Media(object):
 					message("looking for geonames...", "", 5)
 					self.get_geonames()
 			back_level()
+
 			media_path_pointer.close()
-		elif self.mime_type.find("video/") == 0:
+		elif self.is_video:
 			# try with video detection
 			self._video_metadata(media_path)
 			if self.is_video:
-				self._video_transcode(thumbs_path, media_path)
+				transcode_path = self._video_transcode(thumbs_path, media_path)
 				if self.is_valid:
+					self._attributes["fileSizes"] = Sizes()
+					self._attributes["fileSizes"].setVideo(0, os.path.getsize(media_path))
+					# let us set all the reduction sizes to the value of the transcoded video
+					for thumb_size in Options.config['reduced_sizes']:
+						self._attributes["fileSizes"].setVideo(thumb_size, os.path.getsize(transcode_path))
 					self._video_thumbnails(thumbs_path, media_path, json_files, json_files_min_mtime)
 
 					if self.has_gps_data:
@@ -1069,6 +1225,14 @@ class Media(object):
 	@property
 	def datetime_file(self):
 		return self._attributes["dateTimeFile"]
+
+	# @property
+	# def file_size(self):
+	# 	return self._attributes["fileSize"]
+
+	@property
+	def file_sizes(self):
+		return self._attributes["fileSizes"]
 
 	@property
 	def datetime_dir(self):
@@ -1396,7 +1560,6 @@ class Media(object):
 			if 'codec_type' in s:
 				indented_message("debug: s[codec_type]", s['codec_type'], 5)
 			if 'codec_type' in s and s['codec_type'] == 'video':
-				# self._attributes["mediaType"] = "video"
 				self._attributes["metadata"]["size"] = (int(s["width"]), int(s["height"]))
 				if "duration" in s:
 					self._attributes["metadata"]["duration"] = int(round(float(s["duration"]) * 10) / 10)
@@ -1514,7 +1677,7 @@ class Media(object):
 				for thumb_or_reduced_size_image in thumbs_and_reduced_size_images:
 					index += 1
 					if index == last_index or Media._thumbnail_is_smaller_than(thumb_or_reduced_size_image, thumb_size, thumb_type, mobile_bigger):
-						thumb = self.reduce_size_or_make_thumbnail(thumb_or_reduced_size_image, photo_path, thumbs_path, thumb_size, json_files, json_files_min_mtime, thumb_type, mobile_bigger)
+						[thumb, thumb_path] = self.reduce_size_or_make_thumbnail(thumb_or_reduced_size_image, photo_path, thumbs_path, thumb_size, json_files, json_files_min_mtime, thumb_type, mobile_bigger)
 						thumbs_and_reduced_size_images = [thumb] + thumbs_and_reduced_size_images
 						break
 
@@ -1526,7 +1689,8 @@ class Media(object):
 
 		message("checking reduced sizes", "", 5)
 		for thumb_size in Options.config['reduced_sizes']:
-			reduced_size_image = self.reduce_size_or_make_thumbnail(reduced_size_image, photo_path, thumbs_path, thumb_size, json_files, json_files_min_mtime)
+			[reduced_size_image, thumb_path] = self.reduce_size_or_make_thumbnail(reduced_size_image, photo_path, thumbs_path, thumb_size, json_files, json_files_min_mtime)
+			self.file_sizes.setImage(thumb_size, os.path.getsize(thumb_path))
 			reduced_size_images = [reduced_size_image] + reduced_size_images
 		indented_message("reduced sizes checked!", "", 5)
 
@@ -1633,7 +1797,7 @@ class Media(object):
 			# the reduced image/thumbnail is there and is valid, exit immediately
 			indented_message("reduction/thumbnail OK, skipping", "", 5)
 			back_level()
-			return start_image
+			return [start_image, thumb_path]
 
 		next_level()
 		message("so the reduction/thumbnail is not OK, creating it!", "", 5)
@@ -1929,7 +2093,7 @@ class Media(object):
 			back_level()
 			back_level()
 			back_level()
-			return start_image_copy
+			return [start_image_copy, thumb_path]
 		except KeyboardInterrupt:
 			try:
 				os.unlink(thumb_path)
@@ -1937,7 +2101,7 @@ class Media(object):
 				pass
 			raise
 		except IOError:
-			message("saving (2nd try)...", info_string, 5)
+			message("saving (2nd try)...", "", 5)
 			try:
 				if hasattr(start_image, 'exif_by_PIL'):
 					start_image_copy_for_saving.convert('RGB').save(thumb_path, "JPEG", quality=Options.config['jpeg_quality'], exif=exif)
@@ -1952,7 +2116,7 @@ class Media(object):
 					msg = "saved for media (2nd try, " + str(original_thumb_size) + ")"
 				if hasattr(start_image, 'exif_by_PIL'):
 					msg += " with exif data"
-				message(msg, "", 2)
+				message(msg, info_string, 2)
 				back_level()
 			except KeyboardInterrupt:
 				try:
@@ -1961,7 +2125,7 @@ class Media(object):
 					pass
 			back_level()
 			back_level()
-			return start_image_copy
+			return [start_image_copy, thumb_path]
 		except Exception as e:
 			print(e)
 			indented_message("thumbnail save failure with error: " + e, str(original_thumb_size) + " -> " + os.path.basename(thumb_path), 2)
@@ -1971,7 +2135,7 @@ class Media(object):
 				pass
 			back_level()
 			back_level()
-			return start_image
+			return [start_image, thumb_path]
 
 
 	def _video_thumbnails(self, thumbs_path, original_path, json_files, json_files_min_mtime):
@@ -2068,7 +2232,7 @@ class Media(object):
 		if os.path.exists(transcode_path) and file_mtime(transcode_path) >= self.datetime_file:
 			indented_message("existent transcoded video", info_string, 4)
 			self._video_metadata(transcode_path, False)
-			return
+			return transcode_path
 
 		if "originalSize" in self._attributes["metadata"] and self._attributes["metadata"]["originalSize"][1] > 720:
 			transcode_cmd.append('-s')
@@ -2127,6 +2291,7 @@ class Media(object):
 		if self.is_valid:
 			self._video_metadata(transcode_path, False)
 		back_level()
+		return transcode_path
 
 
 	@property
@@ -2163,9 +2328,12 @@ class Media(object):
 		return self._attributes["metadata"]["size"]
 
 	@property
+	def is_image(self):
+		return self.mime_type.find("image/") == 0
+
+	@property
 	def is_video(self):
 		return self.mime_type.find("video/") == 0
-		# return "mediaType" in self._attributes and self._attributes["mediaType"] == "video"
 
 	def __str__(self):
 		return self.name
@@ -2424,6 +2592,7 @@ class Media(object):
 		media["name"] = self.name
 		media["cacheBase"] = self.cache_base
 		media["date"] = self.date_string
+		media["fileSizes"] = self.file_sizes
 		# media["yearAlbum"] = self.year_album_path
 		# media["monthAlbum"] = self.month_album_path
 		media["dayAlbum"] = self.day_album_path
@@ -2470,6 +2639,12 @@ class PhotoAlbumEncoder(json.JSONEncoder):
 			return obj.to_dict()
 		if isinstance(obj, Positions):
 			return obj.to_dict(self.type)
+		if isinstance(obj, Sizes):
+			return obj.to_dict()
+		if isinstance(obj, ImageAndVideo):
+			return obj.to_dict()
+		if isinstance(obj, NumsProtected):
+			return obj.to_dict()
 		if isinstance(obj, set):
 			return list(obj)
 		return json.JSONEncoder.default(self, obj)

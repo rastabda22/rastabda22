@@ -47,7 +47,7 @@
 					<div class="links">
 						<span class="link-button">
 							<a class="metadata-show"></a>
-						<a class="metadata-hide"></a>
+							<a class="metadata-hide"></a>
 						</span>
 						|
 						<span class="link-button">
@@ -112,7 +112,7 @@
 				<input type="text" id="search-field" />
 				<img id="search-button" src="img/ic_search_black_48dp_2x.png" />
 			</form>
-			<ul>
+			<ul class="hidden">
 				<li id="inside-words" class="search active"></li>
 				<li id="any-word" class="search active"></li>
 				<li id="case-sensitive" class="search active"></li>
@@ -123,7 +123,7 @@
 
 		<li class="expandable browsing-mode-switcher active">
 			<a class="browsing-mode-switcher caption"></a>
-			<ul class="sub-menu">
+			<ul class="sub-menu hidden">
 				<li id="folders-view" class="browsing-mode-switcher"></li>
 				<li id="by-date-view" class="browsing-mode-switcher"></li>
 				<li id="by-gps-view" class="browsing-mode-switcher"></li>
@@ -134,7 +134,7 @@
 
 		<li class="expandable sort album-sort active">
 			<span class="sort album-sort caption"></span>
-			<ul class="sub-menu">
+			<ul class="sub-menu hidden">
 				<li class='sort album-sort by-date'></li>
 				<li class='sort album-sort by-name'></li>
 				<li class='sort album-sort reverse active'></li>
@@ -143,7 +143,7 @@
 
 		<li class="expandable sort media-sort active">
 			<span class="sort media-sort caption"></span>
-			<ul class="sub-menu">
+			<ul class="sub-menu hidden">
 				<li class='sort media-sort by-date'></li>
 				<li class='sort media-sort by-name'></li>
 				<li class='sort media-sort reverse active'></li>
@@ -152,7 +152,7 @@
 
 		<li class='expandable ui active'>
 			<span class='ui caption'></span>
-			<ul class="sub-menu">
+			<ul class="sub-menu hidden">
 				<li class='ui hide-title active'></li>
 				<li class='ui media-count active'></li>
 				<li class='ui spaced active'></li>
@@ -169,12 +169,33 @@
 			<span id='show-big-albums' class="big-albums caption"></span>
 		</li>
 
+		<li class='expandable download-album active'>
+			<span class='download-album caption'></span>
+			<ul class="sub-menu hidden">
+				<li class='download-album everything all full active'></li>
+				<li class='download-album everything all sized active'></li>
+				<li class='download-album everything images full active'></li>
+				<li class='download-album everything images sized active'></li>
+				<li class='download-album everything videos full active'></li>
+				<li class='download-album everything videos sized active'></li>
+				<li class='download-album media-only all full active'></li>
+				<li class='download-album media-only all sized active'></li>
+				<li class='download-album media-only images full active'></li>
+				<li class='download-album media-only images sized active'></li>
+				<li class='download-album media-only videos full active'></li>
+				<li class='download-album media-only videos sized active'></li>
+			</ul>
+		</li>
+
 		<li class='protection active'>
 			<span id="protected-content-unveil" class='protection caption'></span>
 		</li>
 	</ul>
 
+
 	<div id="loading"></div>
+	<div id="downloading-media"></div>
+	<div id="preparing-zip"></div>
 
 	<div id="folders-browsing" class="browsing-mode-message"></div>
 	<div id="by-date-browsing" class="browsing-mode-message"></div>

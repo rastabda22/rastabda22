@@ -20,8 +20,8 @@ def main():
 		print("usage: {0} ALBUM_PATH CACHE_PATH - or {1} CONFIG_FILE".format(sys.argv[0], sys.argv[0]))
 		return
 
-	Options.initialize_opencv()
 	Options.get_options()
+	Options.initialize_opencv()
 
 	from TreeWalker import TreeWalker
 
@@ -48,7 +48,7 @@ def main():
 			if Options.config['debug_profile']:
 				Debug.profile_dump(cumulative=False)
 
-		message("    The end!    ", "", 3)
+		message("    The end!    ", "", 1)
 	except KeyboardInterrupt:
 		message("keyboard", "CTRL+C pressed, quitting.")
 		sys.exit(-97)

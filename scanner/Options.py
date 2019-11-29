@@ -119,9 +119,10 @@ config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x
 # json_version = 3.997 since corrected bug with positions in search albums
 # json_version = 3.998 since symlinkCodesAndNumbers added as album property
 # json_version = 4.0 for new release
+# json_version = 4.1 since sizes of media, albums and trees added
 
 # json_version = 0
-json_version = 4.0
+json_version = 4.1
 
 
 def set_obsolete_json_version_flag():
@@ -158,7 +159,7 @@ def initialize_opencv():
 	try:
 		import cv2
 
-		message("PRE importer", "opencv library available, using it!", 3)
+		message("PRE importer", "opencv library available, using it!", 4)
 		next_level()
 		FACE_CONFIG_FILE = "haarcascade_frontalface_default.xml"
 		message("PRE looking for file...", FACE_CONFIG_FILE + " in /usr/share", 5)
@@ -375,14 +376,14 @@ def get_options():
 		sys.exit(-97)
 
 	if guessed_index_dir or guessed_album_dir or guessed_cache_dir:
-		message("PRE options", "guessed value(s):", 2)
+		message("PRE options", "guessed value(s):", 3)
 		next_level()
 		if guessed_index_dir:
-			message("PRE guessed directory", "index_html_path" + "=" + config['index_html_path'], 2)
+			message("PRE guessed directory", "index_html_path" + "=" + config['index_html_path'], 3)
 		if guessed_album_dir:
-			message("PRE guessed directory", "album_path" + "=" + config['album_path'], 2)
+			message("PRE guessed directory", "album_path" + "=" + config['album_path'], 3)
 		if guessed_cache_dir:
-			message("PRE guessed directory", "cache_path" + "=" + config['cache_path'], 2)
+			message("PRE guessed directory", "cache_path" + "=" + config['cache_path'], 3)
 		back_level()
 
 	# the album directory must exist and be readable
@@ -416,7 +417,7 @@ def get_options():
 		try:
 			with open(passwords_file_name, 'r') as passwords_file:
 				# Get the old file contents, they are needed in order to evalutate the numsProtectedMediaInSubTree dictionary in json file
-				message("PRE Reading passwords file", passwords_file_name, 3)
+				message("PRE Reading passwords file", passwords_file_name, 4)
 				for line in passwords_file.read().splitlines():
 					# remove leading spaces
 					line = line.lstrip()
@@ -429,7 +430,7 @@ def get_options():
 					# everything beginning with the first non-space character till the end of line (including the traling spaces) is the password
 					password = " ".join(columns[1:]).lstrip()
 					if password == "":
-						indented_message("PRE Missing password", "for identifier: '" + identifier + "'", 3)
+						indented_message("PRE Missing password", "for identifier: '" + identifier + "'", 4)
 						continue
 					while True:
 						password_code = str(random.randint(min_random, max_random))
@@ -449,12 +450,12 @@ def get_options():
 					indented_message(
 						"PRE Password read",
 						"identifier: " + identifier + ", encrypted password: " + password_md5 + ", password code = " + str(password_code),
-						3
+						4
 					)
 			if len(identifiers_and_passwords) > 0:
 				passwords_file_mtime = file_mtime(passwords_file_name)
 		except IOError:
-			indented_message("PRE WARNING", passwords_file_name + " doesn't exist or unreadable, not using it", 2)
+			indented_message("PRE WARNING", passwords_file_name + " doesn't exist or unreadable, not using it", 3)
 
 	# create the directory where php will put album composite images
 	album_cache_dir = os.path.join(config['cache_path'], config['cache_album_subdir'])

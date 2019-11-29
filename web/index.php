@@ -39,7 +39,7 @@
 		<link href="css/010-leaflet-prunecluster.css" rel="stylesheet" type="text/css" />
 	<?php	}
 
-			if (strcasecmp($options['debug_js'], "false") == 0 || $options['debug_js'] == "0") { ?>
+	if (strcasecmp($options['debug_js'], "false") == 0 || $options['debug_js'] == "0") { ?>
 		<script type="text/javascript" src="js/scripts.min.js"></script>
 	<?php	} else {
 			// Use system wide jQuery if available
@@ -81,15 +81,18 @@
 		<script type="text/javascript" src="js/008-leaflet.js"></script>
 		<script type="text/javascript" src="js/009-leaflet-prunecluster.js"></script>
 		<script type="text/javascript" src="js/010-social.js"></script>
-		<script type="text/javascript" src="js/012-translations.js"></script>
+		<script type="text/javascript" src="js/011-jszip.js"></script>
+		<script type="text/javascript" src="js/012-jszip-utils.js"></script>
 		<script type="text/javascript" src="js/013-md5.js"></script>
-		<script type="text/javascript" src="js/014-utilities.js"></script>
-		<script type="text/javascript" src="js/016-libphotofloat.js"></script>
-		<script type="text/javascript" src="js/018-pinch-swipe.js"></script>
-		<script type="text/javascript" src="js/022-functions.js"></script>
-		<script type="text/javascript" src="js/025-map.js"></script>
-		<script type="text/javascript" src="js/027-top-functions.js"></script>
-		<script type="text/javascript" src="js/030-display.js"></script>
+		<script type="text/javascript" src="js/014-file-saver.js"></script>
+		<script type="text/javascript" src="js/031-translations.js"></script>
+		<script type="text/javascript" src="js/033-utilities.js"></script>
+		<script type="text/javascript" src="js/034-libphotofloat.js"></script>
+		<script type="text/javascript" src="js/035-pinch-swipe.js"></script>
+		<script type="text/javascript" src="js/036-functions.js"></script>
+		<script type="text/javascript" src="js/037-map.js"></script>
+		<script type="text/javascript" src="js/038-top-functions.js"></script>
+		<script type="text/javascript" src="js/039-display.js"></script>
 
 	<?php } ?>
 
@@ -238,7 +241,7 @@
 					<div class="links">
 						<span class="link-button">
 							<a class="metadata-show"></a>
-						<a class="metadata-hide"></a>
+							<a class="metadata-hide"></a>
 						</span>
 						|
 						<span class="link-button">
@@ -303,7 +306,7 @@
 				<input type="text" id="search-field" />
 				<img id="search-button" src="img/ic_search_black_48dp_2x.png" />
 			</form>
-			<ul>
+			<ul class="hidden">
 				<li id="inside-words" class="search active"></li>
 				<li id="any-word" class="search active"></li>
 				<li id="case-sensitive" class="search active"></li>
@@ -314,7 +317,7 @@
 
 		<li class="expandable browsing-mode-switcher active">
 			<a class="browsing-mode-switcher caption"></a>
-			<ul class="sub-menu">
+			<ul class="sub-menu hidden">
 				<li id="folders-view" class="browsing-mode-switcher"></li>
 				<li id="by-date-view" class="browsing-mode-switcher"></li>
 				<li id="by-gps-view" class="browsing-mode-switcher"></li>
@@ -325,7 +328,7 @@
 
 		<li class="expandable sort album-sort active">
 			<span class="sort album-sort caption"></span>
-			<ul class="sub-menu">
+			<ul class="sub-menu hidden">
 				<li class='sort album-sort by-date'></li>
 				<li class='sort album-sort by-name'></li>
 				<li class='sort album-sort reverse active'></li>
@@ -334,7 +337,7 @@
 
 		<li class="expandable sort media-sort active">
 			<span class="sort media-sort caption"></span>
-			<ul class="sub-menu">
+			<ul class="sub-menu hidden">
 				<li class='sort media-sort by-date'></li>
 				<li class='sort media-sort by-name'></li>
 				<li class='sort media-sort reverse active'></li>
@@ -343,7 +346,7 @@
 
 		<li class='expandable ui active'>
 			<span class='ui caption'></span>
-			<ul class="sub-menu">
+			<ul class="sub-menu hidden">
 				<li class='ui hide-title active'></li>
 				<li class='ui media-count active'></li>
 				<li class='ui spaced active'></li>
@@ -360,6 +363,24 @@
 			<span id='show-big-albums' class="big-albums caption"></span>
 		</li>
 
+		<li class='expandable download-album active'>
+			<span class='download-album caption'></span>
+			<ul class="sub-menu hidden">
+				<li class='download-album everything all full active'></li>
+				<li class='download-album everything all sized active'></li>
+				<li class='download-album everything images full active'></li>
+				<li class='download-album everything images sized active'></li>
+				<li class='download-album everything videos full active'></li>
+				<li class='download-album everything videos sized active'></li>
+				<li class='download-album media-only all full active'></li>
+				<li class='download-album media-only all sized active'></li>
+				<li class='download-album media-only images full active'></li>
+				<li class='download-album media-only images sized active'></li>
+				<li class='download-album media-only videos full active'></li>
+				<li class='download-album media-only videos sized active'></li>
+			</ul>
+		</li>
+
 		<li class='protection active'>
 			<span id="protected-content-unveil" class='protection caption'></span>
 		</li>
@@ -367,6 +388,8 @@
 
 
 	<div id="loading"></div>
+	<div id="downloading-media"></div>
+	<div id="preparing-zip"></div>
 
 	<div id="folders-browsing" class="browsing-mode-message"></div>
 	<div id="by-date-browsing" class="browsing-mode-message"></div>

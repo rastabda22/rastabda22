@@ -48,6 +48,10 @@ a:hover {
 	filter: alpha(opacity=70); /* For IE8 and earlier */
 }
 
+.title-count-detail {
+	cursor: pointer;
+}
+
 .hidden, .hidden-by-option, .hidden-by-fullscreen, .hidden-by-pinch {
 	display: none !important;
 }
@@ -72,7 +76,7 @@ a.title-anchor.mobile {
 	color: orange !important;
 }
 
-#loading, #folders-browsing, #by-date-browsing, #by-gps-browsing, #by-search-browsing {
+#loading, #folders-browsing, #by-date-browsing, #by-gps-browsing, #by-search-browsing, #downloading-media, #preparing-zip {
 	display: none;
 }
 
@@ -464,7 +468,7 @@ video {
 	color: #FFAD27;
 	margin-top: 20px;
 }
-.error, .browsing-mode-message, .sort-message, #error-overlay, #auth-text, .search-failed, #loading {
+.error, .browsing-mode-message, .sort-message, #error-overlay, #auth-text, .search-failed, #loading, #downloading-media, #preparing-zip {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -472,18 +476,18 @@ video {
 	height: 100%;
 	display: none;
 }
-.error, .browsing-mode-message, .sort-message, #auth-text, .search-failed, #loading {
+.error, .browsing-mode-message, .sort-message, #auth-text, .search-failed, #loading, #downloading-media, #preparing-zip {
 	margin-top: 20%;
 	text-align: center;
 }
 
-.error, .browsing-mode-message, .sort-message, .search-failed, #loading {
+.error, .browsing-mode-message, .sort-message, .search-failed, #loading, #downloading-media, #preparing-zip {
 	font-size: 4em;
 	font-weight: bold;
 	font-style: italic;
 }
 
-.browsing-mode-message, .sort-message, #loading {
+.browsing-mode-message, .sort-message, #loading, #downloading-media, #preparing-zip {
 	background-color: black;
 	z-index: 1000;
 	height: auto;
@@ -652,6 +656,10 @@ ul#right-menu li.caption, ul#right-menu li:not(.active) {
 	cursor: default;
 }
 
+ul#right-menu li.caption, ul#right-menu li.active {
+	cursor: pointer;
+}
+
 ul#right-menu span a#menu-icon:hover {
 	background-color: transparent;
 }
@@ -668,7 +676,6 @@ ul#right-menu span#menu-icon, ul#right-menu li#menu-line {
 ul#right-menu span#menu-icon, ul#right-menu #padlock img, ul#right-menu.expand li {
 	float: none;
 	text-align: right;
-	background-color: black;
 }
 
 ul#right-menu.expand li:not(#menu-and-padlock) {
@@ -688,7 +695,7 @@ ul#right-menu #padlock {
 }
 
 ul#right-menu.expand {
-	opacity: 0.6;
+	background-color:rgba(0, 0, 0, 0.6);
 	min-width: 15em;
 }
 
@@ -755,7 +762,7 @@ ul#right-menu.expand .selected {
 }
 
 ul#right-menu.expand li.dimmed {
-	opacity: 0.2;
+	background-color:rgba(0, 0, 0, 0.2);
 	cursor: auto;
 }
 
@@ -763,11 +770,12 @@ ul#right-menu.expand li:not(.active, .sub-menu) {
 	color: darkgray;
 }
 
-ul#right-menu.expand li.active:hover, ul#right-menu #menu-icon:hover, ul#right-menu #padlock img:hover, ul#right-menu #padlock:hover {
+ul#right-menu.expand li .caption:hover, ul#right-menu.expand ul li.active:hover, ul#right-menu #menu-icon:hover, ul#right-menu #padlock img:hover, ul#right-menu #padlock:hover {
 	background-color: gray !important;
-	/* text-shadow: .15ex 0 white; */
-	/* font-weight: bold;
-	font-size: 80%; */
+}
+
+ul#right-menu.expand ul li:not(.active):hover  {
+	background-color: black !important;
 }
 
 ul#right-menu #padlock img:hover {
@@ -791,10 +799,21 @@ ul#right-menu.expand ul {
 	padding-inline-start: 1em;
 }
 
-ul#right-menu .expandable ul {
-	display: none;
+.download-album.active {
+	cursor: pointer;
 }
 
+.download-album.red {
+	color: red;
+}
+
+.download-album.red:not(.active) {
+	font-weight: bold;
+}
+
+.download-album.red:not(.active) {
+	cursor: auto !important;
+}
 /* end right menu */
 
 /* from https://www.w3schools.com/css/tryit.asp?filename=trycss_buttons_animate3 */

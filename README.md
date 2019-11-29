@@ -1,4 +1,4 @@
-# MyPhotoShare v4.0.4 (Nov 11, 2019)
+# MyPhotoShare v4.1.0 (Nov 29, 2019)
 
 ### A Web Photo Gallery Done Right via Static JSON & Dynamic Javascript
 #### by Jason A. Donenfeld (<Jason@zx2c4.com>), Jerome Charaoui (jerome@riseup.net)  Joachim Tingvold (joachim@tingvold.com), Paolo Benvenuto (<paolobenve@gmail.com>), Pierre Métras (<p.metras@videotron.ca>)
@@ -46,6 +46,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Media and folders can be sorted ascending/descending, by date or by name.
 - [x] Media can be searched by file/album name, title, description, tags; search may be whole word or inside words, considering accents and capitals or not, in current album (in virtual albums too) or in the whole tree.
 - [x] Thumbnails can be square (cropped, with optional face detection by [OpenCV](https://opencv.org/)) or full-content.
+- [x] Albums can be downloaded via the right menu, either with or without subalbums, either images only, videos only, or both.
 
 ### For Photographers
 
@@ -54,7 +55,8 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] EXIF, IPTC and XMP Metadata display.
 - [x] Link to original media.
 - [x] Link for direct download.
-- [x] Allows enlarging the photo till 1:1 aspect.
+- [x] Menu entries for direct download of whole album, with or without its subalbums.
+- [x] Allows enlarging the photo without any limit.
 - [x] Installer can decide whether to replicate all Exif metadata (including copyright info) into all the reductions/thumbnails or not
 
 ### For Geotaggers
@@ -77,12 +79,12 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Keyboard navigation: arrows, pageup/down, `[esc]`, `[f]` (fullscreen), `[d]` (download original), `[o]` (show original), `[s]` (map), `[m]` (metadata), `[e]` (open right menu), `[+]` (pinch in), `[-]` (pinch out), space/backspace (like in [Darktable](https://www.darktable.org/)), `[>]`/`[<]` (rotation among browsing modes: folders -> by date -> by gps -> by search), `[`/`]` (changing sort of albums in a rotative way), `{`/`}` (changing sort of media in a rotative way).
 - [x] Keyboard dragging when the photo is zoomed in.
 - [x] Mouse-wheel support, including for pinching (with ctrl or shift).
-- [x] Various user interface option can be changed by the user.
+- [x] Various user interface options can be changed by the user.
 - [x] Animations to make the interface feel nice.
 - [x] Separate album view and photo view.
 - [x] Media animation when passing to next/previous media.
 - [x] Available in English, Italian, Spanish, French. User interface translated via separate translation file. Add your language!
-- [x] Lazy loading thumbnail for a faster page load
+- [x] Lazy loading thumbnail for a faster page load.
 
 ### Social
 

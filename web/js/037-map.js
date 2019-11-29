@@ -51,7 +51,7 @@
 		else
 			albumViewPadding = parseInt(albumViewPadding);
 
-		for(mediaIndex = 0; mediaIndex < theAlbum.numMedia; mediaIndex ++) {
+		for(mediaIndex = 0; mediaIndex < util.imagesAndVideosTotal(theAlbum.numMedia); mediaIndex ++) {
 
 			ithMedia = theAlbum.media[mediaIndex];
 
@@ -199,7 +199,7 @@
 	};
 
 	MapFunctions.buildPopupHeader = function() {
-		$("#popup-photo-count-number").html(MapFunctions.mapAlbum.numMedia);
+		$("#popup-photo-count-number").html(util.imagesAndVideosTotal(MapFunctions.mapAlbum.numMedia));
 		$("#popup-photo-count").css("max-width", MapFunctions.maxWidthForPopupContent);
 		// add the click event for showing the photos in the popup as an album
 		$("#popup-photo-count").on(
@@ -323,8 +323,10 @@
 		// initializes the map album
 		var album = {};
 		album.media = [];
-		album.numMedia = 0;
-		album.numMediaInSubTree = 0;
+		album.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
+		album.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
+		album.sizesOfAlbum = initialSizes;
+		album.sizesOfSubTree = initialSizes;
 		album.subalbums = [];
 		album.positionsAndMediaInTree = [];
 		album.numPositionsInTree = 0;
@@ -333,7 +335,7 @@
 		album.physicalPath = album.path;
 		album.searchInFolderCacheBase = currentAlbum.cacheBase;
 		album.clickHistory = [];
-		album.numsProtectedMediaInSubTree = {"": 0};
+		album.numsProtectedMediaInSubTree = {"": imagesAndVideos0};
 
 		return album;
 	};
@@ -341,7 +343,7 @@
 	MapFunctions.addMediaFromPositionsToMapAlbum = function(positionsAndCounts, mapAlbum, resolve_imageLoad) {
 
 		var mediaNameListElement, indexPositions, indexPhoto, markerClass, photoIndex, mediaIndex;
-		var albumsToGet = 0, albumsGot = 0, photosByAlbum = {}, positionsAndCountsElement;
+		var photosByAlbum = {}, positionsAndCountsElement;
 
 		// in order to add the html code for the images to a string,
 		// we group the photos by album: this way we rationalize the process of getting them
@@ -352,7 +354,6 @@
 				mediaNameListElement = positionsAndCountsElement.mediaNameList[indexPhoto];
 				if (! photosByAlbum.hasOwnProperty(mediaNameListElement.albumCacheBase)) {
 					photosByAlbum[mediaNameListElement.albumCacheBase] = [];
-					albumsToGet ++;
 				}
 				photosByAlbum[mediaNameListElement.albumCacheBase].push(
 					{
@@ -370,17 +371,15 @@
 				let cacheBasePromise = new Promise(
 					function(resolve_cacheBasePromise) {
 						let photosInAlbum = photosByAlbum[albumCacheBase];
-						var getAlbumPromise = phFl.getAlbum(
-							albumCacheBase,
-							util.die,
-							{"getMedia": true, "getPositions": true}
-						);
+						var getAlbumPromise = phFl.getAlbum(albumCacheBase, util.die, {"getMedia": true, "getPositions": true});
 						getAlbumPromise.then(
 							function(theAlbum) {
-								for (mediaIndex = 0; mediaIndex < theAlbum.numMedia; mediaIndex ++) {
+								for (mediaIndex = 0; mediaIndex < util.imagesAndVideosTotal(theAlbum.numMedia); mediaIndex ++) {
 									for (photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
 										if (theAlbum.media[mediaIndex].cacheBase == photosInAlbum[photoIndex].element.cacheBase) {
 											mapAlbum.media.push(theAlbum.media[mediaIndex]);
+											mapAlbum.sizesOfAlbum = util.sumSizes(mapAlbum.sizesOfAlbum, theAlbum.media[mediaIndex].fileSizes);
+											mapAlbum.sizesOfSubTree = util.sumSizes(mapAlbum.sizesOfSubTree, theAlbum.media[mediaIndex].fileSizes);
 										}
 									}
 								}

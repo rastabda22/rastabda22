@@ -29,7 +29,7 @@
 		folders = location.pathname;
 		folders = folders.substring(0, folders.lastIndexOf('/'));
 		url += folders;
-		if (currentMedia === null || currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.numMedia == 1) {
+		if (currentMedia === null || currentAlbum !== null && ! currentAlbum.subalbums.length && util.imagesAndVideosTotal(currentAlbum.numMedia) == 1) {
 			mediaParameter = util.pathJoin([
 				Options.server_cache_path,
 				Options.cache_album_subdir,
@@ -42,12 +42,12 @@
 			var prefix = util.removeFolderMarker(currentMedia.foldersCacheBase);
 			if (prefix)
 				prefix += Options.cache_folder_separator;
-			if (currentMedia.mimeType.indexOf("video") === 0) {
+			if (currentMedia.mimeType.indexOf("video/") === 0) {
 				mediaParameter = util.pathJoin([
 					Options.server_cache_path,
 					currentMedia.cacheSubdir,
 				]) + prefix + currentMedia.cacheBase + Options.cache_folder_separator + "transcoded_" + Options.video_transcode_bitrate + "_" + Options.video_crf + ".mp4";
-			} else if (currentMedia.mimeType.indexOf("image") === 0) {
+			} else if (currentMedia.mimeType.indexOf("image/") === 0) {
 				mediaParameter = util.pathJoin([
 					Options.server_cache_path,
 					currentMedia.cacheSubdir,
@@ -57,7 +57,8 @@
 		}
 
 		myShareUrl = url + '?';
-		myShareUrl += 'm=' + mediaParameter;
+		// disable the image parameter, because of issue #169
+		// myShareUrl += 'm=' + mediaParameter;
 		hash = location.hash;
 		if (hash)
 			myShareUrl += '#' + hash.substring(1);
@@ -88,7 +89,7 @@
 	Functions.getAlbumNameFromAlbumHash = function(hash) {
 		return new Promise(
 			function(resolve_getAlbumNameFromAlbumHash) {
-				getAlbumPromise = PhotoFloat.getAlbum(hash, util.die, {"getMedia": false, "getPositions": false});
+				let getAlbumPromise = PhotoFloat.getAlbum(hash, util.die, {"getMedia": false, "getPositions": false});
 				getAlbumPromise.then(
 					function(theAlbum) {
 						var path;
@@ -135,6 +136,8 @@
 		}
 
 		// add the correct classes to the menu buttons
+
+		// if ($("ul#right-menu li ul#sub-menu"))
 
 		if (
 			isMapOrPopup ||
@@ -199,7 +202,7 @@
 		}
 
 		if (
-			thisAlbum !== null
+			thisAlbum !== null && ! $(".sub-menu:not(.hidden)").length
 			// thisAlbum !== null &&
 			// (util.isSearchCacheBase(thisAlbum.cacheBase) || thisAlbum.cacheBase == Options.by_search_string)
 			// ||
@@ -207,11 +210,7 @@
 			// $("ul#right-menu li#no-results").is(":visible") ||
 			// $("ul#right-menu li#search-too-wide").is(":visible")
 		) {
-			$("ul#right-menu li#inside-words").removeClass("hidden");
-			$("ul#right-menu li#any-word").removeClass("hidden");
-			$("ul#right-menu li#case-sensitive").removeClass("hidden");
-			$("ul#right-menu li#accent-sensitive").removeClass("hidden");
-			$("ul#right-menu li#album-search").removeClass("hidden");
+			$("ul#right-menu li.search ul").removeClass("hidden");
 			// $("ul#right-menu li#refine-search").removeClass("hidden");
 			if (Options.search_inside_words)
 				$("ul#right-menu li#inside-words").addClass("selected");
@@ -246,11 +245,7 @@
 					$("ul#right-menu li#album-search").removeClass("selected");
 			}
 		} else {
-			$("ul#right-menu li#inside-words").addClass("hidden");
-			$("ul#right-menu li#any-word").addClass("hidden");
-			$("ul#right-menu li#case-sensitive").addClass("hidden");
-			$("ul#right-menu li#accent-sensitive").addClass("hidden");
-			$("ul#right-menu li#album-search").addClass("hidden");
+			$("ul#right-menu li.search ul").addClass("hidden");
 			// $("ul#right-menu li#refine-search").addClass("hidden");
 		}
 
@@ -357,8 +352,8 @@
 				currentMedia !== null ||
 				util.isAlbumWithOneMedia(thisAlbum) ||
 				thisAlbum !== null && (
-					thisAlbum.numMedia === 0 ||
-					! util.isFolderCacheBase(thisAlbum.cacheBase) && thisAlbum.numMedia > Options.big_virtual_folders_threshold
+					util.imagesAndVideosTotal(thisAlbum.numMedia) === 0 ||
+					! util.isFolderCacheBase(thisAlbum.cacheBase) && util.imagesAndVideosTotal(thisAlbum.numMedia) > Options.big_virtual_folders_threshold
 				)
 			)
 		) {
@@ -402,7 +397,7 @@
 
 		if (
 			thisAlbum === null ||
-			thisAlbum.numMedia < Options.big_virtual_folders_threshold ||
+			util.imagesAndVideosTotal(thisAlbum.numMedia) < Options.big_virtual_folders_threshold ||
 			util.isFolderCacheBase(thisAlbum.cacheBase)
 		) {
 			$("ul#right-menu #show-big-albums").addClass("hidden");
@@ -428,7 +423,7 @@
 				$("ul#right-menu li.album-sort").removeClass("hidden");
 			}
 
-			if (thisAlbum.numMedia <= 1 || thisAlbum.numMedia > Options.big_virtual_folders_thresholds) {
+			if (util.imagesAndVideosTotal(thisAlbum.numMedia) <= 1 || util.imagesAndVideosTotal(thisAlbum.numMedia) > Options.big_virtual_folders_thresholds) {
 				// no media or one media or too many media
 				$("ul#right-menu li.media-sort").addClass("hidden");
 			} else {
@@ -458,6 +453,264 @@
 			}
 		}
 
+		const maximumZipSize = 2000000000;
+		const bigZipSize = 500000000;
+
+		$(".download-album").addClass("hidden").removeClass("red").addClass("active");
+		$(".download-album.sized").addClass("hidden");
+
+		if (thisAlbum !== null) {
+			$(".download-album.expandable, .download-album.caption").removeClass("hidden");
+
+			let showDownloadEverything = false;
+
+			if (thisAlbum.subalbums.length && ! util.isByDateCacheBase(thisAlbum.cacheBase) && ! util.isByGpsCacheBase(thisAlbum.cacheBase)) {
+				$(".download-album.everything.all.full").removeClass("hidden");
+				// reset the html
+				$(".download-album.everything.all").html(util._t(".download-album.everything.all"));
+
+				let numMediaInSubTree = util.imagesAndVideosTotal(thisAlbum.numMediaInSubTree);
+				if (util.isSearchCacheBase(thisAlbum.cacheBase) && thisAlbum.subalbums.length) {
+					// in search albums, numMediaInSubTree doesn't include the media in the albums found, the values that goes into the DOm must be update by code here
+					for (let iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; iSubalbum ++) {
+						numMediaInSubTree += util.imagesAndVideosTotal(thisAlbum.subalbums[iSubalbum].numMediaInSubTree);
+					}
+				}
+
+				let treeSize = thisAlbum.sizesOfSubTree[0].images + thisAlbum.sizesOfSubTree[0].videos;
+				$(".download-album.everything.all.full").append(" (" + numMediaInSubTree + " " + util._t(".title-media") + ", " + Functions.humanFileSize(treeSize) + ")");
+				if (treeSize < bigZipSize) {
+					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
+					// actually it can be less (Chrome on Android)
+					// It may happen that the files are collected but nothing is saved
+					$(".download-album.everything.all.full").attr("title", "");
+				} else if (treeSize < maximumZipSize) {
+					$(".download-album.everything.all.full").addClass("red").attr("title", util._t("#download-difficult"));
+				} else {
+					$(".download-album.everything.all.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
+				}
+
+				if (treeSize >= bigZipSize) {
+					// propose to download the resized media
+					for (let i = 0; i < Options.reduced_sizes.length; i++) {
+						let reducedSize = Options.reduced_sizes[i];
+						treeSize = util.imagesAndVideosTotal(thisAlbum.sizesOfSubTree[reducedSize]);
+						if (treeSize < bigZipSize) {
+							$(".download-album.everything.all.sized").append(", " + reducedSize + "px  (" + util.imagesAndVideosTotal(thisAlbum.numMedia) + " " + util._t(".title-media") + ", " + Functions.humanFileSize(treeSize) + ")");
+							$(".download-album.everything.all.sized").attr("size", reducedSize);
+							$(".download-album.everything.all.sized").removeClass("hidden");
+							break;
+						}
+					}
+				}
+				showDownloadEverything = true;
+
+				let numImages = thisAlbum.numMediaInSubTree.images;
+				let numVideos = thisAlbum.numMediaInSubTree.videos;
+				// let numImages = 0;
+				// let numVideos = 0;
+				// for (let iMedia = 0; iMedia < thisAlbum.media.length; iMedia ++) {
+				// 	if (thisAlbum.media[iMedia].mimeType.indexOf("image") === 0) {
+				// 		numImages ++;
+				// 	} else {
+				// 		numVideos ++;
+				// 	}
+				// }
+
+				let mediaInThisAlbum = util.imagesAndVideosTotal(thisAlbum.numMedia);
+				let mediaInThisTree = util.imagesAndVideosTotal(thisAlbum.numMediaInSubTree);
+				if (numImages && numImages !== mediaInThisAlbum && numImages !== mediaInThisTree && mediaInThisAlbum !== mediaInThisTree) {
+					$(".download-album.everything.images.full").removeClass("hidden");
+					// reset the html
+					$(".download-album.everything.images").html(util._t(".download-album.everything.images"));
+
+					// add the download size
+					let imagesSize = thisAlbum.sizesOfSubTree[0].images;
+					$(".download-album.everything.images.full").append(" (" + numImages + ", " + Functions.humanFileSize(imagesSize) + ")");
+					// check the size and decide if they can be downloaded
+					if (imagesSize < bigZipSize) {
+						// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
+						// actually it can be less (Chrome on Android)
+						// It may happen that the files are collected but nothing is saved
+						$(".download-album.everything.images.full").attr("title", "");
+					} else if (imagesSize < maximumZipSize) {
+						$(".download-album.everything.images.full").addClass("red").attr("title", util._t("#download-difficult"));
+					} else {
+						$(".download-album.everything.images.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
+					}
+
+					if (imagesSize >= bigZipSize) {
+						// propose to download the resized media
+						for (let i = 0; i < Options.reduced_sizes.length; i++) {
+							let reducedSize = Options.reduced_sizes[i];
+							if (thisAlbum.sizesOfSubTree[reducedSize].images < bigZipSize) {
+								$(".download-album.everything.images.sized").append(", " + reducedSize + "px  (" + numImages + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].images) + ")");
+								$(".download-album.everything.images.sized").attr("size", reducedSize);
+								$(".download-album.everything.images.sized").removeClass("hidden");
+								break;
+							}
+						}
+					}
+				}
+
+				if (numVideos && numVideos !== mediaInThisAlbum && numVideos !== mediaInThisTree && mediaInThisAlbum !== mediaInThisTree) {
+					$(".download-album.everything.videos.full").removeClass("hidden");
+					// reset the html
+					$(".download-album.everything.videos").html(util._t(".download-album.everything.videos"));
+
+					// add the download size
+					let videosSize = thisAlbum.sizesOfSubTree[0].videos;
+					$(".download-album.everything.videos.full").append(" (" + numVideos + ", " + Functions.humanFileSize(videosSize) + ")");
+					// check the size and decide if they can be downloaded
+					if (videosSize < bigZipSize) {
+						// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
+						// actually it can be less (Chrome on Android)
+						// It may happen that the files are collected but nothing is saved
+						$(".download-album.everything.videos.full").attr("title", "");
+					} else if (videosSize < maximumZipSize) {
+						$(".download-album.everything.videos.full").addClass("red").attr("title", util._t("#download-difficult"));
+					} else {
+						$(".download-album.everything.videos.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
+					}
+
+					if (videosSize >= bigZipSize) {
+						// propose to download the resized media
+						for (let i = 0; i < Options.reduced_sizes.length; i++) {
+							let reducedSize = Options.reduced_sizes[i];
+							if (thisAlbum.sizesOfSubTree[reducedSize].videos < bigZipSize) {
+								$(".download-album.everything.videos.sized").append(", " + reducedSize + "px  (" + numVideos + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].videos) + ")");
+								$(".download-album.everything.videos.sized").attr("size", reducedSize);
+								$(".download-album.everything.videos.sized").removeClass("hidden");
+								break;
+							}
+						}
+					}
+				}
+			}
+
+			if (util.imagesAndVideosTotal(thisAlbum.numMedia)) {
+				$(".download-album.media-only.all.full").removeClass("hidden");
+				// reset the html
+				if (showDownloadEverything)
+					$(".download-album.media-only.all").html(util._t(".download-album.media-only.all"));
+				else
+					$(".download-album.media-only.all").html(util._t(".download-album.simple.all"));
+
+				// add the download size
+				let albumSize = util.imagesAndVideosTotal(thisAlbum.sizesOfAlbum[0]);
+				$(".download-album.media-only.all.full").append(" (" + util.imagesAndVideosTotal(thisAlbum.numMedia) + " " + util._t(".title-media") + ", " + Functions.humanFileSize(albumSize) + ")");
+				// check the size and decide if they can be downloaded
+				if (albumSize < bigZipSize) {
+					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
+					// actually it can be less (Chrome on Android)
+					// It may happen that the files are collected but nothing is saved
+					$(".download-album.media-only.all.full").attr("title", "");
+				} else if (albumSize < maximumZipSize) {
+					$(".download-album.media-only.all.full").addClass("red").attr("title", util._t("#download-difficult"));
+				} else {
+					$(".download-album.media-only.all.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
+				}
+
+				if (albumSize >= bigZipSize) {
+					// propose to download the resized media
+					for (let i = 0; i < Options.reduced_sizes.length; i++) {
+						let reducedSize = Options.reduced_sizes[i];
+						albumSize = thisAlbum.sizesOfAlbum[reducedSize].images + thisAlbum.sizesOfAlbum[reducedSize].videos;
+						if (albumSize < bigZipSize) {
+							$(".download-album.media-only.all.sized").append(", " + reducedSize + "px  (" + util.imagesAndVideosTotal(thisAlbum.numMedia) + " " + util._t(".title-media") + ", " + Functions.humanFileSize(albumSize) + ")");
+							$(".download-album.media-only.all.sized").attr("size", reducedSize);
+							$(".download-album.media-only.all.sized").removeClass("hidden");
+							break;
+						}
+					}
+				}
+			}
+
+			let numImages = 0;
+			let numVideos = 0;
+			for (let iMedia = 0; iMedia < thisAlbum.media.length; iMedia ++) {
+				if (thisAlbum.media[iMedia].mimeType.indexOf("image") === 0) {
+					numImages ++;
+				} else {
+					numVideos ++;
+				}
+			}
+
+			if (numImages && numImages !== util.imagesAndVideosTotal(thisAlbum.numMedia)) {
+				$(".download-album.media-only.images.full").removeClass("hidden");
+				// reset the html
+				if (showDownloadEverything)
+					$(".download-album.media-only.images").html(util._t(".download-album.media-only.images"));
+				else
+					$(".download-album.media-only.images").html(util._t(".download-album.simple.images"));
+
+				// add the download size
+				let imagesSize = thisAlbum.sizesOfAlbum[0].images;
+				$(".download-album.media-only.images.full").append(" (" + numImages + ", " + Functions.humanFileSize(imagesSize) + ")");
+				// check the size and decide if they can be downloaded
+				if (imagesSize < bigZipSize) {
+					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
+					// actually it can be less (Chrome on Android)
+					// It may happen that the files are collected but nothing is saved
+					$(".download-album.media-only.images.full").attr("title", "");
+				} else if (imagesSize < maximumZipSize) {
+					$(".download-album.media-only.images.full").addClass("red").attr("title", util._t("#download-difficult"));
+				} else {
+					$(".download-album.media-only.images.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
+				}
+
+				if (imagesSize >= bigZipSize) {
+					// propose to download the resized media
+					for (let i = 0; i < Options.reduced_sizes.length; i++) {
+						let reducedSize = Options.reduced_sizes[i];
+						if (thisAlbum.sizesOfAlbum[reducedSize].images < bigZipSize) {
+							$(".download-album.media-only.images.sized").append(", " + reducedSize + "px  (" + numImages + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reducedSize].images) + ")");
+							$(".download-album.media-only.images.sized").attr("size", reducedSize);
+							$(".download-album.media-only.images.sized").removeClass("hidden");
+							break;
+						}
+					}
+				}
+			}
+
+			if (numVideos && numVideos !== util.imagesAndVideosTotal(thisAlbum.numMedia)) {
+				$(".download-album.media-only.videos.full").removeClass("hidden");
+				// reset the html
+				if (showDownloadEverything)
+					$(".download-album.media-only.videos").html(util._t(".download-album.media-only.videos"));
+				else
+					$(".download-album.media-only.videos").html(util._t(".download-album.simple.videos"));
+
+				// add the download size
+				let videosSize = thisAlbum.sizesOfAlbum[0].videos;
+				$(".download-album.media-only.videos.full").append(" (" + numVideos + ", " + Functions.humanFileSize(videosSize) + ")");
+				// check the size and decide if they can be downloaded
+				if (videosSize < bigZipSize) {
+					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
+					// actually it can be less (Chrome on Android)
+					// It may happen that the files are collected but nothing is saved
+					$(".download-album.media-only.videos.full").attr("title", "");
+				} else if (videosSize < maximumZipSize) {
+					$(".download-album.media-only.videos.full").addClass("red").attr("title", util._t("#download-difficult"));
+				} else {
+					$(".download-album.media-only.videos.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
+				}
+
+				if (videosSize >= bigZipSize) {
+					// propose to download the resized media
+					for (let i = 0; i < Options.reduced_sizes.length; i++) {
+						let reducedSize = Options.reduced_sizes[i];
+						if (thisAlbum.sizesOfAlbum[reducedSize].videos < bigZipSize) {
+							$(".download-album.media-only.videos.sized").append(", " + reducedSize + "px  (" + numVideos + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reducedSize].videos) + ")");
+							$(".download-album.media-only.videos.sized").attr("size", reducedSize);
+							$(".download-album.media-only.videos.sized").removeClass("hidden");
+							break;
+						}
+					}
+				}
+			}
+		}
+
 		if (thisAlbum !== null) {
 			let numPasswords;
 			if (util.isSearchCacheBase(thisAlbum.cacheBase))
@@ -466,8 +719,8 @@
 				numPasswords = util.numPasswords(thisAlbum);
 
 			if (
-				numPasswords
-				&& PhotoFloat.guessedPasswordCodes.length < numPasswords
+				numPasswords &&
+				PhotoFloat.guessedPasswordCodes.length < numPasswords
 			) {
 				$(".protection").show();
 				$("#padlock").off('click').on(
@@ -487,21 +740,27 @@
 		$("#right-menu li.expandable").off('click').on(
 			'click',
 			function() {
-				$("#right-menu li ul").hide();
-				$("ul", this).show();
+				$("#right-menu li ul").addClass("hidden");
+				$("ul", this).removeClass("hidden");
 			}
 		);
 
-		$(".search").off("focus").on(
+		$("#search-field").off("focus").on(
 			"focus",
 			function() {
-				$("#right-menu li.expandable ul").hide();
-				$("#right-menu li.search ul").show();
+				$(".sub-menu").addClass("hidden");
+				$("#right-menu li.search ul").removeClass("hidden");
 				// if ($("ul", this).is(':hidden'))
 				// 	$('#right-menu ul').slideUp(300);
 				// $("ul", this).slideToggle(300);
 			}
 		);
+	};
+
+	Functions.humanFileSize = function(size) {
+		// from https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
+	    var i = Math.floor(Math.log(size) / Math.log(1024));
+	    return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
 	};
 
 	Functions.prototype.scrollToThumb = function() {
@@ -859,6 +1118,11 @@
 
 						PhotoFloat.initializeMapRootAlbum();
 
+						for (let i = 0; i < Options.reduced_sizes.length; i++) {
+							initialSizes[Options.reduced_sizes[i]] = JSON.parse(JSON.stringify(imagesAndVideos0));
+						}
+
+
 						resolve_getOptions();
 					},
 					error: function(jqXHR, textStatus, errorThrown) {
@@ -958,7 +1222,8 @@
 	Functions.prototype.toggleMenu = function() {
 		$("ul#right-menu").toggleClass("expand");
 		if ($("ul#right-menu").hasClass("expand")) {
-			util.focusSearchField();
+			if (! $(".sub-menu:not(.hidden)").length)
+				util.focusSearchField();
 			Functions.updateMenu();
 		}
 	};
@@ -970,6 +1235,7 @@
 	Functions.prototype.updateMenu = Functions.updateMenu;
 	Functions.prototype.focusSearchField = Functions.focusSearchField;
 	Functions.prototype.toggleMetadata = Functions.toggleMetadata;
+	Functions.prototype.humanFileSize = Functions.humanFileSize;
 
 	window.Functions = Functions;
 }());

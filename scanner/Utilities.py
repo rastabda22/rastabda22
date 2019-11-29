@@ -134,7 +134,7 @@ def convert_simple_md5_combination_to_simple_codes_combination(md5_simple_comple
 	return ','.join([convert_md5_to_code(splitted_md5_simple_complex_combination[0]), convert_md5_to_code(splitted_md5_simple_complex_combination[1])])
 
 def save_password_codes():
-	message("Working with password files...", "", 3)
+	message("Saving password/codes files...", "", 3)
 	next_level()
 	# remove the old single password files
 	passwords_subdir_with_path = os.path.join(Options.config['cache_path'], Options.config['passwords_subdir'])
@@ -153,7 +153,7 @@ def save_password_codes():
 				json.dump({"passwordCode": password_code}, password_file)
 			indented_message("New password file created", password_md5, 4)
 	back_level()
-	message("Password files worked!", "", 3)
+	indented_message("Password/codes files saved!", "", 4)
 
 
 def merge_albums_dictionaries_from_json_files(dict, dict1):
@@ -318,9 +318,9 @@ def report_times(final):
 	albums where media is not geotagged or has no EXIF.
 	"""
 	# Print report for each album only when tracing level >= 4
-	if message.max_verbose < 3:
+	if message.max_verbose < 4:
 		return
-	if not final and message.max_verbose < 4:
+	if not final and message.max_verbose < 5:
 		return
 
 	print()
