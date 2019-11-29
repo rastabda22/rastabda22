@@ -79,7 +79,6 @@ class Album(object):
 			self._attributes["metadata"] = {}
 			self.json_version = ""
 			self.password_identifiers_set = set()
-			self.album_identifiers_set = set()
 			self.passwords_marker_mtime = None
 			self.album_ini_mtime = None
 
