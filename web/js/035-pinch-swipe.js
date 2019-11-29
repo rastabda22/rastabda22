@@ -216,7 +216,10 @@
 						mediaBoxInnerHeight = $(mediaContainerSelector).css("height");
 
 						currentZoom = initialZoom;
-						// finalZoom = currentZoom;
+						if (finalZoom === undefined)
+							finalZoom = null;
+						if (finalZoom === null)
+							finalZoom = currentZoom;
 					} else if (finalZoom === null || typeof finalZoom === "undefined") {
 						finalZoom = currentZoom * zoomIncrement;
 					}
