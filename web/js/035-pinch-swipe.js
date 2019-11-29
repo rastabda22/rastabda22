@@ -218,7 +218,7 @@
 						currentZoom = initialZoom;
 						if (finalZoom === undefined)
 							finalZoom = null;
-						if (finalZoom === null)
+						if (finalZoom === null || finalZoom < currentZoom)
 							finalZoom = currentZoom;
 					} else if (finalZoom === null || typeof finalZoom === "undefined") {
 						finalZoom = currentZoom * zoomIncrement;
@@ -245,8 +245,13 @@
 
 	PinchSwipe.pinchOut = function(event, finalZoom = null, duration = pinchSpeed) {
 		var mediaWidthOnScreen, mediaHeightOnScreen, mediaRatioOnScreen, windowRatio;
-		if (finalZoom === null || typeof finalZoom === "undefined")
-			var finalZoom = currentZoom * zoomDecrement;
+		var finalZoomWasZero = false;
+		if (typeof finalZoom === "undefined")
+			finalZoom = null;
+		if (finalZoom === null)
+			finalZoom = currentZoom * zoomDecrement;
+		if (! finalZoom)
+			finalZoomWasZero = true;
 		if (currentZoom > initialZoom) {
 			if (finalZoom < initialZoom)
 				finalZoom = initialZoom;
@@ -262,6 +267,7 @@
 					mediaBoxInnerHeight = $(mediaContainerSelector).css("height");
 
 					if (
+						finalZoomWasZero ||
 						mediaRatioOnScreen > windowRatio &&
 						$(mediaSelector).outerWidth() == windowWidth || (
 							$("#center .title").hasClass("hidden") ||
