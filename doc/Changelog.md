@@ -1,7 +1,9 @@
-* give the user the chance to download the album, either with or without its subalbums; download can include everything, or images only, or videos only
-* added 3-9 enlargments by shortcut
-* many bug fixes
+### version v4.1.0 (Nov 29, 2019)
 
+* give the user the chance to download the album, either with or without its subalbums; download can include everything, or images only, or videos only
+* added 3-9 pinch by shortcut
+* generation of composite images has been disabled, because it mixed protected and unprotected images
+* many bug fixes
 
 ### version v4.0.4 (Nov 11, 2019)
 
