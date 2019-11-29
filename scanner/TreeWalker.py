@@ -1297,7 +1297,7 @@ class TreeWalker:
 			album = Album(absolute_path)
 			indented_message("void album generated", "", 5)
 
-		if album_cache_hit and album_ini_good:
+		if not album_cache_hit and album_ini_good:
 			if must_process_album_ini:
 				message("reading album.ini...", "", 2)
 				album.read_album_ini(album_ini_file)
