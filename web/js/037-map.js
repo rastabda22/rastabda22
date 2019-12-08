@@ -44,7 +44,7 @@
 		// we must get the media corresponding to the name in the point
 		// var markerClass;
 		var mediaIndex, mediaHash, thumbHeight, thumbWidth, width, height;
-		var ithMedia, images = "", calculatedWidth, calculatedHeight, imageString, thumbHash, imgTitle;
+		var ithMedia, images = "", calculatedWidth, calculatedHeight, imageString, imgString, img, thumbHash, imgTitle;
 		var albumViewPadding = $("#album-view").css("padding");
 		if (! albumViewPadding)
 			albumViewPadding = 0;
@@ -85,6 +85,30 @@
 			);
 			calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
+			imgString =	"<img " +
+							"data-src='" + encodeURI(thumbHash) + "' " +
+							"src='img/image-placeholder.png' " +
+							"data='" +
+							JSON.stringify(
+								{
+									"width": ithMedia.metadata.size[0],
+									"height": ithMedia.metadata.size[1],
+									"mediaHash": mediaHash
+								}
+							) +
+							"' " +
+							"class='lazyload-popup-media thumbnail' " +
+							"height='" + thumbHeight + "' " +
+							"width='" + thumbWidth + "' " +
+							" style='" +
+								 "width: " + calculatedWidth + "px; " +
+								 "height: " + calculatedHeight + "px;" +
+								 "'" +
+						"/>";
+
+			img = $(imgString);
+			img.attr("title", imgTitle).attr("alt", util.trimExtension(ithMedia.name));
+
 			imageString =
 				// "<div id='" + codedHashId + "' class='thumb-and-caption-container " + markerClass +"' ";
 				"<div class='thumb-and-caption-container' ";
@@ -105,31 +129,7 @@
 							"'" +
 						"'>" +
 							"<span class='helper'></span>" +
-							"<img title='" + imgTitle + "' " +
-								"alt='" + util.trimExtension(ithMedia.name) + "' ";
-			imageString +=
-								"data-src='" + encodeURI(thumbHash) + "' ";
-			imageString +=
-								"src='img/image-placeholder.png' " +
-								"data='" +
-								JSON.stringify(
-									{
-										"width": ithMedia.metadata.size[0],
-										"height": ithMedia.metadata.size[1],
-										"mediaHash": mediaHash
-									}
-								) +
-								"' " +
-								"class='lazyload-popup-media thumbnail";
-			imageString +=
-								"' " +
-								"height='" + thumbHeight + "' " +
-								"width='" + thumbWidth + "' " +
-								" style='" +
-									 "width: " + calculatedWidth + "px; " +
-									 "height: " + calculatedHeight + "px;" +
-									 "'" +
-								"/>" +
+							img.prop("outerHTML") +
 					"</div>" +
 					"<div class='media-caption'>" +
 						"<span>";

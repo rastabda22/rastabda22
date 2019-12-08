@@ -1741,7 +1741,7 @@
 
 
 		var i, imageLink, linkContainer, container, image, media, thumbsElement, subalbumsElement, thumbHash, thumbnailSize;
-		var width, height, thumbWidth, thumbHeight, imageString, calculatedWidth, calculatedHeight, populateMedia;
+		var width, height, thumbWidth, thumbHeight, imageString, imgString, img, calculatedWidth, calculatedHeight, populateMedia;
 		var albumViewWidth, correctedAlbumThumbSize = Options.album_thumb_size;
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
 		var tooBig = false, isVirtualAlbum = false;
@@ -1852,39 +1852,42 @@
 							"</a>";
 					}
 
-					imageString =	"<div class='thumb-and-caption-container' style='" +
-										"width: " + calculatedWidth + "px; " +
-									"'>" +
-								"<div class='thumb-container' " + "style='" +
-										// "width: " + calculatedWidth + "px; " +
-										"width: " + calculatedWidth + "px; " +
-										"height: " + calculatedHeight + "px;" +
-									"'>" +
-									mapLinkIcon +
-									"<span class='helper'></span>" +
-									"<img title='" + imgTitle + "' " +
-										"alt='" + util.trimExtension(ithMedia.name) + "' ";
-					imageString +=
-										"data-src='" + encodeURI(thumbHash) + "' ";
-					imageString +=
-										"src='img/image-placeholder.png' " +
-										"class='thumbnail lazyload-media" + "' " +
-										"height='" + thumbHeight + "' " +
-										"width='" + thumbWidth + "' " +
-										"style='" +
-											 "width: " + calculatedWidth + "px; " +
-											 "height: " + calculatedHeight + "px;" +
-											 "'" +
-									"/>" +
-								"</div>" +
-								"<div class='media-caption'>" +
+					imgString = "<img " +
+									"data-src='" + encodeURI(thumbHash) + "' " +
+									"src='img/image-placeholder.png' " +
+									"class='thumbnail lazyload-media" + "' " +
+									"height='" + thumbHeight + "' " +
+									"width='" + thumbWidth + "' " +
+									"style='" +
+										 "width: " + calculatedWidth + "px; " +
+										 "height: " + calculatedHeight + "px;" +
+										 "'" +
+								"/>";
+					img = $(imgString);
+					img.attr("title", imgTitle).attr("alt", util.trimExtension(ithMedia.name));
+
+					imageString =
+						"<div class='thumb-and-caption-container' style='" +
+									"width: " + calculatedWidth + "px; " +
+						"'>" +
+							"<div class='thumb-container' " + "style='" +
+									// "width: " + calculatedWidth + "px; " +
+									"width: " + calculatedWidth + "px; " +
+									"height: " + calculatedHeight + "px;" +
+							"'>" +
+							mapLinkIcon +
+							"<span class='helper'></span>" +
+							img.prop("outerHTML") +
+							"</div>" +
+							"<div class='media-caption'>" +
 								"<span>";
 					imageString +=
 									ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>");
 					imageString +=
 								"</span>";
-					imageString += "</div>" +
-							"</div>";
+					imageString +=
+							"</div>" +
+						"</div>";
 					image = $(imageString);
 
 					image.get(0).media = ithMedia;
