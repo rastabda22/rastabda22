@@ -12,7 +12,7 @@ from pprint import pprint
 
 import configparser
 
-from Utilities import message, indented_message, next_level, back_level, find, find_in_usr_share, make_dir, file_mtime
+from Utilities import message, indented_message, next_level, back_level, find, find_in_filesystem, make_dir, file_mtime
 
 config = {}
 all_albums = []
@@ -162,30 +162,32 @@ def initialize_opencv():
 		message("PRE importer", "opencv library available, using it!", 4)
 		next_level()
 		FACE_CONFIG_FILE = "haarcascade_frontalface_default.xml"
-		message("PRE looking for file...", FACE_CONFIG_FILE + " in /usr/share", 5)
-		face_config_file_with_path = find_in_usr_share(FACE_CONFIG_FILE)
+		message("PRE looking for file in /usr/share ...", FACE_CONFIG_FILE, 5)
+		face_config_file_with_path = find_in_filesystem(FACE_CONFIG_FILE, "/usr/share/")
 		if not face_config_file_with_path:
-			message("PRE face xml file not found", FACE_CONFIG_FILE + " not found in /usr/share", 5)
-			message("PRE looking for file...", FACE_CONFIG_FILE + " in /", 5)
-			face_config_file_with_path = find(FACE_CONFIG_FILE)
+			message("PRE opencv face xml file not found in /usr/share", FACE_CONFIG_FILE, 5)
+			message("PRE looking for file in / ...", FACE_CONFIG_FILE, 5)
+			face_config_file_with_path = find_in_filesystem(FACE_CONFIG_FILE, "/")
 		if not face_config_file_with_path:
-			indented_message("PRE face xml file not found", FACE_CONFIG_FILE, 5)
+			indented_message("PRE opencv face xml file not found", FACE_CONFIG_FILE, 5)
 			config['cv2_installed'] = False
 		else:
 			face_cascade = cv2.CascadeClassifier(face_config_file_with_path)
+			indented_message("PRE opencv face xml file found and initialized!", face_config_file_with_path, 5)
 
-			indented_message("PRE face xml file found and initialized:", face_config_file_with_path, 5)
 			EYE_CONFIG_FILE = "haarcascade_eye.xml"
-			message("PRE looking for file...", EYE_CONFIG_FILE, 5)
-			eye_config_file_with_path = find_in_usr_share(EYE_CONFIG_FILE)
+			message("PRE looking for file in /usr/share ...", EYE_CONFIG_FILE, 5)
+			eye_config_file_with_path = find_in_filesystem(EYE_CONFIG_FILE, "/usr/share/")
 			if not eye_config_file_with_path:
-				eye_config_file_with_path = find(EYE_CONFIG_FILE)
+				message("PRE opencv eyes xml file not found in /usr/share", EYE_CONFIG_FILE, 5)
+				message("PRE looking for file in / ...", EYE_CONFIG_FILE, 5)
+				eye_config_file_with_path = find_in_filesystem(EYE_CONFIG_FILE, "/")
 			if not eye_config_file_with_path:
-				indented_message("PRE eyes xml file not found", EYE_CONFIG_FILE, 5)
+				indented_message("PRE opencv eyes xml file not found", EYE_CONFIG_FILE, 5)
 				config['cv2_installed'] = False
 			else:
 				eye_cascade = cv2.CascadeClassifier(eye_config_file_with_path)
-				indented_message("PRE found and initialized:", eye_config_file_with_path, 5)
+				indented_message("PRE opencv eyes xml file found and initialized!", eye_config_file_with_path, 5)
 		back_level()
 	except ImportError:
 		config['cv2_installed'] = False
