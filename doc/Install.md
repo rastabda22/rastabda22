@@ -19,8 +19,9 @@ MyPhotoShare needs:
 * `exiftool`
 
 ### Optional
-* `python-opencv` if found, face detection is used when cropping images to square.
-* OpenCV libraries and data (`opencv-data`)
+* `python-opencv`: if found, face detection is used when cropping images to square.
+  * OpenCV libraries and data (`opencv-data`), if opencv is used
+  * `locate`, if opencv is used
 * `cssmin` (`https://github.com/zacharyvoase/cssmin`, debian/ubuntu packages `cssmin`), unless using external web service
 * `jsmin` (`https://github.com/tikitu/jsmin`, debian/ubuntu package `python-jsmin`) or `uglifyjs` (`https://github.com/mishoo/UglifyJS`, debian/ubuntu package `uglifyjs`, but `node-buble` is requiered too, and is not available in _debian stable_ yet), unless using external web service
 
