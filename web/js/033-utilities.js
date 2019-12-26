@@ -1135,6 +1135,10 @@
 		return degrees * (pi/180);
 	};
 
+	Utilities.prototype.escapeSingleQuotes = function(text) {
+		return text.replace(/'/g, "\\'");;
+	};
+
 	Utilities.xDistanceBetweenCoordinatePoints = function(point1, point2) {
 		return Math.max(
 			Utilities.distanceBetweenCoordinatePoints({"lng": point1.lng, "lat": point1.lat}, {"lng": point2.lng, "lat": point1.lat}),

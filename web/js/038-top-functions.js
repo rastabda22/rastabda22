@@ -142,9 +142,9 @@
 				else {
 					title += "<span class='title-count-detail' title='";
 					if (components.length === 2)
-						title += imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos");
+						title += util.escapeSingleQuotes(imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
 					else
-						title += imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos");
+						title += util.escapeSingleQuotes(imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
 					title += "'>";
 					title += util._t(".title-media");
 					title += "</span>";
@@ -183,7 +183,7 @@
 
 				if (i < components.length - 1 || singleMedia !== null) {
 					title += "<a class='" + titleAnchorClasses + "' href='#!/" + encodeURI(currentAlbum.ancestorsCacheBase[i - 1]) + "'";
-					title += " title='" + util._t("#place-icon-title") + gpsName + util._t("#place-icon-title-end") + "'";
+					title += " title='" + util.escapeSingleQuotes(util._t("#place-icon-title") + gpsName + util._t("#place-icon-title-end")) + "'";
 					title += ">";
 				} else
 					title += "<span class='title-no-anchor'>";
@@ -228,9 +228,9 @@
 				else {
 					title += "<span class='title-count-detail' title='";
 					if (components.length === 2)
-						title += imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos");
+						title += util.escapeSingleQuotes(imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
 					else
-						title += imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos");
+						title += util.escapeSingleQuotes(imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
 					title += "'>";
 					title += util._t(".title-media");
 					title += "</span>";
@@ -450,9 +450,9 @@
 					else {
 						title += "<span class='title-count-detail' title='";
 						if (components.length === 2)
-							title += imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos");
+							title += util.escapeSingleQuotes(imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
 						else
-							title += imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos");
+							title += util.escapeSingleQuotes(imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
 						title += "'>";
 						title += util._t(".title-media");
 						title += "</span>";
@@ -469,7 +469,7 @@
 						title += util._t(".title-images");
 					else {
 						title += "<span class='title-count-detail' title='";
-						title += imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos");
+						title += util.escapeSingleQuotes(imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
 						title += "'>";
 						title += util._t(".title-media");
 						title += "</span>";
@@ -479,7 +479,7 @@
 				if (mediaTotalInAlbum && mediaTotalInSubAlbums) {
 					title += ", ";
 					title += "<span class='title-count-detail' title='";
-					title += imagesTotalInSubTree + " " + util._t(".title-images") + ", " + videosTotalInSubTree + " " + util._t(".title-videos");
+					title += util.escapeSingleQuotes(imagesTotalInSubTree + " " + util._t(".title-images") + ", " + videosTotalInSubTree + " " + util._t(".title-videos"));
 					title += "'>";
 					title += util._t(".title-total") + " ";
 					title += mediaTotalInSubTree;
@@ -502,15 +502,15 @@
 			title += "<span class='media-name'>" + singleMedia.name + "</span>";
 			if (util.hasGpsData(currentMedia))
 				title += "<a class='map-popup-trigger'>" +
-					"<img class='title-img' title='" + util._t("#show-on-map") + " [s]' alt='" + util._t("#show-on-map") + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
+					"<img class='title-img' title='" + util.escapeSingleQuotes(util._t("#show-on-map")) + " [s]' alt='" + util.escapeSingleQuotes(util._t("#show-on-map")) + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
 					"</a>";
 		} else if (title.includes(fillInSpan) && currentAlbum.numPositionsInTree) {
 			title = title.replace(
 				fillInSpan,
 				"<a class='map-popup-trigger'>" +
 				"<img class='title-img' " +
-					"title='" + util._t("#show-markers-on-map") + "' " +
-					"alt='" + util._t("#show-markers-on-map") + "' " +
+					"title='" + util.escapeSingleQuotes(util._t("#show-markers-on-map")) + "' " +
+					"alt='" + util.escapeSingleQuotes(util._t("#show-markers-on-map")) + "' " +
 					"height='20px' " +
 					"src='img/ic_place_white_24dp_2x.png'" +
 				">" +
@@ -1844,8 +1844,8 @@
 								"<img " +
 									// "id='media-map-link-" + i + "' " +
 									"class='thumbnail-map-link' " +
-									"title='" + util._t("#show-on-map") + "' " +
-									"alt='" + util._t("#show-on-map") + "' " +
+									"title='" + util.escapeSingleQuotes(util._t("#show-on-map")) + "' " +
+									"alt='" + util.escapeSingleQuotes(util._t("#show-on-map")) + "' " +
 									"height='20px' " +
 									"src='img/ic_place_white_24dp_2x.png'" +
 								">" +
@@ -2033,8 +2033,8 @@
 									folder += "<a id='subalbum-map-link-" + i + "' >" +
 													"<img " +
 														"class='title-img' " +
-														"title='" + folderTitle + "' " +
-														"alt='" + folderTitle + "' " +
+														"title='" + util.escapeSingleQuotes(folderTitle) + "' " +
+														"alt='" + util.escapeSingleQuotes(folderTitle) + "' " +
 														"height='15px' " +
 														"src='img/ic_place_white_24dp_2x.png' " +
 													"/>" +
