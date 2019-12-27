@@ -509,7 +509,7 @@
 				fillInSpan,
 				"<a class='map-popup-trigger'>" +
 				"<img class='title-img' " +
-					"title='" + util.escapeSingleQuotes(util._t("#show-markers-on-map")) + "' " +
+					"title='" + util.escapeSingleQuotes(util._t("#show-markers-on-map")) + " [s]' " +
 					"alt='" + util.escapeSingleQuotes(util._t("#show-markers-on-map")) + "' " +
 					"height='20px' " +
 					"src='img/ic_place_white_24dp_2x.png'" +
