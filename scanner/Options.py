@@ -195,6 +195,9 @@ def initialize_opencv():
 
 def get_options():
 	global passwords_file_mtime, old_password_codes
+
+	initialize_opencv()
+
 	project_dir = os.path.dirname(os.path.realpath(os.path.join(__file__, "..")))
 	default_config_file = os.path.join(project_dir, "myphotoshare.conf.defaults")
 	default_config = configparser.ConfigParser()

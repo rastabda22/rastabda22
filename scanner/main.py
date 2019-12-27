@@ -21,7 +21,6 @@ def main():
 		return
 
 	Options.get_options()
-	Options.initialize_opencv()
 
 	from TreeWalker import TreeWalker
 
