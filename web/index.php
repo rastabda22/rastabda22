@@ -247,10 +247,6 @@
 						<span class="link-button">
 							<a class="original-link"></a>
 						</span>
-						|
-						<span class="link-button">
-							<a class="download-link"></a>
-						</span>
 						<a class="menu-map-divider">|</a>
 						<span class="link-button">
 							<a class="menu-map-link"></a>
@@ -366,6 +362,9 @@
 		<li class='expandable download-album active'>
 			<span class='download-album caption'></span>
 			<ul class="sub-menu hidden">
+				<li class='download-single-media active'>
+					<a class='download-link'></a>
+				</li>
 				<li class='download-album everything all full active'></li>
 				<li class='download-album everything all sized active'></li>
 				<li class='download-album everything images full active'></li>
