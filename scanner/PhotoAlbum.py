@@ -1102,12 +1102,12 @@ class Media(object):
 		self.mime_type = dictionary['mimeType']
 		if "password_identifiers_set" in dictionary:
 			self.password_identifiers_set = dictionary['password_identifiers_set']
-		else:
-			self.password_identifiers_set = set()
+		# else:
+		# 	self.password_identifiers_set = set()
 		if "album_identifiers_set" in dictionary:
 			self.album_identifiers_set = dictionary['album_identifiers_set']
-		else:
-			self.album_identifiers_set = set()
+		# else:
+		# 	self.album_identifiers_set = set()
 
 		self.is_valid = True
 
@@ -2589,6 +2589,15 @@ class Media(object):
 			folders_album = os.path.join(folders_album, self.folders)
 
 		media = self.attributes
+		try:
+			del media["password_identifiers_set"]
+		except:
+			pass
+		try:
+			del media["album_identifiers_set"]
+		except:
+			pass
+
 		media["name"] = self.name
 		media["cacheBase"] = self.cache_base
 		media["date"] = self.date_string
