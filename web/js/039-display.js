@@ -163,6 +163,7 @@ $(document).ready(function() {
 						e.preventDefault();
 						if (pS.getCurrentZoom() == pS.getInitialZoom() && ! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
 							$("ul#right-menu li.hide-title")[0].click();
+							$("ul#right-menu li.hide-media-caption")[0].click();
 							$("ul#right-menu li.hide-bottom-thumbnails")[0].click();
 							// tF.toggleTitle(e);
 							// tF.toggleBottomThumbnails(e);
@@ -591,6 +592,7 @@ $(document).ready(function() {
 	// binds the click events to the sort buttons
 
 	$("ul#right-menu li.hide-title").on('click', tF.toggleTitle);
+	$("ul#right-menu li.hide-media-caption").on('click', tF.toggleCaption);
 	$("ul#right-menu li.hide-bottom-thumbnails").on('click', tF.toggleBottomThumbnails);
 	$("ul#right-menu li.slide").on('click', tF.toggleSlideMode);
 	$("ul#right-menu li.spaced").on('click', tF.toggleSpacing);

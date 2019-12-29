@@ -1,3 +1,6 @@
+* Media and album captions from `album.ini` file are now shown, a menu option to hide them has been added
+* French translation completed
+
 ### version v4.1.0 (Nov 29, 2019)
 
 * give the user the chance to download the album, either with or without its subalbums; download can include everything, or images only, or videos only

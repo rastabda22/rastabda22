@@ -78,6 +78,8 @@
 
 		<script type="text/javascript" src="js/006-jquery-touchswipe.js"></script>
 		<script type="text/javascript" src="js/007-jquery-lazy.js"></script>
+
+		<?php
 		<script type="text/javascript" src="js/008-leaflet.js"></script>
 		<script type="text/javascript" src="js/009-leaflet-prunecluster.js"></script>
 		<script type="text/javascript" src="js/010-social.js"></script>
@@ -283,7 +285,7 @@
 		<div id="subalbums"></div>
 		<div id="thumbs">
 		</div>
-		<div id="error-too-many-images"></div>
+		<div id="error-too-many-images" role="alert"></div>
 		<div id="powered-by">
 			<span id="powered-by-string">Powered by</span>
 			<a href="https://gitlab.com/paolobenve/myphotoshare" target="_blank">MyPhotoShare</a>
@@ -344,6 +346,7 @@
 			<span class='ui caption'></span>
 			<ul class="sub-menu hidden">
 				<li class='ui hide-title active'></li>
+				<li class='ui hide-media-caption active'></li>
 				<li class='ui media-count active'></li>
 				<li class='ui spaced active'></li>
 				<li class='ui square-album-thumbnails active'></li>
@@ -412,6 +415,11 @@
 	<div id="by-date-reverse-media-sorting" class="sort-message"></div>
 	<div id="by-name-media-sorting" class="sort-message"></div>
 	<div id="by-name-reverse-media-sorting" class="sort-message"></div>
+
+	<div id="caption">
+		<div id="caption-title"></div>
+		<div id="caption-description"></div>
+	</div>
 
 	<div id="auth-text">
 		<div id="auth-close" style="top: 22px; right: 22px;"></div>

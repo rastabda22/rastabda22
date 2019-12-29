@@ -5,13 +5,15 @@
 
 ## Description
 
-**MyPhotoShare** is an open source web photo gallery aimed at sleekness and speed. It works over directory structures rather than esoteric photo database management software. Everything it generates is static, which means it's extremely fast.
+**MyPhotoShare** is an open source web photo gallery aimed at sleekness and speed. It works over directory structures rather than esoteric photo database management software. Everything it generates is static, which means it's extremely fast and secure.
 
-It permits browsing the media by folder, date and geotags.
+It permits browsing the media by folder, date, search terms, geotags and maps. You can associate metadata (i.e. title, description, tags) with pictures and albums and search media content by keywords or display captions.
 
 Whenever geotagged photos are found, a map with the photo(s) position can be shown using Leaflet, and clicking the photo markers the photo thumbnails for that point are shown.
 
-Content (albums and media files) can be shared over some popular social plaforms.
+Content (albums and media files) can be shared over some popular social plaforms or downloaded.
+
+It is available in English, Italian, French and Spanish. Localizing to other languages is simple.
 
 **MyPhotoShare** is a Jason A. Donenfeld's *photofloat* fork, enriched by Jerome Charaoui's patches permitting showing videos, Paolo Benvenuto's and Pierre Métras's following development.
 
@@ -114,6 +116,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Developer friendly with debug mode for using unminimized css's and js's.
 - [x] Photos metadata can be overloaded by user defined values in special file `album.ini`.
 - [x] Consistent hash URL format.
+- [x] Create Debian/Ubuntu package with (mps_debian)[https://github.com/pmetras/mps_debian] for easy install.
 
 
 ## Python version

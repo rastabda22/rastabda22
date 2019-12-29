@@ -791,7 +791,7 @@
 
 	Utilities.prototype.scaleMedia = function(event) {
 		// this function works on the img tag identified by event.data.id
-		// it adjusts width, height and position so that it fits in its parent (<div class="bedia-box-inner">, or the whole window)
+		// it adjusts width, height and position so that it fits in its parent (<div class="media-box-inner">, or the whole window)
 		// and centers vertically
 		return new Promise(
 			function(resolve_scaleMedia) {

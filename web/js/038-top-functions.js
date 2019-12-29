@@ -932,6 +932,12 @@
 			}
 			TopFunctions.setTitle(id, singleMedia);
 
+			if (Options.hide_caption) {
+				$("#caption").addClass("hidden-by-option");
+			} else {
+				$("#caption").removeClass("hidden-by-option");
+			}
+
 			if (Options.hide_bottom_thumbnails) {
 				$("#album-view").addClass("hidden-by-option");
 			} else {
@@ -1182,12 +1188,7 @@
 
 		$(".media-box#" + id + " .metadata tr.gps").off('click');
 		text = "<table>";
-		if (typeof singleMedia.metadata.title !== "undefined")
-			text += "<tr><td class='metadata-data-title'></td><td>" + singleMedia.metadata.title.replace(/\n/g, "<br>") + "</td></tr>";
-		if (typeof singleMedia.metadata.description !== "undefined")
-			text += "<tr><td class='metadata-data-description'></td><td>" + singleMedia.metadata.description.replace(/\n/g, "<br>") + "</td></tr>";
-		if (typeof singleMedia.metadata.tags !== "undefined")
-			text += "<tr><td class='metadata-data-tags'></td><td>" + singleMedia.metadata.tags + "</td></tr>";
+		// Here we keep only the technical metadata
 		if (typeof singleMedia.date !== "undefined")
 			text += "<tr><td class='metadata-data-date'></td><td>" + singleMedia.date + "</td></tr>";
 		var fileSize = singleMedia.fileSizes[0].images;
@@ -1248,6 +1249,13 @@
 				$(".map-popup-trigger")[0].click();
 			}
 		);
+
+		if (id === "center") {
+			if (singleMedia != null) {
+				TopFunctions.setCaption(singleMedia.metadata.title, singleMedia.metadata.description);
+				TopFunctions.positionCaption('media');
+			}
+		}
 
 		util.translate();
 
@@ -1516,8 +1524,34 @@
 			}
 			if (currentMedia !== null) {
 				TopFunctions.showMedia(currentAlbum, currentMedia, 'center');
-				TopFunctions.showMedia(currentAlbum, nextMedia, 'right');
-				TopFunctions.showMedia(currentAlbum, prevMedia, 'left');
+				if (nextMedia !== null)
+					TopFunctions.showMedia(currentAlbum, nextMedia, 'right');
+				if (prevMedia !== null)
+					TopFunctions.showMedia(currentAlbum, prevMedia, 'left');
+			} else
+				TopFunctions.showAlbum(false);
+			util.focusSearchField();
+		}
+		return false;
+	};
+
+	TopFunctions.prototype.toggleCaption = function(ev) {
+		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+			Options.hide_caption = ! Options.hide_caption;
+			f.setBooleanCookie("hide_caption", Options.hide_caption);
+			f.updateMenu();
+			if (Options.hide_caption) {
+				$("#caption").addClass("hidden-by-option");
+			} else {
+				$("#caption").removeClass("hidden-by-option");
+				TopFunctions.showAlbum("refreshMedia");
+			}
+			if (currentMedia !== null) {
+				TopFunctions.showMedia(currentAlbum, currentMedia, 'center');
+				if (nextMedia !== null)
+					TopFunctions.showMedia(currentAlbum, nextMedia, 'right');
+				if (prevMedia !== null)
+					TopFunctions.showMedia(currentAlbum, prevMedia, 'left');
 			} else
 				TopFunctions.showAlbum(false);
 			// util.focusSearchField();
@@ -1755,6 +1789,15 @@
 
 		if (Options.albums_slide_style)
 			slideBorder = 3;
+
+		// When there is both a media and an album, we display the media's caption; else it's the album's one
+		if (currentMedia === null) {
+			TopFunctions.setCaption(currentAlbum.title, currentAlbum.description);
+			TopFunctions.positionCaption('album');
+		} else {
+			TopFunctions.setCaption(currentMedia.metadata.title, currentMedia.metadata.description);
+			TopFunctions.positionCaption('media');
+		}
 
 		if (currentMedia === null)
 			$("#album-view").off('mousewheel');
@@ -2855,6 +2898,56 @@
 			}
 		);
 	};
+
+	TopFunctions.setCaption = function(title, description) {
+		// Replace CRLF by <br> and remove all useless <br>.
+		function formatText(text) {
+		  text = text.replace(/<(\/?\w+)>\s*\n\s*<(\/?\w+)>/g, "<$1><$2>");
+		  text = text.replace(/\n/g, "</p><p class='caption-text'>");
+		  return "<p class='caption-text'>" + text + "</p>";
+		}
+	
+		if (title != undefined) {
+		  $("#caption-title").html(formatText(title));
+		} else {
+		  $("#caption-title").html("");
+		}
+	
+		if (description != undefined) {
+		  $("#caption-description").html(formatText(description));
+		} else {
+		  $("#caption-description").html("");
+		}
+	
+		if (title == undefined && description == undefined) {
+		  $("#caption").addClass("hidden");
+		} else {
+		  $("#caption").removeClass("hidden");
+		}
+	};
+
+	TopFunctions.positionCaption = function(captionType) {
+		// Size of caption varies if on album or media
+		if (captionType == 'media') {
+			var mediaHeight = parseInt($(".media-box#center").css("height"));
+			$("#caption").css("top", mediaHeight * 0.7);
+			$("#caption").css("bottom", "");
+			$("#caption").css("height", "");
+			$("#caption").css("max-height", mediaHeight * 0.2);
+		} else if (captionType == 'album') {
+			var titleHeight = parseInt($("#album-view .title").css("height"));
+			var albumTop = parseInt($("#album-view").css("top"));
+			var albumHeight = parseInt($("#album-view").css("height"));
+			var thumbsHeight = parseInt($("#thumbs").css("height"));
+			var subalbumsHeight = parseInt($("#subalbums").css("height"));
+			// TODO: How to adapt height to different platforms?
+			$("#caption").css("top", "");
+			$("#caption").css("bottom", 0);
+			$("#caption").css("height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
+			$("#caption").css("max-height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
+		}
+	}
+
 
 	TopFunctions.prototype.goFullscreen = TopFunctions.goFullscreen;
 	TopFunctions.prototype.hashParsed = TopFunctions.hashParsed;
