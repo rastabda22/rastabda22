@@ -79,7 +79,6 @@
 		<script type="text/javascript" src="js/006-jquery-touchswipe.js"></script>
 		<script type="text/javascript" src="js/007-jquery-lazy.js"></script>
 
-		<?php
 		<script type="text/javascript" src="js/008-leaflet.js"></script>
 		<script type="text/javascript" src="js/009-leaflet-prunecluster.js"></script>
 		<script type="text/javascript" src="js/010-social.js"></script>
