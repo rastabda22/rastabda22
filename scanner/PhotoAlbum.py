@@ -2268,7 +2268,9 @@ class Media(object):
 		tmp_transcode_cmd = transcode_cmd[:]
 		transcode_cmd.append(transcode_path)
 		# avoid ffmpeg/avconv stopping if the scanner is running interactively
-		transcode_cmd.append('< /dev/null')
+		#transcode_cmd.append('< /dev/null')
+		# The previous line makes the first transcoding attempt fail. I don't understand what
+		# it is supposed to do and why avconv/ffmpeg would be interactive with -y option...
 		indented_message("transcoding command", transcode_cmd, 4)
 		try:
 			return_code = VideoTranscodeWrapper().call(*transcode_cmd)
