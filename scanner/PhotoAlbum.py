@@ -2203,41 +2203,50 @@ class Media(object):
 				message("FATAL ERROR", album_cache_path + " not writable, quitting")
 				sys.exit(-97)
 		else:
-			make_dir(album_cache_path, "unexistent albums cache subdir")
+			make_dir(album_cache_path, "nonexistent albums cache subdir")
 
-		transcode_path = os.path.join(album_cache_path, album_prefix + video_cache_name(self))
-		# get number of cores on the system, and use all minus one
-		transcode_cmd = [
-			'-i', original_path,					# original file to be encoded
-			'-c:v', 'libx264',					# set h264 as videocodec
-			'-preset', 'slow',					# set specific preset that provides a certain encoding speed to compression ratio
-			'-profile:v', 'baseline',				# set output to specific h264 profile
-			'-level', '3.0',					# sets highest compatibility with target devices
-			'-crf', str(Options.config['video_crf']),		# set quality
-			'-b:v', Options.config['video_transcode_bitrate'],	# set videobitrate
-			'-strict', 'experimental',				# allow native aac codec below
-			'-c:a', 'aac',						# set aac as audiocodec
-			'-ac', '2',						# force two audiochannels
-			'-ab', '160k',						# set audiobitrate to 160Kbps
-			'-maxrate', '10000000',					# limits max rate, will degrade CRF if needed
-			'-bufsize', '10000000',					# define how much the client should buffer
-			'-f', 'mp4',						# fileformat mp4
-			'-threads', str(Options.config['num_processors']),				# number of cores to use
-			'-loglevel', 'quiet',					# don't display anything
-			'-y' 							# don't prompt for overwrite
-		]
-		filters = []
 		info_string = "mp4, h264, " + Options.config['video_transcode_bitrate'] + " bit/sec, crf=" + str(Options.config['video_crf'])
-
+		transcode_path = os.path.join(album_cache_path, album_prefix + video_cache_name(self))
 		if os.path.exists(transcode_path) and file_mtime(transcode_path) >= self.datetime_file:
-			indented_message("existent transcoded video", info_string, 4)
+			indented_message("existing transcoded video", info_string, 4)
 			self._video_metadata(transcode_path, False)
 			return transcode_path
 
-		if "originalSize" in self._attributes["metadata"] and self._attributes["metadata"]["originalSize"][1] > 720:
-			transcode_cmd.append('-s')
-			transcode_cmd.append('hd720')
+		transcode_cmd = [
+			'-i', original_path,									# original file to be encoded
+			'-c:v', 'libx264',										# set h264 as videocodec
+			'-preset', str(Options.config['video_preset']),			# set specific preset that provides a certain encoding speed to compression ratio
+			'-profile:v', str(Options.config['video_profile']),		# set output to specific h264 profile
+			'-level', str(Options.config['video_profile_level']),	# sets highest compatibility with target devices
+			'-crf', str(Options.config['video_crf']),				# set quality
+			'-b:v', Options.config['video_transcode_bitrate'],		# set videobitrate
+			'-strict', 'experimental',								# allow native aac codec below
+			'-c:a', 'aac',											# set aac as audiocodec
+			'-ac', str(Options.config['video_audio_ac']),			# force two audiochannels
+			'-ab', str(Options.config['video_audio_ab']),			# set audiobitrate to 160Kbps
+			'-maxrate', str(Options.config['video_maxrate']),		# limits max rate, will degrade CRF if needed
+			'-bufsize', str(Options.config['video_bufsize']),		# define how much the client should buffer
+			'-f', 'mp4',											# fileformat mp4
+			'-threads', str(Options.config['num_processors']),		# number of cores to use
+			'-loglevel', 'quiet',									# don't display anything
+			'-y' 													# don't prompt for overwrite
+		]
+		filters = []
 
+        # Limit frame size. Default is HD 720p
+		frame_maxsize = Options.config['video_frame_maxsize']
+		if frame_maxsize == 'hd480':
+			dim_max_size = 480
+		elif frame_maxsize == 'hd1080':
+			dim_max_size = 1080
+		else:
+			dim_max_size = 720
+			frame_maxsize = 'hd720'
+		if "originalSize" in self._attributes["metadata"] and self._attributes["metadata"]["originalSize"][1] > dim_max_size:
+			transcode_cmd.append('-s')
+			transcode_cmd.append(frame_maxsize)
+
+        # Rotate picture if necessary
 		if "rotate" in self._attributes["metadata"]:
 			if self._attributes["metadata"]["rotate"] == "90":
 				filters.append('transpose=1')
@@ -2250,12 +2259,17 @@ class Media(object):
 			transcode_cmd.append('-vf')
 			transcode_cmd.append(','.join(filters))
 
+        # Add user-defined options
+		if len(str(Options.config['video_add_options'])):
+			transcode_cmd.append(str(Options.config['video_add_options']))
+
 		next_level()
 		message("transcoding...", info_string, 5)
 		tmp_transcode_cmd = transcode_cmd[:]
 		transcode_cmd.append(transcode_path)
 		# avoid ffmpeg/avconv stopping if the scanner is running interactively
 		transcode_cmd.append('< /dev/null')
+		indented_message("transcoding command", transcode_cmd, 4)
 		try:
 			return_code = VideoTranscodeWrapper().call(*transcode_cmd)
 			if return_code != False:
@@ -2272,6 +2286,7 @@ class Media(object):
 			tmp_transcode_cmd.append('-pix_fmt')
 			tmp_transcode_cmd.append('yuv420p')
 			tmp_transcode_cmd.append(transcode_path)
+			message("transcoding command", tmp_transcode_cmd, 4)
 			try:
 				return_code = VideoTranscodeWrapper().call(*tmp_transcode_cmd)
 				if return_code != False:
