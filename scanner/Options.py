@@ -65,6 +65,10 @@ options_requiring_thumbnails_regeneration = [
 	{'name': 'cv2_installed', 'default': False},
 	{'name': 'copy_exif_into_reductions', 'default': False}
 ]
+options_requiring_videos_regeneration = [
+	{'name': 'video_transcode_bitrate', 'default': '1M'},
+	{'name': 'video_crf', 'default': 20}
+]
 
 # lets put here all unicode combining code points, in order to be sure to use the same in both python and js
 # from https://github.com/paulmillr/unicode-categories/blob/master/index.js
@@ -526,6 +530,21 @@ def get_options():
 				message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of reduced size images", 3)
 			else:
 				message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of reduced size images", 3)
+
+	config['recreate_transcoded_videos'] = False
+	for option_dict in options_requiring_videos_regeneration:
+		option = option_dict['name']
+		default_value = option_dict['default']
+		try:
+			if old_options[option] != config[option]:
+				config['recreate_transcoded_videos'] = True
+				message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of videos", 3)
+		except KeyError:
+			if config[option] != default_value:
+				config['recreate_transcoded_videos'] = True
+				message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of videos", 3)
+			else:
+				message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of videos", 3)
 
 	config['recreate_thumbnails'] = False
 	for option_dict in options_requiring_thumbnails_regeneration:

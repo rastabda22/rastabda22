@@ -753,7 +753,7 @@
 			}
 			suffix += ".jpg";
 		} else if (singleMedia.mimeType.indexOf("video") === 0) {
-			suffix += "transcoded_" + Options.video_transcode_bitrate + "_" + Options.video_crf + ".mp4";
+			suffix += "transcoded.mp4";
 		}
 
 		hash = singleMedia.foldersCacheBase + Options.cache_folder_separator + singleMedia.cacheBase + suffix;
