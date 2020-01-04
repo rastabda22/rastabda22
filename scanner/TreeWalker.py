@@ -1419,8 +1419,13 @@ class TreeWalker:
 				indented_message("unicode error", entry, 1)
 				continue
 
+			print(Options.global_pattern, entry)
 			if entry[0] == '.' or entry == Options.config['metadata_filename']:
-				# skip hidden files and directories, or user's metadata file 'album.ini'
+				# skip hidden files/directories and  user's metadata file 'album.ini'
+				continue
+			if Options.global_pattern != "" and re.search(Options.global_pattern, entry):
+				# skip excluded files/directories
+				indented_message("skipping file/directory matching a pattern", "global pattern = '" + Options.global_pattern + "', entry = '" + entry + "'" , 3)
 				continue
 
 			entry_with_path = os.path.join(absolute_path, entry)
