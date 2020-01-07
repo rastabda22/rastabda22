@@ -2127,7 +2127,6 @@ class Media(object):
 			back_level()
 			return [start_image_copy, thumb_path]
 		except Exception as e:
-			print(e)
 			indented_message("thumbnail save failure with error: " + e, str(original_thumb_size) + " -> " + os.path.basename(thumb_path), 2)
 			try:
 				os.unlink(thumb_path)
