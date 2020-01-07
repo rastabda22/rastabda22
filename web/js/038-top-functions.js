@@ -2906,20 +2906,23 @@
 		  text = text.replace(/\n/g, "</p><p class='caption-text'>");
 		  return "<p class='caption-text'>" + text + "</p>";
 		}
-	
-		if (title != undefined) {
+
+		var nullTitle = title === undefined || ! title;
+		var nullDescription = description === undefined || ! description;
+
+		if (nullTitle) {
 		  $("#caption-title").html(formatText(title));
 		} else {
 		  $("#caption-title").html("");
 		}
-	
-		if (description != undefined) {
+
+		if (nullDescription) {
 		  $("#caption-description").html(formatText(description));
 		} else {
 		  $("#caption-description").html("");
 		}
-	
-		if (title == undefined && description == undefined) {
+
+		if (nullTitle && nullDescription) {
 		  $("#caption").addClass("hidden");
 		} else {
 		  $("#caption").removeClass("hidden");
