@@ -2910,13 +2910,13 @@
 		var nullTitle = title === undefined || ! title;
 		var nullDescription = description === undefined || ! description;
 
-		if (nullTitle) {
+		if (! nullTitle) {
 		  $("#caption-title").html(formatText(title));
 		} else {
 		  $("#caption-title").html("");
 		}
 
-		if (nullDescription) {
+		if (! nullDescription) {
 		  $("#caption-description").html(formatText(description));
 		} else {
 		  $("#caption-description").html("");
