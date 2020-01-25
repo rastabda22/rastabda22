@@ -1,5 +1,6 @@
-* Media and album captions from `album.ini` file are now shown, a menu option to hide them has been added
+* Media and album captions from `album.ini` file are now separately from metadata; a menu option to hide them has been added
 * French translation completed
+* new option `excluded_patterns_file`: specifies a file whose lines are file patterns (regexes) to ignore when scanning
 
 ### version v4.1.0 (Nov 29, 2019)
 

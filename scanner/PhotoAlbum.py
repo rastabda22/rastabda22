@@ -1201,7 +1201,7 @@ class Media(object):
 			# try with video detection
 			self._video_metadata(media_path)
 			if self.is_video:
-				transcode_path = self._video_transcode(thumbs_path, media_path)
+				transcode_path = self._video_transcode(thumbs_path, media_path, json_files, json_files_min_mtime)
 				if self.is_valid:
 					self._attributes["fileSizes"] = Sizes()
 					self._attributes["fileSizes"].setVideo(0, os.path.getsize(media_path))
@@ -1783,7 +1783,7 @@ class Media(object):
 		elif not os.path.exists(thumb_path):
 			indented_message("unexistent reduction/thumbnail", thumb_path, 5)
 		elif file_mtime(thumb_path) < self.datetime_file:
-			indented_message("reduction/thumbnail older than media date time", thumb_path, 5)
+			indented_message("reduction/thumbnail older than original media", thumb_path, 5)
 		elif json_files_min_mtime is not None and file_mtime(thumb_path) >= json_files_min_mtime:
 			files = "'" + json_files[0] + "' and others"
 			json_file = os.path.join(thumbs_path, self.album.json_file)
@@ -1792,7 +1792,7 @@ class Media(object):
 			not _is_thumbnail and Options.config['recreate_reduced_photos'] or
 			_is_thumbnail and Options.config['recreate_thumbnails']
 		):
-			indented_message("some option change requests recreation", "", 5)
+			indented_message("some option change requests reduction/thumbnail recreation", "", 5)
 		else:
 			# the reduced image/thumbnail is there and is valid, exit immediately
 			indented_message("reduction/thumbnail OK, skipping", "", 5)
@@ -2127,7 +2127,6 @@ class Media(object):
 			back_level()
 			return [start_image_copy, thumb_path]
 		except Exception as e:
-			print(e)
 			indented_message("thumbnail save failure with error: " + e, str(original_thumb_size) + " -> " + os.path.basename(thumb_path), 2)
 			try:
 				os.unlink(thumb_path)
@@ -2192,7 +2191,7 @@ class Media(object):
 			pass
 
 
-	def _video_transcode(self, transcode_path, original_path):
+	def _video_transcode(self, transcode_path, original_path, json_files, json_files_min_mtime):
 		album_prefix = remove_folders_marker(self.album.cache_base) + Options.config["cache_folder_separator"]
 		if album_prefix == Options.config["cache_folder_separator"]:
 			album_prefix = ""

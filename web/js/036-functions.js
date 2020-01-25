@@ -46,7 +46,7 @@
 				mediaParameter = util.pathJoin([
 					Options.server_cache_path,
 					currentMedia.cacheSubdir,
-				]) + prefix + currentMedia.cacheBase + Options.cache_folder_separator + "transcoded_" + Options.video_transcode_bitrate + "_" + Options.video_crf + ".mp4";
+				]) + prefix + currentMedia.cacheBase + Options.cache_folder_separator + "transcoded.mp4";
 			} else if (currentMedia.mimeType.indexOf("image/") === 0) {
 				mediaParameter = util.pathJoin([
 					Options.server_cache_path,

@@ -1420,7 +1420,11 @@ class TreeWalker:
 				continue
 
 			if entry[0] == '.' or entry == Options.config['metadata_filename']:
-				# skip hidden files and directories, or user's metadata file 'album.ini'
+				# skip hidden files/directories and  user's metadata file 'album.ini'
+				continue
+			if Options.global_pattern != "" and re.search(Options.global_pattern, entry):
+				# skip excluded files/directories
+				indented_message("skipping file/directory matching a pattern", "global pattern = '" + Options.global_pattern + "', entry = '" + entry + "'" , 3)
 				continue
 
 			entry_with_path = os.path.join(absolute_path, entry)
@@ -1521,7 +1525,7 @@ class TreeWalker:
 				if (
 					single_media_cache_hit and (
 						cached_media.is_video and cached_media._attributes["fileSizes"].getVideosSize(0) != file_size or
-						not cached_media.is_video and cached_media._attributes["fileSizes"].getImagesSize(0) != file_size
+						cached_media.is_image and cached_media._attributes["fileSizes"].getImagesSize(0) != file_size
 					)
 				):
 					indented_message("not a single media cache hit", "file size different", 5)
@@ -1561,6 +1565,7 @@ class TreeWalker:
 									try:
 										os.unlink(os.path.join(Options.config['cache_path'], cache_file))
 										message("deleted, re-creating fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 3)
+										absolute_cache_file_exists = False
 									except OSError:
 										message("error deleting fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 1)
 
@@ -1576,8 +1581,12 @@ class TreeWalker:
 								indented_message("not a single media cache hit", "reduction/thumbnail newer than json file", 4)
 								single_media_cache_hit = False
 								break
-							if Options.config['recreate_reduced_photos']:
+							if cached_media.is_image and Options.config['recreate_reduced_photos']:
 								indented_message("not a single media cache hit", "reduced photo recreation requested", 4)
+								single_media_cache_hit = False
+								break
+							if cached_media.is_video and Options.config['recreate_transcoded_videos']:
+								indented_message("not a single media cache hit", "transcoded video recreation requested", 4)
 								single_media_cache_hit = False
 								break
 							if Options.config['recreate_thumbnails']:

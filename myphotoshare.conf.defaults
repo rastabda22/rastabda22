@@ -181,11 +181,22 @@ jpeg_quality = 95
 # markers that permit not to scan files in folder or whole trees
 ################################################################################
 # BEWARE:
-# if you use this feature and don't change this options, the user can know what files you are hiding,
-# and therefore the user could try to access them in the `/albums/` tree
+# if you use this feature and don't change this options, the user can know what files/trees you are hiding,
+# and therefore he/she could try to access them in the `/albums/` tree
 ################################################################################
 exclude_files_marker = .myphotoshare.exclude.files
 exclude_tree_marker = .myphotoshare.exclude.tree
+
+# a file, relative to the directory of the configuration file, whose lines are regex patterns for excluding certain files from scanning
+# the directory/file name is matched against every pattern with re.search()
+# use ^ at the beginning and $ at the end of the patterns if you want a match on the whole directory/file name (including extension)
+# lines beginning with # are skipped
+################################################################################
+# BEWARE:
+# if you use this feature and don't change this file name, the user can know what files you aren't scanning,
+# and therefore he/she could try to access them in the `/albums/` tree
+################################################################################
+excluded_patterns_file = myphotoshare.excluded
 
 # marker for passwords: put it in the album you want to protect
 # every line is either:
@@ -199,7 +210,7 @@ exclude_tree_marker = .myphotoshare.exclude.tree
 ################################################################################
 # BEWARE:
 # if you have protected content and don't change this option, the user can know what files you are protecting,
-# and therefore could try to access them in the `/albums/` tree
+# and therefore he/she could try to access them in the `/albums/` tree
 ################################################################################
 passwords_marker = .myphotoshare.passwords
 
