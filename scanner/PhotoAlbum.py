@@ -2206,33 +2206,34 @@ class Media(object):
 
 		info_string = "mp4, h264, " + Options.config['video_transcode_bitrate'] + " bit/sec, crf=" + str(Options.config['video_crf'])
 		transcode_path = os.path.join(album_cache_path, album_prefix + video_cache_name(self))
-		if os.path.exists(transcode_path) and file_mtime(transcode_path) >= self.datetime_file:
+		if os.path.exists(transcode_path) and file_mtime(transcode_path) >= self.datetime_file and not Options.config['recreate_transcoded_videos']:
 			indented_message("existing transcoded video", info_string, 4)
 			self._video_metadata(transcode_path, False)
 			return transcode_path
 
+		indented_message("re-transcoding video", info_string, 3)
 		transcode_cmd = [
-			'-i', original_path,									# original file to be encoded
-			'-c:v', 'libx264',										# set h264 as videocodec
-			'-preset', str(Options.config['video_preset']),			# set specific preset that provides a certain encoding speed to compression ratio
-			'-profile:v', str(Options.config['video_profile']),		# set output to specific h264 profile
-			'-level', str(Options.config['video_profile_level']),	# sets highest compatibility with target devices
-			'-crf', str(Options.config['video_crf']),				# set quality
-			'-b:v', Options.config['video_transcode_bitrate'],		# set videobitrate
-			'-strict', 'experimental',								# allow native aac codec below
-			'-c:a', 'aac',											# set aac as audiocodec
-			'-ac', str(Options.config['video_audio_ac']),			# force two audiochannels
-			'-ab', str(Options.config['video_audio_ab']),			# set audiobitrate to 160Kbps
-			'-maxrate', str(Options.config['video_maxrate']),		# limits max rate, will degrade CRF if needed
-			'-bufsize', str(Options.config['video_bufsize']),		# define how much the client should buffer
-			'-f', 'mp4',											# fileformat mp4
-			'-threads', str(Options.config['num_processors']),		# number of cores to use
-			'-loglevel', 'quiet',									# don't display anything
-			'-y' 													# don't prompt for overwrite
+			'-i', original_path,                  # original file to be encoded
+			'-c:v', 'libx264',                    # set h264 as videocodec
+			'-preset', str(Options.config['video_preset']),       # set specific preset that provides a certain encoding speed to compression ratio
+			'-profile:v', str(Options.config['video_profile']),   # set output to specific h264 profile
+			'-level', str(Options.config['video_profile_level']), # sets highest compatibility with target devices
+			'-crf', str(Options.config['video_crf']),             # set quality
+			'-b:v', Options.config['video_transcode_bitrate'],    # set videobitrate
+			'-strict', 'experimental',            # allow native aac codec below
+			'-c:a', 'aac',                        # set aac as audiocodec
+			'-ac', str(Options.config['video_audio_ac']),         # force two audiochannels
+			'-ab', str(Options.config['video_audio_ab']),         # set audiobitrate to 160Kbps
+			'-maxrate', str(Options.config['video_maxrate']),     # limits max rate, will degrade CRF if needed
+			'-bufsize', str(Options.config['video_bufsize']),     # define how much the client should buffer
+			'-f', 'mp4',                          # fileformat mp4
+			'-threads', str(Options.config['num_processors']),    # number of cores to use
+			'-loglevel', 'quiet',                 # don't display anything
+			'-y'                                  # don't prompt for overwrite
 		]
 		filters = []
 
-        # Limit frame size. Default is HD 720p
+    # Limit frame size. Default is HD 720p
 		frame_maxsize = Options.config['video_frame_maxsize']
 		if frame_maxsize == 'hd480':
 			dim_max_size = 480
@@ -2245,7 +2246,7 @@ class Media(object):
 			transcode_cmd.append('-s')
 			transcode_cmd.append(frame_maxsize)
 
-        # Rotate picture if necessary
+    # Rotate picture if necessary
 		if "rotate" in self._attributes["metadata"]:
 			if self._attributes["metadata"]["rotate"] == "90":
 				filters.append('transpose=1')
@@ -2258,7 +2259,7 @@ class Media(object):
 			transcode_cmd.append('-vf')
 			transcode_cmd.append(','.join(filters))
 
-        # Add user-defined options
+    # Add user-defined options
 		if len(str(Options.config['video_add_options'])):
 			transcode_cmd.append(str(Options.config['video_add_options']))
 
