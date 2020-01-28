@@ -641,9 +641,13 @@
 
 		// trigger piwik tracking. It's here because it needs document.title
 		if (Options.piwik_server && Options.piwik_id && id === "center") {
-			_paq.push(['setCustomUrl', '/' + window.location.hash]);
+			_paq.push(['setCustomUrl', '/' + window.location.hash.substr(1)]);
 			// _paq.push(['setDocumentTitle', PhotoFloat.cleanHash(location.hash)]);
-			_paq.push(['setDocumentTitle', document.title]);
+			let title = $(".media-box#center .title-string")[0].textContent.replace(/»/g, " » ");
+			// let title = $(".media-box#center .title-string")[0].textContent.replace(/»/g, " » ").replace(/&#(\d+);/g, function(match, dec) {
+			// 	return String.fromCharCode(dec);
+			// });
+			_paq.push(['setDocumentTitle', title]);
 			_paq.push(['trackPageView']);
 		}
 	};
