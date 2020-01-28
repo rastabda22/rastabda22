@@ -132,7 +132,7 @@
 		<!-- Piwik -->
 		<script type="text/javascript">
 			var _paq = _paq || [];
-			_paq.push(['trackPageView']);
+			// _paq.push(['trackPageView']);
 			_paq.push(['enableLinkTracking']);
 			(function() {
 				var u="<?php echo $options['piwik_server']; ?>";
@@ -141,14 +141,14 @@
 				var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
 				g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
 			})();
-			// from https://piwik.org/blog/2017/02/how-to-track-single-page-websites-using-piwik-analytics/
-			$(document).ready(function() {
-				$(window).hashchange(function() {
-					_paq.push(['setCustomUrl', '/' + window.location.hash]);
-					_paq.push(['setDocumentTitle', PhotoFloat.cleanHash(location.hash)]);
-					_paq.push(['trackPageView']);
-				});
-			});
+			// // from https://piwik.org/blog/2017/02/how-to-track-single-page-websites-using-piwik-analytics/
+			// $(document).ready(function() {
+			// 	$(window).hashchange(function() {
+			// 		_paq.push(['setCustomUrl', '/' + window.location.hash]);
+			// 		_paq.push(['setDocumentTitle', PhotoFloat.cleanHash(location.hash)]);
+			// 		_paq.push(['trackPageView']);
+			// 	});
+			// });
 		</script>
 		<noscript><p><img src="<?php echo $options['piwik_server'] . 'piwik.php?idsite=' . $options['piwik_id']; ?>" style="border:0;" alt="" /></p></noscript>
 		<!-- End Piwik Code -->
