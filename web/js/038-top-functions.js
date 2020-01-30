@@ -649,22 +649,23 @@
 		if (Options.piwik_server && Options.piwik_id && (id === "album" || id === "center")) {
 			_paq.push(['setCustomUrl', '/' + window.location.hash.substr(1)]);
 			// _paq.push(['setDocumentTitle', PhotoFloat.cleanHash(location.hash)]);
-			let title, splittedTitle;
+			let titleElement, titleText, splittedTitle;
 			if (id === "center") {
-				title = $(".media-box#center .title-string")[0].textContent;
+				titleText = $(".media-box#center .title-string")[0].textContent;
 			} else {
-				// id === "album"
-				title = $("#album-view .title-string")[0].textContent;
-				title = title.substr(0, title.lastIndexOf("("));
+				// id === "album": temporaly detach the counts, get the text and append the counts again
+				let titleCount = $("#album-view .title-string .title-count").detach();
+				titleText = $("#album-view .title-string")[0].textContent;
+				$("#album-view .title-string").append(titleCount);
 			}
-			splittedTitle = title.split("»");
+			splittedTitle = titleText.split("»");
 			if (splittedTitle.length > 1)
 				splittedTitle.shift();
-			title = splittedTitle.join(" » ");
+			titleText = splittedTitle.join(" » ");
 			// let title = $(".media-box#center .title-string")[0].textContent.replace(/»/g, " » ").replace(/&#(\d+);/g, function(match, dec) {
 			// 	return String.fromCharCode(dec);
 			// });
-			_paq.push(['setDocumentTitle', title]);
+			_paq.push(['setDocumentTitle', titleText]);
 			_paq.push(['trackPageView']);
 		}
 	};
