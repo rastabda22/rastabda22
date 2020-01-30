@@ -93,7 +93,7 @@
 				documentTitle += components[0];
 				if (components.length > 2 || singleMedia !== null)
 					documentTitle = " \u00ab " + documentTitle;
-				documentTitle += " (" + util._t("#by-date") + ")";
+				documentTitle += "(" + util._t("#by-date") + ")";
 			}
 
 			for (i = 2; i < components.length; ++i) {
@@ -130,7 +130,7 @@
 			title += fillInSpan;
 
 			if (components.length > 1 && singleMedia === null && ! isMobile.any()) {
-				title += " <span class='title-count'>(";
+				title += "<span class='title-count'>(";
 				if (components.length === 2)
 					title += mediaTotalInSubAlbums + " ";
 				else
@@ -166,7 +166,7 @@
 				documentTitle += components[0];
 				if (components.length > 2 || singleMedia !== null)
 					documentTitle = " \u00ab " + documentTitle;
-				documentTitle += " (" + util._t("#by-gps") + ")";
+				documentTitle += "(" + util._t("#by-gps") + ")";
 			}
 
 			for (i = 2; i < components.length; ++i) {
@@ -216,7 +216,7 @@
 			title += fillInSpan;
 
 			if (components.length > 1 && singleMedia === null && ! isMobile.any()) {
-				title += " <span class='title-count'>(";
+				title += "<span class='title-count'>(";
 				if (components.length === 2)
 					title += mediaTotalInSubAlbums + " ";
 				else
@@ -253,7 +253,7 @@
 				Options.search_current_album &&
 				! util.isAnyRootHash(Options.cache_base_to_search_in)
 			) {
-				title += " <span id='search-album-to-be-filled'></span> " + raquo;
+				title += "<span id='search-album-to-be-filled'></span>" + raquo;
 			}
 			var searchClass = "search-link";
 
@@ -286,7 +286,7 @@
 				(util.imagesAndVideosTotal(currentAlbum.numMedia) || currentAlbum.subalbums.length) &&
 				! isMobile.any()
 			) {
-				title += " <span class='title-count'>(";
+				title += "<span class='title-count'>(";
 				title += util._t(".title-found") + ' ';
 				if (util.imagesAndVideosTotal(currentAlbum.numMedia)) {
 					title += mediaTotalInAlbum + " ";
@@ -353,7 +353,7 @@
 				(util.imagesAndVideosTotal(currentAlbum.numMedia) || currentAlbum.subalbums.length) &&
 				! isMobile.any()
 			) {
-				title += " <span class='title-count'>(";
+				title += "<span class='title-count'>(";
 				if (util.imagesAndVideosTotal(currentAlbum.numMedia)) {
 					title += mediaTotalInAlbum + " ";
 					if (! imagesTotalInAlbum && videosTotalInAlbum)
@@ -440,7 +440,7 @@
 			title += fillInSpan;
 
 			if (components.length > 1 && singleMedia === null && ! isMobile.any()) {
-				title += " <span class='title-count'>(";
+				title += "<span class='title-count'>(";
 				if (util.imagesAndVideosTotal(currentAlbum.numMedia)) {
 					title += mediaTotalInAlbum + " ";
 					if (! imagesTotalInAlbum && videosTotalInAlbum)
@@ -568,7 +568,7 @@
 
 
 		if (singleMedia === null && currentAlbum !== null && ! currentAlbum.subalbums.length && util.imagesAndVideosTotal(currentAlbum.numMedia) == 1) {
-			title += " " + raquo + "<span class='media-name'>" + util.trimExtension(currentAlbum.media[0].name) + "</span>";
+			title += raquo + "<span class='media-name'>" + util.trimExtension(currentAlbum.media[0].name) + "</span>";
 		}
 
 		if ($("#search-album-to-be-filled").length) {
@@ -594,7 +594,7 @@
 								name = util._t("#month-" + name);
 							thisCacheBase = "#!/" + theAlbum.ancestorsCacheBase[i];
 							if (i > 0 && (i !== 1 || theAlbum.ancestorsNames[0] !== ""))
-								whereLinks += ' ' + raquo + ' ';
+								whereLinks += raquo;
 							if (name)
 								whereLinks += "<a class='search-link' href='" + thisCacheBase + "'>" + name + "</a>";
 						}
