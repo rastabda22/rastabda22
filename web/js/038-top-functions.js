@@ -612,11 +612,15 @@
 						);
 						document.title = documentTitle;
 					}
+
+					TopFunctions.trackPiwik(id);
 				},
 				function() {
 					console.trace();
 				}
 			);
+		} else {
+			TopFunctions.trackPiwik(id);
 		}
 
 		f.setOptions();
@@ -638,12 +642,25 @@
 				$('#mapdiv').empty();
 			}
 		);
+	};
 
+	TopFunctions.trackPiwik = function(id) {
 		// trigger piwik tracking. It's here because it needs document.title
-		if (Options.piwik_server && Options.piwik_id && id === "center") {
+		if (Options.piwik_server && Options.piwik_id && (id === "album" || id === "center")) {
 			_paq.push(['setCustomUrl', '/' + window.location.hash.substr(1)]);
 			// _paq.push(['setDocumentTitle', PhotoFloat.cleanHash(location.hash)]);
-			let title = $(".media-box#center .title-string")[0].textContent.replace(/»/g, " » ");
+			let title, splittedTitle;
+			if (id === "center") {
+				title = $(".media-box#center .title-string")[0].textContent;
+			} else {
+				// id === "album"
+				title = $("#album-view .title-string")[0].textContent;
+				title = title.substr(0, title.lastIndexOf("("));
+			}
+			splittedTitle = title.split("»");
+			if (splittedTitle.length > 1)
+				splittedTitle.shift();
+			title = splittedTitle.join(" » ");
 			// let title = $(".media-box#center .title-string")[0].textContent.replace(/»/g, " » ").replace(/&#(\d+);/g, function(match, dec) {
 			// 	return String.fromCharCode(dec);
 			// });
