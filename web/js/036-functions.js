@@ -734,7 +734,7 @@
 		if (thisAlbum !== null) {
 			let numPasswords;
 			if (util.isSearchCacheBase(thisAlbum.cacheBase))
-				numPasswords = util.numPasswords(phFl.getAlbumFromCache(thisAlbum.ancestorsCacheBase[0]));
+				numPasswords = util.numPasswords(phFl.getAlbumFromCache(Options.by_search_string));
 			else
 				numPasswords = util.numPasswords(thisAlbum);
 
