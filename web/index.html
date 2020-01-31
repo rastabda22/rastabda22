@@ -36,47 +36,58 @@
 		</div>
 	</div>
 
-	<div id="media-view">
-		<div id="media-box-container">
-			<div class="media-box" id="center">
-
-				<div class="media-box-inner">
-				</div>
-
-				<div class="media-bar">
-					<div class="links">
-						<span class="link-button">
-							<a class="metadata-show"></a>
-							<a class="metadata-hide"></a>
-						</span>
-						|
-						<span class="link-button">
-							<a class="original-link"></a>
-						</span>
-						<a class="menu-map-divider">|</a>
-						<span class="link-button">
-							<a class="menu-map-link"></a>
-						</span>
-						<span class="fullscreen">
-							<span class="fullscreen-divider"> | </span>
-							<span class="link-button">
-								<a class="enter-fullscreen"></a>
-								<a class="exit-fullscreen"></a>
-							</span>
-						</span>
-					</div>
-					<div class="metadata">
-					</div>
-				</div>
-
-			</div>
+	<div id="media-view-container">
+		<div id="auth-text">
+			<div id="auth-close" style="top: 22px; right: 22px;"></div>
+			<form id="auth-form">
+				<div id="auth-question"></div>
+				<input id="password" type="password" />
+				<input type="submit" value="⏎" class="button"/>
+			</form>
 		</div>
 
-		<img id="prev" width="42" height="88" src="img/prev.png">
-		<img id="next" width="42" height="88" src="img/next.png">
-		<div id="pinch-container" class="hidden">
-			<img src="img/pinch-plus.png" id="pinch-in" class="pinch" width="25" height="25">
-			<img src="img/pinch-minus.png" id="pinch-out" class="pinch disabled" width="25" height="25">
+		<div id="media-view">
+			<div id="media-box-container">
+				<div class="media-box" id="center">
+
+					<div class="media-box-inner">
+					</div>
+
+					<div class="media-bar">
+						<div class="links">
+							<span class="link-button">
+								<a class="metadata-show"></a>
+								<a class="metadata-hide"></a>
+							</span>
+							|
+							<span class="link-button">
+								<a class="original-link"></a>
+							</span>
+							<a class="menu-map-divider">|</a>
+							<span class="link-button">
+								<a class="menu-map-link"></a>
+							</span>
+							<span class="fullscreen">
+								<span class="fullscreen-divider"> | </span>
+								<span class="link-button">
+									<a class="enter-fullscreen"></a>
+									<a class="exit-fullscreen"></a>
+								</span>
+							</span>
+						</div>
+						<div class="metadata">
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<img id="prev" width="42" height="88" src="img/prev.png">
+			<img id="next" width="42" height="88" src="img/next.png">
+			<div id="pinch-container" class="hidden">
+				<img src="img/pinch-plus.png" id="pinch-in" class="pinch" width="25" height="25">
+				<img src="img/pinch-minus.png" id="pinch-out" class="pinch disabled" width="25" height="25">
+			</div>
 		</div>
 	</div>
 
@@ -201,12 +212,12 @@
 	<div id="by-gps-browsing" class="browsing-mode-message"></div>
 	<div id="by-search-browsing" class="browsing-mode-message"></div>
 	<div id="by-map-browsing" class="browsing-mode-message"></div>
-	
+
 	<div id="caption">
 		<div id="caption-title"></div>
 		<div id="caption-description"></div>
 	</div>
-	
+
 	<div id="error-overlay"></div>
 	<div id="error-options-file" class="error"></div>
 	<div id="error-text-folder" class="error"></div>

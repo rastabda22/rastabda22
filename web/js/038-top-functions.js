@@ -2384,7 +2384,7 @@
 		if (Modernizr.fullscreen) {
 			e.preventDefault();
 			$("#album-view").addClass('hidden');
-			$("#media-view").fullScreen({
+			$("#media-view-container").fullScreen({
 				callback: function(isFullscreen) {
 					$("#loading").hide();
 					fullScreenStatus = isFullscreen;
