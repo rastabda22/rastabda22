@@ -1089,7 +1089,7 @@
 				sum = Utilities.imagesAndVideosSum(sum, numsProtectedMediaInSubTree[codesComplexcombination]);
 			}
 		}
-		return sum;
+		return sum.images + sum.videos;
 	};
 	Utilities.prototype.sumNumsProtectedMediaOfArray = function(arrayOfAlbumsOrSubalbunms) {
 		var result = {}, i, codesComplexcombination, albumOrSubalbum;
@@ -1099,7 +1099,7 @@
 			for (codesComplexcombination in albumOrSubalbum.numsProtectedMediaInSubTree) {
 				if (albumOrSubalbum.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexcombination) && codesComplexcombination !== ",") {
 					if (! result.hasOwnProperty(codesComplexcombination))
-						result[codesComplexcombination] = 0;
+						result[codesComplexcombination] = {images: 0, videos: 0};
 					result[codesComplexcombination] = Utilities.imagesAndVideosSum(result[codesComplexcombination], albumOrSubalbum.numsProtectedMediaInSubTree[codesComplexcombination]);
 				}
 			}
