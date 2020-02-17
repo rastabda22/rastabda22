@@ -368,7 +368,7 @@
 			album.includedFilesByCodesSimpleCombination = {};
 		if (! album.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination)) {
 			album.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
-			if (codesSimpleCombination !== "" && ! album.includedFilesByCodesSimpleCombination[codesSimpleCombination].hasOwnProperty(number))
+			if (codesSimpleCombination !== "," && ! album.includedFilesByCodesSimpleCombination[codesSimpleCombination].hasOwnProperty(number))
 				album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number] = {};
 			album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album = {};
 		}
@@ -1010,7 +1010,7 @@
 
 		var count = 0;
 		for (var codesComplexCombinationFromObject in numsProtectedMediaInSubTree) {
-			if (numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombinationFromObject) && codesComplexCombinationFromObject !== "") {
+			if (numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombinationFromObject) && codesComplexCombinationFromObject !== ",") {
 				var [albumCodesComplexCombinationListFromObject, mediaCodesComplexCombinationListFromObject] =
 					PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationFromObject);
 

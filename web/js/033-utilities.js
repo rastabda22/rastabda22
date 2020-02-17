@@ -85,7 +85,7 @@
 	Utilities.prototype.numPasswords = function(album) {
 		var codes = [];
 		for (let codesComplexCombination in album.numsProtectedMediaInSubTree) {
-			if (album.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombination) && codesComplexCombination !== "") {
+			if (album.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombination) && codesComplexCombination !== ",") {
 				var albumCombination = codesComplexCombination.split(',')[0];
 				var mediaCombination = codesComplexCombination.split(',')[1];
 				if (albumCombination)
@@ -1085,7 +1085,7 @@
 	Utilities.prototype.sumUpNumsProtectedMedia = function(numsProtectedMediaInSubTree) {
 		var sum = imagesAndVideos0, codesComplexcombination;
 		for (codesComplexcombination in numsProtectedMediaInSubTree) {
-			if (numsProtectedMediaInSubTree.hasOwnProperty(codesComplexcombination) && codesComplexcombination !== "") {
+			if (numsProtectedMediaInSubTree.hasOwnProperty(codesComplexcombination) && codesComplexcombination !== ",") {
 				sum = Utilities.imagesAndVideosSum(sum, numsProtectedMediaInSubTree[codesComplexcombination]);
 			}
 		}
@@ -1097,7 +1097,7 @@
 		for (i = 0; i < arrayOfAlbumsOrSubalbunms.length; i ++) {
 			albumOrSubalbum = arrayOfAlbumsOrSubalbunms[i];
 			for (codesComplexcombination in albumOrSubalbum.numsProtectedMediaInSubTree) {
-				if (albumOrSubalbum.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexcombination)) {
+				if (albumOrSubalbum.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexcombination) && codesComplexcombination !== ",") {
 					if (! result.hasOwnProperty(codesComplexcombination))
 						result[codesComplexcombination] = 0;
 					result[codesComplexcombination] = Utilities.imagesAndVideosSum(result[codesComplexcombination], albumOrSubalbum.numsProtectedMediaInSubTree[codesComplexcombination]);
