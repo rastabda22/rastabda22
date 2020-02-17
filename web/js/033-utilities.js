@@ -82,16 +82,26 @@
 		return language;
 	};
 
-	Utilities.prototype.numPasswords = function(album) {
+	Utilities.prototype.numPasswords = function(album, unveiledOnly = false) {
 		var codes = [];
 		for (let codesComplexCombination in album.numsProtectedMediaInSubTree) {
 			if (album.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombination) && codesComplexCombination !== ",") {
 				var albumCombination = codesComplexCombination.split(',')[0];
 				var mediaCombination = codesComplexCombination.split(',')[1];
-				if (albumCombination)
-					codes = this.arrayUnion(codes, albumCombination.split('-'));
-				if (mediaCombination)
-					codes = this.arrayUnion(codes, mediaCombination.split('-'));
+				let combinations = [albumCombination, mediaCombination];
+				for (let i = 0; i < combinations.length; i ++) {
+					if (combinations[i]) {
+						let combinationList = combinations[i].split('-');
+						if (unveiledOnly) {
+							for (let j = 0; j < combinationList.length; j ++) {
+								if (PhotoFloat.guessedPasswordCodes.includes(combinationList[j]))
+									combinationList.splice(j, 1);
+							}
+						}
+						codes = this.arrayUnion(codes, combinationList);
+					}
+
+				}
 			}
 		}
 		return codes.length;

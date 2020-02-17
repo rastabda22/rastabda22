@@ -2076,7 +2076,7 @@
 				$("#loading").stop().hide();
 
 				if (
-					util.numPasswords(theAlbum) &&
+					util.numPasswords(theAlbum, true) &&
 					// ! jQuery.isEmptyObject(theAlbum.numsProtectedMediaInSubTree) &&
 					(
 						theAlbum.subalbums.length == 0 ||
