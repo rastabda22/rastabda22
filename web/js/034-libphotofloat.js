@@ -2059,7 +2059,7 @@
 		util.initializeSortPropertiesAndCookies(theAlbum);
 		util.sortAlbumsMedia(theAlbum);
 
-		var i = -1, perhapsIsAProtectedMedia = false;
+		var i = -1;
 		var media = null;
 		if (mediaHash !== null) {
 			i = theAlbum.media.findIndex(
@@ -2072,12 +2072,10 @@
 			);
 			if (i !== -1) {
 				media = theAlbum.media[i];
-				perhapsIsAProtectedMedia = false;
 			} else {
 				$("#loading").stop().hide();
 
 				if (
-					! perhapsIsAProtectedMedia &&
 					util.numPasswords(theAlbum) &&
 					// ! jQuery.isEmptyObject(theAlbum.numsProtectedMediaInSubTree) &&
 					(
@@ -2085,13 +2083,11 @@
 						util.sumUpNumsProtectedMedia(theAlbum.numsProtectedMediaInSubTree) > util.sumUpNumsProtectedMedia(util.sumNumsProtectedMediaOfArray(theAlbum.subalbums))
 					)
 				) {
-					// the media not found could be a protected one, show the authentication dialog
-					perhapsIsAProtectedMedia = true;
+					// the media not found could be a protected one, show the authentication dialog, it could be a protected media
 					util.showAuthForm(null, true);
 				} else {
 					// surely the media doesn't exist
 
-					perhapsIsAProtectedMedia = false;
 					$("#album-view").fadeOut(200).fadeIn(3500);
 					$("#media-view").fadeOut(200);
 					// $("#album-view").stop().fadeIn(3500);
