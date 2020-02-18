@@ -131,9 +131,13 @@
 		if (! empty($_GET['email']) && $options['request_password_email']) {
 			$subject = 'Password request';
 			$message =  'From ' . $_GET['url'] . '        "' . $_GET['name'] . '" <' . $_GET['email'] . '>  says:        ' . $_GET['identity'];
-			$headers = ['From: "myphotoshare" <' . $options['request_password_email'] . '>', 'Reply-To:' . '"' . $_GET['name'] . '" <' . $_GET['email'] . '>'];
+			$from = '"myphotoshare" <' . $options['request_password_email'] . '>';
+			$headers =
+				'From: ' . $from . "\r\n" .
+				'Reply-To: "' . $_GET['name'] . '" <' . $_GET['email'] . '>' . "\r\n" .
+				'X-Mailer: PHP/' . phpversion();
 			// $result = mail($options['request_password_email'], $subject, $message, 'Reply-To:' . $_GET['email']);
-			$result = mail($options['request_password_email'], $subject, $message, $headers, '-f ' . $options['request_password_email']);
+			$result = mail($options['request_password_email'], $subject, $message, $headers, '-f ' . $from);
 				// ' -f' . $options['request_password_email']
 			if (! $result) {
 				echo "mail not sent:" . error_get_last()['message'];
