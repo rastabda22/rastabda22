@@ -80,6 +80,9 @@ a.title-anchor.mobile {
 	display: none;
 }
 
+.space-before {
+	margin-left: 1em;
+}
 
 #album-view {
 	position: absolute;

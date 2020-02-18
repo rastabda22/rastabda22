@@ -274,10 +274,12 @@
 					<input type="hidden" name="requestpassword" />
 					<span id="name-label"></span>
 					<input id="form-name" type="text" name="name" />
-					<span id="email-label"></span>
+					<span id="email-label" class="space-before"></span>
 					<input id="form-email" type="text" name="email" />
-					<span id="identity-label"></span>
-					<input id="form-identity" type="text" name="identity" />
+					<span id="identity" class="space-before">
+						<span id="identity-label"></span>
+						<input id="form-identity" type="text" name="identity" />
+					</span>
 					<input type="submit" value="⏎" class="button"/>
 				</form>
 			</div>

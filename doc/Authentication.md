@@ -60,6 +60,10 @@ It's important that the directory listing feature of `apache` (or the equivalent
 
 The option `passwords_marker` must be changed in the config file; otherwise a malicious user could access it and know what you are protecting: from the marker content he/she could guess something of the protected content in the albums tree.
 
+### Optional: allow the user to ask for the password
+
+The user could forget or loose the password. If the `request_password_email` option is set in the configuration file, the authentication dialog allows the user to send an email requesting the password.
+
 ## Optional: Deployment Makefiles
 
 Both the scanner and the webpage have a `make deploy` target, and the scanner has a `make scan` target, to automatically deploy assets to a remote server and run the scanner. For use, customize `deployment-config.mk` in the root of the project, and carefully read the `Makefile`s to learn what's happening.
