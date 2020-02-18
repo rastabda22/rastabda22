@@ -1269,6 +1269,11 @@
 		);
 	};
 
+	Utilities.prototype.showPasswordRequestForm = function(event) {
+		$("#auth-form").hide();
+		$("#password-request-form").show();
+	};
+
 	/* Error displays */
 	Utilities.prototype.die = function(error) {
 		if (error == 403) {

@@ -172,6 +172,9 @@ passwords_subdir = pwd
 # the prefix for the protected directories where json files are stored
 protected_directories_prefix = protected_
 
+# put here the email address for requesting the password(s)
+request_password_email = 
+
 # recreate fixed height media thumbnails if their ratio (width/height) is > 1,
 # in order to get rid of a past bug in thumbnail generator
 recreate_fixed_height_thumbnails = false

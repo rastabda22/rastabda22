@@ -109,7 +109,7 @@
 		}
 
 		// put the <link rel=".."> tag in <head> for letting facebook/google+ load the image/video when sharing
-		if (isset($_GET['m']) && $_GET['m']) {
+		if (! empty($_GET['m'])) {
 			// Prevent directory traversal security vulnerability
 			$realPath = realpath($_GET['m']);
 			if (strpos($realPath, realpath('cache')) === 0  && url_exist($realPath)) {
@@ -125,6 +125,26 @@
 				$linkTag .= '>';
 				echo "$linkTag\n";
 			}
+		}
+
+		// send the email for requesting the protected content password
+		if (! empty($_GET['email']) && $options['request_password_email']) {
+			$subject = 'Password request';
+			$message =  'From ' . $_GET['url'] . ', "' . $_GET['name'] . '" &lt;' . $_GET['email'] . '&gt;  says: ' . $_GET['identity'];
+			// $result = mail($options['request_password_email'], $subject, $message, 'Reply-To:' . $_GET['email']);
+			$result = mail($options['request_password_email'], $subject, $message);
+				// ' -f' . $options['request_password_email']
+			if (! $result) {
+				echo "mail not sent:" . error_get_last()['message'];
+				// echo "<br>mail command = mail(" .$options['request_password_email'] . ", " . $subject . ", " . $message . ", " . 'Reply-To:' . $_GET['email'] . ")";
+				echo "<br>mail command = mail('" .$options['request_password_email'] . "', '" . $subject . "', '" . $message . "')";
+				echo "<br>subject = " . $subject;
+				echo "<br>nessage = " . $message;
+				exit;
+			} else {
+				header($_GET['url']);
+			}
+			// header(urldecode($_GET['url']));
 		}
 	?>
 
@@ -239,6 +259,20 @@
 				<input id="password" type="password" />
 				<input type="submit" value="⏎" class="button"/>
 			</form>
+			<div>
+				<div id="request-password"></div>
+				<form id="password-request-form">
+					<div id="enter-your-data"></div>
+					<input type="hidden" name="requestpassword" />
+					<span id="name-label"></span>
+					<input id="form-name" type="text" name="name" />
+					<span id="email-label"></span>
+					<input id="form-email" type="text" name="email" />
+					<span id="identity-label"></span>
+					<input id="form-identity" type="text" name="identity" />
+					<input type="submit" value="⏎" class="button"/>
+				</form>
+			</div>
 		</div>
 
 		<div id="media-view">
@@ -402,6 +436,7 @@
 	<div id="loading"></div>
 	<div id="downloading-media"></div>
 	<div id="preparing-zip"></div>
+	<div id="sending-email"></div>
 
 	<div id="folders-browsing" class="browsing-mode-message"></div>
 	<div id="by-date-browsing" class="browsing-mode-message"></div>

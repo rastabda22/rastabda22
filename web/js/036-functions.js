@@ -1041,6 +1041,7 @@
 						// for map zoom levels, see http://wiki.openstreetmap.org/wiki/Zoom_levels
 
 						for (var key in data)
+							// if (data.hasOwnProperty(key) && key !== 'request_password_email')
 							if (data.hasOwnProperty(key))
 								Options[key] = data[key];
 						util.translate();
@@ -1151,6 +1152,28 @@
 							initialSizes[Options.reduced_sizes[i]] = JSON.parse(JSON.stringify(imagesAndVideos0));
 						}
 
+						if (Options.request_password_email) {
+							$("#request-password").on('click', util.showPasswordRequestForm);
+							$("#password-request-form").submit(
+								function() {
+									// alert(location.href.substr(0, - location.hash) + '?name=' + encodeURI($("#form-name").val()) + '&email=' + encodeURI($("#form-email").val()) + '&identity=' + encodeURI($("#form-identity").val()) + location.hash);
+									var newLocation = location.href.substr(0, - location.hash) +
+									 					'?url=' + encodeURIComponent(location.href) +
+														'&name=' + encodeURIComponent($("#form-name").val()) +
+														'&email=' + encodeURIComponent($("#form-email").val()) +
+														'&identity=' + encodeURIComponent($("#form-identity").val()) +
+														location.hash;
+									$("#auth-text").stop().fadeOut(1000);
+									$("#sending-email").stop().fadeIn(1000);
+									$("#sending-email").fadeOut(3000, function() {
+										location.href = newLocation;
+									});
+									return false;
+								}
+							);
+						} else {
+							$("#request-password").hide();
+						}
 
 						resolve_getOptions();
 					},
