@@ -17,6 +17,8 @@ MyPhotoShare needs:
 * `avconv` / `ffmpeg` in order to be able to manage videos
 * `curl`, used by minify script
 * `exiftool`
+* `php-mail` (optional, it's needed to send the password request email)
+* a working MTA, e.g. `postfix` (optional, it's needed to send the password request email)
 
 ### Optional
 * `python-opencv`: if found, face detection is used when cropping images to square.
@@ -31,6 +33,8 @@ MyPhotoShare needs:
 PHP is *required* for sharing, because social apps do not execute any JavaScript when they receive an *URI*. Without PHP, sharing any page is perfectly equivalent to sharing the simple `index.html`: no information of the particular page you want to share is retained.
 
 PHP does the job you need for sharing: JavaScript creates proper URLs based on the page hash, and when a share button is pressed a parameter is passed to PHP and it sets the proper HTML page title and appends the proper `<link rel='video_src' href="`video_link`">` or `<link rel='image_src' href="`image_link`">` tag to the `<head>` tag. This way the social media apps get the data they need and show a preview of the media/album you are sharing.
+
+PHP allows requesting a forgot password, sending an email to a site administrator.
 
 If your web server does not have PHP, you can use MyPhotoShare in degraded mode: just use the `index.html` file instead of the `index.php` one in the `web` directory. You won't have the social sharing features but you'll still have all the great features of MyPhotoShare like geotagging or keyword search...
 

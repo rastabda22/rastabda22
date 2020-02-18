@@ -1,7 +1,8 @@
 * Media and album captions from `album.ini` file are now separately from metadata; a menu option to hide them has been added
 * French translation completed
 * new option `excluded_patterns_file`: specifies a file whose lines are file patterns (regexes) to ignore when scanning
-* new option `request_password_email`: the email for requesting the password(s) that allow seeing the protected content
+* The authentication dialog allows the user to send an email that requests the protected content password (the `request_password_email` option must be set)
+  * new option `request_password_email`: the email for requesting the password that allows seeing the protected content
 
 ### version v4.1.0 (Nov 29, 2019)
 
