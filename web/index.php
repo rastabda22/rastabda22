@@ -131,8 +131,8 @@
 		if (! empty($_GET['email']) && $options['request_password_email']) {
 			$subject = 'Password request';
 			$message =
-				'This request has been sent from ' . $_GET['url'] . '\r\n\r\n' .
-				'"' . $_GET['name'] . '" <' . $_GET['email'] . '>  says:\r\n\r\n' .
+				'This request has been sent from ' . $_GET['url'] . "\r\n\r\n" .
+				'"' . $_GET['name'] . '" <' . $_GET['email'] . '>  says:' . "\r\n\r\n" .
 				$_GET['identity'];
 			$from = '"myphotoshare" <' . $options['request_password_email'] . '>';
 			$headers =
