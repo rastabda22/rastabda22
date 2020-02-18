@@ -130,8 +130,8 @@
 		// send the email for requesting the protected content password
 		if (! empty($_GET['email']) && $options['request_password_email']) {
 			$subject = 'Password request';
-			$message =  'From ' . $_GET['url'] . '<br /><br />"' . $_GET['name'] . '" <' . $_GET['email'] . '>  says:<br />' . $_GET['identity'];
-			$headers = ['From:' . $options['request_password_email'], 'Reply-To:' . $_GET['email']];
+			$message =  'From ' . $_GET['url'] . '        "' . $_GET['name'] . '" <' . $_GET['email'] . '>  says:        ' . $_GET['identity'];
+			$headers = ['From: "myphotoshare" <' . $options['request_password_email'] . '>', 'Reply-To:' . '"' . $_GET['name'] . '" <' . $_GET['email'] . '>'];
 			// $result = mail($options['request_password_email'], $subject, $message, 'Reply-To:' . $_GET['email']);
 			$result = mail($options['request_password_email'], $subject, $message, $headers, '-f ' . $options['request_password_email']);
 				// ' -f' . $options['request_password_email']
