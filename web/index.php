@@ -271,6 +271,7 @@
 				<div id="request-password"></div>
 				<form id="password-request-form">
 					<div id="enter-your-data"></div>
+					<div id="please-fill"></div>
 					<input type="hidden" name="requestpassword" />
 					<span id="name-label"></span>
 					<input id="form-name" type="text" name="name" />

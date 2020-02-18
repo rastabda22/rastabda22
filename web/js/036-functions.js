@@ -1156,18 +1156,27 @@
 							$("#request-password").on('click', util.showPasswordRequestForm);
 							$("#password-request-form").submit(
 								function() {
-									// alert(location.href.substr(0, - location.hash) + '?name=' + encodeURI($("#form-name").val()) + '&email=' + encodeURI($("#form-email").val()) + '&identity=' + encodeURI($("#form-identity").val()) + location.hash);
-									var newLocation = location.href.substr(0, - location.hash) +
-									 					'?url=' + encodeURIComponent(location.href) +
-														'&name=' + encodeURIComponent($("#form-name").val()) +
-														'&email=' + encodeURIComponent($("#form-email").val()) +
-														'&identity=' + encodeURIComponent($("#form-identity").val()) +
-														location.hash;
-									$("#auth-text").stop().fadeOut(1000);
-									$("#sending-email").stop().fadeIn(1000);
-									$("#sending-email").fadeOut(3000, function() {
-										location.href = newLocation;
-									});
+									let name = $("#form-name").val().trim();
+									let email = $("#form-email").val().trim();
+									let identity = $("#form-identity").val().trim();
+
+									if (name && email && identity) {
+										// alert(location.href.substr(0, - location.hash) + '?name=' + encodeURI($("#form-name").val()) + '&email=' + encodeURI($("#form-email").val()) + '&identity=' + encodeURI($("#form-identity").val()) + location.hash);
+										var newLocation = location.href.substr(0, - location.hash) +
+										 					'?url=' + encodeURIComponent(location.href) +
+															'&name=' + encodeURIComponent(name) +
+															'&email=' + encodeURIComponent(email) +
+															'&identity=' + encodeURIComponent(identity) +
+															location.hash;
+										$("#auth-text").stop().fadeOut(1000);
+										$("#sending-email").stop().fadeIn(1000);
+										$("#sending-email").fadeOut(3000, function() {
+											location.href = newLocation;
+										});
+									} else {
+										$("#please-fill").css("display", "table");
+										$("#please-fill").fadeOut(5000);
+									}
 									return false;
 								}
 							);

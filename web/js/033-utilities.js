@@ -1272,6 +1272,7 @@
 	Utilities.prototype.showPasswordRequestForm = function(event) {
 		$("#auth-form").hide();
 		$("#password-request-form").show();
+		$("#please-fill").hide();
 		$("#identity").attr("title", Utilities._t("#identity-explication"));
 	};
 
