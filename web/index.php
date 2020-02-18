@@ -130,9 +130,10 @@
 		// send the email for requesting the protected content password
 		if (! empty($_GET['email']) && $options['request_password_email']) {
 			$subject = 'Password request';
-			$message =  'From ' . $_GET['url'] . ', "' . $_GET['name'] . '" &lt;' . $_GET['email'] . '&gt;  says: ' . $_GET['identity'];
+			$message =  'From ' . $_GET['url'] . '<br /><br />"' . $_GET['name'] . '" <' . $_GET['email'] . '>  says:<br />' . $_GET['identity'];
+			$headers = ['From:' . $options['request_password_email'], 'Reply-To:' . $_GET['email']];
 			// $result = mail($options['request_password_email'], $subject, $message, 'Reply-To:' . $_GET['email']);
-			$result = mail($options['request_password_email'], $subject, $message);
+			$result = mail($options['request_password_email'], $subject, $message, $headers, '-f ' . $options['request_password_email']);
 				// ' -f' . $options['request_password_email']
 			if (! $result) {
 				echo "mail not sent:" . error_get_last()['message'];
