@@ -134,7 +134,7 @@ $(document).ready(function() {
 					mapRefreshType = "none";
 				}
 				return false;
-			} else if (pS.getCurrentZoom() > pS.getInitialZoom() || $(".title").hasClass("hidden-by-pinch")) {
+			} else if (pS.getCurrentZoom() > pS.getInitialZoom() || $(".media-box#center .title").hasClass("hidden-by-pinch")) {
 				pS.pinchOut(null, null);
 				return false;
 			} else if (! Modernizr.fullscreen && fullScreenStatus) {
