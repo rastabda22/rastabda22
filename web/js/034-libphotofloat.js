@@ -705,8 +705,10 @@
 				} else {
 					var iDirectory = -1;
 					var getNumsProtectedMediaInSubTreePropertyPromise = getNextProtectedDirectory();
-					getNumsProtectedMediaInSubTreePropertyPromise.then(resolve_getNumsProtectedMediaInSubTreeProperty);
-					getNumsProtectedMediaInSubTreePropertyPromise.catch(reject_getNumsProtectedMediaInSubTreeProperty);
+					getNumsProtectedMediaInSubTreePropertyPromise.then(
+						resolve_getNumsProtectedMediaInSubTreeProperty,
+						reject_getNumsProtectedMediaInSubTreeProperty
+					);
 				}
 				// end of getNumsProtectedMediaInSubTreePropertyProperty function body
 
