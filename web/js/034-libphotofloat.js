@@ -837,7 +837,8 @@
 								);
 							},
 							function() {
-								console.trace();
+								util.errorThenGoUp();
+								// console.trace();
 							}
 						);
 					}
