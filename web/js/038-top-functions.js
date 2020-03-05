@@ -1305,7 +1305,7 @@
 
 	/* Entry point for most events */
 
-	TopFunctions.hashParsed = function(album, singleMedia, mediaIndex) {
+	TopFunctions.hashParsed = function([album, singleMedia, mediaIndex]) {
 		var populateAlbum;
 		var currentAlbumPath, currentAlbumPathArray;
 
@@ -2719,10 +2719,12 @@
 
 		map.addPopupMover();
 
-		phFl.endPreparingAlbumAndKeepOn(
+		var promise = phFl.endPreparingAlbumAndKeepOn(
 			MapFunctions.mapAlbum,
 			null,
-			null,
+			null
+		);
+		promise.then(
 			function() {
 				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(MapFunctions.mapAlbum) + MapFunctions.titleWrapper2);
 				$("#loading").hide();

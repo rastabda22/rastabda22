@@ -688,7 +688,12 @@ $(document).ready(function() {
 			var promise = f.getOptions();
 			promise.then(
 				function() {
-					f.parseHash(location.hash, tF.hashParsed, util.errorThenGoUp);
+					var promise = f.parseHash(location.hash, util.errorThenGoUp);
+					promise.then(
+						function(array) {
+							tF.hashParsed(array);
+						}
+					);
 				},
 				function() {
 					console.trace();

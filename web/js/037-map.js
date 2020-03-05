@@ -211,10 +211,12 @@
 				popupRefreshType = "previousAlbum";
 				mapRefreshType = "none";
 
-				phFl.endPreparingAlbumAndKeepOn(
+				var promise = phFl.endPreparingAlbumAndKeepOn(
 					MapFunctions.mapAlbum,
 					null,
-					null,
+					null
+				);
+				promise.then(
 					function(){
 						$("#album-view").addClass("hidden");
 						$("#loading").show();
