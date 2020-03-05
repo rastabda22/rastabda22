@@ -604,90 +604,87 @@ $(document).ready(function() {
 	$("#menu-icon").off();
 	$("#menu-icon").on("click", f.toggleMenu);
 
-	$("#auth-form").submit(function() {
-		// This function checks the password looking for a file with the encrypted password name in the passwords subdir
-		// the code in the found password file is inserted into PhotoFloat.guessedPasswordsMd5, and at the hash change the content unveiled by that password will be shown
+	$("#auth-form").submit(
+		function() {
+			// This function checks the password looking for a file with the encrypted password name in the passwords subdir
+			// the code in the found password file is inserted into PhotoFloat.guessedPasswordsMd5, and at the hash change the content unveiled by that password will be shown
 
-		var password = $("#password");
-		var encryptedPassword = md5(password.val());
-		password.val("");
+			var password = $("#password");
+			var encryptedPassword = md5(password.val());
+			password.val("");
 
-		var ajaxOptions = {
-			type: "GET",
-			dataType: "json",
-			url: util.pathJoin([Options.server_cache_path, Options.passwords_subdir, encryptedPassword]),
-			success: function(jsonCode) {
-				password.css("background-color", "rgb(200, 200, 200)");
-				var passwordCode = jsonCode.passwordCode;
+			var ajaxOptions = {
+				type: "GET",
+				dataType: "json",
+				url: util.pathJoin([Options.server_cache_path, Options.passwords_subdir, encryptedPassword]),
+				success: function(jsonCode) {
+					password.css("background-color", "rgb(200, 200, 200)");
+					var passwordCode = jsonCode.passwordCode;
 
-				if (! PhotoFloat.guessedPasswordCodes.includes(passwordCode))
-					PhotoFloat.guessedPasswordCodes.push(passwordCode);
-				if (! PhotoFloat.guessedPasswordsMd5.includes(encryptedPassword))
-					PhotoFloat.guessedPasswordsMd5.push(encryptedPassword);
+					if (! PhotoFloat.guessedPasswordCodes.includes(passwordCode))
+						PhotoFloat.guessedPasswordCodes.push(passwordCode);
+					if (! PhotoFloat.guessedPasswordsMd5.includes(encryptedPassword))
+						PhotoFloat.guessedPasswordsMd5.push(encryptedPassword);
 
-				$("#loading").show();
+					$("#loading").show();
 
-				// phFl.removeAllProtectedAlbumsFromCache();
+					// phFl.removeAllProtectedAlbumsFromCache();
 
-				var isPopup = $('.leaflet-popup').html() ? true : false;
-				var isMap = $('#mapdiv').html() ? true : false;
+					var isPopup = $('.leaflet-popup').html() ? true : false;
+					var isMap = $('#mapdiv').html() ? true : false;
 
-				if (isMap) {
-					// the map must be generated again including the points that only carry protected content
-					mapRefreshType = "refresh";
+					if (isMap) {
+						// the map must be generated again including the points that only carry protected content
+						mapRefreshType = "refresh";
 
-					if (isPopup) {
-						popupRefreshType = "mapAlbum";
-						$('.leaflet-popup-close-button')[0].click();
-					} else {
-						popupRefreshType = "none";
+						if (isPopup) {
+							popupRefreshType = "mapAlbum";
+							$('.leaflet-popup-close-button')[0].click();
+						} else {
+							popupRefreshType = "none";
+						}
+						// close the map
+						$('.modal-close')[0].click();
 					}
-					// close the map
-					$('.modal-close')[0].click();
+
+					$(window).hashchange();
+				},
+				error: function() {
+					password.css("background-color", "red");
+					password.on(
+						'input',
+						function() {
+							password.css("background-color", "");
+							password.off('input');
+						}
+					);
 				}
+			};
+			$.ajax(ajaxOptions);
 
-				$(window).hashchange();
-			},
-			error: function() {
-				password.css("background-color", "red");
-				password.on(
-					'input',
-					function() {
-						password.css("background-color", "");
-						password.off('input');
-					}
-				);
-			}
-		};
-		$.ajax(ajaxOptions);
-
-		return false;
-	});
+			return false;
+		}
+	);
 
 	scrollbarWidth = util.detectScrollbarWidth();
 
-	$(window).hashchange(function() {
-		$("#auth-text").hide();
-		$("#album-view, #media-view, #my-modal").css("opacity", "");
+	$(window).hashchange(
+		function() {
+			$("#auth-text").hide();
+			$("#album-view, #media-view, #my-modal").css("opacity", "");
 
-		if (isABrowsingModeChange)
-			isABrowsingModeChange = false;
-		else {
-			// the image has changed, reset the search and map link
-			bySearchViewLink = null;
-			byMapViewLink = null;
-		}
-		$("#loading").show();
-		$("#album-view").removeClass("hidden");
-		$("link[rel=image_src]").remove();
-		$("link[rel=video_src]").remove();
-		$("ul#right-menu").removeClass("expand");
-		// if (util.isMapHash(location.hash))
-		// 	// map albums are generated passing the data from the map, so here we must exit
-		// 	return;
-		if (Object.keys(Options).length > 0) {
-			f.parseHash(location.hash, tF.hashParsed, util.errorThenGoUp);
-		} else {
+			if (isABrowsingModeChange)
+				isABrowsingModeChange = false;
+			else {
+				// the image has changed, reset the search and map link
+				bySearchViewLink = null;
+				byMapViewLink = null;
+			}
+			$("#loading").show();
+			$("#album-view").removeClass("hidden");
+			$("link[rel=image_src]").remove();
+			$("link[rel=video_src]").remove();
+			$("ul#right-menu").removeClass("expand");
 			var promise = f.getOptions();
 			promise.then(
 				function() {
@@ -698,7 +695,7 @@ $(document).ready(function() {
 				}
 			);
 		}
-	});
+	);
 
 	// execution starts here
 	$(window).hashchange();
