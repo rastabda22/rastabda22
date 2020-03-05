@@ -2046,18 +2046,6 @@
 	};
 
 	PhotoFloat.selectMedia = function(theAlbum, mediaFolderHash, mediaHash, hashParsed) {
-
-		function keepOn() {
-			hashParsed(theAlbum, media, i);
-			if (
-				util.isSearchCacheBase(theAlbum.cacheBase)
-				// && (media === null && ! util.isAlbumWithOneMedia(theAlbum))
-			) {
-				$("ul#right-menu").addClass("expand");
-				util.focusSearchField();
-			}
-		}
-
 		util.initializeSortPropertiesAndCookies(theAlbum);
 		util.sortAlbumsMedia(theAlbum);
 
@@ -2107,7 +2095,14 @@
 				return;
 			}
 		}
-		keepOn();
+		if (
+			util.isSearchCacheBase(theAlbum.cacheBase)
+			// && (media === null && ! util.isAlbumWithOneMedia(theAlbum))
+		) {
+			$("ul#right-menu").addClass("expand");
+			util.focusSearchField();
+		}
+		hashParsed(theAlbum, media, i);
 	};
 
 	PhotoFloat.hashCode = function(hash) {
