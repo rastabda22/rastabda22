@@ -1277,7 +1277,7 @@
 	};
 
 	/* Error displays */
-	Utilities.prototype.die = function(error) {
+	Utilities.prototype.errorThenGoUp = function(error) {
 		if (error == 403) {
 			$("#auth-text").stop().fadeIn(1000);
 			$("#password").focus();

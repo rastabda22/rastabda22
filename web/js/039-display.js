@@ -686,12 +686,12 @@ $(document).ready(function() {
 		// 	// map albums are generated passing the data from the map, so here we must exit
 		// 	return;
 		if (Object.keys(Options).length > 0) {
-			f.parseHash(location.hash, tF.hashParsed, util.die);
+			f.parseHash(location.hash, tF.hashParsed, util.errorThenGoUp);
 		} else {
 			var promise = f.getOptions();
 			promise.then(
 				function() {
-					f.parseHash(location.hash, tF.hashParsed, util.die);
+					f.parseHash(location.hash, tF.hashParsed, util.errorThenGoUp);
 				},
 				function() {
 					console.trace();

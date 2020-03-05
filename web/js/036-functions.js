@@ -89,7 +89,7 @@
 	Functions.getAlbumNameFromAlbumHash = function(hash) {
 		return new Promise(
 			function(resolve_getAlbumNameFromAlbumHash) {
-				let getAlbumPromise = PhotoFloat.getAlbum(hash, util.die, {"getMedia": false, "getPositions": false});
+				let getAlbumPromise = PhotoFloat.getAlbum(hash, util.errorThenGoUp, {"getMedia": false, "getPositions": false});
 				getAlbumPromise.then(
 					function(theAlbum) {
 						var path;
