@@ -142,7 +142,7 @@
 		}
 	};
 
-	PhotoFloat.getStopWords = function(error) {
+	PhotoFloat.getStopWords = function() {
 		return new Promise(
 			function(resolve_getStopWords) {
 				if (! Options.search_inside_words && Options.use_stop_words) {
@@ -1649,7 +1649,6 @@
 			var removedStopWords = [];
 
 			// possibly we need the stop words, because if some searched word is a stop word it must be removed from the search
-			promise = PhotoFloat.getStopWords(util.die);
 			promise.then(
 				function removeStopWords(stopWords) {
 					// remove the stop words from the search words lists
@@ -1662,6 +1661,7 @@
 							stopWords.every(
 								function(word) {
 									return word !== searchWordsFromUserNormalized[i];
+					promise = PhotoFloat.getStopWords();
 								}
 							)
 						) {
