@@ -162,11 +162,10 @@
 								resolve_getStopWords(stopWords.stopWords);
 							}
 						};
-						if (typeof error !== "undefined" && error !== null) {
-							ajaxOptions.error = function(jqXHR) {
-								error(jqXHR.status);
-							};
-						}
+						ajaxOptions.error = function(jqXHR) {
+							// TO DO something different should be made here?
+							util.errorThenGoUp(jqXHR.status);
+						};
 						$.ajax(ajaxOptions);
 					}
 				} else {
