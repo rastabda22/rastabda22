@@ -399,6 +399,11 @@
 								// this is needed when getSingleProtectedCacheBaseWithExternalMediaAndPositions() is called by getNumsProtectedMediaInSubTreeProperty()
 								album.numsProtectedMediaInSubTree = protectedAlbum.numsProtectedMediaInSubTree;
 
+							if (! album.hasOwnProperty("name"))
+								album.name = protectedAlbum.name;
+							if (! album.hasOwnProperty("altName") && protectedAlbum.hasOwnProperty("altName"))
+								album.altName = protectedAlbum.altName;
+
 							album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].codesComplexCombination = protectedAlbum.codesComplexCombination;
 
 							if (! protectedAlbum.hasOwnProperty("numMedia"))
@@ -927,8 +932,8 @@
 										function(resolve_ithPromise, reject) {
 											if (
 												album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("protectedAlbumGot") &&
-												! getMedia || album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("mediaGot") &&
-												! getPositions || album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("positionsGot")
+												(! getMedia || album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("mediaGot")) &&
+												(! getPositions || album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("positionsGot"))
 											) {
 												// this cache base has been already loaded and either media/positions are already there or aren't needed now
 												resolve_ithPromise();
