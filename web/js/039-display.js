@@ -698,11 +698,14 @@ $(document).ready(function() {
 					promise.then(
 						function(array) {
 							tF.hashParsed(array);
+						},
+						function() {
+							util.errorThenGoUp();
 						}
 					);
 				},
 				function() {
-					console.trace();
+					util.errorThenGoUp();
 				}
 			);
 		}

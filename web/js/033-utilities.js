@@ -1322,6 +1322,10 @@
 		return PhotoFloat.guessedPasswordCodes[index];
 	};
 
+	Utilities.prototype.noOp = function() {
+		console.trace();
+	};
+
 	Utilities.prototype.convertCodesListToMd5sList = function(codesList) {
 		var i, index, md5sList = [];
 		for (i = 0; i < codesList.length; i ++) {
