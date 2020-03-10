@@ -1300,7 +1300,13 @@
 				$("#error-text-folder, #error-overlay, #auth-text").fadeOut(
 					3500,
 					function() {
-						window.location.href = rootLink;
+						var splittedHash = location.hash.split(Options.cache_folder_separator);
+						if (splittedHash.length > 2) {
+							splittedHash.pop();
+							window.location.href = splittedHash.join(Options.cache_folder_separator);
+						} else {
+							window.location.href = rootLink;
+						}
 					}
 				);
 				$("#album-view").stop().fadeOut(100).fadeIn(3500);
