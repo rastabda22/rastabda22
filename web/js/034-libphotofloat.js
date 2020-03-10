@@ -1142,7 +1142,7 @@
 							var promise = PhotoFloat.addProtectedContent(album, {"getMedia": getMedia, "getPositions": getPositions});
 							promise.then(
 								function() {
-									goOnTowardResolvingGetAlbum(album);
+									thingsToBeDoneBeforeResolvingGetAlbum(album);
 									resolve_getAlbum(album);
 								},
 								function() {
@@ -1173,7 +1173,7 @@
 								var promise = PhotoFloat.addProtectedContent(album, {"getMedia": getMedia, "getPositions": getPositions});
 								promise.then(
 									function() {
-										goOnTowardResolvingGetAlbum(album);
+										thingsToBeDoneBeforeResolvingGetAlbum(album);
 										resolve_getAlbum(album);
 									},
 									function() {
@@ -1181,7 +1181,7 @@
 									}
 								);
 							} else {
-								goOnTowardResolvingGetAlbum(album);
+								thingsToBeDoneBeforeResolvingGetAlbum(album);
 								resolve_getAlbum(album);
 							}
 						},
@@ -1190,7 +1190,7 @@
 							var promise = PhotoFloat.addProtectedContent(emptyAlbum, {"getMedia": getMedia, "getPositions": getPositions});
 							promise.then(
 								function() {
-									goOnTowardResolvingGetAlbum(emptyAlbum);
+									thingsToBeDoneBeforeResolvingGetAlbum(emptyAlbum);
 									resolve_getAlbum(emptyAlbum);
 								},
 								function() {
@@ -1204,7 +1204,7 @@
 		);
 		// end of getalbum function
 
-		function goOnTowardResolvingGetAlbum(theAlbum) {
+		function thingsToBeDoneBeforeResolvingGetAlbum(theAlbum) {
 			var i, j;
 			if (theAlbum.cacheBase == Options.by_search_string) {
 				// root of search albums: build the word list
@@ -1237,7 +1237,7 @@
 			if (! PhotoFloat.getAlbumFromCache(theAlbum.cacheBase))
 				PhotoFloat.putAlbumIntoCache(theAlbum.cacheBase, theAlbum);
 		}
-		//////// end of goOnTowardResolvingGetAlbum function
+		//////// end of thingsToBeDoneBeforeResolvingGetAlbum function
 
 		// auxiliary functions
 		function generateAncestorsCacheBase(album) {
