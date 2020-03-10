@@ -1646,19 +1646,19 @@
 					if (util.isSearchCacheBase(albumHash) && ! albumFromCache.subalbums.length && ! albumFromCache.media.length)
 						// it's a search with no results
 						util.noResults(albumFromCache);
-					let [theAlbum, media, i] = PhotoFloat.selectMedia(albumFromCache, mediaFolderHash, mediaHash);
+					let [theAlbum, singleMedia, i] = PhotoFloat.selectMedia(albumFromCache, mediaFolderHash, mediaHash);
 					if (theAlbum !== null)
-						resolve_parseHash([theAlbum, media, i]);
-						// hashParsed(theAlbum, media, i);
+						resolve_parseHash([theAlbum, singleMedia, i]);
+						// hashParsed(theAlbum, singleMedia, i);
 				} else if (! util.isSearchCacheBase(albumHash) || searchWordsFromUser.length === 0) {
 					// something is missing, getAlbum must be called
 					promise = PhotoFloat.getAlbum(albumHashToGet, reject_parseHash, {"getMedia": true, "getPositions": true});
 					promise.then(
 						function(album) {
-							let [theAlbum, media, i] = PhotoFloat.selectMedia(album, mediaFolderHash, mediaHash);
+							let [theAlbum, singleMedia, i] = PhotoFloat.selectMedia(album, mediaFolderHash, mediaHash);
 							if (theAlbum !== null)
-								resolve_parseHash([theAlbum, media, i]);
-								// hashParsed(theAlbum, media, i);
+								resolve_parseHash([theAlbum, singleMedia, i]);
+								// hashParsed(theAlbum, singleMedia, i);
 						},
 						function() {
 							console.trace();
@@ -1742,8 +1742,8 @@
 					}
 					var promise = PhotoFloat.endPreparingAlbumAndKeepOn(searchResultsAlbumFinal, mediaHash, mediaFolderHash);
 					promise.then(
-						function([theAlbum, media, i]) {
-							resolve_parseHash([theAlbum, media, i]);
+						function([theAlbum, singleMedia, i]) {
+							resolve_parseHash([theAlbum, singleMedia, i]);
 						}
 					);
 				}
@@ -1857,8 +1857,8 @@
 																	ithMedia.hasOwnProperty("gpsAlbumCacheBase") && ithMedia.gpsAlbumCacheBase.indexOf(Options.cache_base_to_search_in) === 0 ||
 																	util.isMapCacheBase(Options.cache_base_to_search_in) &&
 																	PhotoFloat.getAlbumFromCache(Options.cache_base_to_search_in).media.some(
-																		function(media) {
-																			return media.cacheBase == ithMedia.cacheBase && media.foldersCacheBase == ithMedia.foldersCacheBase;
+																		function(singleMedia) {
+																			return singleMedia.cacheBase == ithMedia.cacheBase && singleMedia.foldersCacheBase == ithMedia.foldersCacheBase;
 																		}
 																	)
 																)
@@ -1899,8 +1899,8 @@
 																	ithMedia.hasOwnProperty("gpsAlbumCacheBase") && ithMedia.gpsAlbumCacheBase.indexOf(Options.cache_base_to_search_in) === 0 ||
 																	util.isMapCacheBase(Options.cache_base_to_search_in) &&
 																	PhotoFloat.getAlbumFromCache(Options.cache_base_to_search_in).media.some(
-																		function(media) {
-																			return media.cacheBase == ithMedia.cacheBase && media.foldersCacheBase == ithMedia.foldersCacheBase;
+																		function(singleMedia) {
+																			return singleMedia.cacheBase == ithMedia.cacheBase && singleMedia.foldersCacheBase == ithMedia.foldersCacheBase;
 																		}
 																	)
 																)
@@ -2073,10 +2073,10 @@
 				// save in the cache array
 				PhotoFloat.putAlbumIntoCache(resultsAlbumFinal.cacheBase, resultsAlbumFinal);
 
-				var [theAlbum, media, i] = PhotoFloat.selectMedia(resultsAlbumFinal, mediaFolderHash, mediaHash);
+				var [theAlbum, singleMedia, i] = PhotoFloat.selectMedia(resultsAlbumFinal, mediaFolderHash, mediaHash);
 				if (theAlbum !== null)
-					resolve_endPreparingAlbumAndKeepOn([theAlbum, media, i]);
-					// hashParsed(theAlbum, media, i);
+					resolve_endPreparingAlbumAndKeepOn([theAlbum, singleMedia, i]);
+					// hashParsed(theAlbum, singleMedia, i);
 
 				$("#loading").hide();
 			}
@@ -2088,7 +2088,7 @@
 		util.sortAlbumsMedia(theAlbum);
 
 		var i = -1;
-		var media = null;
+		var singleMedia = null;
 		if (mediaHash !== null) {
 			i = theAlbum.media.findIndex(
 				function(thisMedia) {
@@ -2099,7 +2099,7 @@
 				}
 			);
 			if (i !== -1) {
-				media = theAlbum.media[i];
+				singleMedia = theAlbum.media[i];
 			} else {
 				$("#loading").stop().hide();
 
@@ -2140,7 +2140,7 @@
 			$("ul#right-menu").addClass("expand");
 			util.focusSearchField();
 		}
-		return [theAlbum, media, i];
+		return [theAlbum, singleMedia, i];
 	};
 
 	PhotoFloat.hashCode = function(hash) {
@@ -2160,8 +2160,8 @@
 		}
 	};
 
-	PhotoFloat.mediaHash = function(album, media) {
-		return media.cacheBase;
+	PhotoFloat.mediaHash = function(album, singleMedia) {
+		return singleMedia.cacheBase;
 	};
 
 	PhotoFloat.cleanHash = function(hash) {
