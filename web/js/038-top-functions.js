@@ -170,7 +170,6 @@
 			}
 
 			for (i = 2; i < components.length; ++i) {
-				// var currentAlbumPath = currentAlbum.ancestorsNames;
 				if (i == components.length - 1 && currentAlbum.ancestorsNames[i - 1].match(/_[0-9]+$/)) {
 					gpsName = util.transformAltPlaceName(currentAlbum.ancestorsNames[i - 1]);
 				} else {
