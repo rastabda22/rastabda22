@@ -997,7 +997,7 @@
 
 	Functions.getOptions = function() {
 		return new Promise(
-			function(resolve_getOptions) {
+			function(resolve_getOptions, reject_getOptions) {
 				if (Object.keys(Options).length > 0) {
 					if (! util.isSearchHash(location.hash)) {
 						// reset the return link from search
@@ -1161,12 +1161,7 @@
 						},
 						error: function(jqXHR, textStatus, errorThrown) {
 							if (errorThrown == "Not Found") {
-								$("#album-view").fadeOut(200);
-								$("#media-view").fadeOut(200);
-								$("#album-view").stop().fadeIn(3500);
-								$("#media-view").stop().fadeIn(3500);
-								$("#error-options-file").stop().fadeIn(200);
-								$("#error-options-file, #error-overlay, #auth-text").fadeOut(2500);
+								reject_getOptions();
 							}
 						}
 					};

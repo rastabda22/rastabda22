@@ -694,6 +694,10 @@ $(document).ready(function() {
 						f.setBooleanCookie("search_current_album", Options.search_current_album);
 						f.updateMenu();
 					}
+					// parseHash returns an array of 3 elements:
+					// - the requested album
+					// - the requested media (if applicable)
+					// - the requested media index (if applicable)
 					var promise = phFl.parseHash(location.hash);
 					promise.then(
 						function(array) {
@@ -705,7 +709,12 @@ $(document).ready(function() {
 					);
 				},
 				function() {
-					util.errorThenGoUp();
+					$("#album-view").fadeOut(200);
+					$("#media-view").fadeOut(200);
+					$("#album-view").stop().fadeIn(3500);
+					$("#media-view").stop().fadeIn(3500);
+					$("#error-options-file").stop().fadeIn(200);
+					$("#error-options-file, #error-overlay, #auth-text").fadeOut(2500);
 				}
 			);
 		}
