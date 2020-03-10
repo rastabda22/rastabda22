@@ -688,7 +688,13 @@ $(document).ready(function() {
 			var promise = f.getOptions();
 			promise.then(
 				function() {
-					var promise = f.parseHash(location.hash, util.errorThenGoUp);
+					if (! util.isSearchHash(location.hash)) {
+						// reset current album search flag to its default value
+						Options.search_current_album = true;
+						f.setBooleanCookie("search_current_album", Options.search_current_album);
+						f.updateMenu();
+					}
+					var promise = phFl.parseHash(location.hash);
 					promise.then(
 						function(array) {
 							tF.hashParsed(array);

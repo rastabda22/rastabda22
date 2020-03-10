@@ -995,39 +995,6 @@
 		return result;
 	};
 
-
-	// this function is needed in order to let this point to the correct value in phFl.parseHash
-	Functions.parseHash = function(hash, error) {
-		return new Promise(
-			function(resolve_f_parseHash) {
-				if (! util.isSearchHash(hash)) {
-					// reset current album search flag to its default value
-					Options.search_current_album = true;
-					Functions.setBooleanCookie("search_current_album", Options.search_current_album);
-					Functions.updateMenu();
-				}
-
-				var promise = Functions.getOptions();
-				promise.then(
-					function() {
-						var promise = phFl.parseHash(hash);
-						promise.then(
-							function(array) {
-								resolve_f_parseHash(array);
-							},
-							error
-						);
-					},
-					function(album) {
-						console.trace();
-					}
-				);
-				// }
-				// phFl.parseHash(hash, callback, error);
-			}
-		);
-	};
-
 	Functions.getOptions = function() {
 		return new Promise(
 			function(resolve_getOptions) {
