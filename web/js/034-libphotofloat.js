@@ -1537,9 +1537,9 @@
 	};
 
 
-	PhotoFloat.prototype.parseHash = function(hash, error) {
+	PhotoFloat.prototype.parseHash = function(hash) {
 		return new Promise(
-			function(resolve_parseHash) {
+			function(resolve_parseHash, reject_parseHash) {
 				var searchResultsAlbumFinal = {};
 				var removedStopWords = [];
 				var searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions;
@@ -1652,7 +1652,7 @@
 						// hashParsed(theAlbum, media, i);
 				} else if (! util.isSearchCacheBase(albumHash) || searchWordsFromUser.length === 0) {
 					// something is missing, getAlbum must be called
-					promise = PhotoFloat.getAlbum(albumHashToGet, error, {"getMedia": true, "getPositions": true});
+					promise = PhotoFloat.getAlbum(albumHashToGet, reject_parseHash, {"getMedia": true, "getPositions": true});
 					promise.then(
 						function(album) {
 							let [theAlbum, media, i] = PhotoFloat.selectMedia(album, mediaFolderHash, mediaHash);
@@ -1759,7 +1759,7 @@
 					}
 
 					// get the search root album before getting the search words ones
-					var promise = PhotoFloat.getAlbum(Options.by_search_string, error, {"getMedia": true, "getPositions": true});
+					var promise = PhotoFloat.getAlbum(Options.by_search_string, reject_parseHash, {"getMedia": true, "getPositions": true});
 					promise.then(
 						function(bySearchRootAlbum) {
 							var lastIndex, i, j, wordHashes, numSearchAlbumsReady = 0, numSubAlbumsToGet = 0, normalizedWords;
@@ -1834,7 +1834,7 @@
 									searchResultsSubalbums[indexWords] = [];
 									for (indexAlbums = 0; indexAlbums < albumHashes[indexWords].length; indexAlbums ++) {
 										let thisIndexWords = indexWords, thisIndexAlbums = indexAlbums;
-										var promise = PhotoFloat.getAlbum(albumHashes[thisIndexWords][thisIndexAlbums], error, {"getMedia": true, "getPositions": true});
+										var promise = PhotoFloat.getAlbum(albumHashes[thisIndexWords][thisIndexAlbums], reject_parseHash, {"getMedia": true, "getPositions": true});
 										promise.then(
 											function(theAlbum) {
 												var matchingMedia = [], matchingSubalbums = [], match, indexMedia, indexSubalbums, indexWordsLeft, resultAlbum, indexWords1, ithMedia, ithSubalbum;
