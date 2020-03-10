@@ -813,7 +813,7 @@
 		// this function adds the protected content to the given album
 
 		return new Promise(
-			function(resolve_addProtectedContent, reject) {
+			function(resolve_addProtectedContent, reject_addProtectedContent) {
 				var numsPromise;
 				if (album.hasOwnProperty("numsProtectedMediaInSubTree")) {
 					numsPromise = continueAddProtectedContent();
@@ -846,10 +846,7 @@
 									}
 								);
 							},
-							function() {
-								util.errorThenGoUp();
-								// console.trace();
-							}
+							reject_addProtectedContent
 						);
 					}
 				}
