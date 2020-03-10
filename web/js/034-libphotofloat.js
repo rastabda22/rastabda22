@@ -1535,15 +1535,17 @@
 	PhotoFloat.prototype.parseHash = function(hash, hashParsed, error) {
 		return new Promise(
 			function(resolve_parseHash) {
-				var albumHashToGet, albumHashes, wordSubalbums;
+				var searchResultsAlbumFinal = {};
+				var removedStopWords = [];
 				var searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions;
+				var albumHashToGet, albumHashes, wordSubalbums;
+				var [albumHash, mediaHash, mediaFolderHash] = PhotoFloat.decodeHash(hash);
 				var indexWords, indexAlbums, wordsWithOptionsString;
 				// this vars are defined here and not at the beginning of the file because the options must have been read
 
 				$("#error-too-many-images").hide();
 				$(".search-failed").hide();
 				// $("#media-view").removeClass("hidden");
-				var [albumHash, mediaHash, mediaFolderHash] = PhotoFloat.decodeHash(hash);
 				// $("ul#right-menu li#album-search").removeClass("hidden");
 				$("ul#right-menu li#any-word").removeClass("dimmed");
 				$("#album-view, #album-view #subalbums, #album-view #thumbs").removeClass("hidden");
@@ -1596,7 +1598,6 @@
 						if (searchWordsFromUser.length == 1)
 							$("ul#right-menu li#any-word").addClass("dimmed").off("click");
 
-						var searchResultsAlbumFinal = {};
 						searchResultsAlbumFinal.positionsAndMediaInTree = [];
 						searchResultsAlbumFinal.media = [];
 						searchResultsAlbumFinal.subalbums = [];
@@ -1661,7 +1662,6 @@
 				} else {
 					// it's a search!
 					// self = this;
-					var removedStopWords = [];
 
 					// possibly we need the stop words, because if some searched word is a stop word it must be removed from the search
 					promise = PhotoFloat.getStopWords();
