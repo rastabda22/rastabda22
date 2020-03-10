@@ -403,6 +403,10 @@
 								album.name = protectedAlbum.name;
 							if (! album.hasOwnProperty("altName") && protectedAlbum.hasOwnProperty("altName"))
 								album.altName = protectedAlbum.altName;
+							if (! album.hasOwnProperty("ancestorsNames") && protectedAlbum.hasOwnProperty("ancestorsNames"))
+								album.ancestorsNames = protectedAlbum.ancestorsNames;
+							if (! album.hasOwnProperty("ancestorsCenters") && protectedAlbum.hasOwnProperty("ancestorsCenters"))
+								album.ancestorsCenters = protectedAlbum.ancestorsCenters;
 
 							album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].codesComplexCombination = protectedAlbum.codesComplexCombination;
 
