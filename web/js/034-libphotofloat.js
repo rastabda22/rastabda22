@@ -1086,13 +1086,15 @@
 				}
 
 				var promise;
+				// add media and positions
 				if (album) {
 					if (
 						// map albums and search albums already have all the media and positions
 						util.isMapCacheBase(album.cacheBase) || util.isSearchCacheBase(album.cacheBase) ||
-						// the album hasn't unprotected content => not adding media/positions  => go immediately to promise.then
+						// the album hasn't unprotected content
 						album.includedFilesByCodesSimpleCombination[","] === false
 					) {
+						// not adding media/positions  => go immediately to promise.then
 						promise = new Promise(
 							function(resolve) {
 								resolve([false, false]);
@@ -1152,7 +1154,9 @@
 						}
 					);
 				} else if (util.isMapCacheBase(albumCacheBase)) {
-					// map album are not on server, if they aren't in cache go to root album
+					// map albums are not on server:
+					// if the album hasn't been passed as argument and isn't in cache => go to root album
+					// execution arrives here if a map album is reloaded or opened from a link
 					$("#loading").hide();
 					$("#error-unexistent-map-album").stop().fadeIn(200);
 					$("#error-unexistent-map-album").fadeOut(
@@ -1162,7 +1166,7 @@
 						}
 					);
 				} else {
-					// the album is not in cache, get it brand new
+					// neiter the album has been passed as argument, nor is in cache, get it brand new
 					promise = PhotoFloat.getSingleUnprotectedCacheBaseWithExternalMediaAndPositions(albumCacheBase, {"getMedia": getMedia, "getPositions": getPositions});
 					promise.then(
 						function unprotectedAlbumGot(album) {
@@ -1236,7 +1240,7 @@
 		}
 		//////// end of thingsToBeDoneBeforeResolvingGetAlbum function
 
-		// auxiliary functions
+		// auxiliary function
 		function generateAncestorsCacheBase(album) {
 			if (! album.hasOwnProperty("ancestorsCacheBase")) {
 				var i;
