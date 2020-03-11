@@ -1485,7 +1485,7 @@
 		);
 	};
 
-	PhotoFloat.upHash = function() {
+	PhotoFloat.prototype.upHash = function() {
 		var resultHash;
 		var hash = window.location.hash;
 		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
@@ -2186,7 +2186,6 @@
 	PhotoFloat.prototype.encodeHash = PhotoFloat.encodeHash;
 	PhotoFloat.prototype.cleanHash = PhotoFloat.cleanHash;
 	PhotoFloat.prototype.decodeHash = PhotoFloat.decodeHash;
-	PhotoFloat.prototype.upHash = PhotoFloat.upHash;
 	PhotoFloat.prototype.hashCode = PhotoFloat.hashCode;
 	PhotoFloat.prototype.endPreparingAlbumAndKeepOn = PhotoFloat.endPreparingAlbumAndKeepOn;
 	PhotoFloat.prototype.searchAndSubalbumHash = PhotoFloat.searchAndSubalbumHash;
