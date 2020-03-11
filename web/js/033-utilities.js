@@ -1263,7 +1263,7 @@
 				$("#auth-text").hide();
 				$("#album-view, #media-view, #my-modal").css("opacity", "");
 				if (maybeProtectedContent)
-					window.location.href = PhotoFloat.upHash();
+					window.location.href = Utilities.upHash();
 					// Utilities.goUpInHash();
 			}
 		);
@@ -1275,6 +1275,58 @@
 		$("#please-fill").hide();
 		$("#identity").attr("title", Utilities._t("#identity-explication"));
 	};
+
+	Utilities.upHash = function() {
+		var resultHash;
+		var hash = window.location.hash;
+		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
+
+		if (mediaHash === null || Utilities.isAlbumWithOneMedia(currentAlbum)) {
+			// hash of an album: go up in the album tree
+			if (savedSearchAlbumHash !== null) {
+				if (albumHash == savedSearchSubAlbumHash)
+					resultHash = savedSearchAlbumHash;
+				else {
+					// we must go up in the sub folder
+					albumHash = albumHash.split(Options.cache_folder_separator).slice(0, -1).join(Options.cache_folder_separator);
+					resultHash = Utilities.pathJoin([
+						albumHash,
+						savedSearchSubAlbumHash,
+						savedSearchAlbumHash
+					]);
+				}
+			} else {
+				if (albumHash == Options.folders_string)
+					// stay there
+					resultHash = albumHash;
+				else if (albumHash == Options.by_date_string || albumHash == Options.by_gps_string || albumHash == Options.by_map_string)
+					// go to folders root
+					resultHash = Options.folders_string;
+				else if (Utilities.isSearchCacheBase(albumHash) || Utilities.isMapCacheBase(albumHash)) {
+					// the return folder must be extracted from the album hash
+					resultHash = albumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
+				} else {
+					// we must go up in the sub folders tree
+					resultHash = albumHash.split(Options.cache_folder_separator).slice(0, -1).join(Options.cache_folder_separator);
+				}
+			}
+		} else {
+			// hash of a media: remove the media
+			if (savedSearchAlbumHash !== null || Utilities.isFolderCacheBase(albumHash))
+				// media in found album or in one of its subalbum
+				// or
+				// media in folder hash:
+				// remove the trailing media
+				resultHash = Utilities.pathJoin(hash.split("/").slice(1, -1));
+			else
+				// all the other cases
+				// remove the trailing media and the folder it's inside
+				resultHash = Utilities.pathJoin(hash.split("/").slice(1, -2));
+		}
+
+		return "#!/" + resultHash;
+	};
+
 
 	/* Error displays */
 	Utilities.prototype.errorThenGoUp = function(error) {
@@ -1300,13 +1352,15 @@
 				$("#error-text-folder, #error-overlay, #auth-text").fadeOut(
 					3500,
 					function() {
-						var splittedHash = location.hash.split(Options.cache_folder_separator);
-						if (splittedHash.length > 2) {
-							splittedHash.pop();
-							window.location.href = splittedHash.join(Options.cache_folder_separator);
-						} else {
-							window.location.href = rootLink;
-						}
+						window.location.href = Utilities.upHash();
+
+						// var splittedHash = location.hash.split(Options.cache_folder_separator);
+						// if (splittedHash.length > 2) {
+						// 	splittedHash.pop();
+						// 	window.location.href = splittedHash.join(Options.cache_folder_separator);
+						// } else {
+						// 	window.location.href = rootLink;
+						// }
 					}
 				);
 				$("#album-view").stop().fadeOut(100).fadeIn(3500);
@@ -1492,6 +1546,7 @@
 	Utilities.prototype.getLanguage = Utilities.getLanguage;
 	Utilities.prototype.imagesAndVideosTotal = Utilities.imagesAndVideosTotal;
 	Utilities.prototype.imagesAndVideosSum = Utilities.imagesAndVideosSum;
+	Utilities.prototype.upHash = Utilities.upHash;
 
 	window.Utilities = Utilities;
 }());

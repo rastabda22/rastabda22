@@ -1122,7 +1122,7 @@
 			$("#next").off();
 			$("#prev").off();
 
-			upLink = phFl.upHash();
+			upLink = util.upHash();
 
 			mediaBoxInnerElement.off('mousewheel');
 			if (singleMedia.mimeType.indexOf("image") === 0)
@@ -1310,7 +1310,7 @@
 			// the album hasn't any content:
 			// either the hash is wrong or it's a protected content album
 			// go up
-			window.location.href = PhotoFloat.upHash();
+			window.location.href = util.upHash();
 			return;
 		}
 
@@ -2020,7 +2020,7 @@
 					firstEscKey = true;
 				}
 
-				upLink = phFl.upHash();
+				upLink = util.upHash();
 
 				if (
 					populate === true ||
