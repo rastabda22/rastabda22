@@ -1302,7 +1302,7 @@
 	};
 
 
-	TopFunctions.prototype.hashParsed = function(album, singleMedia, mediaIndex) {
+	TopFunctions.prototype.showAlbumOrMedia = function(album, singleMedia, mediaIndex) {
 		var populateAlbum;
 		var currentAlbumPath, currentAlbumPathArray;
 
@@ -1359,7 +1359,7 @@
 			prevMedia = null;
 			TopFunctions.showMedia(currentAlbum, currentMedia, 'center');
 
-			// we are in hashParsed
+			// we are in showAlbumOrMedia
 			// activate the map and the popup when coming back from a map album
 			if (
 				previousAlbum !== null &&

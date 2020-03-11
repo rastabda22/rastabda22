@@ -704,7 +704,7 @@ $(document).ready(function() {
 					var promise = phFl.parseHashAndReturnAlbumAndMedia(location.hash);
 					promise.then(
 						function([album, singleMedia, mediaIndex]) {
-							tF.hashParsed(album, singleMedia, mediaIndex);
+							tF.showAlbumOrMedia(album, singleMedia, mediaIndex);
 						},
 						function() {
 							util.errorThenGoUp();
