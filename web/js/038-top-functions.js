@@ -1302,7 +1302,7 @@
 	};
 
 
-	TopFunctions.prototype.hashParsed = function([album, singleMedia, mediaIndex]) {
+	TopFunctions.prototype.hashParsed = function(album, singleMedia, mediaIndex) {
 		var populateAlbum;
 		var currentAlbumPath, currentAlbumPathArray;
 

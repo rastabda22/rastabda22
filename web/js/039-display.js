@@ -703,8 +703,8 @@ $(document).ready(function() {
 					// - the requested media index (if applicable)
 					var promise = phFl.parseHashAndReturnAlbumAndMedia(location.hash);
 					promise.then(
-						function(array) {
-							tF.hashParsed(array);
+						function([album, singleMedia, mediaIndex]) {
+							tF.hashParsed(album, singleMedia, mediaIndex);
 						},
 						function() {
 							util.errorThenGoUp();
