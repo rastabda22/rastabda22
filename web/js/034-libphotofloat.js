@@ -1619,7 +1619,6 @@
 						if (albumHash == Options.by_search_string) {
 							util.noResults(searchResultsAlbumFinal, '#no-search-string');
 							resolve_parseHash([searchResultsAlbumFinal, null, -1]);
-							// hashParsed(searchResultsAlbumFinal, null, -1);
 							return;
 						}
 					}
@@ -1649,7 +1648,6 @@
 					let [theAlbum, singleMedia, i] = PhotoFloat.selectMedia(albumFromCache, mediaFolderHash, mediaHash);
 					if (theAlbum !== null)
 						resolve_parseHash([theAlbum, singleMedia, i]);
-						// hashParsed(theAlbum, singleMedia, i);
 				} else if (! util.isSearchCacheBase(albumHash) || searchWordsFromUser.length === 0) {
 					// something is missing, getAlbum must be called
 					promise = PhotoFloat.getAlbum(albumHashToGet, reject_parseHash, {"getMedia": true, "getPositions": true});
@@ -1658,7 +1656,6 @@
 							let [theAlbum, singleMedia, i] = PhotoFloat.selectMedia(album, mediaFolderHash, mediaHash);
 							if (theAlbum !== null)
 								resolve_parseHash([theAlbum, singleMedia, i]);
-								// hashParsed(theAlbum, singleMedia, i);
 						},
 						function() {
 							console.trace();
@@ -1754,7 +1751,6 @@
 					if (searchWordsFromUser.length == 0) {
 						util.noResults(searchResultsAlbumFinal, '#no-search-string-after-stopwords-removed');
 						resolve_parseHash([searchResultsAlbumFinal, null, -1]);
-						// hashParsed(searchResultsAlbumFinal, null, -1);
 						return;
 					}
 
@@ -1821,11 +1817,9 @@
 							if (numSubAlbumsToGet === 0) {
 								util.noResults(searchResultsAlbumFinal);
 								resolve_parseHash([searchResultsAlbumFinal, null, -1]);
-								// hashParsed(searchResultsAlbumFinal, null, -1);
 							} else if (numSubAlbumsToGet > Options.max_search_album_number) {
 								util.noResults(searchResultsAlbumFinal, '#search-too-wide');
 								resolve_parseHash([searchResultsAlbumFinal, null, -1]);
-								// hashParsed(searchResultsAlbumFinal, null, -1);
 							} else {
 								$(".search-failed").hide();
 								searchResultsAlbumFinal.numsProtectedMediaInSubTree = util.sumNumsProtectedMediaOfArray(wordSubalbums);
@@ -2076,7 +2070,6 @@
 				var [theAlbum, singleMedia, i] = PhotoFloat.selectMedia(resultsAlbumFinal, mediaFolderHash, mediaHash);
 				if (theAlbum !== null)
 					resolve_endPreparingAlbumAndKeepOn([theAlbum, singleMedia, i]);
-					// hashParsed(theAlbum, singleMedia, i);
 
 				$("#loading").hide();
 			}
