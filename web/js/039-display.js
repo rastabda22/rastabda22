@@ -473,6 +473,9 @@ $(document).ready(function() {
 		return false;
 	});
 
+
+	/* Entry point for most events */
+
 	$('#search-field').keypress(function(ev) {
 		$("#right-menu li.search ul").removeClass("hidden");
 		if (ev.which == 13) {
@@ -694,11 +697,11 @@ $(document).ready(function() {
 						f.setBooleanCookie("search_current_album", Options.search_current_album);
 						f.updateMenu();
 					}
-					// parseHash returns an array of 3 elements:
+					// parseHashAndReturnAlbumAndMedia returns an array of 3 elements:
 					// - the requested album
 					// - the requested media (if applicable)
 					// - the requested media index (if applicable)
-					var promise = phFl.parseHash(location.hash);
+					var promise = phFl.parseHashAndReturnAlbumAndMedia(location.hash);
 					promise.then(
 						function(array) {
 							tF.hashParsed(array);

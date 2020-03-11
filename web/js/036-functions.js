@@ -1258,7 +1258,6 @@
 		}
 	};
 
-	Functions.prototype.parseHash = Functions.parseHash;
 	Functions.prototype.getOptions = Functions.getOptions;
 	Functions.prototype.getBooleanCookie = Functions.getBooleanCookie;
 	Functions.prototype.setBooleanCookie = Functions.setBooleanCookie;

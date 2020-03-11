@@ -1302,9 +1302,7 @@
 	};
 
 
-	/* Entry point for most events */
-
-	TopFunctions.hashParsed = function([album, singleMedia, mediaIndex]) {
+	TopFunctions.prototype.hashParsed = function([album, singleMedia, mediaIndex]) {
 		var populateAlbum;
 		var currentAlbumPath, currentAlbumPathArray;
 
@@ -2984,7 +2982,6 @@
 
 
 	TopFunctions.prototype.goFullscreen = TopFunctions.goFullscreen;
-	TopFunctions.prototype.hashParsed = TopFunctions.hashParsed;
 	TopFunctions.prototype.showBrowsingModeMessage = TopFunctions.showBrowsingModeMessage;
 	// TopFunctions.prototype.goUpIfProtected = TopFunctions.goUpIfProtected;
 

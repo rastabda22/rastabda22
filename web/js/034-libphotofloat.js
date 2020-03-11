@@ -1537,7 +1537,7 @@
 	};
 
 
-	PhotoFloat.prototype.parseHash = function(hash) {
+	PhotoFloat.prototype.parseHashAndReturnAlbumAndMedia = function(hash) {
 		return new Promise(
 			function(resolve_parseHash, reject_parseHash) {
 				var searchResultsAlbumFinal = {};
@@ -1701,7 +1701,7 @@
 						}
 					);
 				}
-				// end of parseHash promise code
+				// end of parseHashAndReturnAlbumAndMedia promise code
 
 				function subalbumsAbsentOrGot() {
 					var indexMedia, indexSubalbums;
