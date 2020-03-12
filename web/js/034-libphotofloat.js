@@ -1569,7 +1569,7 @@
 							// does execution actually arrive here?
 							util.noResults(searchResultsAlbumFinal, '#no-search-string');
 							// the resolve function is needed at least in order to show the title
-							resolve_parseHash([searchResultsAlbumFinal, null, -1]);
+							resolve_parseHash([searchResultsAlbumFinal, -1]);
 							return;
 						}
 					}
@@ -1607,15 +1607,16 @@
 						// it's a search with no results
 						util.noResults(albumFromCache);
 						// the resolve function is needed at least in order to show the title
-						resolve_parseHash([searchResultsAlbumFinal, null, -1]);
+						resolve_parseHash([searchResultsAlbumFinal, -1]);
 					} else {
 						// it's not a search without results: everything is ok, resolve!
-						let [singleMedia, i] = PhotoFloat.decodeMediaAndIndex(albumFromCache, mediaFolderHash, mediaHash);
-						if (albumFromCache !== null) {
-							resolve_parseHash([albumFromCache, singleMedia, i]);
+						let result = PhotoFloat.getMediaIndex(albumFromCache, mediaFolderHash, mediaHash);
+						if (result === null) {
+							// getMediaIndex arguments don't match any media in the album,
+							// either the authentication dialog has been shown or the hash has been changed to the album
+							// Nothing to do
 						} else {
-							// TO DO: what?!?!?
-							// null album!
+							resolve_parseHash([albumFromCache, result]);
 						}
 					}
 				} else if (! util.isSearchCacheBase(albumHash) || searchWordsFromUser.length === 0) {
@@ -1623,12 +1624,13 @@
 					promise = PhotoFloat.getAlbum(albumHashToGet, reject_parseHash, {"getMedia": true, "getPositions": true});
 					promise.then(
 						function(album) {
-							let [singleMedia, i] = PhotoFloat.decodeMediaAndIndex(album, mediaFolderHash, mediaHash);
-							if (album !== null) {
-								resolve_parseHash([album, singleMedia, i]);
+							let result = PhotoFloat.getMediaIndex(album, mediaFolderHash, mediaHash);
+							if (result === null) {
+								// getMediaIndex arguments don't match any media in the album,
+								// either the authentication dialog has been shown or the hash has been changed to the album
+								// Nothing to do
 							} else {
-								// TO DO: what?!?!?
-								// null album!
+								resolve_parseHash([album, result]);
 							}
 						},
 						function() {
@@ -1713,8 +1715,8 @@
 					}
 					var promise = PhotoFloat.endPreparingAlbumAndKeepOn(searchResultsAlbumFinal, mediaHash, mediaFolderHash);
 					promise.then(
-						function([theAlbum, singleMedia, i]) {
-							resolve_parseHash([theAlbum, singleMedia, i]);
+						function(i) {
+							resolve_parseHash([searchResultsAlbumFinal, i]);
 						}
 					);
 				}
@@ -1724,7 +1726,7 @@
 					// has any word remained after stop words have been removed?
 					if (searchWordsFromUser.length == 0) {
 						util.noResults(searchResultsAlbumFinal, '#no-search-string-after-stopwords-removed');
-						resolve_parseHash([searchResultsAlbumFinal, null, -1]);
+						resolve_parseHash([searchResultsAlbumFinal, -1]);
 						return;
 					}
 
@@ -1790,10 +1792,10 @@
 
 							if (numSubAlbumsToGet === 0) {
 								util.noResults(searchResultsAlbumFinal);
-								resolve_parseHash([searchResultsAlbumFinal, null, -1]);
+								resolve_parseHash([searchResultsAlbumFinal, -1]);
 							} else if (numSubAlbumsToGet > Options.max_search_album_number) {
 								util.noResults(searchResultsAlbumFinal, '#search-too-wide');
-								resolve_parseHash([searchResultsAlbumFinal, null, -1]);
+								resolve_parseHash([searchResultsAlbumFinal, -1]);
 							} else {
 								$(".search-failed").hide();
 								searchResultsAlbumFinal.numsProtectedMediaInSubTree = util.sumNumsProtectedMediaOfArray(wordSubalbums);
@@ -2041,12 +2043,13 @@
 				// save in the cache array
 				PhotoFloat.putAlbumIntoCache(resultsAlbumFinal.cacheBase, resultsAlbumFinal);
 
-				var [singleMedia, i] = PhotoFloat.decodeMediaAndIndex(resultsAlbumFinal, mediaFolderHash, mediaHash);
-				if (resultsAlbumFinal !== null) {
-					resolve_endPreparingAlbumAndKeepOn([resultsAlbumFinal, singleMedia, i]);
+				var result = PhotoFloat.getMediaIndex(resultsAlbumFinal, mediaFolderHash, mediaHash);
+				if (result === null) {
+					// getMediaIndex arguments don't match any media in the album,
+					// either the authentication dialog has been shown or the hash has been changed to the album
+					// Nothing to do
 				} else {
-					// TO DO: what?!?!?
-					// null album!
+					resolve_endPreparingAlbumAndKeepOn(result);
 				}
 
 				$("#loading").hide();
@@ -2054,14 +2057,16 @@
 		);
 	};
 
-	PhotoFloat.decodeMediaAndIndex = function(theAlbum, mediaFolderHash, mediaHash) {
+	PhotoFloat.getMediaIndex = function(theAlbum, mediaFolderHash, mediaHash) {
+		// returns the index of the media identified by the arguments
+		// returns null if no media matches
+
 		util.initializeSortPropertiesAndCookies(theAlbum);
 		util.sortAlbumsMedia(theAlbum);
 
-		var i = -1;
-		var singleMedia = null;
+		var mediaIndex = -1;
 		if (mediaHash !== null) {
-			i = theAlbum.media.findIndex(
+			mediaIndex = theAlbum.media.findIndex(
 				function(thisMedia) {
 					var matches =
 						thisMedia.cacheBase === mediaHash &&
@@ -2069,9 +2074,7 @@
 					return matches;
 				}
 			);
-			if (i !== -1) {
-				singleMedia = theAlbum.media[i];
-			} else {
+			if (mediaIndex === -1) {
 				$("#loading").stop().hide();
 
 				if (
@@ -2095,7 +2098,7 @@
 						2500,
 						function() {
 							window.location.href = "#!" + theAlbum.cacheBase;
-							// i = -1;
+							// mediaIndex = -1;
 							// keepOn();
 							$("#media-view").fadeIn(100);
 						}
@@ -2111,7 +2114,7 @@
 			$("ul#right-menu").addClass("expand");
 			util.focusSearchField();
 		}
-		return [singleMedia, i];
+		return mediaIndex;
 	};
 
 	PhotoFloat.hashCode = function(hash) {

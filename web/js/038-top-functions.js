@@ -1302,7 +1302,7 @@
 	};
 
 
-	TopFunctions.prototype.showAlbumOrMedia = function(album, singleMedia, mediaIndex) {
+	TopFunctions.prototype.showAlbumOrMedia = function(album, mediaIndex) {
 		var populateAlbum;
 		var currentAlbumPath, currentAlbumPathArray;
 
@@ -1322,8 +1322,8 @@
 			currentAlbum = null;
 		}
 
-		if (currentAlbum && util.isByDateCacheBase(currentAlbum.cacheBase) && singleMedia !== null) {
-			previousMedia = singleMedia;
+		if (currentAlbum && util.isByDateCacheBase(currentAlbum.cacheBase) && mediaIndex !== -1) {
+			previousMedia = album.media[mediaIndex];
 		} else {
 			previousMedia = currentMedia;
 		}
@@ -1333,7 +1333,9 @@
 			$("#media-center")[0].pause();
 
 		currentAlbum = album;
-		currentMedia = singleMedia;
+		currentMedia = null;
+		if (mediaIndex !== -1)
+			currentMedia = album.media[mediaIndex];
 		currentMediaIndex = mediaIndex;
 
 		var isAlbumWithOneMedia = util.isAlbumWithOneMedia(currentAlbum);
