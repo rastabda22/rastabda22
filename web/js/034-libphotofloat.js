@@ -1565,7 +1565,10 @@
 						searchResultsAlbumFinal.numsProtectedMediaInSubTree = {"": imagesAndVideos0};
 
 						if (albumHash == Options.by_search_string) {
+							// no search term
+							// does execution actually arrive here?
 							util.noResults(searchResultsAlbumFinal, '#no-search-string');
+							// the resolve function is needed at least in order to show the title
 							resolve_parseHash([searchResultsAlbumFinal, null, -1]);
 							return;
 						}
@@ -1589,21 +1592,44 @@
 					PhotoFloat.searchAndSubalbumHash = decodeURI(PhotoFloat.searchAndSubalbumHash);
 
 				var albumFromCache = PhotoFloat.getAlbumFromCache(albumHashToGet), promise;
-				if (albumFromCache && ! PhotoFloat.guessedPasswordsMd5.length && albumFromCache.hasOwnProperty("subalbums") && albumFromCache.hasOwnProperty("media") && albumFromCache.hasOwnProperty("positionsAndMediaInTree")) {
-					if (util.isSearchCacheBase(albumHash) && ! albumFromCache.subalbums.length && ! albumFromCache.media.length)
+				if (
+					albumFromCache &&
+					! PhotoFloat.guessedPasswordsMd5.length &&
+					albumFromCache.hasOwnProperty("subalbums") &&
+					albumFromCache.hasOwnProperty("media") &&
+					albumFromCache.hasOwnProperty("positionsAndMediaInTree")
+				) {
+					if (
+						util.isSearchCacheBase(albumHash) &&
+						! albumFromCache.subalbums.length &&
+						! albumFromCache.media.length
+					) {
 						// it's a search with no results
 						util.noResults(albumFromCache);
-					let [theAlbum, singleMedia, i] = PhotoFloat.selectMedia(albumFromCache, mediaFolderHash, mediaHash);
-					if (theAlbum !== null)
-						resolve_parseHash([theAlbum, singleMedia, i]);
+						// the resolve function is needed at least in order to show the title
+						resolve_parseHash([searchResultsAlbumFinal, null, -1]);
+					} else {
+						// it's not a search without results: everything is ok, resolve!
+						let [singleMedia, i] = PhotoFloat.decodeMediaAndIndex(albumFromCache, mediaFolderHash, mediaHash);
+						if (albumFromCache !== null) {
+							resolve_parseHash([albumFromCache, singleMedia, i]);
+						} else {
+							// TO DO: what?!?!?
+							// null album!
+						}
+					}
 				} else if (! util.isSearchCacheBase(albumHash) || searchWordsFromUser.length === 0) {
 					// something is missing, getAlbum must be called
 					promise = PhotoFloat.getAlbum(albumHashToGet, reject_parseHash, {"getMedia": true, "getPositions": true});
 					promise.then(
 						function(album) {
-							let [theAlbum, singleMedia, i] = PhotoFloat.selectMedia(album, mediaFolderHash, mediaHash);
-							if (theAlbum !== null)
-								resolve_parseHash([theAlbum, singleMedia, i]);
+							let [singleMedia, i] = PhotoFloat.decodeMediaAndIndex(album, mediaFolderHash, mediaHash);
+							if (album !== null) {
+								resolve_parseHash([album, singleMedia, i]);
+							} else {
+								// TO DO: what?!?!?
+								// null album!
+							}
 						},
 						function() {
 							console.trace();
@@ -2015,16 +2041,20 @@
 				// save in the cache array
 				PhotoFloat.putAlbumIntoCache(resultsAlbumFinal.cacheBase, resultsAlbumFinal);
 
-				var [theAlbum, singleMedia, i] = PhotoFloat.selectMedia(resultsAlbumFinal, mediaFolderHash, mediaHash);
-				if (theAlbum !== null)
-					resolve_endPreparingAlbumAndKeepOn([theAlbum, singleMedia, i]);
+				var [singleMedia, i] = PhotoFloat.decodeMediaAndIndex(resultsAlbumFinal, mediaFolderHash, mediaHash);
+				if (resultsAlbumFinal !== null) {
+					resolve_endPreparingAlbumAndKeepOn([resultsAlbumFinal, singleMedia, i]);
+				} else {
+					// TO DO: what?!?!?
+					// null album!
+				}
 
 				$("#loading").hide();
 			}
 		);
 	};
 
-	PhotoFloat.selectMedia = function(theAlbum, mediaFolderHash, mediaHash) {
+	PhotoFloat.decodeMediaAndIndex = function(theAlbum, mediaFolderHash, mediaHash) {
 		util.initializeSortPropertiesAndCookies(theAlbum);
 		util.sortAlbumsMedia(theAlbum);
 
@@ -2081,7 +2111,7 @@
 			$("ul#right-menu").addClass("expand");
 			util.focusSearchField();
 		}
-		return [theAlbum, singleMedia, i];
+		return [singleMedia, i];
 	};
 
 	PhotoFloat.hashCode = function(hash) {
