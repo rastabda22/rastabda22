@@ -1070,8 +1070,8 @@
 		return album.includedFilesByCodesSimpleCombination[","] !== false;
 	};
 
-	PhotoFloat.getAlbum = function(albumOrCacheBase, error, {getMedia = false, getPositions = false}) {
-		// error is a function, and is executed when the album cannot be retrieved:
+	PhotoFloat.getAlbum = function(albumOrCacheBase, getAlbum_error, {getMedia = false, getPositions = false}) {
+		// getAlbum_error is a function, and is executed when the album cannot be retrieved:
 		// either because it doesn't exist or is a protected one
 
 		return new Promise(
@@ -1194,7 +1194,10 @@
 									thingsToBeDoneBeforeResolvingGetAlbum(emptyAlbum);
 									resolve_getAlbum(emptyAlbum);
 								},
-								error
+								function() {
+									// neither the unprotected nor the protected album exist = unexistent album
+									getAlbum_error();
+								}
 								// function() {
 								// 	console.trace();
 								// }
