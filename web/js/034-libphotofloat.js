@@ -1613,7 +1613,7 @@
 						let result = PhotoFloat.getMediaIndex(albumFromCache, mediaFolderHash, mediaHash);
 						if (result === null) {
 							// getMediaIndex arguments don't match any media in the album,
-							// either the authentication dialog has been shown or the hash has been changed to the album
+							// in getMediaIndex either the authentication dialog has been shown or the hash has been changed to the album
 							// Nothing to do
 						} else {
 							resolve_parseHash([albumFromCache, result]);
@@ -1627,7 +1627,7 @@
 							let result = PhotoFloat.getMediaIndex(album, mediaFolderHash, mediaHash);
 							if (result === null) {
 								// getMediaIndex arguments don't match any media in the album,
-								// either the authentication dialog has been shown or the hash has been changed to the album
+								// in getMediaIndex either the authentication dialog has been shown or the hash has been changed to the album
 								// Nothing to do
 							} else {
 								resolve_parseHash([album, result]);
@@ -2046,7 +2046,7 @@
 				var result = PhotoFloat.getMediaIndex(resultsAlbumFinal, mediaFolderHash, mediaHash);
 				if (result === null) {
 					// getMediaIndex arguments don't match any media in the album,
-					// either the authentication dialog has been shown or the hash has been changed to the album
+					// in getMediaIndex either the authentication dialog has been shown or the hash has been changed to the album
 					// Nothing to do
 				} else {
 					resolve_endPreparingAlbumAndKeepOn(result);
