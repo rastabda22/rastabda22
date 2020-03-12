@@ -1162,7 +1162,7 @@
 					$("#error-unexistent-map-album").fadeOut(
 						2000,
 						function () {
-							window.location.href = "#!" + Options.folders_string;
+							window.location.href = util.upHash();
 						}
 					);
 				} else {
