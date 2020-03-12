@@ -1071,8 +1071,8 @@
 	};
 
 	PhotoFloat.getAlbum = function(albumOrCacheBase, error, {getMedia = false, getPositions = false}) {
-		// error is executed when in no way the album can be retrieved:
-		// either it doesn't exist or it could be a protected one
+		// error is a function, and is executed when the album cannot be retrieved:
+		// either because it doesn't exist or is a protected one
 
 		return new Promise(
 			function(resolve_getAlbum) {
