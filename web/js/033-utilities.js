@@ -480,7 +480,7 @@
 		return (em * emSize);
 	};
 
-	Utilities.prototype.isAlbumWithOneMedia = function(currentAlbum) {
+	Utilities.isAlbumWithOneMedia = function(currentAlbum) {
 		return currentAlbum !== null && ! currentAlbum.subalbums.length && Utilities.imagesAndVideosTotal(currentAlbum.numMedia) == 1;
 	};
 
@@ -1547,6 +1547,7 @@
 	Utilities.prototype.imagesAndVideosTotal = Utilities.imagesAndVideosTotal;
 	Utilities.prototype.imagesAndVideosSum = Utilities.imagesAndVideosSum;
 	Utilities.prototype.upHash = Utilities.upHash;
+	Utilities.prototype.isAlbumWithOneMedia = Utilities.isAlbumWithOneMedia;
 
 	window.Utilities = Utilities;
 }());

@@ -17,7 +17,7 @@ var popupRefreshType = "previousAlbum";
 var destHash = null;
 var destMedia = null;
 var destAlbum = null;
-var scrollbarWidth;
+// var scrollbarWidth;
 var contextMenu = false;
 var imagesAndVideos0 = {"images": 0, "videos": 0};
 var initialSizes = {};
@@ -669,7 +669,7 @@ $(document).ready(function() {
 		}
 	);
 
-	scrollbarWidth = util.detectScrollbarWidth();
+	// scrollbarWidth = util.detectScrollbarWidth();
 
 	$(window).hashchange(
 		function() {
