@@ -689,21 +689,21 @@ $(document).ready(function() {
 			$("link[rel=video_src]").remove();
 			$("ul#right-menu").removeClass("expand");
 
-			var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
-			if (currentAlbum && albumHash !== currentAlbum.cacheBase) {
-				// the browser location bar value has been changed manually
-				currentAlbum = null;
-				previousAlbum = null;
-			}
-			if (currentMedia && mediaHash !== currentMedia.cacheBase) {
-				// the browser location bar value has been changed manually
-				currentMedia = null;
-				previousMedia = null;
-			}
-			
 			var promise = f.getOptions();
 			promise.then(
 				function() {
+					var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+					if (currentAlbum && albumHash !== currentAlbum.cacheBase) {
+						// the browser location bar value has been changed manually
+						currentAlbum = null;
+						previousAlbum = null;
+					}
+					if (currentMedia && mediaHash !== currentMedia.cacheBase) {
+						// the browser location bar value has been changed manually
+						currentMedia = null;
+						previousMedia = null;
+					}
+
 					if (! util.isSearchHash(location.hash)) {
 						// reset current album search flag to its default value
 						Options.search_current_album = true;
