@@ -688,6 +688,19 @@ $(document).ready(function() {
 			$("link[rel=image_src]").remove();
 			$("link[rel=video_src]").remove();
 			$("ul#right-menu").removeClass("expand");
+
+			var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+			if (currentAlbum && albumHash !== currentAlbum.cacheBase) {
+				// the browser location bar value has been changed manually
+				currentAlbum = null;
+				previousAlbum = null;
+			}
+			if (currentMedia && mediaHash !== currentMedia.cacheBase) {
+				// the browser location bar value has been changed manually
+				currentMedia = null;
+				previousMedia = null;
+			}
+			
 			var promise = f.getOptions();
 			promise.then(
 				function() {
