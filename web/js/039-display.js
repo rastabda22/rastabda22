@@ -708,7 +708,6 @@ $(document).ready(function() {
 						// reset current album search flag to its default value
 						Options.search_current_album = true;
 						f.setBooleanCookie("search_current_album", Options.search_current_album);
-						f.updateMenu();
 					}
 					// parseHashAndReturnAlbumAndMedia returns an array of 3 elements:
 					// - the requested album
