@@ -1341,8 +1341,8 @@
 			$("#album-view").fadeOut(200);
 			$("#media-view").fadeOut(200);
 
+			$("#loading").hide();
 			if (window.location.href == rootLink) {
-				$("#loading").hide();
 				$("#error-text-folder").stop();
 				$("#error-root-folder").stop().fadeIn(2000);
 				$("#powered-by").show();
