@@ -336,21 +336,7 @@
 						emptyAlbum.includedFilesByCodesSimpleCombination = {};
 						emptyAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
-						if (PhotoFloat.guessedPasswordsMd5.length) {
-							reject_getSingleUnprotectedCacheBase(emptyAlbum);
-						} else {
-							// end here
-							if (util.isSearchCacheBase(unprotectedCacheBase)) {
-								emptyAlbum.media = [];
-								emptyAlbum.subalbums = [];
-								emptyAlbum.path = unprotectedCacheBase.replace(Options.cache_folder_separator, "/");
-								util.noResults(emptyAlbum);
-							} else {
-								// wrong hash: it might be the hash of a protected content
-								$("#loading").hide();
-								util.showAuthForm(null, true);
-							}
-						}
+						reject_getSingleUnprotectedCacheBase(emptyAlbum);
 					}
 				);
 			}
@@ -830,8 +816,7 @@
 					// a protected album must be loaded in order to know the complex combinations
 					var theProtectedDirectoriesToGet = PhotoFloat.protectedDirectoriesToGet();
 					if (! theProtectedDirectoriesToGet.length) {
-						// executions shouldn't arrive here
-						resolve_addProtectedContent();
+						reject_addProtectedContent();
 					} else {
 						var promise = PhotoFloat.getNumsProtectedMediaInSubTreeProperty(album, theProtectedDirectoriesToGet);
 						promise.then(
@@ -846,7 +831,10 @@
 									}
 								);
 							},
-							reject_addProtectedContent
+							function() {
+								// numsProtectedMediaInSubTree couldn't be retrieved because no protected album was found
+								reject_addProtectedContent();
+							}
 						);
 					}
 				}
@@ -1195,7 +1183,7 @@
 									resolve_getAlbum(emptyAlbum);
 								},
 								function() {
-									// neither the unprotected nor the protected album exist = unexistent album
+									// neither the unprotected nor any protected album exists = unexistent album
 									getAlbum_error();
 								}
 								// function() {

@@ -1264,7 +1264,6 @@
 				$("#album-view, #media-view, #my-modal").css("opacity", "");
 				if (maybeProtectedContent)
 					window.location.href = Utilities.upHash();
-					// Utilities.goUpInHash();
 			}
 		);
 	};
@@ -1348,9 +1347,8 @@
 				$("#error-root-folder").stop().fadeIn(2000);
 				$("#powered-by").show();
 			} else {
-				$("#error-text-folder").stop().fadeIn(200);
-				$("#error-text-folder, #error-overlay, #auth-text").fadeOut(
-					3500,
+				$("#error-text-folder").stop().fadeIn(
+					200,
 					function() {
 						window.location.href = Utilities.upHash();
 
@@ -1363,6 +1361,7 @@
 						// }
 					}
 				);
+				$("#error-text-folder, #error-overlay, #auth-text").fadeOut(3500);
 				$("#album-view").stop().fadeOut(100).fadeIn(3500);
 				$("#media-view").stop().fadeOut(100).fadeIn(3500);
 			}
