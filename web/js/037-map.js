@@ -167,6 +167,7 @@
 		MapFunctions.setPopupPosition();
 		MapFunctions.panMap();
 		MapFunctions.addLazy("img.lazyload-popup-media");
+		f.updateMenu();
 	};
 
 	MapFunctions.calculatePopupSizes = function() {

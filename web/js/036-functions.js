@@ -347,7 +347,7 @@
 				$("ul#right-menu li.album-names").removeClass("selected");
 		}
 
-		if (isMapOrPopup)
+		if (isMap && ! isPopup)
 			$("ul#right-menu li.square-media-thumbnails").addClass("hidden");
 		else
 			$("ul#right-menu li.square-media-thumbnails").removeClass("hidden");
@@ -855,7 +855,8 @@
 		$(".media-name").css("color", Options.title_image_name_color);
 		$(".thumb-and-caption-container").css("margin-right", Options.spacing.toString() + "px").css("margin-bottom", Options.spacing.toString() + "px");
 
-		if (currentMedia !== null || ! Options.show_media_names_below_thumbs)
+		var isPopup = $('.leaflet-popup').html() ? true : false;
+		if (currentMedia !== null && ! isPopup || ! Options.show_media_names_below_thumbs)
 			$(".media-caption").addClass("hidden");
 		else
 			$(".media-caption").removeClass("hidden");
