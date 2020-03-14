@@ -119,8 +119,8 @@
 
 	Functions.updateMenu = function(thisAlbum, hasGpsData) {
 		var albumOrMedia;
-		var isMap = $('#mapdiv').html() ? true : false;
 		var isPopup = $('.leaflet-popup').html() ? true : false;
+		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
 		var isMapOrPopup = isMap || isPopup;
 
 		if (typeof thisAlbum === "undefined")
@@ -201,8 +201,14 @@
 			}
 		}
 
+		if (isMap)
+			$("ul#right-menu li.search").addClass("hidden");
+		else
+			$("ul#right-menu li.search").removeClass("hidden");
+
 		if (
-			thisAlbum !== null && ! $(".sub-menu:not(.hidden)").length
+			thisAlbum === null ||
+			$(".sub-menu:not(.hidden)").length
 			// thisAlbum !== null &&
 			// (util.isSearchCacheBase(thisAlbum.cacheBase) || thisAlbum.cacheBase == Options.by_search_string)
 			// ||
@@ -210,6 +216,8 @@
 			// $("ul#right-menu li#no-results").is(":visible") ||
 			// $("ul#right-menu li#search-too-wide").is(":visible")
 		) {
+			$("ul#right-menu li.search ul").addClass("hidden");
+		} else {
 			$("ul#right-menu li.search ul").removeClass("hidden");
 			// $("ul#right-menu li#refine-search").removeClass("hidden");
 			if (Options.search_inside_words)
@@ -244,9 +252,6 @@
 				else
 					$("ul#right-menu li#album-search").removeClass("selected");
 			}
-		} else {
-			$("ul#right-menu li.search ul").addClass("hidden");
-			// $("ul#right-menu li#refine-search").addClass("hidden");
 		}
 
 		$("ul#right-menu li.protection").removeClass("hidden");
@@ -289,11 +294,7 @@
 		}
 
 
-		if (
-			isMap && (
-				! isPopup || MapFunctions.mapAlbum.media.length <= 1
-			)
-		)
+		if (isMap || isPopup && MapFunctions.mapAlbum.media.length <= 1)
 			$("ul#right-menu li.spaced").addClass("hidden");
 		else
 			$("ul#right-menu li.spaced").removeClass("hidden");
@@ -347,7 +348,7 @@
 				$("ul#right-menu li.album-names").removeClass("selected");
 		}
 
-		if (isMap && ! isPopup)
+		if (isMap)
 			$("ul#right-menu li.square-media-thumbnails").addClass("hidden");
 		else
 			$("ul#right-menu li.square-media-thumbnails").removeClass("hidden");
@@ -357,7 +358,7 @@
 			$("ul#right-menu li.square-media-thumbnails").removeClass("selected");
 
 		if (
-			isMap && ! isPopup ||
+			isMap ||
 			! isMapOrPopup && (
 				currentMedia !== null ||
 				util.isAlbumWithOneMedia(thisAlbum) ||
