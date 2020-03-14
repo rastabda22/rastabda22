@@ -635,7 +635,7 @@
 				let codesSimpleCombination = albumCode + ',' + mediaCode;
 
 				for (codesComplexCombinationInAlbum in album.numsProtectedMediaInSubTree) {
-					if (album.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombinationInAlbum) && codesComplexCombinationInAlbum != "") {
+					if (album.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombinationInAlbum) && codesComplexCombinationInAlbum != ",") {
 						let [albumCodesComplexCombinationList, mediaCodesComplexCombinationList] = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationInAlbum);
 
 						if (
@@ -904,7 +904,7 @@
 								if (mediaMd5)
 									protectedDirectory += mediaMd5;
 								// let codesSimpleCombination = util.convertProtectedDirectoryToCodesSimpleCombination(protectedDirectory);
-								if (! album.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination))
+								if (! album.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination) || ! album.includedFilesByCodesSimpleCombination[codesSimpleCombination])
 									album.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
 
 								// we can know how many files/symlinks we have to get in the protected directory
