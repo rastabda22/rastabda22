@@ -241,7 +241,7 @@
 				$("ul#right-menu li#accent-sensitive").addClass("selected");
 			else
 				$("ul#right-menu li#accent-sensitive").removeClass("selected");
-			if (util.isAnyRootHash(Options.cache_base_to_search_in)) {
+			if (util.isAnyRootHash(Options.cache_base_to_search_in) || isPopup) {
 				$("ul#right-menu li#album-search").addClass("dimmed").off("click");
 			} else {
 				$("ul#right-menu li#album-search").removeClass("dimmed");
