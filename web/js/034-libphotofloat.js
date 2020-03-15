@@ -1630,7 +1630,6 @@
 					);
 				} else {
 					// it's a search!
-					// self = this;
 
 					// possibly we need the stop words, because if some searched word is a stop word it must be removed from the search
 					promise = PhotoFloat.getStopWords();
