@@ -146,20 +146,20 @@
 		return new Promise(
 			function(resolve_getStopWords) {
 				if (! Options.search_inside_words && Options.use_stop_words) {
-					var stopWordsFileName = 'stopwords.json';
 					// before getting the file check whether it's in the cache
-					if (PhotoFloat.cache.hasOwnProperty("stopWords")) {
-						resolve_getStopWords(PhotoFloat.cache.stopWords);
+					if (PhotoFloat.cache.hasOwnProperty("stopWords") && PhotoFloat.cache.stopWords.length) {
+						resolve_getStopWords();
 					} else {
+						PhotoFloat.cache.stopWords = [];
 						// get the file
-						var stopWordsFile = util.pathJoin([Options.server_cache_path, stopWordsFileName]);
+						var stopWordsFile = util.pathJoin([Options.server_cache_path, 'stopwords.json']);
 						var ajaxOptions = {
 							type: "GET",
 							dataType: "json",
 							url: stopWordsFile,
 							success: function(stopWords) {
 								PhotoFloat.cache.stopWords = stopWords.stopWords;
-								resolve_getStopWords(stopWords.stopWords);
+								resolve_getStopWords();
 							}
 						};
 						ajaxOptions.error = function(jqXHR) {
@@ -169,8 +169,9 @@
 						$.ajax(ajaxOptions);
 					}
 				} else {
-					// stop words aren't used, resolve with a void list
-					resolve_getStopWords([]);
+					// stop words aren't used
+					PhotoFloat.cache.stopWords = [];
+					resolve_getStopWords();
 				}
 			}
 		);
@@ -1481,8 +1482,8 @@
 			function(resolve_parseHash, reject_parseHash) {
 				var searchResultsAlbumFinal = {};
 				var removedStopWords = [];
-				var searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions;
-				var albumHashToGet, albumHashes, wordSubalbums;
+				var searchWordsFromUser = [], searchWordsFromUserNormalized = [], searchWordsFromUserNormalizedAccordingToOptions = [];
+				var albumHashToGet, albumHashes = [], wordSubalbums = [];
 				var [albumHash, mediaHash, mediaFolderHash] = PhotoFloat.decodeHash(hash);
 				var indexWords, indexAlbums, wordsWithOptionsString;
 				// this vars are defined here and not at the beginning of the file because the options must have been read
@@ -1494,11 +1495,6 @@
 				$("ul#right-menu li#any-word").removeClass("dimmed");
 				$("#album-view, #album-view #subalbums, #album-view #thumbs").removeClass("hidden");
 
-				albumHashes = [];
-				wordSubalbums = [];
-				searchWordsFromUser = [];
-				searchWordsFromUserNormalized = [];
-				searchWordsFromUserNormalizedAccordingToOptions = [];
 				if (albumHash) {
 					albumHash = decodeURI(albumHash);
 
@@ -1634,31 +1630,9 @@
 					// possibly we need the stop words, because if some searched word is a stop word it must be removed from the search
 					promise = PhotoFloat.getStopWords();
 					promise.then(
-						function removeStopWords(stopWords) {
-							// remove the stop words from the search words lists
-
-							var searchWordsFromUserWithoutStopWords = [];
-							var searchWordsFromUserWithoutStopWordsNormalized = [];
-							var searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions = [];
-							for (var i = 0; i < searchWordsFromUser.length; i ++) {
-								if (
-									stopWords.every(
-										function(word) {
-											return word !== searchWordsFromUserNormalized[i];
-										}
-									)
-								) {
-									searchWordsFromUserWithoutStopWords.push(searchWordsFromUser[i]);
-									searchWordsFromUserWithoutStopWordsNormalized.push(searchWordsFromUserNormalized[i]);
-									searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions.push(searchWordsFromUserNormalizedAccordingToOptions[i]);
-								} else {
-									removedStopWords.push(searchWordsFromUser[i]);
-								}
-							}
-
-							searchWordsFromUser = searchWordsFromUserWithoutStopWords;
-							searchWordsFromUserNormalized = searchWordsFromUserWithoutStopWordsNormalized;
-							searchWordsFromUserNormalizedAccordingToOptions = searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions;
+						function () {
+							[searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions, removedStopWords] =
+								PhotoFloat.removeStopWords(searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions);
 
 							buildSearchResult();
 						},
@@ -2023,6 +1997,38 @@
 		);
 	};
 
+	PhotoFloat.removeStopWords = function(searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions) {
+		// remove the stop words from the search words lists
+
+		var removedStopWords = [];
+		var searchWordsFromUserWithoutStopWords = [];
+		var searchWordsFromUserWithoutStopWordsNormalized = [];
+		var searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions = [];
+		if (! PhotoFloat.cache.stopWords.length) {
+			searchWordsFromUserWithoutStopWords = searchWordsFromUser;
+			searchWordsFromUserWithoutStopWordsNormalized = searchWordsFromUserNormalized;
+			searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions = searchWordsFromUserNormalizedAccordingToOptions;
+		} else {
+			for (var i = 0; i < searchWordsFromUser.length; i ++) {
+				if (
+					PhotoFloat.cache.stopWords.every(
+						function(word) {
+							return word !== searchWordsFromUserNormalized[i];
+						}
+					)
+				) {
+					searchWordsFromUserWithoutStopWords.push(searchWordsFromUser[i]);
+					searchWordsFromUserWithoutStopWordsNormalized.push(searchWordsFromUserNormalized[i]);
+					searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions.push(searchWordsFromUserNormalizedAccordingToOptions[i]);
+				} else {
+					removedStopWords.push(searchWordsFromUser[i]);
+				}
+			}
+		}
+
+		return [searchWordsFromUserWithoutStopWords, searchWordsFromUserWithoutStopWordsNormalized, searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions, removedStopWords];
+	};
+
 	PhotoFloat.endPreparingAlbumAndKeepOn = function(resultsAlbumFinal, mediaHash, mediaFolderHash) {
 		return new Promise(
 			function(resolve_endPreparingAlbumAndKeepOn) {
@@ -2160,6 +2166,8 @@
 	PhotoFloat.prototype.hashCode = PhotoFloat.hashCode;
 	PhotoFloat.prototype.endPreparingAlbumAndKeepOn = PhotoFloat.endPreparingAlbumAndKeepOn;
 	PhotoFloat.prototype.searchAndSubalbumHash = PhotoFloat.searchAndSubalbumHash;
+	PhotoFloat.prototype.getStopWords = PhotoFloat.getStopWords;
+	PhotoFloat.prototype.removeStopWords = PhotoFloat.removeStopWords;
 
 	/* expose class globally */
 	window.PhotoFloat = PhotoFloat;

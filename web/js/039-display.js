@@ -449,24 +449,83 @@ $(document).ready(function() {
 		var bySearchViewHash = "#!/" + Options.by_search_string;
 
 		// build the search album part of the hash
-		var searchTerms = encodeURIComponent($("#search-field").val().normalize().trim().replace(/  /g, ' ').replace(/ /g, '_'));
-		if (searchTerms) {
-			bySearchViewHash += Options.cache_folder_separator;
-			if (Options.search_inside_words)
-				searchOptions += 'i' + Options.search_options_separator;
-			if (Options.search_any_word)
-				searchOptions += 'n' + Options.search_options_separator;
-			if (Options.search_case_sensitive)
-				searchOptions += 'c' + Options.search_options_separator;
-			if (Options.search_accent_sensitive)
-				searchOptions += 'a' + Options.search_options_separator;
-			if (Options.search_current_album)
-				searchOptions += 'o' + Options.search_options_separator;
-			bySearchViewHash += searchOptions + searchTerms;
+		var wordsStringOriginal = $("#search-field").val().normalize().trim().replace(/  /g, ' ');
+		var wordsString = encodeURIComponent(wordsStringOriginal.replace(/ /g, '_'));
+		if (wordsString) {
+			var isPopup = $('.leaflet-popup').html() ? true : false;
+			if (isPopup) {
+				// refine the popup content!
 
-			bySearchViewHash += Options.cache_folder_separator + Options.cache_base_to_search_in;
+				// normalize the search terms
+				// the normalized words are needed in order to compare with the search cache json files names, which are normalized
+				var wordsStringNormalizedAccordingToOptions = util.normalizeAccordingToOptions(wordsStringOriginal);
+				var wordsStringNormalized = util.removeAccents(wordsStringOriginal.toLowerCase());
 
-			window.location.href = bySearchViewHash;
+				var searchWordsFromUser = wordsStringOriginal.split(' ');
+				var searchWordsFromUserNormalizedAccordingToOptions = wordsStringNormalizedAccordingToOptions.split(' ');
+				var searchWordsFromUserNormalized = wordsStringNormalized.split(' ');
+
+				// remove the stopwords from the search terms
+				promise = phFl.getStopWords();
+				promise.then(
+					function () {
+						[searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions, removedStopWords] =
+							phFl.removeStopWords(searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions);
+
+						// every normalized single media name must match the search terms
+						var matchingMedia = [];
+						for (let iMedia = 0; iMedia < MapFunctions.mapAlbum.media.length; iMedia ++) {
+							let ithMediaName = util.normalizeAccordingToOptions(MapFunctions.mapAlbum.media[iMedia].name);
+							if (
+								! Options.search_any_word &&
+								searchWordsFromUserNormalizedAccordingToOptions.every(
+									function(searchWord) {
+										var result =
+											Options.search_inside_words && ithMediaName.indexOf(searchWord) > -1 ||
+											! Options.search_inside_words && ithMediaName === searchWord;
+										return result;
+									}
+								) ||
+								Options.search_any_word &&
+								searchWordsFromUserNormalizedAccordingToOptions.some(
+									function(searchWord) {
+										var result =
+											Options.search_inside_words && ithMediaName.indexOf(searchWord) > -1 ||
+											! Options.search_inside_words && ithMediaName === searchWord;
+										return result;
+									}
+								)
+
+							)
+								matchingMedia.push(MapFunctions.mapAlbum.media[iMedia]);
+						}
+						MapFunctions.mapAlbum.media = matchingMedia;
+						tF.prepareAndDoPopupUpdate();
+
+					},
+					function() {
+						console.trace();
+					}
+				);
+			} else {
+				// produce a new hash in order to perform the search
+				bySearchViewHash += Options.cache_folder_separator;
+				if (Options.search_inside_words)
+					searchOptions += 'i' + Options.search_options_separator;
+				if (Options.search_any_word)
+					searchOptions += 'n' + Options.search_options_separator;
+				if (Options.search_case_sensitive)
+					searchOptions += 'c' + Options.search_options_separator;
+				if (Options.search_accent_sensitive)
+					searchOptions += 'a' + Options.search_options_separator;
+				if (Options.search_current_album)
+					searchOptions += 'o' + Options.search_options_separator;
+				bySearchViewHash += searchOptions + wordsString;
+
+				bySearchViewHash += Options.cache_folder_separator + Options.cache_base_to_search_in;
+
+				window.location.href = bySearchViewHash;
+			}
 		}
 
 		util.focusSearchField();
