@@ -451,6 +451,7 @@ $(document).ready(function() {
 		// build the search album part of the hash
 		var wordsStringOriginal = $("#search-field").val().normalize().trim().replace(/  /g, ' ');
 		var wordsString = encodeURIComponent(wordsStringOriginal.replace(/ /g, '_'));
+		// TO DO: non-alphabitic words have to be filtered out
 		if (wordsString) {
 			var isPopup = $('.leaflet-popup').html() ? true : false;
 			if (isPopup) {
@@ -475,14 +476,24 @@ $(document).ready(function() {
 						// every normalized single media name must match the search terms
 						var matchingMedia = [];
 						for (let iMedia = 0; iMedia < MapFunctions.mapAlbum.media.length; iMedia ++) {
-							let ithMediaName = util.normalizeAccordingToOptions(MapFunctions.mapAlbum.media[iMedia].name);
+							// TO DO, BUG: it's not the media name to be used for matching, but the words in media name!!!!!!!
+							// TO DO: the description (caption) must be matched too
+							let words = util.normalizeAccordingToOptions(MapFunctions.mapAlbum.media[iMedia].words);
 							if (
 								! Options.search_any_word &&
 								searchWordsFromUserNormalizedAccordingToOptions.every(
 									function(searchWord) {
 										var result =
-											Options.search_inside_words && ithMediaName.indexOf(searchWord) > -1 ||
-											! Options.search_inside_words && ithMediaName === searchWord;
+											Options.search_inside_words && words.some(
+												function(word) {
+													return word.indexOf(searchWord) > -1;
+												}
+											) ||
+											! Options.search_inside_words && words.some(
+												function(word) {
+													return word === searchWord;
+												}
+											);
 										return result;
 									}
 								) ||
@@ -490,8 +501,16 @@ $(document).ready(function() {
 								searchWordsFromUserNormalizedAccordingToOptions.some(
 									function(searchWord) {
 										var result =
-											Options.search_inside_words && ithMediaName.indexOf(searchWord) > -1 ||
-											! Options.search_inside_words && ithMediaName === searchWord;
+											Options.search_inside_words && words.some(
+												function(word) {
+													return word.indexOf(searchWord) > -1;
+												}
+											) ||
+											! Options.search_inside_words && words.some(
+												function(word) {
+													return word === searchWord;
+												}
+											);
 										return result;
 									}
 								)
