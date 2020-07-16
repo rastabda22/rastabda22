@@ -1,8 +1,9 @@
+* menu refinements in download section
 * searching when in popup now refines the popup content
-* Media and album captions from `album.ini` file are now separately from metadata; a menu option to hide them has been added
-* French translation completed
+* media and album captions from `album.ini` file are now separate from metadata; a menu option to hide them has been added
+* french translation completed
 * new option `excluded_patterns_file`: specifies a file whose lines are file patterns (regexes) to ignore when scanning
-* The authentication dialog allows the user to send an email that requests the protected content password (the `request_password_email` option must be set)
+* the authentication dialog allows the user to send an email that requests the protected content password (the `request_password_email` option must be set)
   * new option `request_password_email`: the email for requesting the password that allows seeing the protected content
 
 ### version v4.1.0 (Nov 29, 2019)
