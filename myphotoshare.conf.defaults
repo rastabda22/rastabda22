@@ -122,7 +122,7 @@ video_transcode_bitrate = 1M
 video_crf = 20
 
 # The jpg quality parameter for generating the reduced size images and the tumbnails
-# an integer number 1 -100
+# an integer number 1 - 100
 jpeg_quality = 95
 
 # markers that permit not to scan files in folder or whole trees
@@ -173,7 +173,7 @@ passwords_subdir = pwd
 protected_directories_prefix = protected_
 
 # put here the email address for requesting the password(s)
-request_password_email = 
+request_password_email =
 
 # recreate fixed height media thumbnails if their ratio (width/height) is > 1,
 # in order to get rid of a past bug in thumbnail generator

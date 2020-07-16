@@ -78,7 +78,7 @@ class TreeWalker:
 			# 	message("nothing has changed in the album tree!", "Execution may end up here", 3)
 			# 	return
 
-			message("changes has been in the album tree", "I must keep working!", 3)
+			message("changes have occurred in the album tree", "I must keep working!", 3)
 			next_level()
 
 			self.origin_album.nums_protected_media_in_sub_tree.merge(folders_album.nums_protected_media_in_sub_tree)
