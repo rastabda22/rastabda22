@@ -652,15 +652,18 @@
 				}
 			}
 
-			let numImages = 0;
-			let numVideos = 0;
-			for (let iMedia = 0; iMedia < thisAlbum.media.length; iMedia ++) {
-				if (thisAlbum.media[iMedia].mimeType.indexOf("image") === 0) {
-					numImages ++;
-				} else {
-					numVideos ++;
-				}
-			}
+			// let numImages = 0;
+			// let numVideos = 0;
+			// for (let iMedia = 0; iMedia < thisAlbum.media.length; iMedia ++) {
+			// 	if (thisAlbum.media[iMedia].mimeType.indexOf("image") === 0) {
+			// 		numImages ++;
+			// 	} else {
+			// 		numVideos ++;
+			// 	}
+			// }
+			// TO DO: verify if it's correct to replace previous commented out code with the following 2 lines
+			let numImages = thisAlbum.numMedia.images;
+			let numVideos = thisAlbum.numMedia.videos;
 
 			if (numImages && numImages !== util.imagesAndVideosTotal(thisAlbum.numMedia)) {
 				$(".download-album.media-only.images.full").removeClass("hidden");
