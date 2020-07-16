@@ -454,7 +454,7 @@
 							title += util.escapeSingleQuotes(imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
 						title += "'>";
 						title += util._t(".title-media");
-						title += "</span>";
+						title += "</span> ";
 					}
 					title += util._t(".title-in-album");
 					if (mediaTotalInSubAlbums)
