@@ -831,6 +831,11 @@ ul#right-menu.expand li .caption:hover, ul#right-menu.expand ul li.active:hover,
 	background-color: gray !important;
 }
 
+ul#right-menu.expand li a, ul#right-menu.expand li span {
+	display: inline-block;
+	width: 100%;
+}
+
 ul#right-menu.expand ul li:not(.active):hover  {
 	background-color: black !important;
 }
