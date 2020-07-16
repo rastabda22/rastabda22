@@ -369,7 +369,7 @@
 		</li>
 
 		<li class="expandable browsing-mode-switcher active">
-			<a class="browsing-mode-switcher caption"></a>
+			<span class="browsing-mode-switcher caption"></span>
 			<ul class="sub-menu hidden">
 				<li id="folders-view" class="browsing-mode-switcher"></li>
 				<li id="by-date-view" class="browsing-mode-switcher"></li>

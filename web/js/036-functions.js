@@ -475,7 +475,8 @@
 		const bigZipSize = 500000000;
 
 		$(".download-single-media").addClass("hidden").addClass("active");
-		$(".download-album").addClass("hidden").removeClass("red").addClass("active");
+		$(".download-album").addClass("hidden").removeClass("red");
+		$("ul li.download-album").addClass("active");
 		$(".download-album.sized").addClass("hidden");
 
 		$(".download-album .sub-menu").addClass("hidden");
@@ -779,7 +780,9 @@
 			'click',
 			function() {
 				$("#right-menu li ul").addClass("hidden");
+				$("#right-menu li span.caption").removeClass("expanded");
 				$("ul", this).removeClass("hidden");
+				$("span.caption", this).addClass("expanded");
 			}
 		);
 

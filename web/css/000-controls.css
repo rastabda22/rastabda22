@@ -698,11 +698,12 @@ ul#right-menu {
 	top: 0;
 	right: 0;
 	z-index: 200;
+	cursor: default;
 }
 
 ul#right-menu li {
 	/* padding: 0 .5em; */
-	cursor: pointer;
+	/* cursor: pointer; */
 	font-size: 90%;
 }
 ul#right-menu.expand #search-field {
@@ -713,7 +714,8 @@ ul#right-menu li.caption, ul#right-menu li:not(.active) {
 	cursor: default;
 }
 
-ul#right-menu li.caption, ul#right-menu li.active {
+/* ul#right-menu li.caption, ul#right-menu li.active { */
+ul#right-menu li span.caption:not(.expanded), ul#right-menu li ul:not(.hidden) li:not(.selected) {
 	cursor: pointer;
 }
 
@@ -760,7 +762,7 @@ ul#right-menu.expand li {
 	display: list-item;
 	text-align: left;
 	font-style: italic;
-	cursor: pointer;
+	/* cursor: pointer; */
 	/* position: relative;
 	width: 13em; */
 }
@@ -827,7 +829,7 @@ ul#right-menu.expand li:not(.active, .sub-menu) {
 	color: darkgray;
 }
 
-ul#right-menu.expand li .caption:hover, ul#right-menu.expand ul li.active:hover, ul#right-menu #menu-icon:hover, ul#right-menu #padlock img:hover, ul#right-menu #padlock:hover {
+ul#right-menu.expand li .caption:not(.expanded):hover, ul#right-menu.expand ul li.active:hover, ul#right-menu #menu-icon:hover, ul#right-menu #padlock img:hover, ul#right-menu #padlock:hover {
 	background-color: gray !important;
 }
 
@@ -861,7 +863,7 @@ ul#right-menu.expand ul {
 	padding-inline-start: 1em;
 }
 
-.download-album.active {
+ul#right-menu ul li.download-album.active {
 	cursor: pointer;
 }
 
