@@ -1147,8 +1147,8 @@
 					// if the album hasn't been passed as argument and isn't in cache => go to root album
 					// execution arrives here if a map album is reloaded or opened from a link
 					$("#loading").hide();
-					$("#error-unexistent-map-album").stop().fadeIn(200);
-					$("#error-unexistent-map-album").fadeOut(
+					$("#error-nonexistent-map-album").stop().fadeIn(200);
+					$("#error-nonexistent-map-album").fadeOut(
 						2000,
 						function () {
 							window.location.href = util.upHash();
@@ -1184,7 +1184,7 @@
 									resolve_getAlbum(emptyAlbum);
 								},
 								function() {
-									// neither the unprotected nor any protected album exists = unexistent album
+									// neither the unprotected nor any protected album exists = nonexistent album
 									getAlbum_error();
 								}
 								// function() {

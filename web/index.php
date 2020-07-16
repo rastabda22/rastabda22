@@ -460,7 +460,7 @@
 	<div id="error-text-folder" class="error"></div>
 	<div id="error-root-folder" class="error"></div>
 	<div id="error-text-image" class="error"></div>
-	<div id="error-unexistent-map-album" class="error"></div>
+	<div id="error-nonexistent-map-album" class="error"></div>
 	<div id="warning-no-geolocated-media" class="error"></div>
 
 	<div id="by-date-album-sorting" class="sort-message"></div>

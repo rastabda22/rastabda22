@@ -507,7 +507,7 @@ class Album(object):
 					back_level()
 					return [None, True]
 			if "jsonVersion" not in json_file_dict:
-				indented_message("not an album cache hit", "unexistent json_version", 4)
+				indented_message("not an album cache hit", "nonexistent json_version", 4)
 				Options.set_obsolete_json_version_flag()
 				return [None, True]
 			elif json_file_dict["jsonVersion"] != Options.json_version:
@@ -1779,9 +1779,9 @@ class Media(object):
 		next_level()
 		message("checking reduction/thumbnail...", thumb_path, 5)
 		if not os.path.exists(thumbs_path_with_subdir):
-			indented_message("unexistent thumbnails subdir", thumbs_path_with_subdir, 5)
+			indented_message("nonexistent thumbnails subdir", thumbs_path_with_subdir, 5)
 		elif not os.path.exists(thumb_path):
-			indented_message("unexistent reduction/thumbnail", thumb_path, 5)
+			indented_message("nonexistent reduction/thumbnail", thumb_path, 5)
 		elif file_mtime(thumb_path) < self.datetime_file:
 			indented_message("reduction/thumbnail older than original media", thumb_path, 5)
 		elif json_files_min_mtime is not None and file_mtime(thumb_path) >= json_files_min_mtime:
@@ -2052,7 +2052,7 @@ class Media(object):
 			indented_message("filled", "", 5)
 
 		# the subdir hadn't been created when creating the album in order to avoid creation of empty directories
-		make_dir(thumbs_path_with_subdir, "unexistent cache subdir")
+		make_dir(thumbs_path_with_subdir, "nonexistent cache subdir")
 
 		if os.path.exists(thumb_path) and not os.access(thumb_path, os.W_OK):
 			message("FATAL ERROR", thumb_path + " not writable, quitting")
@@ -2202,7 +2202,7 @@ class Media(object):
 				message("FATAL ERROR", album_cache_path + " not writable, quitting")
 				sys.exit(-97)
 		else:
-			make_dir(album_cache_path, "unexistent albums cache subdir")
+			make_dir(album_cache_path, "nonexistent albums cache subdir")
 
 		transcode_path = os.path.join(album_cache_path, album_prefix + video_cache_name(self))
 		# get number of cores on the system, and use all minus one
@@ -2229,7 +2229,7 @@ class Media(object):
 		info_string = "mp4, h264, " + Options.config['video_transcode_bitrate'] + " bit/sec, crf=" + str(Options.config['video_crf'])
 
 		if not os.path.exists(transcode_path):
-			indented_message("unexistent transcoded video", transcode_path, 5)
+			indented_message("nonexistent transcoded video", transcode_path, 5)
 		elif file_mtime(transcode_path) < self.datetime_file:
 			indented_message("transcoded video older than original video", transcode_path, 5)
 		elif json_files_min_mtime is not None and file_mtime(transcode_path) >= json_files_min_mtime:

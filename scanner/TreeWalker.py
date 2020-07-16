@@ -1007,7 +1007,7 @@ class TreeWalker:
 	@staticmethod
 	def _listdir_sorted_by_time(path):
 		# this function returns the directory listing sorted by mtime
-		# it takes into account the fact that the file is a symlink to an unexistent file
+		# it takes into account the fact that the file is a symlink to an nonexistent file
 		mtime = lambda f: os.path.exists(os.path.join(path, f)) and os.stat(os.path.join(path, f)).st_mtime or time.mktime(datetime.now().timetuple())
 		return list(sorted(os.listdir(path), key=mtime))
 
@@ -1270,7 +1270,7 @@ class TreeWalker:
 					must_process_passwords = True
 			# except IOError:
 			# 	# will execution never come here?
-			# 	indented_message("not an album cache hit", "json file unexistent", 4)
+			# 	indented_message("not an album cache hit", "json file nonexistent", 4)
 			# 	album_cache_hit = False
 			# is the following exception needed? it surely catched date errors...
 			# except (ValueError, AttributeError, KeyError):
@@ -1429,7 +1429,7 @@ class TreeWalker:
 
 			entry_with_path = os.path.join(absolute_path, entry)
 			if not os.path.exists(entry_with_path):
-				indented_message("unexistent file, perhaps a symlink, skipping", entry_with_path, 2)
+				indented_message("nonexistent file, perhaps a symlink, skipping", entry_with_path, 2)
 			elif not os.access(entry_with_path, os.R_OK):
 				indented_message("unreadable file", entry_with_path, 2)
 			elif os.path.islink(entry_with_path) and not Options.config['follow_symlinks']:
@@ -1570,7 +1570,7 @@ class TreeWalker:
 										message("error deleting fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 1)
 
 							if not absolute_cache_file_exists:
-								indented_message("not a single media cache hit", "unexistent reduction/thumbnail", 4)
+								indented_message("not a single media cache hit", "nonexistent reduction/thumbnail", 4)
 								single_media_cache_hit = False
 								break
 							if file_mtime(absolute_cache_file) < cached_media.datetime_file:
@@ -1904,7 +1904,7 @@ class TreeWalker:
 				if i == num_random_thumbnails:
 					break
 			else:
-				message("unexistent thumbnail", thumbnail + " - i=" + str(i) + ", good=" + str(good_media_number), 5)
+				message("nonexistent thumbnail", thumbnail + " - i=" + str(i) + ", good=" + str(good_media_number), 5)
 				bad_list.append(thumbnail)
 				good_media_number -= 1
 
