@@ -545,7 +545,7 @@ var translations =
 			".metadata-show": "afficher les métadonnées [m]",
 			".metadata-hide": "cacher les métadonnées [m]",
 			".original-link": "voir l'original [o]",
-			".download-link": "L'original [d]",
+			".download-link": "Original [d]",
 			".menu-map-link": "carte [s]",
 			".enter-fullscreen": "plein écran [f]",
 			".exit-fullscreen": "sortir [f]",
