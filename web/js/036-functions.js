@@ -576,7 +576,7 @@
 						for (let i = 0; i < Options.reduced_sizes.length; i++) {
 							let reducedSize = Options.reduced_sizes[i];
 							if (thisAlbum.sizesOfSubTree[reducedSize].images < bigZipSize) {
-								$(".download-album.everything.images.sized").append(", " + reducedSize + " px: " + numImages + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].images));
+								$(".download-album.everything.images.sized").append(", " + reducedSize + " px: " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].images));
 								$(".download-album.everything.images.sized").attr("size", reducedSize);
 								$(".download-album.everything.images.sized").removeClass("hidden");
 								break;
@@ -606,15 +606,13 @@
 					}
 
 					if (videosSize >= bigZipSize) {
-						// propose to download the resized media
-						for (let i = 0; i < Options.reduced_sizes.length; i++) {
-							let reducedSize = Options.reduced_sizes[i];
-							if (thisAlbum.sizesOfSubTree[reducedSize].videos < bigZipSize) {
-								$(".download-album.everything.videos.sized").append(", " + reducedSize + " px: " + numVideos + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].videos));
-								$(".download-album.everything.videos.sized").attr("size", reducedSize);
-								$(".download-album.everything.videos.sized").removeClass("hidden");
-								break;
-							}
+						// propose to download the resized video
+						// in thisAlbum.sizesOfSubTree[i] all the reduced sizes have the same value, corresponding to the transcoded videos
+						let reducedSize = Options.reduced_sizes[0];
+						if (thisAlbum.sizesOfSubTree[reducedSize].videos < bigZipSize) {
+							$(".download-album.everything.videos.sized").append(", " + util._t(".title-transcoded") + ": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].videos));
+							$(".download-album.everything.videos.sized").attr("size", reducedSize);
+							$(".download-album.everything.videos.sized").removeClass("hidden");
 						}
 					}
 				}
