@@ -715,7 +715,7 @@ ul#right-menu li.caption, ul#right-menu li:not(.active) {
 }
 
 /* ul#right-menu li.caption, ul#right-menu li.active { */
-ul#right-menu li span.caption:not(.expanded), ul#right-menu li ul:not(.hidden) li:not(.selected) {
+ul#right-menu li span.caption:not(.expanded), ul#right-menu li ul:not(.hidden) li.radio:not(.selected), ul#right-menu li ul:not(.hidden) li:not(.radio) {
 	cursor: pointer;
 }
 

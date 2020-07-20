@@ -371,19 +371,19 @@
 		<li class="expandable browsing-mode-switcher active">
 			<span class="browsing-mode-switcher caption"></span>
 			<ul class="sub-menu hidden">
-				<li id="folders-view" class="browsing-mode-switcher"></li>
-				<li id="by-date-view" class="browsing-mode-switcher"></li>
-				<li id="by-gps-view" class="browsing-mode-switcher"></li>
-				<li id="by-map-view" class="browsing-mode-switcher"></li>
-				<li id="by-search-view" class="browsing-mode-switcher"></li>
+				<li id="folders-view" class="browsing-mode-switcher radio"></li>
+				<li id="by-date-view" class="browsing-mode-switcher radio"></li>
+				<li id="by-gps-view" class="browsing-mode-switcher radio"></li>
+				<li id="by-map-view" class="browsing-mode-switcher radio"></li>
+				<li id="by-search-view" class="browsing-mode-switcher radio"></li>
 			</ul>
 		</li>
 
 		<li class="expandable sort album-sort active">
 			<span class="sort album-sort caption"></span>
 			<ul class="sub-menu hidden">
-				<li class='sort album-sort by-date'></li>
-				<li class='sort album-sort by-name'></li>
+				<li class='sort album-sort by-date radio'></li>
+				<li class='sort album-sort by-name radio'></li>
 				<li class='sort album-sort reverse active'></li>
 			</ul>
 		</li>
@@ -391,8 +391,8 @@
 		<li class="expandable sort media-sort active">
 			<span class="sort media-sort caption"></span>
 			<ul class="sub-menu hidden">
-				<li class='sort media-sort by-date'></li>
-				<li class='sort media-sort by-name'></li>
+				<li class='sort media-sort by-date radio'></li>
+				<li class='sort media-sort by-name radio'></li>
 				<li class='sort media-sort reverse active'></li>
 			</ul>
 		</li>
