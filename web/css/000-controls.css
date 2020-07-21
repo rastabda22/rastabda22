@@ -833,7 +833,7 @@ ul#right-menu.expand li .caption:not(.expanded):hover, ul#right-menu.expand ul l
 	background-color: gray !important;
 }
 
-ul#right-menu.expand li a, ul#right-menu.expand li span {
+ul#right-menu.expand li a, ul#right-menu.expand li span:not(#padlock):not(#menu-icon) {
 	display: inline-block;
 	width: 100%;
 }
