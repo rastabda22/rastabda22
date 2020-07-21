@@ -480,7 +480,9 @@
 		$(".download-album.sized").addClass("hidden");
 
 		$(".download-album .sub-menu").addClass("hidden");
-		if (currentMedia !== null || util.isAlbumWithOneMedia(thisAlbum)) {
+		if (util.isSearchCacheBase(thisAlbum.cacheBase) && ! thisAlbum.media.length && ! thisAlbum.subalbums.length) {
+			// download menu item remains hidden
+		} else if (currentMedia !== null || util.isAlbumWithOneMedia(thisAlbum)) {
 			$(".download-album .sub-menu").removeClass("hidden");
 			$(".download-album.expandable, .download-album.caption").removeClass("hidden");
 			$(".download-single-media").removeClass("hidden");
