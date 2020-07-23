@@ -475,23 +475,89 @@
 		return media.mimeType.indexOf("image") === 0 && typeof media.metadata.latitude !== "undefined";
 	};
 
-	Utilities.isSelected = function(media) {
+
+	Utilities.mediaIsSelected = function(media) {
 		return typeof media.selected !== "undefined" && media.selected === true;
 	};
 
-	Utilities.prototype.toggleSelected = function(media) {
-		if (Utilities.isSelected(media))
+	Utilities.mediaIsOnStandBy = function(media) {
+		return typeof media.selected !== "undefined" && media.selected === false;
+	};
+
+	Utilities.mediaIsUnselected = function(media) {
+		return typeof media.selected === "undefined";
+	};
+
+	Utilities.prototype.putOnStandBySelectedMedia = function(media) {
+		// the value of false is something like a standby, in order to keep the memory of the true state
+		if (Utilities.mediaIsSelected(media))
 			media.selected = false;
+	};
+
+	Utilities.prototype.removeStandByFromSelectedMedia = function(media) {
+		// the value of false is something like a standby, in order to keep the memory of the true state
+		if (Utilities.mediaIsOnStandBy(media))
+			media.selected = true;
+	};
+
+	Utilities.prototype.toggleSelectedMedia = function(media) {
+		if (Utilities.mediaIsSelected(media))
+			delete media.selected;
 		else
 			media.selected = true;
 	};
 
-	Utilities.prototype.updateSelectedCheckBox = function(media, selector) {
-		if (Utilities.isSelected(media))
-			$(selector + " img").attr("src", "img/checkbox-checked-48px.png");
-		else
-			$(selector + " img").attr("src", "img/checkbox-unchecked-48px.png");
+	Utilities.prototype.toggleStandByOnSelectedMedia = function(media) {
+		if (Utilities.mediaIsSelected(media))
+			media.selected = false;
+		else if (Utilities.mediaIsOnStandBy(media))
+			media.selected = true;
 	};
+
+	Utilities.resetSelectedMedia = function(album, includeSubalbums = false) {
+		for (let i = 0; i < album.media.length; i ++) {
+			if (Utilities.mediaIsSelected(album.media[i]))
+				delete album.media[i].selected;
+		}
+		if (includeSubalbums) {
+			for (let i = 0; i < album.subalbums.length; i ++) {
+				Utilities.resetSelectedMedia(album.subalbums[i], includeSubalbums);
+			}
+		}
+	};
+
+	Utilities.countSelectedMedia = function(album, includeSubalbums = false) {
+		var count = 0;
+		for (let i = 0; i < album.media.length; i ++) {
+			if (Utilities.mediaIsSelected(album.media[i]))
+				count ++;
+		}
+		if (includeSubalbums) {
+			for (let i = 0; i < album.subalbums.length; i ++) {
+				count += Utilities.countSelectedMedia(album.subalbums[i], includeSubalbums);
+			}
+		}
+		return count;
+	};
+
+	Utilities.prototype.updateSelectedMediaCheckBox = function(media, selector) {
+		if (Utilities.mediaIsSelected(media)) {
+			$(selector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#"));
+
+		} else {
+			$(selector + " img").attr("src", "img/checkbox-unchecked-48px.png");
+		}
+	};
+
+	Utilities.prototype.updateSelectedAlbumCheckBox = function(album, selector) {
+		if (Utilities.mediaIsSelected(media)) {
+			$(selector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#"));
+
+		} else {
+			$(selector + " img").attr("src", "img/checkbox-unchecked-48px.png");
+		}
+	};
+
 
 	Utilities.prototype.em2px = function(selector, em) {
 		var emSize = parseFloat($(selector).css("font-size"));
@@ -1565,7 +1631,9 @@
 	Utilities.prototype.imagesAndVideosSum = Utilities.imagesAndVideosSum;
 	Utilities.prototype.upHash = Utilities.upHash;
 	Utilities.prototype.isAlbumWithOneMedia = Utilities.isAlbumWithOneMedia;
-	Utilities.prototype.isSelected = Utilities.isSelected;
+	Utilities.prototype.mediaIsSelected = Utilities.mediaIsSelected;
+	Utilities.prototype.resetSelectedMedia = Utilities.resetSelectedMedia;
+	Utilities.prototype.countSelectedMedia = Utilities.countSelectedMedia;
 
 	window.Utilities = Utilities;
 }());

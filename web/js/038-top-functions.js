@@ -1924,7 +1924,7 @@
 							"</a>";
 					}
 					selectSrc = 'img/checkbox-unchecked-48px.png';
-					if (util.isSelected(ithMedia)) {
+					if (util.mediaIsSelected(ithMedia)) {
 						selectSrc = 'img/checkbox-checked-48px.png';
 					}
 					selectBox =
@@ -2026,8 +2026,8 @@
 						{media: ithMedia, clickedSelector: "#media-select-box-" + i},
 						function(ev) {
 							ev.stopPropagation();
-							util.toggleSelected(ev.data.media);
-							util.updateSelectedCheckBox(ev.data.media, ev.data.clickedSelector);
+							util.toggleSelectedMedia(ev.data.media);
+							util.updateSelectedMediaCheckBox(ev.data.media, ev.data.clickedSelector);
 						}
 					);
 				}
