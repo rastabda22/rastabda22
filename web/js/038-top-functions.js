@@ -1997,6 +1997,7 @@
 
 				// generate the click event for the map for every media
 				for (i = 0; i < util.imagesAndVideosTotal(currentAlbum.numMedia); ++i) {
+					ithMedia = currentAlbum.media[i];
 					$("#media-map-link-" + i).off('click').on(
 						'click',
 						{media: ithMedia, album: currentAlbum, clickedSelector: "#media-map-link-" + i},
