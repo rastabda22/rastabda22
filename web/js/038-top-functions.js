@@ -1177,12 +1177,13 @@
 					return true;
 				});
 			}
+
+			var trueOriginalMediaPath = encodeURI(util.trueOriginalMediaPath(singleMedia));
+			$(".download-single-media .download-link").attr("href", trueOriginalMediaPath).attr("download", "");
 		}
 
 		var originalMediaPath = encodeURI(util.originalMediaPath(singleMedia));
-		var trueOriginalMediaPath = encodeURI(util.trueOriginalMediaPath(singleMedia));
 		$(".media-box#" + id + " .original-link").attr("target", "_blank").attr("href", originalMediaPath);
-		$(".media-box#" + id + " .download-link").attr("href", trueOriginalMediaPath).attr("download", "");
 		if (util.hasGpsData(singleMedia)) {
 			$(".media-box#" + id + " .menu-map-link").on(
 				'click',

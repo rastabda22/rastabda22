@@ -246,7 +246,7 @@ $(document).ready(function() {
 						}
 					} else if (e.key.toLowerCase() === "d" && ! isMap) {
 						if (currentMedia !== null)
-							$("#center .download-link")[0].click();
+							$(".download-single-media .download-link")[0].click();
 						return false;
 					} else if (e.key.toLowerCase() === "f" && currentMedia !== null && ! isMap) {
 						tF.goFullscreen(e);

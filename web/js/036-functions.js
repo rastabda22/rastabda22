@@ -487,7 +487,7 @@
 			$(".download-album.expandable, .download-album.caption").removeClass("hidden");
 			$(".download-single-media").removeClass("hidden");
 			let trueOriginalMediaPath = encodeURI(util.trueOriginalMediaPath(currentMedia));
-			$(".download-single-media.download-link").attr("href", trueOriginalMediaPath).attr("download", "");
+			$(".download-single-media .download-link").attr("href", trueOriginalMediaPath).attr("download", "");
 		} else if (thisAlbum !== null) {
 			$(".download-album.expandable, .download-album.caption").removeClass("hidden");
 
