@@ -475,6 +475,24 @@
 		return media.mimeType.indexOf("image") === 0 && typeof media.metadata.latitude !== "undefined";
 	};
 
+	Utilities.isSelected = function(media) {
+		return typeof media.selected !== "undefined" && media.selected === true;
+	};
+
+	Utilities.prototype.toggleSelected = function(media) {
+		if (Utilities.isSelected(media))
+			media.selected = false;
+		else
+			media.selected = true;
+	};
+
+	Utilities.prototype.updateSelectedCheckBox = function(media, selector) {
+		if (Utilities.isSelected(media))
+			$(selector + " img").attr("src", "img/checkbox-checked-48px.png");
+		else
+			$(selector + " img").attr("src", "img/checkbox-unchecked-48px.png");
+	};
+
 	Utilities.prototype.em2px = function(selector, em) {
 		var emSize = parseFloat($(selector).css("font-size"));
 		return (em * emSize);
@@ -1547,6 +1565,7 @@
 	Utilities.prototype.imagesAndVideosSum = Utilities.imagesAndVideosSum;
 	Utilities.prototype.upHash = Utilities.upHash;
 	Utilities.prototype.isAlbumWithOneMedia = Utilities.isAlbumWithOneMedia;
+	Utilities.prototype.isSelected = Utilities.isSelected;
 
 	window.Utilities = Utilities;
 }());

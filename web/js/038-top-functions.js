@@ -1809,7 +1809,7 @@
 		var albumViewWidth, correctedAlbumThumbSize = Options.album_thumb_size;
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
 		var tooBig = false, isVirtualAlbum = false;
-		var mapLinkIcon, id, ithMedia;
+		var mapLinkIcon, selectBox, selectSrc, id, ithMedia;
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
 		var folderArray, folder, folderName, folderTitle;
 
@@ -1915,7 +1915,6 @@
 						mapLinkIcon =
 							"<a id='media-map-link-" + i + "'>" +
 								"<img " +
-									// "id='media-map-link-" + i + "' " +
 									"class='thumbnail-map-link' " +
 									"title='" + util.escapeSingleQuotes(util._t("#show-on-map")) + "' " +
 									"alt='" + util.escapeSingleQuotes(util._t("#show-on-map")) + "' " +
@@ -1924,6 +1923,20 @@
 								">" +
 							"</a>";
 					}
+					selectSrc = 'img/checkbox-unchecked-48px.png';
+					if (util.isSelected(ithMedia)) {
+						selectSrc = 'img/checkbox-checked-48px.png';
+					}
+					selectBox =
+						"<a id='media-select-box-" + i + "'>" +
+							"<img " +
+								"class='select-box' " +
+								"title='" + util.escapeSingleQuotes(util._t("#select-image")) + "' " +
+								"alt='" + util.escapeSingleQuotes(util._t("#select-image")) + "' " +
+								"height='20px' " +
+								"src='" + selectSrc + "'" +
+							">" +
+						"</a>";
 
 					imgString = "<img " +
 									"data-src='" + encodeURI(thumbHash) + "' " +
@@ -1949,6 +1962,7 @@
 									"height: " + calculatedHeight + "px;" +
 							"'>" +
 							mapLinkIcon +
+							selectBox +
 							"<span class='helper'></span>" +
 							img.prop("outerHTML") +
 							"</div>" +
@@ -2005,6 +2019,15 @@
 							selectorClickedToOpenTheMap = ev.data.clickedSelector;
 							ev.stopPropagation();
 							TopFunctions.generateMapFromMedia(ev, from);
+						}
+					);
+					$("#media-select-box-" + i).off('click').on(
+						'click',
+						{media: ithMedia, clickedSelector: "#media-select-box-" + i},
+						function(ev) {
+							ev.stopPropagation();
+							util.toggleSelected(ev.data.media);
+							util.updateSelectedCheckBox(ev.data.media, ev.data.clickedSelector);
 						}
 					);
 				}
