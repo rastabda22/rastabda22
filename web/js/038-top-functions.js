@@ -8,7 +8,6 @@
 	var f = new Functions();
 	var numSubAlbumsReady = 0;
 	var mapIsInitialized = false;
-	var lastAlbumIndex = 0;
 
 	/* constructor */
 	function TopFunctions() {
@@ -2874,8 +2873,7 @@
 							if (jQuery.isEmptyObject(MapFunctions.mapAlbum) || util.imagesAndVideosTotal(MapFunctions.mapAlbum.numMedia) == 0 || ! evt.originalEvent.shiftKey) {
 								// normal click or shift click without previous content
 
-								lastAlbumIndex ++;
-								MapFunctions.mapAlbum = map.initializeMapAlbum(lastAlbumIndex);
+								MapFunctions.mapAlbum = map.initializeMapAlbum();
 
 								MapFunctions.mapAlbum.clickHistory = [clickHistoryElement];
 

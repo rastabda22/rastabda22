@@ -4,6 +4,7 @@
 	var phFl = new PhotoFloat();
 	var util = new Utilities();
 	var f = new Functions();
+	var lastMapAlbumIndex = 0;
 
 	/* constructor */
 	function MapFunctions() {
@@ -322,7 +323,9 @@
 		MapFunctions.setPopupPosition();
 	};
 
-	MapFunctions.prototype.initializeMapAlbum = function(mapAlbumHash) {
+	MapFunctions.prototype.initializeMapAlbum = function() {
+		lastMapAlbumIndex ++;
+
 		// initializes the map album
 		var album = {};
 		album.media = [];
@@ -333,7 +336,7 @@
 		album.subalbums = [];
 		album.positionsAndMediaInTree = [];
 		album.numPositionsInTree = 0;
-		album.cacheBase = Options.by_map_string + Options.cache_folder_separator + mapAlbumHash + Options.cache_folder_separator + currentAlbum.cacheBase;
+		album.cacheBase = Options.by_map_string + Options.cache_folder_separator + lastMapAlbumIndex + Options.cache_folder_separator + currentAlbum.cacheBase;
 		album.path = album.cacheBase.replace(Options.cache_folder_separator, "/");
 		album.physicalPath = album.path;
 		album.searchInFolderCacheBase = currentAlbum.cacheBase;
