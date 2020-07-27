@@ -487,16 +487,32 @@
 
 	Utilities.prototype.toggleSelectedMedia = function(media) {
 		if (Utilities.mediaIsSelected(media))
-			delete media.selected;
+			Utilities.removeSingleMediaFromSelection(media);
 		else
-			media.selected = true;
+			Utilities.addSingleMediaToSelection(media);
+	};
+
+	Utilities.addSingleMediaToSelection = function(media) {
+		media.selected = true;
+	}
+
+	Utilities.removeSingleMediaFromSelection = function(media) {
+		delete media.selected;
 	};
 
 	Utilities.prototype.toggleSelectedSubalbum = function(subalbum) {
 		if (Utilities.subalbumIsSelected(subalbum))
-			delete subalbum.selected;
+			Utilities.removeSubalbumFromSelection(subalbum);
 		else
-			subalbum.selected = true;
+			Utilities.addSubalbumToSelection(subalbum);
+	};
+
+	Utilities.addSubalbumToSelection = function(subalbum) {
+		subalbum.selected = true;
+	};
+
+	Utilities.removeSubalbumFromSelection = function(subalbum) {
+		delete subalbum.selected;
 	};
 
 	Utilities.resetSelectedMedia = function(album, includeSubalbums = false) {
