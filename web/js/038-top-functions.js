@@ -92,7 +92,7 @@
 				documentTitle += components[0];
 				if (components.length > 2 || singleMedia !== null)
 					documentTitle = " \u00ab " + documentTitle;
-				documentTitle += "(" + util._t("#by-date") + ")";
+				documentTitle += " (" + util._t("#by-date") + ")";
 			}
 
 			for (i = 2; i < components.length; ++i) {
@@ -165,7 +165,7 @@
 				documentTitle += components[0];
 				if (components.length > 2 || singleMedia !== null)
 					documentTitle = " \u00ab " + documentTitle;
-				documentTitle += "(" + util._t("#by-gps") + ")";
+				documentTitle += " (" + util._t("#by-gps") + ")";
 			}
 
 			for (i = 2; i < components.length; ++i) {
@@ -372,7 +372,7 @@
 
 			if (setDocumentTitle) {
 				// build the html page title
-				documentTitle += " (" + where +") \u00ab " + components[0];
+				documentTitle += " (" + where + ") \u00ab " + components[0];
 				if (singleMedia !== null)
 					documentTitle = " \u00ab " + documentTitle;
 			}
