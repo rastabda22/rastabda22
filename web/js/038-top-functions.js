@@ -859,9 +859,25 @@
 				$("#pinch-in").off("click").on("click", pS.pinchIn);
 				$("#pinch-out").off("click").on("click", pS.pinchOut);
 
+				let selectSrc = 'img/checkbox-unchecked-48px.png';
+				if (util.mediaIsSelected(singleMedia)) {
+					selectSrc = 'img/checkbox-checked-48px.png';
+				}
+				$("#media-select-box .select-box").attr("title", util._t("#select-single-media")).attr("alt", util._t("#select-single-media")).attr("src", selectSrc);
+				$("#media-select-box").off('click').on(
+					'click',
+					{media: singleMedia, clickedSelector: "#media-select-box"},
+					function(ev) {
+						ev.stopPropagation();
+						util.toggleSelectedMedia(ev.data.media);
+						util.updateSelectedMediaCheckBox(ev.data.media, ev.data.clickedSelector);
+					}
+				);
+
 				if (singleMedia.mimeType.indexOf("image") === 0) {
 					pS.addMediaGesturesDetection();
 					util.setPinchButtonsPosition();
+					util.setSelectButtonPosition();
 					util.correctPrevNextPosition();
 				}
 
@@ -891,8 +907,9 @@
 							function() {
 								if (singleMedia.mimeType.indexOf("image") === 0) {
 									f.pinchSwipeInitialization();
-									Utilities.setPinchButtonsPosition();
-									Utilities.correctPrevNextPosition();
+									util.setPinchButtonsPosition();
+									util.setSelectButtonPosition();
+									util.correctPrevNextPosition();
 								}
 							}
 						);
@@ -1093,8 +1110,9 @@
 					let scaleMediaPromise = util.scaleMedia(event);
 					scaleMediaPromise.then(
 						function() {
-							Utilities.setPinchButtonsPosition();
-							Utilities.correctPrevNextPosition();
+							util.setPinchButtonsPosition();
+							util.setSelectButtonPosition();
+							util.correctPrevNextPosition();
 							if (singleMedia.mimeType.indexOf("image") === 0) {
 								loadNextPrevMedia(containerHeight, containerWidth);
 							}
@@ -1808,7 +1826,7 @@
 		var albumViewWidth, correctedAlbumThumbSize = Options.album_thumb_size;
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
 		var tooBig = false, isVirtualAlbum = false;
-		var mapLinkIcon, selectBoxHtml, selectBox, selectSrc, id, ithMedia;
+		var mapLinkIcon, selectBoxHtml, selectSrc, id, ithMedia;
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
 		var folderArray, folder, folderName, folderTitle;
 
@@ -1932,7 +1950,6 @@
 								"class='select-box' " +
 								"title='" + util.escapeSingleQuotes(util._t("#select-single-media")) + "' " +
 								"alt='" + util.escapeSingleQuotes(util._t("#select-single-media")) + "' " +
-								"height='20px' " +
 								"src='" + selectSrc + "'" +
 							">" +
 						"</a>";
@@ -2182,11 +2199,9 @@
 											"class='select-box' " +
 											"title='" + util.escapeSingleQuotes(util._t("#select-subalbum")) + "' " +
 											"alt='" + util.escapeSingleQuotes(util._t("#select-subalbum")) + "' " +
-											"height='20px' " +
 											"src='" + selectSrc + "'" +
 										">" +
 									"</a>";
-								selectBox = $(selectBoxHtml);
 
 
 								// a dot could be present in a cache base, making $("#" + cacheBase) fail, beware...

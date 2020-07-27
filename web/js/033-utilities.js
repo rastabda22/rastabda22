@@ -1185,7 +1185,7 @@
 	};
 
 
-	Utilities.setPinchButtonsPosition = function(containerHeight, containerWidth) {
+	Utilities.prototype.setPinchButtonsPosition = function(containerHeight, containerWidth) {
 		// calculate and set pinch buttons position
 
 		var mediaElement = $(".media-box#center .media-box-inner img");
@@ -1209,6 +1209,31 @@
 		// var pinchTop = Math.round((containerHeight - actualHeight) / 2 + distanceFromImageBorder);
 		var pinchRight = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
 		$("#pinch-container").css("right", pinchRight.toString() + "px").css("top", pinchTop.toString() + "px");
+	};
+
+	Utilities.prototype.setSelectButtonPosition = function(containerHeight, containerWidth) {
+		// calculate and set pinch buttons position
+
+		var mediaElement = $(".media-box#center .media-box-inner img");
+		var actualHeight = mediaElement.height();
+		var actualWidth = mediaElement.width();
+		var titleHeight, albumHeight;
+		if ($(".media-box#center .title").is(":visible"))
+			titleHeight = $(".media-box#center .title").height();
+		else
+			titleHeight = 0;
+		if ($("#album-view").is(":visible"))
+			albumHeight = $("#album-view").height();
+		else
+			albumHeight = 0;
+		var distanceFromImageBorder = 15;
+		// if (typeof containerHeight === "undefined") {
+		containerHeight = windowHeight - titleHeight - albumHeight;
+		containerWidth = windowWidth;
+		// }
+		var bottom = Math.round(titleHeight + (containerHeight - actualHeight) / 2 + distanceFromImageBorder);
+		var right = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
+		$("#media-select-box .select-box").css("right", right.toString() + "px").css("bottom", bottom.toString() + "px");
 	};
 
 	Utilities.prototype.sumUpNumsProtectedMedia = function(numsProtectedMediaInSubTree) {
@@ -1658,7 +1683,6 @@
 	Utilities.prototype.isByGpsCacheBase = Utilities.isByGpsCacheBase;
 	Utilities.prototype.isSearchCacheBase = Utilities.isSearchCacheBase;
 	Utilities.prototype.isMapCacheBase = Utilities.isMapCacheBase;
-	Utilities.prototype.setPinchButtonsPosition = Utilities.setPinchButtonsPosition;
 	Utilities.prototype.convertMd5ToCode = Utilities.convertMd5ToCode;
 	Utilities.prototype._t = Utilities._t;
 	Utilities.prototype.getLanguage = Utilities.getLanguage;
