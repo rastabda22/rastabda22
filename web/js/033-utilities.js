@@ -481,11 +481,22 @@
 		return typeof media.selected !== "undefined" && media.selected === true;
 	};
 
+	Utilities.subalbumIsSelected = function(subalbum) {
+		return typeof subalbum.selected !== "undefined" && subalbum.selected === true;
+	};
+
 	Utilities.prototype.toggleSelectedMedia = function(media) {
 		if (Utilities.mediaIsSelected(media))
 			delete media.selected;
 		else
 			media.selected = true;
+	};
+
+	Utilities.prototype.toggleSelectedSubalbum = function(subalbum) {
+		if (Utilities.subalbumIsSelected(subalbum))
+			delete subalbum.selected;
+		else
+			subalbum.selected = true;
 	};
 
 	Utilities.resetSelectedMedia = function(album, includeSubalbums = false) {
@@ -496,6 +507,18 @@
 		if (includeSubalbums) {
 			for (let i = 0; i < album.subalbums.length; i ++) {
 				Utilities.resetSelectedMedia(album.subalbums[i], includeSubalbums);
+			}
+		}
+	};
+
+	Utilities.resetSelectedSubalbums = function(album, includeSubalbums = false) {
+		for (let i = 0; i < album.subalbums.length; i ++) {
+			if (Utilities.subalbumIsSelected(album.subalbums[i]))
+				delete album.subalbums[i].selected;
+		}
+		if (includeSubalbums) {
+			for (let i = 0; i < album.subalbums.length; i ++) {
+				Utilities.resetSelectedSubalbums(album.subalbums[i], includeSubalbums);
 			}
 		}
 	};
@@ -514,21 +537,35 @@
 		return count;
 	};
 
+	Utilities.countSelectedSubalbums = function(album, includeSubalbums = false) {
+		var count = 0;
+		for (let i = 0; i < album.subalbums.length; i ++) {
+			if (Utilities.mediaIsSelected(album.subalbums[i]))
+				count ++;
+		}
+		if (includeSubalbums) {
+			for (let i = 0; i < album.subalbums.length; i ++) {
+				count += Utilities.countSelectedSubalbums(album.subalbums[i], includeSubalbums);
+			}
+		}
+		return count;
+	};
+
 	Utilities.prototype.updateSelectedMediaCheckBox = function(media, selector) {
 		if (Utilities.mediaIsSelected(media)) {
-			$(selector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#"));
+			$(selector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-single-media"));
 
 		} else {
-			$(selector + " img").attr("src", "img/checkbox-unchecked-48px.png");
+			$(selector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
 		}
 	};
 
-	Utilities.prototype.updateSelectedAlbumCheckBox = function(album, selector) {
-		if (Utilities.mediaIsSelected(media)) {
-			$(selector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#"));
+	Utilities.prototype.updateSelectedSubalbumCheckBox = function(subalbum, selector) {
+		if (Utilities.subalbumIsSelected(subalbum)) {
+			$(selector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-subalbum"));
 
 		} else {
-			$(selector + " img").attr("src", "img/checkbox-unchecked-48px.png");
+			$(selector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-subalbum"));
 		}
 	};
 
@@ -1630,8 +1667,11 @@
 	Utilities.prototype.upHash = Utilities.upHash;
 	Utilities.prototype.isAlbumWithOneMedia = Utilities.isAlbumWithOneMedia;
 	Utilities.prototype.mediaIsSelected = Utilities.mediaIsSelected;
+	Utilities.prototype.subalbumIsSelected = Utilities.subalbumIsSelected;
 	Utilities.prototype.resetSelectedMedia = Utilities.resetSelectedMedia;
+	Utilities.prototype.resetSelectedSubalbums = Utilities.resetSelectedSubalbums;
 	Utilities.prototype.countSelectedMedia = Utilities.countSelectedMedia;
+	Utilities.prototype.countSelectedSubalbums = Utilities.countSelectedSubalbums;
 	Utilities.prototype.isAnyRootHash = Utilities.isAnyRootHash;
 
 	window.Utilities = Utilities;

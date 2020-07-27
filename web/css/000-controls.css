@@ -213,7 +213,7 @@ a.title-anchor.mobile {
 */
 }
 
-.album-button-random-media-link, #thumbs .thumbnail-map-link, #thumbs .select-box {
+.album-button-random-media-link, #thumbs .thumbnail-map-link, #thumbs .select-box, #subalbums .select-box {
 	position: absolute;
 	filter: alpha(opacity=30); /* For IE8 and earlier */
 }
@@ -225,13 +225,14 @@ a.title-anchor.mobile {
 
 .album-button-random-media-link {
 	opacity: .3;
-	top: 0px;
-	right: 0px;
+	top: 5px;
+	right: 5px;
+	height: 30px;
 }
 
-#thumbs .thumbnail-map-link, #thumbs .select-box {
+#thumbs .thumbnail-map-link, #thumbs .select-box, #subalbums .select-box {
 	opacity: .5;
-	height: 20px;
+	height: 30px;
 }
 
 #thumbs .thumbnail-map-link {
@@ -239,16 +240,16 @@ a.title-anchor.mobile {
 	right: 5px;
 }
 
-#thumbs .select-box {
+#thumbs .select-box, #subalbums .select-box {
 	bottom: 5px;
-	left: 5px;
+	right: 5px;
 }
 
-#thumbs .thumbnail-map-link:hover, #thumbs .select-box:hover {
+#thumbs .thumbnail-map-link:hover, #thumbs .select-box:hover, #subalbums .select-box:hover {
 	opacity: 1;
 }
 
-.album-button-random-media-link:hover, .thumbnail-map-link:hover, #thumbs .select-box:hover {
+.album-button-random-media-link:hover, .thumbnail-map-link:hover, #thumbs .select-box:hover, #subalbums .select-box:hover {
 	opacity: 1;
 	filter: alpha(opacity=100); /* For IE8 and earlier */
 }

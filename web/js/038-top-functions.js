@@ -1808,7 +1808,7 @@
 		var albumViewWidth, correctedAlbumThumbSize = Options.album_thumb_size;
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
 		var tooBig = false, isVirtualAlbum = false;
-		var mapLinkIcon, selectBox, selectSrc, id, ithMedia;
+		var mapLinkIcon, selectBoxHtml, selectBox, selectSrc, id, ithMedia;
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
 		var folderArray, folder, folderName, folderTitle;
 
@@ -1926,12 +1926,12 @@
 					if (util.mediaIsSelected(ithMedia)) {
 						selectSrc = 'img/checkbox-checked-48px.png';
 					}
-					selectBox =
+					selectBoxHtml =
 						"<a id='media-select-box-" + i + "'>" +
 							"<img " +
 								"class='select-box' " +
-								"title='" + util.escapeSingleQuotes(util._t("#select-image")) + "' " +
-								"alt='" + util.escapeSingleQuotes(util._t("#select-image")) + "' " +
+								"title='" + util.escapeSingleQuotes(util._t("#select-single-media")) + "' " +
+								"alt='" + util.escapeSingleQuotes(util._t("#select-single-media")) + "' " +
 								"height='20px' " +
 								"src='" + selectSrc + "'" +
 							">" +
@@ -1961,7 +1961,7 @@
 									"height: " + calculatedHeight + "px;" +
 							"'>" +
 							mapLinkIcon +
-							selectBox +
+							selectBoxHtml +
 							"<span class='helper'></span>" +
 							img.prop("outerHTML") +
 							"</div>" +
@@ -2172,6 +2172,22 @@
 								captionHtml += ")</div>";
 								caption = $(captionHtml);
 
+								selectSrc = 'img/checkbox-unchecked-48px.png';
+								if (util.subalbumIsSelected(ithSubalbum)) {
+									selectSrc = 'img/checkbox-checked-48px.png';
+								}
+								selectBoxHtml =
+									"<a id='subalbum-select-box-" + i + "'>" +
+										"<img " +
+											"class='select-box' " +
+											"title='" + util.escapeSingleQuotes(util._t("#select-subalbum")) + "' " +
+											"alt='" + util.escapeSingleQuotes(util._t("#select-subalbum")) + "' " +
+											"height='20px' " +
+											"src='" + selectSrc + "'" +
+										">" +
+									"</a>";
+								selectBox = $(selectBoxHtml);
+
 
 								// a dot could be present in a cache base, making $("#" + cacheBase) fail, beware...
 								id = phFl.hashCode(ithSubalbum.cacheBase);
@@ -2204,14 +2220,11 @@
 											"margin:" + margin + "px;" +
 										"'" +
 										">" +
+										selectBoxHtml +
 										"<a href=''>" +
 											"<img " +
 												"src='img/link-arrow.png' " +
-												"class='album-button-random-media-link' " +
-												"style='" +
-													"width: 20px;" +
-													" height: 20px;" +
-													"'" +
+												"class='album-button-random-media-link'" +
 												">" +
 										"</a>" +
 										"<span class='helper'></span>" +
@@ -2286,6 +2299,16 @@
 								function(ev, from) {
 									selectorClickedToOpenTheMap = ev.data.clickedSelector;
 									TopFunctions.generateMapFromSubalbum(ev, from);
+								}
+							);
+							$("#subalbum-select-box-" + i).off('click').on(
+								'click',
+								{subalbum: ithSubalbum, clickedSelector: "#subalbum-select-box-" + i},
+								function(ev) {
+									ev.stopPropagation();
+									ev.preventDefault();
+									util.toggleSelectedSubalbum(ev.data.subalbum);
+									util.updateSelectedSubalbumCheckBox(ev.data.subalbum, ev.data.clickedSelector);
 								}
 							);
 						}
