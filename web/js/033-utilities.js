@@ -1217,15 +1217,11 @@
 		var mediaElement = $(".media-box#center .media-box-inner img");
 		var actualHeight = mediaElement.height();
 		var actualWidth = mediaElement.width();
-		var titleHeight, albumHeight;
+		var titleHeight = 0, albumHeight = 0;
 		if ($(".media-box#center .title").is(":visible"))
 			titleHeight = $(".media-box#center .title").height();
-		else
-			titleHeight = 0;
 		if ($("#album-view").is(":visible"))
 			albumHeight = $("#album-view").height();
-		else
-			albumHeight = 0;
 		var distanceFromImageBorder = 15;
 		// if (typeof containerHeight === "undefined") {
 		containerHeight = windowHeight - titleHeight - albumHeight;
