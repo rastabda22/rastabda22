@@ -1,5 +1,6 @@
 /*jshint esversion: 6 */
 (function() {
+	var lastSelectionAlbumIndex = 0;
 	/* constructor */
 	function Utilities() {
 		$(document).ready(
@@ -480,37 +481,10 @@
 		return typeof media.selected !== "undefined" && media.selected === true;
 	};
 
-	Utilities.mediaIsOnStandBy = function(media) {
-		return typeof media.selected !== "undefined" && media.selected === false;
-	};
-
-	Utilities.mediaIsUnselected = function(media) {
-		return typeof media.selected === "undefined";
-	};
-
-	Utilities.prototype.putOnStandBySelectedMedia = function(media) {
-		// the value of false is something like a standby, in order to keep the memory of the true state
-		if (Utilities.mediaIsSelected(media))
-			media.selected = false;
-	};
-
-	Utilities.prototype.removeStandByFromSelectedMedia = function(media) {
-		// the value of false is something like a standby, in order to keep the memory of the true state
-		if (Utilities.mediaIsOnStandBy(media))
-			media.selected = true;
-	};
-
 	Utilities.prototype.toggleSelectedMedia = function(media) {
 		if (Utilities.mediaIsSelected(media))
 			delete media.selected;
 		else
-			media.selected = true;
-	};
-
-	Utilities.prototype.toggleStandByOnSelectedMedia = function(media) {
-		if (Utilities.mediaIsSelected(media))
-			media.selected = false;
-		else if (Utilities.mediaIsOnStandBy(media))
 			media.selected = true;
 	};
 
@@ -557,6 +531,30 @@
 			$(selector + " img").attr("src", "img/checkbox-unchecked-48px.png");
 		}
 	};
+
+	Utilities.prototype.initializeSelectionAlbum = function() {
+		// initializes the selection album
+		lastSelectionAlbumIndex ++;
+
+		var album = {};
+		album.media = [];
+		album.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
+		album.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
+		album.sizesOfAlbum = initialSizes;
+		album.sizesOfSubTree = initialSizes;
+		album.subalbums = [];
+		album.positionsAndMediaInTree = [];
+		album.numPositionsInTree = 0;
+		album.cacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
+		album.path = album.cacheBase.replace(Options.cache_folder_separator, "/");
+		album.physicalPath = album.path;
+		album.searchInFolderCacheBase = currentAlbum.cacheBase;
+		album.clickHistory = [];
+		album.numsProtectedMediaInSubTree = {"": imagesAndVideos0};
+
+		return album;
+	};
+
 
 
 	Utilities.prototype.em2px = function(selector, em) {

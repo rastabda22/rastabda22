@@ -274,6 +274,7 @@ by_date_string = _bd
 by_gps_string = _bg
 by_search_string = _bs
 by_map_string = _bm
+by_selection_string = _be
 cache_folder_separator = -
 search_options_separator = .
 
