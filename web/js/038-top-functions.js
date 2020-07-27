@@ -708,7 +708,7 @@
 				return false;
 			}
 
-			function changeToBySearcView() {
+			function changeToBySearchView() {
 				TopFunctions.showBrowsingModeMessage("#by-search-browsing");
 				window.location.href = bySearchViewLink;
 				return false;
@@ -753,7 +753,7 @@
 			if (byMapViewLink !== null)
 				$("#by-map-view").on("click", changeToByMapView);
 			if (bySearchViewLink !== null)
-				$("#by-search-view").on("click", changeToBySearcView);
+				$("#by-search-view").on("click", changeToBySearchView);
 
 			if (util.isFolderCacheBase(thisAlbum.cacheBase)) {
 				$("#folders-view").off("click");
