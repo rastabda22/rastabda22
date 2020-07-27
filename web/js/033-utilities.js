@@ -364,8 +364,8 @@
 		return sortedAlbum;
 	};
 
-	Utilities.prototype.isAnyRootHash = function(hash) {
-		return [Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string].indexOf(hash) !== -1;
+	Utilities.isAnyRootHash = function(hash) {
+		return [Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string, Options.by_selection_string].indexOf(hash) !== -1;
 	};
 
 	Utilities.prototype.trimExtension = function(name) {
@@ -1382,7 +1382,7 @@
 				if (albumHash == Options.folders_string)
 					// stay there
 					resultHash = albumHash;
-				else if (albumHash == Options.by_date_string || albumHash == Options.by_gps_string || albumHash == Options.by_map_string)
+				else if (Utilities.isAnyRootHash(albumHash))
 					// go to folders root
 					resultHash = Options.folders_string;
 				else if (Utilities.isSearchCacheBase(albumHash) || Utilities.isMapCacheBase(albumHash)) {
@@ -1634,6 +1634,7 @@
 	Utilities.prototype.mediaIsSelected = Utilities.mediaIsSelected;
 	Utilities.prototype.resetSelectedMedia = Utilities.resetSelectedMedia;
 	Utilities.prototype.countSelectedMedia = Utilities.countSelectedMedia;
+	Utilities.prototype.isAnyRootHash = Utilities.isAnyRootHash;
 
 	window.Utilities = Utilities;
 }());
