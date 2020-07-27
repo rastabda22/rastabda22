@@ -6,7 +6,7 @@ var currentMediaIndex = -1;
 var previousAlbum = null;
 var previousMedia = null;
 var nextMedia = null, prevMedia = null, upLink = "";
-var bySearchViewLink = null, byMapViewLink = null, isABrowsingModeChange = false;
+var bySearchViewLink = null, byMapViewLink = null, bySelectionViewLink = null, isABrowsingModeChange = false;
 var nextBrowsingModeSelector, prevBrowsingModeSelector;
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
@@ -759,6 +759,7 @@ $(document).ready(function() {
 			else {
 				// the image has changed, reset the search and map link
 				bySearchViewLink = null;
+				bySelectionViewLink = null
 				byMapViewLink = null;
 			}
 			$("#loading").show();

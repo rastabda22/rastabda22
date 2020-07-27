@@ -392,6 +392,10 @@
 		return string.indexOf(Options.bySearchStringWithTrailingSeparator) === 0;
 	};
 
+	Utilities.isBySelectionCacheBase = function(string) {
+		return string.indexOf(Options.bySelectionStringWithTrailingSeparator) === 0;
+	};
+
 	Utilities.isMapCacheBase = function(string) {
 		return string.indexOf(Options.byMapStringWithTrailingSeparator) === 0;
 	};
@@ -529,6 +533,7 @@
 			selectionAlbum = Utilities.initializeSelectionAlbum();
 
 		singleMedia.parent = selectionAlbum;
+		singleMedia.selectionAlbumCacheBase = selectionAlbum.cacheBase;
 		if (Utilities.hasGpsData(singleMedia)) {
 			// add the media position
 			selectionAlbum.positionsAndMediaInTree =
@@ -552,6 +557,8 @@
 		var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
 		var index = selectionAlbum.media.findIndex(x => x.albumName === singleMedia.albumName && x.name === singleMedia.name);
 		selectionAlbum.media.splice(index, 1);
+
+		delete singleMedia.selectionAlbumCacheBase;
 
 		selectionAlbum.numMediaInAlbum -= 1;
 		selectionAlbum.numMediaInSubTree -= 1;

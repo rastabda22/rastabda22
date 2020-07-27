@@ -163,6 +163,9 @@
 				if (bySearchViewLink === null) {
 					$("#by-search-view").addClass("hidden");
 				}
+				if (bySelectionViewLink === null) {
+					$("#by-selection-view").addClass("hidden");
+				}
 			} else if (util.isByDateCacheBase(thisAlbum.cacheBase)) {
 				$("#by-date-view").removeClass("active").addClass("selected");
 				if (hideGpsEntry) {
@@ -174,6 +177,9 @@
 				if (bySearchViewLink === null) {
 					$("#by-search-view").addClass("hidden");
 				}
+				if (bySelectionViewLink === null) {
+					$("#by-selection-view").addClass("hidden");
+				}
 			} else if (util.isByGpsCacheBase(thisAlbum.cacheBase)) {
 				$("#by-gps-view").removeClass("active").addClass("selected");
 				if (byMapViewLink === null) {
@@ -181,6 +187,9 @@
 				}
 				if (bySearchViewLink === null) {
 					$("#by-search-view").addClass("hidden");
+				}
+				if (bySelectionViewLink === null) {
+					$("#by-selection-view").addClass("hidden");
 				}
 			} else if (util.isMapCacheBase(thisAlbum.cacheBase)) {
 				if (hideGpsEntry) {
@@ -190,6 +199,9 @@
 				if (bySearchViewLink === null) {
 					$("#by-search-view").addClass("hidden");
 				}
+				if (bySelectionViewLink === null) {
+					$("#by-selection-view").addClass("hidden");
+				}
 			} else if (util.isSearchCacheBase(thisAlbum.cacheBase)) {
 				if (hideGpsEntry) {
 					$("#by-gps-view").addClass("hidden");
@@ -198,6 +210,20 @@
 					$("#by-map-view").addClass("hidden");
 				}
 				$("#by-search-view").removeClass("active").addClass("selected");
+				if (bySelectionViewLink === null) {
+					$("#by-selection-view").addClass("hidden");
+				}
+			} else if (util.isBySelectionCacheBase(thisAlbum.cacheBase)) {
+				if (hideGpsEntry) {
+					$("#by-gps-view").addClass("hidden");
+				}
+				if (byMapViewLink === null) {
+					$("#by-map-view").addClass("hidden");
+				}
+				if (bySearchViewLink === null) {
+					$("#by-search-view").addClass("hidden");
+				}
+				$("#by-selection-view").removeClass("active").addClass("selected");
 			}
 		}
 
@@ -1141,6 +1167,7 @@
 							Options.byDateStringWithTrailingSeparator = Options.by_date_string + Options.cache_folder_separator;
 							Options.byGpsStringWithTrailingSeparator = Options.by_gps_string + Options.cache_folder_separator;
 							Options.bySearchStringWithTrailingSeparator = Options.by_search_string + Options.cache_folder_separator;
+							Options.bySelectionStringWithTrailingSeparator = Options.by_selection_string + Options.cache_folder_separator;
 							Options.byMapStringWithTrailingSeparator = Options.by_map_string + Options.cache_folder_separator;
 
 							PhotoFloat.initializeMapRootAlbum();

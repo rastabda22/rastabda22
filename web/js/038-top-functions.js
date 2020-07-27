@@ -714,6 +714,12 @@
 				return false;
 			}
 
+			function changeToBySelectionView() {
+				TopFunctions.showBrowsingModeMessage("#by-selection-browsing");
+				window.location.href = bySelectionViewLink;
+				return false;
+			}
+
 			var foldersViewLink, byDateViewLink, byGpsViewLink;
 			if (currentMedia !== null) {
 				foldersViewLink = "#!/" + util.pathJoin([
@@ -754,13 +760,17 @@
 				$("#by-map-view").on("click", changeToByMapView);
 			if (bySearchViewLink !== null)
 				$("#by-search-view").on("click", changeToBySearchView);
+			if (bySelectionViewLink !== null)
+				$("#by-selection-view").on("click", changeToBySelectionView);
 
 			if (util.isFolderCacheBase(thisAlbum.cacheBase)) {
 				$("#folders-view").off("click");
 
 				// add the browsing mode switcher links
 				nextBrowsingModeSelector = "#by-date-view";
-				if (bySearchViewLink !== null) {
+				if (bySelectionViewLink !== null) {
+					prevBrowsingModeSelector = "#by-selection-view";
+				} else if (bySearchViewLink !== null) {
 					prevBrowsingModeSelector = "#by-search-view";
 				} else if (byMapViewLink !== null) {
 					prevBrowsingModeSelector = "#by-map-view";
@@ -779,6 +789,8 @@
 					nextBrowsingModeSelector = "#by-map-view";
 				} else if (bySearchViewLink !== null) {
 					nextBrowsingModeSelector = "#by-search-view";
+				} else if (bySelectionViewLink !== null) {
+					nextBrowsingModeSelector = "#by-selection-view";
 				} else {
 					nextBrowsingModeSelector = "#folders-view";
 				}
@@ -791,6 +803,8 @@
 					nextBrowsingModeSelector = "#by-map-view";
 				} else if (bySearchViewLink !== null) {
 					nextBrowsingModeSelector = "#by-search-view";
+				} else if (bySelectionViewLink !== null) {
+					nextBrowsingModeSelector = "#by-selection-view";
 				} else {
 					nextBrowsingModeSelector = "#folders-view";
 				}
@@ -803,6 +817,8 @@
 				// add the browsing mode switcher links
 				if (bySearchViewLink !== null) {
 					nextBrowsingModeSelector = "#by-search-view";
+				} else if (bySelectionViewLink !== null) {
+					nextBrowsingModeSelector = "#by-selection-view";
 				} else {
 					nextBrowsingModeSelector = "#folders-view";
 				}
@@ -817,8 +833,28 @@
 				bySearchViewLink = location.hash;
 
 				// add the browsing mode switcher links
-				nextBrowsingModeSelector = "#folders-view";
+				if (bySelectionViewLink !== null) {
+					nextBrowsingModeSelector = "#by-selection-view";
+				} else {
+					nextBrowsingModeSelector = "#folders-view";
+				}
 				if (byMapViewLink !== null) {
+					prevBrowsingModeSelector = "#by-map-view";
+				} else if (hasGpsData) {
+					prevBrowsingModeSelector = "#by-gps-view";
+				} else {
+					prevBrowsingModeSelector = "#by-date-view";
+				}
+			} else if (util.isSelectionCacheBase(thisAlbum.cacheBase)) {
+				$("#by-selection-view").off("click");
+
+				bySelectionViewLink = location.hash;
+
+				// add the browsing mode switcher links
+				nextBrowsingModeSelector = "#folders-view";
+				if (bySearchViewLink !== null) {
+					prevBrowsingModeSelector = "#by-search-view";
+				} else if (byMapViewLink !== null) {
 					prevBrowsingModeSelector = "#by-map-view";
 				} else if (hasGpsData) {
 					prevBrowsingModeSelector = "#by-gps-view";
