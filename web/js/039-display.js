@@ -324,10 +324,10 @@ $(document).ready(function() {
 					) && ! isMap
 				) {
 					// browsing mode switchers
-					if (e.key === '<' && nextBrowsingModeSelector !== null) {
+					if (e.key === '>' && nextBrowsingModeSelector !== null) {
 						$(nextBrowsingModeSelector)[0].click();
 						return false;
-					} else if (e.key === '>' && prevBrowsingModeSelector !== null) {
+					} else if (e.key === '<' && prevBrowsingModeSelector !== null) {
 						$(prevBrowsingModeSelector)[0].click();
 						return false;
 					}
