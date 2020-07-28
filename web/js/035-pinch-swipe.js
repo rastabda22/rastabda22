@@ -159,9 +159,11 @@
 					$(mediaSelector).css("cursor", "");
 				}
 
-				Utilities.setPinchButtonsPosition();
+				util.setPinchButtonsPosition();
 				PinchSwipe.setPinchButtonsVisibility();
-				Utilities.correctPrevNextPosition();
+				util.correctPrevNextPosition();
+
+				util.setSelectButtonPosition();
 
 				currentZoom = finalZoom;
 			}
@@ -210,6 +212,7 @@
 						util.setPinchButtonsPosition();
 						util.correctPrevNextPosition();
 						PinchSwipe.setPinchButtonsVisibility();
+						util.setSelectButtonPosition();
 						mediaWidth = $(mediaSelector).css("width");
 						mediaHeight = $(mediaSelector).css("height");
 						mediaBoxInnerWidth = $(mediaContainerSelector).css("width");
@@ -309,6 +312,7 @@
 					util.setPinchButtonsPosition();
 					util.correctPrevNextPosition();
 					PinchSwipe.setPinchButtonsVisibility();
+					util.setSelectButtonPosition();
 					mediaWidth = $(mediaSelector).css("width");
 					mediaHeight = $(mediaSelector).css("height");
 					initialZoom = PinchSwipe.screenZoom();

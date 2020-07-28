@@ -213,7 +213,7 @@
 				if (bySelectionViewLink === null) {
 					$("#by-selection-view").addClass("hidden");
 				}
-			} else if (util.isBySelectionCacheBase(thisAlbum.cacheBase)) {
+			} else if (util.isSelectionCacheBase(thisAlbum.cacheBase)) {
 				if (hideGpsEntry) {
 					$("#by-gps-view").addClass("hidden");
 				}
@@ -849,6 +849,7 @@
 					util.isByDateCacheBase(currentAlbum.cacheBase) ||
 					util.isByGpsCacheBase(currentAlbum.cacheBase) ||
 					util.isSearchCacheBase(currentAlbum.cacheBase) ||
+					util.isSelectionCacheBase(currentAlbum.cacheBase) ||
 					util.isMapCacheBase(currentAlbum.cacheBase)
 				)
 			) {
@@ -936,6 +937,7 @@
 		pS.initialize();
 		util.setPinchButtonsPosition();
 		util.correctPrevNextPosition();
+		util.setSelectButtonPosition();
 	};
 
 	Functions.threeYears = function() {

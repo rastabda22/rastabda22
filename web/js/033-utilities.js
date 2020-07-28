@@ -392,7 +392,7 @@
 		return string.indexOf(Options.bySearchStringWithTrailingSeparator) === 0;
 	};
 
-	Utilities.isBySelectionCacheBase = function(string) {
+	Utilities.isSelectionCacheBase = function(string) {
 		return string.indexOf(Options.bySelectionStringWithTrailingSeparator) === 0;
 	};
 
@@ -544,6 +544,7 @@
 		}
 
 		selectionAlbum.media.push(singleMedia);
+		selectionAlbum.numMedia = Utilities.imagesAndVideosCount(selectionAlbum.media);
 		selectionAlbum.numMediaInAlbum += 1;
 		selectionAlbum.numMediaInSubTree += 1;
 		selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
@@ -557,7 +558,6 @@
 		var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
 		var index = selectionAlbum.media.findIndex(x => x.albumName === singleMedia.albumName && x.name === singleMedia.name);
 		selectionAlbum.media.splice(index, 1);
-
 		delete singleMedia.selectionAlbumCacheBase;
 
 		selectionAlbum.numMediaInAlbum -= 1;
@@ -1007,6 +1007,8 @@
 				hash = hash.substring(Options.byGpsStringWithTrailingSeparator.length);
 			else if (this.isSearchCacheBase(hash))
 				hash = hash.substring(Options.bySearchStringWithTrailingSeparator.length);
+			else if (this.isSelectionCacheBase(hash))
+				hash = hash.substring(Options.bySelectionStringWithTrailingSeparator.length);
 			else if (this.isMapCacheBase(hash))
 				hash = hash.substring(Options.byMapStringWithTrailingSeparator.length);
 		}
@@ -1157,7 +1159,7 @@
 		return result;
 	};
 
-	Utilities.prototype.imagesAndVideosCount = function(mediaList) {
+	Utilities.imagesAndVideosCount = function(mediaList) {
 		var result = JSON.parse(JSON.stringify(imagesAndVideos0));
 		for (let i = 0; i < mediaList.length; i ++) {
 			if (mediaList[i].mimeType.indexOf("image/") === 0)
@@ -1184,6 +1186,8 @@
 		zipFilename = Options.page_title + '.';
 		if (Utilities.isSearchCacheBase(currentAlbum.cacheBase)) {
 			zipFilename += Utilities._t("#by-search") + " '" + $("#search-field").val() + "'";
+		} else if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
+			zipFilename += Utilities._t("#by-selection");
 		} else if (Utilities.isByDateCacheBase(currentAlbum.cacheBase)) {
 			let textComponents = currentAlbum.path.split("/").splice(1);
 			if (textComponents.length > 1)
@@ -1331,13 +1335,14 @@
 		if ($(".media-box#center .title").is(":visible"))
 			titleHeight = $(".media-box#center .title").height();
 		if ($("#album-view").is(":visible"))
-			albumHeight = $("#album-view").height();
+			albumHeight = Math.max($("#album-view").height(), parseInt($("#album-view").css("height")));
 		var distanceFromImageBorder = 15;
 		// if (typeof containerHeight === "undefined") {
 		containerHeight = windowHeight - titleHeight - albumHeight;
 		containerWidth = windowWidth;
 		// }
-		var bottom = Math.round(albumHeight + (containerHeight - actualHeight) / 2 + distanceFromImageBorder);
+		var bottom = Math.round(albumHeight + distanceFromImageBorder);
+		// var bottom = Math.round(albumHeight + (containerHeight - actualHeight) / 2 + distanceFromImageBorder);
 		var right = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
 		$("#media-select-box .select-box").css("right", right.toString() + "px").css("bottom", bottom.toString() + "px");
 	};
@@ -1788,6 +1793,7 @@
 	Utilities.prototype.isByDateCacheBase = Utilities.isByDateCacheBase;
 	Utilities.prototype.isByGpsCacheBase = Utilities.isByGpsCacheBase;
 	Utilities.prototype.isSearchCacheBase = Utilities.isSearchCacheBase;
+	Utilities.prototype.isSelectionCacheBase = Utilities.isSelectionCacheBase;
 	Utilities.prototype.isMapCacheBase = Utilities.isMapCacheBase;
 	Utilities.prototype.convertMd5ToCode = Utilities.convertMd5ToCode;
 	Utilities.prototype._t = Utilities._t;
@@ -1808,6 +1814,7 @@
 	Utilities.prototype.addMediaToPoints = Utilities.addMediaToPoints;
 	Utilities.prototype.addPointToPoints = Utilities.addPointToPoints;
 	Utilities.prototype.sumSizes = Utilities.sumSizes;
+	Utilities.prototype.imagesAndVideosCount = Utilities.imagesAndVideosCount;
 
 	window.Utilities = Utilities;
 }());

@@ -246,6 +246,10 @@ a.title-anchor.mobile {
 	right: 5px;
 }
 
+#media-select-box .select-box {
+	position: fixed;
+}
+
 #thumbs .thumbnail-map-link:hover, #thumbs .select-box:hover, #subalbums .select-box:hover, #media-select-box .select-box:hover {
 	opacity: 1;
 }

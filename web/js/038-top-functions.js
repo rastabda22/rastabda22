@@ -53,6 +53,7 @@
 		isDateTitle = (components.length > 1 && components[1] == Options.by_date_string);
 		isGpsTitle = (components.length > 1 && components[1] == Options.by_gps_string);
 		isSearchTitle = (components.length > 1 && components[1] == Options.by_search_string);
+		isSelectionTitle = (components.length > 1 && components[1] == Options.by_selection_string);
 		isMapTitle = (components.length > 1 && components[1] == Options.by_map_string);
 
 		// 'textComponents = components' doesn't work: textComponents becomes a pointer to components
@@ -317,6 +318,58 @@
 
 			if (setDocumentTitle) {
 				// build the html page title
+				documentTitle += " (" + where +") \u00ab " + components[0];
+				if (singleMedia !== null)
+					documentTitle = " \u00ab " + documentTitle;
+			}
+		} else if (isSelectionTitle) {
+			// i=0: title
+			// i=1: Options.by_selection_string
+			// (optional) i=2: media folder cache base
+			// (optional) i=3: media cache base
+
+			// TO DO: not finished!!!!!!!!!
+
+			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>" + raquo;
+			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_selection_string + "'>(" + util._t("#by-selection") + ")</a>";
+			if (singleMedia !== null) {
+				title += raquo;
+			}
+
+			if (setDocumentTitle) {
+				documentTitle += components[0];
+				documentTitle += " (" + util._t("#by-selection") + ")";
+				if (singleMedia !== null)
+					documentTitle += " \u00ab " + documentTitle;
+			}
+
+			if (
+				(singleMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)) &&
+				(util.imagesAndVideosTotal(currentAlbum.numMedia) || currentAlbum.subalbums.length) &&
+				! isMobile.any()
+			) {
+				title += "<span class='title-count'>(";
+				// title += util._t(".title-selected") + ' ';
+				if (util.imagesAndVideosTotal(currentAlbum.numMedia)) {
+					title += mediaTotalInAlbum + " ";
+					if (! imagesTotalInAlbum && videosTotalInAlbum)
+						title += util._t(".title-videos");
+					else if (imagesTotalInAlbum && ! videosTotalInAlbum)
+						title += util._t(".title-images");
+					else
+						title += util._t(".title-media");
+					if (currentAlbum.subalbums.length)
+						title += " " + util._t(".title-and");
+				}
+				if (currentAlbum.subalbums.length) {
+					title += " " + currentAlbum.subalbums.length;
+					title += " " + util._t(".title-albums");
+				}
+
+				title += ")</span>";
+			}
+
+			if (setDocumentTitle) {
 				documentTitle += " (" + where +") \u00ab " + components[0];
 				if (singleMedia !== null)
 					documentTitle = " \u00ab " + documentTitle;
@@ -740,6 +793,14 @@
 						currentMedia.cacheBase
 					]);
 				}
+
+				if (currentMedia.selectionAlbumCacheBase) {
+					bySelectionViewLink = "#!/" + util.pathJoin([
+						currentMedia.selectionAlbumCacheBase,
+						currentMedia.foldersCacheBase,
+						currentMedia.cacheBase
+					]);
+				}
 			} else {
 				// we are in a root album
 				foldersViewLink = "#!/" + encodeURIComponent(Options.folders_string);
@@ -748,6 +809,16 @@
 
 				if (hasGpsData) {
 					byGpsViewLink = "#!/" + encodeURIComponent(Options.by_gps_string);
+				}
+
+				bySelectionViewLink = null;
+				let bySelectionRootAlbum = phFl.getAlbumFromCache(Options.by_selection_string);
+				if (bySelectionRootAlbum) {
+
+					let bySelectionAlbum = phFl.getAlbumFromCache(bySelectionRootAlbum.subalbums[bySelectionRootAlbum.subalbums.length - 1].cacheBase);
+					if (bySelectionAlbum.media.length)
+						bySelectionViewLink = phFl.encodeHash(bySelectionAlbum, null);
+						// bySelectionViewLink = "#!/" + encodeURIComponent(Options.by_selection_string);
 				}
 			}
 			$(".browsing-mode-switcher").off("click");
@@ -907,6 +978,13 @@
 						ev.stopPropagation();
 						util.toggleSelectedMedia(ev.data.media);
 						util.updateSelectedMediaCheckBox(ev.data.media, ev.data.clickedSelector);
+						// if (util.mediaIsSelected(ev.data.media))
+						// 	bySelectionViewLink = "#!" + ev.data.media.bySelectionCacheBase + Options.cache_folder_separator + ev.data.media.cacheBase;
+						// else
+						// 	bySelectionViewLink = null;
+						TopFunctions.bindChangeBrowsingEvents(currentAlbum);
+
+						f.updateMenu();
 					}
 				);
 
@@ -1254,7 +1332,14 @@
 		}
 
 		if (id === "center") {
+			// if (util.mediaIsSelected(singleMedia)) {
+			// 	bySelectionViewLink = singleMedia.bySelectionCacheBase;
+			// } else {
+			// 	bySelectionViewLink = null;
+			// }
+
 			TopFunctions.bindChangeBrowsingEvents(currentAlbum);
+
 			f.updateMenu(currentAlbum);
 
 			$(".media-box#center .metadata-show").off('click').on('click', f.toggleMetadataFromMouse);
@@ -1808,8 +1893,8 @@
 			} else if (util.isByGpsCacheBase(currentAlbum.cacheBase)) {
 				humanGeonames = util.pathJoin([Options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
 				titleName = util.pathJoin([humanGeonames, randomMedia.name]);
-			} else if (util.isSearchCacheBase(currentAlbum.cacheBase)) {
-				titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
+			// } else if (util.isSearchCacheBase(currentAlbum.cacheBase)) {
+			// 	titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
 			} else {
 				titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
 			}
@@ -1894,6 +1979,7 @@
 				util.isByDateCacheBase(currentAlbum.cacheBase) ||
 				util.isByGpsCacheBase(currentAlbum.cacheBase) ||
 				util.isSearchCacheBase(currentAlbum.cacheBase) ||
+				util.isSelectionCacheBase(currentAlbum.cacheBase) ||
 				util.isMapCacheBase(currentAlbum.cacheBase)
 			);
 			tooBig = currentAlbum.path.split("/").length < 4 && util.imagesAndVideosTotal(currentAlbum.numMedia) > Options.big_virtual_folders_threshold;
@@ -2997,7 +3083,7 @@
 
 				function endPreparingMapAlbumAndUpdatePopup() {
 					if (updateMapAlbum) {
-						MapFunctions.mapAlbum.numMedia = util.imagesAndVideosCount;
+						MapFunctions.mapAlbum.numMedia = util.imagesAndVideosCount(mapAlbum.media);
 						MapFunctions.mapAlbum.numMediaInSubTree = MapFunctions.mapAlbum.numMedia;
 						MapFunctions.mapAlbum.numPositionsInTree = MapFunctions.mapAlbum.positionsAndMediaInTree.length;
 						MapFunctions.mapAlbum.numsProtectedMediaInSubTree = {"": MapFunctions.mapAlbum.numMedia};

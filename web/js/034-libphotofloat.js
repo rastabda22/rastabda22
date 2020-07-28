@@ -1079,7 +1079,7 @@
 				if (album) {
 					if (
 						// map albums and search albums already have all the media and positions
-						util.isMapCacheBase(album.cacheBase) || util.isSearchCacheBase(album.cacheBase) ||
+						util.isMapCacheBase(album.cacheBase) || util.isSearchCacheBase(album.cacheBase) || util.isSelectionCacheBase(album.cacheBase) ||
 						// the album hasn't unprotected content
 						album.includedFilesByCodesSimpleCombination[","] === false
 					) {
@@ -1358,6 +1358,7 @@
 				util.isByDateCacheBase(albumHash) ||
 				util.isByGpsCacheBase(albumHash) ||
 				util.isSearchCacheBase(albumHash) && (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null) ||
+				util.isSelectionCacheBase(albumHash) ||
 				util.isMapCacheBase(albumHash)
 			)
 				// media in date or gps album, count = 3
@@ -1407,7 +1408,7 @@
 				albumHash = hashParts[0];
 				mediaHash = hashParts[1];
 			} else if (hashPartsCount == 3) {
-				// gps or date or search hash: album, album where the image is, media
+				// gps or date or search or selection hash: album, album where the image is, media
 				// subfolder of search hash: album, search subalbum, search album
 				if (util.isSearchCacheBase(hashParts[2])) {
 					albumHash = hashParts[0];
