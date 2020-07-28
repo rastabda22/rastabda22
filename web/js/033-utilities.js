@@ -1552,7 +1552,7 @@
 				if (albumHash == Options.folders_string)
 					// stay there
 					resultHash = albumHash;
-				else if (Utilities.isAnyRootHash(albumHash))
+				else if (Utilities.isSelectionCacheBase(albumHash) || Utilities.isAnyRootHash(albumHash))
 					// go to folders root
 					resultHash = Options.folders_string;
 				else if (Utilities.isSearchCacheBase(albumHash) || Utilities.isMapCacheBase(albumHash)) {
