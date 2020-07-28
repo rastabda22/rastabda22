@@ -1341,8 +1341,7 @@
 		containerHeight = windowHeight - titleHeight - albumHeight;
 		containerWidth = windowWidth;
 		// }
-		var bottom = Math.round(albumHeight + distanceFromImageBorder);
-		// var bottom = Math.round(albumHeight + (containerHeight - actualHeight) / 2 + distanceFromImageBorder);
+		var bottom = Math.round(albumHeight + (containerHeight - actualHeight) / 2 + distanceFromImageBorder);
 		var right = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
 		$("#media-select-box .select-box").css("right", right.toString() + "px").css("bottom", bottom.toString() + "px");
 	};
