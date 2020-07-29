@@ -1724,6 +1724,17 @@
 				if (typeof currentMediaIndex !== "undefined" && currentMediaIndex != -1)
 					currentMediaIndex = Utilities.imagesAndVideosTotal(thisAlbum.numMedia) - 1 - currentMediaIndex;
 			}
+
+			// calculate the new index
+			if (currentMedia !== null && (currentAlbum === null || thisAlbum.cacheBase === currentAlbum.cacheBase)) {
+				currentMediaIndex = thisAlbum.media.findIndex(
+					function(thisMedia) {
+						var matches =
+							thisMedia.cacheBase == currentMedia.cacheBase && thisMedia.foldersCacheBase == currentMedia.foldersCacheBase;
+						return matches;
+					}
+				);
+			}
 		}
 	};
 
