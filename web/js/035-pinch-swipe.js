@@ -420,7 +420,7 @@
 						} else if (direction == "left") {
 							PinchSwipe.swipeLeft(nextMedia);
 						} else if (direction == "down") {
-							PinchSwipe.swipeDown(upLink);
+							PinchSwipe.swipeDown(util.upHash());
 						}
 					}
 				} else {

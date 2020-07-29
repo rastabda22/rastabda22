@@ -1253,8 +1253,6 @@
 			$("#next").off();
 			$("#prev").off();
 
-			upLink = util.upHash();
-
 			mediaBoxInnerElement.off('mousewheel');
 			if (singleMedia.mimeType.indexOf("image") === 0)
 				mediaBoxInnerElement.on('mousewheel', pS.swipeOnWheel);
@@ -2184,8 +2182,6 @@
 
 					firstEscKey = true;
 				}
-
-				upLink = util.upHash();
 
 				if (
 					populate === true ||

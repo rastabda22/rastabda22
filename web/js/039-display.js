@@ -5,7 +5,7 @@ var currentMedia = null;
 var currentMediaIndex = -1;
 var previousAlbum = null;
 var previousMedia = null;
-var nextMedia = null, prevMedia = null, upLink = "";
+var nextMedia = null, prevMedia = null;
 var bySearchViewLink = null, byMapViewLink = null, bySelectionViewLink = null, isABrowsingModeChange = false;
 var nextBrowsingModeSelector, prevBrowsingModeSelector;
 var windowWidth = $(window).outerWidth();
@@ -105,8 +105,11 @@ $(document).ready(function() {
 			$("#menu-icon")[0].click();
 		}
 
+		let upLink = util.upHash();
+
 		if (e.key === "Escape") {
 			// warning: modern browsers will always exit fullscreen when pressing esc
+
 			if (isAuth) {
 				// if (upLink && (currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)))
 				// 	pS.swipeDown(upLink);
