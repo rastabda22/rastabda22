@@ -2993,7 +2993,7 @@
 								MapFunctions.mapAlbum.positionsAndMediaInTree.some(
 									function(element, index) {
 										matchingIndex = index;
-										return matchPositionAndCount(positionsAndCountsElement, element);
+										return util.matchPosition(positionsAndCountsElement, element);
 									}
 								)
 							) {
@@ -3049,7 +3049,7 @@
 									if (
 										MapFunctions.mapAlbum.positionsAndMediaInTree.every(
 											function(element) {
-												return ! matchPositionAndCount(positionsAndCountsElement, element);
+												return ! util.matchPosition(positionsAndCountsElement, element);
 											}
 										)
 									) {
@@ -3077,13 +3077,9 @@
 				}
 				// end of function updateMapAlbumOnMapClick body
 
-				function matchPositionAndCount(reference, element) {
-					return (JSON.stringify([reference.lat, reference.lng]) === JSON.stringify([element.lat, element.lng]));
-				}
-
 				function endPreparingMapAlbumAndUpdatePopup() {
 					if (updateMapAlbum) {
-						MapFunctions.mapAlbum.numMedia = util.imagesAndVideosCount(mapAlbum.media);
+						MapFunctions.mapAlbum.numMedia = util.imagesAndVideosCount(MapFunctions.mapAlbum.media);
 						MapFunctions.mapAlbum.numMediaInSubTree = MapFunctions.mapAlbum.numMedia;
 						MapFunctions.mapAlbum.numPositionsInTree = MapFunctions.mapAlbum.positionsAndMediaInTree.length;
 						MapFunctions.mapAlbum.numsProtectedMediaInSubTree = {"": MapFunctions.mapAlbum.numMedia};

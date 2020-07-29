@@ -108,6 +108,21 @@
 			return false;
 	};
 
+	PhotoFloat.removeAlbumFromCache = function(albumCacheBase) {
+		if (! Options.hasOwnProperty("js_cache_levels"))
+			Options.js_cache_levels = PhotoFloat.js_cache_levels;
+
+		if (PhotoFloat.cache.albums.index.hasOwnProperty(albumCacheBase)) {
+			var level = PhotoFloat.cache.albums.index[albumCacheBase];
+			var queueIndex = PhotoFloat.cache.albums[level].queue.indexOf(albumCacheBase);
+			PhotoFloat.cache.albums[level].queue.splice(queueIndex, 1);
+			delete PhotoFloat.cache.albums[level][albumCacheBase];
+			delete PhotoFloat.cache.albums.index[albumCacheBase];
+			return true;
+		} else
+			return false;
+	};
+
 	PhotoFloat.addPositionsToSubalbums = function(thisAlbum) {
 		var iSubalbum, iPosition, iPhoto, position, subalbum, albumFromCache;
 		var positions = thisAlbum.positionsAndMediaInTree;
