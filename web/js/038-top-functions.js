@@ -976,8 +976,7 @@
 					{media: singleMedia, clickedSelector: "#media-select-box"},
 					function(ev) {
 						ev.stopPropagation();
-						util.toggleSelectedMedia(ev.data.media);
-						util.updateSelectedMediaCheckBox(ev.data.media, ev.data.clickedSelector);
+						util.toggleSelectedMedia(ev.data.media, ev.data.clickedSelector);
 						// if (util.mediaIsSelected(ev.data.media))
 						// 	bySelectionViewLink = "#!" + ev.data.media.bySelectionCacheBase + Options.cache_folder_separator + ev.data.media.cacheBase;
 						// else
@@ -2162,8 +2161,7 @@
 						{media: ithMedia, clickedSelector: "#media-select-box-" + i},
 						function(ev) {
 							ev.stopPropagation();
-							util.toggleSelectedMedia(ev.data.media);
-							util.updateSelectedMediaCheckBox(ev.data.media, ev.data.clickedSelector);
+							util.toggleSelectedMedia(ev.data.media, ev.data.clickedSelector);
 						}
 					);
 				}
@@ -2440,8 +2438,7 @@
 								function(ev) {
 									ev.stopPropagation();
 									ev.preventDefault();
-									util.toggleSelectedSubalbum(ev.data.subalbum);
-									util.updateSelectedSubalbumCheckBox(ev.data.subalbum, ev.data.clickedSelector);
+									util.toggleSelectedSubalbum(ev.data.subalbum, ev.data.clickedSelector);
 								}
 							);
 						}
