@@ -1642,7 +1642,7 @@
 						for (let iMedia = 0; iMedia < album.media.length; iMedia ++) {
 							let splittedSelectedMediaCacheBase = album.media[iMedia].foldersCacheBase.split(Options.cache_folder_separator);
 							if (splittedSelectedMediaCacheBase.length < minimumLength)
-								splittedSelectedMediaCacheBase.length = minimumLength;
+								minimumLength = splittedSelectedMediaCacheBase.length;
 						}
 						for (let iPart = 0; iPart < minimumLength; iPart ++)
 							parts[iPart] = [];
@@ -1652,10 +1652,10 @@
 								if (! iPart)
 									parts[iPart][iMedia] = splittedSelectedMediaCacheBase[iPart];
 								else
-									parts[iPart][iMedia] = parts[iMedia][iPart - 1] + Options.cache_folder_separator + splittedSelectedMediaCacheBase[iPart];
+									parts[iPart][iMedia] = parts[iPart - 1][iMedia] + Options.cache_folder_separator + splittedSelectedMediaCacheBase[iPart];
 							}
 						}
-						let resultHash = '', start = 0;
+						resultHash = '';
 						for (let iPart = 0; iPart < minimumLength; iPart ++) {
 							if (parts[iPart].some((val, i, arr) => val !== arr[0])) {
 								break
