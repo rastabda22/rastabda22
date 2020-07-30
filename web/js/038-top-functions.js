@@ -2248,9 +2248,10 @@
 									else
 										folderName = ithSubalbum.name;
 									folderTitle = util._t('#place-icon-title') + folderName;
-
-								}
-								else {
+								} else if (util.isSelectionCacheBase(currentAlbum.cacheBase)) {
+									folderName = ithSubalbum.physicalPath;
+									folderTitle = folderName;
+								} else {
 									folderName = ithSubalbum.path;
 									folderTitle = folderName;
 								}
