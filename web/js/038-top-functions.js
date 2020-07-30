@@ -794,7 +794,7 @@
 					]);
 				}
 
-				if (currentMedia.selectionAlbumCacheBase) {
+				if (util.singleMediaIsSelected(currentMedia)) {
 					bySelectionViewLink = "#!/" + util.pathJoin([
 						currentMedia.selectionAlbumCacheBase,
 						currentMedia.foldersCacheBase,
