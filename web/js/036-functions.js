@@ -119,6 +119,7 @@
 
 	Functions.updateMenu = function(thisAlbum, hasGpsData) {
 		var albumOrMedia;
+		var isAlbumWithOneMedia = util.isAlbumWithOneMedia(thisAlbum);
 		var isPopup = $('.leaflet-popup').html() ? true : false;
 		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
 		var isMapOrPopup = isMap || isPopup;
@@ -129,7 +130,7 @@
 		if (typeof hasGpsData === "undefined") {
 			if (currentMedia !== null)
 				hasGpsData = util.hasGpsData(currentMedia);
-			else if (currentMedia === null && util.isAlbumWithOneMedia(thisAlbum))
+			else if (currentMedia === null && isAlbumWithOneMedia)
 				hasGpsData = util.hasGpsData(thisAlbum.media[0]);
 			else
 				hasGpsData = true;
@@ -143,13 +144,13 @@
 			isMapOrPopup ||
 			thisAlbum === null ||
 			! util.isAnyRootHash(thisAlbum.cacheBase) &&
-			(currentMedia === null && ! util.isAlbumWithOneMedia(thisAlbum))
+			(currentMedia === null && ! isAlbumWithOneMedia)
 		) {
 			$(".browsing-mode-switcher").addClass("hidden");
 		} else {
 			var hideGpsEntry = ! hasGpsData;
 
-			// var hasGpsData = (currentMedia !== null || util.isAlbumWithOneMedia(thisAlbum)) && util.hasGpsData(currentMedia);
+			// var hasGpsData = (currentMedia !== null || isAlbumWithOneMedia) && util.hasGpsData(currentMedia);
 			$(".browsing-mode-switcher").addClass("active").removeClass("hidden").removeClass("selected");
 			if (util.isFolderCacheBase(thisAlbum.cacheBase)) {
 				// folder album: change to by date or by gps view
@@ -312,7 +313,7 @@
 		if (
 			isMapOrPopup ||
 			currentMedia !== null ||
-			util.isAlbumWithOneMedia(thisAlbum) ||
+			isAlbumWithOneMedia ||
 			thisAlbum !== null && thisAlbum.subalbums.length === 0 && Options.hide_title
 		) {
 			$("ul#right-menu li.media-count").addClass("hidden");
@@ -337,7 +338,7 @@
 		if (
 			isMapOrPopup ||
 			currentMedia !== null ||
-			util.isAlbumWithOneMedia(thisAlbum) ||
+			isAlbumWithOneMedia ||
 			thisAlbum !== null && thisAlbum.subalbums.length === 0
 		) {
 			$("ul#right-menu li.square-album-thumbnails").addClass("hidden");
@@ -352,7 +353,7 @@
 		if (
 			isMapOrPopup ||
 			currentMedia !== null ||
-			util.isAlbumWithOneMedia(thisAlbum) ||
+			isAlbumWithOneMedia ||
 			thisAlbum !== null && thisAlbum.subalbums.length === 0
 		) {
 			$("ul#right-menu li.slide").addClass("hidden");
@@ -367,7 +368,7 @@
 		if (
 			isMapOrPopup ||
 			currentMedia !== null ||
-			util.isAlbumWithOneMedia(thisAlbum) ||
+			isAlbumWithOneMedia ||
 			thisAlbum !== null && (thisAlbum.subalbums.length === 0 || ! util.isFolderCacheBase(thisAlbum.cacheBase))
 		) {
 			$("ul#right-menu li.album-names").addClass("hidden");
@@ -392,7 +393,7 @@
 			isMap ||
 			! isMapOrPopup && (
 				currentMedia !== null ||
-				util.isAlbumWithOneMedia(thisAlbum) ||
+				isAlbumWithOneMedia ||
 				thisAlbum !== null && (
 					util.imagesAndVideosTotal(thisAlbum.numMedia) === 0 ||
 					! util.isFolderCacheBase(thisAlbum.cacheBase) && util.imagesAndVideosTotal(thisAlbum.numMedia) > Options.big_virtual_folders_threshold
@@ -410,7 +411,7 @@
 
 		if (
 			isMapOrPopup ||
-			currentMedia === null && ! util.isAlbumWithOneMedia(thisAlbum)
+			currentMedia === null && ! isAlbumWithOneMedia
 			// ||
 			// thisAlbum !== null && thisAlbum.subalbums.length === 0
 		) {
@@ -508,7 +509,7 @@
 		$(".download-album .sub-menu").addClass("hidden");
 		if (util.isSearchCacheBase(thisAlbum.cacheBase) && ! thisAlbum.media.length && ! thisAlbum.subalbums.length) {
 			// download menu item remains hidden
-		} else if (currentMedia !== null || util.isAlbumWithOneMedia(thisAlbum)) {
+		} else if (currentMedia !== null || isAlbumWithOneMedia) {
 			$(".download-album .sub-menu").removeClass("hidden");
 			$(".download-album.expandable, .download-album.caption").removeClass("hidden");
 			$(".download-single-media").removeClass("hidden");
