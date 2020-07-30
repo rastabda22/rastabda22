@@ -587,7 +587,7 @@
 			return false;
 	};
 
-	Utilities.mediaIsSelected = function(singleMedia) {
+	Utilities.singleMediaIsSelected = function(singleMedia) {
 		var selectionAlbumCacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
 		var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
 		if (! selectionAlbum)
@@ -617,7 +617,7 @@
 	};
 
 	Utilities.prototype.toggleSelectedMedia = function(media, clickedSelector) {
-		if (Utilities.mediaIsSelected(media))
+		if (Utilities.singleMediaIsSelected(media))
 			Utilities.removeSingleMediaFromSelection(media, clickedSelector);
 		else
 			Utilities.addSingleMediaToSelection(media, clickedSelector);
@@ -791,7 +791,7 @@
 
 	// Utilities.resetSelectedMedia = function(album, includeSubalbums = false) {
 	// 	for (let i = 0; i < album.media.length; i ++) {
-	// 		if (Utilities.mediaIsSelected(album.media[i]))
+	// 		if (Utilities.singleMediaIsSelected(album.media[i]))
 	// 			delete album.media[i].selected;
 	// 	}
 	// 	if (includeSubalbums) {
@@ -816,7 +816,7 @@
 	// Utilities.countSelectedMedia = function(album, includeSubalbums = false) {
 	// 	var count = 0;
 	// 	for (let i = 0; i < album.media.length; i ++) {
-	// 		if (Utilities.mediaIsSelected(album.media[i]))
+	// 		if (Utilities.singleMediaIsSelected(album.media[i]))
 	// 			count ++;
 	// 	}
 	// 	if (includeSubalbums) {
@@ -830,7 +830,7 @@
 	// Utilities.countSelectedSubalbums = function(album, includeSubalbums = false) {
 	// 	var count = 0;
 	// 	for (let i = 0; i < album.subalbums.length; i ++) {
-	// 		if (Utilities.mediaIsSelected(album.subalbums[i]))
+	// 		if (Utilities.singleMediaIsSelected(album.subalbums[i]))
 	// 			count ++;
 	// 	}
 	// 	if (includeSubalbums) {
@@ -2016,7 +2016,7 @@
 	Utilities.prototype.imagesAndVideosSum = Utilities.imagesAndVideosSum;
 	Utilities.prototype.upHash = Utilities.upHash;
 	Utilities.prototype.isAlbumWithOneMedia = Utilities.isAlbumWithOneMedia;
-	Utilities.prototype.mediaIsSelected = Utilities.mediaIsSelected;
+	Utilities.prototype.singleMediaIsSelected = Utilities.singleMediaIsSelected;
 	Utilities.prototype.subalbumIsSelected = Utilities.subalbumIsSelected;
 	// Utilities.prototype.resetSelectedMedia = Utilities.resetSelectedMedia;
 	// Utilities.prototype.resetSelectedSubalbums = Utilities.resetSelectedSubalbums;

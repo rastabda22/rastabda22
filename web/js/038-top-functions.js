@@ -968,7 +968,7 @@
 				$("#pinch-out").off("click").on("click", pS.pinchOut);
 
 				let selectSrc = 'img/checkbox-unchecked-48px.png';
-				if (util.mediaIsSelected(singleMedia)) {
+				if (util.singleMediaIsSelected(singleMedia)) {
 					selectSrc = 'img/checkbox-checked-48px.png';
 				}
 				$("#media-select-box .select-box").attr("title", util._t("#select-single-media")).attr("alt", util._t("#select-single-media")).attr("src", selectSrc);
@@ -978,7 +978,7 @@
 					function(ev) {
 						ev.stopPropagation();
 						util.toggleSelectedMedia(ev.data.media, ev.data.clickedSelector);
-						// if (util.mediaIsSelected(ev.data.media))
+						// if (util.singleMediaIsSelected(ev.data.media))
 						// 	bySelectionViewLink = "#!" + ev.data.media.bySelectionCacheBase + Options.cache_folder_separator + ev.data.media.cacheBase;
 						// else
 						// 	bySelectionViewLink = null;
@@ -1329,7 +1329,7 @@
 		}
 
 		if (id === "center") {
-			// if (util.mediaIsSelected(singleMedia)) {
+			// if (util.singleMediaIsSelected(singleMedia)) {
 			// 	bySelectionViewLink = singleMedia.bySelectionCacheBase;
 			// } else {
 			// 	bySelectionViewLink = null;
@@ -2059,7 +2059,7 @@
 							"</a>";
 					}
 					selectSrc = 'img/checkbox-unchecked-48px.png';
-					if (util.mediaIsSelected(ithMedia)) {
+					if (util.singleMediaIsSelected(ithMedia)) {
 						selectSrc = 'img/checkbox-checked-48px.png';
 					}
 					selectBoxHtml =
