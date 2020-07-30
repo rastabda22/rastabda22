@@ -800,6 +800,8 @@
 						currentMedia.foldersCacheBase,
 						currentMedia.cacheBase
 					]);
+				} else {
+					bySelectionViewLink = "#!/" + currentMedia.selectionAlbumCacheBase;
 				}
 			} else {
 				// we are in a root album
@@ -814,9 +816,8 @@
 				bySelectionViewLink = null;
 				let bySelectionRootAlbum = phFl.getAlbumFromCache(Options.by_selection_string);
 				if (bySelectionRootAlbum) {
-
 					let bySelectionAlbum = phFl.getAlbumFromCache(bySelectionRootAlbum.subalbums[bySelectionRootAlbum.subalbums.length - 1].cacheBase);
-					if (bySelectionAlbum.media.length)
+					if (util.imagesAndVideosTotal(bySelectionAlbum.numMediaInSubTree))
 						bySelectionViewLink = phFl.encodeHash(bySelectionAlbum, null);
 						// bySelectionViewLink = "#!/" + encodeURIComponent(Options.by_selection_string);
 				}
@@ -1921,7 +1922,7 @@
 				'click',
 				function() {
 					var subfolderHash;
-					if (util.isSearchCacheBase(currentAlbum.cacheBase))
+					if (util.isSearchCacheBase(currentAlbum.cacheBase) || util.isSelectionCacheBase(currentAlbum.cacheBase))
 						subfolderHash = phFl.encodeHash(subalbum, null, subalbum.cacheBase, currentAlbum.cacheBase);
 					else {
 						if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)

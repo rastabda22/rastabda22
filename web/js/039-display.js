@@ -323,7 +323,7 @@ $(document).ready(function() {
 							Options.by_map_string,
 							Options.by_search_string
 						].indexOf(currentAlbum.cacheBase) !== -1 ||
-						currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)
+						currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum) || util.somethingIsSelected()
 					) && ! isMap
 				) {
 					// browsing mode switchers

@@ -578,6 +578,15 @@
 		return selectionRootAlbum;
 	};
 
+	Utilities.prototype.somethingIsSelected = function() {
+		var selectionAlbumCacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
+		var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
+		if (selectionAlbum)
+			return true;
+		else
+			return false;
+	};
+
 	Utilities.mediaIsSelected = function(singleMedia) {
 		var selectionAlbumCacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
 		var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
