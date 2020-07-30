@@ -42,7 +42,7 @@
 		rootMapAlbum.subalbums = [];
 		rootMapAlbum.positionsAndMediaInTree = [];
 		rootMapAlbum.numPositionsInTree = 0;
-		rootMapAlbum.numsProtectedMediaInSubTree = {"": imagesAndVideos0};
+		rootMapAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
 
 		PhotoFloat.putAlbumIntoCache(rootMapAlbum.cacheBase, rootMapAlbum);
 
@@ -341,8 +341,8 @@
 						var emptyAlbum = {
 							"cacheBase": unprotectedCacheBase,
 							"subalbums": [],
-							"numMedia": imagesAndVideos0,
-							"numMediaInSubTree": imagesAndVideos0,
+							"numMedia": JSON.parse(JSON.stringify(imagesAndVideos0)),
+							"numMediaInSubTree": JSON.parse(JSON.stringify(imagesAndVideos0)),
 							"sizesOfAlbum": initialSizes,
 							"sizesOfSubTree": initialSizes,
 							"numPositionsInTree": 0,
@@ -440,7 +440,7 @@
 									if (! album.hasOwnProperty("positionsAndMediaInTree"))
 										album.positionsAndMediaInTree = protectedAlbum.positionsAndMediaInTree;
 									else
-										album.positionsAndMediaInTree = util.mergePoints(album.positionsAndMediaInTree, protectedAlbum.positionsAndMediaInTree);
+										album.positionsAndMediaInTree = util.mergePositionsAndMedia(album.positionsAndMediaInTree, protectedAlbum.positionsAndMediaInTree);
 									album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.positionsGot = true;
 								}
 
@@ -519,7 +519,7 @@
 											if (! album.hasOwnProperty("positionsAndMediaInTree") || ! album.positionsAndMediaInTree.length)
 												album.positionsAndMediaInTree = positionsGot;
 											else
-												album.positionsAndMediaInTree = util.mergePoints(album.positionsAndMediaInTree, positionsGot);
+												album.positionsAndMediaInTree = util.mergePositionsAndMedia(album.positionsAndMediaInTree, positionsGot);
 											// album.includedFilesByCodesSimpleCombination[","].positionsGot = true;
 											album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.positionsGot = true;
 										}
@@ -1138,7 +1138,7 @@
 								if (! album.hasOwnProperty("positionsAndMediaInTree") || ! album.positionsAndMediaInTree.length)
 									album.positionsAndMediaInTree = positionsGot;
 								else
-									album.positionsAndMediaInTree = util.mergePoints(album.positionsAndMediaInTree, positionsGot);
+									album.positionsAndMediaInTree = util.mergePositionsAndMedia(album.positionsAndMediaInTree, positionsGot);
 								album.includedFilesByCodesSimpleCombination[","].positionsGot = true;
 							}
 
@@ -1285,7 +1285,7 @@
 
 					var i, nMediaInAlbum;
 
-					if (util.imagesAndVideosTotal(album.numMediaInSubTree) == 0) {
+					if (! util.imagesAndVideosTotal(album.numMediaInSubTree)) {
 						error();
 						return;
 					}
@@ -1565,7 +1565,7 @@
 						searchResultsAlbumFinal.path = searchResultsAlbumFinal.cacheBase.replace(Options.cache_folder_separator, "/");
 						searchResultsAlbumFinal.physicalPath = searchResultsAlbumFinal.path;
 						searchResultsAlbumFinal.searchInFolderCacheBase = mediaFolderHash;
-						searchResultsAlbumFinal.numsProtectedMediaInSubTree = {"": imagesAndVideos0};
+						searchResultsAlbumFinal.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
 
 						if (albumHash == Options.by_search_string) {
 							// no search term
@@ -1673,7 +1673,7 @@
 						if (util.hasGpsData(searchResultsAlbumFinal.media[indexMedia]))
 							// add the media position
 							searchResultsAlbumFinal.positionsAndMediaInTree =
-								util.addMediaToPoints(
+								util.addSingleMediaToPositionsAndMedia(
 									searchResultsAlbumFinal.positionsAndMediaInTree,
 									searchResultsAlbumFinal.media[indexMedia]
 								);
@@ -2049,7 +2049,7 @@
 		return new Promise(
 			function(resolve_endPreparingAlbumAndKeepOn) {
 				// add the various counts
-				resultsAlbumFinal.numMediaInSubTree = resultsAlbumFinal.media.length;
+				resultsAlbumFinal.numMediaInSubTree = util.imagesAndVideosCount(resultsAlbumFinal.media);
 				resultsAlbumFinal.numMedia = util.imagesAndVideosCount(resultsAlbumFinal.media);
 				resultsAlbumFinal.numPositionsInTree = resultsAlbumFinal.positionsAndMediaInTree.length;
 				// save in the cache array

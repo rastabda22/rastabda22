@@ -15,7 +15,7 @@
 
 	TopFunctions.setTitle = function(id, singleMedia) {
 
-		var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, isMapTitle, originalTitle;
+		var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, isSelectionTitle, isMapTitle, originalTitle;
 		var titleAnchorClasses, where, initialValue, searchFolderHash;
 		var linkCount = 0, linksToLeave = 1, latitude, longitude, arrayCoordinates;
 		var raquo = "&raquo;";
@@ -67,16 +67,16 @@
 		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 		var fillInSpan = "<span id='fill-in-map-link'></span>";
 
-		var mediaTotalInAlbum, imagesTotalInAlbum, videosTotalInAlbum, numMediaInSubTree;
+		var mediaTotalInAlbum, imagesTotalInAlbum, videosTotalInAlbum;
 		var mediaTotalInSubTree, imagesTotalInSubTree, videosTotalInSubTree;
 		var mediaTotalInSubAlbums, imagesTotalInSubAlbums, videosTotalInSubAlbums;
 		if (singleMedia === null) {
 			mediaTotalInAlbum = util.imagesAndVideosTotal(currentAlbum.numMedia);
-			imagesTotalInAlbum = util.imagesTotal(currentAlbum.numMedia);
-			videosTotalInAlbum = util.videosTotal(currentAlbum.numMedia);
+			imagesTotalInAlbum = currentAlbum.numMedia.images;
+			videosTotalInAlbum = currentAlbum.numMedia.videos;
 			mediaTotalInSubTree = util.imagesAndVideosTotal(currentAlbum.numMediaInSubTree);
-			imagesTotalInSubTree = util.imagesTotal(currentAlbum.numMediaInSubTree);
-			videosTotalInSubTree = util.videosTotal(currentAlbum.numMediaInSubTree);
+			imagesTotalInSubTree = currentAlbum.numMediaInSubTree.images;
+			videosTotalInSubTree = currentAlbum.numMediaInSubTree.videos;
 			mediaTotalInSubAlbums = mediaTotalInSubTree - mediaTotalInAlbum;
 			imagesTotalInSubAlbums = imagesTotalInSubTree - imagesTotalInAlbum;
 			videosTotalInSubAlbums = videosTotalInSubTree - videosTotalInAlbum;
@@ -178,7 +178,7 @@
 
 				if (gpsName === '')
 					gpsName = util._t('.not-specified');
-				gpsHtmlTitle = util._t("#place-icon-title") + gpsName;
+				// gpsHtmlTitle = util._t("#place-icon-title") + gpsName;
 
 				if (i < components.length - 1 || singleMedia !== null) {
 					title += "<a class='" + titleAnchorClasses + "' href='#!/" + encodeURI(currentAlbum.ancestorsCacheBase[i - 1]) + "'";
@@ -700,7 +700,7 @@
 		if (Options.piwik_server && Options.piwik_id && (id === "album" || id === "center")) {
 			_paq.push(['setCustomUrl', '/' + window.location.hash.substr(1)]);
 			// _paq.push(['setDocumentTitle', PhotoFloat.cleanHash(location.hash)]);
-			let titleElement, titleText, splittedTitle;
+			let titleText, splittedTitle;
 			if (id === "center") {
 				titleText = $(".media-box#center .title-string")[0].textContent;
 			} else {
@@ -1126,10 +1126,9 @@
 
 		heightForMediaAndTitle = util.mediaBoxContainerHeight();
 
+		var titleHeight = 0;
 		if ($(".media-box#" + id + " .title").is(":visible"))
 			titleHeight = $(".media-box#" + id + " .title").outerHeight();
-		else
-			titleHeight = 0;
 
 		heightForMedia = heightForMediaAndTitle - titleHeight;
 
@@ -1285,7 +1284,7 @@
 								return false;
 							}
 						}
-						contextMenu = true;
+						// contextMenu = true;
 						return true;
 					}
 				);
@@ -1440,7 +1439,6 @@
 
 	TopFunctions.prototype.showAlbumOrMedia = function(album, mediaIndex) {
 		var populateAlbum;
-		var currentAlbumPath, currentAlbumPathArray;
 
 		if (util.imagesAndVideosTotal(album.numMediaInSubTree) == 0 && ! util.isSearchCacheBase(album.cacheBase)) {
 			// the album hasn't any content:
@@ -2598,7 +2596,7 @@
 
 		if (util.hasGpsData(ev.data.media)) {
 			ev.preventDefault();
-			var point =
+			var positionAndMedia =
 				{
 					'lng': parseFloat(ev.data.media.metadata.longitude),
 					'lat' : parseFloat(ev.data.media.metadata.latitude),
@@ -2609,7 +2607,7 @@
 						'foldersCacheBase': ev.data.media.foldersCacheBase
 					}]
 				};
-			TopFunctions.generateMap(ev, [point], from);
+			TopFunctions.generateMap(ev, [positionAndMedia], from);
 		}
 	};
 
@@ -2986,7 +2984,7 @@
 								MapFunctions.mapAlbum.positionsAndMediaInTree.some(
 									function(element, index) {
 										matchingIndex = index;
-										return util.matchPosition(positionsAndCountsElement, element);
+										return util.matchPositionsAndMediaByPosition(positionsAndCountsElement, element);
 									}
 								)
 							) {
@@ -3042,7 +3040,7 @@
 									if (
 										MapFunctions.mapAlbum.positionsAndMediaInTree.every(
 											function(element) {
-												return ! util.matchPosition(positionsAndCountsElement, element);
+												return ! util.matchPositionsAndMediaByPosition(positionsAndCountsElement, element);
 											}
 										)
 									) {
@@ -3073,9 +3071,9 @@
 				function endPreparingMapAlbumAndUpdatePopup() {
 					if (updateMapAlbum) {
 						MapFunctions.mapAlbum.numMedia = util.imagesAndVideosCount(MapFunctions.mapAlbum.media);
-						MapFunctions.mapAlbum.numMediaInSubTree = MapFunctions.mapAlbum.numMedia;
+						MapFunctions.mapAlbum.numMediaInSubTree = JSON.parse(JSON.stringify(MapFunctions.mapAlbum.numMedia));
 						MapFunctions.mapAlbum.numPositionsInTree = MapFunctions.mapAlbum.positionsAndMediaInTree.length;
-						MapFunctions.mapAlbum.numsProtectedMediaInSubTree = {"": MapFunctions.mapAlbum.numMedia};
+						MapFunctions.mapAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(MapFunctions.mapAlbum.numMedia))};
 						// media must be initially sorted by date not reverse, as json they are in albums
 						util.sortByDate(MapFunctions.mapAlbum.media);
 						MapFunctions.mapAlbum.mediaNameSort = false;
@@ -3088,9 +3086,9 @@
 						var rootMapAlbum = phFl.getAlbumFromCache(Options.by_map_string);
 						if (! rootMapAlbum)
 							rootMapAlbum = PhotoFloat.initializeMapRootAlbum();
-						rootMapAlbum.numMediaInSubTree += MapFunctions.mapAlbum.numMediaInSubTree;
+						rootMapAlbum.numMediaInSubTree += JSON.parse(JSON.stringify(MapFunctions.mapAlbum.numMediaInSubTree));
 						rootMapAlbum.subalbums.push(MapFunctions.mapAlbum);
-						rootMapAlbum.positionsAndMediaInTree = util.mergePoints(rootMapAlbum.positionsAndMediaInTree, MapFunctions.mapAlbum.positionsAndMediaInTree);
+						rootMapAlbum.positionsAndMediaInTree = util.mergePositionsAndMedia(rootMapAlbum.positionsAndMediaInTree, MapFunctions.mapAlbum.positionsAndMediaInTree);
 						rootMapAlbum.numPositionsInTree += MapFunctions.mapAlbum.numPositionsInTree;
 						rootMapAlbum.numsProtectedMediaInSubTree[""] += MapFunctions.mapAlbum.numsProtectedMediaInSubTree[""];
 
@@ -3141,8 +3139,8 @@
 			$("#caption").css("height", "");
 			$("#caption").css("max-height", mediaHeight * 0.2);
 		} else if (captionType == 'album') {
-			var titleHeight = parseInt($("#album-view .title").css("height"));
-			var albumTop = parseInt($("#album-view").css("top"));
+			// var titleHeight = parseInt($("#album-view .title").css("height"));
+			// var albumTop = parseInt($("#album-view").css("top"));
 			var albumHeight = parseInt($("#album-view").css("height"));
 			var thumbsHeight = parseInt($("#thumbs").css("height"));
 			var subalbumsHeight = parseInt($("#subalbums").css("height"));
@@ -3152,7 +3150,7 @@
 			$("#caption").css("height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
 			$("#caption").css("max-height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
 		}
-	}
+	};
 
 
 	TopFunctions.prototype.goFullscreen = TopFunctions.goFullscreen;

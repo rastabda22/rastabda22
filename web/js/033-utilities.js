@@ -170,62 +170,63 @@
 		);
 	};
 
-	Utilities.addPointToPoints = function(oldPoints, newPoint) {
-		var oldPoint, newElement;
-		for (var iOld = 0; iOld < oldPoints.length; iOld ++) {
-			oldPoint = oldPoints[iOld];
-			if (newPoint.lng == oldPoint.lng && newPoint.lat == oldPoint.lat) {
-				for (var iNew = 0; iNew < newPoint.mediaNameList.length; iNew ++) {
-					newElement = newPoint.mediaNameList[iNew];
+	Utilities.addPositionAndMediaToPositionsAndMedia = function(positionsAndMedia, newPositionAndMedia) {
+		var positionAndMedia, newMediaNameListElement;
+		for (var iOld = 0; iOld < positionsAndMedia.length; iOld ++) {
+			positionAndMedia = positionsAndMedia[iOld];
+			if (newPositionAndMedia.lng == positionAndMedia.lng && newPositionAndMedia.lat == positionAndMedia.lat) {
+				for (var iNew = 0; iNew < newPositionAndMedia.mediaNameList.length; iNew ++) {
+					newMediaNameListElement = newPositionAndMedia.mediaNameList[iNew];
 					// the following check is needed for searches only?
 					if (
-						oldPoint.mediaNameList.every(
-							function(element) {
-								return element.albumCacheBase != newElement.albumCacheBase || element.cacheBase != newElement.cacheBase;
+						positionAndMedia.mediaNameList.every(
+							function(mediaNameListElement) {
+								return mediaNameListElement.albumCacheBase != newMediaNameListElement.albumCacheBase || mediaNameListElement.cacheBase != newMediaNameListElement.cacheBase;
 							}
 						)
 					)
-						oldPoints[iOld].mediaNameList.push(newPoint.mediaNameList[iNew]);
+						positionsAndMedia[iOld].mediaNameList.push(newPositionAndMedia.mediaNameList[iNew]);
 				}
-				return oldPoints;
+				return positionsAndMedia;
 			}
 		}
-		oldPoints.push(newPoint);
-		return oldPoints;
+		positionsAndMedia.push(newPositionAndMedia);
+		return positionsAndMedia;
 	};
 
-	Utilities.matchPosition = function(reference, element) {
-		return (JSON.stringify([reference.lat, reference.lng]) === JSON.stringify([element.lat, element.lng]));
+	Utilities.matchPositionsAndMediaByPosition = function(positionsAndMedia1, positionsAndMedia2) {
+		return (JSON.stringify([positionsAndMedia1.lat, positionsAndMedia1.lng]) === JSON.stringify([positionsAndMedia2.lat, positionsAndMedia2.lng]));
 	};
 
-	Utilities.mergePoints = function(oldPoints, newPoints) {
-		for (var i = 0; i < newPoints.length; i ++) {
-			oldPoints = Utilities.addPointToPoints(oldPoints, newPoints[i]);
+	Utilities.mergePositionsAndMedia = function(positionsAndMedia, newPositionsAndMedia) {
+		for (var i = 0; i < newPositionsAndMedia.length; i ++) {
+			positionsAndMedia = Utilities.addPositionAndMediaToPositionsAndMedia(positionsAndMedia, newPositionsAndMedia[i]);
 		}
-		return oldPoints;
+		return positionsAndMedia;
 	};
 
-	Utilities.removePoints = function(positionsAndMediaInTree, positionsAndMediaInTreeToRemove) {
-		for (indexPositions = 0; indexPositions < positionsAndMediaInTreeToRemove.length; indexPositions ++) {
-			let positionsAndMediaInTreeToRemoveElement = positionsAndMediaInTreeToRemove[indexPositions];
-			for (indexMedia = 0; indexMedia < positionsAndMediaInTreeToRemoveElement.mediaNameList; indexMedia ++) {
-				let mediaNameListElement = positionsAndMediaInTreeToRemoveElement.mediaNameList[indexMedia];
-				let point = {
-					'lng': parseFloat(positionsAndMediaInTreeToRemoveElement.lng),
-					'lat' : parseFloat(positionsAndMediaInTreeToRemoveElement.lat),
-					'mediaNameList': [{
-						'cacheBase': mediaNameListElement.cacheBase,
-						'albumCacheBase': mediaNameListElement.albumCacheBase,
-						'foldersCacheBase': mediaNameListElement.foldersCacheBase
-					}]
-				};
-				Utilities.removePointFromPoints(positionsAndMediaInTree, point);
-			}
+	Utilities.removePositionsAndMediaFromPositionsAndMedia = function(positionsAndMedia, positionsAndMediaToRemove) {
+		for (let indexPositions = 0; indexPositions < positionsAndMediaToRemove.length; indexPositions ++) {
+			let positionsAndMediaToRemoveElement = positionsAndMediaToRemove[indexPositions];
+			Utilities.removePositionAndMediaFromPositionsAndMedia(positionsAndMedia, positionsAndMediaToRemoveElement);
+			// for (let indexMedia = 0; indexMedia < positionsAndMediaToRemoveElement.mediaNameList; indexMedia ++) {
+			// 	let mediaNameListElement = positionsAndMediaToRemoveElement.mediaNameList[indexMedia];
+			// 	let positionAndMedia = {
+			// 		'lng': parseFloat(positionsAndMediaToRemoveElement.lng),
+			// 		'lat' : parseFloat(positionsAndMediaToRemoveElement.lat),
+			// 		'mediaNameList': [{
+			// 			'cacheBase': mediaNameListElement.cacheBase,
+			// 			'albumCacheBase': mediaNameListElement.albumCacheBase,
+			// 			'foldersCacheBase': mediaNameListElement.foldersCacheBase
+			// 		}]
+			// 	};
+			// 	Utilities.removePositionAndMediaFromPositionsAndMedia(positionsAndMedia, positionAndMedia);
+			// }
 		}
 	};
 
-	Utilities.addMediaToPoints = function(positionsAndMediaInTree, singleMedia) {
-		var newPoint = {
+	Utilities.addSingleMediaToPositionsAndMedia = function(positionsAndMedia, singleMedia) {
+		var newPositionsAndMedia = {
 			'lng': parseFloat(singleMedia.metadata.longitude),
 			'lat' : parseFloat(singleMedia.metadata.latitude),
 			'mediaNameList': [{
@@ -234,34 +235,40 @@
 				'foldersCacheBase': singleMedia.foldersCacheBase
 			}]
 		};
-		return Utilities.addPointToPoints(positionsAndMediaInTree, newPoint);
+		return Utilities.addPositionAndMediaToPositionsAndMedia(positionsAndMedia, newPositionsAndMedia);
 	};
 
-	Utilities.removeMediaFromPoints = function(positionsAndMediaInTree, singleMedia) {
-		var indexPositions, matchingPointIndex, matchingMediaIndex;
-		var point = {
+	Utilities.removeSingleMediaFromPositionsAndMedia = function(positionsAndMedia, singleMedia) {
+		var positionAndMediaToRemove = {
 			'lng': parseFloat(singleMedia.metadata.longitude),
-			'lat' : parseFloat(singleMedia.metadata.latitude),
+			'lat': parseFloat(singleMedia.metadata.latitude),
 			'mediaNameList': [{
 				'cacheBase': singleMedia.cacheBase,
 				'albumCacheBase': singleMedia.parent.cacheBase,
 				'foldersCacheBase': singleMedia.foldersCacheBase
 			}]
 		};
-		Utilities.removePointFromPoints(positionsAndMediaInTree, point);
+		Utilities.removePositionAndMediaFromPositionsAndMedia(positionsAndMedia, positionAndMediaToRemove);
 	};
 
-	Utilities.removePointFromPoints = function(positionsAndMediaInTree, point) {
+	Utilities.removePositionAndMediaFromPositionsAndMedia = function(positionsAndMedia, positionAndMediaToRemove) {
+		var matchingPositionAndMediaIndex, matchingMediaIndex;
+		var arrayCacheBases = [];
+		for (let indexMediaName = 0; indexMediaName < positionAndMediaToRemove.mediaNameList; indexMediaName ++)
+			arrayCacheBases.push(positionAndMediaToRemove.mediaNameList[indexMediaName].cacheBase);
+		var arrayAlbumCacheBases = [];
+		for (let indexMediaName = 0; indexMediaName < positionAndMediaToRemove.mediaNameList; indexMediaName ++)
+			arrayAlbumCacheBases.push(positionAndMediaToRemove.mediaNameList[indexMediaName].albumCacheBase);
 		if (
-			positionsAndMediaInTree.some(
-				function(element, index) {
-					matchingPointIndex = index;
-					if (Utilities.matchPosition(point, element)) {
+			positionsAndMedia.some(
+				function(positionsAndMediaInTreeElement, positionsAndMediaInTreeIndex) {
+					matchingPositionAndMediaIndex = positionsAndMediaInTreeIndex;
+					if (Utilities.matchPositionsAndMediaByPosition(positionAndMediaToRemove, positionsAndMediaInTreeElement)) {
 						if (
-							element.mediaNameList.some(
-								function(mediaNameListElement, index) {
-									matchingMediaIndex = index;
-									return mediaNameListElement.cacheBase === singleMedia.cacheBase && mediaNameListElement.albumCacheBase === singleMedia.albumCacheBase;
+							positionsAndMediaInTreeElement.mediaNameList.some(
+								function(mediaNameListElement, mediaNameListElementIndex) {
+									matchingMediaIndex = mediaNameListElementIndex;
+									return arrayCacheBases.indexOf(mediaNameListElement.cacheBase) !== -1 && arrayAlbumCacheBases.indexOf(mediaNameListElement.albumCacheBase) !== -1;
 								}
 							)
 						) {
@@ -276,10 +283,10 @@
 			)
 		) {
 			// the position was present: remove the media...
-			positionsAndMediaInTree[matchingPointIndex].mediaNameList.splice(matchingMediaIndex, 1);
-			if (! positionsAndMediaInTree[matchingPointIndex].mediaNameList.length)
-				// remove teh position too
-				positionsAndMediaInTree.splice(matchingPointIndex, 1);
+			positionsAndMedia[matchingPositionAndMediaIndex].mediaNameList.splice(matchingMediaIndex, 1);
+			if (! positionsAndMedia[matchingPositionAndMediaIndex].mediaNameList.length)
+				// remove the position too
+				positionsAndMedia.splice(matchingPositionAndMediaIndex, 1);
 		}
 	};
 
@@ -562,7 +569,7 @@
 		selectionRootAlbum.subalbums = [];
 		selectionRootAlbum.positionsAndMediaInTree = [];
 		selectionRootAlbum.numPositionsInTree = 0;
-		selectionRootAlbum.numsProtectedMediaInSubTree = {"": imagesAndVideos0};
+		selectionRootAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
 		selectionRootAlbum.ancestorsCacheBase = [Options.by_selection_string];
 
 		PhotoFloat.putAlbumIntoCache(selectionRootAlbum.cacheBase, selectionRootAlbum);
@@ -617,16 +624,15 @@
 		if (Utilities.hasGpsData(singleMedia)) {
 			// add the media position
 			selectionAlbum.positionsAndMediaInTree =
-				Utilities.addMediaToPoints(
+				Utilities.addSingleMediaToPositionsAndMedia(
 					selectionAlbum.positionsAndMediaInTree,
 					singleMedia
 				);
 		}
 
 		selectionAlbum.media.push(singleMedia);
-		selectionAlbum.numMedia = Utilities.imagesAndVideosCount(selectionAlbum.media);
-		selectionAlbum.numMediaInAlbum += 1;
-		selectionAlbum.numMediaInSubTree += 1;
+		selectionAlbum.numMedia = Utilities.imagesAndVideosSum(selectionAlbum.numMedia, Utilities.imagesAndVideosCount([singleMedia]));
+		selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
 		selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
 		selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, singleMedia.fileSizes);
 
@@ -642,48 +648,55 @@
 				$(otherSelector).attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-single-media"));
 			}
 		} else if (parseInt(clickedSelector.substring(singleMediaSelector.length + 1)) === currentMediaIndex && $(singleMediaSelector).is(":visible")) {
-			singleMediaSelector += " img";
-			$(singleMediaSelector).attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-single-media"));
+			$(singleMediaSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-single-media"));
 		}
 
-	}
+	};
 
 	Utilities.removeSingleMediaFromSelection = function(singleMedia, clickedSelector) {
 		var selectionAlbumCacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
 		var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
-		selectionAlbum.numMediaInAlbum -= 1;
-		if (! selectionAlbum.numMediaInAlbum) {
+		selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
+		if (! Utilities.imagesAndVideosTotal(selectionAlbum.numMediaInSubTree)) {
 			// no media selected: remove the album
 			PhotoFloat.removeAlbumFromCache(selectionAlbumCacheBase);
 		} else {
-			selectionAlbum.numMediaInSubTree -= 1;
+			selectionAlbum.numMedia = Utilities.imagesAndVideosSubtract(selectionAlbum.numMedia, Utilities.imagesAndVideosCount([singleMedia]));
 			selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
 			selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, singleMedia.fileSizes);
 
-			var index = selectionAlbum.media.findIndex(x => x.albumName === singleMedia.albumName && x.name === singleMedia.name);
+			var index = selectionAlbum.media.findIndex(x => x.foldersCacheBase === singleMedia.foldersCacheBase && x.cacheBase === singleMedia.cacheBase);
 			selectionAlbum.media.splice(index, 1);
 			delete singleMedia.selectionAlbumCacheBase;
 
 			selectionAlbum.positionsAndMediaInTree =
-				Utilities.removeMediaFromPoints(
+				Utilities.removeSingleMediaFromPositionsAndMedia(
 					selectionAlbum.positionsAndMediaInTree,
 					singleMedia
 				);
+		}
 
-			// update the selector
-			$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
+		// update the selector
+		$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
 
-			var singleMediaSelector = "#media-select-box";
-			var otherSelector;
-			if (clickedSelector === singleMediaSelector) {
-				otherSelector = singleMediaSelector + "-" + currentMediaIndex + " img";
-				if ($(otherSelector).is(":visible")) {
-					$(otherSelector).attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
-				}
-			} else if (parseInt(clickedSelector.substring(singleMediaSelector.length + 1)) === currentMediaIndex && $(singleMediaSelector).is(":visible")) {
-				singleMediaSelector += " img";
-				$(singleMediaSelector).attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
+		var singleMediaSelector = "#media-select-box";
+		var otherSelector;
+		if (clickedSelector === singleMediaSelector) {
+			otherSelector = singleMediaSelector + "-" + currentMediaIndex + " img";
+			if ($(otherSelector).is(":visible")) {
+				$(otherSelector).attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
 			}
+		} else if (parseInt(clickedSelector.substring(singleMediaSelector.length + 1)) === currentMediaIndex && $(singleMediaSelector).is(":visible")) {
+			$(singleMediaSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
+		}
+
+		if (currentMedia === null && ! Utilities.isAlbumWithOneMedia(currentAlbum) && Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
+			if (Utilities.imagesAndVideosTotal(selectionAlbum.numMediaInSubTree))
+				// the media must be removed from the shown album
+				TopFunctions.showAlbum("refreshMedia");
+		} else if (Utilities.isAlbumWithOneMedia(currentAlbum) && Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
+			// no media left
+			window.location.href = Utilities.upHash();
 		}
 	};
 
@@ -705,23 +718,23 @@
 			function(subalbum) {
 				subalbum.selectionAlbumCacheBase = selectionAlbum.cacheBase;
 				// add the positions
-				selectionAlbum.positionsAndMediaInTree = Utilities.mergePoints(selectionAlbum.positionsAndMediaInTree, subalbum.positionsAndMediaInTree);
+				selectionAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(selectionAlbum.positionsAndMediaInTree, subalbum.positionsAndMediaInTree);
 
 				selectionAlbum.subalbums.push(subalbum);
-				selectionAlbum.numMediaInSubTree += subalbum.numMediaInSubTree;
+				selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
 				selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
 
 				Utilities.sortAlbumsMedia(selectionAlbum);
-				$(clickedSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-subalbum"));
 			}
 		);
+		$(clickedSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-subalbum"));
 	};
 
 	Utilities.removeSubalbumFromSelection = function(subalbum, clickedSelector) {
 		var selectionAlbumCacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
 		var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
-		selectionAlbum.numMediaInSubTree -= subalbum.numMediaInSubTree;
-		if (! selectionAlbum.numMediaInSubTree) {
+		selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
+		if (! Utilities.imagesAndVideosTotal(selectionAlbum.numMediaInSubTree)) {
 			// no media selected: remove the album
 			PhotoFloat.removeAlbumFromCache(selectionAlbumCacheBase);
 		} else {
@@ -735,69 +748,68 @@
 					selectionAlbum.subalbums.splice(index, 1);
 					delete subalbum.selectionAlbumCacheBase;
 
-					// selectionAlbum.positionsAndMediaInTree =
-					// 	Utilities.removeMediaFromPoints(
-					// 		selectionAlbum.positionsAndMediaInTree,
-					// 		singleMedia
-					// 	);
-
-					$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-subalbum"));
+					selectionAlbum.positionsAndMediaInTree =
+						Utilities.removePositionAndMediaFromPositionsAndMedia(
+							selectionAlbum.positionsAndMediaInTree,
+							subalbum.positionsAndMediaInTree
+						);
 				}
 			);
+			$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-subalbum"));
 		}
 	};
 
-	Utilities.resetSelectedMedia = function(album, includeSubalbums = false) {
-		for (let i = 0; i < album.media.length; i ++) {
-			if (Utilities.mediaIsSelected(album.media[i]))
-				delete album.media[i].selected;
-		}
-		if (includeSubalbums) {
-			for (let i = 0; i < album.subalbums.length; i ++) {
-				Utilities.resetSelectedMedia(album.subalbums[i], includeSubalbums);
-			}
-		}
-	};
+	// Utilities.resetSelectedMedia = function(album, includeSubalbums = false) {
+	// 	for (let i = 0; i < album.media.length; i ++) {
+	// 		if (Utilities.mediaIsSelected(album.media[i]))
+	// 			delete album.media[i].selected;
+	// 	}
+	// 	if (includeSubalbums) {
+	// 		for (let i = 0; i < album.subalbums.length; i ++) {
+	// 			Utilities.resetSelectedMedia(album.subalbums[i], includeSubalbums);
+	// 		}
+	// 	}
+	// };
 
-	Utilities.resetSelectedSubalbums = function(album, includeSubalbums = false) {
-		for (let i = 0; i < album.subalbums.length; i ++) {
-			if (Utilities.subalbumIsSelected(album.subalbums[i]))
-				delete album.subalbums[i].selected;
-		}
-		if (includeSubalbums) {
-			for (let i = 0; i < album.subalbums.length; i ++) {
-				Utilities.resetSelectedSubalbums(album.subalbums[i], includeSubalbums);
-			}
-		}
-	};
+	// Utilities.resetSelectedSubalbums = function(album, includeSubalbums = false) {
+	// 	for (let i = 0; i < album.subalbums.length; i ++) {
+	// 		if (Utilities.subalbumIsSelected(album.subalbums[i]))
+	// 			delete album.subalbums[i].selected;
+	// 	}
+	// 	if (includeSubalbums) {
+	// 		for (let i = 0; i < album.subalbums.length; i ++) {
+	// 			Utilities.resetSelectedSubalbums(album.subalbums[i], includeSubalbums);
+	// 		}
+	// 	}
+	// };
 
-	Utilities.countSelectedMedia = function(album, includeSubalbums = false) {
-		var count = 0;
-		for (let i = 0; i < album.media.length; i ++) {
-			if (Utilities.mediaIsSelected(album.media[i]))
-				count ++;
-		}
-		if (includeSubalbums) {
-			for (let i = 0; i < album.subalbums.length; i ++) {
-				count += Utilities.countSelectedMedia(album.subalbums[i], includeSubalbums);
-			}
-		}
-		return count;
-	};
+	// Utilities.countSelectedMedia = function(album, includeSubalbums = false) {
+	// 	var count = 0;
+	// 	for (let i = 0; i < album.media.length; i ++) {
+	// 		if (Utilities.mediaIsSelected(album.media[i]))
+	// 			count ++;
+	// 	}
+	// 	if (includeSubalbums) {
+	// 		for (let i = 0; i < album.subalbums.length; i ++) {
+	// 			count += Utilities.countSelectedMedia(album.subalbums[i], includeSubalbums);
+	// 		}
+	// 	}
+	// 	return count;
+	// };
 
-	Utilities.countSelectedSubalbums = function(album, includeSubalbums = false) {
-		var count = 0;
-		for (let i = 0; i < album.subalbums.length; i ++) {
-			if (Utilities.mediaIsSelected(album.subalbums[i]))
-				count ++;
-		}
-		if (includeSubalbums) {
-			for (let i = 0; i < album.subalbums.length; i ++) {
-				count += Utilities.countSelectedSubalbums(album.subalbums[i], includeSubalbums);
-			}
-		}
-		return count;
-	};
+	// Utilities.countSelectedSubalbums = function(album, includeSubalbums = false) {
+	// 	var count = 0;
+	// 	for (let i = 0; i < album.subalbums.length; i ++) {
+	// 		if (Utilities.mediaIsSelected(album.subalbums[i]))
+	// 			count ++;
+	// 	}
+	// 	if (includeSubalbums) {
+	// 		for (let i = 0; i < album.subalbums.length; i ++) {
+	// 			count += Utilities.countSelectedSubalbums(album.subalbums[i], includeSubalbums);
+	// 		}
+	// 	}
+	// 	return count;
+	// };
 
 	Utilities.initializeSelectionAlbum = function() {
 		// initializes the selection album
@@ -822,11 +834,11 @@
 		selectionAlbum.physicalPath = selectionAlbum.path;
 		// TO DO: apparently searchInFolderCacheBase property isn't used anywhere for any album
 		selectionAlbum.searchInFolderCacheBase = currentAlbum.cacheBase;
-		selectionAlbum.numsProtectedMediaInSubTree = {"": imagesAndVideos0};
+		selectionAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
 
-		selectionRootAlbum.numMediaInSubTree += selectionAlbum.numMediaInSubTree;
+		selectionRootAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(selectionRootAlbum.numMediaInSubTree, selectionAlbum.numMediaInSubTree);
 		selectionRootAlbum.subalbums.push(selectionAlbum);
-		selectionRootAlbum.positionsAndMediaInTree = Utilities.mergePoints(selectionRootAlbum.positionsAndMediaInTree, selectionAlbum.positionsAndMediaInTree);
+		selectionRootAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(selectionRootAlbum.positionsAndMediaInTree, selectionAlbum.positionsAndMediaInTree);
 		selectionRootAlbum.numPositionsInTree += selectionAlbum.numPositionsInTree;
 		selectionRootAlbum.numsProtectedMediaInSubTree[""] += selectionAlbum.numsProtectedMediaInSubTree[""];
 
@@ -845,8 +857,8 @@
 		return (em * emSize);
 	};
 
-	Utilities.isAlbumWithOneMedia = function(currentAlbum) {
-		return currentAlbum !== null && ! currentAlbum.subalbums.length && Utilities.imagesAndVideosTotal(currentAlbum.numMedia) == 1;
+	Utilities.isAlbumWithOneMedia = function(album) {
+		return album !== null && ! album.subalbums.length && Utilities.imagesAndVideosTotal(album.numMedia) == 1;
 	};
 
 	Utilities.chooseReducedPhoto = function(media, container, fullScreenStatus) {
@@ -1287,14 +1299,6 @@
 		);
 	};
 
-	Utilities.prototype.imagesTotal = function(imagesAndVideos) {
-		return imagesAndVideos.images;
-	};
-
-	Utilities.prototype.videosTotal = function(imagesAndVideos) {
-		return imagesAndVideos.videos;
-	};
-
 	Utilities.imagesAndVideosTotal = function(imagesAndVideos) {
 		return imagesAndVideos.images + imagesAndVideos.videos;
 	};
@@ -1303,6 +1307,13 @@
 		var result = JSON.parse(JSON.stringify(imagesAndVideos0));
 		result.images = imagesAndVideos1.images + imagesAndVideos2.images;
 		result.videos = imagesAndVideos1.videos + imagesAndVideos2.videos;
+		return result;
+	};
+
+	Utilities.imagesAndVideosSubtract = function(imagesAndVideos1, imagesAndVideos2) {
+		var result = JSON.parse(JSON.stringify(imagesAndVideos0));
+		result.images = imagesAndVideos1.images - imagesAndVideos2.images;
+		result.videos = imagesAndVideos1.videos - imagesAndVideos2.videos;
 		return result;
 	};
 
@@ -1494,7 +1505,7 @@
 	};
 
 	Utilities.prototype.sumUpNumsProtectedMedia = function(numsProtectedMediaInSubTree) {
-		var sum = imagesAndVideos0, codesComplexcombination;
+		var sum = JSON.parse(JSON.stringify(imagesAndVideos0)), codesComplexcombination;
 		for (codesComplexcombination in numsProtectedMediaInSubTree) {
 			if (numsProtectedMediaInSubTree.hasOwnProperty(codesComplexcombination) && codesComplexcombination !== ",") {
 				sum = Utilities.imagesAndVideosSum(sum, numsProtectedMediaInSubTree[codesComplexcombination]);
@@ -1547,7 +1558,7 @@
 	};
 
 	Utilities.prototype.escapeSingleQuotes = function(text) {
-		return text.replace(/'/g, "\\'");;
+		return text.replace(/'/g, "\\'");
 	};
 
 	Utilities.xDistanceBetweenCoordinatePoints = function(point1, point2) {
@@ -1733,7 +1744,7 @@
 						resultHash = '';
 						for (let iPart = 0; iPart < minimumLength; iPart ++) {
 							if (parts[iPart].some((val, i, arr) => val !== arr[0])) {
-								break
+								break;
 							} else {
 								resultHash = parts[iPart][0];
 							}
@@ -1975,18 +1986,18 @@
 	Utilities.prototype.isAlbumWithOneMedia = Utilities.isAlbumWithOneMedia;
 	Utilities.prototype.mediaIsSelected = Utilities.mediaIsSelected;
 	Utilities.prototype.subalbumIsSelected = Utilities.subalbumIsSelected;
-	Utilities.prototype.resetSelectedMedia = Utilities.resetSelectedMedia;
-	Utilities.prototype.resetSelectedSubalbums = Utilities.resetSelectedSubalbums;
-	Utilities.prototype.countSelectedMedia = Utilities.countSelectedMedia;
-	Utilities.prototype.countSelectedSubalbums = Utilities.countSelectedSubalbums;
+	// Utilities.prototype.resetSelectedMedia = Utilities.resetSelectedMedia;
+	// Utilities.prototype.resetSelectedSubalbums = Utilities.resetSelectedSubalbums;
+	// Utilities.prototype.countSelectedMedia = Utilities.countSelectedMedia;
+	// Utilities.prototype.countSelectedSubalbums = Utilities.countSelectedSubalbums;
 	Utilities.prototype.isAnyRootHash = Utilities.isAnyRootHash;
-	Utilities.prototype.mergePoints = Utilities.mergePoints;
+	Utilities.prototype.mergePositionsAndMedia = Utilities.mergePositionsAndMedia;
 	Utilities.prototype.hasGpsData = Utilities.hasGpsData;
-	Utilities.prototype.addMediaToPoints = Utilities.addMediaToPoints;
-	Utilities.prototype.addPointToPoints = Utilities.addPointToPoints;
+	Utilities.prototype.addSingleMediaToPositionsAndMedia = Utilities.addSingleMediaToPositionsAndMedia;
+	Utilities.prototype.addPositionAndMediaToPositionsAndMedia = Utilities.addPositionAndMediaToPositionsAndMedia;
 	Utilities.prototype.sumSizes = Utilities.sumSizes;
 	Utilities.prototype.imagesAndVideosCount = Utilities.imagesAndVideosCount;
-	Utilities.prototype.matchPosition = Utilities.matchPosition;
+	Utilities.prototype.matchPositionsAndMediaByPosition = Utilities.matchPositionsAndMediaByPosition;
 
 	window.Utilities = Utilities;
 }());

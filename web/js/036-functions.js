@@ -524,7 +524,7 @@
 				// reset the html
 				$(".download-album.everything.all").html(util._t(".download-album.everything.all"));
 
-				let numMediaInSubTree = util.imagesAndVideosTotal(thisAlbum.numMediaInSubTree);
+				let nMediaInSubTree = util.imagesAndVideosCount(thisAlbum.numMediaInSubTree);
 				let numImages = thisAlbum.numMediaInSubTree.images;
 				let numVideos = thisAlbum.numMediaInSubTree.videos;
 				let what = util._t(".title-media")
@@ -536,12 +536,12 @@
 				if (util.isSearchCacheBase(thisAlbum.cacheBase) && thisAlbum.subalbums.length) {
 					// in search albums, numMediaInSubTree doesn't include the media in the albums found, the values that goes into the DOm must be update by code here
 					for (let iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; iSubalbum ++) {
-						numMediaInSubTree += util.imagesAndVideosTotal(thisAlbum.subalbums[iSubalbum].numMediaInSubTree);
+						nMediaInSubTree += util.imagesAndVideosTotal(thisAlbum.subalbums[iSubalbum].numMediaInSubTree);
 					}
 				}
 
 				let treeSize = thisAlbum.sizesOfSubTree[0].images + thisAlbum.sizesOfSubTree[0].videos;
-				$(".download-album.everything.all.full").append(": " + numMediaInSubTree + " " + what + ", " + Functions.humanFileSize(treeSize));
+				$(".download-album.everything.all.full").append(": " + nMediaInSubTree + " " + what + ", " + Functions.humanFileSize(treeSize));
 				if (treeSize < bigZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)

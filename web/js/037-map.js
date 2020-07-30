@@ -341,7 +341,7 @@
 		album.physicalPath = album.path;
 		album.searchInFolderCacheBase = currentAlbum.cacheBase;
 		album.clickHistory = [];
-		album.numsProtectedMediaInSubTree = {"": imagesAndVideos0};
+		album.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
 
 		return album;
 	};
@@ -402,7 +402,7 @@
 		}
 		Promise.all(cacheBasesPromises).then(
 			function() {
-				mapAlbum.positionsAndMediaInTree = util.mergePoints(mapAlbum.positionsAndMediaInTree, positionsAndCounts);
+				mapAlbum.positionsAndMediaInTree = util.mergePositionsAndMedia(mapAlbum.positionsAndMediaInTree, positionsAndCounts);
 				resolve_imageLoad(mapAlbum);
 			}
 		);
