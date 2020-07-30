@@ -1283,7 +1283,7 @@
 
 				function nextAlbum(album) {
 
-					var i, numMediaInAlbum;
+					var i, nMediaInAlbum;
 
 					if (util.imagesAndVideosTotal(album.numMediaInSubTree) == 0) {
 						error();
@@ -1291,11 +1291,11 @@
 					}
 
 					// if (album.hasOwnProperty("media"))
-					// 	numMediaInAlbum = album.numMedia;
+					// 	nMediaInAlbum = album.numMedia;
 					// else
-					numMediaInAlbum = util.imagesAndVideosTotal(album.numMedia);
-					if (index >= numMediaInAlbum) {
-						index -= numMediaInAlbum;
+					nMediaInAlbum = util.imagesAndVideosTotal(album.numMedia);
+					if (index >= nMediaInAlbum) {
+						index -= nMediaInAlbum;
 						let found = false;
 						let targetCacheBase;
 						// if (! album.subalbums.length) {
