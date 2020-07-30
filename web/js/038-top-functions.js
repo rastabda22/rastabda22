@@ -1437,7 +1437,7 @@
 	};
 
 
-	TopFunctions.prototype.showAlbumOrMedia = function(album, mediaIndex) {
+	TopFunctions.showAlbumOrMedia = function(album, mediaIndex) {
 		var populateAlbum;
 
 		if (util.imagesAndVideosTotal(album.numMediaInSubTree) == 0 && ! util.isSearchCacheBase(album.cacheBase)) {
@@ -3156,6 +3156,7 @@
 	TopFunctions.prototype.goFullscreen = TopFunctions.goFullscreen;
 	TopFunctions.prototype.showBrowsingModeMessage = TopFunctions.showBrowsingModeMessage;
 	TopFunctions.prototype.prepareAndDoPopupUpdate = TopFunctions.prepareAndDoPopupUpdate;
+	TopFunctions.prototype.showAlbumOrMedia = TopFunctions.showAlbumOrMedia;
 	// TopFunctions.prototype.goUpIfProtected = TopFunctions.goUpIfProtected;
 
 	window.TopFunctions = TopFunctions;

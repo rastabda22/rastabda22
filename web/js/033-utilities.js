@@ -661,10 +661,13 @@
 	Utilities.removeSingleMediaFromSelection = function(singleMedia, clickedSelector) {
 		var selectionAlbumCacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
 		var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
+		var upLink = Utilities.upHash();
+		var isVoid = false;
 		selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
 		if (! Utilities.imagesAndVideosTotal(selectionAlbum.numMediaInSubTree)) {
 			// no media selected: remove the album
 			PhotoFloat.removeAlbumFromCache(selectionAlbumCacheBase);
+			isVoid = true;
 		} else {
 			selectionAlbum.numMedia = Utilities.imagesAndVideosSubtract(selectionAlbum.numMedia, Utilities.imagesAndVideosCount([singleMedia]));
 			selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
@@ -695,13 +698,15 @@
 			$(singleMediaSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
 		}
 
-		if (currentMedia === null && ! Utilities.isAlbumWithOneMedia(currentAlbum) && Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
-			if (Utilities.imagesAndVideosTotal(selectionAlbum.numMediaInSubTree))
-				// the media must be removed from the shown album
-				TopFunctions.showAlbum("refreshMedia");
-		} else if (Utilities.isAlbumWithOneMedia(currentAlbum) && Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
-			// no media left
-			window.location.href = Utilities.upHash();
+		if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
+			if (isVoid) {
+				window.location.href = upLink;
+			} else if (currentMedia === null) {
+				if (Utilities.isAlbumWithOneMedia(currentAlbum))
+					TopFunctions.showAlbumOrMedia(currentAlbum, 0);
+				else
+					TopFunctions.showAlbum("refreshMedia");
+			}
 		}
 	};
 
@@ -1758,6 +1763,8 @@
 								resultHash = parts[iPart][0];
 							}
 						}
+					} else if (Utilities.isSelectionCacheBase(albumHash) && album.media.length === 1) {
+						resultHash = album.media[0].foldersCacheBase;
 					} else {
 						// we must go up in the sub folders tree
 						resultHash = albumHash.split(Options.cache_folder_separator).slice(0, -1).join(Options.cache_folder_separator);

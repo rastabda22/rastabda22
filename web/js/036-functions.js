@@ -119,13 +119,13 @@
 
 	Functions.updateMenu = function(thisAlbum, hasGpsData) {
 		var albumOrMedia;
-		var isAlbumWithOneMedia = util.isAlbumWithOneMedia(thisAlbum);
 		var isPopup = $('.leaflet-popup').html() ? true : false;
 		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
 		var isMapOrPopup = isMap || isPopup;
 
 		if (typeof thisAlbum === "undefined")
 			thisAlbum = currentAlbum;
+		var isAlbumWithOneMedia = util.isAlbumWithOneMedia(thisAlbum);
 
 		if (typeof hasGpsData === "undefined") {
 			if (currentMedia !== null)
