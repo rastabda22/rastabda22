@@ -706,6 +706,13 @@
 					TopFunctions.showAlbumOrMedia(currentAlbum, 0);
 				else
 					TopFunctions.showAlbum("refreshMedia");
+			} else {
+				let clickedMediaIndex = parseInt(clickedSelector.split('-').pop());
+				if (clickedSelector === singleMediaSelector || clickedMediaIndex === currentMediaIndex) {
+					TopFunctions.showAlbumOrMedia(currentAlbum, null);
+				} else {
+					TopFunctions.showAlbumOrMedia(currentAlbum, currentMediaIndex);
+				}
 			}
 		}
 	};
