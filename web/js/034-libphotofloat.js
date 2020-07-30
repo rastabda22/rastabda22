@@ -1290,9 +1290,6 @@
 						return;
 					}
 
-					// if (album.hasOwnProperty("media"))
-					// 	nMediaInAlbum = album.numMedia;
-					// else
 					nMediaInAlbum = util.imagesAndVideosTotal(album.numMedia);
 					if (index >= nMediaInAlbum) {
 						index -= nMediaInAlbum;
