@@ -637,6 +637,10 @@
 		selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
 		selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, singleMedia.fileSizes);
 
+		Utilities.sortByDate(selectionAlbum.media);
+		selectionAlbum.mediaNameSort = false;
+		selectionAlbum.mediaReverseSort = false;
+		Utilities.initializeSortPropertiesAndCookies(selectionAlbum);
 		Utilities.sortAlbumsMedia(selectionAlbum);
 
 		// update the selector
@@ -725,6 +729,10 @@
 				selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
 				selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
 
+				Utilities.sortByDate(selectionAlbum.subalbums);
+				selectionAlbum.albumNameSort = false;
+				selectionAlbum.albumReverseSort = false;
+				Utilities.initializeSortPropertiesAndCookies(selectionAlbum);
 				Utilities.sortAlbumsMedia(selectionAlbum);
 			}
 		);
@@ -1911,7 +1919,7 @@
 		}
 	};
 
-	Utilities.prototype.initializeSortPropertiesAndCookies = function(thisAlbum) {
+	Utilities.initializeSortPropertiesAndCookies = function(thisAlbum) {
 		// this function applies the sorting on the media and subalbum lists
 		// and sets the album properties that attest the lists status
 
@@ -1999,6 +2007,7 @@
 	Utilities.prototype.sumSizes = Utilities.sumSizes;
 	Utilities.prototype.imagesAndVideosCount = Utilities.imagesAndVideosCount;
 	Utilities.prototype.matchPositionsAndMediaByPosition = Utilities.matchPositionsAndMediaByPosition;
+	Utilities.prototype.initializeSortPropertiesAndCookies = Utilities.initializeSortPropertiesAndCookies;
 
 	window.Utilities = Utilities;
 }());
