@@ -208,7 +208,7 @@
 	Utilities.removePositionsAndMediaFromPositionsAndMedia = function(positionsAndMedia, positionsAndMediaToRemove) {
 		for (let indexPositions = 0; indexPositions < positionsAndMediaToRemove.length; indexPositions ++) {
 			let positionsAndMediaToRemoveElement = positionsAndMediaToRemove[indexPositions];
-			Utilities.removePositionAndMediaFromPositionsAndMedia(positionsAndMedia, positionsAndMediaToRemoveElement);
+			return Utilities.removePositionAndMediaFromPositionsAndMedia(positionsAndMedia, positionsAndMediaToRemoveElement);
 			// for (let indexMedia = 0; indexMedia < positionsAndMediaToRemoveElement.mediaNameList; indexMedia ++) {
 			// 	let mediaNameListElement = positionsAndMediaToRemoveElement.mediaNameList[indexMedia];
 			// 	let positionAndMedia = {
@@ -248,7 +248,7 @@
 				'foldersCacheBase': singleMedia.foldersCacheBase
 			}]
 		};
-		Utilities.removePositionAndMediaFromPositionsAndMedia(positionsAndMedia, positionAndMediaToRemove);
+		return Utilities.removePositionAndMediaFromPositionsAndMedia(positionsAndMedia, positionAndMediaToRemove);
 	};
 
 	Utilities.removePositionAndMediaFromPositionsAndMedia = function(positionsAndMedia, positionAndMediaToRemove) {
@@ -288,6 +288,7 @@
 				// remove the position too
 				positionsAndMedia.splice(matchingPositionAndMediaIndex, 1);
 		}
+		return positionsAndMedia;
 	};
 
 	Utilities.prototype.union = function(a, b) {
