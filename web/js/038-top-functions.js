@@ -2319,7 +2319,6 @@
 										">" +
 									"</a>";
 
-
 								// a dot could be present in a cache base, making $("#" + cacheBase) fail, beware...
 								id = phFl.hashCode(ithSubalbum.cacheBase);
 								albumButtonAndCaptionHtml =

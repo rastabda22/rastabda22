@@ -1422,7 +1422,7 @@
 			} else if (hashPartsCount == 3) {
 				// gps or date or search or selection hash: album, album where the image is, media
 				// subfolder of search hash: album, search subalbum, search album
-				if (util.isSearchCacheBase(hashParts[2])) {
+				if (util.isSearchCacheBase(hashParts[2]) || util.isSelectionCacheBase(hashParts[2])) {
 					albumHash = hashParts[0];
 					savedSearchSubAlbumHash = hashParts[1];
 					savedSearchAlbumHash = hashParts[2];
