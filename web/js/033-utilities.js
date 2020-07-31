@@ -670,7 +670,6 @@
 	Utilities.removeSingleMediaFromSelection = function(singleMedia, clickedSelector) {
 		var selectionAlbumCacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
 		var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
-		var upLink = Utilities.upHash();
 		var isVoid = false;
 		selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
 		if (! Utilities.imagesAndVideosTotal(selectionAlbum.numMediaInSubTree)) {
@@ -693,9 +692,6 @@
 				);
 		}
 
-		// update the selector
-		$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
-
 		var singleMediaSelector = "#media-select-box";
 		var otherSelector;
 		if (clickedSelector === singleMediaSelector) {
@@ -709,7 +705,7 @@
 
 		if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
 			if (isVoid) {
-				window.location.href = upLink;
+				window.location.href = Utilities.upHash();
 			} else if (currentMedia === null) {
 				if (Utilities.isAlbumWithOneMedia(currentAlbum))
 					TopFunctions.showAlbumOrMedia(currentAlbum, 0);
@@ -718,11 +714,16 @@
 			} else {
 				let clickedMediaIndex = parseInt(clickedSelector.split('-').pop());
 				if (clickedSelector === singleMediaSelector || clickedMediaIndex === currentMediaIndex) {
-					TopFunctions.showAlbumOrMedia(currentAlbum, null);
+					TopFunctions.showAlbumOrMedia(currentAlbum, -1);
 				} else {
+					if (currentMediaIndex === currentAlbum.media.length)
+						currentMediaIndex -= 1;
 					TopFunctions.showAlbumOrMedia(currentAlbum, currentMediaIndex);
 				}
 			}
+		} else {
+			// update the selector
+			$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
 		}
 	};
 
@@ -764,14 +765,18 @@
 		var selectionAlbumCacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
 		var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
 		selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
+		var isVoid = false;
 		if (! Utilities.imagesAndVideosTotal(selectionAlbum.numMediaInSubTree)) {
 			// no media selected: remove the album
 			PhotoFloat.removeAlbumFromCache(selectionAlbumCacheBase);
+			isVoid = true;
+			if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase))
+				window.location.href = Utilities.upHash();
 		} else {
 			let getAlbumPromise = PhotoFloat.getAlbum(subalbum.cacheBase, null, {"getMedia": true, "getPositions": true});
 			getAlbumPromise.then(
 				function(subalbum) {
-					selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, subalbum.fileSizes);
+					selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
 					selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
 
 					var index = selectionAlbum.subalbums.findIndex(x => x.cacheBase === subalbum.cacheBase);
@@ -779,12 +784,19 @@
 					delete subalbum.selectionAlbumCacheBase;
 
 					selectionAlbum.positionsAndMediaInTree =
-						Utilities.removePositionAndMediaFromPositionsAndMedia(
+						Utilities.removePositionsAndMediaFromPositionsAndMedia(
 							selectionAlbum.positionsAndMediaInTree,
 							subalbum.positionsAndMediaInTree
 						);
+
+					if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
+							TopFunctions.showAlbumOrMedia(currentAlbum, -1);
+					}
 				}
 			);
+		}
+
+		if (! Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
 			$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-subalbum"));
 		}
 	};
