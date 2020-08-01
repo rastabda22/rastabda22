@@ -380,6 +380,7 @@
 				<li id="by-map-view" class="browsing-mode-switcher radio"></li>
 				<li id="by-search-view" class="browsing-mode-switcher radio"></li>
 				<li id="by-selection-view" class="browsing-mode-switcher radio"></li>
+				<li id="back-to-previous-view" class="browsing-mode-switcher"></li>
 			</ul>
 		</li>
 
@@ -459,6 +460,7 @@
 	<div id="by-search-browsing" class="browsing-mode-message"></div>
 	<div id="by-selection-browsing" class="browsing-mode-message"></div>
 	<div id="by-map-browsing" class="browsing-mode-message"></div>
+	<div id="previous-browsing" class="browsing-mode-message"></div>
 
 	<div id="error-overlay"></div>
 	<div id="error-options-file" class="error"></div>

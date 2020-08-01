@@ -773,6 +773,13 @@
 				return false;
 			}
 
+			function changeToPreviousView() {
+				TopFunctions.showBrowsingModeMessage("#previous-browsing");
+				window.location.href = "#!/" + browsingModeChangeOrigin;
+				browsingModeChangeOrigin = null;
+				return false;
+			}
+
 			var foldersViewLink, byDateViewLink, byGpsViewLink;
 			if (currentMedia !== null) {
 				foldersViewLink = "#!/" + util.pathJoin([
@@ -834,6 +841,8 @@
 				$("#by-search-view").on("click", changeToBySearchView);
 			if (bySelectionViewLink !== null)
 				$("#by-selection-view").on("click", changeToBySelectionView);
+			if (browsingModeChangeOrigin !== null)
+				$("#back-to-previous-view").on("click", changeToPreviousView);
 
 			if (util.isFolderCacheBase(thisAlbum.cacheBase)) {
 				$("#folders-view").off("click");
@@ -922,16 +931,21 @@
 
 				bySelectionViewLink = location.hash;
 
-				// add the browsing mode switcher links
-				nextBrowsingModeSelector = "#folders-view";
-				if (bySearchViewLink !== null) {
-					prevBrowsingModeSelector = "#by-search-view";
-				} else if (byMapViewLink !== null) {
-					prevBrowsingModeSelector = "#by-map-view";
-				} else if (hasGpsData) {
-					prevBrowsingModeSelector = "#by-gps-view";
+				if (browsingModeChangeOrigin === null || currentMedia !== null) {
+					// add the browsing mode switcher links
+					nextBrowsingModeSelector = "#folders-view";
+					if (bySearchViewLink !== null) {
+						prevBrowsingModeSelector = "#by-search-view";
+					} else if (byMapViewLink !== null) {
+						prevBrowsingModeSelector = "#by-map-view";
+					} else if (hasGpsData) {
+						prevBrowsingModeSelector = "#by-gps-view";
+					} else {
+						prevBrowsingModeSelector = "#by-date-view";
+					}
 				} else {
-					prevBrowsingModeSelector = "#by-date-view";
+					nextBrowsingModeSelector = "#back-to-previous-view";
+					prevBrowsingModeSelector = nextBrowsingModeSelector;
 				}
 			}
 			f.updateMenu(thisAlbum, hasGpsData);
@@ -957,6 +971,27 @@
 
 	};
 
+	TopFunctions.toggleSelectedMedia = function(media, clickedSelector) {
+		if (util.singleMediaIsSelected(media)) {
+			util.removeSingleMediaFromSelection(media, clickedSelector);
+		} else {
+			var nMediaSelected = util.addSingleMediaToSelection(media, clickedSelector);
+			if (nMediaSelected === 1)
+				f.updateMenu();
+		}
+	};
+
+	TopFunctions.toggleSelectedSubalbum = function(subalbum, clickedSelector) {
+		if (util.subalbumIsSelected(subalbum)) {
+			util.removeSubalbumFromSelection(subalbum, clickedSelector);
+		} else {
+			util.addSubalbumToSelection(subalbum, clickedSelector);
+			var nSubalbumsSelected = util.addSubalbumToSelection(media, clickedSelector);
+			if (nSubalbumsSelected === 1)
+				f.updateMenu();
+		}
+	};
+
 	TopFunctions.showMedia = function(album, singleMedia, id) {
 
 		function loadNextPrevMedia(containerHeight, containerWidth) {
@@ -977,7 +1012,7 @@
 					{media: singleMedia, clickedSelector: "#media-select-box"},
 					function(ev) {
 						ev.stopPropagation();
-						util.toggleSelectedMedia(ev.data.media, ev.data.clickedSelector);
+						TopFunctions.toggleSelectedMedia(ev.data.media, ev.data.clickedSelector);
 						// if (util.singleMediaIsSelected(ev.data.media))
 						// 	bySelectionViewLink = "#!" + ev.data.media.bySelectionCacheBase + Options.cache_folder_separator + ev.data.media.cacheBase;
 						// else
@@ -2160,7 +2195,7 @@
 						{media: ithMedia, clickedSelector: "#media-select-box-" + i},
 						function(ev) {
 							ev.stopPropagation();
-							util.toggleSelectedMedia(ev.data.media, ev.data.clickedSelector);
+							TopFunctions.toggleSelectedMedia(ev.data.media, ev.data.clickedSelector);
 						}
 					);
 				}
@@ -2437,7 +2472,7 @@
 								function(ev) {
 									ev.stopPropagation();
 									ev.preventDefault();
-									util.toggleSelectedSubalbum(ev.data.subalbum, ev.data.clickedSelector);
+									TopFunctions.toggleSelectedSubalbum(ev.data.subalbum, ev.data.clickedSelector);
 								}
 							);
 						}

@@ -8,6 +8,7 @@ var previousMedia = null;
 var nextMedia = null, prevMedia = null;
 var bySearchViewLink = null, byMapViewLink = null, bySelectionViewLink = null, isABrowsingModeChange = false;
 var nextBrowsingModeSelector, prevBrowsingModeSelector;
+var browsingModeChangeOrigin = null;
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
 var fromEscKey = false;
@@ -327,10 +328,19 @@ $(document).ready(function() {
 					) && ! isMap
 				) {
 					// browsing mode switchers
-					if (e.key === '>' && nextBrowsingModeSelector !== null) {
+					let isNextBrowsingMode = (e.key === '>' && nextBrowsingModeSelector !== null);
+					let isPrevBrowsingMode = (e.key === '<' && prevBrowsingModeSelector !== null);
+					if (isNextBrowsingMode || isPrevBrowsingMode) {
+						if (! util.isSelectionCacheBase(currentAlbum.cacheBase) && ! util.isAnyRootHash(currentAlbum.cacheBase) && currentMedia === null && browsingModeChangeOrigin === null) {
+							browsingModeChangeOrigin = currentAlbum.cacheBase;
+						// } else if (util.isSelectionCacheBase(currentAlbum.cacheBase) && currentAlbum.cacheBase.split(Options.cache_folder_separator).length === 2) {
+							// browsingModeChangeOrigin = null
+						}
+					}
+					if (isNextBrowsingMode) {
 						$(nextBrowsingModeSelector)[0].click();
 						return false;
-					} else if (e.key === '<' && prevBrowsingModeSelector !== null) {
+					} else if (isPrevBrowsingMode) {
 						$(prevBrowsingModeSelector)[0].click();
 						return false;
 					}
