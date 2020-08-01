@@ -740,6 +740,7 @@
 
 			var foldersViewLink = null, byDateViewLink = null, byGpsViewLink = null;
 			bySelectionViewLink = null;
+
 			if (currentMedia !== null) {
 				foldersViewLink = "#!/" + util.pathJoin([
 					currentMedia.foldersCacheBase,
@@ -955,11 +956,6 @@
 					function(ev) {
 						ev.stopPropagation();
 						TopFunctions.toggleSelectedMedia(ev.data.media, ev.data.clickedSelector);
-						// if (util.singleMediaIsSelected(ev.data.media))
-						// 	bySelectionViewLink = "#!" + ev.data.media.bySelectionCacheBase + Options.cache_folder_separator + ev.data.media.cacheBase;
-						// else
-						// 	bySelectionViewLink = null;
-						TopFunctions.bindChangeBrowsingEvents(currentAlbum);
 					}
 				);
 
