@@ -619,8 +619,11 @@
 	Utilities.prototype.addSingleMediaToSelection = function(singleMedia, clickedSelector) {
 		var selectionAlbumCacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
 		var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
-		if (! selectionAlbum)
+		var firstAddition = false;
+		if (! selectionAlbum) {
 			selectionAlbum = Utilities.initializeSelectionAlbum();
+			firstAddition = true;
+		}
 
 		// singleMedia.parent = selectionAlbum;
 		singleMedia.selectionAlbumCacheBase = selectionAlbum.cacheBase;
@@ -658,7 +661,7 @@
 			$(singleMediaSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-single-media"));
 		}
 
-		return selectionAlbum.media.length;
+		return firstAddition;;
 
 	};
 
@@ -720,13 +723,17 @@
 			// update the selector
 			$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
 		}
+		return isVoid;
 	};
 
 	Utilities.prototype.addSubalbumToSelection = function(subalbum, clickedSelector) {
 		var selectionAlbumCacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
 		var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
-		if (! selectionAlbum)
+		var firstAddition = false;
+		if (! selectionAlbum) {
 			selectionAlbum = Utilities.initializeSelectionAlbum();
+			firstAddition = true;
+		}
 
 		let getAlbumPromise = PhotoFloat.getAlbum(subalbum.cacheBase, null, {"getMedia": true, "getPositions": true});
 		var nSubalbums = selectionAlbum.subalbums.length;
@@ -748,7 +755,7 @@
 			}
 		);
 		$(clickedSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-subalbum"));
-		return nSubalbums + 1;
+		return firstAddition;
 	};
 
 	Utilities.prototype.removeSubalbumFromSelection = function(subalbum, clickedSelector) {
@@ -789,6 +796,7 @@
 		if (! Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
 			$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-subalbum"));
 		}
+		return isVoid;
 	};
 
 	// Utilities.resetSelectedMedia = function(album, includeSubalbums = false) {

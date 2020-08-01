@@ -8,7 +8,7 @@ var previousMedia = null;
 var nextMedia = null, prevMedia = null;
 var bySearchViewLink = null, byMapViewLink = null, bySelectionViewLink = null, isABrowsingModeChange = false;
 var nextBrowsingModeSelector, prevBrowsingModeSelector;
-var browsingModeChangeOrigin = null;
+var cacheBaseBeforeBrowsingBySelection = null;
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
 var fromEscKey = false;
@@ -328,19 +328,29 @@ $(document).ready(function() {
 					) && ! isMap
 				) {
 					// browsing mode switchers
-					let isNextBrowsingMode = (e.key === '>' && nextBrowsingModeSelector !== null);
-					let isPrevBrowsingMode = (e.key === '<' && prevBrowsingModeSelector !== null);
-					if (isNextBrowsingMode || isPrevBrowsingMode) {
-						if (! util.isSelectionCacheBase(currentAlbum.cacheBase) && ! util.isAnyRootHash(currentAlbum.cacheBase) && currentMedia === null && browsingModeChangeOrigin === null) {
-							browsingModeChangeOrigin = currentAlbum.cacheBase;
-						// } else if (util.isSelectionCacheBase(currentAlbum.cacheBase) && currentAlbum.cacheBase.split(Options.cache_folder_separator).length === 2) {
-							// browsingModeChangeOrigin = null
+					let nextBrowsingModeRequested = (e.key === '>');
+					let prevBrowsingModeRequested = (e.key === '<');
+					if (nextBrowsingModeRequested || prevBrowsingModeRequested) {
+						if (cacheBaseBeforeBrowsingBySelection) {
+							cacheBaseBeforeBrowsingBySelection = null
 						}
 					}
-					if (isNextBrowsingMode) {
+
+					var filter = ".radio:not(.hidden):not(.selected)";
+					if (nextBrowsingModeRequested) {
+						nextBrowsingModeSelector = $(".browsing-mode-switcher.selected").next(filter);
+						if (nextBrowsingModeSelector[0] === undefined)
+							nextBrowsingModeSelector = $(".browsing-mode-switcher.selected").siblings(filter).first();
+						$(".browsing-mode-switcher").removeClass("selected");
+						$(nextBrowsingModeSelector).addClass("selected");
 						$(nextBrowsingModeSelector)[0].click();
 						return false;
-					} else if (isPrevBrowsingMode) {
+					} else if (prevBrowsingModeRequested) {
+						prevBrowsingModeSelector = $(".browsing-mode-switcher.selected").prev(filter);
+						if (prevBrowsingModeSelector[0] === undefined)
+							prevBrowsingModeSelector = $(".browsing-mode-switcher.selected").siblings(filter).last();
+						$(".browsing-mode-switcher").removeClass("selected");
+						$(prevBrowsingModeSelector).addClass("selected");
 						$(prevBrowsingModeSelector)[0].click();
 						return false;
 					}
