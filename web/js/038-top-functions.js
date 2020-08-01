@@ -894,15 +894,15 @@
 			actuallyBind(thisAlbum, util.hasGpsData(currentMedia));
 		} else {
 			// we are in a root album
-			var promise = phFl.geotaggedPhotosExist();
-			promise.then(
-				function(hasGpsData) {
-					actuallyBind(thisAlbum, hasGpsData);
-				},
-				function(album) {
-					console.trace();
-				}
-			);
+			actuallyBind(thisAlbum, (Options.num_positions_in_tree > 0));
+			// promise.then(
+			// 	function(hasGpsData) {
+			// 		actuallyBind(thisAlbum, hasGpsData);
+			// 	},
+			// 	function(album) {
+			// 		console.trace();
+			// 	}
+			// );
 		}
 
 	};
