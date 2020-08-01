@@ -985,8 +985,7 @@
 		if (util.subalbumIsSelected(subalbum)) {
 			util.removeSubalbumFromSelection(subalbum, clickedSelector);
 		} else {
-			util.addSubalbumToSelection(subalbum, clickedSelector);
-			var nSubalbumsSelected = util.addSubalbumToSelection(media, clickedSelector);
+			var nSubalbumsSelected = util.addSubalbumToSelection(subalbum, clickedSelector);
 			if (nSubalbumsSelected === 1)
 				f.updateMenu();
 		}

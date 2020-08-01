@@ -301,7 +301,7 @@ var translations =
 			"#by-map-view": "per mappa",
 			"#by-search-view": "per ricerca",
 			"#by-selection-view": "per selezione",
-			"#back-to-previous-view": "torno a dove eravamo prima di mostrare per selezione",
+			"#back-to-previous-view": "torna a dove eravamo prima di mostrare per selezione",
 			"#no-search-string": "(nessuna parola cercata)",
 			"#no-search-string-after-stopwords-removed": "(tutte le parole erano banali e non sono state considerate)",
 			"#removed-stopwords": "parole banali non cercate",
