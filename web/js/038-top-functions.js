@@ -908,25 +908,29 @@
 
 	TopFunctions.toggleSelectedMedia = function(media, clickedSelector) {
 		if (util.singleMediaIsSelected(media)) {
-			var isVoid = util.removeSingleMediaFromSelection(media, clickedSelector);
+			let isVoid = util.removeSingleMediaFromSelection(media, clickedSelector);
 			if (isVoid)
-				f.updateMenu();
+				TopFunctions.bindChangeBrowsingEvents(currentAlbum);
+				// f.updateMenu();
 		} else {
-			var firstAddition = util.addSingleMediaToSelection(media, clickedSelector);
+			let firstAddition = util.addSingleMediaToSelection(media, clickedSelector);
 			if (firstAddition)
-				f.updateMenu();
+				TopFunctions.bindChangeBrowsingEvents(currentAlbum);
+				// f.updateMenu();
 		}
 	};
 
 	TopFunctions.toggleSelectedSubalbum = function(subalbum, clickedSelector) {
 		if (util.subalbumIsSelected(subalbum)) {
-			var isVoid = util.removeSubalbumFromSelection(subalbum, clickedSelector);
+			let isVoid = util.removeSubalbumFromSelection(subalbum, clickedSelector);
 			if (isVoid)
-				f.updateMenu();
+				TopFunctions.bindChangeBrowsingEvents(currentAlbum);
+				// f.updateMenu();
 		} else {
-			var firstAddition = util.addSubalbumToSelection(subalbum, clickedSelector);
+			let firstAddition = util.addSubalbumToSelection(subalbum, clickedSelector);
 			if (firstAddition)
-				f.updateMenu();
+				TopFunctions.bindChangeBrowsingEvents(currentAlbum);
+				// f.updateMenu();
 		}
 	};
 
@@ -956,8 +960,6 @@
 						// else
 						// 	bySelectionViewLink = null;
 						TopFunctions.bindChangeBrowsingEvents(currentAlbum);
-
-						f.updateMenu();
 					}
 				);
 
@@ -1309,8 +1311,6 @@
 			// }
 
 			TopFunctions.bindChangeBrowsingEvents(currentAlbum);
-
-			f.updateMenu(currentAlbum);
 
 			$(".media-box#center .metadata-show").off('click').on('click', f.toggleMetadataFromMouse);
 			$(".media-box#center .metadata-hide").off('click').on('click', f.toggleMetadataFromMouse);
