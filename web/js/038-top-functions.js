@@ -733,205 +733,173 @@
 		isABrowsingModeChange = true;
 	};
 
-	TopFunctions.bindChangeBrowsingEvents = function(thisAlbum) {
+	TopFunctions.bindChangeBrowsingEvents = function() {
+		var foldersViewLink = null, byDateViewLink = null, byGpsViewLink = null;
+		bySelectionViewLink = null;
+		var hasGpsData, thisMedia;
 
-		function actuallyBind(thisAlbum, hasGpsData) {
-			// this function is called by bindChangeBrowsingEvents when an asyncronous function has ended
+		if (currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)) {
+			// single media
+			if (currentMedia !== null)
+				thisMedia = currentMedia;
+			else
+				thisMedia = currentAlbum.media[0];
 
-			var foldersViewLink = null, byDateViewLink = null, byGpsViewLink = null;
-			bySelectionViewLink = null;
+			hasGpsData = util.hasGpsData(thisMedia);
 
-			if (currentMedia !== null) {
-				foldersViewLink = "#!/" + util.pathJoin([
+			foldersViewLink = "#!/" + util.pathJoin([
+				currentMedia.foldersCacheBase,
+				currentMedia.cacheBase
+			]);
+
+			byDateViewLink = "#!/" + util.pathJoin([
+				currentMedia.dayAlbumCacheBase,
+				currentMedia.foldersCacheBase,
+				currentMedia.cacheBase
+			]);
+
+			if (hasGpsData) {
+				byGpsViewLink = "#!/" + util.pathJoin([
+					currentMedia.gpsAlbumCacheBase,
 					currentMedia.foldersCacheBase,
 					currentMedia.cacheBase
 				]);
+			}
 
-				byDateViewLink = "#!/" + util.pathJoin([
-					currentMedia.dayAlbumCacheBase,
-					currentMedia.foldersCacheBase,
-					currentMedia.cacheBase
-				]);
-
-				if (currentMedia.gpsAlbumCacheBase) {
-					byGpsViewLink = "#!/" + util.pathJoin([
-						currentMedia.gpsAlbumCacheBase,
+			if (! util.isSelectionCacheBase(currentAlbum.cacheBase)) {
+				if (util.singleMediaIsSelected(currentMedia)) {
+					bySelectionViewLink = "#!/" + util.pathJoin([
+						currentMedia.selectionAlbumCacheBase,
 						currentMedia.foldersCacheBase,
 						currentMedia.cacheBase
 					]);
-				}
-
-				if (! util.isSelectionCacheBase(currentAlbum.cacheBase)) {
-					if (util.singleMediaIsSelected(currentMedia)) {
-						bySelectionViewLink = "#!/" + util.pathJoin([
-							currentMedia.selectionAlbumCacheBase,
-							currentMedia.foldersCacheBase,
-							currentMedia.cacheBase
-						]);
-					} else {
-						bySelectionViewLink = "#!/" + currentMedia.selectionAlbumCacheBase;
-					}
-				}
-			} else {
-				let bySelectionRootAlbum = phFl.getAlbumFromCache(Options.by_selection_string);
-				if (bySelectionRootAlbum && bySelectionRootAlbum.subalbums.length) {
-					let bySelectionAlbum = phFl.getAlbumFromCache(bySelectionRootAlbum.subalbums[bySelectionRootAlbum.subalbums.length - 1].cacheBase);
-					bySelectionViewLink = phFl.encodeHash(bySelectionAlbum, null);
-				}
-
-				if (util.isAnyRootHash(currentAlbum.cacheBase)) {
-					// we are in a root album
-					if (! util.isFolderCacheBase(currentAlbum.cacheBase))
-						foldersViewLink = "#!/" + encodeURIComponent(Options.folders_string);
-
-					if (! util.isByDateCacheBase(currentAlbum.cacheBase))
-						byDateViewLink = "#!/" + encodeURIComponent(Options.by_date_string);
-
-					if (hasGpsData) {
-						byGpsViewLink = "#!/" + encodeURIComponent(Options.by_gps_string);
-					}
-
 				} else {
-					// we are in any album but the root ones
-					if (util.isSelectionCacheBase(currentAlbum.cacheBase)) {
-						bySelectionViewLink = null;
-					} else {
-						cacheBaseBeforeBrowsingBySelection = currentAlbum.cacheBase;
-					}
+					bySelectionViewLink = "#!/" + currentMedia.selectionAlbumCacheBase;
 				}
 			}
-			$(".browsing-mode-switcher").off("click");
-
-			$("#folders-view").on(
-				"click",
-				function changeToFoldersView() {
-					TopFunctions.showBrowsingModeMessage("#folders-browsing");
-					window.location.href = foldersViewLink;
-					return false;
-				}
-			);
-			$("#by-date-view").on(
-				"click",
-				function changeToByDateView() {
-					TopFunctions.showBrowsingModeMessage("#by-date-browsing");
-					window.location.href = byDateViewLink;
-					return false;
-				}
-			);
-			if (hasGpsData)
-				$("#by-gps-view").on(
-					"click",
-					function changeToByGpsView() {
-						TopFunctions.showBrowsingModeMessage("#by-gps-browsing");
-						window.location.href = byGpsViewLink;
-						return false;
-					}
-			);
-			if (byMapViewLink !== null)
-				$("#by-map-view").on(
-					"click",
-					function changeToByMapView() {
-						TopFunctions.showBrowsingModeMessage("#by-map-browsing");
-						window.location.href = byMapViewLink;
-						return false;
-					}
-				);
-			if (bySearchViewLink !== null)
-				$("#by-search-view").on(
-					"click",
-					function changeToBySearchView() {
-						TopFunctions.showBrowsingModeMessage("#by-search-browsing");
-						window.location.href = bySearchViewLink;
-						return false;
-					}
-				);
-			if (bySelectionViewLink !== null)
-				$("#by-selection-view").on(
-					"click",
-					function changeToBySelectionView() {
-						TopFunctions.showBrowsingModeMessage("#by-selection-browsing");
-						window.location.href = bySelectionViewLink;
-						return false;
-					}
-				);
-			if (cacheBaseBeforeBrowsingBySelection !== null)
-				$("#back-to-previous-view").on(
-					"click",
-					function backToCacheBaseBeforeEnteringSelectionBrowsing() {
-						TopFunctions.showBrowsingModeMessage("#previous-browsing");
-						window.location.href = "#!/" + cacheBaseBeforeBrowsingBySelection;
-						cacheBaseBeforeBrowsingBySelection = null;
-						return false;
-					}
-				);
-
-			if (util.isFolderCacheBase(thisAlbum.cacheBase)) {
-				$("#folders-view").off("click");
-			} else if (util.isByDateCacheBase(thisAlbum.cacheBase)) {
-				$("#by-date-view").off("click");
-			} else if (util.isByGpsCacheBase(thisAlbum.cacheBase)) {
-				$("#by-gps-view").off("click");
-			} else if (util.isMapCacheBase(thisAlbum.cacheBase)) {
-				$("#by-map-view").off("click");
-
-				byMapViewLink = location.hash;
-			} else if (util.isSearchCacheBase(thisAlbum.cacheBase)) {
-				$("#by-search-view").off("click");
-
-				bySearchViewLink = location.hash;
-			} else if (util.isSelectionCacheBase(thisAlbum.cacheBase)) {
-				$("#by-selection-view").off("click");
-
-				bySelectionViewLink = location.hash;
-			}
-			f.updateMenu(thisAlbum, hasGpsData);
-		}
-
-		// end of subfunctions, function execution begins here
-		// The actuallyBind function is needed because, in order to know whether geotagged photos exist,
-		// an asyncronous function has to be called
-		if (currentMedia !== null) {
-			actuallyBind(thisAlbum, util.hasGpsData(currentMedia));
 		} else {
-			// we are in a root album
-			actuallyBind(thisAlbum, (Options.num_positions_in_tree > 0));
-			// promise.then(
-			// 	function(hasGpsData) {
-			// 		actuallyBind(thisAlbum, hasGpsData);
-			// 	},
-			// 	function(album) {
-			// 		console.trace();
-			// 	}
-			// );
+			// album
+			let bySelectionRootAlbum = phFl.getAlbumFromCache(Options.by_selection_string);
+			if (bySelectionRootAlbum && bySelectionRootAlbum.subalbums.length) {
+				let bySelectionAlbum = phFl.getAlbumFromCache(bySelectionRootAlbum.subalbums[bySelectionRootAlbum.subalbums.length - 1].cacheBase);
+				bySelectionViewLink = phFl.encodeHash(bySelectionAlbum, null);
+			}
+
+			if (util.isAnyRootHash(currentAlbum.cacheBase) || util.isSelectionCacheBase(currentAlbum.cacheBase)) {
+				// we are in a root album
+				if (! util.isFolderCacheBase(currentAlbum.cacheBase))
+					foldersViewLink = "#!/" + encodeURIComponent(Options.folders_string);
+
+				if (! util.isByDateCacheBase(currentAlbum.cacheBase))
+					byDateViewLink = "#!/" + encodeURIComponent(Options.by_date_string);
+
+				if (hasGpsData)
+					byGpsViewLink = "#!/" + encodeURIComponent(Options.by_gps_string);
+
+				if (util.isSelectionCacheBase(currentAlbum.cacheBase))
+					bySelectionViewLink = null;
+
+			}
 		}
+
+		if (util.isSelectionCacheBase(currentAlbum.cacheBase)) {
+			bySelectionViewLink = location.hash;
+		}
+
+		$("#folders-view:not(.hidden):not(.selected)").on(
+			"click",
+			function changeToFoldersView() {
+				TopFunctions.showBrowsingModeMessage("#folders-browsing");
+				window.location.href = foldersViewLink;
+				return false;
+			}
+		);
+		$("#by-date-view:not(.hidden):not(.selected)").on(
+			"click",
+			function changeToByDateView() {
+				TopFunctions.showBrowsingModeMessage("#by-date-browsing");
+				window.location.href = byDateViewLink;
+				return false;
+			}
+		);
+		$("#by-gps-view:not(.hidden):not(.selected)").on(
+			"click",
+			function changeToByGpsView() {
+				TopFunctions.showBrowsingModeMessage("#by-gps-browsing");
+				window.location.href = byGpsViewLink;
+				return false;
+			}
+		);
+		$("#by-map-view:not(.hidden):not(.selected)").on(
+			"click",
+			function changeToByMapView() {
+				TopFunctions.showBrowsingModeMessage("#by-map-browsing");
+				window.location.href = byMapViewLink;
+				return false;
+			}
+		);
+		$("#by-search-view:not(.hidden):not(.selected)").on(
+			"click",
+			function changeToBySearchView() {
+				TopFunctions.showBrowsingModeMessage("#by-search-browsing");
+				window.location.href = bySearchViewLink;
+				return false;
+			}
+		);
+		$("#by-selection-view:not(.hidden):not(.selected)").on(
+			"click",
+			function changeToBySelectionView() {
+				TopFunctions.showBrowsingModeMessage("#by-selection-browsing");
+				if (currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum) && ! util.isAnyRootHash(currentAlbum.cacheBase)) {
+					cacheBaseBeforeBrowsingBySelection = currentAlbum.cacheBase;
+
+				}
+				window.location.href = bySelectionViewLink;
+				return false;
+			}
+		);
+		if (cacheBaseBeforeBrowsingBySelection)
+			$("#back-to-previous-view:not(.hidden)").on(
+				"click",
+				function backToCacheBaseBeforeEnteringSelectionBrowsing() {
+					TopFunctions.showBrowsingModeMessage("#previous-browsing");
+					window.location.href = "#!/" + cacheBaseBeforeBrowsingBySelection;
+					cacheBaseBeforeBrowsingBySelection = null;
+					return false;
+				}
+			);
 
 	};
 
 	TopFunctions.toggleSelectedMedia = function(media, clickedSelector) {
 		if (util.singleMediaIsSelected(media)) {
 			let isVoid = util.removeSingleMediaFromSelection(media, clickedSelector);
-			if (isVoid)
-				TopFunctions.bindChangeBrowsingEvents(currentAlbum);
-				// f.updateMenu();
+			if (isVoid) {
+				f.updateMenu();
+				TopFunctions.bindChangeBrowsingEvents();
+			}
 		} else {
 			let firstAddition = util.addSingleMediaToSelection(media, clickedSelector);
-			if (firstAddition)
-				TopFunctions.bindChangeBrowsingEvents(currentAlbum);
-				// f.updateMenu();
+			if (firstAddition) {
+				f.updateMenu();
+				TopFunctions.bindChangeBrowsingEvents();
+			}
 		}
 	};
 
 	TopFunctions.toggleSelectedSubalbum = function(subalbum, clickedSelector) {
 		if (util.subalbumIsSelected(subalbum)) {
 			let isVoid = util.removeSubalbumFromSelection(subalbum, clickedSelector);
-			if (isVoid)
-				TopFunctions.bindChangeBrowsingEvents(currentAlbum);
-				// f.updateMenu();
+			if (isVoid) {
+				f.updateMenu();
+				TopFunctions.bindChangeBrowsingEvents();
+			}
 		} else {
 			let firstAddition = util.addSubalbumToSelection(subalbum, clickedSelector);
-			if (firstAddition)
-				TopFunctions.bindChangeBrowsingEvents(currentAlbum);
-				// f.updateMenu();
+			if (firstAddition) {
+				f.updateMenu();
+				TopFunctions.bindChangeBrowsingEvents();
+			}
 		}
 	};
 
@@ -1306,7 +1274,8 @@
 			// 	bySelectionViewLink = null;
 			// }
 
-			TopFunctions.bindChangeBrowsingEvents(currentAlbum);
+			f.updateMenu();
+			TopFunctions.bindChangeBrowsingEvents();
 
 			$(".media-box#center .metadata-show").off('click').on('click', f.toggleMetadataFromMouse);
 			$(".media-box#center .metadata-hide").off('click').on('click', f.toggleMetadataFromMouse);
@@ -2472,7 +2441,8 @@
 		f.setOptions();
 
 		TopFunctions.bindSortEvents(currentAlbum);
-		TopFunctions.bindChangeBrowsingEvents(currentAlbum);
+		f.updateMenu();
+		TopFunctions.bindChangeBrowsingEvents();
 
 		// we are in showAlbum
 		// activate the map and the popup when coming back from a map album
