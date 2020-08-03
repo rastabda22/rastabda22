@@ -173,7 +173,7 @@
 				}
 			}
 
-			if (jQuery.isEmptyObject(MapFunctions.mapAlbum)) {
+			if (jQuery.isEmptyObject(mapAlbum)) {
 				$("#by-map-view").addClass("hidden");
 			} else {
 				if (isSingleMedia && thisMedia.hasOwnProperty("byMapViewHash")) {
@@ -472,7 +472,7 @@
 		}
 
 
-		if (isMap || isPopup && MapFunctions.mapAlbum.media.length <= 1)
+		if (isMap || isPopup && mapAlbum.media.length <= 1)
 			$("ul#right-menu li.spaced").addClass("hidden");
 		else
 			$("ul#right-menu li.spaced").removeClass("hidden");
@@ -606,7 +606,7 @@
 
 		if (
 			! isMapOrPopup && currentMedia !== null ||
-			isPopup && MapFunctions.mapAlbum.media.length <= 1
+			isPopup && mapAlbum.media.length <= 1
 		) {
 			// showing a media or a map or a popup on the map, nothing to sort
 			$("#right-menu li.sort").addClass("hidden");

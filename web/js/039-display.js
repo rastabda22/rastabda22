@@ -18,6 +18,7 @@ var destHash = null;
 var destMedia = null;
 var destAlbum = null;
 var hashBeginning = "#!/";
+var mapAlbum = {};
 // var scrollbarWidth;
 // var contextMenu = false;
 var imagesAndVideos0 = {"images": 0, "videos": 0};
@@ -129,7 +130,7 @@ $(document).ready(function() {
 				if (isPopup) {
 					// the popup is there: close it
 					$('.leaflet-popup-close-button').click();
-					MapFunctions.mapAlbum = {};
+					mapAlbum = {};
 					// $('#popup #popup-content').html("");
 				} else {
 					// we are in a map: close it
@@ -498,10 +499,10 @@ $(document).ready(function() {
 
 						// every normalized single media name must match the search terms
 						var matchingMedia = [];
-						for (let iMedia = 0; iMedia < MapFunctions.mapAlbum.media.length; iMedia ++) {
+						for (let iMedia = 0; iMedia < mapAlbum.media.length; iMedia ++) {
 							// TO DO, BUG: it's not the media name to be used for matching, but the words in media name!!!!!!!
 							// TO DO: the description (caption) must be matched too
-							let words = util.normalizeAccordingToOptions(MapFunctions.mapAlbum.media[iMedia].words);
+							let words = util.normalizeAccordingToOptions(mapAlbum.media[iMedia].words);
 							if (
 								! Options.search_any_word &&
 								searchWordsFromUserNormalizedAccordingToOptions.every(
@@ -539,9 +540,9 @@ $(document).ready(function() {
 								)
 
 							)
-								matchingMedia.push(MapFunctions.mapAlbum.media[iMedia]);
+								matchingMedia.push(mapAlbum.media[iMedia]);
 						}
-						MapFunctions.mapAlbum.media = matchingMedia;
+						mapAlbum.media = matchingMedia;
 						tF.prepareAndDoPopupUpdate();
 
 					},

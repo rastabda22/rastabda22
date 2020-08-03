@@ -15,7 +15,6 @@
 		MapFunctions.maxHeightForPopupContent = 0;
 		MapFunctions.mymap = null;
 		MapFunctions.popup = null;
-		MapFunctions.mapAlbum = {};
 	}
 
 	MapFunctions.averagePosition = function(latLngArray) {
@@ -162,7 +161,7 @@
 		// $("#popup-images-wrapper").css("width", MapFunctions.maxWidthForImagesInPopup);
 		$("#popup-photo-count").css("max-width", MapFunctions.maxWidthForPopupContent + "px");
 		// $(".leaflet-popup-content").css("max-width", MapFunctions.maxWidthForImagesInPopup).css("width", MapFunctions.maxWidthForImagesInPopup);
-		MapFunctions.popup.setLatLng(MapFunctions.averagePosition(MapFunctions.mapAlbum.positionsAndMediaInTree));
+		MapFunctions.popup.setLatLng(MapFunctions.averagePosition(mapAlbum.positionsAndMediaInTree));
 		MapFunctions.buildPopupHeader();
 
 		MapFunctions.setPopupPosition();
@@ -201,7 +200,7 @@
 	};
 
 	MapFunctions.buildPopupHeader = function() {
-		$("#popup-photo-count-number").html(util.imagesAndVideosTotal(MapFunctions.mapAlbum.numMedia));
+		$("#popup-photo-count-number").html(util.imagesAndVideosTotal(mapAlbum.numMedia));
 		$("#popup-photo-count").css("max-width", MapFunctions.maxWidthForPopupContent);
 		// add the click event for showing the photos in the popup as an album
 		$("#popup-photo-count").on(
@@ -214,7 +213,7 @@
 				mapRefreshType = "none";
 
 				var promise = phFl.endPreparingAlbumAndKeepOn(
-					MapFunctions.mapAlbum,
+					mapAlbum,
 					null,
 					null
 				);
@@ -222,7 +221,7 @@
 					function(){
 						$("#album-view").addClass("hidden");
 						$("#loading").show();
-						window.location.href = "#!" + MapFunctions.mapAlbum.cacheBase;
+						window.location.href = "#!" + mapAlbum.cacheBase;
 					}
 				);
 			}
@@ -346,7 +345,7 @@
 		return album;
 	};
 
-	MapFunctions.addMediaFromPositionsToMapAlbum = function(positionsAndCounts, mapAlbum, resolve_imageLoad) {
+	MapFunctions.addMediaFromPositionsToMapAlbum = function(positionsAndCounts, thisMapAlbum, resolve_imageLoad) {
 
 		var mediaNameListElement, indexPositions, indexPhoto, markerClass, photoIndex, mediaIndex;
 		var photosByAlbum = {}, positionsAndCountsElement;
@@ -383,9 +382,9 @@
 								for (mediaIndex = 0; mediaIndex < util.imagesAndVideosTotal(theAlbum.numMedia); mediaIndex ++) {
 									for (photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
 										if (theAlbum.media[mediaIndex].cacheBase == photosInAlbum[photoIndex].element.cacheBase) {
-											mapAlbum.media.push(theAlbum.media[mediaIndex]);
-											mapAlbum.sizesOfAlbum = util.sumSizes(mapAlbum.sizesOfAlbum, theAlbum.media[mediaIndex].fileSizes);
-											mapAlbum.sizesOfSubTree = util.sumSizes(mapAlbum.sizesOfSubTree, theAlbum.media[mediaIndex].fileSizes);
+											thisMapAlbum.media.push(theAlbum.media[mediaIndex]);
+											thisMapAlbum.sizesOfAlbum = util.sumSizes(thisMapAlbum.sizesOfAlbum, theAlbum.media[mediaIndex].fileSizes);
+											thisMapAlbum.sizesOfSubTree = util.sumSizes(thisMapAlbum.sizesOfSubTree, theAlbum.media[mediaIndex].fileSizes);
 										}
 									}
 								}
@@ -402,8 +401,8 @@
 		}
 		Promise.all(cacheBasesPromises).then(
 			function() {
-				mapAlbum.positionsAndMediaInTree = util.mergePositionsAndMedia(mapAlbum.positionsAndMediaInTree, positionsAndCounts);
-				resolve_imageLoad(mapAlbum);
+				thisMapAlbum.positionsAndMediaInTree = util.mergePositionsAndMedia(thisMapAlbum.positionsAndMediaInTree, positionsAndCounts);
+				resolve_imageLoad(thisMapAlbum);
 			}
 		);
 		// end of function addMediaFromPositionsToMapAlbum body

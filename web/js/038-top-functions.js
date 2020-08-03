@@ -1562,7 +1562,7 @@
 				TopFunctions.showAlbum("refreshMedia");
 
 			if ($('.leaflet-popup').html())
-				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(MapFunctions.mapAlbum) + MapFunctions.titleWrapper2);
+				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(mapAlbum) + MapFunctions.titleWrapper2);
 			// util.focusSearchField();
 		}
 		return false;
@@ -1619,7 +1619,7 @@
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
 			if ($('.leaflet-popup').html())
-				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(MapFunctions.mapAlbum) + MapFunctions.titleWrapper2);
+				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(mapAlbum) + MapFunctions.titleWrapper2);
 			// util.focusSearchField();
 		}
 		return false;
@@ -2294,7 +2294,7 @@
 
 		TopFunctions.bindSortEvents(currentAlbum);
 		f.updateMenu();
-		
+
 		// we are in showAlbum
 		// activate the map and the popup when coming back from a map album
 		if (
@@ -2656,8 +2656,8 @@
 						);
 					}
 
-					var clickHistory = MapFunctions.mapAlbum.clickHistory;
-					delete MapFunctions.mapAlbum;
+					var clickHistory = mapAlbum.clickHistory;
+					delete mapAlbum;
 					playClickElement(clickHistory, 0);
 
 				}
@@ -2679,19 +2679,19 @@
 				autoPan: false
 			}
 		).setContent(MapFunctions.titleWrapper1 + MapFunctions.titleWrapper2)
-		.setLatLng(MapFunctions.averagePosition(MapFunctions.mapAlbum.positionsAndMediaInTree))
+		.setLatLng(MapFunctions.averagePosition(mapAlbum.positionsAndMediaInTree))
 		.openOn(MapFunctions.mymap);
 
 		map.addPopupMover();
 
 		var promise = phFl.endPreparingAlbumAndKeepOn(
-			MapFunctions.mapAlbum,
+			mapAlbum,
 			null,
 			null
 		);
 		promise.then(
 			function() {
-				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(MapFunctions.mapAlbum) + MapFunctions.titleWrapper2);
+				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(mapAlbum) + MapFunctions.titleWrapper2);
 				$("#loading").hide();
 			}
 		);
@@ -2763,16 +2763,16 @@
 
 				var indexPositions, imageLoadPromise, mediaNameListElement;
 				if (evt.originalEvent.ctrlKey) {
-					if (! jQuery.isEmptyObject(MapFunctions.mapAlbum)) {
+					if (! jQuery.isEmptyObject(mapAlbum)) {
 						// control click: remove the points
 
-						MapFunctions.mapAlbum.clickHistory.push(clickHistoryElement);
+						mapAlbum.clickHistory.push(clickHistoryElement);
 
 						var matchingIndex, matchingMedia, positionsAndCountsElement;
 						for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
 							positionsAndCountsElement = positionsAndCounts[indexPositions];
 							if (
-								MapFunctions.mapAlbum.positionsAndMediaInTree.some(
+								mapAlbum.positionsAndMediaInTree.some(
 									function(element, index) {
 										matchingIndex = index;
 										return util.matchPositionsAndMediaByPosition(positionsAndCountsElement, element);
@@ -2780,13 +2780,13 @@
 								)
 							) {
 								// the position was present: remove the position itself...
-								MapFunctions.mapAlbum.positionsAndMediaInTree.splice(matchingIndex, 1);
+								mapAlbum.positionsAndMediaInTree.splice(matchingIndex, 1);
 
 								// ...and the corresponding photos
 								for (iMediaPosition = 0; iMediaPosition < positionsAndCountsElement.mediaNameList.length; iMediaPosition ++) {
 									mediaNameListElement = positionsAndCountsElement.mediaNameList[iMediaPosition];
 									if (
-										MapFunctions.mapAlbum.media.some(
+										mapAlbum.media.some(
 											function(media, index) {
 												matchingMedia = index;
 												var match = (media.cacheBase == mediaNameListElement.cacheBase && media.foldersCacheBase == mediaNameListElement.foldersCacheBase);
@@ -2794,12 +2794,12 @@
 											}
 										)
 									)
-										MapFunctions.mapAlbum.media.splice(matchingMedia, 1);
+										mapAlbum.media.splice(matchingMedia, 1);
 								}
 							}
 						}
 
-						if (! util.imagesAndVideosTotal(MapFunctions.mapAlbum.numMedia)) {
+						if (! util.imagesAndVideosTotal(mapAlbum.numMedia)) {
 							$("#loading").hide();
 							MapFunctions.popup.remove();
 						} else {
@@ -2812,36 +2812,36 @@
 						function(resolve_imageLoad) {
 							var indexPositions, positionsAndCountsElement;
 
-							if (jQuery.isEmptyObject(MapFunctions.mapAlbum) || util.imagesAndVideosTotal(MapFunctions.mapAlbum.numMedia) == 0 || ! evt.originalEvent.shiftKey) {
+							if (jQuery.isEmptyObject(mapAlbum) || util.imagesAndVideosTotal(mapAlbum.numMedia) == 0 || ! evt.originalEvent.shiftKey) {
 								// normal click or shift click without previous content
 
-								MapFunctions.mapAlbum = map.initializeMapAlbum();
+								mapAlbum = map.initializeMapAlbum();
 
-								MapFunctions.mapAlbum.clickHistory = [clickHistoryElement];
+								mapAlbum.clickHistory = [clickHistoryElement];
 
-								MapFunctions.addMediaFromPositionsToMapAlbum(positionsAndCounts, MapFunctions.mapAlbum, resolve_imageLoad);
+								MapFunctions.addMediaFromPositionsToMapAlbum(positionsAndCounts, mapAlbum, resolve_imageLoad);
 							} else {
 								// shift-click with previous content
-								MapFunctions.mapAlbum.clickHistory.push(clickHistoryElement);
+								mapAlbum.clickHistory.push(clickHistoryElement);
 
 								// determine what positions aren't yet in selectedPositions array
 								var missingPositions = [];
 								for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
 									positionsAndCountsElement = positionsAndCounts[indexPositions];
 									if (
-										MapFunctions.mapAlbum.positionsAndMediaInTree.every(
+										mapAlbum.positionsAndMediaInTree.every(
 											function(element) {
 												return ! util.matchPositionsAndMediaByPosition(positionsAndCountsElement, element);
 											}
 										)
 									) {
 										missingPositions.push(positionsAndCountsElement);
-										MapFunctions.mapAlbum.positionsAndMediaInTree.push(positionsAndCountsElement);
+										mapAlbum.positionsAndMediaInTree.push(positionsAndCountsElement);
 									}
 								}
 								positionsAndCounts = missingPositions;
 								if (missingPositions.length > 0)
-									MapFunctions.addMediaFromPositionsToMapAlbum(positionsAndCounts, MapFunctions.mapAlbum, resolve_imageLoad);
+									MapFunctions.addMediaFromPositionsToMapAlbum(positionsAndCounts, mapAlbum, resolve_imageLoad);
 								else
 									$("#loading").hide();
 							}
@@ -2861,29 +2861,29 @@
 
 				function endPreparingMapAlbumAndUpdatePopup() {
 					if (updateMapAlbum) {
-						MapFunctions.mapAlbum.numMedia = util.imagesAndVideosCount(MapFunctions.mapAlbum.media);
-						MapFunctions.mapAlbum.numMediaInSubTree = JSON.parse(JSON.stringify(MapFunctions.mapAlbum.numMedia));
-						MapFunctions.mapAlbum.numPositionsInTree = MapFunctions.mapAlbum.positionsAndMediaInTree.length;
-						MapFunctions.mapAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(MapFunctions.mapAlbum.numMedia))};
+						mapAlbum.numMedia = util.imagesAndVideosCount(mapAlbum.media);
+						mapAlbum.numMediaInSubTree = JSON.parse(JSON.stringify(mapAlbum.numMedia));
+						mapAlbum.numPositionsInTree = mapAlbum.positionsAndMediaInTree.length;
+						mapAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(mapAlbum.numMedia))};
 						// media must be initially sorted by date not reverse, as json they are in albums
-						util.sortByDate(MapFunctions.mapAlbum.media);
-						MapFunctions.mapAlbum.mediaNameSort = false;
-						MapFunctions.mapAlbum.mediaReverseSort = false;
-						util.initializeSortPropertiesAndCookies(MapFunctions.mapAlbum);
+						util.sortByDate(mapAlbum.media);
+						mapAlbum.mediaNameSort = false;
+						mapAlbum.mediaReverseSort = false;
+						util.initializeSortPropertiesAndCookies(mapAlbum);
 						// now sort them according to options
-						util.sortAlbumsMedia(MapFunctions.mapAlbum);
+						util.sortAlbumsMedia(mapAlbum);
 
 						// update the map root album in cache
 						var rootMapAlbum = phFl.getAlbumFromCache(Options.by_map_string);
 						if (! rootMapAlbum)
 							rootMapAlbum = PhotoFloat.initializeMapRootAlbum();
-						rootMapAlbum.numMediaInSubTree += JSON.parse(JSON.stringify(MapFunctions.mapAlbum.numMediaInSubTree));
-						rootMapAlbum.subalbums.push(MapFunctions.mapAlbum);
-						rootMapAlbum.positionsAndMediaInTree = util.mergePositionsAndMedia(rootMapAlbum.positionsAndMediaInTree, MapFunctions.mapAlbum.positionsAndMediaInTree);
-						rootMapAlbum.numPositionsInTree += MapFunctions.mapAlbum.numPositionsInTree;
-						rootMapAlbum.numsProtectedMediaInSubTree[""] += MapFunctions.mapAlbum.numsProtectedMediaInSubTree[""];
+						rootMapAlbum.numMediaInSubTree += JSON.parse(JSON.stringify(mapAlbum.numMediaInSubTree));
+						rootMapAlbum.subalbums.push(mapAlbum);
+						rootMapAlbum.positionsAndMediaInTree = util.mergePositionsAndMedia(rootMapAlbum.positionsAndMediaInTree, mapAlbum.positionsAndMediaInTree);
+						rootMapAlbum.numPositionsInTree += mapAlbum.numPositionsInTree;
+						rootMapAlbum.numsProtectedMediaInSubTree[""] += mapAlbum.numsProtectedMediaInSubTree[""];
 
-						TopFunctions.bindSortEvents(MapFunctions.mapAlbum);
+						TopFunctions.bindSortEvents(mapAlbum);
 					}
 					resolve_updateMapAlbumOnMapClick();
 				}
