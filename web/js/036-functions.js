@@ -117,7 +117,7 @@
 	};
 
 
-	Functions.updateMenu = function(thisAlbum, hasGpsData) {
+	Functions.updateMenu = function(thisAlbum) {
 		var albumOrMedia;
 		var isPopup = $('.leaflet-popup').html() ? true : false;
 		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
