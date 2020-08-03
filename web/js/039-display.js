@@ -19,6 +19,7 @@ var destMedia = null;
 var destAlbum = null;
 var hashBeginning = "#!/";
 var mapAlbum = {};
+var selectionAlbum = {};
 // var scrollbarWidth;
 // var contextMenu = false;
 var imagesAndVideos0 = {"images": 0, "videos": 0};
