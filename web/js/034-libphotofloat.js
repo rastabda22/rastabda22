@@ -1486,6 +1486,21 @@
 		// );
 	// };
 
+	PhotoFloat.initializeSearchAlbum = function(albumHash, mediaFolderHash) {
+		searchResultsAlbumFinal.positionsAndMediaInTree = [];
+		searchResultsAlbumFinal.media = [];
+		searchResultsAlbumFinal.subalbums = [];
+		searchResultsAlbumFinal.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
+		searchResultsAlbumFinal.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
+		searchResultsAlbumFinal.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
+		searchResultsAlbumFinal.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
+		searchResultsAlbumFinal.cacheBase = albumHash;
+		searchResultsAlbumFinal.path = searchResultsAlbumFinal.cacheBase.replace(Options.cache_folder_separator, "/");
+		searchResultsAlbumFinal.physicalPath = searchResultsAlbumFinal.path;
+		searchResultsAlbumFinal.searchInFolderCacheBase = mediaFolderHash;
+		searchResultsAlbumFinal.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
+	};
+
 	PhotoFloat.prototype.parseHashAndReturnAlbumAndMedia = function(hash) {
 		return new Promise(
 			function(resolve_parseHash, reject_parseHash) {
@@ -1546,18 +1561,7 @@
 						if (searchWordsFromUser.length == 1)
 							$("ul#right-menu li#any-word").addClass("dimmed").off("click");
 
-						searchResultsAlbumFinal.positionsAndMediaInTree = [];
-						searchResultsAlbumFinal.media = [];
-						searchResultsAlbumFinal.subalbums = [];
-						searchResultsAlbumFinal.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-						searchResultsAlbumFinal.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
-						searchResultsAlbumFinal.sizesOfAlbum = initialSizes;
-						searchResultsAlbumFinal.sizesOfSubTree = initialSizes;
-						searchResultsAlbumFinal.cacheBase = albumHash;
-						searchResultsAlbumFinal.path = searchResultsAlbumFinal.cacheBase.replace(Options.cache_folder_separator, "/");
-						searchResultsAlbumFinal.physicalPath = searchResultsAlbumFinal.path;
-						searchResultsAlbumFinal.searchInFolderCacheBase = mediaFolderHash;
-						searchResultsAlbumFinal.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
+						PhotoFloat.initializeSearchAlbum(albumHash, mediaFolderHash);
 
 						if (albumHash == Options.by_search_string) {
 							// no search term
