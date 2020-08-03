@@ -6,7 +6,7 @@ var currentMediaIndex = -1;
 var previousAlbum = null;
 var previousMedia = null;
 var nextMedia = null, prevMedia = null;
-var bySearchViewHash = "", byMapViewHash = "", bySelectionViewHash = "", isABrowsingModeChange = false;
+var isABrowsingModeChange = false;
 var cacheBaseBeforeBrowsingBySelection = null;
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
