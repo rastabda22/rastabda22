@@ -443,7 +443,7 @@
 	};
 
 	Utilities.isAnyRootHash = function(hash) {
-		return [Options.folders_string, Options.by_date_string, Options.by_gps_string, Options.by_map_string, Options.by_selection_string].indexOf(hash) !== -1;
+		return [Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(hash) !== -1;
 	};
 
 	Utilities.prototype.trimExtension = function(name) {
