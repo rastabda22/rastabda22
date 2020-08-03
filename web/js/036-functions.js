@@ -118,140 +118,6 @@
 
 
 	Functions.updateMenu = function(thisAlbum) {
-		function bindChangeBrowsingEvents() {
-			$("#folders-view:not(.hidden):not(.selected)").on(
-				"click",
-				function changeToFoldersView() {
-					TopFunctions.showBrowsingModeMessage("#folders-browsing");
-
-					if (isSingleMedia) {
-						window.location.href = hashBeginning + util.pathJoin([
-							thisMedia.foldersCacheBase,
-							thisMedia.cacheBase
-						]);
-					} else if (isAnyRootHash) {
-					// } else if (isAnyRootHash || isSelectionCacheBase) {
-						window.location.href = hashBeginning + encodeURIComponent(Options.folders_string);
-					}
-
-					return false;
-				}
-			);
-			$("#by-date-view:not(.hidden):not(.selected)").on(
-				"click",
-				function changeToByDateView() {
-					TopFunctions.showBrowsingModeMessage("#by-date-browsing");
-
-					if (isSingleMedia) {
-						window.location.href = hashBeginning + util.pathJoin([
-							thisMedia.dayAlbumCacheBase,
-							thisMedia.foldersCacheBase,
-							thisMedia.cacheBase
-						]);
-					} else if (isAnyRootHash) {
-					// } else if (isAnyRootHash || isSelectionCacheBase) {
-						window.location.href = hashBeginning + encodeURIComponent(Options.by_date_string);
-					}
-					return false;
-				}
-			);
-			$("#by-gps-view:not(.hidden):not(.selected)").on(
-				"click",
-				function changeToByGpsView() {
-					TopFunctions.showBrowsingModeMessage("#by-gps-browsing");
-
-					if (isSingleMedia) {
-						window.location.href = hashBeginning + util.pathJoin([
-							thisMedia.gpsAlbumCacheBase,
-							thisMedia.foldersCacheBase,
-							thisMedia.cacheBase
-						]);
-					} else if (isAnyRootHash) {
-					// } else if (isAnyRootHash || isSelectionCacheBase) {
-						window.location.href = hashBeginning + encodeURIComponent(Options.by_gps_string);
-					}
-					return false;
-				}
-			);
-			$("#by-map-view:not(.hidden):not(.selected)").on(
-				"click",
-				function changeToByMapView() {
-					if (isSingleMedia) {
-						TopFunctions.showBrowsingModeMessage("#by-map-browsing");
-						window.location.href = thisMedia.byMapViewHash;
-						return false;
-					}
-				}
-			);
-			$("#by-search-view:not(.hidden):not(.selected)").on(
-				"click",
-				function changeToBySearchView() {
-					if (isSingleMedia) {
-						TopFunctions.showBrowsingModeMessage("#by-search-browsing");
-						window.location.href = thisMedia.bySearchViewHash;
-						return false;
-					}
-				}
-			);
-			$("#by-selection-view:not(.hidden):not(.selected)").on(
-				"click",
-				function changeToBySelectionView() {
-					TopFunctions.showBrowsingModeMessage("#by-selection-browsing");
-					if (! isAnyRootHash) {
-					// if (! isSingleMedia && ! isAnyRootHash) {
-						cacheBaseBeforeBrowsingBySelection = thisAlbum.cacheBase;
-					}
-
-					let bySelectionViewHash;
-					if (isSingleMedia) {
-						if (! isSelectionCacheBase) {
-							if (util.singleMediaIsSelected(thisMedia)) {
-								bySelectionViewHash = hashBeginning + util.pathJoin([
-									thisMedia.selectionAlbumCacheBase,
-									thisMedia.foldersCacheBase,
-									thisMedia.cacheBase
-								]);
-							} else {
-								bySelectionViewHash = hashBeginning + thisMedia.selectionAlbumCacheBase;
-							}
-						}
-					} else {
-						// album
-						let bySelectionRootAlbum = phFl.getAlbumFromCache(Options.by_selection_string);
-						if (bySelectionRootAlbum && bySelectionRootAlbum.subalbums.length) {
-							let bySelectionAlbum = phFl.getAlbumFromCache(bySelectionRootAlbum.subalbums[bySelectionRootAlbum.subalbums.length - 1].cacheBase);
-							bySelectionViewHash = phFl.encodeHash(bySelectionAlbum, null);
-						}
-
-						if (isAnyRootHash || isSelectionCacheBase) {
-							// we are in a root album
-							if (isSelectionCacheBase)
-								bySelectionViewHash = "";
-						}
-					}
-
-					if (isSelectionCacheBase) {
-						bySelectionViewHash = location.hash;
-					}
-
-					window.location.href = bySelectionViewHash;
-					return false;
-				}
-			);
-			if (cacheBaseBeforeBrowsingBySelection)
-				$("#back-to-previous-view:not(.hidden)").on(
-					"click",
-					function backToCacheBaseBeforeEnteringSelectionBrowsing() {
-						TopFunctions.showBrowsingModeMessage("#previous-browsing");
-						window.location.href = hashBeginning + cacheBaseBeforeBrowsingBySelection;
-						cacheBaseBeforeBrowsingBySelection = null;
-						return false;
-					}
-				);
-
-		}
-		// end of auxiliary function
-
 		var albumOrMedia;
 		var isPopup = $('.leaflet-popup').html() ? true : false;
 		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
@@ -319,6 +185,7 @@
 
 			if (jQuery.isEmptyObject(PhotoFloat.searchResultsAlbumFinal)) {
 				$("#by-search-view").addClass("hidden");
+			} else {
 				if (isSingleMedia && thisMedia.hasOwnProperty("bySearchViewHash")) {
 					if (! util.getAlbumFromCache(thisMedia.bySearchViewHash)) {
 						delete thisMedia.bySearchViewHash;
@@ -360,8 +227,137 @@
 						$("#by-selection-view").addClass("selected");
 				}
 			}
+
+			// bind the click events
+
+			$("#folders-view:not(.hidden):not(.selected)").on(
+				"click",
+				function changeToFoldersView() {
+					TopFunctions.showBrowsingModeMessage("#folders-browsing");
+
+					if (isSingleMedia) {
+						window.location.href = hashBeginning + util.pathJoin([
+							thisMedia.foldersCacheBase,
+							thisMedia.cacheBase
+						]);
+					} else if (isAnyRootHash) {
+					// } else if (isAnyRootHash || isSelectionCacheBase) {
+						window.location.href = hashBeginning + encodeURIComponent(Options.folders_string);
+					}
+
+					return false;
+				}
+			);
+
+			$("#by-date-view:not(.hidden):not(.selected)").on(
+				"click",
+				function changeToByDateView() {
+					TopFunctions.showBrowsingModeMessage("#by-date-browsing");
+
+					if (isSingleMedia) {
+						window.location.href = hashBeginning + util.pathJoin([
+							thisMedia.dayAlbumCacheBase,
+							thisMedia.foldersCacheBase,
+							thisMedia.cacheBase
+						]);
+					} else if (isAnyRootHash) {
+					// } else if (isAnyRootHash || isSelectionCacheBase) {
+						window.location.href = hashBeginning + encodeURIComponent(Options.by_date_string);
+					}
+					return false;
+				}
+			);
+
+			$("#by-gps-view:not(.hidden):not(.selected)").on(
+				"click",
+				function changeToByGpsView() {
+					TopFunctions.showBrowsingModeMessage("#by-gps-browsing");
+
+					if (isSingleMedia) {
+						window.location.href = hashBeginning + util.pathJoin([
+							thisMedia.gpsAlbumCacheBase,
+							thisMedia.foldersCacheBase,
+							thisMedia.cacheBase
+						]);
+					} else if (isAnyRootHash) {
+					// } else if (isAnyRootHash || isSelectionCacheBase) {
+						window.location.href = hashBeginning + encodeURIComponent(Options.by_gps_string);
+					}
+					return false;
+				}
+			);
+
+			$("#by-map-view:not(.hidden):not(.selected)").on(
+				"click",
+				function changeToByMapView() {
+					if (isSingleMedia) {
+						TopFunctions.showBrowsingModeMessage("#by-map-browsing");
+						window.location.href = thisMedia.byMapViewHash;
+						return false;
+					}
+				}
+			);
+
+			$("#by-search-view:not(.hidden):not(.selected)").on(
+				"click",
+				function changeToBySearchView() {
+					if (isSingleMedia) {
+						TopFunctions.showBrowsingModeMessage("#by-search-browsing");
+						window.location.href = thisMedia.bySearchViewHash;
+						return false;
+					}
+				}
+			);
+
+			$("#by-selection-view:not(.hidden):not(.selected)").on(
+				"click",
+				function changeToBySelectionView() {
+					TopFunctions.showBrowsingModeMessage("#by-selection-browsing");
+
+					let bySelectionRootAlbum = phFl.getAlbumFromCache(Options.by_selection_string);
+					if (bySelectionRootAlbum && bySelectionRootAlbum.subalbums.length) {
+						let bySelectionAlbum = phFl.getAlbumFromCache(bySelectionRootAlbum.subalbums[bySelectionRootAlbum.subalbums.length - 1].cacheBase);
+					}
+
+					if (! isAnyRootHash) {
+					// if (! isSingleMedia && ! isAnyRootHash) {
+						cacheBaseBeforeBrowsingBySelection = thisAlbum.cacheBase;
+					} else if (isSingleMedia && ! singleMediaIsSelected) {
+						cacheBaseBeforeBrowsingBySelection = phFl.encodeHash(thisAlbum, thisMedia);
+					}
+
+					let bySelectionViewHash;
+					if (isSingleMedia) {
+						if (util.singleMediaIsSelected(thisMedia)) {
+							bySelectionViewHash = phFl.encodeHash(bySelectionAlbum, thisMedia);
+							// bySelectionViewHash = hashBeginning + util.pathJoin([
+							// 	thisMedia.selectionAlbumCacheBase,
+							// 	thisMedia.foldersCacheBase,
+							// 	thisMedia.cacheBase
+							// ]);
+						} else {
+							bySelectionViewHash = hashBeginning + thisMedia.selectionAlbumCacheBase;
+						}
+					} else {
+						// album
+						bySelectionViewHash = phFl.encodeHash(bySelectionAlbum, null);
+					}
+
+					window.location.href = bySelectionViewHash;
+					return false;
+				}
+			);
+
+			$("#back-to-previous-view:not(.hidden)").on(
+				"click",
+				function backToCacheBaseBeforeEnteringSelectionBrowsing() {
+					TopFunctions.showBrowsingModeMessage("#previous-browsing");
+					window.location.href = hashBeginning + cacheBaseBeforeBrowsingBySelection;
+					cacheBaseBeforeBrowsingBySelection = null;
+					return false;
+				}
+			);
 		}
-		bindChangeBrowsingEvents();
 
 		////////////////// SEARCH //////////////////////////////
 
