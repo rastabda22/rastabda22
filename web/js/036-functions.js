@@ -249,6 +249,8 @@
 			}
 		}
 
+		////////////////// SEARCH //////////////////////////////
+
 		if (isMap)
 			$("ul#right-menu li.search").addClass("hidden");
 		else
@@ -306,6 +308,19 @@
 					$("ul#right-menu li#album-search").removeClass("selected");
 			}
 		}
+
+		$("#search-field").off("focus").on(
+			"focus",
+			function() {
+				$(".sub-menu").addClass("hidden");
+				$("#right-menu li.search ul").removeClass("hidden");
+				// if ($("ul", this).is(':hidden'))
+				// 	$('#right-menu ul').slideUp(300);
+				// $("ul", this).slideToggle(300);
+			}
+		);
+
+		////////////////// UI //////////////////////////////
 
 		$("ul#right-menu li.protection").removeClass("hidden");
 
@@ -461,6 +476,8 @@
 			$("ul#right-menu li.ui").addClass("hidden");
 		}
 
+		////////////////// BIG ALBUMS //////////////////////////////
+
 		if (
 			thisAlbum === null ||
 			util.imagesAndVideosTotal(thisAlbum.numMedia) < Options.big_virtual_folders_threshold ||
@@ -474,6 +491,8 @@
 			else
 				$("ul#right-menu #show-big-albums").removeClass("selected");
 		}
+
+		////////////////// SORT //////////////////////////////
 
 		if (
 			! isMapOrPopup && currentMedia !== null ||
@@ -518,6 +537,8 @@
 				}
 			}
 		}
+
+		////////////////// DOWNLOAD //////////////////////////////
 
 		const maximumZipSize = 2000000000;
 		const bigZipSize = 500000000;
@@ -804,6 +825,8 @@
 			}
 		}
 
+		////////////////// PROTECTED CONTENT //////////////////////////////
+
 		if (thisAlbum !== null) {
 			let numPasswords;
 			if (util.isSearchCacheBase(thisAlbum.cacheBase))
@@ -829,6 +852,8 @@
 			$(".protection").hide();
 		}
 
+		////////////////// ACCORDION EFFECT //////////////////////////////
+
 		// accordion effect on right menu
 		$("#right-menu li.expandable").off('click').on(
 			'click',
@@ -840,16 +865,6 @@
 			}
 		);
 
-		$("#search-field").off("focus").on(
-			"focus",
-			function() {
-				$(".sub-menu").addClass("hidden");
-				$("#right-menu li.search ul").removeClass("hidden");
-				// if ($("ul", this).is(':hidden'))
-				// 	$('#right-menu ul').slideUp(300);
-				// $("ul", this).slideToggle(300);
-			}
-		);
 	};
 
 	Functions.humanFileSize = function(size) {
