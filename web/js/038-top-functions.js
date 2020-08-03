@@ -985,13 +985,13 @@
 
 							if (isPopup) {
 								popupRefreshType = "mapAlbum";
-								$('.leaflet-popup-close-button')[0].click();
+								$('.leaflet-popup-close-button').click();
 							} else {
 								popupRefreshType = "none";
 							}
 
 							// close the map and reopen it
-							$('.modal-close')[0].click();
+							$('.modal-close').click();
 							$(selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 						}
 					}
@@ -1255,7 +1255,7 @@
 			$(".media-box#" + id + " .menu-map-link").on(
 				'click',
 				function() {
-					$(".map-popup-trigger")[0].click();
+					$(".map-popup-trigger").click();
 				}
 			);
 			$(".media-box#" + id + " .menu-map-link").show();
@@ -1349,7 +1349,7 @@
 		$(".media-box#" + id + " .metadata tr.gps").attr("title", linkTitle).on(
 			'click',
 			function() {
-				$(".map-popup-trigger")[0].click();
+				$(".map-popup-trigger").click();
 			}
 		);
 
@@ -2480,13 +2480,13 @@
 
 						if (isPopup) {
 							popupRefreshType = "mapAlbum";
-							$('.leaflet-popup-close-button')[0].click();
+							$('.leaflet-popup-close-button').click();
 						} else {
 							popupRefreshType = "none";
 						}
 
 						// close the map and reopen it
-						$('.modal-close')[0].click();
+						$('.modal-close').click();
 						$(selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 					}
 				}

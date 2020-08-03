@@ -7,7 +7,6 @@ var previousAlbum = null;
 var previousMedia = null;
 var nextMedia = null, prevMedia = null;
 var bySearchViewLink = null, byMapViewLink = null, bySelectionViewLink = null, isABrowsingModeChange = false;
-var nextBrowsingModeSelector, prevBrowsingModeSelector;
 var cacheBaseBeforeBrowsingBySelection = null;
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
@@ -103,7 +102,7 @@ $(document).ready(function() {
 		var isAuth = $("#auth-text").is(":visible");
 
 		function toggleMenu() {
-			$("#menu-icon")[0].click();
+			$("#menu-icon").click();
 		}
 
 		let upLink = util.upHash();
@@ -114,7 +113,7 @@ $(document).ready(function() {
 			if (isAuth) {
 				// if (upLink && (currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)))
 				// 	pS.swipeDown(upLink);
-				$('#auth-close')[0].click();
+				$('#auth-close').click();
 				// $("#auth-text").hide();
 				// $("#album-view, #media-view, #my-modal").css("opacity", "");
 				// util.goUpInHash();
@@ -128,12 +127,12 @@ $(document).ready(function() {
 			} else if (isMap) {
 				if (isPopup) {
 					// the popup is there: close it
-					$('.leaflet-popup-close-button')[0].click();
+					$('.leaflet-popup-close-button').click();
 					MapFunctions.mapAlbum = {};
 					// $('#popup #popup-content').html("");
 				} else {
 					// we are in a map: close it
-					$('.modal-close')[0].click();
+					$('.modal-close').click();
 					popupRefreshType = "previousAlbum";
 					mapRefreshType = "none";
 				}
@@ -165,9 +164,9 @@ $(document).ready(function() {
 					if (e.key === "Tab") {
 						e.preventDefault();
 						if (pS.getCurrentZoom() == pS.getInitialZoom() && ! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
-							$("ul#right-menu li.hide-title")[0].click();
-							$("ul#right-menu li.hide-media-caption")[0].click();
-							$("ul#right-menu li.hide-bottom-thumbnails")[0].click();
+							$("ul#right-menu li.hide-title").click();
+							$("ul#right-menu li.hide-media-caption").click();
+							$("ul#right-menu li.hide-bottom-thumbnails").click();
 							// tF.toggleTitle(e);
 							// tF.toggleBottomThumbnails(e);
 							return false;
@@ -175,7 +174,7 @@ $(document).ready(function() {
 					} else if (e.key === "ArrowRight" && (pS.getCurrentZoom() !== pS.getInitialZoom() || prevMedia) && currentMedia !== null && ! isMap) {
 						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
 							$("#album-view.media-view-container").removeClass("hidden-by-pinch");
-							$("#next")[0].click();
+							$("#next").click();
 							// PinchSwipe.swipeLeft(media);
 						} else {
 							// drag
@@ -198,7 +197,7 @@ $(document).ready(function() {
 						nextMedia && currentMedia !== null && ! isMap
 					) {
 						$("#album-view.media-view-container").removeClass("hidden-by-pinch");
-						$("#next")[0].click();
+						$("#next").click();
 						// pS.swipeLeft(nextMedia);
 						return false;
 					} else if (
@@ -206,13 +205,13 @@ $(document).ready(function() {
 						prevMedia && currentMedia !== null && ! isMap
 					) {
 						$("#album-view.media-view-container").removeClass("hidden-by-pinch");
-						$("#prev")[0].click();
+						$("#prev").click();
 						// pS.swipeRight(prevMedia);
 						return false;
 					} else if (e.key === "ArrowLeft" && (pS.getCurrentZoom() !== pS.getInitialZoom() || prevMedia) && currentMedia !== null && ! isMap) {
 						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
 							$("#album-view.media-view-container").removeClass("hidden-by-pinch");
-							$("#prev")[0].click();
+							$("#prev").click();
 							// PinchSwipe.swipeRight(media);
 						} else {
 							// drag
@@ -250,7 +249,7 @@ $(document).ready(function() {
 						}
 					} else if (e.key.toLowerCase() === "d" && ! isMap) {
 						if (currentMedia !== null)
-							$(".download-single-media .download-link")[0].click();
+							$(".download-single-media .download-link").click();
 						return false;
 					} else if (e.key.toLowerCase() === "f" && currentMedia !== null && ! isMap) {
 						tF.goFullscreen(e);
@@ -259,7 +258,7 @@ $(document).ready(function() {
 						f.toggleMetadata();
 						return false;
 					} else if (e.key.toLowerCase() === "o" && currentMedia !== null && ! isMap) {
-						$("#center .original-link")[0].click();
+						$("#center .original-link").click();
 						return false;
 					} else if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].indexOf(e.key) > -1) {
 						if (isMap) {
@@ -294,7 +293,7 @@ $(document).ready(function() {
 							currentMedia === null && currentAlbum.positionsAndMediaInTree.length
 						)
 					) {
-						$(".map-popup-trigger")[0].click();
+						$(".map-popup-trigger").click();
 						return false;
 					} else if (
 						e.key.toLowerCase() === "u" &&
@@ -309,7 +308,7 @@ $(document).ready(function() {
 						if (
 							numPasswords && PhotoFloat.guessedPasswordCodes.length < numPasswords
 						) {
-							$("#protected-content-unveil")[0].click();
+							$("#protected-content-unveil").click();
 							return false;
 						}
 					}
@@ -338,20 +337,20 @@ $(document).ready(function() {
 
 					var filter = ".radio:not(.hidden):not(.selected)";
 					if (nextBrowsingModeRequested) {
-						nextBrowsingModeSelector = $(".browsing-mode-switcher.selected").next(filter);
-						if (nextBrowsingModeSelector[0] === undefined)
-							nextBrowsingModeSelector = $(".browsing-mode-switcher.selected").siblings(filter).first();
+						let nextBrowsingModeObject = $(".browsing-mode-switcher.selected").next(filter);
+						if (nextBrowsingModeObject[0] === undefined)
+							nextBrowsingModeObject = $(".browsing-mode-switcher.selected").siblings(filter).first();
 						$(".browsing-mode-switcher").removeClass("selected");
-						$(nextBrowsingModeSelector).addClass("selected");
-						$(nextBrowsingModeSelector)[0].click();
+						nextBrowsingModeObject.addClass("selected");
+						nextBrowsingModeObject.click();
 						return false;
 					} else if (prevBrowsingModeRequested) {
-						prevBrowsingModeSelector = $(".browsing-mode-switcher.selected").prev(filter);
-						if (prevBrowsingModeSelector[0] === undefined)
-							prevBrowsingModeSelector = $(".browsing-mode-switcher.selected").siblings(filter).last();
+						let prevBrowsingModeObject = $(".browsing-mode-switcher.selected").prev(filter);
+						if (prevBrowsingModeObject[0] === undefined)
+							prevBrowsingModeObject = $(".browsing-mode-switcher.selected").siblings(filter).last();
 						$(".browsing-mode-switcher").removeClass("selected");
-						$(prevBrowsingModeSelector).addClass("selected");
-						$(prevBrowsingModeSelector)[0].click();
+						prevBrowsingModeObject.addClass("selected");
+						prevBrowsingModeObject.click();
 						return false;
 					}
 				}
@@ -409,7 +408,7 @@ $(document).ready(function() {
 						prevSortingModeMessageId = sortingMessageIds[prevSortingIndex] + "-" + mode + "-sorting";
 						$("#" + prevSortingModeMessageId).show();
 						$("#" + prevSortingModeMessageId).fadeOut(2500);
-						$(".sort." + mode + "-sort" + prevSelector)[0].click();
+						$(".sort." + mode + "-sort" + prevSelector).click();
 						// console.log(".sort." + mode + "-sort" + prevSelector + " ------- " + prevSortingModeMessageId);
 					} else {
 						var nextSelectors = [".by-name", ".reverse", ".by-date", ".reverse"];
@@ -418,7 +417,7 @@ $(document).ready(function() {
 						nextSortingModeMessageId = sortingMessageIds[nextSortingIndex] + "-" + mode + "-sorting";
 						$("#" + nextSortingModeMessageId).show();
 						$("#" + nextSortingModeMessageId).fadeOut(2500);
-						$(".sort." + mode + "-sort" + nextSelector)[0].click();
+						$(".sort." + mode + "-sort" + nextSelector).click();
 						// console.log(".sort." + mode + "-sort" + nextSelector + " ------- " + nextSortingModeMessageId);
 					}
 				}
@@ -743,12 +742,12 @@ $(document).ready(function() {
 
 						if (isPopup) {
 							popupRefreshType = "mapAlbum";
-							$('.leaflet-popup-close-button')[0].click();
+							$('.leaflet-popup-close-button').click();
 						} else {
 							popupRefreshType = "none";
 						}
 						// close the map
-						$('.modal-close')[0].click();
+						$('.modal-close').click();
 					}
 
 					$(window).hashchange();

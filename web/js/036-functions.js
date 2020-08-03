@@ -819,7 +819,7 @@
 				$("#padlock").off('click').on(
 					'click',
 					function() {
-						$("#protected-content-unveil")[0].click();
+						$("#protected-content-unveil").click();
 					}
 				);
 			} else {
