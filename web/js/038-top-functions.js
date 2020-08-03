@@ -738,13 +738,11 @@
 			let isVoid = util.removeSingleMediaFromSelection(media, clickedSelector);
 			if (isVoid) {
 				f.updateMenu();
-				TopFunctions.bindChangeBrowsingEvents();
 			}
 		} else {
 			let firstAddition = util.addSingleMediaToSelection(media, clickedSelector);
 			if (firstAddition) {
 				f.updateMenu();
-				TopFunctions.bindChangeBrowsingEvents();
 			}
 		}
 	};
@@ -754,13 +752,11 @@
 			let isVoid = util.removeSubalbumFromSelection(subalbum, clickedSelector);
 			if (isVoid) {
 				f.updateMenu();
-				TopFunctions.bindChangeBrowsingEvents();
 			}
 		} else {
 			let firstAddition = util.addSubalbumToSelection(subalbum, clickedSelector);
 			if (firstAddition) {
 				f.updateMenu();
-				TopFunctions.bindChangeBrowsingEvents();
 			}
 		}
 	};
@@ -1132,7 +1128,6 @@
 		if (id === "center") {
 
 			f.updateMenu();
-			TopFunctions.bindChangeBrowsingEvents();
 
 			$(".media-box#center .metadata-show").off('click').on('click', f.toggleMetadataFromMouse);
 			$(".media-box#center .metadata-hide").off('click').on('click', f.toggleMetadataFromMouse);
@@ -2299,8 +2294,7 @@
 
 		TopFunctions.bindSortEvents(currentAlbum);
 		f.updateMenu();
-		TopFunctions.bindChangeBrowsingEvents();
-
+		
 		// we are in showAlbum
 		// activate the map and the popup when coming back from a map album
 		if (

@@ -6,7 +6,7 @@ var currentMediaIndex = -1;
 var previousAlbum = null;
 var previousMedia = null;
 var nextMedia = null, prevMedia = null;
-var bySearchViewLink = null, byMapViewLink = null, bySelectionViewLink = null, isABrowsingModeChange = false;
+var bySearchViewHash = "", byMapViewHash = "", bySelectionViewHash = "", isABrowsingModeChange = false;
 var cacheBaseBeforeBrowsingBySelection = null;
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
@@ -781,9 +781,9 @@ $(document).ready(function() {
 				isABrowsingModeChange = false;
 			else {
 				// the image has changed, reset the search and map link
-				bySearchViewLink = null;
-				bySelectionViewLink = null
-				byMapViewLink = null;
+				bySearchViewHash = "";
+				bySelectionViewHash = ""
+				byMapViewHash = "";
 			}
 			$("#loading").show();
 			$("#album-view").removeClass("hidden");

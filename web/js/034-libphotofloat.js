@@ -20,6 +20,8 @@
 		PhotoFloat.searchAlbumCacheBasesFromJsonFile = this.searchAlbumCacheBasesFromJsonFile;
 		PhotoFloat.searchAlbumSubalbumsFromJsonFile = this.searchAlbumSubalbumsFromJsonFile;
 
+		var searchResultsAlbumFinal = {};
+
 		// temporary, will be removed later
 		PhotoFloat.js_cache_levels = [
 			{"mediaThreshold": 10000, "max": 1},
@@ -1487,7 +1489,6 @@
 	PhotoFloat.prototype.parseHashAndReturnAlbumAndMedia = function(hash) {
 		return new Promise(
 			function(resolve_parseHash, reject_parseHash) {
-				var searchResultsAlbumFinal = {};
 				var removedStopWords = [];
 				var searchWordsFromUser = [], searchWordsFromUserNormalized = [], searchWordsFromUserNormalizedAccordingToOptions = [];
 				var albumHashToGet, albumHashes = [], wordSubalbums = [];
