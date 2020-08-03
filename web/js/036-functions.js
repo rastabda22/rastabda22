@@ -125,12 +125,12 @@
 					TopFunctions.showBrowsingModeMessage("#folders-browsing");
 
 					if (isSingleMedia) {
-						window.location.href = "#!/" + util.pathJoin([
+						window.location.href = hashBeginning + util.pathJoin([
 							thisMedia.foldersCacheBase,
 							thisMedia.cacheBase
 						]);
 					} else if (isAnyRootHash || isSelectionCacheBase) {
-						window.location.href = "#!/" + encodeURIComponent(Options.folders_string);
+						window.location.href = hashBeginning + encodeURIComponent(Options.folders_string);
 					}
 
 					return false;
@@ -142,13 +142,13 @@
 					TopFunctions.showBrowsingModeMessage("#by-date-browsing");
 
 					if (isSingleMedia) {
-						window.location.href = "#!/" + util.pathJoin([
+						window.location.href = hashBeginning + util.pathJoin([
 							thisMedia.dayAlbumCacheBase,
 							thisMedia.foldersCacheBase,
 							thisMedia.cacheBase
 						]);
 					} else if (isAnyRootHash || isSelectionCacheBase) {
-						window.location.href = "#!/" + encodeURIComponent(Options.by_date_string);
+						window.location.href = hashBeginning + encodeURIComponent(Options.by_date_string);
 					}
 					return false;
 				}
@@ -159,15 +159,14 @@
 					TopFunctions.showBrowsingModeMessage("#by-gps-browsing");
 
 					if (isSingleMedia) {
-						window.location.href = "#!/" + util.pathJoin([
+						window.location.href = hashBeginning + util.pathJoin([
 							thisMedia.gpsAlbumCacheBase,
 							thisMedia.foldersCacheBase,
 							thisMedia.cacheBase
 						]);
 					} else if (isAnyRootHash || isSelectionCacheBase) {
-						window.location.href = "#!/" + encodeURIComponent(Options.by_gps_string);
+						window.location.href = hashBeginning + encodeURIComponent(Options.by_gps_string);
 					}
-					window.location.href = byGpsViewLink;
 					return false;
 				}
 			);
@@ -199,13 +198,13 @@
 					if (isSingleMedia) {
 						if (! isSelectionCacheBase) {
 							if (util.singleMediaIsSelected(thisMedia)) {
-								bySelectionViewLink = "#!/" + util.pathJoin([
+								bySelectionViewLink = hashBeginning + util.pathJoin([
 									thisMedia.selectionAlbumCacheBase,
 									thisMedia.foldersCacheBase,
 									thisMedia.cacheBase
 								]);
 							} else {
-								bySelectionViewLink = "#!/" + currentMedia.selectionAlbumCacheBase;
+								bySelectionViewLink = hashBeginning + currentMedia.selectionAlbumCacheBase;
 							}
 						}
 					} else {
@@ -236,7 +235,7 @@
 					"click",
 					function backToCacheBaseBeforeEnteringSelectionBrowsing() {
 						TopFunctions.showBrowsingModeMessage("#previous-browsing");
-						window.location.href = "#!/" + cacheBaseBeforeBrowsingBySelection;
+						window.location.href = hashBeginning + cacheBaseBeforeBrowsingBySelection;
 						cacheBaseBeforeBrowsingBySelection = null;
 						return false;
 					}

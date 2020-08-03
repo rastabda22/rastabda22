@@ -83,8 +83,8 @@
 		}
 
 		if (isDateTitle) {
-			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>" + raquo;
-			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_date_string + "'>(" + util._t("#by-date") + ")</a>";
+			title = "<a class='" + titleAnchorClasses + "' href='" + hashBeginning + "'>" + components[0] + "</a>" + raquo;
+			title += "<a class='" + titleAnchorClasses + "' href='" + hashBeginning + Options.by_date_string + "'>(" + util._t("#by-date") + ")</a>";
 
 			if (components.length > 2 || singleMedia !== null)
 				title += raquo;
@@ -98,7 +98,7 @@
 
 			for (i = 2; i < components.length; ++i) {
 				if (i < components.length - 1 || singleMedia !== null)
-					title += "<a class='" + titleAnchorClasses + "' href='#!/" + encodeURI(currentAlbum.ancestorsCacheBase[i - 1]) + "'>";
+					title += "<a class='" + titleAnchorClasses + "' href='" + hashBeginning + encodeURI(currentAlbum.ancestorsCacheBase[i - 1]) + "'>";
 				else
 					title += "<span class='title-no-anchor'>";
 
@@ -156,8 +156,8 @@
 				title += ")</span>";
 			}
 		} else if (isGpsTitle) {
-			title = "<a class='" + titleAnchorClasses + "' href='#!/'>" + components[0] + "</a>" + raquo;
-			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_gps_string + "'>(" + util._t("#by-gps") + ")</a>";
+			title = "<a class='" + titleAnchorClasses + "' href='" + hashBeginning + "'>" + components[0] + "</a>" + raquo;
+			title += "<a class='" + titleAnchorClasses + "' href='" + hashBeginning + Options.by_gps_string + "'>(" + util._t("#by-gps") + ")</a>";
 
 			if (components.length > 2 || singleMedia !== null)
 				title += raquo;
@@ -181,7 +181,7 @@
 				// gpsHtmlTitle = util._t("#place-icon-title") + gpsName;
 
 				if (i < components.length - 1 || singleMedia !== null) {
-					title += "<a class='" + titleAnchorClasses + "' href='#!/" + encodeURI(currentAlbum.ancestorsCacheBase[i - 1]) + "'";
+					title += "<a class='" + titleAnchorClasses + "' href='" + hashBeginning + encodeURI(currentAlbum.ancestorsCacheBase[i - 1]) + "'";
 					title += " title='" + util.escapeSingleQuotes(util._t("#place-icon-title") + gpsName + util._t("#place-icon-title-end")) + "'";
 					title += ">";
 				} else
@@ -247,7 +247,7 @@
 			// (optional) i=3 up: folder or image
 			// (optional) i=n: image
 
-			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>" + raquo;
+			title = "<a class='" + titleAnchorClasses + "' href='" + hashBeginning + "'>" + components[0] + "</a>" + raquo;
 			if (
 				Options.search_current_album &&
 				! util.isAnyRootHash(Options.cache_base_to_search_in)
@@ -264,7 +264,7 @@
 				searchFolderHash = albumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
 			}
 			where =
-				"<a class='" + searchClass + "' href='#!/" + currentAlbum.cacheBase + "'>" +
+				"<a class='" + searchClass + "' href='" + hashBeginning + currentAlbum.cacheBase + "'>" +
 				util._t("#by-search") +
 				"</a>";
 
@@ -330,8 +330,8 @@
 
 			// TO DO: not finished!!!!!!!!!
 
-			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>" + raquo;
-			title += "<a class='" + titleAnchorClasses + "' href='#!/" + Options.by_selection_string + "'>(" + util._t("#by-selection") + ")</a>";
+			title = "<a class='" + titleAnchorClasses + "' href='" + hashBeginning + "'>" + components[0] + "</a>" + raquo;
+			title += "<a class='" + titleAnchorClasses + "' href='" + hashBeginning + Options.by_selection_string + "'>(" + util._t("#by-selection") + ")</a>";
 			if (singleMedia !== null) {
 				title += raquo;
 			}
@@ -380,10 +380,10 @@
 			// (optional) i=2: image cache or folder
 			// (optional) i=3 up: folder or image
 			// (optional) i=n: image
-			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>" + raquo;
+			title = "<a class='" + titleAnchorClasses + "' href='" + hashBeginning + "'>" + components[0] + "</a>" + raquo;
 
 			where =
-				"<a class='search-link' href='#!/" + currentAlbum.cacheBase + "'>" +
+				"<a class='search-link' href='" + hashBeginning + currentAlbum.cacheBase + "'>" +
 				util._t("#by-map") +
 				"</a>";
 
@@ -431,7 +431,7 @@
 			}
 		} else {
 			// folders title
-			title = "<a class='" + titleAnchorClasses + "' href='#!/" + "'>" + components[0] + "</a>";
+			title = "<a class='" + titleAnchorClasses + "' href='" + hashBeginning + "'>" + components[0] + "</a>";
 			if (components.length > 2 || singleMedia !== null)
 				title += raquo;
 
@@ -439,14 +439,14 @@
 				searchFolderHash = savedSearchAlbumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
 				if (searchFolderHash.split(Options.cache_folder_separator).length > 1) {
 					where =
-						"<a class='main-search-link' href='#!/" + savedSearchAlbumHash + "'>" +
+						"<a class='main-search-link' href='" + hashBeginning + savedSearchAlbumHash + "'>" +
 						util._t("#by-search") +
 						"</a> " +
 						util._t("#in") +
 						" <span id='search-album-to-be-filled'></span>";
 				} else {
 					where =
-						"<a class='search-link' href='#!/" + savedSearchAlbumHash + "'>" +
+						"<a class='search-link' href='" + hashBeginning + savedSearchAlbumHash + "'>" +
 						util._t("#by-search") +
 						"</a>";
 				}
@@ -473,7 +473,7 @@
 			}
 			for (i = initialValue; i < components.length; ++i) {
 				if (i < components.length - 1 || singleMedia !== null)
-					title += "<a class='" + titleAnchorClasses + "' href='#!/" + encodeURI(currentAlbum.ancestorsCacheBase[i - 1]) + "'>";
+					title += "<a class='" + titleAnchorClasses + "' href='" + hashBeginning + encodeURI(currentAlbum.ancestorsCacheBase[i - 1]) + "'>";
 				else
 					title += "<span class='title-no-anchor'>";
 
@@ -643,7 +643,7 @@
 							} else if (i === 2 && util.isByDateCacheBase(Options.cache_base_to_search_in))
 								// convert the month number to localized month name
 								name = util._t("#month-" + name);
-							thisCacheBase = "#!/" + theAlbum.ancestorsCacheBase[i];
+							thisCacheBase = hashBeginning + theAlbum.ancestorsCacheBase[i];
 							if (i > 0 && (i !== 1 || theAlbum.ancestorsNames[0] !== ""))
 								whereLinks += raquo;
 							if (name)
@@ -1970,7 +1970,7 @@
 					if (util.imagesAndVideosTotal(currentAlbum.numMedia))
 						mediaLink = phFl.encodeHash(currentAlbum, currentAlbum.media[0], savedSearchSubAlbumHash, savedSearchAlbumHash);
 					else
-						mediaLink = "#!/" + currentAlbum.cacheBase;
+						mediaLink = hashBeginning + currentAlbum.cacheBase;
 
 					firstEscKey = true;
 				}

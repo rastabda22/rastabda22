@@ -1811,7 +1811,7 @@
 				resultHash = Utilities.pathJoin(hash.split("/").slice(1, -2));
 		}
 
-		return "#!/" + resultHash;
+		return hashBeginning + resultHash;
 	};
 
 
@@ -1824,7 +1824,7 @@
 			// Jason's code only had the following line
 			//$("#error-text").stop().fadeIn(2500);
 
-			var rootLink = "#!/" + Options.folders_string;
+			var rootLink = hashBeginning + Options.folders_string;
 
 			$("#album-view").fadeOut(200);
 			$("#media-view").fadeOut(200);

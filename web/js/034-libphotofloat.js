@@ -1393,7 +1393,7 @@
 				// folders album, count = 1
 				hash = albumHash;
 		}
-		return "#!/" + hash;
+		return hashBeginning + hash;
 	};
 
 	PhotoFloat.decodeHash = function(hash) {

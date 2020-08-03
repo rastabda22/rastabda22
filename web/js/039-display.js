@@ -17,6 +17,7 @@ var popupRefreshType = "previousAlbum";
 var destHash = null;
 var destMedia = null;
 var destAlbum = null;
+var hashBeginning = "#!/";
 // var scrollbarWidth;
 // var contextMenu = false;
 var imagesAndVideos0 = {"images": 0, "videos": 0};
@@ -468,7 +469,7 @@ $(document).ready(function() {
 		if (! Options.hasOwnProperty('cache_base_to_search_in') || ! Options.cache_base_to_search_in)
 			Options.cache_base_to_search_in = Options.folders_string;
 
-		var bySearchViewHash = "#!/" + Options.by_search_string;
+		var bySearchViewHash = hashBeginning + Options.by_search_string;
 
 		// build the search album part of the hash
 		var wordsStringOriginal = $("#search-field").val().normalize().trim().replace(/  /g, ' ');
