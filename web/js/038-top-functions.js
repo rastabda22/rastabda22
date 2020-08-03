@@ -1268,11 +1268,6 @@
 		}
 
 		if (id === "center") {
-			// if (util.singleMediaIsSelected(singleMedia)) {
-			// 	bySelectionViewLink = singleMedia.bySelectionCacheBase;
-			// } else {
-			// 	bySelectionViewLink = null;
-			// }
 
 			f.updateMenu();
 			TopFunctions.bindChangeBrowsingEvents();
