@@ -292,7 +292,7 @@
 			if (util.isAnyRootHash(Options.cache_base_to_search_in) || isPopup) {
 				$("ul#right-menu li#album-search").addClass("dimmed").off("click");
 			} else {
-				$("ul#right-menu li#album-search").removeClass("dimmed");
+				$("ul#right-menu li#album-search").removeClass("dimmed").off("click").on('click', Functions.toggleCurrentAbumSearch);
 				let albumNamePromise = Functions.getAlbumNameFromAlbumHash(Options.cache_base_to_search_in);
 				albumNamePromise.then(
 					function(path) {
@@ -1294,7 +1294,7 @@
 		util.focusSearchField();
 	};
 
-	Functions.prototype.toggleCurrentAbumSearch = function() {
+	Functions.toggleCurrentAbumSearch = function() {
 		Options.search_current_album = ! Options.search_current_album;
 		Functions.setBooleanCookie("search_current_album", Options.search_current_album);
 		Functions.updateMenu();
@@ -1342,6 +1342,7 @@
 	Functions.prototype.setBooleanCookie = Functions.setBooleanCookie;
 	Functions.prototype.updateMenu = Functions.updateMenu;
 	Functions.prototype.focusSearchField = Functions.focusSearchField;
+	Functions.prototype.toggleCurrentAbumSearch = Functions.toggleCurrentAbumSearch;
 	Functions.prototype.toggleMetadata = Functions.toggleMetadata;
 	Functions.prototype.humanFileSize = Functions.humanFileSize;
 
