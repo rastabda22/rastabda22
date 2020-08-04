@@ -322,29 +322,6 @@
 		MapFunctions.setPopupPosition();
 	};
 
-	MapFunctions.prototype.initializeMapAlbum = function() {
-		lastMapAlbumIndex ++;
-
-		// initializes the map album
-		var album = {};
-		album.media = [];
-		album.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-		album.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
-		album.sizesOfAlbum = initialSizes;
-		album.sizesOfSubTree = initialSizes;
-		album.subalbums = [];
-		album.positionsAndMediaInTree = [];
-		album.numPositionsInTree = 0;
-		album.cacheBase = Options.by_map_string + Options.cache_folder_separator + lastMapAlbumIndex + Options.cache_folder_separator + currentAlbum.cacheBase;
-		album.path = album.cacheBase.replace(Options.cache_folder_separator, "/");
-		album.physicalPath = album.path;
-		album.searchInFolderCacheBase = currentAlbum.cacheBase;
-		album.clickHistory = [];
-		album.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
-
-		return album;
-	};
-
 	MapFunctions.addMediaFromPositionsToMapAlbum = function(positionsAndCounts, thisMapAlbum, resolve_imageLoad) {
 
 		var mediaNameListElement, indexPositions, indexPhoto, markerClass, photoIndex, mediaIndex;

@@ -314,33 +314,20 @@
 				function changeToBySelectionView() {
 					TopFunctions.showBrowsingModeMessage("#by-selection-browsing");
 
-					let bySelectionRootAlbum = phFl.getAlbumFromCache(Options.by_selection_string);
-					if (bySelectionRootAlbum && bySelectionRootAlbum.subalbums.length) {
-						let bySelectionAlbum = phFl.getAlbumFromCache(bySelectionRootAlbum.subalbums[bySelectionRootAlbum.subalbums.length - 1].cacheBase);
-					}
+					// let bySelectionRootAlbum = phFl.getAlbumFromCache(Options.by_selection_string);
+					// if (bySelectionRootAlbum && bySelectionRootAlbum.subalbums.length) {
+					// 	let bySelectionAlbum = phFl.getAlbumFromCache(bySelectionRootAlbum.subalbums[bySelectionRootAlbum.subalbums.length - 1].cacheBase);
+					// }
 
-					if (! isAnyRootHash) {
-					// if (! isSingleMedia && ! isAnyRootHash) {
+					if (! isSingleMedia && ! isAnyRootHash) {
 						cacheBaseBeforeBrowsingBySelection = thisAlbum.cacheBase;
-					} else if (isSingleMedia && ! singleMediaIsSelected) {
-						cacheBaseBeforeBrowsingBySelection = phFl.encodeHash(thisAlbum, thisMedia);
 					}
 
 					let bySelectionViewHash;
 					if (isSingleMedia) {
-						if (util.singleMediaIsSelected(thisMedia)) {
-							bySelectionViewHash = phFl.encodeHash(bySelectionAlbum, thisMedia);
-							// bySelectionViewHash = hashBeginning + util.pathJoin([
-							// 	thisMedia.selectionAlbumCacheBase,
-							// 	thisMedia.foldersCacheBase,
-							// 	thisMedia.cacheBase
-							// ]);
-						} else {
-							bySelectionViewHash = hashBeginning + thisMedia.selectionAlbumCacheBase;
-						}
+						bySelectionViewHash = hashBeginning + thisMedia.selectionAlbumCacheBase;
 					} else {
-						// album
-						bySelectionViewHash = phFl.encodeHash(bySelectionAlbum, null);
+						bySelectionViewHash = phFl.encodeHash(selectionAlbum, null);
 					}
 
 					window.location.href = bySelectionViewHash;
@@ -1323,7 +1310,9 @@
 							Options.bySelectionStringWithTrailingSeparator = Options.by_selection_string + Options.cache_folder_separator;
 							Options.byMapStringWithTrailingSeparator = Options.by_map_string + Options.cache_folder_separator;
 
-							PhotoFloat.initializeMapRootAlbum();
+							util.initializeMapRootAlbum();
+							util.initializeSearchRootAlbum();
+							util.initializeSelectionRootAlbum();
 
 							for (let i = 0; i < Options.reduced_sizes.length; i++) {
 								initialSizes[Options.reduced_sizes[i]] = JSON.parse(JSON.stringify(imagesAndVideos0));

@@ -2815,7 +2815,7 @@
 							if (jQuery.isEmptyObject(mapAlbum) || util.imagesAndVideosTotal(mapAlbum.numMedia) == 0 || ! evt.originalEvent.shiftKey) {
 								// normal click or shift click without previous content
 
-								mapAlbum = map.initializeMapAlbum();
+								mapAlbum = util.initializeMapAlbum();
 
 								mapAlbum.clickHistory = [clickHistoryElement];
 
@@ -2876,7 +2876,7 @@
 						// update the map root album in cache
 						var rootMapAlbum = phFl.getAlbumFromCache(Options.by_map_string);
 						if (! rootMapAlbum)
-							rootMapAlbum = PhotoFloat.initializeMapRootAlbum();
+							rootMapAlbum = util.initializeMapRootAlbum();
 						rootMapAlbum.numMediaInSubTree += JSON.parse(JSON.stringify(mapAlbum.numMediaInSubTree));
 						rootMapAlbum.subalbums.push(mapAlbum);
 						rootMapAlbum.positionsAndMediaInTree = util.mergePositionsAndMedia(rootMapAlbum.positionsAndMediaInTree, mapAlbum.positionsAndMediaInTree);

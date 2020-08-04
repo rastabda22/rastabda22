@@ -20,8 +20,6 @@
 		PhotoFloat.searchAlbumCacheBasesFromJsonFile = this.searchAlbumCacheBasesFromJsonFile;
 		PhotoFloat.searchAlbumSubalbumsFromJsonFile = this.searchAlbumSubalbumsFromJsonFile;
 
-		var searchResultsAlbumFinal = {};
-
 		// temporary, will be removed later
 		PhotoFloat.js_cache_levels = [
 			{"mediaThreshold": 10000, "max": 1},
@@ -32,25 +30,6 @@
 	}
 
 	/* public member functions */
-	PhotoFloat.initializeMapRootAlbum = function() {
-		// prepare the root of the map albums and put it in the cache
-		var rootMapAlbum = {};
-		rootMapAlbum.cacheBase = Options.by_map_string;
-		rootMapAlbum.media = [];
-		rootMapAlbum.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-		rootMapAlbum.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
-		rootMapAlbum.sizesOfAlbum = initialSizes;
-		rootMapAlbum.sizesOfSubTree = initialSizes;
-		rootMapAlbum.subalbums = [];
-		rootMapAlbum.positionsAndMediaInTree = [];
-		rootMapAlbum.numPositionsInTree = 0;
-		rootMapAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
-
-		PhotoFloat.putAlbumIntoCache(rootMapAlbum.cacheBase, rootMapAlbum);
-
-		return rootMapAlbum;
-	};
-
 	PhotoFloat.putAlbumIntoCache = function(albumCacheBase, album) {
 		if (! Options.hasOwnProperty("js_cache_levels"))
 			Options.js_cache_levels = PhotoFloat.js_cache_levels;
@@ -1486,21 +1465,6 @@
 		// );
 	// };
 
-	PhotoFloat.initializeSearchAlbum = function(albumHash, mediaFolderHash) {
-		searchResultsAlbumFinal.positionsAndMediaInTree = [];
-		searchResultsAlbumFinal.media = [];
-		searchResultsAlbumFinal.subalbums = [];
-		searchResultsAlbumFinal.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-		searchResultsAlbumFinal.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
-		searchResultsAlbumFinal.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
-		searchResultsAlbumFinal.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
-		searchResultsAlbumFinal.cacheBase = albumHash;
-		searchResultsAlbumFinal.path = searchResultsAlbumFinal.cacheBase.replace(Options.cache_folder_separator, "/");
-		searchResultsAlbumFinal.physicalPath = searchResultsAlbumFinal.path;
-		searchResultsAlbumFinal.searchInFolderCacheBase = mediaFolderHash;
-		searchResultsAlbumFinal.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
-	};
-
 	PhotoFloat.prototype.parseHashAndReturnAlbumAndMedia = function(hash) {
 		return new Promise(
 			function(resolve_parseHash, reject_parseHash) {
@@ -1561,14 +1525,14 @@
 						if (searchWordsFromUser.length == 1)
 							$("ul#right-menu li#any-word").addClass("dimmed").off("click");
 
-						PhotoFloat.initializeSearchAlbum(albumHash, mediaFolderHash);
+						searchAlbum = util.initializeSearchAlbum(albumHash, mediaFolderHash);
 
 						if (albumHash == Options.by_search_string) {
 							// no search term
 							// does execution actually arrive here?
-							util.noResults(searchResultsAlbumFinal, '#no-search-string');
+							util.noResults(searchAlbum, '#no-search-string');
 							// the resolve function is needed at least in order to show the title
-							resolve_parseHash([searchResultsAlbumFinal, -1]);
+							resolve_parseHash([searchAlbum, -1]);
 							return;
 						}
 					}
@@ -1606,7 +1570,7 @@
 						// it's a search with no results
 						util.noResults(albumFromCache);
 						// the resolve function is needed at least in order to show the title
-						resolve_parseHash([searchResultsAlbumFinal, -1]);
+						resolve_parseHash([searchAlbum, -1]);
 					} else {
 						// it's not a search without results: everything is ok, resolve!
 						let result = PhotoFloat.getMediaIndex(albumFromCache, mediaFolderHash, mediaHash);
@@ -1657,52 +1621,52 @@
 
 				function subalbumsAbsentOrGot() {
 					var indexMedia, indexSubalbums;
-					if (searchResultsAlbumFinal.media.length === 0 && searchResultsAlbumFinal.subalbums.length === 0) {
-						util.noResults(searchResultsAlbumFinal);
+					if (searchAlbum.media.length === 0 && searchAlbum.subalbums.length === 0) {
+						util.noResults(searchAlbum);
 					} else {
 						$(".search-failed").hide();
 					}
 
-					for (indexMedia = 0; indexMedia < searchResultsAlbumFinal.media.length; indexMedia ++) {
+					for (indexMedia = 0; indexMedia < searchAlbum.media.length; indexMedia ++) {
 						// add the parent to the media
-						searchResultsAlbumFinal.media[indexMedia].parent = searchResultsAlbumFinal;
-						if (util.hasGpsData(searchResultsAlbumFinal.media[indexMedia]))
+						searchAlbum.media[indexMedia].parent = searchAlbum;
+						if (util.hasGpsData(searchAlbum.media[indexMedia]))
 							// add the media position
-							searchResultsAlbumFinal.positionsAndMediaInTree =
+							searchAlbum.positionsAndMediaInTree =
 								util.addSingleMediaToPositionsAndMedia(
-									searchResultsAlbumFinal.positionsAndMediaInTree,
-									searchResultsAlbumFinal.media[indexMedia]
+									searchAlbum.positionsAndMediaInTree,
+									searchAlbum.media[indexMedia]
 								);
 					}
 
-					if (searchResultsAlbumFinal.subalbums.length) {
-						for (indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
+					if (searchAlbum.subalbums.length) {
+						for (indexSubalbums = 0; indexSubalbums < searchAlbum.subalbums.length; indexSubalbums ++) {
 							// update the media count
-							searchResultsAlbumFinal.numMediaInSubTree = util.imagesAndVideosSum(searchResultsAlbumFinal.numMediaInSubTree, searchResultsAlbumFinal.subalbums[indexSubalbums].numMediaInSubTree);
+							searchAlbum.numMediaInSubTree = util.imagesAndVideosSum(searchAlbum.numMediaInSubTree, searchAlbum.subalbums[indexSubalbums].numMediaInSubTree);
 							// update the size totals
-							searchResultsAlbumFinal.sizesOfSubTree = util.sumSizes(searchResultsAlbumFinal.sizesOfSubTree, searchResultsAlbumFinal.subalbums[indexSubalbums].sizesOfSubTree);
-							searchResultsAlbumFinal.sizesOfAlbum = util.sumSizes(searchResultsAlbumFinal.sizesOfAlbum, searchResultsAlbumFinal.subalbums[indexSubalbums].sizesOfAlbum);
+							searchAlbum.sizesOfSubTree = util.sumSizes(searchAlbum.sizesOfSubTree, searchAlbum.subalbums[indexSubalbums].sizesOfSubTree);
+							searchAlbum.sizesOfAlbum = util.sumSizes(searchAlbum.sizesOfAlbum, searchAlbum.subalbums[indexSubalbums].sizesOfAlbum);
 							// add the points from the subalbums
 
 							// the subalbum could still have no positionsAndMediaInTree array, get it
-							if (! searchResultsAlbumFinal.subalbums[indexSubalbums].hasOwnProperty("positionsAndMediaInTree"))
-								searchResultsAlbumFinal.subalbums[indexSubalbums].positionsAndMediaInTree = [];
+							if (! searchAlbum.subalbums[indexSubalbums].hasOwnProperty("positionsAndMediaInTree"))
+								searchAlbum.subalbums[indexSubalbums].positionsAndMediaInTree = [];
 						}
 					}
-					var promise = PhotoFloat.endPreparingAlbumAndKeepOn(searchResultsAlbumFinal, mediaHash, mediaFolderHash);
+					var promise = PhotoFloat.endPreparingAlbumAndKeepOn(searchAlbum, mediaHash, mediaFolderHash);
 					promise.then(
 						function(i) {
-							resolve_parseHash([searchResultsAlbumFinal, i]);
+							resolve_parseHash([searchAlbum, i]);
 						}
 					);
 				}
 
 				function buildSearchResult() {
-					searchResultsAlbumFinal.removedStopWords = removedStopWords;
+					searchAlbum.removedStopWords = removedStopWords;
 					// has any word remained after stop words have been removed?
 					if (searchWordsFromUser.length == 0) {
-						util.noResults(searchResultsAlbumFinal, '#no-search-string-after-stopwords-removed');
-						resolve_parseHash([searchResultsAlbumFinal, -1]);
+						util.noResults(searchAlbum, '#no-search-string-after-stopwords-removed');
+						resolve_parseHash([searchAlbum, -1]);
 						return;
 					}
 
@@ -1716,8 +1680,8 @@
 
 							PhotoFloat.putAlbumIntoCache(Options.by_search_string, bySearchRootAlbum);
 
-							searchResultsAlbumFinal.ancestorsCacheBase = bySearchRootAlbum.ancestorsCacheBase.slice();
-							searchResultsAlbumFinal.ancestorsCacheBase.push(wordsWithOptionsString);
+							searchAlbum.ancestorsCacheBase = bySearchRootAlbum.ancestorsCacheBase.slice();
+							searchAlbum.ancestorsCacheBase.push(wordsWithOptionsString);
 							if (! Options.search_any_word)
 								// when serching all the words, getting the first album is enough, media that do not match the other words will be escluded later
 								lastIndex = 0;
@@ -1767,14 +1731,14 @@
 							}
 
 							if (numSubAlbumsToGet === 0) {
-								util.noResults(searchResultsAlbumFinal);
-								resolve_parseHash([searchResultsAlbumFinal, -1]);
+								util.noResults(searchAlbum);
+								resolve_parseHash([searchAlbum, -1]);
 							} else if (numSubAlbumsToGet > Options.max_search_album_number) {
-								util.noResults(searchResultsAlbumFinal, '#search-too-wide');
-								resolve_parseHash([searchResultsAlbumFinal, -1]);
+								util.noResults(searchAlbum, '#search-too-wide');
+								resolve_parseHash([searchAlbum, -1]);
 							} else {
 								$(".search-failed").hide();
-								searchResultsAlbumFinal.numsProtectedMediaInSubTree = util.sumNumsProtectedMediaOfArray(wordSubalbums);
+								searchAlbum.numsProtectedMediaInSubTree = util.sumNumsProtectedMediaOfArray(wordSubalbums);
 								for (indexWords = 0; indexWords <= lastIndex; indexWords ++) {
 									searchResultsMedia[indexWords] = [];
 									searchResultsSubalbums[indexWords] = [];
@@ -1890,18 +1854,18 @@
 												numSearchAlbumsReady ++;
 												if (numSearchAlbumsReady >= numSubAlbumsToGet) {
 													// all the albums have been got, we can merge the results
-													searchResultsAlbumFinal.media = searchResultsMedia[0];
-													searchResultsAlbumFinal.subalbums = searchResultsSubalbums[0];
+													searchAlbum.media = searchResultsMedia[0];
+													searchAlbum.subalbums = searchResultsSubalbums[0];
 													for (indexWords1 = 1; indexWords1 <= lastIndex; indexWords1 ++) {
 														if (indexWords1 in searchResultsMedia) {
-															searchResultsAlbumFinal.media = Options.search_any_word ?
-																util.union(searchResultsAlbumFinal.media, searchResultsMedia[indexWords1]) :
-																util.intersect(searchResultsAlbumFinal.media, searchResultsMedia[indexWords1]);
+															searchAlbum.media = Options.search_any_word ?
+																util.union(searchAlbum.media, searchResultsMedia[indexWords1]) :
+																util.intersect(searchAlbum.media, searchResultsMedia[indexWords1]);
 														}
 														if (indexWords1 in searchResultsSubalbums) {
-															searchResultsAlbumFinal.subalbums = Options.search_any_word ?
-																util.union(searchResultsAlbumFinal.subalbums, searchResultsSubalbums[indexWords1]) :
-																util.intersect(searchResultsAlbumFinal.subalbums, searchResultsSubalbums[indexWords1]);
+															searchAlbum.subalbums = Options.search_any_word ?
+																util.union(searchAlbum.subalbums, searchResultsSubalbums[indexWords1]) :
+																util.intersect(searchAlbum.subalbums, searchResultsSubalbums[indexWords1]);
 														}
 													}
 
@@ -1909,11 +1873,11 @@
 														// we still have to filter out the media that do not match the words after the first
 														// we are in all words search mode
 														matchingMedia = [];
-														for (indexMedia = 0; indexMedia < searchResultsAlbumFinal.media.length; indexMedia ++) {
+														for (indexMedia = 0; indexMedia < searchAlbum.media.length; indexMedia ++) {
 															match = true;
 															if (! Options.search_inside_words) {
 																// whole word
-																normalizedWords = util.normalizeAccordingToOptions(searchResultsAlbumFinal.media[indexMedia].words);
+																normalizedWords = util.normalizeAccordingToOptions(searchAlbum.media[indexMedia].words);
 																if (
 																	searchWordsFromUserNormalizedAccordingToOptions.some(
 																		function(element, index) {
@@ -1925,7 +1889,7 @@
 															} else {
 																// inside words
 																for (indexWordsLeft = lastIndex + 1; indexWordsLeft < searchWordsFromUser.length; indexWordsLeft ++) {
-																	normalizedWords = util.normalizeAccordingToOptions(searchResultsAlbumFinal.media[indexMedia].words);
+																	normalizedWords = util.normalizeAccordingToOptions(searchAlbum.media[indexMedia].words);
 																	if (
 																		! normalizedWords.some(
 																			function(element) {
@@ -1938,21 +1902,21 @@
 																	}
 																}
 															}
-															if (match && matchingMedia.indexOf(searchResultsAlbumFinal.media[indexMedia]) == -1)
-																matchingMedia.push(searchResultsAlbumFinal.media[indexMedia]);
+															if (match && matchingMedia.indexOf(searchAlbum.media[indexMedia]) == -1)
+																matchingMedia.push(searchAlbum.media[indexMedia]);
 														}
-														searchResultsAlbumFinal.media = matchingMedia;
+														searchAlbum.media = matchingMedia;
 
 														// search albums need to conform to default behaviour of albums:
 														// json files have subalbums and media sorted by date not reversed
-														util.sortByDate(searchResultsAlbumFinal.media);
+														util.sortByDate(searchAlbum.media);
 
 														matchingSubalbums = [];
-														for (indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
+														for (indexSubalbums = 0; indexSubalbums < searchAlbum.subalbums.length; indexSubalbums ++) {
 															match = true;
 															if (! Options.search_inside_words) {
 																// whole word
-																normalizedWords = util.normalizeAccordingToOptions(searchResultsAlbumFinal.subalbums[indexSubalbums].words);
+																normalizedWords = util.normalizeAccordingToOptions(searchAlbum.subalbums[indexSubalbums].words);
 																if (
 																	searchWordsFromUserNormalizedAccordingToOptions.some(
 																		function(element, index) {
@@ -1964,7 +1928,7 @@
 															} else {
 																// inside words
 																for (indexWordsLeft = lastIndex + 1; indexWordsLeft < searchWordsFromUser.length; indexWordsLeft ++) {
-																	normalizedWords = util.normalizeAccordingToOptions(searchResultsAlbumFinal.subalbums[indexSubalbums].words);
+																	normalizedWords = util.normalizeAccordingToOptions(searchAlbum.subalbums[indexSubalbums].words);
 																	if (
 																		! normalizedWords.some(
 																			function(element) {
@@ -1977,15 +1941,15 @@
 																	}
 																}
 															}
-															if (match && matchingSubalbums.indexOf(searchResultsAlbumFinal.subalbums[indexSubalbums]) == -1)
-																matchingSubalbums.push(searchResultsAlbumFinal.subalbums[indexSubalbums]);
+															if (match && matchingSubalbums.indexOf(searchAlbum.subalbums[indexSubalbums]) == -1)
+																matchingSubalbums.push(searchAlbum.subalbums[indexSubalbums]);
 														}
 
-														searchResultsAlbumFinal.subalbums = matchingSubalbums;
+														searchAlbum.subalbums = matchingSubalbums;
 
-														if (searchResultsAlbumFinal.subalbums.length) {
+														if (searchAlbum.subalbums.length) {
 															// search albums need to conform to default behaviour of albums: json files have subalbums and media sorted by date not reversed
-															util.sortByDate(searchResultsAlbumFinal.subalbums);
+															util.sortByDate(searchAlbum.subalbums);
 														}
 													}
 													subalbumsAbsentOrGot();

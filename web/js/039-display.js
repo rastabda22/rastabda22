@@ -20,6 +20,7 @@ var destAlbum = null;
 var hashBeginning = "#!/";
 var mapAlbum = {};
 var selectionAlbum = {};
+var searchAlbum = {};
 // var scrollbarWidth;
 // var contextMenu = false;
 var imagesAndVideos0 = {"images": 0, "videos": 0};
@@ -344,16 +345,16 @@ $(document).ready(function() {
 						if (nextBrowsingModeObject[0] === undefined)
 							nextBrowsingModeObject = $(".browsing-mode-switcher.selected").siblings(filter).first();
 						$(".browsing-mode-switcher").removeClass("selected");
-						nextBrowsingModeObject.addClass("selected");
 						nextBrowsingModeObject.click();
+						nextBrowsingModeObject.addClass("selected");
 						return false;
 					} else if (prevBrowsingModeRequested) {
 						let prevBrowsingModeObject = $(".browsing-mode-switcher.selected").prev(filter);
 						if (prevBrowsingModeObject[0] === undefined)
 							prevBrowsingModeObject = $(".browsing-mode-switcher.selected").siblings(filter).last();
 						$(".browsing-mode-switcher").removeClass("selected");
-						prevBrowsingModeObject.addClass("selected");
 						prevBrowsingModeObject.click();
+						prevBrowsingModeObject.addClass("selected");
 						return false;
 					}
 				}
