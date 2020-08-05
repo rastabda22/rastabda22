@@ -154,7 +154,7 @@
 		if (
 			isMapOrPopup ||
 			thisAlbum === null ||
-			! isSingleMedia && ! isAnyRootHash && ! somethingIsSelected
+			! isSingleMedia && ! isAnyRootHash
 		) {
 			$(".browsing-mode-switcher").addClass("hidden");
 		} else {
@@ -214,19 +214,19 @@
 				$("#by-selection-view").removeClass("hidden").addClass("selected");
 			}
 
-			$("#back-to-previous-view").addClass("hidden").removeClass("radio");
-			if (somethingIsSelected && ! isSingleMedia && ! isAnyRootHash) {
-				if (! isSelectionCacheBase || location.hash === cacheBaseBeforeBrowsingBySelection) {
-					$("#folders-view").addClass("hidden");
-					$("#by-gps-view").addClass("hidden");
-					$("#by-map-view").addClass("hidden");
-					$("#back-to-previous-view").removeClass("hidden").addClass("radio");
-					if (location.hash === cacheBaseBeforeBrowsingBySelection)
-						$("#back-to-previous-view").addClass("selected");
-					else
-						$("#by-selection-view").addClass("selected");
-				}
-			}
+			// $("#back-to-previous-view").addClass("hidden").removeClass("radio");
+			// if (somethingIsSelected && ! isSingleMedia && ! isAnyRootHash) {
+			// 	if (! isSelectionCacheBase || location.hash === cacheBaseBeforeBrowsingBySelection) {
+			// 		$("#folders-view").addClass("hidden");
+			// 		$("#by-gps-view").addClass("hidden");
+			// 		$("#by-map-view").addClass("hidden");
+			// 		$("#back-to-previous-view").removeClass("hidden").addClass("radio");
+			// 		if (location.hash === cacheBaseBeforeBrowsingBySelection)
+			// 			$("#back-to-previous-view").addClass("selected");
+			// 		else
+			// 			$("#by-selection-view").addClass("selected");
+			// 	}
+			// }
 
 			// bind the click events
 
@@ -290,22 +290,27 @@
 			$("#by-map-view:not(.hidden):not(.selected)").on(
 				"click",
 				function changeToByMapView() {
+					TopFunctions.showBrowsingModeMessage("#by-map-browsing");
 					if (isSingleMedia) {
-						TopFunctions.showBrowsingModeMessage("#by-map-browsing");
-						window.location.href = thisMedia.byMapViewHash;
-						return false;
+						window.location.href = phFl.encodeHash(mapAlbum, thisMedia);
+					} else if (isAnyRootHash) {
+					// } else if (isAnyRootHash || isSelectionCacheBase) {
+						window.location.href = phFl.encodeHash(mapAlbum, null);
 					}
+					return false;
 				}
 			);
 
 			$("#by-search-view:not(.hidden):not(.selected)").on(
 				"click",
 				function changeToBySearchView() {
+					TopFunctions.showBrowsingModeMessage("#by-search-browsing");
 					if (isSingleMedia) {
-						TopFunctions.showBrowsingModeMessage("#by-search-browsing");
-						window.location.href = thisMedia.bySearchViewHash;
-						return false;
+						window.location.href = phFl.encodeHash(searchAlbum, thisMedia);
+					} else if (isAnyRootHash) {
+						window.location.href = phFl.encodeHash(searchAlbum, null);
 					}
+					return false;
 				}
 			);
 
@@ -313,37 +318,25 @@
 				"click",
 				function changeToBySelectionView() {
 					TopFunctions.showBrowsingModeMessage("#by-selection-browsing");
-
-					// let bySelectionRootAlbum = phFl.getAlbumFromCache(Options.by_selection_string);
-					// if (bySelectionRootAlbum && bySelectionRootAlbum.subalbums.length) {
-					// 	let bySelectionAlbum = phFl.getAlbumFromCache(bySelectionRootAlbum.subalbums[bySelectionRootAlbum.subalbums.length - 1].cacheBase);
-					// }
-
-					if (! isSingleMedia && ! isAnyRootHash) {
-						cacheBaseBeforeBrowsingBySelection = thisAlbum.cacheBase;
-					}
-
 					let bySelectionViewHash;
 					if (isSingleMedia) {
-						bySelectionViewHash = hashBeginning + thisMedia.selectionAlbumCacheBase;
+						window.location.href = phFl.encodeHash(selectionAlbum, thisMedia);
 					} else {
-						bySelectionViewHash = phFl.encodeHash(selectionAlbum, null);
+						window.location.href = phFl.encodeHash(selectionAlbum, null);
 					}
-
-					window.location.href = bySelectionViewHash;
 					return false;
 				}
 			);
 
-			$("#back-to-previous-view:not(.hidden)").on(
-				"click",
-				function backToCacheBaseBeforeEnteringSelectionBrowsing() {
-					TopFunctions.showBrowsingModeMessage("#previous-browsing");
-					window.location.href = hashBeginning + cacheBaseBeforeBrowsingBySelection;
-					cacheBaseBeforeBrowsingBySelection = null;
-					return false;
-				}
-			);
+			// $("#back-to-previous-view:not(.hidden)").on(
+			// 	"click",
+			// 	function backToCacheBaseBeforeEnteringSelectionBrowsing() {
+			// 		TopFunctions.showBrowsingModeMessage("#previous-browsing");
+			// 		window.location.href = hashBeginning + cacheBaseBeforeBrowsingBySelection;
+			// 		cacheBaseBeforeBrowsingBySelection = null;
+			// 		return false;
+			// 	}
+			// );
 		}
 
 		////////////////// SEARCH //////////////////////////////
