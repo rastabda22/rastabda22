@@ -106,7 +106,7 @@ $(document).ready(function() {
 		var isAuth = $("#auth-text").is(":visible");
 
 		function toggleMenu() {
-			$("#menu-icon").click();
+			$("#menu-icon")[0].click();
 		}
 
 		let upLink = util.upHash();
@@ -117,7 +117,7 @@ $(document).ready(function() {
 			if (isAuth) {
 				// if (upLink && (currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)))
 				// 	pS.swipeDown(upLink);
-				$('#auth-close').click();
+				$('#auth-close')[0].click();
 				// $("#auth-text").hide();
 				// $("#album-view, #media-view, #my-modal").css("opacity", "");
 				// util.goUpInHash();
@@ -131,12 +131,12 @@ $(document).ready(function() {
 			} else if (isMap) {
 				if (isPopup) {
 					// the popup is there: close it
-					$('.leaflet-popup-close-button').click();
+					$('.leaflet-popup-close-button')[0].click();
 					mapAlbum = {};
 					// $('#popup #popup-content').html("");
 				} else {
 					// we are in a map: close it
-					$('.modal-close').click();
+					$('.modal-close')[0].click();
 					popupRefreshType = "previousAlbum";
 					mapRefreshType = "none";
 				}
@@ -168,9 +168,9 @@ $(document).ready(function() {
 					if (e.key === "Tab") {
 						e.preventDefault();
 						if (pS.getCurrentZoom() == pS.getInitialZoom() && ! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
-							$("ul#right-menu li.hide-title").click();
-							$("ul#right-menu li.hide-media-caption").click();
-							$("ul#right-menu li.hide-bottom-thumbnails").click();
+							$("ul#right-menu li.hide-title")[0].click();
+							$("ul#right-menu li.hide-media-caption")[0].click();
+							$("ul#right-menu li.hide-bottom-thumbnails")[0].click();
 							// tF.toggleTitle(e);
 							// tF.toggleBottomThumbnails(e);
 							return false;
@@ -178,7 +178,7 @@ $(document).ready(function() {
 					} else if (e.key === "ArrowRight" && (pS.getCurrentZoom() !== pS.getInitialZoom() || prevMedia) && currentMedia !== null && ! isMap) {
 						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
 							$("#album-view.media-view-container").removeClass("hidden-by-pinch");
-							$("#next").click();
+							$("#next")[0].click();
 							// PinchSwipe.swipeLeft(media);
 						} else {
 							// drag
@@ -201,7 +201,7 @@ $(document).ready(function() {
 						nextMedia && currentMedia !== null && ! isMap
 					) {
 						$("#album-view.media-view-container").removeClass("hidden-by-pinch");
-						$("#next").click();
+						$("#next")[0].click();
 						// pS.swipeLeft(nextMedia);
 						return false;
 					} else if (
@@ -209,13 +209,13 @@ $(document).ready(function() {
 						prevMedia && currentMedia !== null && ! isMap
 					) {
 						$("#album-view.media-view-container").removeClass("hidden-by-pinch");
-						$("#prev").click();
+						$("#prev")[0].click();
 						// pS.swipeRight(prevMedia);
 						return false;
 					} else if (e.key === "ArrowLeft" && (pS.getCurrentZoom() !== pS.getInitialZoom() || prevMedia) && currentMedia !== null && ! isMap) {
 						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
 							$("#album-view.media-view-container").removeClass("hidden-by-pinch");
-							$("#prev").click();
+							$("#prev")[0].click();
 							// PinchSwipe.swipeRight(media);
 						} else {
 							// drag
@@ -253,7 +253,7 @@ $(document).ready(function() {
 						}
 					} else if (e.key.toLowerCase() === "d" && ! isMap) {
 						if (currentMedia !== null)
-							$(".download-single-media .download-link").click();
+							$(".download-single-media .download-link")[0].click();
 						return false;
 					} else if (e.key.toLowerCase() === "f" && currentMedia !== null && ! isMap) {
 						tF.goFullscreen(e);
@@ -262,7 +262,7 @@ $(document).ready(function() {
 						f.toggleMetadata();
 						return false;
 					} else if (e.key.toLowerCase() === "o" && currentMedia !== null && ! isMap) {
-						$("#center .original-link").click();
+						$("#center .original-link")[0].click();
 						return false;
 					} else if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].indexOf(e.key) > -1) {
 						if (isMap) {
@@ -297,7 +297,7 @@ $(document).ready(function() {
 							currentMedia === null && currentAlbum.positionsAndMediaInTree.length
 						)
 					) {
-						$(".map-popup-trigger").click();
+						$(".map-popup-trigger")[0].click();
 						return false;
 					} else if (
 						e.key.toLowerCase() === "u" &&
@@ -312,7 +312,7 @@ $(document).ready(function() {
 						if (
 							numPasswords && PhotoFloat.guessedPasswordCodes.length < numPasswords
 						) {
-							$("#protected-content-unveil").click();
+							$("#protected-content-unveil")[0].click();
 							return false;
 						}
 					}
@@ -345,16 +345,16 @@ $(document).ready(function() {
 						if (nextBrowsingModeObject[0] === undefined)
 							nextBrowsingModeObject = $(".browsing-mode-switcher.selected").siblings(filter).first();
 						$(".browsing-mode-switcher").removeClass("selected");
-						nextBrowsingModeObject.click();
-						nextBrowsingModeObject.addClass("selected");
+						$(nextBrowsingModeObject).addClass("selected");
+						nextBrowsingModeObject[0].click();
 						return false;
 					} else if (prevBrowsingModeRequested) {
 						let prevBrowsingModeObject = $(".browsing-mode-switcher.selected").prev(filter);
 						if (prevBrowsingModeObject[0] === undefined)
 							prevBrowsingModeObject = $(".browsing-mode-switcher.selected").siblings(filter).last();
 						$(".browsing-mode-switcher").removeClass("selected");
-						prevBrowsingModeObject.click();
-						prevBrowsingModeObject.addClass("selected");
+						$(prevBrowsingModeObject).addClass("selected");
+						prevBrowsingModeObject[0].click();
 						return false;
 					}
 				}
@@ -412,7 +412,7 @@ $(document).ready(function() {
 						prevSortingModeMessageId = sortingMessageIds[prevSortingIndex] + "-" + mode + "-sorting";
 						$("#" + prevSortingModeMessageId).show();
 						$("#" + prevSortingModeMessageId).fadeOut(2500);
-						$(".sort." + mode + "-sort" + prevSelector).click();
+						$(".sort." + mode + "-sort" + prevSelector)[0].click();
 						// console.log(".sort." + mode + "-sort" + prevSelector + " ------- " + prevSortingModeMessageId);
 					} else {
 						var nextSelectors = [".by-name", ".reverse", ".by-date", ".reverse"];
@@ -421,7 +421,7 @@ $(document).ready(function() {
 						nextSortingModeMessageId = sortingMessageIds[nextSortingIndex] + "-" + mode + "-sorting";
 						$("#" + nextSortingModeMessageId).show();
 						$("#" + nextSortingModeMessageId).fadeOut(2500);
-						$(".sort." + mode + "-sort" + nextSelector).click();
+						$(".sort." + mode + "-sort" + nextSelector)[0].click();
 						// console.log(".sort." + mode + "-sort" + nextSelector + " ------- " + nextSortingModeMessageId);
 					}
 				}
@@ -746,12 +746,12 @@ $(document).ready(function() {
 
 						if (isPopup) {
 							popupRefreshType = "mapAlbum";
-							$('.leaflet-popup-close-button').click();
+							$('.leaflet-popup-close-button')[0].click();
 						} else {
 							popupRefreshType = "none";
 						}
 						// close the map
-						$('.modal-close').click();
+						$('.modal-close')[0].click();
 					}
 
 					$(window).hashchange();

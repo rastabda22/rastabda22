@@ -932,7 +932,7 @@
 				$("#padlock").off('click').on(
 					'click',
 					function() {
-						$("#protected-content-unveil").click();
+						$("#protected-content-unveil")[0].click();
 					}
 				);
 			} else {

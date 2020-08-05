@@ -206,9 +206,9 @@
 		$("#popup-photo-count").on(
 			"click",
 			function() {
-				$('.leaflet-popup-close-button').click();
+				$('.leaflet-popup-close-button')[0].click();
 				// $('#popup #popup-content').html("");
-				$('.modal-close').click();
+				$('.modal-close')[0].click();
 				popupRefreshType = "previousAlbum";
 				mapRefreshType = "none";
 
@@ -246,9 +246,9 @@
 			function() {
 				var imgData = JSON.parse(element.attr("data"));
 				// called after an element was successfully handled
-				$('.leaflet-popup-close-button').click();
+				$('.leaflet-popup-close-button')[0].click();
 				// $('#popup #popup-content').html("");
-				$('.modal-close').click();
+				$('.modal-close')[0].click();
 				popupRefreshType = "previousAlbum";
 				mapRefreshType = "none";
 				window.location.href = imgData.mediaHash;
