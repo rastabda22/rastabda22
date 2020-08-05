@@ -127,7 +127,7 @@
 			thisAlbum = currentAlbum;
 		var isAlbumWithOneMedia = util.isAlbumWithOneMedia(thisAlbum);
 		var isSingleMedia = (currentMedia !== null || isAlbumWithOneMedia);
-		var isAnyRootHash = util.isAnyRootHash(thisAlbum.cacheBase);
+		var isAnyRootCacheBase = util.isAnyRootCacheBase(thisAlbum.cacheBase);
 		var isSelectionCacheBase = util.isSelectionCacheBase(thisAlbum.cacheBase);
 		var somethingIsSelected = util.somethingIsSelected();
 
@@ -139,7 +139,7 @@
 			else
 				thisMedia = thisAlbum.media[0];
 			hasGpsData = util.hasGpsData(thisMedia);
-		} else if (isAnyRootHash) {
+		} else if (isAnyRootCacheBase) {
 			hasGpsData = (Options.num_positions_in_tree > 0);
 		} else {
 			hasGpsData = false;
@@ -154,7 +154,7 @@
 		if (
 			isMapOrPopup ||
 			thisAlbum === null ||
-			! isSingleMedia && ! isAnyRootHash
+			! isSingleMedia && ! isAnyRootCacheBase
 		) {
 			$(".browsing-mode-switcher").addClass("hidden");
 		} else {
@@ -215,7 +215,7 @@
 			}
 
 			// $("#back-to-previous-view").addClass("hidden").removeClass("radio");
-			// if (somethingIsSelected && ! isSingleMedia && ! isAnyRootHash) {
+			// if (somethingIsSelected && ! isSingleMedia && ! isAnyRootCacheBase) {
 			// 	if (! isSelectionCacheBase || location.hash === cacheBaseBeforeBrowsingBySelection) {
 			// 		$("#folders-view").addClass("hidden");
 			// 		$("#by-gps-view").addClass("hidden");
@@ -240,8 +240,8 @@
 							thisMedia.foldersCacheBase,
 							thisMedia.cacheBase
 						]);
-					} else if (isAnyRootHash) {
-					// } else if (isAnyRootHash || isSelectionCacheBase) {
+					} else if (isAnyRootCacheBase) {
+					// } else if (isAnyRootCacheBase || isSelectionCacheBase) {
 						window.location.href = hashBeginning + encodeURIComponent(Options.folders_string);
 					}
 
@@ -260,8 +260,8 @@
 							thisMedia.foldersCacheBase,
 							thisMedia.cacheBase
 						]);
-					} else if (isAnyRootHash) {
-					// } else if (isAnyRootHash || isSelectionCacheBase) {
+					} else if (isAnyRootCacheBase) {
+					// } else if (isAnyRootCacheBase || isSelectionCacheBase) {
 						window.location.href = hashBeginning + encodeURIComponent(Options.by_date_string);
 					}
 					return false;
@@ -279,8 +279,8 @@
 							thisMedia.foldersCacheBase,
 							thisMedia.cacheBase
 						]);
-					} else if (isAnyRootHash) {
-					// } else if (isAnyRootHash || isSelectionCacheBase) {
+					} else if (isAnyRootCacheBase) {
+					// } else if (isAnyRootCacheBase || isSelectionCacheBase) {
 						window.location.href = hashBeginning + encodeURIComponent(Options.by_gps_string);
 					}
 					return false;
@@ -293,8 +293,8 @@
 					TopFunctions.showBrowsingModeMessage("#by-map-browsing");
 					if (isSingleMedia) {
 						window.location.href = phFl.encodeHash(mapAlbum, thisMedia);
-					} else if (isAnyRootHash) {
-					// } else if (isAnyRootHash || isSelectionCacheBase) {
+					} else if (isAnyRootCacheBase) {
+					// } else if (isAnyRootCacheBase || isSelectionCacheBase) {
 						window.location.href = phFl.encodeHash(mapAlbum, null);
 					}
 					return false;
@@ -307,7 +307,7 @@
 					TopFunctions.showBrowsingModeMessage("#by-search-browsing");
 					if (isSingleMedia) {
 						window.location.href = phFl.encodeHash(searchAlbum, thisMedia);
-					} else if (isAnyRootHash) {
+					} else if (isAnyRootCacheBase) {
 						window.location.href = phFl.encodeHash(searchAlbum, null);
 					}
 					return false;
@@ -381,7 +381,7 @@
 				$("ul#right-menu li#accent-sensitive").addClass("selected");
 			else
 				$("ul#right-menu li#accent-sensitive").removeClass("selected");
-			if (util.isAnyRootHash(Options.cache_base_to_search_in) || isPopup) {
+			if (util.isAnyRootCacheBase(Options.cache_base_to_search_in) || isPopup) {
 				$("ul#right-menu li#album-search").addClass("dimmed").off("click");
 			} else {
 				$("ul#right-menu li#album-search").removeClass("dimmed").off("click").on('click', Functions.toggleCurrentAbumSearch);

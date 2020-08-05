@@ -1510,7 +1510,7 @@
 
 						Options.cache_base_to_search_in = splittedAlbumHash.slice(2).join(Options.cache_folder_separator);
 
-						// if (util.isAnyRootHash(Options.cache_base_to_search_in))
+						// if (util.isAnyRootCacheBase(Options.cache_base_to_search_in))
 						// 	$("ul#right-menu li#album-search").addClass("hidden");
 
 						// if (util.isSearchHash(location.hash) && Options.search_refine)
@@ -1760,7 +1760,7 @@
 														if (
 															util.normalizeAccordingToOptions(ithMedia.words).includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) && (
 																! Options.search_current_album ||
-																util.isAnyRootHash(Options.cache_base_to_search_in) || (
+																util.isAnyRootCacheBase(Options.cache_base_to_search_in) || (
 																	// check whether the media is inside the current album tree
 																	ithMedia.foldersCacheBase.indexOf(Options.cache_base_to_search_in) === 0 ||
 																	ithMedia.hasOwnProperty("dayAlbumCacheBase") && ithMedia.dayAlbumCacheBase.indexOf(Options.cache_base_to_search_in) === 0 ||
@@ -1781,7 +1781,7 @@
 														if (
 															util.normalizeAccordingToOptions(ithSubalbum.words).includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) && (
 																! Options.search_current_album ||
-																util.isAnyRootHash(Options.cache_base_to_search_in) || (
+																util.isAnyRootCacheBase(Options.cache_base_to_search_in) || (
 																	// check whether the media is inside the current album tree
 																	ithSubalbum.cacheBase.indexOf(Options.cache_base_to_search_in) === 0 &&
 																	ithSubalbum.cacheBase != Options.cache_base_to_search_in
@@ -1802,7 +1802,7 @@
 																}
 															) && (
 																! Options.search_current_album ||
-																util.isAnyRootHash(Options.cache_base_to_search_in) || (
+																util.isAnyRootCacheBase(Options.cache_base_to_search_in) || (
 																	// check whether the media is inside the current album tree
 																	ithMedia.foldersCacheBase.indexOf(Options.cache_base_to_search_in) === 0 ||
 																	ithMedia.hasOwnProperty("dayAlbumCacheBase") && ithMedia.dayAlbumCacheBase.indexOf(Options.cache_base_to_search_in) === 0 ||
@@ -1828,7 +1828,7 @@
 																}
 															) && (
 																! Options.search_current_album ||
-																util.isAnyRootHash(Options.cache_base_to_search_in) || (
+																util.isAnyRootCacheBase(Options.cache_base_to_search_in) || (
 																	// check whether the media is inside the current album tree
 																	ithSubalbum.cacheBase.indexOf(Options.cache_base_to_search_in) === 0 &&
 																	ithSubalbum.cacheBase != Options.cache_base_to_search_in

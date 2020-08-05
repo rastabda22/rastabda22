@@ -608,8 +608,32 @@
 		return sortedAlbum;
 	};
 
+	Utilities.isSearchRootCacheBase = function(cacheBase) {
+		return cacheBase.indexOf(Options.by_search_string) === 0 && cacheBase.split(Options.cache_folder_separator).length === 3;
+	};
+
+	Utilities.isMapRootCacheBase = function(cacheBase) {
+		return cacheBase.indexOf(Options.by_map_string) === 0 && cacheBase.split(Options.cache_folder_separator).length === 3;
+	};
+
+	Utilities.isSelectionRootCacheBase = function(cacheBase) {
+		return cacheBase.indexOf(Options.by_selection_string) === 0 && cacheBase.split(Options.cache_folder_separator).length === 2;
+	};
+
 	Utilities.isAnyRootHash = function(hash) {
-		return [Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(hash) !== -1;
+		var cacheBase = hash;
+		if (hash.indexOf(hashBeginning) === 0)
+			cacheBase = hash.substring(hashBeginning);
+		return Utilities.isAnyRootCacheBase(cacheBase);
+	};
+
+	Utilities.isAnyRootCacheBase = function(cacheBase) {
+		result =
+			[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(cacheBase) !== -1 ||
+			Utilities.isSearchRootCacheBase(cacheBase) ||
+			Utilities.isMapRootCacheBase(cacheBase) ||
+			Utilities.isSelectionRootCacheBase(cacheBase);
+		return result;
 	};
 
 	Utilities.prototype.trimExtension = function(name) {
@@ -2138,6 +2162,7 @@
 	// Utilities.prototype.countSelectedMedia = Utilities.countSelectedMedia;
 	// Utilities.prototype.countSelectedSubalbums = Utilities.countSelectedSubalbums;
 	Utilities.prototype.isAnyRootHash = Utilities.isAnyRootHash;
+	Utilities.prototype.isAnyRootCacheBase = Utilities.isAnyRootCacheBase;
 	Utilities.prototype.mergePositionsAndMedia = Utilities.mergePositionsAndMedia;
 	Utilities.prototype.hasGpsData = Utilities.hasGpsData;
 	Utilities.prototype.addSingleMediaToPositionsAndMedia = Utilities.addSingleMediaToPositionsAndMedia;
