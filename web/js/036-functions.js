@@ -206,20 +206,6 @@
 				$("#by-selection-view").removeClass("hidden").addClass("selected");
 			}
 
-			// $("#back-to-previous-view").addClass("hidden").removeClass("radio");
-			// if (somethingIsSelected && ! isSingleMedia && ! isAnyRootCacheBase) {
-			// 	if (! isSelectionCacheBase || location.hash === cacheBaseBeforeBrowsingBySelection) {
-			// 		$("#folders-view").addClass("hidden");
-			// 		$("#by-gps-view").addClass("hidden");
-			// 		$("#by-map-view").addClass("hidden");
-			// 		$("#back-to-previous-view").removeClass("hidden").addClass("radio");
-			// 		if (location.hash === cacheBaseBeforeBrowsingBySelection)
-			// 			$("#back-to-previous-view").addClass("selected");
-			// 		else
-			// 			$("#by-selection-view").addClass("selected");
-			// 	}
-			// }
-
 			// bind the click events
 
 			$("#folders-view:not(.hidden):not(.selected)").on(
@@ -318,16 +304,6 @@
 					return false;
 				}
 			);
-
-			// $("#back-to-previous-view:not(.hidden)").on(
-			// 	"click",
-			// 	function backToCacheBaseBeforeEnteringSelectionBrowsing() {
-			// 		TopFunctions.showBrowsingModeMessage("#previous-browsing");
-			// 		window.location.href = hashBeginning + cacheBaseBeforeBrowsingBySelection;
-			// 		cacheBaseBeforeBrowsingBySelection = null;
-			// 		return false;
-			// 	}
-			// );
 		}
 
 		////////////////// SEARCH //////////////////////////////
