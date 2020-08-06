@@ -133,7 +133,7 @@
 		searchAlbum.ancestorsCacheBase = searchRootAlbum.ancestorsCacheBase.slice();
 		searchAlbum.ancestorsCacheBase.push(searchAlbum.cacheBase);
 
-		PhotoFloat.putAlbumIntoCache(newSearchAlbum.cacheBase, newSearchAlbum);
+		PhotoFloat.putAlbumIntoCache(searchAlbum.cacheBase, searchAlbum);
 	};
 
 	Utilities.initializeSelectionRootAlbum = function() {
