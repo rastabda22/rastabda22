@@ -782,12 +782,6 @@ $(document).ready(function() {
 
 			if (isABrowsingModeChange)
 				isABrowsingModeChange = false;
-			else {
-				// the image has changed, reset the search and map link
-				bySearchViewHash = "";
-				bySelectionViewHash = ""
-				byMapViewHash = "";
-			}
 			$("#loading").show();
 			$("#album-view").removeClass("hidden");
 			$("link[rel=image_src]").remove();

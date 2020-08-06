@@ -748,7 +748,49 @@
 	};
 
 
-	Utilities.prototype.somethingIsSelected = function() {
+	Utilities.prototype.singleMediaIsInMapAlbum = function(singleMedia) {
+		if (! Utilities.somethingIsInMapAlbum())
+			return false;
+		else {
+			var index = mapAlbum.media.findIndex(x => x.foldersCacheBase === singleMedia.foldersCacheBase && x.cacheBase === singleMedia.cacheBase);
+			if (index > -1)
+				return true;
+			else
+				return false;
+		}
+	};
+
+	Utilities.prototype.singleMediaIsSearched = function(singleMedia) {
+		if (! Utilities.somethingIsSearched())
+			return false;
+		else {
+			var index = searchAlbum.media.findIndex(x => x.foldersCacheBase === singleMedia.foldersCacheBase && x.cacheBase === singleMedia.cacheBase);
+			if (index > -1)
+				return true;
+			else
+				return false;
+		}
+	};
+
+	Utilities.somethingIsInMapAlbum = function() {
+		// var selectionAlbumCacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
+		// var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
+		if (mapAlbum.hasOwnProperty("numMediaInSubTree") && Utilities.imagesAndVideosTotal(mapAlbum.numMediaInSubTree))
+			return true;
+		else
+			return false;
+	};
+
+	Utilities.somethingIsSearched = function() {
+		// var selectionAlbumCacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
+		// var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
+		if (searchAlbum.hasOwnProperty("numMediaInSubTree") && Utilities.imagesAndVideosTotal(searchAlbum.numMediaInSubTree))
+			return true;
+		else
+			return false;
+	};
+
+	Utilities.somethingIsSelected = function() {
 		// var selectionAlbumCacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
 		// var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
 		if (selectionAlbum.hasOwnProperty("numMediaInSubTree") && Utilities.imagesAndVideosTotal(selectionAlbum.numMediaInSubTree))
@@ -760,10 +802,10 @@
 	Utilities.singleMediaIsSelected = function(singleMedia) {
 		// var selectionAlbumCacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
 		// var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
-		if (! selectionAlbum.hasOwnProperty("numMediaInSubTree"))
+		if (! Utilities.somethingIsSelected())
 			return false;
 		else {
-			var index = selectionAlbum.media.findIndex(x => x.albumName === singleMedia.albumName && x.cacheBase === singleMedia.cacheBase);
+			var index = selectionAlbum.media.findIndex(x => x.foldersCacheBase === singleMedia.foldersCacheBase && x.cacheBase === singleMedia.cacheBase);
 			if (index > -1)
 				return true;
 			else
@@ -2174,6 +2216,9 @@
 	Utilities.prototype.initializeSelectionRootAlbum = Utilities.initializeSelectionRootAlbum;
 	Utilities.prototype.initializeMapRootAlbum = Utilities.initializeMapRootAlbum;
 	Utilities.prototype.initializeSearchRootAlbum = Utilities.initializeSearchRootAlbum;
+	Utilities.prototype.somethingIsSelected = Utilities.somethingIsSelected;
+	Utilities.prototype.somethingIsSearched = Utilities.somethingIsSearched;
+	Utilities.prototype.somethingIsInMapAlbum = Utilities.somethingIsInMapAlbum;
 
 	window.Utilities = Utilities;
 }());

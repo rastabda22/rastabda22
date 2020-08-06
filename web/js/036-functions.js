@@ -164,33 +164,31 @@
 				$("#by-gps-view").addClass("hidden");
 			}
 
-			if (! somethingIsSelected) {
+			if (
+				! util.somethingIsSelected() || ! (
+					isSingleMedia && util.singleMediaIsSelected(thisMedia) ||
+					isAnyRootCacheBase
+				)
+			) {
 				$("#by-selection-view").addClass("hidden");
-				if (isSingleMedia && thisMedia.hasOwnProperty("bySelectionViewHash")) {
-					if (! util.getAlbumFromCache(thisMedia.bySelectionViewHash)) {
-						delete thisMedia.bySelectionViewHash;
-					}
-				}
 			}
 
-			if (jQuery.isEmptyObject(mapAlbum)) {
+			if (
+				! util.somethingIsInMapAlbum() || ! (
+					isSingleMedia && util.singleMediaIsInMapAlbum(thisMedia) ||
+					isAnyRootCacheBase
+				)
+			) {
 				$("#by-map-view").addClass("hidden");
-			} else {
-				if (isSingleMedia && thisMedia.hasOwnProperty("byMapViewHash")) {
-					if (! util.getAlbumFromCache(thisMedia.byMapViewHash)) {
-						delete thisMedia.byMapViewHash;
-					}
-				}
 			}
 
-			if (jQuery.isEmptyObject(PhotoFloat.searchResultsAlbumFinal)) {
+			if (
+				! util.somethingIsSearched() || ! (
+					isSingleMedia && util.singleMediaIsSearched(thisMedia) ||
+					isAnyRootCacheBase
+				)
+			) {
 				$("#by-search-view").addClass("hidden");
-			} else {
-				if (isSingleMedia && thisMedia.hasOwnProperty("bySearchViewHash")) {
-					if (! util.getAlbumFromCache(thisMedia.bySearchViewHash)) {
-						delete thisMedia.bySearchViewHash;
-					}
-				}
 			}
 
 			if (util.isFolderCacheBase(thisAlbum.cacheBase)) {
@@ -201,16 +199,10 @@
 			} else if (util.isByGpsCacheBase(thisAlbum.cacheBase)) {
 				$("#by-gps-view").addClass("selected");
 			} else if (util.isMapCacheBase(thisAlbum.cacheBase)) {
-				if (isSingleMedia)
-					thisMedia.byMapViewHash = location.hash;
 				$("#by-map-view").removeClass("hidden").addClass("selected");
 			} else if (util.isSearchCacheBase(thisAlbum.cacheBase)) {
-				if (isSingleMedia)
-					thisMedia.bySearchViewHash = location.hash;
 				$("#by-search-view").removeClass("hidden").addClass("selected");
 			} else if (isSelectionCacheBase) {
-				if (isSingleMedia)
-					thisMedia.bySelectionViewHash = location.hash;
 				$("#by-selection-view").removeClass("hidden").addClass("selected");
 			}
 
@@ -318,7 +310,6 @@
 				"click",
 				function changeToBySelectionView() {
 					TopFunctions.showBrowsingModeMessage("#by-selection-browsing");
-					let bySelectionViewHash;
 					if (isSingleMedia) {
 						window.location.href = phFl.encodeHash(selectionAlbum, thisMedia);
 					} else {
