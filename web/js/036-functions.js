@@ -628,7 +628,7 @@
 				// reset the html
 				$(".download-album.everything.all").html(util._t(".download-album.everything.all"));
 
-				let nMediaInSubTree = util.imagesAndVideosCount(thisAlbum.numMediaInSubTree);
+				let nMediaInSubTree = util.imagesAndVideosTotal(thisAlbum.numMediaInSubTree);
 				let numImages = thisAlbum.numMediaInSubTree.images;
 				let numVideos = thisAlbum.numMediaInSubTree.videos;
 				let what = util._t(".title-media")
