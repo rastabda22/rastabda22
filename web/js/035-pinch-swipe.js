@@ -392,7 +392,7 @@
 		 */
 		function swipeStatus(event, phase, direction, distance, duration, fingerCount) {
 			//If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
-			if (event.which === 3 && (event.shiftKey || event.ctrlKey || event.altKey)) {
+			if (event.button === 2 && (event.shiftKey || event.ctrlKey || event.altKey)) {
 				return;
 			}
 
@@ -475,7 +475,7 @@
 			// lamentably, swipeStatus doesn't return info about the swipe vector
 
 			pinchZoom = parseFloat(pinchZoom);
-			if (event.which === 3 && (event.shiftKey || event.ctrlKey || event.altKey)) {
+			if (event.button === 2 && (event.shiftKey || event.ctrlKey || event.altKey)) {
 				return;
 			}
 
@@ -524,7 +524,7 @@
 
 		function tap(event, target) {
 			if (currentZoom == initialZoom) {
-				if (event.which === 3) {
+				if (event.button === 2) {
 					// right click
 					if (prevMedia !== null) {
 						PinchSwipe.swipeRight(prevMedia);

@@ -582,7 +582,7 @@ $(document).ready(function() {
 
 	$('#search-field').keypress(function(ev) {
 		$("#right-menu li.search ul").removeClass("hidden");
-		if (ev.which == 13) {
+		if (ev.which === 13 || ev.keyCode === 13) {
 			//Enter key pressed, trigger search button click event
 			$('#search-button').click();
 			util.focusSearchField();

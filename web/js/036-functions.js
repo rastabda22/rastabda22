@@ -1358,7 +1358,7 @@
 	};
 
 	Functions.prototype.toggleMetadataFromMouse = function(ev) {
-		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			ev.stopPropagation();
 			Functions.toggleMetadata();
 			return false;

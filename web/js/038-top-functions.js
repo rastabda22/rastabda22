@@ -598,7 +598,7 @@
 			$(".dots").off('click').on(
 				'click',
 				function(ev) {
-					if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+					if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 						$(".dots-surroundings").hide();
 						$(".hidden-title").show();
 						return false;
@@ -1088,14 +1088,14 @@
 				);
 
 				$("#prev").on('click', function(ev) {
-					if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+					if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 						pS.swipeRight(prevMedia);
 						return false;
 					}
 					return true;
 				});
 				$("#next").on('click', function(ev) {
-					if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+					if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 						pS.swipeLeft(nextMedia);
 						return false;
 					}
@@ -1372,7 +1372,7 @@
 	TopFunctions.sortAlbumsByDate = function(ev, thisAlbum) {
 		if (
 			thisAlbum.albumNameSort &&
-			ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
+			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			f.setBooleanCookie("albumNameSortRequested", false);
 			f.setBooleanCookie("albumReverseSortRequested", thisAlbum.albumReverseSort);
@@ -1387,7 +1387,7 @@
 	TopFunctions.sortAlbumsByName = function(ev, thisAlbum) {
 		if (
 			! thisAlbum.albumNameSort &&
-			ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
+			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			f.setBooleanCookie("albumNameSortRequested", true);
 			f.setBooleanCookie("albumReverseSortRequested", thisAlbum.albumReverseSort);
@@ -1401,7 +1401,7 @@
 
 	TopFunctions.sortAlbumsReverse = function(ev, thisAlbum) {
 		if (
-			ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
+			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			f.setBooleanCookie("albumReverseSortRequested", ! thisAlbum.albumReverseSort);
 			util.sortAlbumsMedia(thisAlbum);
@@ -1416,7 +1416,7 @@
 	TopFunctions.sortMediaByDate = function (ev, thisAlbum) {
 		if (
 			thisAlbum.mediaNameSort &&
-			ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
+			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			f.setBooleanCookie("mediaNameSortRequested", false);
 			f.setBooleanCookie("mediaReverseSortRequested", thisAlbum.mediaReverseSort);
@@ -1435,7 +1435,7 @@
 	TopFunctions.sortMediaByName = function(ev, thisAlbum) {
 		if (
 			! thisAlbum.mediaNameSort &&
-			ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
+			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			f.setBooleanCookie("mediaNameSortRequested", true);
 			f.setBooleanCookie("mediaReverseSortRequested", thisAlbum.mediaReverseSort);
@@ -1451,7 +1451,7 @@
 	};
 
 	TopFunctions.sortMediaReverse = function(ev, thisAlbum) {
-		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			f.setBooleanCookie("mediaReverseSortRequested", ! f.getBooleanCookie("mediaReverseSortRequested"));
 
 			util.sortAlbumsMedia(thisAlbum);
@@ -1466,7 +1466,9 @@
 	};
 
 	TopFunctions.prototype.toggleTitle = function(ev) {
-		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		// next line: why [1, 9].indexOf(ev.which) !== -1 ?!?!?
+		// if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			Options.hide_title = ! Options.hide_title;
 			f.setBooleanCookie("hide_title", Options.hide_title);
 			f.updateMenu();
@@ -1536,7 +1538,7 @@
 	};
 
 	TopFunctions.prototype.toggleSlideMode = function(ev) {
-		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			Options.albums_slide_style = ! Options.albums_slide_style;
 			f.setBooleanCookie("albums_slide_style", Options.albums_slide_style);
 			f.updateMenu();
@@ -1547,7 +1549,7 @@
 	};
 
 	TopFunctions.prototype.toggleSpacing = function(ev) {
-		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			if (Options.spacing)
 				Options.spacing = 0;
 			else
@@ -1569,7 +1571,7 @@
 	};
 
 	TopFunctions.prototype.toggleAlbumNames = function(ev) {
-		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			Options.show_album_names_below_thumbs = ! Options.show_album_names_below_thumbs;
 			f.setBooleanCookie("show_album_names_below_thumbs", Options.show_album_names_below_thumbs);
 			f.updateMenu();
@@ -1580,7 +1582,7 @@
 	};
 
 	TopFunctions.prototype.toggleMediaCount = function(ev) {
-		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			Options.show_album_media_count = ! Options.show_album_media_count;
 			f.setBooleanCookie("show_album_media_count", Options.show_album_media_count);
 			f.updateMenu();
@@ -1591,7 +1593,7 @@
 	};
 
 	TopFunctions.prototype.toggleMediaNames = function(ev) {
-		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			Options.show_media_names_below_thumbs = ! Options.show_media_names_below_thumbs;
 			f.setBooleanCookie("show_media_names_below_thumbs", Options.show_media_names_below_thumbs);
 			f.updateMenu();
@@ -1602,7 +1604,7 @@
 	};
 
 	TopFunctions.prototype.toggleAlbumsSquare = function(ev) {
-		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			Options.album_thumb_type = Options.album_thumb_type == "square" ? "fit" : "square";
 			f.setCookie("album_thumb_type", Options.album_thumb_type);
 			f.updateMenu();
@@ -1613,7 +1615,7 @@
 	};
 
 	TopFunctions.prototype.toggleMediaSquare = function(ev) {
-		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			Options.media_thumb_type = Options.media_thumb_type == "square" ? "fixed_height" : "square";
 			f.setCookie("media_thumb_type", Options.media_thumb_type);
 			f.updateMenu();
@@ -1626,7 +1628,7 @@
 	};
 
 	TopFunctions.prototype.toggleBigAlbumsShow = function(ev) {
-		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			if ($("#error-too-many-images").is(":visible")) {
 				$("#error-too-many-images").hide();
 			}
@@ -2377,7 +2379,7 @@
 	};
 
 	TopFunctions.goFullscreenFromMouse = function(ev) {
-		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			TopFunctions.goFullscreen(ev);
 			return false;
 		}
