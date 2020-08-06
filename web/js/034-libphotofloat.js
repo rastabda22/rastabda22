@@ -324,8 +324,8 @@
 							"subalbums": [],
 							"numMedia": JSON.parse(JSON.stringify(imagesAndVideos0)),
 							"numMediaInSubTree": JSON.parse(JSON.stringify(imagesAndVideos0)),
-							"sizesOfAlbum": initialSizes,
-							"sizesOfSubTree": initialSizes,
+							"sizesOfAlbum": JSON.parse(JSON.stringify(initialSizes)),
+							"sizesOfSubTree": JSON.parse(JSON.stringify(initialSizes)),
 							"numPositionsInTree": 0,
 							// "includedProtectedDirectories": [],
 							"empty": true
@@ -1525,11 +1525,11 @@
 						if (searchWordsFromUser.length == 1)
 							$("ul#right-menu li#any-word").addClass("dimmed").off("click");
 
-						searchAlbum = util.initializeSearchAlbum(albumHash, mediaFolderHash);
+						searchAlbum = util.initializeSearchAlbumBegin(albumHash, mediaFolderHash);
 
 						if (albumHash == Options.by_search_string) {
 							// no search term
-							// does execution actually arrive here?
+							// TO DO: does execution actually arrive here?
 							util.noResults(searchAlbum, '#no-search-string');
 							// the resolve function is needed at least in order to show the title
 							resolve_parseHash([searchAlbum, -1]);
@@ -1570,7 +1570,7 @@
 						// it's a search with no results
 						util.noResults(albumFromCache);
 						// the resolve function is needed at least in order to show the title
-						resolve_parseHash([searchAlbum, -1]);
+						resolve_parseHash([albumFromCache, -1]);
 					} else {
 						// it's not a search without results: everything is ok, resolve!
 						let result = PhotoFloat.getMediaIndex(albumFromCache, mediaFolderHash, mediaHash);
@@ -1739,6 +1739,7 @@
 								resolve_parseHash([searchAlbum, -1]);
 							} else {
 								$(".search-failed").hide();
+								util.initializeSearchAlbumEnd();
 								searchAlbum.numsProtectedMediaInSubTree = util.sumNumsProtectedMediaOfArray(wordSubalbums);
 								for (indexWords = 0; indexWords <= lastIndex; indexWords ++) {
 									searchResultsMedia[indexWords] = [];

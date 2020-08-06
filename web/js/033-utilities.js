@@ -60,7 +60,6 @@
 		newMapAlbum.cacheBase = Options.by_map_string + Options.cache_folder_separator + lastMapAlbumIndex + Options.cache_folder_separator + currentAlbum.cacheBase;
 		newMapAlbum.path = newMapAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
 		newMapAlbum.physicalPath = newMapAlbum.path;
-		newMapAlbum.searchInFolderCacheBase = currentAlbum.cacheBase;
 		newMapAlbum.clickHistory = [];
 		newMapAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
 		newMapAlbum.includedFilesByCodesSimpleCombination = {};
@@ -79,33 +78,29 @@
 		return newMapAlbum;
 	};
 
-	Utilities.initializeSearchRootAlbum = function() {
-		// prepare the root of the map albums and put it in the cache
-		var rootSearchAlbum = {};
-		rootSearchAlbum.cacheBase = Options.by_search_string;
-		rootSearchAlbum.media = [];
-		rootSearchAlbum.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-		rootSearchAlbum.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
-		rootSearchAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
-		rootSearchAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
-		rootSearchAlbum.subalbums = [];
-		rootSearchAlbum.positionsAndMediaInTree = [];
-		rootSearchAlbum.numPositionsInTree = 0;
-		rootSearchAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
-		rootSearchAlbum.ancestorsCacheBase = [Options.by_search_string];
-		rootSearchAlbum.includedFilesByCodesSimpleCombination = {};
-		rootSearchAlbum.includedFilesByCodesSimpleCombination[","] = false;
+	// Utilities.initializeSearchRootAlbum = function() {
+	// 	// prepare the root of the map albums and put it in the cache
+	// 	var rootSearchAlbum = {};
+	// 	rootSearchAlbum.cacheBase = Options.by_search_string;
+	// 	rootSearchAlbum.media = [];
+	// 	rootSearchAlbum.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
+	// 	rootSearchAlbum.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
+	// 	rootSearchAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
+	// 	rootSearchAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
+	// 	rootSearchAlbum.subalbums = [];
+	// 	rootSearchAlbum.positionsAndMediaInTree = [];
+	// 	rootSearchAlbum.numPositionsInTree = 0;
+	// 	rootSearchAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
+	// 	rootSearchAlbum.ancestorsCacheBase = [Options.by_search_string];
+	// 	rootSearchAlbum.includedFilesByCodesSimpleCombination = {};
+	// 	rootSearchAlbum.includedFilesByCodesSimpleCombination[","] = false;
+	//
+	// 	PhotoFloat.putAlbumIntoCache(rootSearchAlbum.cacheBase, rootSearchAlbum);
+	//
+	// 	return rootSearchAlbum;
+	// };
 
-		PhotoFloat.putAlbumIntoCache(rootSearchAlbum.cacheBase, rootSearchAlbum);
-
-		return rootSearchAlbum;
-	};
-
-	Utilities.prototype.initializeSearchAlbum = function(albumHash, mediaFolderHash) {
-		var searchRootAlbum = PhotoFloat.getAlbumFromCache(Options.by_search_string);
-		// if (! searchRootAlbum)
-		// 	searchRootAlbum = util.initializeSearchRootAlbum();
-
+	Utilities.prototype.initializeSearchAlbumBegin = function(albumHash) {
 		var newSearchAlbum = {};
 		newSearchAlbum.positionsAndMediaInTree = [];
 		newSearchAlbum.media = [];
@@ -117,25 +112,28 @@
 		newSearchAlbum.cacheBase = albumHash;
 		newSearchAlbum.path = newSearchAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
 		newSearchAlbum.physicalPath = newSearchAlbum.path;
-		newSearchAlbum.searchInFolderCacheBase = mediaFolderHash;
 		newSearchAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
 		newSearchAlbum.includedFilesByCodesSimpleCombination = {};
 		newSearchAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
-
-		searchRootAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(searchRootAlbum.numMediaInSubTree, newSearchAlbum.numMediaInSubTree);
-		// searchRootAlbum.subalbums.push(newSearchAlbum);
-		searchRootAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(searchRootAlbum.positionsAndMediaInTree, newSearchAlbum.positionsAndMediaInTree);
-		searchRootAlbum.numPositionsInTree += newSearchAlbum.numPositionsInTree;
-		searchRootAlbum.numsProtectedMediaInSubTree[""] += newSearchAlbum.numsProtectedMediaInSubTree[""];
-
-		newSearchAlbum.ancestorsCacheBase = searchRootAlbum.ancestorsCacheBase.slice();
-		newSearchAlbum.ancestorsCacheBase.push(newSearchAlbum.cacheBase);
-
-		// Commented out, because it's better to put in cache further on
-		//PhotoFloat.putAlbumIntoCache(newSearchAlbum.cacheBase, newSearchAlbum);
-
 		return newSearchAlbum;
+	};
+
+	Utilities.prototype.initializeSearchAlbumEnd = function() {
+		var searchRootAlbum = PhotoFloat.getAlbumFromCache(Options.by_search_string);
+		// if (! searchRootAlbum)
+		// 	searchRootAlbum = util.initializeSearchRootAlbum();
+
+		searchRootAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(searchRootAlbum.numMediaInSubTree, searchAlbum.numMediaInSubTree);
+		// searchRootAlbum.subalbums.push(newSearchAlbum);
+		searchRootAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(searchRootAlbum.positionsAndMediaInTree, searchAlbum.positionsAndMediaInTree);
+		searchRootAlbum.numPositionsInTree += searchAlbum.numPositionsInTree;
+		searchRootAlbum.numsProtectedMediaInSubTree[""] += searchAlbum.numsProtectedMediaInSubTree[""];
+
+		searchAlbum.ancestorsCacheBase = searchRootAlbum.ancestorsCacheBase.slice();
+		searchAlbum.ancestorsCacheBase.push(searchAlbum.cacheBase);
+
+		PhotoFloat.putAlbumIntoCache(newSearchAlbum.cacheBase, newSearchAlbum);
 	};
 
 	Utilities.initializeSelectionRootAlbum = function() {
@@ -145,8 +143,8 @@
 		selectionRootAlbum.media = [];
 		selectionRootAlbum.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
 		selectionRootAlbum.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
-		selectionRootAlbum.sizesOfAlbum = initialSizes;
-		selectionRootAlbum.sizesOfSubTree = initialSizes;
+		selectionRootAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
+		selectionRootAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
 		selectionRootAlbum.subalbums = [];
 		selectionRootAlbum.positionsAndMediaInTree = [];
 		selectionRootAlbum.numPositionsInTree = 0;
@@ -173,16 +171,14 @@
 		newSelectionAlbum.media = [];
 		newSelectionAlbum.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
 		newSelectionAlbum.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
-		newSelectionAlbum.sizesOfAlbum = initialSizes;
-		newSelectionAlbum.sizesOfSubTree = initialSizes;
+		newSelectionAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
+		newSelectionAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
 		newSelectionAlbum.subalbums = [];
 		newSelectionAlbum.positionsAndMediaInTree = [];
 		newSelectionAlbum.numPositionsInTree = 0;
 		newSelectionAlbum.cacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
 		newSelectionAlbum.path = newSelectionAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
 		newSelectionAlbum.physicalPath = newSelectionAlbum.path;
-		// TO DO: apparently searchInFolderCacheBase property isn't used anywhere for any album
-		newSelectionAlbum.searchInFolderCacheBase = currentAlbum.cacheBase;
 		newSelectionAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
 		newSelectionAlbum.includedFilesByCodesSimpleCombination = {};
 		newSelectionAlbum.includedFilesByCodesSimpleCombination[","] = false;
@@ -2234,7 +2230,7 @@
 	Utilities.prototype.initializeSortPropertiesAndCookies = Utilities.initializeSortPropertiesAndCookies;
 	Utilities.prototype.initializeSelectionRootAlbum = Utilities.initializeSelectionRootAlbum;
 	Utilities.prototype.initializeMapRootAlbum = Utilities.initializeMapRootAlbum;
-	Utilities.prototype.initializeSearchRootAlbum = Utilities.initializeSearchRootAlbum;
+	// Utilities.prototype.initializeSearchRootAlbum = Utilities.initializeSearchRootAlbum;
 	Utilities.prototype.somethingIsSelected = Utilities.somethingIsSelected;
 	Utilities.prototype.somethingIsSearched = Utilities.somethingIsSearched;
 	Utilities.prototype.somethingIsInMapAlbum = Utilities.somethingIsInMapAlbum;

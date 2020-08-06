@@ -1295,7 +1295,7 @@
 							Options.byMapStringWithTrailingSeparator = Options.by_map_string + Options.cache_folder_separator;
 
 							util.initializeMapRootAlbum();
-							util.initializeSearchRootAlbum();
+							// WARNING: do not initialize the search root album, the app must read it from its json file!
 							util.initializeSelectionRootAlbum();
 
 							for (let i = 0; i < Options.reduced_sizes.length; i++) {

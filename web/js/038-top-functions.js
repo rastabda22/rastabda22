@@ -2030,7 +2030,10 @@
 									else if (folderArray.length == 4)
 										folderName += util._t("#day") + " " + parseInt(folderArray[3]);
 										folderTitle = folderName;
-								} else if (util.isByGpsCacheBase(currentAlbum.cacheBase)) {
+								} else if (
+									util.isByGpsCacheBase(currentAlbum.cacheBase) ||
+									util.isSelectionCacheBase(currentAlbum.cacheBase) && util.isByGpsCacheBase(ithSubalbum.cacheBase)
+								) {
 									folderName = '';
 									folderTitle = '';
 									if (ithSubalbum.name === '')
