@@ -1891,10 +1891,10 @@
 									"width: " + calculatedWidth + "px; " +
 									"height: " + calculatedHeight + "px;" +
 							"'>" +
-							mapLinkIcon +
-							selectBoxHtml +
-							"<span class='helper'></span>" +
-							img.prop("outerHTML") +
+								mapLinkIcon +
+								selectBoxHtml +
+								"<span class='helper'></span>" +
+								img.prop("outerHTML") +
 							"</div>" +
 							"<div class='media-caption'>" +
 								"<span>";
