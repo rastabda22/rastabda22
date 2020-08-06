@@ -29,6 +29,7 @@
 		rootMapAlbum.positionsAndMediaInTree = [];
 		rootMapAlbum.numPositionsInTree = 0;
 		rootMapAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
+		rootMapAlbum.ancestorsCacheBase = [Options.by_map_string];
 
 		PhotoFloat.putAlbumIntoCache(rootMapAlbum.cacheBase, rootMapAlbum);
 
@@ -84,6 +85,7 @@
 		rootSearchAlbum.positionsAndMediaInTree = [];
 		rootSearchAlbum.numPositionsInTree = 0;
 		rootSearchAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
+		rootSearchAlbum.ancestorsCacheBase = [Options.by_search_string];
 
 		PhotoFloat.putAlbumIntoCache(rootSearchAlbum.cacheBase, rootSearchAlbum);
 
