@@ -754,10 +754,14 @@
 				f.updateMenu();
 			}
 		} else {
-			let firstAddition = util.addSubalbumToSelection(subalbum, clickedSelector);
-			if (firstAddition) {
-				f.updateMenu();
-			}
+			let addSubalbumPromise = util.addSubalbumToSelection(subalbum, clickedSelector);
+			addSubalbumPromise.then(
+				function subalbumAdded(firstAddition) {
+					if (firstAddition) {
+						f.updateMenu();
+					}
+				}
+			);
 		}
 	};
 
