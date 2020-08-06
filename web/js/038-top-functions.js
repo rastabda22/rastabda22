@@ -328,8 +328,6 @@
 			// (optional) i=2: media folder cache base
 			// (optional) i=3: media cache base
 
-			// TO DO: not finished!!!!!!!!!
-
 			title = "<a class='" + titleAnchorClasses + "' href='" + hashBeginning + "'>" + components[0] + "</a>" + raquo;
 			title += "<a class='" + titleAnchorClasses + "' href='" + hashBeginning + Options.by_selection_string + "'>(" + util._t("#by-selection") + ")</a>";
 			if (singleMedia !== null) {
@@ -370,7 +368,7 @@
 			}
 
 			if (setDocumentTitle) {
-				documentTitle += " (" + where +") \u00ab " + components[0];
+				// documentTitle += " (" + where +") \u00ab " + components[0];
 				if (singleMedia !== null)
 					documentTitle = " \u00ab " + documentTitle;
 			}
@@ -444,10 +442,16 @@
 						"</a> " +
 						util._t("#in") +
 						" <span id='search-album-to-be-filled'></span>";
-				} else {
+				} else if (util.isSearchCacheBase(savedSearchAlbumHash)) {
 					where =
 						"<a class='search-link' href='" + hashBeginning + savedSearchAlbumHash + "'>" +
 						util._t("#by-search") +
+						"</a>";
+				} else {
+					// album in a selection
+					where =
+						"<a class='search-link' href='" + hashBeginning + savedSearchAlbumHash + "'>" +
+						util._t("#by-selection") +
 						"</a>";
 				}
 
@@ -467,7 +471,7 @@
 			}
 
 			initialValue = 2;
-			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
+			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null && util.isSearchCacheBase(savedSearchAlbumHash)) {
 				// the folders from the first until the search folder inclusive must not be shown
 				initialValue = savedSearchAlbumHash.split(Options.cache_folder_separator).slice(2).length + 1;
 			}
