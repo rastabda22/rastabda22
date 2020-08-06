@@ -1,6 +1,7 @@
 /*jshint esversion: 6 */
 (function() {
 	var lastSelectionAlbumIndex = 0;
+	var lastMapAlbumIndex = 0;
 	/* constructor */
 	function Utilities() {
 		$(document).ready(
@@ -30,6 +31,9 @@
 		rootMapAlbum.numPositionsInTree = 0;
 		rootMapAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
 		rootMapAlbum.ancestorsCacheBase = [Options.by_map_string];
+		rootMapAlbum.includedFilesByCodesSimpleCombination = {};
+		rootMapAlbum.includedFilesByCodesSimpleCombination[","] = false;
+
 
 		PhotoFloat.putAlbumIntoCache(rootMapAlbum.cacheBase, rootMapAlbum);
 
@@ -37,9 +41,9 @@
 	};
 
 	Utilities.prototype.initializeMapAlbum = function() {
-		var mapRootAlbum = PhotoFloat.getAlbumFromCache(Options.by_search_string);
-		if (! mapRootAlbum)
-			mapRootAlbum = util.initializeMapRootAlbum();
+		var mapRootAlbum = PhotoFloat.getAlbumFromCache(Options.by_map_string);
+		// if (! mapRootAlbum)
+		// 	mapRootAlbum = util.initializeMapRootAlbum();
 
 		lastMapAlbumIndex ++;
 
@@ -59,6 +63,9 @@
 		newMapAlbum.searchInFolderCacheBase = currentAlbum.cacheBase;
 		newMapAlbum.clickHistory = [];
 		newMapAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
+		newMapAlbum.includedFilesByCodesSimpleCombination = {};
+		newMapAlbum.includedFilesByCodesSimpleCombination[","] = false;
+
 
 		mapRootAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(mapRootAlbum.numMediaInSubTree, newMapAlbum.numMediaInSubTree);
 		mapRootAlbum.subalbums.push(newMapAlbum);
@@ -86,6 +93,8 @@
 		rootSearchAlbum.numPositionsInTree = 0;
 		rootSearchAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
 		rootSearchAlbum.ancestorsCacheBase = [Options.by_search_string];
+		rootSearchAlbum.includedFilesByCodesSimpleCombination = {};
+		rootSearchAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
 		PhotoFloat.putAlbumIntoCache(rootSearchAlbum.cacheBase, rootSearchAlbum);
 
@@ -94,8 +103,8 @@
 
 	Utilities.prototype.initializeSearchAlbum = function(albumHash, mediaFolderHash) {
 		var searchRootAlbum = PhotoFloat.getAlbumFromCache(Options.by_search_string);
-		if (! searchRootAlbum)
-			searchRootAlbum = util.initializeSearchRootAlbum();
+		// if (! searchRootAlbum)
+		// 	searchRootAlbum = util.initializeSearchRootAlbum();
 
 		var newSearchAlbum = {};
 		newSearchAlbum.positionsAndMediaInTree = [];
@@ -110,9 +119,12 @@
 		newSearchAlbum.physicalPath = newSearchAlbum.path;
 		newSearchAlbum.searchInFolderCacheBase = mediaFolderHash;
 		newSearchAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
+		newSearchAlbum.includedFilesByCodesSimpleCombination = {};
+		newSearchAlbum.includedFilesByCodesSimpleCombination[","] = false;
+
 
 		searchRootAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(searchRootAlbum.numMediaInSubTree, newSearchAlbum.numMediaInSubTree);
-		searchRootAlbum.subalbums.push(newSearchAlbum);
+		// searchRootAlbum.subalbums.push(newSearchAlbum);
 		searchRootAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(searchRootAlbum.positionsAndMediaInTree, newSearchAlbum.positionsAndMediaInTree);
 		searchRootAlbum.numPositionsInTree += newSearchAlbum.numPositionsInTree;
 		searchRootAlbum.numsProtectedMediaInSubTree[""] += newSearchAlbum.numsProtectedMediaInSubTree[""];
@@ -120,7 +132,8 @@
 		newSearchAlbum.ancestorsCacheBase = searchRootAlbum.ancestorsCacheBase.slice();
 		newSearchAlbum.ancestorsCacheBase.push(newSearchAlbum.cacheBase);
 
-		PhotoFloat.putAlbumIntoCache(newSearchAlbum.cacheBase, newSearchAlbum);
+		// Commented out, because it's better to put in cache further on
+		//PhotoFloat.putAlbumIntoCache(newSearchAlbum.cacheBase, newSearchAlbum);
 
 		return newSearchAlbum;
 	};
@@ -139,6 +152,8 @@
 		selectionRootAlbum.numPositionsInTree = 0;
 		selectionRootAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
 		selectionRootAlbum.ancestorsCacheBase = [Options.by_selection_string];
+		selectionRootAlbum.includedFilesByCodesSimpleCombination = {};
+		selectionRootAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
 		PhotoFloat.putAlbumIntoCache(selectionRootAlbum.cacheBase, selectionRootAlbum);
 
@@ -149,8 +164,8 @@
 		// initializes the selection album
 
 		var selectionRootAlbum = PhotoFloat.getAlbumFromCache(Options.by_selection_string);
-		if (! selectionRootAlbum)
-			selectionRootAlbum = Utilities.initializeSelectionRootAlbum();
+		// if (! selectionRootAlbum)
+		// 	selectionRootAlbum = Utilities.initializeSelectionRootAlbum();
 
 		lastSelectionAlbumIndex ++;
 
@@ -169,6 +184,8 @@
 		// TO DO: apparently searchInFolderCacheBase property isn't used anywhere for any album
 		newSelectionAlbum.searchInFolderCacheBase = currentAlbum.cacheBase;
 		newSelectionAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
+		newSelectionAlbum.includedFilesByCodesSimpleCombination = {};
+		newSelectionAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
 		selectionRootAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(selectionRootAlbum.numMediaInSubTree, newSelectionAlbum.numMediaInSubTree);
 		selectionRootAlbum.subalbums.push(newSelectionAlbum);

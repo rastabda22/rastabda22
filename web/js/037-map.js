@@ -4,7 +4,6 @@
 	var phFl = new PhotoFloat();
 	var util = new Utilities();
 	var f = new Functions();
-	var lastMapAlbumIndex = 0;
 
 	/* constructor */
 	function MapFunctions() {

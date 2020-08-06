@@ -134,7 +134,7 @@
 				// go up recursively
 				PhotoFloat.addPositionsToSubalbums(subalbum);
 			}
-			PhotoFloat.putAlbumIntoCache(thisAlbum.cacheBase, thisAlbum);
+			// PhotoFloat.putAlbumIntoCache(thisAlbum.cacheBase, thisAlbum);
 		}
 	};
 
@@ -734,7 +734,7 @@
 										album.albumReverseSort = false;
 										util.sortAlbumsMedia(album);
 
-										PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
+										// PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
 
 										resolve_getNextProtectedDirectory();
 									},
@@ -1603,6 +1603,7 @@
 				} else {
 					// it's a search!
 
+
 					// possibly we need the stop words, because if some searched word is a stop word it must be removed from the search
 					promise = PhotoFloat.getStopWords();
 					promise.then(
@@ -1678,10 +1679,10 @@
 							var searchResultsMedia = [];
 							var searchResultsSubalbums = [];
 
-							PhotoFloat.putAlbumIntoCache(Options.by_search_string, bySearchRootAlbum);
+							// PhotoFloat.putAlbumIntoCache(Options.by_search_string, bySearchRootAlbum);
 
-							searchAlbum.ancestorsCacheBase = bySearchRootAlbum.ancestorsCacheBase.slice();
-							searchAlbum.ancestorsCacheBase.push(wordsWithOptionsString);
+							// searchAlbum.ancestorsCacheBase = bySearchRootAlbum.ancestorsCacheBase.slice();
+							// searchAlbum.ancestorsCacheBase.push(wordsWithOptionsString);
 							if (! Options.search_any_word)
 								// when serching all the words, getting the first album is enough, media that do not match the other words will be escluded later
 								lastIndex = 0;
@@ -2013,7 +2014,8 @@
 				resultsAlbumFinal.numMedia = util.imagesAndVideosCount(resultsAlbumFinal.media);
 				resultsAlbumFinal.numPositionsInTree = resultsAlbumFinal.positionsAndMediaInTree.length;
 				// save in the cache array
-				PhotoFloat.putAlbumIntoCache(resultsAlbumFinal.cacheBase, resultsAlbumFinal);
+				if (! PhotoFloat.getAlbumFromCache(resultsAlbumFinal.cacheBase))
+					PhotoFloat.putAlbumIntoCache(resultsAlbumFinal.cacheBase, resultsAlbumFinal);
 
 				var result = PhotoFloat.getMediaIndex(resultsAlbumFinal, mediaFolderHash, mediaHash);
 				if (result === null) {
