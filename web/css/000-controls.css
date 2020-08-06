@@ -213,7 +213,7 @@ a.title-anchor.mobile {
 */
 }
 
-.album-button-random-media-link, #thumbs .thumbnail-map-link, #thumbs .select-box, #subalbums .select-box, #media-select-box .select-box {
+.album-button-random-media-link, #thumbs .thumbnail-map-link, #thumbs .select-box, #subalbums .select-box, #media-select-box .select-box, #popup-images-wrapper .select-box {
 	position: absolute;
 	filter: alpha(opacity=30); /* For IE8 and earlier */
 }
@@ -230,7 +230,7 @@ a.title-anchor.mobile {
 	height: 30px;
 }
 
-#thumbs .thumbnail-map-link, #thumbs .select-box, #subalbums .select-box, #media-select-box .select-box {
+#thumbs .thumbnail-map-link, #thumbs .select-box, #subalbums .select-box, #media-select-box .select-box, #popup-images-wrapper .select-box {
 	opacity: .5;
 	height: 30px;
 	cursor: pointer;
@@ -241,7 +241,7 @@ a.title-anchor.mobile {
 	right: 5px;
 }
 
-#thumbs .select-box, #subalbums .select-box, #media-select-box .select-box {
+#thumbs .select-box, #subalbums .select-box, #media-select-box .select-box, #popup-images-wrapper .select-box {
 	bottom: 5px;
 	right: 5px;
 }
