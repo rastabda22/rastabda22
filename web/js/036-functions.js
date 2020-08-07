@@ -643,11 +643,22 @@
 			function() {
 				if (util.everySubalbumIsSelected(thisAlbum.subalbums) && util.everyMediaIsSelected(thisAlbum.media)) {
 					util.removeAllMediaFromSelection(thisAlbum.media);
-					util.removeAllSubalbumsFromSelection(thisAlbum.subalbums);
-					Functions.updateMenu();
+					let promise = util.removeAllSubalbumsFromSelection(thisAlbum.subalbums);
+					promise.then(
+						function() {
+							// if (! selectionAlbum.subalbums.length && ! selectionAlbum.media.length) {
+							// 	// nothing remaining: remove the album
+							// 	PhotoFloat.removeAlbumFromCache(selectionAlbum.cacheBase);
+							// 	selectionAlbum = {};
+							// 	if (Utilities.isSelectionCacheBase(thisAlbum.cacheBase))
+							// 		window.location.href = Utilities.upHash();
+							// }
+							Functions.updateMenu();
+						}
+					);
 				} else {
 					util.addAllMediaToSelection(thisAlbum.media);
-					var promise = util.addAllSubalbumsToSelection(thisAlbum.subalbums);
+					let promise = util.addAllSubalbumsToSelection(thisAlbum.subalbums);
 					promise.then(
 						function() {
 							Functions.updateMenu();
@@ -710,8 +721,12 @@
 			"click",
 			function() {
 				if (util.everySubalbumIsSelected(thisAlbum.subalbums)) {
-					util.removeAllSubalbumsFromSelection(thisAlbum.subalbums);
-					Functions.updateMenu();
+					let promise = util.removeAllSubalbumsFromSelection(thisAlbum.subalbums);
+					promise.then(
+						function() {
+							Functions.updateMenu();
+						}
+					);
 				} else {
 					var promise = util.addAllSubalbumsToSelection(thisAlbum.subalbums);
 					promise.then(
@@ -728,9 +743,13 @@
 			function() {
 				util.removeAllMediaFromSelection(currentAlbum.media);
 				util.removeAllMediaFromSelection(selectionAlbum.media);
-				util.removeAllSubalbumsFromSelection(currentAlbum.subalbums);
-				util.removeAllSubalbumsFromSelection(selectionAlbum.subalbums);
-				Functions.updateMenu();
+				let promise1 = util.removeAllSubalbumsFromSelection(currentAlbum.subalbums);
+				let promise2 = util.removeAllSubalbumsFromSelection(selectionAlbum.subalbums);
+				Promise.all([promise1, promise2]).then(
+					function() {
+						Functions.updateMenu();
+					}
+				);
 			}
 		);
 

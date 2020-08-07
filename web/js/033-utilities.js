@@ -1027,7 +1027,7 @@
 	};
 
 	Utilities.prototype.addAllSubalbumsToSelection = function(subalbums) {
-		return new  Promise(
+		return new Promise(
 			function(resolve_addAllSubalbums) {
 				var subalbumsPromises = [];
 				subalbums.forEach(
@@ -1048,18 +1048,29 @@
 	};
 
 	Utilities.prototype.removeAllSubalbumsFromSelection = function(subalbums) {
-		var isVoid;
-		if (subalbums !== undefined) {
-			subalbums.forEach(
-				function(subalbum, indexSubalbum) {
-					if (Utilities.subalbumIsSelected(subalbum)) {
-						isVoid = Utilities.removeSubalbumFromSelection(subalbum, "#subalbum-select-box-" + indexSubalbum);
-					}
+		return new Promise(
+			function(resolve_removeAllSubalbums) {
+				// var isVoid;
+				if (subalbums !== undefined) {
+					let subalbumsPromises = [];
+					subalbums.forEach(
+						function(subalbum, indexSubalbum) {
+							if (Utilities.subalbumIsSelected(subalbum)) {
+								removeSubalbumPromise = Utilities.removeSubalbumFromSelection(subalbum, "#subalbum-select-box-" + indexSubalbum);
+								subalbumsPromises.push(removeSubalbumPromise);
+							}
+						}
+					);
+					Promise.all(subalbumsPromises).then(
+						function() {
+							resolve_removeAllSubalbums();
+						}
+					);
+				// } else {
+				// 	return isVoid;
 				}
-			);
-		} else {
-			return isVoid;
-		}
+			}
+		);
 	};
 
 
@@ -1207,45 +1218,41 @@
 	};
 
 	Utilities.removeSubalbumFromSelection = function(subalbum, clickedSelector) {
-		// var selectionAlbumCacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
-		// var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
-		selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
-		var isVoid = false;
-		if (! Utilities.imagesAndVideosTotal(selectionAlbum.numMediaInSubTree)) {
-			// no media selected: remove the album
-			PhotoFloat.removeAlbumFromCache(selectionAlbum.cacheBase);
-			selectionAlbum = {};
-			isVoid = true;
-			if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase))
-				window.location.href = Utilities.upHash();
-		} else {
-			let getAlbumPromise = PhotoFloat.getAlbum(subalbum.cacheBase, null, {"getMedia": true, "getPositions": true});
-			getAlbumPromise.then(
-				function(subalbum) {
-					selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
-					selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
+		return new Promise(
+			function(resolve_removeSubalbum) {
+				selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
+				var isVoid = false;
+				// if (Utilities.imagesAndVideosTotal(selectionAlbum.numMediaInSubTree)) {
+				let getAlbumPromise = PhotoFloat.getAlbum(subalbum.cacheBase, null, {"getMedia": true, "getPositions": true});
+				getAlbumPromise.then(
+					function(subalbum) {
+						selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
+						selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
 
-					var index = selectionAlbum.subalbums.findIndex(x => x.cacheBase === subalbum.cacheBase);
-					selectionAlbum.subalbums.splice(index, 1);
-					delete subalbum.selectionAlbumCacheBase;
+						var index = selectionAlbum.subalbums.findIndex(x => x.cacheBase === subalbum.cacheBase);
+						selectionAlbum.subalbums.splice(index, 1);
+						delete subalbum.selectionAlbumCacheBase;
 
-					selectionAlbum.positionsAndMediaInTree =
-						Utilities.removePositionsAndMediaFromPositionsAndMedia(
-							selectionAlbum.positionsAndMediaInTree,
-							subalbum.positionsAndMediaInTree
-						);
+						selectionAlbum.positionsAndMediaInTree =
+							Utilities.removePositionsAndMediaFromPositionsAndMedia(
+								selectionAlbum.positionsAndMediaInTree,
+								subalbum.positionsAndMediaInTree
+							);
 
-					if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
-						TopFunctions.showAlbumOrMedia(currentAlbum, -1);
+						if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
+							TopFunctions.showAlbumOrMedia(currentAlbum, -1);
+						}
+
+						resolve_removeSubalbum(isVoid);
 					}
-				}
-			);
-		}
+				);
+				// }
 
-		if (! Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
-			$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-subalbum"));
-		}
-		return isVoid;
+				if (! Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
+					$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-subalbum"));
+				}
+			}
+		);
 	};
 
 	// Utilities.resetSelectedMedia = function(album, includeSubalbums = false) {

@@ -422,8 +422,8 @@
 			<ul class="sub-menu hidden">
 				<li class='select everything active'></li>
 				<li class='select everything-individual active'></li>
-				<li class='select media active'></li>
 				<li class='select albums active'></li>
+				<li class='select media active'></li>
 				<li class='select global-reset active'></li>
 				<li class='select go-to-selected active'></li>
 			</ul>

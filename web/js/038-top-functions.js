@@ -753,10 +753,14 @@
 
 	TopFunctions.toggleSelectedSubalbum = function(subalbum, clickedSelector) {
 		if (util.subalbumIsSelected(subalbum)) {
-			let isVoid = util.removeSubalbumFromSelection(subalbum, clickedSelector);
-			if (isVoid) {
-				f.updateMenu();
-			}
+			let removeSubalbumPromise = util.removeSubalbumFromSelection(subalbum, clickedSelector);
+			removeSubalbumPromise.then(
+				function subalbumRemoved(isVoid) {
+					if (isVoid) {
+						f.updateMenu();
+					}
+				}
+			);
 		} else {
 			let addSubalbumPromise = util.addSubalbumToSelection(subalbum, clickedSelector);
 			addSubalbumPromise.then(
