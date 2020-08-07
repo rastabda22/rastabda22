@@ -291,20 +291,20 @@
 					return false;
 				}
 			);
-
-			$("#by-selection-view:not(.hidden):not(.selected)").on(
-				"click",
-				function changeToBySelectionView() {
-					TopFunctions.showBrowsingModeMessage("#by-selection-browsing");
-					if (isSingleMedia) {
-						window.location.href = phFl.encodeHash(selectionAlbum, thisMedia);
-					} else {
-						window.location.href = phFl.encodeHash(selectionAlbum, null);
-					}
-					return false;
-				}
-			);
 		}
+
+		$("#by-selection-view:not(.selected)").on(
+			"click",
+			function changeToBySelectionView() {
+				TopFunctions.showBrowsingModeMessage("#by-selection-browsing");
+				if (isSingleMedia) {
+					window.location.href = phFl.encodeHash(selectionAlbum, thisMedia);
+				} else {
+					window.location.href = phFl.encodeHash(selectionAlbum, null);
+				}
+				return false;
+			}
+		);
 
 		////////////////// SEARCH //////////////////////////////
 
@@ -597,7 +597,7 @@
 
 		////////////////// SELECTION //////////////////////////////
 
-		$(".select").removeClass("hidden");
+		$(".select").removeClass("hidden").removeClass("selected");
 		if (! util.somethingIsSelected()) {
 			$(".select.global-reset, .select.go-to-selected").addClass("hidden")
 		}
@@ -607,6 +607,74 @@
 		} else if (! thisAlbum.media.length || ! thisAlbum.subalbums.length) {
 			$(".select.media, .select.albums").addClass("hidden")
 		}
+
+		if (util.someSubalbumIsSelected(thisAlbum.subalbums)) {
+			$(".select.albums").addClass("selected");
+		}
+
+		if (util.someMediaIsSelected(thisAlbum.media)) {
+			$(".select.media").addClass("selected");
+		}
+
+		if (util.everySubalbumIsSelected(thisAlbum.subalbums) && util.everyMediaIsSelected(thisAlbum.media)) {
+			$(".select.everything").addClass("selected");
+		}
+
+		$(".select.everything:not(.hidden)").off("click").on(
+			"click",
+			function() {
+				if (util.everySubalbumIsSelected(thisAlbum.subalbums) && util.everyMediaIsSelected(thisAlbum.media)) {
+					util.removeAllMediaFromSelection(thisAlbum.media);
+					util.removeAllSubalbumsFromSelection(thisAlbum.subalbums);
+					Functions.updateMenu();
+				} else {
+					util.addAllMediaToSelection(thisAlbum.media);
+					var promise = util.addAllSubalbumsToSelection(thisAlbum.subalbums);
+					promise.then(
+						function() {
+							Functions.updateMenu();
+						}
+					);
+				}
+			}
+		);
+
+		$(".select.media:not(.hidden)").off("click").on(
+			"click",
+			function() {
+				if (util.everyMediaIsSelected(thisAlbum.media)) {
+					util.removeAllMediaFromSelection(thisAlbum.media);
+				} else {
+					util.addAllMediaToSelection(thisAlbum.media);
+				}
+				Functions.updateMenu();
+			}
+		);
+
+		$(".select.albums:not(.hidden)").off("click").on(
+			"click",
+			function() {
+				if (util.everySubalbumIsSelected(thisAlbum.subalbums)) {
+					util.removeAllSubalbumsFromSelection(thisAlbum.subalbums);
+					Functions.updateMenu();
+				} else {
+					var promise = util.addAllSubalbumsToSelection(thisAlbum.subalbums);
+					promise.then(
+						function() {
+							Functions.updateMenu();
+						}
+					);
+				}
+			}
+		);
+
+		$(".select.go-to-selected:not(.hidden)").on(
+			"click",
+			function() {
+				$("#by-selection-view")[0].click();
+			}
+		);
+
 
 		////////////////// DOWNLOAD //////////////////////////////
 
