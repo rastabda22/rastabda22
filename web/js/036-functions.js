@@ -595,6 +595,19 @@
 			}
 		}
 
+		////////////////// SELECTION //////////////////////////////
+
+		$(".select").removeClass("hidden");
+		if (! util.somethingIsSelected()) {
+			$(".select.global-reset, .select.go-to-selected").addClass("hidden")
+		}
+
+		if (isSingleMedia) {
+			$(".select.albums, .select.everything, .select.everything-individual").addClass("hidden");
+		} else if (! thisAlbum.media.length || ! thisAlbum.subalbums.length) {
+			$(".select.media, .select.albums").addClass("hidden")
+		}
+
 		////////////////// DOWNLOAD //////////////////////////////
 
 		const maximumZipSize = 2000000000;
