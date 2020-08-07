@@ -994,6 +994,7 @@
 		if (! Utilities.imagesAndVideosTotal(selectionAlbum.numMediaInSubTree)) {
 			// no media selected: remove the album
 			PhotoFloat.removeAlbumFromCache(selectionAlbum.cacheBase);
+			selectionAlbum = {};
 			isVoid = true;
 			if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase))
 				window.location.href = Utilities.upHash();
