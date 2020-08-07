@@ -473,7 +473,9 @@
 	<div id="by-search-browsing" class="browsing-mode-message"></div>
 	<div id="by-selection-browsing" class="browsing-mode-message"></div>
 	<div id="by-map-browsing" class="browsing-mode-message"></div>
-	<div id="previous-browsing" class="browsing-mode-message"></div>
+
+	<div id="added-individually" class="selection-message"></div>
+	<div id="removed-individually" class="selection-message"></div>
 
 	<div id="error-overlay"></div>
 	<div id="error-options-file" class="error"></div>

@@ -566,7 +566,7 @@
 				$("ul#right-menu li.album-sort").removeClass("hidden");
 			}
 
-			if (util.imagesAndVideosTotal(thisAlbum.numMedia) <= 1 || util.imagesAndVideosTotal(thisAlbum.numMedia) > Options.big_virtual_folders_thresholds) {
+			if (util.imagesAndVideosTotal(thisAlbum.numMedia) <= 1 || util.imagesAndVideosTotal(thisAlbum.numMedia) > Options.big_virtual_folders_threshold) {
 				// no media or one media or too many media
 				$("ul#right-menu li.media-sort").addClass("hidden");
 			} else {
@@ -609,17 +609,34 @@
 			$(".select.media, .select.albums").addClass("hidden")
 		}
 
-		if (util.someSubalbumIsSelected(thisAlbum.subalbums)) {
+		if (util.everySubalbumIsSelected(thisAlbum.subalbums)) {
 			$(".select.albums").addClass("selected");
 		}
 
-		if (util.someMediaIsSelected(thisAlbum.media)) {
+		if (util.everyMediaIsSelected(thisAlbum.media)) {
 			$(".select.media").addClass("selected");
 		}
 
 		if (util.everySubalbumIsSelected(thisAlbum.subalbums) && util.everyMediaIsSelected(thisAlbum.media)) {
 			$(".select.everything").addClass("selected");
 		}
+
+		if (! thisAlbum.media.length || ! thisAlbum.subalbums.length) {
+			$(".select.media, .select.albums").addClass("hidden")
+		}
+
+		if (! thisAlbum.subalbums.length || util.imagesAndVideosTotal(thisAlbum.numMediaInSubTree) > Options.big_virtual_folders_threshold) {
+			$(".select.everything-individual").addClass("hidden");
+		} else {
+			let everythingIndividualPromise = util.recursivelyAllMediaAreSelected(thisAlbum);
+			everythingIndividualPromise.then(
+				function() {
+					$(".select.everything-individual").addClass("selected");
+				},
+				function() {}
+			);
+		}
+
 
 		$(".select.everything:not(.hidden)").off("click").on(
 			"click",
@@ -637,6 +654,43 @@
 						}
 					);
 				}
+			}
+		);
+
+		$(".select.everything-individual:not(.hidden)").off("click").on(
+			"click",
+			function() {
+				let everythingIndividualPromise = util.recursivelyAllMediaAreSelected(thisAlbum);
+				everythingIndividualPromise.then(
+					function() {
+						let firstPromise = util.recursivelyRemoveMedia(thisAlbum);
+						firstPromise.then(
+							function() {
+								$("#removed-individually").stop().fadeIn(
+									1000,
+									function() {
+										Functions.updateMenu();
+										$("#removed-individually").stop().fadeOut(3000);
+									}
+								);
+							}
+						);
+					},
+					function() {
+						let firstPromise = util.recursivelySelectMedia(thisAlbum);
+						firstPromise.then(
+							function() {
+								$("#added-individually").stop().fadeIn(
+									1000,
+									function() {
+										Functions.updateMenu();
+										$("#added-individually").stop().fadeOut(3000);
+									}
+								);
+							}
+						);
+					}
+				);
 			}
 		);
 
@@ -666,6 +720,17 @@
 						}
 					);
 				}
+			}
+		);
+
+		$(".select.global-reset:not(.hidden)").on(
+			"click",
+			function() {
+				util.removeAllMediaFromSelection(currentAlbum.media);
+				util.removeAllMediaFromSelection(selectionAlbum.media);
+				util.removeAllSubalbumsFromSelection(currentAlbum.subalbums);
+				util.removeAllSubalbumsFromSelection(selectionAlbum.subalbums);
+				Functions.updateMenu();
 			}
 		);
 

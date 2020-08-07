@@ -472,6 +472,112 @@
 		return positionsAndMedia;
 	};
 
+	Utilities.recursivelySelectMedia = function(album) {
+		return new Promise(
+			function (resolve_promise) {
+				Utilities.addAllMediaToSelection(album.media);
+				let promises = [];
+				for (iSubalbum = 0; iSubalbum < album.subalbums.length; iSubalbum ++) {
+					ithPromise = new Promise(
+						function(resolve_ithPromise) {
+							let getAlbumPromise = PhotoFloat.getAlbum(album.subalbums[iSubalbum].cacheBase, null, {"getMedia": true, "getPositions": false});
+							getAlbumPromise.then(
+								function(subalbum) {
+									let promise = Utilities.recursivelySelectMedia(subalbum);
+									promise.then(
+										function() {
+											resolve_ithPromise();
+										}
+									);
+								}
+							);
+						}
+					);
+					promises.push(ithPromise);
+				}
+				Promise.all(promises).then(
+					function() {
+						resolve_promise();
+					}
+				);
+			}
+		);
+	};
+
+	Utilities.recursivelyRemoveMedia = function(album) {
+		return new Promise(
+			function (resolve_promise) {
+				Utilities.removeAllMediaFromSelection(album.media);
+				let promises = [];
+				for (iSubalbum = 0; iSubalbum < album.subalbums.length; iSubalbum ++) {
+					ithPromise = new Promise(
+						function(resolve_ithPromise) {
+							let getAlbumPromise = PhotoFloat.getAlbum(album.subalbums[iSubalbum].cacheBase, null, {"getMedia": true, "getPositions": false});
+							getAlbumPromise.then(
+								function(subalbum) {
+									let promise = Utilities.recursivelyRemoveMedia(subalbum);
+									promise.then(
+										function() {
+											resolve_ithPromise();
+										}
+									);
+								}
+							);
+						}
+					);
+					promises.push(ithPromise);
+				}
+				Promise.all(promises).then(
+					function() {
+						resolve_promise();
+					}
+				);
+			}
+		);
+	};
+
+	Utilities.recursivelyAllMediaAreSelected = function(album) {
+		return new Promise(
+			function (resolve_promise, reject_promise) {
+				if (! Utilities.everyMediaIsSelected(album.media)) {
+					reject_promise();
+				} else {
+					let promises = [];
+					for (iSubalbum = 0; iSubalbum < album.subalbums.length; iSubalbum ++) {
+						ithPromise = new Promise(
+							function(resolve_ithPromise, reject_ithPromise) {
+								let getAlbumPromise = PhotoFloat.getAlbum(album.subalbums[iSubalbum].cacheBase, null, {"getMedia": true, "getPositions": false});
+								getAlbumPromise.then(
+									function(subalbum) {
+										let promise = Utilities.recursivelyAllMediaAreSelected(subalbum);
+										promise.then(
+											function() {
+												resolve_ithPromise();
+											},
+											function() {
+												reject_ithPromise();
+											}
+										);
+									}
+								);
+							}
+						);
+						promises.push(ithPromise);
+					}
+					Promise.all(promises).then(
+						function() {
+							resolve_promise(true);
+						},
+						function() {
+							reject_promise(false);
+						}
+					);
+				}
+			}
+		);
+	};
+
+
 	Utilities.prototype.union = function(a, b) {
 		var self = this;
 		if (a === [])
@@ -855,7 +961,7 @@
 		}
 	};
 
-	Utilities.prototype.everyMediaIsSelected = function(media) {
+	Utilities.everyMediaIsSelected = function(media) {
 		if (
 			media.every(
 				function(singleMedia) {
@@ -897,7 +1003,7 @@
 		}
 	};
 
-	Utilities.prototype.addAllMediaToSelection = function(media) {
+	Utilities.addAllMediaToSelection = function(media) {
 		media.forEach(
 			function(singleMedia, indexMedia) {
 				if (! Utilities.singleMediaIsSelected(singleMedia)) {
@@ -908,15 +1014,16 @@
 
 	};
 
-	Utilities.prototype.removeAllMediaFromSelection = function(media) {
-		media.forEach(
-			function(singleMedia, indexMedia) {
-				if (Utilities.singleMediaIsSelected(singleMedia)) {
-					Utilities.removeSingleMediaFromSelection(singleMedia, "#media-select-box-" + indexMedia);
+	Utilities.removeAllMediaFromSelection = function(media) {
+		if (media !== undefined) {
+			media.forEach(
+				function(singleMedia, indexMedia) {
+					if (Utilities.singleMediaIsSelected(singleMedia)) {
+						Utilities.removeSingleMediaFromSelection(singleMedia, "#media-select-box-" + indexMedia);
+					}
 				}
-			}
-		);
-
+			);
+		}
 	};
 
 	Utilities.prototype.addAllSubalbumsToSelection = function(subalbums) {
@@ -942,14 +1049,17 @@
 
 	Utilities.prototype.removeAllSubalbumsFromSelection = function(subalbums) {
 		var isVoid;
-		subalbums.forEach(
-			function(subalbum, indexSubalbum) {
-				if (Utilities.subalbumIsSelected(subalbum)) {
-					isVoid = Utilities.removeSubalbumFromSelection(subalbum, "#subalbum-select-box-" + indexSubalbum);
+		if (subalbums !== undefined) {
+			subalbums.forEach(
+				function(subalbum, indexSubalbum) {
+					if (Utilities.subalbumIsSelected(subalbum)) {
+						isVoid = Utilities.removeSubalbumFromSelection(subalbum, "#subalbum-select-box-" + indexSubalbum);
+					}
 				}
-			}
-		);
-		return isVoid;
+			);
+		} else {
+			return isVoid;
+		}
 	};
 
 
@@ -2350,6 +2460,12 @@
 	Utilities.prototype.addSubalbumToSelection = Utilities.addSubalbumToSelection;
 	Utilities.prototype.removeSingleMediaFromSelection = Utilities.removeSingleMediaFromSelection;
 	Utilities.prototype.removeSubalbumFromSelection = Utilities.removeSubalbumFromSelection;
+	Utilities.prototype.recursivelySelectMedia = Utilities.recursivelySelectMedia;
+	Utilities.prototype.recursivelyRemoveMedia = Utilities.recursivelyRemoveMedia;
+	Utilities.prototype.recursivelyAllMediaAreSelected = Utilities.recursivelyAllMediaAreSelected;
+	Utilities.prototype.addAllMediaToSelection = Utilities.addAllMediaToSelection;
+	Utilities.prototype.removeAllMediaFromSelection = Utilities.removeAllMediaFromSelection;
+	Utilities.prototype.everyMediaIsSelected = Utilities.everyMediaIsSelected;
 
 	window.Utilities = Utilities;
 }());

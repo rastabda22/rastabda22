@@ -531,7 +531,7 @@ video {
 	color: #FFAD27;
 	margin-top: 20px;
 }
-.error, .browsing-mode-message, .sort-message, #error-overlay, #auth-text, .search-failed, #loading, #downloading-media, #preparing-zip, #sending-email {
+.error, .browsing-mode-message, .sort-message, .selection-message, #error-overlay, #auth-text, .search-failed, #loading, #downloading-media, #preparing-zip, #sending-email {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -539,18 +539,18 @@ video {
 	height: 100%;
 	display: none;
 }
-.error, .browsing-mode-message, .sort-message, #auth-text, .search-failed, #loading, #downloading-media, #preparing-zip, #sending-email {
+.error, .browsing-mode-message, .sort-message, .selection-message, #auth-text, .search-failed, #loading, #downloading-media, #preparing-zip, #sending-email {
 	margin-top: 20%;
 	text-align: center;
 }
 
-.error, .browsing-mode-message, .sort-message, .search-failed, #loading, #downloading-media, #preparing-zip, #sending-email {
+.error, .browsing-mode-message, .sort-message, .selection-message, .search-failed, #loading, #downloading-media, #preparing-zip, #sending-email {
 	font-size: 4em;
 	font-weight: bold;
 	font-style: italic;
 }
 
-.browsing-mode-message, .sort-message, #loading, #downloading-media, #preparing-zip, #sending-email {
+.browsing-mode-message, .sort-message, .selection-message, #loading, #downloading-media, #preparing-zip, #sending-email {
 	background-color: black;
 	z-index: 1000;
 	height: auto;

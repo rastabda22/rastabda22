@@ -2147,6 +2147,7 @@
 	PhotoFloat.prototype.searchAndSubalbumHash = PhotoFloat.searchAndSubalbumHash;
 	PhotoFloat.prototype.getStopWords = PhotoFloat.getStopWords;
 	PhotoFloat.prototype.removeStopWords = PhotoFloat.removeStopWords;
+	PhotoFloat.prototype.removeAlbumFromCache = PhotoFloat.removeAlbumFromCache;
 
 	/* expose class globally */
 	window.PhotoFloat = PhotoFloat;
