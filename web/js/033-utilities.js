@@ -963,7 +963,6 @@
 				}
 
 				let getAlbumPromise = PhotoFloat.getAlbum(subalbum.cacheBase, null, {"getMedia": true, "getPositions": true});
-				var nSubalbums = selectionAlbum.subalbums.length;
 				getAlbumPromise.then(
 					function(subalbum) {
 						subalbum.selectionAlbumCacheBase = selectionAlbum.cacheBase;
