@@ -2028,20 +2028,57 @@
 								var ithSubalbum = currentAlbum.subalbums[i];
 
 								// generate the subalbum caption
-								if (util.isByDateCacheBase(currentAlbum.cacheBase)) {
+								if (util.isSelectionCacheBase(currentAlbum.cacheBase) && util.isByDateCacheBase(ithSubalbum.cacheBase)) {
 									folderArray = ithSubalbum.cacheBase.split(Options.cache_folder_separator);
 									folderName = "";
-									if (folderArray.length == 2) {
+									if (folderArray.length == 4)
+										folderName += parseInt(folderArray[3]) + " ";
+									if (folderArray.length >= 3)
+										folderName += util._t("#month-" + folderArray[2]) + " ";
+									if (folderArray.length >= 2)
 										folderName += parseInt(folderArray[1]);
-									} else if (folderArray.length == 3)
+									folderTitle = util._t('#place-icon-title') + folderName;
+								} else if (util.isSelectionCacheBase(currentAlbum.cacheBase) && util.isByGpsCacheBase(ithSubalbum.cacheBase)) {
+									folderName = '';
+									for (iCacheBase = 1; iCacheBase < ithSubalbum.ancestorsCacheBase.length - 1; iCacheBase ++) {
+										let marker = "<marker>" + iCacheBase + "</marker>";
+										folderName += marker + " > ";
+										let cacheBasePromise = phFl.getAlbum(ithSubalbum.ancestorsCacheBase[iCacheBase], null, {"getMedia": false, "getPositions": false});
+										cacheBasePromise.then(
+											function(album) {
+												let albumName;
+												if (album.name === '')
+													albumName = util._t('.not-specified');
+												else if (album.hasOwnProperty('altName'))
+													albumName = util.transformAltPlaceName(album.altName);
+												else
+													albumName = album.name;
+												$("#subalbums").html($("#subalbums").html().replace(marker, albumName));
+											}
+										);
+									}
+									if (ithSubalbum.name === '')
+										folderTitle = util._t('.not-specified');
+									else if (ithSubalbum.hasOwnProperty('altName'))
+										folderTitle = util.transformAltPlaceName(ithSubalbum.altName);
+									else
+										folderTitle = ithSubalbum.name;
+									folderName += folderTitle;
+									folderTitle = util._t('#place-icon-title') + folderTitle;
+								} else if (util.isSelectionCacheBase(currentAlbum.cacheBase)) {
+									folderName = ithSubalbum.physicalPath;
+									folderTitle = util._t('#place-icon-title') + folderName;
+								} else if (util.isByDateCacheBase(currentAlbum.cacheBase)) {
+									folderArray = ithSubalbum.cacheBase.split(Options.cache_folder_separator);
+									folderName = "";
+									if (folderArray.length == 2)
+										folderName += parseInt(folderArray[1]);
+									else if (folderArray.length == 3)
 										folderName += " " + util._t("#month-" + folderArray[2]);
 									else if (folderArray.length == 4)
 										folderName += util._t("#day") + " " + parseInt(folderArray[3]);
-										folderTitle = folderName;
-								} else if (
-									util.isByGpsCacheBase(currentAlbum.cacheBase) ||
-									util.isSelectionCacheBase(currentAlbum.cacheBase) && util.isByGpsCacheBase(ithSubalbum.cacheBase)
-								) {
+									folderTitle = util._t('#place-icon-title') + folderName;
+								} else if (util.isByGpsCacheBase(currentAlbum.cacheBase)) {
 									folderName = '';
 									folderTitle = '';
 									if (ithSubalbum.name === '')
@@ -2051,12 +2088,9 @@
 									else
 										folderName = ithSubalbum.name;
 									folderTitle = util._t('#place-icon-title') + folderName;
-								} else if (util.isSelectionCacheBase(currentAlbum.cacheBase)) {
-									folderName = ithSubalbum.physicalPath;
-									folderTitle = folderName;
 								} else {
 									folderName = ithSubalbum.path;
-									folderTitle = folderName;
+									folderTitle = util._t('#place-icon-title') + folderName;
 								}
 
 								folder = "<span class='folder-name'>" +

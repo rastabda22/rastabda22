@@ -574,15 +574,21 @@
 	};
 
 	// see https://stackoverflow.com/questions/1069666/sorting-javascript-object-by-property-value
-	Utilities.sortBy = function(albumOrMediaList, field) {
+	Utilities.sortBy = function(albumOrMediaList, fieldArray) {
 		return albumOrMediaList.sort(
 			function(a,b) {
-				var aValue = a[field];
-				var bValue = b[field];
-				if (['name', 'altName', 'path'].indexOf(field) > -1) {
-					// make name search case insensitive
-					aValue = aValue.toLowerCase();
-					bValue = bValue.toLowerCase();
+				var aValue, bValue, iField;
+				for (iField = 0; iField < fieldArray.length; iField ++) {
+					if (a.hasOwnProperty(fieldArray[iField])) {
+						aValue = a[fieldArray[iField]].toLowerCase();
+						break;
+					}
+				}
+				for (iField = 0; iField < fieldArray.length; iField ++) {
+					if (b.hasOwnProperty(fieldArray[iField])) {
+						bValue = b[fieldArray[iField]].toLowerCase();
+						break;
+					}
 				}
 				return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
 			}
@@ -590,18 +596,20 @@
 	};
 
 	 Utilities.sortByName = function(mediaList) {
-		mediaList = this.sortBy(mediaList, 'name');
+		mediaList = this.sortBy(mediaList, ['name']);
 	};
 
-	Utilities.sortByPath = function(albumList) {
-		if (albumList.length) {
-			if (Utilities.isByGpsCacheBase(albumList[0].cacheBase)) {
-				if (albumList[0].hasOwnProperty('altName'))
-					albumList = this.sortBy(albumList, 'altName');
+	Utilities.sortByPath = function(album) {
+		if (album.subalbums.length) {
+			if (Utilities.isSelectionCacheBase(album.cacheBase)) {
+				album.subalbums = this.sortBy(album.subalbums, ['altName', 'name', 'path']);
+			} else if (Utilities.isByGpsCacheBase(album.cacheBase)) {
+				if (album.subalbums[0].hasOwnProperty('altName'))
+					album.subalbums = this.sortBy(album.subalbums, ['altName']);
 				else
-					albumList = this.sortBy(albumList, 'name');
+					album.subalbums = this.sortBy(album.subalbums, ['name']);
 			} else {
-				albumList = this.sortBy(albumList, 'path');
+				album.subalbums = this.sortBy(album.subalbums, ['path']);
 			}
 		}
 	};
@@ -2200,7 +2208,7 @@
 		// json files have subalbums and media sorted by date not reversed
 
 		if (Functions.needAlbumNameSort(thisAlbum)) {
-			Utilities.sortByPath(thisAlbum.subalbums);
+			Utilities.sortByPath(thisAlbum);
 			thisAlbum.albumNameSort = true;
 			thisAlbum.albumReverseSort = false;
 			// $("li.album-sort.by-name").addClass("selected");
@@ -2302,8 +2310,8 @@
 	Utilities.prototype.sortReverse = Utilities.sortReverse;
 	Utilities.prototype.sortByName = Utilities.sortByName;
 	Utilities.prototype.sortByDate = Utilities.sortByDate;
-	Utilities.prototype.sortByPath = Utilities.sortByPath;
-	Utilities.prototype.sortBy = Utilities.sortBy;
+	// Utilities.prototype.sortByPath = Utilities.sortByPath;
+	// Utilities.prototype.sortBy = Utilities.sortBy;
 	Utilities.prototype.isByDateCacheBase = Utilities.isByDateCacheBase;
 	Utilities.prototype.isByGpsCacheBase = Utilities.isByGpsCacheBase;
 	Utilities.prototype.isSearchCacheBase = Utilities.isSearchCacheBase;

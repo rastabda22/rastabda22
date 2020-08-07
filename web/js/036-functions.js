@@ -205,94 +205,95 @@
 			} else if (isSelectionCacheBase) {
 				$("#by-selection-view").removeClass("hidden").addClass("selected");
 			}
-
-			// bind the click events
-
-			$("#folders-view:not(.hidden):not(.selected)").on(
-				"click",
-				function changeToFoldersView() {
-					TopFunctions.showBrowsingModeMessage("#folders-browsing");
-
-					if (isSingleMedia) {
-						window.location.href = hashBeginning + util.pathJoin([
-							thisMedia.foldersCacheBase,
-							thisMedia.cacheBase
-						]);
-					} else if (isAnyRootCacheBase) {
-					// } else if (isAnyRootCacheBase || isSelectionCacheBase) {
-						window.location.href = hashBeginning + encodeURIComponent(Options.folders_string);
-					}
-
-					return false;
-				}
-			);
-
-			$("#by-date-view:not(.hidden):not(.selected)").on(
-				"click",
-				function changeToByDateView() {
-					TopFunctions.showBrowsingModeMessage("#by-date-browsing");
-
-					if (isSingleMedia) {
-						window.location.href = hashBeginning + util.pathJoin([
-							thisMedia.dayAlbumCacheBase,
-							thisMedia.foldersCacheBase,
-							thisMedia.cacheBase
-						]);
-					} else if (isAnyRootCacheBase) {
-					// } else if (isAnyRootCacheBase || isSelectionCacheBase) {
-						window.location.href = hashBeginning + encodeURIComponent(Options.by_date_string);
-					}
-					return false;
-				}
-			);
-
-			$("#by-gps-view:not(.hidden):not(.selected)").on(
-				"click",
-				function changeToByGpsView() {
-					TopFunctions.showBrowsingModeMessage("#by-gps-browsing");
-
-					if (isSingleMedia) {
-						window.location.href = hashBeginning + util.pathJoin([
-							thisMedia.gpsAlbumCacheBase,
-							thisMedia.foldersCacheBase,
-							thisMedia.cacheBase
-						]);
-					} else if (isAnyRootCacheBase) {
-					// } else if (isAnyRootCacheBase || isSelectionCacheBase) {
-						window.location.href = hashBeginning + encodeURIComponent(Options.by_gps_string);
-					}
-					return false;
-				}
-			);
-
-			$("#by-map-view:not(.hidden):not(.selected)").on(
-				"click",
-				function changeToByMapView() {
-					TopFunctions.showBrowsingModeMessage("#by-map-browsing");
-					if (isSingleMedia) {
-						window.location.href = phFl.encodeHash(mapAlbum, thisMedia);
-					} else if (isAnyRootCacheBase) {
-					// } else if (isAnyRootCacheBase || isSelectionCacheBase) {
-						window.location.href = phFl.encodeHash(mapAlbum, null);
-					}
-					return false;
-				}
-			);
-
-			$("#by-search-view:not(.hidden):not(.selected)").on(
-				"click",
-				function changeToBySearchView() {
-					TopFunctions.showBrowsingModeMessage("#by-search-browsing");
-					if (isSingleMedia) {
-						window.location.href = phFl.encodeHash(searchAlbum, thisMedia);
-					} else if (isAnyRootCacheBase) {
-						window.location.href = phFl.encodeHash(searchAlbum, null);
-					}
-					return false;
-				}
-			);
 		}
 
+		// bind the click events
+
+		$("#folders-view:not(.hidden):not(.selected)").on(
+			"click",
+			function changeToFoldersView() {
+				TopFunctions.showBrowsingModeMessage("#folders-browsing");
+
+				if (isSingleMedia) {
+					window.location.href = hashBeginning + util.pathJoin([
+						thisMedia.foldersCacheBase,
+						thisMedia.cacheBase
+					]);
+				} else if (isAnyRootCacheBase) {
+				// } else if (isAnyRootCacheBase || isSelectionCacheBase) {
+					window.location.href = hashBeginning + encodeURIComponent(Options.folders_string);
+				}
+
+				return false;
+			}
+		);
+
+		$("#by-date-view:not(.hidden):not(.selected)").on(
+			"click",
+			function changeToByDateView() {
+				TopFunctions.showBrowsingModeMessage("#by-date-browsing");
+
+				if (isSingleMedia) {
+					window.location.href = hashBeginning + util.pathJoin([
+						thisMedia.dayAlbumCacheBase,
+						thisMedia.foldersCacheBase,
+						thisMedia.cacheBase
+					]);
+				} else if (isAnyRootCacheBase) {
+				// } else if (isAnyRootCacheBase || isSelectionCacheBase) {
+					window.location.href = hashBeginning + encodeURIComponent(Options.by_date_string);
+				}
+				return false;
+			}
+		);
+
+		$("#by-gps-view:not(.hidden):not(.selected)").on(
+			"click",
+			function changeToByGpsView() {
+				TopFunctions.showBrowsingModeMessage("#by-gps-browsing");
+
+				if (isSingleMedia) {
+					window.location.href = hashBeginning + util.pathJoin([
+						thisMedia.gpsAlbumCacheBase,
+						thisMedia.foldersCacheBase,
+						thisMedia.cacheBase
+					]);
+				} else if (isAnyRootCacheBase) {
+				// } else if (isAnyRootCacheBase || isSelectionCacheBase) {
+					window.location.href = hashBeginning + encodeURIComponent(Options.by_gps_string);
+				}
+				return false;
+			}
+		);
+
+		$("#by-map-view:not(.hidden):not(.selected)").on(
+			"click",
+			function changeToByMapView() {
+				TopFunctions.showBrowsingModeMessage("#by-map-browsing");
+				if (isSingleMedia) {
+					window.location.href = phFl.encodeHash(mapAlbum, thisMedia);
+				} else if (isAnyRootCacheBase) {
+				// } else if (isAnyRootCacheBase || isSelectionCacheBase) {
+					window.location.href = phFl.encodeHash(mapAlbum, null);
+				}
+				return false;
+			}
+		);
+
+		$("#by-search-view:not(.hidden):not(.selected)").on(
+			"click",
+			function changeToBySearchView() {
+				TopFunctions.showBrowsingModeMessage("#by-search-browsing");
+				if (isSingleMedia) {
+					window.location.href = phFl.encodeHash(searchAlbum, thisMedia);
+				} else if (isAnyRootCacheBase) {
+					window.location.href = phFl.encodeHash(searchAlbum, null);
+				}
+				return false;
+			}
+		);
+
+		// WARNING: the ":not(.hidden)" is missing intentionally, in order to permit to trigger a click even if the menu item isn't shown
 		$("#by-selection-view:not(.selected)").on(
 			"click",
 			function changeToBySelectionView() {
