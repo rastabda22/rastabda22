@@ -73,7 +73,7 @@
 				var windowCenter = {x: windowWidth / 2, y: windowHeight / 2};
 				if (center === null)
 					center = windowCenter;
-				centersDifference = {x: center.x - windowCenter.x, y: center.y - windowCenter.y};
+				var centersDifference = {x: center.x - windowCenter.x, y: center.y - windowCenter.y};
 				var [currentReductionSize, currentReductionIndex] = util.currentSizeAndIndex();
 				var width, height;
 				var photoSize = Math.max(currentMedia.metadata.size[0], currentMedia.metadata.size[1]);

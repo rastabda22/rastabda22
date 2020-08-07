@@ -279,7 +279,7 @@
 				var imgData = JSON.parse(element.attr("data"));
 				ev.stopPropagation();
 				var album = phFl.getAlbumFromCache(imgData.albumCacheBase);
-				for (iMedia = 0; iMedia < album.media.length; iMedia ++) {
+				for (let iMedia = 0; iMedia < album.media.length; iMedia ++) {
 					if (imgData.mediaHash.split('/').pop() == album.media[iMedia].cacheBase) {
 						TopFunctions.toggleSelectedMedia(album.media[iMedia], '#' + id);
 						break;

@@ -80,7 +80,7 @@ $(document).ready(function() {
 	var util = new Utilities();
 	var pS = new PinchSwipe();
 	var f = new Functions();
-	var map = new MapFunctions();
+	// var map = new MapFunctions();
 	var tF = new TopFunctions();
 	var maxSize;
 	var language;
@@ -335,7 +335,7 @@ $(document).ready(function() {
 					let prevBrowsingModeRequested = (e.key === '<');
 					if (nextBrowsingModeRequested || prevBrowsingModeRequested) {
 						if (cacheBaseBeforeBrowsingBySelection) {
-							cacheBaseBeforeBrowsingBySelection = null
+							cacheBaseBeforeBrowsingBySelection = null;
 						}
 					}
 
@@ -493,8 +493,8 @@ $(document).ready(function() {
 				var searchWordsFromUserNormalized = wordsStringNormalized.split(' ');
 
 				// remove the stopwords from the search terms
-				promise = phFl.getStopWords();
-				promise.then(
+				let stopWordsPromise = phFl.getStopWords();
+				stopWordsPromise.then(
 					function () {
 						[searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions, removedStopWords] =
 							phFl.removeStopWords(searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions);
@@ -788,8 +788,8 @@ $(document).ready(function() {
 			$("link[rel=video_src]").remove();
 			$("ul#right-menu").removeClass("expand");
 
-			var promise = f.getOptions();
-			promise.then(
+			var optionsPromise = f.getOptions();
+			optionsPromise.then(
 				function() {
 					var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 					if (currentAlbum && albumHash !== currentAlbum.cacheBase) {
@@ -812,8 +812,8 @@ $(document).ready(function() {
 					// - the requested album
 					// - the requested media (if applicable)
 					// - the requested media index (if applicable)
-					var promise = phFl.parseHashAndReturnAlbumAndMedia(location.hash);
-					promise.then(
+					var hashPromise = phFl.parseHashAndReturnAlbumAndMedia(location.hash);
+					hashPromise.then(
 						function([album, mediaIndex]) {
 							tF.showAlbumOrMedia(album, mediaIndex);
 						},

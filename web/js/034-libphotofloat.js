@@ -105,7 +105,7 @@
 	};
 
 	PhotoFloat.addPositionsToSubalbums = function(thisAlbum) {
-		var iSubalbum, iPosition, iPhoto, position, subalbum, albumFromCache;
+		var iPosition, iPhoto, position, subalbum, albumFromCache;
 		var positions = thisAlbum.positionsAndMediaInTree;
 		if (! thisAlbum.hasOwnProperty("subalbums")) {
 			albumFromCache = PhotoFloat.getAlbumFromCache(thisAlbum.cacheBase);
@@ -114,7 +114,7 @@
 		}
 
 		if (thisAlbum.hasOwnProperty("subalbums")) {
-			for (iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; ++ iSubalbum) {
+			for (let iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; ++ iSubalbum) {
 				subalbum = thisAlbum.subalbums[iSubalbum];
 				subalbum.positionsAndMediaInTree = [];
 				for (iPosition = 0; iPosition < positions.length; ++ iPosition) {

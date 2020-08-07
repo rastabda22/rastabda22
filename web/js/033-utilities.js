@@ -477,8 +477,8 @@
 			function (resolve_promise) {
 				Utilities.addAllMediaToSelection(album.media);
 				let promises = [];
-				for (iSubalbum = 0; iSubalbum < album.subalbums.length; iSubalbum ++) {
-					ithPromise = new Promise(
+				for (let iSubalbum = 0; iSubalbum < album.subalbums.length; iSubalbum ++) {
+					let ithPromise = new Promise(
 						function(resolve_ithPromise) {
 							let getAlbumPromise = PhotoFloat.getAlbum(album.subalbums[iSubalbum].cacheBase, null, {"getMedia": true, "getPositions": false});
 							getAlbumPromise.then(
@@ -509,8 +509,8 @@
 			function (resolve_promise) {
 				Utilities.removeAllMediaFromSelection(album.media);
 				let promises = [];
-				for (iSubalbum = 0; iSubalbum < album.subalbums.length; iSubalbum ++) {
-					ithPromise = new Promise(
+				for (let iSubalbum = 0; iSubalbum < album.subalbums.length; iSubalbum ++) {
+					let ithPromise = new Promise(
 						function(resolve_ithPromise) {
 							let getAlbumPromise = PhotoFloat.getAlbum(album.subalbums[iSubalbum].cacheBase, null, {"getMedia": true, "getPositions": false});
 							getAlbumPromise.then(
@@ -543,8 +543,8 @@
 					reject_promise();
 				} else {
 					let promises = [];
-					for (iSubalbum = 0; iSubalbum < album.subalbums.length; iSubalbum ++) {
-						ithPromise = new Promise(
+					for (let iSubalbum = 0; iSubalbum < album.subalbums.length; iSubalbum ++) {
+						let ithPromise = new Promise(
 							function(resolve_ithPromise, reject_ithPromise) {
 								let getAlbumPromise = PhotoFloat.getAlbum(album.subalbums[iSubalbum].cacheBase, null, {"getMedia": true, "getPositions": false});
 								getAlbumPromise.then(
@@ -757,7 +757,7 @@
 	};
 
 	Utilities.isAnyRootCacheBase = function(cacheBase) {
-		result =
+		var result =
 			[Options.folders_string, Options.by_date_string, Options.by_gps_string].indexOf(cacheBase) !== -1 ||
 			Utilities.isSearchRootCacheBase(cacheBase) ||
 			Utilities.isMapRootCacheBase(cacheBase) ||
@@ -1029,7 +1029,7 @@
 	Utilities.prototype.addAllSubalbumsToSelection = function(subalbums) {
 		return new  Promise(
 			function(resolve_addAllSubalbums) {
-				subalbumsPromises = [];
+				var subalbumsPromises = [];
 				subalbums.forEach(
 					function(subalbum, indexSubalbum) {
 						if (! Utilities.subalbumIsSelected(subalbum)) {

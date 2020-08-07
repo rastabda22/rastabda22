@@ -2040,7 +2040,7 @@
 									folderTitle = util._t('#place-icon-title') + folderName;
 								} else if (util.isSelectionCacheBase(currentAlbum.cacheBase) && util.isByGpsCacheBase(ithSubalbum.cacheBase)) {
 									folderName = '';
-									for (iCacheBase = 1; iCacheBase < ithSubalbum.ancestorsCacheBase.length - 1; iCacheBase ++) {
+									for (let iCacheBase = 1; iCacheBase < ithSubalbum.ancestorsCacheBase.length - 1; iCacheBase ++) {
 										let marker = "<marker>" + iCacheBase + "</marker>";
 										folderName += marker + " > ";
 										let cacheBasePromise = phFl.getAlbum(ithSubalbum.ancestorsCacheBase[iCacheBase], null, {"getMedia": false, "getPositions": false});

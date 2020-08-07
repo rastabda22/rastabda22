@@ -165,7 +165,7 @@
 			}
 
 			if (
-				! util.somethingIsSelected() || ! (
+				! somethingIsSelected || ! (
 					isSingleMedia && util.singleMediaIsSelected(thisMedia) ||
 					isAnyRootCacheBase
 				)
@@ -599,14 +599,14 @@
 		////////////////// SELECTION //////////////////////////////
 
 		$(".select").removeClass("hidden").removeClass("selected");
-		if (! util.somethingIsSelected()) {
-			$(".select.global-reset, .select.go-to-selected").addClass("hidden")
+		if (! somethingIsSelected) {
+			$(".select.global-reset, .select.go-to-selected").addClass("hidden");
 		}
 
 		if (isSingleMedia) {
 			$(".select.albums, .select.everything, .select.everything-individual").addClass("hidden");
 		} else if (! thisAlbum.media.length || ! thisAlbum.subalbums.length) {
-			$(".select.media, .select.albums").addClass("hidden")
+			$(".select.media, .select.albums").addClass("hidden");
 		}
 
 		if (util.everySubalbumIsSelected(thisAlbum.subalbums)) {
@@ -622,7 +622,7 @@
 		}
 
 		if (! thisAlbum.media.length || ! thisAlbum.subalbums.length) {
-			$(".select.media, .select.albums").addClass("hidden")
+			$(".select.media, .select.albums").addClass("hidden");
 		}
 
 		if (! thisAlbum.subalbums.length || util.imagesAndVideosTotal(thisAlbum.numMediaInSubTree) > Options.big_virtual_folders_threshold) {
@@ -778,11 +778,11 @@
 				let nMediaInSubTree = util.imagesAndVideosTotal(thisAlbum.numMediaInSubTree);
 				let numImages = thisAlbum.numMediaInSubTree.images;
 				let numVideos = thisAlbum.numMediaInSubTree.videos;
-				let what = util._t(".title-media")
+				let what = util._t(".title-media");
 				if (numImages === 0)
-					what = util._t(".title-videos")
+					what = util._t(".title-videos");
 				if (numVideos === 0)
-					what = util._t(".title-images")
+					what = util._t(".title-images");
 
 				if (util.isSearchCacheBase(thisAlbum.cacheBase) && thisAlbum.subalbums.length) {
 					// in search albums, numMediaInSubTree doesn't include the media in the albums found, the values that goes into the DOm must be update by code here
@@ -910,11 +910,11 @@
 			// TO DO: verify if it's correct to replace previous commented out code with the following 2 lines
 			let numImages = thisAlbum.numMedia.images;
 			let numVideos = thisAlbum.numMedia.videos;
-			let what = util._t(".title-media")
+			let what = util._t(".title-media");
 			if (numImages === 0)
-				what = util._t(".title-videos")
+				what = util._t(".title-videos");
 			if (numVideos === 0)
-				what = util._t(".title-images")
+				what = util._t(".title-images");
 
 			if (util.imagesAndVideosTotal(thisAlbum.numMedia)) {
 				$(".download-album.media-only.all.full").removeClass("hidden");
