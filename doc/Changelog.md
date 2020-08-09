@@ -1,3 +1,5 @@
+* new option `by_selection_string` for albums built from selection
+
 * menu refinements in download section
 * searching when in popup now refines the popup content
 * media and album captions from `album.ini` file are now separate from metadata; a menu option to hide them has been added

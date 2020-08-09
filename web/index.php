@@ -324,6 +324,9 @@
 
 			<img id="prev" width="42" height="88" src="img/prev.png">
 			<img id="next" width="42" height="88" src="img/next.png">
+			<a id="media-select-box">
+				<img class="select-box">
+			</a>
 			<div id="pinch-container" class="hidden">
 				<img src="img/pinch-plus.png" id="pinch-in" class="pinch" width="25" height="25">
 				<img src="img/pinch-minus.png" id="pinch-out" class="pinch disabled" width="25" height="25">
@@ -376,6 +379,7 @@
 				<li id="by-gps-view" class="browsing-mode-switcher radio"></li>
 				<li id="by-map-view" class="browsing-mode-switcher radio"></li>
 				<li id="by-search-view" class="browsing-mode-switcher radio"></li>
+				<li id="by-selection-view" class="browsing-mode-switcher radio"></li>
 			</ul>
 		</li>
 
@@ -413,6 +417,18 @@
 			</ul>
 		</li>
 
+		<li class='expandable select active'>
+			<span class='select caption'></span>
+			<ul class="sub-menu hidden">
+				<li class='select everything active'></li>
+				<li class='select everything-individual active'></li>
+				<li class='select albums active'></li>
+				<li class='select media active'></li>
+				<li class='select global-reset active'></li>
+				<li class='select go-to-selected active'></li>
+			</ul>
+		</li>
+
 		<li class='big-albums active'>
 			<span id='show-big-albums' class="big-albums caption"></span>
 		</li>
@@ -435,6 +451,8 @@
 				<li class='download-album media-only images sized active'></li>
 				<li class='download-album media-only videos full active'></li>
 				<li class='download-album media-only videos sized active'></li>
+				<li class='download-album selected active'></li>
+				<li class='download-album selection active'></li>
 			</ul>
 		</li>
 
@@ -453,7 +471,11 @@
 	<div id="by-date-browsing" class="browsing-mode-message"></div>
 	<div id="by-gps-browsing" class="browsing-mode-message"></div>
 	<div id="by-search-browsing" class="browsing-mode-message"></div>
+	<div id="by-selection-browsing" class="browsing-mode-message"></div>
 	<div id="by-map-browsing" class="browsing-mode-message"></div>
+
+	<div id="added-individually" class="selection-message"></div>
+	<div id="removed-individually" class="selection-message"></div>
 
 	<div id="error-overlay"></div>
 	<div id="error-options-file" class="error"></div>

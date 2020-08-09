@@ -73,7 +73,7 @@
 				var windowCenter = {x: windowWidth / 2, y: windowHeight / 2};
 				if (center === null)
 					center = windowCenter;
-				centersDifference = {x: center.x - windowCenter.x, y: center.y - windowCenter.y};
+				var centersDifference = {x: center.x - windowCenter.x, y: center.y - windowCenter.y};
 				var [currentReductionSize, currentReductionIndex] = util.currentSizeAndIndex();
 				var width, height;
 				var photoSize = Math.max(currentMedia.metadata.size[0], currentMedia.metadata.size[1]);
@@ -159,9 +159,11 @@
 					$(mediaSelector).css("cursor", "");
 				}
 
-				Utilities.setPinchButtonsPosition();
+				util.setPinchButtonsPosition();
 				PinchSwipe.setPinchButtonsVisibility();
-				Utilities.correctPrevNextPosition();
+				util.correctPrevNextPosition();
+
+				util.setSelectButtonPosition();
 
 				currentZoom = finalZoom;
 			}
@@ -210,6 +212,7 @@
 						util.setPinchButtonsPosition();
 						util.correctPrevNextPosition();
 						PinchSwipe.setPinchButtonsVisibility();
+						util.setSelectButtonPosition();
 						mediaWidth = $(mediaSelector).css("width");
 						mediaHeight = $(mediaSelector).css("height");
 						mediaBoxInnerWidth = $(mediaContainerSelector).css("width");
@@ -309,6 +312,7 @@
 					util.setPinchButtonsPosition();
 					util.correctPrevNextPosition();
 					PinchSwipe.setPinchButtonsVisibility();
+					util.setSelectButtonPosition();
 					mediaWidth = $(mediaSelector).css("width");
 					mediaHeight = $(mediaSelector).css("height");
 					initialZoom = PinchSwipe.screenZoom();
@@ -388,7 +392,7 @@
 		 */
 		function swipeStatus(event, phase, direction, distance, duration, fingerCount) {
 			//If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
-			if (event.which === 3 && (event.shiftKey || event.ctrlKey || event.altKey)) {
+			if (event.button === 2 && (event.shiftKey || event.ctrlKey || event.altKey)) {
 				return;
 			}
 
@@ -416,7 +420,7 @@
 						} else if (direction == "left") {
 							PinchSwipe.swipeLeft(nextMedia);
 						} else if (direction == "down") {
-							PinchSwipe.swipeDown(upLink);
+							PinchSwipe.swipeDown(util.upHash());
 						}
 					}
 				} else {
@@ -471,7 +475,7 @@
 			// lamentably, swipeStatus doesn't return info about the swipe vector
 
 			pinchZoom = parseFloat(pinchZoom);
-			if (event.which === 3 && (event.shiftKey || event.ctrlKey || event.altKey)) {
+			if (event.button === 2 && (event.shiftKey || event.ctrlKey || event.altKey)) {
 				return;
 			}
 
@@ -520,7 +524,7 @@
 
 		function tap(event, target) {
 			if (currentZoom == initialZoom) {
-				if (event.which === 3) {
+				if (event.button === 2) {
 					// right click
 					if (prevMedia !== null) {
 						PinchSwipe.swipeRight(prevMedia);

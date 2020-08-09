@@ -14,7 +14,6 @@
 		MapFunctions.maxHeightForPopupContent = 0;
 		MapFunctions.mymap = null;
 		MapFunctions.popup = null;
-		MapFunctions.mapAlbum = {};
 	}
 
 	MapFunctions.averagePosition = function(latLngArray) {
@@ -43,7 +42,7 @@
 	MapFunctions.prototype.generateHtmlForImages = function(theAlbum) {
 		// we must get the media corresponding to the name in the point
 		// var markerClass;
-		var mediaIndex, mediaHash, thumbHeight, thumbWidth, width, height;
+		var mediaIndex, mediaHash, albumCacheBase, thumbHeight, thumbWidth, width, height;
 		var ithMedia, images = "", calculatedWidth, calculatedHeight, imageString, imgString, img, thumbHash, imgTitle;
 		var albumViewPadding = $("#album-view").css("padding");
 		if (! albumViewPadding)
@@ -56,6 +55,7 @@
 			ithMedia = theAlbum.media[mediaIndex];
 
 			mediaHash = phFl.encodeHash(theAlbum, ithMedia);
+			albumCacheBase = theAlbum.cacheBase;
 			// var codedHashId = getCodedHashId(photosInAlbumCopy[photoIndex].element);
 			thumbHash = util.chooseThumbnail(theAlbum, ithMedia, Options.media_thumb_size);
 			imgTitle = util.pathJoin([ithMedia.albumName, ithMedia.name]);
@@ -85,6 +85,20 @@
 			);
 			calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
+			selectSrc = 'img/checkbox-unchecked-48px.png';
+			if (util.singleMediaIsSelected(ithMedia)) {
+				selectSrc = 'img/checkbox-checked-48px.png';
+			}
+			selectBoxHtml =
+				"<a id='media-select-box-" + mediaIndex + "'>" +
+					"<img " +
+						"class='select-box' " +
+						"title='" + util.escapeSingleQuotes(util._t("#select-single-media")) + "' " +
+						"alt='" + util.escapeSingleQuotes(util._t("#select-single-media")) + "' " +
+						"src='" + selectSrc + "'" +
+					">" +
+				"</a>";
+
 			imgString =	"<img " +
 							"data-src='" + encodeURI(thumbHash) + "' " +
 							"src='img/image-placeholder.png' " +
@@ -93,6 +107,7 @@
 								{
 									"width": ithMedia.metadata.size[0],
 									"height": ithMedia.metadata.size[1],
+									"albumCacheBase": albumCacheBase,
 									"mediaHash": mediaHash
 								}
 							) +
@@ -126,10 +141,11 @@
 						" style='" +
 							"width: " + calculatedWidth + "px; " +
 							"height: " + calculatedHeight + "px;" +
-							"'" +
-						"'>" +
-							"<span class='helper'></span>" +
-							img.prop("outerHTML") +
+							// "'" +
+							"'>" +
+						selectBoxHtml +
+						"<span class='helper'></span>" +
+						img.prop("outerHTML") +
 					"</div>" +
 					"<div class='media-caption'>" +
 						"<span>";
@@ -161,7 +177,7 @@
 		// $("#popup-images-wrapper").css("width", MapFunctions.maxWidthForImagesInPopup);
 		$("#popup-photo-count").css("max-width", MapFunctions.maxWidthForPopupContent + "px");
 		// $(".leaflet-popup-content").css("max-width", MapFunctions.maxWidthForImagesInPopup).css("width", MapFunctions.maxWidthForImagesInPopup);
-		MapFunctions.popup.setLatLng(MapFunctions.averagePosition(MapFunctions.mapAlbum.positionsAndMediaInTree));
+		MapFunctions.popup.setLatLng(MapFunctions.averagePosition(mapAlbum.positionsAndMediaInTree));
 		MapFunctions.buildPopupHeader();
 
 		MapFunctions.setPopupPosition();
@@ -200,7 +216,7 @@
 	};
 
 	MapFunctions.buildPopupHeader = function() {
-		$("#popup-photo-count-number").html(util.imagesAndVideosTotal(MapFunctions.mapAlbum.numMedia));
+		$("#popup-photo-count-number").html(util.imagesAndVideosTotal(mapAlbum.numMedia));
 		$("#popup-photo-count").css("max-width", MapFunctions.maxWidthForPopupContent);
 		// add the click event for showing the photos in the popup as an album
 		$("#popup-photo-count").on(
@@ -213,7 +229,7 @@
 				mapRefreshType = "none";
 
 				var promise = phFl.endPreparingAlbumAndKeepOn(
-					MapFunctions.mapAlbum,
+					mapAlbum,
 					null,
 					null
 				);
@@ -221,7 +237,7 @@
 					function(){
 						$("#album-view").addClass("hidden");
 						$("#loading").show();
-						window.location.href = "#!" + MapFunctions.mapAlbum.cacheBase;
+						window.location.href = "#!" + mapAlbum.cacheBase;
 					}
 				);
 			}
@@ -254,7 +270,34 @@
 				window.location.href = imgData.mediaHash;
 			}
 		);
-
+		var mediaBoxSelectElement = element.siblings('a');
+		var id = mediaBoxSelectElement.attr("id");
+		mediaBoxSelectElement.on(
+			'click',
+			{id: id},
+			function(ev) {
+				var imgData = JSON.parse(element.attr("data"));
+				ev.stopPropagation();
+				var album = phFl.getAlbumFromCache(imgData.albumCacheBase);
+				for (let iMedia = 0; iMedia < album.media.length; iMedia ++) {
+					if (imgData.mediaHash.split('/').pop() == album.media[iMedia].cacheBase) {
+						TopFunctions.toggleSelectedMedia(album.media[iMedia], '#' + id);
+						break;
+					}
+				}
+				// var getAlbumPromise = PhotoFloat.getAlbum(imgData.albumCacheBase, null, {"getMedia": true, "getPositions": false});
+				// getAlbumPromise.then(
+				// 	function(album) {
+				// 		for (iMedia = 0; iMedia < album.media.length; iMedia ++) {
+				// 			if (imgData.mediaHash.split('/').pop() == album.media[iMedia].cacheBase) {
+				// 				TopFunctions.toggleSelectedMedia(album.media[iMedia], 'a');
+				// 				break;
+				// 			}
+				// 		}
+				// 	}
+				// );
+			}
+		);
 	};
 
 	MapFunctions.addLazy = function(selector) {
@@ -322,28 +365,7 @@
 		MapFunctions.setPopupPosition();
 	};
 
-	MapFunctions.prototype.initializeMapAlbum = function(mapAlbumHash) {
-		// initializes the map album
-		var album = {};
-		album.media = [];
-		album.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-		album.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
-		album.sizesOfAlbum = initialSizes;
-		album.sizesOfSubTree = initialSizes;
-		album.subalbums = [];
-		album.positionsAndMediaInTree = [];
-		album.numPositionsInTree = 0;
-		album.cacheBase = Options.by_map_string + Options.cache_folder_separator + mapAlbumHash + Options.cache_folder_separator + currentAlbum.cacheBase;
-		album.path = album.cacheBase.replace(Options.cache_folder_separator, "/");
-		album.physicalPath = album.path;
-		album.searchInFolderCacheBase = currentAlbum.cacheBase;
-		album.clickHistory = [];
-		album.numsProtectedMediaInSubTree = {"": imagesAndVideos0};
-
-		return album;
-	};
-
-	MapFunctions.addMediaFromPositionsToMapAlbum = function(positionsAndCounts, mapAlbum, resolve_imageLoad) {
+	MapFunctions.addMediaFromPositionsToMapAlbum = function(positionsAndCounts, thisMapAlbum, resolve_imageLoad) {
 
 		var mediaNameListElement, indexPositions, indexPhoto, markerClass, photoIndex, mediaIndex;
 		var photosByAlbum = {}, positionsAndCountsElement;
@@ -380,9 +402,9 @@
 								for (mediaIndex = 0; mediaIndex < util.imagesAndVideosTotal(theAlbum.numMedia); mediaIndex ++) {
 									for (photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
 										if (theAlbum.media[mediaIndex].cacheBase == photosInAlbum[photoIndex].element.cacheBase) {
-											mapAlbum.media.push(theAlbum.media[mediaIndex]);
-											mapAlbum.sizesOfAlbum = util.sumSizes(mapAlbum.sizesOfAlbum, theAlbum.media[mediaIndex].fileSizes);
-											mapAlbum.sizesOfSubTree = util.sumSizes(mapAlbum.sizesOfSubTree, theAlbum.media[mediaIndex].fileSizes);
+											thisMapAlbum.media.push(theAlbum.media[mediaIndex]);
+											thisMapAlbum.sizesOfAlbum = util.sumSizes(thisMapAlbum.sizesOfAlbum, theAlbum.media[mediaIndex].fileSizes);
+											thisMapAlbum.sizesOfSubTree = util.sumSizes(thisMapAlbum.sizesOfSubTree, theAlbum.media[mediaIndex].fileSizes);
 										}
 									}
 								}
@@ -399,8 +421,8 @@
 		}
 		Promise.all(cacheBasesPromises).then(
 			function() {
-				mapAlbum.positionsAndMediaInTree = util.mergePoints(mapAlbum.positionsAndMediaInTree, positionsAndCounts);
-				resolve_imageLoad(mapAlbum);
+				thisMapAlbum.positionsAndMediaInTree = util.mergePositionsAndMedia(thisMapAlbum.positionsAndMediaInTree, positionsAndCounts);
+				resolve_imageLoad(thisMapAlbum);
 			}
 		);
 		// end of function addMediaFromPositionsToMapAlbum body

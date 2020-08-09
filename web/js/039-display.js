@@ -5,9 +5,9 @@ var currentMedia = null;
 var currentMediaIndex = -1;
 var previousAlbum = null;
 var previousMedia = null;
-var nextMedia = null, prevMedia = null, upLink = "";
-var bySearchViewLink = null, byMapViewLink = null, isABrowsingModeChange = false;
-var nextBrowsingModeSelector, prevBrowsingModeSelector;
+var nextMedia = null, prevMedia = null;
+var isABrowsingModeChange = false;
+var cacheBaseBeforeBrowsingBySelection = null;
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
 var fromEscKey = false;
@@ -17,8 +17,12 @@ var popupRefreshType = "previousAlbum";
 var destHash = null;
 var destMedia = null;
 var destAlbum = null;
+var hashBeginning = "#!/";
+var mapAlbum = {};
+var selectionAlbum = {};
+var searchAlbum = {};
 // var scrollbarWidth;
-var contextMenu = false;
+// var contextMenu = false;
 var imagesAndVideos0 = {"images": 0, "videos": 0};
 var initialSizes = {};
 initialSizes[0] = JSON.parse(JSON.stringify(imagesAndVideos0));
@@ -76,7 +80,7 @@ $(document).ready(function() {
 	var util = new Utilities();
 	var pS = new PinchSwipe();
 	var f = new Functions();
-	var map = new MapFunctions();
+	// var map = new MapFunctions();
 	var tF = new TopFunctions();
 	var maxSize;
 	var language;
@@ -105,8 +109,11 @@ $(document).ready(function() {
 			$("#menu-icon")[0].click();
 		}
 
+		let upLink = util.upHash();
+
 		if (e.key === "Escape") {
 			// warning: modern browsers will always exit fullscreen when pressing esc
+
 			if (isAuth) {
 				// if (upLink && (currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)))
 				// 	pS.swipeDown(upLink);
@@ -125,7 +132,7 @@ $(document).ready(function() {
 				if (isPopup) {
 					// the popup is there: close it
 					$('.leaflet-popup-close-button')[0].click();
-					MapFunctions.mapAlbum = {};
+					mapAlbum = {};
 					// $('#popup #popup-content').html("");
 				} else {
 					// we are in a map: close it
@@ -320,15 +327,34 @@ $(document).ready(function() {
 							Options.by_map_string,
 							Options.by_search_string
 						].indexOf(currentAlbum.cacheBase) !== -1 ||
-						currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)
+						currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum) || util.somethingIsSelected()
 					) && ! isMap
 				) {
 					// browsing mode switchers
-					if (e.key === '<' && nextBrowsingModeSelector !== null) {
-						$(nextBrowsingModeSelector)[0].click();
+					let nextBrowsingModeRequested = (e.key === '>');
+					let prevBrowsingModeRequested = (e.key === '<');
+					if (nextBrowsingModeRequested || prevBrowsingModeRequested) {
+						if (cacheBaseBeforeBrowsingBySelection) {
+							cacheBaseBeforeBrowsingBySelection = null;
+						}
+					}
+
+					var filter = ".radio:not(.hidden):not(.selected)";
+					if (nextBrowsingModeRequested) {
+						let nextBrowsingModeObject = $(".browsing-mode-switcher.selected").nextAll(filter).first();
+						if (nextBrowsingModeObject[0] === undefined)
+							nextBrowsingModeObject = $(".browsing-mode-switcher.selected").siblings(filter).first();
+						$(".browsing-mode-switcher").removeClass("selected");
+						nextBrowsingModeObject.addClass("selected");
+						nextBrowsingModeObject[0].click();
 						return false;
-					} else if (e.key === '>' && prevBrowsingModeSelector !== null) {
-						$(prevBrowsingModeSelector)[0].click();
+					} else if (prevBrowsingModeRequested) {
+						let prevBrowsingModeObject = $(".browsing-mode-switcher.selected").prevAll(filter).first();
+						if (prevBrowsingModeObject[0] === undefined)
+							prevBrowsingModeObject = $(".browsing-mode-switcher.selected").siblings(filter).last();
+						$(".browsing-mode-switcher").removeClass("selected");
+						prevBrowsingModeObject.addClass("selected");
+						prevBrowsingModeObject[0].click();
 						return false;
 					}
 				}
@@ -446,7 +472,7 @@ $(document).ready(function() {
 		if (! Options.hasOwnProperty('cache_base_to_search_in') || ! Options.cache_base_to_search_in)
 			Options.cache_base_to_search_in = Options.folders_string;
 
-		var bySearchViewHash = "#!/" + Options.by_search_string;
+		var bySearchViewHash = hashBeginning + Options.by_search_string;
 
 		// build the search album part of the hash
 		var wordsStringOriginal = $("#search-field").val().normalize().trim().replace(/  /g, ' ');
@@ -467,18 +493,18 @@ $(document).ready(function() {
 				var searchWordsFromUserNormalized = wordsStringNormalized.split(' ');
 
 				// remove the stopwords from the search terms
-				promise = phFl.getStopWords();
-				promise.then(
+				let stopWordsPromise = phFl.getStopWords();
+				stopWordsPromise.then(
 					function () {
 						[searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions, removedStopWords] =
 							phFl.removeStopWords(searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions);
 
 						// every normalized single media name must match the search terms
 						var matchingMedia = [];
-						for (let iMedia = 0; iMedia < MapFunctions.mapAlbum.media.length; iMedia ++) {
+						for (let iMedia = 0; iMedia < mapAlbum.media.length; iMedia ++) {
 							// TO DO, BUG: it's not the media name to be used for matching, but the words in media name!!!!!!!
 							// TO DO: the description (caption) must be matched too
-							let words = util.normalizeAccordingToOptions(MapFunctions.mapAlbum.media[iMedia].words);
+							let words = util.normalizeAccordingToOptions(mapAlbum.media[iMedia].words);
 							if (
 								! Options.search_any_word &&
 								searchWordsFromUserNormalizedAccordingToOptions.every(
@@ -516,9 +542,9 @@ $(document).ready(function() {
 								)
 
 							)
-								matchingMedia.push(MapFunctions.mapAlbum.media[iMedia]);
+								matchingMedia.push(mapAlbum.media[iMedia]);
 						}
-						MapFunctions.mapAlbum.media = matchingMedia;
+						mapAlbum.media = matchingMedia;
 						tF.prepareAndDoPopupUpdate();
 
 					},
@@ -556,7 +582,7 @@ $(document).ready(function() {
 
 	$('#search-field').keypress(function(ev) {
 		$("#right-menu li.search ul").removeClass("hidden");
-		if (ev.which == 13) {
+		if (ev.which === 13 || ev.keyCode === 13) {
 			//Enter key pressed, trigger search button click event
 			$('#search-button').click();
 			util.focusSearchField();
@@ -756,19 +782,14 @@ $(document).ready(function() {
 
 			if (isABrowsingModeChange)
 				isABrowsingModeChange = false;
-			else {
-				// the image has changed, reset the search and map link
-				bySearchViewLink = null;
-				byMapViewLink = null;
-			}
 			$("#loading").show();
 			$("#album-view").removeClass("hidden");
 			$("link[rel=image_src]").remove();
 			$("link[rel=video_src]").remove();
 			$("ul#right-menu").removeClass("expand");
 
-			var promise = f.getOptions();
-			promise.then(
+			var optionsPromise = f.getOptions();
+			optionsPromise.then(
 				function() {
 					var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 					if (currentAlbum && albumHash !== currentAlbum.cacheBase) {
@@ -791,8 +812,8 @@ $(document).ready(function() {
 					// - the requested album
 					// - the requested media (if applicable)
 					// - the requested media index (if applicable)
-					var promise = phFl.parseHashAndReturnAlbumAndMedia(location.hash);
-					promise.then(
+					var hashPromise = phFl.parseHashAndReturnAlbumAndMedia(location.hash);
+					hashPromise.then(
 						function([album, mediaIndex]) {
 							tF.showAlbumOrMedia(album, mediaIndex);
 						},

@@ -173,7 +173,7 @@ class TreeWalker:
 			report_mem()
 
 			# options must be saved when json files have been saved, otherwise in case of error they may not reflect the json files situation
-			self._save_json_options()
+			self._save_json_options(len(self.origin_album.subalbums[0].positions_and_media_in_tree.positions))
 
 			for identifier_and_password in Options.identifiers_and_passwords:
 				if identifier_and_password['used']:
@@ -1950,7 +1950,7 @@ class TreeWalker:
 
 
 	@staticmethod
-	def _save_json_options():
+	def _save_json_options(num):
 		json_options_file = os.path.join(Options.config['cache_path'], 'options.json')
 		message("saving json options file...", json_options_file, 4)
 		# some option must not be saved
@@ -1958,6 +1958,8 @@ class TreeWalker:
 		for key, value in list(Options.config.items()):
 			if key not in Options.options_not_to_be_saved:
 				options_to_save[key] = value
+		# add the total count of positions, so that reading another json file is not needed in order to know if gps data exist
+		options_to_save['num_positions_in_tree'] = num
 
 		with open(json_options_file, 'w') as options_file:
 			json.dump(options_to_save, options_file)

@@ -275,7 +275,7 @@ class Album(object):
 		album = Album(None)
 		for key, value in list(self.__dict__.items()):
 			if key == "subalbums_list":
-				# subalbus must be new objects
+				# subalbums must be new objects
 				setattr(album, key, [subalbum.copy() for subalbum in value])
 			elif isinstance(value, list):
 				# media are the same object, but the list is a copy
