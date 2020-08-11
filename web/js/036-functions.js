@@ -752,15 +752,18 @@
 		$(".select.global-reset:not(.hidden)").on(
 			"click",
 			function() {
-				util.removeAllMediaFromSelection(currentAlbum.media);
 				util.removeAllMediaFromSelection(selectionAlbum.media);
-				let promise1 = util.removeAllSubalbumsFromSelection(currentAlbum.subalbums);
-				let promise2 = util.removeAllSubalbumsFromSelection(selectionAlbum.subalbums);
-				Promise.all([promise1, promise2]).then(
-					function() {
+				let subalbumsPromise = util.removeAllSubalbumsFromSelection(selectionAlbum.subalbums);
+				subalbumsPromise.then(
+					function allSubalbumsRemoved(isVoid) {
+						if (isVoid)
+							selectionAlbum = util.initializeSelectionAlbum();
 						Functions.updateMenu();
 					}
 				);
+				// $(".select-box").attr("src", "img/checkbox-unchecked-48px.png");
+				// $(".album-button .select-box").attr("title", util._t("#select-subalbum"));
+				// $(".thumb-container .select-box").attr("title", util._t("#select-single-media"));
 			}
 		);
 
