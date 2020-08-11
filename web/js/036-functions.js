@@ -661,8 +661,8 @@
 							// 	// nothing remaining: remove the album
 							// 	PhotoFloat.removeAlbumFromCache(selectionAlbum.cacheBase);
 							// 	selectionAlbum = {};
-							// 	if (Utilities.isSelectionCacheBase(thisAlbum.cacheBase))
-							// 		window.location.href = Utilities.upHash();
+							// 	if (util.isSelectionCacheBase(thisAlbum.cacheBase))
+							// 		window.location.href = util.upHash();
 							// }
 							Functions.updateMenu();
 						}
