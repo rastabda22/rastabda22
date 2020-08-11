@@ -601,6 +601,17 @@
 		$(".select").removeClass("hidden").removeClass("selected");
 		if (! somethingIsSelected) {
 			$(".select.global-reset, .select.go-to-selected").addClass("hidden");
+		} else {
+			let menuItem = util._t(".select.go-to-selected");
+			menuItem += " (";
+			if (selectionAlbum.subalbums.length)
+				menuItem += selectionAlbum.subalbums.length + " " + util._t(".title-albums");
+			if (selectionAlbum.subalbums.length && selectionAlbum.media.length)
+				menuItem += ", ";
+			if (selectionAlbum.media.length)
+				menuItem += selectionAlbum.media.length + " " + util._t(".title-media");
+			menuItem += ")";
+			$(".select.go-to-selected").html(menuItem);
 		}
 
 		if (isSingleMedia) {
