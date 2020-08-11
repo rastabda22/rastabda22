@@ -1004,25 +1004,20 @@
 	};
 
 	Utilities.addAllMediaToSelection = function(media) {
-		media.forEach(
-			function(singleMedia, indexMedia) {
-				if (! Utilities.singleMediaIsSelected(singleMedia)) {
-					Utilities.addSingleMediaToSelection(singleMedia, "#media-select-box-" + indexMedia);
-				}
-			}
-		);
-
+		for (let indexMedia = media.length - 1; indexMedia >= 0; indexMedia --) {
+			let singleMedia = media[indexMedia];
+			if (! Utilities.singleMediaIsSelected(singleMedia))
+				Utilities.addSingleMediaToSelection(singleMedia, "#media-select-box-" + indexMedia);
+		}
 	};
 
 	Utilities.removeAllMediaFromSelection = function(media) {
 		if (media !== undefined) {
-			media.forEach(
-				function(singleMedia, indexMedia) {
-					if (Utilities.singleMediaIsSelected(singleMedia)) {
-						Utilities.removeSingleMediaFromSelection(singleMedia, "#media-select-box-" + indexMedia);
-					}
-				}
-			);
+			for (let indexMedia = media.length - 1; indexMedia >= 0; indexMedia --) {
+				let singleMedia = media[indexMedia];
+				if (Utilities.singleMediaIsSelected(singleMedia))
+					Utilities.removeSingleMediaFromSelection(singleMedia, "#media-select-box-" + indexMedia);
+			}
 		}
 	};
 
@@ -1030,14 +1025,13 @@
 		return new Promise(
 			function(resolve_addAllSubalbums) {
 				var subalbumsPromises = [];
-				subalbums.forEach(
-					function(subalbum, indexSubalbum) {
-						if (! Utilities.subalbumIsSelected(subalbum)) {
-							let addSubalbumPromise = Utilities.addSubalbumToSelection(subalbum, "#subalbum-select-box-" + indexSubalbum);
-							subalbumsPromises.push(addSubalbumPromise);
-						}
+				for (let indexSubalbum = subalbums.length - 1; indexSubalbum >= 0; indexSubalbum --) {
+					let subalbum = subalbums[indexSubalbum];
+					if (! Utilities.subalbumIsSelected(subalbum)) {
+						let addSubalbumPromise = Utilities.addSubalbumToSelection(subalbum, "#subalbum-select-box-" + indexSubalbum);
+						subalbumsPromises.push(addSubalbumPromise);
 					}
-				);
+				}
 				Promise.all(subalbumsPromises).then(
 					function() {
 						resolve_addAllSubalbums();
@@ -1053,14 +1047,13 @@
 				// var isVoid;
 				if (subalbums !== undefined) {
 					let subalbumsPromises = [];
-					subalbums.forEach(
-						function(subalbum, indexSubalbum) {
-							if (Utilities.subalbumIsSelected(subalbum)) {
-								removeSubalbumPromise = Utilities.removeSubalbumFromSelection(subalbum, "#subalbum-select-box-" + indexSubalbum);
-								subalbumsPromises.push(removeSubalbumPromise);
-							}
+					for (let indexSubalbum = subalbums.length - 1; indexSubalbum >= 0; indexSubalbum --) {
+						let subalbum = subalbums[indexSubalbum];
+						if (Utilities.subalbumIsSelected(subalbum)) {
+							removeSubalbumPromise = Utilities.removeSubalbumFromSelection(subalbum, "#subalbum-select-box-" + indexSubalbum);
+							subalbumsPromises.push(removeSubalbumPromise);
 						}
-					);
+					}
 					Promise.all(subalbumsPromises).then(
 						function() {
 							resolve_removeAllSubalbums();
@@ -1196,7 +1189,6 @@
 				let getAlbumPromise = PhotoFloat.getAlbum(subalbum.cacheBase, null, {"getMedia": true, "getPositions": true});
 				getAlbumPromise.then(
 					function(subalbum) {
-						subalbum.selectionAlbumCacheBase = selectionAlbum.cacheBase;
 						// add the positions
 						selectionAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(selectionAlbum.positionsAndMediaInTree, subalbum.positionsAndMediaInTree);
 
