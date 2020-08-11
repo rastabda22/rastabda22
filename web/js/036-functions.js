@@ -757,7 +757,7 @@
 				subalbumsPromise.then(
 					function allSubalbumsRemoved(isVoid) {
 						if (isVoid)
-							selectionAlbum = util.initializeSelectionAlbum();
+							Utilities.initializeSelectionAlbum();
 						Functions.updateMenu();
 					}
 				);
@@ -1453,6 +1453,7 @@
 							util.initializeMapRootAlbum();
 							// WARNING: do not initialize the search root album, the app must read it from its json file!
 							util.initializeSelectionRootAlbum();
+							util.initializeSelectionAlbum();
 
 							for (let i = 0; i < Options.reduced_sizes.length; i++) {
 								initialSizes[Options.reduced_sizes[i]] = JSON.parse(JSON.stringify(imagesAndVideos0));

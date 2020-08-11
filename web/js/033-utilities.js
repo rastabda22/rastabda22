@@ -192,9 +192,9 @@
 		newSelectionAlbum.ancestorsCacheBase = selectionRootAlbum.ancestorsCacheBase.slice();
 		newSelectionAlbum.ancestorsCacheBase.push(newSelectionAlbum.cacheBase);
 
-		PhotoFloat.putAlbumIntoCache(newSelectionAlbum.cacheBase, newSelectionAlbum);
+		selectionAlbum = newSelectionAlbum;
 
-		return newSelectionAlbum;
+		PhotoFloat.putAlbumIntoCache(selectionAlbum.cacheBase, newSelectionAlbum);
 	};
 
 	Utilities._t = function(id) {
@@ -1072,7 +1072,7 @@
 		// var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
 		var firstAddition = false;
 		if (! selectionAlbum.hasOwnProperty("numMediaInSubTree")) {
-			selectionAlbum = Utilities.initializeSelectionAlbum();
+			Utilities.initializeSelectionAlbum();
 			firstAddition = true;
 		}
 
@@ -1182,7 +1182,7 @@
 			function(resolve_addSubalbum) {
 				var firstAddition = false;
 				if (! selectionAlbum.hasOwnProperty("numMediaInSubTree")) {
-					selectionAlbum = Utilities.initializeSelectionAlbum();
+					Utilities.initializeSelectionAlbum();
 					firstAddition = true;
 				}
 
@@ -2465,6 +2465,7 @@
 	Utilities.prototype.addAllMediaToSelection = Utilities.addAllMediaToSelection;
 	Utilities.prototype.removeAllMediaFromSelection = Utilities.removeAllMediaFromSelection;
 	Utilities.prototype.everyMediaIsSelected = Utilities.everyMediaIsSelected;
+	Utilities.prototype.initializeSelectionAlbum = Utilities.initializeSelectionAlbum;
 
 	window.Utilities = Utilities;
 }());
