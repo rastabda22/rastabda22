@@ -916,35 +916,27 @@
 	};
 
 	Utilities.somethingIsSelected = function() {
-		if (selectionAlbum.hasOwnProperty("numMediaInSubTree") && Utilities.imagesAndVideosTotal(selectionAlbum.numMediaInSubTree))
+		if (selectionAlbum.media.length || selectionAlbum.subalbums.length)
+		// if (selectionAlbum.hasOwnProperty("numMediaInSubTree") && Utilities.imagesAndVideosTotal(selectionAlbum.numMediaInSubTree))
 			return true;
 		else
 			return false;
 	};
 
 	Utilities.singleMediaIsSelected = function(singleMedia) {
-		if (! Utilities.somethingIsSelected())
+		var index = selectionAlbum.media.findIndex(x => x.foldersCacheBase === singleMedia.foldersCacheBase && x.cacheBase === singleMedia.cacheBase);
+		if (index > -1)
+			return true;
+		else
 			return false;
-		else {
-			var index = selectionAlbum.media.findIndex(x => x.foldersCacheBase === singleMedia.foldersCacheBase && x.cacheBase === singleMedia.cacheBase);
-			if (index > -1)
-				return true;
-			else
-				return false;
-		}
 	};
 
 	Utilities.subalbumIsSelected = function(subalbum) {
-		if (! selectionAlbum.hasOwnProperty("numMediaInSubTree"))
+		var index = selectionAlbum.subalbums.findIndex(x => x.cacheBase === subalbum.cacheBase);
+		if (index > -1)
+			return true;
+		else
 			return false;
-		else {
-			var index = selectionAlbum.subalbums.findIndex(x => x.cacheBase === subalbum.cacheBase);
-			if (index > -1)
-				return true;
-			else
-				return false;
-		}
-
 	};
 
 	Utilities.prototype.someMediaIsSelected = function(media) {
@@ -1006,8 +998,7 @@
 	Utilities.addAllMediaToSelection = function(media) {
 		for (let indexMedia = media.length - 1; indexMedia >= 0; indexMedia --) {
 			let singleMedia = media[indexMedia];
-			if (! Utilities.singleMediaIsSelected(singleMedia))
-				Utilities.addSingleMediaToSelection(singleMedia, "#media-select-box-" + indexMedia);
+			Utilities.addSingleMediaToSelection(singleMedia, "#media-select-box-" + indexMedia);
 		}
 	};
 
@@ -1015,8 +1006,7 @@
 		if (media !== undefined) {
 			for (let indexMedia = media.length - 1; indexMedia >= 0; indexMedia --) {
 				let singleMedia = media[indexMedia];
-				if (Utilities.singleMediaIsSelected(singleMedia))
-					Utilities.removeSingleMediaFromSelection(singleMedia, "#media-select-box-" + indexMedia);
+				Utilities.removeSingleMediaFromSelection(singleMedia, "#media-select-box-" + indexMedia);
 			}
 		}
 	};
@@ -1027,10 +1017,8 @@
 				var subalbumsPromises = [];
 				for (let indexSubalbum = subalbums.length - 1; indexSubalbum >= 0; indexSubalbum --) {
 					let subalbum = subalbums[indexSubalbum];
-					if (! Utilities.subalbumIsSelected(subalbum)) {
-						let addSubalbumPromise = Utilities.addSubalbumToSelection(subalbum, "#subalbum-select-box-" + indexSubalbum);
-						subalbumsPromises.push(addSubalbumPromise);
-					}
+					let addSubalbumPromise = Utilities.addSubalbumToSelection(subalbum, "#subalbum-select-box-" + indexSubalbum);
+					subalbumsPromises.push(addSubalbumPromise);
 				}
 				Promise.all(subalbumsPromises).then(
 					function() {
@@ -1044,23 +1032,18 @@
 	Utilities.prototype.removeAllSubalbumsFromSelection = function(subalbums) {
 		return new Promise(
 			function(resolve_removeAllSubalbums) {
-				// var isVoid;
 				if (subalbums !== undefined) {
 					let subalbumsPromises = [];
 					for (let indexSubalbum = subalbums.length - 1; indexSubalbum >= 0; indexSubalbum --) {
 						let subalbum = subalbums[indexSubalbum];
-						if (Utilities.subalbumIsSelected(subalbum)) {
-							removeSubalbumPromise = Utilities.removeSubalbumFromSelection(subalbum, "#subalbum-select-box-" + indexSubalbum);
-							subalbumsPromises.push(removeSubalbumPromise);
-						}
+						removeSubalbumPromise = Utilities.removeSubalbumFromSelection(subalbum, "#subalbum-select-box-" + indexSubalbum);
+						subalbumsPromises.push(removeSubalbumPromise);
 					}
 					Promise.all(subalbumsPromises).then(
 						function() {
 							resolve_removeAllSubalbums();
 						}
 					);
-				// } else {
-				// 	return isVoid;
 				}
 			}
 		);
@@ -1068,143 +1051,124 @@
 
 
 	Utilities.addSingleMediaToSelection = function(singleMedia, clickedSelector) {
-		// var selectionAlbumCacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
-		// var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
-		var firstAddition = false;
-		if (! selectionAlbum.hasOwnProperty("numMediaInSubTree")) {
-			Utilities.initializeSelectionAlbum();
-			firstAddition = true;
-		}
-
-		// singleMedia.parent = selectionAlbum;
-		singleMedia.selectionAlbumCacheBase = selectionAlbum.cacheBase;
-		if (Utilities.hasGpsData(singleMedia)) {
-			// add the media position
-			selectionAlbum.positionsAndMediaInTree =
-				Utilities.addSingleMediaToPositionsAndMedia(
-					selectionAlbum.positionsAndMediaInTree,
-					singleMedia
-				);
-		}
-
-		selectionAlbum.media.push(singleMedia);
-		selectionAlbum.numMedia = Utilities.imagesAndVideosSum(selectionAlbum.numMedia, Utilities.imagesAndVideosCount([singleMedia]));
-		selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
-		selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
-		selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, singleMedia.fileSizes);
-
-		Utilities.sortByDate(selectionAlbum.media);
-		selectionAlbum.mediaNameSort = false;
-		selectionAlbum.mediaReverseSort = false;
-		Utilities.initializeSortPropertiesAndCookies(selectionAlbum);
-		Utilities.sortAlbumsMedia(selectionAlbum);
-
-		// update the selector
-		$(clickedSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-single-media"));
-		var singleMediaSelector = "#media-select-box";
-		var otherSelector;
-		if (clickedSelector === singleMediaSelector) {
-			otherSelector = singleMediaSelector + "-" + currentMediaIndex + " img";
-			if ($(otherSelector).is(":visible")) {
-				$(otherSelector).attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-single-media"));
+		if (! Utilities.singleMediaIsSelected(singleMedia)) {
+			// singleMedia.parent = selectionAlbum;
+			if (Utilities.hasGpsData(singleMedia)) {
+				// add the media position
+				selectionAlbum.positionsAndMediaInTree =
+					Utilities.addSingleMediaToPositionsAndMedia(
+						selectionAlbum.positionsAndMediaInTree,
+						singleMedia
+					);
 			}
-		} else if (parseInt(clickedSelector.substring(singleMediaSelector.length + 1)) === currentMediaIndex && $(singleMediaSelector).is(":visible")) {
-			$(singleMediaSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-single-media"));
-		}
 
-		return firstAddition;;
+			selectionAlbum.media.push(singleMedia);
+			selectionAlbum.numMedia = Utilities.imagesAndVideosSum(selectionAlbum.numMedia, Utilities.imagesAndVideosCount([singleMedia]));
+			selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
+			selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
+			selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, singleMedia.fileSizes);
+
+			Utilities.sortByDate(selectionAlbum.media);
+			selectionAlbum.mediaNameSort = false;
+			selectionAlbum.mediaReverseSort = false;
+			Utilities.initializeSortPropertiesAndCookies(selectionAlbum);
+			Utilities.sortAlbumsMedia(selectionAlbum);
+
+			// update the selector
+			$(clickedSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-single-media"));
+			var singleMediaSelector = "#media-select-box";
+			var otherSelector;
+			if (clickedSelector === singleMediaSelector) {
+				otherSelector = singleMediaSelector + "-" + currentMediaIndex + " img";
+				if ($(otherSelector).is(":visible")) {
+					$(otherSelector).attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-single-media"));
+				}
+			} else if (parseInt(clickedSelector.substring(singleMediaSelector.length + 1)) === currentMediaIndex && $(singleMediaSelector).is(":visible")) {
+				$(singleMediaSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-single-media"));
+			}
+		}
 
 	};
 
 	Utilities.removeSingleMediaFromSelection = function(singleMedia, clickedSelector) {
-		// var selectionAlbumCacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
-		// var selectionAlbum = PhotoFloat.getAlbumFromCache(selectionAlbumCacheBase);
-		var isVoid = false;
-		selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
-		if (! Utilities.imagesAndVideosTotal(selectionAlbum.numMediaInSubTree)) {
-			// no media selected: remove the album
-			PhotoFloat.removeAlbumFromCache(selectionAlbum.cacheBase);
-			isVoid = true;
-		} else {
+		if (Utilities.singleMediaIsSelected(singleMedia)) {
+			selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
 			selectionAlbum.numMedia = Utilities.imagesAndVideosSubtract(selectionAlbum.numMedia, Utilities.imagesAndVideosCount([singleMedia]));
 			selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
 			selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, singleMedia.fileSizes);
 
 			var index = selectionAlbum.media.findIndex(x => x.foldersCacheBase === singleMedia.foldersCacheBase && x.cacheBase === singleMedia.cacheBase);
 			selectionAlbum.media.splice(index, 1);
-			delete singleMedia.selectionAlbumCacheBase;
 
 			selectionAlbum.positionsAndMediaInTree =
 				Utilities.removeSingleMediaFromPositionsAndMedia(
 					selectionAlbum.positionsAndMediaInTree,
 					singleMedia
 				);
-		}
 
-		var singleMediaSelector = "#media-select-box";
-		var otherSelector;
-		if (clickedSelector === singleMediaSelector) {
-			otherSelector = singleMediaSelector + "-" + currentMediaIndex + " img";
-			if ($(otherSelector).is(":visible")) {
-				$(otherSelector).attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
-			}
-		} else if (parseInt(clickedSelector.substring(singleMediaSelector.length + 1)) === currentMediaIndex && $(singleMediaSelector).is(":visible")) {
-			$(singleMediaSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
-		}
-
-		if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
-			if (isVoid) {
-				window.location.href = Utilities.upHash();
-			} else if (currentMedia === null) {
-				if (Utilities.isAlbumWithOneMedia(currentAlbum))
-					TopFunctions.showAlbumOrMedia(currentAlbum, 0);
-				else
-					TopFunctions.showAlbum("refreshMedia");
-			} else {
-				let clickedMediaIndex = parseInt(clickedSelector.split('-').pop());
-				if (clickedSelector === singleMediaSelector || clickedMediaIndex === currentMediaIndex) {
-					TopFunctions.showAlbumOrMedia(currentAlbum, -1);
-				} else {
-					if (currentMediaIndex === currentAlbum.media.length)
-						currentMediaIndex -= 1;
-					TopFunctions.showAlbumOrMedia(currentAlbum, currentMediaIndex);
+			var singleMediaSelector = "#media-select-box";
+			var otherSelector;
+			if (clickedSelector === singleMediaSelector) {
+				otherSelector = singleMediaSelector + "-" + currentMediaIndex + " img";
+				if ($(otherSelector).is(":visible")) {
+					$(otherSelector).attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
 				}
+			} else if (parseInt(clickedSelector.substring(singleMediaSelector.length + 1)) === currentMediaIndex && $(singleMediaSelector).is(":visible")) {
+				$(singleMediaSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
 			}
-		} else {
-			// update the selector
-			$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
+
+			if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
+				if (! Utilities.somethingIsSelected()) {
+					Utilities.initializeSelectionAlbum();
+					window.location.href = Utilities.upHash();
+				} else if (currentMedia === null) {
+					if (Utilities.isAlbumWithOneMedia(currentAlbum))
+						TopFunctions.showAlbumOrMedia(currentAlbum, 0);
+					else
+						TopFunctions.showAlbum("refreshMedia");
+				} else {
+					let clickedMediaIndex = parseInt(clickedSelector.split('-').pop());
+					if (clickedSelector === singleMediaSelector || clickedMediaIndex === currentMediaIndex) {
+						TopFunctions.showAlbumOrMedia(currentAlbum, -1);
+					} else {
+						if (currentMediaIndex === currentAlbum.media.length)
+							currentMediaIndex -= 1;
+						TopFunctions.showAlbumOrMedia(currentAlbum, currentMediaIndex);
+					}
+				}
+			} else {
+				// update the selector
+				$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
+			}
 		}
-		return isVoid;
 	};
 
 	Utilities.addSubalbumToSelection = function(subalbum, clickedSelector) {
 		return new Promise(
 			function(resolve_addSubalbum) {
-				var firstAddition = false;
-				if (! selectionAlbum.hasOwnProperty("numMediaInSubTree")) {
-					Utilities.initializeSelectionAlbum();
-					firstAddition = true;
+				if (Utilities.subalbumIsSelected(subalbum)) {
+					resolve_addSubalbum();
+				} else {
+					let getAlbumPromise = PhotoFloat.getAlbum(subalbum.cacheBase, null, {"getMedia": true, "getPositions": true});
+					getAlbumPromise.then(
+						function(subalbum) {
+							// add the positions
+							selectionAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(selectionAlbum.positionsAndMediaInTree, subalbum.positionsAndMediaInTree);
+
+							selectionAlbum.subalbums.push(subalbum);
+							selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
+							selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
+
+							Utilities.sortByDate(selectionAlbum.subalbums);
+							selectionAlbum.albumNameSort = false;
+							selectionAlbum.albumReverseSort = false;
+							Utilities.initializeSortPropertiesAndCookies(selectionAlbum);
+							Utilities.sortAlbumsMedia(selectionAlbum);
+							resolve_addSubalbum();
+						}
+					);
+					$(clickedSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-subalbum"));
 				}
-
-				let getAlbumPromise = PhotoFloat.getAlbum(subalbum.cacheBase, null, {"getMedia": true, "getPositions": true});
-				getAlbumPromise.then(
-					function(subalbum) {
-						// add the positions
-						selectionAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(selectionAlbum.positionsAndMediaInTree, subalbum.positionsAndMediaInTree);
-
-						selectionAlbum.subalbums.push(subalbum);
-						selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
-						selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
-
-						Utilities.sortByDate(selectionAlbum.subalbums);
-						selectionAlbum.albumNameSort = false;
-						selectionAlbum.albumReverseSort = false;
-						Utilities.initializeSortPropertiesAndCookies(selectionAlbum);
-						Utilities.sortAlbumsMedia(selectionAlbum);
-						resolve_addSubalbum(firstAddition);
-					}
-				);
-				$(clickedSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-subalbum"));
 			}
 		);
 	};
@@ -1212,36 +1176,38 @@
 	Utilities.removeSubalbumFromSelection = function(subalbum, clickedSelector) {
 		return new Promise(
 			function(resolve_removeSubalbum) {
-				selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
-				var isVoid = false;
-				// if (Utilities.imagesAndVideosTotal(selectionAlbum.numMediaInSubTree)) {
-				let getAlbumPromise = PhotoFloat.getAlbum(subalbum.cacheBase, null, {"getMedia": true, "getPositions": true});
-				getAlbumPromise.then(
-					function(subalbum) {
-						selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
-						selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
+				if (! Utilities.subalbumIsSelected(subalbum)) {
+					resolve_removeSubalbum();
+				} else {
+					selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
+					// if (Utilities.imagesAndVideosTotal(selectionAlbum.numMediaInSubTree)) {
+					let getAlbumPromise = PhotoFloat.getAlbum(subalbum.cacheBase, null, {"getMedia": true, "getPositions": true});
+					getAlbumPromise.then(
+						function(subalbum) {
+							selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
+							selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
 
-						var index = selectionAlbum.subalbums.findIndex(x => x.cacheBase === subalbum.cacheBase);
-						selectionAlbum.subalbums.splice(index, 1);
-						delete subalbum.selectionAlbumCacheBase;
+							var index = selectionAlbum.subalbums.findIndex(x => x.cacheBase === subalbum.cacheBase);
+							selectionAlbum.subalbums.splice(index, 1);
 
-						selectionAlbum.positionsAndMediaInTree =
-							Utilities.removePositionsAndMediaFromPositionsAndMedia(
-								selectionAlbum.positionsAndMediaInTree,
-								subalbum.positionsAndMediaInTree
-							);
+							selectionAlbum.positionsAndMediaInTree =
+								Utilities.removePositionsAndMediaFromPositionsAndMedia(
+									selectionAlbum.positionsAndMediaInTree,
+									subalbum.positionsAndMediaInTree
+								);
 
-						if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
-							TopFunctions.showAlbumOrMedia(currentAlbum, -1);
+							if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
+								TopFunctions.showAlbumOrMedia(currentAlbum, -1);
+							}
+
+							resolve_removeSubalbum();
 						}
+					);
+					// }
 
-						resolve_removeSubalbum(isVoid);
+					if (! Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
+						$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-subalbum"));
 					}
-				);
-				// }
-
-				if (! Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
-					$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-subalbum"));
 				}
 			}
 		);

@@ -739,15 +739,11 @@
 
 	TopFunctions.toggleSelectedMedia = function(media, clickedSelector) {
 		if (util.singleMediaIsSelected(media)) {
-			let isVoid = util.removeSingleMediaFromSelection(media, clickedSelector);
-			if (isVoid) {
-				f.updateMenu();
-			}
+			util.removeSingleMediaFromSelection(media, clickedSelector);
+			f.updateMenu();
 		} else {
-			let firstAddition = util.addSingleMediaToSelection(media, clickedSelector);
-			if (firstAddition) {
-				f.updateMenu();
-			}
+			util.addSingleMediaToSelection(media, clickedSelector);
+			f.updateMenu();
 		}
 	};
 
@@ -755,19 +751,17 @@
 		if (util.subalbumIsSelected(subalbum)) {
 			let removeSubalbumPromise = util.removeSubalbumFromSelection(subalbum, clickedSelector);
 			removeSubalbumPromise.then(
-				function subalbumRemoved(isVoid) {
-					if (isVoid) {
-						f.updateMenu();
-					}
+				function subalbumRemoved() {
+					if (! util.somethingIsSelected())
+						Utilities.initializeSelectionAlbum();
+					f.updateMenu();
 				}
 			);
 		} else {
 			let addSubalbumPromise = util.addSubalbumToSelection(subalbum, clickedSelector);
 			addSubalbumPromise.then(
-				function subalbumAdded(firstAddition) {
-					if (firstAddition) {
-						f.updateMenu();
-					}
+				function subalbumAdded() {
+					f.updateMenu();
 				}
 			);
 		}
