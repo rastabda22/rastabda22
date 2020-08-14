@@ -278,14 +278,14 @@ $(document).ready(function() {
 					} else if (e.key === "+") {
 						if (isMap) {
 							// return false;
-						} else if (currentMedia !== null) {
+						} else if (currentMedia !== null && currentMedia.mimeType.indexOf("image") === 0) {
 							pS.pinchIn(null);
 							return false;
 						}
 					} else if (e.key === "-") {
 						if (isMap) {
 							// return false;
-						} else if (currentMedia !== null) {
+						} else if (currentMedia !== null && currentMedia.mimeType.indexOf("image") === 0) {
 							pS.pinchOut(null, null);
 							return false;
 						}
