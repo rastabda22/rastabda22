@@ -847,8 +847,8 @@
 
 				if (treeSize >= bigZipSize) {
 					// propose to download the resized media
-					for (let i = 0; i < Options.reduced_sizes.length; i++) {
-						let reducedSize = Options.reduced_sizes[i];
+					for (let iSize = 0; iSize < Options.reduced_sizes.length; iSize++) {
+						let reducedSize = Options.reduced_sizes[iSize];
 						treeSize = util.imagesAndVideosTotal(thisAlbum.sizesOfSubTree[reducedSize]);
 						if (treeSize < bigZipSize) {
 							$(".download-album.everything.all.sized").append(", " + reducedSize + " px: " + util.imagesAndVideosTotal(thisAlbum.numMediaInSubTree) + " " + what + ", " + Functions.humanFileSize(treeSize));
@@ -894,8 +894,8 @@
 
 					if (imagesSize >= bigZipSize) {
 						// propose to download the resized media
-						for (let i = 0; i < Options.reduced_sizes.length; i++) {
-							let reducedSize = Options.reduced_sizes[i];
+						for (let iSize = 0; iSize < Options.reduced_sizes.length; iSize++) {
+							let reducedSize = Options.reduced_sizes[iSize];
 							if (thisAlbum.sizesOfSubTree[reducedSize].images < bigZipSize) {
 								$(".download-album.everything.images.sized").append(", " + reducedSize + " px: " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].images));
 								$(".download-album.everything.images.sized").attr("size", reducedSize);
@@ -928,7 +928,7 @@
 
 					if (videosSize >= bigZipSize) {
 						// propose to download the resized video
-						// in thisAlbum.sizesOfSubTree[i] all the reduced sizes have the same value, corresponding to the transcoded videos
+						// in thisAlbum.sizesOfSubTree[iSize] all the reduced sizes have the same value, corresponding to the transcoded videos
 						let reducedSize = Options.reduced_sizes[0];
 						if (thisAlbum.sizesOfSubTree[reducedSize].videos < bigZipSize) {
 							$(".download-album.everything.videos.sized").append(", " + util._t(".title-transcoded") + ": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].videos));
@@ -982,8 +982,8 @@
 
 				if (albumSize >= bigZipSize) {
 					// propose to download the resized media
-					for (let i = 0; i < Options.reduced_sizes.length; i++) {
-						let reducedSize = Options.reduced_sizes[i];
+					for (let iSize = 0; iSize < Options.reduced_sizes.length; iSize++) {
+						let reducedSize = Options.reduced_sizes[iSize];
 						albumSize = thisAlbum.sizesOfAlbum[reducedSize].images + thisAlbum.sizesOfAlbum[reducedSize].videos;
 						if (albumSize < bigZipSize) {
 							$(".download-album.media-only.all.sized").append(", " + reducedSize + " px: " + util.imagesAndVideosTotal(thisAlbum.numMedia) + " " + what + ", " + Functions.humanFileSize(albumSize));
@@ -1020,8 +1020,8 @@
 
 				if (imagesSize >= bigZipSize) {
 					// propose to download the resized media
-					for (let i = 0; i < Options.reduced_sizes.length; i++) {
-						let reducedSize = Options.reduced_sizes[i];
+					for (let iSize = 0; iSize < Options.reduced_sizes.length; iSize++) {
+						let reducedSize = Options.reduced_sizes[iSize];
 						if (thisAlbum.sizesOfAlbum[reducedSize].images < bigZipSize) {
 							$(".download-album.media-only.images.sized").append(", " + reducedSize + " px: " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reducedSize].images));
 							$(".download-album.media-only.images.sized").attr("size", reducedSize);
@@ -1057,8 +1057,8 @@
 
 				if (videosSize >= bigZipSize) {
 					// propose to download the resized media
-					for (let i = 0; i < Options.reduced_sizes.length; i++) {
-						let reducedSize = Options.reduced_sizes[i];
+					for (let iSize = 0; iSize < Options.reduced_sizes.length; iSize++) {
+						let reducedSize = Options.reduced_sizes[iSize];
 						if (thisAlbum.sizesOfAlbum[reducedSize].videos < bigZipSize) {
 							$(".download-album.media-only.videos.sized").append(", " + reducedSize + " px: " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reducedSize].videos));
 							$(".download-album.media-only.videos.sized").attr("size", reducedSize);
@@ -1463,8 +1463,8 @@
 							util.initializeSelectionRootAlbum();
 							util.initializeSelectionAlbum();
 
-							for (let i = 0; i < Options.reduced_sizes.length; i++) {
-								initialSizes[Options.reduced_sizes[i]] = JSON.parse(JSON.stringify(imagesAndVideos0));
+							for (let iSize = 0; iSize < Options.reduced_sizes.length; iSize++) {
+								initialSizes[Options.reduced_sizes[iSize]] = JSON.parse(JSON.stringify(imagesAndVideos0));
 							}
 
 							if (Options.request_password_email) {
