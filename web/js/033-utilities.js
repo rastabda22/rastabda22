@@ -52,8 +52,8 @@
 		newMapAlbum.media = [];
 		newMapAlbum.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
 		newMapAlbum.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
-		newMapAlbum.sizesOfAlbum = initialSizes;
-		newMapAlbum.sizesOfSubTree = initialSizes;
+		newMapAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
+		newMapAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
 		newMapAlbum.subalbums = [];
 		newMapAlbum.positionsAndMediaInTree = [];
 		newMapAlbum.numPositionsInTree = 0;
@@ -1053,6 +1053,8 @@
 	Utilities.addSingleMediaToSelection = function(singleMedia, clickedSelector) {
 		if (! Utilities.singleMediaIsSelected(singleMedia)) {
 			// singleMedia.parent = selectionAlbum;
+			selectionAlbum.media.push(singleMedia);
+
 			if (Utilities.hasGpsData(singleMedia)) {
 				// add the media position
 				selectionAlbum.positionsAndMediaInTree =
@@ -1061,8 +1063,6 @@
 						singleMedia
 					);
 			}
-
-			selectionAlbum.media.push(singleMedia);
 			selectionAlbum.numMedia = Utilities.imagesAndVideosSum(selectionAlbum.numMedia, Utilities.imagesAndVideosCount([singleMedia]));
 			selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
 			selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
@@ -1092,11 +1092,6 @@
 
 	Utilities.removeSingleMediaFromSelection = function(singleMedia, clickedSelector) {
 		if (Utilities.singleMediaIsSelected(singleMedia)) {
-			selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
-			selectionAlbum.numMedia = Utilities.imagesAndVideosSubtract(selectionAlbum.numMedia, Utilities.imagesAndVideosCount([singleMedia]));
-			selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
-			selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, singleMedia.fileSizes);
-
 			var index = selectionAlbum.media.findIndex(x => x.foldersCacheBase === singleMedia.foldersCacheBase && x.cacheBase === singleMedia.cacheBase);
 			selectionAlbum.media.splice(index, 1);
 
@@ -1105,6 +1100,10 @@
 					selectionAlbum.positionsAndMediaInTree,
 					singleMedia
 				);
+			selectionAlbum.numMedia = Utilities.imagesAndVideosSubtract(selectionAlbum.numMedia, Utilities.imagesAndVideosCount([singleMedia]));
+			selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
+			selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
+			selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, singleMedia.fileSizes);
 
 			var singleMediaSelector = "#media-select-box";
 			var otherSelector;
@@ -1152,11 +1151,12 @@
 					let getAlbumPromise = PhotoFloat.getAlbum(subalbum.cacheBase, null, {"getMedia": true, "getPositions": true});
 					getAlbumPromise.then(
 						function(subalbum) {
-							// add the positions
-							selectionAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(selectionAlbum.positionsAndMediaInTree, subalbum.positionsAndMediaInTree);
-
 							selectionAlbum.subalbums.push(subalbum);
+
+							selectionAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(selectionAlbum.positionsAndMediaInTree, subalbum.positionsAndMediaInTree);
+							selectionAlbum.numMedia = Utilities.imagesAndVideosSum(selectionAlbum.numMedia, subalbum.numMedia);
 							selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
+							selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
 							selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
 
 							Utilities.sortByDate(selectionAlbum.subalbums);
@@ -1184,9 +1184,6 @@
 					let getAlbumPromise = PhotoFloat.getAlbum(subalbum.cacheBase, null, {"getMedia": true, "getPositions": true});
 					getAlbumPromise.then(
 						function(subalbum) {
-							selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
-							selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
-
 							var index = selectionAlbum.subalbums.findIndex(x => x.cacheBase === subalbum.cacheBase);
 							selectionAlbum.subalbums.splice(index, 1);
 
@@ -1195,6 +1192,10 @@
 									selectionAlbum.positionsAndMediaInTree,
 									subalbum.positionsAndMediaInTree
 								);
+							selectionAlbum.numMedia = Utilities.imagesAndVideosSubtract(selectionAlbum.numMedia, subalbum.numMedia);
+							selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
+							selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
+							selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
 
 							if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
 								TopFunctions.showAlbumOrMedia(currentAlbum, -1);
