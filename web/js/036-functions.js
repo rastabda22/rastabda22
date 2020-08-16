@@ -665,7 +665,7 @@
 							// 		window.location.href = util.upHash();
 							// }
 							if (! util.somethingIsSelected())
-								Utilities.initializeSelectionAlbum();
+								util.initializeSelectionAlbum();
 							Functions.updateMenu();
 						}
 					);
@@ -691,7 +691,7 @@
 						firstPromise.then(
 							function() {
 								if (! util.somethingIsSelected())
-									Utilities.initializeSelectionAlbum();
+									util.initializeSelectionAlbum();
 								Functions.updateMenu();
 								$("#removed-individually").stop().fadeIn(
 									1000,
@@ -726,7 +726,7 @@
 				if (util.everyMediaIsSelected(thisAlbum.media)) {
 					util.removeAllMediaFromSelection(thisAlbum.media);
 					if (! util.somethingIsSelected())
-						Utilities.initializeSelectionAlbum();
+						util.initializeSelectionAlbum();
 				} else {
 					util.addAllMediaToSelection(thisAlbum.media);
 				}
@@ -742,7 +742,7 @@
 					promise.then(
 						function() {
 							if (! util.somethingIsSelected())
-								Utilities.initializeSelectionAlbum();
+								util.initializeSelectionAlbum();
 							Functions.updateMenu();
 						}
 					);
@@ -765,7 +765,7 @@
 				subalbumsPromise.then(
 					function allSubalbumsRemoved() {
 						if (! util.somethingIsSelected())
-							Utilities.initializeSelectionAlbum();
+							util.initializeSelectionAlbum();
 						Functions.updateMenu();
 					}
 				);

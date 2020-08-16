@@ -753,7 +753,7 @@
 			removeSubalbumPromise.then(
 				function subalbumRemoved() {
 					if (! util.somethingIsSelected())
-						Utilities.initializeSelectionAlbum();
+						util.initializeSelectionAlbum();
 					f.updateMenu();
 				}
 			);
