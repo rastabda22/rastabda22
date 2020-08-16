@@ -46,7 +46,7 @@
 
 		if (album.hasOwnProperty("media")) {
 			for (level = 0; level < cacheLevelsLength; level ++) {
-		 		if (util.imagesAndVideosTotal(album.numMedia) >= Options.js_cache_levels[level].mediaThreshold) {
+		 		if (album.media.length >= Options.js_cache_levels[level].mediaThreshold) {
 					if (! PhotoFloat.cache.albums.hasOwnProperty(level)) {
 						PhotoFloat.cache.albums[level] = [];
 						PhotoFloat.cache.albums[level].queue = [];
@@ -1271,7 +1271,7 @@
 						return;
 					}
 
-					nMediaInAlbum = util.imagesAndVideosTotal(album.numMedia);
+					nMediaInAlbum = album.media.length;
 					if (index >= nMediaInAlbum) {
 						index -= nMediaInAlbum;
 						let found = false;

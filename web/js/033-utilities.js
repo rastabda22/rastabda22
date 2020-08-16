@@ -1272,7 +1272,7 @@
 	};
 
 	Utilities.isAlbumWithOneMedia = function(album) {
-		return album !== null && ! album.subalbums.length && Utilities.imagesAndVideosTotal(album.numMedia) == 1;
+		return album !== null && ! album.subalbums.length && album.media.length == 1;
 	};
 
 	Utilities.chooseReducedPhoto = function(media, container, fullScreenStatus) {
@@ -2062,7 +2062,7 @@
 
 		$("#next").css("right", "");
 		$("#prev").css("left", "");
-		if (! fullScreenStatus && Utilities.imagesAndVideosTotal(currentAlbum.numMedia) > 1) {
+		if (! fullScreenStatus && currentAlbum.media.length > 1) {
 			// correct next button position when pinch buttons collide
 			$("#next").css("right", correctionForPinch.toString() + "px");
 			// correct prev button position when social buttons are on the left
