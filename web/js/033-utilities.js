@@ -1154,9 +1154,9 @@
 							selectionAlbum.subalbums.push(subalbum);
 
 							selectionAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(selectionAlbum.positionsAndMediaInTree, subalbum.positionsAndMediaInTree);
-							selectionAlbum.numMedia = Utilities.imagesAndVideosSum(selectionAlbum.numMedia, subalbum.numMedia);
+							// selectionAlbum.numMedia = Utilities.imagesAndVideosSum(selectionAlbum.numMedia, subalbum.numMedia);
 							selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
-							selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
+							// selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
 							selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
 
 							Utilities.sortByDate(selectionAlbum.subalbums);
@@ -1192,9 +1192,9 @@
 									selectionAlbum.positionsAndMediaInTree,
 									subalbum.positionsAndMediaInTree
 								);
-							selectionAlbum.numMedia = Utilities.imagesAndVideosSubtract(selectionAlbum.numMedia, subalbum.numMedia);
+							// selectionAlbum.numMedia = Utilities.imagesAndVideosSubtract(selectionAlbum.numMedia, subalbum.numMedia);
 							selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
-							selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
+							// selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
 							selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
 
 							if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
