@@ -29,7 +29,7 @@
 		folders = location.pathname;
 		folders = folders.substring(0, folders.lastIndexOf('/'));
 		url += folders;
-		if (currentMedia === null || currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.media.length == 1) {
+		if (currentMedia === null || currentAlbum !== null && ! currentAlbum.subalbums.length && util.imagesAndVideosTotal(currentAlbum.numMedia) == 1) {
 			mediaParameter = util.pathJoin([
 				Options.server_cache_path,
 				Options.cache_album_subdir,
@@ -489,8 +489,8 @@
 				currentMedia !== null ||
 				isAlbumWithOneMedia ||
 				thisAlbum !== null && (
-					thisAlbum.media.length === 0 ||
-					! util.isFolderCacheBase(thisAlbum.cacheBase) && thisAlbum.media.length > Options.big_virtual_folders_threshold
+					util.imagesAndVideosTotal(thisAlbum.numMedia) === 0 ||
+					! util.isFolderCacheBase(thisAlbum.cacheBase) && util.imagesAndVideosTotal(thisAlbum.numMedia) > Options.big_virtual_folders_threshold
 				)
 			)
 		) {
@@ -538,7 +538,7 @@
 
 		if (
 			thisAlbum === null ||
-			thisAlbum.media.length < Options.big_virtual_folders_threshold ||
+			util.imagesAndVideosTotal(thisAlbum.numMedia) < Options.big_virtual_folders_threshold ||
 			util.isFolderCacheBase(thisAlbum.cacheBase)
 		) {
 			$("ul#right-menu #show-big-albums").addClass("hidden");
@@ -566,7 +566,7 @@
 				$("ul#right-menu li.album-sort").removeClass("hidden");
 			}
 
-			if (thisAlbum.media.length <= 1 || thisAlbum.media.length > Options.big_virtual_folders_threshold) {
+			if (util.imagesAndVideosTotal(thisAlbum.numMedia) <= 1 || util.imagesAndVideosTotal(thisAlbum.numMedia) > Options.big_virtual_folders_threshold) {
 				// no media or one media or too many media
 				$("ul#right-menu li.media-sort").addClass("hidden");
 			} else {
@@ -870,7 +870,7 @@
 				// 	}
 				// }
 
-				let mediaInThisAlbum = thisAlbum.media.length;
+				let mediaInThisAlbum = util.imagesAndVideosTotal(thisAlbum.numMedia);
 				let mediaInThisTree = util.imagesAndVideosTotal(thisAlbum.numMediaInSubTree);
 				if (numImages && numImages !== mediaInThisAlbum && numImages !== mediaInThisTree && mediaInThisAlbum !== mediaInThisTree) {
 					$(".download-album.everything.images.full").removeClass("hidden");
@@ -957,7 +957,7 @@
 			if (numVideos === 0)
 				what = util._t(".title-images");
 
-			if (thisAlbum.media.length) {
+			if (util.imagesAndVideosTotal(thisAlbum.numMedia)) {
 				$(".download-album.media-only.all.full").removeClass("hidden");
 				// reset the html
 				if (showDownloadEverything)
@@ -967,7 +967,7 @@
 
 				// add the download size
 				let albumSize = util.imagesAndVideosTotal(thisAlbum.sizesOfAlbum[0]);
-				$(".download-album.media-only.all.full").append(": " + thisAlbum.media.length + " " + what + ", " + Functions.humanFileSize(albumSize));
+				$(".download-album.media-only.all.full").append(": " + util.imagesAndVideosTotal(thisAlbum.numMedia) + " " + what + ", " + Functions.humanFileSize(albumSize));
 				// check the size and decide if they can be downloaded
 				if (albumSize < bigZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
@@ -986,7 +986,7 @@
 						let reducedSize = Options.reduced_sizes[iSize];
 						albumSize = thisAlbum.sizesOfAlbum[reducedSize].images + thisAlbum.sizesOfAlbum[reducedSize].videos;
 						if (albumSize < bigZipSize) {
-							$(".download-album.media-only.all.sized").append(", " + reducedSize + " px: " + thisAlbum.media.length + " " + what + ", " + Functions.humanFileSize(albumSize));
+							$(".download-album.media-only.all.sized").append(", " + reducedSize + " px: " + util.imagesAndVideosTotal(thisAlbum.numMedia) + " " + what + ", " + Functions.humanFileSize(albumSize));
 							$(".download-album.media-only.all.sized").attr("size", reducedSize);
 							$(".download-album.media-only.all.sized").removeClass("hidden");
 							break;
@@ -995,7 +995,7 @@
 				}
 			}
 
-			if (numImages && numImages !== thisAlbum.media.length) {
+			if (numImages && numImages !== util.imagesAndVideosTotal(thisAlbum.numMedia)) {
 				$(".download-album.media-only.images.full").removeClass("hidden");
 				// reset the html
 				if (showDownloadEverything)
@@ -1032,7 +1032,7 @@
 				}
 			}
 
-			if (numVideos && numVideos !== thisAlbum.media.length) {
+			if (numVideos && numVideos !== util.imagesAndVideosTotal(thisAlbum.numMedia)) {
 				$(".download-album.media-only.videos.full").removeClass("hidden");
 				// reset the html
 				if (showDownloadEverything)
