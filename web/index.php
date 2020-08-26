@@ -9,6 +9,10 @@
 	<meta name="medium" content="image" />
 	<?php
 		$jsonString = file_get_contents('cache/options.json');
+		if (! $jsonString) {
+			echo "missing options file";
+			exit;
+		}
 		$options = json_decode($jsonString, true);
 
 		// Check if an option is true or 1
