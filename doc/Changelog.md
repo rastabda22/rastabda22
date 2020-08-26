@@ -229,7 +229,7 @@
 * option `show_media_names_below_thumbs_in_albums` changed to `show_media_names_below_thumbs`
 * new option `show_album_names_below_thumbs`: decides whether to show the album name in album thumbnails
 * new option `show_media_count`: decides whether to show the media count in album thumbnail and title
-* cropping to square takes now into account faces if opencv and python-opencv are installed
+* cropping to square takes now into account faces if opencv and python3-opencv are installed
 * scanner code for producing the thumbnails was optimized
 * default options give now a light UI
 

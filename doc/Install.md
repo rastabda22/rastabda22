@@ -6,7 +6,7 @@ MyPhotoShare needs:
 
 * a working web server (e.g. `apache`, `nginx`, etc.)
 * the web server `php` module installed (optional if accepting degraded mode, see below)
-* `php5-gd` in order to create albums share images (optional if accepting degraded mode, see below)
+* `php-gd` in order to create albums share images (optional if accepting degraded mode, see below)
 * `python3`
 * `python3-magic`
 * `python3-numpy`
@@ -21,11 +21,11 @@ MyPhotoShare needs:
 * a working MTA, e.g. `postfix` (optional, it's needed to send the password request email)
 
 ### Optional
-* `python-opencv`: if found, face detection is used when cropping images to square.
+* `python3-opencv`: if found, face detection is used when cropping images to square.
   * OpenCV libraries and data (`opencv-data`), if opencv is used
   * `locate`, if opencv is used
 * `cssmin` (`https://github.com/zacharyvoase/cssmin`, debian/ubuntu packages `cssmin`), unless using external web service
-* `jsmin` (`https://github.com/tikitu/jsmin`, debian/ubuntu package `python-jsmin`) or `uglifyjs` (`https://github.com/mishoo/UglifyJS`, debian/ubuntu package `uglifyjs`, but `node-buble` is requiered too, and is not available in _debian stable_ yet), unless using external web service
+* `jsmin` (`https://github.com/tikitu/jsmin`, debian/ubuntu package `python3-jsmin`) or `uglifyjs` (`https://github.com/mishoo/UglifyJS`, debian/ubuntu package `uglifyjs`, but `node-buble` is requiered too, and is not available in _debian stable_ yet), unless using external web service
 
 
 ### Why PHP? Isn't it enough with JavaScript?
@@ -105,14 +105,15 @@ It's recommended to have this directive only in the directory of MyPhotoShare ga
 
 
 ## Apache server configuration
- Edit you domain configuration file in `/etc/apache2/sites-available/`, or use `/etc/apache2/sites-available/000-default.conf`:
+
+Edit you domain configuration file in `/etc/apache2/sites-available/`, or use `/etc/apache2/sites-available/000-default.conf`:
 
 ```bash
 $ sudo vi /etc/apache2/sites-available/000-default.conf
 
 ```
 
- Add the following lines in the `<VirtualHost>` section:
+Add the following lines in the `<VirtualHost>` section:
 ```apache
 <VirtualHost *:80>
     ServerAdmin myemail@myprovider.com
@@ -129,6 +130,11 @@ $ sudo vi /etc/apache2/sites-available/000-default.conf
 ```
 
 The `Option -Indexes` line is important for security reasons, in order not to permit directory listings.
+
+Enable the new configuration (if you used a configuration file in `/etc/apache2/sites-available/`)
+```bash
+$ sudo a2ensite _mysitename_
+```
 
 ### Other tweakings
 
