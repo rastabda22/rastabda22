@@ -360,15 +360,19 @@ def get_options():
 		guessed_album_dir = True
 		guessed_cache_dir = True
 	elif (
-		config['index_html_path'] and
-		not config['album_path'] and
-		not config['cache_path']
+		config['index_html_path'] and (
+			not config['album_path'] or
+			not config['cache_path']
+		)
 	):
-		message("PRE options", "only index_html_path is given, using its subfolder 'albums' for album_path and 'cache' for cache_path", 3)
-		config['album_path'] = os.path.join(config['index_html_path'], "albums")
-		config['cache_path'] = os.path.join(config['index_html_path'], "cache")
-		guessed_album_dir = True
-		guessed_cache_dir = True
+		if not config['album_path']:
+			message("PRE options", "index_html_path is given, using its subfolder 'albums' for album_path", 3)
+			config['album_path'] = os.path.join(config['index_html_path'], "albums")
+			guessed_album_dir = True
+		if not config['cache_path']:
+			message("PRE options", "index_html_path is given, using its subfolder 'cache' for cache_path", 3)
+			config['cache_path'] = os.path.join(config['index_html_path'], "cache")
+			guessed_cache_dir = True
 	elif (
 		not config['index_html_path'] and
 		config['album_path'] and
@@ -379,10 +383,10 @@ def get_options():
 		guessed_index_dir = True
 		message("PRE options", "only album_path or cache_path has been given, using their common parent folder for index_html_path", 3)
 		config['index_html_path'] = config['album_path'][:config['album_path'].rfind("/")]
-	elif not (
-		config['index_html_path'] and
-		config['album_path'] and
-		config['cache_path']
+	elif (
+		not config['index_html_path'] and
+		not config['album_path'] and
+		not config['cache_path']
 	):
 		message("PRE options", "you must define at least some of index_html_path, album_path and cache_path, and correctly; quitting", 0)
 		sys.exit(-97)
