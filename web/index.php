@@ -224,7 +224,22 @@
 	<div id="search-too-wide" class="search-failed"></div>
 	<div id="social">
 	<?php if (!has_option_value('social', 'none')) { ?>
-		<div class="ssk-group ssk-rounded ssk-sticky ssk-left ssk-center <?php switch(strtolower($options['social_size'])) { case "small": echo " ssk-xs"; break; case "large": echo " ssk-lg"; break; default: echo " ssk-sm"; } if (!is_option_set('social_color')) { echo(" ssk-grayscale"); } ?>">
+		<div class="ssk-group ssk-rounded ssk-sticky ssk-left ssk-center
+			<?php
+				switch(strtolower($options['social_size'])) {
+					case "small":
+						echo " ssk-xs";
+						break;
+					case "large":
+						echo " ssk-lg";
+					 	break;
+					default:
+						echo " ssk-sm";
+				}
+				if (! is_option_set('social_color')) {
+					echo(" ssk-grayscale");
+				}
+			?>">
 		<?php if (has_option_value('social', 'facebook')) { ?>
 			<a href="" class="ssk ssk-facebook"></a>
 		<?php } if (has_option_value('social', 'whatsapp')) { ?>
