@@ -1775,8 +1775,8 @@
 
 		zipFilename += ".zip";
 
-		var addMediaPromise = addMediaFromAlbum(currentAlbum);
-		addMediaPromise.then(
+		var addMediaAndSubalbumsPromise = addMediaAndSubalbumsFromAlbum(currentAlbum);
+		addMediaAndSubalbumsPromise.then(
 			// the complete zip can be generated...
 			function() {
 				$("#downloading-media").hide();
@@ -1792,9 +1792,9 @@
 		);
 		// end of function
 
-		function addMediaFromAlbum(currentAlbum, subalbum = "") {
+		function addMediaAndSubalbumsFromAlbum(currentAlbum, subalbum = "") {
 			return new Promise(
-				function(resolve_addMediaFromAlbum) {
+				function(resolve_addMediaAndSubalbumsFromAlbum) {
 					var albumPromises = [];
 
 					for (let iMedia = 0; iMedia < currentAlbum.media.length; iMedia ++) {
@@ -1840,13 +1840,13 @@
 									getAlbumPromise.then(
 										function(subalbum) {
 											let albumPath = subalbum.path;
-											if (Utilities.isSearchCacheBase(currentAlbum.cacheBase))
+											if (Utilities.isSearchCacheBase(currentAlbum.cacheBase) || Utilities.isSelectionCacheBase(currentAlbum.cacheBase))
 												// remove the leading folders/date/gps/map string
 												albumPath = albumPath.split('/').splice(1).join('/');
 											else
 												albumPath = albumPath.substring(basePath.length + 1);
-											let addMediaPromise = addMediaFromAlbum(subalbum, albumPath);
-											addMediaPromise.then(
+											let addMediaAndSubalbumsPromise = addMediaAndSubalbumsFromAlbum(subalbum, albumPath);
+											addMediaAndSubalbumsPromise.then(
 												function() {
 													resolveSubalbumPromise();
 												}
@@ -1859,10 +1859,9 @@
 						}
 					}
 
-
 					Promise.all(albumPromises).then(
 						function() {
-							resolve_addMediaFromAlbum();
+							resolve_addMediaAndSubalbumsFromAlbum();
 						}
 					);
 				}
