@@ -104,7 +104,7 @@ DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm
 It's recommended to have this directive only in the directory of MyPhotoShare gallery, not to break other web applications on the server.
 
 
-## Apache server configuration
+#### Apache server configuration
 
 Edit you domain configuration file in `/etc/apache2/sites-available/`, or use `/etc/apache2/sites-available/000-default.conf`:
 
@@ -136,23 +136,34 @@ Enable the new configuration (if you used a configuration file in `/etc/apache2/
 $ sudo a2ensite _mysitename_
 ```
 
-### Other tweakings
+#### Other `apache` tweakings
 
- * Compression of files must be enabled with Mod_deflate.
+* Compression of files must be enabled with Mod_deflate.
 ```bash
 $ sudo a2enmod deflate
 ```
 
- * Add support for Header directive to manage the browser cache correctly with Mod_header.
+* Add support for Header directive to manage the browser cache correctly with Mod_header.
 ```bash
 $ sudo a2enmod headers
 ```
 
- * Restart Apache to take into account the changes.
+* Restart Apache to take into account the changes.
 ```bash
 $ service apache2 restart
 ```
 
+### Get geonames in your language
+
+`myphotoshare` has a script that downloads and prepare the geonames (i.e. the geographical names of cities, states, etc.) in any language. In your installation directory (the directory where the `bin` folder is located) you must run
+
+```bash
+$ python3 bin/get_alternate_names.py
+```
+
+The script downloads a 150MB file from geonames.org, and extracts from it the geonames in the languages present in the _javascript_ translations strings, at the moment english, spanish, french, italian. If you need any language which is not there, you can add its standard 2-digit code as a script argument, e.g. _de_ for german.
+
+The script can be run again if you hope to find more translated geonames. The downloaded file is a work-in-progress.
 
 ## Updates
 
