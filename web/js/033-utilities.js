@@ -43,7 +43,7 @@
 	Utilities.prototype.initializeMapAlbum = function() {
 		var mapRootAlbum = PhotoFloat.getAlbumFromCache(Options.by_map_string);
 		// if (! mapRootAlbum)
-		// 	mapRootAlbum = util.initializeMapRootAlbum();
+		// 	mapRootAlbum = Utilities.initializeMapRootAlbum();
 
 		lastMapAlbumIndex ++;
 
@@ -122,7 +122,7 @@
 	Utilities.prototype.initializeSearchAlbumEnd = function() {
 		var searchRootAlbum = PhotoFloat.getAlbumFromCache(Options.by_search_string);
 		// if (! searchRootAlbum)
-		// 	searchRootAlbum = util.initializeSearchRootAlbum();
+		// 	searchRootAlbum = Utilities.initializeSearchRootAlbum();
 
 		searchRootAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(searchRootAlbum.numMediaInSubTree, searchAlbum.numMediaInSubTree);
 		// searchRootAlbum.subalbums.push(newSearchAlbum);
@@ -845,7 +845,7 @@
 		return htmlString.replace(/<(?:.|\n)*?>/gm, '').replace(/&raquo;/g, '\u00bb');
 	};
 
-	Utilities.prototype.transformAltPlaceName = function(altPlaceName) {
+	Utilities.transformAltPlaceName = function(altPlaceName) {
 		var underscoreIndex = altPlaceName.lastIndexOf('_');
 		if (underscoreIndex != -1) {
 			var number = altPlaceName.substring(underscoreIndex + 1);
@@ -1198,7 +1198,12 @@
 							selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
 
 							if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
-								TopFunctions.showAlbumOrMedia(currentAlbum, -1);
+								if (! Utilities.somethingIsSelected()) {
+									Utilities.initializeSelectionAlbum();
+									window.location.href = Utilities.upHash();
+								} else {
+									TopFunctions.showAlbumOrMedia(currentAlbum, -1);
+								}
 							}
 
 							resolve_removeSubalbum();
@@ -1869,6 +1874,90 @@
 		}
 	};
 
+	Utilities.prototype.folderNameAndTitle = function(currentAlbum, ithSubalbum) {
+		return new Promise(
+			function (resolve_folderNameAndTitle) {
+				var folderName, folderTitle;
+				if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase) && Utilities.isByDateCacheBase(ithSubalbum.cacheBase)) {
+					var folderArray = ithSubalbum.cacheBase.split(Options.cache_folder_separator);
+					folderName = "";
+					if (folderArray.length == 4)
+						folderName += parseInt(folderArray[3]) + " ";
+					if (folderArray.length >= 3)
+						folderName += Utilities._t("#month-" + folderArray[2]) + " ";
+					if (folderArray.length >= 2)
+						folderName += parseInt(folderArray[1]);
+					folderTitle = Utilities._t('#place-icon-title') + folderName;
+					resolve_folderNameAndTitle([folderName, folderTitle]);
+				} else if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase) && Utilities.isByGpsCacheBase(ithSubalbum.cacheBase)) {
+					folderName = '';
+					let cacheBasesPromises = new Array(ithSubalbum.ancestorsCacheBase.length);
+					for (let iCacheBase = 1; iCacheBase < ithSubalbum.ancestorsCacheBase.length - 1; iCacheBase ++) {
+						let marker = "<marker>" + iCacheBase + "</marker>";
+						folderName += marker + " > ";
+						let cacheBasePromise = PhotoFloat.getAlbum(ithSubalbum.ancestorsCacheBase[iCacheBase], null, {"getMedia": false, "getPositions": false});
+						cacheBasePromise.then(
+							function(album) {
+								let albumName;
+								if (album.name === '')
+									albumName = Utilities._t('.not-specified');
+								else if (album.hasOwnProperty('altName'))
+									albumName = Utilities.transformAltPlaceName(album.altName);
+								else
+									albumName = album.name;
+								folderName.replace(marker, albumName);
+								// $("#subalbums").html($("#subalbums").html().replace(marker, albumName));
+								cacheBasesPromises[iCacheBase] = Promise.resolve();
+							}
+						);
+					}
+					if (ithSubalbum.name === '')
+						folderTitle = Utilities._t('.not-specified');
+					else if (ithSubalbum.hasOwnProperty('altName'))
+						folderTitle = Utilities.transformAltPlaceName(ithSubalbum.altName);
+					else
+						folderTitle = ithSubalbum.name;
+					folderName += folderTitle;
+					folderTitle = Utilities._t('#place-icon-title') + folderTitle;
+					Promise.all(cacheBasesPromises).then(
+						function() {
+							resolve_folderNameAndTitle([folderName, folderTitle]);
+						}
+					);
+				} else if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
+					folderName = ithSubalbum.physicalPath;
+					folderTitle = Utilities._t('#place-icon-title') + folderName;
+					resolve_folderNameAndTitle([folderName, folderTitle]);
+				} else if (Utilities.isByDateCacheBase(currentAlbum.cacheBase)) {
+					folderArray = ithSubalbum.cacheBase.split(Options.cache_folder_separator);
+					folderName = "";
+					if (folderArray.length == 2)
+						folderName += parseInt(folderArray[1]);
+					else if (folderArray.length == 3)
+						folderName += " " + Utilities._t("#month-" + folderArray[2]);
+					else if (folderArray.length == 4)
+						folderName += Utilities._t("#day") + " " + parseInt(folderArray[3]);
+					folderTitle = Utilities._t('#place-icon-title') + folderName;
+					resolve_folderNameAndTitle([folderName, folderTitle]);
+				} else if (Utilities.isByGpsCacheBase(currentAlbum.cacheBase)) {
+					folderName = '';
+					folderTitle = '';
+					if (ithSubalbum.name === '')
+						folderName = Utilities._t('.not-specified');
+					else if (ithSubalbum.hasOwnProperty('altName'))
+						folderName = Utilities.transformAltPlaceName(ithSubalbum.altName);
+					else
+						folderName = ithSubalbum.name;
+					folderTitle = Utilities._t('#place-icon-title') + folderName;
+					resolve_folderNameAndTitle([folderName, folderTitle]);
+				} else {
+					folderName = ithSubalbum.path;
+					folderTitle = Utilities._t('#place-icon-title') + folderName;
+					resolve_folderNameAndTitle([folderName, folderTitle]);
+				}
+			}
+		);
+	};
 
 	Utilities.prototype.setPinchButtonsPosition = function(containerHeight, containerWidth) {
 		// calculate and set pinch buttons position
@@ -2432,6 +2521,7 @@
 	Utilities.prototype.removeAllMediaFromSelection = Utilities.removeAllMediaFromSelection;
 	Utilities.prototype.everyMediaIsSelected = Utilities.everyMediaIsSelected;
 	Utilities.prototype.initializeSelectionAlbum = Utilities.initializeSelectionAlbum;
+	Utilities.prototype.transformAltPlaceName = Utilities.transformAltPlaceName;
 
 	window.Utilities = Utilities;
 }());

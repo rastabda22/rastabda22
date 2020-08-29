@@ -1743,7 +1743,7 @@
 		var tooBig = false, isVirtualAlbum = false;
 		var mapLinkIcon, selectBoxHtml, selectSrc, id, ithMedia;
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
-		var folderArray, folder, folderName, folderTitle;
+		var folder;
 
 		numSubAlbumsReady = 0;
 
@@ -2020,211 +2020,153 @@
 					//
 					// The promise in order to know when everything has come to its end
 					var subalbumsPromises = [];
-					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
+					for (i = 0; i < currentAlbum.subalbums.length; i ++) {
+						let iSubalbum = i;
 						let subalbumPromise = new Promise(
 							function(resolve_subalbumPromise) {
-								var ithSubalbum = currentAlbum.subalbums[i];
+								let folderName, folderTitle;
+								var ithSubalbum = currentAlbum.subalbums[iSubalbum];
 
 								// generate the subalbum caption
-								if (util.isSelectionCacheBase(currentAlbum.cacheBase) && util.isByDateCacheBase(ithSubalbum.cacheBase)) {
-									folderArray = ithSubalbum.cacheBase.split(Options.cache_folder_separator);
-									folderName = "";
-									if (folderArray.length == 4)
-										folderName += parseInt(folderArray[3]) + " ";
-									if (folderArray.length >= 3)
-										folderName += util._t("#month-" + folderArray[2]) + " ";
-									if (folderArray.length >= 2)
-										folderName += parseInt(folderArray[1]);
-									folderTitle = util._t('#place-icon-title') + folderName;
-								} else if (util.isSelectionCacheBase(currentAlbum.cacheBase) && util.isByGpsCacheBase(ithSubalbum.cacheBase)) {
-									folderName = '';
-									for (let iCacheBase = 1; iCacheBase < ithSubalbum.ancestorsCacheBase.length - 1; iCacheBase ++) {
-										let marker = "<marker>" + iCacheBase + "</marker>";
-										folderName += marker + " > ";
-										let cacheBasePromise = phFl.getAlbum(ithSubalbum.ancestorsCacheBase[iCacheBase], null, {"getMedia": false, "getPositions": false});
-										cacheBasePromise.then(
-											function(album) {
-												let albumName;
-												if (album.name === '')
-													albumName = util._t('.not-specified');
-												else if (album.hasOwnProperty('altName'))
-													albumName = util.transformAltPlaceName(album.altName);
-												else
-													albumName = album.name;
-												$("#subalbums").html($("#subalbums").html().replace(marker, albumName));
-											}
-										);
-									}
-									if (ithSubalbum.name === '')
-										folderTitle = util._t('.not-specified');
-									else if (ithSubalbum.hasOwnProperty('altName'))
-										folderTitle = util.transformAltPlaceName(ithSubalbum.altName);
-									else
-										folderTitle = ithSubalbum.name;
-									folderName += folderTitle;
-									folderTitle = util._t('#place-icon-title') + folderTitle;
-								} else if (util.isSelectionCacheBase(currentAlbum.cacheBase)) {
-									folderName = ithSubalbum.physicalPath;
-									folderTitle = util._t('#place-icon-title') + folderName;
-								} else if (util.isByDateCacheBase(currentAlbum.cacheBase)) {
-									folderArray = ithSubalbum.cacheBase.split(Options.cache_folder_separator);
-									folderName = "";
-									if (folderArray.length == 2)
-										folderName += parseInt(folderArray[1]);
-									else if (folderArray.length == 3)
-										folderName += " " + util._t("#month-" + folderArray[2]);
-									else if (folderArray.length == 4)
-										folderName += util._t("#day") + " " + parseInt(folderArray[3]);
-									folderTitle = util._t('#place-icon-title') + folderName;
-								} else if (util.isByGpsCacheBase(currentAlbum.cacheBase)) {
-									folderName = '';
-									folderTitle = '';
-									if (ithSubalbum.name === '')
-										folderName = util._t('.not-specified');
-									else if (ithSubalbum.hasOwnProperty('altName'))
-										folderName = util.transformAltPlaceName(ithSubalbum.altName);
-									else
-										folderName = ithSubalbum.name;
-									folderTitle = util._t('#place-icon-title') + folderName;
-								} else {
-									folderName = ithSubalbum.path;
-									folderTitle = util._t('#place-icon-title') + folderName;
-								}
+								let folderNameAndTitlePromise = util.folderNameAndTitle(currentAlbum, ithSubalbum);
+								folderNameAndTitlePromise.then(
+									function([folderName, folderTitle]) {
+										folder = "<span class='folder-name'>" +
+															folderName;
+										if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree)
+											folder += "<a id='subalbum-map-link-" + iSubalbum + "' >" +
+															"<img " +
+																"class='title-img' " +
+																"title='" + util.escapeSingleQuotes(folderTitle) + "' " +
+																"alt='" + util.escapeSingleQuotes(folderTitle) + "' " +
+																"height='15px' " +
+																"src='img/ic_place_white_24dp_2x.png' " +
+															"/>" +
+														"</a>";
+										folder += "</span>";
 
-								folder = "<span class='folder-name'>" +
-													folderName;
-								if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree)
-									folder += "<a id='subalbum-map-link-" + i + "' >" +
-													"<img " +
-														"class='title-img' " +
-														"title='" + util.escapeSingleQuotes(folderTitle) + "' " +
-														"alt='" + util.escapeSingleQuotes(folderTitle) + "' " +
-														"height='15px' " +
-														"src='img/ic_place_white_24dp_2x.png' " +
-													"/>" +
-												"</a>";
-								folder += "</span>";
+										// // get the value in style sheet (element with that class doesn't exist in DOM)
+										// var $el = $('<div class="album-caption"></div>');
+										// $($el).appendTo('body');
+										// $($el).remove();
+										captionColor = Options.albums_slide_style ? Options.slide_album_caption_color : Options.album_caption_color;
 
-								// // get the value in style sheet (element with that class doesn't exist in DOM)
-								// var $el = $('<div class="album-caption"></div>');
-								// $($el).appendTo('body');
-								// $($el).remove();
-								captionColor = Options.albums_slide_style ? Options.slide_album_caption_color : Options.album_caption_color;
+										captionHtml = "<div class='album-caption";
+										if (util.isFolderCacheBase(currentAlbum.cacheBase) && ! Options.show_album_names_below_thumbs)
+											captionHtml += " hidden";
+										captionHtml += "' id='album-caption-" + phFl.hashCode(ithSubalbum.cacheBase) + "' " +
+																	"style='" +
+																		"width: " + correctedAlbumThumbSize + "px; " +
+																		"font-size: " + captionFontSize + "px; " +
+																		"height: " + captionHeight + "px; " +
+																		"color: " + captionColor + ";" +
+																	"'" +
+																	">" + folder + "</div>";
 
-								captionHtml = "<div class='album-caption";
-								if (util.isFolderCacheBase(currentAlbum.cacheBase) && ! Options.show_album_names_below_thumbs)
-									captionHtml += " hidden";
-								captionHtml += "' id='album-caption-" + phFl.hashCode(ithSubalbum.cacheBase) + "' " +
-															"style='" +
-																"width: " + correctedAlbumThumbSize + "px; " +
-																"font-size: " + captionFontSize + "px; " +
-																"height: " + captionHeight + "px; " +
-																"color: " + captionColor + ";" +
-															"'" +
-															">" + folder + "</div>";
+										captionHtml += "<div class='album-caption-count";
+										if (util.isFolderCacheBase(currentAlbum.cacheBase) && ! Options.show_album_names_below_thumbs || ! Options.show_album_media_count)
+											captionHtml += " hidden";
+										captionHtml += "' " +
+													"style='" +
+														"font-size: " + Math.round((captionFontSize / 1.5)) + "px; " +
+														"height: " + captionHeight + "px; " +
+														"color: " + captionColor + ";" +
+													"'" +
+												">(";
+										captionHtml +=		util.imagesAndVideosTotal(ithSubalbum.numMediaInSubTree);
+										captionHtml +=		" <span class='title-media'>";
+										captionHtml +=		util._t(".title-media");
+										captionHtml +=		"</span>";
+										captionHtml += ")</div>";
+										caption = $(captionHtml);
 
-								captionHtml += "<div class='album-caption-count";
-								if (util.isFolderCacheBase(currentAlbum.cacheBase) && ! Options.show_album_names_below_thumbs || ! Options.show_album_media_count)
-									captionHtml += " hidden";
-								captionHtml += "' " +
-											"style='" +
-												"font-size: " + Math.round((captionFontSize / 1.5)) + "px; " +
-												"height: " + captionHeight + "px; " +
-												"color: " + captionColor + ";" +
-											"'" +
-										">(";
-								captionHtml +=		util.imagesAndVideosTotal(ithSubalbum.numMediaInSubTree);
-								captionHtml +=		" <span class='title-media'>";
-								captionHtml +=		util._t(".title-media");
-								captionHtml +=		"</span>";
-								captionHtml += ")</div>";
-								caption = $(captionHtml);
-
-								selectSrc = 'img/checkbox-unchecked-48px.png';
-								if (util.subalbumIsSelected(ithSubalbum)) {
-									selectSrc = 'img/checkbox-checked-48px.png';
-								}
-								selectBoxHtml =
-									"<a id='subalbum-select-box-" + i + "'>" +
-										"<img " +
-											"class='select-box' " +
-											"title='" + util.escapeSingleQuotes(util._t("#select-subalbum")) + "' " +
-											"alt='" + util.escapeSingleQuotes(util._t("#select-subalbum")) + "' " +
-											"src='" + selectSrc + "'" +
-										">" +
-									"</a>";
-
-								// a dot could be present in a cache base, making $("#" + cacheBase) fail, beware...
-								id = phFl.hashCode(ithSubalbum.cacheBase);
-								albumButtonAndCaptionHtml =
-									"<div id='" + id + "' " +
-										"class='album-button-and-caption";
-								if (Options.albums_slide_style)
-									albumButtonAndCaptionHtml += " slide";
-								albumButtonAndCaptionHtml +=
-										"' " +
-										"style='" +
-											"margin-right: " + Options.spacing + "px; " +
-											"margin-bottom: " + Options.spacing + "px; " +
-											"height: " + buttonAndCaptionHeight + "px; " +
-											"width: " + util.albumButtonWidth(correctedAlbumThumbSize, buttonBorder) + "px; ";
-								if (Options.albums_slide_style)
-									albumButtonAndCaptionHtml += "background-color:" + Options.album_button_background_color + ";";
-								albumButtonAndCaptionHtml +=
-										"'" +
-									">" +
-									"</div>";
-								linkContainer = $(albumButtonAndCaptionHtml);
-
-								image = $(
-									"<div " +
-									 	"class='album-button' " +
-										"style='" +
-											"width:" + correctedAlbumThumbSize + "px; " +
-											"height:" + correctedAlbumThumbSize + "px; " +
-											"margin:" + margin + "px;" +
-										"'" +
-										">" +
-										selectBoxHtml +
-										"<a href=''>" +
-											"<img " +
-												"src='img/link-arrow.png' " +
-												"class='album-button-random-media-link'" +
+										selectSrc = 'img/checkbox-unchecked-48px.png';
+										if (util.subalbumIsSelected(ithSubalbum)) {
+											selectSrc = 'img/checkbox-checked-48px.png';
+										}
+										selectBoxHtml =
+											"<a id='subalbum-select-box-" + iSubalbum + "'>" +
+												"<img " +
+													"class='select-box' " +
+													"title='" + util.escapeSingleQuotes(util._t("#select-subalbum")) + "' " +
+													"alt='" + util.escapeSingleQuotes(util._t("#select-subalbum")) + "' " +
+													"src='" + selectSrc + "'" +
 												">" +
-										"</a>" +
-										"<span class='helper'></span>" +
-										"<img src='img/image-placeholder.png' class='thumbnail lazyload-album-" + id + "'>" +
-									"</div>"
+											"</a>";
+
+										// a dot could be present in a cache base, making $("#" + cacheBase) fail, beware...
+										id = phFl.hashCode(ithSubalbum.cacheBase);
+										albumButtonAndCaptionHtml =
+											"<div id='" + id + "' " +
+												"class='album-button-and-caption";
+										if (Options.albums_slide_style)
+											albumButtonAndCaptionHtml += " slide";
+										albumButtonAndCaptionHtml +=
+												"' " +
+												"style='" +
+													"margin-right: " + Options.spacing + "px; " +
+													"margin-bottom: " + Options.spacing + "px; " +
+													"height: " + buttonAndCaptionHeight + "px; " +
+													"width: " + util.albumButtonWidth(correctedAlbumThumbSize, buttonBorder) + "px; ";
+										if (Options.albums_slide_style)
+											albumButtonAndCaptionHtml += "background-color:" + Options.album_button_background_color + ";";
+										albumButtonAndCaptionHtml +=
+												"'" +
+											">" +
+											"</div>";
+										linkContainer = $(albumButtonAndCaptionHtml);
+
+										image = $(
+											"<div " +
+											 	"class='album-button' " +
+												"style='" +
+													"width:" + correctedAlbumThumbSize + "px; " +
+													"height:" + correctedAlbumThumbSize + "px; " +
+													"margin:" + margin + "px;" +
+												"'" +
+												">" +
+												selectBoxHtml +
+												"<a href=''>" +
+													"<img " +
+														"src='img/link-arrow.png' " +
+														"class='album-button-random-media-link'" +
+														">" +
+												"</a>" +
+												"<span class='helper'></span>" +
+												"<img src='img/image-placeholder.png' class='thumbnail lazyload-album-" + id + "'>" +
+											"</div>"
+										);
+										linkContainer.append(image);
+										linkContainer.append(caption);
+
+										subalbumsElement.append(linkContainer);
+
+										//////////////////// begin anonymous function /////////////////////
+										//      })(ithSubalbum, image, container, id);
+										(function(theSubalbum, theImage) {
+											// function(subalbum, error)
+											var promise = phFl.pickRandomMedia(
+												theSubalbum,
+												function error() {
+													currentAlbum.subalbums.splice(currentAlbum.subalbums.indexOf(theSubalbum), 1);
+													theImage.parent().remove();
+													resolve_subalbumPromise();
+													// subalbums.splice(subalbums.indexOf(theLink), 1);
+												}
+											);
+											promise.then(
+												function([album, index]) {
+													insertRandomImage(album, index, theSubalbum);
+													resolve_subalbumPromise();
+												},
+												function(album) {
+													console.trace();
+												}
+											);
+										})(ithSubalbum, image);
+										//////////////////// end anonymous function /////////////////////
+									}
 								);
-								linkContainer.append(image);
-								linkContainer.append(caption);
-
-								subalbumsElement.append(linkContainer);
-
-								//////////////////// begin anonymous function /////////////////////
-								//      })(ithSubalbum, image, container, id);
-								(function(theSubalbum, theImage) {
-									// function(subalbum, error)
-									var promise = phFl.pickRandomMedia(
-										theSubalbum,
-										function error() {
-											currentAlbum.subalbums.splice(currentAlbum.subalbums.indexOf(theSubalbum), 1);
-											theImage.parent().remove();
-											resolve_subalbumPromise();
-											// subalbums.splice(subalbums.indexOf(theLink), 1);
-										}
-									);
-									promise.then(
-										function([album, index]) {
-											insertRandomImage(album, index, theSubalbum);
-											resolve_subalbumPromise();
-										},
-										function(album) {
-											console.trace();
-										}
-									);
-								})(ithSubalbum, image);
-								//////////////////// end anonymous function /////////////////////
 							}
 						);
 						subalbumsPromises.push(subalbumPromise);
@@ -2234,6 +2176,29 @@
 						function allRandomImagesGot() {
 							// we can run the function that prepare the stuffs for sharing
 							f.socialButtons();
+
+							for (i = 0; i < currentAlbum.subalbums.length; ++i) {
+								let ithSubalbum = currentAlbum.subalbums[i];
+								if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
+									$("#subalbum-map-link-" + i).off('click').on(
+										'click',
+										{subalbum: ithSubalbum, clickedSelector: "#subalbum-map-link-" + i},
+										function(ev, from) {
+											selectorClickedToOpenTheMap = ev.data.clickedSelector;
+											TopFunctions.generateMapFromSubalbum(ev, from);
+										}
+									);
+									$("#subalbum-select-box-" + i).off('click').on(
+										'click',
+										{subalbum: ithSubalbum, clickedSelector: "#subalbum-select-box-" + i},
+										function(ev) {
+											ev.stopPropagation();
+											ev.preventDefault();
+											TopFunctions.toggleSelectedSubalbum(ev.data.subalbum, ev.data.clickedSelector);
+										}
+									);
+								}
+							}
 
 							// check for overflow in album-caption class in order to adapt album caption height to the string length
 							// when diving into search subalbum, the whole album path is showed and it can be lengthy
@@ -2254,29 +2219,6 @@
 							console.trace();
 						}
 					);
-
-					for (i = 0; i < currentAlbum.subalbums.length; ++i) {
-						let ithSubalbum = currentAlbum.subalbums[i];
-						if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
-							$("#subalbum-map-link-" + i).off('click').on(
-								'click',
-								{subalbum: ithSubalbum, clickedSelector: "#subalbum-map-link-" + i},
-								function(ev, from) {
-									selectorClickedToOpenTheMap = ev.data.clickedSelector;
-									TopFunctions.generateMapFromSubalbum(ev, from);
-								}
-							);
-							$("#subalbum-select-box-" + i).off('click').on(
-								'click',
-								{subalbum: ithSubalbum, clickedSelector: "#subalbum-select-box-" + i},
-								function(ev) {
-									ev.stopPropagation();
-									ev.preventDefault();
-									TopFunctions.toggleSelectedSubalbum(ev.data.subalbum, ev.data.clickedSelector);
-								}
-							);
-						}
-					}
 
 					$("#subalbums").show();
 					$("#album-view").removeClass("media-view-container");
