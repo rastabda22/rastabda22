@@ -1890,25 +1890,32 @@
 					folderTitle = Utilities._t('#place-icon-title') + folderName;
 					resolve_folderNameAndTitle([folderName, folderTitle]);
 				} else if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase) && Utilities.isByGpsCacheBase(ithSubalbum.cacheBase)) {
+					let raquo = "&raquo;";
 					folderName = '';
-					let cacheBasesPromises = new Array(ithSubalbum.ancestorsCacheBase.length);
-					for (let iCacheBase = 1; iCacheBase < ithSubalbum.ancestorsCacheBase.length - 1; iCacheBase ++) {
+					let cacheBasesPromises = [];
+					for (let iCacheBase = 1; iCacheBase < ithSubalbum.ancestorsCacheBase.length; iCacheBase ++) {
 						let marker = "<marker>" + iCacheBase + "</marker>";
-						folderName += marker + " > ";
-						let cacheBasePromise = PhotoFloat.getAlbum(ithSubalbum.ancestorsCacheBase[iCacheBase], null, {"getMedia": false, "getPositions": false});
-						cacheBasePromise.then(
-							function(album) {
-								let albumName;
-								if (album.name === '')
-									albumName = Utilities._t('.not-specified');
-								else if (album.hasOwnProperty('altName'))
-									albumName = Utilities.transformAltPlaceName(album.altName);
-								else
-									albumName = album.name;
-								folderName.replace(marker, albumName);
-								// $("#subalbums").html($("#subalbums").html().replace(marker, albumName));
-								cacheBasesPromises[iCacheBase] = Promise.resolve();
-							}
+						folderName += marker + " " + raquo + " ";
+						cacheBasesPromises.push(
+							new Promise(
+								function(resolve_ithCacheBasePromise) {
+									let cacheBasePromise = PhotoFloat.getAlbum(ithSubalbum.ancestorsCacheBase[iCacheBase], null, {"getMedia": false, "getPositions": false});
+									cacheBasePromise.then(
+										function(album) {
+											let albumName;
+											if (album.name === '')
+												albumName = Utilities._t('.not-specified');
+											else if (album.hasOwnProperty('altName'))
+												albumName = Utilities.transformAltPlaceName(album.altName);
+											else
+												albumName = album.name;
+											folderName = folderName.replace(marker, albumName);
+											// $("#subalbums").html($("#subalbums").html().replace(marker, albumName));
+											resolve_ithCacheBasePromise();
+										}
+									);
+								}
+							)
 						);
 					}
 					if (ithSubalbum.name === '')
@@ -1917,7 +1924,7 @@
 						folderTitle = Utilities.transformAltPlaceName(ithSubalbum.altName);
 					else
 						folderTitle = ithSubalbum.name;
-					folderName += folderTitle;
+					// folderName += folderTitle;
 					folderTitle = Utilities._t('#place-icon-title') + folderTitle;
 					Promise.all(cacheBasesPromises).then(
 						function() {
