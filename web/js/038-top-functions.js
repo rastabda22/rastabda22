@@ -2024,25 +2024,25 @@
 						let iSubalbum = i;
 						let subalbumPromise = new Promise(
 							function(resolve_subalbumPromise) {
-								let folderName, folderTitle;
 								var ithSubalbum = currentAlbum.subalbums[iSubalbum];
 
 								// generate the subalbum caption
-								let folderNameAndTitlePromise = util.folderNameAndTitle(currentAlbum, ithSubalbum);
-								folderNameAndTitlePromise.then(
-									function([folderName, folderTitle]) {
-										folder = "<span class='folder-name'>" +
-															folderName;
-										if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree)
+								let folderNamePromise = util.folderName(currentAlbum, ithSubalbum);
+								folderNamePromise.then(
+									function(folderName) {
+										folder = "<span class='folder-name'>" + folderName;
+										if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
+											folderMapTitle = util.folderMapTitle(currentAlbum, ithSubalbum, folderName);
 											folder += "<a id='subalbum-map-link-" + iSubalbum + "' >" +
 															"<img " +
 																"class='title-img' " +
-																"title='" + util.escapeSingleQuotes(folderTitle) + "' " +
-																"alt='" + util.escapeSingleQuotes(folderTitle) + "' " +
+																"title='" + util.escapeSingleQuotes(folderMapTitle) + "' " +
+																"alt='" + util.escapeSingleQuotes(folderMapTitle) + "' " +
 																"height='15px' " +
 																"src='img/ic_place_white_24dp_2x.png' " +
 															"/>" +
 														"</a>";
+										}
 										folder += "</span>";
 
 										// // get the value in style sheet (element with that class doesn't exist in DOM)

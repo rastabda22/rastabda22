@@ -1874,12 +1874,12 @@
 		}
 	};
 
-	Utilities.prototype.folderNameAndTitle = function(currentAlbum, ithSubalbum) {
+	Utilities.prototype.folderName = function(currentAlbum, ithSubalbum) {
 		return new Promise(
 			function (resolve_folderNameAndTitle) {
-				var folderName, folderTitle;
+				var folderName;
 				if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase) && Utilities.isByDateCacheBase(ithSubalbum.cacheBase)) {
-					var folderArray = ithSubalbum.cacheBase.split(Options.cache_folder_separator);
+					let folderArray = ithSubalbum.cacheBase.split(Options.cache_folder_separator);
 					folderName = "";
 					if (folderArray.length == 4)
 						folderName += parseInt(folderArray[3]) + " ";
@@ -1887,15 +1887,16 @@
 						folderName += Utilities._t("#month-" + folderArray[2]) + " ";
 					if (folderArray.length >= 2)
 						folderName += parseInt(folderArray[1]);
-					folderTitle = Utilities._t('#place-icon-title') + folderName;
-					resolve_folderNameAndTitle([folderName, folderTitle]);
+					resolve_folderNameAndTitle(folderName);
 				} else if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase) && Utilities.isByGpsCacheBase(ithSubalbum.cacheBase)) {
 					let raquo = "&raquo;";
 					folderName = '';
 					let cacheBasesPromises = [];
 					for (let iCacheBase = 1; iCacheBase < ithSubalbum.ancestorsCacheBase.length; iCacheBase ++) {
 						let marker = "<marker>" + iCacheBase + "</marker>";
-						folderName += marker + " " + raquo + " ";
+						folderName += marker;
+						if (iCacheBase < ithSubalbum.ancestorsCacheBase.length - 1)
+							folderName += " " + raquo + " ";
 						cacheBasesPromises.push(
 							new Promise(
 								function(resolve_ithCacheBasePromise) {
@@ -1918,25 +1919,16 @@
 							)
 						);
 					}
-					if (ithSubalbum.name === '')
-						folderTitle = Utilities._t('.not-specified');
-					else if (ithSubalbum.hasOwnProperty('altName'))
-						folderTitle = Utilities.transformAltPlaceName(ithSubalbum.altName);
-					else
-						folderTitle = ithSubalbum.name;
-					// folderName += folderTitle;
-					folderTitle = Utilities._t('#place-icon-title') + folderTitle;
 					Promise.all(cacheBasesPromises).then(
 						function() {
-							resolve_folderNameAndTitle([folderName, folderTitle]);
+							resolve_folderNameAndTitle(folderName);
 						}
 					);
 				} else if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
 					folderName = ithSubalbum.physicalPath;
-					folderTitle = Utilities._t('#place-icon-title') + folderName;
-					resolve_folderNameAndTitle([folderName, folderTitle]);
+					resolve_folderNameAndTitle(folderName);
 				} else if (Utilities.isByDateCacheBase(currentAlbum.cacheBase)) {
-					folderArray = ithSubalbum.cacheBase.split(Options.cache_folder_separator);
+					let folderArray = ithSubalbum.cacheBase.split(Options.cache_folder_separator);
 					folderName = "";
 					if (folderArray.length == 2)
 						folderName += parseInt(folderArray[1]);
@@ -1944,26 +1936,40 @@
 						folderName += " " + Utilities._t("#month-" + folderArray[2]);
 					else if (folderArray.length == 4)
 						folderName += Utilities._t("#day") + " " + parseInt(folderArray[3]);
-					folderTitle = Utilities._t('#place-icon-title') + folderName;
-					resolve_folderNameAndTitle([folderName, folderTitle]);
+					resolve_folderNameAndTitle(folderName);
 				} else if (Utilities.isByGpsCacheBase(currentAlbum.cacheBase)) {
-					folderName = '';
-					folderTitle = '';
 					if (ithSubalbum.name === '')
 						folderName = Utilities._t('.not-specified');
 					else if (ithSubalbum.hasOwnProperty('altName'))
 						folderName = Utilities.transformAltPlaceName(ithSubalbum.altName);
 					else
 						folderName = ithSubalbum.name;
-					folderTitle = Utilities._t('#place-icon-title') + folderName;
-					resolve_folderNameAndTitle([folderName, folderTitle]);
+					resolve_folderNameAndTitle(folderName);
 				} else {
 					folderName = ithSubalbum.path;
-					folderTitle = Utilities._t('#place-icon-title') + folderName;
-					resolve_folderNameAndTitle([folderName, folderTitle]);
+					resolve_folderNameAndTitle(folderName);
 				}
 			}
 		);
+	};
+
+	Utilities.prototype.folderMapTitle = function(currentAlbum, ithSubalbum, folderName) {
+		var folderMapTitle;
+		if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase) && Utilities.isByDateCacheBase(ithSubalbum.cacheBase)) {
+			folderMapTitle = Utilities._t('#place-icon-title') + folderName;
+		} else if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase) && Utilities.isByGpsCacheBase(ithSubalbum.cacheBase)) {
+			if (ithSubalbum.name === '')
+				folderMapTitle = Utilities._t('.not-specified');
+			else if (ithSubalbum.hasOwnProperty('altName'))
+				folderMapTitle = Utilities.transformAltPlaceName(ithSubalbum.altName);
+			else
+				folderMapTitle = ithSubalbum.name;
+			// folderName += folderMapTitle;
+			folderMapTitle = Utilities._t('#place-icon-title') + folderMapTitle;
+		} else {
+			folderMapTitle = Utilities._t('#place-icon-title') + folderName;
+		}
+		return folderMapTitle;
 	};
 
 	Utilities.prototype.setPinchButtonsPosition = function(containerHeight, containerWidth) {
