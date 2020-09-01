@@ -2141,6 +2141,27 @@
 
 										subalbumsElement.append(linkContainer);
 
+										if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
+											$("#subalbum-map-link-" + iSubalbum).off('click').on(
+												'click',
+												{subalbum: ithSubalbum, clickedSelector: "#subalbum-map-link-" + iSubalbum},
+												function(ev, from) {
+													selectorClickedToOpenTheMap = ev.data.clickedSelector;
+													TopFunctions.generateMapFromSubalbum(ev, from);
+												}
+											);
+											$("#subalbum-select-box-" + iSubalbum + " .select-box").show();
+											$("#subalbum-select-box-" + iSubalbum).off('click').on(
+												'click',
+												{subalbum: ithSubalbum, clickedSelector: "#subalbum-select-box-" + iSubalbum},
+												function(ev) {
+													ev.stopPropagation();
+													ev.preventDefault();
+													TopFunctions.toggleSelectedSubalbum(ev.data.subalbum, ev.data.clickedSelector);
+												}
+											);
+										}
+
 										//////////////////// begin anonymous function /////////////////////
 										//      })(ithSubalbum, image, container, id);
 										(function(theSubalbum, theImage) {
@@ -2177,28 +2198,29 @@
 							// we can run the function that prepare the stuffs for sharing
 							f.socialButtons();
 
-							for (i = 0; i < currentAlbum.subalbums.length; ++i) {
-								let ithSubalbum = currentAlbum.subalbums[i];
-								if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
-									$("#subalbum-map-link-" + i).off('click').on(
-										'click',
-										{subalbum: ithSubalbum, clickedSelector: "#subalbum-map-link-" + i},
-										function(ev, from) {
-											selectorClickedToOpenTheMap = ev.data.clickedSelector;
-											TopFunctions.generateMapFromSubalbum(ev, from);
-										}
-									);
-									$("#subalbum-select-box-" + i).off('click').on(
-										'click',
-										{subalbum: ithSubalbum, clickedSelector: "#subalbum-select-box-" + i},
-										function(ev) {
-											ev.stopPropagation();
-											ev.preventDefault();
-											TopFunctions.toggleSelectedSubalbum(ev.data.subalbum, ev.data.clickedSelector);
-										}
-									);
-								}
-							}
+							// for (i = 0; i < currentAlbum.subalbums.length; ++i) {
+								// let ithSubalbum = currentAlbum.subalbums[i];
+								// if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
+								// 	$("#subalbum-map-link-" + i).off('click').on(
+								// 		'click',
+								// 		{subalbum: ithSubalbum, clickedSelector: "#subalbum-map-link-" + i},
+								// 		function(ev, from) {
+								// 			selectorClickedToOpenTheMap = ev.data.clickedSelector;
+								// 			TopFunctions.generateMapFromSubalbum(ev, from);
+								// 		}
+								// 	);
+								// 	$("#subalbum-select-box-" + i + " .select-box").show();
+								// 	$("#subalbum-select-box-" + i).off('click').on(
+								// 		'click',
+								// 		{subalbum: ithSubalbum, clickedSelector: "#subalbum-select-box-" + i},
+								// 		function(ev) {
+								// 			ev.stopPropagation();
+								// 			ev.preventDefault();
+								// 			TopFunctions.toggleSelectedSubalbum(ev.data.subalbum, ev.data.clickedSelector);
+								// 		}
+								// 	);
+								// }
+							// }
 
 							// check for overflow in album-caption class in order to adapt album caption height to the string length
 							// when diving into search subalbum, the whole album path is showed and it can be lengthy
