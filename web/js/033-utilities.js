@@ -29,7 +29,7 @@
 		rootMapAlbum.subalbums = [];
 		rootMapAlbum.positionsAndMediaInTree = [];
 		rootMapAlbum.numPositionsInTree = 0;
-		rootMapAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
+		rootMapAlbum.numsProtectedMediaInSubTree = {",": JSON.parse(JSON.stringify(imagesAndVideos0))};
 		rootMapAlbum.ancestorsCacheBase = [Options.by_map_string];
 		rootMapAlbum.includedFilesByCodesSimpleCombination = {};
 		rootMapAlbum.includedFilesByCodesSimpleCombination[","] = false;
@@ -61,7 +61,7 @@
 		newMapAlbum.path = newMapAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
 		newMapAlbum.physicalPath = newMapAlbum.path;
 		newMapAlbum.clickHistory = [];
-		newMapAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
+		newMapAlbum.numsProtectedMediaInSubTree = {",": JSON.parse(JSON.stringify(imagesAndVideos0))};
 		newMapAlbum.includedFilesByCodesSimpleCombination = {};
 		newMapAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
@@ -70,7 +70,7 @@
 		mapRootAlbum.subalbums.push(newMapAlbum);
 		mapRootAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(mapRootAlbum.positionsAndMediaInTree, newMapAlbum.positionsAndMediaInTree);
 		mapRootAlbum.numPositionsInTree += newMapAlbum.numPositionsInTree;
-		mapRootAlbum.numsProtectedMediaInSubTree[""] += newMapAlbum.numsProtectedMediaInSubTree[""];
+		mapRootAlbum.numsProtectedMediaInSubTree[","] = Utilities.imagesAndVideosSum(mapRootAlbum.numsProtectedMediaInSubTree[","], newMapAlbum.numsProtectedMediaInSubTree[","]);
 
 		newMapAlbum.ancestorsCacheBase = mapRootAlbum.ancestorsCacheBase.slice();
 		newMapAlbum.ancestorsCacheBase.push(newMapAlbum.cacheBase);
@@ -90,7 +90,7 @@
 	// 	rootSearchAlbum.subalbums = [];
 	// 	rootSearchAlbum.positionsAndMediaInTree = [];
 	// 	rootSearchAlbum.numPositionsInTree = 0;
-	// 	rootSearchAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
+	// 	rootSearchAlbum.numsProtectedMediaInSubTree = {",": JSON.parse(JSON.stringify(imagesAndVideos0))};
 	// 	rootSearchAlbum.ancestorsCacheBase = [Options.by_search_string];
 	// 	rootSearchAlbum.includedFilesByCodesSimpleCombination = {};
 	// 	rootSearchAlbum.includedFilesByCodesSimpleCombination[","] = false;
@@ -112,7 +112,7 @@
 		newSearchAlbum.cacheBase = albumHash;
 		newSearchAlbum.path = newSearchAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
 		newSearchAlbum.physicalPath = newSearchAlbum.path;
-		newSearchAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
+		newSearchAlbum.numsProtectedMediaInSubTree = {",": JSON.parse(JSON.stringify(imagesAndVideos0))};
 		newSearchAlbum.includedFilesByCodesSimpleCombination = {};
 		newSearchAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
@@ -128,7 +128,7 @@
 		// searchRootAlbum.subalbums.push(newSearchAlbum);
 		searchRootAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(searchRootAlbum.positionsAndMediaInTree, searchAlbum.positionsAndMediaInTree);
 		searchRootAlbum.numPositionsInTree += searchAlbum.numPositionsInTree;
-		searchRootAlbum.numsProtectedMediaInSubTree[""] += searchAlbum.numsProtectedMediaInSubTree[""];
+		searchRootAlbum.numsProtectedMediaInSubTree[","] = Utilities.imagesAndVideosSum(searchRootAlbum.numsProtectedMediaInSubTree[","], searchAlbum.numsProtectedMediaInSubTree[","]);
 
 		searchAlbum.ancestorsCacheBase = searchRootAlbum.ancestorsCacheBase.slice();
 		searchAlbum.ancestorsCacheBase.push(searchAlbum.cacheBase);
@@ -148,7 +148,7 @@
 		selectionRootAlbum.subalbums = [];
 		selectionRootAlbum.positionsAndMediaInTree = [];
 		selectionRootAlbum.numPositionsInTree = 0;
-		selectionRootAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
+		selectionRootAlbum.numsProtectedMediaInSubTree = {",": JSON.parse(JSON.stringify(imagesAndVideos0))};
 		selectionRootAlbum.ancestorsCacheBase = [Options.by_selection_string];
 		selectionRootAlbum.includedFilesByCodesSimpleCombination = {};
 		selectionRootAlbum.includedFilesByCodesSimpleCombination[","] = false;
@@ -179,7 +179,7 @@
 		newSelectionAlbum.cacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
 		newSelectionAlbum.path = newSelectionAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
 		newSelectionAlbum.physicalPath = newSelectionAlbum.path;
-		newSelectionAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(imagesAndVideos0))};
+		newSelectionAlbum.numsProtectedMediaInSubTree = {",": JSON.parse(JSON.stringify(imagesAndVideos0))};
 		newSelectionAlbum.includedFilesByCodesSimpleCombination = {};
 		newSelectionAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
@@ -187,7 +187,7 @@
 		selectionRootAlbum.subalbums.push(newSelectionAlbum);
 		selectionRootAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(selectionRootAlbum.positionsAndMediaInTree, newSelectionAlbum.positionsAndMediaInTree);
 		selectionRootAlbum.numPositionsInTree += newSelectionAlbum.numPositionsInTree;
-		selectionRootAlbum.numsProtectedMediaInSubTree[""] += newSelectionAlbum.numsProtectedMediaInSubTree[""];
+		selectionRootAlbum.numsProtectedMediaInSubTree[","] = Utilities.imagesAndVideosSum(selectionRootAlbum.numsProtectedMediaInSubTree[","], newSelectionAlbum.numsProtectedMediaInSubTree[","]);
 
 		newSelectionAlbum.ancestorsCacheBase = selectionRootAlbum.ancestorsCacheBase.slice();
 		newSelectionAlbum.ancestorsCacheBase.push(newSelectionAlbum.cacheBase);

@@ -2152,7 +2152,7 @@
 												}
 											);
 										}
-										
+
 										$("#subalbum-select-box-" + iSubalbum + " .select-box").show();
 										$("#subalbum-select-box-" + iSubalbum).off('click').on(
 											'click',
@@ -2875,7 +2875,7 @@
 						mapAlbum.numMedia = util.imagesAndVideosCount(mapAlbum.media);
 						mapAlbum.numMediaInSubTree = JSON.parse(JSON.stringify(mapAlbum.numMedia));
 						mapAlbum.numPositionsInTree = mapAlbum.positionsAndMediaInTree.length;
-						mapAlbum.numsProtectedMediaInSubTree = {"": JSON.parse(JSON.stringify(mapAlbum.numMedia))};
+						mapAlbum.numsProtectedMediaInSubTree = {",": JSON.parse(JSON.stringify(mapAlbum.numMedia))};
 						// media must be initially sorted by date not reverse, as json they are in albums
 						util.sortByDate(mapAlbum.media);
 						mapAlbum.mediaNameSort = false;
@@ -2892,7 +2892,7 @@
 						rootMapAlbum.subalbums.push(mapAlbum);
 						rootMapAlbum.positionsAndMediaInTree = util.mergePositionsAndMedia(rootMapAlbum.positionsAndMediaInTree, mapAlbum.positionsAndMediaInTree);
 						rootMapAlbum.numPositionsInTree += mapAlbum.numPositionsInTree;
-						rootMapAlbum.numsProtectedMediaInSubTree[""] += mapAlbum.numsProtectedMediaInSubTree[""];
+						rootMapAlbum.numsProtectedMediaInSubTree[","] = util.imagesAndVideosSum(rootMapAlbum.numsProtectedMediaInSubTree[","], mapAlbum.numsProtectedMediaInSubTree[","]);
 
 						TopFunctions.bindSortEvents(mapAlbum);
 					}
