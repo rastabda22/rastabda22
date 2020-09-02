@@ -197,7 +197,10 @@ var translations =
 			"#month-10": "October",
 			"#month-11": "November",
 			"#month-12": "December",
-			"#day": "day"
+			"#day": "day",
+			"#year-album": "by year album",
+			"#month-album": "by month album, year",
+			"#day-album": "by day album"
 		},
 		"it": {
 			"#next-media-title": "Prossima [n]",
@@ -396,7 +399,10 @@ var translations =
 			"#month-10": "Ottobre",
 			"#month-11": "Novembre",
 			"#month-12": "Dicembre",
-			"#day": "giorno"
+			"#day": "giorno",
+			"#year-album": "album per anno",
+			"#month-album": "album per mese, anno",
+			"#day-album": "album per giorno"
 		},
 		"es": {
 			"#next-media-title": "Siguiente [n]",
@@ -595,7 +601,10 @@ var translations =
 			"#month-10": "Octubre",
 			"#month-11": "Noviembre",
 			"#month-12": "Dicembre",
-			"#day": "día"
+			"#day": "día",
+			"#year-album": "álbum por año",
+			"#month-album": "álbum por mes, año",
+			"#day-album": "álbum por día"
 		},
 		"fr": {
 			"#next-media-title": "Suivant [n]",
@@ -795,6 +804,9 @@ var translations =
 			"#month-10": "Octobre",
 			"#month-11": "Novembre",
 			"#month-12": "Décembre",
-			"#day": "journée"
+			"#day": "journée",
+			"#year-album": "by year album",
+			"#month-album": "by month album, year",
+			"#day-album": "by day album"
 		}
 	};

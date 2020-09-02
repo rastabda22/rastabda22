@@ -68,6 +68,10 @@ img.thumbnail-img {
 	padding: 0 .5em;
 }
 
+.folder-name .second-line {
+	font-size: 75%;
+}
+
 .title-anchor.italic {
 	font-style: italic;
 }

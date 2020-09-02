@@ -2029,7 +2029,7 @@
 								// generate the subalbum caption
 								let folderNamePromise = util.folderName(currentAlbum, ithSubalbum);
 								folderNamePromise.then(
-									function(folderName) {
+									function([folderName, nameSorting]) {
 										folder = "<span class='folder-name'>" + folderName;
 										if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
 											folderMapTitle = util.folderMapTitle(currentAlbum, ithSubalbum, folderName);
