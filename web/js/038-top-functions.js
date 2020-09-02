@@ -1696,7 +1696,7 @@
 
 			titleName = titleName.substr(titleName.indexOf('/') + 1);
 			goTo = util._t(".go-to") + " " + titleName;
-			$("#" + id + " .album-button a").attr("href", randomMediaLink);
+			$("#" + id + " .album-button a.random-media-link").attr("href", randomMediaLink);
 			$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
 			$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName);
 			$("#" + id + " img.thumbnail").attr("data-src", encodeURI(mediaSrc));
@@ -2126,7 +2126,7 @@
 												"'" +
 												">" +
 												selectBoxHtml +
-												"<a href=''>" +
+												"<a class='random-media-link' href=''>" +
 													"<img " +
 														"src='img/link-arrow.png' " +
 														"class='album-button-random-media-link'" +
