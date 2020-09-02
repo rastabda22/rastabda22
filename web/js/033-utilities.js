@@ -1235,58 +1235,6 @@
 		);
 	};
 
-	// Utilities.resetSelectedMedia = function(album, includeSubalbums = false) {
-	// 	for (let i = 0; i < album.media.length; i ++) {
-	// 		if (Utilities.singleMediaIsSelected(album.media[i]))
-	// 			delete album.media[i].selected;
-	// 	}
-	// 	if (includeSubalbums) {
-	// 		for (let i = 0; i < album.subalbums.length; i ++) {
-	// 			Utilities.resetSelectedMedia(album.subalbums[i], includeSubalbums);
-	// 		}
-	// 	}
-	// };
-
-	// Utilities.resetSelectedSubalbums = function(album, includeSubalbums = false) {
-	// 	for (let i = 0; i < album.subalbums.length; i ++) {
-	// 		if (Utilities.subalbumIsSelected(album.subalbums[i]))
-	// 			delete album.subalbums[i].selected;
-	// 	}
-	// 	if (includeSubalbums) {
-	// 		for (let i = 0; i < album.subalbums.length; i ++) {
-	// 			Utilities.resetSelectedSubalbums(album.subalbums[i], includeSubalbums);
-	// 		}
-	// 	}
-	// };
-
-	// Utilities.countSelectedMedia = function(album, includeSubalbums = false) {
-	// 	var count = 0;
-	// 	for (let i = 0; i < album.media.length; i ++) {
-	// 		if (Utilities.singleMediaIsSelected(album.media[i]))
-	// 			count ++;
-	// 	}
-	// 	if (includeSubalbums) {
-	// 		for (let i = 0; i < album.subalbums.length; i ++) {
-	// 			count += Utilities.countSelectedMedia(album.subalbums[i], includeSubalbums);
-	// 		}
-	// 	}
-	// 	return count;
-	// };
-
-	// Utilities.countSelectedSubalbums = function(album, includeSubalbums = false) {
-	// 	var count = 0;
-	// 	for (let i = 0; i < album.subalbums.length; i ++) {
-	// 		if (Utilities.singleMediaIsSelected(album.subalbums[i]))
-	// 			count ++;
-	// 	}
-	// 	if (includeSubalbums) {
-	// 		for (let i = 0; i < album.subalbums.length; i ++) {
-	// 			count += Utilities.countSelectedSubalbums(album.subalbums[i], includeSubalbums);
-	// 		}
-	// 	}
-	// 	return count;
-	// };
-
 	Utilities.prototype.em2px = function(selector, em) {
 		var emSize = parseFloat($(selector).css("font-size"));
 		return (em * emSize);
