@@ -2090,7 +2090,8 @@
 													"class='select-box' " +
 													"title='" + util.escapeSingleQuotes(util._t("#select-subalbum")) + "' " +
 													"alt='" + util.escapeSingleQuotes(util._t("#select-subalbum")) + "' " +
-													"src='" + selectSrc + "'" +
+													"src='" + selectSrc + "' " +
+													"style='display: none;'" +
 												">" +
 											"</a>";
 
@@ -2150,17 +2151,18 @@
 													TopFunctions.generateMapFromSubalbum(ev, from);
 												}
 											);
-											$("#subalbum-select-box-" + iSubalbum + " .select-box").show();
-											$("#subalbum-select-box-" + iSubalbum).off('click').on(
-												'click',
-												{subalbum: ithSubalbum, clickedSelector: "#subalbum-select-box-" + iSubalbum},
-												function(ev) {
-													ev.stopPropagation();
-													ev.preventDefault();
-													TopFunctions.toggleSelectedSubalbum(ev.data.subalbum, ev.data.clickedSelector);
-												}
-											);
 										}
+										
+										$("#subalbum-select-box-" + iSubalbum + " .select-box").show();
+										$("#subalbum-select-box-" + iSubalbum).off('click').on(
+											'click',
+											{subalbum: ithSubalbum, clickedSelector: "#subalbum-select-box-" + iSubalbum},
+											function(ev) {
+												ev.stopPropagation();
+												ev.preventDefault();
+												TopFunctions.toggleSelectedSubalbum(ev.data.subalbum, ev.data.clickedSelector);
+											}
+										);
 
 										//////////////////// begin anonymous function /////////////////////
 										//      })(ithSubalbum, image, container, id);
