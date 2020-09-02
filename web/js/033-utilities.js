@@ -1165,10 +1165,10 @@
 							let parentAlbumPromise = PhotoFloat.getAlbum(parentCacheBase, null, {"getMedia": false, "getPositions": false});
 							parentAlbumPromise.then(
 								function(parentAlbum) {
-									Utilities.folderName(parentAlbum, subalbum).then(
+									Utilities.generateSubalbumNameForSelectionAlbum(parentAlbum, subalbum).then(
 										function([folderName, nameSorting]) {
-											selectionAlbum.selectionAlbumName = folderName;
-											selectionAlbum.selectionAlbumNameSorting = nameSorting;
+											subalbum.selectionAlbumName = folderName;
+											subalbum.selectionAlbumNameSorting = nameSorting;
 
 											Utilities.sortByDate(selectionAlbum.subalbums);
 											selectionAlbum.albumNameSort = false;
@@ -1897,13 +1897,13 @@
 			return Utilities._t("#month-" + folderArray[index]);
 	};
 
-	Utilities.folderName = function(currentAlbum, ithSubalbum) {
+	Utilities.generateSubalbumNameForSelectionAlbum = function(album, subalbum) {
 		return new Promise(
 			function (resolve_folderNameAndTitle) {
 				var folderName = "";
-				let folderArray = ithSubalbum.cacheBase.split(Options.cache_folder_separator);
-				let nameSorting = folderArray.slice(0, -1).reverse().join(Options.cache_folder_separator);
-				if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase) && Utilities.isByDateCacheBase(ithSubalbum.cacheBase)) {
+				let folderArray = subalbum.cacheBase.split(Options.cache_folder_separator);
+				let nameSorting = folderArray.slice(1).reverse().join(Options.cache_folder_separator);
+				if (Utilities.isSelectionCacheBase(album.cacheBase) && Utilities.isByDateCacheBase(subalbum.cacheBase)) {
 					if (folderArray.length === 4)
 						folderName = Utilities._t("#day") + " ";
 					folderName += Utilities.dateElementForFolderName(folderArray, folderArray.length - 1);
@@ -1923,28 +1923,28 @@
 					folderName += ")</span>";
 
 					resolve_folderNameAndTitle([folderName, nameSorting]);
-				} else if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase) && Utilities.isByGpsCacheBase(ithSubalbum.cacheBase)) {
+				} else if (Utilities.isSelectionCacheBase(album.cacheBase) && Utilities.isByGpsCacheBase(subalbum.cacheBase)) {
 					let raquo = "&raquo;";
 					folderName = '';
 					let cacheBasesPromises = [];
-					for (let iCacheBase = 1; iCacheBase < ithSubalbum.ancestorsCacheBase.length; iCacheBase ++) {
+					for (let iCacheBase = 1; iCacheBase < subalbum.ancestorsCacheBase.length; iCacheBase ++) {
 						let marker = "<marker>" + iCacheBase + "</marker>";
 						folderName += marker;
-						if (iCacheBase < ithSubalbum.ancestorsCacheBase.length - 1)
+						if (iCacheBase < subalbum.ancestorsCacheBase.length - 1)
 							folderName += " " + raquo + " ";
 						cacheBasesPromises.push(
 							new Promise(
 								function(resolve_ithCacheBasePromise) {
-									let cacheBasePromise = PhotoFloat.getAlbum(ithSubalbum.ancestorsCacheBase[iCacheBase], null, {"getMedia": false, "getPositions": false});
+									let cacheBasePromise = PhotoFloat.getAlbum(subalbum.ancestorsCacheBase[iCacheBase], null, {"getMedia": false, "getPositions": false});
 									cacheBasePromise.then(
-										function(album) {
+										function(subalbum) {
 											let albumName;
-											if (album.name === '')
+											if (subalbum.name === '')
 												albumName = Utilities._t('.not-specified');
-											else if (album.hasOwnProperty('altName'))
-												albumName = Utilities.transformAltPlaceName(album.altName);
+											else if (subalbum.hasOwnProperty('altName'))
+												albumName = Utilities.transformAltPlaceName(subalbum.altName);
 											else
-												albumName = album.name;
+												albumName = subalbum.name;
 											folderName = folderName.replace(marker, albumName);
 											// $("#subalbums").html($("#subalbums").html().replace(marker, albumName));
 											resolve_ithCacheBasePromise();
@@ -1959,11 +1959,8 @@
 							resolve_folderNameAndTitle([folderName, nameSorting]);
 						}
 					);
-				} else if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
-					folderName = ithSubalbum.physicalPath;
-					resolve_folderNameAndTitle([folderName, nameSorting]);
-				} else if (Utilities.isByDateCacheBase(currentAlbum.cacheBase)) {
-					let folderArray = ithSubalbum.cacheBase.split(Options.cache_folder_separator);
+				} else if (Utilities.isByDateCacheBase(album.cacheBase)) {
+					let folderArray = subalbum.cacheBase.split(Options.cache_folder_separator);
 					folderName = "";
 					if (folderArray.length == 2)
 						folderName += parseInt(folderArray[1]);
@@ -1972,34 +1969,60 @@
 					else if (folderArray.length == 4)
 						folderName += Utilities._t("#day") + " " + parseInt(folderArray[3]);
 					resolve_folderNameAndTitle([folderName, nameSorting]);
-				} else if (Utilities.isByGpsCacheBase(currentAlbum.cacheBase)) {
-					if (ithSubalbum.name === '')
+				} else if (Utilities.isByGpsCacheBase(album.cacheBase)) {
+					if (subalbum.name === '')
 						folderName = Utilities._t('.not-specified');
-					else if (ithSubalbum.hasOwnProperty('altName'))
-						folderName = Utilities.transformAltPlaceName(ithSubalbum.altName);
+					else if (subalbum.hasOwnProperty('altName'))
+						folderName = Utilities.transformAltPlaceName(subalbum.altName);
 					else
-						folderName = ithSubalbum.name;
+						folderName = subalbum.name;
 					resolve_folderNameAndTitle([folderName, nameSorting]);
 				} else {
-					folderName = ithSubalbum.path;
+					folderName = subalbum.path;
 					resolve_folderNameAndTitle([folderName, nameSorting]);
 				}
 			}
 		);
 	};
 
-	Utilities.prototype.folderMapTitle = function(currentAlbum, ithSubalbum, folderName) {
+	Utilities.prototype.subalbumName = function(album, subalbum) {
+		var folderName = '';
+		if (Utilities.isSelectionCacheBase(album.cacheBase)) {
+			folderName = subalbum.selectionAlbumName;
+		} else if (Utilities.isByDateCacheBase(album.cacheBase)) {
+			let folderArray = subalbum.cacheBase.split(Options.cache_folder_separator);
+			if (folderArray.length == 2) {
+				folderName += parseInt(folderArray[1]);
+			} else if (folderArray.length == 3)
+				folderName += " " + Utilities._t("#month-" + folderArray[2]);
+			else if (folderArray.length == 4)
+				folderName += Utilities._t("#day") + " " + parseInt(folderArray[3]);
+		} else if (Utilities.isByGpsCacheBase(album.cacheBase)) {
+			if (subalbum.name === '')
+				folderName = Utilities._t('.not-specified');
+			else if (subalbum.hasOwnProperty('altName'))
+				folderName = Utilities.transformAltPlaceName(subalbum.altName);
+			else
+				folderName = subalbum.name;
+		} else {
+			folderName = subalbum.path;
+		}
+
+		return folderName;
+	};
+
+	Utilities.prototype.folderMapTitle = function(album, subalbum, folderName) {
 		var folderMapTitle;
-		if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase) && Utilities.isByDateCacheBase(ithSubalbum.cacheBase)) {
+		if (Utilities.isSelectionCacheBase(album.cacheBase) && Utilities.isByDateCacheBase(subalbum.cacheBase)) {
 			let reducedFolderName = folderName.substring(0, folderName.indexOf("<br />"));
 			folderMapTitle = Utilities._t('#place-icon-title') + reducedFolderName;
-		} else if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase) && Utilities.isByGpsCacheBase(ithSubalbum.cacheBase)) {
-			if (ithSubalbum.name === '')
+		} else if (Utilities.isSelectionCacheBase(album.cacheBase) && Utilities.isByGpsCacheBase(subalbum.cacheBase)) {
+			if (subalbum.name === '')
 				folderMapTitle = Utilities._t('.not-specified');
-			else if (ithSubalbum.hasOwnProperty('altName'))
-				folderMapTitle = Utilities.transformAltPlaceName(ithSubalbum.altName);
+			else if (subalbum.hasOwnProperty('altName'))
+				folderMapTitle = Utilities.transformAltPlaceName(subalbum.altName);
 			else
-				folderMapTitle = ithSubalbum.name;
+				folderMapTitle = subalbum.name;
 			// folderName += folderMapTitle;
 			folderMapTitle = Utilities._t('#place-icon-title') + folderMapTitle;
 		} else {
@@ -2571,7 +2594,6 @@
 	Utilities.prototype.everyMediaIsSelected = Utilities.everyMediaIsSelected;
 	Utilities.prototype.initializeSelectionAlbum = Utilities.initializeSelectionAlbum;
 	Utilities.prototype.transformAltPlaceName = Utilities.transformAltPlaceName;
-	Utilities.prototype.folderName = Utilities.folderName;
 
 	window.Utilities = Utilities;
 }());
