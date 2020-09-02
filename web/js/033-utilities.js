@@ -1159,6 +1159,7 @@
 							selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
 							// selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
 							selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
+							selectionAlbum.numsProtectedMediaInSubTree = Utilities.sumSizes(selectionAlbum.numsProtectedMediaInSubTree, subalbum.numsProtectedMediaInSubTree);
 
 							let parentCacheBase = subalbum.ancestorsCacheBase[subalbum.ancestorsCacheBase.length - 2];
 							let parentAlbumPromise = PhotoFloat.getAlbum(parentCacheBase, null, {"getMedia": false, "getPositions": false});
@@ -1210,6 +1211,7 @@
 							selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
 							// selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
 							selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
+							selectionAlbum.numsProtectedMediaInSubTree = Utilities.subtractSizes(selectionAlbum.numsProtectedMediaInSubTree, subalbum.numsProtectedMediaInSubTree);
 
 							if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
 								if (! Utilities.somethingIsSelected()) {
