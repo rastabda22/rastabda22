@@ -793,16 +793,16 @@ $(document).ready(function() {
 			optionsPromise.then(
 				function() {
 					var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
-					if (currentAlbum && albumHash !== currentAlbum.cacheBase) {
-						// the browser location bar value has been changed manually
-						currentAlbum = null;
-						previousAlbum = null;
-					}
-					if (currentMedia && mediaHash !== currentMedia.cacheBase) {
-						// the browser location bar value has been changed manually
-						currentMedia = null;
-						previousMedia = null;
-					}
+					// if (currentAlbum && albumHash !== currentAlbum.cacheBase) {
+					// 	// the browser location bar value has been changed manually
+					// 	currentAlbum = null;
+					// 	previousAlbum = null;
+					// }
+					// if (currentMedia && mediaHash !== currentMedia.cacheBase) {
+					// 	// the browser location bar value has been changed manually
+					// 	currentMedia = null;
+					// 	previousMedia = null;
+					// }
 
 					if (! util.isSearchHash(location.hash)) {
 						// reset current album search flag to its default value
