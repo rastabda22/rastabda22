@@ -2030,15 +2030,21 @@
 								let folder = "<span class='folder-name'>" + folderName;
 								if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
 									folderMapTitle = util.folderMapTitle(currentAlbum, ithSubalbum, folderName);
-									folder += "<a id='subalbum-map-link-" + iSubalbum + "' >" +
-													"<img " +
-														"class='title-img' " +
-														"title='" + util.escapeSingleQuotes(folderMapTitle) + "' " +
-														"alt='" + util.escapeSingleQuotes(folderMapTitle) + "' " +
-														"height='15px' " +
-														"src='img/ic_place_white_24dp_2x.png' " +
-													"/>" +
-												"</a>";
+									folderMapTitleWithoutHtmlTags = folderMapTitle.replace(/<[^>]*>?/gm, '');
+									let positionHtml =
+										"<a id='subalbum-map-link-" + iSubalbum + "' >" +
+											"<img " +
+												"class='title-img' " +
+												"title='" + util.escapeSingleQuotes(folderMapTitleWithoutHtmlTags) + "' " +
+												"alt='" + util.escapeSingleQuotes(folderMapTitleWithoutHtmlTags) + "' " +
+												"height='15px' " +
+												"src='img/ic_place_white_24dp_2x.png' " +
+											"/>" +
+										"</a>";
+									if (folder.indexOf(positionMarker) !== -1)
+										folder = folder.replace(positionMarker, positionHtml);
+									else
+										folder += positionHtml;
 								}
 								folder += "</span>";
 

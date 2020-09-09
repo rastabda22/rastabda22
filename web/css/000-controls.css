@@ -72,6 +72,16 @@ img.thumbnail-img {
 	font-size: 75%;
 }
 
+.gray {
+	font-size: 95%;
+	color: gray;
+}
+
+.separated {
+	padding-left: .6em;
+	padding-right: .6em;
+}
+
 .title-anchor.italic {
 	font-style: italic;
 }

@@ -200,7 +200,10 @@ var translations =
 			"#day": "day",
 			"#year-album": "by year album",
 			"#month-album": "by month album, year",
-			"#day-album": "by day album"
+			"#day-album": "by day album",
+			"#by-gps-album": "by place album",
+			"#by-gps-album-in": "by place album in",
+			"#regular-album-in": "album in"
 		},
 		"it": {
 			"#next-media-title": "Prossima [n]",
@@ -402,7 +405,10 @@ var translations =
 			"#day": "giorno",
 			"#year-album": "album per anno",
 			"#month-album": "album per mese, anno",
-			"#day-album": "album per giorno"
+			"#day-album": "album per giorno",
+			"#by-gps-album": "album per luogo",
+			"#by-gps-album-in": "album per luogo in",
+			"#regular-album-in": "album in"
 		},
 		"es": {
 			"#next-media-title": "Siguiente [n]",
@@ -604,7 +610,10 @@ var translations =
 			"#day": "día",
 			"#year-album": "álbum por año",
 			"#month-album": "álbum por mes, año",
-			"#day-album": "álbum por día"
+			"#day-album": "álbum por día",
+			"#by-gps-album": "álbum por lugar",
+			"#by-gps-album-in": "álbum por lugar en",
+			"#regular-album-in": "álbum en"
 		},
 		"fr": {
 			"#next-media-title": "Suivant [n]",
@@ -807,6 +816,9 @@ var translations =
 			"#day": "journée",
 			"#year-album": "by year album",
 			"#month-album": "by month album, year",
-			"#day-album": "by day album"
+			"#day-album": "by day album",
+			"#by-gps-album": "by place album",
+			"#by-gps-album-in": "by place album in",
+			"#regular-album-in": "album in"
 		}
 	};
