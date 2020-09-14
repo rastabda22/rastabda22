@@ -632,11 +632,20 @@
 			$(".select.everything").addClass("selected");
 		}
 
+		if (! Options.show_big_virtual_folders && util.imagesAndVideosTotal(thisAlbum.numMedia) > Options.big_virtual_folders_threshold) {
+			$(".select.everything, .select.media").addClass("hidden");
+		}
+
 		if (! thisAlbum.media.length || ! thisAlbum.subalbums.length) {
 			$(".select.media, .select.albums").addClass("hidden");
 		}
 
-		if (! thisAlbum.subalbums.length || util.imagesAndVideosTotal(thisAlbum.numMediaInSubTree) > Options.big_virtual_folders_threshold) {
+		if (
+			! thisAlbum.subalbums.length ||
+			! Options.show_big_virtual_folders && (
+				util.imagesAndVideosTotal(thisAlbum.numMediaInSubTree) > Options.big_virtual_folders_threshold
+			)
+		) {
 			$(".select.everything-individual").addClass("hidden");
 		} else {
 			let everythingIndividualPromise = util.recursivelyAllMediaAreSelected(thisAlbum);
