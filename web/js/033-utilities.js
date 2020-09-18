@@ -1854,17 +1854,28 @@
 		return result;
 	};
 
+	Utilities.convertByDateAncestosNames = function(ancestorsNames) {
+		if (ancestorsNames[0] === Options.by_date_string && ancestorsNames.length > 2) {
+			let result = ancestorsNames.slice()
+			result[2] = Utilities._t("#month-" + result[2]);
+			return result;
+		} else {
+			return ancestorsNames;
+		}
+
+	};
+
 	Utilities.generateSubalbumNameForSelectionAlbum = function(album, subalbum) {
 		return new Promise(
 			function (resolve_folderNameAndTitle) {
 				var folderName = "", firstLine = '', secondLine = '';
 				var raquo = "<span class='gray separated'>&raquo;</span>";
 				var folderArray = subalbum.cacheBase.split(Options.cache_folder_separator);
-				var nameSorting = folderArray.slice(1).reverse().join(Options.cache_folder_separator);
+				var nameSorting = Utilities.convertByDateAncestosNames(subalbum.ancestorsNames).slice(1).reverse().join(Options.cache_folder_separator).replace(/^0+/, '');
 				if (Utilities.isByDateCacheBase(subalbum.cacheBase)) {
 				// if (Utilities.isSelectionCacheBase(album.cacheBase) && Utilities.isByDateCacheBase(subalbum.cacheBase)) {
-					if (folderArray.length === 4)
-						firstLine += Utilities._t("#day") + " ";
+					// if (folderArray.length === 4)
+					// 	firstLine += Utilities._t("#day") + " ";
 					firstLine += Utilities.dateElementForFolderName(folderArray, folderArray.length - 1);
 					secondLine += "<span class='gray'>(";
 					if (folderArray.length === 2) {
