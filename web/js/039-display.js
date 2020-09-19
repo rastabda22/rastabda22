@@ -361,6 +361,21 @@ $(document).ready(function() {
 				}
 			}
 
+			if (e.key.toLowerCase() === 'a' && e.ctrlKey) {
+				if (! e.shiftKey && ! $(".select.everything").hasClass("hidden") && ! $(".select.everything").hasClass("selected")) {
+					// select everything
+					$(".select.everything").click();
+				} else if (e.shiftKey) {
+					// unselect everything
+					if (! $(".select.everything-individual").hasClass("hidden") && $(".select.everything-individual").hasClass("selected")) {
+						$(".select.everything-individual").click();
+					} else if (! $(".select.everything").hasClass("hidden") && $(".select.everything").hasClass("selected")) {
+						$(".select.everything").click();
+					}
+				}
+				return false;
+			}
+
 			if (
 				['[', ']'].indexOf(e.key) !== -1 && ! isPopup ||
 				['{', '}'].indexOf(e.key) !== -1
