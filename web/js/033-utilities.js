@@ -435,10 +435,10 @@
 	Utilities.removePositionAndMediaFromPositionsAndMedia = function(positionsAndMedia, positionAndMediaToRemove) {
 		var matchingPositionAndMediaIndex, matchingMediaIndex;
 		var arrayCacheBases = [];
-		for (let indexMediaName = 0; indexMediaName < positionAndMediaToRemove.mediaNameList; indexMediaName ++)
+		for (let indexMediaName = 0; indexMediaName < positionAndMediaToRemove.mediaNameList.length; indexMediaName ++)
 			arrayCacheBases.push(positionAndMediaToRemove.mediaNameList[indexMediaName].cacheBase);
 		var arrayAlbumCacheBases = [];
-		for (let indexMediaName = 0; indexMediaName < positionAndMediaToRemove.mediaNameList; indexMediaName ++)
+		for (let indexMediaName = 0; indexMediaName < positionAndMediaToRemove.mediaNameList.length; indexMediaName ++)
 			arrayAlbumCacheBases.push(positionAndMediaToRemove.mediaNameList[indexMediaName].albumCacheBase);
 		if (
 			positionsAndMedia.some(
@@ -1204,11 +1204,13 @@
 							var index = selectionAlbum.subalbums.findIndex(x => x.cacheBase === subalbum.cacheBase);
 							selectionAlbum.subalbums.splice(index, 1);
 
-							selectionAlbum.positionsAndMediaInTree =
-								Utilities.removePositionsAndMediaFromPositionsAndMedia(
-									selectionAlbum.positionsAndMediaInTree,
-									subalbum.positionsAndMediaInTree
-								);
+							if (subalbum.positionsAndMediaInTree.length) {
+								selectionAlbum.positionsAndMediaInTree =
+									Utilities.removePositionsAndMediaFromPositionsAndMedia(
+										selectionAlbum.positionsAndMediaInTree,
+										subalbum.positionsAndMediaInTree
+									);
+							}
 							// selectionAlbum.numMedia = Utilities.imagesAndVideosSubtract(selectionAlbum.numMedia, subalbum.numMedia);
 							selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
 							// selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
