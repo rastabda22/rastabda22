@@ -429,7 +429,7 @@ $(document).ready(function() {
 			}
 
 			if (
-				e.key.toLowerCase() === "e" && e.target.tagName.toLowerCase() != 'input' &&  ! e.shiftKey&&  ! e.ctrlKey&&  ! e.altKey
+				e.key.toLowerCase() === "e" && e.target.tagName.toLowerCase() != 'input' &&  ! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey
 					// "e" opens the menu, and closes it if focus in not in input field
 			) {
 				toggleMenu();
