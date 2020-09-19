@@ -599,7 +599,7 @@
 		////////////////// SELECTION //////////////////////////////
 
 		$(".select").removeClass("hidden").removeClass("selected");
-		if (! somethingIsSelected) {
+		if (! somethingIsSelected || util.isSelectionCacheBase(thisAlbum.cacheBase)) {
 			$(".select.global-reset, .select.go-to-selected").addClass("hidden");
 		} else {
 			let menuItem = util._t(".select.go-to-selected");
