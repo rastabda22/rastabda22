@@ -182,16 +182,21 @@
 				$("#by-map-view").addClass("hidden");
 			}
 
+			let [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(location.hash);
 			if (
-				! util.somethingIsSearched() || ! (
-					isSingleMedia && util.singleMediaIsSearched(thisMedia) ||
-					isAnyRootCacheBase
+				! (
+					isAnyRootCacheBase ||
+					isSingleMedia && (
+						util.somethingIsSearched() ||
+						util.singleMediaIsSearched(thisMedia) ||
+						savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash)
+					)
 				)
 			) {
 				$("#by-search-view").addClass("hidden");
 			}
 
-			if (util.isFolderCacheBase(thisAlbum.cacheBase)) {
+			if (util.isFolderCacheBase(thisAlbum.cacheBase) && ! (savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash))) {
 				// folder album: change to by date or by gps view
 				$("#folders-view").addClass("selected");
 			} else if (util.isByDateCacheBase(thisAlbum.cacheBase)) {
@@ -200,7 +205,10 @@
 				$("#by-gps-view").addClass("selected");
 			} else if (util.isMapCacheBase(thisAlbum.cacheBase)) {
 				$("#by-map-view").removeClass("hidden").addClass("selected");
-			} else if (util.isSearchCacheBase(thisAlbum.cacheBase)) {
+			} else if (
+				util.isSearchCacheBase(thisAlbum.cacheBase) ||
+				savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash)
+			) {
 				$("#by-search-view").removeClass("hidden").addClass("selected");
 			} else if (isSelectionCacheBase) {
 				$("#by-selection-view").removeClass("hidden").addClass("selected");
