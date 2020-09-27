@@ -1525,9 +1525,9 @@
 						if (searchWordsFromUser.length == 1)
 							$("ul#right-menu li#any-word").addClass("dimmed").off("click");
 
-						searchAlbum = util.initializeSearchAlbumBegin(albumHash, mediaFolderHash);
 
 						if (albumHash == Options.by_search_string) {
+							searchAlbum = util.initializeSearchAlbumBegin(albumHash, mediaFolderHash);
 							// no search term
 							// TO DO: does execution actually arrive here?
 							util.noResults(searchAlbum, '#no-search-string');
@@ -1602,7 +1602,7 @@
 					);
 				} else {
 					// it's a search!
-
+					searchAlbum = util.initializeSearchAlbumBegin(albumHash, mediaFolderHash);
 
 					// possibly we need the stop words, because if some searched word is a stop word it must be removed from the search
 					promise = PhotoFloat.getStopWords();
