@@ -435,13 +435,13 @@
 
 			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
 				searchFolderHash = savedSearchAlbumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
+				let addSearchFolder = false;
 				if (searchFolderHash.split(Options.cache_folder_separator).length > 1) {
 					where =
 						"<a class='main-search-link' href='" + hashBeginning + savedSearchAlbumHash + "'>" +
 						util._t("#by-search") +
-						"</a> " +
-						util._t("#in") +
-						" <span id='search-album-to-be-filled'></span>";
+						"</a>";
+						addSearchFolder = true;
 				} else if (util.isSearchCacheBase(savedSearchAlbumHash)) {
 					where =
 						"<a class='search-link' href='" + hashBeginning + savedSearchAlbumHash + "'>" +
@@ -455,6 +455,10 @@
 						"</a>";
 				}
 
+				if (addSearchFolder) {
+					title += "<span id='search-album-to-be-filled'></span>";
+					title += raquo;
+				}
 				title += "<span class='title-no-anchor'>(" + where + ")</span>";
 				title += raquo;
 				where = util.stripHtmlAndReplaceEntities(where);
@@ -632,7 +636,7 @@
 			var promise = phFl.getAlbum(searchFolderHash, util.errorThenGoUp, {"getMedia": true, "getPositions": true});
 			promise.then(
 				function(theAlbum) {
-					var whereLinks = '', thisCacheBase, name, documentTitle;
+					var whereLinks = '', whereLinksArray = [], thisCacheBase, name, documentTitle;
 
 					if (theAlbum.hasOwnProperty('ancestorsNames')) {
 						for (var i = 0; i < theAlbum.ancestorsNames.length; i ++) {
@@ -648,11 +652,14 @@
 								// convert the month number to localized month name
 								name = util._t("#month-" + name);
 							thisCacheBase = hashBeginning + theAlbum.ancestorsCacheBase[i];
-							if (i > 0 && (i !== 1 || theAlbum.ancestorsNames[0] !== ""))
-								whereLinks += raquo;
+							// if (i > 0 && (i !== 1 || theAlbum.ancestorsNames[0] !== ""))
+							// 	whereLinks += raquo;
+							// if (name)
+							// 	whereLinks += "<a class='search-link' href='" + thisCacheBase + "'>" + name + "</a>";
 							if (name)
-								whereLinks += "<a class='search-link' href='" + thisCacheBase + "'>" + name + "</a>";
+								whereLinksArray.push("<a class='search-link' href='" + thisCacheBase + "'>" + name + "</a>");
 						}
+						whereLinks = whereLinksArray.join(raquo);
 					}
 
 					// insert the album tree links in DOM (if )
@@ -662,8 +669,8 @@
 						// correct the page title too
 						documentTitle = $(document).attr('title');
 						documentTitle = documentTitle.replace(
-							util._t("#by-search") + ' ' + util._t("#-in") + ' ',
-							util._t("#by-search") + ' ' + util._t("#-in") + ' ' + util.stripHtmlAndReplaceEntities(whereLinks)
+							"(" + util._t("#by-search") + ")",
+							"(" + util._t("#by-search") + ") \u00ab " + util.stripHtmlAndReplaceEntities(whereLinksArray.reverse().join(" \u00ab "))
 						);
 						document.title = documentTitle;
 					}
