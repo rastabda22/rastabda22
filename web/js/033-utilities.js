@@ -910,7 +910,10 @@
 	};
 
 	Utilities.somethingIsSearched = function() {
-		if (searchAlbum.hasOwnProperty("numMediaInSubTree") && Utilities.imagesAndVideosTotal(searchAlbum.numMediaInSubTree))
+		if (
+			searchAlbum.hasOwnProperty("numMediaInSubTree") && Utilities.imagesAndVideosTotal(searchAlbum.numMediaInSubTree) ||
+			searchAlbum.subalbums.length
+		)
 			return true;
 		else
 			return false;
