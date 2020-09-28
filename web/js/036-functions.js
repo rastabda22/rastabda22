@@ -1354,7 +1354,7 @@
 		return new Promise(
 			function(resolve_getOptions, reject_getOptions) {
 				if (Object.keys(Options).length > 0) {
-					if (! util.isSearchHash(location.hash)) {
+					if (! util.isSearchHash()) {
 						// reset the return link from search
 						var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(location.hash);
 						Options.cache_base_to_search_in = phFl.cleanHash(albumHash);

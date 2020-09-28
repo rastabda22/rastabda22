@@ -797,23 +797,23 @@
 		return string.indexOf(Options.byMapStringWithTrailingSeparator) === 0;
 	};
 
-	Utilities.prototype.isSearchHash = function(hash) {
-		hash = PhotoFloat.cleanHash(hash);
+	Utilities.prototype.isSearchHash = function() {
+		hash = PhotoFloat.cleanHash(location.hash);
 		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
-		if (this.isSearchCacheBase(hash) || savedSearchAlbumHash !== null)
+		if (Utilities.isSearchCacheBase(hash) || savedSearchAlbumHash !== null)
 			return true;
 		else
 			return false;
 	};
 
-	Utilities.prototype.isMapHash = function(hash) {
-		hash = PhotoFloat.cleanHash(hash);
-		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
-		if (this.isMapCacheBase(hash) || savedSearchAlbumHash !== null)
-			return true;
-		else
-			return false;
-	};
+	// Utilities.prototype.isMapHash = function(hash) {
+	// 	hash = PhotoFloat.cleanHash(hash);
+	// 	var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
+	// 	if (this.isMapCacheBase(hash) || savedSearchAlbumHash !== null)
+	// 		return true;
+	// 	else
+	// 		return false;
+	// };
 
 	Utilities.prototype.noResults = function(album, selector) {
 		// no media found or other search fail, show the message

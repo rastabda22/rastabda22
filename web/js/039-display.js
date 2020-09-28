@@ -819,7 +819,7 @@ $(document).ready(function() {
 					// 	previousMedia = null;
 					// }
 
-					if (! util.isSearchHash(location.hash)) {
+					if (! util.isSearchHash()) {
 						// reset current album search flag to its default value
 						Options.search_current_album = true;
 						f.setBooleanCookie("search_current_album", Options.search_current_album);

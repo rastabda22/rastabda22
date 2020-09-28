@@ -1513,7 +1513,7 @@
 						// if (util.isAnyRootCacheBase(Options.cache_base_to_search_in))
 						// 	$("ul#right-menu li#album-search").addClass("hidden");
 
-						// if (util.isSearchHash(location.hash) && Options.search_refine)
+						// if (util.isSearchHash() && Options.search_refine)
 						// 	Options.cache_base_to_search_in = albumHash;
 
 						$("ul#right-menu #search-field").attr("value", wordsStringOriginal);
