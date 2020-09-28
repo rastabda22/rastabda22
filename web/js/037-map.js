@@ -54,7 +54,7 @@
 
 			ithMedia = theAlbum.media[mediaIndex];
 
-			mediaHash = phFl.encodeHash(theAlbum, ithMedia);
+			mediaHash = phFl.encodeHash(theAlbum.cacheBase, ithMedia);
 			albumCacheBase = theAlbum.cacheBase;
 			// var codedHashId = getCodedHashId(photosInAlbumCopy[photoIndex].element);
 			thumbHash = util.chooseThumbnail(theAlbum, ithMedia, Options.media_thumb_size);

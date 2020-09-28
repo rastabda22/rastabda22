@@ -697,7 +697,7 @@
 				$(".media-box#left").css("width", $(".media-box#center").attr('width')).css("height", $(".media-box#center").attr('height'));
 
 				var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
-				window.location.href = phFl.encodeHash(currentAlbum, media, foundAlbumHash, savedSearchAlbumHash);
+				window.location.href = phFl.encodeHash(currentAlbum.cacheBase, media, foundAlbumHash, savedSearchAlbumHash);
 			}
 		);
 
@@ -724,7 +724,7 @@
 				$("#media-box-container").css("transform", "translate(-" + windowWidth + "px, 0px)");
 
 				var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
-				window.location.href = phFl.encodeHash(currentAlbum, media, foundAlbumHash, savedSearchAlbumHash);
+				window.location.href = phFl.encodeHash(currentAlbum.cacheBase, media, foundAlbumHash, savedSearchAlbumHash);
 			}
 		);
 

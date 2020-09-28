@@ -1318,12 +1318,8 @@
 		);
 	};
 
-	PhotoFloat.encodeHash = function(album, media, foundAlbumHash, savedSearchAlbumHash) {
-		var hash, albumHash;
-		if (typeof album === "string")
-			albumHash = album;
-		else
-			albumHash = album.cacheBase;
+	PhotoFloat.encodeHash = function(albumCacheBase, media, foundAlbumHash, savedSearchAlbumHash) {
+		var hash;
 
 		if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
 			savedSearchAlbumHash = PhotoFloat.cleanHash(savedSearchAlbumHash);
@@ -1332,31 +1328,31 @@
 
 		if (media !== null) {
 			// media hash
-			if (util.isFolderCacheBase(albumHash)) {
+			if (util.isFolderCacheBase(albumCacheBase)) {
 				if (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null)
 					// media in folders album, count = 2
 					hash = util.pathJoin([
-						albumHash,
+						albumCacheBase,
 						media.cacheBase
 					]);
 				else
 					// media in found album or in one of its subalbum, count = 4
 					hash = util.pathJoin([
-						albumHash,
+						albumCacheBase,
 						foundAlbumHash,
 						savedSearchAlbumHash,
 						media.cacheBase
 					]);
 			} else if (
-				util.isByDateCacheBase(albumHash) ||
-				util.isByGpsCacheBase(albumHash) ||
-				util.isSearchCacheBase(albumHash) && (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null) ||
-				util.isSelectionCacheBase(albumHash) ||
-				util.isMapCacheBase(albumHash)
+				util.isByDateCacheBase(albumCacheBase) ||
+				util.isByGpsCacheBase(albumCacheBase) ||
+				util.isSearchCacheBase(albumCacheBase) && (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null) ||
+				util.isSelectionCacheBase(albumCacheBase) ||
+				util.isMapCacheBase(albumCacheBase)
 			)
 				// media in date or gps album, count = 3
 				hash = util.pathJoin([
-					albumHash,
+					albumCacheBase,
 					media.foldersCacheBase,
 					media.cacheBase
 				]);
@@ -1365,14 +1361,14 @@
 			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
 				// found album or one of its subalbums, count = 3
 				hash = util.pathJoin([
-					albumHash,
+					albumCacheBase,
 					foundAlbumHash,
 					savedSearchAlbumHash
 				]);
 			else
 				// plain search album, count = 1
 				// folders album, count = 1
-				hash = albumHash;
+				hash = albumCacheBase;
 		}
 		return hashBeginning + hash;
 	};

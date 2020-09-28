@@ -279,10 +279,10 @@
 			function changeToByMapView() {
 				TopFunctions.showBrowsingModeMessage("#by-map-browsing");
 				if (isSingleMedia) {
-					window.location.href = phFl.encodeHash(mapAlbum, thisMedia);
+					window.location.href = phFl.encodeHash(mapAlbum.cacheBase, thisMedia);
 				} else if (isAnyRootCacheBase) {
 				// } else if (isAnyRootCacheBase || isSelectionCacheBase) {
-					window.location.href = phFl.encodeHash(mapAlbum, null);
+					window.location.href = phFl.encodeHash(mapAlbum.cacheBase, null);
 				}
 				return false;
 			}
@@ -295,7 +295,7 @@
 				if (isSingleMedia) {
 					window.location.href = phFl.encodeHash(searchAlbum, thisMedia);
 				} else if (isAnyRootCacheBase) {
-					window.location.href = phFl.encodeHash(searchAlbum, null);
+					window.location.href = phFl.encodeHash(searchAlbum.cacheBase, null);
 				}
 				return false;
 			}
@@ -307,9 +307,9 @@
 			function changeToBySelectionView() {
 				TopFunctions.showBrowsingModeMessage("#by-selection-browsing");
 				if (isSingleMedia) {
-					window.location.href = phFl.encodeHash(selectionAlbum, thisMedia);
+					window.location.href = phFl.encodeHash(selectionAlbum.cacheBase, thisMedia);
 				} else {
-					window.location.href = phFl.encodeHash(selectionAlbum, null);
+					window.location.href = phFl.encodeHash(selectionAlbum.cacheBase, null);
 				}
 				return false;
 			}

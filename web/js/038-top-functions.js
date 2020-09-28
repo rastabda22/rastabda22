@@ -882,7 +882,7 @@
 
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
-		mediaLink = phFl.encodeHash(currentAlbum, singleMedia, foundAlbumHash, savedSearchAlbumHash);
+		mediaLink = phFl.encodeHash(currentAlbum.cacheBase, singleMedia, foundAlbumHash, savedSearchAlbumHash);
 		firstEscKey = true;
 
 		thumbnailSize = Options.media_thumb_size;
@@ -1699,7 +1699,7 @@
 			} else {
 				titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
 			}
-			randomMediaLink = phFl.encodeHash(randomSubAlbum, randomMedia);
+			randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia);
 
 			titleName = titleName.substr(titleName.indexOf('/') + 1);
 			goTo = util._t(".go-to") + " " + titleName;
@@ -1728,12 +1728,12 @@
 				function() {
 					var subfolderHash;
 					if (util.isSearchCacheBase(currentAlbum.cacheBase) || util.isSelectionCacheBase(currentAlbum.cacheBase))
-						subfolderHash = phFl.encodeHash(subalbum, null, subalbum.cacheBase, currentAlbum.cacheBase);
+						subfolderHash = phFl.encodeHash(subalbum.cacheBase, null, subalbum.cacheBase, currentAlbum.cacheBase);
 					else {
 						if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
 							subfolderHash = phFl.encodeHash(subalbum.cacheBase, null, foundAlbumHash, savedSearchAlbumHash);
 						else
-							subfolderHash = phFl.encodeHash(subalbum, null);
+							subfolderHash = phFl.encodeHash(subalbum.cacheBase, null);
 					}
 
 					window.location.href = subfolderHash;
@@ -1917,9 +1917,9 @@
 
 					image.get(0).media = ithMedia;
 					if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
-						mediaHash = phFl.encodeHash(currentAlbum, ithMedia, foundAlbumHash, savedSearchAlbumHash);
+						mediaHash = phFl.encodeHash(currentAlbum.cacheBase, ithMedia, foundAlbumHash, savedSearchAlbumHash);
 					else
-						mediaHash = phFl.encodeHash(currentAlbum, ithMedia);
+						mediaHash = phFl.encodeHash(currentAlbum.cacheBase, ithMedia);
 
 					imageLink = $("<a id='link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase + "'></a>");
 					imageLink.append(image);
@@ -1977,7 +1977,7 @@
 				} else {
 					// reset mediaLink
 					if (util.imagesAndVideosTotal(currentAlbum.numMedia))
-						mediaLink = phFl.encodeHash(currentAlbum, currentAlbum.media[0], foundAlbumHash, savedSearchAlbumHash);
+						mediaLink = phFl.encodeHash(currentAlbum.cacheBase, currentAlbum.media[0], foundAlbumHash, savedSearchAlbumHash);
 					else
 						mediaLink = hashBeginning + currentAlbum.cacheBase;
 
