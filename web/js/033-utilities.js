@@ -902,6 +902,18 @@
 		}
 	};
 
+	Utilities.prototype.singleMediaIsInFoundAlbum = function(singleMedia) {
+		if (! Utilities.somethingIsSearched())
+			return false;
+		else {
+			var album = searchAlbum.subalbums.find(x => singleMedia.foldersCacheBase.indexOf(x.cacheBase) === 0);
+			if (album !== undefined)
+				return album;
+			else
+				return false;
+		}
+	};
+
 	Utilities.somethingIsInMapAlbum = function() {
 		if (mapAlbum.hasOwnProperty("numMediaInSubTree") && Utilities.imagesAndVideosTotal(mapAlbum.numMediaInSubTree))
 			return true;

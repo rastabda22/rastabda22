@@ -187,9 +187,12 @@
 				! (
 					isAnyRootCacheBase ||
 					isSingleMedia && (
-						util.somethingIsSearched() ||
+						// util.somethingIsSearched() ||
+						// savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash)
+						util.isSearchCacheBase(thisAlbum.cacheBase) ||
 						util.singleMediaIsSearched(thisMedia) ||
-						savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash)
+						savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash) ||
+						util.singleMediaIsInFoundAlbum(thisMedia) !== false
 					)
 				)
 			) {
@@ -293,7 +296,13 @@
 			function changeToBySearchView() {
 				TopFunctions.showBrowsingModeMessage("#by-search-browsing");
 				if (isSingleMedia) {
-					window.location.href = phFl.encodeHash(searchAlbum, thisMedia);
+					// if (thisMedia.hasOwnProperty("searchHashes") && thisMedia.searchHashes.length)
+					foundAlbum = util.singleMediaIsInFoundAlbum(thisMedia);
+					if (foundAlbum !== false) {
+						window.location.href = phFl.encodeHash(thisMedia.foldersCacheBase, thisMedia, foundAlbum.cacheBase, searchAlbum.cacheBase);
+					} else {
+						window.location.href = phFl.encodeHash(searchAlbum.cacheBase, thisMedia);
+					}
 				} else if (isAnyRootCacheBase) {
 					window.location.href = phFl.encodeHash(searchAlbum.cacheBase, null);
 				}
