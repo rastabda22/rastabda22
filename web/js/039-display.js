@@ -472,7 +472,7 @@ $(document).ready(function() {
 	// search
 	$('#search-button').on("click", function() {
 		var searchOptions = '';
-		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
 		// save the current hash in order to come back there when exiting from search
 		if (util.isSearchCacheBase(albumHash)) {
@@ -807,7 +807,7 @@ $(document).ready(function() {
 			var optionsPromise = f.getOptions();
 			optionsPromise.then(
 				function() {
-					var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+					var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 					// if (currentAlbum && albumHash !== currentAlbum.cacheBase) {
 					// 	// the browser location bar value has been changed manually
 					// 	currentAlbum = null;

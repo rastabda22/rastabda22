@@ -799,7 +799,7 @@
 
 	Utilities.prototype.isSearchHash = function() {
 		hash = PhotoFloat.cleanHash(location.hash);
-		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
+		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
 		if (Utilities.isSearchCacheBase(hash) || savedSearchAlbumHash !== null)
 			return true;
 		else
@@ -808,7 +808,7 @@
 
 	// Utilities.prototype.isMapHash = function(hash) {
 	// 	hash = PhotoFloat.cleanHash(hash);
-	// 	var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
+	// 	var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
 	// 	if (this.isMapCacheBase(hash) || savedSearchAlbumHash !== null)
 	// 		return true;
 	// 	else
@@ -2264,19 +2264,19 @@
 	Utilities.upHash = function() {
 		var resultHash;
 		var hash = window.location.hash;
-		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
+		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
 
 		if (mediaHash === null || Utilities.isAlbumWithOneMedia(currentAlbum)) {
 			// hash of an album: go up in the album tree
 			if (savedSearchAlbumHash !== null) {
-				if (albumHash == savedSearchSubAlbumHash)
+				if (albumHash == foundAlbumHash)
 					resultHash = savedSearchAlbumHash;
 				else {
 					// we must go up in the sub folder
 					albumHash = albumHash.split(Options.cache_folder_separator).slice(0, -1).join(Options.cache_folder_separator);
 					resultHash = Utilities.pathJoin([
 						albumHash,
-						savedSearchSubAlbumHash,
+						foundAlbumHash,
 						savedSearchAlbumHash
 					]);
 				}

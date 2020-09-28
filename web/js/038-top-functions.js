@@ -64,7 +64,7 @@
 		if (isMobile.any())
 			titleAnchorClasses += ' mobile';
 
-		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 		var fillInSpan = "<span id='fill-in-map-link'></span>";
 
 		var mediaTotalInAlbum, imagesTotalInAlbum, videosTotalInAlbum;
@@ -880,9 +880,9 @@
 		if (id === "center")
 			$("#media-view").removeClass("hidden");
 
-		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
-		mediaLink = phFl.encodeHash(currentAlbum, singleMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
+		mediaLink = phFl.encodeHash(currentAlbum, singleMedia, foundAlbumHash, savedSearchAlbumHash);
 		firstEscKey = true;
 
 		thumbnailSize = Options.media_thumb_size;
@@ -1081,7 +1081,7 @@
 			if (util.imagesAndVideosTotal(currentAlbum.numMedia) == 1) {
 				mediaBoxInnerElement.css('cursor', 'default');
 			} else {
-				[albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+				[albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
 				$("#next").show();
 				$("#prev").show();
@@ -1731,7 +1731,7 @@
 						subfolderHash = phFl.encodeHash(subalbum, null, subalbum.cacheBase, currentAlbum.cacheBase);
 					else {
 						if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
-							subfolderHash = phFl.encodeHash(subalbum.cacheBase, null, savedSearchSubAlbumHash, savedSearchAlbumHash);
+							subfolderHash = phFl.encodeHash(subalbum.cacheBase, null, foundAlbumHash, savedSearchAlbumHash);
 						else
 							subfolderHash = phFl.encodeHash(subalbum, null);
 					}
@@ -1753,7 +1753,7 @@
 
 		numSubAlbumsReady = 0;
 
-		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
 		if (Options.albums_slide_style)
 			slideBorder = 3;
@@ -1917,7 +1917,7 @@
 
 					image.get(0).media = ithMedia;
 					if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
-						mediaHash = phFl.encodeHash(currentAlbum, ithMedia, savedSearchSubAlbumHash, savedSearchAlbumHash);
+						mediaHash = phFl.encodeHash(currentAlbum, ithMedia, foundAlbumHash, savedSearchAlbumHash);
 					else
 						mediaHash = phFl.encodeHash(currentAlbum, ithMedia);
 
@@ -1977,7 +1977,7 @@
 				} else {
 					// reset mediaLink
 					if (util.imagesAndVideosTotal(currentAlbum.numMedia))
-						mediaLink = phFl.encodeHash(currentAlbum, currentAlbum.media[0], savedSearchSubAlbumHash, savedSearchAlbumHash);
+						mediaLink = phFl.encodeHash(currentAlbum, currentAlbum.media[0], foundAlbumHash, savedSearchAlbumHash);
 					else
 						mediaLink = hashBeginning + currentAlbum.cacheBase;
 

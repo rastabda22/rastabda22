@@ -1318,7 +1318,7 @@
 		);
 	};
 
-	PhotoFloat.encodeHash = function(album, media, savedSearchSubAlbumHash, savedSearchAlbumHash) {
+	PhotoFloat.encodeHash = function(album, media, foundAlbumHash, savedSearchAlbumHash) {
 		var hash, albumHash;
 		if (typeof album === "string")
 			albumHash = album;
@@ -1327,7 +1327,7 @@
 
 		if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
 			savedSearchAlbumHash = PhotoFloat.cleanHash(savedSearchAlbumHash);
-			savedSearchSubAlbumHash = PhotoFloat.cleanHash(savedSearchSubAlbumHash);
+			foundAlbumHash = PhotoFloat.cleanHash(foundAlbumHash);
 		}
 
 		if (media !== null) {
@@ -1343,7 +1343,7 @@
 					// media in found album or in one of its subalbum, count = 4
 					hash = util.pathJoin([
 						albumHash,
-						savedSearchSubAlbumHash,
+						foundAlbumHash,
 						savedSearchAlbumHash,
 						media.cacheBase
 					]);
@@ -1366,7 +1366,7 @@
 				// found album or one of its subalbums, count = 3
 				hash = util.pathJoin([
 					albumHash,
-					savedSearchSubAlbumHash,
+					foundAlbumHash,
 					savedSearchAlbumHash
 				]);
 			else
@@ -1381,7 +1381,7 @@
 		// decodes the hash and returns its components
 
 		var hashParts, hashPartsCount, albumHash, mediaFolderHash = null, mediaHash = null;
-		var savedSearchAlbumHash = null, savedSearchSubAlbumHash = null;
+		var savedSearchAlbumHash = null, foundAlbumHash = null;
 
 		hash = PhotoFloat.cleanHash(hash);
 
@@ -1405,7 +1405,7 @@
 				// subfolder of search hash: album, search subalbum, search album
 				if (util.isSearchCacheBase(hashParts[2]) || util.isSelectionCacheBase(hashParts[2])) {
 					albumHash = hashParts[0];
-					savedSearchSubAlbumHash = hashParts[1];
+					foundAlbumHash = hashParts[1];
 					savedSearchAlbumHash = hashParts[2];
 				} else {
 					albumHash = hashParts[0];
@@ -1414,12 +1414,12 @@
 				}
 			} else if (hashPartsCount == 4) {
 				albumHash = hashParts[0];
-				savedSearchSubAlbumHash = hashParts[1];
+				foundAlbumHash = hashParts[1];
 				savedSearchAlbumHash = hashParts[2];
 				mediaHash = hashParts[3];
 			}
 		}
-		return [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash];
+		return [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash];
 	};
 
 	// PhotoFloat.prototype.geotaggedPhotosExist = function() {

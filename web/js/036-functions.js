@@ -182,7 +182,7 @@
 				$("#by-map-view").addClass("hidden");
 			}
 
-			let [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(location.hash);
+			let [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 			if (
 				! (
 					isAnyRootCacheBase ||
@@ -1356,7 +1356,7 @@
 				if (Object.keys(Options).length > 0) {
 					if (! util.isSearchHash()) {
 						// reset the return link from search
-						var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(location.hash);
+						var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(location.hash);
 						Options.cache_base_to_search_in = phFl.cleanHash(albumHash);
 					}
 					resolve_getOptions();
