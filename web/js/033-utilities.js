@@ -924,7 +924,7 @@
 	Utilities.somethingIsSearched = function() {
 		if (
 			searchAlbum.hasOwnProperty("numMediaInSubTree") && Utilities.imagesAndVideosTotal(searchAlbum.numMediaInSubTree) ||
-			searchAlbum.subalbums.length
+			searchAlbum.hasOwnProperty("subalbums") && searchAlbum.subalbums.length
 		)
 			return true;
 		else
