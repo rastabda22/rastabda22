@@ -185,7 +185,7 @@
 			let [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 			if (
 				! (
-					isAnyRootCacheBase ||
+					isAnyRootCacheBase & util.somethingIsSearched() ||
 					isSingleMedia && (
 						// util.somethingIsSearched() ||
 						// savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash)
