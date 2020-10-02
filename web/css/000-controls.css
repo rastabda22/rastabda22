@@ -120,6 +120,7 @@ a.title-anchor.mobile {
 
 #thumbs {
 	clear: both;
+	padding-top: 1em;
 }
 
 #thumbs img {
@@ -133,7 +134,7 @@ a.title-anchor.mobile {
 
 #subalbums {
 	padding-top: .2em;
-	padding-bottom: 2em;
+	padding-bottom: 1em;
 	overflow: hidden;
 }
 
@@ -607,20 +608,20 @@ video {
 #password-request-form {
 	display: none;
 }
-#error-too-many-images {
+#message-too-many-images {
 	font-size: 1em;
 	font-weight: bold;
 	font-style: italic;
 	display: none;
 }
 
-#show-them {
+#show-hide-them {
 	font-weight: bold;
 	font-style: normal;
 	cursor: pointer;
 }
 
-#show-them:hover {
+#show-hide-them:hover {
 	color: orange;
 }
 

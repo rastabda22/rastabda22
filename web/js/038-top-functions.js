@@ -1642,15 +1642,15 @@
 
 	TopFunctions.prototype.toggleBigAlbumsShow = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-			if ($("#error-too-many-images").is(":visible")) {
-				$("#error-too-many-images").hide();
+			if ($("#message-too-many-images").is(":visible")) {
+				$("#message-too-many-images").hide();
 			}
 			$("#loading").show();
 			Options.show_big_virtual_folders = ! Options.show_big_virtual_folders;
 			if (Options.show_big_virtual_folders)
-				$("#show-them:hover").css("color", "").css("cursor", "");
+				$("#show-hide-them:hover").css("color", "").css("cursor", "");
 			else
-				$("#show-them:hover").css("color", "inherit").css("cursor", "auto");
+				$("#show-hide-them:hover").css("color", "inherit").css("cursor", "auto");
 			f.setBooleanCookie("show_big_virtual_folders", Options.show_big_virtual_folders);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
@@ -1786,28 +1786,51 @@
 			if (populateMedia === true && isVirtualAlbum)
 				populateMedia = populateMedia && (! tooBig || Options.show_big_virtual_folders);
 
-			if (isVirtualAlbum && tooBig && ! Options.show_big_virtual_folders) {
-				$("#thumbs").empty();
-				var tooManyImagesText =
-					"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + util.imagesAndVideosTotal(currentAlbum.numMedia) +
-					", <span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + Options.big_virtual_folders_threshold + "</span>, " +
-					"<span id='show-them'>" + util._t("#show-them") + "</span>";
-				$("#error-too-many-images").html(tooManyImagesText).show();
-				if (! $("ul#right-menu").hasClass("expand")) {
-					$("#show-them:hover").css("color", "").css("cursor", "");
-					$("#show-them").on(
-						"click",
-						function() {
-							$("ul#right-menu").addClass("expand");
-						}
-					);
+			if (isVirtualAlbum && tooBig) {
+				var tooManyImagesText, isShowing = false;
+				if (Options.show_big_virtual_folders) {
+					tooManyImagesText =
+						"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + util.imagesAndVideosTotal(currentAlbum.numMedia) +
+						", <span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + Options.big_virtual_folders_threshold + "</span>, " +
+						"<span id='show-hide-them'>" + util._t("#hide-them") + "</span>";
 				} else {
-					$("#show-them:hover").css("color", "inherit").css("cursor", "auto");
+					$("#thumbs").empty();
+					tooManyImagesText =
+						"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + util.imagesAndVideosTotal(currentAlbum.numMedia) +
+						", <span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + Options.big_virtual_folders_threshold + "</span>, " +
+						"<span id='show-hide-them'>" + util._t("#show-them") + "</span>";
+					isShowing = true;
 				}
-			} else if (
-				populateMedia === true ||
-				populateMedia == "refreshMedia" ||
-				populateMedia == "refreshBoth"
+				$("#message-too-many-images").html(tooManyImagesText).show();
+				if (! $("ul#right-menu").hasClass("expand")) {
+					$("#show-hide-them:hover").css("color", "").css("cursor", "");
+					$("ul#right-menu").addClass("expand");
+				} else {
+					$("#show-hide-them:hover").css("color", "inherit").css("cursor", "auto");
+				}
+				$("#show-hide-them").on(
+					"click",
+					function() {
+						if (isShowing) {
+							$("#loading").fadeIn(
+								500,
+								function() {
+									$("#show-big-albums")[0].click();
+								}
+							);
+						} else {
+							$("#show-big-albums")[0].click();
+						}
+					}
+				);
+			}
+
+			if (
+				! (isVirtualAlbum && tooBig && ! Options.show_big_virtual_folders) && (
+					populateMedia === true ||
+					populateMedia == "refreshMedia" ||
+					populateMedia == "refreshBoth"
+				)
 			) {
 				media = [];
 
@@ -2019,7 +2042,7 @@
 					// insert into DOM
 					subalbumsElement = $("#subalbums");
 					subalbumsElement.empty();
-					subalbumsElement.insertBefore(thumbsElement);
+					subalbumsElement.insertBefore("#message-too-many-images");
 
 					//
 					// subalbum loop

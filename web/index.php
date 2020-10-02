@@ -360,9 +360,8 @@
 		</div>
 
 		<div id="subalbums"></div>
-		<div id="thumbs">
-		</div>
-		<div id="error-too-many-images" role="alert"></div>
+		<div id="message-too-many-images" role="alert"></div>
+		<div id="thumbs"></div>
 		<div id="powered-by">
 			<span id="powered-by-string">Powered by</span>
 			<a href="https://gitlab.com/paolobenve/myphotoshare" target="_blank">MyPhotoShare</a>
