@@ -2116,7 +2116,7 @@ class Media(object):
 					msg = "saved for media (2nd try, " + str(original_thumb_size) + ")"
 				if hasattr(start_image, 'exif_by_PIL'):
 					msg += " with exif data"
-				message(msg, info_string, 2)
+				message(msg, info_string, 4)
 				back_level()
 			except KeyboardInterrupt:
 				try:
