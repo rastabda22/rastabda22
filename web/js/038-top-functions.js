@@ -1720,25 +1720,25 @@
 				);
 			});
 
-			container = $("#" + phFl.hashCode(subalbum.cacheBase));
-			// add the click event
-			container.off('click').on(
-			// container.off('click').css("cursor", "pointer").on(
-				'click',
-				function() {
-					var subfolderHash;
-					if (util.isSearchCacheBase(currentAlbum.cacheBase) || util.isSelectionCacheBase(currentAlbum.cacheBase))
-						subfolderHash = phFl.encodeHash(subalbum.cacheBase, null, subalbum.cacheBase, currentAlbum.cacheBase);
-					else {
-						if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
-							subfolderHash = phFl.encodeHash(subalbum.cacheBase, null, foundAlbumHash, savedSearchAlbumHash);
-						else
-							subfolderHash = phFl.encodeHash(subalbum.cacheBase, null);
-					}
-
-					window.location.href = subfolderHash;
-				}
-			);
+			// container = $("#" + phFl.hashCode(subalbum.cacheBase));
+			// // add the click event
+			// container.off('click').on(
+			// // container.off('click').css("cursor", "pointer").on(
+			// 	'click',
+			// 	function() {
+			// 		var subfolderHash;
+			// 		if (util.isSearchCacheBase(currentAlbum.cacheBase) || util.isSelectionCacheBase(currentAlbum.cacheBase))
+			// 			subfolderHash = phFl.encodeHash(subalbum.cacheBase, null, subalbum.cacheBase, currentAlbum.cacheBase);
+			// 		else {
+			// 			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
+			// 				subfolderHash = phFl.encodeHash(subalbum.cacheBase, null, foundAlbumHash, savedSearchAlbumHash);
+			// 			else
+			// 				subfolderHash = phFl.encodeHash(subalbum.cacheBase, null);
+			// 		}
+			//
+			// 		window.location.href = subfolderHash;
+			// 	}
+			// );
 		}
 		// end of insertRandomImage function
 
@@ -2130,6 +2130,18 @@
 
 								// a dot could be present in a cache base, making $("#" + cacheBase) fail, beware...
 								id = phFl.hashCode(ithSubalbum.cacheBase);
+								let subfolderHash;
+								if (util.isSearchCacheBase(currentAlbum.cacheBase) || util.isSelectionCacheBase(currentAlbum.cacheBase)) {
+									subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, ithSubalbum.cacheBase, currentAlbum.cacheBase);
+								} else {
+									if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
+										subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, foundAlbumHash, savedSearchAlbumHash);
+									else
+										subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null);
+								}
+
+								let aHrefHtml = "<a href='" + subfolderHash + "'></a>";
+								let aHrefHtmlContainer = $(aHrefHtml);
 								albumButtonAndCaptionHtml =
 									"<div id='" + id + "' " +
 										"class='album-button-and-caption";
@@ -2172,8 +2184,10 @@
 								);
 								linkContainer.append(image);
 								linkContainer.append(caption);
+								aHrefHtmlContainer.append(linkContainer)
 
-								subalbumsElement.append(linkContainer);
+								// subalbumsElement.append(linkContainer);
+								subalbumsElement.append(aHrefHtmlContainer);
 
 								if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
 									$("#subalbum-map-link-" + iSubalbum).off('click').on(
