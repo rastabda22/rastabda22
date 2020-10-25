@@ -281,6 +281,8 @@
 				var album = phFl.getAlbumFromCache(imgData.albumCacheBase);
 				for (let iMedia = 0; iMedia < album.media.length; iMedia ++) {
 					if (imgData.mediaHash.split('/').pop() == album.media[iMedia].cacheBase) {
+						ev.stopPropagation();
+						ev.preventDefault();
 						TopFunctions.toggleSelectedMedia(album.media[iMedia], '#' + id);
 						break;
 					}

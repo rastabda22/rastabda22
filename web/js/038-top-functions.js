@@ -794,6 +794,7 @@
 					{media: singleMedia, clickedSelector: "#media-select-box"},
 					function(ev) {
 						ev.stopPropagation();
+						ev.preventDefault();
 						TopFunctions.toggleSelectedMedia(ev.data.media, ev.data.clickedSelector);
 					}
 				);
@@ -1944,18 +1945,18 @@
 					else
 						mediaHash = phFl.encodeHash(currentAlbum.cacheBase, ithMedia);
 
-					imageLink = $("<a id='link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase + "'></a>");
+					imageLink = $("<a href='" + mediaHash + "' id='link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase + "'></a>");
 					imageLink.append(image);
 					media.push(imageLink);
 
-					imageLink.off('click').on(
-					// imageLink.off('click').css("cursor", "pointer").on(
-						'click',
-						{hash: mediaHash},
-						function(ev) {
-							window.location.href = ev.data.hash;
-						}
-					);
+					// imageLink.off('click').on(
+					// // imageLink.off('click').css("cursor", "pointer").on(
+					// 	'click',
+					// 	{hash: mediaHash},
+					// 	function(ev) {
+					// 		window.location.href = ev.data.hash;
+					// 	}
+					// );
 
 					(function(theLink, theImage) {
 						theImage.on("error", function() {
@@ -1987,6 +1988,7 @@
 						{media: ithMedia, clickedSelector: "#media-select-box-" + i},
 						function(ev) {
 							ev.stopPropagation();
+							ev.preventDefault();
 							TopFunctions.toggleSelectedMedia(ev.data.media, ev.data.clickedSelector);
 						}
 					);
