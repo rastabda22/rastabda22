@@ -287,17 +287,6 @@
 						break;
 					}
 				}
-				// var getAlbumPromise = PhotoFloat.getAlbum(imgData.albumCacheBase, null, {"getMedia": true, "getPositions": false});
-				// getAlbumPromise.then(
-				// 	function(album) {
-				// 		for (iMedia = 0; iMedia < album.media.length; iMedia ++) {
-				// 			if (imgData.mediaHash.split('/').pop() == album.media[iMedia].cacheBase) {
-				// 				TopFunctions.toggleSelectedMedia(album.media[iMedia], 'a');
-				// 				break;
-				// 			}
-				// 		}
-				// 	}
-				// );
 			}
 		);
 	};
