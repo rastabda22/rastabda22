@@ -334,6 +334,8 @@
 				title += raquo;
 			}
 
+			title += fillInSpan;
+
 			if (setDocumentTitle) {
 				documentTitle += components[0];
 				documentTitle += " (" + util._t("#by-selection") + ")";
