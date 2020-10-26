@@ -307,6 +307,7 @@
 
 								if (positionsGot) {
 									album.positionsAndMediaInTree = positionsGot;
+									album.numPositionsInTree = album.positionsAndMediaInTree.length;
 									album.includedFilesByCodesSimpleCombination[","].positionsGot = true;
 								}
 
@@ -422,6 +423,7 @@
 										album.positionsAndMediaInTree = protectedAlbum.positionsAndMediaInTree;
 									else
 										album.positionsAndMediaInTree = util.mergePositionsAndMedia(album.positionsAndMediaInTree, protectedAlbum.positionsAndMediaInTree);
+									album.numPositionsInTree = album.positionsAndMediaInTree.length;
 									album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.positionsGot = true;
 								}
 
@@ -501,6 +503,7 @@
 												album.positionsAndMediaInTree = positionsGot;
 											else
 												album.positionsAndMediaInTree = util.mergePositionsAndMedia(album.positionsAndMediaInTree, positionsGot);
+											album.numPositionsInTree = album.positionsAndMediaInTree.length;
 											// album.includedFilesByCodesSimpleCombination[","].positionsGot = true;
 											album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.positionsGot = true;
 										}
@@ -1120,6 +1123,7 @@
 									album.positionsAndMediaInTree = positionsGot;
 								else
 									album.positionsAndMediaInTree = util.mergePositionsAndMedia(album.positionsAndMediaInTree, positionsGot);
+								album.numPositionsInTree = album.positionsAndMediaInTree.length;
 								album.includedFilesByCodesSimpleCombination[","].positionsGot = true;
 							}
 
@@ -1646,6 +1650,7 @@
 									searchAlbum.positionsAndMediaInTree,
 									searchAlbum.media[indexMedia]
 								);
+							searchAlbum.numPositionsInTree = searchAlbum.positionsAndMediaInTree.length;
 					}
 
 					if (searchAlbum.subalbums.length) {
@@ -1660,6 +1665,7 @@
 							// the subalbum could still have no positionsAndMediaInTree array, get it
 							if (! searchAlbum.subalbums[indexSubalbums].hasOwnProperty("positionsAndMediaInTree"))
 								searchAlbum.subalbums[indexSubalbums].positionsAndMediaInTree = [];
+								searchAlbum.subalbums[indexSubalbums].numPositionsInTree = 0;
 						}
 					}
 					var promise = PhotoFloat.endPreparingAlbumAndKeepOn(searchAlbum, mediaHash, mediaFolderHash);

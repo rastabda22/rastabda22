@@ -2835,6 +2835,7 @@
 							) {
 								// the position was present: remove the position itself...
 								mapAlbum.positionsAndMediaInTree.splice(matchingIndex, 1);
+								mapAlbum.numPositionsInTree = mapAlbum.positionsAndMediaInTree.length;
 
 								// ...and the corresponding photos
 								for (iMediaPosition = 0; iMediaPosition < positionsAndCountsElement.mediaNameList.length; iMediaPosition ++) {
@@ -2891,6 +2892,7 @@
 									) {
 										missingPositions.push(positionsAndCountsElement);
 										mapAlbum.positionsAndMediaInTree.push(positionsAndCountsElement);
+										mapAlbum.numPositionsInTree = mapAlbum.positionsAndMediaInTree.length;
 									}
 								}
 								positionsAndCounts = missingPositions;
@@ -2934,7 +2936,8 @@
 						rootMapAlbum.numMediaInSubTree += JSON.parse(JSON.stringify(mapAlbum.numMediaInSubTree));
 						rootMapAlbum.subalbums.push(mapAlbum);
 						rootMapAlbum.positionsAndMediaInTree = util.mergePositionsAndMedia(rootMapAlbum.positionsAndMediaInTree, mapAlbum.positionsAndMediaInTree);
-						rootMapAlbum.numPositionsInTree += mapAlbum.numPositionsInTree;
+						rootMapAlbum.numPositionsInTree += mapAlbum.positionsAndMediaInTree.length;
+						// rootMapAlbum.numPositionsInTree += mapAlbum.numPositionsInTree;
 						rootMapAlbum.numsProtectedMediaInSubTree[","] = util.imagesAndVideosSum(rootMapAlbum.numsProtectedMediaInSubTree[","], mapAlbum.numsProtectedMediaInSubTree[","]);
 
 						TopFunctions.bindSortEvents(mapAlbum);

@@ -429,6 +429,7 @@
 		Promise.all(cacheBasesPromises).then(
 			function() {
 				thisMapAlbum.positionsAndMediaInTree = util.mergePositionsAndMedia(thisMapAlbum.positionsAndMediaInTree, positionsAndCounts);
+				thisMapAlbum.numPositionsInTree = thisMapAlbum.positionsAndMediaInTree.length;
 				resolve_imageLoad(thisMapAlbum);
 			}
 		);

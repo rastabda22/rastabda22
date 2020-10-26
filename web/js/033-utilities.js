@@ -101,7 +101,8 @@
 		mapRootAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(mapRootAlbum.numMediaInSubTree, newMapAlbum.numMediaInSubTree);
 		mapRootAlbum.subalbums.push(newMapAlbum);
 		mapRootAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(mapRootAlbum.positionsAndMediaInTree, newMapAlbum.positionsAndMediaInTree);
-		mapRootAlbum.numPositionsInTree += newMapAlbum.numPositionsInTree;
+		mapRootAlbum.numPositionsInTree = mapRootAlbum.positionsAndMediaInTree.length;
+		// mapRootAlbum.numPositionsInTree += newMapAlbum.numPositionsInTree;
 		mapRootAlbum.numsProtectedMediaInSubTree[","] = Utilities.imagesAndVideosSum(mapRootAlbum.numsProtectedMediaInSubTree[","], newMapAlbum.numsProtectedMediaInSubTree[","]);
 
 		newMapAlbum.ancestorsCacheBase = mapRootAlbum.ancestorsCacheBase.slice();
@@ -159,7 +160,8 @@
 		searchRootAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(searchRootAlbum.numMediaInSubTree, searchAlbum.numMediaInSubTree);
 		// searchRootAlbum.subalbums.push(newSearchAlbum);
 		searchRootAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(searchRootAlbum.positionsAndMediaInTree, searchAlbum.positionsAndMediaInTree);
-		searchRootAlbum.numPositionsInTree += searchAlbum.numPositionsInTree;
+		searchRootAlbum.numPositionsInTree = searchRootAlbum.positionsAndMediaInTree.length;
+		// searchRootAlbum.numPositionsInTree += searchAlbum.numPositionsInTree;
 		searchRootAlbum.numsProtectedMediaInSubTree[","] = Utilities.imagesAndVideosSum(searchRootAlbum.numsProtectedMediaInSubTree[","], searchAlbum.numsProtectedMediaInSubTree[","]);
 
 		searchAlbum.ancestorsCacheBase = searchRootAlbum.ancestorsCacheBase.slice();
@@ -218,7 +220,8 @@
 		selectionRootAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(selectionRootAlbum.numMediaInSubTree, newSelectionAlbum.numMediaInSubTree);
 		selectionRootAlbum.subalbums.push(newSelectionAlbum);
 		selectionRootAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(selectionRootAlbum.positionsAndMediaInTree, newSelectionAlbum.positionsAndMediaInTree);
-		selectionRootAlbum.numPositionsInTree += newSelectionAlbum.numPositionsInTree;
+		selectionRootAlbum.numPositionsInTree = selectionRootAlbum.positionsAndMediaInTree.length;
+		// selectionRootAlbum.numPositionsInTree += newSelectionAlbum.numPositionsInTree;
 		selectionRootAlbum.numsProtectedMediaInSubTree[","] = Utilities.imagesAndVideosSum(selectionRootAlbum.numsProtectedMediaInSubTree[","], newSelectionAlbum.numsProtectedMediaInSubTree[","]);
 
 		newSelectionAlbum.ancestorsCacheBase = selectionRootAlbum.ancestorsCacheBase.slice();
@@ -1110,6 +1113,7 @@
 						selectionAlbum.positionsAndMediaInTree,
 						singleMedia
 					);
+				selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 			}
 			selectionAlbum.numMedia = Utilities.imagesAndVideosSum(selectionAlbum.numMedia, Utilities.imagesAndVideosCount([singleMedia]));
 			selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
@@ -1148,6 +1152,7 @@
 					selectionAlbum.positionsAndMediaInTree,
 					singleMedia
 				);
+			selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 			selectionAlbum.numMedia = Utilities.imagesAndVideosSubtract(selectionAlbum.numMedia, Utilities.imagesAndVideosCount([singleMedia]));
 			selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
 			selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
@@ -1202,6 +1207,7 @@
 							selectionAlbum.subalbums.push(subalbum);
 
 							selectionAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(selectionAlbum.positionsAndMediaInTree, subalbum.positionsAndMediaInTree);
+							selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 							// selectionAlbum.numMedia = Utilities.imagesAndVideosSum(selectionAlbum.numMedia, subalbum.numMedia);
 							selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
 							// selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
@@ -1257,6 +1263,7 @@
 										selectionAlbum.positionsAndMediaInTree,
 										subalbum.positionsAndMediaInTree
 									);
+								selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 							}
 							// selectionAlbum.numMedia = Utilities.imagesAndVideosSubtract(selectionAlbum.numMedia, subalbum.numMedia);
 							selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
