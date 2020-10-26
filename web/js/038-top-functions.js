@@ -2333,7 +2333,11 @@
 		// activate the map and the popup when coming back from a map album
 		if (
 			previousAlbum !== null &&
-			util.isMapCacheBase(previousAlbum.cacheBase) && previousMedia === null &&
+			util.isMapCacheBase(previousAlbum.cacheBase) &&
+			(
+				previousMedia === null ||
+				util.isAlbumWithOneMedia(previousAlbum)
+			) &&
 			fromEscKey ||
 			mapRefreshType == "refresh"
 		)
