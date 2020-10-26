@@ -8,27 +8,29 @@
 	<meta name="fragment" content="!" />
 	<meta name="medium" content="image" />
 	<?php
-		$jsonString = file_get_contents('cache/options.json');
-		if (! $jsonString) {
-			echo "missing options file";
-			exit;
-		}
-		$options = json_decode($jsonString, true);
+	$jsonString = file_get_contents('cache/options.json');
+	if (! $jsonString) {
+		echo "missing options file";
+		exit;
+	}
+	$options = json_decode($jsonString, true);
 
-		// Check if an option is true or 1
-		function is_option_set($option_name) {
-			global $options;
-			return strcasecmp($options[$option_name], "true") == 0 || $options[$option_name] == "1";
-		}
+	// Check if an option is true or 1
+	function is_option_set($option_name) {
+		global $options;
+		return strcasecmp($options[$option_name], "true") == 0 || $options[$option_name] == "1";
+	}
 
-		// Check if an option as a list contains a given value
-		function has_option_value($option_name, $option_value) {
-			global $options;
-			return stripos($options[$option_name], $option_value) !== false;
-		}
+	// Check if an option as a list contains a given value
+	function has_option_value($option_name, $option_value) {
+		global $options;
+		return stripos($options[$option_name], $option_value) !== false;
+	}
 	?>
+
 	<title><?php if ($options['page_title'])
-			echo $options['page_title']; ?></title>
+			echo $options['page_title'];
+	?></title>
 	<link rel="icon" href="favicon.ico" type="image/x-icon"/>
 
 	<?php	if (strcasecmp($options['debug_css'], "false") == 0 || $options['debug_css'] == "0") { ?>
@@ -46,39 +48,39 @@
 	if (strcasecmp($options['debug_js'], "false") == 0 || $options['debug_js'] == "0") { ?>
 		<script type="text/javascript" src="js/scripts.min.js"></script>
 	<?php	} else {
-			// Use system wide jQuery if available
-			if (file_exists("/usr/share/javascript/jquery/jquery.js")) { ?>
-		<script type="text/javascript" src="/javascript/jquery/jquery.js"></script>
-	<?php	} else { ?>
-		<script type="text/javascript" src="js/000-jquery-3.3.1.js"></script>
-	<?php	}
+		// Use system wide jQuery if available
+		if (file_exists("/usr/share/javascript/jquery/jquery.js")) { ?>
+			<script type="text/javascript" src="/javascript/jquery/jquery.js"></script>
+		<?php	} else { ?>
+			<script type="text/javascript" src="js/000-jquery-3.3.1.js"></script>
+		<?php	}
 
 		// jQuery-hashchange should be in Debian! ?>
 		<script type="text/javascript" src="js/001-hashchange.js"></script>
 
 		<script type="text/javascript" src="js/002-preloadimages.js"></script>
 
-	<?php
-			// Use system wide jQuery-mousewheel if available
-			if (file_exists("/usr/share/javascript/jquery-mousewheel/jquery.mousewheel.js")) { ?>
-		<script type="text/javascript" src="/javascript/jquery-mousewheel/jquery.mousewheel.js"></script>
-	<?php	} else { ?>
-		<script type="text/javascript" src="js/003-mousewheel.js"></script>
-	<?php	}
+		<?php
+		// Use system wide jQuery-mousewheel if available
+		if (file_exists("/usr/share/javascript/jquery-mousewheel/jquery.mousewheel.js")) { ?>
+			<script type="text/javascript" src="/javascript/jquery-mousewheel/jquery.mousewheel.js"></script>
+		<?php	} else { ?>
+			<script type="text/javascript" src="js/003-mousewheel.js"></script>
+		<?php	}
 
-			// Use system wide jQuery-fullscreen if available
-			if (file_exists("/usr/share/javascript/jquery-fullscreen/jquery.fullscreen.js")) { ?>
-		<script type="text/javascript" src="/javascript/jquery-fullscreen/jquery.fullscreen.js"></script>
-	<?php	} else { ?>
-		<script type="text/javascript" src="js/004-fullscreen.js"></script>
-	<?php	}
+		// Use system wide jQuery-fullscreen if available
+		if (file_exists("/usr/share/javascript/jquery-fullscreen/jquery.fullscreen.js")) { ?>
+			<script type="text/javascript" src="/javascript/jquery-fullscreen/jquery.fullscreen.js"></script>
+		<?php	} else { ?>
+			<script type="text/javascript" src="js/004-fullscreen.js"></script>
+		<?php	}
 
-	// Use system wide modernizr if available
-	if (! $options['use_internal_modernizr'] && file_exists("/usr/share/javascript/modernizr/modernizr.min.js")) { ?>
-		<script type="text/javascript" src="/javascript/modernizr/modernizr.min.js"></script>
-	<?php	} else { ?>
-		<script type="text/javascript" src="js/005-modernizr.js"></script>
-	<?php	} ?>
+		// Use system wide modernizr if available
+		if (! $options['use_internal_modernizr'] && file_exists("/usr/share/javascript/modernizr/modernizr.min.js")) { ?>
+			<script type="text/javascript" src="/javascript/modernizr/modernizr.min.js"></script>
+		<?php	} else { ?>
+			<script type="text/javascript" src="js/005-modernizr.js"></script>
+		<?php	} ?>
 
 		<script type="text/javascript" src="js/006-jquery-touchswipe.js"></script>
 		<script type="text/javascript" src="js/007-jquery-lazy.js"></script>
@@ -99,9 +101,8 @@
 		<script type="text/javascript" src="js/038-top-functions.js"></script>
 		<script type="text/javascript" src="js/039-display.js"></script>
 
-	<?php } ?>
+	<?php }
 
-	<?php
 		//~ ini_set('display_errors', 1);
 		//~ error_reporting(E_ALL);
 		// from http://skills2earn.blogspot.it/2012/01/how-to-check-if-file-exists-on.html , solution # 3
