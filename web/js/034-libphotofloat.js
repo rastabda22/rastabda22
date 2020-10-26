@@ -1138,18 +1138,30 @@
 							console.trace();
 						}
 					);
-				} else if (util.isMapCacheBase(albumCacheBase)) {
+				} else if (util.isMapCacheBase(albumCacheBase) || util.isSelectionCacheBase(albumCacheBase)) {
 					// map albums are not on server:
-					// if the album hasn't been passed as argument and isn't in cache => go to root album
-					// execution arrives here if a map album is reloaded or opened from a link
-					$("#loading").hide();
-					$("#error-nonexistent-map-album").stop().fadeIn(200);
-					$("#error-nonexistent-map-album").fadeOut(
-						2000,
-						function () {
-							window.location.href = util.upHash();
-						}
-					);
+					// if the album hasn't been passed as argument and isn't in cache => it could have been passed with POST and be put in postData["packedAlbum"]
+					if (typeof openImageFromVirtualAlbumInNewTab === "function" && typeof postData !== "undefined") {
+						let packedArray = postData.packedAlbum.split(',').map(
+							function (x) {
+							  return parseInt(x, 10);
+							}
+						);
+						selectorClickedToOpenTheMap = postData.selectorClickedToOpenTheMap;
+						mapAlbum = JSON.retrocycle(lzwCompress.unpack(packedArray));
+						resolve_getAlbum(mapAlbum);
+					} else {
+						// go to root album
+						// execution arrives here if a map album is reloaded or opened from a link
+						$("#loading").hide();
+						$("#error-nonexistent-map-album").stop().fadeIn(200);
+						$("#error-nonexistent-map-album").fadeOut(
+							2000,
+							function () {
+								window.location.href = util.upHash();
+							}
+						);
+					}
 				} else {
 					// neiter the album has been passed as argument, nor is in cache, get it brand new
 					promise = PhotoFloat.getSingleUnprotectedCacheBaseWithExternalMediaAndPositions(albumCacheBase, {"getMedia": getMedia, "getPositions": getPositions});

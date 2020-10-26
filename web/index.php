@@ -92,6 +92,8 @@
 		<script type="text/javascript" src="js/012-jszip-utils.js"></script>
 		<script type="text/javascript" src="js/013-md5.js"></script>
 		<script type="text/javascript" src="js/014-file-saver.js"></script>
+		<script type="text/javascript" src="js/015-json-cycle.js"></script>
+		<script type="text/javascript" src="js/016-lzw-compress.js"></script>
 		<script type="text/javascript" src="js/031-translations.js"></script>
 		<script type="text/javascript" src="js/033-utilities.js"></script>
 		<script type="text/javascript" src="js/034-libphotofloat.js"></script>
@@ -103,7 +105,51 @@
 
 	<?php }
 
+	// receive the post data, they contain the compressed stringified map/selection album with name packedAlbum
+	function passPostArrayToJavascript($variableName){
+		if(! empty($_POST)) {
+			echo '<script>
+				var '. $variableName . ' = ' . json_encode($_POST) . '; // alert(' . $variableName . '["packedAlbum"]);
+				popupRefreshType = "previousAlbum";
+				mapRefreshType = "none";
+				</script>';
 		}
+	}
+	passPostArrayToJavascript('postData');
+	// no, if postdata isn't undefined, javascript's postData["packedAlbum"] contains the compressed stringified album
+
+	echo '<script>
+		function openImageFromVirtualAlbumInNewTab(imgData) {
+			var newForm = jQuery(
+				"<form>",
+				{
+					"action": imgData.mediaHash,
+					"target": "_blank",
+					"method": "post"
+				}
+			).append(
+				jQuery(
+					"<input>",
+					{
+						"name": "packedAlbum",
+						"value": lzwCompress.pack(JSON.decycle(mapAlbum)).join(),
+						"type": "hidden"
+					}
+				)
+			).append(
+				jQuery(
+					"<input>",
+					{
+						"name": "selectorClickedToOpenTheMap",
+						"value": selectorClickedToOpenTheMap,
+						"type": "hidden"
+					}
+				)
+			);
+			newForm.hide().appendTo("body").submit().remove();
+		}
+	</script>';
+
 	//~ ini_set('display_errors', 1);
 	//~ error_reporting(E_ALL);
 	// from http://skills2earn.blogspot.it/2012/01/how-to-check-if-file-exists-on.html , solution # 3
@@ -112,6 +158,7 @@
 			return true;
 		else
 			return false;
+	}
 
 	// put the <link rel=".."> tag in <head> for letting facebook/google+ load the image/video when sharing
 	if (! empty($_GET['m'])) {

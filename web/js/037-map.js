@@ -252,7 +252,9 @@
 	MapFunctions.addClickToPopupPhoto = function(element) {
 		element.parent().parent().on(
 			'click',
-			function() {
+			function(ev) {
+				ev.stopPropagation();
+				ev.preventDefault();
 				var imgData = JSON.parse(element.attr("data"));
 				// called after an element was successfully handled
 				$('.leaflet-popup-close-button')[0].click();
@@ -263,6 +265,27 @@
 				window.location.href = imgData.mediaHash;
 			}
 		);
+		if (typeof openImageFromVirtualAlbumInNewTab === "function") {
+			// execution enters here if we are using index.php
+			// make middle click open the media in a new window (from https://stackoverflow.com/questions/5392442/detect-middle-button-click-scroll-button-with-jquery#answer-49178713)
+			element.parent().parent().on(
+				"mousedown",
+				function (ev1) {
+			  		element.parent().parent().on(
+						"mouseup",
+						function (ev2) {
+			    			if (ev1.which == 2 && ev1.target == ev2.target) {
+								var imgData = JSON.parse(element.attr("data"));
+
+								ev1.preventDefault();
+								openImageFromVirtualAlbumInNewTab(imgData);
+							}
+						}
+					)
+				}
+			);
+		}
+
 		var mediaBoxSelectElement = element.siblings('a');
 		var id = mediaBoxSelectElement.attr("id");
 		mediaBoxSelectElement.on(
