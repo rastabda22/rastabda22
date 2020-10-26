@@ -1141,7 +1141,7 @@
 				} else if (util.isMapCacheBase(albumCacheBase) || util.isSelectionCacheBase(albumCacheBase)) {
 					// map albums are not on server:
 					// if the album hasn't been passed as argument and isn't in cache => it could have been passed with POST and be put in postData["packedAlbum"]
-					if (typeof openImageFromVirtualAlbumInNewTab === "function" && typeof postData !== "undefined") {
+					if (typeof isPhp === "function" && typeof postData !== "undefined") {
 						let packedArray = postData.packedAlbum.split(',').map(
 							function (x) {
 							  return parseInt(x, 10);

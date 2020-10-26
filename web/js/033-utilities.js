@@ -17,6 +17,38 @@
 		);
 	}
 
+	Utilities.prototype.openImageFromVirtualAlbumInNewTab = function(mediaHash) {
+		var newForm = jQuery(
+			"<form>",
+			{
+				"action": mediaHash,
+				// "action": imgData.mediaHash,
+				"target": "_blank",
+				"method": "post"
+			}
+		).append(
+			jQuery(
+				"<input>",
+				{
+					"name": "packedAlbum",
+					"value": lzwCompress.pack(JSON.decycle(mapAlbum)).join(),
+					"type": "hidden"
+				}
+			)
+		).append(
+			jQuery(
+				"<input>",
+				{
+					"name": "selectorClickedToOpenTheMap",
+					"value": selectorClickedToOpenTheMap,
+					"type": "hidden"
+				}
+			)
+		);
+		newForm.hide().appendTo("body").submit().remove();
+		return false;
+	};
+
 	Utilities.initializeMapRootAlbum = function() {
 		// prepare the root of the map albums and put it in the cache
 		var rootMapAlbum = {};

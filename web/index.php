@@ -119,35 +119,7 @@
 	// no, if postdata isn't undefined, javascript's postData["packedAlbum"] contains the compressed stringified album
 
 	echo '<script>
-		function openImageFromVirtualAlbumInNewTab(imgData) {
-			var newForm = jQuery(
-				"<form>",
-				{
-					"action": imgData.mediaHash,
-					"target": "_blank",
-					"method": "post"
-				}
-			).append(
-				jQuery(
-					"<input>",
-					{
-						"name": "packedAlbum",
-						"value": lzwCompress.pack(JSON.decycle(mapAlbum)).join(),
-						"type": "hidden"
-					}
-				)
-			).append(
-				jQuery(
-					"<input>",
-					{
-						"name": "selectorClickedToOpenTheMap",
-						"value": selectorClickedToOpenTheMap,
-						"type": "hidden"
-					}
-				)
-			);
-			newForm.hide().appendTo("body").submit().remove();
-		}
+		function isPhp() {}
 	</script>';
 
 	//~ ini_set('display_errors', 1);

@@ -265,7 +265,7 @@
 				window.location.href = imgData.mediaHash;
 			}
 		);
-		if (typeof openImageFromVirtualAlbumInNewTab === "function") {
+		if (typeof isPhp === "function") {
 			// execution enters here if we are using index.php
 			// make middle click open the media in a new window (from https://stackoverflow.com/questions/5392442/detect-middle-button-click-scroll-button-with-jquery#answer-49178713)
 			element.parent().parent().on(
@@ -276,9 +276,9 @@
 						function (ev2) {
 			    			if (ev1.which == 2 && ev1.target == ev2.target) {
 								var imgData = JSON.parse(element.attr("data"));
-
 								ev1.preventDefault();
-								openImageFromVirtualAlbumInNewTab(imgData);
+								ev1.stopPropagation();
+								util.openImageFromVirtualAlbumInNewTab(imgData.mediaHash);
 							}
 						}
 					)
