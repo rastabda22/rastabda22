@@ -1983,6 +1983,31 @@
 							TopFunctions.toggleSelectedMedia(ev.data.media, ev.data.clickedSelector);
 						}
 					);
+					if (
+						typeof isPhp === "function" && (
+							util.isMapCacheBase(currentAlbum.cacheBase) || util.isSelectionCacheBase(currentAlbum.cacheBase)
+						)
+					) {
+						// execution enters here if we are using index.php
+						// make middle click open the media in a new window (from https://stackoverflow.com/questions/5392442/detect-middle-button-click-scroll-button-with-jquery#answer-49178713)
+						let id = "#link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase;
+						$(id).on(
+							"mousedown",
+							{mediaHash: phFl.encodeHash(currentAlbum.cacheBase, ithMedia)},
+							function (ev1) {
+								$(id).on(
+									"mouseup",
+									function (ev2) {
+										if (ev1.which == 2 && ev1.target == ev2.target) {
+											ev1.preventDefault();
+											ev1.stopPropagation();
+											util.openImageFromVirtualAlbumInNewTab(ev1.data.mediaHash);
+										}
+									}
+								)
+							}
+						);
+					}
 				}
 			}
 
