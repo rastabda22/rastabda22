@@ -125,18 +125,15 @@
 			img.attr("title", imgTitle).attr("alt", util.trimExtension(ithMedia.name));
 
 			imageString =
-				// "<div id='" + codedHashId + "' class='thumb-and-caption-container " + markerClass +"' ";
-				"<div class='thumb-and-caption-container' ";
-			imageString +=
+				"<div class='thumb-and-caption-container' " +
 					"style='" +
 						"width: " + calculatedWidth + "px;";
 			if (Options.spacing)
 				imageString +=
-					"style='" +
-						"margin-right: " + Options.spacingToggle + "px; " +
-						"margin-bottom: " + Options.spacingToggle + "px;";
-			imageString += "'>";
+						" margin-right: " + Options.spacingToggle + "px;" +
+						" margin-bottom: " + Options.spacingToggle + "px;";
 			imageString +=
+				"'>" +
 					"<div class='thumb-container'" +
 						" style='" +
 							"width: " + calculatedWidth + "px; " +
@@ -148,16 +145,12 @@
 						img.prop("outerHTML") +
 					"</div>" +
 					"<div class='media-caption'>" +
-						"<span>";
-			imageString +=
-						ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>");
-			imageString +=
+						"<span>" +
+						ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
 						"</span>" +
 					"</div>" +
 				"</div>";
 
-
-			// $("#popup-images-wrapper").html(imageString);
 			images += imageString;
 		}
 
