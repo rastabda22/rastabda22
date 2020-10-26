@@ -1949,15 +1949,6 @@
 					imageLink.append(image);
 					media.push(imageLink);
 
-					// imageLink.off('click').on(
-					// // imageLink.off('click').css("cursor", "pointer").on(
-					// 	'click',
-					// 	{hash: mediaHash},
-					// 	function(ev) {
-					// 		window.location.href = ev.data.hash;
-					// 	}
-					// );
-
 					(function(theLink, theImage) {
 						theImage.on("error", function() {
 							media.splice(media.indexOf(theLink), 1);
