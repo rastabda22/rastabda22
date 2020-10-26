@@ -103,62 +103,62 @@
 
 	<?php }
 
-		//~ ini_set('display_errors', 1);
-		//~ error_reporting(E_ALL);
-		// from http://skills2earn.blogspot.it/2012/01/how-to-check-if-file-exists-on.html , solution # 3
-		function url_exist($url) {
-			if (@fopen($url,"r"))
-				return true;
+		}
+	//~ ini_set('display_errors', 1);
+	//~ error_reporting(E_ALL);
+	// from http://skills2earn.blogspot.it/2012/01/how-to-check-if-file-exists-on.html , solution # 3
+	function url_exist($url) {
+		if (@fopen($url,"r"))
+			return true;
+		else
+			return false;
+
+	// put the <link rel=".."> tag in <head> for letting facebook/google+ load the image/video when sharing
+	if (! empty($_GET['m'])) {
+		// Prevent directory traversal security vulnerability
+		$realPath = realpath($_GET['m']);
+		if (strpos($realPath, realpath('cache')) === 0  && url_exist($realPath)) {
+			$linkTag = '<link rel="';
+			$videoEnd = ".mp4";
+			if (substr($_GET['m'], - strlen($videoEnd)) === $videoEnd)
+				// video
+				$linkTag .= 'video_src';
 			else
-				return false;
+				// image
+				$linkTag .= 'image_src';
+			$linkTag .= '" href="' . $_GET['m'] . '"';
+			$linkTag .= '>';
+			echo "$linkTag\n";
 		}
+	}
 
-		// put the <link rel=".."> tag in <head> for letting facebook/google+ load the image/video when sharing
-		if (! empty($_GET['m'])) {
-			// Prevent directory traversal security vulnerability
-			$realPath = realpath($_GET['m']);
-			if (strpos($realPath, realpath('cache')) === 0  && url_exist($realPath)) {
-				$linkTag = '<link rel="';
-				$videoEnd = ".mp4";
-				if (substr($_GET['m'], - strlen($videoEnd)) === $videoEnd)
-					// video
-					$linkTag .= 'video_src';
-				else
-					// image
-					$linkTag .= 'image_src';
-				$linkTag .= '" href="' . $_GET['m'] . '"';
-				$linkTag .= '>';
-				echo "$linkTag\n";
-			}
+	// send the email for requesting the protected content password
+	if (! empty($_GET['email']) && $options['request_password_email']) {
+		$subject = 'Password request';
+		$message =
+			'This request has been sent from ' . $_GET['url'] . "\r\n\r\n" .
+			'"' . $_GET['name'] . '" <' . $_GET['email'] . '>  says:' . "\r\n\r\n" .
+			$_GET['identity'];
+		$from = '"myphotoshare" <' . $options['request_password_email'] . '>';
+		$headers =
+			'From: ' . $from . "\r\n" .
+			'Reply-To: "' . $_GET['name'] . '" <' . $_GET['email'] . '>' . "\r\n" .
+			'X-Mailer: PHP/' . phpversion();
+		// $result = mail($options['request_password_email'], $subject, $message, 'Reply-To:' . $_GET['email']);
+		$result = mail($options['request_password_email'], $subject, $message, $headers, '-f ' . $from);
+			// ' -f' . $options['request_password_email']
+		if (! $result) {
+			echo "mail not sent:" . error_get_last()['message'];
+			// echo "<br>mail command = mail(" .$options['request_password_email'] . ", " . $subject . ", " . $message . ", " . 'Reply-To:' . $_GET['email'] . ")";
+			echo "<br>mail command = mail('" .$options['request_password_email'] . "', '" . $subject . "', '" . $message . "')";
+			echo "<br>subject = " . $subject;
+			echo "<br>nessage = " . $message;
+			exit;
+		} else {
+			header($_GET['url']);
 		}
-
-		// send the email for requesting the protected content password
-		if (! empty($_GET['email']) && $options['request_password_email']) {
-			$subject = 'Password request';
-			$message =
-				'This request has been sent from ' . $_GET['url'] . "\r\n\r\n" .
-				'"' . $_GET['name'] . '" <' . $_GET['email'] . '>  says:' . "\r\n\r\n" .
-				$_GET['identity'];
-			$from = '"myphotoshare" <' . $options['request_password_email'] . '>';
-			$headers =
-				'From: ' . $from . "\r\n" .
-				'Reply-To: "' . $_GET['name'] . '" <' . $_GET['email'] . '>' . "\r\n" .
-				'X-Mailer: PHP/' . phpversion();
-			// $result = mail($options['request_password_email'], $subject, $message, 'Reply-To:' . $_GET['email']);
-			$result = mail($options['request_password_email'], $subject, $message, $headers, '-f ' . $from);
-				// ' -f' . $options['request_password_email']
-			if (! $result) {
-				echo "mail not sent:" . error_get_last()['message'];
-				// echo "<br>mail command = mail(" .$options['request_password_email'] . ", " . $subject . ", " . $message . ", " . 'Reply-To:' . $_GET['email'] . ")";
-				echo "<br>mail command = mail('" .$options['request_password_email'] . "', '" . $subject . "', '" . $message . "')";
-				echo "<br>subject = " . $subject;
-				echo "<br>nessage = " . $message;
-				exit;
-			} else {
-				header($_GET['url']);
-			}
-			// header(urldecode($_GET['url']));
-		}
+		// header(urldecode($_GET['url']));
+	}
 	?>
 
 	<?php if ($options['piwik_server'] && $options['piwik_id']) { ?>
