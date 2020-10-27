@@ -315,6 +315,15 @@
 			"click",
 			function changeToBySelectionView() {
 				TopFunctions.showBrowsingModeMessage("#by-selection-browsing");
+				if (isPopup) {
+					// the popup is there: close it
+					$('.leaflet-popup-close-button')[0].click();
+				}
+				if (isMap || isPopup) {
+					// we are in a map: close it
+					$('.modal-close')[0].click();
+				}
+
 				if (isSingleMedia) {
 					window.location.href = phFl.encodeHash(selectionAlbum.cacheBase, thisMedia);
 				} else {
