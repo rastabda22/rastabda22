@@ -699,7 +699,7 @@
 							// 	if (util.isSelectionCacheBase(thisAlbum.cacheBase))
 							// 		window.location.href = util.upHash();
 							// }
-							if (nothingIsSelected)
+							if (util.nothingIsSelected())
 								util.initializeSelectionAlbum();
 							Functions.updateMenu();
 						}
@@ -725,7 +725,7 @@
 						let firstPromise = util.recursivelyRemoveMedia(thisAlbum);
 						firstPromise.then(
 							function() {
-								if (nothingIsSelected)
+								if (util.nothingIsSelected())
 									util.initializeSelectionAlbum();
 								Functions.updateMenu();
 								$("#removed-individually").stop().fadeIn(
@@ -760,7 +760,7 @@
 			function() {
 				if (util.everyMediaIsSelected(thisAlbum.media)) {
 					util.removeAllMediaFromSelection(thisAlbum.media);
-					if (nothingIsSelected)
+					if (util.nothingIsSelected())
 						util.initializeSelectionAlbum();
 				} else {
 					util.addAllMediaToSelection(thisAlbum.media);
@@ -776,7 +776,7 @@
 					let promise = util.removeAllSubalbumsFromSelection(thisAlbum.subalbums);
 					promise.then(
 						function() {
-							if (nothingIsSelected)
+							if (util.nothingIsSelected())
 								util.initializeSelectionAlbum();
 							Functions.updateMenu();
 						}
@@ -799,7 +799,7 @@
 				let subalbumsPromise = util.removeAllSubalbumsFromSelection(selectionAlbum.subalbums);
 				subalbumsPromise.then(
 					function allSubalbumsRemoved() {
-						if (nothingIsSelected)
+						if (util.nothingIsSelected())
 							util.initializeSelectionAlbum();
 						Functions.updateMenu();
 					}
