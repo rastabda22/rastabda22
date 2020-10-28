@@ -984,13 +984,13 @@
 			return false;
 	};
 
-	Utilities.somethingIsSelected = function() {
+	Utilities.nothingIsSelected = function() {
 		if (jQuery.isEmptyObject(selectionAlbum))
-			return false;
-		if (selectionAlbum.media.length || selectionAlbum.subalbums.length)
 			return true;
-		else
+		if (selectionAlbum.media.length || selectionAlbum.subalbums.length)
 			return false;
+		else
+			return true;
 	};
 
 	Utilities.singleMediaIsSelected = function(singleMedia) {
@@ -1201,7 +1201,7 @@
 			}
 
 			if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
-				if (! Utilities.somethingIsSelected()) {
+				if (Utilities.nothingIsSelected()) {
 					Utilities.initializeSelectionAlbum();
 					window.location.href = Utilities.upHash();
 				} else if (currentMedia === null) {
@@ -1303,7 +1303,7 @@
 							selectionAlbum.numsProtectedMediaInSubTree = Utilities.subtractSizes(selectionAlbum.numsProtectedMediaInSubTree, subalbum.numsProtectedMediaInSubTree);
 
 							if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
-								if (! Utilities.somethingIsSelected()) {
+								if (Utilities.nothingIsSelected()) {
 									Utilities.initializeSelectionAlbum();
 									window.location.href = Utilities.upHash();
 								} else {
@@ -2664,7 +2664,7 @@
 	Utilities.prototype.initializeSelectionRootAlbum = Utilities.initializeSelectionRootAlbum;
 	Utilities.prototype.initializeMapRootAlbum = Utilities.initializeMapRootAlbum;
 	// Utilities.prototype.initializeSearchRootAlbum = Utilities.initializeSearchRootAlbum;
-	Utilities.prototype.somethingIsSelected = Utilities.somethingIsSelected;
+	Utilities.prototype.nothingIsSelected = Utilities.nothingIsSelected;
 	Utilities.prototype.somethingIsSearched = Utilities.somethingIsSearched;
 	Utilities.prototype.somethingIsInMapAlbum = Utilities.somethingIsInMapAlbum;
 	Utilities.prototype.addSingleMediaToSelection = Utilities.addSingleMediaToSelection;

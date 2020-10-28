@@ -328,7 +328,7 @@ $(document).ready(function() {
 							Options.by_map_string,
 							Options.by_search_string
 						].indexOf(currentAlbum.cacheBase) !== -1 ||
-						currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum) || util.somethingIsSelected()
+						currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum) || ! util.nothingIsSelected()
 					) && ! isMap
 				) {
 					// browsing mode switchers

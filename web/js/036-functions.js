@@ -129,7 +129,7 @@
 		var isSingleMedia = (currentMedia !== null || isAlbumWithOneMedia);
 		var isAnyRootCacheBase = util.isAnyRootCacheBase(thisAlbum.cacheBase);
 		var isSelectionCacheBase = util.isSelectionCacheBase(thisAlbum.cacheBase);
-		var somethingIsSelected = util.somethingIsSelected();
+		var nothingIsSelected = util.nothingIsSelected();
 
 		var hasGpsData, thisMedia;
 
@@ -165,7 +165,7 @@
 			}
 
 			if (
-				! somethingIsSelected || ! (
+				nothingIsSelected || ! (
 					isSingleMedia && util.singleMediaIsSelected(thisMedia) ||
 					isAnyRootCacheBase
 				)
@@ -625,7 +625,7 @@
 		////////////////// SELECTION //////////////////////////////
 
 		$(".select").removeClass("hidden").removeClass("selected");
-		if (! somethingIsSelected || util.isSelectionCacheBase(thisAlbum.cacheBase)) {
+		if (nothingIsSelected || util.isSelectionCacheBase(thisAlbum.cacheBase)) {
 			$(".select.global-reset, .select.go-to-selected").addClass("hidden");
 		} else {
 			let menuItem = util._t(".select.go-to-selected");
@@ -699,7 +699,7 @@
 							// 	if (util.isSelectionCacheBase(thisAlbum.cacheBase))
 							// 		window.location.href = util.upHash();
 							// }
-							if (! util.somethingIsSelected())
+							if (nothingIsSelected)
 								util.initializeSelectionAlbum();
 							Functions.updateMenu();
 						}
@@ -725,7 +725,7 @@
 						let firstPromise = util.recursivelyRemoveMedia(thisAlbum);
 						firstPromise.then(
 							function() {
-								if (! util.somethingIsSelected())
+								if (nothingIsSelected)
 									util.initializeSelectionAlbum();
 								Functions.updateMenu();
 								$("#removed-individually").stop().fadeIn(
@@ -760,7 +760,7 @@
 			function() {
 				if (util.everyMediaIsSelected(thisAlbum.media)) {
 					util.removeAllMediaFromSelection(thisAlbum.media);
-					if (! util.somethingIsSelected())
+					if (nothingIsSelected)
 						util.initializeSelectionAlbum();
 				} else {
 					util.addAllMediaToSelection(thisAlbum.media);
@@ -776,7 +776,7 @@
 					let promise = util.removeAllSubalbumsFromSelection(thisAlbum.subalbums);
 					promise.then(
 						function() {
-							if (! util.somethingIsSelected())
+							if (nothingIsSelected)
 								util.initializeSelectionAlbum();
 							Functions.updateMenu();
 						}
@@ -799,7 +799,7 @@
 				let subalbumsPromise = util.removeAllSubalbumsFromSelection(selectionAlbum.subalbums);
 				subalbumsPromise.then(
 					function allSubalbumsRemoved() {
-						if (! util.somethingIsSelected())
+						if (nothingIsSelected)
 							util.initializeSelectionAlbum();
 						Functions.updateMenu();
 					}

@@ -751,7 +751,7 @@
 			util.removeSingleMediaFromSelection(media, clickedSelector);
 			f.updateMenu();
 		} else {
-			if (! util.somethingIsSelected())
+			if (util.nothingIsSelected())
 				util.initializeSelectionAlbum();
 			util.addSingleMediaToSelection(media, clickedSelector);
 			f.updateMenu();
@@ -763,7 +763,7 @@
 			let removeSubalbumPromise = util.removeSubalbumFromSelection(subalbum, clickedSelector);
 			removeSubalbumPromise.then(
 				function subalbumRemoved() {
-					if (! util.somethingIsSelected())
+					if (sutil.nothingIsSelected())
 						util.initializeSelectionAlbum();
 					f.updateMenu();
 				}
