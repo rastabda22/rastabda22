@@ -1498,10 +1498,9 @@
 								initialSizes[Options.reduced_sizes[iSize]] = JSON.parse(JSON.stringify(imagesAndVideos0));
 							}
 
-							util.initializeMapRootAlbum();
 							// WARNING: do not initialize the search root album, the app must read it from its json file!
+							util.initializeMapRootAlbum();
 							util.initializeSelectionRootAlbum();
-							util.initializeSelectionAlbum();
 
 							if (Options.request_password_email) {
 								$("#request-password").on('click', util.showPasswordRequestForm);

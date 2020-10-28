@@ -1145,15 +1145,23 @@
 				} else if (util.isMapCacheBase(albumCacheBase) || util.isSelectionCacheBase(albumCacheBase)) {
 					// map albums are not on server:
 					// if the album hasn't been passed as argument and isn't in cache => it could have been passed with POST and be put in postData["packedAlbum"]
+					let stringifiedPackedAlbum, packedAlbum;
 					if (typeof isPhp === "function" && typeof postData !== "undefined") {
-						let packedArray = postData.packedAlbum.split(',').map(
-							function (x) {
-							  return parseInt(x, 10);
-							}
-						);
+						stringifiedPackedAlbum = postData.stringifiedPackedAlbum;
+						console.log(stringifiedPackedAlbum);
+						if (postData.typeOfPackedAlbum === "object") {
+							packedAlbum = stringifiedPackedAlbum.split(',').map(x => parseInt(x, 10));
+						} else {
+							packedAlbum = stringifiedPackedAlbum;
+						}
 						selectorClickedToOpenTheMap = postData.selectorClickedToOpenTheMap;
-						mapAlbum = JSON.retrocycle(lzwCompress.unpack(packedArray));
-						resolve_getAlbum(mapAlbum);
+						if (util.isMapCacheBase(albumCacheBase)) {
+							mapAlbum = JSON.retrocycle(lzwCompress.unpack(packedAlbum));
+							resolve_getAlbum(mapAlbum);
+						} else {
+							album = JSON.retrocycle(lzwCompress.unpack(packedAlbum));
+							resolve_getAlbum(album);
+						}
 					} else {
 						// go to root album
 						// execution arrives here if a map album is reloaded or opened from a link

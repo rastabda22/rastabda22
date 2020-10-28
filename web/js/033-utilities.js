@@ -17,7 +17,16 @@
 		);
 	}
 
-	Utilities.prototype.openImageFromVirtualAlbumInNewTab = function(mediaHash) {
+	Utilities.prototype.openImageFromVirtualAlbumInNewTab = function(mediaHash, virtualAlbum) {
+		var typeOfPackedAlbum, stringifiedPackedAlbum;
+		var packedAlbum = lzwCompress.pack(JSON.decycle(virtualAlbum));
+		if (typeof packedAlbum === "object") {
+			stringifiedPackedAlbum = packedAlbum.join();
+			typeOfPackedAlbum = "object";
+		} else {
+			typeOfPackedAlbum = "string";
+			stringifiedPackedAlbum = packedAlbum;
+		}
 		var newForm = jQuery(
 			"<form>",
 			{
@@ -30,8 +39,8 @@
 			jQuery(
 				"<input>",
 				{
-					"name": "packedAlbum",
-					"value": lzwCompress.pack(JSON.decycle(mapAlbum)).join(),
+					"name": "stringifiedPackedAlbum",
+					"value": stringifiedPackedAlbum,
 					"type": "hidden"
 				}
 			)
@@ -41,6 +50,15 @@
 				{
 					"name": "selectorClickedToOpenTheMap",
 					"value": selectorClickedToOpenTheMap,
+					"type": "hidden"
+				}
+			)
+		).append(
+			jQuery(
+				"<input>",
+				{
+					"name": "typeOfPackedAlbum",
+					"value": typeOfPackedAlbum,
 					"type": "hidden"
 				}
 			)
@@ -967,14 +985,17 @@
 	};
 
 	Utilities.somethingIsSelected = function() {
+		if (jQuery.isEmptyObject(selectionAlbum))
+			return false;
 		if (selectionAlbum.media.length || selectionAlbum.subalbums.length)
-		// if (selectionAlbum.hasOwnProperty("numMediaInSubTree") && Utilities.imagesAndVideosTotal(selectionAlbum.numMediaInSubTree))
 			return true;
 		else
 			return false;
 	};
 
 	Utilities.singleMediaIsSelected = function(singleMedia) {
+		if (jQuery.isEmptyObject(selectionAlbum))
+			return false;
 		var index = selectionAlbum.media.findIndex(x => x.foldersCacheBase === singleMedia.foldersCacheBase && x.cacheBase === singleMedia.cacheBase);
 		if (index > -1)
 			return true;
@@ -983,6 +1004,8 @@
 	};
 
 	Utilities.subalbumIsSelected = function(subalbum) {
+		if (jQuery.isEmptyObject(selectionAlbum))
+			return false;
 		var index = selectionAlbum.subalbums.findIndex(x => x.cacheBase === subalbum.cacheBase);
 		if (index > -1)
 			return true;
@@ -991,6 +1014,8 @@
 	};
 
 	Utilities.prototype.someMediaIsSelected = function(media) {
+		if (jQuery.isEmptyObject(selectionAlbum))
+			return false;
 		if (
 			media.some(
 				function(singleMedia) {
@@ -1005,6 +1030,8 @@
 	};
 
 	Utilities.everyMediaIsSelected = function(media) {
+		if (jQuery.isEmptyObject(selectionAlbum))
+			return false;
 		if (
 			media.every(
 				function(singleMedia) {
@@ -1019,6 +1046,8 @@
 	};
 
 	Utilities.prototype.someSubalbumIsSelected = function(subalbums) {
+		if (jQuery.isEmptyObject(selectionAlbum))
+			return false;
 		if (
 			subalbums.some(
 				function(subalbum) {
@@ -1033,6 +1062,8 @@
 	};
 
 	Utilities.prototype.everySubalbumIsSelected = function(subalbums) {
+		if (jQuery.isEmptyObject(selectionAlbum))
+			return false;
 		if (
 			subalbums.every(
 				function(subalbum) {

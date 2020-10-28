@@ -267,21 +267,14 @@
 		);
 		if (typeof isPhp === "function") {
 			// execution enters here if we are using index.php
-			// make middle click open the media in a new window (from https://stackoverflow.com/questions/5392442/detect-middle-button-click-scroll-button-with-jquery#answer-49178713)
-			element.parent().parent().on(
-				"mousedown",
-				function (ev1) {
-			  		element.parent().parent().on(
-						"mouseup",
-						function (ev2) {
-			    			if (ev1.which == 2 && ev1.target == ev2.target) {
-								var imgData = JSON.parse(element.attr("data"));
-								ev1.preventDefault();
-								ev1.stopPropagation();
-								util.openImageFromVirtualAlbumInNewTab(imgData.mediaHash);
-							}
-						}
-					)
+			element.parent().parent().off("auxclick").on(
+				"auxclick",
+				function (ev) {
+					if (ev.which == 2) {
+						var imgData = JSON.parse(element.attr("data"));
+						util.openImageFromVirtualAlbumInNewTab(imgData.mediaHash, mapAlbum);
+						return false;
+					}
 				}
 			);
 		}
