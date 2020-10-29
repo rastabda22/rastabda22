@@ -763,7 +763,7 @@
 			let removeSubalbumPromise = util.removeSubalbumFromSelection(subalbum, clickedSelector);
 			removeSubalbumPromise.then(
 				function subalbumRemoved() {
-					if (sutil.nothingIsSelected())
+					if (util.nothingIsSelected())
 						util.initializeSelectionAlbum();
 					f.updateMenu();
 				}
