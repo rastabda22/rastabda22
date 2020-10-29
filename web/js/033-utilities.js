@@ -1235,6 +1235,8 @@
 					let getAlbumPromise = PhotoFloat.getAlbum(subalbum.cacheBase, null, {"getMedia": false, "getPositions": true});
 					getAlbumPromise.then(
 						function(subalbum) {
+							if (Utilities.nothingIsSelected())
+								Utilities.initializeSelectionAlbum();
 							selectionAlbum.subalbums.push(subalbum);
 
 							selectionAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(selectionAlbum.positionsAndMediaInTree, subalbum.positionsAndMediaInTree);
