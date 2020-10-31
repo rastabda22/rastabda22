@@ -1473,26 +1473,6 @@
 		// 	return Options.reduced_sizes[theNextSizeIndex];
 	};
 
-	// Utilities.nextSizeIndex = function() {
-	// 	// returns the index of the next bigger reduction size than that of the photo in DOM
-	// 	// returns -1 if the next bigger image is the original image
-	// 	// returns false if in the DOM there is the original image
-	//
-	// 	var currentPhotoSize = Utilities.currentSize();
-	// 	if (currentPhotoSize == 0) {
-	// 		return false;
-	// 	} else {
-	// 		if (currentPhotoSize === Options.reduced_sizes[0])
-	// 			return -1;
-	// 		for (var i = 1; i < Options.reduced_sizes.length - 1; i ++) {
-	// 			if (currentPhotoSize === Options.reduced_sizes[i]) {
-	// 				return i - 1;
-	// 			}
-	// 		}
-	// 	}
-	// 	return 0;
-	// };
-
 	Utilities.prototype.nextReduction = function() {
 		// Returns the file name of the reduction with the next bigger size than the reduction in DOM,
 		// possibly the original photo
