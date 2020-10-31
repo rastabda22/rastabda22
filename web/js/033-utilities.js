@@ -1731,7 +1731,7 @@
 				if (id === "center") {
 					// position next/prev buttons verticallly centered in media-box-inner
 					var mediaBoxInnerHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
-					titleHeight = parseInt($(".media-box#center .title").css("height"));
+					// titleHeight = parseInt($(".media-box#center .title").css("height"));
 					var prevNextHeight = parseInt($("#next").outerHeight());
 					$("#next, #prev").css("top", titleHeight + (mediaBoxInnerHeight - prevNextHeight) / 2);
 
