@@ -130,9 +130,19 @@
 				$(mediaSelector).css("transform", "translate(" + cssTranslateXString + "px," + cssTranslateYString + "px) scale(" + cssScale + ")");
 
 				if (finalZoom > startZoom) {
-					var [nextReductionSize, nextReductionIndex] = util.nextSizeAndIndex();
-					if (nextReductionIndex !== false && photoSize * finalZoom >= currentReductionSize) {
-						// use next size reduction
+					var nextReductionSize = currentReductionSize;
+					var nextReductionIndex = currentReductionIndex;
+					if (currentReductionIndex !== -1) {
+						while (nextReductionIndex !== -1 && nextReductionSize < photoSize * finalZoom) {
+							if (nextReductionIndex === 0) {
+								nextReductionIndex = -1;
+								nextReductionSize = Math.max(... currentMedia.metadata.size);
+							} else {
+								nextReductionIndex -= 1;
+								nextReductionSize = Options.reduced_sizes[nextReductionIndex];
+							}
+						}
+
 						if (photoWidth > photoHeight) {
 							width = nextReductionSize;
 							height = parseInt(nextReductionSize / photoWidth * photoHeight);
@@ -140,7 +150,10 @@
 							height = nextReductionSize;
 							width = parseInt(nextReductionSize / photoHeight * photoWidth);
 						}
-						$(mediaSelector).attr("width", width).attr("height", height).attr("src", util.nextReduction());
+						photoSrc = util.originalMediaPath(currentMedia);
+						if (nextReductionIndex !== -1)
+							photoSrc = util.mediaPath(currentAlbum, currentMedia, nextReductionSize);
+						$(mediaSelector).attr("width", width).attr("height", height).attr("src", photoSrc);
 					}
 				}
 
