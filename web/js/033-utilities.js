@@ -851,7 +851,7 @@
 	};
 
 	Utilities.prototype.isSearchHash = function() {
-		hash = PhotoFloat.cleanHash(location.hash);
+		var hash = PhotoFloat.cleanHash(location.hash);
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
 		if (Utilities.isSearchCacheBase(hash) || savedSearchAlbumHash !== null)
 			return true;
@@ -1118,7 +1118,7 @@
 					let subalbumsPromises = [];
 					for (let indexSubalbum = subalbums.length - 1; indexSubalbum >= 0; indexSubalbum --) {
 						let subalbum = subalbums[indexSubalbum];
-						removeSubalbumPromise = Utilities.removeSubalbumFromSelection(subalbum, "#subalbum-select-box-" + indexSubalbum);
+						let removeSubalbumPromise = Utilities.removeSubalbumFromSelection(subalbum, "#subalbum-select-box-" + indexSubalbum);
 						subalbumsPromises.push(removeSubalbumPromise);
 					}
 					Promise.all(subalbumsPromises).then(
@@ -1731,7 +1731,6 @@
 				if (id === "center") {
 					// position next/prev buttons verticallly centered in media-box-inner
 					var mediaBoxInnerHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
-					// titleHeight = parseInt($(".media-box#center .title").css("height"));
 					var prevNextHeight = parseInt($("#next").outerHeight());
 					$("#next, #prev").css("top", titleHeight + (mediaBoxInnerHeight - prevNextHeight) / 2);
 
@@ -1925,7 +1924,7 @@
 
 	Utilities.convertByDateAncestosNames = function(ancestorsNames) {
 		if (ancestorsNames[0] === Options.by_date_string && ancestorsNames.length > 2) {
-			let result = ancestorsNames.slice()
+			let result = ancestorsNames.slice();
 			result[2] = Utilities._t("#month-" + result[2]);
 			return result;
 		} else {

@@ -185,7 +185,7 @@
 
 	PinchSwipe.pinchIn = function(event, finalZoom, duration = pinchSpeed, center = null) {
 		var windowRatio;
-		var mediaWidthOnScreen;
+		// var mediaWidthOnScreen;
 		if (
 			currentZoom == initialZoom &&
 			! $("#album-view.media-view-container").hasClass("hidden-by-pinch") && (
@@ -260,7 +260,8 @@
 	};
 
 	PinchSwipe.pinchOut = function(event, finalZoom = null, duration = pinchSpeed) {
-		var mediaWidthOnScreen, mediaHeightOnScreen, mediaRatioOnScreen, windowRatio;
+		// var mediaWidthOnScreen, mediaHeightOnScreen;
+		var mediaRatioOnScreen, windowRatio;
 		var finalZoomWasZero = false;
 		if (typeof finalZoom === "undefined")
 			finalZoom = null;
@@ -275,8 +276,8 @@
 			pinchInOutPromise.then(
 				function() {
 					// check whether the final pinchout (re-establishing title and the bottom thumbnails) has to be performed
-					mediaWidthOnScreen = $(mediaSelector)[0].width;
-					mediaHeightOnScreen = $(mediaSelector)[0].height;
+					// mediaWidthOnScreen = $(mediaSelector)[0].width;
+					// mediaHeightOnScreen = $(mediaSelector)[0].height;
 					mediaRatioOnScreen = pastMediaWidthOnScreen / pastMediaHeightOnScreen;
 					windowRatio = windowWidth / windowHeight;
 					mediaBoxInnerWidth = $(mediaContainerSelector).css("width");
@@ -318,7 +319,7 @@
 			let scaleMediaPromise = util.scaleMedia(event);
 			scaleMediaPromise.then(
 				function() {
-					mediaWidthOnScreen = $(mediaSelector)[0].width;
+					// mediaWidthOnScreen = $(mediaSelector)[0].width;
 					// currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
 					// currentZoom = 1;
 					// zoomAfterFirstPinch = currentZoom;

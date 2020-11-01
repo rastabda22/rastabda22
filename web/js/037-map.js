@@ -89,7 +89,7 @@
 			if (util.singleMediaIsSelected(ithMedia)) {
 				selectSrc = 'img/checkbox-checked-48px.png';
 			}
-			selectBoxHtml =
+			let selectBoxHtml =
 				"<a id='media-select-box-" + mediaIndex + "'>" +
 					"<img " +
 						"class='select-box' " +

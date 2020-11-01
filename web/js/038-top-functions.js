@@ -1748,7 +1748,7 @@
 		// end of insertRandomImage function
 
 
-		var i, imageLink, linkContainer, container, image, media, thumbsElement, subalbumsElement, thumbHash, thumbnailSize;
+		var i, imageLink, linkContainer, image, media, thumbsElement, subalbumsElement, thumbHash, thumbnailSize;
 		var width, height, thumbWidth, thumbHeight, imageString, imgString, img, calculatedWidth, calculatedHeight, populateMedia;
 		var albumViewWidth, correctedAlbumThumbSize = Options.album_thumb_size;
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
@@ -2198,7 +2198,7 @@
 								);
 								linkContainer.append(image);
 								linkContainer.append(caption);
-								aHrefHtmlContainer.append(linkContainer)
+								aHrefHtmlContainer.append(linkContainer);
 
 								// subalbumsElement.append(linkContainer);
 								subalbumsElement.append(aHrefHtmlContainer);
@@ -2707,7 +2707,7 @@
 					}
 
 					var clickHistory = mapAlbum.clickHistory;
-					delete mapAlbum;
+					mapAlbum = {};
 					playClickElement(clickHistory, 0);
 
 				}

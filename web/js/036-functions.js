@@ -185,7 +185,7 @@
 			let [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 			if (
 				! (
-					isAnyRootCacheBase & util.somethingIsSearched() ||
+					isAnyRootCacheBase && util.somethingIsSearched() ||
 					isSingleMedia && (
 						// util.somethingIsSearched() ||
 						// savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash)
@@ -297,7 +297,7 @@
 				TopFunctions.showBrowsingModeMessage("#by-search-browsing");
 				if (isSingleMedia) {
 					// if (thisMedia.hasOwnProperty("searchHashes") && thisMedia.searchHashes.length)
-					foundAlbum = util.singleMediaIsInFoundAlbum(thisMedia);
+					var foundAlbum = util.singleMediaIsInFoundAlbum(thisMedia);
 					if (foundAlbum !== false) {
 						window.location.href = phFl.encodeHash(thisMedia.foldersCacheBase, thisMedia, foundAlbum.cacheBase, searchAlbum.cacheBase);
 					} else {
