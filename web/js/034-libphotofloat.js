@@ -46,7 +46,7 @@
 
 		if (album.hasOwnProperty("media")) {
 			for (level = 0; level < cacheLevelsLength; level ++) {
-		 		if (util.imagesAndVideosTotal(album.numMedia) >= Options.js_cache_levels[level].mediaThreshold) {
+		 		if (util.imagesAndVideosTotal(album.numsMedia) >= Options.js_cache_levels[level].mediaThreshold) {
 					if (! PhotoFloat.cache.albums.hasOwnProperty(level)) {
 						PhotoFloat.cache.albums[level] = [];
 						PhotoFloat.cache.albums[level].queue = [];
@@ -288,7 +288,7 @@
 				promise.then(
 					function unprotectedFileExists(album) {
 						if (album.hasOwnProperty("media"))
-							album.numMedia = util.imagesAndVideosCount(album.media);
+							album.numsMedia = util.imagesAndVideosCount(album.media);
 						album.includedFilesByCodesSimpleCombination = {};
 						album.includedFilesByCodesSimpleCombination[","] = {};
 						if (album.hasOwnProperty("media"))
@@ -323,8 +323,8 @@
 						var emptyAlbum = {
 							"cacheBase": unprotectedCacheBase,
 							"subalbums": [],
-							"numMedia": JSON.parse(JSON.stringify(imagesAndVideos0)),
-							"numMediaInSubTree": JSON.parse(JSON.stringify(imagesAndVideos0)),
+							"numsMedia": JSON.parse(JSON.stringify(imagesAndVideos0)),
+							"numsMediaInSubTree": JSON.parse(JSON.stringify(imagesAndVideos0)),
 							"sizesOfAlbum": JSON.parse(JSON.stringify(initialSizes)),
 							"sizesOfSubTree": JSON.parse(JSON.stringify(initialSizes)),
 							"numPositionsInTree": 0,
@@ -394,15 +394,15 @@
 
 							album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].codesComplexCombination = protectedAlbum.codesComplexCombination;
 
-							if (! protectedAlbum.hasOwnProperty("numMedia"))
-								protectedAlbum.numMedia = util.imagesAndVideosCount(protectedAlbum.media);
+							if (! protectedAlbum.hasOwnProperty("numsMedia"))
+								protectedAlbum.numsMedia = util.imagesAndVideosCount(protectedAlbum.media);
 
 							if (! album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("protectedAlbumGot")) {
 								if (protectedAlbum.subalbums.length)
 									PhotoFloat.mergeProtectedSubalbums(album, protectedAlbum);
 
-								album.numMedia = util.imagesAndVideosSum(album.numMedia, protectedAlbum.numMedia);
-								album.numMediaInSubTree = util.imagesAndVideosSum(album.numMediaInSubTree, protectedAlbum.numMediaInSubTree);
+								album.numsMedia = util.imagesAndVideosSum(album.numsMedia, protectedAlbum.numsMedia);
+								album.numsMediaInSubTree = util.imagesAndVideosSum(album.numsMediaInSubTree, protectedAlbum.numsMediaInSubTree);
 								album.sizesOfSubTree = util.sumSizes(album.sizesOfSubTree, protectedAlbum.sizesOfSubTree);
 								album.sizesOfAlbum = util.sumSizes(album.sizesOfAlbum, protectedAlbum.sizesOfAlbum);
 								album.numPositionsInTree += protectedAlbum.numPositionsInTree;
@@ -763,7 +763,7 @@
 
 
 	PhotoFloat.mergeProtectedSubalbum = function(subalbum, protectedSubalbum) {
-		subalbum.numMediaInSubTree = util.imagesAndVideosSum(subalbum.numMediaInSubTree, protectedSubalbum.numMediaInSubTree);
+		subalbum.numsMediaInSubTree = util.imagesAndVideosSum(subalbum.numsMediaInSubTree, protectedSubalbum.numsMediaInSubTree);
 		subalbum.sizesOfSubTree = util.sumSizes(subalbum.sizesOfSubTree, protectedSubalbum.sizesOfSubTree);
 		subalbum.sizesOfAlbum = util.sumSizes(subalbum.sizesOfAlbum, protectedSubalbum.sizesOfAlbum);
 		subalbum.numPositionsInTree += protectedSubalbum.numPositionsInTree;
@@ -1277,7 +1277,7 @@
 				promise.then(
 					function(album) {
 						// index = 0;
-						index = Math.floor(Math.random() * (util.imagesAndVideosTotal(album.numMediaInSubTree)));
+						index = Math.floor(Math.random() * (util.imagesAndVideosTotal(album.numsMediaInSubTree)));
 						nextAlbum(album);
 					},
 					function() {
@@ -1290,12 +1290,12 @@
 
 					var i, nMediaInAlbum;
 
-					if (! util.imagesAndVideosTotal(album.numMediaInSubTree)) {
+					if (! util.imagesAndVideosTotal(album.numsMediaInSubTree)) {
 						error();
 						return;
 					}
 
-					nMediaInAlbum = util.imagesAndVideosTotal(album.numMedia);
+					nMediaInAlbum = util.imagesAndVideosTotal(album.numsMedia);
 					if (index >= nMediaInAlbum) {
 						index -= nMediaInAlbum;
 						let found = false;
@@ -1305,8 +1305,8 @@
 						// 	targetCacheBase = album.cacheBase;
 						// }
 						for (i = 0; i < album.subalbums.length; i ++) {
-							if (index >= util.imagesAndVideosTotal(album.subalbums[i].numMediaInSubTree))
-								index -= util.imagesAndVideosTotal(album.subalbums[i].numMediaInSubTree);
+							if (index >= util.imagesAndVideosTotal(album.subalbums[i].numsMediaInSubTree))
+								index -= util.imagesAndVideosTotal(album.subalbums[i].numsMediaInSubTree);
 							else {
 								targetCacheBase = album.subalbums[i].cacheBase;
 								found = true;
@@ -1664,7 +1664,7 @@
 					if (searchAlbum.subalbums.length) {
 						for (indexSubalbums = 0; indexSubalbums < searchAlbum.subalbums.length; indexSubalbums ++) {
 							// update the media count
-							searchAlbum.numMediaInSubTree = util.imagesAndVideosSum(searchAlbum.numMediaInSubTree, searchAlbum.subalbums[indexSubalbums].numMediaInSubTree);
+							searchAlbum.numsMediaInSubTree = util.imagesAndVideosSum(searchAlbum.numsMediaInSubTree, searchAlbum.subalbums[indexSubalbums].numsMediaInSubTree);
 							// update the size totals
 							searchAlbum.sizesOfSubTree = util.sumSizes(searchAlbum.sizesOfSubTree, searchAlbum.subalbums[indexSubalbums].sizesOfSubTree);
 							searchAlbum.sizesOfAlbum = util.sumSizes(searchAlbum.sizesOfAlbum, searchAlbum.subalbums[indexSubalbums].sizesOfAlbum);
@@ -2033,8 +2033,8 @@
 		return new Promise(
 			function(resolve_endPreparingAlbumAndKeepOn) {
 				// add the various counts
-				resultsAlbumFinal.numMediaInSubTree = util.imagesAndVideosCount(resultsAlbumFinal.media);
-				resultsAlbumFinal.numMedia = util.imagesAndVideosCount(resultsAlbumFinal.media);
+				resultsAlbumFinal.numsMediaInSubTree = util.imagesAndVideosCount(resultsAlbumFinal.media);
+				resultsAlbumFinal.numsMedia = util.imagesAndVideosCount(resultsAlbumFinal.media);
 				resultsAlbumFinal.numPositionsInTree = resultsAlbumFinal.positionsAndMediaInTree.length;
 				// save in the cache array
 				if (! PhotoFloat.getAlbumFromCache(resultsAlbumFinal.cacheBase))

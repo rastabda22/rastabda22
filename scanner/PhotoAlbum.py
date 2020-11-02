@@ -67,7 +67,7 @@ class Album(object):
 			self.media_list_is_sorted = True
 			self.subalbums_list_is_sorted = True
 			self._subdir = ""
-			self.num_media_in_sub_tree = ImageAndVideo()
+			self.nums_media_in_sub_tree = ImageAndVideo()
 			self.complex_combination = ','
 			self.nums_protected_media_in_sub_tree = NumsProtected()
 			self.sizes_protected_media_in_album = SizesProtected()
@@ -332,10 +332,10 @@ class Album(object):
 		# 	# 	self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
 		if ',' in list(self.nums_protected_media_in_sub_tree.keys()):
-			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(',')
+			self.nums_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(',')
 			self.sizes_of_sub_tree = self.sizes_protected_media_in_sub_tree.sizes(',')
 		else:
-			self.num_media_in_sub_tree = ImageAndVideo()
+			self.nums_media_in_sub_tree = ImageAndVideo()
 			self.sizes_of_sub_tree = Sizes()
 		if ',' in list(self.sizes_protected_media_in_album.keys()):
 			self.sizes_of_album = self.sizes_protected_media_in_album.sizes(',')
@@ -385,10 +385,10 @@ class Album(object):
 		# 		self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
 		if self.complex_combination in list(self.nums_protected_media_in_sub_tree.keys()):
-			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.complex_combination)
+			self.nums_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.complex_combination)
 			self.sizes_of_sub_tree = self.sizes_protected_media_in_sub_tree.sizes(self.complex_combination)
 		else:
-			self.num_media_in_sub_tree = ImageAndVideo()
+			self.nums_media_in_sub_tree = ImageAndVideo()
 			self.sizes_of_sub_tree = Sizes()
 		if self.complex_combination in list(self.sizes_protected_media_in_album.keys()):
 			self.sizes_of_album = self.sizes_protected_media_in_album.sizes(self.complex_combination)
@@ -625,7 +625,7 @@ class Album(object):
 					"date": subalbum.date_string,
 					# "positionsAndMediaInTree": subalbum.positions_and_media_in_tree,
 					"numPositionsInTree": len(subalbum.positions_and_media_in_tree.positions),
-					"numMediaInSubTree": subalbum.num_media_in_sub_tree,
+					"numsMediaInSubTree": subalbum.nums_media_in_sub_tree,
 					"sizesOfSubTree": subalbum.sizes_of_sub_tree,
 					"sizesOfAlbum": subalbum.sizes_of_album,
 				}
@@ -709,7 +709,7 @@ class Album(object):
 			# "ancestorsCacheBase": ancestors_cache_base,
 			"ancestorsNames": ancestors_names,
 			"physicalPath": path_without_folders_marker,
-			"numMediaInSubTree": self.num_media_in_sub_tree,
+			"numsMediaInSubTree": self.nums_media_in_sub_tree,
 			"sizesOfSubTree": self.sizes_of_sub_tree,
 			"sizesOfAlbum": self.sizes_of_album,
 			"numPositionsInTree": len(self.positions_and_media_in_tree.positions),
@@ -743,9 +743,9 @@ class Album(object):
 		if not separate_media:
 			dictionary["media"] = self.media_list
 		else:
-			dictionary["numMedia"] = ImageAndVideo();
-			dictionary["numMedia"].setImage(len([_media for _media in self.media_list if _media.is_image]))
-			dictionary["numMedia"].setVideo(len([_media for _media in self.media_list if _media.is_video]))
+			dictionary["numsMedia"] = ImageAndVideo();
+			dictionary["numsMedia"].setImage(len([_media for _media in self.media_list if _media.is_image]))
+			dictionary["numsMedia"].setVideo(len([_media for _media in self.media_list if _media.is_video]))
 		if hasattr(self, "symlink_codes_and_numbers"):
 			dictionary["symlinkCodesAndNumbers"] = self.symlink_codes_and_numbers
 		if hasattr(self, "center"):

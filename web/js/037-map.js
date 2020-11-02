@@ -50,7 +50,7 @@
 		else
 			albumViewPadding = parseInt(albumViewPadding);
 
-		for(mediaIndex = 0; mediaIndex < util.imagesAndVideosTotal(theAlbum.numMedia); mediaIndex ++) {
+		for(mediaIndex = 0; mediaIndex < util.imagesAndVideosTotal(theAlbum.numsMedia); mediaIndex ++) {
 
 			ithMedia = theAlbum.media[mediaIndex];
 
@@ -209,7 +209,7 @@
 	};
 
 	MapFunctions.buildPopupHeader = function() {
-		$("#popup-photo-count-number").html(util.imagesAndVideosTotal(mapAlbum.numMedia));
+		$("#popup-photo-count-number").html(util.imagesAndVideosTotal(mapAlbum.numsMedia));
 		$("#popup-photo-count").css("max-width", MapFunctions.maxWidthForPopupContent);
 		// add the click event for showing the photos in the popup as an album
 		$("#popup-photo-count").on(
@@ -399,7 +399,7 @@
 						var getAlbumPromise = phFl.getAlbum(albumCacheBase, util.errorThenGoUp, {"getMedia": true, "getPositions": true});
 						getAlbumPromise.then(
 							function(theAlbum) {
-								for (mediaIndex = 0; mediaIndex < util.imagesAndVideosTotal(theAlbum.numMedia); mediaIndex ++) {
+								for (mediaIndex = 0; mediaIndex < util.imagesAndVideosTotal(theAlbum.numsMedia); mediaIndex ++) {
 									for (photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
 										if (theAlbum.media[mediaIndex].cacheBase == photosInAlbum[photoIndex].element.cacheBase) {
 											thisMapAlbum.media.push(theAlbum.media[mediaIndex]);

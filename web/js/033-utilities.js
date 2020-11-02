@@ -72,8 +72,8 @@
 		var rootMapAlbum = {};
 		rootMapAlbum.cacheBase = Options.by_map_string;
 		rootMapAlbum.media = [];
-		rootMapAlbum.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-		rootMapAlbum.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
+		rootMapAlbum.numsMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
+		rootMapAlbum.numsMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
 		rootMapAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
 		rootMapAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
 		rootMapAlbum.subalbums = [];
@@ -100,8 +100,8 @@
 		// initializes the map album
 		var newMapAlbum = {};
 		newMapAlbum.media = [];
-		newMapAlbum.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-		newMapAlbum.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
+		newMapAlbum.numsMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
+		newMapAlbum.numsMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
 		newMapAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
 		newMapAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
 		newMapAlbum.subalbums = [];
@@ -116,7 +116,7 @@
 		newMapAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
 
-		mapRootAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(mapRootAlbum.numMediaInSubTree, newMapAlbum.numMediaInSubTree);
+		mapRootAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSum(mapRootAlbum.numsMediaInSubTree, newMapAlbum.numsMediaInSubTree);
 		mapRootAlbum.subalbums.push(newMapAlbum);
 		mapRootAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(mapRootAlbum.positionsAndMediaInTree, newMapAlbum.positionsAndMediaInTree);
 		mapRootAlbum.numPositionsInTree = mapRootAlbum.positionsAndMediaInTree.length;
@@ -134,8 +134,8 @@
 	// 	var rootSearchAlbum = {};
 	// 	rootSearchAlbum.cacheBase = Options.by_search_string;
 	// 	rootSearchAlbum.media = [];
-	// 	rootSearchAlbum.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-	// 	rootSearchAlbum.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
+	// 	rootSearchAlbum.numsMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
+	// 	rootSearchAlbum.numsMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
 	// 	rootSearchAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
 	// 	rootSearchAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
 	// 	rootSearchAlbum.subalbums = [];
@@ -156,8 +156,8 @@
 		newSearchAlbum.positionsAndMediaInTree = [];
 		newSearchAlbum.media = [];
 		newSearchAlbum.subalbums = [];
-		newSearchAlbum.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-		newSearchAlbum.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
+		newSearchAlbum.numsMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
+		newSearchAlbum.numsMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
 		newSearchAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
 		newSearchAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
 		newSearchAlbum.cacheBase = albumHash;
@@ -175,7 +175,7 @@
 		// if (! searchRootAlbum)
 		// 	searchRootAlbum = Utilities.initializeSearchRootAlbum();
 
-		searchRootAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(searchRootAlbum.numMediaInSubTree, searchAlbum.numMediaInSubTree);
+		searchRootAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSum(searchRootAlbum.numsMediaInSubTree, searchAlbum.numsMediaInSubTree);
 		// searchRootAlbum.subalbums.push(newSearchAlbum);
 		searchRootAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(searchRootAlbum.positionsAndMediaInTree, searchAlbum.positionsAndMediaInTree);
 		searchRootAlbum.numPositionsInTree = searchRootAlbum.positionsAndMediaInTree.length;
@@ -193,8 +193,8 @@
 		var selectionRootAlbum = {};
 		selectionRootAlbum.cacheBase = Options.by_selection_string;
 		selectionRootAlbum.media = [];
-		selectionRootAlbum.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-		selectionRootAlbum.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
+		selectionRootAlbum.numsMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
+		selectionRootAlbum.numsMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
 		selectionRootAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
 		selectionRootAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
 		selectionRootAlbum.subalbums = [];
@@ -221,8 +221,8 @@
 
 		var newSelectionAlbum = {};
 		newSelectionAlbum.media = [];
-		newSelectionAlbum.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-		newSelectionAlbum.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
+		newSelectionAlbum.numsMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
+		newSelectionAlbum.numsMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
 		newSelectionAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
 		newSelectionAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
 		newSelectionAlbum.subalbums = [];
@@ -235,7 +235,7 @@
 		newSelectionAlbum.includedFilesByCodesSimpleCombination = {};
 		newSelectionAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
-		selectionRootAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(selectionRootAlbum.numMediaInSubTree, newSelectionAlbum.numMediaInSubTree);
+		selectionRootAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSum(selectionRootAlbum.numsMediaInSubTree, newSelectionAlbum.numsMediaInSubTree);
 		selectionRootAlbum.subalbums.push(newSelectionAlbum);
 		selectionRootAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(selectionRootAlbum.positionsAndMediaInTree, newSelectionAlbum.positionsAndMediaInTree);
 		selectionRootAlbum.numPositionsInTree = selectionRootAlbum.positionsAndMediaInTree.length;
@@ -968,7 +968,7 @@
 	};
 
 	Utilities.somethingIsInMapAlbum = function() {
-		if (mapAlbum.hasOwnProperty("numMediaInSubTree") && Utilities.imagesAndVideosTotal(mapAlbum.numMediaInSubTree))
+		if (mapAlbum.hasOwnProperty("numsMediaInSubTree") && Utilities.imagesAndVideosTotal(mapAlbum.numsMediaInSubTree))
 			return true;
 		else
 			return false;
@@ -976,7 +976,7 @@
 
 	Utilities.somethingIsSearched = function() {
 		if (
-			searchAlbum.hasOwnProperty("numMediaInSubTree") && Utilities.imagesAndVideosTotal(searchAlbum.numMediaInSubTree) ||
+			searchAlbum.hasOwnProperty("numsMediaInSubTree") && Utilities.imagesAndVideosTotal(searchAlbum.numsMediaInSubTree) ||
 			searchAlbum.hasOwnProperty("subalbums") && searchAlbum.subalbums.length
 		)
 			return true;
@@ -1146,8 +1146,8 @@
 					);
 				selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 			}
-			selectionAlbum.numMedia = Utilities.imagesAndVideosSum(selectionAlbum.numMedia, Utilities.imagesAndVideosCount([singleMedia]));
-			selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
+			selectionAlbum.numsMedia = Utilities.imagesAndVideosSum(selectionAlbum.numsMedia, Utilities.imagesAndVideosCount([singleMedia]));
+			selectionAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numsMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
 			selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
 			selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, singleMedia.fileSizes);
 
@@ -1184,8 +1184,8 @@
 					singleMedia
 				);
 			selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
-			selectionAlbum.numMedia = Utilities.imagesAndVideosSubtract(selectionAlbum.numMedia, Utilities.imagesAndVideosCount([singleMedia]));
-			selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
+			selectionAlbum.numsMedia = Utilities.imagesAndVideosSubtract(selectionAlbum.numsMedia, Utilities.imagesAndVideosCount([singleMedia]));
+			selectionAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numsMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
 			selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
 			selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, singleMedia.fileSizes);
 
@@ -1241,8 +1241,8 @@
 
 							selectionAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(selectionAlbum.positionsAndMediaInTree, subalbum.positionsAndMediaInTree);
 							selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
-							// selectionAlbum.numMedia = Utilities.imagesAndVideosSum(selectionAlbum.numMedia, subalbum.numMedia);
-							selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
+							// selectionAlbum.numsMedia = Utilities.imagesAndVideosSum(selectionAlbum.numsMedia, subalbum.numsMedia);
+							selectionAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numsMediaInSubTree, subalbum.numsMediaInSubTree);
 							// selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
 							selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
 							selectionAlbum.numsProtectedMediaInSubTree = Utilities.sumSizes(selectionAlbum.numsProtectedMediaInSubTree, subalbum.numsProtectedMediaInSubTree);
@@ -1282,8 +1282,8 @@
 				if (! Utilities.subalbumIsSelected(subalbum)) {
 					resolve_removeSubalbum();
 				} else {
-					selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
-					// if (Utilities.imagesAndVideosTotal(selectionAlbum.numMediaInSubTree)) {
+					selectionAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numsMediaInSubTree, subalbum.numsMediaInSubTree);
+					// if (Utilities.imagesAndVideosTotal(selectionAlbum.numsMediaInSubTree)) {
 					let getAlbumPromise = PhotoFloat.getAlbum(subalbum.cacheBase, null, {"getMedia": true, "getPositions": true});
 					getAlbumPromise.then(
 						function(subalbum) {
@@ -1298,8 +1298,8 @@
 									);
 								selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 							}
-							// selectionAlbum.numMedia = Utilities.imagesAndVideosSubtract(selectionAlbum.numMedia, subalbum.numMedia);
-							selectionAlbum.numMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numMediaInSubTree, subalbum.numMediaInSubTree);
+							// selectionAlbum.numsMedia = Utilities.imagesAndVideosSubtract(selectionAlbum.numsMedia, subalbum.numsMedia);
+							selectionAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numsMediaInSubTree, subalbum.numsMediaInSubTree);
 							// selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
 							selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
 							selectionAlbum.numsProtectedMediaInSubTree = Utilities.subtractSizes(selectionAlbum.numsProtectedMediaInSubTree, subalbum.numsProtectedMediaInSubTree);
@@ -1332,7 +1332,7 @@
 	};
 
 	Utilities.isAlbumWithOneMedia = function(album) {
-		return album !== null && ! album.subalbums.length && Utilities.imagesAndVideosTotal(album.numMedia) == 1;
+		return album !== null && ! album.subalbums.length && Utilities.imagesAndVideosTotal(album.numsMedia) == 1;
 	};
 
 	Utilities.chooseReducedPhoto = function(media, container, fullScreenStatus) {
@@ -2288,7 +2288,7 @@
 
 		$("#next").css("right", "");
 		$("#prev").css("left", "");
-		if (! fullScreenStatus && Utilities.imagesAndVideosTotal(currentAlbum.numMedia) > 1) {
+		if (! fullScreenStatus && Utilities.imagesAndVideosTotal(currentAlbum.numsMedia) > 1) {
 			// correct next button position when pinch buttons collide
 			$("#next").css("right", correctionForPinch.toString() + "px");
 			// correct prev button position when social buttons are on the left
