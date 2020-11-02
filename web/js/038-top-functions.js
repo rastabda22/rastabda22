@@ -782,7 +782,7 @@
 
 		function loadNextPrevMedia(containerHeight, containerWidth) {
 
-			$(mediaSelector).off(triggerLoad);
+			$(mediaSelector).off(loadEvent);
 
 			if (id === "center") {
 				$("#pinch-in").off("click").on("click", pS.pinchIn);
@@ -875,7 +875,7 @@
 			}
 		}
 
-		var text, thumbnailSize, triggerLoad, mediaHtml, mediaSelector, mediaSrc;
+		var text, thumbnailSize, loadEvent, mediaHtml, mediaSelector, mediaSrc;
 		var exposureTime, heightForMedia, heightForMediaAndTitle;
 		var previousMediaIndex, nextMediaIndex;
 
@@ -1010,7 +1010,7 @@
 			mediaSrc = util.chooseMediaReduction(singleMedia, id, fullScreenStatus);
 			mediaHtml = util.createMediaHtml(singleMedia, id, fullScreenStatus);
 
-			triggerLoad = util.chooseTriggerEvent(singleMedia);
+			loadEvent = util.chooseTriggerEvent(singleMedia);
 
 			if (mediaBoxInnerElement.html() !== mediaHtml) {
 				// only replace the media-box-inner content if it's not yet there
@@ -1027,8 +1027,8 @@
 			if (id === "center")
 				$(mediaBoxInnerElement).css("opacity", 1);
 
-			$(mediaSelector).off(triggerLoad).on(
-				triggerLoad,
+			$(mediaSelector).off(loadEvent).on(
+				loadEvent,
 				{
 					id: id,
 					media: singleMedia,
@@ -1050,7 +1050,7 @@
 			);
 			// in case the image has been already loaded, trigger the event
 			if ($(mediaSelector)[0].complete)
-				$(mediaSelector).trigger(triggerLoad);
+				$(mediaSelector).trigger(loadEvent);
 
 			if (id === "center") {
 				if (! Options.persistent_metadata) {
