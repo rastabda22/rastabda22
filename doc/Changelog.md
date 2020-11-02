@@ -1,4 +1,5 @@
 * numMediaInSubTree and numMedia album properties have been changed to numsMediaInSubTree and numsMedia (requieres json files regenerations)
+* media and albums can now be selected, and the resulting selection album can be viewed browsed and saved
 * new option `by_selection_string` for albums built from selection
 
 * menu refinements in download section
