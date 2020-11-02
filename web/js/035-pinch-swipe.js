@@ -620,7 +620,7 @@
 
 	PinchSwipe.screenZoom = function() {
 		var imageRatio = currentMedia.metadata.size[0] / currentMedia.metadata.size[1];
-		var mediaBoxInnerRatio = $("#center .media-box-inner").css("width") / $("#center .media-box-inner").css("height");
+		var mediaBoxInnerRatio = parseInt($("#center .media-box-inner").css("width")) / parseInt($("#center .media-box-inner").css("height"));
 		if (imageRatio > mediaBoxInnerRatio)
 			return $(mediaSelector)[0].width / currentMedia.metadata.size[0];
 		else
