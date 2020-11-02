@@ -76,7 +76,7 @@
 				var centersDifference = {x: center.x - windowCenter.x, y: center.y - windowCenter.y};
 				var [currentReductionSize, currentReductionIndex] = util.currentSizeAndIndex();
 				var width, height;
-				var photoSize = Math.max(currentMedia.metadata.size[0], currentMedia.metadata.size[1]);
+				var photoSize = Math.max(... currentMedia.metadata.size);
 				// scaleZoom is the value we must give to the scale part of the transform css property.
 				// In css("transform", ...), scale(1) means that the image fits into the given width/height values
 				var scaleZoom = finalZoom / initialZoom;
