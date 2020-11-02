@@ -417,79 +417,83 @@
 		 */
 		function swipeStatus(event, phase, direction, distance, duration, fingerCount) {
 			//If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
-			if (event.button === 2 && (event.shiftKey || event.ctrlKey || event.altKey)) {
-				return;
-			}
 
-			var clientX, clientY;
+			if (event.buttons > 0) {
+				if (event.button === 2 && (event.shiftKey || event.ctrlKey || event.altKey)) {
+					return;
+				}
 
-			if (phase == "start") {
-				isLongTap = false;
-			}
+				var clientX, clientY;
 
-			// when dragging with the mouse, fingerCount is 0
-			if (typeof event.touches === "undefined" || fingerCount === 1) {
-				if (currentZoom === initialZoom) {
-					// zoom = 1: swipe
-					if (phase == "move") {
-						if (direction == "left") {
-							PinchSwipe.scrollMedia(windowWidth + distance);
-						} else if (direction == "right") {
-							PinchSwipe.scrollMedia(windowWidth - distance);
+				if (phase == "start") {
+					isLongTap = false;
+				}
+
+				// when dragging with the mouse, fingerCount is 0
+				if (typeof event.touches === "undefined" || fingerCount === 1) {
+					if (currentZoom === initialZoom) {
+						// zoom = 1: swipe
+						if (phase == "move") {
+							if (direction == "left") {
+								PinchSwipe.scrollMedia(windowWidth + distance);
+							} else if (direction == "right") {
+								PinchSwipe.scrollMedia(windowWidth - distance);
+							}
+						} else if (phase == "cancel") {
+							PinchSwipe.swipeMedia(windowWidth);
+						} else if (phase == "end") {
+							if (direction == "right") {
+								PinchSwipe.swipeRight(prevMedia);
+							} else if (direction == "left") {
+								PinchSwipe.swipeLeft(nextMedia);
+							} else if (direction == "down") {
+								PinchSwipe.swipeDown(util.upHash());
+							}
 						}
-					} else if (phase == "cancel") {
-						PinchSwipe.swipeMedia(windowWidth);
-					} else if (phase == "end") {
-						if (direction == "right") {
-							PinchSwipe.swipeRight(prevMedia);
-						} else if (direction == "left") {
-							PinchSwipe.swipeLeft(nextMedia);
-						} else if (direction == "down") {
-							PinchSwipe.swipeDown(util.upHash());
+					} else {
+						// zoom > 1: drag
+
+						if (typeof event.clientX !== "undefined") {
+							clientX = event.clientX;
+							clientY = event.clientY;
+						} else if (typeof event.touches !== "undefined" && event.touches.length > 0) {
+							clientX = event.touches[0].clientX;
+							clientY = event.touches[0].clientY;
+						} else if (typeof event.changedTouches !== "undefined" && event.changedTouches.length > 0) {
+							clientX = event.changedTouches[0].clientX;
+							clientY = event.changedTouches[0].clientY;
 						}
-					}
-				} else {
-					// zoom > 1: drag
-					if (typeof event.clientX !== "undefined") {
-						clientX = event.clientX;
-						clientY = event.clientY;
-					} else if (typeof event.touches !== "undefined" && event.touches.length > 0) {
-						clientX = event.touches[0].clientX;
-						clientY = event.touches[0].clientY;
-					} else if (typeof event.changedTouches !== "undefined" && event.changedTouches.length > 0) {
-						clientX = event.changedTouches[0].clientX;
-						clientY = event.changedTouches[0].clientY;
-					}
-					if (phase == "start" || phase == "end" || phase == "cancel" || distance == 0) {
-						if (phase == "start") {
+						if (phase == "start" || phase == "end" || phase == "cancel" || distance == 0) {
+							if (phase == "start") {
+								previousClientX = clientX;
+								previousClientY = clientY;
+							}
+							// distance = 0
+							// baseTranslateX = currentTranslateX;
+							// baseTranslateY = currentTranslateY;
+						} else {
+							var dragVectorX = clientX - previousClientX;
+							var dragVectorY = clientY - previousClientY;
 							previousClientX = clientX;
 							previousClientY = clientY;
-						}
-						// distance = 0
-						// baseTranslateX = currentTranslateX;
-						// baseTranslateY = currentTranslateY;
-					} else {
-						var dragVectorX = clientX - previousClientX;
-						var dragVectorY = clientY - previousClientY;
-						previousClientX = clientX;
-						previousClientY = clientY;
-						// var dragVectorX = event.movementX;
-						// var dragVectorY = event.movementY;
-						var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
-						if (dragVectorLength)
-							// normalize the vector
-							dragVector = {
-								"x": dragVectorX / dragVectorLength,
-								"y": dragVectorY / dragVectorLength
-							};
-						else
-							dragVector = [0, 0];
-						// } else {
-						// 	// the dragVector calculated by pinchStatus is used
-						// }
+							// var dragVectorX = event.movementX;
+							// var dragVectorY = event.movementY;
+							var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
+							if (dragVectorLength)
+								// normalize the vector
+								dragVector = {
+									"x": dragVectorX / dragVectorLength,
+									"y": dragVectorY / dragVectorLength
+								};
+							else
+								dragVector = [0, 0];
+							// } else {
+							// 	// the dragVector calculated by pinchStatus is used
+							// }
 
-						// PinchSwipe.drag(dragVectorLength / devicePixelRatio, dragVector, 0);
-						PinchSwipe.drag(dragVectorLength, dragVector, 0);
+							// PinchSwipe.drag(dragVectorLength / devicePixelRatio, dragVector, 0);
+							PinchSwipe.drag(dragVectorLength, dragVector, 0);
+						}
 					}
 				}
 			}
@@ -499,47 +503,49 @@
 			// the drag vector is calculated here for use in the swipeStatus function
 			// lamentably, swipeStatus doesn't return info about the swipe vector
 
-			pinchZoom = parseFloat(pinchZoom);
-			if (event.button === 2 && (event.shiftKey || event.ctrlKey || event.altKey)) {
-				return;
-			}
-
-			if (phase === "start") {
-				// distance = 0
-				baseZoom = currentZoom;
-				if (fingerCount < 2)
-					previousFingerEnd = {x: fingerData[0].start.x, y: fingerData[0].start.y};
-			} else if (phase === "move" && fingerCount >= 2) {
-				// phase is "move"
-				let center = {x: 0, y: 0};
-				for (let i = 0; i < event.touches.length; i ++) {
-					center.x += event.touches[i].clientX / event.touches.length;
-					center.y += event.touches[i].clientY / event.touches.length;
+			if (event.buttons > 0) {
+				pinchZoom = parseFloat(pinchZoom);
+				if (event.button === 2 && (event.shiftKey || event.ctrlKey || event.altKey)) {
+					return;
 				}
 
-				let finalZoom = baseZoom * pinchZoom;
-				// currentZoom = baseZoom;
-				if (pinchZoom > 1) {
-					PinchSwipe.pinchIn(event, finalZoom, 0, center);
-				} else {
-					PinchSwipe.pinchOut(event, finalZoom, 0);
-				}
-			}
+				if (phase === "start") {
+					// distance = 0
+					baseZoom = currentZoom;
+					if (fingerCount < 2)
+						previousFingerEnd = {x: fingerData[0].start.x, y: fingerData[0].start.y};
+				} else if (phase === "move" && fingerCount >= 2) {
+					// phase is "move"
+					let center = {x: 0, y: 0};
+					for (let i = 0; i < event.touches.length; i ++) {
+						center.x += event.touches[i].clientX / event.touches.length;
+						center.y += event.touches[i].clientY / event.touches.length;
+					}
 
-			if (fingerCount < 2) {
-				// calculate the dragVector for dragging
-				var dragVectorX = fingerData[0].end.x - previousFingerEnd.x;
-				var dragVectorY = fingerData[0].end.y - previousFingerEnd.y;
-				previousFingerEnd = {x: fingerData[0].end.x, y: fingerData[0].end.y};
-				var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
-				if (dragVectorLength)
-					// normalize the vector
-					dragVector = {
-						"x": dragVectorX / dragVectorLength,
-						"y": dragVectorY / dragVectorLength
-					};
-				else
-					dragVector = [0, 0];
+					let finalZoom = baseZoom * pinchZoom;
+					// currentZoom = baseZoom;
+					if (pinchZoom > 1) {
+						PinchSwipe.pinchIn(event, finalZoom, 0, center);
+					} else {
+						PinchSwipe.pinchOut(event, finalZoom, 0);
+					}
+				}
+
+				if (fingerCount < 2) {
+					// calculate the dragVector for dragging
+					var dragVectorX = fingerData[0].end.x - previousFingerEnd.x;
+					var dragVectorY = fingerData[0].end.y - previousFingerEnd.y;
+					previousFingerEnd = {x: fingerData[0].end.x, y: fingerData[0].end.y};
+					var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
+					if (dragVectorLength)
+						// normalize the vector
+						dragVector = {
+							"x": dragVectorX / dragVectorLength,
+							"y": dragVectorY / dragVectorLength
+						};
+					else
+						dragVector = [0, 0];
+				}
 			}
 		}
 
