@@ -782,7 +782,7 @@
 
 		function loadNextPrevMedia(containerHeight, containerWidth) {
 
-			$(mediaSelector).off(loadEvent);
+			// $(mediaSelector).off(loadEvent);
 
 			if (id === "center") {
 				$("#pinch-in").off("click").on("click", pS.pinchIn);
@@ -1035,6 +1035,7 @@
 					resize: false,
 				},
 				function (event) {
+					$(mediaSelector).off(loadEvent);
 					let scaleMediaPromise = util.scaleMedia(event);
 					scaleMediaPromise.then(
 						function() {
