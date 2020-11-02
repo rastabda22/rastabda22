@@ -150,8 +150,10 @@
 							height = nextReductionSize;
 							width = parseInt(nextReductionSize / photoHeight * photoWidth);
 						}
-						photoSrc = util.originalMediaPath(currentMedia);
-						if (nextReductionIndex !== -1)
+						let photoSrc;
+						if (nextReductionIndex === -1)
+							photoSrc = util.originalMediaPath(currentMedia);
+						else
 							photoSrc = util.mediaPath(currentAlbum, currentMedia, nextReductionSize);
 						$(mediaSelector).attr("width", width).attr("height", height).attr("src", photoSrc);
 					}
@@ -214,37 +216,46 @@
 			let scaleMediaPromise = util.scaleMedia(event);
 			scaleMediaPromise.then(
 				function() {
-					var newInitialZoom = PinchSwipe.screenZoom();
-					if (newInitialZoom !== initialZoom) {
-						// hiding the bottom thumbnails has resized the image
-						initialZoom = newInitialZoom;
-
-						mediaWidthOnScreen = $(mediaSelector)[0].width;
-						// currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
-						// zoomAfterFirstPinch = currentZoom;
-						util.setPinchButtonsPosition();
-						util.correctPrevNextPosition();
-						PinchSwipe.setPinchButtonsVisibility();
-						util.setSelectButtonPosition();
-						mediaWidth = $(mediaSelector).css("width");
-						mediaHeight = $(mediaSelector).css("height");
-						mediaBoxInnerWidth = $(mediaContainerSelector).css("width");
-						mediaBoxInnerHeight = $(mediaContainerSelector).css("height");
-
-						currentZoom = initialZoom;
-						if (finalZoom === undefined)
-							finalZoom = null;
-						if (finalZoom === null || finalZoom < currentZoom)
-							finalZoom = currentZoom;
-					} else if (finalZoom === null || typeof finalZoom === "undefined") {
-						finalZoom = currentZoom * zoomIncrement;
-					}
-					let pinchInOutPromise = PinchSwipe.pinchInOut(currentZoom, finalZoom, duration, center);
-					pinchInOutPromise.then(
+					$("#media-center").on(
+						"load",
 						function() {
-							// do nothing
+							$("#media-center").off("load");
+							var newInitialZoom = PinchSwipe.screenZoom();
+							if (newInitialZoom !== initialZoom) {
+								// hiding the bottom thumbnails has resized the image
+								initialZoom = newInitialZoom;
+
+								// mediaWidthOnScreen = $(mediaSelector)[0].width;
+								// currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
+								// zoomAfterFirstPinch = currentZoom;
+								util.setPinchButtonsPosition();
+								util.correctPrevNextPosition();
+								PinchSwipe.setPinchButtonsVisibility();
+								util.setSelectButtonPosition();
+								mediaWidth = $(mediaSelector).css("width");
+								mediaHeight = $(mediaSelector).css("height");
+								mediaBoxInnerWidth = $(mediaContainerSelector).css("width");
+								mediaBoxInnerHeight = $(mediaContainerSelector).css("height");
+
+								currentZoom = initialZoom;
+								if (finalZoom === undefined)
+									finalZoom = null;
+								if (finalZoom === null || finalZoom < currentZoom)
+									finalZoom = currentZoom;
+							} else if (finalZoom === null || typeof finalZoom === "undefined") {
+								finalZoom = currentZoom * zoomIncrement;
+							}
+							let pinchInOutPromise = PinchSwipe.pinchInOut(currentZoom, finalZoom, duration, center);
+							pinchInOutPromise.then(
+								function() {
+									// do nothing
+								}
+							);
 						}
 					);
+					// in case the image has been already loaded, trigger the event
+					if ($("#media-center")[0].complete)
+						$("#media-center").trigger("load");
 				}
 			);
 		} else {
