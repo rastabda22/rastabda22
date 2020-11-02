@@ -136,7 +136,7 @@
 						while (nextReductionIndex !== -1 && nextReductionSize < photoSize * finalZoom) {
 							if (nextReductionIndex === 0) {
 								nextReductionIndex = -1;
-								nextReductionSize = Math.max(... currentMedia.metadata.size);
+								nextReductionSize = photoSize;
 							} else {
 								nextReductionIndex -= 1;
 								nextReductionSize = Options.reduced_sizes[nextReductionIndex];
