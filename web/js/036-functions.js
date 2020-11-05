@@ -1494,9 +1494,7 @@
 							Options.byMapStringWithTrailingSeparator = Options.by_map_string + Options.cache_folder_separator;
 
 							// fill the initias sizes object
-							for (let iSize = 0; iSize < Options.reduced_sizes.length; iSize++) {
-								initialSizes[Options.reduced_sizes[iSize]] = JSON.parse(JSON.stringify(imagesAndVideos0));
-							}
+							initialSizes = new Sizes();
 
 							// WARNING: do not initialize the search root album, the app must read it from its json file!
 							util.initializeMapRootAlbum();

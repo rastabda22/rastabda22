@@ -69,23 +69,23 @@
 
 	Utilities.initializeMapRootAlbum = function() {
 		// prepare the root of the map albums and put it in the cache
-		var rootMapAlbum = {};
-		rootMapAlbum.cacheBase = Options.by_map_string;
-		rootMapAlbum.media = [];
-		rootMapAlbum.numsMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-		rootMapAlbum.numsMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
-		rootMapAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
-		rootMapAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
-		rootMapAlbum.subalbums = [];
-		rootMapAlbum.positionsAndMediaInTree = [];
-		rootMapAlbum.numPositionsInTree = 0;
-		rootMapAlbum.numsProtectedMediaInSubTree = {",": JSON.parse(JSON.stringify(imagesAndVideos0))};
-		rootMapAlbum.ancestorsCacheBase = [Options.by_map_string];
-		rootMapAlbum.includedFilesByCodesSimpleCombination = {};
-		rootMapAlbum.includedFilesByCodesSimpleCombination[","] = false;
+		var rootMapAlbum = new Album(Options.by_map_string);
+		// rootMapAlbum.cacheBase = Options.by_map_string;
+		// rootMapAlbum.media = [];
+		// rootMapAlbum.numsMedia = new ImagesAndVideos();
+		// rootMapAlbum.numsMediaInSubTree = new ImagesAndVideos();
+		// rootMapAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
+		// rootMapAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
+		// rootMapAlbum.subalbums = [];
+		// rootMapAlbum.positionsAndMediaInTree = [];
+		// rootMapAlbum.numPositionsInTree = 0;
+		// rootMapAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
+		// rootMapAlbum.ancestorsCacheBase = [Options.by_map_string];
+		// rootMapAlbum.includedFilesByCodesSimpleCombination = {};
+		// rootMapAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
 
-		PhotoFloat.putAlbumIntoCache(rootMapAlbum.cacheBase, rootMapAlbum);
+		// PhotoFloat.putAlbumIntoCache(rootMapAlbum.cacheBase, rootMapAlbum);
 
 		return rootMapAlbum;
 	};
@@ -98,22 +98,22 @@
 		lastMapAlbumIndex ++;
 
 		// initializes the map album
-		var newMapAlbum = {};
-		newMapAlbum.media = [];
-		newMapAlbum.numsMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-		newMapAlbum.numsMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
-		newMapAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
-		newMapAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
-		newMapAlbum.subalbums = [];
-		newMapAlbum.positionsAndMediaInTree = [];
-		newMapAlbum.numPositionsInTree = 0;
-		newMapAlbum.cacheBase = Options.by_map_string + Options.cache_folder_separator + lastMapAlbumIndex + Options.cache_folder_separator + currentAlbum.cacheBase;
-		newMapAlbum.path = newMapAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
-		newMapAlbum.physicalPath = newMapAlbum.path;
-		newMapAlbum.clickHistory = [];
-		newMapAlbum.numsProtectedMediaInSubTree = {",": JSON.parse(JSON.stringify(imagesAndVideos0))};
-		newMapAlbum.includedFilesByCodesSimpleCombination = {};
-		newMapAlbum.includedFilesByCodesSimpleCombination[","] = false;
+		newMapAlbum = new Album(Options.by_map_string + Options.cache_folder_separator + lastMapAlbumIndex + Options.cache_folder_separator + currentAlbum.cacheBase);
+		// newMapAlbum.media = [];
+		// newMapAlbum.numsMedia = new ImagesAndVideos();
+		// newMapAlbum.numsMediaInSubTree = new ImagesAndVideos();
+		// newMapAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
+		// newMapAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
+		// newMapAlbum.subalbums = [];
+		// newMapAlbum.positionsAndMediaInTree = [];
+		// newMapAlbum.numPositionsInTree = 0;
+		// newMapAlbum.cacheBase = Options.by_map_string + Options.cache_folder_separator + lastMapAlbumIndex + Options.cache_folder_separator + currentAlbum.cacheBase;
+		// newMapAlbum.path = newMapAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
+		// newMapAlbum.physicalPath = newMapAlbum.path;
+		// newMapAlbum.clickHistory = [];
+		// newMapAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
+		// newMapAlbum.includedFilesByCodesSimpleCombination = {};
+		// newMapAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
 
 		mapRootAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSum(mapRootAlbum.numsMediaInSubTree, newMapAlbum.numsMediaInSubTree);
@@ -134,14 +134,14 @@
 	// 	var rootSearchAlbum = {};
 	// 	rootSearchAlbum.cacheBase = Options.by_search_string;
 	// 	rootSearchAlbum.media = [];
-	// 	rootSearchAlbum.numsMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-	// 	rootSearchAlbum.numsMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
+	// 	rootSearchAlbum.numsMedia = new ImagesAndVideos();
+	// 	rootSearchAlbum.numsMediaInSubTree = new ImagesAndVideos();
 	// 	rootSearchAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
 	// 	rootSearchAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
 	// 	rootSearchAlbum.subalbums = [];
 	// 	rootSearchAlbum.positionsAndMediaInTree = [];
 	// 	rootSearchAlbum.numPositionsInTree = 0;
-	// 	rootSearchAlbum.numsProtectedMediaInSubTree = {",": JSON.parse(JSON.stringify(imagesAndVideos0))};
+	// 	rootSearchAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
 	// 	rootSearchAlbum.ancestorsCacheBase = [Options.by_search_string];
 	// 	rootSearchAlbum.includedFilesByCodesSimpleCombination = {};
 	// 	rootSearchAlbum.includedFilesByCodesSimpleCombination[","] = false;
@@ -152,20 +152,20 @@
 	// };
 
 	Utilities.prototype.initializeSearchAlbumBegin = function(albumHash) {
-		var newSearchAlbum = {};
-		newSearchAlbum.positionsAndMediaInTree = [];
-		newSearchAlbum.media = [];
-		newSearchAlbum.subalbums = [];
-		newSearchAlbum.numsMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-		newSearchAlbum.numsMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
-		newSearchAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
-		newSearchAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
-		newSearchAlbum.cacheBase = albumHash;
-		newSearchAlbum.path = newSearchAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
-		newSearchAlbum.physicalPath = newSearchAlbum.path;
-		newSearchAlbum.numsProtectedMediaInSubTree = {",": JSON.parse(JSON.stringify(imagesAndVideos0))};
-		newSearchAlbum.includedFilesByCodesSimpleCombination = {};
-		newSearchAlbum.includedFilesByCodesSimpleCombination[","] = false;
+		var newSearchAlbum = new Album(albumHash);
+		// newSearchAlbum.positionsAndMediaInTree = [];
+		// newSearchAlbum.media = [];
+		// newSearchAlbum.subalbums = [];
+		// newSearchAlbum.numsMedia = new ImagesAndVideos();
+		// newSearchAlbum.numsMediaInSubTree = new ImagesAndVideos();
+		// newSearchAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
+		// newSearchAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
+		// newSearchAlbum.cacheBase = albumHash;
+		// newSearchAlbum.path = newSearchAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
+		// newSearchAlbum.physicalPath = newSearchAlbum.path;
+		// newSearchAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
+		// newSearchAlbum.includedFilesByCodesSimpleCombination = {};
+		// newSearchAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
 		return newSearchAlbum;
 	};
@@ -185,27 +185,27 @@
 		searchAlbum.ancestorsCacheBase = searchRootAlbum.ancestorsCacheBase.slice();
 		searchAlbum.ancestorsCacheBase.push(searchAlbum.cacheBase);
 
-		PhotoFloat.putAlbumIntoCache(searchAlbum.cacheBase, searchAlbum);
+		// PhotoFloat.putAlbumIntoCache(searchAlbum.cacheBase, searchAlbum);
 	};
 
 	Utilities.initializeSelectionRootAlbum = function() {
 		// prepare the root of the selections albums and put it in the cache
-		var selectionRootAlbum = {};
-		selectionRootAlbum.cacheBase = Options.by_selection_string;
-		selectionRootAlbum.media = [];
-		selectionRootAlbum.numsMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-		selectionRootAlbum.numsMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
-		selectionRootAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
-		selectionRootAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
-		selectionRootAlbum.subalbums = [];
-		selectionRootAlbum.positionsAndMediaInTree = [];
-		selectionRootAlbum.numPositionsInTree = 0;
-		selectionRootAlbum.numsProtectedMediaInSubTree = {",": JSON.parse(JSON.stringify(imagesAndVideos0))};
-		selectionRootAlbum.ancestorsCacheBase = [Options.by_selection_string];
-		selectionRootAlbum.includedFilesByCodesSimpleCombination = {};
-		selectionRootAlbum.includedFilesByCodesSimpleCombination[","] = false;
+		var selectionRootAlbum = new Album(Options.by_selection_string);
+		// selectionRootAlbum.cacheBase = Options.by_selection_string;
+		// selectionRootAlbum.media = [];
+		// selectionRootAlbum.numsMedia = new ImagesAndVideos();
+		// selectionRootAlbum.numsMediaInSubTree = new ImagesAndVideos();
+		// selectionRootAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
+		// selectionRootAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
+		// selectionRootAlbum.subalbums = [];
+		// selectionRootAlbum.positionsAndMediaInTree = [];
+		// selectionRootAlbum.numPositionsInTree = 0;
+		// selectionRootAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
+		// selectionRootAlbum.ancestorsCacheBase = [Options.by_selection_string];
+		// selectionRootAlbum.includedFilesByCodesSimpleCombination = {};
+		// selectionRootAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
-		PhotoFloat.putAlbumIntoCache(selectionRootAlbum.cacheBase, selectionRootAlbum);
+		// PhotoFloat.putAlbumIntoCache(selectionRootAlbum.cacheBase, selectionRootAlbum);
 
 		return selectionRootAlbum;
 	};
@@ -219,21 +219,21 @@
 
 		lastSelectionAlbumIndex ++;
 
-		var newSelectionAlbum = {};
-		newSelectionAlbum.media = [];
-		newSelectionAlbum.numsMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-		newSelectionAlbum.numsMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
-		newSelectionAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
-		newSelectionAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
-		newSelectionAlbum.subalbums = [];
-		newSelectionAlbum.positionsAndMediaInTree = [];
-		newSelectionAlbum.numPositionsInTree = 0;
-		newSelectionAlbum.cacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
-		newSelectionAlbum.path = newSelectionAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
-		newSelectionAlbum.physicalPath = newSelectionAlbum.path;
-		newSelectionAlbum.numsProtectedMediaInSubTree = {",": JSON.parse(JSON.stringify(imagesAndVideos0))};
-		newSelectionAlbum.includedFilesByCodesSimpleCombination = {};
-		newSelectionAlbum.includedFilesByCodesSimpleCombination[","] = false;
+		var newSelectionAlbum = new Album(Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex);
+		// newSelectionAlbum.media = [];
+		// newSelectionAlbum.numsMedia = new ImagesAndVideos();
+		// newSelectionAlbum.numsMediaInSubTree = new ImagesAndVideos();
+		// newSelectionAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
+		// newSelectionAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
+		// newSelectionAlbum.subalbums = [];
+		// newSelectionAlbum.positionsAndMediaInTree = [];
+		// newSelectionAlbum.numPositionsInTree = 0;
+		// newSelectionAlbum.cacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
+		// newSelectionAlbum.path = newSelectionAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
+		// newSelectionAlbum.physicalPath = newSelectionAlbum.path;
+		// newSelectionAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
+		// newSelectionAlbum.includedFilesByCodesSimpleCombination = {};
+		// newSelectionAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
 		selectionRootAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSum(selectionRootAlbum.numsMediaInSubTree, newSelectionAlbum.numsMediaInSubTree);
 		selectionRootAlbum.subalbums.push(newSelectionAlbum);
@@ -247,7 +247,7 @@
 
 		selectionAlbum = newSelectionAlbum;
 
-		PhotoFloat.putAlbumIntoCache(selectionAlbum.cacheBase, newSelectionAlbum);
+		// PhotoFloat.putAlbumIntoCache(selectionAlbum.cacheBase, newSelectionAlbum);
 	};
 
 	Utilities._t = function(id) {
@@ -1757,21 +1757,21 @@
 	};
 
 	Utilities.imagesAndVideosSum = function(imagesAndVideos1, imagesAndVideos2) {
-		var result = JSON.parse(JSON.stringify(imagesAndVideos0));
+		var result = new ImagesAndVideos();
 		result.images = imagesAndVideos1.images + imagesAndVideos2.images;
 		result.videos = imagesAndVideos1.videos + imagesAndVideos2.videos;
 		return result;
 	};
 
 	Utilities.imagesAndVideosSubtract = function(imagesAndVideos1, imagesAndVideos2) {
-		var result = JSON.parse(JSON.stringify(imagesAndVideos0));
+		var result = new ImagesAndVideos();
 		result.images = imagesAndVideos1.images - imagesAndVideos2.images;
 		result.videos = imagesAndVideos1.videos - imagesAndVideos2.videos;
 		return result;
 	};
 
 	Utilities.imagesAndVideosCount = function(mediaList) {
-		var result = JSON.parse(JSON.stringify(imagesAndVideos0));
+		var result = new ImagesAndVideos();
 		for (let i = 0; i < mediaList.length; i ++) {
 			if (mediaList[i].mimeType.indexOf("image/") === 0)
 				result.images += 1;
@@ -2145,7 +2145,7 @@
 	};
 
 	Utilities.prototype.sumUpNumsProtectedMedia = function(numsProtectedMediaInSubTree) {
-		var sum = JSON.parse(JSON.stringify(imagesAndVideos0)), codesComplexcombination;
+		var sum = new ImagesAndVideos(), codesComplexcombination;
 		for (codesComplexcombination in numsProtectedMediaInSubTree) {
 			if (numsProtectedMediaInSubTree.hasOwnProperty(codesComplexcombination) && codesComplexcombination !== ",") {
 				sum = Utilities.imagesAndVideosSum(sum, numsProtectedMediaInSubTree[codesComplexcombination]);

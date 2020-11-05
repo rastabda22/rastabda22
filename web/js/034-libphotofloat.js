@@ -182,6 +182,17 @@
 						type: "GET",
 						dataType: "json",
 						success: function(album) {
+							let indexPosition = jsonRelativeFileName.lastIndexOf(".positions.json");
+							let indexMedia = jsonRelativeFileName.lastIndexOf(".media.json");
+							if (indexPosition >= 0 && indexPosition === jsonRelativeFileName.length - ".positions.json".length) {
+								// positions file
+							} else if (indexMedia >= 0 && indexMedia === jsonRelativeFileName.length - ".media.json".length) {
+								// media file
+								for (let iMedia = 0; iMedia < album.length; iMedia ++)
+									album[iMedia] = new Media(album[iMedia]);
+							} else {
+								album = new Album(album);
+							}
 							resolve_getJsonFile(album);
 						},
 						error: function() {
@@ -287,8 +298,8 @@
 				var promise = PhotoFloat.getJsonFile(jsonFile);
 				promise.then(
 					function unprotectedFileExists(album) {
-						if (album.hasOwnProperty("media"))
-							album.numsMedia = util.imagesAndVideosCount(album.media);
+						// if (album.hasOwnProperty("media"))
+						// 	album.numsMedia = util.imagesAndVideosCount(album.media);
 						album.includedFilesByCodesSimpleCombination = {};
 						album.includedFilesByCodesSimpleCombination[","] = {};
 						if (album.hasOwnProperty("media"))
@@ -320,17 +331,18 @@
 					},
 					function unprotectedFileDoesntExist() {
 						// execution arrives here if the json file doesn't exist
-						var emptyAlbum = {
-							"cacheBase": unprotectedCacheBase,
-							"subalbums": [],
-							"numsMedia": JSON.parse(JSON.stringify(imagesAndVideos0)),
-							"numsMediaInSubTree": JSON.parse(JSON.stringify(imagesAndVideos0)),
-							"sizesOfAlbum": JSON.parse(JSON.stringify(initialSizes)),
-							"sizesOfSubTree": JSON.parse(JSON.stringify(initialSizes)),
-							"numPositionsInTree": 0,
-							// "includedProtectedDirectories": [],
-							"empty": true
-						};
+						var emptyAlbum = new Album(unprotectedCacheBase);
+						// var emptyAlbum = {
+						// 	"cacheBase": unprotectedCacheBase,
+						// 	"subalbums": [],
+						// 	"numsMedia": new ImagesAndVideos(),
+						// 	"numsMediaInSubTree": new ImagesAndVideos(),
+						// 	"sizesOfAlbum": JSON.parse(JSON.stringify(initialSizes)),
+						// 	"sizesOfSubTree": JSON.parse(JSON.stringify(initialSizes)),
+						// 	"numPositionsInTree": 0,
+						// 	// "includedProtectedDirectories": [],
+						// 	"empty": true
+						// };
 						emptyAlbum.includedFilesByCodesSimpleCombination = {};
 						emptyAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
@@ -394,14 +406,14 @@
 
 							album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].codesComplexCombination = protectedAlbum.codesComplexCombination;
 
-							if (! protectedAlbum.hasOwnProperty("numsMedia"))
-								protectedAlbum.numsMedia = util.imagesAndVideosCount(protectedAlbum.media);
+							// if (! protectedAlbum.hasOwnProperty("numsMedia"))
+							// 	protectedAlbum.numsMedia = util.imagesAndVideosCount(protectedAlbum.media);
 
 							if (! album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("protectedAlbumGot")) {
 								if (protectedAlbum.subalbums.length)
 									PhotoFloat.mergeProtectedSubalbums(album, protectedAlbum);
 
-								album.numsMedia = util.imagesAndVideosSum(album.numsMedia, protectedAlbum.numsMedia);
+								// album.numsMedia = util.imagesAndVideosSum(album.numsMedia, protectedAlbum.numsMedia);
 								album.numsMediaInSubTree = util.imagesAndVideosSum(album.numsMediaInSubTree, protectedAlbum.numsMediaInSubTree);
 								album.sizesOfSubTree = util.sumSizes(album.sizesOfSubTree, protectedAlbum.sizesOfSubTree);
 								album.sizesOfAlbum = util.sumSizes(album.sizesOfAlbum, protectedAlbum.sizesOfAlbum);
@@ -855,8 +867,8 @@
 					} else {
 						var theCodesSimpleCombinationsToGet = PhotoFloat.codesSimpleCombinationsToGet(album, {"getMedia": getMedia, "getPositions": getPositions});
 						if (! theCodesSimpleCombinationsToGet.length) {
-							if (! PhotoFloat.getAlbumFromCache(album.cacheBase))
-								PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
+							// if (! PhotoFloat.getAlbumFromCache(album.cacheBase))
+							// 	PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
 							resolve_continueAddProtectedContent();
 						} else {
 							// prepare and get the protected content from the protected directories
@@ -1248,8 +1260,8 @@
 
 			if (! util.isMapCacheBase(theAlbum.cacheBase))
 				generateAncestorsCacheBase(theAlbum);
-			if (! PhotoFloat.getAlbumFromCache(theAlbum.cacheBase))
-				PhotoFloat.putAlbumIntoCache(theAlbum.cacheBase, theAlbum);
+			// if (! PhotoFloat.getAlbumFromCache(theAlbum.cacheBase))
+			// 	PhotoFloat.putAlbumIntoCache(theAlbum.cacheBase, theAlbum);
 		}
 		//////// end of thingsToBeDoneBeforeResolvingGetAlbum function
 
@@ -1773,7 +1785,7 @@
 											function(theAlbum) {
 												var matchingMedia = [], matchingSubalbums = [], match, indexMedia, indexSubalbums, indexWordsLeft, resultAlbum, indexWords1, ithMedia, ithSubalbum;
 
-												PhotoFloat.putAlbumIntoCache(albumHashes[thisIndexWords][thisIndexAlbums], theAlbum);
+												// PhotoFloat.putAlbumIntoCache(albumHashes[thisIndexWords][thisIndexAlbums], theAlbum);
 
 												resultAlbum = util.cloneObject(theAlbum);
 												// media in the album still has to be filtered according to search criteria
@@ -2034,11 +2046,11 @@
 			function(resolve_endPreparingAlbumAndKeepOn) {
 				// add the various counts
 				resultsAlbumFinal.numsMediaInSubTree = util.imagesAndVideosCount(resultsAlbumFinal.media);
-				resultsAlbumFinal.numsMedia = util.imagesAndVideosCount(resultsAlbumFinal.media);
+				// resultsAlbumFinal.numsMedia = util.imagesAndVideosCount(resultsAlbumFinal.media);
 				resultsAlbumFinal.numPositionsInTree = resultsAlbumFinal.positionsAndMediaInTree.length;
 				// save in the cache array
-				if (! PhotoFloat.getAlbumFromCache(resultsAlbumFinal.cacheBase))
-					PhotoFloat.putAlbumIntoCache(resultsAlbumFinal.cacheBase, resultsAlbumFinal);
+				// if (! PhotoFloat.getAlbumFromCache(resultsAlbumFinal.cacheBase))
+				// 	PhotoFloat.putAlbumIntoCache(resultsAlbumFinal.cacheBase, resultsAlbumFinal);
 
 				var result = PhotoFloat.getMediaIndex(resultsAlbumFinal, mediaFolderHash, mediaHash);
 				if (result === null) {

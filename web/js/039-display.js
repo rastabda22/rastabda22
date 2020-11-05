@@ -23,9 +23,9 @@ var selectionAlbum = {};
 var searchAlbum = {};
 // var scrollbarWidth;
 // var contextMenu = false;
-var imagesAndVideos0 = {"images": 0, "videos": 0};
-var initialSizes = {};
-initialSizes[0] = JSON.parse(JSON.stringify(imagesAndVideos0));
+
+// var initialSizes = {};
+// initialSizes[0] = new ImagesAndVideos();
 var positionMarker = "<marker>position</marker>";
 
 var Options = {};
