@@ -1146,7 +1146,7 @@
 					);
 				selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 			}
-			selectionAlbum.numsMedia = Utilities.imagesAndVideosSum(selectionAlbum.numsMedia, Utilities.imagesAndVideosCount([singleMedia]));
+			selectionAlbum.numsMedia = Utilities.imagesAndVideosCount(selectionAlbum.media);
 			selectionAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numsMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
 			selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
 			selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, singleMedia.fileSizes);
@@ -1184,7 +1184,8 @@
 					singleMedia
 				);
 			selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
-			selectionAlbum.numsMedia = Utilities.imagesAndVideosSubtract(selectionAlbum.numsMedia, Utilities.imagesAndVideosCount([singleMedia]));
+			selectionAlbum.numsMedia = Utilities.imagesAndVideosCount(selectionAlbum.media);
+			// selectionAlbum.numsMedia = Utilities.imagesAndVideosSubtract(selectionAlbum.numsMedia, Utilities.imagesAndVideosCount([singleMedia]));
 			selectionAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numsMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
 			selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
 			selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, singleMedia.fileSizes);
