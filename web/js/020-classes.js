@@ -120,7 +120,8 @@
 				if (! this.hasOwnProperty("includedFilesByCodesSimpleCombination")) {
 					this.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
 				}
-				PhotoFloat.putAlbumIntoCache(this.cacheBase, this);
+				if (this.codesComplexCombination === undefined)
+					PhotoFloat.putAlbumIntoCache(this.cacheBase, this);
 			}
 		}
 	}
