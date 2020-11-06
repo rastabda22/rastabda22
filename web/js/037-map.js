@@ -287,12 +287,12 @@
 			function(ev) {
 				var imgData = JSON.parse(element.attr("data"));
 				ev.stopPropagation();
-				var album = phFl.getAlbumFromCache(imgData.albumCacheBase);
-				for (let iMedia = 0; iMedia < album.media.length; iMedia ++) {
-					if (imgData.mediaHash.split('/').pop() == album.media[iMedia].cacheBase) {
+				var cachedAlbum = phFl.getAlbumFromCache(imgData.albumCacheBase);
+				for (let iMedia = 0; iMedia < cachedAlbum.media.length; iMedia ++) {
+					if (imgData.mediaHash.split('/').pop() == cachedAlbum.media[iMedia].cacheBase) {
 						ev.stopPropagation();
 						ev.preventDefault();
-						TopFunctions.toggleSelectedMedia(album.media[iMedia], '#' + id);
+						TopFunctions.toggleSelectedMedia(cachedAlbum.media[iMedia], '#' + id);
 						break;
 					}
 				}

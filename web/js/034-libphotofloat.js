@@ -83,8 +83,8 @@
 
 		if (PhotoFloat.cache.albums.index.hasOwnProperty(albumCacheBase)) {
 			var cacheLevel = PhotoFloat.cache.albums.index[albumCacheBase];
-			var album = PhotoFloat.cache.albums[cacheLevel][albumCacheBase];
-			return album;
+			var cachedAlbum = PhotoFloat.cache.albums[cacheLevel][albumCacheBase];
+			return cachedAlbum;
 		} else
 			return false;
 	};

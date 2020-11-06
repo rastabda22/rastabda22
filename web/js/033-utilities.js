@@ -959,9 +959,9 @@
 		if (! Utilities.somethingIsSearched())
 			return false;
 		else {
-			var album = searchAlbum.subalbums.find(x => singleMedia.foldersCacheBase.indexOf(x.cacheBase) === 0);
-			if (album !== undefined)
-				return album;
+			var foundAlbum = searchAlbum.subalbums.find(x => singleMedia.foldersCacheBase.indexOf(x.cacheBase) === 0);
+			if (foundAlbum !== undefined)
+				return foundAlbum;
 			else
 				return false;
 		}
