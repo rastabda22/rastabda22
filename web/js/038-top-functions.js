@@ -2917,7 +2917,7 @@
 						mapAlbum.numsMedia = util.imagesAndVideosCount(mapAlbum.media);
 						mapAlbum.numsMediaInSubTree = JSON.parse(JSON.stringify(mapAlbum.numsMedia));
 						mapAlbum.numPositionsInTree = mapAlbum.positionsAndMediaInTree.length;
-						mapAlbum.numsProtectedMediaInSubTree = {",": JSON.parse(JSON.stringify(mapAlbum.numsMedia))};
+						mapAlbum.numsProtectedMediaInSubTree = new NumsProtected({",": mapAlbum.numsMedia});
 						// media must be initially sorted by date not reverse, as json they are in albums
 						util.sortByDate(mapAlbum.media);
 						mapAlbum.mediaNameSort = false;
