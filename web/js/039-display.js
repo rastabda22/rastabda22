@@ -18,9 +18,9 @@ var popupRefreshType = "previousAlbum";
 // var destMedia = null;
 // var destAlbum = null;
 var hashBeginning = "#!/";
-var mapAlbum = {};
-var selectionAlbum = {};
-var searchAlbum = {};
+var mapAlbum = new Album();
+var selectionAlbum = new Album();
+var searchAlbum = new Album();
 // var scrollbarWidth;
 // var contextMenu = false;
 
@@ -133,7 +133,8 @@ $(document).ready(function() {
 				if (isPopup) {
 					// the popup is there: close it
 					$('.leaflet-popup-close-button')[0].click();
-					mapAlbum = {};
+					mapAlbum = util.initializeMapAlbum();
+					// mapAlbum = {};
 					// $('#popup #popup-content').html("");
 				} else {
 					// we are in a map: close it

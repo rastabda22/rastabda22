@@ -2708,7 +2708,8 @@
 					}
 
 					var clickHistory = mapAlbum.clickHistory;
-					mapAlbum = {};
+					mapAlbum = new Album();
+					// mapAlbum = {};
 					playClickElement(clickHistory, 0);
 
 				}
@@ -2915,7 +2916,7 @@
 				function endPreparingMapAlbumAndUpdatePopup() {
 					if (updateMapAlbum) {
 						mapAlbum.numsMedia = util.imagesAndVideosCount(mapAlbum.media);
-						mapAlbum.numsMediaInSubTree = JSON.parse(JSON.stringify(mapAlbum.numsMedia));
+						mapAlbum.numsMediaInSubTree = new ImagesAndVideos(mapAlbum.numsMedia);
 						mapAlbum.numPositionsInTree = mapAlbum.positionsAndMediaInTree.length;
 						mapAlbum.numsProtectedMediaInSubTree = new NumsProtected({",": mapAlbum.numsMedia});
 						// media must be initially sorted by date not reverse, as json they are in albums
@@ -2930,7 +2931,7 @@
 						var rootMapAlbum = phFl.getAlbumFromCache(Options.by_map_string);
 						if (! rootMapAlbum)
 							rootMapAlbum = util.initializeMapRootAlbum();
-						rootMapAlbum.numsMediaInSubTree += JSON.parse(JSON.stringify(mapAlbum.numsMediaInSubTree));
+						rootMapAlbum.numsMediaInSubTree += new ImagesAndVideos(mapAlbum.numsMediaInSubTree);
 						rootMapAlbum.subalbums.push(mapAlbum);
 						rootMapAlbum.positionsAndMediaInTree = util.mergePositionsAndMedia(rootMapAlbum.positionsAndMediaInTree, mapAlbum.positionsAndMediaInTree);
 						rootMapAlbum.numPositionsInTree += mapAlbum.positionsAndMediaInTree.length;

@@ -134,7 +134,7 @@
 				// go up recursively
 				PhotoFloat.addPositionsToSubalbums(subalbum);
 			}
-			// PhotoFloat.putAlbumIntoCache(thisAlbum.cacheBase, thisAlbum);
+			PhotoFloat.putAlbumIntoCache(thisAlbum.cacheBase, thisAlbum);
 		}
 	};
 
@@ -748,7 +748,7 @@
 										album.albumReverseSort = false;
 										util.sortAlbumsMedia(album);
 
-										// PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
+										PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
 
 										resolve_getNextProtectedDirectory();
 									},
@@ -866,8 +866,8 @@
 					} else {
 						var theCodesSimpleCombinationsToGet = PhotoFloat.codesSimpleCombinationsToGet(album, {"getMedia": getMedia, "getPositions": getPositions});
 						if (! theCodesSimpleCombinationsToGet.length) {
-							// if (! PhotoFloat.getAlbumFromCache(album.cacheBase))
-							// 	PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
+							if (! PhotoFloat.getAlbumFromCache(album.cacheBase))
+								PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
 							resolve_continueAddProtectedContent();
 						} else {
 							// prepare and get the protected content from the protected directories
@@ -1167,10 +1167,15 @@
 						}
 						selectorClickedToOpenTheMap = postData.selectorClickedToOpenTheMap;
 						if (util.isMapCacheBase(albumCacheBase)) {
-							mapAlbum = JSON.retrocycle(lzwCompress.unpack(packedAlbum));
+							mapAlbum = new Album(JSON.retrocycle(lzwCompress.unpack(packedAlbum)));
+							// mapAlbum = JSON.retrocycle(lzwCompress.unpack(packedAlbum));
 							resolve_getAlbum(mapAlbum);
+						} else if (util.isSelectionCacheBase(albumCacheBase)) {
+							selectionAlbum = new Album(JSON.retrocycle(lzwCompress.unpack(packedAlbum)));
+							// mapAlbum = JSON.retrocycle(lzwCompress.unpack(packedAlbum));
+							resolve_getAlbum(selectionAlbum);
 						} else {
-							album = JSON.retrocycle(lzwCompress.unpack(packedAlbum));
+							album = new Album(JSON.retrocycle(lzwCompress.unpack(packedAlbum)));
 							resolve_getAlbum(album);
 						}
 					} else {
@@ -1259,8 +1264,8 @@
 
 			if (! util.isMapCacheBase(theAlbum.cacheBase))
 				generateAncestorsCacheBase(theAlbum);
-			// if (! PhotoFloat.getAlbumFromCache(theAlbum.cacheBase))
-			// 	PhotoFloat.putAlbumIntoCache(theAlbum.cacheBase, theAlbum);
+			if (! PhotoFloat.getAlbumFromCache(theAlbum.cacheBase))
+				PhotoFloat.putAlbumIntoCache(theAlbum.cacheBase, theAlbum);
 		}
 		//////// end of thingsToBeDoneBeforeResolvingGetAlbum function
 
@@ -1712,7 +1717,7 @@
 							var searchResultsMedia = [];
 							var searchResultsSubalbums = [];
 
-							// PhotoFloat.putAlbumIntoCache(Options.by_search_string, bySearchRootAlbum);
+							PhotoFloat.putAlbumIntoCache(Options.by_search_string, bySearchRootAlbum);
 
 							// searchAlbum.ancestorsCacheBase = bySearchRootAlbum.ancestorsCacheBase.slice();
 							// searchAlbum.ancestorsCacheBase.push(wordsWithOptionsString);
@@ -1784,7 +1789,7 @@
 											function(theAlbum) {
 												var matchingMedia = [], matchingSubalbums = [], match, indexMedia, indexSubalbums, indexWordsLeft, resultAlbum, indexWords1, ithMedia, ithSubalbum;
 
-												// PhotoFloat.putAlbumIntoCache(albumHashes[thisIndexWords][thisIndexAlbums], theAlbum);
+												PhotoFloat.putAlbumIntoCache(albumHashes[thisIndexWords][thisIndexAlbums], theAlbum);
 
 												resultAlbum = util.cloneObject(theAlbum);
 												// media in the album still has to be filtered according to search criteria
@@ -2048,8 +2053,8 @@
 				resultsAlbumFinal.numsMedia = util.imagesAndVideosCount(resultsAlbumFinal.media);
 				resultsAlbumFinal.numPositionsInTree = resultsAlbumFinal.positionsAndMediaInTree.length;
 				// save in the cache array
-				// if (! PhotoFloat.getAlbumFromCache(resultsAlbumFinal.cacheBase))
-				// 	PhotoFloat.putAlbumIntoCache(resultsAlbumFinal.cacheBase, resultsAlbumFinal);
+				if (! PhotoFloat.getAlbumFromCache(resultsAlbumFinal.cacheBase))
+					PhotoFloat.putAlbumIntoCache(resultsAlbumFinal.cacheBase, resultsAlbumFinal);
 
 				var result = PhotoFloat.getMediaIndex(resultsAlbumFinal, mediaFolderHash, mediaHash);
 				if (result === null) {

@@ -91,7 +91,7 @@
 				if (Utilities.isMapCacheBase(objectOrCacheBase)) {
 					this.clickHistory = [];
 				}
-			} else {
+			} else if (typeof objectOrCacheBase === "object") {
 				Object.keys(objectOrCacheBase).forEach(
 					(key) => {
 						this[key] = objectOrCacheBase[key];
@@ -116,10 +116,12 @@
 				}
 
 			}
-			if (! this.hasOwnProperty("includedFilesByCodesSimpleCombination")) {
-				this.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
+			if (objectOrCacheBase !== undefined) {
+				if (! this.hasOwnProperty("includedFilesByCodesSimpleCombination")) {
+					this.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
+				}
+				PhotoFloat.putAlbumIntoCache(this.cacheBase, this);
 			}
-			PhotoFloat.putAlbumIntoCache(this.cacheBase, this);
 		}
 	}
 
