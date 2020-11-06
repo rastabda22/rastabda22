@@ -134,7 +134,7 @@
 				// go up recursively
 				PhotoFloat.addPositionsToSubalbums(subalbum);
 			}
-			PhotoFloat.putAlbumIntoCache(thisAlbum.cacheBase, thisAlbum);
+			// PhotoFloat.putAlbumIntoCache(thisAlbum.cacheBase, thisAlbum);
 		}
 	};
 
@@ -748,7 +748,7 @@
 										album.albumReverseSort = false;
 										util.sortAlbumsMedia(album);
 
-										PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
+										// PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
 
 										resolve_getNextProtectedDirectory();
 									},
@@ -1717,7 +1717,7 @@
 							var searchResultsMedia = [];
 							var searchResultsSubalbums = [];
 
-							PhotoFloat.putAlbumIntoCache(Options.by_search_string, bySearchRootAlbum);
+							// PhotoFloat.putAlbumIntoCache(Options.by_search_string, bySearchRootAlbum);
 
 							// searchAlbum.ancestorsCacheBase = bySearchRootAlbum.ancestorsCacheBase.slice();
 							// searchAlbum.ancestorsCacheBase.push(wordsWithOptionsString);
