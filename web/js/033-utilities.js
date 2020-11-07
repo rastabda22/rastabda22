@@ -1246,24 +1246,19 @@
 							selectionAlbum.numsProtectedMediaInSubTree = Utilities.sumSizes(selectionAlbum.numsProtectedMediaInSubTree, subalbum.numsProtectedMediaInSubTree);
 
 							let parentCacheBase = subalbum.ancestorsCacheBase[subalbum.ancestorsCacheBase.length - 2];
-							let parentAlbumPromise = PhotoFloat.getAlbum(parentCacheBase, null, {"getMedia": false, "getPositions": false});
-							parentAlbumPromise.then(
-								function(parentAlbum) {
-									Utilities.generateSubalbumNameForSelectionAlbum(parentAlbum, subalbum).then(
-										function([folderName, nameSorting]) {
-											subalbum.selectionAlbumName = folderName;
-											if (subalbum.hasOwnProperty("numPositionsInTree") && subalbum.numPositionsInTree)
-												subalbum.selectionAlbumName += positionMarker;
-											subalbum.selectionAlbumNameSorting = nameSorting;
+							Utilities.generateSubalbumNameForSelectionAlbum(subalbum).then(
+								function([folderName, nameSorting]) {
+									subalbum.selectionAlbumName = folderName;
+									if (subalbum.hasOwnProperty("numPositionsInTree") && subalbum.numPositionsInTree)
+										subalbum.selectionAlbumName += positionMarker;
+									subalbum.selectionAlbumNameSorting = nameSorting;
 
-											Utilities.sortByDate(selectionAlbum.subalbums);
-											selectionAlbum.albumNameSort = false;
-											selectionAlbum.albumReverseSort = false;
-											selectionAlbum.initializeSortPropertiesAndCookies();
-											selectionAlbum.sortAlbumsMedia();
-											resolve_addSubalbum();
-										}
-									);
+									Utilities.sortByDate(selectionAlbum.subalbums);
+									selectionAlbum.albumNameSort = false;
+									selectionAlbum.albumReverseSort = false;
+									selectionAlbum.initializeSortPropertiesAndCookies();
+									selectionAlbum.sortAlbumsMedia();
+									resolve_addSubalbum();
 								}
 							);
 						}
@@ -1931,7 +1926,7 @@
 
 	};
 
-	Utilities.generateSubalbumNameForSelectionAlbum = function(album, subalbum) {
+	Utilities.generateSubalbumNameForSelectionAlbum = function(subalbum) {
 		return new Promise(
 			function (resolve_folderNameAndTitle) {
 				var folderName = "", firstLine = '', secondLine = '';
