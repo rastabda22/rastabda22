@@ -125,7 +125,7 @@
 
 		if (typeof thisAlbum === "undefined")
 			thisAlbum = currentAlbum;
-		var isAlbumWithOneMedia = util.isAlbumWithOneMedia(thisAlbum);
+		var isAlbumWithOneMedia = thisAlbum.isAlbumWithOneMedia();
 		var isSingleMedia = (currentMedia !== null || isAlbumWithOneMedia);
 		var isAnyRootCacheBase = util.isAnyRootCacheBase(thisAlbum.cacheBase);
 		var isSelectionCacheBase = util.isSelectionCacheBase(thisAlbum.cacheBase);
@@ -674,7 +674,7 @@
 		) {
 			$(".select.everything-individual").addClass("hidden");
 		} else {
-			let everythingIndividualPromise = util.recursivelyAllMediaAreSelected(thisAlbum);
+			let everythingIndividualPromise = thisAlbum.recursivelyAllMediaAreSelected();
 			everythingIndividualPromise.then(
 				function() {
 					$(".select.everything-individual").addClass("selected");
@@ -719,10 +719,10 @@
 		$(".select.everything-individual:not(.hidden)").off("click").on(
 			"click",
 			function() {
-				let everythingIndividualPromise = util.recursivelyAllMediaAreSelected(thisAlbum);
+				let everythingIndividualPromise = thisAlbum.recursivelyAllMediaAreSelected();
 				everythingIndividualPromise.then(
 					function() {
-						let firstPromise = util.recursivelyRemoveMedia(thisAlbum);
+						let firstPromise = thisAlbum.recursivelyRemoveMedia();
 						firstPromise.then(
 							function() {
 								if (util.nothingIsSelected())
@@ -738,7 +738,7 @@
 						);
 					},
 					function() {
-						let firstPromise = util.recursivelySelectMedia(thisAlbum);
+						let firstPromise = thisAlbum.recursivelySelectMedia();
 						firstPromise.then(
 							function() {
 								$("#added-individually").stop().fadeIn(
@@ -1110,9 +1110,9 @@
 		if (thisAlbum !== null) {
 			let numPasswords;
 			if (util.isSearchCacheBase(thisAlbum.cacheBase))
-				numPasswords = util.numPasswords(phFl.getAlbumFromCache(Options.by_search_string));
+				numPasswords = phFl.getAlbumFromCache(Options.by_search_string).numPasswords();
 			else
-				numPasswords = util.numPasswords(thisAlbum);
+				numPasswords = thisAlbum.numPasswords();
 
 			if (
 				numPasswords &&
@@ -1247,7 +1247,7 @@
 		else
 			$("#caption").removeClass("hidden-by-option");
 
-		if (Options.hide_bottom_thumbnails && (currentMedia != null || util.isAlbumWithOneMedia(currentAlbum))) {
+		if (Options.hide_bottom_thumbnails && (currentMedia != null || currentAlbum.isAlbumWithOneMedia())) {
 			$("#album-view").addClass("hidden-by-option");
 		} else {
 			$("#album-view").removeClass("hidden-by-option");

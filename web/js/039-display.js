@@ -116,7 +116,7 @@ $(document).ready(function() {
 			// warning: modern browsers will always exit fullscreen when pressing esc
 
 			if (isAuth) {
-				// if (upLink && (currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum)))
+				// if (upLink && (currentMedia !== null || currentAlbum.isAlbumWithOneMedia()))
 				// 	pS.swipeDown(upLink);
 				$('#auth-close')[0].click();
 				// $("#auth-text").hide();
@@ -307,9 +307,9 @@ $(document).ready(function() {
 					) {
 						var numPasswords;
 						if (util.isSearchCacheBase(currentAlbum.cacheBase))
-							numPasswords = util.numPasswords(phFl.getAlbumFromCache(currentAlbum.ancestorsCacheBase[0]));
+							numPasswords = phFl.getAlbumFromCache(currentAlbum.ancestorsCacheBase[0]).numPasswords();
 						else
-							numPasswords = util.numPasswords(currentAlbum);
+							numPasswords = currentAlbum.numPasswords();
 
 						if (
 							numPasswords && PhotoFloat.guessedPasswordCodes.length < numPasswords
@@ -329,7 +329,7 @@ $(document).ready(function() {
 							Options.by_map_string,
 							Options.by_search_string
 						].indexOf(currentAlbum.cacheBase) !== -1 ||
-						currentMedia !== null || util.isAlbumWithOneMedia(currentAlbum) || ! util.nothingIsSelected()
+						currentMedia !== null || currentAlbum.isAlbumWithOneMedia() || ! util.nothingIsSelected()
 					) && ! isMap
 				) {
 					// browsing mode switchers
@@ -381,7 +381,7 @@ $(document).ready(function() {
 				['[', ']'].indexOf(e.key) !== -1 && ! isPopup ||
 				['{', '}'].indexOf(e.key) !== -1
 			) {
-				if (currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)) {
+				if (currentMedia === null && ! currentAlbum.isAlbumWithOneMedia()) {
 					// media and subalbums sort switcher
 
 					var mode;

@@ -746,7 +746,7 @@
 										util.sortByDate(album.subalbums);
 										album.albumNameSort = false;
 										album.albumReverseSort = false;
-										util.sortAlbumsMedia(album);
+										album.sortAlbumsMedia();
 
 										// PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
 
@@ -970,7 +970,7 @@
 									util.sortByDate(album.subalbums);
 									album.albumNameSort = false;
 									album.albumReverseSort = false;
-									util.sortAlbumsMedia(album);
+									album.sortAlbumsMedia();
 
 									resolve_continueAddProtectedContent();
 								}
@@ -2078,8 +2078,8 @@
 		// returns the index of the media identified by the arguments
 		// returns null if no media matches
 
-		util.initializeSortPropertiesAndCookies(theAlbum);
-		util.sortAlbumsMedia(theAlbum);
+		theAlbum.initializeSortPropertiesAndCookies();
+		theAlbum.sortAlbumsMedia();
 
 		var mediaIndex = -1;
 		if (mediaHash !== null) {
@@ -2095,7 +2095,7 @@
 				$("#loading").stop().hide();
 
 				if (
-					util.numPasswords(theAlbum, true) &&
+					theAlbum.numPasswords(true) &&
 					// ! jQuery.isEmptyObject(theAlbum.numsProtectedMediaInSubTree) &&
 					(
 						theAlbum.subalbums.length == 0 ||
@@ -2126,7 +2126,7 @@
 		}
 		if (
 			util.isSearchCacheBase(theAlbum.cacheBase)
-			// && (media === null && ! util.isAlbumWithOneMedia(theAlbum))
+			// && (media === null && ! theAlbum.isAlbumWithOneMedia())
 		) {
 			$("ul#right-menu").addClass("expand");
 			util.focusSearchField();

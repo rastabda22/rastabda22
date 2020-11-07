@@ -281,7 +281,7 @@
 
 			if (
 				components.length > 2 &&
-				(singleMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)) &&
+				(singleMedia === null && ! currentAlbum.isAlbumWithOneMedia()) &&
 				(util.imagesAndVideosTotal(currentAlbum.numsMedia) || currentAlbum.subalbums.length) &&
 				! isMobile.any()
 			) {
@@ -344,7 +344,7 @@
 			}
 
 			if (
-				(singleMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)) &&
+				(singleMedia === null && ! currentAlbum.isAlbumWithOneMedia()) &&
 				(util.imagesAndVideosTotal(currentAlbum.numsMedia) || currentAlbum.subalbums.length) &&
 				! isMobile.any()
 			) {
@@ -400,7 +400,7 @@
 
 			if (
 				components.length > 2 &&
-				(singleMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)) &&
+				(singleMedia === null && ! currentAlbum.isAlbumWithOneMedia()) &&
 				(util.imagesAndVideosTotal(currentAlbum.numsMedia) || currentAlbum.subalbums.length) &&
 				! isMobile.any()
 			) {
@@ -747,7 +747,7 @@
 	};
 
 	TopFunctions.toggleSelectedMedia = function(media, clickedSelector) {
-		if (jQuery.isEmptyObject(selectionAlbum))
+		if (selectionAlbum.isEmpty())
 			util.initializeSelectionAlbum();
 		if (util.singleMediaIsSelected(media)) {
 			util.removeSingleMediaFromSelection(media, clickedSelector);
@@ -761,7 +761,7 @@
 	};
 
 	TopFunctions.toggleSelectedSubalbum = function(subalbum, clickedSelector) {
-		if (jQuery.isEmptyObject(selectionAlbum))
+		if (selectionAlbum.isEmpty())
 			util.initializeSelectionAlbum();
 		if (util.subalbumIsSelected(subalbum)) {
 			let removeSubalbumPromise = util.removeSubalbumFromSelection(subalbum, clickedSelector);
@@ -1286,14 +1286,14 @@
 			currentMedia = album.media[mediaIndex];
 		currentMediaIndex = mediaIndex;
 
-		var isAlbumWithOneMedia = util.isAlbumWithOneMedia(currentAlbum);
+		var isAlbumWithOneMedia = currentAlbum.isAlbumWithOneMedia();
 
 		f.setOptions();
 
 		if (currentMedia === null || typeof currentMedia === "object") {
-			util.initializeSortPropertiesAndCookies(currentAlbum);
+			currentAlbum.initializeSortPropertiesAndCookies();
 			$("#menu-icon").attr("title", util._t("#menu-icon-title"));
-			util.sortAlbumsMedia(currentAlbum);
+			currentAlbum.sortAlbumsMedia();
 		}
 
 		if (currentMedia !== null || isAlbumWithOneMedia) {
@@ -1399,7 +1399,7 @@
 		) {
 			f.setBooleanCookie("albumNameSortRequested", false);
 			f.setBooleanCookie("albumReverseSortRequested", thisAlbum.albumReverseSort);
-			util.sortAlbumsMedia(thisAlbum);
+			thisAlbum.sortAlbumsMedia();
 			f.updateMenu(thisAlbum);
 			TopFunctions.showAlbum("refreshSubalbums");
 			// util.focusSearchField();
@@ -1414,7 +1414,7 @@
 		) {
 			f.setBooleanCookie("albumNameSortRequested", true);
 			f.setBooleanCookie("albumReverseSortRequested", thisAlbum.albumReverseSort);
-			util.sortAlbumsMedia(thisAlbum);
+			thisAlbum.sortAlbumsMedia();
 			f.updateMenu(thisAlbum);
 			TopFunctions.showAlbum("refreshSubalbums");
 			// util.focusSearchField();
@@ -1427,7 +1427,7 @@
 			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			f.setBooleanCookie("albumReverseSortRequested", ! thisAlbum.albumReverseSort);
-			util.sortAlbumsMedia(thisAlbum);
+			thisAlbum.sortAlbumsMedia();
 			f.updateMenu(thisAlbum);
 			TopFunctions.showAlbum("refreshSubalbums");
 			// util.focusSearchField();
@@ -1443,7 +1443,7 @@
 		) {
 			f.setBooleanCookie("mediaNameSortRequested", false);
 			f.setBooleanCookie("mediaReverseSortRequested", thisAlbum.mediaReverseSort);
-			util.sortAlbumsMedia(thisAlbum);
+			thisAlbum.sortAlbumsMedia();
 			f.updateMenu(thisAlbum);
 			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
 				TopFunctions.showAlbum("refreshMedia");
@@ -1462,7 +1462,7 @@
 		) {
 			f.setBooleanCookie("mediaNameSortRequested", true);
 			f.setBooleanCookie("mediaReverseSortRequested", thisAlbum.mediaReverseSort);
-			util.sortAlbumsMedia(thisAlbum);
+			thisAlbum.sortAlbumsMedia();
 			f.updateMenu(thisAlbum);
 			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
 				TopFunctions.showAlbum("refreshMedia");
@@ -1477,7 +1477,7 @@
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			f.setBooleanCookie("mediaReverseSortRequested", ! f.getBooleanCookie("mediaReverseSortRequested"));
 
-			util.sortAlbumsMedia(thisAlbum);
+			thisAlbum.sortAlbumsMedia();
 			f.updateMenu(thisAlbum);
 			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
 				TopFunctions.showAlbum("refreshMedia");
@@ -2075,10 +2075,10 @@
 								var ithSubalbum = currentAlbum.subalbums[iSubalbum];
 
 								// generate the subalbum caption
-								let folderName = util.subalbumName(currentAlbum, ithSubalbum);
+								let folderName = currentAlbum.subalbumName(ithSubalbum);
 								let folder = "<span class='folder-name'>" + folderName;
 								if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
-									folderMapTitle = util.folderMapTitle(currentAlbum, ithSubalbum, folderName);
+									folderMapTitle = currentAlbum.folderMapTitle(ithSubalbum, folderName);
 									folderMapTitleWithoutHtmlTags = folderMapTitle.replace(/<[^>]*>?/gm, '');
 									let positionHtml =
 										"<a id='subalbum-map-link-" + iSubalbum + "' >" +
@@ -2313,7 +2313,7 @@
 				);
 		}
 
-		if (currentMedia === null && ! util.isAlbumWithOneMedia(currentAlbum)) {
+		if (currentMedia === null && ! currentAlbum.isAlbumWithOneMedia()) {
 			$("#media-view").addClass("hidden");
 			$(".thumb-container").removeClass("current-thumb");
 			$("#album-view").removeClass("media-view-container");
@@ -2353,7 +2353,7 @@
 			util.isMapCacheBase(previousAlbum.cacheBase) &&
 			(
 				previousMedia === null ||
-				util.isAlbumWithOneMedia(previousAlbum)
+				previousAlbum.isAlbumWithOneMedia()
 			) &&
 			fromEscKey ||
 			mapRefreshType == "refresh"
@@ -2819,7 +2819,7 @@
 
 				var indexPositions, imageLoadPromise, mediaNameListElement;
 				if (evt.originalEvent.ctrlKey) {
-					if (! jQuery.isEmptyObject(mapAlbum)) {
+					if (! mapAlbum.isEmpty()) {
 						// control click: remove the points
 
 						mapAlbum.clickHistory.push(clickHistoryElement);
@@ -2869,7 +2869,7 @@
 						function(resolve_imageLoad) {
 							var indexPositions, positionsAndCountsElement;
 
-							if (jQuery.isEmptyObject(mapAlbum) || util.imagesAndVideosTotal(mapAlbum.numsMedia) == 0 || ! evt.originalEvent.shiftKey) {
+							if (mapAlbum.isEmpty() || util.imagesAndVideosTotal(mapAlbum.numsMedia) == 0 || ! evt.originalEvent.shiftKey) {
 								// normal click or shift click without previous content
 
 								mapAlbum = util.initializeMapAlbum();
@@ -2927,9 +2927,9 @@
 						util.sortByDate(mapAlbum.media);
 						mapAlbum.mediaNameSort = false;
 						mapAlbum.mediaReverseSort = false;
-						util.initializeSortPropertiesAndCookies(mapAlbum);
+						mapAlbum.initializeSortPropertiesAndCookies();
 						// now sort them according to options
-						util.sortAlbumsMedia(mapAlbum);
+						mapAlbum.sortAlbumsMedia();
 
 						// update the map root album in cache
 						var rootMapAlbum = phFl.getAlbumFromCache(Options.by_map_string);

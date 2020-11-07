@@ -130,6 +130,8 @@
 					this.subalbums[iSubalbum].sizesOfSubTree = new Sizes(this.subalbums[iSubalbum].sizesOfSubTree);
 				}
 
+			} else if (objectOrCacheBase === undefined) {
+				this.empty = true;
 			}
 
 			if (objectOrCacheBase !== undefined) {
@@ -139,6 +141,10 @@
 				if (this.codesComplexCombination === undefined)
 					PhotoFloat.putAlbumIntoCache(this.cacheBase, this);
 			}
+		}
+
+		isEmpty() {
+			return this.empty !== undefined && this.empty;
 		}
 	}
 
