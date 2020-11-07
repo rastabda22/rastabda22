@@ -1991,7 +1991,7 @@
 					);
 					if (
 						typeof isPhp === "function" && (
-							util.isMapCacheBase(currentAlbum.cacheBase) || util.isSelectionCacheBase(currentAlbum.cacheBase)
+							util.isMapCacheBase(currentAlbum.cacheBase) || util.isSelectionCacheBase(currentAlbum.cacheBase) || PhotoFloat.guessedPasswordsMd5.length
 						)
 					) {
 						// execution enters here if we are using index.php
@@ -2000,7 +2000,7 @@
 							{mediaHash: phFl.encodeHash(currentAlbum.cacheBase, ithMedia)},
 							function (ev) {
 								if (ev.which == 2) {
-									util.openImageFromVirtualAlbumInNewTab(ev.data.mediaHash, currentAlbum);
+									util.openInNewTab(ev.data.mediaHash, currentAlbum);
 									return false;
 								}
 							}
@@ -2212,6 +2212,24 @@
 										function(ev, from) {
 											selectorClickedToOpenTheMap = ev.data.clickedSelector;
 											TopFunctions.generateMapFromSubalbum(ev, from);
+										}
+									);
+								}
+
+								if (
+									typeof isPhp === "function" && (
+										util.isMapCacheBase(currentAlbum.cacheBase) || util.isSelectionCacheBase(currentAlbum.cacheBase) || PhotoFloat.guessedPasswordsMd5.length
+									)
+								) {
+									// execution enters here if we are using index.php
+									$("#" + id).off("auxclick").on(
+										"auxclick",
+										{subfolderHash: subfolderHash},
+										function (ev) {
+											if (ev.which == 2) {
+												util.openInNewTab(ev.data.subfolderHash);
+												return false;
+											}
 										}
 									);
 								}

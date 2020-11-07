@@ -17,16 +17,7 @@
 		);
 	}
 
-	Utilities.prototype.openImageFromVirtualAlbumInNewTab = function(mediaHash, virtualAlbum) {
-		var typeOfPackedAlbum, stringifiedPackedAlbum;
-		var packedAlbum = lzwCompress.pack(JSON.decycle(virtualAlbum));
-		if (typeof packedAlbum === "object") {
-			stringifiedPackedAlbum = packedAlbum.join();
-			typeOfPackedAlbum = "object";
-		} else {
-			typeOfPackedAlbum = "string";
-			stringifiedPackedAlbum = packedAlbum;
-		}
+	Utilities.prototype.openInNewTab = function(mediaHash, virtualAlbum) {
 		var newForm = jQuery(
 			"<form>",
 			{
@@ -35,34 +26,67 @@
 				"target": "_blank",
 				"method": "post"
 			}
-		).append(
-			jQuery(
-				"<input>",
-				{
-					"name": "stringifiedPackedAlbum",
-					"value": stringifiedPackedAlbum,
-					"type": "hidden"
-				}
-			)
-		).append(
-			jQuery(
-				"<input>",
-				{
-					"name": "selectorClickedToOpenTheMap",
-					"value": selectorClickedToOpenTheMap,
-					"type": "hidden"
-				}
-			)
-		).append(
-			jQuery(
-				"<input>",
-				{
-					"name": "typeOfPackedAlbum",
-					"value": typeOfPackedAlbum,
-					"type": "hidden"
-				}
-			)
 		);
+		if (virtualAlbum !== undefined) {
+			var typeOfPackedAlbum, stringifiedPackedAlbum;
+			var packedAlbum = lzwCompress.pack(JSON.decycle(virtualAlbum));
+			if (typeof packedAlbum === "object") {
+				stringifiedPackedAlbum = packedAlbum.join();
+				typeOfPackedAlbum = "object";
+			} else {
+				typeOfPackedAlbum = "string";
+				stringifiedPackedAlbum = packedAlbum;
+			}
+			newForm.append(
+				jQuery(
+					"<input>",
+					{
+						"name": "stringifiedPackedAlbum",
+						"value": stringifiedPackedAlbum,
+						"type": "hidden"
+					}
+				)
+			).append(
+				jQuery(
+					"<input>",
+					{
+						"name": "selectorClickedToOpenTheMap",
+						"value": selectorClickedToOpenTheMap,
+						"type": "hidden"
+					}
+				)
+			).append(
+				jQuery(
+					"<input>",
+					{
+						"name": "typeOfPackedAlbum",
+						"value": typeOfPackedAlbum,
+						"type": "hidden"
+					}
+				)
+			);
+		}
+		if (PhotoFloat.guessedPasswordsMd5.length) {
+			newForm.append(
+				jQuery(
+					"<input>",
+					{
+						"name": "guessedPasswordsMd5",
+						"value": PhotoFloat.guessedPasswordsMd5.join('-'),
+						"type": "hidden"
+					}
+				)
+			).append(
+				jQuery(
+					"<input>",
+					{
+						"name": "guessedPasswordCodes",
+						"value": PhotoFloat.guessedPasswordCodes.join('-'),
+						"type": "hidden"
+					}
+				)
+			);
+		}
 		newForm.hide().appendTo("body").submit().remove();
 		return false;
 	};

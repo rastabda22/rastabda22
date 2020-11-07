@@ -1062,6 +1062,14 @@
 		// getAlbum_error is a function, and is executed when the album cannot be retrieved:
 		// either because it doesn't exist or is a protected one
 
+		if (typeof isPhp === "function" && typeof postData !== "undefined") {
+			if (postData.guessedPasswordsMd5) {
+				PhotoFloat.guessedPasswordsMd5 = postData.guessedPasswordsMd5.split('-');
+				PhotoFloat.guessedPasswordCodes = postData.guessedPasswordCodes.split('-');
+				delete postData.guessedPasswordsMd5;
+			}
+		}
+
 		return new Promise(
 			function(resolve_getAlbum) {
 				var albumCacheBase, album;
@@ -1145,10 +1153,9 @@
 				} else if (util.isMapCacheBase(albumCacheBase) || util.isSelectionCacheBase(albumCacheBase)) {
 					// map albums are not on server:
 					// if the album hasn't been passed as argument and isn't in cache => it could have been passed with POST and be put in postData["packedAlbum"]
-					let stringifiedPackedAlbum, packedAlbum;
 					if (typeof isPhp === "function" && typeof postData !== "undefined") {
+						let stringifiedPackedAlbum, packedAlbum;
 						stringifiedPackedAlbum = postData.stringifiedPackedAlbum;
-						console.log(stringifiedPackedAlbum);
 						if (postData.typeOfPackedAlbum === "object") {
 							packedAlbum = stringifiedPackedAlbum.split(',').map(x => parseInt(x, 10));
 						} else {
@@ -1156,12 +1163,14 @@
 						}
 						selectorClickedToOpenTheMap = postData.selectorClickedToOpenTheMap;
 						if (util.isMapCacheBase(albumCacheBase)) {
-							mapAlbum = JSON.retrocycle(lzwCompress.unpack(packedAlbum));
-							resolve_getAlbum(mapAlbum);
-						} else {
 							album = JSON.retrocycle(lzwCompress.unpack(packedAlbum));
-							resolve_getAlbum(album);
+							mapAlbum = album;
+							resolve_getAlbum(mapAlbum);
+						} else if (util.isSelectionCacheBase(albumCacheBase)) {
+							album = JSON.retrocycle(lzwCompress.unpack(packedAlbum));
+							selectionAlbum = album;
 						}
+						resolve_getAlbum(album);
 					} else {
 						// go to root album
 						// execution arrives here if a map album is reloaded or opened from a link
