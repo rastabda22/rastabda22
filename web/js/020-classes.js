@@ -94,7 +94,8 @@
 				this.positionsAndMediaInTree = [];
 				this.numPositionsInTree = 0;
 				this.numsProtectedMediaInSubTree = new NumsProtected();
-				// this.ancestorsCacheBase = [cacheBase];
+				if (cacheBase.split(Options.cache_folder_separator).length === 1)
+					this.ancestorsCacheBase = [cacheBase];
 				this.path = cacheBase.replace(Options.cache_folder_separator, "/");
 				this.physicalPath = this.path;
 				this.empty = false;
