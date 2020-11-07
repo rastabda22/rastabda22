@@ -186,10 +186,10 @@
 							let indexMedia = jsonRelativeFileName.lastIndexOf(".media.json");
 							if (indexPosition >= 0 && indexPosition === jsonRelativeFileName.length - ".positions.json".length) {
 								// positions file
+								albumOrPositionsOrMedia = albumOrPositionsOrMedia.map(positionAndMedia => new PositionAndMedia(positionAndMedia));
 							} else if (indexMedia >= 0 && indexMedia === jsonRelativeFileName.length - ".media.json".length) {
 								// media file
-								for (let iMedia = 0; iMedia < albumOrPositionsOrMedia.length; iMedia ++)
-									albumOrPositionsOrMedia[iMedia] = new Media(albumOrPositionsOrMedia[iMedia]);
+								albumOrPositionsOrMedia = albumOrPositionsOrMedia.map(singleMedia => new SingleMedia(singleMedia));
 							} else {
 								albumOrPositionsOrMedia = new Album(albumOrPositionsOrMedia);
 							}

@@ -58,8 +58,17 @@
 		}
 	};
 
+	class PositionAndMedia {
+		constructor(object) {
+			Object.keys(object).forEach(
+				(key) => {
+					this[key] = object[key];
+				}
+			);
+		}
+	};
 
-	class Media {
+	class SingleMedia {
 		constructor(object) {
 			Object.keys(object).forEach(
 				(key) => {
@@ -74,7 +83,8 @@
 	class Album {
 		constructor(objectOrCacheBase) {
 			if (typeof objectOrCacheBase === "string") {
-				this.cacheBase = objectOrCacheBase;
+				let cacheBase = objectOrCacheBase;
+				this.cacheBase = cacheBase;
 				this.media = [];
 				this.numsMedia = new ImagesAndVideos();
 				this.numsMediaInSubTree = new ImagesAndVideos();
@@ -84,23 +94,27 @@
 				this.positionsAndMediaInTree = [];
 				this.numPositionsInTree = 0;
 				this.numsProtectedMediaInSubTree = new NumsProtected();
-				this.ancestorsCacheBase = [objectOrCacheBase];
-				this.path = objectOrCacheBase.replace(Options.cache_folder_separator, "/");
+				this.ancestorsCacheBase = [cacheBase];
+				this.path = cacheBase.replace(Options.cache_folder_separator, "/");
 				this.physicalPath = this.path;
 				this.empty = false;
-				if (Utilities.isMapCacheBase(objectOrCacheBase)) {
+				if (Utilities.isMapCacheBase(cacheBase)) {
 					this.clickHistory = [];
 				}
 			} else if (typeof objectOrCacheBase === "object") {
-				Object.keys(objectOrCacheBase).forEach(
+				let object = objectOrCacheBase;
+				Object.keys(object).forEach(
 					(key) => {
-						this[key] = objectOrCacheBase[key];
+						this[key] = object[key];
 					}
 				);
+
 				if (this.hasOwnProperty("media")) {
-					for (let iMedia = 0; iMedia < this.media.length; iMedia ++)
-						this.media[iMedia] = new Media(this.media[iMedia]);
+					this.media = this.media.map(singleMedia => new SingleMedia(singleMedia));
 					this.numsMedia = Utilities.imagesAndVideosCount(this.media);
+				}
+				if (this.hasOwnProperty("positionsAndMediaInTree")) {
+					this.positionsAndMediaInTree = this.positionsAndMediaInTree.map(positionAndMedia => new PositionAndMedia(positionAndMedia));
 				}
 				this.numsMediaInSubTree = new ImagesAndVideos(this.numsMediaInSubTree);
 				this.sizesOfAlbum = new Sizes(this.sizesOfAlbum);
@@ -116,6 +130,7 @@
 				}
 
 			}
+
 			if (objectOrCacheBase !== undefined) {
 				if (! this.hasOwnProperty("includedFilesByCodesSimpleCombination")) {
 					this.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
@@ -127,9 +142,10 @@
 	}
 
 	window.Album = Album;
-	window.Media = Media;
+	window.SingleMedia = SingleMedia;
 	window.ImagesAndVideos = ImagesAndVideos;
 	window.IncludedFiles = IncludedFiles;
 	window.NumsProtected = NumsProtected;
 	window.Sizes = Sizes;
+	window.PositionAndMedia = PositionAndMedia;
 }());
