@@ -832,7 +832,7 @@
 							// 		numProtected += album.numsProtectedMediaInSubTree[codesComplexCombination];
 							// }
 							// if (
-							// 	! PhotoFloat.isEmpty(album) && numProtected == 0 &&
+							// 	! album.isEmpty() && numProtected == 0 &&
 							// 	album.cacheBase !== Options.by_search_string &&
 							// 	! util.isSearchCacheBase(album.cacheBase)
 							// ) {
@@ -894,7 +894,7 @@
 												let promise = PhotoFloat.getSingleProtectedCacheBaseWithExternalMediaAndPositions(protectedCacheBase, album, {"getMedia": getMedia, "getPositions": getPositions});
 												promise.then(
 													function() {
-														if (PhotoFloat.isEmpty(album))
+														if (album.isEmpty())
 															album.empty = false;
 														resolve_ithPromise();
 													},
@@ -1001,12 +1001,12 @@
 		return count;
 	};
 
-	PhotoFloat.hasProtectedContent = function(album) {
+	Album.prototype.hasProtectedContent = function() {
 		if (
-			// album.hasOwnProperty("numsProtectedMediaInSubTree") && (
-			! Object.keys(album.numsProtectedMediaInSubTree).length ||
-			album.numsProtectedMediaInSubTree.hasOwnProperty("") &&
-			Object.keys(album.numsProtectedMediaInSubTree).length == 1
+			// this.hasOwnProperty("numsProtectedMediaInSubTree") && (
+			! Object.keys(this.numsProtectedMediaInSubTree).length ||
+			this.numsProtectedMediaInSubTree.hasOwnProperty("") &&
+			Object.keys(this.numsProtectedMediaInSubTree).length == 1
 			// )
 		)
 			return false;
@@ -1148,7 +1148,7 @@
 					promise = PhotoFloat.getSingleUnprotectedCacheBaseWithExternalMediaAndPositions(albumCacheBase, {"getMedia": getMedia, "getPositions": getPositions});
 					promise.then(
 						function unprotectedAlbumGot(album) {
-							if (PhotoFloat.hasProtectedContent(album)) {
+							if (album.hasProtectedContent()) {
 								var promise = PhotoFloat.addProtectedContent(album, {"getMedia": getMedia, "getPositions": getPositions});
 								promise.then(
 									function() {
@@ -1216,7 +1216,7 @@
 			}
 
 			if (! util.isMapCacheBase(theAlbum.cacheBase))
-				PhotoFloat.generateAncestorsCacheBase(theAlbum);
+				theAlbum.generateAncestorsCacheBase();
 			if (! PhotoFloat.getAlbumFromCache(theAlbum.cacheBase))
 				theAlbum.putAlbumIntoCache(theAlbum.cacheBase);
 		}
@@ -1224,17 +1224,17 @@
 
 	};
 
-	PhotoFloat.generateAncestorsCacheBase = function(album) {
-		if (! album.hasOwnProperty("ancestorsCacheBase")) {
+	Album.prototype.generateAncestorsCacheBase = function() {
+		if (! this.hasOwnProperty("ancestorsCacheBase")) {
 			var i;
-			album.ancestorsCacheBase = [];
-			var splittedCacheBase = album.cacheBase.split(Options.cache_folder_separator);
-			album.ancestorsCacheBase[0] = splittedCacheBase[0];
+			this.ancestorsCacheBase = [];
+			var splittedCacheBase = this.cacheBase.split(Options.cache_folder_separator);
+			this.ancestorsCacheBase[0] = splittedCacheBase[0];
 			var length = splittedCacheBase.length;
-			if (util.isSearchCacheBase(album.cacheBase))
+			if (util.isSearchCacheBase(this.cacheBase))
 				length = 2;
 			for (i = 1; i < length; i ++) {
-				album.ancestorsCacheBase[i] = [album.ancestorsCacheBase[i - 1], splittedCacheBase[i]].join(Options.cache_folder_separator);
+				this.ancestorsCacheBase[i] = [this.ancestorsCacheBase[i - 1], splittedCacheBase[i]].join(Options.cache_folder_separator);
 			}
 		}
 
@@ -1564,7 +1564,7 @@
 						resolve_parseHash([albumFromCache, -1]);
 					} else {
 						// it's not a search without results: everything is ok, resolve!
-						let result = PhotoFloat.getMediaIndex(albumFromCache, mediaFolderHash, mediaHash);
+						let result = albumFromCache.getMediaIndex(mediaFolderHash, mediaHash);
 						if (result === null) {
 							// getMediaIndex arguments don't match any media in the album,
 							// in getMediaIndex either the authentication dialog has been shown or the hash has been changed to the album
@@ -1578,7 +1578,7 @@
 					promise = PhotoFloat.getAlbum(albumHashToGet, reject_parseHash, {"getMedia": true, "getPositions": true});
 					promise.then(
 						function(album) {
-							let result = PhotoFloat.getMediaIndex(album, mediaFolderHash, mediaHash);
+							let result = album.getMediaIndex(mediaFolderHash, mediaHash);
 							if (result === null) {
 								// getMediaIndex arguments don't match any media in the album,
 								// in getMediaIndex either the authentication dialog has been shown or the hash has been changed to the album
@@ -1594,7 +1594,7 @@
 				} else {
 					// it's a search!
 					searchAlbum = util.initializeSearchAlbumBegin(albumHash, mediaFolderHash);
-					PhotoFloat.generateAncestorsCacheBase(searchAlbum);
+					searchAlbum.generateAncestorsCacheBase();
 
 					// possibly we need the stop words, because if some searched word is a stop word it must be removed from the search
 					promise = PhotoFloat.getStopWords();
@@ -2013,7 +2013,7 @@
 				if (! PhotoFloat.getAlbumFromCache(resultsAlbumFinal.cacheBase))
 					resultsAlbumFinal.putAlbumIntoCache(resultsAlbumFinal.cacheBase);
 
-				var result = PhotoFloat.getMediaIndex(resultsAlbumFinal, mediaFolderHash, mediaHash);
+				var result = resultsAlbumFinal.getMediaIndex(mediaFolderHash, mediaHash);
 				if (result === null) {
 					// getMediaIndex arguments don't match any media in the album,
 					// in getMediaIndex either the authentication dialog has been shown or the hash has been changed to the album
@@ -2027,16 +2027,16 @@
 		);
 	};
 
-	PhotoFloat.getMediaIndex = function(theAlbum, mediaFolderHash, mediaHash) {
+	Album.prototype.getMediaIndex = function(mediaFolderHash, mediaHash) {
 		// returns the index of the media identified by the arguments
 		// returns null if no media matches
 
-		theAlbum.initializeSortPropertiesAndCookies();
-		theAlbum.sortAlbumsMedia();
+		this.initializeSortPropertiesAndCookies();
+		this.sortAlbumsMedia();
 
 		var mediaIndex = -1;
 		if (mediaHash !== null) {
-			mediaIndex = theAlbum.media.findIndex(
+			mediaIndex = this.media.findIndex(
 				function(thisMedia) {
 					var matches =
 						thisMedia.cacheBase === mediaHash &&
@@ -2048,11 +2048,11 @@
 				$("#loading").stop().hide();
 
 				if (
-					theAlbum.numPasswords(true) &&
-					// ! jQuery.isEmptyObject(theAlbum.numsProtectedMediaInSubTree) &&
+					this.numPasswords(true) &&
+					// ! jQuery.isEmptyObject(this.numsProtectedMediaInSubTree) &&
 					(
-						theAlbum.subalbums.length == 0 ||
-						util.sumUpNumsProtectedMedia(theAlbum.numsProtectedMediaInSubTree) > util.sumUpNumsProtectedMedia(util.sumNumsProtectedMediaOfArray(theAlbum.subalbums))
+						this.subalbums.length == 0 ||
+						util.sumUpNumsProtectedMedia(this.numsProtectedMediaInSubTree) > util.sumUpNumsProtectedMedia(util.sumNumsProtectedMediaOfArray(this.subalbums))
 					)
 				) {
 					// the media not found could be a protected one, show the authentication dialog, it could be a protected media
@@ -2067,7 +2067,7 @@
 					$("#error-text-image, #error-overlay, #auth-text").fadeOut(
 						2500,
 						function() {
-							window.location.href = "#!" + theAlbum.cacheBase;
+							window.location.href = "#!" + this.cacheBase;
 							// mediaIndex = -1;
 							// keepOn();
 							$("#media-view").fadeIn(100);
@@ -2078,8 +2078,8 @@
 			}
 		}
 		if (
-			util.isSearchCacheBase(theAlbum.cacheBase)
-			// && (media === null && ! theAlbum.isAlbumWithOneMedia())
+			util.isSearchCacheBase(this.cacheBase)
+			// && (media === null && ! y.isAlbumWithOneMedia())
 		) {
 			$("ul#right-menu").addClass("expand");
 			util.focusSearchField();

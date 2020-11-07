@@ -1312,59 +1312,59 @@
 	};
 
 	// this function refer to the need that the html showed be sorted
-	Functions.needAlbumNameSort = function(thisAlbum) {
+	Album.prototype.needAlbumNameSort = function() {
 		var result =
-			! thisAlbum.albumNameSort &&
+			! this.albumNameSort &&
 			Functions.getBooleanCookie("albumNameSortRequested");
 		return result;
 	};
 
-	Functions.needAlbumDateSort = function(thisAlbum) {
+	Album.prototype.needAlbumDateSort = function() {
 		var result =
-			thisAlbum.albumNameSort &&
+			this.albumNameSort &&
 			! Functions.getBooleanCookie("albumNameSortRequested");
 		return result;
 	};
 
-	Functions.needAlbumDateReverseSort = function(thisAlbum) {
+	Album.prototype.needAlbumDateReverseSort = function() {
 		var result =
-			! thisAlbum.albumNameSort &&
-			thisAlbum.albumReverseSort !== Functions.getBooleanCookie("albumReverseSortRequested");
+			! this.albumNameSort &&
+			this.albumReverseSort !== Functions.getBooleanCookie("albumReverseSortRequested");
 		return result;
 	};
 
-	Functions.needAlbumNameReverseSort = function(thisAlbum) {
+	Album.prototype.needAlbumNameReverseSort = function() {
 		var result =
-			thisAlbum.albumNameSort &&
-			thisAlbum.albumReverseSort !== Functions.getBooleanCookie("albumReverseSortRequested");
+			this.albumNameSort &&
+			this.albumReverseSort !== Functions.getBooleanCookie("albumReverseSortRequested");
 		return result;
 	};
 
-	Functions.needMediaNameSort = function(thisAlbum) {
+	Album.prototype.needMediaNameSort = function() {
 		var result =
-			! thisAlbum.mediaNameSort &&
+			! this.mediaNameSort &&
 			Functions.getBooleanCookie("mediaNameSortRequested");
 		return result;
 	};
 
-	Functions.needMediaDateSort = function(thisAlbum) {
+	Album.prototype.needMediaDateSort = function() {
 		var result =
-			thisAlbum.mediaNameSort &&
+			this.mediaNameSort &&
 			! Functions.getBooleanCookie("mediaNameSortRequested");
 		return result;
 	};
 
-	Functions.needMediaDateReverseSort = function(thisAlbum) {
+	Album.prototype.needMediaDateReverseSort = function() {
 		var result =
-			! thisAlbum.mediaNameSort &&
-			thisAlbum.mediaReverseSort !== Functions.getBooleanCookie("mediaReverseSortRequested");
+			! this.mediaNameSort &&
+			this.mediaReverseSort !== Functions.getBooleanCookie("mediaReverseSortRequested");
 		return result;
 	};
 
-	Functions.needMediaNameReverseSort = function(thisAlbum) {
+	Album.prototype.needMediaNameReverseSort = function() {
 		var result =
-			thisAlbum.mediaNameSort &&
-			thisAlbum.mediaReverseSort !== Functions.getBooleanCookie("mediaReverseSortRequested");
+			this.mediaNameSort &&
+			this.mediaReverseSort !== Functions.getBooleanCookie("mediaReverseSortRequested");
 		return result;
 	};
 

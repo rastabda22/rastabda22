@@ -2502,32 +2502,32 @@
 		// album properties reflect the current sorting of album and media objects
 		// json files have subalbums and media sorted by date not reversed
 
-		if (Functions.needAlbumNameSort(this)) {
+		if (this.needAlbumNameSort()) {
 			this.sortByPath();
 			this.albumNameSort = true;
 			this.albumReverseSort = false;
 			// $("li.album-sort.by-name").addClass("selected");
-		} else if (Functions.needAlbumDateSort(this)) {
+		} else if (this.needAlbumDateSort()) {
 			Utilities.sortByDate(this.subalbums);
 			this.albumNameSort = false;
 			this.albumReverseSort = false;
 		}
-		if (Functions.needAlbumDateReverseSort(this) || Functions.needAlbumNameReverseSort(this)) {
+		if (this.needAlbumDateReverseSort() || this.needAlbumNameReverseSort()) {
 			this.subalbums = Utilities.sortReverse(this.subalbums);
 			this.albumReverseSort = ! this.albumReverseSort;
 		}
 
 		if (this.hasOwnProperty("media")) {
-			if (Functions.needMediaNameSort(this)) {
+			if (this.needMediaNameSort()) {
 				Utilities.sortByName(this.media);
 				this.mediaNameSort = true;
 				this.mediaReverseSort = false;
-			} else if (Functions.needMediaDateSort(this)) {
+			} else if (this.needMediaDateSort()) {
 				Utilities.sortByDate(this.media);
 				this.mediaNameSort = false;
 				this.mediaReverseSort = false;
 			}
-			if (Functions.needMediaDateReverseSort(this) || Functions.needMediaNameReverseSort(this)) {
+			if (this.needMediaDateReverseSort() || this.needMediaNameReverseSort()) {
 				this.media = Utilities.sortReverse(this.media);
 				this.mediaReverseSort = ! this.mediaReverseSort;
 			}
