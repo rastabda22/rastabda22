@@ -2104,9 +2104,9 @@
 		}
 	};
 
-	PhotoFloat.mediaHash = function(album, singleMedia) {
-		return singleMedia.cacheBase;
-	};
+	// PhotoFloat.mediaHash = function(album, singleMedia) {
+	// 	return singleMedia.cacheBase;
+	// };
 
 	PhotoFloat.cleanHash = function(hash) {
 		while (hash.length) {
