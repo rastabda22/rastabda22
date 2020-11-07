@@ -1086,7 +1086,7 @@
 				if (album) {
 					if (
 						// map albums and search albums already have all the media and positions
-						util.isMapCacheBase(album.cacheBase) || util.isSearchCacheBase(album.cacheBase) || util.isSelectionCacheBase(album.cacheBase) ||
+						util.isMapCacheBase(albumCacheBase) || util.isSearchCacheBase(albumCacheBase) || util.isSelectionCacheBase(albumCacheBase) ||
 						// the album hasn't unprotected content
 						album.includedFilesByCodesSimpleCombination[","] === false
 					) {
