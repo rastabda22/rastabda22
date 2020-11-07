@@ -747,6 +747,8 @@
 	};
 
 	TopFunctions.toggleSelectedMedia = function(media, clickedSelector) {
+		if (jQuery.isEmptyObject(selectionAlbum))
+			util.initializeSelectionAlbum();
 		if (util.singleMediaIsSelected(media)) {
 			util.removeSingleMediaFromSelection(media, clickedSelector);
 			f.updateMenu();
@@ -759,6 +761,8 @@
 	};
 
 	TopFunctions.toggleSelectedSubalbum = function(subalbum, clickedSelector) {
+		if (jQuery.isEmptyObject(selectionAlbum))
+			util.initializeSelectionAlbum();
 		if (util.subalbumIsSelected(subalbum)) {
 			let removeSubalbumPromise = util.removeSubalbumFromSelection(subalbum, clickedSelector);
 			removeSubalbumPromise.then(

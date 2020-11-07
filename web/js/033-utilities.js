@@ -219,7 +219,7 @@
 
 		lastSelectionAlbumIndex ++;
 
-		var selectionAlbum = new Album(Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex);
+		selectionAlbum = new Album(Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex);
 		// newSelectionAlbum.media = [];
 		// newSelectionAlbum.numsMedia = new ImagesAndVideos();
 		// newSelectionAlbum.numsMediaInSubTree = new ImagesAndVideos();
