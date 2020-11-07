@@ -85,7 +85,7 @@
 		// rootMapAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
 
-		// PhotoFloat.putAlbumIntoCache(rootMapAlbum.cacheBase, rootMapAlbum);
+		// rootMapAlbum.putAlbumIntoCache(rootMapAlbum.cacheBase);
 
 		return rootMapAlbum;
 	};
@@ -146,7 +146,7 @@
 	// 	rootSearchAlbum.includedFilesByCodesSimpleCombination = {};
 	// 	rootSearchAlbum.includedFilesByCodesSimpleCombination[","] = false;
 	//
-	// 	PhotoFloat.putAlbumIntoCache(rootSearchAlbum.cacheBase, rootSearchAlbum);
+	// 	rootSearchAlbum.putAlbumIntoCache(rootSearchAlbum.cacheBase);
 	//
 	// 	return rootSearchAlbum;
 	// };
@@ -185,7 +185,7 @@
 		searchAlbum.ancestorsCacheBase = searchRootAlbum.ancestorsCacheBase.slice();
 		searchAlbum.ancestorsCacheBase.push(searchAlbum.cacheBase);
 
-		// PhotoFloat.putAlbumIntoCache(searchAlbum.cacheBase, searchAlbum);
+		// searchAlbum.putAlbumIntoCache(searchAlbum.cacheBase);
 	};
 
 	Utilities.initializeSelectionRootAlbum = function() {
@@ -205,7 +205,7 @@
 		// selectionRootAlbum.includedFilesByCodesSimpleCombination = {};
 		// selectionRootAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
-		// PhotoFloat.putAlbumIntoCache(selectionRootAlbum.cacheBase, selectionRootAlbum);
+		// selectionRootAlbum.putAlbumIntoCache(selectionRootAlbum.cacheBase);
 
 		return selectionRootAlbum;
 	};
@@ -245,7 +245,7 @@
 		selectionAlbum.ancestorsCacheBase = selectionRootAlbum.ancestorsCacheBase.slice();
 		selectionAlbum.ancestorsCacheBase.push(selectionAlbum.cacheBase);
 
-		// PhotoFloat.putAlbumIntoCache(selectionAlbum.cacheBase, newSelectionAlbum);
+		// newSelectionAlbum.putAlbumIntoCache(selectionAlbum.cacheBase);
 	};
 
 	Utilities._t = function(id) {

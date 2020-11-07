@@ -139,12 +139,60 @@
 					this.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
 				}
 				if (this.codesComplexCombination === undefined)
-					PhotoFloat.putAlbumIntoCache(this.cacheBase, this);
+					this.putAlbumIntoCache(this.cacheBase);
 			}
 		}
 
 		isEmpty() {
 			return this.empty !== undefined && this.empty;
+		}
+
+
+		putAlbumIntoCache = function(albumCacheBase) {
+			if (! Options.hasOwnProperty("js_cache_levels"))
+				Options.js_cache_levels = PhotoFloat.js_cache_levels;
+
+			var done = false, level, cacheLevelsLength = Options.js_cache_levels.length, firstKey;
+			// check if the album is already in cache (it could be there with another media number)
+			// if it is there, remove it
+			if (PhotoFloat.cache.albums.index.hasOwnProperty(albumCacheBase)) {
+				level = PhotoFloat.cache.albums.index[albumCacheBase];
+				delete PhotoFloat.cache.albums[level][albumCacheBase];
+				delete PhotoFloat.cache.albums[level].queue[albumCacheBase];
+				delete PhotoFloat.cache.albums.index[albumCacheBase];
+			}
+
+			if (this.hasOwnProperty("media")) {
+				for (level = 0; level < cacheLevelsLength; level ++) {
+					if (Utilities.imagesAndVideosTotal(this.numsMedia) >= Options.js_cache_levels[level].mediaThreshold) {
+						if (! PhotoFloat.cache.albums.hasOwnProperty(level)) {
+							PhotoFloat.cache.albums[level] = [];
+							PhotoFloat.cache.albums[level].queue = [];
+						}
+						if (PhotoFloat.cache.albums[level].queue.length >= Options.js_cache_levels[level].max) {
+							// remove the first element
+							firstKey = PhotoFloat.cache.albums[level].queue[0];
+							PhotoFloat.cache.albums[level].queue.shift();
+							delete PhotoFloat.cache.albums.index[firstKey];
+							delete PhotoFloat.cache.albums[level][firstKey];
+						}
+						PhotoFloat.cache.albums.index[albumCacheBase] = level;
+						PhotoFloat.cache.albums[level].queue.push(albumCacheBase);
+						PhotoFloat.cache.albums[level][albumCacheBase] = this;
+						done = true;
+						break;
+					}
+				}
+			}
+			if (! done) {
+				if (! PhotoFloat.cache.albums.hasOwnProperty(cacheLevelsLength)) {
+					PhotoFloat.cache.albums[cacheLevelsLength] = [];
+					PhotoFloat.cache.albums[cacheLevelsLength].queue = [];
+				}
+				PhotoFloat.cache.albums.index[albumCacheBase] = cacheLevelsLength;
+				PhotoFloat.cache.albums[cacheLevelsLength].queue.push(albumCacheBase);
+				PhotoFloat.cache.albums[cacheLevelsLength][albumCacheBase] = this;
+			}
 		}
 	}
 
