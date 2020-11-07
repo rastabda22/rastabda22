@@ -924,8 +924,8 @@
 		return cacheBase;
 	};
 
-	Utilities.hasGpsData = function(media) {
-		return media.mimeType.indexOf("image") === 0 && typeof media.metadata.latitude !== "undefined";
+	Utilities.hasGpsData = function(singleMedia) {
+		return singleMedia.mimeType.indexOf("image") === 0 && typeof singleMedia.metadata.latitude !== "undefined";
 	};
 
 
