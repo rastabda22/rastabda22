@@ -1263,28 +1263,27 @@
 			}
 
 			if (! util.isMapCacheBase(theAlbum.cacheBase))
-				generateAncestorsCacheBase(theAlbum);
+				PhotoFloat.generateAncestorsCacheBase(theAlbum);
 			if (! PhotoFloat.getAlbumFromCache(theAlbum.cacheBase))
 				PhotoFloat.putAlbumIntoCache(theAlbum.cacheBase, theAlbum);
 		}
 		//////// end of thingsToBeDoneBeforeResolvingGetAlbum function
 
-		// auxiliary function
-		function generateAncestorsCacheBase(album) {
-			if (! album.hasOwnProperty("ancestorsCacheBase")) {
-				var i;
-				album.ancestorsCacheBase = [];
-				var splittedCacheBase = album.cacheBase.split(Options.cache_folder_separator);
-				album.ancestorsCacheBase[0] = splittedCacheBase[0];
-				for (i = 1; i < splittedCacheBase.length; i ++) {
-					album.ancestorsCacheBase[i] = [album.ancestorsCacheBase[i - 1], splittedCacheBase[i]].join(Options.cache_folder_separator);
-				}
-			}
-
-			return;
-		}
 	};
 
+	PhotoFloat.generateAncestorsCacheBase = function(album) {
+		if (! album.hasOwnProperty("ancestorsCacheBase")) {
+			var i;
+			album.ancestorsCacheBase = [];
+			var splittedCacheBase = album.cacheBase.split(Options.cache_folder_separator);
+			album.ancestorsCacheBase[0] = splittedCacheBase[0];
+			for (i = 1; i < splittedCacheBase.length; i ++) {
+				album.ancestorsCacheBase[i] = [album.ancestorsCacheBase[i - 1], splittedCacheBase[i]].join(Options.cache_folder_separator);
+			}
+		}
+
+		return;
+	};
 	PhotoFloat.prototype.pickRandomMedia = function(theSubalbum, error) {
 		var index;
 		return new Promise(
@@ -1639,6 +1638,7 @@
 				} else {
 					// it's a search!
 					searchAlbum = util.initializeSearchAlbumBegin(albumHash, mediaFolderHash);
+					PhotoFloat.generateAncestorsCacheBase(searchAlbum);
 
 					// possibly we need the stop words, because if some searched word is a stop word it must be removed from the search
 					promise = PhotoFloat.getStopWords();
@@ -1992,6 +1992,7 @@
 															util.sortByDate(searchAlbum.subalbums);
 														}
 													}
+
 													subalbumsAbsentOrGot();
 												}
 											},
