@@ -1277,7 +1277,10 @@
 			album.ancestorsCacheBase = [];
 			var splittedCacheBase = album.cacheBase.split(Options.cache_folder_separator);
 			album.ancestorsCacheBase[0] = splittedCacheBase[0];
-			for (i = 1; i < splittedCacheBase.length; i ++) {
+			var length = splittedCacheBase.length;
+			if (util.isSearchCacheBase(album.cacheBase))
+				length = 2;
+			for (i = 1; i < length; i ++) {
 				album.ancestorsCacheBase[i] = [album.ancestorsCacheBase[i - 1], splittedCacheBase[i]].join(Options.cache_folder_separator);
 			}
 		}
