@@ -96,7 +96,7 @@
 				this.numsProtectedMediaInSubTree = new NumsProtected();
 				if (cacheBase.split(Options.cache_folder_separator).length === 1)
 					this.ancestorsCacheBase = [cacheBase];
-				this.path = cacheBase.replace(Options.cache_folder_separator, "/");
+				// this.path = cacheBase.replace(Options.cache_folder_separator, "/");
 				this.physicalPath = this.path;
 				this.empty = false;
 				if (Utilities.isMapCacheBase(cacheBase)) {
