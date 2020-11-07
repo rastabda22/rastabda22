@@ -1996,7 +1996,7 @@
 												albumName = Utilities.transformAltPlaceName(gottenAlbum.altName);
 											else
 												albumName = gottenAlbum.name;
-											secondLine = secondLine.replace(marker, albumName);
+											secondLine = secondLine.replace(marker, "<a href='" + hashBeginning + gottenAlbum.cacheBase+ "'>" + albumName + "</a>");
 											// $("#subalbums").html($("#subalbums").html().replace(marker, albumName));
 											resolve_ithCacheBasePromise();
 										}
@@ -2031,7 +2031,7 @@
 									let cacheBasePromise = PhotoFloat.getAlbum(subalbum.ancestorsCacheBase[iCacheBase], null, {"getMedia": false, "getPositions": false});
 									cacheBasePromise.then(
 										function(gottenAlbum) {
-											secondLine = secondLine.replace(marker, gottenAlbum.name);
+											secondLine = secondLine.replace(marker, "<a href='" + hashBeginning + gottenAlbum.cacheBase+ "'>" + gottenAlbum.name + "</a>");
 											// $("#subalbums").html($("#subalbums").html().replace(marker, albumName));
 											resolve_ithCacheBasePromise();
 										}
