@@ -219,7 +219,7 @@
 
 		lastSelectionAlbumIndex ++;
 
-		var newSelectionAlbum = new Album(Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex);
+		var selectionAlbum = new Album(Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex);
 		// newSelectionAlbum.media = [];
 		// newSelectionAlbum.numsMedia = new ImagesAndVideos();
 		// newSelectionAlbum.numsMediaInSubTree = new ImagesAndVideos();
@@ -235,17 +235,15 @@
 		// newSelectionAlbum.includedFilesByCodesSimpleCombination = {};
 		// newSelectionAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
-		selectionRootAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSum(selectionRootAlbum.numsMediaInSubTree, newSelectionAlbum.numsMediaInSubTree);
-		selectionRootAlbum.subalbums.push(newSelectionAlbum);
-		selectionRootAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(selectionRootAlbum.positionsAndMediaInTree, newSelectionAlbum.positionsAndMediaInTree);
+		selectionRootAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSum(selectionRootAlbum.numsMediaInSubTree, selectionAlbum.numsMediaInSubTree);
+		selectionRootAlbum.subalbums.push(selectionAlbum);
+		selectionRootAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(selectionRootAlbum.positionsAndMediaInTree, selectionAlbum.positionsAndMediaInTree);
 		selectionRootAlbum.numPositionsInTree = selectionRootAlbum.positionsAndMediaInTree.length;
-		// selectionRootAlbum.numPositionsInTree += newSelectionAlbum.numPositionsInTree;
-		selectionRootAlbum.numsProtectedMediaInSubTree[","] = Utilities.imagesAndVideosSum(selectionRootAlbum.numsProtectedMediaInSubTree[","], newSelectionAlbum.numsProtectedMediaInSubTree[","]);
+		// selectionRootAlbum.numPositionsInTree += selectionAlbum.numPositionsInTree;
+		selectionRootAlbum.numsProtectedMediaInSubTree[","] = Utilities.imagesAndVideosSum(selectionRootAlbum.numsProtectedMediaInSubTree[","], selectionAlbum.numsProtectedMediaInSubTree[","]);
 
-		newSelectionAlbum.ancestorsCacheBase = selectionRootAlbum.ancestorsCacheBase.slice();
-		newSelectionAlbum.ancestorsCacheBase.push(newSelectionAlbum.cacheBase);
-
-		selectionAlbum = newSelectionAlbum;
+		selectionAlbum.ancestorsCacheBase = selectionRootAlbum.ancestorsCacheBase.slice();
+		selectionAlbum.ancestorsCacheBase.push(selectionAlbum.cacheBase);
 
 		// PhotoFloat.putAlbumIntoCache(selectionAlbum.cacheBase, newSelectionAlbum);
 	};
