@@ -272,7 +272,7 @@
 				function (ev) {
 					if (ev.which == 2) {
 						var imgData = JSON.parse(element.attr("data"));
-						util.openImageFromVirtualAlbumInNewTab(imgData.mediaHash, mapAlbum);
+						util.openInNewTab(imgData.mediaHash, mapAlbum);
 						return false;
 					}
 				}
