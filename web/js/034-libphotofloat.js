@@ -363,7 +363,7 @@
 
 							if (! album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("protectedAlbumGot")) {
 								if (protectedAlbum.subalbums.length)
-									PhotoFloat.mergeProtectedSubalbums(album, protectedAlbum);
+									album.mergeProtectedSubalbums(protectedAlbum);
 
 								album.numsMedia = util.imagesAndVideosSum(album.numsMedia, protectedAlbum.numsMedia);
 								album.numsMediaInSubTree = util.imagesAndVideosSum(album.numsMediaInSubTree, protectedAlbum.numsMediaInSubTree);
@@ -511,7 +511,7 @@
 		return result;
 	};
 
-
+	// WARNING: making this function an Album method doesn't work. Why?!?
 	PhotoFloat.codesSimpleCombinationsToGet = function(album, {getMedia, getPositions}) {
 		var iAlbumPassword, iMediaPassword, albumGuessedPassword, mediaGuessedPassword;
 		var albumCode, mediaCode;
@@ -593,6 +593,7 @@
 		return result;
 	};
 
+	// WARNING: making this function an Album method doesn't work. Why?!?
 	PhotoFloat.getNumsProtectedMediaInSubTreeProperty = function(album, theProtectedDirectoriesToGet) {
 
 		return new Promise(
@@ -672,9 +673,9 @@
 		// subalbum.words = util.arrayUnion(subalbum.words, protectedSubalbum.words);
 	};
 
-	PhotoFloat.mergeProtectedSubalbums = function(album, protectedAlbum) {
+	Album.prototype.mergeProtectedSubalbums = function(protectedAlbum) {
 		var cacheBases = [], i, ithProtectedSubalbum;
-		album.subalbums.forEach(
+		this.subalbums.forEach(
 			function(subalbum) {
 				cacheBases.push(subalbum.cacheBase);
 			}
@@ -682,11 +683,11 @@
 		for (i = 0; i < protectedAlbum.subalbums.length; i ++) {
 			ithProtectedSubalbum = protectedAlbum.subalbums[i];
 			if (cacheBases.indexOf(ithProtectedSubalbum.cacheBase) == -1) {
-				album.subalbums.push(ithProtectedSubalbum);
+				this.subalbums.push(ithProtectedSubalbum);
 			// // if media or positions are missing the combination must not be reported as included
-			// } else if (album.hasOwnProperty("media") && album.hasOwnProperty("positionsAndMediaInTree")) {
+			// } else if (this.hasOwnProperty("media") && this.hasOwnProperty("positionsAndMediaInTree")) {
 			} else {
-				album.subalbums.forEach(
+				this.subalbums.forEach(
 					function(subalbum) {
 						if (subalbum.cacheBase == ithProtectedSubalbum.cacheBase)
 							PhotoFloat.mergeProtectedSubalbum(subalbum, ithProtectedSubalbum);
