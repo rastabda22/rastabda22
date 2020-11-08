@@ -2448,13 +2448,13 @@
 			// Jason's code only had the following line
 			//$("#error-text").stop().fadeIn(2500);
 
-			var rootLink = hashBeginning + Options.folders_string;
+			var rootHash = hashBeginning + Options.folders_string;
 
 			$("#album-view").fadeOut(200);
 			$("#media-view").fadeOut(200);
 
 			$("#loading").hide();
-			if (window.location.href == rootLink) {
+			if (window.location.hash == rootHash) {
 				$("#error-text-folder").stop();
 				$("#error-root-folder").stop().fadeIn(2000);
 				$("#powered-by").show();

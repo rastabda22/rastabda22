@@ -1208,11 +1208,11 @@
 							// look for a protected album: something must be there
 							var promise = PhotoFloat.addProtectedContent(emptyAlbum, {"getMedia": getMedia, "getPositions": getPositions});
 							promise.then(
-								function() {
+								function unprotectedAlbumUnexistingProtectedAlbumExisting() {
 									thingsToBeDoneBeforeResolvingGetAlbum(emptyAlbum);
 									resolve_getAlbum(emptyAlbum);
 								},
-								function() {
+								function unprotectedAlbumUnexistingProtectedAlbumUnexisting() {
 									// neither the unprotected nor any protected album exists = nonexistent album
 									getAlbum_error();
 								}
