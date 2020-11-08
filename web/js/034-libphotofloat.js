@@ -1003,9 +1003,9 @@
 
 	Album.prototype.hasProtectedContent = function() {
 		if (
-			Object.keys(album.numsProtectedMediaInSubTree).length > 0 && (
-				! album.numsProtectedMediaInSubTree.hasOwnProperty(",") ||
-				Object.keys(album.numsProtectedMediaInSubTree).length > 1
+			Object.keys(this.numsProtectedMediaInSubTree).length > 0 && (
+				! this.numsProtectedMediaInSubTree.hasOwnProperty(",") ||
+				Object.keys(this.numsProtectedMediaInSubTree).length > 1
 			)
 		)
 			return true;
@@ -1013,11 +1013,11 @@
 			return false;
 	};
 
-	PhotoFloat.prototype.hasMoreProtectedContent = function(album) {
+	Album.prototype.hasMoreProtectedContent = function() {
 		if (
-			Object.keys(album.numsProtectedMediaInSubTree).length > PhotoFloat.guessedPasswordCodes.length && (
-				! album.numsProtectedMediaInSubTree.hasOwnProperty(",") ||
-				Object.keys(album.numsProtectedMediaInSubTree).length > PhotoFloat.guessedPasswordCodes.length + 1
+			Object.keys(this.numsProtectedMediaInSubTree).length > PhotoFloat.guessedPasswordCodes.length && (
+				! this.numsProtectedMediaInSubTree.hasOwnProperty(",") ||
+				Object.keys(this.numsProtectedMediaInSubTree).length > PhotoFloat.guessedPasswordCodes.length + 1
 			)
 		)
 			return true;
