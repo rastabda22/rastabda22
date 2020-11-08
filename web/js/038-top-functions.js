@@ -25,7 +25,7 @@
 		var gpsName = '';
 		var setDocumentTitle = (id === "center" || id === "album");
 
-		f.updateMenu();
+		// f.updateMenu();
 
 		if (id === "album") {
 			$(".media-box#" + id + " .title").addClass("hidden");
@@ -1150,9 +1150,6 @@
 		}
 
 		if (id === "center") {
-
-			f.updateMenu();
-
 			$(".media-box#center .metadata-show").off('click').on('click', f.toggleMetadataFromMouse);
 			$(".media-box#center .metadata-hide").off('click').on('click', f.toggleMetadataFromMouse);
 			$(".media-box#center .metadata").off('click').on('click', f.toggleMetadataFromMouse);
@@ -1234,6 +1231,8 @@
 				TopFunctions.setCaption(singleMedia.metadata.title, singleMedia.metadata.description);
 				TopFunctions.positionCaption('media');
 			}
+
+			f.updateMenu();
 		}
 
 		util.translate();
@@ -2363,7 +2362,6 @@
 		f.setOptions();
 
 		TopFunctions.bindSortEvents(currentAlbum);
-		f.updateMenu();
 
 		// we are in showAlbum
 		// activate the map and the popup when coming back from a map album
@@ -2417,6 +2415,7 @@
 				}
 			);
 		}
+		f.updateMenu();
 	};
 
 	TopFunctions.goFullscreen = function(e) {
