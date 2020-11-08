@@ -1025,10 +1025,6 @@
 			return false;
 	};
 
-	PhotoFloat.isEmpty = function(album) {
-		return album.empty;
-	};
-
 	PhotoFloat.hasUnprotectedContent = function(album) {
 		return album.includedFilesByCodesSimpleCombination[","] !== false;
 	};
