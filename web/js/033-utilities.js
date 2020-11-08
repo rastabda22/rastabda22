@@ -2463,14 +2463,6 @@
 					200,
 					function() {
 						window.location.href = Utilities.upHash();
-
-						// var splittedHash = location.hash.split(Options.cache_folder_separator);
-						// if (splittedHash.length > 2) {
-						// 	splittedHash.pop();
-						// 	window.location.href = splittedHash.join(Options.cache_folder_separator);
-						// } else {
-						// 	window.location.href = rootLink;
-						// }
 					}
 				);
 				$("#error-text-folder, #error-overlay, #auth-text").fadeOut(3500);
