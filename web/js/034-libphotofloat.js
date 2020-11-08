@@ -512,68 +512,6 @@
 	};
 
 
-	// Album.prototype.codesComplexCombinationsToGet = function({getMedia, getPositions}) {
-	// 	var iAlbumPassword, iMediaPassword, albumGuessedPassword, mediaGuessedPassword;
-	// 	var albumCode, mediaCode;
-	// 	var codesComplexCombinationInAlbum;
-	//
-	// 	var result = [];
-	// 	for (codesComplexCombinationInAlbum in this.numsProtectedMediaInSubTree) {
-	// 		if (this.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombinationInAlbum) && codesComplexCombinationInAlbum != "") {
-	// 			for (iAlbumPassword = 0; iAlbumPassword < PhotoFloat.guessedPasswordsMd5.length; iAlbumPassword ++) {
-	// 				for (iMediaPassword = 0; iMediaPassword < PhotoFloat.guessedPasswordsMd5.length; iMediaPassword ++) {
-	// 					albumGuessedPassword = PhotoFloat.guessedPasswordsMd5[iAlbumPassword];
-	// 					albumCode = util.convertMd5ToCode(albumGuessedPassword);
-	// 					mediaGuessedPassword = PhotoFloat.guessedPasswordsMd5[iMediaPassword];
-	// 					mediaCode = util.convertMd5ToCode(mediaGuessedPassword);
-	// 					let [albumCodesComplexCombinationList, mediaCodesComplexCombinationList] = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationInAlbum);
-	// 					let codesSimpleCombinationInAlbum = util.convertCodesComplexCombinationToCodesSimpleCombination(codesComplexCombinationInAlbum);
-	// 					let numProtectedCacheBases = PhotoFloat.getNumProtectedCacheBases(this.numsProtectedMediaInSubTree, codesComplexCombinationInAlbum);
-	// 					if (
-	// 						! albumCodesComplexCombinationList.length &&
-	// 						mediaCodesComplexCombinationList.length &&
-	// 						mediaCodesComplexCombinationList.indexOf(mediaCode) != -1
-	// 						||
-	// 						albumCodesComplexCombinationList.length &&
-	// 						albumCodesComplexCombinationList.indexOf(albumCode) != -1 &&
-	// 						! mediaCodesComplexCombinationList.length
-	// 						||
-	// 						albumCodesComplexCombinationList.length &&
-	// 						mediaCodesComplexCombinationList.length &&
-	// 						albumCodesComplexCombinationList.indexOf(albumCode) != -1 &&
-	// 						mediaCodesComplexCombinationList.indexOf(mediaCode) != -1
-	// 					) {
-	// 						if (
-	// 							! (codesSimpleCombinationInAlbum in this.includedFilesByCodesSimpleCombination)
-	// 							||
-	// 							Object.keys(this.includedFilesByCodesSimpleCombination[codesSimpleCombinationInAlbum]).length < numProtectedCacheBases
-	// 							||
-	// 							getMedia && Object.keys(this.includedFilesByCodesSimpleCombination[codesSimpleCombinationInAlbum]).some(
-	// 								function(number) {
-	// 									number = parseInt(number);
-	// 									var result = ! this.includedFilesByCodesSimpleCombination[codesSimpleCombinationInAlbum][number].this.hasOwnProperty("mediaGot");
-	// 									return result;
-	// 								}
-	// 							)
-	// 							||
-	// 							getPositions && Object.keys(this.includedFilesByCodesSimpleCombination[codesSimpleCombinationInAlbum]).some(
-	// 								function(number) {
-	// 									number = parseInt(number);
-	// 									var result = ! this.includedFilesByCodesSimpleCombination[codesSimpleCombinationInAlbum][number].this.hasOwnProperty("positionsGot");
-	// 									return result;
-	// 								}
-	// 							)
-	// 						) {
-	// 							result.push(codesComplexCombinationInAlbum);
-	// 						}
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// 	return result;
-	// };
-
 	PhotoFloat.codesSimpleCombinationsToGet = function(album, {getMedia, getPositions}) {
 		var iAlbumPassword, iMediaPassword, albumGuessedPassword, mediaGuessedPassword;
 		var albumCode, mediaCode;
