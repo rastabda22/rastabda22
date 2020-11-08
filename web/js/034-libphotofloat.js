@@ -1039,13 +1039,26 @@
 
 	PhotoFloat.hasProtectedContent = function(album) {
 		if (
-			! Object.keys(album.numsProtectedMediaInSubTree).length ||
-			album.numsProtectedMediaInSubTree.hasOwnProperty(",") &&
-			Object.keys(album.numsProtectedMediaInSubTree).length == 1
+			Object.keys(album.numsProtectedMediaInSubTree).length > 0 && (
+				! album.numsProtectedMediaInSubTree.hasOwnProperty(",") ||
+				Object.keys(album.numsProtectedMediaInSubTree).length > 1
+			)
 		)
-			return false;
-		else
 			return true;
+		else
+			return false;
+	};
+
+	PhotoFloat.prototype.hasMoreProtectedContent = function(album) {
+		if (
+			Object.keys(album.numsProtectedMediaInSubTree).length > PhotoFloat.guessedPasswordCodes.length && (
+				! album.numsProtectedMediaInSubTree.hasOwnProperty(",") ||
+				Object.keys(album.numsProtectedMediaInSubTree).length > PhotoFloat.guessedPasswordCodes.length + 1
+			)
+		)
+			return true;
+		else
+			return false;
 	};
 
 	PhotoFloat.isEmpty = function(album) {
@@ -2138,6 +2151,7 @@
 	PhotoFloat.prototype.getStopWords = PhotoFloat.getStopWords;
 	PhotoFloat.prototype.removeStopWords = PhotoFloat.removeStopWords;
 	PhotoFloat.prototype.removeAlbumFromCache = PhotoFloat.removeAlbumFromCache;
+	PhotoFloat.prototype.hasProtectedContent = PhotoFloat.hasProtectedContent;
 
 	/* expose class globally */
 	window.PhotoFloat = PhotoFloat;

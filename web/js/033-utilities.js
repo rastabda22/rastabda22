@@ -2338,8 +2338,12 @@
 			function() {
 				$("#auth-text").hide();
 				$("#album-view, #media-view, #my-modal").css("opacity", "");
-				if (maybeProtectedContent)
+				if (currentAlbum === null) {
+					fromEscKey = true;
+					$(window).hashchange();
+				} else if (maybeProtectedContent) {
 					window.location.href = Utilities.upHash();
+				}
 			}
 		);
 	};
@@ -2351,9 +2355,10 @@
 		$("#identity").attr("title", Utilities._t("#identity-explication"));
 	};
 
-	Utilities.upHash = function() {
+	Utilities.upHash = function(hash) {
 		var resultHash;
-		var hash = window.location.hash;
+		if (hash === undefined)
+			var hash = window.location.hash;
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
 
 		if (mediaHash === null || Utilities.isAlbumWithOneMedia(currentAlbum)) {

@@ -11,6 +11,7 @@ var cacheBaseBeforeBrowsingBySelection = null;
 var windowWidth = $(window).outerWidth();
 var windowHeight = $(window).outerHeight();
 var fromEscKey = false;
+var firstEscKey = true;
 var mapRefreshType = "none";
 var selectorClickedToOpenTheMap = false;
 var popupRefreshType = "previousAlbum";
@@ -85,7 +86,6 @@ $(document).ready(function() {
 	var tF = new TopFunctions();
 	var maxSize;
 	var language;
-	var firstEscKey = true;
 	// var nextLink = "", prevLink = "";
 	var mediaLink = "";
 
@@ -834,7 +834,33 @@ $(document).ready(function() {
 							tF.showAlbumOrMedia(album, mediaIndex);
 						},
 						function() {
-							util.errorThenGoUp();
+							function checkHigherAncestor() {
+								let upHash = util.upHash(hash);
+								if (! hash.length || upHash === hash) {
+									// the top album has been reached and no unprotected nor protected content has been found
+									util.showAuthForm();
+								} else {
+									hash = upHash;
+									let cacheBase = hash.substring(hashBeginning.length)
+									let getAlbumPromise = phFl.getAlbum(cacheBase, checkHigherAncestor, {"getMedia": false, "getPositions": false});
+									getAlbumPromise.then(
+										function(upAlbum) {
+											if (phFl.hasMoreProtectedContent(upAlbum) && ! fromEscKey) {
+												$("#loading").hide();
+												util.showAuthForm();
+											} else {
+												util.errorThenGoUp();
+											}
+										}
+									);
+								}
+							}
+							// end of auxiliary function
+
+							// neither the unprotected nor the protected album exist
+							// the user could have opened a protected album link: the password can be asked, but only if some ancestor album has protected content
+							let hash = location.hash
+							checkHigherAncestor();
 						}
 					);
 				},
