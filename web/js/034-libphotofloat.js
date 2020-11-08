@@ -1039,11 +1039,9 @@
 
 	PhotoFloat.hasProtectedContent = function(album) {
 		if (
-			// album.hasOwnProperty("numsProtectedMediaInSubTree") && (
 			! Object.keys(album.numsProtectedMediaInSubTree).length ||
-			album.numsProtectedMediaInSubTree.hasOwnProperty("") &&
+			album.numsProtectedMediaInSubTree.hasOwnProperty(",") &&
 			Object.keys(album.numsProtectedMediaInSubTree).length == 1
-			// )
 		)
 			return false;
 		else
