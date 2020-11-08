@@ -1003,15 +1003,26 @@
 
 	Album.prototype.hasProtectedContent = function() {
 		if (
-			// this.hasOwnProperty("numsProtectedMediaInSubTree") && (
-			! Object.keys(this.numsProtectedMediaInSubTree).length ||
-			this.numsProtectedMediaInSubTree.hasOwnProperty("") &&
-			Object.keys(this.numsProtectedMediaInSubTree).length == 1
-			// )
+			Object.keys(album.numsProtectedMediaInSubTree).length > 0 && (
+				! album.numsProtectedMediaInSubTree.hasOwnProperty(",") ||
+				Object.keys(album.numsProtectedMediaInSubTree).length > 1
+			)
 		)
-			return false;
-		else
 			return true;
+		else
+			return false;
+	};
+
+	PhotoFloat.prototype.hasMoreProtectedContent = function(album) {
+		if (
+			Object.keys(album.numsProtectedMediaInSubTree).length > PhotoFloat.guessedPasswordCodes.length && (
+				! album.numsProtectedMediaInSubTree.hasOwnProperty(",") ||
+				Object.keys(album.numsProtectedMediaInSubTree).length > PhotoFloat.guessedPasswordCodes.length + 1
+			)
+		)
+			return true;
+		else
+			return false;
 	};
 
 	PhotoFloat.isEmpty = function(album) {
@@ -1172,11 +1183,11 @@
 							// look for a protected album: something must be there
 							var promise = PhotoFloat.addProtectedContent(emptyAlbum, {"getMedia": getMedia, "getPositions": getPositions});
 							promise.then(
-								function() {
+								function unprotectedAlbumUnexistingProtectedAlbumExisting() {
 									thingsToBeDoneBeforeResolvingGetAlbum(emptyAlbum);
 									resolve_getAlbum(emptyAlbum);
 								},
-								function() {
+								function unprotectedAlbumUnexistingProtectedAlbumUnexisting() {
 									// neither the unprotected nor any protected album exists = nonexistent album
 									getAlbum_error();
 								}
@@ -1416,49 +1427,6 @@
 		}
 		return [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash];
 	};
-
-	// PhotoFloat.prototype.geotaggedPhotosExist = function() {
-	// 	return (Options.num_positions_in_tree > 0);
-		// return new Promise(
-		// 	function(resolveGeotaggedPhotosExist) {
-		// 		var self;
-		// 		// this function returns true if the root album has the by gps subalbum
-		// 		if (PhotoFloat.geotaggedPhotosFound !== null) {
-		// 			if (PhotoFloat.geotaggedPhotosFound) {
-		// 				resolveGeotaggedPhotosExist(true);
-		// 			} else {
-		// 				resolveGeotaggedPhotosExist(false);
-		// 			}
-		// 		} else {
-		// 			self = this;
-		// 			// error is executed if no gps json file has been found (but gps json file must exist)
-		// 			var promise = PhotoFloat.getAlbum(
-		// 				Options.folders_string,
-		// 				function() {
-		// 					PhotoFloat.geotaggedPhotosFound = false;
-		// 					resolveGeotaggedPhotosExist(false);
-		// 				},
-		// 				{"getMedia": false, "getPositions": true}
-		// 			);
-		// 			promise.then(
-		// 				function(foldersRootAlbum) {
-		// 					if (! foldersRootAlbum.numPositionsInTree) {
-		// 						// $("#by-gps-view").addClass("hidden");
-		// 						PhotoFloat.geotaggedPhotosFound = false;
-		// 						resolveGeotaggedPhotosExist(false);
-		// 					} else {
-		// 						PhotoFloat.geotaggedPhotosFound = true;
-		// 						resolveGeotaggedPhotosExist(true);
-		// 					}
-		// 				},
-		// 				function() {
-		// 					console.trace();
-		// 				}
-		// 			);
-		// 		}
-		// 	}
-		// );
-	// };
 
 	PhotoFloat.prototype.parseHashAndReturnAlbumAndMedia = function(hash) {
 		return new Promise(
@@ -2147,6 +2115,7 @@
 	PhotoFloat.prototype.getStopWords = PhotoFloat.getStopWords;
 	PhotoFloat.prototype.removeStopWords = PhotoFloat.removeStopWords;
 	PhotoFloat.prototype.removeAlbumFromCache = PhotoFloat.removeAlbumFromCache;
+	PhotoFloat.prototype.hasProtectedContent = PhotoFloat.hasProtectedContent;
 
 	/* expose class globally */
 	window.PhotoFloat = PhotoFloat;

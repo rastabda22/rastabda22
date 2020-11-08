@@ -2331,8 +2331,12 @@
 			function() {
 				$("#auth-text").hide();
 				$("#album-view, #media-view, #my-modal").css("opacity", "");
-				if (maybeProtectedContent)
+				if (currentAlbum === null) {
+					fromEscKey = true;
+					$(window).hashchange();
+				} else if (maybeProtectedContent) {
 					window.location.href = Utilities.upHash();
+				}
 			}
 		);
 	};
@@ -2344,9 +2348,10 @@
 		$("#identity").attr("title", Utilities._t("#identity-explication"));
 	};
 
-	Utilities.upHash = function() {
+	Utilities.upHash = function(hash) {
 		var resultHash;
-		var hash = window.location.hash;
+		if (hash === undefined)
+			var hash = window.location.hash;
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
 
 		if (mediaHash === null || currentAlbum.isAlbumWithOneMedia()) {
@@ -2441,13 +2446,13 @@
 			// Jason's code only had the following line
 			//$("#error-text").stop().fadeIn(2500);
 
-			var rootLink = hashBeginning + Options.folders_string;
+			var rootHash = hashBeginning + Options.folders_string;
 
 			$("#album-view").fadeOut(200);
 			$("#media-view").fadeOut(200);
 
 			$("#loading").hide();
-			if (window.location.href == rootLink) {
+			if (window.location.hash == rootHash) {
 				$("#error-text-folder").stop();
 				$("#error-root-folder").stop().fadeIn(2000);
 				$("#powered-by").show();
@@ -2456,14 +2461,6 @@
 					200,
 					function() {
 						window.location.href = Utilities.upHash();
-
-						// var splittedHash = location.hash.split(Options.cache_folder_separator);
-						// if (splittedHash.length > 2) {
-						// 	splittedHash.pop();
-						// 	window.location.href = splittedHash.join(Options.cache_folder_separator);
-						// } else {
-						// 	window.location.href = rootLink;
-						// }
 					}
 				);
 				$("#error-text-folder, #error-overlay, #auth-text").fadeOut(3500);
