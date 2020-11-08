@@ -1025,10 +1025,6 @@
 			return false;
 	};
 
-	PhotoFloat.hasUnprotectedContent = function(album) {
-		return album.includedFilesByCodesSimpleCombination[","] !== false;
-	};
-
 	PhotoFloat.getAlbum = function(albumOrCacheBase, getAlbum_error, {getMedia = false, getPositions = false}) {
 		// getAlbum_error is a function, and is executed when the album cannot be retrieved:
 		// either because it doesn't exist or is a protected one
