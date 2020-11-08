@@ -1448,7 +1448,7 @@
 			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
 				TopFunctions.showAlbum("refreshMedia");
 			else
-				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2);
+				map.updatePopup(MapFunctions.titleWrapper1 + thisAlbum.generateHtmlForImages() + MapFunctions.titleWrapper2);
 			// util.focusSearchField();
 		}
 		return false;
@@ -1467,7 +1467,7 @@
 			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
 				TopFunctions.showAlbum("refreshMedia");
 			else
-				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2);
+				map.updatePopup(MapFunctions.titleWrapper1 + thisAlbum.generateHtmlForImages() + MapFunctions.titleWrapper2);
 			// util.focusSearchField();
 		}
 		return false;
@@ -1482,7 +1482,7 @@
 			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
 				TopFunctions.showAlbum("refreshMedia");
 			else
-				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(thisAlbum) + MapFunctions.titleWrapper2);
+				map.updatePopup(MapFunctions.titleWrapper1 + thisAlbum.generateHtmlForImages() + MapFunctions.titleWrapper2);
 			// util.focusSearchField();
 		}
 		return false;
@@ -1587,7 +1587,7 @@
 				TopFunctions.showAlbum("refreshMedia");
 
 			if ($('.leaflet-popup').html())
-				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(mapAlbum) + MapFunctions.titleWrapper2);
+				map.updatePopup(MapFunctions.titleWrapper1 + mapAlbum.generateHtmlForImages() + MapFunctions.titleWrapper2);
 			// util.focusSearchField();
 		}
 		return false;
@@ -1644,7 +1644,7 @@
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
 			if ($('.leaflet-popup').html())
-				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(mapAlbum) + MapFunctions.titleWrapper2);
+				map.updatePopup(MapFunctions.titleWrapper1 + mapAlbum.generateHtmlForImages() + MapFunctions.titleWrapper2);
 			// util.focusSearchField();
 		}
 		return false;
@@ -2765,7 +2765,7 @@
 		);
 		promise.then(
 			function() {
-				map.updatePopup(MapFunctions.titleWrapper1 + map.generateHtmlForImages(mapAlbum) + MapFunctions.titleWrapper2);
+				map.updatePopup(MapFunctions.titleWrapper1 + mapAlbum.generateHtmlForImages() + MapFunctions.titleWrapper2);
 				$("#loading").hide();
 			}
 		);

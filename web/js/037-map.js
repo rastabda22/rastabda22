@@ -39,7 +39,7 @@
 		return averageLatLng;
 	};
 
-	MapFunctions.prototype.generateHtmlForImages = function(theAlbum) {
+	Album.prototype.generateHtmlForImages = function() {
 		// we must get the media corresponding to the name in the point
 		// var markerClass;
 		var mediaIndex, mediaHash, albumCacheBase, thumbHeight, thumbWidth, width, height;
@@ -50,14 +50,14 @@
 		else
 			albumViewPadding = parseInt(albumViewPadding);
 
-		for(mediaIndex = 0; mediaIndex < util.imagesAndVideosTotal(theAlbum.numsMedia); mediaIndex ++) {
+		for(mediaIndex = 0; mediaIndex < util.imagesAndVideosTotal(this.numsMedia); mediaIndex ++) {
 
-			ithMedia = theAlbum.media[mediaIndex];
+			ithMedia = this.media[mediaIndex];
 
-			mediaHash = phFl.encodeHash(theAlbum.cacheBase, ithMedia);
-			albumCacheBase = theAlbum.cacheBase;
+			mediaHash = phFl.encodeHash(this.cacheBase, ithMedia);
+			albumCacheBase = this.cacheBase;
 			// var codedHashId = getCodedHashId(photosInAlbumCopy[photoIndex].element);
-			thumbHash = util.chooseThumbnail(theAlbum, ithMedia, Options.media_thumb_size);
+			thumbHash = util.chooseThumbnail(this, ithMedia, Options.media_thumb_size);
 			imgTitle = util.pathJoin([ithMedia.albumName, ithMedia.name]);
 
 			// calculate the width and height values
