@@ -519,11 +519,14 @@
 	PositionsAndMedia.prototype.removePositionAndMediaFromPositionsAndMedia = function(positionAndMediaToRemove) {
 		var matchingPositionAndMediaIndex, matchingMediaIndex;
 		var arrayCacheBases = [];
-		for (let indexMediaName = 0; indexMediaName < positionAndMediaToRemove.mediaNameList.length; indexMediaName ++)
+		for (let indexMediaName = 0; indexMediaName < positionAndMediaToRemove.mediaNameList.length; indexMediaName ++) {
 			arrayCacheBases.push(positionAndMediaToRemove.mediaNameList[indexMediaName].cacheBase);
+		}
 		var arrayAlbumCacheBases = [];
-		for (let indexMediaName = 0; indexMediaName < positionAndMediaToRemove.mediaNameList.length; indexMediaName ++)
-			arrayAlbumCacheBases.push(positionAndMediaToRemove.mediaNameList[indexMediaName].albumCacheBase);
+		for (let indexMediaName = 0; indexMediaName < positionAndMediaToRemove.mediaNameList.length; indexMediaName ++) {
+			if (arrayAlbumCacheBases.indexOf(positionAndMediaToRemove.mediaNameList[indexMediaName].albumCacheBase) === -1)
+				arrayAlbumCacheBases.push(positionAndMediaToRemove.mediaNameList[indexMediaName].albumCacheBase);
+		}
 		if (
 			this.some(
 				function(positionsAndMediaInTreeElement, positionsAndMediaInTreeIndex) {
@@ -553,7 +556,6 @@
 				// remove the position too
 				this.splice(matchingPositionAndMediaIndex, 1);
 		}
-		return this;
 	};
 
 	Album.prototype.recursivelySelectMedia = function() {
@@ -1410,24 +1412,24 @@
 		return chosenMedia;
 	};
 
-	Utilities.prototype.chooseMediaReduction = function(media, id, fullScreenStatus) {
+	SingleMedia.prototype.chooseMediaReduction = function(id, fullScreenStatus) {
 		// chooses the proper reduction to use depending on the container size
 		var container, mediaSrc;
 
-		if (media.mimeType.indexOf("video") === 0) {
-			if (fullScreenStatus && media.name.match(/\.avi$/) === null) {
-				mediaSrc = media.originalMediaPath();
+		if (this.mimeType.indexOf("video") === 0) {
+			if (fullScreenStatus && this.name.match(/\.avi$/) === null) {
+				mediaSrc = this.originalMediaPath();
 			} else {
 				// .avi videos are not played by browsers, use the transcoded one
-				mediaSrc = this.mediaPath(currentAlbum, media, "");
+				mediaSrc = this.mediaPath(currentAlbum, this, "");
 			}
-		} else if (media.mimeType.indexOf("image") === 0) {
+		} else if (this.mimeType.indexOf("image") === 0) {
 			if (fullScreenStatus && Modernizr.fullscreen)
 				container = $(window);
 			else
 				container = $(".media-box#" + id + " .media-box-inner");
 
-			mediaSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
+			mediaSrc = Utilities.chooseReducedPhoto(this, container, fullScreenStatus);
 		}
 
 		return mediaSrc;
@@ -1546,30 +1548,30 @@
 		return Utilities.mediaPath(currentAlbum, currentMedia, nextReductionSize);
 	};
 
-	Utilities.prototype.createMediaHtml = function(media, id, fullScreenStatus) {
+	SingleMedia.prototype.createMediaHtml = function(id, fullScreenStatus) {
 		// creates a media element that can be inserted in DOM (e.g. with append/prepend methods)
 
 		// the actual sizes of the image
-		var mediaWidth = media.metadata.size[0], mediaHeight = media.metadata.size[1];
+		var mediaWidth = this.metadata.size[0], mediaHeight = this.metadata.size[1];
 		var mediaSrc, mediaElement, container;
 		var attrWidth = mediaWidth, attrHeight = mediaHeight;
 
-		if (media.mimeType.indexOf("video") === 0) {
-			if (fullScreenStatus && media.name.match(/\.avi$/) === null) {
-				mediaSrc = media.originalMediaPath();
+		if (this.mimeType.indexOf("video") === 0) {
+			if (fullScreenStatus && this.name.match(/\.avi$/) === null) {
+				mediaSrc = this.originalMediaPath();
 			} else {
 				// .avi videos are not played by browsers, use the transcoded one
-				mediaSrc = this.mediaPath(currentAlbum, media, "");
+				mediaSrc = this.mediaPath(currentAlbum, this, "");
 			}
 
 			mediaElement = $('<video/>', {controls: true });
-		} else if (media.mimeType.indexOf("image") === 0) {
+		} else if (this.mimeType.indexOf("image") === 0) {
 			if (fullScreenStatus && Modernizr.fullscreen)
 				container = $(window);
 			else
 				container = $(".media-box#" + id + " .media-box-inner");
 
-			mediaSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
+			mediaSrc = Utilities.chooseReducedPhoto(this, container, fullScreenStatus);
 
 			if (maxSize) {
 				// correct phisical width and height according to reduction sizes
@@ -1584,9 +1586,9 @@
 
 			mediaElement = $('<img/>');
 			if (this.isFolderCacheBase(currentAlbum.cacheBase))
-				mediaElement.attr("title", media.date);
+				mediaElement.attr("title", this.date);
 			else
-				mediaElement.attr("title", this.pathJoin([media.albumName, media.name]));
+				mediaElement.attr("title", this.pathJoin([this.albumName, this.name]));
 		}
 
 		mediaElement
@@ -1595,7 +1597,7 @@
 			.attr("height", attrHeight)
 			.attr("ratio", mediaWidth / mediaHeight)
 			.attr("src", encodeURI(mediaSrc))
-			.attr("alt", media.name);
+			.attr("alt", this.name);
 
 		return mediaElement[0].outerHTML;
 	};

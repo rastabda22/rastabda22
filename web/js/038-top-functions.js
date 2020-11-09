@@ -1012,8 +1012,8 @@
 				mediaSelector = ".media-box#" + id + " .media-box-inner img";
 			}
 			// is the following line correct for videos?
-			mediaSrc = util.chooseMediaReduction(singleMedia, id, fullScreenStatus);
-			mediaHtml = util.createMediaHtml(singleMedia, id, fullScreenStatus);
+			mediaSrc = singleMedia.chooseMediaReduction(id, fullScreenStatus);
+			mediaHtml = singleMedia.createMediaHtml(id, fullScreenStatus);
 
 			loadEvent = util.chooseTriggerEvent(singleMedia);
 
