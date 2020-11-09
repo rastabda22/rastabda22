@@ -451,8 +451,8 @@
 		// return positionsAndMedia;
 	};
 
-	PositionAndMedia.prototype.matchPositionsAndMediaByPosition = function(positionsAndMedia2) {
-		return (JSON.stringify([this.lat, this.lng]) === JSON.stringify([positionsAndMedia2.lat, positionsAndMedia2.lng]));
+	PositionAndMedia.prototype.matchPositionsAndMediaByPosition = function(positionAndMedia2) {
+		return (JSON.stringify([this.lat, this.lng]) === JSON.stringify([positionAndMedia2.lat, positionAndMedia2.lng]));
 	};
 
 	PositionsAndMedia.prototype.mergePositionsAndMedia = function(newPositionsAndMedia) {
