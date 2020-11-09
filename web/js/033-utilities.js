@@ -1220,8 +1220,8 @@
 			selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 			selectionAlbum.numsMedia.imagesAndVideosSubtract(singleMediaArray.imagesAndVideosCount());
 			selectionAlbum.numsMediaInSubTree.imagesAndVideosSubtract(singleMediaArray.imagesAndVideosCount());
-			selectionAlbum.sizesOfAlbum.subtractSizes(this.fileSizes);
-			selectionAlbum.sizesOfSubTree.subtractSizes(this.fileSizes);
+			selectionAlbum.sizesOfAlbum.subtract(this.fileSizes);
+			selectionAlbum.sizesOfSubTree.subtract(this.fileSizes);
 
 			var singleMediaSelector = "#media-select-box";
 			var otherSelector;
@@ -1325,8 +1325,8 @@
 							}
 							// selectionAlbum.numsMedia.imagesAndVideosSubtract(subalbum.numsMedia);
 							selectionAlbum.numsMediaInSubTree.imagesAndVideosSubtract(subalbum.numsMediaInSubTree);
-							// selectionAlbum.Utilities.subtractSizes(subalbum.sizesOfAlbum);
-							selectionAlbum.sizesOfSubTree.subtractSizes(subalbum.sizesOfSubTree);
+							// selectionAlbum.Utilities.subtract(subalbum.sizesOfAlbum);
+							selectionAlbum.sizesOfSubTree.subtract(subalbum.sizesOfSubTree);
 							selectionAlbum.numsProtectedMediaInSubTree.subtract(subalbum.numsProtectedMediaInSubTree);
 
 							if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
@@ -1461,7 +1461,7 @@
 		}
 	};
 
-	Sizes.prototype.subtractSizes = function(sizes2) {
+	Sizes.prototype.subtract = function(sizes2) {
 		var keys = Object.keys(this);
 		for (var i = 0; i < keys.length; i++)
 			this[keys[i]] = new ImagesAndVideos(
