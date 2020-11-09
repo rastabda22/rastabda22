@@ -132,7 +132,7 @@
 		// newMapAlbum.positionsAndMediaInTree = [];
 		// newMapAlbum.numPositionsInTree = 0;
 		// newMapAlbum.cacheBase = Options.by_map_string + Options.cache_folder_separator + lastMapAlbumIndex + Options.cache_folder_separator + currentAlbum.cacheBase;
-		// newMapAlbum.path = newMapAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
+		newMapAlbum.path = newMapAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
 		// newMapAlbum.physicalPath = newMapAlbum.path;
 		// newMapAlbum.clickHistory = [];
 		// newMapAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
@@ -185,7 +185,7 @@
 		// newSearchAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
 		// newSearchAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
 		// newSearchAlbum.cacheBase = albumHash;
-		// newSearchAlbum.path = newSearchAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
+		newSearchAlbum.path = newSearchAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
 		// newSearchAlbum.physicalPath = newSearchAlbum.path;
 		// newSearchAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
 		// newSearchAlbum.includedFilesByCodesSimpleCombination = {};
@@ -253,7 +253,7 @@
 		// newSelectionAlbum.positionsAndMediaInTree = [];
 		// newSelectionAlbum.numPositionsInTree = 0;
 		// newSelectionAlbum.cacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
-		// newSelectionAlbum.path = newSelectionAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
+		newSelectionAlbum.path = newSelectionAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
 		// newSelectionAlbum.physicalPath = newSelectionAlbum.path;
 		// newSelectionAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
 		// newSelectionAlbum.includedFilesByCodesSimpleCombination = {};
