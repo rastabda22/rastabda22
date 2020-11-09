@@ -1080,8 +1080,11 @@
 						// go to root album
 						// execution arrives here if a map album is reloaded or opened from a link
 						$("#loading").hide();
-						$("#error-nonexistent-map-album").stop().fadeIn(200);
-						$("#error-nonexistent-map-album").fadeOut(
+						let selector = "#error-nonexistent-map-album";
+						if (util.isSelectionCacheBase(albumCacheBase))
+							selector = "#error-nonexistent-selection-album";
+						$(selector).stop().fadeIn(200);
+						$(selector).fadeOut(
 							2000,
 							function () {
 								window.location.href = util.upHash();
