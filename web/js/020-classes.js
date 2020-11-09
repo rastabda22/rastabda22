@@ -128,6 +128,9 @@
 					}
 				);
 
+				if (this.hasOwnProperty("numsMedia")) {
+					this.numsMedia = new ImagesAndVideos(this.numsMedia);
+				}
 				if (this.hasOwnProperty("media")) {
 					// let newMediaArray = new Media(this.media);
 					// newMediaArray = this.media.map(singleMedia => new SingleMedia(singleMedia));
