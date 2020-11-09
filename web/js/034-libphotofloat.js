@@ -139,7 +139,7 @@
 							let indexMedia = jsonRelativeFileName.lastIndexOf(".media.json");
 							if (indexPosition >= 0 && indexPosition === jsonRelativeFileName.length - ".positions.json".length) {
 								// positions file
-								resolve_getJsonFile(new PositionAndMedia(albumOrPositionsOrMedia));
+								resolve_getJsonFile(new PositionsAndMedia(albumOrPositionsOrMedia));
 							} else if (indexMedia >= 0 && indexMedia === jsonRelativeFileName.length - ".media.json".length) {
 								// media file
 								resolve_getJsonFile(new Media(albumOrPositionsOrMedia));
