@@ -1426,24 +1426,28 @@
 	};
 
 	Utilities.sumSizes = function(sizes1, sizes2) {
-		var result = {};
+		var result = new Sizes();
 		var keys = Object.keys(sizes1);
 		for (var i = 0; i < keys.length; i++)
-			result[keys[i]] = {
-				"images": sizes1[keys[i]].images + sizes2[keys[i]].images,
-				"videos": sizes1[keys[i]].videos + sizes2[keys[i]].videos
-			};
+			result[keys[i]] = new ImagesAndVideos(
+				{
+					"images": sizes1[keys[i]].images + sizes2[keys[i]].images,
+					"videos": sizes1[keys[i]].videos + sizes2[keys[i]].videos
+				}
+			);
 		return result;
 	};
 
 	Utilities.subtractSizes = function(sizes1, sizes2) {
-		var result = {};
+		var result = new Sizes();
 		var keys = Object.keys(sizes1);
 		for (var i = 0; i < keys.length; i++)
-			result[keys[i]] = {
-				"images": sizes1[keys[i]].images - sizes2[keys[i]].images,
-				"videos": sizes1[keys[i]].videos - sizes2[keys[i]].videos
-			};
+			result[keys[i]] = new ImagesAndVideos(
+				{
+					"images": sizes1[keys[i]].images - sizes2[keys[i]].images,
+					"videos": sizes1[keys[i]].videos - sizes2[keys[i]].videos
+				}
+			);
 		return result;
 	};
 

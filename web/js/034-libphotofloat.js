@@ -139,14 +139,13 @@
 							let indexMedia = jsonRelativeFileName.lastIndexOf(".media.json");
 							if (indexPosition >= 0 && indexPosition === jsonRelativeFileName.length - ".positions.json".length) {
 								// positions file
-								albumOrPositionsOrMedia = albumOrPositionsOrMedia.map(positionAndMedia => new PositionAndMedia(positionAndMedia));
+								resolve_getJsonFile(new PositionAndMedia(albumOrPositionsOrMedia));
 							} else if (indexMedia >= 0 && indexMedia === jsonRelativeFileName.length - ".media.json".length) {
 								// media file
-								albumOrPositionsOrMedia = albumOrPositionsOrMedia.map(singleMedia => new SingleMedia(singleMedia));
+								resolve_getJsonFile(new Media(albumOrPositionsOrMedia));
 							} else {
-								albumOrPositionsOrMedia = new Album(albumOrPositionsOrMedia);
+								resolve_getJsonFile(new Album(albumOrPositionsOrMedia));
 							}
-							resolve_getJsonFile(albumOrPositionsOrMedia);
 						},
 						error: function() {
 							reject_getJsonFile();
@@ -1069,11 +1068,11 @@
 						}
 						selectorClickedToOpenTheMap = postData.selectorClickedToOpenTheMap;
 						if (util.isMapCacheBase(albumCacheBase)) {
-							album = JSON.retrocycle(lzwCompress.unpack(packedAlbum));
+							album = new Album(JSON.retrocycle(lzwCompress.unpack(packedAlbum)));
 							mapAlbum = album;
 							resolve_getAlbum(mapAlbum);
 						} else if (util.isSelectionCacheBase(albumCacheBase)) {
-							album = JSON.retrocycle(lzwCompress.unpack(packedAlbum));
+							album = new Album(JSON.retrocycle(lzwCompress.unpack(packedAlbum)));
 							selectionAlbum = album;
 						}
 						resolve_getAlbum(album);
