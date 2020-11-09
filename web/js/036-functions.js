@@ -688,7 +688,7 @@
 			"click",
 			function() {
 				if (util.everySubalbumIsSelected(thisAlbum.subalbums) && thisAlbum.media.everyMediaIsSelected()) {
-					util.removeAllMediaFromSelection(thisAlbum.media);
+					thisAlbum.media.removeAllMediaFromSelection();
 					let promise = util.removeAllSubalbumsFromSelection(thisAlbum.subalbums);
 					promise.then(
 						function() {
@@ -705,7 +705,7 @@
 						}
 					);
 				} else {
-					util.addAllMediaToSelection(thisAlbum.media);
+					thisAlbum.media.addAllMediaToSelection();
 					let promise = util.addAllSubalbumsToSelection(thisAlbum.subalbums);
 					promise.then(
 						function() {
@@ -759,11 +759,11 @@
 			"click",
 			function() {
 				if (thisAlbum.media.everyMediaIsSelected()) {
-					util.removeAllMediaFromSelection(thisAlbum.media);
+					thisAlbum.media.removeAllMediaFromSelection();
 					if (util.nothingIsSelected())
 						util.initializeSelectionAlbum();
 				} else {
-					util.addAllMediaToSelection(thisAlbum.media);
+					thisAlbum.media.addAllMediaToSelection();
 				}
 				Functions.updateMenu();
 			}
@@ -795,7 +795,7 @@
 		$(".select.global-reset:not(.hidden)").on(
 			"click",
 			function() {
-				util.removeAllMediaFromSelection(selectionAlbum.media);
+				selectionAlbum.media.removeAllMediaFromSelection();
 				let subalbumsPromise = util.removeAllSubalbumsFromSelection(selectionAlbum.subalbums);
 				subalbumsPromise.then(
 					function allSubalbumsRemoved() {

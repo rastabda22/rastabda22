@@ -559,7 +559,7 @@
 	Album.prototype.recursivelySelectMedia = function() {
 		return new Promise(
 			function (resolve_promise) {
-				Utilities.addAllMediaToSelection(this.media);
+				this.media.addAllMediaToSelection();
 				let promises = [];
 				for (let iSubalbum = 0; iSubalbum < this.subalbums.length; iSubalbum ++) {
 					let ithPromise = new Promise(
@@ -591,7 +591,7 @@
 	Album.prototype.recursivelyRemoveMedia = function() {
 		return new Promise(
 			function (resolve_promise) {
-				Utilities.removeAllMediaFromSelection(this.media);
+				this.media.removeAllMediaFromSelection();
 				let promises = [];
 				for (let iSubalbum = 0; iSubalbum < this.subalbums.length; iSubalbum ++) {
 					let ithPromise = new Promise(
@@ -1115,18 +1115,18 @@
 		}
 	};
 
-	Utilities.addAllMediaToSelection = function(media) {
-		for (let indexMedia = media.length - 1; indexMedia >= 0; indexMedia --) {
-			let singleMedia = media[indexMedia];
-			Utilities.addSingleMediaToSelection(singleMedia, "#media-select-box-" + indexMedia);
+	Media.prototype.addAllMediaToSelection = function() {
+		for (let indexMedia = this.length - 1; indexMedia >= 0; indexMedia --) {
+			let singleMedia = this[indexMedia];
+			singleMedia.addToSelection("#media-select-box-" + indexMedia);
 		}
 	};
 
-	Utilities.removeAllMediaFromSelection = function(media) {
-		if (media !== undefined) {
-			for (let indexMedia = media.length - 1; indexMedia >= 0; indexMedia --) {
-				let singleMedia = media[indexMedia];
-				Utilities.removeSingleMediaFromSelection(singleMedia, "#media-select-box-" + indexMedia);
+	Media.prototype.removeAllMediaFromSelection = function() {
+		if (this !== undefined) {
+			for (let indexMedia = this.length - 1; indexMedia >= 0; indexMedia --) {
+				let singleMedia = this[indexMedia];
+				singleMedia.removeFromSelection("#media-select-box-" + indexMedia);
 			}
 		}
 	};
@@ -1170,21 +1170,21 @@
 	};
 
 
-	Utilities.addSingleMediaToSelection = function(singleMedia, clickedSelector) {
-		if (! singleMedia.isSelected()) {
-			// singleMedia.parent = selectionAlbum;
-			selectionAlbum.media.push(singleMedia);
+	SingleMedia.prototype.addToSelection = function(clickedSelector) {
+		if (! this.isSelected()) {
+			// this.parent = selectionAlbum;
+			selectionAlbum.media.push(this);
 
-			if (singleMedia.hasGpsData()) {
+			if (this.hasGpsData()) {
 				// add the media position
-				selectionAlbum.positionsAndMediaInTree.addSingleMediaToPositionsAndMedia(singleMedia);
+				selectionAlbum.positionsAndMediaInTree.addSingleMediaToPositionsAndMedia(this);
 				selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 			}
-			var singleMediaArray = new Media([singleMedia]);
+			var singleMediaArray = new Media([this]);
 			selectionAlbum.numsMedia.imagesAndVideosSum(singleMediaArray.imagesAndVideosCount());
 			selectionAlbum.numsMediaInSubTree.imagesAndVideosSum(singleMediaArray.imagesAndVideosCount());
-			selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
-			selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, singleMedia.fileSizes);
+			selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, this.fileSizes);
+			selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, this.fileSizes);
 
 			selectionAlbum.media.sortByDate();
 			selectionAlbum.mediaNameSort = false;
@@ -1208,18 +1208,18 @@
 
 	};
 
-	Utilities.removeSingleMediaFromSelection = function(singleMedia, clickedSelector) {
-		if (singleMedia.isSelected()) {
-			var index = selectionAlbum.media.findIndex(x => x.foldersCacheBase === singleMedia.foldersCacheBase && x.cacheBase === singleMedia.cacheBase);
+	SingleMedia.prototype.removeFromSelection = function(clickedSelector) {
+		if (this.isSelected()) {
+			var index = selectionAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
 			selectionAlbum.media.splice(index, 1);
 
-			selectionAlbum.positionsAndMediaInTree.removeSingleMediaFromPositionsAndMedia(singleMedia);
-			var singleMediaArray = new Media([singleMedia]);
+			selectionAlbum.positionsAndMediaInTree.removeSingleMediaFromPositionsAndMedia(this);
+			var singleMediaArray = new Media([this]);
 			selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 			selectionAlbum.numsMedia.imagesAndVideosSubtract(singleMediaArray.imagesAndVideosCount());
 			selectionAlbum.numsMediaInSubTree.imagesAndVideosSubtract(singleMediaArray.imagesAndVideosCount());
-			selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
-			selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, singleMedia.fileSizes);
+			selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, this.fileSizes);
+			selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, this.fileSizes);
 
 			var singleMediaSelector = "#media-select-box";
 			var otherSelector;
@@ -2652,12 +2652,8 @@
 	Utilities.prototype.nothingIsSelected = Utilities.nothingIsSelected;
 	Utilities.prototype.somethingIsSearched = Utilities.somethingIsSearched;
 	Utilities.prototype.somethingIsInMapAlbum = Utilities.somethingIsInMapAlbum;
-	Utilities.prototype.addSingleMediaToSelection = Utilities.addSingleMediaToSelection;
 	Utilities.prototype.addSubalbumToSelection = Utilities.addSubalbumToSelection;
-	Utilities.prototype.removeSingleMediaFromSelection = Utilities.removeSingleMediaFromSelection;
 	Utilities.prototype.removeSubalbumFromSelection = Utilities.removeSubalbumFromSelection;
-	Utilities.prototype.addAllMediaToSelection = Utilities.addAllMediaToSelection;
-	Utilities.prototype.removeAllMediaFromSelection = Utilities.removeAllMediaFromSelection;
 	Utilities.prototype.initializeSelectionAlbum = Utilities.initializeSelectionAlbum;
 	Utilities.prototype.transformAltPlaceName = Utilities.transformAltPlaceName;
 	Utilities.prototype.arrayUnion = Utilities.arrayUnion;

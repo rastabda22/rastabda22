@@ -751,12 +751,12 @@
 		if (selectionAlbum.isEmpty())
 			util.initializeSelectionAlbum();
 		if (singleMedia.isSelected()) {
-			util.removeSingleMediaFromSelection(singleMedia, clickedSelector);
+			singleMedia.removeFromSelection(clickedSelector);
 			f.updateMenu();
 		} else {
 			if (util.nothingIsSelected())
 				util.initializeSelectionAlbum();
-			util.addSingleMediaToSelection(singleMedia, clickedSelector);
+			singleMedia.addToSelection(clickedSelector);
 			f.updateMenu();
 		}
 	};
