@@ -1271,13 +1271,13 @@
 								Utilities.initializeSelectionAlbum();
 							selectionAlbum.subalbums.push(subalbum);
 
-							selectionAlbum.positionsAndMediaInTree.mergePositionsAndMedia(selectionAlbum.positionsAndMediaInTree, subalbum.positionsAndMediaInTree);
+							selectionAlbum.positionsAndMediaInTree.mergePositionsAndMedia(subalbum.positionsAndMediaInTree);
 							selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 							// selectionAlbum.numsMedia.imagesAndVideosSum(subalbum.numsMedia);
 							selectionAlbum.numsMediaInSubTree.imagesAndVideosSum(subalbum.numsMediaInSubTree);
 							// selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
 							selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
-							selectionAlbum.numsProtectedMediaInSubTree = Utilities.sumSizes(selectionAlbum.numsProtectedMediaInSubTree, subalbum.numsProtectedMediaInSubTree);
+							selectionAlbum.numsProtectedMediaInSubTree = Utilities.sumNumsProtectedSizes(selectionAlbum.numsProtectedMediaInSubTree, subalbum.numsProtectedMediaInSubTree);
 
 							let parentCacheBase = subalbum.ancestorsCacheBase[subalbum.ancestorsCacheBase.length - 2];
 							Utilities.generateSubalbumNameForSelectionAlbum(subalbum).then(
@@ -1443,6 +1443,26 @@
 					"videos": sizes1[keys[i]].videos + sizes2[keys[i]].videos
 				}
 			);
+		return result;
+	};
+
+	Utilities.sumNumsProtectedSizes = function(sizes1, sizes2) {
+		var result = new NumsProtected();
+		var keys = Utilities.arrayUnion(Object.keys(sizes1), Object.keys(sizes2));
+		for (var i = 0; i < keys.length; i++) {
+			if (sizes1[keys[i]] !== undefined && sizes2[keys[i]] !== undefined) {
+				result[keys[i]] = new ImagesAndVideos(
+					{
+						"images": sizes1[keys[i]].images + sizes2[keys[i]].images,
+						"videos": sizes1[keys[i]].videos + sizes2[keys[i]].videos
+					}
+				);
+			} else if (sizes1[keys[i]] === undefined) {
+				result[keys[i]] = sizes2[keys[i]];
+			} else {
+				result[keys[i]] = sizes1[keys[i]];
+			}
+		}
 		return result;
 	};
 
