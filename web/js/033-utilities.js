@@ -1320,8 +1320,7 @@
 							selectionAlbum.subalbums.splice(index, 1);
 
 							if (subalbum.positionsAndMediaInTree.length) {
-								selectionAlbum.positionsAndMediaInTree =
-									selectionAlbum.positionsAndMediaInTree.removePositionsAndMediaFromPositionsAndMedia(subalbum.positionsAndMediaInTree);
+								selectionAlbum.positionsAndMediaInTree.removePositionsAndMediaFromPositionsAndMedia(subalbum.positionsAndMediaInTree);
 								selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 							}
 							// selectionAlbum.numsMedia.imagesAndVideosSubtract(subalbum.numsMedia);
