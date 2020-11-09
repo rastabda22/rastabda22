@@ -2198,14 +2198,14 @@
 		$("#media-select-box .select-box").css("right", right.toString() + "px").css("bottom", bottom.toString() + "px");
 	};
 
-	Utilities.prototype.sumUpNumsProtectedMedia = function(numsProtectedMediaInSubTree) {
-		var sum = new ImagesAndVideos(), codesComplexcombination;
-		for (codesComplexcombination in numsProtectedMediaInSubTree) {
-			if (numsProtectedMediaInSubTree.hasOwnProperty(codesComplexcombination) && codesComplexcombination !== ",") {
-				sum.imagesAndVideosSum(numsProtectedMediaInSubTree[codesComplexcombination]);
+	NumsProtected.prototype.sumUpNumsProtectedMedia = function() {
+		var result = new ImagesAndVideos(), codesComplexcombination;
+		for (codesComplexcombination in this) {
+			if (this.hasOwnProperty(codesComplexcombination) && codesComplexcombination !== ",") {
+				result.imagesAndVideosSum(this[codesComplexcombination]);
 			}
 		}
-		return sum.images + sum.videos;
+		return result.images + result.videos;
 	};
 	Utilities.prototype.sumNumsProtectedMediaOfArray = function(arrayOfAlbumsOrSubalbunms) {
 		var result = {}, i, codesComplexcombination, albumOrSubalbum;

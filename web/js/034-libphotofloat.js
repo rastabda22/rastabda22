@@ -1953,7 +1953,7 @@
 					// ! jQuery.isEmptyObject(this.numsProtectedMediaInSubTree) &&
 					(
 						this.subalbums.length == 0 ||
-						util.sumUpNumsProtectedMedia(this.numsProtectedMediaInSubTree) > util.sumUpNumsProtectedMedia(util.sumNumsProtectedMediaOfArray(this.subalbums))
+						this.numsProtectedMediaInSubTree.sumUpNumsProtectedMedia() > this.subalbums.sumUpNumsProtectedMedia(util.sumNumsProtectedMediaOfArray())
 					)
 				) {
 					// the media not found could be a protected one, show the authentication dialog, it could be a protected media
