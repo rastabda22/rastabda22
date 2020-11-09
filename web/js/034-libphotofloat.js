@@ -69,9 +69,9 @@
 		if (thisAlbum.hasOwnProperty("subalbums")) {
 			for (let iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; ++ iSubalbum) {
 				subalbum = thisAlbum.subalbums[iSubalbum];
-				subalbum.positionsAndMediaInTree = [];
+				subalbum.positionsAndMediaInTree = new PositionsAndMedia();
 				for (iPosition = 0; iPosition < positions.length; ++ iPosition) {
-					position = {};
+					position = new PositionAndMedia();
 					position.lat = positions[iPosition].lat;
 					position.lng = positions[iPosition].lng;
 					position.mediaNameList = [];
