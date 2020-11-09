@@ -68,6 +68,15 @@
 		}
 	};
 
+	class PositionsAndMedia extends Array {
+		constructor(positionsAndMedia) {
+			if (Array.isArray(positionsAndMedia))
+				super(... positionsAndMedia.map(positionAndMedia => new PositionAndMedia(positionAndMedia)));
+			else
+				super(positionsAndMedia);
+		}
+	}
+
 	class SingleMedia {
 		constructor(object) {
 			Object.keys(object).forEach(
@@ -79,19 +88,28 @@
 		}
 	}
 
+	class Media extends Array {
+		constructor(media) {
+			if (Array.isArray(media))
+				super(... media.map(singleMedia => new SingleMedia(singleMedia)));
+			else
+				super(media);
+		}
+	}
+
 
 	class Album {
 		constructor(objectOrCacheBase) {
 			if (typeof objectOrCacheBase === "string") {
 				let cacheBase = objectOrCacheBase;
 				this.cacheBase = cacheBase;
-				this.media = [];
+				this.media = new Media([]);
 				this.numsMedia = new ImagesAndVideos();
 				this.numsMediaInSubTree = new ImagesAndVideos();
 				this.sizesOfAlbum = new Sizes();
 				this.sizesOfSubTree = new Sizes();
 				this.subalbums = [];
-				this.positionsAndMediaInTree = [];
+				this.positionsAndMediaInTree = new PositionsAndMedia([]);
 				this.numPositionsInTree = 0;
 				this.numsProtectedMediaInSubTree = new NumsProtected();
 				if (cacheBase.split(Options.cache_folder_separator).length === 1)
@@ -111,11 +129,16 @@
 				);
 
 				if (this.hasOwnProperty("media")) {
-					this.media = this.media.map(singleMedia => new SingleMedia(singleMedia));
-					this.numsMedia = Utilities.imagesAndVideosCount(this.media);
+					// let newMediaArray = new Media(this.media);
+					// newMediaArray = this.media.map(singleMedia => new SingleMedia(singleMedia));
+					// this.media = newMediaArray;
+					this.media = new Media(this.media);;
+
+					this.numsMedia = this.media.imagesAndVideosCount();
 				}
 				if (this.hasOwnProperty("positionsAndMediaInTree")) {
-					this.positionsAndMediaInTree = this.positionsAndMediaInTree.map(positionAndMedia => new PositionAndMedia(positionAndMedia));
+					this.positionsAndMediaInTree = new PositionsAndMedia(this.positionsAndMediaInTree);
+					// this.positionsAndMediaInTree = this.positionsAndMediaInTree.map(positionAndMedia => new PositionAndMedia(positionAndMedia));
 				}
 				this.numsMediaInSubTree = new ImagesAndVideos(this.numsMediaInSubTree);
 				this.sizesOfAlbum = new Sizes(this.sizesOfAlbum);
@@ -164,7 +187,7 @@
 
 			if (this.hasOwnProperty("media")) {
 				for (level = 0; level < cacheLevelsLength; level ++) {
-					if (Utilities.imagesAndVideosTotal(this.numsMedia) >= Options.js_cache_levels[level].mediaThreshold) {
+					if (this.numsMedia.imagesAndVideosTotal() >= Options.js_cache_levels[level].mediaThreshold) {
 						if (! PhotoFloat.cache.albums.hasOwnProperty(level)) {
 							PhotoFloat.cache.albums[level] = [];
 							PhotoFloat.cache.albums[level].queue = [];
@@ -198,9 +221,11 @@
 
 	window.Album = Album;
 	window.SingleMedia = SingleMedia;
+	window.Media = Media;
 	window.ImagesAndVideos = ImagesAndVideos;
 	window.IncludedFiles = IncludedFiles;
 	window.NumsProtected = NumsProtected;
 	window.Sizes = Sizes;
 	window.PositionAndMedia = PositionAndMedia;
+	window.PositionsAndMedia = PositionsAndMedia;
 }());

@@ -140,12 +140,12 @@
 		// newMapAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
 
-		mapRootAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSum(mapRootAlbum.numsMediaInSubTree, newMapAlbum.numsMediaInSubTree);
+		mapRootAlbum.numsMediaInSubTree.imagesAndVideosSum(newMapAlbum.numsMediaInSubTree);
 		mapRootAlbum.subalbums.push(newMapAlbum);
-		mapRootAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(mapRootAlbum.positionsAndMediaInTree, newMapAlbum.positionsAndMediaInTree);
+		mapRootAlbum.positionsAndMediaInTree.mergePositionsAndMedia(newMapAlbum.positionsAndMediaInTree);
 		mapRootAlbum.numPositionsInTree = mapRootAlbum.positionsAndMediaInTree.length;
 		// mapRootAlbum.numPositionsInTree += newMapAlbum.numPositionsInTree;
-		mapRootAlbum.numsProtectedMediaInSubTree[","] = Utilities.imagesAndVideosSum(mapRootAlbum.numsProtectedMediaInSubTree[","], newMapAlbum.numsProtectedMediaInSubTree[","]);
+		mapRootAlbum.numsProtectedMediaInSubTree[","].imagesAndVideosSum(newMapAlbum.numsProtectedMediaInSubTree[","]);
 
 		newMapAlbum.ancestorsCacheBase = mapRootAlbum.ancestorsCacheBase.slice();
 		newMapAlbum.ancestorsCacheBase.push(newMapAlbum.cacheBase);
@@ -199,12 +199,12 @@
 		// if (! searchRootAlbum)
 		// 	searchRootAlbum = Utilities.initializeSearchRootAlbum();
 
-		searchRootAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSum(searchRootAlbum.numsMediaInSubTree, searchAlbum.numsMediaInSubTree);
+		searchRootAlbum.numsMediaInSubTree.imagesAndVideosSum(searchAlbum.numsMediaInSubTree);
 		// searchRootAlbum.subalbums.push(newSearchAlbum);
-		searchRootAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(searchRootAlbum.positionsAndMediaInTree, searchAlbum.positionsAndMediaInTree);
+		searchRootAlbum.positionsAndMediaInTree.mergePositionsAndMedia(searchAlbum.positionsAndMediaInTree);
 		searchRootAlbum.numPositionsInTree = searchRootAlbum.positionsAndMediaInTree.length;
 		// searchRootAlbum.numPositionsInTree += searchAlbum.numPositionsInTree;
-		searchRootAlbum.numsProtectedMediaInSubTree[","] = Utilities.imagesAndVideosSum(searchRootAlbum.numsProtectedMediaInSubTree[","], searchAlbum.numsProtectedMediaInSubTree[","]);
+		searchRootAlbum.numsProtectedMediaInSubTree[","].imagesAndVideosSum(searchAlbum.numsProtectedMediaInSubTree[","]);
 
 		searchAlbum.ancestorsCacheBase = searchRootAlbum.ancestorsCacheBase.slice();
 		searchAlbum.ancestorsCacheBase.push(searchAlbum.cacheBase);
@@ -253,18 +253,18 @@
 		// newSelectionAlbum.positionsAndMediaInTree = [];
 		// newSelectionAlbum.numPositionsInTree = 0;
 		// newSelectionAlbum.cacheBase = Options.by_selection_string + Options.cache_folder_separator + lastSelectionAlbumIndex;
-		newSelectionAlbum.path = newSelectionAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
+		selectionAlbum.path = selectionAlbum.cacheBase.replace(Options.cache_folder_separator, "/");
 		// newSelectionAlbum.physicalPath = newSelectionAlbum.path;
 		// newSelectionAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
 		// newSelectionAlbum.includedFilesByCodesSimpleCombination = {};
 		// newSelectionAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
-		selectionRootAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSum(selectionRootAlbum.numsMediaInSubTree, selectionAlbum.numsMediaInSubTree);
+		selectionRootAlbum.numsMediaInSubTree.imagesAndVideosSum(selectionAlbum.numsMediaInSubTree);
 		selectionRootAlbum.subalbums.push(selectionAlbum);
-		selectionRootAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(selectionRootAlbum.positionsAndMediaInTree, selectionAlbum.positionsAndMediaInTree);
+		selectionRootAlbum.positionsAndMediaInTree.mergePositionsAndMedia(selectionAlbum.positionsAndMediaInTree);
 		selectionRootAlbum.numPositionsInTree = selectionRootAlbum.positionsAndMediaInTree.length;
 		// selectionRootAlbum.numPositionsInTree += selectionAlbum.numPositionsInTree;
-		selectionRootAlbum.numsProtectedMediaInSubTree[","] = Utilities.imagesAndVideosSum(selectionRootAlbum.numsProtectedMediaInSubTree[","], selectionAlbum.numsProtectedMediaInSubTree[","]);
+		selectionRootAlbum.numsProtectedMediaInSubTree[","].imagesAndVideosSum(selectionAlbum.numsProtectedMediaInSubTree[","]);
 
 		selectionAlbum.ancestorsCacheBase = selectionRootAlbum.ancestorsCacheBase.slice();
 		selectionAlbum.ancestorsCacheBase.push(selectionAlbum.cacheBase);
@@ -426,10 +426,10 @@
 		);
 	};
 
-	Utilities.addPositionAndMediaToPositionsAndMedia = function(positionsAndMedia, newPositionAndMedia) {
+	PositionsAndMedia.prototype.addPositionAndMediaToPositionsAndMedia = function(newPositionAndMedia) {
 		var positionAndMedia, newMediaNameListElement;
-		for (var iOld = 0; iOld < positionsAndMedia.length; iOld ++) {
-			positionAndMedia = positionsAndMedia[iOld];
+		for (var iOld = 0; iOld < this.length; iOld ++) {
+			positionAndMedia = this[iOld];
 			if (newPositionAndMedia.lng == positionAndMedia.lng && newPositionAndMedia.lat == positionAndMedia.lat) {
 				for (var iNew = 0; iNew < newPositionAndMedia.mediaNameList.length; iNew ++) {
 					newMediaNameListElement = newPositionAndMedia.mediaNameList[iNew];
@@ -441,24 +441,25 @@
 							}
 						)
 					)
-						positionsAndMedia[iOld].mediaNameList.push(newPositionAndMedia.mediaNameList[iNew]);
+						this[iOld].mediaNameList.push(newPositionAndMedia.mediaNameList[iNew]);
 				}
-				return positionsAndMedia;
+				// return positionsAndMedia;
+				return;
 			}
 		}
-		positionsAndMedia.push(newPositionAndMedia);
-		return positionsAndMedia;
+		this.push(newPositionAndMedia);
+		// return positionsAndMedia;
 	};
 
 	Utilities.matchPositionsAndMediaByPosition = function(positionsAndMedia1, positionsAndMedia2) {
 		return (JSON.stringify([positionsAndMedia1.lat, positionsAndMedia1.lng]) === JSON.stringify([positionsAndMedia2.lat, positionsAndMedia2.lng]));
 	};
 
-	Utilities.mergePositionsAndMedia = function(positionsAndMedia, newPositionsAndMedia) {
+	PositionsAndMedia.prototype.mergePositionsAndMedia = function(newPositionsAndMedia) {
 		for (var i = 0; i < newPositionsAndMedia.length; i ++) {
-			positionsAndMedia = Utilities.addPositionAndMediaToPositionsAndMedia(positionsAndMedia, newPositionsAndMedia[i]);
+			this.addPositionAndMediaToPositionsAndMedia(newPositionsAndMedia[i]);
 		}
-		return positionsAndMedia;
+		// return positionsAndMedia;
 	};
 
 	Utilities.removePositionsAndMediaFromPositionsAndMedia = function(positionsAndMedia, positionsAndMediaToRemove) {
@@ -481,7 +482,7 @@
 		}
 	};
 
-	Utilities.addSingleMediaToPositionsAndMedia = function(positionsAndMedia, singleMedia) {
+	PositionsAndMedia.prototype.addSingleMediaToPositionsAndMedia = function(singleMedia) {
 		var newPositionsAndMedia = {
 			'lng': parseFloat(singleMedia.metadata.longitude),
 			'lat' : parseFloat(singleMedia.metadata.latitude),
@@ -491,7 +492,7 @@
 				'foldersCacheBase': singleMedia.foldersCacheBase
 			}]
 		};
-		return Utilities.addPositionAndMediaToPositionsAndMedia(positionsAndMedia, newPositionsAndMedia);
+		this.addPositionAndMediaToPositionsAndMedia(newPositionsAndMedia);
 	};
 
 	Utilities.removeSingleMediaFromPositionsAndMedia = function(positionsAndMedia, singleMedia) {
@@ -990,7 +991,7 @@
 	};
 
 	Utilities.somethingIsInMapAlbum = function() {
-		if (mapAlbum.hasOwnProperty("numsMediaInSubTree") && Utilities.imagesAndVideosTotal(mapAlbum.numsMediaInSubTree))
+		if (mapAlbum.hasOwnProperty("numsMediaInSubTree") && mapAlbum.numsMediaInSubTree.imagesAndVideosTotal())
 			return true;
 		else
 			return false;
@@ -998,7 +999,7 @@
 
 	Utilities.somethingIsSearched = function() {
 		if (
-			searchAlbum.hasOwnProperty("numsMediaInSubTree") && Utilities.imagesAndVideosTotal(searchAlbum.numsMediaInSubTree) ||
+			searchAlbum.hasOwnProperty("numsMediaInSubTree") && searchAlbum.numsMediaInSubTree.imagesAndVideosTotal() ||
 			searchAlbum.hasOwnProperty("subalbums") && searchAlbum.subalbums.length
 		)
 			return true;
@@ -1161,15 +1162,12 @@
 
 			if (Utilities.hasGpsData(singleMedia)) {
 				// add the media position
-				selectionAlbum.positionsAndMediaInTree =
-					Utilities.addSingleMediaToPositionsAndMedia(
-						selectionAlbum.positionsAndMediaInTree,
-						singleMedia
-					);
+				selectionAlbum.positionsAndMediaInTree.addSingleMediaToPositionsAndMedia(singleMedia);
 				selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 			}
-			selectionAlbum.numsMedia = Utilities.imagesAndVideosSum(selectionAlbum.numsMedia, Utilities.imagesAndVideosCount([singleMedia]));
-			selectionAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numsMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
+			var singleMediaArray = new Media([singleMedia]);
+			selectionAlbum.numsMedia.imagesAndVideosSum(singleMediaArray.imagesAndVideosCount());
+			selectionAlbum.numsMediaInSubTree.imagesAndVideosSum(singleMediaArray.imagesAndVideosCount());
 			selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
 			selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, singleMedia.fileSizes);
 
@@ -1205,9 +1203,10 @@
 					selectionAlbum.positionsAndMediaInTree,
 					singleMedia
 				);
+			var singleMediaArray = new Media([singleMedia]);
 			selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
-			selectionAlbum.numsMedia = Utilities.imagesAndVideosSubtract(selectionAlbum.numsMedia, Utilities.imagesAndVideosCount([singleMedia]));
-			selectionAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numsMediaInSubTree, Utilities.imagesAndVideosCount([singleMedia]));
+			selectionAlbum.numsMedia.imagesAndVideosSubtract(singleMediaArray.imagesAndVideosCount());
+			selectionAlbum.numsMediaInSubTree.imagesAndVideosSubtract(singleMediaArray.imagesAndVideosCount());
 			selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
 			selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, singleMedia.fileSizes);
 
@@ -1261,10 +1260,10 @@
 								Utilities.initializeSelectionAlbum();
 							selectionAlbum.subalbums.push(subalbum);
 
-							selectionAlbum.positionsAndMediaInTree = Utilities.mergePositionsAndMedia(selectionAlbum.positionsAndMediaInTree, subalbum.positionsAndMediaInTree);
+							selectionAlbum.positionsAndMediaInTree.mergePositionsAndMedia(selectionAlbum.positionsAndMediaInTree, subalbum.positionsAndMediaInTree);
 							selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
-							// selectionAlbum.numsMedia = Utilities.imagesAndVideosSum(selectionAlbum.numsMedia, subalbum.numsMedia);
-							selectionAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSum(selectionAlbum.numsMediaInSubTree, subalbum.numsMediaInSubTree);
+							// selectionAlbum.numsMedia.imagesAndVideosSum(subalbum.numsMedia);
+							selectionAlbum.numsMediaInSubTree.imagesAndVideosSum(subalbum.numsMediaInSubTree);
 							// selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
 							selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
 							selectionAlbum.numsProtectedMediaInSubTree = Utilities.sumSizes(selectionAlbum.numsProtectedMediaInSubTree, subalbum.numsProtectedMediaInSubTree);
@@ -1299,8 +1298,8 @@
 				if (! Utilities.subalbumIsSelected(subalbum)) {
 					resolve_removeSubalbum();
 				} else {
-					selectionAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numsMediaInSubTree, subalbum.numsMediaInSubTree);
-					// if (Utilities.imagesAndVideosTotal(selectionAlbum.numsMediaInSubTree)) {
+					selectionAlbum.numsMediaInSubTree.imagesAndVideosSubtract(subalbum.numsMediaInSubTree);
+					// if (selectionAlbum.numsMediaInSubTree.imagesAndVideosTotal()) {
 					let getAlbumPromise = PhotoFloat.getAlbum(subalbum.cacheBase, null, {"getMedia": true, "getPositions": true});
 					getAlbumPromise.then(
 						function(subalbum) {
@@ -1315,8 +1314,8 @@
 									);
 								selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 							}
-							// selectionAlbum.numsMedia = Utilities.imagesAndVideosSubtract(selectionAlbum.numsMedia, subalbum.numsMedia);
-							selectionAlbum.numsMediaInSubTree = Utilities.imagesAndVideosSubtract(selectionAlbum.numsMediaInSubTree, subalbum.numsMediaInSubTree);
+							// selectionAlbum.numsMedia.imagesAndVideosSubtract(subalbum.numsMedia);
+							selectionAlbum.numsMediaInSubTree.imagesAndVideosSubtract(subalbum.numsMediaInSubTree);
 							// selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
 							selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
 							selectionAlbum.numsProtectedMediaInSubTree = Utilities.subtractSizes(selectionAlbum.numsProtectedMediaInSubTree, subalbum.numsProtectedMediaInSubTree);
@@ -1349,7 +1348,7 @@
 	};
 
 	Album.prototype.isAlbumWithOneMedia = function() {
-		return this !== null && ! this.subalbums.length && Utilities.imagesAndVideosTotal(this.numsMedia) == 1;
+		return this !== null && ! this.subalbums.length && this.numsMedia.imagesAndVideosTotal() == 1;
 	};
 
 	Utilities.chooseReducedPhoto = function(media, container, fullScreenStatus) {
@@ -1769,28 +1768,24 @@
 		);
 	};
 
-	Utilities.imagesAndVideosTotal = function(imagesAndVideos) {
-		return imagesAndVideos.images + imagesAndVideos.videos;
+	ImagesAndVideos.prototype.imagesAndVideosTotal = function() {
+		return this.images + this.videos;
 	};
 
-	Utilities.imagesAndVideosSum = function(imagesAndVideos1, imagesAndVideos2) {
-		var result = new ImagesAndVideos();
-		result.images = imagesAndVideos1.images + imagesAndVideos2.images;
-		result.videos = imagesAndVideos1.videos + imagesAndVideos2.videos;
-		return result;
+	ImagesAndVideos.prototype.imagesAndVideosSum = function(imagesAndVideos) {
+		this.images = this.images + imagesAndVideos.images;
+		this.videos = this.videos + imagesAndVideos.videos;
 	};
 
-	Utilities.imagesAndVideosSubtract = function(imagesAndVideos1, imagesAndVideos2) {
-		var result = new ImagesAndVideos();
-		result.images = imagesAndVideos1.images - imagesAndVideos2.images;
-		result.videos = imagesAndVideos1.videos - imagesAndVideos2.videos;
-		return result;
+	ImagesAndVideos.prototype.imagesAndVideosSubtract = function(imagesAndVideos) {
+		this.images = this.images - imagesAndVideos.images;
+		this.videos = this.videos - imagesAndVideos.videos;
 	};
 
-	Utilities.imagesAndVideosCount = function(mediaList) {
+	Media.prototype.imagesAndVideosCount = function() {
 		var result = new ImagesAndVideos();
-		for (let i = 0; i < mediaList.length; i ++) {
-			if (mediaList[i].mimeType.indexOf("image/") === 0)
+		for (let i = 0; i < this.length; i ++) {
+			if (this[i].mimeType.indexOf("image/") === 0)
 				result.images += 1;
 			else
 				result.videos += 1;
@@ -2165,7 +2160,7 @@
 		var sum = new ImagesAndVideos(), codesComplexcombination;
 		for (codesComplexcombination in numsProtectedMediaInSubTree) {
 			if (numsProtectedMediaInSubTree.hasOwnProperty(codesComplexcombination) && codesComplexcombination !== ",") {
-				sum = Utilities.imagesAndVideosSum(sum, numsProtectedMediaInSubTree[codesComplexcombination]);
+				sum.imagesAndVideosSum(numsProtectedMediaInSubTree[codesComplexcombination]);
 			}
 		}
 		return sum.images + sum.videos;
@@ -2178,8 +2173,8 @@
 			for (codesComplexcombination in albumOrSubalbum.numsProtectedMediaInSubTree) {
 				if (albumOrSubalbum.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexcombination) && codesComplexcombination !== ",") {
 					if (! result.hasOwnProperty(codesComplexcombination))
-						result[codesComplexcombination] = {images: 0, videos: 0};
-					result[codesComplexcombination] = Utilities.imagesAndVideosSum(result[codesComplexcombination], albumOrSubalbum.numsProtectedMediaInSubTree[codesComplexcombination]);
+						result[codesComplexcombination] = new ImagesAndVideos();
+					result[codesComplexcombination].imagesAndVideosSum(albumOrSubalbum.numsProtectedMediaInSubTree[codesComplexcombination]);
 				}
 			}
 		}
@@ -2305,7 +2300,7 @@
 
 		$("#next").css("right", "");
 		$("#prev").css("left", "");
-		if (! fullScreenStatus && Utilities.imagesAndVideosTotal(currentAlbum.numsMedia) > 1) {
+		if (! fullScreenStatus && currentAlbum.numsMedia.imagesAndVideosTotal() > 1) {
 			// correct next button position when pinch buttons collide
 			$("#next").css("right", correctionForPinch.toString() + "px");
 			// correct prev button position when social buttons are on the left
@@ -2634,8 +2629,6 @@
 	Utilities.prototype.convertMd5ToCode = Utilities.convertMd5ToCode;
 	Utilities.prototype._t = Utilities._t;
 	Utilities.prototype.getLanguage = Utilities.getLanguage;
-	Utilities.prototype.imagesAndVideosTotal = Utilities.imagesAndVideosTotal;
-	Utilities.prototype.imagesAndVideosSum = Utilities.imagesAndVideosSum;
 	Utilities.prototype.upHash = Utilities.upHash;
 	Utilities.prototype.isAlbumWithOneMedia = Utilities.isAlbumWithOneMedia;
 	Utilities.prototype.singleMediaIsSelected = Utilities.singleMediaIsSelected;
@@ -2646,12 +2639,8 @@
 	// Utilities.prototype.countSelectedSubalbums = Utilities.countSelectedSubalbums;
 	Utilities.prototype.isAnyRootHash = Utilities.isAnyRootHash;
 	Utilities.prototype.isAnyRootCacheBase = Utilities.isAnyRootCacheBase;
-	Utilities.prototype.mergePositionsAndMedia = Utilities.mergePositionsAndMedia;
 	Utilities.prototype.hasGpsData = Utilities.hasGpsData;
-	Utilities.prototype.addSingleMediaToPositionsAndMedia = Utilities.addSingleMediaToPositionsAndMedia;
-	Utilities.prototype.addPositionAndMediaToPositionsAndMedia = Utilities.addPositionAndMediaToPositionsAndMedia;
 	Utilities.prototype.sumSizes = Utilities.sumSizes;
-	Utilities.prototype.imagesAndVideosCount = Utilities.imagesAndVideosCount;
 	Utilities.prototype.matchPositionsAndMediaByPosition = Utilities.matchPositionsAndMediaByPosition;
 	Utilities.prototype.initializeSelectionRootAlbum = Utilities.initializeSelectionRootAlbum;
 	Utilities.prototype.initializeMapRootAlbum = Utilities.initializeMapRootAlbum;

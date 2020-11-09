@@ -50,7 +50,7 @@
 		else
 			albumViewPadding = parseInt(albumViewPadding);
 
-		for(mediaIndex = 0; mediaIndex < util.imagesAndVideosTotal(this.numsMedia); mediaIndex ++) {
+		for(mediaIndex = 0; mediaIndex < this.numsMedia.imagesAndVideosTotal(); mediaIndex ++) {
 
 			ithMedia = this.media[mediaIndex];
 
@@ -209,7 +209,7 @@
 	};
 
 	MapFunctions.buildPopupHeader = function() {
-		$("#popup-photo-count-number").html(util.imagesAndVideosTotal(mapAlbum.numsMedia));
+		$("#popup-photo-count-number").html(mapAlbum.numsMedia.imagesAndVideosTotal());
 		$("#popup-photo-count").css("max-width", MapFunctions.maxWidthForPopupContent);
 		// add the click event for showing the photos in the popup as an album
 		$("#popup-photo-count").on(
@@ -365,10 +365,11 @@
 		MapFunctions.setPopupPosition();
 	};
 
-	MapFunctions.addMediaFromPositionsToMapAlbum = function(positionsAndCounts, thisMapAlbum, resolve_imageLoad) {
+	Album.prototype.addMediaFromPositionsToMapAlbum = function(positionsAndCounts, resolve_imageLoad) {
 
 		var mediaNameListElement, indexPositions, indexPhoto, markerClass, photoIndex, mediaIndex;
 		var photosByAlbum = {}, positionsAndCountsElement;
+		var self = this;
 
 		// in order to add the html code for the images to a string,
 		// we group the photos by album: this way we rationalize the process of getting them
@@ -399,12 +400,12 @@
 						var getAlbumPromise = phFl.getAlbum(albumCacheBase, util.errorThenGoUp, {"getMedia": true, "getPositions": true});
 						getAlbumPromise.then(
 							function(theAlbum) {
-								for (mediaIndex = 0; mediaIndex < util.imagesAndVideosTotal(theAlbum.numsMedia); mediaIndex ++) {
+								for (mediaIndex = 0; mediaIndex < theAlbum.numsMedia.imagesAndVideosTotal(); mediaIndex ++) {
 									for (photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
 										if (theAlbum.media[mediaIndex].cacheBase == photosInAlbum[photoIndex].element.cacheBase) {
-											thisMapAlbum.media.push(theAlbum.media[mediaIndex]);
-											thisMapAlbum.sizesOfAlbum = util.sumSizes(thisMapAlbum.sizesOfAlbum, theAlbum.media[mediaIndex].fileSizes);
-											thisMapAlbum.sizesOfSubTree = util.sumSizes(thisMapAlbum.sizesOfSubTree, theAlbum.media[mediaIndex].fileSizes);
+											self.media.push(theAlbum.media[mediaIndex]);
+											self.sizesOfAlbum = util.sumSizes(self.sizesOfAlbum, theAlbum.media[mediaIndex].fileSizes);
+											self.sizesOfSubTree = util.sumSizes(self.sizesOfSubTree, theAlbum.media[mediaIndex].fileSizes);
 										}
 									}
 								}
@@ -421,9 +422,9 @@
 		}
 		Promise.all(cacheBasesPromises).then(
 			function() {
-				thisMapAlbum.positionsAndMediaInTree = util.mergePositionsAndMedia(thisMapAlbum.positionsAndMediaInTree, positionsAndCounts);
-				thisMapAlbum.numPositionsInTree = thisMapAlbum.positionsAndMediaInTree.length;
-				resolve_imageLoad(thisMapAlbum);
+				self.positionsAndMediaInTree.mergePositionsAndMedia(positionsAndCounts);
+				self.numPositionsInTree = self.positionsAndMediaInTree.length;
+				resolve_imageLoad(self);
 			}
 		);
 		// end of function addMediaFromPositionsToMapAlbum body
