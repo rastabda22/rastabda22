@@ -86,7 +86,7 @@
 			calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
 			selectSrc = 'img/checkbox-unchecked-48px.png';
-			if (util.singleMediaIsSelected(ithMedia)) {
+			if (ithMedia.isSelected()) {
 				selectSrc = 'img/checkbox-checked-48px.png';
 			}
 			let selectBoxHtml =

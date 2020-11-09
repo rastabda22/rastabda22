@@ -630,7 +630,7 @@
 										// numsProtectedMediaInSubTree property has already been added by getSingleProtectedCacheBaseWithExternalMediaAndPositions()
 
 										if (album.hasOwnProperty("media")) {
-											util.sortByDate(album.media);
+											album.media.sortByDate();
 											album.mediaNameSort = false;
 											album.mediaReverseSort = false;
 										}
@@ -854,7 +854,7 @@
 									// execution arrives here when all the protected json has been loaded and processed
 
 									if (album.hasOwnProperty("media")) {
-										util.sortByDate(album.media);
+										album.media.sortByDate();
 										album.mediaNameSort = false;
 										album.mediaReverseSort = false;
 									}
@@ -1525,7 +1525,7 @@
 					for (indexMedia = 0; indexMedia < searchAlbum.media.length; indexMedia ++) {
 						// add the parent to the media
 						searchAlbum.media[indexMedia].parent = searchAlbum;
-						if (util.hasGpsData(searchAlbum.media[indexMedia]))
+						if (searchAlbum.media[indexMedia].hasGpsData())
 							// add the media position
 							searchAlbum.positionsAndMediaInTree.addSingleMediaToPositionsAndMedia(searchAlbum.media[indexMedia]);
 							searchAlbum.numPositionsInTree = searchAlbum.positionsAndMediaInTree.length;
@@ -1803,7 +1803,7 @@
 
 														// search albums need to conform to default behaviour of albums:
 														// json files have subalbums and media sorted by date not reversed
-														util.sortByDate(searchAlbum.media);
+														searchAlbum.media.sortByDate();
 
 														matchingSubalbums = [];
 														for (indexSubalbums = 0; indexSubalbums < searchAlbum.subalbums.length; indexSubalbums ++) {

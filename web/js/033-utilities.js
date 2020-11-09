@@ -451,8 +451,8 @@
 		// return positionsAndMedia;
 	};
 
-	Utilities.matchPositionsAndMediaByPosition = function(positionsAndMedia1, positionsAndMedia2) {
-		return (JSON.stringify([positionsAndMedia1.lat, positionsAndMedia1.lng]) === JSON.stringify([positionsAndMedia2.lat, positionsAndMedia2.lng]));
+	PositionAndMedia.prototype.matchPositionsAndMediaByPosition = function(positionsAndMedia2) {
+		return (JSON.stringify([this.lat, this.lng]) === JSON.stringify([positionsAndMedia2.lat, positionsAndMedia2.lng]));
 	};
 
 	PositionsAndMedia.prototype.mergePositionsAndMedia = function(newPositionsAndMedia) {
@@ -462,10 +462,10 @@
 		// return positionsAndMedia;
 	};
 
-	Utilities.removePositionsAndMediaFromPositionsAndMedia = function(positionsAndMedia, positionsAndMediaToRemove) {
+	PositionsAndMedia.prototype.removePositionsAndMediaFromPositionsAndMedia = function(positionsAndMediaToRemove) {
 		for (let indexPositions = 0; indexPositions < positionsAndMediaToRemove.length; indexPositions ++) {
 			let positionsAndMediaToRemoveElement = positionsAndMediaToRemove[indexPositions];
-			return Utilities.removePositionAndMediaFromPositionsAndMedia(positionsAndMedia, positionsAndMediaToRemoveElement);
+			this.removePositionAndMediaFromPositionsAndMedia(positionsAndMediaToRemoveElement);
 			// for (let indexMedia = 0; indexMedia < positionsAndMediaToRemoveElement.mediaNameList; indexMedia ++) {
 			// 	let mediaNameListElement = positionsAndMediaToRemoveElement.mediaNameList[indexMedia];
 			// 	let positionAndMedia = {
@@ -477,38 +477,46 @@
 			// 			'foldersCacheBase': mediaNameListElement.foldersCacheBase
 			// 		}]
 			// 	};
-			// 	Utilities.removePositionAndMediaFromPositionsAndMedia(positionsAndMedia, positionAndMedia);
+			// 	Utilities.removePositionAndMediaFromPositionsAndMedia(this, positionAndMedia);
 			// }
 		}
 	};
 
 	PositionsAndMedia.prototype.addSingleMediaToPositionsAndMedia = function(singleMedia) {
-		var newPositionsAndMedia = {
-			'lng': parseFloat(singleMedia.metadata.longitude),
-			'lat' : parseFloat(singleMedia.metadata.latitude),
-			'mediaNameList': [{
-				'cacheBase': singleMedia.cacheBase,
-				'albumCacheBase': singleMedia.parent.cacheBase,
-				'foldersCacheBase': singleMedia.foldersCacheBase
-			}]
-		};
+		var newPositionsAndMedia = new PositionAndMedia (
+			{
+				'lng': parseFloat(singleMedia.metadata.longitude),
+				'lat' : parseFloat(singleMedia.metadata.latitude),
+				'mediaNameList': [
+					{
+						'cacheBase': singleMedia.cacheBase,
+						'albumCacheBase': singleMedia.parent.cacheBase,
+						'foldersCacheBase': singleMedia.foldersCacheBase
+					}
+				]
+			}
+		);
 		this.addPositionAndMediaToPositionsAndMedia(newPositionsAndMedia);
 	};
 
-	Utilities.removeSingleMediaFromPositionsAndMedia = function(positionsAndMedia, singleMedia) {
-		var positionAndMediaToRemove = {
-			'lng': parseFloat(singleMedia.metadata.longitude),
-			'lat': parseFloat(singleMedia.metadata.latitude),
-			'mediaNameList': [{
-				'cacheBase': singleMedia.cacheBase,
-				'albumCacheBase': singleMedia.parent.cacheBase,
-				'foldersCacheBase': singleMedia.foldersCacheBase
-			}]
-		};
-		return Utilities.removePositionAndMediaFromPositionsAndMedia(positionsAndMedia, positionAndMediaToRemove);
+	PositionsAndMedia.prototype.removeSingleMediaFromPositionsAndMedia = function(singleMedia) {
+		var positionAndMediaToRemove = new PositionAndMedia (
+			{
+				'lng': parseFloat(singleMedia.metadata.longitude),
+				'lat': parseFloat(singleMedia.metadata.latitude),
+				'mediaNameList': [
+						{
+						'cacheBase': singleMedia.cacheBase,
+						'albumCacheBase': singleMedia.parent.cacheBase,
+						'foldersCacheBase': singleMedia.foldersCacheBase
+					}
+				]
+			}
+		);
+		this.removePositionAndMediaFromPositionsAndMedia(positionAndMediaToRemove);
 	};
 
-	Utilities.removePositionAndMediaFromPositionsAndMedia = function(positionsAndMedia, positionAndMediaToRemove) {
+	PositionsAndMedia.prototype.removePositionAndMediaFromPositionsAndMedia = function(positionAndMediaToRemove) {
 		var matchingPositionAndMediaIndex, matchingMediaIndex;
 		var arrayCacheBases = [];
 		for (let indexMediaName = 0; indexMediaName < positionAndMediaToRemove.mediaNameList.length; indexMediaName ++)
@@ -517,10 +525,10 @@
 		for (let indexMediaName = 0; indexMediaName < positionAndMediaToRemove.mediaNameList.length; indexMediaName ++)
 			arrayAlbumCacheBases.push(positionAndMediaToRemove.mediaNameList[indexMediaName].albumCacheBase);
 		if (
-			positionsAndMedia.some(
+			this.some(
 				function(positionsAndMediaInTreeElement, positionsAndMediaInTreeIndex) {
 					matchingPositionAndMediaIndex = positionsAndMediaInTreeIndex;
-					if (Utilities.matchPositionsAndMediaByPosition(positionAndMediaToRemove, positionsAndMediaInTreeElement)) {
+					if (positionAndMediaToRemove.matchPositionsAndMediaByPosition(positionsAndMediaInTreeElement)) {
 						if (
 							positionsAndMediaInTreeElement.mediaNameList.some(
 								function(mediaNameListElement, mediaNameListElementIndex) {
@@ -540,12 +548,12 @@
 			)
 		) {
 			// the position was present: remove the media...
-			positionsAndMedia[matchingPositionAndMediaIndex].mediaNameList.splice(matchingMediaIndex, 1);
-			if (! positionsAndMedia[matchingPositionAndMediaIndex].mediaNameList.length)
+			this[matchingPositionAndMediaIndex].mediaNameList.splice(matchingMediaIndex, 1);
+			if (! this[matchingPositionAndMediaIndex].mediaNameList.length)
 				// remove the position too
-				positionsAndMedia.splice(matchingPositionAndMediaIndex, 1);
+				this.splice(matchingPositionAndMediaIndex, 1);
 		}
-		return positionsAndMedia;
+		return this;
 	};
 
 	Album.prototype.recursivelySelectMedia = function() {
@@ -615,7 +623,7 @@
 	Album.prototype.recursivelyAllMediaAreSelected = function() {
 		return new Promise(
 			function (resolve_promise, reject_promise) {
-				if (! Utilities.everyMediaIsSelected(this.media)) {
+				if (! this.media.everyMediaIsSelected()) {
 					reject_promise();
 				} else {
 					let promises = [];
@@ -757,7 +765,7 @@
 
 	// see https://stackoverflow.com/questions/1069666/sorting-javascript-object-by-property-value
 	Utilities.sortBy = function(albumOrMediaList, fieldArray) {
-		return albumOrMediaList.sort(
+		albumOrMediaList.sort(
 			function(a,b) {
 				var aValue, bValue, iField;
 				for (iField = 0; iField < fieldArray.length; iField ++) {
@@ -777,41 +785,48 @@
 		);
 	};
 
-	 Utilities.sortByName = function(mediaList) {
-		mediaList = this.sortBy(mediaList, ['name']);
+	Media.prototype.sortBy = function(fieldArray) {
+		Utilities.sortBy(this, fieldArray);
+	};
+
+	Media.prototype.sortByName = function() {
+		this.sortBy(['name']);
 	};
 
 	Album.prototype.sortByPath = function() {
 		if (this.subalbums.length) {
 			if (Utilities.isSelectionCacheBase(this.cacheBase)) {
-				this.subalbums = Utilities.sortBy(this.subalbums, ['selectionAlbumNameSorting']);
+				Utilities.sortBy(this.subalbums, ['selectionAlbumNameSorting']);
 				// this.subalbums = Utilities.sortBy(this.subalbums, ['altName', 'name', 'path']);
 			} else if (Utilities.isByGpsCacheBase(this.cacheBase)) {
 				if (this.subalbums[0].hasOwnProperty('altName'))
-					this.subalbums = Utilities.sortBy(this.subalbums, ['altName']);
+					Utilities.sortBy(this.subalbums, ['altName']);
 				else
-					this.subalbums = Utilities.sortBy(this.subalbums, ['name']);
+					Utilities.sortBy(this.subalbums, ['name']);
 			} else {
-				this.subalbums = Utilities.sortBy(this.subalbums, ['path']);
+				Utilities.sortBy(this.subalbums, ['path']);
 			}
 		}
 	};
 
-	Utilities.sortByDate = function (albumOrMediaList) {
-		albumOrMediaList = albumOrMediaList.sort(
+	Media.prototype.sortByDate = function () {
+		this.sort(
 			function(a,b) {
 				return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
-				// var aValue = new Date(a.date);
-				// var bValue = new Date(b.date);
-				// return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
 			}
 		);
 	};
 
-	Utilities.sortReverse = function(albumOrMediaList) {
-		var sortedAlbum = albumOrMediaList.reverse();
+	Utilities.sortByDate = function (subalbums) {
+		subalbums.sort(
+			function(a,b) {
+				return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
+			}
+		);
+	};
 
-		return sortedAlbum;
+	Media.prototype.sortReverse = function() {
+		this.reverse();
 	};
 
 	Utilities.isSearchRootCacheBase = function(cacheBase) {
@@ -949,16 +964,16 @@
 		return cacheBase;
 	};
 
-	Utilities.hasGpsData = function(singleMedia) {
-		return singleMedia.mimeType.indexOf("image") === 0 && typeof singleMedia.metadata.latitude !== "undefined";
+	SingleMedia.prototype.hasGpsData = function() {
+		return this.mimeType.indexOf("image") === 0 && typeof this.metadata.latitude !== "undefined";
 	};
 
 
-	Utilities.prototype.singleMediaIsInMapAlbum = function(singleMedia) {
+	SingleMedia.prototype.isInMapAlbum = function() {
 		if (! Utilities.somethingIsInMapAlbum())
 			return false;
 		else {
-			var index = mapAlbum.media.findIndex(x => x.foldersCacheBase === singleMedia.foldersCacheBase && x.cacheBase === singleMedia.cacheBase);
+			var index = mapAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
 			if (index > -1)
 				return true;
 			else
@@ -966,11 +981,11 @@
 		}
 	};
 
-	Utilities.prototype.singleMediaIsSearched = function(singleMedia) {
+	SingleMedia.prototype.isSearched = function() {
 		if (! Utilities.somethingIsSearched())
 			return false;
 		else {
-			var index = searchAlbum.media.findIndex(x => x.foldersCacheBase === singleMedia.foldersCacheBase && x.cacheBase === singleMedia.cacheBase);
+			var index = searchAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
 			if (index > -1)
 				return true;
 			else
@@ -978,11 +993,11 @@
 		}
 	};
 
-	Utilities.prototype.singleMediaIsInFoundAlbum = function(singleMedia) {
+	SingleMedia.prototype.singleMediaIsInFoundAlbum = function() {
 		if (! Utilities.somethingIsSearched())
 			return false;
 		else {
-			var foundAlbum = searchAlbum.subalbums.find(x => singleMedia.foldersCacheBase.indexOf(x.cacheBase) === 0);
+			var foundAlbum = searchAlbum.subalbums.find(x => this.foldersCacheBase.indexOf(x.cacheBase) === 0);
 			if (foundAlbum !== undefined)
 				return foundAlbum;
 			else
@@ -1016,10 +1031,10 @@
 			return true;
 	};
 
-	Utilities.singleMediaIsSelected = function(singleMedia) {
+	SingleMedia.prototype.isSelected = function() {
 		if (selectionAlbum.isEmpty())
 			return false;
-		var index = selectionAlbum.media.findIndex(x => x.foldersCacheBase === singleMedia.foldersCacheBase && x.cacheBase === singleMedia.cacheBase);
+		var index = selectionAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
 		if (index > -1)
 			return true;
 		else
@@ -1036,29 +1051,29 @@
 			return false;
 	};
 
-	Utilities.prototype.someMediaIsSelected = function(media) {
-		if (selectionAlbum.isEmpty())
-			return false;
-		if (
-			media.some(
-				function(singleMedia) {
-					return Utilities.singleMediaIsSelected(singleMedia);
-				}
-			)
-		) {
-			return true;
-		} else {
-			return false;
-		}
-	};
+	// Media.prototype.someMediaIsSelected = function() {
+	// 	if (selectionAlbum.isEmpty())
+	// 		return false;
+	// 	if (
+	// 		this.some(
+	// 			function(singleMedia) {
+	// 				return singleMedia.isSelected();
+	// 			}
+	// 		)
+	// 	) {
+	// 		return true;
+	// 	} else {
+	// 		return false;
+	// 	}
+	// };
 
-	Utilities.everyMediaIsSelected = function(media) {
+	Media.prototype.everyMediaIsSelected = function() {
 		if (selectionAlbum.isEmpty())
 			return false;
 		if (
-			media.every(
+			this.every(
 				function(singleMedia) {
-					return Utilities.singleMediaIsSelected(singleMedia);
+					return singleMedia.isSelected();
 				}
 			)
 		) {
@@ -1156,11 +1171,11 @@
 
 
 	Utilities.addSingleMediaToSelection = function(singleMedia, clickedSelector) {
-		if (! Utilities.singleMediaIsSelected(singleMedia)) {
+		if (! singleMedia.isSelected()) {
 			// singleMedia.parent = selectionAlbum;
 			selectionAlbum.media.push(singleMedia);
 
-			if (Utilities.hasGpsData(singleMedia)) {
+			if (singleMedia.hasGpsData()) {
 				// add the media position
 				selectionAlbum.positionsAndMediaInTree.addSingleMediaToPositionsAndMedia(singleMedia);
 				selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
@@ -1171,7 +1186,7 @@
 			selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, singleMedia.fileSizes);
 			selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, singleMedia.fileSizes);
 
-			Utilities.sortByDate(selectionAlbum.media);
+			selectionAlbum.media.sortByDate();
 			selectionAlbum.mediaNameSort = false;
 			selectionAlbum.mediaReverseSort = false;
 			selectionAlbum.initializeSortPropertiesAndCookies();
@@ -1194,15 +1209,11 @@
 	};
 
 	Utilities.removeSingleMediaFromSelection = function(singleMedia, clickedSelector) {
-		if (Utilities.singleMediaIsSelected(singleMedia)) {
+		if (singleMedia.isSelected()) {
 			var index = selectionAlbum.media.findIndex(x => x.foldersCacheBase === singleMedia.foldersCacheBase && x.cacheBase === singleMedia.cacheBase);
 			selectionAlbum.media.splice(index, 1);
 
-			selectionAlbum.positionsAndMediaInTree =
-				Utilities.removeSingleMediaFromPositionsAndMedia(
-					selectionAlbum.positionsAndMediaInTree,
-					singleMedia
-				);
+			selectionAlbum.positionsAndMediaInTree.removeSingleMediaFromPositionsAndMedia(singleMedia);
 			var singleMediaArray = new Media([singleMedia]);
 			selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 			selectionAlbum.numsMedia.imagesAndVideosSubtract(singleMediaArray.imagesAndVideosCount());
@@ -1308,10 +1319,7 @@
 
 							if (subalbum.positionsAndMediaInTree.length) {
 								selectionAlbum.positionsAndMediaInTree =
-									Utilities.removePositionsAndMediaFromPositionsAndMedia(
-										selectionAlbum.positionsAndMediaInTree,
-										subalbum.positionsAndMediaInTree
-									);
+									selectionAlbum.positionsAndMediaInTree.removePositionsAndMediaFromPositionsAndMedia(subalbum.positionsAndMediaInTree);
 								selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 							}
 							// selectionAlbum.numsMedia.imagesAndVideosSubtract(subalbum.numsMedia);
@@ -2533,22 +2541,22 @@
 			this.albumReverseSort = false;
 		}
 		if (this.needAlbumDateReverseSort() || this.needAlbumNameReverseSort()) {
-			this.subalbums = Utilities.sortReverse(this.subalbums);
+			this.subalbums.reverse();
 			this.albumReverseSort = ! this.albumReverseSort;
 		}
 
 		if (this.hasOwnProperty("media")) {
 			if (this.needMediaNameSort()) {
-				Utilities.sortByName(this.media);
+				this.media.sortByName();
 				this.mediaNameSort = true;
 				this.mediaReverseSort = false;
 			} else if (this.needMediaDateSort()) {
-				Utilities.sortByDate(this.media);
+				this.media.sortByDate();
 				this.mediaNameSort = false;
 				this.mediaReverseSort = false;
 			}
 			if (this.needMediaDateReverseSort() || this.needMediaNameReverseSort()) {
-				this.media = Utilities.sortReverse(this.media);
+				this.media.sortReverse();
 				this.mediaReverseSort = ! this.mediaReverseSort;
 			}
 
@@ -2621,10 +2629,7 @@
 	Utilities.prototype.degreesToRadians = Utilities.degreesToRadians;
 	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
 	Utilities.prototype.mediaBoxContainerHeight = Utilities.mediaBoxContainerHeight;
-	Utilities.prototype.sortReverse = Utilities.sortReverse;
-	Utilities.prototype.sortByName = Utilities.sortByName;
 	Utilities.prototype.sortByDate = Utilities.sortByDate;
-	// Utilities.prototype.sortBy = Utilities.sortBy;
 	Utilities.prototype.isByDateCacheBase = Utilities.isByDateCacheBase;
 	Utilities.prototype.isByGpsCacheBase = Utilities.isByGpsCacheBase;
 	Utilities.prototype.isSearchCacheBase = Utilities.isSearchCacheBase;
@@ -2635,7 +2640,6 @@
 	Utilities.prototype.getLanguage = Utilities.getLanguage;
 	Utilities.prototype.upHash = Utilities.upHash;
 	Utilities.prototype.isAlbumWithOneMedia = Utilities.isAlbumWithOneMedia;
-	Utilities.prototype.singleMediaIsSelected = Utilities.singleMediaIsSelected;
 	Utilities.prototype.subalbumIsSelected = Utilities.subalbumIsSelected;
 	// Utilities.prototype.resetSelectedMedia = Utilities.resetSelectedMedia;
 	// Utilities.prototype.resetSelectedSubalbums = Utilities.resetSelectedSubalbums;
@@ -2643,9 +2647,7 @@
 	// Utilities.prototype.countSelectedSubalbums = Utilities.countSelectedSubalbums;
 	Utilities.prototype.isAnyRootHash = Utilities.isAnyRootHash;
 	Utilities.prototype.isAnyRootCacheBase = Utilities.isAnyRootCacheBase;
-	Utilities.prototype.hasGpsData = Utilities.hasGpsData;
 	Utilities.prototype.sumSizes = Utilities.sumSizes;
-	Utilities.prototype.matchPositionsAndMediaByPosition = Utilities.matchPositionsAndMediaByPosition;
 	Utilities.prototype.initializeSelectionRootAlbum = Utilities.initializeSelectionRootAlbum;
 	Utilities.prototype.initializeMapRootAlbum = Utilities.initializeMapRootAlbum;
 	// Utilities.prototype.initializeSearchRootAlbum = Utilities.initializeSearchRootAlbum;
@@ -2658,7 +2660,6 @@
 	Utilities.prototype.removeSubalbumFromSelection = Utilities.removeSubalbumFromSelection;
 	Utilities.prototype.addAllMediaToSelection = Utilities.addAllMediaToSelection;
 	Utilities.prototype.removeAllMediaFromSelection = Utilities.removeAllMediaFromSelection;
-	Utilities.prototype.everyMediaIsSelected = Utilities.everyMediaIsSelected;
 	Utilities.prototype.initializeSelectionAlbum = Utilities.initializeSelectionAlbum;
 	Utilities.prototype.transformAltPlaceName = Utilities.transformAltPlaceName;
 	Utilities.prototype.arrayUnion = Utilities.arrayUnion;

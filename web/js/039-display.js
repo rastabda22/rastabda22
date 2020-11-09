@@ -295,7 +295,7 @@ $(document).ready(function() {
 						e.key.toLowerCase() === "s" &&
 						! isMap &&
 						(
-							currentMedia !== null && util.hasGpsData(currentMedia) ||
+							currentMedia !== null && currentMedia.hasGpsData() ||
 							currentMedia === null && currentAlbum.positionsAndMediaInTree.length
 						)
 					) {

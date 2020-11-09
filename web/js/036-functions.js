@@ -138,7 +138,7 @@
 				thisMedia = currentMedia;
 			else
 				thisMedia = thisAlbum.media[0];
-			hasGpsData = util.hasGpsData(thisMedia);
+			hasGpsData = thisMedia.hasGpsData();
 		} else if (isAnyRootCacheBase) {
 			hasGpsData = (Options.num_positions_in_tree > 0);
 		} else {
@@ -166,7 +166,7 @@
 
 			if (
 				nothingIsSelected || ! (
-					isSingleMedia && util.singleMediaIsSelected(thisMedia) ||
+					isSingleMedia && thisMedia.isSelected() ||
 					isAnyRootCacheBase
 				)
 			) {
@@ -175,7 +175,7 @@
 
 			if (
 				! util.somethingIsInMapAlbum() || ! (
-					isSingleMedia && util.singleMediaIsInMapAlbum(thisMedia) ||
+					isSingleMedia && thisMedia.isInMapAlbum() ||
 					isAnyRootCacheBase
 				)
 			) {
@@ -190,9 +190,9 @@
 						// util.somethingIsSearched() ||
 						// savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash)
 						util.isSearchCacheBase(thisAlbum.cacheBase) ||
-						util.singleMediaIsSearched(thisMedia) ||
+						thisMedia.isSearched() ||
 						savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash) ||
-						util.singleMediaIsInFoundAlbum(thisMedia) !== false
+						thisMedia.singleMediaIsInFoundAlbum() !== false
 					)
 				)
 			) {
@@ -297,7 +297,7 @@
 				TopFunctions.showBrowsingModeMessage("#by-search-browsing");
 				if (isSingleMedia) {
 					// if (thisMedia.hasOwnProperty("searchHashes") && thisMedia.searchHashes.length)
-					var foundAlbum = util.singleMediaIsInFoundAlbum(thisMedia);
+					var foundAlbum = thisMedia.singleMediaIsInFoundAlbum();
 					if (foundAlbum !== false) {
 						window.location.href = phFl.encodeHash(thisMedia.foldersCacheBase, thisMedia, foundAlbum.cacheBase, searchAlbum.cacheBase);
 					} else {
@@ -650,11 +650,11 @@
 			$(".select.albums").addClass("selected");
 		}
 
-		if (util.everyMediaIsSelected(thisAlbum.media)) {
+		if (thisAlbum.media.everyMediaIsSelected()) {
 			$(".select.media").addClass("selected");
 		}
 
-		if (util.everySubalbumIsSelected(thisAlbum.subalbums) && util.everyMediaIsSelected(thisAlbum.media)) {
+		if (util.everySubalbumIsSelected(thisAlbum.subalbums) && thisAlbum.media.everyMediaIsSelected()) {
 			$(".select.everything").addClass("selected");
 		}
 
@@ -687,7 +687,7 @@
 		$(".select.everything:not(.hidden)").off("click").on(
 			"click",
 			function() {
-				if (util.everySubalbumIsSelected(thisAlbum.subalbums) && util.everyMediaIsSelected(thisAlbum.media)) {
+				if (util.everySubalbumIsSelected(thisAlbum.subalbums) && thisAlbum.media.everyMediaIsSelected()) {
 					util.removeAllMediaFromSelection(thisAlbum.media);
 					let promise = util.removeAllSubalbumsFromSelection(thisAlbum.subalbums);
 					promise.then(
@@ -758,7 +758,7 @@
 		$(".select.media:not(.hidden)").off("click").on(
 			"click",
 			function() {
-				if (util.everyMediaIsSelected(thisAlbum.media)) {
+				if (thisAlbum.media.everyMediaIsSelected()) {
 					util.removeAllMediaFromSelection(thisAlbum.media);
 					if (util.nothingIsSelected())
 						util.initializeSelectionAlbum();

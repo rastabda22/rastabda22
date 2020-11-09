@@ -562,7 +562,7 @@
 
 		if (singleMedia !== null) {
 			title += "<span class='media-name'>" + singleMedia.name + "</span>";
-			if (util.hasGpsData(currentMedia))
+			if (currentMedia.hasGpsData())
 				title += "<a class='map-popup-trigger'>" +
 					"<img class='title-img' title='" + util.escapeSingleQuotes(util._t("#show-on-map")) + " [s]' alt='" + util.escapeSingleQuotes(util._t("#show-on-map")) + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
 					"</a>";
@@ -750,7 +750,7 @@
 	TopFunctions.toggleSelectedMedia = function(singleMedia, clickedSelector) {
 		if (selectionAlbum.isEmpty())
 			util.initializeSelectionAlbum();
-		if (util.singleMediaIsSelected(singleMedia)) {
+		if (singleMedia.isSelected()) {
 			util.removeSingleMediaFromSelection(singleMedia, clickedSelector);
 			f.updateMenu();
 		} else {
@@ -794,7 +794,7 @@
 				$("#pinch-out").off("click").on("click", pS.pinchOut);
 
 				let selectSrc = 'img/checkbox-unchecked-48px.png';
-				if (util.singleMediaIsSelected(singleMedia)) {
+				if (singleMedia.isSelected()) {
 					selectSrc = 'img/checkbox-checked-48px.png';
 				}
 				$("#media-select-box .select-box").attr("title", util._t("#select-single-media")).attr("alt", util._t("#select-single-media")).attr("src", selectSrc);
@@ -1133,7 +1133,7 @@
 
 		var originalMediaPath = encodeURI(util.originalMediaPath(singleMedia));
 		$(".media-box#" + id + " .original-link").attr("target", "_blank").attr("href", originalMediaPath);
-		if (util.hasGpsData(singleMedia)) {
+		if (singleMedia.hasGpsData()) {
 			$(".media-box#" + id + " .menu-map-link").on(
 				'click',
 				function() {
@@ -1883,7 +1883,7 @@
 					calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
 					mapLinkIcon = "";
-					if (util.hasGpsData(ithMedia)) {
+					if (ithMedia.hasGpsData()) {
 						mapLinkIcon =
 							"<a id='media-map-link-" + i + "'>" +
 								"<img " +
@@ -1896,7 +1896,7 @@
 							"</a>";
 					}
 					selectSrc = 'img/checkbox-unchecked-48px.png';
-					if (util.singleMediaIsSelected(ithMedia)) {
+					if (ithMedia.isSelected()) {
 						selectSrc = 'img/checkbox-checked-48px.png';
 					}
 					selectBoxHtml =
@@ -2458,7 +2458,7 @@
 
 	TopFunctions.generateMapFromMedia = function(ev, from) {
 
-		if (util.hasGpsData(ev.data.media)) {
+		if (ev.data.media.hasGpsData()) {
 			ev.preventDefault();
 			var positionAndMedia =
 				{
@@ -2497,7 +2497,7 @@
 
 	TopFunctions.generateMapFromDefaults = function(ev, from) {
 		var pointList;
-		if (currentMedia !== null && util.hasGpsData(currentMedia)) {
+		if (currentMedia !== null && currentMedia.hasGpsData()) {
 			pointList = [
 				{
 					'lng': parseFloat(currentMedia.metadata.longitude),
@@ -2850,7 +2850,7 @@
 								mapAlbum.positionsAndMediaInTree.some(
 									function(element, index) {
 										matchingIndex = index;
-										return util.matchPositionsAndMediaByPosition(positionsAndCountsElement, element);
+										return positionsAndCountsElement.matchPositionsAndMediaByPosition(element);
 									}
 								)
 							) {
@@ -2907,7 +2907,7 @@
 									if (
 										mapAlbum.positionsAndMediaInTree.every(
 											function(element) {
-												return ! util.matchPositionsAndMediaByPosition(positionsAndCountsElement, element);
+												return ! positionsAndCountsElement.matchPositionsAndMediaByPosition(element);
 											}
 										)
 									) {
@@ -2943,7 +2943,7 @@
 						mapAlbum.numPositionsInTree = mapAlbum.positionsAndMediaInTree.length;
 						mapAlbum.numsProtectedMediaInSubTree = new NumsProtected({",": mapAlbum.numsMedia});
 						// media must be initially sorted by date not reverse, as json they are in albums
-						util.sortByDate(mapAlbum.media);
+						mapAlbum.media.sortByDate();
 						mapAlbum.mediaNameSort = false;
 						mapAlbum.mediaReverseSort = false;
 						mapAlbum.initializeSortPropertiesAndCookies();
