@@ -1127,11 +1127,11 @@
 				});
 			}
 
-			var trueOriginalMediaPath = encodeURI(util.trueOriginalMediaPath(singleMedia));
+			var trueOriginalMediaPath = encodeURI(singleMedia.trueOriginalMediaPath());
 			$(".download-single-media .download-link").attr("href", trueOriginalMediaPath).attr("download", "");
 		}
 
-		var originalMediaPath = encodeURI(util.originalMediaPath(singleMedia));
+		var originalMediaPath = encodeURI(singleMedia.originalMediaPath());
 		$(".media-box#" + id + " .original-link").attr("target", "_blank").attr("href", originalMediaPath);
 		if (singleMedia.hasGpsData()) {
 			$(".media-box#" + id + " .menu-map-link").on(

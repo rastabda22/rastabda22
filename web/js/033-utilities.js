@@ -1365,7 +1365,7 @@
 		var mediaSize = Math.max(mediaWidth, mediaHeight);
 		var mediaRatio = mediaWidth / mediaHeight, containerRatio;
 
-		chosenMedia = this.originalMediaPath(media);
+		chosenMedia = media.originalMediaPath();
 		maxSize = 0;
 
 		if (container === null) {
@@ -1416,7 +1416,7 @@
 
 		if (media.mimeType.indexOf("video") === 0) {
 			if (fullScreenStatus && media.name.match(/\.avi$/) === null) {
-				mediaSrc = Utilities.originalMediaPath(media);
+				mediaSrc = media.originalMediaPath();
 			} else {
 				// .avi videos are not played by browsers, use the transcoded one
 				mediaSrc = this.mediaPath(currentAlbum, media, "");
@@ -1527,7 +1527,7 @@
 
 		if (media.mimeType.indexOf("video") === 0) {
 			if (fullScreenStatus && media.name.match(/\.avi$/) === null) {
-				mediaSrc = Utilities.originalMediaPath(media);
+				mediaSrc = media.originalMediaPath();
 			} else {
 				// .avi videos are not played by browsers, use the transcoded one
 				mediaSrc = this.mediaPath(currentAlbum, media, "");
@@ -1591,15 +1591,15 @@
 		}
 	};
 
-	Utilities.originalMediaPath = function(media) {
-		if (Options.browser_unsupported_mime_types.includes(media.mimeType))
-			return Utilities.pathJoin([Options.server_cache_path, media.convertedPath]);
+	SingleMedia.prototype.originalMediaPath = function() {
+		if (Options.browser_unsupported_mime_types.includes(this.mimeType))
+			return Utilities.pathJoin([Options.server_cache_path, this.convertedPath]);
 		else
-			return Utilities.trueOriginalMediaPath(media);
+			return this.trueOriginalMediaPath();
 	};
 
-	Utilities.trueOriginalMediaPath = function(media) {
-		return Utilities.pathJoin([media.albumName, media.name]);
+	SingleMedia.prototype.trueOriginalMediaPath = function() {
+		return Utilities.pathJoin([this.albumName, this.name]);
 	};
 
 	Utilities.mediaPath = function(album, singleMedia, size) {
@@ -1871,7 +1871,7 @@
 							function(resolveUrlPromise) {
 								let url;
 								if (size === 0)
-									url = encodeURI(Utilities.trueOriginalMediaPath(currentAlbum.media[iMedia]));
+									url = encodeURI(currentAlbum.media[iMedia].trueOriginalMediaPath());
 								else
 									url = encodeURI(Utilities.mediaPath(currentAlbum, currentAlbum.media[iMedia], size));
 								let name = currentAlbum.media[iMedia].name;
@@ -2612,8 +2612,6 @@
 	/* make static methods callable as member functions */
 	// Utilities.prototype.convertComplexCombinationToCodesComplexCombination = Utilities.convertComplexCombinationToCodesComplexCombination;
 	Utilities.prototype.chooseReducedPhoto = Utilities.chooseReducedPhoto;
-	Utilities.prototype.originalMediaPath = Utilities.originalMediaPath;
-	Utilities.prototype.trueOriginalMediaPath = Utilities.trueOriginalMediaPath;
 	Utilities.prototype.mediaPath = Utilities.mediaPath;
 	Utilities.prototype.isFolderCacheBase = Utilities.isFolderCacheBase;
 	Utilities.prototype.pathJoin = Utilities.pathJoin;

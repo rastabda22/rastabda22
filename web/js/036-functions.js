@@ -837,9 +837,9 @@
 			$(".download-single-media").removeClass("hidden");
 			let trueOriginalMediaPath;
 			if (isAlbumWithOneMedia)
-				trueOriginalMediaPath = encodeURI(util.trueOriginalMediaPath(thisAlbum.media[0]));
+				trueOriginalMediaPath = encodeURI(thisAlbum.media[0].trueOriginalMediaPath());
 			else
-				trueOriginalMediaPath = encodeURI(util.trueOriginalMediaPath(currentMedia));
+				trueOriginalMediaPath = encodeURI(currentMedia.trueOriginalMediaPath());
 			$(".download-single-media .download-link").attr("href", trueOriginalMediaPath).attr("download", "");
 		} else if (thisAlbum !== null) {
 			$(".download-album.expandable, .download-album.caption").removeClass("hidden");
