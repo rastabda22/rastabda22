@@ -366,8 +366,8 @@
 
 								album.numsMedia.imagesAndVideosSum(protectedAlbum.numsMedia);
 								album.numsMediaInSubTree.imagesAndVideosSum(protectedAlbum.numsMediaInSubTree);
-								album.sizesOfSubTree = util.sumSizes(album.sizesOfSubTree, protectedAlbum.sizesOfSubTree);
-								album.sizesOfAlbum = util.sumSizes(album.sizesOfAlbum, protectedAlbum.sizesOfAlbum);
+								album.sizesOfSubTree.sum(protectedAlbum.sizesOfSubTree);
+								album.sizesOfAlbum.sum(protectedAlbum.sizesOfAlbum);
 								album.numPositionsInTree += protectedAlbum.numPositionsInTree;
 								if (! album.hasOwnProperty("path"))
 									album.path = protectedAlbum.path;
@@ -666,8 +666,8 @@
 
 	PhotoFloat.mergeProtectedSubalbum = function(subalbum, protectedSubalbum) {
 		subalbum.numsMediaInSubTree.imagesAndVideosSum(protectedSubalbum.numsMediaInSubTree);
-		subalbum.sizesOfSubTree = util.sumSizes(subalbum.sizesOfSubTree, protectedSubalbum.sizesOfSubTree);
-		subalbum.sizesOfAlbum = util.sumSizes(subalbum.sizesOfAlbum, protectedSubalbum.sizesOfAlbum);
+		subalbum.sizesOfSubTree.sum(protectedSubalbum.sizesOfSubTree);
+		subalbum.sizesOfAlbum.sum(protectedSubalbum.sizesOfAlbum);
 		subalbum.numPositionsInTree += protectedSubalbum.numPositionsInTree;
 		// subalbum.words = util.arrayUnion(subalbum.words, protectedSubalbum.words);
 	};
@@ -1539,8 +1539,8 @@
 							// update the media count
 							searchAlbum.numsMediaInSubTree.imagesAndVideosSum(searchAlbum.numsMediaInSubTree, searchAlbum.subalbums[indexSubalbums].numsMediaInSubTree);
 							// update the size totals
-							searchAlbum.sizesOfSubTree = util.sumSizes(searchAlbum.sizesOfSubTree, searchAlbum.subalbums[indexSubalbums].sizesOfSubTree);
-							searchAlbum.sizesOfAlbum = util.sumSizes(searchAlbum.sizesOfAlbum, searchAlbum.subalbums[indexSubalbums].sizesOfAlbum);
+							searchAlbum.sizesOfSubTree.sum(searchAlbum.subalbums[indexSubalbums].sizesOfSubTree);
+							searchAlbum.sizesOfAlbum.sum(searchAlbum.subalbums[indexSubalbums].sizesOfAlbum);
 							// add the points from the subalbums
 
 							// the subalbum could still have no positionsAndMediaInTree array, get it

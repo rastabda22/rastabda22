@@ -404,8 +404,8 @@
 									for (photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
 										if (theAlbum.media[mediaIndex].cacheBase == photosInAlbum[photoIndex].element.cacheBase) {
 											self.media.push(theAlbum.media[mediaIndex]);
-											self.sizesOfAlbum = util.sumSizes(self.sizesOfAlbum, theAlbum.media[mediaIndex].fileSizes);
-											self.sizesOfSubTree = util.sumSizes(self.sizesOfSubTree, theAlbum.media[mediaIndex].fileSizes);
+											self.sizesOfAlbum.sum(theAlbum.media[mediaIndex].fileSizes);
+											self.sizesOfSubTree.sum(theAlbum.media[mediaIndex].fileSizes);
 										}
 									}
 								}

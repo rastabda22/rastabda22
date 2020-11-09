@@ -1183,8 +1183,8 @@
 			var singleMediaArray = new Media([this]);
 			selectionAlbum.numsMedia.imagesAndVideosSum(singleMediaArray.imagesAndVideosCount());
 			selectionAlbum.numsMediaInSubTree.imagesAndVideosSum(singleMediaArray.imagesAndVideosCount());
-			selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, this.fileSizes);
-			selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, this.fileSizes);
+			selectionAlbum.sizesOfAlbum.sum(this.fileSizes);
+			selectionAlbum.sizesOfSubTree.sum(this.fileSizes);
 
 			selectionAlbum.media.sortByDate();
 			selectionAlbum.mediaNameSort = false;
@@ -1218,8 +1218,8 @@
 			selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 			selectionAlbum.numsMedia.imagesAndVideosSubtract(singleMediaArray.imagesAndVideosCount());
 			selectionAlbum.numsMediaInSubTree.imagesAndVideosSubtract(singleMediaArray.imagesAndVideosCount());
-			selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, this.fileSizes);
-			selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, this.fileSizes);
+			selectionAlbum.sizesOfAlbum.subtractSizes(this.fileSizes);
+			selectionAlbum.sizesOfSubTree.subtractSizes(this.fileSizes);
 
 			var singleMediaSelector = "#media-select-box";
 			var otherSelector;
@@ -1275,9 +1275,9 @@
 							selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 							// selectionAlbum.numsMedia.imagesAndVideosSum(subalbum.numsMedia);
 							selectionAlbum.numsMediaInSubTree.imagesAndVideosSum(subalbum.numsMediaInSubTree);
-							// selectionAlbum.sizesOfAlbum = Utilities.sumSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
-							selectionAlbum.sizesOfSubTree = Utilities.sumSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
-							selectionAlbum.numsProtectedMediaInSubTree = Utilities.sumNumsProtectedSizes(selectionAlbum.numsProtectedMediaInSubTree, subalbum.numsProtectedMediaInSubTree);
+							// selectionAlbum.sizesOfAlbum.sum(subalbum.sizesOfAlbum);
+							selectionAlbum.sizesOfSubTree.sum(subalbum.sizesOfSubTree);
+							selectionAlbum.numsProtectedMediaInSubTree.sum(subalbum.numsProtectedMediaInSubTree);
 
 							let parentCacheBase = subalbum.ancestorsCacheBase[subalbum.ancestorsCacheBase.length - 2];
 							Utilities.generateSubalbumNameForSelectionAlbum(subalbum).then(
@@ -1324,9 +1324,9 @@
 							}
 							// selectionAlbum.numsMedia.imagesAndVideosSubtract(subalbum.numsMedia);
 							selectionAlbum.numsMediaInSubTree.imagesAndVideosSubtract(subalbum.numsMediaInSubTree);
-							// selectionAlbum.sizesOfAlbum = Utilities.subtractSizes(selectionAlbum.sizesOfAlbum, subalbum.sizesOfAlbum);
-							selectionAlbum.sizesOfSubTree = Utilities.subtractSizes(selectionAlbum.sizesOfSubTree, subalbum.sizesOfSubTree);
-							selectionAlbum.numsProtectedMediaInSubTree = Utilities.subtractSizes(selectionAlbum.numsProtectedMediaInSubTree, subalbum.numsProtectedMediaInSubTree);
+							// selectionAlbum.Utilities.subtractSizes(subalbum.sizesOfAlbum);
+							selectionAlbum.sizesOfSubTree.subtractSizes(subalbum.sizesOfSubTree);
+							selectionAlbum.numsProtectedMediaInSubTree.subtract(subalbum.numsProtectedMediaInSubTree);
 
 							if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
 								if (Utilities.nothingIsSelected()) {
@@ -1433,50 +1433,59 @@
 		return mediaSrc;
 	};
 
-	Utilities.sumSizes = function(sizes1, sizes2) {
-		var result = new Sizes();
-		var keys = Object.keys(sizes1);
+	Sizes.prototype.sum = function(sizes2) {
+		var keys = Object.keys(this);
 		for (var i = 0; i < keys.length; i++)
-			result[keys[i]] = new ImagesAndVideos(
+			this[keys[i]] = new ImagesAndVideos(
 				{
-					"images": sizes1[keys[i]].images + sizes2[keys[i]].images,
-					"videos": sizes1[keys[i]].videos + sizes2[keys[i]].videos
+					"images": this[keys[i]].images + sizes2[keys[i]].images,
+					"videos": this[keys[i]].videos + sizes2[keys[i]].videos
 				}
 			);
-		return result;
 	};
 
-	Utilities.sumNumsProtectedSizes = function(sizes1, sizes2) {
-		var result = new NumsProtected();
-		var keys = Utilities.arrayUnion(Object.keys(sizes1), Object.keys(sizes2));
+	NumsProtected.prototype.sum = function(numsProtectedSize2) {
+		var keys = Utilities.arrayUnion(Object.keys(this), Object.keys(numsProtectedSize2));
 		for (var i = 0; i < keys.length; i++) {
-			if (sizes1[keys[i]] !== undefined && sizes2[keys[i]] !== undefined) {
-				result[keys[i]] = new ImagesAndVideos(
+			if (this[keys[i]] !== undefined && numsProtectedSize2[keys[i]] !== undefined) {
+				this[keys[i]] = new ImagesAndVideos(
 					{
-						"images": sizes1[keys[i]].images + sizes2[keys[i]].images,
-						"videos": sizes1[keys[i]].videos + sizes2[keys[i]].videos
+						"images": this[keys[i]].images + numsProtectedSize2[keys[i]].images,
+						"videos": this[keys[i]].videos + numsProtectedSize2[keys[i]].videos
 					}
 				);
-			} else if (sizes1[keys[i]] === undefined) {
-				result[keys[i]] = sizes2[keys[i]];
-			} else {
-				result[keys[i]] = sizes1[keys[i]];
+			} else if (this[keys[i]] === undefined) {
+				this[keys[i]] = numsProtectedSize2[keys[i]];
 			}
 		}
-		return result;
 	};
 
-	Utilities.subtractSizes = function(sizes1, sizes2) {
-		var result = new Sizes();
-		var keys = Object.keys(sizes1);
+	Sizes.prototype.subtractSizes = function(sizes2) {
+		var keys = Object.keys(this);
 		for (var i = 0; i < keys.length; i++)
-			result[keys[i]] = new ImagesAndVideos(
+			this[keys[i]] = new ImagesAndVideos(
 				{
-					"images": sizes1[keys[i]].images - sizes2[keys[i]].images,
-					"videos": sizes1[keys[i]].videos - sizes2[keys[i]].videos
+					"images": this[keys[i]].images - sizes2[keys[i]].images,
+					"videos": this[keys[i]].videos - sizes2[keys[i]].videos
 				}
 			);
-		return result;
+	};
+
+	NumsProtected.prototype.subtract = function(numsProtectedSize2) {
+		var keys = Utilities.arrayUnion(Object.keys(this), Object.keys(numsProtectedSize2));
+		for (var i = 0; i < keys.length; i++) {
+			if (this[keys[i]] !== undefined && numsProtectedSize2[keys[i]] !== undefined) {
+				this[keys[i]] = new ImagesAndVideos(
+					{
+						"images": this[keys[i]].images - numsProtectedSize2[keys[i]].images,
+						"videos": this[keys[i]].videos - numsProtectedSize2[keys[i]].videos
+					}
+				);
+			} else if (this[keys[i]] === undefined) {
+				// execution shouldn't arrive here
+				console.trace();
+			}
+		}
 	};
 
 	Utilities.currentSizeAndIndex = function() {
@@ -2665,7 +2674,6 @@
 	// Utilities.prototype.countSelectedSubalbums = Utilities.countSelectedSubalbums;
 	Utilities.prototype.isAnyRootHash = Utilities.isAnyRootHash;
 	Utilities.prototype.isAnyRootCacheBase = Utilities.isAnyRootCacheBase;
-	Utilities.prototype.sumSizes = Utilities.sumSizes;
 	Utilities.prototype.initializeSelectionRootAlbum = Utilities.initializeSelectionRootAlbum;
 	Utilities.prototype.initializeMapRootAlbum = Utilities.initializeMapRootAlbum;
 	// Utilities.prototype.initializeSearchRootAlbum = Utilities.initializeSearchRootAlbum;
