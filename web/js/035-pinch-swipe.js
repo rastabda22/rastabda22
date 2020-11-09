@@ -154,7 +154,7 @@
 						if (nextReductionIndex === -1)
 							photoSrc = currentMedia.originalMediaPath();
 						else
-							photoSrc = util.mediaPath(currentAlbum, currentMedia, nextReductionSize);
+							photoSrc = currentMedia.mediaPath(nextReductionSize);
 						$(mediaSelector).attr("width", width).attr("height", height).attr("src", photoSrc);
 					}
 				}

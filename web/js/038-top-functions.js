@@ -1015,7 +1015,7 @@
 			mediaSrc = singleMedia.chooseMediaReduction(id, fullScreenStatus);
 			mediaHtml = singleMedia.createMediaHtml(id, fullScreenStatus);
 
-			loadEvent = util.chooseTriggerEvent(singleMedia);
+			loadEvent = singleMedia.chooseTriggerEvent();
 
 			if (mediaBoxInnerElement.html() !== mediaHtml) {
 				// only replace the media-box-inner content if it's not yet there
@@ -1026,7 +1026,7 @@
 					$("link[rel=image_src]").remove();
 					$('link[rel="video_src"]').remove();
 				}
-				$("head").append(util.createMediaLinkTag(singleMedia, mediaSrc));
+				$("head").append(singleMedia.createMediaLinkTag(mediaSrc));
 			}
 
 			if (id === "center")

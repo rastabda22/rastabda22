@@ -1404,7 +1404,7 @@
 					)
 						break;
 				}
-				chosenMedia = this.mediaPath(currentAlbum, media, Options.reduced_sizes[i]);
+				chosenMedia = media.mediaPath(Options.reduced_sizes[i]);
 				maxSize = Options.reduced_sizes[i];
 			}
 		}
@@ -1420,7 +1420,7 @@
 				mediaSrc = this.originalMediaPath();
 			} else {
 				// .avi videos are not played by browsers, use the transcoded one
-				mediaSrc = this.mediaPath(currentAlbum, this, "");
+				mediaSrc = this.mediaPath("");
 			}
 		} else if (this.mimeType.indexOf("image") === 0) {
 			if (fullScreenStatus && Modernizr.fullscreen)
@@ -1497,7 +1497,7 @@
 
 		// check if it's a reduction
 		for (var i = 0; i < Options.reduced_sizes.length; i ++) {
-			if (currentReduction === Utilities.mediaPath(currentAlbum, currentMedia, Options.reduced_sizes[i])) {
+			if (currentReduction === currentMedia.mediaPath(Options.reduced_sizes[i])) {
 				return [Options.reduced_sizes[i], i];
 			}
 		}
@@ -1544,7 +1544,7 @@
 		if (nextReductionIndex === -1)
 			return Utilities.pathJoin([currentMedia.albumName, currentMedia.name]);
 
-		return Utilities.mediaPath(currentAlbum, currentMedia, nextReductionSize);
+		return currentMedia.mediaPath(nextReductionSize);
 	};
 
 	SingleMedia.prototype.createMediaHtml = function(id, fullScreenStatus) {
@@ -1560,7 +1560,7 @@
 				mediaSrc = this.originalMediaPath();
 			} else {
 				// .avi videos are not played by browsers, use the transcoded one
-				mediaSrc = this.mediaPath(currentAlbum, this, "");
+				mediaSrc = this.mediaPath("");
 			}
 
 			mediaElement = $('<video/>', {controls: true });
@@ -1584,10 +1584,10 @@
 			}
 
 			mediaElement = $('<img/>');
-			if (this.isFolderCacheBase(currentAlbum.cacheBase))
+			if (Utilities.isFolderCacheBase(currentAlbum.cacheBase))
 				mediaElement.attr("title", this.date);
 			else
-				mediaElement.attr("title", this.pathJoin([this.albumName, this.name]));
+				mediaElement.attr("title", Utilities.pathJoin([this.albumName, this.name]));
 		}
 
 		mediaElement
@@ -1601,22 +1601,22 @@
 		return mediaElement[0].outerHTML;
 	};
 
-	Utilities.prototype.createMediaLinkTag = function(media, mediaSrc) {
+	SingleMedia.prototype.createMediaLinkTag = function(mediaSrc) {
 		// creates a link tag to be inserted in <head>
 
-		if (media.mimeType.indexOf("video") === 0) {
+		if (this.mimeType.indexOf("video") === 0) {
 			return '<link rel="video_src" href="' + encodeURI(mediaSrc) + '" />';
-		} else if (media.mimeType.indexOf("image") === 0) {
+		} else if (this.mimeType.indexOf("image") === 0) {
 			return '<link rel="image_src" href="' + encodeURI(mediaSrc) + '" />';
 		}
 	};
 
-	Utilities.prototype.chooseTriggerEvent = function(media) {
+	SingleMedia.prototype.chooseTriggerEvent = function() {
 		// choose the event that must trigger the scaleMedia function
 
-		if (media.mimeType.indexOf("video") === 0) {
+		if (this.mimeType.indexOf("video") === 0) {
 			return "loadstart";
-		} else if (media.mimeType.indexOf("image") === 0) {
+		} else if (this.mimeType.indexOf("image") === 0) {
 			return "load";
 		}
 	};
@@ -1632,11 +1632,11 @@
 		return Utilities.pathJoin([this.albumName, this.name]);
 	};
 
-	Utilities.mediaPath = function(album, singleMedia, size) {
+	SingleMedia.prototype.mediaPath = function(size) {
 		var suffix = Options.cache_folder_separator, hash, rootString = "root-";
 		if (
-			singleMedia.mimeType.indexOf("image") === 0 ||
-			singleMedia.mimeType.indexOf("video") === 0 && [Options.album_thumb_size, Options.media_thumb_size].indexOf(size) != -1
+			this.mimeType.indexOf("image") === 0 ||
+			this.mimeType.indexOf("video") === 0 && [Options.album_thumb_size, Options.media_thumb_size].indexOf(size) != -1
 		) {
 			var actualSize = size;
 			var albumThumbSize = Options.album_thumb_size;
@@ -1662,31 +1662,31 @@
 					suffix += "f";
 			}
 			suffix += ".jpg";
-		} else if (singleMedia.mimeType.indexOf("video") === 0) {
+		} else if (this.mimeType.indexOf("video") === 0) {
 			suffix += "transcoded.mp4";
 		}
 
-		hash = singleMedia.foldersCacheBase + Options.cache_folder_separator + singleMedia.cacheBase + suffix;
+		hash = this.foldersCacheBase + Options.cache_folder_separator + this.cacheBase + suffix;
 		if (hash.indexOf(rootString) === 0)
 			hash = hash.substring(rootString.length);
 		else {
-			if (this.isFolderCacheBase(hash))
+			if (Utilities.isFolderCacheBase(hash))
 				hash = hash.substring(Options.foldersStringWithTrailingSeparator.length);
-			else if (this.isByDateCacheBase(hash))
+			else if (Utilities.isByDateCacheBase(hash))
 				hash = hash.substring(Options.byDateStringWithTrailingSeparator.length);
-			else if (this.isByGpsCacheBase(hash))
+			else if (Utilities.isByGpsCacheBase(hash))
 				hash = hash.substring(Options.byGpsStringWithTrailingSeparator.length);
-			else if (this.isSearchCacheBase(hash))
+			else if (Utilities.isSearchCacheBase(hash))
 				hash = hash.substring(Options.bySearchStringWithTrailingSeparator.length);
-			else if (this.isSelectionCacheBase(hash))
+			else if (Utilities.isSelectionCacheBase(hash))
 				hash = hash.substring(Options.bySelectionStringWithTrailingSeparator.length);
-			else if (this.isMapCacheBase(hash))
+			else if (Utilities.isMapCacheBase(hash))
 				hash = hash.substring(Options.byMapStringWithTrailingSeparator.length);
 		}
-		if (singleMedia.cacheSubdir)
-			return this.pathJoin([Options.server_cache_path, singleMedia.cacheSubdir, hash]);
+		if (this.cacheSubdir)
+			return Utilities.pathJoin([Options.server_cache_path, this.cacheSubdir, hash]);
 		else
-			return this.pathJoin([Options.server_cache_path, hash]);
+			return Utilities.pathJoin([Options.server_cache_path, hash]);
 	};
 
 	Utilities.mediaBoxContainerHeight = function() {
@@ -1903,7 +1903,7 @@
 								if (size === 0)
 									url = encodeURI(currentAlbum.media[iMedia].trueOriginalMediaPath());
 								else
-									url = encodeURI(Utilities.mediaPath(currentAlbum, currentAlbum.media[iMedia], size));
+									url = encodeURI(currentAlbum.media[iMedia].mediaPath(size));
 								let name = currentAlbum.media[iMedia].name;
 								// load a file and add it to the zip file
 								JSZipUtils.getBinaryContent(
@@ -2550,7 +2550,7 @@
 	};
 
 	Utilities.prototype.chooseThumbnail	= function(album, singleMedia, thumbnailSize) {
-		return this.mediaPath(album, singleMedia, thumbnailSize);
+		return singleMedia.mediaPath(thumbnailSize);
 	};
 
 	Album.prototype.sortAlbumsMedia = function() {
@@ -2642,7 +2642,6 @@
 	/* make static methods callable as member functions */
 	// Utilities.prototype.convertComplexCombinationToCodesComplexCombination = Utilities.convertComplexCombinationToCodesComplexCombination;
 	Utilities.prototype.chooseReducedPhoto = Utilities.chooseReducedPhoto;
-	Utilities.prototype.mediaPath = Utilities.mediaPath;
 	Utilities.prototype.isFolderCacheBase = Utilities.isFolderCacheBase;
 	Utilities.prototype.pathJoin = Utilities.pathJoin;
 	Utilities.prototype.setLinksVisibility = Utilities.setLinksVisibility;
