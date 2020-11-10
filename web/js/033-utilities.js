@@ -414,7 +414,7 @@
 		);
 	};
 
-	PositionsAndMedia.prototype.addPositionAndMediaToPositionsAndMedia = function(newPositionAndMedia) {
+	PositionsAndMedia.prototype.addPositionAndMedia = function(newPositionAndMedia) {
 		var positionAndMedia, newMediaNameListElement;
 		for (var iOld = 0; iOld < this.length; iOld ++) {
 			positionAndMedia = this[iOld];
@@ -445,7 +445,7 @@
 
 	PositionsAndMedia.prototype.mergePositionsAndMedia = function(newPositionsAndMedia) {
 		for (var i = 0; i < newPositionsAndMedia.length; i ++) {
-			this.addPositionAndMediaToPositionsAndMedia(newPositionsAndMedia[i]);
+			this.addPositionAndMedia(newPositionsAndMedia[i]);
 		}
 		// return positionsAndMedia;
 	};
@@ -457,40 +457,29 @@
 		}
 	};
 
-	PositionsAndMedia.prototype.addSingleMediaToPositionsAndMedia = function(singleMedia) {
-		var newPositionsAndMedia = new PositionAndMedia(
+	SingleMedia.prototype.positionAndMedia = function() {
+		return new PositionAndMedia(
 			{
-				'lng': parseFloat(singleMedia.metadata.longitude),
-				'lat' : parseFloat(singleMedia.metadata.latitude),
+				'lng': parseFloat(this.metadata.longitude),
+				'lat' : parseFloat(this.metadata.latitude),
 				'mediaNameList': [
 					{
-						'name': util.pathJoin([singleMedia.albumName, singleMedia.name]),
-						'cacheBase': singleMedia.cacheBase,
-						'albumCacheBase': singleMedia.parent.cacheBase,
-						'foldersCacheBase': singleMedia.foldersCacheBase
+						'name': util.pathJoin([this.albumName, this.name]),
+						'cacheBase': this.cacheBase,
+						'albumCacheBase': this.parent.cacheBase,
+						'foldersCacheBase': this.foldersCacheBase
 					}
 				]
 			}
 		);
-		this.addPositionAndMediaToPositionsAndMedia(newPositionsAndMedia);
 	};
 
-	PositionsAndMedia.prototype.removeSingleMediaFromPositionsAndMedia = function(singleMedia) {
-		var positionAndMediaToRemove = new PositionAndMedia(
-			{
-				'lng': parseFloat(singleMedia.metadata.longitude),
-				'lat': parseFloat(singleMedia.metadata.latitude),
-				'mediaNameList': [
-					{
-						'name': util.pathJoin([singleMedia.albumName, singleMedia.name]),
-						'cacheBase': singleMedia.cacheBase,
-						'albumCacheBase': singleMedia.parent.cacheBase,
-						'foldersCacheBase': singleMedia.foldersCacheBase
-					}
-				]
-			}
-		);
-		this.removePositionAndMediaFromPositionsAndMedia(positionAndMediaToRemove);
+	PositionsAndMedia.prototype.addSingleMediaToPositionsAndMedia = function(singleMedia) {
+		this.addPositionAndMedia(singleMedia.positionAndMedia());
+	};
+
+	PositionsAndMedia.prototype.removeSingleMedia = function(singleMedia) {
+		this.removePositionAndMediaFromPositionsAndMedia(singleMedia.positionAndMedia());
 	};
 
 	PositionsAndMedia.prototype.removePositionAndMediaFromPositionsAndMedia = function(positionAndMediaToRemove) {
@@ -1192,7 +1181,7 @@
 			var index = selectionAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
 			selectionAlbum.media.splice(index, 1);
 
-			selectionAlbum.positionsAndMediaInTree.removeSingleMediaFromPositionsAndMedia(this);
+			selectionAlbum.positionsAndMediaInTree.removeSingleMedia(this);
 			var singleMediaArray = new Media([this]);
 			selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 			selectionAlbum.numsMedia.imagesAndVideosSubtract(singleMediaArray.imagesAndVideosCount());
