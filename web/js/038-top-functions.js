@@ -2953,7 +2953,7 @@
 						// update the map root album in cache
 						var rootMapAlbum = phFl.getAlbumFromCache(Options.by_map_string);
 						if (! rootMapAlbum)
-							rootMapAlbum = util.initializeMapRootAlbum();
+							rootMapAlbum = util.initializeOrGetMapRootAlbum();
 						rootMapAlbum.numsMediaInSubTree.sum(mapAlbum.numsMediaInSubTree);
 						rootMapAlbum.subalbums.push(mapAlbum);
 						rootMapAlbum.positionsAndMediaInTree.mergePositionsAndMedia(mapAlbum.positionsAndMediaInTree);

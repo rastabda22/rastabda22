@@ -91,9 +91,8 @@
 		return false;
 	};
 
-	Utilities.initializeMapRootAlbum = function() {
+	Utilities.initializeOrGetMapRootAlbum = function() {
 		// prepare the root of the map albums and put it in the cache
-		var rootMapAlbum = new Album(Options.by_map_string);
 		var rootMapAlbum = PhotoFloat.getAlbumFromCache(Options.by_map_string);
 		if (! rootMapAlbum) {
 			rootMapAlbum = new Album(Options.by_map_string);
@@ -122,7 +121,7 @@
 	Utilities.prototype.initializeMapAlbum = function() {
 		rootMapAlbum = PhotoFloat.getAlbumFromCache(Options.by_map_string);
 		// if (! rootMapAlbum)
-		// 	rootMapAlbum = Utilities.initializeMapRootAlbum();
+		// 	rootMapAlbum = Utilities.initializeOrGetMapRootAlbum();
 
 		lastMapAlbumIndex ++;
 
@@ -2664,7 +2663,7 @@
 	Utilities.prototype.isAnyRootHash = Utilities.isAnyRootHash;
 	Utilities.prototype.isAnyRootCacheBase = Utilities.isAnyRootCacheBase;
 	Utilities.prototype.initializeSelectionRootAlbum = Utilities.initializeSelectionRootAlbum;
-	Utilities.prototype.initializeMapRootAlbum = Utilities.initializeMapRootAlbum;
+	Utilities.prototype.initializeOrGetMapRootAlbum = Utilities.initializeOrGetMapRootAlbum;
 	// Utilities.prototype.initializeSearchRootAlbum = Utilities.initializeSearchRootAlbum;
 	Utilities.prototype.nothingIsSelected = Utilities.nothingIsSelected;
 	Utilities.prototype.somethingIsSearched = Utilities.somethingIsSearched;

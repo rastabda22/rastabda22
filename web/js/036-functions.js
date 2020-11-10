@@ -1497,7 +1497,7 @@
 							initialSizes = new Sizes();
 
 							// WARNING: do not initialize the search root album, the app must read it from its json file!
-							util.initializeMapRootAlbum();
+							util.initializeOrGetMapRootAlbum();
 							util.initializeSelectionRootAlbum();
 
 							if (Options.request_password_email) {
