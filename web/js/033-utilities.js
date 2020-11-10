@@ -2537,8 +2537,8 @@
 		$("body, html").css("overflow", "auto");
 	};
 
-	Utilities.prototype.chooseThumbnail	= function(album, singleMedia, thumbnailSize) {
-		return singleMedia.mediaPath(thumbnailSize);
+	SingleMedia.prototype.chooseThumbnail	= function(thumbnailSize) {
+		return this.mediaPath(thumbnailSize);
 	};
 
 	Album.prototype.sortAlbumsMedia = function() {

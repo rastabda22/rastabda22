@@ -57,7 +57,7 @@
 			mediaHash = phFl.encodeHash(this.cacheBase, ithMedia);
 			albumCacheBase = this.cacheBase;
 			// var codedHashId = getCodedHashId(photosInAlbumCopy[photoIndex].element);
-			thumbHash = util.chooseThumbnail(this, ithMedia, Options.media_thumb_size);
+			thumbHash = ithMedia.chooseThumbnail(Options.media_thumb_size);
 			imgTitle = util.pathJoin([ithMedia.albumName, ithMedia.name]);
 
 			// calculate the width and height values

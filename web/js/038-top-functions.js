@@ -1675,7 +1675,7 @@
 			var titleName, randomMediaLink, goTo, humanGeonames;
 			var randomMedia = randomSubAlbum.media[index];
 			var id = phFl.hashCode(subalbum.cacheBase);
-			var mediaSrc = util.chooseThumbnail(randomSubAlbum, randomMedia, Options.album_thumb_size);
+			var mediaSrc = randomMedia.chooseThumbnail(Options.album_thumb_size);
 
 			$("#downloading-media").hide();
 
@@ -1852,7 +1852,7 @@
 
 					width = ithMedia.metadata.size[0];
 					height = ithMedia.metadata.size[1];
-					thumbHash = util.chooseThumbnail(currentAlbum, ithMedia, thumbnailSize);
+					thumbHash = ithMedia.chooseThumbnail(thumbnailSize);
 
 					if (Options.media_thumb_type == "fixed_height") {
 						if (height < Options.media_thumb_size) {
