@@ -454,29 +454,17 @@
 		for (let indexPositions = 0; indexPositions < positionsAndMediaToRemove.length; indexPositions ++) {
 			let positionsAndMediaToRemoveElement = positionsAndMediaToRemove[indexPositions];
 			this.removePositionAndMediaFromPositionsAndMedia(positionsAndMediaToRemoveElement);
-			// for (let indexMedia = 0; indexMedia < positionsAndMediaToRemoveElement.mediaNameList; indexMedia ++) {
-			// 	let mediaNameListElement = positionsAndMediaToRemoveElement.mediaNameList[indexMedia];
-			// 	let positionAndMedia = {
-			// 		'lng': parseFloat(positionsAndMediaToRemoveElement.lng),
-			// 		'lat' : parseFloat(positionsAndMediaToRemoveElement.lat),
-			// 		'mediaNameList': [{
-			// 			'cacheBase': mediaNameListElement.cacheBase,
-			// 			'albumCacheBase': mediaNameListElement.albumCacheBase,
-			// 			'foldersCacheBase': mediaNameListElement.foldersCacheBase
-			// 		}]
-			// 	};
-			// 	Utilities.removePositionAndMediaFromPositionsAndMedia(this, positionAndMedia);
-			// }
 		}
 	};
 
 	PositionsAndMedia.prototype.addSingleMediaToPositionsAndMedia = function(singleMedia) {
-		var newPositionsAndMedia = new PositionAndMedia (
+		var newPositionsAndMedia = new PositionAndMedia(
 			{
 				'lng': parseFloat(singleMedia.metadata.longitude),
 				'lat' : parseFloat(singleMedia.metadata.latitude),
 				'mediaNameList': [
 					{
+						'name': util.pathJoin([singleMedia.albumName, singleMedia.name]),
 						'cacheBase': singleMedia.cacheBase,
 						'albumCacheBase': singleMedia.parent.cacheBase,
 						'foldersCacheBase': singleMedia.foldersCacheBase
@@ -488,12 +476,13 @@
 	};
 
 	PositionsAndMedia.prototype.removeSingleMediaFromPositionsAndMedia = function(singleMedia) {
-		var positionAndMediaToRemove = new PositionAndMedia (
+		var positionAndMediaToRemove = new PositionAndMedia(
 			{
 				'lng': parseFloat(singleMedia.metadata.longitude),
 				'lat': parseFloat(singleMedia.metadata.latitude),
 				'mediaNameList': [
-						{
+					{
+						'name': util.pathJoin([singleMedia.albumName, singleMedia.name]),
 						'cacheBase': singleMedia.cacheBase,
 						'albumCacheBase': singleMedia.parent.cacheBase,
 						'foldersCacheBase': singleMedia.foldersCacheBase

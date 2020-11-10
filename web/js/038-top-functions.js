@@ -2460,7 +2460,7 @@
 
 		if (ev.data.media.hasGpsData()) {
 			ev.preventDefault();
-			var positionAndMedia =
+			var positionAndMedia = new PositionAndMedia(
 				{
 					'lng': parseFloat(ev.data.media.metadata.longitude),
 					'lat' : parseFloat(ev.data.media.metadata.latitude),
@@ -2470,7 +2470,8 @@
 						'albumCacheBase': ev.data.album.cacheBase,
 						'foldersCacheBase': ev.data.media.foldersCacheBase
 					}]
-				};
+				}
+			);
 			TopFunctions.generateMap(ev, [positionAndMedia], from);
 		}
 	};
@@ -2498,18 +2499,22 @@
 	TopFunctions.generateMapFromDefaults = function(ev, from) {
 		var pointList;
 		if (currentMedia !== null && currentMedia.hasGpsData()) {
-			pointList = [
-				{
-					'lng': parseFloat(currentMedia.metadata.longitude),
-					'lat' : parseFloat(currentMedia.metadata.latitude),
-					'mediaNameList': [{
-						'name': util.pathJoin([currentMedia.albumName, currentMedia.name]),
-						'cacheBase': currentMedia.cacheBase,
-						'albumCacheBase': currentAlbum.cacheBase,
-						'foldersCacheBase': currentMedia.foldersCacheBase
-					}]
-				}
-			];
+			pointList = new PositionsAndMedia(
+				[
+					new PositionAndMedia(
+						{
+							'lng': parseFloat(currentMedia.metadata.longitude),
+							'lat' : parseFloat(currentMedia.metadata.latitude),
+							'mediaNameList': [{
+								'name': util.pathJoin([currentMedia.albumName, currentMedia.name]),
+								'cacheBase': currentMedia.cacheBase,
+								'albumCacheBase': currentAlbum.cacheBase,
+								'foldersCacheBase': currentMedia.foldersCacheBase
+							}]
+						}
+					)
+				]
+			);
 		} else if (currentAlbum.positionsAndMediaInTree.length) {
 			pointList = currentAlbum.positionsAndMediaInTree;
 		}
