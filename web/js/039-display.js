@@ -141,6 +141,8 @@ $(document).ready(function() {
 					$('.modal-close')[0].click();
 					popupRefreshType = "previousAlbum";
 					mapRefreshType = "none";
+					// the menu must be updated here in order to have the browsing mode shortcuts workng
+					f.updateMenu();
 				}
 				return false;
 			} else if (pS.getCurrentZoom() > pS.getInitialZoom() || $(".media-box#center .title").hasClass("hidden-by-pinch")) {
