@@ -2959,7 +2959,7 @@
 						rootMapAlbum.positionsAndMediaInTree.mergePositionsAndMedia(mapAlbum.positionsAndMediaInTree);
 						rootMapAlbum.numPositionsInTree += mapAlbum.positionsAndMediaInTree.length;
 						// rootMapAlbum.numPositionsInTree += mapAlbum.numPositionsInTree;
-						rootMapAlbum.numsProtectedMediaInSubTree[","].imagesAndVideosSum(mapAlbum.numsProtectedMediaInSubTree[","]);
+						rootMapAlbum.numsProtectedMediaInSubTree[","].sum(mapAlbum.numsProtectedMediaInSubTree[","]);
 
 						TopFunctions.bindSortEvents(mapAlbum);
 					}

@@ -1171,8 +1171,8 @@
 				selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 			}
 			var singleMediaArray = new Media([this]);
-			selectionAlbum.numsMedia.imagesAndVideosSum(singleMediaArray.imagesAndVideosCount());
-			selectionAlbum.numsMediaInSubTree.imagesAndVideosSum(singleMediaArray.imagesAndVideosCount());
+			selectionAlbum.numsMedia.sum(singleMediaArray.imagesAndVideosCount());
+			selectionAlbum.numsMediaInSubTree.sum(singleMediaArray.imagesAndVideosCount());
 			selectionAlbum.sizesOfAlbum.sum(this.fileSizes);
 			selectionAlbum.sizesOfSubTree.sum(this.fileSizes);
 
@@ -1263,8 +1263,8 @@
 
 							selectionAlbum.positionsAndMediaInTree.mergePositionsAndMedia(subalbum.positionsAndMediaInTree);
 							selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
-							// selectionAlbum.numsMedia.imagesAndVideosSum(subalbum.numsMedia);
-							selectionAlbum.numsMediaInSubTree.imagesAndVideosSum(subalbum.numsMediaInSubTree);
+							// selectionAlbum.numsMedia.sum(subalbum.numsMedia);
+							selectionAlbum.numsMediaInSubTree.sum(subalbum.numsMediaInSubTree);
 							// selectionAlbum.sizesOfAlbum.sum(subalbum.sizesOfAlbum);
 							selectionAlbum.sizesOfSubTree.sum(subalbum.sizesOfSubTree);
 							selectionAlbum.numsProtectedMediaInSubTree.sum(subalbum.numsProtectedMediaInSubTree);
@@ -1802,7 +1802,7 @@
 		return this.images + this.videos;
 	};
 
-	ImagesAndVideos.prototype.imagesAndVideosSum = function(imagesAndVideos) {
+	ImagesAndVideos.prototype.sum = function(imagesAndVideos) {
 		this.images = this.images + imagesAndVideos.images;
 		this.videos = this.videos + imagesAndVideos.videos;
 	};
@@ -2190,7 +2190,7 @@
 		var result = new ImagesAndVideos(), codesComplexcombination;
 		for (codesComplexcombination in this) {
 			if (this.hasOwnProperty(codesComplexcombination) && codesComplexcombination !== ",") {
-				result.imagesAndVideosSum(this[codesComplexcombination]);
+				result.sum(this[codesComplexcombination]);
 			}
 		}
 		return result.images + result.videos;
@@ -2204,7 +2204,7 @@
 				if (albumOrSubalbum.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexcombination) && codesComplexcombination !== ",") {
 					if (! result.hasOwnProperty(codesComplexcombination))
 						result[codesComplexcombination] = new ImagesAndVideos();
-					result[codesComplexcombination].imagesAndVideosSum(albumOrSubalbum.numsProtectedMediaInSubTree[codesComplexcombination]);
+					result[codesComplexcombination].sum(albumOrSubalbum.numsProtectedMediaInSubTree[codesComplexcombination]);
 				}
 			}
 		}

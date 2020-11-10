@@ -364,8 +364,8 @@
 								if (protectedAlbum.subalbums.length)
 									album.mergeProtectedSubalbums(protectedAlbum);
 
-								album.numsMedia.imagesAndVideosSum(protectedAlbum.numsMedia);
-								album.numsMediaInSubTree.imagesAndVideosSum(protectedAlbum.numsMediaInSubTree);
+								album.numsMedia.sum(protectedAlbum.numsMedia);
+								album.numsMediaInSubTree.sum(protectedAlbum.numsMediaInSubTree);
 								album.sizesOfSubTree.sum(protectedAlbum.sizesOfSubTree);
 								album.sizesOfAlbum.sum(protectedAlbum.sizesOfAlbum);
 								album.numPositionsInTree += protectedAlbum.numPositionsInTree;
@@ -665,7 +665,7 @@
 
 
 	PhotoFloat.mergeProtectedSubalbum = function(subalbum, protectedSubalbum) {
-		subalbum.numsMediaInSubTree.imagesAndVideosSum(protectedSubalbum.numsMediaInSubTree);
+		subalbum.numsMediaInSubTree.sum(protectedSubalbum.numsMediaInSubTree);
 		subalbum.sizesOfSubTree.sum(protectedSubalbum.sizesOfSubTree);
 		subalbum.sizesOfAlbum.sum(protectedSubalbum.sizesOfAlbum);
 		subalbum.numPositionsInTree += protectedSubalbum.numPositionsInTree;
@@ -1537,7 +1537,7 @@
 					if (searchAlbum.subalbums.length) {
 						for (indexSubalbums = 0; indexSubalbums < searchAlbum.subalbums.length; indexSubalbums ++) {
 							// update the media count
-							searchAlbum.numsMediaInSubTree.imagesAndVideosSum(searchAlbum.numsMediaInSubTree, searchAlbum.subalbums[indexSubalbums].numsMediaInSubTree);
+							searchAlbum.numsMediaInSubTree.sum(searchAlbum.numsMediaInSubTree, searchAlbum.subalbums[indexSubalbums].numsMediaInSubTree);
 							// update the size totals
 							searchAlbum.sizesOfSubTree.sum(searchAlbum.subalbums[indexSubalbums].sizesOfSubTree);
 							searchAlbum.sizesOfAlbum.sum(searchAlbum.subalbums[indexSubalbums].sizesOfAlbum);
