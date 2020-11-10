@@ -94,6 +94,11 @@
 	Utilities.initializeMapRootAlbum = function() {
 		// prepare the root of the map albums and put it in the cache
 		var rootMapAlbum = new Album(Options.by_map_string);
+		var rootMapAlbum = PhotoFloat.getAlbumFromCache(Options.by_map_string);
+		if (! rootMapAlbum) {
+			rootMapAlbum = new Album(Options.by_map_string);
+			rootMapAlbum.putAlbumIntoCache(rootMapAlbum.cacheBase);
+		}
 		// rootMapAlbum.cacheBase = Options.by_map_string;
 		// rootMapAlbum.media = [];
 		// rootMapAlbum.numsMedia = new ImagesAndVideos();
@@ -115,9 +120,9 @@
 	};
 
 	Utilities.prototype.initializeMapAlbum = function() {
-		var mapRootAlbum = PhotoFloat.getAlbumFromCache(Options.by_map_string);
-		// if (! mapRootAlbum)
-		// 	mapRootAlbum = Utilities.initializeMapRootAlbum();
+		rootMapAlbum = PhotoFloat.getAlbumFromCache(Options.by_map_string);
+		// if (! rootMapAlbum)
+		// 	rootMapAlbum = Utilities.initializeMapRootAlbum();
 
 		lastMapAlbumIndex ++;
 
@@ -140,40 +145,18 @@
 		// newMapAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
 
-		mapRootAlbum.numsMediaInSubTree.imagesAndVideosSum(newMapAlbum.numsMediaInSubTree);
-		mapRootAlbum.subalbums.push(newMapAlbum);
-		mapRootAlbum.positionsAndMediaInTree.mergePositionsAndMedia(newMapAlbum.positionsAndMediaInTree);
-		mapRootAlbum.numPositionsInTree = mapRootAlbum.positionsAndMediaInTree.length;
-		// mapRootAlbum.numPositionsInTree += newMapAlbum.numPositionsInTree;
-		mapRootAlbum.numsProtectedMediaInSubTree[","].imagesAndVideosSum(newMapAlbum.numsProtectedMediaInSubTree[","]);
+		rootMapAlbum.numsMediaInSubTree.sum(newMapAlbum.numsMediaInSubTree);
+		rootMapAlbum.subalbums.push(newMapAlbum);
+		rootMapAlbum.positionsAndMediaInTree.mergePositionsAndMedia(newMapAlbum.positionsAndMediaInTree);
+		rootMapAlbum.numPositionsInTree = rootMapAlbum.positionsAndMediaInTree.length;
+		// rootMapAlbum.numPositionsInTree += newMapAlbum.numPositionsInTree;
+		rootMapAlbum.numsProtectedMediaInSubTree[","].sum(newMapAlbum.numsProtectedMediaInSubTree[","]);
 
-		newMapAlbum.ancestorsCacheBase = mapRootAlbum.ancestorsCacheBase.slice();
+		newMapAlbum.ancestorsCacheBase = rootMapAlbum.ancestorsCacheBase.slice();
 		newMapAlbum.ancestorsCacheBase.push(newMapAlbum.cacheBase);
 
 		return newMapAlbum;
 	};
-
-	// Utilities.initializeSearchRootAlbum = function() {
-	// 	// prepare the root of the map albums and put it in the cache
-	// 	var rootSearchAlbum = {};
-	// 	rootSearchAlbum.cacheBase = Options.by_search_string;
-	// 	rootSearchAlbum.media = [];
-	// 	rootSearchAlbum.numsMedia = new ImagesAndVideos();
-	// 	rootSearchAlbum.numsMediaInSubTree = new ImagesAndVideos();
-	// 	rootSearchAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
-	// 	rootSearchAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
-	// 	rootSearchAlbum.subalbums = [];
-	// 	rootSearchAlbum.positionsAndMediaInTree = [];
-	// 	rootSearchAlbum.numPositionsInTree = 0;
-	// 	rootSearchAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
-	// 	rootSearchAlbum.ancestorsCacheBase = [Options.by_search_string];
-	// 	rootSearchAlbum.includedFilesByCodesSimpleCombination = {};
-	// 	rootSearchAlbum.includedFilesByCodesSimpleCombination[","] = false;
-	//
-	// 	rootSearchAlbum.putAlbumIntoCache(rootSearchAlbum.cacheBase);
-	//
-	// 	return rootSearchAlbum;
-	// };
 
 	Utilities.prototype.initializeSearchAlbumBegin = function(albumHash) {
 		var newSearchAlbum = new Album(albumHash);
@@ -195,18 +178,20 @@
 	};
 
 	Utilities.prototype.initializeSearchAlbumEnd = function() {
-		var searchRootAlbum = PhotoFloat.getAlbumFromCache(Options.by_search_string);
-		// if (! searchRootAlbum)
-		// 	searchRootAlbum = Utilities.initializeSearchRootAlbum();
+		var rootSearchAlbum = PhotoFloat.getAlbumFromCache(Options.by_search_string);
+		if (! rootSearchAlbum) {
+			rootSearchAlbum = new Album(Options.by_search_string);
+			rootSearchAlbum.putAlbumIntoCache(rootSearchAlbum.cacheBase);
+		}
 
-		searchRootAlbum.numsMediaInSubTree.imagesAndVideosSum(searchAlbum.numsMediaInSubTree);
-		// searchRootAlbum.subalbums.push(newSearchAlbum);
-		searchRootAlbum.positionsAndMediaInTree.mergePositionsAndMedia(searchAlbum.positionsAndMediaInTree);
-		searchRootAlbum.numPositionsInTree = searchRootAlbum.positionsAndMediaInTree.length;
-		// searchRootAlbum.numPositionsInTree += searchAlbum.numPositionsInTree;
-		searchRootAlbum.numsProtectedMediaInSubTree[","].imagesAndVideosSum(searchAlbum.numsProtectedMediaInSubTree[","]);
+		rootSearchAlbum.numsMediaInSubTree.sum(searchAlbum.numsMediaInSubTree);
+		// rootSearchAlbum.subalbums.push(newSearchAlbum);
+		rootSearchAlbum.positionsAndMediaInTree.mergePositionsAndMedia(searchAlbum.positionsAndMediaInTree);
+		rootSearchAlbum.numPositionsInTree = rootSearchAlbum.positionsAndMediaInTree.length;
+		// rootSearchAlbum.numPositionsInTree += searchAlbum.numPositionsInTree;
+		rootSearchAlbum.numsProtectedMediaInSubTree[","].sum(searchAlbum.numsProtectedMediaInSubTree[","]);
 
-		searchAlbum.ancestorsCacheBase = searchRootAlbum.ancestorsCacheBase.slice();
+		searchAlbum.ancestorsCacheBase = rootSearchAlbum.ancestorsCacheBase.slice();
 		searchAlbum.ancestorsCacheBase.push(searchAlbum.cacheBase);
 
 		// searchAlbum.putAlbumIntoCache(searchAlbum.cacheBase);
@@ -214,32 +199,36 @@
 
 	Utilities.initializeSelectionRootAlbum = function() {
 		// prepare the root of the selections albums and put it in the cache
-		var selectionRootAlbum = new Album(Options.by_selection_string);
-		// selectionRootAlbum.cacheBase = Options.by_selection_string;
-		// selectionRootAlbum.media = [];
-		// selectionRootAlbum.numsMedia = new ImagesAndVideos();
-		// selectionRootAlbum.numsMediaInSubTree = new ImagesAndVideos();
-		// selectionRootAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
-		// selectionRootAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
-		// selectionRootAlbum.subalbums = [];
-		// selectionRootAlbum.positionsAndMediaInTree = [];
-		// selectionRootAlbum.numPositionsInTree = 0;
-		// selectionRootAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
-		// selectionRootAlbum.ancestorsCacheBase = [Options.by_selection_string];
-		// selectionRootAlbum.includedFilesByCodesSimpleCombination = {};
-		// selectionRootAlbum.includedFilesByCodesSimpleCombination[","] = false;
+		var rootSelectionAlbum = new Album(Options.by_selection_string);
+		if (! rootSelectionAlbum) {
+			rootSelectionAlbum = new Album(Options.by_selection_string);
+			rootSelectionAlbum.putAlbumIntoCache(rootMapAlbum.cacheBase);
+		}
+		// rootSelectionAlbum.cacheBase = Options.by_selection_string;
+		// rootSelectionAlbum.media = [];
+		// rootSelectionAlbum.numsMedia = new ImagesAndVideos();
+		// rootSelectionAlbum.numsMediaInSubTree = new ImagesAndVideos();
+		// rootSelectionAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
+		// rootSelectionAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
+		// rootSelectionAlbum.subalbums = [];
+		// rootSelectionAlbum.positionsAndMediaInTree = [];
+		// rootSelectionAlbum.numPositionsInTree = 0;
+		// rootSelectionAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
+		// rootSelectionAlbum.ancestorsCacheBase = [Options.by_selection_string];
+		// rootSelectionAlbum.includedFilesByCodesSimpleCombination = {};
+		// rootSelectionAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
-		// selectionRootAlbum.putAlbumIntoCache(selectionRootAlbum.cacheBase);
+		// rootSelectionAlbum.putAlbumIntoCache(rootSelectionAlbum.cacheBase);
 
-		return selectionRootAlbum;
+		return rootSelectionAlbum;
 	};
 
 	Utilities.initializeSelectionAlbum = function() {
 		// initializes the selection album
 
-		var selectionRootAlbum = PhotoFloat.getAlbumFromCache(Options.by_selection_string);
-		// if (! selectionRootAlbum)
-		// 	selectionRootAlbum = Utilities.initializeSelectionRootAlbum();
+		var rootSelectionAlbum = PhotoFloat.getAlbumFromCache(Options.by_selection_string);
+		// if (! rootSelectionAlbum)
+		// 	rootSelectionAlbum = Utilities.initializeSelectionRootAlbum();
 
 		lastSelectionAlbumIndex ++;
 
@@ -259,14 +248,14 @@
 		// newSelectionAlbum.includedFilesByCodesSimpleCombination = {};
 		// newSelectionAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
-		selectionRootAlbum.numsMediaInSubTree.imagesAndVideosSum(selectionAlbum.numsMediaInSubTree);
-		selectionRootAlbum.subalbums.push(selectionAlbum);
-		selectionRootAlbum.positionsAndMediaInTree.mergePositionsAndMedia(selectionAlbum.positionsAndMediaInTree);
-		selectionRootAlbum.numPositionsInTree = selectionRootAlbum.positionsAndMediaInTree.length;
-		// selectionRootAlbum.numPositionsInTree += selectionAlbum.numPositionsInTree;
-		selectionRootAlbum.numsProtectedMediaInSubTree[","].imagesAndVideosSum(selectionAlbum.numsProtectedMediaInSubTree[","]);
+		rootSelectionAlbum.numsMediaInSubTree.sum(selectionAlbum.numsMediaInSubTree);
+		rootSelectionAlbum.subalbums.push(selectionAlbum);
+		rootSelectionAlbum.positionsAndMediaInTree.mergePositionsAndMedia(selectionAlbum.positionsAndMediaInTree);
+		rootSelectionAlbum.numPositionsInTree = rootSelectionAlbum.positionsAndMediaInTree.length;
+		// rootSelectionAlbum.numPositionsInTree += selectionAlbum.numPositionsInTree;
+		rootSelectionAlbum.numsProtectedMediaInSubTree[","].sum(selectionAlbum.numsProtectedMediaInSubTree[","]);
 
-		selectionAlbum.ancestorsCacheBase = selectionRootAlbum.ancestorsCacheBase.slice();
+		selectionAlbum.ancestorsCacheBase = rootSelectionAlbum.ancestorsCacheBase.slice();
 		selectionAlbum.ancestorsCacheBase.push(selectionAlbum.cacheBase);
 
 		// newSelectionAlbum.putAlbumIntoCache(selectionAlbum.cacheBase);
