@@ -2954,7 +2954,7 @@
 						var rootMapAlbum = phFl.getAlbumFromCache(Options.by_map_string);
 						if (! rootMapAlbum)
 							rootMapAlbum = util.initializeMapRootAlbum();
-						rootMapAlbum.numsMediaInSubTree += new ImagesAndVideos(mapAlbum.numsMediaInSubTree);
+						rootMapAlbum.numsMediaInSubTree.sum(mapAlbum.numsMediaInSubTree);
 						rootMapAlbum.subalbums.push(mapAlbum);
 						rootMapAlbum.positionsAndMediaInTree.mergePositionsAndMedia(mapAlbum.positionsAndMediaInTree);
 						rootMapAlbum.numPositionsInTree += mapAlbum.positionsAndMediaInTree.length;
