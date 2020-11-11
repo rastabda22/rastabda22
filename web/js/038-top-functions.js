@@ -2578,7 +2578,7 @@
 			$(".map-container").css("max-height", $(window).height() - 54).css("max-width", $(window).width() - 54).css("right", "44px").css("top", "24px");
 			$(".map-container").css("display", "grid");
 
-				var markers = [];
+			var markers = [];
 			// initialize the markers clusters
 			var pruneCluster = new PruneClusterForLeaflet(150, 70);
 			PruneCluster.Cluster.ENABLE_MARKERS_LIST = true;
@@ -2655,11 +2655,11 @@
 			var cacheBases;
 			for (var iPoint = 0; iPoint < pointList.length; iPoint ++) {
 				cacheBases = '';
-						for(var iPhoto = 0; iPhoto < pointList[iPoint].mediaNameList.length; iPhoto ++) {
-							// we must get the media corresponding to the name in the point
-				if (cacheBases)
-					cacheBases += br;
-				cacheBases += pointList[iPoint].mediaNameList[iPhoto].cacheBase;
+				for(var iPhoto = 0; iPhoto < pointList[iPoint].mediaNameList.length; iPhoto ++) {
+					// we must get the media corresponding to the name in the point
+					if (cacheBases)
+						cacheBases += br;
+					cacheBases += pointList[iPoint].mediaNameList[iPhoto].cacheBase;
 				}
 
 				markers[iPoint] = new PruneCluster.Marker(
