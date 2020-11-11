@@ -2326,6 +2326,7 @@
 
 	Utilities.prototype.showAuthForm = function(event, maybeProtectedContent = false) {
 		$("#album-view, #media-view, #my-modal, #no-results").css("opacity", "0.2");
+		$("#loading").hide();
 		$("#auth-text").stop().fadeIn(1000);
 		$("#password").focus();
 
