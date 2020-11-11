@@ -307,13 +307,18 @@ class Album(object):
 			# subalbums are not removed, because there may be some unprotected content up in the tree
 
 		# process subalbums
+		subalbums_to_remove = []
 		for subalbum in self.subalbums_list:
 			subalbum.leave_only_unprotected_content()
-			if (
+			if (subalbum.nums_protected_media_in_sub_tree.value(',').total() == 0):
+				subalbums_to_remove.append(subalbum)
+			elif (
 				self.cache_base == Options.config['by_search_string'] or
 				self.cache_base.find(Options.config['by_search_string']) != 0
 			):
 				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
+		for subalbum in subalbums_to_remove:
+			self.subalbums_list.remove(subalbum)
 		# # search albums:
 		# # - do not process subalbums because they have been already processed
 		# # - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
@@ -359,13 +364,21 @@ class Album(object):
 				self.positions_and_media_in_tree.add_single_media(single_media)
 
 		# process subalbums
+		subalbums_to_remove = []
 		for subalbum in self.subalbums_list:
 			subalbum.leave_only_content_protected_by(album_identifiers_set, media_identifiers_set)
 			if (
+				self.complex_combination in subalbum.nums_protected_media_in_sub_tree.keys() and
+				subalbum.nums_protected_media_in_sub_tree.value(self.complex_combination).total() == 0
+			):
+				subalbums_to_remove.append(subalbum)
+			elif (
 				self.cache_base == Options.config['by_search_string'] or
 				self.cache_base.find(Options.config['by_search_string']) != 0
 			):
 				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
+		for subalbum in subalbums_to_remove:
+			self.subalbums_list.remove(subalbum)
 		# # search albums:
 		# # - do not process subalbums because they have been already processed
 		# # - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches

@@ -85,13 +85,13 @@ class TreeWalker:
 			self.origin_album.sizes_protected_media_in_sub_tree.merge(folders_album.sizes_protected_media_in_sub_tree)
 			self.origin_album.add_subalbum(folders_album)
 
-			self.all_json_files.append(Options.config['folders_string'] + ".json")
+			# self.all_json_files.append(Options.config['folders_string'] + ".json")
 
 			message("generating by date albums...", "", 4)
 			by_date_album = self.generate_by_date_albums(self.origin_album)
 			indented_message("by date albums generated", "", 5)
 			if by_date_album is not None and not by_date_album.empty:
-				self.all_json_files.append(Options.config['by_date_string'] + ".json")
+				# self.all_json_files.append(Options.config['by_date_string'] + ".json")
 				self.origin_album.nums_protected_media_in_sub_tree.merge(by_date_album.nums_protected_media_in_sub_tree)
 				self.origin_album.sizes_protected_media_in_sub_tree.merge(by_date_album.sizes_protected_media_in_sub_tree)
 				self.origin_album.add_subalbum(by_date_album)
@@ -101,7 +101,7 @@ class TreeWalker:
 			by_geonames_album = self.generate_by_geonames_albums(self.origin_album)
 			indented_message("by geonames albums generated", "", 5)
 			if by_geonames_album is not None and not by_geonames_album.empty:
-				self.all_json_files.append(Options.config['by_gps_string'] + ".json")
+				# self.all_json_files.append(Options.config['by_gps_string'] + ".json")
 				self.origin_album.nums_protected_media_in_sub_tree.merge(by_geonames_album.nums_protected_media_in_sub_tree)
 				self.origin_album.sizes_protected_media_in_sub_tree.merge(by_geonames_album.sizes_protected_media_in_sub_tree)
 				self.origin_album.add_subalbum(by_geonames_album)
@@ -111,7 +111,7 @@ class TreeWalker:
 			by_search_album = self.generate_by_search_albums(self.origin_album)
 			indented_message("by search albums generated", "", 5)
 			if by_search_album is not None and not by_search_album.empty:
-				self.all_json_files.append(Options.config['by_search_string'] + ".json")
+				# self.all_json_files.append(Options.config['by_search_string'] + ".json")
 				self.origin_album.nums_protected_media_in_sub_tree.merge(by_search_album.nums_protected_media_in_sub_tree)
 				self.origin_album.sizes_protected_media_in_sub_tree.merge(by_search_album.sizes_protected_media_in_sub_tree)
 				self.origin_album.add_subalbum(by_search_album)
@@ -172,8 +172,8 @@ class TreeWalker:
 			message("all protected albums saved to json files", "", 4)
 			report_mem()
 
-			# options must be saved when json files have been saved, otherwise in case of error they may not reflect the json files situation
-			self._save_json_options(len(self.origin_album.subalbums[0].positions_and_media_in_tree.positions))
+			# options must be saved here, when json files have already been saved, otherwise in case of error they may not reflect the json files situation
+			self._save_json_options(len(self.origin_album.positions_and_media_in_tree.positions))
 
 			for identifier_and_password in Options.identifiers_and_passwords:
 				if identifier_and_password['used']:
