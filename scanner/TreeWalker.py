@@ -213,7 +213,7 @@ class TreeWalker:
 
 		if (
 			album.nums_media_in_sub_tree.total() == 0 and (
-				album.cache_base.find(Options.config['by_search_string']) != 0  or
+				album.cache_base.find(Options.config['by_search_string']) != 0 or
 				album.cache_base != Options.config['by_search_string'] and
 				(
 					complex_identifiers_combination is None and
@@ -570,9 +570,6 @@ class TreeWalker:
 
 			for single_album in media_album_and_words["albums_list"]:
 				word_album.add_subalbum(single_album)
-				# word_album.nums_media_in_sub_tree += single_album.nums_media_in_sub_tree
-				# actually, this counter for the search root album is not significant
-				# by_search_album.nums_media_in_sub_tree += single_album.nums_media_in_sub_tree
 				# if word_max_file_date:
 				# 	word_max_file_date = max(word_max_file_date, single_album.date)
 				# else:
