@@ -172,8 +172,8 @@ class TreeWalker:
 			message("all protected albums saved to json files", "", 4)
 			report_mem()
 
-			self._save_json_options(len(self.origin_album.subalbums[0].positions_and_media_in_tree.positions))
 			# options must be saved here, when json files have already been saved, otherwise in case of error they may not reflect the json files situation
+			self._save_json_options(len(self.origin_album.positions_and_media_in_tree.positions))
 
 			for identifier_and_password in Options.identifiers_and_passwords:
 				if identifier_and_password['used']:
