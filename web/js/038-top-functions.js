@@ -2526,6 +2526,43 @@
 	TopFunctions.generateMap = function(ev, pointList, from) {
 		// pointList is an array of uniq points with a list of the media geolocated there
 
+		function playClickElement(clickHistory, iClick) {
+			var clickHistoryElement = clickHistory[iClick];
+			var promise = new Promise(
+				function(resolve_playClickElement) {
+					MapFunctions.mymap.setView(clickHistoryElement.center, clickHistoryElement.zoom, {animate: false});
+					ev = {
+						"latlng": clickHistoryElement.latlng,
+						"originalEvent": {
+							"shiftKey": clickHistoryElement.shiftKey,
+							"ctrlKey": clickHistoryElement.ctrlKey,
+						}
+					};
+					var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, pruneCluster.Cluster._clusters, false);
+					updatePromise.then(
+						resolve_playClickElement,
+						function() {
+							console.trace();
+						}
+					);
+
+				}
+			);
+
+			promise.then(
+				function() {
+					if (iClick < clickHistory.length - 1)
+						playClickElement(clickHistory, iClick + 1);
+					else
+						TopFunctions.prepareAndDoPopupUpdate();
+				},
+				function(album) {
+					console.trace();
+				}
+			);
+		}
+		// end of auxiliary function
+
 		var i;
 		MapFunctions.titleWrapper1 =
 			'<div id="popup-photo-count" style="max-width: ' + MapFunctions.maxWidthForPopupContent + 'px;">' +
@@ -2698,42 +2735,6 @@
 				if (popupRefreshType == "previousAlbum")
 					TopFunctions.prepareAndDoPopupUpdate();
 				else if (popupRefreshType == "mapAlbum") {
-					function playClickElement(clickHistory, iClick) {
-						var clickHistoryElement = clickHistory[iClick];
-						var promise = new Promise(
-							function(resolve_playClickElement) {
-								MapFunctions.mymap.setView(clickHistoryElement.center, clickHistoryElement.zoom, {animate: false});
-								ev = {
-									"latlng": clickHistoryElement.latlng,
-									"originalEvent": {
-										"shiftKey": clickHistoryElement.shiftKey,
-										"ctrlKey": clickHistoryElement.ctrlKey,
-									}
-								};
-								var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, pruneCluster.Cluster._clusters, false);
-								updatePromise.then(
-									resolve_playClickElement,
-									function() {
-										console.trace();
-									}
-								);
-
-							}
-						);
-
-						promise.then(
-							function() {
-								if (iClick < clickHistory.length - 1)
-									playClickElement(clickHistory, iClick + 1);
-								else
-									TopFunctions.prepareAndDoPopupUpdate();
-							},
-							function(album) {
-								console.trace();
-							}
-						);
-					}
-
 					var clickHistory = mapAlbum.clickHistory;
 					mapAlbum = new Album();
 					// mapAlbum = {};
