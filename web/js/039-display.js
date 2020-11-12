@@ -330,6 +330,7 @@ $(document).ready(function() {
 							Options.by_date_string,
 							Options.by_gps_string,
 							Options.by_map_string,
+							Options.by_selection_string,
 							Options.by_search_string
 						].indexOf(currentAlbum.cacheBase) !== -1 ||
 						currentMedia !== null || currentAlbum.isAlbumWithOneMedia() || ! util.nothingIsSelected()
