@@ -165,63 +165,99 @@
 					this.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
 				}
 				if (this.codesComplexCombination === undefined)
-					this.putAlbumIntoCache(this.cacheBase);
+					cache.putAlbum(this);
 			}
 		}
 
 		isEmpty() {
 			return this.empty !== undefined && this.empty;
 		}
+	}
 
+	class Cache {
+		constructor() {
+			this.js_cache_levels = [
+				{"mediaThreshold": 10000, "max": 1},
+				{"mediaThreshold": 2000, "max": 2},
+				{"mediaThreshold": 500, "max": 10},
+				{"mediaThreshold": 200, "max": 50}
+			];
+			this.cache = {};
+			this.cache.albums = {};
+			this.cache.albums.index = {};
+		}
 
-		putAlbumIntoCache = function(albumCacheBase) {
-			if (! Options.hasOwnProperty("js_cache_levels"))
-				Options.js_cache_levels = PhotoFloat.js_cache_levels;
-
-			var done = false, level, cacheLevelsLength = Options.js_cache_levels.length, firstKey;
+		putAlbum(album) {
+			var done = false, level, cacheLevelsLength = this.js_cache_levels.length, firstKey;
+			var albumCacheBase = album.cacheBase;
 			// check if the album is already in cache (it could be there with another media number)
 			// if it is there, remove it
-			if (PhotoFloat.cache.albums.index.hasOwnProperty(albumCacheBase)) {
-				level = PhotoFloat.cache.albums.index[albumCacheBase];
-				delete PhotoFloat.cache.albums[level][albumCacheBase];
-				delete PhotoFloat.cache.albums[level].queue[albumCacheBase];
-				delete PhotoFloat.cache.albums.index[albumCacheBase];
+			if (this.cache.albums.index.hasOwnProperty(albumCacheBase)) {
+				level = this.cache.albums.index[albumCacheBase];
+				delete this.cache.albums[level][albumCacheBase];
+				delete this.cache.albums[level].queue[albumCacheBase];
+				delete this.cache.albums.index[albumCacheBase];
 			}
 
-			if (this.hasOwnProperty("media")) {
+			if (album.hasOwnProperty("media")) {
 				for (level = 0; level < cacheLevelsLength; level ++) {
-					if (this.numsMedia.imagesAndVideosTotal() >= Options.js_cache_levels[level].mediaThreshold) {
-						if (! PhotoFloat.cache.albums.hasOwnProperty(level)) {
-							PhotoFloat.cache.albums[level] = [];
-							PhotoFloat.cache.albums[level].queue = [];
+					if (album.numsMedia.imagesAndVideosTotal() >= this.js_cache_levels[level].mediaThreshold) {
+						if (! this.cache.albums.hasOwnProperty(level)) {
+							this.cache.albums[level] = [];
+							this.cache.albums[level].queue = [];
 						}
-						if (PhotoFloat.cache.albums[level].queue.length >= Options.js_cache_levels[level].max) {
+						if (this.cache.albums[level].queue.length >= this.js_cache_levels[level].max) {
 							// remove the first element
-							firstKey = PhotoFloat.cache.albums[level].queue[0];
-							PhotoFloat.cache.albums[level].queue.shift();
-							delete PhotoFloat.cache.albums.index[firstKey];
-							delete PhotoFloat.cache.albums[level][firstKey];
+							firstKey = this.cache.albums[level].queue[0];
+							this.cache.albums[level].queue.shift();
+							delete this.cache.albums.index[firstKey];
+							delete this.cache.albums[level][firstKey];
 						}
-						PhotoFloat.cache.albums.index[albumCacheBase] = level;
-						PhotoFloat.cache.albums[level].queue.push(albumCacheBase);
-						PhotoFloat.cache.albums[level][albumCacheBase] = this;
+						this.cache.albums.index[albumCacheBase] = level;
+						this.cache.albums[level].queue.push(albumCacheBase);
+						this.cache.albums[level][albumCacheBase] = album;
 						done = true;
 						break;
 					}
 				}
 			}
 			if (! done) {
-				if (! PhotoFloat.cache.albums.hasOwnProperty(cacheLevelsLength)) {
-					PhotoFloat.cache.albums[cacheLevelsLength] = [];
-					PhotoFloat.cache.albums[cacheLevelsLength].queue = [];
+				if (! this.cache.albums.hasOwnProperty(cacheLevelsLength)) {
+					this.cache.albums[cacheLevelsLength] = [];
+					this.cache.albums[cacheLevelsLength].queue = [];
 				}
-				PhotoFloat.cache.albums.index[albumCacheBase] = cacheLevelsLength;
-				PhotoFloat.cache.albums[cacheLevelsLength].queue.push(albumCacheBase);
-				PhotoFloat.cache.albums[cacheLevelsLength][albumCacheBase] = this;
+				this.cache.albums.index[albumCacheBase] = cacheLevelsLength;
+				this.cache.albums[cacheLevelsLength].queue.push(albumCacheBase);
+				this.cache.albums[cacheLevelsLength][albumCacheBase] = album;
 			}
 		}
+
+		getAlbum(albumCacheBase) {
+			if (this.cache.albums.index.hasOwnProperty(albumCacheBase)) {
+				var cacheLevel = this.cache.albums.index[albumCacheBase];
+				var cachedAlbum = this.cache.albums[cacheLevel][albumCacheBase];
+				return cachedAlbum;
+			} else
+				return false;
+		}
+
+		// WARNING: unused method
+		removeAlbumFromCache(albumCacheBase) {
+			if (this.cache.albums.index.hasOwnProperty(albumCacheBase)) {
+				var level = this.cache.albums.index[albumCacheBase];
+				var queueIndex = this.cache.albums[level].queue.indexOf(albumCacheBase);
+				this.cache.albums[level].queue.splice(queueIndex, 1);
+				delete this.cache.albums[level][albumCacheBase];
+				delete this.cache.albums.index[albumCacheBase];
+				return true;
+			} else
+				return false;
+		};
+
 	}
 
+
+	window.Cache = Cache;
 	window.Album = Album;
 	window.SingleMedia = SingleMedia;
 	window.Media = Media;

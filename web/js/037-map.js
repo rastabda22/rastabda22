@@ -287,7 +287,7 @@
 			function(ev) {
 				var imgData = JSON.parse(element.attr("data"));
 				ev.stopPropagation();
-				var cachedAlbum = phFl.getAlbumFromCache(imgData.albumCacheBase);
+				var cachedAlbum = cache.getAlbum(imgData.albumCacheBase);
 				for (let iMedia = 0; iMedia < cachedAlbum.media.length; iMedia ++) {
 					if (imgData.mediaHash.split('/').pop() == cachedAlbum.media[iMedia].cacheBase) {
 						ev.stopPropagation();

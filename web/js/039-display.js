@@ -19,9 +19,10 @@ var popupRefreshType = "previousAlbum";
 // var destMedia = null;
 // var destAlbum = null;
 var hashBeginning = "#!/";
-var mapAlbum = new Album();
-var selectionAlbum = new Album();
-var searchAlbum = new Album();
+var mapAlbum;
+var selectionAlbum;
+var searchAlbum;
+var cache;
 // var scrollbarWidth;
 // var contextMenu = false;
 
@@ -309,7 +310,7 @@ $(document).ready(function() {
 					) {
 						var numPasswords;
 						if (util.isSearchCacheBase(currentAlbum.cacheBase))
-							numPasswords = phFl.getAlbumFromCache(currentAlbum.ancestorsCacheBase[0]).numPasswords();
+							numPasswords = cache.getAlbum(currentAlbum.ancestorsCacheBase[0]).numPasswords();
 						else
 							numPasswords = currentAlbum.numPasswords();
 
@@ -812,15 +813,6 @@ $(document).ready(function() {
 			optionsPromise.then(
 				function() {
 					var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
-					// if (currentAlbum && albumHash !== currentAlbum.cacheBase) {
-					// 	currentAlbum = null;
-					// 	previousAlbum = null;
-					// }
-					// if (currentMedia && mediaHash !== currentMedia.cacheBase) {
-					// 	// the browser location bar value has been changed manually
-					// 	currentMedia = null;
-					// 	previousMedia = null;
-					// }
 
 					if (! util.isSearchHash()) {
 						// reset current album search flag to its default value

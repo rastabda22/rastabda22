@@ -1104,7 +1104,7 @@
 		if (thisAlbum !== null) {
 			let numPasswords;
 			if (util.isSearchCacheBase(thisAlbum.cacheBase))
-				numPasswords = phFl.getAlbumFromCache(Options.by_search_string).numPasswords();
+				numPasswords = cache.getAlbum(Options.by_search_string).numPasswords();
 			else
 				numPasswords = thisAlbum.numPasswords();
 
@@ -1487,10 +1487,6 @@
 							Options.bySelectionStringWithTrailingSeparator = Options.by_selection_string + Options.cache_folder_separator;
 							Options.byMapStringWithTrailingSeparator = Options.by_map_string + Options.cache_folder_separator;
 
-							// WARNING: do not initialize the search root album, the app must read it from its json file!
-							util.initializeOrGetMapRootAlbum();
-							util.initializeSelectionRootAlbum();
-
 							if (Options.request_password_email) {
 								$("#request-password").on('click', util.showPasswordRequestForm);
 								$("#password-request-form").submit(
@@ -1522,6 +1518,16 @@
 							} else {
 								$("#request-password").hide();
 							}
+
+							cache = new Cache();
+
+							// WARNING: do not initialize the search root album, the app must read it from its json file!
+							util.initializeOrGetMapRootAlbum();
+							util.initializeSelectionRootAlbum();
+
+							mapAlbum = new Album();
+							selectionAlbum = new Album();
+							searchAlbum = new Album();
 
 							resolve_getOptions();
 						},

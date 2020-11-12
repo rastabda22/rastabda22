@@ -2957,7 +2957,7 @@
 						mapAlbum.sortAlbumsMedia();
 
 						// update the map root album in cache
-						var rootMapAlbum = phFl.getAlbumFromCache(Options.by_map_string);
+						var rootMapAlbum = cache.getAlbum(Options.by_map_string);
 						if (! rootMapAlbum)
 							rootMapAlbum = util.initializeOrGetMapRootAlbum();
 						rootMapAlbum.numsMediaInSubTree.sum(mapAlbum.numsMediaInSubTree);

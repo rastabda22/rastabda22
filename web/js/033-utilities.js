@@ -93,10 +93,10 @@
 
 	Utilities.initializeOrGetMapRootAlbum = function() {
 		// prepare the root of the map albums and put it in the cache
-		var rootMapAlbum = PhotoFloat.getAlbumFromCache(Options.by_map_string);
+		var rootMapAlbum = cache.getAlbum(Options.by_map_string);
 		if (! rootMapAlbum) {
 			rootMapAlbum = new Album(Options.by_map_string);
-			rootMapAlbum.putAlbumIntoCache(rootMapAlbum.cacheBase);
+			cache.putAlbum(rootMapAlbum);
 		}
 		// rootMapAlbum.cacheBase = Options.by_map_string;
 		// rootMapAlbum.media = [];
@@ -115,7 +115,7 @@
 	};
 
 	Utilities.prototype.initializeMapAlbum = function() {
-		var rootMapAlbum = PhotoFloat.getAlbumFromCache(Options.by_map_string);
+		var rootMapAlbum = cache.getAlbum(Options.by_map_string);
 		// if (! rootMapAlbum)
 		// 	rootMapAlbum = Utilities.initializeOrGetMapRootAlbum();
 
@@ -173,10 +173,10 @@
 	};
 
 	Utilities.prototype.initializeSearchAlbumEnd = function() {
-		var rootSearchAlbum = PhotoFloat.getAlbumFromCache(Options.by_search_string);
+		var rootSearchAlbum = cache.getAlbum(Options.by_search_string);
 		if (! rootSearchAlbum) {
 			rootSearchAlbum = new Album(Options.by_search_string);
-			rootSearchAlbum.putAlbumIntoCache(rootSearchAlbum.cacheBase);
+			cache.putAlbum(rootSearchAlbum);
 		}
 
 		rootSearchAlbum.numsMediaInSubTree.sum(searchAlbum.numsMediaInSubTree);
@@ -192,10 +192,10 @@
 
 	Utilities.initializeSelectionRootAlbum = function() {
 		// prepare the root of the selections albums and put it in the cache
-		var rootSelectionAlbum = PhotoFloat.getAlbumFromCache(Options.by_selection_string);
+		var rootSelectionAlbum = cache.getAlbum(Options.by_selection_string);
 		if (! rootSelectionAlbum) {
 			rootSelectionAlbum = new Album(Options.by_selection_string);
-			rootSelectionAlbum.putAlbumIntoCache(rootSelectionAlbum.cacheBase);
+			cache.putAlbum(rootSelectionAlbum);
 		}
 		// rootSelectionAlbum.cacheBase = Options.by_selection_string;
 		// rootSelectionAlbum.media = [];
@@ -217,7 +217,7 @@
 	Utilities.initializeSelectionAlbum = function() {
 		// initializes the selection album
 
-		var rootSelectionAlbum = PhotoFloat.getAlbumFromCache(Options.by_selection_string);
+		var rootSelectionAlbum = cache.getAlbum(Options.by_selection_string);
 		// if (! rootSelectionAlbum)
 		// 	rootSelectionAlbum = Utilities.initializeSelectionRootAlbum();
 
@@ -2372,7 +2372,7 @@
 					// the return folder must be extracted from the album hash
 					resultHash = albumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
 				} else {
-					let album = PhotoFloat.getAlbumFromCache(albumHash);
+					let album = cache.getAlbum(albumHash);
 					if (Utilities.isSelectionCacheBase(albumHash) && ! album) {
 						resultHash = Options.folders_string;
 					} else if (Utilities.isSelectionCacheBase(albumHash) && album.media.length > 1) {
