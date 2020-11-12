@@ -98,10 +98,10 @@
 
 		getAndPutIntoCache() {
 			this.forEach(
-				function(singleMedia) {
+				function(singleMedia, index, media) {
 					var singleMediaFromCache = cache.getSingleMedia(singleMedia);
 					if (singleMediaFromCache !== false) {
-						singleMedia = singleMediaFromCache;
+						media[index] = singleMediaFromCache;
 					}
 				}
 			);
