@@ -431,7 +431,7 @@ $(document).ready(function() {
 						prevSortingIndex = (currentSortingIndex + 4 - 1) % 4;
 						prevSortingModeMessageId = sortingMessageIds[prevSortingIndex] + "-" + mode + "-sorting";
 						$("#" + prevSortingModeMessageId).show();
-						$("#" + prevSortingModeMessageId).fadeOut(2500);
+						$("#" + prevSortingModeMessageId).fadeOut(5000);
 						$(".sort." + mode + "-sort" + prevSelector)[0].click();
 						// console.log(".sort." + mode + "-sort" + prevSelector + " ------- " + prevSortingModeMessageId);
 					} else {
@@ -440,7 +440,7 @@ $(document).ready(function() {
 						nextSortingIndex = (currentSortingIndex + 1) % 4;
 						nextSortingModeMessageId = sortingMessageIds[nextSortingIndex] + "-" + mode + "-sorting";
 						$("#" + nextSortingModeMessageId).show();
-						$("#" + nextSortingModeMessageId).fadeOut(2500);
+						$("#" + nextSortingModeMessageId).fadeOut(5000);
 						$(".sort." + mode + "-sort" + nextSelector)[0].click();
 						// console.log(".sort." + mode + "-sort" + nextSelector + " ------- " + nextSortingModeMessageId);
 					}
