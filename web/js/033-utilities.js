@@ -464,7 +464,7 @@
 				'lat' : parseFloat(this.metadata.latitude),
 				'mediaNameList': [
 					{
-						'name': util.pathJoin([this.albumName, this.name]),
+						'name': Utilities.pathJoin([this.albumName, this.name]),
 						'cacheBase': this.cacheBase,
 						'albumCacheBase': this.parent.cacheBase,
 						'foldersCacheBase': this.foldersCacheBase
