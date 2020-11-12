@@ -187,7 +187,7 @@
 		}
 
 		putAlbum(album) {
-			var done = false, level, cacheLevelsLength = this.js_cache_levels.length, firstKey;
+			var done = false, level, cacheLevelsLength = this.js_cache_levels.length, firstCacheBase;
 			var albumCacheBase = album.cacheBase;
 			// check if the album is already in cache (it could be there with another media number)
 			// if it is there, remove it
@@ -207,10 +207,10 @@
 						}
 						if (this.albums[level].queue.length >= this.js_cache_levels[level].max) {
 							// remove the first element
-							firstKey = this.albums[level].queue[0];
+							firstCacheBase = this.albums[level].queue[0];
 							this.albums[level].queue.shift();
-							delete this.albums.index[firstKey];
-							delete this.albums[level][firstKey];
+							delete this.albums.index[firstCacheBase];
+							delete this.albums[level][firstCacheBase];
 						}
 						this.albums.index[albumCacheBase] = level;
 						this.albums[level].queue.push(albumCacheBase);
@@ -241,7 +241,7 @@
 		}
 
 		// WARNING: unused method
-		removeAlbumFromCache(albumCacheBase) {
+		removeAlbum(albumCacheBase) {
 			if (this.albums.index.hasOwnProperty(albumCacheBase)) {
 				var level = this.albums.index[albumCacheBase];
 				var queueIndex = this.albums[level].queue.indexOf(albumCacheBase);
