@@ -1,11 +1,11 @@
+* many bug fixes
+* js code mainly converted to OOP
 * numMediaInSubTree and numMedia album properties have been changed to numsMediaInSubTree and numsMedia (requieres json files regenerations)
-* media and albums can now be selected, and the resulting selection album can be viewed browsed and saved
-* new option `by_selection_string` for albums built from selection
-
+* media and albums can now be selected, and the resulting selection can be viewed, browsed and saved as an album
+  * new option `by_selection_string` for albums built from selection
 * menu refinements in download section
 * searching when in popup now refines the popup content
 * media and album captions from `album.ini` file are now separate from metadata; a menu option to hide them has been added
-* french translation completed
 * new option `excluded_patterns_file`: specifies a file whose lines are file patterns (regexes) to ignore when scanning
 * the authentication dialog allows the user to send an email that requests the protected content password (the `request_password_email` option must be set)
   * new option `request_password_email`: the email for requesting the password that allows seeing the protected content
