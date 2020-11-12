@@ -381,8 +381,10 @@ $(document).ready(function() {
 			}
 
 			if (
-				['[', ']'].indexOf(e.key) !== -1 && ! isPopup ||
-				['{', '}'].indexOf(e.key) !== -1
+				currentMedia === null && ! isMap && (
+					['[', ']'].indexOf(e.key) !== -1 && ! isPopup && currentAlbum.subalbums.length > 1 ||
+					['{', '}'].indexOf(e.key) !== -1 && currentAlbum.media.length > 1
+				)
 			) {
 				if (currentMedia === null && ! currentAlbum.isAlbumWithOneMedia()) {
 					// media and subalbums sort switcher
