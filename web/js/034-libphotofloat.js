@@ -103,7 +103,9 @@
 								resolve_getJsonFile(new PositionsAndMedia(albumOrPositionsOrMedia));
 							} else if (indexMedia >= 0 && indexMedia === jsonRelativeFileName.length - ".media.json".length) {
 								// media file
-								resolve_getJsonFile(new Media(albumOrPositionsOrMedia));
+								let mediaGot = new Media(albumOrPositionsOrMedia);
+								mediaGot.getAndPutIntoCache()
+								resolve_getJsonFile(mediaGot);
 							} else {
 								resolve_getJsonFile(new Album(albumOrPositionsOrMedia));
 							}

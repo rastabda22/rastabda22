@@ -95,6 +95,17 @@
 			else
 				super(media);
 		}
+
+		getAndPutIntoCache() {
+			this.forEach(
+				function(singleMedia) {
+					var singleMediaFromCache = cache.getSingleMedia(singleMedia);
+					if (singleMediaFromCache !== false) {
+						singleMedia = singleMediaFromCache;
+					}
+				}
+			);
+		}
 	}
 
 
@@ -136,6 +147,7 @@
 					// newMediaArray = this.media.map(singleMedia => new SingleMedia(singleMedia));
 					// this.media = newMediaArray;
 					this.media = new Media(this.media);
+					this.media.getAndPutIntoCache();
 
 					this.numsMedia = this.media.imagesAndVideosCount();
 				}
@@ -184,6 +196,8 @@
 			];
 			this.albums = {};
 			this.albums.index = {};
+
+			this.media = {};
 		}
 
 		putAlbum(album) {
@@ -251,8 +265,23 @@
 				return true;
 			} else
 				return false;
-		};
+		}
 
+		getSingleMedia(singleMedia) {
+			var foldersCacheBase = singleMedia.foldersCacheBase;
+			var cacheBase = singleMedia.cacheBase;
+
+			if (! this.media.hasOwnProperty(foldersCacheBase)) {
+				this.media[foldersCacheBase] = {};
+				return false;
+			}
+			if (! this.media[foldersCacheBase].hasOwnProperty(cacheBase)) {
+				this.media[foldersCacheBase][cacheBase] = singleMedia;
+				return false;
+			} else {
+				return this.media[foldersCacheBase][cacheBase];
+			}
+		}
 	}
 
 
