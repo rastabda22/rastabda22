@@ -1,4 +1,5 @@
 * many bug fixes
+* media cache implementation, so that the same object is used for the same image/video across the various albums where it is present
 * js code mainly converted to OOP
 * numMediaInSubTree and numMedia album properties have been changed to numsMediaInSubTree and numsMedia (requieres json files regenerations)
 * media and albums can now be selected, and the resulting selection can be viewed, browsed and saved as an album
