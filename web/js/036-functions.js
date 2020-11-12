@@ -1494,9 +1494,6 @@
 							Options.bySelectionStringWithTrailingSeparator = Options.by_selection_string + Options.cache_folder_separator;
 							Options.byMapStringWithTrailingSeparator = Options.by_map_string + Options.cache_folder_separator;
 
-							// fill the initias sizes object
-							initialSizes = new Sizes();
-
 							// WARNING: do not initialize the search root album, the app must read it from its json file!
 							util.initializeOrGetMapRootAlbum();
 							util.initializeSelectionRootAlbum();

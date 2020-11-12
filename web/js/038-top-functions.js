@@ -2078,8 +2078,8 @@
 								let folderName = currentAlbum.subalbumName(ithSubalbum);
 								let folder = "<span class='folder-name'>" + folderName;
 								if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
-									folderMapTitle = currentAlbum.folderMapTitle(ithSubalbum, folderName);
-									folderMapTitleWithoutHtmlTags = folderMapTitle.replace(/<[^>]*>?/gm, '');
+									let folderMapTitle = currentAlbum.folderMapTitle(ithSubalbum, folderName);
+									let folderMapTitleWithoutHtmlTags = folderMapTitle.replace(/<[^>]*>?/gm, '');
 									let positionHtml =
 										"<a id='subalbum-map-link-" + iSubalbum + "' >" +
 											"<img " +

@@ -510,6 +510,7 @@ $(document).ready(function() {
 				var searchWordsFromUser = wordsStringOriginal.split(' ');
 				var searchWordsFromUserNormalizedAccordingToOptions = wordsStringNormalizedAccordingToOptions.split(' ');
 				var searchWordsFromUserNormalized = wordsStringNormalized.split(' ');
+				var removedStopWords;
 
 				// remove the stopwords from the search terms
 				let stopWordsPromise = phFl.getStopWords();
@@ -844,7 +845,7 @@ $(document).ready(function() {
 									util.showAuthForm();
 								} else {
 									hash = upHash;
-									let cacheBase = hash.substring(hashBeginning.length)
+									let cacheBase = hash.substring(hashBeginning.length);
 									let getAlbumPromise = phFl.getAlbum(cacheBase, checkHigherAncestor, {"getMedia": false, "getPositions": false});
 									getAlbumPromise.then(
 										function(upAlbum) {
@@ -862,7 +863,7 @@ $(document).ready(function() {
 
 							// neither the unprotected nor the protected album exist
 							// the user could have opened a protected album link: the password can be asked, but only if some ancestor album has protected content
-							let hash = location.hash
+							let hash = location.hash;
 							checkHigherAncestor();
 						}
 					);

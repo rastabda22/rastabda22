@@ -85,7 +85,7 @@
 			);
 			calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
-			selectSrc = 'img/checkbox-unchecked-48px.png';
+			let selectSrc = 'img/checkbox-unchecked-48px.png';
 			if (ithMedia.isSelected()) {
 				selectSrc = 'img/checkbox-checked-48px.png';
 			}

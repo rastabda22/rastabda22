@@ -11,7 +11,7 @@
 				this.videos = object.videos;
 			}
 		}
-	};
+	}
 
 	class IncludedFiles {
 		constructor(object) {
@@ -25,7 +25,7 @@
 				);
 			}
 		}
-	};
+	}
 
 	class NumsProtected {
 		constructor(object) {
@@ -39,7 +39,7 @@
 				);
 			}
 		}
-	};
+	}
 
 	class Sizes {
 		constructor(object) {
@@ -56,7 +56,7 @@
 				);
 			}
 		}
-	};
+	}
 
 	class PositionAndMedia {
 		constructor(object) {
@@ -66,7 +66,7 @@
 				}
 			);
 		}
-	};
+	}
 
 	class PositionsAndMedia extends Array {
 		constructor(positionsAndMedia) {
@@ -135,7 +135,7 @@
 					// let newMediaArray = new Media(this.media);
 					// newMediaArray = this.media.map(singleMedia => new SingleMedia(singleMedia));
 					// this.media = newMediaArray;
-					this.media = new Media(this.media);;
+					this.media = new Media(this.media);
 
 					this.numsMedia = this.media.imagesAndVideosCount();
 				}
