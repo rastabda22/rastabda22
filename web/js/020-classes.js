@@ -182,9 +182,8 @@
 				{"mediaThreshold": 500, "max": 10},
 				{"mediaThreshold": 200, "max": 50}
 			];
-			this.cache = {};
-			this.cache.albums = {};
-			this.cache.albums.index = {};
+			this.albums = {};
+			this.albums.index = {};
 		}
 
 		putAlbum(album) {
@@ -192,50 +191,50 @@
 			var albumCacheBase = album.cacheBase;
 			// check if the album is already in cache (it could be there with another media number)
 			// if it is there, remove it
-			if (this.cache.albums.index.hasOwnProperty(albumCacheBase)) {
-				level = this.cache.albums.index[albumCacheBase];
-				delete this.cache.albums[level][albumCacheBase];
-				delete this.cache.albums[level].queue[albumCacheBase];
-				delete this.cache.albums.index[albumCacheBase];
+			if (this.albums.index.hasOwnProperty(albumCacheBase)) {
+				level = this.albums.index[albumCacheBase];
+				delete this.albums[level][albumCacheBase];
+				delete this.albums[level].queue[albumCacheBase];
+				delete this.albums.index[albumCacheBase];
 			}
 
 			if (album.hasOwnProperty("media")) {
 				for (level = 0; level < cacheLevelsLength; level ++) {
 					if (album.numsMedia.imagesAndVideosTotal() >= this.js_cache_levels[level].mediaThreshold) {
-						if (! this.cache.albums.hasOwnProperty(level)) {
-							this.cache.albums[level] = [];
-							this.cache.albums[level].queue = [];
+						if (! this.albums.hasOwnProperty(level)) {
+							this.albums[level] = [];
+							this.albums[level].queue = [];
 						}
-						if (this.cache.albums[level].queue.length >= this.js_cache_levels[level].max) {
+						if (this.albums[level].queue.length >= this.js_cache_levels[level].max) {
 							// remove the first element
-							firstKey = this.cache.albums[level].queue[0];
-							this.cache.albums[level].queue.shift();
-							delete this.cache.albums.index[firstKey];
-							delete this.cache.albums[level][firstKey];
+							firstKey = this.albums[level].queue[0];
+							this.albums[level].queue.shift();
+							delete this.albums.index[firstKey];
+							delete this.albums[level][firstKey];
 						}
-						this.cache.albums.index[albumCacheBase] = level;
-						this.cache.albums[level].queue.push(albumCacheBase);
-						this.cache.albums[level][albumCacheBase] = album;
+						this.albums.index[albumCacheBase] = level;
+						this.albums[level].queue.push(albumCacheBase);
+						this.albums[level][albumCacheBase] = album;
 						done = true;
 						break;
 					}
 				}
 			}
 			if (! done) {
-				if (! this.cache.albums.hasOwnProperty(cacheLevelsLength)) {
-					this.cache.albums[cacheLevelsLength] = [];
-					this.cache.albums[cacheLevelsLength].queue = [];
+				if (! this.albums.hasOwnProperty(cacheLevelsLength)) {
+					this.albums[cacheLevelsLength] = [];
+					this.albums[cacheLevelsLength].queue = [];
 				}
-				this.cache.albums.index[albumCacheBase] = cacheLevelsLength;
-				this.cache.albums[cacheLevelsLength].queue.push(albumCacheBase);
-				this.cache.albums[cacheLevelsLength][albumCacheBase] = album;
+				this.albums.index[albumCacheBase] = cacheLevelsLength;
+				this.albums[cacheLevelsLength].queue.push(albumCacheBase);
+				this.albums[cacheLevelsLength][albumCacheBase] = album;
 			}
 		}
 
 		getAlbum(albumCacheBase) {
-			if (this.cache.albums.index.hasOwnProperty(albumCacheBase)) {
-				var cacheLevel = this.cache.albums.index[albumCacheBase];
-				var cachedAlbum = this.cache.albums[cacheLevel][albumCacheBase];
+			if (this.albums.index.hasOwnProperty(albumCacheBase)) {
+				var cacheLevel = this.albums.index[albumCacheBase];
+				var cachedAlbum = this.albums[cacheLevel][albumCacheBase];
 				return cachedAlbum;
 			} else
 				return false;
@@ -243,12 +242,12 @@
 
 		// WARNING: unused method
 		removeAlbumFromCache(albumCacheBase) {
-			if (this.cache.albums.index.hasOwnProperty(albumCacheBase)) {
-				var level = this.cache.albums.index[albumCacheBase];
-				var queueIndex = this.cache.albums[level].queue.indexOf(albumCacheBase);
-				this.cache.albums[level].queue.splice(queueIndex, 1);
-				delete this.cache.albums[level][albumCacheBase];
-				delete this.cache.albums.index[albumCacheBase];
+			if (this.albums.index.hasOwnProperty(albumCacheBase)) {
+				var level = this.albums.index[albumCacheBase];
+				var queueIndex = this.albums[level].queue.indexOf(albumCacheBase);
+				this.albums[level].queue.splice(queueIndex, 1);
+				delete this.albums[level][albumCacheBase];
+				delete this.albums.index[albumCacheBase];
 				return true;
 			} else
 				return false;
