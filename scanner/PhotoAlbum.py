@@ -298,9 +298,15 @@ class Album(object):
 			# the album isn't protected, but media and subalbums may be protected
 			# besides that, for virtual media the physical album password is included in the media and must be taken into account
 			self.media_list = [single_media for single_media in self.media if len(single_media.album_identifiers_set) ==  0 and len(single_media.password_identifiers_set) == 0]
-			for single_media in self.media_list:
-				if single_media.has_gps_data:
-					self.positions_and_media_in_tree.add_single_media(single_media)
+			if not (
+				len(self.cache_base.split(Options.config['cache_folder_separator'])) < 4 and (
+					self.cache_base.find(Options.config['by_date_string']) == 0 or
+					self.cache_base.find(Options.config['by_gps_string']) == 0
+				)
+			):
+				for single_media in self.media_list:
+					if single_media.has_gps_data:
+						self.positions_and_media_in_tree.add_single_media(single_media)
 		else:
 			# protected album, remove the media
 			self.media_list = []
@@ -359,9 +365,15 @@ class Album(object):
 		# for virtual media the physical album password is included in the media, and must be taken into account
 		self.media_list = [single_media for single_media in self.media if
 							single_media.album_identifiers_set == album_identifiers_set and single_media.password_identifiers_set == media_identifiers_set]
-		for single_media in self.media_list:
-			if single_media.has_gps_data:
-				self.positions_and_media_in_tree.add_single_media(single_media)
+		if not (
+			len(self.cache_base.split(Options.config['cache_folder_separator'])) < 4 and (
+				self.cache_base.find(Options.config['by_date_string']) == 0 or
+				self.cache_base.find(Options.config['by_gps_string']) == 0
+			)
+		):
+			for single_media in self.media_list:
+				if single_media.has_gps_data:
+					self.positions_and_media_in_tree.add_single_media(single_media)
 
 		# process subalbums
 		subalbums_to_remove = []
