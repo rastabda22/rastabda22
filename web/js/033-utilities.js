@@ -199,6 +199,7 @@
 	Utilities.initializeSelectionRootAlbum = function() {
 		// prepare the root of the selections albums and put it in the cache
 		var rootSelectionAlbum = new Album(Options.by_selection_string);
+		var rootSelectionAlbum = PhotoFloat.getAlbumFromCache(Options.by_selection_string);
 		if (! rootSelectionAlbum) {
 			rootSelectionAlbum = new Album(Options.by_selection_string);
 			rootSelectionAlbum.putAlbumIntoCache(rootMapAlbum.cacheBase);
