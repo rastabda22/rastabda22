@@ -105,7 +105,7 @@ It is available in English, Italian, French and Spanish. Localizing to other lan
 - [x] Patterns are defined in album tree and specify what should every password protect; allowed matching modes: case sensitive/insensitive, whole/part of dir/file name, dir only/files only/both.
 - [x] Passwords aren't exposed in javascript, and sensitive data and media are extremely difficult to find in cache.
 
-### Selecting images and albums (_new_ in v4.2)
+### Selecting media and albums (_new_ in v4.2)
 
 - [x] Albums and media can be seleted via a click or massively, either in _hard_ albums (the default tree, by date, by place) and virtual ones (by search, by gps, by map).
 - [x] Selected media and albums can be seen as an album, and can be browsed, downloaded, sorted, shown on map, etc.
