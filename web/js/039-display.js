@@ -813,7 +813,6 @@ $(document).ready(function() {
 				function() {
 					var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 					// if (currentAlbum && albumHash !== currentAlbum.cacheBase) {
-					// 	// the browser location bar value has been changed manually
 					// 	currentAlbum = null;
 					// 	previousAlbum = null;
 					// }

@@ -111,10 +111,6 @@
 		// rootMapAlbum.ancestorsCacheBase = [Options.by_map_string];
 		// rootMapAlbum.includedFilesByCodesSimpleCombination = {};
 		// rootMapAlbum.includedFilesByCodesSimpleCombination[","] = false;
-
-
-		// rootMapAlbum.putAlbumIntoCache(rootMapAlbum.cacheBase);
-
 		return rootMapAlbum;
 	};
 
@@ -192,8 +188,6 @@
 
 		searchAlbum.ancestorsCacheBase = rootSearchAlbum.ancestorsCacheBase.slice();
 		searchAlbum.ancestorsCacheBase.push(searchAlbum.cacheBase);
-
-		// searchAlbum.putAlbumIntoCache(searchAlbum.cacheBase);
 	};
 
 	Utilities.initializeSelectionRootAlbum = function() {
@@ -216,8 +210,6 @@
 		// rootSelectionAlbum.ancestorsCacheBase = [Options.by_selection_string];
 		// rootSelectionAlbum.includedFilesByCodesSimpleCombination = {};
 		// rootSelectionAlbum.includedFilesByCodesSimpleCombination[","] = false;
-
-		// rootSelectionAlbum.putAlbumIntoCache(rootSelectionAlbum.cacheBase);
 
 		return rootSelectionAlbum;
 	};
@@ -256,8 +248,6 @@
 
 		selectionAlbum.ancestorsCacheBase = rootSelectionAlbum.ancestorsCacheBase.slice();
 		selectionAlbum.ancestorsCacheBase.push(selectionAlbum.cacheBase);
-
-		// newSelectionAlbum.putAlbumIntoCache(selectionAlbum.cacheBase);
 	};
 
 	Utilities._t = function(id) {

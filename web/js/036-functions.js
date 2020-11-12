@@ -693,13 +693,6 @@
 					let promise = util.removeAllSubalbumsFromSelection(thisAlbum.subalbums);
 					promise.then(
 						function() {
-							// if (! selectionAlbum.subalbums.length && ! selectionAlbum.media.length) {
-							// 	// nothing remaining: remove the album
-							// 	PhotoFloat.removeAlbumFromCache(selectionAlbum.cacheBase);
-							// 	selectionAlbum = {};
-							// 	if (util.isSelectionCacheBase(thisAlbum.cacheBase))
-							// 		window.location.href = util.upHash();
-							// }
 							if (util.nothingIsSelected())
 								util.initializeSelectionAlbum();
 							Functions.updateMenu();
