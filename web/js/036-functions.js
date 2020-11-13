@@ -193,7 +193,7 @@
 						util.isSearchCacheBase(thisAlbum.cacheBase) ||
 						thisMedia.isSearched() ||
 						savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash) ||
-						thisMedia.singleMediaIsInFoundAlbum() !== false
+						thisMedia.isInFoundAlbum() !== false
 					)
 				)
 			) {
@@ -298,7 +298,7 @@
 				TopFunctions.showBrowsingModeMessage("#by-search-browsing");
 				if (isSingleMedia) {
 					// if (thisMedia.hasOwnProperty("searchHashes") && thisMedia.searchHashes.length)
-					var foundAlbum = thisMedia.singleMediaIsInFoundAlbum();
+					var foundAlbum = thisMedia.isInFoundAlbum();
 					if (foundAlbum !== false) {
 						window.location.href = phFl.encodeHash(thisMedia.foldersCacheBase, thisMedia, foundAlbum.cacheBase, searchAlbum.cacheBase);
 					} else {

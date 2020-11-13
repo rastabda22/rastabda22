@@ -764,7 +764,7 @@
 	TopFunctions.toggleSelectedSubalbum = function(subalbum, clickedSelector) {
 		if (selectionAlbum.isEmpty())
 			util.initializeSelectionAlbum();
-		if (util.subalbumIsSelected(subalbum)) {
+		if (subalbum.isSelected()) {
 			let removeSubalbumPromise = util.removeSubalbumFromSelection(subalbum, clickedSelector);
 			removeSubalbumPromise.then(
 				function subalbumRemoved() {
@@ -2133,7 +2133,7 @@
 								caption = $(captionHtml);
 
 								selectSrc = 'img/checkbox-unchecked-48px.png';
-								if (util.subalbumIsSelected(ithSubalbum)) {
+								if (ithSubalbum.isSelected()) {
 									selectSrc = 'img/checkbox-checked-48px.png';
 								}
 								selectBoxHtml =

@@ -108,6 +108,28 @@
 		}
 	}
 
+	class Subalbum {
+		constructor(object) {
+			Object.keys(object).forEach(
+				(key) => {
+					this[key] = object[key];
+				}
+			);
+			this.numsMediaInSubTree = new ImagesAndVideos(this.numsMediaInSubTree);
+			this.numsProtectedMediaInSubTree = new NumsProtected(this.numsProtectedMediaInSubTree);
+			this.sizesOfAlbum = new Sizes(this.sizesOfAlbum);
+			this.sizesOfSubTree = new Sizes(this.sizesOfSubTree);
+		}
+	}
+
+	class Subalbums extends Array {
+		constructor(subalbums) {
+			if (Array.isArray(subalbums))
+				super(... subalbums.map(subalbum => new Subalbum(subalbum)));
+			else
+				super(subalbums);
+		}
+	}
 
 	class Album {
 		constructor(objectOrCacheBase) {
@@ -119,7 +141,7 @@
 				this.numsMediaInSubTree = new ImagesAndVideos();
 				this.sizesOfAlbum = new Sizes();
 				this.sizesOfSubTree = new Sizes();
-				this.subalbums = [];
+				this.subalbums = new Subalbums([]);
 				this.positionsAndMediaInTree = new PositionsAndMedia([]);
 				this.numPositionsInTree = 0;
 				this.numsProtectedMediaInSubTree = new NumsProtected();
@@ -161,13 +183,7 @@
 				if (this.hasOwnProperty("numsProtectedMediaInSubTree")) {
 					this.numsProtectedMediaInSubTree = new NumsProtected(this.numsProtectedMediaInSubTree);
 				}
-				for (let iSubalbum = 0; iSubalbum < this.subalbums.length; iSubalbum ++) {
-					this.subalbums[iSubalbum].numsMediaInSubTree = new ImagesAndVideos(this.subalbums[iSubalbum].numsMediaInSubTree);
-					this.subalbums[iSubalbum].numsProtectedMediaInSubTree = new NumsProtected(this.subalbums[iSubalbum].numsProtectedMediaInSubTree);
-					this.subalbums[iSubalbum].sizesOfAlbum = new Sizes(this.subalbums[iSubalbum].sizesOfAlbum);
-					this.subalbums[iSubalbum].sizesOfSubTree = new Sizes(this.subalbums[iSubalbum].sizesOfSubTree);
-				}
-
+				this.subalbums = new Subalbums(this.subalbums);
 			} else if (objectOrCacheBase === undefined) {
 				this.empty = true;
 			}
@@ -183,6 +199,23 @@
 
 		isEmpty() {
 			return this.empty !== undefined && this.empty;
+		}
+
+		convertSubalbum(subalbumIndex, error, {getMedia = false, getPositions = false}) {
+			var self = this;
+			var wasASubalbum = this.subalbums[subalbumIndex] instanceof Subalbum;
+			return new Promise(
+				function(resolve_convertIntoAlbum) {
+					let promise = PhotoFloat.getAlbum(self.subalbums[subalbumIndex].cacheBase, error, {"getMedia": false, "getPositions": false});
+					promise.then(
+						function(convertedSubalbum) {
+							if (wasASubalbum)
+								self.subalbums[subalbumIndex] = convertedSubalbum;
+							resolve_convertIntoAlbum(subalbumIndex);
+						}
+					);
+				}
+			);
 		}
 	}
 
@@ -287,6 +320,7 @@
 
 	window.Cache = Cache;
 	window.Album = Album;
+	window.Subalbum = Subalbum;
 	window.SingleMedia = SingleMedia;
 	window.Media = Media;
 	window.ImagesAndVideos = ImagesAndVideos;

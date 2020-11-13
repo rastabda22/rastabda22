@@ -515,17 +515,19 @@
 	};
 
 	Album.prototype.recursivelySelectMedia = function() {
+		var self = this;
 		return new Promise(
 			function (resolve_promise) {
-				this.media.addAllMediaToSelection();
+				self.media.addAllMediaToSelection();
 				let promises = [];
-				for (let iSubalbum = 0; iSubalbum < this.subalbums.length; iSubalbum ++) {
+				for (let iSubalbum = 0; iSubalbum < self.subalbums.length; iSubalbum ++) {
 					let ithPromise = new Promise(
 						function(resolve_ithPromise) {
-							let getAlbumPromise = PhotoFloat.getAlbum(this.subalbums[iSubalbum].cacheBase, null, {"getMedia": true, "getPositions": false});
-							getAlbumPromise.then(
-								function(subalbum) {
-									let promise = subalbum.recursivelySelectMedia();
+							let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {"getMedia": true, "getPositions": false});
+							// let getAlbumPromise = PhotoFloat.getAlbum(self.subalbums[iSubalbum].cacheBase, null, {"getMedia": true, "getPositions": false});
+							convertSubalbumPromise.then(
+								function(iSubalbum) {
+									let promise = self.subalbums[iSubalbum].recursivelySelectMedia();
 									promise.then(
 										function() {
 											resolve_ithPromise();
@@ -547,17 +549,19 @@
 	};
 
 	Album.prototype.recursivelyRemoveMedia = function() {
+		var self = this;
 		return new Promise(
 			function (resolve_promise) {
-				this.media.removeAllMediaFromSelection();
+				self.media.removeAllMediaFromSelection();
 				let promises = [];
-				for (let iSubalbum = 0; iSubalbum < this.subalbums.length; iSubalbum ++) {
+				for (let iSubalbum = 0; iSubalbum < self.subalbums.length; iSubalbum ++) {
 					let ithPromise = new Promise(
 						function(resolve_ithPromise) {
-							let getAlbumPromise = PhotoFloat.getAlbum(this.subalbums[iSubalbum].cacheBase, null, {"getMedia": true, "getPositions": false});
-							getAlbumPromise.then(
-								function(subalbum) {
-									let promise = subalbum.recursivelyRemoveMedia();
+							let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {"getMedia": true, "getPositions": false});
+							// let getAlbumPromise = PhotoFloat.getAlbum(this.subalbums[iSubalbum].cacheBase, null, {"getMedia": true, "getPositions": false});
+							convertSubalbumPromise.then(
+								function(iSubalbum) {
+									let promise = self.subalbums[iSubalbum].recursivelyRemoveMedia();
 									promise.then(
 										function() {
 											resolve_ithPromise();
@@ -579,19 +583,21 @@
 	};
 
 	Album.prototype.recursivelyAllMediaAreSelected = function() {
+		var self = this;
 		return new Promise(
 			function (resolve_promise, reject_promise) {
-				if (! this.media.everyMediaIsSelected()) {
+				if (! self.media.everyMediaIsSelected()) {
 					reject_promise();
 				} else {
 					let promises = [];
-					for (let iSubalbum = 0; iSubalbum < this.subalbums.length; iSubalbum ++) {
+					for (let iSubalbum = 0; iSubalbum < self.subalbums.length; iSubalbum ++) {
 						let ithPromise = new Promise(
 							function(resolve_ithPromise, reject_ithPromise) {
-								let getAlbumPromise = PhotoFloat.getAlbum(this.subalbums[iSubalbum].cacheBase, null, {"getMedia": true, "getPositions": false});
-								getAlbumPromise.then(
-									function(subalbum) {
-										let promise = subalbum.recursivelyAllMediaAreSelected();
+								let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {"getMedia": true, "getPositions": false});
+								// let getAlbumPromise = PhotoFloat.getAlbum(self.subalbums[iSubalbum].cacheBase, null, {"getMedia": true, "getPositions": false});
+								convertSubalbumPromise.then(
+									function(iSubalbum) {
+										let promise = self.subalbums[iSubalbum].recursivelyAllMediaAreSelected();
 										promise.then(
 											function() {
 												resolve_ithPromise();
@@ -951,7 +957,7 @@
 		}
 	};
 
-	SingleMedia.prototype.singleMediaIsInFoundAlbum = function() {
+	SingleMedia.prototype.isInFoundAlbum = function() {
 		if (! Utilities.somethingIsSearched())
 			return false;
 		else {
@@ -981,32 +987,46 @@
 	};
 
 	Utilities.nothingIsSelected = function() {
-		if (selectionAlbum.isEmpty())
+		if (selectionAlbum.isEmpty()) {
 			return true;
-		if (selectionAlbum.media.length || selectionAlbum.subalbums.length)
-			return false;
-		else
-			return true;
+		} else {
+			if (selectionAlbum.media.length || selectionAlbum.subalbums.length)
+				return false;
+			else
+				return true;
+		}
 	};
 
 	SingleMedia.prototype.isSelected = function() {
-		if (selectionAlbum.isEmpty())
+		if (selectionAlbum.isEmpty()) {
 			return false;
-		var index = selectionAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
-		if (index > -1)
-			return true;
-		else
-			return false;
+		} else {
+			var index = selectionAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
+			if (index > -1)
+				return true;
+			else
+				return false;
+		}
 	};
 
-	Utilities.subalbumIsSelected = function(subalbum) {
-		if (selectionAlbum.isEmpty())
+	Utilities.albumIsSelected = function(album) {
+		if (selectionAlbum.isEmpty()) {
 			return false;
-		var index = selectionAlbum.subalbums.findIndex(x => x.cacheBase === subalbum.cacheBase);
-		if (index > -1)
-			return true;
-		else
-			return false;
+		} else {
+			var index = selectionAlbum.subalbums.findIndex(x => x.cacheBase === album.cacheBase);
+			if (index > -1)
+				return true;
+			else
+				return false;
+		}
+	};
+
+	Album.prototype.isSelected = function() {
+		return Utilities.albumIsSelected(this);
+	};
+
+	Subalbum.prototype.isSelected = function() {
+		return Utilities.albumIsSelected(this);
 	};
 
 	// Media.prototype.someMediaIsSelected = function() {
@@ -1026,50 +1046,59 @@
 	// };
 
 	Media.prototype.everyMediaIsSelected = function() {
-		if (selectionAlbum.isEmpty())
+		if (selectionAlbum.isEmpty()) {
+			Utilities.initializeSelectionAlbum();
 			return false;
-		if (
-			this.every(
-				function(singleMedia) {
-					return singleMedia.isSelected();
-				}
-			)
-		) {
-			return true;
 		} else {
-			return false;
+			if (
+				this.every(
+					function(singleMedia) {
+						return singleMedia.isSelected();
+					}
+				)
+			) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	};
 
 	Utilities.prototype.someSubalbumIsSelected = function(subalbums) {
-		if (selectionAlbum.isEmpty())
+		if (selectionAlbum.isEmpty()) {
+			Utilities.initializeSelectionAlbum();
 			return false;
-		if (
-			subalbums.some(
-				function(subalbum) {
-					return Utilities.subalbumIsSelected(subalbum);
-				}
-			)
-		) {
-			return true;
 		} else {
-			return false;
+			if (
+				subalbums.some(
+					function(subalbum) {
+						return subalbum.isSelected();
+					}
+				)
+			) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	};
 
 	Utilities.prototype.everySubalbumIsSelected = function(subalbums) {
-		if (selectionAlbum.isEmpty())
+		if (selectionAlbum.isEmpty()) {
+			Utilities.initializeSelectionAlbum();
 			return false;
-		if (
-			subalbums.every(
-				function(subalbum) {
-					return Utilities.subalbumIsSelected(subalbum);
-				}
-			)
-		) {
-			return true;
 		} else {
-			return false;
+			if (
+				subalbums.every(
+					function(subalbum) {
+						return subalbum.isSelected();
+					}
+				)
+			) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	};
 
@@ -1130,6 +1159,8 @@
 
 	SingleMedia.prototype.addToSelection = function(clickedSelector) {
 		if (! this.isSelected()) {
+			if (selectionAlbum.isEmpty())
+				Utilities.initializeSelectionAlbum();
 			// this.parent = selectionAlbum;
 			selectionAlbum.media.push(this);
 
@@ -1219,7 +1250,7 @@
 	Utilities.addSubalbumToSelection = function(subalbum, clickedSelector) {
 		return new Promise(
 			function(resolve_addSubalbum) {
-				if (Utilities.subalbumIsSelected(subalbum)) {
+				if (subalbum.isSelected()) {
 					resolve_addSubalbum();
 				} else {
 					let getAlbumPromise = PhotoFloat.getAlbum(subalbum.cacheBase, null, {"getMedia": false, "getPositions": true});
@@ -1263,7 +1294,9 @@
 	Utilities.removeSubalbumFromSelection = function(subalbum, clickedSelector) {
 		return new Promise(
 			function(resolve_removeSubalbum) {
-				if (! Utilities.subalbumIsSelected(subalbum)) {
+				if (! subalbum.isSelected()) {
+					if (subalbum.isEmpty())
+						Utilities.initializeSelectionAlbum();
 					resolve_removeSubalbum();
 				} else {
 					selectionAlbum.numsMediaInSubTree.imagesAndVideosSubtract(subalbum.numsMediaInSubTree);
@@ -1884,16 +1917,17 @@
 							let subalbumPromise = new Promise(
 								function(resolveSubalbumPromise) {
 									let ithSubalbum = currentAlbum.subalbums[iSubalbum];
-									let getAlbumPromise = PhotoFloat.getAlbum(ithSubalbum.cacheBase, null, {"getMedia": true, "getPositions": false});
-									getAlbumPromise.then(
-										function(subalbum) {
-											let albumPath = subalbum.path;
+									let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {"getMedia": true, "getPositions": false});
+									// let getAlbumPromise = PhotoFloat.getAlbum(ithSubalbum.cacheBase, null, {"getMedia": true, "getPositions": false});
+									convertSubalbumPromise.then(
+										function(iSubalbum) {
+											let albumPath = currentAlbum.subalbums[iSubalbum].path;
 											if (Utilities.isSearchCacheBase(currentAlbum.cacheBase) || Utilities.isSelectionCacheBase(currentAlbum.cacheBase))
 												// remove the leading folders/date/gps/map string
 												albumPath = albumPath.split('/').splice(1).join('/');
 											else
 												albumPath = albumPath.substring(basePath.length + 1);
-											let addMediaAndSubalbumsPromise = addMediaAndSubalbumsFromAlbum(subalbum, albumPath);
+											let addMediaAndSubalbumsPromise = addMediaAndSubalbumsFromAlbum(currentAlbum.subalbums[iSubalbum], albumPath);
 											addMediaAndSubalbumsPromise.then(
 												function() {
 													resolveSubalbumPromise();
@@ -2623,7 +2657,6 @@
 	Utilities.prototype.getLanguage = Utilities.getLanguage;
 	Utilities.prototype.upHash = Utilities.upHash;
 	Utilities.prototype.isAlbumWithOneMedia = Utilities.isAlbumWithOneMedia;
-	Utilities.prototype.subalbumIsSelected = Utilities.subalbumIsSelected;
 	// Utilities.prototype.resetSelectedMedia = Utilities.resetSelectedMedia;
 	// Utilities.prototype.resetSelectedSubalbums = Utilities.resetSelectedSubalbums;
 	// Utilities.prototype.countSelectedMedia = Utilities.countSelectedMedia;
