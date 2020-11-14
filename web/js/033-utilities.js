@@ -2114,7 +2114,7 @@
 			else
 				folderName = subalbum.name;
 		} else {
-			folderName = subalbum.path;
+			folderName = subalbum.name;
 		}
 
 		return folderName;
