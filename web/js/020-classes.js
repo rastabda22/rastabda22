@@ -305,7 +305,8 @@
 			for (let j = 0; j < unnecessaryProperties.length; j ++)
 				if (this.hasOwnProperty(unnecessaryProperties[j]))
 					delete this[unnecessaryProperties[j]];
-			this.media.removeUnnecessaryPropertiesAndAddParent(this);
+			if (this.hasOwnProperty("media"))
+				this.media.removeUnnecessaryPropertiesAndAddParent(this);
 		}
 	}
 

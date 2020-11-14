@@ -163,7 +163,7 @@
 		return false;
 	};
 
-	Utilites.prototype.readPostData = function() {
+	Utilities.prototype.readPostData = function() {
 		if (postData.guessedPasswordsMd5) {
 			PhotoFloat.guessedPasswordsMd5 = postData.guessedPasswordsMd5.split('-');
 			PhotoFloat.guessedPasswordCodes = postData.guessedPasswordCodes.split('-');
