@@ -1268,7 +1268,7 @@
 							selectionAlbum.sizesOfSubTree.sum(subalbum.sizesOfSubTree);
 							selectionAlbum.numsProtectedMediaInSubTree.sum(subalbum.numsProtectedMediaInSubTree);
 
-							Utilities.generateSubalbumNameForSelectionAlbum(subalbum).then(
+							subalbum.generateSubalbumNameForSelectionAlbum().then(
 								function([folderName, nameSorting]) {
 									subalbum.selectionAlbumName = folderName;
 									if (subalbum.hasOwnProperty("numPositionsInTree") && subalbum.numPositionsInTree)
@@ -1976,15 +1976,16 @@
 
 	};
 
-	Utilities.generateSubalbumNameForSelectionAlbum = function(subalbum) {
+	Album.prototype.generateSubalbumNameForSelectionAlbum = function() {
+		var self = this;
 		return new Promise(
 			function (resolve_folderNameAndTitle) {
 				var folderName = "", firstLine = '', secondLine = '';
 				var raquo = "<span class='gray separated'>&raquo;</span>";
-				var folderArray = subalbum.cacheBase.split(Options.cache_folder_separator);
-				var nameSorting = Utilities.convertByDateAncestosNames(subalbum.ancestorsNames).slice(1).reverse().join(Options.cache_folder_separator).replace(/^0+/, '');
-				if (Utilities.isByDateCacheBase(subalbum.cacheBase)) {
-				// if (Utilities.isSelectionCacheBase(album.cacheBase) && Utilities.isByDateCacheBase(subalbum.cacheBase)) {
+				var folderArray = self.cacheBase.split(Options.cache_folder_separator);
+				var nameSorting = Utilities.convertByDateAncestosNames(self.ancestorsNames).slice(1).reverse().join(Options.cache_folder_separator).replace(/^0+/, '');
+				if (Utilities.isByDateCacheBase(self.cacheBase)) {
+				// if (Utilities.isSelectionCacheBase(album.cacheBase) && Utilities.isByDateCacheBase(self.cacheBase)) {
 					// if (folderArray.length === 4)
 					// 	firstLine += Utilities._t("#day") + " ";
 					firstLine += Utilities.dateElementForFolderName(folderArray, folderArray.length - 1);
@@ -2007,29 +2008,29 @@
 					folderName = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
 
 					resolve_folderNameAndTitle([folderName, nameSorting]);
-				} else if (Utilities.isByGpsCacheBase(subalbum.cacheBase)) {
-				// } else if (Utilities.isSelectionCacheBase(album.cacheBase) && Utilities.isByGpsCacheBase(subalbum.cacheBase)) {
+				} else if (Utilities.isByGpsCacheBase(self.cacheBase)) {
+				// } else if (Utilities.isSelectionCacheBase(album.cacheBase) && Utilities.isByGpsCacheBase(self.cacheBase)) {
 					let cacheBasesPromises = [];
-					if (subalbum.name === '')
+					if (self.name === '')
 						firstLine = Utilities._t('.not-specified');
-					else if (subalbum.hasOwnProperty('altName'))
-						firstLine = Utilities.transformAltPlaceName(subalbum.altName);
+					else if (self.hasOwnProperty('altName'))
+						firstLine = Utilities.transformAltPlaceName(self.altName);
 					else
-						firstLine = subalbum.name;
+						firstLine = self.name;
 
-					for (let iCacheBase = 1; iCacheBase < subalbum.ancestorsCacheBase.length - 1; iCacheBase ++) {
+					for (let iCacheBase = 1; iCacheBase < self.ancestorsCacheBase.length - 1; iCacheBase ++) {
 						if (iCacheBase == 1)
 							secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album-in") + "</span> ";
 						let marker = "<marker>" + iCacheBase + "</marker>";
 						secondLine += marker;
-						if (iCacheBase < subalbum.ancestorsCacheBase.length - 2)
+						if (iCacheBase < self.ancestorsCacheBase.length - 2)
 							secondLine += raquo;
-						if (iCacheBase === subalbum.ancestorsCacheBase.length - 2)
+						if (iCacheBase === self.ancestorsCacheBase.length - 2)
 							secondLine += "<span class='gray'>)</span>";
 						cacheBasesPromises.push(
 							new Promise(
 								function(resolve_ithCacheBasePromise) {
-									let cacheBasePromise = PhotoFloat.getAlbum(subalbum.ancestorsCacheBase[iCacheBase], null, {"getMedia": false, "getPositions": false});
+									let cacheBasePromise = PhotoFloat.getAlbum(self.ancestorsCacheBase[iCacheBase], null, {"getMedia": false, "getPositions": false});
 									cacheBasePromise.then(
 										function(gottenAlbum) {
 											let albumName;
@@ -2058,20 +2059,20 @@
 					);
 				} else {
 					let cacheBasesPromises = [];
-					firstLine = subalbum.name;
-					for (let iCacheBase = 1; iCacheBase < subalbum.ancestorsCacheBase.length - 1; iCacheBase ++) {
+					firstLine = self.name;
+					for (let iCacheBase = 1; iCacheBase < self.ancestorsCacheBase.length - 1; iCacheBase ++) {
 						if (iCacheBase == 1)
 							secondLine = "<span class='gray'>(" + Utilities._t("#regular-album-in") + "</span> ";
 						let marker = "<marker>" + iCacheBase + "</marker>";
 						secondLine += marker;
-						if (iCacheBase < subalbum.ancestorsCacheBase.length - 2)
+						if (iCacheBase < self.ancestorsCacheBase.length - 2)
 							secondLine += raquo;
-						if (iCacheBase === subalbum.ancestorsCacheBase.length - 2)
+						if (iCacheBase === self.ancestorsCacheBase.length - 2)
 							secondLine += "<span class='gray'>)</span>";
 						cacheBasesPromises.push(
 							new Promise(
 								function(resolve_ithCacheBasePromise) {
-									let cacheBasePromise = PhotoFloat.getAlbum(subalbum.ancestorsCacheBase[iCacheBase], null, {"getMedia": false, "getPositions": false});
+									let cacheBasePromise = PhotoFloat.getAlbum(self.ancestorsCacheBase[iCacheBase], null, {"getMedia": false, "getPositions": false});
 									cacheBasePromise.then(
 										function(gottenAlbum) {
 											secondLine = secondLine.replace(marker, "<a href='" + hashBeginning + gottenAlbum.cacheBase+ "'>" + gottenAlbum.name + "</a>");
