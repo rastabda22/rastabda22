@@ -107,16 +107,16 @@
 	<?php }
 
 	// receive the post data, they contain the compressed stringified map/selection album with name packedAlbum
-	function passPostArrayToJavascript($variableName){
+	function passPostArrayToJavascript(){
 		if(! empty($_POST)) {
 			echo '<script>
-				var '. $variableName . ' = ' . json_encode($_POST) . '; // alert(' . $variableName . '["packedAlbum"]);
+				var postData = ' . json_encode($_POST) . '; // alert(postData["packedAlbum"]);
 				popupRefreshType = "previousAlbum";
 				mapRefreshType = "none";
 				</script>';
 		}
 	}
-	passPostArrayToJavascript('postData');
+	passPostArrayToJavascript();
 	// no, if postdata isn't undefined, javascript's postData["packedAlbum"] contains the compressed stringified album
 
 	echo '<script>
