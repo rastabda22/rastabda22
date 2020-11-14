@@ -358,7 +358,7 @@
 		return scrollbarWidth;
 	};
 
-	Utilities.prototype.cloneObject = function(object) {
+	Utilities.cloneObject = function(object) {
 		return Object.assign({}, object);
 	};
 
@@ -2675,6 +2675,7 @@
 	Utilities.prototype.initializeSelectionAlbum = Utilities.initializeSelectionAlbum;
 	Utilities.prototype.transformAltPlaceName = Utilities.transformAltPlaceName;
 	Utilities.prototype.arrayUnion = Utilities.arrayUnion;
+	Utilities.prototype.cloneObject = Utilities.cloneObject;
 
 	window.Utilities = Utilities;
 }());
