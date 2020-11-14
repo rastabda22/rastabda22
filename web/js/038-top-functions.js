@@ -2095,6 +2095,8 @@
 									else
 										folder += positionHtml;
 								}
+								if (folder.indexOf(positionMarker) !== -1)
+									folder = folder.replace(positionMarker, "");
 								folder += "</span>";
 
 								// // get the value in style sheet (element with that class doesn't exist in DOM)
