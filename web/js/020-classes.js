@@ -86,6 +86,12 @@
 			);
 			this.fileSizes = new Sizes(this.fileSizes);
 		}
+
+		addParent(album) {
+			// add parent album
+			if (! this.hasOwnProperty("parent"))
+				this.parent = album;
+		}
 	}
 
 	class Media extends Array {
@@ -105,6 +111,19 @@
 					}
 				}
 			);
+		}
+
+		removeUnnecessaryPropertiesAndAddParent(album) {
+			var unnecessaryProperties = ['albumIniMTime', 'passwordMarkerMTime'];
+			// remove unnecessary properties from each media
+			for (let i = this.length - 1; i >= 0; i --) {
+				unnecessaryProperties = ['checksum', 'dateTimeDir', 'dateTimeFile'];
+				for (let j = 0; j < unnecessaryProperties.length; j ++)
+				if (this[i].hasOwnProperty(unnecessaryProperties[j]))
+					delete this[i][unnecessaryProperties[j]];
+
+				this[i].addParent(album);
+			}
 		}
 	}
 
@@ -128,6 +147,10 @@
 				super(... subalbums.map(subalbum => new Subalbum(subalbum)));
 			else
 				super(subalbums);
+		}
+
+		toSubalbum() {
+			return Utilities.reduceAlbumtoSubalbum(this);
 		}
 	}
 
@@ -169,6 +192,14 @@
 					// newMediaArray = this.media.map(singleMedia => new SingleMedia(singleMedia));
 					// this.media = newMediaArray;
 					this.media = new Media(this.media);
+					this.media.forEach(
+						function(singleMedia) {
+							// add parent album
+							singleMedia.addParent(this);
+
+						}
+					);
+
 					this.media.getAndPutIntoCache();
 
 					this.numsMedia = this.media.imagesAndVideosCount();
@@ -219,32 +250,11 @@
 		}
 
 		toSubalbum() {
-			var subalbumProperties = [
-				'cacheBase',
-				'date',
-				'name',
-				'numPositionsInTree',
-				'numsMediaInSubTree',
-				'numsProtectedMediaInSubTree',
-				'path',
-				'sizesOfAlbum',
-				'sizesOfSubTree',
-				'words'
-			];
-			subalbum = Utilities.cloneObject(this);
-			Object.keys(this).forEach(
-				function(key) {
-					if (subalbumProperties.indexOf(key) === -1) {
-						delete subalbum[key];
-					}
-				}
-			);
-			return new Subalbum(subalbum);
+			return Utilities.reduceAlbumtoSubalbum(this);
 		}
 
 		toJson() {
 			var albumProperties = [
-				'albumIniMTime',
 				'ancestorsNames',
 				'cacheBase',
 				'cacheSubdir',
@@ -256,20 +266,20 @@
 				'numPositionsInTree',
 				'numsMediaInSubTree',
 				'numsProtectedMediaInSubTree',
-				'passwordMarkerMTime',
 				'path',
 				'physicalPath',
 				'positionsAndMediaInTree',
+				'selectionAlbumName',
 				'sizesOfAlbum',
 				'sizesOfSubTree',
 				'subalbums',
 				'tags',
 				'title'
 			];
-			clonedAlbum = Utilities.cloneObject(this);
+			var clonedAlbum = Utilities.cloneObject(this);
 			Object.keys(this).forEach(
 				function(key) {
-					if (subalbumProperties.indexOf(key) === -1) {
+					if (albumProperties.indexOf(key) === -1) {
 						delete clonedAlbum[key];
 					}
 				}
@@ -279,7 +289,23 @@
 					clonedAlbum.subalbums[index] = subalbum.toSubalbum();
 				}
 			);
+			clonedAlbum.media.forEach(
+				function(singleMedia, index) {
+					let clonedSingleMedia = Utilities.cloneObject(singleMedia);
+					delete clonedSingleMedia.parent;
+					clonedAlbum.media[index] = clonedSingleMedia;
+				}
+			);
 			return JSON.stringify(clonedAlbum);
+		}
+
+		removeUnnecessaryPropertiesAndAddParentToMedia() {
+			// remove unnecessary properties from album
+			var unnecessaryProperties = ['albumIniMTime', 'passwordMarkerMTime'];
+			for (let j = 0; j < unnecessaryProperties.length; j ++)
+				if (this.hasOwnProperty(unnecessaryProperties[j]))
+					delete this[unnecessaryProperties[j]];
+			this.media.removeUnnecessaryPropertiesAndAddParent(this);
 		}
 	}
 

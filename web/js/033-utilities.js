@@ -17,6 +17,32 @@
 		);
 	}
 
+	Utilities.reduceAlbumtoSubalbum = function(album) {
+		var subalbumProperties = [
+			'cacheBase',
+			'date',
+			'name',
+			'numPositionsInTree',
+			'numsMediaInSubTree',
+			'numsProtectedMediaInSubTree',
+			'path',
+			'selectionAlbumName',
+			'selectionAlbumNameSorting',
+			'sizesOfAlbum',
+			'sizesOfSubTree',
+			'words'
+		];
+		var subalbum = Utilities.cloneObject(this);
+		Object.keys(this).forEach(
+			function(key) {
+				if (subalbumProperties.indexOf(key) === -1) {
+					delete subalbum[key];
+				}
+			}
+		);
+		return new Subalbum(subalbum);
+	};
+
 	Utilities.prototype.openInNewTab = function(hash) {
 		// albums is a list of objects {albumName: album}
 		var typeOfPackedAlbum, stringifiedPackedAlbum;

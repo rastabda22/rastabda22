@@ -1086,25 +1086,7 @@
 					}
 				}
 			} else if (! util.isSearchCacheBase(theAlbum.cacheBase)) {
-				// if (! theAlbum.hasOwnProperty("positionsAndMediaInTree"))
-				// 	theAlbum.numPositionsInTree = 0;
-
-				// remove unnecessary properties from album
-				var unnecessaryProperties = ['albumIniMTime', 'passwordMarkerMTime'];
-				for (j = 0; j < unnecessaryProperties.length; j ++)
-					delete theAlbum[unnecessaryProperties[j];
-
-				if (theAlbum.hasOwnProperty("media")) {
-					for (i = theAlbum.media.length - 1; i >= 0; i --) {
-						// remove unnecessary properties from each media
-						unnecessaryProperties = ['checksum', 'dateTimeDir', 'dateTimeFile'];
-						for (j = 0; j < unnecessaryProperties.length; j ++)
-							delete theAlbum.media[i][unnecessaryProperties[j]];
-
-						// add parent album
-						theAlbum.media[i].parent = theAlbum;
-					}
-				}
+				theAlbum.removeUnnecessaryPropertiesAndAddParentToMedia();
 			}
 
 			if (! util.isMapCacheBase(theAlbum.cacheBase))
