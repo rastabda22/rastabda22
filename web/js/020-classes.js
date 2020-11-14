@@ -217,6 +217,70 @@
 				}
 			);
 		}
+
+		toSubalbum() {
+			var subalbumProperties = [
+				'cacheBase',
+				'date',
+				'name',
+				'numPositionsInTree',
+				'numsMediaInSubTree',
+				'numsProtectedMediaInSubTree',
+				'path',
+				'sizesOfAlbum',
+				'sizesOfSubTree',
+				'words'
+			];
+			subalbum = Utilities.cloneObject(this);
+			Object.keys(this).forEach(
+				function(key) {
+					if (subalbumProperties.indexOf(key) === -1) {
+						delete subalbum[key];
+					}
+				}
+			);
+			return new Subalbum(subalbum);
+		}
+
+		toJson() {
+			var albumProperties = [
+				'albumIniMTime',
+				'ancestorsNames',
+				'cacheBase',
+				'cacheSubdir',
+				'date',
+				'description',
+				'jsonVersion',
+				'media',
+				'name',
+				'numPositionsInTree',
+				'numsMediaInSubTree',
+				'numsProtectedMediaInSubTree',
+				'passwordMarkerMTime',
+				'path',
+				'physicalPath',
+				'positionsAndMediaInTree',
+				'sizesOfAlbum',
+				'sizesOfSubTree',
+				'subalbums',
+				'tags',
+				'title'
+			];
+			clonedAlbum = Utilities.cloneObject(this);
+			Object.keys(this).forEach(
+				function(key) {
+					if (subalbumProperties.indexOf(key) === -1) {
+						delete clonedAlbum[key];
+					}
+				}
+			);
+			clonedAlbum.subalbums.forEach(
+				function(subalbum, index) {
+					clonedAlbum.subalbums[index] = subalbum.toSubalbum();
+				}
+			);
+			return JSON.stringify(clonedAlbum);
+		}
 	}
 
 	class Cache {
