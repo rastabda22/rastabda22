@@ -17,31 +17,58 @@
 		);
 	}
 
-	Utilities.prototype.openInNewTab = function(mediaHash, virtualAlbum) {
+	Utilities.prototype.openInNewTab = function(hash) {
+		// albums is a list of objects {albumName: album}
+		var typeOfPackedAlbum, stringifiedPackedAlbum;
+
 		var newForm = jQuery(
 			"<form>",
 			{
-				"action": mediaHash,
-				// "action": imgData.mediaHash,
+				"action": hash,
+				// "action": imgData.hash,
 				"target": "_blank",
 				"method": "post"
 			}
 		);
-		if (virtualAlbum !== undefined) {
-			var typeOfPackedAlbum, stringifiedPackedAlbum;
-			var packedAlbum = lzwCompress.pack(JSON.decycle(virtualAlbum));
-			if (typeof packedAlbum === "object") {
+
+		let albums = [];
+		if (util.somethingIsInMapAlbum()) {
+			albums.push(mapAlbum);
+		}
+		if (! util.nothingIsSelected()) {
+			albums.push(selectionAlbum);
+		}
+
+		for (let iAlbum = 0; iAlbum < albums.length; iAlbum ++) {
+			var packedAlbum = lzwCompress.pack(albums[iAlbum].toJson());
+			// var packedAlbum = lzwCompress.pack(JSON.decycle(albums[albumName]));
+			if (Array.isArray(packedAlbum)) {
 				stringifiedPackedAlbum = packedAlbum.join();
-				typeOfPackedAlbum = "object";
+				typeOfPackedAlbum = "array";
 			} else {
 				typeOfPackedAlbum = "string";
 				stringifiedPackedAlbum = packedAlbum;
 			}
+			if (albums[iAlbum].indexOf(Options.by_selection_string) === 0)
+				albumName = "selectionAlbum";
+			else
+				albumName = "mapAlbum";
+
+			let iString = iAlbum.toString();
 			newForm.append(
 				jQuery(
 					"<input>",
 					{
-						"name": "stringifiedPackedAlbum",
+						"name": "albumName_" + iString,
+						"value": albumName,
+						"type": "hidden"
+					}
+				)
+			).append(
+				jQuery(
+					"<input>",
+					{
+						"name": "stringifiedPackedAlbum_" + iString,
 						"value": stringifiedPackedAlbum,
 						"type": "hidden"
 					}
@@ -50,22 +77,41 @@
 				jQuery(
 					"<input>",
 					{
-						"name": "selectorClickedToOpenTheMap",
-						"value": selectorClickedToOpenTheMap,
-						"type": "hidden"
-					}
-				)
-			).append(
-				jQuery(
-					"<input>",
-					{
-						"name": "typeOfPackedAlbum",
+						"name": "typeOfPackedAlbum_" + iString,
 						"value": typeOfPackedAlbum,
 						"type": "hidden"
 					}
 				)
 			);
 		}
+
+		newForm.append(
+			jQuery(
+				"<input>",
+				{
+					"name": "selectorClickedToOpenTheMap",
+					"value": selectorClickedToOpenTheMap,
+					"type": "hidden"
+				}
+			)
+		);
+
+		let currentAlbumIs = "";
+		if (currentAlbum === mapAlbum)
+			currentAlbumIs = "mapAlbum";
+		else if (currentAlbum === selectionAlbum)
+			currentAlbumIs = "selectionAlbum";
+		newForm.append(
+			jQuery(
+				"<input>",
+				{
+					"name": "currentAlbumIs",
+					"value": currentAlbumIs,
+					"type": "hidden"
+				}
+			)
+		);
+
 		if (PhotoFloat.guessedPasswordsMd5.length) {
 			newForm.append(
 				jQuery(
@@ -89,6 +135,43 @@
 		}
 		newForm.hide().appendTo("body").submit().remove();
 		return false;
+	};
+
+	Utilites.prototype.readPostData = function() {
+		if (postData.guessedPasswordsMd5) {
+			PhotoFloat.guessedPasswordsMd5 = postData.guessedPasswordsMd5.split('-');
+			PhotoFloat.guessedPasswordCodes = postData.guessedPasswordCodes.split('-');
+			delete postData.guessedPasswordsMd5;
+		}
+		selectorClickedToOpenTheMap = postData.selectorClickedToOpenTheMap;
+
+		let stringifiedPackedAlbum, packedAlbum, albumName, uncompressedAlbum;
+		let index = 0;
+
+		while (postData.hasOwnProperty("albumName_" + index.toString())) {
+			albumName = postData["albumName_" + index.toString()];
+			if (albumName !== "null") {
+				stringifiedPackedAlbum = postData["stringifiedPackedAlbum_" + index.toString()];
+				if (postData.typeOfPackedAlbum === "array") {
+					packedAlbum = stringifiedPackedAlbum.split(',').map(x => parseInt(x, 10));
+				} else {
+					packedAlbum = stringifiedPackedAlbum;
+				}
+				uncompressedAlbum = new Album(JSON.parse(lzwCompress.unpack(packedAlbum)));
+				if (albumName === "currentAlbum") {
+					currentAlbum = uncompressedAlbum
+				} else if (albumName === "mapAlbum") {
+					mapAlbum = uncompressedAlbum
+				} else if (albumName === "selectionAlbum") {
+					selectionAlbum = uncompressedAlbum
+				}
+				if (index === 0)
+					albumForResolving = uncompressedAlbum;
+			}
+			index ++;
+		}
+		// invalidate the variable so that it's not used any more
+		postData = null;
 	};
 
 	Utilities.initializeOrGetMapRootAlbum = function() {

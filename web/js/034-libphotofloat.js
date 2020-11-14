@@ -927,14 +927,7 @@
 	PhotoFloat.getAlbum = function(albumOrCacheBase, getAlbum_error, {getMedia = false, getPositions = false}) {
 		// getAlbum_error is a function, and is executed when the album cannot be retrieved:
 		// either because it doesn't exist or is a protected one
-
-		if (typeof isPhp === "function" && typeof postData !== "undefined") {
-			if (postData.guessedPasswordsMd5) {
-				PhotoFloat.guessedPasswordsMd5 = postData.guessedPasswordsMd5.split('-');
-				PhotoFloat.guessedPasswordCodes = postData.guessedPasswordCodes.split('-');
-				delete postData.guessedPasswordsMd5;
-			}
-		}
+		var albumForResolving = null;
 
 		return new Promise(
 			function(resolve_getAlbum) {
@@ -1017,26 +1010,11 @@
 						}
 					);
 				} else if (util.isMapCacheBase(albumCacheBase) || util.isSelectionCacheBase(albumCacheBase)) {
-					// map albums are not on server:
+					// map and selection albums are not on server:
 					// if the album hasn't been passed as argument and isn't in cache => it could have been passed with POST and be put in postData["packedAlbum"]
-					if (typeof isPhp === "function" && typeof postData !== "undefined") {
-						let stringifiedPackedAlbum, packedAlbum;
-						stringifiedPackedAlbum = postData.stringifiedPackedAlbum;
-						if (postData.typeOfPackedAlbum === "object") {
-							packedAlbum = stringifiedPackedAlbum.split(',').map(x => parseInt(x, 10));
-						} else {
-							packedAlbum = stringifiedPackedAlbum;
-						}
-						selectorClickedToOpenTheMap = postData.selectorClickedToOpenTheMap;
-						if (util.isMapCacheBase(albumCacheBase)) {
-							album = new Album(JSON.retrocycle(lzwCompress.unpack(packedAlbum)));
-							mapAlbum = album;
-							resolve_getAlbum(mapAlbum);
-						} else if (util.isSelectionCacheBase(albumCacheBase)) {
-							album = new Album(JSON.retrocycle(lzwCompress.unpack(packedAlbum)));
-							selectionAlbum = album;
-						}
-						resolve_getAlbum(album);
+					// alert("alt");
+					if (albumForResolving !== null) {
+						resolve_getAlbum(albumForResolving);
 					} else {
 						// go to root album
 						// execution arrives here if a map album is reloaded or opened from a link

@@ -1994,7 +1994,7 @@
 					);
 					if (
 						typeof isPhp === "function" && (
-							util.isMapCacheBase(currentAlbum.cacheBase) || util.isSelectionCacheBase(currentAlbum.cacheBase) || PhotoFloat.guessedPasswordsMd5.length
+							util.somethingIsInMapAlbum() || ! util.nothingIsSelected() || PhotoFloat.guessedPasswordsMd5.length
 						)
 					) {
 						// execution enters here if we are using index.php
@@ -2003,7 +2003,7 @@
 							{mediaHash: phFl.encodeHash(currentAlbum.cacheBase, ithMedia)},
 							function (ev) {
 								if (ev.which == 2) {
-									util.openInNewTab(ev.data.mediaHash, currentAlbum);
+									util.openInNewTab(ev.data.mediaHash);
 									return false;
 								}
 							}
@@ -2223,7 +2223,7 @@
 
 								if (
 									typeof isPhp === "function" && (
-										util.isMapCacheBase(currentAlbum.cacheBase) || util.isSelectionCacheBase(currentAlbum.cacheBase) || PhotoFloat.guessedPasswordsMd5.length
+										util.somethingIsInMapAlbum() || ! util.nothingIsSelected() || PhotoFloat.guessedPasswordsMd5.length
 									)
 								) {
 									// execution enters here if we are using index.php

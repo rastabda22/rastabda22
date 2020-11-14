@@ -822,6 +822,11 @@ $(document).ready(function() {
 						Options.search_current_album = true;
 						f.setBooleanCookie("search_current_album", Options.search_current_album);
 					}
+
+					if (typeof isPhp === "function" && typeof postData !== "undefined" && postData !== null) {
+						util.readPostData();
+					}
+
 					// parseHashAndReturnAlbumAndMedia returns an array of 3 elements:
 					// - the requested album
 					// - the requested media (if applicable)
