@@ -32,15 +32,15 @@
 			'sizesOfSubTree',
 			'words'
 		];
-		var subalbum = Utilities.cloneObject(this);
-		Object.keys(this).forEach(
+		var clonedAlbum = Utilities.cloneObject(album);
+		Object.keys(album).forEach(
 			function(key) {
 				if (subalbumProperties.indexOf(key) === -1) {
-					delete subalbum[key];
+					delete clonedAlbum[key];
 				}
 			}
 		);
-		return new Subalbum(subalbum);
+		return clonedAlbum;
 	};
 
 	Utilities.prototype.openInNewTab = function(hash) {
@@ -75,7 +75,7 @@
 				typeOfPackedAlbum = "string";
 				stringifiedPackedAlbum = packedAlbum;
 			}
-			if (albums[iAlbum].indexOf(Options.by_selection_string) === 0)
+			if (albums[iAlbum].isSelection())
 				albumName = "selectionAlbum";
 			else
 				albumName = "mapAlbum";
@@ -177,7 +177,7 @@
 		while (postData.hasOwnProperty("albumName_" + index.toString())) {
 			albumName = postData["albumName_" + index.toString()];
 			stringifiedPackedAlbum = postData["stringifiedPackedAlbum_" + index.toString()];
-			if (postData.typeOfPackedAlbum === "array") {
+			if (postData["typeOfPackedAlbum_" + index.toString()] === "array") {
 				packedAlbum = stringifiedPackedAlbum.split(',').map(x => parseInt(x, 10));
 			} else {
 				packedAlbum = stringifiedPackedAlbum;
@@ -192,7 +192,7 @@
 		}
 		if (postData.currentAlbumIs === "mapAlbum")
 			currentAlbum = mapAlbum;
-		else if (postData.currentAlbumIs === "selectiongAlbum")
+		else if (postData.currentAlbumIs === "selectionAlbum")
 			currentAlbum = selectionAlbum;
 		// invalidate the variable so that it's not used any more
 		postData = null;
@@ -928,6 +928,10 @@
 		return result;
 	};
 
+	Album.prototype.isAnyRoot = function() {
+		return Utilities.isAnyRootCacheBase(this.cacheBase);
+	};
+
 	Utilities.prototype.trimExtension = function(name) {
 		var index = name.lastIndexOf(".");
 		if (index !== -1)
@@ -943,11 +947,19 @@
 		return Utilities.isFolderCacheBase(this.cacheBase);
 	};
 
+	Subalbum.prototype.isFolder = function() {
+		return Utilities.isFolderCacheBase(this.cacheBase);
+	};
+
 	Utilities.isByDateCacheBase = function(string) {
 		return string == Options.by_date_string || string.indexOf(Options.byDateStringWithTrailingSeparator) === 0;
 	};
 
 	Album.prototype.isByDate = function() {
+		return Utilities.isByDateCacheBase(this.cacheBase);
+	};
+
+	Subalbum.prototype.isByDate = function() {
 		return Utilities.isByDateCacheBase(this.cacheBase);
 	};
 
@@ -959,11 +971,19 @@
 		return Utilities.isByGpsCacheBase(this.cacheBase);
 	};
 
+	Subalbum.prototype.isByGps = function() {
+		return Utilities.isByGpsCacheBase(this.cacheBase);
+	};
+
 	Utilities.isSearchCacheBase = function(string) {
 		return string.indexOf(Options.bySearchStringWithTrailingSeparator) === 0;
 	};
 
 	Album.prototype.isSearch = function() {
+		return Utilities.isSearchCacheBase(this.cacheBase);
+	};
+
+	Subalbum.prototype.isSearch = function() {
 		return Utilities.isSearchCacheBase(this.cacheBase);
 	};
 
@@ -975,11 +995,19 @@
 		return Utilities.isSelectionCacheBase(this.cacheBase);
 	};
 
+	Subalbum.prototype.isSelection = function() {
+		return Utilities.isSelectionCacheBase(this.cacheBase);
+	};
+
 	Utilities.isMapCacheBase = function(string) {
 		return string.indexOf(Options.byMapStringWithTrailingSeparator) === 0;
 	};
 
 	Album.prototype.isMap = function() {
+		return Utilities.isMapCacheBase(this.cacheBase);
+	};
+
+	Subalbum.prototype.isMap = function() {
 		return Utilities.isMapCacheBase(this.cacheBase);
 	};
 

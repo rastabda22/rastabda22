@@ -139,6 +139,10 @@
 			this.sizesOfAlbum = new Sizes(this.sizesOfAlbum);
 			this.sizesOfSubTree = new Sizes(this.sizesOfSubTree);
 		}
+
+		toSubalbum() {
+			return this;
+		}
 	}
 
 	class Subalbums extends Array {
@@ -147,10 +151,6 @@
 				super(... subalbums.map(subalbum => new Subalbum(subalbum)));
 			else
 				super(subalbums);
-		}
-
-		toSubalbum() {
-			return Utilities.reduceAlbumtoSubalbum(this);
 		}
 	}
 
@@ -244,7 +244,7 @@
 		}
 
 		toSubalbum() {
-			return Utilities.reduceAlbumtoSubalbum(this);
+			return new Subalbum(Utilities.reduceAlbumtoSubalbum(this));
 		}
 
 		toJson() {
@@ -280,7 +280,7 @@
 			);
 			clonedAlbum.subalbums.forEach(
 				function(subalbum, index) {
-					clonedAlbum.subalbums[index] = subalbum.toSubalbum();
+					clonedAlbum.subalbums[index] = Utilities.reduceAlbumtoSubalbum(subalbum);
 				}
 			);
 			clonedAlbum.media.forEach(

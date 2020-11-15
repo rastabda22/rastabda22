@@ -127,7 +127,7 @@
 			thisAlbum = currentAlbum;
 		var isAlbumWithOneMedia = thisAlbum.isAlbumWithOneMedia();
 		var isSingleMedia = (currentMedia !== null || isAlbumWithOneMedia);
-		var isAnyRootCacheBase = util.isAnyRootCacheBase(thisAlbum.cacheBase);
+		var isAnyRootCacheBase = thisAlbum.isAnyRoot();
 		var isSelectionCacheBase = thisAlbum.isSelection();
 		var nothingIsSelected = util.nothingIsSelected();
 
