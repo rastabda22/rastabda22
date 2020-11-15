@@ -712,7 +712,7 @@
 
 			return new Promise(
 				function(resolve_continueAddProtectedContent) {
-					if (util.isMapCacheBase(album.cacheBase)) {
+					if (album.isMap()) {
 						// map albums are fixed, i.e. do not admit adding protected content
 						resolve_continueAddProtectedContent();
 					} else {
@@ -733,7 +733,7 @@
 							// if (
 							// 	! album.isEmpty() && numProtected == 0 &&
 							// 	album.cacheBase !== Options.by_search_string &&
-							// 	! util.isSearchCacheBase(album.cacheBase)
+							// 	! album.isSearch()
 							// ) {
 							// 	// no need to get any protected content for this md5
 							// 	resolve_continueAddProtectedContent(album);
@@ -1085,11 +1085,11 @@
 						PhotoFloat.searchAlbumSubalbumsFromJsonFile.push(theAlbum.subalbums[i]);
 					}
 				}
-			} else if (! util.isSearchCacheBase(theAlbum.cacheBase)) {
+			} else if (! theAlbum.isSearch()) {
 				theAlbum.removeUnnecessaryPropertiesAndAddParentToMedia();
 			}
 
-			if (! util.isMapCacheBase(theAlbum.cacheBase))
+			if (! theAlbum.isMap())
 				theAlbum.generateAncestorsCacheBase();
 			if (! cache.getAlbum(theAlbum.cacheBase))
 				cache.putAlbum(theAlbum);
@@ -1105,7 +1105,7 @@
 			var splittedCacheBase = this.cacheBase.split(Options.cache_folder_separator);
 			this.ancestorsCacheBase[0] = splittedCacheBase[0];
 			var length = splittedCacheBase.length;
-			if (util.isSearchCacheBase(this.cacheBase))
+			if (this.isSearch())
 				length = 2;
 			for (i = 1; i < length; i ++) {
 				this.ancestorsCacheBase[i] = [this.ancestorsCacheBase[i - 1], splittedCacheBase[i]].join(Options.cache_folder_separator);
@@ -1141,7 +1141,7 @@
 					}
 
 					if (
-						(util.isByGpsCacheBase(album.cacheBase) || util.isByDateCacheBase(album.cacheBase)) &&
+						(album.isByGps() || album.isByDate()) &&
 						album.subalbums.length > 0
 					) {
 						// do not get the random media from the year/country nor the month/state albums
@@ -1912,7 +1912,7 @@
 			}
 		}
 		if (
-			util.isSearchCacheBase(this.cacheBase)
+			this.isSearch()
 			// && (media === null && ! y.isAlbumWithOneMedia())
 		) {
 			$("ul#right-menu").addClass("expand");

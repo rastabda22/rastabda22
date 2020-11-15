@@ -1254,7 +1254,7 @@
 	TopFunctions.showAlbumOrMedia = function(album, mediaIndex) {
 		var populateAlbum;
 
-		if (album.numsMediaInSubTree.imagesAndVideosTotal() == 0 && ! util.isSearchCacheBase(album.cacheBase)) {
+		if (album.numsMediaInSubTree.imagesAndVideosTotal() == 0 && ! album.isSearch()) {
 			// the album hasn't any content:
 			// either the hash is wrong or it's a protected content album
 			// go up
@@ -1270,7 +1270,7 @@
 			currentAlbum = null;
 		}
 
-		if (currentAlbum && util.isByDateCacheBase(currentAlbum.cacheBase) && mediaIndex !== -1) {
+		if (currentAlbum && currentAlbum.isByDate() && mediaIndex !== -1) {
 			previousMedia = album.media[mediaIndex];
 		} else {
 			previousMedia = currentMedia;
@@ -1313,7 +1313,7 @@
 			// activate the map and the popup when coming back from a map album
 			if (
 				previousAlbum !== null &&
-				util.isMapCacheBase(previousAlbum.cacheBase) && previousMedia === null &&
+				previousAlbum.isMap() && previousMedia === null &&
 				fromEscKey ||
 				mapRefreshType !== "none"
 			) {
@@ -1699,12 +1699,12 @@
 				thumbHeight = correctedAlbumThumbSize;
 			}
 
-			if (util.isByDateCacheBase(currentAlbum.cacheBase)) {
+			if (currentAlbum.isByDate()) {
 				titleName = util.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
-			} else if (util.isByGpsCacheBase(currentAlbum.cacheBase)) {
+			} else if (currentAlbum.isByGps()) {
 				humanGeonames = util.pathJoin([Options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
 				titleName = util.pathJoin([humanGeonames, randomMedia.name]);
-			// } else if (util.isSearchCacheBase(currentAlbum.cacheBase)) {
+			// } else if (currentAlbum.isSearch()) {
 			// 	titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
 			} else {
 				titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
@@ -1737,7 +1737,7 @@
 			// 	'click',
 			// 	function() {
 			// 		var subfolderHash;
-			// 		if (util.isSearchCacheBase(currentAlbum.cacheBase) || util.isSelectionCacheBase(currentAlbum.cacheBase))
+			// 		if (currentAlbum.isSearch() || currentAlbum.isSelection())
 			// 			subfolderHash = phFl.encodeHash(subalbum.cacheBase, null, subalbum.cacheBase, currentAlbum.cacheBase);
 			// 		else {
 			// 			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
@@ -1786,11 +1786,11 @@
 
 			populateMedia = populate;
 			isVirtualAlbum = (
-				util.isByDateCacheBase(currentAlbum.cacheBase) ||
-				util.isByGpsCacheBase(currentAlbum.cacheBase) ||
-				util.isSearchCacheBase(currentAlbum.cacheBase) ||
-				util.isSelectionCacheBase(currentAlbum.cacheBase) ||
-				util.isMapCacheBase(currentAlbum.cacheBase)
+				currentAlbum.isByDate() ||
+				currentAlbum.isByGps() ||
+				currentAlbum.isSearch() ||
+				currentAlbum.isSelection() ||
+				currentAlbum.isMap()
 			);
 			tooBig = currentAlbum.path.split("/").length < 4 && currentAlbum.numsMedia.imagesAndVideosTotal() > Options.big_virtual_folders_threshold;
 			if (populateMedia === true && isVirtualAlbum)
@@ -2050,7 +2050,7 @@
 
 					captionFontSize = Math.round(util.em2px("body", 1) * correctedAlbumThumbSize / Options.album_thumb_size);
 					captionHeight = parseInt(captionFontSize * 1.1) + 1;
-					if (util.isFolderCacheBase(currentAlbum.cacheBase) && ! Options.show_album_names_below_thumbs)
+					if (currentAlbum.isFolder() && ! Options.show_album_names_below_thumbs)
 						heightfactor = 0;
 					else if (! Options.show_album_media_count)
 						heightfactor = 1.6;
@@ -2106,7 +2106,7 @@
 								captionColor = Options.albums_slide_style ? Options.slide_album_caption_color : Options.album_caption_color;
 
 								captionHtml = "<div class='album-caption";
-								if (util.isFolderCacheBase(currentAlbum.cacheBase) && ! Options.show_album_names_below_thumbs)
+								if (currentAlbum.isFolder() && ! Options.show_album_names_below_thumbs)
 									captionHtml += " hidden";
 								captionHtml += "' id='album-caption-" + phFl.hashCode(ithSubalbum.cacheBase) + "' " +
 															"style='" +
@@ -2118,7 +2118,7 @@
 															">" + folder + "</div>";
 
 								captionHtml += "<div class='album-caption-count";
-								if (util.isFolderCacheBase(currentAlbum.cacheBase) && ! Options.show_album_names_below_thumbs || ! Options.show_album_media_count)
+								if (currentAlbum.isFolder() && ! Options.show_album_names_below_thumbs || ! Options.show_album_media_count)
 									captionHtml += " hidden";
 								captionHtml += "' " +
 											"style='" +
@@ -2152,7 +2152,7 @@
 								// a dot could be present in a cache base, making $("#" + cacheBase) fail, beware...
 								id = phFl.hashCode(ithSubalbum.cacheBase);
 								let subfolderHash;
-								if (util.isSearchCacheBase(currentAlbum.cacheBase) || util.isSelectionCacheBase(currentAlbum.cacheBase)) {
+								if (currentAlbum.isSearch() || currentAlbum.isSelection()) {
 									subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, ithSubalbum.cacheBase, currentAlbum.cacheBase);
 								} else {
 									if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
@@ -2369,7 +2369,7 @@
 		// activate the map and the popup when coming back from a map album
 		if (
 			previousAlbum !== null &&
-			util.isMapCacheBase(previousAlbum.cacheBase) &&
+			previousAlbum.isMap() &&
 			(
 				previousMedia === null ||
 				previousAlbum.isAlbumWithOneMedia()

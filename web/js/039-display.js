@@ -309,7 +309,7 @@ $(document).ready(function() {
 						currentAlbum !== null
 					) {
 						var numPasswords;
-						if (util.isSearchCacheBase(currentAlbum.cacheBase))
+						if (currentAlbum.isSearch())
 							numPasswords = cache.getAlbum(currentAlbum.ancestorsCacheBase[0]).numPasswords();
 						else
 							numPasswords = currentAlbum.numPasswords();

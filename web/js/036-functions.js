@@ -128,7 +128,7 @@
 		var isAlbumWithOneMedia = thisAlbum.isAlbumWithOneMedia();
 		var isSingleMedia = (currentMedia !== null || isAlbumWithOneMedia);
 		var isAnyRootCacheBase = util.isAnyRootCacheBase(thisAlbum.cacheBase);
-		var isSelectionCacheBase = util.isSelectionCacheBase(thisAlbum.cacheBase);
+		var isSelectionCacheBase = thisAlbum.isSelection();
 		var nothingIsSelected = util.nothingIsSelected();
 
 		var hasGpsData, thisMedia;
@@ -190,7 +190,7 @@
 					isSingleMedia && (
 						// util.somethingIsSearched() ||
 						// savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash)
-						util.isSearchCacheBase(thisAlbum.cacheBase) ||
+						thisAlbum.isSearch() ||
 						thisMedia.isSearched() ||
 						savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash) ||
 						thisMedia.isInFoundAlbum() !== false
@@ -200,17 +200,17 @@
 				$("#by-search-view").addClass("hidden");
 			}
 
-			if (util.isFolderCacheBase(thisAlbum.cacheBase) && ! (savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash))) {
+			if (thisAlbum.isFolder() && ! (savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash))) {
 				// folder album: change to by date or by gps view
 				$("#folders-view").addClass("selected");
-			} else if (util.isByDateCacheBase(thisAlbum.cacheBase)) {
+			} else if (thisAlbum.isByDate()) {
 				$("#by-date-view").addClass("selected");
-			} else if (util.isByGpsCacheBase(thisAlbum.cacheBase)) {
+			} else if (thisAlbum.isByGps()) {
 				$("#by-gps-view").addClass("selected");
-			} else if (util.isMapCacheBase(thisAlbum.cacheBase)) {
+			} else if (thisAlbum.isMap()) {
 				$("#by-map-view").removeClass("hidden").addClass("selected");
 			} else if (
-				util.isSearchCacheBase(thisAlbum.cacheBase) ||
+				thisAlbum.isSearch() ||
 				savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash)
 			) {
 				$("#by-search-view").removeClass("hidden").addClass("selected");
@@ -345,7 +345,7 @@
 			thisAlbum === null ||
 			$(".sub-menu:not(.hidden)").length
 			// thisAlbum !== null &&
-			// (util.isSearchCacheBase(thisAlbum.cacheBase) || thisAlbum.cacheBase == Options.by_search_string)
+			// (thisAlbum.isSearch() || thisAlbum.cacheBase == Options.by_search_string)
 			// ||
 			// $("ul#right-menu li#no-search-string").is(":visible") ||
 			// $("ul#right-menu li#no-results").is(":visible") ||
@@ -490,7 +490,7 @@
 			isMapOrPopup ||
 			currentMedia !== null ||
 			isAlbumWithOneMedia ||
-			thisAlbum !== null && (thisAlbum.subalbums.length === 0 || ! util.isFolderCacheBase(thisAlbum.cacheBase))
+			thisAlbum !== null && (thisAlbum.subalbums.length === 0 || ! thisAlbum.isFolder())
 		) {
 			$("ul#right-menu li.album-names").addClass("hidden");
 		} else {
@@ -517,7 +517,7 @@
 				isAlbumWithOneMedia ||
 				thisAlbum !== null && (
 					thisAlbum.numsMedia.imagesAndVideosTotal() === 0 ||
-					! util.isFolderCacheBase(thisAlbum.cacheBase) && thisAlbum.numsMedia.imagesAndVideosTotal() > Options.big_virtual_folders_threshold
+					! thisAlbum.isFolder() && thisAlbum.numsMedia.imagesAndVideosTotal() > Options.big_virtual_folders_threshold
 				)
 			)
 		) {
@@ -566,7 +566,7 @@
 		if (
 			thisAlbum === null ||
 			thisAlbum.numsMedia.imagesAndVideosTotal() < Options.big_virtual_folders_threshold ||
-			util.isFolderCacheBase(thisAlbum.cacheBase)
+			thisAlbum.isFolder()
 		) {
 			$("ul#right-menu #show-big-albums").addClass("hidden");
 		} else {
@@ -626,7 +626,7 @@
 		////////////////// SELECTION //////////////////////////////
 
 		$(".select").removeClass("hidden").removeClass("selected");
-		if (nothingIsSelected || util.isSelectionCacheBase(thisAlbum.cacheBase)) {
+		if (nothingIsSelected || thisAlbum.isSelection()) {
 			$(".select.global-reset, .select.go-to-selected").addClass("hidden");
 		} else {
 			let menuItem = util._t(".select.go-to-selected");
@@ -823,7 +823,7 @@
 		$(".download-album.sized").addClass("hidden");
 
 		$(".download-album .sub-menu").addClass("hidden");
-		if (util.isSearchCacheBase(thisAlbum.cacheBase) && ! thisAlbum.media.length && ! thisAlbum.subalbums.length) {
+		if (thisAlbum.isSearch() && ! thisAlbum.media.length && ! thisAlbum.subalbums.length) {
 			// download menu item remains hidden
 		} else if (currentMedia !== null || isAlbumWithOneMedia) {
 			$(".download-album .sub-menu").removeClass("hidden");
@@ -840,7 +840,7 @@
 
 			let showDownloadEverything = false;
 
-			if (thisAlbum.subalbums.length && ! util.isByDateCacheBase(thisAlbum.cacheBase) && ! util.isByGpsCacheBase(thisAlbum.cacheBase)) {
+			if (thisAlbum.subalbums.length && ! thisAlbum.isByDate() && ! thisAlbum.isByGps()) {
 				$(".download-album.everything.all.full").removeClass("hidden");
 				// reset the html
 				$(".download-album.everything.all").html(util._t(".download-album.everything.all"));
@@ -854,7 +854,7 @@
 				if (numVideos === 0)
 					what = util._t(".title-images");
 
-				if (util.isSearchCacheBase(thisAlbum.cacheBase) && thisAlbum.subalbums.length) {
+				if (thisAlbum.isSearch() && thisAlbum.subalbums.length) {
 					// in search albums, numsMediaInSubTree doesn't include the media in the albums found, the values that goes into the DOm must be update by code here
 					for (let iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; iSubalbum ++) {
 						nMediaInSubTree += thisAlbum.subalbums[iSubalbum].numsMediaInSubTree.imagesAndVideosTotal();
@@ -1103,7 +1103,7 @@
 
 		if (thisAlbum !== null) {
 			let numPasswords;
-			if (util.isSearchCacheBase(thisAlbum.cacheBase))
+			if (thisAlbum.isSearch())
 				numPasswords = cache.getAlbum(Options.by_search_string).numPasswords();
 			else
 				numPasswords = thisAlbum.numPasswords();
@@ -1159,13 +1159,13 @@
 		$("#thumbs img.thumbnail").each(function() {
 			if (
 				this.title === util.pathJoin([media.albumName, media.name]) && (
-					util.isFolderCacheBase(currentAlbum.cacheBase) ||
+					currentAlbum.isFolder() ||
 					currentAlbum.cacheBase == Options.folders_string ||
-					util.isByDateCacheBase(currentAlbum.cacheBase) ||
-					util.isByGpsCacheBase(currentAlbum.cacheBase) ||
-					util.isSearchCacheBase(currentAlbum.cacheBase) ||
-					util.isSelectionCacheBase(currentAlbum.cacheBase) ||
-					util.isMapCacheBase(currentAlbum.cacheBase)
+					currentAlbum.isByDate() ||
+					currentAlbum.isByGps() ||
+					currentAlbum.isSearch() ||
+					currentAlbum.isSelection() ||
+					currentAlbum.isMap()
 				)
 			) {
 				thumb = $(this);

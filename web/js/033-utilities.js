@@ -866,10 +866,10 @@
 
 	Album.prototype.sortByPath = function() {
 		if (this.subalbums.length) {
-			if (Utilities.isSelectionCacheBase(this.cacheBase)) {
+			if (this.isSelection()) {
 				Utilities.sortBy(this.subalbums, ['selectionAlbumNameSorting']);
 				// this.subalbums = Utilities.sortBy(this.subalbums, ['altName', 'name', 'path']);
-			} else if (Utilities.isByGpsCacheBase(this.cacheBase)) {
+			} else if (this.isByGps()) {
 				if (this.subalbums[0].hasOwnProperty('altName'))
 					Utilities.sortBy(this.subalbums, ['altName']);
 				else
@@ -939,24 +939,48 @@
 		return string == Options.folders_string || string.indexOf(Options.foldersStringWithTrailingSeparator) === 0;
 	};
 
+	Album.prototype.isFolder = function() {
+		return Utilities.isFolderCacheBase(this.cacheBase);
+	};
+
 	Utilities.isByDateCacheBase = function(string) {
 		return string == Options.by_date_string || string.indexOf(Options.byDateStringWithTrailingSeparator) === 0;
+	};
+
+	Album.prototype.isByDate = function() {
+		return Utilities.isByDateCacheBase(this.cacheBase);
 	};
 
 	Utilities.isByGpsCacheBase = function(string) {
 		return string == Options.by_gps_string || string.indexOf(Options.byGpsStringWithTrailingSeparator) === 0;
 	};
 
+	Album.prototype.isByGps = function() {
+		return Utilities.isByGpsCacheBase(this.cacheBase);
+	};
+
 	Utilities.isSearchCacheBase = function(string) {
 		return string.indexOf(Options.bySearchStringWithTrailingSeparator) === 0;
+	};
+
+	Album.prototype.isSearch = function() {
+		return Utilities.isSearchCacheBase(this.cacheBase);
 	};
 
 	Utilities.isSelectionCacheBase = function(string) {
 		return string.indexOf(Options.bySelectionStringWithTrailingSeparator) === 0;
 	};
 
+	Album.prototype.isSelection = function() {
+		return Utilities.isSelectionCacheBase(this.cacheBase);
+	};
+
 	Utilities.isMapCacheBase = function(string) {
 		return string.indexOf(Options.byMapStringWithTrailingSeparator) === 0;
+	};
+
+	Album.prototype.isMap = function() {
+		return Utilities.isMapCacheBase(this.cacheBase);
 	};
 
 	Utilities.prototype.isSearchHash = function() {
@@ -1328,7 +1352,7 @@
 				$(singleMediaSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
 			}
 
-			if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
+			if (currentAlbum.isSelection()) {
 				if (Utilities.nothingIsSelected()) {
 					Utilities.initializeSelectionAlbum();
 					window.location.href = Utilities.upHash();
@@ -1424,7 +1448,7 @@
 							selectionAlbum.sizesOfSubTree.subtract(subalbum.sizesOfSubTree);
 							selectionAlbum.numsProtectedMediaInSubTree.subtract(subalbum.numsProtectedMediaInSubTree);
 
-							if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
+							if (currentAlbum.isSelection()) {
 								if (Utilities.nothingIsSelected()) {
 									Utilities.initializeSelectionAlbum();
 									window.location.href = Utilities.upHash();
@@ -1438,7 +1462,7 @@
 					);
 					// }
 
-					if (! Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
+					if (! currentAlbum.isSelection()) {
 						$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-subalbum"));
 					}
 				}
@@ -1679,7 +1703,7 @@
 			}
 
 			mediaElement = $('<img/>');
-			if (Utilities.isFolderCacheBase(currentAlbum.cacheBase))
+			if (currentAlbum.isFolder())
 				mediaElement.attr("title", this.date);
 			else
 				mediaElement.attr("title", Utilities.pathJoin([this.albumName, this.name]));
@@ -1944,19 +1968,19 @@
 		var zipFilename;
 		var basePath = currentAlbum.path;
 		zipFilename = Options.page_title + '.';
-		if (Utilities.isSearchCacheBase(currentAlbum.cacheBase)) {
+		if (currentAlbum.isSearch()) {
 			zipFilename += Utilities._t("#by-search") + " '" + $("#search-field").val() + "'";
-		} else if (Utilities.isSelectionCacheBase(currentAlbum.cacheBase)) {
+		} else if (currentAlbum.isSelection()) {
 			zipFilename += Utilities._t("#by-selection");
-		} else if (Utilities.isByDateCacheBase(currentAlbum.cacheBase)) {
+		} else if (currentAlbum.isByDate()) {
 			let textComponents = currentAlbum.path.split("/").splice(1);
 			if (textComponents.length > 1)
 				textComponents[1] = Utilities._t("#month-" + textComponents[1]);
 
 			zipFilename += textComponents.join('-');
-		} else if (Utilities.isByGpsCacheBase(currentAlbum.cacheBase)) {
+		} else if (currentAlbum.isByGps()) {
 			zipFilename += currentAlbum.ancestorsNames.splice(1).join('-');
-		} else if (Utilities.isMapCacheBase(currentAlbum.cacheBase)) {
+		} else if (currentAlbum.isMap()) {
 			zipFilename += Utilities._t("#from-map");
 		} else if (currentAlbum.cacheBase !== Options.folders_string)
 			zipFilename += currentAlbum.name;
@@ -2029,7 +2053,7 @@
 									convertSubalbumPromise.then(
 										function(iSubalbum) {
 											let albumPath = currentAlbum.subalbums[iSubalbum].path;
-											if (Utilities.isSearchCacheBase(currentAlbum.cacheBase) || Utilities.isSelectionCacheBase(currentAlbum.cacheBase))
+											if (currentAlbum.isSearch() || currentAlbum.isSelection())
 												// remove the leading folders/date/gps/map string
 												albumPath = albumPath.split('/').splice(1).join('/');
 											else
@@ -2091,8 +2115,8 @@
 				var raquo = "<span class='gray separated'>&raquo;</span>";
 				var folderArray = self.cacheBase.split(Options.cache_folder_separator);
 				var nameSorting = Utilities.convertByDateAncestosNames(self.ancestorsNames).slice(1).reverse().join(Options.cache_folder_separator).replace(/^0+/, '');
-				if (Utilities.isByDateCacheBase(self.cacheBase)) {
-				// if (Utilities.isSelectionCacheBase(album.cacheBase) && Utilities.isByDateCacheBase(self.cacheBase)) {
+				if (self.isByDate()) {
+				// if (album.isSelection() && self.isByDate()) {
 					// if (folderArray.length === 4)
 					// 	firstLine += Utilities._t("#day") + " ";
 					firstLine += Utilities.dateElementForFolderName(folderArray, folderArray.length - 1);
@@ -2115,8 +2139,8 @@
 					folderName = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
 
 					resolve_folderNameAndTitle([folderName, nameSorting]);
-				} else if (Utilities.isByGpsCacheBase(self.cacheBase)) {
-				// } else if (Utilities.isSelectionCacheBase(album.cacheBase) && Utilities.isByGpsCacheBase(self.cacheBase)) {
+				} else if (self.isByGps()) {
+				// } else if (album.isSelection() && self.isByGps()) {
 					let cacheBasesPromises = [];
 					if (self.name === '')
 						firstLine = Utilities._t('.not-specified');
@@ -2204,9 +2228,9 @@
 
 	Album.prototype.subalbumName = function(subalbum) {
 		var folderName = '';
-		if (Utilities.isSelectionCacheBase(this.cacheBase)) {
+		if (this.isSelection()) {
 			folderName = subalbum.selectionAlbumName;
-		} else if (Utilities.isByDateCacheBase(this.cacheBase)) {
+		} else if (this.isByDate()) {
 			let folderArray = subalbum.cacheBase.split(Options.cache_folder_separator);
 			if (folderArray.length == 2) {
 				folderName += parseInt(folderArray[1]);
@@ -2214,7 +2238,7 @@
 				folderName += " " + Utilities._t("#month-" + folderArray[2]);
 			else if (folderArray.length == 4)
 				folderName += Utilities._t("#day") + " " + parseInt(folderArray[3]);
-		} else if (Utilities.isByGpsCacheBase(this.cacheBase)) {
+		} else if (this.isByGps()) {
 			if (subalbum.name === '')
 				folderName = Utilities._t('.not-specified');
 			else if (subalbum.hasOwnProperty('altName'))
@@ -2230,10 +2254,10 @@
 
 	Album.prototype.folderMapTitle = function(subalbum, folderName) {
 		var folderMapTitle;
-		if (Utilities.isSelectionCacheBase(this.cacheBase) && Utilities.isByDateCacheBase(subalbum.cacheBase)) {
+		if (this.isSelection() && subalbum.isByDate()) {
 			let reducedFolderName = folderName.substring(0, folderName.indexOf("<br />"));
 			folderMapTitle = Utilities._t('#place-icon-title') + reducedFolderName;
-		} else if (Utilities.isSelectionCacheBase(this.cacheBase) && Utilities.isByGpsCacheBase(subalbum.cacheBase)) {
+		} else if (this.isSelection() && subalbum.isByGps()) {
 			if (subalbum.name === '')
 				folderMapTitle = Utilities._t('.not-specified');
 			else if (subalbum.hasOwnProperty('altName'))
