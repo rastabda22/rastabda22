@@ -1752,6 +1752,28 @@
 		}
 		// end of insertRandomImage function
 
+		function pickRandomMediaAndInsertIt(theSubalbum, theImage, resolve_subalbumPromise) {
+			// function(subalbum, error)
+			var promise = phFl.pickRandomMedia(
+				theSubalbum,
+				function error() {
+					// executions shoudn't arrive here, if it arrives it's because of some error
+					currentAlbum.subalbums.splice(currentAlbum.subalbums.indexOf(theSubalbum), 1);
+					theImage.parent().remove();
+					resolve_subalbumPromise();
+					// subalbums.splice(subalbums.indexOf(theLink), 1);
+				}
+			);
+			promise.then(
+				function([album, index]) {
+					insertRandomImage(album, index, theSubalbum);
+					resolve_subalbumPromise();
+				},
+				function(album) {
+					console.trace();
+				}
+			);
+		}
 
 		var i, imageLink, linkContainer, imageElement, media, thumbsElement, subalbumsElement, thumbHash, thumbnailSize;
 		var width, height, thumbWidth, thumbHeight, imageString, imgString, img, calculatedWidth, calculatedHeight, populateMedia;
@@ -2250,30 +2272,7 @@
 									}
 								);
 
-								//////////////////// begin anonymous function /////////////////////
-								//      })(ithSubalbum, image, container, id);
-								(function(theSubalbum, theImage) {
-									// function(subalbum, error)
-									var promise = phFl.pickRandomMedia(
-										theSubalbum,
-										function error() {
-											currentAlbum.subalbums.splice(currentAlbum.subalbums.indexOf(theSubalbum), 1);
-											theImage.parent().remove();
-											resolve_subalbumPromise();
-											// subalbums.splice(subalbums.indexOf(theLink), 1);
-										}
-									);
-									promise.then(
-										function([album, index]) {
-											insertRandomImage(album, index, theSubalbum);
-											resolve_subalbumPromise();
-										},
-										function(album) {
-											console.trace();
-										}
-									);
-								})(ithSubalbum, image);
-								//////////////////// end anonymous function /////////////////////
+								pickRandomMediaAndInsertIt(ithSubalbum, imageElement, resolve_subalbumPromise);
 							}
 						);
 						subalbumsPromises.push(subalbumPromise);
