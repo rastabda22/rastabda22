@@ -1140,7 +1140,16 @@
 						return;
 					}
 
-					nMediaInAlbum = album.numsMedia.imagesAndVideosTotal();
+					if (
+						(util.isByGpsCacheBase(album.cacheBase) || util.isByDateCacheBase(album.cacheBase)) &&
+						album.subalbums.length > 0
+					) {
+						// do not get the random media from the year/country nor the month/state albums
+						// this way loading of albums is much faster
+						nMediaInAlbum = 0;
+					} else {
+						nMediaInAlbum = album.numsMedia.imagesAndVideosTotal();
+					}
 					if (index >= nMediaInAlbum) {
 						index -= nMediaInAlbum;
 						let found = false;
