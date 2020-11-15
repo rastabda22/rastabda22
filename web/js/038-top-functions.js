@@ -1729,26 +1729,6 @@
 					}
 				);
 			});
-
-			// container = $("#" + phFl.hashCode(subalbum.cacheBase));
-			// // add the click event
-			// container.off('click').on(
-			// // container.off('click').css("cursor", "pointer").on(
-			// 	'click',
-			// 	function() {
-			// 		var subfolderHash;
-			// 		if (currentAlbum.isSearch() || currentAlbum.isSelection())
-			// 			subfolderHash = phFl.encodeHash(subalbum.cacheBase, null, subalbum.cacheBase, currentAlbum.cacheBase);
-			// 		else {
-			// 			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
-			// 				subfolderHash = phFl.encodeHash(subalbum.cacheBase, null, foundAlbumHash, savedSearchAlbumHash);
-			// 			else
-			// 				subfolderHash = phFl.encodeHash(subalbum.cacheBase, null);
-			// 		}
-			//
-			// 		window.location.href = subfolderHash;
-			// 	}
-			// );
 		}
 		// end of insertRandomImage function
 
