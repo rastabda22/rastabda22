@@ -114,13 +114,13 @@
 		}
 
 		removeUnnecessaryPropertiesAndAddParent(album) {
-			var unnecessaryProperties = ['albumIniMTime', 'passwordMarkerMTime'];
+			var unnecessaryProperties = ['checksum', 'dateTimeDir', 'dateTimeFile'];
 			// remove unnecessary properties from each media
 			for (let i = this.length - 1; i >= 0; i --) {
-				unnecessaryProperties = ['checksum', 'dateTimeDir', 'dateTimeFile'];
-				for (let j = 0; j < unnecessaryProperties.length; j ++)
-				if (this[i].hasOwnProperty(unnecessaryProperties[j]))
-					delete this[i][unnecessaryProperties[j]];
+				for (let j = 0; j < unnecessaryProperties.length; j ++) {
+					if (this[i].hasOwnProperty(unnecessaryProperties[j]))
+						delete this[i][unnecessaryProperties[j]];
+				}
 
 				this[i].addParent(album);
 			}
@@ -192,14 +192,6 @@
 					// newMediaArray = this.media.map(singleMedia => new SingleMedia(singleMedia));
 					// this.media = newMediaArray;
 					this.media = new Media(this.media);
-					this.media.forEach(
-						function(singleMedia) {
-							// add parent album
-							singleMedia.addParent(this);
-
-						}
-					);
-
 					this.media.getAndPutIntoCache();
 
 					this.numsMedia = this.media.imagesAndVideosCount();
@@ -219,7 +211,9 @@
 				this.empty = true;
 			}
 
+
 			if (objectOrCacheBase !== undefined) {
+				this.removeUnnecessaryPropertiesAndAddParentToMedia();
 				if (! this.hasOwnProperty("includedFilesByCodesSimpleCombination")) {
 					this.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
 				}
