@@ -176,26 +176,24 @@
 
 		while (postData.hasOwnProperty("albumName_" + index.toString())) {
 			albumName = postData["albumName_" + index.toString()];
-			if (albumName !== "null") {
-				stringifiedPackedAlbum = postData["stringifiedPackedAlbum_" + index.toString()];
-				if (postData.typeOfPackedAlbum === "array") {
-					packedAlbum = stringifiedPackedAlbum.split(',').map(x => parseInt(x, 10));
-				} else {
-					packedAlbum = stringifiedPackedAlbum;
-				}
-				uncompressedAlbum = new Album(JSON.parse(lzwCompress.unpack(packedAlbum)));
-				if (albumName === "currentAlbum") {
-					currentAlbum = uncompressedAlbum
-				} else if (albumName === "mapAlbum") {
-					mapAlbum = uncompressedAlbum
-				} else if (albumName === "selectionAlbum") {
-					selectionAlbum = uncompressedAlbum
-				}
-				if (index === 0)
-					albumForResolving = uncompressedAlbum;
+			stringifiedPackedAlbum = postData["stringifiedPackedAlbum_" + index.toString()];
+			if (postData.typeOfPackedAlbum === "array") {
+				packedAlbum = stringifiedPackedAlbum.split(',').map(x => parseInt(x, 10));
+			} else {
+				packedAlbum = stringifiedPackedAlbum;
+			}
+			uncompressedAlbum = new Album(JSON.parse(lzwCompress.unpack(packedAlbum)));
+			if (albumName === "mapAlbum") {
+				mapAlbum = uncompressedAlbum
+			} else if (albumName === "selectionAlbum") {
+				selectionAlbum = uncompressedAlbum
 			}
 			index ++;
 		}
+		if (postData.currentAlbumIs = "mapAlbum")
+			currentAlbum = mapAlbum;
+		else if (postData.currentAlbumIs = "selectiongAlbum")
+			currentAlbum = selectionAlbum;
 		// invalidate the variable so that it's not used any more
 		postData = null;
 	};
