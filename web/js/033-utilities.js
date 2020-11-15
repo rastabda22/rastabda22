@@ -58,10 +58,10 @@
 		);
 
 		let albums = [];
-		if (util.somethingIsInMapAlbum()) {
+		if (Utilities.somethingIsInMapAlbum()) {
 			albums.push(mapAlbum);
 		}
-		if (! util.nothingIsSelected()) {
+		if (! Utilities.nothingIsSelected()) {
 			albums.push(selectionAlbum);
 		}
 
