@@ -647,7 +647,7 @@
 			$(".select.media, .select.albums").addClass("hidden");
 		}
 
-		if (util.everySubalbumIsSelected(thisAlbum.subalbums)) {
+		if (thisAlbum.subalbums.everySubalbumIsSelected()) {
 			$(".select.albums").addClass("selected");
 		}
 
@@ -655,7 +655,7 @@
 			$(".select.media").addClass("selected");
 		}
 
-		if (util.everySubalbumIsSelected(thisAlbum.subalbums) && thisAlbum.media.everyMediaIsSelected()) {
+		if (thisAlbum.subalbums.everySubalbumIsSelected() && thisAlbum.media.everyMediaIsSelected()) {
 			$(".select.everything").addClass("selected");
 		}
 
@@ -688,9 +688,9 @@
 		$(".select.everything:not(.hidden)").off("click").on(
 			"click",
 			function() {
-				if (util.everySubalbumIsSelected(thisAlbum.subalbums) && thisAlbum.media.everyMediaIsSelected()) {
+				if (thisAlbum.subalbums.everySubalbumIsSelected() && thisAlbum.media.everyMediaIsSelected()) {
 					thisAlbum.media.removeAllMediaFromSelection();
-					let promise = util.removeAllSubalbumsFromSelection(thisAlbum.subalbums);
+					let promise = thisAlbum.subalbums.removeAllSubalbumsFromSelection();
 					promise.then(
 						function() {
 							if (util.nothingIsSelected())
@@ -700,7 +700,7 @@
 					);
 				} else {
 					thisAlbum.media.addAllMediaToSelection();
-					let promise = util.addAllSubalbumsToSelection(thisAlbum.subalbums);
+					let promise = thisAlbum.subalbums.addAllSubalbumsToSelection();
 					promise.then(
 						function() {
 							Functions.updateMenu();
@@ -766,8 +766,8 @@
 		$(".select.albums:not(.hidden)").off("click").on(
 			"click",
 			function() {
-				if (util.everySubalbumIsSelected(thisAlbum.subalbums)) {
-					let promise = util.removeAllSubalbumsFromSelection(thisAlbum.subalbums);
+				if (thisAlbum.subalbums.everySubalbumIsSelected()) {
+					let promise = thisAlbum.subalbums.removeAllSubalbumsFromSelection();
 					promise.then(
 						function() {
 							if (util.nothingIsSelected())
@@ -776,7 +776,7 @@
 						}
 					);
 				} else {
-					var promise = util.addAllSubalbumsToSelection(thisAlbum.subalbums);
+					var promise = thisAlbum.subalbums.addAllSubalbumsToSelection();
 					promise.then(
 						function() {
 							Functions.updateMenu();
@@ -790,7 +790,7 @@
 			"click",
 			function() {
 				selectionAlbum.media.removeAllMediaFromSelection();
-				let subalbumsPromise = util.removeAllSubalbumsFromSelection(selectionAlbum.subalbums);
+				let subalbumsPromise = selectionAlbum.subalbums.removeAllSubalbumsFromSelection();
 				subalbumsPromise.then(
 					function allSubalbumsRemoved() {
 						if (util.nothingIsSelected())

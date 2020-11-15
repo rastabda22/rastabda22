@@ -406,6 +406,7 @@
 	window.Cache = Cache;
 	window.Album = Album;
 	window.Subalbum = Subalbum;
+	window.Subalbums = Subalbums;
 	window.SingleMedia = SingleMedia;
 	window.Media = Media;
 	window.ImagesAndVideos = ImagesAndVideos;
