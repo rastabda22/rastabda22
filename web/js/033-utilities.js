@@ -45,7 +45,7 @@
 
 	Utilities.prototype.openInNewTab = function(hash) {
 		// albums is a list of objects {albumName: album}
-		var typeOfPackedAlbum, stringifiedPackedAlbum;
+		var typeOfPackedAlbum, stringifiedPackedAlbum, albumName;
 
 		var newForm = jQuery(
 			"<form>",
@@ -184,15 +184,15 @@
 			}
 			uncompressedAlbum = new Album(JSON.parse(lzwCompress.unpack(packedAlbum)));
 			if (albumName === "mapAlbum") {
-				mapAlbum = uncompressedAlbum
+				mapAlbum = uncompressedAlbum;
 			} else if (albumName === "selectionAlbum") {
-				selectionAlbum = uncompressedAlbum
+				selectionAlbum = uncompressedAlbum;
 			}
 			index ++;
 		}
-		if (postData.currentAlbumIs = "mapAlbum")
+		if (postData.currentAlbumIs === "mapAlbum")
 			currentAlbum = mapAlbum;
-		else if (postData.currentAlbumIs = "selectiongAlbum")
+		else if (postData.currentAlbumIs === "selectiongAlbum")
 			currentAlbum = selectionAlbum;
 		// invalidate the variable so that it's not used any more
 		postData = null;
@@ -2047,8 +2047,8 @@
 						for (let iSubalbum = 0; iSubalbum < currentAlbum.subalbums.length; iSubalbum ++) {
 							let subalbumPromise = new Promise(
 								function(resolveSubalbumPromise) {
-									let ithSubalbum = currentAlbum.subalbums[iSubalbum];
-									let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {"getMedia": true, "getPositions": false});
+									// let ithSubalbum = currentAlbum.subalbums[iSubalbum];
+									let convertSubalbumPromise = currentAlbum.convertSubalbum(iSubalbum, null, {"getMedia": true, "getPositions": false});
 									// let getAlbumPromise = PhotoFloat.getAlbum(ithSubalbum.cacheBase, null, {"getMedia": true, "getPositions": false});
 									convertSubalbumPromise.then(
 										function(iSubalbum) {
