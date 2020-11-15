@@ -1223,24 +1223,24 @@
 		}
 	};
 
-	Utilities.prototype.someSubalbumIsSelected = function(subalbums) {
-		if (selectionAlbum.isEmpty()) {
-			Utilities.initializeSelectionAlbum();
-			return false;
-		} else {
-			if (
-				subalbums.some(
-					function(subalbum) {
-						return subalbum.isSelected();
-					}
-				)
-			) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	};
+	// Subalbums.prototype.someSubalbumIsSelected = function() {
+	// 	if (selectionAlbum.isEmpty()) {
+	// 		Utilities.initializeSelectionAlbum();
+	// 		return false;
+	// 	} else {
+	// 		if (
+	// 			this.some(
+	// 				function(subalbum) {
+	// 					return subalbum.isSelected();
+	// 				}
+	// 			)
+	// 		) {
+	// 			return true;
+	// 		} else {
+	// 			return false;
+	// 		}
+	// 	}
+	// };
 
 	Subalbums.prototype.everySubalbumIsSelected = function() {
 		if (selectionAlbum.isEmpty()) {
