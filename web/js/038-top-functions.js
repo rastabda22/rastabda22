@@ -1753,7 +1753,7 @@
 		// end of insertRandomImage function
 
 
-		var i, imageLink, linkContainer, image, media, thumbsElement, subalbumsElement, thumbHash, thumbnailSize;
+		var i, imageLink, linkContainer, imageElement, media, thumbsElement, subalbumsElement, thumbHash, thumbnailSize;
 		var width, height, thumbWidth, thumbHeight, imageString, imgString, img, calculatedWidth, calculatedHeight, populateMedia;
 		var albumViewWidth, correctedAlbumThumbSize = Options.album_thumb_size;
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
@@ -1946,16 +1946,16 @@
 					imageString +=
 							"</div>" +
 						"</div>";
-					image = $(imageString);
+					imageElement = $(imageString);
 
-					image.get(0).media = ithMedia;
+					imageElement.get(0).media = ithMedia;
 					if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
 						mediaHash = phFl.encodeHash(currentAlbum.cacheBase, ithMedia, foundAlbumHash, savedSearchAlbumHash);
 					else
 						mediaHash = phFl.encodeHash(currentAlbum.cacheBase, ithMedia);
 
 					imageLink = $("<a href='" + mediaHash + "' id='link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase + "'></a>");
-					imageLink.append(image);
+					imageLink.append(imageElement);
 					media.push(imageLink);
 
 					(function(theLink, theImage) {
@@ -1964,7 +1964,7 @@
 							theLink.remove();
 							currentAlbum.media.splice(currentAlbum.media.indexOf(theImage.get(0).media), 1);
 						});
-					})(imageLink, image);
+					})(imageLink, imageElement);
 				}
 
 				thumbsElement = $("#thumbs");
@@ -2183,7 +2183,7 @@
 									"</div>";
 								linkContainer = $(albumButtonAndCaptionHtml);
 
-								image = $(
+								imageElement = $(
 									"<div " +
 										"class='album-button' " +
 										"style='" +
@@ -2203,7 +2203,7 @@
 										"<img src='img/image-placeholder.png' class='thumbnail lazyload-album-" + id + "'>" +
 									"</div>"
 								);
-								linkContainer.append(image);
+								linkContainer.append(imageElement);
 								linkContainer.append(caption);
 								aHrefHtmlContainer.append(linkContainer);
 
