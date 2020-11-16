@@ -1118,82 +1118,77 @@
 		var index;
 		return new Promise(
 			function(resolve_pickRandomMedia) {
-				var promise = PhotoFloat.getAlbum(theSubalbum.cacheBase, error, {"getMedia": false, "getPositions": false});
+				var promise = PhotoFloat.getAlbum(theSubalbum.cacheBase, error, {getMedia: false, getPositions: false});
 				promise.then(
 					function(album) {
 						// index = 0;
 						index = Math.floor(Math.random() * (album.numsMediaInSubTree.imagesAndVideosTotal()));
-						nextAlbum(album);
+						nextAlbum(album, resolve_pickRandomMedia);
 					},
 					function() {
 						console.trace();
 					}
 				);
-				//// end of function pickRandomMedia ////////////////////
-
-				function nextAlbum(album) {
-
-					var i, nMediaInAlbum;
-
-					if (! album.numsMediaInSubTree.imagesAndVideosTotal()) {
-						error();
-						return;
-					}
-
-					if (
-						(album.isByGps() || album.isByDate()) &&
-						album.subalbums.length > 0
-					) {
-						// do not get the random media from the year/country nor the month/state albums
-						// this way loading of albums is much faster
-						nMediaInAlbum = 0;
-					} else {
-						nMediaInAlbum = album.numsMedia.imagesAndVideosTotal();
-					}
-					if (index >= nMediaInAlbum) {
-						index -= nMediaInAlbum;
-						let found = false;
-						let targetCacheBase;
-						// if (! album.subalbums.length) {
-						// 	found = true;
-						// 	targetCacheBase = album.cacheBase;
-						// }
-						for (i = 0; i < album.subalbums.length; i ++) {
-							if (index >= album.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal())
-								index -= album.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal();
-							else {
-								targetCacheBase = album.subalbums[i].cacheBase;
-								found = true;
-								break;
-							}
-						}
-						if (! found) {
-							error();
-						} else {
-							var promise = PhotoFloat.getAlbum(targetSubalbum, error, {getMedia: false, getPositions: false});
-							promise.then(
-								function(subalbum) {
-									nextAlbum(subalbum);
-								},
-								function() {
-									console.trace();
-								}
-							);
-						}
-					} else {
-						var lastPromise = PhotoFloat.getAlbum(album, error, {getMedia: true, getPositions: true});
-						lastPromise.then(
-							function(album) {
-								resolve_pickRandomMedia([album, index]);
-							},
-							function() {
-								console.trace();
-							}
-						);
-					}
-				}
 			}
 		);
+		//// end of function pickRandomMedia ////////////////////
+
+		function nextAlbum(album, resolve_pickRandomMedia) {
+			var i, nMediaInAlbum;
+
+			if (! album.numsMediaInSubTree.imagesAndVideosTotal()) {
+				error();
+				return;
+			}
+
+			if (
+				(album.isByGps() || album.isByDate()) &&
+				album.subalbums.length > 0
+			) {
+				// do not get the random media from the year/country nor the month/state albums
+				// this way loading of albums is much faster
+				nMediaInAlbum = 0;
+			} else {
+				nMediaInAlbum = album.numsMedia.imagesAndVideosTotal();
+			}
+			if (index >= nMediaInAlbum) {
+				index -= nMediaInAlbum;
+				let found = false;
+				let targetSubalbumIndex;
+				for (i = 0; i < album.subalbums.length; i ++) {
+					if (index >= album.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal())
+					index -= album.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal();
+					else {
+						targetSubalbumIndex = i;
+						found = true;
+						break;
+					}
+				}
+				if (! found) {s
+					error();
+				} else {
+					var promise = album.convertSubalbum(targetSubalbumIndex, error, {getMedia: false, getPositions: false});
+					promise.then(
+						function(iSubalbum) {
+							nextAlbum(album.subalbums[iSubalbum], resolve_pickRandomMedia);
+						},
+						function() {
+							console.trace();
+						}
+					);
+				}
+			} else {
+				var lastPromise = PhotoFloat.getAlbum(album, error, {getMedia: true, getPositions: true});
+				lastPromise.then(
+					function(album) {
+						resolve_pickRandomMedia([album, index]);
+					},
+					function() {
+						console.trace();
+					}
+				);
+			}
+		}
 	};
 
 	PhotoFloat.encodeHash = function(albumCacheBase, media, foundAlbumHash, savedSearchAlbumHash) {
