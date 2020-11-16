@@ -234,8 +234,14 @@
 					let promise = PhotoFloat.getAlbum(self.subalbums[subalbumIndex].cacheBase, error, {"getMedia": false, "getPositions": false});
 					promise.then(
 						function(convertedSubalbum) {
-							if (wasASubalbum)
+							if (wasASubalbum) {
+								if (self.subalbums[subalbumIndex].hasOwnProperty("selectionAlbumName")) {
+									// transfer subalbums properties to the album
+									convertedSubalbum.selectionAlbumName = albumOrSubalbumOrCacheBase.selectionAlbumName;
+									convertedSubalbum.selectionAlbumNameSorting = albumOrSubalbumOrCacheBase.selectionAlbumNameSorting;
+								}
 								self.subalbums[subalbumIndex] = convertedSubalbum;
+							}
 							resolve_convertIntoAlbum(subalbumIndex);
 						}
 					);
