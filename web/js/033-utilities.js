@@ -1385,17 +1385,17 @@
 					window.location.href = Utilities.upHash();
 				} else if (currentMedia === null) {
 					if (currentAlbum.isAlbumWithOneMedia())
-						TopFunctions.showAlbumOrMedia(currentAlbum, 0);
+						currentAlbum.prepareForShowing(0);
 					else
 						TopFunctions.showAlbum("refreshMedia");
 				} else {
 					let clickedMediaIndex = parseInt(clickedSelector.split('-').pop());
 					if (clickedSelector === singleMediaSelector || clickedMediaIndex === currentMediaIndex) {
-						TopFunctions.showAlbumOrMedia(currentAlbum, -1);
+						currentAlbum.prepareForShowing(-1);
 					} else {
 						if (currentMediaIndex === currentAlbum.media.length)
 							currentMediaIndex -= 1;
-						TopFunctions.showAlbumOrMedia(currentAlbum, currentMediaIndex);
+						currentAlbum.prepareForShowing(currentMediaIndex);
 					}
 				}
 			} else {
@@ -1485,7 +1485,7 @@
 									Utilities.initializeSelectionAlbum();
 									window.location.href = Utilities.upHash();
 								} else {
-									TopFunctions.showAlbumOrMedia(currentAlbum, -1);
+									currentAlbum.prepareForShowing(-1);
 								}
 							}
 

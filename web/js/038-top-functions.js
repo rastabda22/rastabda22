@@ -1252,10 +1252,10 @@
 	};
 
 
-	TopFunctions.showAlbumOrMedia = function(album, mediaIndex) {
+	Album.prototype.prepareForShowing = function(mediaIndex) {
 		var populateAlbum;
 
-		if (album.numsMediaInSubTree.imagesAndVideosTotal() == 0 && ! album.isSearch()) {
+		if (this.numsMediaInSubTree.imagesAndVideosTotal() == 0 && ! this.isSearch()) {
 			// the album hasn't any content:
 			// either the hash is wrong or it's a protected content album
 			// go up
@@ -1266,13 +1266,13 @@
 		util.undie();
 		$("#loading").hide();
 
-		if (album != currentAlbum) {
+		if (this != currentAlbum) {
 			previousAlbum = currentAlbum;
 			currentAlbum = null;
 		}
 
 		if (currentAlbum && currentAlbum.isByDate() && mediaIndex !== -1) {
-			previousMedia = album.media[mediaIndex];
+			previousMedia = this.media[mediaIndex];
 		} else {
 			previousMedia = currentMedia;
 		}
@@ -1281,10 +1281,10 @@
 			// stop the video, otherwise it will keep playing
 			$("#media-center")[0].pause();
 
-		currentAlbum = album;
+		currentAlbum = this;
 		currentMedia = null;
 		if (mediaIndex !== -1)
-			currentMedia = album.media[mediaIndex];
+			currentMedia = this.media[mediaIndex];
 		currentMediaIndex = mediaIndex;
 
 		var isAlbumWithOneMedia = currentAlbum.isAlbumWithOneMedia();
@@ -1310,7 +1310,7 @@
 			prevMedia = null;
 			TopFunctions.showMedia(currentAlbum, currentMedia, 'center');
 
-			// we are in showAlbumOrMedia
+			// we are in prepareForShowing
 			// activate the map and the popup when coming back from a map album
 			if (
 				previousAlbum !== null &&
@@ -1340,7 +1340,7 @@
 			// no subalbums, nothing to wait
 		} else if (
 			currentAlbum !== null && ! currentAlbum.subalbums.length ||
-			numSubAlbumsReady >= album.subalbums.length
+			numSubAlbumsReady >= this.subalbums.length
 		) {
 			// no subalbums
 			// set social buttons href's when all the stuff is loaded
@@ -1351,85 +1351,87 @@
 		fromEscKey = false;
 	};
 
-	TopFunctions.bindSortEvents = function(thisAlbum) {
+	Album.prototype.bindSortEvents = function() {
 		// binds the click events to the sort buttons
+
+		var self = this;
 
 		$("li.sort").off('click');
 		$("li.album-sort.by-date").on(
 			'click',
 			function(ev) {
-				TopFunctions.sortAlbumsByDate(ev, thisAlbum);
+				self.sortSubalbumsByDate(ev);
 			}
 		);
 		$("li.album-sort.by-name").on(
 			'click',
 			function(ev) {
-				TopFunctions.sortAlbumsByName(ev, thisAlbum);
+				self.sortSubalbumsByName(ev);
 			}
 		);
 		$("li.album-sort.reverse").on(
 			'click',
 			function(ev) {
-				TopFunctions.sortAlbumsReverse(ev, thisAlbum);
+				self.sortSubalbumsReverse(ev);
 			}
 		);
 		$("li.media-sort.by-date").on(
 			'click',
 			function(ev) {
-				TopFunctions.sortMediaByDate(ev, thisAlbum);
+				self.sortMediaByDate(ev);
 			}
 		);
 		$("li.media-sort.by-name").on(
 			'click',
 			function(ev) {
-				TopFunctions.sortMediaByName(ev, thisAlbum);
+				self.sortMediaByName(ev);
 			}
 		);
 		$("li.media-sort.reverse").on(
 			'click',
 			function(ev) {
-				TopFunctions.sortMediaReverse(ev, thisAlbum);
+				self.sortMediaReverse(ev);
 			}
 		);
 	};
 
-	TopFunctions.sortAlbumsByDate = function(ev, thisAlbum) {
+	Album.prototype.sortSubalbumsByDate = function(ev) {
 		if (
-			thisAlbum.albumNameSort &&
+			this.albumNameSort &&
 			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			f.setBooleanCookie("albumNameSortRequested", false);
-			f.setBooleanCookie("albumReverseSortRequested", thisAlbum.albumReverseSort);
-			thisAlbum.sortAlbumsMedia();
-			f.updateMenu(thisAlbum);
+			f.setBooleanCookie("albumReverseSortRequested", this.albumReverseSort);
+			this.sortAlbumsMedia();
+			f.updateMenu(this);
 			TopFunctions.showAlbum("refreshSubalbums");
 			// util.focusSearchField();
 		}
 		return false;
 	};
 
-	TopFunctions.sortAlbumsByName = function(ev, thisAlbum) {
+	Album.prototype.sortSubalbumsByName = function(ev) {
 		if (
-			! thisAlbum.albumNameSort &&
+			! this.albumNameSort &&
 			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			f.setBooleanCookie("albumNameSortRequested", true);
-			f.setBooleanCookie("albumReverseSortRequested", thisAlbum.albumReverseSort);
-			thisAlbum.sortAlbumsMedia();
-			f.updateMenu(thisAlbum);
+			f.setBooleanCookie("albumReverseSortRequested", this.albumReverseSort);
+			this.sortAlbumsMedia();
+			f.updateMenu(this);
 			TopFunctions.showAlbum("refreshSubalbums");
 			// util.focusSearchField();
 		}
 		return false;
 	};
 
-	TopFunctions.sortAlbumsReverse = function(ev, thisAlbum) {
+	Album.prototype.sortSubalbumsReverse = function(ev) {
 		if (
 			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
-			f.setBooleanCookie("albumReverseSortRequested", ! thisAlbum.albumReverseSort);
-			thisAlbum.sortAlbumsMedia();
-			f.updateMenu(thisAlbum);
+			f.setBooleanCookie("albumReverseSortRequested", ! this.albumReverseSort);
+			this.sortAlbumsMedia();
+			f.updateMenu(this);
 			TopFunctions.showAlbum("refreshSubalbums");
 			// util.focusSearchField();
 		}
@@ -1437,53 +1439,53 @@
 	};
 	// media
 
-	TopFunctions.sortMediaByDate = function (ev, thisAlbum) {
+	Album.prototype.sortMediaByDate = function (ev) {
 		if (
-			thisAlbum.mediaNameSort &&
+			this.mediaNameSort &&
 			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			f.setBooleanCookie("mediaNameSortRequested", false);
-			f.setBooleanCookie("mediaReverseSortRequested", thisAlbum.mediaReverseSort);
-			thisAlbum.sortAlbumsMedia();
-			f.updateMenu(thisAlbum);
-			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
+			f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
+			this.sortAlbumsMedia();
+			f.updateMenu(this);
+			if (this.cacheBase == currentAlbum.cacheBase)
 				TopFunctions.showAlbum("refreshMedia");
 			else
-				map.updatePopup(MapFunctions.titleWrapper1 + thisAlbum.generateHtmlForImages() + MapFunctions.titleWrapper2);
+				map.updatePopup(MapFunctions.titleWrapper1 + this.generateHtmlForImages() + MapFunctions.titleWrapper2);
 			// util.focusSearchField();
 		}
 		return false;
 	};
 
 
-	TopFunctions.sortMediaByName = function(ev, thisAlbum) {
+	Album.prototype.sortMediaByName = function(ev) {
 		if (
-			! thisAlbum.mediaNameSort &&
+			! this.mediaNameSort &&
 			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			f.setBooleanCookie("mediaNameSortRequested", true);
-			f.setBooleanCookie("mediaReverseSortRequested", thisAlbum.mediaReverseSort);
-			thisAlbum.sortAlbumsMedia();
-			f.updateMenu(thisAlbum);
-			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
+			f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
+			this.sortAlbumsMedia();
+			f.updateMenu(this);
+			if (this.cacheBase == currentAlbum.cacheBase)
 				TopFunctions.showAlbum("refreshMedia");
 			else
-				map.updatePopup(MapFunctions.titleWrapper1 + thisAlbum.generateHtmlForImages() + MapFunctions.titleWrapper2);
+				map.updatePopup(MapFunctions.titleWrapper1 + this.generateHtmlForImages() + MapFunctions.titleWrapper2);
 			// util.focusSearchField();
 		}
 		return false;
 	};
 
-	TopFunctions.sortMediaReverse = function(ev, thisAlbum) {
+	Album.prototype.sortMediaReverse = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			f.setBooleanCookie("mediaReverseSortRequested", ! f.getBooleanCookie("mediaReverseSortRequested"));
 
-			thisAlbum.sortAlbumsMedia();
-			f.updateMenu(thisAlbum);
-			if (thisAlbum.cacheBase == currentAlbum.cacheBase)
+			this.sortAlbumsMedia();
+			f.updateMenu(this);
+			if (this.cacheBase == currentAlbum.cacheBase)
 				TopFunctions.showAlbum("refreshMedia");
 			else
-				map.updatePopup(MapFunctions.titleWrapper1 + thisAlbum.generateHtmlForImages() + MapFunctions.titleWrapper2);
+				map.updatePopup(MapFunctions.titleWrapper1 + this.generateHtmlForImages() + MapFunctions.titleWrapper2);
 			// util.focusSearchField();
 		}
 		return false;
@@ -2343,7 +2345,7 @@
 
 		f.setOptions();
 
-		TopFunctions.bindSortEvents(currentAlbum);
+		currentAlbum.bindSortEvents();
 
 		// we are in showAlbum
 		// activate the map and the popup when coming back from a map album
@@ -2948,7 +2950,7 @@
 						// rootMapAlbum.numPositionsInTree += mapAlbum.numPositionsInTree;
 						rootMapAlbum.numsProtectedMediaInSubTree[","].sum(mapAlbum.numsProtectedMediaInSubTree[","]);
 
-						TopFunctions.bindSortEvents(mapAlbum);
+						mapAlbum.bindSortEvents();
 					}
 					resolve_updateMapAlbumOnMapClick();
 				}

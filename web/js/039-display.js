@@ -834,7 +834,7 @@ $(document).ready(function() {
 					var hashPromise = phFl.parseHashAndReturnAlbumAndMedia(location.hash);
 					hashPromise.then(
 						function([album, mediaIndex]) {
-							tF.showAlbumOrMedia(album, mediaIndex);
+							album.prepareForShowing(mediaIndex);
 						},
 						function() {
 							function checkHigherAncestor() {
