@@ -2839,7 +2839,7 @@
 								mapAlbum.positionsAndMediaInTree.some(
 									function(element, index) {
 										matchingIndex = index;
-										return positionsAndCountsElement.matchPositionsAndMediaByPosition(element);
+										return positionsAndCountsElement.matchPosition(element);
 									}
 								)
 							) {
@@ -2896,7 +2896,7 @@
 									if (
 										mapAlbum.positionsAndMediaInTree.every(
 											function(element) {
-												return ! positionsAndCountsElement.matchPositionsAndMediaByPosition(element);
+												return ! positionsAndCountsElement.matchPosition(element);
 											}
 										)
 									) {

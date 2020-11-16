@@ -543,7 +543,7 @@
 		// return positionsAndMedia;
 	};
 
-	PositionAndMedia.prototype.matchPositionsAndMediaByPosition = function(positionAndMedia2) {
+	PositionAndMedia.prototype.matchPosition = function(positionAndMedia2) {
 		return (JSON.stringify([this.lat, this.lng]) === JSON.stringify([positionAndMedia2.lat, positionAndMedia2.lng]));
 	};
 
@@ -554,10 +554,10 @@
 		// return positionsAndMedia;
 	};
 
-	PositionsAndMedia.prototype.removePositionsAndMediaFromPositionsAndMedia = function(positionsAndMediaToRemove) {
 		for (let indexPositions = 0; indexPositions < positionsAndMediaToRemove.length; indexPositions ++) {
 			let positionsAndMediaToRemoveElement = positionsAndMediaToRemove[indexPositions];
 			this.removePositionAndMediaFromPositionsAndMedia(positionsAndMediaToRemoveElement);
+	PositionsAndMedia.prototype.removePositionsAndMedia = function(positionsAndMediaToRemove) {
 		}
 	};
 
@@ -583,7 +583,7 @@
 	};
 
 	PositionsAndMedia.prototype.removeSingleMedia = function(singleMedia) {
-		this.removePositionAndMediaFromPositionsAndMedia(singleMedia.positionAndMedia());
+		this.removePositionAndMedia(singleMedia.positionAndMedia());
 	};
 
 	PositionsAndMedia.prototype.removePositionAndMediaFromPositionsAndMedia = function(positionAndMediaToRemove) {
@@ -1369,8 +1369,8 @@
 			selectionAlbum.positionsAndMediaInTree.removeSingleMedia(this);
 			var singleMediaArray = new Media([this]);
 			selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
-			selectionAlbum.numsMedia.imagesAndVideosSubtract(singleMediaArray.imagesAndVideosCount());
-			selectionAlbum.numsMediaInSubTree.imagesAndVideosSubtract(singleMediaArray.imagesAndVideosCount());
+			selectionAlbum.numsMedia.subtract(singleMediaArray.imagesAndVideosCount());
+			selectionAlbum.numsMediaInSubTree.subtract(singleMediaArray.imagesAndVideosCount());
 			selectionAlbum.sizesOfAlbum.subtract(this.fileSizes);
 			selectionAlbum.sizesOfSubTree.subtract(this.fileSizes);
 
@@ -1477,12 +1477,12 @@
 							selectionAlbum.subalbums.splice(index, 1);
 
 							if (subalbum.positionsAndMediaInTree.length) {
-								selectionAlbum.positionsAndMediaInTree.removePositionsAndMediaFromPositionsAndMedia(subalbum.positionsAndMediaInTree);
+								selectionAlbum.positionsAndMediaInTree.removePositionsAndMedia(subalbum.positionsAndMediaInTree);
 								selectionAlbum.numPositionsInTree = selectionAlbum.positionsAndMediaInTree.length;
 							}
-							// selectionAlbum.numsMedia.imagesAndVideosSubtract(subalbum.numsMedia);
-							selectionAlbum.numsMediaInSubTree.imagesAndVideosSubtract(subalbum.numsMediaInSubTree);
-							// selectionAlbum.Utilities.subtract(subalbum.sizesOfAlbum);
+							// selectionAlbum.numsMedia.subtract(subalbum.numsMedia);
+							selectionAlbum.numsMediaInSubTree.subtract(subalbum.numsMediaInSubTree);
+							// selectionAlbum.subtract(subalbum.sizesOfAlbum);
 							selectionAlbum.sizesOfSubTree.subtract(subalbum.sizesOfSubTree);
 							selectionAlbum.numsProtectedMediaInSubTree.subtract(subalbum.numsProtectedMediaInSubTree);
 
@@ -1976,7 +1976,7 @@
 		this.videos = this.videos + imagesAndVideos.videos;
 	};
 
-	ImagesAndVideos.prototype.imagesAndVideosSubtract = function(imagesAndVideos) {
+	ImagesAndVideos.prototype.subtract = function(imagesAndVideos) {
 		this.images = this.images - imagesAndVideos.images;
 		this.videos = this.videos - imagesAndVideos.videos;
 	};
