@@ -3014,7 +3014,6 @@
 	TopFunctions.prototype.goFullscreen = TopFunctions.goFullscreen;
 	TopFunctions.prototype.showBrowsingModeMessage = TopFunctions.showBrowsingModeMessage;
 	TopFunctions.prototype.prepareAndDoPopupUpdate = TopFunctions.prepareAndDoPopupUpdate;
-	TopFunctions.prototype.showAlbumOrMedia = TopFunctions.showAlbumOrMedia;
 	// TopFunctions.prototype.goUpIfProtected = TopFunctions.goUpIfProtected;
 
 	window.TopFunctions = TopFunctions;

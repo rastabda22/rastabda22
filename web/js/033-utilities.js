@@ -1280,7 +1280,6 @@
 			function(resolve_addAllSubalbums) {
 				var subalbumsPromises = [];
 				for (let indexSubalbum = self.subalbums.length - 1; indexSubalbum >= 0; indexSubalbum --) {
-					let subalbum = self.subalbums[indexSubalbum];
 					let addSubalbumPromise = self.addSubalbumToSelection(indexSubalbum, "#subalbum-select-box-" + indexSubalbum);
 					subalbumsPromises.push(addSubalbumPromise);
 				}
