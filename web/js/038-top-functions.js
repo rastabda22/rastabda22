@@ -1735,13 +1735,13 @@
 		}
 		// end of insertRandomImage function
 
-		function pickRandomMediaAndInsertIt(theSubalbum, theImage, resolve_subalbumPromise) {
+		function pickRandomMediaAndInsertIt(iSubalbum, theImage, resolve_subalbumPromise) {
 			// function(subalbum, error)
 			var promise = phFl.pickRandomMedia(
-				theSubalbum,
+				iSubalbum,
 				function error() {
 					// executions shoudn't arrive here, if it arrives it's because of some error
-					currentAlbum.subalbums.splice(currentAlbum.subalbums.indexOf(theSubalbum), 1);
+					currentAlbum.subalbums.splice(iSubalbum, 1);
 					theImage.parent().remove();
 					resolve_subalbumPromise();
 					// subalbums.splice(subalbums.indexOf(theLink), 1);
@@ -1749,7 +1749,7 @@
 			);
 			promise.then(
 				function([album, index]) {
-					insertRandomImage(album, index, theSubalbum);
+					insertRandomImage(album, index, currentAlbum.subalbums[iSubalbum]);
 					resolve_subalbumPromise();
 				},
 				function(album) {
@@ -2255,7 +2255,7 @@
 									}
 								);
 
-								pickRandomMediaAndInsertIt(ithSubalbum, imageElement, resolve_subalbumPromise);
+								pickRandomMediaAndInsertIt(iSubalbum, imageElement, resolve_subalbumPromise);
 							}
 						);
 						subalbumsPromises.push(subalbumPromise);

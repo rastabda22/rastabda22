@@ -1114,13 +1114,15 @@
 
 		return;
 	};
-	PhotoFloat.prototype.pickRandomMedia = function(theSubalbum, error) {
+	PhotoFloat.prototype.pickRandomMedia = function(iSubalbum, error) {
 		var index;
+		var theSubalbum = currentAlbum.subalbums[iSubalbum];
 		return new Promise(
 			function(resolve_pickRandomMedia) {
-				var promise = PhotoFloat.getAlbum(theSubalbum.cacheBase, error, {getMedia: false, getPositions: false});
+				var promise = currentAlbum.convertSubalbum(iSubalbum, error, {getMedia: false, getPositions: false});
 				promise.then(
-					function(album) {
+					function(iSubalbum) {
+						var album = currentAlbum.subalbums[iSubalbum];
 						// index = 0;
 						index = Math.floor(Math.random() * (album.numsMediaInSubTree.imagesAndVideosTotal()));
 						nextAlbum(album, resolve_pickRandomMedia);
