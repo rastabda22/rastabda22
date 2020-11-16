@@ -237,8 +237,8 @@
 							if (wasASubalbum) {
 								if (self.subalbums[subalbumIndex].hasOwnProperty("selectionAlbumName")) {
 									// transfer subalbums properties to the album
-									convertedSubalbum.selectionAlbumName = albumOrSubalbumOrCacheBase.selectionAlbumName;
-									convertedSubalbum.selectionAlbumNameSorting = albumOrSubalbumOrCacheBase.selectionAlbumNameSorting;
+									convertedSubalbum.selectionAlbumName = self.subalbums[subalbumIndex].selectionAlbumName;
+									convertedSubalbum.selectionAlbumNameSorting = self.subalbums[subalbumIndex].selectionAlbumNameSorting;
 								}
 								self.subalbums[subalbumIndex] = convertedSubalbum;
 							}
