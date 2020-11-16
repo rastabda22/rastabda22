@@ -466,7 +466,14 @@
 	};
 
 	Utilities.cloneObject = function(object) {
-		return Object.assign({}, object);
+		var copy = Object.assign({}, object);
+		Object.keys(copy).forEach(
+			function(key) {
+				if (typeof copy[key] === "object")
+					copy[key] = Utilities.cloneObject(copy[key]);
+			}
+		);
+		return copy;
 	};
 
 	Utilities.prototype.arrayIntersect = function(a, b) {
