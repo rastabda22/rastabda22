@@ -554,10 +554,10 @@
 		// return positionsAndMedia;
 	};
 
-		for (let indexPositions = 0; indexPositions < positionsAndMediaToRemove.length; indexPositions ++) {
-			let positionsAndMediaToRemoveElement = positionsAndMediaToRemove[indexPositions];
-			this.removePositionAndMediaFromPositionsAndMedia(positionsAndMediaToRemoveElement);
 	PositionsAndMedia.prototype.removePositionsAndMedia = function(positionsAndMediaToRemove) {
+		for (let indexPositions = positionsAndMediaToRemove.length - 1; indexPositions >= 0; indexPositions --) {
+			let positionAndMediaToRemove = positionsAndMediaToRemove[indexPositions];
+			this.removePositionAndMedia(positionAndMediaToRemove);
 		}
 	};
 
@@ -586,45 +586,45 @@
 		this.removePositionAndMedia(singleMedia.positionAndMedia());
 	};
 
-	PositionsAndMedia.prototype.removePositionAndMediaFromPositionsAndMedia = function(positionAndMediaToRemove) {
-		var matchingPositionAndMediaIndex, matchingMediaIndex;
-		var arrayCacheBases = [];
-		for (let indexMediaName = 0; indexMediaName < positionAndMediaToRemove.mediaNameList.length; indexMediaName ++) {
-			arrayCacheBases.push(positionAndMediaToRemove.mediaNameList[indexMediaName].cacheBase);
-		}
-		var arrayAlbumCacheBases = [];
-		for (let indexMediaName = 0; indexMediaName < positionAndMediaToRemove.mediaNameList.length; indexMediaName ++) {
-			if (arrayAlbumCacheBases.indexOf(positionAndMediaToRemove.mediaNameList[indexMediaName].albumCacheBase) === -1)
-				arrayAlbumCacheBases.push(positionAndMediaToRemove.mediaNameList[indexMediaName].albumCacheBase);
-		}
-		if (
-			this.some(
-				function(positionsAndMediaInTreeElement, positionsAndMediaInTreeIndex) {
-					matchingPositionAndMediaIndex = positionsAndMediaInTreeIndex;
-					if (positionAndMediaToRemove.matchPositionsAndMediaByPosition(positionsAndMediaInTreeElement)) {
-						if (
-							positionsAndMediaInTreeElement.mediaNameList.some(
-								function(mediaNameListElement, mediaNameListElementIndex) {
-									matchingMediaIndex = mediaNameListElementIndex;
-									return arrayCacheBases.indexOf(mediaNameListElement.cacheBase) !== -1 && arrayAlbumCacheBases.indexOf(mediaNameListElement.albumCacheBase) !== -1;
+	PositionsAndMedia.prototype.removePositionAndMedia = function(positionAndMediaToRemove) {
+		var matchingPositionAndMediaIndex = -1;
+		var matchingMediaIndexes = [];
+		var self = this;
+
+		this.some(
+			function(positionAndMedia, positionAndMediaIndex) {
+				matchingPositionAndMediaIndex = positionAndMediaIndex;
+				if (positionAndMedia.matchPosition(positionAndMediaToRemove)) {
+					positionAndMediaToRemove.mediaNameList.forEach(
+						function(mediaNameListToRemoveElement) {
+							for (let index = positionAndMedia.mediaNameList.length - 1; index >= 0; index --) {
+								mediaNameListElement = positionAndMedia.mediaNameList[index];
+								if (
+									mediaNameListElement.albumCacheBase === mediaNameListToRemoveElement.albumCacheBase &&
+									mediaNameListElement.cacheBase === mediaNameListToRemoveElement.cacheBase
+								) {
+									matchingMediaIndexes.push(index);
 								}
-							)
-						) {
-							return true;
-						} else {
-							return false;
+							}
 						}
-					} else {
-						return false;
-					}
+					);
+					return true;
+				} else {
+					return false;
 				}
-			)
-		) {
-			// the position was present: remove the media...
-			this[matchingPositionAndMediaIndex].mediaNameList.splice(matchingMediaIndex, 1);
-			if (! this[matchingPositionAndMediaIndex].mediaNameList.length)
-				// remove the position too
+			}
+		);
+
+		if (matchingPositionAndMediaIndex !== -1) {
+			if (this[matchingPositionAndMediaIndex].mediaNameList.length === matchingMediaIndexes.length) {
 				this.splice(matchingPositionAndMediaIndex, 1);
+			} else {
+				matchingMediaIndexes.forEach(
+					function(index) {
+						self[matchingPositionAndMediaIndex].mediaNameList.splice(index, 1);
+					}
+				);
+			}
 		}
 	};
 
@@ -1473,8 +1473,7 @@
 					convertSubalbumPromise.then(
 						function(iSubalbum) {
 							var subalbum = self.subalbums[iSubalbum];
-							var index = selectionAlbum.subalbums.findIndex(x => x.cacheBase === subalbum.cacheBase);
-							selectionAlbum.subalbums.splice(index, 1);
+							selectionAlbum.subalbums.splice(iSubalbum, 1);
 
 							if (subalbum.positionsAndMediaInTree.length) {
 								selectionAlbum.positionsAndMediaInTree.removePositionsAndMedia(subalbum.positionsAndMediaInTree);
