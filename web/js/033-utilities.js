@@ -631,7 +631,6 @@
 					let ithPromise = new Promise(
 						function(resolve_ithPromise) {
 							let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {getMedia: true, getPositions: false});
-							// let getAlbumPromise = PhotoFloat.getAlbum(self.subalbums[iSubalbum], null, {getMedia: true, getPositions: false});
 							convertSubalbumPromise.then(
 								function(iSubalbum) {
 									let promise = self.subalbums[iSubalbum].recursivelySelectMedia();
@@ -665,7 +664,6 @@
 					let ithPromise = new Promise(
 						function(resolve_ithPromise) {
 							let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {getMedia: true, getPositions: false});
-							// let getAlbumPromise = PhotoFloat.getAlbum(this.subalbums[iSubalbum], null, {getMedia: true, getPositions: false});
 							convertSubalbumPromise.then(
 								function(iSubalbum) {
 									let promise = self.subalbums[iSubalbum].recursivelyRemoveMedia();
@@ -701,7 +699,6 @@
 						let ithPromise = new Promise(
 							function(resolve_ithPromise, reject_ithPromise) {
 								let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {getMedia: true, getPositions: false});
-								// let getAlbumPromise = PhotoFloat.getAlbum(self.subalbums[iSubalbum], null, {getMedia: true, getPositions: false});
 								convertSubalbumPromise.then(
 									function(iSubalbum) {
 										let promise = self.subalbums[iSubalbum].recursivelyAllMediaAreSelected();
@@ -1416,9 +1413,10 @@
 				if (self.isSelected()) {
 					resolve_addSubalbum();
 				} else {
-					let getAlbumPromise = PhotoFloat.getAlbum(subalbum.cacheBase, null, {"getMedia": false, "getPositions": true});
-					getAlbumPromise.then(
-						function(subalbum) {
+					let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {getMedia: false, getPositions: true});
+					convertSubalbumPromise.then(
+						function(iSubalbum) {
+							var subalbum = self.subalbums[iSubalbum];
 							if (Utilities.nothingIsSelected())
 								Utilities.initializeSelectionAlbum();
 							selectionAlbum.subalbums.push(subalbum);
@@ -2083,7 +2081,6 @@
 								function(resolveSubalbumPromise) {
 									// let ithSubalbum = currentAlbum.subalbums[iSubalbum];
 									let convertSubalbumPromise = currentAlbum.convertSubalbum(iSubalbum, null, {getMedia: true, getPositions: false});
-									// let getAlbumPromise = PhotoFloat.getAlbum(ithSubalbum, null, {getMedia: true, getPositions: false});
 									convertSubalbumPromise.then(
 										function(iSubalbum) {
 											let albumPath = currentAlbum.subalbums[iSubalbum].path;

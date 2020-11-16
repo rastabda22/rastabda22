@@ -2458,10 +2458,10 @@
 	};
 
 	TopFunctions.generateMapFromSubalbum = function(ev, from) {
-
-		var subalbumPromise = phFl.getAlbum(ev.data.subalbum.cacheBase, util.errorThenGoUp, {"getMedia": false, "getPositions": true});
+		var subalbumPromise = currentAlbum.convertSubalbum(ev.data.iSubalbum, util.errorThenGoUp, {getMedia: false, getPositions: true});
 		subalbumPromise.then(
-			function(subalbum) {
+			function(iSubalbum) {
+				var subalbum = currentAlbum.subalbums[iSubalbum];
 				if (subalbum.positionsAndMediaInTree.length) {
 					ev.stopPropagation();
 					ev.preventDefault();
