@@ -630,8 +630,8 @@
 				for (let iSubalbum = 0; iSubalbum < self.subalbums.length; iSubalbum ++) {
 					let ithPromise = new Promise(
 						function(resolve_ithPromise) {
-							let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {"getMedia": true, "getPositions": false});
-							// let getAlbumPromise = PhotoFloat.getAlbum(self.subalbums[iSubalbum].cacheBase, null, {"getMedia": true, "getPositions": false});
+							let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {getMedia: true, getPositions: false});
+							// let getAlbumPromise = PhotoFloat.getAlbum(self.subalbums[iSubalbum], null, {getMedia: true, getPositions: false});
 							convertSubalbumPromise.then(
 								function(iSubalbum) {
 									let promise = self.subalbums[iSubalbum].recursivelySelectMedia();
@@ -664,8 +664,8 @@
 				for (let iSubalbum = 0; iSubalbum < self.subalbums.length; iSubalbum ++) {
 					let ithPromise = new Promise(
 						function(resolve_ithPromise) {
-							let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {"getMedia": true, "getPositions": false});
-							// let getAlbumPromise = PhotoFloat.getAlbum(this.subalbums[iSubalbum].cacheBase, null, {"getMedia": true, "getPositions": false});
+							let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {getMedia: true, getPositions: false});
+							// let getAlbumPromise = PhotoFloat.getAlbum(this.subalbums[iSubalbum], null, {getMedia: true, getPositions: false});
 							convertSubalbumPromise.then(
 								function(iSubalbum) {
 									let promise = self.subalbums[iSubalbum].recursivelyRemoveMedia();
@@ -700,8 +700,8 @@
 					for (let iSubalbum = 0; iSubalbum < self.subalbums.length; iSubalbum ++) {
 						let ithPromise = new Promise(
 							function(resolve_ithPromise, reject_ithPromise) {
-								let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {"getMedia": true, "getPositions": false});
-								// let getAlbumPromise = PhotoFloat.getAlbum(self.subalbums[iSubalbum].cacheBase, null, {"getMedia": true, "getPositions": false});
+								let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {getMedia: true, getPositions: false});
+								// let getAlbumPromise = PhotoFloat.getAlbum(self.subalbums[iSubalbum], null, {getMedia: true, getPositions: false});
 								convertSubalbumPromise.then(
 									function(iSubalbum) {
 										let promise = self.subalbums[iSubalbum].recursivelyAllMediaAreSelected();
@@ -2195,7 +2195,7 @@
 						cacheBasesPromises.push(
 							new Promise(
 								function(resolve_ithCacheBasePromise) {
-									let cacheBasePromise = PhotoFloat.getAlbum(self.ancestorsCacheBase[iCacheBase], null, {"getMedia": false, "getPositions": false});
+									let cacheBasePromise = PhotoFloat.getAlbum(self.ancestorsCacheBase[iCacheBase], null, {getMedia: false, getPositions: false});
 									cacheBasePromise.then(
 										function(gottenAlbum) {
 											let albumName;
@@ -2237,7 +2237,7 @@
 						cacheBasesPromises.push(
 							new Promise(
 								function(resolve_ithCacheBasePromise) {
-									let cacheBasePromise = PhotoFloat.getAlbum(self.ancestorsCacheBase[iCacheBase], null, {"getMedia": false, "getPositions": false});
+									let cacheBasePromise = PhotoFloat.getAlbum(self.ancestorsCacheBase[iCacheBase], null, {getMedia: false, getPositions: false});
 									cacheBasePromise.then(
 										function(gottenAlbum) {
 											secondLine = secondLine.replace(marker, "<a href='" + hashBeginning + gottenAlbum.cacheBase+ "'>" + gottenAlbum.name + "</a>");

@@ -845,7 +845,7 @@ $(document).ready(function() {
 								} else {
 									hash = upHash;
 									let cacheBase = hash.substring(hashBeginning.length);
-									let getAlbumPromise = phFl.getAlbum(cacheBase, checkHigherAncestor, {"getMedia": false, "getPositions": false});
+									let getAlbumPromise = phFl.getAlbum(cacheBase, checkHigherAncestor, {getMedia: false, getPositions: false});
 									getAlbumPromise.then(
 										function(upAlbum) {
 											if (upAlbum.hasMoreProtectedContent() && ! fromEscKey) {

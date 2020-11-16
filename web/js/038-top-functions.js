@@ -636,7 +636,7 @@
 		if ($("#search-album-to-be-filled").length) {
 			// for searches in current folder we must get the names from the album
 			// we must use getAlbum() because the album could not be in the cache yet (as when ctl-r is pressed)
-			var promise = phFl.getAlbum(searchFolderHash, util.errorThenGoUp, {"getMedia": true, "getPositions": true});
+			var promise = phFl.getAlbum(searchFolderHash, util.errorThenGoUp, {getMedia: true, getPositions: true});
 			promise.then(
 				function(theAlbum) {
 					var whereLinks = '', whereLinksArray = [], thisCacheBase, name, documentTitle;

@@ -586,7 +586,7 @@
 								var protectedDirectory = theProtectedDirectoriesToGet[iDirectory];
 								var protectedCacheBase = protectedDirectory + '/' + album.cacheBase + '.0';
 
-								var promise = PhotoFloat.getSingleProtectedCacheBaseWithExternalMediaAndPositions(protectedCacheBase, album, {"getMedia": false, "getPositions": false});
+								var promise = PhotoFloat.getSingleProtectedCacheBaseWithExternalMediaAndPositions(protectedCacheBase, album, {getMedia: false, getPositions: false});
 								promise.then(
 									function getSingleProtectedCacheBaseWithExternalMediaAndPositions_resolved() {
 										// ok, we got what we were looking for:
@@ -716,7 +716,7 @@
 						// map albums are fixed, i.e. do not admit adding protected content
 						resolve_continueAddProtectedContent();
 					} else {
-						var theCodesSimpleCombinationsToGet = PhotoFloat.codesSimpleCombinationsToGet(album, {"getMedia": getMedia, "getPositions": getPositions});
+						var theCodesSimpleCombinationsToGet = PhotoFloat.codesSimpleCombinationsToGet(album, {getMedia: getMedia, getPositions: getPositions});
 						if (! theCodesSimpleCombinationsToGet.length) {
 							if (! cache.getAlbum(album.cacheBase))
 								cache.putAlbum(album);
@@ -790,7 +790,7 @@
 												// this cache base has been already loaded and either media/positions are already there or aren't needed now
 												resolve_ithPromise();
 											} else {
-												let promise = PhotoFloat.getSingleProtectedCacheBaseWithExternalMediaAndPositions(protectedCacheBase, album, {"getMedia": getMedia, "getPositions": getPositions});
+												let promise = PhotoFloat.getSingleProtectedCacheBaseWithExternalMediaAndPositions(protectedCacheBase, album, {getMedia: getMedia, getPositions: getPositions});
 												promise.then(
 													function() {
 														if (album.isEmpty())
@@ -994,7 +994,7 @@
 								album.includedFilesByCodesSimpleCombination[","].positionsGot = true;
 							}
 
-							var promise = PhotoFloat.addProtectedContent(album, {"getMedia": getMedia, "getPositions": getPositions});
+							var promise = PhotoFloat.addProtectedContent(album, {getMedia: getMedia, getPositions: getPositions});
 							promise.then(
 								function() {
 									thingsToBeDoneBeforeResolvingGetAlbum(album);
@@ -1032,11 +1032,11 @@
 					}
 				} else {
 					// neiter the album has been passed as argument, nor is in cache, get it brand new
-					promise = PhotoFloat.getSingleUnprotectedCacheBaseWithExternalMediaAndPositions(albumCacheBase, {"getMedia": getMedia, "getPositions": getPositions});
+					promise = PhotoFloat.getSingleUnprotectedCacheBaseWithExternalMediaAndPositions(albumCacheBase, {getMedia: getMedia, getPositions: getPositions});
 					promise.then(
 						function unprotectedAlbumGot(album) {
 							if (album.hasProtectedContent()) {
-								var promise = PhotoFloat.addProtectedContent(album, {"getMedia": getMedia, "getPositions": getPositions});
+								var promise = PhotoFloat.addProtectedContent(album, {getMedia: getMedia, getPositions: getPositions});
 								promise.then(
 									function() {
 										thingsToBeDoneBeforeResolvingGetAlbum(album);
@@ -1053,7 +1053,7 @@
 						},
 						function unprotectedAlbumUnexisting(emptyAlbum) {
 							// look for a protected album: something must be there
-							var promise = PhotoFloat.addProtectedContent(emptyAlbum, {"getMedia": getMedia, "getPositions": getPositions});
+							var promise = PhotoFloat.addProtectedContent(emptyAlbum, {getMedia: getMedia, getPositions: getPositions});
 							promise.then(
 								function unprotectedAlbumUnexistingProtectedAlbumExisting() {
 									thingsToBeDoneBeforeResolvingGetAlbum(emptyAlbum);
@@ -1170,7 +1170,7 @@
 						if (! found) {
 							error();
 						} else {
-							var promise = PhotoFloat.getAlbum(targetCacheBase, error, {"getMedia": false, "getPositions": false});
+							var promise = PhotoFloat.getAlbum(targetSubalbum, error, {getMedia: false, getPositions: false});
 							promise.then(
 								function(subalbum) {
 									nextAlbum(subalbum);
@@ -1181,7 +1181,7 @@
 							);
 						}
 					} else {
-						var lastPromise = PhotoFloat.getAlbum(album, error, {"getMedia": true, "getPositions": true});
+						var lastPromise = PhotoFloat.getAlbum(album, error, {getMedia: true, getPositions: true});
 						lastPromise.then(
 							function(album) {
 								resolve_pickRandomMedia([album, index]);
@@ -1415,7 +1415,7 @@
 					}
 				} else if (! util.isSearchCacheBase(albumHash) || searchWordsFromUser.length === 0) {
 					// something is missing, getAlbum must be called
-					promise = PhotoFloat.getAlbum(albumHashToGet, reject_parseHash, {"getMedia": true, "getPositions": true});
+					promise = PhotoFloat.getAlbum(albumHashToGet, reject_parseHash, {getMedia: true, getPositions: true});
 					promise.then(
 						function(album) {
 							let result = album.getMediaIndex(mediaFolderHash, mediaHash);
@@ -1502,7 +1502,7 @@
 					}
 
 					// get the search root album before getting the search words ones
-					var promise = PhotoFloat.getAlbum(Options.by_search_string, reject_parseHash, {"getMedia": true, "getPositions": true});
+					var promise = PhotoFloat.getAlbum(Options.by_search_string, reject_parseHash, {getMedia: true, getPositions: true});
 					promise.then(
 						function(bySearchRootAlbum) {
 							var lastIndex, i, j, wordHashes, numSearchAlbumsReady = 0, numSubAlbumsToGet = 0, normalizedWords;
@@ -1574,7 +1574,7 @@
 									searchResultsSubalbums[indexWords] = [];
 									for (indexAlbums = 0; indexAlbums < albumHashes[indexWords].length; indexAlbums ++) {
 										let thisIndexWords = indexWords, thisIndexAlbums = indexAlbums;
-										var promise = PhotoFloat.getAlbum(albumHashes[thisIndexWords][thisIndexAlbums], reject_parseHash, {"getMedia": true, "getPositions": true});
+										var promise = PhotoFloat.getAlbum(albumHashes[thisIndexWords][thisIndexAlbums], reject_parseHash, {getMedia: true, getPositions: true});
 										promise.then(
 											function(theAlbum) {
 												var matchingMedia = [], matchingSubalbums = [], match, indexMedia, indexSubalbums, indexWordsLeft, resultAlbum, indexWords1, ithMedia, ithSubalbum;
