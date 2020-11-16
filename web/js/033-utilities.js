@@ -625,7 +625,7 @@
 		var self = this;
 		return new Promise(
 			function (resolve_promise) {
-				self.media.addAllMediaToSelection();
+				self.addAllMediaToSelection();
 				let promises = [];
 				for (let iSubalbum = 0; iSubalbum < self.subalbums.length; iSubalbum ++) {
 					let ithPromise = new Promise(
@@ -659,7 +659,7 @@
 		var self = this;
 		return new Promise(
 			function (resolve_promise) {
-				self.media.removeAllMediaFromSelection();
+				self.removeAllMediaFromSelection();
 				let promises = [];
 				for (let iSubalbum = 0; iSubalbum < self.subalbums.length; iSubalbum ++) {
 					let ithPromise = new Promise(
@@ -693,7 +693,7 @@
 		var self = this;
 		return new Promise(
 			function (resolve_promise, reject_promise) {
-				if (! self.media.everyMediaIsSelected()) {
+				if (! self.everyMediaIsSelected()) {
 					reject_promise();
 				} else {
 					let promises = [];
@@ -1204,13 +1204,13 @@
 	// 	}
 	// };
 
-	Media.prototype.everyMediaIsSelected = function() {
+	Album.prototype.everyMediaIsSelected = function() {
 		if (selectionAlbum.isEmpty()) {
 			Utilities.initializeSelectionAlbum();
 			return false;
 		} else {
 			if (
-				this.every(
+				this.media.every(
 					function(singleMedia) {
 						return singleMedia.isSelected();
 					}
@@ -1242,13 +1242,13 @@
 	// 	}
 	// };
 
-	Subalbums.prototype.everySubalbumIsSelected = function() {
+	Album.prototype.everySubalbumIsSelected = function() {
 		if (selectionAlbum.isEmpty()) {
 			Utilities.initializeSelectionAlbum();
 			return false;
 		} else {
 			if (
-				this.every(
+				this.subalbums.every(
 					function(subalbum) {
 						return subalbum.isSelected();
 					}
@@ -1261,29 +1261,29 @@
 		}
 	};
 
-	Media.prototype.addAllMediaToSelection = function() {
-		for (let indexMedia = this.length - 1; indexMedia >= 0; indexMedia --) {
-			let singleMedia = this[indexMedia];
+	Album.prototype.addAllMediaToSelection = function() {
+		for (let indexMedia = this.media.length - 1; indexMedia >= 0; indexMedia --) {
+			let singleMedia = this.media[indexMedia];
 			singleMedia.addToSelection("#media-select-box-" + indexMedia);
 		}
 	};
 
-	Media.prototype.removeAllMediaFromSelection = function() {
+	Album.prototype.removeAllMediaFromSelection = function() {
 		if (this !== undefined) {
-			for (let indexMedia = this.length - 1; indexMedia >= 0; indexMedia --) {
-				let singleMedia = this[indexMedia];
+			for (let indexMedia = this.media.length - 1; indexMedia >= 0; indexMedia --) {
+				let singleMedia = this.media[indexMedia];
 				singleMedia.removeFromSelection("#media-select-box-" + indexMedia);
 			}
 		}
 	};
 
-	Subalbums.prototype.addAllSubalbumsToSelection = function() {
+	Album.prototype.addAllSubalbumsToSelection = function() {
 		var self = this;
 		return new Promise(
 			function(resolve_addAllSubalbums) {
 				var subalbumsPromises = [];
-				for (let indexSubalbum = self.length - 1; indexSubalbum >= 0; indexSubalbum --) {
-					let subalbum = self[indexSubalbum];
+				for (let indexSubalbum = self.subalbums.length - 1; indexSubalbum >= 0; indexSubalbum --) {
+					let subalbum = self.subalbums[indexSubalbum];
 					let addSubalbumPromise = Utilities.addSubalbumToSelection(subalbum, "#subalbum-select-box-" + indexSubalbum);
 					subalbumsPromises.push(addSubalbumPromise);
 				}
@@ -1296,14 +1296,14 @@
 		);
 	};
 
-	Subalbums.prototype.removeAllSubalbumsFromSelection = function() {
+	Album.prototype.removeAllSubalbumsFromSelection = function() {
 		var self = this;
 		return new Promise(
 			function(resolve_removeAllSubalbums) {
-				if (self !== undefined) {
+				if (self.subalbums !== undefined) {
 					let subalbumsPromises = [];
-					for (let indexSubalbum = self.length - 1; indexSubalbum >= 0; indexSubalbum --) {
-						let subalbum = self[indexSubalbum];
+					for (let indexSubalbum = self.subalbums.length - 1; indexSubalbum >= 0; indexSubalbum --) {
+						let subalbum = self.subalbums[indexSubalbum];
 						let removeSubalbumPromise = Utilities.removeSubalbumFromSelection(subalbum, "#subalbum-select-box-" + indexSubalbum);
 						subalbumsPromises.push(removeSubalbumPromise);
 					}

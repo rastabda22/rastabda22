@@ -647,15 +647,15 @@
 			$(".select.media, .select.albums").addClass("hidden");
 		}
 
-		if (thisAlbum.subalbums.everySubalbumIsSelected()) {
+		if (thisAlbum.everySubalbumIsSelected()) {
 			$(".select.albums").addClass("selected");
 		}
 
-		if (thisAlbum.media.everyMediaIsSelected()) {
+		if (thisAlbum.everyMediaIsSelected()) {
 			$(".select.media").addClass("selected");
 		}
 
-		if (thisAlbum.subalbums.everySubalbumIsSelected() && thisAlbum.media.everyMediaIsSelected()) {
+		if (thisAlbum.everySubalbumIsSelected() && thisAlbum.everyMediaIsSelected()) {
 			$(".select.everything").addClass("selected");
 		}
 
@@ -688,9 +688,9 @@
 		$(".select.everything:not(.hidden)").off("click").on(
 			"click",
 			function() {
-				if (thisAlbum.subalbums.everySubalbumIsSelected() && thisAlbum.media.everyMediaIsSelected()) {
-					thisAlbum.media.removeAllMediaFromSelection();
-					let promise = thisAlbum.subalbums.removeAllSubalbumsFromSelection();
+				if (thisAlbum.everySubalbumIsSelected() && thisAlbum.everyMediaIsSelected()) {
+					thisAlbum.removeAllMediaFromSelection();
+					let promise = thisAlbum.removeAllSubalbumsFromSelection();
 					promise.then(
 						function() {
 							if (util.nothingIsSelected())
@@ -699,8 +699,8 @@
 						}
 					);
 				} else {
-					thisAlbum.media.addAllMediaToSelection();
-					let promise = thisAlbum.subalbums.addAllSubalbumsToSelection();
+					thisAlbum.addAllMediaToSelection();
+					let promise = thisAlbum.addAllSubalbumsToSelection();
 					promise.then(
 						function() {
 							Functions.updateMenu();
@@ -752,12 +752,12 @@
 		$(".select.media:not(.hidden)").off("click").on(
 			"click",
 			function() {
-				if (thisAlbum.media.everyMediaIsSelected()) {
-					thisAlbum.media.removeAllMediaFromSelection();
+				if (thisAlbum.everyMediaIsSelected()) {
+					thisAlbum.removeAllMediaFromSelection();
 					if (util.nothingIsSelected())
 						util.initializeSelectionAlbum();
 				} else {
-					thisAlbum.media.addAllMediaToSelection();
+					thisAlbum.addAllMediaToSelection();
 				}
 				Functions.updateMenu();
 			}
@@ -766,8 +766,8 @@
 		$(".select.albums:not(.hidden)").off("click").on(
 			"click",
 			function() {
-				if (thisAlbum.subalbums.everySubalbumIsSelected()) {
-					let promise = thisAlbum.subalbums.removeAllSubalbumsFromSelection();
+				if (thisAlbum.everySubalbumIsSelected()) {
+					let promise = thisAlbum.removeAllSubalbumsFromSelection();
 					promise.then(
 						function() {
 							if (util.nothingIsSelected())
@@ -776,7 +776,7 @@
 						}
 					);
 				} else {
-					var promise = thisAlbum.subalbums.addAllSubalbumsToSelection();
+					var promise = thisAlbum.addAllSubalbumsToSelection();
 					promise.then(
 						function() {
 							Functions.updateMenu();
@@ -789,8 +789,8 @@
 		$(".select.global-reset:not(.hidden)").on(
 			"click",
 			function() {
-				selectionAlbum.media.removeAllMediaFromSelection();
-				let subalbumsPromise = selectionAlbum.subalbums.removeAllSubalbumsFromSelection();
+				selectionAlbum.removeAllMediaFromSelection();
+				let subalbumsPromise = selectionAlbum.removeAllSubalbumsFromSelection();
 				subalbumsPromise.then(
 					function allSubalbumsRemoved() {
 						if (util.nothingIsSelected())
