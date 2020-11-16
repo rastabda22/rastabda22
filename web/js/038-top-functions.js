@@ -761,11 +761,12 @@
 		}
 	};
 
-	TopFunctions.toggleSelectedSubalbum = function(subalbum, clickedSelector) {
+	TopFunctions.toggleSelectedSubalbum = function(iSubalbum, clickedSelector) {
 		if (selectionAlbum.isEmpty())
 			util.initializeSelectionAlbum();
+		var subalbum = currentAlbum.subalbums[iSubalbum];
 		if (subalbum.isSelected()) {
-			let removeSubalbumPromise = util.removeSubalbumFromSelection(subalbum, clickedSelector);
+			let removeSubalbumPromise = currentAlbum.removeSubalbumFromSelection(iSubalbum, clickedSelector);
 			removeSubalbumPromise.then(
 				function subalbumRemoved() {
 					if (util.nothingIsSelected())
@@ -774,7 +775,7 @@
 				}
 			);
 		} else {
-			let addSubalbumPromise = util.addSubalbumToSelection(subalbum, clickedSelector);
+			let addSubalbumPromise = currentAlbum.addSubalbumToSelection(iSubalbum, clickedSelector);
 			addSubalbumPromise.then(
 				function subalbumAdded() {
 					f.updateMenu();
@@ -2215,7 +2216,7 @@
 								if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
 									$("#subalbum-map-link-" + iSubalbum).off('click').on(
 										'click',
-										{subalbum: ithSubalbum, clickedSelector: "#subalbum-map-link-" + iSubalbum},
+										{iSubalbum: iSubalbum, clickedSelector: "#subalbum-map-link-" + iSubalbum},
 										function(ev, from) {
 											selectorClickedToOpenTheMap = ev.data.clickedSelector;
 											TopFunctions.generateMapFromSubalbum(ev, from);
@@ -2244,11 +2245,11 @@
 								$("#subalbum-select-box-" + iSubalbum + " .select-box").show();
 								$("#subalbum-select-box-" + iSubalbum).off('click').on(
 									'click',
-									{subalbum: ithSubalbum, clickedSelector: "#subalbum-select-box-" + iSubalbum},
+									{iSubalbum: iSubalbum, clickedSelector: "#subalbum-select-box-" + iSubalbum},
 									function(ev) {
 										ev.stopPropagation();
 										ev.preventDefault();
-										TopFunctions.toggleSelectedSubalbum(ev.data.subalbum, ev.data.clickedSelector);
+										TopFunctions.toggleSelectedSubalbum(ev.data.iSubalbum, ev.data.clickedSelector);
 									}
 								);
 
@@ -2438,7 +2439,6 @@
 	};
 
 	TopFunctions.generateMapFromMedia = function(ev, from) {
-
 		if (ev.data.media.hasGpsData()) {
 			ev.preventDefault();
 			var positionAndMedia = new PositionAndMedia(

@@ -1284,7 +1284,7 @@
 				var subalbumsPromises = [];
 				for (let indexSubalbum = self.subalbums.length - 1; indexSubalbum >= 0; indexSubalbum --) {
 					let subalbum = self.subalbums[indexSubalbum];
-					let addSubalbumPromise = Utilities.addSubalbumToSelection(subalbum, "#subalbum-select-box-" + indexSubalbum);
+					let addSubalbumPromise = self.addSubalbumToSelection(indexSubalbum, "#subalbum-select-box-" + indexSubalbum);
 					subalbumsPromises.push(addSubalbumPromise);
 				}
 				Promise.all(subalbumsPromises).then(
@@ -1304,7 +1304,7 @@
 					let subalbumsPromises = [];
 					for (let indexSubalbum = self.subalbums.length - 1; indexSubalbum >= 0; indexSubalbum --) {
 						let subalbum = self.subalbums[indexSubalbum];
-						let removeSubalbumPromise = Utilities.removeSubalbumFromSelection(subalbum, "#subalbum-select-box-" + indexSubalbum);
+						let removeSubalbumPromise = self.removeSubalbumFromSelection(indexSubalbum, "#subalbum-select-box-" + indexSubalbum);
 						subalbumsPromises.push(removeSubalbumPromise);
 					}
 					Promise.all(subalbumsPromises).then(
@@ -1408,10 +1408,12 @@
 		}
 	};
 
-	Utilities.addSubalbumToSelection = function(subalbum, clickedSelector) {
+	Album.prototype.addSubalbumToSelection = function(iSubalbum, clickedSelector) {
+		var self = this;
+		var subalbum = self.subalbums[iSubalbum];
 		return new Promise(
 			function(resolve_addSubalbum) {
-				if (subalbum.isSelected()) {
+				if (self.isSelected()) {
 					resolve_addSubalbum();
 				} else {
 					let getAlbumPromise = PhotoFloat.getAlbum(subalbum.cacheBase, null, {"getMedia": false, "getPositions": true});
@@ -1452,7 +1454,9 @@
 		);
 	};
 
-	Utilities.removeSubalbumFromSelection = function(subalbum, clickedSelector) {
+	Album.prototype.removeSubalbumFromSelection = function(iSubalbum, clickedSelector) {
+		var subalbum = this.subalbums[iSubalbum];
+		var self = this;
 		return new Promise(
 			function(resolve_removeSubalbum) {
 				if (! subalbum.isSelected()) {
@@ -1461,9 +1465,10 @@
 					resolve_removeSubalbum();
 				} else {
 					// if (selectionAlbum.numsMediaInSubTree.imagesAndVideosTotal()) {
-					let getAlbumPromise = PhotoFloat.getAlbum(subalbum.cacheBase, null, {"getMedia": true, "getPositions": true});
-					getAlbumPromise.then(
-						function(subalbum) {
+					let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {getMedia: true, getPositions: true});
+					convertSubalbumPromise.then(
+						function(iSubalbum) {
+							var subalbum = self.subalbums[iSubalbum];
 							var index = selectionAlbum.subalbums.findIndex(x => x.cacheBase === subalbum.cacheBase);
 							selectionAlbum.subalbums.splice(index, 1);
 
@@ -2077,8 +2082,8 @@
 							let subalbumPromise = new Promise(
 								function(resolveSubalbumPromise) {
 									// let ithSubalbum = currentAlbum.subalbums[iSubalbum];
-									let convertSubalbumPromise = currentAlbum.convertSubalbum(iSubalbum, null, {"getMedia": true, "getPositions": false});
-									// let getAlbumPromise = PhotoFloat.getAlbum(ithSubalbum.cacheBase, null, {"getMedia": true, "getPositions": false});
+									let convertSubalbumPromise = currentAlbum.convertSubalbum(iSubalbum, null, {getMedia: true, getPositions: false});
+									// let getAlbumPromise = PhotoFloat.getAlbum(ithSubalbum, null, {getMedia: true, getPositions: false});
 									convertSubalbumPromise.then(
 										function(iSubalbum) {
 											let albumPath = currentAlbum.subalbums[iSubalbum].path;
@@ -2830,8 +2835,6 @@
 	Utilities.prototype.nothingIsSelected = Utilities.nothingIsSelected;
 	Utilities.prototype.somethingIsSearched = Utilities.somethingIsSearched;
 	Utilities.prototype.somethingIsInMapAlbum = Utilities.somethingIsInMapAlbum;
-	Utilities.prototype.addSubalbumToSelection = Utilities.addSubalbumToSelection;
-	Utilities.prototype.removeSubalbumFromSelection = Utilities.removeSubalbumFromSelection;
 	Utilities.prototype.initializeSelectionAlbum = Utilities.initializeSelectionAlbum;
 	Utilities.prototype.transformAltPlaceName = Utilities.transformAltPlaceName;
 	Utilities.prototype.arrayUnion = Utilities.arrayUnion;
