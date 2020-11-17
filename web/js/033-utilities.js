@@ -1390,10 +1390,11 @@
 					Utilities.initializeSelectionAlbum();
 					window.location.href = Utilities.upHash();
 				} else if (currentMedia === null) {
-					if (currentAlbum.isAlbumWithOneMedia())
+					if (currentAlbum.isAlbumWithOneMedia()) {
 						currentAlbum.prepareForShowing(0);
-					else
+					} else {
 						TopFunctions.showAlbum("refreshMedia");
+					}
 				} else {
 					let clickedMediaIndex = parseInt(clickedSelector.split('-').pop());
 					if (clickedSelector === singleMediaSelector || clickedMediaIndex === currentMediaIndex) {
