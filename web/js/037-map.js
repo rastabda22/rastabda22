@@ -158,8 +158,8 @@
 	};
 
 
-	MapFunctions.prototype.updatePopup = function(images) {
-		$(".leaflet-popup-content").html(images);
+	MapFunctions.prototype.updatePopup = function(imagesHtml) {
+		$(".leaflet-popup-content").html(imagesHtml);
 		f.setOptions();
 		MapFunctions.popup.setContent($(".leaflet-popup-content").html());
 		MapFunctions.calculatePopupSizes();
