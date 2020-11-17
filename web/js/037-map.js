@@ -292,7 +292,7 @@
 					if (imgData.mediaHash.split('/').pop() == cachedAlbum.media[iMedia].cacheBase) {
 						ev.stopPropagation();
 						ev.preventDefault();
-						TopFunctions.toggleSelectedMedia(cachedAlbum.media[iMedia], '#' + id);
+						cachedAlbum.media[iMedia].toggleSelectedMedia('#' + id);
 						break;
 					}
 				}

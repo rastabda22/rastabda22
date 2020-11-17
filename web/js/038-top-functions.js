@@ -747,16 +747,28 @@
 		isABrowsingModeChange = true;
 	};
 
-	TopFunctions.toggleSelectedMedia = function(singleMedia, clickedSelector) {
+	SingleMedia.prototype.toggleSelectedMedia = function(clickedSelector) {
 		if (selectionAlbum.isEmpty())
 			util.initializeSelectionAlbum();
-		if (singleMedia.isSelected()) {
-			singleMedia.removeFromSelection(clickedSelector);
+		if (this.isSelected()) {
+			this.removeFromSelection(clickedSelector);
+			let isPopup = $('.leaflet-popup').html() ? true : false;
+			let isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
+			if (Utilities.nothingIsSelected()) {
+				if (isPopup) {
+					// the popup is there: close it
+					$('.leaflet-popup-close-button')[0].click();
+				}
+				if (isMap || isPopup) {
+					// we are in a map: close it
+					$('.modal-close')[0].click();
+				}
+			}
 			f.updateMenu();
 		} else {
 			if (util.nothingIsSelected())
 				util.initializeSelectionAlbum();
-			singleMedia.addToSelection(clickedSelector);
+			this.addToSelection(clickedSelector);
 			f.updateMenu();
 		}
 	};
@@ -805,7 +817,7 @@
 					function(ev) {
 						ev.stopPropagation();
 						ev.preventDefault();
-						TopFunctions.toggleSelectedMedia(ev.data.media, ev.data.clickedSelector);
+						ev.data.media.toggleSelectedMedia(ev.data.clickedSelector);
 					}
 				);
 
@@ -1994,7 +2006,7 @@
 						function(ev) {
 							ev.stopPropagation();
 							ev.preventDefault();
-							TopFunctions.toggleSelectedMedia(ev.data.media, ev.data.clickedSelector);
+							ev.data.media.toggleSelectedMedia(ev.data.clickedSelector);
 						}
 					);
 					if (
