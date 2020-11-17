@@ -765,6 +765,8 @@
 				}
 			}
 			f.updateMenu();
+			if (currentAlbum.isSelection() && currentMedia === null && ! currentAlbum.isAlbumWithOneMedia())
+				TopFunctions.setTitle("album", null);
 		} else {
 			if (util.nothingIsSelected())
 				util.initializeSelectionAlbum();
