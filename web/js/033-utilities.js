@@ -17,32 +17,6 @@
 		);
 	}
 
-	Utilities.reduceAlbumtoSubalbum = function(album) {
-		var subalbumProperties = [
-			'cacheBase',
-			'date',
-			'name',
-			'numPositionsInTree',
-			'numsMediaInSubTree',
-			'numsProtectedMediaInSubTree',
-			'path',
-			'selectionAlbumName',
-			'selectionAlbumNameSorting',
-			'sizesOfAlbum',
-			'sizesOfSubTree',
-			'words'
-		];
-		var clonedAlbum = Utilities.cloneObject(album);
-		Object.keys(album).forEach(
-			function(key) {
-				if (subalbumProperties.indexOf(key) === -1) {
-					delete clonedAlbum[key];
-				}
-			}
-		);
-		return clonedAlbum;
-	};
-
 	Utilities.prototype.openInNewTab = function(hash) {
 		// albums is a list of objects {albumName: album}
 		var typeOfPackedAlbum, stringifiedPackedAlbum, albumName;
@@ -466,14 +440,7 @@
 	};
 
 	Utilities.cloneObject = function(object) {
-		var copy = Object.assign({}, object);
-		Object.keys(copy).forEach(
-			function(key) {
-				if (typeof copy[key] === "object")
-					copy[key] = Utilities.cloneObject(copy[key]);
-			}
-		);
-		return copy;
+		return Object.assign({}, object);
 	};
 
 	Utilities.prototype.arrayIntersect = function(a, b) {
@@ -2841,7 +2808,6 @@
 	Utilities.prototype.initializeSelectionAlbum = Utilities.initializeSelectionAlbum;
 	Utilities.prototype.transformAltPlaceName = Utilities.transformAltPlaceName;
 	Utilities.prototype.arrayUnion = Utilities.arrayUnion;
-	Utilities.prototype.cloneObject = Utilities.cloneObject;
 
 	window.Utilities = Utilities;
 }());

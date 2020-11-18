@@ -1544,7 +1544,7 @@
 
 												cache.putAlbum(theAlbum);
 
-												resultAlbum = util.cloneObject(theAlbum);
+												resultAlbum = theAlbum.clone();
 												// media in the album still has to be filtered according to search criteria
 												if (! Options.search_inside_words) {
 													// whole word

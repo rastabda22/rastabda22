@@ -92,6 +92,16 @@
 			if (! this.hasOwnProperty("parent"))
 				this.parent = album;
 		}
+
+		clone() {
+			return Utilities.cloneObject(this);
+		}
+
+		cloneAndDeleteParent() {
+			let clonedSingleMedia = this.clone();
+			delete clonedSingleMedia.parent;
+			return clonedSingleMedia;
+		}
 	}
 
 	class Media extends Array {
@@ -249,8 +259,34 @@
 			);
 		}
 
+		clone() {
+			return Utilities.cloneObject(this);
+		}
+
 		toSubalbum() {
-			return new Subalbum(Utilities.reduceAlbumtoSubalbum(this));
+			var subalbumProperties = [
+				'cacheBase',
+				'date',
+				'name',
+				'numPositionsInTree',
+				'numsMediaInSubTree',
+				'numsProtectedMediaInSubTree',
+				'path',
+				'selectionAlbumName',
+				'selectionAlbumNameSorting',
+				'sizesOfAlbum',
+				'sizesOfSubTree',
+				'words'
+			];
+			var clonedAlbum = this.clone();
+			Object.keys(this).forEach(
+				function(key) {
+					if (subalbumProperties.indexOf(key) === -1) {
+						delete clonedAlbum[key];
+					}
+				}
+			);
+			return new Subalbum(clonedAlbum);
 		}
 
 		toJson() {
@@ -276,7 +312,7 @@
 				'tags',
 				'title'
 			];
-			var clonedAlbum = Utilities.cloneObject(this);
+			var clonedAlbum = this.clone();
 			Object.keys(this).forEach(
 				function(key) {
 					if (albumProperties.indexOf(key) === -1) {
@@ -286,14 +322,12 @@
 			);
 			clonedAlbum.subalbums.forEach(
 				function(subalbum, index) {
-					clonedAlbum.subalbums[index] = Utilities.reduceAlbumtoSubalbum(subalbum);
+					clonedAlbum.subalbums[index] = subalbum.toSubalbum();
 				}
 			);
 			clonedAlbum.media.forEach(
 				function(singleMedia, index) {
-					let clonedSingleMedia = Utilities.cloneObject(singleMedia);
-					delete clonedSingleMedia.parent;
-					clonedAlbum.media[index] = clonedSingleMedia;
+					clonedAlbum.media[index] = singleMedia.cloneAndDeleteParent();
 				}
 			);
 			return JSON.stringify(clonedAlbum);
