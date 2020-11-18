@@ -16,7 +16,7 @@
 		var mediaParameter;
 		var folders, myShareText, myShareTextAdd;
 
-		if (! isMobile.any()) {
+		if (! env.isMobile.any()) {
 			$(".ssk-whatsapp").hide();
 		} else {
 			// with touchscreens luminosity on hover cannot be used
@@ -29,30 +29,30 @@
 		folders = location.pathname;
 		folders = folders.substring(0, folders.lastIndexOf('/'));
 		url += folders;
-		if (currentMedia === null || currentAlbum !== null && ! currentAlbum.subalbums.length && currentAlbum.numsMedia.imagesAndVideosTotal() == 1) {
+		if (env.currentMedia === null || env.currentAlbum !== null && ! env.currentAlbum.subalbums.length && env.currentAlbum.numsMedia.imagesAndVideosTotal() == 1) {
 			mediaParameter = util.pathJoin([
-				Options.server_cache_path,
-				Options.cache_album_subdir,
-				currentAlbum.cacheBase
+				env.options.server_cache_path,
+				env.options.cache_album_subdir,
+				env.currentAlbum.cacheBase
 				]) + ".jpg";
 		} else {
 			var reducedSizesIndex = 1;
-			if (Options.reduced_sizes.length == 1)
+			if (env.options.reduced_sizes.length == 1)
 				reducedSizesIndex = 0;
-			var prefix = util.removeFolderString(currentMedia.foldersCacheBase);
+			var prefix = util.removeFolderString(env.currentMedia.foldersCacheBase);
 			if (prefix)
-				prefix += Options.cache_folder_separator;
-			if (currentMedia.mimeType.indexOf("video/") === 0) {
+				prefix += env.options.cache_folder_separator;
+			if (env.currentMedia.mimeType.indexOf("video/") === 0) {
 				mediaParameter = util.pathJoin([
-					Options.server_cache_path,
-					currentMedia.cacheSubdir,
-				]) + prefix + currentMedia.cacheBase + Options.cache_folder_separator + "transcoded.mp4";
-			} else if (currentMedia.mimeType.indexOf("image/") === 0) {
+					env.options.server_cache_path,
+					env.currentMedia.cacheSubdir,
+				]) + prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + "transcoded.mp4";
+			} else if (env.currentMedia.mimeType.indexOf("image/") === 0) {
 				mediaParameter = util.pathJoin([
-					Options.server_cache_path,
-					currentMedia.cacheSubdir,
-					prefix + currentMedia.cacheBase
-				]) + Options.cache_folder_separator + Options.reduced_sizes[reducedSizesIndex] + ".jpg";
+					env.options.server_cache_path,
+					env.currentMedia.cacheSubdir,
+					prefix + env.currentMedia.cacheBase
+				]) + env.options.cache_folder_separator + env.options.reduced_sizes[reducedSizesIndex] + ".jpg";
 			}
 		}
 
@@ -63,8 +63,8 @@
 		if (hash)
 			myShareUrl += '#' + hash.substring(1);
 
-		myShareText = Options.page_title;
-		myShareTextAdd = currentAlbum.physicalPath;
+		myShareText = env.options.page_title;
+		myShareTextAdd = env.currentAlbum.physicalPath;
 		if (myShareTextAdd)
 			myShareText += ": " + myShareTextAdd.substring(myShareTextAdd.lastIndexOf('/') + 1);
 
@@ -94,14 +94,14 @@
 					function(theAlbum) {
 						var path;
 						var splittedPath = theAlbum.path.split('/');
-						if (splittedPath[0] === Options.folders_string) {
+						if (splittedPath[0] === env.options.folders_string) {
 							splittedPath[0] = "";
-						} else if (splittedPath[0] === Options.by_date_string) {
+						} else if (splittedPath[0] === env.options.by_date_string) {
 							splittedPath[0] = "(" + util._t("#by-date") + ")";
-						} else if (splittedPath[0] === Options.by_gps_string) {
+						} else if (splittedPath[0] === env.options.by_gps_string) {
 							splittedPath = theAlbum.ancestorsNames;
 							splittedPath[0] = "(" + util._t("#by-gps") + ")";
-						} else if (splittedPath[0] === Options.by_map_string) {
+						} else if (splittedPath[0] === env.options.by_map_string) {
 							splittedPath = ["(" + util._t("#by-map") + ")"];
 						}
 						path = splittedPath.join('/');
@@ -124,23 +124,23 @@
 		var isMapOrPopup = isMap || isPopup;
 
 		if (typeof thisAlbum === "undefined")
-			thisAlbum = currentAlbum;
+			thisAlbum = env.currentAlbum;
 		var isAlbumWithOneMedia = thisAlbum.isAlbumWithOneMedia();
-		var isSingleMedia = (currentMedia !== null || isAlbumWithOneMedia);
+		var isSingleMedia = (env.currentMedia !== null || isAlbumWithOneMedia);
 		var isAnyRootCacheBase = thisAlbum.isAnyRoot();
 		var nothingIsSelected = util.nothingIsSelected();
 
 		var hasGpsData, thisMedia;
 
 		if (isSingleMedia) {
-			if (currentMedia !== null)
-				thisMedia = currentMedia;
+			if (env.currentMedia !== null)
+				thisMedia = env.currentMedia;
 			else
 				thisMedia = thisAlbum.media[0];
 			hasGpsData = thisMedia.hasGpsData();
 		} else if (isAnyRootCacheBase) {
-			// hasGpsData = (Options.num_positions_in_tree > 0);
-			hasGpsData = (currentAlbum.numPositionsInTree > 0);
+			// hasGpsData = (env.options.num_positions_in_tree > 0);
+			hasGpsData = (env.currentAlbum.numPositionsInTree > 0);
 		} else {
 			hasGpsData = false;
 		}
@@ -226,12 +226,12 @@
 				TopFunctions.showBrowsingModeMessage("#folders-browsing");
 
 				if (isSingleMedia) {
-					window.location.href = hashBeginning + util.pathJoin([
+					window.location.href = env.hashBeginning + util.pathJoin([
 						thisMedia.foldersCacheBase,
 						thisMedia.cacheBase
 					]);
 				} else if (isAnyRootCacheBase) {
-					window.location.href = hashBeginning + encodeURIComponent(Options.folders_string);
+					window.location.href = env.hashBeginning + encodeURIComponent(env.options.folders_string);
 				}
 
 				return false;
@@ -244,13 +244,13 @@
 				TopFunctions.showBrowsingModeMessage("#by-date-browsing");
 
 				if (isSingleMedia) {
-					window.location.href = hashBeginning + util.pathJoin([
+					window.location.href = env.hashBeginning + util.pathJoin([
 						thisMedia.dayAlbumCacheBase,
 						thisMedia.foldersCacheBase,
 						thisMedia.cacheBase
 					]);
 				} else if (isAnyRootCacheBase) {
-					window.location.href = hashBeginning + encodeURIComponent(Options.by_date_string);
+					window.location.href = env.hashBeginning + encodeURIComponent(env.options.by_date_string);
 				}
 				return false;
 			}
@@ -262,13 +262,13 @@
 				TopFunctions.showBrowsingModeMessage("#by-gps-browsing");
 
 				if (isSingleMedia) {
-					window.location.href = hashBeginning + util.pathJoin([
+					window.location.href = env.hashBeginning + util.pathJoin([
 						thisMedia.gpsAlbumCacheBase,
 						thisMedia.foldersCacheBase,
 						thisMedia.cacheBase
 					]);
 				} else if (isAnyRootCacheBase) {
-					window.location.href = hashBeginning + encodeURIComponent(Options.by_gps_string);
+					window.location.href = env.hashBeginning + encodeURIComponent(env.options.by_gps_string);
 				}
 				return false;
 			}
@@ -279,9 +279,9 @@
 			function changeToByMapView() {
 				TopFunctions.showBrowsingModeMessage("#by-map-browsing");
 				if (isSingleMedia) {
-					window.location.href = phFl.encodeHash(mapAlbum.cacheBase, thisMedia);
+					window.location.href = phFl.encodeHash(env.mapAlbum.cacheBase, thisMedia);
 				} else if (isAnyRootCacheBase) {
-					window.location.href = phFl.encodeHash(mapAlbum.cacheBase, null);
+					window.location.href = phFl.encodeHash(env.mapAlbum.cacheBase, null);
 				}
 				return false;
 			}
@@ -295,12 +295,12 @@
 					// if (thisMedia.hasOwnProperty("searchHashes") && thisMedia.searchHashes.length)
 					var foundAlbum = thisMedia.isInFoundAlbum();
 					if (foundAlbum !== false) {
-						window.location.href = phFl.encodeHash(thisMedia.foldersCacheBase, thisMedia, foundAlbum.cacheBase, searchAlbum.cacheBase);
+						window.location.href = phFl.encodeHash(thisMedia.foldersCacheBase, thisMedia, foundAlbum.cacheBase, env.searchAlbum.cacheBase);
 					} else {
-						window.location.href = phFl.encodeHash(searchAlbum.cacheBase, thisMedia);
+						window.location.href = phFl.encodeHash(env.searchAlbum.cacheBase, thisMedia);
 					}
 				} else if (isAnyRootCacheBase) {
-					window.location.href = phFl.encodeHash(searchAlbum.cacheBase, null);
+					window.location.href = phFl.encodeHash(env.searchAlbum.cacheBase, null);
 				}
 				return false;
 			}
@@ -321,9 +321,9 @@
 				}
 
 				if (isSingleMedia) {
-					window.location.href = phFl.encodeHash(selectionAlbum.cacheBase, thisMedia);
+					window.location.href = phFl.encodeHash(env.selectionAlbum.cacheBase, thisMedia);
 				} else {
-					window.location.href = phFl.encodeHash(selectionAlbum.cacheBase, null);
+					window.location.href = phFl.encodeHash(env.selectionAlbum.cacheBase, null);
 				}
 				return false;
 			}
@@ -340,7 +340,7 @@
 			thisAlbum === null ||
 			$(".sub-menu:not(.hidden)").length
 			// thisAlbum !== null &&
-			// (thisAlbum.isSearch() || thisAlbum.cacheBase == Options.by_search_string)
+			// (thisAlbum.isSearch() || thisAlbum.cacheBase == env.options.by_search_string)
 			// ||
 			// $("ul#right-menu li#no-search-string").is(":visible") ||
 			// $("ul#right-menu li#no-results").is(":visible") ||
@@ -355,34 +355,34 @@
 
 			$("ul#right-menu li.search ul").removeClass("hidden");
 			// $("ul#right-menu li#refine-search").removeClass("hidden");
-			if (Options.search_inside_words)
+			if (env.options.search_inside_words)
 				$("ul#right-menu li#inside-words").addClass("selected");
 			else
 				$("ul#right-menu li#inside-words").removeClass("selected");
-			if (Options.search_any_word)
+			if (env.options.search_any_word)
 				$("ul#right-menu li#any-word").addClass("selected");
 			else
 				$("ul#right-menu li#any-word").removeClass("selected");
-			if (Options.search_case_sensitive)
+			if (env.options.search_case_sensitive)
 				$("ul#right-menu li#case-sensitive").addClass("selected");
 			else
 				$("ul#right-menu li#case-sensitive").removeClass("selected");
-			if (Options.search_accent_sensitive)
+			if (env.options.search_accent_sensitive)
 				$("ul#right-menu li#accent-sensitive").addClass("selected");
 			else
 				$("ul#right-menu li#accent-sensitive").removeClass("selected");
-			if (util.isAnyRootCacheBase(Options.cache_base_to_search_in) || isPopup) {
+			if (util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || isPopup) {
 				$("ul#right-menu li#album-search").addClass("dimmed").off("click");
 			} else {
 				$("ul#right-menu li#album-search").removeClass("dimmed").off("click").on('click', Functions.toggleCurrentAbumSearch);
-				let albumNamePromise = Functions.getAlbumNameFromAlbumHash(Options.cache_base_to_search_in);
+				let albumNamePromise = Functions.getAlbumNameFromAlbumHash(env.options.cache_base_to_search_in);
 				albumNamePromise.then(
 					function(path) {
 						$("#album-search").attr('title', util._t("#current-album-is") + '"' + path + '"');
 					}
 				);
 
-				if (Options.search_current_album)
+				if (env.options.search_current_album)
 					$("ul#right-menu li#album-search").addClass("selected");
 				else
 					$("ul#right-menu li#album-search").removeClass("selected");
@@ -410,7 +410,7 @@
 			$("ul#right-menu li.hide-title").addClass("hidden");
 		} else {
 			$("ul#right-menu li.hide-title").removeClass("hidden");
-			if (Options.hide_title)
+			if (env.options.hide_title)
 				$("ul#right-menu li.hide-title").addClass("selected");
 			else
 				$("ul#right-menu li.hide-title").removeClass("selected");
@@ -420,7 +420,7 @@
 			$("ul#right-menu li.hide-media-caption").addClass("hidden");
 		} else {
 			$("ul#right-menu li.hide-media-caption").removeClass("hidden");
-			if (Options.hide_caption)
+			if (env.options.hide_caption)
 				$("ul#right-menu li.hide-media-caption").addClass("selected");
 			else
 				$("ul#right-menu li.hide-media-caption").removeClass("selected");
@@ -428,39 +428,39 @@
 
 		if (
 			isMapOrPopup ||
-			currentMedia !== null ||
+			env.currentMedia !== null ||
 			isAlbumWithOneMedia ||
-			thisAlbum !== null && thisAlbum.subalbums.length === 0 && Options.hide_title
+			thisAlbum !== null && thisAlbum.subalbums.length === 0 && env.options.hide_title
 		) {
 			$("ul#right-menu li.media-count").addClass("hidden");
 		} else {
 			$("ul#right-menu li.media-count").removeClass("hidden");
-			if (Options.show_album_media_count)
+			if (env.options.show_album_media_count)
 				$("ul#right-menu li.media-count").addClass("selected");
 			else
 				$("ul#right-menu li.media-count").removeClass("selected");
 		}
 
 
-		if (isMap || isPopup && mapAlbum.media.length <= 1)
+		if (isMap || isPopup && env.mapAlbum.media.length <= 1)
 			$("ul#right-menu li.spaced").addClass("hidden");
 		else
 			$("ul#right-menu li.spaced").removeClass("hidden");
-		if (Options.spacing)
+		if (env.options.spacing)
 			$("ul#right-menu li.spaced").addClass("selected");
 		else
 			$("ul#right-menu li.spaced").removeClass("selected");
 
 		if (
 			isMapOrPopup ||
-			currentMedia !== null ||
+			env.currentMedia !== null ||
 			isAlbumWithOneMedia ||
 			thisAlbum !== null && thisAlbum.subalbums.length === 0
 		) {
 			$("ul#right-menu li.square-album-thumbnails").addClass("hidden");
 		} else {
 			$("ul#right-menu li.square-album-thumbnails").removeClass("hidden");
-			if (Options.album_thumb_type == "square")
+			if (env.options.album_thumb_type == "square")
 				$("ul#right-menu li.square-album-thumbnails").addClass("selected");
 			else
 				$("ul#right-menu li.square-album-thumbnails").removeClass("selected");
@@ -468,14 +468,14 @@
 
 		if (
 			isMapOrPopup ||
-			currentMedia !== null ||
+			env.currentMedia !== null ||
 			isAlbumWithOneMedia ||
 			thisAlbum !== null && thisAlbum.subalbums.length === 0
 		) {
 			$("ul#right-menu li.slide").addClass("hidden");
 		} else {
 			$("ul#right-menu li.slide").removeClass("hidden");
-			if (Options.albums_slide_style)
+			if (env.options.albums_slide_style)
 				$("ul#right-menu li.slide").addClass("selected");
 			else
 				$("ul#right-menu li.slide").removeClass("selected");
@@ -483,14 +483,14 @@
 
 		if (
 			isMapOrPopup ||
-			currentMedia !== null ||
+			env.currentMedia !== null ||
 			isAlbumWithOneMedia ||
 			thisAlbum !== null && (thisAlbum.subalbums.length === 0 || ! thisAlbum.isFolder())
 		) {
 			$("ul#right-menu li.album-names").addClass("hidden");
 		} else {
 			$("ul#right-menu li.album-names").removeClass("hidden");
-			if (Options.show_album_names_below_thumbs)
+			if (env.options.show_album_names_below_thumbs)
 				$("ul#right-menu li.album-names").addClass("selected");
 			else
 				$("ul#right-menu li.album-names").removeClass("selected");
@@ -500,7 +500,7 @@
 			$("ul#right-menu li.square-media-thumbnails").addClass("hidden");
 		else
 			$("ul#right-menu li.square-media-thumbnails").removeClass("hidden");
-		if (Options.media_thumb_type == "square")
+		if (env.options.media_thumb_type == "square")
 		 	$("ul#right-menu li.square-media-thumbnails").addClass("selected");
 		else
 			$("ul#right-menu li.square-media-thumbnails").removeClass("selected");
@@ -508,18 +508,18 @@
 		if (
 			isMap ||
 			! isMapOrPopup && (
-				currentMedia !== null ||
+				env.currentMedia !== null ||
 				isAlbumWithOneMedia ||
 				thisAlbum !== null && (
 					thisAlbum.numsMedia.imagesAndVideosTotal() === 0 ||
-					! thisAlbum.isFolder() && thisAlbum.numsMedia.imagesAndVideosTotal() > Options.big_virtual_folders_threshold
+					! thisAlbum.isFolder() && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
 				)
 			)
 		) {
 			$("ul#right-menu li.media-names").addClass("hidden");
 		} else {
 			$("ul#right-menu li.media-names").removeClass("hidden");
-			if (Options.show_media_names_below_thumbs)
+			if (env.options.show_media_names_below_thumbs)
 				$("ul#right-menu li.media-names").addClass("selected");
 			else
 				$("ul#right-menu li.media-names").removeClass("selected");
@@ -527,7 +527,7 @@
 
 		if (
 			isMapOrPopup ||
-			currentMedia === null && ! isAlbumWithOneMedia
+			env.currentMedia === null && ! isAlbumWithOneMedia
 			// ||
 			// thisAlbum !== null && thisAlbum.subalbums.length === 0
 		) {
@@ -535,7 +535,7 @@
 		} else {
 			$("ul#right-menu li.hide-bottom-thumbnails").removeClass("hidden");
 
-			if (Options.hide_bottom_thumbnails)
+			if (env.options.hide_bottom_thumbnails)
 				$("ul#right-menu li.hide-bottom-thumbnails").addClass("selected");
 			else
 				$("ul#right-menu li.hide-bottom-thumbnails").removeClass("selected");
@@ -560,13 +560,13 @@
 
 		if (
 			thisAlbum === null ||
-			thisAlbum.numsMedia.imagesAndVideosTotal() < Options.big_virtual_folders_threshold ||
+			thisAlbum.numsMedia.imagesAndVideosTotal() < env.options.big_virtual_folders_threshold ||
 			thisAlbum.isFolder()
 		) {
 			$("ul#right-menu #show-big-albums").addClass("hidden");
 		} else {
 			$("ul#right-menu #show-big-albums").removeClass("hidden");
-			if (Options.show_big_virtual_folders)
+			if (env.options.show_big_virtual_folders)
 			 	$("ul#right-menu #show-big-albums").addClass("selected");
 			else
 				$("ul#right-menu #show-big-albums").removeClass("selected");
@@ -575,8 +575,8 @@
 		////////////////// SORT //////////////////////////////
 
 		if (
-			! isMapOrPopup && currentMedia !== null ||
-			isPopup && mapAlbum.media.length <= 1
+			! isMapOrPopup && env.currentMedia !== null ||
+			isPopup && env.mapAlbum.media.length <= 1
 		) {
 			// showing a media or a map or a popup on the map, nothing to sort
 			$("#right-menu li.sort").addClass("hidden");
@@ -588,7 +588,7 @@
 				$("ul#right-menu li.album-sort").removeClass("hidden");
 			}
 
-			if (thisAlbum.numsMedia.imagesAndVideosTotal() <= 1 || thisAlbum.numsMedia.imagesAndVideosTotal() > Options.big_virtual_folders_threshold) {
+			if (thisAlbum.numsMedia.imagesAndVideosTotal() <= 1 || thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold) {
 				// no media or one media or too many media
 				$("ul#right-menu li.media-sort").addClass("hidden");
 			} else {
@@ -626,12 +626,12 @@
 		} else {
 			let menuItem = util._t(".select.go-to-selected");
 			menuItem += " (";
-			if (selectionAlbum.subalbums.length)
-				menuItem += selectionAlbum.subalbums.length + " " + util._t(".title-albums");
-			if (selectionAlbum.subalbums.length && selectionAlbum.media.length)
+			if (env.selectionAlbum.subalbums.length)
+				menuItem += env.selectionAlbum.subalbums.length + " " + util._t(".title-albums");
+			if (env.selectionAlbum.subalbums.length && env.selectionAlbum.media.length)
 				menuItem += ", ";
-			if (selectionAlbum.media.length)
-				menuItem += selectionAlbum.media.length + " " + util._t(".title-media");
+			if (env.selectionAlbum.media.length)
+				menuItem += env.selectionAlbum.media.length + " " + util._t(".title-media");
 			menuItem += ")";
 			$(".select.go-to-selected").html(menuItem);
 		}
@@ -654,7 +654,7 @@
 			$(".select.everything").addClass("selected");
 		}
 
-		if (! Options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > Options.big_virtual_folders_threshold) {
+		if (! env.options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold) {
 			$(".select.everything, .select.media").addClass("hidden");
 		}
 
@@ -664,8 +664,8 @@
 
 		if (
 			! thisAlbum.subalbums.length ||
-			! Options.show_big_virtual_folders && (
-				thisAlbum.numsMediaInSubTree.imagesAndVideosTotal() > Options.big_virtual_folders_threshold
+			! env.options.show_big_virtual_folders && (
+				thisAlbum.numsMediaInSubTree.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
 			)
 		) {
 			$(".select.everything-individual").addClass("hidden");
@@ -784,8 +784,8 @@
 		$(".select.global-reset:not(.hidden)").on(
 			"click",
 			function() {
-				selectionAlbum.removeAllMediaFromSelection();
-				let subalbumsPromise = selectionAlbum.removeAllSubalbumsFromSelection();
+				env.selectionAlbum.removeAllMediaFromSelection();
+				let subalbumsPromise = env.selectionAlbum.removeAllSubalbumsFromSelection();
 				subalbumsPromise.then(
 					function allSubalbumsRemoved() {
 						if (util.nothingIsSelected())
@@ -820,7 +820,7 @@
 		$(".download-album .sub-menu").addClass("hidden");
 		if (thisAlbum.isSearch() && ! thisAlbum.media.length && ! thisAlbum.subalbums.length) {
 			// download menu item remains hidden
-		} else if (currentMedia !== null || isAlbumWithOneMedia) {
+		} else if (env.currentMedia !== null || isAlbumWithOneMedia) {
 			$(".download-album .sub-menu").removeClass("hidden");
 			$(".download-album.expandable, .download-album.caption").removeClass("hidden");
 			$(".download-single-media").removeClass("hidden");
@@ -828,7 +828,7 @@
 			if (isAlbumWithOneMedia)
 				trueOriginalMediaPath = encodeURI(thisAlbum.media[0].trueOriginalMediaPath());
 			else
-				trueOriginalMediaPath = encodeURI(currentMedia.trueOriginalMediaPath());
+				trueOriginalMediaPath = encodeURI(env.currentMedia.trueOriginalMediaPath());
 			$(".download-single-media .download-link").attr("href", trueOriginalMediaPath).attr("download", "");
 		} else if (thisAlbum !== null) {
 			$(".download-album.expandable, .download-album.caption").removeClass("hidden");
@@ -871,8 +871,8 @@
 
 				if (treeSize >= bigZipSize) {
 					// propose to download the resized media
-					for (let iSize = 0; iSize < Options.reduced_sizes.length; iSize++) {
-						let reducedSize = Options.reduced_sizes[iSize];
+					for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
+						let reducedSize = env.options.reduced_sizes[iSize];
 						treeSize = thisAlbum.sizesOfSubTree[reducedSize].imagesAndVideosTotal();
 						if (treeSize < bigZipSize) {
 							$(".download-album.everything.all.sized").append(", " + reducedSize + " px: " + thisAlbum.numsMediaInSubTree.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(treeSize));
@@ -918,8 +918,8 @@
 
 					if (imagesSize >= bigZipSize) {
 						// propose to download the resized media
-						for (let iSize = 0; iSize < Options.reduced_sizes.length; iSize++) {
-							let reducedSize = Options.reduced_sizes[iSize];
+						for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
+							let reducedSize = env.options.reduced_sizes[iSize];
 							if (thisAlbum.sizesOfSubTree[reducedSize].images < bigZipSize) {
 								$(".download-album.everything.images.sized").append(", " + reducedSize + " px: " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].images));
 								$(".download-album.everything.images.sized").attr("size", reducedSize);
@@ -953,7 +953,7 @@
 					if (videosSize >= bigZipSize) {
 						// propose to download the resized video
 						// in thisAlbum.sizesOfSubTree[iSize] all the reduced sizes have the same value, corresponding to the transcoded videos
-						let reducedSize = Options.reduced_sizes[0];
+						let reducedSize = env.options.reduced_sizes[0];
 						if (thisAlbum.sizesOfSubTree[reducedSize].videos < bigZipSize) {
 							$(".download-album.everything.videos.sized").append(", " + util._t(".title-transcoded") + ": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].videos));
 							$(".download-album.everything.videos.sized").attr("size", reducedSize);
@@ -1006,8 +1006,8 @@
 
 				if (albumSize >= bigZipSize) {
 					// propose to download the resized media
-					for (let iSize = 0; iSize < Options.reduced_sizes.length; iSize++) {
-						let reducedSize = Options.reduced_sizes[iSize];
+					for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
+						let reducedSize = env.options.reduced_sizes[iSize];
 						albumSize = thisAlbum.sizesOfAlbum[reducedSize].images + thisAlbum.sizesOfAlbum[reducedSize].videos;
 						if (albumSize < bigZipSize) {
 							$(".download-album.media-only.all.sized").append(", " + reducedSize + " px: " + thisAlbum.numsMedia.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(albumSize));
@@ -1044,8 +1044,8 @@
 
 				if (imagesSize >= bigZipSize) {
 					// propose to download the resized media
-					for (let iSize = 0; iSize < Options.reduced_sizes.length; iSize++) {
-						let reducedSize = Options.reduced_sizes[iSize];
+					for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
+						let reducedSize = env.options.reduced_sizes[iSize];
 						if (thisAlbum.sizesOfAlbum[reducedSize].images < bigZipSize) {
 							$(".download-album.media-only.images.sized").append(", " + reducedSize + " px: " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reducedSize].images));
 							$(".download-album.media-only.images.sized").attr("size", reducedSize);
@@ -1081,8 +1081,8 @@
 
 				if (videosSize >= bigZipSize) {
 					// propose to download the resized media
-					for (let iSize = 0; iSize < Options.reduced_sizes.length; iSize++) {
-						let reducedSize = Options.reduced_sizes[iSize];
+					for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
+						let reducedSize = env.options.reduced_sizes[iSize];
 						if (thisAlbum.sizesOfAlbum[reducedSize].videos < bigZipSize) {
 							$(".download-album.media-only.videos.sized").append(", " + reducedSize + " px: " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reducedSize].videos));
 							$(".download-album.media-only.videos.sized").attr("size", reducedSize);
@@ -1099,7 +1099,7 @@
 		if (thisAlbum !== null) {
 			let numPasswords;
 			if (thisAlbum.isSearch())
-				numPasswords = cache.getAlbum(Options.by_search_string).numPasswords();
+				numPasswords = env.cache.getAlbum(env.options.by_search_string).numPasswords();
 			else
 				numPasswords = thisAlbum.numPasswords();
 
@@ -1145,7 +1145,7 @@
 	Functions.prototype.scrollToThumb = function() {
 		var media, thumb;
 
-		media = currentMedia;
+		media = env.currentMedia;
 		if (media === null) {
 			media = previousMedia;
 			if (media === null)
@@ -1155,13 +1155,13 @@
 			if (
 				this.title === util.pathJoin([media.albumName, media.name])
 				// this.title === util.pathJoin([media.albumName, media.name]) && (
-				// 	currentAlbum.isFolder() ||
-				// 	currentAlbum.cacheBase == Options.folders_string ||
-				// 	currentAlbum.isByDate() ||
-				// 	currentAlbum.isByGps() ||
-				// 	currentAlbum.isSearch() ||
-				// 	currentAlbum.isMap() ||
-				// 	currentAlbum.isSelection()
+				// 	env.currentAlbum.isFolder() ||
+				// 	env.currentAlbum.cacheBase == env.options.folders_string ||
+				// 	env.currentAlbum.isByDate() ||
+				// 	env.currentAlbum.isByGps() ||
+				// 	env.currentAlbum.isSearch() ||
+				// 	env.currentAlbum.isMap() ||
+				// 	env.currentAlbum.isSelection()
 				// )
 			) {
 				thumb = $(this);
@@ -1170,13 +1170,13 @@
 		});
 		if (typeof thumb === "undefined")
 			return;
-		if (currentMedia !== null) {
+		if (env.currentMedia !== null) {
 			var scroller = $("#album-view");
 			scroller.scrollLeft(thumb.parent().position().left + scroller.scrollLeft() - scroller.width() / 2 + thumb.width() / 2);
 		} else
 			$("html, body").scrollTop(thumb.offset().top - $(window).height() / 2 + thumb.height());
 
-		if (currentMedia !== null) {
+		if (env.currentMedia !== null) {
 			$(".thumb-container").removeClass("current-thumb");
 			thumb.parent().addClass("current-thumb");
 		}
@@ -1202,42 +1202,42 @@
 	};
 
 	Functions.prototype.setOptions = function() {
-		$("body").css("background-color", Options.background_color);
+		$("body").css("background-color", env.options.background_color);
 
-		$(".title").css("font-size", Options.title_font_size);
-		$(".title-anchor").css("color", Options.title_color);
+		$(".title").css("font-size", env.options.title_font_size);
+		$(".title-anchor").css("color", env.options.title_color);
 		$(".title-anchor").hover(function() {
 			//mouse over
-			$(this).css("color", Options.title_color_hover);
+			$(this).css("color", env.options.title_color_hover);
 		}, function() {
 			//mouse out
-			$(this).css("color", Options.title_color);
+			$(this).css("color", env.options.title_color);
 		});
-		$(".media-name").css("color", Options.title_image_name_color);
-		$(".thumb-and-caption-container").css("margin-right", Options.spacing.toString() + "px").css("margin-bottom", Options.spacing.toString() + "px");
+		$(".media-name").css("color", env.options.title_image_name_color);
+		$(".thumb-and-caption-container").css("margin-right", env.options.spacing.toString() + "px").css("margin-bottom", env.options.spacing.toString() + "px");
 
 		var isPopup = $('.leaflet-popup').html() ? true : false;
-		if (currentMedia !== null && ! isPopup || ! Options.show_media_names_below_thumbs)
+		if (env.currentMedia !== null && ! isPopup || ! env.options.show_media_names_below_thumbs)
 			$(".media-caption").addClass("hidden");
 		else
 			$(".media-caption").removeClass("hidden");
 
-		if (Options.show_album_media_count)
+		if (env.options.show_album_media_count)
 			$(".title-count").removeClass("hidden");
 		else
 			$(".title-count").addClass("hidden");
 
-		if (Options.hide_title)
+		if (env.options.hide_title)
 			$(".title").addClass("hidden-by-option");
 		else
 			$(".title").removeClass("hidden-by-option");
 
-		if (Options.hide_caption)
+		if (env.options.hide_caption)
 			$("#caption").addClass("hidden-by-option");
 		else
 			$("#caption").removeClass("hidden-by-option");
 
-		if (Options.hide_bottom_thumbnails && (currentMedia != null || currentAlbum.isAlbumWithOneMedia())) {
+		if (env.options.hide_bottom_thumbnails && (env.currentMedia != null || env.currentAlbum.isAlbumWithOneMedia())) {
 			$("#album-view").addClass("hidden-by-option");
 		} else {
 			$("#album-view").removeClass("hidden-by-option");
@@ -1361,11 +1361,11 @@
 	Functions.getOptions = function() {
 		return new Promise(
 			function(resolve_getOptions, reject_getOptions) {
-				if (Object.keys(Options).length > 0) {
+				if (Object.keys(env.options).length > 0) {
 					if (! util.isSearchHash()) {
 						// reset the return link from search
 						var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(location.hash);
-						Options.cache_base_to_search_in = phFl.cleanHash(albumHash);
+						env.options.cache_base_to_search_in = phFl.cleanHash(albumHash);
 					}
 					resolve_getOptions();
 				} else {
@@ -1379,111 +1379,111 @@
 							for (var key in data)
 								// if (data.hasOwnProperty(key) && key !== 'request_password_email')
 								if (data.hasOwnProperty(key))
-									Options[key] = data[key];
+									env.options[key] = data[key];
 							util.translate();
 							// server_cache_path actually is a constant: it cannot be passed as an option, because getOptions need to know it before reading the options
 							// options.json is in this directory
-							Options.server_cache_path = 'cache';
+							env.options.server_cache_path = 'cache';
 
-							maxSize = Options.reduced_sizes[Options.reduced_sizes.length - 1];
+							env.maxSize = env.options.reduced_sizes[env.options.reduced_sizes.length - 1];
 
 							// override according to user selections
 							var titleCookie = Functions.getBooleanCookie("hide_title");
 							if (titleCookie !== null)
-								Options.hide_title = titleCookie;
+								env.options.hide_title = titleCookie;
 
 							var captionCookie = Functions.getBooleanCookie("hide_caption");
 							if (captionCookie !== null)
-								Options.hide_caption = captionCookie;
+								env.options.hide_caption = captionCookie;
 
 							var bottomThumbnailsCookie = Functions.getBooleanCookie("hide_bottom_thumbnails");
 							if (bottomThumbnailsCookie !== null)
-								Options.hide_bottom_thumbnails = bottomThumbnailsCookie;
+								env.options.hide_bottom_thumbnails = bottomThumbnailsCookie;
 
 							var slideCookie = Functions.getBooleanCookie("albums_slide_style");
 							if (slideCookie !== null)
-								Options.albums_slide_style = slideCookie;
+								env.options.albums_slide_style = slideCookie;
 
-							if (Options.thumb_spacing)
-								Options.spacingToggle = Options.thumb_spacing;
+							if (env.options.thumb_spacing)
+								env.options.spacingToggle = env.options.thumb_spacing;
 							else
-								Options.spacingToggle = Options.media_thumb_size * 0.03;
+								env.options.spacingToggle = env.options.media_thumb_size * 0.03;
 
 							var spacingCookie = Functions.getNumberCookie("spacing");
 							if (spacingCookie !== null) {
-								Options.spacing = spacingCookie;
+								env.options.spacing = spacingCookie;
 							} else {
-								Options.spacing = Options.thumb_spacing;
+								env.options.spacing = env.options.thumb_spacing;
 							}
 
 							var showAlbumNamesCookie = Functions.getBooleanCookie("show_album_names_below_thumbs");
 							if (showAlbumNamesCookie !== null)
-								Options.show_album_names_below_thumbs = showAlbumNamesCookie;
+								env.options.show_album_names_below_thumbs = showAlbumNamesCookie;
 
 							var showMediaCountCookie = Functions.getBooleanCookie("show_album_media_count");
 							if (showMediaCountCookie !== null)
-								Options.show_album_media_count = showMediaCountCookie;
+								env.options.show_album_media_count = showMediaCountCookie;
 
 							var showMediaNamesCookie = Functions.getBooleanCookie("show_media_names_below_thumbs");
 							if (showMediaNamesCookie !== null)
-								Options.show_media_names_below_thumbs = showMediaNamesCookie;
+								env.options.show_media_names_below_thumbs = showMediaNamesCookie;
 
 							var squareAlbumsCookie = Functions.getCookie("album_thumb_type");
 							if (squareAlbumsCookie !== null)
-								Options.album_thumb_type = squareAlbumsCookie;
+								env.options.album_thumb_type = squareAlbumsCookie;
 
 							var squareMediaCookie = Functions.getCookie("media_thumb_type");
 							if (squareMediaCookie !== null)
-								Options.media_thumb_type = squareMediaCookie;
+								env.options.media_thumb_type = squareMediaCookie;
 
-							Options.search_inside_words = false;
+							env.options.search_inside_words = false;
 							var searchInsideWordsCookie = Functions.getBooleanCookie("search_inside_words");
 							if (searchInsideWordsCookie !== null)
-								Options.search_inside_words = searchInsideWordsCookie;
+								env.options.search_inside_words = searchInsideWordsCookie;
 
-							Options.search_any_word = false;
+							env.options.search_any_word = false;
 							var searchAnyWordCookie = Functions.getBooleanCookie("search_any_word");
 							if (searchAnyWordCookie !== null)
-								Options.search_any_word = searchAnyWordCookie;
+								env.options.search_any_word = searchAnyWordCookie;
 
-							Options.search_case_sensitive = false;
+							env.options.search_case_sensitive = false;
 							var searchCaseSensitiveCookie = Functions.getBooleanCookie("search_case_sensitive");
 							if (searchCaseSensitiveCookie !== null)
-								Options.search_case_sensitive = searchCaseSensitiveCookie;
+								env.options.search_case_sensitive = searchCaseSensitiveCookie;
 
-							Options.search_accent_sensitive = false;
+							env.options.search_accent_sensitive = false;
 							var searchAccentSensitiveCookie = Functions.getBooleanCookie("search_accent_sensitive");
 							if (searchAccentSensitiveCookie !== null)
-								Options.search_accent_sensitive = searchAccentSensitiveCookie;
+								env.options.search_accent_sensitive = searchAccentSensitiveCookie;
 
-							Options.search_current_album = true;
+							env.options.search_current_album = true;
 							var searchCurrentAlbumCookie = Functions.getBooleanCookie("search_current_album");
 							if (searchCurrentAlbumCookie !== null)
-								Options.search_current_album = searchCurrentAlbumCookie;
+								env.options.search_current_album = searchCurrentAlbumCookie;
 
-							Options.show_big_virtual_folders = false;
+							env.options.show_big_virtual_folders = false;
 							var showBigVirtualFoldersCookie = Functions.getBooleanCookie("show_big_virtual_folders");
 							if (showBigVirtualFoldersCookie !== null)
-								Options.show_big_virtual_folders = showBigVirtualFoldersCookie;
+								env.options.show_big_virtual_folders = showBigVirtualFoldersCookie;
 
-							// Options.search_refine = false;
+							// env.options.search_refine = false;
 							// var searchRefineCookie = Functions.getBooleanCookie("search_refine");
 							// if (searchRefineCookie !== null)
-							// 	Options.search_refine = searchRefineCookie;
+							// 	env.options.search_refine = searchRefineCookie;
 
-							if (! Options.hasOwnProperty('cache_base_to_search_in') || ! Options.cache_base_to_search_in)
-								Options.cache_base_to_search_in = Options.folders_string;
-							if (! Options.hasOwnProperty('saved_cache_base_to_search_in') || ! Options.saved_cache_base_to_search_in)
-								Options.saved_cache_base_to_search_in = Options.folders_string;
+							if (! env.options.hasOwnProperty('cache_base_to_search_in') || ! env.options.cache_base_to_search_in)
+								env.options.cache_base_to_search_in = env.options.folders_string;
+							if (! env.options.hasOwnProperty('saved_cache_base_to_search_in') || ! env.options.saved_cache_base_to_search_in)
+								env.options.saved_cache_base_to_search_in = env.options.folders_string;
 
-							Options.foldersStringWithTrailingSeparator = Options.folders_string + Options.cache_folder_separator;
-							Options.byDateStringWithTrailingSeparator = Options.by_date_string + Options.cache_folder_separator;
-							Options.byGpsStringWithTrailingSeparator = Options.by_gps_string + Options.cache_folder_separator;
-							Options.bySearchStringWithTrailingSeparator = Options.by_search_string + Options.cache_folder_separator;
-							Options.bySelectionStringWithTrailingSeparator = Options.by_selection_string + Options.cache_folder_separator;
-							Options.byMapStringWithTrailingSeparator = Options.by_map_string + Options.cache_folder_separator;
+							env.options.foldersStringWithTrailingSeparator = env.options.folders_string + env.options.cache_folder_separator;
+							env.options.byDateStringWithTrailingSeparator = env.options.by_date_string + env.options.cache_folder_separator;
+							env.options.byGpsStringWithTrailingSeparator = env.options.by_gps_string + env.options.cache_folder_separator;
+							env.options.bySearchStringWithTrailingSeparator = env.options.by_search_string + env.options.cache_folder_separator;
+							env.options.bySelectionStringWithTrailingSeparator = env.options.by_selection_string + env.options.cache_folder_separator;
+							env.options.byMapStringWithTrailingSeparator = env.options.by_map_string + env.options.cache_folder_separator;
 
-							if (Options.request_password_email) {
+							if (env.options.request_password_email) {
 								$("#request-password").on('click', util.showPasswordRequestForm);
 								$("#password-request-form").submit(
 									function() {
@@ -1515,15 +1515,13 @@
 								$("#request-password").hide();
 							}
 
-							cache = new Cache();
-
 							// WARNING: do not initialize the search root album, the app must read it from its json file!
 							util.initializeOrGetMapRootAlbum();
 							util.initializeSelectionRootAlbum();
 
-							mapAlbum = new Album();
-							selectionAlbum = new Album();
-							searchAlbum = new Album();
+							env.mapAlbum = new Album();
+							env.selectionAlbum = new Album();
+							env.searchAlbum = new Album();
 
 							resolve_getOptions();
 						},
@@ -1548,8 +1546,8 @@
 	};
 
 	Functions.prototype.toggleInsideWordsSearch = function() {
-		Options.search_inside_words = ! Options.search_inside_words;
-		Functions.setBooleanCookie("search_inside_words", Options.search_inside_words);
+		env.options.search_inside_words = ! env.options.search_inside_words;
+		Functions.setBooleanCookie("search_inside_words", env.options.search_inside_words);
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
@@ -1557,8 +1555,8 @@
 	};
 
 	Functions.prototype.toggleAnyWordSearch = function() {
-		Options.search_any_word = ! Options.search_any_word;
-		Functions.setBooleanCookie("search_any_word", Options.search_any_word);
+		env.options.search_any_word = ! env.options.search_any_word;
+		Functions.setBooleanCookie("search_any_word", env.options.search_any_word);
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
@@ -1566,8 +1564,8 @@
 	};
 
 	Functions.prototype.toggleCaseSensitiveSearch = function() {
-		Options.search_case_sensitive = ! Options.search_case_sensitive;
-		Functions.setBooleanCookie("search_case_sensitive", Options.search_case_sensitive);
+		env.options.search_case_sensitive = ! env.options.search_case_sensitive;
+		Functions.setBooleanCookie("search_case_sensitive", env.options.search_case_sensitive);
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
@@ -1575,8 +1573,8 @@
 
 	};
 	Functions.prototype.toggleAccentSensitiveSearch = function() {
-		Options.search_accent_sensitive = ! Options.search_accent_sensitive;
-		Functions.setBooleanCookie("search_accent_sensitive", Options.search_accent_sensitive);
+		env.options.search_accent_sensitive = ! env.options.search_accent_sensitive;
+		Functions.setBooleanCookie("search_accent_sensitive", env.options.search_accent_sensitive);
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
@@ -1584,8 +1582,8 @@
 	};
 
 	Functions.toggleCurrentAbumSearch = function() {
-		Options.search_current_album = ! Options.search_current_album;
-		Functions.setBooleanCookie("search_current_album", Options.search_current_album);
+		env.options.search_current_album = ! env.options.search_current_album;
+		Functions.setBooleanCookie("search_current_album", env.options.search_current_album);
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();

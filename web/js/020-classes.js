@@ -1,6 +1,74 @@
 /* jshint esversion: 6 */
 (function() {
 
+	class Env {
+		constructor() {
+			this.fullScreenStatus = false;
+			this.currentAlbum = null;
+			this.currentMedia = null;
+			this.currentMediaIndex = -1;
+			this.previousAlbum = null;
+			this.previousMedia = null;
+			this.nextMedia = null;
+			this.prevMedia = null;
+			this.isABrowsingModeChange = false;
+			this.windowWidth = $(window).outerWidth();
+			this.windowHeight = $(window).outerHeight();
+			this.fromEscKey = false;
+			this.firstEscKey = true;
+			this.mapRefreshType = "none";
+			this.selectorClickedToOpenTheMap = false;
+			this.popupRefreshType = "previousAlbum";
+			// destHash = null;
+			// destMedia = null;
+			// destAlbum = null;
+			this.hashBeginning = "#!/";
+			// var nextLink = "", prevLink = "";
+			this.mediaLink = "";
+			// scrollbarWidth;
+			// contextMenu = false;
+
+			// initialSizes = {};
+			// initialSizes[0] = new ImagesAndVideos();
+			this.positionMarker = "<marker>position</marker>";
+
+			this.options = {};
+			this.cache = new Cache();
+			var self = this;
+			this.isMobile = {
+				Android: function() {
+					return navigator.userAgent.match(/Android/i);
+				},
+				BlackBerry: function() {
+					return navigator.userAgent.match(/BlackBerry/i);
+				},
+				iOS: function() {
+					return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+				},
+				Opera: function() {
+					return navigator.userAgent.match(/Opera Mini/i);
+				},
+				Windows: function() {
+					return navigator.userAgent.match(/IEMobile/i);
+				},
+				any: function() {
+					return (self.isMobile.Android() || self.isMobile.BlackBerry() || self.isMobile.iOS() || self.isMobile.Opera() || self.isMobile.Windows());
+				}
+			};
+			// this variable permits to take into account the real mobile device pixels when deciding the size of reduced size image which is going to be loaded
+			this.devicePixelRatio = 1;
+			if (this.isMobile.any())
+				this.devicePixelRatio =  window.devicePixelRatio || 1;
+			else
+				this.devicePixelRatio = 1;
+
+			this.maxSize = 0;
+			this.language = "en";
+			// var nextLink = "", prevLink = "";
+		}
+	}
+
+
 	class ImagesAndVideos {
 		constructor(object) {
 			if (object === undefined) {
@@ -45,8 +113,8 @@
 		constructor(object) {
 			if (object === undefined) {
 				this[0] = new ImagesAndVideos();
-				for (let iSize = 0; iSize < Options.reduced_sizes.length; iSize ++) {
-					this[Options.reduced_sizes[iSize]] = new ImagesAndVideos();
+				for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize ++) {
+					this[env.options.reduced_sizes[iSize]] = new ImagesAndVideos();
 				}
 			} else {
 				Object.keys(object).forEach(
@@ -115,7 +183,7 @@
 		getAndPutIntoCache() {
 			this.forEach(
 				function(singleMedia, index, media) {
-					var singleMediaFromCache = cache.getSingleMedia(singleMedia);
+					var singleMediaFromCache = env.cache.getSingleMedia(singleMedia);
 					if (singleMediaFromCache !== false) {
 						media[index] = singleMediaFromCache;
 					}
@@ -192,9 +260,9 @@
 				this.positionsAndMediaInTree = new PositionsAndMedia([]);
 				this.numPositionsInTree = 0;
 				this.numsProtectedMediaInSubTree = new NumsProtected();
-				if (cacheBase.split(Options.cache_folder_separator).length === 1)
+				if (cacheBase.split(env.options.cache_folder_separator).length === 1)
 					this.ancestorsCacheBase = [cacheBase];
-				// this.path = cacheBase.replace(Options.cache_folder_separator, "/");
+				// this.path = cacheBase.replace(env.options.cache_folder_separator, "/");
 				this.physicalPath = this.path;
 				this.empty = false;
 				if (Utilities.isMapCacheBase(cacheBase)) {
@@ -242,7 +310,7 @@
 					this.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
 				}
 				if (this.codesComplexCombination === undefined)
-					cache.putAlbum(this);
+					env.cache.putAlbum(this);
 			}
 		}
 
@@ -457,7 +525,7 @@
 	}
 
 
-	window.Cache = Cache;
+	window.Env = Env;
 	window.Album = Album;
 	window.Subalbum = Subalbum;
 	window.Subalbums = Subalbums;
