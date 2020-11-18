@@ -1264,7 +1264,7 @@
 			function(resolve_parseHash, reject_parseHash) {
 				var removedStopWords = [];
 				var searchWordsFromUser = [], searchWordsFromUserNormalized = [], searchWordsFromUserNormalizedAccordingToOptions = [];
-				var albumHashToGet, albumHashes = [], wordSubalbums = [];
+				var albumHashToGet, albumHashes = [], wordSubalbums = new Subalbums([]);
 				var [albumHash, mediaHash, mediaFolderHash] = PhotoFloat.decodeHash(hash);
 				var indexWords, indexAlbums, wordsWithOptionsString;
 				// this vars are defined here and not at the beginning of the file because the options must have been read
@@ -1425,7 +1425,7 @@
 
 					for (indexMedia = 0; indexMedia < searchAlbum.media.length; indexMedia ++) {
 						// add the parent to the media
-						searchAlbum.media[indexMedia].parent = searchAlbum;
+						searchAlbum.media[indexMedia].addParent(searchAlbum);
 						if (searchAlbum.media[indexMedia].hasGpsData())
 							// add the media position
 							searchAlbum.positionsAndMediaInTree.addSingleMediaToPositionsAndMedia(searchAlbum.media[indexMedia]);
@@ -1443,7 +1443,7 @@
 
 							// the subalbum could still have no positionsAndMediaInTree array, get it
 							if (! searchAlbum.subalbums[indexSubalbums].hasOwnProperty("positionsAndMediaInTree"))
-								searchAlbum.subalbums[indexSubalbums].positionsAndMediaInTree = [];
+								searchAlbum.subalbums[indexSubalbums].positionsAndMediaInTree = new PositionsAndMedia([]);
 								searchAlbum.subalbums[indexSubalbums].numPositionsInTree = 0;
 						}
 					}
@@ -1469,8 +1469,8 @@
 					promise.then(
 						function(bySearchRootAlbum) {
 							var lastIndex, i, j, wordHashes, numSearchAlbumsReady = 0, numSubAlbumsToGet = 0, normalizedWords;
-							var searchResultsMedia = [];
-							var searchResultsSubalbums = [];
+							var searchResultsMedia = new Media([]);
+							var searchResultsSubalbums = new Subalbums([]);
 
 							// searchAlbum.ancestorsCacheBase = bySearchRootAlbum.ancestorsCacheBase.slice();
 							// searchAlbum.ancestorsCacheBase.push(wordsWithOptionsString);
@@ -1533,14 +1533,14 @@
 								util.initializeSearchAlbumEnd();
 								searchAlbum.numsProtectedMediaInSubTree = util.sumNumsProtectedMediaOfArray(wordSubalbums);
 								for (indexWords = 0; indexWords <= lastIndex; indexWords ++) {
-									searchResultsMedia[indexWords] = [];
-									searchResultsSubalbums[indexWords] = [];
+									searchResultsMedia[indexWords] = new Media([]);
+									searchResultsSubalbums[indexWords] = new Subalbums([]);
 									for (indexAlbums = 0; indexAlbums < albumHashes[indexWords].length; indexAlbums ++) {
 										let thisIndexWords = indexWords, thisIndexAlbums = indexAlbums;
 										var promise = PhotoFloat.getAlbum(albumHashes[thisIndexWords][thisIndexAlbums], reject_parseHash, {getMedia: true, getPositions: true});
 										promise.then(
 											function(theAlbum) {
-												var matchingMedia = [], matchingSubalbums = [], match, indexMedia, indexSubalbums, indexWordsLeft, resultAlbum, indexWords1, ithMedia, ithSubalbum;
+												var matchingMedia = new Media([]), matchingSubalbums = new Subalbums([]), match, indexMedia, indexSubalbums, indexWordsLeft, resultAlbum, indexWords1, ithMedia, ithSubalbum;
 
 												cache.putAlbum(theAlbum);
 
@@ -1665,7 +1665,7 @@
 													if (lastIndex != searchWordsFromUser.length - 1) {
 														// we still have to filter out the media that do not match the words after the first
 														// we are in all words search mode
-														matchingMedia = [];
+														matchingMedia = new Media([]);
 														for (indexMedia = 0; indexMedia < searchAlbum.media.length; indexMedia ++) {
 															match = true;
 															if (! Options.search_inside_words) {
@@ -1704,7 +1704,7 @@
 														// json files have subalbums and media sorted by date not reversed
 														searchAlbum.media.sortByDate();
 
-														matchingSubalbums = [];
+														matchingSubalbums = new Subalbums([]);
 														for (indexSubalbums = 0; indexSubalbums < searchAlbum.subalbums.length; indexSubalbums ++) {
 															match = true;
 															if (! Options.search_inside_words) {
