@@ -1512,13 +1512,13 @@
 		return this !== null && ! this.subalbums.length && this.numsMedia.imagesAndVideosTotal() == 1;
 	};
 
-	Utilities.chooseReducedPhoto = function(media, container, fullScreenStatus) {
+	SingleMedia.prototype.chooseReducedPhoto = function(container, fullScreenStatus) {
 		var chosenMedia, reducedWidth, reducedHeight;
-		var mediaWidth = media.metadata.size[0], mediaHeight = media.metadata.size[1];
+		var mediaWidth = this.metadata.size[0], mediaHeight = this.metadata.size[1];
 		var mediaSize = Math.max(mediaWidth, mediaHeight);
 		var mediaRatio = mediaWidth / mediaHeight, containerRatio;
 
-		chosenMedia = media.originalMediaPath();
+		chosenMedia = this.originalMediaPath();
 		maxSize = 0;
 
 		if (container === null) {
@@ -1556,7 +1556,7 @@
 					)
 						break;
 				}
-				chosenMedia = media.mediaPath(Options.reduced_sizes[i]);
+				chosenMedia = this.mediaPath(Options.reduced_sizes[i]);
 				maxSize = Options.reduced_sizes[i];
 			}
 		}
@@ -1580,7 +1580,7 @@
 			else
 				container = $(".media-box#" + id + " .media-box-inner");
 
-			mediaSrc = Utilities.chooseReducedPhoto(this, container, fullScreenStatus);
+			mediaSrc = this.chooseReducedPhoto(container, fullScreenStatus);
 		}
 
 		return mediaSrc;
@@ -1722,7 +1722,7 @@
 			else
 				container = $(".media-box#" + id + " .media-box-inner");
 
-			mediaSrc = Utilities.chooseReducedPhoto(this, container, fullScreenStatus);
+			mediaSrc = this.chooseReducedPhoto(container, fullScreenStatus);
 
 			if (maxSize) {
 				// correct phisical width and height according to reduction sizes
@@ -1907,8 +1907,8 @@
 				containerHeight = heightForMedia;
 				containerRatio = containerWidth / containerHeight;
 
-				if (media.mimeType.indexOf("image") === 0) {
-					photoSrc = Utilities.chooseReducedPhoto(media, container, fullScreenStatus);
+				if (singleMedia.mimeType.indexOf("image") === 0) {
+					photoSrc = singleMedia.chooseReducedPhoto(container, fullScreenStatus);
 					previousSrc = mediaElement.attr("src");
 
 					if (encodeURI(photoSrc) != previousSrc && event.data.currentZoom === event.data.initialZoom) {
@@ -2795,7 +2795,6 @@
 
 	/* make static methods callable as member functions */
 	// Utilities.prototype.convertComplexCombinationToCodesComplexCombination = Utilities.convertComplexCombinationToCodesComplexCombination;
-	Utilities.prototype.chooseReducedPhoto = Utilities.chooseReducedPhoto;
 	Utilities.prototype.isFolderCacheBase = Utilities.isFolderCacheBase;
 	Utilities.prototype.pathJoin = Utilities.pathJoin;
 	Utilities.prototype.setLinksVisibility = Utilities.setLinksVisibility;
