@@ -39,7 +39,7 @@
 			var reducedSizesIndex = 1;
 			if (Options.reduced_sizes.length == 1)
 				reducedSizesIndex = 0;
-			var prefix = util.removeFolderMarker(currentMedia.foldersCacheBase);
+			var prefix = util.removeFolderString(currentMedia.foldersCacheBase);
 			if (prefix)
 				prefix += Options.cache_folder_separator;
 			if (currentMedia.mimeType.indexOf("video/") === 0) {

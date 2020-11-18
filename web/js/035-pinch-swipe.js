@@ -209,7 +209,7 @@
 			event.data = {};
 			event.data.resize = true;
 			event.data.id = "center";
-			event.data.media = currentMedia;
+			event.data.singleMedia = currentMedia;
 			event.data.currentZoom = currentZoom;
 			event.data.initialZoom = initialZoom;
 
@@ -323,7 +323,7 @@
 			var event = {data: {}};
 			event.data.resize = true;
 			event.data.id = "center";
-			event.data.media = currentMedia;
+			event.data.singleMedia = currentMedia;
 			event.data.currentZoom = currentZoom;
 			event.data.initialZoom = initialZoom;
 			pastMediaWidthOnScreen = $(mediaSelector)[0].width;

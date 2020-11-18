@@ -848,7 +848,7 @@
 						event.data.resize = true;
 
 						event.data.id = "center";
-						event.data.media = singleMedia;
+						event.data.singleMedia = singleMedia;
 						event.data.currentZoom = pS.getCurrentZoom();
 						event.data.initialZoom = pS.getInitialZoom();
 						let scaleMediaPromise = util.scaleMedia(event);
@@ -865,11 +865,11 @@
 
 						if (album.numsMedia.imagesAndVideosTotal() > 1) {
 							event.data.id = "left";
-							event.data.media = prevMedia;
+							event.data.singleMedia = prevMedia;
 							util.scaleMedia(event);
 
 							event.data.id = "right";
-							event.data.media = nextMedia;
+							event.data.singleMedia = nextMedia;
 							util.scaleMedia(event);
 						}
 
@@ -1051,7 +1051,7 @@
 				loadEvent,
 				{
 					id: id,
-					media: singleMedia,
+					singleMedia: singleMedia,
 					resize: false,
 				},
 				function (event) {

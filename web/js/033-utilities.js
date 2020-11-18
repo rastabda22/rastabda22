@@ -910,8 +910,8 @@
 		return name;
 	};
 
-	Utilities.isFolderCacheBase = function(string) {
-		return string == Options.folders_string || string.indexOf(Options.foldersStringWithTrailingSeparator) === 0;
+	Utilities.isFolderCacheBase = function(cacheBase) {
+		return cacheBase == Options.folders_string || cacheBase.indexOf(Options.foldersStringWithTrailingSeparator) === 0;
 	};
 
 	Album.prototype.isFolder = function() {
@@ -922,8 +922,8 @@
 		return Utilities.isFolderCacheBase(this.cacheBase);
 	};
 
-	Utilities.isByDateCacheBase = function(string) {
-		return string == Options.by_date_string || string.indexOf(Options.byDateStringWithTrailingSeparator) === 0;
+	Utilities.isByDateCacheBase = function(cacheBase) {
+		return cacheBase == Options.by_date_string || cacheBase.indexOf(Options.byDateStringWithTrailingSeparator) === 0;
 	};
 
 	Album.prototype.isByDate = function() {
@@ -934,12 +934,12 @@
 		return Utilities.isByDateCacheBase(this.cacheBase);
 	};
 
-	Utilities.isByGpsCacheBase = function(string) {
-		return string == Options.by_gps_string || string.indexOf(Options.byGpsStringWithTrailingSeparator) === 0;
+	Utilities.isByGpsCacheBase = function(cacheBase) {
+		return cacheBase == Options.by_gps_string || cacheBase.indexOf(Options.byGpsStringWithTrailingSeparator) === 0;
 	};
 
-	Utilities.isSearchCacheBase = function(string) {
-		return string.indexOf(Options.bySearchStringWithTrailingSeparator) === 0;
+	Utilities.isSearchCacheBase = function(cacheBase) {
+		return cacheBase.indexOf(Options.bySearchStringWithTrailingSeparator) === 0;
 	};
 
 	Album.prototype.isByGps = function() {
@@ -958,8 +958,8 @@
 		return Utilities.isSearchCacheBase(this.cacheBase);
 	};
 
-	Utilities.isSelectionCacheBase = function(string) {
-		return string.indexOf(Options.bySelectionStringWithTrailingSeparator) === 0;
+	Utilities.isSelectionCacheBase = function(cacheBase) {
+		return cacheBase.indexOf(Options.bySelectionStringWithTrailingSeparator) === 0;
 	};
 
 	Album.prototype.isSelection = function() {
@@ -970,8 +970,8 @@
 		return Utilities.isSelectionCacheBase(this.cacheBase);
 	};
 
-	Utilities.isMapCacheBase = function(string) {
-		return string.indexOf(Options.byMapStringWithTrailingSeparator) === 0;
+	Utilities.isMapCacheBase = function(cacheBase) {
+		return cacheBase.indexOf(Options.byMapStringWithTrailingSeparator) === 0;
 	};
 
 	Album.prototype.isMap = function() {
@@ -1073,7 +1073,7 @@
 				return thumbnailWidth + 2 * buttonBorder;
 	};
 
-	Utilities.prototype.removeFolderMarker = function (cacheBase) {
+	Utilities.prototype.removeFolderString = function (cacheBase) {
 		if (this.isFolderCacheBase(cacheBase)) {
 			cacheBase = cacheBase.substring(Options.folders_string.length);
 			if (cacheBase.length > 0)
@@ -1859,7 +1859,7 @@
 		// and centers vertically
 		return new Promise(
 			function(resolve_scaleMedia) {
-				var media = event.data.media, mediaElement, container, photoSrc, previousSrc;
+				var singleMedia = event.data.singleMedia, mediaElement, container, photoSrc, previousSrc;
 				var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth(), containerRatio;
 				var mediaBarBottom = 0;
 				var mediaWidth, mediaHeight, attrWidth, attrHeight;
@@ -1888,13 +1888,13 @@
 				$(".media-box .media-box-inner").css("height", heightForMedia);
 				$(".media-box").show();
 
-				if (media.mimeType.indexOf("image") === 0)
+				if (singleMedia.mimeType.indexOf("image") === 0)
 					mediaElement = $(".media-box#" + id + " .media-box-inner img");
-				else if (media.mimeType.indexOf("video") === 0)
+				else if (singleMedia.mimeType.indexOf("video") === 0)
 					mediaElement = $(".media-box#" + id + " .media-box-inner video");
 
-				mediaWidth = media.metadata.size[0];
-				mediaHeight = media.metadata.size[1];
+				mediaWidth = singleMedia.metadata.size[0];
+				mediaHeight = singleMedia.metadata.size[1];
 				attrWidth = mediaWidth;
 				attrHeight = mediaHeight;
 
