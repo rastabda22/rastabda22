@@ -1110,7 +1110,7 @@
 			}
 
 			if (
-				(album.isByGps() || album.isByDate()) &&
+				(album.isTransversal()) &&
 				album.subalbums.length > 0
 			) {
 				// do not get the random media from the year/country nor the month/state albums
@@ -1874,10 +1874,7 @@
 				return null;
 			}
 		}
-		if (
-			this.isSearch()
-			// && (media === null && ! y.isAlbumWithOneMedia())
-		) {
+		if (this.isSearch()) {
 			$("ul#right-menu").addClass("expand");
 			util.focusSearchField();
 		}

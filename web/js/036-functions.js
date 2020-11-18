@@ -128,7 +128,6 @@
 		var isAlbumWithOneMedia = thisAlbum.isAlbumWithOneMedia();
 		var isSingleMedia = (currentMedia !== null || isAlbumWithOneMedia);
 		var isAnyRootCacheBase = thisAlbum.isAnyRoot();
-		var isSelectionCacheBase = thisAlbum.isSelection();
 		var nothingIsSelected = util.nothingIsSelected();
 
 		var hasGpsData, thisMedia;
@@ -214,7 +213,7 @@
 				savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash)
 			) {
 				$("#by-search-view").removeClass("hidden").addClass("selected");
-			} else if (isSelectionCacheBase) {
+			} else if (thisAlbum.isSelection()) {
 				$("#by-selection-view").removeClass("hidden").addClass("selected");
 			}
 		}
@@ -232,7 +231,6 @@
 						thisMedia.cacheBase
 					]);
 				} else if (isAnyRootCacheBase) {
-				// } else if (isAnyRootCacheBase || isSelectionCacheBase) {
 					window.location.href = hashBeginning + encodeURIComponent(Options.folders_string);
 				}
 
@@ -252,7 +250,6 @@
 						thisMedia.cacheBase
 					]);
 				} else if (isAnyRootCacheBase) {
-				// } else if (isAnyRootCacheBase || isSelectionCacheBase) {
 					window.location.href = hashBeginning + encodeURIComponent(Options.by_date_string);
 				}
 				return false;
@@ -271,7 +268,6 @@
 						thisMedia.cacheBase
 					]);
 				} else if (isAnyRootCacheBase) {
-				// } else if (isAnyRootCacheBase || isSelectionCacheBase) {
 					window.location.href = hashBeginning + encodeURIComponent(Options.by_gps_string);
 				}
 				return false;
@@ -285,7 +281,6 @@
 				if (isSingleMedia) {
 					window.location.href = phFl.encodeHash(mapAlbum.cacheBase, thisMedia);
 				} else if (isAnyRootCacheBase) {
-				// } else if (isAnyRootCacheBase || isSelectionCacheBase) {
 					window.location.href = phFl.encodeHash(mapAlbum.cacheBase, null);
 				}
 				return false;
@@ -840,7 +835,7 @@
 
 			let showDownloadEverything = false;
 
-			if (thisAlbum.subalbums.length && ! thisAlbum.isByDate() && ! thisAlbum.isByGps()) {
+			if (thisAlbum.subalbums.length && ! thisAlbum.isTransversal()) {
 				$(".download-album.everything.all.full").removeClass("hidden");
 				// reset the html
 				$(".download-album.everything.all").html(util._t(".download-album.everything.all"));
@@ -1158,15 +1153,16 @@
 		}
 		$("#thumbs img.thumbnail").each(function() {
 			if (
-				this.title === util.pathJoin([media.albumName, media.name]) && (
-					currentAlbum.isFolder() ||
-					currentAlbum.cacheBase == Options.folders_string ||
-					currentAlbum.isByDate() ||
-					currentAlbum.isByGps() ||
-					currentAlbum.isSearch() ||
-					currentAlbum.isSelection() ||
-					currentAlbum.isMap()
-				)
+				this.title === util.pathJoin([media.albumName, media.name])
+				// this.title === util.pathJoin([media.albumName, media.name]) && (
+				// 	currentAlbum.isFolder() ||
+				// 	currentAlbum.cacheBase == Options.folders_string ||
+				// 	currentAlbum.isByDate() ||
+				// 	currentAlbum.isByGps() ||
+				// 	currentAlbum.isSearch() ||
+				// 	currentAlbum.isMap() ||
+				// 	currentAlbum.isSelection()
+				// )
 			) {
 				thumb = $(this);
 				return false;
