@@ -90,7 +90,7 @@
 				selectSrc = 'img/checkbox-checked-48px.png';
 			}
 			let selectBoxHtml =
-				"<a id='media-select-box-" + mediaIndex + "'>" +
+				"<a id='map-media-select-box-" + mediaIndex + "'>" +
 					"<img " +
 						"class='select-box' " +
 						"title='" + util.escapeSingleQuotes(util._t("#select-single-media")) + "' " +
