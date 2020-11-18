@@ -255,7 +255,7 @@
 			var wasASubalbum = this.subalbums[subalbumIndex] instanceof Subalbum;
 			return new Promise(
 				function(resolve_convertIntoAlbum) {
-					let promise = PhotoFloat.getAlbum(self.subalbums[subalbumIndex].cacheBase, error, {getMedia: false, getPositions: false});
+					let promise = PhotoFloat.getAlbum(self.subalbums[subalbumIndex].cacheBase, error, {getMedia: getMedia, getPositions: getPositions});
 					promise.then(
 						function(convertedSubalbum) {
 							if (wasASubalbum) {
