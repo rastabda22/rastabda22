@@ -23,10 +23,10 @@
 			function(resolve_getStopWords) {
 				if (! Options.search_inside_words && Options.use_stop_words) {
 					// before getting the file check whether it's in the cache
-					if (PhotoFloat.cache.hasOwnProperty("stopWords") && PhotoFloat.cache.stopWords.length) {
+					if (cache.hasOwnProperty("stopWords") && cache.stopWords.length) {
 						resolve_getStopWords();
 					} else {
-						PhotoFloat.cache.stopWords = [];
+						cache.stopWords = [];
 						// get the file
 						var stopWordsFile = util.pathJoin([Options.server_cache_path, 'stopwords.json']);
 						var ajaxOptions = {
@@ -34,7 +34,7 @@
 							dataType: "json",
 							url: stopWordsFile,
 							success: function(stopWords) {
-								PhotoFloat.cache.stopWords = stopWords.stopWords;
+								cache.stopWords = stopWords.stopWords;
 								resolve_getStopWords();
 							}
 						};
@@ -46,7 +46,7 @@
 					}
 				} else {
 					// stop words aren't used
-					PhotoFloat.cache.stopWords = [];
+					cache.stopWords = [];
 					resolve_getStopWords();
 				}
 			}
@@ -1774,14 +1774,14 @@
 		var searchWordsFromUserWithoutStopWords = [];
 		var searchWordsFromUserWithoutStopWordsNormalized = [];
 		var searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions = [];
-		if (! PhotoFloat.cache.stopWords.length) {
+		if (! cache.stopWords.length) {
 			searchWordsFromUserWithoutStopWords = searchWordsFromUser;
 			searchWordsFromUserWithoutStopWordsNormalized = searchWordsFromUserNormalized;
 			searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions = searchWordsFromUserNormalizedAccordingToOptions;
 		} else {
 			for (var i = 0; i < searchWordsFromUser.length; i ++) {
 				if (
-					PhotoFloat.cache.stopWords.every(
+					cache.stopWords.every(
 						function(word) {
 							return word !== searchWordsFromUserNormalized[i];
 						}
