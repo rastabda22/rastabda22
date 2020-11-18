@@ -1776,7 +1776,7 @@
 		var width, height, thumbWidth, thumbHeight, imageString, imgString, img, calculatedWidth, calculatedHeight, populateMedia;
 		var albumViewWidth, correctedAlbumThumbSize = Options.album_thumb_size;
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
-		var tooBig = false, isVirtualAlbum = false;
+		var tooBig = false, isGeneratedAlbum = false;
 		var mapLinkIcon, selectBoxHtml, selectSrc, id, ithMedia;
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
 
@@ -1804,18 +1804,12 @@
 			thumbnailSize = Options.media_thumb_size;
 
 			populateMedia = populate;
-			isVirtualAlbum = (
-				currentAlbum.isByDate() ||
-				currentAlbum.isByGps() ||
-				currentAlbum.isSearch() ||
-				currentAlbum.isSelection() ||
-				currentAlbum.isMap()
-			);
+			isGeneratedAlbum = currentAlbum.isGenerated();
 			tooBig = currentAlbum.path.split("/").length < 4 && currentAlbum.numsMedia.imagesAndVideosTotal() > Options.big_virtual_folders_threshold;
-			if (populateMedia === true && isVirtualAlbum)
+			if (populateMedia === true && isGeneratedAlbum)
 				populateMedia = populateMedia && (! tooBig || Options.show_big_virtual_folders);
 
-			if (isVirtualAlbum && tooBig) {
+			if (isGeneratedAlbum && tooBig) {
 				var tooManyImagesText, isShowing = false;
 				if (Options.show_big_virtual_folders) {
 					tooManyImagesText =
@@ -1855,7 +1849,7 @@
 			}
 
 			if (
-				! (isVirtualAlbum && tooBig && ! Options.show_big_virtual_folders) && (
+				! (isGeneratedAlbum && tooBig && ! Options.show_big_virtual_folders) && (
 					populateMedia === true ||
 					populateMedia == "refreshMedia" ||
 					populateMedia == "refreshBoth"
@@ -2013,7 +2007,7 @@
 					);
 					if (
 						typeof isPhp === "function" && (
-							util.somethingIsInMapAlbum() || ! util.nothingIsSelected() || PhotoFloat.guessedPasswordsMd5.length
+							util.somethingIsInMapAlbum() || util.somethingIsSelected() || PhotoFloat.guessedPasswordsMd5.length
 						)
 					) {
 						// execution enters here if we are using index.php
@@ -2242,7 +2236,7 @@
 
 								if (
 									typeof isPhp === "function" && (
-										util.somethingIsInMapAlbum() || ! util.nothingIsSelected() || PhotoFloat.guessedPasswordsMd5.length
+										util.somethingIsInMapAlbum() || util.somethingIsSelected() || PhotoFloat.guessedPasswordsMd5.length
 									)
 								) {
 									// execution enters here if we are using index.php

@@ -333,7 +333,7 @@ $(document).ready(function() {
 							Options.by_selection_string,
 							Options.by_search_string
 						].indexOf(currentAlbum.cacheBase) !== -1 ||
-						currentMedia !== null || currentAlbum.isAlbumWithOneMedia() || ! util.nothingIsSelected()
+						currentMedia !== null || currentAlbum.isAlbumWithOneMedia() || util.somethingIsSelected()
 					) && ! isMap
 				) {
 					// browsing mode switchers

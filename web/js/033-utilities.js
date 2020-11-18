@@ -35,7 +35,7 @@
 		if (Utilities.somethingIsInMapAlbum()) {
 			albums.push(mapAlbum);
 		}
-		if (! Utilities.nothingIsSelected()) {
+		if (Utilities.somethingIsSelected()) {
 			albums.push(selectionAlbum);
 		}
 
@@ -938,16 +938,16 @@
 		return string == Options.by_gps_string || string.indexOf(Options.byGpsStringWithTrailingSeparator) === 0;
 	};
 
+	Utilities.isSearchCacheBase = function(string) {
+		return string.indexOf(Options.bySearchStringWithTrailingSeparator) === 0;
+	};
+
 	Album.prototype.isByGps = function() {
 		return Utilities.isByGpsCacheBase(this.cacheBase);
 	};
 
 	Subalbum.prototype.isByGps = function() {
 		return Utilities.isByGpsCacheBase(this.cacheBase);
-	};
-
-	Utilities.isSearchCacheBase = function(string) {
-		return string.indexOf(Options.bySearchStringWithTrailingSeparator) === 0;
 	};
 
 	Album.prototype.isSearch = function() {
@@ -980,6 +980,30 @@
 
 	Subalbum.prototype.isMap = function() {
 		return Utilities.isMapCacheBase(this.cacheBase);
+	};
+
+	Album.prototype.isTransversal =  function() {
+		return this.isByDate() || this.isByGps();
+	};
+
+	Subalbum.prototype.isTransversal =  function() {
+		return this.isByDate() || this.isByGps();
+	};
+
+	Album.prototype.isVirtual =  function() {
+		return this.isSelection() || this.isMap();
+	};
+
+	Album.prototype.isCollection =  function() {
+		return this.isSearch() || this.isVirtual();
+	};
+
+	Album.prototype.isGenerated =  function() {
+		return this.isTransversal() || this.isCollection();
+	};
+
+	Subalbum.prototype.isGenerated =  function() {
+		return this.isTransversal() || this.isCollection();
 	};
 
 	Utilities.prototype.isSearchHash = function() {
@@ -1125,6 +1149,10 @@
 			else
 				return true;
 		}
+	};
+
+	Utilities.somethingIsSelected = function() {
+		return ! Utilities.nothingIsSelected();
 	};
 
 	SingleMedia.prototype.isSelected = function() {
@@ -2803,6 +2831,7 @@
 	Utilities.prototype.initializeOrGetMapRootAlbum = Utilities.initializeOrGetMapRootAlbum;
 	// Utilities.prototype.initializeSearchRootAlbum = Utilities.initializeSearchRootAlbum;
 	Utilities.prototype.nothingIsSelected = Utilities.nothingIsSelected;
+	Utilities.prototype.somethingIsSelected = Utilities.somethingIsSelected;
 	Utilities.prototype.somethingIsSearched = Utilities.somethingIsSearched;
 	Utilities.prototype.somethingIsInMapAlbum = Utilities.somethingIsInMapAlbum;
 	Utilities.prototype.initializeSelectionAlbum = Utilities.initializeSelectionAlbum;
