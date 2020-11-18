@@ -24,10 +24,10 @@
 		var newForm = jQuery(
 			"<form>",
 			{
-				"action": hash,
+				action: hash,
 				// "action": imgData.hash,
-				"target": "_blank",
-				"method": "post"
+				target: "_blank",
+				method: "post"
 			}
 		);
 
@@ -59,27 +59,27 @@
 				jQuery(
 					"<input>",
 					{
-						"name": "albumName_" + iString,
-						"value": albumName,
-						"type": "hidden"
+						name: "albumName_" + iString,
+						value: albumName,
+						type: "hidden"
 					}
 				)
 			).append(
 				jQuery(
 					"<input>",
 					{
-						"name": "stringifiedPackedAlbum_" + iString,
-						"value": stringifiedPackedAlbum,
-						"type": "hidden"
+						name: "stringifiedPackedAlbum_" + iString,
+						value: stringifiedPackedAlbum,
+						type: "hidden"
 					}
 				)
 			).append(
 				jQuery(
 					"<input>",
 					{
-						"name": "typeOfPackedAlbum_" + iString,
-						"value": typeOfPackedAlbum,
-						"type": "hidden"
+						name: "typeOfPackedAlbum_" + iString,
+						value: typeOfPackedAlbum,
+						type: "hidden"
 					}
 				)
 			);
@@ -89,9 +89,9 @@
 			jQuery(
 				"<input>",
 				{
-					"name": "selectorClickedToOpenTheMap",
-					"value": selectorClickedToOpenTheMap,
-					"type": "hidden"
+					name: "selectorClickedToOpenTheMap",
+					value: selectorClickedToOpenTheMap,
+					type: "hidden"
 				}
 			)
 		);
@@ -105,9 +105,9 @@
 			jQuery(
 				"<input>",
 				{
-					"name": "currentAlbumIs",
-					"value": currentAlbumIs,
-					"type": "hidden"
+					name: "currentAlbumIs",
+					value: currentAlbumIs,
+					type: "hidden"
 				}
 			)
 		);
@@ -117,18 +117,18 @@
 				jQuery(
 					"<input>",
 					{
-						"name": "guessedPasswordsMd5",
-						"value": PhotoFloat.guessedPasswordsMd5.join('-'),
-						"type": "hidden"
+						name: "guessedPasswordsMd5",
+						value: PhotoFloat.guessedPasswordsMd5.join('-'),
+						type: "hidden"
 					}
 				)
 			).append(
 				jQuery(
 					"<input>",
 					{
-						"name": "guessedPasswordCodes",
-						"value": PhotoFloat.guessedPasswordCodes.join('-'),
-						"type": "hidden"
+						name: "guessedPasswordCodes",
+						value: PhotoFloat.guessedPasswordCodes.join('-'),
+						type: "hidden"
 					}
 				)
 			);
@@ -1591,8 +1591,8 @@
 		for (var i = 0; i < keys.length; i++)
 			this[keys[i]] = new ImagesAndVideos(
 				{
-					"images": this[keys[i]].images + sizes2[keys[i]].images,
-					"videos": this[keys[i]].videos + sizes2[keys[i]].videos
+					images: this[keys[i]].images + sizes2[keys[i]].images,
+					videos: this[keys[i]].videos + sizes2[keys[i]].videos
 				}
 			);
 	};
@@ -1603,8 +1603,8 @@
 			if (this[keys[i]] !== undefined && numsProtectedSize2[keys[i]] !== undefined) {
 				this[keys[i]] = new ImagesAndVideos(
 					{
-						"images": this[keys[i]].images + numsProtectedSize2[keys[i]].images,
-						"videos": this[keys[i]].videos + numsProtectedSize2[keys[i]].videos
+						images: this[keys[i]].images + numsProtectedSize2[keys[i]].images,
+						videos: this[keys[i]].videos + numsProtectedSize2[keys[i]].videos
 					}
 				);
 			} else if (this[keys[i]] === undefined) {
@@ -1618,8 +1618,8 @@
 		for (var i = 0; i < keys.length; i++)
 			this[keys[i]] = new ImagesAndVideos(
 				{
-					"images": this[keys[i]].images - sizes2[keys[i]].images,
-					"videos": this[keys[i]].videos - sizes2[keys[i]].videos
+					images: this[keys[i]].images - sizes2[keys[i]].images,
+					videos: this[keys[i]].videos - sizes2[keys[i]].videos
 				}
 			);
 	};
@@ -1630,8 +1630,8 @@
 			if (this[keys[i]] !== undefined && numsProtectedSize2[keys[i]] !== undefined) {
 				this[keys[i]] = new ImagesAndVideos(
 					{
-						"images": this[keys[i]].images - numsProtectedSize2[keys[i]].images,
-						"videos": this[keys[i]].videos - numsProtectedSize2[keys[i]].videos
+						images: this[keys[i]].images - numsProtectedSize2[keys[i]].images,
+						videos: this[keys[i]].videos - numsProtectedSize2[keys[i]].videos
 					}
 				);
 			} else if (this[keys[i]] === undefined) {
@@ -2410,13 +2410,13 @@
 
 	Utilities.xDistanceBetweenCoordinatePoints = function(point1, point2) {
 		return Math.max(
-			Utilities.distanceBetweenCoordinatePoints({"lng": point1.lng, "lat": point1.lat}, {"lng": point2.lng, "lat": point1.lat}),
-			Utilities.distanceBetweenCoordinatePoints({"lng": point1.lng, "lat": point2.lat}, {"lng": point2.lng, "lat": point2.lat})
+			Utilities.distanceBetweenCoordinatePoints({lng: point1.lng, lat: point1.lat}, {lng: point2.lng, lat: point1.lat}),
+			Utilities.distanceBetweenCoordinatePoints({lng: point1.lng, lat: point2.lat}, {lng: point2.lng, lat: point2.lat})
 		);
 	};
 
 	Utilities.yDistanceBetweenCoordinatePoints = function(point1, point2) {
-		return Utilities.distanceBetweenCoordinatePoints({"lng": point1.lng, "lat": point1.lat}, {"lng": point1.lng, "lat": point2.lat});
+		return Utilities.distanceBetweenCoordinatePoints({lng: point1.lng, lat: point1.lat}, {lng: point1.lng, lat: point2.lat});
 	};
 
 	Utilities.distanceBetweenCoordinatePoints = function(point1, point2) {

@@ -482,8 +482,8 @@
 							if (dragVectorLength)
 								// normalize the vector
 								dragVector = {
-									"x": dragVectorX / dragVectorLength,
-									"y": dragVectorY / dragVectorLength
+									x: dragVectorX / dragVectorLength,
+									y: dragVectorY / dragVectorLength
 								};
 							else
 								dragVector = [0, 0];
@@ -540,8 +540,8 @@
 					if (dragVectorLength)
 						// normalize the vector
 						dragVector = {
-							"x": dragVectorX / dragVectorLength,
-							"y": dragVectorY / dragVectorLength
+							x: dragVectorX / dragVectorLength,
+							y: dragVectorY / dragVectorLength
 						};
 					else
 						dragVector = [0, 0];

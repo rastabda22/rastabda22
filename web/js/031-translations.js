@@ -1,6 +1,6 @@
 var translations =
 	{
-		"en": {
+		en: {
 			"#next-media-title": "Next [n]",
 			"#prev-media-title": "Previous [p]",
 			"#pinch-in-title": "Zoom in [+]",
@@ -207,7 +207,7 @@ var translations =
 			"#by-gps-album-in": "by place album in",
 			"#regular-album-in": "album in"
 		},
-		"it": {
+		it: {
 			"#next-media-title": "Prossima [n]",
 			"#prev-media-title": "Precedente [p]",
 			"#pinch-in-title": "Zoom avanti [+]",
@@ -414,7 +414,7 @@ var translations =
 			"#by-gps-album-in": "album per luogo in",
 			"#regular-album-in": "album in"
 		},
-		"es": {
+		es: {
 			"#next-media-title": "Siguiente [n]",
 			"#prev-media-title": "Anterior [p]",
 			"#pinch-in-title": "Zoom adelante [+]",
@@ -621,7 +621,7 @@ var translations =
 			"#by-gps-album-in": "álbum por lugar en",
 			"#regular-album-in": "álbum en"
 		},
-		"fr": {
+		fr: {
 			"#next-media-title": "Suivant [n]",
 			"#prev-media-title": "Précédent [p]",
 			"#pinch-in-title": "Zoom avant [+]",

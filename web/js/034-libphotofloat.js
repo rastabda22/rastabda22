@@ -188,7 +188,7 @@
 							album.includedFilesByCodesSimpleCombination[","].positionsGot = true;
 						var mustGetMedia = getMedia && ! album.includedFilesByCodesSimpleCombination[","].hasOwnProperty("mediaGot");
 						var mustGetPositions = getPositions && ! album.includedFilesByCodesSimpleCombination[","].hasOwnProperty("positionsGot");
-						var promise = PhotoFloat.getMediaAndPositions(album.cacheBase, {"mustGetMedia": mustGetMedia,"mustGetPositions": mustGetPositions});
+						var promise = PhotoFloat.getMediaAndPositions(album.cacheBase, {mustGetMedia: mustGetMedia,mustGetPositions: mustGetPositions});
 						promise.then(
 							function([mediaGot, positionsGot]) {
 								if (mediaGot) {
@@ -378,7 +378,7 @@
 							if (! mustGetMedia && ! mustGetPositions) {
 								resolve_addExternalMediaAndPositionsFromProtectedAlbum();
 							} else {
-								var promise = PhotoFloat.getMediaAndPositions(protectedCacheBase, {"mustGetMedia": mustGetMedia, "mustGetPositions": mustGetPositions});
+								var promise = PhotoFloat.getMediaAndPositions(protectedCacheBase, {mustGetMedia: mustGetMedia, mustGetPositions: mustGetPositions});
 								promise.then(
 									function([mediaGot, positionsGot]) {
 										if (mediaGot) {
@@ -931,7 +931,7 @@
 							album.includedFilesByCodesSimpleCombination[","] !== false && ! album.includedFilesByCodesSimpleCombination[","].hasOwnProperty("positionsGot")
 						);
 						// this call to getMediaAndPositions adds positions and media of the unprotected album only
-						promise = PhotoFloat.getMediaAndPositions(album.cacheBase, {"mustGetMedia": mustGetMedia, "mustGetPositions": mustGetPositions});
+						promise = PhotoFloat.getMediaAndPositions(album.cacheBase, {mustGetMedia: mustGetMedia, mustGetPositions: mustGetPositions});
 					}
 					promise.then(
 						function mediaAndPositionsGot([mediaGot, positionsGot]) {

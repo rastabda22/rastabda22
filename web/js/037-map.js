@@ -105,10 +105,10 @@
 							"data='" +
 							JSON.stringify(
 								{
-									"width": ithMedia.metadata.size[0],
-									"height": ithMedia.metadata.size[1],
-									"albumCacheBase": albumCacheBase,
-									"mediaHash": mediaHash
+									width: ithMedia.metadata.size[0],
+									height: ithMedia.metadata.size[1],
+									albumCacheBase: albumCacheBase,
+									mediaHash: mediaHash
 								}
 							) +
 							"' " +
@@ -335,7 +335,7 @@
 			panY = popupHeight - (mapHeight - popupPosition.y) + 50;
 		} else if (popupPosition.y < 0)
 			panY = popupPosition.y - 20;
-		MapFunctions.mymap.panBy([panX, panY], {"animate": false});
+		MapFunctions.mymap.panBy([panX, panY], {animate: false});
 	};
 
 	MapFunctions.prototype.addPopupMover = function() {
@@ -383,8 +383,8 @@
 				}
 				photosByAlbum[mediaNameListElement.albumCacheBase].push(
 					{
-						"element": mediaNameListElement,
-						"markerClass": markerClass
+						element: mediaNameListElement,
+						markerClass: markerClass
 					}
 				);
 			}

@@ -361,10 +361,10 @@
 	class Cache {
 		constructor() {
 			this.js_cache_levels = [
-				{"mediaThreshold": 10000, "max": 1},
-				{"mediaThreshold": 2000, "max": 2},
-				{"mediaThreshold": 500, "max": 10},
-				{"mediaThreshold": 200, "max": 50}
+				{mediaThreshold: 10000, max: 1},
+				{mediaThreshold: 2000, max: 2},
+				{mediaThreshold: 500, max: 10},
+				{mediaThreshold: 200, max: 50}
 			];
 			this.albums = {};
 			this.albums.index = {};

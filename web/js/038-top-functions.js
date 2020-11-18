@@ -751,19 +751,23 @@
 		if (selectionAlbum.isEmpty())
 			util.initializeSelectionAlbum();
 		if (this.isSelected()) {
-			this.removeFromSelection(clickedSelector);
 			let isPopup = $('.leaflet-popup').html() ? true : false;
 			let isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
-			if (Utilities.nothingIsSelected()) {
-				if (isPopup) {
-					// the popup is there: close it
-					$('.leaflet-popup-close-button')[0].click();
+			if (isPopup) {
+				$('.leaflet-popup-close-button')[0].click();
+				if (mapAlbum.media.length > 1) {
+					// mapRefreshType = "resize";
+					popupRefreshType = "mapAlbum";
+					// close the map and reopen it
+					$('.modal-close')[0].click();
+					$(selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 				}
-				if (isMap || isPopup) {
+				if ((isMap || isPopup) && currentAlbum.media.length === 1) {
 					// we are in a map: close it
 					$('.modal-close')[0].click();
 				}
 			}
+			this.removeFromSelection(clickedSelector);
 			f.updateMenu();
 			if (currentAlbum.isSelection() && currentMedia === null && ! currentAlbum.isAlbumWithOneMedia())
 				TopFunctions.setTitle("album", null);
@@ -771,6 +775,9 @@
 			if (util.nothingIsSelected())
 				util.initializeSelectionAlbum();
 			this.addToSelection(clickedSelector);
+			if (currentAlbum.isSelection()) {
+				TopFunctions.showAlbum("refreshMedia");
+			}
 			f.updateMenu();
 		}
 	};
@@ -2165,6 +2172,7 @@
 								// a dot could be present in a cache base, making $("#" + cacheBase) fail, beware...
 								id = phFl.hashCode(ithSubalbum.cacheBase);
 								let subfolderHash;
+								// TO DO: verify that isMap() is not missing in the following line
 								if (currentAlbum.isSearch() || currentAlbum.isSelection()) {
 									subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, ithSubalbum.cacheBase, currentAlbum.cacheBase);
 								} else {
@@ -2523,10 +2531,10 @@
 				function(resolve_playClickElement) {
 					MapFunctions.mymap.setView(clickHistoryElement.center, clickHistoryElement.zoom, {animate: false});
 					ev = {
-						"latlng": clickHistoryElement.latlng,
-						"originalEvent": {
-							"shiftKey": clickHistoryElement.shiftKey,
-							"ctrlKey": clickHistoryElement.ctrlKey,
+						latlng: clickHistoryElement.latlng,
+						originalEvent: {
+							shiftKey: clickHistoryElement.shiftKey,
+							ctrlKey: clickHistoryElement.ctrlKey,
 						}
 					};
 					var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, pruneCluster.Cluster._clusters, false);
@@ -2824,10 +2832,10 @@
 					currentCluster.data.mediaNameList = currentCluster.data.mediaNameList.concat(currentCluster._clusterMarkers[i].data.mediaNameList);
 					positionsAndCounts.push(new PositionAndMedia(
 							{
-								"lat": currentCluster._clusterMarkers[i].position.lat,
-								"lng": currentCluster._clusterMarkers[i].position.lng,
-								"mediaNameList": currentCluster._clusterMarkers[i].data.mediaNameList,
-								"count": currentCluster._clusterMarkers[i].data.mediaNameList.length
+								lat: currentCluster._clusterMarkers[i].position.lat,
+								lng: currentCluster._clusterMarkers[i].position.lng,
+								mediaNameList: currentCluster._clusterMarkers[i].data.mediaNameList,
+								count: currentCluster._clusterMarkers[i].data.mediaNameList.length
 							}
 						)
 					);
