@@ -6,7 +6,6 @@
 	var map = new MapFunctions();
 	var pS = new PinchSwipe();
 	var f = new Functions();
-	var numSubAlbumsReady = 0;
 	var mapIsInitialized = false;
 
 	/* constructor */
@@ -1287,12 +1286,13 @@
 		util.undie();
 		$("#loading").hide();
 
-		if (this != currentAlbum) {
+		if (this !== currentAlbum) {
 			previousAlbum = currentAlbum;
 			currentAlbum = null;
 		}
 
-		if (currentAlbum && currentAlbum.isByDate() && mediaIndex !== -1) {
+		if (currentAlbum && mediaIndex !== -1) {
+		// if (currentAlbum && currentAlbum.isByDate() && mediaIndex !== -1) {
 			previousMedia = this.media[mediaIndex];
 		} else {
 			previousMedia = currentMedia;
@@ -1305,7 +1305,7 @@
 		currentAlbum = this;
 		currentMedia = null;
 		if (mediaIndex !== -1)
-			currentMedia = this.media[mediaIndex];
+			currentMedia = currentAlbum.media[mediaIndex];
 		currentMediaIndex = mediaIndex;
 
 		var isAlbumWithOneMedia = currentAlbum.isAlbumWithOneMedia();
@@ -1357,14 +1357,8 @@
 
 		// options function must be called again in order to set elements previously absent
 		f.setOptions();
-		if (currentMedia !== null) {
-			// no subalbums, nothing to wait
-		} else if (
-			currentAlbum !== null && ! currentAlbum.subalbums.length ||
-			numSubAlbumsReady >= this.subalbums.length
-		) {
-			// no subalbums
-			// set social buttons href's when all the stuff is loaded
+		if (currentMedia === null && currentAlbum !== null && ! currentAlbum.subalbums.length) {
+			// no subalbums: set social buttons href's when all the stuff is loaded
 			$(window).on("load", f.socialButtons());
 		} else {
 			// subalbums are present, we have to wait when all the random thumbnails will be loaded
@@ -1786,8 +1780,6 @@
 		var tooBig = false, isGeneratedAlbum = false;
 		var mapLinkIcon, selectBoxHtml, selectSrc, id, ithMedia;
 		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
-
-		numSubAlbumsReady = 0;
 
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
