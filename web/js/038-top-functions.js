@@ -1688,10 +1688,10 @@
 
 
 	TopFunctions.showAlbum = function(populate) {
-		function insertRandomImage(randomSubAlbum, index, subalbum) {
+		function insertRandomImage(randomSubAlbum, index, iSubalbum) {
 			var titleName, randomMediaLink, goTo, humanGeonames;
 			var randomMedia = randomSubAlbum.media[index];
-			var id = phFl.hashCode(subalbum.cacheBase);
+			var id = phFl.hashCode(currentAlbum.subalbums[iSubalbum].cacheBase);
 			var mediaSrc = randomMedia.chooseThumbnail(Options.album_thumb_size);
 
 			$("#downloading-media").hide();
@@ -1763,7 +1763,7 @@
 			);
 			promise.then(
 				function([album, index]) {
-					insertRandomImage(album, index, currentAlbum.subalbums[iSubalbum]);
+					insertRandomImage(album, index, iSubalbum);
 					resolve_subalbumPromise();
 				},
 				function(album) {
