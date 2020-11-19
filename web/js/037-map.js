@@ -367,7 +367,7 @@
 
 	Album.prototype.addMediaFromPositionsToMapAlbum = function(positionsAndCounts, resolve_imageLoad) {
 
-		var mediaNameListElement, indexPositions, indexPhoto, markerClass, photoIndex, mediaIndex;
+		var mediaListElement, indexPositions, indexPhoto, markerClass, photoIndex, mediaIndex;
 		var photosByAlbum = {}, positionsAndCountsElement;
 		var self = this;
 
@@ -377,13 +377,13 @@
 			positionsAndCountsElement = positionsAndCounts[indexPositions];
 			markerClass = getMarkerClass(positionsAndCountsElement);
 			for (indexPhoto = 0; indexPhoto < positionsAndCountsElement.mediaList.length; indexPhoto ++) {
-				mediaNameListElement = positionsAndCountsElement.mediaList[indexPhoto];
-				if (! photosByAlbum.hasOwnProperty(mediaNameListElement.albumCacheBase)) {
-					photosByAlbum[mediaNameListElement.albumCacheBase] = [];
+				mediaListElement = positionsAndCountsElement.mediaList[indexPhoto];
+				if (! photosByAlbum.hasOwnProperty(mediaListElement.albumCacheBase)) {
+					photosByAlbum[mediaListElement.albumCacheBase] = [];
 				}
-				photosByAlbum[mediaNameListElement.albumCacheBase].push(
+				photosByAlbum[mediaListElement.albumCacheBase].push(
 					{
-						element: mediaNameListElement,
+						element: mediaListElement,
 						markerClass: markerClass
 					}
 				);

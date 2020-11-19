@@ -2822,7 +2822,7 @@
 					);
 				}
 
-				var indexPositions, imageLoadPromise, mediaNameListElement;
+				var indexPositions, imageLoadPromise, mediaListElement;
 				if (evt.originalEvent.ctrlKey) {
 					if (! env.mapAlbum.isEmpty()) {
 						// control click: remove the points
@@ -2846,12 +2846,12 @@
 
 								// ...and the corresponding photos
 								for (iMediaPosition = 0; iMediaPosition < positionsAndCountsElement.mediaList.length; iMediaPosition ++) {
-									mediaNameListElement = positionsAndCountsElement.mediaList[iMediaPosition];
+									mediaListElement = positionsAndCountsElement.mediaList[iMediaPosition];
 									if (
 										env.mapAlbum.media.some(
 											function(media, index) {
 												matchingMedia = index;
-												var match = (media.cacheBase == mediaNameListElement.cacheBase && media.foldersCacheBase == mediaNameListElement.foldersCacheBase);
+												var match = (media.cacheBase == mediaListElement.cacheBase && media.foldersCacheBase == mediaListElement.foldersCacheBase);
 												return match;
 											}
 										)

@@ -152,7 +152,7 @@
 					this[key] = object[key];
 				}
 			);
-			this.mediaList = new MediaInPositions(this.media);
+			this.mediaList = new MediaInPositions(this.mediaList);
 		}
 	}
 

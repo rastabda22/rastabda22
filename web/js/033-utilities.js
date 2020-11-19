@@ -495,8 +495,8 @@
 					// the following check is needed for searches only?
 					if (
 						positionAndMedia.mediaList.every(
-							function(mediaNameListElement) {
-								return mediaNameListElement.albumCacheBase != newMediaNameListElement.albumCacheBase || mediaNameListElement.cacheBase != newMediaNameListElement.cacheBase;
+							function(mediaListElement) {
+								return mediaListElement.albumCacheBase != newMediaNameListElement.albumCacheBase || mediaListElement.cacheBase != newMediaNameListElement.cacheBase;
 							}
 						)
 					)
@@ -548,10 +548,10 @@
 					positionAndMediaToRemove.mediaList.forEach(
 						function(mediaNameListToRemoveElement) {
 							for (let index = positionAndMedia.mediaList.length - 1; index >= 0; index --) {
-								mediaNameListElement = positionAndMedia.mediaList[index];
+								mediaListElement = positionAndMedia.mediaList[index];
 								if (
-									mediaNameListElement.albumCacheBase === mediaNameListToRemoveElement.albumCacheBase &&
-									mediaNameListElement.cacheBase === mediaNameListToRemoveElement.cacheBase
+									mediaListElement.albumCacheBase === mediaNameListToRemoveElement.albumCacheBase &&
+									mediaListElement.cacheBase === mediaNameListToRemoveElement.cacheBase
 								) {
 									matchingMediaIndexes.push(index);
 								}
