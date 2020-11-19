@@ -152,7 +152,8 @@
 					this[key] = object[key];
 				}
 			);
-			this.fileSizes = new Sizes(this.fileSizes);
+			if (! this.hasOwnProperty("fileSizes"))
+				this.fileSizes = new Sizes(this.fileSizes);
 		}
 
 		addParent(album) {
