@@ -1146,7 +1146,7 @@
 
 		media = env.currentMedia;
 		if (media === null) {
-			media = previousMedia;
+			media = env.previousMedia;
 			if (media === null)
 				return;
 		}

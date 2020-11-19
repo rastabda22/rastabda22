@@ -458,7 +458,7 @@
 		return intersection;
 	};
 
-	Utilities.prototype.intersect = function(a, b) {
+	Utilities.mediaOrSubalbumsIntersectionForSearches = function(a, b) {
 		if (b.length > a.length) {
 			// indexOf to loop over shorter
 			[a, b] = [b, a];
@@ -468,7 +468,7 @@
 			// searched albums hasn't albumName property
 			property = 'path';
 
-		return a.filter(
+		a = a.filter(
 			function (e) {
 				for (var i = 0; i < b.length; i ++) {
 					var first = b[i][property];
@@ -477,12 +477,20 @@
 						first = Utilities.pathJoin([first, b[i].name]);
 						second = Utilities.pathJoin([second, e.name]);
 					}
-					if (this.normalizeAccordingToOptions(first) == this.normalizeAccordingToOptions(second))
+					if (Utilities.normalizeAccordingToOptions(first) == Utilities.normalizeAccordingToOptions(second))
 						return true;
 				}
 				return false;
 			}
 		);
+	};
+
+	Media.prototype.intersectionForSearches = function(other) {
+		Utilities.mediaOrSubalbumsIntersectionForSearches(this, other);
+	};
+
+	Subalbums.prototype.intersectionForSearches = function(other) {
+		Utilities.mediaOrSubalbumsIntersectionForSearches(this, other);
 	};
 
 	PositionsAndMedia.prototype.addPositionAndMedia = function(newPositionAndMedia) {
@@ -687,17 +695,17 @@
 	};
 
 
-	Utilities.prototype.union = function(a, b) {
-		var self = this;
-		if (a === [])
-			return b;
-		if (b === [])
-			return a;
-		// begin cloning the first array
-		var union = a.slice(0);
+	Utilities.mediaOrSubalbumsUnionForSearches = function(a, b) {
+		if (! a.length) {
+			a.push(... b);
+			return;
+		}
+		if (! b.length) {
+			return;
+		}
 
 		var property = 'albumName';
-		if (a.length && ! a[0].hasOwnProperty('albumName'))
+		if (! a[0].hasOwnProperty('albumName'))
 			// searched albums hasn't albumName property
 			property = 'path';
 
@@ -710,12 +718,19 @@
 						first = Utilities.pathJoin([first, b[i].name]);
 						second = Utilities.pathJoin([second, e.name]);
 					}
-					return self.normalizeAccordingToOptions(first) == self.normalizeAccordingToOptions(second);
+					return Utilities.normalizeAccordingToOptions(first) == Utilities.normalizeAccordingToOptions(second);
 				})
 			)
-				union.push(b[i]);
+				a.push(b[i]);
 		}
-		return union;
+	};
+
+	Media.prototype.unionForSearches = function(other) {
+		Utilities.mediaOrSubalbumsUnionForSearches(this, other);
+	};
+
+	Subalbums.prototype.unionForSearches = function(other) {
+		Utilities.mediaOrSubalbumsUnionForSearches(this, other);
 	};
 
 	Utilities.arrayUnion = function(a, b, equalityFunction = null) {
@@ -747,7 +762,7 @@
 		return union;
 	};
 
-	Utilities.prototype.normalizeAccordingToOptions = function(object) {
+	Utilities.normalizeAccordingToOptions = function(object) {
 		var string = object;
 		if (typeof object === "object")
 			string = string.join('|');
@@ -755,7 +770,7 @@
 		if (! env.options.search_case_sensitive)
 			string = string.toLowerCase();
 		if (! env.options.search_accent_sensitive)
-			string = this.removeAccents(string);
+			string = Utilities.removeAccents(string);
 
 		if (typeof object === "object")
 			object = string.split('|');
@@ -765,7 +780,7 @@
 		return object;
 	};
 
-	Utilities.prototype.removeAccents = function(string) {
+	Utilities.removeAccents = function(string) {
 		string = string.normalize('NFD');
 		var stringArray = Array.from(string);
 		var resultString = '';
@@ -2823,6 +2838,8 @@
 	Utilities.prototype.initializeSelectionAlbum = Utilities.initializeSelectionAlbum;
 	Utilities.prototype.transformAltPlaceName = Utilities.transformAltPlaceName;
 	Utilities.prototype.arrayUnion = Utilities.arrayUnion;
+	Utilities.prototype.normalizeAccordingToOptions = Utilities.normalizeAccordingToOptions;
+	Utilities.prototype.removeAccents = Utilities.removeAccents;
 
 	window.Utilities = Utilities;
 }());

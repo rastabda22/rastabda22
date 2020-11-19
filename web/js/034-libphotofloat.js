@@ -939,15 +939,15 @@
 								if (! album.hasOwnProperty("media") || ! album.media.length)
 									album.media = mediaGot;
 								else
-									// TO DO: verify that concat is be enough
-									// album.media = album.media.concat(mediaGot);
-									album.media = util.arrayUnion(
-										album.media,
-										mediaGot,
-										function(singleMedia1, singleMedia2) {
-											return singleMedia1.foldersCacheBase == singleMedia2.foldersCacheBase && singleMedia1.cacheBase == singleMedia2.cacheBase;
-										}
-									);
+									// TO DO: verify that concat is enough
+									album.media = album.media.concat(mediaGot);
+									// album.media = util.arrayUnion(
+									// 	album.media,
+									// 	mediaGot,
+									// 	function(singleMedia1, singleMedia2) {
+									// 		return singleMedia1.foldersCacheBase == singleMedia2.foldersCacheBase && singleMedia1.cacheBase == singleMedia2.cacheBase;
+									// 	}
+									// );
 								album.includedFilesByCodesSimpleCombination[","].mediaGot = true;
 							}
 
@@ -1469,8 +1469,8 @@
 					promise.then(
 						function(bySearchRootAlbum) {
 							var lastIndex, i, j, wordHashes, numSearchAlbumsReady = 0, numSubAlbumsToGet = 0, normalizedWords;
-							var searchResultsMedia = new Media([]);
-							var searchResultsSubalbums = new Subalbums([]);
+							var searchResultsMedia = [];
+							var searchResultsSubalbums = [];
 
 							// env.searchAlbum.ancestorsCacheBase = bySearchRootAlbum.ancestorsCacheBase.slice();
 							// env.searchAlbum.ancestorsCacheBase.push(wordsWithOptionsString);
@@ -1638,8 +1638,8 @@
 													searchResultsMedia[thisIndexWords] = resultAlbum.media;
 													searchResultsSubalbums[thisIndexWords] = resultAlbum.subalbums;
 												} else {
-													searchResultsMedia[thisIndexWords] = util.union(searchResultsMedia[thisIndexWords], resultAlbum.media);
-													searchResultsSubalbums[thisIndexWords] = util.union(searchResultsSubalbums[thisIndexWords], resultAlbum.subalbums);
+													searchResultsMedia[thisIndexWords].unionForSearches(resultAlbum.media);
+													searchResultsSubalbums[thisIndexWords].unionForSearches(resultAlbum.subalbums);
 												}
 												// the following instruction makes me see that numSearchAlbumsReady never reaches numSubAlbumsToGet when numSubAlbumsToGet is > 1000,
 												// numSearchAlbumsReady remains < 1000
@@ -1651,14 +1651,22 @@
 													env.searchAlbum.subalbums = searchResultsSubalbums[0];
 													for (indexWords1 = 1; indexWords1 <= lastIndex; indexWords1 ++) {
 														if (indexWords1 in searchResultsMedia) {
-															env.searchAlbum.media = env.options.search_any_word ?
-																util.union(env.searchAlbum.media, searchResultsMedia[indexWords1]) :
-																util.intersect(env.searchAlbum.media, searchResultsMedia[indexWords1]);
+															if (env.options.search_any_word)
+																env.searchAlbum.media.unionForSearches(searchResultsMedia[indexWords1]);
+															else
+																env.searchAlbum.media.intersectionForSearches(searchResultsMedia[indexWords1]);
+															// env.searchAlbum.media = env.options.search_any_word ?
+															// 	util.mediaOrSubalbumsUnionForSearches(env.searchAlbum.media, searchResultsMedia[indexWords1]) :
+															// 	util.intersect(env.searchAlbum.media, searchResultsMedia[indexWords1]);
 														}
 														if (indexWords1 in searchResultsSubalbums) {
-															env.searchAlbum.subalbums = env.options.search_any_word ?
-																util.union(env.searchAlbum.subalbums, searchResultsSubalbums[indexWords1]) :
-																util.intersect(env.searchAlbum.subalbums, searchResultsSubalbums[indexWords1]);
+															if (env.options.search_any_word)
+																env.searchAlbum.subalbums.unionForSearches(searchResultsSubalbums[indexWords1]);
+															else
+																env.searchAlbum.subalbums.intersectionForSearches(searchResultsSubalbums[indexWords1]);
+															// env.searchAlbum.subalbums = env.options.search_any_word ?
+															// 	util.mediaOrSubalbumsUnionForSearches(env.searchAlbum.subalbums, searchResultsSubalbums[indexWords1]) :
+															// 	util.intersect(env.searchAlbum.subalbums, searchResultsSubalbums[indexWords1]);
 														}
 													}
 

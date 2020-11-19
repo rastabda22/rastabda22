@@ -1287,18 +1287,18 @@
 		$("#loading").hide();
 
 		if (this !== env.currentAlbum) {
-			previousAlbum = env.currentAlbum;
+			env.previousAlbum = env.currentAlbum;
 			env.currentAlbum = null;
 		}
 
 		if (env.currentAlbum && mediaIndex !== -1) {
 		// if (env.currentAlbum && env.currentAlbum.isByDate() && mediaIndex !== -1) {
-			previousMedia = this.media[mediaIndex];
+			env.previousMedia = this.media[mediaIndex];
 		} else {
-			previousMedia = env.currentMedia;
+			env.previousMedia = env.currentMedia;
 		}
 
-		if (previousMedia !== null && previousMedia.mimeType.indexOf("video") === 0)
+		if (env.previousMedia !== null && env.previousMedia.mimeType.indexOf("video") === 0)
 			// stop the video, otherwise it will keep playing
 			$("#media-center")[0].pause();
 
@@ -1334,8 +1334,8 @@
 			// we are in prepareForShowing
 			// activate the map and the popup when coming back from a map album
 			if (
-				previousAlbum !== null &&
-				previousAlbum.isMap() && previousMedia === null &&
+				env.previousAlbum !== null &&
+				env.previousAlbum.isMap() && env.previousMedia === null &&
 				env.fromEscKey ||
 				env.mapRefreshType !== "none"
 			) {
@@ -1348,10 +1348,10 @@
 
 		if ($("#album-view").is(":visible")) {
 			populateAlbum =
-				previousAlbum === null ||
-			 	previousAlbum.cacheBase !== env.currentAlbum.cacheBase ||
-				previousAlbum.numsMediaInSubTree.imagesAndVideosTotal() !== env.currentAlbum.numsMediaInSubTree.imagesAndVideosTotal() ||
-				env.currentMedia === null && previousMedia !== null;
+				env.previousAlbum === null ||
+			 	env.previousAlbum.cacheBase !== env.currentAlbum.cacheBase ||
+				env.previousAlbum.numsMediaInSubTree.imagesAndVideosTotal() !== env.currentAlbum.numsMediaInSubTree.imagesAndVideosTotal() ||
+				env.currentMedia === null && env.previousMedia !== null;
 			TopFunctions.showAlbum(populateAlbum);
 		}
 
@@ -1797,7 +1797,7 @@
 
 		if (env.currentMedia === null)
 			$("#album-view").off('mousewheel');
-		if (env.currentMedia === null && previousMedia === null)
+		if (env.currentMedia === null && env.previousMedia === null)
 			$("html, body").stop().animate({ scrollTop: 0 }, "slow");
 		if (populate) {
 			thumbnailSize = env.options.media_thumb_size;
@@ -2358,11 +2358,11 @@
 		// we are in showAlbum
 		// activate the map and the popup when coming back from a map album
 		if (
-			previousAlbum !== null &&
-			previousAlbum.isMap() &&
+			env.previousAlbum !== null &&
+			env.previousAlbum.isMap() &&
 			(
-				previousMedia === null ||
-				previousAlbum.isAlbumWithOneMedia()
+				env.previousMedia === null ||
+				env.previousAlbum.isAlbumWithOneMedia()
 			) &&
 			env.fromEscKey ||
 			env.mapRefreshType == "refresh"
