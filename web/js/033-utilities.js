@@ -2361,7 +2361,7 @@
 		return result.images + result.videos;
 	};
 	Utilities.prototype.sumNumsProtectedMediaOfArray = function(arrayOfAlbumsOrSubalbunms) {
-		var result = {}, i, codesComplexcombination, albumOrSubalbum;
+		var result = new NumsProtected({}), i, codesComplexcombination, albumOrSubalbum;
 
 		for (i = 0; i < arrayOfAlbumsOrSubalbunms.length; i ++) {
 			albumOrSubalbum = arrayOfAlbumsOrSubalbunms[i];
