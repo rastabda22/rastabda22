@@ -1133,7 +1133,6 @@
 				$("span.caption", this).addClass("expanded");
 			}
 		);
-
 	};
 
 	Functions.humanFileSize = function(size) {
@@ -1514,6 +1513,8 @@
 							} else {
 								$("#request-password").hide();
 							}
+
+							$("#padlock img").attr("alt", util._t("#padlock-img-alt-text"));
 
 							// WARNING: do not initialize the search root album, the app must read it from its json file!
 							util.initializeOrGetMapRootAlbum();

@@ -1,6 +1,7 @@
 var translations =
 	{
 		en: {
+			"#padlock-img-alt-text": "padlock",
 			"#next-media-title": "Next [n]",
 			"#prev-media-title": "Previous [p]",
 			"#pinch-in-title": "Zoom in [+]",
@@ -208,6 +209,7 @@ var translations =
 			"#regular-album-in": "album in"
 		},
 		it: {
+			"#padlock-img-alt-text": "lucchetto",
 			"#next-media-title": "Prossima [n]",
 			"#prev-media-title": "Precedente [p]",
 			"#pinch-in-title": "Zoom avanti [+]",
@@ -415,6 +417,7 @@ var translations =
 			"#regular-album-in": "album in"
 		},
 		es: {
+			"#padlock-img-alt-text": "candado",
 			"#next-media-title": "Siguiente [n]",
 			"#prev-media-title": "Anterior [p]",
 			"#pinch-in-title": "Zoom adelante [+]",
@@ -622,6 +625,7 @@ var translations =
 			"#regular-album-in": "álbum en"
 		},
 		fr: {
+			"#padlock-img-alt-text": "padlock",
 			"#next-media-title": "Suivant [n]",
 			"#prev-media-title": "Précédent [p]",
 			"#pinch-in-title": "Zoom avant [+]",

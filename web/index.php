@@ -393,7 +393,7 @@
 		<li id="menu-and-padlock">
 			<span id="menu-icon"> ☰ </span>
 			<span id="padlock" class="protection">
-				<img  width="12px" height="16px" src="img/padlock.png" />
+				<img width="12px" height="16px" src="img/padlock.png" />
 			</span>
 		</li>
 		<li class="expandable search">
