@@ -386,7 +386,7 @@
 	};
 
 	Utilities.getLanguage = function() {
-		language = "en";
+		var language = "en";
 		if (env.options.language && translations[env.options.language] !== undefined)
 			language = env.options.language;
 		else {
@@ -1532,8 +1532,8 @@
 			}
 		}
 
-		containerWidth = container.width();
-		containerHeight = container.height();
+		var containerWidth = container.width();
+		var containerHeight = container.height();
 		containerRatio = container.width() / container.height();
 
 		if (
@@ -2544,7 +2544,7 @@
 	Utilities.upHash = function(hash) {
 		var resultHash;
 		if (hash === undefined)
-			var hash = window.location.hash;
+			hash = window.location.hash;
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
 
 		if (mediaHash === null || env.currentAlbum.isAlbumWithOneMedia()) {
