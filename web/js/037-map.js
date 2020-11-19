@@ -376,8 +376,8 @@
 		for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
 			positionsAndCountsElement = positionsAndCounts[indexPositions];
 			markerClass = getMarkerClass(positionsAndCountsElement);
-			for (indexPhoto = 0; indexPhoto < positionsAndCountsElement.mediaNameList.length; indexPhoto ++) {
-				mediaNameListElement = positionsAndCountsElement.mediaNameList[indexPhoto];
+			for (indexPhoto = 0; indexPhoto < positionsAndCountsElement.mediaList.length; indexPhoto ++) {
+				mediaNameListElement = positionsAndCountsElement.mediaList[indexPhoto];
 				if (! photosByAlbum.hasOwnProperty(mediaNameListElement.albumCacheBase)) {
 					photosByAlbum[mediaNameListElement.albumCacheBase] = [];
 				}

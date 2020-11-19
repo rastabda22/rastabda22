@@ -69,6 +69,25 @@
 	}
 
 
+	class SingleMediaInPositions {
+		constructor(object) {
+			Object.keys(object).forEach(
+				(key) => {
+					this[key] = object[key];
+				}
+			);
+		}
+	}
+
+	class MediaInPositions extends Array {
+		constructor(mediaInPositions) {
+			if (Array.isArray(mediaInPositions))
+				super(... mediaInPositions.map(singleMediaInPositions => new SingleMediaInPositions(singleMediaInPositions)));
+			else
+				super(mediaInPositions);
+		}
+	}
+
 	class ImagesAndVideos {
 		constructor(object) {
 			if (object === undefined) {
@@ -133,6 +152,7 @@
 					this[key] = object[key];
 				}
 			);
+			this.mediaList = new MediaInPositions(this.media);
 		}
 	}
 
@@ -170,6 +190,31 @@
 			let clonedSingleMedia = this.clone();
 			delete clonedSingleMedia.parent;
 			return clonedSingleMedia;
+		}
+
+		transformForPositions() {
+			return new SingleMediaInPositions(
+				{
+					name: Utilities.pathJoin([this.albumName, this.name]),
+					cacheBase: this.cacheBase,
+					albumCacheBase: this.albumCacheBase,
+					foldersCacheBase: this.foldersCacheBase
+				}
+			);
+		}
+
+		generatePositionAndMedia() {
+			return new PositionAndMedia(
+				{
+					'lng': parseFloat(this.metadata.longitude),
+					'lat' : parseFloat(this.metadata.latitude),
+					'mediaList': [this.transformForPositions()]
+				}
+			);
+		}
+
+		generatePositionsAndMedia() {
+			return new PositionsAndMedia([generatePositionAndMedia(this)]);
 		}
 	}
 

@@ -2451,22 +2451,7 @@
 	SingleMedia.prototype.generateMapFromMedia = function(ev, from) {
 		if (this.hasGpsData()) {
 			ev.preventDefault();
-			var positionsAndMedia = new PositionsAndMedia(
-				[
-					new PositionAndMedia(
-						{
-							'lng': parseFloat(this.metadata.longitude),
-							'lat' : parseFloat(this.metadata.latitude),
-							'mediaNameList': [{
-								'name': util.pathJoin([this.albumName, this.name]),
-								'cacheBase': this.cacheBase,
-								'albumCacheBase': ev.data.album.cacheBase,
-								'foldersCacheBase': this.foldersCacheBase
-							}]
-						}
-					)
-				]
-			);
+			this.generatePositionsAndMedia();
 			positionsAndMedia.generateMap(ev, from);
 		}
 	};
@@ -2500,7 +2485,7 @@
 						{
 							'lng': parseFloat(env.currentMedia.metadata.longitude),
 							'lat' : parseFloat(env.currentMedia.metadata.latitude),
-							'mediaNameList': [{
+							'mediaList': [{
 								'name': util.pathJoin([env.currentMedia.albumName, env.currentMedia.name]),
 								'cacheBase': env.currentMedia.cacheBase,
 								'albumCacheBase': env.currentAlbum.cacheBase,
@@ -2645,7 +2630,7 @@
 				var population = 0;
 				// count the number of photos in a cluster
 				for(var i = 0; i < markers.length; i ++) {
-					population += markers[i].data.mediaNameList.length;
+					population += markers[i].data.mediaList.length;
 				}
 
 				if (population < Math.max(10, maxPopulation * 0.01)) {
@@ -2687,24 +2672,24 @@
 			var cacheBases;
 			for (var iPoint = 0; iPoint < this.length; iPoint ++) {
 				cacheBases = '';
-				for(var iPhoto = 0; iPhoto < this[iPoint].mediaNameList.length; iPhoto ++) {
+				for(var iPhoto = 0; iPhoto < this[iPoint].mediaList.length; iPhoto ++) {
 					// we must get the media corresponding to the name in the point
 					if (cacheBases)
 						cacheBases += br;
-					cacheBases += this[iPoint].mediaNameList[iPhoto].cacheBase;
+					cacheBases += this[iPoint].mediaList[iPhoto].cacheBase;
 				}
 
 				markers[iPoint] = new PruneCluster.Marker(
 					this[iPoint].lat,
 					this[iPoint].lng,
 					{
-						icon:	new L.NumberedDivIcon({number: this[iPoint].mediaNameList.length})
+						icon:	new L.NumberedDivIcon({number: this[iPoint].mediaList.length})
 					}
 				);
 				pruneCluster.RegisterMarker(markers[iPoint]);
 				markers[iPoint].data.tooltip = cacheBases;
-				markers[iPoint].data.mediaNameList = this[iPoint].mediaNameList;
-				markers[iPoint].weight = this[iPoint].mediaNameList.length;
+				markers[iPoint].data.mediaList = this[iPoint].mediaList;
+				markers[iPoint].weight = this[iPoint].mediaList.length;
 			}
 
 			MapFunctions.mymap.addLayer(pruneCluster);
@@ -2820,18 +2805,18 @@
 					}
 				}
 				var currentCluster = clusters[index];
-				currentCluster.data.mediaNameList = [];
+				currentCluster.data.mediaList = [];
 
 				// build the cluster's media name list
 				var positionsAndCounts = new PositionsAndMedia([]);
 				for(i = 0; i < currentCluster._clusterMarkers.length; i ++) {
-					currentCluster.data.mediaNameList = currentCluster.data.mediaNameList.concat(currentCluster._clusterMarkers[i].data.mediaNameList);
+					currentCluster.data.mediaList = currentCluster.data.mediaList.concat(currentCluster._clusterMarkers[i].data.mediaList);
 					positionsAndCounts.push(new PositionAndMedia(
 							{
 								lat: currentCluster._clusterMarkers[i].position.lat,
 								lng: currentCluster._clusterMarkers[i].position.lng,
-								mediaNameList: currentCluster._clusterMarkers[i].data.mediaNameList,
-								count: currentCluster._clusterMarkers[i].data.mediaNameList.length
+								mediaList: currentCluster._clusterMarkers[i].data.mediaList,
+								count: currentCluster._clusterMarkers[i].data.mediaList.length
 							}
 						)
 					);
@@ -2860,8 +2845,8 @@
 								env.mapAlbum.numPositionsInTree = env.mapAlbum.positionsAndMediaInTree.length;
 
 								// ...and the corresponding photos
-								for (iMediaPosition = 0; iMediaPosition < positionsAndCountsElement.mediaNameList.length; iMediaPosition ++) {
-									mediaNameListElement = positionsAndCountsElement.mediaNameList[iMediaPosition];
+								for (iMediaPosition = 0; iMediaPosition < positionsAndCountsElement.mediaList.length; iMediaPosition ++) {
+									mediaNameListElement = positionsAndCountsElement.mediaList[iMediaPosition];
 									if (
 										env.mapAlbum.media.some(
 											function(media, index) {

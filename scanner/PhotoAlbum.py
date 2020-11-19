@@ -860,7 +860,7 @@ class Position(object):
 	def __init__(self, single_media):
 		self.lng = single_media.longitude
 		self.lat = single_media.latitude
-		self.mediaNameList = [single_media]
+		self.mediaList = [single_media]
 
 	def belongs(self, single_media):
 		# checks whether the single media given as argument can belong to the position
@@ -868,11 +868,11 @@ class Position(object):
 
 	def add(self, single_media):
 		# the media to add is supposed to have the same lat and lng as the position
-		self.mediaNameList.append(single_media)
+		self.mediaList.append(single_media)
 
 	def copy(self):
-		new_position = Position(self.mediaNameList[0])
-		new_position.mediaNameList = self.mediaNameList[:]
+		new_position = Position(self.mediaList[0])
+		new_position.mediaList = self.mediaList[:]
 		return new_position
 
 
@@ -888,7 +888,7 @@ class Positions(object):
 		match = False
 		for index, _position in enumerate(self.positions):
 			if position.lat == _position.lat and position.lng == _position.lng:
-				self.positions[index].mediaNameList.extend(position.mediaNameList)
+				self.positions[index].mediaList.extend(position.mediaList)
 				match = True
 				break
 		if not match:
@@ -910,7 +910,7 @@ class Positions(object):
 			self.add_position(Position(single_media))
 
 	def remove_empty_positions(self):
-		self.positions = [position for position in self.positions if len(position.mediaNameList) > 0]
+		self.positions = [position for position in self.positions if len(position.mediaList) > 0]
 
 	def to_dict(self, type_string = None):
 		positions = []
@@ -918,15 +918,15 @@ class Positions(object):
 			position_dict = {
 				'lat': position.lat,
 				'lng': position.lng,
-				'mediaNameList': []
+				'mediaList': []
 			}
-			for single_media in position.mediaNameList:
+			for single_media in position.mediaList:
 				media_album_cache_base = single_media.album.cache_base
 				if type_string == Options.config['by_date_string']:
 					media_album_cache_base = single_media.day_album_cache_base
 				elif type_string == Options.config['by_gps_string']:
 					media_album_cache_base = single_media.gps_album_cache_base
-				position_dict['mediaNameList'].append({
+				position_dict['mediaList'].append({
 					'cacheBase': single_media.cache_base,
 					'albumCacheBase': media_album_cache_base,
 					'foldersCacheBase': single_media.album.cache_base
@@ -944,7 +944,7 @@ class Positions(object):
 	def count_media(self):
 		count = 0
 		for position in self.positions:
-			count += len(position.mediaNameList)
+			count += len(position.mediaList)
 		return count
 
 
