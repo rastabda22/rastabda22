@@ -1988,11 +1988,11 @@
 					ithMedia = env.currentAlbum.media[i];
 					$("#media-map-link-" + i).off('click').on(
 						'click',
-						{media: ithMedia, album: env.currentAlbum, clickedSelector: "#media-map-link-" + i},
+						{singleMedia: ithMedia, album: env.currentAlbum, clickedSelector: "#media-map-link-" + i},
 						function(ev, from) {
 							env.selectorClickedToOpenTheMap = ev.data.clickedSelector;
 							ev.stopPropagation();
-							TopFunctions.generateMapFromMedia(ev, from);
+							ev.data.singleMedia.generateMapFromMedia(ev, from);
 						}
 					);
 					$("#media-select-box-" + i).off('click').on(
@@ -2448,22 +2448,26 @@
 		}
 	};
 
-	TopFunctions.generateMapFromMedia = function(ev, from) {
-		if (ev.data.media.hasGpsData()) {
+	SingleMedia.prototype.generateMapFromMedia = function(ev, from) {
+		if (this.hasGpsData()) {
 			ev.preventDefault();
-			var positionAndMedia = new PositionAndMedia(
-				{
-					'lng': parseFloat(ev.data.media.metadata.longitude),
-					'lat' : parseFloat(ev.data.media.metadata.latitude),
-					'mediaNameList': [{
-						'name': util.pathJoin([ev.data.media.albumName, ev.data.media.name]),
-						'cacheBase': ev.data.media.cacheBase,
-						'albumCacheBase': ev.data.album.cacheBase,
-						'foldersCacheBase': ev.data.media.foldersCacheBase
-					}]
-				}
+			var positionsAndMedia = new PositionsAndMedia(
+				[
+					new PositionAndMedia(
+						{
+							'lng': parseFloat(this.metadata.longitude),
+							'lat' : parseFloat(this.metadata.latitude),
+							'mediaNameList': [{
+								'name': util.pathJoin([this.albumName, this.name]),
+								'cacheBase': this.cacheBase,
+								'albumCacheBase': ev.data.album.cacheBase,
+								'foldersCacheBase': this.foldersCacheBase
+							}]
+						}
+					)
+				]
 			);
-			TopFunctions.generateMap(ev, [positionAndMedia], from);
+			positionsAndMedia.generateMap(ev, from);
 		}
 	};
 
@@ -2475,7 +2479,7 @@
 				if (subalbum.positionsAndMediaInTree.length) {
 					ev.stopPropagation();
 					ev.preventDefault();
-					TopFunctions.generateMap(ev, subalbum.positionsAndMediaInTree, from);
+					subalbum.positionsAndMediaInTree.generateMap(ev, from);
 				} else {
 					$("#warning-no-geolocated-media").stop().fadeIn(200);
 					$("#warning-no-geolocated-media").fadeOut(3000);
@@ -2511,11 +2515,11 @@
 		}
 
 		if (pointList.length > 0)
-			TopFunctions.generateMap(ev, pointList, from);
+			pointList.generateMap(ev, from);
 	};
 
-	TopFunctions.generateMap = function(ev, pointList, from) {
-		// pointList is an array of uniq points with a list of the media geolocated there
+	PositionsAndMedia.prototype.generateMap = function(ev, from) {
+		// this is an array of uniq points with a list of the media geolocated there
 
 		function playClickElement(clickHistory, iClick) {
 			var clickHistoryElement = clickHistory[iClick];
@@ -2571,11 +2575,11 @@
 			$("#my-modal .modal-content").css("width", (env.windowWidth - 55).toString() + "px").css("height", (env.windowHeight - 60).toString() + "px");
 		}
 
-		if(pointList) {
+		if(this) {
 			// maximum OSM zoom is 19
 			const maxOSMZoom = 19;
 			// calculate the center
-			var center = MapFunctions.averagePosition(pointList);
+			var center = MapFunctions.averagePosition(this);
 
 			var br = '<br />';
 			// var thumbAndCaptionHeight = 0;
@@ -2583,14 +2587,14 @@
 			// default zoom is used for single media or media list with one point
 			var maxXDistance = env.options.photo_map_size;
 			var maxYDistance = env.options.photo_map_size;
-			if (pointList.length > 1) {
+			if (this.length > 1) {
 				// calculate the maximum distance from the center
 				// it's needed in order to calculate the zoom level
 				maxXDistance = 0;
 				maxYDistance = 0;
-				for (i = 0; i < pointList.length; ++i) {
-					maxXDistance = Math.max(maxXDistance, Math.abs(util.xDistanceBetweenCoordinatePoints(center, pointList[i])));
-					maxYDistance = Math.max(maxYDistance, Math.abs(util.yDistanceBetweenCoordinatePoints(center, pointList[i])));
+				for (i = 0; i < this.length; ++i) {
+					maxXDistance = Math.max(maxXDistance, Math.abs(util.xDistanceBetweenCoordinatePoints(center, this[i])));
+					maxYDistance = Math.max(maxYDistance, Math.abs(util.yDistanceBetweenCoordinatePoints(center, this[i])));
 				}
 			}
 			// calculate the zoom level needed in order to have all the points inside the map
@@ -2681,26 +2685,26 @@
 			L.control.scale().addTo(MapFunctions.mymap);
 
 			var cacheBases;
-			for (var iPoint = 0; iPoint < pointList.length; iPoint ++) {
+			for (var iPoint = 0; iPoint < this.length; iPoint ++) {
 				cacheBases = '';
-				for(var iPhoto = 0; iPhoto < pointList[iPoint].mediaNameList.length; iPhoto ++) {
+				for(var iPhoto = 0; iPhoto < this[iPoint].mediaNameList.length; iPhoto ++) {
 					// we must get the media corresponding to the name in the point
 					if (cacheBases)
 						cacheBases += br;
-					cacheBases += pointList[iPoint].mediaNameList[iPhoto].cacheBase;
+					cacheBases += this[iPoint].mediaNameList[iPhoto].cacheBase;
 				}
 
 				markers[iPoint] = new PruneCluster.Marker(
-					pointList[iPoint].lat,
-					pointList[iPoint].lng,
+					this[iPoint].lat,
+					this[iPoint].lng,
 					{
-						icon:	new L.NumberedDivIcon({number: pointList[iPoint].mediaNameList.length})
+						icon:	new L.NumberedDivIcon({number: this[iPoint].mediaNameList.length})
 					}
 				);
 				pruneCluster.RegisterMarker(markers[iPoint]);
 				markers[iPoint].data.tooltip = cacheBases;
-				markers[iPoint].data.mediaNameList = pointList[iPoint].mediaNameList;
-				markers[iPoint].weight = pointList[iPoint].mediaNameList.length;
+				markers[iPoint].data.mediaNameList = this[iPoint].mediaNameList;
+				markers[iPoint].weight = this[iPoint].mediaNameList.length;
 			}
 
 			MapFunctions.mymap.addLayer(pruneCluster);
