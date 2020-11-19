@@ -496,7 +496,7 @@
 					if (
 						positionAndMedia.mediaList.every(
 							function(mediaListElement) {
-								return mediaListElement.albumCacheBase != newMediaNameListElement.albumCacheBase || mediaListElement.cacheBase != newMediaNameListElement.cacheBase;
+								return ! mediaListElement.isEqual(newPositionAndMedia.mediaList[iNew]);
 							}
 						)
 					)
@@ -549,10 +549,10 @@
 						function(mediaNameListToRemoveElement) {
 							for (let index = positionAndMedia.mediaList.length - 1; index >= 0; index --) {
 								mediaListElement = positionAndMedia.mediaList[index];
-								if (
-									mediaListElement.albumCacheBase === mediaNameListToRemoveElement.albumCacheBase &&
-									mediaListElement.cacheBase === mediaNameListToRemoveElement.cacheBase
-								) {
+								if (mediaListElement.isEqual(mediaNameListToRemoveElement)) {
+								// 	mediaListElement.albumCacheBase === mediaNameListToRemoveElement.albumCacheBase &&
+								// 	mediaListElement.cacheBase === mediaNameListToRemoveElement.cacheBase
+								// ) {
 									matchingMediaIndexes.push(index);
 								}
 							}
@@ -1074,7 +1074,8 @@
 		if (! Utilities.somethingIsInMapAlbum())
 			return false;
 		else {
-			var index = env.mapAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
+			var index = env.mapAlbum.media.findIndex(x => x.isEqual(this));
+			// var index = env.mapAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
 			if (index > -1)
 				return true;
 			else
@@ -1086,7 +1087,8 @@
 		if (! Utilities.somethingIsSearched())
 			return false;
 		else {
-			var index = env.searchAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
+			var index = env.searchAlbum.media.findIndex(x => x.isEqual(this));
+			// var index = env.searchAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
 			if (index > -1)
 				return true;
 			else
@@ -1142,7 +1144,8 @@
 		if (env.selectionAlbum.isEmpty()) {
 			return false;
 		} else {
-			var index = env.selectionAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
+			var index = env.selectionAlbum.media.findIndex(x => x.isEqual(this));
+			// var index = env.selectionAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
 			if (index > -1)
 				return true;
 			else
@@ -1341,7 +1344,8 @@
 
 	SingleMedia.prototype.removeFromSelection = function(clickedSelector) {
 		if (this.isSelected()) {
-			var index = env.selectionAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
+			var index = env.selectionAlbum.media.findIndex(x => x.isEqual(this));
+			// var index = env.selectionAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
 			env.selectionAlbum.media.splice(index, 1);
 
 			env.selectionAlbum.positionsAndMediaInTree.removeSingleMedia(this);

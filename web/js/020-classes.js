@@ -77,6 +77,10 @@
 				}
 			);
 		}
+
+		isEqual(otherMediaInPosition) {
+			return this.albumCacheBase === otherMediaInPosition.albumCacheBase && this.cacheBase === otherMediaInPosition.cacheBase;
+		}
 	}
 
 	class MediaInPositions extends Array {
@@ -216,6 +220,11 @@
 		generatePositionsAndMedia() {
 			return new PositionsAndMedia([generatePositionAndMedia(this)]);
 		}
+
+		isEqual(otherMedia) {
+			return this.albumCacheBase === otherMedia.albumCacheBase && this.cacheBase === otherMedia.cacheBase;
+		}
+
 	}
 
 	class Media extends Array {
