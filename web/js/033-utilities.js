@@ -443,44 +443,52 @@
 		return Object.assign({}, object);
 	};
 
-	Utilities.prototype.arrayIntersect = function(a, b) {
-		if (b.length > a.length) {
-			// indexOf to loop over shorter
-			[a, b] = [b, a];
-		}
-
-		let intersection = [];
-		for (let i = 0; i < b.length; i ++) {
-			if (a.indexOf(b[i]) !== -1)
-				intersection.push(b[i]);
-		}
-
-		return intersection;
-	};
+	// Utilities.prototype.arrayIntersect = function(a, b) {
+	// 	if (b.length > a.length) {
+	// 		// indexOf to loop over shorter
+	// 		[a, b] = [b, a];
+	// 	}
+	//
+	// 	let intersection = [];
+	// 	for (let i = 0; i < b.length; i ++) {
+	// 		let elementB = b[i];
+	// 		if (a.indexOf(elementB) !== -1)
+	// 			intersection.push(elementB);
+	// 	}
+	//
+	// 	return intersection;
+	// };
 
 	Utilities.mediaOrSubalbumsIntersectionForSearches = function(a, b) {
-		if (b.length > a.length) {
-			// indexOf to loop over shorter
-			[a, b] = [b, a];
+		if (! a.length || ! b.length) {
+			a.length = 0;
+			return;
 		}
+
 		var property = 'albumName';
-		if (a.length && ! a[0].hasOwnProperty('albumName'))
+		if (! a[0].hasOwnProperty('albumName'))
 			// searched albums hasn't albumName property
 			property = 'path';
 
-		a = a.filter(
-			function (e) {
-				for (var i = 0; i < b.length; i ++) {
-					var first = b[i][property];
-					var second = e[property];
+		b.forEach(
+			function(elementB) {
+				let found = false;
+				let indexA;
+				for (indexA = a.length - 1; indexA >= 0; indexA --) {
+					let elementA = a[indexA];
+					var aValue = elementA[property];
+					var bValue = elementB[property];
 					if (property == 'albumName') {
-						first = Utilities.pathJoin([first, b[i].name]);
-						second = Utilities.pathJoin([second, e.name]);
+						aValue = Utilities.pathJoin([aValue, elementA.name]);
+						bValue = Utilities.pathJoin([bValue, elementB.name]);
 					}
-					if (Utilities.normalizeAccordingToOptions(first) == Utilities.normalizeAccordingToOptions(second))
-						return true;
+					if (Utilities.normalizeAccordingToOptions(bValue) === Utilities.normalizeAccordingToOptions(aValue)) {
+						found = true;
+						break;
+					}
 				}
-				return false;
+				if (! found)
+					a.splice(indexA, 1);
 			}
 		);
 	};
@@ -706,22 +714,23 @@
 
 		var property = 'albumName';
 		if (! a[0].hasOwnProperty('albumName'))
-			// searched albums hasn't albumName property
+			// searched albums haven't albumName property
 			property = 'path';
 
 		for (var i = 0; i < b.length; i ++) {
+			let elementB = b[i];
 			if (! a.some(
-				function (e) {
-					var first = b[i][property];
-					var second = e[property];
+				function (elementA) {
+					var bValue = elementB[property];
+					var aValue = elementA[property];
 					if (property == 'albumName') {
-						first = Utilities.pathJoin([first, b[i].name]);
-						second = Utilities.pathJoin([second, e.name]);
+						bValue = Utilities.pathJoin([bValue, elementB.name]);
+						aValue = Utilities.pathJoin([aValue, elementA.name]);
 					}
-					return Utilities.normalizeAccordingToOptions(first) == Utilities.normalizeAccordingToOptions(second);
+					return Utilities.normalizeAccordingToOptions(bValue) == Utilities.normalizeAccordingToOptions(aValue);
 				})
 			)
-				a.push(b[i]);
+				a.push(elementB);
 		}
 	};
 
@@ -744,19 +753,21 @@
 
 		if (equalityFunction === null) {
 			for (i = 0; i < b.length; i ++) {
-				if (union.indexOf(b[i]) == -1)
-					union.push(b[i]);
+				let elementB = b[i];
+				if (union.indexOf(elementB) == -1)
+					union.push(elementB);
 			}
 		} else {
 			for (i = 0; i < b.length; i ++) {
+				let elementB = b[i];
 				if (
 					a.every(
 						function notEqual(element) {
-							return ! equalityFunction(element, b[i]);
+							return ! equalityFunction(element, elementB);
 						}
 					)
 				)
-					union.push(b[i]);
+					union.push(elementB);
 			}
 		}
 		return union;
@@ -2837,7 +2848,7 @@
 	Utilities.prototype.somethingIsInMapAlbum = Utilities.somethingIsInMapAlbum;
 	Utilities.prototype.initializeSelectionAlbum = Utilities.initializeSelectionAlbum;
 	Utilities.prototype.transformAltPlaceName = Utilities.transformAltPlaceName;
-	Utilities.prototype.arrayUnion = Utilities.arrayUnion;
+	// Utilities.prototype.arrayUnion = Utilities.arrayUnion;
 	Utilities.prototype.normalizeAccordingToOptions = Utilities.normalizeAccordingToOptions;
 	Utilities.prototype.removeAccents = Utilities.removeAccents;
 
