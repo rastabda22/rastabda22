@@ -746,7 +746,7 @@
 		env.isABrowsingModeChange = true;
 	};
 
-	SingleMedia.prototype.toggleSelectedMedia = function(clickedSelector) {
+	SingleMedia.prototype.toggleSelectedStatus = function(clickedSelector) {
 		if (env.selectionAlbum.isEmpty())
 			util.initializeSelectionAlbum();
 		if (this.isSelected()) {
@@ -825,7 +825,7 @@
 					function(ev) {
 						ev.stopPropagation();
 						ev.preventDefault();
-						ev.data.media.toggleSelectedMedia(ev.data.clickedSelector);
+						ev.data.media.toggleSelectedStatus(ev.data.clickedSelector);
 					}
 				);
 
@@ -2001,7 +2001,7 @@
 						function(ev) {
 							ev.stopPropagation();
 							ev.preventDefault();
-							ev.data.media.toggleSelectedMedia(ev.data.clickedSelector);
+							ev.data.media.toggleSelectedStatus(ev.data.clickedSelector);
 						}
 					);
 					if (
