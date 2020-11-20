@@ -1433,26 +1433,59 @@
 					}
 
 					if (env.searchAlbum.subalbums.length) {
+						let subalbumPromises = [];
 						for (indexSubalbums = 0; indexSubalbums < env.searchAlbum.subalbums.length; indexSubalbums ++) {
+							let thisSubalbum = env.searchAlbum.subalbums[indexSubalbums];
+							let thisIndex = indexSubalbums;
 							// update the media count
-							env.searchAlbum.numsMediaInSubTree.sum(env.searchAlbum.numsMediaInSubTree, env.searchAlbum.subalbums[indexSubalbums].numsMediaInSubTree);
+							env.searchAlbum.numsMediaInSubTree.sum(env.searchAlbum.numsMediaInSubTree, thisSubalbum.numsMediaInSubTree);
 							// update the size totals
-							env.searchAlbum.sizesOfSubTree.sum(env.searchAlbum.subalbums[indexSubalbums].sizesOfSubTree);
-							env.searchAlbum.sizesOfAlbum.sum(env.searchAlbum.subalbums[indexSubalbums].sizesOfAlbum);
+							env.searchAlbum.sizesOfSubTree.sum(thisSubalbum.sizesOfSubTree);
+							env.searchAlbum.sizesOfAlbum.sum(thisSubalbum.sizesOfAlbum);
 							// add the points from the subalbums
 
 							// the subalbum could still have no positionsAndMediaInTree array, get it
-							if (! env.searchAlbum.subalbums[indexSubalbums].hasOwnProperty("positionsAndMediaInTree"))
-								env.searchAlbum.subalbums[indexSubalbums].positionsAndMediaInTree = new PositionsAndMedia([]);
-								env.searchAlbum.subalbums[indexSubalbums].numPositionsInTree = 0;
+							if (! thisSubalbum.hasOwnProperty("positionsAndMediaInTree")) {
+								let subalbumPromise = new Promise(
+									function(resolve_subalbumPromise) {
+										let promise = PhotoFloat.getAlbum(thisSubalbum.cacheBase, null, {getMedia: false, getPositions: true});
+										promise.then(
+											function(thisSubalbum) {
+												env.searchAlbum.subalbums[thisIndex] = thisSubalbum;
+												env.searchAlbum.positionsAndMediaInTree.mergePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
+												env.searchAlbum.numPositionsInTree = env.searchAlbum.positionsAndMediaInTree.length;
+												// thisSubalbum.positionsAndMediaInTree = positionsGot;
+												// thisSubalbum.numPositionsInTree = album.positionsAndMediaInTree.length;
+												// thisSubalbum.includedFilesByCodesSimpleCombination[","].positionsGot = true;
+												resolve_subalbumPromise();
+											},
+											function() {
+												console.trace();
+											}
+										);
+									}
+								);
+								subalbumPromises.push(subalbumPromise);
+							}
+							Promise.all(subalbumPromises).then(
+								function() {
+									var promise = PhotoFloat.endPreparingAlbumAndKeepOn(env.searchAlbum, mediaHash, mediaFolderHash);
+									promise.then(
+										function(i) {
+											resolve_parseHash([env.searchAlbum, i]);
+										}
+									);
+								}
+							);
 						}
+					} else {
+						var promise = PhotoFloat.endPreparingAlbumAndKeepOn(env.searchAlbum, mediaHash, mediaFolderHash);
+						promise.then(
+							function(i) {
+								resolve_parseHash([env.searchAlbum, i]);
+							}
+						);
 					}
-					var promise = PhotoFloat.endPreparingAlbumAndKeepOn(env.searchAlbum, mediaHash, mediaFolderHash);
-					promise.then(
-						function(i) {
-							resolve_parseHash([env.searchAlbum, i]);
-						}
-					);
 				}
 
 				function buildSearchResult() {
