@@ -1091,11 +1091,6 @@
 		return cacheBase;
 	};
 
-	SingleMedia.prototype.hasGpsData = function() {
-		return this.mimeType.indexOf("image") === 0 && typeof this.metadata.latitude !== "undefined";
-	};
-
-
 	SingleMedia.prototype.isInMapAlbum = function() {
 		if (! Utilities.somethingIsInMapAlbum())
 			return false;
@@ -1364,6 +1359,7 @@
 			} else if (parseInt(clickedSelector.substring(singleMediaSelector.length + 1)) === env.currentMediaIndex && $(singleMediaSelector).is(":visible")) {
 				$(singleMediaSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-single-media"));
 			}
+			this.parent.invalidateAuxiliaryPositionsAndMedia();
 		}
 
 	};
@@ -1417,6 +1413,7 @@
 				// update the selector
 				$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
 			}
+			this.parent.invalidateAuxiliaryPositionsAndMedia();
 		}
 	};
 
@@ -1462,6 +1459,7 @@
 						}
 					);
 					$(clickedSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-subalbum"));
+					self.invalidateAuxiliaryPositionsAndMedia();
 				}
 			}
 		);
@@ -1511,6 +1509,7 @@
 					if (! env.currentAlbum.isSelection()) {
 						$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-subalbum"));
 					}
+					self.invalidateAuxiliaryPositionsAndMedia();
 				}
 			}
 		);
@@ -1966,7 +1965,7 @@
 				$(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
 
 				if (id === "center")
-					resolve_scaleMedia();
+					resolve_scaleMedia([containerHeight, containerWidth]);
 
 				$("#loading").hide();
 				// Utilities.setPinchButtonsPosition();

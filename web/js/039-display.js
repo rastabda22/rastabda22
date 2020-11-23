@@ -242,7 +242,10 @@ $(document).ready(function() {
 							env.currentMedia === null && env.currentAlbum.positionsAndMediaInTree.length
 						)
 					) {
-						$(".map-popup-trigger")[0].click();
+						if ($(".map-popup-trigger-double")[0] !== undefined)
+							$(".map-popup-trigger-double")[0].click();
+						else
+							$(".map-popup-trigger")[0].click();
 						return false;
 					} else if (
 						e.key.toLowerCase() === "u" &&

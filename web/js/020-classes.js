@@ -79,7 +79,7 @@
 		}
 
 		isEqual(otherMediaInPosition) {
-			return this.albumCacheBase === otherMediaInPosition.albumCacheBase && this.cacheBase === otherMediaInPosition.cacheBase;
+			return this.foldersCacheBase === otherMediaInPosition.foldersCacheBase && this.cacheBase === otherMediaInPosition.cacheBase;
 		}
 	}
 
@@ -210,8 +210,8 @@
 		generatePositionAndMedia() {
 			return new PositionAndMedia(
 				{
-					'lng': parseFloat(this.metadata.longitude),
 					'lat' : parseFloat(this.metadata.latitude),
+					'lng': parseFloat(this.metadata.longitude),
 					'mediaList': [this.transformForPositions()]
 				}
 			);
@@ -222,9 +222,12 @@
 		}
 
 		isEqual(otherMedia) {
-			return this.albumCacheBase === otherMedia.albumCacheBase && this.cacheBase === otherMedia.cacheBase;
+			return this.foldersCacheBase === otherMedia.foldersCacheBase && this.cacheBase === otherMedia.cacheBase;
 		}
 
+		hasGpsData() {
+			return this.mimeType.indexOf("image") === 0 && typeof this.metadata.latitude !== "undefined";
+		}
 	}
 
 	class Media extends Array {
@@ -260,9 +263,15 @@
 		}
 
 		generatePositionsAndMedia() {
-			return new PositionsAndMedia([... this.map(singleMedia => singleMedia.generatePositionAndMedia())]);
+			var result = new PositionsAndMedia([]);
+			this.forEach(
+				function(singleMedia) {
+					result.addPositionAndMedia(singleMedia.generatePositionAndMedia());
+				}
+			);
+			// return new PositionsAndMedia([... this.map(singleMedia => singleMedia.generatePositionAndMedia())]);
+			return result;
 		}
-
 	}
 
 	class Subalbum {
@@ -280,6 +289,10 @@
 
 		toSubalbum() {
 			return this;
+		}
+
+		isGenerated() {
+			return this.isTransversal() || this.isCollection();
 		}
 	}
 
@@ -483,6 +496,31 @@
 					delete this[unnecessaryProperties[j]];
 			if (this.hasOwnProperty("media"))
 				this.media.removeUnnecessaryPropertiesAndAddParent(this);
+		}
+
+		hasPositions() {
+			var result =
+				this.numPositionsInTree &&
+				this.media.length &&
+				this.media.some(
+					function(singleMedia) {
+						return singleMedia.hasGpsData();
+					}
+				);
+			return result;
+		}
+
+		isGenerated() {
+			return this.isTransversal() || this.isCollection();
+		}
+
+		hasValidAuxiliaryPositionsAndMedia() {
+			return this.hasOwnProperty("positionsAndMedia");
+		}
+
+		invalidateAuxiliaryPositionsAndMedia() {
+			if (this.hasOwnProperty("positionsAndMedia"))
+				delete this.positionsAndMedia;
 		}
 	}
 
