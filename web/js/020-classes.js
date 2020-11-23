@@ -218,7 +218,7 @@
 		}
 
 		generatePositionsAndMedia() {
-			return new PositionsAndMedia([generatePositionAndMedia(this)]);
+			return new PositionsAndMedia([this.generatePositionAndMedia()]);
 		}
 
 		isEqual(otherMedia) {
@@ -258,6 +258,11 @@
 				this[i].addParent(album);
 			}
 		}
+
+		generatePositionsAndMedia() {
+			return new PositionsAndMedia([... this.map(singleMedia => singleMedia.generatePositionAndMedia())]);
+		}
+
 	}
 
 	class Subalbum {

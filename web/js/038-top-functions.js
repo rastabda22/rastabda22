@@ -2451,7 +2451,7 @@
 	SingleMedia.prototype.generateMapFromMedia = function(ev, from) {
 		if (this.hasGpsData()) {
 			ev.preventDefault();
-			this.generatePositionsAndMedia();
+			var positionsAndMedia = this.generatePositionsAndMedia();
 			positionsAndMedia.generateMap(ev, from);
 		}
 	};
