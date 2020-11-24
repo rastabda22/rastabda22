@@ -1040,6 +1040,7 @@
 				);
 			}
 		}
+		// end of loadNextPrevMedia auxiliary function
 
 		var text, thumbnailSize, loadEvent, mediaHtml, mediaSelector, mediaSrc;
 		var exposureTime, heightForMedia, heightForMediaAndTitle;

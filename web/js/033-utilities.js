@@ -1422,7 +1422,7 @@
 		var subalbum = self.subalbums[iSubalbum];
 		return new Promise(
 			function(resolve_addSubalbum) {
-				if (self.isSelected()) {
+				if (subalbum.isSelected()) {
 					resolve_addSubalbum();
 				} else {
 					let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {getMedia: false, getPositions: true});
