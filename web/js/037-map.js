@@ -378,10 +378,10 @@
 			markerClass = getMarkerClass(positionsAndCountsElement);
 			for (indexPhoto = 0; indexPhoto < positionsAndCountsElement.mediaList.length; indexPhoto ++) {
 				mediaListElement = positionsAndCountsElement.mediaList[indexPhoto];
-				if (! photosByAlbum.hasOwnProperty(mediaListElement.albumCacheBase)) {
-					photosByAlbum[mediaListElement.albumCacheBase] = [];
+				if (! photosByAlbum.hasOwnProperty(mediaListElement.foldersCacheBase)) {
+					photosByAlbum[mediaListElement.foldersCacheBase] = [];
 				}
-				photosByAlbum[mediaListElement.albumCacheBase].push(
+				photosByAlbum[mediaListElement.foldersCacheBase].push(
 					{
 						element: mediaListElement,
 						markerClass: markerClass
@@ -392,12 +392,12 @@
 
 		// ok, now we can interate over the object we created and add the media to the map album
 		var cacheBasesPromises = [];
-		for (var albumCacheBase in photosByAlbum) {
-			if (photosByAlbum.hasOwnProperty(albumCacheBase)) {
+		for (var foldersCacheBase in photosByAlbum) {
+			if (photosByAlbum.hasOwnProperty(foldersCacheBase)) {
 				let cacheBasePromise = new Promise(
 					function(resolve_cacheBasePromise) {
-						let photosInAlbum = photosByAlbum[albumCacheBase];
-						var getAlbumPromise = phFl.getAlbum(albumCacheBase, util.errorThenGoUp, {getMedia: true, getPositions: true});
+						let photosInAlbum = photosByAlbum[foldersCacheBase];
+						var getAlbumPromise = phFl.getAlbum(foldersCacheBase, util.errorThenGoUp, {getMedia: true, getPositions: true});
 						getAlbumPromise.then(
 							function(theAlbum) {
 								for (mediaIndex = 0; mediaIndex < theAlbum.numsMedia.imagesAndVideosTotal(); mediaIndex ++) {
