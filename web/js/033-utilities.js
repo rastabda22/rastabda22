@@ -2062,8 +2062,8 @@
 						)
 							continue;
 
-						let urlPromise = new Promise(
-							function(resolveUrlPromise) {
+						let mediaPromise = new Promise(
+							function(resolveMediaPromise) {
 								let url;
 								if (size === 0)
 									url = encodeURI(album.media[iMedia].trueOriginalMediaPath());
@@ -2081,12 +2081,12 @@
 										if (subalbum)
 											fileName = subalbum + "/" + fileName;
 										zip.file(fileName, data, {binary:true});
-										resolveUrlPromise();
+										resolveMediaPromise();
 									}
 								);
 							}
 						);
-						albumPromises.push(urlPromise);
+						albumPromises.push(mediaPromise);
 					}
 
 					if (everything) {
