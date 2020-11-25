@@ -2135,7 +2135,7 @@
 	};
 
 	Utilities.combineFirstAndSecondLine = function(firstLine, secondLine) {
-		var result = firstLine;
+		var result = firstLine + env.positionMarker;
 		if (secondLine)
 			result += "<br /><span class='second-line'>" + secondLine + "</span>";
 		return result;
@@ -2236,29 +2236,33 @@
 				} else {
 					let cacheBasesPromises = [];
 					firstLine = self.name;
-					for (let iCacheBase = 1; iCacheBase < self.ancestorsCacheBase.length - 1; iCacheBase ++) {
-						if (iCacheBase == 1)
-							secondLine = "<span class='gray'>(" + Utilities._t("#regular-album-in") + "</span> ";
-						let marker = "<marker>" + iCacheBase + "</marker>";
-						secondLine += marker;
-						if (iCacheBase < self.ancestorsCacheBase.length - 2)
-							secondLine += raquo;
-						if (iCacheBase === self.ancestorsCacheBase.length - 2)
-							secondLine += "<span class='gray'>)</span>";
-						cacheBasesPromises.push(
-							new Promise(
-								function(resolve_ithCacheBasePromise) {
-									let cacheBasePromise = PhotoFloat.getAlbum(self.ancestorsCacheBase[iCacheBase], null, {getMedia: false, getPositions: false});
-									cacheBasePromise.then(
-										function(gottenAlbum) {
-											secondLine = secondLine.replace(marker, "<a href='" + env.hashBeginning + gottenAlbum.cacheBase+ "'>" + gottenAlbum.name + "</a>");
-											// $("#subalbums").html($("#subalbums").html().replace(marker, albumName));
-											resolve_ithCacheBasePromise();
-										}
-									);
-								}
-							)
-						);
+					for (let iCacheBase = 0; iCacheBase < self.ancestorsCacheBase.length - 1; iCacheBase ++) {
+						if (iCacheBase == 0 && self.ancestorsCacheBase.length === 2) {
+							secondLine = "<span class='gray'>(" + Utilities._t("#regular-album") + ")</span> ";
+						} else {
+							if (iCacheBase == 1)
+								secondLine = "<span class='gray'>(" + Utilities._t("#regular-album-in") + "</span> ";
+							let marker = "<marker>" + iCacheBase + "</marker>";
+							secondLine += marker;
+							if (iCacheBase < self.ancestorsCacheBase.length - 2)
+								secondLine += raquo;
+							if (iCacheBase === self.ancestorsCacheBase.length - 2)
+								secondLine += "<span class='gray'>)</span>";
+							cacheBasesPromises.push(
+								new Promise(
+									function(resolve_ithCacheBasePromise) {
+										let cacheBasePromise = PhotoFloat.getAlbum(self.ancestorsCacheBase[iCacheBase], null, {getMedia: false, getPositions: false});
+										cacheBasePromise.then(
+											function(gottenAlbum) {
+												secondLine = secondLine.replace(marker, "<a href='" + env.hashBeginning + gottenAlbum.cacheBase+ "'>" + gottenAlbum.name + "</a>");
+												// $("#subalbums").html($("#subalbums").html().replace(marker, albumName));
+												resolve_ithCacheBasePromise();
+											}
+										);
+									}
+								)
+							);
+						}
 					}
 					Promise.all(cacheBasesPromises).then(
 						function() {

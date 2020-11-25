@@ -209,6 +209,7 @@ var translations =
 			"#day-album": "by day album",
 			"#by-gps-album": "by place album",
 			"#by-gps-album-in": "by place album in",
+			"#regular-album": "album",
 			"#regular-album-in": "album in"
 		},
 		it: {
@@ -420,6 +421,7 @@ var translations =
 			"#day-album": "album per giorno",
 			"#by-gps-album": "album per luogo",
 			"#by-gps-album-in": "album per luogo in",
+			"#regular-album": "album",
 			"#regular-album-in": "album in"
 		},
 		es: {
@@ -631,6 +633,7 @@ var translations =
 			"#day-album": "álbum por día",
 			"#by-gps-album": "álbum por lugar",
 			"#by-gps-album-in": "álbum por lugar en",
+			"#regular-album": "álbum",
 			"#regular-album-in": "álbum en"
 		},
 		fr: {
@@ -843,6 +846,7 @@ var translations =
 			"#day-album": "by day album",
 			"#by-gps-album": "by place album",
 			"#by-gps-album-in": "by place album in",
+			"#regular-album": "album",
 			"#regular-album-in": "album in"
 		}
 	};
