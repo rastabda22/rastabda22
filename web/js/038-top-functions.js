@@ -2429,18 +2429,14 @@
 
 								if (env.currentAlbum.isSearch()) {
 									// the folder name must be added the second line
-									let searchPromise = ithSubalbum.generateAlbumNameForSelectionAndSearchAlbum();
-									searchPromise.then(
-										function() {
-											ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
-											let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
-											$("#" + captionId + " .folder-name").html(env.currentAlbum.generateSubalbumNameHtml(iSubalbum));
-											indexCompletedSearchAlbums ++;
-											if (indexCompletedSearchAlbums === env.currentAlbum.subalbums.length) {
-												adaptCaptionHeight();
-											}
-										}
-									);
+									ithSubalbum.generateAlbumNameForSelectionAndSearchAlbum();
+									ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
+									let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
+									$("#" + captionId + " .folder-name").html(env.currentAlbum.generateSubalbumNameHtml(iSubalbum));
+									// indexCompletedSearchAlbums ++;
+									// if (indexCompletedSearchAlbums === env.currentAlbum.subalbums.length) {
+									// 	adaptCaptionHeight();
+									// }
 								}
 
 								pickRandomMediaAndInsertIt(iSubalbum, imageElement, resolve_subalbumPromise);

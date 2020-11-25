@@ -1442,16 +1442,13 @@
 							env.selectionAlbum.sizesOfSubTree.sum(subalbum.sizesOfSubTree);
 							env.selectionAlbum.numsProtectedMediaInSubTree.sum(subalbum.numsProtectedMediaInSubTree);
 
-							subalbum.generateAlbumNameForSelectionAndSearchAlbum().then(
-								function() {
-									Utilities.sortByDate(env.selectionAlbum.subalbums);
-									env.selectionAlbum.albumNameSort = false;
-									env.selectionAlbum.albumReverseSort = false;
-									env.selectionAlbum.initializeSortPropertiesAndCookies();
-									env.selectionAlbum.sortAlbumsMedia();
-									resolve_addSubalbum();
-								}
-							);
+							subalbum.generateAlbumNameForSelectionAndSearchAlbum();
+							Utilities.sortByDate(env.selectionAlbum.subalbums);
+							env.selectionAlbum.albumNameSort = false;
+							env.selectionAlbum.albumReverseSort = false;
+							env.selectionAlbum.initializeSortPropertiesAndCookies();
+							env.selectionAlbum.sortAlbumsMedia();
+							resolve_addSubalbum();
 						}
 					);
 					$(clickedSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-subalbum"));
@@ -2154,132 +2151,89 @@
 
 	Album.prototype.generateAlbumNameForSelectionAndSearchAlbum = function() {
 		var self = this;
-		return new Promise(
-			function (resolve_folderNameAndTitle) {
-				var folderName = "", firstLine = '', secondLine = '';
-				var raquo = "<span class='gray separated'>&raquo;</span>";
-				var folderArray = self.cacheBase.split(env.options.cache_folder_separator);
-				var nameSorting = Utilities.convertByDateAncestosNames(self.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
-				if (self.isByDate()) {
-				// if (album.isSelection() && self.isByDate()) {
-					// if (folderArray.length === 4)
-					// 	firstLine += Utilities._t("#day") + " ";
-					firstLine += Utilities.dateElementForFolderName(folderArray, folderArray.length - 1);
-					secondLine += "<span class='gray'>(";
-					if (folderArray.length === 2) {
-						secondLine += Utilities._t("#year-album");
-					} else if (folderArray.length === 3) {
-						secondLine += Utilities._t("#month-album") + " ";
-					} else if (folderArray.length === 4) {
-						secondLine += Utilities._t("#day-album") + ", ";
-					}
-					secondLine += "</span>";
-					if (folderArray.length > 2) {
-						if (folderArray.length === 4)
-							secondLine += Utilities.dateElementForFolderName(folderArray, 2) + " ";
-						secondLine += Utilities.dateElementForFolderName(folderArray, 1);
-					}
+		var folderName = "", firstLine = '', secondLine = '';
+		var raquo = "<span class='gray separated'>&raquo;</span>";
+		var folderArray = self.cacheBase.split(env.options.cache_folder_separator);
+		var nameSorting = Utilities.convertByDateAncestosNames(self.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
+		if (self.isByDate()) {
+		// if (album.isSelection() && self.isByDate()) {
+			// if (folderArray.length === 4)
+			// 	firstLine += Utilities._t("#day") + " ";
+			firstLine += Utilities.dateElementForFolderName(folderArray, folderArray.length - 1);
+			secondLine += "<span class='gray'>(";
+			if (folderArray.length === 2) {
+				secondLine += Utilities._t("#year-album");
+			} else if (folderArray.length === 3) {
+				secondLine += Utilities._t("#month-album") + " ";
+			} else if (folderArray.length === 4) {
+				secondLine += Utilities._t("#day-album") + ", ";
+			}
+			secondLine += "</span>";
+			if (folderArray.length > 2) {
+				if (folderArray.length === 4)
+					secondLine += Utilities.dateElementForFolderName(folderArray, 2) + " ";
+				secondLine += Utilities.dateElementForFolderName(folderArray, 1);
+			}
+			secondLine += "<span class='gray'>)</span>";
+
+			folderName = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
+		} else if (self.isByGps()) {
+		// } else if (album.isSelection() && self.isByGps()) {
+			if (self.name === '')
+				firstLine = Utilities._t('.not-specified');
+			else if (self.hasOwnProperty('altName'))
+				firstLine = Utilities.transformAltPlaceName(self.altName);
+			else
+				firstLine = self.name;
+
+			for (let iCacheBase = 1; iCacheBase < self.ancestorsCacheBase.length - 1; iCacheBase ++) {
+				if (iCacheBase == 1)
+					secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album-in") + "</span> ";
+				let marker = "<marker>" + iCacheBase + "</marker>";
+				secondLine += marker;
+				if (iCacheBase < self.ancestorsCacheBase.length - 2)
+					secondLine += raquo;
+				if (iCacheBase === self.ancestorsCacheBase.length - 2)
 					secondLine += "<span class='gray'>)</span>";
 
-					folderName = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
+				let albumName;
+				if (self.ancestorsNames[iCacheBase] === '')
+					albumName = Utilities._t('.not-specified');
+				else
+					albumName = self.ancestorsNames[iCacheBase];
+				secondLine = secondLine.replace(marker, "<a href='" + env.hashBeginning + self.ancestorsCacheBase[iCacheBase] + "'>" + albumName + "</a>");
+			}
+			if (! secondLine)
+				secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album") + ")</span>";
 
-					resolve_folderNameAndTitle([folderName, nameSorting]);
-				} else if (self.isByGps()) {
-				// } else if (album.isSelection() && self.isByGps()) {
-					let cacheBasesPromises = [];
-					if (self.name === '')
-						firstLine = Utilities._t('.not-specified');
-					else if (self.hasOwnProperty('altName'))
-						firstLine = Utilities.transformAltPlaceName(self.altName);
-					else
-						firstLine = self.name;
-
-					for (let iCacheBase = 1; iCacheBase < self.ancestorsCacheBase.length - 1; iCacheBase ++) {
-						if (iCacheBase == 1)
-							secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album-in") + "</span> ";
-						let marker = "<marker>" + iCacheBase + "</marker>";
-						secondLine += marker;
-						if (iCacheBase < self.ancestorsCacheBase.length - 2)
-							secondLine += raquo;
-						if (iCacheBase === self.ancestorsCacheBase.length - 2)
-							secondLine += "<span class='gray'>)</span>";
-						cacheBasesPromises.push(
-							new Promise(
-								function(resolve_ithCacheBasePromise) {
-									let cacheBasePromise = PhotoFloat.getAlbum(self.ancestorsCacheBase[iCacheBase], null, {getMedia: false, getPositions: false});
-									cacheBasePromise.then(
-										function(gottenAlbum) {
-											let albumName;
-											if (gottenAlbum.name === '')
-												albumName = Utilities._t('.not-specified');
-											else if (gottenAlbum.hasOwnProperty('altName'))
-												albumName = Utilities.transformAltPlaceName(gottenAlbum.altName);
-											else
-												albumName = gottenAlbum.name;
-											secondLine = secondLine.replace(marker, "<a href='" + env.hashBeginning + gottenAlbum.cacheBase+ "'>" + albumName + "</a>");
-											// $("#subalbums").html($("#subalbums").html().replace(marker, albumName));
-											resolve_ithCacheBasePromise();
-										}
-									);
-								}
-							)
-						);
-					}
-					if (! secondLine)
-						secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album") + ")</span>";
-					Promise.all(cacheBasesPromises).then(
-						function() {
-							folderName = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
-							resolve_folderNameAndTitle([folderName, nameSorting]);
-						}
-					);
+			folderName = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
+		} else {
+			firstLine = self.name;
+			for (let iCacheBase = 0; iCacheBase < self.ancestorsCacheBase.length - 1; iCacheBase ++) {
+				if (iCacheBase == 0 && self.ancestorsCacheBase.length === 2) {
+					secondLine = "<span class='gray'>(" + Utilities._t("#regular-album") + ")</span> ";
 				} else {
-					let cacheBasesPromises = [];
-					firstLine = self.name;
-					for (let iCacheBase = 0; iCacheBase < self.ancestorsCacheBase.length - 1; iCacheBase ++) {
-						if (iCacheBase == 0 && self.ancestorsCacheBase.length === 2) {
-							secondLine = "<span class='gray'>(" + Utilities._t("#regular-album") + ")</span> ";
-						} else {
-							if (iCacheBase == 1)
-								secondLine = "<span class='gray'>(" + Utilities._t("#regular-album-in") + "</span> ";
-							let marker = "<marker>" + iCacheBase + "</marker>";
-							secondLine += marker;
-							if (iCacheBase < self.ancestorsCacheBase.length - 2)
-								secondLine += raquo;
-							if (iCacheBase === self.ancestorsCacheBase.length - 2)
-								secondLine += "<span class='gray'>)</span>";
-							cacheBasesPromises.push(
-								new Promise(
-									function(resolve_ithCacheBasePromise) {
-										let cacheBasePromise = PhotoFloat.getAlbum(self.ancestorsCacheBase[iCacheBase], null, {getMedia: false, getPositions: false});
-										cacheBasePromise.then(
-											function(gottenAlbum) {
-												secondLine = secondLine.replace(marker, "<a href='" + env.hashBeginning + gottenAlbum.cacheBase+ "'>" + gottenAlbum.name + "</a>");
-												// $("#subalbums").html($("#subalbums").html().replace(marker, albumName));
-												resolve_ithCacheBasePromise();
-											}
-										);
-									}
-								)
-							);
-						}
-					}
-					Promise.all(cacheBasesPromises).then(
-						function() {
-							folderName = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
-							self.selectionAlbumName = folderName;
-							self.selectionAlbumNameSorting = nameSorting;
-							resolve_folderNameAndTitle();
-						}
-					);
+					if (iCacheBase == 1)
+						secondLine = "<span class='gray'>(" + Utilities._t("#regular-album-in") + "</span> ";
+					let marker = "<marker>" + iCacheBase + "</marker>";
+					secondLine += marker;
+					if (iCacheBase < self.ancestorsCacheBase.length - 2)
+						secondLine += raquo;
+					if (iCacheBase === self.ancestorsCacheBase.length - 2)
+						secondLine += "<span class='gray'>)</span>";
+					secondLine = secondLine.replace(marker, "<a href='" + env.hashBeginning + self.ancestorsCacheBase[iCacheBase] + "'>" + self.ancestorsNames[iCacheBase] + "</a>");
 				}
 			}
-		);
+
+			folderName = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
+		}
+		self.selectionAlbumName = folderName;
+		self.selectionAlbumNameSorting = nameSorting;
 	};
 
 	Album.prototype.subalbumName = function(subalbum) {
 		var folderName = '';
-		if (this.isSelection() || this.isSearch() && subalbum.hasOwnProperty("selectionAlbumName")) {
+		if ((this.isSelection() || this.isSearch()) && subalbum.hasOwnProperty("selectionAlbumName")) {
 			folderName = subalbum.selectionAlbumName;
 		} else if (this.isByDate()) {
 			let folderArray = subalbum.cacheBase.split(env.options.cache_folder_separator);
