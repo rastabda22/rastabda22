@@ -862,7 +862,7 @@
 
 	Media.prototype.sortByDate = function () {
 		this.sort(
-			function(a,b) {
+			function(a, b) {
 				return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
 			}
 		);
@@ -870,7 +870,7 @@
 
 	Utilities.sortByDate = function (subalbums) {
 		subalbums.sort(
-			function(a,b) {
+			function(a, b) {
 				return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
 			}
 		);
@@ -880,17 +880,18 @@
 		this.reverse();
 	};
 
-	Utilities.isSearchRootCacheBase = function(cacheBase) {
-		return cacheBase.indexOf(env.options.by_search_string) === 0 && cacheBase.split(env.options.cache_folder_separator).length === 3;
-	};
-
-	Utilities.isMapRootCacheBase = function(cacheBase) {
-		return cacheBase.indexOf(env.options.by_map_string) === 0 && cacheBase.split(env.options.cache_folder_separator).length === 3;
-	};
-
-	Utilities.isSelectionRootCacheBase = function(cacheBase) {
-		return cacheBase.indexOf(env.options.by_selection_string) === 0 && cacheBase.split(env.options.cache_folder_separator).length === 2;
-	};
+	// Utilities.isSearchRootCacheBase = function(cacheBase) {
+	// 	return cacheBase.indexOf(env.options.by_search_string) === 0;
+	// 	// return cacheBase.indexOf(env.options.by_search_string) === 0 && cacheBase.split(env.options.cache_folder_separator).length === 3;
+	// };
+	//
+	// Utilities.isMapRootCacheBase = function(cacheBase) {
+	// 	return cacheBase.indexOf(env.options.by_map_string) === 0 && cacheBase.split(env.options.cache_folder_separator).length === 3;
+	// };
+	//
+	// Utilities.isSelectionRootCacheBase = function(cacheBase) {
+	// 	return cacheBase.indexOf(env.options.by_selection_string) === 0 && cacheBase.split(env.options.cache_folder_separator).length === 2;
+	// };
 
 	Utilities.isAnyRootHash = function(hash) {
 		var cacheBase = hash;
@@ -902,9 +903,9 @@
 	Utilities.isAnyRootCacheBase = function(cacheBase) {
 		var result =
 			[env.options.folders_string, env.options.by_date_string, env.options.by_gps_string].indexOf(cacheBase) !== -1 ||
-			Utilities.isSearchRootCacheBase(cacheBase) ||
-			Utilities.isMapRootCacheBase(cacheBase) ||
-			Utilities.isSelectionRootCacheBase(cacheBase);
+			Utilities.isSearchCacheBase(cacheBase) ||
+			Utilities.isMapCacheBase(cacheBase) ||
+			Utilities.isSelectionCacheBase(cacheBase);
 		return result;
 	};
 
