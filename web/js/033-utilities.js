@@ -2050,6 +2050,8 @@
 				function(resolve_addMediaAndSubalbumsFromAlbum) {
 					var albumPromises = [];
 
+					var fileList = [];
+
 					for (let iMedia = 0; iMedia < album.media.length; iMedia ++) {
 						if (
 							album.media[iMedia].mimeType.indexOf("image") === 0 && what === "videos" ||
@@ -2075,7 +2077,10 @@
 										let fileName = name;
 										if (subalbum)
 											fileName = subalbum + "/" + fileName;
-										zip.file(fileName, data, {binary:true});
+										if (fileList.indexOf(fileName) === -1) {
+											fileList.push(fileName);
+											zip.file(fileName, data, {binary:true});
+										}
 										resolveMediaPromise();
 									}
 								);
