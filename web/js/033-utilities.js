@@ -1442,13 +1442,8 @@
 							env.selectionAlbum.sizesOfSubTree.sum(subalbum.sizesOfSubTree);
 							env.selectionAlbum.numsProtectedMediaInSubTree.sum(subalbum.numsProtectedMediaInSubTree);
 
-							subalbum.generateSubalbumNameForSelectionAlbum().then(
-								function([folderName, nameSorting]) {
-									subalbum.selectionAlbumName = folderName;
-									// if (subalbum.hasOwnProperty("numPositionsInTree") && subalbum.numPositionsInTree)
-									// 	subalbum.selectionAlbumName += env.positionMarker;
-									subalbum.selectionAlbumNameSorting = nameSorting;
-
+							subalbum.generateAlbumNameForSelectionAndSearchAlbum().then(
+								function() {
 									Utilities.sortByDate(env.selectionAlbum.subalbums);
 									env.selectionAlbum.albumNameSort = false;
 									env.selectionAlbum.albumReverseSort = false;
@@ -2152,7 +2147,7 @@
 
 	};
 
-	Album.prototype.generateSubalbumNameForSelectionAlbum = function() {
+	Album.prototype.generateAlbumNameForSelectionAndSearchAlbum = function() {
 		var self = this;
 		return new Promise(
 			function (resolve_folderNameAndTitle) {
@@ -2267,7 +2262,9 @@
 					Promise.all(cacheBasesPromises).then(
 						function() {
 							folderName = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
-							resolve_folderNameAndTitle([folderName, nameSorting]);
+							self.selectionAlbumName = folderName;
+							self.selectionAlbumNameSorting = nameSorting;
+							resolve_folderNameAndTitle();
 						}
 					);
 				}
@@ -2277,7 +2274,7 @@
 
 	Album.prototype.subalbumName = function(subalbum) {
 		var folderName = '';
-		if (this.isSelection()) {
+		if (this.isSelection() || this.isSearch() && subalbum.hasOwnProperty("selectionAlbumName")) {
 			folderName = subalbum.selectionAlbumName;
 		} else if (this.isByDate()) {
 			let folderArray = subalbum.cacheBase.split(env.options.cache_folder_separator);

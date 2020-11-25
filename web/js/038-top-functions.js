@@ -38,7 +38,7 @@
 						} else {
 							self.positionsAndMedia = self.media.generatePositionsAndMedia();
 							self.numPositions = self.positionsAndMedia.length;
-							self.positionsAndMediaInSubalbums = new PositionsAndMedia(self.positionsAndMediaInTree)
+							self.positionsAndMediaInSubalbums = new PositionsAndMedia(self.positionsAndMediaInTree);
 							self.positionsAndMediaInSubalbums.removePositionsAndMedia(self.positionsAndMedia);
 							self.numPositionsInSubalbums = self.positionsAndMediaInSubalbums.length;
 						}
@@ -65,7 +65,7 @@
 								} else {
 									subalbumPromise = new Promise(
 										function(resolve_subalbumPromise) {
-											let promise = PhotoFloat.getAlbum(thisSubalbum.cacheBase, null, {getMedia: false, getPositions: true});
+											let promise = phFl.getAlbum(thisSubalbum.cacheBase, null, {getMedia: false, getPositions: true});
 											promise.then(
 												function(thisSubalbum) {
 													self.subalbums[thisIndex] = thisSubalbum;
@@ -1829,7 +1829,54 @@
 	};
 
 
+	Album.prototype.generateSubalbumNameHtml = function(iSubalbum) {
+		var ithSubalbum = this.subalbums[iSubalbum];
+
+		// generate the subalbum caption
+		let folderName = this.subalbumName(ithSubalbum);
+		let folderNameHtml = folderName;
+		if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
+			let folderMapTitle = this.folderMapTitle(ithSubalbum, folderName);
+			let folderMapTitleWithoutHtmlTags = folderMapTitle.replace(/<[^>]*>?/gm, '');
+			let positionHtml =
+				"<a id='subalbum-map-link-" + iSubalbum + "' >" +
+					"<img " +
+						"class='title-img' " +
+						"title='" + util.escapeSingleQuotes(folderMapTitleWithoutHtmlTags) + "' " +
+						"alt='" + util.escapeSingleQuotes(folderMapTitleWithoutHtmlTags) + "' " +
+						"height='15px' " +
+						"src='img/ic_place_white_24dp_2x.png' " +
+					"/>" +
+				"</a>";
+			if (folderNameHtml.indexOf(env.positionMarker) !== -1)
+				folderNameHtml = folderNameHtml.replace(env.positionMarker, positionHtml);
+			else
+				folderNameHtml += positionHtml;
+		}
+		if (folderNameHtml.indexOf(env.positionMarker) !== -1)
+			folderNameHtml = folderNameHtml.replace(env.positionMarker, "");
+
+		return folderNameHtml;
+	};
+
 	TopFunctions.showAlbum = function(populate) {
+		function adaptCaptionHeight() {
+			// check for overflow in album-caption class in order to adapt album caption height to the string length
+			// when diving into search subalbum, the whole album path is showed and it can be lengthy
+			if (env.options.show_album_names_below_thumbs) {
+				var maxHeight = null;
+				$('.album-caption').each(
+					function() {
+						var thisHeight = $(this)[0].scrollHeight;
+						maxHeight = (thisHeight > maxHeight) ? thisHeight : maxHeight;
+					}
+				);
+				var difference = maxHeight - parseFloat($(".album-caption").css("height"));
+				$(".album-button-and-caption").css("height", (parseInt($(".album-button-and-caption").css("height")) + difference) + 'px');
+				$(".album-caption").css("height", maxHeight + 'px');
+			}
+		}
+
 		function insertRandomImage(randomSubAlbum, index, iSubalbum) {
 			var titleName, randomMediaLink, goTo, humanGeonames;
 			var randomMedia = randomSubAlbum.media[index];
@@ -1841,21 +1888,21 @@
 			mediaWidth = randomMedia.metadata.size[0];
 			mediaHeight = randomMedia.metadata.size[1];
 			if (env.options.album_thumb_type == "fit") {
-				if (mediaWidth < correctedAlbumThumbSize && mediaHeight < correctedAlbumThumbSize) {
+				if (mediaWidth < env.correctedAlbumThumbSize && mediaHeight < env.correctedAlbumThumbSize) {
 					thumbWidth = mediaWidth;
 					thumbHeight = mediaHeight;
 				} else {
 					if (mediaWidth > mediaHeight) {
-						thumbWidth = correctedAlbumThumbSize;
-						thumbHeight = Math.floor(correctedAlbumThumbSize * mediaHeight / mediaWidth);
+						thumbWidth = env.correctedAlbumThumbSize;
+						thumbHeight = Math.floor(env.correctedAlbumThumbSize * mediaHeight / mediaWidth);
 					} else {
-						thumbWidth = Math.floor(correctedAlbumThumbSize * mediaWidth / mediaHeight);
-						thumbHeight = correctedAlbumThumbSize;
+						thumbWidth = Math.floor(env.correctedAlbumThumbSize * mediaWidth / mediaHeight);
+						thumbHeight = env.correctedAlbumThumbSize;
 					}
 				}
 			} else if (env.options.album_thumb_type == "square") {
-				thumbWidth = correctedAlbumThumbSize;
-				thumbHeight = correctedAlbumThumbSize;
+				thumbWidth = env.correctedAlbumThumbSize;
+				thumbHeight = env.correctedAlbumThumbSize;
 			}
 
 			if (env.currentAlbum.isByDate()) {
@@ -1916,11 +1963,11 @@
 
 		var i, imageLink, linkContainer, imageElement, media, thumbsElement, subalbumsElement, thumbHash, thumbnailSize;
 		var width, height, thumbWidth, thumbHeight, imageString, imgString, img, calculatedWidth, calculatedHeight, populateMedia;
-		var albumViewWidth, correctedAlbumThumbSize = env.options.album_thumb_size;
+		var albumViewWidth;
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
 		var tooBig = false, isGeneratedAlbum = false;
 		var mapLinkIcon, selectBoxHtml, selectSrc, id, ithMedia;
-		var caption, captionColor, captionHtml, captionHeight, captionFontSize, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
+		var caption, captionHtml, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
 
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
@@ -2189,27 +2236,25 @@
 							parseInt($("#album-view").css("padding-left")) -
 							parseInt($("#album-view").css("padding-right")) -
 							scrollBarWidth;
-					if ((util.albumButtonWidth(correctedAlbumThumbSize, buttonBorder) + env.options.spacing) * env.options.min_album_thumbnail > albumViewWidth) {
+					if ((util.albumButtonWidth(env.correctedAlbumThumbSize, buttonBorder) + env.options.spacing) * env.options.min_album_thumbnail > albumViewWidth) {
 						if (env.options.albums_slide_style)
-							correctedAlbumThumbSize =
+							env.correctedAlbumThumbSize =
 								Math.floor((albumViewWidth / env.options.min_album_thumbnail - env.options.spacing - 2 * slideBorder) / 1.1 - 2 * buttonBorder);
 						else
-							correctedAlbumThumbSize =
+							env.correctedAlbumThumbSize =
 								Math.floor(albumViewWidth / env.options.min_album_thumbnail - env.options.spacing - 2 * buttonBorder);
 					}
 					margin = 0;
 					if (env.options.albums_slide_style)
-						margin = Math.round(correctedAlbumThumbSize * 0.05);
+						margin = Math.round(env.correctedAlbumThumbSize * 0.05);
 
-					captionFontSize = Math.round(util.em2px("body", 1) * correctedAlbumThumbSize / env.options.album_thumb_size);
-					captionHeight = parseInt(captionFontSize * 1.1) + 1;
 					if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs)
 						heightfactor = 0;
 					else if (! env.options.show_album_media_count)
 						heightfactor = 1.6;
 					else
 						heightfactor = 2.8;
-					buttonAndCaptionHeight = util.albumButtonWidth(correctedAlbumThumbSize, buttonBorder) + captionHeight * heightfactor;
+					buttonAndCaptionHeight = util.albumButtonWidth(env.correctedAlbumThumbSize, buttonBorder) + env.captionHeight * heightfactor;
 
 					// insert into DOM
 					subalbumsElement = $("#subalbums");
@@ -2217,67 +2262,44 @@
 					subalbumsElement.insertBefore("#message-too-many-images");
 
 					//
-					// subalbum loop
+					// subalbums loop
 					//
-					// The promise in order to know when everything has come to its end
+					// The promises are needed in order to know when everything has come to its end
 					var subalbumsPromises = [];
+					var indexCompletedSearchAlbums = 0;
 					for (i = 0; i < env.currentAlbum.subalbums.length; i ++) {
 						let iSubalbum = i;
 						let subalbumPromise = new Promise(
 							function(resolve_subalbumPromise) {
 								var ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
 
-								// generate the subalbum caption
-								let folderName = env.currentAlbum.subalbumName(ithSubalbum);
-								let folder = "<span class='folder-name'>" + folderName;
-								if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
-									let folderMapTitle = env.currentAlbum.folderMapTitle(ithSubalbum, folderName);
-									let folderMapTitleWithoutHtmlTags = folderMapTitle.replace(/<[^>]*>?/gm, '');
-									let positionHtml =
-										"<a id='subalbum-map-link-" + iSubalbum + "' >" +
-											"<img " +
-												"class='title-img' " +
-												"title='" + util.escapeSingleQuotes(folderMapTitleWithoutHtmlTags) + "' " +
-												"alt='" + util.escapeSingleQuotes(folderMapTitleWithoutHtmlTags) + "' " +
-												"height='15px' " +
-												"src='img/ic_place_white_24dp_2x.png' " +
-											"/>" +
-										"</a>";
-									if (folder.indexOf(env.positionMarker) !== -1)
-										folder = folder.replace(env.positionMarker, positionHtml);
-									else
-										folder += positionHtml;
-								}
-								if (folder.indexOf(env.positionMarker) !== -1)
-									folder = folder.replace(env.positionMarker, "");
-								folder += "</span>";
-
-								// // get the value in style sheet (element with that class doesn't exist in DOM)
-								// var $el = $('<div class="album-caption"></div>');
-								// $($el).appendTo('body');
-								// $($el).remove();
-								captionColor = env.options.albums_slide_style ? env.options.slide_album_caption_color : env.options.album_caption_color;
+								let nameHtml = env.currentAlbum.generateSubalbumNameHtml(iSubalbum);
 
 								captionHtml = "<div class='album-caption";
 								if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs)
 									captionHtml += " hidden";
-								captionHtml += "' id='album-caption-" + phFl.hashCode(ithSubalbum.cacheBase) + "' " +
+								let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
+								captionHtml += "' id='" + captionId + "' " +
 															"style='" +
-																"width: " + correctedAlbumThumbSize + "px; " +
-																"font-size: " + captionFontSize + "px; " +
-																"height: " + captionHeight + "px; " +
-																"color: " + captionColor + ";" +
+																"width: " + env.correctedAlbumThumbSize + "px; " +
+																"font-size: " + env.captionFontSize + "px; " +
+																"height: " + env.captionHeight + "px; " +
+																"color: " + env.captionColor + ";" +
 															"'" +
-															">" + folder + "</div>";
+															">" +
+													"<span class='folder-name'>" + nameHtml +
+													"</span>" +
+												"</div>";
+
 
 								captionHtml += "<div class='album-caption-count";
 								if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs || ! env.options.show_album_media_count)
 									captionHtml += " hidden";
 								captionHtml += "' " +
 											"style='" +
-												"font-size: " + Math.round((captionFontSize / 1.5)) + "px; " +
-												"height: " + captionHeight + "px; " +
-												"color: " + captionColor + ";" +
+												"font-size: " + Math.round((env.captionFontSize / 1.5)) + "px; " +
+												"height: " + env.captionHeight + "px; " +
+												"color: " + env.captionColor + ";" +
 											"'" +
 										">(";
 								captionHtml +=		ithSubalbum.numsMediaInSubTree.imagesAndVideosTotal();
@@ -2285,6 +2307,7 @@
 								captionHtml +=		util._t(".title-media");
 								captionHtml +=		"</span>";
 								captionHtml += ")</div>";
+
 								caption = $(captionHtml);
 
 								selectSrc = 'img/checkbox-unchecked-48px.png';
@@ -2328,7 +2351,7 @@
 											"margin-right: " + env.options.spacing + "px; " +
 											"margin-bottom: " + env.options.spacing + "px; " +
 											"height: " + buttonAndCaptionHeight + "px; " +
-											"width: " + util.albumButtonWidth(correctedAlbumThumbSize, buttonBorder) + "px; ";
+											"width: " + util.albumButtonWidth(env.correctedAlbumThumbSize, buttonBorder) + "px; ";
 								if (env.options.albums_slide_style)
 									albumButtonAndCaptionHtml += "background-color:" + env.options.album_button_background_color + ";";
 								albumButtonAndCaptionHtml +=
@@ -2341,8 +2364,8 @@
 									"<div " +
 										"class='album-button' " +
 										"style='" +
-											"width:" + correctedAlbumThumbSize + "px; " +
-											"height:" + correctedAlbumThumbSize + "px; " +
+											"width:" + env.correctedAlbumThumbSize + "px; " +
+											"height:" + env.correctedAlbumThumbSize + "px; " +
 											"margin:" + margin + "px;" +
 										"'" +
 										">" +
@@ -2404,6 +2427,22 @@
 									}
 								);
 
+								if (env.currentAlbum.isSearch()) {
+									// the folder name must be added the second line
+									let searchPromise = ithSubalbum.generateAlbumNameForSelectionAndSearchAlbum();
+									searchPromise.then(
+										function() {
+											ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
+											let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
+											$("#" + captionId + " .folder-name").html(env.currentAlbum.generateSubalbumNameHtml(iSubalbum));
+											indexCompletedSearchAlbums ++;
+											if (indexCompletedSearchAlbums === env.currentAlbum.subalbums.length) {
+												adaptCaptionHeight();
+											}
+										}
+									);
+								}
+
 								pickRandomMediaAndInsertIt(iSubalbum, imageElement, resolve_subalbumPromise);
 							}
 						);
@@ -2414,21 +2453,7 @@
 						function allRandomImagesGot() {
 							// we can run the function that prepare the stuffs for sharing
 							f.socialButtons();
-
-							// check for overflow in album-caption class in order to adapt album caption height to the string length
-							// when diving into search subalbum, the whole album path is showed and it can be lengthy
-							if (env.options.show_album_names_below_thumbs) {
-								var maxHeight = null;
-								$('.album-caption').each(
-									function() {
-										var thisHeight = $(this)[0].scrollHeight;
-										maxHeight = (thisHeight > maxHeight) ? thisHeight : maxHeight;
-									}
-								);
-								var difference = maxHeight - parseFloat($(".album-caption").css("height"));
-								$(".album-button-and-caption").css("height", (parseInt($(".album-button-and-caption").css("height")) + difference) + 'px');
-								$(".album-caption").css("height", maxHeight + 'px');
-							}
+							adaptCaptionHeight();
 						},
 						function() {
 							console.trace();
