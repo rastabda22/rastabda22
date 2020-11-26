@@ -1268,7 +1268,7 @@
 	Album.prototype.addAllMediaToSelection = function() {
 		for (let indexMedia = this.media.length - 1; indexMedia >= 0; indexMedia --) {
 			let singleMedia = this.media[indexMedia];
-			singleMedia.addToSelection("#media-select-box-" + indexMedia);
+			singleMedia.addToSelection(this, "#media-select-box-" + indexMedia);
 		}
 	};
 
@@ -1321,7 +1321,7 @@
 	};
 
 
-	SingleMedia.prototype.addToSelection = function(clickedSelector) {
+	SingleMedia.prototype.addToSelection = function(album, clickedSelector) {
 		if (! this.isSelected()) {
 			if (env.selectionAlbum.isEmpty())
 				Utilities.initializeSelectionAlbum();

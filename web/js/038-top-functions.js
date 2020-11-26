@@ -886,7 +886,7 @@
 		env.isABrowsingModeChange = true;
 	};
 
-	SingleMedia.prototype.toggleSelectedStatus = function(clickedSelector) {
+	SingleMedia.prototype.toggleSelectedStatus = function(album, clickedSelector) {
 		if (env.selectionAlbum.isEmpty())
 			util.initializeSelectionAlbum();
 		if (this.isSelected()) {
@@ -913,7 +913,7 @@
 		} else {
 			if (util.nothingIsSelected())
 				util.initializeSelectionAlbum();
-			this.addToSelection(clickedSelector);
+			this.addToSelection(album, clickedSelector);
 			if (env.currentAlbum.isSelection()) {
 				TopFunctions.showAlbum("refreshMedia");
 			}
@@ -965,7 +965,7 @@
 					function(ev) {
 						ev.stopPropagation();
 						ev.preventDefault();
-						ev.data.media.toggleSelectedStatus(ev.data.clickedSelector);
+						ev.data.media.toggleSelectedStatus(album, ev.data.clickedSelector);
 					}
 				);
 
@@ -2200,7 +2200,7 @@
 						function(ev) {
 							ev.stopPropagation();
 							ev.preventDefault();
-							ev.data.media.toggleSelectedStatus(ev.data.clickedSelector);
+							ev.data.media.toggleSelectedStatus(env.currentAlbum, ev.data.clickedSelector);
 						}
 					);
 					if (
