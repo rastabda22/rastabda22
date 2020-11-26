@@ -1489,7 +1489,8 @@
 									Utilities.initializeSelectionAlbum();
 									window.location.href = Utilities.upHash();
 								} else {
-									env.currentAlbum.prepareForShowing(-1);
+									// env.currentAlbum.prepareForShowing(-1);
+									$(clickedSelector).parent().parent().parent().remove()
 								}
 							}
 

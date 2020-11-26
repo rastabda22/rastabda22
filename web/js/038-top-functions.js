@@ -921,10 +921,12 @@
 		}
 	};
 
-	TopFunctions.toggleSelectedSubalbum = function(iSubalbum, clickedSelector) {
+	TopFunctions.toggleAlbumSelection = function(cacheBase, clickedSelector) {
 		if (env.selectionAlbum.isEmpty())
 			util.initializeSelectionAlbum();
+		var iSubalbum = env.currentAlbum.subalbums.findIndex(subalbum => subalbum.cacheBase === cacheBase);
 		var subalbum = env.currentAlbum.subalbums[iSubalbum];
+		// var subalbum = env.currentAlbum.subalbums[iSubalbum];
 		if (subalbum.isSelected()) {
 			let removeSubalbumPromise = env.currentAlbum.removeSubalbumFromSelection(iSubalbum, clickedSelector);
 			removeSubalbumPromise.then(
