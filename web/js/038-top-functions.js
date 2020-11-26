@@ -1829,34 +1829,42 @@
 	};
 
 
-	Album.prototype.generateSubalbumNameHtml = function(iSubalbum) {
+	Album.prototype.generateSubalbumCaptionHtml = function(iSubalbum) {
 		var ithSubalbum = this.subalbums[iSubalbum];
 
 		// generate the subalbum caption
 		let folderName = this.subalbumName(ithSubalbum);
 		let folderNameHtml = folderName;
-		if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
-			let folderMapTitle = this.folderMapTitle(ithSubalbum, folderName);
-			let folderMapTitleWithoutHtmlTags = folderMapTitle.replace(/<[^>]*>?/gm, '');
-			let positionHtml =
-				"<a id='subalbum-map-link-" + iSubalbum + "' >" +
-					"<img " +
-						"class='title-img' " +
-						"title='" + util.escapeSingleQuotes(folderMapTitleWithoutHtmlTags) + "' " +
-						"alt='" + util.escapeSingleQuotes(folderMapTitleWithoutHtmlTags) + "' " +
-						"height='15px' " +
-						"src='img/ic_place_white_24dp_2x.png' " +
-					"/>" +
-				"</a>";
-			if (folderNameHtml.indexOf(env.positionMarker) !== -1)
-				folderNameHtml = folderNameHtml.replace(env.positionMarker, positionHtml);
-			else
-				folderNameHtml += positionHtml;
-		}
-		if (folderNameHtml.indexOf(env.positionMarker) !== -1)
-			folderNameHtml = folderNameHtml.replace(env.positionMarker, "");
+		// if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
+		// 	let folderMapTitle = this.folderMapTitle(ithSubalbum, folderName);
+		// 	let folderMapTitleWithoutHtmlTags = folderMapTitle.replace(/<[^>]*>?/gm, '');
+		// 	let positionHtml =
+		// 		"<a id='subalbum-map-link-" + iSubalbum + "' >" +
+		// 			"<img " +
+		// 				"class='title-img' " +
+		// 				"title='" + util.escapeSingleQuotes(folderMapTitleWithoutHtmlTags) + "' " +
+		// 				"alt='" + util.escapeSingleQuotes(folderMapTitleWithoutHtmlTags) + "' " +
+		// 				"height='15px' " +
+		// 				"src='img/ic_place_white_24dp_2x.png' " +
+		// 			"/>" +
+		// 		"</a>";
+		// 	if (folderNameHtml.indexOf(env.positionMarker) !== -1)
+		// 		folderNameHtml = folderNameHtml.replace(env.positionMarker, positionHtml);
+		// 	else
+		// 		folderNameHtml += positionHtml;
+		// }
+		// if (folderNameHtml.indexOf(env.positionMarker) !== -1)
+		// 	folderNameHtml = folderNameHtml.replace(env.positionMarker, "");
 
 		return folderNameHtml;
+	};
+
+	SingleMedia.prototype.generateCaptionHtml = function(album) {
+		// generate the media caption
+		let mediaName = this.name;
+		let mediaNameHtml = this.mediaName(album);;
+
+		return mediaNameHtml;
 	};
 
 	TopFunctions.showAlbum = function(populate) {
@@ -2035,9 +2043,6 @@
 				);
 			}
 
-			thumbsElement = $("#thumbs");
-			thumbsElement.empty();
-
 			if (
 				! (isGeneratedAlbum && tooBig && ! env.options.show_big_virtual_folders) && (
 					populateMedia === true ||
@@ -2046,6 +2051,9 @@
 				)
 			) {
 				media = [];
+
+				thumbsElement = $("#thumbs");
+				thumbsElement.empty();
 
 				//
 				// media loop
@@ -2171,13 +2179,14 @@
 					})(imageLink, imageElement);
 
 					thumbsElement.append(imageLink);
-					if (true || env.currentAlbum.isCollection()) {
-						// the folder name must be added the second line
-						env.currentAlbum.generateAlbumCaptionForSelectionAndSearchAlbum();
-						// TO DO ancestorsNames is missin
-						$("#" + imageId + " .media-caption").append(env.currentAlbum.generateSubalbumNameHtml());
-					}
 
+					if (env.currentAlbum.isCollection()) {
+						// the folder name must be added the second line
+						if (! ithMedia.hasOwnProperty("captionForSelection"))
+							ithMedia.generateCaptionForSelectionAndSearches();
+						// TO DO ancestorsNames is missing
+						$("#" + imageId + " .media-caption").html(ithMedia.generateCaptionHtml(env.currentAlbum));
+					}
 				}
 
 				// thumbsElement.append.apply(thumbsElement, media);
@@ -2284,7 +2293,7 @@
 							function(resolve_subalbumPromise) {
 								var ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
 
-								let nameHtml = env.currentAlbum.generateSubalbumNameHtml(iSubalbum);
+								let nameHtml = env.currentAlbum.generateSubalbumCaptionHtml(iSubalbum);
 
 								captionHtml = "<div class='album-caption";
 								if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs)
@@ -2336,6 +2345,20 @@
 										">" +
 									"</a>";
 
+								let folderName = env.currentAlbum.subalbumName(ithSubalbum);
+								let folderMapTitle = env.currentAlbum.folderMapTitle(ithSubalbum, folderName);
+								let folderMapTitleWithoutHtmlTags = folderMapTitle.replace(/<[^>]*>?/gm, '');
+								let positionHtml =
+									"<a id='subalbum-map-link-" + iSubalbum + "' >" +
+										"<img " +
+											"class='thumbnail-map-link' " +
+											"title='" + util.escapeSingleQuotes(folderMapTitleWithoutHtmlTags) + "' " +
+											"alt='" + util.escapeSingleQuotes(folderMapTitleWithoutHtmlTags) + "' " +
+											"height='15px' " +
+											"src='img/ic_place_white_24dp_2x.png' " +
+										"/>" +
+									"</a>";
+
 								// a dot could be present in a cache base, making $("#" + cacheBase) fail, beware...
 								id = phFl.hashCode(ithSubalbum.cacheBase);
 								let subfolderHash;
@@ -2381,6 +2404,7 @@
 										"'" +
 										">" +
 										selectBoxHtml +
+										positionHtml +
 										"<a class='random-media-link' href=''>" +
 											"<img " +
 												"src='img/link-arrow.png' " +
@@ -2403,6 +2427,7 @@
 										'click',
 										{iSubalbum: iSubalbum, clickedSelector: "#subalbum-map-link-" + iSubalbum},
 										function(ev, from) {
+											ev.preventDefault();
 											env.selectorClickedToOpenTheMap = ev.data.clickedSelector;
 											TopFunctions.generateMapFromSubalbum(ev, from);
 										}
@@ -2442,7 +2467,7 @@
 									// the folder name must be added the second line
 									ithSubalbum.generateCaptionForSelectionAndSearches();
 									let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
-									$("#" + captionId + " .folder-name").html(env.currentAlbum.generateSubalbumNameHtml(iSubalbum));
+									$("#" + captionId + " .folder-name").html(env.currentAlbum.generateSubalbumCaptionHtml(iSubalbum));
 									// indexCompletedSearchAlbums ++;
 									// if (indexCompletedSearchAlbums === env.currentAlbum.subalbums.length) {
 									// 	adaptCaptionHeight();

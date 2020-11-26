@@ -228,12 +228,12 @@ a.title-anchor.mobile {
 */
 }
 
-.album-button-random-media-link, #thumbs .thumbnail-map-link, #thumbs .select-box, #subalbums .select-box, #media-select-box .select-box, #popup-images-wrapper .select-box {
+.album-button-random-media-link, #thumbs .thumbnail-map-link, #subalbums .thumbnail-map-link, #thumbs .select-box, #subalbums .select-box, #media-select-box .select-box, #popup-images-wrapper .select-box {
 	position: absolute;
 	filter: alpha(opacity=30); /* For IE8 and earlier */
 }
 
-/* #thumbs .thumbnail-map-link {
+/* #thumbs .thumbnail-map-link, #subalbums .thumbnail-map-link {
 	top: 0px;
 	right: 0px;
 } */
@@ -241,17 +241,17 @@ a.title-anchor.mobile {
 .album-button-random-media-link {
 	opacity: .3;
 	top: 5px;
-	right: 5px;
+	left: 5px;
 	height: 30px;
 }
 
-#thumbs .thumbnail-map-link, #thumbs .select-box, #subalbums .select-box, #media-select-box .select-box, #popup-images-wrapper .select-box {
+#thumbs .thumbnail-map-link, #subalbums .thumbnail-map-link, #thumbs .select-box, #subalbums .select-box, #media-select-box .select-box, #popup-images-wrapper .select-box {
 	opacity: .5;
 	height: 30px;
 	cursor: pointer;
 }
 
-#thumbs .thumbnail-map-link {
+#thumbs .thumbnail-map-link, #subalbums .thumbnail-map-link {
 	top: 5px;
 	right: 5px;
 }
@@ -265,7 +265,7 @@ a.title-anchor.mobile {
 	position: fixed;
 }
 
-#thumbs .thumbnail-map-link:hover, #thumbs .select-box:hover, #subalbums .select-box:hover, #media-select-box .select-box:hover {
+#thumbs .thumbnail-map-link, #subalbums .thumbnail-map-link:hover, #thumbs .select-box:hover, #subalbums .select-box:hover, #media-select-box .select-box:hover {
 	opacity: 1;
 }
 

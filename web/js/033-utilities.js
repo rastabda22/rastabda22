@@ -1339,6 +1339,7 @@
 			env.selectionAlbum.sizesOfAlbum.sum(this.fileSizes);
 			env.selectionAlbum.sizesOfSubTree.sum(this.fileSizes);
 
+			this.generateCaptionForSelectionAndSearches(album);
 			env.selectionAlbum.media.sortByDate();
 			env.selectionAlbum.mediaNameSort = false;
 			env.selectionAlbum.mediaReverseSort = false;
@@ -1395,7 +1396,8 @@
 					if (env.currentAlbum.isAlbumWithOneMedia()) {
 						env.currentAlbum.prepareForShowing(0);
 					} else {
-						TopFunctions.showAlbum("refreshMedia");
+						// TopFunctions.showAlbum("refreshMedia");
+						$(clickedSelector).parent().parent().parent().remove();
 					}
 				} else {
 					let clickedMediaIndex = parseInt(clickedSelector.split('-').pop());
@@ -2129,7 +2131,7 @@
 	};
 
 	Utilities.combineFirstAndSecondLine = function(firstLine, secondLine) {
-		var result = firstLine + env.positionMarker;
+		var result = firstLine;
 		if (secondLine)
 			result += "<br /><span class='second-line'>" + secondLine + "</span>";
 		return result;
@@ -2217,7 +2219,73 @@
 		this.captionForSelectionSorting = captionSorting;
 	};
 
-			folderName = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
+	SingleMedia.prototype.generateCaptionForSelectionAndSearches = function(album) {
+		var firstLine = '', secondLine = '';
+		var raquo = "<span class='gray separated'>&raquo;</span>";
+		var folderArray = album.cacheBase.split(env.options.cache_folder_separator);
+		var captionSorting = Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
+
+		if (album.isByDate()) {
+			firstLine += Utilities.dateElementForFolderName(folderArray, folderArray.length - 1);
+			secondLine += "<span class='gray'>(";
+			if (folderArray.length === 2) {
+				secondLine += Utilities._t("#year-album");
+			} else if (folderArray.length === 3) {
+				secondLine += Utilities._t("#month-album") + " ";
+			} else if (folderArray.length === 4) {
+				secondLine += Utilities._t("#day-album") + ", ";
+			}
+			secondLine += "</span>";
+			if (folderArray.length > 2) {
+				if (folderArray.length === 4)
+					secondLine += Utilities.dateElementForFolderName(folderArray, 2) + " ";
+				secondLine += Utilities.dateElementForFolderName(folderArray, 1);
+			}
+			secondLine += "<span class='gray'>)</span>";
+		} else if (album.isByGps()) {
+			// if (this.name === '')
+			// 	firstLine = Utilities._t('.not-specified');
+			// else if (this.hasOwnProperty('altName'))
+			// 	firstLine = Utilities.transformAltPlaceName(this.altName);
+			// else
+			firstLine = this.name;
+
+			for (let iCacheBase = 1; iCacheBase < album.ancestorsCacheBase.length - 1; iCacheBase ++) {
+				if (iCacheBase == 1)
+					secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album-in") + "</span> ";
+				let marker = "<marker>" + iCacheBase + "</marker>";
+				secondLine += marker;
+				if (iCacheBase < album.ancestorsCacheBase.length - 2)
+					secondLine += raquo;
+				if (iCacheBase === album.ancestorsCacheBase.length - 2)
+					secondLine += "<span class='gray'>)</span>";
+
+				let albumName;
+				if (album.ancestorsNames[iCacheBase] === '')
+					albumName = Utilities._t('.not-specified');
+				else
+					albumName = album.ancestorsNames[iCacheBase];
+				secondLine = secondLine.replace(marker, "<a href='" + env.hashBeginning + album.ancestorsCacheBase[iCacheBase] + "'>" + albumName + "</a>");
+			}
+			if (! secondLine)
+				secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album") + ")</span>";
+		} else {
+			firstLine = this.name
+			for (let iCacheBase = 1; iCacheBase < album.ancestorsCacheBase.length; iCacheBase ++) {
+				if (iCacheBase == 0 && album.ancestorsCacheBase.length === 2) {
+					secondLine = "<span class='gray'>(" + Utilities._t("#regular-album") + ")</span> ";
+				} else {
+					if (iCacheBase == 1)
+						secondLine = "<span class='gray'>(" + Utilities._t("#in") + "</span> ";
+					let marker = "<marker>" + iCacheBase + "</marker>";
+					secondLine += marker;
+					if (iCacheBase < album.ancestorsCacheBase.length - 1)
+						secondLine += raquo;
+					if (iCacheBase === album.ancestorsCacheBase.length - 1)
+						secondLine += "<span class='gray'>)</span>";
+					secondLine = secondLine.replace(marker, "<a href='" + env.hashBeginning + album.ancestorsCacheBase[iCacheBase] + "'>" + album.ancestorsNames[iCacheBase] + "</a>");
+				}
+			}
 		}
 
 		this.captionForSelection = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
@@ -2248,6 +2316,32 @@
 		}
 
 		return folderName;
+	};
+
+	SingleMedia.prototype.mediaName = function(album) {
+		var mediaName = '';
+		if ((album.isSelection() || album.isSearch()) && this.hasOwnProperty("captionForSelection")) {
+			mediaName = this.captionForSelection;
+		} else if (album.isByDate()) {
+			let folderArray = album.cacheBase.split(env.options.cache_folder_separator);
+			if (folderArray.length == 2) {
+				mediaName += parseInt(folderArray[1]);
+			} else if (folderArray.length == 3)
+				mediaName += " " + Utilities._t("#month-" + folderArray[2]);
+			else if (folderArray.length == 4)
+				mediaName += Utilities._t("#day") + " " + parseInt(folderArray[3]);
+		} else if (album.isByGps()) {
+			if (this.name === '')
+				mediaName = Utilities._t('.not-specified');
+			else if (this.hasOwnProperty('altName'))
+				mediaName = Utilities.transformAltPlaceName(this.altName);
+			else
+				mediaName = this.name;
+		} else {
+			mediaName = this.name;
+		}
+
+		return mediaName;
 	};
 
 	Album.prototype.folderMapTitle = function(subalbum, folderName) {
