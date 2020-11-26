@@ -102,13 +102,13 @@
 		// end of function getMediaAndPositions body
 
 		// auxiliary functions
-		function getMedia(albumCacheBase) {
+		function getMedia(cacheBase) {
 			return new Promise(
 				function(resolve_getMedia, reject_getMedia) {
 					var mediaJsonFile;
 					// are media still missing?
 					if (mustGetMedia) {
-						mediaJsonFile = albumCacheBase + '.media.json';
+						mediaJsonFile = cacheBase + '.media.json';
 						var promise = PhotoFloat.getJsonFile(mediaJsonFile);
 						promise.then(
 							function(media) {
@@ -125,13 +125,13 @@
 			);
 		}
 
-		function getPositions(albumCacheBase) {
+		function getPositions(cacheBase) {
 			return new Promise(
 				function(resolve_getPositions, reject_getPositions) {
 					var positionJsonFile;
 					// are positions still missing?
 					if (mustGetPositions) {
-						positionJsonFile = albumCacheBase + '.positions.json';
+						positionJsonFile = cacheBase + '.positions.json';
 						var promise = PhotoFloat.getJsonFile(positionJsonFile);
 						promise.then(
 							function(positions) {
@@ -164,8 +164,8 @@
 		return [albumCombinationList, mediaCombinationList];
 	};
 
-	PhotoFloat.isProtectedCacheBase = function(albumCacheBase) {
-		return albumCacheBase.indexOf(env.options.protected_directories_prefix) == 0;
+	PhotoFloat.isProtectedCacheBase = function(cacheBase) {
+		return cacheBase.indexOf(env.options.protected_directories_prefix) == 0;
 	};
 
 	PhotoFloat.getSingleUnprotectedCacheBaseWithExternalMediaAndPositions = function(unprotectedCacheBase, {getMedia, getPositions}) {
@@ -897,13 +897,13 @@
 
 		return new Promise(
 			function(resolve_getAlbum) {
-				var albumCacheBase, album;
+				var cacheBase, album;
 				if (typeof albumOrCacheBase === "string") {
-					albumCacheBase = albumOrCacheBase;
-					album = env.cache.getAlbum(albumCacheBase);
+					cacheBase = albumOrCacheBase;
+					album = env.cache.getAlbum(cacheBase);
 				} else {
 					album = albumOrCacheBase;
-					albumCacheBase = album.cacheBase;
+					cacheBase = album.cacheBase;
 				}
 
 				var promise;
@@ -911,7 +911,7 @@
 				if (album) {
 					if (
 						// map albums and search albums already have all the media and positions
-						util.isMapCacheBase(albumCacheBase) || util.isSearchCacheBase(albumCacheBase) || util.isSelectionCacheBase(albumCacheBase) ||
+						util.isMapCacheBase(cacheBase) || util.isSearchCacheBase(cacheBase) || util.isSelectionCacheBase(cacheBase) ||
 						// the album hasn't unprotected content
 						album.includedFilesByCodesSimpleCombination[","] === false
 					) {
@@ -975,7 +975,7 @@
 							console.trace();
 						}
 					);
-				} else if (util.isMapCacheBase(albumCacheBase) || util.isSelectionCacheBase(albumCacheBase)) {
+				} else if (util.isMapCacheBase(cacheBase) || util.isSelectionCacheBase(cacheBase)) {
 					// map and selection albums are not on server:
 					// if the album hasn't been passed as argument and isn't in cache => it could have been passed with POST and be put in postData["packedAlbum"]
 					// alert("alt");
@@ -986,7 +986,7 @@
 						// execution arrives here if a map album is reloaded or opened from a link
 						$("#loading").hide();
 						let selector = "#error-nonexistent-map-album";
-						if (util.isSelectionCacheBase(albumCacheBase))
+						if (util.isSelectionCacheBase(cacheBase))
 							selector = "#error-nonexistent-selection-album";
 						$(selector).stop().fadeIn(200);
 						$(selector).fadeOut(
@@ -998,7 +998,7 @@
 					}
 				} else {
 					// neiter the album has been passed as argument, nor is in cache, get it brand new
-					promise = PhotoFloat.getSingleUnprotectedCacheBaseWithExternalMediaAndPositions(albumCacheBase, {getMedia: getMedia, getPositions: getPositions});
+					promise = PhotoFloat.getSingleUnprotectedCacheBaseWithExternalMediaAndPositions(cacheBase, {getMedia: getMedia, getPositions: getPositions});
 					promise.then(
 						function unprotectedAlbumGot(album) {
 							if (album.hasProtectedContent()) {
@@ -1159,7 +1159,7 @@
 		}
 	};
 
-	PhotoFloat.encodeHash = function(albumCacheBase, media, foundAlbumHash, savedSearchAlbumHash) {
+	PhotoFloat.encodeHash = function(cacheBase, media, foundAlbumHash, savedSearchAlbumHash) {
 		var hash;
 
 		if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
@@ -1169,31 +1169,31 @@
 
 		if (media !== null) {
 			// media hash
-			if (util.isFolderCacheBase(albumCacheBase)) {
+			if (util.isFolderCacheBase(cacheBase)) {
 				if (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null)
 					// media in folders album, count = 2
 					hash = util.pathJoin([
-						albumCacheBase,
+						cacheBase,
 						media.cacheBase
 					]);
 				else
 					// media in found album or in one of its subalbum, count = 4
 					hash = util.pathJoin([
-						albumCacheBase,
+						cacheBase,
 						foundAlbumHash,
 						savedSearchAlbumHash,
 						media.cacheBase
 					]);
 			} else if (
-				util.isByDateCacheBase(albumCacheBase) ||
-				util.isByGpsCacheBase(albumCacheBase) ||
-				util.isSearchCacheBase(albumCacheBase) && (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null) ||
-				util.isSelectionCacheBase(albumCacheBase) ||
-				util.isMapCacheBase(albumCacheBase)
+				util.isByDateCacheBase(cacheBase) ||
+				util.isByGpsCacheBase(cacheBase) ||
+				util.isSearchCacheBase(cacheBase) && (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null) ||
+				util.isSelectionCacheBase(cacheBase) ||
+				util.isMapCacheBase(cacheBase)
 			)
 				// media in date or gps album, count = 3
 				hash = util.pathJoin([
-					albumCacheBase,
+					cacheBase,
 					media.foldersCacheBase,
 					media.cacheBase
 				]);
@@ -1202,14 +1202,14 @@
 			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
 				// found album or one of its subalbums, count = 3
 				hash = util.pathJoin([
-					albumCacheBase,
+					cacheBase,
 					foundAlbumHash,
 					savedSearchAlbumHash
 				]);
 			else
 				// plain search album, count = 1
 				// folders album, count = 1
-				hash = albumCacheBase;
+				hash = cacheBase;
 		}
 		return env.hashBeginning + hash;
 	};

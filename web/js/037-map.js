@@ -42,7 +42,7 @@
 	Album.prototype.generateHtmlForImages = function() {
 		// we must get the media corresponding to the name in the point
 		// var markerClass;
-		var mediaIndex, mediaHash, albumCacheBase, thumbHeight, thumbWidth, width, height;
+		var mediaIndex, mediaHash, thumbHeight, thumbWidth, width, height;
 		var ithMedia, images = "", calculatedWidth, calculatedHeight, imageString, imgString, img, thumbHash, imgTitle;
 		var albumViewPadding = $("#album-view").css("padding");
 		if (! albumViewPadding)
@@ -55,7 +55,6 @@
 			ithMedia = this.media[mediaIndex];
 
 			mediaHash = phFl.encodeHash(this.cacheBase, ithMedia);
-			albumCacheBase = this.cacheBase;
 			// var codedHashId = getCodedHashId(photosInAlbumCopy[photoIndex].element);
 			thumbHash = ithMedia.chooseThumbnail(env.options.media_thumb_size);
 			imgTitle = util.pathJoin([ithMedia.albumName, ithMedia.name]);
@@ -107,7 +106,7 @@
 								{
 									width: ithMedia.metadata.size[0],
 									height: ithMedia.metadata.size[1],
-									albumCacheBase: albumCacheBase,
+									albumCacheBase: this.cacheBase,
 									mediaHash: mediaHash
 								}
 							) +

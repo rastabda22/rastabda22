@@ -566,9 +566,6 @@
 							for (let index = positionAndMedia.mediaList.length - 1; index >= 0; index --) {
 								mediaListElement = positionAndMedia.mediaList[index];
 								if (mediaListElement.isEqual(mediaNameListToRemoveElement)) {
-								// 	mediaListElement.albumCacheBase === mediaNameListToRemoveElement.albumCacheBase &&
-								// 	mediaListElement.cacheBase === mediaNameListToRemoveElement.cacheBase
-								// ) {
 									matchingMediaIndexes.push(index);
 								}
 							}
