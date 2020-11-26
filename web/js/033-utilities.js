@@ -1439,7 +1439,7 @@
 							env.selectionAlbum.sizesOfSubTree.sum(subalbum.sizesOfSubTree);
 							env.selectionAlbum.numsProtectedMediaInSubTree.sum(subalbum.numsProtectedMediaInSubTree);
 
-							subalbum.generateAlbumNameForSelectionAndSearchAlbum();
+							subalbum.generateAlbumCaptionForSelectionAndSearchAlbum();
 							Utilities.sortByDate(env.selectionAlbum.subalbums);
 							env.selectionAlbum.albumNameSort = false;
 							env.selectionAlbum.albumReverseSort = false;
@@ -2146,8 +2146,7 @@
 
 	};
 
-	Album.prototype.generateAlbumNameForSelectionAndSearchAlbum = function() {
-		var self = this;
+	Album.prototype.generateAlbumCaptionForSelectionAndSearchAlbum = function() {
 		var folderName = "", firstLine = '', secondLine = '';
 		var raquo = "<span class='gray separated'>&raquo;</span>";
 		var folderArray = self.cacheBase.split(env.options.cache_folder_separator);

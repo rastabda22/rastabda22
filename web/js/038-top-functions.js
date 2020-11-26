@@ -2035,6 +2035,9 @@
 				);
 			}
 
+			thumbsElement = $("#thumbs");
+			thumbsElement.empty();
+
 			if (
 				! (isGeneratedAlbum && tooBig && ! env.options.show_big_virtual_folders) && (
 					populateMedia === true ||
@@ -2154,7 +2157,8 @@
 					else
 						mediaHash = phFl.encodeHash(env.currentAlbum.cacheBase, ithMedia);
 
-					imageLink = $("<a href='" + mediaHash + "' id='link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase + "'></a>");
+					let imageId = "link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase;
+					imageLink = $("<a href='" + mediaHash + "' id='" + imageId + "'></a>");
 					imageLink.append(imageElement);
 					media.push(imageLink);
 
@@ -2165,11 +2169,18 @@
 							env.currentAlbum.media.splice(env.currentAlbum.media.indexOf(theImage.get(0).media), 1);
 						});
 					})(imageLink, imageElement);
+
+					thumbsElement.append(imageLink);
+					if (true || env.currentAlbum.isCollection()) {
+						// the folder name must be added the second line
+						env.currentAlbum.generateAlbumCaptionForSelectionAndSearchAlbum();
+						// TO DO ancestorsNames is missin
+						$("#" + imageId + " .media-caption").append(env.currentAlbum.generateSubalbumNameHtml());
+					}
+
 				}
 
-				thumbsElement = $("#thumbs");
-				thumbsElement.empty();
-				thumbsElement.append.apply(thumbsElement, media);
+				// thumbsElement.append.apply(thumbsElement, media);
 
 				// generate the click event for the map for every media
 				for (i = 0; i < env.currentAlbum.numsMedia.imagesAndVideosTotal(); ++i) {
@@ -2429,8 +2440,7 @@
 
 								if (env.currentAlbum.isSearch()) {
 									// the folder name must be added the second line
-									ithSubalbum.generateAlbumNameForSelectionAndSearchAlbum();
-									ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
+									ithSubalbum.generateAlbumCaptionForSelectionAndSearchAlbum();
 									let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
 									$("#" + captionId + " .folder-name").html(env.currentAlbum.generateSubalbumNameHtml(iSubalbum));
 									// indexCompletedSearchAlbums ++;
