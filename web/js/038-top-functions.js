@@ -2427,7 +2427,7 @@
 								if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
 									$("#subalbum-map-link-" + iSubalbum).off('click').on(
 										'click',
-										// {iSubalbum: iSubalbum},
+										{iSubalbum: iSubalbum},
 										function(ev, from) {
 											ev.preventDefault();
 											env.selectorClickedToOpenTheMap = "#subalbum-map-link-" + iSubalbum;
