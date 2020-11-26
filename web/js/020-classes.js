@@ -399,10 +399,10 @@
 					promise.then(
 						function(convertedSubalbum) {
 							if (wasASubalbum) {
-								if (self.subalbums[subalbumIndex].hasOwnProperty("selectionAlbumName")) {
+								if (self.subalbums[subalbumIndex].hasOwnProperty("captionForSelection")) {
 									// transfer subalbums properties to the album
-									convertedSubalbum.selectionAlbumName = self.subalbums[subalbumIndex].selectionAlbumName;
-									convertedSubalbum.selectionAlbumNameSorting = self.subalbums[subalbumIndex].selectionAlbumNameSorting;
+									convertedSubalbum.captionForSelection = self.subalbums[subalbumIndex].captionForSelection;
+									convertedSubalbum.captionForSelectionSorting = self.subalbums[subalbumIndex].captionForSelectionSorting;
 								}
 								self.subalbums[subalbumIndex] = convertedSubalbum;
 							}
@@ -426,8 +426,8 @@
 				'numsMediaInSubTree',
 				'numsProtectedMediaInSubTree',
 				'path',
-				'selectionAlbumName',
-				'selectionAlbumNameSorting',
+				'captionForSelection',
+				'captionForSelectionSorting',
 				'sizesOfAlbum',
 				'sizesOfSubTree',
 				'words'
@@ -459,7 +459,7 @@
 				'path',
 				'physicalPath',
 				'positionsAndMediaInTree',
-				'selectionAlbumName',
+				'captionForSelection',
 				'sizesOfAlbum',
 				'sizesOfSubTree',
 				'subalbums',

@@ -2440,7 +2440,7 @@
 
 								if (env.currentAlbum.isSearch()) {
 									// the folder name must be added the second line
-									ithSubalbum.generateAlbumCaptionForSelectionAndSearchAlbum();
+									ithSubalbum.generateCaptionForSelectionAndSearches();
 									let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
 									$("#" + captionId + " .folder-name").html(env.currentAlbum.generateSubalbumNameHtml(iSubalbum));
 									// indexCompletedSearchAlbums ++;
