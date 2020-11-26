@@ -2221,44 +2221,38 @@
 	};
 
 	SingleMedia.prototype.generateCaptionForSelectionAndSearches = function(album) {
-		var firstLine = '', secondLine = '';
+		var secondLine = '';
 		var raquo = "<span class='gray separated'>&raquo;</span>";
 		var folderArray = album.cacheBase.split(env.options.cache_folder_separator);
 		var captionSorting = Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
 
+		var firstLine = this.name;
 		if (album.isByDate()) {
-			firstLine += Utilities.dateElementForFolderName(folderArray, folderArray.length - 1);
 			secondLine += "<span class='gray'>(";
 			if (folderArray.length === 2) {
-				secondLine += Utilities._t("#year-album");
+				secondLine += Utilities._t("#in-year-album") + " ";
 			} else if (folderArray.length === 3) {
-				secondLine += Utilities._t("#month-album") + " ";
+				secondLine += Utilities._t("#in-month-album") + " ";
 			} else if (folderArray.length === 4) {
-				secondLine += Utilities._t("#day-album") + ", ";
+				secondLine += Utilities._t("#in-day-album") + " ";
 			}
 			secondLine += "</span>";
-			if (folderArray.length > 2) {
-				if (folderArray.length === 4)
-					secondLine += Utilities.dateElementForFolderName(folderArray, 2) + " ";
+			if (folderArray.length > 3)
+				secondLine += Utilities.dateElementForFolderName(folderArray, 3) + " ";
+			if (folderArray.length > 2)
+				secondLine += Utilities.dateElementForFolderName(folderArray, 2) + " ";
+			if (folderArray.length > 1)
 				secondLine += Utilities.dateElementForFolderName(folderArray, 1);
-			}
 			secondLine += "<span class='gray'>)</span>";
 		} else if (album.isByGps()) {
-			// if (this.name === '')
-			// 	firstLine = Utilities._t('.not-specified');
-			// else if (this.hasOwnProperty('altName'))
-			// 	firstLine = Utilities.transformAltPlaceName(this.altName);
-			// else
-			firstLine = this.name;
-
-			for (let iCacheBase = 1; iCacheBase < album.ancestorsCacheBase.length - 1; iCacheBase ++) {
+			for (let iCacheBase = 1; iCacheBase < album.ancestorsCacheBase.length; iCacheBase ++) {
 				if (iCacheBase == 1)
-					secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album-in") + "</span> ";
+					secondLine = "<span class='gray'>(" + Utilities._t("#in-by-gps-album") + "</span> ";
 				let marker = "<marker>" + iCacheBase + "</marker>";
 				secondLine += marker;
-				if (iCacheBase < album.ancestorsCacheBase.length - 2)
+				if (iCacheBase < album.ancestorsCacheBase.length - 1)
 					secondLine += raquo;
-				if (iCacheBase === album.ancestorsCacheBase.length - 2)
+				if (iCacheBase === album.ancestorsCacheBase.length - 1)
 					secondLine += "<span class='gray'>)</span>";
 
 				let albumName;
@@ -2271,7 +2265,6 @@
 			if (! secondLine)
 				secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album") + ")</span>";
 		} else {
-			firstLine = this.name
 			for (let iCacheBase = 1; iCacheBase < album.ancestorsCacheBase.length; iCacheBase ++) {
 				if (iCacheBase == 0 && album.ancestorsCacheBase.length === 2) {
 					secondLine = "<span class='gray'>(" + Utilities._t("#regular-album") + ")</span> ";
