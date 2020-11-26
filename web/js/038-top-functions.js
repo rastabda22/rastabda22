@@ -2425,10 +2425,10 @@
 								if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
 									$("#subalbum-map-link-" + iSubalbum).off('click').on(
 										'click',
-										{iSubalbum: iSubalbum, clickedSelector: "#subalbum-map-link-" + iSubalbum},
+										// {iSubalbum: iSubalbum},
 										function(ev, from) {
 											ev.preventDefault();
-											env.selectorClickedToOpenTheMap = ev.data.clickedSelector;
+											env.selectorClickedToOpenTheMap = "#subalbum-map-link-" + iSubalbum;
 											TopFunctions.generateMapFromSubalbum(ev, from);
 										}
 									);
@@ -2442,10 +2442,10 @@
 									// execution enters here if we are using index.php
 									$("#" + id).off("auxclick").on(
 										"auxclick",
-										{subfolderHash: subfolderHash},
+										// {subfolderHash: subfolderHash},
 										function (ev) {
 											if (ev.which == 2) {
-												util.openInNewTab(ev.data.subfolderHash);
+												util.openInNewTab(subfolderHash);
 												return false;
 											}
 										}
@@ -2455,11 +2455,10 @@
 								$("#subalbum-select-box-" + iSubalbum + " .select-box").show();
 								$("#subalbum-select-box-" + iSubalbum).off('click').on(
 									'click',
-									{iSubalbum: iSubalbum, clickedSelector: "#subalbum-select-box-" + iSubalbum},
 									function(ev) {
 										ev.stopPropagation();
 										ev.preventDefault();
-										TopFunctions.toggleSelectedSubalbum(ev.data.iSubalbum, ev.data.clickedSelector);
+										TopFunctions.toggleAlbumSelection(ithSubalbum.cacheBase, "#subalbum-select-box-" + iSubalbum);
 									}
 								);
 
