@@ -129,9 +129,10 @@ config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x
 # json_version = 4.1 since sizes of media, albums and trees added
 # json_version = 4.2 since numMediaInSubTree and numMedia are changed to numsMediaInSubTree and numsMedia
 # json_version = 4.21 since mediaNameList changed to mediaList
+# json_version = 4.22 since albumCacheBase removed from mediaList elements
 
 # json_version = 0
-json_version = 4.21
+json_version = 4.22
 
 
 def set_obsolete_json_version_flag():

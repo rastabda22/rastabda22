@@ -921,14 +921,14 @@ class Positions(object):
 				'mediaList': []
 			}
 			for single_media in position.mediaList:
-				media_album_cache_base = single_media.album.cache_base
-				if type_string == Options.config['by_date_string']:
-					media_album_cache_base = single_media.day_album_cache_base
-				elif type_string == Options.config['by_gps_string']:
-					media_album_cache_base = single_media.gps_album_cache_base
+				# media_album_cache_base = single_media.album.cache_base
+				# if type_string == Options.config['by_date_string']:
+				# 	media_album_cache_base = single_media.day_album_cache_base
+				# elif type_string == Options.config['by_gps_string']:
+				# 	media_album_cache_base = single_media.gps_album_cache_base
 				position_dict['mediaList'].append({
 					'cacheBase': single_media.cache_base,
-					'albumCacheBase': media_album_cache_base,
+					# 'albumCacheBase': media_album_cache_base,
 					'foldersCacheBase': single_media.album.cache_base
 					# 'passwordsMd5': list(single_media.passwords_md5)
 				})
