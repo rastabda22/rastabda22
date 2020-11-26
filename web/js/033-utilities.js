@@ -2135,7 +2135,7 @@
 		return result;
 	};
 
-	Utilities.convertByDateAncestosNames = function(ancestorsNames) {
+	Utilities.convertByDateAncestorNames = function(ancestorsNames) {
 		if (ancestorsNames[0] === env.options.by_date_string && ancestorsNames.length > 2) {
 			let result = ancestorsNames.slice();
 			result[2] = Utilities._t("#month-" + result[2]);
@@ -2146,15 +2146,12 @@
 
 	};
 
-	Album.prototype.generateAlbumCaptionForSelectionAndSearchAlbum = function() {
-		var folderName = "", firstLine = '', secondLine = '';
+	Album.prototype.generateCaptionForSelectionAndSearches = function() {
+		var firstLine = '', secondLine = '';
 		var raquo = "<span class='gray separated'>&raquo;</span>";
-		var folderArray = self.cacheBase.split(env.options.cache_folder_separator);
-		var nameSorting = Utilities.convertByDateAncestosNames(self.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
-		if (self.isByDate()) {
-		// if (album.isSelection() && self.isByDate()) {
-			// if (folderArray.length === 4)
-			// 	firstLine += Utilities._t("#day") + " ";
+		var folderArray = this.cacheBase.split(env.options.cache_folder_separator);
+		var captionSorting = Utilities.convertByDateAncestorNames(this.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
+		if (this.isByDate()) {
 			firstLine += Utilities.dateElementForFolderName(folderArray, folderArray.length - 1);
 			secondLine += "<span class='gray'>(";
 			if (folderArray.length === 2) {
@@ -2171,55 +2168,54 @@
 				secondLine += Utilities.dateElementForFolderName(folderArray, 1);
 			}
 			secondLine += "<span class='gray'>)</span>";
-
-			folderName = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
-		} else if (self.isByGps()) {
-		// } else if (album.isSelection() && self.isByGps()) {
-			if (self.name === '')
+		} else if (this.isByGps()) {
+			if (this.name === '')
 				firstLine = Utilities._t('.not-specified');
-			else if (self.hasOwnProperty('altName'))
-				firstLine = Utilities.transformAltPlaceName(self.altName);
+			else if (this.hasOwnProperty('altName'))
+				firstLine = Utilities.transformAltPlaceName(this.altName);
 			else
-				firstLine = self.name;
+				firstLine = this.name;
 
-			for (let iCacheBase = 1; iCacheBase < self.ancestorsCacheBase.length - 1; iCacheBase ++) {
+			for (let iCacheBase = 1; iCacheBase < this.ancestorsCacheBase.length - 1; iCacheBase ++) {
 				if (iCacheBase == 1)
 					secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album-in") + "</span> ";
 				let marker = "<marker>" + iCacheBase + "</marker>";
 				secondLine += marker;
-				if (iCacheBase < self.ancestorsCacheBase.length - 2)
+				if (iCacheBase < this.ancestorsCacheBase.length - 2)
 					secondLine += raquo;
-				if (iCacheBase === self.ancestorsCacheBase.length - 2)
+				if (iCacheBase === this.ancestorsCacheBase.length - 2)
 					secondLine += "<span class='gray'>)</span>";
 
 				let albumName;
-				if (self.ancestorsNames[iCacheBase] === '')
+				if (this.ancestorsNames[iCacheBase] === '')
 					albumName = Utilities._t('.not-specified');
 				else
-					albumName = self.ancestorsNames[iCacheBase];
-				secondLine = secondLine.replace(marker, "<a href='" + env.hashBeginning + self.ancestorsCacheBase[iCacheBase] + "'>" + albumName + "</a>");
+					albumName = this.ancestorsNames[iCacheBase];
+				secondLine = secondLine.replace(marker, "<a href='" + env.hashBeginning + this.ancestorsCacheBase[iCacheBase] + "'>" + albumName + "</a>");
 			}
 			if (! secondLine)
 				secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album") + ")</span>";
-
-			folderName = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
 		} else {
-			firstLine = self.name;
-			for (let iCacheBase = 0; iCacheBase < self.ancestorsCacheBase.length - 1; iCacheBase ++) {
-				if (iCacheBase == 0 && self.ancestorsCacheBase.length === 2) {
+			firstLine = this.name;
+			for (let iCacheBase = 0; iCacheBase < this.ancestorsCacheBase.length - 1; iCacheBase ++) {
+				if (iCacheBase == 0 && this.ancestorsCacheBase.length === 2) {
 					secondLine = "<span class='gray'>(" + Utilities._t("#regular-album") + ")</span> ";
 				} else {
 					if (iCacheBase == 1)
 						secondLine = "<span class='gray'>(" + Utilities._t("#regular-album-in") + "</span> ";
 					let marker = "<marker>" + iCacheBase + "</marker>";
 					secondLine += marker;
-					if (iCacheBase < self.ancestorsCacheBase.length - 2)
+					if (iCacheBase < this.ancestorsCacheBase.length - 2)
 						secondLine += raquo;
-					if (iCacheBase === self.ancestorsCacheBase.length - 2)
+					if (iCacheBase === this.ancestorsCacheBase.length - 2)
 						secondLine += "<span class='gray'>)</span>";
-					secondLine = secondLine.replace(marker, "<a href='" + env.hashBeginning + self.ancestorsCacheBase[iCacheBase] + "'>" + self.ancestorsNames[iCacheBase] + "</a>");
+					secondLine = secondLine.replace(marker, "<a href='" + env.hashBeginning + this.ancestorsCacheBase[iCacheBase] + "'>" + this.ancestorsNames[iCacheBase] + "</a>");
 				}
 			}
+		}
+		this.captionForSelection = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
+		this.captionForSelectionSorting = captionSorting;
+	};
 
 			folderName = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
 		}
