@@ -1339,7 +1339,16 @@
 			env.selectionAlbum.sizesOfAlbum.sum(this.fileSizes);
 			env.selectionAlbum.sizesOfSubTree.sum(this.fileSizes);
 
-			this.generateCaptionForSelectionAndSearches(album);
+			if (album.isSearch) {
+				let parentAlbumPromise = PhotoFloat.getAlbum(this.foldersCacheBase, null, {getMedia: false, getPositions: false});
+				parentAlbumPromise.then(
+					function(parentAlbum) {
+						this.generateCaptionForSelectionAndSearches(parentAlbum);
+					}
+				);
+			} else {
+				this.generateCaptionForSelectionAndSearches(album);
+			}
 			env.selectionAlbum.media.sortByDate();
 			env.selectionAlbum.mediaNameSort = false;
 			env.selectionAlbum.mediaReverseSort = false;
@@ -2224,9 +2233,9 @@
 		var secondLine = '';
 		var raquo = "<span class='gray separated'>&raquo;</span>";
 		var folderArray = album.cacheBase.split(env.options.cache_folder_separator);
-		var captionSorting = Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
 
 		var firstLine = this.name;
+		var captionSorting = Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
 		if (album.isByDate()) {
 			secondLine += "<span class='gray'>(";
 			if (folderArray.length === 2) {
@@ -2247,7 +2256,7 @@
 		} else if (album.isByGps()) {
 			for (let iCacheBase = 1; iCacheBase < album.ancestorsCacheBase.length; iCacheBase ++) {
 				if (iCacheBase == 1)
-					secondLine = "<span class='gray'>(" + Utilities._t("#in-by-gps-album") + "</span> ";
+					secondLine += "<span class='gray'>(" + Utilities._t("#in-by-gps-album") + "</span> ";
 				let marker = "<marker>" + iCacheBase + "</marker>";
 				secondLine += marker;
 				if (iCacheBase < album.ancestorsCacheBase.length - 1)
@@ -2267,10 +2276,10 @@
 		} else {
 			for (let iCacheBase = 1; iCacheBase < album.ancestorsCacheBase.length; iCacheBase ++) {
 				if (iCacheBase == 0 && album.ancestorsCacheBase.length === 2) {
-					secondLine = "<span class='gray'>(" + Utilities._t("#regular-album") + ")</span> ";
+					secondLine += "<span class='gray'>(" + Utilities._t("#regular-album") + ")</span> ";
 				} else {
 					if (iCacheBase == 1)
-						secondLine = "<span class='gray'>(" + Utilities._t("#in") + "</span> ";
+						secondLine += "<span class='gray'>(" + Utilities._t("#in") + "</span> ";
 					let marker = "<marker>" + iCacheBase + "</marker>";
 					secondLine += marker;
 					if (iCacheBase < album.ancestorsCacheBase.length - 1)

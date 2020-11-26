@@ -2184,10 +2184,14 @@
 
 					if (env.currentAlbum.isCollection()) {
 						// the folder name must be added the second line
-						if (! ithMedia.hasOwnProperty("captionForSelection"))
-							ithMedia.generateCaptionForSelectionAndSearches();
-						// TO DO ancestorsNames is missing
-						$("#" + imageId + " .media-caption").html(ithMedia.generateCaptionHtml(env.currentAlbum));
+						let parentAlbumPromise = phFl.getAlbum(ithMedia.foldersCacheBase, null, {getMedia: false, getPositions: false});
+						parentAlbumPromise.then(
+							function(parentAlbum) {
+								if (! ithMedia.hasOwnProperty("captionForSelection"))
+									ithMedia.generateCaptionForSelectionAndSearches(parentAlbum);
+								$("#" + imageId + " .media-caption").html(ithMedia.generateCaptionHtml(ithMedia.parent));
+							}
+						);
 					}
 				}
 
