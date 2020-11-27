@@ -1976,7 +1976,7 @@
 		var albumViewWidth;
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
 		var tooBig = false, isGeneratedAlbum = false;
-		var mapLinkIcon, selectBoxHtml, selectSrc, id, ithMedia;
+		var mapLinkIcon, selectBoxHtml, selectSrc, id;
 		var caption, captionHtml, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
 
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
@@ -2061,7 +2061,7 @@
 				// media loop
 				//
 				for (i = 0; i < env.currentAlbum.numsMedia.imagesAndVideosTotal(); ++i) {
-					ithMedia = env.currentAlbum.media[i];
+					let ithMedia = env.currentAlbum.media[i];
 
 					width = ithMedia.metadata.size[0];
 					height = ithMedia.metadata.size[1];
@@ -2470,13 +2470,15 @@
 
 								if (env.currentAlbum.isSearch()) {
 									// the folder name must be added the second line
-									ithSubalbum.generateCaptionForSelectionAndSearches();
-									let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
-									$("#" + captionId + " .folder-name").html(env.currentAlbum.generateSubalbumCaptionHtml(iSubalbum));
-									// indexCompletedSearchAlbums ++;
-									// if (indexCompletedSearchAlbums === env.currentAlbum.subalbums.length) {
-									// 	adaptCaptionHeight();
-									// }
+									let convertSubalbumPromise = env.currentAlbum.convertSubalbum(iSubalbum, null, {getMedia: false, getPositions: false});
+									convertSubalbumPromise.then(
+										function(iSubalbum) {
+											let ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
+											ithSubalbum.generateCaptionForSelectionAndSearches();
+											let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
+											$("#" + captionId + " .folder-name").html(env.currentAlbum.generateSubalbumCaptionHtml(iSubalbum));
+										}
+									);
 								}
 
 								pickRandomMediaAndInsertIt(iSubalbum, imageElement, resolve_subalbumPromise);
