@@ -304,7 +304,8 @@
 			<div id="auth-close" style="top: 22px; right: 22px;"></div>
 			<form id="auth-form">
 				<div id="auth-question"></div>
-				<input id="password" type="password" />
+				<input type="text" value="username" autocomplete="username" style="display: none;" />
+				<input id="password" type="password" autocomplete="current-password" />
 				<input type="submit" value="⏎" class="button"/>
 			</form>
 			<div>
