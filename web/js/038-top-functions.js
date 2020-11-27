@@ -1861,13 +1861,13 @@
 		return folderNameHtml;
 	};
 
-	SingleMedia.prototype.generateCaptionHtml = function(album) {
-		// generate the media caption
-		let mediaName = this.name;
-		let mediaNameHtml = this.mediaName(album);;
-
-		return mediaNameHtml;
-	};
+	// SingleMedia.prototype.generateCaptionHtml = function(album) {
+	// 	// generate the media caption
+	// 	let mediaName = this.name;
+	// 	let mediaNameHtml = this.mediaName(album);;
+	//
+	// 	return mediaNameHtml;
+	// };
 
 	TopFunctions.showAlbum = function(populate) {
 		function adaptCaptionHeight() {
@@ -2189,7 +2189,7 @@
 							function(parentAlbum) {
 								if (! ithMedia.hasOwnProperty("captionForSelection"))
 									ithMedia.generateCaptionForSelectionAndSearches(parentAlbum);
-								$("#" + imageId + " .media-caption").html(ithMedia.generateCaptionHtml(ithMedia.parent));
+								$("#" + imageId + " .media-caption").html(ithMedia.mediaName(env.currentAlbum));
 							}
 						);
 					}
@@ -2299,7 +2299,7 @@
 							function(resolve_subalbumPromise) {
 								var ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
 
-								let nameHtml = env.currentAlbum.generateSubalbumCaptionHtml(iSubalbum);
+								let nameHtml = env.currentAlbum.subalbumName(ithSubalbum);
 
 								captionHtml = "<div class='album-caption";
 								if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs)
@@ -2468,7 +2468,7 @@
 									}
 								);
 
-								if (env.currentAlbum.isSearch()) {
+								if (env.currentAlbum.isCollection()) {
 									// the folder name must be added the second line
 									let convertSubalbumPromise = env.currentAlbum.convertSubalbum(iSubalbum, null, {getMedia: false, getPositions: false});
 									convertSubalbumPromise.then(
@@ -2476,7 +2476,7 @@
 											let ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
 											ithSubalbum.generateCaptionForSelectionAndSearches();
 											let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
-											$("#" + captionId + " .folder-name").html(env.currentAlbum.generateSubalbumCaptionHtml(iSubalbum));
+											$("#" + captionId + " .folder-name").html(env.currentAlbum.subalbumName(ithSubalbum));
 										}
 									);
 								}

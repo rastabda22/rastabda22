@@ -1341,9 +1341,10 @@
 
 			if (album.isSearch) {
 				let parentAlbumPromise = PhotoFloat.getAlbum(this.foldersCacheBase, null, {getMedia: false, getPositions: false});
+				let self = this;
 				parentAlbumPromise.then(
 					function(parentAlbum) {
-						this.generateCaptionForSelectionAndSearches(parentAlbum);
+						self.generateCaptionForSelectionAndSearches(parentAlbum);
 					}
 				);
 			} else {
@@ -2189,6 +2190,11 @@
 				firstLine = this.name;
 
 			for (let iCacheBase = 1; iCacheBase < this.ancestorsCacheBase.length - 1; iCacheBase ++) {
+				let albumName;
+				if (this.ancestorsNames[iCacheBase] === '')
+				albumName = Utilities._t('.not-specified');
+				else
+				albumName = this.ancestorsNames[iCacheBase];
 				if (iCacheBase == 1)
 					secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album-in") + "</span> ";
 				// let marker = "<marker>" + iCacheBase + "</marker>";
@@ -2199,11 +2205,6 @@
 				if (iCacheBase === this.ancestorsCacheBase.length - 2)
 					secondLine += "<span class='gray'>)</span>";
 
-				let albumName;
-				if (this.ancestorsNames[iCacheBase] === '')
-					albumName = Utilities._t('.not-specified');
-				else
-					albumName = this.ancestorsNames[iCacheBase];
 				// secondLine = secondLine.replace(marker, "<a href='" + env.hashBeginning + this.ancestorsCacheBase[iCacheBase] + "'>" + albumName + "</a>");
 			}
 			if (! secondLine)
@@ -2257,6 +2258,11 @@
 			secondLine += "<span class='gray'>)</span>";
 		} else if (album.isByGps()) {
 			for (let iCacheBase = 1; iCacheBase < album.ancestorsCacheBase.length; iCacheBase ++) {
+				let albumName;
+				if (album.ancestorsNames[iCacheBase] === "")
+				albumName = Utilities._t('.not-specified');
+				else
+				albumName = album.ancestorsNames[iCacheBase];
 				if (iCacheBase == 1)
 					secondLine += "<span class='gray'>(" + Utilities._t("#in-by-gps-album") + "</span> ";
 				// let marker = "<marker>" + iCacheBase + "</marker>";
@@ -2267,11 +2273,6 @@
 				if (iCacheBase === album.ancestorsCacheBase.length - 1)
 					secondLine += "<span class='gray'>)</span>";
 
-				let albumName;
-				if (album.ancestorsNames[iCacheBase] === "")
-					albumName = Utilities._t('.not-specified');
-				else
-					albumName = album.ancestorsNames[iCacheBase];
 				// secondLine = secondLine.replace(marker, "<a href='" + env.hashBeginning + album.ancestorsCacheBase[iCacheBase] + "'>" + albumName + "</a>");
 			}
 			if (! secondLine)
@@ -2282,7 +2283,7 @@
 					secondLine += "<span class='gray'>(" + Utilities._t("#regular-album") + ")</span>";
 				} else {
 					if (iCacheBase == 1)
-						secondLine += "<span class='gray'>(" + Utilities._t("#in") + "</span>";
+						secondLine += "<span class='gray'>(" + Utilities._t("#in") + "</span> ";
 					// let marker = "<marker>" + iCacheBase + "</marker>";
 					// secondLine += marker;
 					secondLine += "<a href='" + env.hashBeginning + album.ancestorsCacheBase[iCacheBase] + "'>" + album.ancestorsNames[iCacheBase] + "</a>";
