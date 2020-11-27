@@ -85,15 +85,17 @@
 			calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
 			let selectSrc = 'img/checkbox-unchecked-48px.png';
+			let titleSelector = "#select-single-media";
 			if (ithMedia.isSelected()) {
 				selectSrc = 'img/checkbox-checked-48px.png';
+				titleSelector = "#unselect-single-media";
 			}
 			let selectBoxHtml =
 				"<a id='map-media-select-box-" + mediaIndex + "'>" +
 					"<img " +
 						"class='select-box' " +
-						"title='" + util.escapeSingleQuotes(util._t("#select-single-media")) + "' " +
-						"alt='" + util.escapeSingleQuotes(util._t("#select-single-media")) + "' " +
+						"title='" + util.escapeSingleQuotes(util._t(titleSelector)) + "' " +
+						"alt='" + util.escapeSingleQuotes(util._t("#selector")) + "' " +
 						"src='" + selectSrc + "'" +
 					">" +
 				"</a>";

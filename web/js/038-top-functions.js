@@ -957,10 +957,12 @@
 				$("#pinch-out").off("click").on("click", pS.pinchOut);
 
 				let selectSrc = 'img/checkbox-unchecked-48px.png';
+				let titleSelector = "#select-single-media";
 				if (singleMedia.isSelected()) {
 					selectSrc = 'img/checkbox-checked-48px.png';
+					titleSelector = "#unselect-single-media";
 				}
-				$("#media-select-box .select-box").attr("title", util._t("#select-single-media")).attr("alt", util._t("#select-single-media")).attr("src", selectSrc);
+				$("#media-select-box .select-box").attr("title", util._t(titleSelector)).attr("alt", util._t("#selector")).attr("src", selectSrc);
 				$("#media-select-box").off('click').on(
 					'click',
 					{media: singleMedia, clickedSelector: "#media-select-box"},
@@ -1976,7 +1978,7 @@
 		var albumViewWidth;
 		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
 		var tooBig = false, isGeneratedAlbum = false;
-		var mapLinkIcon, selectBoxHtml, selectSrc, id;
+		var mapLinkIcon, selectBoxHtml, selectSrc, titleSelector, id;
 		var caption, captionHtml, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
 
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
@@ -2109,15 +2111,17 @@
 							"</a>";
 					}
 					selectSrc = 'img/checkbox-unchecked-48px.png';
+					titleSelector = "#select-single-media";
 					if (ithMedia.isSelected()) {
 						selectSrc = 'img/checkbox-checked-48px.png';
+						titleSelector = "#unselect-single-media";
 					}
 					selectBoxHtml =
 						"<a id='media-select-box-" + i + "'>" +
 							"<img " +
 								"class='select-box' " +
-								"title='" + util.escapeSingleQuotes(util._t("#select-single-media")) + "' " +
-								"alt='" + util.escapeSingleQuotes(util._t("#select-single-media")) + "' " +
+								"title='" + util.escapeSingleQuotes(util._t(titleSelector)) + "' " +
+								"alt='" + util.escapeSingleQuotes(util._t("#selector")) + "' " +
 								"src='" + selectSrc + "'" +
 							">" +
 						"</a>";
@@ -2337,15 +2341,17 @@
 								caption = $(captionHtml);
 
 								selectSrc = 'img/checkbox-unchecked-48px.png';
+								titleSelector = "#select-subalbum";
 								if (ithSubalbum.isSelected()) {
 									selectSrc = 'img/checkbox-checked-48px.png';
+									titleSelector = "#unselect-subalbum";
 								}
 								selectBoxHtml =
 									"<a id='subalbum-select-box-" + iSubalbum + "'>" +
 										"<img " +
 											"class='select-box' " +
-											"title='" + util.escapeSingleQuotes(util._t("#select-subalbum")) + "' " +
-											"alt='" + util.escapeSingleQuotes(util._t("#select-subalbum")) + "' " +
+											"title='" + util.escapeSingleQuotes(util._t(titleSelector)) + "' " +
+											"alt='" + util.escapeSingleQuotes(util._t("#selector")) + "' " +
 											"src='" + selectSrc + "' " +
 											"style='display: none;'" +
 										">" +
