@@ -78,8 +78,8 @@
 			);
 		}
 
-		isEqual(otherMediaInPosition) {
-			return this.foldersCacheBase === otherMediaInPosition.foldersCacheBase && this.cacheBase === otherMediaInPosition.cacheBase;
+		isEqual(otherMedia) {
+			return this.foldersCacheBase === otherMedia.foldersCacheBase && this.cacheBase === otherMedia.cacheBase;
 		}
 	}
 

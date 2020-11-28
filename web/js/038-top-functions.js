@@ -921,7 +921,7 @@
 		}
 	};
 
-	TopFunctions.toggleAlbumSelection = function(cacheBase, clickedSelector) {
+	TopFunctions.toggleSubalbumSelection = function(cacheBase, clickedSelector) {
 		if (env.selectionAlbum.isEmpty())
 			util.initializeSelectionAlbum();
 		var iSubalbum = env.currentAlbum.subalbums.findIndex(subalbum => subalbum.cacheBase === cacheBase);
@@ -2472,7 +2472,7 @@
 									function(ev) {
 										ev.stopPropagation();
 										ev.preventDefault();
-										TopFunctions.toggleAlbumSelection(ithSubalbum.cacheBase, "#subalbum-select-box-" + iSubalbum);
+										TopFunctions.toggleSubalbumSelection(ithSubalbum.cacheBase, "#subalbum-select-box-" + iSubalbum);
 									}
 								);
 
