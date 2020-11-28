@@ -1176,7 +1176,7 @@
 		if (env.selectionAlbum.isEmpty()) {
 			return false;
 		} else {
-			var index = env.selectionAlbum.subalbums.findIndex(x => x.cacheBase === album.cacheBase);
+			var index = env.selectionAlbum.subalbums.findIndex(x => x.isEqual(album));
 			if (index > -1)
 				return true;
 			else
@@ -2906,7 +2906,7 @@
 			}
 
 			// calculate the new index
-			if (env.currentMedia !== null && (env.currentAlbum === null || this.cacheBase === env.currentAlbum.cacheBase)) {
+			if (env.currentMedia !== null && (env.currentAlbum === null || this.isEqual(env.currentAlbum))) {
 				env.currentMediaIndex = this.media.findIndex(
 					function(thisMedia) {
 						var matches =

@@ -293,6 +293,10 @@
 		isGenerated() {
 			return this.isTransversal() || this.isCollection();
 		}
+
+		isEqual(otherAlbum) {
+			return this.cacheBase === otherAlbum.cacheBase;
+		}
 	}
 
 	class Subalbums extends Array {
@@ -520,6 +524,10 @@
 		invalidateAuxiliaryPositionsAndMedia() {
 			if (this.hasOwnProperty("positionsAndMedia"))
 				delete this.positionsAndMedia;
+		}
+
+		isEqual(otherAlbum) {
+			return this.cacheBase === otherAlbum.cacheBase;
 		}
 	}
 
