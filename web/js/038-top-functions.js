@@ -1420,6 +1420,10 @@
 	Album.prototype.prepareForShowing = function(mediaIndex) {
 		var populateAlbum;
 
+		if (env.previousMedia !== null && env.previousMedia.mimeType.indexOf("video") === 0)
+			// stop the video, otherwise it will keep playing
+			$("#media-center")[0].pause();
+		
 		if (this.numsMediaInSubTree.imagesAndVideosTotal() == 0 && ! this.isSearch()) {
 			// the album hasn't any content:
 			// either the hash is wrong or it's a protected content album
@@ -1431,23 +1435,21 @@
 		util.undie();
 		$("#loading").hide();
 
-		if (this !== env.currentAlbum) {
-			env.previousAlbum = env.currentAlbum;
-			env.currentAlbum = null;
-		}
-
-		if (env.currentAlbum && mediaIndex !== -1) {
-		// if (env.currentAlbum && env.currentAlbum.isByDate() && mediaIndex !== -1) {
-			env.previousMedia = this.media[mediaIndex];
-		} else {
-			env.previousMedia = env.currentMedia;
-		}
-
-		if (env.previousMedia !== null && env.previousMedia.mimeType.indexOf("video") === 0)
-			// stop the video, otherwise it will keep playing
-			$("#media-center")[0].pause();
-
+		env.previousAlbum = env.currentAlbum;
 		env.currentAlbum = this;
+
+		// if (this !== env.currentAlbum) {
+		// 	env.previousAlbum = env.currentAlbum;
+		// 	env.currentAlbum = null;
+		// }
+
+		// if (env.currentAlbum && mediaIndex !== -1) {
+		// // if (env.currentAlbum && env.currentAlbum.isByDate() && mediaIndex !== -1) {
+		// 	env.previousMedia = this.media[mediaIndex];
+		// } else {
+		env.previousMedia = env.currentMedia;
+		// }
+
 		env.currentMedia = null;
 		if (mediaIndex !== -1)
 			env.currentMedia = env.currentAlbum.media[mediaIndex];
@@ -1457,7 +1459,7 @@
 
 		f.setOptions();
 
-		if (env.currentMedia === null || typeof env.currentMedia === "object") {
+		if (env.currentMedia === null) {
 			env.currentAlbum.initializeSortPropertiesAndCookies();
 			$("#menu-icon").attr("title", util._t("#menu-icon-title"));
 			env.currentAlbum.sortAlbumsMedia();
