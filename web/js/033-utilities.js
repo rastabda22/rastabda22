@@ -1321,6 +1321,43 @@
 	};
 
 
+	SingleMedia.prototype.isInsideSelectedAlbums = function() {
+		var self = this;
+		if (
+			env.selectionAlbum.subalbums.some(
+				function(selectedAlbum) {
+					return (
+						self.foldersCacheBase.indexOf(selectedAlbum.cacheBase) === 0 ||
+						self.dayAlbumCacheBase.indexOf(selectedAlbum.cacheBase) === 0 ||
+						self.gpsAlbumCacheBase.indexOf(selectedAlbum.cacheBase) === 0
+					);
+				}
+			)
+		) {
+			return true;
+		} else {
+			return false;
+		}
+	};
+
+	Album.prototype.isInsideSelectedAlbums = function() {
+		var self = this;
+		if (
+			env.selectionAlbum.subalbums.some(
+				function(selectedAlbum) {
+					return (
+						self.cacheBase.indexOf(selectedAlbum.cacheBase) === 0 &&
+						self.cacheBase !== selectedAlbum.cacheBase
+					);
+				}
+			)
+		) {
+			return true;
+		} else {
+			return false;
+		}
+	};
+
 	SingleMedia.prototype.addToSelection = function(album, clickedSelector) {
 		if (! this.isSelected()) {
 			if (env.selectionAlbum.isEmpty())
@@ -1335,9 +1372,11 @@
 			}
 			var singleMediaArray = new Media([this]);
 			env.selectionAlbum.numsMedia.sum(singleMediaArray.imagesAndVideosCount());
-			env.selectionAlbum.numsMediaInSubTree.sum(singleMediaArray.imagesAndVideosCount());
 			env.selectionAlbum.sizesOfAlbum.sum(this.fileSizes);
-			env.selectionAlbum.sizesOfSubTree.sum(this.fileSizes);
+			if (! this.isInsideSelectedAlbums()) {
+				env.selectionAlbum.numsMediaInSubTree.sum(singleMediaArray.imagesAndVideosCount());
+				env.selectionAlbum.sizesOfSubTree.sum(this.fileSizes);
+			}
 
 			if (album.isSearch()) {
 				let parentAlbumPromise = PhotoFloat.getAlbum(this.foldersCacheBase, null, {getMedia: false, getPositions: false});
@@ -1379,13 +1418,18 @@
 			// var index = env.selectionAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
 			env.selectionAlbum.media.splice(index, 1);
 
-			env.selectionAlbum.positionsAndMediaInTree.removeSingleMedia(this);
+			if (this.hasGpsData()) {
+				env.selectionAlbum.positionsAndMediaInTree.removeSingleMedia(this);
+				env.selectionAlbum.numPositionsInTree = env.selectionAlbum.positionsAndMediaInTree.length;
+			}
 			var singleMediaArray = new Media([this]);
-			env.selectionAlbum.numPositionsInTree = env.selectionAlbum.positionsAndMediaInTree.length;
 			env.selectionAlbum.numsMedia.subtract(singleMediaArray.imagesAndVideosCount());
-			env.selectionAlbum.numsMediaInSubTree.subtract(singleMediaArray.imagesAndVideosCount());
 			env.selectionAlbum.sizesOfAlbum.subtract(this.fileSizes);
-			env.selectionAlbum.sizesOfSubTree.subtract(this.fileSizes);
+			if (! this.isInsideSelectedAlbums()) {
+				let singleMediaArray = new Media([this]);
+				env.selectionAlbum.numsMediaInSubTree.subtract(singleMediaArray.imagesAndVideosCount());
+				env.selectionAlbum.sizesOfSubTree.subtract(this.fileSizes);
+			}
 
 			var singleMediaSelector = "#media-select-box";
 			var otherSelector;
@@ -1428,8 +1472,8 @@
 	};
 
 	Album.prototype.addSubalbumToSelection = function(iSubalbum, clickedSelector) {
+		var subalbum = this.subalbums[iSubalbum];
 		var self = this;
-		var subalbum = self.subalbums[iSubalbum];
 		return new Promise(
 			function(resolve_addSubalbum) {
 				if (subalbum.isSelected()) {
@@ -1441,15 +1485,36 @@
 							var subalbum = self.subalbums[iSubalbum];
 							if (Utilities.nothingIsSelected())
 								Utilities.initializeSelectionAlbum();
+
+							var selectedMediaNotInsideSelectedAlbums = [];
+							env.selectionAlbum.media.forEach(
+								function(singleMedia) {
+									if (! singleMedia.isInsideSelectedAlbums())
+										selectedMediaNotInsideSelectedAlbums.push(singleMedia);
+								}
+							);
+
+							var subalbumIsInsideSelectedAlbums = subalbum.isInsideSelectedAlbums();
+
 							env.selectionAlbum.subalbums.push(subalbum);
 
 							env.selectionAlbum.positionsAndMediaInTree.mergePositionsAndMedia(subalbum.positionsAndMediaInTree);
 							env.selectionAlbum.numPositionsInTree = env.selectionAlbum.positionsAndMediaInTree.length;
-							// env.selectionAlbum.numsMedia.sum(subalbum.numsMedia);
-							env.selectionAlbum.numsMediaInSubTree.sum(subalbum.numsMediaInSubTree);
-							// env.selectionAlbum.sizesOfAlbum.sum(subalbum.sizesOfAlbum);
-							env.selectionAlbum.sizesOfSubTree.sum(subalbum.sizesOfSubTree);
-							env.selectionAlbum.numsProtectedMediaInSubTree.sum(subalbum.numsProtectedMediaInSubTree);
+
+							if (! subalbumIsInsideSelectedAlbums) {
+								env.selectionAlbum.numsMediaInSubTree.sum(subalbum.numsMediaInSubTree);
+								env.selectionAlbum.sizesOfSubTree.sum(subalbum.sizesOfSubTree);
+								selectedMediaNotInsideSelectedAlbums.forEach(
+									function(singleMedia) {
+										if (singleMedia.isInsideSelectedAlbums()) {
+											var singleMediaArray = new Media([singleMedia]);
+											env.selectionAlbum.numsMediaInSubTree.subtract(singleMediaArray.imagesAndVideosCount());
+											env.selectionAlbum.sizesOfSubTree.subtract(singleMedia.fileSizes);
+										}
+									}
+								);
+								env.selectionAlbum.numsProtectedMediaInSubTree.sum(subalbum.numsProtectedMediaInSubTree);
+							}
 
 							subalbum.generateCaptionForSelectionAndSearches();
 							Utilities.sortByDate(env.selectionAlbum.subalbums);
@@ -1457,11 +1522,13 @@
 							env.selectionAlbum.albumReverseSort = false;
 							env.selectionAlbum.initializeSortPropertiesAndCookies();
 							env.selectionAlbum.sortAlbumsMedia();
+
+							$(clickedSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-subalbum"));
+							self.invalidateAuxiliaryPositionsAndMedia();
+
 							resolve_addSubalbum();
 						}
 					);
-					$(clickedSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-subalbum"));
-					self.invalidateAuxiliaryPositionsAndMedia();
 				}
 			}
 		);
@@ -1483,6 +1550,16 @@
 						function(iSubalbum) {
 							var subalbum = self.subalbums[iSubalbum];
 
+							var selectedMediaInsideSelectedAlbums = [];
+							env.selectionAlbum.media.forEach(
+								function(singleMedia) {
+									if (singleMedia.isInsideSelectedAlbums())
+										selectedMediaInsideSelectedAlbums.push(singleMedia);
+								}
+							);
+
+							var subalbumIsInsideSelectedAlbums = subalbum.isInsideSelectedAlbums();
+
 							indexInSelection = env.selectionAlbum.subalbums.findIndex(
 								function(selectedSubalbum) {
 									return selectedSubalbum.cacheBase = subalbum.cacheBase;
@@ -1494,11 +1571,26 @@
 								env.selectionAlbum.positionsAndMediaInTree.removePositionsAndMedia(subalbum.positionsAndMediaInTree);
 								env.selectionAlbum.numPositionsInTree = env.selectionAlbum.positionsAndMediaInTree.length;
 							}
-							// env.selectionAlbum.numsMedia.subtract(subalbum.numsMedia);
-							env.selectionAlbum.numsMediaInSubTree.subtract(subalbum.numsMediaInSubTree);
-							// env.selectionAlbum.subtract(subalbum.sizesOfAlbum);
-							env.selectionAlbum.sizesOfSubTree.subtract(subalbum.sizesOfSubTree);
-							env.selectionAlbum.numsProtectedMediaInSubTree.subtract(subalbum.numsProtectedMediaInSubTree);
+
+							if (! subalbumIsInsideSelectedAlbums) {
+								env.selectionAlbum.numsMediaInSubTree.subtract(subalbum.numsMediaInSubTree);
+								env.selectionAlbum.sizesOfSubTree.subtract(subalbum.sizesOfSubTree);
+								selectedMediaInsideSelectedAlbums.forEach(
+									function(singleMedia) {
+										if (! singleMedia.isInsideSelectedAlbums()) {
+											var singleMediaArray = new Media([singleMedia]);
+											env.selectionAlbum.numsMediaInSubTree.sum(singleMediaArray.imagesAndVideosCount());
+											env.selectionAlbum.sizesOfSubTree.sum(singleMedia.fileSizes);
+										}
+									}
+								);
+								env.selectionAlbum.numsProtectedMediaInSubTree.subtract(subalbum.numsProtectedMediaInSubTree);
+							}
+
+							if (! env.currentAlbum.isSelection()) {
+								$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-subalbum"));
+							}
+							self.invalidateAuxiliaryPositionsAndMedia();
 
 							if (env.currentAlbum.isSelection()) {
 								if (Utilities.nothingIsSelected()) {
@@ -1514,11 +1606,6 @@
 						}
 					);
 					// }
-
-					if (! env.currentAlbum.isSelection()) {
-						$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-subalbum"));
-					}
-					self.invalidateAuxiliaryPositionsAndMedia();
 				}
 			}
 		);
