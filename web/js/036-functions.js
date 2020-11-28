@@ -817,7 +817,7 @@
 		$("ul li.download-album").addClass("active");
 		$(".download-album.sized").addClass("hidden");
 
-		$(".download-album .sub-menu").addClass("hidden");
+		// $(".download-album .sub-menu").addClass("hidden");
 		if (thisAlbum.isSearch() && ! thisAlbum.media.length && ! thisAlbum.subalbums.length) {
 			// download menu item remains hidden
 		} else if (env.currentMedia !== null || isAlbumWithOneMedia) {
