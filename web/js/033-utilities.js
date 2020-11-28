@@ -1339,7 +1339,7 @@
 			env.selectionAlbum.sizesOfAlbum.sum(this.fileSizes);
 			env.selectionAlbum.sizesOfSubTree.sum(this.fileSizes);
 
-			if (album.isSearch) {
+			if (album.isSearch()) {
 				let parentAlbumPromise = PhotoFloat.getAlbum(this.foldersCacheBase, null, {getMedia: false, getPositions: false});
 				let self = this;
 				parentAlbumPromise.then(
@@ -1482,7 +1482,13 @@
 					convertSubalbumPromise.then(
 						function(iSubalbum) {
 							var subalbum = self.subalbums[iSubalbum];
-							env.selectionAlbum.subalbums.splice(iSubalbum, 1);
+
+							indexInSelection = env.selectionAlbum.subalbums.findIndex(
+								function(selectedSubalbum) {
+									return selectedSubalbum.cacheBase = subalbum.cacheBase;
+								}
+							);
+							env.selectionAlbum.subalbums.splice(indexInSelection, 1);
 
 							if (subalbum.positionsAndMediaInTree.length) {
 								env.selectionAlbum.positionsAndMediaInTree.removePositionsAndMedia(subalbum.positionsAndMediaInTree);
