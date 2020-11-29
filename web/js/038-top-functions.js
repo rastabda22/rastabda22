@@ -946,7 +946,7 @@
 		}
 	};
 
-	TopFunctions.showSingleMedia = function(album, singleMedia, id) {
+	SingleMedia.prototype.showSingleMedia = function(album, id) {
 
 		function loadNextPrevMedia(containerHeight, containerWidth) {
 
@@ -958,22 +958,22 @@
 
 				let selectSrc = 'img/checkbox-unchecked-48px.png';
 				let titleSelector = "#select-single-media";
-				if (singleMedia.isSelected()) {
+				if (this.isSelected()) {
 					selectSrc = 'img/checkbox-checked-48px.png';
 					titleSelector = "#unselect-single-media";
 				}
 				$("#media-select-box .select-box").attr("title", util._t(titleSelector)).attr("alt", util._t("#selector")).attr("src", selectSrc);
 				$("#media-select-box").off('click').on(
 					'click',
-					{media: singleMedia, clickedSelector: "#media-select-box"},
+					{singleMedia: this, clickedSelector: "#media-select-box"},
 					function(ev) {
 						ev.stopPropagation();
 						ev.preventDefault();
-						ev.data.media.toggleSelectedStatus(album, ev.data.clickedSelector);
+						ev.data.singleMedia.toggleSelectedStatus(album, ev.data.clickedSelector);
 					}
 				);
 
-				if (singleMedia.mimeType.indexOf("image") === 0) {
+				if (this.mimeType.indexOf("image") === 0) {
 					pS.addMediaGesturesDetection();
 					util.setPinchButtonsPosition();
 					util.setSelectButtonPosition();
@@ -981,8 +981,8 @@
 				}
 
 				if (album.numsMedia.imagesAndVideosTotal() > 1) {
-					TopFunctions.showSingleMedia(album, env.prevMedia, 'left');
-					TopFunctions.showSingleMedia(album, env.nextMedia, 'right');
+					env.prevMedia.showSingleMedia(album, 'left');
+					env.nextMedia.showSingleMedia(album, 'right');
 				}
 
 				$(window).off("resize").on(
@@ -998,13 +998,13 @@
 						event.data.resize = true;
 
 						event.data.id = "center";
-						event.data.singleMedia = singleMedia;
+						event.data.singleMedia = this;
 						event.data.currentZoom = pS.getCurrentZoom();
 						event.data.initialZoom = pS.getInitialZoom();
 						let scaleMediaPromise = util.scaleMedia(event);
 						scaleMediaPromise.then(
 							function() {
-								if (singleMedia.mimeType.indexOf("image") === 0) {
+								if (this.mimeType.indexOf("image") === 0) {
 									f.pinchSwipeInitialization();
 									util.setPinchButtonsPosition();
 									util.setSelectButtonPosition();
@@ -1058,7 +1058,7 @@
 
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
-		env.mediaLink = phFl.encodeHash(env.currentAlbum.cacheBase, singleMedia, foundAlbumHash, savedSearchAlbumHash);
+		env.mediaLink = phFl.encodeHash(env.currentAlbum.cacheBase, this, foundAlbumHash, savedSearchAlbumHash);
 		env.firstEscKey = true;
 
 		thumbnailSize = env.options.media_thumb_size;
@@ -1075,7 +1075,7 @@
 			} else {
 				$("#" + id + " .title").removeClass("hidden-by-fullscreen");
 			}
-			TopFunctions.setTitle(id, singleMedia);
+			TopFunctions.setTitle(id, this);
 
 			if (env.options.hide_caption) {
 				$("#caption").addClass("hidden-by-option");
@@ -1166,22 +1166,22 @@
 		var mediaBoxInnerElement = $(".media-box#" + id + " .media-box-inner");
 		// empty the img container: another image will be put in there
 
-		if (singleMedia.mimeType.indexOf("video") === 0 && ! f.videoOK()) {
+		if (this.mimeType.indexOf("video") === 0 && ! f.videoOK()) {
 			mediaBoxInnerElement.empty();
 			f.addVideoUnsupportedMarker(id);
 			if (id === "center")
 				loadNextPrevMedia();
 		} else {
-			if (singleMedia.mimeType.indexOf("video") === 0) {
+			if (this.mimeType.indexOf("video") === 0) {
 				mediaSelector = ".media-box#" + id + " .media-box-inner video";
 			} else {
 				mediaSelector = ".media-box#" + id + " .media-box-inner img";
 			}
 			// is the following line correct for videos?
-			mediaSrc = singleMedia.chooseMediaReduction(id, env.fullScreenStatus);
-			mediaHtml = singleMedia.createMediaHtml(id, env.fullScreenStatus);
+			mediaSrc = this.chooseMediaReduction(id, env.fullScreenStatus);
+			mediaHtml = this.createMediaHtml(id, env.fullScreenStatus);
 
-			loadEvent = singleMedia.chooseTriggerEvent();
+			loadEvent = this.chooseTriggerEvent();
 
 			if (mediaBoxInnerElement.html() !== mediaHtml) {
 				// only replace the media-box-inner content if it's not yet there
@@ -1192,7 +1192,7 @@
 					$("link[rel=image_src]").remove();
 					$('link[rel="video_src"]').remove();
 				}
-				$("head").append(singleMedia.createMediaLinkTag(mediaSrc));
+				$("head").append(this.createMediaLinkTag(mediaSrc));
 			}
 
 			if (id === "center")
@@ -1202,7 +1202,7 @@
 				loadEvent,
 				{
 					id: id,
-					singleMedia: singleMedia,
+					singleMedia: this,
 					resize: false,
 				},
 				function (event) {
@@ -1213,7 +1213,7 @@
 							util.setPinchButtonsPosition();
 							util.setSelectButtonPosition();
 							util.correctPrevNextPosition();
-							if (singleMedia.mimeType.indexOf("image") === 0) {
+							if (this.mimeType.indexOf("image") === 0) {
 								loadNextPrevMedia(containerHeight, containerWidth);
 							}
 						}
@@ -1240,7 +1240,7 @@
 			$("#prev").off();
 
 			mediaBoxInnerElement.off('mousewheel');
-			if (singleMedia.mimeType.indexOf("image") === 0)
+			if (this.mimeType.indexOf("image") === 0)
 				mediaBoxInnerElement.on('mousewheel', pS.swipeOnWheel);
 
 			$(".media-box#center .media-box-inner .media-bar").on(
@@ -1293,13 +1293,13 @@
 				});
 			}
 
-			var trueOriginalMediaPath = encodeURI(singleMedia.trueOriginalMediaPath());
+			var trueOriginalMediaPath = encodeURI(this.trueOriginalMediaPath());
 			$(".download-single-media .download-link").attr("href", trueOriginalMediaPath).attr("download", "");
 		}
 
-		var originalMediaPath = encodeURI(singleMedia.originalMediaPath());
+		var originalMediaPath = encodeURI(this.originalMediaPath());
 		$(".media-box#" + id + " .original-link").attr("target", "_blank").attr("href", originalMediaPath);
-		if (singleMedia.hasGpsData()) {
+		if (this.hasGpsData()) {
 			$(".media-box#" + id + " .menu-map-link").on(
 				'click',
 				function() {
@@ -1331,57 +1331,57 @@
 		$(".media-box#" + id + " .metadata tr.gps").off('click');
 		text = "<table>";
 		// Here we keep only the technical metadata
-		if (typeof singleMedia.date !== "undefined")
-			text += "<tr><td class='metadata-data-date'></td><td>" + singleMedia.date + "</td></tr>";
-		var fileSize = singleMedia.fileSizes[0].images;
-		if (singleMedia.mimeType.indexOf("video") === 0)
-			fileSize = singleMedia.fileSizes[0].videos;
+		if (typeof this.date !== "undefined")
+			text += "<tr><td class='metadata-data-date'></td><td>" + this.date + "</td></tr>";
+		var fileSize = this.fileSizes[0].images;
+		if (this.mimeType.indexOf("video") === 0)
+			fileSize = this.fileSizes[0].videos;
 		text += "<tr><td class='metadata-data-file-size'></td><td>" + f.humanFileSize(fileSize) + "</td></tr>";
-		if (typeof singleMedia.metadata.size !== "undefined")
-			text += "<tr><td class='metadata-data-size'></td><td>" + singleMedia.metadata.size[0] + " x " + singleMedia.metadata.size[1] + "</td></tr>";
-		if (typeof singleMedia.metadata.make !== "undefined")
-			text += "<tr><td class='metadata-data-make'></td><td>" + singleMedia.metadata.make + "</td></tr>";
-		if (typeof singleMedia.metadata.model !== "undefined")
-			text += "<tr><td class='metadata-data-model'></td><td>" + singleMedia.metadata.model + "</td></tr>";
-		if (typeof singleMedia.metadata.aperture !== "undefined")
-			text += "<tr><td class='metadata-data-aperture'></td><td> f/" + singleMedia.metadata.aperture + "</td></tr>";
-		if (typeof singleMedia.metadata.focalLength !== "undefined")
-			text += "<tr><td class='metadata-data-focalLength'></td><td>" + singleMedia.metadata.focalLength + " mm</td></tr>";
-		if (typeof singleMedia.metadata.subjectDistanceRange !== "undefined")
-			text += "<tr><td class='metadata-data-subjectDistanceRange'></td><td>" + singleMedia.metadata.subjectDistanceRange + "</td></tr>";
-		if (typeof singleMedia.metadata.iso !== "undefined")
-			text += "<tr><td class='metadata-data-iso'></td><td>" + singleMedia.metadata.iso + "</td></tr>";
-		if (typeof singleMedia.metadata.sceneCaptureType !== "undefined")
-			text += "<tr><td class='metadata-data-sceneCaptureType'></td><td>" + singleMedia.metadata.sceneCaptureType + "</td></tr>";
-		if (typeof singleMedia.metadata.exposureTime !== "undefined") {
-			if (typeof singleMedia.metadata.exposureTime === "string")
-				exposureTime = singleMedia.metadata.exposureTime;
-			else if (singleMedia.metadata.exposureTime > 0.3)
-				exposureTime = Math.round(singleMedia.metadata.exposureTime * 10 ) / 10;
+		if (typeof this.metadata.size !== "undefined")
+			text += "<tr><td class='metadata-data-size'></td><td>" + this.metadata.size[0] + " x " + this.metadata.size[1] + "</td></tr>";
+		if (typeof this.metadata.make !== "undefined")
+			text += "<tr><td class='metadata-data-make'></td><td>" + this.metadata.make + "</td></tr>";
+		if (typeof this.metadata.model !== "undefined")
+			text += "<tr><td class='metadata-data-model'></td><td>" + this.metadata.model + "</td></tr>";
+		if (typeof this.metadata.aperture !== "undefined")
+			text += "<tr><td class='metadata-data-aperture'></td><td> f/" + this.metadata.aperture + "</td></tr>";
+		if (typeof this.metadata.focalLength !== "undefined")
+			text += "<tr><td class='metadata-data-focalLength'></td><td>" + this.metadata.focalLength + " mm</td></tr>";
+		if (typeof this.metadata.subjectDistanceRange !== "undefined")
+			text += "<tr><td class='metadata-data-subjectDistanceRange'></td><td>" + this.metadata.subjectDistanceRange + "</td></tr>";
+		if (typeof this.metadata.iso !== "undefined")
+			text += "<tr><td class='metadata-data-iso'></td><td>" + this.metadata.iso + "</td></tr>";
+		if (typeof this.metadata.sceneCaptureType !== "undefined")
+			text += "<tr><td class='metadata-data-sceneCaptureType'></td><td>" + this.metadata.sceneCaptureType + "</td></tr>";
+		if (typeof this.metadata.exposureTime !== "undefined") {
+			if (typeof this.metadata.exposureTime === "string")
+				exposureTime = this.metadata.exposureTime;
+			else if (this.metadata.exposureTime > 0.3)
+				exposureTime = Math.round(this.metadata.exposureTime * 10 ) / 10;
 			else
-				exposureTime = "1/" + Math.round(1 / singleMedia.metadata.exposureTime);
+				exposureTime = "1/" + Math.round(1 / this.metadata.exposureTime);
 			text += "<tr><td class='metadata-data-exposureTime'></td><td>" + exposureTime + " sec</td></tr>";
 		}
-		if (typeof singleMedia.metadata.exposureProgram !== "undefined")
-			text += "<tr><td class='metadata-data-exposureProgram'></td><td>" + singleMedia.metadata.exposureProgram + "</td></tr>";
-		if (typeof singleMedia.metadata.exposureCompensation !== "undefined")
-			text += "<tr><td class='metadata-data-exposureCompensation'></td><td>" + singleMedia.metadata.exposureCompensation + "</td></tr>";
-		if (typeof singleMedia.metadata.spectralSensitivity !== "undefined")
-			text += "<tr><td class='metadata-data-spectralSensitivity'></td><td>" + singleMedia.metadata.spectralSensitivity + "</td></tr>";
-		if (typeof singleMedia.metadata.sensingMethod !== "undefined")
-			text += "<tr><td class='metadata-data-sensingMethod'></td><td>" + singleMedia.metadata.sensingMethod + "</td></tr>";
-		if (typeof singleMedia.metadata.lightSource !== "undefined")
-			text += "<tr><td class='metadata-data-lightSource'></td><td>" + singleMedia.metadata.lightSource + "</td></tr>";
-		if (typeof singleMedia.metadata.flash !== "undefined")
-			text += "<tr><td class='metadata-data-flash'></td><td>" + singleMedia.metadata.flash + "</td></tr>";
-		if (typeof singleMedia.metadata.orientationText !== "undefined")
-			text += "<tr><td class='metadata-data-orientation'></td><td>" + singleMedia.metadata.orientationText + "</td></tr>";
-		if (typeof singleMedia.metadata.duration !== "undefined")
-			text += "<tr><td class='metadata-data-duration'></td><td>" + singleMedia.metadata.duration + " sec</td></tr>";
-		if (typeof singleMedia.metadata.latitude !== "undefined")
-			text += "<tr class='map-link' class='gps'><td class='metadata-data-latitude'></td><td>" + singleMedia.metadata.latitudeMS + " </td></tr>";
-		if (typeof singleMedia.metadata.longitude !== "undefined")
-			text += "<tr class='gps'><td class='metadata-data-longitude'></td><td>" + singleMedia.metadata.longitudeMS + " </td></tr>";
+		if (typeof this.metadata.exposureProgram !== "undefined")
+			text += "<tr><td class='metadata-data-exposureProgram'></td><td>" + this.metadata.exposureProgram + "</td></tr>";
+		if (typeof this.metadata.exposureCompensation !== "undefined")
+			text += "<tr><td class='metadata-data-exposureCompensation'></td><td>" + this.metadata.exposureCompensation + "</td></tr>";
+		if (typeof this.metadata.spectralSensitivity !== "undefined")
+			text += "<tr><td class='metadata-data-spectralSensitivity'></td><td>" + this.metadata.spectralSensitivity + "</td></tr>";
+		if (typeof this.metadata.sensingMethod !== "undefined")
+			text += "<tr><td class='metadata-data-sensingMethod'></td><td>" + this.metadata.sensingMethod + "</td></tr>";
+		if (typeof this.metadata.lightSource !== "undefined")
+			text += "<tr><td class='metadata-data-lightSource'></td><td>" + this.metadata.lightSource + "</td></tr>";
+		if (typeof this.metadata.flash !== "undefined")
+			text += "<tr><td class='metadata-data-flash'></td><td>" + this.metadata.flash + "</td></tr>";
+		if (typeof this.metadata.orientationText !== "undefined")
+			text += "<tr><td class='metadata-data-orientation'></td><td>" + this.metadata.orientationText + "</td></tr>";
+		if (typeof this.metadata.duration !== "undefined")
+			text += "<tr><td class='metadata-data-duration'></td><td>" + this.metadata.duration + " sec</td></tr>";
+		if (typeof this.metadata.latitude !== "undefined")
+			text += "<tr class='map-link' class='gps'><td class='metadata-data-latitude'></td><td>" + this.metadata.latitudeMS + " </td></tr>";
+		if (typeof this.metadata.longitude !== "undefined")
+			text += "<tr class='gps'><td class='metadata-data-longitude'></td><td>" + this.metadata.longitudeMS + " </td></tr>";
 		text += "</table>";
 		$(".media-box#" + id + " .metadata").html(text);
 		var linkTitle = util._t('#show-map');
@@ -1393,8 +1393,8 @@
 		);
 
 		if (id === "center") {
-			if (singleMedia != null) {
-				TopFunctions.setCaption(singleMedia.metadata.title, singleMedia.metadata.description);
+			if (this != null) {
+				TopFunctions.setCaption(this.metadata.title, this.metadata.description);
 				TopFunctions.positionCaption('media');
 			}
 
@@ -1476,7 +1476,7 @@
 			}
 			env.nextMedia = null;
 			env.prevMedia = null;
-			TopFunctions.showSingleMedia(env.currentAlbum, env.currentMedia, 'center');
+			env.currentMedia.showSingleMedia(env.currentAlbum, 'center');
 
 			// we are in prepareForShowing
 			// activate the map and the popup when coming back from a map album
@@ -1667,11 +1667,11 @@
 				TopFunctions.showAlbum("refreshMedia");
 			}
 			if (env.currentMedia !== null) {
-				TopFunctions.showSingleMedia(env.currentAlbum, env.currentMedia, 'center');
+				env.currentMedia.showSingleMedia(env.currentAlbum, 'center');
 				if (env.nextMedia !== null)
-					TopFunctions.showSingleMedia(env.currentAlbum, env.nextMedia, 'right');
+					env.nextMedia.showSingleMedia(env.currentAlbum, 'right');
 				if (env.prevMedia !== null)
-					TopFunctions.showSingleMedia(env.currentAlbum, env.prevMedia, 'left');
+					env.prevMedia.showSingleMedia(env.currentAlbum, 'left');
 			} else
 				TopFunctions.showAlbum(false);
 			util.focusSearchField();
@@ -1691,11 +1691,11 @@
 				TopFunctions.showAlbum("refreshMedia");
 			}
 			if (env.currentMedia !== null) {
-				TopFunctions.showSingleMedia(env.currentAlbum, env.currentMedia, 'center');
+				env.currentMedia.showSingleMedia(env.currentAlbum, 'center');
 				if (env.nextMedia !== null)
-					TopFunctions.showSingleMedia(env.currentAlbum, env.nextMedia, 'right');
+					env.nextMedia.showSingleMedia(env.currentAlbum, 'right');
 				if (env.prevMedia !== null)
-					TopFunctions.showSingleMedia(env.currentAlbum, env.prevMedia, 'left');
+					env.prevMedia.showSingleMedia(env.currentAlbum, 'left');
 			} else
 				TopFunctions.showAlbum(false);
 			// util.focusSearchField();
@@ -1715,9 +1715,9 @@
 			}
 			TopFunctions.showAlbum("refreshMedia");
 			if (env.currentMedia !== null) {
-				TopFunctions.showSingleMedia(env.currentAlbum, env.currentMedia, 'center');
-				TopFunctions.showSingleMedia(env.currentAlbum, env.nextMedia, 'right');
-				TopFunctions.showSingleMedia(env.currentAlbum, env.prevMedia, 'left');
+				env.currentMedia.showSingleMedia(env.currentAlbum, 'center');
+				env.nextMedia.showSingleMedia(env.currentAlbum, 'right');
+				env.prevMedia.showSingleMedia(env.currentAlbum, 'left');
 			} else
 				TopFunctions.showAlbum(false);
 			// util.focusSearchField();
@@ -2632,7 +2632,7 @@
 					env.fullScreenStatus = isFullscreen;
 					$(".enter-fullscreen").toggle();
 					$(".exit-fullscreen").toggle();
-					TopFunctions.showSingleMedia(env.currentAlbum, env.currentMedia, 'center');
+					env.currentMedia.showSingleMedia(env.currentAlbum, 'center');
 				}
 			});
 		} else {
@@ -2649,7 +2649,7 @@
 				$(".exit-fullscreen").toggle();
 				env.fullScreenStatus = false;
 			}
-			TopFunctions.showSingleMedia(env.currentAlbum, env.currentMedia, 'center');
+			env.currentMedia.showSingleMedia(env.currentAlbum, 'center');
 		}
 	};
 
