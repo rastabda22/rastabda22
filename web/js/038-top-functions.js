@@ -2261,8 +2261,8 @@
 
 				if (
 					populate === true ||
-					populate == "refreshSubalbums" ||
-					populateMedia == "refreshBoth"
+					populate === "refreshSubalbums" ||
+					populateMedia === "refreshBoth"
 				) {
 					// resize down the album buttons if they are too wide
 					albumViewWidth = $("body").width() -
