@@ -1573,11 +1573,7 @@
 
 							var subalbumIsInsideSelectedAlbums = subalbum.isInsideSelectedAlbums();
 
-							indexInSelection = env.selectionAlbum.subalbums.findIndex(
-								function(selectedSubalbum) {
-									return selectedSubalbum.cacheBase = subalbum.cacheBase;
-								}
-							);
+							indexInSelection = env.selectionAlbum.subalbums.findIndex(selectedSubalbum => selectedSubalbum.cacheBase === subalbum.cacheBase);
 							env.selectionAlbum.subalbums.splice(indexInSelection, 1);
 
 							if (subalbum.positionsAndMediaInTree.length) {
