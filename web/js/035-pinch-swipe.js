@@ -209,11 +209,10 @@
 			event.data = {};
 			event.data.resize = true;
 			event.data.id = "center";
-			event.data.singleMedia = env.currentMedia;
 			event.data.currentZoom = currentZoom;
 			event.data.initialZoom = initialZoom;
 
-			let scaleSingleMediaPromise = util.scaleSingleMedia(event);
+			let scaleSingleMediaPromise = env.currentMedia.scaleSingleMedia(event);
 			scaleSingleMediaPromise.then(
 				function() {
 					$("#media-center").on(
@@ -323,11 +322,10 @@
 			var event = {data: {}};
 			event.data.resize = true;
 			event.data.id = "center";
-			event.data.singleMedia = env.currentMedia;
 			event.data.currentZoom = currentZoom;
 			event.data.initialZoom = initialZoom;
 			pastMediaWidthOnScreen = $(mediaSelector)[0].width;
-			let scaleSingleMediaPromise = util.scaleSingleMedia(event);
+			let scaleSingleMediaPromise = env.currentMedia.scaleSingleMedia(event);
 			scaleSingleMediaPromise.then(
 				function() {
 					// mediaWidthOnScreen = $(mediaSelector)[0].width;

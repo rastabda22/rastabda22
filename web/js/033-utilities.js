@@ -1970,13 +1970,14 @@
 		return heightForMediaAndTitle;
 	};
 
-	Utilities.prototype.scaleSingleMedia = function(event) {
+	SingleMedia.prototype.scaleSingleMedia = function(event) {
 		// this function works on the img tag identified by event.data.id
 		// it adjusts width, height and position so that it fits in its parent (<div class="media-box-inner">, or the whole window)
 		// and centers vertically
+		var self = this;
 		return new Promise(
 			function(resolve_scaleSingleMedia) {
-				var singleMedia = event.data.singleMedia, mediaElement, container, photoSrc, previousSrc;
+				var mediaElement, container, photoSrc, previousSrc;
 				var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth(), containerRatio;
 				var mediaBarBottom = 0;
 				var mediaWidth, mediaHeight, attrWidth, attrHeight;
@@ -2005,13 +2006,13 @@
 				$(".media-box .media-box-inner").css("height", heightForMedia);
 				$(".media-box").show();
 
-				if (singleMedia.mimeType.indexOf("image") === 0)
+				if (self.mimeType.indexOf("image") === 0)
 					mediaElement = $(".media-box#" + id + " .media-box-inner img");
-				else if (singleMedia.mimeType.indexOf("video") === 0)
+				else if (self.mimeType.indexOf("video") === 0)
 					mediaElement = $(".media-box#" + id + " .media-box-inner video");
 
-				mediaWidth = singleMedia.metadata.size[0];
-				mediaHeight = singleMedia.metadata.size[1];
+				mediaWidth = self.metadata.size[0];
+				mediaHeight = self.metadata.size[1];
 				attrWidth = mediaWidth;
 				attrHeight = mediaHeight;
 
@@ -2024,8 +2025,8 @@
 				containerHeight = heightForMedia;
 				containerRatio = containerWidth / containerHeight;
 
-				if (singleMedia.mimeType.indexOf("image") === 0) {
-					photoSrc = singleMedia.chooseReducedPhoto(container, env.fullScreenStatus);
+				if (self.mimeType.indexOf("image") === 0) {
+					photoSrc = self.chooseReducedPhoto(container, env.fullScreenStatus);
 					previousSrc = mediaElement.attr("src");
 
 					if (encodeURI(photoSrc) != previousSrc && event.data.currentZoom === event.data.initialZoom) {

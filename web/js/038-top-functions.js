@@ -998,10 +998,9 @@
 						event.data.resize = true;
 
 						event.data.id = "center";
-						event.data.singleMedia = self;
 						event.data.currentZoom = pS.getCurrentZoom();
 						event.data.initialZoom = pS.getInitialZoom();
-						let scaleSingleMediaPromise = util.scaleSingleMedia(event);
+						let scaleSingleMediaPromise = self.scaleSingleMedia(event);
 						scaleSingleMediaPromise.then(
 							function() {
 								if (self.mimeType.indexOf("image") === 0) {
@@ -1015,12 +1014,10 @@
 
 						if (album.numsMedia.imagesAndVideosTotal() > 1) {
 							event.data.id = "left";
-							event.data.singleMedia = env.prevMedia;
-							util.scaleSingleMedia(event);
+							env.prevMedia.scaleSingleMedia(event);
 
 							event.data.id = "right";
-							event.data.singleMedia = env.nextMedia;
-							util.scaleSingleMedia(event);
+							env.nextMedia.scaleSingleMedia(event);
 						}
 
 						var isPopup = $('.leaflet-popup').html() ? true : false;
@@ -1203,12 +1200,11 @@
 				loadEvent,
 				{
 					id: id,
-					singleMedia: self,
 					resize: false,
 				},
 				function (event) {
 					$(mediaSelector).off(loadEvent);
-					let scaleSingleMediaPromise = util.scaleSingleMedia(event);
+					let scaleSingleMediaPromise = self.scaleSingleMedia(event);
 					scaleSingleMediaPromise.then(
 						function([containerHeight, containerWidth]) {
 							util.setPinchButtonsPosition();
@@ -1668,11 +1664,18 @@
 				TopFunctions.showAlbum("refreshMedia");
 			}
 			if (env.currentMedia !== null) {
-				env.currentMedia.show(env.currentAlbum, 'center');
-				if (env.nextMedia !== null)
-					env.nextMedia.show(env.currentAlbum, 'right');
-				if (env.prevMedia !== null)
-					env.prevMedia.show(env.currentAlbum, 'left');
+				let event = {data: {}};
+				event.data.resize = true;
+				event.data.id = "center";
+				env.currentMedia.scaleSingleMedia(event);
+				if (env.nextMedia !== null) {
+					event.data.id = "right";
+					env.nextMedia.scaleSingleMedia(event);
+				}
+				if (env.prevMedia !== null) {
+					event.data.id = "left";
+					env.prevMedia.scaleSingleMedia(event);
+				}
 			} else
 				TopFunctions.showAlbum(false);
 			util.focusSearchField();
