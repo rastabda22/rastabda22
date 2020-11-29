@@ -1680,6 +1680,40 @@
 		return false;
 	};
 
+	TopFunctions.prototype.toggleBottomThumbnails = function(ev) {
+		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+			env.options.hide_bottom_thumbnails = ! env.options.hide_bottom_thumbnails;
+			f.setBooleanCookie("hide_bottom_thumbnails", env.options.hide_bottom_thumbnails);
+			f.updateMenu();
+			if (env.options.hide_bottom_thumbnails) {
+				$("#album-view").addClass("hidden-by-option");
+			} else {
+				$("#album-view").removeClass("hidden-by-option");
+			}
+			if ($("#thumbs").children().length)
+				TopFunctions.showAlbum("refreshMedia");
+			// else
+			// 	env.currentAlbum.prepareForShowing(env.currentMediaIndex);
+			if (env.currentMedia !== null) {
+				let event = {data: {}};
+				event.data.resize = true;
+				event.data.id = "center";
+				env.currentMedia.scaleSingleMedia(event);
+				if (env.nextMedia !== null) {
+					event.data.id = "right";
+					env.nextMedia.scaleSingleMedia(event);
+				}
+				if (env.prevMedia !== null) {
+					event.data.id = "left";
+					env.prevMedia.scaleSingleMedia(event);
+				}
+			} else
+				TopFunctions.showAlbum(false);
+			// util.focusSearchField();
+		}
+		return false;
+	};
+
 	TopFunctions.prototype.toggleCaption = function(ev) {
 		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_caption = ! env.options.hide_caption;
@@ -1692,33 +1726,18 @@
 				TopFunctions.showAlbum("refreshMedia");
 			}
 			if (env.currentMedia !== null) {
-				env.currentMedia.show(env.currentAlbum, 'center');
-				if (env.nextMedia !== null)
-					env.nextMedia.show(env.currentAlbum, 'right');
-				if (env.prevMedia !== null)
-					env.prevMedia.show(env.currentAlbum, 'left');
-			} else
-				TopFunctions.showAlbum(false);
-			// util.focusSearchField();
-		}
-		return false;
-	};
-
-	TopFunctions.prototype.toggleBottomThumbnails = function(ev) {
-		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-			env.options.hide_bottom_thumbnails = ! env.options.hide_bottom_thumbnails;
-			f.setBooleanCookie("hide_bottom_thumbnails", env.options.hide_bottom_thumbnails);
-			f.updateMenu();
-			if (env.options.hide_bottom_thumbnails) {
-				$("#album-view").addClass("hidden-by-option");
-			} else {
-				$("#album-view").removeClass("hidden-by-option");
-			}
-			TopFunctions.showAlbum("refreshMedia");
-			if (env.currentMedia !== null) {
-				env.currentMedia.show(env.currentAlbum, 'center');
-				env.nextMedia.show(env.currentAlbum, 'right');
-				env.prevMedia.show(env.currentAlbum, 'left');
+				let event = {data: {}};
+				event.data.resize = true;
+				event.data.id = "center";
+				env.currentMedia.scaleSingleMedia(event);
+				if (env.nextMedia !== null) {
+					event.data.id = "right";
+					env.nextMedia.scaleSingleMedia(event);
+				}
+				if (env.prevMedia !== null) {
+					event.data.id = "left";
+					env.prevMedia.scaleSingleMedia(event);
+				}
 			} else
 				TopFunctions.showAlbum(false);
 			// util.focusSearchField();
