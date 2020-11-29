@@ -1426,7 +1426,6 @@
 			env.selectionAlbum.numsMedia.subtract(singleMediaArray.imagesAndVideosCount());
 			env.selectionAlbum.sizesOfAlbum.subtract(this.fileSizes);
 			if (! this.isInsideSelectedAlbums()) {
-				let singleMediaArray = new Media([this]);
 				env.selectionAlbum.numsMediaInSubTree.subtract(singleMediaArray.imagesAndVideosCount());
 				env.selectionAlbum.sizesOfSubTree.subtract(this.fileSizes);
 			}
