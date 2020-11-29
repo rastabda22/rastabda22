@@ -469,40 +469,15 @@ $(document).ready(function() {
 							let words = util.normalizeAccordingToOptions(env.mapAlbum.media[iMedia].words);
 							if (
 								! env.options.search_any_word &&
-								searchWordsFromUserNormalizedAccordingToOptions.every(
-									function(searchWord) {
-										var result =
-											env.options.search_inside_words && words.some(
-												function(word) {
-													return word.indexOf(searchWord) > -1;
-												}
-											) ||
-											! env.options.search_inside_words && words.some(
-												function(word) {
-													return word === searchWord;
-												}
-											);
-										return result;
-									}
+								searchWordsFromUserNormalizedAccordingToOptions.every(searchWord =>
+									env.options.search_inside_words && words.some(word => word.indexOf(searchWord) > -1) ||
+									! env.options.search_inside_words && words.some(word => word === searchWord)
 								) ||
 								env.options.search_any_word &&
-								searchWordsFromUserNormalizedAccordingToOptions.some(
-									function(searchWord) {
-										var result =
-											env.options.search_inside_words && words.some(
-												function(word) {
-													return word.indexOf(searchWord) > -1;
-												}
-											) ||
-											! env.options.search_inside_words && words.some(
-												function(word) {
-													return word === searchWord;
-												}
-											);
-										return result;
-									}
+								searchWordsFromUserNormalizedAccordingToOptions.some(searchWord =>
+									env.options.search_inside_words && words.some(word => word.indexOf(searchWord) > -1) ||
+									! env.options.search_inside_words && words.some(word => word === searchWord)
 								)
-
 							)
 								matchingMedia.push(env.mapAlbum.media[iMedia]);
 						}
