@@ -946,7 +946,7 @@
 		}
 	};
 
-	TopFunctions.showMedia = function(album, singleMedia, id) {
+	TopFunctions.showSingleMedia = function(album, singleMedia, id) {
 
 		function loadNextPrevMedia(containerHeight, containerWidth) {
 
@@ -981,8 +981,8 @@
 				}
 
 				if (album.numsMedia.imagesAndVideosTotal() > 1) {
-					TopFunctions.showMedia(album, env.prevMedia, 'left');
-					TopFunctions.showMedia(album, env.nextMedia, 'right');
+					TopFunctions.showSingleMedia(album, env.prevMedia, 'left');
+					TopFunctions.showSingleMedia(album, env.nextMedia, 'right');
 				}
 
 				$(window).off("resize").on(
@@ -1423,7 +1423,7 @@
 		if (env.previousMedia !== null && env.previousMedia.mimeType.indexOf("video") === 0)
 			// stop the video, otherwise it will keep playing
 			$("#media-center")[0].pause();
-		
+
 		if (this.numsMediaInSubTree.imagesAndVideosTotal() == 0 && ! this.isSearch()) {
 			// the album hasn't any content:
 			// either the hash is wrong or it's a protected content album
@@ -1476,7 +1476,7 @@
 			}
 			env.nextMedia = null;
 			env.prevMedia = null;
-			TopFunctions.showMedia(env.currentAlbum, env.currentMedia, 'center');
+			TopFunctions.showSingleMedia(env.currentAlbum, env.currentMedia, 'center');
 
 			// we are in prepareForShowing
 			// activate the map and the popup when coming back from a map album
@@ -1667,11 +1667,11 @@
 				TopFunctions.showAlbum("refreshMedia");
 			}
 			if (env.currentMedia !== null) {
-				TopFunctions.showMedia(env.currentAlbum, env.currentMedia, 'center');
+				TopFunctions.showSingleMedia(env.currentAlbum, env.currentMedia, 'center');
 				if (env.nextMedia !== null)
-					TopFunctions.showMedia(env.currentAlbum, env.nextMedia, 'right');
+					TopFunctions.showSingleMedia(env.currentAlbum, env.nextMedia, 'right');
 				if (env.prevMedia !== null)
-					TopFunctions.showMedia(env.currentAlbum, env.prevMedia, 'left');
+					TopFunctions.showSingleMedia(env.currentAlbum, env.prevMedia, 'left');
 			} else
 				TopFunctions.showAlbum(false);
 			util.focusSearchField();
@@ -1691,11 +1691,11 @@
 				TopFunctions.showAlbum("refreshMedia");
 			}
 			if (env.currentMedia !== null) {
-				TopFunctions.showMedia(env.currentAlbum, env.currentMedia, 'center');
+				TopFunctions.showSingleMedia(env.currentAlbum, env.currentMedia, 'center');
 				if (env.nextMedia !== null)
-					TopFunctions.showMedia(env.currentAlbum, env.nextMedia, 'right');
+					TopFunctions.showSingleMedia(env.currentAlbum, env.nextMedia, 'right');
 				if (env.prevMedia !== null)
-					TopFunctions.showMedia(env.currentAlbum, env.prevMedia, 'left');
+					TopFunctions.showSingleMedia(env.currentAlbum, env.prevMedia, 'left');
 			} else
 				TopFunctions.showAlbum(false);
 			// util.focusSearchField();
@@ -1715,9 +1715,9 @@
 			}
 			TopFunctions.showAlbum("refreshMedia");
 			if (env.currentMedia !== null) {
-				TopFunctions.showMedia(env.currentAlbum, env.currentMedia, 'center');
-				TopFunctions.showMedia(env.currentAlbum, env.nextMedia, 'right');
-				TopFunctions.showMedia(env.currentAlbum, env.prevMedia, 'left');
+				TopFunctions.showSingleMedia(env.currentAlbum, env.currentMedia, 'center');
+				TopFunctions.showSingleMedia(env.currentAlbum, env.nextMedia, 'right');
+				TopFunctions.showSingleMedia(env.currentAlbum, env.prevMedia, 'left');
 			} else
 				TopFunctions.showAlbum(false);
 			// util.focusSearchField();
@@ -2632,7 +2632,7 @@
 					env.fullScreenStatus = isFullscreen;
 					$(".enter-fullscreen").toggle();
 					$(".exit-fullscreen").toggle();
-					TopFunctions.showMedia(env.currentAlbum, env.currentMedia, 'center');
+					TopFunctions.showSingleMedia(env.currentAlbum, env.currentMedia, 'center');
 				}
 			});
 		} else {
@@ -2649,7 +2649,7 @@
 				$(".exit-fullscreen").toggle();
 				env.fullScreenStatus = false;
 			}
-			TopFunctions.showMedia(env.currentAlbum, env.currentMedia, 'center');
+			TopFunctions.showSingleMedia(env.currentAlbum, env.currentMedia, 'center');
 		}
 	};
 
