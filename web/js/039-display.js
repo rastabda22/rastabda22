@@ -123,7 +123,7 @@ $(document).ready(function() {
 						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
 							$("#album-view.media-view-container").removeClass("hidden-by-pinch");
 							$("#next")[0].click();
-							// PinchSwipe.swipeLeft(media);
+							// media.swipeLeft();
 						} else {
 							// drag
 							if (! e.shiftKey)
@@ -146,7 +146,7 @@ $(document).ready(function() {
 					) {
 						$("#album-view.media-view-container").removeClass("hidden-by-pinch");
 						$("#next")[0].click();
-						// pS.swipeLeft(env.nextMedia);
+						// env.nextMedia.swipeLeft();
 						return false;
 					} else if (
 						(e.key.toLowerCase() === "p" || e.key === "Backspace" && ! e.shiftKey || (e.key === "Enter" || e.key === " ") && e.shiftKey) &&
@@ -154,13 +154,13 @@ $(document).ready(function() {
 					) {
 						$("#album-view.media-view-container").removeClass("hidden-by-pinch");
 						$("#prev")[0].click();
-						// pS.swipeRight(env.prevMedia);
+						// env.prevMedia.swipeRight();
 						return false;
 					} else if (e.key === "ArrowLeft" && (pS.getCurrentZoom() !== pS.getInitialZoom() || env.prevMedia) && env.currentMedia !== null && ! isMap) {
 						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
 							$("#album-view.media-view-container").removeClass("hidden-by-pinch");
 							$("#prev")[0].click();
-							// PinchSwipe.swipeRight(media);
+							// media.swipeRight();
 						} else {
 							// drag
 							if (! e.shiftKey)

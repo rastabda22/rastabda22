@@ -212,8 +212,8 @@
 			event.data.currentZoom = currentZoom;
 			event.data.initialZoom = initialZoom;
 
-			let scaleSingleMediaPromise = env.currentMedia.scaleSingleMedia(event);
-			scaleSingleMediaPromise.then(
+			let scalePromise = env.currentMedia.scale(event);
+			scalePromise.then(
 				function() {
 					$("#media-center").on(
 						"load",
@@ -325,8 +325,8 @@
 			event.data.currentZoom = currentZoom;
 			event.data.initialZoom = initialZoom;
 			pastMediaWidthOnScreen = $(mediaSelector)[0].width;
-			let scaleSingleMediaPromise = env.currentMedia.scaleSingleMedia(event);
-			scaleSingleMediaPromise.then(
+			let scalePromise = env.currentMedia.scale(event);
+			scalePromise.then(
 				function() {
 					// mediaWidthOnScreen = $(mediaSelector)[0].width;
 					// currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
@@ -441,9 +441,9 @@
 							PinchSwipe.swipeMedia(env.windowWidth);
 						} else if (phase == "end") {
 							if (direction == "right") {
-								PinchSwipe.swipeRight(env.prevMedia);
+								env.prevMedia.swipeRight();
 							} else if (direction == "left") {
-								PinchSwipe.swipeLeft(env.nextMedia);
+								env.nextMedia.swipeLeft();
 							} else if (direction == "down") {
 								PinchSwipe.swipeDown(util.upHash());
 							}
@@ -556,13 +556,13 @@
 				if (event.button === 2) {
 					// right click
 					if (env.prevMedia !== null) {
-						PinchSwipe.swipeRight(env.prevMedia);
+						env.prevMedia.swipeRight();
 						return false;
 					}
 				} else if (! isLongTap) {
 					if (! fromResetZoom) {
 						if (env.nextMedia !== null) {
-							PinchSwipe.swipeLeft(env.nextMedia);
+							env.nextMedia.swipeLeft();
 							return false;
 						}
 					} else
@@ -573,12 +573,12 @@
 		}
 
 		function longTap(event, target) {
-			PinchSwipe.swipeRight(env.prevMedia);
+			env.prevMedia.swipeRight();
 		}
 
 		function doubleTap(event, target) {
 			if (currentZoom == initialZoom) {
-				PinchSwipe.swipeRight(env.prevMedia);
+				env.prevMedia.swipeRight();
 			} else {
 				// currentZoom > initialZoom
 				// image scaled up, reduce it to base zoom
@@ -675,10 +675,10 @@
 			if (env.currentMedia.mimeType.indexOf("video") === 0 || env.currentMedia.mimeType.indexOf("image") === 0 && currentZoom == initialZoom) {
 				// mouse wheel with no key: swipe
 				if (delta < 0) {
-					PinchSwipe.swipeLeft(env.nextMedia);
+					env.nextMedia.swipeLeft();
 					return false;
 				} else if (delta > 0) {
-					PinchSwipe.swipeRight(env.prevMedia);
+					env.prevMedia.swipeRight();
 					return false;
 				}
 			} else {
@@ -710,7 +710,8 @@
 		return true;
 	};
 
-	PinchSwipe.swipeRight = function(media) {
+	SingleMedia.prototype.swipeRight = function() {
+		var self = this;
 		$("#media-box-container").on(
 			'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
 			function() {
@@ -726,7 +727,7 @@
 				$(".media-box#left").css("width", $(".media-box#center").attr('width')).css("height", $(".media-box#center").attr('height'));
 
 				var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
-				window.location.href = phFl.encodeHash(env.currentAlbum.cacheBase, media, foundAlbumHash, savedSearchAlbumHash);
+				window.location.href = phFl.encodeHash(env.currentAlbum.cacheBase, self, foundAlbumHash, savedSearchAlbumHash);
 			}
 		);
 
@@ -734,7 +735,8 @@
 		PinchSwipe.swipeMedia(0);
 	};
 
-	PinchSwipe.swipeLeft = function(media) {
+	SingleMedia.prototype.swipeLeft = function() {
+		var self = this;
 		$("#media-box-container").on(
 			'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
 			function() {
@@ -753,7 +755,7 @@
 				$("#media-box-container").css("transform", "translate(-" + env.windowWidth + "px, 0px)");
 
 				var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
-				window.location.href = phFl.encodeHash(env.currentAlbum.cacheBase, media, foundAlbumHash, savedSearchAlbumHash);
+				window.location.href = phFl.encodeHash(env.currentAlbum.cacheBase, self, foundAlbumHash, savedSearchAlbumHash);
 			}
 		);
 
@@ -800,8 +802,6 @@
 	};
 
 	/* make static methods callable as member functions */
-	PinchSwipe.prototype.swipeLeft = PinchSwipe.swipeLeft;
-	PinchSwipe.prototype.swipeRight = PinchSwipe.swipeRight;
 	PinchSwipe.prototype.swipeDown = PinchSwipe.swipeDown;
 	PinchSwipe.prototype.drag = PinchSwipe.drag;
 	PinchSwipe.prototype.pinchIn = PinchSwipe.pinchIn;

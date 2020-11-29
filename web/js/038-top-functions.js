@@ -1000,8 +1000,8 @@
 						event.data.id = "center";
 						event.data.currentZoom = pS.getCurrentZoom();
 						event.data.initialZoom = pS.getInitialZoom();
-						let scaleSingleMediaPromise = self.scaleSingleMedia(event);
-						scaleSingleMediaPromise.then(
+						let scalePromise = self.scale(event);
+						scalePromise.then(
 							function() {
 								if (self.mimeType.indexOf("image") === 0) {
 									f.pinchSwipeInitialization();
@@ -1014,10 +1014,10 @@
 
 						if (album.numsMedia.imagesAndVideosTotal() > 1) {
 							event.data.id = "left";
-							env.prevMedia.scaleSingleMedia(event);
+							env.prevMedia.scale(event);
 
 							event.data.id = "right";
-							env.nextMedia.scaleSingleMedia(event);
+							env.nextMedia.scale(event);
 						}
 
 						var isPopup = $('.leaflet-popup').html() ? true : false;
@@ -1204,8 +1204,8 @@
 				},
 				function (event) {
 					$(mediaSelector).off(loadEvent);
-					let scaleSingleMediaPromise = self.scaleSingleMedia(event);
-					scaleSingleMediaPromise.then(
+					let scalePromise = self.scale(event);
+					scalePromise.then(
 						function([containerHeight, containerWidth]) {
 							util.setPinchButtonsPosition();
 							util.setSelectButtonPosition();
@@ -1265,7 +1265,7 @@
 						if (! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 							ev.preventDefault();
 							if (pS.getCurrentZoom() == 1) {
-								pS.swipeRight(env.prevMedia);
+								env.prevMedia.swipeRight();
 								return false;
 							}
 						}
@@ -1276,14 +1276,14 @@
 
 				$("#prev").on('click', function(ev) {
 					if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-						pS.swipeRight(env.prevMedia);
+						env.prevMedia.swipeRight();
 						return false;
 					}
 					return true;
 				});
 				$("#next").on('click', function(ev) {
 					if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-						pS.swipeLeft(env.nextMedia);
+						env.nextMedia.swipeLeft();
 						return false;
 					}
 					return true;
@@ -1684,14 +1684,14 @@
 				let event = {data: {}};
 				event.data.resize = true;
 				event.data.id = "center";
-				env.currentMedia.scaleSingleMedia(event);
+				env.currentMedia.scale(event);
 				if (env.nextMedia !== null) {
 					event.data.id = "right";
-					env.nextMedia.scaleSingleMedia(event);
+					env.nextMedia.scale(event);
 				}
 				if (env.prevMedia !== null) {
 					event.data.id = "left";
-					env.prevMedia.scaleSingleMedia(event);
+					env.prevMedia.scale(event);
 				}
 			} else
 				TopFunctions.showAlbum(false);
@@ -1717,14 +1717,14 @@
 				let event = {data: {}};
 				event.data.resize = true;
 				event.data.id = "center";
-				env.currentMedia.scaleSingleMedia(event);
+				env.currentMedia.scale(event);
 				if (env.nextMedia !== null) {
 					event.data.id = "right";
-					env.nextMedia.scaleSingleMedia(event);
+					env.nextMedia.scale(event);
 				}
 				if (env.prevMedia !== null) {
 					event.data.id = "left";
-					env.prevMedia.scaleSingleMedia(event);
+					env.prevMedia.scale(event);
 				}
 			} else
 				TopFunctions.showAlbum(false);
@@ -1751,14 +1751,14 @@
 				let event = {data: {}};
 				event.data.resize = true;
 				event.data.id = "center";
-				env.currentMedia.scaleSingleMedia(event);
+				env.currentMedia.scale(event);
 				if (env.nextMedia !== null) {
 					event.data.id = "right";
-					env.nextMedia.scaleSingleMedia(event);
+					env.nextMedia.scale(event);
 				}
 				if (env.prevMedia !== null) {
 					event.data.id = "left";
-					env.prevMedia.scaleSingleMedia(event);
+					env.prevMedia.scale(event);
 				}
 			} else
 				TopFunctions.showAlbum(false);
@@ -1782,14 +1782,14 @@
 				let event = {data: {}};
 				event.data.resize = true;
 				event.data.id = "center";
-				env.currentMedia.scaleSingleMedia(event);
+				env.currentMedia.scale(event);
 				if (env.nextMedia !== null) {
 					event.data.id = "right";
-					env.nextMedia.scaleSingleMedia(event);
+					env.nextMedia.scale(event);
 				}
 				if (env.prevMedia !== null) {
 					event.data.id = "left";
-					env.prevMedia.scaleSingleMedia(event);
+					env.prevMedia.scale(event);
 				}
 			} else
 				TopFunctions.showAlbum(false);
