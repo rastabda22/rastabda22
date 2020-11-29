@@ -1443,23 +1443,37 @@
 
 			if (env.currentAlbum.isSelection()) {
 				if (Utilities.nothingIsSelected()) {
+					// nothing has remained in the selection
 					Utilities.initializeSelectionAlbum();
 					window.location.href = Utilities.upHash();
 				} else if (env.currentMedia === null) {
+					// we are in album view
 					if (env.currentAlbum.isAlbumWithOneMedia()) {
+						// only one media has remained after the removal
 						env.currentAlbum.prepareForShowing(0);
 					} else {
-						// TopFunctions.showAlbum("refreshMedia");
+						// more than one media has remained after the removal: remove the single media thumbnail
 						$(clickedSelector).parent().parent().parent().remove();
+						// TopFunctions.showAlbum("refreshMedia");
 					}
 				} else {
+					// we are in media view
 					let clickedMediaIndex = parseInt(clickedSelector.split('-').pop());
 					if (clickedSelector === singleMediaSelector || clickedMediaIndex === env.currentMediaIndex) {
-						env.currentAlbum.prepareForShowing(-1);
+						// currentMedia ha been removed: show the album
+						window.location.href = Utilities.upHash();
+						// env.currentAlbum.prepareForShowing(-1);
 					} else {
-						if (env.currentMediaIndex === env.currentAlbum.media.length)
-							env.currentMediaIndex -= 1;
-						env.currentAlbum.prepareForShowing(env.currentMediaIndex);
+						// another media which is not currentMedia has been removed among the bottom thumbnails:
+						// keep showing the same media, but remove the media
+						if (env.currentAlbum.isAlbumWithOneMedia()) {
+							// only one media has remained after the removal
+							env.currentAlbum.prepareForShowing(0);
+						} else if (clickedMediaIndex < env.currentMediaIndex) {
+							env.currentMediaIndex --;
+						}
+						// env.currentAlbum.prepareForShowing(env.currentMediaIndex);
+						TopFunctions.showAlbum("refreshMedia");
 					}
 				}
 			} else {

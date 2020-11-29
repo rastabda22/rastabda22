@@ -958,14 +958,14 @@
 
 				let selectSrc = 'img/checkbox-unchecked-48px.png';
 				let titleSelector = "#select-single-media";
-				if (this.isSelected()) {
+				if (self.isSelected()) {
 					selectSrc = 'img/checkbox-checked-48px.png';
 					titleSelector = "#unselect-single-media";
 				}
 				$("#media-select-box .select-box").attr("title", util._t(titleSelector)).attr("alt", util._t("#selector")).attr("src", selectSrc);
 				$("#media-select-box").off('click').on(
 					'click',
-					{singleMedia: this, clickedSelector: "#media-select-box"},
+					{singleMedia: self, clickedSelector: "#media-select-box"},
 					function(ev) {
 						ev.stopPropagation();
 						ev.preventDefault();
@@ -973,7 +973,7 @@
 					}
 				);
 
-				if (this.mimeType.indexOf("image") === 0) {
+				if (self.mimeType.indexOf("image") === 0) {
 					pS.addMediaGesturesDetection();
 					util.setPinchButtonsPosition();
 					util.setSelectButtonPosition();
@@ -998,13 +998,13 @@
 						event.data.resize = true;
 
 						event.data.id = "center";
-						event.data.singleMedia = this;
+						event.data.singleMedia = self;
 						event.data.currentZoom = pS.getCurrentZoom();
 						event.data.initialZoom = pS.getInitialZoom();
 						let scaleMediaPromise = util.scaleMedia(event);
 						scaleMediaPromise.then(
 							function() {
-								if (this.mimeType.indexOf("image") === 0) {
+								if (self.mimeType.indexOf("image") === 0) {
 									f.pinchSwipeInitialization();
 									util.setPinchButtonsPosition();
 									util.setSelectButtonPosition();
@@ -1198,11 +1198,12 @@
 			if (id === "center")
 				$(mediaBoxInnerElement).css("opacity", 1);
 
+			var self = this;
 			$(mediaSelector).off(loadEvent).on(
 				loadEvent,
 				{
 					id: id,
-					singleMedia: this,
+					singleMedia: self,
 					resize: false,
 				},
 				function (event) {
@@ -1213,7 +1214,7 @@
 							util.setPinchButtonsPosition();
 							util.setSelectButtonPosition();
 							util.correctPrevNextPosition();
-							if (this.mimeType.indexOf("image") === 0) {
+							if (self.mimeType.indexOf("image") === 0) {
 								loadNextPrevMedia(containerHeight, containerWidth);
 							}
 						}
