@@ -946,7 +946,7 @@
 		}
 	};
 
-	SingleMedia.prototype.showSingleMedia = function(album, id) {
+	SingleMedia.prototype.show = function(album, id) {
 
 		function loadNextPrevMedia(containerHeight, containerWidth) {
 
@@ -981,8 +981,8 @@
 				}
 
 				if (album.numsMedia.imagesAndVideosTotal() > 1) {
-					env.prevMedia.showSingleMedia(album, 'left');
-					env.nextMedia.showSingleMedia(album, 'right');
+					env.prevMedia.show(album, 'left');
+					env.nextMedia.show(album, 'right');
 				}
 
 				$(window).off("resize").on(
@@ -1476,7 +1476,7 @@
 			}
 			env.nextMedia = null;
 			env.prevMedia = null;
-			env.currentMedia.showSingleMedia(env.currentAlbum, 'center');
+			env.currentMedia.show(env.currentAlbum, 'center');
 
 			// we are in prepareForShowing
 			// activate the map and the popup when coming back from a map album
@@ -1667,11 +1667,11 @@
 				TopFunctions.showAlbum("refreshMedia");
 			}
 			if (env.currentMedia !== null) {
-				env.currentMedia.showSingleMedia(env.currentAlbum, 'center');
+				env.currentMedia.show(env.currentAlbum, 'center');
 				if (env.nextMedia !== null)
-					env.nextMedia.showSingleMedia(env.currentAlbum, 'right');
+					env.nextMedia.show(env.currentAlbum, 'right');
 				if (env.prevMedia !== null)
-					env.prevMedia.showSingleMedia(env.currentAlbum, 'left');
+					env.prevMedia.show(env.currentAlbum, 'left');
 			} else
 				TopFunctions.showAlbum(false);
 			util.focusSearchField();
@@ -1691,11 +1691,11 @@
 				TopFunctions.showAlbum("refreshMedia");
 			}
 			if (env.currentMedia !== null) {
-				env.currentMedia.showSingleMedia(env.currentAlbum, 'center');
+				env.currentMedia.show(env.currentAlbum, 'center');
 				if (env.nextMedia !== null)
-					env.nextMedia.showSingleMedia(env.currentAlbum, 'right');
+					env.nextMedia.show(env.currentAlbum, 'right');
 				if (env.prevMedia !== null)
-					env.prevMedia.showSingleMedia(env.currentAlbum, 'left');
+					env.prevMedia.show(env.currentAlbum, 'left');
 			} else
 				TopFunctions.showAlbum(false);
 			// util.focusSearchField();
@@ -1715,9 +1715,9 @@
 			}
 			TopFunctions.showAlbum("refreshMedia");
 			if (env.currentMedia !== null) {
-				env.currentMedia.showSingleMedia(env.currentAlbum, 'center');
-				env.nextMedia.showSingleMedia(env.currentAlbum, 'right');
-				env.prevMedia.showSingleMedia(env.currentAlbum, 'left');
+				env.currentMedia.show(env.currentAlbum, 'center');
+				env.nextMedia.show(env.currentAlbum, 'right');
+				env.prevMedia.show(env.currentAlbum, 'left');
 			} else
 				TopFunctions.showAlbum(false);
 			// util.focusSearchField();
@@ -2632,7 +2632,7 @@
 					env.fullScreenStatus = isFullscreen;
 					$(".enter-fullscreen").toggle();
 					$(".exit-fullscreen").toggle();
-					env.currentMedia.showSingleMedia(env.currentAlbum, 'center');
+					env.currentMedia.show(env.currentAlbum, 'center');
 				}
 			});
 		} else {
@@ -2649,7 +2649,7 @@
 				$(".exit-fullscreen").toggle();
 				env.fullScreenStatus = false;
 			}
-			env.currentMedia.showSingleMedia(env.currentAlbum, 'center');
+			env.currentMedia.show(env.currentAlbum, 'center');
 		}
 	};
 
