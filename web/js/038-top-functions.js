@@ -1001,8 +1001,8 @@
 						event.data.singleMedia = self;
 						event.data.currentZoom = pS.getCurrentZoom();
 						event.data.initialZoom = pS.getInitialZoom();
-						let scaleMediaPromise = util.scaleMedia(event);
-						scaleMediaPromise.then(
+						let scaleSingleMediaPromise = util.scaleSingleMedia(event);
+						scaleSingleMediaPromise.then(
 							function() {
 								if (self.mimeType.indexOf("image") === 0) {
 									f.pinchSwipeInitialization();
@@ -1016,11 +1016,11 @@
 						if (album.numsMedia.imagesAndVideosTotal() > 1) {
 							event.data.id = "left";
 							event.data.singleMedia = env.prevMedia;
-							util.scaleMedia(event);
+							util.scaleSingleMedia(event);
 
 							event.data.id = "right";
 							event.data.singleMedia = env.nextMedia;
-							util.scaleMedia(event);
+							util.scaleSingleMedia(event);
 						}
 
 						var isPopup = $('.leaflet-popup').html() ? true : false;
@@ -1208,8 +1208,8 @@
 				},
 				function (event) {
 					$(mediaSelector).off(loadEvent);
-					let scaleMediaPromise = util.scaleMedia(event);
-					scaleMediaPromise.then(
+					let scaleSingleMediaPromise = util.scaleSingleMedia(event);
+					scaleSingleMediaPromise.then(
 						function([containerHeight, containerWidth]) {
 							util.setPinchButtonsPosition();
 							util.setSelectButtonPosition();

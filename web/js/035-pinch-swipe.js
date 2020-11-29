@@ -213,8 +213,8 @@
 			event.data.currentZoom = currentZoom;
 			event.data.initialZoom = initialZoom;
 
-			let scaleMediaPromise = util.scaleMedia(event);
-			scaleMediaPromise.then(
+			let scaleSingleMediaPromise = util.scaleSingleMedia(event);
+			scaleSingleMediaPromise.then(
 				function() {
 					$("#media-center").on(
 						"load",
@@ -327,8 +327,8 @@
 			event.data.currentZoom = currentZoom;
 			event.data.initialZoom = initialZoom;
 			pastMediaWidthOnScreen = $(mediaSelector)[0].width;
-			let scaleMediaPromise = util.scaleMedia(event);
-			scaleMediaPromise.then(
+			let scaleSingleMediaPromise = util.scaleSingleMedia(event);
+			scaleSingleMediaPromise.then(
 				function() {
 					// mediaWidthOnScreen = $(mediaSelector)[0].width;
 					// currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;

@@ -1881,7 +1881,7 @@
 	};
 
 	SingleMedia.prototype.chooseTriggerEvent = function() {
-		// choose the event that must trigger the scaleMedia function
+		// choose the event that must trigger the scaleSingleMedia function
 
 		if (this.mimeType.indexOf("video") === 0) {
 			return "loadstart";
@@ -1970,12 +1970,12 @@
 		return heightForMediaAndTitle;
 	};
 
-	Utilities.prototype.scaleMedia = function(event) {
+	Utilities.prototype.scaleSingleMedia = function(event) {
 		// this function works on the img tag identified by event.data.id
 		// it adjusts width, height and position so that it fits in its parent (<div class="media-box-inner">, or the whole window)
 		// and centers vertically
 		return new Promise(
-			function(resolve_scaleMedia) {
+			function(resolve_scaleSingleMedia) {
 				var singleMedia = event.data.singleMedia, mediaElement, container, photoSrc, previousSrc;
 				var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth(), containerRatio;
 				var mediaBarBottom = 0;
@@ -2070,7 +2070,7 @@
 				$(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
 
 				if (id === "center")
-					resolve_scaleMedia([containerHeight, containerWidth]);
+					resolve_scaleSingleMedia([containerHeight, containerWidth]);
 
 				$("#loading").hide();
 				// Utilities.setPinchButtonsPosition();
