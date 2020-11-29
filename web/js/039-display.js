@@ -113,11 +113,10 @@ $(document).ready(function() {
 					if (e.key === "Tab") {
 						e.preventDefault();
 						if (pS.getCurrentZoom() == pS.getInitialZoom() && ! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
-							$("ul#right-menu li.hide-title")[0].click();
-							$("ul#right-menu li.hide-media-caption")[0].click();
-							$("ul#right-menu li.hide-bottom-thumbnails")[0].click();
-							// tF.toggleTitle(e);
-							// tF.toggleBottomThumbnails(e);
+							tF.toggleTitleThumbnailAndCaption(e);
+							// $("ul#right-menu li.hide-title")[0].click();
+							// $("ul#right-menu li.hide-bottom-thumbnails")[0].click();
+							// $("ul#right-menu li.hide-media-caption")[0].click();
 							return false;
 						}
 					} else if (e.key === "ArrowRight" && (pS.getCurrentZoom() !== pS.getInitialZoom() || env.prevMedia) && env.currentMedia !== null && ! isMap) {
