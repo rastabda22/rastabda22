@@ -1741,10 +1741,6 @@
 														}
 														env.searchAlbum.media = matchingMedia;
 
-														// search albums need to conform to default behaviour of albums:
-														// json files have subalbums and media sorted by date not reversed
-														env.searchAlbum.media.sortByDate();
-
 														matchingSubalbums = new Subalbums([]);
 														for (indexSubalbums = 0; indexSubalbums < env.searchAlbum.subalbums.length; indexSubalbums ++) {
 															match = true;
@@ -1780,11 +1776,36 @@
 														}
 
 														env.searchAlbum.subalbums = matchingSubalbums;
+													}
 
-														if (env.searchAlbum.subalbums.length) {
-															// search albums need to conform to default behaviour of albums: json files have subalbums and media sorted by date not reversed
-															util.sortByDate(env.searchAlbum.subalbums);
-														}
+													if (env.searchAlbum.media.length) {
+														// search albums need to conform to default behaviour of albums:
+														// json files have subalbums and media sorted by date not reversed
+														env.searchAlbum.media.sortByDate();
+														env.searchAlbum.media.forEach(
+															function(singleMedia) {
+																singleMedia.captionForSelectionSorting = singleMedia.name + env.options.cache_folder_separator + singleMedia.albumName.split('/').slice(1).reverse().join(env.options.cache_folder_separator);
+															}
+														);
+													}
+													env.searchAlbum.mediaNameSort = false;
+													env.searchAlbum.mediaReverseSort = false;
+
+													if (env.searchAlbum.subalbums.length) {
+														// search albums need to conform to default behaviour of albums: json files have subalbums and media sorted by date not reversed
+														util.sortByDate(env.searchAlbum.subalbums);
+														env.searchAlbum.subalbums.forEach(
+															function(subalbum) {
+																subalbum.captionForSelectionSorting = subalbum.path.split('/').reverse().join(env.options.cache_folder_separator);
+															}
+														);
+													}
+													env.searchAlbum.albumNameSort = false;
+													env.searchAlbum.albumReverseSort = false;
+
+													if (env.searchAlbum.media.length || env.searchAlbum.subalbums.length) {
+														env.searchAlbum.initializeSortPropertiesAndCookies();
+														env.searchAlbum.sortAlbumsMedia();
 													}
 
 													subalbumsAbsentOrGot();

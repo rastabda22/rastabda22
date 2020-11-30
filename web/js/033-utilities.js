@@ -2395,7 +2395,7 @@
 		}
 
 		this.captionForSelection = Utilities.combineFirstAndSecondLine(this.name, secondLine);
-		this.captionForSelectionSorting = Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
+		this.captionForSelectionSorting = this.name + env.options.cache_folder_separator + Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
 	};
 
 	Album.prototype.subalbumName = function(subalbum) {
