@@ -1906,44 +1906,6 @@
 	};
 
 
-	Album.prototype.generateSubalbumCaptionHtml = function(iSubalbum) {
-		var ithSubalbum = this.subalbums[iSubalbum];
-
-		// generate the subalbum caption
-		let folderName = this.subalbumName(ithSubalbum);
-		let folderNameHtml = folderName;
-		// if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
-		// 	let folderMapTitle = this.folderMapTitle(ithSubalbum, folderName);
-		// 	let folderMapTitleWithoutHtmlTags = folderMapTitle.replace(/<[^>]*>?/gm, '');
-		// 	let positionHtml =
-		// 		"<a id='subalbum-map-link-" + iSubalbum + "' >" +
-		// 			"<img " +
-		// 				"class='title-img' " +
-		// 				"title='" + util.escapeSingleQuotes(folderMapTitleWithoutHtmlTags) + "' " +
-		// 				"alt='" + util.escapeSingleQuotes(folderMapTitleWithoutHtmlTags) + "' " +
-		// 				"height='15px' " +
-		// 				"src='img/ic_place_white_24dp_2x.png' " +
-		// 			"/>" +
-		// 		"</a>";
-		// 	if (folderNameHtml.indexOf(env.positionMarker) !== -1)
-		// 		folderNameHtml = folderNameHtml.replace(env.positionMarker, positionHtml);
-		// 	else
-		// 		folderNameHtml += positionHtml;
-		// }
-		// if (folderNameHtml.indexOf(env.positionMarker) !== -1)
-		// 	folderNameHtml = folderNameHtml.replace(env.positionMarker, "");
-
-		return folderNameHtml;
-	};
-
-	// SingleMedia.prototype.generateCaptionHtml = function(album) {
-	// 	// generate the media caption
-	// 	let mediaName = this.name;
-	// 	let mediaNameHtml = this.mediaName(album);;
-	//
-	// 	return mediaNameHtml;
-	// };
-
 	TopFunctions.showAlbum = function(populate) {
 		function adaptCaptionHeight() {
 			// check for overflow in album-caption class in order to adapt album caption height to the string length
