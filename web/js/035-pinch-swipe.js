@@ -416,85 +416,85 @@
 		function swipeStatus(event, phase, direction, distance, duration, fingerCount) {
 			//If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
 
-			if (event.buttons > 0) {
-				if (event.button === 2 && (event.shiftKey || event.ctrlKey || event.altKey)) {
-					return;
-				}
+			// if (event.buttons > 0) {
+			if (event.button === 2 && (event.shiftKey || event.ctrlKey || event.altKey)) {
+				return;
+			}
 
-				var clientX, clientY;
+			var clientX, clientY;
 
-				if (phase == "start") {
-					isLongTap = false;
-				}
+			if (phase == "start") {
+				isLongTap = false;
+			}
 
-				// when dragging with the mouse, fingerCount is 0
-				if (typeof event.touches === "undefined" || fingerCount === 1) {
-					if (currentZoom === initialZoom) {
-						// zoom = 1: swipe
-						if (phase == "move") {
-							if (direction == "left") {
-								PinchSwipe.scrollMedia(env.windowWidth + distance);
-							} else if (direction == "right") {
-								PinchSwipe.scrollMedia(env.windowWidth - distance);
-							}
-						} else if (phase == "cancel") {
-							PinchSwipe.swipeMedia(env.windowWidth);
-						} else if (phase == "end") {
-							if (direction == "right") {
-								env.prevMedia.swipeRight();
-							} else if (direction == "left") {
-								env.nextMedia.swipeLeft();
-							} else if (direction == "down") {
-								PinchSwipe.swipeDown(util.upHash());
-							}
+			// when dragging with the mouse, fingerCount is 0
+			if (typeof event.touches === "undefined" || fingerCount === 1) {
+				if (currentZoom === initialZoom) {
+					// zoom = 1: swipe
+					if (phase == "move") {
+						if (direction == "left") {
+							PinchSwipe.scrollMedia(env.windowWidth + distance);
+						} else if (direction == "right") {
+							PinchSwipe.scrollMedia(env.windowWidth - distance);
 						}
-					} else {
-						// zoom > 1: drag
-
-						if (typeof event.clientX !== "undefined") {
-							clientX = event.clientX;
-							clientY = event.clientY;
-						} else if (typeof event.touches !== "undefined" && event.touches.length > 0) {
-							clientX = event.touches[0].clientX;
-							clientY = event.touches[0].clientY;
-						} else if (typeof event.changedTouches !== "undefined" && event.changedTouches.length > 0) {
-							clientX = event.changedTouches[0].clientX;
-							clientY = event.changedTouches[0].clientY;
+					} else if (phase == "cancel") {
+						PinchSwipe.swipeMedia(env.windowWidth);
+					} else if (phase == "end") {
+						if (direction == "right") {
+							env.prevMedia.swipeRight();
+						} else if (direction == "left") {
+							env.nextMedia.swipeLeft();
+						} else if (direction == "down") {
+							PinchSwipe.swipeDown(util.upHash());
 						}
-						if (phase == "start" || phase == "end" || phase == "cancel" || distance == 0) {
-							if (phase == "start") {
-								previousClientX = clientX;
-								previousClientY = clientY;
-							}
-							// distance = 0
-							// baseTranslateX = currentTranslateX;
-							// baseTranslateY = currentTranslateY;
-						} else {
-							var dragVectorX = clientX - previousClientX;
-							var dragVectorY = clientY - previousClientY;
+					}
+				} else {
+					// zoom > 1: drag
+
+					if (typeof event.clientX !== "undefined") {
+						clientX = event.clientX;
+						clientY = event.clientY;
+					} else if (typeof event.touches !== "undefined" && event.touches.length > 0) {
+						clientX = event.touches[0].clientX;
+						clientY = event.touches[0].clientY;
+					} else if (typeof event.changedTouches !== "undefined" && event.changedTouches.length > 0) {
+						clientX = event.changedTouches[0].clientX;
+						clientY = event.changedTouches[0].clientY;
+					}
+					if (phase == "start" || phase == "end" || phase == "cancel" || distance == 0) {
+						if (phase == "start") {
 							previousClientX = clientX;
 							previousClientY = clientY;
-							// var dragVectorX = event.movementX;
-							// var dragVectorY = event.movementY;
-							var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
-							if (dragVectorLength)
-								// normalize the vector
-								dragVector = {
-									x: dragVectorX / dragVectorLength,
-									y: dragVectorY / dragVectorLength
-								};
-							else
-								dragVector = [0, 0];
-							// } else {
-							// 	// the dragVector calculated by pinchStatus is used
-							// }
-
-							// PinchSwipe.drag(dragVectorLength / devicePixelRatio, dragVector, 0);
-							PinchSwipe.drag(dragVectorLength, dragVector, 0);
 						}
+						// distance = 0
+						// baseTranslateX = currentTranslateX;
+						// baseTranslateY = currentTranslateY;
+					} else {
+						var dragVectorX = clientX - previousClientX;
+						var dragVectorY = clientY - previousClientY;
+						previousClientX = clientX;
+						previousClientY = clientY;
+						// var dragVectorX = event.movementX;
+						// var dragVectorY = event.movementY;
+						var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
+						if (dragVectorLength)
+							// normalize the vector
+							dragVector = {
+								x: dragVectorX / dragVectorLength,
+								y: dragVectorY / dragVectorLength
+							};
+						else
+							dragVector = [0, 0];
+						// } else {
+						// 	// the dragVector calculated by pinchStatus is used
+						// }
+
+						// PinchSwipe.drag(dragVectorLength / devicePixelRatio, dragVector, 0);
+						PinchSwipe.drag(dragVectorLength, dragVector, 0);
 					}
 				}
 			}
+			// }
 		}
 
 		function pinchStatus(event, phase, direction, distance , duration , fingerCount, pinchZoom, fingerData) {
