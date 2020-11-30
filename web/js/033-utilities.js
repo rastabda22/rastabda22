@@ -843,7 +843,7 @@
 
 	Album.prototype.sortByPath = function() {
 		if (this.subalbums.length) {
-			if (this.isSelection()) {
+			if (this.isCollection()) {
 				Utilities.sortBy(this.subalbums, ['captionForSelectionSorting']);
 				// this.subalbums = Utilities.sortBy(this.subalbums, ['altName', 'name', 'path']);
 			} else if (this.isByGps()) {
@@ -2263,12 +2263,12 @@
 	};
 
 	Album.prototype.generateCaptionForSelectionAndSearches = function() {
-		var firstLine = '', secondLine = '';
+		var firstLine = this.name, secondLine = '';
+
 		var raquo = " <span class='gray'>&raquo;</span> ";
 		var folderArray = this.cacheBase.split(env.options.cache_folder_separator);
-		var captionSorting = Utilities.convertByDateAncestorNames(this.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
 		if (this.isByDate()) {
-			firstLine += Utilities.dateElementForFolderName(folderArray, folderArray.length - 1);
+			firstLine = Utilities.dateElementForFolderName(folderArray, folderArray.length - 1);
 			secondLine += "<span class='gray'>(";
 			if (folderArray.length === 2) {
 				secondLine += Utilities._t("#year-album");
@@ -2289,8 +2289,6 @@
 				firstLine = Utilities._t('.not-specified');
 			else if (this.hasOwnProperty('altName'))
 				firstLine = Utilities.transformAltPlaceName(this.altName);
-			else
-				firstLine = this.name;
 
 			for (let iCacheBase = 1; iCacheBase < this.ancestorsCacheBase.length - 1; iCacheBase ++) {
 				let albumName;
@@ -2313,7 +2311,6 @@
 			if (! secondLine)
 				secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album") + ")</span>";
 		} else {
-			firstLine = this.name;
 			for (let iCacheBase = 0; iCacheBase < this.ancestorsCacheBase.length - 1; iCacheBase ++) {
 				if (iCacheBase == 0 && this.ancestorsCacheBase.length === 2) {
 					secondLine = "<span class='gray'>(" + Utilities._t("#regular-album") + ")</span> ";
@@ -2332,7 +2329,7 @@
 			}
 		}
 		this.captionForSelection = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
-		this.captionForSelectionSorting = captionSorting;
+		this.captionForSelectionSorting = Utilities.convertByDateAncestorNames(this.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
 	};
 
 	SingleMedia.prototype.generateCaptionForSelectionAndSearches = function(album) {
@@ -2340,8 +2337,6 @@
 		var raquo = " <span class='gray'>&raquo;</span> ";
 		var folderArray = album.cacheBase.split(env.options.cache_folder_separator);
 
-		var firstLine = this.name;
-		var captionSorting = Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
 		if (album.isByDate()) {
 			secondLine += "<span class='gray'>(";
 			if (folderArray.length === 2) {
@@ -2399,8 +2394,8 @@
 			}
 		}
 
-		this.captionForSelection = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
-		this.captionForSelectionSorting = captionSorting;
+		this.captionForSelection = Utilities.combineFirstAndSecondLine(this.name, secondLine);
+		this.captionForSelectionSorting = Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
 	};
 
 	Album.prototype.subalbumName = function(subalbum) {
