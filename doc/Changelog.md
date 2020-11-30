@@ -1,14 +1,18 @@
+### version v4.9.0 (Dec 1st, 2020)
+
 * many bug fixes
+* global variables are now property of a global class
+* middle now preserves map album, selection, and unveiled passwords (requires `php`)
 * media cache implementation, so that the same object is used for the same image/video across the various albums where it is present
 * js code mainly converted to OOP
 * numMediaInSubTree and numMedia album properties have been changed to numsMediaInSubTree and numsMedia (requieres json files regenerations)
-* media and albums can now be selected, and the resulting selection can be viewed, browsed and saved as an album
+* media and albums can now be selected, and the resulting selection can be viewed, browsed and saved, as the other albums
   * new option `by_selection_string` for albums built from selection
 * menu refinements in download section
-* searching when in popup now refines the popup content
+* searching when in map popup now refines the popup content
 * media and album captions from `album.ini` file are now separate from metadata; a menu option to hide them has been added
 * new option `excluded_patterns_file`: specifies a file whose lines are file patterns (regexes) to ignore when scanning
-* the authentication dialog allows the user to send an email that requests the protected content password (the `request_password_email` option must be set)
+* the authentication dialog now allows the user to send an email that requests the protected content password (the `request_password_email` option must be set)
   * new option `request_password_email`: the email for requesting the password that allows seeing the protected content
 
 ### version v4.1.0 (Nov 29, 2019)
