@@ -1073,11 +1073,20 @@
 		}
 	};
 
-	Utilities.prototype.albumButtonWidth = function(thumbnailWidth, buttonBorder) {
-			if (env.options.albums_slide_style)
-				return Math.round((thumbnailWidth + 2 * buttonBorder) * 1.1);
-			else
-				return thumbnailWidth + 2 * buttonBorder;
+	Utilities.prototype.albumButtonWidth = function(thumbnailWidth) {
+		if (env.options.albums_slide_style) {
+			return Math.ceil(thumbnailWidth * (1 + 2 * env.slideMarginFactor) + 2 * env.slideAlbumButtonBorder + 2 * env.slideBorder);
+		} else {
+			return Math.ceil(thumbnailWidth + 1 * env.options.spacing);
+		}
+	};
+
+	Utilities.prototype.thumbnailWidth = function(albumButtonWidth) {
+		if (env.options.albums_slide_style) {
+			return Math.floor((albumButtonWidth - 2 * env.slideAlbumButtonBorder - 2 * env.slideBorder) / (1 + 2 * env.slideMarginFactor));
+		} else {
+			return Math.floor(albumButtonWidth - 1 * env.options.spacing);
+		}
 	};
 
 	Utilities.prototype.removeFolderString = function (cacheBase) {

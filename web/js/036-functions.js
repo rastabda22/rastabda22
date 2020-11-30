@@ -1475,6 +1475,10 @@
 							if (! env.options.hasOwnProperty('saved_cache_base_to_search_in') || ! env.options.saved_cache_base_to_search_in)
 								env.options.saved_cache_base_to_search_in = env.options.folders_string;
 
+							env.slideAlbumButtonBorder = 1;
+							env.slideBorder = 3;
+							env.slideMarginFactor = 0.05;
+
 							env.options.foldersStringWithTrailingSeparator = env.options.folders_string + env.options.cache_folder_separator;
 							env.options.byDateStringWithTrailingSeparator = env.options.by_date_string + env.options.cache_folder_separator;
 							env.options.byGpsStringWithTrailingSeparator = env.options.by_gps_string + env.options.cache_folder_separator;
@@ -1525,7 +1529,7 @@
 							env.searchAlbum = new Album();
 
 							env.captionColor = env.options.albums_slide_style ? env.options.slide_album_caption_color : env.options.album_caption_color;
-							env.correctedAlbumThumbSize = env.options.album_thumb_size
+							env.correctedAlbumThumbSize = env.options.album_thumb_size;
 							env.captionFontSize = Math.round(util.em2px("body", 1) * env.correctedAlbumThumbSize / env.options.album_thumb_size);
 							env.captionHeight = parseInt(env.captionFontSize * 1.1) + 1;
 

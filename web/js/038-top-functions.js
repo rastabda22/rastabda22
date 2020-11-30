@@ -2051,7 +2051,8 @@
 		var i, imageLink, linkContainer, imageElement, media, thumbsElement, subalbumsElement, thumbHash, thumbnailSize;
 		var width, height, thumbWidth, thumbHeight, imageString, imgString, img, calculatedWidth, calculatedHeight, populateMedia;
 		var albumViewWidth;
-		var mediaWidth, mediaHeight, slideBorder = 0, scrollBarWidth = 0, buttonBorder = 0, margin, imgTitle;
+		var mediaWidth, mediaHeight, slideBorder = 0, buttonBorder = 0, margin, imgTitle;
+		var scrollBarWidth = window.innerWidth - document.body.clientWidth || 15;
 		var tooBig = false, isGeneratedAlbum = false;
 		var mapLinkIcon, selectBoxHtml, selectSrc, titleSelector, id;
 		var caption, captionHtml, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
@@ -2059,7 +2060,7 @@
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
 		if (env.options.albums_slide_style)
-			slideBorder = 3;
+			slideBorder = env.slideBorder;
 
 		// When there is both a media and an album, we display the media's caption; else it's the album's one
 		if (env.currentMedia === null) {
@@ -2338,20 +2339,20 @@
 				) {
 					// resize down the album buttons if they are too wide
 					albumViewWidth = $("body").width() -
-							parseInt($("#album-view").css("padding-left")) -
-							parseInt($("#album-view").css("padding-right")) -
-							scrollBarWidth;
-					if ((util.albumButtonWidth(env.correctedAlbumThumbSize, buttonBorder) + env.options.spacing) * env.options.min_album_thumbnail > albumViewWidth) {
-						if (env.options.albums_slide_style)
-							env.correctedAlbumThumbSize =
-								Math.floor((albumViewWidth / env.options.min_album_thumbnail - env.options.spacing - 2 * slideBorder) / 1.1 - 2 * buttonBorder);
-						else
-							env.correctedAlbumThumbSize =
-								Math.floor(albumViewWidth / env.options.min_album_thumbnail - env.options.spacing - 2 * buttonBorder);
+						parseInt($("#album-view").css("padding-left")) -
+						parseInt($("#album-view").css("padding-right")) -
+						scrollBarWidth;
+					env.correctedAlbumThumbSize = env.options.album_thumb_size;
+					var correctedAlbumButtonSize = util.albumButtonWidth(env.options.album_thumb_size);
+					if (albumViewWidth / (correctedAlbumButtonSize + env.options.spacing) < env.options.min_album_thumbnail) {
+						env.correctedAlbumThumbSize = Math.floor(util.thumbnailWidth(albumViewWidth / env.options.min_album_thumbnail - env.options.spacing)) - 1;
+						correctedAlbumButtonSize = util.albumButtonWidth(env.correctedAlbumThumbSize);
 					}
+					env.captionFontSize = Math.round(util.em2px("body", 1) * env.correctedAlbumThumbSize / env.options.album_thumb_size);
+					env.captionHeight = parseInt(env.captionFontSize * 1.1) + 1;
 					margin = 0;
 					if (env.options.albums_slide_style)
-						margin = Math.round(env.correctedAlbumThumbSize * 0.05);
+						margin = Math.round(env.correctedAlbumThumbSize * env.slideMarginFactor);
 
 					if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs)
 						heightfactor = 0;
@@ -2359,7 +2360,7 @@
 						heightfactor = 1.6;
 					else
 						heightfactor = 2.8;
-					buttonAndCaptionHeight = util.albumButtonWidth(env.correctedAlbumThumbSize, buttonBorder) + env.captionHeight * heightfactor;
+					buttonAndCaptionHeight = correctedAlbumButtonSize + env.captionHeight * heightfactor;
 
 					// insert into DOM
 					subalbumsElement = $("#subalbums");
@@ -2472,7 +2473,7 @@
 											"margin-right: " + env.options.spacing + "px; " +
 											"margin-bottom: " + env.options.spacing + "px; " +
 											"height: " + buttonAndCaptionHeight + "px; " +
-											"width: " + util.albumButtonWidth(env.correctedAlbumThumbSize, buttonBorder) + "px; ";
+											"width: " + (correctedAlbumButtonSize - 2 * env.slideBorder) + "px; ";
 								if (env.options.albums_slide_style)
 									albumButtonAndCaptionHtml += "background-color:" + env.options.album_button_background_color + ";";
 								albumButtonAndCaptionHtml +=
