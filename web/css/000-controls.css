@@ -120,6 +120,9 @@ a.title-anchor.mobile {
 
 #thumbs {
 	clear: both;
+}
+
+#album-view:not(.media-view-container) #thumbs {
 	padding-top: 1em;
 }
 
