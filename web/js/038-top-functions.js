@@ -921,14 +921,12 @@
 		}
 	};
 
-	TopFunctions.toggleSubalbumSelection = function(cacheBase, clickedSelector) {
+	Album.prototype.toggleSubalbumSelection = function(iSubalbum, clickedSelector) {
 		if (env.selectionAlbum.isEmpty())
 			util.initializeSelectionAlbum();
-		var iSubalbum = env.currentAlbum.subalbums.findIndex(subalbum => subalbum.cacheBase === cacheBase);
-		var subalbum = env.currentAlbum.subalbums[iSubalbum];
-		// var subalbum = env.currentAlbum.subalbums[iSubalbum];
+		var subalbum = this.subalbums[iSubalbum];
 		if (subalbum.isSelected()) {
-			let removeSubalbumPromise = env.currentAlbum.removeSubalbumFromSelection(iSubalbum, clickedSelector);
+			let removeSubalbumPromise = this.removeSubalbumFromSelection(iSubalbum, clickedSelector);
 			removeSubalbumPromise.then(
 				function subalbumRemoved() {
 					if (util.nothingIsSelected())
@@ -937,7 +935,7 @@
 				}
 			);
 		} else {
-			let addSubalbumPromise = env.currentAlbum.addSubalbumToSelection(iSubalbum, clickedSelector);
+			let addSubalbumPromise = this.addSubalbumToSelection(iSubalbum, clickedSelector);
 			addSubalbumPromise.then(
 				function subalbumAdded() {
 					f.updateMenu();
@@ -2546,7 +2544,7 @@
 									function(ev) {
 										ev.stopPropagation();
 										ev.preventDefault();
-										TopFunctions.toggleSubalbumSelection(ithSubalbum.cacheBase, "#subalbum-select-box-" + iSubalbum);
+										env.currentAlbum.toggleSubalbumSelection(iSubalbum, "#subalbum-select-box-" + iSubalbum);
 									}
 								);
 
