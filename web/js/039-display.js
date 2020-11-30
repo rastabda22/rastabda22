@@ -319,6 +319,7 @@ $(document).ready(function() {
 			}
 
 			if (
+				! $("#search-field").is(':focus') &&
 				env.currentMedia === null && ! isMap && (
 					['[', ']'].indexOf(e.key) !== -1 && ! isPopup && env.currentAlbum.subalbums.length > 1 ||
 					['{', '}'].indexOf(e.key) !== -1 && env.currentAlbum.media.length > 1
