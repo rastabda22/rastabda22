@@ -1781,7 +1781,19 @@
 														env.searchAlbum.media.sortByDate();
 														env.searchAlbum.media.forEach(
 															function(singleMedia) {
-																singleMedia.captionForSelectionSorting = singleMedia.name + env.options.cache_folder_separator + singleMedia.albumName.split('/').slice(1).reverse().join(env.options.cache_folder_separator);
+																let cacheBase = singleMedia.foldersCacheBase
+																let albumHash = PhotoFloat.decodeHash(window.location.hash)[0];
+																let searchStartCacheBase = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
+																if (Utilities.isByDateCacheBase(searchStartCacheBase) && singleMedia.hasOwnProperty("dayAlbumCacheBase"))
+																	cacheBase = singleMedia.dayAlbumCacheBase;
+																else if (Utilities.isByGpsCacheBase(searchStartCacheBase) && singleMedia.hasGpsData())
+																	cacheBase = singleMedia.gpsAlbumCacheBase;
+																let parentAlbumPromise = PhotoFloat.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
+																parentAlbumPromise.then(
+																	function(parentAlbum) {
+																		singleMedia.generateCaptionForCollections(parentAlbum);
+																	}
+																);
 															}
 														);
 													}
@@ -1792,8 +1804,19 @@
 														// search albums need to conform to default behaviour of albums: json files have subalbums and media sorted by date not reversed
 														util.sortByDate(env.searchAlbum.subalbums);
 														env.searchAlbum.subalbums.forEach(
-															function(subalbum) {
-																subalbum.captionForSelectionSorting = subalbum.path.split('/').reverse().join(env.options.cache_folder_separator);
+															function(subalbum, iSubalbum) {
+																let splittedCacheBase = subalbum.cacheBase.split(env.options.cache_folder_separator);
+																let parentCacheBase = splittedCacheBase.slice(0, splittedCacheBase.length - 1).join(env.options.cache_folder_separator);
+																var getAlbumPromise = PhotoFloat.getAlbum(parentCacheBase, null, {getMedia: false, getPositions: false});
+																getAlbumPromise.then(
+																	function(subalbum) {
+																		env.searchAlbum.subalbums[iSubalbum] = subalbum;
+																		subalbum.generateCaptionForCollections();
+																	},
+																	function() {
+																		console.trace();
+																	}
+																);
 															}
 														);
 													}

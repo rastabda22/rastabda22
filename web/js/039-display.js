@@ -267,15 +267,17 @@ $(document).ready(function() {
 
 				if (
 					env.currentAlbum !== null && (
-						[
-							env.options.folders_string,
-							env.options.by_date_string,
-							env.options.by_gps_string,
-							env.options.by_map_string,
-							env.options.by_selection_string,
-							env.options.by_search_string
-						].indexOf(env.currentAlbum.cacheBase) !== -1 ||
-						env.currentMedia !== null || env.currentAlbum.isAlbumWithOneMedia() || util.somethingIsSelected()
+						env.currentAlbum.isAnyRoot() ||
+						env.currentMedia !== null || env.currentAlbum.isAlbumWithOneMedia()
+						// [
+						// 	env.options.folders_string,
+						// 	env.options.by_date_string,
+						// 	env.options.by_gps_string,
+						// 	env.options.by_map_string,
+						// 	env.options.by_selection_string,
+						// 	env.options.by_search_string
+						// ].indexOf(env.currentAlbum.cacheBase) !== -1 ||
+						// env.currentMedia !== null || env.currentAlbum.isAlbumWithOneMedia() || util.somethingIsSelected() || util.somethingIsSearched() || env.currentAlbum.isMap()
 					) && ! isMap
 				) {
 					// browsing mode switchers

@@ -2228,18 +2228,18 @@
 						// the folder name must be added the second line
 						let cacheBase = ithMedia.foldersCacheBase
 						if (env.currentAlbum.isSearch()) {
-							let [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(window.location.hash);
+							let albumHash = phFl.decodeHash(window.location.hash)[0];
 							let searchStartCacheBase = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
-							if (util.isByDateCacheBase(searchStartCacheBase))
+							if (util.isByDateCacheBase(searchStartCacheBase) && ithMedia.hasOwnProperty("dayAlbumCacheBase"))
 								cacheBase = ithMedia.dayAlbumCacheBase;
-							else if (util.isByGpsCacheBase(searchStartCacheBase))
+							else if (util.isByGpsCacheBase(searchStartCacheBase) && ithMedia.hasGpsData())
 								cacheBase = ithMedia.gpsAlbumCacheBase;
 						}
 						let parentAlbumPromise = phFl.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
 						parentAlbumPromise.then(
 							function(parentAlbum) {
 								if (! ithMedia.hasOwnProperty("captionForSelection"))
-									ithMedia.generateCaptionForSelectionAndSearches(parentAlbum);
+									ithMedia.generateCaptionForCollections(parentAlbum);
 								$("#" + imageId + " .media-caption").html(ithMedia.mediaName(env.currentAlbum));
 							}
 						);
@@ -2417,9 +2417,7 @@
 										">" +
 									"</a>";
 
-								let folderName = env.currentAlbum.subalbumName(ithSubalbum);
-								let folderMapTitle = env.currentAlbum.folderMapTitle(ithSubalbum, folderName);
-								let folderMapTitleWithoutHtmlTags = folderMapTitle.replace(/<[^>]*>?/gm, '');
+								let folderMapTitleWithoutHtmlTags = env.currentAlbum.folderMapTitle(ithSubalbum, nameHtml).replace(/<[^>]*>?/gm, '');
 								let positionHtml =
 									"<a id='subalbum-map-link-" + iSubalbum + "' >" +
 										"<img " +
@@ -2556,9 +2554,9 @@
 									convertSubalbumPromise.then(
 										function(iSubalbum) {
 											let ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
-											ithSubalbum.generateCaptionForSelectionAndSearches();
+											ithSubalbum.generateCaptionForCollections();
 											let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
-											$("#" + captionId + " .folder-name").html(env.currentAlbum.subalbumName(ithSubalbum));
+											$("#" + captionId + " .folder-name").html(nameHtml);
 										}
 									);
 								}
