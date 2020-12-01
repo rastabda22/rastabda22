@@ -2969,7 +2969,6 @@
 	};
 
 	/* make static methods callable as member functions */
-	// Utilities.prototype.convertComplexCombinationToCodesComplexCombination = Utilities.convertComplexCombinationToCodesComplexCombination;
 	Utilities.prototype.isFolderCacheBase = Utilities.isFolderCacheBase;
 	Utilities.prototype.pathJoin = Utilities.pathJoin;
 	Utilities.prototype.setLinksVisibility = Utilities.setLinksVisibility;
@@ -2995,22 +2994,15 @@
 	Utilities.prototype.getLanguage = Utilities.getLanguage;
 	Utilities.prototype.upHash = Utilities.upHash;
 	Utilities.prototype.isAlbumWithOneMedia = Utilities.isAlbumWithOneMedia;
-	// Utilities.prototype.resetSelectedMedia = Utilities.resetSelectedMedia;
-	// Utilities.prototype.resetSelectedSubalbums = Utilities.resetSelectedSubalbums;
-	// Utilities.prototype.countSelectedMedia = Utilities.countSelectedMedia;
-	// Utilities.prototype.countSelectedSubalbums = Utilities.countSelectedSubalbums;
-	Utilities.prototype.isAnyRootHash = Utilities.isAnyRootHash;
 	Utilities.prototype.isAnyRootCacheBase = Utilities.isAnyRootCacheBase;
 	Utilities.prototype.initializeSelectionRootAlbum = Utilities.initializeSelectionRootAlbum;
 	Utilities.prototype.initializeOrGetMapRootAlbum = Utilities.initializeOrGetMapRootAlbum;
-	// Utilities.prototype.initializeSearchRootAlbum = Utilities.initializeSearchRootAlbum;
 	Utilities.prototype.nothingIsSelected = Utilities.nothingIsSelected;
 	Utilities.prototype.somethingIsSelected = Utilities.somethingIsSelected;
 	Utilities.prototype.somethingIsSearched = Utilities.somethingIsSearched;
 	Utilities.prototype.somethingIsInMapAlbum = Utilities.somethingIsInMapAlbum;
 	Utilities.prototype.initializeSelectionAlbum = Utilities.initializeSelectionAlbum;
 	Utilities.prototype.transformAltPlaceName = Utilities.transformAltPlaceName;
-	// Utilities.prototype.arrayUnion = Utilities.arrayUnion;
 	Utilities.prototype.normalizeAccordingToOptions = Utilities.normalizeAccordingToOptions;
 	Utilities.prototype.removeAccents = Utilities.removeAccents;
 

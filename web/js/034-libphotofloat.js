@@ -1279,9 +1279,6 @@
 				if (albumHash) {
 					albumHash = decodeURI(albumHash);
 
-					// if (util.isAnyRootHash(albumHash))
-					// 	$("ul#right-menu li#album-search").addClass("hidden");
-
 					if (util.isSearchCacheBase(albumHash)) {
 						var splittedAlbumHash = albumHash.split(env.options.cache_folder_separator);
 
