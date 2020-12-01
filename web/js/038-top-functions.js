@@ -822,6 +822,7 @@
 				$(".map-popup-trigger").off('click').on(
 					'click',
 					function(ev, from) {
+						// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
 						env.selectorClickedToOpenTheMap = ".map-popup-trigger";
 						TopFunctions.generateMapFromTitleWithoutSubalbums(ev, from);
 					}
@@ -830,6 +831,7 @@
 				$(".map-popup-trigger-double").off('click').on(
 					'click',
 					function(ev, from) {
+						// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
 						env.selectorClickedToOpenTheMap = ".map-popup-trigger-double";
 						TopFunctions.generateMapFromTitle(ev, from);
 					}
@@ -2238,10 +2240,10 @@
 						'click',
 						{singleMedia: ithMedia, album: env.currentAlbum, clickedSelector: "#media-map-link-" + iMedia},
 						function(ev, from) {
+							// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
 							env.selectorClickedToOpenTheMap = ev.data.clickedSelector;
 							ev.stopPropagation();
 							ithMedia.generateMapFromMedia(ev, from);
-							// ev.data.singleMedia.generateMapFromMedia(ev, from);
 						}
 					);
 
@@ -2488,6 +2490,7 @@
 										'click',
 										{iSubalbum: iSubalbum},
 										function(ev, from) {
+											// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
 											ev.preventDefault();
 											env.selectorClickedToOpenTheMap = "#subalbum-map-link-" + iSubalbum;
 											TopFunctions.generateMapFromSubalbum(ev, from);
