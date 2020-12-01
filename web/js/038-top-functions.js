@@ -2098,7 +2098,8 @@
 				// media loop
 				//
 				for (i = 0; i < env.currentAlbum.numsMedia.imagesAndVideosTotal(); ++i) {
-					let ithMedia = env.currentAlbum.media[i];
+					let iMedia = i;
+					let ithMedia = env.currentAlbum.media[iMedia];
 
 					width = ithMedia.metadata.size[0];
 					height = ithMedia.metadata.size[1];
@@ -2135,7 +2136,7 @@
 					mapLinkIcon = "";
 					if (ithMedia.hasGpsData()) {
 						mapLinkIcon =
-							"<a id='media-map-link-" + i + "'>" +
+							"<a id='media-map-link-" + iMedia + "'>" +
 								"<img " +
 									"class='thumbnail-map-link' " +
 									"title='" + util.escapeSingleQuotes(util._t("#show-on-map")) + "' " +
@@ -2152,7 +2153,7 @@
 						titleSelector = "#unselect-single-media";
 					}
 					selectBoxHtml =
-						"<a id='media-select-box-" + i + "'>" +
+						"<a id='media-select-box-" + iMedia + "'>" +
 							"<img " +
 								"class='select-box' " +
 								"title='" + util.escapeSingleQuotes(util._t(titleSelector)) + "' " +
@@ -2232,25 +2233,20 @@
 							}
 						);
 					}
-				}
 
-				// thumbsElement.append.apply(thumbsElement, media);
-
-				// generate the click event for the map for every media
-				for (i = 0; i < env.currentAlbum.numsMedia.imagesAndVideosTotal(); ++i) {
-					ithMedia = env.currentAlbum.media[i];
-					$("#media-map-link-" + i).off('click').on(
+					$("#media-map-link-" + iMedia).off('click').on(
 						'click',
-						{singleMedia: ithMedia, album: env.currentAlbum, clickedSelector: "#media-map-link-" + i},
+						{singleMedia: ithMedia, album: env.currentAlbum, clickedSelector: "#media-map-link-" + iMedia},
 						function(ev, from) {
 							env.selectorClickedToOpenTheMap = ev.data.clickedSelector;
 							ev.stopPropagation();
-							ev.data.singleMedia.generateMapFromMedia(ev, from);
+							ithMedia.generateMapFromMedia(ev, from);
+							// ev.data.singleMedia.generateMapFromMedia(ev, from);
 						}
 					);
 
 					if (
-						env.selectorClickedToOpenTheMap === "#media-map-link-" + i &&
+						env.selectorClickedToOpenTheMap === "#media-map-link-" + iMedia &&
 						env.previousAlbum !== null &&
 						env.previousAlbum.isMap() &&
 						(
@@ -2264,13 +2260,14 @@
 						$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 					}
 
-					$("#media-select-box-" + i).off('click').on(
+					$("#media-select-box-" + iMedia).off('click').on(
 						'click',
-						{media: ithMedia, clickedSelector: "#media-select-box-" + i},
+						{media: ithMedia, clickedSelector: "#media-select-box-" + iMedia},
 						function(ev) {
 							ev.stopPropagation();
 							ev.preventDefault();
-							ev.data.media.toggleSelectedStatus(env.currentAlbum, ev.data.clickedSelector);
+							ithMedia.toggleSelectedStatus(env.currentAlbum, ev.data.clickedSelector);
+							// ev.data.media.toggleSelectedStatus(env.currentAlbum, ev.data.clickedSelector);
 						}
 					);
 
