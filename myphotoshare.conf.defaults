@@ -27,7 +27,7 @@
 ###########################################################
 ##########################################################
 
-# absolute path of the folder where index.html resides; normally album_path will be its "albums" subfolder, and cache_path its "cache" subfolder
+# absolute path of the folder where index.php/html resides; normally album_path will be its "albums" subfolder, and cache_path its "cache" subfolder
 index_html_path =
 
 # albums folder absolute path, for use in python
@@ -122,17 +122,28 @@ video_transcode_bitrate = 1M
 video_crf = 20
 
 # The jpg quality parameter for generating the reduced size images and the tumbnails
-# an integer number 1 -100
+# an integer number 1 - 100
 jpeg_quality = 95
 
 # markers that permit not to scan files in folder or whole trees
 ################################################################################
 # BEWARE:
-# if you use this feature and don't change this options, the user can know what files you are hiding,
-# and therefore the user could try to access them in the `/albums/` tree
+# if you use this feature and don't change this options, the user can know what files/trees you are hiding,
+# and therefore he/she could try to access them in the `/albums/` tree
 ################################################################################
 exclude_files_marker = .myphotoshare.exclude.files
 exclude_tree_marker = .myphotoshare.exclude.tree
+
+# a file, relative to the directory of the configuration file, whose lines are regex patterns for excluding certain files from scanning
+# the directory/file name is matched against every pattern with re.search()
+# use ^ at the beginning and $ at the end of the patterns if you want a match on the whole directory/file name (including extension)
+# lines beginning with # are skipped
+################################################################################
+# BEWARE:
+# if you use this feature and don't change this file name, the user can know what files you aren't scanning,
+# and therefore he/she could try to access them in the `/albums/` tree
+################################################################################
+excluded_patterns_file = myphotoshare.excluded
 
 # marker for passwords: put it in the album you want to protect
 # every line is either:
@@ -146,7 +157,7 @@ exclude_tree_marker = .myphotoshare.exclude.tree
 ################################################################################
 # BEWARE:
 # if you have protected content and don't change this option, the user can know what files you are protecting,
-# and therefore could try to access them in the `/albums/` tree
+# and therefore he/she could try to access them in the `/albums/` tree
 ################################################################################
 passwords_marker = .myphotoshare.passwords
 
@@ -160,6 +171,9 @@ passwords_subdir = pwd
 
 # the prefix for the protected directories where json files are stored
 protected_directories_prefix = protected_
+
+# put here the email address for requesting the password(s)
+request_password_email =
 
 # recreate fixed height media thumbnails if their ratio (width/height) is > 1,
 # in order to get rid of a past bug in thumbnail generator
@@ -260,6 +274,7 @@ by_date_string = _bd
 by_gps_string = _bg
 by_search_string = _bs
 by_map_string = _bm
+by_selection_string = _be
 cache_folder_separator = -
 search_options_separator = .
 

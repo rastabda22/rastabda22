@@ -36,51 +36,62 @@
 		</div>
 	</div>
 
-	<div id="media-view">
-		<div id="media-box-container">
-			<div class="media-box" id="center">
-
-				<div class="media-box-inner">
-				</div>
-
-				<div class="media-bar">
-					<div class="links">
-						<span class="link-button">
-							<a class="metadata-show"></a>
-							<a class="metadata-hide"></a>
-						</span>
-						|
-						<span class="link-button">
-							<a class="original-link"></a>
-						</span>
-						|
-						<span class="link-button">
-							<a class="download-link"></a>
-						</span>
-						<a class="menu-map-divider">|</a>
-						<span class="link-button">
-							<a class="menu-map-link"></a>
-						</span>
-						<span class="fullscreen">
-							<span class="fullscreen-divider"> | </span>
-							<span class="link-button">
-								<a class="enter-fullscreen"></a>
-								<a class="exit-fullscreen"></a>
-							</span>
-						</span>
-					</div>
-					<div class="metadata">
-					</div>
-				</div>
-
-			</div>
+	<div id="media-view-container">
+		<div id="auth-text">
+			<div id="auth-close" style="top: 22px; right: 22px;"></div>
+			<form id="auth-form">
+				<div id="auth-question"></div>
+				<input type="text" value="username" autocomplete="username" style="display: none;" />
+				<input id="password" type="password" autocomplete="current-password" />
+				<input type="submit" value="⏎" class="button"/>
+			</form>
 		</div>
 
-		<img id="prev" width="42" height="88" src="img/prev.png">
-		<img id="next" width="42" height="88" src="img/next.png">
-		<div id="pinch-container" class="hidden">
-			<img src="img/pinch-plus.png" id="pinch-in" class="pinch" width="25" height="25">
-			<img src="img/pinch-minus.png" id="pinch-out" class="pinch disabled" width="25" height="25">
+		<div id="media-view">
+			<div id="media-box-container">
+				<div class="media-box" id="center">
+
+					<div class="media-box-inner">
+					</div>
+
+					<div class="media-bar">
+						<div class="links">
+							<span class="link-button">
+								<a class="metadata-show"></a>
+								<a class="metadata-hide"></a>
+							</span>
+							|
+							<span class="link-button">
+								<a class="original-link"></a>
+							</span>
+							<a class="menu-map-divider">|</a>
+							<span class="link-button">
+								<a class="menu-map-link"></a>
+							</span>
+							<span class="fullscreen">
+								<span class="fullscreen-divider"> | </span>
+								<span class="link-button">
+									<a class="enter-fullscreen"></a>
+									<a class="exit-fullscreen"></a>
+								</span>
+							</span>
+						</div>
+						<div class="metadata">
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<img id="prev" width="42" height="88" src="img/prev.png">
+			<img id="next" width="42" height="88" src="img/next.png">
+			<a id="media-select-box">
+				<img class="select-box">
+			</a>
+			<div id="pinch-container" class="hidden">
+				<img src="img/pinch-plus.png" id="pinch-in" class="pinch" width="25" height="25">
+				<img src="img/pinch-minus.png" id="pinch-out" class="pinch disabled" width="25" height="25">
+			</div>
 		</div>
 	</div>
 
@@ -91,9 +102,8 @@
 		</div>
 
 		<div id="subalbums"></div>
-		<div id="thumbs">
-		</div>
-		<div id="error-too-many-images"></div>
+		<div id="message-too-many-images"></div>
+		<div id="thumbs"></div>
 		<div id="powered-by">
 			<span id="powered-by-string">Powered by</span>
 			<a href="https://gitlab.com/paolobenve/myphotoshare" target="_blank">MyPhotoShare</a>
@@ -104,7 +114,7 @@
 		<li id="menu-and-padlock">
 			<span id="menu-icon"> ☰ </span>
 			<span id="padlock" class="protection">
-				<img  width="12px" height="16px" src="img/padlock.png" />
+				<img width="12px" height="16px" src="img/padlock.png" />
 			</span>
 		</li>
 		<li class="expandable search">
@@ -122,21 +132,22 @@
 		</li>
 
 		<li class="expandable browsing-mode-switcher active">
-			<a class="browsing-mode-switcher caption"></a>
+			<span class="browsing-mode-switcher caption"></span>
 			<ul class="sub-menu hidden">
-				<li id="folders-view" class="browsing-mode-switcher"></li>
-				<li id="by-date-view" class="browsing-mode-switcher"></li>
-				<li id="by-gps-view" class="browsing-mode-switcher"></li>
-				<li id="by-map-view" class="browsing-mode-switcher"></li>
-				<li id="by-search-view" class="browsing-mode-switcher"></li>
+				<li id="folders-view" class="browsing-mode-switcher radio"></li>
+				<li id="by-date-view" class="browsing-mode-switcher radio"></li>
+				<li id="by-gps-view" class="browsing-mode-switcher radio"></li>
+				<li id="by-map-view" class="browsing-mode-switcher radio"></li>
+				<li id="by-search-view" class="browsing-mode-switcher radio"></li>
+				<li id="by-selection-view" class="browsing-mode-switcher radio"></li>
 			</ul>
 		</li>
 
 		<li class="expandable sort album-sort active">
 			<span class="sort album-sort caption"></span>
 			<ul class="sub-menu hidden">
-				<li class='sort album-sort by-date'></li>
-				<li class='sort album-sort by-name'></li>
+				<li class='sort album-sort by-date radio'></li>
+				<li class='sort album-sort by-name radio'></li>
 				<li class='sort album-sort reverse active'></li>
 			</ul>
 		</li>
@@ -144,8 +155,8 @@
 		<li class="expandable sort media-sort active">
 			<span class="sort media-sort caption"></span>
 			<ul class="sub-menu hidden">
-				<li class='sort media-sort by-date'></li>
-				<li class='sort media-sort by-name'></li>
+				<li class='sort media-sort by-date radio'></li>
+				<li class='sort media-sort by-name radio'></li>
 				<li class='sort media-sort reverse active'></li>
 			</ul>
 		</li>
@@ -154,6 +165,7 @@
 			<span class='ui caption'></span>
 			<ul class="sub-menu hidden">
 				<li class='ui hide-title active'></li>
+				<li class='ui hide-media-caption active'></li>
 				<li class='ui media-count active'></li>
 				<li class='ui spaced active'></li>
 				<li class='ui square-album-thumbnails active'></li>
@@ -165,6 +177,18 @@
 			</ul>
 		</li>
 
+		<li class='expandable select active'>
+			<span class='select caption'></span>
+			<ul class="sub-menu hidden">
+				<li class='select everything active'></li>
+				<li class='select everything-individual active'></li>
+				<li class='select albums active'></li>
+				<li class='select media active'></li>
+				<li class='select global-reset active'></li>
+				<li class='select go-to-selected active'></li>
+			</ul>
+		</li>
+
 		<li class='big-albums active'>
 			<span id='show-big-albums' class="big-albums caption"></span>
 		</li>
@@ -172,6 +196,9 @@
 		<li class='expandable download-album active'>
 			<span class='download-album caption'></span>
 			<ul class="sub-menu hidden">
+				<li class='download-single-media active'>
+					<a class='download-link'></a>
+				</li>
 				<li class='download-album everything all full active'></li>
 				<li class='download-album everything all sized active'></li>
 				<li class='download-album everything images full active'></li>
@@ -184,6 +211,8 @@
 				<li class='download-album media-only images sized active'></li>
 				<li class='download-album media-only videos full active'></li>
 				<li class='download-album media-only videos sized active'></li>
+				<li class='download-album selected active'></li>
+				<li class='download-album selection active'></li>
 			</ul>
 		</li>
 
@@ -191,7 +220,6 @@
 			<span id="protected-content-unveil" class='protection caption'></span>
 		</li>
 	</ul>
-
 
 	<div id="loading"></div>
 	<div id="downloading-media"></div>
@@ -201,14 +229,19 @@
 	<div id="by-date-browsing" class="browsing-mode-message"></div>
 	<div id="by-gps-browsing" class="browsing-mode-message"></div>
 	<div id="by-search-browsing" class="browsing-mode-message"></div>
+	<div id="by-selection-browsing" class="browsing-mode-message"></div>
 	<div id="by-map-browsing" class="browsing-mode-message"></div>
+
+	<div id="added-individually" class="selection-message"></div>
+	<div id="removed-individually" class="selection-message"></div>
 
 	<div id="error-overlay"></div>
 	<div id="error-options-file" class="error"></div>
 	<div id="error-text-folder" class="error"></div>
 	<div id="error-root-folder" class="error"></div>
 	<div id="error-text-image" class="error"></div>
-	<div id="error-unexistent-map-album" class="error"></div>
+	<div id="error-nonexistent-map-album" class="error"></div>
+	<div id="error-nonexistent-selection-album" class="error"></div>
 	<div id="warning-no-geolocated-media" class="error"></div>
 
 	<div id="by-date-album-sorting" class="sort-message"></div>
@@ -220,13 +253,9 @@
 	<div id="by-name-media-sorting" class="sort-message"></div>
 	<div id="by-name-reverse-media-sorting" class="sort-message"></div>
 
-	<div id="auth-text">
-		<div id="auth-close" style="top: 22px; right: 22px;"></div>
-		<form id="auth-form">
-			<div id="auth-question"></div>
-			<input id="password" type="password" />
-			<input type="submit" value="⏎" class="button"/>
-		</form>
+	<div id="caption">
+		<div id="caption-title"></div>
+		<div id="caption-description"></div>
 	</div>
 
 </body>

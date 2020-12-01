@@ -5,9 +5,6 @@
 
 	/* constructor */
 	function PhotoFloat() {
-		PhotoFloat.cache = {};
-		PhotoFloat.cache.albums = {};
-		PhotoFloat.cache.albums.index = {};
 		PhotoFloat.guessedPasswordCodes = [];
 		PhotoFloat.guessedPasswordsMd5 = [];
 		PhotoFloat.geotaggedPhotosFound = null;
@@ -19,159 +16,38 @@
 		PhotoFloat.searchWordsFromJsonFile = this.searchWordsFromJsonFile;
 		PhotoFloat.searchAlbumCacheBasesFromJsonFile = this.searchAlbumCacheBasesFromJsonFile;
 		PhotoFloat.searchAlbumSubalbumsFromJsonFile = this.searchAlbumSubalbumsFromJsonFile;
-
-		// temporary, will be removed later
-		PhotoFloat.js_cache_levels = [
-			{"mediaThreshold": 10000, "max": 1},
-			{"mediaThreshold": 2000, "max": 2},
-			{"mediaThreshold": 500, "max": 10},
-			{"mediaThreshold": 200, "max": 50}
-		];
 	}
 
-	/* public member functions */
-	PhotoFloat.initializeMapRootAlbum = function() {
-		// prepare the root of the map albums and put it in the cache
-		var rootMapAlbum = {};
-		rootMapAlbum.cacheBase = Options.by_map_string;
-		rootMapAlbum.media = [];
-		rootMapAlbum.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-		rootMapAlbum.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
-		rootMapAlbum.sizesOfAlbum = initialSizes;
-		rootMapAlbum.sizesOfSubTree = initialSizes;
-		rootMapAlbum.subalbums = [];
-		rootMapAlbum.positionsAndMediaInTree = [];
-		rootMapAlbum.numPositionsInTree = 0;
-		rootMapAlbum.numsProtectedMediaInSubTree = {"": imagesAndVideos0};
-
-		PhotoFloat.putAlbumIntoCache(rootMapAlbum.cacheBase, rootMapAlbum);
-
-		return rootMapAlbum;
-	};
-
-	PhotoFloat.putAlbumIntoCache = function(albumCacheBase, album) {
-		if (! Options.hasOwnProperty("js_cache_levels"))
-			Options.js_cache_levels = PhotoFloat.js_cache_levels;
-
-		var done = false, level, cacheLevelsLength = Options.js_cache_levels.length, firstKey;
-		// check if the album is already in cache (it could be there with another media number)
-		// if it is there, remove it
-		if (PhotoFloat.cache.albums.index.hasOwnProperty(albumCacheBase)) {
-			level = PhotoFloat.cache.albums.index[albumCacheBase];
-			delete PhotoFloat.cache.albums[level][albumCacheBase];
-			delete PhotoFloat.cache.albums[level].queue[albumCacheBase];
-			delete PhotoFloat.cache.albums.index[albumCacheBase];
-		}
-
-		if (album.hasOwnProperty("media")) {
-			for (level = 0; level < cacheLevelsLength; level ++) {
-		 		if (util.imagesAndVideosTotal(album.numMedia) >= Options.js_cache_levels[level].mediaThreshold) {
-					if (! PhotoFloat.cache.albums.hasOwnProperty(level)) {
-						PhotoFloat.cache.albums[level] = [];
-						PhotoFloat.cache.albums[level].queue = [];
-					}
-					if (PhotoFloat.cache.albums[level].queue.length >= Options.js_cache_levels[level].max) {
-						// remove the first element
-						firstKey = PhotoFloat.cache.albums[level].queue[0];
-						PhotoFloat.cache.albums[level].queue.shift();
-						delete PhotoFloat.cache.albums.index[firstKey];
-						delete PhotoFloat.cache.albums[level][firstKey];
-					}
-					PhotoFloat.cache.albums.index[albumCacheBase] = level;
-					PhotoFloat.cache.albums[level].queue.push(albumCacheBase);
-					PhotoFloat.cache.albums[level][albumCacheBase] = album;
-					done = true;
-					break;
-				}
-			}
-		}
-		if (! done) {
-			if (! PhotoFloat.cache.albums.hasOwnProperty(cacheLevelsLength)) {
-				PhotoFloat.cache.albums[cacheLevelsLength] = [];
-				PhotoFloat.cache.albums[cacheLevelsLength].queue = [];
-			}
-			PhotoFloat.cache.albums.index[albumCacheBase] = cacheLevelsLength;
-			PhotoFloat.cache.albums[cacheLevelsLength].queue.push(albumCacheBase);
-			PhotoFloat.cache.albums[cacheLevelsLength][albumCacheBase] = album;
-		}
-	};
-
-	PhotoFloat.getAlbumFromCache = function(albumCacheBase) {
-		if (! Options.hasOwnProperty("js_cache_levels"))
-			Options.js_cache_levels = PhotoFloat.js_cache_levels;
-
-		if (PhotoFloat.cache.albums.index.hasOwnProperty(albumCacheBase)) {
-			var cacheLevel = PhotoFloat.cache.albums.index[albumCacheBase];
-			var album = PhotoFloat.cache.albums[cacheLevel][albumCacheBase];
-			return album;
-		} else
-			return false;
-	};
-
-	PhotoFloat.addPositionsToSubalbums = function(thisAlbum) {
-		var iSubalbum, iPosition, iPhoto, position, subalbum, albumFromCache;
-		var positions = thisAlbum.positionsAndMediaInTree;
-		if (! thisAlbum.hasOwnProperty("subalbums")) {
-			albumFromCache = PhotoFloat.getAlbumFromCache(thisAlbum.cacheBase);
-			if (albumFromCache)
-				thisAlbum = albumFromCache;
-		}
-
-		if (thisAlbum.hasOwnProperty("subalbums")) {
-			for (iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; ++ iSubalbum) {
-				subalbum = thisAlbum.subalbums[iSubalbum];
-				subalbum.positionsAndMediaInTree = [];
-				for (iPosition = 0; iPosition < positions.length; ++ iPosition) {
-					position = {};
-					position.lat = positions[iPosition].lat;
-					position.lng = positions[iPosition].lng;
-					position.mediaNameList = [];
-					for (iPhoto = 0; iPhoto < positions[iPosition].mediaNameList.length; ++ iPhoto) {
-						// add the photos belonging to this subalbum
-						if (positions[iPosition].mediaNameList[iPhoto].albumCacheBase.indexOf(subalbum.cacheBase) == 0) {
-							position.mediaNameList.push(positions[iPosition].mediaNameList[iPhoto]);
-						}
-					}
-					if (position.mediaNameList.length)
-						subalbum.positionsAndMediaInTree.push(position);
-				}
-				// go up recursively
-				PhotoFloat.addPositionsToSubalbums(subalbum);
-			}
-			PhotoFloat.putAlbumIntoCache(thisAlbum.cacheBase, thisAlbum);
-		}
-	};
-
-	PhotoFloat.getStopWords = function(error) {
+	PhotoFloat.getStopWords = function() {
 		return new Promise(
 			function(resolve_getStopWords) {
-				if (! Options.search_inside_words && Options.use_stop_words) {
-					var stopWordsFileName = 'stopwords.json';
+				if (! env.options.search_inside_words && env.options.use_stop_words) {
 					// before getting the file check whether it's in the cache
-					if (PhotoFloat.cache.hasOwnProperty("stopWords")) {
-						resolve_getStopWords(PhotoFloat.cache.stopWords);
+					if (env.cache.hasOwnProperty("stopWords") && env.cache.stopWords.length) {
+						resolve_getStopWords();
 					} else {
+						env.cache.stopWords = [];
 						// get the file
-						var stopWordsFile = util.pathJoin([Options.server_cache_path, stopWordsFileName]);
+						var stopWordsFile = util.pathJoin([env.options.server_cache_path, 'stopwords.json']);
 						var ajaxOptions = {
 							type: "GET",
 							dataType: "json",
 							url: stopWordsFile,
 							success: function(stopWords) {
-								PhotoFloat.cache.stopWords = stopWords.stopWords;
-								resolve_getStopWords(stopWords.stopWords);
+								env.cache.stopWords = stopWords.stopWords;
+								resolve_getStopWords();
 							}
 						};
-						if (typeof error !== "undefined" && error !== null) {
-							ajaxOptions.error = function(jqXHR) {
-								error(jqXHR.status);
-							};
-						}
+						ajaxOptions.error = function(jqXHR) {
+							// TO DO something different should be made here?
+							util.errorThenGoUp(jqXHR.status);
+						};
 						$.ajax(ajaxOptions);
 					}
 				} else {
-					// stop words aren't used, resolve with a void list
-					resolve_getStopWords([]);
+					// stop words aren't used
+					env.cache.stopWords = [];
+					resolve_getStopWords();
 				}
 			}
 		);
@@ -182,11 +58,23 @@
 			function(resolve_getJsonFile, reject_getJsonFile) {
 				$.ajax(
 					{
-						url: util.pathJoin([Options.server_cache_path, jsonRelativeFileName]),
+						url: util.pathJoin([env.options.server_cache_path, jsonRelativeFileName]),
 						type: "GET",
 						dataType: "json",
-						success: function(album) {
-							resolve_getJsonFile(album);
+						success: function(albumOrPositionsOrMedia) {
+							let indexPosition = jsonRelativeFileName.lastIndexOf(".positions.json");
+							let indexMedia = jsonRelativeFileName.lastIndexOf(".media.json");
+							if (indexPosition >= 0 && indexPosition === jsonRelativeFileName.length - ".positions.json".length) {
+								// positions file
+								resolve_getJsonFile(new PositionsAndMedia(albumOrPositionsOrMedia));
+							} else if (indexMedia >= 0 && indexMedia === jsonRelativeFileName.length - ".media.json".length) {
+								// media file
+								let mediaGot = new Media(albumOrPositionsOrMedia);
+								mediaGot.getAndPutIntoCache();
+								resolve_getJsonFile(mediaGot);
+							} else {
+								resolve_getJsonFile(new Album(albumOrPositionsOrMedia));
+							}
 						},
 						error: function() {
 							reject_getJsonFile();
@@ -214,13 +102,13 @@
 		// end of function getMediaAndPositions body
 
 		// auxiliary functions
-		function getMedia(albumCacheBase) {
+		function getMedia(cacheBase) {
 			return new Promise(
 				function(resolve_getMedia, reject_getMedia) {
 					var mediaJsonFile;
 					// are media still missing?
 					if (mustGetMedia) {
-						mediaJsonFile = albumCacheBase + '.media.json';
+						mediaJsonFile = cacheBase + '.media.json';
 						var promise = PhotoFloat.getJsonFile(mediaJsonFile);
 						promise.then(
 							function(media) {
@@ -237,13 +125,13 @@
 			);
 		}
 
-		function getPositions(albumCacheBase) {
+		function getPositions(cacheBase) {
 			return new Promise(
 				function(resolve_getPositions, reject_getPositions) {
 					var positionJsonFile;
 					// are positions still missing?
 					if (mustGetPositions) {
-						positionJsonFile = albumCacheBase + '.positions.json';
+						positionJsonFile = cacheBase + '.positions.json';
 						var promise = PhotoFloat.getJsonFile(positionJsonFile);
 						promise.then(
 							function(positions) {
@@ -276,8 +164,8 @@
 		return [albumCombinationList, mediaCombinationList];
 	};
 
-	PhotoFloat.isProtectedCacheBase = function(albumCacheBase) {
-		return albumCacheBase.indexOf(Options.protected_directories_prefix) == 0;
+	PhotoFloat.isProtectedCacheBase = function(cacheBase) {
+		return cacheBase.indexOf(env.options.protected_directories_prefix) == 0;
 	};
 
 	PhotoFloat.getSingleUnprotectedCacheBaseWithExternalMediaAndPositions = function(unprotectedCacheBase, {getMedia, getPositions}) {
@@ -292,16 +180,15 @@
 				promise.then(
 					function unprotectedFileExists(album) {
 						if (album.hasOwnProperty("media"))
-							album.numMedia = util.imagesAndVideosCount(album.media);
-						album.includedFilesByCodesSimpleCombination = {};
-						album.includedFilesByCodesSimpleCombination[","] = {};
+							album.numsMedia = album.media.imagesAndVideosCount();
+						album.includedFilesByCodesSimpleCombination = new IncludedFiles({",": {}});
 						if (album.hasOwnProperty("media"))
 							album.includedFilesByCodesSimpleCombination[","].mediaGot = true;
 						if (album.hasOwnProperty("positionsAndMediaInTree"))
 							album.includedFilesByCodesSimpleCombination[","].positionsGot = true;
 						var mustGetMedia = getMedia && ! album.includedFilesByCodesSimpleCombination[","].hasOwnProperty("mediaGot");
 						var mustGetPositions = getPositions && ! album.includedFilesByCodesSimpleCombination[","].hasOwnProperty("positionsGot");
-						var promise = PhotoFloat.getMediaAndPositions(album.cacheBase, {"mustGetMedia": mustGetMedia,"mustGetPositions": mustGetPositions});
+						var promise = PhotoFloat.getMediaAndPositions(album.cacheBase, {mustGetMedia: mustGetMedia,mustGetPositions: mustGetPositions});
 						promise.then(
 							function([mediaGot, positionsGot]) {
 								if (mediaGot) {
@@ -311,6 +198,7 @@
 
 								if (positionsGot) {
 									album.positionsAndMediaInTree = positionsGot;
+									album.numPositionsInTree = album.positionsAndMediaInTree.length;
 									album.includedFilesByCodesSimpleCombination[","].positionsGot = true;
 								}
 
@@ -323,35 +211,22 @@
 					},
 					function unprotectedFileDoesntExist() {
 						// execution arrives here if the json file doesn't exist
-						var emptyAlbum = {
-							"cacheBase": unprotectedCacheBase,
-							"subalbums": [],
-							"numMedia": imagesAndVideos0,
-							"numMediaInSubTree": imagesAndVideos0,
-							"sizesOfAlbum": initialSizes,
-							"sizesOfSubTree": initialSizes,
-							"numPositionsInTree": 0,
-							// "includedProtectedDirectories": [],
-							"empty": true
-						};
-						emptyAlbum.includedFilesByCodesSimpleCombination = {};
-						emptyAlbum.includedFilesByCodesSimpleCombination[","] = false;
+						var emptyAlbum = new Album(unprotectedCacheBase);
+						emptyAlbum.empty = true;
+						// var emptyAlbum = {
+						// 	"cacheBase": unprotectedCacheBase,
+						// 	"subalbums": [],
+						// 	"numsMedia": new ImagesAndVideos(),
+						// 	"numsMediaInSubTree": new ImagesAndVideos(),
+						// 	"sizesOfAlbum": JSON.parse(JSON.stringify(initialSizes)),
+						// 	"sizesOfSubTree": JSON.parse(JSON.stringify(initialSizes)),
+						// 	"numPositionsInTree": 0,
+						// 	// "includedProtectedDirectories": [],
+						// 	"empty": true
+						// };
+						// emptyAlbum.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
 
-						if (PhotoFloat.guessedPasswordsMd5.length) {
-							reject_getSingleUnprotectedCacheBase(emptyAlbum);
-						} else {
-							// end here
-							if (util.isSearchCacheBase(unprotectedCacheBase)) {
-								emptyAlbum.media = [];
-								emptyAlbum.subalbums = [];
-								emptyAlbum.path = unprotectedCacheBase.replace(Options.cache_folder_separator, "/");
-								util.noResults(emptyAlbum);
-							} else {
-								// wrong hash: it might be the hash of a protected content
-								$("#loading").hide();
-								util.showAuthForm(null, true);
-							}
-						}
+						reject_getSingleUnprotectedCacheBase(emptyAlbum);
 					}
 				);
 			}
@@ -365,10 +240,10 @@
 		var number = parseInt(splittedProtectedCacheBase[splittedProtectedCacheBase.length - 1]);
 		var codesSimpleCombination = util.convertProtectedCacheBaseToCodesSimpleCombination(protectedCacheBase);
 		if (! album.hasOwnProperty("includedFilesByCodesSimpleCombination"))
-			album.includedFilesByCodesSimpleCombination = {};
+			album.includedFilesByCodesSimpleCombination = new IncludedFiles();
 		if (! album.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination)) {
 			album.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
-			if (codesSimpleCombination !== "" && ! album.includedFilesByCodesSimpleCombination[codesSimpleCombination].hasOwnProperty(number))
+			if (codesSimpleCombination !== "," && ! album.includedFilesByCodesSimpleCombination[codesSimpleCombination].hasOwnProperty(number))
 				album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number] = {};
 			album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album = {};
 		}
@@ -396,23 +271,32 @@
 					promise.then(
 						function protectedFileExists(protectedAlbum) {
 
-							if (! album.hasOwnProperty("numsProtectedMediaInSubTree"))
+							if (! album.hasOwnProperty("numsProtectedMediaInSubTree") || album.empty)
 								// this is needed when getSingleProtectedCacheBaseWithExternalMediaAndPositions() is called by getNumsProtectedMediaInSubTreeProperty()
 								album.numsProtectedMediaInSubTree = protectedAlbum.numsProtectedMediaInSubTree;
 
+							if (! album.hasOwnProperty("name"))
+								album.name = protectedAlbum.name;
+							if (! album.hasOwnProperty("altName") && protectedAlbum.hasOwnProperty("altName"))
+								album.altName = protectedAlbum.altName;
+							if (! album.hasOwnProperty("ancestorsNames") && protectedAlbum.hasOwnProperty("ancestorsNames"))
+								album.ancestorsNames = protectedAlbum.ancestorsNames;
+							if (! album.hasOwnProperty("ancestorsCenters") && protectedAlbum.hasOwnProperty("ancestorsCenters"))
+								album.ancestorsCenters = protectedAlbum.ancestorsCenters;
+
 							album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].codesComplexCombination = protectedAlbum.codesComplexCombination;
 
-							if (! protectedAlbum.hasOwnProperty("numMedia"))
-								protectedAlbum.numMedia = util.imagesAndVideosCount(protectedAlbum.media);
+							if (! protectedAlbum.hasOwnProperty("numsMedia"))
+								protectedAlbum.numsMedia = protectedAlbum.media.imagesAndVideosCount();
 
 							if (! album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("protectedAlbumGot")) {
 								if (protectedAlbum.subalbums.length)
-									PhotoFloat.mergeProtectedSubalbums(album, protectedAlbum);
+									album.mergeProtectedSubalbums(protectedAlbum);
 
-								album.numMedia = util.imagesAndVideosSum(album.numMedia, protectedAlbum.numMedia);
-								album.numMediaInSubTree = util.imagesAndVideosSum(album.numMediaInSubTree, protectedAlbum.numMediaInSubTree);
-								album.sizesOfSubTree = util.sumSizes(album.sizesOfSubTree, protectedAlbum.sizesOfSubTree);
-								album.sizesOfAlbum = util.sumSizes(album.sizesOfAlbum, protectedAlbum.sizesOfAlbum);
+								album.numsMedia.sum(protectedAlbum.numsMedia);
+								album.numsMediaInSubTree.sum(protectedAlbum.numsMediaInSubTree);
+								album.sizesOfSubTree.sum(protectedAlbum.sizesOfSubTree);
+								album.sizesOfAlbum.sum(protectedAlbum.sizesOfAlbum);
 								album.numPositionsInTree += protectedAlbum.numPositionsInTree;
 								if (! album.hasOwnProperty("path"))
 									album.path = protectedAlbum.path;
@@ -430,7 +314,8 @@
 									if (! album.hasOwnProperty("positionsAndMediaInTree"))
 										album.positionsAndMediaInTree = protectedAlbum.positionsAndMediaInTree;
 									else
-										album.positionsAndMediaInTree = util.mergePoints(album.positionsAndMediaInTree, protectedAlbum.positionsAndMediaInTree);
+										album.positionsAndMediaInTree.mergePositionsAndMedia(protectedAlbum.positionsAndMediaInTree);
+									album.numPositionsInTree = album.positionsAndMediaInTree.length;
 									album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.positionsGot = true;
 								}
 
@@ -493,7 +378,7 @@
 							if (! mustGetMedia && ! mustGetPositions) {
 								resolve_addExternalMediaAndPositionsFromProtectedAlbum();
 							} else {
-								var promise = PhotoFloat.getMediaAndPositions(protectedCacheBase, {"mustGetMedia": mustGetMedia, "mustGetPositions": mustGetPositions});
+								var promise = PhotoFloat.getMediaAndPositions(protectedCacheBase, {mustGetMedia: mustGetMedia, mustGetPositions: mustGetPositions});
 								promise.then(
 									function([mediaGot, positionsGot]) {
 										if (mediaGot) {
@@ -509,7 +394,8 @@
 											if (! album.hasOwnProperty("positionsAndMediaInTree") || ! album.positionsAndMediaInTree.length)
 												album.positionsAndMediaInTree = positionsGot;
 											else
-												album.positionsAndMediaInTree = util.mergePoints(album.positionsAndMediaInTree, positionsGot);
+												album.positionsAndMediaInTree.mergePositionsAndMedia(positionsGot);
+											album.numPositionsInTree = album.positionsAndMediaInTree.length;
 											// album.includedFilesByCodesSimpleCombination[","].positionsGot = true;
 											album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.positionsGot = true;
 										}
@@ -534,88 +420,26 @@
 
 		for (iAlbumPassword = 0; iAlbumPassword < PhotoFloat.guessedPasswordsMd5.length; iAlbumPassword ++) {
 			albumGuessedPassword = PhotoFloat.guessedPasswordsMd5[iAlbumPassword];
-			protectedDirectory = Options.protected_directories_prefix + albumGuessedPassword + ',';
+			protectedDirectory = env.options.protected_directories_prefix + albumGuessedPassword + ',';
 			result.push(protectedDirectory);
 		}
 		for (iMediaPassword = 0; iMediaPassword < PhotoFloat.guessedPasswordsMd5.length; iMediaPassword ++) {
 			mediaGuessedPassword = PhotoFloat.guessedPasswordsMd5[iMediaPassword];
-			protectedDirectory = Options.protected_directories_prefix + ',' + mediaGuessedPassword;
+			protectedDirectory = env.options.protected_directories_prefix + ',' + mediaGuessedPassword;
 			result.push(protectedDirectory);
 		}
 		for (iAlbumPassword = 0; iAlbumPassword < PhotoFloat.guessedPasswordsMd5.length; iAlbumPassword ++) {
 			albumGuessedPassword = PhotoFloat.guessedPasswordsMd5[iAlbumPassword];
 			for (iMediaPassword = 0; iMediaPassword < PhotoFloat.guessedPasswordsMd5.length; iMediaPassword ++) {
 				mediaGuessedPassword = PhotoFloat.guessedPasswordsMd5[iMediaPassword];
-				protectedDirectory = Options.protected_directories_prefix + albumGuessedPassword + ',' + mediaGuessedPassword;
+				protectedDirectory = env.options.protected_directories_prefix + albumGuessedPassword + ',' + mediaGuessedPassword;
 				result.push(protectedDirectory);
 			}
 		}
 		return result;
 	};
 
-
-	PhotoFloat.codesComplexCombinationsToGet = function(album, {getMedia, getPositions}) {
-		var iAlbumPassword, iMediaPassword, albumGuessedPassword, mediaGuessedPassword;
-		var albumCode, mediaCode;
-		var codesComplexCombinationInAlbum;
-
-		var result = [];
-		for (codesComplexCombinationInAlbum in album.numsProtectedMediaInSubTree) {
-			if (album.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombinationInAlbum) && codesComplexCombinationInAlbum != "") {
-				for (iAlbumPassword = 0; iAlbumPassword < PhotoFloat.guessedPasswordsMd5.length; iAlbumPassword ++) {
-					for (iMediaPassword = 0; iMediaPassword < PhotoFloat.guessedPasswordsMd5.length; iMediaPassword ++) {
-						albumGuessedPassword = PhotoFloat.guessedPasswordsMd5[iAlbumPassword];
-						albumCode = util.convertMd5ToCode(albumGuessedPassword);
-						mediaGuessedPassword = PhotoFloat.guessedPasswordsMd5[iMediaPassword];
-						mediaCode = util.convertMd5ToCode(mediaGuessedPassword);
-						let [albumCodesComplexCombinationList, mediaCodesComplexCombinationList] = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationInAlbum);
-						let codesSimpleCombinationInAlbum = util.convertCodesComplexCombinationToCodesSimpleCombination(codesComplexCombinationInAlbum);
-						let numProtectedCacheBases = PhotoFloat.getNumProtectedCacheBases(album.numsProtectedMediaInSubTree, codesComplexCombinationInAlbum);
-						if (
-							! albumCodesComplexCombinationList.length &&
-							mediaCodesComplexCombinationList.length &&
-							mediaCodesComplexCombinationList.indexOf(mediaCode) != -1
-							||
-							albumCodesComplexCombinationList.length &&
-							albumCodesComplexCombinationList.indexOf(albumCode) != -1 &&
-							! mediaCodesComplexCombinationList.length
-							||
-							albumCodesComplexCombinationList.length &&
-							mediaCodesComplexCombinationList.length &&
-							albumCodesComplexCombinationList.indexOf(albumCode) != -1 &&
-							mediaCodesComplexCombinationList.indexOf(mediaCode) != -1
-						) {
-							if (
-								! (codesSimpleCombinationInAlbum in album.includedFilesByCodesSimpleCombination)
-								||
-								Object.keys(album.includedFilesByCodesSimpleCombination[codesSimpleCombinationInAlbum]).length < numProtectedCacheBases
-								||
-								getMedia && Object.keys(album.includedFilesByCodesSimpleCombination[codesSimpleCombinationInAlbum]).some(
-									function(number) {
-										number = parseInt(number);
-										var result = ! album.includedFilesByCodesSimpleCombination[codesSimpleCombinationInAlbum][number].album.hasOwnProperty("mediaGot");
-										return result;
-									}
-								)
-								||
-								getPositions && Object.keys(album.includedFilesByCodesSimpleCombination[codesSimpleCombinationInAlbum]).some(
-									function(number) {
-										number = parseInt(number);
-										var result = ! album.includedFilesByCodesSimpleCombination[codesSimpleCombinationInAlbum][number].album.hasOwnProperty("positionsGot");
-										return result;
-									}
-								)
-							) {
-								result.push(codesComplexCombinationInAlbum);
-							}
-						}
-					}
-				}
-			}
-		}
-		return result;
-	};
-
+	// WARNING: making this function an Album method doesn't work. Why?!?
 	PhotoFloat.codesSimpleCombinationsToGet = function(album, {getMedia, getPositions}) {
 		var iAlbumPassword, iMediaPassword, albumGuessedPassword, mediaGuessedPassword;
 		var albumCode, mediaCode;
@@ -641,7 +465,7 @@
 				let codesSimpleCombination = albumCode + ',' + mediaCode;
 
 				for (codesComplexCombinationInAlbum in album.numsProtectedMediaInSubTree) {
-					if (album.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombinationInAlbum) && codesComplexCombinationInAlbum != "") {
+					if (album.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombinationInAlbum) && codesComplexCombinationInAlbum != ",") {
 						let [albumCodesComplexCombinationList, mediaCodesComplexCombinationList] = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationInAlbum);
 
 						if (
@@ -697,17 +521,20 @@
 		return result;
 	};
 
+	// WARNING: making this function an Album method doesn't work. Why?!?
 	PhotoFloat.getNumsProtectedMediaInSubTreeProperty = function(album, theProtectedDirectoriesToGet) {
 
 		return new Promise(
 			function(resolve_getNumsProtectedMediaInSubTreeProperty, reject_getNumsProtectedMediaInSubTreeProperty) {
-				if (album.hasOwnProperty("numsProtectedMediaInSubTree")) {
+				if (album.hasOwnProperty("numsProtectedMediaInSubTree") && ! album.empty) {
 					resolve_getNumsProtectedMediaInSubTreeProperty();
 				} else {
 					var iDirectory = -1;
 					var getNumsProtectedMediaInSubTreePropertyPromise = getNextProtectedDirectory();
-					getNumsProtectedMediaInSubTreePropertyPromise.then(resolve_getNumsProtectedMediaInSubTreeProperty);
-					getNumsProtectedMediaInSubTreePropertyPromise.catch(reject_getNumsProtectedMediaInSubTreeProperty);
+					getNumsProtectedMediaInSubTreePropertyPromise.then(
+						resolve_getNumsProtectedMediaInSubTreeProperty,
+						reject_getNumsProtectedMediaInSubTreeProperty
+					);
 				}
 				// end of getNumsProtectedMediaInSubTreePropertyProperty function body
 
@@ -725,23 +552,21 @@
 								var protectedDirectory = theProtectedDirectoriesToGet[iDirectory];
 								var protectedCacheBase = protectedDirectory + '/' + album.cacheBase + '.0';
 
-								var promise = PhotoFloat.getSingleProtectedCacheBaseWithExternalMediaAndPositions(protectedCacheBase, album, {"getMedia": false, "getPositions": false});
+								var promise = PhotoFloat.getSingleProtectedCacheBaseWithExternalMediaAndPositions(protectedCacheBase, album, {getMedia: false, getPositions: false});
 								promise.then(
 									function getSingleProtectedCacheBaseWithExternalMediaAndPositions_resolved() {
 										// ok, we got what we were looking for:
 										// numsProtectedMediaInSubTree property has already been added by getSingleProtectedCacheBaseWithExternalMediaAndPositions()
 
 										if (album.hasOwnProperty("media")) {
-											util.sortByDate(album.media);
+											album.media.sortByDate();
 											album.mediaNameSort = false;
 											album.mediaReverseSort = false;
 										}
 										util.sortByDate(album.subalbums);
 										album.albumNameSort = false;
 										album.albumReverseSort = false;
-										util.sortAlbumsMedia(album);
-
-										PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
+										album.sortAlbumsMedia();
 
 										resolve_getNextProtectedDirectory();
 									},
@@ -767,16 +592,16 @@
 
 
 	PhotoFloat.mergeProtectedSubalbum = function(subalbum, protectedSubalbum) {
-		subalbum.numMediaInSubTree = util.imagesAndVideosSum(subalbum.numMediaInSubTree, protectedSubalbum.numMediaInSubTree);
-		subalbum.sizesOfSubTree = util.sumSizes(subalbum.sizesOfSubTree, protectedSubalbum.sizesOfSubTree);
-		subalbum.sizesOfAlbum = util.sumSizes(subalbum.sizesOfAlbum, protectedSubalbum.sizesOfAlbum);
+		subalbum.numsMediaInSubTree.sum(protectedSubalbum.numsMediaInSubTree);
+		subalbum.sizesOfSubTree.sum(protectedSubalbum.sizesOfSubTree);
+		subalbum.sizesOfAlbum.sum(protectedSubalbum.sizesOfAlbum);
 		subalbum.numPositionsInTree += protectedSubalbum.numPositionsInTree;
 		// subalbum.words = util.arrayUnion(subalbum.words, protectedSubalbum.words);
 	};
 
-	PhotoFloat.mergeProtectedSubalbums = function(album, protectedAlbum) {
+	Album.prototype.mergeProtectedSubalbums = function(protectedAlbum) {
 		var cacheBases = [], i, ithProtectedSubalbum;
-		album.subalbums.forEach(
+		this.subalbums.forEach(
 			function(subalbum) {
 				cacheBases.push(subalbum.cacheBase);
 			}
@@ -784,11 +609,11 @@
 		for (i = 0; i < protectedAlbum.subalbums.length; i ++) {
 			ithProtectedSubalbum = protectedAlbum.subalbums[i];
 			if (cacheBases.indexOf(ithProtectedSubalbum.cacheBase) == -1) {
-				album.subalbums.push(ithProtectedSubalbum);
+				this.subalbums.push(ithProtectedSubalbum);
 			// // if media or positions are missing the combination must not be reported as included
-			// } else if (album.hasOwnProperty("media") && album.hasOwnProperty("positionsAndMediaInTree")) {
+			// } else if (this.hasOwnProperty("media") && this.hasOwnProperty("positionsAndMediaInTree")) {
 			} else {
-				album.subalbums.forEach(
+				this.subalbums.forEach(
 					function(subalbum) {
 						if (subalbum.cacheBase == ithProtectedSubalbum.cacheBase)
 							PhotoFloat.mergeProtectedSubalbum(subalbum, ithProtectedSubalbum);
@@ -803,9 +628,9 @@
 		// this function adds the protected content to the given album
 
 		return new Promise(
-			function(resolve_addProtectedContent, reject) {
+			function(resolve_addProtectedContent, reject_addProtectedContent) {
 				var numsPromise;
-				if (album.hasOwnProperty("numsProtectedMediaInSubTree")) {
+				if (album.hasOwnProperty("numsProtectedMediaInSubTree") && ! album.empty) {
 					numsPromise = continueAddProtectedContent();
 					numsPromise.then(
 						function() {
@@ -820,8 +645,7 @@
 					// a protected album must be loaded in order to know the complex combinations
 					var theProtectedDirectoriesToGet = PhotoFloat.protectedDirectoriesToGet();
 					if (! theProtectedDirectoriesToGet.length) {
-						// executions shouldn't arrive here
-						resolve_addProtectedContent();
+						reject_addProtectedContent();
 					} else {
 						var promise = PhotoFloat.getNumsProtectedMediaInSubTreeProperty(album, theProtectedDirectoriesToGet);
 						promise.then(
@@ -837,7 +661,8 @@
 								);
 							},
 							function() {
-								console.trace();
+								// numsProtectedMediaInSubTree couldn't be retrieved because no protected album was found
+								reject_addProtectedContent();
 							}
 						);
 					}
@@ -853,14 +678,14 @@
 
 			return new Promise(
 				function(resolve_continueAddProtectedContent) {
-					if (util.isMapCacheBase(album.cacheBase)) {
+					if (album.isMap()) {
 						// map albums are fixed, i.e. do not admit adding protected content
 						resolve_continueAddProtectedContent();
 					} else {
-						var theCodesSimpleCombinationsToGet = PhotoFloat.codesSimpleCombinationsToGet(album, {"getMedia": getMedia, "getPositions": getPositions});
+						var theCodesSimpleCombinationsToGet = PhotoFloat.codesSimpleCombinationsToGet(album, {getMedia: getMedia, getPositions: getPositions});
 						if (! theCodesSimpleCombinationsToGet.length) {
-							if (! PhotoFloat.getAlbumFromCache(album.cacheBase))
-								PhotoFloat.putAlbumIntoCache(album.cacheBase, album);
+							if (! env.cache.getAlbum(album.cacheBase))
+								env.cache.putAlbum(album);
 							resolve_continueAddProtectedContent();
 						} else {
 							// prepare and get the protected content from the protected directories
@@ -872,9 +697,9 @@
 							// 		numProtected += album.numsProtectedMediaInSubTree[codesComplexCombination];
 							// }
 							// if (
-							// 	! PhotoFloat.isEmpty(album) && numProtected == 0 &&
-							// 	album.cacheBase !== Options.by_search_string &&
-							// 	! util.isSearchCacheBase(album.cacheBase)
+							// 	! album.isEmpty() && numProtected == 0 &&
+							// 	album.cacheBase !== env.options.by_search_string &&
+							// 	! album.isSearch()
 							// ) {
 							// 	// no need to get any protected content for this md5
 							// 	resolve_continueAddProtectedContent(album);
@@ -901,14 +726,14 @@
 								// 	continue;
 								// }
 
-								let protectedDirectory = Options.protected_directories_prefix;
+								let protectedDirectory = env.options.protected_directories_prefix;
 								if (albumMd5)
 									protectedDirectory += albumMd5;
 								protectedDirectory += ',';
 								if (mediaMd5)
 									protectedDirectory += mediaMd5;
 								// let codesSimpleCombination = util.convertProtectedDirectoryToCodesSimpleCombination(protectedDirectory);
-								if (! album.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination))
+								if (! album.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination) || ! album.includedFilesByCodesSimpleCombination[codesSimpleCombination])
 									album.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
 
 								// we can know how many files/symlinks we have to get in the protected directory
@@ -925,17 +750,17 @@
 										function(resolve_ithPromise, reject) {
 											if (
 												album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("protectedAlbumGot") &&
-												! getMedia || album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("mediaGot") &&
-												! getPositions || album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("positionsGot")
+												(! getMedia || album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("mediaGot")) &&
+												(! getPositions || album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("positionsGot"))
 											) {
 												// this cache base has been already loaded and either media/positions are already there or aren't needed now
 												resolve_ithPromise();
 											} else {
-												let promise = PhotoFloat.getSingleProtectedCacheBaseWithExternalMediaAndPositions(protectedCacheBase, album, {"getMedia": getMedia, "getPositions": getPositions});
+												let promise = PhotoFloat.getSingleProtectedCacheBaseWithExternalMediaAndPositions(protectedCacheBase, album, {getMedia: getMedia, getPositions: getPositions});
 												promise.then(
 													function() {
-														if (PhotoFloat.isEmpty(album))
-															delete album.empty;
+														if (album.isEmpty())
+															album.empty = false;
 														resolve_ithPromise();
 													},
 													function() {
@@ -956,14 +781,14 @@
 									// execution arrives here when all the protected json has been loaded and processed
 
 									if (album.hasOwnProperty("media")) {
-										util.sortByDate(album.media);
+										album.media.sortByDate();
 										album.mediaNameSort = false;
 										album.mediaReverseSort = false;
 									}
 									util.sortByDate(album.subalbums);
 									album.albumNameSort = false;
 									album.albumReverseSort = false;
-									util.sortAlbumsMedia(album);
+									album.sortAlbumsMedia();
 
 									resolve_continueAddProtectedContent();
 								}
@@ -1010,7 +835,7 @@
 
 		var count = 0;
 		for (var codesComplexCombinationFromObject in numsProtectedMediaInSubTree) {
-			if (numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombinationFromObject) && codesComplexCombinationFromObject !== "") {
+			if (numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombinationFromObject) && codesComplexCombinationFromObject !== ",") {
 				var [albumCodesComplexCombinationListFromObject, mediaCodesComplexCombinationListFromObject] =
 					PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationFromObject);
 
@@ -1041,50 +866,56 @@
 		return count;
 	};
 
-	PhotoFloat.hasProtectedContent = function(album) {
+	Album.prototype.hasProtectedContent = function() {
 		if (
-			// album.hasOwnProperty("numsProtectedMediaInSubTree") && (
-			! Object.keys(album.numsProtectedMediaInSubTree).length ||
-			album.numsProtectedMediaInSubTree.hasOwnProperty("") &&
-			Object.keys(album.numsProtectedMediaInSubTree).length == 1
-			// )
+			Object.keys(this.numsProtectedMediaInSubTree).length > 0 && (
+				! this.numsProtectedMediaInSubTree.hasOwnProperty(",") ||
+				Object.keys(this.numsProtectedMediaInSubTree).length > 1
+			)
 		)
-			return false;
-		else
 			return true;
+		else
+			return false;
 	};
 
-	PhotoFloat.isEmpty = function(album) {
-		return album.hasOwnProperty("empty");
+	Album.prototype.hasMoreProtectedContent = function() {
+		if (
+			Object.keys(this.numsProtectedMediaInSubTree).length > PhotoFloat.guessedPasswordCodes.length && (
+				! this.numsProtectedMediaInSubTree.hasOwnProperty(",") ||
+				Object.keys(this.numsProtectedMediaInSubTree).length > PhotoFloat.guessedPasswordCodes.length + 1
+			)
+		)
+			return true;
+		else
+			return false;
 	};
 
-	PhotoFloat.hasUnprotectedContent = function(album) {
-		return album.includedFilesByCodesSimpleCombination[","] !== false;
-	};
-
-	PhotoFloat.getAlbum = function(albumOrCacheBase, error, {getMedia = false, getPositions = false}) {
-		// error is executed when in no way the album can be retrieved:
-		// either it doesn't exist or it could be a protected one
+	PhotoFloat.getAlbum = function(albumOrCacheBase, getAlbum_error, {getMedia = false, getPositions = false}) {
+		// getAlbum_error is a function, and is executed when the album cannot be retrieved:
+		// either because it doesn't exist or is a protected one
+		var albumForResolving = null;
 
 		return new Promise(
 			function(resolve_getAlbum) {
-				var albumCacheBase, album;
+				var cacheBase, album;
 				if (typeof albumOrCacheBase === "string") {
-					albumCacheBase = albumOrCacheBase;
-					album = PhotoFloat.getAlbumFromCache(albumCacheBase);
+					cacheBase = albumOrCacheBase;
+					album = env.cache.getAlbum(cacheBase);
 				} else {
 					album = albumOrCacheBase;
-					albumCacheBase = album.cacheBase;
+					cacheBase = album.cacheBase;
 				}
 
 				var promise;
+				// add media and positions
 				if (album) {
 					if (
 						// map albums and search albums already have all the media and positions
-						util.isMapCacheBase(album.cacheBase) || util.isSearchCacheBase(album.cacheBase) ||
-						// the album hasn't unprotected content => not adding media/positions  => go immediately to promise.then
+						util.isMapCacheBase(cacheBase) || util.isSearchCacheBase(cacheBase) || util.isSelectionCacheBase(cacheBase) ||
+						// the album hasn't unprotected content
 						album.includedFilesByCodesSimpleCombination[","] === false
 					) {
+						// not adding media/positions  => go immediately to promise.then
 						promise = new Promise(
 							function(resolve) {
 								resolve([false, false]);
@@ -1100,7 +931,7 @@
 							album.includedFilesByCodesSimpleCombination[","] !== false && ! album.includedFilesByCodesSimpleCombination[","].hasOwnProperty("positionsGot")
 						);
 						// this call to getMediaAndPositions adds positions and media of the unprotected album only
-						promise = PhotoFloat.getMediaAndPositions(album.cacheBase, {"mustGetMedia": mustGetMedia, "mustGetPositions": mustGetPositions});
+						promise = PhotoFloat.getMediaAndPositions(album.cacheBase, {mustGetMedia: mustGetMedia, mustGetPositions: mustGetPositions});
 					}
 					promise.then(
 						function mediaAndPositionsGot([mediaGot, positionsGot]) {
@@ -1108,15 +939,15 @@
 								if (! album.hasOwnProperty("media") || ! album.media.length)
 									album.media = mediaGot;
 								else
-									// TO DO: verify that concat is be enough
-									// album.media = album.media.concat(mediaGot);
-									album.media = util.arrayUnion(
-										album.media,
-										mediaGot,
-										function(singleMedia1, singleMedia2) {
-											return singleMedia1.foldersCacheBase == singleMedia2.foldersCacheBase && singleMedia1.cacheBase == singleMedia2.cacheBase;
-										}
-									);
+									// TO DO: verify that concat is enough
+									album.media = album.media.concat(mediaGot);
+									// album.media = util.arrayUnion(
+									// 	album.media,
+									// 	mediaGot,
+									// 	function(singleMedia1, singleMedia2) {
+									// 		return singleMedia1.foldersCacheBase == singleMedia2.foldersCacheBase && singleMedia1.cacheBase == singleMedia2.cacheBase;
+									// 	}
+									// );
 								album.includedFilesByCodesSimpleCombination[","].mediaGot = true;
 							}
 
@@ -1124,14 +955,15 @@
 								if (! album.hasOwnProperty("positionsAndMediaInTree") || ! album.positionsAndMediaInTree.length)
 									album.positionsAndMediaInTree = positionsGot;
 								else
-									album.positionsAndMediaInTree = util.mergePoints(album.positionsAndMediaInTree, positionsGot);
+									album.positionsAndMediaInTree.mergePositionsAndMedia(positionsGot);
+								album.numPositionsInTree = album.positionsAndMediaInTree.length;
 								album.includedFilesByCodesSimpleCombination[","].positionsGot = true;
 							}
 
-							var promise = PhotoFloat.addProtectedContent(album, {"getMedia": getMedia, "getPositions": getPositions});
+							var promise = PhotoFloat.addProtectedContent(album, {getMedia: getMedia, getPositions: getPositions});
 							promise.then(
 								function() {
-									goOnTowardResolvingGetAlbum(album);
+									thingsToBeDoneBeforeResolvingGetAlbum(album);
 									resolve_getAlbum(album);
 								},
 								function() {
@@ -1143,26 +975,37 @@
 							console.trace();
 						}
 					);
-				} else if (util.isMapCacheBase(albumCacheBase)) {
-					// map album are not on server, if they aren't in cache go to root album
-					$("#loading").hide();
-					$("#error-unexistent-map-album").stop().fadeIn(200);
-					$("#error-unexistent-map-album").fadeOut(
-						2000,
-						function () {
-							window.location.href = "#!" + Options.folders_string;
-						}
-					);
+				} else if (util.isMapCacheBase(cacheBase) || util.isSelectionCacheBase(cacheBase)) {
+					// map and selection albums are not on server:
+					// if the album hasn't been passed as argument and isn't in cache => it could have been passed with POST and be put in postData["packedAlbum"]
+					// alert("alt");
+					if (albumForResolving !== null) {
+						resolve_getAlbum(albumForResolving);
+					} else {
+						// go to root album
+						// execution arrives here if a map album is reloaded or opened from a link
+						$("#loading").hide();
+						let selector = "#error-nonexistent-map-album";
+						if (util.isSelectionCacheBase(cacheBase))
+							selector = "#error-nonexistent-selection-album";
+						$(selector).stop().fadeIn(200);
+						$(selector).fadeOut(
+							2000,
+							function () {
+								window.location.href = util.upHash();
+							}
+						);
+					}
 				} else {
-					// the album is not in cache, get it brand new
-					promise = PhotoFloat.getSingleUnprotectedCacheBaseWithExternalMediaAndPositions(albumCacheBase, {"getMedia": getMedia, "getPositions": getPositions});
+					// neiter the album has been passed as argument, nor is in cache, get it brand new
+					promise = PhotoFloat.getSingleUnprotectedCacheBaseWithExternalMediaAndPositions(cacheBase, {getMedia: getMedia, getPositions: getPositions});
 					promise.then(
 						function unprotectedAlbumGot(album) {
-							if (PhotoFloat.hasProtectedContent(album)) {
-								var promise = PhotoFloat.addProtectedContent(album, {"getMedia": getMedia, "getPositions": getPositions});
+							if (album.hasProtectedContent()) {
+								var promise = PhotoFloat.addProtectedContent(album, {getMedia: getMedia, getPositions: getPositions});
 								promise.then(
 									function() {
-										goOnTowardResolvingGetAlbum(album);
+										thingsToBeDoneBeforeResolvingGetAlbum(album);
 										resolve_getAlbum(album);
 									},
 									function() {
@@ -1170,21 +1013,25 @@
 									}
 								);
 							} else {
-								goOnTowardResolvingGetAlbum(album);
+								thingsToBeDoneBeforeResolvingGetAlbum(album);
 								resolve_getAlbum(album);
 							}
 						},
 						function unprotectedAlbumUnexisting(emptyAlbum) {
 							// look for a protected album: something must be there
-							var promise = PhotoFloat.addProtectedContent(emptyAlbum, {"getMedia": getMedia, "getPositions": getPositions});
+							var promise = PhotoFloat.addProtectedContent(emptyAlbum, {getMedia: getMedia, getPositions: getPositions});
 							promise.then(
-								function() {
-									goOnTowardResolvingGetAlbum(emptyAlbum);
+								function unprotectedAlbumUnexistingProtectedAlbumExisting() {
+									thingsToBeDoneBeforeResolvingGetAlbum(emptyAlbum);
 									resolve_getAlbum(emptyAlbum);
 								},
-								function() {
-									console.trace();
+								function unprotectedAlbumUnexistingProtectedAlbumUnexisting() {
+									// neither the unprotected nor any protected album exists = nonexistent album
+									getAlbum_error();
 								}
+								// function() {
+								// 	console.trace();
+								// }
 							);
 						}
 					);
@@ -1193,9 +1040,9 @@
 		);
 		// end of getalbum function
 
-		function goOnTowardResolvingGetAlbum(theAlbum) {
-			var i, j;
-			if (theAlbum.cacheBase == Options.by_search_string) {
+		function thingsToBeDoneBeforeResolvingGetAlbum(theAlbum) {
+			var i;
+			if (theAlbum.cacheBase == env.options.by_search_string) {
 				// root of search albums: build the word list
 				for (i = 0; i < theAlbum.subalbums.length; ++i) {
 					if (PhotoFloat.searchWordsFromJsonFile.indexOf(theAlbum.subalbums[i].unicodeWords) == -1) {
@@ -1204,160 +1051,149 @@
 						PhotoFloat.searchAlbumSubalbumsFromJsonFile.push(theAlbum.subalbums[i]);
 					}
 				}
-			} else if (! util.isSearchCacheBase(theAlbum.cacheBase)) {
-				// if (! theAlbum.hasOwnProperty("positionsAndMediaInTree"))
-				// 	theAlbum.numPositionsInTree = 0;
-
-				if (theAlbum.hasOwnProperty("media")) {
-					for (i = theAlbum.media.length - 1; i >= 0; i --) {
-						// remove unnecessary properties
-						var unnecessaryProperties = ['checksum', 'dateTimeDir', 'dateTimeFile'];
-						for (j = 0; j < unnecessaryProperties.length; j ++)
-							delete theAlbum.media[i][unnecessaryProperties[j]];
-
-						// add parent album
-						theAlbum.media[i].parent = theAlbum;
-					}
-				}
+			} else if (! theAlbum.isSearch()) {
+				theAlbum.removeUnnecessaryPropertiesAndAddParentToMedia();
 			}
 
-			if (! util.isMapCacheBase(theAlbum.cacheBase))
-				generateAncestorsCacheBase(theAlbum);
-			if (! PhotoFloat.getAlbumFromCache(theAlbum.cacheBase))
-				PhotoFloat.putAlbumIntoCache(theAlbum.cacheBase, theAlbum);
+			if (! theAlbum.isMap())
+				theAlbum.generateAncestorsCacheBase();
+			if (! env.cache.getAlbum(theAlbum.cacheBase))
+				env.cache.putAlbum(theAlbum);
 		}
-		//////// end of goOnTowardResolvingGetAlbum function
+		//////// end of thingsToBeDoneBeforeResolvingGetAlbum function
 
-		// auxiliary functions
-		function generateAncestorsCacheBase(album) {
-			if (! album.hasOwnProperty("ancestorsCacheBase")) {
-				var i;
-				album.ancestorsCacheBase = [];
-				var splittedCacheBase = album.cacheBase.split(Options.cache_folder_separator);
-				album.ancestorsCacheBase[0] = splittedCacheBase[0];
-				for (i = 1; i < splittedCacheBase.length; i ++) {
-					album.ancestorsCacheBase[i] = [album.ancestorsCacheBase[i - 1], splittedCacheBase[i]].join(Options.cache_folder_separator);
-				}
-			}
-
-			return;
-		}
 	};
 
-	PhotoFloat.prototype.pickRandomMedia = function(theSubalbum, error) {
+	Album.prototype.generateAncestorsCacheBase = function() {
+		if (! this.hasOwnProperty("ancestorsCacheBase")) {
+			var i;
+			this.ancestorsCacheBase = [];
+			var splittedCacheBase = this.cacheBase.split(env.options.cache_folder_separator);
+			this.ancestorsCacheBase[0] = splittedCacheBase[0];
+			var length = splittedCacheBase.length;
+			if (this.isSearch())
+				length = 2;
+			for (i = 1; i < length; i ++) {
+				this.ancestorsCacheBase[i] = [this.ancestorsCacheBase[i - 1], splittedCacheBase[i]].join(env.options.cache_folder_separator);
+			}
+		}
+
+		return;
+	};
+	PhotoFloat.prototype.pickRandomMedia = function(iSubalbum, error) {
 		var index;
+
 		return new Promise(
 			function(resolve_pickRandomMedia) {
-				var promise = PhotoFloat.getAlbum(theSubalbum.cacheBase, error, {"getMedia": false, "getPositions": false});
+				var promise = env.currentAlbum.convertSubalbum(iSubalbum, error, {getMedia: false, getPositions: false});
 				promise.then(
-					function(album) {
+					function(iSubalbum) {
+						var album = env.currentAlbum.subalbums[iSubalbum];
 						// index = 0;
-						index = Math.floor(Math.random() * (util.imagesAndVideosTotal(album.numMediaInSubTree)));
-						nextAlbum(album);
+						index = Math.floor(Math.random() * (album.numsMediaInSubTree.imagesAndVideosTotal()));
+						nextAlbum(album, resolve_pickRandomMedia);
 					},
 					function() {
 						console.trace();
 					}
 				);
-				//// end of function pickRandomMedia ////////////////////
-
-				function nextAlbum(album) {
-
-					var i, numMediaInAlbum;
-
-					if (util.imagesAndVideosTotal(album.numMediaInSubTree) == 0) {
-						error();
-						return;
-					}
-
-					// if (album.hasOwnProperty("media"))
-					// 	numMediaInAlbum = album.numMedia;
-					// else
-					numMediaInAlbum = util.imagesAndVideosTotal(album.numMedia);
-					if (index >= numMediaInAlbum) {
-						index -= numMediaInAlbum;
-						let found = false;
-						let targetCacheBase;
-						// if (! album.subalbums.length) {
-						// 	found = true;
-						// 	targetCacheBase = album.cacheBase;
-						// }
-						for (i = 0; i < album.subalbums.length; i ++) {
-							if (index >= util.imagesAndVideosTotal(album.subalbums[i].numMediaInSubTree))
-								index -= util.imagesAndVideosTotal(album.subalbums[i].numMediaInSubTree);
-							else {
-								targetCacheBase = album.subalbums[i].cacheBase;
-								found = true;
-								break;
-							}
-						}
-						if (! found) {
-							error();
-						} else {
-							var promise = PhotoFloat.getAlbum(targetCacheBase, error, {"getMedia": false, "getPositions": false});
-							promise.then(
-								function(subalbum) {
-									nextAlbum(subalbum);
-								},
-								function() {
-									console.trace();
-								}
-							);
-						}
-					} else {
-						var lastPromise = PhotoFloat.getAlbum(album, error, {"getMedia": true, "getPositions": true});
-						lastPromise.then(
-							function(album) {
-								resolve_pickRandomMedia([album, index]);
-							},
-							function() {
-								console.trace();
-							}
-						);
-					}
-				}
 			}
 		);
+		//// end of function pickRandomMedia ////////////////////
+
+		function nextAlbum(album, resolve_pickRandomMedia) {
+			var i, nMediaInAlbum;
+
+			if (! album.numsMediaInSubTree.imagesAndVideosTotal()) {
+				error();
+				return;
+			}
+
+			if (
+				(album.isTransversal()) &&
+				album.subalbums.length > 0
+			) {
+				// do not get the random media from the year/country nor the month/state albums
+				// this way loading of albums is much faster
+				nMediaInAlbum = 0;
+			} else {
+				nMediaInAlbum = album.numsMedia.imagesAndVideosTotal();
+			}
+			if (index >= nMediaInAlbum) {
+				index -= nMediaInAlbum;
+				let found = false;
+				let targetSubalbumIndex;
+				for (i = 0; i < album.subalbums.length; i ++) {
+					if (index >= album.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal())
+					index -= album.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal();
+					else {
+						targetSubalbumIndex = i;
+						found = true;
+						break;
+					}
+				}
+				if (! found) {
+					error();
+				} else {
+					var promise = album.convertSubalbum(targetSubalbumIndex, error, {getMedia: false, getPositions: false});
+					promise.then(
+						function(iSubalbum) {
+							nextAlbum(album.subalbums[iSubalbum], resolve_pickRandomMedia);
+						},
+						function() {
+							console.trace();
+						}
+					);
+				}
+			} else {
+				var lastPromise = PhotoFloat.getAlbum(album, error, {getMedia: true, getPositions: true});
+				lastPromise.then(
+					function(album) {
+						resolve_pickRandomMedia([album, index]);
+					},
+					function() {
+						console.trace();
+					}
+				);
+			}
+		}
 	};
 
-	PhotoFloat.encodeHash = function(album, media, savedSearchSubAlbumHash, savedSearchAlbumHash) {
-		var hash, albumHash;
-		if (typeof album === "string")
-			albumHash = album;
-		else
-			albumHash = album.cacheBase;
+	PhotoFloat.encodeHash = function(cacheBase, media, foundAlbumHash, savedSearchAlbumHash) {
+		var hash;
 
 		if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
 			savedSearchAlbumHash = PhotoFloat.cleanHash(savedSearchAlbumHash);
-			savedSearchSubAlbumHash = PhotoFloat.cleanHash(savedSearchSubAlbumHash);
+			foundAlbumHash = PhotoFloat.cleanHash(foundAlbumHash);
 		}
 
 		if (media !== null) {
 			// media hash
-			if (util.isFolderCacheBase(albumHash)) {
+			if (util.isFolderCacheBase(cacheBase)) {
 				if (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null)
 					// media in folders album, count = 2
 					hash = util.pathJoin([
-						albumHash,
+						cacheBase,
 						media.cacheBase
 					]);
 				else
 					// media in found album or in one of its subalbum, count = 4
 					hash = util.pathJoin([
-						albumHash,
-						savedSearchSubAlbumHash,
+						cacheBase,
+						foundAlbumHash,
 						savedSearchAlbumHash,
 						media.cacheBase
 					]);
 			} else if (
-				util.isByDateCacheBase(albumHash) ||
-				util.isByGpsCacheBase(albumHash) ||
-				util.isSearchCacheBase(albumHash) && (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null) ||
-				util.isMapCacheBase(albumHash)
+				util.isByDateCacheBase(cacheBase) ||
+				util.isByGpsCacheBase(cacheBase) ||
+				util.isSearchCacheBase(cacheBase) && (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null) ||
+				util.isSelectionCacheBase(cacheBase) ||
+				util.isMapCacheBase(cacheBase)
 			)
 				// media in date or gps album, count = 3
 				hash = util.pathJoin([
-					albumHash,
+					cacheBase,
 					media.foldersCacheBase,
 					media.cacheBase
 				]);
@@ -1366,28 +1202,28 @@
 			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
 				// found album or one of its subalbums, count = 3
 				hash = util.pathJoin([
-					albumHash,
-					savedSearchSubAlbumHash,
+					cacheBase,
+					foundAlbumHash,
 					savedSearchAlbumHash
 				]);
 			else
 				// plain search album, count = 1
 				// folders album, count = 1
-				hash = albumHash;
+				hash = cacheBase;
 		}
-		return "#!/" + hash;
+		return env.hashBeginning + hash;
 	};
 
 	PhotoFloat.decodeHash = function(hash) {
 		// decodes the hash and returns its components
 
 		var hashParts, hashPartsCount, albumHash, mediaFolderHash = null, mediaHash = null;
-		var savedSearchAlbumHash = null, savedSearchSubAlbumHash = null;
+		var savedSearchAlbumHash = null, foundAlbumHash = null;
 
 		hash = PhotoFloat.cleanHash(hash);
 
 		if (! hash.length) {
-			albumHash = Options.folders_string;
+			albumHash = env.options.folders_string;
 		} else {
 			// split on the slash and count the number of parts
 			hashParts = hash.split("/");
@@ -1402,11 +1238,11 @@
 				albumHash = hashParts[0];
 				mediaHash = hashParts[1];
 			} else if (hashPartsCount == 3) {
-				// gps or date or search hash: album, album where the image is, media
+				// gps or date or search or selection hash: album, album where the image is, media
 				// subfolder of search hash: album, search subalbum, search album
-				if (util.isSearchCacheBase(hashParts[2])) {
+				if (util.isSearchCacheBase(hashParts[2]) || util.isSelectionCacheBase(hashParts[2])) {
 					albumHash = hashParts[0];
-					savedSearchSubAlbumHash = hashParts[1];
+					foundAlbumHash = hashParts[1];
 					savedSearchAlbumHash = hashParts[2];
 				} else {
 					albumHash = hashParts[0];
@@ -1415,52 +1251,569 @@
 				}
 			} else if (hashPartsCount == 4) {
 				albumHash = hashParts[0];
-				savedSearchSubAlbumHash = hashParts[1];
+				foundAlbumHash = hashParts[1];
 				savedSearchAlbumHash = hashParts[2];
 				mediaHash = hashParts[3];
 			}
 		}
-		return [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash];
+		return [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash];
 	};
 
-	PhotoFloat.prototype.geotaggedPhotosExist = function() {
+	PhotoFloat.prototype.parseHashAndReturnAlbumAndMedia = function(hash) {
 		return new Promise(
-			function(resolveGeotaggedPhotosExist) {
-				var self;
-				// this function returns true if the root album has the by gps subalbum
-				if (PhotoFloat.geotaggedPhotosFound !== null) {
-					if (PhotoFloat.geotaggedPhotosFound) {
-						resolveGeotaggedPhotosExist(true);
-						// $("#by-gps-view").off("click");
-						// $("#by-gps-view").removeClass("hidden").addClass("active").on("click", function(ev) {
-						// 	$(".search-failed").hide();
-						// 	$("#album-view").removeClass("hidden");
-						// 	window.location.href = link;
-						// 	return false;
-						// });
-					} else {
-						resolveGeotaggedPhotosExist(false);
+			function(resolve_parseHash, reject_parseHash) {
+				var removedStopWords = [];
+				var searchWordsFromUser = [], searchWordsFromUserNormalized = [], searchWordsFromUserNormalizedAccordingToOptions = [];
+				var albumHashToGet, albumHashes = [], wordSubalbums = new Subalbums([]);
+				var [albumHash, mediaHash, mediaFolderHash] = PhotoFloat.decodeHash(hash);
+				var indexWords, indexAlbums, wordsWithOptionsString;
+				// this vars are defined here and not at the beginning of the file because the options must have been read
+
+				$("#message-too-many-images").hide();
+				$(".search-failed").hide();
+				// $("#media-view").removeClass("hidden");
+				// $("ul#right-menu li#album-search").removeClass("hidden");
+				$("ul#right-menu li#any-word").removeClass("dimmed");
+				$("#album-view, #album-view #subalbums, #album-view #thumbs").removeClass("hidden");
+
+				if (albumHash) {
+					albumHash = decodeURI(albumHash);
+
+					if (util.isSearchCacheBase(albumHash)) {
+						var splittedAlbumHash = albumHash.split(env.options.cache_folder_separator);
+
+						// wordsWithOptionsString = albumHash.substring(env.options.by_search_string.length + 1);
+						wordsWithOptionsString = splittedAlbumHash[1];
+						var wordsAndOptions = wordsWithOptionsString.split(env.options.search_options_separator);
+						var wordsString = wordsAndOptions[wordsAndOptions.length - 1];
+						var wordsStringOriginal = wordsString.replace(/_/g, ' ');
+						// the normalized words are needed in order to compare with the search cache json files names, which are normalized
+						var wordsStringNormalizedAccordingToOptions = util.normalizeAccordingToOptions(wordsStringOriginal);
+						var wordsStringNormalized = util.removeAccents(wordsStringOriginal.toLowerCase());
+						if (wordsAndOptions.length > 1) {
+							var searchOptions = wordsAndOptions.slice(0, -1);
+							env.options.search_inside_words = searchOptions.includes('i');
+							env.options.search_any_word = searchOptions.includes('n');
+							env.options.search_case_sensitive = searchOptions.includes('c');
+							env.options.search_accent_sensitive = searchOptions.includes('a');
+							env.options.search_current_album = searchOptions.includes('o');
+						}
+
+						env.options.cache_base_to_search_in = splittedAlbumHash.slice(2).join(env.options.cache_folder_separator);
+
+						// if (util.isAnyRootCacheBase(env.options.cache_base_to_search_in))
+						// 	$("ul#right-menu li#album-search").addClass("hidden");
+
+						// if (util.isSearchHash() && env.options.search_refine)
+						// 	env.options.cache_base_to_search_in = albumHash;
+
+						$("ul#right-menu #search-field").attr("value", wordsStringOriginal);
+						wordsString = util.normalizeAccordingToOptions(wordsString);
+						searchWordsFromUser = wordsString.split('_');
+						searchWordsFromUserNormalizedAccordingToOptions = wordsStringNormalizedAccordingToOptions.split(' ');
+						searchWordsFromUserNormalized = wordsStringNormalized.split(' ');
+
+						if (searchWordsFromUser.length == 1)
+							$("ul#right-menu li#any-word").addClass("dimmed").off("click");
+
+
+						if (albumHash == env.options.by_search_string) {
+							env.searchAlbum = util.initializeSearchAlbumBegin(albumHash, mediaFolderHash);
+							// no search term
+							// TO DO: does execution actually arrive here?
+							util.noResults(env.searchAlbum, '#no-search-string');
+							// the resolve function is needed at least in order to show the title
+							resolve_parseHash([env.searchAlbum, -1]);
+							return;
+						}
 					}
+				}
+
+				if (util.isSearchCacheBase(albumHash)) {
+					albumHashToGet = albumHash;
+				// // same conditions as before????????????????
+				// } else if (util.isSearchCacheBase(albumHash)) {
+				// 	albumHashToGet = util.pathJoin([albumHash, mediaFolderHash]);
 				} else {
-					self = this;
-					// error is executed if no gps json file has been found (but gps json file must exist)
-					var promise = PhotoFloat.getAlbum(
-						Options.folders_string,
-						function() {
-							PhotoFloat.geotaggedPhotosFound = false;
-							resolveGeotaggedPhotosExist(false);
-						},
-						{"getMedia": false, "getPositions": true}
-					);
+					albumHashToGet = albumHash;
+				}
+
+				if (mediaHash)
+					mediaHash = decodeURI(mediaHash);
+				if (mediaFolderHash)
+					mediaFolderHash = decodeURI(mediaFolderHash);
+				if (PhotoFloat.searchAndSubalbumHash)
+					PhotoFloat.searchAndSubalbumHash = decodeURI(PhotoFloat.searchAndSubalbumHash);
+
+				var albumFromCache = env.cache.getAlbum(albumHashToGet), promise;
+				if (
+					albumFromCache &&
+					! PhotoFloat.guessedPasswordsMd5.length &&
+					albumFromCache.hasOwnProperty("subalbums") &&
+					albumFromCache.hasOwnProperty("media") &&
+					albumFromCache.hasOwnProperty("positionsAndMediaInTree")
+				) {
+					if (
+						util.isSearchCacheBase(albumHash) &&
+						! albumFromCache.subalbums.length &&
+						! albumFromCache.media.length
+					) {
+						// it's a search with no results
+						util.noResults(albumFromCache);
+						// the resolve function is needed at least in order to show the title
+						resolve_parseHash([albumFromCache, -1]);
+					} else {
+						// it's not a search without results: everything is ok, resolve!
+						let result = albumFromCache.getMediaIndex(mediaFolderHash, mediaHash);
+						if (result === null) {
+							// getMediaIndex arguments don't match any media in the album,
+							// in getMediaIndex either the authentication dialog has been shown or the hash has been changed to the album
+							// Nothing to do
+						} else {
+							resolve_parseHash([albumFromCache, result]);
+						}
+					}
+				} else if (! util.isSearchCacheBase(albumHash) || searchWordsFromUser.length === 0) {
+					// something is missing, getAlbum must be called
+					promise = PhotoFloat.getAlbum(albumHashToGet, reject_parseHash, {getMedia: true, getPositions: true});
 					promise.then(
-						function(foldersRootAlbum) {
-							if (! foldersRootAlbum.numPositionsInTree) {
-								// $("#by-gps-view").addClass("hidden");
-								PhotoFloat.geotaggedPhotosFound = false;
-								resolveGeotaggedPhotosExist(false);
+						function(album) {
+							let result = album.getMediaIndex(mediaFolderHash, mediaHash);
+							if (result === null) {
+								// getMediaIndex arguments don't match any media in the album,
+								// in getMediaIndex either the authentication dialog has been shown or the hash has been changed to the album
+								// Nothing to do
 							} else {
-								PhotoFloat.geotaggedPhotosFound = true;
-								resolveGeotaggedPhotosExist(true);
+								resolve_parseHash([album, result]);
+							}
+						},
+						function() {
+							console.trace();
+						}
+					);
+				} else {
+					// it's a search!
+					env.searchAlbum = util.initializeSearchAlbumBegin(albumHash, mediaFolderHash);
+					env.searchAlbum.generateAncestorsCacheBase();
+
+					// possibly we need the stop words, because if some searched word is a stop word it must be removed from the search
+					promise = PhotoFloat.getStopWords();
+					promise.then(
+						function () {
+							[searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions, removedStopWords] =
+								PhotoFloat.removeStopWords(searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions);
+
+							buildSearchResult();
+						},
+						function() {
+							console.trace();
+						}
+					);
+				}
+				// end of parseHashAndReturnAlbumAndMedia promise code
+
+				function subalbumsAbsentOrGot() {
+					var indexMedia, indexSubalbums;
+					if (env.searchAlbum.media.length === 0 && env.searchAlbum.subalbums.length === 0) {
+						util.noResults(env.searchAlbum);
+					} else {
+						$(".search-failed").hide();
+					}
+
+					for (indexMedia = 0; indexMedia < env.searchAlbum.media.length; indexMedia ++) {
+						// add the parent to the media
+						env.searchAlbum.media[indexMedia].addParent(env.searchAlbum);
+						if (env.searchAlbum.media[indexMedia].hasGpsData())
+							// add the media position
+							env.searchAlbum.positionsAndMediaInTree.addSingleMediaToPositionsAndMedia(env.searchAlbum.media[indexMedia]);
+							env.searchAlbum.numPositionsInTree = env.searchAlbum.positionsAndMediaInTree.length;
+					}
+
+					if (env.searchAlbum.subalbums.length) {
+						let subalbumPromises = [];
+						for (indexSubalbums = 0; indexSubalbums < env.searchAlbum.subalbums.length; indexSubalbums ++) {
+							let thisSubalbum = env.searchAlbum.subalbums[indexSubalbums];
+							let thisIndex = indexSubalbums;
+							// update the media count
+							env.searchAlbum.numsMediaInSubTree.sum(env.searchAlbum.numsMediaInSubTree, thisSubalbum.numsMediaInSubTree);
+							// update the size totals
+							env.searchAlbum.sizesOfSubTree.sum(thisSubalbum.sizesOfSubTree);
+							env.searchAlbum.sizesOfAlbum.sum(thisSubalbum.sizesOfAlbum);
+							// add the points from the subalbums
+
+							// the subalbum could still have no positionsAndMediaInTree array, get it
+							if (! thisSubalbum.hasOwnProperty("positionsAndMediaInTree")) {
+								let subalbumPromise = new Promise(
+									function(resolve_subalbumPromise) {
+										let promise = PhotoFloat.getAlbum(thisSubalbum.cacheBase, null, {getMedia: false, getPositions: true});
+										promise.then(
+											function(thisSubalbum) {
+												env.searchAlbum.subalbums[thisIndex] = thisSubalbum;
+												env.searchAlbum.positionsAndMediaInTree.mergePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
+												env.searchAlbum.numPositionsInTree = env.searchAlbum.positionsAndMediaInTree.length;
+												// thisSubalbum.positionsAndMediaInTree = positionsGot;
+												// thisSubalbum.numPositionsInTree = album.positionsAndMediaInTree.length;
+												// thisSubalbum.includedFilesByCodesSimpleCombination[","].positionsGot = true;
+												resolve_subalbumPromise();
+											},
+											function() {
+												console.trace();
+											}
+										);
+									}
+								);
+								subalbumPromises.push(subalbumPromise);
+							}
+							Promise.all(subalbumPromises).then(
+								function() {
+									var promise = PhotoFloat.endPreparingAlbumAndKeepOn(env.searchAlbum, mediaHash, mediaFolderHash);
+									promise.then(
+										function(i) {
+											resolve_parseHash([env.searchAlbum, i]);
+										}
+									);
+								}
+							);
+						}
+					} else {
+						var promise = PhotoFloat.endPreparingAlbumAndKeepOn(env.searchAlbum, mediaHash, mediaFolderHash);
+						promise.then(
+							function(i) {
+								resolve_parseHash([env.searchAlbum, i]);
+							}
+						);
+					}
+				}
+
+				function buildSearchResult() {
+					env.searchAlbum.removedStopWords = removedStopWords;
+					// has any word remained after stop words have been removed?
+					if (searchWordsFromUser.length == 0) {
+						util.noResults(env.searchAlbum, '#no-search-string-after-stopwords-removed');
+						resolve_parseHash([env.searchAlbum, -1]);
+						return;
+					}
+
+					// get the search root album before getting the search words ones
+					var promise = PhotoFloat.getAlbum(env.options.by_search_string, reject_parseHash, {getMedia: true, getPositions: true});
+					promise.then(
+						function(bySearchRootAlbum) {
+							var lastIndex, i, j, wordHashes, numSearchAlbumsReady = 0, numSubAlbumsToGet = 0, normalizedWords;
+							var searchResultsMedia = [];
+							var searchResultsSubalbums = [];
+
+							// env.searchAlbum.ancestorsCacheBase = bySearchRootAlbum.ancestorsCacheBase.slice();
+							// env.searchAlbum.ancestorsCacheBase.push(wordsWithOptionsString);
+							if (! env.options.search_any_word)
+								// when serching all the words, getting the first album is enough, media that do not match the other words will be escluded later
+								lastIndex = 0;
+							else
+								lastIndex = searchWordsFromUser.length - 1;
+							if (env.options.search_inside_words) {
+								// we must determine the albums that could match the words given by the user, word by word
+								for (i = 0; i <= lastIndex; i ++) {
+									wordHashes = [];
+									for (j = 0; j < PhotoFloat.searchWordsFromJsonFile.length; j ++) {
+										if (
+											PhotoFloat.searchWordsFromJsonFile[j].some(
+												function(word) {
+													return word.includes(searchWordsFromUserNormalized[i]);
+												}
+											)
+										) {
+											wordHashes.push(PhotoFloat.searchAlbumCacheBasesFromJsonFile[j]);
+											wordSubalbums.push(PhotoFloat.searchAlbumSubalbumsFromJsonFile[j]);
+											numSubAlbumsToGet ++;
+										}
+									}
+									if (wordHashes.length)
+										albumHashes.push(wordHashes);
+									else
+										albumHashes.push([]);
+								}
+							} else {
+								// whole words
+								for (i = 0; i <= lastIndex; i ++)
+									if (
+										PhotoFloat.searchWordsFromJsonFile.some(
+											function(words, index) {
+												if (words.includes(searchWordsFromUserNormalized[i])) {
+													albumHashes.push([PhotoFloat.searchAlbumCacheBasesFromJsonFile[index]]);
+													wordSubalbums.push(PhotoFloat.searchAlbumSubalbumsFromJsonFile[index]);
+													return true;
+												}
+												return false;
+											}
+										)
+									) {
+										numSubAlbumsToGet ++;
+									} else {
+										albumHashes.push([]);
+									}
+							}
+
+							if (numSubAlbumsToGet === 0) {
+								util.noResults(env.searchAlbum);
+								resolve_parseHash([env.searchAlbum, -1]);
+							} else if (numSubAlbumsToGet > env.options.max_search_album_number) {
+								util.noResults(env.searchAlbum, '#search-too-wide');
+								resolve_parseHash([env.searchAlbum, -1]);
+							} else {
+								$(".search-failed").hide();
+								util.initializeSearchAlbumEnd();
+								env.searchAlbum.numsProtectedMediaInSubTree = util.sumNumsProtectedMediaOfArray(wordSubalbums);
+								for (indexWords = 0; indexWords <= lastIndex; indexWords ++) {
+									searchResultsMedia[indexWords] = new Media([]);
+									searchResultsSubalbums[indexWords] = new Subalbums([]);
+									for (indexAlbums = 0; indexAlbums < albumHashes[indexWords].length; indexAlbums ++) {
+										let thisIndexWords = indexWords, thisIndexAlbums = indexAlbums;
+										var promise = PhotoFloat.getAlbum(albumHashes[thisIndexWords][thisIndexAlbums], reject_parseHash, {getMedia: true, getPositions: true});
+										promise.then(
+											function(theAlbum) {
+												var matchingMedia = new Media([]), matchingSubalbums = new Subalbums([]), match, indexMedia, indexSubalbums, indexWordsLeft, resultAlbum, indexWords1, ithMedia, ithSubalbum;
+
+												env.cache.putAlbum(theAlbum);
+
+												resultAlbum = theAlbum.clone();
+												// media in the album still has to be filtered according to search criteria
+												if (! env.options.search_inside_words) {
+													// whole word
+													for (indexMedia = 0; indexMedia < theAlbum.media.length; indexMedia ++) {
+														ithMedia = theAlbum.media[indexMedia];
+														if (
+															util.normalizeAccordingToOptions(ithMedia.words).includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) && (
+																! env.options.search_current_album ||
+																util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || (
+																	// check whether the media is inside the current album tree
+																	ithMedia.foldersCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
+																	ithMedia.hasOwnProperty("dayAlbumCacheBase") && ithMedia.dayAlbumCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
+																	ithMedia.hasOwnProperty("gpsAlbumCacheBase") && ithMedia.gpsAlbumCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
+																	util.isMapCacheBase(env.options.cache_base_to_search_in) &&
+																	env.cache.getAlbum(env.options.cache_base_to_search_in).media.some(
+																		function(singleMedia) {
+																			return singleMedia.cacheBase == ithMedia.cacheBase && singleMedia.foldersCacheBase == ithMedia.foldersCacheBase;
+																		}
+																	)
+																)
+															)
+														)
+															matchingMedia.push(ithMedia);
+													}
+													for (indexSubalbums = 0; indexSubalbums < theAlbum.subalbums.length; indexSubalbums ++) {
+														ithSubalbum = theAlbum.subalbums[indexSubalbums];
+														if (
+															util.normalizeAccordingToOptions(ithSubalbum.words).includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) && (
+																! env.options.search_current_album ||
+																util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || (
+																	// check whether the media is inside the current album tree
+																	ithSubalbum.cacheBase.indexOf(env.options.cache_base_to_search_in) === 0 &&
+																	ithSubalbum.cacheBase != env.options.cache_base_to_search_in
+																)
+															)
+														)
+															matchingSubalbums.push(ithSubalbum);
+													}
+												} else {
+													// inside words
+													for (indexMedia = 0; indexMedia < theAlbum.media.length; indexMedia ++) {
+														ithMedia = theAlbum.media[indexMedia];
+														normalizedWords = util.normalizeAccordingToOptions(ithMedia.words);
+														if (
+															normalizedWords.some(
+																function(element) {
+																	return element.includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
+																}
+															) && (
+																! env.options.search_current_album ||
+																util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || (
+																	// check whether the media is inside the current album tree
+																	ithMedia.foldersCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
+																	ithMedia.hasOwnProperty("dayAlbumCacheBase") && ithMedia.dayAlbumCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
+																	ithMedia.hasOwnProperty("gpsAlbumCacheBase") && ithMedia.gpsAlbumCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
+																	util.isMapCacheBase(env.options.cache_base_to_search_in) &&
+																	env.cache.getAlbum(env.options.cache_base_to_search_in).media.some(
+																		function(singleMedia) {
+																			return singleMedia.cacheBase == ithMedia.cacheBase && singleMedia.foldersCacheBase == ithMedia.foldersCacheBase;
+																		}
+																	)
+																)
+															)
+														)
+															matchingMedia.push(ithMedia);
+													}
+													for (indexSubalbums = 0; indexSubalbums < theAlbum.subalbums.length; indexSubalbums ++) {
+														ithSubalbum = theAlbum.subalbums[indexSubalbums];
+														normalizedWords = util.normalizeAccordingToOptions(ithSubalbum.words);
+														if (
+															normalizedWords.some(
+																function(element) {
+																	return element.includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
+																}
+															) && (
+																! env.options.search_current_album ||
+																util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || (
+																	// check whether the media is inside the current album tree
+																	ithSubalbum.cacheBase.indexOf(env.options.cache_base_to_search_in) === 0 &&
+																	ithSubalbum.cacheBase != env.options.cache_base_to_search_in
+																)
+															)
+														)
+															matchingSubalbums.push(ithSubalbum);
+													}
+												}
+												resultAlbum.media = matchingMedia;
+												resultAlbum.subalbums = matchingSubalbums;
+
+												if (! (thisIndexWords in searchResultsMedia)) {
+													searchResultsMedia[thisIndexWords] = resultAlbum.media;
+													searchResultsSubalbums[thisIndexWords] = resultAlbum.subalbums;
+												} else {
+													searchResultsMedia[thisIndexWords].unionForSearches(resultAlbum.media);
+													searchResultsSubalbums[thisIndexWords].unionForSearches(resultAlbum.subalbums);
+												}
+												// the following instruction makes me see that numSearchAlbumsReady never reaches numSubAlbumsToGet when numSubAlbumsToGet is > 1000,
+												// numSearchAlbumsReady remains < 1000
+
+												numSearchAlbumsReady ++;
+												if (numSearchAlbumsReady >= numSubAlbumsToGet) {
+													// all the albums have been got, we can merge the results
+													env.searchAlbum.media = searchResultsMedia[0];
+													env.searchAlbum.subalbums = searchResultsSubalbums[0];
+													for (indexWords1 = 1; indexWords1 <= lastIndex; indexWords1 ++) {
+														if (indexWords1 in searchResultsMedia) {
+															if (env.options.search_any_word)
+																env.searchAlbum.media.unionForSearches(searchResultsMedia[indexWords1]);
+															else
+																env.searchAlbum.media.intersectionForSearches(searchResultsMedia[indexWords1]);
+															// env.searchAlbum.media = env.options.search_any_word ?
+															// 	util.mediaOrSubalbumsUnionForSearches(env.searchAlbum.media, searchResultsMedia[indexWords1]) :
+															// 	util.intersect(env.searchAlbum.media, searchResultsMedia[indexWords1]);
+														}
+														if (indexWords1 in searchResultsSubalbums) {
+															if (env.options.search_any_word)
+																env.searchAlbum.subalbums.unionForSearches(searchResultsSubalbums[indexWords1]);
+															else
+																env.searchAlbum.subalbums.intersectionForSearches(searchResultsSubalbums[indexWords1]);
+															// env.searchAlbum.subalbums = env.options.search_any_word ?
+															// 	util.mediaOrSubalbumsUnionForSearches(env.searchAlbum.subalbums, searchResultsSubalbums[indexWords1]) :
+															// 	util.intersect(env.searchAlbum.subalbums, searchResultsSubalbums[indexWords1]);
+														}
+													}
+
+													if (lastIndex != searchWordsFromUser.length - 1) {
+														// we still have to filter out the media that do not match the words after the first
+														// we are in all words search mode
+														matchingMedia = new Media([]);
+														for (indexMedia = 0; indexMedia < env.searchAlbum.media.length; indexMedia ++) {
+															match = true;
+															if (! env.options.search_inside_words) {
+																// whole word
+																normalizedWords = util.normalizeAccordingToOptions(env.searchAlbum.media[indexMedia].words);
+																if (
+																	searchWordsFromUserNormalizedAccordingToOptions.some(
+																		function(element, index) {
+																			return index > lastIndex && normalizedWords.indexOf(element) == -1;
+																		}
+																	)
+																)
+																	match = false;
+															} else {
+																// inside words
+																for (indexWordsLeft = lastIndex + 1; indexWordsLeft < searchWordsFromUser.length; indexWordsLeft ++) {
+																	normalizedWords = util.normalizeAccordingToOptions(env.searchAlbum.media[indexMedia].words);
+																	if (
+																		! normalizedWords.some(
+																			function(element) {
+																				return element.includes(searchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft]);
+																			}
+																		)
+																	) {
+																		match = false;
+																		break;
+																	}
+																}
+															}
+															if (match && matchingMedia.indexOf(env.searchAlbum.media[indexMedia]) == -1)
+																matchingMedia.push(env.searchAlbum.media[indexMedia]);
+														}
+														env.searchAlbum.media = matchingMedia;
+
+														matchingSubalbums = new Subalbums([]);
+														for (indexSubalbums = 0; indexSubalbums < env.searchAlbum.subalbums.length; indexSubalbums ++) {
+															match = true;
+															if (! env.options.search_inside_words) {
+																// whole word
+																normalizedWords = util.normalizeAccordingToOptions(env.searchAlbum.subalbums[indexSubalbums].words);
+																if (
+																	searchWordsFromUserNormalizedAccordingToOptions.some(
+																		function(element, index) {
+																			return index > lastIndex && normalizedWords.indexOf(element) == -1;
+																		}
+																	)
+																)
+																	match = false;
+															} else {
+																// inside words
+																for (indexWordsLeft = lastIndex + 1; indexWordsLeft < searchWordsFromUser.length; indexWordsLeft ++) {
+																	normalizedWords = util.normalizeAccordingToOptions(env.searchAlbum.subalbums[indexSubalbums].words);
+																	if (
+																		! normalizedWords.some(
+																			function(element) {
+																				return element.includes(searchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft]);
+																			}
+																		)
+																	) {
+																		match = false;
+																		break;
+																	}
+																}
+															}
+															if (match && matchingSubalbums.indexOf(env.searchAlbum.subalbums[indexSubalbums]) == -1)
+																matchingSubalbums.push(env.searchAlbum.subalbums[indexSubalbums]);
+														}
+
+														env.searchAlbum.subalbums = matchingSubalbums;
+													}
+
+													if (env.searchAlbum.media.length) {
+														// search albums need to conform to default behaviour of albums:
+														// json files have subalbums and media sorted by date not reversed
+														env.searchAlbum.media.sortByDate();
+														env.searchAlbum.media.forEach(
+															function(singleMedia) {
+																singleMedia.captionForSelectionSorting = singleMedia.name + env.options.cache_folder_separator + singleMedia.albumName.split('/').slice(1).reverse().join(env.options.cache_folder_separator);
+															}
+														);
+													}
+													env.searchAlbum.mediaNameSort = false;
+													env.searchAlbum.mediaReverseSort = false;
+
+													if (env.searchAlbum.subalbums.length) {
+														// search albums need to conform to default behaviour of albums: json files have subalbums and media sorted by date not reversed
+														util.sortByDate(env.searchAlbum.subalbums);
+														env.searchAlbum.subalbums.forEach(
+															function(subalbum) {
+																subalbum.captionForSelectionSorting = subalbum.path.split('/').reverse().join(env.options.cache_folder_separator);
+															}
+														);
+													}
+													env.searchAlbum.albumNameSort = false;
+													env.searchAlbum.albumReverseSort = false;
+
+													if (env.searchAlbum.media.length || env.searchAlbum.subalbums.length) {
+														env.searchAlbum.initializeSortPropertiesAndCookies();
+														env.searchAlbum.sortAlbumsMedia();
+													}
+
+													subalbumsAbsentOrGot();
+												}
+											},
+											function() {
+												console.trace();
+											}
+										);
+									}
+								}
 							}
 						},
 						function() {
@@ -1468,601 +1821,78 @@
 						}
 					);
 				}
+				// end of auxiliary functions
 			}
 		);
 	};
 
-	PhotoFloat.upHash = function() {
-		var resultHash;
-		var hash = window.location.hash;
-		var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
+	PhotoFloat.removeStopWords = function(searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions) {
+		// remove the stop words from the search words lists
 
-		if (mediaHash === null || util.isAlbumWithOneMedia(currentAlbum)) {
-			// hash of an album: go up in the album tree
-			if (savedSearchAlbumHash !== null) {
-				if (albumHash == savedSearchSubAlbumHash)
-					resultHash = savedSearchAlbumHash;
-				else {
-					// we must go up in the sub folder
-					albumHash = albumHash.split(Options.cache_folder_separator).slice(0, -1).join(Options.cache_folder_separator);
-					resultHash = util.pathJoin([
-						albumHash,
-						savedSearchSubAlbumHash,
-						savedSearchAlbumHash
-					]);
-				}
-			} else {
-				if (albumHash == Options.folders_string)
-					// stay there
-					resultHash = albumHash;
-				else if (albumHash == Options.by_date_string || albumHash == Options.by_gps_string || albumHash == Options.by_map_string)
-					// go to folders root
-					resultHash = Options.folders_string;
-				else if (util.isSearchCacheBase(albumHash) || util.isMapCacheBase(albumHash)) {
-					// the return folder must be extracted from the album hash
-					resultHash = albumHash.split(Options.cache_folder_separator).slice(2).join(Options.cache_folder_separator);
+		var removedStopWords = [];
+		var searchWordsFromUserWithoutStopWords = [];
+		var searchWordsFromUserWithoutStopWordsNormalized = [];
+		var searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions = [];
+		if (! env.cache.stopWords.length) {
+			searchWordsFromUserWithoutStopWords = searchWordsFromUser;
+			searchWordsFromUserWithoutStopWordsNormalized = searchWordsFromUserNormalized;
+			searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions = searchWordsFromUserNormalizedAccordingToOptions;
+		} else {
+			for (var i = 0; i < searchWordsFromUser.length; i ++) {
+				if (
+					env.cache.stopWords.every(
+						function(word) {
+							return word !== searchWordsFromUserNormalized[i];
+						}
+					)
+				) {
+					searchWordsFromUserWithoutStopWords.push(searchWordsFromUser[i]);
+					searchWordsFromUserWithoutStopWordsNormalized.push(searchWordsFromUserNormalized[i]);
+					searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions.push(searchWordsFromUserNormalizedAccordingToOptions[i]);
 				} else {
-					// we must go up in the sub folders tree
-					resultHash = albumHash.split(Options.cache_folder_separator).slice(0, -1).join(Options.cache_folder_separator);
+					removedStopWords.push(searchWordsFromUser[i]);
 				}
 			}
-		} else {
-			// hash of a media: remove the media
-			if (savedSearchAlbumHash !== null || util.isFolderCacheBase(albumHash))
-				// media in found album or in one of its subalbum
-				// or
-				// media in folder hash:
-				// remove the trailing media
-				resultHash = util.pathJoin(hash.split("/").slice(1, -1));
-			else
-				// all the other cases
-				// remove the trailing media and the folder it's inside
-				resultHash = util.pathJoin(hash.split("/").slice(1, -2));
 		}
 
-		return "#!/" + resultHash;
+		return [searchWordsFromUserWithoutStopWords, searchWordsFromUserWithoutStopWordsNormalized, searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions, removedStopWords];
 	};
 
+	PhotoFloat.endPreparingAlbumAndKeepOn = function(resultsAlbumFinal, mediaHash, mediaFolderHash) {
+		return new Promise(
+			function(resolve_endPreparingAlbumAndKeepOn) {
+				// add the various counts
+				resultsAlbumFinal.numsMediaInSubTree = resultsAlbumFinal.media.imagesAndVideosCount();
+				resultsAlbumFinal.numsMedia = resultsAlbumFinal.media.imagesAndVideosCount();
+				resultsAlbumFinal.numPositionsInTree = resultsAlbumFinal.positionsAndMediaInTree.length;
+				// save in the cache array
+				if (! env.cache.getAlbum(resultsAlbumFinal.cacheBase))
+					env.cache.putAlbum(resultsAlbumFinal);
 
-	PhotoFloat.prototype.parseHash = function(hash, hashParsed, error) {
-		var albumHashToGet, albumHashes, wordSubalbums;
-		var searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions;
-		var indexWords, indexAlbums, wordsWithOptionsString;
-		// this vars are defined here and not at the beginning of the file because the options must have been read
-
-		$("#error-too-many-images").hide();
-		$(".search-failed").hide();
-		// $("#media-view").removeClass("hidden");
-		var [albumHash, mediaHash, mediaFolderHash] = PhotoFloat.decodeHash(hash);
-		// $("ul#right-menu li#album-search").removeClass("hidden");
-		$("ul#right-menu li#any-word").removeClass("dimmed");
-		$("#album-view, #album-view #subalbums, #album-view #thumbs").removeClass("hidden");
-
-		albumHashes = [];
-		wordSubalbums = [];
-		searchWordsFromUser = [];
-		searchWordsFromUserNormalized = [];
-		searchWordsFromUserNormalizedAccordingToOptions = [];
-		if (albumHash) {
-			albumHash = decodeURI(albumHash);
-
-			// if (util.isAnyRootHash(albumHash))
-			// 	$("ul#right-menu li#album-search").addClass("hidden");
-
-			if (util.isSearchCacheBase(albumHash)) {
-				var splittedAlbumHash = albumHash.split(Options.cache_folder_separator);
-
-				// wordsWithOptionsString = albumHash.substring(Options.by_search_string.length + 1);
-				wordsWithOptionsString = splittedAlbumHash[1];
-				var wordsAndOptions = wordsWithOptionsString.split(Options.search_options_separator);
-				var wordsString = wordsAndOptions[wordsAndOptions.length - 1];
-				var wordsStringOriginal = wordsString.replace(/_/g, ' ');
-				// the normalized words are needed in order to compare with the search cache json files names, which are normalized
-				var wordsStringNormalizedAccordingToOptions = util.normalizeAccordingToOptions(wordsStringOriginal);
-				var wordsStringNormalized = util.removeAccents(wordsStringOriginal.toLowerCase());
-				if (wordsAndOptions.length > 1) {
-					var searchOptions = wordsAndOptions.slice(0, -1);
-					Options.search_inside_words = searchOptions.includes('i');
-					Options.search_any_word = searchOptions.includes('n');
-					Options.search_case_sensitive = searchOptions.includes('c');
-					Options.search_accent_sensitive = searchOptions.includes('a');
-					Options.search_current_album = searchOptions.includes('o');
+				var result = resultsAlbumFinal.getMediaIndex(mediaFolderHash, mediaHash);
+				if (result === null) {
+					// getMediaIndex arguments don't match any media in the album,
+					// in getMediaIndex either the authentication dialog has been shown or the hash has been changed to the album
+					// Nothing to do
+				} else {
+					resolve_endPreparingAlbumAndKeepOn(result);
 				}
 
-				Options.cache_base_to_search_in = splittedAlbumHash.slice(2).join(Options.cache_folder_separator);
-
-				// if (util.isAnyRootHash(Options.cache_base_to_search_in))
-				// 	$("ul#right-menu li#album-search").addClass("hidden");
-
-				// if (util.isSearchHash(location.hash) && Options.search_refine)
-				// 	Options.cache_base_to_search_in = albumHash;
-
-				$("ul#right-menu #search-field").attr("value", wordsStringOriginal);
-				wordsString = util.normalizeAccordingToOptions(wordsString);
-				searchWordsFromUser = wordsString.split('_');
-				searchWordsFromUserNormalizedAccordingToOptions = wordsStringNormalizedAccordingToOptions.split(' ');
-				searchWordsFromUserNormalized = wordsStringNormalized.split(' ');
-
-				if (searchWordsFromUser.length == 1)
-					$("ul#right-menu li#any-word").addClass("dimmed").off("click");
-
-				var searchResultsAlbumFinal = {};
-				searchResultsAlbumFinal.positionsAndMediaInTree = [];
-				searchResultsAlbumFinal.media = [];
-				searchResultsAlbumFinal.subalbums = [];
-				searchResultsAlbumFinal.numMedia = JSON.parse(JSON.stringify(imagesAndVideos0));
-				searchResultsAlbumFinal.numMediaInSubTree = JSON.parse(JSON.stringify(imagesAndVideos0));
-				searchResultsAlbumFinal.sizesOfAlbum = initialSizes;
-				searchResultsAlbumFinal.sizesOfSubTree = initialSizes;
-				searchResultsAlbumFinal.cacheBase = albumHash;
-				searchResultsAlbumFinal.path = searchResultsAlbumFinal.cacheBase.replace(Options.cache_folder_separator, "/");
-				searchResultsAlbumFinal.physicalPath = searchResultsAlbumFinal.path;
-				searchResultsAlbumFinal.searchInFolderCacheBase = mediaFolderHash;
-				searchResultsAlbumFinal.numsProtectedMediaInSubTree = {"": imagesAndVideos0};
-
-				if (albumHash == Options.by_search_string) {
-					util.noResults(searchResultsAlbumFinal, '#no-search-string');
-					hashParsed(searchResultsAlbumFinal, null, -1);
-					return;
-				}
+				$("#loading").hide();
 			}
-		}
-
-		if (util.isSearchCacheBase(albumHash)) {
-			albumHashToGet = albumHash;
-		// // same conditions as before????????????????
-		// } else if (util.isSearchCacheBase(albumHash)) {
-		// 	albumHashToGet = util.pathJoin([albumHash, mediaFolderHash]);
-		} else {
-			albumHashToGet = albumHash;
-		}
-
-		if (mediaHash)
-			mediaHash = decodeURI(mediaHash);
-		if (mediaFolderHash)
-			mediaFolderHash = decodeURI(mediaFolderHash);
-		if (PhotoFloat.searchAndSubalbumHash)
-			PhotoFloat.searchAndSubalbumHash = decodeURI(PhotoFloat.searchAndSubalbumHash);
-
-		var albumFromCache = PhotoFloat.getAlbumFromCache(albumHashToGet), promise;
-		if (albumFromCache && ! PhotoFloat.guessedPasswordsMd5.length && albumFromCache.hasOwnProperty("subalbums") && albumFromCache.hasOwnProperty("media") && albumFromCache.hasOwnProperty("positionsAndMediaInTree")) {
-			if (util.isSearchCacheBase(albumHash) && ! albumFromCache.subalbums.length && ! albumFromCache.media.length)
-				// it's a search with no results
-				util.noResults(albumFromCache);
-			PhotoFloat.selectMedia(albumFromCache, mediaFolderHash, mediaHash, hashParsed);
-		} else if (! util.isSearchCacheBase(albumHash) || searchWordsFromUser.length === 0) {
-			// something is missing, getAlbum must be called
-			promise = PhotoFloat.getAlbum(albumHashToGet, error, {"getMedia": true, "getPositions": true});
-			promise.then(
-				function(theAlbum) {
-					PhotoFloat.selectMedia(theAlbum, mediaFolderHash, mediaHash, hashParsed);
-				},
-				function() {
-					console.trace();
-				}
-			);
-		} else {
-			// it's a search!
-			// self = this;
-			var removedStopWords = [];
-
-			// possibly we need the stop words, because if some searched word is a stop word it must be removed from the search
-			promise = PhotoFloat.getStopWords(util.die);
-			promise.then(
-				function removeStopWords(stopWords) {
-					// remove the stop words from the search words lists
-
-					var searchWordsFromUserWithoutStopWords = [];
-					var searchWordsFromUserWithoutStopWordsNormalized = [];
-					var searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions = [];
-					for (var i = 0; i < searchWordsFromUser.length; i ++) {
-						if (
-							stopWords.every(
-								function(word) {
-									return word !== searchWordsFromUserNormalized[i];
-								}
-							)
-						) {
-							searchWordsFromUserWithoutStopWords.push(searchWordsFromUser[i]);
-							searchWordsFromUserWithoutStopWordsNormalized.push(searchWordsFromUserNormalized[i]);
-							searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions.push(searchWordsFromUserNormalizedAccordingToOptions[i]);
-						} else {
-							removedStopWords.push(searchWordsFromUser[i]);
-						}
-					}
-
-					searchWordsFromUser = searchWordsFromUserWithoutStopWords;
-					searchWordsFromUserNormalized = searchWordsFromUserWithoutStopWordsNormalized;
-					searchWordsFromUserNormalizedAccordingToOptions = searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions;
-
-					buildSearchResult();
-				},
-				function() {
-					console.trace();
-				}
-			);
-		}
-		// end of body of parseHash
-
-		function subalbumsAbsentOrGot() {
-			var indexMedia, indexSubalbums;
-			if (searchResultsAlbumFinal.media.length === 0 && searchResultsAlbumFinal.subalbums.length === 0) {
-				util.noResults(searchResultsAlbumFinal);
-			} else {
-				$(".search-failed").hide();
-			}
-
-			for (indexMedia = 0; indexMedia < searchResultsAlbumFinal.media.length; indexMedia ++) {
-				// add the parent to the media
-				searchResultsAlbumFinal.media[indexMedia].parent = searchResultsAlbumFinal;
-				if (util.hasGpsData(searchResultsAlbumFinal.media[indexMedia]))
-					// add the media position
-					searchResultsAlbumFinal.positionsAndMediaInTree =
-						util.addMediaToPoints(
-							searchResultsAlbumFinal.positionsAndMediaInTree,
-							searchResultsAlbumFinal.media[indexMedia]
-						);
-			}
-
-			if (searchResultsAlbumFinal.subalbums.length) {
-				for (indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
-					// update the media count
-					searchResultsAlbumFinal.numMediaInSubTree = util.imagesAndVideosSum(searchResultsAlbumFinal.numMediaInSubTree, searchResultsAlbumFinal.subalbums[indexSubalbums].numMediaInSubTree);
-					// update the size totals
-					searchResultsAlbumFinal.sizesOfSubTree = util.sumSizes(searchResultsAlbumFinal.sizesOfSubTree, searchResultsAlbumFinal.subalbums[indexSubalbums].sizesOfSubTree);
-					searchResultsAlbumFinal.sizesOfAlbum = util.sumSizes(searchResultsAlbumFinal.sizesOfAlbum, searchResultsAlbumFinal.subalbums[indexSubalbums].sizesOfAlbum);
-					// add the points from the subalbums
-
-					// the subalbum could still have no positionsAndMediaInTree array, get it
-					if (! searchResultsAlbumFinal.subalbums[indexSubalbums].hasOwnProperty("positionsAndMediaInTree"))
-						searchResultsAlbumFinal.subalbums[indexSubalbums].positionsAndMediaInTree = [];
-				}
-			}
-			PhotoFloat.endPreparingAlbumAndKeepOn(searchResultsAlbumFinal, mediaHash, mediaFolderHash, hashParsed);
-		}
-
-		function buildSearchResult() {
-			searchResultsAlbumFinal.removedStopWords = removedStopWords;
-			// has any word remained after stop words have been removed?
-			if (searchWordsFromUser.length == 0) {
-				util.noResults(searchResultsAlbumFinal, '#no-search-string-after-stopwords-removed');
-				hashParsed(searchResultsAlbumFinal, null, -1);
-				return;
-			}
-
-			// get the search root album before getting the search words ones
-			var promise = PhotoFloat.getAlbum(Options.by_search_string, error, {"getMedia": true, "getPositions": true});
-			promise.then(
-				function(bySearchRootAlbum) {
-					var lastIndex, i, j, wordHashes, numSearchAlbumsReady = 0, numSubAlbumsToGet = 0, normalizedWords;
-					var searchResultsMedia = [];
-					var searchResultsSubalbums = [];
-
-					PhotoFloat.putAlbumIntoCache(Options.by_search_string, bySearchRootAlbum);
-
-					searchResultsAlbumFinal.ancestorsCacheBase = bySearchRootAlbum.ancestorsCacheBase.slice();
-					searchResultsAlbumFinal.ancestorsCacheBase.push(wordsWithOptionsString);
-					if (! Options.search_any_word)
-						// when serching all the words, getting the first album is enough, media that do not match the other words will be escluded later
-						lastIndex = 0;
-					else
-						lastIndex = searchWordsFromUser.length - 1;
-					if (Options.search_inside_words) {
-						// we must determine the albums that could match the words given by the user, word by word
-						for (i = 0; i <= lastIndex; i ++) {
-							wordHashes = [];
-							for (j = 0; j < PhotoFloat.searchWordsFromJsonFile.length; j ++) {
-								if (
-									PhotoFloat.searchWordsFromJsonFile[j].some(
-										function(word) {
-											return word.includes(searchWordsFromUserNormalized[i]);
-										}
-									)
-								) {
-									wordHashes.push(PhotoFloat.searchAlbumCacheBasesFromJsonFile[j]);
-									wordSubalbums.push(PhotoFloat.searchAlbumSubalbumsFromJsonFile[j]);
-									numSubAlbumsToGet ++;
-								}
-							}
-							if (wordHashes.length)
-								albumHashes.push(wordHashes);
-							else
-								albumHashes.push([]);
-						}
-					} else {
-						// whole words
-						for (i = 0; i <= lastIndex; i ++)
-							if (
-								PhotoFloat.searchWordsFromJsonFile.some(
-									function(words, index) {
-										if (words.includes(searchWordsFromUserNormalized[i])) {
-											albumHashes.push([PhotoFloat.searchAlbumCacheBasesFromJsonFile[index]]);
-											wordSubalbums.push(PhotoFloat.searchAlbumSubalbumsFromJsonFile[index]);
-											return true;
-										}
-										return false;
-									}
-								)
-							) {
-								numSubAlbumsToGet ++;
-							} else {
-								albumHashes.push([]);
-							}
-					}
-
-					if (numSubAlbumsToGet === 0) {
-						util.noResults(searchResultsAlbumFinal);
-						hashParsed(searchResultsAlbumFinal, null, -1);
-					} else if (numSubAlbumsToGet > Options.max_search_album_number) {
-						util.noResults(searchResultsAlbumFinal, '#search-too-wide');
-						hashParsed(searchResultsAlbumFinal, null, -1);
-					} else {
-						$(".search-failed").hide();
-						searchResultsAlbumFinal.numsProtectedMediaInSubTree = util.sumNumsProtectedMediaOfArray(wordSubalbums);
-						for (indexWords = 0; indexWords <= lastIndex; indexWords ++) {
-							searchResultsMedia[indexWords] = [];
-							searchResultsSubalbums[indexWords] = [];
-							for (indexAlbums = 0; indexAlbums < albumHashes[indexWords].length; indexAlbums ++) {
-								let thisIndexWords = indexWords, thisIndexAlbums = indexAlbums;
-								var promise = PhotoFloat.getAlbum(albumHashes[thisIndexWords][thisIndexAlbums], error, {"getMedia": true, "getPositions": true});
-								promise.then(
-									function(theAlbum) {
-										var matchingMedia = [], matchingSubalbums = [], match, indexMedia, indexSubalbums, indexWordsLeft, resultAlbum, indexWords1, ithMedia, ithSubalbum;
-
-										PhotoFloat.putAlbumIntoCache(albumHashes[thisIndexWords][thisIndexAlbums], theAlbum);
-
-										resultAlbum = util.cloneObject(theAlbum);
-										// media in the album still has to be filtered according to search criteria
-										if (! Options.search_inside_words) {
-											// whole word
-											for (indexMedia = 0; indexMedia < theAlbum.media.length; indexMedia ++) {
-												ithMedia = theAlbum.media[indexMedia];
-												if (
-													util.normalizeAccordingToOptions(ithMedia.words).includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) && (
-														! Options.search_current_album ||
-														util.isAnyRootHash(Options.cache_base_to_search_in) || (
-															// check whether the media is inside the current album tree
-															ithMedia.foldersCacheBase.indexOf(Options.cache_base_to_search_in) === 0 ||
-															ithMedia.hasOwnProperty("dayAlbumCacheBase") && ithMedia.dayAlbumCacheBase.indexOf(Options.cache_base_to_search_in) === 0 ||
-															ithMedia.hasOwnProperty("gpsAlbumCacheBase") && ithMedia.gpsAlbumCacheBase.indexOf(Options.cache_base_to_search_in) === 0 ||
-															util.isMapCacheBase(Options.cache_base_to_search_in) &&
-															PhotoFloat.getAlbumFromCache(Options.cache_base_to_search_in).media.some(
-																function(media) {
-																	return media.cacheBase == ithMedia.cacheBase && media.foldersCacheBase == ithMedia.foldersCacheBase;
-																}
-															)
-														)
-													)
-												)
-													matchingMedia.push(ithMedia);
-											}
-											for (indexSubalbums = 0; indexSubalbums < theAlbum.subalbums.length; indexSubalbums ++) {
-												ithSubalbum = theAlbum.subalbums[indexSubalbums];
-												if (
-													util.normalizeAccordingToOptions(ithSubalbum.words).includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) && (
-														! Options.search_current_album ||
-														util.isAnyRootHash(Options.cache_base_to_search_in) || (
-															// check whether the media is inside the current album tree
-															ithSubalbum.cacheBase.indexOf(Options.cache_base_to_search_in) === 0 &&
-															ithSubalbum.cacheBase != Options.cache_base_to_search_in
-														)
-													)
-												)
-													matchingSubalbums.push(ithSubalbum);
-											}
-										} else {
-											// inside words
-											for (indexMedia = 0; indexMedia < theAlbum.media.length; indexMedia ++) {
-												ithMedia = theAlbum.media[indexMedia];
-												normalizedWords = util.normalizeAccordingToOptions(ithMedia.words);
-												if (
-													normalizedWords.some(
-														function(element) {
-															return element.includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
-														}
-													) && (
-														! Options.search_current_album ||
-														util.isAnyRootHash(Options.cache_base_to_search_in) || (
-															// check whether the media is inside the current album tree
-															ithMedia.foldersCacheBase.indexOf(Options.cache_base_to_search_in) === 0 ||
-															ithMedia.hasOwnProperty("dayAlbumCacheBase") && ithMedia.dayAlbumCacheBase.indexOf(Options.cache_base_to_search_in) === 0 ||
-															ithMedia.hasOwnProperty("gpsAlbumCacheBase") && ithMedia.gpsAlbumCacheBase.indexOf(Options.cache_base_to_search_in) === 0 ||
-															util.isMapCacheBase(Options.cache_base_to_search_in) &&
-															PhotoFloat.getAlbumFromCache(Options.cache_base_to_search_in).media.some(
-																function(media) {
-																	return media.cacheBase == ithMedia.cacheBase && media.foldersCacheBase == ithMedia.foldersCacheBase;
-																}
-															)
-														)
-													)
-												)
-													matchingMedia.push(ithMedia);
-											}
-											for (indexSubalbums = 0; indexSubalbums < theAlbum.subalbums.length; indexSubalbums ++) {
-												ithSubalbum = theAlbum.subalbums[indexSubalbums];
-												normalizedWords = util.normalizeAccordingToOptions(ithSubalbum.words);
-												if (
-													normalizedWords.some(
-														function(element) {
-															return element.includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
-														}
-													) && (
-														! Options.search_current_album ||
-														util.isAnyRootHash(Options.cache_base_to_search_in) || (
-															// check whether the media is inside the current album tree
-															ithSubalbum.cacheBase.indexOf(Options.cache_base_to_search_in) === 0 &&
-															ithSubalbum.cacheBase != Options.cache_base_to_search_in
-														)
-													)
-												)
-													matchingSubalbums.push(ithSubalbum);
-											}
-										}
-										resultAlbum.media = matchingMedia;
-										resultAlbum.subalbums = matchingSubalbums;
-
-										if (! (thisIndexWords in searchResultsMedia)) {
-											searchResultsMedia[thisIndexWords] = resultAlbum.media;
-											searchResultsSubalbums[thisIndexWords] = resultAlbum.subalbums;
-										} else {
-											searchResultsMedia[thisIndexWords] = util.union(searchResultsMedia[thisIndexWords], resultAlbum.media);
-											searchResultsSubalbums[thisIndexWords] = util.union(searchResultsSubalbums[thisIndexWords], resultAlbum.subalbums);
-										}
-										// the following instruction makes me see that numSearchAlbumsReady never reaches numSubAlbumsToGet when numSubAlbumsToGet is > 1000,
-										// numSearchAlbumsReady remains < 1000
-
-										numSearchAlbumsReady ++;
-										if (numSearchAlbumsReady >= numSubAlbumsToGet) {
-											// all the albums have been got, we can merge the results
-											searchResultsAlbumFinal.media = searchResultsMedia[0];
-											searchResultsAlbumFinal.subalbums = searchResultsSubalbums[0];
-											for (indexWords1 = 1; indexWords1 <= lastIndex; indexWords1 ++) {
-												if (indexWords1 in searchResultsMedia) {
-													searchResultsAlbumFinal.media = Options.search_any_word ?
-														util.union(searchResultsAlbumFinal.media, searchResultsMedia[indexWords1]) :
-														util.intersect(searchResultsAlbumFinal.media, searchResultsMedia[indexWords1]);
-												}
-												if (indexWords1 in searchResultsSubalbums) {
-													searchResultsAlbumFinal.subalbums = Options.search_any_word ?
-														util.union(searchResultsAlbumFinal.subalbums, searchResultsSubalbums[indexWords1]) :
-														util.intersect(searchResultsAlbumFinal.subalbums, searchResultsSubalbums[indexWords1]);
-												}
-											}
-
-											if (lastIndex != searchWordsFromUser.length - 1) {
-												// we still have to filter out the media that do not match the words after the first
-												// we are in all words search mode
-												matchingMedia = [];
-												for (indexMedia = 0; indexMedia < searchResultsAlbumFinal.media.length; indexMedia ++) {
-													match = true;
-													if (! Options.search_inside_words) {
-														// whole word
-														normalizedWords = util.normalizeAccordingToOptions(searchResultsAlbumFinal.media[indexMedia].words);
-														if (
-															searchWordsFromUserNormalizedAccordingToOptions.some(
-																function(element, index) {
-																	return index > lastIndex && normalizedWords.indexOf(element) == -1;
-																}
-															)
-														)
-															match = false;
-													} else {
-														// inside words
-														for (indexWordsLeft = lastIndex + 1; indexWordsLeft < searchWordsFromUser.length; indexWordsLeft ++) {
-															normalizedWords = util.normalizeAccordingToOptions(searchResultsAlbumFinal.media[indexMedia].words);
-															if (
-																! normalizedWords.some(
-																	function(element) {
-																		return element.includes(searchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft]);
-																	}
-																)
-															) {
-																match = false;
-																break;
-															}
-														}
-													}
-													if (match && matchingMedia.indexOf(searchResultsAlbumFinal.media[indexMedia]) == -1)
-														matchingMedia.push(searchResultsAlbumFinal.media[indexMedia]);
-												}
-												searchResultsAlbumFinal.media = matchingMedia;
-
-												// search albums need to conform to default behaviour of albums:
-												// json files have subalbums and media sorted by date not reversed
-												util.sortByDate(searchResultsAlbumFinal.media);
-
-												matchingSubalbums = [];
-												for (indexSubalbums = 0; indexSubalbums < searchResultsAlbumFinal.subalbums.length; indexSubalbums ++) {
-													match = true;
-													if (! Options.search_inside_words) {
-														// whole word
-														normalizedWords = util.normalizeAccordingToOptions(searchResultsAlbumFinal.subalbums[indexSubalbums].words);
-														if (
-															searchWordsFromUserNormalizedAccordingToOptions.some(
-																function(element, index) {
-																	return index > lastIndex && normalizedWords.indexOf(element) == -1;
-																}
-															)
-														)
-															match = false;
-													} else {
-														// inside words
-														for (indexWordsLeft = lastIndex + 1; indexWordsLeft < searchWordsFromUser.length; indexWordsLeft ++) {
-															normalizedWords = util.normalizeAccordingToOptions(searchResultsAlbumFinal.subalbums[indexSubalbums].words);
-															if (
-																! normalizedWords.some(
-																	function(element) {
-																		return element.includes(searchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft]);
-																	}
-																)
-															) {
-																match = false;
-																break;
-															}
-														}
-													}
-													if (match && matchingSubalbums.indexOf(searchResultsAlbumFinal.subalbums[indexSubalbums]) == -1)
-														matchingSubalbums.push(searchResultsAlbumFinal.subalbums[indexSubalbums]);
-												}
-
-												searchResultsAlbumFinal.subalbums = matchingSubalbums;
-
-												if (searchResultsAlbumFinal.subalbums.length) {
-													// search albums need to conform to default behaviour of albums: json files have subalbums and media sorted by date not reversed
-													util.sortByDate(searchResultsAlbumFinal.subalbums);
-												}
-											}
-											subalbumsAbsentOrGot();
-										}
-									},
-									function() {
-										console.trace();
-									}
-								);
-							}
-						}
-					}
-				},
-				function() {
-					console.trace();
-				}
-			);
-		}
+		);
 	};
 
-	PhotoFloat.endPreparingAlbumAndKeepOn = function(resultsAlbumFinal, mediaHash, mediaFolderHash, hashParsed) {
-		// add the various counts
-		resultsAlbumFinal.numMediaInSubTree = resultsAlbumFinal.media.length;
-		resultsAlbumFinal.numMedia = util.imagesAndVideosCount(resultsAlbumFinal.media);
-		resultsAlbumFinal.numPositionsInTree = resultsAlbumFinal.positionsAndMediaInTree.length;
-		// save in the cache array
-		PhotoFloat.putAlbumIntoCache(resultsAlbumFinal.cacheBase, resultsAlbumFinal);
+	Album.prototype.getMediaIndex = function(mediaFolderHash, mediaHash) {
+		// returns the index of the media identified by the arguments
+		// returns null if no media matches
 
-		PhotoFloat.selectMedia(resultsAlbumFinal, mediaFolderHash, mediaHash, hashParsed);
+		this.initializeSortPropertiesAndCookies();
+		this.sortAlbumsMedia();
 
-		$("#loading").hide();
-	};
-
-	PhotoFloat.selectMedia = function(theAlbum, mediaFolderHash, mediaHash, hashParsed) {
-
-		function keepOn() {
-			hashParsed(theAlbum, media, i);
-			if (
-				util.isSearchCacheBase(theAlbum.cacheBase)
-				// && (media === null && ! util.isAlbumWithOneMedia(theAlbum))
-			) {
-				$("ul#right-menu").addClass("expand");
-				util.focusSearchField();
-			}
-		}
-
-		util.initializeSortPropertiesAndCookies(theAlbum);
-		util.sortAlbumsMedia(theAlbum);
-
-		var i = -1, perhapsIsAProtectedMedia = false;
-		var media = null;
+		var mediaIndex = -1;
 		if (mediaHash !== null) {
-			i = theAlbum.media.findIndex(
+			mediaIndex = this.media.findIndex(
 				function(thisMedia) {
 					var matches =
 						thisMedia.cacheBase === mediaHash &&
@@ -2070,28 +1900,22 @@
 					return matches;
 				}
 			);
-			if (i !== -1) {
-				media = theAlbum.media[i];
-				perhapsIsAProtectedMedia = false;
-			} else {
+			if (mediaIndex === -1) {
 				$("#loading").stop().hide();
 
 				if (
-					! perhapsIsAProtectedMedia &&
-					util.numPasswords(theAlbum) &&
-					// ! jQuery.isEmptyObject(theAlbum.numsProtectedMediaInSubTree) &&
+					this.numPasswords(true) &&
+					// ! jQuery.isEmptyObject(this.numsProtectedMediaInSubTree) &&
 					(
-						theAlbum.subalbums.length == 0 ||
-						util.sumUpNumsProtectedMedia(theAlbum.numsProtectedMediaInSubTree) > util.sumUpNumsProtectedMedia(util.sumNumsProtectedMediaOfArray(theAlbum.subalbums))
+						this.subalbums.length == 0 ||
+						this.numsProtectedMediaInSubTree.sumUpNumsProtectedMedia() > this.subalbums.sumUpNumsProtectedMedia(util.sumNumsProtectedMediaOfArray())
 					)
 				) {
-					// the media not found could be a protected one, show the authentication dialog
-					perhapsIsAProtectedMedia = true;
+					// the media not found could be a protected one, show the authentication dialog, it could be a protected media
 					util.showAuthForm(null, true);
 				} else {
 					// surely the media doesn't exist
 
-					perhapsIsAProtectedMedia = false;
 					$("#album-view").fadeOut(200).fadeIn(3500);
 					$("#media-view").fadeOut(200);
 					// $("#album-view").stop().fadeIn(3500);
@@ -2099,17 +1923,21 @@
 					$("#error-text-image, #error-overlay, #auth-text").fadeOut(
 						2500,
 						function() {
-							window.location.href = "#!" + theAlbum.cacheBase;
-							// i = -1;
+							window.location.href = "#!" + this.cacheBase;
+							// mediaIndex = -1;
 							// keepOn();
 							$("#media-view").fadeIn(100);
 						}
 					);
 				}
-				return;
+				return null;
 			}
 		}
-		keepOn();
+		if (this.isSearch()) {
+			$("ul#right-menu").addClass("expand");
+			util.focusSearchField();
+		}
+		return mediaIndex;
 	};
 
 	PhotoFloat.hashCode = function(hash) {
@@ -2129,9 +1957,9 @@
 		}
 	};
 
-	PhotoFloat.mediaHash = function(album, media) {
-		return media.cacheBase;
-	};
+	// PhotoFloat.mediaHash = function(album, singleMedia) {
+	// 	return singleMedia.cacheBase;
+	// };
 
 	PhotoFloat.cleanHash = function(hash) {
 		while (hash.length) {
@@ -2150,22 +1978,23 @@
 		}
 
 		if (! hash)
-			hash = Options.folders_string;
+			hash = env.options.folders_string;
 		return hash;
 	};
 
 
 	/* make static methods callable as member functions */
 	PhotoFloat.prototype.getAlbum = PhotoFloat.getAlbum;
-	PhotoFloat.prototype.getAlbumFromCache = PhotoFloat.getAlbumFromCache;
 	PhotoFloat.prototype.mediaHash = PhotoFloat.mediaHash;
 	PhotoFloat.prototype.encodeHash = PhotoFloat.encodeHash;
 	PhotoFloat.prototype.cleanHash = PhotoFloat.cleanHash;
 	PhotoFloat.prototype.decodeHash = PhotoFloat.decodeHash;
-	PhotoFloat.prototype.upHash = PhotoFloat.upHash;
 	PhotoFloat.prototype.hashCode = PhotoFloat.hashCode;
 	PhotoFloat.prototype.endPreparingAlbumAndKeepOn = PhotoFloat.endPreparingAlbumAndKeepOn;
 	PhotoFloat.prototype.searchAndSubalbumHash = PhotoFloat.searchAndSubalbumHash;
+	PhotoFloat.prototype.getStopWords = PhotoFloat.getStopWords;
+	PhotoFloat.prototype.removeStopWords = PhotoFloat.removeStopWords;
+	PhotoFloat.prototype.hasProtectedContent = PhotoFloat.hasProtectedContent;
 
 	/* expose class globally */
 	window.PhotoFloat = PhotoFloat;

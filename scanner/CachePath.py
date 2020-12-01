@@ -122,7 +122,8 @@ def photo_cache_name(photo, size, thumb_type="", mobile_bigger=False):
 
 
 def video_cache_name(video):
-	return video.cache_base + Options.config['cache_folder_separator'] + "transcoded_" + Options.config['video_transcode_bitrate'] + "_" + str(Options.config['video_crf']) + ".mp4"
+	# return video.cache_base + Options.config['cache_folder_separator'] + "transcoded_" + Options.config['video_transcode_bitrate'] + "_" + str(Options.config['video_crf']) + ".mp4"
+	return video.cache_base + Options.config['cache_folder_separator'] + "transcoded.mp4"
 
 def last_modification_time(path):
 	maximum = 0

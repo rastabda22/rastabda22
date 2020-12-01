@@ -67,7 +67,7 @@ class Album(object):
 			self.media_list_is_sorted = True
 			self.subalbums_list_is_sorted = True
 			self._subdir = ""
-			self.num_media_in_sub_tree = ImageAndVideo()
+			self.nums_media_in_sub_tree = ImageAndVideo()
 			self.complex_combination = ','
 			self.nums_protected_media_in_sub_tree = NumsProtected()
 			self.sizes_protected_media_in_album = SizesProtected()
@@ -275,7 +275,7 @@ class Album(object):
 		album = Album(None)
 		for key, value in list(self.__dict__.items()):
 			if key == "subalbums_list":
-				# subalbus must be new objects
+				# subalbums must be new objects
 				setattr(album, key, [subalbum.copy() for subalbum in value])
 			elif isinstance(value, list):
 				# media are the same object, but the list is a copy
@@ -298,22 +298,33 @@ class Album(object):
 			# the album isn't protected, but media and subalbums may be protected
 			# besides that, for virtual media the physical album password is included in the media and must be taken into account
 			self.media_list = [single_media for single_media in self.media if len(single_media.album_identifiers_set) ==  0 and len(single_media.password_identifiers_set) == 0]
-			for single_media in self.media_list:
-				if single_media.has_gps_data:
-					self.positions_and_media_in_tree.add_single_media(single_media)
+			if not (
+				len(self.cache_base.split(Options.config['cache_folder_separator'])) < 4 and (
+					self.cache_base.find(Options.config['by_date_string']) == 0 or
+					self.cache_base.find(Options.config['by_gps_string']) == 0
+				)
+			):
+				for single_media in self.media_list:
+					if single_media.has_gps_data:
+						self.positions_and_media_in_tree.add_single_media(single_media)
 		else:
 			# protected album, remove the media
 			self.media_list = []
 			# subalbums are not removed, because there may be some unprotected content up in the tree
 
 		# process subalbums
+		subalbums_to_remove = []
 		for subalbum in self.subalbums_list:
 			subalbum.leave_only_unprotected_content()
-			if (
+			if (subalbum.nums_protected_media_in_sub_tree.value(',').total() == 0):
+				subalbums_to_remove.append(subalbum)
+			elif (
 				self.cache_base == Options.config['by_search_string'] or
 				self.cache_base.find(Options.config['by_search_string']) != 0
 			):
 				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
+		for subalbum in subalbums_to_remove:
+			self.subalbums_list.remove(subalbum)
 		# # search albums:
 		# # - do not process subalbums because they have been already processed
 		# # - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
@@ -332,10 +343,10 @@ class Album(object):
 		# 	# 	self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
 		if ',' in list(self.nums_protected_media_in_sub_tree.keys()):
-			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(',')
+			self.nums_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(',')
 			self.sizes_of_sub_tree = self.sizes_protected_media_in_sub_tree.sizes(',')
 		else:
-			self.num_media_in_sub_tree = ImageAndVideo()
+			self.nums_media_in_sub_tree = ImageAndVideo()
 			self.sizes_of_sub_tree = Sizes()
 		if ',' in list(self.sizes_protected_media_in_album.keys()):
 			self.sizes_of_album = self.sizes_protected_media_in_album.sizes(',')
@@ -354,18 +365,32 @@ class Album(object):
 		# for virtual media the physical album password is included in the media, and must be taken into account
 		self.media_list = [single_media for single_media in self.media if
 							single_media.album_identifiers_set == album_identifiers_set and single_media.password_identifiers_set == media_identifiers_set]
-		for single_media in self.media_list:
-			if single_media.has_gps_data:
-				self.positions_and_media_in_tree.add_single_media(single_media)
+		if not (
+			len(self.cache_base.split(Options.config['cache_folder_separator'])) < 4 and (
+				self.cache_base.find(Options.config['by_date_string']) == 0 or
+				self.cache_base.find(Options.config['by_gps_string']) == 0
+			)
+		):
+			for single_media in self.media_list:
+				if single_media.has_gps_data:
+					self.positions_and_media_in_tree.add_single_media(single_media)
 
 		# process subalbums
+		subalbums_to_remove = []
 		for subalbum in self.subalbums_list:
 			subalbum.leave_only_content_protected_by(album_identifiers_set, media_identifiers_set)
 			if (
+				self.complex_combination in subalbum.nums_protected_media_in_sub_tree.keys() and
+				subalbum.nums_protected_media_in_sub_tree.value(self.complex_combination).total() == 0
+			):
+				subalbums_to_remove.append(subalbum)
+			elif (
 				self.cache_base == Options.config['by_search_string'] or
 				self.cache_base.find(Options.config['by_search_string']) != 0
 			):
 				self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
+		for subalbum in subalbums_to_remove:
+			self.subalbums_list.remove(subalbum)
 		# # search albums:
 		# # - do not process subalbums because they have been already processed
 		# # - do not process media: anyway their presence isn't significant, and processing them brings trouble with searches
@@ -385,10 +410,10 @@ class Album(object):
 		# 		self.positions_and_media_in_tree.merge(subalbum.positions_and_media_in_tree)
 
 		if self.complex_combination in list(self.nums_protected_media_in_sub_tree.keys()):
-			self.num_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.complex_combination)
+			self.nums_media_in_sub_tree = self.nums_protected_media_in_sub_tree.value(self.complex_combination)
 			self.sizes_of_sub_tree = self.sizes_protected_media_in_sub_tree.sizes(self.complex_combination)
 		else:
-			self.num_media_in_sub_tree = ImageAndVideo()
+			self.nums_media_in_sub_tree = ImageAndVideo()
 			self.sizes_of_sub_tree = Sizes()
 		if self.complex_combination in list(self.sizes_protected_media_in_album.keys()):
 			self.sizes_of_album = self.sizes_protected_media_in_album.sizes(self.complex_combination)
@@ -507,7 +532,7 @@ class Album(object):
 					back_level()
 					return [None, True]
 			if "jsonVersion" not in json_file_dict:
-				indented_message("not an album cache hit", "unexistent json_version", 4)
+				indented_message("not an album cache hit", "nonexistent json_version", 4)
 				Options.set_obsolete_json_version_flag()
 				return [None, True]
 			elif json_file_dict["jsonVersion"] != Options.json_version:
@@ -625,7 +650,7 @@ class Album(object):
 					"date": subalbum.date_string,
 					# "positionsAndMediaInTree": subalbum.positions_and_media_in_tree,
 					"numPositionsInTree": len(subalbum.positions_and_media_in_tree.positions),
-					"numMediaInSubTree": subalbum.num_media_in_sub_tree,
+					"numsMediaInSubTree": subalbum.nums_media_in_sub_tree,
 					"sizesOfSubTree": subalbum.sizes_of_sub_tree,
 					"sizesOfAlbum": subalbum.sizes_of_album,
 				}
@@ -709,7 +734,7 @@ class Album(object):
 			# "ancestorsCacheBase": ancestors_cache_base,
 			"ancestorsNames": ancestors_names,
 			"physicalPath": path_without_folders_marker,
-			"numMediaInSubTree": self.num_media_in_sub_tree,
+			"numsMediaInSubTree": self.nums_media_in_sub_tree,
 			"sizesOfSubTree": self.sizes_of_sub_tree,
 			"sizesOfAlbum": self.sizes_of_album,
 			"numPositionsInTree": len(self.positions_and_media_in_tree.positions),
@@ -743,9 +768,9 @@ class Album(object):
 		if not separate_media:
 			dictionary["media"] = self.media_list
 		else:
-			dictionary["numMedia"] = ImageAndVideo();
-			dictionary["numMedia"].setImage(len([_media for _media in self.media_list if _media.is_image]))
-			dictionary["numMedia"].setVideo(len([_media for _media in self.media_list if _media.is_video]))
+			dictionary["numsMedia"] = ImageAndVideo();
+			dictionary["numsMedia"].setImage(len([_media for _media in self.media_list if _media.is_image]))
+			dictionary["numsMedia"].setVideo(len([_media for _media in self.media_list if _media.is_video]))
 		if hasattr(self, "symlink_codes_and_numbers"):
 			dictionary["symlinkCodesAndNumbers"] = self.symlink_codes_and_numbers
 		if hasattr(self, "center"):
@@ -835,7 +860,7 @@ class Position(object):
 	def __init__(self, single_media):
 		self.lng = single_media.longitude
 		self.lat = single_media.latitude
-		self.mediaNameList = [single_media]
+		self.mediaList = [single_media]
 
 	def belongs(self, single_media):
 		# checks whether the single media given as argument can belong to the position
@@ -843,11 +868,11 @@ class Position(object):
 
 	def add(self, single_media):
 		# the media to add is supposed to have the same lat and lng as the position
-		self.mediaNameList.append(single_media)
+		self.mediaList.append(single_media)
 
 	def copy(self):
-		new_position = Position(self.mediaNameList[0])
-		new_position.mediaNameList = self.mediaNameList[:]
+		new_position = Position(self.mediaList[0])
+		new_position.mediaList = self.mediaList[:]
 		return new_position
 
 
@@ -863,7 +888,7 @@ class Positions(object):
 		match = False
 		for index, _position in enumerate(self.positions):
 			if position.lat == _position.lat and position.lng == _position.lng:
-				self.positions[index].mediaNameList.extend(position.mediaNameList)
+				self.positions[index].mediaList.extend(position.mediaList)
 				match = True
 				break
 		if not match:
@@ -885,7 +910,7 @@ class Positions(object):
 			self.add_position(Position(single_media))
 
 	def remove_empty_positions(self):
-		self.positions = [position for position in self.positions if len(position.mediaNameList) > 0]
+		self.positions = [position for position in self.positions if len(position.mediaList) > 0]
 
 	def to_dict(self, type_string = None):
 		positions = []
@@ -893,17 +918,17 @@ class Positions(object):
 			position_dict = {
 				'lat': position.lat,
 				'lng': position.lng,
-				'mediaNameList': []
+				'mediaList': []
 			}
-			for single_media in position.mediaNameList:
-				media_album_cache_base = single_media.album.cache_base
-				if type_string == Options.config['by_date_string']:
-					media_album_cache_base = single_media.day_album_cache_base
-				elif type_string == Options.config['by_gps_string']:
-					media_album_cache_base = single_media.gps_album_cache_base
-				position_dict['mediaNameList'].append({
+			for single_media in position.mediaList:
+				# media_album_cache_base = single_media.album.cache_base
+				# if type_string == Options.config['by_date_string']:
+				# 	media_album_cache_base = single_media.day_album_cache_base
+				# elif type_string == Options.config['by_gps_string']:
+				# 	media_album_cache_base = single_media.gps_album_cache_base
+				position_dict['mediaList'].append({
 					'cacheBase': single_media.cache_base,
-					'albumCacheBase': media_album_cache_base,
+					# 'albumCacheBase': media_album_cache_base,
 					'foldersCacheBase': single_media.album.cache_base
 					# 'passwordsMd5': list(single_media.passwords_md5)
 				})
@@ -919,7 +944,7 @@ class Positions(object):
 	def count_media(self):
 		count = 0
 		for position in self.positions:
-			count += len(position.mediaNameList)
+			count += len(position.mediaList)
 		return count
 
 
@@ -1102,12 +1127,12 @@ class Media(object):
 		self.mime_type = dictionary['mimeType']
 		if "password_identifiers_set" in dictionary:
 			self.password_identifiers_set = dictionary['password_identifiers_set']
-		else:
-			self.password_identifiers_set = set()
+		# else:
+		# 	self.password_identifiers_set = set()
 		if "album_identifiers_set" in dictionary:
 			self.album_identifiers_set = dictionary['album_identifiers_set']
-		else:
-			self.album_identifiers_set = set()
+		# else:
+		# 	self.album_identifiers_set = set()
 
 		self.is_valid = True
 
@@ -1201,7 +1226,7 @@ class Media(object):
 			# try with video detection
 			self._video_metadata(media_path)
 			if self.is_video:
-				transcode_path = self._video_transcode(thumbs_path, media_path)
+				transcode_path = self._video_transcode(thumbs_path, media_path, json_files, json_files_min_mtime)
 				if self.is_valid:
 					self._attributes["fileSizes"] = Sizes()
 					self._attributes["fileSizes"].setVideo(0, os.path.getsize(media_path))
@@ -1779,11 +1804,11 @@ class Media(object):
 		next_level()
 		message("checking reduction/thumbnail...", thumb_path, 5)
 		if not os.path.exists(thumbs_path_with_subdir):
-			indented_message("unexistent thumbnails subdir", thumbs_path_with_subdir, 5)
+			indented_message("nonexistent thumbnails subdir", thumbs_path_with_subdir, 5)
 		elif not os.path.exists(thumb_path):
-			indented_message("unexistent reduction/thumbnail", thumb_path, 5)
+			indented_message("nonexistent reduction/thumbnail", thumb_path, 5)
 		elif file_mtime(thumb_path) < self.datetime_file:
-			indented_message("reduction/thumbnail older than media date time", thumb_path, 5)
+			indented_message("reduction/thumbnail older than original media", thumb_path, 5)
 		elif json_files_min_mtime is not None and file_mtime(thumb_path) >= json_files_min_mtime:
 			files = "'" + json_files[0] + "' and others"
 			json_file = os.path.join(thumbs_path, self.album.json_file)
@@ -1792,7 +1817,7 @@ class Media(object):
 			not _is_thumbnail and Options.config['recreate_reduced_photos'] or
 			_is_thumbnail and Options.config['recreate_thumbnails']
 		):
-			indented_message("some option change requests recreation", "", 5)
+			indented_message("some option change requests reduction/thumbnail recreation", "", 5)
 		else:
 			# the reduced image/thumbnail is there and is valid, exit immediately
 			indented_message("reduction/thumbnail OK, skipping", "", 5)
@@ -2052,7 +2077,7 @@ class Media(object):
 			indented_message("filled", "", 5)
 
 		# the subdir hadn't been created when creating the album in order to avoid creation of empty directories
-		make_dir(thumbs_path_with_subdir, "unexistent cache subdir")
+		make_dir(thumbs_path_with_subdir, "nonexistent cache subdir")
 
 		if os.path.exists(thumb_path) and not os.access(thumb_path, os.W_OK):
 			message("FATAL ERROR", thumb_path + " not writable, quitting")
@@ -2116,7 +2141,7 @@ class Media(object):
 					msg = "saved for media (2nd try, " + str(original_thumb_size) + ")"
 				if hasattr(start_image, 'exif_by_PIL'):
 					msg += " with exif data"
-				message(msg, info_string, 2)
+				message(msg, info_string, 4)
 				back_level()
 			except KeyboardInterrupt:
 				try:
@@ -2127,7 +2152,6 @@ class Media(object):
 			back_level()
 			return [start_image_copy, thumb_path]
 		except Exception as e:
-			print(e)
 			indented_message("thumbnail save failure with error: " + e, str(original_thumb_size) + " -> " + os.path.basename(thumb_path), 2)
 			try:
 				os.unlink(thumb_path)
@@ -2192,7 +2216,7 @@ class Media(object):
 			pass
 
 
-	def _video_transcode(self, transcode_path, original_path):
+	def _video_transcode(self, transcode_path, original_path, json_files, json_files_min_mtime):
 		album_prefix = remove_folders_marker(self.album.cache_base) + Options.config["cache_folder_separator"]
 		if album_prefix == Options.config["cache_folder_separator"]:
 			album_prefix = ""
@@ -2203,7 +2227,7 @@ class Media(object):
 				message("FATAL ERROR", album_cache_path + " not writable, quitting")
 				sys.exit(-97)
 		else:
-			make_dir(album_cache_path, "unexistent albums cache subdir")
+			make_dir(album_cache_path, "nonexistent albums cache subdir")
 
 		transcode_path = os.path.join(album_cache_path, album_prefix + video_cache_name(self))
 		# get number of cores on the system, and use all minus one
@@ -2229,8 +2253,21 @@ class Media(object):
 		filters = []
 		info_string = "mp4, h264, " + Options.config['video_transcode_bitrate'] + " bit/sec, crf=" + str(Options.config['video_crf'])
 
-		if os.path.exists(transcode_path) and file_mtime(transcode_path) >= self.datetime_file:
-			indented_message("existent transcoded video", info_string, 4)
+		if not os.path.exists(transcode_path):
+			indented_message("nonexistent transcoded video", transcode_path, 5)
+		elif file_mtime(transcode_path) < self.datetime_file:
+			indented_message("transcoded video older than original video", transcode_path, 5)
+		elif json_files_min_mtime is not None and file_mtime(transcode_path) >= json_files_min_mtime:
+			files = "'" + json_files[0] + "' and others"
+			# json_file = os.path.join(thumbs_path, self.album.json_file)
+			indented_message("transcoded video newer than json files", transcode_path + ", " + files, 5)
+		elif file_mtime(transcode_path) < self.datetime_file:
+			indented_message("transcoded video older than original video", transcode_path, 5)
+		elif Options.config['recreate_transcoded_videos']:
+			indented_message("some option change requests transcoded video recreation", "", 5)
+		else:
+			# the trascoded video is there and is valid
+			indented_message("transcoded video OK, skipping", info_string, 4)
 			self._video_metadata(transcode_path, False)
 			return transcode_path
 
@@ -2589,6 +2626,15 @@ class Media(object):
 			folders_album = os.path.join(folders_album, self.folders)
 
 		media = self.attributes
+		try:
+			del media["password_identifiers_set"]
+		except:
+			pass
+		try:
+			del media["album_identifiers_set"]
+		except:
+			pass
+
 		media["name"] = self.name
 		media["cacheBase"] = self.cache_base
 		media["date"] = self.date_string

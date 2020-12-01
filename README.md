@@ -1,17 +1,19 @@
-# MyPhotoShare v4.1.0 (Nov 29, 2019)
+# MyPhotoShare v4.9.0 (Dec 1, 2020)
 
 ### A Web Photo Gallery Done Right via Static JSON & Dynamic Javascript
 #### by Jason A. Donenfeld (<Jason@zx2c4.com>), Jerome Charaoui (jerome@riseup.net)  Joachim Tingvold (joachim@tingvold.com), Paolo Benvenuto (<paolobenve@gmail.com>), Pierre Métras (<p.metras@videotron.ca>)
 
 ## Description
 
-**MyPhotoShare** is an open source web photo gallery aimed at sleekness and speed. It works over directory structures rather than esoteric photo database management software. Everything it generates is static, which means it's extremely fast.
+**MyPhotoShare** is an open source web photo gallery aimed at sleekness and speed. It works over directory structures rather than esoteric photo database management software. Everything it generates is static, which means it's extremely fast and secure.
 
-It permits browsing the media by folder, date and geotags.
+It permits browsing the media by folder, date, search terms, geotags and maps. You can associate metadata (i.e. title, description, tags) with pictures and albums and search media content by keywords or display captions.
 
 Whenever geotagged photos are found, a map with the photo(s) position can be shown using Leaflet, and clicking the photo markers the photo thumbnails for that point are shown.
 
-Content (albums and media files) can be shared over some popular social plaforms.
+Content (albums and media files) can be shared over some popular social plaforms or downloaded.
+
+It is available in English, Italian, French and Spanish. Localizing to other languages is simple.
 
 **MyPhotoShare** is a Jason A. Donenfeld's *photofloat* fork, enriched by Jerome Charaoui's patches permitting showing videos, Paolo Benvenuto's and Pierre Métras's following development.
 
@@ -76,7 +78,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 
 ### Great User Experience
 
-- [x] Keyboard navigation: arrows, pageup/down, `[esc]`, `[f]` (fullscreen), `[d]` (download original), `[o]` (show original), `[s]` (map), `[m]` (metadata), `[e]` (open right menu), `[+]` (pinch in), `[-]` (pinch out), space/backspace (like in [Darktable](https://www.darktable.org/)), `[>]`/`[<]` (rotation among browsing modes: folders -> by date -> by gps -> by search), `[`/`]` (changing sort of albums in a rotative way), `{`/`}` (changing sort of media in a rotative way).
+- [x] Keyboard navigation: arrows, pageup/down, `[esc]`, `[f]` (fullscreen), `[d]` (download original), `[o]` (show original), `[s]` (map), `[m]` (metadata), `[e]` (open right menu), `[+]` (pinch in), `[-]` (pinch out), space/backspace (like in [Darktable](https://www.darktable.org/)), `[>]`/`[<]` (rotation among browsing modes: folders -> by date -> by gps -> by search -> by map -> by selection), `[`/`]` (changing sort of albums in a rotative way), `{`/`}` (changing sort of media in a rotative way).
 - [x] Keyboard dragging when the photo is zoomed in.
 - [x] Mouse-wheel support, including for pinching (with ctrl or shift).
 - [x] Various user interface options can be changed by the user.
@@ -103,6 +105,11 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Patterns are defined in album tree and specify what should every password protect; allowed matching modes: case sensitive/insensitive, whole/part of dir/file name, dir only/files only/both.
 - [x] Passwords aren't exposed in javascript, and sensitive data and media are extremely difficult to find in cache.
 
+### Selecting media and albums (_new_ in v5.0)
+
+- [x] Albums and media can be seleted via a click or massively, either in _hard_ albums (the default tree, by date, by place) and virtual ones (by search, by gps, by map).
+- [x] Selected media and albums can be seen as an album, and can be browsed, downloaded, sorted, shown on map, etc.
+
 ### And More...
 
 - [x] Analytics with optional Google Analytics and Piwik integration.
@@ -114,6 +121,7 @@ Content (albums and media files) can be shared over some popular social plaforms
 - [x] Developer friendly with debug mode for using unminimized css's and js's.
 - [x] Photos metadata can be overloaded by user defined values in special file `album.ini`.
 - [x] Consistent hash URL format.
+- [x] Create Debian/Ubuntu package with (mps_debian)[https://github.com/pmetras/mps_debian] for easy install.
 
 
 ## Python version

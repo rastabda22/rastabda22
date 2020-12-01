@@ -4,6 +4,7 @@
 from datetime import datetime
 import os
 import json
+import subprocess
 
 import Options
 
@@ -278,12 +279,19 @@ def find(name):
 			return os.path.join(root, name)
 	return False
 
-def find_in_usr_share(name):
-	for root, dirnames, files in os.walk('/usr/share/'):
-		dirnames[:] = [dir for dir in dirnames if not os.path.ismount(os.path.join(root, dir))]
-		if name in files:
-			return os.path.join(root, name)
-	return False
+def find_in_filesystem(file_name, dir):
+	command = ['locate', file_name]
+
+	output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
+	output = output.decode()
+
+	search_results = output.split('\n')
+	search_results = [file_path for file_path in search_results if file_path.startswith(dir) and file_path.endswith("/" + file_name)]
+
+	if len(search_results) == 0:
+		return False
+	else:
+		return search_results[0]
 
 
 def time_totals(time):

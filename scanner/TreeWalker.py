@@ -78,20 +78,20 @@ class TreeWalker:
 			# 	message("nothing has changed in the album tree!", "Execution may end up here", 3)
 			# 	return
 
-			message("changes has been in the album tree", "I must keep working!", 3)
+			message("changes have occurred in the album tree", "I must keep working!", 3)
 			next_level()
 
 			self.origin_album.nums_protected_media_in_sub_tree.merge(folders_album.nums_protected_media_in_sub_tree)
 			self.origin_album.sizes_protected_media_in_sub_tree.merge(folders_album.sizes_protected_media_in_sub_tree)
 			self.origin_album.add_subalbum(folders_album)
 
-			self.all_json_files.append(Options.config['folders_string'] + ".json")
+			# self.all_json_files.append(Options.config['folders_string'] + ".json")
 
 			message("generating by date albums...", "", 4)
 			by_date_album = self.generate_by_date_albums(self.origin_album)
 			indented_message("by date albums generated", "", 5)
 			if by_date_album is not None and not by_date_album.empty:
-				self.all_json_files.append(Options.config['by_date_string'] + ".json")
+				# self.all_json_files.append(Options.config['by_date_string'] + ".json")
 				self.origin_album.nums_protected_media_in_sub_tree.merge(by_date_album.nums_protected_media_in_sub_tree)
 				self.origin_album.sizes_protected_media_in_sub_tree.merge(by_date_album.sizes_protected_media_in_sub_tree)
 				self.origin_album.add_subalbum(by_date_album)
@@ -101,7 +101,7 @@ class TreeWalker:
 			by_geonames_album = self.generate_by_geonames_albums(self.origin_album)
 			indented_message("by geonames albums generated", "", 5)
 			if by_geonames_album is not None and not by_geonames_album.empty:
-				self.all_json_files.append(Options.config['by_gps_string'] + ".json")
+				# self.all_json_files.append(Options.config['by_gps_string'] + ".json")
 				self.origin_album.nums_protected_media_in_sub_tree.merge(by_geonames_album.nums_protected_media_in_sub_tree)
 				self.origin_album.sizes_protected_media_in_sub_tree.merge(by_geonames_album.sizes_protected_media_in_sub_tree)
 				self.origin_album.add_subalbum(by_geonames_album)
@@ -111,7 +111,7 @@ class TreeWalker:
 			by_search_album = self.generate_by_search_albums(self.origin_album)
 			indented_message("by search albums generated", "", 5)
 			if by_search_album is not None and not by_search_album.empty:
-				self.all_json_files.append(Options.config['by_search_string'] + ".json")
+				# self.all_json_files.append(Options.config['by_search_string'] + ".json")
 				self.origin_album.nums_protected_media_in_sub_tree.merge(by_search_album.nums_protected_media_in_sub_tree)
 				self.origin_album.sizes_protected_media_in_sub_tree.merge(by_search_album.sizes_protected_media_in_sub_tree)
 				self.origin_album.add_subalbum(by_search_album)
@@ -172,8 +172,8 @@ class TreeWalker:
 			message("all protected albums saved to json files", "", 4)
 			report_mem()
 
-			# options must be saved when json files have been saved, otherwise in case of error they may not reflect the json files situation
-			self._save_json_options()
+			# options must be saved here, when json files have already been saved, otherwise in case of error they may not reflect the json files situation
+			self._save_json_options(len(self.origin_album.positions_and_media_in_tree.positions))
 
 			for identifier_and_password in Options.identifiers_and_passwords:
 				if identifier_and_password['used']:
@@ -212,17 +212,17 @@ class TreeWalker:
 				self.all_albums_to_json_file(subalbum, complex_identifiers_combination)
 
 		if (
-			album.num_media_in_sub_tree.total() == 0 and (
-				album.cache_base.find(Options.config['by_search_string']) != 0  or
+			album.nums_media_in_sub_tree.total() == 0 and (
+				album.cache_base.find(Options.config['by_search_string']) != 0 or
 				album.cache_base != Options.config['by_search_string'] and
 				(
 					complex_identifiers_combination is None and
-					all(subalbum.nums_protected_media_in_sub_tree.value(',') == 0 for subalbum in album.subalbums)
+					all(subalbum.nums_protected_media_in_sub_tree.value(',').total() == 0 for subalbum in album.subalbums)
 					or
 					complex_identifiers_combination is not None and
 					all(
 						complex_identifiers_combination in subalbum.nums_protected_media_in_sub_tree.non_trivial_keys() and
-						subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination) == 0
+						subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination).total() == 0
 						for subalbum in album.subalbums)
 				)
 			)
@@ -437,15 +437,15 @@ class TreeWalker:
 						month_album.add_single_media(single_media)
 						year_album.add_single_media(single_media)
 						if single_media.is_image:
-							day_album.num_media_in_sub_tree.incrementImages()
-							month_album.num_media_in_sub_tree.incrementImages()
-							year_album.num_media_in_sub_tree.incrementImages()
-							by_date_album.num_media_in_sub_tree.incrementImages()
+							day_album.nums_media_in_sub_tree.incrementImages()
+							month_album.nums_media_in_sub_tree.incrementImages()
+							year_album.nums_media_in_sub_tree.incrementImages()
+							by_date_album.nums_media_in_sub_tree.incrementImages()
 						else:
-							day_album.num_media_in_sub_tree.incrementVideos()
-							month_album.num_media_in_sub_tree.incrementVideos()
-							year_album.num_media_in_sub_tree.incrementVideos()
-							by_date_album.num_media_in_sub_tree.incrementVideos()
+							day_album.nums_media_in_sub_tree.incrementVideos()
+							month_album.nums_media_in_sub_tree.incrementVideos()
+							year_album.nums_media_in_sub_tree.incrementVideos()
+							by_date_album.nums_media_in_sub_tree.incrementVideos()
 						if single_media.has_gps_data:
 							day_album.positions_and_media_in_tree.add_single_media(single_media)
 							month_album.positions_and_media_in_tree.add_single_media(single_media)
@@ -498,7 +498,7 @@ class TreeWalker:
 			Options.all_albums.append(year_album)
 			self.generate_composite_image(year_album, year_max_file_date)
 		Options.all_albums.append(by_date_album)
-		if by_date_album.num_media_in_sub_tree.total() > 0:
+		if by_date_album.nums_media_in_sub_tree.total() > 0:
 			self.generate_composite_image(by_date_album, by_date_max_file_date)
 		back_level()
 		return by_date_album
@@ -530,13 +530,13 @@ class TreeWalker:
 			for single_media in media_album_and_words["media_list"]:
 				word_album.add_single_media(single_media)
 				if single_media.is_image:
-					word_album.num_media_in_sub_tree.incrementImages()
+					word_album.nums_media_in_sub_tree.incrementImages()
 					# actually, this counter for the search root album is not significant
-					by_search_album.num_media_in_sub_tree.incrementImages()
+					by_search_album.nums_media_in_sub_tree.incrementImages()
 				else:
-					word_album.num_media_in_sub_tree.incrementVideos()
+					word_album.nums_media_in_sub_tree.incrementVideos()
 					# actually, this counter for the search root album is not significant
-					by_search_album.num_media_in_sub_tree.incrementVideos()
+					by_search_album.nums_media_in_sub_tree.incrementVideos()
 
 				single_media_date = max(single_media.datetime_file, single_media.datetime_dir)
 				# if word_max_file_date:
@@ -570,9 +570,6 @@ class TreeWalker:
 
 			for single_album in media_album_and_words["albums_list"]:
 				word_album.add_subalbum(single_album)
-				# word_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
-				# actually, this counter for the search root album is not significant
-				# by_search_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
 				# if word_max_file_date:
 				# 	word_max_file_date = max(word_max_file_date, single_album.date)
 				# else:
@@ -755,15 +752,15 @@ class TreeWalker:
 							region_album.add_single_media(single_media)
 							country_album.add_single_media(single_media)
 							if single_media.is_image:
-								place_album.num_media_in_sub_tree.incrementImages()
-								region_album.num_media_in_sub_tree.incrementImages()
-								country_album.num_media_in_sub_tree.incrementImages()
-								by_geonames_album.num_media_in_sub_tree.incrementImages()
+								place_album.nums_media_in_sub_tree.incrementImages()
+								region_album.nums_media_in_sub_tree.incrementImages()
+								country_album.nums_media_in_sub_tree.incrementImages()
+								by_geonames_album.nums_media_in_sub_tree.incrementImages()
 							else:
-								place_album.num_media_in_sub_tree.incrementVideos()
-								region_album.num_media_in_sub_tree.incrementVideos()
-								country_album.num_media_in_sub_tree.incrementVideos()
-								by_geonames_album.num_media_in_sub_tree.incrementVideos()
+								place_album.nums_media_in_sub_tree.incrementVideos()
+								region_album.nums_media_in_sub_tree.incrementVideos()
+								country_album.nums_media_in_sub_tree.incrementVideos()
+								by_geonames_album.nums_media_in_sub_tree.incrementVideos()
 
 							if place_album.center == {}:
 								place_album.center['latitude'] = single_media.latitude
@@ -849,7 +846,7 @@ class TreeWalker:
 			Options.all_albums.append(country_album)
 			self.generate_composite_image(country_album, country_max_file_date)
 		Options.all_albums.append(by_geonames_album)
-		if by_geonames_album.num_media_in_sub_tree.total() > 0:
+		if by_geonames_album.nums_media_in_sub_tree.total() > 0:
 			self.generate_composite_image(by_geonames_album, by_geonames_max_file_date)
 		back_level()
 		return by_geonames_album
@@ -1007,7 +1004,7 @@ class TreeWalker:
 	@staticmethod
 	def _listdir_sorted_by_time(path):
 		# this function returns the directory listing sorted by mtime
-		# it takes into account the fact that the file is a symlink to an unexistent file
+		# it takes into account the fact that the file is a symlink to an nonexistent file
 		mtime = lambda f: os.path.exists(os.path.join(path, f)) and os.stat(os.path.join(path, f)).st_mtime or time.mktime(datetime.now().timetuple())
 		return list(sorted(os.listdir(path), key=mtime))
 
@@ -1270,7 +1267,7 @@ class TreeWalker:
 					must_process_passwords = True
 			# except IOError:
 			# 	# will execution never come here?
-			# 	indented_message("not an album cache hit", "json file unexistent", 4)
+			# 	indented_message("not an album cache hit", "json file nonexistent", 4)
 			# 	album_cache_hit = False
 			# is the following exception needed? it surely catched date errors...
 			# except (ValueError, AttributeError, KeyError):
@@ -1420,12 +1417,16 @@ class TreeWalker:
 				continue
 
 			if entry[0] == '.' or entry == Options.config['metadata_filename']:
-				# skip hidden files and directories, or user's metadata file 'album.ini'
+				# skip hidden files/directories and  user's metadata file 'album.ini'
+				continue
+			if Options.global_pattern != "" and re.search(Options.global_pattern, entry):
+				# skip excluded files/directories
+				indented_message("skipping file/directory matching a pattern", "global pattern = '" + Options.global_pattern + "', entry = '" + entry + "'" , 3)
 				continue
 
 			entry_with_path = os.path.join(absolute_path, entry)
 			if not os.path.exists(entry_with_path):
-				indented_message("unexistent file, perhaps a symlink, skipping", entry_with_path, 2)
+				indented_message("nonexistent file, perhaps a symlink, skipping", entry_with_path, 2)
 			elif not os.access(entry_with_path, os.R_OK):
 				indented_message("unreadable file", entry_with_path, 2)
 			elif os.path.islink(entry_with_path) and not Options.config['follow_symlinks']:
@@ -1445,7 +1446,7 @@ class TreeWalker:
 				passwords_or_album_ini_processed = passwords_or_album_ini_processed or _passwords_or_album_ini_processed
 				if next_walked_album is not None:
 					max_file_date = max(max_file_date, sub_max_file_date)
-					album.num_media_in_sub_tree.sum(next_walked_album.num_media_in_sub_tree)
+					album.nums_media_in_sub_tree.sum(next_walked_album.nums_media_in_sub_tree)
 					album.positions_and_media_in_tree.merge(next_walked_album.positions_and_media_in_tree)
 					album.nums_protected_media_in_sub_tree.merge(next_walked_album.nums_protected_media_in_sub_tree)
 					album.sizes_protected_media_in_sub_tree.merge(next_walked_album.sizes_protected_media_in_sub_tree)
@@ -1521,7 +1522,7 @@ class TreeWalker:
 				if (
 					single_media_cache_hit and (
 						cached_media.is_video and cached_media._attributes["fileSizes"].getVideosSize(0) != file_size or
-						not cached_media.is_video and cached_media._attributes["fileSizes"].getImagesSize(0) != file_size
+						cached_media.is_image and cached_media._attributes["fileSizes"].getImagesSize(0) != file_size
 					)
 				):
 					indented_message("not a single media cache hit", "file size different", 5)
@@ -1561,11 +1562,12 @@ class TreeWalker:
 									try:
 										os.unlink(os.path.join(Options.config['cache_path'], cache_file))
 										message("deleted, re-creating fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 3)
+										absolute_cache_file_exists = False
 									except OSError:
 										message("error deleting fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 1)
 
 							if not absolute_cache_file_exists:
-								indented_message("not a single media cache hit", "unexistent reduction/thumbnail", 4)
+								indented_message("not a single media cache hit", "nonexistent reduction/thumbnail", 4)
 								single_media_cache_hit = False
 								break
 							if file_mtime(absolute_cache_file) < cached_media.datetime_file:
@@ -1576,8 +1578,12 @@ class TreeWalker:
 								indented_message("not a single media cache hit", "reduction/thumbnail newer than json file", 4)
 								single_media_cache_hit = False
 								break
-							if Options.config['recreate_reduced_photos']:
+							if cached_media.is_image and Options.config['recreate_reduced_photos']:
 								indented_message("not a single media cache hit", "reduced photo recreation requested", 4)
+								single_media_cache_hit = False
+								break
+							if cached_media.is_video and Options.config['recreate_transcoded_videos']:
+								indented_message("not a single media cache hit", "transcoded video recreation requested", 4)
 								single_media_cache_hit = False
 								break
 							if Options.config['recreate_thumbnails']:
@@ -1670,9 +1676,9 @@ class TreeWalker:
 					album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 
 					if single_media.is_image:
-						album.num_media_in_sub_tree.incrementImages()
+						album.nums_media_in_sub_tree.incrementImages()
 					else:
-						album.num_media_in_sub_tree.incrementVideos()
+						album.nums_media_in_sub_tree.incrementVideos()
 					if single_media.has_gps_data:
 						album.positions_and_media_in_tree.add_single_media(single_media)
 
@@ -1785,7 +1791,7 @@ class TreeWalker:
 		else:
 			message("VOID: no media in this directory", os.path.basename(absolute_path), 4)
 
-		if album.num_media_in_sub_tree.total():
+		if album.nums_media_in_sub_tree.total():
 			# generate the album composite image for sharing
 			self.generate_composite_image(album, max_file_date)
 		back_level()
@@ -1812,11 +1818,11 @@ class TreeWalker:
 		else:
 			random_number -= len(album.media_list)
 			for subalbum in album.subalbums_list:
-				if random_number < subalbum.num_media_in_sub_tree.total():
+				if random_number < subalbum.nums_media_in_sub_tree.total():
 					[picked_image, random_number] = self.pick_random_image(subalbum, random_number)
 					if picked_image:
 						return [picked_image, random_number]
-				random_number -= subalbum.num_media_in_sub_tree.total()
+				random_number -= subalbum.nums_media_in_sub_tree.total()
 		return [None, random_number]
 
 	def generate_composite_image(self, album, max_file_date):
@@ -1849,15 +1855,15 @@ class TreeWalker:
 		# and generate a square composite image
 
 		# determine the number of images to use
-		if album.num_media_in_sub_tree.total() == 1 or Options.config['max_album_share_thumbnails_number'] == 1:
+		if album.nums_media_in_sub_tree.total() == 1 or Options.config['max_album_share_thumbnails_number'] == 1:
 			max_thumbnail_number = 1
-		elif album.num_media_in_sub_tree.total() < 9 or Options.config['max_album_share_thumbnails_number'] == 4:
+		elif album.nums_media_in_sub_tree.total() < 9 or Options.config['max_album_share_thumbnails_number'] == 4:
 			max_thumbnail_number = 4
-		elif album.num_media_in_sub_tree.total() < 16 or Options.config['max_album_share_thumbnails_number'] == 9:
+		elif album.nums_media_in_sub_tree.total() < 16 or Options.config['max_album_share_thumbnails_number'] == 9:
 			max_thumbnail_number = 9
-		elif album.num_media_in_sub_tree.total() < 25 or Options.config['max_album_share_thumbnails_number'] == 16:
+		elif album.nums_media_in_sub_tree.total() < 25 or Options.config['max_album_share_thumbnails_number'] == 16:
 			max_thumbnail_number = 16
-		elif album.num_media_in_sub_tree.total() < 36 or Options.config['max_album_share_thumbnails_number'] == 25:
+		elif album.nums_media_in_sub_tree.total() < 36 or Options.config['max_album_share_thumbnails_number'] == 25:
 			max_thumbnail_number = 25
 		else:
 			max_thumbnail_number = Options.config['max_album_share_thumbnails_number']
@@ -1866,9 +1872,9 @@ class TreeWalker:
 		random_thumbnails = list()
 		random_list = list()
 		bad_list = list()
-		num_random_thumbnails = min(max_thumbnail_number, album.num_media_in_sub_tree.total())
+		num_random_thumbnails = min(max_thumbnail_number, album.nums_media_in_sub_tree.total())
 		i = 0
-		good_media_number = album.num_media_in_sub_tree.total()
+		good_media_number = album.nums_media_in_sub_tree.total()
 		while True:
 			if i >= good_media_number:
 				break
@@ -1876,7 +1882,7 @@ class TreeWalker:
 				random_media = album.media_list[0]
 			else:
 				while True:
-					random_number = random.randint(0, album.num_media_in_sub_tree.total() - 1)
+					random_number = random.randint(0, album.nums_media_in_sub_tree.total() - 1)
 					if random_number not in random_list and random_number not in bad_list:
 						break
 				random_list.append(random_number)
@@ -1895,7 +1901,7 @@ class TreeWalker:
 				if i == num_random_thumbnails:
 					break
 			else:
-				message("unexistent thumbnail", thumbnail + " - i=" + str(i) + ", good=" + str(good_media_number), 5)
+				message("nonexistent thumbnail", thumbnail + " - i=" + str(i) + ", good=" + str(good_media_number), 5)
 				bad_list.append(thumbnail)
 				good_media_number -= 1
 
@@ -1941,7 +1947,7 @@ class TreeWalker:
 
 
 	@staticmethod
-	def _save_json_options():
+	def _save_json_options(num):
 		json_options_file = os.path.join(Options.config['cache_path'], 'options.json')
 		message("saving json options file...", json_options_file, 4)
 		# some option must not be saved
@@ -1949,6 +1955,8 @@ class TreeWalker:
 		for key, value in list(Options.config.items()):
 			if key not in Options.options_not_to_be_saved:
 				options_to_save[key] = value
+		# add the total count of positions, so that reading another json file is not needed in order to know if gps data exist
+		options_to_save['num_positions_in_tree'] = num
 
 		with open(json_options_file, 'w') as options_file:
 			json.dump(options_to_save, options_file)
