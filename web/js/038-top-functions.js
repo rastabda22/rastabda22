@@ -835,6 +835,17 @@
 					}
 				);
 
+				if (
+					[".map-popup-trigger", ".map-popup-trigger-double"].indexOf(env.selectorClickedToOpenTheMap) !== -1 &&
+					env.previousAlbum !== null &&
+					env.previousAlbum.isMap() && env.previousMedia === null &&
+					env.fromEscKey ||
+					env.mapRefreshType !== "none"
+				) {
+					env.fromEscKey = false;
+					$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
+				}
+
 				$('.modal-close').on(
 					'click',
 					function() {
@@ -1472,17 +1483,6 @@
 			env.nextMedia = null;
 			env.prevMedia = null;
 			env.currentMedia.show(env.currentAlbum, 'center');
-
-			// we are in prepareForShowing
-			// activate the map and the popup when coming back from a map album
-			if (
-				env.previousAlbum !== null &&
-				env.previousAlbum.isMap() && env.previousMedia === null &&
-				env.fromEscKey ||
-				env.mapRefreshType !== "none"
-			) {
-				$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
-			}
 		} else {
 			TopFunctions.setTitle("album", null);
 			$("#album-view").removeClass("media-view-container");
@@ -1505,7 +1505,6 @@
 		} else {
 			// subalbums are present, we have to wait when all the random thumbnails will be loaded
 		}
-		env.fromEscKey = false;
 	};
 
 	Album.prototype.bindSortEvents = function() {
@@ -2249,6 +2248,22 @@
 							ev.data.singleMedia.generateMapFromMedia(ev, from);
 						}
 					);
+
+					if (
+						env.selectorClickedToOpenTheMap === "#media-map-link-" + i &&
+						env.previousAlbum !== null &&
+						env.previousAlbum.isMap() &&
+						(
+							env.previousMedia === null ||
+							env.previousAlbum.isAlbumWithOneMedia()
+						) &&
+						env.fromEscKey ||
+						env.mapRefreshType == "refresh"
+					) {
+						env.fromEscKey = false;
+						$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
+					}
+
 					$("#media-select-box-" + i).off('click').on(
 						'click',
 						{media: ithMedia, clickedSelector: "#media-select-box-" + i},
@@ -2258,6 +2273,7 @@
 							ev.data.media.toggleSelectedStatus(env.currentAlbum, ev.data.clickedSelector);
 						}
 					);
+
 					if (
 						typeof isPhp === "function" && (
 							util.somethingIsInMapAlbum() || util.somethingIsSelected() || PhotoFloat.guessedPasswordsMd5.length
@@ -2483,6 +2499,21 @@
 								}
 
 								if (
+									env.selectorClickedToOpenTheMap === "#subalbum-map-link-" + iSubalbum &&
+									env.previousAlbum !== null &&
+									env.previousAlbum.isMap() &&
+									(
+										env.previousMedia === null ||
+										env.previousAlbum.isAlbumWithOneMedia()
+									) &&
+									env.fromEscKey ||
+									env.mapRefreshType == "refresh"
+								) {
+									env.fromEscKey = false;
+									$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
+								}
+
+								if (
 									typeof isPhp === "function" && (
 										util.somethingIsInMapAlbum() || util.somethingIsSelected() || PhotoFloat.guessedPasswordsMd5.length
 									)
@@ -2600,20 +2631,6 @@
 		f.setOptions();
 
 		env.currentAlbum.bindSortEvents();
-
-		// we are in showAlbum
-		// activate the map and the popup when coming back from a map album
-		if (
-			env.previousAlbum !== null &&
-			env.previousAlbum.isMap() &&
-			(
-				env.previousMedia === null ||
-				env.previousAlbum.isAlbumWithOneMedia()
-			) &&
-			env.fromEscKey ||
-			env.mapRefreshType == "refresh"
-		)
-			$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 
 		if (! $("#album-view").hasClass("hidden"))
 			setTimeout(f.scrollToThumb, 1);
