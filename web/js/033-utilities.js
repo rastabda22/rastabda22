@@ -2367,9 +2367,9 @@
 			for (let iCacheBase = 1; iCacheBase < album.ancestorsCacheBase.length; iCacheBase ++) {
 				let albumName;
 				if (album.ancestorsNames[iCacheBase] === "")
-				albumName = Utilities._t('.not-specified');
+					albumName = Utilities._t('.not-specified');
 				else
-				albumName = album.ancestorsNames[iCacheBase];
+					albumName = Utilities.transformAltPlaceName(album.ancestorsNames[iCacheBase]);
 				if (iCacheBase == 1)
 					secondLine += "<span class='gray'>(" + Utilities._t("#in-by-gps-album") + "</span> ";
 				// let marker = "<marker>" + iCacheBase + "</marker>";

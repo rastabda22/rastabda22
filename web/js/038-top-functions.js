@@ -2226,7 +2226,16 @@
 
 					if (env.currentAlbum.isCollection()) {
 						// the folder name must be added the second line
-						let parentAlbumPromise = phFl.getAlbum(ithMedia.foldersCacheBase, null, {getMedia: false, getPositions: false});
+						let cacheBase = ithMedia.foldersCacheBase
+						if (env.currentAlbum.isSearch()) {
+							let [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(window.location.hash);
+							let searchStartCacheBase = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
+							if (util.isByDateCacheBase(searchStartCacheBase))
+								cacheBase = ithMedia.dayAlbumCacheBase;
+							else if (util.isByGpsCacheBase(searchStartCacheBase))
+								cacheBase = ithMedia.gpsAlbumCacheBase;
+						}
+						let parentAlbumPromise = phFl.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
 						parentAlbumPromise.then(
 							function(parentAlbum) {
 								if (! ithMedia.hasOwnProperty("captionForSelection"))
