@@ -825,13 +825,13 @@ class Album(object):
 
 		while (
 			subalbum_or_media_path.find("__") != -1 or
-			subalbum_or_media_path.find(Options.config['cache_folder_separator'] + "_") != -1 or
-			subalbum_or_media_path.find("_" + Options.config['cache_folder_separator']) != -1 or
+			# subalbum_or_media_path.find(Options.config['cache_folder_separator'] + "_") != -1 or
+			# subalbum_or_media_path.find("_" + Options.config['cache_folder_separator']) != -1 or
 			subalbum_or_media_path.find(Options.config['cache_folder_separator'] + Options.config['cache_folder_separator']) != -1
 		):
 			subalbum_or_media_path = subalbum_or_media_path.replace("__", "_")
-			subalbum_or_media_path = subalbum_or_media_path.replace(Options.config['cache_folder_separator'] + '_', Options.config['cache_folder_separator'])
-			subalbum_or_media_path = subalbum_or_media_path.replace('_' + Options.config['cache_folder_separator'], Options.config['cache_folder_separator'])
+			# subalbum_or_media_path = subalbum_or_media_path.replace(Options.config['cache_folder_separator'] + '_', Options.config['cache_folder_separator'])
+			# subalbum_or_media_path = subalbum_or_media_path.replace('_' + Options.config['cache_folder_separator'], Options.config['cache_folder_separator'])
 			subalbum_or_media_path = subalbum_or_media_path.replace(Options.config['cache_folder_separator'] + Options.config['cache_folder_separator'], Options.config['cache_folder_separator'])
 
 		# restore the saved prefix
@@ -845,8 +845,8 @@ class Album(object):
 				if distinguish_suffix:
 					_path += "_" + str(distinguish_suffix)
 				if (
-					media_file_name is None     and any(_path == _subalbum.cache_base and self.absolute_path != _subalbum.absolute_path   for _subalbum in self.subalbums_list) or
-					media_file_name is not None and any(_path == _media.cache_base and media_file_name    != _media.media_file_name for _media in self.media_list)
+					media_file_name is None     and any(_path == _subalbum.cache_base and self.absolute_path != _subalbum.absolute_path for _subalbum in self.subalbums_list) or
+					media_file_name is not None and any(_path == _media.cache_base    and media_file_name    != _media.media_file_name  for _media    in self.media_list)
 				):
 					distinguish_suffix += 1
 				else:
