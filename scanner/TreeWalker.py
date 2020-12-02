@@ -644,7 +644,9 @@ class TreeWalker:
 					if len(media_list) > Options.config['big_virtual_folders_threshold']:
 						next_level()
 						message("big list found", str(len(media_list)) + " photos, limit is " + str(Options.config['big_virtual_folders_threshold']), 5)
-						K = 2
+						k = 4
+						if Options.config['big_virtual_folders_threshold'] < k:
+							k = 2
 						clustering_ok = True
 						# this array is used in order to detect when there is no convertion
 						max_cluster_length_list = [0, 0, 0]
@@ -652,10 +654,10 @@ class TreeWalker:
 						cluster_list_ok = []
 						n_cluster = 0
 						while True:
-							message("clustering with k-means algorithm...", "K = " + str(K), 5)
+							message("clustering with k-means algorithm...", "k = " + str(k), 5)
 
 							while len(media_list) > 0:
-								provisional_cluster_list = Geonames.find_centers(media_list, K)
+								provisional_cluster_list = Geonames.find_centers(media_list, k)
 								remaining_media_list = []
 								cluster_list = []
 								found = False
@@ -690,12 +692,12 @@ class TreeWalker:
 									clustering_ok = False
 									break
 
-								if K > len(media_list):
+								if k > len(media_list):
 									indented_message("clustering with k-means algorithm failed", "clusters remain too big even with k > number of images (" + str(len(media_list)) + ")", 5)
 									clustering_ok = False
 									break
 								indented_message("clustering with k-means algorithm not ok", "biggest cluster has " + str(max_cluster_length) + " photos, doubling the k factor", 5)
-								K = K * 2
+								k = k * 2
 						if not clustering_ok:
 							# we must split the big clusters into smaller ones
 							# but firts sort media in cluster by date, so that we get more homogeneus clusters
@@ -740,7 +742,7 @@ class TreeWalker:
 
 						cluster_list = cluster_list_ok[:]
 						max_cluster_ok_length = max([len(cluster) for cluster in cluster_list])
-						indented_message("clustering ok", str(len(cluster_list)) + " clusters, biggest one has " + str(max_cluster_ok_length) + " images, ", 5)
+						message("clustering ok", str(len(cluster_list)) + " clusters, biggest one has " + str(max_cluster_ok_length) + " images, ", 5)
 
 						back_level()
 						back_level()
