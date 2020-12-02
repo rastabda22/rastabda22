@@ -643,40 +643,60 @@ class TreeWalker:
 					message("checking if it's a big list...", "", 5)
 					if len(media_list) > Options.config['big_virtual_folders_threshold']:
 						next_level()
+						message("big list found", str(len(media_list)) + " photos", 5)
 						K = 2
-						clustering_failed = False
+						clustering_ok = True
 						# this array is used in order to detect when there is no convertion
 						max_cluster_length_list = [0, 0, 0]
-						message("big list found", str(len(media_list)) + " photos", 5)
 						next_level()
+						cluster_list_ok = []
+						max_cluster_ok_length = 0
 						while True:
 							message("clustering with k-means algorithm...", "K = " + str(K), 5)
-							cluster_list = Geonames.find_centers(media_list, K)
-							max_cluster_length = max([len(cluster) for cluster in cluster_list])
-							if max_cluster_length <= Options.config['big_virtual_folders_threshold']:
-								indented_message("clustered with k-means algorithm", "biggest cluster has " + str(max_cluster_length) + " photos", 5)
-								break
-							# detect no convergence
-							max_cluster_length_list.append(max_cluster_length)
-							max_cluster_length_list.pop(0)
-							if max(max_cluster_length_list) > 0 and max(max_cluster_length_list) == min(max_cluster_length_list):
-								# three times the same value: no convergence
-								indented_message("clustering with k-means algorithm failed", "max cluster length doesn't converge, it's stuck at " + str(max_cluster_length), 5)
-								clustering_failed = True
-								break
 
-							if K > len(media_list):
-								indented_message("clustering with k-means algorithm failed", "clusters remain too big even with k > len(media_list)", 5)
-								clustering_failed = True
+							while len(media_list) > 0:
+								provisional_cluster_list = Geonames.find_centers(media_list, K)
+								remaining_media_list = []
+								cluster_list = []
+								found = False
+								for cluster in provisional_cluster_list:
+									if len(cluster) <= Options.config['big_virtual_folders_threshold']:
+										cluster_list_ok.append(cluster)
+										found = True
+									else:
+										cluster_list.append(cluster)
+										for single_media in cluster:
+											remaining_media_list.append(single_media)
+								media_list = remaining_media_list
+								if not found:
+									break
+
+							if len(cluster_list) == 0:
+								max_cluster_ok_length = max(max([len(cluster) for cluster in cluster_list_ok]), max_cluster_ok_length)
+								indented_message("clustered with k-means algorithm", "biggest cluster has " + str(max_cluster_ok_length) + " photos", 5)
 								break
-							indented_message("clustering with k-means algorithm not ok", "biggest cluster has " + str(max_cluster_length) + " photos", 5)
-							K = K * 2
+							else:
+								# detect no convergence
+								max_cluster_length = max([len(cluster) for cluster in cluster_list])
+								max_cluster_length_list.append(max_cluster_length)
+								max_cluster_length_list.pop(0)
+								if max(max_cluster_length_list) > 0 and max(max_cluster_length_list) == min(max_cluster_length_list):
+									# three times the same value: no convergence
+									indented_message("clustering with k-means algorithm failed", "max cluster length doesn't converge, it's stuck at " + str(max_cluster_length), 5)
+									clustering_ok = False
+									break
+
+								if K > len(media_list):
+									indented_message("clustering with k-means algorithm failed", "clusters remain too big even with k > len(media_list)", 5)
+									clustering_ok = False
+									break
+								indented_message("clustering with k-means algorithm not ok", "biggest cluster has " + str(max_cluster_length) + " photos", 5)
+								K = K * 2
 						next_level()
-						if clustering_failed:
+						if not clustering_ok:
 							# we must split the big clusters into smaller ones
 							# but firts sort media in cluster by date, so that we get more homogeneus clusters
-							message("splitting big clusters into smaller ones...", "", 5)
-							cluster_list_new = list()
+							message("splitting remaining big clusters into smaller ones...", "", 5)
 							n = 0
 							for cluster in cluster_list:
 								n += 1
@@ -698,19 +718,19 @@ class TreeWalker:
 									for index in range(integer_ratio):
 										start = index * new_length
 										end = (index + 1) * new_length
-										cluster_list_new.append(cluster[start:end])
+										cluster_list_ok.append(cluster[start:end])
 									# the remaining is still to be appended
-									cluster_list_new.append(cluster[end:])
+									cluster_list_ok.append(cluster[end:])
 									indented_message("cluster splitted", "", 5)
 									back_level()
 								else:
 									indented_message("cluster is OK", "", 5)
-									cluster_list_new.append(cluster)
+									cluster_list_ok.append(cluster)
 								back_level()
-							cluster_list = cluster_list_new[:]
-							max_cluster_length = max([len(cluster) for cluster in cluster_list])
-							indented_message("big clusters splitted into smaller ones", "biggest cluster lenght is now " + str(max_cluster_length), 5)
+							max_cluster_ok_length = max(max([len(cluster) for cluster in cluster_list]), max_cluster_ok_length)
+							indented_message("big clusters splitted into smaller ones", "biggest cluster lenght is now " + str(max_cluster_ok_length), 5)
 
+						cluster_list = cluster_list_ok[:]
 						message("clustering terminated", "there are " + str(len(cluster_list)) + " clusters", 5)
 						back_level()
 						back_level()
