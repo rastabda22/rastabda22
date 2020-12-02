@@ -1,3 +1,5 @@
+* scanner: fragmentation of gps albums clustering reduced
+
 ### version v4.9.0 (Dec 1st, 2020)
 
 * many bug fixes
