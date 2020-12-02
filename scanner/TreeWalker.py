@@ -643,14 +643,14 @@ class TreeWalker:
 					message("checking if it's a big list...", "", 5)
 					if len(media_list) > Options.config['big_virtual_folders_threshold']:
 						next_level()
-						message("big list found", str(len(media_list)) + " photos", 5)
+						message("big list found", str(len(media_list)) + " photos, limit is " + str(Options.config['big_virtual_folders_threshold']), 5)
 						K = 2
 						clustering_ok = True
 						# this array is used in order to detect when there is no convertion
 						max_cluster_length_list = [0, 0, 0]
 						next_level()
 						cluster_list_ok = []
-						max_cluster_ok_length = 0
+						n_cluster = 0
 						while True:
 							message("clustering with k-means algorithm...", "K = " + str(K), 5)
 
@@ -661,6 +661,8 @@ class TreeWalker:
 								found = False
 								for cluster in provisional_cluster_list:
 									if len(cluster) <= Options.config['big_virtual_folders_threshold']:
+										n_cluster += 1
+										indented_message("found cluster n.", str(n_cluster) + ", containing " + str(len(cluster)) + " images", 5)
 										cluster_list_ok.append(cluster)
 										found = True
 									else:
@@ -668,12 +670,14 @@ class TreeWalker:
 										for single_media in cluster:
 											remaining_media_list.append(single_media)
 								media_list = remaining_media_list
-								if not found:
+								if found:
+									if len(remaining_media_list):
+										message("clustering again with the remaining images...", "", 5)
+								else:
+									indented_message("done!", "", 5)
 									break
 
 							if len(cluster_list) == 0:
-								max_cluster_ok_length = max(max([len(cluster) for cluster in cluster_list_ok]), max_cluster_ok_length)
-								indented_message("clustered with k-means algorithm", "biggest cluster has " + str(max_cluster_ok_length) + " photos", 5)
 								break
 							else:
 								# detect no convergence
@@ -687,12 +691,11 @@ class TreeWalker:
 									break
 
 								if K > len(media_list):
-									indented_message("clustering with k-means algorithm failed", "clusters remain too big even with k > len(media_list)", 5)
+									indented_message("clustering with k-means algorithm failed", "clusters remain too big even with k > number of images (" + str(len(media_list)) + ")", 5)
 									clustering_ok = False
 									break
-								indented_message("clustering with k-means algorithm not ok", "biggest cluster has " + str(max_cluster_length) + " photos", 5)
+								indented_message("clustering with k-means algorithm not ok", "biggest cluster has " + str(max_cluster_length) + " photos, doubling the k factor", 5)
 								K = K * 2
-						next_level()
 						if not clustering_ok:
 							# we must split the big clusters into smaller ones
 							# but firts sort media in cluster by date, so that we get more homogeneus clusters
@@ -701,38 +704,44 @@ class TreeWalker:
 							for cluster in cluster_list:
 								n += 1
 								next_level()
-								message("working with cluster...", "n." + str(n), 5)
-
 								integer_ratio = len(cluster) // Options.config['big_virtual_folders_threshold']
-								if integer_ratio >= 1:
-									# big cluster
+								if integer_ratio != len(cluster) / Options.config['big_virtual_folders_threshold']:
+									integer_ratio += 1
+								message("working with remaining cluster n.", str(n) + ", " + str(len(cluster)) + " images, splitting it into " + str(integer_ratio) + " clusters", 5)
 
-									# sort the cluster by date
-									next_level()
-									message("sorting cluster by date...", "", 5)
-									cluster.sort()
-									indented_message("cluster sorted by date", "", 5)
+								# if integer_ratio >= 1:
+								# 	# big cluster
 
-									message("splitting cluster...", "", 5)
-									new_length = len(cluster) // (integer_ratio + 1)
-									for index in range(integer_ratio):
-										start = index * new_length
-										end = (index + 1) * new_length
-										cluster_list_ok.append(cluster[start:end])
-									# the remaining is still to be appended
-									cluster_list_ok.append(cluster[end:])
-									indented_message("cluster splitted", "", 5)
-									back_level()
-								else:
-									indented_message("cluster is OK", "", 5)
-									cluster_list_ok.append(cluster)
+								# sort the cluster by date
+								next_level()
+								message("sorting cluster by date...", "", 5)
+								cluster.sort()
+								indented_message("cluster sorted by date", "", 6)
+
+								message("splitting cluster...", "", 5)
+								next_level()
+								new_length = len(cluster) // integer_ratio
+								if new_length != len(cluster) / integer_ratio:
+									new_length += 1
+								for index in range(integer_ratio):
+									n_cluster += 1
+									start = index * new_length
+									end = (index + 1) * new_length
+									new_cluster = cluster[start:end]
+									message("generating cluster n.", str(n_cluster) + ", containing " + str(len(new_cluster)) + " images", 5)
+									cluster_list_ok.append(new_cluster)
 								back_level()
-							max_cluster_ok_length = max(max([len(cluster) for cluster in cluster_list]), max_cluster_ok_length)
-							indented_message("big clusters splitted into smaller ones", "biggest cluster lenght is now " + str(max_cluster_ok_length), 5)
+								indented_message("cluster splitted", "", 6)
+								back_level()
+								# else:
+								# 	indented_message("cluster is OK", "", 5)
+								# 	cluster_list_ok.append(cluster)
+								back_level()
 
 						cluster_list = cluster_list_ok[:]
-						message("clustering terminated", "there are " + str(len(cluster_list)) + " clusters", 5)
-						back_level()
+						max_cluster_ok_length = max([len(cluster) for cluster in cluster_list])
+						indented_message("clustering ok", str(len(cluster_list)) + " clusters, biggest one has " + str(max_cluster_ok_length) + " images, ", 5)
+
 						back_level()
 						back_level()
 
@@ -748,7 +757,7 @@ class TreeWalker:
 					for i, cluster in enumerate(cluster_list):
 						if set_alt_place:
 							next_level()
-							message("working with clusters", str(i) + "-th cluster", 5)
+							message("processing cluster n.", str(i + 1) + " (" + str(len(cluster))+ " images)", 5)
 							alt_place_code = place_code + "_" + str(i + 1).zfill(num_digits)
 							alt_place_name = place_name + "_" + str(i + 1).zfill(num_digits)
 
@@ -850,7 +859,7 @@ class TreeWalker:
 						Options.all_albums.append(place_album)
 						self.generate_composite_image(place_album, place_max_file_date)
 						if set_alt_place:
-							indented_message("cluster worked out", str(i) + "-th cluster: " + cluster[0].country_code + "-" + cluster[0].region_code + "-" + alt_place_name, 4)
+							indented_message("cluster worked out", str(i + 1) + "-th cluster: " + cluster[0].country_code + "-" + cluster[0].region_code + "-" + alt_place_name, 4)
 							back_level()
 						else:
 							# next_level()
