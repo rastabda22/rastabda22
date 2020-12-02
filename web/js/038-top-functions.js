@@ -749,9 +749,9 @@
 				if (setDocumentTitle) {
 					// keep generating the html page title
 					if (singleMedia !== null)
-					documentTitle = singleMedia.name + documentTitle;
+						documentTitle = singleMedia.name + documentTitle;
 					else if (env.currentAlbum !== null && ! env.currentAlbum.subalbums.length && env.currentAlbum.numsMedia.imagesAndVideosTotal() == 1)
-					documentTitle = util.trimExtension(env.currentAlbum.media[0].name) + " \u00ab " + documentTitle;
+						documentTitle = util.trimExtension(env.currentAlbum.media[0].name) + " \u00ab " + documentTitle;
 
 					document.title = documentTitle;
 				}
@@ -774,21 +774,18 @@
 									name = theAlbum.ancestorsNames[i];
 									if (i === 0) {
 										if (name == env.options.by_date_string)
-										name = "(" + util._t("#by-date") + ")";
+											name = "(" + util._t("#by-date") + ")";
 										else if (name == env.options.by_gps_string)
-										name = "(" + util._t("#by-gps") + ")";
+											name = "(" + util._t("#by-gps") + ")";
 										if (name == env.options.by_map_string)
-										name = "(" + util._t("#by-map") + ")";
-									} else if (i === 2 && util.isByDateCacheBase(env.options.cache_base_to_search_in))
-									// convert the month number to localized month name
-									name = util._t("#month-" + name);
+											name = "(" + util._t("#by-map") + ")";
+									} else if (i === 2 && util.isByDateCacheBase(env.options.cache_base_to_search_in)) {
+									// convert the month number to the localized month name
+										name = util._t("#month-" + name);
+									}
 									thisCacheBase = env.hashBeginning + theAlbum.ancestorsCacheBase[i];
-									// if (i > 0 && (i !== 1 || theAlbum.ancestorsNames[0] !== ""))
-									// 	whereLinks += raquo;
-									// if (name)
-									// 	whereLinks += "<a class='search-link' href='" + thisCacheBase + "'>" + name + "</a>";
 									if (name)
-									whereLinksArray.push("<a class='search-link' href='" + thisCacheBase + "'>" + name + "</a>");
+										whereLinksArray.push("<a class='search-link' href='" + thisCacheBase + "'>" + name + "</a>");
 								}
 								whereLinks = whereLinksArray.join(raquo);
 							}
