@@ -591,6 +591,32 @@ class TreeWalker:
 		back_level()
 		return by_search_album
 
+	def make_clusters(self, media_list, k, n_cluster):
+		while len(media_list) > 0:
+			provisional_cluster_list = Geonames.find_centers(media_list, k)
+			cluster_list_ok = []
+			remaining_media_list = []
+			cluster_list = []
+			found = False
+			for cluster in provisional_cluster_list:
+				if len(cluster) <= Options.config['big_virtual_folders_threshold']:
+					n_cluster += 1
+					indented_message("found cluster n.", str(n_cluster) + ", " + str(len(cluster)) + " images", 5)
+					cluster_list_ok.append(cluster)
+					found = True
+				else:
+					indented_message("big cluster", str(len(cluster)) + " images", 5)
+					cluster_list.append(cluster)
+					for single_media in cluster:
+						remaining_media_list.append(single_media)
+			media_list = remaining_media_list
+			if found:
+				if len(remaining_media_list):
+					message("clustering again with the remaining images...", "", 5)
+			else:
+				indented_message("done!", "", 5)
+				break
+		return [cluster_list_ok, cluster_list, remaining_media_list]
 
 	def generate_by_geonames_albums(self, origin_album):
 		next_level()
@@ -656,28 +682,10 @@ class TreeWalker:
 						while True:
 							message("clustering with k-means algorithm...", "k = " + str(k), 5)
 
-							while len(media_list) > 0:
-								provisional_cluster_list = Geonames.find_centers(media_list, k)
-								remaining_media_list = []
-								cluster_list = []
-								found = False
-								for cluster in provisional_cluster_list:
-									if len(cluster) <= Options.config['big_virtual_folders_threshold']:
-										n_cluster += 1
-										indented_message("found cluster n.", str(n_cluster) + ", containing " + str(len(cluster)) + " images", 5)
-										cluster_list_ok.append(cluster)
-										found = True
-									else:
-										cluster_list.append(cluster)
-										for single_media in cluster:
-											remaining_media_list.append(single_media)
-								media_list = remaining_media_list
-								if found:
-									if len(remaining_media_list):
-										message("clustering again with the remaining images...", "", 5)
-								else:
-									indented_message("done!", "", 5)
-									break
+							[good_clusters, cluster_list, remaining_media_list] = self.make_clusters(media_list, k, n_cluster)
+
+							n_cluster += len(good_clusters)
+							cluster_list_ok += good_clusters
 
 							if len(cluster_list) == 0:
 								break
