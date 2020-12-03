@@ -285,7 +285,7 @@ class Geonames(object):
 
 	@staticmethod
 	def coordinates(media):
-		return np.array((media.latitude, media.longitude))
+		return np.array((media.latitude, media.longitude, media.date.timestamp()))
 
 
 	@staticmethod
