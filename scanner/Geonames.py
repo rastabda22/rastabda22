@@ -254,7 +254,14 @@ class Geonames(object):
 		clusters = {}
 		for media in media_list:
 			# bestmukey = min([(i[0], np.linalg.norm(x-mu[i[0]])) for i in enumerate(mu)], key=lambda t:t[1])[0]
-			bestmukey = min([(index_and_point[0], np.linalg.norm(Geonames.coordinates(media) - mu[index_and_point[0]])) for index_and_point in enumerate(mu)], key=lambda t: t[1])[0]
+			bestmukey = min(
+					[
+						(
+							index_and_point[0],
+							np.linalg.norm(Geonames.coordinates(media) - mu[index_and_point[0]])
+						) for index_and_point in enumerate(mu)
+					], key=lambda t: t[1]
+				)[0]
 			try:
 				clusters[bestmukey].append(media)
 			except KeyError:
