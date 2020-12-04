@@ -250,7 +250,7 @@ class Geonames(object):
 	# the following functions implement k-means clustering, got from https://datasciencelab.wordpress.com/2013/12/12/clustering-with-k-means-in-python/
 	# the main function is find_centers
 	@staticmethod
-	def cluster_points(media_list, mu):
+	def cluster_points(media_list, mu, time_factor):
 		clusters = {}
 		for media in media_list:
 			# bestmukey = min([(i[0], np.linalg.norm(x-mu[i[0]])) for i in enumerate(mu)], key=lambda t:t[1])[0]
@@ -258,7 +258,7 @@ class Geonames(object):
 					[
 						(
 							index_and_point[0],
-							np.linalg.norm(Geonames.coordinates(media) - mu[index_and_point[0]])
+							np.linalg.norm(Geonames.coordinates(media, time_factor) - mu[index_and_point[0]])
 						) for index_and_point in enumerate(mu)
 					], key=lambda t: t[1]
 				)[0]
@@ -270,11 +270,11 @@ class Geonames(object):
 
 
 	@staticmethod
-	def reevaluate_centers(clusters):
+	def reevaluate_centers(clusters, time_factor):
 		newmu = []
 		keys = sorted(clusters.keys())
 		for k in keys:
-			newmu.append(np.mean([Geonames.coordinates(_media) for _media in clusters[k]], axis=0))
+			newmu.append(np.mean([Geonames.coordinates(_media, time_factor) for _media in clusters[k]], axis=0))
 		return newmu
 
 
@@ -284,14 +284,15 @@ class Geonames(object):
 
 
 	@staticmethod
-	def coordinates(media):
-		return np.array((media.latitude, media.longitude, media.date.timestamp()))
+	def coordinates(media, time_factor):
+		# if time_factor is zero, then time isn't considered
+		return np.array((media.latitude, media.longitude, media.date.timestamp() * time_factor))
 
 
 	@staticmethod
-	def find_centers(media_list, K):
+	def find_centers(media_list, K, time_factor):
 		# Initialize to K random centers
-		coordinate_list = [Geonames.coordinates(media) for media in media_list]
+		coordinate_list = [Geonames.coordinates(media, time_factor) for media in media_list]
 		try:
 			oldmu = random.sample(coordinate_list, K)
 		except ValueError:
@@ -304,9 +305,9 @@ class Geonames(object):
 		while first_time or not Geonames.has_converged(mu, oldmu):
 			oldmu = mu
 			# Assign all points in media_list to clusters
-			clusters = Geonames.cluster_points(media_list, mu)
+			clusters = Geonames.cluster_points(media_list, mu, time_factor)
 			# Reevaluate centers
-			mu = Geonames.reevaluate_centers(clusters)
+			mu = Geonames.reevaluate_centers(clusters, time_factor)
 			if first_time:
 				first_time = False
 		cluster_list = [cluster for key, cluster in list(clusters.items())]
