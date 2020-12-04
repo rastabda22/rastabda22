@@ -347,7 +347,8 @@
 				! util.isAnyRootCacheBase(env.options.cache_base_to_search_in)
 			) {
 				searchClass = "main-search-link";
-				searchFolderHash = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
+				// searchFolderHash = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
+				searchFolderHash = env.options.cache_base_to_search_in;
 			}
 			where =
 				"<a class='" + searchClass + "' href='" + env.hashBeginning + env.currentAlbum.cacheBase + "'>" +
@@ -2235,8 +2236,10 @@
 						let parentAlbumPromise = phFl.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
 						parentAlbumPromise.then(
 							function(parentAlbum) {
-								if (! ithMedia.hasOwnProperty("captionForSelection"))
-									ithMedia.generateCaptionForCollections(parentAlbum);
+								// if (! ithMedia.hasOwnProperty("captionForSelection"))
+								// 	ithMedia.generateSingleMediaCaptionForSelection(parentAlbum);
+								// if (! ithMedia.hasOwnProperty("captionForSearch"))
+								// 	ithMedia.generateSingleMediaCaptionForSearch(parentAlbum);
 								$("#" + imageId + " .media-caption").html(ithMedia.mediaName(env.currentAlbum));
 							}
 						);
@@ -2551,7 +2554,7 @@
 									convertSubalbumPromise.then(
 										function(iSubalbum) {
 											let ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
-											ithSubalbum.generateCaptionForCollections();
+											// ithSubalbum.generateCaptionForCollections();
 											let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
 											$("#" + captionId + " .folder-name").html(nameHtml);
 										}

@@ -408,6 +408,11 @@
 									convertedSubalbum.captionForSelection = self.subalbums[subalbumIndex].captionForSelection;
 									convertedSubalbum.captionForSelectionSorting = self.subalbums[subalbumIndex].captionForSelectionSorting;
 								}
+								if (self.subalbums[subalbumIndex].hasOwnProperty("captionForSearch")) {
+									// transfer subalbums properties to the album
+									convertedSubalbum.captionForSearch = self.subalbums[subalbumIndex].captionForSearch;
+									convertedSubalbum.captionForSearchSorting = self.subalbums[subalbumIndex].captionForSearchSorting;
+								}
 								self.subalbums[subalbumIndex] = convertedSubalbum;
 							}
 							resolve_convertIntoAlbum(subalbumIndex);
@@ -432,6 +437,8 @@
 				'path',
 				'captionForSelection',
 				'captionForSelectionSorting',
+				'captionForSearch',
+				'captionForSearchSorting',
 				'sizesOfAlbum',
 				'sizesOfSubTree',
 				'words'
@@ -464,6 +471,9 @@
 				'physicalPath',
 				'positionsAndMediaInTree',
 				'captionForSelection',
+				'captionForSelectionSorting',
+				'captionForSearch',
+				'captionForSearchSorting',
 				'sizesOfAlbum',
 				'sizesOfSubTree',
 				'subalbums',

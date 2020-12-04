@@ -418,6 +418,7 @@ $(document).ready(function() {
 
 	// search
 	$('#search-button').on("click", function() {
+		$("#loading").show();
 		var searchOptions = '';
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
@@ -716,6 +717,7 @@ $(document).ready(function() {
 
 	$(window).hashchange(
 		function() {
+			util.translate();
 			$("#auth-text").hide();
 			$("#album-view, #media-view, #my-modal").css("opacity", "");
 
