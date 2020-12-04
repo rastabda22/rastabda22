@@ -245,6 +245,7 @@
 		// newSearchAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
 		// newSearchAlbum.cacheBase = albumHash;
 		newSearchAlbum.path = newSearchAlbum.cacheBase.replace(env.options.cache_folder_separator, "/");
+		newSearchAlbum.ancestorsNames = [env.options.by_search_string, newSearchAlbum.cacheBase];
 		// newSearchAlbum.physicalPath = newSearchAlbum.path;
 		// newSearchAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
 		// newSearchAlbum.includedFilesByCodesSimpleCombination = {};
@@ -1340,8 +1341,8 @@
 				function(selectedAlbum) {
 					return (
 						self.foldersCacheBase.indexOf(selectedAlbum.cacheBase) === 0 ||
-						self.dayAlbumCacheBase.indexOf(selectedAlbum.cacheBase) === 0 ||
-						self.gpsAlbumCacheBase.indexOf(selectedAlbum.cacheBase) === 0
+						self.hasOwnProperty("dayAlbumCacheBase") && self.dayAlbumCacheBase.indexOf(selectedAlbum.cacheBase) === 0 ||
+						self.hasOwnProperty("gpsAlbumCacheBase") && self.gpsAlbumCacheBase.indexOf(selectedAlbum.cacheBase) === 0
 					);
 				}
 			)
