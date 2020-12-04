@@ -1402,7 +1402,7 @@
 			// 	// let self = this;
 			// 	// parentAlbumPromise.then(
 			// 	// 	function(parentAlbum) {
-			// 	// 		self.generateSingleMediaCaptionForSearch(parentAlbum);
+			// 	// 		self.generateCaptionForSearch(parentAlbum);
 			// 	// 	}
 			// 	// );
 			// } else {
@@ -1548,7 +1548,7 @@
 								env.selectionAlbum.numsProtectedMediaInSubTree.sum(subalbum.numsProtectedMediaInSubTree);
 							}
 
-							subalbum.generateAlbumCaptionForSelection();
+							subalbum.generateCaptionForSearch();
 							Utilities.sortByDate(env.selectionAlbum.subalbums);
 							env.selectionAlbum.albumNameSort = false;
 							env.selectionAlbum.albumReverseSort = false;
@@ -2281,7 +2281,7 @@
 
 	};
 
-	Album.prototype.generateAlbumCaptionForSelection = function() {
+	Album.prototype.generateCaptionForSearch = function() {
 		[this.captionForSelection, this.captionForSelectionSorting] = Utilities.generateAlbumCaptionForCollections(this);
 	};
 
@@ -2364,7 +2364,7 @@
 		[this.captionForSelection, this.captionForSelectionSorting] = Utilities.generateSingleMediaCaptionForCollections(this, album);
 	};
 
-	SingleMedia.prototype.generateSingleMediaCaptionForSearch = function(album) {
+	SingleMedia.prototype.generateCaptionForSearch = function(album) {
 		[this.captionForSearch, this.captionForSearchSorting] = Utilities.generateSingleMediaCaptionForCollections(this, album);
 	};
 

@@ -1794,7 +1794,7 @@
 																		let parentAlbumPromise = PhotoFloat.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
 																		parentAlbumPromise.then(
 																			function(parentAlbum) {
-																				singleMedia.generateSingleMediaCaptionForSearch(parentAlbum);
+																				singleMedia.generateCaptionForSearch(parentAlbum);
 																				resolve_singleMedia();
 																			}
 																		);

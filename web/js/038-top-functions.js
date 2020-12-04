@@ -2239,7 +2239,7 @@
 								// if (! ithMedia.hasOwnProperty("captionForSelection"))
 								// 	ithMedia.generateSingleMediaCaptionForSelection(parentAlbum);
 								// if (! ithMedia.hasOwnProperty("captionForSearch"))
-								// 	ithMedia.generateSingleMediaCaptionForSearch(parentAlbum);
+								// 	ithMedia.generateCaptionForSearch(parentAlbum);
 								$("#" + imageId + " .media-caption").html(ithMedia.mediaName(env.currentAlbum));
 							}
 						);
