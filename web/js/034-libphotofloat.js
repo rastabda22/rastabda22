@@ -270,7 +270,6 @@
 					var promise = PhotoFloat.getJsonFile(jsonFile);
 					promise.then(
 						function protectedFileExists(protectedAlbum) {
-
 							if (! album.hasOwnProperty("numsProtectedMediaInSubTree") || album.empty)
 								// this is needed when getSingleProtectedCacheBaseWithExternalMediaAndPositions() is called by getNumsProtectedMediaInSubTreeProperty()
 								album.numsProtectedMediaInSubTree = protectedAlbum.numsProtectedMediaInSubTree;
@@ -1169,29 +1168,27 @@
 			if (index >= nMediaInAlbum) {
 				index -= nMediaInAlbum;
 				if (album.subalbums.length) {
-					let targetSubalbum;
 					let found = false;
 					for (i = 0; i < album.subalbums.length; i ++) {
 						if (index >= album.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal())
 							index -= album.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal();
 						else {
-							targetSubalbum = album.subalbums[i];
+							var promise = album.subalbums[i].toAlbum(error, {getMedia: false, getPositions: false});
+							promise.then(
+								function(targetSubalbum) {
+									album.subalbums[i] = targetSubalbum;
+									nextAlbum(targetSubalbum, resolve_pickRandomMedia);
+								},
+								function() {
+									console.trace();
+								}
+							);
 							found = true;
 							break;
 						}
 					}
 					if (! found)
 						error();
-					var promise = targetSubalbum.toAlbum(error, {getMedia: false, getPositions: false});
-					promise.then(
-						function(targetSubalbum) {
-							album.subalbums[i] = targetSubalbum;
-							nextAlbum(targetSubalbum, resolve_pickRandomMedia);
-						},
-						function() {
-							console.trace();
-						}
-					);
 				}
 			} else {
 				var lastPromise = PhotoFloat.getAlbum(album, error, {getMedia: true, getPositions: true});
