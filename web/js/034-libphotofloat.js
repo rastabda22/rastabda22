@@ -1092,7 +1092,11 @@
 						env.currentAlbum.subalbums[iSubalbum] = album;
 						// var album = env.currentAlbum.subalbums[iSubalbum];
 						// index = 0;
-						index = Math.floor(Math.random() * (album.numsMediaInSubTree.imagesAndVideosTotal()));
+						let nMedia = album.numsMediaInSubTree.imagesAndVideosTotal();
+						if (album.isTransversal() && album.subalbums.length > 0)
+							nMedia -= album.numsMedia.imagesAndVideosTotal();
+
+						index = Math.floor(Math.random() * nMedia);
 						nextAlbum(album, resolve_pickRandomMedia);
 					},
 					function() {
@@ -1111,10 +1115,7 @@
 				return;
 			}
 
-			if (
-				(album.isTransversal()) &&
-				album.subalbums.length > 0
-			) {
+			if (album.isTransversal() && album.subalbums.length > 0) {
 				// do not get the random media from the year/country nor the month/state albums
 				// this way loading of albums is much faster
 				nMediaInAlbum = 0;
@@ -1137,17 +1138,17 @@
 					}
 					if (! found)
 						error();
+					var promise = targetSubalbum.toAlbum(error, {getMedia: false, getPositions: false});
+					promise.then(
+						function(targetSubalbum) {
+							album.subalbums[i] = targetSubalbum;
+							nextAlbum(targetSubalbum, resolve_pickRandomMedia);
+						},
+						function() {
+							console.trace();
+						}
+					);
 				}
-				var promise = targetSubalbum.toAlbum(error, {getMedia: false, getPositions: false});
-				promise.then(
-					function(targetSubalbum) {
-						album.subalbums[iSubalbum] = targetSubalbum;
-						nextAlbum(album.subalbums[iSubalbum], resolve_pickRandomMedia);
-					},
-					function() {
-						console.trace();
-					}
-				);
 			} else {
 				var lastPromise = PhotoFloat.getAlbum(album, error, {getMedia: true, getPositions: true});
 				lastPromise.then(
