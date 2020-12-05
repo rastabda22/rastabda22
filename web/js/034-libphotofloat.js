@@ -289,90 +289,73 @@
 								protectedAlbum.numsMedia = protectedAlbum.media.imagesAndVideosCount();
 
 							if (! album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("protectedAlbumGot")) {
-								let mergePromises = [];
 								if (protectedAlbum.subalbums.length) {
-									let mergePromise = album.mergeProtectedSubalbums(protectedAlbum);
-									mergePromises.push(mergePromise);
+									album.mergeProtectedSubalbums(protectedAlbum);
 								}
 
-								Promise.all(mergePromises).then(
-									function() {
-										album.numsMedia.sum(protectedAlbum.numsMedia);
-										album.numsMediaInSubTree.sum(protectedAlbum.numsMediaInSubTree);
-										album.sizesOfSubTree.sum(protectedAlbum.sizesOfSubTree);
-										album.sizesOfAlbum.sum(protectedAlbum.sizesOfAlbum);
-										album.numPositionsInTree += protectedAlbum.numPositionsInTree;
-										if (! album.hasOwnProperty("path"))
-											album.path = protectedAlbum.path;
-										album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.protectedAlbumGot = true;
+								album.numsMedia.sum(protectedAlbum.numsMedia);
+								album.numsMediaInSubTree.sum(protectedAlbum.numsMediaInSubTree);
+								album.sizesOfSubTree.sum(protectedAlbum.sizesOfSubTree);
+								album.sizesOfAlbum.sum(protectedAlbum.sizesOfAlbum);
+								album.numPositionsInTree += protectedAlbum.numPositionsInTree;
+								if (! album.hasOwnProperty("path"))
+									album.path = protectedAlbum.path;
+								album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.protectedAlbumGot = true;
 
-										if (protectedAlbum.hasOwnProperty("media")) {
-											if (! album.hasOwnProperty("media"))
-												album.media = protectedAlbum.media;
-											else
-												album.media = album.media.concat(protectedAlbum.media);
-											album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.mediaGot = true;
-										}
+								if (protectedAlbum.hasOwnProperty("media")) {
+									if (! album.hasOwnProperty("media"))
+										album.media = protectedAlbum.media;
+									else
+										album.media = album.media.concat(protectedAlbum.media);
+									album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.mediaGot = true;
+								}
 
-										if (protectedAlbum.hasOwnProperty("positionsAndMediaInTree")) {
-											if (! album.hasOwnProperty("positionsAndMediaInTree"))
-												album.positionsAndMediaInTree = protectedAlbum.positionsAndMediaInTree;
-											else
-												album.positionsAndMediaInTree.mergePositionsAndMedia(protectedAlbum.positionsAndMediaInTree);
-											album.numPositionsInTree = album.positionsAndMediaInTree.length;
-											album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.positionsGot = true;
-										}
+								if (protectedAlbum.hasOwnProperty("positionsAndMediaInTree")) {
+									if (! album.hasOwnProperty("positionsAndMediaInTree"))
+										album.positionsAndMediaInTree = protectedAlbum.positionsAndMediaInTree;
+									else
+										album.positionsAndMediaInTree.mergePositionsAndMedia(protectedAlbum.positionsAndMediaInTree);
+									album.numPositionsInTree = album.positionsAndMediaInTree.length;
+									album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.positionsGot = true;
+								}
 
-										// add pointers to the same object for the symlinks
-										for (let iSymlink = 0; iSymlink < protectedAlbum.symlinkCodesAndNumbers.length; iSymlink ++) {
-											let symlinkCodesAndNumbersItem = protectedAlbum.symlinkCodesAndNumbers[iSymlink];
-											if (
-												! album.includedFilesByCodesSimpleCombination.hasOwnProperty(symlinkCodesAndNumbersItem.codesSimpleCombination) ||
-												! Object.keys(album.includedFilesByCodesSimpleCombination[symlinkCodesAndNumbersItem.codesSimpleCombination]).some(
-													function(thisNumber) {
-														thisNumber = parseInt(thisNumber);
-														var result =
-															album.includedFilesByCodesSimpleCombination[symlinkCodesAndNumbersItem.codesSimpleCombination][thisNumber].codesComplexCombination ==
-																symlinkCodesAndNumbersItem.codesComplexCombination &&
-															album.includedFilesByCodesSimpleCombination[symlinkCodesAndNumbersItem.codesSimpleCombination][thisNumber].hasOwnProperty("protectedAlbumGot");
-														return result;
-													}
-												)
-											) {
-												// actually add the pointer
-												if (! album.includedFilesByCodesSimpleCombination.hasOwnProperty(symlinkCodesAndNumbersItem.codesSimpleCombination))
-													album.includedFilesByCodesSimpleCombination[symlinkCodesAndNumbersItem.codesSimpleCombination] = {};
-												if (! album.includedFilesByCodesSimpleCombination[symlinkCodesAndNumbersItem.codesSimpleCombination].hasOwnProperty(symlinkCodesAndNumbersItem.number))
-													album.includedFilesByCodesSimpleCombination[symlinkCodesAndNumbersItem.codesSimpleCombination][symlinkCodesAndNumbersItem.number] = {};
-												album.includedFilesByCodesSimpleCombination[symlinkCodesAndNumbersItem.codesSimpleCombination][symlinkCodesAndNumbersItem.number].album =
-													album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album;
-												album.includedFilesByCodesSimpleCombination[symlinkCodesAndNumbersItem.codesSimpleCombination][symlinkCodesAndNumbersItem.number].codesComplexCombination =
-													symlinkCodesAndNumbersItem.codesComplexCombination;
+								// add pointers to the same object for the symlinks
+								for (let iSymlink = 0; iSymlink < protectedAlbum.symlinkCodesAndNumbers.length; iSymlink ++) {
+									let symlinkCodesAndNumbersItem = protectedAlbum.symlinkCodesAndNumbers[iSymlink];
+									if (
+										! album.includedFilesByCodesSimpleCombination.hasOwnProperty(symlinkCodesAndNumbersItem.codesSimpleCombination) ||
+										! Object.keys(album.includedFilesByCodesSimpleCombination[symlinkCodesAndNumbersItem.codesSimpleCombination]).some(
+											function(thisNumber) {
+												thisNumber = parseInt(thisNumber);
+												var result =
+													album.includedFilesByCodesSimpleCombination[symlinkCodesAndNumbersItem.codesSimpleCombination][thisNumber].codesComplexCombination ==
+														symlinkCodesAndNumbersItem.codesComplexCombination &&
+													album.includedFilesByCodesSimpleCombination[symlinkCodesAndNumbersItem.codesSimpleCombination][thisNumber].hasOwnProperty("protectedAlbumGot");
+												return result;
 											}
-
-											let addMediaAndPositionsPromise = addExternalMediaAndPositionsFromProtectedAlbum();
-											addMediaAndPositionsPromise.then(
-												function externalMediaAndPositionsAdded() {
-													resolve_getSingleProtectedCacheBase();
-												},
-												function() {
-													console.trace();
-												}
-											);
-										}
+										)
+									) {
+										// actually add the pointer
+										if (! album.includedFilesByCodesSimpleCombination.hasOwnProperty(symlinkCodesAndNumbersItem.codesSimpleCombination))
+											album.includedFilesByCodesSimpleCombination[symlinkCodesAndNumbersItem.codesSimpleCombination] = {};
+										if (! album.includedFilesByCodesSimpleCombination[symlinkCodesAndNumbersItem.codesSimpleCombination].hasOwnProperty(symlinkCodesAndNumbersItem.number))
+											album.includedFilesByCodesSimpleCombination[symlinkCodesAndNumbersItem.codesSimpleCombination][symlinkCodesAndNumbersItem.number] = {};
+										album.includedFilesByCodesSimpleCombination[symlinkCodesAndNumbersItem.codesSimpleCombination][symlinkCodesAndNumbersItem.number].album =
+											album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album;
+										album.includedFilesByCodesSimpleCombination[symlinkCodesAndNumbersItem.codesSimpleCombination][symlinkCodesAndNumbersItem.number].codesComplexCombination =
+											symlinkCodesAndNumbersItem.codesComplexCombination;
 									}
-								);
-							} else {
-								let addMediaAndPositionsPromise = addExternalMediaAndPositionsFromProtectedAlbum();
-								addMediaAndPositionsPromise.then(
-									function externalMediaAndPositionsAdded() {
-										resolve_getSingleProtectedCacheBase();
-									},
-									function() {
-										console.trace();
-									}
-								);
+								}
 							}
+							let addMediaAndPositionsPromise = addExternalMediaAndPositionsFromProtectedAlbum();
+							addMediaAndPositionsPromise.then(
+								function externalMediaAndPositionsAdded() {
+									resolve_getSingleProtectedCacheBase();
+								},
+								function() {
+									console.trace();
+								}
+							);
 						},
 						function protectedFileDoesntExist() {
 							if (codesSimpleCombination !== null)
@@ -623,47 +606,21 @@
 			}
 		);
 		var self = this;
-		return new Promise(
-			function(resolve_mergeProtectedSubalbums) {
-				let promises = [];
-				for (i = 0; i < protectedAlbum.subalbums.length; i ++) {
-					ithProtectedSubalbum = protectedAlbum.subalbums[i];
-					if (cacheBases.indexOf(ithProtectedSubalbum.cacheBase) == -1) {
-						let subalbumPromise = new Promise(
-							function(resolve_subalbumPromise) {
-								let convertSubalbumPromise = ithProtectedSubalbum.toAlbum(null, {getMedia: false, getPositions: false});
-								convertSubalbumPromise.then(
-									function(album) {
-										self.subalbums.push(album);
-										resolve_subalbumPromise();
-									}
-								);
-							}
-						);
-						promises.push(subalbumPromise);
-					// // if media or positions are missing the combination must not be reported as included
-					// } else if (self.hasOwnProperty("media") && self.hasOwnProperty("positionsAndMediaInTree")) {
-					} else {
-						self.subalbums.forEach(
-							function(subalbum) {
-								if (subalbum.isEqual(ithProtectedSubalbum))
-									PhotoFloat.mergeProtectedSubalbum(subalbum, ithProtectedSubalbum);
-							}
-						);
-					}
-				}
-				Promise.all(promises).then(
-					function() {
-						util.sortByDate(self.subalbums);
-						self.albumNameSort = false;
-						self.albumReverseSort = false;
-						self.sortAlbumsMedia();
-
-						resolve_mergeProtectedSubalbums();
+		for (i = 0; i < protectedAlbum.subalbums.length; i ++) {
+			ithProtectedSubalbum = protectedAlbum.subalbums[i];
+			if (cacheBases.indexOf(ithProtectedSubalbum.cacheBase) == -1) {
+				self.subalbums.push(ithProtectedSubalbum);
+			// // if media or positions are missing the combination must not be reported as included
+			// } else if (self.hasOwnProperty("media") && self.hasOwnProperty("positionsAndMediaInTree")) {
+			} else {
+				self.subalbums.forEach(
+					function(subalbum) {
+						if (subalbum.isEqual(ithProtectedSubalbum))
+							PhotoFloat.mergeProtectedSubalbum(subalbum, ithProtectedSubalbum);
 					}
 				);
 			}
-		);
+		}
 	};
 
 
@@ -824,17 +781,42 @@
 								function() {
 									// execution arrives here when all the protected json has been loaded and processed
 
-									if (self.hasOwnProperty("media")) {
-										self.media.sortByDate();
-										self.mediaNameSort = false;
-										self.mediaReverseSort = false;
-									}
-									util.sortByDate(self.subalbums);
-									self.albumNameSort = false;
-									self.albumReverseSort = false;
-									self.sortAlbumsMedia();
+									// before sorting, any subalbum must be converted to album, because their data are slightly different
+									let conversionPromises = [];
+									self.subalbums.forEach(
+										function convertSubalbum(subalbum, iSubalbum) {
+											if (subalbum instanceof Subalbum) {
+												let conversionPromise = new Promise(
+													function(resolve_conversionPromise) {
+														let toAlbumPromise = subalbum.toAlbum(null, {getMedia: false, getPositions: false});
+														toAlbumPromise.then(
+															function(album) {
+																self.subalbums[iSubalbum] = album;
+																resolve_conversionPromise();
+															}
+														);
+													}
+												);
+												conversionPromises.push(conversionPromise);
+											}
+										}
+									);
+									Promise.all(conversionPromises).then(
+										function() {
+											if (self.hasOwnProperty("media")) {
+												self.media.sortByDate();
+												self.mediaNameSort = false;
+												self.mediaReverseSort = false;
+											}
+											util.sortByDate(self.subalbums);
+											self.albumNameSort = false;
+											self.albumReverseSort = false;
+											self.sortAlbumsMedia();
 
-									resolve_continueAddProtectedContent();
+											resolve_continueAddProtectedContent();
+										}
+									);
+
 								}
 							);
 						}
