@@ -172,8 +172,10 @@ $(document).ready(function() {
 						return false;
 					} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink && ! isMap) {
 						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
-							if (! $("#center .title").hasClass("hidden-by-pinch"))
-								pS.swipeDown(upLink);
+							if (! $("#center .title").hasClass("hidden-by-pinch")) {
+								// pS.swipeDown(upLink);
+								// return false;
+							}
 						} else {
 							// drag
 							if (! e.shiftKey)
@@ -181,12 +183,12 @@ $(document).ready(function() {
 							else
 								// faster
 								pS.drag(env.windowHeight / 3, {x: 0, y: 1});
+							return false;
 						}
-						return false;
 					} else if (e.key === "ArrowDown" || e.key === "PageDown" && ! isMap) {
 					 	if (env.mediaLink && env.currentMedia === null) {
-							pS.swipeUp(env.mediaLink);
-							return false;
+							// pS.swipeUp(env.mediaLink);
+							// return false;
 						} else if (pS.getCurrentZoom() > pS.getInitialZoom()) {
 							if (! e.shiftKey)
 								PinchSwipe.drag(env.windowHeight / 10, {x: 0, y: -1});
