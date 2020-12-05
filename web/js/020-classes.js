@@ -221,7 +221,7 @@
 		}
 
 		isEqual(otherMedia) {
-			return this.foldersCacheBase === otherMedia.foldersCacheBase && this.cacheBase === otherMedia.cacheBase;
+			return otherMedia !== null && this.foldersCacheBase === otherMedia.foldersCacheBase && this.cacheBase === otherMedia.cacheBase;
 		}
 
 		hasGpsData() {
@@ -294,8 +294,8 @@
 			return this.isTransversal() || this.isCollection();
 		}
 
-		isEqual(otherAlbum) {
-			return this.cacheBase === otherAlbum.cacheBase;
+		isEqual(otherSubalbum) {
+			return otherSubalbum !== null && this.cacheBase === otherSubalbum.cacheBase;
 		}
 	}
 
@@ -537,7 +537,7 @@
 		}
 
 		isEqual(otherAlbum) {
-			return this.cacheBase === otherAlbum.cacheBase;
+			return otherAlbum !== null && this.cacheBase === otherAlbum.cacheBase;
 		}
 	}
 

@@ -1441,7 +1441,10 @@
 		util.undie();
 		$("#loading").hide();
 
-		env.previousAlbum = env.currentAlbum;
+		if (! this.isEqual(env.currentAlbum)) {
+			// the if confidition is required for when a password is unveiled
+			env.previousAlbum = env.currentAlbum;
+		}
 		env.currentAlbum = this;
 
 		// if (this !== env.currentAlbum) {
