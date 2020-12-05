@@ -690,21 +690,6 @@
 							resolve_continueAddProtectedContent();
 						} else {
 							// prepare and get the protected content from the protected directories
-							// let numProtected = 0;
-							// let codesComplexCombination;
-							// for (let iComplex = 0; iComplex < theCodesComplexCombinationsToGet.length; iComplex ++) {
-							// 	codesComplexCombination = theCodesComplexCombinationsToGet[iComplex];
-							// 	if (! self.includedFilesByCodesSimpleCombination[codesComplexCombination].mediaGot)
-							// 		numProtected += self.numsProtectedMediaInSubTree[codesComplexCombination];
-							// }
-							// if (
-							// 	! self.isEmpty() && numProtected == 0 &&
-							// 	self.cacheBase !== env.options.by_search_string &&
-							// 	! self.isSearch()
-							// ) {
-							// 	// no need to get any protected content for this md5
-							// 	resolve_continueAddProtectedContent(self);
-							// } else {
 							let protectedPromises = [];
 							// let codesSimpleCombinationGot = [];
 
@@ -714,18 +699,6 @@
 								// let codesCombinationsLists = PhotoFloat.convertComplexCombinationsIntoLists(codesSimpleCombination);
 								let [albumMd5, mediaMd5] = util.convertCodesListToMd5sList(codesSimpleCombination.split(','));
 								// codesSimpleCombinationGot.push(codesSimpleCombination);
-
-								// // check if the combination is equivalent to a got one
-								// if (
-								// 	codesSimpleCombinationGot.some(
-								// 		function(codesComplexCombinationGot) {
-								// 			return codesSimpleCombination !== codesComplexCombinationGot && isEquivalent(codesSimpleCombination, codesComplexCombinationGot);
-								// 		}
-								// 	)
-								// ) {
-								// 	// is equivalent to one of the got codesSimpleCombination's
-								// 	continue;
-								// }
 
 								let protectedDirectory = env.options.protected_directories_prefix;
 								if (albumMd5)
@@ -816,7 +789,6 @@
 											resolve_continueAddProtectedContent();
 										}
 									);
-
 								}
 							);
 						}
@@ -824,36 +796,6 @@
 				}
 			);
 		}
-
-		// function isEquivalent(codesSimpleCombination, codesComplexCombinationGot) {
-		// 	let codesCombinationsLists = PhotoFloat.convertComplexCombinationsIntoLists(codesSimpleCombination);
-		// 	let albumCodesCombinationsList = codesCombinationsLists[0];
-		// 	let mediaCodesCombinationList = codesCombinationsLists[1];
-		// 	let codesCombinationsListsGot = PhotoFloat.convertComplexCombinationsIntoLists(codesComplexCombinationGot);
-		// 	let albumCodesCombinationsListGot = codesCombinationsListsGot[0];
-		// 	let mediaCodesCombinationListGot = codesCombinationsListsGot[1];
-		// 	var result =
-		// 		! albumCodesCombinationsList.length &&
-		// 		! albumCodesCombinationsListGot.length &&
-		// 		mediaCodesCombinationList.length &&
-		// 		mediaCodesCombinationListGot.length &&
-		// 		util.arrayIntersect(mediaCodesCombinationList, mediaCodesCombinationListGot).length
-		// 		||
-		// 		albumCodesCombinationsList.length &&
-		// 		albumCodesCombinationsListGot.length &&
-		// 		! mediaCodesCombinationList.length &&
-		// 		! mediaCodesCombinationListGot.length &&
-		// 		util.arrayIntersect(albumCodesCombinationsList, albumCodesCombinationsListGot).length
-		// 		||
-		// 		albumCodesCombinationsList.length &&
-		// 		albumCodesCombinationsListGot.length &&
-		// 		mediaCodesCombinationList.length &&
-		// 		mediaCodesCombinationListGot.length &&
-		// 		util.arrayIntersect(albumCodesCombinationsList, albumCodesCombinationsListGot).length &&
-		// 		util.arrayIntersect(mediaCodesCombinationList, mediaCodesCombinationListGot).length;
-		// 	// result == true means that the combination is equivalent to the got one
-		// 	return result;
-		// }
 	};
 
 	PhotoFloat.getNumProtectedCacheBases = function(numsProtectedMediaInSubTree, codesComplexCombination) {
@@ -1328,12 +1270,6 @@
 						}
 
 						env.options.cache_base_to_search_in = splittedAlbumHash.slice(2).join(env.options.cache_folder_separator);
-
-						// if (util.isAnyRootCacheBase(env.options.cache_base_to_search_in))
-						// 	$("ul#right-menu li#album-search").addClass("hidden");
-
-						// if (util.isSearchHash() && env.options.search_refine)
-						// 	env.options.cache_base_to_search_in = albumHash;
 
 						$("ul#right-menu #search-field").attr("value", wordsStringOriginal);
 						wordsString = util.normalizeAccordingToOptions(wordsString);
