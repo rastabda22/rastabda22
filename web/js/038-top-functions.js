@@ -1993,10 +1993,10 @@
 				iSubalbum,
 				function error() {
 					// executions shoudn't arrive here, if it arrives it's because of some error
-					env.currentAlbum.subalbums.splice(iSubalbum, 1);
-					theImage.parent().remove();
-					resolve_subalbumPromise();
-					// subalbums.splice(subalbums.indexOf(theLink), 1);
+					console.trace();
+					// env.currentAlbum.subalbums.splice(iSubalbum, 1);
+					// theImage.parent().remove();
+					// resolve_subalbumPromise();
 				}
 			);
 			promise.then(
@@ -2217,9 +2217,10 @@
 
 					(function(theLink, theImage) {
 						theImage.on("error", function() {
-							media.splice(media.indexOf(theLink), 1);
-							theLink.remove();
-							env.currentAlbum.media.splice(env.currentAlbum.media.indexOf(theImage.get(0).media), 1);
+							console.trace();
+							// media.splice(media.indexOf(theLink), 1);
+							// theLink.remove();
+							// env.currentAlbum.media.splice(env.currentAlbum.media.indexOf(theImage.get(0).media), 1);
 						});
 					})(imageLink, imageElement);
 

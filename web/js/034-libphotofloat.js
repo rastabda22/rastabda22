@@ -1124,8 +1124,8 @@
 			}
 			if (index >= nMediaInAlbum) {
 				index -= nMediaInAlbum;
-				let targetSubalbum;
 				if (album.subalbums.length) {
+					let targetSubalbum;
 					let found = false;
 					for (i = 0; i < album.subalbums.length; i ++) {
 						if (index >= album.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal())
