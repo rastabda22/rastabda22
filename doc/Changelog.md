@@ -1,3 +1,7 @@
+### version v4.9.1 (Unreleased)
+
+* new option `use_system_js_libraries` to use OS javascript libraries instead of the versions provided by MyPhotoShare. Default uses MyPhotoShare versions.
+
 ### version v4.9.0 (Dec 1st, 2020)
 
 * many bug fixes

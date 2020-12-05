@@ -79,6 +79,9 @@ debug_profile = false
 # minifying
 ###########################################################
 
+# Use system javascript libraries instead of the versions instead of the ones supplied.
+use_system_js_libraries = false
+
 # CSS minifier
 # permitted values:
 #    web_service : https://cssminifier.com/

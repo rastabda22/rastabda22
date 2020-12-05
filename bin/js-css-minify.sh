@@ -34,6 +34,15 @@ if [ ! -e "$DEFAULT_CONF" ]; then
 	exit 1
 fi
 
+# Do we use the system JavaScript libraries? Set the variable $OS_JS if that's the case.
+OS_JS="$(sed -nr 's/^\s*use_system_js_libraries\s*=\s*(\w+)\s*.*$/\1/p' $CONF)"
+DEFAULT_OS_JS="$(sed -nr 's/^\s*use_system_js_libraries\s*=\s*(\w+)\s*.*$/\1/p' $DEFAULT_CONF)"
+OS_JS=${OS_JS:-$DEFAULT_OS_JS}
+if [ "$OS_JS" = "true" ] || [ "$OS_JS" = "1" ]; then
+	OS_JS="true"
+else
+	unset OS_JS
+fi
 
 # Parse which minifiers to use from configuration file
 MINIFY_JS="$(sed -nr 's/^\s*js_minifier\s*=\s*(\w+)\s*.*$/\1/p' $CONF)"
@@ -47,6 +56,11 @@ MINIFY_CSS=${MINIFY_CSS:-$DEFAULT_MINIFY_CSS}
 echo
 echo "$MINIFY_CSS" set as CSS minifier in $CONF
 echo "$MINIFY_JS" set as JS minifier in $CONF
+if [ "$OS_JS" ]; then
+	echo "We'll use system JavaScript libraries (/usr/share/javascript/) when found"
+else
+	echo "We'll use JavaScript libraries provided by MyPhotoShare"
+fi
 
 unixseconds=$(date +%s)
 
@@ -130,7 +144,7 @@ while read jsfile; do
 	# Check if minified versions are provided by the system (Debian/Ubuntu)
 	case $jsfile in
 		000-jquery-*)
-		if [ -e /usr/share/javascript/jquery/jquery.min.js ]; then
+		if [ -n "$OS_JS" ] && [ -e /usr/share/javascript/jquery/jquery.min.js ]; then
 			CAT_LIST="$CAT_LIST /usr/share/javascript/jquery/jquery.min.js"
 			echo "... Found system jquery; using it."
 			continue
@@ -138,7 +152,7 @@ while read jsfile; do
 		;;
 
 		003-mousewheel*)
-		if [ -e /usr/share/javascript/jquery-mousewheel/jquery.mousewheel.min.js ]; then
+		if [ -n "$OS_JS" ] && [ -e /usr/share/javascript/jquery-mousewheel/jquery.mousewheel.min.js ]; then
 			CAT_LIST="$CAT_LIST /usr/share/javascript/jquery-mousewheel/jquery.mousewheel.min.js"
 			echo "... Found system jquery-mousewheel; using it."
 			continue
@@ -148,7 +162,7 @@ while read jsfile; do
 		004-fullscreen*)
 		# Currently, there is no minified library in the Debian package... So this test is
 		# skipped and will be used in future Debian versions
-		if [ -e /usr/share/javascript/jquery-fullscreen/jquery.fullscreen.min.js ]; then
+		if [ -n "$OS_JS" ] && [ -e /usr/share/javascript/jquery-fullscreen/jquery.fullscreen.min.js ]; then
 			CAT_LIST="$CAT_LIST /usr/share/javascript/jquery-fullscreen/jquery.fullscreen.min.js"
 			echo "... Found system jquery-fullscreen; using it."
 			continue
@@ -156,7 +170,7 @@ while read jsfile; do
 		;;
 
 		005-modernizr*)
-		if [ -e /usr/share/javascript/modernizr/modernizr.min.js ]; then
+		if [ -n "$OS_JS" ] && [ -e /usr/share/javascript/modernizr/modernizr.min.js ]; then
 			CAT_LIST="$CAT_LIST /usr/share/javascript/modernizr/modernizr.min.js"
 			echo "... Found system modernizr; using it."
 			continue
@@ -164,7 +178,7 @@ while read jsfile; do
 		;;
 
 		007-jquery-lazyload*)
-		if [ -e /usr/share/javascript/jquery-lazyload/jquery.lazyload.min.js ]; then
+		if [ -n "$OS_JS" ] && [ -e /usr/share/javascript/jquery-lazyload/jquery.lazyload.min.js ]; then
 			CAT_LIST="$CAT_LIST /usr/share/javascript/jquery-lazyload/jquery.lazyload.min.js"
 			echo "... Found system jquery-lazyload; using it."
 			continue
