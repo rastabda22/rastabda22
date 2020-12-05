@@ -1082,13 +1082,15 @@
 	};
 	PhotoFloat.prototype.pickRandomMedia = function(iSubalbum, error) {
 		var index;
+		ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
 
 		return new Promise(
 			function(resolve_pickRandomMedia) {
-				var promise = env.currentAlbum.convertSubalbum(iSubalbum, error, {getMedia: false, getPositions: false});
+				var promise = ithSubalbum.toAlbum(error, {getMedia: false, getPositions: false});
 				promise.then(
-					function(iSubalbum) {
-						var album = env.currentAlbum.subalbums[iSubalbum];
+					function(album) {
+						env.currentAlbum.subalbums[iSubalbum] = album;
+						// var album = env.currentAlbum.subalbums[iSubalbum];
 						// index = 0;
 						index = Math.floor(Math.random() * (album.numsMediaInSubTree.imagesAndVideosTotal()));
 						nextAlbum(album, resolve_pickRandomMedia);
@@ -1121,30 +1123,31 @@
 			}
 			if (index >= nMediaInAlbum) {
 				index -= nMediaInAlbum;
-				let found = false;
-				let targetSubalbumIndex;
-				for (i = 0; i < album.subalbums.length; i ++) {
-					if (index >= album.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal())
-					index -= album.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal();
-					else {
-						targetSubalbumIndex = i;
-						found = true;
-						break;
-					}
-				}
-				if (! found) {
-					error();
-				} else {
-					var promise = album.convertSubalbum(targetSubalbumIndex, error, {getMedia: false, getPositions: false});
-					promise.then(
-						function(iSubalbum) {
-							nextAlbum(album.subalbums[iSubalbum], resolve_pickRandomMedia);
-						},
-						function() {
-							console.trace();
+				let targetSubalbum;
+				if (album.subalbums.length) {
+					let found = false;
+					for (i = 0; i < album.subalbums.length; i ++) {
+						if (index >= album.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal())
+							index -= album.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal();
+						else {
+							targetSubalbum = album.subalbums[i];
+							found = true;
+							break;
 						}
-					);
+					}
+					if (! found)
+						error();
 				}
+				var promise = targetSubalbum.toAlbum(error, {getMedia: false, getPositions: false});
+				promise.then(
+					function(targetSubalbum) {
+						album.subalbums[iSubalbum] = targetSubalbum;
+						nextAlbum(album.subalbums[iSubalbum], resolve_pickRandomMedia);
+					},
+					function() {
+						console.trace();
+					}
+				);
 			} else {
 				var lastPromise = PhotoFloat.getAlbum(album, error, {getMedia: true, getPositions: true});
 				lastPromise.then(
@@ -1814,23 +1817,26 @@
 															function(subalbum, iSubalbum) {
 																let promise = new Promise(
 																	function(resolve_subalbum) {
-																		let splittedCacheBase = subalbum.cacheBase.split(env.options.cache_folder_separator);
-																		let parentCacheBase = splittedCacheBase.slice(0, splittedCacheBase.length - 1).join(env.options.cache_folder_separator);
-																		var getAlbumPromise = PhotoFloat.getAlbum(parentCacheBase, null, {getMedia: false, getPositions: false});
-																		getAlbumPromise.then(
-																			function(parentAlbum) {
-																				indexInParent = parentAlbum.subalbums.findIndex(parentSubalbum => parentSubalbum.isEqual(subalbum));
-																				var convertAlbumPromise = parentAlbum.convertSubalbum(indexInParent, null, {getMedia: false, getPositions: false});
-																				convertAlbumPromise.then(
-																					function(indexInParent) {
-																						env.searchAlbum.subalbums[iSubalbum] = parentAlbum.subalbums[indexInParent];
-																						env.searchAlbum.subalbums[iSubalbum].generateAlbumCaptionForSearch();
-																						resolve_subalbum();
-																					},
-																					function() {
-																						console.trace();
-																					}
-																				);
+																		var convertAlbumPromise = subalbum.toAlbum(null, {getMedia: false, getPositions: false});
+																		convertAlbumPromise.then(
+																			function(subalbum) {
+																				env.searchAlbum.subalbums[iSubalbum] = subalbum;
+																				env.searchAlbum.subalbums[iSubalbum].generateAlbumCaptionForSearch();
+
+																				// // replace the converted subalbum in its parent's subalbums
+																				// let splittedCacheBase = subalbum.cacheBase.split(env.options.cache_folder_separator);
+																				// let parentCacheBase = splittedCacheBase.slice(0, splittedCacheBase.length - 1).join(env.options.cache_folder_separator);
+																				// var getAlbumPromise = PhotoFloat.getAlbum(parentCacheBase, null, {getMedia: false, getPositions: false});
+																				// getAlbumPromise.then(
+																				// 	function(parentAlbum) {
+																				// 		indexInParent = parentAlbum.subalbums.findIndex(parentSubalbum => parentSubalbum.isEqual(subalbum));
+																				// 	}
+																				// );
+
+																				resolve_subalbum();
+																			},
+																			function() {
+																				console.trace();
 																			}
 																		);
 																	}

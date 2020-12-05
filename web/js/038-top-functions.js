@@ -2498,7 +2498,7 @@
 								if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
 									$("#subalbum-map-link-" + iSubalbum).off('click').on(
 										'click',
-										{iSubalbum: iSubalbum},
+										{ithSubalbum: ithSubalbum},
 										function(ev, from) {
 											// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
 											ev.preventDefault();
@@ -2553,10 +2553,10 @@
 
 								if (env.currentAlbum.isCollection()) {
 									// the folder name must be added the second line
-									let convertSubalbumPromise = env.currentAlbum.convertSubalbum(iSubalbum, null, {getMedia: false, getPositions: false});
+									let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: false, getPositions: false});
 									convertSubalbumPromise.then(
-										function(iSubalbum) {
-											let ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
+										function(ithSubalbum) {
+											env.currentAlbum.subalbums[iSubalbum] = ithSubalbum;
 											// ithSubalbum.generateCaptionForCollections();
 											let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
 											$("#" + captionId + " .folder-name").html(nameHtml);
@@ -2730,10 +2730,10 @@
 	};
 
 	TopFunctions.generateMapFromSubalbum = function(ev, from) {
-		var subalbumPromise = env.currentAlbum.convertSubalbum(ev.data.iSubalbum, util.errorThenGoUp, {getMedia: false, getPositions: true});
+		var subalbumPromise = ev.data.ithSubalbum.toAlbum(util.errorThenGoUp, {getMedia: false, getPositions: true});
 		subalbumPromise.then(
-			function(iSubalbum) {
-				var subalbum = env.currentAlbum.subalbums[iSubalbum];
+			function(subalbum) {
+				// var subalbum = env.currentAlbum.subalbums[iSubalbum];
 				if (subalbum.positionsAndMediaInTree.length) {
 					ev.stopPropagation();
 					ev.preventDefault();

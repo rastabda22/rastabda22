@@ -598,12 +598,15 @@
 			function (resolve_promise) {
 				self.addAllMediaToSelection();
 				let promises = [];
-				for (let iSubalbum = 0; iSubalbum < self.subalbums.length; iSubalbum ++) {
+				for (let i = 0; i < self.subalbums.length; i ++) {
+					let iSubalbum = i;
+					let ithSubalbum = self.subalbums[iSubalbum];
 					let ithPromise = new Promise(
 						function(resolve_ithPromise) {
-							let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {getMedia: true, getPositions: false});
+							let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: false});
 							convertSubalbumPromise.then(
-								function(iSubalbum) {
+								function(ithSubalbum) {
+									self.subalbums[iSubalbum] = ithSubalbum;
 									let promise = self.subalbums[iSubalbum].recursivelySelectMedia();
 									promise.then(
 										function() {
@@ -631,12 +634,15 @@
 			function (resolve_promise) {
 				self.removeAllMediaFromSelection();
 				let promises = [];
-				for (let iSubalbum = 0; iSubalbum < self.subalbums.length; iSubalbum ++) {
+				for (let i = 0; i < self.subalbums.length; i ++) {
+					let iSubalbum = i;
+					let ithSubalbum = self.subalbums[iSubalbum];
 					let ithPromise = new Promise(
 						function(resolve_ithPromise) {
-							let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {getMedia: true, getPositions: false});
+							let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: false});
 							convertSubalbumPromise.then(
-								function(iSubalbum) {
+								function(ithSubalbum) {
+									self.subalbums[iSubalbum] = ithSubalbum;
 									let promise = self.subalbums[iSubalbum].recursivelyRemoveMedia();
 									promise.then(
 										function() {
@@ -666,12 +672,15 @@
 					reject_promise();
 				} else {
 					let promises = [];
-					for (let iSubalbum = 0; iSubalbum < self.subalbums.length; iSubalbum ++) {
+					for (let i = 0; i < self.subalbums.length; i ++) {
+						let iSubalbum = i;
+						let ithSubalbum = self.subalbums[iSubalbum];
 						let ithPromise = new Promise(
 							function(resolve_ithPromise, reject_ithPromise) {
-								let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {getMedia: true, getPositions: false});
+								let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: false});
 								convertSubalbumPromise.then(
-									function(iSubalbum) {
+									function(ithSubalbum) {
+										self.subalbums[iSubalbum] = ithSubalbum;
 										let promise = self.subalbums[iSubalbum].recursivelyAllMediaAreSelected();
 										promise.then(
 											function() {
@@ -1512,10 +1521,10 @@
 				if (subalbum.isSelected()) {
 					resolve_addSubalbum();
 				} else {
-					let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {getMedia: false, getPositions: true});
+					let convertSubalbumPromise = subalbum.toAlbum(null, {getMedia: false, getPositions: true});
 					convertSubalbumPromise.then(
-						function(iSubalbum) {
-							var subalbum = self.subalbums[iSubalbum];
+						function(subalbum) {
+							self.subalbums[iSubalbum] = subalbum;
 							if (Utilities.nothingIsSelected())
 								Utilities.initializeSelectionAlbum();
 
@@ -1578,10 +1587,10 @@
 					resolve_removeSubalbum();
 				} else {
 					// if (env.selectionAlbum.numsMediaInSubTree.imagesAndVideosTotal()) {
-					let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {getMedia: true, getPositions: true});
+					let convertSubalbumPromise = subalbum.toAlbum(null, {getMedia: true, getPositions: true});
 					convertSubalbumPromise.then(
-						function(iSubalbum) {
-							var subalbum = self.subalbums[iSubalbum];
+						function(subalbum) {
+							self.subalbums[iSubalbum] = subalbum;
 
 							var selectedMediaInsideSelectedAlbums = [];
 							env.selectionAlbum.media.forEach(
@@ -2220,13 +2229,16 @@
 					}
 
 					if (everything) {
-						for (let iSubalbum = 0; iSubalbum < album.subalbums.length; iSubalbum ++) {
+						for (let i = 0; i < album.subalbums.length; i ++) {
+							let iSubalbum = i;
+							let ithSubalbum = self.subalbums[iSubalbum];
 							let subalbumPromise = new Promise(
 								function(resolveSubalbumPromise) {
 									// let ithSubalbum = album.subalbums[iSubalbum];
-									let convertSubalbumPromise = album.convertSubalbum(iSubalbum, null, {getMedia: true, getPositions: false});
+									let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: false});
 									convertSubalbumPromise.then(
-										function(iSubalbum) {
+										function(ithSubalbum) {
+											album.subalbums[iSubalbum] = ithSubalbum;
 											let albumPath = album.subalbums[iSubalbum].path;
 											if (album.isSearch() || album.isSelection())
 												// remove the leading folders/date/gps/map string

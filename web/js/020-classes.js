@@ -297,6 +297,31 @@
 		isEqual(otherSubalbum) {
 			return otherSubalbum !== null && this.cacheBase === otherSubalbum.cacheBase;
 		}
+
+		toAlbum(error, {getMedia = false, getPositions = false}) {
+			var self = this;
+			return new Promise(
+				function(resolve_convertIntoAlbum) {
+					let promise = PhotoFloat.getAlbum(self.cacheBase, error, {getMedia: getMedia, getPositions: getPositions});
+					promise.then(
+						function(convertedSubalbum) {
+							if (self.hasOwnProperty("captionForSelection")) {
+								// transfer subalbums properties to the album
+								convertedSubalbum.captionForSelection = self.captionForSelection;
+								convertedSubalbum.captionForSelectionSorting = self.captionForSelectionSorting;
+							}
+							if (self.hasOwnProperty("captionForSearch")) {
+								// transfer subalbums properties to the album
+								convertedSubalbum.captionForSearch = self.captionForSearch;
+								convertedSubalbum.captionForSearchSorting = self.captionForSearchSorting;
+							}
+							resolve_convertIntoAlbum(convertedSubalbum);
+						}
+					);
+				}
+			);
+		}
+
 	}
 
 	class Subalbums extends Array {
@@ -394,28 +419,14 @@
 			return this.empty !== undefined && this.empty;
 		}
 
-		convertSubalbum(subalbumIndex, error, {getMedia = false, getPositions = false}) {
+		toAlbum(error, {getMedia = false, getPositions = false}) {
 			var self = this;
-			var wasASubalbum = this.subalbums[subalbumIndex] instanceof Subalbum;
 			return new Promise(
 				function(resolve_convertIntoAlbum) {
-					let promise = PhotoFloat.getAlbum(self.subalbums[subalbumIndex].cacheBase, error, {getMedia: getMedia, getPositions: getPositions});
+					let promise = PhotoFloat.getAlbum(self.cacheBase, error, {getMedia: getMedia, getPositions: getPositions});
 					promise.then(
 						function(convertedSubalbum) {
-							if (wasASubalbum) {
-								if (self.subalbums[subalbumIndex].hasOwnProperty("captionForSelection")) {
-									// transfer subalbums properties to the album
-									convertedSubalbum.captionForSelection = self.subalbums[subalbumIndex].captionForSelection;
-									convertedSubalbum.captionForSelectionSorting = self.subalbums[subalbumIndex].captionForSelectionSorting;
-								}
-								if (self.subalbums[subalbumIndex].hasOwnProperty("captionForSearch")) {
-									// transfer subalbums properties to the album
-									convertedSubalbum.captionForSearch = self.subalbums[subalbumIndex].captionForSearch;
-									convertedSubalbum.captionForSearchSorting = self.subalbums[subalbumIndex].captionForSearchSorting;
-								}
-								self.subalbums[subalbumIndex] = convertedSubalbum;
-							}
-							resolve_convertIntoAlbum(subalbumIndex);
+							resolve_convertIntoAlbum(convertedSubalbum);
 						}
 					);
 				}
