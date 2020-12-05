@@ -1468,10 +1468,11 @@
 					for (indexMedia = 0; indexMedia < env.searchAlbum.media.length; indexMedia ++) {
 						// add the parent to the media
 						env.searchAlbum.media[indexMedia].addParent(env.searchAlbum);
-						if (env.searchAlbum.media[indexMedia].hasGpsData())
+						if (env.searchAlbum.media[indexMedia].hasGpsData()) {
 							// add the media position
 							env.searchAlbum.positionsAndMediaInTree.addSingleMediaToPositionsAndMedia(env.searchAlbum.media[indexMedia]);
 							env.searchAlbum.numPositionsInTree = env.searchAlbum.positionsAndMediaInTree.length;
+						}
 					}
 
 					if (env.searchAlbum.subalbums.length) {
