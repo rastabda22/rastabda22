@@ -1268,7 +1268,7 @@
 			function(resolve_parseHash, reject_parseHash) {
 				var removedStopWords = [];
 				var searchWordsFromUser = [], searchWordsFromUserNormalized = [], searchWordsFromUserNormalizedAccordingToOptions = [];
-				var albumHashToGet, albumHashes = [], wordSubalbums = new Subalbums([]);
+				var albumCacheBaseToGet, albumHashes = [], wordSubalbums = new Subalbums([]);
 				var [albumHash, mediaHash, mediaFolderHash] = PhotoFloat.decodeHash(hash);
 				var indexWords, indexAlbums, wordsWithOptionsString;
 				// this vars are defined here and not at the beginning of the file because the options must have been read
@@ -1334,12 +1334,12 @@
 				}
 
 				if (util.isSearchCacheBase(albumHash)) {
-					albumHashToGet = albumHash;
+					albumCacheBaseToGet = albumHash;
 				// // same conditions as before????????????????
 				// } else if (util.isSearchCacheBase(albumHash)) {
-				// 	albumHashToGet = util.pathJoin([albumHash, mediaFolderHash]);
+				// 	albumCacheBaseToGet = util.pathJoin([albumHash, mediaFolderHash]);
 				} else {
-					albumHashToGet = albumHash;
+					albumCacheBaseToGet = albumHash;
 				}
 
 				if (mediaHash)
@@ -1349,7 +1349,7 @@
 				if (PhotoFloat.searchAndSubalbumHash)
 					PhotoFloat.searchAndSubalbumHash = decodeURI(PhotoFloat.searchAndSubalbumHash);
 
-				var albumFromCache = env.cache.getAlbum(albumHashToGet), promise;
+				var albumFromCache = env.cache.getAlbum(albumCacheBaseToGet), promise;
 				if (
 					albumFromCache &&
 					! PhotoFloat.guessedPasswordsMd5.length &&
@@ -1379,7 +1379,7 @@
 					}
 				} else if (! util.isSearchCacheBase(albumHash) || searchWordsFromUser.length === 0) {
 					// something is missing, getAlbum must be called
-					promise = PhotoFloat.getAlbum(albumHashToGet, reject_parseHash, {getMedia: true, getPositions: true});
+					promise = PhotoFloat.getAlbum(albumCacheBaseToGet, reject_parseHash, {getMedia: true, getPositions: true});
 					promise.then(
 						function(album) {
 							let result = album.getMediaIndex(mediaFolderHash, mediaHash);
