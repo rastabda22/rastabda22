@@ -1941,7 +1941,7 @@
 				return null;
 			}
 		}
-		if (this.isSearch()) {
+		if (this.isSearch() && mediaIndex === -1) {
 			$("ul#right-menu").addClass("expand");
 			util.focusSearchField();
 		}

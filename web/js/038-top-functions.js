@@ -1426,9 +1426,9 @@
 	Album.prototype.prepareForShowing = function(mediaIndex) {
 		var populateAlbum;
 
-		if (env.previousMedia !== null && env.previousMedia.mimeType.indexOf("video") === 0)
+		if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video") === 0)
 			// stop the video, otherwise it will keep playing
-			$("#media-center")[0].pause();
+			$("video#media-center")[0].pause();
 
 		if (this.numsMediaInSubTree.imagesAndVideosTotal() == 0 && ! this.isSearch()) {
 			// the album hasn't any content:

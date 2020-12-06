@@ -47,9 +47,9 @@ $(document).ready(function() {
 		var isPopup = $('.leaflet-popup').html() ? true : false;
 		var isAuth = $("#auth-text").is(":visible");
 
-		function toggleMenu() {
-			$("#menu-icon")[0].click();
-		}
+		// function toggleMenu() {
+		// 	$("#menu-icon")[0].click();
+		// }
 
 		let upLink = util.upHash();
 
@@ -65,11 +65,11 @@ $(document).ready(function() {
 				// util.goUpInHash();
 				return false;
 			} else if ($("ul#right-menu").hasClass("expand")) {
-				toggleMenu();
+				f.toggleMenu();
 				return false;
-			} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video") === 0 && ! $("#media-center")[0].paused) {
+			} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video") === 0 && ! $("video#media-center")[0].paused) {
 					// stop the video, otherwise it keeps playing
-					$("#media-center")[0].pause();
+					$("video#media-center")[0].pause();
 			} else if (isMap) {
 				if (isPopup) {
 					// the popup is there: close it
@@ -95,7 +95,7 @@ $(document).ready(function() {
 			} else if (upLink) {
 				if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video") === 0)
 					// stop the video, otherwise it keeps playing
-					$("#media-center")[0].pause();
+					$("video#media-center")[0].pause();
 				if (env.currentAlbum.cacheBase !== env.options.folders_string || env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia()) {
 					env.fromEscKey = true;
 					$("#loading").show();
@@ -133,13 +133,13 @@ $(document).ready(function() {
 								pS.drag(env.windowWidth / 3, {x: -1, y: 0});
 						}
 						return false;
-					} else if (e.key === " " && env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video") === 0) {
-						if ($("#media-center")[0].paused)
+					} else if (e.key === " " && ! e.shiftKey && env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video") === 0) {
+						if ($("video#media-center")[0].paused)
 							// play the video
-							$("#media-center")[0].play();
+							$("video#media-center")[0].play();
 						else
 							// stop the video
-							$("#media-center")[0].pause();
+							$("video#media-center")[0].pause();
 					} else if (
 						(e.key.toLowerCase() === "n" || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
 						env.nextMedia && env.currentMedia !== null && ! isMap
@@ -172,9 +172,9 @@ $(document).ready(function() {
 						return false;
 					} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink && ! isMap) {
 						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
-							if (! $("#center .title").hasClass("hidden-by-pinch")) {
-								// pS.swipeDown(upLink);
-								// return false;
+							if (e.shiftKey && ! $("#center .title").hasClass("hidden-by-pinch")) {
+								pS.swipeDown(upLink);
+								return false;
 							}
 						} else {
 							// drag
@@ -186,9 +186,9 @@ $(document).ready(function() {
 							return false;
 						}
 					} else if (e.key === "ArrowDown" || e.key === "PageDown" && ! isMap) {
-					 	if (env.mediaLink && env.currentMedia === null) {
-							// pS.swipeUp(env.mediaLink);
-							// return false;
+					 	if (e.shiftKey && env.mediaLink && env.currentMedia === null) {
+							pS.swipeUp(env.mediaLink);
+							return false;
 						} else if (pS.getCurrentZoom() > pS.getInitialZoom()) {
 							if (! e.shiftKey)
 								PinchSwipe.drag(env.windowHeight / 10, {x: 0, y: -1});
@@ -396,7 +396,7 @@ $(document).ready(function() {
 				e.key.toLowerCase() === "e" && e.target.tagName.toLowerCase() != 'input' &&  ! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey
 					// "e" opens the menu, and closes it if focus in not in input field
 			) {
-				toggleMenu();
+				f.toggleMenu();
 				return false;
 			}
 		}
