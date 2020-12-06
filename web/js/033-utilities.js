@@ -112,13 +112,13 @@
 			)
 		);
 
-		if (PhotoFloat.guessedPasswordsMd5.length) {
+		if (env.guessedPasswordsMd5.length) {
 			newForm.append(
 				jQuery(
 					"<input>",
 					{
 						name: "guessedPasswordsMd5",
-						value: PhotoFloat.guessedPasswordsMd5.join('-'),
+						value: env.guessedPasswordsMd5.join('-'),
 						type: "hidden"
 					}
 				)
@@ -127,7 +127,7 @@
 					"<input>",
 					{
 						name: "guessedPasswordCodes",
-						value: PhotoFloat.guessedPasswordCodes.join('-'),
+						value: env.guessedPasswordCodes.join('-'),
 						type: "hidden"
 					}
 				)
@@ -139,8 +139,8 @@
 
 	Utilities.prototype.readPostData = function() {
 		if (postData.guessedPasswordsMd5) {
-			PhotoFloat.guessedPasswordsMd5 = postData.guessedPasswordsMd5.split('-');
-			PhotoFloat.guessedPasswordCodes = postData.guessedPasswordCodes.split('-');
+			env.guessedPasswordsMd5 = postData.guessedPasswordsMd5.split('-');
+			env.guessedPasswordCodes = postData.guessedPasswordCodes.split('-');
 			delete postData.guessedPasswordsMd5;
 		}
 		env.selectorClickedToOpenTheMap = postData.selectorClickedToOpenTheMap;
@@ -411,7 +411,7 @@
 						let combinationList = combinations[i].split('-');
 						if (unveiledOnly) {
 							for (let j = 0; j < combinationList.length; j ++) {
-								if (PhotoFloat.guessedPasswordCodes.includes(combinationList[j]))
+								if (env.guessedPasswordCodes.includes(combinationList[j]))
 									combinationList.splice(j, 1);
 							}
 						}
@@ -2890,8 +2890,8 @@
 	};
 
 	Utilities.convertMd5ToCode = function(md5) {
-		var index = PhotoFloat.guessedPasswordsMd5.indexOf(md5);
-		return PhotoFloat.guessedPasswordCodes[index];
+		var index = env.guessedPasswordsMd5.indexOf(md5);
+		return env.guessedPasswordCodes[index];
 	};
 
 	Utilities.prototype.noOp = function() {
@@ -2904,9 +2904,9 @@
 			if (! codesList[i]) {
 				md5sList.push('');
 			} else {
-				index = PhotoFloat.guessedPasswordCodes.indexOf(codesList[i]);
+				index = env.guessedPasswordCodes.indexOf(codesList[i]);
 				if (index != -1)
-					md5sList.push(PhotoFloat.guessedPasswordsMd5[index]);
+					md5sList.push(env.guessedPasswordsMd5[index]);
 			}
 		}
 		return md5sList;

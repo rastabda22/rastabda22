@@ -2288,7 +2288,7 @@
 
 					if (
 						typeof isPhp === "function" && (
-							util.somethingIsInMapAlbum() || util.somethingIsSelected() || PhotoFloat.guessedPasswordsMd5.length
+							util.somethingIsInMapAlbum() || util.somethingIsSelected() || env.guessedPasswordsMd5.length
 						)
 					) {
 						// execution enters here if we are using index.php
@@ -2526,7 +2526,7 @@
 
 								if (
 									typeof isPhp === "function" && (
-										util.somethingIsInMapAlbum() || util.somethingIsSelected() || PhotoFloat.guessedPasswordsMd5.length
+										util.somethingIsInMapAlbum() || util.somethingIsSelected() || env.guessedPasswordsMd5.length
 									)
 								) {
 									// execution enters here if we are using index.php

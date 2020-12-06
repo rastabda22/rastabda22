@@ -5,9 +5,6 @@
 
 	/* constructor */
 	function PhotoFloat() {
-		PhotoFloat.guessedPasswordCodes = [];
-		PhotoFloat.guessedPasswordsMd5 = [];
-		PhotoFloat.geotaggedPhotosFound = null;
 		this.searchWordsFromJsonFile = [];
 		this.searchAlbumCacheBasesFromJsonFile = [];
 		this.searchAlbumSubalbumsFromJsonFile = [];
@@ -417,20 +414,20 @@
 		var iAlbumPassword, iMediaPassword, albumGuessedPassword, mediaGuessedPassword, protectedDirectory;
 		var result = [];
 
-		for (iAlbumPassword = 0; iAlbumPassword < PhotoFloat.guessedPasswordsMd5.length; iAlbumPassword ++) {
-			albumGuessedPassword = PhotoFloat.guessedPasswordsMd5[iAlbumPassword];
+		for (iAlbumPassword = 0; iAlbumPassword < env.guessedPasswordsMd5.length; iAlbumPassword ++) {
+			albumGuessedPassword = env.guessedPasswordsMd5[iAlbumPassword];
 			protectedDirectory = env.options.protected_directories_prefix + albumGuessedPassword + ',';
 			result.push(protectedDirectory);
 		}
-		for (iMediaPassword = 0; iMediaPassword < PhotoFloat.guessedPasswordsMd5.length; iMediaPassword ++) {
-			mediaGuessedPassword = PhotoFloat.guessedPasswordsMd5[iMediaPassword];
+		for (iMediaPassword = 0; iMediaPassword < env.guessedPasswordsMd5.length; iMediaPassword ++) {
+			mediaGuessedPassword = env.guessedPasswordsMd5[iMediaPassword];
 			protectedDirectory = env.options.protected_directories_prefix + ',' + mediaGuessedPassword;
 			result.push(protectedDirectory);
 		}
-		for (iAlbumPassword = 0; iAlbumPassword < PhotoFloat.guessedPasswordsMd5.length; iAlbumPassword ++) {
-			albumGuessedPassword = PhotoFloat.guessedPasswordsMd5[iAlbumPassword];
-			for (iMediaPassword = 0; iMediaPassword < PhotoFloat.guessedPasswordsMd5.length; iMediaPassword ++) {
-				mediaGuessedPassword = PhotoFloat.guessedPasswordsMd5[iMediaPassword];
+		for (iAlbumPassword = 0; iAlbumPassword < env.guessedPasswordsMd5.length; iAlbumPassword ++) {
+			albumGuessedPassword = env.guessedPasswordsMd5[iAlbumPassword];
+			for (iMediaPassword = 0; iMediaPassword < env.guessedPasswordsMd5.length; iMediaPassword ++) {
+				mediaGuessedPassword = env.guessedPasswordsMd5[iMediaPassword];
 				protectedDirectory = env.options.protected_directories_prefix + albumGuessedPassword + ',' + mediaGuessedPassword;
 				result.push(protectedDirectory);
 			}
@@ -445,18 +442,18 @@
 		var codesComplexCombinationInAlbum;
 
 		var result = [];
-		for (iAlbumPassword = 0; iAlbumPassword <= PhotoFloat.guessedPasswordsMd5.length; iAlbumPassword ++) {
-			if (iAlbumPassword === PhotoFloat.guessedPasswordsMd5.length) {
+		for (iAlbumPassword = 0; iAlbumPassword <= env.guessedPasswordsMd5.length; iAlbumPassword ++) {
+			if (iAlbumPassword === env.guessedPasswordsMd5.length) {
 				albumCode = '';
 			} else {
-				albumGuessedPassword = PhotoFloat.guessedPasswordsMd5[iAlbumPassword];
+				albumGuessedPassword = env.guessedPasswordsMd5[iAlbumPassword];
 				albumCode = util.convertMd5ToCode(albumGuessedPassword);
 			}
-			for (iMediaPassword = 0; iMediaPassword <= PhotoFloat.guessedPasswordsMd5.length; iMediaPassword ++) {
-				if (iMediaPassword === PhotoFloat.guessedPasswordsMd5.length) {
+			for (iMediaPassword = 0; iMediaPassword <= env.guessedPasswordsMd5.length; iMediaPassword ++) {
+				if (iMediaPassword === env.guessedPasswordsMd5.length) {
 					mediaCode = '';
 				} else {
-					mediaGuessedPassword = PhotoFloat.guessedPasswordsMd5[iMediaPassword];
+					mediaGuessedPassword = env.guessedPasswordsMd5[iMediaPassword];
 					mediaCode = util.convertMd5ToCode(mediaGuessedPassword);
 				}
 				if (! albumCode && ! mediaCode)
@@ -848,9 +845,9 @@
 
 	Album.prototype.hasMoreProtectedContent = function() {
 		if (
-			Object.keys(this.numsProtectedMediaInSubTree).length > PhotoFloat.guessedPasswordCodes.length && (
+			Object.keys(this.numsProtectedMediaInSubTree).length > env.guessedPasswordCodes.length && (
 				! this.numsProtectedMediaInSubTree.hasOwnProperty(",") ||
-				Object.keys(this.numsProtectedMediaInSubTree).length > PhotoFloat.guessedPasswordCodes.length + 1
+				Object.keys(this.numsProtectedMediaInSubTree).length > env.guessedPasswordCodes.length + 1
 			)
 		)
 			return true;
@@ -1312,7 +1309,7 @@
 				var albumFromCache = env.cache.getAlbum(albumCacheBaseToGet), promise;
 				if (
 					albumFromCache &&
-					! PhotoFloat.guessedPasswordsMd5.length &&
+					! env.guessedPasswordsMd5.length &&
 					albumFromCache.hasOwnProperty("subalbums") &&
 					albumFromCache.hasOwnProperty("media") &&
 					albumFromCache.hasOwnProperty("positionsAndMediaInTree")

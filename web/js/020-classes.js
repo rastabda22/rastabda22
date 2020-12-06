@@ -3,6 +3,8 @@
 
 	class Env {
 		constructor() {
+			this.guessedPasswordCodes = [];
+			this.guessedPasswordsMd5 = [];
 			this.fullScreenStatus = false;
 			this.currentAlbum = null;
 			this.currentMedia = null;
