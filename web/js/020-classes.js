@@ -321,6 +321,16 @@
 								convertedSubalbum.captionForSearch = self.captionForSearch;
 								convertedSubalbum.captionForSearchSorting = self.captionForSearchSorting;
 							}
+							if (self.hasOwnProperty("unicodeWords")) {
+								// transfer subalbums properties to the album
+								convertedSubalbum.unicodeWords = self.unicodeWords;
+								convertedSubalbum.unicodeWords = self.unicodeWords;
+							}
+							if (self.hasOwnProperty("words")) {
+								// transfer subalbums properties to the album
+								convertedSubalbum.words = self.words;
+								convertedSubalbum.words = self.words;
+							}
 							resolve_convertIntoAlbum(convertedSubalbum);
 						}
 					);
@@ -458,6 +468,7 @@
 				'captionForSearchSorting',
 				'sizesOfAlbum',
 				'sizesOfSubTree',
+				'unicodeWords',
 				'words'
 			];
 			var clonedAlbum = this.clone();
