@@ -5,6 +5,10 @@
 		constructor() {
 			this.guessedPasswordCodes = [];
 			this.guessedPasswordsMd5 = [];
+			this.searchWordsFromJsonFile = [];
+			this.searchAndSubalbumHash = '';
+			this.searchAlbumCacheBasesFromJsonFile = [];
+			this.searchAlbumSubalbumsFromJsonFile = [];
 			this.fullScreenStatus = false;
 			this.currentAlbum = null;
 			this.currentMedia = null;

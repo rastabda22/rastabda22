@@ -5,14 +5,6 @@
 
 	/* constructor */
 	function PhotoFloat() {
-		this.searchWordsFromJsonFile = [];
-		this.searchAlbumCacheBasesFromJsonFile = [];
-		this.searchAlbumSubalbumsFromJsonFile = [];
-
-		PhotoFloat.searchAndSubalbumHash = '';
-		PhotoFloat.searchWordsFromJsonFile = this.searchWordsFromJsonFile;
-		PhotoFloat.searchAlbumCacheBasesFromJsonFile = this.searchAlbumCacheBasesFromJsonFile;
-		PhotoFloat.searchAlbumSubalbumsFromJsonFile = this.searchAlbumSubalbumsFromJsonFile;
 	}
 
 	PhotoFloat.getStopWords = function() {
@@ -1010,10 +1002,10 @@
 			if (theAlbum.cacheBase == env.options.by_search_string) {
 				// root of search albums: build the word list
 				for (i = 0; i < theAlbum.subalbums.length; ++i) {
-					if (PhotoFloat.searchWordsFromJsonFile.indexOf(theAlbum.subalbums[i].unicodeWords) == -1) {
-						PhotoFloat.searchWordsFromJsonFile.push(theAlbum.subalbums[i].unicodeWords);
-						PhotoFloat.searchAlbumCacheBasesFromJsonFile.push(theAlbum.subalbums[i].cacheBase);
-						PhotoFloat.searchAlbumSubalbumsFromJsonFile.push(theAlbum.subalbums[i]);
+					if (env.searchWordsFromJsonFile.indexOf(theAlbum.subalbums[i].unicodeWords) == -1) {
+						env.searchWordsFromJsonFile.push(theAlbum.subalbums[i].unicodeWords);
+						env.searchAlbumCacheBasesFromJsonFile.push(theAlbum.subalbums[i].cacheBase);
+						env.searchAlbumSubalbumsFromJsonFile.push(theAlbum.subalbums[i]);
 					}
 				}
 			} else if (! theAlbum.isSearch()) {
@@ -1195,7 +1187,7 @@
 			// split on the slash and count the number of parts
 			hashParts = hash.split("/");
 			hashPartsCount = hashParts.length;
-			PhotoFloat.searchAndSubalbumHash = "";
+			env.searchAndSubalbumHash = "";
 
 			if (hashPartsCount === 1) {
 				// folders or gps or date hash: album only
@@ -1303,8 +1295,8 @@
 					mediaHash = decodeURI(mediaHash);
 				if (mediaFolderHash)
 					mediaFolderHash = decodeURI(mediaFolderHash);
-				if (PhotoFloat.searchAndSubalbumHash)
-					PhotoFloat.searchAndSubalbumHash = decodeURI(PhotoFloat.searchAndSubalbumHash);
+				if (env.searchAndSubalbumHash)
+					env.searchAndSubalbumHash = decodeURI(env.searchAndSubalbumHash);
 
 				var albumFromCache = env.cache.getAlbum(albumCacheBaseToGet), promise;
 				if (
@@ -1475,16 +1467,16 @@
 								// we must determine the albums that could match the words given by the user, word by word
 								for (i = 0; i <= lastIndex; i ++) {
 									wordHashes = [];
-									for (j = 0; j < PhotoFloat.searchWordsFromJsonFile.length; j ++) {
+									for (j = 0; j < env.searchWordsFromJsonFile.length; j ++) {
 										if (
-											PhotoFloat.searchWordsFromJsonFile[j].some(
+											env.searchWordsFromJsonFile[j].some(
 												function(word) {
 													return word.includes(searchWordsFromUserNormalized[i]);
 												}
 											)
 										) {
-											wordHashes.push(PhotoFloat.searchAlbumCacheBasesFromJsonFile[j]);
-											wordSubalbums.push(PhotoFloat.searchAlbumSubalbumsFromJsonFile[j]);
+											wordHashes.push(env.searchAlbumCacheBasesFromJsonFile[j]);
+											wordSubalbums.push(env.searchAlbumSubalbumsFromJsonFile[j]);
 											numSubAlbumsToGet ++;
 										}
 									}
@@ -1497,11 +1489,11 @@
 								// whole words
 								for (i = 0; i <= lastIndex; i ++)
 									if (
-										PhotoFloat.searchWordsFromJsonFile.some(
+										env.searchWordsFromJsonFile.some(
 											function(words, index) {
 												if (words.includes(searchWordsFromUserNormalized[i])) {
-													albumHashes.push([PhotoFloat.searchAlbumCacheBasesFromJsonFile[index]]);
-													wordSubalbums.push(PhotoFloat.searchAlbumSubalbumsFromJsonFile[index]);
+													albumHashes.push([env.searchAlbumCacheBasesFromJsonFile[index]]);
+													wordSubalbums.push(env.searchAlbumSubalbumsFromJsonFile[index]);
 													return true;
 												}
 												return false;
@@ -2003,7 +1995,6 @@
 	PhotoFloat.prototype.decodeHash = PhotoFloat.decodeHash;
 	PhotoFloat.prototype.hashCode = PhotoFloat.hashCode;
 	PhotoFloat.prototype.endPreparingAlbumAndKeepOn = PhotoFloat.endPreparingAlbumAndKeepOn;
-	PhotoFloat.prototype.searchAndSubalbumHash = PhotoFloat.searchAndSubalbumHash;
 	PhotoFloat.prototype.getStopWords = PhotoFloat.getStopWords;
 	PhotoFloat.prototype.removeStopWords = PhotoFloat.removeStopWords;
 	PhotoFloat.prototype.hasProtectedContent = PhotoFloat.hasProtectedContent;
