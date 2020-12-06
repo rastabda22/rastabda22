@@ -743,41 +743,45 @@
 								function() {
 									// execution arrives here when all the protected json has been loaded and processed
 
-									// before sorting, any subalbum must be converted to album, because their data are slightly different
-									let conversionPromises = [];
-									self.subalbums.forEach(
-										function convertSubalbum(subalbum, iSubalbum) {
-											if (subalbum instanceof Subalbum) {
-												let conversionPromise = new Promise(
-													function(resolve_conversionPromise) {
-														let toAlbumPromise = subalbum.toAlbum(null, {getMedia: false, getPositions: false});
-														toAlbumPromise.then(
-															function(album) {
-																self.subalbums[iSubalbum] = album;
-																resolve_conversionPromise();
-															}
-														);
-													}
-												);
-												conversionPromises.push(conversionPromise);
+									if (util.isSearchRootCacheBase(self.cacheBase)) {
+										resolve_continueAddProtectedContent();
+									} else {
+										// before sorting, any subalbum must be converted to album, because their data are slightly different
+										let conversionPromises = [];
+										self.subalbums.forEach(
+											function convertSubalbum(subalbum, iSubalbum) {
+												if (subalbum instanceof Subalbum) {
+													let conversionPromise = new Promise(
+														function(resolve_conversionPromise) {
+															let toAlbumPromise = subalbum.toAlbum(null, {getMedia: false, getPositions: false});
+															toAlbumPromise.then(
+																function(album) {
+																	self.subalbums[iSubalbum] = album;
+																	resolve_conversionPromise();
+																}
+															);
+														}
+													);
+													conversionPromises.push(conversionPromise);
+												}
 											}
-										}
-									);
-									Promise.all(conversionPromises).then(
-										function() {
-											if (self.hasOwnProperty("media")) {
-												self.media.sortByDate();
-												self.mediaNameSort = false;
-												self.mediaReverseSort = false;
-											}
-											util.sortByDate(self.subalbums);
-											self.albumNameSort = false;
-											self.albumReverseSort = false;
-											self.sortAlbumsMedia();
+										);
+										Promise.all(conversionPromises).then(
+											function() {
+												if (self.hasOwnProperty("media")) {
+													self.media.sortByDate();
+													self.mediaNameSort = false;
+													self.mediaReverseSort = false;
+												}
+												util.sortByDate(self.subalbums);
+												self.albumNameSort = false;
+												self.albumReverseSort = false;
+												self.sortAlbumsMedia();
 
-											resolve_continueAddProtectedContent();
-										}
-									);
+												resolve_continueAddProtectedContent();
+											}
+										);
+									}
 								}
 							);
 						}

@@ -890,11 +890,11 @@
 		this.reverse();
 	};
 
-	// Utilities.isSearchRootCacheBase = function(cacheBase) {
-	// 	return cacheBase.indexOf(env.options.by_search_string) === 0;
-	// 	// return cacheBase.indexOf(env.options.by_search_string) === 0 && cacheBase.split(env.options.cache_folder_separator).length === 3;
-	// };
-	//
+	Utilities.prototype.isSearchRootCacheBase = function(cacheBase) {
+		return cacheBase.indexOf(env.options.by_search_string) === 0;
+		// return cacheBase.indexOf(env.options.by_search_string) === 0 && cacheBase.split(env.options.cache_folder_separator).length === 3;
+	};
+
 	// Utilities.isMapRootCacheBase = function(cacheBase) {
 	// 	return cacheBase.indexOf(env.options.by_map_string) === 0 && cacheBase.split(env.options.cache_folder_separator).length === 3;
 	// };
