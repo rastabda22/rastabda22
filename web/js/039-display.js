@@ -96,7 +96,7 @@ $(document).ready(function() {
 				if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video") === 0)
 					// stop the video, otherwise it keeps playing
 					$("#media-center")[0].pause();
-				if (env.currentMedia !== null || env.currentAlbum.cacheBase !== env.options.folders_string) {
+				if (env.currentAlbum.cacheBase !== env.options.folders_string || env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia()) {
 					env.fromEscKey = true;
 					$("#loading").show();
 					pS.swipeDown(upLink);
