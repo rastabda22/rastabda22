@@ -311,26 +311,16 @@
 					let promise = PhotoFloat.getAlbum(self.cacheBase, error, {getMedia: getMedia, getPositions: getPositions});
 					promise.then(
 						function(convertedSubalbum) {
-							if (self.hasOwnProperty("captionForSelection")) {
-								// transfer subalbums properties to the album
-								convertedSubalbum.captionForSelection = self.captionForSelection;
-								convertedSubalbum.captionForSelectionSorting = self.captionForSelectionSorting;
-							}
-							if (self.hasOwnProperty("captionForSearch")) {
-								// transfer subalbums properties to the album
-								convertedSubalbum.captionForSearch = self.captionForSearch;
-								convertedSubalbum.captionForSearchSorting = self.captionForSearchSorting;
-							}
-							if (self.hasOwnProperty("unicodeWords")) {
-								// transfer subalbums properties to the album
-								convertedSubalbum.unicodeWords = self.unicodeWords;
-								convertedSubalbum.unicodeWords = self.unicodeWords;
-							}
-							if (self.hasOwnProperty("words")) {
-								// transfer subalbums properties to the album
-								convertedSubalbum.words = self.words;
-								convertedSubalbum.words = self.words;
-							}
+							let properties = ["captionForSelection", "captionForSearch", "unicodeWords", "words"];
+							properties.forEach(
+								function(property) {
+									if (self.hasOwnProperty(property)) {
+										// transfer subalbums properties to the album
+										convertedSubalbum[property] = self[property];
+										convertedSubalbum[property] = self[property];
+									}
+								}
+							);
 							resolve_convertIntoAlbum(convertedSubalbum);
 						}
 					);
