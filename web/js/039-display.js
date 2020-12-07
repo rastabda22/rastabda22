@@ -47,9 +47,9 @@ $(document).ready(function() {
 		var isPopup = $('.leaflet-popup').html() ? true : false;
 		var isAuth = $("#auth-text").is(":visible");
 
-		function toggleMenu() {
-			$("#menu-icon")[0].click();
-		}
+		// function toggleMenu() {
+		// 	$("#menu-icon")[0].click();
+		// }
 
 		let upLink = util.upHash();
 
@@ -65,11 +65,11 @@ $(document).ready(function() {
 				// util.goUpInHash();
 				return false;
 			} else if ($("ul#right-menu").hasClass("expand")) {
-				toggleMenu();
+				f.toggleMenu();
 				return false;
-			} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video") === 0 && ! $("#media-center")[0].paused) {
+			} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video") === 0 && ! $("video#media-center")[0].paused) {
 					// stop the video, otherwise it keeps playing
-					$("#media-center")[0].pause();
+					$("video#media-center")[0].pause();
 			} else if (isMap) {
 				if (isPopup) {
 					// the popup is there: close it
@@ -95,8 +95,8 @@ $(document).ready(function() {
 			} else if (upLink) {
 				if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video") === 0)
 					// stop the video, otherwise it keeps playing
-					$("#media-center")[0].pause();
-				if (env.currentMedia !== null || env.currentAlbum.cacheBase !== env.options.folders_string) {
+					$("video#media-center")[0].pause();
+				if (env.currentAlbum.cacheBase !== env.options.folders_string || env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia()) {
 					env.fromEscKey = true;
 					$("#loading").show();
 					pS.swipeDown(upLink);
@@ -133,13 +133,13 @@ $(document).ready(function() {
 								pS.drag(env.windowWidth / 3, {x: -1, y: 0});
 						}
 						return false;
-					} else if (e.key === " " && env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video") === 0) {
-						if ($("#media-center")[0].paused)
+					} else if (e.key === " " && ! e.shiftKey && env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video") === 0) {
+						if ($("video#media-center")[0].paused)
 							// play the video
-							$("#media-center")[0].play();
+							$("video#media-center")[0].play();
 						else
 							// stop the video
-							$("#media-center")[0].pause();
+							$("video#media-center")[0].pause();
 					} else if (
 						(e.key.toLowerCase() === "n" || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
 						env.nextMedia && env.currentMedia !== null && ! isMap
@@ -172,8 +172,10 @@ $(document).ready(function() {
 						return false;
 					} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink && ! isMap) {
 						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
-							if (! $("#center .title").hasClass("hidden-by-pinch"))
+							if (e.shiftKey && ! $("#center .title").hasClass("hidden-by-pinch")) {
 								pS.swipeDown(upLink);
+								return false;
+							}
 						} else {
 							// drag
 							if (! e.shiftKey)
@@ -181,10 +183,10 @@ $(document).ready(function() {
 							else
 								// faster
 								pS.drag(env.windowHeight / 3, {x: 0, y: 1});
+							return false;
 						}
-						return false;
 					} else if (e.key === "ArrowDown" || e.key === "PageDown" && ! isMap) {
-					 	if (env.mediaLink && env.currentMedia === null) {
+					 	if (e.shiftKey && env.mediaLink && env.currentMedia === null) {
 							pS.swipeUp(env.mediaLink);
 							return false;
 						} else if (pS.getCurrentZoom() > pS.getInitialZoom()) {
@@ -257,7 +259,7 @@ $(document).ready(function() {
 							numPasswords = env.currentAlbum.numPasswords();
 
 						if (
-							numPasswords && PhotoFloat.guessedPasswordCodes.length < numPasswords
+							numPasswords && env.guessedPasswordCodes.length < numPasswords
 						) {
 							$("#protected-content-unveil")[0].click();
 							return false;
@@ -267,15 +269,17 @@ $(document).ready(function() {
 
 				if (
 					env.currentAlbum !== null && (
-						[
-							env.options.folders_string,
-							env.options.by_date_string,
-							env.options.by_gps_string,
-							env.options.by_map_string,
-							env.options.by_selection_string,
-							env.options.by_search_string
-						].indexOf(env.currentAlbum.cacheBase) !== -1 ||
-						env.currentMedia !== null || env.currentAlbum.isAlbumWithOneMedia() || util.somethingIsSelected()
+						env.currentAlbum.isAnyRoot() ||
+						env.currentMedia !== null || env.currentAlbum.isAlbumWithOneMedia()
+						// [
+						// 	env.options.folders_string,
+						// 	env.options.by_date_string,
+						// 	env.options.by_gps_string,
+						// 	env.options.by_map_string,
+						// 	env.options.by_selection_string,
+						// 	env.options.by_search_string
+						// ].indexOf(env.currentAlbum.cacheBase) !== -1 ||
+						// env.currentMedia !== null || env.currentAlbum.isAlbumWithOneMedia() || util.somethingIsSelected() || util.somethingIsSearched() || env.currentAlbum.isMap()
 					) && ! isMap
 				) {
 					// browsing mode switchers
@@ -392,7 +396,7 @@ $(document).ready(function() {
 				e.key.toLowerCase() === "e" && e.target.tagName.toLowerCase() != 'input' &&  ! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey
 					// "e" opens the menu, and closes it if focus in not in input field
 			) {
-				toggleMenu();
+				f.toggleMenu();
 				return false;
 			}
 		}
@@ -416,6 +420,7 @@ $(document).ready(function() {
 
 	// search
 	$('#search-button').on("click", function() {
+		$("#loading").show();
 		var searchOptions = '';
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
@@ -651,7 +656,7 @@ $(document).ready(function() {
 	$("#auth-form").submit(
 		function() {
 			// This function checks the password looking for a file with the encrypted password name in the passwords subdir
-			// the code in the found password file is inserted into PhotoFloat.guessedPasswordsMd5, and at the hash change the content unveiled by that password will be shown
+			// the code in the found password file is inserted into env.guessedPasswordsMd5, and at the hash change the content unveiled by that password will be shown
 
 			var password = $("#password");
 			var encryptedPassword = md5(password.val());
@@ -665,10 +670,10 @@ $(document).ready(function() {
 					password.css("background-color", "rgb(200, 200, 200)");
 					var passwordCode = jsonCode.passwordCode;
 
-					if (! PhotoFloat.guessedPasswordCodes.includes(passwordCode))
-						PhotoFloat.guessedPasswordCodes.push(passwordCode);
-					if (! PhotoFloat.guessedPasswordsMd5.includes(encryptedPassword))
-						PhotoFloat.guessedPasswordsMd5.push(encryptedPassword);
+					if (! env.guessedPasswordCodes.includes(passwordCode))
+						env.guessedPasswordCodes.push(passwordCode);
+					if (! env.guessedPasswordsMd5.includes(encryptedPassword))
+						env.guessedPasswordsMd5.push(encryptedPassword);
 
 					$("#loading").show();
 
@@ -714,6 +719,7 @@ $(document).ready(function() {
 
 	$(window).hashchange(
 		function() {
+			util.translate();
 			$("#auth-text").hide();
 			$("#album-view, #media-view, #my-modal").css("opacity", "");
 

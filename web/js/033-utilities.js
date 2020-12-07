@@ -112,13 +112,13 @@
 			)
 		);
 
-		if (PhotoFloat.guessedPasswordsMd5.length) {
+		if (env.guessedPasswordsMd5.length) {
 			newForm.append(
 				jQuery(
 					"<input>",
 					{
 						name: "guessedPasswordsMd5",
-						value: PhotoFloat.guessedPasswordsMd5.join('-'),
+						value: env.guessedPasswordsMd5.join('-'),
 						type: "hidden"
 					}
 				)
@@ -127,7 +127,7 @@
 					"<input>",
 					{
 						name: "guessedPasswordCodes",
-						value: PhotoFloat.guessedPasswordCodes.join('-'),
+						value: env.guessedPasswordCodes.join('-'),
 						type: "hidden"
 					}
 				)
@@ -139,8 +139,8 @@
 
 	Utilities.prototype.readPostData = function() {
 		if (postData.guessedPasswordsMd5) {
-			PhotoFloat.guessedPasswordsMd5 = postData.guessedPasswordsMd5.split('-');
-			PhotoFloat.guessedPasswordCodes = postData.guessedPasswordCodes.split('-');
+			env.guessedPasswordsMd5 = postData.guessedPasswordsMd5.split('-');
+			env.guessedPasswordCodes = postData.guessedPasswordCodes.split('-');
 			delete postData.guessedPasswordsMd5;
 		}
 		env.selectorClickedToOpenTheMap = postData.selectorClickedToOpenTheMap;
@@ -245,6 +245,7 @@
 		// newSearchAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
 		// newSearchAlbum.cacheBase = albumHash;
 		newSearchAlbum.path = newSearchAlbum.cacheBase.replace(env.options.cache_folder_separator, "/");
+		newSearchAlbum.ancestorsNames = [env.options.by_search_string, newSearchAlbum.cacheBase];
 		// newSearchAlbum.physicalPath = newSearchAlbum.path;
 		// newSearchAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
 		// newSearchAlbum.includedFilesByCodesSimpleCombination = {};
@@ -410,7 +411,7 @@
 						let combinationList = combinations[i].split('-');
 						if (unveiledOnly) {
 							for (let j = 0; j < combinationList.length; j ++) {
-								if (PhotoFloat.guessedPasswordCodes.includes(combinationList[j]))
+								if (env.guessedPasswordCodes.includes(combinationList[j]))
 									combinationList.splice(j, 1);
 							}
 						}
@@ -597,12 +598,15 @@
 			function (resolve_promise) {
 				self.addAllMediaToSelection();
 				let promises = [];
-				for (let iSubalbum = 0; iSubalbum < self.subalbums.length; iSubalbum ++) {
+				for (let i = 0; i < self.subalbums.length; i ++) {
+					let iSubalbum = i;
+					let ithSubalbum = self.subalbums[iSubalbum];
 					let ithPromise = new Promise(
 						function(resolve_ithPromise) {
-							let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {getMedia: true, getPositions: false});
+							let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: false});
 							convertSubalbumPromise.then(
-								function(iSubalbum) {
+								function(ithSubalbum) {
+									self.subalbums[iSubalbum] = ithSubalbum;
 									let promise = self.subalbums[iSubalbum].recursivelySelectMedia();
 									promise.then(
 										function() {
@@ -630,12 +634,15 @@
 			function (resolve_promise) {
 				self.removeAllMediaFromSelection();
 				let promises = [];
-				for (let iSubalbum = 0; iSubalbum < self.subalbums.length; iSubalbum ++) {
+				for (let i = 0; i < self.subalbums.length; i ++) {
+					let iSubalbum = i;
+					let ithSubalbum = self.subalbums[iSubalbum];
 					let ithPromise = new Promise(
 						function(resolve_ithPromise) {
-							let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {getMedia: true, getPositions: false});
+							let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: false});
 							convertSubalbumPromise.then(
-								function(iSubalbum) {
+								function(ithSubalbum) {
+									self.subalbums[iSubalbum] = ithSubalbum;
 									let promise = self.subalbums[iSubalbum].recursivelyRemoveMedia();
 									promise.then(
 										function() {
@@ -665,12 +672,15 @@
 					reject_promise();
 				} else {
 					let promises = [];
-					for (let iSubalbum = 0; iSubalbum < self.subalbums.length; iSubalbum ++) {
+					for (let i = 0; i < self.subalbums.length; i ++) {
+						let iSubalbum = i;
+						let ithSubalbum = self.subalbums[iSubalbum];
 						let ithPromise = new Promise(
 							function(resolve_ithPromise, reject_ithPromise) {
-								let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {getMedia: true, getPositions: false});
+								let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: false});
 								convertSubalbumPromise.then(
-									function(iSubalbum) {
+									function(ithSubalbum) {
+										self.subalbums[iSubalbum] = ithSubalbum;
 										let promise = self.subalbums[iSubalbum].recursivelyAllMediaAreSelected();
 										promise.then(
 											function() {
@@ -843,7 +853,10 @@
 
 	Album.prototype.sortByPath = function() {
 		if (this.subalbums.length) {
-			if (this.isCollection()) {
+			if (this.isSelection()) {
+				Utilities.sortBy(this.subalbums, ['captionForSelectionSorting']);
+				// this.subalbums = Utilities.sortBy(this.subalbums, ['altName', 'name', 'path']);
+			} else if (this.isSearch()) {
 				Utilities.sortBy(this.subalbums, ['captionForSelectionSorting']);
 				// this.subalbums = Utilities.sortBy(this.subalbums, ['altName', 'name', 'path']);
 			} else if (this.isByGps()) {
@@ -877,11 +890,11 @@
 		this.reverse();
 	};
 
-	// Utilities.isSearchRootCacheBase = function(cacheBase) {
-	// 	return cacheBase.indexOf(env.options.by_search_string) === 0;
-	// 	// return cacheBase.indexOf(env.options.by_search_string) === 0 && cacheBase.split(env.options.cache_folder_separator).length === 3;
-	// };
-	//
+	Utilities.prototype.isSearchRootCacheBase = function(cacheBase) {
+		return cacheBase.indexOf(env.options.by_search_string) === 0;
+		// return cacheBase.indexOf(env.options.by_search_string) === 0 && cacheBase.split(env.options.cache_folder_separator).length === 3;
+	};
+
 	// Utilities.isMapRootCacheBase = function(cacheBase) {
 	// 	return cacheBase.indexOf(env.options.by_map_string) === 0 && cacheBase.split(env.options.cache_folder_separator).length === 3;
 	// };
@@ -1337,8 +1350,8 @@
 				function(selectedAlbum) {
 					return (
 						self.foldersCacheBase.indexOf(selectedAlbum.cacheBase) === 0 ||
-						self.dayAlbumCacheBase.indexOf(selectedAlbum.cacheBase) === 0 ||
-						self.gpsAlbumCacheBase.indexOf(selectedAlbum.cacheBase) === 0
+						self.hasOwnProperty("dayAlbumCacheBase") && self.dayAlbumCacheBase.indexOf(selectedAlbum.cacheBase) === 0 ||
+						self.hasOwnProperty("gpsAlbumCacheBase") && self.gpsAlbumCacheBase.indexOf(selectedAlbum.cacheBase) === 0
 					);
 				}
 			)
@@ -1387,17 +1400,24 @@
 				env.selectionAlbum.sizesOfSubTree.sum(this.fileSizes);
 			}
 
-			if (album.isSearch()) {
-				let parentAlbumPromise = PhotoFloat.getAlbum(this.foldersCacheBase, null, {getMedia: false, getPositions: false});
-				let self = this;
-				parentAlbumPromise.then(
-					function(parentAlbum) {
-						self.generateCaptionForSelectionAndSearches(parentAlbum);
-					}
-				);
-			} else {
-				this.generateCaptionForSelectionAndSearches(album);
-			}
+			// if (album.isSearch()) {
+			// 	// let cacheBase = this.foldersCacheBase
+			// 	// let albumHash = PhotoFloat.decodeHash(window.location.hash)[0];
+			// 	// let searchStartCacheBase = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
+			// 	// if (Utilities.isByDateCacheBase(searchStartCacheBase))
+			// 	// 	cacheBase = this.dayAlbumCacheBase;
+			// 	// else if (Utilities.isByGpsCacheBase(searchStartCacheBase))
+			// 	// 	cacheBase = this.gpsAlbumCacheBase;
+			// 	// let parentAlbumPromise = PhotoFloat.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
+			// 	// let self = this;
+			// 	// parentAlbumPromise.then(
+			// 	// 	function(parentAlbum) {
+			// 	// 		self.generateCaptionForSearch(parentAlbum);
+			// 	// 	}
+			// 	// );
+			// } else {
+			this.generateSingleMediaCaptionForSelection(album);
+			// }
 			env.selectionAlbum.media.sortByDate();
 			env.selectionAlbum.mediaNameSort = false;
 			env.selectionAlbum.mediaReverseSort = false;
@@ -1501,10 +1521,10 @@
 				if (subalbum.isSelected()) {
 					resolve_addSubalbum();
 				} else {
-					let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {getMedia: false, getPositions: true});
+					let convertSubalbumPromise = subalbum.toAlbum(null, {getMedia: false, getPositions: true});
 					convertSubalbumPromise.then(
-						function(iSubalbum) {
-							var subalbum = self.subalbums[iSubalbum];
+						function(subalbum) {
+							self.subalbums[iSubalbum] = subalbum;
 							if (Utilities.nothingIsSelected())
 								Utilities.initializeSelectionAlbum();
 
@@ -1538,7 +1558,7 @@
 								env.selectionAlbum.numsProtectedMediaInSubTree.sum(subalbum.numsProtectedMediaInSubTree);
 							}
 
-							subalbum.generateCaptionForSelectionAndSearches();
+							subalbum.generateCaptionForSearch();
 							Utilities.sortByDate(env.selectionAlbum.subalbums);
 							env.selectionAlbum.albumNameSort = false;
 							env.selectionAlbum.albumReverseSort = false;
@@ -1567,10 +1587,10 @@
 					resolve_removeSubalbum();
 				} else {
 					// if (env.selectionAlbum.numsMediaInSubTree.imagesAndVideosTotal()) {
-					let convertSubalbumPromise = self.convertSubalbum(iSubalbum, null, {getMedia: true, getPositions: true});
+					let convertSubalbumPromise = subalbum.toAlbum(null, {getMedia: true, getPositions: true});
 					convertSubalbumPromise.then(
-						function(iSubalbum) {
-							var subalbum = self.subalbums[iSubalbum];
+						function(subalbum) {
+							self.subalbums[iSubalbum] = subalbum;
 
 							var selectedMediaInsideSelectedAlbums = [];
 							env.selectionAlbum.media.forEach(
@@ -2209,13 +2229,16 @@
 					}
 
 					if (everything) {
-						for (let iSubalbum = 0; iSubalbum < album.subalbums.length; iSubalbum ++) {
+						for (let i = 0; i < album.subalbums.length; i ++) {
+							let iSubalbum = i;
+							let ithSubalbum = self.subalbums[iSubalbum];
 							let subalbumPromise = new Promise(
 								function(resolveSubalbumPromise) {
 									// let ithSubalbum = album.subalbums[iSubalbum];
-									let convertSubalbumPromise = album.convertSubalbum(iSubalbum, null, {getMedia: true, getPositions: false});
+									let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: false});
 									convertSubalbumPromise.then(
-										function(iSubalbum) {
+										function(ithSubalbum) {
+											album.subalbums[iSubalbum] = ithSubalbum;
 											let albumPath = album.subalbums[iSubalbum].path;
 											if (album.isSearch() || album.isSelection())
 												// remove the leading folders/date/gps/map string
@@ -2271,12 +2294,20 @@
 
 	};
 
-	Album.prototype.generateCaptionForSelectionAndSearches = function() {
-		var firstLine = this.name, secondLine = '';
+	Album.prototype.generateCaptionForSearch = function() {
+		[this.captionForSelection, this.captionForSelectionSorting] = Utilities.generateAlbumCaptionForCollections(this);
+	};
+
+	Album.prototype.generateAlbumCaptionForSearch = function() {
+		[this.captionForSearch, this.captionForSearchSorting] = Utilities.generateAlbumCaptionForCollections(this);
+	};
+
+	Utilities.generateAlbumCaptionForCollections = function(album) {
+		var firstLine = album.name, secondLine = '';
 
 		var raquo = " <span class='gray'>&raquo;</span> ";
-		var folderArray = this.cacheBase.split(env.options.cache_folder_separator);
-		if (this.isByDate()) {
+		var folderArray = album.cacheBase.split(env.options.cache_folder_separator);
+		if (album.isByDate()) {
 			firstLine = Utilities.dateElementForFolderName(folderArray, folderArray.length - 1);
 			secondLine += "<span class='gray'>(";
 			if (folderArray.length === 2) {
@@ -2293,15 +2324,15 @@
 				secondLine += Utilities.dateElementForFolderName(folderArray, 1);
 			}
 			secondLine += "<span class='gray'>)</span>";
-		} else if (this.isByGps()) {
-			if (this.name === '')
+		} else if (album.isByGps()) {
+			if (album.name === '')
 				firstLine = Utilities._t('.not-specified');
-			else if (this.hasOwnProperty('altName'))
-				firstLine = Utilities.transformAltPlaceName(this.altName);
+			else if (album.hasOwnProperty('altName'))
+				firstLine = Utilities.transformAltPlaceName(album.altName);
 
-			for (let iCacheBase = 1; iCacheBase < this.ancestorsCacheBase.length - 1; iCacheBase ++) {
+			for (let iCacheBase = 1; iCacheBase < album.ancestorsCacheBase.length - 1; iCacheBase ++) {
 				let albumName;
-				if (this.ancestorsNames[iCacheBase] === '')
+				if (album.ancestorsNames[iCacheBase] === '')
 				albumName = Utilities._t('.not-specified');
 				else
 				albumName = this.ancestorsNames[iCacheBase];
@@ -2309,39 +2340,48 @@
 					secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album-in") + "</span> ";
 				// let marker = "<marker>" + iCacheBase + "</marker>";
 				// secondLine += marker;
-				secondLine += "<a href='" + env.hashBeginning + this.ancestorsCacheBase[iCacheBase] + "'>" + albumName + "</a>";
-				if (iCacheBase < this.ancestorsCacheBase.length - 2)
+				secondLine += "<a href='" + env.hashBeginning + album.ancestorsCacheBase[iCacheBase] + "'>" + albumName + "</a>";
+				if (iCacheBase < album.ancestorsCacheBase.length - 2)
 					secondLine += raquo;
-				if (iCacheBase === this.ancestorsCacheBase.length - 2)
+				if (iCacheBase === album.ancestorsCacheBase.length - 2)
 					secondLine += "<span class='gray'>)</span>";
 
-				// secondLine = secondLine.replace(marker, "<a href='" + env.hashBeginning + this.ancestorsCacheBase[iCacheBase] + "'>" + albumName + "</a>");
+				// secondLine = secondLine.replace(marker, "<a href='" + env.hashBeginning + album.ancestorsCacheBase[iCacheBase] + "'>" + albumName + "</a>");
 			}
 			if (! secondLine)
 				secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album") + ")</span>";
 		} else {
-			for (let iCacheBase = 0; iCacheBase < this.ancestorsCacheBase.length - 1; iCacheBase ++) {
-				if (iCacheBase == 0 && this.ancestorsCacheBase.length === 2) {
+			for (let iCacheBase = 0; iCacheBase < album.ancestorsCacheBase.length - 1; iCacheBase ++) {
+				if (iCacheBase == 0 && album.ancestorsCacheBase.length === 2) {
 					secondLine = "<span class='gray'>(" + Utilities._t("#regular-album") + ")</span> ";
 				} else {
 					if (iCacheBase == 1)
 						secondLine = "<span class='gray'>(" + Utilities._t("#regular-album-in") + "</span> ";
 					// let marker = "<marker>" + iCacheBase + "</marker>";
 					// secondLine += marker;
-					secondLine += "<a href='" + env.hashBeginning + this.ancestorsCacheBase[iCacheBase] + "'>" + this.ancestorsNames[iCacheBase] + "</a>";
-					if (iCacheBase < this.ancestorsCacheBase.length - 2)
+					secondLine += "<a href='" + env.hashBeginning + album.ancestorsCacheBase[iCacheBase] + "'>" + album.ancestorsNames[iCacheBase] + "</a>";
+					if (iCacheBase < album.ancestorsCacheBase.length - 2)
 						secondLine += raquo;
-					if (iCacheBase === this.ancestorsCacheBase.length - 2)
+					if (iCacheBase === album.ancestorsCacheBase.length - 2)
 						secondLine += "<span class='gray'>)</span>";
-					// secondLine = secondLine.replace(marker, "<a href='" + env.hashBeginning + this.ancestorsCacheBase[iCacheBase] + "'>" + this.ancestorsNames[iCacheBase] + "</a>");
+					// secondLine = secondLine.replace(marker, "<a href='" + env.hashBeginning + album.ancestorsCacheBase[iCacheBase] + "'>" + album.ancestorsNames[iCacheBase] + "</a>");
 				}
 			}
 		}
-		this.captionForSelection = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
-		this.captionForSelectionSorting = Utilities.convertByDateAncestorNames(this.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
+		var captionForCollection = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
+		var captionForCollectionSorting = Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
+		return [captionForCollection, captionForCollectionSorting];
 	};
 
-	SingleMedia.prototype.generateCaptionForSelectionAndSearches = function(album) {
+	SingleMedia.prototype.generateSingleMediaCaptionForSelection = function(album) {
+		[this.captionForSelection, this.captionForSelectionSorting] = Utilities.generateSingleMediaCaptionForCollections(this, album);
+	};
+
+	SingleMedia.prototype.generateCaptionForSearch = function(album) {
+		[this.captionForSearch, this.captionForSearchSorting] = Utilities.generateSingleMediaCaptionForCollections(this, album);
+	};
+
+	Utilities.generateSingleMediaCaptionForCollections = function(singleMedia, album) {
 		var secondLine = '';
 		var raquo = " <span class='gray'>&raquo;</span> ";
 		var folderArray = album.cacheBase.split(env.options.cache_folder_separator);
@@ -2367,9 +2407,9 @@
 			for (let iCacheBase = 1; iCacheBase < album.ancestorsCacheBase.length; iCacheBase ++) {
 				let albumName;
 				if (album.ancestorsNames[iCacheBase] === "")
-				albumName = Utilities._t('.not-specified');
+					albumName = Utilities._t('.not-specified');
 				else
-				albumName = album.ancestorsNames[iCacheBase];
+					albumName = Utilities.transformAltPlaceName(album.ancestorsNames[iCacheBase]);
 				if (iCacheBase == 1)
 					secondLine += "<span class='gray'>(" + Utilities._t("#in-by-gps-album") + "</span> ";
 				// let marker = "<marker>" + iCacheBase + "</marker>";
@@ -2403,14 +2443,17 @@
 			}
 		}
 
-		this.captionForSelection = Utilities.combineFirstAndSecondLine(this.name, secondLine);
-		this.captionForSelectionSorting = this.name + env.options.cache_folder_separator + Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
+		var captionForCollection = Utilities.combineFirstAndSecondLine(singleMedia.name, secondLine);
+		var captionForCollectionSorting = singleMedia.name + env.options.cache_folder_separator + Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
+		return [captionForCollection, captionForCollectionSorting];
 	};
 
 	Album.prototype.subalbumName = function(subalbum) {
 		var folderName = '';
-		if ((this.isSelection() || this.isSearch()) && subalbum.hasOwnProperty("captionForSelection")) {
+		if (this.isSelection() && subalbum.hasOwnProperty("captionForSelection")) {
 			folderName = subalbum.captionForSelection;
+		} else if (this.isSearch() && subalbum.hasOwnProperty("captionForSearch")) {
+			folderName = subalbum.captionForSearch;
 		} else if (this.isByDate()) {
 			let folderArray = subalbum.cacheBase.split(env.options.cache_folder_separator);
 			if (folderArray.length == 2) {
@@ -2430,13 +2473,20 @@
 			folderName = subalbum.name;
 		}
 
+		if (this.isSelection())
+			subalbum.captionForSelection = folderName;
+		else if (this.isSearch())
+			subalbum.captionForSearch = folderName;
+
 		return folderName;
 	};
 
 	SingleMedia.prototype.mediaName = function(album) {
 		var mediaName = '';
-		if ((album.isSelection() || album.isSearch()) && this.hasOwnProperty("captionForSelection")) {
+		if ((album.isSelection()) && this.hasOwnProperty("captionForSelection")) {
 			mediaName = this.captionForSelection;
+		} else if ((album.isSearch()) && this.hasOwnProperty("captionForSearch")) {
+			mediaName = this.captionForSearch;
 		} else if (album.isByDate()) {
 			let folderArray = album.cacheBase.split(env.options.cache_folder_separator);
 			if (folderArray.length == 2) {
@@ -2743,7 +2793,8 @@
 					resultHash = env.options.folders_string;
 				} else if (Utilities.isSearchCacheBase(albumHash) || Utilities.isMapCacheBase(albumHash)) {
 					// the return folder must be extracted from the album hash
-					resultHash = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
+					// resultHash = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
+					resultHash = env.options.cache_base_to_search_in;
 				} else {
 					let album = env.cache.getAlbum(albumHash);
 					if (Utilities.isSelectionCacheBase(albumHash) && ! album) {
@@ -2839,8 +2890,8 @@
 	};
 
 	Utilities.convertMd5ToCode = function(md5) {
-		var index = PhotoFloat.guessedPasswordsMd5.indexOf(md5);
-		return PhotoFloat.guessedPasswordCodes[index];
+		var index = env.guessedPasswordsMd5.indexOf(md5);
+		return env.guessedPasswordCodes[index];
 	};
 
 	Utilities.prototype.noOp = function() {
@@ -2853,9 +2904,9 @@
 			if (! codesList[i]) {
 				md5sList.push('');
 			} else {
-				index = PhotoFloat.guessedPasswordCodes.indexOf(codesList[i]);
+				index = env.guessedPasswordCodes.indexOf(codesList[i]);
 				if (index != -1)
-					md5sList.push(PhotoFloat.guessedPasswordsMd5[index]);
+					md5sList.push(env.guessedPasswordsMd5[index]);
 			}
 		}
 		return md5sList;

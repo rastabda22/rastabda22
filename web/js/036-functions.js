@@ -86,10 +86,10 @@
 		}
 	};
 
-	Functions.getAlbumNameFromAlbumHash = function(hash) {
+	Functions.getAlbumNameFromCacheBase = function(cacheBase) {
 		return new Promise(
 			function(resolve_getAlbumNameFromAlbumHash) {
-				let getAlbumPromise = PhotoFloat.getAlbum(hash, util.noOp, {getMedia: false, getPositions: false});
+				let getAlbumPromise = PhotoFloat.getAlbum(cacheBase, util.noOp, {getMedia: false, getPositions: false});
 				getAlbumPromise.then(
 					function(theAlbum) {
 						var path;
@@ -375,7 +375,7 @@
 				$("ul#right-menu li#album-search").addClass("dimmed").off("click");
 			} else {
 				$("ul#right-menu li#album-search").removeClass("dimmed").off("click").on('click', Functions.toggleCurrentAbumSearch);
-				let albumNamePromise = Functions.getAlbumNameFromAlbumHash(env.options.cache_base_to_search_in);
+				let albumNamePromise = Functions.getAlbumNameFromCacheBase(env.options.cache_base_to_search_in);
 				albumNamePromise.then(
 					function(path) {
 						$("#album-search").attr('title', util._t("#current-album-is") + '"' + path + '"');
@@ -1105,7 +1105,7 @@
 
 			if (
 				numPasswords &&
-				PhotoFloat.guessedPasswordCodes.length < numPasswords
+				env.guessedPasswordCodes.length < numPasswords
 			) {
 				$(".protection").show();
 				$("#padlock").off('click').on(

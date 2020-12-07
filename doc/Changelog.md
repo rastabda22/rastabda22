@@ -1,6 +1,5 @@
-### version v4.9.1 (unreleased)
-
 * replace `uglifyjs` minifier by `uglifyjs.terser`
+* scanner: fragmentation of gps albums clustering reduced
 
 ### version v4.9.0 (Dec 1st, 2020)
 
