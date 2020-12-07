@@ -317,8 +317,7 @@
 								"captionForSearch",
 								"captionForSearchSorting",
 								"unicodeWords",
-								"words",
-								"includedFilesByCodesSimpleCombination"
+								"words"
 							];
 							properties.forEach(
 								function(property) {
