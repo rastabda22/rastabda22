@@ -595,21 +595,21 @@
 			}
 		);
 		var self = this;
-		for (i = 0; i < protectedAlbum.subalbums.length; i ++) {
-			ithProtectedSubalbum = protectedAlbum.subalbums[i];
-			if (cacheBases.indexOf(ithProtectedSubalbum.cacheBase) == -1) {
-				self.subalbums.push(ithProtectedSubalbum);
-			// // if media or positions are missing the combination must not be reported as included
-			// } else if (self.hasOwnProperty("media") && self.hasOwnProperty("positionsAndMediaInTree")) {
-			} else {
-				self.subalbums.forEach(
-					function(subalbum) {
-						if (subalbum.isEqual(ithProtectedSubalbum))
-							PhotoFloat.mergeProtectedSubalbum(subalbum, ithProtectedSubalbum);
-					}
-				);
+		// for (i = 0; i < protectedAlbum.subalbums.length; i ++) {
+		protectedAlbum.subalbums.forEach(
+			function(ithProtectedSubalbum) {
+				if (cacheBases.indexOf(ithProtectedSubalbum.cacheBase) == -1) {
+					self.subalbums.push(ithProtectedSubalbum);
+				} else {
+					self.subalbums.forEach(
+						function(subalbum) {
+							if (subalbum.isEqual(ithProtectedSubalbum))
+								PhotoFloat.mergeProtectedSubalbum(subalbum, ithProtectedSubalbum);
+						}
+					);
+				}
 			}
-		}
+		);
 	};
 
 
