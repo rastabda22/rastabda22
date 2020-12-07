@@ -311,12 +311,19 @@
 					let promise = PhotoFloat.getAlbum(self.cacheBase, error, {getMedia: getMedia, getPositions: getPositions});
 					promise.then(
 						function(convertedSubalbum) {
-							let properties = ["captionForSelection", "captionForSearch", "unicodeWords", "words"];
+							let properties = [
+								"captionForSelection",
+								"captionForSelectionSorting",
+								"captionForSearch",
+								"captionForSearchSorting",
+								"unicodeWords",
+								"words",
+								"includedFilesByCodesSimpleCombination"
+							];
 							properties.forEach(
 								function(property) {
 									if (self.hasOwnProperty(property)) {
 										// transfer subalbums properties to the album
-										convertedSubalbum[property] = self[property];
 										convertedSubalbum[property] = self[property];
 									}
 								}
