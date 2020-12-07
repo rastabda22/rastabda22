@@ -1,3 +1,7 @@
+### version v4.9.1 (unreleased)
+
+* replace `uglifyjs` minifier by `uglifyjs.terser`
+
 ### version v4.9.0 (Dec 1st, 2020)
 
 * many bug fixes

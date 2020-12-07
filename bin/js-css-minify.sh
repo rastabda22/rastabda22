@@ -83,6 +83,13 @@ case $MINIFY_JS in
 			exit 1
 		fi
 	;;
+	terser)
+		uglifyjs.terser -V > /dev/null 2>&1
+		if [ $? -ne 0 ]; then
+			( >&2 echo "'uglifyjs.terser' is not installed. Look for package 'uglifyjs.terser' or 'https://terser.org/'" )
+			( >&2 echo "Aborting..." )
+			exit 1
+		fi
 esac
 
 case $MINIFY_CSS in
@@ -184,6 +191,10 @@ while read jsfile; do
 		uglifyjs)
 			# We need to use 'buble' first to convert from ES6 to ES5 as uglifyjs only parses ES5.
 			buble $jsfile | uglifyjs - -o $newfile
+		;;
+
+		terser)
+			uglifyjs.terser -o $newfile $jsfile
 		;;
 
 		*)
