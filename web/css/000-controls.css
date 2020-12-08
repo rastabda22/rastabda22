@@ -268,7 +268,7 @@ a.title-anchor.mobile {
 	position: fixed;
 }
 
-#thumbs .thumbnail-map-link, #subalbums .thumbnail-map-link:hover, #thumbs .select-box:hover, #subalbums .select-box:hover, #media-select-box .select-box:hover {
+#thumbs .thumbnail-map-link:hover, #subalbums .thumbnail-map-link:hover, #thumbs .select-box:hover, #subalbums .select-box:hover, #media-select-box .select-box:hover {
 	opacity: 1;
 }
 

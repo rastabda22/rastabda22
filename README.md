@@ -33,6 +33,7 @@ It is available in English, Italian, French and Spanish. Localizing to other lan
 * [Geotagging](doc/GPS.md)
 * [Tweaking metadata with `album.ini`](doc/Metadata.md)
 * [Make some content private](doc/Authentication.md)
+* [User interface](doc/Navigation.md)
 * [Versions changelog](doc/Changelog.md)
 * [Debugging memory usage](doc/Debugging.md)
 * [Known issues](doc/Issues.md)

@@ -3,6 +3,12 @@
 
 	class Env {
 		constructor() {
+			this.guessedPasswordCodes = [];
+			this.guessedPasswordsMd5 = [];
+			this.searchWordsFromJsonFile = [];
+			this.searchAndSubalbumHash = '';
+			this.searchAlbumCacheBasesFromJsonFile = [];
+			this.searchAlbumSubalbumsFromJsonFile = [];
 			this.fullScreenStatus = false;
 			this.currentAlbum = null;
 			this.currentMedia = null;
@@ -221,7 +227,7 @@
 		}
 
 		isEqual(otherMedia) {
-			return this.foldersCacheBase === otherMedia.foldersCacheBase && this.cacheBase === otherMedia.cacheBase;
+			return otherMedia !== null && this.foldersCacheBase === otherMedia.foldersCacheBase && this.cacheBase === otherMedia.cacheBase;
 		}
 
 		hasGpsData() {
@@ -294,9 +300,34 @@
 			return this.isTransversal() || this.isCollection();
 		}
 
-		isEqual(otherAlbum) {
-			return this.cacheBase === otherAlbum.cacheBase;
+		isEqual(otherSubalbum) {
+			return otherSubalbum !== null && this.cacheBase === otherSubalbum.cacheBase;
 		}
+
+		toAlbum(error, {getMedia = false, getPositions = false}) {
+			var self = this;
+			return new Promise(
+				function(resolve_convertIntoAlbum) {
+					let promise = PhotoFloat.getAlbum(self.cacheBase, error, {getMedia: getMedia, getPositions: getPositions});
+					promise.then(
+						function(convertedSubalbum) {
+							let properties = ["captionForSelection", "captionForSearch", "unicodeWords", "words"];
+							properties.forEach(
+								function(property) {
+									if (self.hasOwnProperty(property)) {
+										// transfer subalbums properties to the album
+										convertedSubalbum[property] = self[property];
+										convertedSubalbum[property] = self[property];
+									}
+								}
+							);
+							resolve_convertIntoAlbum(convertedSubalbum);
+						}
+					);
+				}
+			);
+		}
+
 	}
 
 	class Subalbums extends Array {
@@ -394,23 +425,14 @@
 			return this.empty !== undefined && this.empty;
 		}
 
-		convertSubalbum(subalbumIndex, error, {getMedia = false, getPositions = false}) {
+		toAlbum(error, {getMedia = false, getPositions = false}) {
 			var self = this;
-			var wasASubalbum = this.subalbums[subalbumIndex] instanceof Subalbum;
 			return new Promise(
 				function(resolve_convertIntoAlbum) {
-					let promise = PhotoFloat.getAlbum(self.subalbums[subalbumIndex].cacheBase, error, {getMedia: getMedia, getPositions: getPositions});
+					let promise = PhotoFloat.getAlbum(self.cacheBase, error, {getMedia: getMedia, getPositions: getPositions});
 					promise.then(
 						function(convertedSubalbum) {
-							if (wasASubalbum) {
-								if (self.subalbums[subalbumIndex].hasOwnProperty("captionForSelection")) {
-									// transfer subalbums properties to the album
-									convertedSubalbum.captionForSelection = self.subalbums[subalbumIndex].captionForSelection;
-									convertedSubalbum.captionForSelectionSorting = self.subalbums[subalbumIndex].captionForSelectionSorting;
-								}
-								self.subalbums[subalbumIndex] = convertedSubalbum;
-							}
-							resolve_convertIntoAlbum(subalbumIndex);
+							resolve_convertIntoAlbum(convertedSubalbum);
 						}
 					);
 				}
@@ -432,8 +454,11 @@
 				'path',
 				'captionForSelection',
 				'captionForSelectionSorting',
+				'captionForSearch',
+				'captionForSearchSorting',
 				'sizesOfAlbum',
 				'sizesOfSubTree',
+				'unicodeWords',
 				'words'
 			];
 			var clonedAlbum = this.clone();
@@ -464,6 +489,9 @@
 				'physicalPath',
 				'positionsAndMediaInTree',
 				'captionForSelection',
+				'captionForSelectionSorting',
+				'captionForSearch',
+				'captionForSearchSorting',
 				'sizesOfAlbum',
 				'sizesOfSubTree',
 				'subalbums',
@@ -527,7 +555,7 @@
 		}
 
 		isEqual(otherAlbum) {
-			return this.cacheBase === otherAlbum.cacheBase;
+			return otherAlbum !== null && this.cacheBase === otherAlbum.cacheBase;
 		}
 	}
 
