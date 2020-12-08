@@ -1,4 +1,3 @@
-
 * replace `uglifyjs` minifier by `uglifyjs.terser`
 * scanner: fragmentation of gps albums clustering reduced
 
