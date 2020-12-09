@@ -222,20 +222,35 @@
 		);
 	};
 
+	Album.prototype.initializeIncludedFilesByCodesSimpleCombinationProperty = function(codesSimpleCombination, number) {
+		if (! this.hasOwnProperty("includedFilesByCodesSimpleCombination"))
+			this.includedFilesByCodesSimpleCombination = new IncludedFiles();
+		if (codesSimpleCombination !== undefined) {
+			if (! this.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination))
+				this.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
+			if (number !== undefined) {
+				if (codesSimpleCombination !== "," && ! this.includedFilesByCodesSimpleCombination[codesSimpleCombination].hasOwnProperty(number)) {
+					this.includedFilesByCodesSimpleCombination[codesSimpleCombination][number] = {};
+					this.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album = {};
+			}
+		}
+	};
+
 	PhotoFloat.getSingleProtectedCacheBaseWithExternalMediaAndPositions = function(protectedCacheBase, album, {getMedia, getPositions}) {
 		// this function gets a single protected json file
 
 		var splittedProtectedCacheBase = protectedCacheBase.split('.');
 		var number = parseInt(splittedProtectedCacheBase[splittedProtectedCacheBase.length - 1]);
 		var codesSimpleCombination = util.convertProtectedCacheBaseToCodesSimpleCombination(protectedCacheBase);
-		if (! album.hasOwnProperty("includedFilesByCodesSimpleCombination"))
-			album.includedFilesByCodesSimpleCombination = new IncludedFiles();
-		if (! album.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination)) {
-			album.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
-			if (codesSimpleCombination !== "," && ! album.includedFilesByCodesSimpleCombination[codesSimpleCombination].hasOwnProperty(number))
-				album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number] = {};
-			album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album = {};
-		}
+		album.initializeIncludedFilesByCodesSimpleCombinationProperty(codesSimpleCombination, number);
+		// if (! album.hasOwnProperty("includedFilesByCodesSimpleCombination"))
+		// 	album.includedFilesByCodesSimpleCombination = new IncludedFiles();
+		// if (! album.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination))
+		// 	album.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
+		// if (codesSimpleCombination !== "," && ! album.includedFilesByCodesSimpleCombination[codesSimpleCombination].hasOwnProperty(number)) {
+		// 	album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number] = {};
+		// 	album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album = {};
+		// }
 
 		return new Promise(
 			function(resolve_getSingleProtectedCacheBase, reject_getSingleProtectedCacheBase) {
@@ -483,19 +498,11 @@
 								Object.keys(album.includedFilesByCodesSimpleCombination[codesSimpleCombination]).length < numProtectedCacheBases
 								||
 								getMedia && Object.keys(album.includedFilesByCodesSimpleCombination[codesSimpleCombination]).some(
-									function(number) {
-										number = parseInt(number);
-										var result = ! album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("mediaGot");
-										return result;
-									}
+									number => ! album.includedFilesByCodesSimpleCombination[codesSimpleCombination][parseInt(number)].album.hasOwnProperty("mediaGot")
 								)
 								||
 								getPositions && Object.keys(album.includedFilesByCodesSimpleCombination[codesSimpleCombination]).some(
-									function(number) {
-										number = parseInt(number);
-										var result = ! album.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("positionsGot");
-										return result;
-									}
+									number => ! album.includedFilesByCodesSimpleCombination[codesSimpleCombination][parseInt(number)].album.hasOwnProperty("positionsGot")
 								)
 							) {
 								if (! result.includes(codesSimpleCombination))
