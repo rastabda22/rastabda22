@@ -640,9 +640,25 @@ class Album(object):
 
 		for subalbum in self.subalbums_list:
 			if not subalbum.empty:
-				path_to_dict = trim_base_custom(subalbum.path, self.baseless_path)
-				if path_to_dict == "":
+				# path_to_dict = trim_base_custom(subalbum.path, self.baseless_path)
+				# if path_to_dict == "":
+				# 	path_to_dict = Options.config['folders_string']
+				path_to_dict = subalbum.path
+				folder_position = path_to_dict.find(Options.config['folders_string'])
+				by_date_position = path_to_dict.find(Options.config['by_date_string'])
+				by_gps_position = path_to_dict.find(Options.config['by_gps_string'])
+				by_search_position = path_to_dict.find(Options.config['by_search_string'])
+				if not path_to_dict:
 					path_to_dict = Options.config['folders_string']
+				elif (
+					path_to_dict and
+					by_date_position == -1 and
+					by_gps_position == -1 and
+					by_search_position == -1 and
+					subalbum.cache_base != "root" and
+					folder_position != 0
+				):
+					path_to_dict = Options.config['folders_string'] + '/' + path_to_dict
 
 				sub_dict = {
 					"path": path_to_dict,
