@@ -256,7 +256,8 @@ def get_options():
 			except configparser.Error:
 				indented_message("PRE WARNING: option " + option + " in user config file", "is not integer, using default value", 2)
 				config[option] = default_config.getint('options', option)
-		elif option in ('follow_symlinks',
+		elif option in (
+				'follow_symlinks',
 				'checksum',
 				'different_album_thumbnails',
 				'hide_title',
