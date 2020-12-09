@@ -1,6 +1,5 @@
 /* jshint esversion: 6 */
 (function() {
-
 	var util = new Utilities();
 
 	/* constructor */
@@ -966,7 +965,7 @@
 						);
 					}
 				} else {
-					// neiter the album has been passed as argument, nor is in cache, get it brand new
+					// neither the album has been passed as argument, nor is in cache, get it brand new
 					promise = PhotoFloat.getSingleUnprotectedCacheBaseWithExternalMediaAndPositions(cacheBase, {getMedia: getMedia, getPositions: getPositions});
 					promise.then(
 						function unprotectedAlbumGot(album) {
@@ -1049,6 +1048,7 @@
 
 		return;
 	};
+
 	PhotoFloat.prototype.pickRandomMedia = function(iSubalbum, error) {
 		var index;
 		ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
@@ -1057,7 +1057,7 @@
 			function(resolve_pickRandomMedia) {
 				var promise = ithSubalbum.toAlbum(error, {getMedia: false, getPositions: false});
 				promise.then(
-					function(album) {
+					function beginPick(album) {
 						env.currentAlbum.subalbums[iSubalbum] = album;
 						// var album = env.currentAlbum.subalbums[iSubalbum];
 						// index = 0;
