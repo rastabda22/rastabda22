@@ -232,6 +232,7 @@
 				if (codesSimpleCombination !== "," && ! this.includedFilesByCodesSimpleCombination[codesSimpleCombination].hasOwnProperty(number)) {
 					this.includedFilesByCodesSimpleCombination[codesSimpleCombination][number] = {};
 					this.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album = {};
+				}
 			}
 		}
 	};
