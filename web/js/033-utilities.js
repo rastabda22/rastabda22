@@ -2770,7 +2770,7 @@
 			hash = window.location.hash;
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
 
-		if (mediaHash === null || env.currentAlbum.isAlbumWithOneMedia()) {
+		if (mediaHash === null || env.currentAlbum !== null && env.currentAlbum.isAlbumWithOneMedia()) {
 			// hash of an album: go up in the album tree
 			if (savedSearchAlbumHash !== null) {
 				if (albumHash == foundAlbumHash)

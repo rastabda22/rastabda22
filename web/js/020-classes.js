@@ -308,7 +308,11 @@
 			var self = this;
 			return new Promise(
 				function(resolve_convertIntoAlbum) {
-					let promise = PhotoFloat.getAlbum(self.cacheBase, error, {getMedia: getMedia, getPositions: getPositions});
+					let promise;
+					if (self.hasOwnProperty("numsProtectedMediaInSubTree"))
+						promise = PhotoFloat.getAlbum(self.cacheBase, error, {getMedia: getMedia, getPositions: getPositions}, self.numsProtectedMediaInSubTree);
+					else
+						promise = PhotoFloat.getAlbum(self.cacheBase, error, {getMedia: getMedia, getPositions: getPositions});
 					promise.then(
 						function(convertedSubalbum) {
 							let properties = [
