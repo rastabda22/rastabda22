@@ -81,7 +81,7 @@ class Album(object):
 			self.password_identifiers_set = set()
 			self.passwords_marker_mtime = None
 			self.album_ini_mtime = None
-			self._date = datetime(1900, 1, 1)
+			self.date = datetime(1900, 1, 1)
 
 			if (
 				Options.config['subdir_method'] in ("md5", "folder") and
@@ -173,17 +173,17 @@ class Album(object):
 	def subdir(self):
 		return self._subdir
 
-	@property
-	def date(self):
+	# @property
+	def album_date(self):
 		self.sort_media_by_date()
 		self.sort_subalbum_by_date()
 		if len(self.media_list) == 0 and len(self.subalbums_list) == 0:
 			return datetime(1900, 1, 1)
 		elif len(self.media_list) == 0:
-			return self.subalbums_list[-1]._date
+			return self.subalbums_list[-1].date
 		elif len(self.subalbums_list) == 0:
 			return self.media_list[-1].date
-		return max(self.media_list[-1].date, self.subalbums_list[-1]._date)
+		return max(self.media_list[-1].date, self.subalbums_list[-1].date)
 
 	@property
 	def date_string(self):
@@ -265,7 +265,7 @@ class Album(object):
 		self.subalbums_list_is_sorted = False
 
 	def sort_subalbum_by_date(self):
-		self.subalbums_list.sort(key=lambda _subalbum: _subalbum._date)
+		self.subalbums_list.sort(key=lambda _subalbum: _subalbum.date)
 		if not Options.config['default_album_name_sort'] and not Options.config['default_album_reverse_sort']:
 			self.subalbums_list_is_sorted = False
 
