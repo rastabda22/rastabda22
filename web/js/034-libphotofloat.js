@@ -558,14 +558,11 @@
 									function getSingleProtectedCacheBaseWithExternalMediaAndPositions_resolved() {
 										// ok, we got what we were looking for: numsProtectedMediaInSubTree property has been added by getSingleProtectedCacheBaseWithExternalMediaAndPositions()
 
-										if (self.hasOwnProperty("media")) {
-											self.media.sortByDate();
-											self.mediaNameSort = false;
-											self.mediaReverseSort = false;
-										}
-										util.sortByDate(self.subalbums);
-										self.albumNameSort = false;
-										self.albumReverseSort = false;
+										delete self.mediaNameSort;
+										delete self.mediaReverseSort;
+										delete self.albumNameSort;
+										delete self.albumReverseSort;
+										self.initializeSortPropertiesAndCookies();
 										self.sortAlbumsMedia();
 
 										resolve_getNextProtectedDirectory();
@@ -789,26 +786,16 @@
 								function() {
 									// execution arrives here when all the protected json has been loaded and processed
 
-									if (util.isSearchRootCacheBase(self.cacheBase)) {
-										resolve_continueAddProtectedContent();
-									} else {
-										conversionPromises = [];
-										Promise.all(conversionPromises).then(
-											function() {
-												if (self.hasOwnProperty("media")) {
-													self.media.sortByDate();
-													self.mediaNameSort = false;
-													self.mediaReverseSort = false;
-												}
-												util.sortByDate(self.subalbums);
-												self.albumNameSort = false;
-												self.albumReverseSort = false;
-												self.sortAlbumsMedia();
-
-												resolve_continueAddProtectedContent();
-											}
-										);
+									if (! util.isSearchRootCacheBase(self.cacheBase)) {
+										delete self.mediaNameSort;
+										delete self.mediaReverseSort;
+										// }
+										delete self.albumNameSort;
+										delete self.albumReverseSort;
+										self.initializeSortPropertiesAndCookies();
+										self.sortAlbumsMedia();
 									}
+									resolve_continueAddProtectedContent();
 								}
 							);
 						}
@@ -1770,8 +1757,7 @@
 													let promises = [];
 													if (env.searchAlbum.media.length) {
 														// search albums need to conform to default behaviour of albums:
-														// json files have subalbums and media sorted by date not reversed
-														env.searchAlbum.media.sortByDate();
+														// json files have subalbums and media sorted according to options
 														env.searchAlbum.media.forEach(
 															function(singleMedia) {
 																let promise = new Promise(
@@ -1796,12 +1782,11 @@
 															}
 														);
 													}
-													env.searchAlbum.mediaNameSort = false;
-													env.searchAlbum.mediaReverseSort = false;
+													delete env.searchAlbum.mediaNameSort;
+													delete env.searchAlbum.mediaReverseSort;
 
 													if (env.searchAlbum.subalbums.length) {
-														// search albums need to conform to default behaviour of albums: json files have subalbums and media sorted by date not reversed
-														util.sortByDate(env.searchAlbum.subalbums);
+														// search albums need to conform to default behaviour of albums: json files have subalbums and media sorted according to options
 														env.searchAlbum.subalbums.forEach(
 															function(subalbum, iSubalbum) {
 																let promise = new Promise(
@@ -1826,8 +1811,8 @@
 
 													Promise.all(promises).then(
 														function() {
-															env.searchAlbum.albumNameSort = false;
-															env.searchAlbum.albumReverseSort = false;
+															delete env.searchAlbum.albumNameSort;
+															delete env.searchAlbum.albumReverseSort;
 
 															if (env.searchAlbum.media.length || env.searchAlbum.subalbums.length) {
 																env.searchAlbum.initializeSortPropertiesAndCookies();

@@ -1401,9 +1401,8 @@
 			}
 
 			this.generateSingleMediaCaptionForSelection(album);
-			env.selectionAlbum.media.sortByDate();
-			env.selectionAlbum.mediaNameSort = false;
-			env.selectionAlbum.mediaReverseSort = false;
+			delete env.selectionAlbum.mediaNameSort;
+			delete env.selectionAlbum.mediaReverseSort;
 			env.selectionAlbum.initializeSortPropertiesAndCookies();
 			env.selectionAlbum.sortAlbumsMedia();
 
@@ -1452,6 +1451,11 @@
 			} else if (parseInt(clickedSelector.substring(singleMediaSelector.length + 1)) === env.currentMediaIndex && $(singleMediaSelector).is(":visible")) {
 				$(singleMediaSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
 			}
+
+			delete env.selectionAlbum.mediaNameSort;
+			delete env.selectionAlbum.mediaReverseSort;
+			env.selectionAlbum.initializeSortPropertiesAndCookies();
+			env.selectionAlbum.sortAlbumsMedia();
 
 			if (env.currentAlbum.isSelection()) {
 				if (Utilities.nothingIsSelected()) {
@@ -1542,9 +1546,8 @@
 							}
 
 							subalbum.generateCaptionForSearch();
-							Utilities.sortByDate(env.selectionAlbum.subalbums);
-							env.selectionAlbum.albumNameSort = false;
-							env.selectionAlbum.albumReverseSort = false;
+							delete env.selectionAlbum.albumNameSort;
+							delete env.selectionAlbum.albumReverseSort;
 							env.selectionAlbum.initializeSortPropertiesAndCookies();
 							env.selectionAlbum.sortAlbumsMedia();
 
@@ -1612,6 +1615,11 @@
 								$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-subalbum"));
 							}
 							self.invalidateAuxiliaryPositionsAndMedia();
+
+							delete env.selectionAlbum.albumNameSort;
+							delete env.selectionAlbum.albumReverseSort;
+							env.selectionAlbum.initializeSortPropertiesAndCookies();
+							env.selectionAlbum.sortAlbumsMedia();
 
 							if (env.currentAlbum.isSelection()) {
 								if (Utilities.nothingIsSelected()) {
@@ -2970,24 +2978,7 @@
 		// this function applies the sorting on the media and subalbum lists
 		// and sets the album properties that attest the lists status
 
-		// album properties reflect the current sorting of album and media objects
-		// json files have subalbums and media sorted by date not reversed
-
-		if (typeof this.albumNameSort === "undefined") {
-			this.albumNameSort = false;
-		}
-		if (typeof this.albumReverseSort === "undefined") {
-			this.albumReverseSort = false;
-		}
-
-		if (typeof this.mediaNameSort === "undefined") {
-			this.mediaNameSort = false;
-		}
-		if (typeof this.mediaReverseSort === "undefined") {
-			this.mediaReverseSort = false;
-		}
-
-		// cookies reflect the requested sorting in ui
+		// Cookies reflect the requested sorting in ui
 		// they remember the ui state when a change in sort is requested (via the top buttons) and when the hash changes
 		// if they are not set yet, they are set to default values
 
@@ -3000,6 +2991,19 @@
 			Functions.setBooleanCookie("mediaNameSortRequested", env.options.default_media_name_sort);
 		if (Functions.getBooleanCookie("mediaReverseSortRequested") === null)
 			Functions.setBooleanCookie("mediaReverseSortRequested", env.options.default_media_reverse_sort);
+
+		// album properties reflect the current sorting of album and media objects
+		// json files have subalbums and media sorted according to the options
+
+		if (typeof this.albumNameSort === "undefined")
+			this.albumNameSort = env.options.default_album_name_sort;
+		if (typeof this.albumReverseSort === "undefined")
+			this.albumReverseSort = env.options.default_album_reverse_sort;
+
+		if (typeof this.mediaNameSort === "undefined")
+			this.mediaNameSort = env.options.default_media_name_sort;
+		if (typeof this.mediaReverseSort === "undefined")
+			this.mediaReverseSort = env.options.default_media_reverse_sort;
 	};
 
 	/* make static methods callable as member functions */
@@ -3017,7 +3021,6 @@
 	Utilities.prototype.degreesToRadians = Utilities.degreesToRadians;
 	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
 	Utilities.prototype.mediaBoxContainerHeight = Utilities.mediaBoxContainerHeight;
-	Utilities.prototype.sortByDate = Utilities.sortByDate;
 	Utilities.prototype.isByDateCacheBase = Utilities.isByDateCacheBase;
 	Utilities.prototype.isByGpsCacheBase = Utilities.isByGpsCacheBase;
 	Utilities.prototype.isSearchCacheBase = Utilities.isSearchCacheBase;
