@@ -512,7 +512,7 @@
 				isAlbumWithOneMedia ||
 				thisAlbum !== null && (
 					thisAlbum.numsMedia.imagesAndVideosTotal() === 0 ||
-					! thisAlbum.isFolder() && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
+					! thisAlbum.isFolder() && ! env.options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
 				)
 			)
 		) {
@@ -588,7 +588,10 @@
 				$("ul#right-menu li.album-sort").removeClass("hidden");
 			}
 
-			if (thisAlbum.numsMedia.imagesAndVideosTotal() <= 1 || thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold) {
+			if (
+				thisAlbum.numsMedia.imagesAndVideosTotal() <= 1 ||
+				! env.options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
+			) {
 				// no media or one media or too many media
 				$("ul#right-menu li.media-sort").addClass("hidden");
 			} else {
@@ -664,9 +667,7 @@
 
 		if (
 			! thisAlbum.subalbums.length ||
-			! env.options.show_big_virtual_folders && (
-				thisAlbum.numsMediaInSubTree.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
-			)
+			! env.options.show_big_virtual_folders && thisAlbum.numsMediaInSubTree.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
 		) {
 			$(".select.everything-individual").addClass("hidden");
 		} else {
