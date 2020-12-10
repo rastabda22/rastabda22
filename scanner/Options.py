@@ -131,7 +131,7 @@ config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x
 # json_version = 4.21 since mediaNameList changed to mediaList
 # json_version = 4.22 since albumCacheBase removed from mediaList elements
 # json_version = 4.23 since subalbums have complete path
-# json_version = 4.24 since various albums and media sorting implemented
+# json_version = 4.24 since default albums and media sorting implemented
 
 # json_version = 0
 json_version = 4.24

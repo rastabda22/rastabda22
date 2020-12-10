@@ -490,13 +490,21 @@ class TreeWalker:
 							by_date_max_file_date = max(by_date_max_file_date, single_media_date)
 						else:
 							by_date_max_file_date = single_media_date
+					message("calculating album date", "based on media and subalbums dates", 5)
+					day_album.date = day_album.album_date()
 					Options.all_albums.append(day_album)
 					self.generate_composite_image(day_album, day_max_file_date)
 					indented_message("day album worked out", media_list[0].year + "-" + media_list[0].month + "-" + media_list[0].day, 4)
+				message("calculating album date", "based on media and subalbums dates", 5)
+				month_album.date = month_album.album_date()
 				Options.all_albums.append(month_album)
 				self.generate_composite_image(month_album, month_max_file_date)
+			message("calculating album date", "based on media and subalbums dates", 5)
+			year_album.date = year_album.album_date()
 			Options.all_albums.append(year_album)
 			self.generate_composite_image(year_album, year_max_file_date)
+		message("calculating album date", "based on media and subalbums dates", 5)
+		by_date_album.date = by_date_album.album_date()
 		Options.all_albums.append(by_date_album)
 		if by_date_album.nums_media_in_sub_tree.total() > 0:
 			self.generate_composite_image(by_date_album, by_date_max_file_date)
@@ -898,6 +906,8 @@ class TreeWalker:
 							country_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 							by_geonames_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 
+						message("calculating album date", "based on media and subalbums dates", 5)
+						place_album.date = place_album.album_date()
 						Options.all_albums.append(place_album)
 						self.generate_composite_image(place_album, place_max_file_date)
 						if set_alt_place:
@@ -912,10 +922,16 @@ class TreeWalker:
 						message("place album worked out", cluster_list[0][0].country_code + "-" + cluster_list[0][0].region_code + "-" + place_name, 4)
 						# back_level()
 					back_level()
+				message("calculating album date", "based on media and subalbums dates", 5)
+				region_album.date = region_album.album_date()
 				Options.all_albums.append(region_album)
 				self.generate_composite_image(region_album, region_max_file_date)
+			message("calculating album date", "based on media and subalbums dates", 5)
+			country_album.date = country_album.album_date()
 			Options.all_albums.append(country_album)
 			self.generate_composite_image(country_album, country_max_file_date)
+		message("calculating album date", "based on media and subalbums dates", 5)
+		by_geonames_album.date = by_geonames_album.album_date()
 		Options.all_albums.append(by_geonames_album)
 		if by_geonames_album.nums_media_in_sub_tree.total() > 0:
 			self.generate_composite_image(by_geonames_album, by_geonames_max_file_date)
@@ -1853,8 +1869,8 @@ class TreeWalker:
 				Options.unrecognized_files.extend(unrecognized_files_in_dir)
 				Options.config['num_media_in_tree'] -= len(unrecognized_files_in_dir)
 
-		message("saving album date", "based on media and subalbums dates", 5)
-		album._date = album.date
+		message("calculating album date", "based on media and subalbums dates", 5)
+		album.date = album.album_date()
 
 		if not album.empty:
 			next_level()
