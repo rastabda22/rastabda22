@@ -1400,24 +1400,7 @@
 				env.selectionAlbum.sizesOfSubTree.sum(this.fileSizes);
 			}
 
-			// if (album.isSearch()) {
-			// 	// let cacheBase = this.foldersCacheBase
-			// 	// let albumHash = PhotoFloat.decodeHash(window.location.hash)[0];
-			// 	// let searchStartCacheBase = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
-			// 	// if (Utilities.isByDateCacheBase(searchStartCacheBase))
-			// 	// 	cacheBase = this.dayAlbumCacheBase;
-			// 	// else if (Utilities.isByGpsCacheBase(searchStartCacheBase))
-			// 	// 	cacheBase = this.gpsAlbumCacheBase;
-			// 	// let parentAlbumPromise = PhotoFloat.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
-			// 	// let self = this;
-			// 	// parentAlbumPromise.then(
-			// 	// 	function(parentAlbum) {
-			// 	// 		self.generateCaptionForSearch(parentAlbum);
-			// 	// 	}
-			// 	// );
-			// } else {
 			this.generateSingleMediaCaptionForSelection(album);
-			// }
 			env.selectionAlbum.media.sortByDate();
 			env.selectionAlbum.mediaNameSort = false;
 			env.selectionAlbum.mediaReverseSort = false;

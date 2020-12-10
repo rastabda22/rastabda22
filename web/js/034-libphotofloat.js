@@ -792,26 +792,6 @@
 									if (util.isSearchRootCacheBase(self.cacheBase)) {
 										resolve_continueAddProtectedContent();
 									} else {
-										// before sorting, any subalbum must be converted to album, because their data are slightly different
-										let conversionPromises = [];
-										// self.subalbums.forEach(
-										// 	function convertSubalbum(subalbum, iSubalbum) {
-										// 		if (subalbum instanceof Subalbum) {
-										// 			let conversionPromise = new Promise(
-										// 				function(resolve_conversionPromise) {
-										// 					let toAlbumPromise = subalbum.toAlbum(null, {getMedia: false, getPositions: false});
-										// 					toAlbumPromise.then(
-										// 						function(album) {
-										// 							self.subalbums[iSubalbum] = album;
-										// 							resolve_conversionPromise();
-										// 						}
-										// 					);
-										// 				}
-										// 			);
-										// 			conversionPromises.push(conversionPromise);
-										// 		}
-										// 	}
-										// );
 										Promise.all(conversionPromises).then(
 											function() {
 												if (self.hasOwnProperty("media")) {
@@ -1830,17 +1810,6 @@
 																			function(subalbum) {
 																				env.searchAlbum.subalbums[iSubalbum] = subalbum;
 																				env.searchAlbum.subalbums[iSubalbum].generateAlbumCaptionForSearch();
-
-																				// // replace the converted subalbum in its parent's subalbums
-																				// let splittedCacheBase = subalbum.cacheBase.split(env.options.cache_folder_separator);
-																				// let parentCacheBase = splittedCacheBase.slice(0, splittedCacheBase.length - 1).join(env.options.cache_folder_separator);
-																				// var getAlbumPromise = PhotoFloat.getAlbum(parentCacheBase, null, {getMedia: false, getPositions: false});
-																				// getAlbumPromise.then(
-																				// 	function(parentAlbum) {
-																				// 		indexInParent = parentAlbum.subalbums.findIndex(parentSubalbum => parentSubalbum.isEqual(subalbum));
-																				// 	}
-																				// );
-
 																				resolve_subalbum();
 																			},
 																			function() {
