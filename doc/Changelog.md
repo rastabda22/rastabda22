@@ -1,4 +1,10 @@
-* scanner: fragmentation of gps albums clustering reduced
+### version v4.9.1 (Dec 10, 2020)
+
+* many bug fixes
+* updated french translation
+* execution of js code optimized removing multiple loading of albums
+* js code convertion to OOP continued
+* scanner: fragmentation of gps albums clustering has been reduced
 
 ### version v4.9.0 (Dec 1st, 2020)
 
