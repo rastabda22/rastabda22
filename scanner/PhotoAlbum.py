@@ -175,15 +175,21 @@ class Album(object):
 
 	# @property
 	def album_date(self):
-		self.sort_media_by_date()
-		self.sort_subalbum_by_date()
-		if len(self.media_list) == 0 and len(self.subalbums_list) == 0:
+		dates = [subalbum.album_date() for subalbum in self.subalbums_list]
+		dates.extend([single_media.date for single_media in self.media_list])
+		if len(dates) == 0:
 			return datetime(1900, 1, 1)
-		elif len(self.media_list) == 0:
-			return self.subalbums_list[-1].date
-		elif len(self.subalbums_list) == 0:
-			return self.media_list[-1].date
-		return max(self.media_list[-1].date, self.subalbums_list[-1].date)
+		else:
+			return max(dates)
+		# self.sort_media_by_date()
+		# self.sort_subalbum_by_date()
+		# if len(self.media_list) == 0 and len(self.subalbums_list) == 0:
+		# 	return datetime(1900, 1, 1)
+		# elif len(self.media_list) == 0:
+		# 	return self.subalbums_list[-1].date
+		# elif len(self.subalbums_list) == 0:
+		# 	return self.media_list[-1].date
+		# return max(self.media_list[-1].date, self.subalbums_list[-1].date)
 
 	@property
 	def date_string(self):
