@@ -374,6 +374,9 @@ class Album(object):
 			self.sizes_of_album = self.sizes_protected_media_in_album.sizes(',')
 		else:
 			self.sizes_of_album = Sizes()
+
+		self.date = self.album_date()
+
 		message("album worked!", self.cache_base, 5)
 		back_level()
 
@@ -441,6 +444,9 @@ class Album(object):
 			self.sizes_of_album = self.sizes_protected_media_in_album.sizes(self.complex_combination)
 		else:
 			self.sizes_of_album = Sizes()
+
+		self.date = self.album_date()
+
 		message("album worked!", self.cache_base, 5)
 		back_level()
 
