@@ -792,6 +792,7 @@
 									if (util.isSearchRootCacheBase(self.cacheBase)) {
 										resolve_continueAddProtectedContent();
 									} else {
+										conversionPromises = [];
 										Promise.all(conversionPromises).then(
 											function() {
 												if (self.hasOwnProperty("media")) {
