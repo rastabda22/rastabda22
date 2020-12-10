@@ -3191,10 +3191,8 @@
 						env.mapAlbum.numsMediaInSubTree = new ImagesAndVideos(env.mapAlbum.numsMedia);
 						env.mapAlbum.numPositionsInTree = env.mapAlbum.positionsAndMediaInTree.length;
 						env.mapAlbum.numsProtectedMediaInSubTree = new NumsProtected({",": env.mapAlbum.numsMedia});
-						// media must be initially sorted by date not reverse, as json they are in albums
-						env.mapAlbum.media.sortByDate();
-						env.mapAlbum.mediaNameSort = false;
-						env.mapAlbum.mediaReverseSort = false;
+						delete env.mapAlbum.mediaNameSort;
+						delete env.mapAlbum.mediaReverseSort;
 						env.mapAlbum.initializeSortPropertiesAndCookies();
 						// now sort them according to options
 						env.mapAlbum.sortAlbumsMedia();

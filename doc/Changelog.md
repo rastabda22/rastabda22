@@ -1,3 +1,8 @@
+### version v4.9.2 (Dec 10, 2020)
+
+* many bug fixes
+* implemented python albums and media sortings
+
 ### version v4.9.1 (Dec 10, 2020)
 
 * many bug fixes

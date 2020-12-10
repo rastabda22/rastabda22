@@ -81,6 +81,7 @@ class Album(object):
 			self.password_identifiers_set = set()
 			self.passwords_marker_mtime = None
 			self.album_ini_mtime = None
+			self.date = datetime(1, 1, 1)
 
 			if (
 				Options.config['subdir_method'] in ("md5", "folder") and
@@ -172,16 +173,23 @@ class Album(object):
 	def subdir(self):
 		return self._subdir
 
-	@property
-	def date(self):
-		self.sort_subalbums_and_media()
-		if len(self.media_list) == 0 and len(self.subalbums_list) == 0:
-			return datetime(1900, 1, 1)
-		elif len(self.media_list) == 0:
-			return self.subalbums_list[-1].date
-		elif len(self.subalbums_list) == 0:
-			return self.media_list[-1].date
-		return max(self.media_list[-1].date, self.subalbums_list[-1].date)
+	# @property
+	def album_date(self):
+		dates = [subalbum.date for subalbum in self.subalbums_list]
+		dates.extend([single_media.date for single_media in self.media_list])
+		if len(dates) == 0:
+			return datetime(1, 1, 1)
+		else:
+			return max(dates)
+		# self.sort_media_by_date()
+		# self.sort_subalbum_by_date()
+		# if len(self.media_list) == 0 and len(self.subalbums_list) == 0:
+		# 	return datetime(1, 1, 1)
+		# elif len(self.media_list) == 0:
+		# 	return self.subalbums_list[-1].date
+		# elif len(self.subalbums_list) == 0:
+		# 	return self.media_list[-1].date
+		# return max(self.media_list[-1].date, self.subalbums_list[-1].date)
 
 	@property
 	def date_string(self):
@@ -193,32 +201,42 @@ class Album(object):
 	def __eq__(self, other):
 		return self.path == other.path
 
-	def __ne__(self, other):
-		return not self.__eq__(other)
+	# def __ne__(self, other):
+	# 	return not self.__eq__(other)
 
 	def __lt__(self, other):
 		try:
-			return self.date < other.date
+			if Options.config['default_album_name_sort'] or self.date == other.date:
+				if Options.config['default_album_reverse_sort']:
+					return self.name > other.name
+				else:
+					return self.name < other.name
+			else:
+				if Options.config['default_album_reverse_sort']:
+					return self.date > other.date
+				else:
+					return self.date < other.date
+			# return self.date < other.date
 		except TypeError:
 			return False
 
-	def __le__(self, other):
-		try:
-			return self.date <= other.date
-		except TypeError:
-			return False
-
-	def __gt__(self, other):
-		try:
-			return self.date > other.date
-		except TypeError:
-			return False
-
-	def __ge__(self, other):
-		try:
-			return self.date >= other.date
-		except TypeError:
-			return False
+	# def __le__(self, other):
+	# 	try:
+	# 		return self.date <= other.date
+	# 	except TypeError:
+	# 		return False
+	#
+	# def __gt__(self, other):
+	# 	try:
+	# 		return self.date > other.date
+	# 	except TypeError:
+	# 		return False
+	#
+	# def __ge__(self, other):
+	# 	try:
+	# 		return self.date >= other.date
+	# 	except TypeError:
+	# 		return False
 
 
 	def read_album_ini(self, file_name):
@@ -251,6 +269,16 @@ class Album(object):
 	def add_subalbum(self, album):
 		self.subalbums_list.append(album)
 		self.subalbums_list_is_sorted = False
+
+	def sort_subalbum_by_date(self):
+		self.subalbums_list.sort(key=lambda _subalbum: _subalbum.date)
+		if not Options.config['default_album_name_sort'] and not Options.config['default_album_reverse_sort']:
+			self.subalbums_list_is_sorted = False
+
+	def sort_media_by_date(self):
+		self.media_list.sort(key=lambda _media: _media.date)
+		if not Options.config['default_media_name_sort'] and not Options.config['default_media_reverse_sort']:
+			self.media_list_is_sorted = False
 
 	def sort_subalbums_and_media(self):
 		if not self.media_list_is_sorted:
@@ -352,6 +380,9 @@ class Album(object):
 			self.sizes_of_album = self.sizes_protected_media_in_album.sizes(',')
 		else:
 			self.sizes_of_album = Sizes()
+
+		self.date = self.album_date()
+
 		message("album worked!", self.cache_base, 5)
 		back_level()
 
@@ -419,6 +450,9 @@ class Album(object):
 			self.sizes_of_album = self.sizes_protected_media_in_album.sizes(self.complex_combination)
 		else:
 			self.sizes_of_album = Sizes()
+
+		self.date = self.album_date()
+
 		message("album worked!", self.cache_base, 5)
 		back_level()
 
@@ -2442,7 +2476,7 @@ class Media(object):
 	def date(self):
 		correct_date = None
 		if not self.is_valid:
-			correct_date = datetime(1900, 1, 1)
+			correct_date = datetime(1, 1, 1)
 		elif "dateTimeOriginal" in self._attributes["metadata"]:
 			correct_date = self._attributes["metadata"]["dateTimeOriginal"]
 		elif "dateTime" in self._attributes["metadata"]:
@@ -2558,40 +2592,46 @@ class Media(object):
 			return ""
 
 	def __eq__(self, other):
-		return self.path == other.path
+		return self.album_path == other.album_path
 
-	def __ne__(self, other):
-		return not self.__eq__(other)
+	# def __ne__(self, other):
+	# 	return not self.__eq__(other)
 
 	def __lt__(self, other):
 		try:
-			if self.date == other.date:
-				return self.name < other.name
+			if Options.config['default_media_name_sort'] or self.date == other.date:
+				if Options.config['default_media_reverse_sort']:
+					return self.name > other.name
+				else:
+					return self.name < other.name
 			else:
-				return self.date < other.date
+				if Options.config['default_media_reverse_sort']:
+					return self.date > other.date
+				else:
+					return self.date < other.date
 		except TypeError:
 			return False
 
-	def __le__(self, other):
-		try:
-			return self.date <= other.date
-		except TypeError:
-			return False
-
-	def __gt__(self, other):
-		try:
-			if self.date == other.date:
-				return self.name > other.name
-			else:
-				return self.date > other.date
-		except TypeError:
-			return False
-
-	def __ge__(self, other):
-		try:
-			return self.date <= other.date
-		except TypeError:
-			return False
+	# def __le__(self, other):
+	# 	try:
+	# 		return self.date <= other.date
+	# 	except TypeError:
+	# 		return False
+	#
+	# def __gt__(self, other):
+	# 	try:
+	# 		if self.date == other.date:
+	# 			return self.name > other.name
+	# 		else:
+	# 			return self.date > other.date
+	# 	except TypeError:
+	# 		return False
+	#
+	# def __ge__(self, other):
+	# 	try:
+	# 		return self.date <= other.date
+	# 	except TypeError:
+	# 		return False
 
 	@property
 	def attributes(self):
