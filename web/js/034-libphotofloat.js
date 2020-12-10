@@ -738,7 +738,7 @@
 								protectedDirectory += ',';
 								if (mediaMd5)
 									protectedDirectory += mediaMd5;
-								// let codesSimpleCombination = util.convertProtectedDirectoryToCodesSimpleCombination(protectedDirectory);
+
 								if (! self.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination) || ! self.includedFilesByCodesSimpleCombination[codesSimpleCombination]){
 									// TO DO: check if it's safe to do this when self.includedFilesByCodesSimpleCombination[codesSimpleCombination] === false
 									self.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};

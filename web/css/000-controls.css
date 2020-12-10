@@ -248,6 +248,11 @@ a.title-anchor.mobile {
 	height: 30px;
 }
 
+#request-password:hover {
+	color: black;
+	background-color: white;
+}
+
 #thumbs .thumbnail-map-link, #subalbums .thumbnail-map-link, #thumbs .select-box, #subalbums .select-box, #media-select-box .select-box, #popup-images-wrapper .select-box {
 	opacity: .5;
 	height: 30px;

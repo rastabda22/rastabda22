@@ -130,7 +130,7 @@ config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x
 # json_version = 4.2 since numMediaInSubTree and numMedia are changed to numsMediaInSubTree and numsMedia
 # json_version = 4.21 since mediaNameList changed to mediaList
 # json_version = 4.22 since albumCacheBase removed from mediaList elements
-# json_version = 4.23 since subalbums saved by python have complete path
+# json_version = 4.23 since subalbums have complete path
 
 # json_version = 0
 json_version = 4.23
