@@ -1853,6 +1853,9 @@ class TreeWalker:
 				Options.unrecognized_files.extend(unrecognized_files_in_dir)
 				Options.config['num_media_in_tree'] -= len(unrecognized_files_in_dir)
 
+		message("saving album date", "based on media and subalbums dates", 5)
+		album._date = album.date
+
 		if not album.empty:
 			next_level()
 			message("adding album to albums list...", "", 5)
