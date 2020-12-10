@@ -739,10 +739,10 @@
 								if (mediaMd5)
 									protectedDirectory += mediaMd5;
 
-								if (! self.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination) || ! self.includedFilesByCodesSimpleCombination[codesSimpleCombination]){
-									// TO DO: check if it's safe to do this when self.includedFilesByCodesSimpleCombination[codesSimpleCombination] === false
-									self.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
-								}
+								// if (! self.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination) || ! self.includedFilesByCodesSimpleCombination[codesSimpleCombination]){
+								// 	// TO DO: check if it's safe to do this when self.includedFilesByCodesSimpleCombination[codesSimpleCombination] === false
+								// 	self.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
+								// }
 
 								// we can know how many files/symlinks we have to get in the protected directory
 								let numProtectedCacheBases = PhotoFloat.getNumProtectedCacheBases(self.numsProtectedMediaInSubTree, codesSimpleCombination);
