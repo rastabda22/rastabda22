@@ -81,7 +81,7 @@ class Album(object):
 			self.password_identifiers_set = set()
 			self.passwords_marker_mtime = None
 			self.album_ini_mtime = None
-			self.date = datetime(1900, 1, 1)
+			self.date = datetime(1, 1, 1)
 
 			if (
 				Options.config['subdir_method'] in ("md5", "folder") and
@@ -175,16 +175,16 @@ class Album(object):
 
 	# @property
 	def album_date(self):
-		dates = [subalbum.album_date() for subalbum in self.subalbums_list]
+		dates = [subalbum.date for subalbum in self.subalbums_list]
 		dates.extend([single_media.date for single_media in self.media_list])
 		if len(dates) == 0:
-			return datetime(1900, 1, 1)
+			return datetime(1, 1, 1)
 		else:
 			return max(dates)
 		# self.sort_media_by_date()
 		# self.sort_subalbum_by_date()
 		# if len(self.media_list) == 0 and len(self.subalbums_list) == 0:
-		# 	return datetime(1900, 1, 1)
+		# 	return datetime(1, 1, 1)
 		# elif len(self.media_list) == 0:
 		# 	return self.subalbums_list[-1].date
 		# elif len(self.subalbums_list) == 0:
@@ -2476,7 +2476,7 @@ class Media(object):
 	def date(self):
 		correct_date = None
 		if not self.is_valid:
-			correct_date = datetime(1900, 1, 1)
+			correct_date = datetime(1, 1, 1)
 		elif "dateTimeOriginal" in self._attributes["metadata"]:
 			correct_date = self._attributes["metadata"]["dateTimeOriginal"]
 		elif "dateTime" in self._attributes["metadata"]:
