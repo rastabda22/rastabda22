@@ -1,4 +1,4 @@
-# MyPhotoShare v4.1.0 (Nov 29, 2019)
+# MyPhotoShare v4.9.3 (Dec 11, 2020)
 
 ### A Web Photo Gallery Done Right via Static JSON & Dynamic Javascript
 #### by Jason A. Donenfeld (<Jason@zx2c4.com>), Jerome Charaoui (jerome@riseup.net)  Joachim Tingvold (joachim@tingvold.com), Paolo Benvenuto (<paolobenve@gmail.com>), Pierre Métras (<p.metras@videotron.ca>)
@@ -33,6 +33,7 @@ It is available in English, Italian, French and Spanish. Localizing to other lan
 * [Geotagging](doc/GPS.md)
 * [Tweaking metadata with `album.ini`](doc/Metadata.md)
 * [Make some content private](doc/Authentication.md)
+* [User interface](doc/Navigation.md)
 * [Versions changelog](doc/Changelog.md)
 * [Debugging memory usage](doc/Debugging.md)
 * [Known issues](doc/Issues.md)
@@ -78,7 +79,7 @@ It is available in English, Italian, French and Spanish. Localizing to other lan
 
 ### Great User Experience
 
-- [x] Keyboard navigation: arrows, pageup/down, `[esc]`, `[f]` (fullscreen), `[d]` (download original), `[o]` (show original), `[s]` (map), `[m]` (metadata), `[e]` (open right menu), `[+]` (pinch in), `[-]` (pinch out), space/backspace (like in [Darktable](https://www.darktable.org/)), `[>]`/`[<]` (rotation among browsing modes: folders -> by date -> by gps -> by search), `[`/`]` (changing sort of albums in a rotative way), `{`/`}` (changing sort of media in a rotative way).
+- [x] Keyboard navigation: arrows, pageup/down, `[esc]`, `[f]` (fullscreen), `[d]` (download original), `[o]` (show original), `[s]` (map), `[m]` (metadata), `[e]` (open right menu), `[+]` (pinch in), `[-]` (pinch out), space/backspace (like in [Darktable](https://www.darktable.org/)), `[>]`/`[<]` (rotation among browsing modes: folders -> by date -> by gps -> by search -> by map -> by selection), `[`/`]` (changing sort of albums in a rotative way), `{`/`}` (changing sort of media in a rotative way).
 - [x] Keyboard dragging when the photo is zoomed in.
 - [x] Mouse-wheel support, including for pinching (with ctrl or shift).
 - [x] Various user interface options can be changed by the user.
@@ -104,6 +105,11 @@ It is available in English, Italian, French and Spanish. Localizing to other lan
 - [x] Albums and photo can be protected by passwords. Passwords may be specified for albums, for files, for both.
 - [x] Patterns are defined in album tree and specify what should every password protect; allowed matching modes: case sensitive/insensitive, whole/part of dir/file name, dir only/files only/both.
 - [x] Passwords aren't exposed in javascript, and sensitive data and media are extremely difficult to find in cache.
+
+### Selecting media and albums (_new_ in v5.0)
+
+- [x] Albums and media can be seleted via a click or massively, either in _hard_ albums (the default tree, by date, by place) and virtual ones (by search, by gps, by map).
+- [x] Selected media and albums can be seen as an album, and can be browsed, downloaded, sorted, shown on map, etc.
 
 ### And More...
 

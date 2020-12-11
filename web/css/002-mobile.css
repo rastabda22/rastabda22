@@ -22,7 +22,7 @@
 		font-size: small;
 		z-index: 1;
 	}
-	.error, .browsing-mode-message, .sort-message, #auth-text, .search-failed, #loading, #downloading-media {
+	.error, .browsing-mode-message, .sort-message, #auth-text, .search-failed, #loading, #downloading-media, #preparing-zip, #sending-email {
 		margin-top: 15%;
 	}
 

@@ -15,6 +15,7 @@ zip_file = "alternateNames.zip"
 print()
 print("getting " + zip_file + " from geonames.org and extracting it to file...")
 url = "http://download.geonames.org/export/dump/" + zip_file
+print("url: " + url + " - more than 150MB, be patient")
 request = requests.get(url)
 if request.status_code != 200:
 	print("error getting " + url + ", quitting")
@@ -27,7 +28,7 @@ else:
 
 	print("building language list")
 	# get the languages defined in the translation js file
-	translations_file = "web/js/012-translations.js"
+	translations_file = "web/js/031-translations.js"
 	translations_structure = {}
 	with open(translations_file, "rt") as translations_p:
 		translations = translations_p.read().splitlines(True)

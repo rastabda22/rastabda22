@@ -37,7 +37,7 @@ MyPhotoShare allows you to browse the media by album, by date or by location if 
 
 * If the photos have geotags, this metadata is used by MyPhotoShare and you can browse your media content by location, from country down to city or town. MyPhotoShare includes a database of 10000 location names from [GeoNames.org](https://www.geonames.org/) and you can even update this file to get localized names.
 
-![Browse by country, provine or city](img/myphotoshare-3.4-browse-by-location-fr.png)
+![Browse by country, province or city](img/myphotoshare-3.4-browse-by-location-fr.png)
 
 * A location icon appears over each media that have geotag metadata.
 

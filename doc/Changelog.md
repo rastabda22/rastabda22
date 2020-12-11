@@ -1,6 +1,37 @@
-* Media and album captions from `album.ini` file are now separately from metadata; a menu option to hide them has been added
-* French translation completed
+### version v4.9.3 (Dec 11, 2020)
+
+* fixed bugs in reading image exif metadata, only exiftool was reading them correctly
+* changed default sorting of albums and media, now they are sorted by name not reverse
+
+### version v4.9.2 (Dec 10, 2020)
+
+* many bug fixes
+* implemented python albums and media sortings
+
+### version v4.9.1 (Dec 10, 2020)
+
+* many bug fixes
+* updated french translation
+* execution of js code optimized removing multiple loading of albums
+* js code convertion to OOP continued
+* scanner: fragmentation of gps albums clustering has been reduced
+
+### version v4.9.0 (Dec 1st, 2020)
+
+* many bug fixes
+* global variables are now properties of a global class
+* middle click now preserves map album, selection, and unveiled passwords (requires `php`)
+* a media cache has been implementation, so that the same object is used for the same image/video across the various albums where it is present
+* js code mainly converted to OOP
+* numMediaInSubTree and numMedia album properties have been changed to numsMediaInSubTree and numsMedia (json files will be regenerated)
+* media and albums can now be selected, and the resulting selection can be viewed, browsed and saved, as for the other albums
+  * new option `by_selection_string` for albums built from selection
+* menu refinements in download section
+* searching when in a map popup now refines the popup content
+* media and album captions from `album.ini` file are now separate from metadata; a menu option to hide them has been added
 * new option `excluded_patterns_file`: specifies a file whose lines are file patterns (regexes) to ignore when scanning
+* the authentication dialog now allows the user to send an email that requests the protected content password (please set the `request_password_email`)
+  * new option `request_password_email`: the email address which the requested for the password will be sent to
 
 ### version v4.1.0 (Nov 29, 2019)
 
@@ -199,7 +230,7 @@
   * new option `search_options_separator`: the character used for separating search options from search string in URIs
   * new option `max_search_album_number`: the maximum number of search album that will be loaded
   * new option `use_stop_words`: whether to use stop words when generating the search albums
-* removed `server_album_path` option and hard code it to `albums`
+* removed `server_album_path` option and hard coded it to `albums`
 * removed options `respected_processors` and substituded by `num_processors` option, defaults to 1: better for the user, does not oblige to set the value
 * reorganization of documentation:
   * creation of `doc` and `doc/img` folders
@@ -223,7 +254,7 @@
 * option `show_media_names_below_thumbs_in_albums` changed to `show_media_names_below_thumbs`
 * new option `show_album_names_below_thumbs`: decides whether to show the album name in album thumbnails
 * new option `show_media_count`: decides whether to show the media count in album thumbnail and title
-* cropping to square takes now into account faces if opencv and python-opencv are installed
+* cropping to square takes now into account faces if opencv and python3-opencv are installed
 * scanner code for producing the thumbnails was optimized
 * default options give now a light UI
 

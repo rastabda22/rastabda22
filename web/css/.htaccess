@@ -1,3 +1,3 @@
-<FilesMatch "(?<!\.css)$">
+<FilesMatch "(?<!\.css|\.png)$">
         deny from all
 </FilesMatch>

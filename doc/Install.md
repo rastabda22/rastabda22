@@ -6,7 +6,7 @@ MyPhotoShare needs:
 
 * a working web server (e.g. `apache`, `nginx`, etc.)
 * the web server `php` module installed (optional if accepting degraded mode, see below)
-* `php5-gd` in order to create albums share images (optional if accepting degraded mode, see below)
+* `php-gd` in order to create albums share images (optional if accepting degraded mode, see below)
 * `python3`
 * `python3-magic`
 * `python3-numpy`
@@ -17,13 +17,15 @@ MyPhotoShare needs:
 * `avconv` / `ffmpeg` in order to be able to manage videos
 * `curl`, used by minify script
 * `exiftool`
+* `php-mail` (optional, it's needed to send the password request email)
+* a working MTA, e.g. `postfix` (optional, it's needed to send the password request email)
 
 ### Optional
-* `python-opencv`: if found, face detection is used when cropping images to square.
+* `python3-opencv`: if found, face detection is used when cropping images to square.
   * OpenCV libraries and data (`opencv-data`), if opencv is used
-  * `locate`, if opencv is used
+  * `locate`, if opencv is used; the program must be run and the database generate
 * `cssmin` (`https://github.com/zacharyvoase/cssmin`, debian/ubuntu packages `cssmin`), unless using external web service
-* `jsmin` (`https://github.com/tikitu/jsmin`, debian/ubuntu package `python-jsmin`) or `uglifyjs` (`https://github.com/mishoo/UglifyJS`, debian/ubuntu package `uglifyjs`, but `node-buble` is requiered too, and is not available in _debian stable_ yet), unless using external web service
+* `jsmin` (`https://github.com/tikitu/jsmin`, debian/ubuntu package `python3-jsmin`) or `uglifyjs` (`https://github.com/mishoo/UglifyJS`, debian/ubuntu package `uglifyjs`, but `node-buble` is requiered too, and is not available in _debian stable_ yet), unless using external web service
 
 
 ### Why PHP? Isn't it enough with JavaScript?
@@ -31,6 +33,8 @@ MyPhotoShare needs:
 PHP is *required* for sharing, because social apps do not execute any JavaScript when they receive an *URI*. Without PHP, sharing any page is perfectly equivalent to sharing the simple `index.html`: no information of the particular page you want to share is retained.
 
 PHP does the job you need for sharing: JavaScript creates proper URLs based on the page hash, and when a share button is pressed a parameter is passed to PHP and it sets the proper HTML page title and appends the proper `<link rel='video_src' href="`video_link`">` or `<link rel='image_src' href="`image_link`">` tag to the `<head>` tag. This way the social media apps get the data they need and show a preview of the media/album you are sharing.
+
+PHP allows requesting a forgot password, sending an email to a site administrator.
 
 If your web server does not have PHP, you can use MyPhotoShare in degraded mode: just use the `index.html` file instead of the `index.php` one in the `web` directory. You won't have the social sharing features but you'll still have all the great features of MyPhotoShare like geotagging or keyword search...
 
@@ -100,15 +104,16 @@ DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm
 It's recommended to have this directive only in the directory of MyPhotoShare gallery, not to break other web applications on the server.
 
 
-## Apache server configuration
- Edit you domain configuration file in `/etc/apache2/sites-available/`, or use `/etc/apache2/sites-available/000-default.conf`:
+#### Apache server configuration
+
+Edit you domain configuration file in `/etc/apache2/sites-available/`, or use `/etc/apache2/sites-available/000-default.conf`:
 
 ```bash
 $ sudo vi /etc/apache2/sites-available/000-default.conf
 
 ```
 
- Add the following lines in the `<VirtualHost>` section:
+Add the following lines in the `<VirtualHost>` section:
 ```apache
 <VirtualHost *:80>
     ServerAdmin myemail@myprovider.com
@@ -126,23 +131,39 @@ $ sudo vi /etc/apache2/sites-available/000-default.conf
 
 The `Option -Indexes` line is important for security reasons, in order not to permit directory listings.
 
-### Other tweakings
+Enable the new configuration (if you used a configuration file in `/etc/apache2/sites-available/`)
+```bash
+$ sudo a2ensite _mysitename_
+```
 
- * Compression of files must be enabled with Mod_deflate.
+#### Other `apache` tweakings
+
+* Compression of files must be enabled with Mod_deflate.
 ```bash
 $ sudo a2enmod deflate
 ```
 
- * Add support for Header directive to manage the browser cache correctly with Mod_header.
+* Add support for Header directive to manage the browser cache correctly with Mod_header.
 ```bash
 $ sudo a2enmod headers
 ```
 
- * Restart Apache to take into account the changes.
+* Restart Apache to take into account the changes.
 ```bash
 $ service apache2 restart
 ```
 
+### Get geonames in your language
+
+`myphotoshare` has a script that downloads and prepare the geonames (i.e. the geographical names of cities, states, etc.) in any language. In your installation directory (the directory where the `bin` folder is located) you must run
+
+```bash
+$ python3 bin/get_alternate_names.py
+```
+
+The script downloads a 150MB file from geonames.org, and extracts from it the geonames in the languages present in the _javascript_ translations strings, at the moment english, spanish, french, italian. If you need any language which is not there, you can add its standard 2-digit code as a script argument, e.g. _de_ for german.
+
+The script can be run again if you hope to find more translated geonames. The downloaded file is a work-in-progress.
 
 ## Updates
 

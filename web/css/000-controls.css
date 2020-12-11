@@ -64,8 +64,22 @@ img.thumbnail-img {
 	padding-left: .5em;
 }
 
-.title-anchor, .title-no-anchor, .folder-name img {
+.title-anchor, .title-no-anchor, .search-link, .folder-name img {
 	padding: 0 .5em;
+}
+
+.folder-name .second-line {
+	font-size: 75%;
+}
+
+.gray {
+	font-size: 95%;
+	color: gray;
+}
+
+.separated {
+	padding-left: .6em;
+	padding-right: .6em;
 }
 
 .title-anchor.italic {
@@ -76,10 +90,28 @@ a.title-anchor.mobile {
 	color: orange !important;
 }
 
-#loading, #folders-browsing, #by-date-browsing, #by-gps-browsing, #by-search-browsing, #downloading-media, #preparing-zip {
+#loading, #folders-browsing, #by-date-browsing, #by-gps-browsing, #by-search-browsing, #downloading-media, #preparing-zip, #sending-email {
 	display: none;
 }
 
+#please-fill {
+	display: none;
+	color: red;
+	background-color: yellow;
+	margin-left: auto;
+	margin-right: auto;
+	padding: ,2em;
+	padding-left: 1em;
+	padding-right: 1em;
+	font-weight: bold;
+	font-size: 125%;
+}
+
+.space-before {
+	margin-left: 1em;
+	margin-top: .8em;
+	display: inline-block;
+}
 
 #album-view {
 	position: absolute;
@@ -88,6 +120,10 @@ a.title-anchor.mobile {
 
 #thumbs {
 	clear: both;
+}
+
+#album-view:not(.media-view-container) #thumbs {
+	padding-top: 1em;
 }
 
 #thumbs img {
@@ -101,7 +137,7 @@ a.title-anchor.mobile {
 
 #subalbums {
 	padding-top: .2em;
-	padding-bottom: 2em;
+	padding-bottom: 1em;
 	overflow: hidden;
 }
 
@@ -195,34 +231,53 @@ a.title-anchor.mobile {
 */
 }
 
-.album-button-random-media-link, #thumbs .thumbnail-map-link {
+.album-button-random-media-link, #thumbs .thumbnail-map-link, #subalbums .thumbnail-map-link, #thumbs .select-box, #subalbums .select-box, #media-select-box .select-box, #popup-images-wrapper .select-box {
 	position: absolute;
 	filter: alpha(opacity=30); /* For IE8 and earlier */
 }
 
-#thumbs .thumbnail-map-link {
+/* #thumbs .thumbnail-map-link, #subalbums .thumbnail-map-link {
 	top: 0px;
 	right: 0px;
-}
+} */
 
 .album-button-random-media-link {
 	opacity: .3;
-	top: 0px;
-	right: 0px;
+	top: 5px;
+	left: 5px;
+	height: 30px;
 }
 
-#thumbs .thumbnail-map-link {
+#request-password:hover {
+	color: black;
+	background-color: white;
+}
+
+#thumbs .thumbnail-map-link, #subalbums .thumbnail-map-link, #thumbs .select-box, #subalbums .select-box, #media-select-box .select-box, #popup-images-wrapper .select-box {
 	opacity: .5;
+	height: 30px;
+	cursor: pointer;
+}
+
+#thumbs .thumbnail-map-link, #subalbums .thumbnail-map-link {
 	top: 5px;
 	right: 5px;
-	height: 20px;
 }
 
-#thumbs .thumbnail-map-link:hover {
+#thumbs .select-box, #subalbums .select-box, #media-select-box .select-box, #popup-images-wrapper .select-box {
+	bottom: 5px;
+	right: 5px;
+}
+
+#media-select-box .select-box {
+	position: fixed;
+}
+
+#thumbs .thumbnail-map-link:hover, #subalbums .thumbnail-map-link:hover, #thumbs .select-box:hover, #subalbums .select-box:hover, #media-select-box .select-box:hover {
 	opacity: 1;
 }
 
-.album-button-random-media-link:hover, .thumbnail-map-link:hover {
+.album-button-random-media-link:hover, .thumbnail-map-link:hover, #thumbs .select-box:hover, #subalbums .select-box:hover, #media-select-box .select-box:hover {
 	opacity: 1;
 	filter: alpha(opacity=100); /* For IE8 and earlier */
 }
@@ -499,7 +554,7 @@ video {
 	color: #FFAD27;
 	margin-top: 20px;
 }
-.error, .browsing-mode-message, .sort-message, #error-overlay, #auth-text, .search-failed, #loading, #downloading-media, #preparing-zip {
+.error, .browsing-mode-message, .sort-message, .selection-message, #error-overlay, #auth-text, .search-failed, #loading, #downloading-media, #preparing-zip, #sending-email {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -507,18 +562,18 @@ video {
 	height: 100%;
 	display: none;
 }
-.error, .browsing-mode-message, .sort-message, #auth-text, .search-failed, #loading, #downloading-media, #preparing-zip {
+.error, .browsing-mode-message, .sort-message, .selection-message, #auth-text, .search-failed, #loading, #downloading-media, #preparing-zip, #sending-email {
 	margin-top: 20%;
 	text-align: center;
 }
 
-.error, .browsing-mode-message, .sort-message, .search-failed, #loading, #downloading-media, #preparing-zip {
+.error, .browsing-mode-message, .sort-message, .selection-message, .search-failed, #loading, #downloading-media, #preparing-zip, #sending-email {
 	font-size: 4em;
 	font-weight: bold;
 	font-style: italic;
 }
 
-.browsing-mode-message, .sort-message, #loading, #downloading-media, #preparing-zip {
+.browsing-mode-message, .sort-message, .selection-message, #loading, #downloading-media, #preparing-zip, #sending-email {
 	background-color: black;
 	z-index: 1000;
 	height: auto;
@@ -536,10 +591,11 @@ video {
 	background-color: black;
 	opacity: .6;
 }
-#auth-question {
+#auth-question, #enter-your-data {
 	font-size: 3em;
 	margin-bottom: 1em;
 }
+
 #auth-text input {
 	color: rgb(0, 0, 0);
 	background-color: rgb(200, 200, 200);
@@ -553,20 +609,27 @@ video {
 	caret-color: red;
 }
 
-#error-too-many-images {
+#request-password {
+	cursor: pointer;
+}
+
+#password-request-form {
+	display: none;
+}
+#message-too-many-images {
 	font-size: 1em;
 	font-weight: bold;
 	font-style: italic;
 	display: none;
 }
 
-#show-them {
+#show-hide-them {
 	font-weight: bold;
 	font-style: normal;
 	cursor: pointer;
 }
 
-#show-them:hover {
+#show-hide-them:hover {
 	color: orange;
 }
 
@@ -672,11 +735,12 @@ ul#right-menu {
 	top: 0;
 	right: 0;
 	z-index: 200;
+	cursor: default;
 }
 
 ul#right-menu li {
 	/* padding: 0 .5em; */
-	cursor: pointer;
+	/* cursor: pointer; */
 	font-size: 90%;
 }
 ul#right-menu.expand #search-field {
@@ -687,7 +751,8 @@ ul#right-menu li.caption, ul#right-menu li:not(.active) {
 	cursor: default;
 }
 
-ul#right-menu li.caption, ul#right-menu li.active {
+/* ul#right-menu li.caption, ul#right-menu li.active { */
+ul#right-menu li span.caption:not(.expanded), ul#right-menu li ul:not(.hidden) li.radio:not(.selected), ul#right-menu li ul:not(.hidden) li:not(.radio) {
 	cursor: pointer;
 }
 
@@ -734,7 +799,7 @@ ul#right-menu.expand li {
 	display: list-item;
 	text-align: left;
 	font-style: italic;
-	cursor: pointer;
+	/* cursor: pointer; */
 	/* position: relative;
 	width: 13em; */
 }
@@ -801,8 +866,13 @@ ul#right-menu.expand li:not(.active, .sub-menu) {
 	color: darkgray;
 }
 
-ul#right-menu.expand li .caption:hover, ul#right-menu.expand ul li.active:hover, ul#right-menu #menu-icon:hover, ul#right-menu #padlock img:hover, ul#right-menu #padlock:hover {
+ul#right-menu.expand li .caption:not(.expanded):hover, ul#right-menu.expand ul li.active:hover, ul#right-menu #menu-icon:hover, ul#right-menu #padlock img:hover, ul#right-menu #padlock:hover {
 	background-color: gray !important;
+}
+
+ul#right-menu.expand li a, ul#right-menu.expand li span:not(#padlock):not(#menu-icon) {
+	display: inline-block;
+	width: 100%;
 }
 
 ul#right-menu.expand ul li:not(.active):hover  {
@@ -830,7 +900,7 @@ ul#right-menu.expand ul {
 	padding-inline-start: 1em;
 }
 
-.download-album.active {
+ul#right-menu ul li.download-album.active {
 	cursor: pointer;
 }
 

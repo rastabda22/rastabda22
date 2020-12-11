@@ -85,13 +85,13 @@ class TreeWalker:
 			self.origin_album.sizes_protected_media_in_sub_tree.merge(folders_album.sizes_protected_media_in_sub_tree)
 			self.origin_album.add_subalbum(folders_album)
 
-			self.all_json_files.append(Options.config['folders_string'] + ".json")
+			# self.all_json_files.append(Options.config['folders_string'] + ".json")
 
 			message("generating by date albums...", "", 4)
 			by_date_album = self.generate_by_date_albums(self.origin_album)
 			indented_message("by date albums generated", "", 5)
 			if by_date_album is not None and not by_date_album.empty:
-				self.all_json_files.append(Options.config['by_date_string'] + ".json")
+				# self.all_json_files.append(Options.config['by_date_string'] + ".json")
 				self.origin_album.nums_protected_media_in_sub_tree.merge(by_date_album.nums_protected_media_in_sub_tree)
 				self.origin_album.sizes_protected_media_in_sub_tree.merge(by_date_album.sizes_protected_media_in_sub_tree)
 				self.origin_album.add_subalbum(by_date_album)
@@ -101,7 +101,7 @@ class TreeWalker:
 			by_geonames_album = self.generate_by_geonames_albums(self.origin_album)
 			indented_message("by geonames albums generated", "", 5)
 			if by_geonames_album is not None and not by_geonames_album.empty:
-				self.all_json_files.append(Options.config['by_gps_string'] + ".json")
+				# self.all_json_files.append(Options.config['by_gps_string'] + ".json")
 				self.origin_album.nums_protected_media_in_sub_tree.merge(by_geonames_album.nums_protected_media_in_sub_tree)
 				self.origin_album.sizes_protected_media_in_sub_tree.merge(by_geonames_album.sizes_protected_media_in_sub_tree)
 				self.origin_album.add_subalbum(by_geonames_album)
@@ -111,7 +111,7 @@ class TreeWalker:
 			by_search_album = self.generate_by_search_albums(self.origin_album)
 			indented_message("by search albums generated", "", 5)
 			if by_search_album is not None and not by_search_album.empty:
-				self.all_json_files.append(Options.config['by_search_string'] + ".json")
+				# self.all_json_files.append(Options.config['by_search_string'] + ".json")
 				self.origin_album.nums_protected_media_in_sub_tree.merge(by_search_album.nums_protected_media_in_sub_tree)
 				self.origin_album.sizes_protected_media_in_sub_tree.merge(by_search_album.sizes_protected_media_in_sub_tree)
 				self.origin_album.add_subalbum(by_search_album)
@@ -172,8 +172,8 @@ class TreeWalker:
 			message("all protected albums saved to json files", "", 4)
 			report_mem()
 
-			# options must be saved when json files have been saved, otherwise in case of error they may not reflect the json files situation
-			self._save_json_options()
+			# options must be saved here, when json files have already been saved, otherwise in case of error they may not reflect the json files situation
+			self._save_json_options(len(self.origin_album.positions_and_media_in_tree.positions))
 
 			for identifier_and_password in Options.identifiers_and_passwords:
 				if identifier_and_password['used']:
@@ -212,17 +212,17 @@ class TreeWalker:
 				self.all_albums_to_json_file(subalbum, complex_identifiers_combination)
 
 		if (
-			album.num_media_in_sub_tree.total() == 0 and (
-				album.cache_base.find(Options.config['by_search_string']) != 0  or
+			album.nums_media_in_sub_tree.total() == 0 and (
+				album.cache_base.find(Options.config['by_search_string']) != 0 or
 				album.cache_base != Options.config['by_search_string'] and
 				(
 					complex_identifiers_combination is None and
-					all(subalbum.nums_protected_media_in_sub_tree.value(',') == 0 for subalbum in album.subalbums)
+					all(subalbum.nums_protected_media_in_sub_tree.value(',').total() == 0 for subalbum in album.subalbums)
 					or
 					complex_identifiers_combination is not None and
 					all(
 						complex_identifiers_combination in subalbum.nums_protected_media_in_sub_tree.non_trivial_keys() and
-						subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination) == 0
+						subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination).total() == 0
 						for subalbum in album.subalbums)
 				)
 			)
@@ -437,15 +437,15 @@ class TreeWalker:
 						month_album.add_single_media(single_media)
 						year_album.add_single_media(single_media)
 						if single_media.is_image:
-							day_album.num_media_in_sub_tree.incrementImages()
-							month_album.num_media_in_sub_tree.incrementImages()
-							year_album.num_media_in_sub_tree.incrementImages()
-							by_date_album.num_media_in_sub_tree.incrementImages()
+							day_album.nums_media_in_sub_tree.incrementImages()
+							month_album.nums_media_in_sub_tree.incrementImages()
+							year_album.nums_media_in_sub_tree.incrementImages()
+							by_date_album.nums_media_in_sub_tree.incrementImages()
 						else:
-							day_album.num_media_in_sub_tree.incrementVideos()
-							month_album.num_media_in_sub_tree.incrementVideos()
-							year_album.num_media_in_sub_tree.incrementVideos()
-							by_date_album.num_media_in_sub_tree.incrementVideos()
+							day_album.nums_media_in_sub_tree.incrementVideos()
+							month_album.nums_media_in_sub_tree.incrementVideos()
+							year_album.nums_media_in_sub_tree.incrementVideos()
+							by_date_album.nums_media_in_sub_tree.incrementVideos()
 						if single_media.has_gps_data:
 							day_album.positions_and_media_in_tree.add_single_media(single_media)
 							month_album.positions_and_media_in_tree.add_single_media(single_media)
@@ -490,15 +490,23 @@ class TreeWalker:
 							by_date_max_file_date = max(by_date_max_file_date, single_media_date)
 						else:
 							by_date_max_file_date = single_media_date
+					message("calculating album date", "based on media and subalbums dates", 5)
+					day_album.date = day_album.album_date()
 					Options.all_albums.append(day_album)
 					self.generate_composite_image(day_album, day_max_file_date)
 					indented_message("day album worked out", media_list[0].year + "-" + media_list[0].month + "-" + media_list[0].day, 4)
+				message("calculating album date", "based on media and subalbums dates", 5)
+				month_album.date = month_album.album_date()
 				Options.all_albums.append(month_album)
 				self.generate_composite_image(month_album, month_max_file_date)
+			message("calculating album date", "based on media and subalbums dates", 5)
+			year_album.date = year_album.album_date()
 			Options.all_albums.append(year_album)
 			self.generate_composite_image(year_album, year_max_file_date)
+		message("calculating album date", "based on media and subalbums dates", 5)
+		by_date_album.date = by_date_album.album_date()
 		Options.all_albums.append(by_date_album)
-		if by_date_album.num_media_in_sub_tree.total() > 0:
+		if by_date_album.nums_media_in_sub_tree.total() > 0:
 			self.generate_composite_image(by_date_album, by_date_max_file_date)
 		back_level()
 		return by_date_album
@@ -530,13 +538,13 @@ class TreeWalker:
 			for single_media in media_album_and_words["media_list"]:
 				word_album.add_single_media(single_media)
 				if single_media.is_image:
-					word_album.num_media_in_sub_tree.incrementImages()
+					word_album.nums_media_in_sub_tree.incrementImages()
 					# actually, this counter for the search root album is not significant
-					by_search_album.num_media_in_sub_tree.incrementImages()
+					by_search_album.nums_media_in_sub_tree.incrementImages()
 				else:
-					word_album.num_media_in_sub_tree.incrementVideos()
+					word_album.nums_media_in_sub_tree.incrementVideos()
 					# actually, this counter for the search root album is not significant
-					by_search_album.num_media_in_sub_tree.incrementVideos()
+					by_search_album.nums_media_in_sub_tree.incrementVideos()
 
 				single_media_date = max(single_media.datetime_file, single_media.datetime_dir)
 				# if word_max_file_date:
@@ -570,9 +578,6 @@ class TreeWalker:
 
 			for single_album in media_album_and_words["albums_list"]:
 				word_album.add_subalbum(single_album)
-				# word_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
-				# actually, this counter for the search root album is not significant
-				# by_search_album.num_media_in_sub_tree += single_album.num_media_in_sub_tree
 				# if word_max_file_date:
 				# 	word_max_file_date = max(word_max_file_date, single_album.date)
 				# else:
@@ -594,6 +599,89 @@ class TreeWalker:
 		back_level()
 		return by_search_album
 
+	def make_clusters(self, media_list, k, time_factor):
+		# found = False
+		# while len(media_list) > 0 and not found:
+		cluster_list = Geonames.find_centers(media_list, k, time_factor)
+		good_clusters = []
+		remaining_media_list = []
+		big_clusters = []
+		# found = False
+		for cluster in cluster_list:
+			if len(cluster) <= Options.config['big_virtual_folders_threshold']:
+				good_clusters.append(cluster)
+				# found = True
+			else:
+				big_clusters.append(cluster)
+				remaining_media_list.extend(cluster)
+		# if found:
+		# 	media_list = remaining_media_list
+		return [good_clusters, big_clusters, remaining_media_list]
+
+	def make_clusters_recursively(self, cluster_list_ok, media_list, k, n_recursion, time_factor):
+		# media_list_lengths = [0, 0]
+		# convergence = True
+		# while len(media_list) > 0 and convergence:
+		[good_clusters, big_clusters, remaining_media_list] = self.make_clusters(media_list, k, time_factor)
+
+		for cluster in good_clusters:
+			cluster_list_ok.append(cluster)
+			indented_message("found cluster n.", str(len(cluster_list_ok)) + ", " + str(len(cluster)) + " images, at recursion n. " + str(n_recursion), 5)
+		for cluster in big_clusters:
+			indented_message("found big cluster",                                   str(len(cluster)) + " images, at recursion n. " + str(n_recursion), 5)
+
+		if len(big_clusters) == 0:
+			return [[], []]
+		else:
+			# media_list_lengths.append(len(remaining_media_list))
+			# media_list_lengths.pop(0)
+			# if max(media_list_lengths) > 0 and media_list_lengths[0] == media_list_lengths[1]:
+			if len(big_clusters) == 1 and len(media_list) == len(remaining_media_list):
+				indented_message("no way to cluster any further", "still " + str(len(remaining_media_list)) + " images, at recursion n. " + str(n_recursion), 5)
+				return [big_clusters, remaining_media_list]
+			else:
+				indented_message("big clusters:", "still " + str(len(big_clusters)) + " clusters, " + str(len(remaining_media_list)) + " images, clustering them recursively", 5)
+				all_remaining_media = []
+				remaining_clusters = []
+				indented_message("cycling in big clusters...", "", 5)
+				next_level()
+				for cluster in big_clusters:
+					indented_message("working with a big cluster", str(len(cluster)) + " images", 5)
+					[cluster_list, remaining_media] = self.make_clusters_recursively(cluster_list_ok, cluster, k, n_recursion + 1, time_factor)
+					if len(remaining_media) > 0:
+						remaining_clusters.extend(cluster_list)
+						all_remaining_media.extend(remaining_media)
+				back_level()
+				return [remaining_clusters, all_remaining_media]
+
+	def make_k_means_cluster(self, cluster_list_ok, media_list, time_factor):
+		max_cluster_length_list = [0, 0, 0]
+		k = 4
+		if Options.config['big_virtual_folders_threshold'] < k:
+			k = 2
+		while True:
+			message("clustering with k-means algorithm...", "time factor = " + str(time_factor) + ", k = " + str(k), 5)
+			n_recursion = 1
+			[big_clusters, remaining_media] = self.make_clusters_recursively(cluster_list_ok, media_list, k, n_recursion, time_factor)
+			if (len(remaining_media) == 0):
+				break
+			else:
+				# detect no convergence
+				max_cluster_length = max([len(cluster) for cluster in big_clusters])
+				max_cluster_length_list.append(max_cluster_length)
+				max_cluster_length_list.pop(0)
+				if max(max_cluster_length_list) > 0 and max(max_cluster_length_list) == min(max_cluster_length_list):
+					# three times the same value: no convergence
+					indented_message("clustering with k-means algorithm failed", "max cluster length doesn't converge, it's stuck at " + str(max_cluster_length), 5)
+					break
+
+				if k > len(media_list):
+					indented_message("clustering with k-means algorithm failed", "clusters remain too big even with k > number of images (" + str(len(media_list)) + ")", 5)
+					break
+				indented_message("clustering with k-means algorithm not ok", "biggest cluster has " + str(max_cluster_length) + " photos, doubling the k factor", 5)
+				media_list = remaining_media
+				k = k * 2
+		return [big_clusters, media_list]
 
 	def generate_by_geonames_albums(self, origin_album):
 		next_level()
@@ -644,84 +732,70 @@ class TreeWalker:
 					# clustering is made with the kmeans algorithm
 					# transform media_list in an element in a list, probably most times, we'll work with it
 					message("checking if it's a big list...", "", 5)
-					if len(media_list) > Options.config['big_virtual_folders_threshold']:
+					if len(media_list) <= Options.config['big_virtual_folders_threshold']:
+						indented_message("it's not a big list", "", 5)
+						cluster_list = [media_list]
+					else:
 						next_level()
-						K = 2
-						clustering_failed = False
+						message("big list found", str(len(media_list)) + " photos, limit is " + str(Options.config['big_virtual_folders_threshold']), 5)
+
 						# this array is used in order to detect when there is no convertion
-						max_cluster_length_list = [0, 0, 0]
-						message("big list found", str(len(media_list)) + " photos", 5)
 						next_level()
-						while True:
-							message("clustering with k-means algorithm...", "K = " + str(K), 5)
-							cluster_list = Geonames.find_centers(media_list, K)
-							max_cluster_length = max([len(cluster) for cluster in cluster_list])
-							if max_cluster_length <= Options.config['big_virtual_folders_threshold']:
-								indented_message("clustered with k-means algorithm", "biggest cluster has " + str(max_cluster_length) + " photos", 5)
-								break
-							# detect no convergence
-							max_cluster_length_list.append(max_cluster_length)
-							max_cluster_length_list.pop(0)
-							if max(max_cluster_length_list) > 0 and max(max_cluster_length_list) == min(max_cluster_length_list):
-								# three times the same value: no convergence
-								indented_message("clustering with k-means algorithm failed", "max cluster length doesn't converge, it's stuck at " + str(max_cluster_length), 5)
-								clustering_failed = True
-								break
+						cluster_list_ok = []
+						n_cluster = 0
+						time_factor = 0
+						[big_clusters, remaining_media_list] = self.make_k_means_cluster(cluster_list_ok, media_list, time_factor)
+						if len(remaining_media_list) > 0:
+							time_factor = 0.01
+							[big_clusters, remaining_media_list] = self.make_k_means_cluster(cluster_list_ok, remaining_media_list, time_factor)
+							if len(remaining_media_list) > 0:
+								# we must split the big clusters into smaller ones
+								# but firts sort media in cluster by date, so that we get more homogeneus clusters
+								message("splitting remaining big clusters into smaller ones...", "", 5)
+								n = 0
+								for cluster in big_clusters:
+									n += 1
+									next_level()
+									integer_ratio = len(cluster) // Options.config['big_virtual_folders_threshold']
+									if integer_ratio != len(cluster) / Options.config['big_virtual_folders_threshold']:
+										integer_ratio += 1
+									message("working with remaining cluster n.", str(n) + ", " + str(len(cluster)) + " images, splitting it into " + str(integer_ratio) + " clusters", 5)
 
-							if K > len(media_list):
-								indented_message("clustering with k-means algorithm failed", "clusters remain too big even with k > len(media_list)", 5)
-								clustering_failed = True
-								break
-							indented_message("clustering with k-means algorithm not ok", "biggest cluster has " + str(max_cluster_length) + " photos", 5)
-							K = K * 2
-						next_level()
-						if clustering_failed:
-							# we must split the big clusters into smaller ones
-							# but firts sort media in cluster by date, so that we get more homogeneus clusters
-							message("splitting big clusters into smaller ones...", "", 5)
-							cluster_list_new = list()
-							n = 0
-							for cluster in cluster_list:
-								n += 1
-								next_level()
-								message("working with cluster...", "n." + str(n), 5)
-
-								integer_ratio = len(cluster) // Options.config['big_virtual_folders_threshold']
-								if integer_ratio >= 1:
-									# big cluster
+									# if integer_ratio >= 1:
+									# 	# big cluster
 
 									# sort the cluster by date
 									next_level()
 									message("sorting cluster by date...", "", 5)
 									cluster.sort()
-									indented_message("cluster sorted by date", "", 5)
+									indented_message("cluster sorted by date", "", 6)
 
 									message("splitting cluster...", "", 5)
-									new_length = len(cluster) // (integer_ratio + 1)
+									next_level()
+									new_length = len(cluster) // integer_ratio
+									if new_length != len(cluster) / integer_ratio:
+										new_length += 1
 									for index in range(integer_ratio):
+										n_cluster += 1
 										start = index * new_length
 										end = (index + 1) * new_length
-										cluster_list_new.append(cluster[start:end])
-									# the remaining is still to be appended
-									cluster_list_new.append(cluster[end:])
-									indented_message("cluster splitted", "", 5)
+										new_cluster = cluster[start:end]
+										message("generating cluster n.", str(n_cluster) + ", containing " + str(len(new_cluster)) + " images", 5)
+										cluster_list_ok.append(new_cluster)
 									back_level()
-								else:
-									indented_message("cluster is OK", "", 5)
-									cluster_list_new.append(cluster)
-								back_level()
-							cluster_list = cluster_list_new[:]
-							max_cluster_length = max([len(cluster) for cluster in cluster_list])
-							indented_message("big clusters splitted into smaller ones", "biggest cluster lenght is now " + str(max_cluster_length), 5)
+									indented_message("cluster splitted", "", 6)
+									back_level()
+									# else:
+									# 	indented_message("cluster is OK", "", 5)
+									# 	cluster_list_ok.append(cluster)
+									back_level()
 
-						message("clustering terminated", "there are " + str(len(cluster_list)) + " clusters", 5)
-						back_level()
-						back_level()
-						back_level()
+						cluster_list = cluster_list_ok[:]
+						max_cluster_ok_length = max([len(cluster) for cluster in cluster_list])
+						message("clustering ok", str(len(cluster_list)) + " clusters, biggest one has " + str(max_cluster_ok_length) + " images, ", 5)
 
-					else:
-						indented_message("it's not a big list", "", 5)
-						cluster_list = [media_list]
+						back_level()
+						back_level()
 
 					# iterate on cluster_list
 					num_digits = len(str(len(cluster_list)))
@@ -731,7 +805,9 @@ class TreeWalker:
 					for i, cluster in enumerate(cluster_list):
 						if set_alt_place:
 							next_level()
-							message("working with clusters", str(i) + "-th cluster", 5)
+							message("processing cluster n.", str(i + 1) + " (" + str(len(cluster))+ " images)", 5)
+							for single_media in cluster:
+								print("                                                                    " + single_media.album_path + '/' + single_media.name)
 							alt_place_code = place_code + "_" + str(i + 1).zfill(num_digits)
 							alt_place_name = place_name + "_" + str(i + 1).zfill(num_digits)
 
@@ -755,15 +831,15 @@ class TreeWalker:
 							region_album.add_single_media(single_media)
 							country_album.add_single_media(single_media)
 							if single_media.is_image:
-								place_album.num_media_in_sub_tree.incrementImages()
-								region_album.num_media_in_sub_tree.incrementImages()
-								country_album.num_media_in_sub_tree.incrementImages()
-								by_geonames_album.num_media_in_sub_tree.incrementImages()
+								place_album.nums_media_in_sub_tree.incrementImages()
+								region_album.nums_media_in_sub_tree.incrementImages()
+								country_album.nums_media_in_sub_tree.incrementImages()
+								by_geonames_album.nums_media_in_sub_tree.incrementImages()
 							else:
-								place_album.num_media_in_sub_tree.incrementVideos()
-								region_album.num_media_in_sub_tree.incrementVideos()
-								country_album.num_media_in_sub_tree.incrementVideos()
-								by_geonames_album.num_media_in_sub_tree.incrementVideos()
+								place_album.nums_media_in_sub_tree.incrementVideos()
+								region_album.nums_media_in_sub_tree.incrementVideos()
+								country_album.nums_media_in_sub_tree.incrementVideos()
+								by_geonames_album.nums_media_in_sub_tree.incrementVideos()
 
 							if place_album.center == {}:
 								place_album.center['latitude'] = single_media.latitude
@@ -830,10 +906,12 @@ class TreeWalker:
 							country_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 							by_geonames_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 
+						message("calculating album date", "based on media and subalbums dates", 5)
+						place_album.date = place_album.album_date()
 						Options.all_albums.append(place_album)
 						self.generate_composite_image(place_album, place_max_file_date)
 						if set_alt_place:
-							indented_message("cluster worked out", str(i) + "-th cluster: " + cluster[0].country_code + "-" + cluster[0].region_code + "-" + alt_place_name, 4)
+							indented_message("cluster worked out", str(i + 1) + "-th cluster: " + cluster[0].country_code + "-" + cluster[0].region_code + "-" + alt_place_name, 4)
 							back_level()
 						else:
 							# next_level()
@@ -844,12 +922,18 @@ class TreeWalker:
 						message("place album worked out", cluster_list[0][0].country_code + "-" + cluster_list[0][0].region_code + "-" + place_name, 4)
 						# back_level()
 					back_level()
+				message("calculating album date", "based on media and subalbums dates", 5)
+				region_album.date = region_album.album_date()
 				Options.all_albums.append(region_album)
 				self.generate_composite_image(region_album, region_max_file_date)
+			message("calculating album date", "based on media and subalbums dates", 5)
+			country_album.date = country_album.album_date()
 			Options.all_albums.append(country_album)
 			self.generate_composite_image(country_album, country_max_file_date)
+		message("calculating album date", "based on media and subalbums dates", 5)
+		by_geonames_album.date = by_geonames_album.album_date()
 		Options.all_albums.append(by_geonames_album)
-		if by_geonames_album.num_media_in_sub_tree.total() > 0:
+		if by_geonames_album.nums_media_in_sub_tree.total() > 0:
 			self.generate_composite_image(by_geonames_album, by_geonames_max_file_date)
 		back_level()
 		return by_geonames_album
@@ -1007,7 +1091,7 @@ class TreeWalker:
 	@staticmethod
 	def _listdir_sorted_by_time(path):
 		# this function returns the directory listing sorted by mtime
-		# it takes into account the fact that the file is a symlink to an unexistent file
+		# it takes into account the fact that the file is a symlink to an nonexistent file
 		mtime = lambda f: os.path.exists(os.path.join(path, f)) and os.stat(os.path.join(path, f)).st_mtime or time.mktime(datetime.now().timetuple())
 		return list(sorted(os.listdir(path), key=mtime))
 
@@ -1270,7 +1354,7 @@ class TreeWalker:
 					must_process_passwords = True
 			# except IOError:
 			# 	# will execution never come here?
-			# 	indented_message("not an album cache hit", "json file unexistent", 4)
+			# 	indented_message("not an album cache hit", "json file nonexistent", 4)
 			# 	album_cache_hit = False
 			# is the following exception needed? it surely catched date errors...
 			# except (ValueError, AttributeError, KeyError):
@@ -1429,7 +1513,7 @@ class TreeWalker:
 
 			entry_with_path = os.path.join(absolute_path, entry)
 			if not os.path.exists(entry_with_path):
-				indented_message("unexistent file, perhaps a symlink, skipping", entry_with_path, 2)
+				indented_message("nonexistent file, perhaps a symlink, skipping", entry_with_path, 2)
 			elif not os.access(entry_with_path, os.R_OK):
 				indented_message("unreadable file", entry_with_path, 2)
 			elif os.path.islink(entry_with_path) and not Options.config['follow_symlinks']:
@@ -1449,7 +1533,7 @@ class TreeWalker:
 				passwords_or_album_ini_processed = passwords_or_album_ini_processed or _passwords_or_album_ini_processed
 				if next_walked_album is not None:
 					max_file_date = max(max_file_date, sub_max_file_date)
-					album.num_media_in_sub_tree.sum(next_walked_album.num_media_in_sub_tree)
+					album.nums_media_in_sub_tree.sum(next_walked_album.nums_media_in_sub_tree)
 					album.positions_and_media_in_tree.merge(next_walked_album.positions_and_media_in_tree)
 					album.nums_protected_media_in_sub_tree.merge(next_walked_album.nums_protected_media_in_sub_tree)
 					album.sizes_protected_media_in_sub_tree.merge(next_walked_album.sizes_protected_media_in_sub_tree)
@@ -1570,7 +1654,7 @@ class TreeWalker:
 										message("error deleting fixed height thumbnail", os.path.join(Options.config['cache_path'], cache_file), 1)
 
 							if not absolute_cache_file_exists:
-								indented_message("not a single media cache hit", "unexistent reduction/thumbnail", 4)
+								indented_message("not a single media cache hit", "nonexistent reduction/thumbnail", 4)
 								single_media_cache_hit = False
 								break
 							if file_mtime(absolute_cache_file) < cached_media.datetime_file:
@@ -1679,9 +1763,9 @@ class TreeWalker:
 					album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 
 					if single_media.is_image:
-						album.num_media_in_sub_tree.incrementImages()
+						album.nums_media_in_sub_tree.incrementImages()
 					else:
-						album.num_media_in_sub_tree.incrementVideos()
+						album.nums_media_in_sub_tree.incrementVideos()
 					if single_media.has_gps_data:
 						album.positions_and_media_in_tree.add_single_media(single_media)
 
@@ -1785,6 +1869,9 @@ class TreeWalker:
 				Options.unrecognized_files.extend(unrecognized_files_in_dir)
 				Options.config['num_media_in_tree'] -= len(unrecognized_files_in_dir)
 
+		message("calculating album date", "based on media and subalbums dates", 5)
+		album.date = album.album_date()
+
 		if not album.empty:
 			next_level()
 			message("adding album to albums list...", "", 5)
@@ -1794,7 +1881,7 @@ class TreeWalker:
 		else:
 			message("VOID: no media in this directory", os.path.basename(absolute_path), 4)
 
-		if album.num_media_in_sub_tree.total():
+		if album.nums_media_in_sub_tree.total():
 			# generate the album composite image for sharing
 			self.generate_composite_image(album, max_file_date)
 		back_level()
@@ -1821,11 +1908,11 @@ class TreeWalker:
 		else:
 			random_number -= len(album.media_list)
 			for subalbum in album.subalbums_list:
-				if random_number < subalbum.num_media_in_sub_tree.total():
+				if random_number < subalbum.nums_media_in_sub_tree.total():
 					[picked_image, random_number] = self.pick_random_image(subalbum, random_number)
 					if picked_image:
 						return [picked_image, random_number]
-				random_number -= subalbum.num_media_in_sub_tree.total()
+				random_number -= subalbum.nums_media_in_sub_tree.total()
 		return [None, random_number]
 
 	def generate_composite_image(self, album, max_file_date):
@@ -1858,15 +1945,15 @@ class TreeWalker:
 		# and generate a square composite image
 
 		# determine the number of images to use
-		if album.num_media_in_sub_tree.total() == 1 or Options.config['max_album_share_thumbnails_number'] == 1:
+		if album.nums_media_in_sub_tree.total() == 1 or Options.config['max_album_share_thumbnails_number'] == 1:
 			max_thumbnail_number = 1
-		elif album.num_media_in_sub_tree.total() < 9 or Options.config['max_album_share_thumbnails_number'] == 4:
+		elif album.nums_media_in_sub_tree.total() < 9 or Options.config['max_album_share_thumbnails_number'] == 4:
 			max_thumbnail_number = 4
-		elif album.num_media_in_sub_tree.total() < 16 or Options.config['max_album_share_thumbnails_number'] == 9:
+		elif album.nums_media_in_sub_tree.total() < 16 or Options.config['max_album_share_thumbnails_number'] == 9:
 			max_thumbnail_number = 9
-		elif album.num_media_in_sub_tree.total() < 25 or Options.config['max_album_share_thumbnails_number'] == 16:
+		elif album.nums_media_in_sub_tree.total() < 25 or Options.config['max_album_share_thumbnails_number'] == 16:
 			max_thumbnail_number = 16
-		elif album.num_media_in_sub_tree.total() < 36 or Options.config['max_album_share_thumbnails_number'] == 25:
+		elif album.nums_media_in_sub_tree.total() < 36 or Options.config['max_album_share_thumbnails_number'] == 25:
 			max_thumbnail_number = 25
 		else:
 			max_thumbnail_number = Options.config['max_album_share_thumbnails_number']
@@ -1875,9 +1962,9 @@ class TreeWalker:
 		random_thumbnails = list()
 		random_list = list()
 		bad_list = list()
-		num_random_thumbnails = min(max_thumbnail_number, album.num_media_in_sub_tree.total())
+		num_random_thumbnails = min(max_thumbnail_number, album.nums_media_in_sub_tree.total())
 		i = 0
-		good_media_number = album.num_media_in_sub_tree.total()
+		good_media_number = album.nums_media_in_sub_tree.total()
 		while True:
 			if i >= good_media_number:
 				break
@@ -1885,7 +1972,7 @@ class TreeWalker:
 				random_media = album.media_list[0]
 			else:
 				while True:
-					random_number = random.randint(0, album.num_media_in_sub_tree.total() - 1)
+					random_number = random.randint(0, album.nums_media_in_sub_tree.total() - 1)
 					if random_number not in random_list and random_number not in bad_list:
 						break
 				random_list.append(random_number)
@@ -1904,7 +1991,7 @@ class TreeWalker:
 				if i == num_random_thumbnails:
 					break
 			else:
-				message("unexistent thumbnail", thumbnail + " - i=" + str(i) + ", good=" + str(good_media_number), 5)
+				message("nonexistent thumbnail", thumbnail + " - i=" + str(i) + ", good=" + str(good_media_number), 5)
 				bad_list.append(thumbnail)
 				good_media_number -= 1
 
@@ -1950,7 +2037,7 @@ class TreeWalker:
 
 
 	@staticmethod
-	def _save_json_options():
+	def _save_json_options(num):
 		json_options_file = os.path.join(Options.config['cache_path'], 'options.json')
 		message("saving json options file...", json_options_file, 4)
 		# some option must not be saved
@@ -1958,6 +2045,8 @@ class TreeWalker:
 		for key, value in list(Options.config.items()):
 			if key not in Options.options_not_to_be_saved:
 				options_to_save[key] = value
+		# add the total count of positions, so that reading another json file is not needed in order to know if gps data exist
+		options_to_save['num_positions_in_tree'] = num
 
 		with open(json_options_file, 'w') as options_file:
 			json.dump(options_to_save, options_file)

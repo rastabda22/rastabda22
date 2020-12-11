@@ -16,7 +16,7 @@
 		var mediaParameter;
 		var folders, myShareText, myShareTextAdd;
 
-		if (! isMobile.any()) {
+		if (! env.isMobile.any()) {
 			$(".ssk-whatsapp").hide();
 		} else {
 			// with touchscreens luminosity on hover cannot be used
@@ -29,30 +29,30 @@
 		folders = location.pathname;
 		folders = folders.substring(0, folders.lastIndexOf('/'));
 		url += folders;
-		if (currentMedia === null || currentAlbum !== null && ! currentAlbum.subalbums.length && util.imagesAndVideosTotal(currentAlbum.numMedia) == 1) {
+		if (env.currentMedia === null || env.currentAlbum !== null && ! env.currentAlbum.subalbums.length && env.currentAlbum.numsMedia.imagesAndVideosTotal() == 1) {
 			mediaParameter = util.pathJoin([
-				Options.server_cache_path,
-				Options.cache_album_subdir,
-				currentAlbum.cacheBase
+				env.options.server_cache_path,
+				env.options.cache_album_subdir,
+				env.currentAlbum.cacheBase
 				]) + ".jpg";
 		} else {
 			var reducedSizesIndex = 1;
-			if (Options.reduced_sizes.length == 1)
+			if (env.options.reduced_sizes.length == 1)
 				reducedSizesIndex = 0;
-			var prefix = util.removeFolderMarker(currentMedia.foldersCacheBase);
+			var prefix = util.removeFolderString(env.currentMedia.foldersCacheBase);
 			if (prefix)
-				prefix += Options.cache_folder_separator;
-			if (currentMedia.mimeType.indexOf("video/") === 0) {
+				prefix += env.options.cache_folder_separator;
+			if (env.currentMedia.mimeType.indexOf("video/") === 0) {
 				mediaParameter = util.pathJoin([
-					Options.server_cache_path,
-					currentMedia.cacheSubdir,
-				]) + prefix + currentMedia.cacheBase + Options.cache_folder_separator + "transcoded.mp4";
-			} else if (currentMedia.mimeType.indexOf("image/") === 0) {
+					env.options.server_cache_path,
+					env.currentMedia.cacheSubdir,
+				]) + prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + "transcoded.mp4";
+			} else if (env.currentMedia.mimeType.indexOf("image/") === 0) {
 				mediaParameter = util.pathJoin([
-					Options.server_cache_path,
-					currentMedia.cacheSubdir,
-					prefix + currentMedia.cacheBase
-				]) + Options.cache_folder_separator + Options.reduced_sizes[reducedSizesIndex] + ".jpg";
+					env.options.server_cache_path,
+					env.currentMedia.cacheSubdir,
+					prefix + env.currentMedia.cacheBase
+				]) + env.options.cache_folder_separator + env.options.reduced_sizes[reducedSizesIndex] + ".jpg";
 			}
 		}
 
@@ -63,8 +63,8 @@
 		if (hash)
 			myShareUrl += '#' + hash.substring(1);
 
-		myShareText = Options.page_title;
-		myShareTextAdd = currentAlbum.physicalPath;
+		myShareText = env.options.page_title;
+		myShareTextAdd = env.currentAlbum.physicalPath;
 		if (myShareTextAdd)
 			myShareText += ": " + myShareTextAdd.substring(myShareTextAdd.lastIndexOf('/') + 1);
 
@@ -86,22 +86,22 @@
 		}
 	};
 
-	Functions.getAlbumNameFromAlbumHash = function(hash) {
+	Functions.getAlbumNameFromCacheBase = function(cacheBase) {
 		return new Promise(
 			function(resolve_getAlbumNameFromAlbumHash) {
-				let getAlbumPromise = PhotoFloat.getAlbum(hash, util.die, {"getMedia": false, "getPositions": false});
+				let getAlbumPromise = PhotoFloat.getAlbum(cacheBase, util.noOp, {getMedia: false, getPositions: false});
 				getAlbumPromise.then(
 					function(theAlbum) {
 						var path;
 						var splittedPath = theAlbum.path.split('/');
-						if (splittedPath[0] === Options.folders_string) {
+						if (splittedPath[0] === env.options.folders_string) {
 							splittedPath[0] = "";
-						} else if (splittedPath[0] === Options.by_date_string) {
+						} else if (splittedPath[0] === env.options.by_date_string) {
 							splittedPath[0] = "(" + util._t("#by-date") + ")";
-						} else if (splittedPath[0] === Options.by_gps_string) {
+						} else if (splittedPath[0] === env.options.by_gps_string) {
 							splittedPath = theAlbum.ancestorsNames;
 							splittedPath[0] = "(" + util._t("#by-gps") + ")";
-						} else if (splittedPath[0] === Options.by_map_string) {
+						} else if (splittedPath[0] === env.options.by_map_string) {
 							splittedPath = ["(" + util._t("#by-map") + ")"];
 						}
 						path = splittedPath.join('/');
@@ -117,137 +117,290 @@
 	};
 
 
-	Functions.updateMenu = function(thisAlbum, hasGpsData) {
+	Functions.updateMenu = function(thisAlbum) {
 		var albumOrMedia;
-		var isMap = $('#mapdiv').html() ? true : false;
 		var isPopup = $('.leaflet-popup').html() ? true : false;
+		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
 		var isMapOrPopup = isMap || isPopup;
 
 		if (typeof thisAlbum === "undefined")
-			thisAlbum = currentAlbum;
+			thisAlbum = env.currentAlbum;
+		var isAlbumWithOneMedia = thisAlbum.isAlbumWithOneMedia();
+		var isSingleMedia = (env.currentMedia !== null || isAlbumWithOneMedia);
+		var isAnyRootCacheBase = thisAlbum.isAnyRoot();
+		var nothingIsSelected = util.nothingIsSelected();
 
-		if (typeof hasGpsData === "undefined") {
-			if (currentMedia !== null)
-				hasGpsData = util.hasGpsData(currentMedia);
-			else if (currentMedia === null && util.isAlbumWithOneMedia(thisAlbum))
-				hasGpsData = util.hasGpsData(thisAlbum.media[0]);
+		var hasGpsData, thisMedia;
+
+		if (isSingleMedia) {
+			if (env.currentMedia !== null)
+				thisMedia = env.currentMedia;
 			else
-				hasGpsData = true;
+				thisMedia = thisAlbum.media[0];
+			hasGpsData = thisMedia.hasGpsData();
+		} else if (isAnyRootCacheBase) {
+			// hasGpsData = (env.options.num_positions_in_tree > 0);
+			hasGpsData = (env.currentAlbum.numPositionsInTree > 0);
+		} else {
+			hasGpsData = false;
 		}
 
 		// add the correct classes to the menu buttons
 
-		// if ($("ul#right-menu li ul#sub-menu"))
+		////////////////// BROWSING MODES //////////////////////////////
+
+		$(".browsing-mode-switcher").off("click");
 
 		if (
 			isMapOrPopup ||
 			thisAlbum === null ||
-			! util.isAnyRootHash(thisAlbum.cacheBase) &&
-			(currentMedia === null && ! util.isAlbumWithOneMedia(thisAlbum))
+			! isSingleMedia && ! isAnyRootCacheBase
 		) {
 			$(".browsing-mode-switcher").addClass("hidden");
 		} else {
-			var hideGpsEntry = ! hasGpsData;
+			$(".browsing-mode-switcher").removeClass("hidden").removeClass("selected");
 
-			// var hasGpsData = (currentMedia !== null || util.isAlbumWithOneMedia(thisAlbum)) && util.hasGpsData(currentMedia);
-			$(".browsing-mode-switcher").addClass("active").removeClass("hidden").removeClass("selected");
-			if (util.isFolderCacheBase(thisAlbum.cacheBase)) {
+			if (! hasGpsData) {
+				$("#by-gps-view").addClass("hidden");
+			}
+
+			if (
+				nothingIsSelected || ! (
+					isSingleMedia && thisMedia.isSelected() ||
+					isAnyRootCacheBase
+				)
+			) {
+				$("#by-selection-view").addClass("hidden");
+			}
+
+			if (
+				! util.somethingIsInMapAlbum() || ! (
+					isSingleMedia && thisMedia.isInMapAlbum() ||
+					isAnyRootCacheBase
+				)
+			) {
+				$("#by-map-view").addClass("hidden");
+			}
+
+			let [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+			if (
+				! (
+					isAnyRootCacheBase && util.somethingIsSearched() ||
+					isSingleMedia && (
+						// util.somethingIsSearched() ||
+						// savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash)
+						thisAlbum.isSearch() ||
+						thisMedia.isSearched() ||
+						savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash) ||
+						thisMedia.isInFoundAlbum() !== false
+					)
+				)
+			) {
+				$("#by-search-view").addClass("hidden");
+			}
+
+			if (thisAlbum.isFolder() && ! (savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash))) {
 				// folder album: change to by date or by gps view
-				$("#folders-view").removeClass("active").addClass("selected");
-				if (hideGpsEntry) {
-					$("#by-gps-view").addClass("hidden");
-				}
-				if (byMapViewLink === null) {
-					$("#by-map-view").addClass("hidden");
-				}
-				if (bySearchViewLink === null) {
-					$("#by-search-view").addClass("hidden");
-				}
-			} else if (util.isByDateCacheBase(thisAlbum.cacheBase)) {
-				$("#by-date-view").removeClass("active").addClass("selected");
-				if (hideGpsEntry) {
-					$("#by-gps-view").addClass("hidden");
-				}
-				if (byMapViewLink === null) {
-					$("#by-map-view").addClass("hidden");
-				}
-				if (bySearchViewLink === null) {
-					$("#by-search-view").addClass("hidden");
-				}
-			} else if (util.isByGpsCacheBase(thisAlbum.cacheBase)) {
-				$("#by-gps-view").removeClass("active").addClass("selected");
-				if (byMapViewLink === null) {
-					$("#by-map-view").addClass("hidden");
-				}
-				if (bySearchViewLink === null) {
-					$("#by-search-view").addClass("hidden");
-				}
-			} else if (util.isMapCacheBase(thisAlbum.cacheBase)) {
-				if (hideGpsEntry) {
-					$("#by-gps-view").addClass("hidden");
-				}
-				$("#by-map-view").removeClass("active").addClass("selected");
-				if (bySearchViewLink === null) {
-					$("#by-search-view").addClass("hidden");
-				}
-			} else if (util.isSearchCacheBase(thisAlbum.cacheBase)) {
-				if (hideGpsEntry) {
-					$("#by-gps-view").addClass("hidden");
-				}
-				if (byMapViewLink === null) {
-					$("#by-map-view").addClass("hidden");
-				}
-				$("#by-search-view").removeClass("active").addClass("selected");
+				$("#folders-view").addClass("selected");
+			} else if (thisAlbum.isByDate()) {
+				$("#by-date-view").addClass("selected");
+			} else if (thisAlbum.isByGps()) {
+				$("#by-gps-view").addClass("selected");
+			} else if (thisAlbum.isMap()) {
+				$("#by-map-view").removeClass("hidden").addClass("selected");
+			} else if (
+				thisAlbum.isSearch() ||
+				savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash)
+			) {
+				$("#by-search-view").removeClass("hidden").addClass("selected");
+			} else if (thisAlbum.isSelection()) {
+				$("#by-selection-view").removeClass("hidden").addClass("selected");
 			}
 		}
 
+		// bind the click events
+
+		$("#folders-view:not(.hidden):not(.selected)").on(
+			"click",
+			function changeToFoldersView() {
+				TopFunctions.showBrowsingModeMessage("#folders-browsing");
+
+				if (isSingleMedia) {
+					window.location.href = env.hashBeginning + util.pathJoin([
+						thisMedia.foldersCacheBase,
+						thisMedia.cacheBase
+					]);
+				} else if (isAnyRootCacheBase) {
+					window.location.href = env.hashBeginning + encodeURIComponent(env.options.folders_string);
+				}
+
+				return false;
+			}
+		);
+
+		$("#by-date-view:not(.hidden):not(.selected)").on(
+			"click",
+			function changeToByDateView() {
+				TopFunctions.showBrowsingModeMessage("#by-date-browsing");
+
+				if (isSingleMedia) {
+					window.location.href = env.hashBeginning + util.pathJoin([
+						thisMedia.dayAlbumCacheBase,
+						thisMedia.foldersCacheBase,
+						thisMedia.cacheBase
+					]);
+				} else if (isAnyRootCacheBase) {
+					window.location.href = env.hashBeginning + encodeURIComponent(env.options.by_date_string);
+				}
+				return false;
+			}
+		);
+
+		$("#by-gps-view:not(.hidden):not(.selected)").on(
+			"click",
+			function changeToByGpsView() {
+				TopFunctions.showBrowsingModeMessage("#by-gps-browsing");
+
+				if (isSingleMedia) {
+					window.location.href = env.hashBeginning + util.pathJoin([
+						thisMedia.gpsAlbumCacheBase,
+						thisMedia.foldersCacheBase,
+						thisMedia.cacheBase
+					]);
+				} else if (isAnyRootCacheBase) {
+					window.location.href = env.hashBeginning + encodeURIComponent(env.options.by_gps_string);
+				}
+				return false;
+			}
+		);
+
+		$("#by-map-view:not(.hidden):not(.selected)").on(
+			"click",
+			function changeToByMapView() {
+				TopFunctions.showBrowsingModeMessage("#by-map-browsing");
+				if (isSingleMedia) {
+					window.location.href = phFl.encodeHash(env.mapAlbum.cacheBase, thisMedia);
+				} else if (isAnyRootCacheBase) {
+					window.location.href = phFl.encodeHash(env.mapAlbum.cacheBase, null);
+				}
+				return false;
+			}
+		);
+
+		$("#by-search-view:not(.hidden):not(.selected)").on(
+			"click",
+			function changeToBySearchView() {
+				TopFunctions.showBrowsingModeMessage("#by-search-browsing");
+				if (isSingleMedia) {
+					// if (thisMedia.hasOwnProperty("searchHashes") && thisMedia.searchHashes.length)
+					var foundAlbum = thisMedia.isInFoundAlbum();
+					if (foundAlbum !== false) {
+						window.location.href = phFl.encodeHash(thisMedia.foldersCacheBase, thisMedia, foundAlbum.cacheBase, env.searchAlbum.cacheBase);
+					} else {
+						window.location.href = phFl.encodeHash(env.searchAlbum.cacheBase, thisMedia);
+					}
+				} else if (isAnyRootCacheBase) {
+					window.location.href = phFl.encodeHash(env.searchAlbum.cacheBase, null);
+				}
+				return false;
+			}
+		);
+
+		// WARNING: the ":not(.hidden)" is missing intentionally, in order to permit to trigger a click even if the menu item isn't shown
+		$("#by-selection-view:not(.selected)").on(
+			"click",
+			function changeToBySelectionView() {
+				TopFunctions.showBrowsingModeMessage("#by-selection-browsing");
+				if (isPopup) {
+					// the popup is there: close it
+					$('.leaflet-popup-close-button')[0].click();
+				}
+				if (isMap || isPopup) {
+					// we are in a map: close it
+					$('.modal-close')[0].click();
+				}
+
+				if (isSingleMedia) {
+					window.location.href = phFl.encodeHash(env.selectionAlbum.cacheBase, thisMedia);
+				} else {
+					window.location.href = phFl.encodeHash(env.selectionAlbum.cacheBase, null);
+				}
+				return false;
+			}
+		);
+
+		////////////////// SEARCH //////////////////////////////
+
+		if (isMap)
+			$("ul#right-menu li.search").addClass("hidden");
+		else
+			$("ul#right-menu li.search").removeClass("hidden");
+
 		if (
-			thisAlbum !== null && ! $(".sub-menu:not(.hidden)").length
+			thisAlbum === null ||
+			$(".sub-menu:not(.hidden)").length
 			// thisAlbum !== null &&
-			// (util.isSearchCacheBase(thisAlbum.cacheBase) || thisAlbum.cacheBase == Options.by_search_string)
+			// (thisAlbum.isSearch() || thisAlbum.cacheBase == env.options.by_search_string)
 			// ||
 			// $("ul#right-menu li#no-search-string").is(":visible") ||
 			// $("ul#right-menu li#no-results").is(":visible") ||
 			// $("ul#right-menu li#search-too-wide").is(":visible")
 		) {
+			$("ul#right-menu li.search ul").addClass("hidden");
+		} else {
+			if (isPopup)
+				$("ul#right-menu li.search #search-field, ul#right-menu li.search #search-button").attr("title", util._t("#refine-popup-content"));
+			else
+				$("ul#right-menu li.search #search-field, ul#right-menu li.search #search-button").attr("title", util._t("#real-search"));
+
 			$("ul#right-menu li.search ul").removeClass("hidden");
 			// $("ul#right-menu li#refine-search").removeClass("hidden");
-			if (Options.search_inside_words)
+			if (env.options.search_inside_words)
 				$("ul#right-menu li#inside-words").addClass("selected");
 			else
 				$("ul#right-menu li#inside-words").removeClass("selected");
-			if (Options.search_any_word)
+			if (env.options.search_any_word)
 				$("ul#right-menu li#any-word").addClass("selected");
 			else
 				$("ul#right-menu li#any-word").removeClass("selected");
-			if (Options.search_case_sensitive)
+			if (env.options.search_case_sensitive)
 				$("ul#right-menu li#case-sensitive").addClass("selected");
 			else
 				$("ul#right-menu li#case-sensitive").removeClass("selected");
-			if (Options.search_accent_sensitive)
+			if (env.options.search_accent_sensitive)
 				$("ul#right-menu li#accent-sensitive").addClass("selected");
 			else
 				$("ul#right-menu li#accent-sensitive").removeClass("selected");
-			if (util.isAnyRootHash(Options.cache_base_to_search_in)) {
+			if (util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || isPopup) {
 				$("ul#right-menu li#album-search").addClass("dimmed").off("click");
 			} else {
-				$("ul#right-menu li#album-search").removeClass("dimmed");
-				let albumNamePromise = Functions.getAlbumNameFromAlbumHash(Options.cache_base_to_search_in);
+				$("ul#right-menu li#album-search").removeClass("dimmed").off("click").on('click', Functions.toggleCurrentAbumSearch);
+				let albumNamePromise = Functions.getAlbumNameFromCacheBase(env.options.cache_base_to_search_in);
 				albumNamePromise.then(
 					function(path) {
 						$("#album-search").attr('title', util._t("#current-album-is") + '"' + path + '"');
 					}
 				);
 
-				if (Options.search_current_album)
+				if (env.options.search_current_album)
 					$("ul#right-menu li#album-search").addClass("selected");
 				else
 					$("ul#right-menu li#album-search").removeClass("selected");
 			}
-		} else {
-			$("ul#right-menu li.search ul").addClass("hidden");
-			// $("ul#right-menu li#refine-search").addClass("hidden");
 		}
+
+		$("#search-field").off("focus").on(
+			"focus",
+			function() {
+				$(".sub-menu").addClass("hidden");
+				$("#right-menu li.search ul").removeClass("hidden");
+				// if ($("ul", this).is(':hidden'))
+				// 	$('#right-menu ul').slideUp(300);
+				// $("ul", this).slideToggle(300);
+			}
+		);
+
+		////////////////// UI //////////////////////////////
 
 		$("ul#right-menu li.protection").removeClass("hidden");
 
@@ -257,7 +410,7 @@
 			$("ul#right-menu li.hide-title").addClass("hidden");
 		} else {
 			$("ul#right-menu li.hide-title").removeClass("hidden");
-			if (Options.hide_title)
+			if (env.options.hide_title)
 				$("ul#right-menu li.hide-title").addClass("selected");
 			else
 				$("ul#right-menu li.hide-title").removeClass("selected");
@@ -267,7 +420,7 @@
 			$("ul#right-menu li.hide-media-caption").addClass("hidden");
 		} else {
 			$("ul#right-menu li.hide-media-caption").removeClass("hidden");
-			if (Options.hide_caption)
+			if (env.options.hide_caption)
 				$("ul#right-menu li.hide-media-caption").addClass("selected");
 			else
 				$("ul#right-menu li.hide-media-caption").removeClass("selected");
@@ -275,43 +428,39 @@
 
 		if (
 			isMapOrPopup ||
-			currentMedia !== null ||
-			util.isAlbumWithOneMedia(thisAlbum) ||
-			thisAlbum !== null && thisAlbum.subalbums.length === 0 && Options.hide_title
+			env.currentMedia !== null ||
+			isAlbumWithOneMedia ||
+			thisAlbum !== null && thisAlbum.subalbums.length === 0 && env.options.hide_title
 		) {
 			$("ul#right-menu li.media-count").addClass("hidden");
 		} else {
 			$("ul#right-menu li.media-count").removeClass("hidden");
-			if (Options.show_album_media_count)
+			if (env.options.show_album_media_count)
 				$("ul#right-menu li.media-count").addClass("selected");
 			else
 				$("ul#right-menu li.media-count").removeClass("selected");
 		}
 
 
-		if (
-			isMap && (
-				! isPopup || MapFunctions.mapAlbum.media.length <= 1
-			)
-		)
+		if (isMap || isPopup && env.mapAlbum.media.length <= 1)
 			$("ul#right-menu li.spaced").addClass("hidden");
 		else
 			$("ul#right-menu li.spaced").removeClass("hidden");
-		if (Options.spacing)
+		if (env.options.spacing)
 			$("ul#right-menu li.spaced").addClass("selected");
 		else
 			$("ul#right-menu li.spaced").removeClass("selected");
 
 		if (
 			isMapOrPopup ||
-			currentMedia !== null ||
-			util.isAlbumWithOneMedia(thisAlbum) ||
+			env.currentMedia !== null ||
+			isAlbumWithOneMedia ||
 			thisAlbum !== null && thisAlbum.subalbums.length === 0
 		) {
 			$("ul#right-menu li.square-album-thumbnails").addClass("hidden");
 		} else {
 			$("ul#right-menu li.square-album-thumbnails").removeClass("hidden");
-			if (Options.album_thumb_type == "square")
+			if (env.options.album_thumb_type == "square")
 				$("ul#right-menu li.square-album-thumbnails").addClass("selected");
 			else
 				$("ul#right-menu li.square-album-thumbnails").removeClass("selected");
@@ -319,14 +468,14 @@
 
 		if (
 			isMapOrPopup ||
-			currentMedia !== null ||
-			util.isAlbumWithOneMedia(thisAlbum) ||
+			env.currentMedia !== null ||
+			isAlbumWithOneMedia ||
 			thisAlbum !== null && thisAlbum.subalbums.length === 0
 		) {
 			$("ul#right-menu li.slide").addClass("hidden");
 		} else {
 			$("ul#right-menu li.slide").removeClass("hidden");
-			if (Options.albums_slide_style)
+			if (env.options.albums_slide_style)
 				$("ul#right-menu li.slide").addClass("selected");
 			else
 				$("ul#right-menu li.slide").removeClass("selected");
@@ -334,43 +483,43 @@
 
 		if (
 			isMapOrPopup ||
-			currentMedia !== null ||
-			util.isAlbumWithOneMedia(thisAlbum) ||
-			thisAlbum !== null && (thisAlbum.subalbums.length === 0 || ! util.isFolderCacheBase(thisAlbum.cacheBase))
+			env.currentMedia !== null ||
+			isAlbumWithOneMedia ||
+			thisAlbum !== null && (thisAlbum.subalbums.length === 0 || ! thisAlbum.isFolder())
 		) {
 			$("ul#right-menu li.album-names").addClass("hidden");
 		} else {
 			$("ul#right-menu li.album-names").removeClass("hidden");
-			if (Options.show_album_names_below_thumbs)
+			if (env.options.show_album_names_below_thumbs)
 				$("ul#right-menu li.album-names").addClass("selected");
 			else
 				$("ul#right-menu li.album-names").removeClass("selected");
 		}
 
-		if (isMapOrPopup)
+		if (isMap)
 			$("ul#right-menu li.square-media-thumbnails").addClass("hidden");
 		else
 			$("ul#right-menu li.square-media-thumbnails").removeClass("hidden");
-		if (Options.media_thumb_type == "square")
+		if (env.options.media_thumb_type == "square")
 		 	$("ul#right-menu li.square-media-thumbnails").addClass("selected");
 		else
 			$("ul#right-menu li.square-media-thumbnails").removeClass("selected");
 
 		if (
-			isMap && ! isPopup ||
+			isMap ||
 			! isMapOrPopup && (
-				currentMedia !== null ||
-				util.isAlbumWithOneMedia(thisAlbum) ||
+				env.currentMedia !== null ||
+				isAlbumWithOneMedia ||
 				thisAlbum !== null && (
-					util.imagesAndVideosTotal(thisAlbum.numMedia) === 0 ||
-					! util.isFolderCacheBase(thisAlbum.cacheBase) && util.imagesAndVideosTotal(thisAlbum.numMedia) > Options.big_virtual_folders_threshold
+					thisAlbum.numsMedia.imagesAndVideosTotal() === 0 ||
+					! thisAlbum.isFolder() && ! env.options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
 				)
 			)
 		) {
 			$("ul#right-menu li.media-names").addClass("hidden");
 		} else {
 			$("ul#right-menu li.media-names").removeClass("hidden");
-			if (Options.show_media_names_below_thumbs)
+			if (env.options.show_media_names_below_thumbs)
 				$("ul#right-menu li.media-names").addClass("selected");
 			else
 				$("ul#right-menu li.media-names").removeClass("selected");
@@ -378,7 +527,7 @@
 
 		if (
 			isMapOrPopup ||
-			currentMedia === null && ! util.isAlbumWithOneMedia(thisAlbum)
+			env.currentMedia === null && ! isAlbumWithOneMedia
 			// ||
 			// thisAlbum !== null && thisAlbum.subalbums.length === 0
 		) {
@@ -386,7 +535,7 @@
 		} else {
 			$("ul#right-menu li.hide-bottom-thumbnails").removeClass("hidden");
 
-			if (Options.hide_bottom_thumbnails)
+			if (env.options.hide_bottom_thumbnails)
 				$("ul#right-menu li.hide-bottom-thumbnails").addClass("selected");
 			else
 				$("ul#right-menu li.hide-bottom-thumbnails").removeClass("selected");
@@ -407,23 +556,27 @@
 			$("ul#right-menu li.ui").addClass("hidden");
 		}
 
+		////////////////// BIG ALBUMS //////////////////////////////
+
 		if (
 			thisAlbum === null ||
-			util.imagesAndVideosTotal(thisAlbum.numMedia) < Options.big_virtual_folders_threshold ||
-			util.isFolderCacheBase(thisAlbum.cacheBase)
+			thisAlbum.numsMedia.imagesAndVideosTotal() < env.options.big_virtual_folders_threshold ||
+			thisAlbum.isFolder()
 		) {
 			$("ul#right-menu #show-big-albums").addClass("hidden");
 		} else {
 			$("ul#right-menu #show-big-albums").removeClass("hidden");
-			if (Options.show_big_virtual_folders)
+			if (env.options.show_big_virtual_folders)
 			 	$("ul#right-menu #show-big-albums").addClass("selected");
 			else
 				$("ul#right-menu #show-big-albums").removeClass("selected");
 		}
 
+		////////////////// SORT //////////////////////////////
+
 		if (
-			! isMapOrPopup && currentMedia !== null ||
-			isPopup && MapFunctions.mapAlbum.media.length <= 1
+			! isMapOrPopup && env.currentMedia !== null ||
+			isPopup && env.mapAlbum.media.length <= 1
 		) {
 			// showing a media or a map or a popup on the map, nothing to sort
 			$("#right-menu li.sort").addClass("hidden");
@@ -435,7 +588,10 @@
 				$("ul#right-menu li.album-sort").removeClass("hidden");
 			}
 
-			if (util.imagesAndVideosTotal(thisAlbum.numMedia) <= 1 || util.imagesAndVideosTotal(thisAlbum.numMedia) > Options.big_virtual_folders_thresholds) {
+			if (
+				thisAlbum.numsMedia.imagesAndVideosTotal() <= 1 ||
+				! env.options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
+			) {
 				// no media or one media or too many media
 				$("ul#right-menu li.media-sort").addClass("hidden");
 			} else {
@@ -465,40 +621,244 @@
 			}
 		}
 
+		////////////////// SELECTION //////////////////////////////
+
+		$(".select").removeClass("hidden").removeClass("selected");
+		if (nothingIsSelected || thisAlbum.isSelection()) {
+			$(".select.global-reset, .select.go-to-selected").addClass("hidden");
+		} else {
+			let menuItem = util._t(".select.go-to-selected");
+			menuItem += " (";
+			if (env.selectionAlbum.subalbums.length)
+				menuItem += env.selectionAlbum.subalbums.length + " " + util._t(".title-albums");
+			if (env.selectionAlbum.subalbums.length && env.selectionAlbum.media.length)
+				menuItem += ", ";
+			if (env.selectionAlbum.media.length)
+				menuItem += env.selectionAlbum.media.length + " " + util._t(".title-media");
+			menuItem += ")";
+			$(".select.go-to-selected").html(menuItem);
+		}
+
+		if (isSingleMedia) {
+			$(".select.albums, .select.everything, .select.everything-individual").addClass("hidden");
+		} else if (! thisAlbum.media.length || ! thisAlbum.subalbums.length) {
+			$(".select.media, .select.albums").addClass("hidden");
+		}
+
+		if (thisAlbum.everySubalbumIsSelected()) {
+			$(".select.albums").addClass("selected");
+		}
+
+		if (thisAlbum.everyMediaIsSelected()) {
+			$(".select.media").addClass("selected");
+		}
+
+		if (thisAlbum.everySubalbumIsSelected() && thisAlbum.everyMediaIsSelected()) {
+			$(".select.everything").addClass("selected");
+		}
+
+		if (! env.options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold) {
+			$(".select.everything, .select.media").addClass("hidden");
+		}
+
+		if (! thisAlbum.media.length || ! thisAlbum.subalbums.length) {
+			$(".select.media, .select.albums").addClass("hidden");
+		}
+
+		if (
+			! thisAlbum.subalbums.length ||
+			! env.options.show_big_virtual_folders && thisAlbum.numsMediaInSubTree.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
+		) {
+			$(".select.everything-individual").addClass("hidden");
+		} else {
+			let everythingIndividualPromise = thisAlbum.recursivelyAllMediaAreSelected();
+			everythingIndividualPromise.then(
+				function() {
+					$(".select.everything-individual").addClass("selected");
+				},
+				function() {}
+			);
+		}
+
+
+		$(".select.everything:not(.hidden)").off("click").on(
+			"click",
+			function() {
+				if (thisAlbum.everySubalbumIsSelected() && thisAlbum.everyMediaIsSelected()) {
+					thisAlbum.removeAllMediaFromSelection();
+					let promise = thisAlbum.removeAllSubalbumsFromSelection();
+					promise.then(
+						function() {
+							if (util.nothingIsSelected())
+								util.initializeSelectionAlbum();
+							Functions.updateMenu();
+						}
+					);
+				} else {
+					thisAlbum.addAllMediaToSelection();
+					let promise = thisAlbum.addAllSubalbumsToSelection();
+					promise.then(
+						function() {
+							Functions.updateMenu();
+						}
+					);
+				}
+			}
+		);
+
+		$(".select.everything-individual:not(.hidden)").off("click").on(
+			"click",
+			function() {
+				let everythingIndividualPromise = thisAlbum.recursivelyAllMediaAreSelected();
+				everythingIndividualPromise.then(
+					function() {
+						let firstPromise = thisAlbum.recursivelyRemoveMedia();
+						firstPromise.then(
+							function() {
+								if (util.nothingIsSelected())
+									util.initializeSelectionAlbum();
+								Functions.updateMenu();
+								$("#removed-individually").stop().fadeIn(
+									1000,
+									function() {
+										$("#removed-individually").stop().fadeOut(3000);
+									}
+								);
+							}
+						);
+					},
+					function() {
+						let firstPromise = thisAlbum.recursivelySelectMedia();
+						firstPromise.then(
+							function() {
+								$("#added-individually").stop().fadeIn(
+									1000,
+									function() {
+										Functions.updateMenu();
+										$("#added-individually").stop().fadeOut(3000);
+									}
+								);
+							}
+						);
+					}
+				);
+			}
+		);
+
+		$(".select.media:not(.hidden)").off("click").on(
+			"click",
+			function() {
+				if (thisAlbum.everyMediaIsSelected()) {
+					thisAlbum.removeAllMediaFromSelection();
+					if (util.nothingIsSelected())
+						util.initializeSelectionAlbum();
+				} else {
+					thisAlbum.addAllMediaToSelection();
+				}
+				Functions.updateMenu();
+			}
+		);
+
+		$(".select.albums:not(.hidden)").off("click").on(
+			"click",
+			function() {
+				if (thisAlbum.everySubalbumIsSelected()) {
+					let promise = thisAlbum.removeAllSubalbumsFromSelection();
+					promise.then(
+						function() {
+							if (util.nothingIsSelected())
+								util.initializeSelectionAlbum();
+							Functions.updateMenu();
+						}
+					);
+				} else {
+					var promise = thisAlbum.addAllSubalbumsToSelection();
+					promise.then(
+						function() {
+							Functions.updateMenu();
+						}
+					);
+				}
+			}
+		);
+
+		$(".select.global-reset:not(.hidden)").on(
+			"click",
+			function() {
+				env.selectionAlbum.removeAllMediaFromSelection();
+				let subalbumsPromise = env.selectionAlbum.removeAllSubalbumsFromSelection();
+				subalbumsPromise.then(
+					function allSubalbumsRemoved() {
+						if (util.nothingIsSelected())
+							util.initializeSelectionAlbum();
+						Functions.updateMenu();
+					}
+				);
+				// $(".select-box").attr("src", "img/checkbox-unchecked-48px.png");
+				// $(".album-button .select-box").attr("title", util._t("#select-subalbum"));
+				// $(".thumb-container .select-box").attr("title", util._t("#select-single-media"));
+			}
+		);
+
+		$(".select.go-to-selected:not(.hidden)").on(
+			"click",
+			function() {
+				$("#by-selection-view")[0].click();
+			}
+		);
+
+
+		////////////////// DOWNLOAD //////////////////////////////
+
 		const maximumZipSize = 2000000000;
 		const bigZipSize = 500000000;
 
 		$(".download-single-media").addClass("hidden").addClass("active");
-		$(".download-album").addClass("hidden").removeClass("red").addClass("active");
+		$(".download-album").addClass("hidden").removeClass("red");
+		$("ul li.download-album").addClass("active");
 		$(".download-album.sized").addClass("hidden");
 
-		$(".download-album .sub-menu").addClass("hidden");
-		if (currentMedia !== null || util.isAlbumWithOneMedia(thisAlbum)) {
+		// $(".download-album .sub-menu").addClass("hidden");
+		if (thisAlbum.isSearch() && ! thisAlbum.media.length && ! thisAlbum.subalbums.length) {
+			// download menu item remains hidden
+		} else if (env.currentMedia !== null || isAlbumWithOneMedia) {
 			$(".download-album .sub-menu").removeClass("hidden");
 			$(".download-album.expandable, .download-album.caption").removeClass("hidden");
 			$(".download-single-media").removeClass("hidden");
-			let trueOriginalMediaPath = encodeURI(util.trueOriginalMediaPath(currentMedia));
-			$(".download-single-media.download-link").attr("href", trueOriginalMediaPath).attr("download", "");
+			let trueOriginalMediaPath;
+			if (isAlbumWithOneMedia)
+				trueOriginalMediaPath = encodeURI(thisAlbum.media[0].trueOriginalMediaPath());
+			else
+				trueOriginalMediaPath = encodeURI(env.currentMedia.trueOriginalMediaPath());
+			$(".download-single-media .download-link").attr("href", trueOriginalMediaPath).attr("download", "");
 		} else if (thisAlbum !== null) {
 			$(".download-album.expandable, .download-album.caption").removeClass("hidden");
 
 			let showDownloadEverything = false;
 
-			if (thisAlbum.subalbums.length && ! util.isByDateCacheBase(thisAlbum.cacheBase) && ! util.isByGpsCacheBase(thisAlbum.cacheBase)) {
+			if (thisAlbum.subalbums.length && ! thisAlbum.isTransversal()) {
 				$(".download-album.everything.all.full").removeClass("hidden");
 				// reset the html
 				$(".download-album.everything.all").html(util._t(".download-album.everything.all"));
 
-				let numMediaInSubTree = util.imagesAndVideosTotal(thisAlbum.numMediaInSubTree);
-				if (util.isSearchCacheBase(thisAlbum.cacheBase) && thisAlbum.subalbums.length) {
-					// in search albums, numMediaInSubTree doesn't include the media in the albums found, the values that goes into the DOm must be update by code here
+				let nMediaInSubTree = thisAlbum.numsMediaInSubTree.imagesAndVideosTotal();
+				let numImages = thisAlbum.numsMediaInSubTree.images;
+				let numVideos = thisAlbum.numsMediaInSubTree.videos;
+				let what = util._t(".title-media");
+				if (numImages === 0)
+					what = util._t(".title-videos");
+				if (numVideos === 0)
+					what = util._t(".title-images");
+
+				if (thisAlbum.isSearch() && thisAlbum.subalbums.length) {
+					// in search albums, numsMediaInSubTree doesn't include the media in the albums found, the values that goes into the DOm must be update by code here
 					for (let iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; iSubalbum ++) {
-						numMediaInSubTree += util.imagesAndVideosTotal(thisAlbum.subalbums[iSubalbum].numMediaInSubTree);
+						nMediaInSubTree += thisAlbum.subalbums[iSubalbum].numsMediaInSubTree.imagesAndVideosTotal();
 					}
 				}
 
 				let treeSize = thisAlbum.sizesOfSubTree[0].images + thisAlbum.sizesOfSubTree[0].videos;
-				$(".download-album.everything.all.full").append(" (" + numMediaInSubTree + " " + util._t(".title-media") + ", " + Functions.humanFileSize(treeSize) + ")");
+				$(".download-album.everything.all.full").append(": " + nMediaInSubTree + " " + what + ", " + Functions.humanFileSize(treeSize));
 				if (treeSize < bigZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 					// actually it can be less (Chrome on Android)
@@ -512,11 +872,11 @@
 
 				if (treeSize >= bigZipSize) {
 					// propose to download the resized media
-					for (let i = 0; i < Options.reduced_sizes.length; i++) {
-						let reducedSize = Options.reduced_sizes[i];
-						treeSize = util.imagesAndVideosTotal(thisAlbum.sizesOfSubTree[reducedSize]);
+					for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
+						let reducedSize = env.options.reduced_sizes[iSize];
+						treeSize = thisAlbum.sizesOfSubTree[reducedSize].imagesAndVideosTotal();
 						if (treeSize < bigZipSize) {
-							$(".download-album.everything.all.sized").append(", " + reducedSize + "px  (" + util.imagesAndVideosTotal(thisAlbum.numMedia) + " " + util._t(".title-media") + ", " + Functions.humanFileSize(treeSize) + ")");
+							$(".download-album.everything.all.sized").append(", " + reducedSize + " px: " + thisAlbum.numsMediaInSubTree.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(treeSize));
 							$(".download-album.everything.all.sized").attr("size", reducedSize);
 							$(".download-album.everything.all.sized").removeClass("hidden");
 							break;
@@ -525,8 +885,6 @@
 				}
 				showDownloadEverything = true;
 
-				let numImages = thisAlbum.numMediaInSubTree.images;
-				let numVideos = thisAlbum.numMediaInSubTree.videos;
 				// let numImages = 0;
 				// let numVideos = 0;
 				// for (let iMedia = 0; iMedia < thisAlbum.media.length; iMedia ++) {
@@ -537,8 +895,8 @@
 				// 	}
 				// }
 
-				let mediaInThisAlbum = util.imagesAndVideosTotal(thisAlbum.numMedia);
-				let mediaInThisTree = util.imagesAndVideosTotal(thisAlbum.numMediaInSubTree);
+				let mediaInThisAlbum = thisAlbum.numsMedia.imagesAndVideosTotal();
+				let mediaInThisTree = thisAlbum.numsMediaInSubTree.imagesAndVideosTotal();
 				if (numImages && numImages !== mediaInThisAlbum && numImages !== mediaInThisTree && mediaInThisAlbum !== mediaInThisTree) {
 					$(".download-album.everything.images.full").removeClass("hidden");
 					// reset the html
@@ -546,7 +904,7 @@
 
 					// add the download size
 					let imagesSize = thisAlbum.sizesOfSubTree[0].images;
-					$(".download-album.everything.images.full").append(" (" + numImages + ", " + Functions.humanFileSize(imagesSize) + ")");
+					$(".download-album.everything.images.full").append(": " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(imagesSize));
 					// check the size and decide if they can be downloaded
 					if (imagesSize < bigZipSize) {
 						// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
@@ -561,10 +919,10 @@
 
 					if (imagesSize >= bigZipSize) {
 						// propose to download the resized media
-						for (let i = 0; i < Options.reduced_sizes.length; i++) {
-							let reducedSize = Options.reduced_sizes[i];
+						for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
+							let reducedSize = env.options.reduced_sizes[iSize];
 							if (thisAlbum.sizesOfSubTree[reducedSize].images < bigZipSize) {
-								$(".download-album.everything.images.sized").append(", " + reducedSize + "px  (" + numImages + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].images) + ")");
+								$(".download-album.everything.images.sized").append(", " + reducedSize + " px: " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].images));
 								$(".download-album.everything.images.sized").attr("size", reducedSize);
 								$(".download-album.everything.images.sized").removeClass("hidden");
 								break;
@@ -580,7 +938,7 @@
 
 					// add the download size
 					let videosSize = thisAlbum.sizesOfSubTree[0].videos;
-					$(".download-album.everything.videos.full").append(" (" + numVideos + ", " + Functions.humanFileSize(videosSize) + ")");
+					$(".download-album.everything.videos.full").append(": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(videosSize));
 					// check the size and decide if they can be downloaded
 					if (videosSize < bigZipSize) {
 						// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
@@ -594,21 +952,37 @@
 					}
 
 					if (videosSize >= bigZipSize) {
-						// propose to download the resized media
-						for (let i = 0; i < Options.reduced_sizes.length; i++) {
-							let reducedSize = Options.reduced_sizes[i];
-							if (thisAlbum.sizesOfSubTree[reducedSize].videos < bigZipSize) {
-								$(".download-album.everything.videos.sized").append(", " + reducedSize + "px  (" + numVideos + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].videos) + ")");
-								$(".download-album.everything.videos.sized").attr("size", reducedSize);
-								$(".download-album.everything.videos.sized").removeClass("hidden");
-								break;
-							}
+						// propose to download the resized video
+						// in thisAlbum.sizesOfSubTree[iSize] all the reduced sizes have the same value, corresponding to the transcoded videos
+						let reducedSize = env.options.reduced_sizes[0];
+						if (thisAlbum.sizesOfSubTree[reducedSize].videos < bigZipSize) {
+							$(".download-album.everything.videos.sized").append(", " + util._t(".title-transcoded") + ": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].videos));
+							$(".download-album.everything.videos.sized").attr("size", reducedSize);
+							$(".download-album.everything.videos.sized").removeClass("hidden");
 						}
 					}
 				}
 			}
 
-			if (util.imagesAndVideosTotal(thisAlbum.numMedia)) {
+			// let numImages = 0;
+			// let numVideos = 0;
+			// for (let iMedia = 0; iMedia < thisAlbum.media.length; iMedia ++) {
+			// 	if (thisAlbum.media[iMedia].mimeType.indexOf("image") === 0) {
+			// 		numImages ++;
+			// 	} else {
+			// 		numVideos ++;
+			// 	}
+			// }
+			// TO DO: verify if it's correct to replace previous commented out code with the following 2 lines
+			let numImages = thisAlbum.numsMedia.images;
+			let numVideos = thisAlbum.numsMedia.videos;
+			let what = util._t(".title-media");
+			if (numImages === 0)
+				what = util._t(".title-videos");
+			if (numVideos === 0)
+				what = util._t(".title-images");
+
+			if (thisAlbum.numsMedia.imagesAndVideosTotal()) {
 				$(".download-album.media-only.all.full").removeClass("hidden");
 				// reset the html
 				if (showDownloadEverything)
@@ -617,8 +991,8 @@
 					$(".download-album.media-only.all").html(util._t(".download-album.simple.all"));
 
 				// add the download size
-				let albumSize = util.imagesAndVideosTotal(thisAlbum.sizesOfAlbum[0]);
-				$(".download-album.media-only.all.full").append(" (" + util.imagesAndVideosTotal(thisAlbum.numMedia) + " " + util._t(".title-media") + ", " + Functions.humanFileSize(albumSize) + ")");
+				let albumSize = thisAlbum.sizesOfAlbum[0].imagesAndVideosTotal();
+				$(".download-album.media-only.all.full").append(": " + thisAlbum.numsMedia.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(albumSize));
 				// check the size and decide if they can be downloaded
 				if (albumSize < bigZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
@@ -633,11 +1007,11 @@
 
 				if (albumSize >= bigZipSize) {
 					// propose to download the resized media
-					for (let i = 0; i < Options.reduced_sizes.length; i++) {
-						let reducedSize = Options.reduced_sizes[i];
+					for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
+						let reducedSize = env.options.reduced_sizes[iSize];
 						albumSize = thisAlbum.sizesOfAlbum[reducedSize].images + thisAlbum.sizesOfAlbum[reducedSize].videos;
 						if (albumSize < bigZipSize) {
-							$(".download-album.media-only.all.sized").append(", " + reducedSize + "px  (" + util.imagesAndVideosTotal(thisAlbum.numMedia) + " " + util._t(".title-media") + ", " + Functions.humanFileSize(albumSize) + ")");
+							$(".download-album.media-only.all.sized").append(", " + reducedSize + " px: " + thisAlbum.numsMedia.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(albumSize));
 							$(".download-album.media-only.all.sized").attr("size", reducedSize);
 							$(".download-album.media-only.all.sized").removeClass("hidden");
 							break;
@@ -646,17 +1020,7 @@
 				}
 			}
 
-			let numImages = 0;
-			let numVideos = 0;
-			for (let iMedia = 0; iMedia < thisAlbum.media.length; iMedia ++) {
-				if (thisAlbum.media[iMedia].mimeType.indexOf("image") === 0) {
-					numImages ++;
-				} else {
-					numVideos ++;
-				}
-			}
-
-			if (numImages && numImages !== util.imagesAndVideosTotal(thisAlbum.numMedia)) {
+			if (numImages && numImages !== thisAlbum.numsMedia.imagesAndVideosTotal()) {
 				$(".download-album.media-only.images.full").removeClass("hidden");
 				// reset the html
 				if (showDownloadEverything)
@@ -666,7 +1030,7 @@
 
 				// add the download size
 				let imagesSize = thisAlbum.sizesOfAlbum[0].images;
-				$(".download-album.media-only.images.full").append(" (" + numImages + ", " + Functions.humanFileSize(imagesSize) + ")");
+				$(".download-album.media-only.images.full").append(": " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(imagesSize));
 				// check the size and decide if they can be downloaded
 				if (imagesSize < bigZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
@@ -681,10 +1045,10 @@
 
 				if (imagesSize >= bigZipSize) {
 					// propose to download the resized media
-					for (let i = 0; i < Options.reduced_sizes.length; i++) {
-						let reducedSize = Options.reduced_sizes[i];
+					for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
+						let reducedSize = env.options.reduced_sizes[iSize];
 						if (thisAlbum.sizesOfAlbum[reducedSize].images < bigZipSize) {
-							$(".download-album.media-only.images.sized").append(", " + reducedSize + "px  (" + numImages + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reducedSize].images) + ")");
+							$(".download-album.media-only.images.sized").append(", " + reducedSize + " px: " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reducedSize].images));
 							$(".download-album.media-only.images.sized").attr("size", reducedSize);
 							$(".download-album.media-only.images.sized").removeClass("hidden");
 							break;
@@ -693,7 +1057,7 @@
 				}
 			}
 
-			if (numVideos && numVideos !== util.imagesAndVideosTotal(thisAlbum.numMedia)) {
+			if (numVideos && numVideos !== thisAlbum.numsMedia.imagesAndVideosTotal()) {
 				$(".download-album.media-only.videos.full").removeClass("hidden");
 				// reset the html
 				if (showDownloadEverything)
@@ -703,7 +1067,7 @@
 
 				// add the download size
 				let videosSize = thisAlbum.sizesOfAlbum[0].videos;
-				$(".download-album.media-only.videos.full").append(" (" + numVideos + ", " + Functions.humanFileSize(videosSize) + ")");
+				$(".download-album.media-only.videos.full").append(": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(videosSize));
 				// check the size and decide if they can be downloaded
 				if (videosSize < bigZipSize) {
 					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
@@ -718,10 +1082,10 @@
 
 				if (videosSize >= bigZipSize) {
 					// propose to download the resized media
-					for (let i = 0; i < Options.reduced_sizes.length; i++) {
-						let reducedSize = Options.reduced_sizes[i];
+					for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
+						let reducedSize = env.options.reduced_sizes[iSize];
 						if (thisAlbum.sizesOfAlbum[reducedSize].videos < bigZipSize) {
-							$(".download-album.media-only.videos.sized").append(", " + reducedSize + "px  (" + numVideos + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reducedSize].videos) + ")");
+							$(".download-album.media-only.videos.sized").append(", " + reducedSize + " px: " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reducedSize].videos));
 							$(".download-album.media-only.videos.sized").attr("size", reducedSize);
 							$(".download-album.media-only.videos.sized").removeClass("hidden");
 							break;
@@ -731,16 +1095,18 @@
 			}
 		}
 
+		////////////////// PROTECTED CONTENT //////////////////////////////
+
 		if (thisAlbum !== null) {
 			let numPasswords;
-			if (util.isSearchCacheBase(thisAlbum.cacheBase))
-				numPasswords = util.numPasswords(phFl.getAlbumFromCache(thisAlbum.ancestorsCacheBase[0]));
+			if (thisAlbum.isSearch())
+				numPasswords = env.cache.getAlbum(env.options.by_search_string).numPasswords();
 			else
-				numPasswords = util.numPasswords(thisAlbum);
+				numPasswords = thisAlbum.numPasswords();
 
 			if (
 				numPasswords &&
-				PhotoFloat.guessedPasswordCodes.length < numPasswords
+				env.guessedPasswordCodes.length < numPasswords
 			) {
 				$(".protection").show();
 				$("#padlock").off('click').on(
@@ -756,23 +1122,16 @@
 			$(".protection").hide();
 		}
 
+		////////////////// ACCORDION EFFECT //////////////////////////////
+
 		// accordion effect on right menu
 		$("#right-menu li.expandable").off('click').on(
 			'click',
 			function() {
 				$("#right-menu li ul").addClass("hidden");
+				$("#right-menu li span.caption").removeClass("expanded");
 				$("ul", this).removeClass("hidden");
-			}
-		);
-
-		$("#search-field").off("focus").on(
-			"focus",
-			function() {
-				$(".sub-menu").addClass("hidden");
-				$("#right-menu li.search ul").removeClass("hidden");
-				// if ($("ul", this).is(':hidden'))
-				// 	$('#right-menu ul').slideUp(300);
-				// $("ul", this).slideToggle(300);
+				$("span.caption", this).addClass("expanded");
 			}
 		);
 	};
@@ -786,22 +1145,24 @@
 	Functions.prototype.scrollToThumb = function() {
 		var media, thumb;
 
-		media = currentMedia;
+		media = env.currentMedia;
 		if (media === null) {
-			media = previousMedia;
+			media = env.previousMedia;
 			if (media === null)
 				return;
 		}
 		$("#thumbs img.thumbnail").each(function() {
 			if (
-				this.title === util.pathJoin([media.albumName, media.name]) && (
-					util.isFolderCacheBase(currentAlbum.cacheBase) ||
-					currentAlbum.cacheBase == Options.folders_string ||
-					util.isByDateCacheBase(currentAlbum.cacheBase) ||
-					util.isByGpsCacheBase(currentAlbum.cacheBase) ||
-					util.isSearchCacheBase(currentAlbum.cacheBase) ||
-					util.isMapCacheBase(currentAlbum.cacheBase)
-				)
+				this.title === util.pathJoin([media.albumName, media.name])
+				// this.title === util.pathJoin([media.albumName, media.name]) && (
+				// 	env.currentAlbum.isFolder() ||
+				// 	env.currentAlbum.cacheBase == env.options.folders_string ||
+				// 	env.currentAlbum.isByDate() ||
+				// 	env.currentAlbum.isByGps() ||
+				// 	env.currentAlbum.isSearch() ||
+				// 	env.currentAlbum.isMap() ||
+				// 	env.currentAlbum.isSelection()
+				// )
 			) {
 				thumb = $(this);
 				return false;
@@ -809,13 +1170,13 @@
 		});
 		if (typeof thumb === "undefined")
 			return;
-		if (currentMedia !== null) {
+		if (env.currentMedia !== null) {
 			var scroller = $("#album-view");
 			scroller.scrollLeft(thumb.parent().position().left + scroller.scrollLeft() - scroller.width() / 2 + thumb.width() / 2);
 		} else
 			$("html, body").scrollTop(thumb.offset().top - $(window).height() / 2 + thumb.height());
 
-		if (currentMedia !== null) {
+		if (env.currentMedia !== null) {
 			$(".thumb-container").removeClass("current-thumb");
 			thumb.parent().addClass("current-thumb");
 		}
@@ -841,41 +1202,42 @@
 	};
 
 	Functions.prototype.setOptions = function() {
-		$("body").css("background-color", Options.background_color);
+		$("body").css("background-color", env.options.background_color);
 
-		$(".title").css("font-size", Options.title_font_size);
-		$(".title-anchor").css("color", Options.title_color);
+		$(".title").css("font-size", env.options.title_font_size);
+		$(".title-anchor").css("color", env.options.title_color);
 		$(".title-anchor").hover(function() {
 			//mouse over
-			$(this).css("color", Options.title_color_hover);
+			$(this).css("color", env.options.title_color_hover);
 		}, function() {
 			//mouse out
-			$(this).css("color", Options.title_color);
+			$(this).css("color", env.options.title_color);
 		});
-		$(".media-name").css("color", Options.title_image_name_color);
-		$(".thumb-and-caption-container").css("margin-right", Options.spacing.toString() + "px").css("margin-bottom", Options.spacing.toString() + "px");
+		$(".media-name").css("color", env.options.title_image_name_color);
+		$(".thumb-and-caption-container").css("margin-right", env.options.spacing.toString() + "px").css("margin-bottom", env.options.spacing.toString() + "px");
 
-		if (currentMedia !== null || ! Options.show_media_names_below_thumbs)
+		var isPopup = $('.leaflet-popup').html() ? true : false;
+		if (env.currentMedia !== null && ! isPopup || ! env.options.show_media_names_below_thumbs)
 			$(".media-caption").addClass("hidden");
 		else
 			$(".media-caption").removeClass("hidden");
 
-		if (Options.show_album_media_count)
+		if (env.options.show_album_media_count)
 			$(".title-count").removeClass("hidden");
 		else
 			$(".title-count").addClass("hidden");
 
-		if (Options.hide_title)
+		if (env.options.hide_title)
 			$(".title").addClass("hidden-by-option");
 		else
 			$(".title").removeClass("hidden-by-option");
 
-		if (Options.hide_caption)
+		if (env.options.hide_caption)
 			$("#caption").addClass("hidden-by-option");
 		else
 			$("#caption").removeClass("hidden-by-option");
 
-		if (Options.hide_bottom_thumbnails && (currentMedia != null || util.isAlbumWithOneMedia(currentAlbum))) {
+		if (env.options.hide_bottom_thumbnails && (env.currentMedia != null || env.currentAlbum.isAlbumWithOneMedia())) {
 			$("#album-view").addClass("hidden-by-option");
 		} else {
 			$("#album-view").removeClass("hidden-by-option");
@@ -886,6 +1248,7 @@
 		pS.initialize();
 		util.setPinchButtonsPosition();
 		util.correctPrevNextPosition();
+		util.setSelectButtonPosition();
 	};
 
 	Functions.threeYears = function() {
@@ -939,239 +1302,254 @@
 	};
 
 	// this function refer to the need that the html showed be sorted
-	Functions.needAlbumNameSort = function(thisAlbum) {
+	Album.prototype.needAlbumNameSort = function() {
 		var result =
-			! thisAlbum.albumNameSort &&
+			! this.albumNameSort &&
 			Functions.getBooleanCookie("albumNameSortRequested");
 		return result;
 	};
 
-	Functions.needAlbumDateSort = function(thisAlbum) {
+	Album.prototype.needAlbumDateSort = function() {
 		var result =
-			thisAlbum.albumNameSort &&
+			this.albumNameSort &&
 			! Functions.getBooleanCookie("albumNameSortRequested");
 		return result;
 	};
 
-	Functions.needAlbumDateReverseSort = function(thisAlbum) {
+	Album.prototype.needAlbumDateReverseSort = function() {
 		var result =
-			! thisAlbum.albumNameSort &&
-			thisAlbum.albumReverseSort !== Functions.getBooleanCookie("albumReverseSortRequested");
+			! this.albumNameSort &&
+			this.albumReverseSort !== Functions.getBooleanCookie("albumReverseSortRequested");
 		return result;
 	};
 
-	Functions.needAlbumNameReverseSort = function(thisAlbum) {
+	Album.prototype.needAlbumNameReverseSort = function() {
 		var result =
-			thisAlbum.albumNameSort &&
-			thisAlbum.albumReverseSort !== Functions.getBooleanCookie("albumReverseSortRequested");
+			this.albumNameSort &&
+			this.albumReverseSort !== Functions.getBooleanCookie("albumReverseSortRequested");
 		return result;
 	};
 
-	Functions.needMediaNameSort = function(thisAlbum) {
+	Album.prototype.needMediaNameSort = function() {
 		var result =
-			! thisAlbum.mediaNameSort &&
+			! this.mediaNameSort &&
 			Functions.getBooleanCookie("mediaNameSortRequested");
 		return result;
 	};
 
-	Functions.needMediaDateSort = function(thisAlbum) {
+	Album.prototype.needMediaDateSort = function() {
 		var result =
-			thisAlbum.mediaNameSort &&
+			this.mediaNameSort &&
 			! Functions.getBooleanCookie("mediaNameSortRequested");
 		return result;
 	};
 
-	Functions.needMediaDateReverseSort = function(thisAlbum) {
+	Album.prototype.needMediaDateReverseSort = function() {
 		var result =
-			! thisAlbum.mediaNameSort &&
-			thisAlbum.mediaReverseSort !== Functions.getBooleanCookie("mediaReverseSortRequested");
+			! this.mediaNameSort &&
+			this.mediaReverseSort !== Functions.getBooleanCookie("mediaReverseSortRequested");
 		return result;
 	};
 
-	Functions.needMediaNameReverseSort = function(thisAlbum) {
+	Album.prototype.needMediaNameReverseSort = function() {
 		var result =
-			thisAlbum.mediaNameSort &&
-			thisAlbum.mediaReverseSort !== Functions.getBooleanCookie("mediaReverseSortRequested");
+			this.mediaNameSort &&
+			this.mediaReverseSort !== Functions.getBooleanCookie("mediaReverseSortRequested");
 		return result;
-	};
-
-
-	// this function is needed in order to let this point to the correct value in phFl.parseHash
-	Functions.parseHash = function(hash, callback, error) {
-		if (! util.isSearchHash(hash)) {
-			// reset current album search flag to its default value
-			Options.search_current_album = true;
-			Functions.setBooleanCookie("search_current_album", Options.search_current_album);
-			Functions.updateMenu();
-		}
-
-		if (Object.keys(Options).length > 0) {
-			if (! util.isSearchHash(hash)) {
-				// reset the return link from search
-				var [albumHash, mediaHash, mediaFolderHash, savedSearchSubAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
-				Options.cache_base_to_search_in = phFl.cleanHash(albumHash);
-			}
-			//
-			// if (! Options.hasOwnProperty('cache_base_to_search_in') || ! Options.cache_base_to_search_in)
-			// 	Options.cache_base_to_search_in = Options.folders_string;
-
-			phFl.parseHash(hash, callback, error);
-		} else {
-			var promise = Functions.getOptions();
-			promise.then(
-				function() {
-					phFl.parseHash(hash, callback, error);
-				},
-				function(album) {
-					console.trace();
-				}
-			);
-		}
-		// phFl.parseHash(hash, callback, error);
 	};
 
 	Functions.getOptions = function() {
 		return new Promise(
-			function(resolve_getOptions) {
-				var ajaxOptions = {
-					type: "GET",
-					dataType: "json",
-					url: "cache/options.json",
-					success: function(data) {
-						// for map zoom levels, see http://wiki.openstreetmap.org/wiki/Zoom_levels
-
-						for (var key in data)
-							if (data.hasOwnProperty(key))
-								Options[key] = data[key];
-						util.translate();
-						// server_cache_path actually is a constant: it cannot be passed as an option, because getOptions need to know it before reading the options
-						// options.json is in this directory
-						Options.server_cache_path = 'cache';
-
-						maxSize = Options.reduced_sizes[Options.reduced_sizes.length - 1];
-
-						// override according to user selections
-						var titleCookie = Functions.getBooleanCookie("hide_title");
-						if (titleCookie !== null)
-							Options.hide_title = titleCookie;
-
-						var captionCookie = Functions.getBooleanCookie("hide_caption");
-						if (captionCookie !== null)
-							Options.hide_caption = captionCookie;
-
-						var bottomThumbnailsCookie = Functions.getBooleanCookie("hide_bottom_thumbnails");
-						if (bottomThumbnailsCookie !== null)
-							Options.hide_bottom_thumbnails = bottomThumbnailsCookie;
-
-						var slideCookie = Functions.getBooleanCookie("albums_slide_style");
-						if (slideCookie !== null)
-							Options.albums_slide_style = slideCookie;
-
-						if (Options.thumb_spacing)
-							Options.spacingToggle = Options.thumb_spacing;
-						else
-							Options.spacingToggle = Options.media_thumb_size * 0.03;
-
-						var spacingCookie = Functions.getNumberCookie("spacing");
-						if (spacingCookie !== null) {
-							Options.spacing = spacingCookie;
-						} else {
-							Options.spacing = Options.thumb_spacing;
-						}
-
-						var showAlbumNamesCookie = Functions.getBooleanCookie("show_album_names_below_thumbs");
-						if (showAlbumNamesCookie !== null)
-							Options.show_album_names_below_thumbs = showAlbumNamesCookie;
-
-						var showMediaCountCookie = Functions.getBooleanCookie("show_album_media_count");
-						if (showMediaCountCookie !== null)
-							Options.show_album_media_count = showMediaCountCookie;
-
-						var showMediaNamesCookie = Functions.getBooleanCookie("show_media_names_below_thumbs");
-						if (showMediaNamesCookie !== null)
-							Options.show_media_names_below_thumbs = showMediaNamesCookie;
-
-						var squareAlbumsCookie = Functions.getCookie("album_thumb_type");
-						if (squareAlbumsCookie !== null)
-							Options.album_thumb_type = squareAlbumsCookie;
-
-						var squareMediaCookie = Functions.getCookie("media_thumb_type");
-						if (squareMediaCookie !== null)
-							Options.media_thumb_type = squareMediaCookie;
-
-						Options.search_inside_words = false;
-						var searchInsideWordsCookie = Functions.getBooleanCookie("search_inside_words");
-						if (searchInsideWordsCookie !== null)
-							Options.search_inside_words = searchInsideWordsCookie;
-
-						Options.search_any_word = false;
-						var searchAnyWordCookie = Functions.getBooleanCookie("search_any_word");
-						if (searchAnyWordCookie !== null)
-							Options.search_any_word = searchAnyWordCookie;
-
-						Options.search_case_sensitive = false;
-						var searchCaseSensitiveCookie = Functions.getBooleanCookie("search_case_sensitive");
-						if (searchCaseSensitiveCookie !== null)
-							Options.search_case_sensitive = searchCaseSensitiveCookie;
-
-						Options.search_accent_sensitive = false;
-						var searchAccentSensitiveCookie = Functions.getBooleanCookie("search_accent_sensitive");
-						if (searchAccentSensitiveCookie !== null)
-							Options.search_accent_sensitive = searchAccentSensitiveCookie;
-
-						Options.search_current_album = true;
-						var searchCurrentAlbumCookie = Functions.getBooleanCookie("search_current_album");
-						if (searchCurrentAlbumCookie !== null)
-							Options.search_current_album = searchCurrentAlbumCookie;
-
-						Options.show_big_virtual_folders = false;
-						var showBigVirtualFoldersCookie = Functions.getBooleanCookie("show_big_virtual_folders");
-						if (showBigVirtualFoldersCookie !== null)
-							Options.show_big_virtual_folders = showBigVirtualFoldersCookie;
-
-						// Options.search_refine = false;
-						// var searchRefineCookie = Functions.getBooleanCookie("search_refine");
-						// if (searchRefineCookie !== null)
-						// 	Options.search_refine = searchRefineCookie;
-
-						if (! Options.hasOwnProperty('cache_base_to_search_in') || ! Options.cache_base_to_search_in)
-							Options.cache_base_to_search_in = Options.folders_string;
-						if (! Options.hasOwnProperty('saved_cache_base_to_search_in') || ! Options.saved_cache_base_to_search_in)
-							Options.saved_cache_base_to_search_in = Options.folders_string;
-
-						Options.foldersStringWithTrailingSeparator = Options.folders_string + Options.cache_folder_separator;
-						Options.byDateStringWithTrailingSeparator = Options.by_date_string + Options.cache_folder_separator;
-						Options.byGpsStringWithTrailingSeparator = Options.by_gps_string + Options.cache_folder_separator;
-						Options.bySearchStringWithTrailingSeparator = Options.by_search_string + Options.cache_folder_separator;
-						Options.byMapStringWithTrailingSeparator = Options.by_map_string + Options.cache_folder_separator;
-
-						PhotoFloat.initializeMapRootAlbum();
-
-						for (let i = 0; i < Options.reduced_sizes.length; i++) {
-							initialSizes[Options.reduced_sizes[i]] = JSON.parse(JSON.stringify(imagesAndVideos0));
-						}
-
-
-						resolve_getOptions();
-					},
-					error: function(jqXHR, textStatus, errorThrown) {
-						if (errorThrown == "Not Found") {
-							$("#album-view").fadeOut(200);
-							$("#media-view").fadeOut(200);
-							$("#album-view").stop().fadeIn(3500);
-							$("#media-view").stop().fadeIn(3500);
-							$("#error-options-file").stop().fadeIn(200);
-							$("#error-options-file, #error-overlay, #auth-text").fadeOut(2500);
-						}
+			function(resolve_getOptions, reject_getOptions) {
+				if (Object.keys(env.options).length > 0) {
+					if (! util.isSearchHash()) {
+						// reset the return link from search
+						var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(location.hash);
+						env.options.cache_base_to_search_in = phFl.cleanHash(albumHash);
 					}
-				};
-				$.ajax(ajaxOptions);
+					resolve_getOptions();
+				} else {
+					var ajaxOptions = {
+						type: "GET",
+						dataType: "json",
+						url: "cache/options.json",
+						success: function(data) {
+							// for map zoom levels, see http://wiki.openstreetmap.org/wiki/Zoom_levels
+
+							for (var key in data)
+								// if (data.hasOwnProperty(key) && key !== 'request_password_email')
+								if (data.hasOwnProperty(key))
+									env.options[key] = data[key];
+							util.translate();
+							// server_cache_path actually is a constant: it cannot be passed as an option, because getOptions need to know it before reading the options
+							// options.json is in this directory
+							env.options.server_cache_path = 'cache';
+
+							env.maxSize = env.options.reduced_sizes[env.options.reduced_sizes.length - 1];
+
+							// override according to user selections
+							var titleCookie = Functions.getBooleanCookie("hide_title");
+							if (titleCookie !== null)
+								env.options.hide_title = titleCookie;
+
+							var captionCookie = Functions.getBooleanCookie("hide_caption");
+							if (captionCookie !== null)
+								env.options.hide_caption = captionCookie;
+
+							var bottomThumbnailsCookie = Functions.getBooleanCookie("hide_bottom_thumbnails");
+							if (bottomThumbnailsCookie !== null)
+								env.options.hide_bottom_thumbnails = bottomThumbnailsCookie;
+
+							var slideCookie = Functions.getBooleanCookie("albums_slide_style");
+							if (slideCookie !== null)
+								env.options.albums_slide_style = slideCookie;
+
+							if (env.options.thumb_spacing)
+								env.options.spacingToggle = env.options.thumb_spacing;
+							else
+								env.options.spacingToggle = env.options.media_thumb_size * 0.03;
+
+							var spacingCookie = Functions.getNumberCookie("spacing");
+							if (spacingCookie !== null) {
+								env.options.spacing = spacingCookie;
+							} else {
+								env.options.spacing = env.options.thumb_spacing;
+							}
+
+							var showAlbumNamesCookie = Functions.getBooleanCookie("show_album_names_below_thumbs");
+							if (showAlbumNamesCookie !== null)
+								env.options.show_album_names_below_thumbs = showAlbumNamesCookie;
+
+							var showMediaCountCookie = Functions.getBooleanCookie("show_album_media_count");
+							if (showMediaCountCookie !== null)
+								env.options.show_album_media_count = showMediaCountCookie;
+
+							var showMediaNamesCookie = Functions.getBooleanCookie("show_media_names_below_thumbs");
+							if (showMediaNamesCookie !== null)
+								env.options.show_media_names_below_thumbs = showMediaNamesCookie;
+
+							var squareAlbumsCookie = Functions.getCookie("album_thumb_type");
+							if (squareAlbumsCookie !== null)
+								env.options.album_thumb_type = squareAlbumsCookie;
+
+							var squareMediaCookie = Functions.getCookie("media_thumb_type");
+							if (squareMediaCookie !== null)
+								env.options.media_thumb_type = squareMediaCookie;
+
+							env.options.search_inside_words = false;
+							var searchInsideWordsCookie = Functions.getBooleanCookie("search_inside_words");
+							if (searchInsideWordsCookie !== null)
+								env.options.search_inside_words = searchInsideWordsCookie;
+
+							env.options.search_any_word = false;
+							var searchAnyWordCookie = Functions.getBooleanCookie("search_any_word");
+							if (searchAnyWordCookie !== null)
+								env.options.search_any_word = searchAnyWordCookie;
+
+							env.options.search_case_sensitive = false;
+							var searchCaseSensitiveCookie = Functions.getBooleanCookie("search_case_sensitive");
+							if (searchCaseSensitiveCookie !== null)
+								env.options.search_case_sensitive = searchCaseSensitiveCookie;
+
+							env.options.search_accent_sensitive = false;
+							var searchAccentSensitiveCookie = Functions.getBooleanCookie("search_accent_sensitive");
+							if (searchAccentSensitiveCookie !== null)
+								env.options.search_accent_sensitive = searchAccentSensitiveCookie;
+
+							env.options.search_current_album = true;
+							var searchCurrentAlbumCookie = Functions.getBooleanCookie("search_current_album");
+							if (searchCurrentAlbumCookie !== null)
+								env.options.search_current_album = searchCurrentAlbumCookie;
+
+							env.options.show_big_virtual_folders = false;
+							var showBigVirtualFoldersCookie = Functions.getBooleanCookie("show_big_virtual_folders");
+							if (showBigVirtualFoldersCookie !== null)
+								env.options.show_big_virtual_folders = showBigVirtualFoldersCookie;
+
+							// env.options.search_refine = false;
+							// var searchRefineCookie = Functions.getBooleanCookie("search_refine");
+							// if (searchRefineCookie !== null)
+							// 	env.options.search_refine = searchRefineCookie;
+
+							if (! env.options.hasOwnProperty('cache_base_to_search_in') || ! env.options.cache_base_to_search_in)
+								env.options.cache_base_to_search_in = env.options.folders_string;
+							if (! env.options.hasOwnProperty('saved_cache_base_to_search_in') || ! env.options.saved_cache_base_to_search_in)
+								env.options.saved_cache_base_to_search_in = env.options.folders_string;
+
+							env.slideAlbumButtonBorder = 1;
+							env.slideBorder = 3;
+							env.slideMarginFactor = 0.05;
+
+							env.options.foldersStringWithTrailingSeparator = env.options.folders_string + env.options.cache_folder_separator;
+							env.options.byDateStringWithTrailingSeparator = env.options.by_date_string + env.options.cache_folder_separator;
+							env.options.byGpsStringWithTrailingSeparator = env.options.by_gps_string + env.options.cache_folder_separator;
+							env.options.bySearchStringWithTrailingSeparator = env.options.by_search_string + env.options.cache_folder_separator;
+							env.options.bySelectionStringWithTrailingSeparator = env.options.by_selection_string + env.options.cache_folder_separator;
+							env.options.byMapStringWithTrailingSeparator = env.options.by_map_string + env.options.cache_folder_separator;
+
+							if (env.options.request_password_email) {
+								$("#request-password").on('click', util.showPasswordRequestForm);
+								$("#password-request-form").submit(
+									function() {
+										let name = $("#form-name").val().trim();
+										let email = $("#form-email").val().trim();
+										let identity = $("#form-identity").val().trim();
+
+										if (name && email && identity) {
+											// alert(location.href.substr(0, - location.hash) + '?name=' + encodeURI($("#form-name").val()) + '&email=' + encodeURI($("#form-email").val()) + '&identity=' + encodeURI($("#form-identity").val()) + location.hash);
+											var newLocation = location.href.substr(0, - location.hash) +
+											 					'?url=' + encodeURIComponent(location.href) +
+																'&name=' + encodeURIComponent(name) +
+																'&email=' + encodeURIComponent(email) +
+																'&identity=' + encodeURIComponent(identity) +
+																location.hash;
+											$("#auth-text").stop().fadeOut(1000);
+											$("#sending-email").stop().fadeIn(1000);
+											$("#sending-email").fadeOut(3000, function() {
+												location.href = newLocation;
+											});
+										} else {
+											$("#please-fill").css("display", "table");
+											$("#please-fill").fadeOut(5000);
+										}
+										return false;
+									}
+								);
+							} else {
+								$("#request-password").hide();
+							}
+
+							$("#padlock img").attr("alt", util._t("#padlock-img-alt-text"));
+
+							// WARNING: do not initialize the search root album, the app must read it from its json file!
+							util.initializeOrGetMapRootAlbum();
+							util.initializeSelectionRootAlbum();
+
+							env.mapAlbum = new Album();
+							env.selectionAlbum = new Album();
+							env.searchAlbum = new Album();
+
+							env.captionColor = env.options.albums_slide_style ? env.options.slide_album_caption_color : env.options.album_caption_color;
+							env.correctedAlbumThumbSize = env.options.album_thumb_size;
+							env.captionFontSize = Math.round(util.em2px("body", 1) * env.correctedAlbumThumbSize / env.options.album_thumb_size);
+							env.captionHeight = parseInt(env.captionFontSize * 1.1) + 1;
+
+							resolve_getOptions();
+						},
+						error: function(jqXHR, textStatus, errorThrown) {
+							if (errorThrown == "Not Found") {
+								reject_getOptions();
+							}
+						}
+					};
+					$.ajax(ajaxOptions);
+				}
 			}
 		);
 	};
 
 	Functions.prototype.toggleMetadataFromMouse = function(ev) {
-		if (ev.which == 1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			ev.stopPropagation();
 			Functions.toggleMetadata();
 			return false;
@@ -1179,8 +1557,8 @@
 	};
 
 	Functions.prototype.toggleInsideWordsSearch = function() {
-		Options.search_inside_words = ! Options.search_inside_words;
-		Functions.setBooleanCookie("search_inside_words", Options.search_inside_words);
+		env.options.search_inside_words = ! env.options.search_inside_words;
+		Functions.setBooleanCookie("search_inside_words", env.options.search_inside_words);
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
@@ -1188,8 +1566,8 @@
 	};
 
 	Functions.prototype.toggleAnyWordSearch = function() {
-		Options.search_any_word = ! Options.search_any_word;
-		Functions.setBooleanCookie("search_any_word", Options.search_any_word);
+		env.options.search_any_word = ! env.options.search_any_word;
+		Functions.setBooleanCookie("search_any_word", env.options.search_any_word);
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
@@ -1197,8 +1575,8 @@
 	};
 
 	Functions.prototype.toggleCaseSensitiveSearch = function() {
-		Options.search_case_sensitive = ! Options.search_case_sensitive;
-		Functions.setBooleanCookie("search_case_sensitive", Options.search_case_sensitive);
+		env.options.search_case_sensitive = ! env.options.search_case_sensitive;
+		Functions.setBooleanCookie("search_case_sensitive", env.options.search_case_sensitive);
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
@@ -1206,17 +1584,17 @@
 
 	};
 	Functions.prototype.toggleAccentSensitiveSearch = function() {
-		Options.search_accent_sensitive = ! Options.search_accent_sensitive;
-		Functions.setBooleanCookie("search_accent_sensitive", Options.search_accent_sensitive);
+		env.options.search_accent_sensitive = ! env.options.search_accent_sensitive;
+		Functions.setBooleanCookie("search_accent_sensitive", env.options.search_accent_sensitive);
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
 		util.focusSearchField();
 	};
 
-	Functions.prototype.toggleCurrentAbumSearch = function() {
-		Options.search_current_album = ! Options.search_current_album;
-		Functions.setBooleanCookie("search_current_album", Options.search_current_album);
+	Functions.toggleCurrentAbumSearch = function() {
+		env.options.search_current_album = ! env.options.search_current_album;
+		Functions.setBooleanCookie("search_current_album", env.options.search_current_album);
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
@@ -1257,12 +1635,12 @@
 		}
 	};
 
-	Functions.prototype.parseHash = Functions.parseHash;
 	Functions.prototype.getOptions = Functions.getOptions;
 	Functions.prototype.getBooleanCookie = Functions.getBooleanCookie;
 	Functions.prototype.setBooleanCookie = Functions.setBooleanCookie;
 	Functions.prototype.updateMenu = Functions.updateMenu;
 	Functions.prototype.focusSearchField = Functions.focusSearchField;
+	Functions.prototype.toggleCurrentAbumSearch = Functions.toggleCurrentAbumSearch;
 	Functions.prototype.toggleMetadata = Functions.toggleMetadata;
 	Functions.prototype.humanFileSize = Functions.humanFileSize;
 
