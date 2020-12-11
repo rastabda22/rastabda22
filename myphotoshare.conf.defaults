@@ -411,8 +411,8 @@ default_album_name_sort = true
 default_media_name_sort = true
 
 # should default sorting be reverse (more recent photos/videos top)?
-default_album_reverse_sort = true
-default_media_reverse_sort = true
+default_album_reverse_sort = false
+default_media_reverse_sort = false
 
 # How many album thumbnails will fit at least on screen width?
 # Album button sizes will be reduced in order that the given number of buttons fit in it
