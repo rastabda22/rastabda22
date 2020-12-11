@@ -1540,18 +1540,23 @@ class Media(object):
 					_exif[decoded] = gps_data
 
 				# TO DO: this 2 values could be tuples!!!!
-				exif['GPSAltitude'] = _exif["GPSInfo"].get("GPSAltitude", None)
-				exif['GPSAltitudeRef'] = _exif["GPSInfo"].get("GPSAltitudeRef", None)
-				gps_latitude = None
-				gps_latitude_ref = None
-				gps_longitude = None
-				gps_longitude_ref = None
+				gps_altitude = _exif["GPSInfo"].get("GPSAltitude", None)
+				gps_altitude_ref = _exif["GPSInfo"].get("GPSAltitudeRef", None)
+				if gps_altitude is not None and gps_altitude_ref is not None:
+					exif['GPSAltitude'] = int(gps_altitude[0]) / int(gps_altitude[1])
+					exif['GPSAltitudeRef'] = gps_altitude_ref
+					# _exif['GPSAltitude'] is the absolute value of altitude, _exif['GPSAltitudeRef'] == b'\x00' means above sea level, _exif['GPSAltitudeRef'] == b'\x01' means below sea level
+					# let's use _exif['GPSAltitudeRef'] to give _exif['GPSAltitude'] the correct sign
+					if _exif['GPSAltitudeRef'] != b'\x00':
+						_exif['GPSAltitude'] = - _exif['GPSAltitude']
+					_exif['GPSAltitudeRef'] = _exif['GPSAltitudeRef'].decode('utf-8')
+
 				gps_latitude = _exif["GPSInfo"].get("GPSLatitude", None)
 				gps_latitude_ref = _exif["GPSInfo"].get("GPSLatitudeRef", None)
 				gps_longitude = _exif["GPSInfo"].get("GPSLongitude", None)
 				gps_longitude_ref = _exif["GPSInfo"].get("GPSLongitudeRef", None)
 
-				if gps_latitude and gps_latitude_ref and gps_longitude and gps_longitude_ref:
+				if gps_latitude is not None and gps_latitude_ref is not None and gps_longitude is not None and gps_longitude_ref is not None:
 					exif["GPSLatitude"] = Metadata.convert_tuple_to_degrees_decimal(gps_latitude, gps_latitude_ref)
 					exif["GPSLatitudeRef"] = gps_latitude_ref
 					exif["GPSLongitude"] = Metadata.convert_tuple_to_degrees_decimal(gps_longitude, gps_longitude_ref)
