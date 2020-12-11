@@ -1,3 +1,8 @@
+### version v4.9.3 (Dec 11, 2020)
+
+* fixed bugs in reading image exif metadata, only exiftool was reading them correctly
+* changed default sorting of albums and media, now they are sorted by name not reverse
+
 ### version v4.9.2 (Dec 10, 2020)
 
 * many bug fixes

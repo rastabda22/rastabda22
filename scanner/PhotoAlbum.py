@@ -1336,25 +1336,39 @@ class Media(object):
 		_exif = {}
 		used_tool = ""
 		previous = ''
+		ok = False
 		for _tool in Options.config['metadata_tools_preference']:
-			try:
-				message("extracting metadata by "+ _tool + previous + "...", "", 5)
-				if _tool == 'exiftool':
+			message("extracting metadata by "+ _tool + previous + "...", "", 5)
+			if _tool == 'exiftool':
+				try:
 					_exif = self._photo_metadata_by_exiftool(image)
-				elif _tool == 'exifread':
+					ok = True
+				except:
+					indented_message("UNMANAGED ERROR extracting metadata by exiftool", "is it installed?", 5)
+			elif _tool == 'exifread':
+				try:
 					_exif = self._photo_metadata_by_exifread(image)
-				elif _tool == 'PIL':
+					ok = True
+				# except Exception as e:
+				# 	indented_message("exifread failed: " + str(e), e.__class__.__name__, 5)
+				except:
+					indented_message("UNMANAGED ERROR extracting metadata by exifread", "is it installed?", 5)
+			elif _tool == 'PIL':
+				try:
 					_exif = self._photo_metadata_by_PIL(image)
+					ok = True
+				except Exception as e:
+					indented_message("PIL failed: " + str(e), e.__class__.__name__, 5)
+				# except:
+				# 	indented_message("UNMANAGED ERROR extracting metadata by PIL", "is it installed?", 5)
 
-				if _exif:
-					indented_message("metadata extracted by " + _tool, "", 5)
-					used_tool = _tool
-					previous = ''
-					break
-				else:
-					previous = ', ' + _tool + ' -> {}'
-			except:
-				indented_message("UNMANAGED ERROR extracting metadata by " + _tool, "", 5)
+			if ok:
+				indented_message("metadata extracted by " + _tool, "", 5)
+				used_tool = _tool
+				previous = ''
+				break
+			else:
+				previous = ', ' + _tool + ' -> {}'
 
 		all_keys = list(_exif.keys())
 
@@ -1508,7 +1522,15 @@ class Media(object):
 			if (isinstance(value, tuple) or isinstance(value, list)) and (isinstance(decoded, str) or isinstance(decoded, str)) and decoded.startswith("DateTime") and len(value) >= 1:
 				value = value[0]
 			elif isinstance(value, tuple):
-				value = value[0] / value[1]
+				if isinstance(value[0], tuple):
+					value0 = int(value[0][0]) / int(value[0][1])
+				else:
+					value0 = int(value[0])
+				if isinstance(value[1], tuple):
+					value1 = int(value[1][0]) / int(value[1][1])
+				else:
+					value1 = int(value[1])
+				value = value0 / value1
 
 			if decoded == "GPSInfo":
 				gps_data = {}
@@ -1517,19 +1539,24 @@ class Media(object):
 					gps_data[sub_decoded] = value[gps_tag]
 					_exif[decoded] = gps_data
 
+				# TO DO: this 2 values could be tuples!!!!
+				gps_altitude = _exif["GPSInfo"].get("GPSAltitude", None)
+				gps_altitude_ref = _exif["GPSInfo"].get("GPSAltitudeRef", None)
+				if gps_altitude is not None and gps_altitude_ref is not None:
+					exif['GPSAltitude'] = int(gps_altitude[0]) / int(gps_altitude[1])
+					exif['GPSAltitudeRef'] = gps_altitude_ref
+					# _exif['GPSAltitude'] is the absolute value of altitude, _exif['GPSAltitudeRef'] == b'\x00' means above sea level, _exif['GPSAltitudeRef'] == b'\x01' means below sea level
+					# let's use _exif['GPSAltitudeRef'] to give _exif['GPSAltitude'] the correct sign
+					if _exif['GPSAltitudeRef'] != b'\x00':
+						_exif['GPSAltitude'] = - _exif['GPSAltitude']
+					_exif['GPSAltitudeRef'] = _exif['GPSAltitudeRef'].decode('utf-8')
 
-				exif['GPSAltitude'] = _exif['GPSAltitude']
-				exif['GPSAltitudeRef'] = _exif['GPSAltitudeRef']
-				gps_latitude = None
-				gps_latitude_ref = None
-				gps_longitude = None
-				gps_longitude_ref = None
 				gps_latitude = _exif["GPSInfo"].get("GPSLatitude", None)
 				gps_latitude_ref = _exif["GPSInfo"].get("GPSLatitudeRef", None)
 				gps_longitude = _exif["GPSInfo"].get("GPSLongitude", None)
 				gps_longitude_ref = _exif["GPSInfo"].get("GPSLongitudeRef", None)
 
-				if gps_latitude and gps_latitude_ref and gps_longitude and gps_longitude_ref:
+				if gps_latitude is not None and gps_latitude_ref is not None and gps_longitude is not None and gps_longitude_ref is not None:
 					exif["GPSLatitude"] = Metadata.convert_tuple_to_degrees_decimal(gps_latitude, gps_latitude_ref)
 					exif["GPSLatitudeRef"] = gps_latitude_ref
 					exif["GPSLongitude"] = Metadata.convert_tuple_to_degrees_decimal(gps_longitude, gps_longitude_ref)
@@ -1619,7 +1646,7 @@ class Media(object):
 
 				if k_modified in ('GPSLatitude', 'GPSLongitude'):
 					# exifread returns this values like u'[44, 25, 26495533/1000000]'
-					exif[k_modified] = convert_array_degrees_minutes_seconds_to_degrees_decimal(exif[k_modified])
+					exif[k_modified] = Metadata.convert_array_degrees_minutes_seconds_to_degrees_decimal(exif[k_modified])
 
 		return exif
 
@@ -2992,8 +3019,8 @@ class Metadata(object):
 		# the argument is like u'[44, 25, 26495533/1000000]'
 
 		array = array_string[1:-1].split(', ')
-		d = array[0]
-		m = array[1]
+		d = int(array[0])
+		m = int(array[1])
 		s = eval(array[2])
 		result = d + m / 60 + s / 3600
 
