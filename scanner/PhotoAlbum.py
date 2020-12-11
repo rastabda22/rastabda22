@@ -2992,8 +2992,8 @@ class Metadata(object):
 		# the argument is like u'[44, 25, 26495533/1000000]'
 
 		array = array_string[1:-1].split(', ')
-		d = array[0]
-		m = array[1]
+		d = int(array[0])
+		m = int(array[1])
 		s = eval(array[2])
 		result = d + m / 60 + s / 3600
 
