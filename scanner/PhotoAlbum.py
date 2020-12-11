@@ -1619,7 +1619,7 @@ class Media(object):
 
 				if k_modified in ('GPSLatitude', 'GPSLongitude'):
 					# exifread returns this values like u'[44, 25, 26495533/1000000]'
-					exif[k_modified] = convert_array_degrees_minutes_seconds_to_degrees_decimal(exif[k_modified])
+					exif[k_modified] = Metadata.convert_array_degrees_minutes_seconds_to_degrees_decimal(exif[k_modified])
 
 		return exif
 
