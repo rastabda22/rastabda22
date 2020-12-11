@@ -1508,7 +1508,15 @@ class Media(object):
 			if (isinstance(value, tuple) or isinstance(value, list)) and (isinstance(decoded, str) or isinstance(decoded, str)) and decoded.startswith("DateTime") and len(value) >= 1:
 				value = value[0]
 			elif isinstance(value, tuple):
-				value = value[0] / value[1]
+				if isinstance(value[0], tuple):
+					value0 = int(value[0][0]) / int(value[0][1])
+				else:
+					value0 = int(value[0])
+				if isinstance(value[1], tuple):
+					value1 = int(value[1][0]) / int(value[1][1])
+				else:
+					value1 = int(value[1])
+				value = value0 / value1
 
 			if decoded == "GPSInfo":
 				gps_data = {}
@@ -1517,9 +1525,8 @@ class Media(object):
 					gps_data[sub_decoded] = value[gps_tag]
 					_exif[decoded] = gps_data
 
-
-				exif['GPSAltitude'] = _exif['GPSAltitude']
-				exif['GPSAltitudeRef'] = _exif['GPSAltitudeRef']
+				exif['GPSAltitude'] = _exif["GPSInfo"].get("GPSAltitude", None)
+				exif['GPSAltitudeRef'] = _exif["GPSInfo"].get("GPSAltitudeRef", None)
 				gps_latitude = None
 				gps_latitude_ref = None
 				gps_longitude = None
