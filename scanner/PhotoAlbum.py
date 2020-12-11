@@ -1539,6 +1539,7 @@ class Media(object):
 					gps_data[sub_decoded] = value[gps_tag]
 					_exif[decoded] = gps_data
 
+				# TO DO: this 2 values could be tuples!!!!
 				exif['GPSAltitude'] = _exif["GPSInfo"].get("GPSAltitude", None)
 				exif['GPSAltitudeRef'] = _exif["GPSInfo"].get("GPSAltitudeRef", None)
 				gps_latitude = None
