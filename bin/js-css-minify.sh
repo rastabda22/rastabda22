@@ -68,21 +68,6 @@ case $MINIFY_JS in
 			exit 1
 		fi
 	;;
-	uglifyjs)
-		buble -v > /dev/null 2>&1
-		if [ $? -ne 0 ]; then
-			( >&2 echo "'buble' is not installed and is required for using 'uglifyjs' minifier." )
-			( >&2 echo "Look for package 'node-buble' or 'https://github.com/Rich-Harris/buble'" )
-			( >&2 echo "Aborting..." )
-			exit 1
-		fi
-		uglifyjs -V > /dev/null 2>&1
-		if [ $? -ne 0 ]; then
-			( >&2 echo "'uglifyjs' is not installed. Look for package 'node-uglifyjs' or 'http://lisperator.net/uglifyjs/'" )
-			( >&2 echo "Aborting..." )
-			exit 1
-		fi
-	;;
 	terser)
 		uglifyjs.terser -V > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
@@ -186,11 +171,6 @@ while read jsfile; do
 
 		jsmin3)
 			python3 -m jsmin $jsfile > $newfile
-		;;
-
-		uglifyjs)
-			# We need to use 'buble' first to convert from ES6 to ES5 as uglifyjs only parses ES5.
-			buble $jsfile | uglifyjs - -o $newfile
 		;;
 
 		terser)
