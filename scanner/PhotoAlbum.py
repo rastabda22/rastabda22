@@ -1336,25 +1336,39 @@ class Media(object):
 		_exif = {}
 		used_tool = ""
 		previous = ''
+		ok = False
 		for _tool in Options.config['metadata_tools_preference']:
-			try:
-				message("extracting metadata by "+ _tool + previous + "...", "", 5)
-				if _tool == 'exiftool':
+			message("extracting metadata by "+ _tool + previous + "...", "", 5)
+			if _tool == 'exiftool':
+				try:
 					_exif = self._photo_metadata_by_exiftool(image)
-				elif _tool == 'exifread':
+					ok = True
+				except:
+					indented_message("UNMANAGED ERROR extracting metadata by exiftool", "is it installed?", 5)
+			elif _tool == 'exifread':
+				try:
 					_exif = self._photo_metadata_by_exifread(image)
-				elif _tool == 'PIL':
+					ok = True
+				# except Exception as e:
+				# 	indented_message("exifread failed: " + str(e), e.__class__.__name__, 5)
+				except:
+					indented_message("UNMANAGED ERROR extracting metadata by exifread", "is it installed?", 5)
+			elif _tool == 'PIL':
+				try:
 					_exif = self._photo_metadata_by_PIL(image)
+					ok = True
+				except Exception as e:
+					indented_message("PIL failed: " + str(e), e.__class__.__name__, 5)
+				# except:
+				# 	indented_message("UNMANAGED ERROR extracting metadata by PIL", "is it installed?", 5)
 
-				if _exif:
-					indented_message("metadata extracted by " + _tool, "", 5)
-					used_tool = _tool
-					previous = ''
-					break
-				else:
-					previous = ', ' + _tool + ' -> {}'
-			except:
-				indented_message("UNMANAGED ERROR extracting metadata by " + _tool, "", 5)
+			if ok:
+				indented_message("metadata extracted by " + _tool, "", 5)
+				used_tool = _tool
+				previous = ''
+				break
+			else:
+				previous = ', ' + _tool + ' -> {}'
 
 		all_keys = list(_exif.keys())
 
