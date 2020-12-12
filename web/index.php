@@ -92,7 +92,6 @@
 		<script type="text/javascript" src="js/012-jszip-utils.js"></script>
 		<script type="text/javascript" src="js/013-md5.js"></script>
 		<script type="text/javascript" src="js/014-file-saver.js"></script>
-		<script type="text/javascript" src="js/015-json-cycle.js"></script>
 		<script type="text/javascript" src="js/016-lzw-compress.js"></script>
 		<script type="text/javascript" src="js/020-classes.js"></script>
 		<script type="text/javascript" src="js/031-translations.js"></script>
