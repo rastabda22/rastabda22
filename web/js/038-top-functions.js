@@ -3007,11 +3007,7 @@
 
 		map.addPopupMover();
 
-		var promise = phFl.endPreparingAlbumAndKeepOn(
-			env.mapAlbum,
-			null,
-			null
-		);
+		var promise = phFl.endPreparingAlbumAndKeepOn(env.mapAlbum, null, null);
 		promise.then(
 			function() {
 				map.updatePopup(MapFunctions.titleWrapper1 + env.mapAlbum.generateHtmlForImages() + MapFunctions.titleWrapper2);
