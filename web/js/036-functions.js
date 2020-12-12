@@ -1301,62 +1301,86 @@
 		return true;
 	};
 
+	Album.prototype.isUndefinedOrFalse = function(property) {
+		return ! this.hasOwnProperty(property) || ! this[property];
+	}
+
+	Album.prototype.isTrue = function(property) {
+		return ! this.isUndefinedOrFalse(property);
+	}
+
 	// this function refer to the need that the html showed be sorted
 	Album.prototype.needAlbumNameSort = function() {
-		var result =
-			! this.albumNameSort &&
-			Functions.getBooleanCookie("albumNameSortRequested");
-		return result;
+		return this.isUndefinedOrFalse("albumNameSort") && env.albumNameSort;
 	};
 
 	Album.prototype.needAlbumDateSort = function() {
-		var result =
-			this.albumNameSort &&
-			! Functions.getBooleanCookie("albumNameSortRequested");
-		return result;
+		return this.isTrue("albumNameSort") && ! env.albumNameSort;
 	};
 
 	Album.prototype.needAlbumDateReverseSort = function() {
-		var result =
-			! this.albumNameSort &&
-			this.albumReverseSort !== Functions.getBooleanCookie("albumReverseSortRequested");
-		return result;
+		return this.needAlbumDateSort && (
+			this.isTrue("albumReverseSort") && ! env.albumReverseSort ||
+			this.isUndefinedOrFalse("albumReverseSort") && env.albumReverseSort
+		);
 	};
 
 	Album.prototype.needAlbumNameReverseSort = function() {
-		var result =
-			this.albumNameSort &&
-			this.albumReverseSort !== Functions.getBooleanCookie("albumReverseSortRequested");
-		return result;
+		return this.needAlbumNameSort() && (
+			this.isTrue("albumReverseSort") && ! env.albumReverseSort ||
+			this.isUndefinedOrFalse("albumReverseSort") && env.albumReverseSort
+		);
 	};
 
 	Album.prototype.needMediaNameSort = function() {
-		var result =
-			! this.mediaNameSort &&
-			Functions.getBooleanCookie("mediaNameSortRequested");
-		return result;
+		return this.isUndefinedOrFalse("mediaNameSort") && env.mediaNameSort;
 	};
 
 	Album.prototype.needMediaDateSort = function() {
-		var result =
-			this.mediaNameSort &&
-			! Functions.getBooleanCookie("mediaNameSortRequested");
-		return result;
+		return this.isTrue("mediaNameSort") && ! env.mediaNameSort;
 	};
 
 	Album.prototype.needMediaDateReverseSort = function() {
-		var result =
-			! this.mediaNameSort &&
-			this.mediaReverseSort !== Functions.getBooleanCookie("mediaReverseSortRequested");
-		return result;
+		return this.needMediaDateSort && (
+			this.isTrue("mediaReverseSort") && ! env.mediaReverseSort ||
+			this.isUndefinedOrFalse("mediaReverseSort") && env.mediaReverseSort
+		);
 	};
 
 	Album.prototype.needMediaNameReverseSort = function() {
-		var result =
-			this.mediaNameSort &&
-			this.mediaReverseSort !== Functions.getBooleanCookie("mediaReverseSortRequested");
-		return result;
+		return this.needMediaNameSort() && (
+			this.isTrue("mediaReverseSort") && ! env.mediaReverseSort ||
+			this.isUndefinedOrFalse("mediaReverseSort") && env.mediaReverseSort
+		);
 	};
+
+	// Album.prototype.needMediaNameSort = function() {
+	// 	var result =
+	// 		this.isUndefinedOrFalse(mediaNameSort) &&
+	// 		Functions.getBooleanCookie("mediaNameSortRequested");
+	// 	return result;
+	// };
+	//
+	// Album.prototype.needMediaDateSort = function() {
+	// 	var result =
+	// 		this.isTrue(mediaNameSort) &&
+	// 		! Functions.getBooleanCookie("mediaNameSortRequested");
+	// 	return result;
+	// };
+	//
+	// Album.prototype.needMediaDateReverseSort = function() {
+	// 	var result =
+	// 		this.isUndefinedOrFalse(mediaNameSort) &&
+	// 		this.mediaReverseSort !== Functions.getBooleanCookie("mediaReverseSortRequested");
+	// 	return result;
+	// };
+	//
+	// Album.prototype.needMediaNameReverseSort = function() {
+	// 	var result =
+	// 		this.isTrue(mediaNameSort) &&
+	// 		this.mediaReverseSort !== Functions.getBooleanCookie("mediaReverseSortRequested");
+	// 	return result;
+	// };
 
 	Functions.getOptions = function() {
 		return new Promise(
@@ -1388,6 +1412,37 @@
 							env.maxSize = env.options.reduced_sizes[env.options.reduced_sizes.length - 1];
 
 							// override according to user selections
+
+							// if (Functions.getBooleanCookie("albumNameSortRequested") === null)
+							// 	Functions.setBooleanCookie("albumNameSortRequested", env.options.default_album_name_sort);
+							// if (Functions.getBooleanCookie("albumReverseSortRequested") === null)
+							// 	Functions.setBooleanCookie("albumReverseSortRequested", env.options.default_album_reverse_sort);
+							//
+							// if (Functions.getBooleanCookie("mediaNameSortRequested") === null)
+							// 	Functions.setBooleanCookie("mediaNameSortRequested", env.options.default_media_name_sort);
+							// if (Functions.getBooleanCookie("mediaReverseSortRequested") === null)
+							// 	Functions.setBooleanCookie("mediaReverseSortRequested", env.options.default_media_reverse_sort);
+
+							var albumNameSortCookie = Functions.getBooleanCookie("albumNameSortRequested");
+							env.albumNameSort = env.options.default_album_name_sort;
+							if (albumNameSortCookie !== null)
+								env.albumNameSort = albumNameSortCookie;
+
+							var albumReverseSortCookie = Functions.getBooleanCookie("albumReverseSortRequested");
+							env.albumReverseSort = env.options.default_album_reverse_sort;
+							if (albumReverseSortCookie !== null)
+								env.albumReverseSort = albumReverseSortCookie;
+
+							var mediaNameSortCookie = Functions.getBooleanCookie("mediaNameSortRequested");
+							env.mediaNameSort = env.options.default_media_name_sort;
+							if (mediaNameSortCookie !== null)
+								env.mediaNameSort = mediaNameSortCookie;
+
+							var mediaReverseSortCookie = Functions.getBooleanCookie("mediaReverseSortRequested");
+							env.mediaReverseSort = env.options.default_media_reverse_sort;
+							if (mediaReverseSortCookie !== null)
+								env.mediaReverseSort = mediaReverseSortCookie;
+
 							var titleCookie = Functions.getBooleanCookie("hideTitle");
 							if (titleCookie !== null)
 								env.options.hide_title = titleCookie;

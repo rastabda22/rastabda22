@@ -562,7 +562,6 @@
 										delete self.mediaReverseSort;
 										delete self.albumNameSort;
 										delete self.albumReverseSort;
-										self.initializeSortPropertiesAndCookies();
 										self.sortAlbumsMedia();
 
 										resolve_getNextProtectedDirectory();
@@ -789,10 +788,8 @@
 									if (! util.isSearchRootCacheBase(self.cacheBase)) {
 										delete self.mediaNameSort;
 										delete self.mediaReverseSort;
-										// }
 										delete self.albumNameSort;
 										delete self.albumReverseSort;
-										self.initializeSortPropertiesAndCookies();
 										self.sortAlbumsMedia();
 									}
 									resolve_continueAddProtectedContent();
@@ -1782,8 +1779,6 @@
 															}
 														);
 													}
-													delete env.searchAlbum.mediaNameSort;
-													delete env.searchAlbum.mediaReverseSort;
 
 													if (env.searchAlbum.subalbums.length) {
 														// search albums need to conform to default behaviour of albums: json files have subalbums and media sorted according to options
@@ -1811,11 +1806,12 @@
 
 													Promise.all(promises).then(
 														function() {
+															delete env.searchAlbum.mediaNameSort;
+															delete env.searchAlbum.mediaReverseSort;
 															delete env.searchAlbum.albumNameSort;
 															delete env.searchAlbum.albumReverseSort;
 
 															if (env.searchAlbum.media.length || env.searchAlbum.subalbums.length) {
-																env.searchAlbum.initializeSortPropertiesAndCookies();
 																env.searchAlbum.sortAlbumsMedia();
 															}
 
@@ -1875,6 +1871,7 @@
 	};
 
 	PhotoFloat.endPreparingAlbumAndKeepOn = function(resultsAlbumFinal, mediaHash, mediaFolderHash) {
+		// this function is called after a search album or a map album is prepared
 		return new Promise(
 			function(resolve_endPreparingAlbumAndKeepOn) {
 				// add the various counts
@@ -1884,6 +1881,8 @@
 				// save in the cache array
 				if (! env.cache.getAlbum(resultsAlbumFinal.cacheBase))
 					env.cache.putAlbum(resultsAlbumFinal);
+
+				resultsAlbumFinal.sortAlbumsMedia();
 
 				var result = resultsAlbumFinal.getMediaIndex(mediaFolderHash, mediaHash);
 				if (result === null) {
@@ -1902,9 +1901,6 @@
 	Album.prototype.getMediaIndex = function(mediaFolderHash, mediaHash) {
 		// returns the index of the media identified by the arguments
 		// returns null if no media matches
-
-		this.initializeSortPropertiesAndCookies();
-		this.sortAlbumsMedia();
 
 		var mediaIndex = -1;
 		if (mediaHash !== null) {

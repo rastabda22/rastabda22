@@ -1469,7 +1469,6 @@
 		f.setOptions();
 
 		if (env.currentMedia === null) {
-			env.currentAlbum.initializeSortPropertiesAndCookies();
 			$("#menu-icon").attr("title", util._t("#menu-icon-title"));
 			env.currentAlbum.sortAlbumsMedia();
 		}
@@ -1556,11 +1555,12 @@
 
 	Album.prototype.sortSubalbumsByDate = function(ev) {
 		if (
-			this.albumNameSort &&
+			this.isTrue("albumNameSort") &&
 			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
+			env.albumNameSort = false;
 			f.setBooleanCookie("albumNameSortRequested", false);
-			f.setBooleanCookie("albumReverseSortRequested", this.albumReverseSort);
+			// f.setBooleanCookie("albumReverseSortRequested", this.albumReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
 			TopFunctions.showAlbum("refreshSubalbums");
@@ -1571,11 +1571,12 @@
 
 	Album.prototype.sortSubalbumsByName = function(ev) {
 		if (
-			! this.albumNameSort &&
+			this.isUndefinedOrFalse("albumNameSort") &&
 			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
+			env.albumNameSort = true;
 			f.setBooleanCookie("albumNameSortRequested", true);
-			f.setBooleanCookie("albumReverseSortRequested", this.albumReverseSort);
+			// f.setBooleanCookie("albumReverseSortRequested", this.albumReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
 			TopFunctions.showAlbum("refreshSubalbums");
@@ -1588,7 +1589,8 @@
 		if (
 			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
-			f.setBooleanCookie("albumReverseSortRequested", ! this.albumReverseSort);
+			env.albumReverseSort = ! env.albumReverseSort;
+			f.setBooleanCookie("albumReverseSortRequested", env.albumReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
 			TopFunctions.showAlbum("refreshSubalbums");
@@ -1603,8 +1605,9 @@
 			this.mediaNameSort &&
 			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
+			env.mediaNameSort = false;
 			f.setBooleanCookie("mediaNameSortRequested", false);
-			f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
+			// f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
 			if (this.cacheBase == env.currentAlbum.cacheBase)
@@ -1622,8 +1625,9 @@
 			! this.mediaNameSort &&
 			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
+			env.mediaNameSort = true;
 			f.setBooleanCookie("mediaNameSortRequested", true);
-			f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
+			// f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
 			if (this.cacheBase == env.currentAlbum.cacheBase)
@@ -1637,8 +1641,8 @@
 
 	Album.prototype.sortMediaReverse = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-			f.setBooleanCookie("mediaReverseSortRequested", ! f.getBooleanCookie("mediaReverseSortRequested"));
-
+			env.mediaReverseSort = ! env.mediaReverseSort;
+			f.setBooleanCookie("mediaReverseSortRequested", env.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
 			if (this.cacheBase == env.currentAlbum.cacheBase)
@@ -3189,7 +3193,6 @@
 						env.mapAlbum.numsProtectedMediaInSubTree = new NumsProtected({",": env.mapAlbum.numsMedia});
 						delete env.mapAlbum.mediaNameSort;
 						delete env.mapAlbum.mediaReverseSort;
-						env.mapAlbum.initializeSortPropertiesAndCookies();
 						// now sort them according to options
 						env.mapAlbum.sortAlbumsMedia();
 

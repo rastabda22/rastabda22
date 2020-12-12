@@ -1403,7 +1403,6 @@
 			this.generateSingleMediaCaptionForSelection(album);
 			delete env.selectionAlbum.mediaNameSort;
 			delete env.selectionAlbum.mediaReverseSort;
-			env.selectionAlbum.initializeSortPropertiesAndCookies();
 			env.selectionAlbum.sortAlbumsMedia();
 
 			// update the selector
@@ -1454,7 +1453,6 @@
 
 			delete env.selectionAlbum.mediaNameSort;
 			delete env.selectionAlbum.mediaReverseSort;
-			env.selectionAlbum.initializeSortPropertiesAndCookies();
 			env.selectionAlbum.sortAlbumsMedia();
 
 			if (env.currentAlbum.isSelection()) {
@@ -1548,7 +1546,6 @@
 							subalbum.generateCaptionForSearch();
 							delete env.selectionAlbum.albumNameSort;
 							delete env.selectionAlbum.albumReverseSort;
-							env.selectionAlbum.initializeSortPropertiesAndCookies();
 							env.selectionAlbum.sortAlbumsMedia();
 
 							$(clickedSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-subalbum"));
@@ -1618,7 +1615,6 @@
 
 							delete env.selectionAlbum.albumNameSort;
 							delete env.selectionAlbum.albumReverseSort;
-							env.selectionAlbum.initializeSortPropertiesAndCookies();
 							env.selectionAlbum.sortAlbumsMedia();
 
 							if (env.currentAlbum.isSelection()) {
@@ -2931,22 +2927,24 @@
 		// album properties reflect the current sorting of album and media objects
 		// json files have subalbums and media sorted by date not reversed
 
-		if (this.needAlbumNameSort()) {
-			this.sortByPath();
-			this.albumNameSort = true;
-			this.albumReverseSort = false;
-			// $("li.album-sort.by-name").addClass("selected");
-		} else if (this.needAlbumDateSort()) {
-			Utilities.sortByDate(this.subalbums);
-			this.albumNameSort = false;
-			this.albumReverseSort = false;
-		}
-		if (this.needAlbumDateReverseSort() || this.needAlbumNameReverseSort()) {
-			this.subalbums.reverse();
-			this.albumReverseSort = ! this.albumReverseSort;
+		if (this.subalbums.length) {
+			if (this.needAlbumNameSort()) {
+				this.sortByPath();
+				this.albumNameSort = true;
+				this.albumReverseSort = false;
+				// $("li.album-sort.by-name").addClass("selected");
+			} else if (this.needAlbumDateSort()) {
+				Utilities.sortByDate(this.subalbums);
+				this.albumNameSort = false;
+				this.albumReverseSort = false;
+			}
+			if (this.needAlbumDateReverseSort() || this.needAlbumNameReverseSort()) {
+				this.subalbums.reverse();
+				this.albumReverseSort = ! this.albumReverseSort;
+			}
 		}
 
-		if (this.hasOwnProperty("media")) {
+		if (this.hasOwnProperty("media") && this.media.length) {
 			if (this.needMediaNameSort()) {
 				this.media.sortByName();
 				this.mediaNameSort = true;
@@ -2974,25 +2972,8 @@
 		}
 	};
 
-	Album.prototype.initializeSortPropertiesAndCookies = function() {
-		// this function applies the sorting on the media and subalbum lists
-		// and sets the album properties that attest the lists status
-
-		// Cookies reflect the requested sorting in ui
-		// they remember the ui state when a change in sort is requested (via the top buttons) and when the hash changes
-		// if they are not set yet, they are set to default values
-
-		if (Functions.getBooleanCookie("albumNameSortRequested") === null)
-			Functions.setBooleanCookie("albumNameSortRequested", env.options.default_album_name_sort);
-		if (Functions.getBooleanCookie("albumReverseSortRequested") === null)
-			Functions.setBooleanCookie("albumReverseSortRequested", env.options.default_album_reverse_sort);
-
-		if (Functions.getBooleanCookie("mediaNameSortRequested") === null)
-			Functions.setBooleanCookie("mediaNameSortRequested", env.options.default_media_name_sort);
-		if (Functions.getBooleanCookie("mediaReverseSortRequested") === null)
-			Functions.setBooleanCookie("mediaReverseSortRequested", env.options.default_media_reverse_sort);
-
-		// album properties reflect the current sorting of album and media objects
+	Album.prototype.initializeSortProperties = function() {
+		// this function sets the subalbum and media properties that attest the lists status
 		// json files have subalbums and media sorted according to the options
 
 		if (this.albumNameSort === undefined)
