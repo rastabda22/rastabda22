@@ -1388,19 +1388,19 @@
 							env.maxSize = env.options.reduced_sizes[env.options.reduced_sizes.length - 1];
 
 							// override according to user selections
-							var titleCookie = Functions.getBooleanCookie("hide_title");
+							var titleCookie = Functions.getBooleanCookie("hideTitle");
 							if (titleCookie !== null)
 								env.options.hide_title = titleCookie;
 
-							var captionCookie = Functions.getBooleanCookie("hide_caption");
+							var captionCookie = Functions.getBooleanCookie("hideCaption");
 							if (captionCookie !== null)
 								env.options.hide_caption = captionCookie;
 
-							var bottomThumbnailsCookie = Functions.getBooleanCookie("hide_bottom_thumbnails");
+							var bottomThumbnailsCookie = Functions.getBooleanCookie("hideBottomThumbnails");
 							if (bottomThumbnailsCookie !== null)
 								env.options.hide_bottom_thumbnails = bottomThumbnailsCookie;
 
-							var slideCookie = Functions.getBooleanCookie("albums_slide_style");
+							var slideCookie = Functions.getBooleanCookie("albumsSlideStyle");
 							if (slideCookie !== null)
 								env.options.albums_slide_style = slideCookie;
 
@@ -1416,60 +1416,55 @@
 								env.options.spacing = env.options.thumb_spacing;
 							}
 
-							var showAlbumNamesCookie = Functions.getBooleanCookie("show_album_names_below_thumbs");
+							var showAlbumNamesCookie = Functions.getBooleanCookie("showAlbumNamesBelowThumbs");
 							if (showAlbumNamesCookie !== null)
 								env.options.show_album_names_below_thumbs = showAlbumNamesCookie;
 
-							var showMediaCountCookie = Functions.getBooleanCookie("show_album_media_count");
+							var showMediaCountCookie = Functions.getBooleanCookie("showAlbumMediaCount");
 							if (showMediaCountCookie !== null)
 								env.options.show_album_media_count = showMediaCountCookie;
 
-							var showMediaNamesCookie = Functions.getBooleanCookie("show_media_names_below_thumbs");
+							var showMediaNamesCookie = Functions.getBooleanCookie("showMediaNamesBelowThumbs");
 							if (showMediaNamesCookie !== null)
 								env.options.show_media_names_below_thumbs = showMediaNamesCookie;
 
-							var squareAlbumsCookie = Functions.getCookie("album_thumb_type");
+							var squareAlbumsCookie = Functions.getCookie("albumThumbType");
 							if (squareAlbumsCookie !== null)
 								env.options.album_thumb_type = squareAlbumsCookie;
 
-							var squareMediaCookie = Functions.getCookie("media_thumb_type");
+							var squareMediaCookie = Functions.getCookie("mediaThumbType");
 							if (squareMediaCookie !== null)
 								env.options.media_thumb_type = squareMediaCookie;
 
 							env.options.search_inside_words = false;
-							var searchInsideWordsCookie = Functions.getBooleanCookie("search_inside_words");
+							var searchInsideWordsCookie = Functions.getBooleanCookie("searchInsideWords");
 							if (searchInsideWordsCookie !== null)
 								env.options.search_inside_words = searchInsideWordsCookie;
 
 							env.options.search_any_word = false;
-							var searchAnyWordCookie = Functions.getBooleanCookie("search_any_word");
+							var searchAnyWordCookie = Functions.getBooleanCookie("searchAnyWord");
 							if (searchAnyWordCookie !== null)
 								env.options.search_any_word = searchAnyWordCookie;
 
 							env.options.search_case_sensitive = false;
-							var searchCaseSensitiveCookie = Functions.getBooleanCookie("search_case_sensitive");
+							var searchCaseSensitiveCookie = Functions.getBooleanCookie("searchCaseSensitive");
 							if (searchCaseSensitiveCookie !== null)
 								env.options.search_case_sensitive = searchCaseSensitiveCookie;
 
 							env.options.search_accent_sensitive = false;
-							var searchAccentSensitiveCookie = Functions.getBooleanCookie("search_accent_sensitive");
+							var searchAccentSensitiveCookie = Functions.getBooleanCookie("searchAccentSensitive");
 							if (searchAccentSensitiveCookie !== null)
 								env.options.search_accent_sensitive = searchAccentSensitiveCookie;
 
 							env.options.search_current_album = true;
-							var searchCurrentAlbumCookie = Functions.getBooleanCookie("search_current_album");
+							var searchCurrentAlbumCookie = Functions.getBooleanCookie("searchCurrentAlbum");
 							if (searchCurrentAlbumCookie !== null)
 								env.options.search_current_album = searchCurrentAlbumCookie;
 
 							env.options.show_big_virtual_folders = false;
-							var showBigVirtualFoldersCookie = Functions.getBooleanCookie("show_big_virtual_folders");
+							var showBigVirtualFoldersCookie = Functions.getBooleanCookie("showBigVirtualFolders");
 							if (showBigVirtualFoldersCookie !== null)
 								env.options.show_big_virtual_folders = showBigVirtualFoldersCookie;
-
-							// env.options.search_refine = false;
-							// var searchRefineCookie = Functions.getBooleanCookie("search_refine");
-							// if (searchRefineCookie !== null)
-							// 	env.options.search_refine = searchRefineCookie;
 
 							if (! env.options.hasOwnProperty('cache_base_to_search_in') || ! env.options.cache_base_to_search_in)
 								env.options.cache_base_to_search_in = env.options.folders_string;
@@ -1558,7 +1553,7 @@
 
 	Functions.prototype.toggleInsideWordsSearch = function() {
 		env.options.search_inside_words = ! env.options.search_inside_words;
-		Functions.setBooleanCookie("search_inside_words", env.options.search_inside_words);
+		Functions.setBooleanCookie("searchInsideWords", env.options.search_inside_words);
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
@@ -1567,7 +1562,7 @@
 
 	Functions.prototype.toggleAnyWordSearch = function() {
 		env.options.search_any_word = ! env.options.search_any_word;
-		Functions.setBooleanCookie("search_any_word", env.options.search_any_word);
+		Functions.setBooleanCookie("searchAnyWord", env.options.search_any_word);
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
@@ -1576,7 +1571,7 @@
 
 	Functions.prototype.toggleCaseSensitiveSearch = function() {
 		env.options.search_case_sensitive = ! env.options.search_case_sensitive;
-		Functions.setBooleanCookie("search_case_sensitive", env.options.search_case_sensitive);
+		Functions.setBooleanCookie("searchCaseSensitive", env.options.search_case_sensitive);
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
@@ -1585,7 +1580,7 @@
 	};
 	Functions.prototype.toggleAccentSensitiveSearch = function() {
 		env.options.search_accent_sensitive = ! env.options.search_accent_sensitive;
-		Functions.setBooleanCookie("search_accent_sensitive", env.options.search_accent_sensitive);
+		Functions.setBooleanCookie("searchAccentSensitive", env.options.search_accent_sensitive);
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
@@ -1594,7 +1589,7 @@
 
 	Functions.toggleCurrentAbumSearch = function() {
 		env.options.search_current_album = ! env.options.search_current_album;
-		Functions.setBooleanCookie("search_current_album", env.options.search_current_album);
+		Functions.setBooleanCookie("searchCurrentAlbum", env.options.search_current_album);
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
