@@ -123,7 +123,7 @@
 		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
 		var isMapOrPopup = isMap || isPopup;
 
-		if (typeof thisAlbum === "undefined")
+		if (thisAlbum === undefined)
 			thisAlbum = env.currentAlbum;
 		var isAlbumWithOneMedia = thisAlbum.isAlbumWithOneMedia();
 		var isSingleMedia = (env.currentMedia !== null || isAlbumWithOneMedia);
@@ -1168,7 +1168,7 @@
 				return false;
 			}
 		});
-		if (typeof thumb === "undefined")
+		if (thumb === undefined)
 			return;
 		if (env.currentMedia !== null) {
 			var scroller = $("#album-view");

@@ -241,7 +241,7 @@
 									finalZoom = null;
 								if (finalZoom === null || finalZoom < currentZoom)
 									finalZoom = currentZoom;
-							} else if (finalZoom === null || typeof finalZoom === "undefined") {
+							} else if (finalZoom === null || finalZoom === undefined) {
 								finalZoom = currentZoom * zoomIncrement;
 							}
 							let pinchInOutPromise = PinchSwipe.pinchInOut(currentZoom, finalZoom, duration, center);
@@ -258,7 +258,7 @@
 				}
 			);
 		} else {
-			if (finalZoom === null || typeof finalZoom === "undefined")
+			if (finalZoom === null || finalZoom === undefined)
 				finalZoom = currentZoom * zoomIncrement;
 			let pinchInOutPromise = PinchSwipe.pinchInOut(currentZoom, finalZoom, duration, center);
 			pinchInOutPromise.then(
@@ -273,7 +273,7 @@
 		// var mediaWidthOnScreen, mediaHeightOnScreen;
 		var mediaRatioOnScreen, windowRatio;
 		var finalZoomWasZero = false;
-		if (typeof finalZoom === "undefined")
+		if (finalZoom === undefined)
 			finalZoom = null;
 		if (finalZoom === null)
 			finalZoom = currentZoom * zoomDecrement;
@@ -428,7 +428,7 @@
 			}
 
 			// when dragging with the mouse, fingerCount is 0
-			if (typeof event.touches === "undefined" || fingerCount === 1) {
+			if (event.touches === undefined || fingerCount === 1) {
 				if (currentZoom === initialZoom) {
 					// zoom = 1: swipe
 					if (phase == "move") {
@@ -451,13 +451,13 @@
 				} else {
 					// zoom > 1: drag
 
-					if (typeof event.clientX !== "undefined") {
+					if (event.clientX !== undefined) {
 						clientX = event.clientX;
 						clientY = event.clientY;
-					} else if (typeof event.touches !== "undefined" && event.touches.length > 0) {
+					} else if (event.touches !== undefined && event.touches.length > 0) {
 						clientX = event.touches[0].clientX;
 						clientY = event.touches[0].clientY;
-					} else if (typeof event.changedTouches !== "undefined" && event.changedTouches.length > 0) {
+					} else if (event.changedTouches !== undefined && event.changedTouches.length > 0) {
 						clientX = event.changedTouches[0].clientX;
 						clientY = event.changedTouches[0].clientY;
 					}

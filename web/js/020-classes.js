@@ -231,7 +231,7 @@
 		}
 
 		hasGpsData() {
-			return this.mimeType.indexOf("image") === 0 && typeof this.metadata.latitude !== "undefined";
+			return this.mimeType.indexOf("image") === 0 && this.metadata.latitude !== undefined;
 		}
 	}
 

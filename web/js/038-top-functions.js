@@ -522,7 +522,7 @@
 			if (components.length > 2 || singleMedia !== null)
 				title += raquo;
 
-			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
+			if (savedSearchAlbumHash !== undefined && savedSearchAlbumHash !== null) {
 				searchFolderHash = savedSearchAlbumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
 				let addSearchFolder = false;
 				if (searchFolderHash.split(env.options.cache_folder_separator).length > 1) {
@@ -564,7 +564,7 @@
 			}
 
 			initialValue = 2;
-			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null && util.isSearchCacheBase(savedSearchAlbumHash)) {
+			if (savedSearchAlbumHash !== undefined && savedSearchAlbumHash !== null && util.isSearchCacheBase(savedSearchAlbumHash)) {
 				// the folders from the first until the search folder inclusive must not be shown
 				initialValue = savedSearchAlbumHash.split(env.options.cache_folder_separator).slice(2).length + 1;
 			}
@@ -1337,29 +1337,29 @@
 		$(".media-box#" + id + " .metadata tr.gps").off('click');
 		text = "<table>";
 		// Here we keep only the technical metadata
-		if (typeof this.date !== "undefined")
+		if (this.date !== undefined)
 			text += "<tr><td class='metadata-data-date'></td><td>" + this.date + "</td></tr>";
 		var fileSize = this.fileSizes[0].images;
 		if (this.mimeType.indexOf("video") === 0)
 			fileSize = this.fileSizes[0].videos;
 		text += "<tr><td class='metadata-data-file-size'></td><td>" + f.humanFileSize(fileSize) + "</td></tr>";
-		if (typeof this.metadata.size !== "undefined")
+		if (this.metadata.size !== undefined)
 			text += "<tr><td class='metadata-data-size'></td><td>" + this.metadata.size[0] + " x " + this.metadata.size[1] + "</td></tr>";
-		if (typeof this.metadata.make !== "undefined")
+		if (this.metadata.make !== undefined)
 			text += "<tr><td class='metadata-data-make'></td><td>" + this.metadata.make + "</td></tr>";
-		if (typeof this.metadata.model !== "undefined")
+		if (this.metadata.model !== undefined)
 			text += "<tr><td class='metadata-data-model'></td><td>" + this.metadata.model + "</td></tr>";
-		if (typeof this.metadata.aperture !== "undefined")
+		if (this.metadata.aperture !== undefined)
 			text += "<tr><td class='metadata-data-aperture'></td><td> f/" + this.metadata.aperture + "</td></tr>";
-		if (typeof this.metadata.focalLength !== "undefined")
+		if (this.metadata.focalLength !== undefined)
 			text += "<tr><td class='metadata-data-focalLength'></td><td>" + this.metadata.focalLength + " mm</td></tr>";
-		if (typeof this.metadata.subjectDistanceRange !== "undefined")
+		if (this.metadata.subjectDistanceRange !== undefined)
 			text += "<tr><td class='metadata-data-subjectDistanceRange'></td><td>" + this.metadata.subjectDistanceRange + "</td></tr>";
-		if (typeof this.metadata.iso !== "undefined")
+		if (this.metadata.iso !== undefined)
 			text += "<tr><td class='metadata-data-iso'></td><td>" + this.metadata.iso + "</td></tr>";
-		if (typeof this.metadata.sceneCaptureType !== "undefined")
+		if (this.metadata.sceneCaptureType !== undefined)
 			text += "<tr><td class='metadata-data-sceneCaptureType'></td><td>" + this.metadata.sceneCaptureType + "</td></tr>";
-		if (typeof this.metadata.exposureTime !== "undefined") {
+		if (this.metadata.exposureTime !== undefined) {
 			if (typeof this.metadata.exposureTime === "string")
 				exposureTime = this.metadata.exposureTime;
 			else if (this.metadata.exposureTime > 0.3)
@@ -1368,25 +1368,25 @@
 				exposureTime = "1/" + Math.round(1 / this.metadata.exposureTime);
 			text += "<tr><td class='metadata-data-exposureTime'></td><td>" + exposureTime + " sec</td></tr>";
 		}
-		if (typeof this.metadata.exposureProgram !== "undefined")
+		if (this.metadata.exposureProgram !== undefined)
 			text += "<tr><td class='metadata-data-exposureProgram'></td><td>" + this.metadata.exposureProgram + "</td></tr>";
-		if (typeof this.metadata.exposureCompensation !== "undefined")
+		if (this.metadata.exposureCompensation !== undefined)
 			text += "<tr><td class='metadata-data-exposureCompensation'></td><td>" + this.metadata.exposureCompensation + "</td></tr>";
-		if (typeof this.metadata.spectralSensitivity !== "undefined")
+		if (this.metadata.spectralSensitivity !== undefined)
 			text += "<tr><td class='metadata-data-spectralSensitivity'></td><td>" + this.metadata.spectralSensitivity + "</td></tr>";
-		if (typeof this.metadata.sensingMethod !== "undefined")
+		if (this.metadata.sensingMethod !== undefined)
 			text += "<tr><td class='metadata-data-sensingMethod'></td><td>" + this.metadata.sensingMethod + "</td></tr>";
-		if (typeof this.metadata.lightSource !== "undefined")
+		if (this.metadata.lightSource !== undefined)
 			text += "<tr><td class='metadata-data-lightSource'></td><td>" + this.metadata.lightSource + "</td></tr>";
-		if (typeof this.metadata.flash !== "undefined")
+		if (this.metadata.flash !== undefined)
 			text += "<tr><td class='metadata-data-flash'></td><td>" + this.metadata.flash + "</td></tr>";
-		if (typeof this.metadata.orientationText !== "undefined")
+		if (this.metadata.orientationText !== undefined)
 			text += "<tr><td class='metadata-data-orientation'></td><td>" + this.metadata.orientationText + "</td></tr>";
-		if (typeof this.metadata.duration !== "undefined")
+		if (this.metadata.duration !== undefined)
 			text += "<tr><td class='metadata-data-duration'></td><td>" + this.metadata.duration + " sec</td></tr>";
-		if (typeof this.metadata.latitude !== "undefined")
+		if (this.metadata.latitude !== undefined)
 			text += "<tr class='map-link' class='gps'><td class='metadata-data-latitude'></td><td>" + this.metadata.latitudeMS + " </td></tr>";
-		if (typeof this.metadata.longitude !== "undefined")
+		if (this.metadata.longitude !== undefined)
 			text += "<tr class='gps'><td class='metadata-data-longitude'></td><td>" + this.metadata.longitudeMS + " </td></tr>";
 		text += "</table>";
 		$(".media-box#" + id + " .metadata").html(text);
@@ -2205,7 +2205,7 @@
 					imageElement = $(imageString);
 
 					imageElement.get(0).media = ithMedia;
-					if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
+					if (savedSearchAlbumHash !== undefined && savedSearchAlbumHash !== null)
 						mediaHash = phFl.encodeHash(env.currentAlbum.cacheBase, ithMedia, foundAlbumHash, savedSearchAlbumHash);
 					else
 						mediaHash = phFl.encodeHash(env.currentAlbum.cacheBase, ithMedia);
@@ -2440,7 +2440,7 @@
 								if (env.currentAlbum.isSearch() || env.currentAlbum.isSelection()) {
 									subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, ithSubalbum.cacheBase, env.currentAlbum.cacheBase);
 								} else {
-									if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
+									if (savedSearchAlbumHash !== undefined && savedSearchAlbumHash !== null)
 										subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, foundAlbumHash, savedSearchAlbumHash);
 									else
 										subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null);
@@ -2974,7 +2974,7 @@
 				}
 			);
 
-			if (typeof from !== "undefined") {
+			if (from !== undefined) {
 				if (env.popupRefreshType == "previousAlbum")
 					TopFunctions.prepareAndDoPopupUpdate();
 				else if (env.popupRefreshType == "mapAlbum") {
@@ -3029,7 +3029,7 @@
 
 				$("#loading").show();
 
-				if (evt !== null && typeof evt.latlng !== "undefined") {
+				if (evt !== null && evt.latlng !== undefined) {
 					clickHistoryElement = {
 							latlng: evt.latlng,
 							shiftKey: evt.originalEvent.shiftKey,

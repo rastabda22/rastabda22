@@ -1052,7 +1052,7 @@
 		$("#album-view #subalbums, #album-view #thumbs").addClass("hidden");
 		$("#media-view").addClass("hidden");
 		$("#loading").hide();
-		if (typeof selector === "undefined")
+		if (selector === undefined)
 			selector = '#no-results';
 		$(".search-failed").hide();
 		$(selector).stop().fadeIn(1000);
@@ -2536,7 +2536,7 @@
 		else
 			albumHeight = 0;
 		var distanceFromImageBorder = 15;
-		// if (typeof containerHeight === "undefined") {
+		// if (containerHeight === undefined) {
 		containerHeight = env.windowHeight - titleHeight - albumHeight;
 		containerWidth = env.windowWidth;
 		// }
@@ -2558,7 +2558,7 @@
 		if ($("#album-view").is(":visible"))
 			albumHeight = Math.max($("#album-view").height(), parseInt($("#album-view").css("height")));
 		var distanceFromImageBorder = 15;
-		// if (typeof containerHeight === "undefined") {
+		// if (containerHeight === undefined) {
 		containerHeight = env.windowHeight - titleHeight - albumHeight;
 		containerWidth = env.windowWidth;
 		// }
@@ -2995,14 +2995,14 @@
 		// album properties reflect the current sorting of album and media objects
 		// json files have subalbums and media sorted according to the options
 
-		if (typeof this.albumNameSort === "undefined")
+		if (this.albumNameSort === undefined)
 			this.albumNameSort = env.options.default_album_name_sort;
-		if (typeof this.albumReverseSort === "undefined")
+		if (this.albumReverseSort === undefined)
 			this.albumReverseSort = env.options.default_album_reverse_sort;
 
-		if (typeof this.mediaNameSort === "undefined")
+		if (this.mediaNameSort === undefined)
 			this.mediaNameSort = env.options.default_media_name_sort;
-		if (typeof this.mediaReverseSort === "undefined")
+		if (this.mediaReverseSort === undefined)
 			this.mediaReverseSort = env.options.default_media_reverse_sort;
 	};
 

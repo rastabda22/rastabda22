@@ -1146,7 +1146,7 @@
 	PhotoFloat.encodeHash = function(cacheBase, media, foundAlbumHash, savedSearchAlbumHash) {
 		var hash;
 
-		if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
+		if (savedSearchAlbumHash !== undefined && savedSearchAlbumHash !== null) {
 			savedSearchAlbumHash = PhotoFloat.cleanHash(savedSearchAlbumHash);
 			foundAlbumHash = PhotoFloat.cleanHash(foundAlbumHash);
 		}
@@ -1154,7 +1154,7 @@
 		if (media !== null) {
 			// media hash
 			if (util.isFolderCacheBase(cacheBase)) {
-				if (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null)
+				if (savedSearchAlbumHash === undefined || savedSearchAlbumHash === null)
 					// media in folders album, count = 2
 					hash = util.pathJoin([
 						cacheBase,
@@ -1171,7 +1171,7 @@
 			} else if (
 				util.isByDateCacheBase(cacheBase) ||
 				util.isByGpsCacheBase(cacheBase) ||
-				util.isSearchCacheBase(cacheBase) && (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null) ||
+				util.isSearchCacheBase(cacheBase) && (savedSearchAlbumHash === undefined || savedSearchAlbumHash === null) ||
 				util.isSelectionCacheBase(cacheBase) ||
 				util.isMapCacheBase(cacheBase)
 			)
@@ -1183,7 +1183,7 @@
 				]);
 		} else {
 			// no media: album hash
-			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
+			if (savedSearchAlbumHash !== undefined && savedSearchAlbumHash !== null)
 				// found album or one of its subalbums, count = 3
 				hash = util.pathJoin([
 					cacheBase,
