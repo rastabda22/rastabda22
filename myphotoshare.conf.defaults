@@ -361,22 +361,20 @@ hide_title = false
 hide_bottom_thumbnails = false
 
 # spacing between thumbnails, pixels (integer)
-# the user can modify this value
-thumb_spacing = 0
+thumb_spacing = 4
 
 # should be used a slide-like style?
-# the user can modify this value
-albums_slide_style = false
+albums_slide_style = true
 
 # will photos/videos names be shown below the thumbnail in albums?
-show_media_names_below_thumbs = false
+show_media_names_below_thumbs = true
 
 # will album names be shown below the thumbnail?
 # this option is not followed for virtual (date and gps) folders
 show_album_names_below_thumbs = true
 
 # should we show the media count in the album thumbnails and in the title?
-show_album_media_count = false
+show_album_media_count = true
 
 # The css font-size value for the title on page top
 # other values: large, small, or a px/em size
