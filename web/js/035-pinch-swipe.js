@@ -237,11 +237,11 @@
 								mediaBoxInnerHeight = $(mediaContainerSelector).css("height");
 
 								currentZoom = initialZoom;
-								if (finalZoom === undefined)
+								if (typeof finalZoom === "undefined")
 									finalZoom = null;
 								if (finalZoom === null || finalZoom < currentZoom)
 									finalZoom = currentZoom;
-							} else if (finalZoom === null || finalZoom === undefined) {
+							} else if (finalZoom === null || typeof finalZoom === "undefined") {
 								finalZoom = currentZoom * zoomIncrement;
 							}
 							let pinchInOutPromise = PinchSwipe.pinchInOut(currentZoom, finalZoom, duration, center);
@@ -258,7 +258,7 @@
 				}
 			);
 		} else {
-			if (finalZoom === null || finalZoom === undefined)
+			if (finalZoom === null || typeof finalZoom === "undefined")
 				finalZoom = currentZoom * zoomIncrement;
 			let pinchInOutPromise = PinchSwipe.pinchInOut(currentZoom, finalZoom, duration, center);
 			pinchInOutPromise.then(
@@ -273,7 +273,7 @@
 		// var mediaWidthOnScreen, mediaHeightOnScreen;
 		var mediaRatioOnScreen, windowRatio;
 		var finalZoomWasZero = false;
-		if (finalZoom === undefined)
+		if (typeof finalZoom === "undefined")
 			finalZoom = null;
 		if (finalZoom === null)
 			finalZoom = currentZoom * zoomDecrement;

@@ -224,10 +224,10 @@
 	Album.prototype.initializeIncludedFilesByCodesSimpleCombinationProperty = function(codesSimpleCombination, number) {
 		if (! this.hasOwnProperty("includedFilesByCodesSimpleCombination"))
 			this.includedFilesByCodesSimpleCombination = new IncludedFiles();
-		if (codesSimpleCombination !== undefined) {
+		if (typeof codesSimpleCombination !== "undefined") {
 			if (! this.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination))
 				this.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
-			if (number !== undefined) {
+			if (typeof number !== "undefined") {
 				if (codesSimpleCombination !== "," && ! this.includedFilesByCodesSimpleCombination[codesSimpleCombination].hasOwnProperty(number)) {
 					this.includedFilesByCodesSimpleCombination[codesSimpleCombination][number] = {};
 					this.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album = {};
@@ -654,7 +654,7 @@
 		return new Promise(
 			function(resolve_addProtectedContent, reject_addProtectedContent) {
 				var numsPromise;
-				if (self.isEmpty() && numsProtectedMediaInSubTree !== undefined) {
+				if (self.isEmpty() && typeof numsProtectedMediaInSubTree !== "undefined") {
 					self.numsProtectedMediaInSubTree = numsProtectedMediaInSubTree;
 				}
 				// if (self.hasOwnProperty("numsProtectedMediaInSubTree")) {
@@ -933,7 +933,7 @@
 							}
 
 							var promise;
-							if (numsProtectedMediaInSubTree !== undefined)
+							if (typeof numsProtectedMediaInSubTree !== "undefined")
 								promise = album.addProtectedContent({getMedia: getMedia, getPositions: getPositions}, numsProtectedMediaInSubTree);
 							else
 							promise = album.addProtectedContent({getMedia: getMedia, getPositions: getPositions});
@@ -995,7 +995,7 @@
 						},
 						function unprotectedAlbumUnexisting(emptyAlbum) {
 							// look for a protected album: something must be there
-							if (numsProtectedMediaInSubTree !== undefined)
+							if (typeof numsProtectedMediaInSubTree !== "undefined")
 								emptyAlbum.numsProtectedMediaInSubTree = numsProtectedMediaInSubTree;
 							var promise = emptyAlbum.addProtectedContent({getMedia: getMedia, getPositions: getPositions});
 							promise.then(
@@ -1143,7 +1143,7 @@
 	PhotoFloat.encodeHash = function(cacheBase, media, foundAlbumHash, savedSearchAlbumHash) {
 		var hash;
 
-		if (savedSearchAlbumHash !== undefined && savedSearchAlbumHash !== null) {
+		if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
 			savedSearchAlbumHash = PhotoFloat.cleanHash(savedSearchAlbumHash);
 			foundAlbumHash = PhotoFloat.cleanHash(foundAlbumHash);
 		}
@@ -1151,7 +1151,7 @@
 		if (media !== null) {
 			// media hash
 			if (util.isFolderCacheBase(cacheBase)) {
-				if (savedSearchAlbumHash === undefined || savedSearchAlbumHash === null)
+				if (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null)
 					// media in folders album, count = 2
 					hash = util.pathJoin([
 						cacheBase,
@@ -1168,7 +1168,7 @@
 			} else if (
 				util.isByDateCacheBase(cacheBase) ||
 				util.isByGpsCacheBase(cacheBase) ||
-				util.isSearchCacheBase(cacheBase) && (savedSearchAlbumHash === undefined || savedSearchAlbumHash === null) ||
+				util.isSearchCacheBase(cacheBase) && (typeof savedSearchAlbumHash === "undefined" || savedSearchAlbumHash === null) ||
 				util.isSelectionCacheBase(cacheBase) ||
 				util.isMapCacheBase(cacheBase)
 			)
@@ -1180,7 +1180,7 @@
 				]);
 		} else {
 			// no media: album hash
-			if (savedSearchAlbumHash !== undefined && savedSearchAlbumHash !== null)
+			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
 				// found album or one of its subalbums, count = 3
 				hash = util.pathJoin([
 					cacheBase,

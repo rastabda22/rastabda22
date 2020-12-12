@@ -1052,7 +1052,7 @@
 		$("#album-view #subalbums, #album-view #thumbs").addClass("hidden");
 		$("#media-view").addClass("hidden");
 		$("#loading").hide();
-		if (selector === undefined)
+		if (typeof selector === "undefined")
 			selector = '#no-results';
 		$(".search-failed").hide();
 		$(selector).stop().fadeIn(1000);
@@ -1142,7 +1142,7 @@
 			return false;
 		else {
 			var foundAlbum = env.searchAlbum.subalbums.find(x => this.foldersCacheBase.indexOf(x.cacheBase) === 0);
-			if (foundAlbum !== undefined)
+			if (typeof foundAlbum !== "undefined")
 				return foundAlbum;
 			else
 				return false;
@@ -1295,11 +1295,9 @@
 	};
 
 	Album.prototype.removeAllMediaFromSelection = function() {
-		if (this !== undefined) {
-			for (let indexMedia = this.media.length - 1; indexMedia >= 0; indexMedia --) {
-				let singleMedia = this.media[indexMedia];
-				singleMedia.removeFromSelection("#media-select-box-" + indexMedia);
-			}
+		for (let indexMedia = this.media.length - 1; indexMedia >= 0; indexMedia --) {
+			let singleMedia = this.media[indexMedia];
+			singleMedia.removeFromSelection("#media-select-box-" + indexMedia);
 		}
 	};
 
@@ -2753,7 +2751,7 @@
 
 	Utilities.upHash = function(hash) {
 		var resultHash;
-		if (hash === undefined)
+		if (typeof hash === "undefined")
 			hash = window.location.hash;
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
 

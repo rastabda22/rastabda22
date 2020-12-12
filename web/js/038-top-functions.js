@@ -522,7 +522,7 @@
 			if (components.length > 2 || singleMedia !== null)
 				title += raquo;
 
-			if (savedSearchAlbumHash !== undefined && savedSearchAlbumHash !== null) {
+			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
 				searchFolderHash = savedSearchAlbumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
 				let addSearchFolder = false;
 				if (searchFolderHash.split(env.options.cache_folder_separator).length > 1) {
@@ -564,7 +564,7 @@
 			}
 
 			initialValue = 2;
-			if (savedSearchAlbumHash !== undefined && savedSearchAlbumHash !== null && util.isSearchCacheBase(savedSearchAlbumHash)) {
+			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null && util.isSearchCacheBase(savedSearchAlbumHash)) {
 				// the folders from the first until the search folder inclusive must not be shown
 				initialValue = savedSearchAlbumHash.split(env.options.cache_folder_separator).slice(2).length + 1;
 			}
@@ -2209,7 +2209,7 @@
 					imageElement = $(imageString);
 
 					imageElement.get(0).media = ithMedia;
-					if (savedSearchAlbumHash !== undefined && savedSearchAlbumHash !== null)
+					if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
 						mediaHash = phFl.encodeHash(env.currentAlbum.cacheBase, ithMedia, foundAlbumHash, savedSearchAlbumHash);
 					else
 						mediaHash = phFl.encodeHash(env.currentAlbum.cacheBase, ithMedia);
@@ -2444,7 +2444,7 @@
 								if (env.currentAlbum.isSearch() || env.currentAlbum.isSelection()) {
 									subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, ithSubalbum.cacheBase, env.currentAlbum.cacheBase);
 								} else {
-									if (savedSearchAlbumHash !== undefined && savedSearchAlbumHash !== null)
+									if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
 										subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, foundAlbumHash, savedSearchAlbumHash);
 									else
 										subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null);
@@ -2978,7 +2978,7 @@
 				}
 			);
 
-			if (from !== undefined) {
+			if (typeof from !== "undefined") {
 				if (env.popupRefreshType == "previousAlbum")
 					TopFunctions.prepareAndDoPopupUpdate();
 				else if (env.popupRefreshType == "mapAlbum") {
@@ -3223,8 +3223,8 @@
 		  return "<p class='caption-text'>" + text + "</p>";
 		}
 
-		var nullTitle = title === undefined || ! title;
-		var nullDescription = description === undefined || ! description;
+		var nullTitle = (typeof title === "undefined") || ! title;
+		var nullDescription = (typeof description === "undefined") || ! description;
 
 		if (! nullTitle) {
 		  $("#caption-title").html(formatText(title));

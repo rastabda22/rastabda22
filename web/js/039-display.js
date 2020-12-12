@@ -742,7 +742,7 @@ $(document).ready(function() {
 						f.setBooleanCookie("searchCurrentAlbum", env.options.search_current_album);
 					}
 
-					if (typeof isPhp === "function" && postData !== undefined && postData !== null) {
+					if (typeof isPhp === "function" && typeof postData !== "undefined" && postData !== null) {
 						util.readPostData();
 					}
 
