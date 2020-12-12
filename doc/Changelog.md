@@ -1,3 +1,5 @@
+* replace `uglifyjs` minifier by `uglifyjs.terser`
+
 ### version v4.9.3 (Dec 11, 2020)
 
 * fixed bugs in reading image exif metadata, only exiftool was reading them correctly

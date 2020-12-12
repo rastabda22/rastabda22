@@ -90,7 +90,7 @@ css_minifier = cssmin
 # permitted values:
 #    web_service : https://javascript-minifier.com/
 #    jsmin3 : python3-jsmin (https://github.com/tikitu/jsmin) (Default)
-#    uglifyjs: node-uglify (http://lisperator.net/uglifyjs/)
+#    terser: uglifyjs.terser (https://terser.org/)
 js_minifier = jsmin3
 
 

@@ -32,7 +32,7 @@ Minifying JavaScript and CSS reduces the bandwidth used to display MyPhotoShare 
 $ bin/js-css-minify.sh /etc/myphotoshare/myphotoshare.conf
 
 Using cssmin as CSS minifier
-Using uglifyjs as JS minifier
+Using terser as JS minifier
 
 == Minifying js files in js directory ==
 
