@@ -501,49 +501,47 @@
 			// the drag vector is calculated here for use in the swipeStatus function
 			// lamentably, swipeStatus doesn't return info about the swipe vector
 
-			if (event.buttons > 0) {
-				pinchZoom = parseFloat(pinchZoom);
-				if (event.button === 2 && (event.shiftKey || event.ctrlKey || event.altKey)) {
-					return;
+			pinchZoom = parseFloat(pinchZoom);
+			if (event.button === 2 && (event.shiftKey || event.ctrlKey || event.altKey)) {
+				return;
+			}
+
+			if (phase === "start") {
+				// distance = 0
+				baseZoom = currentZoom;
+				if (fingerCount < 2)
+					previousFingerEnd = {x: fingerData[0].start.x, y: fingerData[0].start.y};
+			} else if (phase === "move" && fingerCount >= 2) {
+				// phase is "move"
+				let center = {x: 0, y: 0};
+				for (let i = 0; i < event.touches.length; i ++) {
+					center.x += event.touches[i].clientX / event.touches.length;
+					center.y += event.touches[i].clientY / event.touches.length;
 				}
 
-				if (phase === "start") {
-					// distance = 0
-					baseZoom = currentZoom;
-					if (fingerCount < 2)
-						previousFingerEnd = {x: fingerData[0].start.x, y: fingerData[0].start.y};
-				} else if (phase === "move" && fingerCount >= 2) {
-					// phase is "move"
-					let center = {x: 0, y: 0};
-					for (let i = 0; i < event.touches.length; i ++) {
-						center.x += event.touches[i].clientX / event.touches.length;
-						center.y += event.touches[i].clientY / event.touches.length;
-					}
-
-					let finalZoom = baseZoom * pinchZoom;
-					// currentZoom = baseZoom;
-					if (pinchZoom > 1) {
-						PinchSwipe.pinchIn(event, finalZoom, 0, center);
-					} else {
-						PinchSwipe.pinchOut(event, finalZoom, 0);
-					}
+				let finalZoom = baseZoom * pinchZoom;
+				// currentZoom = baseZoom;
+				if (pinchZoom > 1) {
+					PinchSwipe.pinchIn(event, finalZoom, 0, center);
+				} else {
+					PinchSwipe.pinchOut(event, finalZoom, 0);
 				}
+			}
 
-				if (fingerCount < 2) {
-					// calculate the dragVector for dragging
-					var dragVectorX = fingerData[0].end.x - previousFingerEnd.x;
-					var dragVectorY = fingerData[0].end.y - previousFingerEnd.y;
-					previousFingerEnd = {x: fingerData[0].end.x, y: fingerData[0].end.y};
-					var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
-					if (dragVectorLength)
-						// normalize the vector
-						dragVector = {
-							x: dragVectorX / dragVectorLength,
-							y: dragVectorY / dragVectorLength
-						};
-					else
-						dragVector = [0, 0];
-				}
+			if (fingerCount < 2) {
+				// calculate the dragVector for dragging
+				var dragVectorX = fingerData[0].end.x - previousFingerEnd.x;
+				var dragVectorY = fingerData[0].end.y - previousFingerEnd.y;
+				previousFingerEnd = {x: fingerData[0].end.x, y: fingerData[0].end.y};
+				var dragVectorLength = Math.sqrt(dragVectorX * dragVectorX + dragVectorY * dragVectorY);
+				if (dragVectorLength)
+					// normalize the vector
+					dragVector = {
+						x: dragVectorX / dragVectorLength,
+						y: dragVectorY / dragVectorLength
+					};
+				else
+					dragVector = [0, 0];
 			}
 		}
 
