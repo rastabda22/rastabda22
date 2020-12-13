@@ -551,13 +551,13 @@
 			return this.isTransversal() || this.isCollection();
 		}
 
-		hasValidAuxiliaryPositionsAndMedia() {
-			return this.hasOwnProperty("positionsAndMedia");
+		hasValidPositionsAndMediaInAlbumAndSubalbums() {
+			return this.hasOwnProperty("positionsAndMediaInAlbum");
 		}
 
-		invalidateAuxiliaryPositionsAndMedia() {
-			if (this.hasOwnProperty("positionsAndMedia"))
-				delete this.positionsAndMedia;
+		invalidatePositionsAndMediaInAlbumAndSubalbums() {
+			if (this.hasOwnProperty("positionsAndMediaInAlbum"))
+				delete this.positionsAndMediaInAlbum;
 		}
 
 		isEqual(otherAlbum) {

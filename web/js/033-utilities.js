@@ -519,12 +519,10 @@
 					)
 						this[iOld].mediaList.push(newPositionAndMedia.mediaList[iNew]);
 				}
-				// return positionsAndMedia;
 				return;
 			}
 		}
 		this.push(newPositionAndMedia);
-		// return positionsAndMedia;
 	};
 
 	PositionAndMedia.prototype.matchPosition = function(positionAndMedia2) {
@@ -535,7 +533,6 @@
 		for (var i = 0; i < newPositionsAndMedia.length; i ++) {
 			this.addPositionAndMedia(newPositionsAndMedia[i]);
 		}
-		// return positionsAndMedia;
 	};
 
 	PositionsAndMedia.prototype.removePositionsAndMedia = function(positionsAndMediaToRemove) {
@@ -1415,7 +1412,7 @@
 			} else if (parseInt(clickedSelector.substring(singleMediaSelector.length + 1)) === env.currentMediaIndex && $(singleMediaSelector).is(":visible")) {
 				$(singleMediaSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-single-media"));
 			}
-			this.parent.invalidateAuxiliaryPositionsAndMedia();
+			this.parent.invalidatePositionsAndMediaInAlbumAndSubalbums();
 		}
 
 	};
@@ -1492,7 +1489,7 @@
 				// update the selector
 				$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-single-media"));
 			}
-			this.parent.invalidateAuxiliaryPositionsAndMedia();
+			this.parent.invalidatePositionsAndMediaInAlbumAndSubalbums();
 		}
 	};
 
@@ -1547,7 +1544,7 @@
 							env.selectionAlbum.sortAlbumsMedia();
 
 							$(clickedSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-subalbum"));
-							self.invalidateAuxiliaryPositionsAndMedia();
+							self.invalidatePositionsAndMediaInAlbumAndSubalbums();
 
 							resolve_addSubalbum();
 						}
@@ -1609,7 +1606,7 @@
 							if (! env.currentAlbum.isSelection()) {
 								$(clickedSelector + " img").attr("src", "img/checkbox-unchecked-48px.png").attr("title", Utilities._t("#select-subalbum"));
 							}
-							self.invalidateAuxiliaryPositionsAndMedia();
+							self.invalidatePositionsAndMediaInAlbumAndSubalbums();
 
 							delete env.selectionAlbum.albumNameSort;
 							delete env.selectionAlbum.albumReverseSort;

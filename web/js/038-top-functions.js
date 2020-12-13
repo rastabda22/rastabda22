@@ -12,17 +12,17 @@
 	function TopFunctions() {
 	}
 
-	Album.prototype.generateAuxiliaryPositionsAndMedia = function() {
+	Album.prototype.generatePositionsAndMediaInAlbumAndSubalbums = function() {
 		var self = this;
 		return new Promise(
-			function(resolve_generateAuxiliaryPositionsAndMedia) {
-				if (self.hasValidAuxiliaryPositionsAndMedia()) {
-					resolve_generateAuxiliaryPositionsAndMedia();
+			function(resolve_generatePositionsAndMediaInAlbumAndSubalbums) {
+				if (self.hasValidPositionsAndMediaInAlbumAndSubalbums()) {
+					resolve_generatePositionsAndMediaInAlbumAndSubalbums();
 				} else {
 					self.positionsAndMediaInSubalbums = new PositionsAndMedia([]);
 					self.numPositionsInSubalbums = 0;
-					self.positionsAndMedia = new PositionsAndMedia([]);
-					self.numPositions = 0;
+					self.positionsAndMediaInAlbum = new PositionsAndMedia([]);
+					self.numPositionsInAlbum = 0;
 					let numSubalbums = self.subalbums.length;
 					let hasPositions = (
 						self.hasPositions() && (
@@ -36,17 +36,17 @@
 							self.positionsAndMediaInSubalbums = self.positionsAndMediaInTree;
 							self.numPositionsInSubalbums = self.positionsAndMediaInSubalbums.length;
 						} else {
-							self.positionsAndMedia = self.media.generatePositionsAndMedia();
-							self.numPositions = self.positionsAndMedia.length;
+							self.positionsAndMediaInAlbum = self.media.generatePositionsAndMedia();
+							self.numPositionsInAlbum = self.positionsAndMediaInAlbum.length;
 							self.positionsAndMediaInSubalbums = new PositionsAndMedia(self.positionsAndMediaInTree);
-							self.positionsAndMediaInSubalbums.removePositionsAndMedia(self.positionsAndMedia);
+							self.positionsAndMediaInSubalbums.removePositionsAndMedia(self.positionsAndMediaInAlbum);
 							self.numPositionsInSubalbums = self.positionsAndMediaInSubalbums.length;
 						}
-						resolve_generateAuxiliaryPositionsAndMedia();
+						resolve_generatePositionsAndMediaInAlbumAndSubalbums();
 					} else {
 						let subalbumPromises = [];
 						if (hasPositions)
-							self.positionsAndMedia = new PositionsAndMedia(self.positionsAndMediaInTree);
+							self.positionsAndMediaInAlbum = new PositionsAndMedia(self.positionsAndMediaInTree);
 						self.subalbums.forEach(
 							function(thisSubalbum, thisIndex) {
 								let subalbumPromise;
@@ -54,8 +54,8 @@
 									self.positionsAndMediaInSubalbums.mergePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
 									self.numPositionsInSubalbums = self.positionsAndMediaInSubalbums.length;
 									if (hasPositions) {
-										self.positionsAndMedia.removePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
-										self.numPositions = self.positionsAndMedia.length;
+										self.positionsAndMediaInAlbum.removePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
+										self.numPositionsInAlbum = self.positionsAndMediaInAlbum.length;
 									}
 									subalbumPromise = new Promise(
 										function(resolve_subalbumPromise) {
@@ -72,8 +72,8 @@
 													self.positionsAndMediaInSubalbums.mergePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
 													self.numPositionsInSubalbums = self.positionsAndMediaInSubalbums.length;
 													if (hasPositions) {
-														self.positionsAndMedia.removePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
-														self.numPositions = self.positionsAndMedia.length;
+														self.positionsAndMediaInAlbum.removePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
+														self.numPositionsInAlbum = self.positionsAndMediaInAlbum.length;
 													}
 													resolve_subalbumPromise();
 												},
@@ -89,7 +89,7 @@
 						);
 						Promise.all(subalbumPromises).then(
 							function() {
-								resolve_generateAuxiliaryPositionsAndMedia();
+								resolve_generatePositionsAndMediaInAlbumAndSubalbums();
 							}
 						);
 					}
@@ -645,7 +645,7 @@
 				}
 			}
 		}
-		let promise = env.currentAlbum.generateAuxiliaryPositionsAndMedia();
+		let promise = env.currentAlbum.generatePositionsAndMediaInAlbumAndSubalbums();
 
 		promise.then(
 			function() {
@@ -660,7 +660,7 @@
 					let replace = "";
 					let shortcutAdded = false;
 					let marker = "<marker>";
-					if (env.currentAlbum.numPositions && env.currentAlbum.numPositionsInTree !== env.currentAlbum.numPositionsInSubalbums) {
+					if (env.currentAlbum.numPositionsInAlbum && env.currentAlbum.numPositionsInTree !== env.currentAlbum.numPositionsInSubalbums) {
 						replace +=
 							"<a class='map-popup-trigger'>" +
 								"<img class='title-img' " +
@@ -2768,8 +2768,8 @@
 	};
 
 	TopFunctions.generateMapFromTitleWithoutSubalbums = function(ev, from) {
-		if (env.currentAlbum.positionsAndMedia.length)
-			env.currentAlbum.positionsAndMedia.generateMap(ev, from);
+		if (env.currentAlbum.positionsAndMediaInAlbum.length)
+			env.currentAlbum.positionsAndMediaInAlbum.generateMap(ev, from);
 	};
 
 	PositionsAndMedia.prototype.generateMap = function(ev, from) {
