@@ -1564,7 +1564,6 @@
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
 			TopFunctions.showAlbum("refreshSubalbums");
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1580,7 +1579,6 @@
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
 			TopFunctions.showAlbum("refreshSubalbums");
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1594,7 +1592,6 @@
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
 			TopFunctions.showAlbum("refreshSubalbums");
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1614,7 +1611,6 @@
 				TopFunctions.showAlbum("refreshMedia");
 			else
 				map.updatePopup(MapFunctions.titleWrapper1 + this.generateHtmlForImages() + MapFunctions.titleWrapper2);
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1634,7 +1630,6 @@
 				TopFunctions.showAlbum("refreshMedia");
 			else
 				map.updatePopup(MapFunctions.titleWrapper1 + this.generateHtmlForImages() + MapFunctions.titleWrapper2);
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1649,7 +1644,6 @@
 				TopFunctions.showAlbum("refreshMedia");
 			else
 				map.updatePopup(MapFunctions.titleWrapper1 + this.generateHtmlForImages() + MapFunctions.titleWrapper2);
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1699,7 +1693,6 @@
 				}
 			} else
 				TopFunctions.showAlbum(false);
-			util.focusSearchField();
 		}
 		return false;
 	};
