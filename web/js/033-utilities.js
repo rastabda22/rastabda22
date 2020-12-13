@@ -1564,7 +1564,6 @@
 						Utilities.initializeSelectionAlbum();
 					resolve_removeSubalbum();
 				} else {
-					// if (env.selectionAlbum.numsMediaInSubTree.imagesAndVideosTotal()) {
 					let convertSubalbumPromise = subalbum.toAlbum(null, {getMedia: true, getPositions: true});
 					convertSubalbumPromise.then(
 						function(subalbum) {
@@ -1625,7 +1624,6 @@
 							resolve_removeSubalbum();
 						}
 					);
-					// }
 				}
 			}
 		);
