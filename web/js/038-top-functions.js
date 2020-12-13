@@ -2726,10 +2726,10 @@
 		}
 	};
 
-	SingleMedia.prototype.generateMapFromMedia = function(ev, from) {
+	SingleMedia.prototype.generateMapFromSingleMedia = function(ev, from) {
 		if (this.hasGpsData()) {
 			ev.preventDefault();
-			var positionsAndMedia = this.generatePositionsAndMedia();
+			var positionsAndMedia = new PositionsAndMedia([this.generatePositionAndMedia()]);
 			positionsAndMedia.generateMap(ev, from);
 		}
 	};
