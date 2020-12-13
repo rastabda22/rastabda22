@@ -1583,7 +1583,22 @@
 							env.selectionAlbum.subalbums.splice(indexInSelection, 1);
 
 							if (subalbum.positionsAndMediaInTree.length) {
-								env.selectionAlbum.positionsAndMediaInTree.removePositionsAndMedia(subalbum.positionsAndMediaInTree);
+								if (subalbum.numPositionsInTree >  env.selectionAlbum.numPositionsInTree / 10) {
+									newPos = new PositionsAndMedia;
+									let firstTime = true;
+									env.selectionAlbum.subalbums.forEach(
+										function(selectedAlbum) {
+											if (firstTime) {
+												newPos = new PositionsAndMedia(selectedAlbum);
+												firstTime = false;
+											} else {
+												newPos.mergePositionsAndMedia(selectedAlbum.positionsAndMediaInTree);
+											}
+										}
+									);
+								} else {
+									env.selectionAlbum.positionsAndMediaInTree.removePositionsAndMedia(subalbum.positionsAndMediaInTree);
+								}
 								env.selectionAlbum.numPositionsInTree = env.selectionAlbum.positionsAndMediaInTree.length;
 							}
 
