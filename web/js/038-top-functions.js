@@ -2361,6 +2361,11 @@
 					subalbumsElement.empty();
 					subalbumsElement.insertBefore("#message-too-many-images");
 
+					env.captionColor = env.options.albums_slide_style ? env.options.slide_album_caption_color : env.options.album_caption_color;
+					env.correctedAlbumThumbSize = env.options.album_thumb_size;
+					env.captionFontSize = Math.round(util.em2px("body", 1) * env.correctedAlbumThumbSize / env.options.album_thumb_size);
+					env.captionHeight = parseInt(env.captionFontSize * 1.1) + 1;
+
 					//
 					// subalbums loop
 					//
