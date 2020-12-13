@@ -2253,16 +2253,18 @@
 						);
 					}
 
-					$("#media-map-link-" + iMedia).off('click').on(
-						'click',
-						{singleMedia: ithMedia, album: env.currentAlbum, clickedSelector: "#media-map-link-" + iMedia},
-						function(ev, from) {
-							// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
-							env.selectorClickedToOpenTheMap = ev.data.clickedSelector;
-							ev.stopPropagation();
-							ithMedia.generateMapFromMedia(ev, from);
-						}
-					);
+					if (ithMedia.hasGpsData()) {
+						$("#media-map-link-" + iMedia).off('click').on(
+							'click',
+							{singleMedia: ithMedia, album: env.currentAlbum, clickedSelector: "#media-map-link-" + iMedia},
+							function(ev, from) {
+								// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
+								env.selectorClickedToOpenTheMap = ev.data.clickedSelector;
+								ev.stopPropagation();
+								ithMedia.generateMapFromSingleMedia(ev, from);
+							}
+						);
+					}
 
 					if (
 						env.selectorClickedToOpenTheMap === "#media-map-link-" + iMedia &&
