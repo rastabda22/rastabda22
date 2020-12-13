@@ -906,7 +906,6 @@
 			if (isPopup) {
 				$('.leaflet-popup-close-button')[0].click();
 				if (env.mapAlbum.media.length > 1) {
-					// env.mapRefreshType = "resize";
 					env.popupRefreshType = "mapAlbum";
 					// close the map and reopen it
 					$('.modal-close')[0].click();
@@ -2314,10 +2313,12 @@
 					populateMedia === "refreshBoth"
 				) {
 					// resize down the album buttons if they are too wide
-					albumViewWidth = $("body").width() -
+					albumViewWidth =
+						$("body").width() -
 						parseInt($("#album-view").css("padding-left")) -
 						parseInt($("#album-view").css("padding-right")) -
 						scrollBarWidth;
+					env.captionColor = env.options.albums_slide_style ? env.options.slide_album_caption_color : env.options.album_caption_color;
 					env.correctedAlbumThumbSize = env.options.album_thumb_size;
 					var correctedAlbumButtonSize = util.albumButtonWidth(env.options.album_thumb_size);
 					if (albumViewWidth / (correctedAlbumButtonSize + env.options.spacing) < env.options.min_album_thumbnail) {
@@ -2342,11 +2343,6 @@
 					subalbumsElement = $("#subalbums");
 					subalbumsElement.empty();
 					subalbumsElement.insertBefore("#message-too-many-images");
-
-					env.captionColor = env.options.albums_slide_style ? env.options.slide_album_caption_color : env.options.album_caption_color;
-					env.correctedAlbumThumbSize = env.options.album_thumb_size;
-					env.captionFontSize = Math.round(util.em2px("body", 1) * env.correctedAlbumThumbSize / env.options.album_thumb_size);
-					env.captionHeight = parseInt(env.captionFontSize * 1.1) + 1;
 
 					//
 					// subalbums loop
