@@ -1732,7 +1732,6 @@
 				}
 			} else
 				TopFunctions.showAlbum(false);
-			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1766,7 +1765,6 @@
 				}
 			} else
 				TopFunctions.showAlbum(false);
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1797,7 +1795,6 @@
 				}
 			} else
 				TopFunctions.showAlbum(false);
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1808,7 +1805,6 @@
 			f.setBooleanCookie("albumsSlideStyle", env.options.albums_slide_style);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1830,7 +1826,6 @@
 
 			if ($('.leaflet-popup').html())
 				map.updatePopup(MapFunctions.titleWrapper1 + env.mapAlbum.generateHtmlForImages() + MapFunctions.titleWrapper2);
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1841,7 +1836,6 @@
 			f.setBooleanCookie("showAlbumNamesBelowThumbs", env.options.show_album_names_below_thumbs);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1852,7 +1846,6 @@
 			f.setBooleanCookie("showAlbumMediaCount", env.options.show_album_media_count);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1863,7 +1856,6 @@
 			f.setBooleanCookie("showMediaNamesBelowThumbs", env.options.show_media_names_below_thumbs);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1874,7 +1866,6 @@
 			f.setCookie("albumThumbType", env.options.album_thumb_type);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1887,7 +1878,6 @@
 			TopFunctions.showAlbum("refreshMedia");
 			if ($('.leaflet-popup').html())
 				map.updatePopup(MapFunctions.titleWrapper1 + env.mapAlbum.generateHtmlForImages() + MapFunctions.titleWrapper2);
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1906,7 +1896,6 @@
 			f.setBooleanCookie("showBigVirtualFolders", env.options.show_big_virtual_folders);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
-			// util.focusSearchField();
 		}
 		return false;
 	};
