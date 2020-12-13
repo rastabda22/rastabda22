@@ -1337,29 +1337,29 @@
 		$(".media-box#" + id + " .metadata tr.gps").off('click');
 		text = "<table>";
 		// Here we keep only the technical metadata
-		if (typeof this.date !== "undefined")
+		if (this.date !== undefined)
 			text += "<tr><td class='metadata-data-date'></td><td>" + this.date + "</td></tr>";
 		var fileSize = this.fileSizes[0].images;
 		if (this.mimeType.indexOf("video") === 0)
 			fileSize = this.fileSizes[0].videos;
 		text += "<tr><td class='metadata-data-file-size'></td><td>" + f.humanFileSize(fileSize) + "</td></tr>";
-		if (typeof this.metadata.size !== "undefined")
+		if (this.metadata.size !== undefined)
 			text += "<tr><td class='metadata-data-size'></td><td>" + this.metadata.size[0] + " x " + this.metadata.size[1] + "</td></tr>";
-		if (typeof this.metadata.make !== "undefined")
+		if (this.metadata.make !== undefined)
 			text += "<tr><td class='metadata-data-make'></td><td>" + this.metadata.make + "</td></tr>";
-		if (typeof this.metadata.model !== "undefined")
+		if (this.metadata.model !== undefined)
 			text += "<tr><td class='metadata-data-model'></td><td>" + this.metadata.model + "</td></tr>";
-		if (typeof this.metadata.aperture !== "undefined")
+		if (this.metadata.aperture !== undefined)
 			text += "<tr><td class='metadata-data-aperture'></td><td> f/" + this.metadata.aperture + "</td></tr>";
-		if (typeof this.metadata.focalLength !== "undefined")
+		if (this.metadata.focalLength !== undefined)
 			text += "<tr><td class='metadata-data-focalLength'></td><td>" + this.metadata.focalLength + " mm</td></tr>";
-		if (typeof this.metadata.subjectDistanceRange !== "undefined")
+		if (this.metadata.subjectDistanceRange !== undefined)
 			text += "<tr><td class='metadata-data-subjectDistanceRange'></td><td>" + this.metadata.subjectDistanceRange + "</td></tr>";
-		if (typeof this.metadata.iso !== "undefined")
+		if (this.metadata.iso !== undefined)
 			text += "<tr><td class='metadata-data-iso'></td><td>" + this.metadata.iso + "</td></tr>";
-		if (typeof this.metadata.sceneCaptureType !== "undefined")
+		if (this.metadata.sceneCaptureType !== undefined)
 			text += "<tr><td class='metadata-data-sceneCaptureType'></td><td>" + this.metadata.sceneCaptureType + "</td></tr>";
-		if (typeof this.metadata.exposureTime !== "undefined") {
+		if (this.metadata.exposureTime !== undefined) {
 			if (typeof this.metadata.exposureTime === "string")
 				exposureTime = this.metadata.exposureTime;
 			else if (this.metadata.exposureTime > 0.3)
@@ -1368,25 +1368,25 @@
 				exposureTime = "1/" + Math.round(1 / this.metadata.exposureTime);
 			text += "<tr><td class='metadata-data-exposureTime'></td><td>" + exposureTime + " sec</td></tr>";
 		}
-		if (typeof this.metadata.exposureProgram !== "undefined")
+		if (this.metadata.exposureProgram !== undefined)
 			text += "<tr><td class='metadata-data-exposureProgram'></td><td>" + this.metadata.exposureProgram + "</td></tr>";
-		if (typeof this.metadata.exposureCompensation !== "undefined")
+		if (this.metadata.exposureCompensation !== undefined)
 			text += "<tr><td class='metadata-data-exposureCompensation'></td><td>" + this.metadata.exposureCompensation + "</td></tr>";
-		if (typeof this.metadata.spectralSensitivity !== "undefined")
+		if (this.metadata.spectralSensitivity !== undefined)
 			text += "<tr><td class='metadata-data-spectralSensitivity'></td><td>" + this.metadata.spectralSensitivity + "</td></tr>";
-		if (typeof this.metadata.sensingMethod !== "undefined")
+		if (this.metadata.sensingMethod !== undefined)
 			text += "<tr><td class='metadata-data-sensingMethod'></td><td>" + this.metadata.sensingMethod + "</td></tr>";
-		if (typeof this.metadata.lightSource !== "undefined")
+		if (this.metadata.lightSource !== undefined)
 			text += "<tr><td class='metadata-data-lightSource'></td><td>" + this.metadata.lightSource + "</td></tr>";
-		if (typeof this.metadata.flash !== "undefined")
+		if (this.metadata.flash !== undefined)
 			text += "<tr><td class='metadata-data-flash'></td><td>" + this.metadata.flash + "</td></tr>";
-		if (typeof this.metadata.orientationText !== "undefined")
+		if (this.metadata.orientationText !== undefined)
 			text += "<tr><td class='metadata-data-orientation'></td><td>" + this.metadata.orientationText + "</td></tr>";
-		if (typeof this.metadata.duration !== "undefined")
+		if (this.metadata.duration !== undefined)
 			text += "<tr><td class='metadata-data-duration'></td><td>" + this.metadata.duration + " sec</td></tr>";
-		if (typeof this.metadata.latitude !== "undefined")
+		if (this.metadata.latitude !== undefined)
 			text += "<tr class='map-link' class='gps'><td class='metadata-data-latitude'></td><td>" + this.metadata.latitudeMS + " </td></tr>";
-		if (typeof this.metadata.longitude !== "undefined")
+		if (this.metadata.longitude !== undefined)
 			text += "<tr class='gps'><td class='metadata-data-longitude'></td><td>" + this.metadata.longitudeMS + " </td></tr>";
 		text += "</table>";
 		$(".media-box#" + id + " .metadata").html(text);
@@ -1469,7 +1469,6 @@
 		f.setOptions();
 
 		if (env.currentMedia === null) {
-			env.currentAlbum.initializeSortPropertiesAndCookies();
 			$("#menu-icon").attr("title", util._t("#menu-icon-title"));
 			env.currentAlbum.sortAlbumsMedia();
 		}
@@ -1556,11 +1555,12 @@
 
 	Album.prototype.sortSubalbumsByDate = function(ev) {
 		if (
-			this.albumNameSort &&
+			this.isTrue("albumNameSort") &&
 			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
+			env.albumNameSort = false;
 			f.setBooleanCookie("albumNameSortRequested", false);
-			f.setBooleanCookie("albumReverseSortRequested", this.albumReverseSort);
+			// f.setBooleanCookie("albumReverseSortRequested", this.albumReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
 			TopFunctions.showAlbum("refreshSubalbums");
@@ -1571,11 +1571,12 @@
 
 	Album.prototype.sortSubalbumsByName = function(ev) {
 		if (
-			! this.albumNameSort &&
+			this.isUndefinedOrFalse("albumNameSort") &&
 			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
+			env.albumNameSort = true;
 			f.setBooleanCookie("albumNameSortRequested", true);
-			f.setBooleanCookie("albumReverseSortRequested", this.albumReverseSort);
+			// f.setBooleanCookie("albumReverseSortRequested", this.albumReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
 			TopFunctions.showAlbum("refreshSubalbums");
@@ -1588,7 +1589,8 @@
 		if (
 			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
-			f.setBooleanCookie("albumReverseSortRequested", ! this.albumReverseSort);
+			env.albumReverseSort = ! env.albumReverseSort;
+			f.setBooleanCookie("albumReverseSortRequested", env.albumReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
 			TopFunctions.showAlbum("refreshSubalbums");
@@ -1603,8 +1605,9 @@
 			this.mediaNameSort &&
 			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
+			env.mediaNameSort = false;
 			f.setBooleanCookie("mediaNameSortRequested", false);
-			f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
+			// f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
 			if (this.cacheBase == env.currentAlbum.cacheBase)
@@ -1622,8 +1625,9 @@
 			! this.mediaNameSort &&
 			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
+			env.mediaNameSort = true;
 			f.setBooleanCookie("mediaNameSortRequested", true);
-			f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
+			// f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
 			if (this.cacheBase == env.currentAlbum.cacheBase)
@@ -1637,8 +1641,8 @@
 
 	Album.prototype.sortMediaReverse = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-			f.setBooleanCookie("mediaReverseSortRequested", ! f.getBooleanCookie("mediaReverseSortRequested"));
-
+			env.mediaReverseSort = ! env.mediaReverseSort;
+			f.setBooleanCookie("mediaReverseSortRequested", env.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
 			if (this.cacheBase == env.currentAlbum.cacheBase)
@@ -1653,11 +1657,11 @@
 	TopFunctions.prototype.toggleTitleThumbnailAndCaption = function(ev) {
 		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_title = ! env.options.hide_title;
-			f.setBooleanCookie("hide_title", env.options.hide_title);
+			f.setBooleanCookie("hideTitle", env.options.hide_title);
 			env.options.hide_bottom_thumbnails = ! env.options.hide_bottom_thumbnails;
-			f.setBooleanCookie("hide_bottom_thumbnails", env.options.hide_bottom_thumbnails);
+			f.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
 			env.options.hide_caption = ! env.options.hide_caption;
-			f.setBooleanCookie("hide_caption", env.options.hide_caption);
+			f.setBooleanCookie("hideCaption", env.options.hide_caption);
 			f.updateMenu();
 			if (env.options.hide_title) {
 				$(".title").addClass("hidden-by-option");
@@ -1705,7 +1709,7 @@
 		// if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_title = ! env.options.hide_title;
-			f.setBooleanCookie("hide_title", env.options.hide_title);
+			f.setBooleanCookie("hideTitle", env.options.hide_title);
 			f.updateMenu();
 			if (env.options.hide_title) {
 				$(".title").addClass("hidden-by-option");
@@ -1736,7 +1740,7 @@
 	TopFunctions.prototype.toggleBottomThumbnails = function(ev) {
 		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_bottom_thumbnails = ! env.options.hide_bottom_thumbnails;
-			f.setBooleanCookie("hide_bottom_thumbnails", env.options.hide_bottom_thumbnails);
+			f.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
 			f.updateMenu();
 			if (env.options.hide_bottom_thumbnails) {
 				$("#album-view").addClass("hidden-by-option");
@@ -1770,7 +1774,7 @@
 	TopFunctions.prototype.toggleCaption = function(ev) {
 		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_caption = ! env.options.hide_caption;
-			f.setBooleanCookie("hide_caption", env.options.hide_caption);
+			f.setBooleanCookie("hideCaption", env.options.hide_caption);
 			f.updateMenu();
 			if (env.options.hide_caption) {
 				$("#caption").addClass("hidden-by-option");
@@ -1801,7 +1805,7 @@
 	TopFunctions.prototype.toggleSlideMode = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.albums_slide_style = ! env.options.albums_slide_style;
-			f.setBooleanCookie("albums_slide_style", env.options.albums_slide_style);
+			f.setBooleanCookie("albumsSlideStyle", env.options.albums_slide_style);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
 			// util.focusSearchField();
@@ -1834,7 +1838,7 @@
 	TopFunctions.prototype.toggleAlbumNames = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.show_album_names_below_thumbs = ! env.options.show_album_names_below_thumbs;
-			f.setBooleanCookie("show_album_names_below_thumbs", env.options.show_album_names_below_thumbs);
+			f.setBooleanCookie("showAlbumNamesBelowThumbs", env.options.show_album_names_below_thumbs);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
 			// util.focusSearchField();
@@ -1845,7 +1849,7 @@
 	TopFunctions.prototype.toggleMediaCount = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.show_album_media_count = ! env.options.show_album_media_count;
-			f.setBooleanCookie("show_album_media_count", env.options.show_album_media_count);
+			f.setBooleanCookie("showAlbumMediaCount", env.options.show_album_media_count);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
 			// util.focusSearchField();
@@ -1856,7 +1860,7 @@
 	TopFunctions.prototype.toggleMediaNames = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.show_media_names_below_thumbs = ! env.options.show_media_names_below_thumbs;
-			f.setBooleanCookie("show_media_names_below_thumbs", env.options.show_media_names_below_thumbs);
+			f.setBooleanCookie("showMediaNamesBelowThumbs", env.options.show_media_names_below_thumbs);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
 			// util.focusSearchField();
@@ -1867,7 +1871,7 @@
 	TopFunctions.prototype.toggleAlbumsSquare = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.album_thumb_type = env.options.album_thumb_type == "square" ? "fit" : "square";
-			f.setCookie("album_thumb_type", env.options.album_thumb_type);
+			f.setCookie("albumThumbType", env.options.album_thumb_type);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
 			// util.focusSearchField();
@@ -1878,7 +1882,7 @@
 	TopFunctions.prototype.toggleMediaSquare = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.media_thumb_type = env.options.media_thumb_type == "square" ? "fixed_height" : "square";
-			f.setCookie("media_thumb_type", env.options.media_thumb_type);
+			f.setCookie("mediaThumbType", env.options.media_thumb_type);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
 			if ($('.leaflet-popup').html())
@@ -1899,7 +1903,7 @@
 				$("#show-hide-them:hover").css("color", "").css("cursor", "");
 			else
 				$("#show-hide-them:hover").css("color", "inherit").css("cursor", "auto");
-			f.setBooleanCookie("show_big_virtual_folders", env.options.show_big_virtual_folders);
+			f.setBooleanCookie("showBigVirtualFolders", env.options.show_big_virtual_folders);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
 			// util.focusSearchField();
@@ -3007,11 +3011,7 @@
 
 		map.addPopupMover();
 
-		var promise = phFl.endPreparingAlbumAndKeepOn(
-			env.mapAlbum,
-			null,
-			null
-		);
+		var promise = phFl.endPreparingAlbumAndKeepOn(env.mapAlbum, null, null);
 		promise.then(
 			function() {
 				map.updatePopup(MapFunctions.titleWrapper1 + env.mapAlbum.generateHtmlForImages() + MapFunctions.titleWrapper2);
@@ -3029,7 +3029,7 @@
 
 				$("#loading").show();
 
-				if (evt !== null && typeof evt.latlng !== "undefined") {
+				if (evt !== null && evt.latlng !== undefined) {
 					clickHistoryElement = {
 							latlng: evt.latlng,
 							shiftKey: evt.originalEvent.shiftKey,
@@ -3193,7 +3193,6 @@
 						env.mapAlbum.numsProtectedMediaInSubTree = new NumsProtected({",": env.mapAlbum.numsMedia});
 						delete env.mapAlbum.mediaNameSort;
 						delete env.mapAlbum.mediaReverseSort;
-						env.mapAlbum.initializeSortPropertiesAndCookies();
 						// now sort them according to options
 						env.mapAlbum.sortAlbumsMedia();
 
@@ -3224,8 +3223,8 @@
 		  return "<p class='caption-text'>" + text + "</p>";
 		}
 
-		var nullTitle = title === undefined || ! title;
-		var nullDescription = description === undefined || ! description;
+		var nullTitle = (typeof title === "undefined") || ! title;
+		var nullDescription = (typeof description === "undefined") || ! description;
 
 		if (! nullTitle) {
 		  $("#caption-title").html(formatText(title));

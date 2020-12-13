@@ -237,7 +237,7 @@
 								mediaBoxInnerHeight = $(mediaContainerSelector).css("height");
 
 								currentZoom = initialZoom;
-								if (finalZoom === undefined)
+								if (typeof finalZoom === "undefined")
 									finalZoom = null;
 								if (finalZoom === null || finalZoom < currentZoom)
 									finalZoom = currentZoom;
@@ -428,7 +428,7 @@
 			}
 
 			// when dragging with the mouse, fingerCount is 0
-			if (typeof event.touches === "undefined" || fingerCount === 1) {
+			if (event.touches === undefined || fingerCount === 1) {
 				if (currentZoom === initialZoom) {
 					// zoom = 1: swipe
 					if (phase == "move") {
@@ -451,13 +451,13 @@
 				} else {
 					// zoom > 1: drag
 
-					if (typeof event.clientX !== "undefined") {
+					if (event.clientX !== undefined) {
 						clientX = event.clientX;
 						clientY = event.clientY;
-					} else if (typeof event.touches !== "undefined" && event.touches.length > 0) {
+					} else if (event.touches !== undefined && event.touches.length > 0) {
 						clientX = event.touches[0].clientX;
 						clientY = event.touches[0].clientY;
-					} else if (typeof event.changedTouches !== "undefined" && event.changedTouches.length > 0) {
+					} else if (event.changedTouches !== undefined && event.changedTouches.length > 0) {
 						clientX = event.changedTouches[0].clientX;
 						clientY = event.changedTouches[0].clientY;
 					}

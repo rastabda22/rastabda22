@@ -1,3 +1,9 @@
+### version v4.9.4 (Dec 12, 2020)
+
+* fixed sorting procedure
+* other bug fixes
+* replace `uglifyjs` minifier by `uglifyjs.terser` (pmetras)
+
 ### version v4.9.3 (Dec 11, 2020)
 
 * fixed bugs in reading image exif metadata, only exiftool was reading them correctly

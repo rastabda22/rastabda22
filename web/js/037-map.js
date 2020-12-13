@@ -222,11 +222,7 @@
 				env.popupRefreshType = "previousAlbum";
 				env.mapRefreshType = "none";
 
-				var promise = phFl.endPreparingAlbumAndKeepOn(
-					env.mapAlbum,
-					null,
-					null
-				);
+				var promise = phFl.endPreparingAlbumAndKeepOn(env.mapAlbum, null, null);
 				promise.then(
 					function(){
 						$("#album-view").addClass("hidden");

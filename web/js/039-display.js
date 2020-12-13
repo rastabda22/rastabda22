@@ -739,7 +739,7 @@ $(document).ready(function() {
 					if (! util.isSearchHash()) {
 						// reset current album search flag to its default value
 						env.options.search_current_album = true;
-						f.setBooleanCookie("search_current_album", env.options.search_current_album);
+						f.setBooleanCookie("searchCurrentAlbum", env.options.search_current_album);
 					}
 
 					if (typeof isPhp === "function" && typeof postData !== "undefined" && postData !== null) {

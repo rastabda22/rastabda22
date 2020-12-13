@@ -100,7 +100,7 @@
 
 	class ImagesAndVideos {
 		constructor(object) {
-			if (object === undefined) {
+			if (typeof object === "undefined") {
 				this.images = 0;
 				this.videos = 0;
 			} else {
@@ -112,7 +112,7 @@
 
 	class IncludedFiles {
 		constructor(object) {
-			if (object === undefined) {
+			if (typeof object === "undefined") {
 				// do nothing, the resulting object will be the void object
 			} else  {
 				Object.keys(object).forEach(
@@ -126,7 +126,7 @@
 
 	class NumsProtected {
 		constructor(object) {
-			if (object === undefined) {
+			if (typeof object === "undefined") {
 				this[","] = new ImagesAndVideos();
 			} else {
 				Object.keys(object).forEach(
@@ -140,7 +140,7 @@
 
 	class Sizes {
 		constructor(object) {
-			if (object === undefined) {
+			if (typeof object === "undefined") {
 				this[0] = new ImagesAndVideos();
 				for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize ++) {
 					this[env.options.reduced_sizes[iSize]] = new ImagesAndVideos();
@@ -231,7 +231,7 @@
 		}
 
 		hasGpsData() {
-			return this.mimeType.indexOf("image") === 0 && typeof this.metadata.latitude !== "undefined";
+			return this.mimeType.indexOf("image") === 0 && this.metadata.latitude !== undefined;
 		}
 	}
 
@@ -271,7 +271,8 @@
 			var result = new PositionsAndMedia([]);
 			this.forEach(
 				function(singleMedia) {
-					result.addPositionAndMedia(singleMedia.generatePositionAndMedia());
+					if (singleMedia.hasGpsData())
+						result.addPositionAndMedia(singleMedia.generatePositionAndMedia());
 				}
 			);
 			// return new PositionsAndMedia([... this.map(singleMedia => singleMedia.generatePositionAndMedia())]);
@@ -416,7 +417,7 @@
 					this.numsProtectedMediaInSubTree = new NumsProtected(this.numsProtectedMediaInSubTree);
 				}
 				this.subalbums = new Subalbums(this.subalbums);
-			} else if (objectOrCacheBase === undefined) {
+			} else if (typeof objectOrCacheBase === "undefined") {
 				this.empty = true;
 			}
 
