@@ -117,6 +117,11 @@ subdir_method = md5
 # Video encoding options
 ########################
 # See https://trac.ffmpeg.org/wiki/Encode/H.264 and ffmpeg documentation if you change these options.
+################################################################################
+# BEWARE:
+# The following video options are EXPERIMENTAL and could be removed in a future version
+# of MyPhotoShare.
+################################################################################
 
 # The transcode bitrate used for videos: an integer, the bitrate in bits/s, even in notation nnk, nnM
 video_transcode_bitrate = 1M
