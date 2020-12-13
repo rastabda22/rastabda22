@@ -271,7 +271,8 @@
 			var result = new PositionsAndMedia([]);
 			this.forEach(
 				function(singleMedia) {
-					result.addPositionAndMedia(singleMedia.generatePositionAndMedia());
+					if (singleMedia.hasGpsData())
+						result.addPositionAndMedia(singleMedia.generatePositionAndMedia());
 				}
 			);
 			// return new PositionsAndMedia([... this.map(singleMedia => singleMedia.generatePositionAndMedia())]);
