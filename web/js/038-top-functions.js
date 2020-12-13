@@ -1738,8 +1738,11 @@
 			} else {
 				$("#album-view").removeClass("hidden-by-option");
 			}
-			if ($("#thumbs").children().length)
+			// if ($("#thumbs").children().length)
+			if (! $("#album-view").hasClass("hide-bottom-thumbnails")) {
+				$("#album-view").addClass("media-view-container");
 				TopFunctions.showAlbum("refreshMedia");
+			}
 			// else
 			// 	env.currentAlbum.prepareForShowing(env.currentMediaIndex);
 			if (env.currentMedia !== null) {
