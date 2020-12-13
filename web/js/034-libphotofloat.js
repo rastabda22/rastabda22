@@ -646,7 +646,6 @@
 	};
 
 
-	// Album.prototype.addProtectedContent = function({getMedia, getPositions}) {
 	Album.prototype.addProtectedContent = function({getMedia, getPositions}, numsProtectedMediaInSubTree) {
 		// this function adds the protected content to the given album
 		var self = this;
@@ -662,6 +661,7 @@
 					numsPromise = continueAddProtectedContent();
 					numsPromise.then(
 						function() {
+							self.invalidatePositionsAndMediaInAlbumAndSubalbums();
 							resolve_addProtectedContent();
 						},
 						function() {
@@ -682,6 +682,7 @@
 								numsPromise = continueAddProtectedContent();
 								numsPromise.then(
 									function() {
+										self.invalidatePositionsAndMediaInAlbumAndSubalbums();
 										resolve_addProtectedContent();
 									},
 									function() {
@@ -936,7 +937,7 @@
 							if (typeof numsProtectedMediaInSubTree !== "undefined")
 								promise = album.addProtectedContent({getMedia: getMedia, getPositions: getPositions}, numsProtectedMediaInSubTree);
 							else
-							promise = album.addProtectedContent({getMedia: getMedia, getPositions: getPositions});
+								promise = album.addProtectedContent({getMedia: getMedia, getPositions: getPositions});
 							promise.then(
 								function() {
 									thingsToBeDoneBeforeResolvingGetAlbum(album);

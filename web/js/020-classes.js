@@ -222,10 +222,6 @@
 			);
 		}
 
-		generatePositionsAndMedia() {
-			return new PositionsAndMedia([this.generatePositionAndMedia()]);
-		}
-
 		isEqual(otherMedia) {
 			return otherMedia !== null && this.foldersCacheBase === otherMedia.foldersCacheBase && this.cacheBase === otherMedia.cacheBase;
 		}
@@ -275,7 +271,6 @@
 						result.addPositionAndMedia(singleMedia.generatePositionAndMedia());
 				}
 			);
-			// return new PositionsAndMedia([... this.map(singleMedia => singleMedia.generatePositionAndMedia())]);
 			return result;
 		}
 	}
@@ -556,13 +551,13 @@
 			return this.isTransversal() || this.isCollection();
 		}
 
-		hasValidAuxiliaryPositionsAndMedia() {
-			return this.hasOwnProperty("positionsAndMedia");
+		hasValidPositionsAndMediaInAlbumAndSubalbums() {
+			return this.hasOwnProperty("positionsAndMediaInAlbum");
 		}
 
-		invalidateAuxiliaryPositionsAndMedia() {
-			if (this.hasOwnProperty("positionsAndMedia"))
-				delete this.positionsAndMedia;
+		invalidatePositionsAndMediaInAlbumAndSubalbums() {
+			if (this.hasOwnProperty("positionsAndMediaInAlbum"))
+				delete this.positionsAndMediaInAlbum;
 		}
 
 		isEqual(otherAlbum) {

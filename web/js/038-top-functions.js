@@ -12,17 +12,17 @@
 	function TopFunctions() {
 	}
 
-	Album.prototype.generateAuxiliaryPositionsAndMedia = function() {
+	Album.prototype.generatePositionsAndMediaInAlbumAndSubalbums = function() {
 		var self = this;
 		return new Promise(
-			function(resolve_generateAuxiliaryPositionsAndMedia) {
-				if (self.hasValidAuxiliaryPositionsAndMedia()) {
-					resolve_generateAuxiliaryPositionsAndMedia();
+			function(resolve_generatePositionsAndMediaInAlbumAndSubalbums) {
+				if (self.hasValidPositionsAndMediaInAlbumAndSubalbums()) {
+					resolve_generatePositionsAndMediaInAlbumAndSubalbums();
 				} else {
 					self.positionsAndMediaInSubalbums = new PositionsAndMedia([]);
 					self.numPositionsInSubalbums = 0;
-					self.positionsAndMedia = new PositionsAndMedia([]);
-					self.numPositions = 0;
+					self.positionsAndMediaInAlbum = new PositionsAndMedia([]);
+					self.numPositionsInAlbum = 0;
 					let numSubalbums = self.subalbums.length;
 					let hasPositions = (
 						self.hasPositions() && (
@@ -36,17 +36,17 @@
 							self.positionsAndMediaInSubalbums = self.positionsAndMediaInTree;
 							self.numPositionsInSubalbums = self.positionsAndMediaInSubalbums.length;
 						} else {
-							self.positionsAndMedia = self.media.generatePositionsAndMedia();
-							self.numPositions = self.positionsAndMedia.length;
+							self.positionsAndMediaInAlbum = self.media.generatePositionsAndMedia();
+							self.numPositionsInAlbum = self.positionsAndMediaInAlbum.length;
 							self.positionsAndMediaInSubalbums = new PositionsAndMedia(self.positionsAndMediaInTree);
-							self.positionsAndMediaInSubalbums.removePositionsAndMedia(self.positionsAndMedia);
+							self.positionsAndMediaInSubalbums.removePositionsAndMedia(self.positionsAndMediaInAlbum);
 							self.numPositionsInSubalbums = self.positionsAndMediaInSubalbums.length;
 						}
-						resolve_generateAuxiliaryPositionsAndMedia();
+						resolve_generatePositionsAndMediaInAlbumAndSubalbums();
 					} else {
 						let subalbumPromises = [];
 						if (hasPositions)
-							self.positionsAndMedia = new PositionsAndMedia(self.positionsAndMediaInTree);
+							self.positionsAndMediaInAlbum = new PositionsAndMedia(self.positionsAndMediaInTree);
 						self.subalbums.forEach(
 							function(thisSubalbum, thisIndex) {
 								let subalbumPromise;
@@ -54,8 +54,8 @@
 									self.positionsAndMediaInSubalbums.mergePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
 									self.numPositionsInSubalbums = self.positionsAndMediaInSubalbums.length;
 									if (hasPositions) {
-										self.positionsAndMedia.removePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
-										self.numPositions = self.positionsAndMedia.length;
+										self.positionsAndMediaInAlbum.removePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
+										self.numPositionsInAlbum = self.positionsAndMediaInAlbum.length;
 									}
 									subalbumPromise = new Promise(
 										function(resolve_subalbumPromise) {
@@ -72,8 +72,8 @@
 													self.positionsAndMediaInSubalbums.mergePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
 													self.numPositionsInSubalbums = self.positionsAndMediaInSubalbums.length;
 													if (hasPositions) {
-														self.positionsAndMedia.removePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
-														self.numPositions = self.positionsAndMedia.length;
+														self.positionsAndMediaInAlbum.removePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
+														self.numPositionsInAlbum = self.positionsAndMediaInAlbum.length;
 													}
 													resolve_subalbumPromise();
 												},
@@ -89,7 +89,7 @@
 						);
 						Promise.all(subalbumPromises).then(
 							function() {
-								resolve_generateAuxiliaryPositionsAndMedia();
+								resolve_generatePositionsAndMediaInAlbumAndSubalbums();
 							}
 						);
 					}
@@ -645,7 +645,7 @@
 				}
 			}
 		}
-		let promise = env.currentAlbum.generateAuxiliaryPositionsAndMedia();
+		let promise = env.currentAlbum.generatePositionsAndMediaInAlbumAndSubalbums();
 
 		promise.then(
 			function() {
@@ -660,7 +660,7 @@
 					let replace = "";
 					let shortcutAdded = false;
 					let marker = "<marker>";
-					if (env.currentAlbum.numPositions && env.currentAlbum.numPositionsInTree !== env.currentAlbum.numPositionsInSubalbums) {
+					if (env.currentAlbum.numPositionsInAlbum && env.currentAlbum.numPositionsInTree !== env.currentAlbum.numPositionsInSubalbums) {
 						replace +=
 							"<a class='map-popup-trigger'>" +
 								"<img class='title-img' " +
@@ -906,7 +906,6 @@
 			if (isPopup) {
 				$('.leaflet-popup-close-button')[0].click();
 				if (env.mapAlbum.media.length > 1) {
-					// env.mapRefreshType = "resize";
 					env.popupRefreshType = "mapAlbum";
 					// close the map and reopen it
 					$('.modal-close')[0].click();
@@ -1564,7 +1563,6 @@
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
 			TopFunctions.showAlbum("refreshSubalbums");
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1580,7 +1578,6 @@
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
 			TopFunctions.showAlbum("refreshSubalbums");
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1594,7 +1591,6 @@
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
 			TopFunctions.showAlbum("refreshSubalbums");
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1614,7 +1610,6 @@
 				TopFunctions.showAlbum("refreshMedia");
 			else
 				map.updatePopup(MapFunctions.titleWrapper1 + this.generateHtmlForImages() + MapFunctions.titleWrapper2);
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1634,7 +1629,6 @@
 				TopFunctions.showAlbum("refreshMedia");
 			else
 				map.updatePopup(MapFunctions.titleWrapper1 + this.generateHtmlForImages() + MapFunctions.titleWrapper2);
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1649,7 +1643,6 @@
 				TopFunctions.showAlbum("refreshMedia");
 			else
 				map.updatePopup(MapFunctions.titleWrapper1 + this.generateHtmlForImages() + MapFunctions.titleWrapper2);
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1699,7 +1692,6 @@
 				}
 			} else
 				TopFunctions.showAlbum(false);
-			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1732,7 +1724,6 @@
 				}
 			} else
 				TopFunctions.showAlbum(false);
-			util.focusSearchField();
 		}
 		return false;
 	};
@@ -1747,8 +1738,11 @@
 			} else {
 				$("#album-view").removeClass("hidden-by-option");
 			}
-			if ($("#thumbs").children().length)
+			// if ($("#thumbs").children().length)
+			if (! $("#album-view").hasClass("hide-bottom-thumbnails")) {
+				$("#album-view").addClass("media-view-container");
 				TopFunctions.showAlbum("refreshMedia");
+			}
 			// else
 			// 	env.currentAlbum.prepareForShowing(env.currentMediaIndex);
 			if (env.currentMedia !== null) {
@@ -1766,7 +1760,6 @@
 				}
 			} else
 				TopFunctions.showAlbum(false);
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1797,7 +1790,6 @@
 				}
 			} else
 				TopFunctions.showAlbum(false);
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1808,7 +1800,6 @@
 			f.setBooleanCookie("albumsSlideStyle", env.options.albums_slide_style);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1830,7 +1821,6 @@
 
 			if ($('.leaflet-popup').html())
 				map.updatePopup(MapFunctions.titleWrapper1 + env.mapAlbum.generateHtmlForImages() + MapFunctions.titleWrapper2);
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1841,7 +1831,6 @@
 			f.setBooleanCookie("showAlbumNamesBelowThumbs", env.options.show_album_names_below_thumbs);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1852,7 +1841,6 @@
 			f.setBooleanCookie("showAlbumMediaCount", env.options.show_album_media_count);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1863,7 +1851,6 @@
 			f.setBooleanCookie("showMediaNamesBelowThumbs", env.options.show_media_names_below_thumbs);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1874,7 +1861,6 @@
 			f.setCookie("albumThumbType", env.options.album_thumb_type);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1887,7 +1873,6 @@
 			TopFunctions.showAlbum("refreshMedia");
 			if ($('.leaflet-popup').html())
 				map.updatePopup(MapFunctions.titleWrapper1 + env.mapAlbum.generateHtmlForImages() + MapFunctions.titleWrapper2);
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -1906,7 +1891,6 @@
 			f.setBooleanCookie("showBigVirtualFolders", env.options.show_big_virtual_folders);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
-			// util.focusSearchField();
 		}
 		return false;
 	};
@@ -2253,16 +2237,18 @@
 						);
 					}
 
-					$("#media-map-link-" + iMedia).off('click').on(
-						'click',
-						{singleMedia: ithMedia, album: env.currentAlbum, clickedSelector: "#media-map-link-" + iMedia},
-						function(ev, from) {
-							// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
-							env.selectorClickedToOpenTheMap = ev.data.clickedSelector;
-							ev.stopPropagation();
-							ithMedia.generateMapFromMedia(ev, from);
-						}
-					);
+					if (ithMedia.hasGpsData()) {
+						$("#media-map-link-" + iMedia).off('click').on(
+							'click',
+							{singleMedia: ithMedia, album: env.currentAlbum, clickedSelector: "#media-map-link-" + iMedia},
+							function(ev, from) {
+								// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
+								env.selectorClickedToOpenTheMap = ev.data.clickedSelector;
+								ev.stopPropagation();
+								ithMedia.generateMapFromSingleMedia(ev, from);
+							}
+						);
+					}
 
 					if (
 						env.selectorClickedToOpenTheMap === "#media-map-link-" + iMedia &&
@@ -2330,10 +2316,12 @@
 					populateMedia === "refreshBoth"
 				) {
 					// resize down the album buttons if they are too wide
-					albumViewWidth = $("body").width() -
+					albumViewWidth =
+						$("body").width() -
 						parseInt($("#album-view").css("padding-left")) -
 						parseInt($("#album-view").css("padding-right")) -
 						scrollBarWidth;
+					env.captionColor = env.options.albums_slide_style ? env.options.slide_album_caption_color : env.options.album_caption_color;
 					env.correctedAlbumThumbSize = env.options.album_thumb_size;
 					var correctedAlbumButtonSize = util.albumButtonWidth(env.options.album_thumb_size);
 					if (albumViewWidth / (correctedAlbumButtonSize + env.options.spacing) < env.options.min_album_thumbnail) {
@@ -2726,10 +2714,10 @@
 		}
 	};
 
-	SingleMedia.prototype.generateMapFromMedia = function(ev, from) {
+	SingleMedia.prototype.generateMapFromSingleMedia = function(ev, from) {
 		if (this.hasGpsData()) {
 			ev.preventDefault();
-			var positionsAndMedia = this.generatePositionsAndMedia();
+			var positionsAndMedia = new PositionsAndMedia([this.generatePositionAndMedia()]);
 			positionsAndMedia.generateMap(ev, from);
 		}
 	};
@@ -2766,8 +2754,8 @@
 	};
 
 	TopFunctions.generateMapFromTitleWithoutSubalbums = function(ev, from) {
-		if (env.currentAlbum.positionsAndMedia.length)
-			env.currentAlbum.positionsAndMedia.generateMap(ev, from);
+		if (env.currentAlbum.positionsAndMediaInAlbum.length)
+			env.currentAlbum.positionsAndMediaInAlbum.generateMap(ev, from);
 	};
 
 	PositionsAndMedia.prototype.generateMap = function(ev, from) {
