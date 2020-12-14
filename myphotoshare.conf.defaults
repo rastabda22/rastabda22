@@ -138,11 +138,6 @@ exclude_tree_marker = .myphotoshare.exclude.tree
 # the directory/file name is matched against every pattern with re.search()
 # use ^ at the beginning and $ at the end of the patterns if you want a match on the whole directory/file name (including extension)
 # lines beginning with # are skipped
-################################################################################
-# BEWARE:
-# if you use this feature and don't change this file name, the user can know what files you aren't scanning,
-# and therefore he/she could try to access them in the `/albums/` tree
-################################################################################
 excluded_patterns_file = myphotoshare.excluded
 
 # marker for passwords: put it in the album you want to protect
