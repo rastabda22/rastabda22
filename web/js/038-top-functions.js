@@ -822,7 +822,11 @@
 					function(ev, from) {
 						// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
 						env.selectorClickedToOpenTheMap = ".map-popup-trigger";
-						TopFunctions.generateMapFromTitleWithoutSubalbums(ev, from);
+						if (env.currentMedia !== null && env.currentMedia.hasGpsData()) {
+							TopFunctions.generateMapFromTitle(ev, from);
+						} else {
+							TopFunctions.generateMapFromTitleWithoutSubalbums(ev, from);
+						}
 					}
 				);
 
