@@ -67,7 +67,7 @@ $(document).ready(function() {
 			} else if ($("ul#right-menu").hasClass("expand")) {
 				f.toggleMenu();
 				return false;
-			} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video") === 0 && ! $("video#media-center")[0].paused) {
+			} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0 && ! $("video#media-center")[0].paused) {
 					// stop the video, otherwise it keeps playing
 					$("video#media-center")[0].pause();
 			} else if (isMap) {
@@ -93,7 +93,7 @@ $(document).ready(function() {
 				tF.goFullscreen(e);
 				return false;
 			} else if (upLink) {
-				if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video") === 0)
+				if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0)
 					// stop the video, otherwise it keeps playing
 					$("video#media-center")[0].pause();
 				if (env.currentAlbum.cacheBase !== env.options.folders_string || env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia()) {
@@ -112,7 +112,7 @@ $(document).ready(function() {
 				if (! e.ctrlKey && ! e.altKey) {
 					if (e.key === "Tab") {
 						e.preventDefault();
-						if (pS.getCurrentZoom() == pS.getInitialZoom() && ! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
+						if (pS.getCurrentZoom() === pS.getInitialZoom() && ! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
 							tF.toggleTitleThumbnailAndCaption(e);
 							// $("ul#right-menu li.hide-title")[0].click();
 							// $("ul#right-menu li.hide-bottom-thumbnails")[0].click();
@@ -120,7 +120,7 @@ $(document).ready(function() {
 							return false;
 						}
 					} else if (e.key === "ArrowRight" && (pS.getCurrentZoom() !== pS.getInitialZoom() || env.prevMedia) && env.currentMedia !== null && ! isMap) {
-						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
+						if (pS.getCurrentZoom() === pS.getInitialZoom()) {
 							$("#album-view.media-view-container").removeClass("hidden-by-pinch");
 							$("#next")[0].click();
 							// media.swipeLeft();
@@ -133,7 +133,7 @@ $(document).ready(function() {
 								pS.drag(env.windowWidth / 3, {x: -1, y: 0});
 						}
 						return false;
-					} else if (e.key === " " && ! e.shiftKey && env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video") === 0) {
+					} else if (e.key === " " && ! e.shiftKey && env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0) {
 						if ($("video#media-center")[0].paused)
 							// play the video
 							$("video#media-center")[0].play();
@@ -157,7 +157,7 @@ $(document).ready(function() {
 						// env.prevMedia.swipeRight();
 						return false;
 					} else if (e.key === "ArrowLeft" && (pS.getCurrentZoom() !== pS.getInitialZoom() || env.prevMedia) && env.currentMedia !== null && ! isMap) {
-						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
+						if (pS.getCurrentZoom() === pS.getInitialZoom()) {
 							$("#album-view.media-view-container").removeClass("hidden-by-pinch");
 							$("#prev")[0].click();
 							// media.swipeRight();
@@ -171,7 +171,7 @@ $(document).ready(function() {
 						}
 						return false;
 					} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink && ! isMap) {
-						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
+						if (pS.getCurrentZoom() === pS.getInitialZoom()) {
 							if (e.shiftKey && ! $("#center .title").hasClass("hidden-by-pinch")) {
 								pS.swipeDown(upLink);
 								return false;
@@ -224,14 +224,14 @@ $(document).ready(function() {
 					} else if (e.key === "+") {
 						if (isMap) {
 							// return false;
-						} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("image") === 0) {
+						} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("image/") === 0) {
 							pS.pinchIn(null);
 							return false;
 						}
 					} else if (e.key === "-") {
 						if (isMap) {
 							// return false;
-						} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("image") === 0) {
+						} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("image/") === 0) {
 							pS.pinchOut(null, null);
 							return false;
 						}

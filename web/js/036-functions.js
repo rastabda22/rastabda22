@@ -29,7 +29,7 @@
 		folders = location.pathname;
 		folders = folders.substring(0, folders.lastIndexOf('/'));
 		url += folders;
-		if (env.currentMedia === null || env.currentAlbum !== null && ! env.currentAlbum.subalbums.length && env.currentAlbum.numsMedia.imagesAndVideosTotal() == 1) {
+		if (env.currentMedia === null || env.currentAlbum !== null && ! env.currentAlbum.subalbums.length && env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1) {
 			mediaParameter = util.pathJoin([
 				env.options.server_cache_path,
 				env.options.cache_album_subdir,
@@ -37,7 +37,7 @@
 				]) + ".jpg";
 		} else {
 			var reducedSizesIndex = 1;
-			if (env.options.reduced_sizes.length == 1)
+			if (env.options.reduced_sizes.length === 1)
 				reducedSizesIndex = 0;
 			var prefix = util.removeFolderString(env.currentMedia.foldersCacheBase);
 			if (prefix)
@@ -340,7 +340,7 @@
 			thisAlbum === null ||
 			$(".sub-menu:not(.hidden)").length
 			// thisAlbum !== null &&
-			// (thisAlbum.isSearch() || thisAlbum.cacheBase == env.options.by_search_string)
+			// (thisAlbum.isSearch() || thisAlbum.cacheBase === env.options.by_search_string)
 			// ||
 			// $("ul#right-menu li#no-search-string").is(":visible") ||
 			// $("ul#right-menu li#no-results").is(":visible") ||
@@ -460,7 +460,7 @@
 			$("ul#right-menu li.square-album-thumbnails").addClass("hidden");
 		} else {
 			$("ul#right-menu li.square-album-thumbnails").removeClass("hidden");
-			if (env.options.album_thumb_type == "square")
+			if (env.options.album_thumb_type === "square")
 				$("ul#right-menu li.square-album-thumbnails").addClass("selected");
 			else
 				$("ul#right-menu li.square-album-thumbnails").removeClass("selected");
@@ -500,7 +500,7 @@
 			$("ul#right-menu li.square-media-thumbnails").addClass("hidden");
 		else
 			$("ul#right-menu li.square-media-thumbnails").removeClass("hidden");
-		if (env.options.media_thumb_type == "square")
+		if (env.options.media_thumb_type === "square")
 		 	$("ul#right-menu li.square-media-thumbnails").addClass("selected");
 		else
 			$("ul#right-menu li.square-media-thumbnails").removeClass("selected");
@@ -888,7 +888,7 @@
 				// let numImages = 0;
 				// let numVideos = 0;
 				// for (let iMedia = 0; iMedia < thisAlbum.media.length; iMedia ++) {
-				// 	if (thisAlbum.media[iMedia].mimeType.indexOf("image") === 0) {
+				// 	if (thisAlbum.media[iMedia].mimeType.indexOf("image/") === 0) {
 				// 		numImages ++;
 				// 	} else {
 				// 		numVideos ++;
@@ -967,7 +967,7 @@
 			// let numImages = 0;
 			// let numVideos = 0;
 			// for (let iMedia = 0; iMedia < thisAlbum.media.length; iMedia ++) {
-			// 	if (thisAlbum.media[iMedia].mimeType.indexOf("image") === 0) {
+			// 	if (thisAlbum.media[iMedia].mimeType.indexOf("image/") === 0) {
 			// 		numImages ++;
 			// 	} else {
 			// 		numVideos ++;
@@ -1156,7 +1156,7 @@
 				this.title === util.pathJoin([media.albumName, media.name])
 				// this.title === util.pathJoin([media.albumName, media.name]) && (
 				// 	env.currentAlbum.isFolder() ||
-				// 	env.currentAlbum.cacheBase == env.options.folders_string ||
+				// 	env.currentAlbum.cacheBase === env.options.folders_string ||
 				// 	env.currentAlbum.isByDate() ||
 				// 	env.currentAlbum.isByGps() ||
 				// 	env.currentAlbum.isSearch() ||
@@ -1261,7 +1261,7 @@
 		var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
 		if (! keyValue)
 			return null;
-		else if (keyValue[2] == 1)
+		else if (keyValue[2] === 1)
 			return true;
 		else
 			return false;
@@ -1582,7 +1582,7 @@
 							resolve_getOptions();
 						},
 						error: function(jqXHR, textStatus, errorThrown) {
-							if (errorThrown == "Not Found") {
+							if (errorThrown === "Not Found") {
 								reject_getOptions();
 							}
 						}
@@ -1647,7 +1647,7 @@
 	};
 
 	Functions.toggleMetadata = function() {
-		if ($(".media-box .metadata").css("display") == "none") {
+		if ($(".media-box .metadata").css("display") === "none") {
 			$(".media-box .metadata-show").hide();
 			$(".media-box .metadata-hide").show();
 			$(".media-box .metadata")

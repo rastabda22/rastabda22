@@ -63,7 +63,7 @@
 			width = ithMedia.metadata.size[0];
 			height = ithMedia.metadata.size[1];
 
-			if (env.options.media_thumb_type == "fixed_height") {
+			if (env.options.media_thumb_type === "fixed_height") {
 				if (height < env.options.media_thumb_size) {
 					thumbHeight = height;
 					thumbWidth = width;
@@ -72,7 +72,7 @@
 					thumbWidth = thumbHeight * width / height;
 				}
 				calculatedWidth = thumbWidth;
-			} else if (env.options.media_thumb_type == "square") {
+			} else if (env.options.media_thumb_type === "square") {
 				thumbHeight = env.options.media_thumb_size;
 				thumbWidth = env.options.media_thumb_size;
 				calculatedWidth = env.options.media_thumb_size;
@@ -193,7 +193,7 @@
 		// the space for the images: remove the margin
 		MapFunctions.maxWidthForImagesInPopup = MapFunctions.maxWidthForPopupContent - 15 - 15;
 		// square thumbnails: set the value to a shorter one, in order to avoid right white space
-		if (env.options.media_thumb_type == "square") {
+		if (env.options.media_thumb_type === "square") {
 			var thumbSize = env.options.media_thumb_size;
 			var spacing = 0;
 			if (env.options.spacing)
@@ -267,7 +267,7 @@
 			element.parent().parent().off("auxclick").on(
 				"auxclick",
 				function (ev) {
-					if (ev.which == 2) {
+					if (ev.which === 2) {
 						var imgData = JSON.parse(element.attr("data"));
 						util.openInNewTab(imgData.mediaHash);
 						return false;
@@ -286,7 +286,7 @@
 				ev.stopPropagation();
 				var cachedAlbum = env.cache.getAlbum(imgData.albumCacheBase);
 				for (let iMedia = 0; iMedia < cachedAlbum.media.length; iMedia ++) {
-					if (imgData.mediaHash.split('/').pop() == cachedAlbum.media[iMedia].cacheBase) {
+					if (imgData.mediaHash.split('/').pop() === cachedAlbum.media[iMedia].cacheBase) {
 						ev.stopPropagation();
 						ev.preventDefault();
 						cachedAlbum.media[iMedia].toggleSelectedStatus(mapAlbum, '#' + id);
@@ -349,7 +349,7 @@
 					}
 				);
 				var nextIndex = currentIndex + 1;
-				if (currentIndex == env.options.available_map_popup_positions.length - 1)
+				if (currentIndex === env.options.available_map_popup_positions.length - 1)
 					nextIndex = 0;
 				$(".leaflet-popup").
 					removeClass(env.options.available_map_popup_positions[currentIndex]).
@@ -399,7 +399,7 @@
 							function(theAlbum) {
 								for (mediaIndex = 0; mediaIndex < theAlbum.numsMedia.imagesAndVideosTotal(); mediaIndex ++) {
 									for (photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
-										if (theAlbum.media[mediaIndex].cacheBase == photosInAlbum[photoIndex].element.cacheBase) {
+										if (theAlbum.media[mediaIndex].cacheBase === photosInAlbum[photoIndex].element.cacheBase) {
 											self.media.push(theAlbum.media[mediaIndex]);
 											self.sizesOfAlbum.sum(theAlbum.media[mediaIndex].fileSizes);
 											self.sizesOfSubTree.sum(theAlbum.media[mediaIndex].fileSizes);

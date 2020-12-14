@@ -189,7 +189,7 @@
 		var windowRatio;
 		// var mediaWidthOnScreen;
 		if (
-			currentZoom == initialZoom &&
+			currentZoom === initialZoom &&
 			! $("#album-view.media-view-container").hasClass("hidden-by-pinch") && (
 				$("#center .title").is(":visible") || $("#album-view.media-view-container").is(":visible")
 			)
@@ -296,7 +296,7 @@
 					if (
 						finalZoomWasZero ||
 						mediaRatioOnScreen > windowRatio &&
-						$(mediaSelector).outerWidth() == env.windowWidth || (
+						$(mediaSelector).outerWidth() === env.windowWidth || (
 							$("#center .title").hasClass("hidden") ||
 							$("#center .title").hasClass("hidden-by-option") ||
 							$("#center .title").hasClass("hidden-by-fullscreen")
@@ -348,7 +348,7 @@
 	PinchSwipe.setPinchButtonsVisibility = function() {
 		$("#pinch-container").removeClass("hidden");
 
-		if (env.currentMedia.mimeType.indexOf("video") === 0) {
+		if (env.currentMedia.mimeType.indexOf("video/") === 0) {
 			$("#pinch-container").hide();
 		} else {
 			$("#pinch-container").show();
@@ -423,7 +423,7 @@
 
 			var clientX, clientY;
 
-			if (phase == "start") {
+			if (phase === "start") {
 				isLongTap = false;
 			}
 
@@ -431,20 +431,20 @@
 			if (event.touches === undefined || fingerCount === 1) {
 				if (currentZoom === initialZoom) {
 					// zoom = 1: swipe
-					if (phase == "move") {
-						if (direction == "left") {
+					if (phase === "move") {
+						if (direction === "left") {
 							PinchSwipe.scrollMedia(env.windowWidth + distance);
-						} else if (direction == "right") {
+						} else if (direction === "right") {
 							PinchSwipe.scrollMedia(env.windowWidth - distance);
 						}
-					} else if (phase == "cancel") {
+					} else if (phase === "cancel") {
 						PinchSwipe.swipeMedia(env.windowWidth);
-					} else if (phase == "end") {
-						if (direction == "right") {
+					} else if (phase === "end") {
+						if (direction === "right") {
 							env.prevMedia.swipeRight();
-						} else if (direction == "left") {
+						} else if (direction === "left") {
 							env.nextMedia.swipeLeft();
-						} else if (direction == "down") {
+						} else if (direction === "down") {
 							PinchSwipe.swipeDown(util.upHash());
 						}
 					}
@@ -461,8 +461,8 @@
 						clientX = event.changedTouches[0].clientX;
 						clientY = event.changedTouches[0].clientY;
 					}
-					if (phase == "start" || phase == "end" || phase == "cancel" || distance == 0) {
-						if (phase == "start") {
+					if (phase === "start" || phase === "end" || phase === "cancel" || distance === 0) {
+						if (phase === "start") {
 							previousClientX = clientX;
 							previousClientY = clientY;
 						}
@@ -550,7 +550,7 @@
 		}
 
 		function tap(event, target) {
-			if (currentZoom == initialZoom) {
+			if (currentZoom === initialZoom) {
 				if (event.button === 2) {
 					// right click
 					if (env.prevMedia !== null) {
@@ -575,7 +575,7 @@
 		}
 
 		function doubleTap(event, target) {
-			if (currentZoom == initialZoom) {
+			if (currentZoom === initialZoom) {
 				env.prevMedia.swipeRight();
 			} else {
 				// currentZoom > initialZoom
@@ -670,7 +670,7 @@
 		if (env.currentMedia === null)
 			return true;
 		if (! event.shiftKey && ! event.altKey && ! event.ctrlKey) {
-			if (env.currentMedia.mimeType.indexOf("video") === 0 || env.currentMedia.mimeType.indexOf("image") === 0 && currentZoom == initialZoom) {
+			if (env.currentMedia.mimeType.indexOf("video/") === 0 || env.currentMedia.mimeType.indexOf("image/") === 0 && currentZoom === initialZoom) {
 				// mouse wheel with no key: swipe
 				if (delta < 0) {
 					env.nextMedia.swipeLeft();
@@ -695,7 +695,7 @@
 					return false;
 				}
 			}
-		} else if (env.currentMedia.mimeType.indexOf("image") === 0) {
+		} else if (env.currentMedia.mimeType.indexOf("image/") === 0) {
 			// mouse wheel with shift/control/alt key: pinch
 			if (delta < 0) {
 				PinchSwipe.pinchOut(event, currentZoom * 0.95, 0);

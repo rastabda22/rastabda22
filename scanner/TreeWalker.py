@@ -1383,7 +1383,6 @@ class TreeWalker:
 
 		if not album_cache_hit and album_ini_good:
 			if must_process_album_ini:
-				message("reading album.ini...", "", 2)
 				album.read_album_ini(album_ini_file)
 				# save the album.ini mtime: it help know whether the file has been removed
 				album.album_ini_mtime = file_mtime(album_ini_file)
