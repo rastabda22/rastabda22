@@ -246,7 +246,7 @@ class Album(object):
 		self.album_ini = configparser.ConfigParser(allow_no_value=True)
 		message("reading album.ini...", file_name, 5)
 		self.album_ini.read(file_name)
-		indented_message("album.ini read", file_name, 5)
+		indented_message("album.ini read", "", 5)
 
 		next_level()
 		message("adding album.ini metadata values to album...", "", 5)
