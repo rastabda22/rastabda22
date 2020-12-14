@@ -348,7 +348,7 @@
 	PinchSwipe.setPinchButtonsVisibility = function() {
 		$("#pinch-container").removeClass("hidden");
 
-		if (env.currentMedia.mimeType.indexOf("video") === 0) {
+		if (env.currentMedia.mimeType.indexOf("video/") === 0) {
 			$("#pinch-container").hide();
 		} else {
 			$("#pinch-container").show();
@@ -670,7 +670,7 @@
 		if (env.currentMedia === null)
 			return true;
 		if (! event.shiftKey && ! event.altKey && ! event.ctrlKey) {
-			if (env.currentMedia.mimeType.indexOf("video") === 0 || env.currentMedia.mimeType.indexOf("image") === 0 && currentZoom == initialZoom) {
+			if (env.currentMedia.mimeType.indexOf("video/") === 0 || env.currentMedia.mimeType.indexOf("image/") === 0 && currentZoom == initialZoom) {
 				// mouse wheel with no key: swipe
 				if (delta < 0) {
 					env.nextMedia.swipeLeft();
@@ -695,7 +695,7 @@
 					return false;
 				}
 			}
-		} else if (env.currentMedia.mimeType.indexOf("image") === 0) {
+		} else if (env.currentMedia.mimeType.indexOf("image/") === 0) {
 			// mouse wheel with shift/control/alt key: pinch
 			if (delta < 0) {
 				PinchSwipe.pinchOut(event, currentZoom * 0.95, 0);

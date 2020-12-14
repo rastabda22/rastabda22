@@ -981,7 +981,7 @@
 					}
 				);
 
-				if (self.mimeType.indexOf("image") === 0) {
+				if (self.mimeType.indexOf("image/") === 0) {
 					pS.addMediaGesturesDetection();
 					util.setPinchButtonsPosition();
 					util.setSelectButtonPosition();
@@ -1011,7 +1011,7 @@
 						let scalePromise = self.scale(event);
 						scalePromise.then(
 							function() {
-								if (self.mimeType.indexOf("image") === 0) {
+								if (self.mimeType.indexOf("image/") === 0) {
 									f.pinchSwipeInitialization();
 									util.setPinchButtonsPosition();
 									util.setSelectButtonPosition();
@@ -1171,13 +1171,13 @@
 		var mediaBoxInnerElement = $(".media-box#" + id + " .media-box-inner");
 		// empty the img container: another image will be put in there
 
-		if (this.mimeType.indexOf("video") === 0 && ! f.videoOK()) {
+		if (this.mimeType.indexOf("video/") === 0 && ! f.videoOK()) {
 			mediaBoxInnerElement.empty();
 			f.addVideoUnsupportedMarker(id);
 			if (id === "center")
 				loadNextPrevMedia();
 		} else {
-			if (this.mimeType.indexOf("video") === 0) {
+			if (this.mimeType.indexOf("video/") === 0) {
 				mediaSelector = ".media-box#" + id + " .media-box-inner video";
 			} else {
 				mediaSelector = ".media-box#" + id + " .media-box-inner img";
@@ -1218,7 +1218,7 @@
 							util.setPinchButtonsPosition();
 							util.setSelectButtonPosition();
 							util.correctPrevNextPosition();
-							if (self.mimeType.indexOf("image") === 0) {
+							if (self.mimeType.indexOf("image/") === 0) {
 								loadNextPrevMedia(containerHeight, containerWidth);
 							}
 						}
@@ -1245,7 +1245,7 @@
 			$("#prev").off();
 
 			mediaBoxInnerElement.off('mousewheel');
-			if (this.mimeType.indexOf("image") === 0)
+			if (this.mimeType.indexOf("image/") === 0)
 				mediaBoxInnerElement.on('mousewheel', pS.swipeOnWheel);
 
 			$(".media-box#center .media-box-inner .media-bar").on(
@@ -1327,7 +1327,7 @@
 			$(".media-box#center .fullscreen").off('click').on('click', TopFunctions.goFullscreenFromMouse);
 
 			// set social buttons events
-			if (env.currentMedia.mimeType.indexOf("video") === 0)
+			if (env.currentMedia.mimeType.indexOf("video/") === 0)
 				$("#media-center").on("loadstart", f.socialButtons);
 			else
 				$("#media-center").on("load", f.socialButtons);
@@ -1339,7 +1339,7 @@
 		if (this.date !== undefined)
 			text += "<tr><td class='metadata-data-date'></td><td>" + this.date + "</td></tr>";
 		var fileSize = this.fileSizes[0].images;
-		if (this.mimeType.indexOf("video") === 0)
+		if (this.mimeType.indexOf("video/") === 0)
 			fileSize = this.fileSizes[0].videos;
 		text += "<tr><td class='metadata-data-file-size'></td><td>" + f.humanFileSize(fileSize) + "</td></tr>";
 		if (this.metadata.size !== undefined)
@@ -1425,7 +1425,7 @@
 	Album.prototype.prepareForShowing = function(mediaIndex) {
 		var populateAlbum;
 
-		if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video") === 0)
+		if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0)
 			// stop the video, otherwise it will keep playing
 			$("video#media-center")[0].pause();
 

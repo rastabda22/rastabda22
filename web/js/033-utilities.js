@@ -1708,14 +1708,14 @@
 		// chooses the proper reduction to use depending on the container size
 		var container, mediaSrc;
 
-		if (this.mimeType.indexOf("video") === 0) {
+		if (this.mimeType.indexOf("video/") === 0) {
 			if (fullScreenStatus && this.name.match(/\.avi$/) === null) {
 				mediaSrc = this.originalMediaPath();
 			} else {
 				// .avi videos are not played by browsers, use the transcoded one
 				mediaSrc = this.mediaPath("");
 			}
-		} else if (this.mimeType.indexOf("image") === 0) {
+		} else if (this.mimeType.indexOf("image/") === 0) {
 			if (fullScreenStatus && Modernizr.fullscreen)
 				container = $(window);
 			else
@@ -1848,7 +1848,7 @@
 		var mediaSrc, mediaElement, container;
 		var attrWidth = mediaWidth, attrHeight = mediaHeight;
 
-		if (this.mimeType.indexOf("video") === 0) {
+		if (this.mimeType.indexOf("video/") === 0) {
 			if (fullScreenStatus && this.name.match(/\.avi$/) === null) {
 				mediaSrc = this.originalMediaPath();
 			} else {
@@ -1857,7 +1857,7 @@
 			}
 
 			mediaElement = $('<video/>', {controls: true });
-		} else if (this.mimeType.indexOf("image") === 0) {
+		} else if (this.mimeType.indexOf("image/") === 0) {
 			if (fullScreenStatus && Modernizr.fullscreen)
 				container = $(window);
 			else
@@ -1897,9 +1897,9 @@
 	SingleMedia.prototype.createMediaLinkTag = function(mediaSrc) {
 		// creates a link tag to be inserted in <head>
 
-		if (this.mimeType.indexOf("video") === 0) {
+		if (this.mimeType.indexOf("video/") === 0) {
 			return '<link rel="video_src" href="' + encodeURI(mediaSrc) + '" />';
-		} else if (this.mimeType.indexOf("image") === 0) {
+		} else if (this.mimeType.indexOf("image/") === 0) {
 			return '<link rel="image_src" href="' + encodeURI(mediaSrc) + '" />';
 		}
 	};
@@ -1907,9 +1907,9 @@
 	SingleMedia.prototype.chooseTriggerEvent = function() {
 		// choose the event that must trigger the scale function
 
-		if (this.mimeType.indexOf("video") === 0) {
+		if (this.mimeType.indexOf("video/") === 0) {
 			return "loadstart";
-		} else if (this.mimeType.indexOf("image") === 0) {
+		} else if (this.mimeType.indexOf("image/") === 0) {
 			return "load";
 		}
 	};
@@ -1928,8 +1928,8 @@
 	SingleMedia.prototype.mediaPath = function(size) {
 		var suffix = env.options.cache_folder_separator, hash, rootString = "root-";
 		if (
-			this.mimeType.indexOf("image") === 0 ||
-			this.mimeType.indexOf("video") === 0 && [env.options.album_thumb_size, env.options.media_thumb_size].indexOf(size) != -1
+			this.mimeType.indexOf("image/") === 0 ||
+			this.mimeType.indexOf("video/") === 0 && [env.options.album_thumb_size, env.options.media_thumb_size].indexOf(size) != -1
 		) {
 			var actualSize = size;
 			var albumThumbSize = env.options.album_thumb_size;
@@ -1955,7 +1955,7 @@
 					suffix += "f";
 			}
 			suffix += ".jpg";
-		} else if (this.mimeType.indexOf("video") === 0) {
+		} else if (this.mimeType.indexOf("video/") === 0) {
 			suffix += "transcoded.mp4";
 		}
 
@@ -2030,9 +2030,9 @@
 				$(".media-box .media-box-inner").css("height", heightForMedia);
 				$(".media-box").show();
 
-				if (self.mimeType.indexOf("image") === 0)
+				if (self.mimeType.indexOf("image/") === 0)
 					mediaElement = $(".media-box#" + id + " .media-box-inner img");
-				else if (self.mimeType.indexOf("video") === 0)
+				else if (self.mimeType.indexOf("video/") === 0)
 					mediaElement = $(".media-box#" + id + " .media-box-inner video");
 
 				mediaWidth = self.metadata.size[0];
@@ -2049,7 +2049,7 @@
 				containerHeight = heightForMedia;
 				containerRatio = containerWidth / containerHeight;
 
-				if (self.mimeType.indexOf("image") === 0) {
+				if (self.mimeType.indexOf("image/") === 0) {
 					photoSrc = self.chooseReducedPhoto(container, env.fullScreenStatus);
 					previousSrc = mediaElement.attr("src");
 
@@ -2123,7 +2123,7 @@
 		for (let i = 0; i < this.length; i ++) {
 			if (this[i].mimeType.indexOf("image/") === 0)
 				result.images += 1;
-			else
+			else if (this[i].mimeType.indexOf("video/") === 0)
 				result.videos += 1;
 		}
 		return result;
@@ -2188,8 +2188,8 @@
 
 					for (let iMedia = 0; iMedia < album.media.length; iMedia ++) {
 						if (
-							album.media[iMedia].mimeType.indexOf("image") === 0 && what === "videos" ||
-							album.media[iMedia].mimeType.indexOf("video") === 0 && what === "images"
+							album.media[iMedia].mimeType.indexOf("image/") === 0 && what === "videos" ||
+							album.media[iMedia].mimeType.indexOf("video/") === 0 && what === "images"
 						)
 							continue;
 

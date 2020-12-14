@@ -888,7 +888,7 @@
 				// let numImages = 0;
 				// let numVideos = 0;
 				// for (let iMedia = 0; iMedia < thisAlbum.media.length; iMedia ++) {
-				// 	if (thisAlbum.media[iMedia].mimeType.indexOf("image") === 0) {
+				// 	if (thisAlbum.media[iMedia].mimeType.indexOf("image/") === 0) {
 				// 		numImages ++;
 				// 	} else {
 				// 		numVideos ++;
@@ -967,7 +967,7 @@
 			// let numImages = 0;
 			// let numVideos = 0;
 			// for (let iMedia = 0; iMedia < thisAlbum.media.length; iMedia ++) {
-			// 	if (thisAlbum.media[iMedia].mimeType.indexOf("image") === 0) {
+			// 	if (thisAlbum.media[iMedia].mimeType.indexOf("image/") === 0) {
 			// 		numImages ++;
 			// 	} else {
 			// 		numVideos ++;
