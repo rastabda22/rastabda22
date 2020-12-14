@@ -1261,8 +1261,8 @@
 				if (albumHash) {
 					albumHash = decodeURI(albumHash);
 
+					let splittedAlbumHash = albumHash.split(env.options.cache_folder_separator);
 					if (util.isSearchCacheBase(albumHash)) {
-						var splittedAlbumHash = albumHash.split(env.options.cache_folder_separator);
 
 						// wordsWithOptionsString = albumHash.substring(env.options.by_search_string.length + 1);
 						wordsWithOptionsString = splittedAlbumHash[1];
@@ -1280,8 +1280,6 @@
 							env.options.search_accent_sensitive = searchOptions.includes('a');
 							env.options.search_current_album = searchOptions.includes('o');
 						}
-
-						env.options.cache_base_to_search_in = splittedAlbumHash.slice(2).join(env.options.cache_folder_separator);
 
 						$("ul#right-menu #search-field").attr("value", wordsStringOriginal);
 						wordsString = util.normalizeAccordingToOptions(wordsString);
@@ -1302,6 +1300,9 @@
 							resolve_parseHash([env.searchAlbum, -1]);
 							return;
 						}
+					}
+					if (util.isSearchCacheBase(albumHash) || util.isMapCacheBase(albumHash)) {
+						env.options.cache_base_to_search_in = splittedAlbumHash.slice(2).join(env.options.cache_folder_separator);
 					}
 				}
 
