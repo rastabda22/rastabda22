@@ -112,7 +112,7 @@ $(document).ready(function() {
 				if (! e.ctrlKey && ! e.altKey) {
 					if (e.key === "Tab") {
 						e.preventDefault();
-						if (pS.getCurrentZoom() == pS.getInitialZoom() && ! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
+						if (pS.getCurrentZoom() === pS.getInitialZoom() && ! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
 							tF.toggleTitleThumbnailAndCaption(e);
 							// $("ul#right-menu li.hide-title")[0].click();
 							// $("ul#right-menu li.hide-bottom-thumbnails")[0].click();
@@ -120,7 +120,7 @@ $(document).ready(function() {
 							return false;
 						}
 					} else if (e.key === "ArrowRight" && (pS.getCurrentZoom() !== pS.getInitialZoom() || env.prevMedia) && env.currentMedia !== null && ! isMap) {
-						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
+						if (pS.getCurrentZoom() === pS.getInitialZoom()) {
 							$("#album-view.media-view-container").removeClass("hidden-by-pinch");
 							$("#next")[0].click();
 							// media.swipeLeft();
@@ -157,7 +157,7 @@ $(document).ready(function() {
 						// env.prevMedia.swipeRight();
 						return false;
 					} else if (e.key === "ArrowLeft" && (pS.getCurrentZoom() !== pS.getInitialZoom() || env.prevMedia) && env.currentMedia !== null && ! isMap) {
-						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
+						if (pS.getCurrentZoom() === pS.getInitialZoom()) {
 							$("#album-view.media-view-container").removeClass("hidden-by-pinch");
 							$("#prev")[0].click();
 							// media.swipeRight();
@@ -171,7 +171,7 @@ $(document).ready(function() {
 						}
 						return false;
 					} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink && ! isMap) {
-						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
+						if (pS.getCurrentZoom() === pS.getInitialZoom()) {
 							if (e.shiftKey && ! $("#center .title").hasClass("hidden-by-pinch")) {
 								pS.swipeDown(upLink);
 								return false;

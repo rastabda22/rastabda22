@@ -140,12 +140,12 @@
 	PhotoFloat.convertComplexCombinationsIntoLists = function(codesComplexCombination) {
 		var albumCombinationList, mediaCombinationList;
 		var albumCombination = codesComplexCombination.split(',')[0];
-		if (albumCombination == "")
+		if (albumCombination === "")
 			albumCombinationList = [];
 		else
 			albumCombinationList = albumCombination.split('-');
 		var mediaCombination = codesComplexCombination.split(',')[1];
-		if (mediaCombination == "")
+		if (mediaCombination === "")
 			mediaCombinationList = [];
 		else
 			mediaCombinationList = mediaCombination.split('-');
@@ -153,7 +153,7 @@
 	};
 
 	PhotoFloat.isProtectedCacheBase = function(cacheBase) {
-		return cacheBase.indexOf(env.options.protected_directories_prefix) == 0;
+		return cacheBase.indexOf(env.options.protected_directories_prefix) === 0;
 	};
 
 	PhotoFloat.getSingleUnprotectedCacheBaseWithExternalMediaAndPositions = function(unprotectedCacheBase, {getMedia, getPositions}) {
@@ -618,7 +618,7 @@
 		// for (i = 0; i < protectedAlbum.subalbums.length; i ++) {
 		protectedAlbum.subalbums.forEach(
 			function(ithProtectedSubalbum) {
-				if (cacheBases.indexOf(ithProtectedSubalbum.cacheBase) == -1) {
+				if (cacheBases.indexOf(ithProtectedSubalbum.cacheBase) === -1) {
 					self.subalbums.push(ithProtectedSubalbum);
 
 					if (ithProtectedSubalbum instanceof Album) {
@@ -918,7 +918,7 @@
 									// 	album.media,
 									// 	mediaGot,
 									// 	function(singleMedia1, singleMedia2) {
-									// 		return singleMedia1.foldersCacheBase == singleMedia2.foldersCacheBase && singleMedia1.cacheBase == singleMedia2.cacheBase;
+									// 		return singleMedia1.foldersCacheBase === singleMedia2.foldersCacheBase && singleMedia1.cacheBase === singleMedia2.cacheBase;
 									// 	}
 									// );
 								album.includedFilesByCodesSimpleCombination[","].mediaGot = true;
@@ -1021,10 +1021,10 @@
 
 		function thingsToBeDoneBeforeResolvingGetAlbum(theAlbum) {
 			var i;
-			if (theAlbum.cacheBase == env.options.by_search_string) {
+			if (theAlbum.cacheBase === env.options.by_search_string) {
 				// root of search albums: build the word list
 				for (i = 0; i < theAlbum.subalbums.length; ++i) {
-					if (env.searchWordsFromJsonFile.indexOf(theAlbum.subalbums[i].unicodeWords) == -1) {
+					if (env.searchWordsFromJsonFile.indexOf(theAlbum.subalbums[i].unicodeWords) === -1) {
 						env.searchWordsFromJsonFile.push(theAlbum.subalbums[i].unicodeWords);
 						env.searchAlbumCacheBasesFromJsonFile.push(theAlbum.subalbums[i].cacheBase);
 						env.searchAlbumSubalbumsFromJsonFile.push(theAlbum.subalbums[i]);
@@ -1215,11 +1215,11 @@
 			if (hashPartsCount === 1) {
 				// folders or gps or date hash: album only
 				albumHash = hash;
-			} else if (hashPartsCount == 2) {
+			} else if (hashPartsCount === 2) {
 				// media in folders album: album, media
 				albumHash = hashParts[0];
 				mediaHash = hashParts[1];
-			} else if (hashPartsCount == 3) {
+			} else if (hashPartsCount === 3) {
 				// gps or date or search or selection hash: album, album where the image is, media
 				// subfolder of search hash: album, search subalbum, search album
 				if (util.isSearchCacheBase(hashParts[2]) || util.isSelectionCacheBase(hashParts[2])) {
@@ -1231,7 +1231,7 @@
 					mediaFolderHash = hashParts[1];
 					mediaHash = hashParts[2];
 				}
-			} else if (hashPartsCount == 4) {
+			} else if (hashPartsCount === 4) {
 				albumHash = hashParts[0];
 				foundAlbumHash = hashParts[1];
 				savedSearchAlbumHash = hashParts[2];
@@ -1289,11 +1289,11 @@
 						searchWordsFromUserNormalizedAccordingToOptions = wordsStringNormalizedAccordingToOptions.split(' ');
 						searchWordsFromUserNormalized = wordsStringNormalized.split(' ');
 
-						if (searchWordsFromUser.length == 1)
+						if (searchWordsFromUser.length === 1)
 							$("ul#right-menu li#any-word").addClass("dimmed").off("click");
 
 
-						if (albumHash == env.options.by_search_string) {
+						if (albumHash === env.options.by_search_string) {
 							env.searchAlbum = util.initializeSearchAlbumBegin(albumHash, mediaFolderHash);
 							// no search term
 							// TO DO: does execution actually arrive here?
@@ -1465,7 +1465,7 @@
 				function buildSearchResult() {
 					env.searchAlbum.removedStopWords = removedStopWords;
 					// has any word remained after stop words have been removed?
-					if (searchWordsFromUser.length == 0) {
+					if (searchWordsFromUser.length === 0) {
 						util.noResults(env.searchAlbum, '#no-search-string-after-stopwords-removed');
 						resolve_parseHash([env.searchAlbum, -1]);
 						return;
@@ -1568,7 +1568,7 @@
 																	util.isMapCacheBase(env.options.cache_base_to_search_in) &&
 																	env.cache.getAlbum(env.options.cache_base_to_search_in).media.some(
 																		function(singleMedia) {
-																			return singleMedia.cacheBase == ithMedia.cacheBase && singleMedia.foldersCacheBase == ithMedia.foldersCacheBase;
+																			return singleMedia.cacheBase === ithMedia.cacheBase && singleMedia.foldersCacheBase === ithMedia.foldersCacheBase;
 																		}
 																	)
 																)
@@ -1610,7 +1610,7 @@
 																	util.isMapCacheBase(env.options.cache_base_to_search_in) &&
 																	env.cache.getAlbum(env.options.cache_base_to_search_in).media.some(
 																		function(singleMedia) {
-																			return singleMedia.cacheBase == ithMedia.cacheBase && singleMedia.foldersCacheBase == ithMedia.foldersCacheBase;
+																			return singleMedia.cacheBase === ithMedia.cacheBase && singleMedia.foldersCacheBase === ithMedia.foldersCacheBase;
 																		}
 																	)
 																)
@@ -1689,7 +1689,7 @@
 																if (
 																	searchWordsFromUserNormalizedAccordingToOptions.some(
 																		function(element, index) {
-																			return index > lastIndex && normalizedWords.indexOf(element) == -1;
+																			return index > lastIndex && normalizedWords.indexOf(element) === -1;
 																		}
 																	)
 																)
@@ -1710,7 +1710,7 @@
 																	}
 																}
 															}
-															if (match && matchingMedia.indexOf(env.searchAlbum.media[indexMedia]) == -1)
+															if (match && matchingMedia.indexOf(env.searchAlbum.media[indexMedia]) === -1)
 																matchingMedia.push(env.searchAlbum.media[indexMedia]);
 														}
 														env.searchAlbum.media = matchingMedia;
@@ -1724,7 +1724,7 @@
 																if (
 																	searchWordsFromUserNormalizedAccordingToOptions.some(
 																		function(element, index) {
-																			return index > lastIndex && normalizedWords.indexOf(element) == -1;
+																			return index > lastIndex && normalizedWords.indexOf(element) === -1;
 																		}
 																	)
 																)
@@ -1745,7 +1745,7 @@
 																	}
 																}
 															}
-															if (match && matchingSubalbums.indexOf(env.searchAlbum.subalbums[indexSubalbums]) == -1)
+															if (match && matchingSubalbums.indexOf(env.searchAlbum.subalbums[indexSubalbums]) === -1)
 																matchingSubalbums.push(env.searchAlbum.subalbums[indexSubalbums]);
 														}
 
@@ -1920,7 +1920,7 @@
 					this.numPasswords(true) &&
 					// ! jQuery.isEmptyObject(this.numsProtectedMediaInSubTree) &&
 					(
-						this.subalbums.length == 0 ||
+						this.subalbums.length === 0 ||
 						this.numsProtectedMediaInSubTree.sumUpNumsProtectedMedia() > util.sumNumsProtectedMediaOfArray(this.subalbums).sumUpNumsProtectedMedia()
 					)
 				) {
