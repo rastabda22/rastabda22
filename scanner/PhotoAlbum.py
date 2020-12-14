@@ -1485,7 +1485,7 @@ class Media(object):
 		if "GPSLongitudeRef" in exif:
 			gps_longitude_ref = exif["GPSLongitudeRef"]
 
-		if gps_latitude and gps_latitude_ref and gps_longitude and gps_longitude_ref:
+		if gps_latitude is not None and gps_latitude_ref is not None and gps_longitude is not None and gps_longitude_ref is not None:
 			self._attributes["metadata"]["altitude"] = gps_altitude
 			self._attributes["metadata"]["altitudeRef"] = gps_altitude_ref
 			self._attributes["metadata"]["latitude"] = gps_latitude
@@ -2866,7 +2866,7 @@ class Metadata(object):
 			except ValueError:
 				message("ERROR", "Incorrect longitude in [" + name + "] in '" + Options.config['metadata_filename'] + "'", 1)
 
-		if gps_latitude and gps_latitude_ref and gps_longitude and gps_longitude_ref:
+		if gps_latitude is not None and gps_latitude_ref is not None and gps_longitude is not None and gps_longitude_ref is not None:
 			attributes["metadata"]["latitude"] = gps_latitude
 			attributes["metadata"]["latitudeMS"] = Metadata.convert_decimal_to_degrees_minutes_seconds(gps_latitude, gps_latitude_ref)
 			attributes["metadata"]["longitude"] = gps_longitude
