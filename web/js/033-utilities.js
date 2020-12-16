@@ -2262,17 +2262,16 @@
 							let ithSubalbum = album.subalbums[iSubalbum];
 							let subalbumPromise = new Promise(
 								function(resolveSubalbumPromise) {
-									// let ithSubalbum = album.subalbums[iSubalbum];
 									let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: false});
 									convertSubalbumPromise.then(
 										function(ithSubalbum) {
 											album.subalbums[iSubalbum] = ithSubalbum;
 											let albumPath = ithSubalbum.path;
-											if (true || album.isSearch() || album.isSelection())
-												// remove the leading folders/date/gps/map string
-												albumPath = albumPath.split('/').splice(1).join('/');
-											else
-												albumPath = albumPath.substring(basePath.length + 1);
+											// if (true || album.isSearch() || album.isSelection())
+											// 	// remove the leading folders/date/gps/map string
+											albumPath = albumPath.split('/').splice(1).join('/');
+											// else
+											// 	albumPath = albumPath.substring(basePath.length + 1);
 											let addMediaAndSubalbumsPromise = addMediaAndSubalbumsFromAlbum(ithSubalbum, albumPath);
 											addMediaAndSubalbumsPromise.then(
 												function() {
