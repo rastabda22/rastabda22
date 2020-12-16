@@ -2250,7 +2250,7 @@
 					if (everything) {
 						for (let i = 0; i < album.subalbums.length; i ++) {
 							let iSubalbum = i;
-							let ithSubalbum = self.subalbums[iSubalbum];
+							let ithSubalbum = album.subalbums[iSubalbum];
 							let subalbumPromise = new Promise(
 								function(resolveSubalbumPromise) {
 									// let ithSubalbum = album.subalbums[iSubalbum];
