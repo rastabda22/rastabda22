@@ -292,10 +292,6 @@
 			return this;
 		}
 
-		isGenerated() {
-			return this.isTransversal() || this.isCollection();
-		}
-
 		isEqual(otherSubalbum) {
 			return otherSubalbum !== null && this.cacheBase === otherSubalbum.cacheBase;
 		}
@@ -545,10 +541,6 @@
 					}
 				);
 			return result;
-		}
-
-		isGenerated() {
-			return this.isTransversal() || this.isCollection();
 		}
 
 		hasValidPositionsAndMediaInAlbumAndSubalbums() {

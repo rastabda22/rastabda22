@@ -400,27 +400,51 @@
 	};
 
 	Album.prototype.numPasswords = function(unveiledOnly = false) {
-		var codes = [];
-		for (let codesComplexCombination in this.numsProtectedMediaInSubTree) {
-			if (this.numsProtectedMediaInSubTree.hasOwnProperty(codesComplexCombination) && codesComplexCombination !== ",") {
-				var albumCombination = codesComplexCombination.split(',')[0];
-				var mediaCombination = codesComplexCombination.split(',')[1];
-				let combinations = [albumCombination, mediaCombination];
-				for (let i = 0; i < combinations.length; i ++) {
-					if (combinations[i]) {
-						let combinationList = combinations[i].split('-');
-						if (unveiledOnly) {
-							for (let j = 0; j < combinationList.length; j ++) {
-								if (env.guessedPasswordCodes.includes(combinationList[j]))
-									combinationList.splice(j, 1);
-							}
-						}
-						codes = Utilities.arrayUnion(codes, combinationList);
-					}
+		var self;
+		if (this.isSearch())
+			self = env.cache.getAlbum(env.options.by_search_string);
+		else
+			self = this;
 
+		var codes = [];
+		Object.keys(self.numsProtectedMediaInSubTree).forEach(
+			function(codesComplexCombination) {
+				if (codesComplexCombination !== ",") {
+					var albumCombinations = codesComplexCombination.split(',')[0];
+					if (albumCombinations && typeof albumCombinations === "string")
+						albumCombinations = [albumCombinations];
+					var mediaCombinations = codesComplexCombination.split(',')[1];
+					if (mediaCombinations && typeof mediaCombinations === "string")
+						mediaCombinations = [mediaCombinations];
+					let combinations = Utilities.arrayUnion(albumCombinations, mediaCombinations);
+					combinations.forEach(
+						function(combination) {
+							codesList = combination.split('-');
+							if (typeof codesList === "string")
+								codesList = [codesList];
+							codesList.forEach(
+								function(code) {
+									if (! codes.includes(code) && (! unveiledOnly || ! env.guessedPasswordCodes.includes(code)))
+										codes.push(code);
+								}
+							);
+						}
+					);
+					// for (let i = 0; i < combinations.length; i ++) {
+					// 	if (combinations[i]) {
+					// 		let combinationList = combinations[i].split('-');
+					// 		if (unveiledOnly) {
+					// 			for (let j = 0; j < combinationList.length; j ++) {
+					// 				if (env.guessedPasswordCodes.includes(combinationList[j]))
+					// 					combinationList.splice(j, 1);
+					// 			}
+					// 		}
+					// 		codes = Utilities.arrayUnion(codes, combinationList);
+					// 	}
+					// }
 				}
 			}
-		}
+		);
 		return codes.length;
 	};
 
@@ -1916,7 +1940,7 @@
 
 	SingleMedia.prototype.originalMediaPath = function() {
 		if (env.options.browser_unsupported_mime_types.includes(this.mimeType))
-			return Utilities.pathJoin([env.options.server_cache_path, this.convertedPath]);
+			return Utilities.pathJoin([env.server_cache_path, this.convertedPath]);
 		else
 			return this.trueOriginalMediaPath();
 	};
@@ -1977,9 +2001,9 @@
 				hash = hash.substring(env.options.byMapStringWithTrailingSeparator.length);
 		}
 		if (this.cacheSubdir)
-			return Utilities.pathJoin([env.options.server_cache_path, this.cacheSubdir, hash]);
+			return Utilities.pathJoin([env.server_cache_path, this.cacheSubdir, hash]);
 		else
-			return Utilities.pathJoin([env.options.server_cache_path, hash]);
+			return Utilities.pathJoin([env.server_cache_path, hash]);
 	};
 
 	Utilities.mediaBoxContainerHeight = function() {

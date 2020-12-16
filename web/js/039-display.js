@@ -252,14 +252,15 @@ $(document).ready(function() {
 						e.key.toLowerCase() === "u" &&
 						env.currentAlbum !== null
 					) {
-						var numPasswords;
-						if (env.currentAlbum.isSearch())
-							numPasswords = env.cache.getAlbum(env.currentAlbum.ancestorsCacheBase[0]).numPasswords();
-						else
-							numPasswords = env.currentAlbum.numPasswords();
+						// var numPasswords;
+						// if (env.currentAlbum.isSearch())
+						// 	numPasswords = env.cache.getAlbum(env.currentAlbum.ancestorsCacheBase[0]).numPasswords();
+						// else
+							// numPasswords = env.currentAlbum.numPasswords();
 
 						if (
-							numPasswords && env.guessedPasswordCodes.length < numPasswords
+							env.currentAlbum.hasMoreProtectedContent()
+							// numPasswords && env.guessedPasswordCodes.length < numPasswords
 						) {
 							$("#protected-content-unveil")[0].click();
 							return false;
@@ -665,7 +666,7 @@ $(document).ready(function() {
 			var ajaxOptions = {
 				type: "GET",
 				dataType: "json",
-				url: util.pathJoin([env.options.server_cache_path, env.options.passwords_subdir, encryptedPassword]),
+				url: util.pathJoin([env.server_cache_path, env.options.passwords_subdir, encryptedPassword]),
 				success: function(jsonCode) {
 					password.css("background-color", "rgb(200, 200, 200)");
 					var passwordCode = jsonCode.passwordCode;

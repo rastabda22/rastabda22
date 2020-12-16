@@ -31,7 +31,7 @@
 		url += folders;
 		if (env.currentMedia === null || env.currentAlbum !== null && ! env.currentAlbum.subalbums.length && env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1) {
 			mediaParameter = util.pathJoin([
-				env.options.server_cache_path,
+				env.server_cache_path,
 				env.options.cache_album_subdir,
 				env.currentAlbum.cacheBase
 				]) + ".jpg";
@@ -44,12 +44,12 @@
 				prefix += env.options.cache_folder_separator;
 			if (env.currentMedia.mimeType.indexOf("video/") === 0) {
 				mediaParameter = util.pathJoin([
-					env.options.server_cache_path,
+					env.server_cache_path,
 					env.currentMedia.cacheSubdir,
 				]) + prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + "transcoded.mp4";
 			} else if (env.currentMedia.mimeType.indexOf("image/") === 0) {
 				mediaParameter = util.pathJoin([
-					env.options.server_cache_path,
+					env.server_cache_path,
 					env.currentMedia.cacheSubdir,
 					prefix + env.currentMedia.cacheBase
 				]) + env.options.cache_folder_separator + env.options.reduced_sizes[reducedSizesIndex] + ".jpg";
@@ -126,9 +126,11 @@
 		if (typeof thisAlbum === "undefined")
 			thisAlbum = env.currentAlbum;
 		var isAlbumWithOneMedia = thisAlbum.isAlbumWithOneMedia();
+		var isTransversalAlbum = thisAlbum.isTransversal();
 		var isSingleMedia = (env.currentMedia !== null || isAlbumWithOneMedia);
 		var isAnyRootCacheBase = thisAlbum.isAnyRoot();
 		var nothingIsSelected = util.nothingIsSelected();
+		var highMediaNumberInTransversalAlbum = isTransversalAlbum && ! env.options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
 
 		var hasGpsData, thisMedia;
 
@@ -512,7 +514,7 @@
 				isAlbumWithOneMedia ||
 				thisAlbum !== null && (
 					thisAlbum.numsMedia.imagesAndVideosTotal() === 0 ||
-					! thisAlbum.isFolder() && ! env.options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
+					highMediaNumberInTransversalAlbum
 				)
 			)
 		) {
@@ -561,7 +563,7 @@
 		if (
 			thisAlbum === null ||
 			thisAlbum.numsMedia.imagesAndVideosTotal() < env.options.big_virtual_folders_threshold ||
-			thisAlbum.isFolder()
+			! isTransversalAlbum
 		) {
 			$("ul#right-menu #show-big-albums").addClass("hidden");
 		} else {
@@ -590,7 +592,7 @@
 
 			if (
 				thisAlbum.numsMedia.imagesAndVideosTotal() <= 1 ||
-				! env.options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
+				highMediaNumberInTransversalAlbum
 			) {
 				// no media or one media or too many media
 				$("ul#right-menu li.media-sort").addClass("hidden");
@@ -657,7 +659,7 @@
 			$(".select.everything").addClass("selected");
 		}
 
-		if (! env.options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold) {
+		if (highMediaNumberInTransversalAlbum) {
 			$(".select.everything, .select.media").addClass("hidden");
 		}
 
@@ -666,8 +668,9 @@
 		}
 
 		if (
-			! thisAlbum.subalbums.length ||
-			! env.options.show_big_virtual_folders && thisAlbum.numsMediaInSubTree.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
+			! thisAlbum.subalbums.length
+			// ! thisAlbum.subalbums.length ||
+			// isTransversalAlbum && ! env.options.show_big_virtual_folders && thisAlbum.numsMediaInSubTree.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
 		) {
 			$(".select.everything-individual").addClass("hidden");
 		} else {
@@ -1098,15 +1101,12 @@
 		////////////////// PROTECTED CONTENT //////////////////////////////
 
 		if (thisAlbum !== null) {
-			let numPasswords;
-			if (thisAlbum.isSearch())
-				numPasswords = env.cache.getAlbum(env.options.by_search_string).numPasswords();
-			else
-				numPasswords = thisAlbum.numPasswords();
+			// let numPasswords = thisAlbum.numPasswords();
 
 			if (
-				numPasswords &&
-				env.guessedPasswordCodes.length < numPasswords
+				thisAlbum.hasMoreProtectedContent()
+				// numPasswords &&
+				// env.guessedPasswordCodes.length < numPasswords
 			) {
 				$(".protection").show();
 				$("#padlock").off('click').on(
@@ -1261,7 +1261,7 @@
 		var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
 		if (! keyValue)
 			return null;
-		else if (keyValue[2] === 1)
+		else if (keyValue[2] === "1")
 			return true;
 		else
 			return false;
@@ -1407,7 +1407,7 @@
 							util.translate();
 							// server_cache_path actually is a constant: it cannot be passed as an option, because getOptions need to know it before reading the options
 							// options.json is in this directory
-							env.options.server_cache_path = 'cache';
+							env.server_cache_path = 'cache';
 
 							env.maxSize = env.options.reduced_sizes[env.options.reduced_sizes.length - 1];
 
