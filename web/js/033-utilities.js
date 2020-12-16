@@ -2198,7 +2198,7 @@
 					{type:'blob'},
 					function onUpdate(meta) {
 						if (meta.currentFile)
-							$("#preparing-zip #file-name").html(meta.currentFile + "<br />" + (parseInt(meta.percent * 10) / 10) + "%");
+							$("#preparing-zip #file-name").html(meta.currentFile + "<br />" + meta.percent.toFixed(1) + "%");
 					}
 				).then(
 					function(content) {
@@ -2218,42 +2218,44 @@
 
 					var fileList = [];
 
-					for (let iMedia = 0; iMedia < album.media.length; iMedia ++) {
-						if (
-							album.media[iMedia].mimeType.indexOf("image/") === 0 && what === "videos" ||
-							album.media[iMedia].mimeType.indexOf("video/") === 0 && what === "images"
-						)
-							continue;
+					if (! album.isTransversal() || album.ancestorsNames.length >= 4) {
+						for (let iMedia = 0; iMedia < album.media.length; iMedia ++) {
+							if (
+								album.media[iMedia].mimeType.indexOf("image/") === 0 && what === "videos" ||
+								album.media[iMedia].mimeType.indexOf("video/") === 0 && what === "images"
+							)
+								continue;
 
-						let mediaPromise = new Promise(
-							function(resolveMediaPromise) {
-								let url;
-								if (size === 0)
-									url = encodeURI(album.media[iMedia].trueOriginalMediaPath());
-								else
-									url = encodeURI(album.media[iMedia].mediaPath(size));
-								let name = album.media[iMedia].name;
-								// load a file and add it to the zip file
-								JSZipUtils.getBinaryContent(
-									url,
-									function (err, data) {
-										if (err) {
-											throw err; // or handle the error
+							let mediaPromise = new Promise(
+								function(resolveMediaPromise) {
+									let url;
+									if (size === 0)
+										url = encodeURI(album.media[iMedia].trueOriginalMediaPath());
+									else
+										url = encodeURI(album.media[iMedia].mediaPath(size));
+									let name = album.media[iMedia].name;
+									// load a file and add it to the zip file
+									JSZipUtils.getBinaryContent(
+										url,
+										function (err, data) {
+											if (err) {
+												throw err; // or handle the error
+											}
+											let fileName = name;
+											if (subalbum)
+												fileName = subalbum + "/" + fileName;
+											if (fileList.indexOf(fileName) === -1) {
+												fileList.push(fileName);
+												$("#downloading-media #file-name").html(fileName);
+												zip.file(fileName, data, {binary:true});
+											}
+											resolveMediaPromise();
 										}
-										let fileName = name;
-										if (subalbum)
-											fileName = subalbum + "/" + fileName;
-										if (fileList.indexOf(fileName) === -1) {
-											fileList.push(fileName);
-											$("#downloading-media #file-name").html(fileName);
-											zip.file(fileName, data, {binary:true});
-										}
-										resolveMediaPromise();
-									}
-								);
-							}
-						);
-						albumPromises.push(mediaPromise);
+									);
+								}
+							);
+							albumPromises.push(mediaPromise);
+						}
 					}
 
 					if (everything) {
@@ -2266,10 +2268,15 @@
 									convertSubalbumPromise.then(
 										function(ithSubalbum) {
 											album.subalbums[iSubalbum] = ithSubalbum;
-											let albumPath = ithSubalbum.path;
-											// if (true || album.isSearch() || album.isSelection())
-											// 	// remove the leading folders/date/gps/map string
-											albumPath = albumPath.split('/').splice(1).join('/');
+											let ancestorsNamesList = ithSubalbum.ancestorsNames.slice(1);
+											if (ancestorsNamesList.length >= 2) {
+												ancestorsNamesList[2] = Utilities.transformAltPlaceName(ancestorsNamesList[2]);
+											}
+											let albumPath = ancestorsNamesList.join('/');
+											// let albumPath = ithSubalbum.path;
+											// // if (true || album.isSearch() || album.isSelection())
+											// // 	// remove the leading folders/date/gps/map string
+											// albumPath = albumPath.split('/').splice(1).join('/');
 											// else
 											// 	albumPath = albumPath.substring(basePath.length + 1);
 											let addMediaAndSubalbumsPromise = addMediaAndSubalbumsFromAlbum(ithSubalbum, albumPath);
