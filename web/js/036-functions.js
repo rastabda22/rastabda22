@@ -31,7 +31,7 @@
 		url += folders;
 		if (env.currentMedia === null || env.currentAlbum !== null && ! env.currentAlbum.subalbums.length && env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1) {
 			mediaParameter = util.pathJoin([
-				env.options.server_cache_path,
+				env.server_cache_path,
 				env.options.cache_album_subdir,
 				env.currentAlbum.cacheBase
 				]) + ".jpg";
@@ -44,12 +44,12 @@
 				prefix += env.options.cache_folder_separator;
 			if (env.currentMedia.mimeType.indexOf("video/") === 0) {
 				mediaParameter = util.pathJoin([
-					env.options.server_cache_path,
+					env.server_cache_path,
 					env.currentMedia.cacheSubdir,
 				]) + prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + "transcoded.mp4";
 			} else if (env.currentMedia.mimeType.indexOf("image/") === 0) {
 				mediaParameter = util.pathJoin([
-					env.options.server_cache_path,
+					env.server_cache_path,
 					env.currentMedia.cacheSubdir,
 					prefix + env.currentMedia.cacheBase
 				]) + env.options.cache_folder_separator + env.options.reduced_sizes[reducedSizesIndex] + ".jpg";
@@ -1407,7 +1407,7 @@
 							util.translate();
 							// server_cache_path actually is a constant: it cannot be passed as an option, because getOptions need to know it before reading the options
 							// options.json is in this directory
-							env.options.server_cache_path = 'cache';
+							env.server_cache_path = 'cache';
 
 							env.maxSize = env.options.reduced_sizes[env.options.reduced_sizes.length - 1];
 

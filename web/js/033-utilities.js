@@ -1916,7 +1916,7 @@
 
 	SingleMedia.prototype.originalMediaPath = function() {
 		if (env.options.browser_unsupported_mime_types.includes(this.mimeType))
-			return Utilities.pathJoin([env.options.server_cache_path, this.convertedPath]);
+			return Utilities.pathJoin([env.server_cache_path, this.convertedPath]);
 		else
 			return this.trueOriginalMediaPath();
 	};
@@ -1977,9 +1977,9 @@
 				hash = hash.substring(env.options.byMapStringWithTrailingSeparator.length);
 		}
 		if (this.cacheSubdir)
-			return Utilities.pathJoin([env.options.server_cache_path, this.cacheSubdir, hash]);
+			return Utilities.pathJoin([env.server_cache_path, this.cacheSubdir, hash]);
 		else
-			return Utilities.pathJoin([env.options.server_cache_path, hash]);
+			return Utilities.pathJoin([env.server_cache_path, hash]);
 	};
 
 	Utilities.mediaBoxContainerHeight = function() {

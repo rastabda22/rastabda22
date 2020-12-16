@@ -16,7 +16,7 @@
 					} else {
 						env.cache.stopWords = [];
 						// get the file
-						var stopWordsFile = util.pathJoin([env.options.server_cache_path, 'stopwords.json']);
+						var stopWordsFile = util.pathJoin([env.server_cache_path, 'stopwords.json']);
 						var ajaxOptions = {
 							type: "GET",
 							dataType: "json",
@@ -46,7 +46,7 @@
 			function(resolve_getJsonFile, reject_getJsonFile) {
 				$.ajax(
 					{
-						url: util.pathJoin([env.options.server_cache_path, jsonRelativeFileName]),
+						url: util.pathJoin([env.server_cache_path, jsonRelativeFileName]),
 						type: "GET",
 						dataType: "json",
 						success: function(albumOrPositionsOrMedia) {
