@@ -1,3 +1,7 @@
+### version v4.9.7 (Dec 16, 2020)
+
+* bug fixes
+
 ### version v4.9.6 (Dec 14, 2020)
 
 * show videos' on map (with gps data from album.ini)
