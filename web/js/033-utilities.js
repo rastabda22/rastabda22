@@ -2160,7 +2160,8 @@
 		//
 		// what is one of "all", "images" or "videos"
 
-		$("#downloading-media").show();
+		$("#downloading-media").html(Utilities._t("#downloading-media")).show();
+		$("#downloading-media").append("<br /><span id='file-name'></span>");
 		size = parseInt(size);
 
 		var zip = new JSZip();
@@ -2191,8 +2192,15 @@
 			// the complete zip can be generated...
 			function() {
 				$("#downloading-media").hide();
-				$("#preparing-zip").show();
-				zip.generateAsync({type:'blob'}).then(
+				$("#preparing-zip").html(Utilities._t("#preparing-zip")).show();
+				$("#preparing-zip").append("<br /><div id='file-name'></div>");
+				zip.generateAsync(
+					{type:'blob'},
+					function onUpdate(meta) {
+						if (meta.currentFile)
+							$("#preparing-zip #file-name").html(meta.currentFile + "<br />" + (parseInt(meta.percent * 10) / 10) + "%");
+					}
+				).then(
 					function(content) {
 						// ... and saved
 						saveAs(content, zipFilename);
@@ -2237,6 +2245,7 @@
 											fileName = subalbum + "/" + fileName;
 										if (fileList.indexOf(fileName) === -1) {
 											fileList.push(fileName);
+											$("#downloading-media #file-name").html(fileName);
 											zip.file(fileName, data, {binary:true});
 										}
 										resolveMediaPromise();
@@ -2258,13 +2267,13 @@
 									convertSubalbumPromise.then(
 										function(ithSubalbum) {
 											album.subalbums[iSubalbum] = ithSubalbum;
-											let albumPath = album.subalbums[iSubalbum].path;
-											if (album.isSearch() || album.isSelection())
+											let albumPath = ithSubalbum.path;
+											if (true || album.isSearch() || album.isSelection())
 												// remove the leading folders/date/gps/map string
 												albumPath = albumPath.split('/').splice(1).join('/');
 											else
 												albumPath = albumPath.substring(basePath.length + 1);
-											let addMediaAndSubalbumsPromise = addMediaAndSubalbumsFromAlbum(album.subalbums[iSubalbum], albumPath);
+											let addMediaAndSubalbumsPromise = addMediaAndSubalbumsFromAlbum(ithSubalbum, albumPath);
 											addMediaAndSubalbumsPromise.then(
 												function() {
 													resolveSubalbumPromise();

@@ -94,6 +94,11 @@ a.title-anchor.mobile {
 	display: none;
 }
 
+#file-name {
+	font-size: 20%;
+	line-height: 2em;
+}
+
 #please-fill {
 	display: none;
 	color: red;
