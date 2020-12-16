@@ -1101,15 +1101,12 @@
 		////////////////// PROTECTED CONTENT //////////////////////////////
 
 		if (thisAlbum !== null) {
-			let numPasswords;
-			if (thisAlbum.isSearch())
-				numPasswords = env.cache.getAlbum(env.options.by_search_string).numPasswords();
-			else
-				numPasswords = thisAlbum.numPasswords();
+			// let numPasswords = thisAlbum.numPasswords();
 
 			if (
-				numPasswords &&
-				env.guessedPasswordCodes.length < numPasswords
+				thisAlbum.hasMoreProtectedContent()
+				// numPasswords &&
+				// env.guessedPasswordCodes.length < numPasswords
 			) {
 				$(".protection").show();
 				$("#padlock").off('click').on(

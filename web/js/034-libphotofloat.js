@@ -840,27 +840,34 @@
 	};
 
 	Album.prototype.hasProtectedContent = function() {
-		if (
-			Object.keys(this.numsProtectedMediaInSubTree).length > 0 && (
-				! this.numsProtectedMediaInSubTree.hasOwnProperty(",") ||
-				Object.keys(this.numsProtectedMediaInSubTree).length > 1
-			)
-		)
-			return true;
-		else
-			return false;
+		return this.numPasswords() > 0;
+		//
+		// if (
+		// 	Object.keys(this.numsProtectedMediaInSubTree).length > 1 ||
+		// 	Object.keys(this.numsProtectedMediaInSubTree).length == 1 &&
+		// 	! this.numsProtectedMediaInSubTree.hasOwnProperty(",")
+		// 	// Object.keys(this.numsProtectedMediaInSubTree).length > 0 && (
+		// 	// 	! this.numsProtectedMediaInSubTree.hasOwnProperty(",") ||
+		// 	// 	Object.keys(this.numsProtectedMediaInSubTree).length > 1
+		// 	// )
+		// )
+		// 	return true;
+		// else
+		// 	return false;
 	};
 
 	Album.prototype.hasMoreProtectedContent = function() {
-		if (
-			Object.keys(this.numsProtectedMediaInSubTree).length > env.guessedPasswordCodes.length && (
-				! this.numsProtectedMediaInSubTree.hasOwnProperty(",") ||
-				Object.keys(this.numsProtectedMediaInSubTree).length > env.guessedPasswordCodes.length + 1
-			)
-		)
-			return true;
-		else
-			return false;
+		var numUnveiledPasswords = this.numPasswords(true);
+		return numUnveiledPasswords > 0;
+		// if (
+		// 	Object.keys(this.numsProtectedMediaInSubTree).length > env.guessedPasswordCodes.length && (
+		// 		! this.numsProtectedMediaInSubTree.hasOwnProperty(",") ||
+		// 		Object.keys(this.numsProtectedMediaInSubTree).length > env.guessedPasswordCodes.length + 1
+		// 	)
+		// )
+		// 	return true;
+		// else
+		// 	return false;
 	};
 
 	PhotoFloat.getAlbum = function(albumOrCacheBase, getAlbum_error, {getMedia = false, getPositions = false}, numsProtectedMediaInSubTree) {
@@ -882,6 +889,9 @@
 				var promise;
 				// add media and positions
 				if (album) {
+					if (numsProtectedMediaInSubTree !== undefined && ! album.hasOwnProperty("numsProtectedMediaInSubTree"))
+						album.numsProtectedMediaInSubTree = numsProtectedMediaInSubTree;
+
 					if (
 						// map albums and search albums already have all the media and positions
 						util.isMapCacheBase(cacheBase) || util.isSearchCacheBase(cacheBase) || util.isSelectionCacheBase(cacheBase) ||
@@ -933,20 +943,25 @@
 								album.includedFilesByCodesSimpleCombination[","].positionsGot = true;
 							}
 
-							var promise;
-							if (typeof numsProtectedMediaInSubTree !== "undefined")
-								promise = album.addProtectedContent({getMedia: getMedia, getPositions: getPositions}, numsProtectedMediaInSubTree);
-							else
+							if (! album.hasOwnProperty("numsProtectedMediaInSubTree") || album.hasMoreProtectedContent()) {
+								var promise;
+								// if (typeof numsProtectedMediaInSubTree !== "undefined")
+								// 	promise = album.addProtectedContent({getMedia: getMedia, getPositions: getPositions}, numsProtectedMediaInSubTree);
+								// else
 								promise = album.addProtectedContent({getMedia: getMedia, getPositions: getPositions});
-							promise.then(
-								function() {
-									thingsToBeDoneBeforeResolvingGetAlbum(album);
-									resolve_getAlbum(album);
-								},
-								function() {
-									getAlbum_error();
-								}
-							);
+								promise.then(
+									function() {
+										thingsToBeDoneBeforeResolvingGetAlbum(album);
+										resolve_getAlbum(album);
+									},
+									function() {
+										getAlbum_error();
+									}
+								);
+							} else {
+								thingsToBeDoneBeforeResolvingGetAlbum(album);
+								resolve_getAlbum(album);
+							}
 						},
 						function() {
 							console.trace();
@@ -1325,7 +1340,8 @@
 				var albumFromCache = env.cache.getAlbum(albumCacheBaseToGet), promise;
 				if (
 					albumFromCache &&
-					! env.guessedPasswordsMd5.length &&
+					! albumFromCache.hasMoreProtectedContent() &&
+					// ! env.guessedPasswordsMd5.length &&
 					albumFromCache.hasOwnProperty("subalbums") &&
 					albumFromCache.hasOwnProperty("media") &&
 					albumFromCache.hasOwnProperty("positionsAndMediaInTree")
@@ -1917,13 +1933,13 @@
 			if (mediaIndex === -1) {
 				$("#loading").stop().hide();
 
+				// let unveiledOnly = true;
 				if (
-					this.numPasswords(true) &&
-					// ! jQuery.isEmptyObject(this.numsProtectedMediaInSubTree) &&
-					(
-						this.subalbums.length === 0 ||
-						this.numsProtectedMediaInSubTree.sumUpNumsProtectedMedia() > util.sumNumsProtectedMediaOfArray(this.subalbums).sumUpNumsProtectedMedia()
-					)
+					this.hasMoreProtectedContent()
+					// this.numPasswords(unveiledOnly) && (
+					// 	this.subalbums.length === 0 ||
+					// 	this.numsProtectedMediaInSubTree.sumUpNumsProtectedMedia() > util.sumNumsProtectedMediaOfArray(this.subalbums).sumUpNumsProtectedMedia()
+					// )
 				) {
 					// the media not found could be a protected one, show the authentication dialog, it could be a protected media
 					util.showAuthForm(null, true);
