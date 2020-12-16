@@ -126,9 +126,11 @@
 		if (typeof thisAlbum === "undefined")
 			thisAlbum = env.currentAlbum;
 		var isAlbumWithOneMedia = thisAlbum.isAlbumWithOneMedia();
+		var isTransversalAlbum = thisAlbum.isTransversal();
 		var isSingleMedia = (env.currentMedia !== null || isAlbumWithOneMedia);
 		var isAnyRootCacheBase = thisAlbum.isAnyRoot();
 		var nothingIsSelected = util.nothingIsSelected();
+		var highMediaNumberInTransversalAlbum = isTransversalAlbum && ! env.options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
 
 		var hasGpsData, thisMedia;
 
@@ -512,7 +514,7 @@
 				isAlbumWithOneMedia ||
 				thisAlbum !== null && (
 					thisAlbum.numsMedia.imagesAndVideosTotal() === 0 ||
-					! thisAlbum.isFolder() && ! env.options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
+					highMediaNumberInTransversalAlbum
 				)
 			)
 		) {
@@ -561,7 +563,7 @@
 		if (
 			thisAlbum === null ||
 			thisAlbum.numsMedia.imagesAndVideosTotal() < env.options.big_virtual_folders_threshold ||
-			thisAlbum.isFolder()
+			! isTransversalAlbum
 		) {
 			$("ul#right-menu #show-big-albums").addClass("hidden");
 		} else {
@@ -590,7 +592,7 @@
 
 			if (
 				thisAlbum.numsMedia.imagesAndVideosTotal() <= 1 ||
-				! env.options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
+				highMediaNumberInTransversalAlbum
 			) {
 				// no media or one media or too many media
 				$("ul#right-menu li.media-sort").addClass("hidden");
@@ -657,7 +659,7 @@
 			$(".select.everything").addClass("selected");
 		}
 
-		if (! env.options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold) {
+		if (highMediaNumberInTransversalAlbum) {
 			$(".select.everything, .select.media").addClass("hidden");
 		}
 
@@ -666,8 +668,9 @@
 		}
 
 		if (
-			! thisAlbum.subalbums.length ||
-			! env.options.show_big_virtual_folders && thisAlbum.numsMediaInSubTree.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
+			! thisAlbum.subalbums.length
+			// ! thisAlbum.subalbums.length ||
+			// isTransversalAlbum && ! env.options.show_big_virtual_folders && thisAlbum.numsMediaInSubTree.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
 		) {
 			$(".select.everything-individual").addClass("hidden");
 		} else {

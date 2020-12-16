@@ -2007,7 +2007,7 @@
 		var albumViewWidth;
 		var mediaWidth, mediaHeight, slideBorder = 0, buttonBorder = 0, margin, imgTitle;
 		var scrollBarWidth = window.innerWidth - document.body.clientWidth || 15;
-		var tooBig = false, isGeneratedAlbum = false;
+		var tooBig = false, isTransversalAlbum;
 		var mapLinkIcon, selectBoxHtml, selectSrc, titleSelector, id;
 		var caption, captionHtml, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
 
@@ -2033,12 +2033,12 @@
 			thumbnailSize = env.options.media_thumb_size;
 
 			populateMedia = populate;
-			isGeneratedAlbum = env.currentAlbum.isGenerated();
+			isTransversalAlbum = env.currentAlbum.isTransversal();
 			tooBig = env.currentAlbum.path.split("/").length < 4 && env.currentAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold;
-			if (populateMedia === true && isGeneratedAlbum)
+			if (populateMedia === true && isTransversalAlbum)
 				populateMedia = populateMedia && (! tooBig || env.options.show_big_virtual_folders);
 
-			if (isGeneratedAlbum && tooBig) {
+			if (isTransversalAlbum && tooBig) {
 				var tooManyImagesText, isShowing = false;
 				if (env.options.show_big_virtual_folders) {
 					tooManyImagesText =
@@ -2078,7 +2078,7 @@
 			}
 
 			if (
-				! (isGeneratedAlbum && tooBig && ! env.options.show_big_virtual_folders) && (
+				! (isTransversalAlbum && tooBig && ! env.options.show_big_virtual_folders) && (
 					populateMedia === true ||
 					populateMedia === "refreshMedia" ||
 					populateMedia === "refreshBoth"
