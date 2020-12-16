@@ -1261,7 +1261,7 @@
 		var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
 		if (! keyValue)
 			return null;
-		else if (keyValue[2] === 1)
+		else if (keyValue[2] === "1")
 			return true;
 		else
 			return false;
