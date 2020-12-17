@@ -259,7 +259,7 @@ $(document).ready(function() {
 							// numPasswords = env.currentAlbum.numPasswords();
 
 						if (
-							env.currentAlbum.hasMoreProtectedContent()
+							env.currentAlbum.hasUnveiledProtectedContent()
 							// numPasswords && env.guessedPasswordCodes.length < numPasswords
 						) {
 							$("#protected-content-unveil")[0].click();
@@ -768,7 +768,7 @@ $(document).ready(function() {
 									let getAlbumPromise = phFl.getAlbum(cacheBase, checkHigherAncestor, {getMedia: false, getPositions: false});
 									getAlbumPromise.then(
 										function(upAlbum) {
-											if (upAlbum.hasMoreProtectedContent() && ! env.fromEscKey) {
+											if (upAlbum.hasUnveiledProtectedContent() && ! env.fromEscKey) {
 												$("#loading").hide();
 												util.showAuthForm();
 											} else {

@@ -863,7 +863,7 @@
 		// 	return false;
 	};
 
-	Album.prototype.hasMoreProtectedContent = function() {
+	Album.prototype.hasUnveiledProtectedContent = function() {
 		var numUnveiledPasswords = this.numPasswords(true);
 		return numUnveiledPasswords > 0;
 		// if (
@@ -1347,7 +1347,7 @@
 				var albumFromCache = env.cache.getAlbum(albumCacheBaseToGet), promise;
 				if (
 					albumFromCache &&
-					! albumFromCache.hasMoreProtectedContent() &&
+					! albumFromCache.hasUnveiledProtectedContent() &&
 					// ! env.guessedPasswordsMd5.length &&
 					albumFromCache.hasOwnProperty("subalbums") &&
 					albumFromCache.hasOwnProperty("media") &&
@@ -1942,7 +1942,7 @@
 
 				// let unveiledOnly = true;
 				if (
-					this.hasMoreProtectedContent()
+					this.hasUnveiledProtectedContent()
 					// this.numPasswords(unveiledOnly) && (
 					// 	this.subalbums.length === 0 ||
 					// 	this.numsProtectedMediaInSubTree.sumUpNumsProtectedMedia() > util.sumNumsProtectedMediaOfArray(this.subalbums).sumUpNumsProtectedMedia()
