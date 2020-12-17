@@ -1222,9 +1222,9 @@
 							util.setPinchButtonsPosition();
 							util.setSelectButtonPosition();
 							util.correctPrevNextPosition();
-							if (self.mimeType.indexOf("image/") === 0) {
-								loadNextPrevMedia(containerHeight, containerWidth);
-							}
+							// if (self.mimeType.indexOf("image/") === 0) {
+							loadNextPrevMedia(containerHeight, containerWidth);
+							// }
 						}
 					);
 				}

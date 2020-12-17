@@ -1,3 +1,8 @@
+### version v4.9.8 (Dec 17, 2020)
+
+* the download script now informs the user about what is doing and the corresponding percent of work done
+* bug fix in scanner when using PIL
+
 ### version v4.9.7 (Dec 16, 2020)
 
 * bug fixes

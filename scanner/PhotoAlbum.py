@@ -1545,11 +1545,13 @@ class Media(object):
 				if gps_altitude is not None and gps_altitude_ref is not None:
 					exif['GPSAltitude'] = int(gps_altitude[0]) / int(gps_altitude[1])
 					exif['GPSAltitudeRef'] = gps_altitude_ref
-					# _exif['GPSAltitude'] is the absolute value of altitude, _exif['GPSAltitudeRef'] == b'\x00' means above sea level, _exif['GPSAltitudeRef'] == b'\x01' means below sea level
-					# let's use _exif['GPSAltitudeRef'] to give _exif['GPSAltitude'] the correct sign
-					if _exif['GPSAltitudeRef'] != b'\x00':
-						_exif['GPSAltitude'] = - _exif['GPSAltitude']
-					_exif['GPSAltitudeRef'] = _exif['GPSAltitudeRef'].decode('utf-8')
+					# exif['GPSAltitude'] is the absolute value of altitude, exif['GPSAltitudeRef'] == b'\x00' means above sea level, exif['GPSAltitudeRef'] == b'\x01' means below sea level
+					# let's use exif['GPSAltitudeRef'] to give exif['GPSAltitude'] the correct sign
+					if exif['GPSAltitudeRef'] != b'\x00':
+						exif['GPSAltitude'] = - exif['GPSAltitude']
+					# since exif['GPSAltitudeRef'], it must be decoded,
+					# otherwise it will produce a "TypeError: Object of type bytes is not JSON serializable" when dumping it
+					exif['GPSAltitudeRef'] = exif['GPSAltitudeRef'].decode('utf-8')
 
 				gps_latitude = _exif["GPSInfo"].get("GPSLatitude", None)
 				gps_latitude_ref = _exif["GPSInfo"].get("GPSLatitudeRef", None)
