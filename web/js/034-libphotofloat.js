@@ -652,6 +652,36 @@
 		);
 	};
 
+	Album.prototype.hasUnloadedProtectedContent = function({getMedia, getPositions}) {
+		var self = this;
+		var numUnveiledPasswords = this.numPasswords(true);
+		if (numUnveiledPasswords) {
+			let codesSimpleCombinations = Object.keys(self.includedFilesByCodesSimpleCombination);
+			let indexOfComma = codesSimpleCombinations.indexOf(",");
+			if (indexOfComma !== -1)
+				codesSimpleCombinations.splice(indexOfComma, 1);
+			if (
+				codesSimpleCombinations.length > 0 &&
+				codesSimpleCombinations.every(
+					function(codesSimpleCombination) {
+						return Object.keys(self.includedFilesByCodesSimpleCombination[codesSimpleCombination]).every(
+							function(number) {
+								var result =
+									self.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("protectedAlbumGot") &&
+									(! getMedia || self.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("mediaGot")) &&
+									(! getPositions || self.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("positionsGot"));
+								return result
+							}
+						)
+					}
+				)
+			) {
+				return false;
+			}
+		}
+		return true;
+	};
+
 
 	Album.prototype.addProtectedContent = function({getMedia, getPositions}, numsProtectedMediaInSubTree) {
 		// this function adds the protected content to the given album
