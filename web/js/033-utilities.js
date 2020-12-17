@@ -400,6 +400,8 @@
 	};
 
 	Album.prototype.numPasswords = function(unveiledOnly = false) {
+		// if unveiledOnly === false, all the passwords which make sense for the album are counted
+		// if unveiledOnly === true, only the already unveiled passwords are considered
 		var self;
 		if (this.isSearch())
 			self = env.cache.getAlbum(env.options.by_search_string);
