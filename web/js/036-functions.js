@@ -1104,7 +1104,7 @@
 			// let numPasswords = thisAlbum.numPasswords();
 
 			if (
-				thisAlbum.hasUnveiledProtectedContent()
+				thisAlbum.hasVeiledProtectedContent()
 				// numPasswords &&
 				// env.guessedPasswordCodes.length < numPasswords
 			) {

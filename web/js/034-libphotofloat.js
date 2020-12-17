@@ -865,9 +865,10 @@
 		// 	return false;
 	};
 
-	Album.prototype.hasUnveiledProtectedContent = function() {
+	Album.prototype.hasVeiledProtectedContent = function() {
 		var numUnveiledPasswords = this.numPasswords(true);
-		return numUnveiledPasswords > 0;
+		var numPasswords = this.numPasswords(false);
+		return numPasswords && numPasswords - numUnveiledPasswords > 0;
 		// if (
 		// 	Object.keys(this.numsProtectedMediaInSubTree).length > env.guessedPasswordCodes.length && (
 		// 		! this.numsProtectedMediaInSubTree.hasOwnProperty(",") ||
@@ -1367,7 +1368,7 @@
 				var albumFromCache = env.cache.getAlbum(albumCacheBaseToGet), promise;
 				if (
 					albumFromCache &&
-					! albumFromCache.hasUnveiledProtectedContent() &&
+					! albumFromCache.hasVeiledProtectedContent() &&
 					// ! env.guessedPasswordsMd5.length &&
 					albumFromCache.hasOwnProperty("subalbums") &&
 					albumFromCache.hasOwnProperty("media") &&
@@ -1962,7 +1963,7 @@
 
 				// let unveiledOnly = true;
 				if (
-					this.hasUnveiledProtectedContent()
+					this.hasVeiledProtectedContent()
 					// this.numPasswords(unveiledOnly) && (
 					// 	this.subalbums.length === 0 ||
 					// 	this.numsProtectedMediaInSubTree.sumUpNumsProtectedMedia() > util.sumNumsProtectedMediaOfArray(this.subalbums).sumUpNumsProtectedMedia()
