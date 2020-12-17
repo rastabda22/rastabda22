@@ -426,7 +426,7 @@
 								codesList = [codesList];
 							codesList.forEach(
 								function(code) {
-									if (! codes.includes(code) && (! unveiledOnly || ! env.guessedPasswordCodes.includes(code)))
+									if (! codes.includes(code) && (! unveiledOnly || env.guessedPasswordCodes.includes(code)))
 										codes.push(code);
 								}
 							);
