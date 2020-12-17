@@ -523,64 +523,69 @@
 	};
 
 	// WARNING: making this function an Album method doesn't work. Why?!?
-	Album.prototype.getNumsProtectedMediaInSubTreeProperty = function(theProtectedDirectoriesToGet) {
-		var self = this;
-		return new Promise(
-			function(resolve_getNumsProtectedMediaInSubTreeProperty, reject_getNumsProtectedMediaInSubTreeProperty) {
-				if (self.hasOwnProperty("numsProtectedMediaInSubTree") && ! self.empty) {
-					resolve_getNumsProtectedMediaInSubTreeProperty();
-				} else {
-					var iDirectory = -1;
-					var getNumsProtectedMediaInSubTreePropertyPromise = getNextProtectedDirectory();
-					getNumsProtectedMediaInSubTreePropertyPromise.then(
-						resolve_getNumsProtectedMediaInSubTreeProperty,
-						reject_getNumsProtectedMediaInSubTreeProperty
-					);
-				}
-				// end of getNumsProtectedMediaInSubTreePropertyProperty function body
+	Album.prototype.getNumsProtectedMediaInSubTreeProperty = function() {
+		function getNextProtectedDirectory() {
+			return new Promise(
+				function(resolve_getNextProtectedDirectory, reject_getNextProtectedDirectory) {
+					iDirectory ++;
+					if (iDirectory >= theProtectedDirectoriesToGet.length) {
+						reject_getNextProtectedDirectory();
+					} else {
+						// since numsProtectedMediaInSubTree isn't in the album,
+						// there is no way to know if a protected directory will have the searched content:
+						// so we must try until a protected directory has the protected album we need
 
-				function getNextProtectedDirectory() {
-					return new Promise(
-						function(resolve_getNextProtectedDirectory, reject_getNextProtectedDirectory) {
-							iDirectory ++;
-							if (iDirectory >= theProtectedDirectoriesToGet.length) {
-								reject_getNextProtectedDirectory();
-							} else {
-								// since numsProtectedMediaInSubTree isn't in the album,
-								// there is no way to know if a protected directory will have the searched content:
-								// so we must try until a protected directory has the protected album we need
+						var protectedDirectory = theProtectedDirectoriesToGet[iDirectory];
+						var protectedCacheBase = protectedDirectory + '/' + self.cacheBase + '.0';
 
-								var protectedDirectory = theProtectedDirectoriesToGet[iDirectory];
-								var protectedCacheBase = protectedDirectory + '/' + self.cacheBase + '.0';
+						var promise = PhotoFloat.getSingleProtectedCacheBaseWithExternalMediaAndPositions(protectedCacheBase, self, {getMedia: false, getPositions: false});
+						promise.then(
+							function getSingleProtectedCacheBaseWithExternalMediaAndPositions_resolved() {
+								// ok, we got what we were looking for: numsProtectedMediaInSubTree property has been added by getSingleProtectedCacheBaseWithExternalMediaAndPositions()
 
-								var promise = PhotoFloat.getSingleProtectedCacheBaseWithExternalMediaAndPositions(protectedCacheBase, self, {getMedia: false, getPositions: false});
+								delete self.mediaNameSort;
+								delete self.mediaReverseSort;
+								delete self.albumNameSort;
+								delete self.albumReverseSort;
+								self.sortAlbumsMedia();
+
+								resolve_getNextProtectedDirectory();
+							},
+							function getSingleProtectedCacheBaseWithExternalMediaAndPositions_rejected() {
+								var promise = getNextProtectedDirectory();
 								promise.then(
-									function getSingleProtectedCacheBaseWithExternalMediaAndPositions_resolved() {
-										// ok, we got what we were looking for: numsProtectedMediaInSubTree property has been added by getSingleProtectedCacheBaseWithExternalMediaAndPositions()
-
-										delete self.mediaNameSort;
-										delete self.mediaReverseSort;
-										delete self.albumNameSort;
-										delete self.albumReverseSort;
-										self.sortAlbumsMedia();
-
+									function() {
 										resolve_getNextProtectedDirectory();
 									},
-									function getSingleProtectedCacheBaseWithExternalMediaAndPositions_rejected() {
-										var promise = getNextProtectedDirectory();
-										promise.then(
-											function() {
-												resolve_getNextProtectedDirectory();
-											},
-											function() {
-												reject_getNextProtectedDirectory();
-											}
-										);
+									function() {
+										reject_getNextProtectedDirectory();
 									}
 								);
 							}
-						}
-					);
+						);
+					}
+				}
+			);
+		}
+		// end of getNextProtectedDirectory function
+
+		var iDirectory = -1;
+		var self = this;
+		return new Promise(
+			function(resolve_getNumsProtectedMediaInSubTreeProperty, reject_getNumsProtectedMediaInSubTreeProperty) {
+				var theProtectedDirectoriesToGet = PhotoFloat.protectedDirectoriesToGet();
+				if (! theProtectedDirectoriesToGet.length) {
+					reject_getNumsProtectedMediaInSubTreeProperty();
+				} else {
+					if (self.hasOwnProperty("numsProtectedMediaInSubTree") && ! self.empty) {
+						resolve_getNumsProtectedMediaInSubTreeProperty();
+					} else {
+						var getNumsProtectedMediaInSubTreePropertyPromise = getNextProtectedDirectory();
+						getNumsProtectedMediaInSubTreePropertyPromise.then(
+							resolve_getNumsProtectedMediaInSubTreeProperty,
+							reject_getNumsProtectedMediaInSubTreeProperty
+						);
+					}
 				}
 			}
 		);
@@ -671,31 +676,33 @@
 				} else {
 					// the album hasn't unprotected content and no protected cache base has been processed yet:
 					// a protected album must be loaded in order to know the complex combinations
-					var theProtectedDirectoriesToGet = PhotoFloat.protectedDirectoriesToGet();
-					if (! theProtectedDirectoriesToGet.length) {
-						reject_addProtectedContent();
-					} else {
-						var promise = self.getNumsProtectedMediaInSubTreeProperty(theProtectedDirectoriesToGet);
-						promise.then(
-							function() {
-								self.empty = false;
-								numsPromise = continueAddProtectedContent();
-								numsPromise.then(
-									function() {
-										self.invalidatePositionsAndMediaInAlbumAndSubalbums();
-										resolve_addProtectedContent();
-									},
-									function() {
-										console.trace();
-									}
-								);
-							},
-							function() {
-								// numsProtectedMediaInSubTree couldn't be retrieved because no protected album was found
-								reject_addProtectedContent();
-							}
-						);
-					}
+
+					// var theProtectedDirectoriesToGet = PhotoFloat.protectedDirectoriesToGet();
+					// if (! theProtectedDirectoriesToGet.length) {
+					// 	reject_addProtectedContent();
+					// } else {
+						// var promise = self.getNumsProtectedMediaInSubTreeProperty(theProtectedDirectoriesToGet);
+					var promise = self.getNumsProtectedMediaInSubTreeProperty();
+					promise.then(
+						function() {
+							self.empty = false;
+							numsPromise = continueAddProtectedContent();
+							numsPromise.then(
+								function() {
+									self.invalidatePositionsAndMediaInAlbumAndSubalbums();
+									resolve_addProtectedContent();
+								},
+								function() {
+									console.trace();
+								}
+							);
+						},
+						function() {
+							// numsProtectedMediaInSubTree couldn't be retrieved because no protected album was found
+							reject_addProtectedContent();
+						}
+					);
+					// }
 				}
 			}
 		);
