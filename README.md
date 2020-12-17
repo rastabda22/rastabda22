@@ -1,4 +1,4 @@
-# MyPhotoShare v4.9.7 (Dec 16, 2020)
+# MyPhotoShare v4.9.8 (Dec 17, 2020)
 
 ### A Web Photo Gallery Done Right via Static JSON & Dynamic Javascript
 #### by Jason A. Donenfeld (<Jason@zx2c4.com>), Jerome Charaoui (jerome@riseup.net)  Joachim Tingvold (joachim@tingvold.com), Paolo Benvenuto (<paolobenve@gmail.com>), Pierre Métras (<p.metras@videotron.ca>)
