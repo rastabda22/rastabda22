@@ -671,33 +671,42 @@ $(document).ready(function() {
 					password.css("background-color", "rgb(200, 200, 200)");
 					var passwordCode = jsonCode.passwordCode;
 
-					if (! env.guessedPasswordCodes.includes(passwordCode))
+					if (env.guessedPasswordCodes.length && env.guessedPasswordCodes.includes(passwordCode)) {
+						password.css("background-color", "red");
+						password.on(
+							'input',
+							function() {
+								password.css("background-color", "");
+								password.off('input');
+							}
+						);
+					} else {
 						env.guessedPasswordCodes.push(passwordCode);
-					if (! env.guessedPasswordsMd5.includes(encryptedPassword))
 						env.guessedPasswordsMd5.push(encryptedPassword);
 
-					$("#loading").show();
+						$("#loading").show();
 
-					// phFl.removeAllProtectedAlbumsFromCache();
+						// phFl.removeAllProtectedAlbumsFromCache();
 
-					var isPopup = $('.leaflet-popup').html() ? true : false;
-					var isMap = $('#mapdiv').html() ? true : false;
+						var isPopup = $('.leaflet-popup').html() ? true : false;
+						var isMap = $('#mapdiv').html() ? true : false;
 
-					if (isMap) {
-						// the map must be generated again including the points that only carry protected content
-						env.mapRefreshType = "refresh";
+						if (isMap) {
+							// the map must be generated again including the points that only carry protected content
+							env.mapRefreshType = "refresh";
 
-						if (isPopup) {
-							env.popupRefreshType = "mapAlbum";
-							$('.leaflet-popup-close-button')[0].click();
-						} else {
-							env.popupRefreshType = "none";
+							if (isPopup) {
+								env.popupRefreshType = "mapAlbum";
+								$('.leaflet-popup-close-button')[0].click();
+							} else {
+								env.popupRefreshType = "none";
+							}
+							// close the map
+							$('.modal-close')[0].click();
 						}
-						// close the map
-						$('.modal-close')[0].click();
-					}
 
-					$(window).hashchange();
+						$(window).hashchange();
+					}
 				},
 				error: function() {
 					password.css("background-color", "red");
