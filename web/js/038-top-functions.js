@@ -842,7 +842,10 @@
 				if (
 					[".map-popup-trigger", ".map-popup-trigger-double"].indexOf(env.selectorClickedToOpenTheMap) !== -1 &&
 					env.previousAlbum !== null &&
-					env.previousAlbum.isMap() && env.previousMedia === null &&
+					env.previousAlbum.isMap() && (
+						env.previousMedia === null ||
+						env.previousAlbum.isAlbumWithOneMedia()
+					) &&
 					env.fromEscKey ||
 					env.mapRefreshType !== "none"
 				) {
@@ -2257,8 +2260,7 @@
 					if (
 						env.selectorClickedToOpenTheMap === "#media-map-link-" + iMedia &&
 						env.previousAlbum !== null &&
-						env.previousAlbum.isMap() &&
-						(
+						env.previousAlbum.isMap() && (
 							env.previousMedia === null ||
 							env.previousAlbum.isAlbumWithOneMedia()
 						) &&
