@@ -158,7 +158,7 @@
 		return cacheBase.indexOf(env.options.protected_directories_prefix) === 0;
 	};
 
-	PhotoFloat.getSingleUnprotectedCacheBaseWithExternalMediaAndPositions = function(unprotectedCacheBase, {getMedia, getPositions}) {
+	PhotoFloat.getAlbumFromSingleUnprotectedCacheBaseWithExternalMediaAndPositions = function(unprotectedCacheBase, {getMedia, getPositions}) {
 		// this function is called when the album isn't in the cache
 		// a brand new album is created
 
@@ -239,7 +239,7 @@
 		}
 	};
 
-	Album.prototype.getSingleProtectedCacheBaseWithExternalMediaAndPositions = function(protectedCacheBase, {getMedia, getPositions}) {
+	Album.prototype.addContentWithExternalMediaAndPositionsFromProtectedCacheBase = function(protectedCacheBase, {getMedia, getPositions}) {
 		// this function gets a single protected json file
 
 		var self = this;
@@ -281,7 +281,7 @@
 						function protectedFileExists(object) {
 							protectedAlbum = new Album(object);
 							if (! self.hasOwnProperty("numsProtectedMediaInSubTree") || self.empty)
-								// this is needed when getSingleProtectedCacheBaseWithExternalMediaAndPositions() is called by getNumsProtectedMediaInSubTreeProperty()
+								// this is needed when addContentWithExternalMediaAndPositionsFromProtectedCacheBase() is called by getNumsProtectedMediaInSubTreeProperty()
 								self.numsProtectedMediaInSubTree = protectedAlbum.numsProtectedMediaInSubTree;
 
 							if (! self.hasOwnProperty("name"))
@@ -379,7 +379,7 @@
 						}
 					);
 				}
-				// end of getSingleProtectedCacheBaseWithExternalMediaAndPositions function body
+				// end of addContentWithExternalMediaAndPositionsFromProtectedCacheBase function body
 
 				function addExternalMediaAndPositionsFromProtectedAlbum() {
 					return new Promise(
@@ -544,10 +544,10 @@
 						var protectedDirectory = theProtectedDirectoriesToGet[iDirectory];
 						var protectedCacheBase = protectedDirectory + '/' + self.cacheBase + '.0';
 
-						var promise = self.getSingleProtectedCacheBaseWithExternalMediaAndPositions(protectedCacheBase, {getMedia: false, getPositions: false});
+						var promise = self.addContentWithExternalMediaAndPositionsFromProtectedCacheBase(protectedCacheBase, {getMedia: false, getPositions: false});
 						promise.then(
-							function getSingleProtectedCacheBaseWithExternalMediaAndPositions_resolved() {
-								// ok, we got what we were looking for: numsProtectedMediaInSubTree property has been added by getSingleProtectedCacheBaseWithExternalMediaAndPositions()
+							function addContentWithExternalMediaAndPositionsFromProtectedCacheBase_resolved() {
+								// ok, we got what we were looking for: numsProtectedMediaInSubTree property has been added by addContentWithExternalMediaAndPositionsFromProtectedCacheBase()
 
 								delete self.mediaNameSort;
 								delete self.mediaReverseSort;
@@ -557,7 +557,7 @@
 
 								resolve_getNextProtectedDirectory();
 							},
-							function getSingleProtectedCacheBaseWithExternalMediaAndPositions_rejected() {
+							function addContentWithExternalMediaAndPositionsFromProtectedCacheBase_rejected() {
 								var promise = getNextProtectedDirectory();
 								promise.then(
 									function() {
@@ -807,7 +807,7 @@
 											// this cache base has been already loaded and either media/positions are already there or aren't needed now
 											resolve_ithPromise();
 										} else {
-											let promise = self.getSingleProtectedCacheBaseWithExternalMediaAndPositions(protectedCacheBase, {getMedia: getMedia, getPositions: getPositions});
+											let promise = self.addContentWithExternalMediaAndPositionsFromProtectedCacheBase(protectedCacheBase, {getMedia: getMedia, getPositions: getPositions});
 											promise.then(
 												function() {
 													if (self.isEmpty())
@@ -1034,7 +1034,7 @@
 				} else {
 					// album is false
 					// neither the album has been passed as argument, nor is in cache, get it brand new
-					var unprotectedCacheBasePromise = PhotoFloat.getSingleUnprotectedCacheBaseWithExternalMediaAndPositions(cacheBase, {getMedia: getMedia, getPositions: getPositions});
+					var unprotectedCacheBasePromise = PhotoFloat.getAlbumFromSingleUnprotectedCacheBaseWithExternalMediaAndPositions(cacheBase, {getMedia: getMedia, getPositions: getPositions});
 					unprotectedCacheBasePromise.then(
 						function unprotectedAlbumGot(album) {
 							if (album.hasProtectedContent()) {
