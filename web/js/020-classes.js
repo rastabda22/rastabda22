@@ -378,10 +378,9 @@
 					this.clickHistory = [];
 				}
 			} else if (typeof objectOrCacheBase === "object") {
-				let object = objectOrCacheBase;
-				Object.keys(object).forEach(
-					(key) => {
-						this[key] = object[key];
+				Object.keys(objectOrCacheBase).forEach(
+					key => {
+						this[key] = objectOrCacheBase[key];
 					}
 				);
 
@@ -408,18 +407,19 @@
 					this.numsProtectedMediaInSubTree = new NumsProtected(this.numsProtectedMediaInSubTree);
 				}
 				this.subalbums = new Subalbums(this.subalbums);
-			} else if (typeof objectOrCacheBase === "undefined") {
+
 				this.removeUnnecessaryPropertiesAndAddParentToMedia();
+			} else if (objectOrCacheBase === undefined) {
 				this.empty = true;
 			}
 
-
-			if (objectOrCacheBase !== undefined) {
-				if (! this.hasOwnProperty("includedFilesByCodesSimpleCombination")) {
-					this.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
-				}
-				if (this.codesComplexCombination === undefined)
-					env.cache.putAlbum(this);
+			// if (objectOrCacheBase !== undefined) {
+			// 	if (! this.hasOwnProperty("includedFilesByCodesSimpleCombination")) {
+			// 		this.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
+			// 	}
+			// }
+			if (objectOrCacheBase !== undefined && this.codesComplexCombination === undefined) {
+				env.cache.putAlbum(this);
 			}
 		}
 

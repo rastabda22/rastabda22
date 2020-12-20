@@ -248,7 +248,7 @@
 		newSearchAlbum.ancestorsNames = [env.options.by_search_string, newSearchAlbum.cacheBase];
 		// newSearchAlbum.physicalPath = newSearchAlbum.path;
 		// newSearchAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
-		// newSearchAlbum.includedFilesByCodesSimpleCombination = {};
+		newSearchAlbum.includedFilesByCodesSimpleCombination = new IncludedFiles({",": {}});
 		// newSearchAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
 		return newSearchAlbum;

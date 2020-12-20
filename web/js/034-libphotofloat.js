@@ -215,7 +215,7 @@
 						// 	// "includedProtectedDirectories": [],
 						// 	"empty": true
 						// };
-						// emptyAlbum.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
+						emptyAlbum.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
 
 						reject_getSingleUnprotectedCacheBase(emptyAlbum);
 					}
@@ -225,8 +225,8 @@
 	};
 
 	Album.prototype.initializeIncludedFilesByCodesSimpleCombinationProperty = function(codesSimpleCombination, number) {
-		if (! this.hasOwnProperty("includedFilesByCodesSimpleCombination"))
-			this.includedFilesByCodesSimpleCombination = new IncludedFiles();
+		// if (! this.hasOwnProperty("includedFilesByCodesSimpleCombination"))
+		// 	this.includedFilesByCodesSimpleCombination = new IncludedFiles();
 		if (typeof codesSimpleCombination !== "undefined") {
 			if (! this.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination))
 				this.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
@@ -247,14 +247,6 @@
 		var number = parseInt(splittedProtectedCacheBase[splittedProtectedCacheBase.length - 1]);
 		var codesSimpleCombination = util.convertProtectedCacheBaseToCodesSimpleCombination(protectedCacheBase);
 		self.initializeIncludedFilesByCodesSimpleCombinationProperty(codesSimpleCombination, number);
-		// if (! self.hasOwnProperty("includedFilesByCodesSimpleCombination"))
-		// 	self.includedFilesByCodesSimpleCombination = new IncludedFiles();
-		// if (! self.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination))
-		// 	self.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
-		// if (codesSimpleCombination !== "," && ! self.includedFilesByCodesSimpleCombination[codesSimpleCombination].hasOwnProperty(number)) {
-		// 	self.includedFilesByCodesSimpleCombination[codesSimpleCombination][number] = {};
-		// 	self.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album = {};
-		// }
 
 		return new Promise(
 			function(resolve_getSingleProtectedCacheBase, reject_getSingleProtectedCacheBase) {

@@ -1576,8 +1576,11 @@
 							util.initializeSelectionRootAlbum();
 
 							env.mapAlbum = new Album();
+
 							env.selectionAlbum = new Album();
+
 							env.searchAlbum = new Album();
+							env.searchAlbum.includedFilesByCodesSimpleCombination = new IncludedFiles();
 
 							resolve_getOptions();
 						},
