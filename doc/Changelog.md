@@ -1,3 +1,7 @@
+* correctly detect when protected content must be added
+* do not accept the same password twice
+* bug fixes
+
 ### version v4.9.8 (Dec 17, 2020)
 
 * the download script now informs the user about what is doing and the corresponding percent of work done
