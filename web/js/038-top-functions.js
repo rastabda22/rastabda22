@@ -1448,7 +1448,7 @@
 		$("#loading").hide();
 
 		if (! this.isEqual(env.currentAlbum)) {
-			// the if confidition is required for when a password is unveiled
+			// this if condition is required for when a password is guessed
 			env.previousAlbum = env.currentAlbum;
 		}
 		env.currentAlbum = this;
