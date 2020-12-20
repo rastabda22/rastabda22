@@ -261,15 +261,15 @@
 			env.cache.putAlbum(rootSearchAlbum);
 		}
 
-		rootSearchAlbum.numsMediaInSubTree.sum(env.searchAlbum.numsMediaInSubTree);
+		rootSearchAlbum.numsMediaInSubTree.sum(this.numsMediaInSubTree);
 		// rootSearchAlbum.subalbums.push(newSearchAlbum);
-		rootSearchAlbum.positionsAndMediaInTree.mergePositionsAndMedia(env.searchAlbum.positionsAndMediaInTree);
+		rootSearchAlbum.positionsAndMediaInTree.mergePositionsAndMedia(this.positionsAndMediaInTree);
 		rootSearchAlbum.numPositionsInTree = rootSearchAlbum.positionsAndMediaInTree.length;
-		// rootSearchAlbum.numPositionsInTree += env.searchAlbum.numPositionsInTree;
-		rootSearchAlbum.numsProtectedMediaInSubTree[","].sum(env.searchAlbum.numsProtectedMediaInSubTree[","]);
+		// rootSearchAlbum.numPositionsInTree += this.numPositionsInTree;
+		rootSearchAlbum.numsProtectedMediaInSubTree[","].sum(this.numsProtectedMediaInSubTree[","]);
 
-		env.searchAlbum.ancestorsCacheBase = rootSearchAlbum.ancestorsCacheBase.slice();
-		env.searchAlbum.ancestorsCacheBase.push(env.searchAlbum.cacheBase);
+		this.ancestorsCacheBase = rootSearchAlbum.ancestorsCacheBase.slice();
+		this.ancestorsCacheBase.push(this.cacheBase);
 	};
 
 	Utilities.initializeSelectionRootAlbum = function() {
