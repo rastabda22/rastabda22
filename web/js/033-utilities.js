@@ -399,9 +399,11 @@
 		return language;
 	};
 
-	Album.prototype.numPasswords = function(unveiledOnly = false) {
-		// if unveiledOnly === false, all the passwords which make sense for the album are counted
-		// if unveiledOnly === true, only the already unveiled passwords are considered
+	Album.prototype.guessedPasswordCodes = function() {
+		return Utilities.arrayIntersect(this.passwordCodes(), env.guessedPasswordCodes);
+	};
+
+	Album.prototype.passwordCodes = function() {
 		var self;
 		if (this.isSearch())
 			self = env.cache.getAlbum(env.options.by_search_string);
@@ -411,43 +413,99 @@
 		var codes = [];
 		Object.keys(self.numsProtectedMediaInSubTree).forEach(
 			function(codesComplexCombination) {
-				if (codesComplexCombination !== ",") {
-					var albumCombinations = codesComplexCombination.split(',')[0];
-					if (albumCombinations && typeof albumCombinations === "string")
-						albumCombinations = [albumCombinations];
-					var mediaCombinations = codesComplexCombination.split(',')[1];
-					if (mediaCombinations && typeof mediaCombinations === "string")
-						mediaCombinations = [mediaCombinations];
-					let combinations = Utilities.arrayUnion(albumCombinations, mediaCombinations);
-					combinations.forEach(
-						function(combination) {
-							codesList = combination.split('-');
-							if (typeof codesList === "string")
-								codesList = [codesList];
-							codesList.forEach(
-								function(code) {
-									if (! codes.includes(code) && (! unveiledOnly || env.guessedPasswordCodes.includes(code)))
-										codes.push(code);
-								}
-							);
+				if (codesComplexCombination === ",")
+					return;
+				let combinations = codesComplexCombination.replace(',', '-').split('-');
+
+				// var albumCombinations = codesComplexCombination.split(',')[0];
+				// if (albumCombinations && typeof albumCombinations === "string")
+				// 	albumCombinations = [albumCombinations];
+				// var mediaCombinations = codesComplexCombination.split(',')[1];
+				// if (mediaCombinations && typeof mediaCombinations === "string")
+				// 	mediaCombinations = [mediaCombinations];
+				// let combinations = Utilities.arrayUnion(albumCombinations, mediaCombinations);
+				combinations.forEach(
+					function(combination) {
+						codesList = combination.split('-');
+						if (typeof codesList === "string")
+							codesList = [codesList];
+						codesList.forEach(
+							function(code) {
+								if (! codes.includes(code))
+									codes.push(code);
+							}
+						);
+					}
+				);
+			}
+		);
+		return codes;
+	};
+
+	Album.prototype.guessedCodesSimpleCombinations = function() {
+		var guessed = [];
+		this.codesSimpleCombinations().forEach(
+			codesSimpleCombination => {
+				var albumCombination = codesSimpleCombination.split(',')[0];
+				var mediaCombination = codesSimpleCombination.split(',')[1];
+				if (
+					(albumCombination === "" || env.guessedPasswordCodes.indexOf(albumCombination) !== -1) &&
+					(mediaCombination === "" || env.guessedPasswordCodes.indexOf(mediaCombination) !== -1)
+				)
+					guessed.push(codesSimpleCombination);
+			}
+		);
+		return guessed;
+	};
+
+	Album.prototype.codesSimpleCombinations = function() {
+		var self;
+		if (this.isSearch())
+			self = env.cache.getAlbum(env.options.by_search_string);
+		else
+			self = this;
+
+		var codesSimpleCombinations = [];
+		Object.keys(self.numsProtectedMediaInSubTree).forEach(
+			function(codesComplexCombination) {
+				if (codesComplexCombination === ",")
+					return;
+				var albumCombinations = codesComplexCombination.split(',')[0].split('-');
+				if (albumCombinations.length && typeof albumCombinations === "string")
+					albumCombinations = [albumCombinations];
+				var mediaCombinations = codesComplexCombination.split(',')[1].split('-');
+				if (mediaCombinations.length && typeof mediaCombinations === "string")
+					mediaCombinations = [mediaCombinations];
+				if (albumCombinations.length) {
+					albumCombinations.forEach(
+						albumCode => {
+							var combination = albumCode + ',';
+							if (mediaCombinations.length) {
+								mediaCombinations.forEach(
+									mediaCode => {
+										combination = albumCode + ',' + mediaCode;
+										if (codesSimpleCombinations.indexOf(combination) === -1)
+											codesSimpleCombinations.push(combination);
+									}
+								);
+							} else {
+								if (codesSimpleCombinations.indexOf(combination) === -1)
+									codesSimpleCombinations.push(combination);
+							}
 						}
 					);
-					// for (let i = 0; i < combinations.length; i ++) {
-					// 	if (combinations[i]) {
-					// 		let combinationList = combinations[i].split('-');
-					// 		if (unveiledOnly) {
-					// 			for (let j = 0; j < combinationList.length; j ++) {
-					// 				if (env.guessedPasswordCodes.includes(combinationList[j]))
-					// 					combinationList.splice(j, 1);
-					// 			}
-					// 		}
-					// 		codes = Utilities.arrayUnion(codes, combinationList);
-					// 	}
-					// }
+				} else {
+					mediaCombinations.forEach(
+						mediaCode => {
+							combination = ',' + mediaCode;
+							if (codesSimpleCombinations.indexOf(combination) === -1)
+								codesSimpleCombinations.push(combination);
+						}
+					);
 				}
 			}
 		);
-		return codes.length;
+		return codesSimpleCombinations;
 	};
 
 	Utilities.prototype.detectScrollbarWidth = function() {
@@ -470,21 +528,21 @@
 		return Object.assign({}, object);
 	};
 
-	// Utilities.prototype.arrayIntersect = function(a, b) {
-	// 	if (b.length > a.length) {
-	// 		// indexOf to loop over shorter
-	// 		[a, b] = [b, a];
-	// 	}
-	//
-	// 	let intersection = [];
-	// 	for (let i = 0; i < b.length; i ++) {
-	// 		let elementB = b[i];
-	// 		if (a.indexOf(elementB) !== -1)
-	// 			intersection.push(elementB);
-	// 	}
-	//
-	// 	return intersection;
-	// };
+	Utilities.arrayIntersect = function(a, b) {
+		if (b.length > a.length) {
+			// indexOf to loop over shorter
+			[a, b] = [b, a];
+		}
+
+		let intersection = [];
+		for (let i = 0; i < b.length; i ++) {
+			let elementB = b[i];
+			if (a.indexOf(elementB) !== -1)
+				intersection.push(elementB);
+		}
+
+		return intersection;
+	};
 
 	Utilities.mediaOrSubalbumsIntersectionForSearches = function(a, b) {
 		if (! a.length || ! b.length) {
@@ -3072,6 +3130,7 @@
 	Utilities.prototype.transformAltPlaceName = Utilities.transformAltPlaceName;
 	Utilities.prototype.normalizeAccordingToOptions = Utilities.normalizeAccordingToOptions;
 	Utilities.prototype.removeAccents = Utilities.removeAccents;
+	Utilities.prototype.arrayIntersect = Utilities.arrayIntersect;
 
 	window.Utilities = Utilities;
 }());
