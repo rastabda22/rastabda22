@@ -1617,7 +1617,7 @@
 								resolve_parseHash([env.searchAlbum, -1]);
 							} else {
 								$(".search-failed").hide();
-								util.initializeSearchAlbumEnd();
+								env.searchAlbum.initializeSearchAlbumEnd();
 								env.searchAlbum.numsProtectedMediaInSubTree = util.sumNumsProtectedMediaOfArray(wordSubalbums);
 								for (indexWords = 0; indexWords <= lastIndex; indexWords ++) {
 									searchResultsMedia[indexWords] = new Media([]);

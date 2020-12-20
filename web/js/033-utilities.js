@@ -254,7 +254,7 @@
 		return newSearchAlbum;
 	};
 
-	Utilities.prototype.initializeSearchAlbumEnd = function() {
+	Album.prototype.initializeSearchAlbumEnd = function() {
 		var rootSearchAlbum = env.cache.getAlbum(env.options.by_search_string);
 		if (! rootSearchAlbum) {
 			rootSearchAlbum = new Album(env.options.by_search_string);
