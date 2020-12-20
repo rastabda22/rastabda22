@@ -409,12 +409,12 @@
 				}
 				this.subalbums = new Subalbums(this.subalbums);
 			} else if (typeof objectOrCacheBase === "undefined") {
+				this.removeUnnecessaryPropertiesAndAddParentToMedia();
 				this.empty = true;
 			}
 
 
 			if (objectOrCacheBase !== undefined) {
-				this.removeUnnecessaryPropertiesAndAddParentToMedia();
 				if (! this.hasOwnProperty("includedFilesByCodesSimpleCombination")) {
 					this.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
 				}
