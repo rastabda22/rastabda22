@@ -368,7 +368,7 @@
 				this.subalbums = new Subalbums([]);
 				this.positionsAndMediaInTree = new PositionsAndMedia([]);
 				this.numPositionsInTree = 0;
-				this.numsProtectedMediaInSubTree = new NumsProtected();
+				// this.numsProtectedMediaInSubTree = new NumsProtected();
 				if (cacheBase.split(env.options.cache_folder_separator).length === 1)
 					this.ancestorsCacheBase = [cacheBase];
 				// this.path = cacheBase.replace(env.options.cache_folder_separator, "/");

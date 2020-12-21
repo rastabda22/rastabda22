@@ -909,7 +909,7 @@
 					cacheBase = album.cacheBase;
 				}
 
-				if (album) {
+				if (album && ! album.isEmpty()) {
 					if (! album.hasOwnProperty("numsProtectedMediaInSubTree") && numsProtectedMediaInSubTree !== undefined) {
 						// we arrive here when getAlbum is called by Subalbum.toAlbum():
 						// the numsProtectedMediaInSubTree property was built in the subalbum, and now it's passed to the album
@@ -1977,7 +1977,8 @@
 
 				// let guessedOnly = true;
 				if (
-					this.hasVeiledProtectedContent()
+					this.hasProtectedContent()
+					// this.hasVeiledProtectedContent()
 					// this.guessedPasswordCodes().length && (
 					// 	this.subalbums.length === 0 ||
 					// 	this.numsProtectedMediaInSubTree.sumUpNumsProtectedMedia() > util.sumNumsProtectedMediaOfArray(this.subalbums).sumUpNumsProtectedMedia()

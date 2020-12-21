@@ -326,7 +326,7 @@
 		rootSelectionAlbum.positionsAndMediaInTree.mergePositionsAndMedia(env.selectionAlbum.positionsAndMediaInTree);
 		rootSelectionAlbum.numPositionsInTree = rootSelectionAlbum.positionsAndMediaInTree.length;
 		// rootSelectionAlbum.numPositionsInTree += env.selectionAlbum.numPositionsInTree;
-		rootSelectionAlbum.numsProtectedMediaInSubTree[","].sum(env.selectionAlbum.numsProtectedMediaInSubTree[","]);
+		// rootSelectionAlbum.numsProtectedMediaInSubTree[","].sum(env.selectionAlbum.numsProtectedMediaInSubTree[","]);
 
 		env.selectionAlbum.ancestorsCacheBase = rootSelectionAlbum.ancestorsCacheBase.slice();
 		env.selectionAlbum.ancestorsCacheBase.push(env.selectionAlbum.cacheBase);

@@ -777,7 +777,8 @@ $(document).ready(function() {
 									let getAlbumPromise = phFl.getAlbum(cacheBase, checkHigherAncestor, {getMedia: false, getPositions: false});
 									getAlbumPromise.then(
 										function(upAlbum) {
-											if (upAlbum.hasVeiledProtectedContent() && ! env.fromEscKey) {
+											if (upAlbum.hasProtectedContent() && ! env.fromEscKey) {
+											// if (upAlbum.hasVeiledProtectedContent() && ! env.fromEscKey) {
 												$("#loading").hide();
 												util.showAuthForm();
 											} else {
