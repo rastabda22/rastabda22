@@ -1381,7 +1381,7 @@ class Media(object):
 			if all(key[0:len(prefix)] != prefix for prefix in ['ExifInteroperabilityOffset', 'ExifTool:ExifToolVersion', 'Interoperability', 'MakerNote', 'Tag ', 'Thumbnail', 'Unknown']):
 				exif[key] = _exif[key]
 
-		if exif:
+		if exif or self.album.album_ini:
 			message("setting metadata extracted with " + used_tool, "", 5)
 			self._set_photo_metadata(exif)
 			indented_message("metadata set!", "", 5)
