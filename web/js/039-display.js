@@ -771,7 +771,7 @@ $(document).ready(function() {
 								if (! hash.length || upHash === hash) {
 									// the top album has been reached and no unprotected nor protected content has been found
 									if (album.hasVeiledProtectedContent())
-										util.showAuthForm();
+										$("#protected-content-unveil")[0].click();
 								} else {
 									hash = upHash;
 									let cacheBase = hash.substring(env.hashBeginning.length);
