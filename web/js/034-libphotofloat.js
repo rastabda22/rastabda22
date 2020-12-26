@@ -1442,71 +1442,72 @@
 						util.noResults(env.searchAlbum);
 					} else {
 						$(".search-failed").hide();
-					}
+					// }
 
-					for (indexMedia = 0; indexMedia < env.searchAlbum.media.length; indexMedia ++) {
-						// add the parent to the media
-						env.searchAlbum.media[indexMedia].addParent(env.searchAlbum);
-						if (env.searchAlbum.media[indexMedia].hasGpsData()) {
-							// add the media position
-							env.searchAlbum.positionsAndMediaInTree.addSingleMediaToPositionsAndMedia(env.searchAlbum.media[indexMedia]);
-							env.searchAlbum.numPositionsInTree = env.searchAlbum.positionsAndMediaInTree.length;
+						for (indexMedia = 0; indexMedia < env.searchAlbum.media.length; indexMedia ++) {
+							// add the parent to the media
+							env.searchAlbum.media[indexMedia].addParent(env.searchAlbum);
+							if (env.searchAlbum.media[indexMedia].hasGpsData()) {
+								// add the media position
+								env.searchAlbum.positionsAndMediaInTree.addSingleMediaToPositionsAndMedia(env.searchAlbum.media[indexMedia]);
+								env.searchAlbum.numPositionsInTree = env.searchAlbum.positionsAndMediaInTree.length;
+							}
 						}
-					}
 
-					if (env.searchAlbum.subalbums.length) {
-						let subalbumPromises = [];
-						for (indexSubalbums = 0; indexSubalbums < env.searchAlbum.subalbums.length; indexSubalbums ++) {
-							let thisSubalbum = env.searchAlbum.subalbums[indexSubalbums];
-							let thisIndex = indexSubalbums;
-							// update the media count
-							env.searchAlbum.numsMediaInSubTree.sum(env.searchAlbum.numsMediaInSubTree, thisSubalbum.numsMediaInSubTree);
-							// update the size totals
-							env.searchAlbum.sizesOfSubTree.sum(thisSubalbum.sizesOfSubTree);
-							env.searchAlbum.sizesOfAlbum.sum(thisSubalbum.sizesOfAlbum);
-							// add the points from the subalbums
+						if (env.searchAlbum.subalbums.length) {
+							let subalbumPromises = [];
+							for (indexSubalbums = 0; indexSubalbums < env.searchAlbum.subalbums.length; indexSubalbums ++) {
+								let thisSubalbum = env.searchAlbum.subalbums[indexSubalbums];
+								let thisIndex = indexSubalbums;
+								// update the media count
+								env.searchAlbum.numsMediaInSubTree.sum(env.searchAlbum.numsMediaInSubTree, thisSubalbum.numsMediaInSubTree);
+								// update the size totals
+								env.searchAlbum.sizesOfSubTree.sum(thisSubalbum.sizesOfSubTree);
+								env.searchAlbum.sizesOfAlbum.sum(thisSubalbum.sizesOfAlbum);
+								// add the points from the subalbums
 
-							// the subalbum could still have no positionsAndMediaInTree array, get it
-							if (! thisSubalbum.hasOwnProperty("positionsAndMediaInTree")) {
-								let subalbumPromise = new Promise(
-									function(resolve_subalbumPromise) {
-										let promise = PhotoFloat.getAlbum(thisSubalbum.cacheBase, null, {getMedia: false, getPositions: true});
+								// the subalbum could still have no positionsAndMediaInTree array, get it
+								if (! thisSubalbum.hasOwnProperty("positionsAndMediaInTree")) {
+									let subalbumPromise = new Promise(
+										function(resolve_subalbumPromise) {
+											let promise = PhotoFloat.getAlbum(thisSubalbum.cacheBase, null, {getMedia: false, getPositions: true});
+											promise.then(
+												function(thisSubalbum) {
+													env.searchAlbum.subalbums[thisIndex] = thisSubalbum;
+													env.searchAlbum.positionsAndMediaInTree.mergePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
+													env.searchAlbum.numPositionsInTree = env.searchAlbum.positionsAndMediaInTree.length;
+													// thisSubalbum.positionsAndMediaInTree = positionsGot;
+													// thisSubalbum.numPositionsInTree = album.positionsAndMediaInTree.length;
+													// thisSubalbum.includedFilesByCodesSimpleCombination[","].positionsGot = true;
+													resolve_subalbumPromise();
+												},
+												function() {
+													console.trace();
+												}
+											);
+										}
+									);
+									subalbumPromises.push(subalbumPromise);
+								}
+								Promise.all(subalbumPromises).then(
+									function() {
+										var promise = PhotoFloat.endPreparingAlbumAndKeepOn(env.searchAlbum, mediaHash, mediaFolderHash);
 										promise.then(
-											function(thisSubalbum) {
-												env.searchAlbum.subalbums[thisIndex] = thisSubalbum;
-												env.searchAlbum.positionsAndMediaInTree.mergePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
-												env.searchAlbum.numPositionsInTree = env.searchAlbum.positionsAndMediaInTree.length;
-												// thisSubalbum.positionsAndMediaInTree = positionsGot;
-												// thisSubalbum.numPositionsInTree = album.positionsAndMediaInTree.length;
-												// thisSubalbum.includedFilesByCodesSimpleCombination[","].positionsGot = true;
-												resolve_subalbumPromise();
-											},
-											function() {
-												console.trace();
+											function(i) {
+												resolve_parseHash([env.searchAlbum, i]);
 											}
 										);
 									}
 								);
-								subalbumPromises.push(subalbumPromise);
 							}
-							Promise.all(subalbumPromises).then(
-								function() {
-									var promise = PhotoFloat.endPreparingAlbumAndKeepOn(env.searchAlbum, mediaHash, mediaFolderHash);
-									promise.then(
-										function(i) {
-											resolve_parseHash([env.searchAlbum, i]);
-										}
-									);
+						} else {
+							var promise = PhotoFloat.endPreparingAlbumAndKeepOn(env.searchAlbum, mediaHash, mediaFolderHash);
+							promise.then(
+								function(i) {
+									resolve_parseHash([env.searchAlbum, i]);
 								}
 							);
 						}
-					} else {
-						var promise = PhotoFloat.endPreparingAlbumAndKeepOn(env.searchAlbum, mediaHash, mediaFolderHash);
-						promise.then(
-							function(i) {
-								resolve_parseHash([env.searchAlbum, i]);
-							}
-						);
 					}
 				}
 
