@@ -226,7 +226,7 @@
 		rootMapAlbum.positionsAndMediaInTree.mergePositionsAndMedia(newMapAlbum.positionsAndMediaInTree);
 		rootMapAlbum.numPositionsInTree = rootMapAlbum.positionsAndMediaInTree.length;
 		// rootMapAlbum.numPositionsInTree += newMapAlbum.numPositionsInTree;
-		rootMapAlbum.numsProtectedMediaInSubTree[","].sum(newMapAlbum.numsProtectedMediaInSubTree[","]);
+		// rootMapAlbum.numsProtectedMediaInSubTree[","].sum(newMapAlbum.numsProtectedMediaInSubTree[","]);
 
 		newMapAlbum.ancestorsCacheBase = rootMapAlbum.ancestorsCacheBase.slice();
 		newMapAlbum.ancestorsCacheBase.push(newMapAlbum.cacheBase);
@@ -266,7 +266,7 @@
 		rootSearchAlbum.positionsAndMediaInTree.mergePositionsAndMedia(this.positionsAndMediaInTree);
 		rootSearchAlbum.numPositionsInTree = rootSearchAlbum.positionsAndMediaInTree.length;
 		// rootSearchAlbum.numPositionsInTree += this.numPositionsInTree;
-		rootSearchAlbum.numsProtectedMediaInSubTree[","].sum(this.numsProtectedMediaInSubTree[","]);
+		// rootSearchAlbum.numsProtectedMediaInSubTree[","].sum(this.numsProtectedMediaInSubTree[","]);
 
 		this.ancestorsCacheBase = rootSearchAlbum.ancestorsCacheBase.slice();
 		this.ancestorsCacheBase.push(this.cacheBase);
