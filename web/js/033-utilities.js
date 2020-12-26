@@ -418,7 +418,7 @@
 				let combinations = codesComplexCombination.replace(',', '-').split('-');
 				var indexOfVoidString = combinations.indexOf("");
 				if (indexOfVoidString !== -1)
-					combinations.splice(indexOfVoidString);
+					combinations.splice(indexOfVoidString, 1);
 
 				// var albumCombinations = codesComplexCombination.split(',')[0];
 				// if (albumCombinations && typeof albumCombinations === "string")
