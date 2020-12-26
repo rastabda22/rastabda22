@@ -50,19 +50,7 @@
 						type: "GET",
 						dataType: "json",
 						success: function(albumOrPositionsOrMedia) {
-							let indexPosition = jsonRelativeFileName.lastIndexOf(".positions.json");
-							let indexMedia = jsonRelativeFileName.lastIndexOf(".media.json");
-							if (indexPosition >= 0 && indexPosition === jsonRelativeFileName.length - ".positions.json".length) {
-								// positions file
-								resolve_getJsonFile(albumOrPositionsOrMedia);
-							} else if (indexMedia >= 0 && indexMedia === jsonRelativeFileName.length - ".media.json".length) {
-								// media file
-								let mediaGot = new Media(albumOrPositionsOrMedia);
-								mediaGot.getAndPutIntoCache();
-								resolve_getJsonFile(mediaGot);
-							} else {
-								resolve_getJsonFile(albumOrPositionsOrMedia);
-							}
+							resolve_getJsonFile(albumOrPositionsOrMedia);
 						},
 						error: function() {
 							reject_getJsonFile();
@@ -101,6 +89,7 @@
 						promise.then(
 							function(object) {
 								var media = new Media (object);
+								// media.getAndPutIntoCache();
 								resolve_getMedia(media);
 							},
 							function() {
@@ -124,7 +113,7 @@
 						var promise = PhotoFloat.getJsonFile(positionJsonFile);
 						promise.then(
 							function(object) {
-								positions = new PositionsAndMedia(object);
+								var positions = new PositionsAndMedia(object);
 								resolve_getPositions(positions);
 							},
 							function() {
@@ -169,7 +158,7 @@
 				var promise = PhotoFloat.getJsonFile(jsonFile);
 				promise.then(
 					function unprotectedFileExists(object) {
-						album = new Album(object);
+						var album = new Album(object);
 						if (album.hasOwnProperty("media"))
 							album.numsMedia = album.media.imagesAndVideosCount();
 						album.includedFilesByCodesSimpleCombination = new IncludedFiles({",": {}});
@@ -271,7 +260,7 @@
 					var promise = PhotoFloat.getJsonFile(jsonFile);
 					promise.then(
 						function protectedFileExists(object) {
-							protectedAlbum = new Album(object);
+							var protectedAlbum = new Album(object);
 							if (! self.hasOwnProperty("numsProtectedMediaInSubTree") || self.empty)
 								// this is needed when addContentWithExternalMediaAndPositionsFromProtectedCacheBase() is called by getNumsProtectedMediaInSubTreeProperty()
 								self.numsProtectedMediaInSubTree = protectedAlbum.numsProtectedMediaInSubTree;

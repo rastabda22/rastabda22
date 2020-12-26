@@ -233,10 +233,11 @@
 
 	class Media extends Array {
 		constructor(media) {
-			if (Array.isArray(media))
-				super(... media.map(singleMedia => new SingleMedia(singleMedia)));
-			else
+			if (Array.isArray(media)) {
+				super(... media.map(singleMedia => new SingleMedia(singleMedia))).getAndPutIntoCache();
+			} else {
 				super(media);
+			}
 		}
 
 		getAndPutIntoCache() {
@@ -392,7 +393,7 @@
 					// newMediaArray = this.media.map(singleMedia => new SingleMedia(singleMedia));
 					// this.media = newMediaArray;
 					this.media = new Media(this.media);
-					this.media.getAndPutIntoCache();
+					// this.media.getAndPutIntoCache();
 
 					this.numsMedia = this.media.imagesAndVideosCount();
 				}
