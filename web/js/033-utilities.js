@@ -1128,7 +1128,7 @@
 	// 		return false;
 	// };
 
-	Utilities.prototype.noResults = function(album, selector) {
+	Utilities.prototype.noResults = function(album, resolveParseHash, selector) {
 		// no media found or other search fail, show the message
 		env.currentAlbum = album;
 		TopFunctions.setTitle("album", null);
@@ -1139,7 +1139,12 @@
 		if (typeof selector === "undefined")
 			selector = '#no-results';
 		$(".search-failed").hide();
-		$(selector).stop().fadeIn(1000);
+		$(selector).stop().fadeIn(
+			1000,
+			function() {
+				resolveParseHash([album, -1]);
+			}
+		);
 		// $(selector).fadeOut(4000);
 	};
 

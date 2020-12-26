@@ -1340,9 +1340,9 @@
 							env.searchAlbum = util.initializeSearchAlbumBegin(albumHash, mediaFolderHash);
 							// no search term
 							// TO DO: does execution actually arrive here?
-							util.noResults(env.searchAlbum, '#no-search-string');
-							// the resolve function is needed at least in order to show the title
-							resolve_parseHash([env.searchAlbum, -1]);
+							util.noResults(env.searchAlbum, resolve_parseHash, '#no-search-string');
+							// // the resolve function is needed at least in order to show the title
+							// resolve_parseHash([env.searchAlbum, -1]);
 							return;
 						}
 					}
@@ -1383,9 +1383,9 @@
 						! albumFromCache.media.length
 					) {
 						// it's a search with no results
-						util.noResults(albumFromCache);
-						// the resolve function is needed at least in order to show the title
-						resolve_parseHash([albumFromCache, -1]);
+						util.noResults(albumFromCache, resolve_parseHash);
+						// // the resolve function is needed at least in order to show the title
+						// resolve_parseHash([albumFromCache, -1]);
 					} else {
 						// it's not a search without results: everything is ok, resolve!
 						let result = albumFromCache.getMediaIndex(mediaFolderHash, mediaHash);
@@ -1439,7 +1439,7 @@
 				function subalbumsAbsentOrGot() {
 					var indexMedia, indexSubalbums;
 					if (env.searchAlbum.media.length === 0 && env.searchAlbum.subalbums.length === 0) {
-						util.noResults(env.searchAlbum);
+						util.noResults(env.searchAlbum, resolve_parseHash);
 					} else {
 						$(".search-failed").hide();
 					// }
@@ -1515,7 +1515,7 @@
 					env.searchAlbum.removedStopWords = removedStopWords;
 					// has any word remained after stop words have been removed?
 					if (searchWordsFromUser.length === 0) {
-						util.noResults(env.searchAlbum, '#no-search-string-after-stopwords-removed');
+						util.noResults(env.searchAlbum, resolve_parseHash, '#no-search-string-after-stopwords-removed');
 						resolve_parseHash([env.searchAlbum, -1]);
 						return;
 					}
@@ -1579,11 +1579,11 @@
 							}
 
 							if (numSubAlbumsToGet === 0) {
-								util.noResults(env.searchAlbum);
-								resolve_parseHash([env.searchAlbum, -1]);
+								util.noResults(env.searchAlbum, resolve_parseHash);
+								// resolve_parseHash([env.searchAlbum, -1]);
 							} else if (numSubAlbumsToGet > env.options.max_search_album_number) {
-								util.noResults(env.searchAlbum, '#search-too-wide');
-								resolve_parseHash([env.searchAlbum, -1]);
+								util.noResults(env.searchAlbum, resolve_parseHash, '#search-too-wide');
+								// resolve_parseHash([env.searchAlbum, -1]);
 							} else {
 								$(".search-failed").hide();
 								env.searchAlbum.initializeSearchAlbumEnd();
