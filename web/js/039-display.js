@@ -770,14 +770,15 @@ $(document).ready(function() {
 								let upHash = util.upHash(hash);
 								if (! hash.length || upHash === hash) {
 									// the top album has been reached and no unprotected nor protected content has been found
-									util.showAuthForm();
+									if (album.hasVeiledProtectedContent())
+										util.showAuthForm();
 								} else {
 									hash = upHash;
 									let cacheBase = hash.substring(env.hashBeginning.length);
 									let getAlbumPromise = phFl.getAlbum(cacheBase, checkHigherAncestor, {getMedia: false, getPositions: false});
 									getAlbumPromise.then(
 										function(upAlbum) {
-											if (upAlbum.hasProtectedContent() && ! env.fromEscKey) {
+											if (upAlbum.hasVeiledProtectedContent() && ! env.fromEscKey) {
 											// if (upAlbum.hasVeiledProtectedContent() && ! env.fromEscKey) {
 												$("#loading").hide();
 												util.showAuthForm();

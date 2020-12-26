@@ -1974,7 +1974,8 @@
 					// )
 				) {
 					// the media not found could be a protected one, show the authentication dialog, it could be a protected media
-					util.showAuthForm(null, true);
+					if (this.hasVeiledProtectedContent())
+						util.showAuthForm(null, true);
 				} else {
 					// surely the media doesn't exist
 
