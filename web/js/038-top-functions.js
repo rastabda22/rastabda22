@@ -1497,11 +1497,16 @@
 		}
 
 		if ($("#album-view").is(":visible")) {
-			populateAlbum =
-				env.previousAlbum === null ||
-			 	env.previousAlbum.cacheBase !== env.currentAlbum.cacheBase ||
-				env.previousAlbum.numsMediaInSubTree.imagesAndVideosTotal() !== env.currentAlbum.numsMediaInSubTree.imagesAndVideosTotal() ||
-				env.currentMedia === null && env.previousMedia !== null;
+			populateAlbum = false;
+			if (
+				env.currentMedia === null && ! env.currentAlbum.isAlbumWithOneMedia() && (
+					env.previousAlbum === null ||
+				 	! env.previousAlbum.isEqual(env.currentAlbum) ||
+					env.previousAlbum.numsMediaInSubTree.imagesAndVideosTotal() !== env.currentAlbum.numsMediaInSubTree.imagesAndVideosTotal()
+				) ||
+				env.currentMedia !== null && env.previousMedia === null
+			)
+				populateAlbum = true;
 			TopFunctions.showAlbum(populateAlbum);
 		}
 
