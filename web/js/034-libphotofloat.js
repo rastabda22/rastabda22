@@ -639,6 +639,8 @@
 	};
 
 	Album.prototype.hasUnloadedProtectedContent = function(mustGetMedia, mustGetPositions) {
+		// this function is for detecting if protected content has to be loaded
+		// to detect if the auth dialog has to be shown use hasVeiledProtectedContent() instead
 		if (! env.guessedPasswordCodes.length)
 			return false;
 		var self = this;
@@ -877,6 +879,8 @@
 	};
 
 	Album.prototype.hasVeiledProtectedContent = function() {
+		// this function is for detecting if the auth dialog has to be shown
+		// to detect if protected content has to be loaded use hasUnloadedProtectedContent() instead
 		var numGuessedPasswords = this.guessedPasswordCodes().length;
 		var numPasswords = this.passwordCodes().length;
 		return numPasswords - numGuessedPasswords > 0;
