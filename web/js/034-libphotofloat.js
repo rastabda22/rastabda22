@@ -1371,8 +1371,7 @@
 				if (
 					albumFromCache &&
 					! albumFromCache.isEmpty() &&
-					! albumFromCache.hasVeiledProtectedContent() &&
-					// ! env.guessedPasswordsMd5.length &&
+					! albumFromCache.hasUnloadedProtectedContent(true, true) &&
 					albumFromCache.hasOwnProperty("subalbums") &&
 					albumFromCache.hasOwnProperty("media") &&
 					albumFromCache.hasOwnProperty("positionsAndMediaInTree")
@@ -1965,18 +1964,11 @@
 			if (mediaIndex === -1) {
 				$("#loading").stop().hide();
 
-				// let guessedOnly = true;
-				if (
-					this.hasProtectedContent()
-					// this.hasVeiledProtectedContent()
-					// this.guessedPasswordCodes().length && (
-					// 	this.subalbums.length === 0 ||
-					// 	this.numsProtectedMediaInSubTree.sumUpNumsProtectedMedia() > util.sumNumsProtectedMediaOfArray(this.subalbums).sumUpNumsProtectedMedia()
-					// )
-				) {
+				if (this.hasVeiledProtectedContent()) {
+				// if (this.hasProtectedContent()) {
 					// the media not found could be a protected one, show the authentication dialog, it could be a protected media
-					if (this.hasVeiledProtectedContent())
-						util.showAuthForm(null, true);
+					// if (this.hasVeiledProtectedContent())
+					util.showAuthForm(null, true);
 				} else {
 					// surely the media doesn't exist
 
