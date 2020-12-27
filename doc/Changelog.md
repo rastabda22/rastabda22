@@ -1,3 +1,4 @@
+* add indexing of title, description and tags in root folder
 * correctly detect when protected content must be added
 * do not accept the same password twice
 * bug fixes
