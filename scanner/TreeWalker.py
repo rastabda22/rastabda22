@@ -69,6 +69,10 @@ class TreeWalker:
 
 		next_level()
 		[folders_album, _, passwords_or_album_ini_processed] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], None, set(), self.origin_album)
+
+		# permit searching the title and description of the root album too
+		self.add_album_to_tree_by_search(folders_album)
+
 		back_level()
 		if folders_album is None:
 			message("WARNING", "ALBUMS ROOT EXCLUDED BY MARKER FILE", 2)

@@ -1,6 +1,7 @@
 var translations =
 	{
 		en: {
+			"#root-album": "root album",
 			"#padlock-img-alt-text": "padlock",
 			"#next-media-title": "Next [n]",
 			"#prev-media-title": "Previous [p]",
@@ -218,6 +219,7 @@ var translations =
 			"#regular-album-in": "album in"
 		},
 		it: {
+			"#root-album": "album radice",
 			"#padlock-img-alt-text": "lucchetto",
 			"#next-media-title": "Prossima [n]",
 			"#prev-media-title": "Precedente [p]",
@@ -435,6 +437,7 @@ var translations =
 			"#regular-album-in": "album in"
 		},
 		es: {
+			"#root-album": "álbum raíz",
 			"#padlock-img-alt-text": "candado",
 			"#next-media-title": "Siguiente [n]",
 			"#prev-media-title": "Anterior [p]",
@@ -652,6 +655,7 @@ var translations =
 			"#regular-album-in": "álbum en"
 		},
 		fr: {
+			"#root-album": "root album",
 			"#padlock-img-alt-text": "padlock",
 			"#next-media-title": "Suivant [n]",
 			"#prev-media-title": "Précédent [p]",

@@ -2371,6 +2371,8 @@
 								var ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
 
 								let nameHtml = env.currentAlbum.subalbumName(ithSubalbum);
+								if (nameHtml === "")
+									nameHtml = "<span class='italic'>(" + util._t("#root-album") + ")</span>";
 
 								captionHtml = "<div class='album-caption";
 								if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs)
