@@ -842,7 +842,10 @@
 				if (
 					[".map-popup-trigger", ".map-popup-trigger-double"].indexOf(env.selectorClickedToOpenTheMap) !== -1 &&
 					env.previousAlbum !== null &&
-					env.previousAlbum.isMap() && env.previousMedia === null &&
+					env.previousAlbum.isMap() && (
+						env.previousMedia === null ||
+						env.previousAlbum.isAlbumWithOneMedia()
+					) &&
 					env.fromEscKey ||
 					env.mapRefreshType !== "none"
 				) {
@@ -1445,7 +1448,7 @@
 		$("#loading").hide();
 
 		if (! this.isEqual(env.currentAlbum)) {
-			// the if confidition is required for when a password is unveiled
+			// this if condition is required for when a password is guessed
 			env.previousAlbum = env.currentAlbum;
 		}
 		env.currentAlbum = this;
@@ -1494,11 +1497,16 @@
 		}
 
 		if ($("#album-view").is(":visible")) {
-			populateAlbum =
-				env.previousAlbum === null ||
-			 	env.previousAlbum.cacheBase !== env.currentAlbum.cacheBase ||
-				env.previousAlbum.numsMediaInSubTree.imagesAndVideosTotal() !== env.currentAlbum.numsMediaInSubTree.imagesAndVideosTotal() ||
-				env.currentMedia === null && env.previousMedia !== null;
+			populateAlbum = false;
+			if (
+				env.currentMedia === null && ! env.currentAlbum.isAlbumWithOneMedia() && (
+					env.previousAlbum === null ||
+				 	! env.previousAlbum.isEqual(env.currentAlbum) ||
+					env.previousAlbum.numsMediaInSubTree.imagesAndVideosTotal() !== env.currentAlbum.numsMediaInSubTree.imagesAndVideosTotal()
+				) ||
+				env.currentMedia !== null && env.previousMedia === null
+			)
+				populateAlbum = true;
 			TopFunctions.showAlbum(populateAlbum);
 		}
 
@@ -2257,8 +2265,7 @@
 					if (
 						env.selectorClickedToOpenTheMap === "#media-map-link-" + iMedia &&
 						env.previousAlbum !== null &&
-						env.previousAlbum.isMap() &&
-						(
+						env.previousAlbum.isMap() && (
 							env.previousMedia === null ||
 							env.previousAlbum.isAlbumWithOneMedia()
 						) &&
@@ -2364,6 +2371,8 @@
 								var ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
 
 								let nameHtml = env.currentAlbum.subalbumName(ithSubalbum);
+								if (nameHtml === "")
+									nameHtml = "<span class='italic'>(" + util._t("#root-album") + ")</span>";
 
 								captionHtml = "<div class='album-caption";
 								if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs)

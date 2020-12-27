@@ -90,6 +90,11 @@ a.title-anchor.mobile {
 	color: orange !important;
 }
 
+.italic {
+	font-style: italic;
+	color: gray;
+}
+
 #loading, #folders-browsing, #by-date-browsing, #by-gps-browsing, #by-search-browsing, #downloading-media, #preparing-zip, #sending-email {
 	display: none;
 }

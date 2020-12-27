@@ -1104,7 +1104,7 @@
 			// let numPasswords = thisAlbum.numPasswords();
 
 			if (
-				thisAlbum.hasMoreProtectedContent()
+				thisAlbum.hasVeiledProtectedContent()
 				// numPasswords &&
 				// env.guessedPasswordCodes.length < numPasswords
 			) {
@@ -1170,11 +1170,20 @@
 		});
 		if (typeof thumb === "undefined")
 			return;
-		if (env.currentMedia !== null) {
+		if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia()) {
 			var scroller = $("#album-view");
-			scroller.scrollLeft(thumb.parent().position().left + scroller.scrollLeft() - scroller.width() / 2 + thumb.width() / 2);
+			scroller.stop().animate(
+				{
+					scrollLeft: thumb.parent().position().left + scroller.scrollLeft() - scroller.width() / 2 + thumb.width() / 2
+				},
+				"fast"
+			);
 		} else
-			$("html, body").scrollTop(thumb.offset().top - $(window).height() / 2 + thumb.height());
+			$("html, body").stop().animate(
+				{
+					scrollTop: thumb.offset().top - $(window).height() / 2 + thumb.height()
+				}, "fast"
+			);
 
 		if (env.currentMedia !== null) {
 			$(".thumb-container").removeClass("current-thumb");
@@ -1576,8 +1585,11 @@
 							util.initializeSelectionRootAlbum();
 
 							env.mapAlbum = new Album();
+
 							env.selectionAlbum = new Album();
+
 							env.searchAlbum = new Album();
+							env.searchAlbum.includedFilesByCodesSimpleCombination = new IncludedFiles();
 
 							resolve_getOptions();
 						},

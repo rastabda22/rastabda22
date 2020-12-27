@@ -69,6 +69,10 @@ class TreeWalker:
 
 		next_level()
 		[folders_album, _, passwords_or_album_ini_processed] = self.walk(Options.config['album_path'], Options.config['folders_string'], [], None, set(), self.origin_album)
+
+		# permit searching the title and description of the root album too
+		self.add_album_to_tree_by_search(folders_album)
+
 		back_level()
 		if folders_album is None:
 			message("WARNING", "ALBUMS ROOT EXCLUDED BY MARKER FILE", 2)
@@ -950,6 +954,8 @@ class TreeWalker:
 			if alphabetic_words[word_index] in purged_alphabetic_words:
 				purged_search_normalized_words.append(search_normalized_words[word_index])
 				purged_ascii_words.append(ascii_words[word_index])
+			else:
+				message("stopword removed", alphabetic_words[word_index], 5)
 
 		return purged_alphabetic_words, purged_search_normalized_words, purged_ascii_words
 
@@ -1055,8 +1061,13 @@ class TreeWalker:
 		if isinstance(media_or_album, Media):
 			# remove the extension
 			media_or_album_name = os.path.splitext(media_or_album_name)[0]
+
 		elements = [media_or_album.title, media_or_album.description, " ".join(media_or_album.tags), media_or_album_name]
 		phrase = ' '.join([_f for _f in elements if _f])
+		# strip html tags
+		phrase = re.sub('<[^<]+?>', '', phrase)
+		# strip new lines
+		phrase = ' '.join(phrase.splitlines())
 
 		alphabetic_phrase = remove_non_alphabetic_characters(remove_digits(phrase))
 		lowercase_phrase = switch_to_lowercase(alphabetic_phrase)
@@ -1069,8 +1080,10 @@ class TreeWalker:
 
 		if (Options.config['use_stop_words']):
 			# remove stop words: do it according to the words in lower case, different words could be removed if performing remotion from every list
+			next_level()
 			alphabetic_words, search_normalized_words, ascii_words = self.remove_stopwords(alphabetic_words, search_normalized_words, ascii_words)
 			alphabetic_words = list(alphabetic_words)
+			back_level()
 
 		return alphabetic_words, search_normalized_words, ascii_words
 

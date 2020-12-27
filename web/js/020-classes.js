@@ -233,10 +233,11 @@
 
 	class Media extends Array {
 		constructor(media) {
-			if (Array.isArray(media))
-				super(... media.map(singleMedia => new SingleMedia(singleMedia)));
-			else
+			if (Array.isArray(media)) {
+				super(... media.map(singleMedia => new SingleMedia(singleMedia))).getAndPutIntoCache();
+			} else {
 				super(media);
+			}
 		}
 
 		getAndPutIntoCache() {
@@ -368,7 +369,7 @@
 				this.subalbums = new Subalbums([]);
 				this.positionsAndMediaInTree = new PositionsAndMedia([]);
 				this.numPositionsInTree = 0;
-				this.numsProtectedMediaInSubTree = new NumsProtected();
+				// this.numsProtectedMediaInSubTree = new NumsProtected();
 				if (cacheBase.split(env.options.cache_folder_separator).length === 1)
 					this.ancestorsCacheBase = [cacheBase];
 				// this.path = cacheBase.replace(env.options.cache_folder_separator, "/");
@@ -378,10 +379,9 @@
 					this.clickHistory = [];
 				}
 			} else if (typeof objectOrCacheBase === "object") {
-				let object = objectOrCacheBase;
-				Object.keys(object).forEach(
-					(key) => {
-						this[key] = object[key];
+				Object.keys(objectOrCacheBase).forEach(
+					key => {
+						this[key] = objectOrCacheBase[key];
 					}
 				);
 
@@ -393,7 +393,7 @@
 					// newMediaArray = this.media.map(singleMedia => new SingleMedia(singleMedia));
 					// this.media = newMediaArray;
 					this.media = new Media(this.media);
-					this.media.getAndPutIntoCache();
+					// this.media.getAndPutIntoCache();
 
 					this.numsMedia = this.media.imagesAndVideosCount();
 				}
@@ -408,18 +408,19 @@
 					this.numsProtectedMediaInSubTree = new NumsProtected(this.numsProtectedMediaInSubTree);
 				}
 				this.subalbums = new Subalbums(this.subalbums);
-			} else if (typeof objectOrCacheBase === "undefined") {
+
+				this.removeUnnecessaryPropertiesAndAddParentToMedia();
+			} else if (objectOrCacheBase === undefined) {
 				this.empty = true;
 			}
 
-
-			if (objectOrCacheBase !== undefined) {
-				this.removeUnnecessaryPropertiesAndAddParentToMedia();
-				if (! this.hasOwnProperty("includedFilesByCodesSimpleCombination")) {
-					this.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
-				}
-				if (this.codesComplexCombination === undefined)
-					env.cache.putAlbum(this);
+			// if (objectOrCacheBase !== undefined) {
+			// 	if (! this.hasOwnProperty("includedFilesByCodesSimpleCombination")) {
+			// 		this.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
+			// 	}
+			// }
+			if (objectOrCacheBase !== undefined && this.codesComplexCombination === undefined) {
+				env.cache.putAlbum(this);
 			}
 		}
 
