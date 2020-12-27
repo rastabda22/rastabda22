@@ -420,19 +420,12 @@
 				if (indexOfVoidString !== -1)
 					combinations.splice(indexOfVoidString, 1);
 
-				// var albumCombinations = codesComplexCombination.split(',')[0];
-				// if (albumCombinations && typeof albumCombinations === "string")
-				// 	albumCombinations = [albumCombinations];
-				// var mediaCombinations = codesComplexCombination.split(',')[1];
-				// if (mediaCombinations && typeof mediaCombinations === "string")
-				// 	mediaCombinations = [mediaCombinations];
-				// let combinations = Utilities.arrayUnion(albumCombinations, mediaCombinations);
 				combinations.forEach(
 					function(combination) {
-						codesList = combination.split('-');
+						codesFromCombination = combination.split('-');
 						if (typeof codesList === "string")
-							codesList = [codesList];
-						codesList.forEach(
+							codesFromCombination = [codesFromCombination];
+						codesFromCombination.forEach(
 							function(code) {
 								if (! codes.includes(code))
 									codes.push(code);
