@@ -424,7 +424,6 @@ $(document).ready(function() {
 
 	// search
 	$('#search-button').on("click", function() {
-		$("#loading").show();
 		var searchOptions = '';
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
@@ -515,7 +514,10 @@ $(document).ready(function() {
 
 				bySearchViewHash += env.options.cache_folder_separator + env.options.cache_base_to_search_in;
 
-				window.location.href = bySearchViewHash;
+				if (bySearchViewHash !== window.location.hash) {
+					$("#loading").show();
+					window.location.hash = bySearchViewHash;
+				}
 			}
 		}
 
