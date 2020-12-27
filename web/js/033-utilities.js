@@ -1620,7 +1620,7 @@
 										}
 									}
 								);
-								env.selectionAlbum.numsProtectedMediaInSubTree.sum(subalbum.numsProtectedMediaInSubTree);
+								// env.selectionAlbum.numsProtectedMediaInSubTree.sum(subalbum.numsProtectedMediaInSubTree);
 							}
 
 							subalbum.generateCaptionForSearch();
@@ -1699,7 +1699,7 @@
 										}
 									}
 								);
-								env.selectionAlbum.numsProtectedMediaInSubTree.subtract(subalbum.numsProtectedMediaInSubTree);
+								// env.selectionAlbum.numsProtectedMediaInSubTree.subtract(subalbum.numsProtectedMediaInSubTree);
 							}
 
 							if (! env.currentAlbum.isSelection()) {

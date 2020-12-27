@@ -3206,7 +3206,7 @@
 						rootMapAlbum.positionsAndMediaInTree.mergePositionsAndMedia(env.mapAlbum.positionsAndMediaInTree);
 						rootMapAlbum.numPositionsInTree += env.mapAlbum.positionsAndMediaInTree.length;
 						// rootMapAlbum.numPositionsInTree += env.mapAlbum.numPositionsInTree;
-						rootMapAlbum.numsProtectedMediaInSubTree[","].sum(env.mapAlbum.numsProtectedMediaInSubTree[","]);
+						// rootMapAlbum.numsProtectedMediaInSubTree[","].sum(env.mapAlbum.numsProtectedMediaInSubTree[","]);
 
 						env.mapAlbum.bindSortEvents();
 					}
