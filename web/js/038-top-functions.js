@@ -1431,7 +1431,7 @@
 
 		if (id === "center") {
 			if (this != null) {
-				TopFunctions.setCaption(this.metadata.title, this.metadata.description);
+				TopFunctions.setCaption(this.metadata.title, this.metadata.description, this.metadata.tags);
 				TopFunctions.positionCaption('media');
 			}
 
@@ -2049,15 +2049,6 @@
 		if (env.options.albums_slide_style)
 			slideBorder = env.slideBorder;
 
-		// When there is both a media and an album, we display the media's caption; else it's the album's one
-		if (env.currentMedia === null) {
-			TopFunctions.setCaption(env.currentAlbum.title, env.currentAlbum.description);
-			TopFunctions.positionCaption('album');
-		} else {
-			TopFunctions.setCaption(env.currentMedia.metadata.title, env.currentMedia.metadata.description);
-			TopFunctions.positionCaption('media');
-		}
-
 		if (env.currentMedia === null)
 			$("#album-view").off('mousewheel');
 		if (env.currentMedia === null && env.previousMedia === null)
@@ -2606,6 +2597,15 @@
 							// we can run the function that prepare the stuffs for sharing
 							f.socialButtons();
 							adaptCaptionHeight();
+
+							// When there is both a media and an album, we display the media's caption; else it's the album's one
+							if (env.currentMedia === null) {
+								TopFunctions.setCaption(env.currentAlbum.title, env.currentAlbum.description, env.currentAlbum.tags);
+								TopFunctions.positionCaption('album');
+							} else {
+								TopFunctions.setCaption(env.currentMedia.metadata.title, env.currentMedia.metadata.description, env.currentMedia.metadata.description);
+								TopFunctions.positionCaption('media');
+							}
 						},
 						function() {
 							console.trace();
@@ -3241,30 +3241,37 @@
 		);
 	};
 
-	TopFunctions.setCaption = function(title, description) {
+	TopFunctions.setCaption = function(title, description, tags) {
 		// Replace CRLF by <br> and remove all useless <br>.
 		function formatText(text) {
-		  text = text.replace(/<(\/?\w+)>\s*\n\s*<(\/?\w+)>/g, "<$1><$2>");
-		  text = text.replace(/\n/g, "</p><p class='caption-text'>");
-		  return "<p class='caption-text'>" + text + "</p>";
+			text = text.replace(/<(\/?\w+)>\s*\n\s*<(\/?\w+)>/g, "<$1><$2>");
+			text = text.replace(/\n/g, "</p><p class='caption-text'>");
+			return "<p class='caption-text'>" + text + "</p>";
 		}
 
 		var nullTitle = (typeof title === "undefined") || ! title;
 		var nullDescription = (typeof description === "undefined") || ! description;
+		var nullTags = (typeof tags === "undefined") || ! tags.length;
 
 		if (! nullTitle) {
-		  $("#caption-title").html(formatText(title));
+			$("#caption-title").html(formatText(title));
 		} else {
-		  $("#caption-title").html("");
+			$("#caption-title").html("");
 		}
 
 		if (! nullDescription) {
-		  $("#caption-description").html(formatText(description));
+			$("#caption-description .description").html(formatText(description));
 		} else {
-		  $("#caption-description").html("");
+			$("#caption-description .description").html("");
+		}
+		if (! nullTags) {
+			let textualTags = "<p class='tags'> " + util._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span></p>";
+			$("#caption-tags").html(textualTags);
+		} else {
+			$("#caption-tags").html("");
 		}
 
-		if (nullTitle && nullDescription) {
+		if (nullTitle && nullDescription && nullTags) {
 		  $("#caption").addClass("hidden");
 		} else {
 		  $("#caption").removeClass("hidden");
@@ -3274,11 +3281,15 @@
 	TopFunctions.positionCaption = function(captionType) {
 		// Size of caption varies if on album or media
 		if (captionType === 'media') {
-			var mediaHeight = parseInt($(".media-box#center").css("height"));
-			$("#caption").css("top", mediaHeight * 0.7);
+			var titleHeight = parseInt($(".media-box#center .title").css("height"));
+			var mediaHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
+			$("#caption").css("top", titleHeight + mediaHeight * 0.7);
 			$("#caption").css("bottom", "");
 			$("#caption").css("height", "");
 			$("#caption").css("max-height", mediaHeight * 0.2);
+			var selectBoxWidth = 30;
+			$("#caption").css("right", 2 * selectBoxWidth + parseInt($("#media-select-box .select-box").css("right")));
+			$("#caption-description").css("max-height", $("#caption").height() - 2 * parseInt($("#caption").css("padding-top")) - $("#caption-title").height() - $("#caption-tags").height());
 		} else if (captionType === 'album') {
 			// var titleHeight = parseInt($("#album-view .title").css("height"));
 			// var albumTop = parseInt($("#album-view").css("top"));

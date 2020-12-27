@@ -2,6 +2,7 @@ var translations =
 	{
 		en: {
 			"#root-album": "root album",
+			"#tags": "Tags",
 			"#padlock-img-alt-text": "padlock",
 			"#next-media-title": "Next [n]",
 			"#prev-media-title": "Previous [p]",
@@ -220,6 +221,7 @@ var translations =
 		},
 		it: {
 			"#root-album": "album radice",
+			"#tags": "Etichette",
 			"#padlock-img-alt-text": "lucchetto",
 			"#next-media-title": "Prossima [n]",
 			"#prev-media-title": "Precedente [p]",
@@ -387,7 +389,7 @@ var translations =
 			".video-unsupported-h264": "<p>Purtroppo il tuo navigatore non supporta il formato video H.264.</p>",
 			".metadata-data-title": "Titolo",
 			".metadata-data-description": "Descrizione",
-			".metadata-data-tags": "Parole",
+			".metadata-data-tags": "Etichette",
 			".metadata-data-make": "Marca",
 			".metadata-data-model": "Modello",
 			".metadata-data-date": "Data e ora",
@@ -438,6 +440,7 @@ var translations =
 		},
 		es: {
 			"#root-album": "álbum raíz",
+			"#tags": "Etiquetas",
 			"#padlock-img-alt-text": "candado",
 			"#next-media-title": "Siguiente [n]",
 			"#prev-media-title": "Anterior [p]",
@@ -656,6 +659,7 @@ var translations =
 		},
 		fr: {
 			"#root-album": "root album",
+			"#tags": "Tags",
 			"#padlock-img-alt-text": "padlock",
 			"#next-media-title": "Suivant [n]",
 			"#prev-media-title": "Précédent [p]",

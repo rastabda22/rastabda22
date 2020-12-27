@@ -1,3 +1,6 @@
+* reposition media caption and add tags
+* bug fixes
+
 ### version v4.9.9 (Dec 27, 2020)
 
 * add indexing of title, description and tags in root folder

@@ -527,24 +527,46 @@ video {
 	filter: alpha(opacity=50); /* For IE8 and earlier */
 	width: 30%;
 	max-width: 30%;
-	overflow-y: auto;
+	overflow-y: hidden;
 	padding: 0.4em;
 	word-wrap: break-word;
 	line-height: 1em;
 }
 
+#caption p.tags {
+	font-size: 90%;
+	color: red;
+	text-align: right;
+}
+
+#caption .tags .tag {
+	font-style: italic;
+	color: yellow;
+}
+
+#caption-title, #caption-tags {
+	position: relative;
+	height: auto;
+}
+
 #caption-title {
+	top: 0;
 	font-weight: bold;
+}
+
+#caption-description {
+	overflow-y: scroll;
+	color: #FFAD27;
+}
+
+#caption-tags {
+	bottom: 0;
 }
 
 #caption-title p, #caption-description p {
 	color: #FFFFFF;
 	margin-bottom: 0.3em;
 	margin-top: 0.3em;
-}
-
-#caption-description a {
-	color: #FFAD27;
 }
 
 .exit-fullscreen {
