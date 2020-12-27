@@ -1,3 +1,5 @@
+### version v4.9.9 (Dec 27, 2020)
+
 * add indexing of title, description and tags in root folder
 * correctly detect when protected content must be added
 * do not accept the same password twice
