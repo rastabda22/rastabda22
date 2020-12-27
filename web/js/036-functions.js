@@ -1103,11 +1103,7 @@
 		if (thisAlbum !== null) {
 			// let numPasswords = thisAlbum.numPasswords();
 
-			if (
-				thisAlbum.hasVeiledProtectedContent()
-				// numPasswords &&
-				// env.guessedPasswordCodes.length < numPasswords
-			) {
+			if (thisAlbum.hasVeiledProtectedContent()) {
 				$(".protection").show();
 				$("#padlock").off('click').on(
 					'click',
