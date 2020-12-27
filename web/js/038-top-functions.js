@@ -100,7 +100,7 @@
 
 	TopFunctions.setTitle = function(id, singleMedia) {
 
-		var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, isSelectionTitle, isMapTitle, originalTitle;
+		var title = "<span class='title-main'>", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, isSelectionTitle, isMapTitle, originalTitle;
 		var titleAnchorClasses, where, initialValue, searchFolderHash;
 		var linkCount = 0, linksToLeave = 1, latitude, longitude, arrayCoordinates;
 		var raquo = "&raquo;";
@@ -168,7 +168,7 @@
 		}
 
 		if (isDateTitle) {
-			title = "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + components[0] + "</a>" + raquo;
+			title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + components[0] + "</a>" + raquo;
 			title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + env.options.by_date_string + "'>(" + util._t("#by-date") + ")</a>";
 
 			if (components.length > 2 || singleMedia !== null)
@@ -241,7 +241,7 @@
 				title += ")</span>";
 			}
 		} else if (isGpsTitle) {
-			title = "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + components[0] + "</a>" + raquo;
+			title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + components[0] + "</a>" + raquo;
 			title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + env.options.by_gps_string + "'>(" + util._t("#by-gps") + ")</a>";
 
 			if (components.length > 2 || singleMedia !== null)
@@ -333,7 +333,7 @@
 			// (optional) i=3 up: folder or image
 			// (optional) i=n: image
 
-			title = "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + components[0] + "</a>" + raquo;
+			title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + components[0] + "</a>" + raquo;
 			if (
 				env.options.search_current_album &&
 				! util.isAnyRootCacheBase(env.options.cache_base_to_search_in)
@@ -415,7 +415,7 @@
 			// (optional) i=2: media folder cache base
 			// (optional) i=3: media cache base
 
-			title = "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + components[0] + "</a>" + raquo;
+			title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + components[0] + "</a>" + raquo;
 			title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + env.options.by_selection_string + "'>(" + util._t("#by-selection") + ")</a>";
 			if (singleMedia !== null) {
 				title += raquo;
@@ -467,7 +467,7 @@
 			// (optional) i=2: image cache or folder
 			// (optional) i=3 up: folder or image
 			// (optional) i=n: image
-			title = "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + components[0] + "</a>" + raquo;
+			title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + components[0] + "</a>" + raquo;
 
 			where =
 				"<a class='search-link' href='" + env.hashBeginning + env.currentAlbum.cacheBase + "'>" +
@@ -518,7 +518,7 @@
 			}
 		} else {
 			// folders title
-			title = "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + components[0] + "</a>";
+			title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + components[0] + "</a>";
 			if (components.length > 2 || singleMedia !== null)
 				title += raquo;
 
@@ -651,6 +651,8 @@
 			function() {
 				if (singleMedia !== null) {
 					title += "<span class='media-name'>" + singleMedia.name + "</span>";
+					// close the .title-main span
+					title += "</span>";
 					if (env.currentMedia.hasGpsData()) {
 						title += "<a class='map-popup-trigger'>" +
 						"<img class='title-img' title='" + util.escapeSingleQuotes(util._t("#show-on-map")) + " [s]' alt='" + util.escapeSingleQuotes(util._t("#show-on-map")) + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
@@ -660,6 +662,8 @@
 					let replace = "";
 					let shortcutAdded = false;
 					let marker = "<marker>";
+					// close the .title-main span
+					replace += "</span>";
 					if (env.currentAlbum.numPositionsInAlbum && env.currentAlbum.numPositionsInTree !== env.currentAlbum.numPositionsInSubalbums) {
 						replace +=
 							"<a class='map-popup-trigger'>" +
@@ -707,6 +711,9 @@
 						fillInSpan,
 						replace
 					);
+				} else {
+					// close the .title-main span
+					title += "</span>";
 				}
 
 				if (env.isMobile.any()) {
@@ -720,8 +727,8 @@
 							linkCount ++;
 							if (linkCount > linksToLeave) {
 								title =
-								"<span class='dots-surroundings'><span class='title-no-anchor dots'>...</span></span>" +
-								"<span class='hidden-title'>" + titleArray.slice(0, i + 1).join(raquo) + "</span>" + raquo + titleArray.slice(i + 1).join(raquo);
+									"<span class='dots-surroundings'><span class='title-no-anchor dots'>...</span></span>" +
+									"<span class='hidden-title'>" + titleArray.slice(0, i + 1).join(raquo) + "</span>" + raquo + titleArray.slice(i + 1).join(raquo);
 								break;
 							}
 						}
@@ -729,9 +736,9 @@
 				}
 
 				if (id === "album")
-				$("#album-view .title-string").html(title);
+					$("#album-view .title-string").html(title);
 				else
-				$(".media-box#" + id + " .title-string").html(title);
+					$(".media-box#" + id + " .title-string").html(title);
 
 
 				if (env.isMobile.any()) {
@@ -875,10 +882,13 @@
 			if (id === "center") {
 				titleText = $(".media-box#center .title-string")[0].textContent;
 			} else {
-				// id === "album": temporaly detach the counts, get the text and append the counts again
-				let titleCount = $("#album-view .title-string .title-count").detach();
-				titleText = $("#album-view .title-string")[0].textContent;
-				$("#album-view .title-string").append(titleCount);
+				// id is "album"
+				// let titleCount = $("#album-view .title-string .title-count").detach();
+				// let tags = $("#album-view .title-string .tags").detach();
+				// titleText = $("#album-view .title-string")[0].textContent;
+				// $("#album-view .title-string").append(titleCount);
+				// $("#album-view .title-string").append(tags);
+				titleText = $("#album-view .title-string .title-main")[0].textContent;
 			}
 			splittedTitle = titleText.split("»");
 			if (splittedTitle.length > 1)
