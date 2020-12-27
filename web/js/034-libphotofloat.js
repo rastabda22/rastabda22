@@ -685,7 +685,7 @@
 
 		return new Promise(
 			function(resolve_addProtectedContent, reject_addProtectedContent) {
-				if (self.isMap() || self.isSelection()) {
+				if (self.isVirtual()) {
 					// map and selection albums do not admit adding protected content
 					resolve_addProtectedContent();
 				} else {
