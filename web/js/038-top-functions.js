@@ -1518,7 +1518,7 @@
 			env.currentMedia.show(env.currentAlbum, 'center');
 		} else {
 			TopFunctions.setTitle("album", null);
-			$("#album-view").removeClass("media-view-container");
+			$("#album-view").removeClass("media-view-container").removeAttr("height");
 		}
 
 		if ($("#album-view").is(":visible")) {
@@ -2613,7 +2613,7 @@
 					);
 
 					$("#subalbums").show();
-					$("#album-view").removeClass("media-view-container");
+					$("#album-view").removeClass("media-view-container").removeAttr("height");
 
 					if (env.options.albums_slide_style)
 						$(".album-button").css("background-color", env.options.album_button_background_color);
@@ -2644,7 +2644,7 @@
 		if (env.currentMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) {
 			$("#media-view").addClass("hidden");
 			$(".thumb-container").removeClass("current-thumb");
-			$("#album-view").removeClass("media-view-container");
+			$("#album-view").removeClass("media-view-container").removeAttr("height");
 			if (env.currentAlbum.subalbums.length > 0)
 				$("#subalbums").show();
 			else
