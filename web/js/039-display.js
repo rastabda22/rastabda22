@@ -781,7 +781,7 @@ $(document).ready(function() {
 											if (upAlbum.hasVeiledProtectedContent() && ! env.fromEscKey) {
 											// if (upAlbum.hasVeiledProtectedContent() && ! env.fromEscKey) {
 												$("#loading").hide();
-												util.showAuthForm();
+												$("#protected-content-unveil")[0].click();
 											} else {
 												util.errorThenGoUp();
 											}
