@@ -273,6 +273,12 @@
 								self.ancestorsNames = protectedAlbum.ancestorsNames;
 							if (! self.hasOwnProperty("ancestorsCenters") && protectedAlbum.hasOwnProperty("ancestorsCenters"))
 								self.ancestorsCenters = protectedAlbum.ancestorsCenters;
+							if (! self.hasOwnProperty("title") && protectedAlbum.hasOwnProperty("title"))
+								self.title = protectedAlbum.title;
+							if (! self.hasOwnProperty("description") && protectedAlbum.hasOwnProperty("description"))
+								self.description = protectedAlbum.description;
+							if (! self.hasOwnProperty("tags") && protectedAlbum.hasOwnProperty("tags"))
+								self.tags = protectedAlbum.tags;
 
 							self.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].codesComplexCombination = protectedAlbum.codesComplexCombination;
 
