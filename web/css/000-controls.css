@@ -533,15 +533,28 @@ video {
 	line-height: 1em;
 }
 
-#caption p.tags {
+.tags {
 	font-size: 90%;
 	color: red;
 	text-align: right;
 }
 
-#caption .tags .tag {
+.album-button-and-caption .album-tags {
+	text-align: center;
+}
+
+.album-button-and-caption .tags {
+	font-size: 100%;
+}
+
+.tags .tag {
 	font-style: italic;
 	color: yellow;
+	font-variant: small-caps;
+}
+
+.album-button-and-caption .tags .tag {
+	color: gray;
 }
 
 #caption-title, #caption-tags {

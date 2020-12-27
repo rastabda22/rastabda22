@@ -780,10 +780,6 @@
 				}
 
 
-				if (singleMedia === null && env.currentAlbum !== null && ! env.currentAlbum.subalbums.length && env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1) {
-					title += raquo + "<span class='media-name'>" + util.trimExtension(env.currentAlbum.media[0].name) + "</span>";
-				}
-
 				if ($("#search-album-to-be-filled").length) {
 					// for searches in current folder we must get the names from the album
 					// we must use getAlbum() because the album could not be in the cache yet (as when ctl-r is pressed)
@@ -1946,7 +1942,7 @@
 					}
 				);
 				var difference = maxHeight - parseFloat($(".album-caption").css("height"));
-				$(".album-button-and-caption").css("height", (parseInt($(".album-button-and-caption").css("height")) + difference) + 'px');
+				$(".album-button-and-caption").css("height", ($(".album-button-and-caption").height() + difference) + 'px');
 				$(".album-caption").css("height", maxHeight + 'px');
 			}
 		}
@@ -2027,6 +2023,26 @@
 			promise.then(
 				function([album, index]) {
 					insertRandomImage(album, index, iSubalbum);
+
+					let ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
+					if (ithSubalbum.hasOwnProperty("tags") && ithSubalbum.tags.length) {
+						let tagsHtml = "<div class='album-tags";
+						// if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs || ! env.options.show_album_media_count)
+						// 	tagsHtml += " hidden";
+						tagsHtml += "' " +
+									"style='" +
+										"font-size: " + Math.round((env.captionFontSize / 1.5)) + "px; " +
+										// "height: " + env.captionHeight + "px; " +
+										"color: " + env.captionColor + ";" +
+									"'" +
+								">";
+						tagsHtml +=		"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithSubalbum.tags.join("</span>, <span class='tag'>") + "</span></span>";
+						tagsHtml += "</div>";
+
+						let id = phFl.hashCode(ithSubalbum.cacheBase);
+						$("#" + id).append($(tagsHtml));
+					}
+
 					resolve_subalbumPromise();
 				},
 				function(album) {
