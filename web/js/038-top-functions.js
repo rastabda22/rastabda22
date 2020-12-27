@@ -214,7 +214,11 @@
 
 			title += fillInSpan;
 
-			if (components.length > 1 && singleMedia === null && ! env.isMobile.any()) {
+			if (
+				components.length > 1 &&
+				(singleMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) &&
+				! env.isMobile.any()
+			) {
 				title += "<span class='title-count'>(";
 				if (components.length === 2)
 					title += mediaTotalInSubAlbums + " ";
@@ -300,7 +304,11 @@
 
 			title += fillInSpan;
 
-			if (components.length > 1 && singleMedia === null && ! env.isMobile.any()) {
+			if (
+				components.length > 1 &&
+				(singleMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) &&
+				! env.isMobile.any()
+			) {
 				title += "<span class='title-count'>(";
 				if (components.length === 2)
 					title += mediaTotalInSubAlbums + " ";
@@ -587,7 +595,11 @@
 
 			title += fillInSpan;
 
-			if (components.length > 1 && singleMedia === null && ! env.isMobile.any()) {
+			if (
+				components.length > 1 &&
+				(singleMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) &&
+				! env.isMobile.any()
+			) {
 				title += "<span class='title-count'>(";
 				if (env.currentAlbum.numsMedia.imagesAndVideosTotal()) {
 					title += mediaTotalInAlbum + " ";
@@ -645,11 +657,14 @@
 				}
 			}
 		}
+
 		let promise = env.currentAlbum.generatePositionsAndMediaInAlbumAndSubalbums();
 
 		promise.then(
 			function() {
-				if (singleMedia !== null) {
+				if (singleMedia !== null || env.currentAlbum.isAlbumWithOneMedia()) {
+					if (singleMedia === null)
+						singleMedia = currentAlbum.media[0];
 					title += "<span class='media-name'>" + singleMedia.name + "</span>";
 					// close the .title-main span
 					title += "</span>";
