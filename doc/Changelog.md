@@ -1,3 +1,4 @@
+* add tags to subalbums
 * reposition media caption and add tags
 * bug fixes
 
