@@ -2948,12 +2948,12 @@
 			$("#caption").css("top", titleHeight + mediaHeight * 0.7);
 			// $("#caption").css("bottom", "");
 			$("#caption").css("height", "");
-			$("#caption").css("max-height", "");
-			$("#caption-description").css("height", "");
-			$("#caption-description").css("max-height", "");
-			$("#caption").css("max-height", mediaHeight * 0.2);
 			var selectBoxWidth = 30;
 			$("#caption").css("right", 2 * selectBoxWidth + parseInt($("#media-select-box .select-box").css("right")));
+			$("#caption").css("max-height", "");
+			$("#caption").css("max-height", mediaHeight * 0.2);
+			$("#caption-description").css("height", "");
+			$("#caption-description").css("max-height", "");
 			$("#caption-description").css("max-height", $("#caption").height() - 2 * parseInt($("#caption").css("padding-top")) - $("#caption-title").height() - $("#caption-tags").height());
 		} else if (captionType === 'album') {
 			// var titleHeight = parseInt($("#album-view .title").css("height"));
@@ -2964,6 +2964,8 @@
 			// TODO: How to adapt height to different platforms?
 			$("#caption").css("top", "");
 			$("#caption").css("bottom", 0);
+			$("#caption").css("height", "");
+			$("#caption").css("max-height", "");
 			$("#caption").css("height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
 			$("#caption").css("max-height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
 		}

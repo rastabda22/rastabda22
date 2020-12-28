@@ -576,7 +576,7 @@ video {
 }
 
 #caption-description {
-	overflow-y: scroll;
+	overflow-y: auto;
 	color: #FFAD27;
 }
 
