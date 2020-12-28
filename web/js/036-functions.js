@@ -1560,51 +1560,6 @@
 		}
 	};
 
-	Functions.prototype.toggleInsideWordsSearch = function() {
-		env.options.search_inside_words = ! env.options.search_inside_words;
-		Functions.setBooleanCookie("searchInsideWords", env.options.search_inside_words);
-		Functions.updateMenu();
-		if ($("#search-field").val().trim())
-			$('#search-button').click();
-		util.focusSearchField();
-	};
-
-	Functions.prototype.toggleAnyWordSearch = function() {
-		env.options.search_any_word = ! env.options.search_any_word;
-		Functions.setBooleanCookie("searchAnyWord", env.options.search_any_word);
-		Functions.updateMenu();
-		if ($("#search-field").val().trim())
-			$('#search-button').click();
-		util.focusSearchField();
-	};
-
-	Functions.prototype.toggleCaseSensitiveSearch = function() {
-		env.options.search_case_sensitive = ! env.options.search_case_sensitive;
-		Functions.setBooleanCookie("searchCaseSensitive", env.options.search_case_sensitive);
-		Functions.updateMenu();
-		if ($("#search-field").val().trim())
-			$('#search-button').click();
-		util.focusSearchField();
-
-	};
-	Functions.prototype.toggleAccentSensitiveSearch = function() {
-		env.options.search_accent_sensitive = ! env.options.search_accent_sensitive;
-		Functions.setBooleanCookie("searchAccentSensitive", env.options.search_accent_sensitive);
-		Functions.updateMenu();
-		if ($("#search-field").val().trim())
-			$('#search-button').click();
-		util.focusSearchField();
-	};
-
-	Functions.toggleCurrentAbumSearch = function() {
-		env.options.search_current_album = ! env.options.search_current_album;
-		Functions.setBooleanCookie("searchCurrentAlbum", env.options.search_current_album);
-		Functions.updateMenu();
-		if ($("#search-field").val().trim())
-			$('#search-button').click();
-		util.focusSearchField();
-	};
-
 	Functions.toggleMetadata = function() {
 		if ($(".media-box .metadata").css("display") === "none") {
 			$(".media-box .links").css("display", "inline").stop().fadeTo("slow", 0.5);

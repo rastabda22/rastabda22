@@ -3244,6 +3244,51 @@
 			this.mediaReverseSort = env.options.default_media_reverse_sort;
 	};
 
+	Utilities.prototype.toggleInsideWordsSearch = function() {
+		env.options.search_inside_words = ! env.options.search_inside_words;
+		Functions.setBooleanCookie("searchInsideWords", env.options.search_inside_words);
+		Functions.updateMenu();
+		if ($("#search-field").val().trim())
+			$('#search-button').click();
+		util.focusSearchField();
+	};
+
+	Utilities.prototype.toggleAnyWordSearch = function() {
+		env.options.search_any_word = ! env.options.search_any_word;
+		Functions.setBooleanCookie("searchAnyWord", env.options.search_any_word);
+		Functions.updateMenu();
+		if ($("#search-field").val().trim())
+			$('#search-button').click();
+		util.focusSearchField();
+	};
+
+	Utilities.prototype.toggleCaseSensitiveSearch = function() {
+		env.options.search_case_sensitive = ! env.options.search_case_sensitive;
+		Functions.setBooleanCookie("searchCaseSensitive", env.options.search_case_sensitive);
+		Functions.updateMenu();
+		if ($("#search-field").val().trim())
+			$('#search-button').click();
+		util.focusSearchField();
+
+	};
+	Utilities.prototype.toggleAccentSensitiveSearch = function() {
+		env.options.search_accent_sensitive = ! env.options.search_accent_sensitive;
+		Functions.setBooleanCookie("searchAccentSensitive", env.options.search_accent_sensitive);
+		Functions.updateMenu();
+		if ($("#search-field").val().trim())
+			$('#search-button').click();
+		util.focusSearchField();
+	};
+
+	Utilities.prototype.toggleCurrentAbumSearch = function() {
+		env.options.search_current_album = ! env.options.search_current_album;
+		Functions.setBooleanCookie("searchCurrentAlbum", env.options.search_current_album);
+		Functions.updateMenu();
+		if ($("#search-field").val().trim())
+			$('#search-button').click();
+		util.focusSearchField();
+	};
+
 	/* make static methods callable as member functions */
 	Utilities.prototype.isFolderCacheBase = Utilities.isFolderCacheBase;
 	Utilities.prototype.pathJoin = Utilities.pathJoin;

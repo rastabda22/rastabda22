@@ -538,11 +538,11 @@ $(document).ready(function() {
 		}
 	});
 
-	$("li#inside-words").on('click', f.toggleInsideWordsSearch);
-	$("li#any-word").on('click', f.toggleAnyWordSearch);
-	$("li#case-sensitive").on('click', f.toggleCaseSensitiveSearch);
-	$("li#accent-sensitive").on('click', f.toggleAccentSensitiveSearch);
-	$("li#album-search").on('click', f.toggleCurrentAbumSearch);
+	$("li#inside-words").on('click', util.toggleInsideWordsSearch);
+	$("li#any-word").on('click', util.toggleAnyWordSearch);
+	$("li#case-sensitive").on('click', util.toggleCaseSensitiveSearch);
+	$("li#accent-sensitive").on('click', util.toggleAccentSensitiveSearch);
+	$("li#album-search").on('click', util.toggleCurrentAbumSearch);
 
 	$(".download-album.everything.all.full").on(
 		'click',
