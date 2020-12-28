@@ -113,7 +113,7 @@ $(document).ready(function() {
 		} else if (! isAuth) {
 			if (! $("#search-field").is(':focus')) {
 				if (! e.ctrlKey && ! e.altKey) {
-					if (e.key === "Tab") {
+					if (e.key === "h") {
 						e.preventDefault();
 						if (pS.getCurrentZoom() === pS.getInitialZoom() && ! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
 							tF.toggleTitleThumbnailAndCaption(e);
