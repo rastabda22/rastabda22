@@ -1607,6 +1607,7 @@
 
 	Functions.toggleMetadata = function() {
 		if ($(".media-box .metadata").css("display") === "none") {
+			$(".media-box .links").css("display", "inline").stop().fadeTo("slow", 0.5);
 			$(".media-box .metadata-show").hide();
 			$(".media-box .metadata-hide").show();
 			$(".media-box .metadata")
@@ -1620,6 +1621,7 @@
 					$(this).css("height", "auto");
 				});
 		} else {
+			$(".media-box .links").stop().fadeOut("slow");
 			$(".media-box .metadata-show").show();
 			$(".media-box .metadata-hide").hide();
 			$(".media-box .metadata")
