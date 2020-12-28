@@ -533,13 +533,13 @@ video {
 	line-height: 1em;
 }
 
-.tags {
+#caption-tags {
 	font-size: 90%;
 	color: red;
 	text-align: right;
 }
 
-.album-button-and-caption .album-tags {
+.album-button-and-caption .album-tags, .thumb-and-caption-container .media-tags  {
 	text-align: center;
 }
 
@@ -547,13 +547,21 @@ video {
 	font-size: 100%;
 }
 
-.tags .tag {
+.thumb-and-caption-container .tags {
+	font-size: 80%;
+}
+
+.tag {
 	font-style: italic;
 	color: yellow;
 	font-variant: small-caps;
 }
 
-.album-button-and-caption .tags .tag {
+.album-button-and-caption .tag {
+	color: gray;
+}
+
+.thumb-and-caption-container .tag {
 	color: gray;
 }
 
@@ -574,9 +582,11 @@ video {
 
 #caption-tags {
 	bottom: 0;
+	margin-top: .5em;
+	margin-bottom: .5em;
 }
 
-#caption-title p, #caption-description p {
+#caption-title p, #caption-description p, #caption-description ul {
 	color: #FFFFFF;
 	margin-bottom: 0.3em;
 	margin-top: 0.3em;

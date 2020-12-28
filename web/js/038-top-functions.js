@@ -2236,6 +2236,22 @@
 						"</div>";
 					imageElement = $(imageString);
 
+					if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
+						let tagsHtml = "<div class='media-tags";
+						// if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs || ! env.options.show_album_media_count)
+						// 	tagsHtml += " hidden";
+						tagsHtml += "' " +
+									"style='" +
+										// "font-size: " + Math.round((env.captionFontSize / 1.5)) + "px; " +
+										// "height: " + env.captionHeight + "px; " +
+										"color: " + env.captionColor + ";" +
+									"'" +
+								">";
+						tagsHtml +=		"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithMedia.metadata.tags.join("</span>, <span class='tag'>") + "</span></span>";
+						tagsHtml += "</div>";
+						imageElement.append($(tagsHtml));
+					}
+
 					imageElement.get(0).media = ithMedia;
 					if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
 						mediaHash = phFl.encodeHash(env.currentAlbum.cacheBase, ithMedia, foundAlbumHash, savedSearchAlbumHash);
@@ -2245,6 +2261,7 @@
 					let imageId = "link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase;
 					imageLink = $("<a href='" + mediaHash + "' id='" + imageId + "'></a>");
 					imageLink.append(imageElement);
+
 					media.push(imageLink);
 
 					(function(theLink, theImage) {

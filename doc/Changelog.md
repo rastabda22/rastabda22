@@ -1,5 +1,5 @@
-* add tags to subalbums
-* reposition media caption and add tags
+* album view: add tags to subalbums and media
+* media view: reposition caption and add tags
 * bug fixes
 
 ### version v4.9.9 (Dec 27, 2020)
