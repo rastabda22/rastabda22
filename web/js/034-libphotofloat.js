@@ -44,19 +44,24 @@
 	PhotoFloat.getJsonFile = function(jsonRelativeFileName) {
 		return new Promise(
 			function(resolve_getJsonFile, reject_getJsonFile) {
-				$.ajax(
-					{
-						url: util.pathJoin([env.server_cache_path, jsonRelativeFileName]),
-						type: "GET",
-						dataType: "json",
-						success: function(albumOrPositionsOrMedia) {
-							resolve_getJsonFile(albumOrPositionsOrMedia);
-						},
-						error: function() {
-							reject_getJsonFile();
+				if (env.cache.inexistentFiles.indexOf(jsonRelativeFileName) !== -1) {
+					reject_getJsonFile();
+				} else {
+					$.ajax(
+						{
+							url: util.pathJoin([env.server_cache_path, jsonRelativeFileName]),
+							type: "GET",
+							dataType: "json",
+							success: function(albumOrPositionsOrMedia) {
+								resolve_getJsonFile(albumOrPositionsOrMedia);
+							},
+							error: function() {
+								env.cache.inexistentFiles.push(jsonRelativeFileName);
+								reject_getJsonFile();
+							}
 						}
-					}
-				);
+					);
+				}
 			}
 		);
 	};

@@ -570,6 +570,8 @@
 			this.albums.index = {};
 
 			this.media = {};
+
+			this.inexistentFiles = [];
 		}
 
 		putAlbum(album) {
