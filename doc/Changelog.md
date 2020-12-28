@@ -1,3 +1,4 @@
+* fix deselection shortcut and add menu entries to deselect subalbums/media
 * album view: add tags to subalbums and media
 * media view: reposition caption and add tags
 * bug fixes

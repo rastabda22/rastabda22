@@ -464,6 +464,9 @@
 				<li class='select albums active'></li>
 				<li class='select media active'></li>
 				<li class='select global-reset active'></li>
+				<li class='select nothing active'></li>
+				<li class='select no-albums active'></li>
+				<li class='select no-media active'></li>
 				<li class='select go-to-selected active'></li>
 			</ul>
 		</li>

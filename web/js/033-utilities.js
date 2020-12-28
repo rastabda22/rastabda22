@@ -1288,85 +1288,54 @@
 		}
 	};
 
-	Album.prototype.isSelected = function() {
-		return Utilities.albumIsSelected(this);
+	Album.prototype.noSubalbumIsSelected = function() {
+		if (env.selectionAlbum.isEmpty()) {
+			return true;
+		} else {
+			return ! this.subalbums.some(subalbum => subalbum.isSelected());
+		}
 	};
 
-	Subalbum.prototype.isSelected = function() {
-		return Utilities.albumIsSelected(this);
+	Album.prototype.someSubalbumIsSelected = function() {
+		return ! this.noSubalbumIsSelected();
 	};
 
-	// Media.prototype.someMediaIsSelected = function() {
-	// 	if (env.selectionAlbum.isEmpty())
-	// 		return false;
-	// 	if (
-	// 		this.some(
-	// 			function(singleMedia) {
-	// 				return singleMedia.isSelected();
-	// 			}
-	// 		)
-	// 	) {
-	// 		return true;
-	// 	} else {
-	// 		return false;
-	// 	}
-	// };
+	Album.prototype.noMediaIsSelected = function() {
+		if (env.selectionAlbum.isEmpty()) {
+			return true;
+		} else {
+			return ! this.media.some(singleMedia => singleMedia.isSelected());
+		}
+	};
+
+	Album.prototype.someMediaIsSelected = function() {
+		return ! this.noMediaIsSelected();
+	};
 
 	Album.prototype.everyMediaIsSelected = function() {
 		if (env.selectionAlbum.isEmpty()) {
 			Utilities.initializeSelectionAlbum();
 			return false;
 		} else {
-			if (
-				this.media.every(
-					function(singleMedia) {
-						return singleMedia.isSelected();
-					}
-				)
-			) {
-				return true;
-			} else {
-				return false;
-			}
+			return this.media.every(singleMedia => singleMedia.isSelected());
 		}
 	};
-
-	// Subalbums.prototype.someSubalbumIsSelected = function() {
-	// 	if (env.selectionAlbum.isEmpty()) {
-	// 		Utilities.initializeSelectionAlbum();
-	// 		return false;
-	// 	} else {
-	// 		if (
-	// 			this.some(
-	// 				function(subalbum) {
-	// 					return subalbum.isSelected();
-	// 				}
-	// 			)
-	// 		) {
-	// 			return true;
-	// 		} else {
-	// 			return false;
-	// 		}
-	// 	}
-	// };
 
 	Album.prototype.everySubalbumIsSelected = function() {
 		if (env.selectionAlbum.isEmpty()) {
 			Utilities.initializeSelectionAlbum();
 			return false;
 		} else {
-			if (
-				this.subalbums.every(
-					function(subalbum) {
-						return subalbum.isSelected();
-					}
-				)
-			) {
-				return true;
-			} else {
-				return false;
-			}
+			return this.subalbums.every(subalbum => subalbum.isSelected());
 		}
+	};
+
+	Album.prototype.isSelected = function() {
+		return Utilities.albumIsSelected(this);
+	};
+
+	Subalbum.prototype.isSelected = function() {
+		return Utilities.albumIsSelected(this);
 	};
 
 	Album.prototype.addAllMediaToSelection = function() {
