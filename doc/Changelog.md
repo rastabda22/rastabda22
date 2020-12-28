@@ -1,4 +1,6 @@
 * fix deselection shortcut and add menu entries to deselect subalbums/media
+* add a cache that avoids requesting inexistent files more than once
+* changed shortcut for hiding title, bottom thumbnails and caption: from TAB to "h"
 * album view: add tags to subalbums and media
 * media view: reposition caption and add tags
 * bug fixes
