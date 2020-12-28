@@ -2186,6 +2186,7 @@
 				}
 				$(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
 
+				Utilities.scrollToThumb();
 				if (id === "center")
 					resolve_scale([containerHeight, containerWidth]);
 
@@ -2194,6 +2195,55 @@
 				// Utilities.correctPrevNextPosition();
 			}
 		);
+	};
+
+	Utilities.scrollToThumb = function() {
+		var media, thumb;
+
+		media = env.currentMedia;
+		if (media === null) {
+			media = env.previousMedia;
+			if (media === null)
+				return;
+		}
+		$("#thumbs img.thumbnail").each(function() {
+			if (
+				this.title === Utilities.pathJoin([media.albumName, media.name])
+				// this.title === Utilities.pathJoin([media.albumName, media.name]) && (
+				// 	env.currentAlbum.isFolder() ||
+				// 	env.currentAlbum.cacheBase === env.options.folders_string ||
+				// 	env.currentAlbum.isByDate() ||
+				// 	env.currentAlbum.isByGps() ||
+				// 	env.currentAlbum.isSearch() ||
+				// 	env.currentAlbum.isMap() ||
+				// 	env.currentAlbum.isSelection()
+				// )
+			) {
+				thumb = $(this);
+				return false;
+			}
+		});
+		if (typeof thumb === "undefined")
+			return;
+		if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia()) {
+			var scroller = $("#album-view");
+			scroller.stop().animate(
+				{
+					scrollLeft: thumb.parent().position().left + scroller.scrollLeft() - scroller.width() / 2 + thumb.width() / 2
+				},
+				"fast"
+			);
+		} else
+			$("html, body").stop().animate(
+				{
+					scrollTop: thumb.offset().top - $(window).height() / 2 + thumb.height()
+				}, "fast"
+			);
+
+		if (env.currentMedia !== null) {
+			$(".thumb-container").removeClass("current-thumb");
+			thumb.parent().addClass("current-thumb");
+		}
 	};
 
 	ImagesAndVideos.prototype.imagesAndVideosTotal = function() {
@@ -3144,6 +3194,7 @@
 	Utilities.prototype.normalizeAccordingToOptions = Utilities.normalizeAccordingToOptions;
 	Utilities.prototype.removeAccents = Utilities.removeAccents;
 	Utilities.prototype.arrayIntersect = Utilities.arrayIntersect;
+	Utilities.prototype.scrollToThumb = Utilities.scrollToThumb;
 
 	window.Utilities = Utilities;
 }());

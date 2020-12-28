@@ -2709,7 +2709,8 @@
 		env.currentAlbum.bindSortEvents();
 
 		if (! $("#album-view").hasClass("hidden"))
-			setTimeout(f.scrollToThumb, 1);
+			util.scrollToThumb();
+			// setTimeout(util.scrollToThumb, 1);
 
 		if (! $("#album-view").hasClass("media-view-container")) {
 			$(window).off("resize").on(
