@@ -730,7 +730,7 @@ $(document).ready(function() {
 		}
 	);
 
-	// scrollbarWidth = util.detectScrollbarWidth();
+	// scrollbarWidth = util.windowVerticalScrollbarWidth();
 
 	$(window).hashchange(
 		function() {

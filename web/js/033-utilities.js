@@ -504,7 +504,7 @@
 		return codesSimpleCombinations;
 	};
 
-	Utilities.prototype.detectScrollbarWidth = function() {
+	Utilities.prototype.windowVerticalScrollbarWidth = function() {
 		// from https://davidwalsh.name/detect-scrollbar-width
 
 		// Create the measurement node
