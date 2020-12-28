@@ -991,7 +991,7 @@
 
 	SingleMedia.prototype.show = function(album, id) {
 
-		function loadNextPrevMedia(containerHeight, containerWidth) {
+		function loadNextPrevMedia(self, containerHeight, containerWidth) {
 
 			// $(mediaSelector).off(loadEvent);
 
@@ -1088,7 +1088,7 @@
 
 		var text, thumbnailSize, loadEvent, mediaHtml, mediaSelector, mediaSrc;
 		var exposureTime, heightForMedia, heightForMediaAndTitle;
-		var previousMediaIndex, nextMediaIndex;
+		var previousMediaIndex, nextMediaIndex, whatMedia;
 
 		$(".media-bar").show();
 		$("#downloading-media").hide();
@@ -1527,6 +1527,11 @@
 			env.nextMedia = null;
 			env.prevMedia = null;
 			$("#album-view").addClass("media-view-container")
+			if (env.currentMedia !== null && env.previousMedia === null) {
+				TopFunctions.showAlbum("refreshMedia");
+			} else {
+				util.scrollToThumb();
+			}
 			env.currentMedia.show(env.currentAlbum, 'center');
 		} else {
 			TopFunctions.setTitle("album", null).then(
@@ -3340,8 +3345,9 @@
 			var titleHeight = parseInt($(".media-box#center .title").css("height"));
 			var mediaHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
 			$("#caption").css("top", titleHeight + mediaHeight * 0.7);
-			$("#caption").css("bottom", "");
+			// $("#caption").css("bottom", "");
 			$("#caption").css("height", "");
+			$("#caption-description").css("height", "");
 			$("#caption").css("max-height", mediaHeight * 0.2);
 			var selectBoxWidth = 30;
 			$("#caption").css("right", 2 * selectBoxWidth + parseInt($("#media-select-box .select-box").css("right")));

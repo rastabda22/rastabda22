@@ -2072,9 +2072,11 @@
 		env.windowHeight = $(window).innerHeight();
 		heightForMediaAndTitle = env.windowHeight;
 		if ($("#album-view").is(":visible"))
-			// 22 is for the scroll bar and the current media marker
-			// 5 is an extra space
-			heightForMediaAndTitle -= env.options.media_thumb_size + 22 + 5;
+			heightForMediaAndTitle -= $("#album-view")[0].offsetHeight;
+			// heightForMediaAndTitle -= parseInt($("#album-view").css("height"));
+			// // 22 is for the scroll bar and the current media marker
+			// // 5 is an extra space
+			// heightForMediaAndTitle -= env.options.media_thumb_size + 22 + 5;
 
 		return heightForMediaAndTitle;
 	};
@@ -2705,8 +2707,26 @@
 		$("#pinch-container").css("right", pinchRight.toString() + "px").css("top", pinchTop.toString() + "px");
 	};
 
-	Utilities.horizontalScrollBarIsVisible = function(element) {
-		return element.scrollHeight > element.clientHeight;
+	Utilities.horizontalScrollBarThickness = function(element) {
+		var thickness = element.offsetHeight - element.clientHeight;
+		if (! thickness && env.currentAlbum.hasOwnProperty("media")) {
+			// sometimes thickness is 0, but the scroll bar could be there
+			// let's try to suppose if it's there
+			let totalThumbsSize = env.options.media_thumb_size * env.currentAlbum.media.length;
+			if (env.options.media_thumb_type === "fixed_height") {
+				let sum = 0;
+				totalThumbsSize = env.currentAlbum.media.forEach(singleMedia => {sum += env.options.media_thumb_size / singleMedia.metadata.size[1] * singleMedia.metadata.size[0]});
+			}
+			if (env.options.spacing)
+				totalThumbsSize += env.options.spacing * (env.currentAlbum.media.length - 1);
+
+			if (totalThumbsSize > env.windowWidth) {
+				// the scrollbar is there
+				thickness = 15;
+
+			}
+		}
+		return thickness;
 	};
 
 	Utilities.prototype.setSelectButtonPosition = function(containerHeight, containerWidth) {
