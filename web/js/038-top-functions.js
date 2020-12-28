@@ -1256,8 +1256,8 @@
 									util.setSelectButtonPosition();
 									util.correctPrevNextPosition();
 									if (id === "center") {
-										TopFunctions.setCaption(self.metadata.title, self.metadata.description, self.metadata.tags);
-										TopFunctions.positionCaption('media');
+										util.setCaption(self.metadata.title, self.metadata.description, self.metadata.tags);
+										util.setCaptionPosition('media');
 									}
 									// if (self.mimeType.indexOf("image/") === 0) {
 									loadNextPrevMedia(self, containerHeight, containerWidth);
@@ -2656,11 +2656,11 @@
 
 							// When there is both a media and an album, we display the media's caption; else it's the album's one
 							if (env.currentMedia === null) {
-								TopFunctions.setCaption(env.currentAlbum.title, env.currentAlbum.description, env.currentAlbum.tags);
-								TopFunctions.positionCaption('album');
+								util.setCaption(env.currentAlbum.title, env.currentAlbum.description, env.currentAlbum.tags);
+								util.setCaptionPosition('album');
 							} else {
-								TopFunctions.setCaption(env.currentMedia.metadata.title, env.currentMedia.metadata.description, env.currentMedia.metadata.description);
-								TopFunctions.positionCaption('media');
+								util.setCaption(env.currentMedia.metadata.title, env.currentMedia.metadata.description, env.currentMedia.metadata.description);
+								util.setCaptionPosition('media');
 							}
 						},
 						function() {
@@ -3300,72 +3300,6 @@
 			}
 		);
 	};
-
-	TopFunctions.setCaption = function(title, description, tags) {
-		// Replace CRLF by <br> and remove all useless <br>.
-		function formatText(text) {
-			text = text.replace(/<(\/?\w+)>\s*\n\s*<(\/?\w+)>/g, "<$1><$2>");
-			text = text.replace(/\n/g, "</p><p class='caption-text'>");
-			return "<p class='caption-text'>" + text + "</p>";
-		}
-
-		var nullTitle = (typeof title === "undefined") || ! title;
-		var nullDescription = (typeof description === "undefined") || ! description;
-		var nullTags = (typeof tags === "undefined") || ! tags.length;
-
-		if (! nullTitle) {
-			$("#caption-title").html(formatText(title));
-		} else {
-			$("#caption-title").html("");
-		}
-
-		if (! nullDescription) {
-			$("#caption-description .description").html(formatText(description));
-		} else {
-			$("#caption-description .description").html("");
-		}
-		if (! nullTags) {
-			// let textualTags = "<p class='tags'> " + util._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span></p>";
-			let textualTags = util._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span>";
-			$("#caption-tags").html(textualTags);
-		} else {
-			$("#caption-tags").html("");
-		}
-
-		if (nullTitle && nullDescription && nullTags) {
-		  $("#caption").addClass("hidden");
-		} else {
-		  $("#caption").removeClass("hidden");
-		}
-	};
-
-	TopFunctions.positionCaption = function(captionType) {
-		// Size of caption varies if on album or media
-		if (captionType === 'media') {
-			var titleHeight = parseInt($(".media-box#center .title").css("height"));
-			var mediaHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
-			$("#caption").css("top", titleHeight + mediaHeight * 0.7);
-			// $("#caption").css("bottom", "");
-			$("#caption").css("height", "");
-			$("#caption-description").css("height", "");
-			$("#caption").css("max-height", mediaHeight * 0.2);
-			var selectBoxWidth = 30;
-			$("#caption").css("right", 2 * selectBoxWidth + parseInt($("#media-select-box .select-box").css("right")));
-			$("#caption-description").css("max-height", $("#caption").height() - 2 * parseInt($("#caption").css("padding-top")) - $("#caption-title").height() - $("#caption-tags").height());
-		} else if (captionType === 'album') {
-			// var titleHeight = parseInt($("#album-view .title").css("height"));
-			// var albumTop = parseInt($("#album-view").css("top"));
-			var albumHeight = parseInt($("#album-view").css("height"));
-			var thumbsHeight = parseInt($("#thumbs").css("height"));
-			var subalbumsHeight = parseInt($("#subalbums").css("height"));
-			// TODO: How to adapt height to different platforms?
-			$("#caption").css("top", "");
-			$("#caption").css("bottom", 0);
-			$("#caption").css("height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
-			$("#caption").css("max-height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
-		}
-	};
-
 
 	TopFunctions.prototype.goFullscreen = TopFunctions.goFullscreen;
 	TopFunctions.prototype.showBrowsingModeMessage = TopFunctions.showBrowsingModeMessage;

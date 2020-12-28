@@ -2902,6 +2902,73 @@
 		}
 	};
 
+	Utilities.prototype.setCaption = function(title, description, tags) {
+		// Replace CRLF by <br> and remove all useless <br>.
+		function formatText(text) {
+			text = text.replace(/<(\/?\w+)>\s*\n\s*<(\/?\w+)>/g, "<$1><$2>");
+			text = text.replace(/\n/g, "</p><p class='caption-text'>");
+			return "<p class='caption-text'>" + text + "</p>";
+		}
+
+		var nullTitle = (typeof title === "undefined") || ! title;
+		var nullDescription = (typeof description === "undefined") || ! description;
+		var nullTags = (typeof tags === "undefined") || ! tags.length;
+
+		if (! nullTitle) {
+			$("#caption-title").html(formatText(title));
+		} else {
+			$("#caption-title").html("");
+		}
+
+		if (! nullDescription) {
+			$("#caption-description .description").html(formatText(description));
+		} else {
+			$("#caption-description .description").html("");
+		}
+		if (! nullTags) {
+			// let textualTags = "<p class='tags'> " + Utilities._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span></p>";
+			let textualTags = Utilities._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span>";
+			$("#caption-tags").html(textualTags);
+		} else {
+			$("#caption-tags").html("");
+		}
+
+		if (nullTitle && nullDescription && nullTags) {
+		  $("#caption").addClass("hidden");
+		} else {
+		  $("#caption").removeClass("hidden");
+		}
+	};
+
+	Utilities.prototype.setCaptionPosition = function(captionType) {
+		// Size of caption varies if on album or media
+		if (captionType === 'media') {
+			var titleHeight = parseInt($(".media-box#center .title").css("height"));
+			var mediaHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
+			$("#caption").css("top", titleHeight + mediaHeight * 0.7);
+			// $("#caption").css("bottom", "");
+			$("#caption").css("height", "");
+			$("#caption").css("max-height", "");
+			$("#caption-description").css("height", "");
+			$("#caption-description").css("max-height", "");
+			$("#caption").css("max-height", mediaHeight * 0.2);
+			var selectBoxWidth = 30;
+			$("#caption").css("right", 2 * selectBoxWidth + parseInt($("#media-select-box .select-box").css("right")));
+			$("#caption-description").css("max-height", $("#caption").height() - 2 * parseInt($("#caption").css("padding-top")) - $("#caption-title").height() - $("#caption-tags").height());
+		} else if (captionType === 'album') {
+			// var titleHeight = parseInt($("#album-view .title").css("height"));
+			// var albumTop = parseInt($("#album-view").css("top"));
+			var albumHeight = parseInt($("#album-view").css("height"));
+			var thumbsHeight = parseInt($("#thumbs").css("height"));
+			var subalbumsHeight = parseInt($("#subalbums").css("height"));
+			// TODO: How to adapt height to different platforms?
+			$("#caption").css("top", "");
+			$("#caption").css("bottom", 0);
+			$("#caption").css("height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
+			$("#caption").css("max-height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
+		}
+	};
+
 	Utilities.mediaBoxGenerator = function(id) {
 		if (id === 'left')
 			$("#media-box-container").prepend(Utilities.originalMediaBoxContainerContent.replace('id="center"', 'id="left"'));
