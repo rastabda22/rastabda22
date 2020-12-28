@@ -1245,6 +1245,10 @@
 							util.setPinchButtonsPosition();
 							util.setSelectButtonPosition();
 							util.correctPrevNextPosition();
+							if (id === "center") {
+								TopFunctions.setCaption(self.metadata.title, self.metadata.description, self.metadata.tags);
+								TopFunctions.positionCaption('media');
+							}
 							// if (self.mimeType.indexOf("image/") === 0) {
 							loadNextPrevMedia(containerHeight, containerWidth);
 							// }
@@ -2230,26 +2234,25 @@
 									ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>");
 					imageString +=
 								"</span>";
+					if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
+						imageString +=
+								"<div class='media-tags' " +
+									"style='" +
+										// "font-size: " + Math.round((env.captionFontSize / 1.5)) + "px; " +
+										// "height: " + env.captionHeight + "px; " +
+										// "color: " + env.captionColor + ";" +
+									"'" +
+								">";
+						imageString +=
+									"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithMedia.metadata.tags.join("</span>, <span class='tag'>") + "</span></span>";
+						imageString +=
+								"</div>";
+					}
 					imageString +=
 							"</div>" +
 						"</div>";
 					imageElement = $(imageString);
 
-					if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
-						let tagsHtml = "<div class='media-tags";
-						// if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs || ! env.options.show_album_media_count)
-						// 	tagsHtml += " hidden";
-						tagsHtml += "' " +
-									"style='" +
-										// "font-size: " + Math.round((env.captionFontSize / 1.5)) + "px; " +
-										// "height: " + env.captionHeight + "px; " +
-										"color: " + env.captionColor + ";" +
-									"'" +
-								">";
-						tagsHtml +=		"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithMedia.metadata.tags.join("</span>, <span class='tag'>") + "</span></span>";
-						tagsHtml += "</div>";
-						imageElement.append($(tagsHtml));
-					}
 
 					imageElement.get(0).media = ithMedia;
 					if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
@@ -3297,7 +3300,8 @@
 			$("#caption-description .description").html("");
 		}
 		if (! nullTags) {
-			let textualTags = "<p class='tags'> " + util._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span></p>";
+			// let textualTags = "<p class='tags'> " + util._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span></p>";
+			let textualTags = util._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span>";
 			$("#caption-tags").html(textualTags);
 		} else {
 			$("#caption-tags").html("");
