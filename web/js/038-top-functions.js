@@ -1135,7 +1135,6 @@
 			}
 
 			if ($("#album-view").is(":visible")) {
-				$("#album-view").css("height", (thumbnailSize + 22).toString() + "px");
 				$("#album-view").addClass("media-view-container");
 			}
 		} else if (id === "left") {

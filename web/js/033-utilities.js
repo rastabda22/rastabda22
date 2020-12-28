@@ -2086,6 +2086,13 @@
 		var self = this;
 		return new Promise(
 			function(resolve_scale) {
+				if ($("#album-view").is(":visible")) {
+					let height = env.options.media_thumb_size + 10;
+					if (Utilities.horizontalScrollBarIsVisible($("#album-view")[0]))
+						height += 15;
+					$("#album-view").css("height", height.toString() + "px");
+				}
+
 				var mediaElement, container, photoSrc, previousSrc;
 				var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth(), containerRatio;
 				var mediaBarBottom = 0;
@@ -2648,6 +2655,10 @@
 		// var pinchTop = Math.round((containerHeight - actualHeight) / 2 + distanceFromImageBorder);
 		var pinchRight = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
 		$("#pinch-container").css("right", pinchRight.toString() + "px").css("top", pinchTop.toString() + "px");
+	};
+
+	Utilities.horizontalScrollBarIsVisible = function(element) {
+		return element.scrollHeight > element.clientHeight;
 	};
 
 	Utilities.prototype.setSelectButtonPosition = function(containerHeight, containerWidth) {
