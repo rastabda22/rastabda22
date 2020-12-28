@@ -2676,22 +2676,6 @@
 			$("#loading").hide();
 		}
 
-		if (populateMedia) {
-			if (! $("#album-view").hasClass("media-view-container"))
-				$("img.lazyload-media").Lazy(
-					{
-						// threshold: 2 * env.options.media_thumb_size,
-						appendScroll: $(window)
-					}
-				);
-				$("#album-view.media-view-container img.lazyload-media").Lazy(
-					{
-						// threshold: 2 * env.options.media_thumb_size,
-						appendScroll: $("#album-view")
-					}
-				);
-		}
-
 		if (env.currentMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) {
 			$("#media-view").addClass("hidden");
 			$(".thumb-container").removeClass("current-thumb");
@@ -2763,6 +2747,25 @@
 				}
 			);
 		}
+
+		if (populateMedia) {
+			if (! $("#album-view").hasClass("media-view-container")) {
+				$("img.lazyload-media").Lazy(
+					{
+						// threshold: 2 * env.options.media_thumb_size,
+						appendScroll: $(window)
+					}
+				);
+			} else {
+				$("#album-view.media-view-container img.lazyload-media").Lazy(
+					{
+						// threshold: 2 * env.options.media_thumb_size,
+						appendScroll: $("#album-view")
+					}
+				);
+			}
+		}
+
 		f.updateMenu();
 	};
 

@@ -2086,19 +2086,17 @@
 		var self = this;
 		return new Promise(
 			function(resolve_scale) {
-				if ($("#album-view").is(":visible")) {
-					let height = env.options.media_thumb_size + 10;
-					if (Utilities.horizontalScrollBarIsVisible($("#album-view")[0]))
-						height += 15;
-					$("#album-view").css("height", height.toString() + "px");
-				}
-
 				var mediaElement, container, photoSrc, previousSrc;
 				var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth(), containerRatio;
 				var mediaBarBottom = 0;
 				var mediaWidth, mediaHeight, attrWidth, attrHeight;
 				var id = event.data.id;
 				var heightForMedia, heightForMediaAndTitle, titleHeight;
+
+				if ($("#album-view").is(":visible")) {
+					let height = env.options.media_thumb_size + Utilities.horizontalScrollBarThickness($("#album-view")[0]);
+					$("#album-view").css("height", height.toString() + "px");
+				}
 
 				env.windowWidth = $(window).innerWidth();
 				heightForMediaAndTitle = Utilities.mediaBoxContainerHeight();
