@@ -113,7 +113,7 @@ $(document).ready(function() {
 		} else if (! isAuth) {
 			if (! $("#search-field").is(':focus')) {
 				if (! e.ctrlKey && ! e.altKey) {
-					if (e.key === "Tab") {
+					if (e.key === "h") {
 						e.preventDefault();
 						if (pS.getCurrentZoom() === pS.getInitialZoom() && ! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
 							tF.toggleTitleThumbnailAndCaption(e);
@@ -317,11 +317,14 @@ $(document).ready(function() {
 					$(".select.everything").click();
 				} else if (e.shiftKey) {
 					// unselect everything
-					if (! $(".select.everything-individual").hasClass("hidden") && $(".select.everything-individual").hasClass("selected")) {
-						$(".select.everything-individual").click();
-					} else if (! $(".select.everything").hasClass("hidden") && $(".select.everything").hasClass("selected")) {
-						$(".select.everything").click();
-					}
+					$(".select.nothing:not(.hidden)").click();
+					$(".select.everything.selected:not(.hidden)").click();
+					$(".select.everything-individual.selected:not(.hidden)").click();
+					// if (! $(".select.everything-individual").hasClass("hidden") && $(".select.everything-individual").hasClass("selected")) {
+					// 	$(".select.everything-individual").click();
+					// } else if (! $(".select.everything").hasClass("hidden") && $(".select.everything").hasClass("selected")) {
+					// 	$(".select.everything").click();
+					// }
 				}
 				return false;
 			}
@@ -424,7 +427,6 @@ $(document).ready(function() {
 
 	// search
 	$('#search-button').on("click", function() {
-		$("#loading").show();
 		var searchOptions = '';
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
@@ -515,7 +517,10 @@ $(document).ready(function() {
 
 				bySearchViewHash += env.options.cache_folder_separator + env.options.cache_base_to_search_in;
 
-				window.location.href = bySearchViewHash;
+				if (bySearchViewHash !== window.location.hash) {
+					$("#loading").show();
+					window.location.hash = bySearchViewHash;
+				}
 			}
 		}
 
@@ -536,11 +541,11 @@ $(document).ready(function() {
 		}
 	});
 
-	$("li#inside-words").on('click', f.toggleInsideWordsSearch);
-	$("li#any-word").on('click', f.toggleAnyWordSearch);
-	$("li#case-sensitive").on('click', f.toggleCaseSensitiveSearch);
-	$("li#accent-sensitive").on('click', f.toggleAccentSensitiveSearch);
-	$("li#album-search").on('click', f.toggleCurrentAbumSearch);
+	$("li#inside-words").on('click', util.toggleInsideWordsSearch);
+	$("li#any-word").on('click', util.toggleAnyWordSearch);
+	$("li#case-sensitive").on('click', util.toggleCaseSensitiveSearch);
+	$("li#accent-sensitive").on('click', util.toggleAccentSensitiveSearch);
+	$("li#album-search").on('click', util.toggleCurrentAbumSearch);
 
 	$(".download-album.everything.all.full").on(
 		'click',
@@ -728,7 +733,7 @@ $(document).ready(function() {
 		}
 	);
 
-	// scrollbarWidth = util.detectScrollbarWidth();
+	// scrollbarWidth = util.windowVerticalScrollbarWidth();
 
 	$(window).hashchange(
 		function() {

@@ -181,11 +181,11 @@
 	};
 
 	MapFunctions.calculatePopupSizes = function() {
-		var scrollerSize = util.detectScrollbarWidth();
+		var scrollerSize = util.windowVerticalScrollbarWidth();
 		if ($("#popup-images-wrapper")[0]) {
 			var popupHasScrollBar = ($("#popup-images-wrapper")[0].offsetWidth !== $("#popup-images-wrapper")[0].clientWidth);
 			if (popupHasScrollBar)
-				scrollerSize = util.detectScrollbarWidth();
+				scrollerSize = util.windowVerticalScrollbarWidth();
 		}
 
 		// how much space is available horizontally for the thumbnails?

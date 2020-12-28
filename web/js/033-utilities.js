@@ -504,7 +504,7 @@
 		return codesSimpleCombinations;
 	};
 
-	Utilities.prototype.detectScrollbarWidth = function() {
+	Utilities.prototype.windowVerticalScrollbarWidth = function() {
 		// from https://davidwalsh.name/detect-scrollbar-width
 
 		// Create the measurement node
@@ -1288,85 +1288,54 @@
 		}
 	};
 
-	Album.prototype.isSelected = function() {
-		return Utilities.albumIsSelected(this);
+	Album.prototype.noSubalbumIsSelected = function() {
+		if (env.selectionAlbum.isEmpty()) {
+			return true;
+		} else {
+			return ! this.subalbums.some(subalbum => subalbum.isSelected());
+		}
 	};
 
-	Subalbum.prototype.isSelected = function() {
-		return Utilities.albumIsSelected(this);
+	Album.prototype.someSubalbumIsSelected = function() {
+		return ! this.noSubalbumIsSelected();
 	};
 
-	// Media.prototype.someMediaIsSelected = function() {
-	// 	if (env.selectionAlbum.isEmpty())
-	// 		return false;
-	// 	if (
-	// 		this.some(
-	// 			function(singleMedia) {
-	// 				return singleMedia.isSelected();
-	// 			}
-	// 		)
-	// 	) {
-	// 		return true;
-	// 	} else {
-	// 		return false;
-	// 	}
-	// };
+	Album.prototype.noMediaIsSelected = function() {
+		if (env.selectionAlbum.isEmpty()) {
+			return true;
+		} else {
+			return ! this.media.some(singleMedia => singleMedia.isSelected());
+		}
+	};
+
+	Album.prototype.someMediaIsSelected = function() {
+		return ! this.noMediaIsSelected();
+	};
 
 	Album.prototype.everyMediaIsSelected = function() {
 		if (env.selectionAlbum.isEmpty()) {
 			Utilities.initializeSelectionAlbum();
 			return false;
 		} else {
-			if (
-				this.media.every(
-					function(singleMedia) {
-						return singleMedia.isSelected();
-					}
-				)
-			) {
-				return true;
-			} else {
-				return false;
-			}
+			return this.media.every(singleMedia => singleMedia.isSelected());
 		}
 	};
-
-	// Subalbums.prototype.someSubalbumIsSelected = function() {
-	// 	if (env.selectionAlbum.isEmpty()) {
-	// 		Utilities.initializeSelectionAlbum();
-	// 		return false;
-	// 	} else {
-	// 		if (
-	// 			this.some(
-	// 				function(subalbum) {
-	// 					return subalbum.isSelected();
-	// 				}
-	// 			)
-	// 		) {
-	// 			return true;
-	// 		} else {
-	// 			return false;
-	// 		}
-	// 	}
-	// };
 
 	Album.prototype.everySubalbumIsSelected = function() {
 		if (env.selectionAlbum.isEmpty()) {
 			Utilities.initializeSelectionAlbum();
 			return false;
 		} else {
-			if (
-				this.subalbums.every(
-					function(subalbum) {
-						return subalbum.isSelected();
-					}
-				)
-			) {
-				return true;
-			} else {
-				return false;
-			}
+			return this.subalbums.every(subalbum => subalbum.isSelected());
 		}
+	};
+
+	Album.prototype.isSelected = function() {
+		return Utilities.albumIsSelected(this);
+	};
+
+	Subalbum.prototype.isSelected = function() {
+		return Utilities.albumIsSelected(this);
 	};
 
 	Album.prototype.addAllMediaToSelection = function() {
@@ -1620,7 +1589,7 @@
 										}
 									}
 								);
-								env.selectionAlbum.numsProtectedMediaInSubTree.sum(subalbum.numsProtectedMediaInSubTree);
+								// env.selectionAlbum.numsProtectedMediaInSubTree.sum(subalbum.numsProtectedMediaInSubTree);
 							}
 
 							subalbum.generateCaptionForSearch();
@@ -1699,7 +1668,7 @@
 										}
 									}
 								);
-								env.selectionAlbum.numsProtectedMediaInSubTree.subtract(subalbum.numsProtectedMediaInSubTree);
+								// env.selectionAlbum.numsProtectedMediaInSubTree.subtract(subalbum.numsProtectedMediaInSubTree);
 							}
 
 							if (! env.currentAlbum.isSelection()) {
@@ -2072,9 +2041,11 @@
 		env.windowHeight = $(window).innerHeight();
 		heightForMediaAndTitle = env.windowHeight;
 		if ($("#album-view").is(":visible"))
-			// 22 is for the scroll bar and the current media marker
-			// 5 is an extra space
-			heightForMediaAndTitle -= env.options.media_thumb_size + 22 + 5;
+			heightForMediaAndTitle -= $("#album-view")[0].offsetHeight;
+			// heightForMediaAndTitle -= parseInt($("#album-view").css("height"));
+			// // 22 is for the scroll bar and the current media marker
+			// // 5 is an extra space
+			// heightForMediaAndTitle -= env.options.media_thumb_size + 22 + 5;
 
 		return heightForMediaAndTitle;
 	};
@@ -2092,6 +2063,11 @@
 				var mediaWidth, mediaHeight, attrWidth, attrHeight;
 				var id = event.data.id;
 				var heightForMedia, heightForMediaAndTitle, titleHeight;
+
+				if ($("#album-view").is(":visible")) {
+					let height = env.options.media_thumb_size + Utilities.horizontalScrollBarThickness($("#album-view")[0]);
+					$("#album-view").css("height", height.toString() + "px");
+				}
 
 				env.windowWidth = $(window).innerWidth();
 				heightForMediaAndTitle = Utilities.mediaBoxContainerHeight();
@@ -2179,6 +2155,7 @@
 				}
 				$(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
 
+				Utilities.scrollToThumb();
 				if (id === "center")
 					resolve_scale([containerHeight, containerWidth]);
 
@@ -2187,6 +2164,55 @@
 				// Utilities.correctPrevNextPosition();
 			}
 		);
+	};
+
+	Utilities.scrollToThumb = function() {
+		var media, thumb;
+
+		media = env.currentMedia;
+		if (media === null) {
+			media = env.previousMedia;
+			if (media === null)
+				return;
+		}
+		$("#thumbs img.thumbnail").each(function() {
+			if (
+				this.title === Utilities.pathJoin([media.albumName, media.name])
+				// this.title === Utilities.pathJoin([media.albumName, media.name]) && (
+				// 	env.currentAlbum.isFolder() ||
+				// 	env.currentAlbum.cacheBase === env.options.folders_string ||
+				// 	env.currentAlbum.isByDate() ||
+				// 	env.currentAlbum.isByGps() ||
+				// 	env.currentAlbum.isSearch() ||
+				// 	env.currentAlbum.isMap() ||
+				// 	env.currentAlbum.isSelection()
+				// )
+			) {
+				thumb = $(this);
+				return false;
+			}
+		});
+		if (typeof thumb === "undefined")
+			return;
+		if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia()) {
+			var scroller = $("#album-view");
+			scroller.stop().animate(
+				{
+					scrollLeft: thumb.parent().position().left + scroller.scrollLeft() - scroller.width() / 2 + thumb.width() / 2
+				},
+				"fast"
+			);
+		} else
+			$("html, body").stop().animate(
+				{
+					scrollTop: thumb.offset().top - $(window).height() / 2 + thumb.height()
+				}, "fast"
+			);
+
+		if (env.currentMedia !== null) {
+			$(".thumb-container").removeClass("current-thumb");
+			thumb.parent().addClass("current-thumb");
+		}
 	};
 
 	ImagesAndVideos.prototype.imagesAndVideosTotal = function() {
@@ -2650,6 +2676,28 @@
 		$("#pinch-container").css("right", pinchRight.toString() + "px").css("top", pinchTop.toString() + "px");
 	};
 
+	Utilities.horizontalScrollBarThickness = function(element) {
+		var thickness = element.offsetHeight - element.clientHeight;
+		if (! thickness && env.currentAlbum.hasOwnProperty("media")) {
+			// sometimes thickness is 0, but the scroll bar could be there
+			// let's try to suppose if it's there
+			let totalThumbsSize = env.options.media_thumb_size * env.currentAlbum.media.length;
+			if (env.options.media_thumb_type === "fixed_height") {
+				let sum = 0;
+				totalThumbsSize = env.currentAlbum.media.forEach(singleMedia => {sum += env.options.media_thumb_size / singleMedia.metadata.size[1] * singleMedia.metadata.size[0]});
+			}
+			if (env.options.spacing)
+				totalThumbsSize += env.options.spacing * (env.currentAlbum.media.length - 1);
+
+			if (totalThumbsSize > env.windowWidth) {
+				// the scrollbar is there
+				thickness = 15;
+
+			}
+		}
+		return thickness;
+	};
+
 	Utilities.prototype.setSelectButtonPosition = function(containerHeight, containerWidth) {
 		// calculate and set pinch buttons position
 
@@ -2820,6 +2868,75 @@
 			$("#next").css("right", correctionForPinch.toString() + "px");
 			// correct prev button position when social buttons are on the left
 			$("#prev").css("left", correctionForSocial.toString() + "px");
+		}
+	};
+
+	Utilities.prototype.setCaption = function(title, description, tags) {
+		// Replace CRLF by <br> and remove all useless <br>.
+		function formatText(text) {
+			text = text.replace(/<(\/?\w+)>\s*\n\s*<(\/?\w+)>/g, "<$1><$2>");
+			text = text.replace(/\n/g, "</p><p class='caption-text'>");
+			return "<p class='caption-text'>" + text + "</p>";
+		}
+
+		var nullTitle = (typeof title === "undefined") || ! title;
+		var nullDescription = (typeof description === "undefined") || ! description;
+		var nullTags = (typeof tags === "undefined") || ! tags.length;
+
+		if (! nullTitle) {
+			$("#caption-title").html(formatText(title));
+		} else {
+			$("#caption-title").html("");
+		}
+
+		if (! nullDescription) {
+			$("#caption-description .description").html(formatText(description));
+		} else {
+			$("#caption-description .description").html("");
+		}
+		if (! nullTags) {
+			// let textualTags = "<p class='tags'> " + Utilities._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span></p>";
+			let textualTags = Utilities._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span>";
+			$("#caption-tags").html(textualTags);
+		} else {
+			$("#caption-tags").html("");
+		}
+
+		if (nullTitle && nullDescription && nullTags) {
+		  $("#caption").addClass("hidden");
+		} else {
+		  $("#caption").removeClass("hidden");
+		}
+	};
+
+	Utilities.prototype.setCaptionPosition = function(captionType) {
+		// Size of caption varies if on album or media
+		if (captionType === 'media') {
+			var titleHeight = parseInt($(".media-box#center .title").css("height"));
+			var mediaHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
+			$("#caption").css("top", titleHeight + mediaHeight * 0.7);
+			// $("#caption").css("bottom", "");
+			$("#caption").css("height", "");
+			var selectBoxWidth = 30;
+			$("#caption").css("right", 2 * selectBoxWidth + parseInt($("#media-select-box .select-box").css("right")));
+			$("#caption").css("max-height", "");
+			$("#caption").css("max-height", mediaHeight * 0.2);
+			$("#caption-description").css("height", "");
+			$("#caption-description").css("max-height", "");
+			$("#caption-description").css("max-height", $("#caption").height() - 2 * parseInt($("#caption").css("padding-top")) - $("#caption-title").height() - $("#caption-tags").height());
+		} else if (captionType === 'album') {
+			// var titleHeight = parseInt($("#album-view .title").css("height"));
+			// var albumTop = parseInt($("#album-view").css("top"));
+			var albumHeight = parseInt($("#album-view").css("height"));
+			var thumbsHeight = parseInt($("#thumbs").css("height"));
+			var subalbumsHeight = parseInt($("#subalbums").css("height"));
+			// TODO: How to adapt height to different platforms?
+			$("#caption").css("top", "");
+			$("#caption").css("bottom", 0);
+			$("#caption").css("height", "");
+			$("#caption").css("max-height", "");
+			$("#caption").css("height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
+			$("#caption").css("max-height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
 		}
 	};
 
@@ -3096,6 +3213,51 @@
 			this.mediaReverseSort = env.options.default_media_reverse_sort;
 	};
 
+	Utilities.prototype.toggleInsideWordsSearch = function() {
+		env.options.search_inside_words = ! env.options.search_inside_words;
+		Functions.setBooleanCookie("searchInsideWords", env.options.search_inside_words);
+		Functions.updateMenu();
+		if ($("#search-field").val().trim())
+			$('#search-button').click();
+		util.focusSearchField();
+	};
+
+	Utilities.prototype.toggleAnyWordSearch = function() {
+		env.options.search_any_word = ! env.options.search_any_word;
+		Functions.setBooleanCookie("searchAnyWord", env.options.search_any_word);
+		Functions.updateMenu();
+		if ($("#search-field").val().trim())
+			$('#search-button').click();
+		util.focusSearchField();
+	};
+
+	Utilities.prototype.toggleCaseSensitiveSearch = function() {
+		env.options.search_case_sensitive = ! env.options.search_case_sensitive;
+		Functions.setBooleanCookie("searchCaseSensitive", env.options.search_case_sensitive);
+		Functions.updateMenu();
+		if ($("#search-field").val().trim())
+			$('#search-button').click();
+		util.focusSearchField();
+
+	};
+	Utilities.prototype.toggleAccentSensitiveSearch = function() {
+		env.options.search_accent_sensitive = ! env.options.search_accent_sensitive;
+		Functions.setBooleanCookie("searchAccentSensitive", env.options.search_accent_sensitive);
+		Functions.updateMenu();
+		if ($("#search-field").val().trim())
+			$('#search-button').click();
+		util.focusSearchField();
+	};
+
+	Utilities.prototype.toggleCurrentAbumSearch = function() {
+		env.options.search_current_album = ! env.options.search_current_album;
+		Functions.setBooleanCookie("searchCurrentAlbum", env.options.search_current_album);
+		Functions.updateMenu();
+		if ($("#search-field").val().trim())
+			$('#search-button').click();
+		util.focusSearchField();
+	};
+
 	/* make static methods callable as member functions */
 	Utilities.prototype.isFolderCacheBase = Utilities.isFolderCacheBase;
 	Utilities.prototype.pathJoin = Utilities.pathJoin;
@@ -3133,6 +3295,7 @@
 	Utilities.prototype.normalizeAccordingToOptions = Utilities.normalizeAccordingToOptions;
 	Utilities.prototype.removeAccents = Utilities.removeAccents;
 	Utilities.prototype.arrayIntersect = Utilities.arrayIntersect;
+	Utilities.prototype.scrollToThumb = Utilities.scrollToThumb;
 
 	window.Utilities = Utilities;
 }());

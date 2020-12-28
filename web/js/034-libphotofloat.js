@@ -44,19 +44,24 @@
 	PhotoFloat.getJsonFile = function(jsonRelativeFileName) {
 		return new Promise(
 			function(resolve_getJsonFile, reject_getJsonFile) {
-				$.ajax(
-					{
-						url: util.pathJoin([env.server_cache_path, jsonRelativeFileName]),
-						type: "GET",
-						dataType: "json",
-						success: function(albumOrPositionsOrMedia) {
-							resolve_getJsonFile(albumOrPositionsOrMedia);
-						},
-						error: function() {
-							reject_getJsonFile();
+				if (env.cache.inexistentFiles.indexOf(jsonRelativeFileName) !== -1) {
+					reject_getJsonFile();
+				} else {
+					$.ajax(
+						{
+							url: util.pathJoin([env.server_cache_path, jsonRelativeFileName]),
+							type: "GET",
+							dataType: "json",
+							success: function(albumOrPositionsOrMedia) {
+								resolve_getJsonFile(albumOrPositionsOrMedia);
+							},
+							error: function() {
+								env.cache.inexistentFiles.push(jsonRelativeFileName);
+								reject_getJsonFile();
+							}
 						}
-					}
-				);
+					);
+				}
 			}
 		);
 	};
@@ -273,6 +278,12 @@
 								self.ancestorsNames = protectedAlbum.ancestorsNames;
 							if (! self.hasOwnProperty("ancestorsCenters") && protectedAlbum.hasOwnProperty("ancestorsCenters"))
 								self.ancestorsCenters = protectedAlbum.ancestorsCenters;
+							if (! self.hasOwnProperty("title") && protectedAlbum.hasOwnProperty("title"))
+								self.title = protectedAlbum.title;
+							if (! self.hasOwnProperty("description") && protectedAlbum.hasOwnProperty("description"))
+								self.description = protectedAlbum.description;
+							if (! self.hasOwnProperty("tags") && protectedAlbum.hasOwnProperty("tags"))
+								self.tags = protectedAlbum.tags;
 
 							self.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].codesComplexCombination = protectedAlbum.codesComplexCombination;
 
@@ -641,6 +652,8 @@
 	Album.prototype.hasUnloadedProtectedContent = function(mustGetMedia, mustGetPositions) {
 		// this function is for detecting if protected content has to be loaded
 		// to detect if the auth dialog has to be shown use hasVeiledProtectedContent() instead
+		if (this.isVirtual())
+			return false;
 		if (! env.guessedPasswordCodes.length)
 			return false;
 		var self = this;
@@ -677,7 +690,7 @@
 
 		return new Promise(
 			function(resolve_addProtectedContent, reject_addProtectedContent) {
-				if (self.isMap() || self.isSelection()) {
+				if (self.isVirtual()) {
 					// map and selection albums do not admit adding protected content
 					resolve_addProtectedContent();
 				} else {
@@ -881,6 +894,9 @@
 	Album.prototype.hasVeiledProtectedContent = function() {
 		// this function is for detecting if the auth dialog has to be shown
 		// to detect if protected content has to be loaded use hasUnloadedProtectedContent() instead
+
+		if (this.isVirtual())
+			return false;
 		var numGuessedPasswords = this.guessedPasswordCodes().length;
 		var numPasswords = this.passwordCodes().length;
 		return numPasswords - numGuessedPasswords > 0;
@@ -1304,7 +1320,7 @@
 				$(".search-failed").hide();
 				// $("#media-view").removeClass("hidden");
 				// $("ul#right-menu li#album-search").removeClass("hidden");
-				$("ul#right-menu li#any-word").removeClass("dimmed");
+				$("ul#right-menu li#any-word").removeClass("dimmed").off('click').on('click', util.toggleAnyWordSearch);
 				$("#album-view, #album-view #subalbums, #album-view #thumbs").removeClass("hidden");
 
 				if (albumHash) {

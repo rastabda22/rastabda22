@@ -229,6 +229,7 @@
 								// zoomAfterFirstPinch = currentZoom;
 								util.setPinchButtonsPosition();
 								util.correctPrevNextPosition();
+								util.setCaptionPosition('media');
 								PinchSwipe.setPinchButtonsVisibility();
 								util.setSelectButtonPosition();
 								mediaWidth = $(mediaSelector).css("width");
@@ -336,6 +337,7 @@
 					util.correctPrevNextPosition();
 					PinchSwipe.setPinchButtonsVisibility();
 					util.setSelectButtonPosition();
+					util.setCaptionPosition('media');
 					mediaWidth = $(mediaSelector).css("width");
 					mediaHeight = $(mediaSelector).css("height");
 					initialZoom = PinchSwipe.screenZoom();

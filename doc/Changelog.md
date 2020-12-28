@@ -1,3 +1,12 @@
+### version v4.9.10 (Dec 28, 2020)
+
+* fix deselection shortcut and add menu entries to deselect subalbums/media
+* add a cache that avoids requesting inexistent files more than once
+* changed shortcut for hiding title, bottom thumbnails and caption: from TAB to "h"
+* album view: add tags to subalbums and media
+* media view: reposition caption and add tags
+* bug fixes
+
 ### version v4.9.9 (Dec 27, 2020)
 
 * add indexing of title, description and tags in root folder
