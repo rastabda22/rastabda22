@@ -312,19 +312,12 @@ $(document).ready(function() {
 			}
 
 			if (e.key.toLowerCase() === 'a' && e.ctrlKey) {
-				if (! e.shiftKey && ! $(".select.everything").hasClass("hidden") && ! $(".select.everything").hasClass("selected")) {
+				if (! e.shiftKey) {
 					// select everything
-					$(".select.everything").click();
+					$(".select.everything:not(.hidden):not(.selected)").click();
 				} else if (e.shiftKey) {
 					// unselect everything
-					$(".select.nothing:not(.hidden)").click();
-					$(".select.everything.selected:not(.hidden)").click();
-					$(".select.everything-individual.selected:not(.hidden)").click();
-					// if (! $(".select.everything-individual").hasClass("hidden") && $(".select.everything-individual").hasClass("selected")) {
-					// 	$(".select.everything-individual").click();
-					// } else if (! $(".select.everything").hasClass("hidden") && $(".select.everything").hasClass("selected")) {
-					// 	$(".select.everything").click();
-					// }
+					$(".select.nothing").click();
 				}
 				return false;
 			}

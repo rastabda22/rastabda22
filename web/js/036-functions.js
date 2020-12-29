@@ -679,19 +679,17 @@
 			$(".select.everything, .select.media").addClass("hidden");
 		}
 
-		if (
-			! thisAlbum.subalbums.length
-			// ! thisAlbum.subalbums.length ||
-			// isTransversalAlbum && ! env.options.show_big_virtual_folders && thisAlbum.numsMediaInSubTree.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
-		) {
+		if (! thisAlbum.subalbums.length) {
 			$(".select.everything-individual").addClass("hidden");
 		} else {
 			let everythingIndividualPromise = thisAlbum.recursivelyAllMediaAreSelected();
 			everythingIndividualPromise.then(
-				function() {
+				function isTrue() {
 					$(".select.everything-individual").addClass("selected");
 				},
-				function() {}
+				function isFalse() {
+					// do nothing
+				}
 			);
 		}
 
@@ -700,20 +698,24 @@
 			"click",
 			function() {
 				if (thisAlbum.everySubalbumIsSelected() && thisAlbum.everyMediaIsSelected()) {
+					$("#working").show();
 					thisAlbum.removeAllMediaFromSelection();
 					let promise = thisAlbum.removeAllSubalbumsFromSelection();
 					promise.then(
 						function() {
+							$("#working").hide();
 							if (util.nothingIsSelected())
 								util.initializeSelectionAlbum();
 							Functions.updateMenu();
 						}
 					);
 				} else {
+					$("#working").show();
 					thisAlbum.addAllMediaToSelection();
 					let promise = thisAlbum.addAllSubalbumsToSelection();
 					promise.then(
 						function() {
+							$("#working").hide();
 							Functions.updateMenu();
 						}
 					);
@@ -724,12 +726,14 @@
 		$(".select.everything-individual:not(.hidden)").off("click").on(
 			"click",
 			function() {
+				$("#working").show();
 				let everythingIndividualPromise = thisAlbum.recursivelyAllMediaAreSelected();
 				everythingIndividualPromise.then(
-					function() {
+					function isTrue() {
 						let firstPromise = thisAlbum.recursivelyRemoveMedia();
 						firstPromise.then(
 							function() {
+								$("#working").hide();
 								if (util.nothingIsSelected())
 									util.initializeSelectionAlbum();
 								Functions.updateMenu();
@@ -742,10 +746,11 @@
 							}
 						);
 					},
-					function() {
+					function isFalse() {
 						let firstPromise = thisAlbum.recursivelySelectMedia();
 						firstPromise.then(
 							function() {
+								$("#working").hide();
 								$("#added-individually").stop().fadeIn(
 									1000,
 									function() {
@@ -777,10 +782,12 @@
 		$(".select.albums:not(.hidden)").off("click").on(
 			"click",
 			function() {
+				$("#working").show();
 				if (thisAlbum.everySubalbumIsSelected()) {
 					let promise = thisAlbum.removeAllSubalbumsFromSelection();
 					promise.then(
 						function() {
+							$("#working").hide();
 							if (util.nothingIsSelected())
 								util.initializeSelectionAlbum();
 							Functions.updateMenu();
@@ -790,6 +797,7 @@
 					var promise = thisAlbum.addAllSubalbumsToSelection();
 					promise.then(
 						function() {
+							$("#working").hide();
 							Functions.updateMenu();
 						}
 					);
@@ -800,10 +808,12 @@
 		$(".select.global-reset:not(.hidden)").on(
 			"click",
 			function() {
+				$("#working").show();
 				env.selectionAlbum.removeAllMediaFromSelection();
 				let subalbumsPromise = env.selectionAlbum.removeAllSubalbumsFromSelection();
 				subalbumsPromise.then(
 					function allSubalbumsRemoved() {
+						$("#working").hide();
 						if (util.nothingIsSelected())
 							util.initializeSelectionAlbum();
 						Functions.updateMenu();
@@ -815,10 +825,12 @@
 		$(".select.nothing:not(.hidden)").on(
 			"click",
 			function() {
+				$("#working").show();
 				thisAlbum.removeAllMediaFromSelection();
 				let subalbumsPromise = thisAlbum.removeAllSubalbumsFromSelection();
 				subalbumsPromise.then(
 					function allSubalbumsRemoved() {
+						$("#working").hide();
 						if (util.nothingIsSelected())
 							util.initializeSelectionAlbum();
 						Functions.updateMenu();
@@ -830,9 +842,11 @@
 		$(".select.no-albums:not(.hidden)").on(
 			"click",
 			function() {
+				$("#working").show();
 				let subalbumsPromise = thisAlbum.removeAllSubalbumsFromSelection();
 				subalbumsPromise.then(
 					function allSubalbumsRemoved() {
+						$("#working").hide();
 						if (util.nothingIsSelected())
 							util.initializeSelectionAlbum();
 						Functions.updateMenu();
