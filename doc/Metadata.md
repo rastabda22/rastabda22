@@ -39,6 +39,7 @@ For video, depending on codec:
 
 
 ## User defined metadata in album.ini files
+
 The user can overwrite existing metadata or complement missing metadata using `album.ini` files.
 
 To do so, place a file name `album.ini` in the directory containing the picture files. This file follows the traditional syntax for configuration files as defined in [Python ConfigParser documentation](https://docs.python.org/3/library/configparser.html). Define a section named with the name of the media file you want to change the metadata. Or you can use the special section `[DEFAULT]` to define values that apply to all media in the directory. The special section `[album]` allows to define metadata for the album itself.
