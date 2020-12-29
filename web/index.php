@@ -504,10 +504,11 @@
 	</ul>
 
 
-	<div id="loading"></div>
-	<div id="downloading-media"></div>
-	<div id="preparing-zip"></div>
-	<div id="sending-email"></div>
+	<div id="loading" class="messages" ></div>
+	<div id="working" class="messages"></div>
+	<div id="downloading-media" class="messages"></div>
+	<div id="preparing-zip" class="messages"></div>
+	<div id="sending-email" class="messages"></div>
 
 	<div id="folders-browsing" class="browsing-mode-message"></div>
 	<div id="by-date-browsing" class="browsing-mode-message"></div>
