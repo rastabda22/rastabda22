@@ -650,17 +650,17 @@
 			$(".select.no-albums").addClass("hidden");
 			$(".select.no-media").addClass("hidden");
 		}
-		if (noSubalbumIsSelected || everySubalbumIsSelected || noMediaIsSelected) {
+		if (! thisAlbum.subalbums.length || noSubalbumIsSelected || everySubalbumIsSelected || noMediaIsSelected) {
 			$(".select.no-albums").addClass("hidden");
 		}
-		if (noMediaIsSelected || everyMediaIsSelected || noSubalbumIsSelected) {
+		if (! thisAlbum.media.length || noMediaIsSelected || everyMediaIsSelected || noSubalbumIsSelected) {
 			$(".select.no-media").addClass("hidden");
 		}
 
 		if (isSingleMedia) {
 			$(".select.albums, .select.everything, .select.everything-individual", ".select.nothing", ".select.no-albums").addClass("hidden");
 		} else if (! thisAlbum.media.length || ! thisAlbum.subalbums.length) {
-			$(".select.media, .select.albums", ".select.no-media", ".select.no-albums").addClass("hidden");
+			$(".select.media, .select.albums, .select.no-media, .select.no-albums").addClass("hidden");
 		}
 
 		if (everySubalbumIsSelected) {
