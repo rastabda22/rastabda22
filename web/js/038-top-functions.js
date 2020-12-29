@@ -2272,6 +2272,12 @@
 									"</span>" +
 								"</span>";
 					}
+					if (ithMedia.metadata.hasOwnProperty("description")) {
+						imageString +=
+								"<div class='media-description'>" +
+									"<div class='description'>" + util.formatDescription(ithMedia.metadata.description) + "</div>" +
+								"</div>";
+					}
 					if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
 						imageString +=
 								"<div class='media-tags'>" +

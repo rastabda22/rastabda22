@@ -2876,26 +2876,27 @@
 		}
 	};
 
+	Utilities.formatDescription = function(text) {
+		// Replace CRLF by <p> and remove all useless <br>.
+		text = text.replace(/<(\/?\w+)>\s*\n\s*<(\/?\w+)>/g, "<$1><$2>");
+		text = text.replace(/\n/g, "</p><p class='description-text'>");
+		return "<p class='description-text'>" + text + "</p>";
+	}
+
 	Utilities.prototype.setDescription = function(title, description, tags) {
-		// Replace CRLF by <br> and remove all useless <br>.
-		function formatText(text) {
-			text = text.replace(/<(\/?\w+)>\s*\n\s*<(\/?\w+)>/g, "<$1><$2>");
-			text = text.replace(/\n/g, "</p><p class='description-text'>");
-			return "<p class='description-text'>" + text + "</p>";
-		}
 
 		var nullTitle = (typeof title === "undefined") || ! title;
 		var nullDescription = (typeof description === "undefined") || ! description;
 		var nullTags = (typeof tags === "undefined") || ! tags.length;
 
 		if (! nullTitle) {
-			$("#description-title").html(formatText(title));
+			$("#description-title").html(Utilities.formatDescription(title));
 		} else {
 			$("#description-title").html("");
 		}
 
 		if (! nullDescription) {
-			$("#description-text .description").html(formatText(description));
+			$("#description-text .description").html(Utilities.formatDescription(description));
 		} else {
 			$("#description-text .description").html("");
 		}
@@ -3313,6 +3314,7 @@
 	Utilities.prototype.scrollToThumb = Utilities.scrollToThumb;
 	Utilities.prototype.focusSearchField = Utilities.focusSearchField;
 	Utilities.prototype.addTagLink = Utilities.addTagLink;
+	Utilities.prototype.formatDescription = Utilities.formatDescription;
 
 	window.Utilities = Utilities;
 }());

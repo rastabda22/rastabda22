@@ -1,3 +1,5 @@
+* if present, show media description below its name/title in album view
+* if present, use media title instead of media name
 * add search option: restrict the search to tags
 
 ### version v4.9.10 (Dec 28, 2020)

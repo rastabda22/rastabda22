@@ -695,6 +695,11 @@ video {
 	padding: 0;
 }
 
+.media-description {
+	font-size: 95%;
+	color: gray;
+}
+
 .thumb-and-caption-container {
 	margin-bottom: 0;
 	display: block;
