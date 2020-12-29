@@ -377,6 +377,10 @@
 				$("ul#right-menu li#accent-sensitive").addClass("selected");
 			else
 				$("ul#right-menu li#accent-sensitive").removeClass("selected");
+			if (env.options.search_tags_only)
+				$("ul#right-menu li#tags-only").addClass("selected");
+			else
+				$("ul#right-menu li#tags-only").removeClass("selected");
 			if (util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || isPopup) {
 				$("ul#right-menu li#album-search").addClass("dimmed").off("click");
 			} else {
@@ -1524,6 +1528,11 @@
 							var searchAccentSensitiveCookie = Functions.getBooleanCookie("searchAccentSensitive");
 							if (searchAccentSensitiveCookie !== null)
 								env.options.search_accent_sensitive = searchAccentSensitiveCookie;
+
+							env.options.search_tags_only = false;
+							var searchTagsOnlyCookie = Functions.getBooleanCookie("searchTagsOnly");
+							if (searchTagsOnlyCookie !== null)
+								env.options.search_tags_only = searchTagsOnlyCookie;
 
 							env.options.search_current_album = true;
 							var searchCurrentAlbumCookie = Functions.getBooleanCookie("searchCurrentAlbum");

@@ -1,3 +1,5 @@
+* add search option: restrict the search to tags
+
 ### version v4.9.10 (Dec 28, 2020)
 
 * fix deselection shortcut and add menu entries to deselect subalbums/media

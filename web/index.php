@@ -406,6 +406,7 @@
 				<li id="any-word" class="search active"></li>
 				<li id="case-sensitive" class="search active"></li>
 				<li id="accent-sensitive" class="search active"></li>
+				<li id="tags-only" class="search active"></li>
 				<li id="album-search" class="search active"></li>
 			</ul>
 		</li>

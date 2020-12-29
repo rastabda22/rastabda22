@@ -504,6 +504,8 @@ $(document).ready(function() {
 					searchOptions += 'c' + env.options.search_options_separator;
 				if (env.options.search_accent_sensitive)
 					searchOptions += 'a' + env.options.search_options_separator;
+				if (env.options.search_tags_only)
+					searchOptions += 't' + env.options.search_options_separator;
 				if (env.options.search_current_album)
 					searchOptions += 'o' + env.options.search_options_separator;
 				bySearchViewHash += searchOptions + wordsString;
@@ -538,6 +540,7 @@ $(document).ready(function() {
 	$("li#any-word").on('click', util.toggleAnyWordSearch);
 	$("li#case-sensitive").on('click', util.toggleCaseSensitiveSearch);
 	$("li#accent-sensitive").on('click', util.toggleAccentSensitiveSearch);
+	$("li#tags-only").on('click', util.toggleTagsOnlySearch);
 	$("li#album-search").on('click', util.toggleCurrentAbumSearch);
 
 	$(".download-album.everything.all.full").on(

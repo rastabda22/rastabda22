@@ -1141,7 +1141,7 @@
 		// $(selector).fadeOut(4000);
 	};
 
-	Utilities.prototype.focusSearchField = function() {
+	Utilities.focusSearchField = function() {
 		if (! env.isMobile.any()) {
 			$("#search-field").focus();
 		} else {
@@ -3219,7 +3219,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		util.focusSearchField();
+		Utilities.focusSearchField();
 	};
 
 	Utilities.prototype.toggleAnyWordSearch = function() {
@@ -3228,7 +3228,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		util.focusSearchField();
+		Utilities.focusSearchField();
 	};
 
 	Utilities.prototype.toggleCaseSensitiveSearch = function() {
@@ -3237,16 +3237,26 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		util.focusSearchField();
+		Utilities.focusSearchField();
 
 	};
+
 	Utilities.prototype.toggleAccentSensitiveSearch = function() {
 		env.options.search_accent_sensitive = ! env.options.search_accent_sensitive;
 		Functions.setBooleanCookie("searchAccentSensitive", env.options.search_accent_sensitive);
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		util.focusSearchField();
+		Utilities.focusSearchField();
+	};
+
+	Utilities.prototype.toggleTagsOnlySearch = function() {
+		env.options.search_tags_only = ! env.options.search_tags_only;
+		Functions.setBooleanCookie("searchTagsOnly", env.options.search_tags_only);
+		Functions.updateMenu();
+		if ($("#search-field").val().trim())
+			$('#search-button').click();
+		Utilities.focusSearchField();
 	};
 
 	Utilities.prototype.toggleCurrentAbumSearch = function() {
@@ -3255,7 +3265,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		util.focusSearchField();
+		Utilities.focusSearchField();
 	};
 
 	/* make static methods callable as member functions */
@@ -3296,6 +3306,7 @@
 	Utilities.prototype.removeAccents = Utilities.removeAccents;
 	Utilities.prototype.arrayIntersect = Utilities.arrayIntersect;
 	Utilities.prototype.scrollToThumb = Utilities.scrollToThumb;
+	Utilities.prototype.focusSearchField = Utilities.focusSearchField;
 
 	window.Utilities = Utilities;
 }());
