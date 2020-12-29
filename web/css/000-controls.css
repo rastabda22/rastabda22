@@ -531,6 +531,14 @@ video {
 	font-variant: small-caps;
 }
 
+.tag a {
+	color: inherit;
+}
+
+.tag a:hover {
+	font-style: normal;
+}
+
 .album-button-and-caption .tag {
 	color: gray;
 }

@@ -1698,6 +1698,11 @@
 		);
 	};
 
+	Utilities.addTagLink = function(tag) {
+		hash = "#!/_bs" + env.options.cache_folder_separator +  "t" + env.options.search_options_separator + "o" + env.options.search_options_separator + tag + env.options.cache_folder_separator + env.currentAlbum.cacheBase;
+		return "<a href='" + hash + "'>" + tag + "</a>";
+	};
+
 	Utilities.prototype.em2px = function(selector, em) {
 		var emSize = parseFloat($(selector).css("font-size"));
 		return (em * emSize);
@@ -2896,7 +2901,7 @@
 		}
 		if (! nullTags) {
 			// let textualTags = "<p class='tags'> " + Utilities._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span></p>";
-			let textualTags = Utilities._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span>";
+			let textualTags = Utilities._t("#tags") + ": <span class='tag'>" + tags.map(tag => Utilities.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span>";
 			$("#caption-tags").html(textualTags);
 		} else {
 			$("#caption-tags").html("");
@@ -3307,6 +3312,7 @@
 	Utilities.prototype.arrayIntersect = Utilities.arrayIntersect;
 	Utilities.prototype.scrollToThumb = Utilities.scrollToThumb;
 	Utilities.prototype.focusSearchField = Utilities.focusSearchField;
+	Utilities.prototype.addTagLink = Utilities.addTagLink;
 
 	window.Utilities = Utilities;
 }());

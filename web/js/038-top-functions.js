@@ -2063,7 +2063,7 @@
 										"color: " + env.captionColor + ";" +
 									"'" +
 								">";
-						tagsHtml +=		"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithSubalbum.tags.join("</span>, <span class='tag'>") + "</span></span>";
+						tagsHtml +=		"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithSubalbum.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>";
 						tagsHtml += "</div>";
 
 						let id = phFl.hashCode(ithSubalbum.cacheBase);
@@ -2268,7 +2268,7 @@
 									"'" +
 								">";
 						imageString +=
-									"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithMedia.metadata.tags.join("</span>, <span class='tag'>") + "</span></span>";
+									"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithMedia.metadata.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>";
 						imageString +=
 								"</div>";
 					}
