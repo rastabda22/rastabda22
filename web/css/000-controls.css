@@ -184,7 +184,35 @@ a.title-anchor.mobile {
 	text-align: center;
 	opacity: 0.7;
 	filter: alpha(opacity=70); /* For IE8 and earlier */
-	font-size: 70%;
+	font-size: 80%;
+}
+
+.album-description, .media-description {
+	/* font-size: 95%; */
+	color: gray;
+	font-style: italic;
+	padding-left: .7em;
+	padding-right: .7em;
+}
+
+.media-description {
+	text-align: left;
+}
+
+.album-description {
+	line-height: 1.1em;
+}
+
+.album-tags, .album-caption-count {
+	margin-top: .5em;
+}
+
+p.description-text, p.description-text ul {
+	margin-top: .1em;
+	margin-bottom: 0;
+}
+.description ul {
+	padding-inline-start: 1.5em;
 }
 
 /* this class is needed in order to get the thumbnails vertically centered,

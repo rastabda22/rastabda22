@@ -1236,14 +1236,14 @@
 
 		var isPopup = $('.leaflet-popup').html() ? true : false;
 		if (env.currentMedia !== null && ! isPopup || ! env.options.show_media_names_below_thumbs)
-			$(".media-caption").addClass("hidden");
+			$(".thumb-and-caption-container .media-name").addClass("hidden-by-option");
 		else
-			$(".media-caption").removeClass("hidden");
+			$(".thumb-and-caption-container .media-name").removeClass("hidden-by-option");
 
 		if (env.options.show_album_media_count)
-			$(".title-count").removeClass("hidden");
+			$(".title-count").removeClass("hidden-by-option");
 		else
-			$(".title-count").addClass("hidden");
+			$(".title-count").addClass("hidden-by-option");
 
 		if (env.options.hide_title)
 			$(".title").addClass("hidden-by-option");

@@ -2883,6 +2883,25 @@
 		return "<p class='description-text'>" + text + "</p>";
 	}
 
+	Utilities.prototype.adaptCaptionHeight = function() {
+		// check for overflow in album-caption class in order to adapt album caption height to the string length
+		// when diving into search subalbum, the whole album path is showed and it can be lengthy
+		// if (env.options.show_album_names_below_thumbs) {
+		var maxHeight = 0;
+		// var initialHeight = env.options.album_thumb_size + 10;
+		// $(".album-button-and-caption").css("height", initialHeight + 'px');
+		$('.album-caption').each(
+			function() {
+				var thisHeight = $(this)[0].scrollHeight;
+				maxHeight = (thisHeight > maxHeight) ? thisHeight : maxHeight;
+			}
+		);
+		var difference = maxHeight - parseFloat($(".album-caption").css("height"));
+		$(".album-button-and-caption").css("height", ($(".album-button-and-caption").height() + difference) + 'px');
+		$(".album-caption").css("height", maxHeight + 'px');
+		// }
+	};
+
 	Utilities.prototype.setDescription = function(title, description, tags) {
 
 		var nullTitle = (typeof title === "undefined") || ! title;

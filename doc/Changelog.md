@@ -1,3 +1,6 @@
+* a message is presented during slow operations
+* every tag has link to a search to all content with that tag
+* add control to hide descriptions and tags
 * if present, show media description below its name/title in album view
 * if present, use media title instead of media name
 * add search option: restrict the search to tags
