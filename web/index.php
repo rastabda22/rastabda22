@@ -406,6 +406,7 @@
 				<li id="any-word" class="search active"></li>
 				<li id="case-sensitive" class="search active"></li>
 				<li id="accent-sensitive" class="search active"></li>
+				<li id="tags-only" class="search active"></li>
 				<li id="album-search" class="search active"></li>
 			</ul>
 		</li>
@@ -444,14 +445,14 @@
 			<span class='ui caption'></span>
 			<ul class="sub-menu hidden">
 				<li class='ui hide-title active'></li>
-				<li class='ui hide-media-caption active'></li>
-				<li class='ui media-count active'></li>
-				<li class='ui spaced active'></li>
-				<li class='ui square-album-thumbnails active'></li>
 				<li class='ui slide active'></li>
 				<li class='ui album-names active'></li>
-				<li class='ui square-media-thumbnails active'></li>
+				<li class='ui square-album-thumbnails active'></li>
 				<li class='ui media-names active'></li>
+				<li class='ui square-media-thumbnails active'></li>
+				<li class='ui hide-descriptions-and-tags active'></li>
+				<li class='ui media-count active'></li>
+				<li class='ui spaced active'></li>
 				<li class='ui hide-bottom-thumbnails active'></li>
 			</ul>
 		</li>
@@ -504,10 +505,11 @@
 	</ul>
 
 
-	<div id="loading"></div>
-	<div id="downloading-media"></div>
-	<div id="preparing-zip"></div>
-	<div id="sending-email"></div>
+	<div id="loading" class="messages" ></div>
+	<div id="working" class="messages"></div>
+	<div id="downloading-media" class="messages"></div>
+	<div id="preparing-zip" class="messages"></div>
+	<div id="sending-email" class="messages"></div>
 
 	<div id="folders-browsing" class="browsing-mode-message"></div>
 	<div id="by-date-browsing" class="browsing-mode-message"></div>
@@ -537,12 +539,12 @@
 	<div id="by-name-media-sorting" class="sort-message"></div>
 	<div id="by-name-reverse-media-sorting" class="sort-message"></div>
 
-	<div id="caption">
-		<div id="caption-title"></div>
-		<div id="caption-description">
+	<div id="description">
+		<div id="description-title"></div>
+		<div id="description-text">
 			<div class="description"></div>
 		</div>
-		<div id="caption-tags"></div>
+		<div id="description-tags"></div>
 	</div>
 
 </body>

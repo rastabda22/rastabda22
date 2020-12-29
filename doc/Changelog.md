@@ -1,10 +1,19 @@
+### version v4.9.11 (Dec 29, 2020)
+
+* a message is presented during slow operations
+* every tag has link to a search to all content with that tag
+* add control to hide descriptions and tags
+* if present, show media description below its name/title in album view
+* if present, use media title instead of media name
+* add search option: restrict the search to tags
+
 ### version v4.9.10 (Dec 28, 2020)
 
 * fix deselection shortcut and add menu entries to deselect subalbums/media
 * add a cache that avoids requesting inexistent files more than once
-* changed shortcut for hiding title, bottom thumbnails and caption: from TAB to "h"
+* changed shortcut for hiding title, bottom thumbnails and description: from TAB to "h"
 * album view: add tags to subalbums and media
-* media view: reposition caption and add tags
+* media view: reposition description and add tags
 * bug fixes
 
 ### version v4.9.9 (Dec 27, 2020)

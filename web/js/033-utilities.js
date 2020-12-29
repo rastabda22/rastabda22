@@ -1141,7 +1141,7 @@
 		// $(selector).fadeOut(4000);
 	};
 
-	Utilities.prototype.focusSearchField = function() {
+	Utilities.focusSearchField = function() {
 		if (! env.isMobile.any()) {
 			$("#search-field").focus();
 		} else {
@@ -1696,6 +1696,11 @@
 				}
 			}
 		);
+	};
+
+	Utilities.addTagLink = function(tag) {
+		hash = "#!/_bs" + env.options.cache_folder_separator +  "t" + env.options.search_options_separator + "o" + env.options.search_options_separator + tag + env.options.cache_folder_separator + env.currentAlbum.cacheBase;
+		return "<a href='" + hash + "'>" + tag + "</a>";
 	};
 
 	Utilities.prototype.em2px = function(selector, em) {
@@ -2871,59 +2876,79 @@
 		}
 	};
 
-	Utilities.prototype.setCaption = function(title, description, tags) {
-		// Replace CRLF by <br> and remove all useless <br>.
-		function formatText(text) {
-			text = text.replace(/<(\/?\w+)>\s*\n\s*<(\/?\w+)>/g, "<$1><$2>");
-			text = text.replace(/\n/g, "</p><p class='caption-text'>");
-			return "<p class='caption-text'>" + text + "</p>";
-		}
+	Utilities.formatDescription = function(text) {
+		// Replace CRLF by <p> and remove all useless <br>.
+		text = text.replace(/<(\/?\w+)>\s*\n\s*<(\/?\w+)>/g, "<$1><$2>");
+		text = text.replace(/\n/g, "</p><p class='description-text'>");
+		return "<p class='description-text'>" + text + "</p>";
+	}
+
+	Utilities.prototype.adaptCaptionHeight = function() {
+		// check for overflow in album-caption class in order to adapt album caption height to the string length
+		// when diving into search subalbum, the whole album path is showed and it can be lengthy
+		// if (env.options.show_album_names_below_thumbs) {
+		var maxHeight = 0;
+		// var initialHeight = env.options.album_thumb_size + 10;
+		// $(".album-button-and-caption").css("height", initialHeight + 'px');
+		$('.album-caption').each(
+			function() {
+				var thisHeight = $(this)[0].scrollHeight;
+				maxHeight = (thisHeight > maxHeight) ? thisHeight : maxHeight;
+			}
+		);
+		var difference = maxHeight - parseFloat($(".album-caption").css("height"));
+		$(".album-button-and-caption").css("height", ($(".album-button-and-caption").height() + difference) + 'px');
+		$(".album-caption").css("height", maxHeight + 'px');
+		// }
+	};
+
+	Utilities.prototype.setDescription = function(title, description, tags) {
 
 		var nullTitle = (typeof title === "undefined") || ! title;
 		var nullDescription = (typeof description === "undefined") || ! description;
 		var nullTags = (typeof tags === "undefined") || ! tags.length;
 
 		if (! nullTitle) {
-			$("#caption-title").html(formatText(title));
+			$("#description-title").html(Utilities.formatDescription(title));
 		} else {
-			$("#caption-title").html("");
+			$("#description-title").html("");
 		}
 
 		if (! nullDescription) {
-			$("#caption-description .description").html(formatText(description));
+			$("#description-text .description").html(Utilities.formatDescription(description));
 		} else {
-			$("#caption-description .description").html("");
+			$("#description-text .description").html("");
 		}
 		if (! nullTags) {
 			// let textualTags = "<p class='tags'> " + Utilities._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span></p>";
-			let textualTags = Utilities._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span>";
-			$("#caption-tags").html(textualTags);
+			let textualTags = Utilities._t("#tags") + ": <span class='tag'>" + tags.map(tag => Utilities.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span>";
+			$("#description-tags").html(textualTags);
 		} else {
-			$("#caption-tags").html("");
+			$("#description-tags").html("");
 		}
 
 		if (nullTitle && nullDescription && nullTags) {
-		  $("#caption").addClass("hidden");
+		  $("#description").addClass("hidden");
 		} else {
-		  $("#caption").removeClass("hidden");
+		  $("#description").removeClass("hidden");
 		}
 	};
 
-	Utilities.prototype.setCaptionPosition = function(captionType) {
-		// Size of caption varies if on album or media
+	Utilities.prototype.setDescriptionPosition = function(captionType) {
+		// Size of description varies if on album or media
 		if (captionType === 'media') {
 			var titleHeight = parseInt($(".media-box#center .title").css("height"));
 			var mediaHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
-			$("#caption").css("top", titleHeight + mediaHeight * 0.7);
-			// $("#caption").css("bottom", "");
-			$("#caption").css("height", "");
+			$("#description").css("top", titleHeight + mediaHeight * 0.7);
+			// $("#description").css("bottom", "");
+			$("#description").css("height", "");
 			var selectBoxWidth = 30;
-			$("#caption").css("right", 2 * selectBoxWidth + parseInt($("#media-select-box .select-box").css("right")));
-			$("#caption").css("max-height", "");
-			$("#caption").css("max-height", mediaHeight * 0.2);
-			$("#caption-description").css("height", "");
-			$("#caption-description").css("max-height", "");
-			$("#caption-description").css("max-height", $("#caption").height() - 2 * parseInt($("#caption").css("padding-top")) - $("#caption-title").height() - $("#caption-tags").height());
+			$("#description").css("right", 2 * selectBoxWidth + parseInt($("#media-select-box .select-box").css("right")));
+			$("#description").css("max-height", "");
+			$("#description").css("max-height", mediaHeight * 0.2);
+			$("#description-text").css("height", "");
+			$("#description-text").css("max-height", "");
+			$("#description-text").css("max-height", $("#description").height() - 2 * parseInt($("#description").css("padding-top")) - $("#description-title").height() - $("#description-tags").height());
 		} else if (captionType === 'album') {
 			// var titleHeight = parseInt($("#album-view .title").css("height"));
 			// var albumTop = parseInt($("#album-view").css("top"));
@@ -2931,12 +2956,12 @@
 			var thumbsHeight = parseInt($("#thumbs").css("height"));
 			var subalbumsHeight = parseInt($("#subalbums").css("height"));
 			// TODO: How to adapt height to different platforms?
-			$("#caption").css("top", "");
-			$("#caption").css("bottom", 0);
-			$("#caption").css("height", "");
-			$("#caption").css("max-height", "");
-			$("#caption").css("height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
-			$("#caption").css("max-height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
+			$("#description").css("top", "");
+			$("#description").css("bottom", 0);
+			$("#description").css("height", "");
+			$("#description").css("max-height", "");
+			$("#description").css("height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
+			$("#description").css("max-height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
 		}
 	};
 
@@ -3219,7 +3244,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		util.focusSearchField();
+		Utilities.focusSearchField();
 	};
 
 	Utilities.prototype.toggleAnyWordSearch = function() {
@@ -3228,7 +3253,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		util.focusSearchField();
+		Utilities.focusSearchField();
 	};
 
 	Utilities.prototype.toggleCaseSensitiveSearch = function() {
@@ -3237,16 +3262,26 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		util.focusSearchField();
+		Utilities.focusSearchField();
 
 	};
+
 	Utilities.prototype.toggleAccentSensitiveSearch = function() {
 		env.options.search_accent_sensitive = ! env.options.search_accent_sensitive;
 		Functions.setBooleanCookie("searchAccentSensitive", env.options.search_accent_sensitive);
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		util.focusSearchField();
+		Utilities.focusSearchField();
+	};
+
+	Utilities.prototype.toggleTagsOnlySearch = function() {
+		env.options.search_tags_only = ! env.options.search_tags_only;
+		Functions.setBooleanCookie("searchTagsOnly", env.options.search_tags_only);
+		Functions.updateMenu();
+		if ($("#search-field").val().trim())
+			$('#search-button').click();
+		Utilities.focusSearchField();
 	};
 
 	Utilities.prototype.toggleCurrentAbumSearch = function() {
@@ -3255,7 +3290,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		util.focusSearchField();
+		Utilities.focusSearchField();
 	};
 
 	/* make static methods callable as member functions */
@@ -3296,6 +3331,9 @@
 	Utilities.prototype.removeAccents = Utilities.removeAccents;
 	Utilities.prototype.arrayIntersect = Utilities.arrayIntersect;
 	Utilities.prototype.scrollToThumb = Utilities.scrollToThumb;
+	Utilities.prototype.focusSearchField = Utilities.focusSearchField;
+	Utilities.prototype.addTagLink = Utilities.addTagLink;
+	Utilities.prototype.formatDescription = Utilities.formatDescription;
 
 	window.Utilities = Utilities;
 }());

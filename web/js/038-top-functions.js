@@ -666,7 +666,11 @@
 						if (singleMedia !== null || env.currentAlbum.isAlbumWithOneMedia()) {
 							if (singleMedia === null)
 								singleMedia = currentAlbum.media[0];
-							title += "<span class='media-name'>" + singleMedia.name + "</span>";
+							if (singleMedia.metadata.hasOwnProperty("title")) {
+								title += "<span class='media-name'>" + singleMedia.metadata.title + "</span><span class='media-real-name'>(" + singleMedia.name + ")</span>";
+							} else {
+								title += "<span class='media-name'>" + singleMedia.name + "</span>";
+							}
 							// close the .title-main span
 							title += "</span>";
 							if (env.currentMedia.hasGpsData()) {
@@ -1050,7 +1054,7 @@
 									f.pinchSwipeInitialization();
 									util.setPinchButtonsPosition();
 								}
-								util.setCaptionPosition('media');
+								util.setDescriptionPosition('media');
 								util.setSelectButtonPosition();
 								util.correctPrevNextPosition();
 							}
@@ -1117,10 +1121,10 @@
 				$("#" + id + " .title").removeClass("hidden-by-fullscreen");
 			}
 
-			if (env.options.hide_caption) {
-				$("#caption").addClass("hidden-by-option");
+			if (env.options.hide_descriptions_and_tags) {
+				$("#description, .media-description, .media-tags").addClass("hidden-by-option");
 			} else {
-				$("#caption").removeClass("hidden-by-option");
+				$("#description, .media-description, .media-tags").removeClass("hidden-by-option");
 			}
 
 			if (env.options.hide_bottom_thumbnails) {
@@ -1259,8 +1263,8 @@
 									if (id === "center") {
 										util.setSelectButtonPosition();
 										util.correctPrevNextPosition();
-										util.setCaption(self.metadata.title, self.metadata.description, self.metadata.tags);
-										util.setCaptionPosition('media');
+										util.setDescription(self.metadata.title, self.metadata.description, self.metadata.tags);
+										util.setDescriptionPosition('media');
 									}
 									// if (self.mimeType.indexOf("image/") === 0) {
 									loadNextPrevMedia(self, containerHeight, containerWidth);
@@ -1443,8 +1447,8 @@
 
 				if (id === "center") {
 					// if (self != null) {
-					// 	util.setCaption(self.metadata.title, self.metadata.description, self.metadata.tags);
-					// 	util.setCaptionPosition('media');
+					// 	util.setDescription(self.metadata.title, self.metadata.description, self.metadata.tags);
+					// 	util.setDescriptionPosition('media');
 					// }
 
 					f.updateMenu();
@@ -1707,14 +1711,14 @@
 		return false;
 	};
 
-	TopFunctions.prototype.toggleTitleThumbnailAndCaption = function(ev) {
+	TopFunctions.prototype.toggleTitleAndBottomThumbnailsAndDescriptionsAndTags = function(ev) {
 		// if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 		env.options.hide_title = ! env.options.hide_title;
 		f.setBooleanCookie("hideTitle", env.options.hide_title);
 		env.options.hide_bottom_thumbnails = ! env.options.hide_bottom_thumbnails;
 		f.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
-		env.options.hide_caption = ! env.options.hide_caption;
-		f.setBooleanCookie("hideCaption", env.options.hide_caption);
+		env.options.hide_descriptions_and_tags = ! env.options.hide_descriptions_and_tags;
+		f.setBooleanCookie("hideDescriptionsAndTags", env.options.hide_descriptions_and_tags);
 		f.updateMenu();
 		if (env.options.hide_title) {
 			$(".title").addClass("hidden-by-option");
@@ -1726,10 +1730,10 @@
 		} else {
 			$("#album-view").removeClass("hidden-by-option");
 		}
-		if (env.options.hide_caption) {
-			$("#caption").addClass("hidden-by-option");
+		if (env.options.hide_descriptions_and_tags) {
+			$("#description, .media-description, .media-tags, .album-description, .album-tags").addClass("hidden-by-option");
 		} else {
-			$("#caption").removeClass("hidden-by-option");
+			$("#description, .media-description, .media-tags, .album-description, .album-tags").removeClass("hidden-by-option");
 		}
 		if (! $("#thumbs").children().length)
 			$("#album-view").addClass("media-view-container");
@@ -1824,16 +1828,16 @@
 		return false;
 	};
 
-	TopFunctions.prototype.toggleCaption = function(ev) {
+	TopFunctions.prototype.toggleDescriptionsAndTags = function(ev) {
 		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-			env.options.hide_caption = ! env.options.hide_caption;
-			f.setBooleanCookie("hideCaption", env.options.hide_caption);
+			env.options.hide_descriptions_and_tags = ! env.options.hide_descriptions_and_tags;
+			f.setBooleanCookie("hideDescriptionsAndTags", env.options.hide_descriptions_and_tags);
 			f.updateMenu();
-			if (env.options.hide_caption) {
-				$("#caption").addClass("hidden-by-option");
+			if (env.options.hide_descriptions_and_tags) {
+				$("#description, .media-description, .media-tags, .album-description, .album-tags").addClass("hidden-by-option");
 			} else {
-				$("#caption").removeClass("hidden-by-option");
-				TopFunctions.showAlbum("refreshMedia");
+				$("#description, .media-description, .media-tags, .album-description, .album-tags").removeClass("hidden-by-option");
+				// TopFunctions.showAlbum("refreshMedia");
 			}
 			if (env.currentMedia !== null) {
 				let event = {data: {}};
@@ -1849,7 +1853,7 @@
 					env.prevMedia.scale(event);
 				}
 			} else
-				TopFunctions.showAlbum(false);
+				TopFunctions.showAlbum("refreshBoth");
 		}
 		return false;
 	};
@@ -1891,6 +1895,12 @@
 			f.setBooleanCookie("showAlbumNamesBelowThumbs", env.options.show_album_names_below_thumbs);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
+			// if (env.options.show_album_names_below_thumbs) {
+			// 	$(".folder-name").removeClass("hidden-by-option");
+			// } else {
+			// 	$(".folder-name").addClass("hidden-by-option");
+			// }
+			// util.adaptCaptionHeight();
 		}
 		return false;
 	};
@@ -1957,23 +1967,6 @@
 
 
 	TopFunctions.showAlbum = function(populate) {
-		function adaptCaptionHeight() {
-			// check for overflow in album-caption class in order to adapt album caption height to the string length
-			// when diving into search subalbum, the whole album path is showed and it can be lengthy
-			if (env.options.show_album_names_below_thumbs) {
-				var maxHeight = null;
-				$('.album-caption').each(
-					function() {
-						var thisHeight = $(this)[0].scrollHeight;
-						maxHeight = (thisHeight > maxHeight) ? thisHeight : maxHeight;
-					}
-				);
-				var difference = maxHeight - parseFloat($(".album-caption").css("height"));
-				$(".album-button-and-caption").css("height", ($(".album-button-and-caption").height() + difference) + 'px');
-				$(".album-caption").css("height", maxHeight + 'px');
-			}
-		}
-
 		function insertRandomImage(randomSubAlbum, index, iSubalbum) {
 			var titleName, randomMediaLink, goTo, humanGeonames;
 			var randomMedia = randomSubAlbum.media[index];
@@ -2050,26 +2043,6 @@
 			promise.then(
 				function([album, index]) {
 					insertRandomImage(album, index, iSubalbum);
-
-					let ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
-					if (ithSubalbum.hasOwnProperty("tags") && ithSubalbum.tags.length) {
-						let tagsHtml = "<div class='album-tags";
-						// if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs || ! env.options.show_album_media_count)
-						// 	tagsHtml += " hidden";
-						tagsHtml += "' " +
-									"style='" +
-										"font-size: " + Math.round((env.captionFontSize / 1.5)) + "px; " +
-										// "height: " + env.captionHeight + "px; " +
-										"color: " + env.captionColor + ";" +
-									"'" +
-								">";
-						tagsHtml +=		"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithSubalbum.tags.join("</span>, <span class='tag'>") + "</span></span>";
-						tagsHtml += "</div>";
-
-						let id = phFl.hashCode(ithSubalbum.cacheBase);
-						$("#" + id).append($(tagsHtml));
-					}
-
 					resolve_subalbumPromise();
 				},
 				function(album) {
@@ -2252,24 +2225,32 @@
 								"<span class='helper'></span>" +
 								img.prop("outerHTML") +
 							"</div>" +
-							"<div class='media-caption'>" +
-								"<span>";
-					imageString +=
-									ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>");
-					imageString +=
+							"<div class='media-caption'>";
+					if (ithMedia.metadata.hasOwnProperty("title")) {
+						imageString +=
+								"<span title='" + util.escapeSingleQuotes(ithMedia.name) + "' class='media-name'>" +
+									"<span>" +
+										ithMedia.metadata.title.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+									"</span>" +
 								"</span>";
+					} else {
+						imageString +=
+								"<span class='media-name'>" +
+									"<span>" +
+										ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+									"</span>" +
+								"</span>";
+					}
+					if (ithMedia.metadata.hasOwnProperty("description")) {
+						imageString +=
+								"<div class='media-description'>" +
+									"<div class='description'>" + util.formatDescription(ithMedia.metadata.description) + "</div>" +
+								"</div>";
+					}
 					if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
 						imageString +=
-								"<div class='media-tags' " +
-									"style='" +
-										// "font-size: " + Math.round((env.captionFontSize / 1.5)) + "px; " +
-										// "height: " + env.captionHeight + "px; " +
-										// "color: " + env.captionColor + ";" +
-									"'" +
-								">";
-						imageString +=
-									"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithMedia.metadata.tags.join("</span>, <span class='tag'>") + "</span></span>";
-						imageString +=
+								"<div class='media-tags'>" +
+									"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithMedia.metadata.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>" +
 								"</div>";
 					}
 					imageString +=
@@ -2315,11 +2296,7 @@
 						let parentAlbumPromise = phFl.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
 						parentAlbumPromise.then(
 							function(parentAlbum) {
-								// if (! ithMedia.hasOwnProperty("captionForSelection"))
-								// 	ithMedia.generateSingleMediaCaptionForSelection(parentAlbum);
-								// if (! ithMedia.hasOwnProperty("captionForSearch"))
-								// 	ithMedia.generateCaptionForSearch(parentAlbum);
-								$("#" + imageId + " .media-caption").html(ithMedia.mediaName(env.currentAlbum));
+								$("#" + imageId + " .media-name").html(ithMedia.mediaName(env.currentAlbum));
 							}
 						);
 					}
@@ -2381,6 +2358,8 @@
 					}
 				}
 			}
+			if (env.options.hide_descriptions_and_tags)
+				$("#description, .media-description, .media-tags, .album-description").addClass("hidden-by-option");
 
 			if (env.currentMedia === null) {
 				if (env.fromEscKey && env.firstEscKey) {
@@ -2420,13 +2399,14 @@
 					if (env.options.albums_slide_style)
 						margin = Math.round(env.correctedAlbumThumbSize * env.slideMarginFactor);
 
-					if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs)
-						heightfactor = 0;
-					else if (! env.options.show_album_media_count)
-						heightfactor = 1.6;
-					else
-						heightfactor = 2.8;
-					buttonAndCaptionHeight = correctedAlbumButtonSize + env.captionHeight * heightfactor;
+					// if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs)
+					// 	heightfactor = 0;
+					// else if (! env.options.show_album_media_count)
+					// 	heightfactor = 1.6;
+					// else
+					// 	heightfactor = 2.8;
+					// buttonAndCaptionHeight = correctedAlbumButtonSize + env.captionHeight * heightfactor;
+					buttonAndCaptionHeight = correctedAlbumButtonSize + env.captionHeight;
 
 					// insert into DOM
 					subalbumsElement = $("#subalbums");
@@ -2449,38 +2429,27 @@
 								if (nameHtml === "")
 									nameHtml = "<span class='italic'>(" + util._t("#root-album") + ")</span>";
 
-								captionHtml = "<div class='album-caption";
-								if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs)
-									captionHtml += " hidden";
 								let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
-								captionHtml += "' id='" + captionId + "' " +
-															"style='" +
-																"width: " + env.correctedAlbumThumbSize + "px; " +
-																"font-size: " + env.captionFontSize + "px; " +
-																"height: " + env.captionHeight + "px; " +
-																"color: " + env.captionColor + ";" +
-															"'" +
-															">" +
-													"<span class='folder-name'>" + nameHtml +
-													"</span>" +
-												"</div>";
+								captionHtml =
+									"<div class='album-caption' " +
+										"id='" + captionId + "' " +
+										"style='" +
+											"width: " + env.correctedAlbumThumbSize + "px; " +
+											"font-size: " + env.captionFontSize + "px; " +
+											"height: " + env.captionHeight + "px; " +
+											"color: " + env.captionColor + ";" +
+										"'" +
+										">";
+								captionHtml +=
+										"<div class='folder-name'>" + nameHtml + "</div>";
 
-
-								captionHtml += "<div class='album-caption-count";
-								if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs || ! env.options.show_album_media_count)
-									captionHtml += " hidden";
-								captionHtml += "' " +
-											"style='" +
-												"font-size: " + Math.round((env.captionFontSize / 1.5)) + "px; " +
-												"height: " + env.captionHeight + "px; " +
-												"color: " + env.captionColor + ";" +
-											"'" +
-										">(";
-								captionHtml +=		ithSubalbum.numsMediaInSubTree.imagesAndVideosTotal();
-								captionHtml +=		" <span class='title-media'>";
-								captionHtml +=		util._t(".title-media");
-								captionHtml +=		"</span>";
-								captionHtml += ")</div>";
+								captionHtml +=
+										"<div class='album-caption-count'>" +
+											"(" + ithSubalbum.numsMediaInSubTree.imagesAndVideosTotal() + " " +
+											"<span class='title-media'>" + util._t(".title-media") + "</span>" +
+											")" +
+										"</div>";
+									"</div>";
 
 								caption = $(captionHtml);
 
@@ -2632,17 +2601,43 @@
 									}
 								);
 
-								if (env.currentAlbum.isCollection()) {
-									// the folder name must be added the second line
-									let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: false, getPositions: false});
-									convertSubalbumPromise.then(
-										function(ithSubalbum) {
-											env.currentAlbum.subalbums[iSubalbum] = ithSubalbum;
-											// ithSubalbum.generateCaptionForCollections();
-											let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
-											$("#" + captionId + " .folder-name").html(nameHtml);
-										}
-									);
+								// if (env.currentAlbum.isCollection()) {
+								// 	// the folder name must be added the second line
+								// 	let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: false, getPositions: false});
+								// 	convertSubalbumPromise.then(
+								// 		function(ithSubalbum) {
+								// 			env.currentAlbum.subalbums[iSubalbum] = ithSubalbum;
+								// 			// ithSubalbum.generateCaptionForCollections();
+								// 			let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
+								// 			$("#" + captionId + " .folder-name").html(nameHtml);
+								// 		}
+								// 	);
+								// }
+
+								// let ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
+								// let id = phFl.hashCode(ithSubalbum.cacheBase);
+								if (ithSubalbum.hasOwnProperty("description")) {
+									let descriptionHtml =
+									 	"<div class='album-description'>" +
+											"<div class='description'>" + util.formatDescription(ithSubalbum.description) + "</div>" +
+										"</div>";
+
+									$("#" + id + " .album-caption").append($(descriptionHtml));
+								}
+
+								if (ithSubalbum.hasOwnProperty("tags") && ithSubalbum.tags.length) {
+									let tagsHtml =
+										"<div class='album-tags' " +
+											"style='" +
+												"font-size: " + Math.round((env.captionFontSize / 1.5)) + "px; " +
+												// "height: " + env.captionHeight + "px; " +
+												"color: " + env.captionColor + ";" +
+											"'" +
+										">" +
+											"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithSubalbum.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>" +
+										"</div>";
+
+									$("#" + id + " .album-caption").append($(tagsHtml));
 								}
 
 								pickRandomMediaAndInsertIt(iSubalbum, imageElement, resolve_subalbumPromise);
@@ -2651,19 +2646,31 @@
 						subalbumsPromises.push(subalbumPromise);
 					}
 
+					// if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs || ! env.options.show_album_media_count)
+					if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs)
+						$(".folder-name").addClass("hidden-by-option");
+
+					if (! env.options.show_album_media_count)
+						$(".album-caption-count").addClass("hidden-by-option");
+
+					if (env.options.hide_descriptions_and_tags)
+						$("#description, .media-description, .media-tags, .album-description, .album-tags").addClass("hidden-by-option");
+
+
+
 					Promise.all(subalbumsPromises).then(
 						function allRandomImagesGot() {
 							// we can run the function that prepare the stuffs for sharing
 							f.socialButtons();
-							adaptCaptionHeight();
+							util.adaptCaptionHeight();
 
-							// When there is both a media and an album, we display the media's caption; else it's the album's one
+							// When there is both a media and an album, we display the media's description; else it's the album's one
 							if (env.currentMedia === null) {
-								util.setCaption(env.currentAlbum.title, env.currentAlbum.description, env.currentAlbum.tags);
-								util.setCaptionPosition('album');
+								util.setDescription(env.currentAlbum.title, env.currentAlbum.description, env.currentAlbum.tags);
+								util.setDescriptionPosition('album');
 							} else {
-								util.setCaption(env.currentMedia.metadata.title, env.currentMedia.metadata.description, env.currentMedia.metadata.description);
-								util.setCaptionPosition('media');
+								util.setDescription(env.currentMedia.metadata.title, env.currentMedia.metadata.description, env.currentMedia.metadata.description);
+								util.setDescriptionPosition('media');
 							}
 						},
 						function() {

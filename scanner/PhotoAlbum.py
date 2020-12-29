@@ -702,7 +702,7 @@ class Album(object):
 					"numPositionsInTree": len(subalbum.positions_and_media_in_tree.positions),
 					"numsMediaInSubTree": subalbum.nums_media_in_sub_tree,
 					"sizesOfSubTree": subalbum.sizes_of_sub_tree,
-					"sizesOfAlbum": subalbum.sizes_of_album,
+					"sizesOfAlbum": subalbum.sizes_of_album
 				}
 				nums_protected_by_code = {}
 				for complex_identifiers_combination in list(subalbum.nums_protected_media_in_sub_tree.keys()):
@@ -727,6 +727,8 @@ class Album(object):
 					sub_dict["words"] = subalbum.words
 				if hasattr(subalbum, "unicode_words"):
 					sub_dict["unicodeWords"] = subalbum.unicode_words
+				if hasattr(subalbum, "tags"):
+					sub_dict["tags"] = subalbum.tags
 				subalbums.append(sub_dict)
 
 		path_without_folders_marker = remove_folders_marker(self.path)
@@ -792,8 +794,7 @@ class Album(object):
 			"passwordMarkerMTime": self.passwords_marker_mtime,
 			"jsonVersion": Options.json_version,
 			"title": self.title,
-			"description": self.description,
-			"tags": self.tags
+			"description": self.description
 		}
 		nums_protected_by_code = {}
 		for complex_identifiers_combination in list(self.nums_protected_media_in_sub_tree.keys()):
@@ -829,6 +830,8 @@ class Album(object):
 			dictionary["name"] = self.name
 		if hasattr(self, "alt_name"):
 			dictionary["altName"] = self.alt_name
+		if hasattr(self, "tags"):
+			dictionary["tags"] = self.tags
 		if self.cache_base.find(Options.config['by_gps_string']) == 0:
 			dictionary["ancestorsCenters"] = ancestors_centers
 

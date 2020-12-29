@@ -116,10 +116,10 @@ $(document).ready(function() {
 					if (e.key === "h") {
 						e.preventDefault();
 						if (pS.getCurrentZoom() === pS.getInitialZoom() && ! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
-							tF.toggleTitleThumbnailAndCaption(e);
+							tF.toggleTitleAndBottomThumbnailsAndDescriptionsAndTags(e);
 							// $("ul#right-menu li.hide-title")[0].click();
 							// $("ul#right-menu li.hide-bottom-thumbnails")[0].click();
-							// $("ul#right-menu li.hide-media-caption")[0].click();
+							// $("ul#right-menu li.hide-descriptions-and-tags")[0].click();
 							return false;
 						}
 					} else if (e.key === "ArrowRight" && (pS.getCurrentZoom() !== pS.getInitialZoom() || env.prevMedia) && env.currentMedia !== null && ! isMap) {
@@ -312,19 +312,12 @@ $(document).ready(function() {
 			}
 
 			if (e.key.toLowerCase() === 'a' && e.ctrlKey) {
-				if (! e.shiftKey && ! $(".select.everything").hasClass("hidden") && ! $(".select.everything").hasClass("selected")) {
+				if (! e.shiftKey) {
 					// select everything
-					$(".select.everything").click();
+					$(".select.everything:not(.hidden):not(.selected)").click();
 				} else if (e.shiftKey) {
 					// unselect everything
-					$(".select.nothing:not(.hidden)").click();
-					$(".select.everything.selected:not(.hidden)").click();
-					$(".select.everything-individual.selected:not(.hidden)").click();
-					// if (! $(".select.everything-individual").hasClass("hidden") && $(".select.everything-individual").hasClass("selected")) {
-					// 	$(".select.everything-individual").click();
-					// } else if (! $(".select.everything").hasClass("hidden") && $(".select.everything").hasClass("selected")) {
-					// 	$(".select.everything").click();
-					// }
+					$(".select.nothing").click();
 				}
 				return false;
 			}
@@ -476,7 +469,6 @@ $(document).ready(function() {
 						var matchingMedia = [];
 						for (let iMedia = 0; iMedia < env.mapAlbum.media.length; iMedia ++) {
 							// TO DO, BUG: it's not the media name to be used for matching, but the words in media name!!!!!!!
-							// TO DO: the description (caption) must be matched too
 							let words = util.normalizeAccordingToOptions(env.mapAlbum.media[iMedia].words);
 							if (
 								! env.options.search_any_word &&
@@ -511,6 +503,8 @@ $(document).ready(function() {
 					searchOptions += 'c' + env.options.search_options_separator;
 				if (env.options.search_accent_sensitive)
 					searchOptions += 'a' + env.options.search_options_separator;
+				if (env.options.search_tags_only)
+					searchOptions += 't' + env.options.search_options_separator;
 				if (env.options.search_current_album)
 					searchOptions += 'o' + env.options.search_options_separator;
 				bySearchViewHash += searchOptions + wordsString;
@@ -545,6 +539,7 @@ $(document).ready(function() {
 	$("li#any-word").on('click', util.toggleAnyWordSearch);
 	$("li#case-sensitive").on('click', util.toggleCaseSensitiveSearch);
 	$("li#accent-sensitive").on('click', util.toggleAccentSensitiveSearch);
+	$("li#tags-only").on('click', util.toggleTagsOnlySearch);
 	$("li#album-search").on('click', util.toggleCurrentAbumSearch);
 
 	$(".download-album.everything.all.full").on(
@@ -649,7 +644,7 @@ $(document).ready(function() {
 	// binds the click events to the sort buttons
 
 	$("ul#right-menu li.hide-title").on('click', tF.toggleTitle);
-	$("ul#right-menu li.hide-media-caption").on('click', tF.toggleCaption);
+	$("ul#right-menu li.hide-descriptions-and-tags").on('click', tF.toggleDescriptionsAndTags);
 	$("ul#right-menu li.hide-bottom-thumbnails").on('click', tF.toggleBottomThumbnails);
 	$("ul#right-menu li.slide").on('click', tF.toggleSlideMode);
 	$("ul#right-menu li.spaced").on('click', tF.toggleSpacing);

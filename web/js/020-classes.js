@@ -314,7 +314,8 @@
 								"captionForSearch",
 								"captionForSearchSorting",
 								"unicodeWords",
-								"words"
+								"words",
+								"tags"
 							];
 							properties.forEach(
 								function(property) {
@@ -462,7 +463,8 @@
 				'sizesOfAlbum',
 				'sizesOfSubTree',
 				'unicodeWords',
-				'words'
+				'words',
+				'tags'
 			];
 			var clonedAlbum = this.clone();
 			Object.keys(this).forEach(

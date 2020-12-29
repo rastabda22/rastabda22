@@ -377,6 +377,10 @@
 				$("ul#right-menu li#accent-sensitive").addClass("selected");
 			else
 				$("ul#right-menu li#accent-sensitive").removeClass("selected");
+			if (env.options.search_tags_only)
+				$("ul#right-menu li#tags-only").addClass("selected");
+			else
+				$("ul#right-menu li#tags-only").removeClass("selected");
 			if (util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || isPopup) {
 				$("ul#right-menu li#album-search").addClass("dimmed").off("click");
 			} else {
@@ -423,13 +427,13 @@
 		}
 
 		if (isMapOrPopup) {
-			$("ul#right-menu li.hide-media-caption").addClass("hidden");
+			$("ul#right-menu li.hide-descriptions-and-tags").addClass("hidden");
 		} else {
-			$("ul#right-menu li.hide-media-caption").removeClass("hidden");
-			if (env.options.hide_caption)
-				$("ul#right-menu li.hide-media-caption").addClass("selected");
+			$("ul#right-menu li.hide-descriptions-and-tags").removeClass("hidden");
+			if (env.options.hide_descriptions_and_tags)
+				$("ul#right-menu li.hide-descriptions-and-tags").addClass("selected");
 			else
-				$("ul#right-menu li.hide-media-caption").removeClass("selected");
+				$("ul#right-menu li.hide-descriptions-and-tags").removeClass("selected");
 		}
 
 		if (
@@ -549,7 +553,7 @@
 
 		if (
 			$("ul#right-menu li.hide-title").hasClass("hidden") &&
-			$("ul#right-menu li.hide-media-caption").hasClass("hidden") &&
+			$("ul#right-menu li.hide-descriptions-and-tags").hasClass("hidden") &&
 			$("ul#right-menu li.media-count").hasClass("hidden") &&
 			$("ul#right-menu li.spaced").hasClass("hidden") &&
 			$("ul#right-menu li.square-album-thumbnails").hasClass("hidden") &&
@@ -650,17 +654,17 @@
 			$(".select.no-albums").addClass("hidden");
 			$(".select.no-media").addClass("hidden");
 		}
-		if (noSubalbumIsSelected || everySubalbumIsSelected || noMediaIsSelected) {
+		if (! thisAlbum.subalbums.length || noSubalbumIsSelected || everySubalbumIsSelected || noMediaIsSelected) {
 			$(".select.no-albums").addClass("hidden");
 		}
-		if (noMediaIsSelected || everyMediaIsSelected || noSubalbumIsSelected) {
+		if (! thisAlbum.media.length || noMediaIsSelected || everyMediaIsSelected || noSubalbumIsSelected) {
 			$(".select.no-media").addClass("hidden");
 		}
 
 		if (isSingleMedia) {
 			$(".select.albums, .select.everything, .select.everything-individual", ".select.nothing", ".select.no-albums").addClass("hidden");
 		} else if (! thisAlbum.media.length || ! thisAlbum.subalbums.length) {
-			$(".select.media, .select.albums", ".select.no-media", ".select.no-albums").addClass("hidden");
+			$(".select.media, .select.albums, .select.no-media, .select.no-albums").addClass("hidden");
 		}
 
 		if (everySubalbumIsSelected) {
@@ -679,19 +683,17 @@
 			$(".select.everything, .select.media").addClass("hidden");
 		}
 
-		if (
-			! thisAlbum.subalbums.length
-			// ! thisAlbum.subalbums.length ||
-			// isTransversalAlbum && ! env.options.show_big_virtual_folders && thisAlbum.numsMediaInSubTree.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
-		) {
+		if (! thisAlbum.subalbums.length) {
 			$(".select.everything-individual").addClass("hidden");
 		} else {
 			let everythingIndividualPromise = thisAlbum.recursivelyAllMediaAreSelected();
 			everythingIndividualPromise.then(
-				function() {
+				function isTrue() {
 					$(".select.everything-individual").addClass("selected");
 				},
-				function() {}
+				function isFalse() {
+					// do nothing
+				}
 			);
 		}
 
@@ -700,20 +702,24 @@
 			"click",
 			function() {
 				if (thisAlbum.everySubalbumIsSelected() && thisAlbum.everyMediaIsSelected()) {
+					$("#working").show();
 					thisAlbum.removeAllMediaFromSelection();
 					let promise = thisAlbum.removeAllSubalbumsFromSelection();
 					promise.then(
 						function() {
+							$("#working").hide();
 							if (util.nothingIsSelected())
 								util.initializeSelectionAlbum();
 							Functions.updateMenu();
 						}
 					);
 				} else {
+					$("#working").show();
 					thisAlbum.addAllMediaToSelection();
 					let promise = thisAlbum.addAllSubalbumsToSelection();
 					promise.then(
 						function() {
+							$("#working").hide();
 							Functions.updateMenu();
 						}
 					);
@@ -724,12 +730,14 @@
 		$(".select.everything-individual:not(.hidden)").off("click").on(
 			"click",
 			function() {
+				$("#working").show();
 				let everythingIndividualPromise = thisAlbum.recursivelyAllMediaAreSelected();
 				everythingIndividualPromise.then(
-					function() {
+					function isTrue() {
 						let firstPromise = thisAlbum.recursivelyRemoveMedia();
 						firstPromise.then(
 							function() {
+								$("#working").hide();
 								if (util.nothingIsSelected())
 									util.initializeSelectionAlbum();
 								Functions.updateMenu();
@@ -742,10 +750,11 @@
 							}
 						);
 					},
-					function() {
+					function isFalse() {
 						let firstPromise = thisAlbum.recursivelySelectMedia();
 						firstPromise.then(
 							function() {
+								$("#working").hide();
 								$("#added-individually").stop().fadeIn(
 									1000,
 									function() {
@@ -777,10 +786,12 @@
 		$(".select.albums:not(.hidden)").off("click").on(
 			"click",
 			function() {
+				$("#working").show();
 				if (thisAlbum.everySubalbumIsSelected()) {
 					let promise = thisAlbum.removeAllSubalbumsFromSelection();
 					promise.then(
 						function() {
+							$("#working").hide();
 							if (util.nothingIsSelected())
 								util.initializeSelectionAlbum();
 							Functions.updateMenu();
@@ -790,6 +801,7 @@
 					var promise = thisAlbum.addAllSubalbumsToSelection();
 					promise.then(
 						function() {
+							$("#working").hide();
 							Functions.updateMenu();
 						}
 					);
@@ -800,10 +812,12 @@
 		$(".select.global-reset:not(.hidden)").on(
 			"click",
 			function() {
+				$("#working").show();
 				env.selectionAlbum.removeAllMediaFromSelection();
 				let subalbumsPromise = env.selectionAlbum.removeAllSubalbumsFromSelection();
 				subalbumsPromise.then(
 					function allSubalbumsRemoved() {
+						$("#working").hide();
 						if (util.nothingIsSelected())
 							util.initializeSelectionAlbum();
 						Functions.updateMenu();
@@ -815,10 +829,12 @@
 		$(".select.nothing:not(.hidden)").on(
 			"click",
 			function() {
+				$("#working").show();
 				thisAlbum.removeAllMediaFromSelection();
 				let subalbumsPromise = thisAlbum.removeAllSubalbumsFromSelection();
 				subalbumsPromise.then(
 					function allSubalbumsRemoved() {
+						$("#working").hide();
 						if (util.nothingIsSelected())
 							util.initializeSelectionAlbum();
 						Functions.updateMenu();
@@ -830,9 +846,11 @@
 		$(".select.no-albums:not(.hidden)").on(
 			"click",
 			function() {
+				$("#working").show();
 				let subalbumsPromise = thisAlbum.removeAllSubalbumsFromSelection();
 				subalbumsPromise.then(
 					function allSubalbumsRemoved() {
+						$("#working").hide();
 						if (util.nothingIsSelected())
 							util.initializeSelectionAlbum();
 						Functions.updateMenu();
@@ -1218,24 +1236,24 @@
 
 		var isPopup = $('.leaflet-popup').html() ? true : false;
 		if (env.currentMedia !== null && ! isPopup || ! env.options.show_media_names_below_thumbs)
-			$(".media-caption").addClass("hidden");
+			$(".thumb-and-caption-container .media-name").addClass("hidden-by-option");
 		else
-			$(".media-caption").removeClass("hidden");
+			$(".thumb-and-caption-container .media-name").removeClass("hidden-by-option");
 
 		if (env.options.show_album_media_count)
-			$(".title-count").removeClass("hidden");
+			$(".title-count").removeClass("hidden-by-option");
 		else
-			$(".title-count").addClass("hidden");
+			$(".title-count").addClass("hidden-by-option");
 
 		if (env.options.hide_title)
 			$(".title").addClass("hidden-by-option");
 		else
 			$(".title").removeClass("hidden-by-option");
 
-		if (env.options.hide_caption)
-			$("#caption").addClass("hidden-by-option");
+		if (env.options.hide_descriptions_and_tags)
+			$("#description").addClass("hidden-by-option");
 		else
-			$("#caption").removeClass("hidden-by-option");
+			$("#description").removeClass("hidden-by-option");
 
 		if (env.options.hide_bottom_thumbnails && (env.currentMedia != null || env.currentAlbum.isAlbumWithOneMedia())) {
 			$("#album-view").addClass("hidden-by-option");
@@ -1447,9 +1465,9 @@
 							if (titleCookie !== null)
 								env.options.hide_title = titleCookie;
 
-							var captionCookie = Functions.getBooleanCookie("hideCaption");
-							if (captionCookie !== null)
-								env.options.hide_caption = captionCookie;
+							var descriptionsCookie = Functions.getBooleanCookie("hideDescriptionsAndTags");
+							if (descriptionsCookie !== null)
+								env.options.hide_descriptions_and_tags = descriptionsCookie;
 
 							var bottomThumbnailsCookie = Functions.getBooleanCookie("hideBottomThumbnails");
 							if (bottomThumbnailsCookie !== null)
@@ -1510,6 +1528,11 @@
 							var searchAccentSensitiveCookie = Functions.getBooleanCookie("searchAccentSensitive");
 							if (searchAccentSensitiveCookie !== null)
 								env.options.search_accent_sensitive = searchAccentSensitiveCookie;
+
+							env.options.search_tags_only = false;
+							var searchTagsOnlyCookie = Functions.getBooleanCookie("searchTagsOnly");
+							if (searchTagsOnlyCookie !== null)
+								env.options.search_tags_only = searchTagsOnlyCookie;
 
 							env.options.search_current_album = true;
 							var searchCurrentAlbumCookie = Functions.getBooleanCookie("searchCurrentAlbum");
