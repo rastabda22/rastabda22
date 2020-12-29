@@ -677,13 +677,22 @@ video {
 	padding-top: 96px;
 }
 
-.media-name {
+.media-name, .media-real-name {
 	padding: 0 .5em;
 	margin: 0 0 0 0;
 	color: lime;
 	font-weight: bold;
 	font-size: 110%;
 	font-style: italic;
+}
+
+.leaflet-popup .media-name {
+	color: gray !important;
+}
+
+.media-real-name {
+	color: gray;
+	padding: 0;
 }
 
 .thumb-and-caption-container {

@@ -145,10 +145,29 @@
 						"<span class='helper'></span>" +
 						img.prop("outerHTML") +
 					"</div>" +
-					"<div class='media-caption'>" +
-						"<span>" +
-						ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
-						"</span>" +
+					"<div class='media-caption'>";
+			if (ithMedia.metadata.hasOwnProperty("title")) {
+				imageString +=
+						"<span title='" + util.escapeSingleQuotes(ithMedia.name) + "' class='media-name'>" +
+							"<span>" +
+								ithMedia.metadata.title.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+							"</span>" +
+						"</span>";
+			} else {
+				imageString +=
+						"<span class='media-name'>" +
+							"<span>" +
+								ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+							"</span>" +
+						"</span>";
+			}
+			if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
+				imageString +=
+						"<div class='media-tags'>" +
+							"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithMedia.metadata.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>" +
+						"</div>";
+			}
+			imageString +=
 					"</div>" +
 				"</div>";
 

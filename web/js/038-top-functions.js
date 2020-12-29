@@ -666,7 +666,11 @@
 						if (singleMedia !== null || env.currentAlbum.isAlbumWithOneMedia()) {
 							if (singleMedia === null)
 								singleMedia = currentAlbum.media[0];
-							title += "<span class='media-name'>" + singleMedia.name + "</span>";
+							if (singleMedia.metadata.hasOwnProperty("title")) {
+								title += "<span class='media-name'>" + singleMedia.metadata.title + "</span><span class='media-real-name'>(" + singleMedia.name + ")</span>";
+							} else {
+								title += "<span class='media-name'>" + singleMedia.name + "</span>";
+							}
 							// close the .title-main span
 							title += "</span>";
 							if (env.currentMedia.hasGpsData()) {
@@ -2252,24 +2256,26 @@
 								"<span class='helper'></span>" +
 								img.prop("outerHTML") +
 							"</div>" +
-							"<div class='media-caption'>" +
-								"<span>";
-					imageString +=
-									ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>");
-					imageString +=
+							"<div class='media-caption'>";
+					if (ithMedia.metadata.hasOwnProperty("title")) {
+						imageString +=
+								"<span title='" + util.escapeSingleQuotes(ithMedia.name) + "' class='media-name'>" +
+									"<span>" +
+										ithMedia.metadata.title.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+									"</span>" +
 								"</span>";
+					} else {
+						imageString +=
+								"<span class='media-name'>" +
+									"<span>" +
+										ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+									"</span>" +
+								"</span>";
+					}
 					if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
 						imageString +=
-								"<div class='media-tags' " +
-									"style='" +
-										// "font-size: " + Math.round((env.captionFontSize / 1.5)) + "px; " +
-										// "height: " + env.captionHeight + "px; " +
-										// "color: " + env.captionColor + ";" +
-									"'" +
-								">";
-						imageString +=
-									"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithMedia.metadata.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>";
-						imageString +=
+								"<div class='media-tags'>" +
+									"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithMedia.metadata.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>" +
 								"</div>";
 					}
 					imageString +=
