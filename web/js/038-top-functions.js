@@ -1050,7 +1050,7 @@
 									f.pinchSwipeInitialization();
 									util.setPinchButtonsPosition();
 								}
-								util.setCaptionPosition('media');
+								util.setDescriptionPosition('media');
 								util.setSelectButtonPosition();
 								util.correctPrevNextPosition();
 							}
@@ -1117,10 +1117,10 @@
 				$("#" + id + " .title").removeClass("hidden-by-fullscreen");
 			}
 
-			if (env.options.hide_caption) {
-				$("#caption").addClass("hidden-by-option");
+			if (env.options.hide_descriptions_and_tags) {
+				$("#description").addClass("hidden-by-option");
 			} else {
-				$("#caption").removeClass("hidden-by-option");
+				$("#description").removeClass("hidden-by-option");
 			}
 
 			if (env.options.hide_bottom_thumbnails) {
@@ -1259,8 +1259,8 @@
 									if (id === "center") {
 										util.setSelectButtonPosition();
 										util.correctPrevNextPosition();
-										util.setCaption(self.metadata.title, self.metadata.description, self.metadata.tags);
-										util.setCaptionPosition('media');
+										util.setDescription(self.metadata.title, self.metadata.description, self.metadata.tags);
+										util.setDescriptionPosition('media');
 									}
 									// if (self.mimeType.indexOf("image/") === 0) {
 									loadNextPrevMedia(self, containerHeight, containerWidth);
@@ -1443,8 +1443,8 @@
 
 				if (id === "center") {
 					// if (self != null) {
-					// 	util.setCaption(self.metadata.title, self.metadata.description, self.metadata.tags);
-					// 	util.setCaptionPosition('media');
+					// 	util.setDescription(self.metadata.title, self.metadata.description, self.metadata.tags);
+					// 	util.setDescriptionPosition('media');
 					// }
 
 					f.updateMenu();
@@ -1707,14 +1707,14 @@
 		return false;
 	};
 
-	TopFunctions.prototype.toggleTitleThumbnailAndCaption = function(ev) {
+	TopFunctions.prototype.toggleTitleAndBottomThumbnailsAndDescriptionsAndTags = function(ev) {
 		// if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 		env.options.hide_title = ! env.options.hide_title;
 		f.setBooleanCookie("hideTitle", env.options.hide_title);
 		env.options.hide_bottom_thumbnails = ! env.options.hide_bottom_thumbnails;
 		f.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
-		env.options.hide_caption = ! env.options.hide_caption;
-		f.setBooleanCookie("hideCaption", env.options.hide_caption);
+		env.options.hide_descriptions_and_tags = ! env.options.hide_descriptions_and_tags;
+		f.setBooleanCookie("hideDescriptionsAndTags", env.options.hide_descriptions_and_tags);
 		f.updateMenu();
 		if (env.options.hide_title) {
 			$(".title").addClass("hidden-by-option");
@@ -1726,10 +1726,10 @@
 		} else {
 			$("#album-view").removeClass("hidden-by-option");
 		}
-		if (env.options.hide_caption) {
-			$("#caption").addClass("hidden-by-option");
+		if (env.options.hide_descriptions_and_tags) {
+			$("#description").addClass("hidden-by-option");
 		} else {
-			$("#caption").removeClass("hidden-by-option");
+			$("#description").removeClass("hidden-by-option");
 		}
 		if (! $("#thumbs").children().length)
 			$("#album-view").addClass("media-view-container");
@@ -1824,15 +1824,15 @@
 		return false;
 	};
 
-	TopFunctions.prototype.toggleCaption = function(ev) {
+	TopFunctions.prototype.toggleDescriptionsAndTags = function(ev) {
 		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-			env.options.hide_caption = ! env.options.hide_caption;
-			f.setBooleanCookie("hideCaption", env.options.hide_caption);
+			env.options.hide_descriptions_and_tags = ! env.options.hide_descriptions_and_tags;
+			f.setBooleanCookie("hideDescriptionsAndTags", env.options.hide_descriptions_and_tags);
 			f.updateMenu();
-			if (env.options.hide_caption) {
-				$("#caption").addClass("hidden-by-option");
+			if (env.options.hide_descriptions_and_tags) {
+				$("#description").addClass("hidden-by-option");
 			} else {
-				$("#caption").removeClass("hidden-by-option");
+				$("#description").removeClass("hidden-by-option");
 				TopFunctions.showAlbum("refreshMedia");
 			}
 			if (env.currentMedia !== null) {
@@ -2085,7 +2085,7 @@
 		var scrollBarWidth = window.innerWidth - document.body.clientWidth || 15;
 		var tooBig = false, isTransversalAlbum;
 		var mapLinkIcon, selectBoxHtml, selectSrc, titleSelector, id;
-		var caption, captionHtml, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
+		var description, descriptionHtml, buttonAndCaptionHeight, albumButtonAndCaptionHtml, heightfactor;
 
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
@@ -2449,11 +2449,11 @@
 								if (nameHtml === "")
 									nameHtml = "<span class='italic'>(" + util._t("#root-album") + ")</span>";
 
-								captionHtml = "<div class='album-caption";
+								descriptionHtml = "<div class='album-caption";
 								if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs)
-									captionHtml += " hidden";
+									descriptionHtml += " hidden";
 								let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
-								captionHtml += "' id='" + captionId + "' " +
+								descriptionHtml += "' id='" + captionId + "' " +
 															"style='" +
 																"width: " + env.correctedAlbumThumbSize + "px; " +
 																"font-size: " + env.captionFontSize + "px; " +
@@ -2466,23 +2466,23 @@
 												"</div>";
 
 
-								captionHtml += "<div class='album-caption-count";
+								descriptionHtml += "<div class='album-caption-count";
 								if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs || ! env.options.show_album_media_count)
-									captionHtml += " hidden";
-								captionHtml += "' " +
+									descriptionHtml += " hidden";
+								descriptionHtml += "' " +
 											"style='" +
 												"font-size: " + Math.round((env.captionFontSize / 1.5)) + "px; " +
 												"height: " + env.captionHeight + "px; " +
 												"color: " + env.captionColor + ";" +
 											"'" +
 										">(";
-								captionHtml +=		ithSubalbum.numsMediaInSubTree.imagesAndVideosTotal();
-								captionHtml +=		" <span class='title-media'>";
-								captionHtml +=		util._t(".title-media");
-								captionHtml +=		"</span>";
-								captionHtml += ")</div>";
+								descriptionHtml +=		ithSubalbum.numsMediaInSubTree.imagesAndVideosTotal();
+								descriptionHtml +=		" <span class='title-media'>";
+								descriptionHtml +=		util._t(".title-media");
+								descriptionHtml +=		"</span>";
+								descriptionHtml += ")</div>";
 
-								caption = $(captionHtml);
+								description = $(descriptionHtml);
 
 								selectSrc = 'img/checkbox-unchecked-48px.png';
 								titleSelector = "#select-subalbum";
@@ -2570,7 +2570,7 @@
 									"</div>"
 								);
 								linkContainer.append(imageElement);
-								linkContainer.append(caption);
+								linkContainer.append(description);
 								aHrefHtmlContainer.append(linkContainer);
 
 								// subalbumsElement.append(linkContainer);
@@ -2657,13 +2657,13 @@
 							f.socialButtons();
 							adaptCaptionHeight();
 
-							// When there is both a media and an album, we display the media's caption; else it's the album's one
+							// When there is both a media and an album, we display the media's description; else it's the album's one
 							if (env.currentMedia === null) {
-								util.setCaption(env.currentAlbum.title, env.currentAlbum.description, env.currentAlbum.tags);
-								util.setCaptionPosition('album');
+								util.setDescription(env.currentAlbum.title, env.currentAlbum.description, env.currentAlbum.tags);
+								util.setDescriptionPosition('album');
 							} else {
-								util.setCaption(env.currentMedia.metadata.title, env.currentMedia.metadata.description, env.currentMedia.metadata.description);
-								util.setCaptionPosition('media');
+								util.setDescription(env.currentMedia.metadata.title, env.currentMedia.metadata.description, env.currentMedia.metadata.description);
+								util.setDescriptionPosition('media');
 							}
 						},
 						function() {

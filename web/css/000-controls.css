@@ -490,7 +490,7 @@ video {
 	display: none;
 }
 
-#caption {
+#description {
 	position: fixed;
 	z-index: 1;
 	/*top: 80%;*/
@@ -507,7 +507,7 @@ video {
 	line-height: 1em;
 }
 
-#caption-tags {
+#description-tags {
 	font-size: 90%;
 	color: red;
 	text-align: right;
@@ -547,28 +547,28 @@ video {
 	color: gray;
 }
 
-#caption-title, #caption-tags {
+#description-title, #description-tags {
 	position: relative;
 	height: auto;
 }
 
-#caption-title {
+#description-title {
 	top: 0;
 	font-weight: bold;
 }
 
-#caption-description {
+#description-text {
 	overflow-y: auto;
 	color: #FFAD27;
 }
 
-#caption-tags {
+#description-tags {
 	bottom: 0;
 	margin-top: .5em;
 	margin-bottom: .5em;
 }
 
-#caption-title p, #caption-description p, #caption-description ul {
+#description-title p, #description-text p, #description-text ul {
 	color: #FFFFFF;
 	margin-bottom: 0.3em;
 	margin-top: 0.3em;
@@ -788,7 +788,6 @@ ul#right-menu li.caption, ul#right-menu li:not(.active) {
 	cursor: default;
 }
 
-/* ul#right-menu li.caption, ul#right-menu li.active { */
 ul#right-menu li span.caption:not(.expanded), ul#right-menu li ul:not(.hidden) li.radio:not(.selected), ul#right-menu li ul:not(.hidden) li:not(.radio) {
 	cursor: pointer;
 }

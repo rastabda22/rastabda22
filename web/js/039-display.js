@@ -116,10 +116,10 @@ $(document).ready(function() {
 					if (e.key === "h") {
 						e.preventDefault();
 						if (pS.getCurrentZoom() === pS.getInitialZoom() && ! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
-							tF.toggleTitleThumbnailAndCaption(e);
+							tF.toggleTitleAndBottomThumbnailsAndDescriptionsAndTags(e);
 							// $("ul#right-menu li.hide-title")[0].click();
 							// $("ul#right-menu li.hide-bottom-thumbnails")[0].click();
-							// $("ul#right-menu li.hide-media-caption")[0].click();
+							// $("ul#right-menu li.hide-descriptions-and-tags")[0].click();
 							return false;
 						}
 					} else if (e.key === "ArrowRight" && (pS.getCurrentZoom() !== pS.getInitialZoom() || env.prevMedia) && env.currentMedia !== null && ! isMap) {
@@ -469,7 +469,6 @@ $(document).ready(function() {
 						var matchingMedia = [];
 						for (let iMedia = 0; iMedia < env.mapAlbum.media.length; iMedia ++) {
 							// TO DO, BUG: it's not the media name to be used for matching, but the words in media name!!!!!!!
-							// TO DO: the description (caption) must be matched too
 							let words = util.normalizeAccordingToOptions(env.mapAlbum.media[iMedia].words);
 							if (
 								! env.options.search_any_word &&
@@ -645,7 +644,7 @@ $(document).ready(function() {
 	// binds the click events to the sort buttons
 
 	$("ul#right-menu li.hide-title").on('click', tF.toggleTitle);
-	$("ul#right-menu li.hide-media-caption").on('click', tF.toggleCaption);
+	$("ul#right-menu li.hide-descriptions-and-tags").on('click', tF.toggleDescriptionsAndTags);
 	$("ul#right-menu li.hide-bottom-thumbnails").on('click', tF.toggleBottomThumbnails);
 	$("ul#right-menu li.slide").on('click', tF.toggleSlideMode);
 	$("ul#right-menu li.spaced").on('click', tF.toggleSpacing);

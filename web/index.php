@@ -539,12 +539,12 @@
 	<div id="by-name-media-sorting" class="sort-message"></div>
 	<div id="by-name-reverse-media-sorting" class="sort-message"></div>
 
-	<div id="caption">
-		<div id="caption-title"></div>
-		<div id="caption-description">
+	<div id="description">
+		<div id="description-title"></div>
+		<div id="description-text">
 			<div class="description"></div>
 		</div>
-		<div id="caption-tags"></div>
+		<div id="description-tags"></div>
 	</div>
 
 </body>

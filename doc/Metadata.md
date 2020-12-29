@@ -46,7 +46,7 @@ To do so, place a file name `album.ini` in the directory containing the picture 
 In a section, you can then set metadata values that will apply for the media file, the album or all media files. The values in the media files are not changed in the files but overloaded by the values specified in `album.ini` by the scanner script and stored in the JSON files used by the web application.
 
 Supported metadata selectors are:
-* `title`: To give a title to the photo, video or album. For the moment, this information is only displayed in the Metadata drawer window, but the goal would be to replace the filename used as caption.
+* `title`: To give a title to the photo, video or album. For the moment, this information is only displayed in the Metadata drawer window, but the goal would be to replace the filename.
 * `description`: A long description of the media. The description can span multiple lines if enclosed in quotes or if the subsequent lines are indented. A future development would be to implement a search feature and find pictures or videos whose description contains the search terms...
 * `date`: The date the photo was taken, in the format YYYY-MM-DD.
 * `latitude`: The latitude of the media, for instance if the media was not geotagged when captured. You can use numerous web sites to find the latitude and longitude of places from a map. Examples are https://www.latlong.net/ or https://www.gps-coordinates.org/.
@@ -75,7 +75,7 @@ The algorithm used is:
       Search value in section [<media_filename>] else in [DEFAULT]
     Else:
       Search value in [DEFAULT]
-  
+
   For album metadata
     If section [album] exists:
       Search value in [album] else in [DEFAULT]
@@ -117,7 +117,7 @@ place_name = Montreal
 # If a metadata is not defined in that section, it will use the ones defined in [DEFAULT],
 # currently 'latitude' and 'longitude' for Montreal.
 [20171030_083915.jpg]
-# We give a caption to the picture instead of using filename.
+# We give a description to the picture instead of using filename.
 title = From the airport
 
 # The description allows us to use a short text associated with the picture.
