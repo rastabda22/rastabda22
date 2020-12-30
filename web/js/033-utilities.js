@@ -2705,6 +2705,8 @@
 
 	Utilities.prototype.setSelectButtonPosition = function(containerHeight, containerWidth) {
 		// calculate and set pinch buttons position
+		if ($(".select-box").attr("src") === undefined)
+			return;
 
 		var mediaElement = $(".media-box#center .media-box-inner img");
 		var actualHeight = mediaElement.height();
@@ -2960,8 +2962,10 @@
 			$("#description").css("bottom", 0);
 			$("#description").css("height", "");
 			$("#description").css("max-height", "");
-			$("#description").css("height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
-			$("#description").css("max-height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
+			$("#description").css("bottom", (env.windowHeight / 10) + "px");
+			// $("#description").css("height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
+			$("#description").css("height", "auto");
+			$("#description").css("max-height", (env.windowHeight / 3) + "px");
 		}
 	};
 
