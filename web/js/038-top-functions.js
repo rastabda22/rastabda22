@@ -1023,9 +1023,9 @@
 				if (self.mimeType.indexOf("image/") === 0) {
 					pS.addMediaGesturesDetection();
 					util.setPinchButtonsPosition();
-					util.setSelectButtonPosition();
-					util.correctPrevNextPosition();
 				}
+				util.correctPrevNextPosition();
+				util.setSelectButtonPosition();
 
 				if (album.numsMedia.imagesAndVideosTotal() > 1) {
 					env.prevMedia.show(album, 'left');
@@ -1054,8 +1054,8 @@
 									f.pinchSwipeInitialization();
 									util.setPinchButtonsPosition();
 								}
-								util.setDescriptionPosition('media');
 								util.setSelectButtonPosition();
+								util.setDescriptionPosition('media');
 								util.correctPrevNextPosition();
 							}
 						);
@@ -1242,8 +1242,10 @@
 						$("head").append(self.createMediaLinkTag(mediaSrc));
 					}
 
-					if (id === "center")
+					if (id === "center") {
 						$(mediaBoxInnerElement).css("opacity", 1);
+						util.setDescription(self.metadata.title, self.metadata.description, self.metadata.tags);
+					}
 
 					// var self = self;
 					$(mediaSelector).off(loadEvent).on(
@@ -1257,14 +1259,13 @@
 							let scalePromise = self.scale(event);
 							scalePromise.then(
 								function([containerHeight, containerWidth]) {
-									if (self.mimeType.indexOf("image/") === 0) {
-										util.setPinchButtonsPosition();
-									}
 									if (id === "center") {
+										if (self.mimeType.indexOf("image/") === 0) {
+											util.setPinchButtonsPosition();
+										}
 										util.setSelectButtonPosition();
-										util.correctPrevNextPosition();
-										util.setDescription(self.metadata.title, self.metadata.description, self.metadata.tags);
 										util.setDescriptionPosition('media');
+										util.correctPrevNextPosition();
 									}
 									// if (self.mimeType.indexOf("image/") === 0) {
 									loadNextPrevMedia(self, containerHeight, containerWidth);

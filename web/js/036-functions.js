@@ -1265,8 +1265,8 @@
 	Functions.prototype.pinchSwipeInitialization = function() {
 		pS.initialize();
 		util.setPinchButtonsPosition();
-		util.correctPrevNextPosition();
 		util.setSelectButtonPosition();
+		util.correctPrevNextPosition();
 	};
 
 	Functions.threeYears = function() {
