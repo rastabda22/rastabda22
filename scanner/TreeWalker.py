@@ -216,29 +216,33 @@ class TreeWalker:
 				self.all_albums_to_json_file(subalbum, complex_identifiers_combination)
 
 		if (
+			complex_identifiers_combination is None and
 			album.nums_media_in_sub_tree.total() == 0 and (
 				album.cache_base.find(Options.config['by_search_string']) != 0 or
-				album.cache_base != Options.config['by_search_string'] and
-				(
-					complex_identifiers_combination is None and
-					all(subalbum.nums_protected_media_in_sub_tree.value(',').total() == 0 for subalbum in album.subalbums)
-					or
-					complex_identifiers_combination is not None and
-					all(
-						complex_identifiers_combination in subalbum.nums_protected_media_in_sub_tree.non_trivial_keys() and
-						subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination).total() == 0
-						for subalbum in album.subalbums)
-				)
+				album.cache_base != Options.config['by_search_string']
+				# album.cache_base != Options.config['by_search_string'] and
+				# all(subalbum.nums_protected_media_in_sub_tree.value(',').total() == 0 for subalbum in album.subalbums)
 			)
 		):
-		# if len(album.subalbums) == 0 and len(album.media_list) == 0:
-			if complex_identifiers_combination is None:
-				indented_message("empty album, not saving it", album.absolute_path, 4)
-			else:
-				indented_message("empty protected album, not saving it", album.absolute_path, 4)
+			indented_message("empty album, not saving it", album.absolute_path, 4)
 			return
 
 		if complex_identifiers_combination is not None:
+			if (
+				album.nums_media_in_sub_tree.total() == 0 and (
+					album.cache_base.find(Options.config['by_search_string']) != 0 or
+					album.cache_base != Options.config['by_search_string']
+					# album.cache_base != Options.config['by_search_string'] and
+					# all(
+					# 	complex_identifiers_combination in subalbum.nums_protected_media_in_sub_tree.non_trivial_keys() and
+					# 	subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination).total() == 0
+					# 	for subalbum in album.subalbums
+					# )
+				)
+			):
+				indented_message("empty protected album, not saving it", album.absolute_path, 4)
+				return
+
 			album_identifiers_combination, media_identifiers_combination = complex_identifiers_combination.split(',')
 
 			if (
@@ -591,9 +595,9 @@ class TreeWalker:
 				# else:
 				# 	by_search_max_file_date = single_album.date
 
-				word_album.nums_protected_media_in_sub_tree.merge(single_album.nums_protected_media_in_sub_tree)
-				word_album.sizes_protected_media_in_sub_tree.merge(single_album.sizes_protected_media_in_sub_tree)
-				word_album.sizes_protected_media_in_album.merge(single_album.sizes_protected_media_in_album)
+				# word_album.nums_protected_media_in_sub_tree.merge(single_album.nums_protected_media_in_sub_tree)
+				# word_album.sizes_protected_media_in_sub_tree.merge(single_album.sizes_protected_media_in_sub_tree)
+				# word_album.sizes_protected_media_in_album.merge(single_album.sizes_protected_media_in_album)
 
 			word_album.unicode_words = media_album_and_words["unicode_words"]
 			Options.all_albums.append(word_album)
