@@ -721,6 +721,7 @@ video {
 .media-real-name {
 	color: gray;
 	padding: 0;
+	font-size: 80%;
 }
 
 .media-description {

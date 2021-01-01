@@ -2596,7 +2596,10 @@
 			else
 				folderName = subalbum.name;
 		} else {
-			folderName = subalbum.name;
+			if (subalbum.hasOwnProperty("title") && subalbum.title !== subalbum.name)
+				folderName = subalbum.title + "<br /><span class='media-real-name'>(" + subalbum.name + ")</span>";
+			else
+				folderName = subalbum.name;
 		}
 
 		if (this.isSelection())
