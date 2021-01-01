@@ -2172,27 +2172,16 @@
 	};
 
 	Utilities.scrollToThumb = function() {
-		var media, thumb;
+		var singleMedia, thumb;
 
-		media = env.currentMedia;
-		if (media === null) {
-			media = env.previousMedia;
-			if (media === null)
+		singleMedia = env.currentMedia;
+		if (singleMedia === null) {
+			singleMedia = env.previousMedia;
+			if (singleMedia === null)
 				return;
 		}
 		$("#thumbs img.thumbnail").each(function() {
-			if (
-				this.title === Utilities.pathJoin([media.albumName, media.name])
-				// this.title === Utilities.pathJoin([media.albumName, media.name]) && (
-				// 	env.currentAlbum.isFolder() ||
-				// 	env.currentAlbum.cacheBase === env.options.folders_string ||
-				// 	env.currentAlbum.isByDate() ||
-				// 	env.currentAlbum.isByGps() ||
-				// 	env.currentAlbum.isSearch() ||
-				// 	env.currentAlbum.isMap() ||
-				// 	env.currentAlbum.isSelection()
-				// )
-			) {
+			if (this.title === Utilities.pathJoin([singleMedia.albumName, singleMedia.name])) {
 				thumb = $(this);
 				return false;
 			}
