@@ -666,7 +666,7 @@
 						if (singleMedia !== null || env.currentAlbum.isAlbumWithOneMedia()) {
 							if (singleMedia === null)
 								singleMedia = currentAlbum.media[0];
-							if (singleMedia.metadata.hasOwnProperty("title")) {
+							if (singleMedia.metadata.hasOwnProperty("title") && singleMedia.metadata.title !== singleMedia.name) {
 								title += "<span class='media-name'>" + singleMedia.metadata.title + "</span><span class='media-real-name'>(" + singleMedia.name + ")</span>";
 							} else {
 								title += "<span class='media-name'>" + singleMedia.name + "</span>";
@@ -2227,7 +2227,7 @@
 								img.prop("outerHTML") +
 							"</div>" +
 							"<div class='media-caption'>";
-					if (ithMedia.metadata.hasOwnProperty("title")) {
+					if (ithMedia.metadata.hasOwnProperty("title") && ithMedia.metadata.title !== ithMedia.name) {
 						imageString +=
 								"<span title='" + util.escapeSingleQuotes(ithMedia.name) + "' class='media-name'>" +
 									"<span>" +
