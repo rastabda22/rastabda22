@@ -1899,7 +1899,7 @@
 		return env.currentMedia.mediaPath(nextReductionSize);
 	};
 
-	SingleMedia.prototype.createMediaHtml = function(id, fullScreenStatus) {
+	SingleMedia.prototype.createMediaHtml = function(album, id, fullScreenStatus) {
 		// creates a media element that can be inserted in DOM (e.g. with append/prepend methods)
 
 		// the actual sizes of the image
@@ -1939,7 +1939,7 @@
 			if (env.currentAlbum.isFolder())
 				mediaElement.attr("title", this.date);
 			else
-				mediaElement.attr("title", Utilities.pathJoin([this.albumName, this.name]));
+				mediaElement.attr("title", Utilities.pathJoin([this.albumName, this.nameForShowing(album)]));
 		}
 
 		mediaElement
@@ -1948,7 +1948,7 @@
 			.attr("height", attrHeight)
 			.attr("ratio", mediaWidth / mediaHeight)
 			.attr("src", encodeURI(mediaSrc))
-			.attr("alt", this.name);
+			.attr("alt", this.nameForShowing(album));
 
 		return mediaElement[0].outerHTML;
 	};
@@ -2563,48 +2563,48 @@
 			}
 		}
 
-		var captionForCollection = Utilities.combineFirstAndSecondLine(singleMedia.name, secondLine);
-		var captionForCollectionSorting = singleMedia.name + env.options.cache_folder_separator + Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
+		var captionForCollection = Utilities.combineFirstAndSecondLine(singleMedia.nameForShowing(album, true, true), secondLine);
+		var captionForCollectionSorting = singleMedia.nameForShowing(album) + env.options.cache_folder_separator + Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
 		return [captionForCollection, captionForCollectionSorting];
 	};
 
-	Album.prototype.subalbumName = function(subalbum) {
+	Album.prototype.nameForShowing = function(parentAlbum) {
 		var folderName = '';
-		if (this.isSelection() && subalbum.hasOwnProperty("captionForSelection")) {
-			folderName = subalbum.captionForSelection;
-		} else if (this.isSearch() && subalbum.hasOwnProperty("captionForSearch")) {
-			folderName = subalbum.captionForSearch;
-		} else if (this.isByDate()) {
-			let folderArray = subalbum.cacheBase.split(env.options.cache_folder_separator);
+		if (parentAlbum.isSelection() && this.hasOwnProperty("captionForSelection")) {
+			folderName = this.captionForSelection;
+		} else if (parentAlbum.isSearch() && this.hasOwnProperty("captionForSearch")) {
+			folderName = this.captionForSearch;
+		} else if (parentAlbum.isByDate()) {
+			let folderArray = this.cacheBase.split(env.options.cache_folder_separator);
 			if (folderArray.length === 2) {
 				folderName += parseInt(folderArray[1]);
 			} else if (folderArray.length === 3)
 				folderName += " " + Utilities._t("#month-" + folderArray[2]);
 			else if (folderArray.length === 4)
 				folderName += Utilities._t("#day") + " " + parseInt(folderArray[3]);
-		} else if (this.isByGps()) {
-			if (subalbum.name === '')
+		} else if (parentAlbum.isByGps()) {
+			if (this.name === '')
 				folderName = Utilities._t('.not-specified');
-			else if (subalbum.hasOwnProperty('altName'))
-				folderName = Utilities.transformAltPlaceName(subalbum.altName);
+			else if (this.hasOwnProperty('altName'))
+				folderName = Utilities.transformAltPlaceName(this.altName);
 			else
-				folderName = subalbum.name;
+				folderName = this.name;
 		} else {
-			if (subalbum.hasOwnProperty("title") && subalbum.title !== subalbum.name)
-				folderName = subalbum.title + "<br /><span class='media-real-name'>(" + subalbum.name + ")</span>";
+			if (this.hasOwnProperty("title") && this.title !== this.name)
+				folderName = this.title + "<br /><span class='media-real-name'>(" + this.name + ")</span>";
 			else
-				folderName = subalbum.name;
+				folderName = this.name;
 		}
 
-		if (this.isSelection())
-			subalbum.captionForSelection = folderName;
-		else if (this.isSearch())
-			subalbum.captionForSearch = folderName;
+		if (parentAlbum.isSelection())
+			this.captionForSelection = folderName;
+		else if (parentAlbum.isSearch())
+			this.captionForSearch = folderName;
 
 		return folderName;
 	};
 
-	SingleMedia.prototype.mediaName = function(album) {
+	SingleMedia.prototype.nameForShowing = function(album, html = false, br = false) {
 		var mediaName = '';
 		if ((album.isSelection()) && this.hasOwnProperty("captionForSelection")) {
 			mediaName = this.captionForSelection;

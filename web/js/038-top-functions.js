@@ -671,13 +671,7 @@
 						if (singleMedia !== null || env.currentAlbum.isAlbumWithOneMedia()) {
 							if (singleMedia === null)
 								singleMedia = currentAlbum.media[0];
-							if (singleMedia.metadata.hasOwnProperty("title") && singleMedia.metadata.title !== singleMedia.name) {
-								title += "<span class='media-name'>" + singleMedia.metadata.title + "</span><span class='media-real-name'>(" + singleMedia.name + ")</span>";
-							} else {
-								title += "<span class='media-name'>" + singleMedia.name + "</span>";
-							}
-							// close the .title-main span
-							title += "</span>";
+							title += "<span class='media-name'>" + singleMedia.nameForShowing(env.currentAlbum, true) + "</span>";
 							if (env.currentMedia.hasGpsData()) {
 								title += "<a class='map-popup-trigger'>" +
 								"<img class='title-img' title='" + util.escapeSingleQuotes(util._t("#show-on-map")) + " [s]' alt='" + util.escapeSingleQuotes(util._t("#show-on-map")) + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
@@ -782,7 +776,7 @@
 						if (setDocumentTitle) {
 							// keep generating the html page title
 							if (singleMedia !== null)
-								documentTitle = singleMedia.name + documentTitle;
+								documentTitle = singleMedia.nameForShowing(env.currentAlbum) + documentTitle;
 							else if (env.currentAlbum !== null && ! env.currentAlbum.subalbums.length && env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1)
 								documentTitle = util.trimExtension(env.currentAlbum.media[0].name) + " \u00ab " + documentTitle;
 
@@ -1240,7 +1234,7 @@
 					}
 					// is the following line correct for videos?
 					mediaSrc = self.chooseMediaReduction(id, env.fullScreenStatus);
-					mediaHtml = self.createMediaHtml(id, env.fullScreenStatus);
+					mediaHtml = self.createMediaHtml(album, id, env.fullScreenStatus);
 
 					loadEvent = self.chooseTriggerEvent();
 
@@ -2065,7 +2059,7 @@
 			// } else if (env.currentAlbum.isSearch()) {
 			// 	titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
 			} else {
-				titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
+				titleName = util.pathJoin([randomMedia.albumName, randomMedia.nameForShowing(randomSubAlbum)]);
 			}
 			randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia);
 
@@ -2216,7 +2210,7 @@
 						thumbWidth = thumbnailSize;
 						calculatedWidth = env.options.media_thumb_size;
 					}
-					imgTitle = util.pathJoin([ithMedia.albumName, ithMedia.name]);
+					imgTitle = util.pathJoin([ithMedia.albumName, ithMedia.nameForShowing(env.currentAlbum)]);
 					calculatedHeight = env.options.media_thumb_size;
 
 					var albumViewPadding = $("#album-view").css("padding");
@@ -2271,7 +2265,7 @@
 										 "'" +
 								"/>";
 					img = $(imgString);
-					img.attr("title", imgTitle).attr("alt", util.trimExtension(ithMedia.name));
+					img.attr("title", imgTitle).attr("alt", util.trimExtension(ithMedia.nameForShowing(env.currentAlbum)));
 
 					imageString =
 						"<div class='thumb-and-caption-container' style='" +
@@ -2288,21 +2282,21 @@
 								img.prop("outerHTML") +
 							"</div>" +
 							"<div class='media-caption'>";
-					if (ithMedia.metadata.hasOwnProperty("title") && ithMedia.metadata.title !== ithMedia.name) {
-						imageString +=
-								"<span title='" + util.escapeSingleQuotes(ithMedia.name) + "' class='media-name'>" +
+					// if (ithMedia.metadata.hasOwnProperty("title") && ithMedia.metadata.title !== ithMedia.name) {
+					imageString +=
+								"<span title='" + util.escapeSingleQuotes(ithMedia.nameForShowing(env.currentAlbum)) + "' class='media-name'>" +
 									"<span>" +
-										ithMedia.metadata.title.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+										ithMedia.nameForShowing(env.currentAlbum, true, true).replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
 									"</span>" +
 								"</span>";
-					} else {
-						imageString +=
-								"<span class='media-name'>" +
-									"<span>" +
-										ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
-									"</span>" +
-								"</span>";
-					}
+					// } else {
+					// 	imageString +=
+					// 			"<span class='media-name'>" +
+					// 				"<span>" +
+					// 					ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+					// 				"</span>" +
+					// 			"</span>";
+					// }
 					if (ithMedia.metadata.hasOwnProperty("description")) {
 						imageString +=
 								"<div class='media-description'>" +
@@ -2358,7 +2352,7 @@
 						let parentAlbumPromise = phFl.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
 						parentAlbumPromise.then(
 							function(parentAlbum) {
-								$("#" + imageId + " .media-name").html(ithMedia.mediaName(env.currentAlbum));
+								$("#" + imageId + " .media-name").html(ithMedia.nameForShowing(env.currentAlbum));
 							}
 						);
 					}
@@ -2491,7 +2485,7 @@
 							function(resolve_subalbumPromise) {
 								var ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
 
-								let nameHtml = env.currentAlbum.subalbumName(ithSubalbum);
+								let nameHtml = ithSubalbum.nameForShowing(env.currentAlbum);
 								if (nameHtml === "")
 									nameHtml = "<span class='italic'>(" + util._t("#root-album") + ")</span>";
 
