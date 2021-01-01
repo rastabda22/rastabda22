@@ -727,7 +727,11 @@ class Album(object):
 					sub_dict["words"] = subalbum.words
 				if hasattr(subalbum, "unicode_words"):
 					sub_dict["unicodeWords"] = subalbum.unicode_words
-				if hasattr(subalbum, "tags"):
+				if subalbum.title:
+					sub_dict["title"] = subalbum.title
+				if subalbum.description:
+					sub_dict["description"] = subalbum.description
+				if subalbum.tags:
 					sub_dict["tags"] = subalbum.tags
 				subalbums.append(sub_dict)
 
@@ -804,9 +808,7 @@ class Album(object):
 			"numPositionsInTree": len(self.positions_and_media_in_tree.positions),
 			"albumIniMTime": self.album_ini_mtime,
 			"passwordMarkerMTime": self.passwords_marker_mtime,
-			"jsonVersion": Options.json_version,
-			"title": self.title,
-			"description": self.description
+			"jsonVersion": Options.json_version
 		}
 		nums_protected_by_code = {}
 		for complex_identifiers_combination in list(self.nums_protected_media_in_sub_tree.keys()):
@@ -842,7 +844,11 @@ class Album(object):
 			dictionary["name"] = self.name
 		if hasattr(self, "alt_name"):
 			dictionary["altName"] = self.alt_name
-		if hasattr(self, "tags"):
+		if self.title:
+			dictionary["title"] = self.title
+		if self.description:
+			dictionary["description"] = self.description
+		if self.tags:
 			dictionary["tags"] = self.tags
 		if self.cache_base.find(Options.config['folders_string']) == 0:
 			dictionary["ancestorsTitles"] = ancestors_titles
