@@ -1,3 +1,6 @@
+* add options `hide_descriptions` (default false) and `hide_tags` (default true) in options file; in js code descriptions and tags can now be shown/hidden separately
+* bug fixes
+
 ### version v4.9.11 (Dec 29, 2020)
 
 * a message is presented during slow operations

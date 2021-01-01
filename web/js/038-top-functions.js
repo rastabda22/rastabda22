@@ -1121,10 +1121,16 @@
 				$("#" + id + " .title").removeClass("hidden-by-fullscreen");
 			}
 
-			if (env.options.hide_descriptions_and_tags) {
-				$("#description, .media-description, .media-tags").addClass("hidden-by-option");
+			if (env.options.hide_descriptions) {
+				$("#description-title, #description-text, .media-description").addClass("hidden-by-option");
 			} else {
-				$("#description, .media-description, .media-tags").removeClass("hidden-by-option");
+				$("#description-title, #description-text, .media-description").removeClass("hidden-by-option");
+			}
+
+			if (env.options.hide_tags) {
+				$("#description-tags, .media-tags").addClass("hidden-by-option");
+			} else {
+				$("#description-tags, .media-tags").removeClass("hidden-by-option");
 			}
 
 			if (env.options.hide_bottom_thumbnails) {
@@ -1718,8 +1724,10 @@
 		f.setBooleanCookie("hideTitle", env.options.hide_title);
 		env.options.hide_bottom_thumbnails = ! env.options.hide_bottom_thumbnails;
 		f.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
-		env.options.hide_descriptions_and_tags = ! env.options.hide_descriptions_and_tags;
-		f.setBooleanCookie("hideDescriptionsAndTags", env.options.hide_descriptions_and_tags);
+		env.options.hide_descriptions = ! env.options.hide_descriptions;
+		env.options.hide_tags = ! env.options.hide_tags;
+		f.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
+		f.setBooleanCookie("hideTags", env.options.hide_tags);
 		f.updateMenu();
 		if (env.options.hide_title) {
 			$(".title").addClass("hidden-by-option");
@@ -1731,10 +1739,15 @@
 		} else {
 			$("#album-view").removeClass("hidden-by-option");
 		}
-		if (env.options.hide_descriptions_and_tags) {
-			$("#description, .media-description, .media-tags, .album-description, .album-tags").addClass("hidden-by-option");
+		if (env.options.hide_descriptions) {
+			$("#description-title, #description-text, .media-description, .album-description").addClass("hidden-by-option");
 		} else {
-			$("#description, .media-description, .media-tags, .album-description, .album-tags").removeClass("hidden-by-option");
+			$("#description-title, #description-text, .media-description, .album-description").removeClass("hidden-by-option");
+		}
+		if (env.options.hide_tags) {
+			$("#description-tags, .media-tags, .album-tags").addClass("hidden-by-option");
+		} else {
+			$("#description-tags, .media-tags, .album-tags").removeClass("hidden-by-option");
 		}
 		if (! $("#thumbs").children().length)
 			$("#album-view").addClass("media-view-container");
@@ -1829,15 +1842,55 @@
 		return false;
 	};
 
-	TopFunctions.prototype.toggleDescriptionsAndTags = function(ev) {
+	TopFunctions.prototype.toggleDescriptions = function(ev) {
 		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-			env.options.hide_descriptions_and_tags = ! env.options.hide_descriptions_and_tags;
-			f.setBooleanCookie("hideDescriptionsAndTags", env.options.hide_descriptions_and_tags);
+			env.options.hide_descriptions = ! env.options.hide_descriptions;
+			f.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
 			f.updateMenu();
-			if (env.options.hide_descriptions_and_tags) {
-				$("#description, .media-description, .media-tags, .album-description, .album-tags").addClass("hidden-by-option");
+			if (env.options.hide_descriptions && env.options.hide_tags) {
+				$("#description").addClass("hidden-by-option");
 			} else {
-				$("#description, .media-description, .media-tags, .album-description, .album-tags").removeClass("hidden-by-option");
+				$("#description").removeClass("hidden-by-option");
+			}
+			if (env.options.hide_descriptions) {
+				$("#description-title, #description-text, .media-description, .album-description").addClass("hidden-by-option");
+			} else {
+				$("#description-title, #description-text, .media-description, .album-description").removeClass("hidden-by-option");
+				// TopFunctions.showAlbum("refreshMedia");
+			}
+			if (env.currentMedia !== null) {
+				let event = {data: {}};
+				event.data.resize = true;
+				event.data.id = "center";
+				env.currentMedia.scale(event);
+				if (env.nextMedia !== null) {
+					event.data.id = "right";
+					env.nextMedia.scale(event);
+				}
+				if (env.prevMedia !== null) {
+					event.data.id = "left";
+					env.prevMedia.scale(event);
+				}
+			} else
+				TopFunctions.showAlbum("refreshBoth");
+		}
+		return false;
+	};
+
+	TopFunctions.prototype.toggleTags = function(ev) {
+		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+			env.options.hide_tags = ! env.options.hide_tags;
+			f.setBooleanCookie("hideTags", env.options.hide_tags);
+			f.updateMenu();
+			if (env.options.hide_descriptions && env.options.hide_tags) {
+				$("#description").addClass("hidden-by-option");
+			} else {
+				$("#description").removeClass("hidden-by-option");
+			}
+			if (env.options.hide_tags) {
+				$("#description-tags, .media-tags, .album-tags").addClass("hidden-by-option");
+			} else {
+				$("#description-tags, .media-tags, .album-tags").removeClass("hidden-by-option");
 				// TopFunctions.showAlbum("refreshMedia");
 			}
 			if (env.currentMedia !== null) {
@@ -2359,8 +2412,12 @@
 					}
 				}
 			}
-			if (env.options.hide_descriptions_and_tags)
-				$("#description, .media-description, .media-tags, .album-description").addClass("hidden-by-option");
+
+			if (env.options.hide_descriptions)
+				$("#description-title, #description-text, .media-description, .album-description").addClass("hidden-by-option");
+
+			if (env.options.hide_tags)
+				$("#description-tags, .media-tags, .album-tags").addClass("hidden-by-option");
 
 			if (env.currentMedia === null) {
 				if (env.fromEscKey && env.firstEscKey) {
@@ -2654,8 +2711,11 @@
 					if (! env.options.show_album_media_count)
 						$(".album-caption-count").addClass("hidden-by-option");
 
-					if (env.options.hide_descriptions_and_tags)
-						$("#description, .media-description, .media-tags, .album-description, .album-tags").addClass("hidden-by-option");
+					if (env.options.hide_descriptions)
+						$("#description-title, #description-text, .media-description, .album-description").addClass("hidden-by-option");
+
+					if (env.options.hide_tags)
+						$("#description-tags, .media-tags, .album-tags").addClass("hidden-by-option");
 
 
 

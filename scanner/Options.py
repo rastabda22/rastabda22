@@ -266,6 +266,8 @@ def get_options():
 				'different_album_thumbnails',
 				'hide_title',
 				'hide_bottom_thumbnails',
+				'hide_descriptions',
+				'hide_tags',
 				'albums_slide_style',
 				'show_media_names_below_thumbs',
 				'show_album_names_below_thumbs',
