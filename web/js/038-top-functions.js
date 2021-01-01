@@ -1950,9 +1950,9 @@
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshSubalbums");
 			// if (env.options.show_album_names_below_thumbs) {
-			// 	$(".folder-name").removeClass("hidden-by-option");
+			// 	$(".album-name").removeClass("hidden-by-option");
 			// } else {
-			// 	$(".folder-name").addClass("hidden-by-option");
+			// 	$(".album-name").addClass("hidden-by-option");
 			// }
 			// util.adaptCaptionHeight();
 		}
@@ -2499,7 +2499,7 @@
 										"'" +
 										">";
 								captionHtml +=
-										"<div class='folder-name'>" + nameHtml + "</div>";
+										"<div class='album-name'>" + nameHtml + "</div>";
 
 								captionHtml +=
 										"<div class='album-caption-count'>" +
@@ -2667,7 +2667,7 @@
 								// 			env.currentAlbum.subalbums[iSubalbum] = ithSubalbum;
 								// 			// ithSubalbum.generateCaptionForCollections();
 								// 			let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
-								// 			$("#" + captionId + " .folder-name").html(nameHtml);
+								// 			$("#" + captionId + " .album-name").html(nameHtml);
 								// 		}
 								// 	);
 								// }
@@ -2706,7 +2706,7 @@
 
 					// if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs || ! env.options.show_album_media_count)
 					if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs)
-						$(".folder-name").addClass("hidden-by-option");
+						$(".album-name").addClass("hidden-by-option");
 
 					if (! env.options.show_album_media_count)
 						$(".album-caption-count").addClass("hidden-by-option");
