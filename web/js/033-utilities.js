@@ -1449,7 +1449,7 @@
 				env.selectionAlbum.sizesOfSubTree.sum(this.fileSizes);
 			}
 
-			this.generateSingleMediaCaptionForSelection(album);
+			this.generateCaptionForSelection(album);
 			delete env.selectionAlbum.mediaNameSort;
 			delete env.selectionAlbum.mediaReverseSort;
 			env.selectionAlbum.sortAlbumsMedia();
@@ -2425,11 +2425,11 @@
 
 	};
 
-	Album.prototype.generateCaptionForSearch = function() {
+	Album.prototype.generateCaptionForSelection = function() {
 		[this.captionForSelection, this.captionForSelectionSorting] = Utilities.generateAlbumCaptionForCollections(this);
 	};
 
-	Album.prototype.generateAlbumCaptionForSearch = function() {
+	Album.prototype.generateCaptionForSearch = function() {
 		[this.captionForSearch, this.captionForSearchSorting] = Utilities.generateAlbumCaptionForCollections(this);
 	};
 
@@ -2504,7 +2504,7 @@
 		return [captionForCollection, captionForCollectionSorting];
 	};
 
-	SingleMedia.prototype.generateSingleMediaCaptionForSelection = function(album) {
+	SingleMedia.prototype.generateCaptionForSelection = function(album) {
 		[this.captionForSelection, this.captionForSelectionSorting] = Utilities.generateSingleMediaCaptionForCollections(this, album);
 	};
 

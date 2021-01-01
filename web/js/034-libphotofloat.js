@@ -1889,7 +1889,7 @@
 																		convertAlbumPromise.then(
 																			function(subalbum) {
 																				env.searchAlbum.subalbums[iSubalbum] = subalbum;
-																				env.searchAlbum.subalbums[iSubalbum].generateAlbumCaptionForSearch();
+																				env.searchAlbum.subalbums[iSubalbum].generateCaptionForSearch();
 																				resolve_subalbum();
 																			},
 																			function() {
