@@ -384,7 +384,7 @@
 			if (util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || isPopup) {
 				$("ul#right-menu li#album-search").addClass("dimmed").off("click");
 			} else {
-				$("ul#right-menu li#album-search").removeClass("dimmed").off("click").on('click', Functions.toggleCurrentAbumSearch);
+				$("ul#right-menu li#album-search").removeClass("dimmed").off("click").on('click', util.toggleCurrentAbumSearch);
 				let albumNamePromise = Functions.getAlbumNameFromCacheBase(env.options.cache_base_to_search_in);
 				albumNamePromise.then(
 					function(path) {
@@ -1698,7 +1698,6 @@
 	Functions.prototype.setBooleanCookie = Functions.setBooleanCookie;
 	Functions.prototype.updateMenu = Functions.updateMenu;
 	Functions.prototype.focusSearchField = Functions.focusSearchField;
-	Functions.prototype.toggleCurrentAbumSearch = Functions.toggleCurrentAbumSearch;
 	Functions.prototype.toggleMetadata = Functions.toggleMetadata;
 	Functions.prototype.humanFileSize = Functions.humanFileSize;
 

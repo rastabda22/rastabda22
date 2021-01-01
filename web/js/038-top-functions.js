@@ -801,7 +801,7 @@
 
 									if (theAlbum.hasOwnProperty('ancestorsNames')) {
 										for (var i = 0; i < theAlbum.ancestorsNames.length; i ++) {
-											if (theAlbum.hasOwnProperty("title") && theAlbum.title !== theAlbum.name)
+											if (theAlbum.hasOwnProperty("ancestorsTitles") && theAlbum.ancestorsTitles[i] !== theAlbum.ancestorsNames[i])
 												name = theAlbum.ancestorsTitles[i] + "<span class='media-real-name'>(" + theAlbum.ancestorsNames[i] + ")";
 											else
 												name = theAlbum.ancestorsNames[i];
