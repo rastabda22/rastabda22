@@ -2274,8 +2274,13 @@
 			zipFilename += env.currentAlbum.ancestorsNames.splice(1).join('-');
 		} else if (env.currentAlbum.isMap()) {
 			zipFilename += Utilities._t("#from-map");
-		} else if (env.currentAlbum.cacheBase !== env.options.folders_string)
-			zipFilename += env.currentAlbum.name;
+		} else if (env.currentAlbum.cacheBase !== env.options.folders_string) {
+			let name;
+			if (env.currentAlbum.hasOwnProperty("title") && env.currentAlbum.title !== env.currentAlbum.name)
+				zipFilename += env.currentAlbum.title + " (" + env.currentAlbum.name + ")";
+			else
+				zipFilename += env.currentAlbum.name;
+		}
 
 		zipFilename += ".zip";
 

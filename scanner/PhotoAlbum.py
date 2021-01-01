@@ -752,6 +752,8 @@ class Album(object):
 
 		# ancestors_cache_base = list()
 		ancestors_names = list()
+		if self.cache_base.find(Options.config['folders_string']) == 0:
+			ancestors_titles = list()
 		ancestors_centers = list()
 		_parent = self
 		while True:
@@ -761,6 +763,14 @@ class Album(object):
 				ancestors_names.append(_parent.alt_name)
 			elif hasattr(_parent, "name"):
 				ancestors_names.append(_parent.name)
+
+			if self.cache_base.find(Options.config['folders_string']) == 0:
+				if hasattr(_parent, "title"):
+					ancestors_titles.append(_parent.title)
+				elif hasattr(_parent, "alt_name"):
+					ancestors_titles.append(_parent.alt_name)
+				elif hasattr(_parent, "name"):
+					ancestors_titles.append(_parent.name)
 
 			if hasattr(_parent, "center"):
 				ancestors_centers.append(_parent.center)
@@ -774,6 +784,8 @@ class Album(object):
 				break
 		# ancestors_cache_base.reverse()
 		ancestors_names.reverse()
+		if self.cache_base.find(Options.config['folders_string']) == 0:
+			ancestors_titles.reverse()
 		ancestors_centers.reverse()
 
 		dictionary = {
@@ -832,6 +844,8 @@ class Album(object):
 			dictionary["altName"] = self.alt_name
 		if hasattr(self, "tags"):
 			dictionary["tags"] = self.tags
+		if self.cache_base.find(Options.config['folders_string']) == 0:
+			dictionary["ancestorsTitles"] = ancestors_titles
 		if self.cache_base.find(Options.config['by_gps_string']) == 0:
 			dictionary["ancestorsCenters"] = ancestors_centers
 

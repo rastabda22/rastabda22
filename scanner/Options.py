@@ -134,9 +134,10 @@ config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x
 # json_version = 4.24 since default albums and media sorting implemented
 # json_version = 4.25 since the bugs in reading exif metadata have been corrected
 # json_version = 4.26 since tags have been added to subalbums
+# json_version = 4.27 since ancestorsTitles list have been added to albums
 
 # json_version = 0
-json_version = 4.26
+json_version = 4.27
 
 
 def set_obsolete_json_version_flag():
