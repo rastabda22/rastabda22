@@ -2503,6 +2503,26 @@
 								captionHtml +=
 										"<div class='album-name'>" + nameHtml + "</div>";
 
+								if (ithSubalbum.hasOwnProperty("description")) {
+									captionHtml +=
+									 	"<div class='album-description'>" +
+											"<div class='description'>" + util.formatDescription(ithSubalbum.description) + "</div>" +
+										"</div>";
+								}
+
+								if (ithSubalbum.hasOwnProperty("tags") && ithSubalbum.tags.length) {
+									captionHtml +=
+										"<div class='album-tags' " +
+											"style='" +
+												"font-size: " + Math.round((env.captionFontSize / 1.5)) + "px; " +
+												// "height: " + env.captionHeight + "px; " +
+												"color: " + env.captionColor + ";" +
+											"'" +
+										">" +
+											"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithSubalbum.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>" +
+										"</div>";
+								}
+
 								captionHtml +=
 										"<div class='album-caption-count'>" +
 											"(" + ithSubalbum.numsMediaInSubTree.imagesAndVideosTotal() + " " +
@@ -2676,30 +2696,6 @@
 
 								// let ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
 								// let id = phFl.hashCode(ithSubalbum.cacheBase);
-								if (ithSubalbum.hasOwnProperty("description")) {
-									let descriptionHtml =
-									 	"<div class='album-description'>" +
-											"<div class='description'>" + util.formatDescription(ithSubalbum.description) + "</div>" +
-										"</div>";
-
-									$("#" + id + " .album-caption").append($(descriptionHtml));
-								}
-
-								if (ithSubalbum.hasOwnProperty("tags") && ithSubalbum.tags.length) {
-									let tagsHtml =
-										"<div class='album-tags' " +
-											"style='" +
-												"font-size: " + Math.round((env.captionFontSize / 1.5)) + "px; " +
-												// "height: " + env.captionHeight + "px; " +
-												"color: " + env.captionColor + ";" +
-											"'" +
-										">" +
-											"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithSubalbum.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>" +
-										"</div>";
-
-									$("#" + id + " .album-caption").append($(tagsHtml));
-								}
-
 								pickRandomMediaAndInsertIt(iSubalbum, imageElement, resolve_subalbumPromise);
 							}
 						);
