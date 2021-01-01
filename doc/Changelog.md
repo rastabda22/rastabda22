@@ -1,3 +1,5 @@
+### version v4.9.12 (Jan 1, 2021)
+
 * use metadata titles in zip filename and in top title too
 * add options `hide_descriptions` (default false) and `hide_tags` (default true) in options file; in js code descriptions and tags can now be shown/hidden separately
 * fix search by tag
