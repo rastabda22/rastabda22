@@ -126,7 +126,7 @@
 				if (env.options.page_title !== "")
 					originalTitle = env.options.page_title;
 				else
-					originalTitle = translations[env.language][".title-string"];
+					originalTitle = util._t(".title-string");
 
 
 				if (! env.currentAlbum.path.length)
