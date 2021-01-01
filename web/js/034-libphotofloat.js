@@ -276,6 +276,8 @@
 								self.altName = protectedAlbum.altName;
 							if (! self.hasOwnProperty("ancestorsNames") && protectedAlbum.hasOwnProperty("ancestorsNames"))
 								self.ancestorsNames = protectedAlbum.ancestorsNames;
+							if (! self.hasOwnProperty("ancestorsTitles") && protectedAlbum.hasOwnProperty("ancestorsTitles"))
+								self.ancestorsTitles = protectedAlbum.ancestorsTitles;
 							if (! self.hasOwnProperty("ancestorsCenters") && protectedAlbum.hasOwnProperty("ancestorsCenters"))
 								self.ancestorsCenters = protectedAlbum.ancestorsCenters;
 							if (! self.hasOwnProperty("title") && protectedAlbum.hasOwnProperty("title"))
@@ -822,13 +824,13 @@
 							function() {
 								// execution arrives here when all the protected json has been loaded and processed
 
-								if (! util.isSearchRootCacheBase(self.cacheBase)) {
-									delete self.mediaNameSort;
-									delete self.mediaReverseSort;
-									delete self.albumNameSort;
-									delete self.albumReverseSort;
-									self.sortAlbumsMedia();
-								}
+								// if (! util.isSearchRootCacheBase(self.cacheBase)) {
+								delete self.mediaNameSort;
+								delete self.mediaReverseSort;
+								delete self.albumNameSort;
+								delete self.albumReverseSort;
+								self.sortAlbumsMedia();
+								// }
 								resolve_continueAddProtectedContent();
 							}
 						);

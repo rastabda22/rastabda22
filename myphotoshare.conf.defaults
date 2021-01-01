@@ -355,6 +355,11 @@ hide_title = false
 # a right menu entry let the user show it
 hide_bottom_thumbnails = false
 
+# Should the description/tags provided by metadata be hidden by default?
+# right menu entries let the user show/hide it
+hide_descriptions = false
+hide_tags = true
+
 # spacing between thumbnails, pixels (integer)
 thumb_spacing = 4
 

@@ -480,6 +480,7 @@
 		toJson() {
 			var albumProperties = [
 				'ancestorsNames',
+				'ancestorsTitles',
 				'cacheBase',
 				'cacheSubdir',
 				'date',

@@ -163,10 +163,9 @@ tags = Canada,trip,holiday,Mount Royal
 
 ### Geographical names are not overloaded. What happens?
 
-If you want to overwrite geonames metadata, i.e. `country_name`, `region_name` and `place_name`, you have to keep in mind that this metadata information is only created by the scanner if it feels that it has to manage georgraphical information. It means that these metadata fields are only created when the scanner has seen `latitude` and `longitude` metadata, either by extracting it from the media EXIF or reading it from user defined values in `album.ini`.
+If you want to overwrite geonames metadata, i.e. `country_name`, `region_name` and `place_name`, you have to keep in mind that this metadata information is only created by the scanner if it feels that it has to manage geographical information. It means that these metadata fields are only created when the scanner has seen `latitude` and `longitude` metadata, either by extracting it from the media EXIF or reading it from user defined values in `album.ini`.
 
 Defining these values in `album.ini` does not inject them in the EXIF of the media. You can probably do it with a small Python/Shell script and the [`exiv2`](http://www.exiv2.org/) tool. These values are only used for display and browsing in MyPhotoShare.
-
 
 ### `title` and `description` metadata values are line-sensitive
 
@@ -190,3 +189,17 @@ The title will be displayed on two lines and the description on five lines.
 You can decide to include HTML markup into these metadata values, like `<strong>` or `<br>` tags, and they will be rendered by MyPhotoShare. But we recommend you not to if you later decide to ingest that metadata into your media EXIF (or you'll have to filter it out before doing it).
 
 Like for other user defined metadata in `album.ini`, this information is not injected back into the media EXIF (see [exiv2 Metadata reference tables](http://www.exiv2.org/metadata.html) for more information). It's only used for display by MyPhotoShare.
+
+
+## album.ini syntax
+
+As the `album.ini` files are considered INI-files by Python, they are checked for valid syntax and can make the scanner fail in case of syntax error. In particular, the `%` character is used to defined a variable according to Python and must be doubled, like `%%` if you want to display a percent character '%'.
+
+Also you can't define the same metadata selector in a section and the INI parser will complain with a syntax error and making the scanner stop. For example, the following is invalid because the `tag` selector is defined twice:
+```ini
+[A picture.jpg]
+title = A picture of children and cats
+tag = children
+tag = cats
+```
+

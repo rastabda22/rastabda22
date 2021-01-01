@@ -2274,8 +2274,13 @@
 			zipFilename += env.currentAlbum.ancestorsNames.splice(1).join('-');
 		} else if (env.currentAlbum.isMap()) {
 			zipFilename += Utilities._t("#from-map");
-		} else if (env.currentAlbum.cacheBase !== env.options.folders_string)
-			zipFilename += env.currentAlbum.name;
+		} else if (env.currentAlbum.cacheBase !== env.options.folders_string) {
+			let name;
+			if (env.currentAlbum.hasOwnProperty("title") && env.currentAlbum.title !== env.currentAlbum.name)
+				zipFilename += env.currentAlbum.title + " (" + env.currentAlbum.name + ")";
+			else
+				zipFilename += env.currentAlbum.name;
+		}
 
 		zipFilename += ".zip";
 
@@ -2459,9 +2464,9 @@
 			for (let iCacheBase = 1; iCacheBase < album.ancestorsCacheBase.length - 1; iCacheBase ++) {
 				let albumName;
 				if (album.ancestorsNames[iCacheBase] === '')
-				albumName = Utilities._t('.not-specified');
+					albumName = Utilities._t('.not-specified');
 				else
-				albumName = this.ancestorsNames[iCacheBase];
+					albumName = this.ancestorsNames[iCacheBase];
 				if (iCacheBase === 1)
 					secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album-in") + "</span> ";
 				// let marker = "<marker>" + iCacheBase + "</marker>";
@@ -2596,7 +2601,10 @@
 			else
 				folderName = subalbum.name;
 		} else {
-			folderName = subalbum.name;
+			if (subalbum.hasOwnProperty("title") && subalbum.title !== subalbum.name)
+				folderName = subalbum.title + "<br /><span class='media-real-name'>(" + subalbum.name + ")</span>";
+			else
+				folderName = subalbum.name;
 		}
 
 		if (this.isSelection())
@@ -2705,6 +2713,8 @@
 
 	Utilities.prototype.setSelectButtonPosition = function(containerHeight, containerWidth) {
 		// calculate and set pinch buttons position
+		if ($(".select-box").attr("src") === undefined)
+			return;
 
 		var mediaElement = $(".media-box#center .media-box-inner img");
 		var actualHeight = mediaElement.height();
@@ -2960,8 +2970,10 @@
 			$("#description").css("bottom", 0);
 			$("#description").css("height", "");
 			$("#description").css("max-height", "");
-			$("#description").css("height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
-			$("#description").css("max-height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
+			$("#description").css("bottom", (env.windowHeight / 10) + "px");
+			// $("#description").css("height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
+			$("#description").css("height", "auto");
+			$("#description").css("max-height", (env.windowHeight / 3) + "px");
 		}
 	};
 
