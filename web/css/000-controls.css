@@ -729,6 +729,10 @@ video {
 	color: gray;
 }
 
+.album-caption .description {
+	font-size: 90%;
+}
+
 .thumb-and-caption-container {
 	margin-bottom: 0;
 	display: block;
