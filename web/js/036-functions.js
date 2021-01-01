@@ -1323,9 +1323,13 @@
 		return ! this.hasOwnProperty(property) || ! this[property];
 	}
 
-	Album.prototype.isTrue = function(property) {
-		return ! this.isUndefinedOrFalse(property);
+	Album.prototype.isUndefinedOrTrue = function(property) {
+		return ! this.hasOwnProperty(property) || this[property];
 	}
+
+	// Album.prototype.isTrue = function(property) {
+	// 	return ! this.isUndefinedOrFalse(property);
+	// }
 
 	// this function refer to the need that the html showed be sorted
 	Album.prototype.needAlbumNameSort = function() {
@@ -1333,19 +1337,19 @@
 	};
 
 	Album.prototype.needAlbumDateSort = function() {
-		return this.isTrue("albumNameSort") && ! env.albumNameSort;
+		return this.isUndefinedOrTrue("albumNameSort") && ! env.albumNameSort;
 	};
 
 	Album.prototype.needAlbumDateReverseSort = function() {
 		return this.needAlbumDateSort && (
-			this.isTrue("albumReverseSort") && ! env.albumReverseSort ||
+			this.isUndefinedOrTrue("albumReverseSort") && ! env.albumReverseSort ||
 			this.isUndefinedOrFalse("albumReverseSort") && env.albumReverseSort
 		);
 	};
 
 	Album.prototype.needAlbumNameReverseSort = function() {
 		return this.needAlbumNameSort() && (
-			this.isTrue("albumReverseSort") && ! env.albumReverseSort ||
+			this.isUndefinedOrTrue("albumReverseSort") && ! env.albumReverseSort ||
 			this.isUndefinedOrFalse("albumReverseSort") && env.albumReverseSort
 		);
 	};
@@ -1355,19 +1359,19 @@
 	};
 
 	Album.prototype.needMediaDateSort = function() {
-		return this.isTrue("mediaNameSort") && ! env.mediaNameSort;
+		return this.isUndefinedOrTrue("mediaNameSort") && ! env.mediaNameSort;
 	};
 
 	Album.prototype.needMediaDateReverseSort = function() {
 		return this.needMediaDateSort && (
-			this.isTrue("mediaReverseSort") && ! env.mediaReverseSort ||
+			this.isUndefinedOrTrue("mediaReverseSort") && ! env.mediaReverseSort ||
 			this.isUndefinedOrFalse("mediaReverseSort") && env.mediaReverseSort
 		);
 	};
 
 	Album.prototype.needMediaNameReverseSort = function() {
 		return this.needMediaNameSort() && (
-			this.isTrue("mediaReverseSort") && ! env.mediaReverseSort ||
+			this.isUndefinedOrTrue("mediaReverseSort") && ! env.mediaReverseSort ||
 			this.isUndefinedOrFalse("mediaReverseSort") && env.mediaReverseSort
 		);
 	};

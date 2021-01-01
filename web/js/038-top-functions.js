@@ -1619,7 +1619,7 @@
 
 	Album.prototype.sortSubalbumsByDate = function(ev) {
 		if (
-			this.isTrue("albumNameSort") &&
+			this.isUndefinedOrTrue("albumNameSort") &&
 			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			env.albumNameSort = false;
