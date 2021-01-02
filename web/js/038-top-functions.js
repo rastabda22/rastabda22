@@ -2583,13 +2583,17 @@
 								albumButtonAndCaptionHtml =
 									"<div id='" + id + "' " +
 										"class='album-button-and-caption";
-								if (env.options.albums_slide_style)
+								let marginBottom = env.options.spacing;
+								if (env.options.albums_slide_style) {
 									albumButtonAndCaptionHtml += " slide";
+								} else {
+									marginBottom += util.em2px("body", 2);
+								}
 								albumButtonAndCaptionHtml +=
 										"' " +
 										"style='" +
 											"margin-right: " + env.options.spacing + "px; " +
-											"margin-bottom: " + env.options.spacing + "px; " +
+											"margin-bottom: " + marginBottom + "px; " +
 											"height: " + buttonAndCaptionHeight + "px; " +
 											"width: " + (correctedAlbumButtonSize - 2 * slideBorder) + "px; ";
 								if (env.options.albums_slide_style)
