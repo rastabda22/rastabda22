@@ -991,7 +991,7 @@
 									},
 									function() {
 										if (getAlbum_error)
-											getAlbum_error();
+											getAlbum_error(album);
 									}
 								);
 							} else {
@@ -1059,7 +1059,7 @@
 									function() {
 										// neither the unprotected nor any protected album exists => nonexistent album
 										if (getAlbum_error)
-											getAlbum_error();
+											getAlbum_error(emptyAlbum);
 									}
 								);
 							}
@@ -1075,7 +1075,7 @@
 									function unprotectedAlbumUnexistingProtectedAlbumUnexisting() {
 										// neither the unprotected nor any protected album exists => nonexistent album
 										if (getAlbum_error)
-											getAlbum_error();
+											getAlbum_error(emptyAlbum);
 									}
 								);
 							}
