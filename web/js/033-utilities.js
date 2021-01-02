@@ -2445,13 +2445,15 @@
 				firstLine = Utilities._t('.not-specified');
 			else if (album.hasOwnProperty('altName'))
 				firstLine = Utilities.transformAltPlaceName(album.altName);
+			else
+				firstLine = album.nameForShowing(null);
 
 			for (let iCacheBase = 1; iCacheBase < album.ancestorsCacheBase.length - 1; iCacheBase ++) {
 				let albumName;
 				if (album.ancestorsNames[iCacheBase] === '')
 					albumName = Utilities._t('.not-specified');
 				else
-					albumName = this.ancestorsNames[iCacheBase];
+					albumName = album.ancestorsNames[iCacheBase];
 				if (iCacheBase === 1)
 					secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album-in") + "</span> ";
 				// let marker = "<marker>" + iCacheBase + "</marker>";
