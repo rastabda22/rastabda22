@@ -2591,7 +2591,7 @@
 											"margin-right: " + env.options.spacing + "px; " +
 											"margin-bottom: " + env.options.spacing + "px; " +
 											"height: " + buttonAndCaptionHeight + "px; " +
-											"width: " + (correctedAlbumButtonSize - 2 * env.slideBorder) + "px; ";
+											"width: " + (correctedAlbumButtonSize - 2 * slideBorder) + "px; ";
 								if (env.options.albums_slide_style)
 									albumButtonAndCaptionHtml += "background-color:" + env.options.album_button_background_color + ";";
 								albumButtonAndCaptionHtml +=
