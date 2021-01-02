@@ -1,3 +1,8 @@
+* refine description position
+* reduce description to one line in subalbums and media thumbnails: the whole description is avaiilable as a tooltip
+* css refinement in album view no slide
+* album/media title is now used everywhere the name was displayed
+
 ### version v4.9.12 (Jan 1, 2021)
 
 * use metadata titles in zip filename and in top title too
