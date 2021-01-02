@@ -2617,29 +2617,30 @@
 			mediaName = this.captionForSelection;
 		} else if (album.isSearch() && this.hasOwnProperty("captionForSearch")) {
 			mediaName = this.captionForSearch;
-		} else if (album.isByDate()) {
-			let folderArray = album.cacheBase.split(env.options.cache_folder_separator);
-			if (folderArray.length === 2) {
-				mediaName += parseInt(folderArray[1]);
-			} else if (folderArray.length === 3)
-				mediaName += " " + Utilities._t("#month-" + folderArray[2]);
-			else if (folderArray.length === 4)
-				mediaName += Utilities._t("#day") + " " + parseInt(folderArray[3]);
-		} else if (album.isByGps()) {
-			if (this.name === '')
-				mediaName = Utilities._t('.not-specified');
-			else if (this.hasOwnProperty('altName'))
-				mediaName = Utilities.transformAltPlaceName(this.altName);
-			else
-				mediaName = this.name;
+		// } else if (album.isByDate()) {
+		// 	let folderArray = album.cacheBase.split(env.options.cache_folder_separator);
+		// 	if (folderArray.length === 2) {
+		// 		mediaName += parseInt(folderArray[1]);
+		// 	} else if (folderArray.length === 3)
+		// 		mediaName += " " + Utilities._t("#month-" + folderArray[2]);
+		// 	else if (folderArray.length === 4)
+		// 		mediaName += Utilities._t("#day") + " " + parseInt(folderArray[3]);
+		// } else if (album.isByGps()) {
+		// 	if (this.name === '')
+		// 		mediaName = Utilities._t('.not-specified');
+		// 	else if (this.hasOwnProperty('altName'))
+		// 		mediaName = Utilities.transformAltPlaceName(this.altName);
+		// 	else
+		// 		mediaName = this.name;
 		} else {
 			if (this.hasOwnProperty("title") && this.title !== this.name) {
+				mediaName = this.title;
 				if (html && br)
-					mediaName = this.title + " <br /><span class='media-real-name'>(" + this.name + ")</span>";
+					mediaName += "<br /><span class='media-real-name'>(" + this.name + ")</span>";
 				else if (html)
-					mediaName = this.title + " <span class='media-real-name'>(" + this.name + ")</span>";
+					mediaName += " <span class='media-real-name'>(" + this.name + ")</span>";
 				else
-					mediaName = this.title + " (" + this.name + ")";
+					mediaName += " (" + this.name + ")";
 			} else {
 				mediaName = this.name;
 			}
