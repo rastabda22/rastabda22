@@ -1256,7 +1256,7 @@
 
 					if (id === "center") {
 						$(mediaBoxInnerElement).css("opacity", 1);
-						util.setDescription(self.metadata.title, self.metadata.description, self.metadata.tags);
+						self.setDescription();
 					}
 
 					// var self = self;
@@ -2736,11 +2736,11 @@
 							util.adaptCaptionHeight();
 
 							// When there is both a media and an album, we display the media's description; else it's the album's one
-							if (env.currentMedia === null) {
-								util.setDescription(env.currentAlbum.title, env.currentAlbum.description, env.currentAlbum.tags);
+							if (env.currentMedia === null || ! env.currentMedia.hasSomeDescription()) {
+								env.currentAlbum.setDescription();
 								util.setDescriptionPosition('album');
 							} else {
-								util.setDescription(env.currentMedia.metadata.title, env.currentMedia.metadata.description, env.currentMedia.metadata.description);
+								env.currentMedia.setDescription();
 								util.setDescriptionPosition('media');
 							}
 						},

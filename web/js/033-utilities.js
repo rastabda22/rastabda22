@@ -2922,36 +2922,64 @@
 		// }
 	};
 
-	Utilities.prototype.setDescription = function(title, description, tags) {
+	Utilities.hasSomeDescription = function(object) {
+		var hasTitle = (typeof object.title !== "undefined") && object.title;
+		var hasDescription = (typeof object.description !== "undefined") && object.description;
+		var hasTags = (typeof object.tags !== "undefined") && object.tags;
 
-		var nullTitle = (typeof title === "undefined") || ! title;
-		var nullDescription = (typeof description === "undefined") || ! description;
-		var nullTags = (typeof tags === "undefined") || ! tags.length;
+		return hasTitle || hasDescription || hasTags;
+	};
 
-		if (! nullTitle) {
-			$("#description-title").html(Utilities.formatDescription(title));
-		} else {
-			$("#description-title").html("");
-		}
+	Album.prototype.hasSomeDescription = function() {
+		return Utilities.hasSomeDescription(this);
+	};
 
-		if (! nullDescription) {
-			$("#description-text .description").html(Utilities.formatDescription(description));
-		} else {
-			$("#description-text .description").html("");
-		}
-		if (! nullTags) {
-			// let textualTags = "<p class='tags'> " + Utilities._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span></p>";
-			let textualTags = Utilities._t("#tags") + ": <span class='tag'>" + tags.map(tag => Utilities.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span>";
-			$("#description-tags").html(textualTags);
-		} else {
-			$("#description-tags").html("");
-		}
+	SingleMedia.prototype.hasSomeDescription = function() {
+		return Utilities.hasSomeDescription(this.metadata);
+	};
 
-		if (nullTitle && nullDescription && nullTags) {
-		  $("#description").addClass("hidden");
+	Utilities.setDescription = function(object) {
+
+		if (! Utilities.hasSomeDescription(object)) {
+			$("#description").addClass("hidden");
 		} else {
-		  $("#description").removeClass("hidden");
+			$("#description").removeClass("hidden");
+
+			var title = object.title;
+			var description = object.description;
+			var tags = object.tags;
+
+			var nullTitle = (typeof title === "undefined") || ! title;
+			var nullDescription = (typeof description === "undefined") || ! description;
+			var nullTags = (typeof tags === "undefined") || ! tags.length;
+
+			if (! nullTitle) {
+				$("#description-title").html(Utilities.formatDescription(title));
+			} else {
+				$("#description-title").html("");
+			}
+
+			if (! nullDescription) {
+				$("#description-text .description").html(Utilities.formatDescription(description));
+			} else {
+				$("#description-text .description").html("");
+			}
+			if (! nullTags) {
+				// let textualTags = "<p class='tags'> " + Utilities._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span></p>";
+				let textualTags = Utilities._t("#tags") + ": <span class='tag'>" + tags.map(tag => Utilities.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span>";
+				$("#description-tags").html(textualTags);
+			} else {
+				$("#description-tags").html("");
+			}
 		}
+	};
+
+	Album.prototype.setDescription = function() {
+		Utilities.setDescription(this);
+	};
+
+	SingleMedia.prototype.setDescription = function() {
+		Utilities.setDescription(this.metadata);
 	};
 
 	Utilities.prototype.setDescriptionPosition = function(captionType) {
