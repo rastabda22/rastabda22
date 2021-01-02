@@ -133,9 +133,12 @@
 					components = [originalTitle];
 				else {
 					if (env.currentAlbum.hasOwnProperty("ancestorsTitles")) {
-						components = env.currentAlbum.ancestorsTitles;
-						components = components.map((title, i) => env.currentAlbum.ancestorsTitles[i] !== env.currentAlbum.ancestorsNames[i] && i > 0 ? title + " <span class='media-real-name'>(" + env.currentAlbum.ancestorsNames[i] + ")" : title);
-						components.unshift(originalTitle !== components[0] ? originalTitle + " <span class='media-real-name'>(" + components[0] + ")" : originalTitle);
+						components = env.currentAlbum.ancestorsNames;
+						components = components.map(
+							(ithComponent, i) =>
+								i && env.currentAlbum.ancestorsTitles[i] && env.currentAlbum.ancestorsTitles[i] !== ithComponent ? env.currentAlbum.ancestorsTitles[i] + " <span class='media-real-name'>(" + ithComponent + ")" : ithComponent
+						);
+						components.unshift(components[0] && originalTitle !== components[0] ? originalTitle + " <span class='media-real-name'>(" + components[0] + ")" : originalTitle);
 					} else {
 						components = env.currentAlbum.path.split("/");
 						components.unshift(originalTitle);
@@ -671,13 +674,7 @@
 						if (singleMedia !== null || env.currentAlbum.isAlbumWithOneMedia()) {
 							if (singleMedia === null)
 								singleMedia = currentAlbum.media[0];
-							if (singleMedia.metadata.hasOwnProperty("title") && singleMedia.metadata.title !== singleMedia.name) {
-								title += "<span class='media-name'>" + singleMedia.metadata.title + "</span><span class='media-real-name'>(" + singleMedia.name + ")</span>";
-							} else {
-								title += "<span class='media-name'>" + singleMedia.name + "</span>";
-							}
-							// close the .title-main span
-							title += "</span>";
+							title += "<span class='media-name'>" + singleMedia.nameForShowing(env.currentAlbum, true) + "</span>";
 							if (env.currentMedia.hasGpsData()) {
 								title += "<a class='map-popup-trigger'>" +
 								"<img class='title-img' title='" + util.escapeSingleQuotes(util._t("#show-on-map")) + " [s]' alt='" + util.escapeSingleQuotes(util._t("#show-on-map")) + "' height='20px' src='img/ic_place_white_24dp_2x.png'>" +
@@ -782,7 +779,7 @@
 						if (setDocumentTitle) {
 							// keep generating the html page title
 							if (singleMedia !== null)
-								documentTitle = singleMedia.name + documentTitle;
+								documentTitle = singleMedia.nameForShowing(env.currentAlbum) + documentTitle;
 							else if (env.currentAlbum !== null && ! env.currentAlbum.subalbums.length && env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1)
 								documentTitle = util.trimExtension(env.currentAlbum.media[0].name) + " \u00ab " + documentTitle;
 
@@ -1007,95 +1004,96 @@
 
 			// $(mediaSelector).off(loadEvent);
 
-			if (id === "center") {
-				$("#pinch-in").off("click").on("click", pS.pinchIn);
-				$("#pinch-out").off("click").on("click", pS.pinchOut);
+			// if (id === "center") {
+			$("#pinch-in").off("click").on("click", pS.pinchIn);
+			$("#pinch-out").off("click").on("click", pS.pinchOut);
 
-				let selectSrc = 'img/checkbox-unchecked-48px.png';
-				let titleSelector = "#select-single-media";
-				if (self.isSelected()) {
-					selectSrc = 'img/checkbox-checked-48px.png';
-					titleSelector = "#unselect-single-media";
-				}
-				$("#media-select-box .select-box").attr("title", util._t(titleSelector)).attr("alt", util._t("#selector")).attr("src", selectSrc);
-				$("#media-select-box").off('click').on(
-					'click',
-					{singleMedia: self, clickedSelector: "#media-select-box"},
-					function(ev) {
-						ev.stopPropagation();
-						ev.preventDefault();
-						ev.data.singleMedia.toggleSelectedStatus(album, ev.data.clickedSelector);
-					}
-				);
-
-				if (self.mimeType.indexOf("image/") === 0) {
-					pS.addMediaGesturesDetection();
-					util.setPinchButtonsPosition();
-				}
-				util.correctPrevNextPosition();
-				util.setSelectButtonPosition();
-
-				if (album.numsMedia.imagesAndVideosTotal() > 1) {
-					env.prevMedia.show(album, 'left');
-					env.nextMedia.show(album, 'right');
-				}
-
-				$(window).off("resize").on(
-					"resize",
-					function () {
-						env.windowWidth = $(window).outerWidth();
-						env.windowHeight = $(window).outerHeight();
-
-						$("#loading").show();
-
-						var event = {data: {}};
-
-						event.data.resize = true;
-
-						event.data.id = "center";
-						event.data.currentZoom = pS.getCurrentZoom();
-						event.data.initialZoom = pS.getInitialZoom();
-						let scalePromise = self.scale(event);
-						scalePromise.then(
-							function() {
-								if (self.mimeType.indexOf("image/") === 0) {
-									f.pinchSwipeInitialization();
-									util.setPinchButtonsPosition();
-								}
-								util.setSelectButtonPosition();
-								util.setDescriptionPosition('media');
-								util.correctPrevNextPosition();
-							}
-						);
-
-						if (album.numsMedia.imagesAndVideosTotal() > 1) {
-							event.data.id = "left";
-							env.prevMedia.scale(event);
-
-							event.data.id = "right";
-							env.nextMedia.scale(event);
-						}
-
-						var isPopup = $('.leaflet-popup').html() ? true : false;
-						var isMap = $('#mapdiv').html() ? true : false;
-						if (isMap) {
-							// the map must be generated again including the points that only carry protected content
-							env.mapRefreshType = "resize";
-
-							if (isPopup) {
-								env.popupRefreshType = "mapAlbum";
-								$('.leaflet-popup-close-button')[0].click();
-							} else {
-								env.popupRefreshType = "none";
-							}
-
-							// close the map and reopen it
-							$('.modal-close')[0].click();
-							$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
-						}
-					}
-				);
+			let selectSrc = 'img/checkbox-unchecked-48px.png';
+			let titleSelector = "#select-single-media";
+			if (self.isSelected()) {
+				selectSrc = 'img/checkbox-checked-48px.png';
+				titleSelector = "#unselect-single-media";
 			}
+			$("#media-select-box .select-box").attr("title", util._t(titleSelector)).attr("alt", util._t("#selector")).attr("src", selectSrc);
+			$("#media-select-box").off('click').on(
+				'click',
+				{singleMedia: self, clickedSelector: "#media-select-box"},
+				function(ev) {
+					ev.stopPropagation();
+					ev.preventDefault();
+					ev.data.singleMedia.toggleSelectedStatus(album, ev.data.clickedSelector);
+				}
+			);
+
+			if (self.mimeType.indexOf("image/") === 0) {
+				pS.addMediaGesturesDetection();
+				util.setPinchButtonsPosition();
+			}
+			util.correctPrevNextPosition();
+			if (util.setSelectButtonPosition())
+				util.setDescriptionPosition('media');
+
+			if (album.numsMedia.imagesAndVideosTotal() > 1) {
+				env.prevMedia.show(album, 'left');
+				env.nextMedia.show(album, 'right');
+			}
+
+			$(window).off("resize").on(
+				"resize",
+				function () {
+					env.windowWidth = $(window).outerWidth();
+					env.windowHeight = $(window).outerHeight();
+
+					$("#loading").show();
+
+					var event = {data: {}};
+
+					event.data.resize = true;
+
+					event.data.id = "center";
+					event.data.currentZoom = pS.getCurrentZoom();
+					event.data.initialZoom = pS.getInitialZoom();
+					let scalePromise = self.scale(event);
+					scalePromise.then(
+						function() {
+							if (self.mimeType.indexOf("image/") === 0) {
+								f.pinchSwipeInitialization();
+								util.setPinchButtonsPosition();
+							}
+							if (util.setSelectButtonPosition())
+								util.setDescriptionPosition('media');
+							util.correctPrevNextPosition();
+						}
+					);
+
+					if (album.numsMedia.imagesAndVideosTotal() > 1) {
+						event.data.id = "left";
+						env.prevMedia.scale(event);
+
+						event.data.id = "right";
+						env.nextMedia.scale(event);
+					}
+
+					var isPopup = $('.leaflet-popup').html() ? true : false;
+					var isMap = $('#mapdiv').html() ? true : false;
+					if (isMap) {
+						// the map must be generated again including the points that only carry protected content
+						env.mapRefreshType = "resize";
+
+						if (isPopup) {
+							env.popupRefreshType = "mapAlbum";
+							$('.leaflet-popup-close-button')[0].click();
+						} else {
+							env.popupRefreshType = "none";
+						}
+
+						// close the map and reopen it
+						$('.modal-close')[0].click();
+						$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
+					}
+				}
+			);
+			// }
 		}
 		// end of loadNextPrevMedia auxiliary function
 
@@ -1240,7 +1238,7 @@
 					}
 					// is the following line correct for videos?
 					mediaSrc = self.chooseMediaReduction(id, env.fullScreenStatus);
-					mediaHtml = self.createMediaHtml(id, env.fullScreenStatus);
+					mediaHtml = self.createMediaHtml(album, id, env.fullScreenStatus);
 
 					loadEvent = self.chooseTriggerEvent();
 
@@ -1277,12 +1275,11 @@
 										if (self.mimeType.indexOf("image/") === 0) {
 											util.setPinchButtonsPosition();
 										}
-										util.setSelectButtonPosition();
-										util.setDescriptionPosition('media');
+										if (util.setSelectButtonPosition())
+											util.setDescriptionPosition('media');
 										util.correctPrevNextPosition();
+										loadNextPrevMedia(self, containerHeight, containerWidth);
 									}
-									// if (self.mimeType.indexOf("image/") === 0) {
-									loadNextPrevMedia(self, containerHeight, containerWidth);
 									// }
 								}
 							);
@@ -2065,7 +2062,7 @@
 			// } else if (env.currentAlbum.isSearch()) {
 			// 	titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
 			} else {
-				titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
+				titleName = util.pathJoin([randomMedia.albumName, randomMedia.nameForShowing(randomSubAlbum)]);
 			}
 			randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia);
 
@@ -2216,7 +2213,7 @@
 						thumbWidth = thumbnailSize;
 						calculatedWidth = env.options.media_thumb_size;
 					}
-					imgTitle = util.pathJoin([ithMedia.albumName, ithMedia.name]);
+					imgTitle = util.pathJoin([ithMedia.albumName, ithMedia.nameForShowing(env.currentAlbum)]);
 					calculatedHeight = env.options.media_thumb_size;
 
 					var albumViewPadding = $("#album-view").css("padding");
@@ -2271,7 +2268,7 @@
 										 "'" +
 								"/>";
 					img = $(imgString);
-					img.attr("title", imgTitle).attr("alt", util.trimExtension(ithMedia.name));
+					img.attr("title", imgTitle).attr("alt", util.trimExtension(ithMedia.nameForShowing(env.currentAlbum)));
 
 					imageString =
 						"<div class='thumb-and-caption-container' style='" +
@@ -2288,25 +2285,25 @@
 								img.prop("outerHTML") +
 							"</div>" +
 							"<div class='media-caption'>";
-					if (ithMedia.metadata.hasOwnProperty("title") && ithMedia.metadata.title !== ithMedia.name) {
-						imageString +=
-								"<span title='" + util.escapeSingleQuotes(ithMedia.name) + "' class='media-name'>" +
+					// if (ithMedia.metadata.hasOwnProperty("title") && ithMedia.metadata.title !== ithMedia.name) {
+					imageString +=
+								"<span title='" + util.escapeSingleQuotes(ithMedia.nameForShowing(env.currentAlbum)) + "' class='media-name'>" +
 									"<span>" +
-										ithMedia.metadata.title.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+										ithMedia.nameForShowing(env.currentAlbum, true, true).replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
 									"</span>" +
 								"</span>";
-					} else {
-						imageString +=
-								"<span class='media-name'>" +
-									"<span>" +
-										ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
-									"</span>" +
-								"</span>";
-					}
+					// } else {
+					// 	imageString +=
+					// 			"<span class='media-name'>" +
+					// 				"<span>" +
+					// 					ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+					// 				"</span>" +
+					// 			"</span>";
+					// }
 					if (ithMedia.metadata.hasOwnProperty("description")) {
 						imageString +=
 								"<div class='media-description'>" +
-									"<div class='description'>" + util.formatDescription(ithMedia.metadata.description) + "</div>" +
+									"<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithMedia.metadata.description) + "</div>" +
 								"</div>";
 					}
 					if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
@@ -2319,7 +2316,6 @@
 							"</div>" +
 						"</div>";
 					imageElement = $(imageString);
-
 
 					imageElement.get(0).media = ithMedia;
 					if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
@@ -2344,6 +2340,9 @@
 
 					thumbsElement.append(imageLink);
 
+					if (ithMedia.metadata.hasOwnProperty("description"))
+						$("#" + imageId + " .description").attr("title", Utilities.stripHtmlAndReplaceEntities(ithMedia.metadata.description));
+
 					if (env.currentAlbum.isCollection()) {
 						// the folder name must be added the second line
 						let cacheBase = ithMedia.foldersCacheBase
@@ -2358,7 +2357,7 @@
 						let parentAlbumPromise = phFl.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
 						parentAlbumPromise.then(
 							function(parentAlbum) {
-								$("#" + imageId + " .media-name").html(ithMedia.mediaName(env.currentAlbum));
+								$("#" + imageId + " .media-name").html(ithMedia.nameForShowing(env.currentAlbum));
 							}
 						);
 					}
@@ -2491,7 +2490,7 @@
 							function(resolve_subalbumPromise) {
 								var ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
 
-								let nameHtml = env.currentAlbum.subalbumName(ithSubalbum);
+								let nameHtml = ithSubalbum.nameForShowing(env.currentAlbum);
 								if (nameHtml === "")
 									nameHtml = "<span class='italic'>(" + util._t("#root-album") + ")</span>";
 
@@ -2508,6 +2507,26 @@
 										">";
 								captionHtml +=
 										"<div class='album-name'>" + nameHtml + "</div>";
+
+								if (ithSubalbum.hasOwnProperty("description")) {
+									captionHtml +=
+									 	"<div class='album-description'>" +
+											"<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithSubalbum.description) + "</div>" +
+										"</div>";
+								}
+
+								if (ithSubalbum.hasOwnProperty("tags") && ithSubalbum.tags.length) {
+									captionHtml +=
+										"<div class='album-tags' " +
+											"style='" +
+												"font-size: " + Math.round((env.captionFontSize / 1.5)) + "px; " +
+												// "height: " + env.captionHeight + "px; " +
+												"color: " + env.captionColor + ";" +
+											"'" +
+										">" +
+											"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithSubalbum.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>" +
+										"</div>";
+								}
 
 								captionHtml +=
 										"<div class='album-caption-count'>" +
@@ -2566,15 +2585,19 @@
 								albumButtonAndCaptionHtml =
 									"<div id='" + id + "' " +
 										"class='album-button-and-caption";
-								if (env.options.albums_slide_style)
+								let marginBottom = env.options.spacing;
+								if (env.options.albums_slide_style) {
 									albumButtonAndCaptionHtml += " slide";
+								} else {
+									marginBottom += util.em2px("body", 2);
+								}
 								albumButtonAndCaptionHtml +=
 										"' " +
 										"style='" +
 											"margin-right: " + env.options.spacing + "px; " +
-											"margin-bottom: " + env.options.spacing + "px; " +
+											"margin-bottom: " + marginBottom + "px; " +
 											"height: " + buttonAndCaptionHeight + "px; " +
-											"width: " + (correctedAlbumButtonSize - 2 * env.slideBorder) + "px; ";
+											"width: " + (correctedAlbumButtonSize - 2 * slideBorder) + "px; ";
 								if (env.options.albums_slide_style)
 									albumButtonAndCaptionHtml += "background-color:" + env.options.album_button_background_color + ";";
 								albumButtonAndCaptionHtml +=
@@ -2610,6 +2633,9 @@
 
 								// subalbumsElement.append(linkContainer);
 								subalbumsElement.append(aHrefHtmlContainer);
+
+								if (ithSubalbum.hasOwnProperty("description"))
+									$("#" + captionId + " .description").attr("title", Utilities.stripHtmlAndReplaceEntities(ithSubalbum.description));
 
 								if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
 									$("#subalbum-map-link-" + iSubalbum).off('click').on(
@@ -2682,30 +2708,6 @@
 
 								// let ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
 								// let id = phFl.hashCode(ithSubalbum.cacheBase);
-								if (ithSubalbum.hasOwnProperty("description")) {
-									let descriptionHtml =
-									 	"<div class='album-description'>" +
-											"<div class='description'>" + util.formatDescription(ithSubalbum.description) + "</div>" +
-										"</div>";
-
-									$("#" + id + " .album-caption").append($(descriptionHtml));
-								}
-
-								if (ithSubalbum.hasOwnProperty("tags") && ithSubalbum.tags.length) {
-									let tagsHtml =
-										"<div class='album-tags' " +
-											"style='" +
-												"font-size: " + Math.round((env.captionFontSize / 1.5)) + "px; " +
-												// "height: " + env.captionHeight + "px; " +
-												"color: " + env.captionColor + ";" +
-											"'" +
-										">" +
-											"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithSubalbum.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>" +
-										"</div>";
-
-									$("#" + id + " .album-caption").append($(tagsHtml));
-								}
-
 								pickRandomMediaAndInsertIt(iSubalbum, imageElement, resolve_subalbumPromise);
 							}
 						);

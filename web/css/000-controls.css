@@ -215,6 +215,13 @@ p.description-text, p.description-text ul {
 	padding-inline-start: 1.5em;
 }
 
+.ellipsis {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+
 /* this class is needed in order to get the thumbnails vertically centered,
  * see https://stackoverflow.com/questions/7273338/how-to-vertically-align-an-image-inside-a-div#7310398*/
 .helper {
@@ -727,6 +734,10 @@ video {
 .media-description {
 	font-size: 95%;
 	color: gray;
+}
+
+.album-caption .description {
+	font-size: 90%;
 }
 
 .thumb-and-caption-container {

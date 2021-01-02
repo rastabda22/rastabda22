@@ -57,7 +57,7 @@
 			mediaHash = phFl.encodeHash(this.cacheBase, ithMedia);
 			// var codedHashId = getCodedHashId(photosInAlbumCopy[photoIndex].element);
 			thumbHash = ithMedia.chooseThumbnail(env.options.media_thumb_size);
-			imgTitle = util.pathJoin([ithMedia.albumName, ithMedia.name]);
+			imgTitle = util.pathJoin([ithMedia.albumName, ithMedia.nameForShowing(this)]);
 
 			// calculate the width and height values
 			width = ithMedia.metadata.size[0];
@@ -146,21 +146,21 @@
 						img.prop("outerHTML") +
 					"</div>" +
 					"<div class='media-caption'>";
-			if (ithMedia.metadata.hasOwnProperty("title")) {
-				imageString +=
-						"<span title='" + util.escapeSingleQuotes(ithMedia.name) + "' class='media-name'>" +
+			// if (ithMedia.metadata.hasOwnProperty("title")) {
+			imageString +=
+						"<span title='" + util.escapeSingleQuotes(ithMedia.nameForShowing(this)) + "' class='media-name'>" +
 							"<span>" +
-								ithMedia.metadata.title.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+								ithMedia.nameForShowing(this, true, true).replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
 							"</span>" +
 						"</span>";
-			} else {
-				imageString +=
-						"<span class='media-name'>" +
-							"<span>" +
-								ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
-							"</span>" +
-						"</span>";
-			}
+			// } else {
+			// 	imageString +=
+			// 			"<span class='media-name'>" +
+			// 				"<span>" +
+			// 					ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+			// 				"</span>" +
+			// 			"</span>";
+			// }
 			if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
 				imageString +=
 						"<div class='media-tags'>" +

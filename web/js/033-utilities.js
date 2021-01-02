@@ -1150,7 +1150,7 @@
 		$("ul#right-menu li.search ul").removeClass("hidden");
 	};
 
-	Utilities.prototype.stripHtmlAndReplaceEntities = function(htmlString) {
+	Utilities.stripHtmlAndReplaceEntities = function(htmlString) {
 		// converto for for html page title
 		// strip html (https://stackoverflow.com/questions/822452/strip-html-from-text-javascript#822464)
 		// and replaces &raquo; with \u00bb
@@ -1449,7 +1449,7 @@
 				env.selectionAlbum.sizesOfSubTree.sum(this.fileSizes);
 			}
 
-			this.generateSingleMediaCaptionForSelection(album);
+			this.generateCaptionForSelection(album);
 			delete env.selectionAlbum.mediaNameSort;
 			delete env.selectionAlbum.mediaReverseSort;
 			env.selectionAlbum.sortAlbumsMedia();
@@ -1592,7 +1592,7 @@
 								// env.selectionAlbum.numsProtectedMediaInSubTree.sum(subalbum.numsProtectedMediaInSubTree);
 							}
 
-							subalbum.generateCaptionForSearch();
+							subalbum.generateCaptionForSelection(self);
 							delete env.selectionAlbum.albumNameSort;
 							delete env.selectionAlbum.albumReverseSort;
 							env.selectionAlbum.sortAlbumsMedia();
@@ -1899,7 +1899,7 @@
 		return env.currentMedia.mediaPath(nextReductionSize);
 	};
 
-	SingleMedia.prototype.createMediaHtml = function(id, fullScreenStatus) {
+	SingleMedia.prototype.createMediaHtml = function(album, id, fullScreenStatus) {
 		// creates a media element that can be inserted in DOM (e.g. with append/prepend methods)
 
 		// the actual sizes of the image
@@ -1939,7 +1939,7 @@
 			if (env.currentAlbum.isFolder())
 				mediaElement.attr("title", this.date);
 			else
-				mediaElement.attr("title", Utilities.pathJoin([this.albumName, this.name]));
+				mediaElement.attr("title", Utilities.pathJoin([this.albumName, this.nameForShowing(album)]));
 		}
 
 		mediaElement
@@ -1948,7 +1948,7 @@
 			.attr("height", attrHeight)
 			.attr("ratio", mediaWidth / mediaHeight)
 			.attr("src", encodeURI(mediaSrc))
-			.attr("alt", this.name);
+			.attr("alt", this.nameForShowing(album));
 
 		return mediaElement[0].outerHTML;
 	};
@@ -2172,27 +2172,16 @@
 	};
 
 	Utilities.scrollToThumb = function() {
-		var media, thumb;
+		var singleMedia, thumb;
 
-		media = env.currentMedia;
-		if (media === null) {
-			media = env.previousMedia;
-			if (media === null)
+		singleMedia = env.currentMedia;
+		if (singleMedia === null) {
+			singleMedia = env.previousMedia;
+			if (singleMedia === null)
 				return;
 		}
 		$("#thumbs img.thumbnail").each(function() {
-			if (
-				this.title === Utilities.pathJoin([media.albumName, media.name])
-				// this.title === Utilities.pathJoin([media.albumName, media.name]) && (
-				// 	env.currentAlbum.isFolder() ||
-				// 	env.currentAlbum.cacheBase === env.options.folders_string ||
-				// 	env.currentAlbum.isByDate() ||
-				// 	env.currentAlbum.isByGps() ||
-				// 	env.currentAlbum.isSearch() ||
-				// 	env.currentAlbum.isMap() ||
-				// 	env.currentAlbum.isSelection()
-				// )
-			) {
+			if (this.title === Utilities.pathJoin([singleMedia.albumName, singleMedia.name])) {
 				thumb = $(this);
 				return false;
 			}
@@ -2275,11 +2264,7 @@
 		} else if (env.currentAlbum.isMap()) {
 			zipFilename += Utilities._t("#from-map");
 		} else if (env.currentAlbum.cacheBase !== env.options.folders_string) {
-			let name;
-			if (env.currentAlbum.hasOwnProperty("title") && env.currentAlbum.title !== env.currentAlbum.name)
-				zipFilename += env.currentAlbum.title + " (" + env.currentAlbum.name + ")";
-			else
-				zipFilename += env.currentAlbum.name;
+			zipFilename += env.currentAlbum.nameForShowing(null);
 		}
 
 		zipFilename += ".zip";
@@ -2425,16 +2410,16 @@
 
 	};
 
-	Album.prototype.generateCaptionForSearch = function() {
+	Album.prototype.generateCaptionForSelection = function() {
 		[this.captionForSelection, this.captionForSelectionSorting] = Utilities.generateAlbumCaptionForCollections(this);
 	};
 
-	Album.prototype.generateAlbumCaptionForSearch = function() {
+	Album.prototype.generateCaptionForSearch = function() {
 		[this.captionForSearch, this.captionForSearchSorting] = Utilities.generateAlbumCaptionForCollections(this);
 	};
 
 	Utilities.generateAlbumCaptionForCollections = function(album) {
-		var firstLine = album.name, secondLine = '';
+		var firstLine, secondLine = '';
 
 		var raquo = " <span class='gray'>&raquo;</span> ";
 		var folderArray = album.cacheBase.split(env.options.cache_folder_separator);
@@ -2482,6 +2467,7 @@
 			if (! secondLine)
 				secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album") + ")</span>";
 		} else {
+			firstLine = album.nameForShowing(null);
 			for (let iCacheBase = 0; iCacheBase < album.ancestorsCacheBase.length - 1; iCacheBase ++) {
 				if (iCacheBase === 0 && album.ancestorsCacheBase.length === 2) {
 					secondLine = "<span class='gray'>(" + Utilities._t("#regular-album") + ")</span> ";
@@ -2504,7 +2490,7 @@
 		return [captionForCollection, captionForCollectionSorting];
 	};
 
-	SingleMedia.prototype.generateSingleMediaCaptionForSelection = function(album) {
+	SingleMedia.prototype.generateCaptionForSelection = function(album) {
 		[this.captionForSelection, this.captionForSelectionSorting] = Utilities.generateSingleMediaCaptionForCollections(this, album);
 	};
 
@@ -2574,52 +2560,60 @@
 			}
 		}
 
-		var captionForCollection = Utilities.combineFirstAndSecondLine(singleMedia.name, secondLine);
-		var captionForCollectionSorting = singleMedia.name + env.options.cache_folder_separator + Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
+		var captionForCollection = Utilities.combineFirstAndSecondLine(singleMedia.nameForShowing(album, true, true), secondLine);
+		var captionForCollectionSorting = singleMedia.nameForShowing(album) + env.options.cache_folder_separator + Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
 		return [captionForCollection, captionForCollectionSorting];
 	};
 
-	Album.prototype.subalbumName = function(subalbum) {
+	Utilities.nameForShowing = function(albumOrSubalbum, parentAlbum) {
 		var folderName = '';
-		if (this.isSelection() && subalbum.hasOwnProperty("captionForSelection")) {
-			folderName = subalbum.captionForSelection;
-		} else if (this.isSearch() && subalbum.hasOwnProperty("captionForSearch")) {
-			folderName = subalbum.captionForSearch;
-		} else if (this.isByDate()) {
-			let folderArray = subalbum.cacheBase.split(env.options.cache_folder_separator);
+		if (parentAlbum && parentAlbum.isSelection() && albumOrSubalbum.hasOwnProperty("captionForSelection")) {
+			folderName = albumOrSubalbum.captionForSelection;
+		} else if (parentAlbum && parentAlbum.isSearch() && albumOrSubalbum.hasOwnProperty("captionForSearch")) {
+			folderName = albumOrSubalbum.captionForSearch;
+		} else if (parentAlbum && parentAlbum.isByDate()) {
+			let folderArray = albumOrSubalbum.cacheBase.split(env.options.cache_folder_separator);
 			if (folderArray.length === 2) {
 				folderName += parseInt(folderArray[1]);
 			} else if (folderArray.length === 3)
 				folderName += " " + Utilities._t("#month-" + folderArray[2]);
 			else if (folderArray.length === 4)
 				folderName += Utilities._t("#day") + " " + parseInt(folderArray[3]);
-		} else if (this.isByGps()) {
-			if (subalbum.name === '')
+		} else if (parentAlbum && parentAlbum.isByGps()) {
+			if (albumOrSubalbum.name === '')
 				folderName = Utilities._t('.not-specified');
-			else if (subalbum.hasOwnProperty('altName'))
-				folderName = Utilities.transformAltPlaceName(subalbum.altName);
+			else if (albumOrSubalbum.hasOwnProperty('altName'))
+				folderName = Utilities.transformAltPlaceName(albumOrSubalbum.altName);
 			else
-				folderName = subalbum.name;
+				folderName = albumOrSubalbum.name;
 		} else {
-			if (subalbum.hasOwnProperty("title") && subalbum.title !== subalbum.name)
-				folderName = subalbum.title + "<br /><span class='media-real-name'>(" + subalbum.name + ")</span>";
+			if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title !== albumOrSubalbum.name)
+				folderName = albumOrSubalbum.title + "<br /><span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
 			else
-				folderName = subalbum.name;
+				folderName = albumOrSubalbum.name;
 		}
 
-		if (this.isSelection())
-			subalbum.captionForSelection = folderName;
-		else if (this.isSearch())
-			subalbum.captionForSearch = folderName;
+		if (parentAlbum && parentAlbum.isSelection())
+			albumOrSubalbum.captionForSelection = folderName;
+		else if (parentAlbum && parentAlbum.isSearch())
+			albumOrSubalbum.captionForSearch = folderName;
 
 		return folderName;
 	};
 
-	SingleMedia.prototype.mediaName = function(album) {
+	Album.prototype.nameForShowing = function(parentAlbum) {
+		return Utilities.nameForShowing(this, parentAlbum);
+	};
+
+	Subalbum.prototype.nameForShowing = function(parentAlbum) {
+		return Utilities.nameForShowing(this, parentAlbum);
+	};
+
+	SingleMedia.prototype.nameForShowing = function(album, html = false, br = false) {
 		var mediaName = '';
-		if ((album.isSelection()) && this.hasOwnProperty("captionForSelection")) {
+		if (album.isSelection() && this.hasOwnProperty("captionForSelection")) {
 			mediaName = this.captionForSelection;
-		} else if ((album.isSearch()) && this.hasOwnProperty("captionForSearch")) {
+		} else if (album.isSearch() && this.hasOwnProperty("captionForSearch")) {
 			mediaName = this.captionForSearch;
 		} else if (album.isByDate()) {
 			let folderArray = album.cacheBase.split(env.options.cache_folder_separator);
@@ -2637,7 +2631,16 @@
 			else
 				mediaName = this.name;
 		} else {
-			mediaName = this.name;
+			if (this.hasOwnProperty("title") && this.title !== this.name) {
+				if (html && br)
+					mediaName = this.title + " <br /><span class='media-real-name'>(" + this.name + ")</span>";
+				else if (html)
+					mediaName = this.title + " <span class='media-real-name'>(" + this.name + ")</span>";
+				else
+					mediaName = this.title + " (" + this.name + ")";
+			} else {
+				mediaName = this.name;
+			}
 		}
 
 		return mediaName;
@@ -2654,7 +2657,7 @@
 			else if (subalbum.hasOwnProperty('altName'))
 				folderMapTitle = Utilities.transformAltPlaceName(subalbum.altName);
 			else
-				folderMapTitle = subalbum.name;
+				folderMapTitle = subalbum.nameForShowing(this);
 			// folderName += folderMapTitle;
 			folderMapTitle = Utilities._t('#place-icon-title') + folderMapTitle;
 		} else {
@@ -2714,7 +2717,7 @@
 	Utilities.prototype.setSelectButtonPosition = function(containerHeight, containerWidth) {
 		// calculate and set pinch buttons position
 		if ($(".select-box").attr("src") === undefined)
-			return;
+			return false;
 
 		var mediaElement = $(".media-box#center .media-box-inner img");
 		var actualHeight = mediaElement.height();
@@ -2732,6 +2735,7 @@
 		var bottom = Math.round(albumHeight + (containerHeight - actualHeight) / 2 + distanceFromImageBorder);
 		var right = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
 		$("#media-select-box .select-box").css("right", right.toString() + "px").css("bottom", bottom.toString() + "px");
+		return true;
 	};
 
 	NumsProtected.prototype.sumUpNumsProtectedMedia = function() {
@@ -2946,16 +2950,18 @@
 
 	Utilities.prototype.setDescriptionPosition = function(captionType) {
 		// Size of description varies if on album or media
+		var titleHeight = parseInt($(".media-box#center .title").css("height"));
+		var mediaBoxHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
+		var mediaHeight = parseInt($(".media-box#center .media-box-inner #media-center").css("height"));
+		var bottomThumbnailsHeight = parseInt($("#album-view.media-view-container").css("height"));
 		if (captionType === 'media') {
-			var titleHeight = parseInt($(".media-box#center .title").css("height"));
-			var mediaHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
-			$("#description").css("top", titleHeight + mediaHeight * 0.7);
+			var selectBoxWidth = 30;
+			$("#description").css("bottom", 2 * selectBoxWidth + parseInt($("#media-select-box .select-box").css("bottom")));
 			// $("#description").css("bottom", "");
 			$("#description").css("height", "");
-			var selectBoxWidth = 30;
 			$("#description").css("right", 2 * selectBoxWidth + parseInt($("#media-select-box .select-box").css("right")));
 			$("#description").css("max-height", "");
-			$("#description").css("max-height", mediaHeight * 0.2);
+			$("#description").css("max-height", mediaHeight * 0.4);
 			$("#description-text").css("height", "");
 			$("#description-text").css("max-height", "");
 			$("#description-text").css("max-height", $("#description").height() - 2 * parseInt($("#description").css("padding-top")) - $("#description-title").height() - $("#description-tags").height());
@@ -3346,6 +3352,7 @@
 	Utilities.prototype.focusSearchField = Utilities.focusSearchField;
 	Utilities.prototype.addTagLink = Utilities.addTagLink;
 	Utilities.prototype.formatDescription = Utilities.formatDescription;
+	Utilities.prototype.stripHtmlAndReplaceEntities = Utilities.stripHtmlAndReplaceEntities;
 
 	window.Utilities = Utilities;
 }());
