@@ -1458,10 +1458,14 @@
 				);
 
 				if (id === "center") {
-					// if (self != null) {
-					// 	util.setDescription(self.metadata.title, self.metadata.description, self.metadata.tags);
-					// 	util.setDescriptionPosition('media');
-					// }
+					// When there is both a media and an album, we display the media's description; else it's the album's one
+					if (env.currentMedia === null || ! env.currentMedia.hasSomeDescription()) {
+						env.currentAlbum.setDescription();
+						util.setDescriptionPosition('album');
+					} else {
+						env.currentMedia.setDescription();
+						util.setDescriptionPosition('media');
+					}
 
 					f.updateMenu();
 				}
