@@ -1150,7 +1150,7 @@
 		$("ul#right-menu li.search ul").removeClass("hidden");
 	};
 
-	Utilities.prototype.stripHtmlAndReplaceEntities = function(htmlString) {
+	Utilities.stripHtmlAndReplaceEntities = function(htmlString) {
 		// converto for for html page title
 		// strip html (https://stackoverflow.com/questions/822452/strip-html-from-text-javascript#822464)
 		// and replaces &raquo; with \u00bb
@@ -3349,6 +3349,7 @@
 	Utilities.prototype.focusSearchField = Utilities.focusSearchField;
 	Utilities.prototype.addTagLink = Utilities.addTagLink;
 	Utilities.prototype.formatDescription = Utilities.formatDescription;
+	Utilities.prototype.stripHtmlAndReplaceEntities = Utilities.stripHtmlAndReplaceEntities;
 
 	window.Utilities = Utilities;
 }());

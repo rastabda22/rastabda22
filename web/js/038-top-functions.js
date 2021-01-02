@@ -2303,7 +2303,7 @@
 					if (ithMedia.metadata.hasOwnProperty("description")) {
 						imageString +=
 								"<div class='media-description'>" +
-									"<div class='description'>" + util.formatDescription(ithMedia.metadata.description) + "</div>" +
+									"<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithMedia.metadata.description) + "</div>" +
 								"</div>";
 					}
 					if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
@@ -2316,7 +2316,6 @@
 							"</div>" +
 						"</div>";
 					imageElement = $(imageString);
-
 
 					imageElement.get(0).media = ithMedia;
 					if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
@@ -2340,6 +2339,9 @@
 					})(imageLink, imageElement);
 
 					thumbsElement.append(imageLink);
+
+					if (ithMedia.metadata.hasOwnProperty("description"))
+						$("#" + imageId + " .description").attr("title", Utilities.stripHtmlAndReplaceEntities(ithMedia.metadata.description));
 
 					if (env.currentAlbum.isCollection()) {
 						// the folder name must be added the second line
@@ -2509,7 +2511,7 @@
 								if (ithSubalbum.hasOwnProperty("description")) {
 									captionHtml +=
 									 	"<div class='album-description'>" +
-											"<div class='description'>" + util.formatDescription(ithSubalbum.description) + "</div>" +
+											"<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithSubalbum.description) + "</div>" +
 										"</div>";
 								}
 
@@ -2631,6 +2633,9 @@
 
 								// subalbumsElement.append(linkContainer);
 								subalbumsElement.append(aHrefHtmlContainer);
+
+								if (ithSubalbum.hasOwnProperty("description"))
+									$("#" + captionId + " .description").attr("title", Utilities.stripHtmlAndReplaceEntities(ithSubalbum.description));
 
 								if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
 									$("#subalbum-map-link-" + iSubalbum).off('click').on(
