@@ -1004,95 +1004,96 @@
 
 			// $(mediaSelector).off(loadEvent);
 
-			if (id === "center") {
-				$("#pinch-in").off("click").on("click", pS.pinchIn);
-				$("#pinch-out").off("click").on("click", pS.pinchOut);
+			// if (id === "center") {
+			$("#pinch-in").off("click").on("click", pS.pinchIn);
+			$("#pinch-out").off("click").on("click", pS.pinchOut);
 
-				let selectSrc = 'img/checkbox-unchecked-48px.png';
-				let titleSelector = "#select-single-media";
-				if (self.isSelected()) {
-					selectSrc = 'img/checkbox-checked-48px.png';
-					titleSelector = "#unselect-single-media";
-				}
-				$("#media-select-box .select-box").attr("title", util._t(titleSelector)).attr("alt", util._t("#selector")).attr("src", selectSrc);
-				$("#media-select-box").off('click').on(
-					'click',
-					{singleMedia: self, clickedSelector: "#media-select-box"},
-					function(ev) {
-						ev.stopPropagation();
-						ev.preventDefault();
-						ev.data.singleMedia.toggleSelectedStatus(album, ev.data.clickedSelector);
-					}
-				);
-
-				if (self.mimeType.indexOf("image/") === 0) {
-					pS.addMediaGesturesDetection();
-					util.setPinchButtonsPosition();
-				}
-				util.correctPrevNextPosition();
-				util.setSelectButtonPosition();
-
-				if (album.numsMedia.imagesAndVideosTotal() > 1) {
-					env.prevMedia.show(album, 'left');
-					env.nextMedia.show(album, 'right');
-				}
-
-				$(window).off("resize").on(
-					"resize",
-					function () {
-						env.windowWidth = $(window).outerWidth();
-						env.windowHeight = $(window).outerHeight();
-
-						$("#loading").show();
-
-						var event = {data: {}};
-
-						event.data.resize = true;
-
-						event.data.id = "center";
-						event.data.currentZoom = pS.getCurrentZoom();
-						event.data.initialZoom = pS.getInitialZoom();
-						let scalePromise = self.scale(event);
-						scalePromise.then(
-							function() {
-								if (self.mimeType.indexOf("image/") === 0) {
-									f.pinchSwipeInitialization();
-									util.setPinchButtonsPosition();
-								}
-								util.setSelectButtonPosition();
-								util.setDescriptionPosition('media');
-								util.correctPrevNextPosition();
-							}
-						);
-
-						if (album.numsMedia.imagesAndVideosTotal() > 1) {
-							event.data.id = "left";
-							env.prevMedia.scale(event);
-
-							event.data.id = "right";
-							env.nextMedia.scale(event);
-						}
-
-						var isPopup = $('.leaflet-popup').html() ? true : false;
-						var isMap = $('#mapdiv').html() ? true : false;
-						if (isMap) {
-							// the map must be generated again including the points that only carry protected content
-							env.mapRefreshType = "resize";
-
-							if (isPopup) {
-								env.popupRefreshType = "mapAlbum";
-								$('.leaflet-popup-close-button')[0].click();
-							} else {
-								env.popupRefreshType = "none";
-							}
-
-							// close the map and reopen it
-							$('.modal-close')[0].click();
-							$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
-						}
-					}
-				);
+			let selectSrc = 'img/checkbox-unchecked-48px.png';
+			let titleSelector = "#select-single-media";
+			if (self.isSelected()) {
+				selectSrc = 'img/checkbox-checked-48px.png';
+				titleSelector = "#unselect-single-media";
 			}
+			$("#media-select-box .select-box").attr("title", util._t(titleSelector)).attr("alt", util._t("#selector")).attr("src", selectSrc);
+			$("#media-select-box").off('click').on(
+				'click',
+				{singleMedia: self, clickedSelector: "#media-select-box"},
+				function(ev) {
+					ev.stopPropagation();
+					ev.preventDefault();
+					ev.data.singleMedia.toggleSelectedStatus(album, ev.data.clickedSelector);
+				}
+			);
+
+			if (self.mimeType.indexOf("image/") === 0) {
+				pS.addMediaGesturesDetection();
+				util.setPinchButtonsPosition();
+			}
+			util.correctPrevNextPosition();
+			if (util.setSelectButtonPosition())
+				util.setDescriptionPosition('media');
+
+			if (album.numsMedia.imagesAndVideosTotal() > 1) {
+				env.prevMedia.show(album, 'left');
+				env.nextMedia.show(album, 'right');
+			}
+
+			$(window).off("resize").on(
+				"resize",
+				function () {
+					env.windowWidth = $(window).outerWidth();
+					env.windowHeight = $(window).outerHeight();
+
+					$("#loading").show();
+
+					var event = {data: {}};
+
+					event.data.resize = true;
+
+					event.data.id = "center";
+					event.data.currentZoom = pS.getCurrentZoom();
+					event.data.initialZoom = pS.getInitialZoom();
+					let scalePromise = self.scale(event);
+					scalePromise.then(
+						function() {
+							if (self.mimeType.indexOf("image/") === 0) {
+								f.pinchSwipeInitialization();
+								util.setPinchButtonsPosition();
+							}
+							if (util.setSelectButtonPosition())
+								util.setDescriptionPosition('media');
+							util.correctPrevNextPosition();
+						}
+					);
+
+					if (album.numsMedia.imagesAndVideosTotal() > 1) {
+						event.data.id = "left";
+						env.prevMedia.scale(event);
+
+						event.data.id = "right";
+						env.nextMedia.scale(event);
+					}
+
+					var isPopup = $('.leaflet-popup').html() ? true : false;
+					var isMap = $('#mapdiv').html() ? true : false;
+					if (isMap) {
+						// the map must be generated again including the points that only carry protected content
+						env.mapRefreshType = "resize";
+
+						if (isPopup) {
+							env.popupRefreshType = "mapAlbum";
+							$('.leaflet-popup-close-button')[0].click();
+						} else {
+							env.popupRefreshType = "none";
+						}
+
+						// close the map and reopen it
+						$('.modal-close')[0].click();
+						$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
+					}
+				}
+			);
+			// }
 		}
 		// end of loadNextPrevMedia auxiliary function
 
@@ -1277,9 +1278,8 @@
 										util.setSelectButtonPosition();
 										util.setDescriptionPosition('media');
 										util.correctPrevNextPosition();
+										loadNextPrevMedia(self, containerHeight, containerWidth);
 									}
-									// if (self.mimeType.indexOf("image/") === 0) {
-									loadNextPrevMedia(self, containerHeight, containerWidth);
 									// }
 								}
 							);
