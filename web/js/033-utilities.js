@@ -1592,7 +1592,7 @@
 								// env.selectionAlbum.numsProtectedMediaInSubTree.sum(subalbum.numsProtectedMediaInSubTree);
 							}
 
-							subalbum.generateCaptionForSearch();
+							subalbum.generateCaptionForSelection(self);
 							delete env.selectionAlbum.albumNameSort;
 							delete env.selectionAlbum.albumReverseSort;
 							env.selectionAlbum.sortAlbumsMedia();
@@ -2264,11 +2264,7 @@
 		} else if (env.currentAlbum.isMap()) {
 			zipFilename += Utilities._t("#from-map");
 		} else if (env.currentAlbum.cacheBase !== env.options.folders_string) {
-			let name;
-			if (env.currentAlbum.hasOwnProperty("title") && env.currentAlbum.title !== env.currentAlbum.name)
-				zipFilename += env.currentAlbum.title + " (" + env.currentAlbum.name + ")";
-			else
-				zipFilename += env.currentAlbum.name;
+			zipFilename += env.currentAlbum.nameForShowing(null);
 		}
 
 		zipFilename += ".zip";
@@ -2423,7 +2419,7 @@
 	};
 
 	Utilities.generateAlbumCaptionForCollections = function(album) {
-		var firstLine = album.name, secondLine = '';
+		var firstLine, secondLine = '';
 
 		var raquo = " <span class='gray'>&raquo;</span> ";
 		var folderArray = album.cacheBase.split(env.options.cache_folder_separator);
@@ -2471,6 +2467,7 @@
 			if (! secondLine)
 				secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album") + ")</span>";
 		} else {
+			firstLine = album.nameForShowing(null);
 			for (let iCacheBase = 0; iCacheBase < album.ancestorsCacheBase.length - 1; iCacheBase ++) {
 				if (iCacheBase === 0 && album.ancestorsCacheBase.length === 2) {
 					secondLine = "<span class='gray'>(" + Utilities._t("#regular-album") + ")</span> ";
@@ -2568,47 +2565,55 @@
 		return [captionForCollection, captionForCollectionSorting];
 	};
 
-	Album.prototype.nameForShowing = function(parentAlbum) {
+	Utilities.nameForShowing = function(albumOrSubalbum, parentAlbum) {
 		var folderName = '';
-		if (parentAlbum.isSelection() && this.hasOwnProperty("captionForSelection")) {
-			folderName = this.captionForSelection;
-		} else if (parentAlbum.isSearch() && this.hasOwnProperty("captionForSearch")) {
-			folderName = this.captionForSearch;
-		} else if (parentAlbum.isByDate()) {
-			let folderArray = this.cacheBase.split(env.options.cache_folder_separator);
+		if (parentAlbum && parentAlbum.isSelection() && albumOrSubalbum.hasOwnProperty("captionForSelection")) {
+			folderName = albumOrSubalbum.captionForSelection;
+		} else if (parentAlbum && parentAlbum.isSearch() && albumOrSubalbum.hasOwnProperty("captionForSearch")) {
+			folderName = albumOrSubalbum.captionForSearch;
+		} else if (parentAlbum && parentAlbum.isByDate()) {
+			let folderArray = albumOrSubalbum.cacheBase.split(env.options.cache_folder_separator);
 			if (folderArray.length === 2) {
 				folderName += parseInt(folderArray[1]);
 			} else if (folderArray.length === 3)
 				folderName += " " + Utilities._t("#month-" + folderArray[2]);
 			else if (folderArray.length === 4)
 				folderName += Utilities._t("#day") + " " + parseInt(folderArray[3]);
-		} else if (parentAlbum.isByGps()) {
-			if (this.name === '')
+		} else if (parentAlbum && parentAlbum.isByGps()) {
+			if (albumOrSubalbum.name === '')
 				folderName = Utilities._t('.not-specified');
-			else if (this.hasOwnProperty('altName'))
-				folderName = Utilities.transformAltPlaceName(this.altName);
+			else if (albumOrSubalbum.hasOwnProperty('altName'))
+				folderName = Utilities.transformAltPlaceName(albumOrSubalbum.altName);
 			else
-				folderName = this.name;
+				folderName = albumOrSubalbum.name;
 		} else {
-			if (this.hasOwnProperty("title") && this.title !== this.name)
-				folderName = this.title + "<br /><span class='media-real-name'>(" + this.name + ")</span>";
+			if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title !== albumOrSubalbum.name)
+				folderName = albumOrSubalbum.title + "<br /><span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
 			else
-				folderName = this.name;
+				folderName = albumOrSubalbum.name;
 		}
 
-		if (parentAlbum.isSelection())
-			this.captionForSelection = folderName;
-		else if (parentAlbum.isSearch())
-			this.captionForSearch = folderName;
+		if (parentAlbum && parentAlbum.isSelection())
+			albumOrSubalbum.captionForSelection = folderName;
+		else if (parentAlbum && parentAlbum.isSearch())
+			albumOrSubalbum.captionForSearch = folderName;
 
 		return folderName;
 	};
 
+	Album.prototype.nameForShowing = function(parentAlbum) {
+		return Utilities.nameForShowing(this, parentAlbum);
+	};
+
+	Subalbum.prototype.nameForShowing = function(parentAlbum) {
+		return Utilities.nameForShowing(this, parentAlbum);
+	};
+
 	SingleMedia.prototype.nameForShowing = function(album, html = false, br = false) {
 		var mediaName = '';
-		if ((album.isSelection()) && this.hasOwnProperty("captionForSelection")) {
+		if (album.isSelection() && this.hasOwnProperty("captionForSelection")) {
 			mediaName = this.captionForSelection;
-		} else if ((album.isSearch()) && this.hasOwnProperty("captionForSearch")) {
+		} else if (album.isSearch() && this.hasOwnProperty("captionForSearch")) {
 			mediaName = this.captionForSearch;
 		} else if (album.isByDate()) {
 			let folderArray = album.cacheBase.split(env.options.cache_folder_separator);
@@ -2626,7 +2631,16 @@
 			else
 				mediaName = this.name;
 		} else {
-			mediaName = this.name;
+			if (this.hasOwnProperty("title") && this.title !== this.name) {
+				if (html && br)
+					mediaName = this.title + " <br /><span class='media-real-name'>(" + this.name + ")</span>";
+				else if (html)
+					mediaName = this.title + " <span class='media-real-name'>(" + this.name + ")</span>";
+				else
+					mediaName = this.title + " (" + this.name + ")";
+			} else {
+				mediaName = this.name;
+			}
 		}
 
 		return mediaName;
@@ -2643,7 +2657,7 @@
 			else if (subalbum.hasOwnProperty('altName'))
 				folderMapTitle = Utilities.transformAltPlaceName(subalbum.altName);
 			else
-				folderMapTitle = subalbum.name;
+				folderMapTitle = subalbum.nameForShowing(this);
 			// folderName += folderMapTitle;
 			folderMapTitle = Utilities._t('#place-icon-title') + folderMapTitle;
 		} else {
