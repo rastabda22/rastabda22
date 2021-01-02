@@ -2717,7 +2717,7 @@
 	Utilities.prototype.setSelectButtonPosition = function(containerHeight, containerWidth) {
 		// calculate and set pinch buttons position
 		if ($(".select-box").attr("src") === undefined)
-			return;
+			return false;
 
 		var mediaElement = $(".media-box#center .media-box-inner img");
 		var actualHeight = mediaElement.height();
@@ -2735,6 +2735,7 @@
 		var bottom = Math.round(albumHeight + (containerHeight - actualHeight) / 2 + distanceFromImageBorder);
 		var right = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
 		$("#media-select-box .select-box").css("right", right.toString() + "px").css("bottom", bottom.toString() + "px");
+		return true;
 	};
 
 	NumsProtected.prototype.sumUpNumsProtectedMedia = function() {

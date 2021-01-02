@@ -1275,8 +1275,8 @@
 										if (self.mimeType.indexOf("image/") === 0) {
 											util.setPinchButtonsPosition();
 										}
-										util.setSelectButtonPosition();
-										util.setDescriptionPosition('media');
+										if (util.setSelectButtonPosition())
+											util.setDescriptionPosition('media');
 										util.correctPrevNextPosition();
 										loadNextPrevMedia(self, containerHeight, containerWidth);
 									}
