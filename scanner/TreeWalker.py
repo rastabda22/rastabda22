@@ -2135,14 +2135,8 @@ class TreeWalker:
 		for cache_file in sorted(os.listdir(os.path.join(Options.config['cache_path'], subdir))):
 			if os.path.isdir(os.path.join(Options.config['cache_path'], subdir, cache_file)):
 				next_level()
-				if cache_file in json_dict['dirs']:
+				if "dirs" in json_dict and cache_file in json_dict['dirs']:
 					self.remove_stale(os.path.join(subdir, cache_file), json_dict['dirs'][cache_file])
-				elif subdir == "":
-					# a protected content directory which is'n reported must be deleted with all its content
-					message("deleting non-reported protected content subdir...", "", 5)
-					shutil.rmtree(os.path.join(Options.config['cache_path'], subdir, cache_file))
-					message("non-reported protected content subdir deleted!", os.path.join(Options.config['cache_path'], subdir, cache_file), 4)
-				try:
 					if not os.listdir(os.path.join(Options.config['cache_path'], subdir, cache_file)):
 						next_level()
 						message("empty subdir, deleting...", "", 4)
@@ -2152,9 +2146,11 @@ class TreeWalker:
 						message("empty subdir, deleted", "", 5)
 						back_level()
 						back_level()
-				except OSError:
-					# no protected content
-					pass
+				elif subdir == "":
+					# a protected content directory which is'n reported must be deleted with all its content
+					message("deleting non-reported protected content subdir...", "", 5)
+					shutil.rmtree(os.path.join(Options.config['cache_path'], subdir, cache_file))
+					indented_message("non-reported protected content subdir deleted!", os.path.join(Options.config['cache_path'], subdir, cache_file), 4)
 				back_level()
 			else:
 				# only delete json's, transcoded videos, reduced images and thumbnails
@@ -2168,7 +2164,6 @@ class TreeWalker:
 					except KeyboardInterrupt:
 						raise
 					if cache_file not in json_dict['files']:
-					# if cache_file not in cache_list:
 						message("removing stale cache file...", cache_file, 4)
 						file_to_delete = os.path.join(Options.config['cache_path'], subdir, cache_file)
 						os.unlink(file_to_delete)
