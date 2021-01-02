@@ -1,3 +1,5 @@
+### version v4.9.13 (Jan 2, 2021)
+
 * refine description position
 * reduce description to one line in subalbums and media thumbnails: the whole description is avaiilable as a tooltip
 * css refinement in album view no slide
