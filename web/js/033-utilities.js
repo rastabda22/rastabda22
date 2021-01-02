@@ -2590,7 +2590,10 @@
 				folderName = albumOrSubalbum.name;
 		} else {
 			if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title !== albumOrSubalbum.name)
-				folderName = albumOrSubalbum.title + "<br /><span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
+				if (albumOrSubalbum.name)
+					folderName = albumOrSubalbum.title + "<br /><span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
+				else
+					folderName = albumOrSubalbum.title;
 			else
 				folderName = albumOrSubalbum.name;
 		}
