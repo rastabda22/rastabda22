@@ -2950,16 +2950,18 @@
 
 	Utilities.prototype.setDescriptionPosition = function(captionType) {
 		// Size of description varies if on album or media
+		var titleHeight = parseInt($(".media-box#center .title").css("height"));
+		var mediaBoxHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
+		var mediaHeight = parseInt($(".media-box#center .media-box-inner #media-center").css("height"));
+		var bottomThumbnailsHeight = parseInt($("#album-view.media-view-container").css("height"));
 		if (captionType === 'media') {
-			var titleHeight = parseInt($(".media-box#center .title").css("height"));
-			var mediaHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
-			$("#description").css("top", titleHeight + mediaHeight * 0.7);
+			var selectBoxWidth = 30;
+			$("#description").css("bottom", 2 * selectBoxWidth + parseInt($("#media-select-box .select-box").css("bottom")));
 			// $("#description").css("bottom", "");
 			$("#description").css("height", "");
-			var selectBoxWidth = 30;
 			$("#description").css("right", 2 * selectBoxWidth + parseInt($("#media-select-box .select-box").css("right")));
 			$("#description").css("max-height", "");
-			$("#description").css("max-height", mediaHeight * 0.2);
+			$("#description").css("max-height", mediaHeight * 0.4);
 			$("#description-text").css("height", "");
 			$("#description-text").css("max-height", "");
 			$("#description-text").css("max-height", $("#description").height() - 2 * parseInt($("#description").css("padding-top")) - $("#description-title").height() - $("#description-tags").height());
