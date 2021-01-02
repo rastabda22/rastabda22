@@ -133,9 +133,12 @@
 					components = [originalTitle];
 				else {
 					if (env.currentAlbum.hasOwnProperty("ancestorsTitles")) {
-						components = env.currentAlbum.ancestorsTitles;
-						components = components.map((title, i) => env.currentAlbum.ancestorsTitles[i] !== env.currentAlbum.ancestorsNames[i] && i > 0 ? title + " <span class='media-real-name'>(" + env.currentAlbum.ancestorsNames[i] + ")" : title);
-						components.unshift(originalTitle !== components[0] ? originalTitle + " <span class='media-real-name'>(" + components[0] + ")" : originalTitle);
+						components = env.currentAlbum.ancestorsNames;
+						components = components.map(
+							(ithComponent, i) =>
+								i && env.currentAlbum.ancestorsTitles[i] && env.currentAlbum.ancestorsTitles[i] !== ithComponent ? env.currentAlbum.ancestorsTitles[i] + " <span class='media-real-name'>(" + ithComponent + ")" : ithComponent
+						);
+						components.unshift(components[0] && originalTitle !== components[0] ? originalTitle + " <span class='media-real-name'>(" + components[0] + ")" : originalTitle);
 					} else {
 						components = env.currentAlbum.path.split("/");
 						components.unshift(originalTitle);
