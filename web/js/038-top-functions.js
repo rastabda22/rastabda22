@@ -3288,7 +3288,7 @@
 										env.mapAlbum.media.some(
 											function(media, index) {
 												matchingMedia = index;
-												var match = (media.cacheBase === mediaListElement.cacheBase && media.foldersCacheBase === mediaListElement.foldersCacheBase);
+												var match = media.isEqual(mediaListElement);
 												return match;
 											}
 										)

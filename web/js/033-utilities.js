@@ -1690,7 +1690,7 @@
 
 							var subalbumIsInsideSelectedAlbums = subalbum.isInsideSelectedAlbums();
 
-							indexInSelection = env.selectionAlbum.subalbums.findIndex(selectedSubalbum => selectedSubalbum.cacheBase === subalbum.cacheBase);
+							indexInSelection = env.selectionAlbum.subalbums.findIndex(selectedSubalbum => selectedSubalbum.isEqual(subalbum));
 							env.selectionAlbum.subalbums.splice(indexInSelection, 1);
 
 							if (subalbum.positionsAndMediaInTree.length) {
@@ -3324,8 +3324,7 @@
 			if (env.currentMedia !== null && (env.currentAlbum === null || this.isEqual(env.currentAlbum))) {
 				env.currentMediaIndex = this.media.findIndex(
 					function(thisMedia) {
-						var matches =
-							thisMedia.cacheBase === env.currentMedia.cacheBase && thisMedia.foldersCacheBase === env.currentMedia.foldersCacheBase;
+						var matches = thisMedia.isEqual(env.currentMedia);
 						return matches;
 					}
 				);
