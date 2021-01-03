@@ -145,8 +145,7 @@
 				thisMedia = thisAlbum.media[0];
 			hasGpsData = thisMedia.hasGpsData();
 		} else if (isAnyRootCacheBase) {
-			// hasGpsData = (env.options.num_positions_in_tree > 0);
-			hasGpsData = (env.currentAlbum.numPositionsInTree > 0);
+			hasGpsData = (thisAlbum.numPositionsInTree > 0);
 		} else {
 			hasGpsData = false;
 		}
