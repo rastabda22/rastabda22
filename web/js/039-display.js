@@ -543,7 +543,7 @@ $(document).ready(function() {
 		'click',
 		function() {
 			if ($(".download-album.everything.all.full").hasClass("active")) {
-				Utilities.downloadAlbum(true);
+				env.currentAlbum.downloadAlbum(true);
 			}
 		}
 	);
@@ -551,7 +551,7 @@ $(document).ready(function() {
 		'click',
 		function() {
 			if ($(".download-album.everything.all.sized").hasClass("active")) {
-				Utilities.downloadAlbum(true, "all", $(".download-album.everything.all.sized").attr("size"));
+				env.currentAlbum.downloadAlbum(true, "all", $(".download-album.everything.all.sized").attr("size"));
 			}
 		}
 	);
@@ -559,7 +559,7 @@ $(document).ready(function() {
 		'click',
 		function() {
 			if ($(".download-album.everything.images.full").hasClass("active")) {
-				Utilities.downloadAlbum(true, "images");
+				env.currentAlbum.downloadAlbum(true, "images");
 			}
 		}
 	);
@@ -567,7 +567,7 @@ $(document).ready(function() {
 		'click',
 		function() {
 			if ($(".download-album.everything.images.sized").hasClass("active")) {
-				Utilities.downloadAlbum(true, "images", $(".download-album.everything.images.sized").attr("size"));
+				env.currentAlbum.downloadAlbum(true, "images", $(".download-album.everything.images.sized").attr("size"));
 			}
 		}
 	);
@@ -575,7 +575,7 @@ $(document).ready(function() {
 		'click',
 		function() {
 			if ($(".download-album.everything.videos.full").hasClass("active")) {
-				Utilities.downloadAlbum(true, "videos");
+				env.currentAlbum.downloadAlbum(true, "videos");
 			}
 		}
 	);
@@ -583,7 +583,7 @@ $(document).ready(function() {
 		'click',
 		function() {
 			if ($(".download-album.everything.videos.sized").hasClass("active")) {
-				Utilities.downloadAlbum(true, "videos", $(".download-album.everything.videos.sized").attr("size"));
+				env.currentAlbum.downloadAlbum(true, "videos", $(".download-album.everything.videos.sized").attr("size"));
 			}
 		}
 	);
@@ -592,7 +592,7 @@ $(document).ready(function() {
 		'click',
 		function() {
 			if ($(".download-album.media-only.all").hasClass("active")) {
-				Utilities.downloadAlbum(false, "all");
+				env.currentAlbum.downloadAlbum(false, "all");
 			}
 		}
 	);
@@ -600,7 +600,7 @@ $(document).ready(function() {
 		'click',
 		function() {
 			if ($(".download-album.media-only.all.sized").hasClass("active")) {
-				Utilities.downloadAlbum(false, "all", $(".download-album.media-only.all.sized").attr("size"));
+				env.currentAlbum.downloadAlbum(false, "all", $(".download-album.media-only.all.sized").attr("size"));
 			}
 		}
 	);
@@ -608,7 +608,7 @@ $(document).ready(function() {
 		'click',
 		function() {
 			if ($(".download-album.media-only.images").hasClass("active")) {
-				Utilities.downloadAlbum(false, "images");
+				env.currentAlbum.downloadAlbum(false, "images");
 			}
 		}
 	);
@@ -616,7 +616,7 @@ $(document).ready(function() {
 		'click',
 		function() {
 			if ($(".download-album.media-only.images.sized").hasClass("active")) {
-				Utilities.downloadAlbum(false, "images", $(".download-album.media-only.images.sized").attr("size"));
+				env.currentAlbum.downloadAlbum(false, "images", $(".download-album.media-only.images.sized").attr("size"));
 			}
 		}
 	);
@@ -624,7 +624,7 @@ $(document).ready(function() {
 		'click',
 		function() {
 			if ($(".download-album.media-only.videos").hasClass("active")) {
-				Utilities.downloadAlbum(false, "videos");
+				env.currentAlbum.downloadAlbum(false, "videos");
 			}
 		}
 	);
@@ -632,7 +632,7 @@ $(document).ready(function() {
 		'click',
 		function() {
 			if ($(".download-album.media-only.videos.sized").hasClass("active")) {
-				Utilities.downloadAlbum(false, "videos", $(".download-album.media-only.videos.sized").attr("size"));
+				env.currentAlbum.downloadAlbum(false, "videos", $(".download-album.media-only.videos.sized").attr("size"));
 			}
 		}
 	);

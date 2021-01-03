@@ -2295,7 +2295,7 @@
 		return result;
 	};
 
-	Utilities.downloadAlbum = function(everything = false, what = "all", size = 0) {
+	Album.prototype.downloadAlbum = function(everything = false, what = "all", size = 0) {
 		// adapted from https://gist.github.com/c4software/981661f1f826ad34c2a5dc11070add0f
 		//
 		// this function must be converted to streams, example at https://jimmywarting.github.io/StreamSaver.js/examples/saving-multiple-files.html
@@ -2308,29 +2308,29 @@
 
 		var zip = new JSZip();
 		var zipFilename;
-		var basePath = env.currentAlbum.path;
+		var basePath = this.path;
 		zipFilename = env.options.page_title + '.';
-		if (env.currentAlbum.isSearch()) {
+		if (this.isSearch()) {
 			zipFilename += Utilities._t("#by-search") + " '" + $("#search-field").val() + "'";
-		} else if (env.currentAlbum.isSelection()) {
+		} else if (this.isSelection()) {
 			zipFilename += Utilities._t("#by-selection");
-		} else if (env.currentAlbum.isByDate()) {
-			let textComponents = env.currentAlbum.path.split("/").splice(1);
+		} else if (this.isByDate()) {
+			let textComponents = this.path.split("/").splice(1);
 			if (textComponents.length > 1)
 				textComponents[1] = Utilities._t("#month-" + textComponents[1]);
 
 			zipFilename += textComponents.join('-');
-		} else if (env.currentAlbum.isByGps()) {
-			zipFilename += env.currentAlbum.ancestorsNames.splice(1).join('-');
-		} else if (env.currentAlbum.isMap()) {
+		} else if (this.isByGps()) {
+			zipFilename += this.ancestorsNames.splice(1).join('-');
+		} else if (this.isMap()) {
 			zipFilename += Utilities._t("#from-map");
-		} else if (env.currentAlbum.cacheBase !== env.options.folders_string) {
-			zipFilename += env.currentAlbum.nameForShowing(null);
+		} else if (this.cacheBase !== env.options.folders_string) {
+			zipFilename += this.nameForShowing(null);
 		}
 
 		zipFilename += ".zip";
 
-		var addMediaAndSubalbumsPromise = addMediaAndSubalbumsFromAlbum(env.currentAlbum);
+		var addMediaAndSubalbumsPromise = addMediaAndSubalbumsFromAlbum(this);
 		addMediaAndSubalbumsPromise.then(
 			// the complete zip can be generated...
 			function() {
