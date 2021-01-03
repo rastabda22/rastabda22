@@ -2364,7 +2364,7 @@
 						let parentAlbumPromise = phFl.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
 						parentAlbumPromise.then(
 							function(parentAlbum) {
-								$("#" + imageId + " .media-name").html(ithMedia.nameForShowing(env.currentAlbum));
+								$("#" + imageId + " .media-name").html(ithMedia.nameForShowing(env.currentAlbum, true, true));
 							}
 						);
 					}
@@ -2497,7 +2497,7 @@
 							function(resolve_subalbumPromise) {
 								var ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
 
-								let nameHtml = ithSubalbum.nameForShowing(env.currentAlbum);
+								let nameHtml = ithSubalbum.nameForShowing(env.currentAlbum, true, true);
 								if (nameHtml === "")
 									nameHtml = "<span class='italic'>(" + util._t("#root-album") + ")</span>";
 
