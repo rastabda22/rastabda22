@@ -967,7 +967,7 @@
 									// 	album.media,
 									// 	mediaGot,
 									// 	function(singleMedia1, singleMedia2) {
-									// 		return singleMedia1.foldersCacheBase === singleMedia2.foldersCacheBase && singleMedia1.cacheBase === singleMedia2.cacheBase;
+									// 		return singleMedia1.isEqual(singleMedia2);
 									// 	}
 									// );
 								album.includedFilesByCodesSimpleCombination[","].mediaGot = true;
@@ -1482,7 +1482,7 @@
 								let thisSubalbum = env.searchAlbum.subalbums[indexSubalbums];
 								let thisIndex = indexSubalbums;
 								// update the media count
-								env.searchAlbum.numsMediaInSubTree.sum(env.searchAlbum.numsMediaInSubTree, thisSubalbum.numsMediaInSubTree);
+								env.searchAlbum.numsMediaInSubTree.sum(thisSubalbum.numsMediaInSubTree);
 								// update the size totals
 								env.searchAlbum.sizesOfSubTree.sum(thisSubalbum.sizesOfSubTree);
 								env.searchAlbum.sizesOfAlbum.sum(thisSubalbum.sizesOfAlbum);
@@ -1645,7 +1645,7 @@
 																	ithMedia.hasOwnProperty("gpsAlbumCacheBase") && ithMedia.gpsAlbumCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
 																	util.isMapCacheBase(env.options.cache_base_to_search_in) &&
 																	env.cache.getAlbum(env.options.cache_base_to_search_in).media.some(
-																		singleMedia => singleMedia.cacheBase === ithMedia.cacheBase && singleMedia.foldersCacheBase === ithMedia.foldersCacheBase
+																		singleMedia => singleMedia.isEqual(ithMedia.cacheBase)
 																	)
 																)
 															)
@@ -1696,7 +1696,7 @@
 																	util.isMapCacheBase(env.options.cache_base_to_search_in) &&
 																	env.cache.getAlbum(env.options.cache_base_to_search_in).media.some(
 																		function(singleMedia) {
-																			return singleMedia.cacheBase === ithMedia.cacheBase && singleMedia.foldersCacheBase === ithMedia.foldersCacheBase;
+																			return singleMedia.isEqual(ithMedia);
 																		}
 																	)
 																)

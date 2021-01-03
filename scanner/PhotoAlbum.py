@@ -344,7 +344,11 @@ class Album(object):
 		subalbums_to_remove = []
 		for subalbum in self.subalbums_list:
 			subalbum.leave_only_unprotected_content()
-			if (subalbum.nums_protected_media_in_sub_tree.value(',').total() == 0):
+
+			if (
+				',' not in subalbum.nums_protected_media_in_sub_tree.keys() or
+				subalbum.nums_protected_media_in_sub_tree.value(',').total() == 0
+			):
 				subalbums_to_remove.append(subalbum)
 			elif (
 				self.cache_base == Options.config['by_search_string'] or
@@ -410,8 +414,9 @@ class Album(object):
 		subalbums_to_remove = []
 		for subalbum in self.subalbums_list:
 			subalbum.leave_only_content_protected_by(album_identifiers_set, media_identifiers_set)
+
 			if (
-				self.complex_combination in subalbum.nums_protected_media_in_sub_tree.keys() and
+				self.complex_combination not in subalbum.nums_protected_media_in_sub_tree.keys() or
 				subalbum.nums_protected_media_in_sub_tree.value(self.complex_combination).total() == 0
 			):
 				subalbums_to_remove.append(subalbum)
@@ -659,9 +664,12 @@ class Album(object):
 		if "symlinkCodesAndNumbers" in dictionary:
 			album.symlink_codes_and_numbers = dictionary["symlinkCodesAndNumbers"]
 
-		album._attributes["metadata"]["title"] = dictionary["title"]
-		album._attributes["metadata"]["description"] = dictionary["description"]
-		album._attributes["metadata"]["tags"] = dictionary["tags"]
+		if "title" in dictionary and dictionary["title"]:
+			album._attributes["metadata"]["title"] = dictionary["title"]
+		if "description" in dictionary and dictionary["description"]:
+			album._attributes["metadata"]["description"] = dictionary["description"]
+		if "tags" in dictionary and len(dictionary["tags"]) and not (len(dictionary["tags"]) == 1 and dictionary["tags"][0] == ""):
+			album._attributes["metadata"]["tags"] = dictionary["tags"]
 
 		album.sort_subalbums_and_media()
 

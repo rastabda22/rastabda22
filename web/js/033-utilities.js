@@ -1198,7 +1198,6 @@
 			return false;
 		else {
 			var index = env.mapAlbum.media.findIndex(x => x.isEqual(this));
-			// var index = env.mapAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
 			if (index > -1)
 				return true;
 			else
@@ -1211,7 +1210,6 @@
 			return false;
 		else {
 			var index = env.searchAlbum.media.findIndex(x => x.isEqual(this));
-			// var index = env.searchAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
 			if (index > -1)
 				return true;
 			else
@@ -1268,7 +1266,6 @@
 			return false;
 		} else {
 			var index = env.selectionAlbum.media.findIndex(x => x.isEqual(this));
-			// var index = env.selectionAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
 			if (index > -1)
 				return true;
 			else
@@ -1396,13 +1393,10 @@
 		var self = this;
 		if (
 			env.selectionAlbum.subalbums.some(
-				function(selectedAlbum) {
-					return (
-						self.foldersCacheBase.indexOf(selectedAlbum.cacheBase) === 0 ||
-						self.hasOwnProperty("dayAlbumCacheBase") && self.dayAlbumCacheBase.indexOf(selectedAlbum.cacheBase) === 0 ||
-						self.hasOwnProperty("gpsAlbumCacheBase") && self.gpsAlbumCacheBase.indexOf(selectedAlbum.cacheBase) === 0
-					);
-				}
+				selectedAlbum =>
+					self.foldersCacheBase.indexOf(selectedAlbum.cacheBase) === 0 ||
+					self.hasOwnProperty("dayAlbumCacheBase") && self.dayAlbumCacheBase.indexOf(selectedAlbum.cacheBase) === 0 ||
+					self.hasOwnProperty("gpsAlbumCacheBase") && self.gpsAlbumCacheBase.indexOf(selectedAlbum.cacheBase) === 0
 			)
 		) {
 			return true;
@@ -1415,12 +1409,9 @@
 		var self = this;
 		if (
 			env.selectionAlbum.subalbums.some(
-				function(selectedAlbum) {
-					return (
-						self.cacheBase.indexOf(selectedAlbum.cacheBase) === 0 &&
-						self.cacheBase !== selectedAlbum.cacheBase
-					);
-				}
+				selectedAlbum =>
+					self.cacheBase.indexOf(selectedAlbum.cacheBase) === 0 &&
+					self.cacheBase !== selectedAlbum.cacheBase
 			)
 		) {
 			return true;
@@ -1474,7 +1465,6 @@
 	SingleMedia.prototype.removeFromSelection = function(clickedSelector) {
 		if (this.isSelected()) {
 			var index = env.selectionAlbum.media.findIndex(x => x.isEqual(this));
-			// var index = env.selectionAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
 			env.selectionAlbum.media.splice(index, 1);
 
 			if (this.hasGpsData()) {
@@ -1547,60 +1537,127 @@
 		}
 	};
 
+	Album.prototype.collectMediaInTree = function() {
+		var self = this;
+		return new Promise(
+			function (resolve_collect) {
+				if (self.media.length)
+					var mediaInAlbum = [... self.media];
+				subalbumsPromises = [];
+				self.subalbums.forEach(
+					function(subalbum) {
+						var subalbumPromise = new Promise(
+							function(resolve_subalbumPromise) {
+								toAlbumPromise = subalbum.toAlbum(null, {});
+								toAlbumPromise.then(
+									function(album) {
+										var collectPromise = album.collectMediaInTree();
+										collectPromise.then(
+											function(mediaInSubalbum) {
+												resolve_subalbumPromise(mediaInSubalbum);
+											}
+										);
+									}
+								);
+							}
+						);
+						subalbumsPromises.push(subalbumPromise);
+					}
+				);
+				Promise.all(subalbumsPromises).then(
+					function(arrayMedia) {
+						arrayMedia.forEach(
+							function(media) {
+								media.forEach(
+									singleMedia => {
+										if (mediaInAlbum.indexOf(singleMedia) === -1)
+											mediaInAlbum.push(singleMedia);
+									}
+								);
+							}
+						);
+						resolve_collect(mediaInAlbum);
+					}
+				);
+			}
+		);
+	};
+
 	Album.prototype.addSubalbumToSelection = function(iSubalbum, clickedSelector) {
 		var subalbum = this.subalbums[iSubalbum];
 		var self = this;
 		return new Promise(
 			function(resolve_addSubalbum) {
+				function continue_addSubalbumToSelection(album) {
+					env.selectionAlbum.subalbums.push(album);
+
+					album.generateCaptionForSelection(self);
+					delete env.selectionAlbum.albumNameSort;
+					delete env.selectionAlbum.albumReverseSort;
+					env.selectionAlbum.sortAlbumsMedia();
+
+					$(clickedSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-subalbum"));
+					self.invalidatePositionsAndMediaInAlbumAndSubalbums();
+
+					resolve_addSubalbum();
+				}
+
 				if (subalbum.isSelected()) {
 					resolve_addSubalbum();
 				} else {
+					if (Utilities.nothingIsSelected())
+						Utilities.initializeSelectionAlbum();
+
 					let convertSubalbumPromise = subalbum.toAlbum(null, {getMedia: false, getPositions: true});
 					convertSubalbumPromise.then(
-						function(subalbum) {
-							self.subalbums[iSubalbum] = subalbum;
-							if (Utilities.nothingIsSelected())
-								Utilities.initializeSelectionAlbum();
+						function(album) {
+							self.subalbums[iSubalbum] = album;
 
-							var selectedMediaNotInsideSelectedAlbums = [];
-							env.selectionAlbum.media.forEach(
-								function(singleMedia) {
-									if (! singleMedia.isInsideSelectedAlbums())
-										selectedMediaNotInsideSelectedAlbums.push(singleMedia);
-								}
-							);
+							var albumIsInsideSelectedAlbums = album.isInsideSelectedAlbums();
+							if (albumIsInsideSelectedAlbums) {
+								continue_addSubalbumToSelection(album);
+							} else {
+								var collectPromise = album.collectMediaInTree();
+								collectPromise.then(
+									function(mediaInAlbumTree) {
+										var mediaInAlbumNotSelectedNorInsideSelectedAlbums = [];
+										mediaInAlbumTree.forEach(
+											function(singleMedia) {
+												if (! singleMedia.isInsideSelectedAlbums() && ! singleMedia.isSelected())
+													mediaInAlbumNotSelectedNorInsideSelectedAlbums.push(singleMedia);
+											}
+										);
+										// var mediaInAlbumNotSelectedNorInsideSelectedAlbums = Utilities.arrayUnion(mediaInAlbumNotSelected, mediaInAlbumNotInsideSelectedAlbums);
 
-							var subalbumIsInsideSelectedAlbums = subalbum.isInsideSelectedAlbums();
+										mediaInAlbumNotSelectedNorInsideSelectedAlbums.forEach(
+											singleMedia => {
+												if (singleMedia.hasGpsData())
+													env.selectionAlbum.positionsAndMediaInTree.addSingleMediaToPositionsAndMedia(singleMedia);
+												env.selectionAlbum.sizesOfSubTree.sum(singleMedia.fileSizes);
+											}
+										);
+										// env.selectionAlbum.positionsAndMediaInTree.mergePositionsAndMedia(album.positionsAndMediaInTree);
+										env.selectionAlbum.numPositionsInTree = env.selectionAlbum.positionsAndMediaInTree.length;
 
-							env.selectionAlbum.subalbums.push(subalbum);
+										env.selectionAlbum.numsMediaInSubTree.sum(new Media(mediaInAlbumNotSelectedNorInsideSelectedAlbums).imagesAndVideosCount());
 
-							env.selectionAlbum.positionsAndMediaInTree.mergePositionsAndMedia(subalbum.positionsAndMediaInTree);
-							env.selectionAlbum.numPositionsInTree = env.selectionAlbum.positionsAndMediaInTree.length;
+										// env.selectionAlbum.sizesOfSubTree.sum(album.sizesOfSubTree);
+										// mediaInAlbumNotSelectedNorInsideSelectedAlbums.forEach(
+										// 	function(singleMedia) {
+										// 		env.selectionAlbum.sizesOfSubTree.sum(singleMedia.fileSizes);
+										// 		if (singleMedia.isInsideSelectedAlbums()) {
+										// 			var singleMediaArray = new Media([singleMedia]);
+										// 			env.selectionAlbum.numsMediaInSubTree.subtract(singleMediaArray.imagesAndVideosCount());
+										// 			env.selectionAlbum.sizesOfSubTree.subtract(singleMedia.fileSizes);
+										// 		}
+										// 	}
+										// );
+										// env.selectionAlbum.numsProtectedMediaInSubTree.sum(album.numsProtectedMediaInSubTree);
 
-							if (! subalbumIsInsideSelectedAlbums) {
-								env.selectionAlbum.numsMediaInSubTree.sum(subalbum.numsMediaInSubTree);
-								env.selectionAlbum.sizesOfSubTree.sum(subalbum.sizesOfSubTree);
-								selectedMediaNotInsideSelectedAlbums.forEach(
-									function(singleMedia) {
-										if (singleMedia.isInsideSelectedAlbums()) {
-											var singleMediaArray = new Media([singleMedia]);
-											env.selectionAlbum.numsMediaInSubTree.subtract(singleMediaArray.imagesAndVideosCount());
-											env.selectionAlbum.sizesOfSubTree.subtract(singleMedia.fileSizes);
-										}
+										continue_addSubalbumToSelection(album);
 									}
 								);
-								// env.selectionAlbum.numsProtectedMediaInSubTree.sum(subalbum.numsProtectedMediaInSubTree);
 							}
-
-							subalbum.generateCaptionForSelection(self);
-							delete env.selectionAlbum.albumNameSort;
-							delete env.selectionAlbum.albumReverseSort;
-							env.selectionAlbum.sortAlbumsMedia();
-
-							$(clickedSelector + " img").attr("src", "img/checkbox-checked-48px.png").attr("title", Utilities._t("#unselect-subalbum"));
-							self.invalidatePositionsAndMediaInAlbumAndSubalbums();
-
-							resolve_addSubalbum();
 						}
 					);
 				}
@@ -1633,7 +1690,7 @@
 
 							var subalbumIsInsideSelectedAlbums = subalbum.isInsideSelectedAlbums();
 
-							indexInSelection = env.selectionAlbum.subalbums.findIndex(selectedSubalbum => selectedSubalbum.cacheBase === subalbum.cacheBase);
+							indexInSelection = env.selectionAlbum.subalbums.findIndex(selectedSubalbum => selectedSubalbum.isEqual(subalbum));
 							env.selectionAlbum.subalbums.splice(indexInSelection, 1);
 
 							if (subalbum.positionsAndMediaInTree.length) {
@@ -2234,7 +2291,7 @@
 		return result;
 	};
 
-	Utilities.downloadAlbum = function(everything = false, what = "all", size = 0) {
+	Album.prototype.downloadAlbum = function(everything = false, what = "all", size = 0) {
 		// adapted from https://gist.github.com/c4software/981661f1f826ad34c2a5dc11070add0f
 		//
 		// this function must be converted to streams, example at https://jimmywarting.github.io/StreamSaver.js/examples/saving-multiple-files.html
@@ -2247,29 +2304,31 @@
 
 		var zip = new JSZip();
 		var zipFilename;
-		var basePath = env.currentAlbum.path;
-		zipFilename = env.options.page_title + '.';
-		if (env.currentAlbum.isSearch()) {
-			zipFilename += Utilities._t("#by-search") + " '" + $("#search-field").val() + "'";
-		} else if (env.currentAlbum.isSelection()) {
-			zipFilename += Utilities._t("#by-selection");
-		} else if (env.currentAlbum.isByDate()) {
-			let textComponents = env.currentAlbum.path.split("/").splice(1);
+		var basePath = this.path;
+		zipFilename = env.options.page_title;
+		if (this.isSearch()) {
+			zipFilename += '.' + Utilities._t("#by-search") + " '" + $("#search-field").val() + "'";
+		} else if (this.isSelection()) {
+			zipFilename += '.' + Utilities._t("#by-selection");
+		} else if (this.isByDate()) {
+			let textComponents = this.path.split("/").splice(1);
 			if (textComponents.length > 1)
 				textComponents[1] = Utilities._t("#month-" + textComponents[1]);
-
-			zipFilename += textComponents.join('-');
-		} else if (env.currentAlbum.isByGps()) {
-			zipFilename += env.currentAlbum.ancestorsNames.splice(1).join('-');
-		} else if (env.currentAlbum.isMap()) {
-			zipFilename += Utilities._t("#from-map");
-		} else if (env.currentAlbum.cacheBase !== env.options.folders_string) {
-			zipFilename += env.currentAlbum.nameForShowing(null);
+			if (textComponents.length)
+				zipFilename += '.' + textComponents.join('-');
+		} else if (this.isByGps()) {
+			zipFilename += '.' + this.ancestorsNames.splice(1).join('-');
+		} else if (this.isMap()) {
+			zipFilename += '.' + Utilities._t("#from-map");
+		} else if (this.cacheBase !== env.options.folders_string) {
+			zipFilename += this.nameForShowing(null);
 		}
 
 		zipFilename += ".zip";
 
-		var addMediaAndSubalbumsPromise = addMediaAndSubalbumsFromAlbum(env.currentAlbum);
+		var includedMedia = [];
+
+		var addMediaAndSubalbumsPromise = addMediaAndSubalbumsFromAlbum(this);
 		addMediaAndSubalbumsPromise.then(
 			// the complete zip can be generated...
 			function() {
@@ -2298,24 +2357,25 @@
 				function(resolve_addMediaAndSubalbumsFromAlbum) {
 					var albumPromises = [];
 
-					var fileList = [];
-
 					if (! album.isTransversal() || album.ancestorsNames.length >= 4) {
 						for (let iMedia = 0; iMedia < album.media.length; iMedia ++) {
+							let ithMedia = album.media[iMedia];
 							if (
-								album.media[iMedia].mimeType.indexOf("image/") === 0 && what === "videos" ||
-								album.media[iMedia].mimeType.indexOf("video/") === 0 && what === "images"
+								ithMedia.mimeType.indexOf("image/") === 0 && what === "videos" ||
+								ithMedia.mimeType.indexOf("video/") === 0 && what === "images" ||
+								includedMedia.some(singleMedia => singleMedia.isEqual(ithMedia))
 							)
 								continue;
 
+							includedMedia.push(ithMedia);
 							let mediaPromise = new Promise(
 								function(resolveMediaPromise) {
 									let url;
 									if (size === 0)
-										url = encodeURI(album.media[iMedia].trueOriginalMediaPath());
+										url = encodeURI(ithMedia.trueOriginalMediaPath());
 									else
-										url = encodeURI(album.media[iMedia].mediaPath(size));
-									let name = album.media[iMedia].name;
+										url = encodeURI(ithMedia.mediaPath(size));
+									let name = ithMedia.name;
 									// load a file and add it to the zip file
 									JSZipUtils.getBinaryContent(
 										url,
@@ -2326,11 +2386,8 @@
 											let fileName = name;
 											if (subalbum)
 												fileName = subalbum + "/" + fileName;
-											if (fileList.indexOf(fileName) === -1) {
-												fileList.push(fileName);
-												$("#downloading-media #file-name").html(fileName);
-												zip.file(fileName, data, {binary:true});
-											}
+											$("#downloading-media #file-name").html(fileName);
+											zip.file(fileName, data, {binary:true});
 											resolveMediaPromise();
 										}
 									);
@@ -2341,9 +2398,34 @@
 					}
 
 					if (everything) {
-						for (let i = 0; i < album.subalbums.length; i ++) {
-							let iSubalbum = i;
+						// sort subalbums: regular albums, then by date ones, then by gps ones, then searches, then maps
+						let regulars = [], byDate = []; byGps = [], searches = [], fromMap = [], selections = [];
+						let sortedSubalbums = [];
+						for (let iSubalbum = 0; iSubalbum < album.subalbums.length; iSubalbum ++) {
 							let ithSubalbum = album.subalbums[iSubalbum];
+							if (ithSubalbum.isFolder())
+								regulars.push(ithSubalbum);
+							if (ithSubalbum.isByDate())
+								byDate.push(ithSubalbum);
+							if (ithSubalbum.isByGps())
+								byGps.push(ithSubalbum);
+							if (ithSubalbum.isSearch())
+								searches.push(ithSubalbum);
+							if (ithSubalbum.isMap())
+								fromMap.push(ithSubalbum);
+							if (ithSubalbum.isSelection())
+								selections.push(ithSubalbum);
+						}
+						sortedSubalbums.push(... regulars);
+						sortedSubalbums.push(... byDate);
+						sortedSubalbums.push(... byGps);
+						sortedSubalbums.push(... searches);
+						sortedSubalbums.push(... fromMap);
+						sortedSubalbums.push(... selections);
+
+						for (let i = 0; i < sortedSubalbums.length; i ++) {
+							let iSubalbum = album.subalbums.findIndex(subalbum => sortedSubalbums[i].isEqual(subalbum));
+							let ithSubalbum = sortedSubalbums[i];
 							let subalbumPromise = new Promise(
 								function(resolveSubalbumPromise) {
 									let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: false});
@@ -2351,7 +2433,7 @@
 										function(ithSubalbum) {
 											album.subalbums[iSubalbum] = ithSubalbum;
 											let ancestorsNamesList = ithSubalbum.ancestorsNames.slice(1);
-											if (ancestorsNamesList.length >= 2) {
+											if (ancestorsNamesList.length > 2) {
 												ancestorsNamesList[2] = Utilities.transformAltPlaceName(ancestorsNamesList[2]);
 											}
 											let albumPath = ancestorsNamesList.join('/');
@@ -2988,8 +3070,8 @@
 		var mediaBoxHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
 		var mediaHeight = parseInt($(".media-box#center .media-box-inner #media-center").css("height"));
 		var bottomThumbnailsHeight = parseInt($("#album-view.media-view-container").css("height"));
+		var selectBoxWidth = 30;
 		if (captionType === 'media') {
-			var selectBoxWidth = 30;
 			$("#description").css("bottom", 2 * selectBoxWidth + parseInt($("#media-select-box .select-box").css("bottom")));
 			// $("#description").css("bottom", "");
 			$("#description").css("height", "");
@@ -3006,6 +3088,7 @@
 			var thumbsHeight = parseInt($("#thumbs").css("height"));
 			var subalbumsHeight = parseInt($("#subalbums").css("height"));
 			// TODO: How to adapt height to different platforms?
+			$("#description").css("right", 2 * selectBoxWidth);
 			$("#description").css("top", "");
 			$("#description").css("bottom", 0);
 			$("#description").css("height", "");
@@ -3266,8 +3349,7 @@
 			if (env.currentMedia !== null && (env.currentAlbum === null || this.isEqual(env.currentAlbum))) {
 				env.currentMediaIndex = this.media.findIndex(
 					function(thisMedia) {
-						var matches =
-							thisMedia.cacheBase === env.currentMedia.cacheBase && thisMedia.foldersCacheBase === env.currentMedia.foldersCacheBase;
+						var matches = thisMedia.isEqual(env.currentMedia);
 						return matches;
 					}
 				);

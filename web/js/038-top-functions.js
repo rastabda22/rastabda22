@@ -983,8 +983,11 @@
 			let removeSubalbumPromise = this.removeSubalbumFromSelection(iSubalbum, clickedSelector);
 			removeSubalbumPromise.then(
 				function subalbumRemoved() {
-					if (util.nothingIsSelected())
+					if (util.nothingIsSelected()) {
 						util.initializeSelectionAlbum();
+					} else {
+						TopFunctions.showAlbum("refreshSubalbums");
+					}
 					f.updateMenu();
 				}
 			);
@@ -3285,7 +3288,7 @@
 										env.mapAlbum.media.some(
 											function(media, index) {
 												matchingMedia = index;
-												var match = (media.cacheBase === mediaListElement.cacheBase && media.foldersCacheBase === mediaListElement.foldersCacheBase);
+												var match = media.isEqual(mediaListElement);
 												return match;
 											}
 										)
