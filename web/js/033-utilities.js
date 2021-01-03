@@ -2988,8 +2988,8 @@
 		var mediaBoxHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
 		var mediaHeight = parseInt($(".media-box#center .media-box-inner #media-center").css("height"));
 		var bottomThumbnailsHeight = parseInt($("#album-view.media-view-container").css("height"));
+		var selectBoxWidth = 30;
 		if (captionType === 'media') {
-			var selectBoxWidth = 30;
 			$("#description").css("bottom", 2 * selectBoxWidth + parseInt($("#media-select-box .select-box").css("bottom")));
 			// $("#description").css("bottom", "");
 			$("#description").css("height", "");
@@ -3006,6 +3006,7 @@
 			var thumbsHeight = parseInt($("#thumbs").css("height"));
 			var subalbumsHeight = parseInt($("#subalbums").css("height"));
 			// TODO: How to adapt height to different platforms?
+			$("#description").css("right", 2 * selectBoxWidth);
 			$("#description").css("top", "");
 			$("#description").css("bottom", 0);
 			$("#description").css("height", "");
