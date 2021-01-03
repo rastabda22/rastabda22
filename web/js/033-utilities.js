@@ -1396,13 +1396,10 @@
 		var self = this;
 		if (
 			env.selectionAlbum.subalbums.some(
-				function(selectedAlbum) {
-					return (
-						self.foldersCacheBase.indexOf(selectedAlbum.cacheBase) === 0 ||
-						self.hasOwnProperty("dayAlbumCacheBase") && self.dayAlbumCacheBase.indexOf(selectedAlbum.cacheBase) === 0 ||
-						self.hasOwnProperty("gpsAlbumCacheBase") && self.gpsAlbumCacheBase.indexOf(selectedAlbum.cacheBase) === 0
-					);
-				}
+				selectedAlbum =>
+					self.foldersCacheBase.indexOf(selectedAlbum.cacheBase) === 0 ||
+					self.hasOwnProperty("dayAlbumCacheBase") && self.dayAlbumCacheBase.indexOf(selectedAlbum.cacheBase) === 0 ||
+					self.hasOwnProperty("gpsAlbumCacheBase") && self.gpsAlbumCacheBase.indexOf(selectedAlbum.cacheBase) === 0
 			)
 		) {
 			return true;
@@ -1415,12 +1412,9 @@
 		var self = this;
 		if (
 			env.selectionAlbum.subalbums.some(
-				function(selectedAlbum) {
-					return (
-						self.cacheBase.indexOf(selectedAlbum.cacheBase) === 0 &&
-						self.cacheBase !== selectedAlbum.cacheBase
-					);
-				}
+				selectedAlbum =>
+					self.cacheBase.indexOf(selectedAlbum.cacheBase) === 0 &&
+					self.cacheBase !== selectedAlbum.cacheBase
 			)
 		) {
 			return true;
