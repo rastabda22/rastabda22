@@ -2528,7 +2528,7 @@
 			else if (album.hasOwnProperty('altName'))
 				firstLine = Utilities.transformAltPlaceName(album.altName);
 			else
-				firstLine = album.nameForShowing(null);
+				firstLine = album.nameForShowing(null, true, true);
 
 			for (let iCacheBase = 1; iCacheBase < album.ancestorsCacheBase.length - 1; iCacheBase ++) {
 				let albumName;
@@ -2551,7 +2551,7 @@
 			if (! secondLine)
 				secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album") + ")</span>";
 		} else {
-			firstLine = album.nameForShowing(null);
+			firstLine = album.nameForShowing(null, true, true);
 			for (let iCacheBase = 0; iCacheBase < album.ancestorsCacheBase.length - 1; iCacheBase ++) {
 				if (iCacheBase === 0 && album.ancestorsCacheBase.length === 2) {
 					secondLine = "<span class='gray'>(" + Utilities._t("#regular-album") + ")</span> ";
@@ -2645,39 +2645,47 @@
 		}
 
 		var captionForCollection = Utilities.combineFirstAndSecondLine(singleMedia.nameForShowing(album, true, true), secondLine);
-		var captionForCollectionSorting = singleMedia.nameForShowing(album) + env.options.cache_folder_separator + Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
+		var captionForCollectionSorting = singleMedia.nameForShowing(album, true, true) + env.options.cache_folder_separator + Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
 		return [captionForCollection, captionForCollectionSorting];
 	};
 
-	Utilities.nameForShowing = function(albumOrSubalbum, parentAlbum) {
+	Utilities.nameForShowing = function(albumOrSubalbum, parentAlbum, html, br) {
 		var folderName = '';
-		if (parentAlbum && parentAlbum.isSelection() && albumOrSubalbum.hasOwnProperty("captionForSelection")) {
-			folderName = albumOrSubalbum.captionForSelection;
-		} else if (parentAlbum && parentAlbum.isSearch() && albumOrSubalbum.hasOwnProperty("captionForSearch")) {
-			folderName = albumOrSubalbum.captionForSearch;
-		} else if (parentAlbum && parentAlbum.isByDate()) {
-			let folderArray = albumOrSubalbum.cacheBase.split(env.options.cache_folder_separator);
-			if (folderArray.length === 2) {
-				folderName += parseInt(folderArray[1]);
-			} else if (folderArray.length === 3)
-				folderName += " " + Utilities._t("#month-" + folderArray[2]);
-			else if (folderArray.length === 4)
-				folderName += Utilities._t("#day") + " " + parseInt(folderArray[3]);
-		} else if (parentAlbum && parentAlbum.isByGps()) {
-			if (albumOrSubalbum.name === '')
-				folderName = Utilities._t('.not-specified');
-			else if (albumOrSubalbum.hasOwnProperty('altName'))
-				folderName = Utilities.transformAltPlaceName(albumOrSubalbum.altName);
-			else
-				folderName = albumOrSubalbum.name;
-		} else {
-			if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title !== albumOrSubalbum.name)
-				if (albumOrSubalbum.name)
-					folderName = albumOrSubalbum.title + "<br /><span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
+		if (parentAlbum) {
+			if (parentAlbum.isSelection() && albumOrSubalbum.hasOwnProperty("captionForSelection")) {
+				folderName = albumOrSubalbum.captionForSelection;
+			} else if (parentAlbum.isSearch() && albumOrSubalbum.hasOwnProperty("captionForSearch")) {
+				folderName = albumOrSubalbum.captionForSearch;
+			} else if (parentAlbum.isByDate()) {
+				let folderArray = albumOrSubalbum.cacheBase.split(env.options.cache_folder_separator);
+				if (folderArray.length === 2) {
+					folderName += parseInt(folderArray[1]);
+				} else if (folderArray.length === 3)
+					folderName += " " + Utilities._t("#month-" + folderArray[2]);
+				else if (folderArray.length === 4)
+					folderName += Utilities._t("#day") + " " + parseInt(folderArray[3]);
+			} else if (parentAlbum.isByGps()) {
+				if (albumOrSubalbum.name === '')
+					folderName = Utilities._t('.not-specified');
+				else if (albumOrSubalbum.hasOwnProperty('altName'))
+					folderName = Utilities.transformAltPlaceName(albumOrSubalbum.altName);
 				else
-					folderName = albumOrSubalbum.title;
-			else
+					folderName = albumOrSubalbum.name;
+			}
+			if (! html)
+				folderName = Utilities.stripHtmlAndReplaceEntities(folderName);
+		} else {
+			if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title !== albumOrSubalbum.name) {
+				folderName = albumOrSubalbum.title;
+				if (html && br)
+					folderName += "<br /><span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
+				else if (html)
+					folderName += " <span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
+				else
+					folderName += " (" + albumOrSubalbum.name + ")";
+			} else {
 				folderName = albumOrSubalbum.name;
+			}
 		}
 
 		if (parentAlbum && parentAlbum.isSelection())
@@ -2688,12 +2696,12 @@
 		return folderName;
 	};
 
-	Album.prototype.nameForShowing = function(parentAlbum) {
-		return Utilities.nameForShowing(this, parentAlbum);
+	Album.prototype.nameForShowing = function(parentAlbum, html = false, br = false) {
+		return Utilities.nameForShowing(this, parentAlbum, html, br);
 	};
 
-	Subalbum.prototype.nameForShowing = function(parentAlbum) {
-		return Utilities.nameForShowing(this, parentAlbum);
+	Subalbum.prototype.nameForShowing = function(parentAlbum, html = false, br = false) {
+		return Utilities.nameForShowing(this, parentAlbum, html, br);
 	};
 
 	SingleMedia.prototype.nameForShowing = function(album, html = false, br = false) {
@@ -2702,21 +2710,6 @@
 			mediaName = this.captionForSelection;
 		} else if (album.isSearch() && this.hasOwnProperty("captionForSearch")) {
 			mediaName = this.captionForSearch;
-		// } else if (album.isByDate()) {
-		// 	let folderArray = album.cacheBase.split(env.options.cache_folder_separator);
-		// 	if (folderArray.length === 2) {
-		// 		mediaName += parseInt(folderArray[1]);
-		// 	} else if (folderArray.length === 3)
-		// 		mediaName += " " + Utilities._t("#month-" + folderArray[2]);
-		// 	else if (folderArray.length === 4)
-		// 		mediaName += Utilities._t("#day") + " " + parseInt(folderArray[3]);
-		// } else if (album.isByGps()) {
-		// 	if (this.name === '')
-		// 		mediaName = Utilities._t('.not-specified');
-		// 	else if (this.hasOwnProperty('altName'))
-		// 		mediaName = Utilities.transformAltPlaceName(this.altName);
-		// 	else
-		// 		mediaName = this.name;
 		} else {
 			if (this.hasOwnProperty("title") && this.title !== this.name) {
 				mediaName = this.title;
@@ -2730,6 +2723,8 @@
 				mediaName = this.name;
 			}
 		}
+		if (! html)
+			mediaName = Utilities.stripHtmlAndReplaceEntities(mediaName);
 
 		return mediaName;
 	};
