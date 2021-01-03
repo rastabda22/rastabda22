@@ -1,3 +1,5 @@
+### version v4.9.15 (Jan 3, 2021)
+
 * fixed downloading: only one copy of every media
 * fixed addition of subalbum to selection
 * bug fixes
