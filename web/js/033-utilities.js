@@ -2326,6 +2326,8 @@
 
 		zipFilename += ".zip";
 
+		var includedMedia = [];
+
 		var addMediaAndSubalbumsPromise = addMediaAndSubalbumsFromAlbum(this);
 		addMediaAndSubalbumsPromise.then(
 			// the complete zip can be generated...
@@ -2355,24 +2357,25 @@
 				function(resolve_addMediaAndSubalbumsFromAlbum) {
 					var albumPromises = [];
 
-					var fileList = [];
-
 					if (! album.isTransversal() || album.ancestorsNames.length >= 4) {
 						for (let iMedia = 0; iMedia < album.media.length; iMedia ++) {
+							let ithMedia = album.media[iMedia];
 							if (
-								album.media[iMedia].mimeType.indexOf("image/") === 0 && what === "videos" ||
-								album.media[iMedia].mimeType.indexOf("video/") === 0 && what === "images"
+								ithMedia.mimeType.indexOf("image/") === 0 && what === "videos" ||
+								ithMedia.mimeType.indexOf("video/") === 0 && what === "images" ||
+								includedMedia.some(singleMedia => singleMedia.isEqual(ithMedia))
 							)
 								continue;
 
+							includedMedia.push(ithMedia);
 							let mediaPromise = new Promise(
 								function(resolveMediaPromise) {
 									let url;
 									if (size === 0)
-										url = encodeURI(album.media[iMedia].trueOriginalMediaPath());
+										url = encodeURI(ithMedia.trueOriginalMediaPath());
 									else
-										url = encodeURI(album.media[iMedia].mediaPath(size));
-									let name = album.media[iMedia].name;
+										url = encodeURI(ithMedia.mediaPath(size));
+									let name = ithMedia.name;
 									// load a file and add it to the zip file
 									JSZipUtils.getBinaryContent(
 										url,
@@ -2383,11 +2386,8 @@
 											let fileName = name;
 											if (subalbum)
 												fileName = subalbum + "/" + fileName;
-											if (fileList.indexOf(fileName) === -1) {
-												fileList.push(fileName);
-												$("#downloading-media #file-name").html(fileName);
-												zip.file(fileName, data, {binary:true});
-											}
+											$("#downloading-media #file-name").html(fileName);
+											zip.file(fileName, data, {binary:true});
 											resolveMediaPromise();
 										}
 									);
@@ -2398,9 +2398,34 @@
 					}
 
 					if (everything) {
-						for (let i = 0; i < album.subalbums.length; i ++) {
-							let iSubalbum = i;
+						// sort subalbums: regular albums, then by date ones, then by gps ones, then searches, then maps
+						let regulars = [], byDate = []; byGps = [], searches = [], fromMap = [], selections = [];
+						let sortedSubalbums = [];
+						for (let iSubalbum = 0; iSubalbum < album.subalbums.length; iSubalbum ++) {
 							let ithSubalbum = album.subalbums[iSubalbum];
+							if (ithSubalbum.isFolder())
+								regulars.push(ithSubalbum);
+							if (ithSubalbum.isByDate())
+								byDate.push(ithSubalbum);
+							if (ithSubalbum.isByGps())
+								byGps.push(ithSubalbum);
+							if (ithSubalbum.isSearch())
+								searches.push(ithSubalbum);
+							if (ithSubalbum.isMap())
+								fromMap.push(ithSubalbum);
+							if (ithSubalbum.isSelection())
+								selections.push(ithSubalbum);
+						}
+						sortedSubalbums.push(... regulars);
+						sortedSubalbums.push(... byDate);
+						sortedSubalbums.push(... byGps);
+						sortedSubalbums.push(... searches);
+						sortedSubalbums.push(... fromMap);
+						sortedSubalbums.push(... selections);
+
+						for (let i = 0; i < sortedSubalbums.length; i ++) {
+							let iSubalbum = album.subalbums.findIndex(subalbum => sortedSubalbums[i].isEqual(subalbum));
+							let ithSubalbum = sortedSubalbums[i];
 							let subalbumPromise = new Promise(
 								function(resolveSubalbumPromise) {
 									let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: false});
