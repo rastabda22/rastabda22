@@ -1574,8 +1574,8 @@
 							function(media) {
 								media.forEach(
 									singleMedia => {
-										if (mediaInAlbum.indexOf(singleMedia) !== -1)
-											mediaInAlbum.push(... media);
+										if (mediaInAlbum.indexOf(singleMedia) === -1)
+											mediaInAlbum.push(singleMedia);
 									}
 								);
 							}
@@ -1621,20 +1621,17 @@
 							if (albumIsInsideSelectedAlbums) {
 								continue_addSubalbumToSelection(album);
 							} else {
-								var mediaInAlbumNotInsideSelectedAlbums = [];
-								var mediaInAlbumNotSelected = [];
 								var collectPromise = album.collectMediaInTree();
 								collectPromise.then(
 									function(mediaInAlbumTree) {
+										var mediaInAlbumNotSelectedNorInsideSelectedAlbums = [];
 										mediaInAlbumTree.forEach(
 											function(singleMedia) {
-												if (! singleMedia.isInsideSelectedAlbums())
-													mediaInAlbumNotInsideSelectedAlbums.push(singleMedia);
-												if (! singleMedia.isSelected())
-													mediaInAlbumNotSelected.push(singleMedia);
+												if (! singleMedia.isInsideSelectedAlbums() && ! singleMedia.isSelected())
+													mediaInAlbumNotSelectedNorInsideSelectedAlbums.push(singleMedia);
 											}
 										);
-										var mediaInAlbumNotSelectedNorInsideSelectedAlbums = Utilities.arrayUnion(mediaInAlbumNotSelected, mediaInAlbumNotInsideSelectedAlbums);
+										// var mediaInAlbumNotSelectedNorInsideSelectedAlbums = Utilities.arrayUnion(mediaInAlbumNotSelected, mediaInAlbumNotInsideSelectedAlbums);
 
 										mediaInAlbumNotSelectedNorInsideSelectedAlbums.forEach(
 											singleMedia => {
@@ -1646,7 +1643,7 @@
 										// env.selectionAlbum.positionsAndMediaInTree.mergePositionsAndMedia(album.positionsAndMediaInTree);
 										env.selectionAlbum.numPositionsInTree = env.selectionAlbum.positionsAndMediaInTree.length;
 
-										env.selectionAlbum.numsMediaInSubTree.sum(mediaInAlbumNotSelectedNorInsideSelectedAlbums);
+										env.selectionAlbum.numsMediaInSubTree.sum(new Media(mediaInAlbumNotSelectedNorInsideSelectedAlbums).imagesAndVideosCount());
 
 										// env.selectionAlbum.sizesOfSubTree.sum(album.sizesOfSubTree);
 										// mediaInAlbumNotSelectedNorInsideSelectedAlbums.forEach(
