@@ -1482,7 +1482,7 @@
 								let thisSubalbum = env.searchAlbum.subalbums[indexSubalbums];
 								let thisIndex = indexSubalbums;
 								// update the media count
-								env.searchAlbum.numsMediaInSubTree.sum(env.searchAlbum.numsMediaInSubTree, thisSubalbum.numsMediaInSubTree);
+								env.searchAlbum.numsMediaInSubTree.sum(thisSubalbum.numsMediaInSubTree);
 								// update the size totals
 								env.searchAlbum.sizesOfSubTree.sum(thisSubalbum.sizesOfSubTree);
 								env.searchAlbum.sizesOfAlbum.sum(thisSubalbum.sizesOfAlbum);
