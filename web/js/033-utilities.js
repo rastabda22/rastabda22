@@ -2309,21 +2309,21 @@
 		var zip = new JSZip();
 		var zipFilename;
 		var basePath = this.path;
-		zipFilename = env.options.page_title + '.';
+		zipFilename = env.options.page_title;
 		if (this.isSearch()) {
-			zipFilename += Utilities._t("#by-search") + " '" + $("#search-field").val() + "'";
+			zipFilename += '.' + Utilities._t("#by-search") + " '" + $("#search-field").val() + "'";
 		} else if (this.isSelection()) {
-			zipFilename += Utilities._t("#by-selection");
+			zipFilename += '.' + Utilities._t("#by-selection");
 		} else if (this.isByDate()) {
 			let textComponents = this.path.split("/").splice(1);
 			if (textComponents.length > 1)
 				textComponents[1] = Utilities._t("#month-" + textComponents[1]);
-
-			zipFilename += textComponents.join('-');
+			if (textComponents.length)
+				zipFilename += '.' + textComponents.join('-');
 		} else if (this.isByGps()) {
-			zipFilename += this.ancestorsNames.splice(1).join('-');
+			zipFilename += '.' + this.ancestorsNames.splice(1).join('-');
 		} else if (this.isMap()) {
-			zipFilename += Utilities._t("#from-map");
+			zipFilename += '.' + Utilities._t("#from-map");
 		} else if (this.cacheBase !== env.options.folders_string) {
 			zipFilename += this.nameForShowing(null);
 		}
