@@ -659,9 +659,12 @@ class Album(object):
 		if "symlinkCodesAndNumbers" in dictionary:
 			album.symlink_codes_and_numbers = dictionary["symlinkCodesAndNumbers"]
 
-		album._attributes["metadata"]["title"] = dictionary["title"]
-		album._attributes["metadata"]["description"] = dictionary["description"]
-		album._attributes["metadata"]["tags"] = dictionary["tags"]
+		if "title" in dictionary and dictionary["title"]:
+			album._attributes["metadata"]["title"] = dictionary["title"]
+		if "description" in dictionary and dictionary["description"]:
+			album._attributes["metadata"]["description"] = dictionary["description"]
+		if "tags" in dictionary and len(dictionary["tags"]) and not (len(dictionary["tags"]) == 1 and dictionary["tags"][0] == ""):
+			album._attributes["metadata"]["tags"] = dictionary["tags"]
 
 		album.sort_subalbums_and_media()
 
