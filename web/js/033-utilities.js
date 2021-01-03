@@ -1198,7 +1198,6 @@
 			return false;
 		else {
 			var index = env.mapAlbum.media.findIndex(x => x.isEqual(this));
-			// var index = env.mapAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
 			if (index > -1)
 				return true;
 			else
@@ -1211,7 +1210,6 @@
 			return false;
 		else {
 			var index = env.searchAlbum.media.findIndex(x => x.isEqual(this));
-			// var index = env.searchAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
 			if (index > -1)
 				return true;
 			else
@@ -1268,7 +1266,6 @@
 			return false;
 		} else {
 			var index = env.selectionAlbum.media.findIndex(x => x.isEqual(this));
-			// var index = env.selectionAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
 			if (index > -1)
 				return true;
 			else
@@ -1468,7 +1465,6 @@
 	SingleMedia.prototype.removeFromSelection = function(clickedSelector) {
 		if (this.isSelected()) {
 			var index = env.selectionAlbum.media.findIndex(x => x.isEqual(this));
-			// var index = env.selectionAlbum.media.findIndex(x => x.foldersCacheBase === this.foldersCacheBase && x.cacheBase === this.cacheBase);
 			env.selectionAlbum.media.splice(index, 1);
 
 			if (this.hasGpsData()) {
