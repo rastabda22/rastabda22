@@ -983,8 +983,11 @@
 			let removeSubalbumPromise = this.removeSubalbumFromSelection(iSubalbum, clickedSelector);
 			removeSubalbumPromise.then(
 				function subalbumRemoved() {
-					if (util.nothingIsSelected())
+					if (util.nothingIsSelected()) {
 						util.initializeSelectionAlbum();
+					} else {
+						TopFunctions.showAlbum("refreshSubalbums");
+					}
 					f.updateMenu();
 				}
 			);
