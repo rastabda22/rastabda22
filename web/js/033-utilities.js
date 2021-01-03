@@ -2412,7 +2412,7 @@
 										function(ithSubalbum) {
 											album.subalbums[iSubalbum] = ithSubalbum;
 											let ancestorsNamesList = ithSubalbum.ancestorsNames.slice(1);
-											if (ancestorsNamesList.length >= 2) {
+											if (ancestorsNamesList.length > 2) {
 												ancestorsNamesList[2] = Utilities.transformAltPlaceName(ancestorsNamesList[2]);
 											}
 											let albumPath = ancestorsNamesList.join('/');
