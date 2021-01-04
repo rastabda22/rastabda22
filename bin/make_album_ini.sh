@@ -96,15 +96,34 @@ elif [ ! -d "$DIR" ]; then
 	exit 1
 fi
 
+# In case it's an old syntax album.ini file, add the [_DOCUMENTATION_]
+# section as the first line and patch the tags and auto_tags options.
+if [ -f "$DIR/$ALBUM_INI" ]; then
+	read -r first_line < "$DIR/$ALBUM_INI"
+
+	if [ "$first_line" = "# User defined metadata for MyPhotoShare" ]; then
+		echo "Old album.ini syntax: patching old values."
+
+#					 -e '1,$s/\[DEFAULT\]\n(#?)tags = (.*)/[DEFAULT]\n\1tags = \2\nauto_tags = %(auto_faces)s, %(auto_scenes)s\nauto_scenes = \nauto_faces = /g' \
+		sed -ibkp -E \
+		       -e '1s/# User defined metadata for MyPhotoShare/[_DOCUMENTATION_]\n# User defined metadata for MyPhotoShare/' \
+					 -e '1,$s/^(#?)tags =(.*)/\1tags = %(auto_tags)s, \2/g' \
+					 -e '/\[DEFAULT\]$/{N;s/\[DEFAULT\]\n(#?)tags =(.*)/[DEFAULT]\n\1tags = %(auto_tags)s,\2\nauto_tags = %(auto_faces)s, %(auto_scenes)s\nauto_scenes = \nauto_faces = /}' \
+					 "$DIR/$ALBUM_INI"
+	fi
+fi
+
 
 if [ ! -f "$DIR/$ALBUM_INI" ]; then
 	echo "Create file '$DIR/$ALBUM_INI'."
-	echo "# User defined metadata for MyPhotoShare" > "$DIR/$ALBUM_INI"
+	echo "[_DOCUMENTATION_]" > "$DIR/$ALBUM_INI"
+	echo "# User defined metadata for MyPhotoShare" >> "$DIR/$ALBUM_INI"
 	echo "########################################" >> "$DIR/$ALBUM_INI"
 	echo "# Possible metadata:" >> "$DIR/$ALBUM_INI"
 	echo "# - title: To give a title to the photo, video or album." >> "$DIR/$ALBUM_INI"
 	echo "# - description: A long description of the media." >> "$DIR/$ALBUM_INI"
 	echo "# - tags: A comma separated list of key words." >> "$DIR/$ALBUM_INI"
+	echo "#         This option must contain '%(auto_tags)s' to support auto-tagging. " >> "$DIR/$ALBUM_INI"
 	echo "# - date: The date the photo was taken, in the format YYYY-MM-DD." >> "$DIR/$ALBUM_INI"
 	echo "# - latitude: The latitude of the media, for instance if the media was not geotagged when captured." >> "$DIR/$ALBUM_INI"
 	echo "# - longitude: The longitude of the capture of media." >> "$DIR/$ALBUM_INI"
@@ -112,9 +131,16 @@ if [ ! -f "$DIR/$ALBUM_INI" ]; then
 	echo "# - region_name: The name of the region." >> "$DIR/$ALBUM_INI"
 	echo "# - place_name: The name of the city or town to be displayed." >> "$DIR/$ALBUM_INI"
 	echo >> "$DIR/$ALBUM_INI"
+	echo "# auto_scenes and auto_faces options are set when using the automatic tagger scripts" >> "$DIR/$ALBUM_INI"
+	echo "# mps_autoscenes (https://gitlab.com/pmetras/mps_autoscenes) and" >> "$DIR/$ALBUM_INI"
+	echo "# mps_autofaces (https://gitlab.com/pmetras/mps_autofaces).">> "$DIR/$ALBUM_INI"
+	echo >> "$DIR/$ALBUM_INI"
 	echo >> "$DIR/$ALBUM_INI"
 	echo "[DEFAULT]" >> "$DIR/$ALBUM_INI"
-	echo "#tags = " >> "$DIR/$ALBUM_INI"
+	echo "tags = %(auto_tags)s, " >> "$DIR/$ALBUM_INI"
+	echo "auto_tags = %(auto_faces)s, %(auto_scenes)s" >> "$DIR/$ALBUM_INI"
+  echo "auto_scenes = " >> "$DIR/$ALBUM_INI"
+  echo "auto_faces = " >> "$DIR/$ALBUM_INI"
 	echo "#date = " >> "$DIR/$ALBUM_INI"
 	echo "#latitude = " >> "$DIR/$ALBUM_INI"
 	echo "#longitude = " >> "$DIR/$ALBUM_INI"
@@ -135,7 +161,7 @@ if [ $SECTION_EXISTS -eq 0 ]; then
 	echo "[album]" >> "$DIR/$ALBUM_INI"
 	echo "#title = $TITLE" >> "$DIR/$ALBUM_INI"
 	echo "#description = " >> "$DIR/$ALBUM_INI"
-	echo "#tags = " >> "$DIR/$ALBUM_INI"
+	echo "#tags = %(auto_tags)s, " >> "$DIR/$ALBUM_INI"
 	echo >> "$DIR/$ALBUM_INI"
 	echo >> "$DIR/$ALBUM_INI"
 fi
@@ -151,7 +177,7 @@ for media in $(ls "$DIR"/*.{jpg,jpeg,JPG,JPEG,mp4,avi,MP4,AVI,MOV,tiff,TIF} 2> /
 		echo "[$SECTION]" >> "$DIR/$ALBUM_INI"
 		echo "#title = $TITLE" >> "$DIR/$ALBUM_INI"
 		echo "#description = " >> "$DIR/$ALBUM_INI"
-		echo "#tags = " >> "$DIR/$ALBUM_INI"
+		echo "#tags = %(auto_tags)s, " >> "$DIR/$ALBUM_INI"
 		echo "#latitude = " >> "$DIR/$ALBUM_INI"
 		echo "#longitude = " >> "$DIR/$ALBUM_INI"
 		echo >> "$DIR/$ALBUM_INI"
