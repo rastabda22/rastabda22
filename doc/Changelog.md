@@ -1,3 +1,5 @@
+### version v4.9.17 (Jan 4, 2021)
+
 * in searches, treat all non-letter characters as spaces
 * do not consider (0, 0) coordinates (they are in offshore in the Atlantic Ocean)
 * bug fixes
