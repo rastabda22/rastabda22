@@ -1516,6 +1516,16 @@ class Media(object):
 		if "GPSLongitudeRef" in exif:
 			gps_longitude_ref = exif["GPSLongitudeRef"]
 
+		# Issue https://gitlab.com/paolobenve/myphotoshare/-/issues/218
+		infinitesimal = 0.00001
+		if gps_latitude < infinitesimal and gps_longitude < infinitesimal and gps_altitude < infinitesimal:
+			gps_altitude = None
+			gps_altitude_ref = None
+			gps_latitude = None
+			gps_latitude_ref = None
+			gps_longitude = None
+			gps_longitude_ref = None
+
 		if gps_latitude is not None and gps_latitude_ref is not None and gps_longitude is not None and gps_longitude_ref is not None:
 			self._attributes["metadata"]["altitude"] = gps_altitude
 			self._attributes["metadata"]["altitudeRef"] = gps_altitude_ref
