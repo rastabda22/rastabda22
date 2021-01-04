@@ -880,8 +880,12 @@
 		var stringArray = Array.from(string);
 		var resultString = '';
 		for (var i = 0; i < stringArray.length; i ++) {
-			if (env.options.unicode_combining_marks.indexOf(stringArray[i]) === -1)
+			if (stringArray[i] === "ł")
+				// I cannot understand why ł is not transliterated, it seems something similar to the spanish ñ, which is transliterated
+				resultString += "l";
+			else if (env.options.unicode_combining_marks.indexOf(stringArray[i]) === -1)
 				resultString += stringArray[i];
+
 		}
 		return resultString;
 	};
