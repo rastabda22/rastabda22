@@ -30,7 +30,7 @@ import numpy as np
 from CachePath import remove_album_path, remove_folders_marker, trim_base_custom
 # from CachePath import remove_album_path, remove_cache_path, remove_folders_marker, trim_base_custom
 from CachePath import thumbnail_types_and_sizes, photo_cache_name, video_cache_name
-from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
+from CachePath import transliterate_to_ascii, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_all_but_alphanumeric_chars_dashes_slashes, switch_to_lowercase
 from Utilities import message, indented_message, next_level, back_level, file_mtime, json_files_and_mtime, make_dir
 from Utilities import merge_albums_dictionaries_from_json_files, calculate_media_file_name
@@ -899,7 +899,7 @@ class Album(object):
 		subalbum_or_media_path = subalbum_or_media_path.replace(' ', '_')
 
 		# convert to ascii only characters
-		subalbum_or_media_path = '/'.join([convert_to_ascii_only(part).replace('/', '_') for part in subalbum_or_media_path.split('/')])
+		subalbum_or_media_path = '/'.join([transliterate_to_ascii(part).replace('/', '_') for part in subalbum_or_media_path.split('/')])
 
 		# convert slashes to proper separator
 		subalbum_or_media_path = subalbum_or_media_path.replace('/', Options.config['cache_folder_separator'])

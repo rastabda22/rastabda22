@@ -23,7 +23,7 @@ from Utilities import save_password_codes, json_files_and_mtime, report_mem
 from Utilities import convert_identifiers_set_to_codes_set, convert_identifiers_set_to_md5s_set
 from Utilities import convert_combination_to_set, convert_set_to_combination, convert_md5_to_code, convert_simple_md5_combination_to_simple_codes_combination, complex_combination
 from Utilities import determine_symlink_number_and_name
-from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
+from CachePath import transliterate_to_ascii, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_digits, switch_to_lowercase, phrase_to_words, checksum
 from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, make_dir
 from PhotoAlbum import Media, Album, PhotoAlbumEncoder, Position, Positions, NumsProtected, Sizes, SizesProtected
@@ -1072,7 +1072,7 @@ class TreeWalker:
 		alphabetic_phrase = remove_non_alphabetic_characters(remove_digits(phrase))
 		lowercase_phrase = switch_to_lowercase(alphabetic_phrase)
 		search_normalized_phrase = remove_accents(lowercase_phrase)
-		ascii_phrase = convert_to_ascii_only(search_normalized_phrase)
+		ascii_phrase = transliterate_to_ascii(search_normalized_phrase)
 
 		alphabetic_words = phrase_to_words(alphabetic_phrase)
 		search_normalized_words = phrase_to_words(search_normalized_phrase)
