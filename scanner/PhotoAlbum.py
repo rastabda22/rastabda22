@@ -1518,7 +1518,10 @@ class Media(object):
 
 		# Issue https://gitlab.com/paolobenve/myphotoshare/-/issues/218
 		infinitesimal = 0.00001
-		if gps_latitude < infinitesimal and gps_longitude < infinitesimal and gps_altitude < infinitesimal:
+		if (
+			gps_latitude is not None and gps_longitude is not None and gps_altitude is not None and
+			gps_latitude < infinitesimal and gps_longitude < infinitesimal and gps_altitude < infinitesimal
+		):
 			gps_altitude = None
 			gps_altitude_ref = None
 			gps_latitude = None
