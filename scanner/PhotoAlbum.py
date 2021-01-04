@@ -30,7 +30,7 @@ import numpy as np
 from CachePath import remove_album_path, remove_folders_marker, trim_base_custom
 # from CachePath import remove_album_path, remove_cache_path, remove_folders_marker, trim_base_custom
 from CachePath import thumbnail_types_and_sizes, photo_cache_name, video_cache_name
-from CachePath import convert_to_ascii_only, remove_accents, remove_non_alphabetic_characters
+from CachePath import transliterate_to_ascii, remove_accents, remove_non_alphabetic_characters
 from CachePath import remove_all_but_alphanumeric_chars_dashes_slashes, switch_to_lowercase
 from Utilities import message, indented_message, next_level, back_level, file_mtime, json_files_and_mtime, make_dir
 from Utilities import merge_albums_dictionaries_from_json_files, calculate_media_file_name
@@ -899,7 +899,7 @@ class Album(object):
 		subalbum_or_media_path = subalbum_or_media_path.replace(' ', '_')
 
 		# convert to ascii only characters
-		subalbum_or_media_path = '/'.join([convert_to_ascii_only(part).replace('/', '_') for part in subalbum_or_media_path.split('/')])
+		subalbum_or_media_path = '/'.join([transliterate_to_ascii(part).replace('/', '_') for part in subalbum_or_media_path.split('/')])
 
 		# convert slashes to proper separator
 		subalbum_or_media_path = subalbum_or_media_path.replace('/', Options.config['cache_folder_separator'])
@@ -1516,6 +1516,19 @@ class Media(object):
 		if "GPSLongitudeRef" in exif:
 			gps_longitude_ref = exif["GPSLongitudeRef"]
 
+		# Issue https://gitlab.com/paolobenve/myphotoshare/-/issues/218
+		infinitesimal = 0.00001
+		if (
+			gps_latitude is not None and gps_longitude is not None and gps_altitude is not None and
+			gps_latitude < infinitesimal and gps_longitude < infinitesimal and gps_altitude < infinitesimal
+		):
+			gps_altitude = None
+			gps_altitude_ref = None
+			gps_latitude = None
+			gps_latitude_ref = None
+			gps_longitude = None
+			gps_longitude_ref = None
+
 		if gps_latitude is not None and gps_latitude_ref is not None and gps_longitude is not None and gps_longitude_ref is not None:
 			self._attributes["metadata"]["altitude"] = gps_altitude
 			self._attributes["metadata"]["altitudeRef"] = gps_altitude_ref
@@ -1578,7 +1591,7 @@ class Media(object):
 					exif['GPSAltitudeRef'] = gps_altitude_ref
 					# exif['GPSAltitude'] is the absolute value of altitude, exif['GPSAltitudeRef'] == b'\x00' means above sea level, exif['GPSAltitudeRef'] == b'\x01' means below sea level
 					# let's use exif['GPSAltitudeRef'] to give exif['GPSAltitude'] the correct sign
-					if exif['GPSAltitudeRef'] != b'\x00':
+					if not exif['GPSAltitudeRef'] in [b'\x00', b'\x00\x00', b'\x00\x00\x00', b'\x00\x00\x00\x00']:
 						exif['GPSAltitude'] = - exif['GPSAltitude']
 					# since exif['GPSAltitudeRef'], it must be decoded,
 					# otherwise it will produce a "TypeError: Object of type bytes is not JSON serializable" when dumping it
@@ -1680,6 +1693,9 @@ class Media(object):
 				if k_modified in ('GPSLatitude', 'GPSLongitude'):
 					# exifread returns this values like u'[44, 25, 26495533/1000000]'
 					exif[k_modified] = Metadata.convert_array_degrees_minutes_seconds_to_degrees_decimal(exif[k_modified])
+				if k_modified == 'GPSAltitude':
+					# exifread returns this values like u'[44, 25, 26495533/1000000]'
+					exif[k_modified] = float(exif[k_modified])
 
 		return exif
 

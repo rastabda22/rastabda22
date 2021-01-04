@@ -437,7 +437,7 @@ $(document).ready(function() {
 		var bySearchViewHash = env.hashBeginning + env.options.by_search_string;
 
 		// build the search album part of the hash
-		var wordsStringOriginal = $("#search-field").val().normalize().trim().replace(/  /g, ' ');
+		var wordsStringOriginal = $("#search-field").val().normalize().replace(/[^\p{L}]/ug, ' ').replace(/  /g, ' ').trim();
 		var wordsString = encodeURIComponent(wordsStringOriginal.replace(/ /g, '_'));
 		// TO DO: non-alphabitic words have to be filtered out
 		if (wordsString) {
@@ -448,7 +448,8 @@ $(document).ready(function() {
 				// normalize the search terms
 				// the normalized words are needed in order to compare with the search cache json files names, which are normalized
 				var wordsStringNormalizedAccordingToOptions = util.normalizeAccordingToOptions(wordsStringOriginal);
-				var wordsStringNormalized = util.removeAccents(wordsStringOriginal.toLowerCase());
+				var wordsStringNormalized = wordsStringOriginal.toLowerCase();
+				wordsStringNormalized = util.removeAccents(wordsStringNormalized);
 
 				var searchWordsFromUser = wordsStringOriginal.split(' ');
 				var searchWordsFromUserNormalizedAccordingToOptions = wordsStringNormalizedAccordingToOptions.split(' ');

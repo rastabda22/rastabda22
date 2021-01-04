@@ -2651,29 +2651,25 @@
 
 	Utilities.nameForShowing = function(albumOrSubalbum, parentAlbum, html, br) {
 		var folderName = '';
-		if (parentAlbum) {
-			if (parentAlbum.isSelection() && albumOrSubalbum.hasOwnProperty("captionForSelection")) {
-				folderName = albumOrSubalbum.captionForSelection;
-			} else if (parentAlbum.isSearch() && albumOrSubalbum.hasOwnProperty("captionForSearch")) {
-				folderName = albumOrSubalbum.captionForSearch;
-			} else if (parentAlbum.isByDate()) {
-				let folderArray = albumOrSubalbum.cacheBase.split(env.options.cache_folder_separator);
-				if (folderArray.length === 2) {
-					folderName += parseInt(folderArray[1]);
-				} else if (folderArray.length === 3)
-					folderName += " " + Utilities._t("#month-" + folderArray[2]);
-				else if (folderArray.length === 4)
-					folderName += Utilities._t("#day") + " " + parseInt(folderArray[3]);
-			} else if (parentAlbum.isByGps()) {
-				if (albumOrSubalbum.name === '')
-					folderName = Utilities._t('.not-specified');
-				else if (albumOrSubalbum.hasOwnProperty('altName'))
-					folderName = Utilities.transformAltPlaceName(albumOrSubalbum.altName);
-				else
-					folderName = albumOrSubalbum.name;
-			}
-			if (! html)
-				folderName = Utilities.stripHtmlAndReplaceEntities(folderName);
+		if (parentAlbum && parentAlbum.isSelection() && albumOrSubalbum.hasOwnProperty("captionForSelection")) {
+			folderName = albumOrSubalbum.captionForSelection;
+		} else if (parentAlbum && parentAlbum.isSearch() && albumOrSubalbum.hasOwnProperty("captionForSearch")) {
+			folderName = albumOrSubalbum.captionForSearch;
+		} else if (parentAlbum && parentAlbum.isByDate()) {
+			let folderArray = albumOrSubalbum.cacheBase.split(env.options.cache_folder_separator);
+			if (folderArray.length === 2) {
+				folderName += parseInt(folderArray[1]);
+			} else if (folderArray.length === 3)
+				folderName += " " + Utilities._t("#month-" + folderArray[2]);
+			else if (folderArray.length === 4)
+				folderName += Utilities._t("#day") + " " + parseInt(folderArray[3]);
+		} else if (parentAlbum && parentAlbum.isByGps()) {
+			if (albumOrSubalbum.name === '')
+				folderName = Utilities._t('.not-specified');
+			else if (albumOrSubalbum.hasOwnProperty('altName'))
+				folderName = Utilities.transformAltPlaceName(albumOrSubalbum.altName);
+			else
+				folderName = albumOrSubalbum.name;
 		} else {
 			if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title !== albumOrSubalbum.name) {
 				folderName = albumOrSubalbum.title;
@@ -2687,6 +2683,8 @@
 				folderName = albumOrSubalbum.name;
 			}
 		}
+		if (! html)
+			folderName = Utilities.stripHtmlAndReplaceEntities(folderName);
 
 		if (parentAlbum && parentAlbum.isSelection())
 			albumOrSubalbum.captionForSelection = folderName;

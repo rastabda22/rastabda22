@@ -76,7 +76,7 @@ def switch_to_lowercase(phrase):
 
 	return phrase
 
-def convert_to_ascii_only(phrase):
+def transliterate_to_ascii(phrase):
 	# convert accented characters to ascii, from https://stackoverflow.com/questions/517923/what-is-the-best-way-to-remove-accents-in-a-python-unicode-string
 
 	# the following line generate a problem with chinese, because unidecode translate every ideogram with a word
