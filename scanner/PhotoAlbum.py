@@ -1588,7 +1588,7 @@ class Media(object):
 					exif['GPSAltitudeRef'] = gps_altitude_ref
 					# exif['GPSAltitude'] is the absolute value of altitude, exif['GPSAltitudeRef'] == b'\x00' means above sea level, exif['GPSAltitudeRef'] == b'\x01' means below sea level
 					# let's use exif['GPSAltitudeRef'] to give exif['GPSAltitude'] the correct sign
-					if exif['GPSAltitudeRef'] != b'\x00':
+					if not exif['GPSAltitudeRef'] in [b'\x00', b'\x00\x00', b'\x00\x00\x00', b'\x00\x00\x00\x00']:
 						exif['GPSAltitude'] = - exif['GPSAltitude']
 					# since exif['GPSAltitudeRef'], it must be decoded,
 					# otherwise it will produce a "TypeError: Object of type bytes is not JSON serializable" when dumping it
@@ -1690,6 +1690,9 @@ class Media(object):
 				if k_modified in ('GPSLatitude', 'GPSLongitude'):
 					# exifread returns this values like u'[44, 25, 26495533/1000000]'
 					exif[k_modified] = Metadata.convert_array_degrees_minutes_seconds_to_degrees_decimal(exif[k_modified])
+				if k_modified == 'GPSAltitude':
+					# exifread returns this values like u'[44, 25, 26495533/1000000]'
+					exif[k_modified] = float(exif[k_modified])
 
 		return exif
 
