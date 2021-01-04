@@ -448,7 +448,8 @@ $(document).ready(function() {
 				// normalize the search terms
 				// the normalized words are needed in order to compare with the search cache json files names, which are normalized
 				var wordsStringNormalizedAccordingToOptions = util.normalizeAccordingToOptions(wordsStringOriginal);
-				var wordsStringNormalized = util.removeAccents(wordsStringOriginal.toLowerCase());
+				var wordsStringNormalized = wordsStringOriginal.toLowerCase();
+				wordsStringNormalized = util.removeAccents(wordsStringNormalized);
 
 				var searchWordsFromUser = wordsStringOriginal.split(' ');
 				var searchWordsFromUserNormalizedAccordingToOptions = wordsStringNormalizedAccordingToOptions.split(' ');
