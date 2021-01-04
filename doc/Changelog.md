@@ -1,3 +1,4 @@
+* support for auto-tagging extensions.
 * in searches, treat all non-letter characters as spaces
 * do not consider (0, 0) coordinates (they are in offshore in the Atlantic Ocean)
 * bug fixes
