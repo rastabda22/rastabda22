@@ -1,3 +1,6 @@
+* css tweaks
+* ui menu entry names and sorting reorganized
+
 ### version v4.9.17 (Jan 4, 2021)
 
 * in searches, treat all non-letter characters as spaces
