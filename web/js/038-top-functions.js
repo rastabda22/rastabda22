@@ -637,7 +637,7 @@
 					function() {
 						if (singleMedia !== null || env.currentAlbum.isAlbumWithOneMedia()) {
 							if (singleMedia === null)
-								singleMedia = currentAlbum.media[0];
+								singleMedia = env.currentAlbum.media[0];
 							title += "<span class='media-name'>" + singleMedia.nameForShowing(env.currentAlbum, true) + "</span>";
 							if (env.currentMedia.hasGpsData()) {
 								let imgHtml = "<img class='title-img' height='20px' src='img/ic_place_white_24dp_2x.png'>";
@@ -1518,7 +1518,7 @@
 			}
 			env.nextMedia = null;
 			env.prevMedia = null;
-			$("#album-view").addClass("media-view-container")
+			$("#album-view").addClass("media-view-container");
 			if (env.currentMedia !== null && env.previousMedia === null) {
 				TopFunctions.showAlbum("refreshMedia");
 			} else {
@@ -2464,7 +2464,6 @@
 					//
 					// The promises are needed in order to know when everything has come to its end
 					var subalbumsPromises = [];
-					var indexCompletedSearchAlbums = 0;
 					for (i = 0; i < env.currentAlbum.subalbums.length; i ++) {
 						let iSubalbum = i;
 						let subalbumPromise = new Promise(
@@ -2514,7 +2513,7 @@
 											"(" + ithSubalbum.numsMediaInSubTree.imagesAndVideosTotal() + " " +
 											"<span class='title-media'>" + util._t(".title-media") + "</span>" +
 											")" +
-										"</div>";
+										"</div>" +
 									"</div>";
 
 								caption = $(captionHtml);
@@ -2535,9 +2534,10 @@
 									"</a>";
 
 								let positionHtml = "";
+								let folderMapTitleWithoutHtmlTags;
 								if (ithSubalbum.numPositionsInTree.length) {
-									let folderMapTitleWithoutHtmlTags = env.currentAlbum.folderMapTitle(ithSubalbum, nameHtml).replace(/\<br \/\>/gm, ' ').replace(/<[^>]*>?/gm, '');
-									let positionHtml =
+									folderMapTitleWithoutHtmlTags = env.currentAlbum.folderMapTitle(ithSubalbum, nameHtml).replace(/<br \/>/gm, ' ').replace(/<[^>]*>?/gm, '');
+									positionHtml =
 										"<a id='subalbum-map-link-" + iSubalbum + "' >" +
 											"<img " +
 												"class='thumbnail-map-link' " +
@@ -2980,7 +2980,7 @@
 			$("#my-modal .modal-content").css("width", (env.windowWidth - 55).toString() + "px").css("height", (env.windowHeight - 60).toString() + "px");
 		}
 
-		if(this) {
+		if (this) {
 			// maximum OSM zoom is 19
 			const maxOSMZoom = 19;
 			// calculate the center
