@@ -2524,14 +2524,6 @@
 									selectSrc = 'img/checkbox-checked-48px.png';
 									titleSelector = "#unselect-subalbum";
 								}
-								selectBoxHtml =
-									"<a id='subalbum-select-box-" + iSubalbum + "'>" +
-										"<img " +
-											"class='select-box' " +
-											"src='" + selectSrc + "' " +
-											"style='display: none;'" +
-										">" +
-									"</a>";
 
 								let positionHtml = "";
 								let folderMapTitleWithoutHtmlTags;
@@ -2585,6 +2577,15 @@
 									">" +
 									"</div>";
 								linkContainer = $(albumButtonAndCaptionHtml);
+
+								let selectBoxHtml =
+									"<a id='subalbum-select-box-" + iSubalbum + "'>" +
+										"<img " +
+											"class='select-box' " +
+											"src='" + selectSrc + "' " +
+											"style='display: none;'" +
+										">" +
+									"</a>";
 
 								imageElement = $(
 									"<div " +
