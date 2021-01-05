@@ -535,25 +535,21 @@
 				this.media.removeUnnecessaryPropertiesAndAddParent(this);
 		}
 
-		hasPositions() {
+		hasPositionsInMedia() {
 			var result =
-				this.numPositionsInTree &&
+				// this.numPositionsInTree &&
 				this.media.length &&
-				this.media.some(
-					function(singleMedia) {
-						return singleMedia.hasGpsData();
-					}
-				);
+				this.media.some(singleMedia => singleMedia.hasGpsData());
 			return result;
 		}
 
-		hasValidPositionsAndMediaInAlbumAndSubalbums() {
-			return this.hasOwnProperty("positionsAndMediaInAlbum");
+		hasValidPositionsAndMediaInMediaAndSubalbums() {
+			return this.hasOwnProperty("positionsAndMediaInMedia");
 		}
 
 		invalidatePositionsAndMediaInAlbumAndSubalbums() {
-			if (this.hasOwnProperty("positionsAndMediaInAlbum"))
-				delete this.positionsAndMediaInAlbum;
+			if (this.hasOwnProperty("positionsAndMediaInMedia"))
+				delete this.positionsAndMediaInMedia;
 		}
 
 		isEqual(otherAlbum) {

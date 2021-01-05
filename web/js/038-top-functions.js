@@ -12,87 +12,99 @@
 	function TopFunctions() {
 	}
 
-	Album.prototype.generatePositionsAndMediaInAlbumAndSubalbums = function() {
+	Album.prototype.generatePositionsAndMediaInMediaAndSubalbums = function() {
 		var self = this;
 		return new Promise(
-			function(resolve_generatePositionsAndMediaInAlbumAndSubalbums) {
-				if (self.hasValidPositionsAndMediaInAlbumAndSubalbums()) {
-					resolve_generatePositionsAndMediaInAlbumAndSubalbums();
+			function(resolve_generatePositionsAndMediaInMediaAndSubalbums) {
+				let numSubalbums = self.subalbums.length;
+				if (
+					self.hasValidPositionsAndMediaInMediaAndSubalbums() ||
+					(
+						! self.numsMedia.imagesAndVideosTotal() || ! self.hasPositionsInMedia()
+					) && ! numSubalbums
+				) {
+					resolve_generatePositionsAndMediaInMediaAndSubalbums();
 				} else {
-					self.positionsAndMediaInSubalbums = new PositionsAndMedia([]);
-					self.numPositionsInSubalbums = 0;
-					self.positionsAndMediaInAlbum = new PositionsAndMedia([]);
-					self.numPositionsInAlbum = 0;
-					let numSubalbums = self.subalbums.length;
-					let hasPositions = (
-						self.hasPositions() && (
-							! self.isTransversal() || ! Boolean(numSubalbums)
-						)
-					);
-					// let fewMedia = (self.media.length < self.numPositionsInTree);
-					if (! hasPositions || (! numSubalbums || self.isCollection())) {
-					// if (! hasPositions || ! numSubalbums || fewMedia) {
-						if (! hasPositions) {
-							self.positionsAndMediaInSubalbums = self.positionsAndMediaInTree;
-							self.numPositionsInSubalbums = self.positionsAndMediaInSubalbums.length;
-						} else {
-							self.positionsAndMediaInAlbum = self.media.generatePositionsAndMedia();
-							self.numPositionsInAlbum = self.positionsAndMediaInAlbum.length;
-							self.positionsAndMediaInSubalbums = new PositionsAndMedia(self.positionsAndMediaInTree);
-							self.positionsAndMediaInSubalbums.removePositionsAndMedia(self.positionsAndMediaInAlbum);
-							self.numPositionsInSubalbums = self.positionsAndMediaInSubalbums.length;
-						}
-						resolve_generatePositionsAndMediaInAlbumAndSubalbums();
+					let hasPositionsInMedia = (self.hasPositionsInMedia() && (! self.isTransversal() || numSubalbums === 0));
+					if (! hasPositionsInMedia) {
+						// no media or date/gps album with subalbums
+						self.positionsAndMediaInMedia = new PositionsAndMedia([]);
+						self.numPositionsInMedia = 0;
+						self.positionsAndMediaInSubalbums = self.positionsAndMediaInTree;
+						self.numPositionsInSubalbums = self.positionsAndMediaInSubalbums.length;
+						resolve_generatePositionsAndMediaInMediaAndSubalbums();
+					} else if (numSubalbums === 0) {
+						// no subalbums
+						self.positionsAndMediaInMedia = self.media.generatePositionsAndMedia();
+						self.numPositionsInMedia = self.positionsAndMediaInMedia.length;
+						self.positionsAndMediaInSubalbums = new PositionsAndMedia([]);
+						self.numPositionsInSubalbums = 0;
+						resolve_generatePositionsAndMediaInMediaAndSubalbums();
 					} else {
-						let subalbumPromises = [];
-						if (hasPositions)
-							self.positionsAndMediaInAlbum = new PositionsAndMedia(self.positionsAndMediaInTree);
-						self.subalbums.forEach(
-							function(thisSubalbum, thisIndex) {
-								let subalbumPromise;
-								if (thisSubalbum.hasOwnProperty("positionsAndMediaInTree")) {
-									self.positionsAndMediaInSubalbums.mergePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
-									self.numPositionsInSubalbums = self.positionsAndMediaInSubalbums.length;
-									if (hasPositions) {
-										self.positionsAndMediaInAlbum.removePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
-										self.numPositionsInAlbum = self.positionsAndMediaInAlbum.length;
-									}
-									subalbumPromise = new Promise(
-										function(resolve_subalbumPromise) {
-											resolve_subalbumPromise();
-										}
-									);
-								} else {
-									subalbumPromise = new Promise(
-										function(resolve_subalbumPromise) {
-											let promise = phFl.getAlbum(thisSubalbum.cacheBase, null, {getMedia: false, getPositions: true});
-											promise.then(
-												function(thisSubalbum) {
-													self.subalbums[thisIndex] = thisSubalbum;
-													self.positionsAndMediaInSubalbums.mergePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
-													self.numPositionsInSubalbums = self.positionsAndMediaInSubalbums.length;
-													if (hasPositions) {
-														self.positionsAndMediaInAlbum.removePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
-														self.numPositionsInAlbum = self.positionsAndMediaInAlbum.length;
-													}
-													resolve_subalbumPromise();
-												},
-												function() {
-													console.trace();
-												}
-											);
-										}
-									);
-								}
-								subalbumPromises.push(subalbumPromise);
-							}
-						);
-						Promise.all(subalbumPromises).then(
-							function() {
-								resolve_generatePositionsAndMediaInAlbumAndSubalbums();
+						// we have media and subalbum, but we don't know if positionsAndMediaInTree property is there
+						let promise = phFl.getAlbum(self, null, {getMedia: true, getPositions: true});
+						promise.then(
+							function(album) {
+								self = album;
+								self.positionsAndMediaInMedia = self.media.generatePositionsAndMedia();
+								self.numPositionsInMedia = self.positionsAndMediaInMedia.length;
+								self.positionsAndMediaInSubalbums = new PositionsAndMedia(self.positionsAndMediaInTree);
+								self.positionsAndMediaInSubalbums.removePositionsAndMedia(self.positionsAndMediaInMedia);
+								self.numPositionsInSubalbums = self.positionsAndMediaInSubalbums.length;
+								resolve_generatePositionsAndMediaInMediaAndSubalbums();
 							}
 						);
 					}
+					// } else {
+					// 	let subalbumPromises = [];
+					// 	if (hasPositionsInMedia)
+					// 		self.positionsAndMediaInMedia = new PositionsAndMedia(self.positionsAndMediaInTree);
+					// 	self.subalbums.forEach(
+					// 		function(thisSubalbum, thisIndex) {
+					// 			let subalbumPromise;
+					// 			if (thisSubalbum.hasOwnProperty("positionsAndMediaInTree")) {
+					// 				self.positionsAndMediaInSubalbums.mergePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
+					// 				self.numPositionsInSubalbums = self.positionsAndMediaInSubalbums.length;
+					// 				if (hasPositionsInMedia) {
+					// 					self.positionsAndMediaInMedia.removePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
+					// 					self.numPositionsInMedia = self.positionsAndMediaInMedia.length;
+					// 				}
+					// 				subalbumPromise = new Promise(
+					// 					function(resolve_subalbumPromise) {
+					// 						resolve_subalbumPromise();
+					// 					}
+					// 				);
+					// 			} else {
+					// 				subalbumPromise = new Promise(
+					// 					function(resolve_subalbumPromise) {
+					// 						let promise = phFl.getAlbum(thisSubalbum.cacheBase, null, {getMedia: false, getPositions: true});
+					// 						promise.then(
+					// 							function(thisSubalbum) {
+					// 								self.subalbums[thisIndex] = thisSubalbum;
+					// 								self.positionsAndMediaInSubalbums.mergePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
+					// 								self.numPositionsInSubalbums = self.positionsAndMediaInSubalbums.length;
+					// 								if (hasPositionsInMedia) {
+					// 									self.positionsAndMediaInMedia.removePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
+					// 									self.numPositionsInMedia = self.positionsAndMediaInMedia.length;
+					// 								}
+					// 								resolve_subalbumPromise();
+					// 							},
+					// 							function() {
+					// 								console.trace();
+					// 							}
+					// 						);
+					// 					}
+					// 				);
+					// 			}
+					// 			subalbumPromises.push(subalbumPromise);
+					// 		}
+					// 	);
+					// 	Promise.all(subalbumPromises).then(
+					// 		function() {
+					// 			resolve_generatePositionsAndMediaInMediaAndSubalbums();
+					// 		}
+					// 	);
+					// }
 				}
 			}
 		);
@@ -667,7 +679,7 @@
 					}
 				}
 
-				let promise = env.currentAlbum.generatePositionsAndMediaInAlbumAndSubalbums();
+				let promise = env.currentAlbum.generatePositionsAndMediaInMediaAndSubalbums();
 
 				promise.then(
 					function() {
@@ -686,7 +698,7 @@
 							let marker = "<marker>";
 							// close the .title-main span
 							replace += "</span>";
-							if (env.currentAlbum.numPositionsInAlbum && env.currentAlbum.numPositionsInTree !== env.currentAlbum.numPositionsInSubalbums) {
+							if (env.currentAlbum.numPositionsInMedia && env.currentAlbum.numPositionsInTree !== env.currentAlbum.numPositionsInSubalbums) {
 								replace +=
 									"<a class='map-popup-trigger'>" +
 										"<img class='title-img' " +
@@ -853,7 +865,7 @@
 							function(ev, from) {
 								// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
 								env.selectorClickedToOpenTheMap = ".map-popup-trigger";
-								if (env.currentMedia !== null && env.currentMedia.hasGpsData()) {
+								if (env.currentMedia !== null && env.currentMedia.hasGpsData() || env.currentMedia === null && env.currentAlbum.numPositionsInTree) {
 									TopFunctions.generateMapFromTitle(ev, from);
 								} else {
 									TopFunctions.generateMapFromTitleWithoutSubalbums(ev, from);
@@ -2940,8 +2952,8 @@
 	};
 
 	TopFunctions.generateMapFromTitleWithoutSubalbums = function(ev, from) {
-		if (env.currentAlbum.positionsAndMediaInAlbum.length)
-			env.currentAlbum.positionsAndMediaInAlbum.generateMap(ev, from);
+		if (env.currentAlbum.positionsAndMediaInMedia.length)
+			env.currentAlbum.positionsAndMediaInMedia.generateMap(ev, from);
 	};
 
 	PositionsAndMedia.prototype.generateMap = function(ev, from) {
