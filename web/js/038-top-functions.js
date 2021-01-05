@@ -1655,10 +1655,12 @@
 			// f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			if (this.cacheBase === env.currentAlbum.cacheBase)
+			if (this.cacheBase === env.currentAlbum.cacheBase) {
 				TopFunctions.showAlbum("refreshMedia");
-			else
-				map.updatePopup(MapFunctions.titleWrapper1 + this.generateHtmlForImages() + MapFunctions.titleWrapper2);
+			} else {
+				this.showMedia("#popup-images-wrapper");
+				map.updatePopup();
+			}
 		}
 		return false;
 	};
@@ -1674,10 +1676,12 @@
 			// f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			if (this.cacheBase === env.currentAlbum.cacheBase)
+			if (this.cacheBase === env.currentAlbum.cacheBase) {
 				TopFunctions.showAlbum("refreshMedia");
-			else
-				map.updatePopup(MapFunctions.titleWrapper1 + this.generateHtmlForImages() + MapFunctions.titleWrapper2);
+			} else {
+				this.showMedia("#popup-images-wrapper");
+				map.updatePopup();
+			}
 		}
 		return false;
 	};
@@ -1688,10 +1692,12 @@
 			f.setBooleanCookie("mediaReverseSortRequested", env.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			if (this.cacheBase === env.currentAlbum.cacheBase)
+			if (this.cacheBase === env.currentAlbum.cacheBase) {
 				TopFunctions.showAlbum("refreshMedia");
-			else
-				map.updatePopup(MapFunctions.titleWrapper1 + this.generateHtmlForImages() + MapFunctions.titleWrapper2);
+			} else {
+				this.showMedia("#popup-images-wrapper");
+				map.updatePopup();
+			}
 		}
 		return false;
 	};
@@ -1915,8 +1921,10 @@
 			else if (env.currentAlbum.numsMedia.imagesAndVideosTotal() > 1)
 				TopFunctions.showAlbum("refreshMedia");
 
-			if ($('.leaflet-popup').html())
-				map.updatePopup(MapFunctions.titleWrapper1 + env.mapAlbum.generateHtmlForImages() + MapFunctions.titleWrapper2);
+			if ($('.leaflet-popup').html()) {
+				env.mapAlbum.showMedia("#popup-images-wrapper");
+				map.updatePopup();
+			}
 		}
 		return false;
 	};
@@ -1973,8 +1981,10 @@
 			f.setCookie("mediaThumbType", env.options.media_thumb_type);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
-			if ($('.leaflet-popup').html())
-				map.updatePopup(MapFunctions.titleWrapper1 + env.mapAlbum.generateHtmlForImages() + MapFunctions.titleWrapper2);
+			if ($('.leaflet-popup').html()) {
+				env.mapAlbum.showMedia("#popup-images-wrapper");
+				map.updatePopup();
+			}
 		}
 		return false;
 	};
@@ -1997,12 +2007,19 @@
 		return false;
 	};
 
-	Album.prototype.showMedia = function(thumbsElement) {
+	Album.prototype.showMedia = function(thumbsSelector) {
 		var thumbnailSize = env.options.media_thumb_size;
 		var media = [];
 		var imageLink;
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 		var self = this;
+		var lazyClass;
+		if (thumbsSelector === "#thumbs") {
+			lazyClass = "lazyload-media";
+		} else {
+			lazyClass = "lazyload-popup-media";
+		}
+
 		//
 		// media loop
 		//
@@ -2079,7 +2096,7 @@
 						"<img " +
 							"data-src='" + encodeURI(thumbHash) + "' " +
 							"src='img/image-placeholder.png' " +
-							"class='thumbnail lazyload-media" + "' " +
+							"class='thumbnail " + lazyClass + "' " +
 							"height='" + thumbHeight + "' " +
 							"width='" + thumbWidth + "' " +
 							"style='" +
@@ -2163,7 +2180,7 @@
 				});
 			})(imageLink, imageElement);
 
-			thumbsElement.append(imageLink);
+			$(thumbsSelector).append(imageLink);
 
 			if (ithMedia.metadata.hasOwnProperty("description"))
 				$("#" + imageId + " .description").attr("title", Utilities.stripHtmlAndReplaceEntities(ithMedia.metadata.description));
@@ -2243,6 +2260,13 @@
 				);
 			}
 		}
+
+		$("img.lazyload-media").Lazy(
+			{
+				// threshold: 2 * env.options.media_thumb_size,
+				appendScroll: $(window)
+			}
+		);
 	};
 
 
@@ -2403,7 +2427,7 @@
 				)
 			) {
 				$("#thumbs").empty();
-				env.currentAlbum.showMedia($("#thumbs"));
+				env.currentAlbum.showMedia("#thumbs");
 			}
 
 			if (env.options.hide_descriptions)
@@ -3173,7 +3197,8 @@
 		var promise = phFl.endPreparingAlbumAndKeepOn(env.mapAlbum, null, null);
 		promise.then(
 			function() {
-				map.updatePopup(MapFunctions.titleWrapper1 + env.mapAlbum.generateHtmlForImages() + MapFunctions.titleWrapper2);
+				env.mapAlbum.showMedia("#popup-images-wrapper");
+				map.updatePopup();
 				$("#loading").hide();
 			}
 		);
