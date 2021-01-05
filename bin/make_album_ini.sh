@@ -104,12 +104,11 @@ if [ -f "$DIR/$ALBUM_INI" ]; then
 	if [ "$first_line" = "# User defined metadata for MyPhotoShare" ]; then
 		echo "Old album.ini syntax: patching old values."
 
-#					 -e '1,$s/\[DEFAULT\]\n(#?)tags = (.*)/[DEFAULT]\n\1tags = \2\nauto_tags = %(auto_faces)s, %(auto_scenes)s\nauto_scenes = \nauto_faces = /g' \
 		sed -ibkp -E \
-		       -e '1s/# User defined metadata for MyPhotoShare/[_DOCUMENTATION_]\n# User defined metadata for MyPhotoShare/' \
-					 -e '1,$s/^(#?)tags =(.*)/\1tags = %(auto_tags)s, \2/g' \
-					 -e '/\[DEFAULT\]$/{N;s/\[DEFAULT\]\n(#?)tags =(.*)/[DEFAULT]\n\1tags = %(auto_tags)s,\2\nauto_tags = %(auto_faces)s, %(auto_scenes)s\nauto_scenes = \nauto_faces = /}' \
-					 "$DIR/$ALBUM_INI"
+			-e '1s/# User defined metadata for MyPhotoShare/[_DOCUMENTATION_]\n# User defined metadata for MyPhotoShare/' \
+			-e '1,$s/^(#?)\s*tags\s*=(.*)/\1tags = %(auto_tags)s, \2/g' \
+			-e '/\[DEFAULT\]/{s/\[DEFAULT\]/[DEFAULT]\nauto_tags = %(auto_faces)s, %(auto_scenes)s\nauto_scenes = \nauto_faces = /}' \
+			"$DIR/$ALBUM_INI"
 	fi
 fi
 
@@ -139,8 +138,8 @@ if [ ! -f "$DIR/$ALBUM_INI" ]; then
 	echo "[DEFAULT]" >> "$DIR/$ALBUM_INI"
 	echo "tags = %(auto_tags)s, " >> "$DIR/$ALBUM_INI"
 	echo "auto_tags = %(auto_faces)s, %(auto_scenes)s" >> "$DIR/$ALBUM_INI"
-  echo "auto_scenes = " >> "$DIR/$ALBUM_INI"
-  echo "auto_faces = " >> "$DIR/$ALBUM_INI"
+	echo "auto_scenes = " >> "$DIR/$ALBUM_INI"
+	echo "auto_faces = " >> "$DIR/$ALBUM_INI"
 	echo "#date = " >> "$DIR/$ALBUM_INI"
 	echo "#latitude = " >> "$DIR/$ALBUM_INI"
 	echo "#longitude = " >> "$DIR/$ALBUM_INI"
