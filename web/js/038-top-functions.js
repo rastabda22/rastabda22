@@ -2524,7 +2524,7 @@
 										">" +
 									"</a>";
 
-								let folderMapTitleWithoutHtmlTags = env.currentAlbum.folderMapTitle(ithSubalbum, nameHtml).replace(/<[^>]*>?/gm, '');
+								let folderMapTitleWithoutHtmlTags = env.currentAlbum.folderMapTitle(ithSubalbum, nameHtml).replace(/\<br \/\>/gm, ' ').replace(/<[^>]*>?/gm, '');
 								let positionHtml =
 									"<a id='subalbum-map-link-" + iSubalbum + "' >" +
 										"<img " +
