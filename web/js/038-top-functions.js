@@ -2534,15 +2534,18 @@
 										">" +
 									"</a>";
 
-								let folderMapTitleWithoutHtmlTags = env.currentAlbum.folderMapTitle(ithSubalbum, nameHtml).replace(/\<br \/\>/gm, ' ').replace(/<[^>]*>?/gm, '');
-								let positionHtml =
-									"<a id='subalbum-map-link-" + iSubalbum + "' >" +
-										"<img " +
-											"class='thumbnail-map-link' " +
-											"height='15px' " +
-											"src='img/ic_place_white_24dp_2x.png' " +
-										"/>" +
-									"</a>";
+								let positionHtml = "";
+								if (ithSubalbum.numPositionsInTree.length) {
+									let folderMapTitleWithoutHtmlTags = env.currentAlbum.folderMapTitle(ithSubalbum, nameHtml).replace(/\<br \/\>/gm, ' ').replace(/<[^>]*>?/gm, '');
+									let positionHtml =
+										"<a id='subalbum-map-link-" + iSubalbum + "' >" +
+											"<img " +
+												"class='thumbnail-map-link' " +
+												"height='15px' " +
+												"src='img/ic_place_white_24dp_2x.png' " +
+											"/>" +
+										"</a>";
+								}
 
 								// a dot could be present in a cache base, making $("#" + cacheBase) fail, beware...
 								id = phFl.hashCode(ithSubalbum.cacheBase);
@@ -2610,8 +2613,10 @@
 
 								subalbumsElement.append(aHrefHtmlContainer);
 
-								$("#subalbum-map-link-" + iSubalbum + " img.thumbnail-map-link").attr("title", folderMapTitleWithoutHtmlTags);
-								$("#subalbum-map-link-" + iSubalbum + " img.thumbnail-map-link").attr("alt", folderMapTitleWithoutHtmlTags);
+								if (ithSubalbum.numPositionsInTree.length) {
+									$("#subalbum-map-link-" + iSubalbum + " img.thumbnail-map-link").attr("title", folderMapTitleWithoutHtmlTags);
+									$("#subalbum-map-link-" + iSubalbum + " img.thumbnail-map-link").attr("alt", folderMapTitleWithoutHtmlTags);
+								}
 								$("#subalbum-select-box-" + iSubalbum + " img.select-box").attr("title", util._t(titleSelector));
 								$("#subalbum-select-box-" + iSubalbum + " img.select-box").attr("alt", util._t("#selector"));
 
