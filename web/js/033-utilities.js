@@ -2672,26 +2672,23 @@
 				folderName = albumOrSubalbum.name;
 		} else {
 			if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title !== albumOrSubalbum.name) {
-				folderName = albumOrSubalbum.title;
-				if (html && br)
-					folderName += "<br /><span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
-				else if (html)
-					folderName += " <span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
-				else
-					folderName += " (" + albumOrSubalbum.name + ")";
+				folderName = albumOrSubalbum.title + "<br /><span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
 			} else {
 				folderName = albumOrSubalbum.name;
 			}
 		}
-		if (! html)
-			folderName = Utilities.stripHtmlAndReplaceEntities(folderName);
 
 		if (parentAlbum && parentAlbum.isSelection())
 			albumOrSubalbum.captionForSelection = folderName;
 		else if (parentAlbum && parentAlbum.isSearch())
 			albumOrSubalbum.captionForSearch = folderName;
 
-		return folderName;
+		if (! html)
+			return Utilities.stripHtmlAndReplaceEntities(folderName);
+		else if (! br)
+			return folderName.replace("<br />", " ");
+		else
+			return folderName;
 	};
 
 	Album.prototype.nameForShowing = function(parentAlbum, html = false, br = false) {
@@ -2721,10 +2718,13 @@
 				mediaName = this.name;
 			}
 		}
-		if (! html)
-			mediaName = Utilities.stripHtmlAndReplaceEntities(mediaName);
 
-		return mediaName;
+		if (! html)
+			return Utilities.stripHtmlAndReplaceEntities(mediaName);
+		else if (! br)
+			return mediaName.replace("<br />", " ");
+		else
+			return mediaName;
 	};
 
 	Album.prototype.folderMapTitle = function(subalbum, folderName) {
