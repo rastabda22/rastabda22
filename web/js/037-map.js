@@ -50,7 +50,7 @@
 		else
 			albumViewPadding = parseInt(albumViewPadding);
 
-		for(mediaIndex = 0; mediaIndex < this.numsMedia.imagesAndVideosTotal(); mediaIndex ++) {
+		for (mediaIndex = 0; mediaIndex < this.numsMedia.imagesAndVideosTotal(); mediaIndex ++) {
 
 			ithMedia = this.media[mediaIndex];
 
