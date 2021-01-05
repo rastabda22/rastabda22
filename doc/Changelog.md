@@ -1,3 +1,4 @@
+* support for auto-tagging extensions.
 * css tweaks
 * ui menu entry names and sorting reorganized
 
