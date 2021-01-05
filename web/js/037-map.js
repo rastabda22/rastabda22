@@ -308,7 +308,7 @@
 					if (imgData.mediaHash.split('/').pop() === cachedAlbum.media[iMedia].cacheBase) {
 						ev.stopPropagation();
 						ev.preventDefault();
-						cachedAlbum.media[iMedia].toggleSelectedStatus(mapAlbum, '#' + id);
+						cachedAlbum.media[iMedia].toggleSelectedStatus(env.mapAlbum, '#' + id);
 						break;
 					}
 				}
