@@ -1541,14 +1541,15 @@
 		var self = this;
 		return new Promise(
 			function (resolve_collect) {
+				var mediaInAlbum = [];
 				if (self.media.length)
-					var mediaInAlbum = [... self.media];
+					mediaInAlbum = [... self.media];
 				subalbumsPromises = [];
 				self.subalbums.forEach(
 					function(subalbum) {
 						var subalbumPromise = new Promise(
 							function(resolve_subalbumPromise) {
-								toAlbumPromise = subalbum.toAlbum(null, {});
+								toAlbumPromise = subalbum.toAlbum(null, {getMedia: true, getPositions: true});
 								toAlbumPromise.then(
 									function(album) {
 										var collectPromise = album.collectMediaInTree();
@@ -1608,7 +1609,7 @@
 					if (Utilities.nothingIsSelected())
 						Utilities.initializeSelectionAlbum();
 
-					let convertSubalbumPromise = subalbum.toAlbum(null, {getMedia: false, getPositions: true});
+					let convertSubalbumPromise = subalbum.toAlbum(null, {getMedia: true, getPositions: true});
 					convertSubalbumPromise.then(
 						function(album) {
 							self.subalbums[iSubalbum] = album;
