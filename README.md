@@ -34,6 +34,7 @@ It is available in English, Italian, French and Spanish. Localizing to other lan
 * [Tweaking metadata with `album.ini`](doc/Metadata.md)
 * [Make some content private](doc/Authentication.md)
 * [User interface](doc/Navigation.md)
+* [FAQ](doc/FAQ.md)
 * [Versions changelog](doc/Changelog.md)
 * [Debugging memory usage](doc/Debugging.md)
 * [Known issues](doc/Issues.md)
@@ -50,6 +51,7 @@ It is available in English, Italian, French and Spanish. Localizing to other lan
 - [x] Media can be searched by file/album name, title, description, tags; search may be whole word or inside words, considering accents and capitals or not, in current album (in virtual albums too) or in the whole tree.
 - [x] Thumbnails can be square (cropped, with optional face detection by [OpenCV](https://opencv.org/)) or full-content.
 - [x] Albums can be downloaded via the right menu, either with or without subalbums, either images only, videos only, or both.
+- [x] Pictures can be automatically indexed and tagged with ML-based extensions.
 
 ### For Photographers
 
@@ -111,6 +113,11 @@ It is available in English, Italian, French and Spanish. Localizing to other lan
 - [x] Albums and media can be seleted via a click or massively, either in _hard_ albums (the default tree, by date, by place) and virtual ones (by search, by gps, by map).
 - [x] Selected media and albums can be seen as an album, and can be browsed, downloaded, sorted, shown on map, etc.
 
+### Add features with MyPhotoShare extensions (_new_ in v5.0)
+
+- [x] Automatic face recognition in pictures with [mps_autofaces](https://gitlab.com/pmetras/mps_autofaces).
+- [x] Automatic scenes recognition and indexing in pictures with [mps_autoscenes](https://gitlab.com/pmetras/mps_autoscenes).
+
 ### And More...
 
 - [x] Analytics with optional Google Analytics and Piwik integration.
@@ -122,13 +129,11 @@ It is available in English, Italian, French and Spanish. Localizing to other lan
 - [x] Developer friendly with debug mode for using unminimized css's and js's.
 - [x] Photos metadata can be overloaded by user defined values in special file `album.ini`.
 - [x] Consistent hash URL format.
-- [x] Create Debian/Ubuntu package with (mps_debian)[https://github.com/pmetras/mps_debian] for easy install.
-
+- [x] Create Debian/Ubuntu package with [mps_debian](https://gitlab.com/pmetras/mps_debian) for easy install.
 
 ## Python version
 
 The python code (basically the _scanner_) is run with `python3`.
-
 
 ## Community
 
