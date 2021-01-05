@@ -43,7 +43,7 @@
 		// we must get the media corresponding to the name in the point
 		// var markerClass;
 		var mediaIndex, mediaHash, thumbHeight, thumbWidth, width, height;
-		var ithMedia, images = "", calculatedWidth, calculatedHeight, imageString, imgString, img, thumbHash, imgTitle;
+		var ithMedia, images = "", calculatedWidth, calculatedHeight, imageString, imgHtml, img, thumbHash, imgTitle;
 		var albumViewPadding = $("#album-view").css("padding");
 		if (! albumViewPadding)
 			albumViewPadding = 0;
@@ -90,17 +90,24 @@
 				selectSrc = 'img/checkbox-checked-48px.png';
 				titleSelector = "#unselect-single-media";
 			}
-			let selectBoxHtml =
-				"<a id='map-media-select-box-" + mediaIndex + "'>" +
+
+			let selectBoxImgHtml =
 					"<img " +
 						"class='select-box' " +
-						"title='" + util.escapeSingleQuotes(util._t(titleSelector)) + "' " +
-						"alt='" + util.escapeSingleQuotes(util._t("#selector")) + "' " +
 						"src='" + selectSrc + "'" +
-					">" +
-				"</a>";
+					">";
+			let selectBoxImg = $(selectBoxImgHtml);
+			selectBoxImg.attr("title", util._t(titleSelector));
+			selectBoxImg.attr("alt", util._t("#selector"));
 
-			imgString =	"<img " +
+			let selectBoxHtml =
+				"<a id='map-media-select-box-" + mediaIndex + "'>" +
+					selectBoxImg.prop("outerHTML") +
+				"</a>";
+			selectBox = $(selectBoxHtml);
+
+
+			imgHtml =	"<img " +
 							"data-src='" + encodeURI(thumbHash) + "' " +
 							"src='img/image-placeholder.png' " +
 							"data='" +
@@ -122,8 +129,9 @@
 								 "'" +
 						"/>";
 
-			img = $(imgString);
-			img.attr("title", imgTitle).attr("alt", util.trimExtension(ithMedia.name));
+			img = $(imgHtml);
+			img.attr("title", imgTitle);
+			img.attr("alt", util.trimExtension(ithMedia.name));
 
 			imageString =
 				"<div class='thumb-and-caption-container' " +
@@ -147,20 +155,17 @@
 					"</div>" +
 					"<div class='media-caption'>";
 			// if (ithMedia.metadata.hasOwnProperty("title")) {
-			imageString +=
-						"<span title='" + util.escapeSingleQuotes(ithMedia.nameForShowing(this)) + "' class='media-name'>" +
-							"<span>" +
+			let spanHtml =
+						"<span class='media-name'>" +
+							"<span style='white-space: nowrap;'>" +
 								ithMedia.nameForShowing(this, true, true).replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
 							"</span>" +
 						"</span>";
-			// } else {
-			// 	imageString +=
-			// 			"<span class='media-name'>" +
-			// 				"<span>" +
-			// 					ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
-			// 				"</span>" +
-			// 			"</span>";
-			// }
+			let span = $(spanHtml);
+			span.attr("title", ithMedia.nameForShowing(this));
+
+			imageString +=
+						span.prop("outerHTML");
 			if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
 				imageString +=
 						"<div class='media-tags'>" +
