@@ -201,15 +201,12 @@
 						else if (imagesTotalInAlbum && ! videosTotalInAlbum)
 							title += util._t(".title-images");
 						else {
-							let titleCountTitle;
-							if (components.length === 2)
-								titleCountTitle = imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos");
-							else
-								titleCountTitle = imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos");
-
 							let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
 							let titleCount = $(titleCountHtml);
-							titleCount.attr("title", titleCountTitle);
+							if (components.length === 2)
+								titleCount.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
+							else
+								titleCount.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
 							title += titleCount.prop("outerHTML");
 						}
 						if (components.length >= 5)
@@ -296,25 +293,13 @@
 						else if (imagesTotalInAlbum && ! videosTotalInAlbum)
 							title += util._t(".title-images");
 						else {
-							let titleCountTitle;
-							if (components.length === 2)
-								titleCountTitle = imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos");
-							else
-								titleCountTitle = imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos");
-
 							let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
 							let titleCount = $(titleCountHtml);
-							titleCount.attr("title", titleCountTitle);
+							if (components.length === 2)
+								titleCount.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
+							else
+								titleCount.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
 							title += titleCount.prop("outerHTML");
-
-							// title += "<span class='title-count-detail' title='";
-							// if (components.length === 2)
-							// 	title += util.escapeSingleQuotes(imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
-							// else
-							// 	title += util.escapeSingleQuotes(imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
-							// title += "'>";
-							// title += util._t(".title-media");
-							// title += "</span>";
 						}
 						if (components.length >= gpsLevelNumber + 2)
 							title += " " + util._t(".title-in-gps-album");
@@ -596,25 +581,14 @@
 							else if (imagesTotalInAlbum && ! videosTotalInAlbum)
 								title += util._t(".title-images") + " ";
 							else {
-								let titleCountTitle;
-								if (components.length === 2)
-									titleCountTitle = imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos");
-								else
-									titleCountTitle = imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos");
 
 								let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
 								let titleCount = $(titleCountHtml);
-								titleCount.attr("title", titleCountTitle);
+								if (components.length === 2)
+									titleCount.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
+								else
+									titleCount.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
 								title += titleCount.prop("outerHTML");
-
-								// title += "<span class='title-count-detail' title='";
-								// if (components.length === 2)
-								// 	title += util.escapeSingleQuotes(imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
-								// else
-								// 	title += util.escapeSingleQuotes(imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
-								// title += "'>";
-								// title += util._t(".title-media");
-								// title += "</span> ";
 							}
 							title += util._t(".title-in-album");
 							if (mediaTotalInSubAlbums)
@@ -627,17 +601,10 @@
 							else if (imagesTotalInSubAlbums && ! videosTotalInSubAlbums)
 								title += util._t(".title-images");
 							else {
-								let titleCountTitle = imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos");
 								let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
 								let titleCount = $(titleCountHtml);
-								titleCount.attr("title", titleCountTitle);
+								titleCount.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
 								title += titleCount.prop("outerHTML");
-
-								// title += "<span class='title-count-detail' title='";
-								// title += util.escapeSingleQuotes(imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
-								// title += "'>";
-								// title += util._t(".title-media");
-								// title += "</span>";
 							}
 							title += " " + util._t(".title-in-subalbums");
 						}
