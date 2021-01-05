@@ -55,56 +55,6 @@
 							}
 						);
 					}
-					// } else {
-					// 	let subalbumPromises = [];
-					// 	if (hasPositionsInMedia)
-					// 		self.positionsAndMediaInMedia = new PositionsAndMedia(self.positionsAndMediaInTree);
-					// 	self.subalbums.forEach(
-					// 		function(thisSubalbum, thisIndex) {
-					// 			let subalbumPromise;
-					// 			if (thisSubalbum.hasOwnProperty("positionsAndMediaInTree")) {
-					// 				self.positionsAndMediaInSubalbums.mergePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
-					// 				self.numPositionsInSubalbums = self.positionsAndMediaInSubalbums.length;
-					// 				if (hasPositionsInMedia) {
-					// 					self.positionsAndMediaInMedia.removePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
-					// 					self.numPositionsInMedia = self.positionsAndMediaInMedia.length;
-					// 				}
-					// 				subalbumPromise = new Promise(
-					// 					function(resolve_subalbumPromise) {
-					// 						resolve_subalbumPromise();
-					// 					}
-					// 				);
-					// 			} else {
-					// 				subalbumPromise = new Promise(
-					// 					function(resolve_subalbumPromise) {
-					// 						let promise = phFl.getAlbum(thisSubalbum.cacheBase, null, {getMedia: false, getPositions: true});
-					// 						promise.then(
-					// 							function(thisSubalbum) {
-					// 								self.subalbums[thisIndex] = thisSubalbum;
-					// 								self.positionsAndMediaInSubalbums.mergePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
-					// 								self.numPositionsInSubalbums = self.positionsAndMediaInSubalbums.length;
-					// 								if (hasPositionsInMedia) {
-					// 									self.positionsAndMediaInMedia.removePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
-					// 									self.numPositionsInMedia = self.positionsAndMediaInMedia.length;
-					// 								}
-					// 								resolve_subalbumPromise();
-					// 							},
-					// 							function() {
-					// 								console.trace();
-					// 							}
-					// 						);
-					// 					}
-					// 				);
-					// 			}
-					// 			subalbumPromises.push(subalbumPromise);
-					// 		}
-					// 	);
-					// 	Promise.all(subalbumPromises).then(
-					// 		function() {
-					// 			resolve_generatePositionsAndMediaInMediaAndSubalbums();
-					// 		}
-					// 	);
-					// }
 				}
 			}
 		);
