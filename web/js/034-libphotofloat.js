@@ -1338,7 +1338,8 @@
 						var wordsStringOriginal = wordsString.replace(/_/g, ' ');
 						// the normalized words are needed in order to compare with the search cache json files names, which are normalized
 						var wordsStringNormalizedAccordingToOptions = util.normalizeAccordingToOptions(wordsStringOriginal);
-						var wordsStringNormalized = util.removeAccents(wordsStringOriginal.toLowerCase());
+						var wordsStringNormalized = wordsStringOriginal.toLowerCase();
+						wordsStringNormalized = util.removeAccents(wordsStringNormalized);
 						if (wordsAndOptions.length > 1) {
 							var searchOptions = wordsAndOptions.slice(0, -1);
 							env.options.search_inside_words = searchOptions.includes('i');
