@@ -2100,6 +2100,12 @@
 			let selectBoxHtml =
 				"<a id='" + mediaSelectBoxSelectorPart + iMedia + "'>" + img.prop("outerHTML") + "</a>";
 
+			// imageElement.get(0).media = ithMedia;
+			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
+				mediaHash = phFl.encodeHash(this.cacheBase, ithMedia, foundAlbumHash, savedSearchAlbumHash);
+			else
+				mediaHash = phFl.encodeHash(this.cacheBase, ithMedia);
+
 			let data = "";
 			if (inPopup) {
 				data =
@@ -2175,12 +2181,6 @@
 					"</div>" +
 				"</div>";
 			let imageElement = $(imageString);
-
-			// imageElement.get(0).media = ithMedia;
-			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
-				mediaHash = phFl.encodeHash(this.cacheBase, ithMedia, foundAlbumHash, savedSearchAlbumHash);
-			else
-				mediaHash = phFl.encodeHash(this.cacheBase, ithMedia);
 
 			let imageId = "link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase;
 			if (inPopup) {
