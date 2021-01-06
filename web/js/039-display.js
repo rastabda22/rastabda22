@@ -70,21 +70,20 @@ $(document).ready(function() {
 			} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0 && ! $("video#media-center")[0].paused) {
 					// stop the video, otherwise it keeps playing
 					$("video#media-center")[0].pause();
+			} else if (isPopup) {
+				// the popup is there: close it
+				$('.leaflet-popup-close-button')[0].click();
+				env.mapAlbum = util.initializeMapAlbum();
+				// env.mapAlbum = {};
+				// $('#popup #popup-content').html("");
+				return false;
 			} else if (isMap) {
-				if (isPopup) {
-					// the popup is there: close it
-					$('.leaflet-popup-close-button')[0].click();
-					env.mapAlbum = util.initializeMapAlbum();
-					// env.mapAlbum = {};
-					// $('#popup #popup-content').html("");
-				} else {
-					// we are in a map: close it
-					$('.modal-close')[0].click();
-					env.popupRefreshType = "previousAlbum";
-					env.mapRefreshType = "none";
-					// the menu must be updated here in order to have the browsing mode shortcuts workng
-					f.updateMenu();
-				}
+				// we are in a map: close it
+				$('.modal-close')[0].click();
+				env.popupRefreshType = "previousAlbum";
+				env.mapRefreshType = "none";
+				// the menu must be updated here in order to have the browsing mode shortcuts workng
+				f.updateMenu();
 				return false;
 			} else if (pS.getCurrentZoom() > pS.getInitialZoom() || $(".media-box#center .title").hasClass("hidden-by-pinch")) {
 				pS.pinchOut(null, null);
