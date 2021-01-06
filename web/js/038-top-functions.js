@@ -2170,7 +2170,7 @@
 				"</div>";
 			let imageElement = $(imageString);
 
-			imageElement.get(0).media = ithMedia;
+			// imageElement.get(0).media = ithMedia;
 			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
 				mediaHash = phFl.encodeHash(this.cacheBase, ithMedia, foundAlbumHash, savedSearchAlbumHash);
 			else
