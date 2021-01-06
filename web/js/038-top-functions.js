@@ -2127,7 +2127,7 @@
 			let spanHtml =
 						"<span class='media-name'>" +
 							"<span>" +
-								ithMedia.nameForShowing(this, true, true).replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+								ithMedia.nameForShowing(this, true, true).replace(/( |<br \/>)/g, "</span>$&<span>") +
 							"</span>" +
 						"</span>";
 			let span = $(spanHtml);
