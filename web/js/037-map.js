@@ -39,147 +39,151 @@
 		return averageLatLng;
 	};
 
-	Album.prototype.generateHtmlForImages = function() {
-		// we must get the media corresponding to the name in the point
-		// var markerClass;
-		var mediaIndex, mediaHash, thumbHeight, thumbWidth, width, height;
-		var ithMedia, images = "", calculatedWidth, calculatedHeight, imageString, imgString, img, thumbHash, imgTitle;
-		var albumViewPadding = $("#album-view").css("padding");
-		if (! albumViewPadding)
-			albumViewPadding = 0;
-		else
-			albumViewPadding = parseInt(albumViewPadding);
+	// Album.prototype.generateHtmlForImages = function() {
+	// 	// we must get the media corresponding to the name in the point
+	// 	// var markerClass;
+	// 	var mediaIndex, mediaHash, thumbHeight, thumbWidth, width, height;
+	// 	var ithMedia, images = "", calculatedWidth, calculatedHeight, imageString, imgHtml, img, thumbHash, imgTitle;
+	// 	var albumViewPadding = $("#album-view").css("padding");
+	// 	if (! albumViewPadding)
+	// 		albumViewPadding = 0;
+	// 	else
+	// 		albumViewPadding = parseInt(albumViewPadding);
+	//
+	// 	for (mediaIndex = 0; mediaIndex < this.numsMedia.imagesAndVideosTotal(); mediaIndex ++) {
+	//
+	// 		ithMedia = this.media[mediaIndex];
+	//
+	// 		mediaHash = phFl.encodeHash(this.cacheBase, ithMedia);
+	// 		// var codedHashId = getCodedHashId(photosInAlbumCopy[photoIndex].element);
+	// 		thumbHash = ithMedia.chooseThumbnail(env.options.media_thumb_size);
+	// 		imgTitle = util.pathJoin([ithMedia.albumName, ithMedia.nameForShowing(this)]);
+	//
+	// 		// calculate the width and height values
+	// 		width = ithMedia.metadata.size[0];
+	// 		height = ithMedia.metadata.size[1];
+	//
+	// 		if (env.options.media_thumb_type === "fixed_height") {
+	// 			if (height < env.options.media_thumb_size) {
+	// 				thumbHeight = height;
+	// 				thumbWidth = width;
+	// 			} else {
+	// 				thumbHeight = env.options.media_thumb_size;
+	// 				thumbWidth = thumbHeight * width / height;
+	// 			}
+	// 			calculatedWidth = thumbWidth;
+	// 		} else if (env.options.media_thumb_type === "square") {
+	// 			thumbHeight = env.options.media_thumb_size;
+	// 			thumbWidth = env.options.media_thumb_size;
+	// 			calculatedWidth = env.options.media_thumb_size;
+	// 		}
+	//
+	// 		calculatedWidth = Math.min(
+	// 			calculatedWidth,
+	// 			$(window).innerWidth() - 2 * albumViewPadding
+	// 		);
+	// 		calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
+	//
+	// 		let selectSrc = 'img/checkbox-unchecked-48px.png';
+	// 		let titleSelector = "#select-single-media";
+	// 		if (ithMedia.isSelected()) {
+	// 			selectSrc = 'img/checkbox-checked-48px.png';
+	// 			titleSelector = "#unselect-single-media";
+	// 		}
+	//
+	// 		let selectBoxImgHtml =
+	// 				"<img " +
+	// 					"class='select-box' " +
+	// 					"src='" + selectSrc + "'" +
+	// 				">";
+	// 		let selectBoxImg = $(selectBoxImgHtml);
+	// 		selectBoxImg.attr("title", util._t(titleSelector));
+	// 		selectBoxImg.attr("alt", util._t("#selector"));
+	//
+	// 		let selectBoxHtml =
+	// 			"<a id='map-media-select-box-" + mediaIndex + "'>" +
+	// 				selectBoxImg.prop("outerHTML") +
+	// 			"</a>";
+	// 		selectBox = $(selectBoxHtml);
+	//
+	//
+	// 		imgHtml =	"<img " +
+	// 						"data-src='" + encodeURI(thumbHash) + "' " +
+	// 						"src='img/image-placeholder.png' " +
+	// 						"data='" +
+	// 						JSON.stringify(
+	// 							{
+	// 								width: ithMedia.metadata.size[0],
+	// 								height: ithMedia.metadata.size[1],
+	// 								albumCacheBase: this.cacheBase,
+	// 								mediaHash: mediaHash
+	// 							}
+	// 						) +
+	// 						"' " +
+	// 						"class='lazyload-popup-media thumbnail' " +
+	// 						"height='" + thumbHeight + "' " +
+	// 						"width='" + thumbWidth + "' " +
+	// 						" style='" +
+	// 							 "width: " + calculatedWidth + "px; " +
+	// 							 "height: " + calculatedHeight + "px;" +
+	// 							 "'" +
+	// 					"/>";
+	//
+	// 		img = $(imgHtml);
+	// 		img.attr("title", imgTitle);
+	// 		img.attr("alt", util.trimExtension(ithMedia.name));
+	//
+	// 		imageString =
+	// 			"<div class='thumb-and-caption-container' " +
+	// 				"style='" +
+	// 					"width: " + calculatedWidth + "px;";
+	// 		if (env.options.spacing)
+	// 			imageString +=
+	// 					" margin-right: " + env.options.spacingToggle + "px;" +
+	// 					" margin-bottom: " + env.options.spacingToggle + "px;";
+	// 		imageString +=
+	// 			"'>" +
+	// 				"<div class='thumb-container'" +
+	// 					" style='" +
+	// 						"width: " + calculatedWidth + "px; " +
+	// 						"height: " + calculatedHeight + "px;" +
+	// 						// "'" +
+	// 						"'>" +
+	// 					selectBoxHtml +
+	// 					"<span class='helper'></span>" +
+	// 					img.prop("outerHTML") +
+	// 				"</div>" +
+	// 				"<div class='media-caption'>";
+	// 		// if (ithMedia.metadata.hasOwnProperty("title")) {
+	// 		let spanHtml =
+	// 					"<span class='media-name'>" +
+	// 						"<span style='white-space: nowrap;'>" +
+	// 							ithMedia.nameForShowing(this, true, true).replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
+	// 						"</span>" +
+	// 					"</span>";
+	// 		let span = $(spanHtml);
+	// 		span.attr("title", ithMedia.nameForShowing(this));
+	//
+	// 		imageString +=
+	// 					span.prop("outerHTML");
+	// 		if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
+	// 			imageString +=
+	// 					"<div class='media-tags'>" +
+	// 						"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithMedia.metadata.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>" +
+	// 					"</div>";
+	// 		}
+	// 		imageString +=
+	// 				"</div>" +
+	// 			"</div>";
+	//
+	// 		images += imageString;
+	// 	}
+	//
+	// 	return images;
+	// };
 
-		for(mediaIndex = 0; mediaIndex < this.numsMedia.imagesAndVideosTotal(); mediaIndex ++) {
 
-			ithMedia = this.media[mediaIndex];
-
-			mediaHash = phFl.encodeHash(this.cacheBase, ithMedia);
-			// var codedHashId = getCodedHashId(photosInAlbumCopy[photoIndex].element);
-			thumbHash = ithMedia.chooseThumbnail(env.options.media_thumb_size);
-			imgTitle = util.pathJoin([ithMedia.albumName, ithMedia.nameForShowing(this)]);
-
-			// calculate the width and height values
-			width = ithMedia.metadata.size[0];
-			height = ithMedia.metadata.size[1];
-
-			if (env.options.media_thumb_type === "fixed_height") {
-				if (height < env.options.media_thumb_size) {
-					thumbHeight = height;
-					thumbWidth = width;
-				} else {
-					thumbHeight = env.options.media_thumb_size;
-					thumbWidth = thumbHeight * width / height;
-				}
-				calculatedWidth = thumbWidth;
-			} else if (env.options.media_thumb_type === "square") {
-				thumbHeight = env.options.media_thumb_size;
-				thumbWidth = env.options.media_thumb_size;
-				calculatedWidth = env.options.media_thumb_size;
-			}
-
-			calculatedWidth = Math.min(
-				calculatedWidth,
-				$(window).innerWidth() - 2 * albumViewPadding
-			);
-			calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
-
-			let selectSrc = 'img/checkbox-unchecked-48px.png';
-			let titleSelector = "#select-single-media";
-			if (ithMedia.isSelected()) {
-				selectSrc = 'img/checkbox-checked-48px.png';
-				titleSelector = "#unselect-single-media";
-			}
-			let selectBoxHtml =
-				"<a id='map-media-select-box-" + mediaIndex + "'>" +
-					"<img " +
-						"class='select-box' " +
-						"title='" + util.escapeSingleQuotes(util._t(titleSelector)) + "' " +
-						"alt='" + util.escapeSingleQuotes(util._t("#selector")) + "' " +
-						"src='" + selectSrc + "'" +
-					">" +
-				"</a>";
-
-			imgString =	"<img " +
-							"data-src='" + encodeURI(thumbHash) + "' " +
-							"src='img/image-placeholder.png' " +
-							"data='" +
-							JSON.stringify(
-								{
-									width: ithMedia.metadata.size[0],
-									height: ithMedia.metadata.size[1],
-									albumCacheBase: this.cacheBase,
-									mediaHash: mediaHash
-								}
-							) +
-							"' " +
-							"class='lazyload-popup-media thumbnail' " +
-							"height='" + thumbHeight + "' " +
-							"width='" + thumbWidth + "' " +
-							" style='" +
-								 "width: " + calculatedWidth + "px; " +
-								 "height: " + calculatedHeight + "px;" +
-								 "'" +
-						"/>";
-
-			img = $(imgString);
-			img.attr("title", imgTitle).attr("alt", util.trimExtension(ithMedia.name));
-
-			imageString =
-				"<div class='thumb-and-caption-container' " +
-					"style='" +
-						"width: " + calculatedWidth + "px;";
-			if (env.options.spacing)
-				imageString +=
-						" margin-right: " + env.options.spacingToggle + "px;" +
-						" margin-bottom: " + env.options.spacingToggle + "px;";
-			imageString +=
-				"'>" +
-					"<div class='thumb-container'" +
-						" style='" +
-							"width: " + calculatedWidth + "px; " +
-							"height: " + calculatedHeight + "px;" +
-							// "'" +
-							"'>" +
-						selectBoxHtml +
-						"<span class='helper'></span>" +
-						img.prop("outerHTML") +
-					"</div>" +
-					"<div class='media-caption'>";
-			// if (ithMedia.metadata.hasOwnProperty("title")) {
-			imageString +=
-						"<span title='" + util.escapeSingleQuotes(ithMedia.nameForShowing(this)) + "' class='media-name'>" +
-							"<span>" +
-								ithMedia.nameForShowing(this, true, true).replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
-							"</span>" +
-						"</span>";
-			// } else {
-			// 	imageString +=
-			// 			"<span class='media-name'>" +
-			// 				"<span>" +
-			// 					ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
-			// 				"</span>" +
-			// 			"</span>";
-			// }
-			if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
-				imageString +=
-						"<div class='media-tags'>" +
-							"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithMedia.metadata.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>" +
-						"</div>";
-			}
-			imageString +=
-					"</div>" +
-				"</div>";
-
-			images += imageString;
-		}
-
-		return images;
-	};
-
-
-	MapFunctions.prototype.updatePopup = function(imagesHtml) {
-		$(".leaflet-popup-content").html(imagesHtml);
+	MapFunctions.prototype.updatePopup = function() {
 		f.setOptions();
 		MapFunctions.popup.setContent($(".leaflet-popup-content").html());
 		MapFunctions.calculatePopupSizes();
@@ -195,7 +199,7 @@
 
 		MapFunctions.setPopupPosition();
 		MapFunctions.panMap();
-		MapFunctions.addLazy("img.lazyload-popup-media");
+		// MapFunctions.addLazy("img.lazyload-popup-media");
 		f.updateMenu();
 	};
 
@@ -301,38 +305,39 @@
 			'click',
 			{id: id},
 			function(ev) {
-				var imgData = JSON.parse(element.attr("data"));
 				ev.stopPropagation();
+				ev.preventDefault();
+				var imgData = JSON.parse(element.attr("data"));
 				var cachedAlbum = env.cache.getAlbum(imgData.albumCacheBase);
-				for (let iMedia = 0; iMedia < cachedAlbum.media.length; iMedia ++) {
-					if (imgData.mediaHash.split('/').pop() === cachedAlbum.media[iMedia].cacheBase) {
-						ev.stopPropagation();
-						ev.preventDefault();
-						cachedAlbum.media[iMedia].toggleSelectedStatus(mapAlbum, '#' + id);
-						break;
+				var name = imgData.mediaHash.split('/').pop();
+				var matchedMedia = cachedAlbum.media.find(singleMedia => name === singleMedia.cacheBase)
+				var promise = phFl.getAlbum(matchedMedia.foldersCacheBase, null, {getMedia: true, getPositions: true});
+				promise.then(
+					function(foldersAlbum) {
+						matchedMedia.toggleSelectedStatus(foldersAlbum, '#' + id);
 					}
-				}
+				);
 			}
 		);
 	};
 
-	MapFunctions.addLazy = function(selector) {
-		$(function() {
-			$(selector).Lazy(
-				{
-					afterLoad: MapFunctions.addClickToPopupPhoto,
-					autoDestroy: true,
-					onError: function(element) {
-						console.log(element[0]);
-					},
-					chainable: false,
-					threshold: env.options.media_thumb_size,
-					removeAttribute: true,
-					appendScroll: $('#popup-images-wrapper')
-				}
-			);
-		});
-	};
+	// MapFunctions.addLazy = function(selector) {
+		// $(function() {
+		// 	$("img.lazyload-popup-media").Lazy(
+		// 		{
+		// 			afterLoad: MapFunctions.addClickToPopupPhoto,
+		// 			autoDestroy: true,
+		// 			onError: function(element) {
+		// 				console.log(element[0]);
+		// 			},
+		// 			chainable: false,
+		// 			threshold: env.options.media_thumb_size,
+		// 			removeAttribute: true,
+		// 			appendScroll: $('#popup-images-wrapper')
+		// 		}
+		// 	);
+		// });
+	// };
 
 	MapFunctions.panMap = function() {
 		// pan the map so that the popup is inside the map

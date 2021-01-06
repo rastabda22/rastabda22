@@ -727,6 +727,10 @@ video {
 	color: gray !important;
 }
 
+.media-caption .media-name span {
+	white-space: nowrap;
+}
+
 .media-real-name {
 	color: gray;
 	padding: 0;

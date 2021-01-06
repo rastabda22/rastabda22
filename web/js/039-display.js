@@ -43,8 +43,8 @@ $(document).ready(function() {
 	/* Event listeners */
 
 	$(document).on('keydown', function(e) {
-		var isMap = $('#mapdiv').html() ? true : false;
-		var isPopup = $('.leaflet-popup').html() ? true : false;
+		var isMap = util.isMap();
+		var isPopup = util.isPopup();
 		var isAuth = $("#auth-text").is(":visible");
 
 		// function toggleMenu() {
@@ -70,21 +70,20 @@ $(document).ready(function() {
 			} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0 && ! $("video#media-center")[0].paused) {
 					// stop the video, otherwise it keeps playing
 					$("video#media-center")[0].pause();
+			} else if (isPopup) {
+				// the popup is there: close it
+				$('.leaflet-popup-close-button')[0].click();
+				env.mapAlbum = util.initializeMapAlbum();
+				// env.mapAlbum = {};
+				// $('#popup #popup-content').html("");
+				return false;
 			} else if (isMap) {
-				if (isPopup) {
-					// the popup is there: close it
-					$('.leaflet-popup-close-button')[0].click();
-					env.mapAlbum = util.initializeMapAlbum();
-					// env.mapAlbum = {};
-					// $('#popup #popup-content').html("");
-				} else {
-					// we are in a map: close it
-					$('.modal-close')[0].click();
-					env.popupRefreshType = "previousAlbum";
-					env.mapRefreshType = "none";
-					// the menu must be updated here in order to have the browsing mode shortcuts workng
-					f.updateMenu();
-				}
+				// we are in a map: close it
+				$('.modal-close')[0].click();
+				env.popupRefreshType = "previousAlbum";
+				env.mapRefreshType = "none";
+				// the menu must be updated here in order to have the browsing mode shortcuts workng
+				f.updateMenu();
 				return false;
 			} else if (pS.getCurrentZoom() > pS.getInitialZoom() || $(".media-box#center .title").hasClass("hidden-by-pinch")) {
 				pS.pinchOut(null, null);
@@ -441,8 +440,7 @@ $(document).ready(function() {
 		var wordsString = encodeURIComponent(wordsStringOriginal.replace(/ /g, '_'));
 		// TO DO: non-alphabitic words have to be filtered out
 		if (wordsString) {
-			var isPopup = $('.leaflet-popup').html() ? true : false;
-			if (isPopup) {
+			if (util.isPopup()) {
 				// refine the popup content!
 
 				// normalize the search terms
@@ -688,16 +686,11 @@ $(document).ready(function() {
 
 						$("#loading").show();
 
-						// phFl.removeAllProtectedAlbumsFromCache();
-
-						var isPopup = $('.leaflet-popup').html() ? true : false;
-						var isMap = $('#mapdiv').html() ? true : false;
-
-						if (isMap) {
+						if (util.isMap()) {
 							// the map must be generated again including the points that only carry protected content
 							env.mapRefreshType = "refresh";
 
-							if (isPopup) {
+							if (util.isPopup()) {
 								env.popupRefreshType = "mapAlbum";
 								$('.leaflet-popup-close-button')[0].click();
 							} else {
