@@ -2096,19 +2096,35 @@
 			let selectBoxHtml =
 				"<a id='media-select-box-" + iMedia + "'>" + img.prop("outerHTML") + "</a>";
 
-			let imgString =
-						"<img " +
-							"data-src='" + encodeURI(thumbHash) + "' " +
-							"src='img/image-placeholder.png' " +
-							"class='thumbnail " + lazyClass + "' " +
-							"height='" + thumbHeight + "' " +
-							"width='" + thumbWidth + "' " +
-							"style='" +
-								 "width: " + calculatedWidth + "px; " +
-								 "height: " + calculatedHeight + "px;" +
-								 "'" +
-						"/>";
-			img = $(imgString);
+			let data = "";
+			if (inPopup) {
+				data =
+					"data='" +
+						JSON.stringify(
+							{
+								width: ithMedia.metadata.size[0],
+								height: ithMedia.metadata.size[1],
+								albumCacheBase: this.cacheBase,
+								mediaHash: mediaHash
+							}
+						) +
+					"' ";
+			}
+
+			imgHtml =
+				"<img " +
+					"data-src='" + encodeURI(thumbHash) + "' " +
+					"src='img/image-placeholder.png' " +
+					data +
+					"class='thumbnail " + lazyClass + "' " +
+					"height='" + thumbHeight + "' " +
+					"width='" + thumbWidth + "' " +
+					"style='" +
+						 "width: " + calculatedWidth + "px; " +
+						 "height: " + calculatedHeight + "px;" +
+						 "'" +
+				"/>";
+			img = $(imgHtml);
 			img.attr("title", util.pathJoin([ithMedia.albumName, ithMedia.nameForShowing(this)]));
 			img.attr("alt", util.trimExtension(ithMedia.nameForShowing(this)));
 
@@ -2266,12 +2282,45 @@
 			}
 		}
 
-		$("img.lazyload-media").Lazy(
-			{
-				// threshold: 2 * env.options.media_thumb_size,
-				appendScroll: $(window)
+		if (inPopup) {
+			$(function() {
+				$("img." + lazyClass).Lazy(
+					{
+						afterLoad: map.addClickToPopupPhoto,
+						autoDestroy: true,
+						onError: function(element) {
+							console.log(element[0]);
+						},
+						chainable: false,
+						threshold: env.options.media_thumb_size,
+						removeAttribute: true,
+						appendScroll: $(thumbsSelector)
+					}
+				);
+			});
+		} else {
+			if (! $("#album-view").hasClass("media-view-container")) {
+				$("img." + lazyClass).Lazy(
+					{
+						// threshold: 2 * env.options.media_thumb_size,
+						appendScroll: $(window)
+					}
+				);
+			} else {
+				$("#album-view.media-view-container img." + lazyClass).Lazy(
+					{
+						// threshold: 2 * env.options.media_thumb_size,
+						appendScroll: $("#album-view")
+					}
+				);
 			}
-		);
+			// $("img." + lazyClass).Lazy(
+			// 	{
+			// 		// threshold: 2 * env.options.media_thumb_size,
+			// 		appendScroll: $(window)
+			// 	}
+			// );
+		}
 	};
 
 
@@ -2855,23 +2904,23 @@
 			);
 		}
 
-		if (populateMedia) {
-			if (! $("#album-view").hasClass("media-view-container")) {
-				$("img.lazyload-media").Lazy(
-					{
-						// threshold: 2 * env.options.media_thumb_size,
-						appendScroll: $(window)
-					}
-				);
-			} else {
-				$("#album-view.media-view-container img.lazyload-media").Lazy(
-					{
-						// threshold: 2 * env.options.media_thumb_size,
-						appendScroll: $("#album-view")
-					}
-				);
-			}
-		}
+		// if (populateMedia) {
+			// if (! $("#album-view").hasClass("media-view-container")) {
+			// 	$("img.lazyload-media").Lazy(
+			// 		{
+			// 			// threshold: 2 * env.options.media_thumb_size,
+			// 			appendScroll: $(window)
+			// 		}
+			// 	);
+			// } else {
+			// 	$("#album-view.media-view-container img.lazyload-media").Lazy(
+			// 		{
+			// 			// threshold: 2 * env.options.media_thumb_size,
+			// 			appendScroll: $("#album-view")
+			// 		}
+			// 	);
+			// }
+		// }
 
 		f.updateMenu();
 	};

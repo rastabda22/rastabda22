@@ -199,7 +199,7 @@
 
 		MapFunctions.setPopupPosition();
 		MapFunctions.panMap();
-		MapFunctions.addLazy("img.lazyload-popup-media");
+		// MapFunctions.addLazy("img.lazyload-popup-media");
 		f.updateMenu();
 	};
 
@@ -320,23 +320,23 @@
 		);
 	};
 
-	MapFunctions.addLazy = function(selector) {
-		$(function() {
-			$(selector).Lazy(
-				{
-					afterLoad: MapFunctions.addClickToPopupPhoto,
-					autoDestroy: true,
-					onError: function(element) {
-						console.log(element[0]);
-					},
-					chainable: false,
-					threshold: env.options.media_thumb_size,
-					removeAttribute: true,
-					appendScroll: $('#popup-images-wrapper')
-				}
-			);
-		});
-	};
+	// MapFunctions.addLazy = function(selector) {
+	// 	$(function() {
+	// 		$("img.lazyload-popup-media").Lazy(
+	// 			{
+	// 				afterLoad: MapFunctions.addClickToPopupPhoto,
+	// 				autoDestroy: true,
+	// 				onError: function(element) {
+	// 					console.log(element[0]);
+	// 				},
+	// 				chainable: false,
+	// 				threshold: env.options.media_thumb_size,
+	// 				removeAttribute: true,
+	// 				appendScroll: $('#popup-images-wrapper')
+	// 			}
+	// 		);
+	// 	});
+	// };
 
 	MapFunctions.panMap = function() {
 		// pan the map so that the popup is inside the map
