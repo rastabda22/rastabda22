@@ -913,7 +913,7 @@
 		if (this.isSelected()) {
 			let isPopup = $('.leaflet-popup').html() ? true : false;
 			let isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
-			if (isPopup) {
+			if (isPopup && album.isSelection()) {
 				$('.leaflet-popup-close-button')[0].click();
 				if (env.mapAlbum.media.length > 1) {
 					env.popupRefreshType = "mapAlbum";
