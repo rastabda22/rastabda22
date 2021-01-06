@@ -2143,7 +2143,6 @@
 						img.prop("outerHTML") +
 					"</div>" +
 					"<div class='media-caption'>";
-			// if (ithMedia.metadata.hasOwnProperty("title") && ithMedia.metadata.title !== ithMedia.name) {
 			let spanHtml =
 						"<span class='media-name'>" +
 							"<span>" +
@@ -2154,14 +2153,6 @@
 			span.attr("title", ithMedia.nameForShowing(this));
 
 			imageString += span.prop("outerHTML");
-			// } else {
-			// 	imageString +=
-			// 			"<span class='media-name'>" +
-			// 				"<span>" +
-			// 					ithMedia.name.replace(/ /g, "</span> <span style='white-space: nowrap;'>") +
-			// 				"</span>" +
-			// 			"</span>";
-			// }
 			if (ithMedia.metadata.hasOwnProperty("description")) {
 				imageString +=
 						"<div class='media-description'>" +
