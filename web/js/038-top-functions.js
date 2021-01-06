@@ -1658,7 +1658,7 @@
 			if (this.cacheBase === env.currentAlbum.cacheBase) {
 				TopFunctions.showAlbum("refreshMedia");
 			} else {
-				this.showMedia("#popup-images-wrapper");
+				this.showMedia(true);
 				map.updatePopup();
 			}
 		}
@@ -1679,7 +1679,7 @@
 			if (this.cacheBase === env.currentAlbum.cacheBase) {
 				TopFunctions.showAlbum("refreshMedia");
 			} else {
-				this.showMedia("#popup-images-wrapper");
+				this.showMedia(true);
 				map.updatePopup();
 			}
 		}
@@ -1695,7 +1695,7 @@
 			if (this.cacheBase === env.currentAlbum.cacheBase) {
 				TopFunctions.showAlbum("refreshMedia");
 			} else {
-				this.showMedia("#popup-images-wrapper");
+				this.showMedia(true);
 				map.updatePopup();
 			}
 		}
@@ -1922,7 +1922,7 @@
 				TopFunctions.showAlbum("refreshMedia");
 
 			if ($('.leaflet-popup').html()) {
-				env.mapAlbum.showMedia("#popup-images-wrapper");
+				env.mapAlbum.showMedia(true);
 				map.updatePopup();
 			}
 		}
@@ -1982,7 +1982,7 @@
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
 			if ($('.leaflet-popup').html()) {
-				env.mapAlbum.showMedia("#popup-images-wrapper");
+				env.mapAlbum.showMedia(true);
 				map.updatePopup();
 			}
 		}
@@ -2007,17 +2007,19 @@
 		return false;
 	};
 
-	Album.prototype.showMedia = function(thumbsSelector) {
+	Album.prototype.showMedia = function(inPopup = false) {
 		var thumbnailSize = env.options.media_thumb_size;
 		var media = [];
 		var imageLink;
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 		var self = this;
-		var lazyClass;
-		if (thumbsSelector === "#thumbs") {
-			lazyClass = "lazyload-media";
-		} else {
+		var lazyClass, thumbsSelector;
+		if (inPopup) {
+			thumbsSelector = "#popup-images-wrapper"
 			lazyClass = "lazyload-popup-media";
+		} else {
+			thumbsSelector = "#thumbs";
+			lazyClass = "lazyload-media";
 		}
 
 		//
@@ -2060,18 +2062,20 @@
 			calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
 			let mapLinkIcon = "";
-			if (ithMedia.hasGpsData()) {
-				let imgHtml =
-						"<img " +
-							"class='thumbnail-map-link' " +
-							"height='20px' " +
-							"src='img/ic_place_white_24dp_2x.png'" +
-						">";
-				let img = $(imgHtml);
-				img.attr("title", util._t("#show-on-map"));
-				img.attr("alt", util._t("#show-on-map"));
-				mapLinkIcon =
-					"<a id='media-map-link-" + iMedia + "'>" + img.prop("outerHTML") + "</a>";
+			if (! inPopup) {
+				if (ithMedia.hasGpsData()) {
+					let imgHtml =
+							"<img " +
+								"class='thumbnail-map-link' " +
+								"height='20px' " +
+								"src='img/ic_place_white_24dp_2x.png'" +
+							">";
+					let img = $(imgHtml);
+					img.attr("title", util._t("#show-on-map"));
+					img.attr("alt", util._t("#show-on-map"));
+					mapLinkIcon =
+						"<a id='media-map-link-" + iMedia + "'>" + img.prop("outerHTML") + "</a>";
+				}
 			}
 			let selectSrc = 'img/checkbox-unchecked-48px.png';
 			let titleSelector = "#select-single-media";
@@ -2204,7 +2208,7 @@
 				);
 			}
 
-			if (ithMedia.hasGpsData()) {
+			if (! inPopup && ithMedia.hasGpsData()) {
 				$("#media-map-link-" + iMedia).off('click').on(
 					'click',
 					{singleMedia: ithMedia, album: this, clickedSelector: "#media-map-link-" + iMedia},
@@ -2218,6 +2222,7 @@
 			}
 
 			if (
+				! inPopup &&
 				env.selectorClickedToOpenTheMap === "#media-map-link-" + iMedia &&
 				env.previousAlbum !== null &&
 				env.previousAlbum.isMap() && (
@@ -2427,7 +2432,7 @@
 				)
 			) {
 				$("#thumbs").empty();
-				env.currentAlbum.showMedia("#thumbs");
+				env.currentAlbum.showMedia();
 			}
 
 			if (env.options.hide_descriptions)
@@ -3197,7 +3202,7 @@
 		var promise = phFl.endPreparingAlbumAndKeepOn(env.mapAlbum, null, null);
 		promise.then(
 			function() {
-				env.mapAlbum.showMedia("#popup-images-wrapper");
+				env.mapAlbum.showMedia(true);
 				map.updatePopup();
 				$("#loading").hide();
 			}
