@@ -425,7 +425,7 @@
 				$("ul#right-menu li.hide-title").removeClass("selected");
 		}
 
-		if (isMapOrPopup) {
+		if (isMap) {
 			$("ul#right-menu li.hide-descriptions").addClass("hidden");
 		} else {
 			$("ul#right-menu li.hide-descriptions").removeClass("hidden");
@@ -435,7 +435,7 @@
 				$("ul#right-menu li.hide-descriptions").removeClass("selected");
 		}
 
-		if (isMapOrPopup) {
+		if (isMap) {
 			$("ul#right-menu li.hide-tags").addClass("hidden");
 		} else {
 			$("ul#right-menu li.hide-tags").removeClass("hidden");
@@ -1244,7 +1244,7 @@
 		$(".media-name").css("color", env.options.title_image_name_color);
 		$(".thumb-and-caption-container").css("margin-right", env.options.spacing.toString() + "px").css("margin-bottom", env.options.spacing.toString() + "px");
 
-		if (env.currentMedia !== null && ! isPopup() || ! env.options.show_media_names_below_thumbs)
+		if (env.currentMedia !== null && ! util.isPopup() || ! env.options.show_media_names_below_thumbs)
 			$(".thumb-and-caption-container .media-name").addClass("hidden-by-option");
 		else
 			$(".thumb-and-caption-container .media-name").removeClass("hidden-by-option");
