@@ -43,8 +43,8 @@ $(document).ready(function() {
 	/* Event listeners */
 
 	$(document).on('keydown', function(e) {
-		var isMap = $('#mapdiv').html() ? true : false;
-		var isPopup = $('.leaflet-popup').html() ? true : false;
+		var isMap = util.isMap();
+		var isPopup = util.isPopup();
 		var isAuth = $("#auth-text").is(":visible");
 
 		// function toggleMenu() {
@@ -441,8 +441,7 @@ $(document).ready(function() {
 		var wordsString = encodeURIComponent(wordsStringOriginal.replace(/ /g, '_'));
 		// TO DO: non-alphabitic words have to be filtered out
 		if (wordsString) {
-			var isPopup = $('.leaflet-popup').html() ? true : false;
-			if (isPopup) {
+			if (util.isPopup()) {
 				// refine the popup content!
 
 				// normalize the search terms
@@ -688,16 +687,11 @@ $(document).ready(function() {
 
 						$("#loading").show();
 
-						// phFl.removeAllProtectedAlbumsFromCache();
-
-						var isPopup = $('.leaflet-popup').html() ? true : false;
-						var isMap = $('#mapdiv').html() ? true : false;
-
-						if (isMap) {
+						if (util.isMap()) {
 							// the map must be generated again including the points that only carry protected content
 							env.mapRefreshType = "refresh";
 
-							if (isPopup) {
+							if (util.isPopup()) {
 								env.popupRefreshType = "mapAlbum";
 								$('.leaflet-popup-close-button')[0].click();
 							} else {

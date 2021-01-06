@@ -911,10 +911,8 @@
 		if (env.selectionAlbum.isEmpty())
 			util.initializeSelectionAlbum();
 		if (this.isSelected()) {
-			let isPopup = $('.leaflet-popup').html() ? true : false;
-			let isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
 			this.removeFromSelection(clickedSelector);
-			if (isPopup && env.currentAlbum.isSelection()) {
+			if (util.isPopup() && env.currentAlbum.isSelection()) {
 				$('.leaflet-popup-close-button')[0].click();
 				if (env.mapAlbum.media.length > 1) {
 					env.popupRefreshType = "mapAlbum";
@@ -922,7 +920,7 @@
 					$('.modal-close')[0].click();
 					$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 				}
-				if ((isMap || isPopup) && env.mapAlbum.media.length === 1) {
+				if (env.mapAlbum.media.length === 1) {
 					// we are in a map: close it
 					$('.modal-close')[0].click();
 				}
@@ -1043,13 +1041,11 @@
 						env.nextMedia.scale(event);
 					}
 
-					var isPopup = $('.leaflet-popup').html() ? true : false;
-					var isMap = $('#mapdiv').html() ? true : false;
-					if (isMap) {
+					if (util.isMap()) {
 						// the map must be generated again including the points that only carry protected content
 						env.mapRefreshType = "resize";
 
-						if (isPopup) {
+						if (util.isPopup()) {
 							env.popupRefreshType = "mapAlbum";
 							$('.leaflet-popup-close-button')[0].click();
 						} else {
@@ -2856,13 +2852,11 @@
 
 					TopFunctions.showAlbum("refreshSubalbums");
 
-					var isPopup = $('.leaflet-popup').html() ? true : false;
-					var isMap = $('#mapdiv').html() ? true : false;
-					if (isMap) {
+					if (util.isMap()) {
 						// the map must be generated again including the points that only carry protected content
 						env.mapRefreshType = "resize";
 
-						if (isPopup) {
+						if (util.isPopup()) {
 							env.popupRefreshType = "mapAlbum";
 							$('.leaflet-popup-close-button')[0].click();
 						} else {

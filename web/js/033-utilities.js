@@ -1537,6 +1537,14 @@
 		}
 	};
 
+	Utilities.isPopup = function() {
+		return $('.leaflet-popup').html() ? true : false;
+	};
+
+	Utilities.prototype.isMap = function() {
+		return ($('#mapdiv').html() ? true : false) && ! Utilities.isPopup();
+	};
+
 	Album.prototype.collectMediaInTree = function() {
 		var self = this;
 		return new Promise(
@@ -3467,6 +3475,7 @@
 	Utilities.prototype.addTagLink = Utilities.addTagLink;
 	Utilities.prototype.formatDescription = Utilities.formatDescription;
 	Utilities.prototype.stripHtmlAndReplaceEntities = Utilities.stripHtmlAndReplaceEntities;
+	Utilities.prototype.isPopup = Utilities.isPopup;
 
 	window.Utilities = Utilities;
 }());

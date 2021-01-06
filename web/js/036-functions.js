@@ -119,7 +119,7 @@
 
 	Functions.updateMenu = function(thisAlbum) {
 		var albumOrMedia;
-		var isPopup = $('.leaflet-popup').html() ? true : false;
+		var isPopup = util.isPopup()
 		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
 		var isMapOrPopup = isMap || isPopup;
 
@@ -1244,8 +1244,7 @@
 		$(".media-name").css("color", env.options.title_image_name_color);
 		$(".thumb-and-caption-container").css("margin-right", env.options.spacing.toString() + "px").css("margin-bottom", env.options.spacing.toString() + "px");
 
-		var isPopup = $('.leaflet-popup').html() ? true : false;
-		if (env.currentMedia !== null && ! isPopup || ! env.options.show_media_names_below_thumbs)
+		if (env.currentMedia !== null && ! isPopup() || ! env.options.show_media_names_below_thumbs)
 			$(".thumb-and-caption-container .media-name").addClass("hidden-by-option");
 		else
 			$(".thumb-and-caption-container .media-name").removeClass("hidden-by-option");
