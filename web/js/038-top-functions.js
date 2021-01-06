@@ -2272,21 +2272,25 @@
 		}
 
 		if (! inPopup) {
-			if (! $("#album-view").hasClass("media-view-container")) {
-				$("img." + lazyClass).Lazy(
-					{
-						// threshold: 2 * env.options.media_thumb_size,
-						appendScroll: $(window)
+			$(
+				function() {
+					if (! $("#album-view").hasClass("media-view-container")) {
+						$("img." + lazyClass).Lazy(
+							{
+								// threshold: 2 * env.options.media_thumb_size,
+								appendScroll: $(window)
+							}
+						);
+					} else {
+						$("#album-view.media-view-container img." + lazyClass).Lazy(
+							{
+								// threshold: 2 * env.options.media_thumb_size,
+								appendScroll: $("#album-view")
+							}
+						);
 					}
-				);
-			} else {
-				$("#album-view.media-view-container img." + lazyClass).Lazy(
-					{
-						// threshold: 2 * env.options.media_thumb_size,
-						appendScroll: $("#album-view")
-					}
-				);
-			}
+				}
+			);
 		}
 	};
 
@@ -2340,16 +2344,18 @@
 			$("#" + id + " img.thumbnail").attr("data-src", encodeURI(mediaSrc));
 			$("#" + id + " img.thumbnail").css("width", thumbWidth).css("height", thumbHeight);
 
-			$(function() {
-				$("img.lazyload-album-" + id).Lazy(
-					{
-						chainable: false,
-						threshold: env.options.media_thumb_size,
-						bind: 'event',
-						removeAttribute: true
-					}
-				);
-			});
+			$(
+				function() {
+					$("img.lazyload-album-" + id).Lazy(
+						{
+							chainable: false,
+							threshold: env.options.media_thumb_size,
+							bind: 'event',
+							removeAttribute: true
+						}
+					);
+				}
+			);
 		}
 		// end of insertRandomImage function
 
@@ -2870,24 +2876,6 @@
 				}
 			);
 		}
-
-		// if (populateMedia) {
-			// if (! $("#album-view").hasClass("media-view-container")) {
-			// 	$("img.lazyload-media").Lazy(
-			// 		{
-			// 			// threshold: 2 * env.options.media_thumb_size,
-			// 			appendScroll: $(window)
-			// 		}
-			// 	);
-			// } else {
-			// 	$("#album-view.media-view-container img.lazyload-media").Lazy(
-			// 		{
-			// 			// threshold: 2 * env.options.media_thumb_size,
-			// 			appendScroll: $("#album-view")
-			// 		}
-			// 	);
-			// }
-		// }
 
 		f.updateMenu();
 	};
