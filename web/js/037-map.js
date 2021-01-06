@@ -305,17 +305,18 @@
 			'click',
 			{id: id},
 			function(ev) {
-				var imgData = JSON.parse(element.attr("data"));
 				ev.stopPropagation();
+				ev.preventDefault();
+				var imgData = JSON.parse(element.attr("data"));
 				var cachedAlbum = env.cache.getAlbum(imgData.albumCacheBase);
-				for (let iMedia = 0; iMedia < cachedAlbum.media.length; iMedia ++) {
-					if (imgData.mediaHash.split('/').pop() === cachedAlbum.media[iMedia].cacheBase) {
-						ev.stopPropagation();
-						ev.preventDefault();
-						cachedAlbum.media[iMedia].toggleSelectedStatus(env.mapAlbum, '#' + id);
-						break;
+				var name = imgData.mediaHash.split('/').pop();
+				var matchedMedia = cachedAlbum.media.find(singleMedia => name === singleMedia.cacheBase)
+				var promise = phFl.getAlbum(matchedMedia.foldersCacheBase, null, {getMedia: true, getPositions: true});
+				promise.then(
+					function(foldersAlbum) {
+						matchedMedia.toggleSelectedStatus(foldersAlbum, '#' + id);
 					}
-				}
+				);
 			}
 		);
 	};
