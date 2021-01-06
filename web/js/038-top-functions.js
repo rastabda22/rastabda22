@@ -913,7 +913,8 @@
 		if (this.isSelected()) {
 			let isPopup = $('.leaflet-popup').html() ? true : false;
 			let isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
-			if (isPopup && album.isSelection()) {
+			this.removeFromSelection(clickedSelector);
+			if (isPopup && env.currentAlbum.isSelection()) {
 				$('.leaflet-popup-close-button')[0].click();
 				if (env.mapAlbum.media.length > 1) {
 					env.popupRefreshType = "mapAlbum";
@@ -921,12 +922,11 @@
 					$('.modal-close')[0].click();
 					$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 				}
-				if ((isMap || isPopup) && env.currentAlbum.media.length === 1) {
+				if ((isMap || isPopup) && env.mapAlbum.media.length === 1) {
 					// we are in a map: close it
 					$('.modal-close')[0].click();
 				}
 			}
-			this.removeFromSelection(clickedSelector);
 			f.updateMenu();
 			if (env.currentAlbum.isSelection() && env.currentMedia === null && ! env.currentAlbum.isAlbumWithOneMedia())
 				TopFunctions.setTitle("album", null);
