@@ -2017,6 +2017,7 @@
 			thumbsSelector = "#thumbs";
 			lazyClass = "lazyload-media";
 		}
+		$(thumbsSelector).empty()
 
 		//
 		// media loop
@@ -2449,7 +2450,7 @@
 					populateMedia === "refreshBoth"
 				)
 			) {
-				$("#thumbs").empty();
+				// $("#thumbs").empty();
 				env.currentAlbum.showMedia();
 			}
 
