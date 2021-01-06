@@ -2285,7 +2285,23 @@
 			$(".media-tags").removeClass("hidden-by-option");
 		}
 
-		if (! inPopup) {
+		if (inPopup) {
+			$(function() {
+				$("img.lazyload-popup-media").Lazy(
+					{
+						afterLoad: map.addClickToPopupPhoto,
+						autoDestroy: true,
+						onError: function(element) {
+							console.log(element[0]);
+						},
+						chainable: false,
+						threshold: env.options.media_thumb_size,
+						removeAttribute: true,
+						appendScroll: $('#popup-images-wrapper')
+					}
+				);
+			});
+		} else {
 			$(
 				function() {
 					if (! $("#album-view").hasClass("media-view-container")) {
