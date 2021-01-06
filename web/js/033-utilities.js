@@ -2579,6 +2579,10 @@
 		[this.captionForSelection, this.captionForSelectionSorting] = Utilities.generateSingleMediaCaptionForCollections(this, album);
 	};
 
+	SingleMedia.prototype.generateCaptionForSelection = function(album) {
+		[this.captionForSelection, this.captionForSelectionSorting] = Utilities.generateSingleMediaCaptionForCollections(this, album);
+	};
+
 	SingleMedia.prototype.generateCaptionForSearch = function(album) {
 		[this.captionForSearch, this.captionForSearchSorting] = Utilities.generateSingleMediaCaptionForCollections(this, album);
 	};

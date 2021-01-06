@@ -2015,7 +2015,7 @@
 		var self = this;
 		var lazyClass, thumbsSelector;
 		if (inPopup) {
-			thumbsSelector = "#popup-images-wrapper"
+			thumbsSelector = "#popup-images-wrapper";
 			lazyClass = "lazyload-popup-media";
 		} else {
 			thumbsSelector = "#thumbs";
@@ -2093,8 +2093,12 @@
 			img.attr("title", util._t(titleSelector));
 			img.attr("alt", util._t("#selector"));
 
+			let mediaSelectBoxSelectorPart = "media-select-box-";
+			if (inPopup)
+				mediaSelectBoxSelectorPart = "map-" + mediaSelectBoxSelectorPart;
+
 			let selectBoxHtml =
-				"<a id='media-select-box-" + iMedia + "'>" + img.prop("outerHTML") + "</a>";
+				"<a id='" + mediaSelectBoxSelectorPart + iMedia + "'>" + img.prop("outerHTML") + "</a>";
 
 			let data = "";
 			if (inPopup) {
@@ -2154,9 +2158,11 @@
 
 			imageString += span.prop("outerHTML");
 			if (ithMedia.metadata.hasOwnProperty("description")) {
+				let description = $("<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithMedia.metadata.description) + "</div>");
+				description.attr("title", Utilities.stripHtmlAndReplaceEntities(ithMedia.metadata.description));
 				imageString +=
 						"<div class='media-description'>" +
-							"<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithMedia.metadata.description) + "</div>" +
+							description.prop("outerHTML") +
 						"</div>";
 			}
 			if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
@@ -2177,24 +2183,14 @@
 				mediaHash = phFl.encodeHash(this.cacheBase, ithMedia);
 
 			let imageId = "link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase;
-			imageLink = $("<a href='" + mediaHash + "' id='" + imageId + "'></a>");
-			imageLink.append(imageElement);
-
-			media.push(imageLink);
-
-			(function(theLink, theImage) {
-				theImage.on("error", function() {
-					console.trace();
-					// media.splice(media.indexOf(theLink), 1);
-					// theLink.remove();
-					// this.media.splice(this.media.indexOf(theImage.get(0).media), 1);
-				});
-			})(imageLink, imageElement);
-
-			$(thumbsSelector).append(imageLink);
-
-			if (ithMedia.metadata.hasOwnProperty("description"))
-				$("#" + imageId + " .description").attr("title", Utilities.stripHtmlAndReplaceEntities(ithMedia.metadata.description));
+			if (inPopup) {
+				imageElement.attr("id", imageId);
+				$(thumbsSelector).append(imageElement);
+			} else {
+				imageLink = $("<a href='" + mediaHash + "' id='" + imageId + "'></a>");
+				imageLink.append(imageElement);
+				$(thumbsSelector).append(imageLink);
+			}
 
 			if (this.isCollection()) {
 				// the folder name must be added the second line
@@ -2210,7 +2206,9 @@
 				let parentAlbumPromise = phFl.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
 				parentAlbumPromise.then(
 					function(parentAlbum) {
-						$("#" + imageId + " .media-name").html(ithMedia.nameForShowing(self, true, true));
+						var name = ithMedia.nameForShowing(parentAlbum, true, true);
+						name = "<span>" + name.replace(/( |<br \/>)/g, "</span>$&<span>") + "</span>";
+						$("#" + imageId + " .media-name").html(name);
 					}
 				);
 			}
@@ -2243,9 +2241,9 @@
 				$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 			}
 
-			$("#media-select-box-" + iMedia).off('click').on(
+			$("#" + mediaSelectBoxSelectorPart + iMedia).off('click').on(
 				'click',
-				{media: ithMedia, clickedSelector: "#media-select-box-" + iMedia},
+				{media: ithMedia, clickedSelector: "#" + mediaSelectBoxSelectorPart + iMedia},
 				function(ev) {
 					ev.stopPropagation();
 					ev.preventDefault();
@@ -2273,23 +2271,7 @@
 			}
 		}
 
-		if (inPopup) {
-			$(function() {
-				$("img." + lazyClass).Lazy(
-					{
-						afterLoad: map.addClickToPopupPhoto,
-						autoDestroy: true,
-						onError: function(element) {
-							console.log(element[0]);
-						},
-						chainable: false,
-						threshold: env.options.media_thumb_size,
-						removeAttribute: true,
-						appendScroll: $(thumbsSelector)
-					}
-				);
-			});
-		} else {
+		if (! inPopup) {
 			if (! $("#album-view").hasClass("media-view-container")) {
 				$("img." + lazyClass).Lazy(
 					{
@@ -2305,12 +2287,6 @@
 					}
 				);
 			}
-			// $("img." + lazyClass).Lazy(
-			// 	{
-			// 		// threshold: 2 * env.options.media_thumb_size,
-			// 		appendScroll: $(window)
-			// 	}
-			// );
 		}
 	};
 
