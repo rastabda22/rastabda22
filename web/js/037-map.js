@@ -494,5 +494,8 @@
 		}
 	});
 
+	MapFunctions.prototype.averagePosition = MapFunctions.averagePosition;
+	MapFunctions.prototype.calculatePopupSizes = MapFunctions.calculatePopupSizes;
+
 	window.MapFunctions = MapFunctions;
 }());
