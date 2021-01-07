@@ -270,17 +270,6 @@
 				this[i].addParent(album);
 			}
 		}
-
-		generatePositionsAndMedia() {
-			var result = new PositionsAndMedia([]);
-			this.forEach(
-				function(singleMedia) {
-					if (singleMedia.hasGpsData())
-						result.addPositionAndMedia(singleMedia.generatePositionAndMedia());
-				}
-			);
-			return result;
-		}
 	}
 
 	class Subalbum {
@@ -432,6 +421,16 @@
 			}
 		}
 
+		generatePositionsAndMedia() {
+			this.positionsAndMediaInMedia = new PositionsAndMedia([]);
+			var self = this;
+			this.media.forEach(
+				function(singleMedia) {
+					if (singleMedia.hasGpsData())
+						self.positionsAndMediaInMedia.addPositionAndMedia(singleMedia.generatePositionAndMedia(self));
+				}
+			);
+		}
 		isEmpty() {
 			return this.empty !== undefined && this.empty;
 		}

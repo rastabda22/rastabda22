@@ -35,7 +35,7 @@
 						resolve_generatePositionsAndMediaInMediaAndSubalbums();
 					} else if (numSubalbums === 0) {
 						// no subalbums
-						self.positionsAndMediaInMedia = self.media.generatePositionsAndMedia();
+						self.generatePositionsAndMedia();
 						self.numPositionsInMedia = self.positionsAndMediaInMedia.length;
 						self.positionsAndMediaInSubalbums = new PositionsAndMedia([]);
 						self.numPositionsInSubalbums = 0;
@@ -46,7 +46,7 @@
 						promise.then(
 							function(album) {
 								self = album;
-								self.positionsAndMediaInMedia = self.media.generatePositionsAndMedia();
+								self.generatePositionsAndMedia();
 								self.numPositionsInMedia = self.positionsAndMediaInMedia.length;
 								self.positionsAndMediaInSubalbums = new PositionsAndMedia(self.positionsAndMediaInTree);
 								self.positionsAndMediaInSubalbums.removePositionsAndMedia(self.positionsAndMediaInMedia);
