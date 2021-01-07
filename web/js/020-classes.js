@@ -71,6 +71,13 @@
 			this.maxSize = 0;
 			this.language = "en";
 			// var nextLink = "", prevLink = "";
+
+			this.titleWrapper = "";
+			this.maxWidthForPopupContent = 0;
+			this.maxWidthForImagesInPopup = 0;
+			this.maxHeightForPopupContent = 0;
+			this.mymap = null;
+			this.popup = null;
 		}
 	}
 

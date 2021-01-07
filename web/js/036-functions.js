@@ -119,7 +119,7 @@
 
 	Functions.updateMenu = function(thisAlbum) {
 		var albumOrMedia;
-		var isPopup = util.isPopup()
+		var isPopup = util.isPopup();
 		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
 		var isMapOrPopup = isMap || isPopup;
 
@@ -129,12 +129,23 @@
 		var isTransversalAlbum = thisAlbum.isTransversal();
 		var isSingleMedia = (env.currentMedia !== null || isAlbumWithOneMedia);
 		var isAnyRootCacheBase = thisAlbum.isAnyRoot();
+
 		var nothingIsSelected = util.nothingIsSelected();
-		var everySubalbumIsSelected = thisAlbum.everySubalbumIsSelected();
+		var everySubalbumIsSelected;
+		if (isPopup)
+			everySubalbumIsSelected = thisAlbum.everySubalbumIsSelected();
 		var noSubalbumIsSelected = thisAlbum.noSubalbumIsSelected();
-		var everyMediaIsSelected = thisAlbum.everyMediaIsSelected();
-		var noMediaIsSelected = thisAlbum.noMediaIsSelected();
-		var highMediaNumberInTransversalAlbum = isTransversalAlbum && ! env.options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold
+		var everyMediaIsSelected;
+		if (isPopup)
+			everyMediaIsSelected = env.mapAlbum.everyMediaIsSelected();
+		else
+			everyMediaIsSelected = thisAlbum.everyMediaIsSelected();
+		var noMediaIsSelected;
+		if (isPopup)
+			noMediaIsSelected = env.mapAlbum.noMediaIsSelected();
+		else
+			noMediaIsSelected = thisAlbum.noMediaIsSelected();
+		var highMediaNumberInTransversalAlbum = isTransversalAlbum && ! env.options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold;
 
 		var hasGpsData, thisMedia;
 
@@ -225,7 +236,7 @@
 
 		// bind the click events
 
-		$("#folders-view:not(.hidden):not(.selected)").on(
+		$("#folders-view:not(.hidden):not(.selected)").off("click").on(
 			"click",
 			function changeToFoldersView() {
 				TopFunctions.showBrowsingModeMessage("#folders-browsing");
@@ -243,7 +254,7 @@
 			}
 		);
 
-		$("#by-date-view:not(.hidden):not(.selected)").on(
+		$("#by-date-view:not(.hidden):not(.selected)").off("click").on(
 			"click",
 			function changeToByDateView() {
 				TopFunctions.showBrowsingModeMessage("#by-date-browsing");
@@ -261,7 +272,7 @@
 			}
 		);
 
-		$("#by-gps-view:not(.hidden):not(.selected)").on(
+		$("#by-gps-view:not(.hidden):not(.selected)").off("click").on(
 			"click",
 			function changeToByGpsView() {
 				TopFunctions.showBrowsingModeMessage("#by-gps-browsing");
@@ -279,7 +290,7 @@
 			}
 		);
 
-		$("#by-map-view:not(.hidden):not(.selected)").on(
+		$("#by-map-view:not(.hidden):not(.selected)").off("click").on(
 			"click",
 			function changeToByMapView() {
 				TopFunctions.showBrowsingModeMessage("#by-map-browsing");
@@ -292,7 +303,7 @@
 			}
 		);
 
-		$("#by-search-view:not(.hidden):not(.selected)").on(
+		$("#by-search-view:not(.hidden):not(.selected)").off("click").on(
 			"click",
 			function changeToBySearchView() {
 				TopFunctions.showBrowsingModeMessage("#by-search-browsing");
@@ -312,7 +323,7 @@
 		);
 
 		// WARNING: the ":not(.hidden)" is missing intentionally, in order to permit to trigger a click even if the menu item isn't shown
-		$("#by-selection-view:not(.selected)").on(
+		$("#by-selection-view:not(.selected)").off("click").on(
 			"click",
 			function changeToBySelectionView() {
 				TopFunctions.showBrowsingModeMessage("#by-selection-browsing");
@@ -383,7 +394,7 @@
 			if (util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || isPopup) {
 				$("ul#right-menu li#album-search").addClass("dimmed").off("click");
 			} else {
-				$("ul#right-menu li#album-search").removeClass("dimmed").off("click").on('click', util.toggleCurrentAbumSearch);
+				$("ul#right-menu li#album-search").removeClass("dimmed").off("click").on("click", util.toggleCurrentAbumSearch);
 				let albumNamePromise = Functions.getAlbumNameFromCacheBase(env.options.cache_base_to_search_in);
 				albumNamePromise.then(
 					function(path) {
@@ -411,174 +422,178 @@
 
 		////////////////// UI //////////////////////////////
 
-		$("ul#right-menu li.protection").removeClass("hidden");
-
-		$("ul#right-menu li.ui").removeClass("hidden");
-
-		if (isMapOrPopup) {
-			$("ul#right-menu li.hide-title").addClass("hidden");
-		} else {
-			$("ul#right-menu li.hide-title").removeClass("hidden");
-			if (env.options.hide_title)
-				$("ul#right-menu li.hide-title").addClass("selected");
-			else
-				$("ul#right-menu li.hide-title").removeClass("selected");
-		}
-
+			// $("ul#right-menu li.protection").removeClass("hidden");
 		if (isMap) {
-			$("ul#right-menu li.hide-descriptions").addClass("hidden");
+			$("ul#right-menu li.ui").addClass("hidden");
 		} else {
-			$("ul#right-menu li.hide-descriptions").removeClass("hidden");
-			if (env.options.hide_descriptions)
-				$("ul#right-menu li.hide-descriptions").addClass("selected");
-			else
-				$("ul#right-menu li.hide-descriptions").removeClass("selected");
-		}
+			$("ul#right-menu li.ui").removeClass("hidden");
 
-		if (isMap) {
-			$("ul#right-menu li.hide-tags").addClass("hidden");
-		} else {
-			$("ul#right-menu li.hide-tags").removeClass("hidden");
-			if (env.options.hide_tags)
-				$("ul#right-menu li.hide-tags").addClass("selected");
-			else
-				$("ul#right-menu li.hide-tags").removeClass("selected");
-		}
+			if (isMapOrPopup) {
+				$("ul#right-menu li.hide-title").addClass("hidden");
+			} else {
+				$("ul#right-menu li.hide-title").removeClass("hidden");
+				if (env.options.hide_title)
+					$("ul#right-menu li.hide-title").addClass("selected");
+				else
+					$("ul#right-menu li.hide-title").removeClass("selected");
+			}
 
-		if (
-			isMapOrPopup ||
-			env.currentMedia !== null ||
-			isAlbumWithOneMedia ||
-			thisAlbum !== null && thisAlbum.subalbums.length === 0 && env.options.hide_title
-		) {
-			$("ul#right-menu li.media-count").addClass("hidden");
-		} else {
-			$("ul#right-menu li.media-count").removeClass("hidden");
-			if (env.options.show_album_media_count)
-				$("ul#right-menu li.media-count").addClass("selected");
-			else
-				$("ul#right-menu li.media-count").removeClass("selected");
-		}
+			if (isMap) {
+				$("ul#right-menu li.hide-descriptions").addClass("hidden");
+			} else {
+				$("ul#right-menu li.hide-descriptions").removeClass("hidden");
+				if (env.options.hide_descriptions)
+					$("ul#right-menu li.hide-descriptions").addClass("selected");
+				else
+					$("ul#right-menu li.hide-descriptions").removeClass("selected");
+			}
 
+			if (isMap) {
+				$("ul#right-menu li.hide-tags").addClass("hidden");
+			} else {
+				$("ul#right-menu li.hide-tags").removeClass("hidden");
+				if (env.options.hide_tags)
+					$("ul#right-menu li.hide-tags").addClass("selected");
+				else
+					$("ul#right-menu li.hide-tags").removeClass("selected");
+			}
 
-		if (isMap || isPopup && env.mapAlbum.media.length <= 1)
-			$("ul#right-menu li.spaced").addClass("hidden");
-		else
-			$("ul#right-menu li.spaced").removeClass("hidden");
-		if (env.options.spacing)
-			$("ul#right-menu li.spaced").addClass("selected");
-		else
-			$("ul#right-menu li.spaced").removeClass("selected");
-
-		if (
-			isMapOrPopup ||
-			env.currentMedia !== null ||
-			isAlbumWithOneMedia ||
-			thisAlbum !== null && thisAlbum.subalbums.length === 0
-		) {
-			$("ul#right-menu li.square-album-thumbnails").addClass("hidden");
-		} else {
-			$("ul#right-menu li.square-album-thumbnails").removeClass("hidden");
-			if (env.options.album_thumb_type === "square")
-				$("ul#right-menu li.square-album-thumbnails").addClass("selected");
-			else
-				$("ul#right-menu li.square-album-thumbnails").removeClass("selected");
-		}
-
-		if (
-			isMapOrPopup ||
-			env.currentMedia !== null ||
-			isAlbumWithOneMedia ||
-			thisAlbum !== null && thisAlbum.subalbums.length === 0
-		) {
-			$("ul#right-menu li.slide").addClass("hidden");
-		} else {
-			$("ul#right-menu li.slide").removeClass("hidden");
-			if (env.options.albums_slide_style)
-				$("ul#right-menu li.slide").addClass("selected");
-			else
-				$("ul#right-menu li.slide").removeClass("selected");
-		}
-
-		if (
-			isMapOrPopup ||
-			env.currentMedia !== null ||
-			isAlbumWithOneMedia ||
-			thisAlbum !== null && (thisAlbum.subalbums.length === 0 || ! thisAlbum.isFolder())
-		) {
-			$("ul#right-menu li.album-names").addClass("hidden");
-		} else {
-			$("ul#right-menu li.album-names").removeClass("hidden");
-			if (env.options.show_album_names_below_thumbs)
-				$("ul#right-menu li.album-names").addClass("selected");
-			else
-				$("ul#right-menu li.album-names").removeClass("selected");
-		}
-
-		if (isMap)
-			$("ul#right-menu li.square-media-thumbnails").addClass("hidden");
-		else
-			$("ul#right-menu li.square-media-thumbnails").removeClass("hidden");
-		if (env.options.media_thumb_type === "square")
-		 	$("ul#right-menu li.square-media-thumbnails").addClass("selected");
-		else
-			$("ul#right-menu li.square-media-thumbnails").removeClass("selected");
-
-		if (
-			isMap ||
-			! isMapOrPopup && (
+			if (
+				isMapOrPopup ||
 				env.currentMedia !== null ||
 				isAlbumWithOneMedia ||
-				thisAlbum !== null && (
-					thisAlbum.numsMedia.imagesAndVideosTotal() === 0 ||
-					highMediaNumberInTransversalAlbum
+				thisAlbum !== null && thisAlbum.subalbums.length === 0 && env.options.hide_title
+			) {
+				$("ul#right-menu li.media-count").addClass("hidden");
+			} else {
+				$("ul#right-menu li.media-count").removeClass("hidden");
+				if (env.options.show_album_media_count)
+					$("ul#right-menu li.media-count").addClass("selected");
+				else
+					$("ul#right-menu li.media-count").removeClass("selected");
+			}
+
+
+			if (isMap || isPopup && env.mapAlbum.media.length <= 1)
+				$("ul#right-menu li.spaced").addClass("hidden");
+			else
+				$("ul#right-menu li.spaced").removeClass("hidden");
+			if (env.options.spacing)
+				$("ul#right-menu li.spaced").addClass("selected");
+			else
+				$("ul#right-menu li.spaced").removeClass("selected");
+
+			if (
+				isMapOrPopup ||
+				env.currentMedia !== null ||
+				isAlbumWithOneMedia ||
+				thisAlbum !== null && thisAlbum.subalbums.length === 0
+			) {
+				$("ul#right-menu li.square-album-thumbnails").addClass("hidden");
+			} else {
+				$("ul#right-menu li.square-album-thumbnails").removeClass("hidden");
+				if (env.options.album_thumb_type === "square")
+					$("ul#right-menu li.square-album-thumbnails").addClass("selected");
+				else
+					$("ul#right-menu li.square-album-thumbnails").removeClass("selected");
+			}
+
+			if (
+				isMapOrPopup ||
+				env.currentMedia !== null ||
+				isAlbumWithOneMedia ||
+				thisAlbum !== null && thisAlbum.subalbums.length === 0
+			) {
+				$("ul#right-menu li.slide").addClass("hidden");
+			} else {
+				$("ul#right-menu li.slide").removeClass("hidden");
+				if (env.options.albums_slide_style)
+					$("ul#right-menu li.slide").addClass("selected");
+				else
+					$("ul#right-menu li.slide").removeClass("selected");
+			}
+
+			if (
+				isMapOrPopup ||
+				env.currentMedia !== null ||
+				isAlbumWithOneMedia ||
+				thisAlbum !== null && (thisAlbum.subalbums.length === 0 || ! thisAlbum.isFolder())
+			) {
+				$("ul#right-menu li.album-names").addClass("hidden");
+			} else {
+				$("ul#right-menu li.album-names").removeClass("hidden");
+				if (env.options.show_album_names_below_thumbs)
+					$("ul#right-menu li.album-names").addClass("selected");
+				else
+					$("ul#right-menu li.album-names").removeClass("selected");
+			}
+
+			if (isMap)
+				$("ul#right-menu li.square-media-thumbnails").addClass("hidden");
+			else
+				$("ul#right-menu li.square-media-thumbnails").removeClass("hidden");
+			if (env.options.media_thumb_type === "square")
+			 	$("ul#right-menu li.square-media-thumbnails").addClass("selected");
+			else
+				$("ul#right-menu li.square-media-thumbnails").removeClass("selected");
+
+			if (
+				isMap ||
+				! isMapOrPopup && (
+					env.currentMedia !== null ||
+					isAlbumWithOneMedia ||
+					thisAlbum !== null && (
+						thisAlbum.numsMedia.imagesAndVideosTotal() === 0 ||
+						highMediaNumberInTransversalAlbum
+					)
 				)
-			)
-		) {
-			$("ul#right-menu li.media-names").addClass("hidden");
-		} else {
-			$("ul#right-menu li.media-names").removeClass("hidden");
-			if (env.options.show_media_names_below_thumbs)
-				$("ul#right-menu li.media-names").addClass("selected");
-			else
-				$("ul#right-menu li.media-names").removeClass("selected");
-		}
+			) {
+				$("ul#right-menu li.media-names").addClass("hidden");
+			} else {
+				$("ul#right-menu li.media-names").removeClass("hidden");
+				if (env.options.show_media_names_below_thumbs)
+					$("ul#right-menu li.media-names").addClass("selected");
+				else
+					$("ul#right-menu li.media-names").removeClass("selected");
+			}
 
-		if (
-			isMapOrPopup ||
-			env.currentMedia === null && ! isAlbumWithOneMedia
-			// ||
-			// thisAlbum !== null && thisAlbum.subalbums.length === 0
-		) {
-			$("ul#right-menu li.hide-bottom-thumbnails").addClass("hidden");
-		} else {
-			$("ul#right-menu li.hide-bottom-thumbnails").removeClass("hidden");
+			if (
+				isMapOrPopup ||
+				env.currentMedia === null && ! isAlbumWithOneMedia
+				// ||
+				// thisAlbum !== null && thisAlbum.subalbums.length === 0
+			) {
+				$("ul#right-menu li.hide-bottom-thumbnails").addClass("hidden");
+			} else {
+				$("ul#right-menu li.hide-bottom-thumbnails").removeClass("hidden");
 
-			if (env.options.hide_bottom_thumbnails)
-				$("ul#right-menu li.hide-bottom-thumbnails").addClass("selected");
-			else
-				$("ul#right-menu li.hide-bottom-thumbnails").removeClass("selected");
-		}
+				if (env.options.hide_bottom_thumbnails)
+					$("ul#right-menu li.hide-bottom-thumbnails").addClass("selected");
+				else
+					$("ul#right-menu li.hide-bottom-thumbnails").removeClass("selected");
+			}
 
-		if (
-			$("ul#right-menu li.hide-title").hasClass("hidden") &&
-			$("ul#right-menu li.hide-descriptions").hasClass("hidden") &&
-			$("ul#right-menu li.hide-tags").hasClass("hidden") &&
-			$("ul#right-menu li.media-count").hasClass("hidden") &&
-			$("ul#right-menu li.spaced").hasClass("hidden") &&
-			$("ul#right-menu li.square-album-thumbnails").hasClass("hidden") &&
-			$("ul#right-menu li.slide").hasClass("hidden") &&
-			$("ul#right-menu li.album-names").hasClass("hidden") &&
-			$("ul#right-menu li.square-media-thumbnails").hasClass("hidden") &&
-			$("ul#right-menu li.media-names").hasClass("hidden") &&
-			$("ul#right-menu li.hide-bottom-thumbnails").hasClass("hidden")
-		) {
-			$("ul#right-menu li.ui").addClass("hidden");
+			if (
+				$("ul#right-menu li.hide-title").hasClass("hidden") &&
+				$("ul#right-menu li.hide-descriptions").hasClass("hidden") &&
+				$("ul#right-menu li.hide-tags").hasClass("hidden") &&
+				$("ul#right-menu li.media-count").hasClass("hidden") &&
+				$("ul#right-menu li.spaced").hasClass("hidden") &&
+				$("ul#right-menu li.square-album-thumbnails").hasClass("hidden") &&
+				$("ul#right-menu li.slide").hasClass("hidden") &&
+				$("ul#right-menu li.album-names").hasClass("hidden") &&
+				$("ul#right-menu li.square-media-thumbnails").hasClass("hidden") &&
+				$("ul#right-menu li.media-names").hasClass("hidden") &&
+				$("ul#right-menu li.hide-bottom-thumbnails").hasClass("hidden")
+			) {
+				$("ul#right-menu li.ui").addClass("hidden");
+			}
 		}
 
 		////////////////// BIG ALBUMS //////////////////////////////
 
 		if (
+			isMapOrPopup ||
 			thisAlbum === null ||
 			thisAlbum.numsMedia.imagesAndVideosTotal() < env.options.big_virtual_folders_threshold ||
 			! isTransversalAlbum
@@ -595,7 +610,8 @@
 		////////////////// SORT //////////////////////////////
 
 		if (
-			! isMapOrPopup && env.currentMedia !== null ||
+			isMap ||
+			! isPopup && (env.currentMedia !== null || env.currentAlbum.numsMedia.imagesAndVideosTotal() <= 1) ||
 			isPopup && env.mapAlbum.media.length <= 1
 		) {
 			// showing a media or a map or a popup on the map, nothing to sort
@@ -609,7 +625,7 @@
 			}
 
 			if (
-				thisAlbum.numsMedia.imagesAndVideosTotal() <= 1 ||
+				thisAlbum.numsMedia.imagesAndVideosTotal() <= 1 && (! isPopup || env.mapAlbum.media.length <= 1) ||
 				highMediaNumberInTransversalAlbum
 			) {
 				// no media or one media or too many media
@@ -643,389 +659,576 @@
 
 		////////////////// SELECTION //////////////////////////////
 
-		$(".select").removeClass("hidden").removeClass("selected");
-		if (thisAlbum.isSelection()) {
-			$(".select.global-reset, .select.go-to-selected").addClass("hidden");
+		if (isMap) {
+			$(".select").addClass("hidden");
 		} else {
-			let goToSelectedText = util._t(".select.go-to-selected");
-			goToSelectedText += " (";
-			if (env.selectionAlbum.subalbums.length)
-				goToSelectedText += env.selectionAlbum.subalbums.length + " " + util._t(".title-albums");
-			if (env.selectionAlbum.subalbums.length && env.selectionAlbum.media.length)
-				goToSelectedText += ", ";
-			if (env.selectionAlbum.media.length)
-				goToSelectedText += env.selectionAlbum.media.length + " " + util._t(".title-media");
-			goToSelectedText += ")";
-			$(".select.go-to-selected").html(goToSelectedText);
-		}
-		if (nothingIsSelected) {
-			$(".select.global-reset, .select.go-to-selected").addClass("hidden");
-			$(".select.nothing").addClass("hidden");
-			$(".select.no-albums").addClass("hidden");
-			$(".select.no-media").addClass("hidden");
-		}
-		if (! thisAlbum.subalbums.length || noSubalbumIsSelected || everySubalbumIsSelected || noMediaIsSelected) {
-			$(".select.no-albums").addClass("hidden");
-		}
-		if (! thisAlbum.media.length || noMediaIsSelected || everyMediaIsSelected || noSubalbumIsSelected) {
-			$(".select.no-media").addClass("hidden");
-		}
+			$(".select").removeClass("hidden").removeClass("selected");
+			if (thisAlbum.isSelection()) {
+				$(".select.global-reset, .select.go-to-selected").addClass("hidden");
+			} else {
+				let goToSelectedText = util._t(".select.go-to-selected");
+				goToSelectedText += " (";
+				if (env.selectionAlbum.subalbums.length)
+					goToSelectedText += env.selectionAlbum.subalbums.length + " " + util._t(".title-albums");
+				if (env.selectionAlbum.subalbums.length && env.selectionAlbum.media.length)
+					goToSelectedText += ", ";
+				if (env.selectionAlbum.media.length)
+					goToSelectedText += env.selectionAlbum.media.length + " " + util._t(".title-media");
+				goToSelectedText += ")";
+				$(".select.go-to-selected").html(goToSelectedText);
+			}
+			if (nothingIsSelected) {
+				$(".select.global-reset, .select.go-to-selected").addClass("hidden");
+				$(".select.nothing").addClass("hidden");
+				$(".select.no-albums").addClass("hidden");
+				$(".select.no-media").addClass("hidden");
+			}
+			if (! thisAlbum.subalbums.length || noSubalbumIsSelected || everySubalbumIsSelected || noMediaIsSelected) {
+				$(".select.no-albums").addClass("hidden");
+			}
+			if (! thisAlbum.numsMedia.imagesAndVideosTotal() || noMediaIsSelected || everyMediaIsSelected || noSubalbumIsSelected) {
+				$(".select.no-media").addClass("hidden");
+			}
 
-		if (isSingleMedia) {
-			$(".select.albums, .select.everything, .select.everything-individual", ".select.nothing", ".select.no-albums").addClass("hidden");
-		} else if (! thisAlbum.media.length || ! thisAlbum.subalbums.length) {
-			$(".select.media, .select.albums, .select.no-media, .select.no-albums").addClass("hidden");
-		}
+			if (isSingleMedia) {
+				$(".select.albums, .select.everything, .select.everything-individual", ".select.nothing", ".select.no-albums").addClass("hidden");
+			} else if (
+				! isPopup && (
+					! thisAlbum.numsMedia.imagesAndVideosTotal() || ! thisAlbum.subalbums.length
+				)
+			) {
+				$(".select.media, .select.albums, .select.no-media, .select.no-albums").addClass("hidden");
+			} else if (isPopup) {
+				$(".select.albums, .select.no-albums").addClass("hidden");
+				$(".select.media, .select.no-media").addClass("hidden");
+			}
 
-		if (everySubalbumIsSelected) {
-			$(".select.albums").addClass("selected");
-		}
+			if (everySubalbumIsSelected) {
+				$(".select.albums").addClass("selected");
+			}
 
-		if (everyMediaIsSelected) {
-			$(".select.media").addClass("selected");
-		}
+			if (everyMediaIsSelected) {
+				$(".select.media").addClass("selected");
+			}
 
-		if (everySubalbumIsSelected && everyMediaIsSelected) {
-			$(".select.everything").addClass("selected");
-		}
+			if ((isPopup || everySubalbumIsSelected) && everyMediaIsSelected) {
+				$(".select.everything").addClass("selected");
+			}
 
-		if (highMediaNumberInTransversalAlbum) {
-			$(".select.everything, .select.media").addClass("hidden");
-		}
+			if (highMediaNumberInTransversalAlbum) {
+				$(".select.everything, .select.media").addClass("hidden");
+			}
 
-		if (! thisAlbum.subalbums.length) {
-			$(".select.everything-individual").addClass("hidden");
-		} else {
-			let everythingIndividualPromise = thisAlbum.recursivelyAllMediaAreSelected();
-			everythingIndividualPromise.then(
-				function isTrue() {
-					$(".select.everything-individual").addClass("selected");
-				},
-				function isFalse() {
-					// do nothing
+			if (! thisAlbum.subalbums.length || isPopup) {
+				$(".select.everything-individual").addClass("hidden");
+			} else {
+				let everythingIndividualPromise = thisAlbum.recursivelyAllMediaAreSelected();
+				everythingIndividualPromise.then(
+					function isTrue() {
+						$(".select.everything-individual").addClass("selected");
+					},
+					function isFalse() {
+						// do nothing
+					}
+				);
+			}
+
+
+			$(".select.everything:not(.hidden)").off("click").on(
+				"click",
+				function() {
+					var albumToUse;
+					if (isPopup)
+						albumToUse = env.mapAlbum;
+					else
+						albumToUse = thisAlbum;
+					var workingWasntVisible = ! $("#working").is(":visible");
+					if (workingWasntVisible)
+						$("#working").show();
+					if (albumToUse.everySubalbumIsSelected() && albumToUse.everyMediaIsSelected()) {
+						albumToUse.removeAllMediaFromSelection();
+						let promise = albumToUse.removeAllSubalbumsFromSelection();
+						promise.then(
+							function() {
+								if (workingWasntVisible)
+									$("#working").hide();
+								if (util.nothingIsSelected())
+									util.initializeSelectionAlbum();
+								Functions.updateMenu();
+							}
+						);
+					} else {
+						albumToUse.addAllMediaToSelection();
+						let promise = albumToUse.addAllSubalbumsToSelection();
+						promise.then(
+							function() {
+								if (workingWasntVisible)
+									$("#working").hide();
+								Functions.updateMenu();
+							}
+						);
+					}
+				}
+			);
+
+			$(".select.everything-individual:not(.hidden)").off("click").on(
+				"click",
+				function() {
+					var workingWasntVisible = ! $("#working").is(":visible");
+					if (workingWasntVisible)
+						$("#working").show();
+					let everythingIndividualPromise = thisAlbum.recursivelyAllMediaAreSelected();
+					everythingIndividualPromise.then(
+						function isTrue() {
+							let firstPromise = thisAlbum.recursivelyRemoveMedia();
+							firstPromise.then(
+								function() {
+									if (workingWasntVisible)
+										$("#working").hide();
+									if (util.nothingIsSelected())
+										util.initializeSelectionAlbum();
+									Functions.updateMenu();
+									$("#removed-individually").stop().fadeIn(
+										1000,
+										function() {
+											$("#removed-individually").stop().fadeOut(3000);
+										}
+									);
+								}
+							);
+						},
+						function isFalse() {
+							let firstPromise = thisAlbum.recursivelySelectMedia();
+							firstPromise.then(
+								function() {
+									if (workingWasntVisible)
+										$("#working").hide();
+									$("#added-individually").stop().fadeIn(
+										1000,
+										function() {
+											Functions.updateMenu();
+											$("#added-individually").stop().fadeOut(3000);
+										}
+									);
+								}
+							);
+						}
+					);
+				}
+			);
+
+			$(".select.media:not(.hidden)").off("click").on(
+				"click",
+				function() {
+					var albumToUse;
+					if (isPopup)
+						albumToUse = env.mapAlbum;
+					else
+						albumToUse = thisAlbum;
+					if (albumToUse.everyMediaIsSelected()) {
+						albumToUse.removeAllMediaFromSelection();
+						if (util.nothingIsSelected())
+							util.initializeSelectionAlbum();
+					} else {
+						albumToUse.addAllMediaToSelection();
+					}
+					Functions.updateMenu();
+				}
+			);
+
+			$(".select.albums:not(.hidden)").off("click").on(
+				"click",
+				function() {
+					var workingWasntVisible = ! $("#working").is(":visible");
+					if (workingWasntVisible)
+						$("#working").show();
+					else
+						$("#working").show();
+					if (thisAlbum.everySubalbumIsSelected()) {
+						let promise = thisAlbum.removeAllSubalbumsFromSelection();
+						promise.then(
+							function() {
+								if (workingWasntVisible)
+									$("#working").hide();
+								if (util.nothingIsSelected())
+									util.initializeSelectionAlbum();
+								Functions.updateMenu();
+							}
+						);
+					} else {
+						var promise = thisAlbum.addAllSubalbumsToSelection();
+						promise.then(
+							function() {
+								if (workingWasntVisible)
+									$("#working").hide();
+								Functions.updateMenu();
+							}
+						);
+					}
+				}
+			);
+
+			$(".select.global-reset:not(.hidden)").off("click").on(
+				"click",
+				function() {
+					var workingWasntVisible = ! $("#working").is(":visible");
+					if (workingWasntVisible)
+						$("#working").show();
+					env.selectionAlbum.removeAllMediaFromSelection();
+					let subalbumsPromise = env.selectionAlbum.removeAllSubalbumsFromSelection();
+					subalbumsPromise.then(
+						function allSubalbumsRemoved() {
+							if (workingWasntVisible)
+								$("#working").hide();
+							if (util.nothingIsSelected())
+								util.initializeSelectionAlbum();
+							Functions.updateMenu();
+						}
+					);
+				}
+			);
+
+			$(".select.nothing:not(.hidden)").off("click").on(
+				"click",
+				function() {
+					var workingWasntVisible = ! $("#working").is(":visible");
+					if (workingWasntVisible)
+						$("#working").show();
+					var albumToUse;
+					if (isPopup)
+						albumToUse = env.mapAlbum;
+					else
+						albumToUse = thisAlbum;
+					albumToUse.removeAllMediaFromSelection();
+					let subalbumsPromise = albumToUse.removeAllSubalbumsFromSelection();
+					subalbumsPromise.then(
+						function allSubalbumsRemoved() {
+							if (workingWasntVisible)
+								$("#working").hide();
+							if (util.nothingIsSelected())
+								util.initializeSelectionAlbum();
+							Functions.updateMenu();
+						}
+					);
+				}
+			);
+
+			$(".select.no-albums:not(.hidden)").off("click").on(
+				"click",
+				function() {
+					var workingWasntVisible = ! $("#working").is(":visible");
+					if (workingWasntVisible)
+						$("#working").show();
+					let subalbumsPromise = thisAlbum.removeAllSubalbumsFromSelection();
+					subalbumsPromise.then(
+						function allSubalbumsRemoved() {
+							if (workingWasntVisible)
+								$("#working").hide();
+							if (util.nothingIsSelected())
+								util.initializeSelectionAlbum();
+							Functions.updateMenu();
+						}
+					);
+				}
+			);
+
+			$(".select.no-media:not(.hidden)").off("click").on(
+				"click",
+				function() {
+					var albumToUse;
+					if (isPopup)
+						albumToUse = env.mapAlbum;
+					else
+						albumToUse = thisAlbum;
+
+					albumToUse.removeAllMediaFromSelection();
+				}
+			);
+
+			$(".select.go-to-selected:not(.hidden)").off("click").on(
+				"click",
+				function() {
+					$("#by-selection-view")[0].click();
 				}
 			);
 		}
 
 
-		$(".select.everything:not(.hidden)").off("click").on(
-			"click",
-			function() {
-				if (thisAlbum.everySubalbumIsSelected() && thisAlbum.everyMediaIsSelected()) {
-					$("#working").show();
-					thisAlbum.removeAllMediaFromSelection();
-					let promise = thisAlbum.removeAllSubalbumsFromSelection();
-					promise.then(
-						function() {
-							$("#working").hide();
-							if (util.nothingIsSelected())
-								util.initializeSelectionAlbum();
-							Functions.updateMenu();
-						}
-					);
-				} else {
-					$("#working").show();
-					thisAlbum.addAllMediaToSelection();
-					let promise = thisAlbum.addAllSubalbumsToSelection();
-					promise.then(
-						function() {
-							$("#working").hide();
-							Functions.updateMenu();
-						}
-					);
-				}
-			}
-		);
-
-		$(".select.everything-individual:not(.hidden)").off("click").on(
-			"click",
-			function() {
-				$("#working").show();
-				let everythingIndividualPromise = thisAlbum.recursivelyAllMediaAreSelected();
-				everythingIndividualPromise.then(
-					function isTrue() {
-						let firstPromise = thisAlbum.recursivelyRemoveMedia();
-						firstPromise.then(
-							function() {
-								$("#working").hide();
-								if (util.nothingIsSelected())
-									util.initializeSelectionAlbum();
-								Functions.updateMenu();
-								$("#removed-individually").stop().fadeIn(
-									1000,
-									function() {
-										$("#removed-individually").stop().fadeOut(3000);
-									}
-								);
-							}
-						);
-					},
-					function isFalse() {
-						let firstPromise = thisAlbum.recursivelySelectMedia();
-						firstPromise.then(
-							function() {
-								$("#working").hide();
-								$("#added-individually").stop().fadeIn(
-									1000,
-									function() {
-										Functions.updateMenu();
-										$("#added-individually").stop().fadeOut(3000);
-									}
-								);
-							}
-						);
-					}
-				);
-			}
-		);
-
-		$(".select.media:not(.hidden)").off("click").on(
-			"click",
-			function() {
-				if (thisAlbum.everyMediaIsSelected()) {
-					thisAlbum.removeAllMediaFromSelection();
-					if (util.nothingIsSelected())
-						util.initializeSelectionAlbum();
-				} else {
-					thisAlbum.addAllMediaToSelection();
-				}
-				Functions.updateMenu();
-			}
-		);
-
-		$(".select.albums:not(.hidden)").off("click").on(
-			"click",
-			function() {
-				$("#working").show();
-				if (thisAlbum.everySubalbumIsSelected()) {
-					let promise = thisAlbum.removeAllSubalbumsFromSelection();
-					promise.then(
-						function() {
-							$("#working").hide();
-							if (util.nothingIsSelected())
-								util.initializeSelectionAlbum();
-							Functions.updateMenu();
-						}
-					);
-				} else {
-					var promise = thisAlbum.addAllSubalbumsToSelection();
-					promise.then(
-						function() {
-							$("#working").hide();
-							Functions.updateMenu();
-						}
-					);
-				}
-			}
-		);
-
-		$(".select.global-reset:not(.hidden)").on(
-			"click",
-			function() {
-				$("#working").show();
-				env.selectionAlbum.removeAllMediaFromSelection();
-				let subalbumsPromise = env.selectionAlbum.removeAllSubalbumsFromSelection();
-				subalbumsPromise.then(
-					function allSubalbumsRemoved() {
-						$("#working").hide();
-						if (util.nothingIsSelected())
-							util.initializeSelectionAlbum();
-						Functions.updateMenu();
-					}
-				);
-			}
-		);
-
-		$(".select.nothing:not(.hidden)").on(
-			"click",
-			function() {
-				$("#working").show();
-				thisAlbum.removeAllMediaFromSelection();
-				let subalbumsPromise = thisAlbum.removeAllSubalbumsFromSelection();
-				subalbumsPromise.then(
-					function allSubalbumsRemoved() {
-						$("#working").hide();
-						if (util.nothingIsSelected())
-							util.initializeSelectionAlbum();
-						Functions.updateMenu();
-					}
-				);
-			}
-		);
-
-		$(".select.no-albums:not(.hidden)").on(
-			"click",
-			function() {
-				$("#working").show();
-				let subalbumsPromise = thisAlbum.removeAllSubalbumsFromSelection();
-				subalbumsPromise.then(
-					function allSubalbumsRemoved() {
-						$("#working").hide();
-						if (util.nothingIsSelected())
-							util.initializeSelectionAlbum();
-						Functions.updateMenu();
-					}
-				);
-			}
-		);
-
-		$(".select.no-media:not(.hidden)").on(
-			"click",
-			function() {
-				thisAlbum.removeAllMediaFromSelection();
-			}
-		);
-
-		$(".select.go-to-selected:not(.hidden)").on(
-			"click",
-			function() {
-				$("#by-selection-view")[0].click();
-			}
-		);
-
-
 		////////////////// DOWNLOAD //////////////////////////////
 
-		const maximumZipSize = 2000000000;
-		const bigZipSize = 500000000;
+		if (isMap) {
+			$(".download-album").addClass("hidden");
+		} else {
+			$(".download-album").removeClass("hidden");
+			const maximumZipSize = 2000000000;
+			const bigZipSize = 500000000;
 
-		$(".download-single-media").addClass("hidden").addClass("active");
-		$(".download-album").addClass("hidden").removeClass("red");
-		$("ul li.download-album").addClass("active");
-		$(".download-album.sized").addClass("hidden");
+			$(".download-single-media").addClass("hidden").addClass("active");
+			$(".download-album").addClass("hidden").removeClass("red");
+			$("ul li.download-album").addClass("active");
+			$(".download-album.sized").addClass("hidden");
 
-		// $(".download-album .sub-menu").addClass("hidden");
-		if (thisAlbum.isSearch() && ! thisAlbum.media.length && ! thisAlbum.subalbums.length) {
-			// download menu item remains hidden
-		} else if (env.currentMedia !== null || isAlbumWithOneMedia) {
-			$(".download-album .sub-menu").removeClass("hidden");
-			$(".download-album.expandable, .download-album.caption").removeClass("hidden");
-			$(".download-single-media").removeClass("hidden");
-			let trueOriginalMediaPath;
-			if (isAlbumWithOneMedia)
-				trueOriginalMediaPath = encodeURI(thisAlbum.media[0].trueOriginalMediaPath());
-			else
-				trueOriginalMediaPath = encodeURI(env.currentMedia.trueOriginalMediaPath());
-			$(".download-single-media .download-link").attr("href", trueOriginalMediaPath).attr("download", "");
-		} else if (thisAlbum !== null) {
-			$(".download-album.expandable, .download-album.caption").removeClass("hidden");
+			// $(".download-album .sub-menu").addClass("hidden");
+			if (thisAlbum.isSearch() && ! thisAlbum.media.length && ! thisAlbum.subalbums.length) {
+				// download menu item remains hidden
+			} else if (env.currentMedia !== null || isAlbumWithOneMedia) {
+				$(".download-album .sub-menu").removeClass("hidden");
+				$(".download-album.expandable, .download-album.caption").removeClass("hidden");
+				$(".download-single-media").removeClass("hidden");
+				let trueOriginalMediaPath;
+				if (isAlbumWithOneMedia)
+					trueOriginalMediaPath = encodeURI(thisAlbum.media[0].trueOriginalMediaPath());
+				else
+					trueOriginalMediaPath = encodeURI(env.currentMedia.trueOriginalMediaPath());
+				$(".download-single-media .download-link").attr("href", trueOriginalMediaPath).attr("download", "");
+			} else if (thisAlbum !== null) {
+				$(".download-album.expandable, .download-album.caption").removeClass("hidden");
 
-			let showDownloadEverything = false;
+				let showDownloadEverything = false;
 
-			if (thisAlbum.subalbums.length) {
-			// if (thisAlbum.subalbums.length && ! thisAlbum.isTransversal()) {
-				$(".download-album.everything.all.full").removeClass("hidden");
-				// reset the html
-				$(".download-album.everything.all").html(util._t(".download-album.everything.all"));
+				if (thisAlbum.subalbums.length) {
+				// if (thisAlbum.subalbums.length && ! thisAlbum.isTransversal()) {
+					$(".download-album.everything.all.full").removeClass("hidden");
+					// reset the html
+					$(".download-album.everything.all").html(util._t(".download-album.everything.all"));
 
-				let nMediaInSubTree = thisAlbum.numsMediaInSubTree.imagesAndVideosTotal();
-				let numImages = thisAlbum.numsMediaInSubTree.images;
-				let numVideos = thisAlbum.numsMediaInSubTree.videos;
-				let what = util._t(".title-media");
-				if (numImages === 0)
-					what = util._t(".title-videos");
-				if (numVideos === 0)
-					what = util._t(".title-images");
+					let nMediaInSubTree = thisAlbum.numsMediaInSubTree.imagesAndVideosTotal();
+					let numImages = thisAlbum.numsMediaInSubTree.images;
+					let numVideos = thisAlbum.numsMediaInSubTree.videos;
+					let what = util._t(".title-media");
+					if (numImages === 0)
+						what = util._t(".title-videos");
+					if (numVideos === 0)
+						what = util._t(".title-images");
 
-				if (thisAlbum.isSearch() && thisAlbum.subalbums.length) {
-					// in search albums, numsMediaInSubTree doesn't include the media in the albums found, the values that goes into the DOm must be update by code here
-					for (let iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; iSubalbum ++) {
-						nMediaInSubTree += thisAlbum.subalbums[iSubalbum].numsMediaInSubTree.imagesAndVideosTotal();
+					if (thisAlbum.isSearch() && thisAlbum.subalbums.length) {
+						// in search albums, numsMediaInSubTree doesn't include the media in the albums found, the values that goes into the DOm must be update by code here
+						for (let iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; iSubalbum ++) {
+							nMediaInSubTree += thisAlbum.subalbums[iSubalbum].numsMediaInSubTree.imagesAndVideosTotal();
+						}
 					}
-				}
 
-				let treeSize = thisAlbum.sizesOfSubTree[0].images + thisAlbum.sizesOfSubTree[0].videos;
-				$(".download-album.everything.all.full").append(": " + nMediaInSubTree + " " + what + ", " + Functions.humanFileSize(treeSize));
-				if (treeSize < bigZipSize) {
-					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
-					// actually it can be less (Chrome on Android)
-					// It may happen that the files are collected but nothing is saved
-					$(".download-album.everything.all.full").attr("title", "");
-				} else if (treeSize < maximumZipSize) {
-					$(".download-album.everything.all.full").addClass("red").attr("title", util._t("#download-difficult"));
-				} else {
-					$(".download-album.everything.all.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
-				}
+					let treeSize = thisAlbum.sizesOfSubTree[0].images + thisAlbum.sizesOfSubTree[0].videos;
+					$(".download-album.everything.all.full").append(": " + nMediaInSubTree + " " + what + ", " + Functions.humanFileSize(treeSize));
+					if (treeSize < bigZipSize) {
+						// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
+						// actually it can be less (Chrome on Android)
+						// It may happen that the files are collected but nothing is saved
+						$(".download-album.everything.all.full").attr("title", "");
+					} else if (treeSize < maximumZipSize) {
+						$(".download-album.everything.all.full").addClass("red").attr("title", util._t("#download-difficult"));
+					} else {
+						$(".download-album.everything.all.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
+					}
 
-				if (treeSize >= bigZipSize) {
-					// propose to download the resized media
-					for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
-						let reducedSize = env.options.reduced_sizes[iSize];
-						treeSize = thisAlbum.sizesOfSubTree[reducedSize].imagesAndVideosTotal();
-						if (treeSize < bigZipSize) {
-							$(".download-album.everything.all.sized").append(", " + reducedSize + " px: " + thisAlbum.numsMediaInSubTree.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(treeSize));
-							$(".download-album.everything.all.sized").attr("size", reducedSize);
-							$(".download-album.everything.all.sized").removeClass("hidden");
-							break;
+					if (treeSize >= bigZipSize) {
+						// propose to download the resized media
+						for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
+							let reducedSize = env.options.reduced_sizes[iSize];
+							treeSize = thisAlbum.sizesOfSubTree[reducedSize].imagesAndVideosTotal();
+							if (treeSize < bigZipSize) {
+								$(".download-album.everything.all.sized").append(", " + reducedSize + " px: " + thisAlbum.numsMediaInSubTree.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(treeSize));
+								$(".download-album.everything.all.sized").attr("size", reducedSize);
+								$(".download-album.everything.all.sized").removeClass("hidden");
+								break;
+							}
+						}
+					}
+					showDownloadEverything = true;
+
+					// let numImages = 0;
+					// let numVideos = 0;
+					// for (let iMedia = 0; iMedia < thisAlbum.numsMedia.imagesAndVideosTotal(); iMedia ++) {
+					// 	if (thisAlbum.media[iMedia].mimeType.indexOf("image/") === 0) {
+					// 		numImages ++;
+					// 	} else {
+					// 		numVideos ++;
+					// 	}
+					// }
+
+					let mediaInThisAlbum = thisAlbum.numsMedia.imagesAndVideosTotal();
+					let mediaInThisTree = thisAlbum.numsMediaInSubTree.imagesAndVideosTotal();
+					if (numImages && numImages !== mediaInThisAlbum && numImages !== mediaInThisTree && mediaInThisAlbum !== mediaInThisTree) {
+						$(".download-album.everything.images.full").removeClass("hidden");
+						// reset the html
+						$(".download-album.everything.images").html(util._t(".download-album.everything.images"));
+
+						// add the download size
+						let imagesSize = thisAlbum.sizesOfSubTree[0].images;
+						$(".download-album.everything.images.full").append(": " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(imagesSize));
+						// check the size and decide if they can be downloaded
+						if (imagesSize < bigZipSize) {
+							// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
+							// actually it can be less (Chrome on Android)
+							// It may happen that the files are collected but nothing is saved
+							$(".download-album.everything.images.full").attr("title", "");
+						} else if (imagesSize < maximumZipSize) {
+							$(".download-album.everything.images.full").addClass("red").attr("title", util._t("#download-difficult"));
+						} else {
+							$(".download-album.everything.images.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
+						}
+
+						if (imagesSize >= bigZipSize) {
+							// propose to download the resized media
+							for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
+								let reducedSize = env.options.reduced_sizes[iSize];
+								if (thisAlbum.sizesOfSubTree[reducedSize].images < bigZipSize) {
+									$(".download-album.everything.images.sized").append(", " + reducedSize + " px: " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].images));
+									$(".download-album.everything.images.sized").attr("size", reducedSize);
+									$(".download-album.everything.images.sized").removeClass("hidden");
+									break;
+								}
+							}
+						}
+					}
+
+					if (numVideos && numVideos !== mediaInThisAlbum && numVideos !== mediaInThisTree && mediaInThisAlbum !== mediaInThisTree) {
+						$(".download-album.everything.videos.full").removeClass("hidden");
+						// reset the html
+						$(".download-album.everything.videos").html(util._t(".download-album.everything.videos"));
+
+						// add the download size
+						let videosSize = thisAlbum.sizesOfSubTree[0].videos;
+						$(".download-album.everything.videos.full").append(": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(videosSize));
+						// check the size and decide if they can be downloaded
+						if (videosSize < bigZipSize) {
+							// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
+							// actually it can be less (Chrome on Android)
+							// It may happen that the files are collected but nothing is saved
+							$(".download-album.everything.videos.full").attr("title", "");
+						} else if (videosSize < maximumZipSize) {
+							$(".download-album.everything.videos.full").addClass("red").attr("title", util._t("#download-difficult"));
+						} else {
+							$(".download-album.everything.videos.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
+						}
+
+						if (videosSize >= bigZipSize) {
+							// propose to download the resized video
+							// in thisAlbum.sizesOfSubTree[iSize] all the reduced sizes have the same value, corresponding to the transcoded videos
+							let reducedSize = env.options.reduced_sizes[0];
+							if (thisAlbum.sizesOfSubTree[reducedSize].videos < bigZipSize) {
+								$(".download-album.everything.videos.sized").append(", " + util._t(".title-transcoded") + ": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].videos));
+								// $(".download-album.everything.videos.sized").attr("size", reducedSize);
+								$(".download-album.everything.videos.sized").removeClass("hidden");
+							}
 						}
 					}
 				}
-				showDownloadEverything = true;
 
 				// let numImages = 0;
 				// let numVideos = 0;
-				// for (let iMedia = 0; iMedia < thisAlbum.media.length; iMedia ++) {
+				// for (let iMedia = 0; iMedia < thisAlbum.numsMedia.imagesAndVideosTotal(); iMedia ++) {
 				// 	if (thisAlbum.media[iMedia].mimeType.indexOf("image/") === 0) {
 				// 		numImages ++;
 				// 	} else {
 				// 		numVideos ++;
 				// 	}
 				// }
+				// TO DO: verify if it's correct to replace previous commented out code with the following 2 lines
+				let numImages = thisAlbum.numsMedia.images;
+				let numVideos = thisAlbum.numsMedia.videos;
+				let what = util._t(".title-media");
+				if (numImages === 0)
+					what = util._t(".title-videos");
+				if (numVideos === 0)
+					what = util._t(".title-images");
 
-				let mediaInThisAlbum = thisAlbum.numsMedia.imagesAndVideosTotal();
-				let mediaInThisTree = thisAlbum.numsMediaInSubTree.imagesAndVideosTotal();
-				if (numImages && numImages !== mediaInThisAlbum && numImages !== mediaInThisTree && mediaInThisAlbum !== mediaInThisTree) {
-					$(".download-album.everything.images.full").removeClass("hidden");
+				if (thisAlbum.numsMedia.imagesAndVideosTotal()) {
+					$(".download-album.media-only.all.full").removeClass("hidden");
 					// reset the html
-					$(".download-album.everything.images").html(util._t(".download-album.everything.images"));
+					if (showDownloadEverything)
+						$(".download-album.media-only.all").html(util._t(".download-album.media-only.all"));
+					else
+						$(".download-album.media-only.all").html(util._t(".download-album.simple.all"));
 
 					// add the download size
-					let imagesSize = thisAlbum.sizesOfSubTree[0].images;
-					$(".download-album.everything.images.full").append(": " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(imagesSize));
+					let albumSize = thisAlbum.sizesOfAlbum[0].imagesAndVideosTotal();
+					$(".download-album.media-only.all.full").append(": " + thisAlbum.numsMedia.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(albumSize));
 					// check the size and decide if they can be downloaded
-					if (imagesSize < bigZipSize) {
+					if (albumSize < bigZipSize) {
 						// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 						// actually it can be less (Chrome on Android)
 						// It may happen that the files are collected but nothing is saved
-						$(".download-album.everything.images.full").attr("title", "");
-					} else if (imagesSize < maximumZipSize) {
-						$(".download-album.everything.images.full").addClass("red").attr("title", util._t("#download-difficult"));
+						$(".download-album.media-only.all.full").attr("title", "");
+					} else if (albumSize < maximumZipSize) {
+						$(".download-album.media-only.all.full").addClass("red").attr("title", util._t("#download-difficult"));
 					} else {
-						$(".download-album.everything.images.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
+						$(".download-album.media-only.all.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
 					}
 
-					if (imagesSize >= bigZipSize) {
+					if (albumSize >= bigZipSize) {
 						// propose to download the resized media
 						for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
 							let reducedSize = env.options.reduced_sizes[iSize];
-							if (thisAlbum.sizesOfSubTree[reducedSize].images < bigZipSize) {
-								$(".download-album.everything.images.sized").append(", " + reducedSize + " px: " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].images));
-								$(".download-album.everything.images.sized").attr("size", reducedSize);
-								$(".download-album.everything.images.sized").removeClass("hidden");
+							albumSize = thisAlbum.sizesOfAlbum[reducedSize].images + thisAlbum.sizesOfAlbum[reducedSize].videos;
+							if (albumSize < bigZipSize) {
+								$(".download-album.media-only.all.sized").append(", " + reducedSize + " px: " + thisAlbum.numsMedia.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(albumSize));
+								$(".download-album.media-only.all.sized").attr("size", reducedSize);
+								$(".download-album.media-only.all.sized").removeClass("hidden");
 								break;
 							}
 						}
 					}
 				}
 
-				if (numVideos && numVideos !== mediaInThisAlbum && numVideos !== mediaInThisTree && mediaInThisAlbum !== mediaInThisTree) {
-					$(".download-album.everything.videos.full").removeClass("hidden");
+				if (numImages && numImages !== thisAlbum.numsMedia.imagesAndVideosTotal()) {
+					$(".download-album.media-only.images.full").removeClass("hidden");
 					// reset the html
-					$(".download-album.everything.videos").html(util._t(".download-album.everything.videos"));
+					if (showDownloadEverything)
+						$(".download-album.media-only.images").html(util._t(".download-album.media-only.images"));
+					else
+						$(".download-album.media-only.images").html(util._t(".download-album.simple.images"));
 
 					// add the download size
-					let videosSize = thisAlbum.sizesOfSubTree[0].videos;
-					$(".download-album.everything.videos.full").append(": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(videosSize));
+					let imagesSize = thisAlbum.sizesOfAlbum[0].images;
+					$(".download-album.media-only.images.full").append(": " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(imagesSize));
+					// check the size and decide if they can be downloaded
+					if (imagesSize < bigZipSize) {
+						// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
+						// actually it can be less (Chrome on Android)
+						// It may happen that the files are collected but nothing is saved
+						$(".download-album.media-only.images.full").attr("title", "");
+					} else if (imagesSize < maximumZipSize) {
+						$(".download-album.media-only.images.full").addClass("red").attr("title", util._t("#download-difficult"));
+					} else {
+						$(".download-album.media-only.images.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
+					}
+
+					if (imagesSize >= bigZipSize) {
+						// propose to download the resized media
+						for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
+							let reducedSize = env.options.reduced_sizes[iSize];
+							if (thisAlbum.sizesOfAlbum[reducedSize].images < bigZipSize) {
+								$(".download-album.media-only.images.sized").append(", " + reducedSize + " px: " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reducedSize].images));
+								$(".download-album.media-only.images.sized").attr("size", reducedSize);
+								$(".download-album.media-only.images.sized").removeClass("hidden");
+								break;
+							}
+						}
+					}
+				}
+
+				if (numVideos && numVideos !== thisAlbum.numsMedia.imagesAndVideosTotal()) {
+					$(".download-album.media-only.videos.full").removeClass("hidden");
+					// reset the html
+					if (showDownloadEverything)
+						$(".download-album.media-only.videos").html(util._t(".download-album.media-only.videos"));
+					else
+						$(".download-album.media-only.videos").html(util._t(".download-album.simple.videos"));
+
+					// add the download size
+					let videosSize = thisAlbum.sizesOfAlbum[0].videos;
+					$(".download-album.media-only.videos.full").append(": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(videosSize));
 					// check the size and decide if they can be downloaded
 					if (videosSize < bigZipSize) {
 						// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
 						// actually it can be less (Chrome on Android)
 						// It may happen that the files are collected but nothing is saved
-						$(".download-album.everything.videos.full").attr("title", "");
+						$(".download-album.media-only.videos.full").attr("title", "");
 					} else if (videosSize < maximumZipSize) {
-						$(".download-album.everything.videos.full").addClass("red").attr("title", util._t("#download-difficult"));
+						$(".download-album.media-only.videos.full").addClass("red").attr("title", util._t("#download-difficult"));
 					} else {
-						$(".download-album.everything.videos.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
+						$(".download-album.media-only.videos.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
 					}
 
 					if (videosSize >= bigZipSize) {
@@ -1033,138 +1236,10 @@
 						// in thisAlbum.sizesOfSubTree[iSize] all the reduced sizes have the same value, corresponding to the transcoded videos
 						let reducedSize = env.options.reduced_sizes[0];
 						if (thisAlbum.sizesOfSubTree[reducedSize].videos < bigZipSize) {
-							$(".download-album.everything.videos.sized").append(", " + util._t(".title-transcoded") + ": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].videos));
+							$(".download-album.media-only.videos.sized").append(", " + util._t(".title-transcoded") + ": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].videos));
 							// $(".download-album.everything.videos.sized").attr("size", reducedSize);
-							$(".download-album.everything.videos.sized").removeClass("hidden");
+							$(".download-album.media-only.videos.sized").removeClass("hidden");
 						}
-					}
-				}
-			}
-
-			// let numImages = 0;
-			// let numVideos = 0;
-			// for (let iMedia = 0; iMedia < thisAlbum.media.length; iMedia ++) {
-			// 	if (thisAlbum.media[iMedia].mimeType.indexOf("image/") === 0) {
-			// 		numImages ++;
-			// 	} else {
-			// 		numVideos ++;
-			// 	}
-			// }
-			// TO DO: verify if it's correct to replace previous commented out code with the following 2 lines
-			let numImages = thisAlbum.numsMedia.images;
-			let numVideos = thisAlbum.numsMedia.videos;
-			let what = util._t(".title-media");
-			if (numImages === 0)
-				what = util._t(".title-videos");
-			if (numVideos === 0)
-				what = util._t(".title-images");
-
-			if (thisAlbum.numsMedia.imagesAndVideosTotal()) {
-				$(".download-album.media-only.all.full").removeClass("hidden");
-				// reset the html
-				if (showDownloadEverything)
-					$(".download-album.media-only.all").html(util._t(".download-album.media-only.all"));
-				else
-					$(".download-album.media-only.all").html(util._t(".download-album.simple.all"));
-
-				// add the download size
-				let albumSize = thisAlbum.sizesOfAlbum[0].imagesAndVideosTotal();
-				$(".download-album.media-only.all.full").append(": " + thisAlbum.numsMedia.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(albumSize));
-				// check the size and decide if they can be downloaded
-				if (albumSize < bigZipSize) {
-					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
-					// actually it can be less (Chrome on Android)
-					// It may happen that the files are collected but nothing is saved
-					$(".download-album.media-only.all.full").attr("title", "");
-				} else if (albumSize < maximumZipSize) {
-					$(".download-album.media-only.all.full").addClass("red").attr("title", util._t("#download-difficult"));
-				} else {
-					$(".download-album.media-only.all.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
-				}
-
-				if (albumSize >= bigZipSize) {
-					// propose to download the resized media
-					for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
-						let reducedSize = env.options.reduced_sizes[iSize];
-						albumSize = thisAlbum.sizesOfAlbum[reducedSize].images + thisAlbum.sizesOfAlbum[reducedSize].videos;
-						if (albumSize < bigZipSize) {
-							$(".download-album.media-only.all.sized").append(", " + reducedSize + " px: " + thisAlbum.numsMedia.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(albumSize));
-							$(".download-album.media-only.all.sized").attr("size", reducedSize);
-							$(".download-album.media-only.all.sized").removeClass("hidden");
-							break;
-						}
-					}
-				}
-			}
-
-			if (numImages && numImages !== thisAlbum.numsMedia.imagesAndVideosTotal()) {
-				$(".download-album.media-only.images.full").removeClass("hidden");
-				// reset the html
-				if (showDownloadEverything)
-					$(".download-album.media-only.images").html(util._t(".download-album.media-only.images"));
-				else
-					$(".download-album.media-only.images").html(util._t(".download-album.simple.images"));
-
-				// add the download size
-				let imagesSize = thisAlbum.sizesOfAlbum[0].images;
-				$(".download-album.media-only.images.full").append(": " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(imagesSize));
-				// check the size and decide if they can be downloaded
-				if (imagesSize < bigZipSize) {
-					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
-					// actually it can be less (Chrome on Android)
-					// It may happen that the files are collected but nothing is saved
-					$(".download-album.media-only.images.full").attr("title", "");
-				} else if (imagesSize < maximumZipSize) {
-					$(".download-album.media-only.images.full").addClass("red").attr("title", util._t("#download-difficult"));
-				} else {
-					$(".download-album.media-only.images.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
-				}
-
-				if (imagesSize >= bigZipSize) {
-					// propose to download the resized media
-					for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
-						let reducedSize = env.options.reduced_sizes[iSize];
-						if (thisAlbum.sizesOfAlbum[reducedSize].images < bigZipSize) {
-							$(".download-album.media-only.images.sized").append(", " + reducedSize + " px: " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reducedSize].images));
-							$(".download-album.media-only.images.sized").attr("size", reducedSize);
-							$(".download-album.media-only.images.sized").removeClass("hidden");
-							break;
-						}
-					}
-				}
-			}
-
-			if (numVideos && numVideos !== thisAlbum.numsMedia.imagesAndVideosTotal()) {
-				$(".download-album.media-only.videos.full").removeClass("hidden");
-				// reset the html
-				if (showDownloadEverything)
-					$(".download-album.media-only.videos").html(util._t(".download-album.media-only.videos"));
-				else
-					$(".download-album.media-only.videos").html(util._t(".download-album.simple.videos"));
-
-				// add the download size
-				let videosSize = thisAlbum.sizesOfAlbum[0].videos;
-				$(".download-album.media-only.videos.full").append(": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(videosSize));
-				// check the size and decide if they can be downloaded
-				if (videosSize < bigZipSize) {
-					// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
-					// actually it can be less (Chrome on Android)
-					// It may happen that the files are collected but nothing is saved
-					$(".download-album.media-only.videos.full").attr("title", "");
-				} else if (videosSize < maximumZipSize) {
-					$(".download-album.media-only.videos.full").addClass("red").attr("title", util._t("#download-difficult"));
-				} else {
-					$(".download-album.media-only.videos.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
-				}
-
-				if (videosSize >= bigZipSize) {
-					// propose to download the resized video
-					// in thisAlbum.sizesOfSubTree[iSize] all the reduced sizes have the same value, corresponding to the transcoded videos
-					let reducedSize = env.options.reduced_sizes[0];
-					if (thisAlbum.sizesOfSubTree[reducedSize].videos < bigZipSize) {
-						$(".download-album.media-only.videos.sized").append(", " + util._t(".title-transcoded") + ": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].videos));
-						// $(".download-album.everything.videos.sized").attr("size", reducedSize);
-						$(".download-album.media-only.videos.sized").removeClass("hidden");
 					}
 				}
 			}
@@ -1176,25 +1251,28 @@
 			// let numPasswords = thisAlbum.numPasswords();
 
 			if (thisAlbum.hasVeiledProtectedContent()) {
-				$(".protection").show();
-				$("#padlock").off('click').on(
-					'click',
+				// $(".protection").show();
+				$("ul#right-menu li.protection").removeClass("hidden");
+				$("#padlock").off("click").on(
+					"click",
 					function() {
 						$("#protected-content-unveil")[0].click();
 					}
 				);
 			} else {
-				$(".protection").hide();
+				// $(".protection").hide();
+				$("ul#right-menu li.protection").addClass("hidden");
 			}
 		} else {
-			$(".protection").hide();
+			// $(".protection").hide();
+			$("ul#right-menu li.protection").addClass("hidden");
 		}
 
 		////////////////// ACCORDION EFFECT //////////////////////////////
 
 		// accordion effect on right menu
-		$("#right-menu li.expandable").off('click').on(
-			'click',
+		$("#right-menu li.expandable").off("click").on(
+			"click",
 			function() {
 				$("#right-menu li ul").addClass("hidden");
 				$("#right-menu li span.caption").removeClass("expanded");
@@ -1230,7 +1308,7 @@
 	};
 
 	Functions.prototype.setOptions = function() {
-		$("body").css("background-color", env.options.background_color);
+		$("body, .leaflet-popup-content-wrapper").css("background-color", env.options.background_color);
 
 		$(".title").css("font-size", env.options.title_font_size);
 		$(".title-anchor").css("color", env.options.title_color);
@@ -1341,11 +1419,11 @@
 
 	Album.prototype.isUndefinedOrFalse = function(property) {
 		return ! this.hasOwnProperty(property) || ! this[property];
-	}
+	};
 
 	Album.prototype.isUndefinedOrTrue = function(property) {
 		return ! this.hasOwnProperty(property) || this[property];
-	}
+	};
 
 	// Album.prototype.isTrue = function(property) {
 	// 	return ! this.isUndefinedOrFalse(property);
@@ -1589,7 +1667,7 @@
 							env.options.byMapStringWithTrailingSeparator = env.options.by_map_string + env.options.cache_folder_separator;
 
 							if (env.options.request_password_email) {
-								$("#request-password").on('click', util.showPasswordRequestForm);
+								$("#request-password").off("click").on("click", util.showPasswordRequestForm);
 								$("#password-request-form").submit(
 									function() {
 										let name = $("#form-name").val().trim();

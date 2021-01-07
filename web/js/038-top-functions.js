@@ -730,8 +730,8 @@
 
 
 						if (env.isMobile.any()) {
-							$(".dots").off('click').on(
-								'click',
+							$(".dots").off("click").on(
+								"click",
 								function(ev) {
 									if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 										$(".dots-surroundings").hide();
@@ -814,8 +814,8 @@
 						f.setOptions();
 
 						// activate the map popup trigger in the title
-						$(".map-popup-trigger").off('click').on(
-							'click',
+						$(".map-popup-trigger").off("click").on(
+							"click",
 							function(ev, from) {
 								// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
 								env.selectorClickedToOpenTheMap = ".map-popup-trigger";
@@ -827,8 +827,8 @@
 							}
 						);
 
-						$(".map-popup-trigger-double").off('click').on(
-							'click',
+						$(".map-popup-trigger-double").off("click").on(
+							"click",
 							function(ev, from) {
 								// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
 								env.selectorClickedToOpenTheMap = ".map-popup-trigger-double";
@@ -850,8 +850,8 @@
 							$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 						}
 
-						$('.modal-close').on(
-							'click',
+						$('.modal-close').off("click").on(
+							"click",
 							function() {
 								$("#my-modal.modal").css("display", "none");
 								// env.popupRefreshType = "previousAlbum";
@@ -982,8 +982,8 @@
 				titleSelector = "#unselect-single-media";
 			}
 			$("#media-select-box .select-box").attr("title", util._t(titleSelector)).attr("alt", util._t("#selector")).attr("src", selectSrc);
-			$("#media-select-box").off('click').on(
-				'click',
+			$("#media-select-box").off("click").on(
+				"click",
 				{singleMedia: self, clickedSelector: "#media-select-box"},
 				function(ev) {
 					ev.stopPropagation();
@@ -1271,15 +1271,15 @@
 
 					mediaBoxInnerElement.off('mousewheel');
 					if (self.mimeType.indexOf("image/") === 0)
-						mediaBoxInnerElement.on('mousewheel', pS.swipeOnWheel);
+						mediaBoxInnerElement.off("mousewheel").on("mousewheel", pS.swipeOnWheel);
 
-					$(".media-box#center .media-box-inner .media-bar").on(
-						'click',
+					$(".media-box#center .media-box-inner .media-bar").off("click").on(
+						"click",
 						function(ev) {
 							ev.stopPropagation();
 						}
-					).on(
-						'contextmenu',
+					).off("contextmenu").on(
+						"contextmenu",
 						function(ev) {
 							ev.stopPropagation();
 						}
@@ -1292,8 +1292,8 @@
 
 						$("#next").show();
 						$("#prev").show();
-						mediaBoxInnerElement.css('cursor', '').on(
-							'contextmenu',
+						mediaBoxInnerElement.css('cursor', '').off("contextmenu").on(
+							"contextmenu",
 							function(ev) {
 								if (! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 									ev.preventDefault();
@@ -1307,14 +1307,14 @@
 							}
 						);
 
-						$("#prev").on('click', function(ev) {
+						$("#prev").off("click").on("click", function(ev) {
 							if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 								env.prevMedia.swipeRight();
 								return false;
 							}
 							return true;
 						});
-						$("#next").on('click', function(ev) {
+						$("#next").off("click").on("click", function(ev) {
 							if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 								env.nextMedia.swipeLeft();
 								return false;
@@ -1330,8 +1330,8 @@
 				var originalMediaPath = encodeURI(self.originalMediaPath());
 				$(".media-box#" + id + " .original-link").attr("target", "_blank").attr("href", originalMediaPath);
 				if (self.hasGpsData()) {
-					$(".media-box#" + id + " .menu-map-link").on(
-						'click',
+					$(".media-box#" + id + " .menu-map-link").off("click").on(
+						"click",
 						function() {
 							$(".map-popup-trigger")[0].click();
 						}
@@ -1346,19 +1346,19 @@
 				}
 
 				if (id === "center") {
-					$(".media-box#center .metadata-show").off('click').on('click', f.toggleMetadataFromMouse);
-					$(".media-box#center .metadata-hide").off('click').on('click', f.toggleMetadataFromMouse);
-					$(".media-box#center .metadata").off('click').on('click', f.toggleMetadataFromMouse);
-					$(".media-box#center .fullscreen").off('click').on('click', TopFunctions.goFullscreenFromMouse);
+					$(".media-box#center .metadata-show").off("click").on("click", f.toggleMetadataFromMouse);
+					$(".media-box#center .metadata-hide").off("click").on("click", f.toggleMetadataFromMouse);
+					$(".media-box#center .metadata").off("click").on("click", f.toggleMetadataFromMouse);
+					$(".media-box#center .fullscreen").off("click").on("click", TopFunctions.goFullscreenFromMouse);
 
 					// set social buttons events
 					if (env.currentMedia.mimeType.indexOf("video/") === 0)
-						$("#media-center").on("loadstart", f.socialButtons);
+						$("#media-center").off("loadstart").on("loadstart", f.socialButtons);
 					else
-						$("#media-center").on("load", f.socialButtons);
+						$("#media-center").off("load").on("load", f.socialButtons);
 				}
 
-				$(".media-box#" + id + " .metadata tr.gps").off('click');
+				$(".media-box#" + id + " .metadata tr.gps").off("click");
 				text = "<table>";
 				// Here we keep only the technical metadata
 				if (self.date !== undefined)
@@ -1415,8 +1415,8 @@
 				text += "</table>";
 				$(".media-box#" + id + " .metadata").html(text);
 				var linkTitle = util._t('#show-map');
-				$(".media-box#" + id + " .metadata tr.gps").attr("title", linkTitle).on(
-					'click',
+				$(".media-box#" + id + " .metadata tr.gps").attr("title", linkTitle).off("click").on(
+					"click",
 					function() {
 						$(".map-popup-trigger")[0].click();
 					}
@@ -1547,7 +1547,7 @@
 		f.setOptions();
 		if (env.currentMedia === null && env.currentAlbum !== null && ! env.currentAlbum.subalbums.length) {
 			// no subalbums: set social buttons href's when all the stuff is loaded
-			$(window).on("load", f.socialButtons());
+			$(window).off("load").on("load", f.socialButtons());
 		} else {
 			// subalbums are present, we have to wait when all the random thumbnails will be loaded
 		}
@@ -1558,39 +1558,39 @@
 
 		var self = this;
 
-		$("li.sort").off('click');
+		$("li.sort").off("click");
 		$("li.album-sort.by-date").on(
-			'click',
+			"click",
 			function(ev) {
 				self.sortSubalbumsByDate(ev);
 			}
 		);
 		$("li.album-sort.by-name").on(
-			'click',
+			"click",
 			function(ev) {
 				self.sortSubalbumsByName(ev);
 			}
 		);
 		$("li.album-sort.reverse").on(
-			'click',
+			"click",
 			function(ev) {
 				self.sortSubalbumsReverse(ev);
 			}
 		);
 		$("li.media-sort.by-date").on(
-			'click',
+			"click",
 			function(ev) {
 				self.sortMediaByDate(ev);
 			}
 		);
 		$("li.media-sort.by-name").on(
-			'click',
+			"click",
 			function(ev) {
 				self.sortMediaByName(ev);
 			}
 		);
 		$("li.media-sort.reverse").on(
-			'click',
+			"click",
 			function(ev) {
 				self.sortMediaReverse(ev);
 			}
@@ -1651,10 +1651,15 @@
 			// f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			if (this.cacheBase === env.currentAlbum.cacheBase) {
-				TopFunctions.showAlbum("refreshMedia");
-			} else {
-				this.showMedia(true);
+			// if (this.isEqual(env.currentAlbum)) {
+			this.showMedia();
+			// } else {
+			// 	this.showMedia(true);
+			// 	map.updatePopup();
+			// }
+			if (util.isPopup()) {
+				env.mapAlbum.sortAlbumsMedia();
+				env.mapAlbum.showMedia(true);
 				map.updatePopup();
 			}
 		}
@@ -1672,12 +1677,17 @@
 			// f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			if (this.cacheBase === env.currentAlbum.cacheBase) {
-				TopFunctions.showAlbum("refreshMedia");
-			} else {
-				this.showMedia(true);
+			// if (this.isEqual(env.currentAlbum)) {
+			// 	TopFunctions.showAlbum("refreshMedia");
+			// } else {
+			this.showMedia();
+
+			if (util.isPopup()) {
+				env.mapAlbum.sortAlbumsMedia();
+				env.mapAlbum.showMedia(true);
 				map.updatePopup();
 			}
+			// }
 		}
 		return false;
 	};
@@ -1688,12 +1698,17 @@
 			f.setBooleanCookie("mediaReverseSortRequested", env.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			if (this.cacheBase === env.currentAlbum.cacheBase) {
-				TopFunctions.showAlbum("refreshMedia");
-			} else {
-				this.showMedia(true);
+			// if (this.cacheBase === env.currentAlbum.cacheBase) {
+			// 	TopFunctions.showAlbum("refreshMedia");
+			// } else {
+			this.showMedia();
+
+			if (util.isPopup()) {
+				env.mapAlbum.sortAlbumsMedia();
+				env.mapAlbum.showMedia(true);
 				map.updatePopup();
 			}
+			// }
 		}
 		return false;
 	};
@@ -1854,6 +1869,11 @@
 			} else {
 				TopFunctions.showAlbum("refreshSubalbums");
 				env.currentAlbum.showMedia();
+
+				if (util.isPopup()) {
+					env.mapAlbum.showMedia(true);
+					map.updatePopup();
+				}
 			}
 		}
 		return false;
@@ -1891,6 +1911,11 @@
 			} else {
 				TopFunctions.showAlbum("refreshSubalbums");
 				env.currentAlbum.showMedia();
+
+				if (util.isPopup()) {
+					env.mapAlbum.showMedia(true);
+					map.updatePopup();
+				}
 			}
 		}
 		return false;
@@ -1919,7 +1944,7 @@
 			if (env.currentAlbum.subalbums.length > 1)
 				TopFunctions.showAlbum("refreshSubalbums");
 			if (env.currentAlbum.numsMedia.imagesAndVideosTotal() > 1)
-				env.currentAlbum.showMedia(true);
+				env.currentAlbum.showMedia();
 
 			if (util.isPopup()) {
 				env.mapAlbum.showMedia(true);
@@ -1954,7 +1979,7 @@
 			env.options.show_media_names_below_thumbs = ! env.options.show_media_names_below_thumbs;
 			f.setBooleanCookie("showMediaNamesBelowThumbs", env.options.show_media_names_below_thumbs);
 			f.updateMenu();
-			env.currentAlbum.showMedia(true);
+			env.currentAlbum.showMedia();
 
 			if (util.isPopup()) {
 				env.mapAlbum.showMedia(true);
@@ -1979,7 +2004,7 @@
 			env.options.media_thumb_type = env.options.media_thumb_type === "square" ? "fixed_height" : "square";
 			f.setCookie("mediaThumbType", env.options.media_thumb_type);
 			f.updateMenu();
-			env.currentAlbum.showMedia(true);
+			env.currentAlbum.showMedia();
 
 			if (util.isPopup()) {
 				env.mapAlbum.showMedia(true);
@@ -2021,7 +2046,7 @@
 			thumbsSelector = "#thumbs";
 			lazyClass = "lazyload-media";
 		}
-		$(thumbsSelector).empty()
+		$(thumbsSelector).empty();
 
 		//
 		// media loop
@@ -2216,8 +2241,8 @@
 			}
 
 			if (! inPopup && ithMedia.hasGpsData()) {
-				$("#media-map-link-" + iMedia).off('click').on(
-					'click',
+				$("#media-map-link-" + iMedia).off("click").on(
+					"click",
 					{singleMedia: ithMedia, album: this, clickedSelector: "#media-map-link-" + iMedia},
 					function(ev, from) {
 						// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
@@ -2243,8 +2268,8 @@
 				$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 			}
 
-			$("#" + mediaSelectBoxSelectorPart + iMedia).off('click').on(
-				'click',
+			$("#" + mediaSelectBoxSelectorPart + iMedia).off("click").on(
+				"click",
 				{media: ithMedia, clickedSelector: "#" + mediaSelectBoxSelectorPart + iMedia},
 				function(ev) {
 					ev.stopPropagation();
@@ -2459,7 +2484,7 @@
 				} else {
 					$("#show-hide-them:hover").css("color", "inherit").css("cursor", "auto");
 				}
-				$("#show-hide-them").on(
+				$("#show-hide-them").off("click").on(
 					"click",
 					function() {
 						if (isShowing) {
@@ -2711,8 +2736,8 @@
 									$("#" + captionId + " .description").attr("title", Utilities.stripHtmlAndReplaceEntities(ithSubalbum.description));
 
 								if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
-									$("#subalbum-map-link-" + iSubalbum).off('click').on(
-										'click',
+									$("#subalbum-map-link-" + iSubalbum).off("click").on(
+										"click",
 										{ithSubalbum: ithSubalbum},
 										function(ev, from) {
 											// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
@@ -2744,7 +2769,7 @@
 									)
 								) {
 									// execution enters here if we are using index.php
-									$("#" + id).off("auxclick").on(
+									$("#" + id).off("auxclick").off("auxclick").on(
 										"auxclick",
 										// {subfolderHash: subfolderHash},
 										function (ev) {
@@ -2757,8 +2782,8 @@
 								}
 
 								$("#subalbum-select-box-" + iSubalbum + " .select-box").show();
-								$("#subalbum-select-box-" + iSubalbum).off('click').on(
-									'click',
+								$("#subalbum-select-box-" + iSubalbum).off("click").on(
+									"click",
 									function(ev) {
 										ev.stopPropagation();
 										ev.preventDefault();
@@ -2997,7 +3022,7 @@
 			var clickHistoryElement = clickHistory[iClick];
 			var promise = new Promise(
 				function(resolve_playClickElement) {
-					MapFunctions.mymap.setView(clickHistoryElement.center, clickHistoryElement.zoom, {animate: false});
+					env.mymap.setView(clickHistoryElement.center, clickHistoryElement.zoom, {animate: false});
 					ev = {
 						latlng: clickHistoryElement.latlng,
 						originalEvent: {
@@ -3031,12 +3056,12 @@
 		// end of auxiliary function
 
 		var i;
-		MapFunctions.titleWrapper1 =
-			'<div id="popup-photo-count" style="max-width: ' + MapFunctions.maxWidthForPopupContent + 'px;">' +
-				'<span id="popup-photo-count-number"></span> ' + util._t("#images") +
-			'</div>' +
-			'<div id="popup-images-wrapper">';
-		MapFunctions.titleWrapper2 = '</div>';
+		env.titleWrapper =
+			"<div id='popup-photo-count' style='max-width: " + env.maxWidthForPopupContent + "px;'>" +
+				"<span id='popup-photo-count-number'></span> " + util._t("#images") +
+			"</div>" +
+			"<div id='popup-images-wrapper'>" +
+			"</div>";
 
 		$("#my-modal.modal").css("display", "block");
 		if (env.isMobile.any()) {
@@ -3051,7 +3076,7 @@
 			// maximum OSM zoom is 19
 			const maxOSMZoom = 19;
 			// calculate the center
-			var center = MapFunctions.averagePosition(this);
+			var center = this.averagePosition();
 
 			var br = '<br />';
 			// var thumbAndCaptionHeight = 0;
@@ -3093,8 +3118,8 @@
 					icon: pruneCluster.BuildLeafletClusterIcon(cluster)
 				});
 				m._leafletClusterBounds = cluster.bounds;
-				m.on(
-					'click',
+				m.off("click").on(
+					"click",
 					function(ev) {
 						var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, pruneCluster.Cluster._clusters);
 						updatePromise.then(
@@ -3139,9 +3164,9 @@
 			};
 
 			if (mapIsInitialized)
-				MapFunctions.mymap.remove();
+				env.mymap.remove();
 
-			MapFunctions.mymap = L.map('mapdiv', {'closePopupOnClick': false}).setView([center.lat, center.lng], zoom);
+			env.mymap = L.map('mapdiv', {'closePopupOnClick': false}).setView([center.lat, center.lng], zoom);
 			$(".map-container > div").css("min-height", (env.windowHeight -50).toString() + "px");
 			mapIsInitialized = true;
 
@@ -3153,8 +3178,8 @@
 					maxNativeZoom: maxOSMZoom,
 					id: 'mapbox.streets'
 				}
-			).addTo(MapFunctions.mymap);
-			L.control.scale().addTo(MapFunctions.mymap);
+			).addTo(env.mymap);
+			L.control.scale().addTo(env.mymap);
 
 			var cacheBases;
 			for (var iPoint = 0; iPoint < this.length; iPoint ++) {
@@ -3179,13 +3204,13 @@
 				markers[iPoint].weight = this[iPoint].mediaList.length;
 			}
 
-			MapFunctions.mymap.addLayer(pruneCluster);
+			env.mymap.addLayer(pruneCluster);
 
 			/**
 			* Add a click handler to the map to render the popup.
 			*/
-			MapFunctions.mymap.on(
-				'click',
+			env.mymap.off("click").on(
+				"click",
 				function(ev) {
 					var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, pruneCluster.Cluster._clusters);
 					updatePromise.then(
@@ -3213,21 +3238,21 @@
 	};
 
 	TopFunctions.prepareAndDoPopupUpdate = function() {
-		MapFunctions.calculatePopupSizes();
+		map.calculatePopupSizes();
 
-		if (MapFunctions.popup) {
-			MapFunctions.popup.remove();
+		if (env.popup) {
+			env.popup.remove();
 			$(".leaflet-popup").remove();
 		}
-		MapFunctions.popup = L.popup(
+		env.popup = L.popup(
 			{
-				maxWidth: MapFunctions.maxWidthForPopupContent,
-				maxHeight: MapFunctions.maxHeightForPopupContent,
+				maxWidth: env.maxWidthForPopupContent,
+				maxHeight: env.maxHeightForPopupContent,
 				autoPan: false
 			}
-		).setContent(MapFunctions.titleWrapper1 + MapFunctions.titleWrapper2)
-		.setLatLng(MapFunctions.averagePosition(env.mapAlbum.positionsAndMediaInTree))
-		.openOn(MapFunctions.mymap);
+		).setContent(env.titleWrapper)
+		.setLatLng(env.mapAlbum.positionsAndMediaInTree.averagePosition())
+		.openOn(env.mymap);
 
 		map.addPopupMover();
 
@@ -3255,8 +3280,8 @@
 							latlng: evt.latlng,
 							shiftKey: evt.originalEvent.shiftKey,
 							ctrlKey: evt.originalEvent.ctrlKey,
-							zoom: MapFunctions.mymap.getZoom(),
-							center: MapFunctions.mymap.getCenter()
+							zoom: env.mymap.getZoom(),
+							center: env.mymap.getCenter()
 					};
 				}
 
@@ -3347,7 +3372,7 @@
 
 						if (! env.mapAlbum.numsMedia.imagesAndVideosTotal()) {
 							$("#loading").hide();
-							MapFunctions.popup.remove();
+							env.popup.remove();
 						} else {
 							endPreparingMapAlbumAndUpdatePopup();
 						}
@@ -3428,7 +3453,8 @@
 						// rootMapAlbum.numPositionsInTree += env.mapAlbum.numPositionsInTree;
 						// rootMapAlbum.numsProtectedMediaInSubTree[","].sum(env.mapAlbum.numsProtectedMediaInSubTree[","]);
 
-						env.mapAlbum.bindSortEvents();
+						// do not uncomment the following line: bindings have already been set for currentAlbum
+						// env.mapAlbum.bindSortEvents();
 					}
 					resolve_updateMapAlbumOnMapClick();
 				}
