@@ -1,3 +1,7 @@
+* align media in popup centered
+* make popup background dark
+* bug fixes
+
 ### version v4.9.19 (Jan 7, 2021)
 
 * bug fixes
