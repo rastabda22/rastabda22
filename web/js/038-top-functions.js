@@ -2911,7 +2911,7 @@
 
 					TopFunctions.showAlbum("refreshSubalbums");
 
-					if (util.isMap()) {
+					if (util.isMap() || util.isPopup()) {
 						// the map must be generated again including the points that only carry protected content
 						env.mapRefreshType = "resize";
 
