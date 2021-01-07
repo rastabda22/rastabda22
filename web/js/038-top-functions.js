@@ -3076,7 +3076,7 @@
 			// maximum OSM zoom is 19
 			const maxOSMZoom = 19;
 			// calculate the center
-			var center = MapFunctions.averagePosition(this);
+			var center = map.averagePosition(this);
 
 			var br = '<br />';
 			// var thumbAndCaptionHeight = 0;
@@ -3238,7 +3238,7 @@
 	};
 
 	TopFunctions.prepareAndDoPopupUpdate = function() {
-		MapFunctions.calculatePopupSizes();
+		map.calculatePopupSizes();
 
 		if (MapFunctions.popup) {
 			MapFunctions.popup.remove();
@@ -3251,7 +3251,7 @@
 				autoPan: false
 			}
 		).setContent(MapFunctions.titleWrapper1 + MapFunctions.titleWrapper2)
-		.setLatLng(MapFunctions.averagePosition(env.mapAlbum.positionsAndMediaInTree))
+		.setLatLng(map.averagePosition(env.mapAlbum.positionsAndMediaInTree))
 		.openOn(MapFunctions.mymap);
 
 		map.addPopupMover();
