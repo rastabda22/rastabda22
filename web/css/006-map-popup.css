@@ -182,7 +182,7 @@
 #mapdiv .leaflet-popup.SE::after {
 	top: 0;
   left: 40px;
-	border-bottom-color: white;
+	border-bottom-color: black;
 	border-top: 0;
 	margin-left: -18px;
 	margin-top: -18px;
@@ -198,7 +198,7 @@
 #mapdiv .leaflet-popup.NW::after {
   bottom: 0;
   right: 20px;
-	border-top-color: white;
+	border-top-color: black;
 	border-bottom: 0;
 	margin-bottom: -18px;
   border-width: 18px 4px 0px 4px;
