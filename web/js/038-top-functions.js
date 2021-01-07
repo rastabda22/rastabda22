@@ -1746,9 +1746,12 @@
 		}
 		if (! $("#thumbs").children().length)
 			$("#album-view").addClass("media-view-container");
-		TopFunctions.showAlbum("refreshMedia");
-		// else
-		// 	TopFunctions.showAlbum(true);
+		env.currentAlbum.showMedia();
+		if (util.isPopup()) {
+			env.mapAlbum.showMedia(true);
+			map.updatePopup();
+		}
+
 		// 	env.currentAlbum.prepareForShowing(env.currentMediaIndex);
 		if (env.currentMedia !== null) {
 			let event = {data: {}};
@@ -1869,11 +1872,11 @@
 			} else {
 				TopFunctions.showAlbum("refreshSubalbums");
 				env.currentAlbum.showMedia();
+			}
 
-				if (util.isPopup()) {
-					env.mapAlbum.showMedia(true);
-					map.updatePopup();
-				}
+			if (util.isPopup()) {
+				env.mapAlbum.showMedia(true);
+				map.updatePopup();
 			}
 		}
 		return false;
@@ -1911,11 +1914,11 @@
 			} else {
 				TopFunctions.showAlbum("refreshSubalbums");
 				env.currentAlbum.showMedia();
+			}
 
-				if (util.isPopup()) {
-					env.mapAlbum.showMedia(true);
-					map.updatePopup();
-				}
+			if (util.isPopup()) {
+				env.mapAlbum.showMedia(true);
+				map.updatePopup();
 			}
 		}
 		return false;
@@ -1941,14 +1944,14 @@
 			f.updateMenu();
 			// if (env.currentAlbum.subalbums.length > 1 && env.currentAlbum.numsMedia.imagesAndVideosTotal() > 1)
 			// 	TopFunctions.showAlbum("refreshBoth");
-			if (env.currentAlbum.subalbums.length > 1)
-				TopFunctions.showAlbum("refreshSubalbums");
-			if (env.currentAlbum.numsMedia.imagesAndVideosTotal() > 1)
-				env.currentAlbum.showMedia();
+			env.currentAlbum.showMedia();
 
 			if (util.isPopup()) {
 				env.mapAlbum.showMedia(true);
 				map.updatePopup();
+			}
+			if (env.currentAlbum.subalbums.length > 1) {
+				TopFunctions.showAlbum("refreshSubalbums");
 			}
 		}
 		return false;
