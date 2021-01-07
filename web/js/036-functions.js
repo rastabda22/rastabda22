@@ -236,7 +236,7 @@
 
 		// bind the click events
 
-		$("#folders-view:not(.hidden):not(.selected)").on(
+		$("#folders-view:not(.hidden):not(.selected)").off("click").on(
 			"click",
 			function changeToFoldersView() {
 				TopFunctions.showBrowsingModeMessage("#folders-browsing");
@@ -254,7 +254,7 @@
 			}
 		);
 
-		$("#by-date-view:not(.hidden):not(.selected)").on(
+		$("#by-date-view:not(.hidden):not(.selected)").off("click").on(
 			"click",
 			function changeToByDateView() {
 				TopFunctions.showBrowsingModeMessage("#by-date-browsing");
@@ -272,7 +272,7 @@
 			}
 		);
 
-		$("#by-gps-view:not(.hidden):not(.selected)").on(
+		$("#by-gps-view:not(.hidden):not(.selected)").off("click").on(
 			"click",
 			function changeToByGpsView() {
 				TopFunctions.showBrowsingModeMessage("#by-gps-browsing");
@@ -290,7 +290,7 @@
 			}
 		);
 
-		$("#by-map-view:not(.hidden):not(.selected)").on(
+		$("#by-map-view:not(.hidden):not(.selected)").off("click").on(
 			"click",
 			function changeToByMapView() {
 				TopFunctions.showBrowsingModeMessage("#by-map-browsing");
@@ -303,7 +303,7 @@
 			}
 		);
 
-		$("#by-search-view:not(.hidden):not(.selected)").on(
+		$("#by-search-view:not(.hidden):not(.selected)").off("click").on(
 			"click",
 			function changeToBySearchView() {
 				TopFunctions.showBrowsingModeMessage("#by-search-browsing");
@@ -323,7 +323,7 @@
 		);
 
 		// WARNING: the ":not(.hidden)" is missing intentionally, in order to permit to trigger a click even if the menu item isn't shown
-		$("#by-selection-view:not(.selected)").on(
+		$("#by-selection-view:not(.selected)").off("click").on(
 			"click",
 			function changeToBySelectionView() {
 				TopFunctions.showBrowsingModeMessage("#by-selection-browsing");
@@ -394,7 +394,7 @@
 			if (util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || isPopup) {
 				$("ul#right-menu li#album-search").addClass("dimmed").off("click");
 			} else {
-				$("ul#right-menu li#album-search").removeClass("dimmed").off("click").on('click', util.toggleCurrentAbumSearch);
+				$("ul#right-menu li#album-search").removeClass("dimmed").off("click").on("click", util.toggleCurrentAbumSearch);
 				let albumNamePromise = Functions.getAlbumNameFromCacheBase(env.options.cache_base_to_search_in);
 				albumNamePromise.then(
 					function(path) {
@@ -855,7 +855,7 @@
 				}
 			);
 
-			$(".select.global-reset:not(.hidden)").on(
+			$(".select.global-reset:not(.hidden)").off("click").on(
 				"click",
 				function() {
 					$("#working").show();
@@ -872,7 +872,7 @@
 				}
 			);
 
-			$(".select.nothing:not(.hidden)").on(
+			$(".select.nothing:not(.hidden)").off("click").on(
 				"click",
 				function() {
 					$("#working").show();
@@ -894,7 +894,7 @@
 				}
 			);
 
-			$(".select.no-albums:not(.hidden)").on(
+			$(".select.no-albums:not(.hidden)").off("click").on(
 				"click",
 				function() {
 					$("#working").show();
@@ -910,7 +910,7 @@
 				}
 			);
 
-			$(".select.no-media:not(.hidden)").on(
+			$(".select.no-media:not(.hidden)").off("click").on(
 				"click",
 				function() {
 					var albumToUse;
@@ -923,7 +923,7 @@
 				}
 			);
 
-			$(".select.go-to-selected:not(.hidden)").on(
+			$(".select.go-to-selected:not(.hidden)").off("click").on(
 				"click",
 				function() {
 					$("#by-selection-view")[0].click();
@@ -1231,8 +1231,8 @@
 			if (thisAlbum.hasVeiledProtectedContent()) {
 				// $(".protection").show();
 				$("ul#right-menu li.protection").removeClass("hidden");
-				$("#padlock").off('click').on(
-					'click',
+				$("#padlock").off("click").on(
+					"click",
 					function() {
 						$("#protected-content-unveil")[0].click();
 					}
@@ -1249,8 +1249,8 @@
 		////////////////// ACCORDION EFFECT //////////////////////////////
 
 		// accordion effect on right menu
-		$("#right-menu li.expandable").off('click').on(
-			'click',
+		$("#right-menu li.expandable").off("click").on(
+			"click",
 			function() {
 				$("#right-menu li ul").addClass("hidden");
 				$("#right-menu li span.caption").removeClass("expanded");
@@ -1645,7 +1645,7 @@
 							env.options.byMapStringWithTrailingSeparator = env.options.by_map_string + env.options.cache_folder_separator;
 
 							if (env.options.request_password_email) {
-								$("#request-password").on('click', util.showPasswordRequestForm);
+								$("#request-password").off("click").on("click", util.showPasswordRequestForm);
 								$("#password-request-form").submit(
 									function() {
 										let name = $("#form-name").val().trim();

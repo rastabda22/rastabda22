@@ -2942,12 +2942,18 @@
 			$(".media-box .links").css("display", "inline").css("opacity", 0.5).stop().fadeTo("slow", 0.25);
 		} else {
 			$("#media-view").off();
-			$("#media-view").on('mouseenter', function() {
-				$(".media-box .links").stop().fadeTo("slow", 0.50).css("display", "inline");
-			});
-			$("#media-view").on('mouseleave', function() {
-				$(".media-box .links").stop().fadeOut("slow");
-			});
+			$("#media-view").off('mouseenter').on(
+				'mouseenter',
+				function() {
+					$(".media-box .links").stop().fadeTo("slow", 0.50).css("display", "inline");
+				}
+			);
+			$("#media-view").off('mouseleave').on(
+				'mouseleave',
+				function() {
+					$(".media-box .links").stop().fadeOut("slow");
+				}
+			);
 		}
 	};
 
@@ -2956,14 +2962,14 @@
 			$("#next, #prev").css("display", "inline").css("opacity", 0.5);
 		} else {
 			$("#next, #prev").off('mouseenter mouseleave');
-			$("#next, #prev").on(
+			$("#next, #prev").off('mouseenter').on(
 				'mouseenter',
 				function() {
 					$(this).stop().fadeTo("fast", 1);
 				}
 			);
 
-			$("#next, #prev").on(
+			$("#next, #prev").off('mouseleave').on(
 				'mouseleave',
 				function() {
 					$(this).stop().fadeTo("fast", 0.4);
@@ -3131,8 +3137,8 @@
 		$("#auth-text").stop().fadeIn(1000);
 		$("#password").focus();
 
-		$('#auth-close').off('click').on(
-			'click',
+		$('#auth-close').off("click").on(
+			"click",
 			function() {
 				$("#auth-text").hide();
 				$("#album-view, #media-view, #my-modal").css("opacity", "");

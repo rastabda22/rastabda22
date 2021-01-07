@@ -229,7 +229,7 @@
 		$("#popup-photo-count-number").html(env.mapAlbum.numsMedia.imagesAndVideosTotal());
 		$("#popup-photo-count").css("max-width", env.maxWidthForPopupContent);
 		// add the click event for showing the photos in the popup as an album
-		$("#popup-photo-count").on(
+		$("#popup-photo-count").off("click").on(
 			"click",
 			function() {
 				$('.leaflet-popup-close-button')[0].click();
@@ -263,8 +263,8 @@
 	};
 
 	MapFunctions.addClickToPopupPhoto = function(element) {
-		element.parent().parent().on(
-			'click',
+		element.parent().parent().off("click").on(
+			"click",
 			function(ev) {
 				ev.stopPropagation();
 				ev.preventDefault();
@@ -294,8 +294,8 @@
 
 		var mediaBoxSelectElement = element.siblings('a');
 		var id = mediaBoxSelectElement.attr("id");
-		mediaBoxSelectElement.on(
-			'click',
+		mediaBoxSelectElement.off("click").on(
+			"click",
 			{id: id},
 			function(ev) {
 				ev.stopPropagation();
@@ -357,7 +357,7 @@
 		$(".popup-mover").remove();
 		$(".leaflet-popup-close-button").after('<a id="popup-mover" class="popup-mover"></a>');
 		// add the corresponding listener
-		$(".popup-mover").on(
+		$(".popup-mover").off("click").on(
 			"click",
 			function() {
 				var currentIndex = env.options.available_map_popup_positions.findIndex(

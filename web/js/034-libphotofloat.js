@@ -1321,7 +1321,7 @@
 				$(".search-failed").hide();
 				// $("#media-view").removeClass("hidden");
 				// $("ul#right-menu li#album-search").removeClass("hidden");
-				$("ul#right-menu li#any-word").removeClass("dimmed").off('click').on('click', util.toggleAnyWordSearch);
+				$("ul#right-menu li#any-word").removeClass("dimmed").off("click").on("click", util.toggleAnyWordSearch);
 				$("#album-view, #album-view #subalbums, #album-view #thumbs").removeClass("hidden");
 
 				if (albumHash) {

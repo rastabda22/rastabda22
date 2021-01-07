@@ -38,11 +38,11 @@ $(document).ready(function() {
 
 	/* Displays */
 
-	$("#menu-icon").off().on("click", f.toggleMenu);
+	$("#menu-icon").off("click").on("click", f.toggleMenu);
 
 	/* Event listeners */
 
-	$(document).on('keydown', function(e) {
+	$(document).off("keydown").on("keydown", function(e) {
 		var isMap = util.isMap();
 		var isPopup = util.isPopup();
 		var isAuth = $("#auth-text").is(":visible");
@@ -415,7 +415,7 @@ $(document).ready(function() {
 	// $("#pinch-out").on("click", pS.pinchOut);
 
 	// search
-	$('#search-button').on("click", function() {
+	$('#search-button').off("click").on("click", function() {
 		var searchOptions = '';
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 
@@ -531,55 +531,55 @@ $(document).ready(function() {
 		}
 	});
 
-	$("li#inside-words").on('click', util.toggleInsideWordsSearch);
-	$("li#any-word").on('click', util.toggleAnyWordSearch);
-	$("li#case-sensitive").on('click', util.toggleCaseSensitiveSearch);
-	$("li#accent-sensitive").on('click', util.toggleAccentSensitiveSearch);
-	$("li#tags-only").on('click', util.toggleTagsOnlySearch);
-	$("li#album-search").on('click', util.toggleCurrentAbumSearch);
+	$("li#inside-words").off("click").on("click", util.toggleInsideWordsSearch);
+	$("li#any-word").off("click").on("click", util.toggleAnyWordSearch);
+	$("li#case-sensitive").off("click").on("click", util.toggleCaseSensitiveSearch);
+	$("li#accent-sensitive").off("click").on("click", util.toggleAccentSensitiveSearch);
+	$("li#tags-only").off("click").on("click", util.toggleTagsOnlySearch);
+	$("li#album-search").off("click").on("click", util.toggleCurrentAbumSearch);
 
-	$(".download-album.everything.all.full").on(
-		'click',
+	$(".download-album.everything.all.full").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.everything.all.full").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(true);
 			}
 		}
 	);
-	$(".download-album.everything.all.sized").on(
-		'click',
+	$(".download-album.everything.all.sized").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.everything.all.sized").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(true, "all", $(".download-album.everything.all.sized").attr("size"));
 			}
 		}
 	);
-	$(".download-album.everything.images.full").on(
-		'click',
+	$(".download-album.everything.images.full").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.everything.images.full").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(true, "images");
 			}
 		}
 	);
-	$(".download-album.everything.images.sized").on(
-		'click',
+	$(".download-album.everything.images.sized").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.everything.images.sized").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(true, "images", $(".download-album.everything.images.sized").attr("size"));
 			}
 		}
 	);
-	$(".download-album.everything.videos.full").on(
-		'click',
+	$(".download-album.everything.videos.full").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.everything.videos.full").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(true, "videos");
 			}
 		}
 	);
-	$(".download-album.everything.videos.sized").on(
-		'click',
+	$(".download-album.everything.videos.sized").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.everything.videos.sized").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(true, "videos", $(".download-album.everything.videos.sized").attr("size"));
@@ -587,72 +587,71 @@ $(document).ready(function() {
 		}
 	);
 
-	$(".download-album.media-only.all.full").on(
-		'click',
+	$(".download-album.media-only.all.full").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.media-only.all").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(false, "all");
 			}
 		}
 	);
-	$(".download-album.media-only.all.sized").on(
-		'click',
+	$(".download-album.media-only.all.sized").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.media-only.all.sized").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(false, "all", $(".download-album.media-only.all.sized").attr("size"));
 			}
 		}
 	);
-	$(".download-album.media-only.images.full").on(
-		'click',
+	$(".download-album.media-only.images.full").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.media-only.images").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(false, "images");
 			}
 		}
 	);
-	$(".download-album.media-only.images.sized").on(
-		'click',
+	$(".download-album.media-only.images.sized").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.media-only.images.sized").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(false, "images", $(".download-album.media-only.images.sized").attr("size"));
 			}
 		}
 	);
-	$(".download-album.media-only.videos.full").on(
-		'click',
+	$(".download-album.media-only.videos.full").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.media-only.videos").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(false, "videos");
 			}
 		}
 	);
-	$(".download-album.media-only.videos.sized").on(
-		'click',
+	$(".download-album.media-only.videos.sized").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.media-only.videos.sized").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(false, "videos", $(".download-album.media-only.videos.sized").attr("size"));
 			}
 		}
 	);
-	$("#protected-content-unveil").on('click', util.showAuthForm);
+	$("#protected-content-unveil").off("click").on("click", util.showAuthForm);
 
 	// binds the click events to the sort buttons
 
-	$("ul#right-menu li.hide-title").on('click', tF.toggleTitle);
-	$("ul#right-menu li.hide-descriptions").on('click', tF.toggleDescriptions);
-	$("ul#right-menu li.hide-tags").on('click', tF.toggleTags);
-	$("ul#right-menu li.hide-bottom-thumbnails").on('click', tF.toggleBottomThumbnails);
-	$("ul#right-menu li.slide").on('click', tF.toggleSlideMode);
-	$("ul#right-menu li.spaced").on('click', tF.toggleSpacing);
-	$("ul#right-menu li.album-names").on('click', tF.toggleAlbumNames);
-	$("ul#right-menu li.media-count").on('click', tF.toggleMediaCount);
-	$("ul#right-menu li.media-names").on('click', tF.toggleMediaNames);
-	$("ul#right-menu li.square-album-thumbnails").on('click', tF.toggleAlbumsSquare);
-	$("ul#right-menu li.square-media-thumbnails").on('click', tF.toggleMediaSquare);
-	$("ul#right-menu #show-big-albums").on('click', tF.toggleBigAlbumsShow);
-	$("#menu-icon").off();
-	$("#menu-icon").on("click", f.toggleMenu);
+	$("ul#right-menu li.hide-title").off("click").on("click", tF.toggleTitle);
+	$("ul#right-menu li.hide-descriptions").off("click").on("click", tF.toggleDescriptions);
+	$("ul#right-menu li.hide-tags").off("click").on("click", tF.toggleTags);
+	$("ul#right-menu li.hide-bottom-thumbnails").off("click").on("click", tF.toggleBottomThumbnails);
+	$("ul#right-menu li.slide").off("click").on("click", tF.toggleSlideMode);
+	$("ul#right-menu li.spaced").off("click").on("click", tF.toggleSpacing);
+	$("ul#right-menu li.album-names").off("click").on("click", tF.toggleAlbumNames);
+	$("ul#right-menu li.media-count").off("click").on("click", tF.toggleMediaCount);
+	$("ul#right-menu li.media-names").off("click").on("click", tF.toggleMediaNames);
+	$("ul#right-menu li.square-album-thumbnails").off("click").on("click", tF.toggleAlbumsSquare);
+	$("ul#right-menu li.square-media-thumbnails").off("click").on("click", tF.toggleMediaSquare);
+	$("ul#right-menu #show-big-albums").off("click").on("click", tF.toggleBigAlbumsShow);
+	$("#menu-icon").off("click").on("click", f.toggleMenu);
 
 	$("#auth-form").submit(
 		function() {

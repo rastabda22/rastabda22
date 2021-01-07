@@ -215,7 +215,7 @@
 			let scalePromise = env.currentMedia.scale(event);
 			scalePromise.then(
 				function() {
-					$("#media-center").on(
+					$("#media-center").off("load").on(
 						"load",
 						function() {
 							$("#media-center").off("load");
@@ -358,7 +358,7 @@
 			$("#pinch-container").show();
 
 			$("#pinch-in").off("click");
-			$("#pinch-in").on(
+			$("#pinch-in").off("click").on(
 				"click",
 				function(ev) {
 					PinchSwipe.pinchIn(null, null);
@@ -370,7 +370,7 @@
 			if (currentZoom === initialZoom && ! $("#center .title").hasClass("hidden-by-pinch")) {
 				$("#pinch-out").addClass("disabled");
 			} else {
-				$("#pinch-out").on(
+				$("#pinch-out").off("click").on(
 					"click",
 					function(ev) {
 						PinchSwipe.pinchOut(null, null);
@@ -714,7 +714,7 @@
 
 	SingleMedia.prototype.swipeRight = function() {
 		var self = this;
-		$("#media-box-container").on(
+		$("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd').on(
 			'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
 			function() {
 				$("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
@@ -739,7 +739,7 @@
 
 	SingleMedia.prototype.swipeLeft = function() {
 		var self = this;
-		$("#media-box-container").on(
+		$("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd').on(
 			'webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd',
 			function() {
 				$("#media-box-container").off('webkitTransitionEnd oTransitionEnd transitionend msTransitionEnd');
