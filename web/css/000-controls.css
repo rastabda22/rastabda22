@@ -584,6 +584,10 @@ video {
 	color: gray;
 }
 
+.leaflet-popup .thumb-and-caption-container .tag a {
+	color: yellow;
+}
+
 #description-title, #description-tags {
 	position: relative;
 	height: auto;
@@ -724,9 +728,9 @@ video {
 	font-style: italic;
 }
 
-.leaflet-popup .media-name {
-	color: gray !important;
-}
+/* .leaflet-popup .media-name {
+	color: white;
+} */
 
 .media-caption .media-name span {
 	white-space: nowrap;
@@ -741,6 +745,11 @@ video {
 .media-description {
 	font-size: 95%;
 	color: gray;
+}
+
+.leaflet-popup .media-description {
+	color: white;
+	text-align: center;
 }
 
 .album-caption .description {
