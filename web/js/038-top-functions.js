@@ -1651,10 +1651,15 @@
 			// f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			if (this.cacheBase === env.currentAlbum.cacheBase) {
-				TopFunctions.showAlbum("refreshMedia");
-			} else {
-				this.showMedia(true);
+			// if (this.isEqual(env.currentAlbum)) {
+			this.showMedia();
+			// } else {
+			// 	this.showMedia(true);
+			// 	map.updatePopup();
+			// }
+			if (util.isPopup()) {
+				env.mapAlbum.sortAlbumsMedia();
+				env.mapAlbum.showMedia(true);
 				map.updatePopup();
 			}
 		}
@@ -1672,12 +1677,17 @@
 			// f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			if (this.cacheBase === env.currentAlbum.cacheBase) {
-				TopFunctions.showAlbum("refreshMedia");
-			} else {
-				this.showMedia(true);
+			// if (this.isEqual(env.currentAlbum)) {
+			// 	TopFunctions.showAlbum("refreshMedia");
+			// } else {
+			this.showMedia();
+
+			if (util.isPopup()) {
+				env.mapAlbum.sortAlbumsMedia();
+				env.mapAlbum.showMedia(true);
 				map.updatePopup();
 			}
+			// }
 		}
 		return false;
 	};
@@ -1688,12 +1698,17 @@
 			f.setBooleanCookie("mediaReverseSortRequested", env.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			if (this.cacheBase === env.currentAlbum.cacheBase) {
-				TopFunctions.showAlbum("refreshMedia");
-			} else {
-				this.showMedia(true);
+			// if (this.cacheBase === env.currentAlbum.cacheBase) {
+			// 	TopFunctions.showAlbum("refreshMedia");
+			// } else {
+			this.showMedia();
+
+			if (util.isPopup()) {
+				env.mapAlbum.sortAlbumsMedia();
+				env.mapAlbum.showMedia(true);
 				map.updatePopup();
 			}
+			// }
 		}
 		return false;
 	};
@@ -1854,6 +1869,11 @@
 			} else {
 				TopFunctions.showAlbum("refreshSubalbums");
 				env.currentAlbum.showMedia();
+
+				if (util.isPopup()) {
+					env.mapAlbum.showMedia(true);
+					map.updatePopup();
+				}
 			}
 		}
 		return false;
@@ -1891,6 +1911,11 @@
 			} else {
 				TopFunctions.showAlbum("refreshSubalbums");
 				env.currentAlbum.showMedia();
+
+				if (util.isPopup()) {
+					env.mapAlbum.showMedia(true);
+					map.updatePopup();
+				}
 			}
 		}
 		return false;
@@ -1919,7 +1944,7 @@
 			if (env.currentAlbum.subalbums.length > 1)
 				TopFunctions.showAlbum("refreshSubalbums");
 			if (env.currentAlbum.numsMedia.imagesAndVideosTotal() > 1)
-				env.currentAlbum.showMedia(true);
+				env.currentAlbum.showMedia();
 
 			if (util.isPopup()) {
 				env.mapAlbum.showMedia(true);
@@ -1954,7 +1979,7 @@
 			env.options.show_media_names_below_thumbs = ! env.options.show_media_names_below_thumbs;
 			f.setBooleanCookie("showMediaNamesBelowThumbs", env.options.show_media_names_below_thumbs);
 			f.updateMenu();
-			env.currentAlbum.showMedia(true);
+			env.currentAlbum.showMedia();
 
 			if (util.isPopup()) {
 				env.mapAlbum.showMedia(true);
@@ -1979,7 +2004,7 @@
 			env.options.media_thumb_type = env.options.media_thumb_type === "square" ? "fixed_height" : "square";
 			f.setCookie("mediaThumbType", env.options.media_thumb_type);
 			f.updateMenu();
-			env.currentAlbum.showMedia(true);
+			env.currentAlbum.showMedia();
 
 			if (util.isPopup()) {
 				env.mapAlbum.showMedia(true);
@@ -3428,7 +3453,8 @@
 						// rootMapAlbum.numPositionsInTree += env.mapAlbum.numPositionsInTree;
 						// rootMapAlbum.numsProtectedMediaInSubTree[","].sum(env.mapAlbum.numsProtectedMediaInSubTree[","]);
 
-						env.mapAlbum.bindSortEvents();
+						// do not uncomment the following line: bindings have already been set for currentAlbum
+						// env.mapAlbum.bindSortEvents();
 					}
 					resolve_updateMapAlbumOnMapClick();
 				}
