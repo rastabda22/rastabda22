@@ -550,7 +550,7 @@ video {
 	text-align: right;
 }
 
-.album-button-and-caption .album-tags, .thumb-and-caption-container .media-tags  {
+.album-button-and-caption .album-tags, .thumb-and-caption-container .media-tags {
 	text-align: center;
 }
 
@@ -967,7 +967,7 @@ ul#right-menu.expand li a, ul#right-menu.expand li span:not(#padlock):not(#menu-
 	width: 100%;
 }
 
-ul#right-menu.expand ul li:not(.active):hover  {
+ul#right-menu.expand ul li:not(.active):hover {
 	background-color: black !important;
 }
 
@@ -1007,24 +1007,24 @@ ul#right-menu ul li.download-album.active {
 
 /* from https://www.w3schools.com/css/tryit.asp?filename=trycss_buttons_animate3 */
 .button {
-  display: inline-block;
-  padding: 15px 25px;
-  font-size: 24px;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  outline: none;
-  color: #fff;
-  background-color: #4CAF50;
-  border: none;
-  border-radius: 15px;
-  box-shadow: 0 9px #999;
+	display: inline-block;
+	padding: 15px 25px;
+	font-size: 24px;
+	cursor: pointer;
+	text-align: center;
+	text-decoration: none;
+	outline: none;
+	color: #fff;
+	background-color: #4CAF50;
+	border: none;
+	border-radius: 15px;
+	box-shadow: 0 9px #999;
 }
 
 .button:hover {background-color: #3e8e41}
 
 .button:active {
-  background-color: #3e8e41;
-  box-shadow: 0 5px #666;
-  transform: translateY(4px);
+	background-color: #3e8e41;
+	box-shadow: 0 5px #666;
+	transform: translateY(4px);
 }
