@@ -310,7 +310,7 @@
 				var imgData = JSON.parse(element.attr("data"));
 				var cachedAlbum = env.cache.getAlbum(imgData.albumCacheBase);
 				var name = imgData.mediaHash.split('/').pop();
-				var matchedMedia = cachedAlbum.media.find(singleMedia => name === singleMedia.cacheBase)
+				var matchedMedia = cachedAlbum.media.find(singleMedia => name === singleMedia.cacheBase);
 				var promise = phFl.getAlbum(matchedMedia.foldersCacheBase, null, {getMedia: true, getPositions: true});
 				promise.then(
 					function(foldersAlbum) {

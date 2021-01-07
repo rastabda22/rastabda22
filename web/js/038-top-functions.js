@@ -2046,7 +2046,7 @@
 			thumbsSelector = "#thumbs";
 			lazyClass = "lazyload-media";
 		}
-		$(thumbsSelector).empty()
+		$(thumbsSelector).empty();
 
 		//
 		// media loop

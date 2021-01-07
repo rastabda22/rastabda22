@@ -422,7 +422,7 @@
 
 				combinations.forEach(
 					function(combination) {
-						codesFromCombination = combination.split('-');
+						var codesFromCombination = combination.split('-');
 						if (typeof codesList === "string")
 							codesFromCombination = [codesFromCombination];
 						codesFromCombination.forEach(
@@ -493,7 +493,7 @@
 				} else {
 					mediaCombinations.forEach(
 						mediaCode => {
-							combination = ',' + mediaCode;
+							var combination = ',' + mediaCode;
 							if (codesSimpleCombinations.indexOf(combination) === -1)
 								codesSimpleCombinations.push(combination);
 						}
@@ -642,8 +642,7 @@
 					positionAndMediaToRemove.mediaList.forEach(
 						function(mediaNameListToRemoveElement) {
 							for (let index = positionAndMedia.mediaList.length - 1; index >= 0; index --) {
-								mediaListElement = positionAndMedia.mediaList[index];
-								if (mediaListElement.isEqual(mediaNameListToRemoveElement)) {
+								if (positionAndMedia.mediaList[index].isEqual(mediaNameListToRemoveElement)) {
 									matchingMediaIndexes.push(index);
 								}
 							}
@@ -1380,7 +1379,7 @@
 				if (self.subalbums !== undefined) {
 					let subalbumsPromises = [];
 					for (let indexSubalbum = self.subalbums.length - 1; indexSubalbum >= 0; indexSubalbum --) {
-						let subalbum = self.subalbums[indexSubalbum];
+						// let subalbum = self.subalbums[indexSubalbum];
 						let removeSubalbumPromise = self.removeSubalbumFromSelection(indexSubalbum, "#subalbum-select-box-" + indexSubalbum);
 						subalbumsPromises.push(removeSubalbumPromise);
 					}
@@ -1559,12 +1558,12 @@
 				var mediaInAlbum = [];
 				if (self.media.length)
 					mediaInAlbum = [... self.media];
-				subalbumsPromises = [];
+				var subalbumsPromises = [];
 				self.subalbums.forEach(
 					function(subalbum) {
 						var subalbumPromise = new Promise(
 							function(resolve_subalbumPromise) {
-								toAlbumPromise = subalbum.toAlbum(null, {getMedia: true, getPositions: true});
+								var toAlbumPromise = subalbum.toAlbum(null, {getMedia: true, getPositions: true});
 								toAlbumPromise.then(
 									function(album) {
 										var collectPromise = album.collectMediaInTree();
@@ -1706,12 +1705,12 @@
 
 							var subalbumIsInsideSelectedAlbums = subalbum.isInsideSelectedAlbums();
 
-							indexInSelection = env.selectionAlbum.subalbums.findIndex(selectedSubalbum => selectedSubalbum.isEqual(subalbum));
+							var indexInSelection = env.selectionAlbum.subalbums.findIndex(selectedSubalbum => selectedSubalbum.isEqual(subalbum));
 							env.selectionAlbum.subalbums.splice(indexInSelection, 1);
 
 							if (subalbum.positionsAndMediaInTree.length) {
 								if (subalbum.numPositionsInTree >  env.selectionAlbum.numPositionsInTree / 10) {
-									newPos = new PositionsAndMedia;
+									let newPos = new PositionsAndMedia();
 									let firstTime = true;
 									env.selectionAlbum.subalbums.forEach(
 										function(selectedAlbum) {
@@ -1759,7 +1758,7 @@
 									window.location.href = Utilities.upHash();
 								} else {
 									// env.currentAlbum.prepareForShowing(-1);
-									$(clickedSelector).parent().parent().parent().remove()
+									$(clickedSelector).parent().parent().parent().remove();
 								}
 							}
 
@@ -1772,7 +1771,7 @@
 	};
 
 	Utilities.addTagLink = function(tag) {
-		hash = "#!/_bs" + env.options.cache_folder_separator +  "t" + env.options.search_options_separator + "o" + env.options.search_options_separator + tag + env.options.cache_folder_separator + env.currentAlbum.cacheBase;
+		var hash = "#!/_bs" + env.options.cache_folder_separator +  "t" + env.options.search_options_separator + "o" + env.options.search_options_separator + tag + env.options.cache_folder_separator + env.currentAlbum.cacheBase;
 		return "<a href='" + hash + "'>" + tag + "</a>";
 	};
 
@@ -2320,7 +2319,7 @@
 
 		var zip = new JSZip();
 		var zipFilename;
-		var basePath = this.path;
+		// var basePath = this.path;
 		zipFilename = env.options.page_title;
 		if (this.isSearch()) {
 			zipFilename += '.' + Utilities._t("#by-search") + " '" + $("#search-field").val() + "'";
@@ -2415,7 +2414,7 @@
 
 					if (everything) {
 						// sort subalbums: regular albums, then by date ones, then by gps ones, then searches, then maps
-						let regulars = [], byDate = []; byGps = [], searches = [], fromMap = [], selections = [];
+						let regulars = [], byDate = [], byGps = [], searches = [], fromMap = [], selections = [];
 						let sortedSubalbums = [];
 						for (let iSubalbum = 0; iSubalbum < album.subalbums.length; iSubalbum ++) {
 							let ithSubalbum = album.subalbums[iSubalbum];
@@ -2801,7 +2800,11 @@
 			let totalThumbsSize = env.options.media_thumb_size * env.currentAlbum.media.length;
 			if (env.options.media_thumb_type === "fixed_height") {
 				let sum = 0;
-				totalThumbsSize = env.currentAlbum.media.forEach(singleMedia => {sum += env.options.media_thumb_size / singleMedia.metadata.size[1] * singleMedia.metadata.size[0]});
+				totalThumbsSize = env.currentAlbum.media.forEach(
+					singleMedia => {
+						sum += env.options.media_thumb_size / singleMedia.metadata.size[1] * singleMedia.metadata.size[0];
+					}
+				);
 			}
 			if (env.options.spacing)
 				totalThumbsSize += env.options.spacing * (env.currentAlbum.media.length - 1);
@@ -2996,7 +2999,7 @@
 		text = text.replace(/<(\/?\w+)>\s*\n\s*<(\/?\w+)>/g, "<$1><$2>");
 		text = text.replace(/\n/g, "</p><p class='description-text'>");
 		return "<p class='description-text'>" + text + "</p>";
-	}
+	};
 
 	Utilities.prototype.adaptCaptionHeight = function() {
 		// check for overflow in album-caption class in order to adapt album caption height to the string length
@@ -3079,10 +3082,10 @@
 
 	Utilities.prototype.setDescriptionPosition = function(captionType) {
 		// Size of description varies if on album or media
-		var titleHeight = parseInt($(".media-box#center .title").css("height"));
-		var mediaBoxHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
+		// var titleHeight = parseInt($(".media-box#center .title").css("height"));
+		// var mediaBoxHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
 		var mediaHeight = parseInt($(".media-box#center .media-box-inner #media-center").css("height"));
-		var bottomThumbnailsHeight = parseInt($("#album-view.media-view-container").css("height"));
+		// var bottomThumbnailsHeight = parseInt($("#album-view.media-view-container").css("height"));
 		var selectBoxWidth = 30;
 		if (captionType === 'media') {
 			$("#description").css("bottom", 2 * selectBoxWidth + parseInt($("#media-select-box .select-box").css("bottom")));
@@ -3097,9 +3100,9 @@
 		} else if (captionType === 'album') {
 			// var titleHeight = parseInt($("#album-view .title").css("height"));
 			// var albumTop = parseInt($("#album-view").css("top"));
-			var albumHeight = parseInt($("#album-view").css("height"));
-			var thumbsHeight = parseInt($("#thumbs").css("height"));
-			var subalbumsHeight = parseInt($("#subalbums").css("height"));
+			// var albumHeight = parseInt($("#album-view").css("height"));
+			// var thumbsHeight = parseInt($("#thumbs").css("height"));
+			// var subalbumsHeight = parseInt($("#subalbums").css("height"));
 			// TODO: How to adapt height to different platforms?
 			$("#description").css("right", 2 * selectBoxWidth);
 			$("#description").css("top", "");

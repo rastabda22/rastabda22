@@ -503,12 +503,11 @@
 									// ||
 									// Object.keys(this.includedFilesByCodesSimpleCombination[codesSimpleCombination]).length < numProtectedCacheBases
 								||
-								getMedia && Object.keys(album.includedFilesByCodesSimpleCombination[codesSimpleCombination]).some(
-									number => ! album.includedFilesByCodesSimpleCombination[codesSimpleCombination][parseInt(number)].this.hasOwnProperty("mediaGot")
-								)
-								||
-								getPositions && Object.keys(album.includedFilesByCodesSimpleCombination[codesSimpleCombination]).some(
-									number => ! album.includedFilesByCodesSimpleCombination[codesSimpleCombination][parseInt(number)].this.hasOwnProperty("positionsGot")
+								getMedia && Object.keys(this.includedFilesByCodesSimpleCombination[codesSimpleCombination]).some(
+									number => ! this.includedFilesByCodesSimpleCombination[codesSimpleCombination][parseInt(number)].this.hasOwnProperty("mediaGot")
+								) ||
+								getPositions && Object.keys(this.includedFilesByCodesSimpleCombination[codesSimpleCombination]).some(
+									number => ! this.includedFilesByCodesSimpleCombination[codesSimpleCombination][parseInt(number)].this.hasOwnProperty("positionsGot")
 								)
 							) {
 								if (! result.includes(codesSimpleCombination))
@@ -614,7 +613,7 @@
 	};
 
 	Album.prototype.mergeProtectedSubalbums = function(protectedAlbum, codesSimpleCombination, number) {
-		var cacheBases = [], i, ithProtectedSubalbum;
+		var cacheBases = [];
 		this.subalbums.forEach(
 			function(subalbum) {
 				cacheBases.push(subalbum.cacheBase);
@@ -1129,7 +1128,7 @@
 
 	PhotoFloat.prototype.pickRandomMedia = function(iSubalbum, error) {
 		var index;
-		ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
+		var ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
 
 		return new Promise(
 			function(resolve_pickRandomMedia) {
@@ -1859,8 +1858,8 @@
 															function(singleMedia) {
 																let promise = new Promise(
 																	function(resolve_singleMedia) {
-																		let cacheBase = singleMedia.foldersCacheBase
-																		let albumHash = PhotoFloat.decodeHash(window.location.hash)[0];
+																		let cacheBase = singleMedia.foldersCacheBase;
+																		// let albumHash = PhotoFloat.decodeHash(window.location.hash)[0];
 																		// let searchStartCacheBase = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
 																		if (Utilities.isByDateCacheBase(env.options.cache_base_to_search_in) && singleMedia.hasOwnProperty("dayAlbumCacheBase"))
 																			cacheBase = singleMedia.dayAlbumCacheBase;
