@@ -1,5 +1,9 @@
 /* Popup box BEGIN */
 
+.leaflet-popup-content-wrapper {
+	color: #FFFFFF !important;
+}
+
 .map-popup-trigger {
     cursor: pointer;
     /* font-size: 20px;
@@ -239,6 +243,12 @@
 
 #popup-photo-count:hover {
 	background-color: lightgray;
+	color: black;
+}
+
+.leaflet-popup-scrolled {
+	border-top: 0;
+	border-bottom: 0;
 }
 
 /* The Modal (background) */
@@ -248,7 +258,7 @@
   z-index: 11; /* Sit on top */
   padding-top: 10px; /* Location of the box */
   left: 0;
-  top: 10px;
+  top: 25px;
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
