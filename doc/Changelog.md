@@ -1,3 +1,5 @@
+* bug fixes
+
 ### version v4.9.18 (Jan 6, 2021)
 
 * media are now created by the same function in regular albums and in popups
