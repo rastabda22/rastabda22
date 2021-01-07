@@ -262,7 +262,7 @@
 		}
 	};
 
-	MapFunctions.addClickToPopupPhoto = function(element) {
+	MapFunctions.prototype.addClickToPopupPhoto = function(element) {
 		element.parent().parent().off("click").on(
 			"click",
 			function(ev) {
