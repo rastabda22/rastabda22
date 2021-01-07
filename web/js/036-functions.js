@@ -742,25 +742,28 @@
 						albumToUse = env.mapAlbum;
 					else
 						albumToUse = thisAlbum;
-					if (albumToUse.everySubalbumIsSelected() && albumToUse.everyMediaIsSelected()) {
+					var workingWasntVisible = ! $("#working").is(":visible");
+					if (workingWasntVisible)
 						$("#working").show();
+					if (albumToUse.everySubalbumIsSelected() && albumToUse.everyMediaIsSelected()) {
 						albumToUse.removeAllMediaFromSelection();
 						let promise = albumToUse.removeAllSubalbumsFromSelection();
 						promise.then(
 							function() {
-								$("#working").hide();
+								if (workingWasntVisible)
+									$("#working").hide();
 								if (util.nothingIsSelected())
 									util.initializeSelectionAlbum();
 								Functions.updateMenu();
 							}
 						);
 					} else {
-						$("#working").show();
 						albumToUse.addAllMediaToSelection();
 						let promise = albumToUse.addAllSubalbumsToSelection();
 						promise.then(
 							function() {
-								$("#working").hide();
+								if (workingWasntVisible)
+									$("#working").hide();
 								Functions.updateMenu();
 							}
 						);
@@ -771,14 +774,17 @@
 			$(".select.everything-individual:not(.hidden)").off("click").on(
 				"click",
 				function() {
-					$("#working").show();
+					var workingWasntVisible = ! $("#working").is(":visible");
+					if (workingWasntVisible)
+						$("#working").show();
 					let everythingIndividualPromise = thisAlbum.recursivelyAllMediaAreSelected();
 					everythingIndividualPromise.then(
 						function isTrue() {
 							let firstPromise = thisAlbum.recursivelyRemoveMedia();
 							firstPromise.then(
 								function() {
-									$("#working").hide();
+									if (workingWasntVisible)
+										$("#working").hide();
 									if (util.nothingIsSelected())
 										util.initializeSelectionAlbum();
 									Functions.updateMenu();
@@ -795,7 +801,8 @@
 							let firstPromise = thisAlbum.recursivelySelectMedia();
 							firstPromise.then(
 								function() {
-									$("#working").hide();
+									if (workingWasntVisible)
+										$("#working").hide();
 									$("#added-individually").stop().fadeIn(
 										1000,
 										function() {
@@ -832,12 +839,17 @@
 			$(".select.albums:not(.hidden)").off("click").on(
 				"click",
 				function() {
-					$("#working").show();
+					var workingWasntVisible = ! $("#working").is(":visible");
+					if (workingWasntVisible)
+						$("#working").show();
+					else
+						$("#working").show();
 					if (thisAlbum.everySubalbumIsSelected()) {
 						let promise = thisAlbum.removeAllSubalbumsFromSelection();
 						promise.then(
 							function() {
-								$("#working").hide();
+								if (workingWasntVisible)
+									$("#working").hide();
 								if (util.nothingIsSelected())
 									util.initializeSelectionAlbum();
 								Functions.updateMenu();
@@ -847,7 +859,8 @@
 						var promise = thisAlbum.addAllSubalbumsToSelection();
 						promise.then(
 							function() {
-								$("#working").hide();
+								if (workingWasntVisible)
+									$("#working").hide();
 								Functions.updateMenu();
 							}
 						);
@@ -858,12 +871,15 @@
 			$(".select.global-reset:not(.hidden)").off("click").on(
 				"click",
 				function() {
-					$("#working").show();
+					var workingWasntVisible = ! $("#working").is(":visible");
+					if (workingWasntVisible)
+						$("#working").show();
 					env.selectionAlbum.removeAllMediaFromSelection();
 					let subalbumsPromise = env.selectionAlbum.removeAllSubalbumsFromSelection();
 					subalbumsPromise.then(
 						function allSubalbumsRemoved() {
-							$("#working").hide();
+							if (workingWasntVisible)
+								$("#working").hide();
 							if (util.nothingIsSelected())
 								util.initializeSelectionAlbum();
 							Functions.updateMenu();
@@ -875,7 +891,9 @@
 			$(".select.nothing:not(.hidden)").off("click").on(
 				"click",
 				function() {
-					$("#working").show();
+					var workingWasntVisible = ! $("#working").is(":visible");
+					if (workingWasntVisible)
+						$("#working").show();
 					var albumToUse;
 					if (isPopup)
 						albumToUse = env.mapAlbum;
@@ -885,7 +903,8 @@
 					let subalbumsPromise = albumToUse.removeAllSubalbumsFromSelection();
 					subalbumsPromise.then(
 						function allSubalbumsRemoved() {
-							$("#working").hide();
+							if (workingWasntVisible)
+								$("#working").hide();
 							if (util.nothingIsSelected())
 								util.initializeSelectionAlbum();
 							Functions.updateMenu();
@@ -897,11 +916,14 @@
 			$(".select.no-albums:not(.hidden)").off("click").on(
 				"click",
 				function() {
-					$("#working").show();
+					var workingWasntVisible = ! $("#working").is(":visible");
+					if (workingWasntVisible)
+						$("#working").show();
 					let subalbumsPromise = thisAlbum.removeAllSubalbumsFromSelection();
 					subalbumsPromise.then(
 						function allSubalbumsRemoved() {
-							$("#working").hide();
+							if (workingWasntVisible)
+								$("#working").hide();
 							if (util.nothingIsSelected())
 								util.initializeSelectionAlbum();
 							Functions.updateMenu();
