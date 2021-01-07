@@ -622,8 +622,8 @@
 		}
 	};
 
-		this.addPositionAndMedia(singleMedia.generatePositionAndMedia());
 	PositionsAndMedia.prototype.addSingleMedia = function(singleMedia, album) {
+		this.addPositionAndMedia(singleMedia.generatePositionAndMedia());
 	};
 
 	PositionsAndMedia.prototype.removeSingleMedia = function(singleMedia) {
