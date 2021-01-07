@@ -209,18 +209,18 @@
 		// the space for the images: remove the margin
 		env.maxWidthForImagesInPopup = env.maxWidthForPopupContent - 15 - 15;
 		// square thumbnails: set the value to a shorter one, in order to avoid right white space
-		if (env.options.media_thumb_type === "square") {
-			var thumbSize = env.options.media_thumb_size;
-			var spacing = 0;
-			if (env.options.spacing)
-				spacing = Math.ceil(env.options.spacingToggle);
-			var numThumbnailsInLine = parseInt((env.maxWidthForImagesInPopup - scrollerSize + spacing) / (thumbSize + spacing));
-			if (numThumbnailsInLine === 1)
-				env.maxWidthForImagesInPopup = thumbSize + 1;
-			else
-				env.maxWidthForImagesInPopup = numThumbnailsInLine * thumbSize + numThumbnailsInLine * spacing + scrollerSize;
-			env.maxWidthForPopupContent = env.maxWidthForImagesInPopup + 15 + 15;
-		}
+		// if (env.options.media_thumb_type === "square") {
+		// 	var thumbSize = env.options.media_thumb_size;
+		// 	var spacing = 0;
+		// 	if (env.options.spacing)
+		// 		spacing = Math.ceil(env.options.spacingToggle);
+		// 	var numThumbnailsInLine = parseInt((env.maxWidthForImagesInPopup - scrollerSize) / (thumbSize + spacing));
+		// 	if (numThumbnailsInLine === 1)
+		// 		env.maxWidthForImagesInPopup = thumbSize + 1;
+		// 	else
+		// 		env.maxWidthForImagesInPopup = numThumbnailsInLine * (thumbSize + spacing) + scrollerSize;
+		// 	env.maxWidthForPopupContent = env.maxWidthForImagesInPopup + 15 + 15;
+		// }
 		// vertical popup size
 		env.maxHeightForPopupContent = parseInt($("#mapdiv").height() * 0.85);
 	};
