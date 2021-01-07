@@ -260,7 +260,7 @@
 	z-index: 11; /* Sit on top */
 	/* padding-top: 10px; /* Location of the box */ */
 	left: 0;
-	top: 25px;
+	top: 35px;
 	width: 100%; /* Full width */
 	height: 100%; /* Full height */
 	overflow: auto; /* Enable scroll if needed */
