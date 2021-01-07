@@ -183,7 +183,7 @@
 		$(".leaflet-popup-content").css("max-width", env.maxWidthForPopupContent + "px");
 		// $(".leaflet-popup-content").css("width", MapFunctions.);
 		$("#popup-images-wrapper").css("max-height", ($(".leaflet-popup-content").outerHeight() - $("#popup-photo-count").outerHeight(true)) + "px");
-		$("#popup-images-wrapper").css("max-width", env.maxWidthForImagesInPopup + "px");
+		// $("#popup-images-wrapper").css("max-width", env.maxWidthForImagesInPopup + "px");
 		// $("#popup-images-wrapper").css("width", env.maxWidthForImagesInPopup);
 		$("#popup-photo-count").css("max-width", env.maxWidthForPopupContent + "px");
 		// $(".leaflet-popup-content").css("max-width", env.maxWidthForImagesInPopup).css("width", env.maxWidthForImagesInPopup);

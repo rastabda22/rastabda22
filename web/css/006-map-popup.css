@@ -134,6 +134,7 @@
 } */
 #popup-images-wrapper {
 	overflow-y: auto;
+	text-align: center;
 }
 
 .leaflet-popup-content .thumb-and-caption-container {
