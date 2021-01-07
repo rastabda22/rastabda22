@@ -9,20 +9,20 @@
 	function MapFunctions() {
 	}
 
-	MapFunctions.averagePosition = function(latLngArray) {
+	PositionsAndMedia.prototype.averagePosition = function() {
 		var averageLatLng = L.latLng(0, 0);
 		var lat, lng, countTotal = 0;
-		for (var i = 0; i < latLngArray.length; i ++) {
-			lat = latLngArray[i].lat;
-			lng = latLngArray[i].lng;
-			if (latLngArray[i].hasOwnProperty("count")) {
-				lat *= latLngArray[i].count;
-				lng *= latLngArray[i].count;
+		for (var i = 0; i < this.length; i ++) {
+			lat = this[i].lat;
+			lng = this[i].lng;
+			if (this[i].hasOwnProperty("count")) {
+				lat *= this[i].count;
+				lng *= this[i].count;
 			}
 			averageLatLng.lat += lat;
 			averageLatLng.lng += lng;
-			if (latLngArray[i].hasOwnProperty("count"))
-				countTotal += latLngArray[i].count;
+			if (this[i].hasOwnProperty("count"))
+				countTotal += this[i].count;
 			else
 				countTotal += 1;
 		}
@@ -487,7 +487,6 @@
 		}
 	});
 
-	MapFunctions.prototype.averagePosition = MapFunctions.averagePosition;
 	MapFunctions.prototype.calculatePopupSizes = MapFunctions.calculatePopupSizes;
 
 	window.MapFunctions = MapFunctions;

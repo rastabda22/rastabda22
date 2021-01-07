@@ -3082,7 +3082,7 @@
 			// maximum OSM zoom is 19
 			const maxOSMZoom = 19;
 			// calculate the center
-			var center = map.averagePosition(this);
+			var center = this.averagePosition();
 
 			var br = '<br />';
 			// var thumbAndCaptionHeight = 0;
