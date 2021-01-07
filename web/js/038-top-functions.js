@@ -3022,7 +3022,7 @@
 			var clickHistoryElement = clickHistory[iClick];
 			var promise = new Promise(
 				function(resolve_playClickElement) {
-					MapFunctions.mymap.setView(clickHistoryElement.center, clickHistoryElement.zoom, {animate: false});
+					env.mymap.setView(clickHistoryElement.center, clickHistoryElement.zoom, {animate: false});
 					ev = {
 						latlng: clickHistoryElement.latlng,
 						originalEvent: {
@@ -3056,12 +3056,18 @@
 		// end of auxiliary function
 
 		var i;
-		MapFunctions.titleWrapper1 =
-			'<div id="popup-photo-count" style="max-width: ' + MapFunctions.maxWidthForPopupContent + 'px;">' +
-				'<span id="popup-photo-count-number"></span> ' + util._t("#images") +
-			'</div>' +
-			'<div id="popup-images-wrapper">';
-		MapFunctions.titleWrapper2 = '</div>';
+		env.titleWrapper =
+			"<div id='popup-photo-count' style='max-width: " + env.maxWidthForPopupContent + "px;'>" +
+				"<span id='popup-photo-count-number'></span> " + util._t("#images") +
+			"</div>" +
+			"<div id='popup-images-wrapper'>" +
+			"</div>";
+		// env.titleWrapper1 =
+		// 	'<div id="popup-photo-count" style="max-width: ' + env.maxWidthForPopupContent + 'px;">' +
+		// 		'<span id="popup-photo-count-number"></span> ' + util._t("#images") +
+		// 	'</div>' +
+		// 	'<div id="popup-images-wrapper">';
+		// env.titleWrapper2 = '</div>';
 
 		$("#my-modal.modal").css("display", "block");
 		if (env.isMobile.any()) {
@@ -3164,9 +3170,9 @@
 			};
 
 			if (mapIsInitialized)
-				MapFunctions.mymap.remove();
+				env.mymap.remove();
 
-			MapFunctions.mymap = L.map('mapdiv', {'closePopupOnClick': false}).setView([center.lat, center.lng], zoom);
+			env.mymap = L.map('mapdiv', {'closePopupOnClick': false}).setView([center.lat, center.lng], zoom);
 			$(".map-container > div").css("min-height", (env.windowHeight -50).toString() + "px");
 			mapIsInitialized = true;
 
@@ -3178,8 +3184,8 @@
 					maxNativeZoom: maxOSMZoom,
 					id: 'mapbox.streets'
 				}
-			).addTo(MapFunctions.mymap);
-			L.control.scale().addTo(MapFunctions.mymap);
+			).addTo(env.mymap);
+			L.control.scale().addTo(env.mymap);
 
 			var cacheBases;
 			for (var iPoint = 0; iPoint < this.length; iPoint ++) {
@@ -3204,12 +3210,12 @@
 				markers[iPoint].weight = this[iPoint].mediaList.length;
 			}
 
-			MapFunctions.mymap.addLayer(pruneCluster);
+			env.mymap.addLayer(pruneCluster);
 
 			/**
 			* Add a click handler to the map to render the popup.
 			*/
-			MapFunctions.mymap.on(
+			env.mymap.on(
 				'click',
 				function(ev) {
 					var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, pruneCluster.Cluster._clusters);
@@ -3240,19 +3246,19 @@
 	TopFunctions.prepareAndDoPopupUpdate = function() {
 		map.calculatePopupSizes();
 
-		if (MapFunctions.popup) {
-			MapFunctions.popup.remove();
+		if (env.popup) {
+			env.popup.remove();
 			$(".leaflet-popup").remove();
 		}
-		MapFunctions.popup = L.popup(
+		env.popup = L.popup(
 			{
-				maxWidth: MapFunctions.maxWidthForPopupContent,
-				maxHeight: MapFunctions.maxHeightForPopupContent,
+				maxWidth: env.maxWidthForPopupContent,
+				maxHeight: env.maxHeightForPopupContent,
 				autoPan: false
 			}
-		).setContent(MapFunctions.titleWrapper1 + MapFunctions.titleWrapper2)
-		.setLatLng(map.averagePosition(env.mapAlbum.positionsAndMediaInTree))
-		.openOn(MapFunctions.mymap);
+		).setContent(env.titleWrapper)
+		.setLatLng(env.mapAlbum.positionsAndMediaInTree.averagePosition())
+		.openOn(env.mymap);
 
 		map.addPopupMover();
 
@@ -3280,8 +3286,8 @@
 							latlng: evt.latlng,
 							shiftKey: evt.originalEvent.shiftKey,
 							ctrlKey: evt.originalEvent.ctrlKey,
-							zoom: MapFunctions.mymap.getZoom(),
-							center: MapFunctions.mymap.getCenter()
+							zoom: env.mymap.getZoom(),
+							center: env.mymap.getCenter()
 					};
 				}
 
@@ -3372,7 +3378,7 @@
 
 						if (! env.mapAlbum.numsMedia.imagesAndVideosTotal()) {
 							$("#loading").hide();
-							MapFunctions.popup.remove();
+							env.popup.remove();
 						} else {
 							endPreparingMapAlbumAndUpdatePopup();
 						}
