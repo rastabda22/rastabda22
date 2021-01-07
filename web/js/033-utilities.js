@@ -622,8 +622,8 @@
 		}
 	};
 
-	PositionsAndMedia.prototype.addSingleMediaToPositionsAndMedia = function(singleMedia) {
 		this.addPositionAndMedia(singleMedia.generatePositionAndMedia());
+	PositionsAndMedia.prototype.addSingleMedia = function(singleMedia, album) {
 	};
 
 	PositionsAndMedia.prototype.removeSingleMedia = function(singleMedia) {
@@ -1434,7 +1434,7 @@
 
 			if (this.hasGpsData()) {
 				// add the media position
-				env.selectionAlbum.positionsAndMediaInTree.addSingleMediaToPositionsAndMedia(this);
+				env.selectionAlbum.positionsAndMediaInTree.addSingleMedia(this);
 				env.selectionAlbum.numPositionsInTree = env.selectionAlbum.positionsAndMediaInTree.length;
 			}
 			var singleMediaArray = new Media([this]);
@@ -1647,7 +1647,7 @@
 										mediaInAlbumNotSelectedNorInsideSelectedAlbums.forEach(
 											singleMedia => {
 												if (singleMedia.hasGpsData())
-													env.selectionAlbum.positionsAndMediaInTree.addSingleMediaToPositionsAndMedia(singleMedia);
+													env.selectionAlbum.positionsAndMediaInTree.addSingleMedia(singleMedia);
 												env.selectionAlbum.sizesOfSubTree.sum(singleMedia.fileSizes);
 											}
 										);

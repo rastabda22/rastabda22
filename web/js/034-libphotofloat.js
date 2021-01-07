@@ -1471,7 +1471,7 @@
 							env.searchAlbum.media[indexMedia].addParent(env.searchAlbum);
 							if (env.searchAlbum.media[indexMedia].hasGpsData()) {
 								// add the media position
-								env.searchAlbum.positionsAndMediaInTree.addSingleMediaToPositionsAndMedia(env.searchAlbum.media[indexMedia]);
+								env.searchAlbum.positionsAndMediaInTree.addSingleMedia(env.searchAlbum.media[indexMedia]);
 								env.searchAlbum.numPositionsInTree = env.searchAlbum.positionsAndMediaInTree.length;
 							}
 						}
