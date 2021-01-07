@@ -129,11 +129,22 @@
 		var isTransversalAlbum = thisAlbum.isTransversal();
 		var isSingleMedia = (env.currentMedia !== null || isAlbumWithOneMedia);
 		var isAnyRootCacheBase = thisAlbum.isAnyRoot();
+
 		var nothingIsSelected = util.nothingIsSelected();
-		var everySubalbumIsSelected = thisAlbum.everySubalbumIsSelected();
+		var everySubalbumIsSelected;
+		if (isPopup)
+			everySubalbumIsSelected = thisAlbum.everySubalbumIsSelected();
 		var noSubalbumIsSelected = thisAlbum.noSubalbumIsSelected();
-		var everyMediaIsSelected = thisAlbum.everyMediaIsSelected();
-		var noMediaIsSelected = thisAlbum.noMediaIsSelected();
+		var everyMediaIsSelected;
+		if (isPopup)
+			everyMediaIsSelected = env.mapAlbum.everyMediaIsSelected();
+		else
+			everyMediaIsSelected = thisAlbum.everyMediaIsSelected();
+		var noMediaIsSelected;
+		if (isPopup)
+			noMediaIsSelected = env.mapAlbum.noMediaIsSelected();
+		else
+			noMediaIsSelected = thisAlbum.noMediaIsSelected();
 		var highMediaNumberInTransversalAlbum = isTransversalAlbum && ! env.options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold;
 
 		var hasGpsData, thisMedia;
@@ -681,8 +692,15 @@
 
 			if (isSingleMedia) {
 				$(".select.albums, .select.everything, .select.everything-individual", ".select.nothing", ".select.no-albums").addClass("hidden");
-			} else if (! thisAlbum.numsMedia.imagesAndVideosTotal() || ! thisAlbum.subalbums.length) {
+			} else if (
+				! isPopup && (
+					! thisAlbum.numsMedia.imagesAndVideosTotal() || ! thisAlbum.subalbums.length
+				)
+			) {
 				$(".select.media, .select.albums, .select.no-media, .select.no-albums").addClass("hidden");
+			} else if (isPopup) {
+				$(".select.albums, .select.no-albums").addClass("hidden");
+				$(".select.media, .select.no-media").addClass("hidden");
 			}
 
 			if (everySubalbumIsSelected) {
@@ -693,7 +711,7 @@
 				$(".select.media").addClass("selected");
 			}
 
-			if (everySubalbumIsSelected && everyMediaIsSelected) {
+			if ((isPopup || everySubalbumIsSelected) && everyMediaIsSelected) {
 				$(".select.everything").addClass("selected");
 			}
 
@@ -701,7 +719,7 @@
 				$(".select.everything, .select.media").addClass("hidden");
 			}
 
-			if (! thisAlbum.subalbums.length) {
+			if (! thisAlbum.subalbums.length || isPopup) {
 				$(".select.everything-individual").addClass("hidden");
 			} else {
 				let everythingIndividualPromise = thisAlbum.recursivelyAllMediaAreSelected();
@@ -719,10 +737,15 @@
 			$(".select.everything:not(.hidden)").off("click").on(
 				"click",
 				function() {
-					if (thisAlbum.everySubalbumIsSelected() && thisAlbum.everyMediaIsSelected()) {
+					var albumToUse;
+					if (isPopup)
+						albumToUse = env.mapAlbum;
+					else
+						albumToUse = thisAlbum;
+					if (albumToUse.everySubalbumIsSelected() && albumToUse.everyMediaIsSelected()) {
 						$("#working").show();
-						thisAlbum.removeAllMediaFromSelection();
-						let promise = thisAlbum.removeAllSubalbumsFromSelection();
+						albumToUse.removeAllMediaFromSelection();
+						let promise = albumToUse.removeAllSubalbumsFromSelection();
 						promise.then(
 							function() {
 								$("#working").hide();
@@ -733,8 +756,8 @@
 						);
 					} else {
 						$("#working").show();
-						thisAlbum.addAllMediaToSelection();
-						let promise = thisAlbum.addAllSubalbumsToSelection();
+						albumToUse.addAllMediaToSelection();
+						let promise = albumToUse.addAllSubalbumsToSelection();
 						promise.then(
 							function() {
 								$("#working").hide();
@@ -790,12 +813,17 @@
 			$(".select.media:not(.hidden)").off("click").on(
 				"click",
 				function() {
-					if (thisAlbum.everyMediaIsSelected()) {
-						thisAlbum.removeAllMediaFromSelection();
+					var albumToUse;
+					if (isPopup)
+						albumToUse = env.mapAlbum;
+					else
+						albumToUse = thisAlbum;
+					if (albumToUse.everyMediaIsSelected()) {
+						albumToUse.removeAllMediaFromSelection();
 						if (util.nothingIsSelected())
 							util.initializeSelectionAlbum();
 					} else {
-						thisAlbum.addAllMediaToSelection();
+						albumToUse.addAllMediaToSelection();
 					}
 					Functions.updateMenu();
 				}
@@ -848,8 +876,13 @@
 				"click",
 				function() {
 					$("#working").show();
-					thisAlbum.removeAllMediaFromSelection();
-					let subalbumsPromise = thisAlbum.removeAllSubalbumsFromSelection();
+					var albumToUse;
+					if (isPopup)
+						albumToUse = env.mapAlbum;
+					else
+						albumToUse = thisAlbum;
+					albumToUse.removeAllMediaFromSelection();
+					let subalbumsPromise = albumToUse.removeAllSubalbumsFromSelection();
 					subalbumsPromise.then(
 						function allSubalbumsRemoved() {
 							$("#working").hide();
@@ -880,7 +913,13 @@
 			$(".select.no-media:not(.hidden)").on(
 				"click",
 				function() {
-					thisAlbum.removeAllMediaFromSelection();
+					var albumToUse;
+					if (isPopup)
+						albumToUse = env.mapAlbum;
+					else
+						albumToUse = thisAlbum;
+
+					albumToUse.removeAllMediaFromSelection();
 				}
 			);
 

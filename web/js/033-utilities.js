@@ -1338,14 +1338,20 @@
 	Album.prototype.addAllMediaToSelection = function() {
 		for (let indexMedia = this.media.length - 1; indexMedia >= 0; indexMedia --) {
 			let singleMedia = this.media[indexMedia];
-			singleMedia.addToSelection(this, "#media-select-box-" + indexMedia);
+			var firstPartOfSelector = "media-select-box-";
+			if (Utilities.isPopup())
+				firstPartOfSelector = "map-" + firstPartOfSelector;
+			singleMedia.addToSelection(this, "#" + firstPartOfSelector + indexMedia);
 		}
 	};
 
 	Album.prototype.removeAllMediaFromSelection = function() {
 		for (let indexMedia = this.media.length - 1; indexMedia >= 0; indexMedia --) {
 			let singleMedia = this.media[indexMedia];
-			singleMedia.removeFromSelection("#media-select-box-" + indexMedia);
+			var firstPartOfSelector = "media-select-box-";
+			if (Utilities.isPopup())
+				firstPartOfSelector = "map-" + firstPartOfSelector;
+			singleMedia.removeFromSelection("#" + firstPartOfSelector + indexMedia);
 		}
 	};
 
@@ -1440,7 +1446,8 @@
 				env.selectionAlbum.sizesOfSubTree.sum(this.fileSizes);
 			}
 
-			this.generateCaptionForSelection(album);
+			if (! Utilities.isPopup())
+				this.generateCaptionForSelection(album);
 			delete env.selectionAlbum.mediaNameSort;
 			delete env.selectionAlbum.mediaReverseSort;
 			env.selectionAlbum.sortAlbumsMedia();
