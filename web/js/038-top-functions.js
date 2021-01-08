@@ -2182,11 +2182,22 @@
 						img.prop("outerHTML") +
 					"</div>" +
 					"<div class='media-caption'>";
+			let name;
+			if (util.isPopup())
+				name = ithMedia.captionForPopup;
+			else if (this.isSearch())
+				name = ithMedia.captionForSearch;
+			else if (this.isSelection())
+				name = ithMedia.captionForSelection;
+			else
+				name = ithMedia.nameForShowing(this, true, true);
+
 			let spanHtml =
 						"<span class='media-name'>" +
-							"<span>" +
-								ithMedia.nameForShowing(this, true, true).replace(/( |<br \/>)/g, "</span>$&<span>") +
-							"</span>" +
+							// "<span>" +
+								name +
+								// ithMedia.nameForShowing(this, true, true).replace(/( |<br \/>)/g, "</span>$&<span>") +
+							// "</span>" +
 						"</span>";
 			let span = $(spanHtml);
 			span.attr("title", ithMedia.nameForShowing(this));
@@ -2222,26 +2233,26 @@
 				$(thumbsSelector).append(imageLink);
 			}
 
-			if (this.isCollection()) {
-				// the folder name must be added the second line
-				let cacheBase = ithMedia.foldersCacheBase;
-				if (this.isSearch()) {
-					let albumHash = phFl.decodeHash(window.location.hash)[0];
-					let searchStartCacheBase = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
-					if (util.isByDateCacheBase(searchStartCacheBase) && ithMedia.hasOwnProperty("dayAlbumCacheBase"))
-						cacheBase = ithMedia.dayAlbumCacheBase;
-					else if (util.isByGpsCacheBase(searchStartCacheBase) && ithMedia.hasGpsData())
-						cacheBase = ithMedia.gpsAlbumCacheBase;
-				}
-				let parentAlbumPromise = phFl.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
-				parentAlbumPromise.then(
-					function(parentAlbum) {
-						var name = ithMedia.nameForShowing(parentAlbum, true, true);
-						name = "<span>" + name.replace(/( |<br \/>)/g, "</span>$&<span>") + "</span>";
-						$("#" + imageId + " .media-name").html(name);
-					}
-				);
-			}
+			// if (this.isCollection()) {
+			// 	// the folder name must be added the second line
+			// 	let cacheBase = ithMedia.foldersCacheBase;
+			// 	if (this.isSearch()) {
+			// 		let albumHash = phFl.decodeHash(window.location.hash)[0];
+			// 		let searchStartCacheBase = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
+			// 		if (util.isByDateCacheBase(searchStartCacheBase) && ithMedia.hasOwnProperty("dayAlbumCacheBase"))
+			// 			cacheBase = ithMedia.dayAlbumCacheBase;
+			// 		else if (util.isByGpsCacheBase(searchStartCacheBase) && ithMedia.hasGpsData())
+			// 			cacheBase = ithMedia.gpsAlbumCacheBase;
+			// 	}
+			// 	let parentAlbumPromise = phFl.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
+			// 	parentAlbumPromise.then(
+			// 		function(parentAlbum) {
+			// 			var name = ithMedia.nameForShowing(parentAlbum, true, true);
+			// 			// name = "<span>" + name.replace(/( |<br \/>)/g, "</span>$&<span>") + "</span>";
+			// 			$("#" + imageId + " .media-name").html(name);
+			// 		}
+			// 	);
+			// }
 
 			if (! inPopup && ithMedia.hasGpsData()) {
 				$("#media-map-link-" + iMedia).off("click").on(
@@ -2584,9 +2595,16 @@
 							function(resolve_subalbumPromise) {
 								var ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
 
-								let nameHtml = ithSubalbum.nameForShowing(env.currentAlbum, true, true);
-								if (nameHtml === "")
-									nameHtml = "<span class='italic'>(" + util._t("#root-album") + ")</span>";
+								let nameHtml;
+								if (env.currentAlbum.isSearch())
+									nameHtml = ithSubalbum.captionForSearch;
+								else if (env.currentAlbum.isSelection())
+									nameHtml = ithSubalbum.captionForSelection;
+								else {
+									nameHtml = ithSubalbum.nameForShowing(env.currentAlbum, true, true);
+									if (nameHtml === "")
+										nameHtml = "<span class='italic'>(" + util._t("#root-album") + ")</span>";
+								}
 
 								let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
 								captionHtml =

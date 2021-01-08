@@ -69,13 +69,17 @@ img.thumbnail-img {
 	padding: 0 .5em;
 }
 
-.folder-name .second-line {
+.second-line {
 	font-size: 75%;
 }
 
 .gray {
 	font-size: 95%;
 	color: gray;
+}
+
+#popup-images-wrapper .gray {
+	color: darkslategray;
 }
 
 .separated {
@@ -733,7 +737,7 @@ video {
 } */
 
 .media-caption .media-name span {
-	white-space: nowrap;
+	/* white-space: nowrap; */
 }
 
 .media-real-name {
