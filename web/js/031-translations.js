@@ -221,7 +221,9 @@ var translations =
 			"#by-gps-album": "by place album",
 			"#by-gps-album-in": "by place album in",
 			"#regular-album": "album",
-			"#regular-album-in": "album in"
+			"#regular-album-in": "album in",
+			"#software-version": "Software version",
+			"#json-version": "Json files version"
 		},
 		it: {
 			"#root-album": "album radice",
@@ -444,7 +446,9 @@ var translations =
 			"#by-gps-album": "album per luogo",
 			"#by-gps-album-in": "album per luogo in",
 			"#regular-album": "album",
-			"#regular-album-in": "album in"
+			"#regular-album-in": "album in",
+			"#software-version": "Versione dell'applicazione",
+			"#json-version": "Versione degli archivi json"
 		},
 		es: {
 			"#root-album": "álbum raíz",
@@ -667,7 +671,9 @@ var translations =
 			"#by-gps-album": "álbum por lugar",
 			"#by-gps-album-in": "álbum por lugar en",
 			"#regular-album": "álbum",
-			"#regular-album-in": "álbum en"
+			"#regular-album-in": "álbum en",
+			"#software-version": "Versión de la aplicación",
+			"#json-version": "Versión de los archivos json"
 		},
 		fr: {
 			"#root-album": "album racine",
@@ -890,6 +896,8 @@ var translations =
 			"#by-gps-album": "par album des lieux",
 			"#by-gps-album-in": "par album des lieux dans",
 			"#regular-album": "album",
-			"#regular-album-in": "album dans"
+			"#regular-album-in": "album dans",
+			"#software-version": "Software version",
+			"#json-version": "Json files version"
 		}
 	};

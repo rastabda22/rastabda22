@@ -1503,7 +1503,7 @@
 	// 	return result;
 	// };
 
-	Functions.getOptions = function() {
+	Functions.prototype.getOptions = function() {
 		return new Promise(
 			function(resolve_getOptions, reject_getOptions) {
 				if (Object.keys(env.options).length > 0) {
@@ -1712,6 +1712,9 @@
 							env.searchAlbum = new Album();
 							env.searchAlbum.includedFilesByCodesSimpleCombination = new IncludedFiles();
 
+							if (env.options.version !== undefined)
+								$("#powered-by").attr("title", util._t("#software-version") + ": " + env.options.version + " - " + util._t("#json-version") + ": " + env.options.json_version.toString());
+
 							resolve_getOptions();
 						},
 						error: function(jqXHR, textStatus, errorThrown) {
@@ -1770,7 +1773,6 @@
 		}
 	};
 
-	Functions.prototype.getOptions = Functions.getOptions;
 	Functions.prototype.getBooleanCookie = Functions.getBooleanCookie;
 	Functions.prototype.setBooleanCookie = Functions.setBooleanCookie;
 	Functions.prototype.updateMenu = Functions.updateMenu;

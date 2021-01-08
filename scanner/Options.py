@@ -101,8 +101,8 @@ max_random = 999999999
 config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x-tga']
 
 
-# set this variable to a new value (previously was a number, now it may include letters)
-# whenever the json files structure changes (the app version can be used)
+# set this variable to a new value whenever the json files structure changes
+# - previously was a string, now it must be a float number
 # json_version = 0 is debug mode: json files are always considered invalid
 # json_version = 1 since ...
 # json_version = 2 since checksums have been added
@@ -138,6 +138,9 @@ config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x
 
 # json_version = 0
 json_version = 4.27
+
+# the release version number (a string)
+version = "v4.9.19"
 
 
 def set_obsolete_json_version_flag():

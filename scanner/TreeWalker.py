@@ -2059,6 +2059,8 @@ class TreeWalker:
 				options_to_save[key] = value
 		# add the total count of positions, so that reading another json file is not needed in order to know if gps data exist
 		options_to_save['num_positions_in_tree'] = num
+		options_to_save['version'] = Options.version
+		options_to_save['json_version'] = Options.json_version
 
 		with open(json_options_file, 'w') as options_file:
 			json.dump(options_to_save, options_file)
