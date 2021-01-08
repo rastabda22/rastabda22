@@ -1701,11 +1701,13 @@ class Media(object):
 
 
 	def _video_metadata(self, path, original=True):
+		message("probing video", path, 4)
 		return_code = VideoProbeWrapper().call('-show_format', '-show_streams', '-of', 'json', '-loglevel', '0', path)
 		if not return_code:
-			indented_message("error probing video, not a video?", path, 5)
+			indented_message("error probing video, not a video?", path, 4)
 			self.is_valid = False
 			return
+		indented_message("video OK!", "", 4)
 		info = json.loads(return_code.decode(sys.getdefaultencoding()))
 		for s in info["streams"]:
 			if 'codec_type' in s:
@@ -2290,6 +2292,7 @@ class Media(object):
 
 	def _video_thumbnails(self, thumbs_path, original_path, json_files, json_files_min_mtime):
 		(_, tfn) = tempfile.mkstemp()
+		message("generating thumbnail from video", original_path, 4)
 		return_code = VideoTranscodeWrapper().call(
 			'-i', original_path,    # original file to extract thumbs from
 			'-f', 'image2',         # extract image
@@ -2308,6 +2311,7 @@ class Media(object):
 				pass
 			self.is_valid = False
 			return
+		indented_message("thumbnail from video generated!", "", 4)
 		try:
 			image = Image.open(tfn)
 		except KeyboardInterrupt:
@@ -2435,13 +2439,17 @@ class Media(object):
 		#transcode_cmd.append('< /dev/null')
 		# The previous line makes the first transcoding attempt fail. I don't understand what
 		# it is supposed to do and why avconv/ffmpeg would be interactive with -y option...
-		indented_message("transcoding command", transcode_cmd, 4)
+		next_level()
+		next_level()
+		message("transcoding command", transcode_cmd, 4)
 		try:
 			return_code = VideoTranscodeWrapper().call(*transcode_cmd)
 			if return_code != False:
-				indented_message("transcoded", "", 4)
+				indented_message("transcoded!", "", 4)
 		except KeyboardInterrupt:
 			raise
+		back_level()
+		back_level()
 
 		if not return_code:
 			# add another option, try transcoding again
