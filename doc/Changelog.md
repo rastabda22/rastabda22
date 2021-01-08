@@ -1,3 +1,6 @@
+### version v4.9.20 (Jan 8, 2021)
+
+* now album and media in searches/popup/selections show their ancestors
 * align media in popup centered
 * make popup background dark
 * bug fixes

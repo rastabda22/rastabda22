@@ -1606,7 +1606,7 @@
 				function continue_addSubalbumToSelection(album) {
 					env.selectionAlbum.subalbums.push(album);
 
-					album.generateCaptionForSelection(self);
+					album.generateCaptionForSelection();
 					delete env.selectionAlbum.albumNameSort;
 					delete env.selectionAlbum.albumReverseSort;
 					env.selectionAlbum.sortAlbumsMedia();
@@ -2507,6 +2507,58 @@
 
 	};
 
+	Album.prototype.getCaptionForSelection = function(html, br) {
+		return this.getCaptionForCollection("Selection", html, br);
+	};
+
+	Album.prototype.getCaptionForSearch = function(html, br) {
+		return this.getCaptionForCollection("Search", html, br);
+	};
+
+	Album.prototype.getCaptionForPopup = function(html, br) {
+		return this.getCaptionForCollection("Popup", html, br);
+	};
+
+	Album.prototype.getCaptionForCollection = function(type, html, br) {
+		return Utilities.getCaptionForCollection(this, type, html, br);
+	};
+
+	SingleMedia.prototype.getCaptionForSelection = function(html, br) {
+		return this.getCaptionForCollection("Selection", html, br);
+	};
+
+	SingleMedia.prototype.getCaptionForSearch = function(html, br) {
+		return this.getCaptionForCollection("Search", html, br);
+	};
+
+	SingleMedia.prototype.getCaptionForPopup = function(html, br) {
+		return this.getCaptionForCollection("Popup", html, br);
+	};
+
+	SingleMedia.prototype.getCaptionForCollection = function(type, html, br) {
+		return Utilities.getCaptionForCollection(this, type, html, br);
+	};
+
+	Utilities.getCaptionForCollection = function(albumOrSingleMedia, type, html, br) {
+		if (! albumOrSingleMedia.hasOwnProperty(type)) {
+			if (albumOrSingleMedia === "Selection")
+				albumOrSingleMedia.generateCaptionForSelection();
+			else if (albumOrSingleMedia === "Search")
+				albumOrSingleMedia.generateCaptionForSearch();
+			else if (type === "Popup")
+				albumOrSingleMedia.generateCaptionForPopup();
+		}
+		var caption = albumOrSingleMedia["captionFor" + type];
+
+		if (! html || ! br) {
+			caption = caption.replace(/<br \/>/g, " ");
+			if (! html) {
+				caption = Utilities.stripHtmlAndReplaceEntities(caption);
+			}
+		}
+		return caption;
+	};
+
 	Album.prototype.generateCaptionForSelection = function() {
 		[this.captionForSelection, this.captionForSelectionSorting] = Utilities.generateAlbumCaptionForCollections(this);
 	};
@@ -2589,8 +2641,8 @@
 		return [captionForCollection, captionForCollectionSorting];
 	};
 
-	SingleMedia.prototype.generateCaptionForSelection = function(album) {
-		[this.captionForSelection, this.captionForSelectionSorting] = Utilities.generateSingleMediaCaptionForCollections(this, album);
+	SingleMedia.prototype.generateCaptionForPopup = function(album) {
+		[this.captionForPopup, this.captionForPopupSorting] = Utilities.generateSingleMediaCaptionForCollections(this, album);
 	};
 
 	SingleMedia.prototype.generateCaptionForSelection = function(album) {
@@ -2663,18 +2715,28 @@
 			}
 		}
 
-		var captionForCollection = Utilities.combineFirstAndSecondLine(singleMedia.nameForShowing(album, true, true), secondLine);
-		var captionForCollectionSorting = singleMedia.nameForShowing(album, true, true) + env.options.cache_folder_separator + Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
+		var nameForShowing = singleMedia.nameForShowing(album, true, true);
+		var captionForCollection = Utilities.combineFirstAndSecondLine(nameForShowing, secondLine);
+		var captionForCollectionSorting = nameForShowing + env.options.cache_folder_separator + Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
 		return [captionForCollection, captionForCollectionSorting];
+	};
+
+	Album.prototype.nameForShowing = function(parentAlbum, html = false, br = false) {
+		return Utilities.nameForShowing(this, parentAlbum, html, br);
+	};
+
+	Subalbum.prototype.nameForShowing = function(parentAlbum, html = false, br = false) {
+		return Utilities.nameForShowing(this, parentAlbum, html, br);
 	};
 
 	Utilities.nameForShowing = function(albumOrSubalbum, parentAlbum, html, br) {
 		var folderName = '';
-		if (parentAlbum && parentAlbum.isSelection() && albumOrSubalbum.hasOwnProperty("captionForSelection")) {
-			folderName = albumOrSubalbum.captionForSelection;
-		} else if (parentAlbum && parentAlbum.isSearch() && albumOrSubalbum.hasOwnProperty("captionForSearch")) {
-			folderName = albumOrSubalbum.captionForSearch;
-		} else if (parentAlbum && parentAlbum.isByDate()) {
+		// if (parentAlbum && parentAlbum.isSelection() && albumOrSubalbum.hasOwnProperty("captionForSelection")) {
+		// 	folderName = albumOrSubalbum.captionForSelection;
+		// } else if (parentAlbum && parentAlbum.isSearch() && albumOrSubalbum.hasOwnProperty("captionForSearch")) {
+		// 	folderName = albumOrSubalbum.captionForSearch;
+		// } else if (parentAlbum && parentAlbum.isByDate()) {
+		if (parentAlbum && parentAlbum.isByDate()) {
 			let folderArray = albumOrSubalbum.cacheBase.split(env.options.cache_folder_separator);
 			if (folderArray.length === 2) {
 				folderName += parseInt(folderArray[1]);
@@ -2691,59 +2753,68 @@
 				folderName = albumOrSubalbum.name;
 		} else {
 			if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title !== albumOrSubalbum.name) {
-				folderName = albumOrSubalbum.title + "<br /><span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
+				folderName = albumOrSubalbum.title;
+				if (html && br)
+					folderName += "<br /><span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
+				else if (html)
+					folderName += " <span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
+				else
+					folderName += " (" + albumOrSubalbum.name + ")";
 			} else {
 				folderName = albumOrSubalbum.name;
 			}
+
+			// if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title !== albumOrSubalbum.name) {
+			// 	folderName = albumOrSubalbum.title + "<br /><span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
+			// } else {
+			// 	folderName = albumOrSubalbum.name;
+			// }
 		}
 
-		if (parentAlbum && parentAlbum.isSelection())
-			albumOrSubalbum.captionForSelection = folderName;
-		else if (parentAlbum && parentAlbum.isSearch())
-			albumOrSubalbum.captionForSearch = folderName;
+		// if (parentAlbum && parentAlbum.isSelection())
+		// 	albumOrSubalbum.captionForSelection = folderName;
+		// else if (parentAlbum && parentAlbum.isSearch())
+		// 	albumOrSubalbum.captionForSearch = folderName;
 
-		if (! html)
-			return Utilities.stripHtmlAndReplaceEntities(folderName);
-		else if (! br)
-			return folderName.replace("<br />", " ");
-		else
-			return folderName;
-	};
-
-	Album.prototype.nameForShowing = function(parentAlbum, html = false, br = false) {
-		return Utilities.nameForShowing(this, parentAlbum, html, br);
-	};
-
-	Subalbum.prototype.nameForShowing = function(parentAlbum, html = false, br = false) {
-		return Utilities.nameForShowing(this, parentAlbum, html, br);
+		// if (! html || ! br) {
+		// 	folderName = folderName.replace(/<br \/>/g, " ");
+		// 	if (! html) {
+		// 		folderName = Utilities.stripHtmlAndReplaceEntities(folderName);
+		// 	}
+		// }
+		return folderName;
 	};
 
 	SingleMedia.prototype.nameForShowing = function(album, html = false, br = false) {
 		var mediaName = '';
-		if (album.isSelection() && this.hasOwnProperty("captionForSelection")) {
-			mediaName = this.captionForSelection;
-		} else if (album.isSearch() && this.hasOwnProperty("captionForSearch")) {
-			mediaName = this.captionForSearch;
+		// if (Utilities.isPopup() && this.hasOwnProperty("captionForPopup")) {
+		// 	mediaName = this.captionForPopup;
+		// } else if (album.isSelection() && this.hasOwnProperty("captionForSelection")) {
+		// 	mediaName = this.captionForSelection;
+		// } else if (album.isSearch() && this.hasOwnProperty("captionForSearch")) {
+		// 	mediaName = this.captionForSearch;
+		// } else {
+		if (this.hasOwnProperty("title") && this.title !== this.name) {
+			mediaName = this.title;
+			if (html && br)
+				mediaName += "<br /><span class='media-real-name'>(" + this.name + ")</span>";
+			else if (html)
+				mediaName += " <span class='media-real-name'>(" + this.name + ")</span>";
+			else
+				mediaName += " (" + this.name + ")";
 		} else {
-			if (this.hasOwnProperty("title") && this.title !== this.name) {
-				mediaName = this.title;
-				if (html && br)
-					mediaName += "<br /><span class='media-real-name'>(" + this.name + ")</span>";
-				else if (html)
-					mediaName += " <span class='media-real-name'>(" + this.name + ")</span>";
-				else
-					mediaName += " (" + this.name + ")";
-			} else {
-				mediaName = this.name;
-			}
+			mediaName = this.name;
 		}
+		// }
 
-		if (! html)
-			return Utilities.stripHtmlAndReplaceEntities(mediaName);
-		else if (! br)
-			return mediaName.replace("<br />", " ");
-		else
-			return mediaName;
+		// if (! html) {
+		// 	mediaName = mediaName.replace(/<br \/>/g, " ");
+		// 	return Utilities.stripHtmlAndReplaceEntities(mediaName);
+		// } else if (! br) {
+		// 	return mediaName.replace("<br />", " ");
+		// } else {
+		return mediaName;
+		// }
 	};
 
 	Album.prototype.folderMapTitle = function(subalbum, folderName) {

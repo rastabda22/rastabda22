@@ -986,29 +986,33 @@
 
 				let showDownloadEverything = false;
 
-				if (thisAlbum.subalbums.length) {
-				// if (thisAlbum.subalbums.length && ! thisAlbum.isTransversal()) {
+				let albumForDownload = thisAlbum;
+				if (isPopup)
+					albumForDownload = env.mapAlbum;
+
+				if (albumForDownload.subalbums.length) {
+				// if (albumForDownload.subalbums.length && ! albumForDownload.isTransversal()) {
 					$(".download-album.everything.all.full").removeClass("hidden");
 					// reset the html
 					$(".download-album.everything.all").html(util._t(".download-album.everything.all"));
 
-					let nMediaInSubTree = thisAlbum.numsMediaInSubTree.imagesAndVideosTotal();
-					let numImages = thisAlbum.numsMediaInSubTree.images;
-					let numVideos = thisAlbum.numsMediaInSubTree.videos;
+					let nMediaInSubTree = albumForDownload.numsMediaInSubTree.imagesAndVideosTotal();
+					let numImages = albumForDownload.numsMediaInSubTree.images;
+					let numVideos = albumForDownload.numsMediaInSubTree.videos;
 					let what = util._t(".title-media");
 					if (numImages === 0)
 						what = util._t(".title-videos");
 					if (numVideos === 0)
 						what = util._t(".title-images");
 
-					if (thisAlbum.isSearch() && thisAlbum.subalbums.length) {
+					if (albumForDownload.isSearch() && albumForDownload.subalbums.length) {
 						// in search albums, numsMediaInSubTree doesn't include the media in the albums found, the values that goes into the DOm must be update by code here
-						for (let iSubalbum = 0; iSubalbum < thisAlbum.subalbums.length; iSubalbum ++) {
-							nMediaInSubTree += thisAlbum.subalbums[iSubalbum].numsMediaInSubTree.imagesAndVideosTotal();
+						for (let iSubalbum = 0; iSubalbum < albumForDownload.subalbums.length; iSubalbum ++) {
+							nMediaInSubTree += albumForDownload.subalbums[iSubalbum].numsMediaInSubTree.imagesAndVideosTotal();
 						}
 					}
 
-					let treeSize = thisAlbum.sizesOfSubTree[0].images + thisAlbum.sizesOfSubTree[0].videos;
+					let treeSize = albumForDownload.sizesOfSubTree[0].images + albumForDownload.sizesOfSubTree[0].videos;
 					$(".download-album.everything.all.full").append(": " + nMediaInSubTree + " " + what + ", " + Functions.humanFileSize(treeSize));
 					if (treeSize < bigZipSize) {
 						// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
@@ -1025,9 +1029,9 @@
 						// propose to download the resized media
 						for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
 							let reducedSize = env.options.reduced_sizes[iSize];
-							treeSize = thisAlbum.sizesOfSubTree[reducedSize].imagesAndVideosTotal();
+							treeSize = albumForDownload.sizesOfSubTree[reducedSize].imagesAndVideosTotal();
 							if (treeSize < bigZipSize) {
-								$(".download-album.everything.all.sized").append(", " + reducedSize + " px: " + thisAlbum.numsMediaInSubTree.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(treeSize));
+								$(".download-album.everything.all.sized").append(", " + reducedSize + " px: " + albumForDownload.numsMediaInSubTree.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(treeSize));
 								$(".download-album.everything.all.sized").attr("size", reducedSize);
 								$(".download-album.everything.all.sized").removeClass("hidden");
 								break;
@@ -1038,23 +1042,23 @@
 
 					// let numImages = 0;
 					// let numVideos = 0;
-					// for (let iMedia = 0; iMedia < thisAlbum.numsMedia.imagesAndVideosTotal(); iMedia ++) {
-					// 	if (thisAlbum.media[iMedia].mimeType.indexOf("image/") === 0) {
+					// for (let iMedia = 0; iMedia < albumForDownload.numsMedia.imagesAndVideosTotal(); iMedia ++) {
+					// 	if (albumForDownload.media[iMedia].mimeType.indexOf("image/") === 0) {
 					// 		numImages ++;
 					// 	} else {
 					// 		numVideos ++;
 					// 	}
 					// }
 
-					let mediaInThisAlbum = thisAlbum.numsMedia.imagesAndVideosTotal();
-					let mediaInThisTree = thisAlbum.numsMediaInSubTree.imagesAndVideosTotal();
+					let mediaInThisAlbum = albumForDownload.numsMedia.imagesAndVideosTotal();
+					let mediaInThisTree = albumForDownload.numsMediaInSubTree.imagesAndVideosTotal();
 					if (numImages && numImages !== mediaInThisAlbum && numImages !== mediaInThisTree && mediaInThisAlbum !== mediaInThisTree) {
 						$(".download-album.everything.images.full").removeClass("hidden");
 						// reset the html
 						$(".download-album.everything.images").html(util._t(".download-album.everything.images"));
 
 						// add the download size
-						let imagesSize = thisAlbum.sizesOfSubTree[0].images;
+						let imagesSize = albumForDownload.sizesOfSubTree[0].images;
 						$(".download-album.everything.images.full").append(": " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(imagesSize));
 						// check the size and decide if they can be downloaded
 						if (imagesSize < bigZipSize) {
@@ -1072,8 +1076,8 @@
 							// propose to download the resized media
 							for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
 								let reducedSize = env.options.reduced_sizes[iSize];
-								if (thisAlbum.sizesOfSubTree[reducedSize].images < bigZipSize) {
-									$(".download-album.everything.images.sized").append(", " + reducedSize + " px: " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].images));
+								if (albumForDownload.sizesOfSubTree[reducedSize].images < bigZipSize) {
+									$(".download-album.everything.images.sized").append(", " + reducedSize + " px: " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(albumForDownload.sizesOfSubTree[reducedSize].images));
 									$(".download-album.everything.images.sized").attr("size", reducedSize);
 									$(".download-album.everything.images.sized").removeClass("hidden");
 									break;
@@ -1088,7 +1092,7 @@
 						$(".download-album.everything.videos").html(util._t(".download-album.everything.videos"));
 
 						// add the download size
-						let videosSize = thisAlbum.sizesOfSubTree[0].videos;
+						let videosSize = albumForDownload.sizesOfSubTree[0].videos;
 						$(".download-album.everything.videos.full").append(": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(videosSize));
 						// check the size and decide if they can be downloaded
 						if (videosSize < bigZipSize) {
@@ -1104,10 +1108,10 @@
 
 						if (videosSize >= bigZipSize) {
 							// propose to download the resized video
-							// in thisAlbum.sizesOfSubTree[iSize] all the reduced sizes have the same value, corresponding to the transcoded videos
+							// in albumForDownload.sizesOfSubTree[iSize] all the reduced sizes have the same value, corresponding to the transcoded videos
 							let reducedSize = env.options.reduced_sizes[0];
-							if (thisAlbum.sizesOfSubTree[reducedSize].videos < bigZipSize) {
-								$(".download-album.everything.videos.sized").append(", " + util._t(".title-transcoded") + ": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].videos));
+							if (albumForDownload.sizesOfSubTree[reducedSize].videos < bigZipSize) {
+								$(".download-album.everything.videos.sized").append(", " + util._t(".title-transcoded") + ": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(albumForDownload.sizesOfSubTree[reducedSize].videos));
 								// $(".download-album.everything.videos.sized").attr("size", reducedSize);
 								$(".download-album.everything.videos.sized").removeClass("hidden");
 							}
@@ -1117,23 +1121,23 @@
 
 				// let numImages = 0;
 				// let numVideos = 0;
-				// for (let iMedia = 0; iMedia < thisAlbum.numsMedia.imagesAndVideosTotal(); iMedia ++) {
-				// 	if (thisAlbum.media[iMedia].mimeType.indexOf("image/") === 0) {
+				// for (let iMedia = 0; iMedia < albumForDownload.numsMedia.imagesAndVideosTotal(); iMedia ++) {
+				// 	if (albumForDownload.media[iMedia].mimeType.indexOf("image/") === 0) {
 				// 		numImages ++;
 				// 	} else {
 				// 		numVideos ++;
 				// 	}
 				// }
 				// TO DO: verify if it's correct to replace previous commented out code with the following 2 lines
-				let numImages = thisAlbum.numsMedia.images;
-				let numVideos = thisAlbum.numsMedia.videos;
+				let numImages = albumForDownload.numsMedia.images;
+				let numVideos = albumForDownload.numsMedia.videos;
 				let what = util._t(".title-media");
 				if (numImages === 0)
 					what = util._t(".title-videos");
 				if (numVideos === 0)
 					what = util._t(".title-images");
 
-				if (thisAlbum.numsMedia.imagesAndVideosTotal()) {
+				if (albumForDownload.numsMedia.imagesAndVideosTotal()) {
 					$(".download-album.media-only.all.full").removeClass("hidden");
 					// reset the html
 					if (showDownloadEverything)
@@ -1142,8 +1146,8 @@
 						$(".download-album.media-only.all").html(util._t(".download-album.simple.all"));
 
 					// add the download size
-					let albumSize = thisAlbum.sizesOfAlbum[0].imagesAndVideosTotal();
-					$(".download-album.media-only.all.full").append(": " + thisAlbum.numsMedia.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(albumSize));
+					let albumSize = albumForDownload.sizesOfAlbum[0].imagesAndVideosTotal();
+					$(".download-album.media-only.all.full").append(": " + albumForDownload.numsMedia.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(albumSize));
 					// check the size and decide if they can be downloaded
 					if (albumSize < bigZipSize) {
 						// maximum allowable size is 500MB (see https://github.com/eligrey/FileSaver.js/#supported-browsers)
@@ -1160,9 +1164,9 @@
 						// propose to download the resized media
 						for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
 							let reducedSize = env.options.reduced_sizes[iSize];
-							albumSize = thisAlbum.sizesOfAlbum[reducedSize].images + thisAlbum.sizesOfAlbum[reducedSize].videos;
+							albumSize = albumForDownload.sizesOfAlbum[reducedSize].images + albumForDownload.sizesOfAlbum[reducedSize].videos;
 							if (albumSize < bigZipSize) {
-								$(".download-album.media-only.all.sized").append(", " + reducedSize + " px: " + thisAlbum.numsMedia.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(albumSize));
+								$(".download-album.media-only.all.sized").append(", " + reducedSize + " px: " + albumForDownload.numsMedia.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(albumSize));
 								$(".download-album.media-only.all.sized").attr("size", reducedSize);
 								$(".download-album.media-only.all.sized").removeClass("hidden");
 								break;
@@ -1171,7 +1175,7 @@
 					}
 				}
 
-				if (numImages && numImages !== thisAlbum.numsMedia.imagesAndVideosTotal()) {
+				if (numImages && numImages !== albumForDownload.numsMedia.imagesAndVideosTotal()) {
 					$(".download-album.media-only.images.full").removeClass("hidden");
 					// reset the html
 					if (showDownloadEverything)
@@ -1180,7 +1184,7 @@
 						$(".download-album.media-only.images").html(util._t(".download-album.simple.images"));
 
 					// add the download size
-					let imagesSize = thisAlbum.sizesOfAlbum[0].images;
+					let imagesSize = albumForDownload.sizesOfAlbum[0].images;
 					$(".download-album.media-only.images.full").append(": " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(imagesSize));
 					// check the size and decide if they can be downloaded
 					if (imagesSize < bigZipSize) {
@@ -1198,8 +1202,8 @@
 						// propose to download the resized media
 						for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
 							let reducedSize = env.options.reduced_sizes[iSize];
-							if (thisAlbum.sizesOfAlbum[reducedSize].images < bigZipSize) {
-								$(".download-album.media-only.images.sized").append(", " + reducedSize + " px: " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(thisAlbum.sizesOfAlbum[reducedSize].images));
+							if (albumForDownload.sizesOfAlbum[reducedSize].images < bigZipSize) {
+								$(".download-album.media-only.images.sized").append(", " + reducedSize + " px: " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(albumForDownload.sizesOfAlbum[reducedSize].images));
 								$(".download-album.media-only.images.sized").attr("size", reducedSize);
 								$(".download-album.media-only.images.sized").removeClass("hidden");
 								break;
@@ -1208,7 +1212,7 @@
 					}
 				}
 
-				if (numVideos && numVideos !== thisAlbum.numsMedia.imagesAndVideosTotal()) {
+				if (numVideos && numVideos !== albumForDownload.numsMedia.imagesAndVideosTotal()) {
 					$(".download-album.media-only.videos.full").removeClass("hidden");
 					// reset the html
 					if (showDownloadEverything)
@@ -1217,7 +1221,7 @@
 						$(".download-album.media-only.videos").html(util._t(".download-album.simple.videos"));
 
 					// add the download size
-					let videosSize = thisAlbum.sizesOfAlbum[0].videos;
+					let videosSize = albumForDownload.sizesOfAlbum[0].videos;
 					$(".download-album.media-only.videos.full").append(": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(videosSize));
 					// check the size and decide if they can be downloaded
 					if (videosSize < bigZipSize) {
@@ -1233,10 +1237,10 @@
 
 					if (videosSize >= bigZipSize) {
 						// propose to download the resized video
-						// in thisAlbum.sizesOfSubTree[iSize] all the reduced sizes have the same value, corresponding to the transcoded videos
+						// in albumForDownload.sizesOfSubTree[iSize] all the reduced sizes have the same value, corresponding to the transcoded videos
 						let reducedSize = env.options.reduced_sizes[0];
-						if (thisAlbum.sizesOfSubTree[reducedSize].videos < bigZipSize) {
-							$(".download-album.media-only.videos.sized").append(", " + util._t(".title-transcoded") + ": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(thisAlbum.sizesOfSubTree[reducedSize].videos));
+						if (albumForDownload.sizesOfSubTree[reducedSize].videos < bigZipSize) {
+							$(".download-album.media-only.videos.sized").append(", " + util._t(".title-transcoded") + ": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(albumForDownload.sizesOfSubTree[reducedSize].videos));
 							// $(".download-album.everything.videos.sized").attr("size", reducedSize);
 							$(".download-album.media-only.videos.sized").removeClass("hidden");
 						}
