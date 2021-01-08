@@ -69,10 +69,10 @@ The metadata added is commented in each section and you only have to uncomment i
 
 ```ini
 #[DEFAULT]
-#tags = %(auto_tags)s, 
+#tags = %(auto_tags)s,
 auto_tags = %(auto_faces)s, %(auto_scenes)s
-auto_scenes = 
-auto_faces = 
+auto_scenes =
+auto_faces =
 #date =
 #latitude =
 #longitude =
@@ -83,14 +83,16 @@ auto_faces =
 [album]
 #title = ALBUM_NAME
 #description =
-#tags = %(auto_tags)s, 
+#tags = %(auto_tags)s,
 
 [MEDIA_FILENAME]
 #title = MEDIA_FILENAME_WITHOUT_EXTENSION
 #description =
-#tags = %(auto_tags)s, 
+#tags = %(auto_tags)s,
 #latitude =
 #longitude =
 ```
 
 If an `album.ini` file already exists in the directory, new media found in the album is added to `album.ini`. When an error occurs, the script exits with error code `1`.
+
+`make_album_ini.sh` must be run with `bash`: it wouldn't run with `sh`, and trying to run it with `sh` produces an error and the script doesn't make anything.
