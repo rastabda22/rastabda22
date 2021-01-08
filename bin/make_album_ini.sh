@@ -5,8 +5,16 @@
 # Name of metadata file (default 'album.ini') is read from config file (default /etc/myphotoshare/myphotoshare.conf)
 
 # All media file extensions that will be considered
-# jpg,jpeg,JPG,JPEG,mp4,avi,MP4,AVI,MOV,tiff,TIF
+# jpg,jpeg,JPG,JPEG,mp4,avi,MP4,AVI,MOV,tiff,TIF,png,PNG
 
+# Check that the script is run with bash
+# sh is linked to dash under Ubuntu.
+if [ -z "$BASH_VERSION" ]; then
+	( >&2 echo "This script must run with bash shell. It does not work with dash!" )
+	( >&2 echo "Under Ubuntu, don't use '$ sh $0 $*' to run it.")
+	( >&2 echo "Simply do '$ $0 $*'.")
+	exit 1
+fi
 
 
 print_usage()
@@ -24,8 +32,8 @@ print_usage()
 	( >&2 echo "Example:" )
 	( >&2 echo "   $0 ~/Pictures/vacations" )
 	( >&2 echo "   Create file '$ALBUM_INI' in '~/Pictures/vacations' with default metadata for all" )
-	( >&2 echo "   media contained that folder. '$ALBUM_INI' name is read from" )
-	( >&2 echo "  '/etc/myphotoshare/myphotoshare.conf'." )
+	( >&2 echo "   media contained that in folder. '$ALBUM_INI' name is read from" )
+	( >&2 echo "   '/etc/myphotoshare/myphotoshare.conf'." )
 }
 
 
@@ -40,7 +48,7 @@ set_config()
 	if [ -f "$1" ]; then
 		CONF="$1"
 	fi
-	# Else use defauly
+	# Else use default
 	if [ -z "$CONF" ]; then
 		CONF="/etc/myphotoshare/myphotoshare.conf"
 	fi
@@ -168,7 +176,7 @@ fi
 # Loop on album content
 SAVEIFS="$IFS"
 IFS=$(echo -en "\n\b")
-for media in $(ls "$DIR"/*.{jpg,jpeg,JPG,JPEG,mp4,avi,MP4,AVI,MOV,tiff,TIF} 2> /dev/null); do
+for media in $(ls "$DIR"/*.{jpg,jpeg,JPG,JPEG,mp4,avi,MP4,AVI,MOV,tiff,TIF,png,PNG} 2> /dev/null); do
 	SECTION=${media##*/}
 	TITLE=${SECTION%.*}
 	SECTION_EXISTS=$(grep -c "\[$SECTION\]" "$DIR/$ALBUM_INI")
