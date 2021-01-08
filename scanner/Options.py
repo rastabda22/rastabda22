@@ -70,7 +70,16 @@ options_requiring_thumbnails_regeneration = [
 ]
 options_requiring_videos_regeneration = [
 	{'name': 'video_transcode_bitrate', 'default': '1M'},
-	{'name': 'video_crf', 'default': 20}
+	{'name': 'video_crf', 'default': 20},
+	{'name': 'video_preset', 'default': 'slow'},
+	{'name': 'video_profile', 'default': 'baseline'},
+	{'name': 'video_profile_level', 'default': '3.0'},
+	{'name': 'video_audio_ac', 'default': 2},
+	{'name': 'video_audio_ab', 'default': '160k'},
+	{'name': 'video_maxrate', 'default': '10M'},
+	{'name': 'video_bufsize', 'default': '10M'},
+	{'name': 'video_frame_maxsize', 'default': 'hd720'},
+	{'name': 'video_add_options', 'default': None},
 ]
 
 # lets put here all unicode combining code points, in order to be sure to use the same in both python and js
