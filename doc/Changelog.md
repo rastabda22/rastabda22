@@ -1,3 +1,5 @@
+* in search albums, make the random media link go to a hash below the search album
+
 ### version v4.9.20 (Jan 8, 2021)
 
 * now album and media in searches/popup/selections show their ancestors
