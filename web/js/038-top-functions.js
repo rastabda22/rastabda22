@@ -2183,7 +2183,7 @@
 					"</div>" +
 					"<div class='media-caption'>";
 			let name;
-			if (util.isPopup())
+			if (util.isPopup() || this.isMap())
 				name = ithMedia.captionForPopup;
 			else if (this.isSearch())
 				name = ithMedia.captionForSearch;
