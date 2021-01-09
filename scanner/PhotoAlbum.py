@@ -2954,7 +2954,7 @@ class Metadata(object):
 			except NoOptionError:
 				pass
 		elif "tags" in album_ini.defaults():
-			attributes["metadata"]["tags"] = [tag for tag in set([x.strip() for x in album_ini.get(name, "tags").split(",")]) if tag]
+			attributes["metadata"]["tags"] = [tag for tag in set([x.strip() for x in album_ini.defaults()["tags"].split(",")]) if tag]
 
 
 	@staticmethod
