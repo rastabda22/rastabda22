@@ -296,6 +296,7 @@ $(document).ready(function() {
 						$(".browsing-mode-switcher").removeClass("selected");
 						nextBrowsingModeObject.addClass("selected");
 						nextBrowsingModeObject[0].click();
+						return false;
 					} else if (prevBrowsingModeRequested) {
 						let prevBrowsingModeObject = $(".browsing-mode-switcher.selected").prevAll(filter).first();
 						if (prevBrowsingModeObject[0] === undefined)
@@ -303,8 +304,8 @@ $(document).ready(function() {
 						$(".browsing-mode-switcher").removeClass("selected");
 						prevBrowsingModeObject.addClass("selected");
 						prevBrowsingModeObject[0].click();
+						return false;
 					}
-					return false;
 				}
 			}
 
