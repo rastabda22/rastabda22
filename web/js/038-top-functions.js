@@ -1296,8 +1296,8 @@
 							"contextmenu",
 							function(ev) {
 								if (! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-									ev.preventDefault();
 									if (pS.getCurrentZoom() === 1) {
+										ev.preventDefault();
 										env.prevMedia.swipeRight();
 										return false;
 									}

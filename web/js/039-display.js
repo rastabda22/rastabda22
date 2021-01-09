@@ -68,8 +68,9 @@ $(document).ready(function() {
 				f.toggleMenu();
 				return false;
 			} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0 && ! $("video#media-center")[0].paused) {
-					// stop the video, otherwise it keeps playing
-					$("video#media-center")[0].pause();
+				// stop the video, otherwise it keeps playing
+				$("video#media-center")[0].pause();
+				return false;
 			} else if (isPopup) {
 				// the popup is there: close it
 				$('.leaflet-popup-close-button')[0].click();
@@ -139,6 +140,7 @@ $(document).ready(function() {
 						else
 							// stop the video
 							$("video#media-center")[0].pause();
+						return false;
 					} else if (
 						(e.key.toLowerCase() === "n" || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
 						env.nextMedia && env.currentMedia !== null && ! isMap
@@ -294,7 +296,6 @@ $(document).ready(function() {
 						$(".browsing-mode-switcher").removeClass("selected");
 						nextBrowsingModeObject.addClass("selected");
 						nextBrowsingModeObject[0].click();
-						return false;
 					} else if (prevBrowsingModeRequested) {
 						let prevBrowsingModeObject = $(".browsing-mode-switcher.selected").prevAll(filter).first();
 						if (prevBrowsingModeObject[0] === undefined)
@@ -302,8 +303,8 @@ $(document).ready(function() {
 						$(".browsing-mode-switcher").removeClass("selected");
 						prevBrowsingModeObject.addClass("selected");
 						prevBrowsingModeObject[0].click();
-						return false;
 					}
+					return false;
 				}
 			}
 
@@ -385,6 +386,7 @@ $(document).ready(function() {
 						$(".sort." + mode + "-sort" + nextSelector)[0].click();
 						// console.log(".sort." + mode + "-sort" + nextSelector + " ------- " + nextSortingModeMessageId);
 					}
+					return false;
 				}
 			}
 
