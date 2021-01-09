@@ -1340,7 +1340,11 @@
 			var firstPartOfSelector = "media-select-box-";
 			if (Utilities.isPopup())
 				firstPartOfSelector = "map-" + firstPartOfSelector;
-			singleMedia.addToSelection(this, "#" + firstPartOfSelector + indexMedia);
+			if (this.isCollection()) {
+				singleMedia.addToSelection(null, "#" + firstPartOfSelector + indexMedia);
+			} else {
+				singleMedia.addToSelection(this, "#" + firstPartOfSelector + indexMedia);
+			}
 		}
 	};
 
@@ -1426,6 +1430,7 @@
 	};
 
 	SingleMedia.prototype.addToSelection = function(album, clickedSelector) {
+		// if album is null, it means that it couldn't be determined, do determine it here
 		if (! this.isSelected()) {
 			if (env.selectionAlbum.isEmpty())
 				Utilities.initializeSelectionAlbum();
@@ -1445,8 +1450,12 @@
 				env.selectionAlbum.sizesOfSubTree.sum(this.fileSizes);
 			}
 
-			if (! Utilities.isPopup())
+			// if (! Utilities.isPopup())
+			if (album === null) {
+				this.generateCaptionForSelection(env.cache.getAlbum(this.foldersCacheBase));
+			} else {
 				this.generateCaptionForSelection(album);
+			}
 			delete env.selectionAlbum.mediaNameSort;
 			delete env.selectionAlbum.mediaReverseSort;
 			env.selectionAlbum.sortAlbumsMedia();
