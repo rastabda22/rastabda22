@@ -2403,7 +2403,7 @@
 			} else {
 				titleName = util.pathJoin([randomMedia.albumName, randomMedia.nameForShowing(randomSubAlbum)]);
 			}
-			if (env.currentAlbum.isSearch)
+			if (env.currentAlbum.isSearch())
 				randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia, randomSubAlbum.cacheBase, env.currentAlbum.cacheBase);
 			else
 				randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia);
