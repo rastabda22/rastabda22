@@ -2403,7 +2403,10 @@
 			} else {
 				titleName = util.pathJoin([randomMedia.albumName, randomMedia.nameForShowing(randomSubAlbum)]);
 			}
-			randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia);
+			if (env.currentAlbum.isSearch)
+				randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia, randomSubAlbum.cacheBase, env.currentAlbum.cacheBase);
+			else
+				randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia);
 
 			titleName = titleName.substr(titleName.indexOf('/') + 1);
 			goTo = util._t(".go-to") + " " + titleName;
