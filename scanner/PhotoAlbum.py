@@ -1664,6 +1664,15 @@ class Media(object):
 			else:
 				exif[k] = exif_all_tags_values[k]
 
+		try:
+			# make exif['GPSAltitude'] a value above/below sea level
+			exif['GPSAltitude'] = float(exif['GPSAltitude'])
+			if exif['GPSAltitudeRef'] != 0:
+				exif['GPSAltitude'] = - exif['GPSAltitude']
+			del exif['GPSAltitudeRef']
+		except KeyError:
+			pass
+
 		return exif
 
 	def _photo_metadata_by_exifread(self, image):
@@ -1702,6 +1711,16 @@ class Media(object):
 					exif[k_modified] = float(exif[k_modified])
 
 		try:
+			if exif['GPSAltitudeRef'] != "0":
+				exif['GPSAltitude'] = - exif['GPSAltitude']
+			del exif['GPSAltitudeRef']
+			if exif['GPSLongitudeRef'] == "W":
+				exif['GPSLongitude'] = - exif['GPSLongitude']
+			if exif['GPSLatitudeRef'] == "S":
+				exif['GPSLatitude'] = - exif['GPSLatitude']
+		except KeyError:
+			pass
+
 		return exif
 
 
