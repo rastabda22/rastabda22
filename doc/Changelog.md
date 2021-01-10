@@ -1,4 +1,5 @@
 * in search albums, make the random media link go to a hash below the search album
+* bug fixes
 
 ### version v4.9.20 (Jan 8, 2021)
 
