@@ -3171,6 +3171,10 @@
 		// var titleHeight = parseInt($(".media-box#center .title").css("height"));
 		// var mediaBoxHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
 		var mediaHeight = parseInt($(".media-box#center .media-box-inner #media-center").css("height"));
+		if (! mediaHeight) {
+			// the img isn't visible yet?
+			mediaHeight = env.windowHeight / 4;
+		}
 		// var bottomThumbnailsHeight = parseInt($("#album-view.media-view-container").css("height"));
 		var selectBoxWidth = 30;
 		if (captionType === 'media') {
