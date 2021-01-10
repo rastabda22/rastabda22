@@ -2810,8 +2810,8 @@
 		// } else if (album.isSearch() && this.hasOwnProperty("captionForSearch")) {
 		// 	mediaName = this.captionForSearch;
 		// } else {
-		if (this.hasOwnProperty("title") && this.title !== this.name) {
-			mediaName = this.title;
+		if (this.metadata.hasOwnProperty("title") && this.metadata.title !== this.name) {
+			mediaName = this.metadata.title;
 			if (html && br)
 				mediaName += "<br /><span class='media-real-name'>(" + this.name + ")</span>";
 			else if (html)
