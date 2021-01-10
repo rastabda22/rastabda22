@@ -1520,7 +1520,7 @@ class Media(object):
 		infinitesimal = 0.00001
 		if (
 			gps_latitude is not None and gps_longitude is not None and
-			gps_latitude < infinitesimal and gps_longitude < infinitesimal
+			abs(gps_latitude) < infinitesimal and abs(gps_longitude) < infinitesimal
 		):
 			gps_latitude = None
 			gps_latitude_ref = None
