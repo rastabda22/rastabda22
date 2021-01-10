@@ -1519,15 +1519,16 @@ class Media(object):
 		# Issue https://gitlab.com/paolobenve/myphotoshare/-/issues/218
 		infinitesimal = 0.00001
 		if (
-			gps_latitude is not None and gps_longitude is not None and gps_altitude is not None and
-			gps_latitude < infinitesimal and gps_longitude < infinitesimal and gps_altitude < infinitesimal
+			gps_latitude is not None and gps_longitude is not None and
+			gps_latitude < infinitesimal and gps_longitude < infinitesimal
 		):
-			gps_altitude = None
-			gps_altitude_ref = None
 			gps_latitude = None
 			gps_latitude_ref = None
 			gps_longitude = None
 			gps_longitude_ref = None
+		if gps_altitude is not None and	gps_altitude < infinitesimal:
+			gps_altitude = None
+			gps_altitude_ref = None
 
 		if gps_latitude is not None and gps_latitude_ref is not None and gps_longitude is not None and gps_longitude_ref is not None:
 			self._attributes["metadata"]["latitude"] = gps_latitude
@@ -2947,7 +2948,7 @@ class Metadata(object):
 		if album_ini.has_section(name):
 			try:
 				gps_altitude = album_ini.getfloat(name, "altitude")
-				gps_alttude_ref = "0" if gps_altitude > 0.0 else "1"
+				gps_altitude_ref = "0" if gps_altitude > 0.0 else "1"
 			except ValueError:
 				message("ERROR", "Incorrect altitude in [" + name + "] in '" + Options.config['metadata_filename'] + "'", 1)
 			except NoOptionError:

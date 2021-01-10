@@ -1412,6 +1412,8 @@
 					text += "<tr class='map-link' class='gps'><td class='metadata-data-latitude'></td><td>" + self.metadata.latitudeMS + " </td></tr>";
 				if (self.metadata.longitude !== undefined)
 					text += "<tr class='gps'><td class='metadata-data-longitude'></td><td>" + self.metadata.longitudeMS + " </td></tr>";
+				if (self.metadata.altitude !== undefined)
+					text += "<tr class='gps'><td class='metadata-data-altitude'></td><td>" + self.metadata.altitude + " m</td></tr>";
 				text += "</table>";
 				$(".media-box#" + id + " .metadata").html(text);
 				var linkTitle = util._t('#show-map');
