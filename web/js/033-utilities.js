@@ -2267,7 +2267,7 @@
 				return;
 		}
 		$("#thumbs img.thumbnail").each(function() {
-			if (this.title === Utilities.pathJoin([singleMedia.albumName, singleMedia.name])) {
+			if (this.id === Utilities.pathJoin([singleMedia.albumName, singleMedia.name])) {
 				thumb = $(this);
 				return false;
 			}

@@ -2160,6 +2160,7 @@
 					"class='thumbnail " + lazyClass + "' " +
 					"height='" + thumbHeight + "' " +
 					"width='" + thumbWidth + "' " +
+					"id='" + Utilities.pathJoin([ithMedia.albumName, ithMedia.name]) + "' " +
 					"style='" +
 						 "width: " + calculatedWidth + "px; " +
 						 "height: " + calculatedHeight + "px;" +
@@ -2167,7 +2168,7 @@
 				"/>";
 			img = $(imgHtml);
 			img.attr("title", util.pathJoin([ithMedia.albumName, ithMedia.nameForShowing(this)]));
-			img.attr("alt", util.trimExtension(ithMedia.nameForShowing(this)));
+			img.attr("alt", util.trimExtension(ithMedia.name));
 
 			let imageString =
 				"<div class='thumb-and-caption-container' style='" +
