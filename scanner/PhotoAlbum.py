@@ -1519,23 +1519,25 @@ class Media(object):
 		# Issue https://gitlab.com/paolobenve/myphotoshare/-/issues/218
 		infinitesimal = 0.00001
 		if (
-			gps_latitude is not None and gps_longitude is not None and gps_altitude is not None and
-			gps_latitude < infinitesimal and gps_longitude < infinitesimal and gps_altitude < infinitesimal
+			gps_latitude is not None and gps_longitude is not None and
+			gps_latitude < infinitesimal and gps_longitude < infinitesimal
 		):
-			gps_altitude = None
-			gps_altitude_ref = None
 			gps_latitude = None
 			gps_latitude_ref = None
 			gps_longitude = None
 			gps_longitude_ref = None
+		if gps_altitude is not None and	gps_altitude < infinitesimal:
+			gps_altitude = None
+			gps_altitude_ref = None
 
 		if gps_latitude is not None and gps_latitude_ref is not None and gps_longitude is not None and gps_longitude_ref is not None:
-			self._attributes["metadata"]["altitude"] = gps_altitude
-			self._attributes["metadata"]["altitudeRef"] = gps_altitude_ref
 			self._attributes["metadata"]["latitude"] = gps_latitude
 			self._attributes["metadata"]["latitudeMS"] = Metadata.convert_decimal_to_degrees_minutes_seconds(gps_latitude, gps_latitude_ref)
 			self._attributes["metadata"]["longitude"] = gps_longitude
 			self._attributes["metadata"]["longitudeMS"] = Metadata.convert_decimal_to_degrees_minutes_seconds(gps_longitude, gps_longitude_ref)
+		if gps_altitude is not None and gps_altitude_ref is not None:
+			self._attributes["metadata"]["altitude"] = gps_altitude
+			self._attributes["metadata"]["altitudeRef"] = gps_altitude_ref
 
 		# Overwrite with album.ini values when it has been read from file
 		if self.album.album_ini:
@@ -2867,7 +2869,8 @@ class Metadata(object):
 			* date: a YYYY-MM-DD date replacing the one from EXIF
 			* latitude: for when the media is not geotagged
 			* longitude: for when the media is not geotagged
-			* tags: a ',' separated list of terms
+			* altitude: for when the media is not geotagged
+			* tags: a ','-separated list of terms
 		"""
 
 		# Initialize with album.ini defaults
@@ -2882,7 +2885,7 @@ class Metadata(object):
 			except NoOptionError:
 				pass
 		elif "title" in album_ini.defaults():
-			attributes["metadata"]["title"] = album_ini.defaults()["title"]
+			attributes["metadata"]["title"] = album_ini.get('DEFAULT', "title")
 
 		# Description
 		if album_ini.has_section(name):
@@ -2891,7 +2894,7 @@ class Metadata(object):
 			except NoOptionError:
 				pass
 		elif "description" in album_ini.defaults():
-			attributes["metadata"]["description"] = album_ini.defaults()["description"]
+			attributes["metadata"]["description"] = album_ini.get('DEFAULT', "description")
 
 		# Date
 		if album_ini.has_section(name):
@@ -2903,7 +2906,7 @@ class Metadata(object):
 				pass
 		elif "date" in album_ini.defaults():
 			try:
-				attributes["metadata"]["dateTime"] = datetime.strptime(album_ini.defaults()["date"], "%Y-%m-%d")
+				attributes["metadata"]["dateTime"] = datetime.strptime(album_ini.get('DEFAULT', "date"), "%Y-%m-%d")
 			except ValueError:
 				message("ERROR", "Incorrect date in [DEFAULT] in '" + Options.config['metadata_filename'] + "'", 1)
 
@@ -2912,6 +2915,8 @@ class Metadata(object):
 		gps_latitude_ref = None
 		gps_longitude = None
 		gps_longitude_ref = None
+		gps_altitude = None
+		gps_altitude_ref = None
 		if album_ini.has_section(name):
 			try:
 				gps_latitude = album_ini.getfloat(name, "latitude")
@@ -2922,7 +2927,7 @@ class Metadata(object):
 				pass
 		elif "latitude" in album_ini.defaults():
 			try:
-				gps_latitude = float(album_ini.defaults()["latitude"])
+				gps_latitude = album_ini.getfloat('DEFAULT', "latitude")
 				gps_latitude_ref = "N" if gps_latitude > 0.0 else "S"
 			except ValueError:
 				message("ERROR", "Incorrect latitude in [" + name + "] in '" + Options.config['metadata_filename'] + "'", 1)
@@ -2936,16 +2941,33 @@ class Metadata(object):
 				pass
 		elif "longitude" in album_ini.defaults():
 			try:
-				gps_longitude = float(album_ini.defaults()["longitude"])
+				gps_longitude = album_ini.getfloat('DEFAULT', "longitude")
 				gps_longitude_ref = "E" if gps_longitude > 0.0 else "W"
 			except ValueError:
 				message("ERROR", "Incorrect longitude in [" + name + "] in '" + Options.config['metadata_filename'] + "'", 1)
+		if album_ini.has_section(name):
+			try:
+				gps_altitude = album_ini.getfloat(name, "altitude")
+				gps_altitude_ref = "0" if gps_altitude > 0.0 else "1"
+			except ValueError:
+				message("ERROR", "Incorrect altitude in [" + name + "] in '" + Options.config['metadata_filename'] + "'", 1)
+			except NoOptionError:
+				pass
+		elif "altitude" in album_ini.defaults():
+			try:
+				gps_altitude = album_ini.getfloat('DEFAULT', "altitude")
+				gps_altitude_ref = "0" if gps_altitude > 0.0 else "1"
+			except ValueError:
+				message("ERROR", "Incorrect altitude in [" + name + "] in '" + Options.config['metadata_filename'] + "'", 1)
 
 		if gps_latitude is not None and gps_latitude_ref is not None and gps_longitude is not None and gps_longitude_ref is not None:
 			attributes["metadata"]["latitude"] = gps_latitude
 			attributes["metadata"]["latitudeMS"] = Metadata.convert_decimal_to_degrees_minutes_seconds(gps_latitude, gps_latitude_ref)
 			attributes["metadata"]["longitude"] = gps_longitude
 			attributes["metadata"]["longitudeMS"] = Metadata.convert_decimal_to_degrees_minutes_seconds(gps_longitude, gps_longitude_ref)
+		if gps_altitude is not None and gps_altitude_ref is not None:
+			attributes["metadata"]["altitude"] = abs(gps_altitude)
+			attributes["metadata"]["altitudeRef"] = gps_altitude_ref
 
 		# Tags
 		if album_ini.has_section(name):
@@ -2954,7 +2976,7 @@ class Metadata(object):
 			except NoOptionError:
 				pass
 		elif "tags" in album_ini.defaults():
-			attributes["metadata"]["tags"] = [tag for tag in set([x.strip() for x in album_ini.get(name, "tags").split(",")]) if tag]
+			attributes["metadata"]["tags"] = [tag for tag in set([x.strip() for x in album_ini.get('DEFAULT', "tags").split(",")]) if tag]
 
 
 	@staticmethod
@@ -2983,7 +3005,7 @@ class Metadata(object):
 			except NoOptionError:
 				pass
 		elif "country_name" in album_ini.defaults():
-			attributes["geoname"]["country_name"] = album_ini.defaults()["country_name"]
+			attributes["geoname"]["country_name"] = album_ini.get('DEFAULT', "country_name")
 
 		# Region_name
 		if album_ini.has_section(name):
@@ -2992,7 +3014,7 @@ class Metadata(object):
 			except NoOptionError:
 				pass
 		elif "region_name" in album_ini.defaults():
-			attributes["geoname"]["region_name"] = album_ini.defaults()["region_name"]
+			attributes["geoname"]["region_name"] = album_ini.get('DEFAULT', "region_name")
 
 		# Place_name
 		if album_ini.has_section(name):
@@ -3001,7 +3023,7 @@ class Metadata(object):
 			except NoOptionError:
 				pass
 		elif "place_name" in album_ini.defaults():
-			attributes["geoname"]["place_name"] = album_ini.defaults()["place_name"]
+			attributes["geoname"]["place_name"] = album_ini.get('DEFAULT', "place_name")
 
 
 	@staticmethod
