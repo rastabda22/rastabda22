@@ -1353,11 +1353,13 @@
 						wordsString = util.normalizeAccordingToOptions(wordsString);
 						if (env.options.search_tags_only) {
 							searchWordsFromUser = [wordsString.replace(/_/g, " ")];
+							searchWordsFromUserNormalizedAccordingToOptions = [wordsStringNormalizedAccordingToOptions];
+							searchWordsFromUserNormalized = [wordsStringNormalized];
 						} else {
 							searchWordsFromUser = wordsString.split('_');
+							searchWordsFromUserNormalizedAccordingToOptions = wordsStringNormalizedAccordingToOptions.split(' ');
+							searchWordsFromUserNormalized = wordsStringNormalized.split(' ');
 						}
-						searchWordsFromUserNormalizedAccordingToOptions = wordsStringNormalizedAccordingToOptions.split(' ');
-						searchWordsFromUserNormalized = wordsStringNormalized.split(' ');
 
 						if (searchWordsFromUser.length === 1)
 							$("ul#right-menu li#any-word").addClass("dimmed").off("click");
