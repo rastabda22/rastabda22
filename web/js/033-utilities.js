@@ -1780,7 +1780,12 @@
 	};
 
 	Utilities.addTagLink = function(tag) {
-		var hash = "#!/_bs" + env.options.cache_folder_separator +  "t" + env.options.search_options_separator + "o" + env.options.search_options_separator + tag + env.options.cache_folder_separator + env.currentAlbum.cacheBase;
+		var tagForHref = tag;
+		if (tag.indexOf(" ")) {
+			// tags can be phrases (e.g. automatic tags from person recognition)
+			tagForHref = tag.replace(/ /g, "_");
+		}
+		var hash = "#!/_bs" + env.options.cache_folder_separator +  "t" + env.options.search_options_separator + "o" + env.options.search_options_separator + tagForHref + env.options.cache_folder_separator + env.currentAlbum.cacheBase;
 		return "<a href='" + hash + "'>" + tag + "</a>";
 	};
 
