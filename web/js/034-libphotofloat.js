@@ -1351,7 +1351,11 @@
 
 						$("ul#right-menu #search-field").attr("value", wordsStringOriginal);
 						wordsString = util.normalizeAccordingToOptions(wordsString);
-						searchWordsFromUser = wordsString.split('_');
+						if (env.options.search_tags_only) {
+							searchWordsFromUser = [wordsString.replace(/_/g, " ")];
+						} else {
+							searchWordsFromUser = wordsString.split('_');
+						}
 						searchWordsFromUserNormalizedAccordingToOptions = wordsStringNormalizedAccordingToOptions.split(' ');
 						searchWordsFromUserNormalized = wordsStringNormalized.split(' ');
 

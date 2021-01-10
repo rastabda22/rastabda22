@@ -1062,21 +1062,31 @@ class TreeWalker:
 			# remove the extension
 			media_or_album_name = os.path.splitext(media_or_album_name)[0]
 
-		elements = [media_or_album.title, media_or_album.description, " ".join(media_or_album.tags), media_or_album_name]
-		phrase = ' '.join([_f for _f in elements if _f])
-		# strip html tags
-		phrase = re.sub('<[^<]+?>', '', phrase)
-		# strip new lines
-		phrase = ' '.join(phrase.splitlines())
+		words = phrase_to_words(media_or_album_name)
+		words.extend(phrase_to_words(re.sub('<[^<]+?>', '', media_or_album.title)))
+		words.extend(phrase_to_words(re.sub('<[^<]+?>', '', media_or_album.description)))
+		words.extend(media_or_album.tags)
 
-		alphabetic_phrase = remove_non_alphabetic_characters(remove_digits(phrase))
-		lowercase_phrase = switch_to_lowercase(alphabetic_phrase)
-		search_normalized_phrase = remove_accents(lowercase_phrase)
-		ascii_phrase = transliterate_to_ascii(search_normalized_phrase)
+		# elements = [media_or_album.title, media_or_album.description, " ".join(media_or_album.tags), media_or_album_name]
+		# phrase = ' '.join([_f for _f in elements if _f])
+		# # strip html tags
+		# phrase = re.sub('<[^<]+?>', '', phrase)
+		# # strip new lines
+		# phrase = ' '.join(phrase.splitlines())
 
-		alphabetic_words = phrase_to_words(alphabetic_phrase)
-		search_normalized_words = phrase_to_words(search_normalized_phrase)
-		ascii_words = phrase_to_words(ascii_phrase)
+		alphabetic_words = list(map(lambda word: remove_non_alphabetic_characters(remove_digits(word)), words))
+		lowercase_words = list(map(lambda word: switch_to_lowercase(word), alphabetic_words))
+		search_normalized_words = list(map(lambda word: remove_accents(word), lowercase_words))
+		ascii_words = list(map(lambda word: transliterate_to_ascii(word), search_normalized_words))
+
+		# alphabetic_phrase = remove_non_alphabetic_characters(remove_digits(phrase))
+		# lowercase_phrase = switch_to_lowercase(alphabetic_phrase)
+		# search_normalized_phrase = remove_accents(lowercase_phrase)
+		# ascii_phrase = transliterate_to_ascii(search_normalized_phrase)
+
+		# alphabetic_words = phrase_to_words(alphabetic_phrase)
+		# search_normalized_words = phrase_to_words(search_normalized_phrase)
+		# ascii_words = phrase_to_words(ascii_phrase)
 
 		if (Options.config['use_stop_words']):
 			# remove stop words: do it according to the words in lower case, different words could be removed if performing remotion from every list
@@ -1422,7 +1432,7 @@ class TreeWalker:
 			elif Options.passwords_file_mtime is not None and Options.passwords_file_mtime >= json_files_min_mtime:
 				indented_message("passwords must be processed", "passwords file newer than json file or absent", 4)
 				must_process_passwords = True
-			elif Options.old_password_codes == {} and Options.passwords_file_mtime is not None:
+			elif len(patterns_and_passwords) > 0 and Options.old_password_codes == {} and Options.passwords_file_mtime is not None:
 				# execution comes here when the password file has been renamed without modifying it
 				indented_message("passwords must be processed", "passwords file didn't exist in previous scanner run", 4)
 				must_process_passwords = True

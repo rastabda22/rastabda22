@@ -1780,7 +1780,12 @@
 	};
 
 	Utilities.addTagLink = function(tag) {
-		var hash = "#!/_bs" + env.options.cache_folder_separator +  "t" + env.options.search_options_separator + "o" + env.options.search_options_separator + tag + env.options.cache_folder_separator + env.currentAlbum.cacheBase;
+		var tagForHref = tag;
+		if (tag.indexOf(" ")) {
+			// tags can be phrases (e.g. automatic tags from person recognition)
+			tagForHref = tag.replace(/ /g, "_");
+		}
+		var hash = "#!/_bs" + env.options.cache_folder_separator +  "t" + env.options.search_options_separator + "o" + env.options.search_options_separator + tagForHref + env.options.cache_folder_separator + env.currentAlbum.cacheBase;
 		return "<a href='" + hash + "'>" + tag + "</a>";
 	};
 
@@ -3171,6 +3176,10 @@
 		// var titleHeight = parseInt($(".media-box#center .title").css("height"));
 		// var mediaBoxHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
 		var mediaHeight = parseInt($(".media-box#center .media-box-inner #media-center").css("height"));
+		if (! mediaHeight) {
+			// the img isn't visible yet?
+			mediaHeight = env.windowHeight / 4;
+		}
 		// var bottomThumbnailsHeight = parseInt($("#album-view.media-view-container").css("height"));
 		var selectBoxWidth = 30;
 		if (captionType === 'media') {
