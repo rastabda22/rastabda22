@@ -1368,6 +1368,11 @@ class Media(object):
 		used_tool = ""
 		previous = ''
 		ok = False
+
+		# _exif = self._photo_metadata_by_exiftool(image)
+		# _exif = self._photo_metadata_by_exifread(image)
+		# _exif = self._photo_metadata_by_PIL(image)
+
 		for _tool in Options.config['metadata_tools_preference']:
 			message("extracting metadata by "+ _tool + previous + "...", "", 5)
 			if _tool == 'exiftool':
