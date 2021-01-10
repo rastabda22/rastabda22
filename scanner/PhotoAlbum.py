@@ -1500,9 +1500,9 @@ class Media(object):
 		gps_altitude = None
 		if "GPSAltitude" in exif:
 			gps_altitude = exif["GPSAltitude"]
-		gps_altitude_ref = None
-		if "GPSAltitudeRef" in exif:
-			gps_altitude_ref = exif["GPSAltitudeRef"]
+		# gps_altitude_ref = None
+		# if "GPSAltitudeRef" in exif:
+		# 	gps_altitude_ref = exif["GPSAltitudeRef"]
 		gps_latitude = None
 		if "GPSLatitude" in exif:
 			gps_latitude = exif["GPSLatitude"]
@@ -1526,18 +1526,19 @@ class Media(object):
 			gps_latitude_ref = None
 			gps_longitude = None
 			gps_longitude_ref = None
-		if gps_altitude is not None and	gps_altitude < infinitesimal:
-			gps_altitude = None
-			gps_altitude_ref = None
+		# if gps_altitude is not None and	gps_altitude < infinitesimal:
+		# 	gps_altitude = None
+		# 	gps_altitude_ref = None
 
 		if gps_latitude is not None and gps_latitude_ref is not None and gps_longitude is not None and gps_longitude_ref is not None:
 			self._attributes["metadata"]["latitude"] = gps_latitude
 			self._attributes["metadata"]["latitudeMS"] = Metadata.convert_decimal_to_degrees_minutes_seconds(gps_latitude, gps_latitude_ref)
 			self._attributes["metadata"]["longitude"] = gps_longitude
 			self._attributes["metadata"]["longitudeMS"] = Metadata.convert_decimal_to_degrees_minutes_seconds(gps_longitude, gps_longitude_ref)
-		if gps_altitude is not None and gps_altitude_ref is not None:
+		if gps_altitude is not None:
+		# if gps_altitude is not None and gps_altitude_ref is not None:
 			self._attributes["metadata"]["altitude"] = gps_altitude
-			self._attributes["metadata"]["altitudeRef"] = gps_altitude_ref
+			# self._attributes["metadata"]["altitudeRef"] = gps_altitude_ref
 
 		# Overwrite with album.ini values when it has been read from file
 		if self.album.album_ini:
@@ -1597,7 +1598,8 @@ class Media(object):
 						exif['GPSAltitude'] = - exif['GPSAltitude']
 					# since exif['GPSAltitudeRef'], it must be decoded,
 					# otherwise it will produce a "TypeError: Object of type bytes is not JSON serializable" when dumping it
-					exif['GPSAltitudeRef'] = exif['GPSAltitudeRef'].decode('utf-8')
+					# exif['GPSAltitudeRef'] = exif['GPSAltitudeRef'].decode('utf-8')
+					del exif['GPSAltitudeRef']
 
 				gps_latitude = _exif["GPSInfo"].get("GPSLatitude", None)
 				gps_latitude_ref = _exif["GPSInfo"].get("GPSLatitudeRef", None)
@@ -1699,6 +1701,7 @@ class Media(object):
 					# exifread returns this values like u'[44, 25, 26495533/1000000]'
 					exif[k_modified] = float(exif[k_modified])
 
+		try:
 		return exif
 
 
@@ -2948,7 +2951,7 @@ class Metadata(object):
 		if album_ini.has_section(name):
 			try:
 				gps_altitude = album_ini.getfloat(name, "altitude")
-				gps_altitude_ref = "0" if gps_altitude > 0.0 else "1"
+				# gps_altitude_ref = "0" if gps_altitude > 0.0 else "1"
 			except ValueError:
 				message("ERROR", "Incorrect altitude in [" + name + "] in '" + Options.config['metadata_filename'] + "'", 1)
 			except NoOptionError:
@@ -2965,9 +2968,10 @@ class Metadata(object):
 			attributes["metadata"]["latitudeMS"] = Metadata.convert_decimal_to_degrees_minutes_seconds(gps_latitude, gps_latitude_ref)
 			attributes["metadata"]["longitude"] = gps_longitude
 			attributes["metadata"]["longitudeMS"] = Metadata.convert_decimal_to_degrees_minutes_seconds(gps_longitude, gps_longitude_ref)
-		if gps_altitude is not None and gps_altitude_ref is not None:
-			attributes["metadata"]["altitude"] = abs(gps_altitude)
-			attributes["metadata"]["altitudeRef"] = gps_altitude_ref
+		if gps_altitude is not None:
+			attributes["metadata"]["altitude"] = gps_altitude
+			# attributes["metadata"]["altitude"] = abs(gps_altitude)
+			# attributes["metadata"]["altitudeRef"] = gps_altitude_ref
 
 		# Tags
 		if album_ini.has_section(name):
