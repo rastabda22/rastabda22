@@ -1,3 +1,6 @@
+* bug fixes
+* frenche translation updated
+
 ### version v4.9.21 (Jan 10, 2021)
 
 * search by tag now works even if tag contains spaces
