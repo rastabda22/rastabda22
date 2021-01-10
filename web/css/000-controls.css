@@ -450,6 +450,10 @@ video {
 	text-align: center;
 }
 
+#album-view.media-view-container .media-caption {
+	display: none;
+}
+
 #album-view.media-view-container.no-bottom-space {
 	height: 0;
 	bottom: 15px;
