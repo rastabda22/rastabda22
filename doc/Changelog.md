@@ -1,3 +1,5 @@
+### version v4.9.21 (Jan 10, 2021)
+
 * search by tag now works even if tag contains spaces
 * in search albums, make the random media link go to a hash below the search album
 * bug fixes
