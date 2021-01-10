@@ -2768,12 +2768,14 @@
 		} else {
 			if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title !== albumOrSubalbum.name) {
 				folderName = albumOrSubalbum.title;
-				if (html && br)
-					folderName += "<br /><span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
-				else if (html)
-					folderName += " <span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
-				else
-					folderName += " (" + albumOrSubalbum.name + ")";
+				if (albumOrSubalbum.name) {
+					if (html && br)
+						folderName += "<br /><span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
+					else if (html)
+						folderName += " <span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
+					else
+						folderName += " (" + albumOrSubalbum.name + ")";
+				}
 			} else {
 				folderName = albumOrSubalbum.name;
 			}
