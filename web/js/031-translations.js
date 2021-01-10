@@ -770,7 +770,7 @@ var translations =
 			"#by-selection": "sélection",
 			"#by-map": "sélection depuis la carte",
 			"#from-map": "Album par carte",
-			"#in": "en",
+			"#in": "dans",
 			"#place-icon-title": "Afficher la carte pour ",
 			"#place-icon-title-end": " [appuyer sur s pour afficher la carte]",
 			"#show-on-map": "Afficher la position des médias sur la carte",
