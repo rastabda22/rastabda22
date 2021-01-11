@@ -1,5 +1,6 @@
+* multi-word and non-letter tags are managed correctly 
 * bug fixes
-* frenche translation updated
+* french translation updated
 
 ### version v4.9.21 (Jan 10, 2021)
 
