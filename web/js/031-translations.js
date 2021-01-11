@@ -824,7 +824,7 @@ var translations =
 			"#album-sort": "Tri album&nbsp;:",
 			"#media-sort": "Tri photos et vidéos&nbsp;:",
 			".ui.caption": "Affichage",
-			".ui.hide-title": "titre: cacher",
+			".ui.hide-title": "cacher le titre",
 			".ui.hide-descriptions": "cacher les descriptions",
 			".ui.hide-tags": "cacher les étiquettes",
 			".ui.hide-bottom-thumbnails": "cacher les vignettes du bas",
