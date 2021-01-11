@@ -874,6 +874,21 @@
 		return object;
 	};
 
+	Utilities.prototype.removeNonLetters = function(object) {
+		var string = object;
+		if (typeof object === "object")
+			string = string.join('|');
+
+		string = string.replace(/[^\p{L}]/ug, ' ')
+
+		if (typeof object === "object")
+			object = string.split('|');
+		else
+			object = string;
+
+		return object;
+	};
+
 	Utilities.removeAccents = function(string) {
 		string = string.normalize('NFD');
 		var stringArray = Array.from(string);
@@ -1780,11 +1795,13 @@
 	};
 
 	Utilities.addTagLink = function(tag) {
-		var tagForHref = tag;
-		if (tag.indexOf(" ")) {
-			// tags can be phrases (e.g. automatic tags from person recognition)
-			tagForHref = tag.replace(/ /g, "_");
-		}
+		// tags can be phrases (e.g. with automatic tags from person recognition)
+
+		// all non-letter character must be converted to space
+		var tagForHref = tag.replace(/[^\p{L}]/ug, ' ');
+		// now replace space -> underscore
+		tagForHref = tagForHref.replace(/ /g, "_");
+
 		var hash = "#!/_bs" + env.options.cache_folder_separator +  "t" + env.options.search_options_separator + "o" + env.options.search_options_separator + tagForHref + env.options.cache_folder_separator + env.currentAlbum.cacheBase;
 		return "<a href='" + hash + "'>" + tag + "</a>";
 	};
