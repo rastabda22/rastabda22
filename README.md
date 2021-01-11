@@ -7,7 +7,7 @@
 
 **MyPhotoShare** is an open source web photo gallery aimed at sleekness and speed. It works over directory structures rather than esoteric photo database management software. Everything it generates is static, which means it's extremely fast and secure.
 
-It permits browsing the media by folder, date, search terms, geotags and maps. You can associate metadata (i.e. title, description, tags) with pictures and albums and search media content by keywords or display descriptions.
+It permits browsing the media by folder, date, search terms, geotags and maps. You can associate metadata (i.e. title, description, multi-word-any-character tags) with pictures and albums and search media content by keywords or display descriptions.
 
 Whenever geotagged photos are found, a map with the photo(s) position can be shown using Leaflet, and clicking the photo markers the photo thumbnails for that point are shown.
 
