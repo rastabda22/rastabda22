@@ -1349,12 +1349,12 @@
 							env.options.search_current_album = searchOptions.includes('o');
 						}
 
-						$("ul#right-menu #search-field").attr("value", wordsStringOriginal);
+						$("ul#right-menu #search-field").attr("value", decodeURIComponent(wordsStringOriginal));
 						wordsString = util.normalizeAccordingToOptions(wordsString);
 						if (env.options.search_tags_only) {
-							searchWordsFromUser = [wordsString.replace(/_/g, " ")];
-							searchWordsFromUserNormalizedAccordingToOptions = [wordsStringNormalizedAccordingToOptions];
-							searchWordsFromUserNormalized = [wordsStringNormalized];
+							searchWordsFromUser = [decodeURIComponent(wordsString).replace(/_/g, " ")];
+							searchWordsFromUserNormalizedAccordingToOptions = [decodeURIComponent(wordsStringNormalizedAccordingToOptions)];
+							searchWordsFromUserNormalized = [decodeURIComponent(wordsStringNormalized)];
 						} else {
 							searchWordsFromUser = wordsString.split('_');
 							searchWordsFromUserNormalizedAccordingToOptions = wordsStringNormalizedAccordingToOptions.split(' ');
@@ -1591,7 +1591,7 @@
 									if (
 										env.searchWordsFromJsonFile.some(
 											function(words, index) {
-												if (words.includes(searchWordsFromUserNormalized[i])) {
+												if (words.includes(searchWordsFromUserNormalized[i].replace(/([^\p{L}])/ug, " "))) {
 													albumHashes.push([env.searchAlbumCacheBasesFromJsonFile[index]]);
 													wordSubalbums.push(env.searchAlbumSubalbumsFromJsonFile[index]);
 													return true;
@@ -1637,7 +1637,7 @@
 														ithMedia = theAlbum.media[indexMedia];
 														normalizedWords = util.normalizeAccordingToOptions(ithMedia.words);
 														if (ithMedia.metadata.hasOwnProperty("tags") && env.options.search_tags_only)
-															normalizedTags = util.removeNonLetters(util.normalizeAccordingToOptions(ithMedia.metadata.tags));
+															normalizedTags = util.normalizeAccordingToOptions(ithMedia.metadata.tags);
 														if (
 															(
 																! env.options.search_tags_only &&
@@ -1665,7 +1665,7 @@
 														ithSubalbum = theAlbum.subalbums[indexSubalbums];
 														normalizedWords = util.normalizeAccordingToOptions(ithSubalbum.words);
 														if (ithSubalbum.hasOwnProperty("tags") && env.options.search_tags_only)
-															normalizedTags = util.removeNonLetters(util.normalizeAccordingToOptions(ithSubalbum.tags));
+															normalizedTags = util.normalizeAccordingToOptions(ithSubalbum.tags);
 														if (
 															(
 																! env.options.search_tags_only &&
@@ -1690,7 +1690,7 @@
 														ithMedia = theAlbum.media[indexMedia];
 														normalizedWords = util.normalizeAccordingToOptions(ithMedia.words);
 														if (ithMedia.metadata.hasOwnProperty("tags") && env.options.search_tags_only)
-															normalizedTags = util.removeNonLetters(util.normalizeAccordingToOptions(ithMedia.metadata.tags));
+															normalizedTags = util.normalizeAccordingToOptions(ithMedia.metadata.tags);
 														if (
 															(
 																! env.options.search_tags_only &&
@@ -1720,7 +1720,7 @@
 														ithSubalbum = theAlbum.subalbums[indexSubalbums];
 														normalizedWords = util.normalizeAccordingToOptions(ithSubalbum.words);
 														if (ithSubalbum.hasOwnProperty("tags") && env.options.search_tags_only)
-															normalizedTags = util.removeNonLetters(util.normalizeAccordingToOptions(ithSubalbum.tags));
+															normalizedTags = util.normalizeAccordingToOptions(ithSubalbum.tags);
 														if (
 															(
 																! env.options.search_tags_only &&
@@ -1783,7 +1783,7 @@
 																// whole word
 																normalizedWords = util.normalizeAccordingToOptions(env.searchAlbum.media[indexMedia].words);
 																if (env.searchAlbum.media[indexMedia].metadata.hasOwnProperty("tags") && env.options.search_tags_only)
-																	normalizedTags = util.removeNonLetters(util.normalizeAccordingToOptions(env.searchAlbum.media[indexMedia].metadata.tags));
+																	normalizedTags = util.normalizeAccordingToOptions(env.searchAlbum.media[indexMedia].metadata.tags);
 																if (
 																	! env.options.search_tags_only &&
 																	searchWordsFromUserNormalizedAccordingToOptions.some((word, index) => index > lastIndex && normalizedWords.indexOf(word) === -1) ||
@@ -1799,7 +1799,7 @@
 																for (indexWordsLeft = lastIndex + 1; indexWordsLeft < searchWordsFromUser.length; indexWordsLeft ++) {
 																	normalizedWords = util.normalizeAccordingToOptions(env.searchAlbum.media[indexMedia].words);
 																	if (env.searchAlbum.media[indexMedia].metadata.hasOwnProperty("tags") && env.options.search_tags_only)
-																		normalizedTags = util.removeNonLetters(util.normalizeAccordingToOptions(env.searchAlbum.media[indexMedia].metadata.tags));
+																		normalizedTags = util.normalizeAccordingToOptions(env.searchAlbum.media[indexMedia].metadata.tags);
 																	if (
 																		! env.options.search_tags_only &&
 																		! normalizedWords.some(word => word.includes(searchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft])) ||
@@ -1825,7 +1825,7 @@
 																// whole word
 																normalizedWords = util.normalizeAccordingToOptions(env.searchAlbum.subalbums[indexSubalbums].words);
 																if (env.searchAlbum.subalbums[indexSubalbums].hasOwnProperty("tags") && env.options.search_tags_only)
-																	normalizedTags = util.removeNonLetters(util.normalizeAccordingToOptions(env.searchAlbum.subalbums[indexSubalbums].tags));
+																	normalizedTags = util.normalizeAccordingToOptions(env.searchAlbum.subalbums[indexSubalbums].tags);
 																if (
 																	! env.options.search_tags_only &&
 																	searchWordsFromUserNormalizedAccordingToOptions.some((word, index) => index > lastIndex && normalizedWords.indexOf(word) === -1) ||
@@ -1841,7 +1841,7 @@
 																for (indexWordsLeft = lastIndex + 1; indexWordsLeft < searchWordsFromUser.length; indexWordsLeft ++) {
 																	normalizedWords = util.normalizeAccordingToOptions(env.searchAlbum.subalbums[indexSubalbums].words);
 																	if (env.searchAlbum.subalbums[indexSubalbums].hasOwnProperty("tags") && env.options.search_tags_only)
-																		normalizedTags = util.removeNonLetters(util.normalizeAccordingToOptions(env.searchAlbum.subalbums[indexSubalbums].tags));
+																		normalizedTags = util.normalizeAccordingToOptions(env.searchAlbum.subalbums[indexSubalbums].tags);
 																	if (
 																		! env.options.search_tags_only &&
 																		! normalizedWords.some(word => word.includes(searchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft])) ||
