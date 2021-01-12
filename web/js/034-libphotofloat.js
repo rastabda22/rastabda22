@@ -1325,7 +1325,14 @@
 				$("#album-view, #album-view #subalbums, #album-view #thumbs").removeClass("hidden");
 
 				if (albumHash) {
-					albumHash = decodeURI(albumHash);
+					if (util.isSearchHash(albumHash)) {
+						// encoded hashes must be preserved, in order to make tag only search work when a dash is inside the tag
+						let splittedHash = albumHash.split("%2D");
+						splittedHash = splittedHash.map(hash => decodeURI(hash))
+						albumHash = splittedHash.join("%2D");
+					} else {
+						albumHash = decodeURI(albumHash);
+					}
 
 					let splittedAlbumHash = albumHash.split(env.options.cache_folder_separator);
 					if (util.isSearchCacheBase(albumHash)) {

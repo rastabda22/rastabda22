@@ -879,7 +879,7 @@
 		if (typeof object === "object")
 			string = string.join('|');
 
-		string = string.replace(/([^\p{L}])/ug, match => encodeURIComponent(match));
+		string = string.replace(/([^\p{L}_])/ug, match => match === "-" ? "%2D" : encodeURIComponent(match));
 
 		if (typeof object === "object")
 			object = string.split('|');
@@ -1800,7 +1800,7 @@
 		// now replace space -> underscore
 		var tagForHref = tag.replace(/ /g, "_");
 		// all non-letter character must be converted to space
-		tagForHref = tagForHref.replace(/([^\p{L}_])/ug, match => encodeURIComponent(match));
+		tagForHref = tagForHref.replace(/([^\p{L}_])/ug, match => match === "-" ? "%2D" : encodeURIComponent(match));
 
 		var hash = "#!/_bs" + env.options.cache_folder_separator +  "t" + env.options.search_options_separator + "o" + env.options.search_options_separator + tagForHref + env.options.cache_folder_separator + env.currentAlbum.cacheBase;
 		return "<a href='" + hash + "'>" + tag + "</a>";
