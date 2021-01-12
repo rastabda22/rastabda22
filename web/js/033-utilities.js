@@ -874,6 +874,21 @@
 		return object;
 	};
 
+	Utilities.prototype.encodeNonLetters = function(object) {
+		var string = object;
+		if (typeof object === "object")
+			string = string.join('|');
+
+		string = string.replace(/([^\p{L}_])/ug, match => match === "-" ? "%2D" : encodeURIComponent(match));
+
+		if (typeof object === "object")
+			object = string.split('|');
+		else
+			object = string;
+
+		return object;
+	};
+
 	Utilities.removeAccents = function(string) {
 		string = string.normalize('NFD');
 		var stringArray = Array.from(string);
@@ -1780,11 +1795,13 @@
 	};
 
 	Utilities.addTagLink = function(tag) {
-		var tagForHref = tag;
-		if (tag.indexOf(" ")) {
-			// tags can be phrases (e.g. automatic tags from person recognition)
-			tagForHref = tag.replace(/ /g, "_");
-		}
+		// tags can be phrases (e.g. with automatic tags from person recognition)
+
+		// now replace space -> underscore
+		var tagForHref = tag.replace(/ /g, "_");
+		// all non-letter character must be converted to space
+		tagForHref = tagForHref.replace(/([^\p{L}_])/ug, match => match === "-" ? "%2D" : encodeURIComponent(match));
+
 		var hash = "#!/_bs" + env.options.cache_folder_separator +  "t" + env.options.search_options_separator + "o" + env.options.search_options_separator + tagForHref + env.options.cache_folder_separator + env.currentAlbum.cacheBase;
 		return "<a href='" + hash + "'>" + tag + "</a>";
 	};
@@ -2267,7 +2284,7 @@
 				return;
 		}
 		$("#thumbs img.thumbnail").each(function() {
-			if (this.title === Utilities.pathJoin([singleMedia.albumName, singleMedia.name])) {
+			if (this.id === Utilities.pathJoin([singleMedia.albumName, singleMedia.name])) {
 				thumb = $(this);
 				return false;
 			}
@@ -2768,12 +2785,14 @@
 		} else {
 			if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title !== albumOrSubalbum.name) {
 				folderName = albumOrSubalbum.title;
-				if (html && br)
-					folderName += "<br /><span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
-				else if (html)
-					folderName += " <span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
-				else
-					folderName += " (" + albumOrSubalbum.name + ")";
+				if (albumOrSubalbum.name) {
+					if (html && br)
+						folderName += "<br /><span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
+					else if (html)
+						folderName += " <span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
+					else
+						folderName += " (" + albumOrSubalbum.name + ")";
+				}
 			} else {
 				folderName = albumOrSubalbum.name;
 			}
@@ -2808,8 +2827,8 @@
 		// } else if (album.isSearch() && this.hasOwnProperty("captionForSearch")) {
 		// 	mediaName = this.captionForSearch;
 		// } else {
-		if (this.hasOwnProperty("title") && this.title !== this.name) {
-			mediaName = this.title;
+		if (this.metadata.hasOwnProperty("title") && this.metadata.title !== this.name) {
+			mediaName = this.metadata.title;
 			if (html && br)
 				mediaName += "<br /><span class='media-real-name'>(" + this.name + ")</span>";
 			else if (html)
@@ -2922,8 +2941,9 @@
 		containerWidth = env.windowWidth;
 		// }
 		var bottom = Math.round(albumHeight + (containerHeight - actualHeight) / 2 + distanceFromImageBorder);
-		var right = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
-		$("#media-select-box .select-box").css("right", right.toString() + "px").css("bottom", bottom.toString() + "px");
+		var left = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
+		$("#media-select-box .select-box").css("left", "");
+		$("#media-select-box .select-box").css("left", left.toString() + "px").css("bottom", bottom.toString() + "px");
 		return true;
 	};
 
@@ -3112,9 +3132,9 @@
 	};
 
 	Utilities.hasSomeDescription = function(object) {
-		var hasTitle = (typeof object.title !== "undefined") && object.title;
-		var hasDescription = (typeof object.description !== "undefined") && object.description;
-		var hasTags = (typeof object.tags !== "undefined") && object.tags;
+		var hasTitle = (object.title !== undefined && object.title);
+		var hasDescription = (object.description !== undefined && object.description);
+		var hasTags = (object.tags !== undefined && object.tags.length);
 
 		return hasTitle || hasDescription || hasTags;
 	};

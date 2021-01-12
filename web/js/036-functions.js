@@ -392,7 +392,7 @@
 			else
 				$("ul#right-menu li#tags-only").removeClass("selected");
 			if (util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || isPopup) {
-				$("ul#right-menu li#album-search").addClass("dimmed").off("click");
+				$("ul#right-menu li#album-search").addClass("dimmed").off("click").attr("title", "");
 			} else {
 				$("ul#right-menu li#album-search").removeClass("dimmed").off("click").on("click", util.toggleCurrentAbumSearch);
 				let albumNamePromise = Functions.getAlbumNameFromCacheBase(env.options.cache_base_to_search_in);

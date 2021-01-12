@@ -1,3 +1,15 @@
+### version v4.9.22 (Jan 12, 2021)
+
+* better managing of album.ini
+* make multi-word-with-dash tags work
+* documentation improved
+* css trimmings
+* select box has been moved from right to left bottom position
+* shortcut _h_ is managed in a better way
+* multi-word and non-letter tags are managed correctly
+* bug fixes
+* french translation updated
+
 ### version v4.9.21 (Jan 10, 2021)
 
 * search by tag now works even if tag contains spaces

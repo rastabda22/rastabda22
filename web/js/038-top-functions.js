@@ -1412,6 +1412,8 @@
 					text += "<tr class='map-link' class='gps'><td class='metadata-data-latitude'></td><td>" + self.metadata.latitudeMS + " </td></tr>";
 				if (self.metadata.longitude !== undefined)
 					text += "<tr class='gps'><td class='metadata-data-longitude'></td><td>" + self.metadata.longitudeMS + " </td></tr>";
+				if (self.metadata.altitude !== undefined)
+					text += "<tr class='gps'><td class='metadata-data-altitude'></td><td>" + self.metadata.altitude + " m</td></tr>";
 				text += "</table>";
 				$(".media-box#" + id + " .metadata").html(text);
 				var linkTitle = util._t('#show-map');
@@ -1715,12 +1717,29 @@
 
 	TopFunctions.prototype.toggleTitleAndBottomThumbnailsAndDescriptionsAndTags = function(ev) {
 		// if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-		env.options.hide_title = ! env.options.hide_title;
+		var howMany = 0;
+		if (env.options.hide_title)
+			howMany ++;
+		if (env.options.hide_bottom_thumbnails)
+			howMany ++;
+		if (env.options.hide_descriptions)
+			howMany ++;
+		if (env.options.hide_tags)
+			howMany ++;
+		var treatAsHidden = false;
+		if (howMany > 2) {
+			env.options.hide_title = false;
+			env.options.hide_bottom_thumbnails = false;
+			env.options.hide_descriptions = false;
+			env.options.hide_tags = false;
+		} else {
+			env.options.hide_title = true;
+			env.options.hide_bottom_thumbnails = true;
+			env.options.hide_descriptions = true;
+			env.options.hide_tags = true;
+		}
 		f.setBooleanCookie("hideTitle", env.options.hide_title);
-		env.options.hide_bottom_thumbnails = ! env.options.hide_bottom_thumbnails;
 		f.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
-		env.options.hide_descriptions = ! env.options.hide_descriptions;
-		env.options.hide_tags = ! env.options.hide_tags;
 		f.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
 		f.setBooleanCookie("hideTags", env.options.hide_tags);
 		f.updateMenu();
@@ -2158,6 +2177,7 @@
 					"class='thumbnail " + lazyClass + "' " +
 					"height='" + thumbHeight + "' " +
 					"width='" + thumbWidth + "' " +
+					"id='" + Utilities.pathJoin([ithMedia.albumName, ithMedia.name]) + "' " +
 					"style='" +
 						 "width: " + calculatedWidth + "px; " +
 						 "height: " + calculatedHeight + "px;" +
@@ -2165,7 +2185,7 @@
 				"/>";
 			img = $(imgHtml);
 			img.attr("title", util.pathJoin([ithMedia.albumName, ithMedia.nameForShowing(this)]));
-			img.attr("alt", util.trimExtension(ithMedia.nameForShowing(this)));
+			img.attr("alt", util.trimExtension(ithMedia.name));
 
 			let imageString =
 				"<div class='thumb-and-caption-container' style='" +
@@ -2324,8 +2344,8 @@
 			$(".media-tags").removeClass("hidden-by-option");
 		}
 
-		if (inPopup) {
-			$(function() {
+		$(
+			function() {
 				$("img.lazyload-popup-media").Lazy(
 					{
 						afterLoad: map.addClickToPopupPhoto,
@@ -2339,28 +2359,28 @@
 						appendScroll: $('#popup-images-wrapper')
 					}
 				);
-			});
-		} else {
-			$(
-				function() {
-					if (! $("#album-view").hasClass("media-view-container")) {
-						$("img." + lazyClass).Lazy(
-							{
-								// threshold: 2 * env.options.media_thumb_size,
-								appendScroll: $(window)
-							}
-						);
-					} else {
-						$("#album-view.media-view-container img." + lazyClass).Lazy(
-							{
-								// threshold: 2 * env.options.media_thumb_size,
-								appendScroll: $("#album-view")
-							}
-						);
+			}
+		);
+		$(
+			function() {
+				$("#album-view:not(.media-view-container) img.lazyload-media").Lazy(
+					{
+						// threshold: 2 * env.options.media_thumb_size,
+						appendScroll: $(window)
 					}
-				}
-			);
-		}
+				);
+			}
+		);
+		$(
+			function() {
+				$("#album-view.media-view-container img.lazyload-media").Lazy(
+					{
+						// threshold: 2 * env.options.media_thumb_size,
+						appendScroll: $("#album-view")
+					}
+				);
+			}
+		);
 	};
 
 

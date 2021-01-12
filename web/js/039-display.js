@@ -439,8 +439,13 @@ $(document).ready(function() {
 		var bySearchViewHash = env.hashBeginning + env.options.by_search_string;
 
 		// build the search album part of the hash
-		var wordsStringOriginal = $("#search-field").val().normalize().replace(/[^\p{L}]/ug, ' ').replace(/  /g, ' ').trim();
-		var wordsString = encodeURIComponent(wordsStringOriginal.replace(/ /g, '_'));
+		var wordsStringOriginal, wordsString;
+		if (env.options.search_tags_only) {
+			wordsStringOriginal = util.encodeNonLetters($("#search-field").val()).normalize().replace(/  /g, ' ').trim();
+		} else {
+			wordsStringOriginal = $("#search-field").val().normalize().replace(/[^\p{L}]/ug, ' ').replace(/  /g, ' ').trim();
+		}
+		wordsString = encodeURIComponent(wordsStringOriginal.replace(/ /g, '_'));
 		// TO DO: non-alphabitic words have to be filtered out
 		if (wordsString) {
 			if (util.isPopup()) {

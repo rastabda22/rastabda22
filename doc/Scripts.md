@@ -76,6 +76,7 @@ auto_faces =
 #date =
 #latitude =
 #longitude =
+#altitude =
 #place_name =
 #region_name =
 #country_name =
