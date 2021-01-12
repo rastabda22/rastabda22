@@ -1717,12 +1717,29 @@
 
 	TopFunctions.prototype.toggleTitleAndBottomThumbnailsAndDescriptionsAndTags = function(ev) {
 		// if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-		env.options.hide_title = ! env.options.hide_title;
+		var howMany = 0;
+		if (env.options.hide_title)
+			howMany ++;
+		if (env.options.hide_bottom_thumbnails)
+			howMany ++;
+		if (env.options.hide_descriptions)
+			howMany ++;
+		if (env.options.hide_tags)
+			howMany ++;
+		var treatAsHidden = false;
+		if (howMany > 2) {
+			env.options.hide_title = false;
+			env.options.hide_bottom_thumbnails = false;
+			env.options.hide_descriptions = false;
+			env.options.hide_tags = false;
+		} else {
+			env.options.hide_title = true;
+			env.options.hide_bottom_thumbnails = true;
+			env.options.hide_descriptions = true;
+			env.options.hide_tags = true;
+		}
 		f.setBooleanCookie("hideTitle", env.options.hide_title);
-		env.options.hide_bottom_thumbnails = ! env.options.hide_bottom_thumbnails;
 		f.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
-		env.options.hide_descriptions = ! env.options.hide_descriptions;
-		env.options.hide_tags = ! env.options.hide_tags;
 		f.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
 		f.setBooleanCookie("hideTags", env.options.hide_tags);
 		f.updateMenu();
