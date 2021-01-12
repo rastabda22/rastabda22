@@ -967,8 +967,13 @@ ul#right-menu.expand .selected {
 }
 
 ul#right-menu.expand li.dimmed {
-	background-color:rgba(0, 0, 0, 0.2);
-	cursor: auto;
+	color: gray;
+	cursor: default !important;
+}
+
+ul#right-menu.expand li.dimmed:hover {
+	color: white;
+	background-color: black !important;
 }
 
 ul#right-menu.expand li:not(.active, .sub-menu) {
