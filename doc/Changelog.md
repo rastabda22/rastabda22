@@ -1,3 +1,5 @@
+### version v4.9.22 (Jan 12, 2021)
+
 * better managing of album.ini
 * make multi-word-with-dash tags work
 * documentation improved
