@@ -1,4 +1,10 @@
-* multi-word and non-letter tags are managed correctly 
+* better managing of album.ini
+* make multi-word-with-dash tags work
+* documentation improved
+* css trimmings
+* select box has been moved from right to left bottom position
+* shortcut _h_ is managed in a better way
+* multi-word and non-letter tags are managed correctly
 * bug fixes
 * french translation updated
 
