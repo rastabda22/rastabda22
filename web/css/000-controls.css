@@ -312,7 +312,7 @@ p.description-text, p.description-text ul {
 
 #thumbs .select-box, #subalbums .select-box, #media-select-box .select-box, #popup-images-wrapper .select-box {
 	bottom: 5px;
-	right: 5px;
+	left: 5px;
 }
 
 #media-select-box .select-box {

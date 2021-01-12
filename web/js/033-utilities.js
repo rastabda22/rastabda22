@@ -2941,8 +2941,9 @@
 		containerWidth = env.windowWidth;
 		// }
 		var bottom = Math.round(albumHeight + (containerHeight - actualHeight) / 2 + distanceFromImageBorder);
-		var right = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
-		$("#media-select-box .select-box").css("right", right.toString() + "px").css("bottom", bottom.toString() + "px");
+		var left = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
+		$("#media-select-box .select-box").css("left", "");
+		$("#media-select-box .select-box").css("left", left.toString() + "px").css("bottom", bottom.toString() + "px");
 		return true;
 	};
 
