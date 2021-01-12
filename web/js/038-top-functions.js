@@ -2347,17 +2347,25 @@
 			$(
 				function() {
 					if (! $("#album-view").hasClass("media-view-container")) {
-						$("img." + lazyClass).Lazy(
-							{
-								// threshold: 2 * env.options.media_thumb_size,
-								appendScroll: $(window)
+						$(
+							function() {
+								$("img." + lazyClass).Lazy(
+									{
+										// threshold: 2 * env.options.media_thumb_size,
+										appendScroll: $(window)
+									}
+								);
 							}
 						);
 					} else {
-						$("#album-view.media-view-container img." + lazyClass).Lazy(
-							{
-								// threshold: 2 * env.options.media_thumb_size,
-								appendScroll: $("#album-view")
+						$(
+							function() {
+								$("#album-view.media-view-container img." + lazyClass).Lazy(
+									{
+										// threshold: 2 * env.options.media_thumb_size,
+										appendScroll: $("#album-view")
+									}
+								);
 							}
 						);
 					}
