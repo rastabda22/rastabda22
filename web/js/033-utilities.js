@@ -3132,9 +3132,9 @@
 	};
 
 	Utilities.hasSomeDescription = function(object) {
-		var hasTitle = (typeof object.title !== "undefined") && object.title;
-		var hasDescription = (typeof object.description !== "undefined") && object.description;
-		var hasTags = (typeof object.tags !== "undefined") && object.tags;
+		var hasTitle = (object.title !== undefined && object.title);
+		var hasDescription = (object.description !== undefined && object.description);
+		var hasTags = (object.tags !== undefined && object.tags.length);
 
 		return hasTitle || hasDescription || hasTags;
 	};
