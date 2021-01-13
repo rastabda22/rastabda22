@@ -1236,12 +1236,6 @@
 							scalePromise.then(
 								function([containerHeight, containerWidth]) {
 									if (id === "center") {
-										if (self.mimeType.indexOf("image/") === 0) {
-											util.setPinchButtonsPosition();
-										}
-										util.setSelectButtonPosition();
-										util.setDescriptionPosition('singleMedia');
-										util.correctPrevNextPosition();
 										loadNextPrevMedia(self, containerHeight, containerWidth);
 									}
 									// }
