@@ -1828,9 +1828,9 @@
 			f.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
 			f.updateMenu();
 			if (env.options.hide_bottom_thumbnails) {
-				$("#album-view").addClass("hidden-by-option");
+				$("#album-view.media-view-container").addClass("hidden-by-option");
 			} else {
-				$("#album-view").removeClass("hidden-by-option");
+				$("#album-view.media-view-container").removeClass("hidden-by-option");
 			}
 			// if ($("#thumbs").children().length)
 			if (! $("#album-view").hasClass("media-view-container")) {
