@@ -398,7 +398,7 @@
 		</li>
 		<li class="expandable search">
 			<form>
-				<input type="text" id="search-field" />
+				<input type="search" id="search-field" />
 				<img id="search-button" src="img/ic_search_black_48dp_2x.png" />
 			</form>
 			<ul class="hidden">
