@@ -7,11 +7,11 @@ body {
 }
 
 a {
-	color: floralwhite;
+	color: white;
 	text-decoration: none;
 }
 a:hover {
-	color: #FFAD27;
+	/* color: yellow; */
 }
 
 .title, .title:hover {
@@ -554,7 +554,7 @@ video {
 
 #description-tags {
 	font-size: 90%;
-	color: red;
+	/* color: red; */
 	text-align: right;
 }
 
@@ -572,7 +572,7 @@ video {
 
 .tag {
 	font-style: italic;
-	color: yellow;
+	/* color: yellow; */
 	font-variant: small-caps;
 }
 
@@ -608,7 +608,7 @@ video {
 
 #description-text {
 	overflow-y: auto;
-	color: #FFAD27;
+	/* color: #FFAD27; */
 }
 
 #description-tags {
@@ -789,7 +789,7 @@ video {
 
 .media-caption {
 	font-size: 75%;
-	color: chartreuse;
+	/* color: chartreuse; */
 	white-space: normal;
 }
 
