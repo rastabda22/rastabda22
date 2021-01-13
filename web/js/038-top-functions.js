@@ -2200,6 +2200,7 @@
 			let imageString =
 				"<div class='thumb-and-caption-container' style='" +
 							"width: " + calculatedWidth + "px; " +
+							"margin-right: " + env.options.spacing + "px; " +
 				"'>" +
 					"<div class='thumb-container' " + "style='" +
 							// "width: " + calculatedWidth + "px; " +
