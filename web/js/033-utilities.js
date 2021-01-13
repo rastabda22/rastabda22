@@ -2787,11 +2787,11 @@
 				folderName = albumOrSubalbum.title;
 				if (albumOrSubalbum.name) {
 					if (html && br)
-						folderName += "<br /><span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
+						folderName += "<br /><span class='media-real-name'>[" + albumOrSubalbum.name + "]</span>";
 					else if (html)
-						folderName += " <span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
+						folderName += " <span class='media-real-name'>[" + albumOrSubalbum.name + "]</span>";
 					else
-						folderName += " (" + albumOrSubalbum.name + ")";
+						folderName += " [" + albumOrSubalbum.name + "]";
 				}
 			} else {
 				folderName = albumOrSubalbum.name;
@@ -2830,11 +2830,11 @@
 		if (this.metadata.hasOwnProperty("title") && this.metadata.title !== this.name) {
 			mediaName = this.metadata.title;
 			if (html && br)
-				mediaName += "<br /><span class='media-real-name'>(" + this.name + ")</span>";
+				mediaName += "<br /><span class='media-real-name'>[" + this.name + "]</span>";
 			else if (html)
-				mediaName += " <span class='media-real-name'>(" + this.name + ")</span>";
+				mediaName += " <span class='media-real-name'>[" + this.name + "]</span>";
 			else
-				mediaName += " (" + this.name + ")";
+				mediaName += " [" + this.name + "]";
 		} else {
 			mediaName = this.name;
 		}
