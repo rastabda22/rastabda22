@@ -1,3 +1,5 @@
+### version v4.9.23 (Jan 13, 2021)
+
 * many ui trims
 * `make_album_ini` now manages in a better way old album.ini files
 * bug fixes
