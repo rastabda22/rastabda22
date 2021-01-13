@@ -1,3 +1,6 @@
+* `make_album_ini` now manages in a better way old album.ini files
+* bug fixes
+
 ### version v4.9.22 (Jan 12, 2021)
 
 * better managing of album.ini

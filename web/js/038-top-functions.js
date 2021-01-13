@@ -997,8 +997,8 @@
 				util.setPinchButtonsPosition();
 			}
 			util.correctPrevNextPosition();
-			if (util.setSelectButtonPosition())
-				util.setDescriptionPosition('singleMedia');
+			util.setSelectButtonPosition();
+			util.setDescriptionPosition('singleMedia');
 
 			if (album.numsMedia.imagesAndVideosTotal() > 1) {
 				env.prevMedia.show(album, 'left');
@@ -1027,8 +1027,8 @@
 								f.pinchSwipeInitialization();
 								util.setPinchButtonsPosition();
 							}
-							if (util.setSelectButtonPosition())
-								util.setDescriptionPosition('singleMedia');
+							util.setSelectButtonPosition();
+							util.setDescriptionPosition('singleMedia');
 							util.correctPrevNextPosition();
 						}
 					);
@@ -1224,7 +1224,6 @@
 						self.setDescription();
 					}
 
-					// var self = self;
 					$(mediaSelector).off(loadEvent).on(
 						loadEvent,
 						{
@@ -1240,8 +1239,8 @@
 										if (self.mimeType.indexOf("image/") === 0) {
 											util.setPinchButtonsPosition();
 										}
-										if (util.setSelectButtonPosition())
-											util.setDescriptionPosition('singleMedia');
+										util.setSelectButtonPosition();
+										util.setDescriptionPosition('singleMedia');
 										util.correctPrevNextPosition();
 										loadNextPrevMedia(self, containerHeight, containerWidth);
 									}
@@ -1844,7 +1843,16 @@
 				let event = {data: {}};
 				event.data.resize = true;
 				event.data.id = "center";
-				env.currentMedia.scale(event);
+				let scalePromise = env.currentMedia.scale(event);
+				scalePromise.then(
+					function() {
+						util.setPinchButtonsPosition();
+						PinchSwipe.setPinchButtonsVisibility();
+						util.setSelectButtonPosition();
+						util.setDescriptionPosition('singleMedia');
+						util.correctPrevNextPosition();
+					}
+				);
 				if (env.nextMedia !== null) {
 					event.data.id = "right";
 					env.nextMedia.scale(event);

@@ -176,8 +176,8 @@
 
 				util.setPinchButtonsPosition();
 				PinchSwipe.setPinchButtonsVisibility();
-				if (util.setSelectButtonPosition())
-					util.setDescriptionPosition('singleMedia');
+				util.setSelectButtonPosition();
+				util.setDescriptionPosition('singleMedia');
 				util.correctPrevNextPosition();
 
 				currentZoom = finalZoom;
@@ -229,8 +229,8 @@
 								// zoomAfterFirstPinch = currentZoom;
 								util.setPinchButtonsPosition();
 								PinchSwipe.setPinchButtonsVisibility();
-								if (util.setSelectButtonPosition())
-									util.setDescriptionPosition('singleMedia');
+								util.setSelectButtonPosition();
+								util.setDescriptionPosition('singleMedia');
 								util.correctPrevNextPosition();
 
 								mediaWidth = $(mediaSelector).css("width");
@@ -336,8 +336,8 @@
 					// zoomAfterFirstPinch = currentZoom;
 					util.setPinchButtonsPosition();
 					PinchSwipe.setPinchButtonsVisibility();
-					if (util.setSelectButtonPosition())
-						util.setDescriptionPosition('singleMedia');
+					util.setSelectButtonPosition();
+					util.setDescriptionPosition('singleMedia');
 					util.correctPrevNextPosition();
 
 					mediaWidth = $(mediaSelector).css("width");
