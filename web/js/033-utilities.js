@@ -3195,18 +3195,21 @@
 		// Size of description varies if on album or media
 		// var titleHeight = parseInt($(".media-box#center .title").css("height"));
 		// var mediaBoxHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
-		var mediaHeight = parseInt($(".media-box#center .media-box-inner #media-center").css("height"));
-		if (! mediaHeight) {
-			// the img isn't visible yet?
-			mediaHeight = env.windowHeight / 4;
-		}
 		// var bottomThumbnailsHeight = parseInt($("#album-view.media-view-container").css("height"));
-		var selectBoxWidth = 30;
-		if (captionType === 'media') {
-			$("#description").css("bottom", 2 * selectBoxWidth + parseInt($("#media-select-box .select-box").css("bottom")));
-			// $("#description").css("bottom", "");
-			$("#description").css("height", "");
-			$("#description").css("right", 2 * selectBoxWidth + parseInt($("#media-select-box .select-box").css("right")));
+		if (captionType === 'singleMedia') {
+			let thumbsHeight = 0;
+			if (! env.options.hide_bottom_thumbnails && env.currentAlbum.media.length > 1)
+				thumbsHeight = env.options.media_thumb_size + 20;
+				// thumbsHeight = parseInt($("#album-view").css("height"));
+
+			let mediaHeight = parseInt($(".media-box#center .media-box-inner #media-center").css("height"));
+			if (! mediaHeight) {
+				mediaHeight = env.windowHeight / 4;
+			}
+
+			$("#description").css("bottom", thumbsHeight + 20);
+			// $("#description").css("height", "auto");
+			$("#description").css("right", 20);
 			$("#description").css("max-height", "");
 			$("#description").css("max-height", mediaHeight * 0.4);
 			$("#description-text").css("height", "");
@@ -3219,7 +3222,7 @@
 			// var thumbsHeight = parseInt($("#thumbs").css("height"));
 			// var subalbumsHeight = parseInt($("#subalbums").css("height"));
 			// TODO: How to adapt height to different platforms?
-			$("#description").css("right", 2 * selectBoxWidth);
+			$("#description").css("right", 20);
 			$("#description").css("top", "");
 			$("#description").css("bottom", 0);
 			$("#description").css("height", "");
