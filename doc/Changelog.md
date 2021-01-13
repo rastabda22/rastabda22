@@ -1,3 +1,4 @@
+* many ui trims
 * `make_album_ini` now manages in a better way old album.ini files
 * bug fixes
 
