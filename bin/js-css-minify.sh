@@ -34,6 +34,22 @@ if [ ! -e "$DEFAULT_CONF" ]; then
 	exit 1
 fi
 
+# Check that js and css directories exist and are writable
+if [ ! -d "$PROJECT_DIR/web/js" ] || [ ! -w "$PROJECT_DIR/web/js" ]; then
+	( >&2 echo "$PROJECT_DIR/web/js is not a writable directory with MyPhotoShare js files" )
+	( >&2 echo "Run $0 from MyPhotoShare root directory." )
+	( >&2 echo )
+	( >&2 echo "Quitting" )
+	exit 1
+fi
+if [ ! -d "$PROJECT_DIR/web/css" ] || [ ! -w "$PROJECT_DIR/web/css" ]; then
+	( >&2 echo "$PROJECT_DIR/web/css is not a writable directory with MyPhotoShare css files" )
+	( >&2 echo "Run $0 from MyPhotoShare root directory." )
+	( >&2 echo )
+	( >&2 echo "Quitting" )
+	exit 1
+fi
+
 
 # Parse which minifiers to use from configuration file
 MINIFY_JS="$(sed -nr 's/^\s*js_minifier\s*=\s*(\w+)\s*.*$/\1/p' $CONF)"
@@ -107,7 +123,7 @@ esac
 # minify all .js-files
 cd "$PROJECT_DIR/web/js"
 echo
-echo == Minifying js files in js directory with $MINIFY_JS ==
+echo "== Minifying js files in $PROJECT_DIR/web/js directory with $MINIFY_JS =="
 echo
 CAT_LIST=""
 rm -f *.min.js
@@ -194,7 +210,7 @@ cat $CAT_LIST > scripts.min.js
 # minify all .css-files
 cd "$PROJECT_DIR/web/css"
 echo
-echo == Minifying css files in css directory with $MINIFY_CSS ==
+echo "== Minifying css files in $PROJECT_DIR/web/css directory with $MINIFY_CSS =="
 echo
 rm -f *.min.css
 if [ $? -ne 0 ]; then
