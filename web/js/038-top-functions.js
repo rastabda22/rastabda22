@@ -997,8 +997,8 @@
 				util.setPinchButtonsPosition();
 			}
 			util.correctPrevNextPosition();
-			if (util.setSelectButtonPosition())
-				util.setDescriptionPosition('media');
+			util.setSelectButtonPosition();
+			util.setDescriptionPosition('singleMedia');
 
 			if (album.numsMedia.imagesAndVideosTotal() > 1) {
 				env.prevMedia.show(album, 'left');
@@ -1027,8 +1027,8 @@
 								f.pinchSwipeInitialization();
 								util.setPinchButtonsPosition();
 							}
-							if (util.setSelectButtonPosition())
-								util.setDescriptionPosition('media');
+							util.setSelectButtonPosition();
+							util.setDescriptionPosition('singleMedia');
 							util.correctPrevNextPosition();
 						}
 					);
@@ -1196,10 +1196,13 @@
 					if (id === "center")
 						loadNextPrevMedia(self);
 				} else {
+					let newMedia;
 					if (self.mimeType.indexOf("video/") === 0) {
 						mediaSelector = ".media-box#" + id + " .media-box-inner video";
+						newMedia = $("<video>");
 					} else {
 						mediaSelector = ".media-box#" + id + " .media-box-inner img";
+						newMedia = $("<img>");
 					}
 					// is the following line correct for videos?
 					mediaSrc = self.chooseMediaReduction(id, env.fullScreenStatus);
@@ -1224,8 +1227,10 @@
 						self.setDescription();
 					}
 
-					// var self = self;
-					$(mediaSelector).off(loadEvent).on(
+					// we use a trick in order to manage the loading of the image/video, from https://www.seancdavis.com/blog/wait-until-all-images-loaded/
+					// the trick is to bind the event to a generic element not in the DOM, and to set its source after the onload event is bound
+					newMedia.off(loadEvent).on(
+					// $(mediaSelector).off(loadEvent).on(
 						loadEvent,
 						{
 							id: id,
@@ -1237,12 +1242,6 @@
 							scalePromise.then(
 								function([containerHeight, containerWidth]) {
 									if (id === "center") {
-										if (self.mimeType.indexOf("image/") === 0) {
-											util.setPinchButtonsPosition();
-										}
-										if (util.setSelectButtonPosition())
-											util.setDescriptionPosition('media');
-										util.correctPrevNextPosition();
 										loadNextPrevMedia(self, containerHeight, containerWidth);
 									}
 									// }
@@ -1250,9 +1249,11 @@
 							);
 						}
 					);
-					// in case the image has been already loaded, trigger the event
-					if ($(mediaSelector)[0].complete)
-						$(mediaSelector).trigger(loadEvent);
+					newMedia.attr("src", $(mediaSelector).attr("src"));
+
+					// // in case the image has been already loaded, trigger the event
+					// if ($(mediaSelector)[0].complete)
+					// 	$(mediaSelector).trigger(loadEvent);
 
 					if (id === "center") {
 						if (! env.options.persistent_metadata) {
@@ -1431,7 +1432,7 @@
 						util.setDescriptionPosition('album');
 					} else {
 						env.currentMedia.setDescription();
-						util.setDescriptionPosition('media');
+						util.setDescriptionPosition('singleMedia');
 					}
 
 					f.updateMenu();
@@ -1829,12 +1830,12 @@
 			f.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
 			f.updateMenu();
 			if (env.options.hide_bottom_thumbnails) {
-				$("#album-view").addClass("hidden-by-option");
+				$("#album-view.media-view-container").addClass("hidden-by-option");
 			} else {
-				$("#album-view").removeClass("hidden-by-option");
+				$("#album-view.media-view-container").removeClass("hidden-by-option");
 			}
 			// if ($("#thumbs").children().length)
-			if (! $("#album-view").hasClass("hide-bottom-thumbnails")) {
+			if (! $("#album-view").hasClass("media-view-container")) {
 				$("#album-view").addClass("media-view-container");
 				TopFunctions.showAlbum("refreshMedia");
 			}
@@ -1844,7 +1845,16 @@
 				let event = {data: {}};
 				event.data.resize = true;
 				event.data.id = "center";
-				env.currentMedia.scale(event);
+				let scalePromise = env.currentMedia.scale(event);
+				scalePromise.then(
+					function() {
+						util.setPinchButtonsPosition();
+						PinchSwipe.setPinchButtonsVisibility();
+						util.setSelectButtonPosition();
+						util.setDescriptionPosition('singleMedia');
+						util.correctPrevNextPosition();
+					}
+				);
 				if (env.nextMedia !== null) {
 					event.data.id = "right";
 					env.nextMedia.scale(event);
@@ -2190,6 +2200,7 @@
 			let imageString =
 				"<div class='thumb-and-caption-container' style='" +
 							"width: " + calculatedWidth + "px; " +
+							"margin-right: " + env.options.spacing + "px; " +
 				"'>" +
 					"<div class='thumb-container' " + "style='" +
 							// "width: " + calculatedWidth + "px; " +
@@ -2883,7 +2894,7 @@
 								util.setDescriptionPosition('album');
 							} else {
 								env.currentMedia.setDescription();
-								util.setDescriptionPosition('media');
+								util.setDescriptionPosition('singleMedia');
 							}
 						},
 						function() {
