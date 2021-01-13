@@ -1196,10 +1196,13 @@
 					if (id === "center")
 						loadNextPrevMedia(self);
 				} else {
+					let newMedia;
 					if (self.mimeType.indexOf("video/") === 0) {
 						mediaSelector = ".media-box#" + id + " .media-box-inner video";
+						newMedia = $("<video>");
 					} else {
 						mediaSelector = ".media-box#" + id + " .media-box-inner img";
+						newMedia = $("<img>");
 					}
 					// is the following line correct for videos?
 					mediaSrc = self.chooseMediaReduction(id, env.fullScreenStatus);
@@ -1224,7 +1227,10 @@
 						self.setDescription();
 					}
 
-					$(mediaSelector).off(loadEvent).on(
+					// we use a trick in order to manage the loading of the image/video, from https://www.seancdavis.com/blog/wait-until-all-images-loaded/
+					// the trick is to bind the event to a generic element not in the DOM, and to set its source after the onload event is bound
+					newMedia.off(loadEvent).on(
+					// $(mediaSelector).off(loadEvent).on(
 						loadEvent,
 						{
 							id: id,
@@ -1243,9 +1249,11 @@
 							);
 						}
 					);
-					// in case the image has been already loaded, trigger the event
-					if ($(mediaSelector)[0].complete)
-						$(mediaSelector).trigger(loadEvent);
+					newMedia.attr("src", $(mediaSelector).attr("src"));
+
+					// // in case the image has been already loaded, trigger the event
+					// if ($(mediaSelector)[0].complete)
+					// 	$(mediaSelector).trigger(loadEvent);
 
 					if (id === "center") {
 						if (! env.options.persistent_metadata) {
