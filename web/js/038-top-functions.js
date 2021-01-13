@@ -1833,7 +1833,7 @@
 				$("#album-view").removeClass("hidden-by-option");
 			}
 			// if ($("#thumbs").children().length)
-			if (! $("#album-view").hasClass("hide-bottom-thumbnails")) {
+			if (! $("#album-view").hasClass("media-view-container")) {
 				$("#album-view").addClass("media-view-container");
 				TopFunctions.showAlbum("refreshMedia");
 			}
