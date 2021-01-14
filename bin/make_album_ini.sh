@@ -170,7 +170,7 @@ if [ ! -f "$DIR/$ALBUM_INI" ]; then
 	echo "# - country_name: The name of the country where the photo was shot." >> "$DIR/$ALBUM_INI"
 	echo "# - region_name: The name of the region." >> "$DIR/$ALBUM_INI"
 	echo "# - place_name: The name of the city or town to be displayed." >> "$DIR/$ALBUM_INI"
-	echo >> "$DIR/$ALBUM_INI"
+	echo "#" >> "$DIR/$ALBUM_INI"
 	echo "# auto_scenes and auto_faces options are set when using the automatic tagger scripts" >> "$DIR/$ALBUM_INI"
 	echo "# mps_autoscenes (https://gitlab.com/pmetras/mps_autoscenes) and" >> "$DIR/$ALBUM_INI"
 	echo "# mps_autofaces (https://gitlab.com/pmetras/mps_autofaces).">> "$DIR/$ALBUM_INI"
