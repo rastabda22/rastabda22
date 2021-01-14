@@ -1763,8 +1763,8 @@
 												numSearchAlbumsReady ++;
 												if (numSearchAlbumsReady >= numSubAlbumsToGet) {
 													// all the albums have been got, we can merge the results
-													env.searchAlbum.media = searchResultsMedia[0];
-													env.searchAlbum.subalbums = searchResultsSubalbums[0];
+													env.searchAlbum.media = new Media(searchResultsMedia[0]);
+													env.searchAlbum.subalbums = new Subalbums(searchResultsSubalbums[0]);
 													for (indexWords1 = 1; indexWords1 <= lastIndex; indexWords1 ++) {
 														if (indexWords1 in searchResultsMedia) {
 															if (env.options.search_any_word)
