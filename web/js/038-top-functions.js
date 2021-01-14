@@ -3070,45 +3070,57 @@
 			env.currentAlbum.positionsAndMediaInMedia.generateMap(ev, from);
 	};
 
+	TopFunctions.playClickElement = function(clickHistory, iClick) {
+		return new Promise(
+			function(resolve_playClickElement) {
+				var clickHistoryElement = clickHistory[iClick];
+				var oneClickPromise = new Promise(
+					function(resolve_oneClickPromise) {
+						env.mymap.setView(clickHistoryElement.center, clickHistoryElement.zoom, {animate: false});
+						ev = {
+							latlng: clickHistoryElement.latlng,
+							originalEvent: {
+								shiftKey: clickHistoryElement.shiftKey,
+								ctrlKey: clickHistoryElement.ctrlKey,
+							}
+						};
+						var updateMapPromise = TopFunctions.updateMapAlbumOnMapClick(ev, env.pruneCluster.Cluster._clusters, false);
+						updateMapPromise.then(
+							function() {
+								resolve_oneClickPromise();
+							},
+							function() {
+								console.trace();
+							}
+						);
+
+					}
+				);
+
+				oneClickPromise.then(
+					function() {
+						if (iClick < clickHistory.length - 1) {
+							let newPlayPromise = TopFunctions.playClickElement(clickHistory, iClick + 1);
+							newPlayPromise.then(
+								function() {
+									resolve_playClickElement();
+								}
+							);
+						} else {
+							TopFunctions.prepareAndDoPopupUpdate();
+							resolve_playClickElement();
+						}
+					},
+					function(album) {
+						console.trace();
+					}
+				);
+			}
+		);
+	};
+
 	PositionsAndMedia.prototype.generateMap = function(ev, from) {
 		// this is an array of uniq points with a list of the media geolocated there
-
-		function playClickElement(clickHistory, iClick) {
-			var clickHistoryElement = clickHistory[iClick];
-			var promise = new Promise(
-				function(resolve_playClickElement) {
-					env.mymap.setView(clickHistoryElement.center, clickHistoryElement.zoom, {animate: false});
-					ev = {
-						latlng: clickHistoryElement.latlng,
-						originalEvent: {
-							shiftKey: clickHistoryElement.shiftKey,
-							ctrlKey: clickHistoryElement.ctrlKey,
-						}
-					};
-					var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, pruneCluster.Cluster._clusters, false);
-					updatePromise.then(
-						resolve_playClickElement,
-						function() {
-							console.trace();
-						}
-					);
-
-				}
-			);
-
-			promise.then(
-				function() {
-					if (iClick < clickHistory.length - 1)
-						playClickElement(clickHistory, iClick + 1);
-					else
-						TopFunctions.prepareAndDoPopupUpdate();
-				},
-				function(album) {
-					console.trace();
-				}
-			);
-		}
-		// end of auxiliary function
 
 		var i;
 		env.titleWrapper =
@@ -3164,19 +3176,19 @@
 
 			var markers = [];
 			// initialize the markers clusters
-			var pruneCluster = new PruneClusterForLeaflet(150, 70);
+			env.pruneCluster = new PruneClusterForLeaflet(150, 70);
 			PruneCluster.Cluster.ENABLE_MARKERS_LIST = true;
 
 			// modify the prunecluster so that the click can be managed in order to show the photo popup
-			pruneCluster.BuildLeafletCluster = function (cluster, position) {
+			env.pruneCluster.BuildLeafletCluster = function (cluster, position) {
 				var m = new L.Marker(position, {
-					icon: pruneCluster.BuildLeafletClusterIcon(cluster)
+					icon: env.pruneCluster.BuildLeafletClusterIcon(cluster)
 				});
 				m._leafletClusterBounds = cluster.bounds;
 				m.off("click").on(
 					"click",
 					function(ev) {
-						var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, pruneCluster.Cluster._clusters);
+						var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, env.pruneCluster.Cluster._clusters);
 						updatePromise.then(
 							TopFunctions.prepareAndDoPopupUpdate,
 							function() {
@@ -3189,10 +3201,10 @@
 			};
 
 			// modify the cluster marker so that it shows the number of photos rather than the number of clusters
-			pruneCluster.BuildLeafletClusterIcon = function (cluster) {
+			env.pruneCluster.BuildLeafletClusterIcon = function (cluster) {
 				var c = 'prunecluster prunecluster-';
 				var iconSize = 38;
-				var maxPopulation = pruneCluster.Cluster.GetPopulation();
+				var maxPopulation = env.pruneCluster.Cluster.GetPopulation();
 				var markers = cluster.GetClusterMarkers();
 				var population = 0;
 				// count the number of photos in a cluster
@@ -3253,13 +3265,13 @@
 						icon:	new L.NumberedDivIcon({number: this[iPoint].mediaList.length})
 					}
 				);
-				pruneCluster.RegisterMarker(markers[iPoint]);
+				env.pruneCluster.RegisterMarker(markers[iPoint]);
 				markers[iPoint].data.tooltip = cacheBases;
 				markers[iPoint].data.mediaList = this[iPoint].mediaList;
 				markers[iPoint].weight = this[iPoint].mediaList.length;
 			}
 
-			env.mymap.addLayer(pruneCluster);
+			env.mymap.addLayer(env.pruneCluster);
 
 			/**
 			* Add a click handler to the map to render the popup.
@@ -3267,7 +3279,7 @@
 			env.mymap.off("click").on(
 				"click",
 				function(ev) {
-					var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, pruneCluster.Cluster._clusters);
+					var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, env.pruneCluster.Cluster._clusters);
 					updatePromise.then(
 						TopFunctions.prepareAndDoPopupUpdate,
 						function() {
@@ -3284,9 +3296,7 @@
 				else if (env.popupRefreshType === "mapAlbum") {
 					var clickHistory = env.mapAlbum.clickHistory;
 					env.mapAlbum = new Album();
-					// env.mapAlbum = {};
-					playClickElement(clickHistory, 0);
-
+					TopFunctions.playClickElement(clickHistory, 0);
 				}
 			}
 		}
@@ -3520,7 +3530,7 @@
 	TopFunctions.prototype.goFullscreen = TopFunctions.goFullscreen;
 	TopFunctions.prototype.showBrowsingModeMessage = TopFunctions.showBrowsingModeMessage;
 	TopFunctions.prototype.prepareAndDoPopupUpdate = TopFunctions.prepareAndDoPopupUpdate;
-	// TopFunctions.prototype.goUpIfProtected = TopFunctions.goUpIfProtected;
+	TopFunctions.prototype.playClickElement = TopFunctions.playClickElement;
 
 	window.TopFunctions = TopFunctions;
 }());
