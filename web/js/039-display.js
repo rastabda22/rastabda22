@@ -470,7 +470,7 @@ $(document).ready(function() {
 							phFl.removeStopWords(searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions);
 
 						// every normalized single media name must match the search terms
-						var matchingMedia = [];
+						var matchingMedia = new Media([]);
 						for (let iMedia = 0; iMedia < env.mapAlbum.media.length; iMedia ++) {
 							// TO DO, BUG: it's not the media name to be used for matching, but the words in media name!!!!!!!
 							let words = util.normalizeAccordingToOptions(env.mapAlbum.media[iMedia].words);
