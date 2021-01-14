@@ -1507,13 +1507,13 @@
 										function(resolve_subalbumPromise) {
 											let promise = PhotoFloat.getAlbum(thisSubalbum.cacheBase, null, {getMedia: false, getPositions: true});
 											promise.then(
-												function(thisSubalbum) {
-													env.searchAlbum.subalbums[thisIndex] = thisSubalbum;
-													env.searchAlbum.positionsAndMediaInTree.mergePositionsAndMedia(thisSubalbum.positionsAndMediaInTree);
+												function(thisAlbum) {
+													env.searchAlbum.subalbums[thisIndex] = thisAlbum;
+													env.searchAlbum.positionsAndMediaInTree.mergePositionsAndMedia(thisAlbum.positionsAndMediaInTree);
 													env.searchAlbum.numPositionsInTree = env.searchAlbum.positionsAndMediaInTree.length;
-													// thisSubalbum.positionsAndMediaInTree = positionsGot;
-													// thisSubalbum.numPositionsInTree = album.positionsAndMediaInTree.length;
-													// thisSubalbum.includedFilesByCodesSimpleCombination[","].positionsGot = true;
+													// thisAlbum.positionsAndMediaInTree = positionsGot;
+													// thisAlbum.numPositionsInTree = album.positionsAndMediaInTree.length;
+													// thisAlbum.includedFilesByCodesSimpleCombination[","].positionsGot = true;
 													resolve_subalbumPromise();
 												},
 												function() {
