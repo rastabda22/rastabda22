@@ -175,6 +175,10 @@ Go to the folder you cloned the repository in and execute:
     $ ./bin/js-css-minify.sh
 ```
 
+If you aren't using `git`, all the system files must be deleted and the [new package](https://gitlab.com/paolobenve/myphotoshare/-/archive/master/myphotoshare-master.zip) unzipped in the same place. You can, however, preserve the cache directory inside `web/`, expecially if you have many photos; the scanner knows how to respect the cache content and only generates again the json files/reductions/thumbnails when strictly required.
+
+If you are using a package, like `debian` one, simply update the package; in `debian`, `sudo apt install myphotoshare`.
+
 Obviously the scanner should be launched too; next section explains how you can do it.
 
 
