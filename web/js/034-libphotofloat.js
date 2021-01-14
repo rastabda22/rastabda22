@@ -1654,7 +1654,8 @@
 																normalizedTags.includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords])
 															) && (
 																! env.options.search_current_album ||
-																util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || (
+																util.isAnyRootCacheBase(env.options.cache_base_to_search_in) ||
+																util.isCollectionCacheBase(env.options.cache_base_to_search_in) || (
 																	// check whether the media is inside the current album tree
 																	ithMedia.foldersCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
 																	ithMedia.hasOwnProperty("dayAlbumCacheBase") && ithMedia.dayAlbumCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
@@ -1682,7 +1683,8 @@
 																normalizedTags.includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords])
 															) && (
 																! env.options.search_current_album ||
-																util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || (
+																util.isAnyRootCacheBase(env.options.cache_base_to_search_in) ||
+																util.isCollectionCacheBase(env.options.cache_base_to_search_in) || (
 																	// check whether the media is inside the current album tree
 																	ithSubalbum.cacheBase.indexOf(env.options.cache_base_to_search_in) === 0 &&
 																	ithSubalbum.cacheBase != env.options.cache_base_to_search_in
@@ -1707,7 +1709,8 @@
 																normalizedTags.some(element => element.includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]))
 															) && (
 																! env.options.search_current_album ||
-																util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || (
+																util.isAnyRootCacheBase(env.options.cache_base_to_search_in) ||
+																util.isCollectionCacheBase(env.options.cache_base_to_search_in) || (
 																	// check whether the media is inside the current album tree
 																	ithMedia.foldersCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
 																	ithMedia.hasOwnProperty("dayAlbumCacheBase") && ithMedia.dayAlbumCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
@@ -1737,7 +1740,8 @@
 																normalizedTags.some(element => element.includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]))
 															) && (
 																! env.options.search_current_album ||
-																util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || (
+																util.isAnyRootCacheBase(env.options.cache_base_to_search_in) ||
+																util.isCollectionCacheBase(env.options.cache_base_to_search_in) || (
 																	// check whether the media is inside the current album tree
 																	ithSubalbum.cacheBase.indexOf(env.options.cache_base_to_search_in) === 0 &&
 																	ithSubalbum.cacheBase != env.options.cache_base_to_search_in

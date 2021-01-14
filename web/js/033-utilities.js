@@ -1003,10 +1003,10 @@
 
 	Utilities.isAnyRootCacheBase = function(cacheBase) {
 		var result =
-			[env.options.folders_string, env.options.by_date_string, env.options.by_gps_string].indexOf(cacheBase) !== -1 ||
-			Utilities.isSearchCacheBase(cacheBase) ||
-			Utilities.isMapCacheBase(cacheBase) ||
-			Utilities.isSelectionCacheBase(cacheBase);
+			[env.options.folders_string, env.options.by_date_string, env.options.by_gps_string].indexOf(cacheBase) !== -1
+			// Utilities.isSearchCacheBase(cacheBase) ||
+			// Utilities.isMapCacheBase(cacheBase) ||
+			// Utilities.isSelectionCacheBase(cacheBase);
 		return result;
 	};
 
@@ -1079,6 +1079,10 @@
 
 	Subalbum.prototype.isSelection = function() {
 		return Utilities.isSelectionCacheBase(this.cacheBase);
+	};
+
+	Utilities.prototype.isCollectionCacheBase = function(cacheBase) {
+		return Utilities.isMapCacheBase(cacheBase) || Utilities.isSearchCacheBase(cacheBase) || Utilities.isSelectionCacheBase(cacheBase);
 	};
 
 	Utilities.isMapCacheBase = function(cacheBase) {

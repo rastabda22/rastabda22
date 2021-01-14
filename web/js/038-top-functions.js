@@ -317,7 +317,8 @@
 					title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + components[0] + "</a>" + raquo;
 					if (
 						env.options.search_current_album &&
-						! util.isAnyRootCacheBase(env.options.cache_base_to_search_in)
+						! util.isAnyRootCacheBase(env.options.cache_base_to_search_in) &&
+						! util.isCollectionCacheBase(env.options.cache_base_to_search_in)
 					) {
 						title += "<span id='search-album-to-be-filled'></span>" + raquo;
 					}
@@ -325,7 +326,8 @@
 
 					if (
 						env.options.search_current_album &&
-						! util.isAnyRootCacheBase(env.options.cache_base_to_search_in)
+						! util.isAnyRootCacheBase(env.options.cache_base_to_search_in) &&
+						! util.isCollectionCacheBase(env.options.cache_base_to_search_in)
 					) {
 						searchClass = "main-search-link";
 						// searchFolderHash = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
