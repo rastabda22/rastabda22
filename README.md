@@ -23,7 +23,7 @@ It is available in English, Italian, French and Spanish. Localizing to other lan
 
 ![Screenshot](doc/img/myphotoshare-3.8-map-and-popup.png)
 
-[What's great in version 4.0](doc/Features-4.0.md)
+[What's great in version 5.0](doc/Features-5.0.md)
 
 ## Read more
 
@@ -102,18 +102,18 @@ It is available in English, Italian, French and Spanish. Localizing to other lan
 - [x] Scanner uses recursive async randomized tree walking album thumbnail algorithm.
 - [x] HTML5 with minified CSS and JavaScript files for minimal load time.
 
-### Privacy (_new_ in v4.0)
+### Privacy (since v4.0)
 
 - [x] Albums and photo can be protected by passwords. Passwords may be specified for albums, for files, for both.
 - [x] Patterns are defined in album tree and specify what should every password protect; allowed matching modes: case sensitive/insensitive, whole/part of dir/file name, dir only/files only/both.
 - [x] Passwords aren't exposed in javascript, and sensitive data and media are extremely difficult to find in cache.
 
-### Selecting media and albums (_new_ in v5.0)
+### Selecting media and albums (_new_ in [v5.0](doc/Features-5.0.md))
 
 - [x] Albums and media can be seleted via a click or massively, either in _hard_ albums (the default tree, by date, by place) and virtual ones (by search, by gps, by map).
 - [x] Selected media and albums can be seen as an album, and can be browsed, downloaded, sorted, shown on map, etc.
 
-### Add features with MyPhotoShare extensions (_new_ in v5.0)
+### Add features with MyPhotoShare extensions (_new_ in [v5.0](doc/Features-5.0.md))
 
 - [x] Automatic face recognition in pictures with [mps_autofaces](https://gitlab.com/pmetras/mps_autofaces).
 - [x] Automatic scenes recognition and indexing in pictures with [mps_autoscenes](https://gitlab.com/pmetras/mps_autoscenes).
