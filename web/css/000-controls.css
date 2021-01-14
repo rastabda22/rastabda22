@@ -972,8 +972,8 @@ ul#right-menu.expand li.dimmed {
 }
 
 ul#right-menu.expand li.dimmed:hover {
-	color: white;
-	background-color: black !important;
+	color: ligthgray;
+	/* background-color: black !important; */
 }
 
 ul#right-menu.expand li:not(.active, .sub-menu) {
@@ -990,7 +990,7 @@ ul#right-menu.expand li a, ul#right-menu.expand li span:not(#padlock):not(#menu-
 }
 
 ul#right-menu.expand ul li:not(.active):hover {
-	background-color: black !important;
+	/* background-color: black !important; */
 }
 
 ul#right-menu #padlock img:hover {
