@@ -1729,7 +1729,6 @@
 			howMany ++;
 		if (env.options.hide_tags)
 			howMany ++;
-		var treatAsHidden = false;
 		if (howMany > 2) {
 			env.options.hide_title = false;
 			env.options.hide_bottom_thumbnails = false;
@@ -2068,7 +2067,6 @@
 
 	Album.prototype.showMedia = function(inPopup = false) {
 		var thumbnailSize = env.options.media_thumb_size;
-		var media = [];
 		var imageLink;
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 		var self = this;

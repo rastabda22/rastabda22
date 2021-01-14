@@ -1328,7 +1328,7 @@
 					if (util.isSearchHash(albumHash)) {
 						// encoded hashes must be preserved, in order to make tag only search work when a dash is inside the tag
 						let splittedHash = albumHash.split("%2D");
-						splittedHash = splittedHash.map(hash => decodeURI(hash))
+						splittedHash = splittedHash.map(hash => decodeURI(hash));
 						albumHash = splittedHash.join("%2D");
 					} else {
 						albumHash = decodeURI(albumHash);
