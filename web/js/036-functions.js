@@ -128,7 +128,7 @@
 		var isAlbumWithOneMedia = thisAlbum.isAlbumWithOneMedia();
 		var isTransversalAlbum = thisAlbum.isTransversal();
 		var isSingleMedia = (env.currentMedia !== null || isAlbumWithOneMedia);
-		var isAnyRootCacheBase = thisAlbum.isAnyRoot();
+		var isAnyRoot = thisAlbum.isAnyRoot();
 
 		var nothingIsSelected = util.nothingIsSelected();
 		var everySubalbumIsSelected;
@@ -155,7 +155,7 @@
 			else
 				thisMedia = thisAlbum.media[0];
 			hasGpsData = thisMedia.hasGpsData();
-		} else if (isAnyRootCacheBase) {
+		} else if (isAnyRoot) {
 			hasGpsData = (thisAlbum.numPositionsInTree > 0);
 		} else {
 			hasGpsData = false;
@@ -170,7 +170,7 @@
 		if (
 			isMapOrPopup ||
 			thisAlbum === null ||
-			! isSingleMedia && ! isAnyRootCacheBase
+			! isSingleMedia && ! isAnyRoot
 		) {
 			$(".browsing-mode-switcher").addClass("hidden");
 		} else {
@@ -183,7 +183,7 @@
 			if (
 				nothingIsSelected || ! (
 					isSingleMedia && thisMedia.isSelected() ||
-					isAnyRootCacheBase
+					isAnyRoot
 				)
 			) {
 				$("#by-selection-view").addClass("hidden");
@@ -192,7 +192,7 @@
 			if (
 				! util.somethingIsInMapAlbum() || ! (
 					isSingleMedia && thisMedia.isInMapAlbum() ||
-					isAnyRootCacheBase
+					isAnyRoot
 				)
 			) {
 				$("#by-map-view").addClass("hidden");
@@ -201,7 +201,7 @@
 			let [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
 			if (
 				! (
-					isAnyRootCacheBase && util.somethingIsSearched() ||
+					isAnyRoot && util.somethingIsSearched() ||
 					isSingleMedia && (
 						// util.somethingIsSearched() ||
 						// savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash)
@@ -246,7 +246,7 @@
 						thisMedia.foldersCacheBase,
 						thisMedia.cacheBase
 					]);
-				} else if (isAnyRootCacheBase) {
+				} else if (isAnyRoot) {
 					window.location.href = env.hashBeginning + encodeURIComponent(env.options.folders_string);
 				}
 
@@ -265,7 +265,7 @@
 						thisMedia.foldersCacheBase,
 						thisMedia.cacheBase
 					]);
-				} else if (isAnyRootCacheBase) {
+				} else if (isAnyRoot) {
 					window.location.href = env.hashBeginning + encodeURIComponent(env.options.by_date_string);
 				}
 				return false;
@@ -283,7 +283,7 @@
 						thisMedia.foldersCacheBase,
 						thisMedia.cacheBase
 					]);
-				} else if (isAnyRootCacheBase) {
+				} else if (isAnyRoot) {
 					window.location.href = env.hashBeginning + encodeURIComponent(env.options.by_gps_string);
 				}
 				return false;
@@ -296,7 +296,7 @@
 				TopFunctions.showBrowsingModeMessage("#by-map-browsing");
 				if (isSingleMedia) {
 					window.location.href = phFl.encodeHash(env.mapAlbum.cacheBase, thisMedia);
-				} else if (isAnyRootCacheBase) {
+				} else if (isAnyRoot) {
 					window.location.href = phFl.encodeHash(env.mapAlbum.cacheBase, null);
 				}
 				return false;
@@ -315,7 +315,7 @@
 					} else {
 						window.location.href = phFl.encodeHash(env.searchAlbum.cacheBase, thisMedia);
 					}
-				} else if (isAnyRootCacheBase) {
+				} else if (isAnyRoot) {
 					window.location.href = phFl.encodeHash(env.searchAlbum.cacheBase, null);
 				}
 				return false;
