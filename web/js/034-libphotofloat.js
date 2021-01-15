@@ -1480,11 +1480,12 @@
 					// }
 
 						for (indexMedia = 0; indexMedia < env.searchAlbum.media.length; indexMedia ++) {
+							let ithMedia = env.searchAlbum.media[indexMedia];
 							// add the parent to the media
-							env.searchAlbum.media[indexMedia].addParent(env.searchAlbum);
-							if (env.searchAlbum.media[indexMedia].hasGpsData()) {
+							ithMedia.addParent(env.searchAlbum);
+							if (ithMedia.hasGpsData()) {
 								// add the media position
-								env.searchAlbum.positionsAndMediaInTree.addSingleMedia(env.searchAlbum.media[indexMedia]);
+								env.searchAlbum.positionsAndMediaInTree.addSingleMedia(ithMedia);
 								env.searchAlbum.numPositionsInTree = env.searchAlbum.positionsAndMediaInTree.length;
 							}
 						}
