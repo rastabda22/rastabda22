@@ -1075,6 +1075,7 @@ class TreeWalker:
 		# phrase = ' '.join(phrase.splitlines())
 
 		alphabetic_words = list(map(lambda word: remove_non_alphabetic_characters(remove_digits(word)), words))
+		alphabetic_words = list(filter(None, alphabetic_words))
 		lowercase_words = list(map(lambda word: switch_to_lowercase(word), alphabetic_words))
 		search_normalized_words = list(map(lambda word: remove_accents(word), lowercase_words))
 		ascii_words = list(map(lambda word: transliterate_to_ascii(word), search_normalized_words))
