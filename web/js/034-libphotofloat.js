@@ -1790,9 +1790,7 @@
 							ithMedia.hasOwnProperty("dayAlbumCacheBase") && ithMedia.dayAlbumCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
 							ithMedia.hasOwnProperty("gpsAlbumCacheBase") && ithMedia.gpsAlbumCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
 							util.isMapCacheBase(env.options.cache_base_to_search_in) &&
-							env.cache.getAlbum(env.options.cache_base_to_search_in).media.some(
-								singleMedia => singleMedia.isEqual(ithMedia.cacheBase)
-							)
+							env.cache.getAlbum(env.options.cache_base_to_search_in).media.some(singleMedia => singleMedia.isEqual(ithMedia.cacheBase))
 						)
 					)
 				) {
@@ -1819,11 +1817,7 @@
 							ithMedia.hasOwnProperty("dayAlbumCacheBase") && ithMedia.dayAlbumCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
 							ithMedia.hasOwnProperty("gpsAlbumCacheBase") && ithMedia.gpsAlbumCacheBase.indexOf(env.options.cache_base_to_search_in) === 0 ||
 							util.isMapCacheBase(env.options.cache_base_to_search_in) &&
-							env.cache.getAlbum(env.options.cache_base_to_search_in).media.some(
-								function(singleMedia) {
-									return singleMedia.isEqual(ithMedia);
-								}
-							)
+							env.cache.getAlbum(env.options.cache_base_to_search_in).media.some(singleMedia => singleMedia.isEqual(ithMedia))
 						)
 					)
 				) {
