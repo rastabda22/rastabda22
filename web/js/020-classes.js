@@ -200,7 +200,7 @@
 		}
 
 		clone() {
-			return Utilities.cloneObject(this);
+			return new SingleMedia(Utilities.cloneObject(this));
 		}
 
 		cloneAndDeleteParent() {
@@ -450,7 +450,7 @@
 		}
 
 		clone() {
-			return Utilities.cloneObject(this);
+			return new Album(Utilities.cloneObject(this));
 		}
 
 		toSubalbum() {
