@@ -1065,7 +1065,6 @@ class TreeWalker:
 		words = phrase_to_words(media_or_album_name)
 		words.extend(phrase_to_words(re.sub('<[^<]+?>', '', media_or_album.title)))
 		words.extend(phrase_to_words(re.sub('<[^<]+?>', '', media_or_album.description)))
-		words.extend(media_or_album.tags)
 
 		# elements = [media_or_album.title, media_or_album.description, " ".join(media_or_album.tags), media_or_album_name]
 		# phrase = ' '.join([_f for _f in elements if _f])
@@ -1075,7 +1074,11 @@ class TreeWalker:
 		# phrase = ' '.join(phrase.splitlines())
 
 		alphabetic_words = list(map(lambda word: remove_non_alphabetic_characters(remove_digits(word)), words))
+		alphabetic_words = " ".join(alphabetic_words).split(" ")
+		alphabetic_words.extend(media_or_album.tags)
 		alphabetic_words = list(filter(None, alphabetic_words))
+		alphabetic_words = list(set(alphabetic_words))
+		alphabetic_words.sort()
 		lowercase_words = list(map(lambda word: switch_to_lowercase(word), alphabetic_words))
 		search_normalized_words = list(map(lambda word: remove_accents(word), lowercase_words))
 		ascii_words = list(map(lambda word: transliterate_to_ascii(word), search_normalized_words))
