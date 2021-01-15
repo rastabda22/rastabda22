@@ -1632,12 +1632,11 @@
 										let thisIndexWords = indexWords, thisIndexAlbums = indexAlbums;
 										var promise = PhotoFloat.getAlbum(albumHashes[thisIndexWords][thisIndexAlbums], reject_parseHash, {getMedia: true, getPositions: true});
 										promise.then(
-											function(theAlbum) {
-												env.cache.putAlbum(theAlbum);
+											function(wordAlbum) {
+												env.cache.putAlbum(wordAlbum);
 
-												var resultAlbum = theAlbum.clone();
+												var resultAlbum = wordAlbum.clone();
 												// media in the album still has to be filtered according to search criteria
-
 												resultAlbum.filterMedia(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
 												resultAlbum.filterSubalbums(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
 
