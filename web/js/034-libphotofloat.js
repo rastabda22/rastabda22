@@ -1638,8 +1638,8 @@
 												var resultAlbum = theAlbum.clone();
 												// media in the album still has to be filtered according to search criteria
 
-												resultAlbum.media = theAlbum.filterMedia(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
-												resultAlbum.subalbums = theAlbum.filterSubalbums(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
+												resultAlbum.filterMedia(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
+												resultAlbum.filterSubalbums(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
 
 												if (! (thisIndexWords in searchResultsMedia)) {
 													searchResultsMedia[thisIndexWords] = resultAlbum.media;
@@ -1764,10 +1764,10 @@
 														env.searchAlbum.subalbums = matchingSubalbums;
 													}
 
+													// search albums need to conform to default behaviour of albums:
+													// json files must have subalbums and media sorted according to options
 													let promises = [];
 													if (env.searchAlbum.media.length) {
-														// search albums need to conform to default behaviour of albums:
-														// json files have subalbums and media sorted according to options
 														env.searchAlbum.media.forEach(
 															function(singleMedia) {
 																let promise = new Promise(
@@ -1915,7 +1915,7 @@
 					matchingMedia.push(ithMedia);
 			}
 		}
-		return matchingMedia;
+		this.media = matchingMedia;
 	};
 
 	Album.prototype.filterSubalbums = function(normalizedWord) {
@@ -1970,7 +1970,7 @@
 					matchingSubalbums.push(ithSubalbum);
 			}
 		}
-		return matchingSubalbums;
+		this.subalbums = matchingSubalbums;
 	};
 
 	PhotoFloat.removeStopWords = function(searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions) {
