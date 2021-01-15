@@ -1675,6 +1675,7 @@
 													if (lastIndex != searchWordsFromUser.length - 1) {
 														// we still have to filter out the media that do not match the words after the first
 														// we are in all words search mode
+
 														matchingMedia = new Media([]);
 														for (let indexMedia = 0; indexMedia < env.searchAlbum.media.length; indexMedia ++) {
 															let ithMedia = env.searchAlbum.media[indexMedia];
@@ -1686,10 +1687,10 @@
 																	normalizedTags = util.normalizeAccordingToOptions(ithMedia.metadata.tags);
 																if (
 																	! env.options.search_tags_only &&
-																	searchWordsFromUserNormalizedAccordingToOptions.some((word, index) => index > lastIndex && normalizedWords.indexOf(word) === -1) ||
+																	searchWordsFromUserNormalizedAccordingToOptions.some((normalizedSearchWord, index) => index > lastIndex && normalizedWords.indexOf(normalizedSearchWord) === -1) ||
 																	env.options.search_tags_only && (
 																		! ithMedia.metadata.hasOwnProperty("tags") ||
-																		searchWordsFromUserNormalizedAccordingToOptions.some((word, index) => index > lastIndex && normalizedTags.indexOf(word) === -1)
+																		searchWordsFromUserNormalizedAccordingToOptions.some((normalizedSearchWord, index) => index > lastIndex && normalizedTags.indexOf(normalizedSearchWord) === -1)
 																	)
 																) {
 																	match = false;
@@ -1702,10 +1703,10 @@
 																		normalizedTags = util.normalizeAccordingToOptions(ithMedia.metadata.tags);
 																	if (
 																		! env.options.search_tags_only &&
-																		! normalizedWords.some(word => word.includes(searchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft])) ||
+																		! normalizedWords.some(normalizedSearchWord => normalizedSearchWord.includes(searchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft])) ||
 																		env.options.search_tags_only && (
 																			! ithMedia.metadata.hasOwnProperty("tags") ||
-																			! normalizedTags.some((word, index) => index > lastIndex && normalizedTags.indexOf(word) === -1)
+																			! normalizedTags.some((normalizedSearchWord, index) => index > lastIndex && normalizedTags.indexOf(normalizedSearchWord) === -1)
 																		)
 																	) {
 																		match = false;
@@ -1729,10 +1730,10 @@
 																	normalizedTags = util.normalizeAccordingToOptions(ithSubalbum.tags);
 																if (
 																	! env.options.search_tags_only &&
-																	searchWordsFromUserNormalizedAccordingToOptions.some((word, index) => index > lastIndex && normalizedWords.indexOf(word) === -1) ||
+																	searchWordsFromUserNormalizedAccordingToOptions.some((normalizedSearchWord, index) => index > lastIndex && normalizedWords.indexOf(normalizedSearchWord) === -1) ||
 																	env.options.search_tags_only && (
 																		! ithSubalbum.hasOwnProperty("tags") ||
-																		searchWordsFromUserNormalizedAccordingToOptions.some((word, index) => index > lastIndex && normalizedTags.indexOf(word) === -1)
+																		searchWordsFromUserNormalizedAccordingToOptions.some((normalizedSearchWord, index) => index > lastIndex && normalizedTags.indexOf(normalizedSearchWord) === -1)
 																	)
 																) {
 																	match = false;
@@ -1745,10 +1746,10 @@
 																		normalizedTags = util.normalizeAccordingToOptions(ithSubalbum.tags);
 																	if (
 																		! env.options.search_tags_only &&
-																		! normalizedWords.some(word => word.includes(searchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft])) ||
+																		! normalizedWords.some(normalizedWord => normalizedWord.includes(searchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft])) ||
 																		env.options.search_tags_only && (
 																			! ithSubalbum.hasOwnProperty("tags") ||
-																			! normalizedTags.some(word => word.includes(searchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft]))
+																			! normalizedTags.some(normalizedWord => normalizedWord.includes(searchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft]))
 																		)
 																	) {
 																		match = false;
@@ -1985,13 +1986,7 @@
 			searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions = searchWordsFromUserNormalizedAccordingToOptions;
 		} else {
 			for (var i = 0; i < searchWordsFromUser.length; i ++) {
-				if (
-					env.cache.stopWords.every(
-						function(word) {
-							return word !== searchWordsFromUserNormalized[i];
-						}
-					)
-				) {
+				if (env.cache.stopWords.every(stopWord => stopWord !== searchWordsFromUserNormalized[i])) {
 					searchWordsFromUserWithoutStopWords.push(searchWordsFromUser[i]);
 					searchWordsFromUserWithoutStopWordsNormalized.push(searchWordsFromUserNormalized[i]);
 					searchWordsFromUserWithoutStopWordsNormalizedAccordingToOptions.push(searchWordsFromUserNormalizedAccordingToOptions[i]);
