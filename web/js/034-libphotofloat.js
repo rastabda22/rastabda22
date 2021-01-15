@@ -1637,8 +1637,8 @@
 
 												var resultAlbum = wordAlbum.clone();
 												// media in the album still has to be filtered according to search criteria
-												resultAlbum.filterMedia(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
-												resultAlbum.filterSubalbums(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
+												resultAlbum.filterMediaAgainstOneWord(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
+												resultAlbum.filterSubalbumsAgainstOneWord(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
 
 												if (! (thisIndexWords in searchResultsMedia)) {
 													searchResultsMedia[thisIndexWords] = resultAlbum.media;
@@ -1675,8 +1675,8 @@
 														// we still have to filter out the media and subalbums that do not match the words after the first
 														// we are in all words search mode
 
-														env.searchAlbum.checkMediaAgainstEveryWord(searchWordsFromUserNormalizedAccordingToOptions, lastIndex);
-														env.searchAlbum.checkSubalbumsAgainstEveryWord(searchWordsFromUserNormalizedAccordingToOptions, lastIndex);
+														env.searchAlbum.filterMediaAgainstEveryWord(searchWordsFromUserNormalizedAccordingToOptions, lastIndex);
+														env.searchAlbum.filterSubalbumsAgainstEveryWord(searchWordsFromUserNormalizedAccordingToOptions, lastIndex);
 													}
 
 													// search albums need to conform to default behaviour of albums:
@@ -1766,7 +1766,7 @@
 		);
 	};
 
-	Album.prototype.filterMedia = function(normalizedWord) {
+	Album.prototype.filterMediaAgainstOneWord = function(normalizedWord) {
 		for (let indexMedia = this.media.length - 1; indexMedia >= 0 ; indexMedia --) {
 			let ithMedia = this.media[indexMedia];
 			if (! env.options.search_inside_words) {
@@ -1833,7 +1833,7 @@
 		}
 	};
 
-	Album.prototype.filterSubalbums = function(normalizedWord) {
+	Album.prototype.filterSubalbumsAgainstOneWord = function(normalizedWord) {
 		for (let indexSubalbums = this.subalbums.length - 1; indexSubalbums >= 0; indexSubalbums --) {
 			let ithSubalbum = this.subalbums[indexSubalbums];
 			if (! env.options.search_inside_words) {
@@ -1888,7 +1888,7 @@
 		}
 	};
 
-	Album.prototype.checkMediaAgainstEveryWord = function(searchWordsFromUserNormalizedAccordingToOptions, lastIndex) {
+	Album.prototype.filterMediaAgainstEveryWord = function(searchWordsFromUserNormalizedAccordingToOptions, lastIndex) {
 		for (let indexMedia = this.media.length - 1; indexMedia >= 0 ; indexMedia --) {
 			let ithMedia = this.media[indexMedia];
 			if (! env.options.search_inside_words) {
@@ -1928,7 +1928,7 @@
 		}
 	};
 
-	Album.prototype.checkSubalbumsAgainstEveryWord = function(searchWordsFromUserNormalizedAccordingToOptions, lastIndex) {
+	Album.prototype.filterSubalbumsAgainstEveryWord = function(searchWordsFromUserNormalizedAccordingToOptions, lastIndex) {
 		for (let indexSubalbums = this.subalbums.length - 1; indexSubalbums >= 0 ; indexSubalbums --) {
 			let ithSubalbum = this.subalbums[indexSubalbums];
 			if (! env.options.search_inside_words) {
