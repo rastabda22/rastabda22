@@ -1633,16 +1633,15 @@
 										var promise = PhotoFloat.getAlbum(albumHashes[thisIndexWords][thisIndexAlbums], reject_parseHash, {getMedia: true, getPositions: true});
 										promise.then(
 											function(theAlbum) {
-												var matchingMedia = new Media([]), matchingSubalbums = new Subalbums([]), match, indexMedia, indexSubalbums, indexWordsLeft, resultAlbum, indexWords1, ithMedia, ithSubalbum;
-
 												env.cache.putAlbum(theAlbum);
 
-												resultAlbum = theAlbum.clone();
+												var resultAlbum = theAlbum.clone();
 												// media in the album still has to be filtered according to search criteria
-												if (! env.options.search_inside_words) {
-													// whole word
-													for (indexMedia = 0; indexMedia < theAlbum.media.length; indexMedia ++) {
-														ithMedia = theAlbum.media[indexMedia];
+												var matchingMedia = new Media([]);
+												for (let indexMedia = 0; indexMedia < theAlbum.media.length; indexMedia ++) {
+													let ithMedia = theAlbum.media[indexMedia];
+													if (! env.options.search_inside_words) {
+														// whole word
 														normalizedWords = util.normalizeAccordingToOptions(ithMedia.words);
 														if (ithMedia.metadata.hasOwnProperty("tags") && env.options.search_tags_only)
 															normalizedTags = util.normalizeAccordingToOptions(ithMedia.metadata.tags);
@@ -1669,35 +1668,8 @@
 															)
 														)
 															matchingMedia.push(ithMedia);
-													}
-													for (indexSubalbums = 0; indexSubalbums < theAlbum.subalbums.length; indexSubalbums ++) {
-														ithSubalbum = theAlbum.subalbums[indexSubalbums];
-														normalizedWords = util.normalizeAccordingToOptions(ithSubalbum.words);
-														if (ithSubalbum.hasOwnProperty("tags") && env.options.search_tags_only)
-															normalizedTags = util.normalizeAccordingToOptions(ithSubalbum.tags);
-														if (
-															(
-																! env.options.search_tags_only &&
-																normalizedWords.includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) ||
-																env.options.search_tags_only &&
-																ithSubalbum.hasOwnProperty("tags") &&
-																normalizedTags.includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords])
-															) && (
-																! env.options.search_current_album ||
-																util.isAnyRootCacheBase(env.options.cache_base_to_search_in) ||
-																util.isCollectionCacheBase(env.options.cache_base_to_search_in) || (
-																	// check whether the media is inside the current album tree
-																	ithSubalbum.cacheBase.indexOf(env.options.cache_base_to_search_in) === 0 &&
-																	ithSubalbum.cacheBase != env.options.cache_base_to_search_in
-																)
-															)
-														)
-															matchingSubalbums.push(ithSubalbum);
-													}
-												} else {
-													// inside words
-													for (indexMedia = 0; indexMedia < theAlbum.media.length; indexMedia ++) {
-														ithMedia = theAlbum.media[indexMedia];
+													} else {
+														// inside words
 														normalizedWords = util.normalizeAccordingToOptions(ithMedia.words);
 														if (ithMedia.metadata.hasOwnProperty("tags") && env.options.search_tags_only)
 															normalizedTags = util.normalizeAccordingToOptions(ithMedia.metadata.tags);
@@ -1727,8 +1699,37 @@
 														)
 															matchingMedia.push(ithMedia);
 													}
-													for (indexSubalbums = 0; indexSubalbums < theAlbum.subalbums.length; indexSubalbums ++) {
-														ithSubalbum = theAlbum.subalbums[indexSubalbums];
+												}
+												resultAlbum.media = matchingMedia;
+
+												var matchingSubalbums = new Subalbums([]);
+												for (let indexSubalbums = 0; indexSubalbums < theAlbum.subalbums.length; indexSubalbums ++) {
+													let ithSubalbum = theAlbum.subalbums[indexSubalbums];
+													if (! env.options.search_inside_words) {
+														// whole word
+														normalizedWords = util.normalizeAccordingToOptions(ithSubalbum.words);
+														if (ithSubalbum.hasOwnProperty("tags") && env.options.search_tags_only)
+															normalizedTags = util.normalizeAccordingToOptions(ithSubalbum.tags);
+														if (
+															(
+																! env.options.search_tags_only &&
+																normalizedWords.includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]) ||
+																env.options.search_tags_only &&
+																ithSubalbum.hasOwnProperty("tags") &&
+																normalizedTags.includes(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords])
+															) && (
+																! env.options.search_current_album ||
+																util.isAnyRootCacheBase(env.options.cache_base_to_search_in) ||
+																util.isCollectionCacheBase(env.options.cache_base_to_search_in) || (
+																	// check whether the media is inside the current album tree
+																	ithSubalbum.cacheBase.indexOf(env.options.cache_base_to_search_in) === 0 &&
+																	ithSubalbum.cacheBase != env.options.cache_base_to_search_in
+																)
+															)
+														)
+															matchingSubalbums.push(ithSubalbum);
+													} else {
+														// inside words
 														normalizedWords = util.normalizeAccordingToOptions(ithSubalbum.words);
 														if (ithSubalbum.hasOwnProperty("tags") && env.options.search_tags_only)
 															normalizedTags = util.normalizeAccordingToOptions(ithSubalbum.tags);
@@ -1752,7 +1753,6 @@
 															matchingSubalbums.push(ithSubalbum);
 													}
 												}
-												resultAlbum.media = matchingMedia;
 												resultAlbum.subalbums = matchingSubalbums;
 
 												if (! (thisIndexWords in searchResultsMedia)) {
@@ -1762,6 +1762,7 @@
 													searchResultsMedia[thisIndexWords].unionForSearches(resultAlbum.media);
 													searchResultsSubalbums[thisIndexWords].unionForSearches(resultAlbum.subalbums);
 												}
+
 												// the following instruction makes me see that numSearchAlbumsReady never reaches numSubAlbumsToGet when numSubAlbumsToGet is > 1000,
 												// numSearchAlbumsReady remains < 1000
 
@@ -1770,7 +1771,7 @@
 													// all the albums have been got, we can merge the results
 													env.searchAlbum.media = new Media(searchResultsMedia[0]);
 													env.searchAlbum.subalbums = new Subalbums(searchResultsSubalbums[0]);
-													for (indexWords1 = 1; indexWords1 <= lastIndex; indexWords1 ++) {
+													for (let indexWords1 = 1; indexWords1 <= lastIndex; indexWords1 ++) {
 														if (indexWords1 in searchResultsMedia) {
 															if (env.options.search_any_word)
 																env.searchAlbum.media.unionForSearches(searchResultsMedia[indexWords1]);
@@ -1789,18 +1790,19 @@
 														// we still have to filter out the media that do not match the words after the first
 														// we are in all words search mode
 														matchingMedia = new Media([]);
-														for (indexMedia = 0; indexMedia < env.searchAlbum.media.length; indexMedia ++) {
-															match = true;
+														for (let indexMedia = 0; indexMedia < env.searchAlbum.media.length; indexMedia ++) {
+															let ithMedia = env.searchAlbum.media[indexMedia];
+															let match = true;
 															if (! env.options.search_inside_words) {
 																// whole word
-																normalizedWords = util.normalizeAccordingToOptions(env.searchAlbum.media[indexMedia].words);
-																if (env.searchAlbum.media[indexMedia].metadata.hasOwnProperty("tags") && env.options.search_tags_only)
-																	normalizedTags = util.normalizeAccordingToOptions(env.searchAlbum.media[indexMedia].metadata.tags);
+																normalizedWords = util.normalizeAccordingToOptions(ithMedia.words);
+																if (ithMedia.metadata.hasOwnProperty("tags") && env.options.search_tags_only)
+																	normalizedTags = util.normalizeAccordingToOptions(ithMedia.metadata.tags);
 																if (
 																	! env.options.search_tags_only &&
 																	searchWordsFromUserNormalizedAccordingToOptions.some((word, index) => index > lastIndex && normalizedWords.indexOf(word) === -1) ||
 																	env.options.search_tags_only && (
-																		! env.searchAlbum.media[indexMedia].metadata.hasOwnProperty("tags") ||
+																		! ithMedia.metadata.hasOwnProperty("tags") ||
 																		searchWordsFromUserNormalizedAccordingToOptions.some((word, index) => index > lastIndex && normalizedTags.indexOf(word) === -1)
 																	)
 																) {
@@ -1808,15 +1810,15 @@
 																}
 															} else {
 																// inside words
-																for (indexWordsLeft = lastIndex + 1; indexWordsLeft < searchWordsFromUser.length; indexWordsLeft ++) {
-																	normalizedWords = util.normalizeAccordingToOptions(env.searchAlbum.media[indexMedia].words);
-																	if (env.searchAlbum.media[indexMedia].metadata.hasOwnProperty("tags") && env.options.search_tags_only)
-																		normalizedTags = util.normalizeAccordingToOptions(env.searchAlbum.media[indexMedia].metadata.tags);
+																for (let indexWordsLeft = lastIndex + 1; indexWordsLeft < searchWordsFromUser.length; indexWordsLeft ++) {
+																	normalizedWords = util.normalizeAccordingToOptions(ithMedia.words);
+																	if (ithMedia.metadata.hasOwnProperty("tags") && env.options.search_tags_only)
+																		normalizedTags = util.normalizeAccordingToOptions(ithMedia.metadata.tags);
 																	if (
 																		! env.options.search_tags_only &&
 																		! normalizedWords.some(word => word.includes(searchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft])) ||
 																		env.options.search_tags_only && (
-																			! env.searchAlbum.media[indexMedia].metadata.hasOwnProperty("tags") ||
+																			! ithMedia.metadata.hasOwnProperty("tags") ||
 																			! normalizedTags.some((word, index) => index > lastIndex && normalizedTags.indexOf(word) === -1)
 																		)
 																	) {
@@ -1825,24 +1827,25 @@
 																	}
 																}
 															}
-															if (match && matchingMedia.indexOf(env.searchAlbum.media[indexMedia]) === -1)
-																matchingMedia.push(env.searchAlbum.media[indexMedia]);
+															if (match && matchingMedia.indexOf(ithMedia) === -1)
+																matchingMedia.push(ithMedia);
 														}
 														env.searchAlbum.media = matchingMedia;
 
 														matchingSubalbums = new Subalbums([]);
-														for (indexSubalbums = 0; indexSubalbums < env.searchAlbum.subalbums.length; indexSubalbums ++) {
-															match = true;
+														for (let indexSubalbums = 0; indexSubalbums < env.searchAlbum.subalbums.length; indexSubalbums ++) {
+															let ithSubalbum = env.searchAlbum.subalbums[indexSubalbums];
+															let match = true;
 															if (! env.options.search_inside_words) {
 																// whole word
-																normalizedWords = util.normalizeAccordingToOptions(env.searchAlbum.subalbums[indexSubalbums].words);
-																if (env.searchAlbum.subalbums[indexSubalbums].hasOwnProperty("tags") && env.options.search_tags_only)
-																	normalizedTags = util.normalizeAccordingToOptions(env.searchAlbum.subalbums[indexSubalbums].tags);
+																normalizedWords = util.normalizeAccordingToOptions(ithSubalbum.words);
+																if (ithSubalbum.hasOwnProperty("tags") && env.options.search_tags_only)
+																	normalizedTags = util.normalizeAccordingToOptions(ithSubalbum.tags);
 																if (
 																	! env.options.search_tags_only &&
 																	searchWordsFromUserNormalizedAccordingToOptions.some((word, index) => index > lastIndex && normalizedWords.indexOf(word) === -1) ||
 																	env.options.search_tags_only && (
-																		! env.searchAlbum.subalbums[indexSubalbums].hasOwnProperty("tags") ||
+																		! ithSubalbum.hasOwnProperty("tags") ||
 																		searchWordsFromUserNormalizedAccordingToOptions.some((word, index) => index > lastIndex && normalizedTags.indexOf(word) === -1)
 																	)
 																) {
@@ -1850,15 +1853,15 @@
 																}
 															} else {
 																// inside words
-																for (indexWordsLeft = lastIndex + 1; indexWordsLeft < searchWordsFromUser.length; indexWordsLeft ++) {
-																	normalizedWords = util.normalizeAccordingToOptions(env.searchAlbum.subalbums[indexSubalbums].words);
-																	if (env.searchAlbum.subalbums[indexSubalbums].hasOwnProperty("tags") && env.options.search_tags_only)
-																		normalizedTags = util.normalizeAccordingToOptions(env.searchAlbum.subalbums[indexSubalbums].tags);
+																for (let indexWordsLeft = lastIndex + 1; indexWordsLeft < searchWordsFromUser.length; indexWordsLeft ++) {
+																	normalizedWords = util.normalizeAccordingToOptions(ithSubalbum.words);
+																	if (ithSubalbum.hasOwnProperty("tags") && env.options.search_tags_only)
+																		normalizedTags = util.normalizeAccordingToOptions(ithSubalbum.tags);
 																	if (
 																		! env.options.search_tags_only &&
 																		! normalizedWords.some(word => word.includes(searchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft])) ||
 																		env.options.search_tags_only && (
-																			! env.searchAlbum.subalbums[indexSubalbums].hasOwnProperty("tags") ||
+																			! ithSubalbum.hasOwnProperty("tags") ||
 																			! normalizedTags.some(word => word.includes(searchWordsFromUserNormalizedAccordingToOptions[indexWordsLeft]))
 																		)
 																	) {
@@ -1867,8 +1870,8 @@
 																	}
 																}
 															}
-															if (match && matchingSubalbums.indexOf(env.searchAlbum.subalbums[indexSubalbums]) === -1)
-																matchingSubalbums.push(env.searchAlbum.subalbums[indexSubalbums]);
+															if (match && matchingSubalbums.indexOf(ithSubalbum) === -1)
+																matchingSubalbums.push(ithSubalbum);
 														}
 
 														env.searchAlbum.subalbums = matchingSubalbums;
