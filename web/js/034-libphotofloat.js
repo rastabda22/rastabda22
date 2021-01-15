@@ -1908,7 +1908,7 @@
 				}
 			} else {
 				// inside words
-				for (let indexWordsLeft = lastIndex + 1; indexWordsLeft < searchWordsFromUser.length; indexWordsLeft ++) {
+				for (let indexWordsLeft = lastIndex + 1; indexWordsLeft < searchWordsFromUserNormalizedAccordingToOptions.length; indexWordsLeft ++) {
 					normalizedWords = util.normalizeAccordingToOptions(ithMedia.words);
 					if (ithMedia.metadata.hasOwnProperty("tags") && env.options.search_tags_only)
 						normalizedTags = util.normalizeAccordingToOptions(ithMedia.metadata.tags);
@@ -1948,7 +1948,7 @@
 				}
 			} else {
 				// inside words
-				for (let indexWordsLeft = lastIndex + 1; indexWordsLeft < searchWordsFromUser.length; indexWordsLeft ++) {
+				for (let indexWordsLeft = lastIndex + 1; indexWordsLeft < searchWordsFromUserNormalizedAccordingToOptions.length; indexWordsLeft ++) {
 					normalizedWords = util.normalizeAccordingToOptions(ithSubalbum.words);
 					if (ithSubalbum.hasOwnProperty("tags") && env.options.search_tags_only)
 						normalizedTags = util.normalizeAccordingToOptions(ithSubalbum.tags);
