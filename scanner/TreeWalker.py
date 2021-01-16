@@ -23,7 +23,7 @@ from Utilities import save_password_codes, json_files_and_mtime, report_mem
 from Utilities import convert_identifiers_set_to_codes_set, convert_identifiers_set_to_md5s_set
 from Utilities import convert_combination_to_set, convert_set_to_combination, convert_md5_to_code, convert_simple_md5_combination_to_simple_codes_combination, complex_combination
 from Utilities import determine_symlink_number_and_name
-from CachePath import transliterate_to_ascii, remove_accents, remove_non_alphabetic_characters
+from CachePath import transliterate_to_ascii, remove_accents, remove_non_alphabetic_characters, remove_new_lines_and_tags
 from CachePath import remove_digits, switch_to_lowercase, phrase_to_words, checksum
 from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, make_dir
 from PhotoAlbum import Media, Album, PhotoAlbumEncoder, Position, Positions, NumsProtected, Sizes, SizesProtected
@@ -1063,13 +1063,14 @@ class TreeWalker:
 			media_or_album_name = os.path.splitext(media_or_album_name)[0]
 
 		alphabetic_words = phrase_to_words(remove_non_alphabetic_characters(remove_digits(media_or_album_name)))
-		alphabetic_words.extend(phrase_to_words(remove_non_alphabetic_characters(remove_digits(re.sub('<[^<]+?>', '', media_or_album.title)))))
-		alphabetic_words.extend(phrase_to_words(remove_non_alphabetic_characters(remove_digits(re.sub('<[^<]+?>', '', media_or_album.description)))))
+		alphabetic_words.extend(phrase_to_words(remove_non_alphabetic_characters(remove_digits(remove_new_lines_and_tags(media_or_album.title)))))
+		alphabetic_words.extend(phrase_to_words(remove_non_alphabetic_characters(remove_digits(remove_new_lines_and_tags(media_or_album.description)))))
+
 
 		# alphabetic_words = list(map(lambda word: remove_non_alphabetic_characters(remove_digits(word)), words))
 		# alphabetic_words = " ".join(alphabetic_words).split(" ")
 		# alphabetic_words.extend(media_or_album.tags)
-		alphabetic_words.extend(map(lambda tag: remove_non_alphabetic_characters(remove_digits(tag)), media_or_album.tags))
+		alphabetic_words.extend(list(map(lambda tag: remove_non_alphabetic_characters(remove_digits(tag)), media_or_album.tags)))
 		# alphabetic_words = list(map(lambda word: remove_non_alphabetic_characters(remove_digits(word)), alphabetic_words))
 		alphabetic_words = list(filter(None, alphabetic_words))
 		alphabetic_words = list(set(alphabetic_words))
