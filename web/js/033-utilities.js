@@ -1003,10 +1003,10 @@
 
 	Utilities.isAnyRootCacheBase = function(cacheBase) {
 		var result =
-			[env.options.folders_string, env.options.by_date_string, env.options.by_gps_string].indexOf(cacheBase) !== -1 ||
-			Utilities.isSearchCacheBase(cacheBase) ||
-			Utilities.isMapCacheBase(cacheBase) ||
-			Utilities.isSelectionCacheBase(cacheBase);
+			[env.options.folders_string, env.options.by_date_string, env.options.by_gps_string].indexOf(cacheBase) !== -1;
+			// Utilities.isSearchCacheBase(cacheBase) ||
+			// Utilities.isMapCacheBase(cacheBase) ||
+			// Utilities.isSelectionCacheBase(cacheBase);
 		return result;
 	};
 
@@ -1079,6 +1079,10 @@
 
 	Subalbum.prototype.isSelection = function() {
 		return Utilities.isSelectionCacheBase(this.cacheBase);
+	};
+
+	Utilities.prototype.isCollectionCacheBase = function(cacheBase) {
+		return Utilities.isMapCacheBase(cacheBase) || Utilities.isSearchCacheBase(cacheBase) || Utilities.isSelectionCacheBase(cacheBase);
 	};
 
 	Utilities.isMapCacheBase = function(cacheBase) {
@@ -2785,6 +2789,11 @@
 		} else {
 			if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title !== albumOrSubalbum.name) {
 				folderName = albumOrSubalbum.title;
+				if (! br) {
+					// remove the tags fronm the title
+					folderName = folderName.replace(/<[^>]*>?/gm, ' ');
+				}
+
 				if (albumOrSubalbum.name) {
 					if (html && br)
 						folderName += "<br /><span class='media-real-name'>[" + albumOrSubalbum.name + "]</span>";
@@ -2829,6 +2838,11 @@
 		// } else {
 		if (this.metadata.hasOwnProperty("title") && this.metadata.title !== this.name) {
 			mediaName = this.metadata.title;
+			if (! br) {
+				// remove the tags fronm the title
+				mediaName = mediaName.replace(/<[^>]*>?/gm, ' ');
+			}
+
 			if (html && br)
 				mediaName += "<br /><span class='media-real-name'>[" + this.name + "]</span>";
 			else if (html)
@@ -3604,6 +3618,7 @@
 	Utilities.prototype.formatDescription = Utilities.formatDescription;
 	Utilities.prototype.stripHtmlAndReplaceEntities = Utilities.stripHtmlAndReplaceEntities;
 	Utilities.prototype.isPopup = Utilities.isPopup;
+	Utilities.prototype.arrayUnion = Utilities.arrayUnion;
 
 	window.Utilities = Utilities;
 }());

@@ -23,7 +23,7 @@ from Utilities import save_password_codes, json_files_and_mtime, report_mem
 from Utilities import convert_identifiers_set_to_codes_set, convert_identifiers_set_to_md5s_set
 from Utilities import convert_combination_to_set, convert_set_to_combination, convert_md5_to_code, convert_simple_md5_combination_to_simple_codes_combination, complex_combination
 from Utilities import determine_symlink_number_and_name
-from CachePath import transliterate_to_ascii, remove_accents, remove_non_alphabetic_characters
+from CachePath import transliterate_to_ascii, remove_accents, remove_non_alphabetic_characters, remove_new_lines_and_tags
 from CachePath import remove_digits, switch_to_lowercase, phrase_to_words, checksum
 from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, make_dir
 from PhotoAlbum import Media, Album, PhotoAlbumEncoder, Position, Positions, NumsProtected, Sizes, SizesProtected
@@ -944,12 +944,13 @@ class TreeWalker:
 
 	def remove_stopwords(self, alphabetic_words, search_normalized_words, ascii_words):
 		# remove the stopwords found in alphabetic_words, from search_normalized_words and ascii_words
-		purged_alphabetic_words = set(alphabetic_words) - TreeWalker.lowercase_stopwords
+		purged_alphabetic_words = list(set(alphabetic_words) - TreeWalker.lowercase_stopwords)
+		purged_alphabetic_words.sort(key=str.lower)
 		purged_search_normalized_words = []
 		purged_ascii_words = []
-		alphabetic_words = list(alphabetic_words)
-		search_normalized_words = list(search_normalized_words)
-		ascii_words = list(ascii_words)
+		# alphabetic_words = list(alphabetic_words)
+		# search_normalized_words = list(search_normalized_words)
+		# ascii_words = list(ascii_words)
 		for word_index in range(len(alphabetic_words)):
 			if alphabetic_words[word_index] in purged_alphabetic_words:
 				purged_search_normalized_words.append(search_normalized_words[word_index])
@@ -1056,43 +1057,27 @@ class TreeWalker:
 		# add the given media or album to a temporary structure where media or albums are organized by search terms
 		# works on the words in the file/directory name and in album.ini's description, title, tags
 
-		# media_or_album.name must be the last item because the normalization will remove the file extension
 		media_or_album_name = media_or_album.name
 		if isinstance(media_or_album, Media):
 			# remove the extension
 			media_or_album_name = os.path.splitext(media_or_album_name)[0]
 
-		words = phrase_to_words(media_or_album_name)
-		words.extend(phrase_to_words(re.sub('<[^<]+?>', '', media_or_album.title)))
-		words.extend(phrase_to_words(re.sub('<[^<]+?>', '', media_or_album.description)))
-		words.extend(media_or_album.tags)
+		alphabetic_words = phrase_to_words(remove_non_alphabetic_characters(remove_digits(media_or_album_name)))
+		alphabetic_words.extend(phrase_to_words(remove_non_alphabetic_characters(remove_digits(remove_new_lines_and_tags(media_or_album.title)))))
+		alphabetic_words.extend(phrase_to_words(remove_non_alphabetic_characters(remove_digits(remove_new_lines_and_tags(media_or_album.description)))))
 
-		# elements = [media_or_album.title, media_or_album.description, " ".join(media_or_album.tags), media_or_album_name]
-		# phrase = ' '.join([_f for _f in elements if _f])
-		# # strip html tags
-		# phrase = re.sub('<[^<]+?>', '', phrase)
-		# # strip new lines
-		# phrase = ' '.join(phrase.splitlines())
-
-		alphabetic_words = list(map(lambda word: remove_non_alphabetic_characters(remove_digits(word)), words))
+		alphabetic_words.extend(list(map(lambda tag: remove_non_alphabetic_characters(remove_digits(tag)), media_or_album.tags)))
+		alphabetic_words = list(filter(None, alphabetic_words))
+		alphabetic_words = list(set(alphabetic_words))
+		alphabetic_words.sort(key=str.lower)
 		lowercase_words = list(map(lambda word: switch_to_lowercase(word), alphabetic_words))
 		search_normalized_words = list(map(lambda word: remove_accents(word), lowercase_words))
 		ascii_words = list(map(lambda word: transliterate_to_ascii(word), search_normalized_words))
-
-		# alphabetic_phrase = remove_non_alphabetic_characters(remove_digits(phrase))
-		# lowercase_phrase = switch_to_lowercase(alphabetic_phrase)
-		# search_normalized_phrase = remove_accents(lowercase_phrase)
-		# ascii_phrase = transliterate_to_ascii(search_normalized_phrase)
-
-		# alphabetic_words = phrase_to_words(alphabetic_phrase)
-		# search_normalized_words = phrase_to_words(search_normalized_phrase)
-		# ascii_words = phrase_to_words(ascii_phrase)
 
 		if (Options.config['use_stop_words']):
 			# remove stop words: do it according to the words in lower case, different words could be removed if performing remotion from every list
 			next_level()
 			alphabetic_words, search_normalized_words, ascii_words = self.remove_stopwords(alphabetic_words, search_normalized_words, ascii_words)
-			alphabetic_words = list(alphabetic_words)
 			back_level()
 
 		return alphabetic_words, search_normalized_words, ascii_words
