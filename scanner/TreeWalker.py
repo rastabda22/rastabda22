@@ -1078,7 +1078,6 @@ class TreeWalker:
 			# remove stop words: do it according to the words in lower case, different words could be removed if performing remotion from every list
 			next_level()
 			alphabetic_words, search_normalized_words, ascii_words = self.remove_stopwords(alphabetic_words, search_normalized_words, ascii_words)
-			alphabetic_words = list(alphabetic_words)
 			back_level()
 
 		return alphabetic_words, search_normalized_words, ascii_words
