@@ -2638,7 +2638,7 @@
 								else {
 									nameHtml = ithSubalbum.nameForShowing(env.currentAlbum, true, true);
 									if (nameHtml === "")
-										nameHtml = "<span class='italic'>(" + util._t("#root-album") + ")</span>";
+										nameHtml = "<span class='italic gray'>(" + util._t("#root-album") + ")</span>";
 								}
 
 								let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
