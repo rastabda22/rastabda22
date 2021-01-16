@@ -244,7 +244,8 @@
 							let aHtml = "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + encodeURI(env.currentAlbum.ancestorsCacheBase[i - 1]) + "'></a>";
 							let a = $(aHtml);
 							a. attr("title", util._t("#place-icon-title") + gpsName + util._t("#place-icon-title-end"));
-							title += a.prop("outerHTML").substring(0, -4);
+							let aString = a.prop("outerHTML");
+							title += aString.substring(0, aString.length -4);
 							// title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + encodeURI(env.currentAlbum.ancestorsCacheBase[i - 1]) + "'";
 							// title += " title='" +  + "'";
 							// title += ">";
