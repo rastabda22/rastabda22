@@ -482,29 +482,6 @@ $(document).ready(function() {
 						let playPromise = tF.playClickElement(clickHistory, 0);
 						playPromise.then(
 							function popupReady() {
-								// // every normalized single media name must match the search terms
-								// var matchingMedia = new Media([]);
-								// for (let iMedia = 0; iMedia < env.mapAlbum.media.length; iMedia ++) {
-								// 	let ithMedia = env.mapAlbum.media[iMedia];
-								// 	// TO DO, BUG: it's not the media name to be used for matching, but the words in media name!!!!!!!
-								// 	let normalizedWords = util.normalizeAccordingToOptions(ithMedia.words);
-								// 	if (ithMedia.metadata.hasOwnProperty("tags") && env.options.search_tags_only)
-								// 		normalizedTags = util.normalizeAccordingToOptions(ithMedia.metadata.tags);
-								// 	if (
-								// 		! env.options.search_any_word &&
-								// 		searchWordsFromUserNormalizedAccordingToOptions.every(searchWord =>
-								// 			env.options.search_inside_words && normalizedWords.some(word => word.indexOf(searchWord) > -1) ||
-								// 			! env.options.search_inside_words && normalizedWords.some(word => word === searchWord)
-								// 		) ||
-								// 		env.options.search_any_word &&
-								// 		searchWordsFromUserNormalizedAccordingToOptions.some(searchWord =>
-								// 			env.options.search_inside_words && normalizedWords.some(word => word.indexOf(searchWord) > -1) ||
-								// 			! env.options.search_inside_words && normalizedWords.some(word => word === searchWord)
-								// 		)
-								// 	)
-								// 		matchingMedia.push(ithMedia);
-								// }
-								// env.mapAlbum.media = matchingMedia;
 								if (env.options.search_any_word) {
 									// at least one word
 									mediaResult = new Media([]);
@@ -520,6 +497,17 @@ $(document).ready(function() {
 									env.mapAlbum.filterMediaAgainstEveryWord(searchWordsFromUserNormalizedAccordingToOptions);
 								}
 								tF.prepareAndDoPopupUpdate();
+								if (! env.options.search_inside_words && removedStopWords.length) {
+									// say that some search word hasn't been used
+									let stopWordsFound = " - <span class='italic'>" + removedStopWords.length + " " + util._t("#removed-stopwords") + ": ";
+									for (i = 0; i < removedStopWords.length; i ++) {
+										if (i)
+											stopWordsFound += ", ";
+										stopWordsFound += removedStopWords[i];
+									}
+									stopWordsFound += "</span>";
+									$("#popup-photo-count").append(stopWordsFound);
+								}
 							}
 						);
 					},

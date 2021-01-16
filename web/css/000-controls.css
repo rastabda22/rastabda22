@@ -97,7 +97,7 @@ a.title-anchor.mobile {
 
 .italic {
 	font-style: italic;
-	color: gray;
+	/* color: gray; */
 }
 
 .messages .browsing-mode-message {
