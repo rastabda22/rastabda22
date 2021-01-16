@@ -1062,20 +1062,15 @@ class TreeWalker:
 			# remove the extension
 			media_or_album_name = os.path.splitext(media_or_album_name)[0]
 
-		words = phrase_to_words(media_or_album_name)
-		words.extend(phrase_to_words(re.sub('<[^<]+?>', '', media_or_album.title)))
-		words.extend(phrase_to_words(re.sub('<[^<]+?>', '', media_or_album.description)))
+		alphabetic_words = phrase_to_words(remove_non_alphabetic_characters(remove_digits(media_or_album_name)))
+		alphabetic_words.extend(phrase_to_words(remove_non_alphabetic_characters(remove_digits(re.sub('<[^<]+?>', '', media_or_album.title)))))
+		alphabetic_words.extend(phrase_to_words(remove_non_alphabetic_characters(remove_digits(re.sub('<[^<]+?>', '', media_or_album.description)))))
 
-		# elements = [media_or_album.title, media_or_album.description, " ".join(media_or_album.tags), media_or_album_name]
-		# phrase = ' '.join([_f for _f in elements if _f])
-		# # strip html tags
-		# phrase = re.sub('<[^<]+?>', '', phrase)
-		# # strip new lines
-		# phrase = ' '.join(phrase.splitlines())
-
-		alphabetic_words = list(map(lambda word: remove_non_alphabetic_characters(remove_digits(word)), words))
-		alphabetic_words = " ".join(alphabetic_words).split(" ")
-		alphabetic_words.extend(media_or_album.tags)
+		# alphabetic_words = list(map(lambda word: remove_non_alphabetic_characters(remove_digits(word)), words))
+		# alphabetic_words = " ".join(alphabetic_words).split(" ")
+		# alphabetic_words.extend(media_or_album.tags)
+		alphabetic_words.extend(map(lambda tag: remove_non_alphabetic_characters(remove_digits(tag)), media_or_album.tags))
+		# alphabetic_words = list(map(lambda word: remove_non_alphabetic_characters(remove_digits(word)), alphabetic_words))
 		alphabetic_words = list(filter(None, alphabetic_words))
 		alphabetic_words = list(set(alphabetic_words))
 		alphabetic_words.sort()
