@@ -1,3 +1,5 @@
+### version v4.9.24 (Jan 16, 2021)
+
 * searching in popup refines the media in it
 * updated italian and spanish stopwords removing many of them
 * menu tweaks
