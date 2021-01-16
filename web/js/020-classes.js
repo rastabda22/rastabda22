@@ -199,9 +199,9 @@
 				this.parent = album;
 		}
 
-		clone() {
-			return new SingleMedia(Utilities.cloneObject(this));
-		}
+		// clone() {
+		// 	return new SingleMedia(Utilities.cloneObject(this));
+		// }
 
 		cloneAndDeleteParent() {
 			let clonedSingleMedia = this.clone();
@@ -354,7 +354,7 @@
 		// - virtual albums: by map and by selection: they are generated through user direct choices, and for this reason they cannot be represented by a cache base
 		// - collection albums: by search, by map and by selection albums
 
-		constructor(objectOrCacheBase) {
+		constructor(objectOrCacheBase, putIntoCache = true) {
 			if (typeof objectOrCacheBase === "string") {
 				let cacheBase = objectOrCacheBase;
 				this.cacheBase = cacheBase;
@@ -416,7 +416,7 @@
 			// 		this.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
 			// 	}
 			// }
-			if (objectOrCacheBase !== undefined && this.codesComplexCombination === undefined) {
+			if (putIntoCache && objectOrCacheBase !== undefined && this.codesComplexCombination === undefined) {
 				env.cache.putAlbum(this);
 			}
 		}
@@ -449,8 +449,8 @@
 			);
 		}
 
-		clone() {
-			return new Album(Utilities.cloneObject(this));
+		clone(putIntoCache = false) {
+			return new Album(Utilities.cloneObject(this), putIntoCache);
 		}
 
 		toSubalbum() {
