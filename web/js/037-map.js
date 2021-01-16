@@ -182,6 +182,7 @@
 		MapFunctions.calculatePopupSizes();
 		$(".leaflet-popup-content").css("max-width", env.maxWidthForPopupContent + "px");
 		// $(".leaflet-popup-content").css("width", MapFunctions.);
+		$(".leaflet-popup-content").css("min-width", env.options.media_thumb_size + "px");
 		$("#popup-images-wrapper").css("max-height", "");
 		$("#popup-images-wrapper").css("max-height", ($(".leaflet-popup-content").outerHeight() - $("#popup-photo-count").outerHeight(true)) + "px");
 		$("#popup-photo-count").css("max-width", env.maxWidthForPopupContent + "px");
