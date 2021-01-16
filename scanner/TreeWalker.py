@@ -944,12 +944,13 @@ class TreeWalker:
 
 	def remove_stopwords(self, alphabetic_words, search_normalized_words, ascii_words):
 		# remove the stopwords found in alphabetic_words, from search_normalized_words and ascii_words
-		purged_alphabetic_words = set(alphabetic_words) - TreeWalker.lowercase_stopwords
+		purged_alphabetic_words = list(set(alphabetic_words) - TreeWalker.lowercase_stopwords)
+		purged_alphabetic_words.sort(key=str.lower)
 		purged_search_normalized_words = []
 		purged_ascii_words = []
-		alphabetic_words = list(alphabetic_words)
-		search_normalized_words = list(search_normalized_words)
-		ascii_words = list(ascii_words)
+		# alphabetic_words = list(alphabetic_words)
+		# search_normalized_words = list(search_normalized_words)
+		# ascii_words = list(ascii_words)
 		for word_index in range(len(alphabetic_words)):
 			if alphabetic_words[word_index] in purged_alphabetic_words:
 				purged_search_normalized_words.append(search_normalized_words[word_index])
@@ -1056,7 +1057,6 @@ class TreeWalker:
 		# add the given media or album to a temporary structure where media or albums are organized by search terms
 		# works on the words in the file/directory name and in album.ini's description, title, tags
 
-		# media_or_album.name must be the last item because the normalization will remove the file extension
 		media_or_album_name = media_or_album.name
 		if isinstance(media_or_album, Media):
 			# remove the extension
@@ -1066,27 +1066,13 @@ class TreeWalker:
 		alphabetic_words.extend(phrase_to_words(remove_non_alphabetic_characters(remove_digits(remove_new_lines_and_tags(media_or_album.title)))))
 		alphabetic_words.extend(phrase_to_words(remove_non_alphabetic_characters(remove_digits(remove_new_lines_and_tags(media_or_album.description)))))
 
-
-		# alphabetic_words = list(map(lambda word: remove_non_alphabetic_characters(remove_digits(word)), words))
-		# alphabetic_words = " ".join(alphabetic_words).split(" ")
-		# alphabetic_words.extend(media_or_album.tags)
 		alphabetic_words.extend(list(map(lambda tag: remove_non_alphabetic_characters(remove_digits(tag)), media_or_album.tags)))
-		# alphabetic_words = list(map(lambda word: remove_non_alphabetic_characters(remove_digits(word)), alphabetic_words))
 		alphabetic_words = list(filter(None, alphabetic_words))
 		alphabetic_words = list(set(alphabetic_words))
-		alphabetic_words.sort()
+		alphabetic_words.sort(key=str.lower)
 		lowercase_words = list(map(lambda word: switch_to_lowercase(word), alphabetic_words))
 		search_normalized_words = list(map(lambda word: remove_accents(word), lowercase_words))
 		ascii_words = list(map(lambda word: transliterate_to_ascii(word), search_normalized_words))
-
-		# alphabetic_phrase = remove_non_alphabetic_characters(remove_digits(phrase))
-		# lowercase_phrase = switch_to_lowercase(alphabetic_phrase)
-		# search_normalized_phrase = remove_accents(lowercase_phrase)
-		# ascii_phrase = transliterate_to_ascii(search_normalized_phrase)
-
-		# alphabetic_words = phrase_to_words(alphabetic_phrase)
-		# search_normalized_words = phrase_to_words(search_normalized_phrase)
-		# ascii_words = phrase_to_words(ascii_phrase)
 
 		if (Options.config['use_stop_words']):
 			# remove stop words: do it according to the words in lower case, different words could be removed if performing remotion from every list
