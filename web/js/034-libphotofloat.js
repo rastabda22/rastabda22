@@ -1884,7 +1884,7 @@
 
 	Album.prototype.filterMediaAgainstEveryWord = function(searchWordsFromUserNormalizedAccordingToOptions, lastIndex) {
 		if (lastIndex === undefined)
-			lastIndex = 0;
+			lastIndex = -1;
 
 		for (let indexMedia = this.media.length - 1; indexMedia >= 0 ; indexMedia --) {
 			let ithMedia = this.media[indexMedia];
