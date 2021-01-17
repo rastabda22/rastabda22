@@ -1,3 +1,5 @@
+### version v4.9.25 (Jan 17, 2021)
+
 * optimized fetching of albums in searches
 * update jquery and jquery.touchSwipe
 * bug fixes
