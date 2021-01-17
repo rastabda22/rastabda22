@@ -1686,27 +1686,43 @@
 													// json files must have subalbums and media sorted according to options
 													let promises = [];
 													if (env.searchAlbum.media.length) {
+
+														// collect the cache bases to get, so that the album for a cachebase is fetched only once
+														let cacheBasesAndMediaToGet = [];
 														env.searchAlbum.media.forEach(
 															function(singleMedia) {
-																let promise = new Promise(
-																	function(resolve_singleMedia) {
-																		let cacheBase = singleMedia.foldersCacheBase;
-																		// let albumHash = PhotoFloat.decodeHash(window.location.hash)[0];
-																		// let searchStartCacheBase = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
-																		if (Utilities.isByDateCacheBase(env.options.cache_base_to_search_in) && singleMedia.hasOwnProperty("dayAlbumCacheBase"))
-																			cacheBase = singleMedia.dayAlbumCacheBase;
-																		else if (Utilities.isByGpsCacheBase(env.options.cache_base_to_search_in) && singleMedia.hasGpsData())
-																			cacheBase = singleMedia.gpsAlbumCacheBase;
-																		let parentAlbumPromise = PhotoFloat.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
+																let cacheBase = singleMedia.foldersCacheBase;
+																// let albumHash = PhotoFloat.decodeHash(window.location.hash)[0];
+																// let searchStartCacheBase = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
+																if (Utilities.isByDateCacheBase(env.options.cache_base_to_search_in) && singleMedia.hasOwnProperty("dayAlbumCacheBase"))
+																	cacheBase = singleMedia.dayAlbumCacheBase;
+																else if (Utilities.isByGpsCacheBase(env.options.cache_base_to_search_in) && singleMedia.hasGpsData())
+																	cacheBase = singleMedia.gpsAlbumCacheBase;
+																matchingIndex = cacheBasesAndMediaToGet.findIndex(cacheBaseAndMedia => cacheBaseAndMedia.cacheBase === cacheBase)
+																if (matchingIndex !== -1)
+																	cacheBasesAndMediaToGet[matchingIndex].media.push(singleMedia);
+																else
+																	cacheBasesAndMediaToGet.push({cacheBase: cacheBase, media: [singleMedia]});
+															}
+														);
+														cacheBasesAndMediaToGet.forEach(
+															function getCacheBase(cacheBaseAndMedia) {
+																let cacheBasePromise = new Promise(
+																	function(resolve_getAlbum) {
+																		let parentAlbumPromise = PhotoFloat.getAlbum(cacheBaseAndMedia.cacheBase, null, {getMedia: false, getPositions: false});
 																		parentAlbumPromise.then(
-																			function(parentAlbum) {
-																				singleMedia.generateCaptionForSearch(parentAlbum);
-																				resolve_singleMedia();
+																			function albumGot(parentAlbum) {
+																				cacheBaseAndMedia.media.forEach(
+																					singleMedia => {
+																						singleMedia.generateCaptionForSearch(parentAlbum);
+																					}
+																				);
+																				resolve_getAlbum();
 																			}
 																		);
 																	}
 																);
-																promises.push(promise);
+																promises.push(cacheBasePromise);
 															}
 														);
 													}
