@@ -2887,7 +2887,8 @@
 						function allRandomImagesGot() {
 							// we can run the function that prepare the stuffs for sharing
 							f.socialButtons();
-							util.adaptCaptionHeight();
+							if (env.currentAlbum.subalbums.length)
+								util.adaptCaptionHeight();
 
 							// When there is both a media and an album, we display the media's description; else it's the album's one
 							if (env.currentMedia === null || ! env.currentMedia.hasSomeDescription()) {
