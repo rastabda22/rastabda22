@@ -1488,6 +1488,8 @@
 								env.searchAlbum.positionsAndMediaInTree.addSingleMedia(ithMedia);
 								env.searchAlbum.numPositionsInTree = env.searchAlbum.positionsAndMediaInTree.length;
 							}
+							env.searchAlbum.sizesOfSubTree.sum(ithMedia.fileSizes);
+							env.searchAlbum.sizesOfAlbum.sum(ithMedia.fileSizes);
 						}
 
 						if (env.searchAlbum.subalbums.length) {
@@ -1499,7 +1501,8 @@
 								env.searchAlbum.numsMediaInSubTree.sum(thisSubalbum.numsMediaInSubTree);
 								// update the size totals
 								env.searchAlbum.sizesOfSubTree.sum(thisSubalbum.sizesOfSubTree);
-								env.searchAlbum.sizesOfAlbum.sum(thisSubalbum.sizesOfAlbum);
+								// env.searchAlbum.sizesOfAlbum.sum(thisSubalbum.sizesOfAlbum);
+
 								// add the points from the subalbums
 
 								// the subalbum could still have no positionsAndMediaInTree array, get it
