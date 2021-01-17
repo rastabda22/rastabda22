@@ -1,3 +1,7 @@
+* optimized fetching of albums in searches
+* update jquery and jquery.touchSwipe
+* bug fixes
+
 ### version v4.9.24 (Jan 16, 2021)
 
 * searching in popup refines the media in it
