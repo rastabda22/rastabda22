@@ -952,7 +952,7 @@
 				function subalbumRemoved() {
 					if (util.nothingIsSelected()) {
 						util.initializeSelectionAlbum();
-					} else {
+					} else if (env.currentAlbum.isSelection()) {
 						TopFunctions.showAlbum("refreshSubalbums");
 					}
 					f.updateMenu();
