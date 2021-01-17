@@ -1684,19 +1684,6 @@
 
 										env.selectionAlbum.numsMediaInSubTree.sum(new Media(mediaInAlbumNotSelectedNorInsideSelectedAlbums).imagesAndVideosCount());
 
-										// env.selectionAlbum.sizesOfSubTree.sum(album.sizesOfSubTree);
-										// mediaInAlbumNotSelectedNorInsideSelectedAlbums.forEach(
-										// 	function(singleMedia) {
-										// 		env.selectionAlbum.sizesOfSubTree.sum(singleMedia.fileSizes);
-										// 		if (singleMedia.isInsideSelectedAlbums()) {
-										// 			var singleMediaArray = new Media([singleMedia]);
-										// 			env.selectionAlbum.numsMediaInSubTree.subtract(singleMediaArray.imagesAndVideosCount());
-										// 			env.selectionAlbum.sizesOfSubTree.subtract(singleMedia.fileSizes);
-										// 		}
-										// 	}
-										// );
-										// env.selectionAlbum.numsProtectedMediaInSubTree.sum(album.numsProtectedMediaInSubTree);
-
 										continue_addSubalbumToSelection(album);
 									}
 								);
