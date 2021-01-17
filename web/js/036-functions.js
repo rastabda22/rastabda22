@@ -611,12 +611,19 @@
 
 		if (
 			isMap ||
-			! isPopup && (env.currentMedia !== null || env.currentAlbum.numsMedia.imagesAndVideosTotal() <= 1) ||
+			! isPopup && (env.currentMedia !== null || thisAlbum.numsMedia.imagesAndVideosTotal() <= 1 && thisAlbum.subalbums.length <= 1) ||
 			isPopup && env.mapAlbum.media.length <= 1
 		) {
 			// showing a media or a map or a popup on the map, nothing to sort
 			$("#right-menu li.sort").addClass("hidden");
 		} else if (thisAlbum !== null) {
+			if (thisAlbum.numsMedia.imagesAndVideosTotal() <= 1) {
+				// no media or one media
+				$("ul#right-menu li.media-sort").addClass("hidden");
+			} else {
+				$("ul#right-menu li.media-sort").removeClass("hidden");
+			}
+			
 			if (thisAlbum.subalbums.length <= 1 || isMapOrPopup) {
 				// no subalbums or one subalbum
 				$("ul#right-menu li.album-sort").addClass("hidden");
