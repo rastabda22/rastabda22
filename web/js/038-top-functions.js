@@ -1433,7 +1433,7 @@
 				$(".media-box#" + id + " .metadata").html(text);
 				var linkTitle = util._t('#show-map');
 				if (env.isMobile.any())
-					linkTitle += " [" + util._t("".map-link-shortcut") + "]";
+					linkTitle += " [" + util._t(".map-link-shortcut") + "]";
 				$(".media-box#" + id + " .metadata tr.gps").attr("title", linkTitle).off("click").on(
 					"click",
 					function() {
