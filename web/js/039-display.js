@@ -237,7 +237,7 @@ $(document).ready(function() {
 							return false;
 						}
 					} else if (
-						e.key.toLowerCase() === util._t(".menu-map-link-shortcut") &&
+						e.key.toLowerCase() === util._t(".map-link-shortcut") &&
 						! isMap &&
 						(
 							env.currentMedia !== null && env.currentMedia.hasGpsData() ||
@@ -392,7 +392,7 @@ $(document).ready(function() {
 			}
 
 			if (
-				e.key.toLowerCase() === util._t("#expand-menu-shortcut") && e.target.tagName.toLowerCase() != "input" &&  ! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey
+				e.key.toLowerCase() === util._t("#menu-icon-title-shortcut") && e.target.tagName.toLowerCase() != "input" &&  ! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey
 					// "e" opens the menu, and closes it if focus in not in input field
 			) {
 				f.toggleMenu();

@@ -650,7 +650,7 @@
 								let img = $(imgHtml);
 								let imgTitle = util._t("#show-on-map");
 								if (! env.isMobile.any())
-									imgTitle += " [" + util._t("#show-on-map-shortcut") + "]";
+									imgTitle += " [" + util._t(".map-link-shortcut") + "]";
 								img.attr("title", imgTitle);
 								img.attr("alt", imgTitle);
 								title += "<a class='map-popup-trigger'>" + img.prop("outerHTML") + "</a>";
@@ -687,14 +687,14 @@
 
 							if (showSingleMarker) {
 								if (! env.isMobile.any() && ! showDoubleMarker)
-									imgTitle1 += " [" + util._t("#show-on-map-shortcut") + "]";
+									imgTitle1 += " [" + util._t(".map-link-shortcut") + "]";
 								img.attr("title", imgTitle1);
 								img.attr("src", imgSrc1);
 								replace += "<a class='map-popup-trigger'>" + img.prop("outerHTML") + "</a>";
 							}
 							if (showDoubleMarker) {
 								if (! env.isMobile.any())
-									imgTitle2 += " [" + util._t("#show-on-map-shortcut") + "]";
+									imgTitle2 += " [" + util._t(".map-link-shortcut") + "]";
 								img.attr("title", imgTitle2);
 								img.attr("src", imgSrc2);
 								replace += "<a class='map-popup-trigger-double'>" + img.prop("outerHTML") + "</a>";
@@ -1433,7 +1433,7 @@
 				$(".media-box#" + id + " .metadata").html(text);
 				var linkTitle = util._t('#show-map');
 				if (env.isMobile.any())
-					linkTitle += " [" + util._t('#show-map-shortcut') + "]";
+					linkTitle += " [" + util._t("".map-link-shortcut") + "]";
 				$(".media-box#" + id + " .metadata tr.gps").attr("title", linkTitle).off("click").on(
 					"click",
 					function() {
