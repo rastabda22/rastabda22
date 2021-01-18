@@ -367,6 +367,17 @@
 
 	Utilities.prototype.translate = function() {
 		var selector, keyLanguage;
+		var keysWithShorcut = [
+			"#next-media-title",
+			"#prev-media-title",
+			".metadata-show",
+			".metadata-hide",
+			".original-link",
+			".download-link",
+			".menu-map-link",
+			".enter-fullscreen",
+			".exit-fullscreen"
+		];
 
 		env.language = Utilities.getLanguage();
 		for (var key in translations.en) {
@@ -380,7 +391,10 @@
 					continue;
 				selector = $(key);
 				if (selector.length) {
-					selector.html(translations[keyLanguage][key]);
+					let translation = translations[keyLanguage][key];
+					if (env.isMobile.any() && keysWithShorcut.indexOf(key) !== -1)
+						translation += " [" + translations[keyLanguage][key + "-shortcut"] + "]"
+					selector.html(translation);
 				}
 			}
 		}

@@ -660,8 +660,8 @@
 									"<a class='map-popup-trigger'>" +
 										"<img class='title-img' " +
 											"title='" + marker;
-								if (! env.currentAlbum.numPositionsInSubalbums) {
-									replace += " " + util.escapeSingleQuotes(util._t("#show-markers-on-map-shortcut"));
+								if (env.isMobile.any() && ! env.currentAlbum.numPositionsInSubalbums) {
+									replace += " [" + util.escapeSingleQuotes(util._t("#show-markers-on-map-shortcut")) + "]";
 									shortcutAdded = true;
 								}
 								replace +=
@@ -678,7 +678,7 @@
 										"<img class='title-img' " +
 											"title='" + marker;
 								if (! shortcutAdded) {
-									replace += " " + util.escapeSingleQuotes(util._t("#show-markers-on-map-shortcut"));
+									replace += " [" + util.escapeSingleQuotes(util._t("#show-markers-on-map-shortcut")) + "]";
 								}
 								replace +=
 											"' " +
@@ -1421,6 +1421,8 @@
 				text += "</table>";
 				$(".media-box#" + id + " .metadata").html(text);
 				var linkTitle = util._t('#show-map');
+				if (env.isMobile.any())
+					linkTitle += " [" + util._t('#show-map-shortcut') + "]";
 				$(".media-box#" + id + " .metadata tr.gps").attr("title", linkTitle).off("click").on(
 					"click",
 					function() {
@@ -1504,10 +1506,12 @@
 
 		f.setOptions();
 
-		if (env.currentMedia === null) {
-			$("#menu-icon").attr("title", util._t("#menu-icon-title"));
+		let menuIconTitle = util._t("#menu-icon-title");
+		if (env.isMobile.any())
+			menuIconTitle += " [" + util._t("#menu-icon-title-shortcut") + util._t("#menu-icon-title-end") + "]";
+		$("#menu-icon").attr("title", menuIconTitle);
+		if (env.currentMedia === null)
 			env.currentAlbum.sortAlbumsMedia();
-		}
 
 		if (env.currentMedia !== null || isAlbumWithOneMedia) {
 			if (isAlbumWithOneMedia) {

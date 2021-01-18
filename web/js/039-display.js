@@ -406,8 +406,14 @@ $(document).ready(function() {
 	util.setLinksVisibility();
 	util.setNextPrevVisibility();
 
-	$("#next").attr("title", util._t("#next-media-title")).attr("alt", util._t("#next-media-title"));
-	$("#prev").attr("title", util._t("#prev-media-title")).attr("alt", util._t("#prev-media-title"));
+	let nextTitle  = util._t("#next-media-title");
+	let prevTitle  = util._t("#prev-media-title");
+	if (! env.isMobile.any()) {
+		nextTitle  += " [" + util._t("#next-media-title-shortcut") + "]";
+		prevTitle  += " [" + util._t("#prev-media-title-shortcut") + "]";
+	}
+	$("#next").attr("title", nextTitle).attr("alt", nextTitle);
+	$("#prev").attr("title", prevTitle).attr("alt", prevTitle);
 	$("#pinch-in").attr("title", util._t("#pinch-in-title")).attr("alt", util._t("#pinch-in-title"));
 	$("#pinch-out").attr("title", util._t("#pinch-out-title")).attr("alt", util._t("#pinch-out-title"));
 	if (env.isMobile.any()) {
