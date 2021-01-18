@@ -672,8 +672,8 @@
 								imgTitle1 = util._t("#show-markers-on-map");
 								imgTitle2 = imgTitle1;
 							} else if (showSingleMarker && showDoubleMarker){
-								imgTitle1 = util._t("#show-tree-markers-on-map");
-								imgTitle2 = util._t("#show-album-markers-on-map");
+								imgTitle1 = util._t("#show-album-markers-on-map");
+								imgTitle2 = util._t("#show-tree-markers-on-map");
 							}
 							let imgAlt = util._t("#show-markers-on-map");
 							let imgHtml =
