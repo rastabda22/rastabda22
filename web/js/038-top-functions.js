@@ -649,7 +649,7 @@
 								let imgHtml = "<img class='title-img' height='20px' src='img/ic_place_white_24dp_2x.png'>";
 								let img = $(imgHtml);
 								let imgTitle = util._t("#show-on-map");
-								if (env.isMobile.any())
+								if (! env.isMobile.any())
 									imgTitle += " [" + util._t("#show-on-map-shortcut") + "]";
 								img.attr("title", imgTitle);
 								img.attr("alt", imgTitle);
