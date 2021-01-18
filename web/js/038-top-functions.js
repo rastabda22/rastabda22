@@ -699,15 +699,6 @@
 								img.attr("src", imgSrc2);
 								replace += "<a class='map-popup-trigger-double'>" + img.prop("outerHTML") + "</a>";
 							}
-							// let firstIndex = replace.indexOf(marker);
-							// let lastIndex = replace.lastIndexOf(marker);
-							// let markerLength = marker.length;
-							// if (numMarkers < 2) {
-							// 	replace = replace.substring(0, firstIndex) + util.escapeSingleQuotes(util._t("#show-markers-on-map")) + replace.substring(firstIndex + markerLength);
-							// } else {
-							// 	replace = replace.substring(0, lastIndex) + util.escapeSingleQuotes(util._t("#show-tree-markers-on-map")) + replace.substring(lastIndex + markerLength);
-							// 	replace = replace.substring(0, firstIndex) + util.escapeSingleQuotes(util._t("#show-album-markers-on-map")) + replace.substring(firstIndex + markerLength);
-							// }
 
 							title = title.replace(
 								fillInSpan,
