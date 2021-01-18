@@ -1,7 +1,11 @@
+* shortcuts are now customizable by language in translation file
+* leaflet updated to 1.7.1
+* bug fixes
+
 ### version v4.9.25 (Jan 17, 2021)
 
 * optimized fetching of albums in searches
-* update jquery and jquery.touchSwipe
+* jquery and jquery.touchSwipe updated
 * bug fixes
 
 ### version v4.9.24 (Jan 16, 2021)
