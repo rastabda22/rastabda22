@@ -1336,18 +1336,18 @@
 				var originalMediaPath = encodeURI(self.originalMediaPath());
 				$(".media-box#" + id + " .original-link").attr("target", "_blank").attr("href", originalMediaPath);
 				if (self.hasGpsData()) {
-					$(".media-box#" + id + " .menu-map-link").off("click").on(
+					$(".media-box#" + id + " .map-link").off("click").on(
 						"click",
 						function() {
 							$(".map-popup-trigger")[0].click();
 						}
 					);
-					$(".media-box#" + id + " .menu-map-link").show();
+					$(".media-box#" + id + " .map-link").show();
 					$(".media-box#" + id + " .menu-map-divider").show();
 				} else {
-					$(".media-box#" + id + " .menu-map-link").removeAttr("href");
-					// $(".media-box#" + id + " .menu-map-link").removeAttr("href").css("cursor", "pointer");
-					$(".media-box#" + id + " .menu-map-link").hide();
+					$(".media-box#" + id + " .map-link").removeAttr("href");
+					// $(".media-box#" + id + " .map-link").removeAttr("href").css("cursor", "pointer");
+					$(".media-box#" + id + " .map-link").hide();
 					$(".media-box#" + id + " .menu-map-divider").hide();
 				}
 
@@ -1423,7 +1423,7 @@
 				text += "</table>";
 				$(".media-box#" + id + " .metadata").html(text);
 				var linkTitle = util._t('#show-map');
-				if (env.isMobile.any())
+				if (! env.isMobile.any())
 					linkTitle += " [" + util._t(".map-link-shortcut") + "]";
 				$(".media-box#" + id + " .metadata tr.gps").attr("title", linkTitle).off("click").on(
 					"click",
@@ -1509,7 +1509,7 @@
 		f.setOptions();
 
 		let menuIconTitle = util._t("#menu-icon-title");
-		if (env.isMobile.any())
+		if (! env.isMobile.any())
 			menuIconTitle += " [" + util._t("#menu-icon-title-shortcut") + util._t("#menu-icon-title-end") + "]";
 		$("#menu-icon").attr("title", menuIconTitle);
 		if (env.currentMedia === null)

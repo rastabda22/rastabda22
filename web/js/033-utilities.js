@@ -374,7 +374,7 @@
 			".metadata-hide",
 			".original-link",
 			".download-link",
-			".menu-map-link",
+			".map-link",
 			".enter-fullscreen",
 			".exit-fullscreen"
 		];
@@ -392,7 +392,7 @@
 				selector = $(key);
 				if (selector.length) {
 					let translation = translations[keyLanguage][key];
-					if (env.isMobile.any() && keysWithShorcut.indexOf(key) !== -1)
+					if (! env.isMobile.any() && keysWithShorcut.indexOf(key) !== -1)
 						translation += " [" + translations[keyLanguage][key + "-shortcut"] + "]"
 					selector.html(translation);
 				}

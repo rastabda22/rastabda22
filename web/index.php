@@ -345,7 +345,7 @@
 							</span>
 							<a class="menu-map-divider">|</a>
 							<span class="link-button">
-								<a class="menu-map-link"></a>
+								<a class="map-link"></a>
 							</span>
 							<span class="fullscreen">
 								<span class="fullscreen-divider"> | </span>
