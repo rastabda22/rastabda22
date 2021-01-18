@@ -645,8 +645,11 @@
 							if (env.currentMedia.hasGpsData()) {
 								let imgHtml = "<img class='title-img' height='20px' src='img/ic_place_white_24dp_2x.png'>";
 								let img = $(imgHtml);
-								img.attr("title", util._t("#show-on-map") + " [s]");
-								img.attr("alt", util._t("#show-on-map"));
+								let imgTitle = util._t("#show-on-map");
+								if (env.isMobile.any())
+									imgTitle += " [" + util._t("#show-on-map-shortcut") + "]";
+								img.attr("title", imgTitle);
+								img.attr("alt", imgTitle);
 								title += "<a class='map-popup-trigger'>" + img.prop("outerHTML") + "</a>";
 							}
 						} else if (title.includes(fillInSpan) && env.currentAlbum.numPositionsInTree) {
