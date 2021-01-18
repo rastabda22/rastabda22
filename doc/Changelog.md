@@ -1,3 +1,5 @@
+### version v4.9.26 (Jan 18, 2021)
+
 * shortcuts are now customizable by language in translation file
 * leaflet updated to 1.7.1
 * bug fixes
