@@ -13,6 +13,7 @@ var translations =
 			".metadata-show": "show metadata",
 			".metadata-show-shortcut": "m",
 			".metadata-hide": "hide metadata",
+			// beware: ".metadata-hide-shortcut" MUST be equal to ".metadata-show-shortcut"
 			".metadata-hide-shortcut": "m",
 			".original-link": "view original",
 			".original-link-shortcut": "o",
@@ -23,9 +24,11 @@ var translations =
 			".enter-fullscreen": "fullscreen",
 			".enter-fullscreen-shortcut": "f",
 			".exit-fullscreen": "exit",
+			// beware: ".exit-fullscreen-shortcut" MUST be equal to ".enter-fullscreen-shortcut"
 			".exit-fullscreen-shortcut": "f",
 			"#hide-everytyhing-shortcut": "h",
 			"#expand-menu-shortcut": "e",
+			"#select-everything-shortcut": "a",
 			".title-string": "My photos",
 			".title-media": "media",
 			".title-images": "images",
@@ -254,6 +257,7 @@ var translations =
 			".metadata-show": "metadati",
 			".metadata-show-shortcut": "m",
 			".metadata-hide": "nascondi",
+			// beware: ".metadata-hide-shortcut" MUST be equal to ".metadata-show-shortcut"
 			".metadata-hide-shortcut": "m",
 			".original-link": "vedi originale",
 			".original-link-shortcut": "o",
@@ -264,8 +268,11 @@ var translations =
 			".enter-fullscreen": "schermo intero",
 			".enter-fullscreen-shortcut": "f",
 			".exit-fullscreen": "esci",
+			// beware: ".exit-fullscreen-shortcut" MUST be equal to ".enter-fullscreen-shortcut"
 			".exit-fullscreen-shortcut": "f",
 			"#hide-everytyhing-shortcut": "h",
+			"#expand-menu-shortcut": "e",
+			"#select-everything-shortcut": "a",
 			".title-string": "Le mie foto",
 			".title-media": "immagini e video",
 			".title-images": "immagini",
@@ -494,6 +501,7 @@ var translations =
 			".metadata-show": "metadatos",
 			".metadata-show-shortcut": "m",
 			".metadata-hide": "esconde metadatos",
+			// beware: ".metadata-hide-shortcut" MUST be equal to ".metadata-show-shortcut"
 			".metadata-hide-shortcut": "m",
 			".original-link": "ve original",
 			".original-link-shortcut": "o",
@@ -504,8 +512,11 @@ var translations =
 			".enter-fullscreen": "f",
 			".enter-fullscreen-shortcut": "f",
 			".exit-fullscreen": "salir",
+			// beware: ".exit-fullscreen-shortcut" MUST be equal to ".enter-fullscreen-shortcut"
 			".exit-fullscreen-shortcut": "f",
 			"#hide-everytyhing-shortcut": "h",
+			"#expand-menu-shortcut": "e",
+			"#select-everything-shortcut": "a",
 			".title-string": "Mis fotos",
 			".title-media": "imágenes y videos",
 			".title-images": "imágenes",
@@ -734,6 +745,7 @@ var translations =
 			".metadata-show": "afficher les métadonnées",
 			".metadata-show-shortcut": "m",
 			".metadata-hide": "cacher les métadonnées",
+			// beware: ".metadata-hide-shortcut" MUST be equal to ".metadata-show-shortcut"
 			".metadata-hide-shortcut": "m",
 			".original-link": "voir l'original",
 			".original-link-shortcut": "o",
@@ -744,8 +756,11 @@ var translations =
 			".enter-fullscreen": "plein écran",
 			".enter-fullscreen-shortcut": "f",
 			".exit-fullscreen": "sortir",
+			// beware: ".exit-fullscreen-shortcut" MUST be equal to ".enter-fullscreen-shortcut"
 			".exit-fullscreen-shortcut": "f",
 			"#hide-everytyhing-shortcut": "h",
+			"#expand-menu-shortcut": "e",
+			"#select-everything-shortcut": "a",
 			".title-string": "Mes photos",
 			".title-media": "média",
 			".title-images": "images",
