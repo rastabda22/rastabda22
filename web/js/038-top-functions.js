@@ -642,6 +642,9 @@
 							if (singleMedia === null)
 								singleMedia = env.currentAlbum.media[0];
 							title += "<span class='media-name'>" + singleMedia.nameForShowing(env.currentAlbum, true) + "</span>";
+							// close the .title-main span
+							title += "</span>";
+
 							if (env.currentMedia.hasGpsData()) {
 								let imgHtml = "<img class='title-img' height='20px' src='img/ic_place_white_24dp_2x.png'>";
 								let img = $(imgHtml);
