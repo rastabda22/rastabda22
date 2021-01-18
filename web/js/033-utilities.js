@@ -367,6 +367,17 @@
 
 	Utilities.prototype.translate = function() {
 		var selector, keyLanguage;
+		var keysWithShorcut = [
+			"#next-media-title",
+			"#prev-media-title",
+			".metadata-show",
+			".metadata-hide",
+			".original-link",
+			".download-link",
+			".menu-map-link",
+			".enter-fullscreen",
+			".exit-fullscreen"
+		];
 
 		env.language = Utilities.getLanguage();
 		for (var key in translations.en) {
@@ -380,7 +391,10 @@
 					continue;
 				selector = $(key);
 				if (selector.length) {
-					selector.html(translations[keyLanguage][key]);
+					let translation = translations[keyLanguage][key];
+					if (env.isMobile.any() && keysWithShorcut.indexOf(key) !== -1)
+						translation += " [" + translations[keyLanguage][key + "-shortcut"] + "]"
+					selector.html(translation);
 				}
 			}
 		}
@@ -3193,46 +3207,53 @@
 	};
 
 	Utilities.prototype.setDescriptionPosition = function(captionType) {
-		// Size of description varies if on album or media
-		// var titleHeight = parseInt($(".media-box#center .title").css("height"));
-		// var mediaBoxHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
-		// var bottomThumbnailsHeight = parseInt($("#album-view.media-view-container").css("height"));
-		if (captionType === 'singleMedia') {
-			let thumbsHeight = 0;
-			if (! env.options.hide_bottom_thumbnails && env.currentAlbum.media.length > 1)
-				thumbsHeight = env.options.media_thumb_size + 20;
-				// thumbsHeight = parseInt($("#album-view").css("height"));
+		// // Size of description varies if on album or media
+		// // var titleHeight = parseInt($(".media-box#center .title").css("height"));
+		// // var mediaBoxHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
+		// // var bottomThumbnailsHeight = parseInt($("#album-view.media-view-container").css("height"));
+		// if (captionType === 'singleMedia') {
+		// 	let thumbsHeight = 0;
+		// 	if (! env.options.hide_bottom_thumbnails && env.currentAlbum.media.length > 1)
+		// 		thumbsHeight = env.options.media_thumb_size + 20;
+		// 		// thumbsHeight = parseInt($("#album-view").css("height"));
+		//
+		// 	let mediaHeight = parseInt($(".media-box#center .media-box-inner #media-center").css("height"));
+		// 	if (! mediaHeight) {
+		// 		mediaHeight = env.windowHeight / 4;
+		// 	}
+		//
+		// 	$("#description").css("bottom", thumbsHeight + 20);
+		// 	// $("#description").css("height", "auto");
+		// 	$("#description").css("right", 20);
+		// 	$("#description").css("max-height", "");
+		// 	$("#description").css("max-height", mediaHeight * 0.4);
+		// 	$("#description-text").css("height", "");
+		// 	$("#description-text").css("max-height", "");
+		// 	$("#description-text").css("max-height", $("#description").height() - 2 * parseInt($("#description").css("padding-top")) - $("#description-title").height() - $("#description-tags").height());
+		// } else if (captionType === 'album') {
+		// var titleHeight = parseInt($("#album-view .title").css("height"));
+		// var albumTop = parseInt($("#album-view").css("top"));
+		// var albumHeight = parseInt($("#album-view").css("height"));
+		// var thumbsHeight = parseInt($("#thumbs").css("height"));
+		// var subalbumsHeight = parseInt($("#subalbums").css("height"));
+		// TODO: How to adapt height to different platforms?
+		let thumbsHeight = 0;
+		if (captionType === 'singleMedia' && $("#album-view").is(":visible"))
+			thumbsHeight = env.options.media_thumb_size + 20;
 
-			let mediaHeight = parseInt($(".media-box#center .media-box-inner #media-center").css("height"));
-			if (! mediaHeight) {
-				mediaHeight = env.windowHeight / 4;
-			}
-
-			$("#description").css("bottom", thumbsHeight + 20);
-			// $("#description").css("height", "auto");
-			$("#description").css("right", 20);
-			$("#description").css("max-height", "");
-			$("#description").css("max-height", mediaHeight * 0.4);
-			$("#description-text").css("height", "");
-			$("#description-text").css("max-height", "");
-			$("#description-text").css("max-height", $("#description").height() - 2 * parseInt($("#description").css("padding-top")) - $("#description-title").height() - $("#description-tags").height());
-		} else if (captionType === 'album') {
-			// var titleHeight = parseInt($("#album-view .title").css("height"));
-			// var albumTop = parseInt($("#album-view").css("top"));
-			// var albumHeight = parseInt($("#album-view").css("height"));
-			// var thumbsHeight = parseInt($("#thumbs").css("height"));
-			// var subalbumsHeight = parseInt($("#subalbums").css("height"));
-			// TODO: How to adapt height to different platforms?
-			$("#description").css("right", 20);
-			$("#description").css("top", "");
-			$("#description").css("bottom", 0);
-			$("#description").css("height", "");
-			$("#description").css("max-height", "");
-			$("#description").css("bottom", (env.windowHeight / 10) + "px");
-			// $("#description").css("height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
-			$("#description").css("height", "auto");
-			$("#description").css("max-height", (env.windowHeight / 3) + "px");
-		}
+		$("#description").css("right", 20);
+		$("#description").css("top", "");
+		$("#description").css("bottom", thumbsHeight + 20);
+		// $("#description").css("bottom", (env.windowHeight / 10) + "px");
+		// $("#description").css("bottom", 0);
+		$("#description").css("height", "");
+		$("#description").css("max-height", "");
+		$("#description").css("width", (env.windowWidth / 3) + "px");
+		$("#description").css("max-width", (env.windowWidth / 3) + "px");
+		// $("#description").css("height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
+		$("#description").css("height", "auto");
+		$("#description").css("max-height", (env.windowHeight / 2.5) + "px");
+		// }
 	};
 
 	Utilities.mediaBoxGenerator = function(id) {

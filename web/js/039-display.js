@@ -113,7 +113,7 @@ $(document).ready(function() {
 		} else if (! isAuth) {
 			if (! $("#search-field").is(':focus')) {
 				if (! e.ctrlKey && ! e.altKey) {
-					if (e.key === "h") {
+					if (e.key === util._t("#hide-everytyhing-shortcut")) {
 						e.preventDefault();
 						if (pS.getCurrentZoom() === pS.getInitialZoom() && ! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
 							tF.toggleTitleAndBottomThumbnailsAndDescriptionsAndTags(e);
@@ -142,7 +142,7 @@ $(document).ready(function() {
 							$("video#media-center")[0].pause();
 						return false;
 					} else if (
-						(e.key.toLowerCase() === "n" || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
+						(e.key.toLowerCase() === util._t("#next-media-title-shortcut") || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
 						env.nextMedia && env.currentMedia !== null && ! isMap
 					) {
 						$("#album-view.media-view-container").removeClass("hidden-by-pinch");
@@ -150,7 +150,7 @@ $(document).ready(function() {
 						// env.nextMedia.swipeLeft();
 						return false;
 					} else if (
-						(e.key.toLowerCase() === "p" || e.key === "Backspace" && ! e.shiftKey || (e.key === "Enter" || e.key === " ") && e.shiftKey) &&
+						(e.key.toLowerCase() === util._t("#prev-media-title-shortcut") || e.key === "Backspace" && ! e.shiftKey || (e.key === "Enter" || e.key === " ") && e.shiftKey) &&
 						env.prevMedia && env.currentMedia !== null && ! isMap
 					) {
 						$("#album-view.media-view-container").removeClass("hidden-by-pinch");
@@ -198,17 +198,17 @@ $(document).ready(function() {
 								PinchSwipe.drag(env.windowHeight / 3, {x: 0, y: -1});
 							return false;
 						}
-					} else if (e.key.toLowerCase() === "d" && ! isMap) {
+					} else if (e.key.toLowerCase() === util._t(".download-link-shortcut") && ! isMap) {
 						if (env.currentMedia !== null)
 							$(".download-single-media .download-link")[0].click();
 						return false;
-					} else if (e.key.toLowerCase() === "f" && env.currentMedia !== null && ! isMap) {
+					} else if (e.key.toLowerCase() === util._t(".enter-fullscreen-shortcut") && env.currentMedia !== null && ! isMap) {
 						tF.goFullscreen(e);
 						return false;
-					} else if (e.key.toLowerCase() === "m" && env.currentMedia !== null && ! isMap) {
+					} else if (e.key.toLowerCase() === util._t(".metadata-hide-shortcut") && env.currentMedia !== null && ! isMap) {
 						f.toggleMetadata();
 						return false;
-					} else if (e.key.toLowerCase() === "o" && env.currentMedia !== null && ! isMap) {
+					} else if (e.key.toLowerCase() === util._t(".original-link-shortcut") && env.currentMedia !== null && ! isMap) {
 						$("#center .original-link")[0].click();
 						return false;
 					} else if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].indexOf(e.key) > -1) {
@@ -237,7 +237,7 @@ $(document).ready(function() {
 							return false;
 						}
 					} else if (
-						e.key.toLowerCase() === "s" &&
+						e.key.toLowerCase() === util._t(".map-link-shortcut") &&
 						! isMap &&
 						(
 							env.currentMedia !== null && env.currentMedia.hasGpsData() ||
@@ -250,7 +250,7 @@ $(document).ready(function() {
 							$(".map-popup-trigger")[0].click();
 						return false;
 					} else if (
-						e.key.toLowerCase() === "u" &&
+						e.key.toLowerCase() === util._t("#protected-content-unveil-shortcut") &&
 						env.currentAlbum !== null
 					) {
 						// var numPasswords;
@@ -309,7 +309,7 @@ $(document).ready(function() {
 				}
 			}
 
-			if (e.key.toLowerCase() === 'a' && e.ctrlKey) {
+			if (e.key.toLowerCase() === util._t("#select-everything-shortcut")) {
 				if (! e.shiftKey) {
 					// select everything
 					$(".select.everything:not(.hidden):not(.selected)").click();
@@ -392,7 +392,7 @@ $(document).ready(function() {
 			}
 
 			if (
-				e.key.toLowerCase() === "e" && e.target.tagName.toLowerCase() != 'input' &&  ! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey
+				e.key.toLowerCase() === util._t("#menu-icon-title-shortcut") && e.target.tagName.toLowerCase() != "input" &&  ! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey
 					// "e" opens the menu, and closes it if focus in not in input field
 			) {
 				f.toggleMenu();
@@ -406,8 +406,14 @@ $(document).ready(function() {
 	util.setLinksVisibility();
 	util.setNextPrevVisibility();
 
-	$("#next").attr("title", util._t("#next-media-title")).attr("alt", util._t("#next-media-title"));
-	$("#prev").attr("title", util._t("#prev-media-title")).attr("alt", util._t("#prev-media-title"));
+	let nextTitle  = util._t("#next-media-title");
+	let prevTitle  = util._t("#prev-media-title");
+	if (! env.isMobile.any()) {
+		nextTitle  += " [" + util._t("#next-media-title-shortcut") + "]";
+		prevTitle  += " [" + util._t("#prev-media-title-shortcut") + "]";
+	}
+	$("#next").attr("title", nextTitle).attr("alt", nextTitle);
+	$("#prev").attr("title", prevTitle).attr("alt", prevTitle);
 	$("#pinch-in").attr("title", util._t("#pinch-in-title")).attr("alt", util._t("#pinch-in-title"));
 	$("#pinch-out").attr("title", util._t("#pinch-out-title")).attr("alt", util._t("#pinch-out-title"));
 	if (env.isMobile.any()) {
