@@ -309,7 +309,7 @@ $(document).ready(function() {
 				}
 			}
 
-			if (e.key.toLowerCase() === util._t("#select-everything-shortcut") && e.ctrlKey) {
+			if (e.key.toLowerCase() === util._t("#select-everything-shortcut")) {
 				if (! e.shiftKey) {
 					// select everything
 					$(".select.everything:not(.hidden):not(.selected)").click();
