@@ -661,48 +661,53 @@
 							let marker = "<marker>";
 							// close the .title-main span
 							replace += "</span>";
-							if (env.currentAlbum.numPositionsInMedia && env.currentAlbum.numPositionsInTree !== env.currentAlbum.numPositionsInSubalbums) {
-								replace +=
-									"<a class='map-popup-trigger'>" +
-										"<img class='title-img' " +
-											"title='" + marker;
-								if (env.isMobile.any() && ! env.currentAlbum.numPositionsInSubalbums) {
-									replace += " [" + util.escapeSingleQuotes(util._t("#show-markers-on-map-shortcut")) + "]";
-									shortcutAdded = true;
-								}
-								replace +=
-											"' " +
-											"alt='" + util.escapeSingleQuotes(util._t("#show-markers-on-map")) + "' " +
-											"height='20px' " +
-											"src='img/ic_place_white_24dp_2x.png'" +
-										">" +
-									"</a>";
+
+							let showSingleMarker = (env.currentAlbum.numPositionsInMedia > 0 && env.currentAlbum.numPositionsInTree !== env.currentAlbum.numPositionsInSubalbums);
+							let showDoubleMarker = (env.currentAlbum.numPositionsInSubalbums > 0);
+
+							let imgTitle1, imgTitle2;
+							let imgSrc1 = "img/ic_place_white_24dp_2x.png";
+							let imgSrc2 = "img/ic_place_white_24dp_2x_double.png";
+							if (showSingleMarker && ! showDoubleMarker || ! showSingleMarker && showDoubleMarker) {
+								imgTitle1 = util._t("#show-markers-on-map");
+								imgTitle2 = imgTitle1;
+							} else if (showSingleMarker && showDoubleMarker){
+								imgTitle1 = util._t("#show-tree-markers-on-map");
+								imgTitle2 = util._t("#show-album-markers-on-map");
 							}
-							if (env.currentAlbum.numPositionsInSubalbums) {
-								replace +=
-									"<a class='map-popup-trigger-double'>" +
-										"<img class='title-img' " +
-											"title='" + marker;
-								if (! shortcutAdded) {
-									replace += " [" + util.escapeSingleQuotes(util._t("#show-markers-on-map-shortcut")) + "]";
-								}
-								replace +=
-											"' " +
-											"alt='" + util.escapeSingleQuotes(util._t("#show-markers-on-map")) + "' " +
-											"height='20px' " +
-											"src='img/ic_place_white_24dp_2x_double.png'" +
-										">" +
-									"</a>";
+							let imgAlt = util._t("#show-markers-on-map");
+							let imgHtml =
+								"<img " +
+									"class='title-img' " +
+									"height='20px' " +
+									"src='" + imgSrc1 + "'" +
+								">";
+							let img = $(imgHtml);
+							img.attr("alt", imgAlt);
+
+							if (showSingleMarker) {
+								if (! env.isMobile.any() && ! showDoubleMarker)
+									imgTitle1 += " [" + util._t("#show-on-map-shortcut") + "]";
+								img.attr("title", imgTitle1);
+								img.attr("src", imgSrc1);
+								replace += "<a class='map-popup-trigger'>" + img.prop("outerHTML") + "</a>";
 							}
-							let firstIndex = replace.indexOf(marker);
-							let lastIndex = replace.lastIndexOf(marker);
-							let markerLength = marker.length;
-							if (firstIndex === lastIndex) {
-								replace = replace.substring(0, firstIndex) + util.escapeSingleQuotes(util._t("#show-markers-on-map")) + replace.substring(firstIndex + markerLength);
-							} else {
-								replace = replace.substring(0, lastIndex) + util.escapeSingleQuotes(util._t("#show-tree-markers-on-map")) + replace.substring(lastIndex + markerLength);
-								replace = replace.substring(0, firstIndex) + util.escapeSingleQuotes(util._t("#show-album-markers-on-map")) + replace.substring(firstIndex + markerLength);
+							if (showDoubleMarker) {
+								if (! env.isMobile.any())
+									imgTitle2 += " [" + util._t("#show-on-map-shortcut") + "]";
+								img.attr("title", imgTitle2);
+								img.attr("src", imgSrc2);
+								replace += "<a class='map-popup-trigger-double'>" + img.prop("outerHTML") + "</a>";
 							}
+							// let firstIndex = replace.indexOf(marker);
+							// let lastIndex = replace.lastIndexOf(marker);
+							// let markerLength = marker.length;
+							// if (numMarkers < 2) {
+							// 	replace = replace.substring(0, firstIndex) + util.escapeSingleQuotes(util._t("#show-markers-on-map")) + replace.substring(firstIndex + markerLength);
+							// } else {
+							// 	replace = replace.substring(0, lastIndex) + util.escapeSingleQuotes(util._t("#show-tree-markers-on-map")) + replace.substring(lastIndex + markerLength);
+							// 	replace = replace.substring(0, firstIndex) + util.escapeSingleQuotes(util._t("#show-album-markers-on-map")) + replace.substring(firstIndex + markerLength);
+							// }
 
 							title = title.replace(
 								fillInSpan,
