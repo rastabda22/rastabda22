@@ -1523,7 +1523,7 @@
 					if (! util.isSearchHash()) {
 						// reset the return link from search
 						var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(location.hash);
-						env.options.cache_base_to_search_in = phFl.cleanHash(albumHash);
+						env.options.cache_base_to_search_in = phFl.convertHashToCacheBase(albumHash);
 					}
 					resolve_getOptions();
 				} else {

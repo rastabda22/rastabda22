@@ -875,7 +875,7 @@
 		// trigger piwik tracking. It's here because it needs document.title
 		if (env.options.piwik_server && env.options.piwik_id && (id === "album" || id === "center")) {
 			_paq.push(['setCustomUrl', '/' + window.location.hash.substr(1)]);
-			// _paq.push(['setDocumentTitle', PhotoFloat.cleanHash(location.hash)]);
+			// _paq.push(['setDocumentTitle', PhotoFloat.convertHashToCacheBase(location.hash)]);
 			let titleText, splittedTitle;
 			if (id === "center") {
 				titleText = $(".media-box#center .title-string")[0].textContent;

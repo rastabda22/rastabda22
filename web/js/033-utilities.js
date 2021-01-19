@@ -1136,7 +1136,7 @@
 	};
 
 	Utilities.prototype.isSearchHash = function() {
-		var hash = PhotoFloat.cleanHash(location.hash);
+		var hash = PhotoFloat.convertHashToCacheBase(location.hash);
 		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
 		if (Utilities.isSearchCacheBase(hash) || savedSearchAlbumHash !== null)
 			return true;
@@ -1145,7 +1145,7 @@
 	};
 
 	// Utilities.prototype.isMapHash = function(hash) {
-	// 	hash = PhotoFloat.cleanHash(hash);
+	// 	hash = PhotoFloat.convertHashToCacheBase(hash);
 	// 	var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
 	// 	if (this.isMapCacheBase(hash) || savedSearchAlbumHash !== null)
 	// 		return true;

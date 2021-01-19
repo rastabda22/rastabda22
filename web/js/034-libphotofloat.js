@@ -1211,8 +1211,8 @@
 		var hash;
 
 		if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
-			savedSearchAlbumHash = PhotoFloat.cleanHash(savedSearchAlbumHash);
-			foundAlbumHash = PhotoFloat.cleanHash(foundAlbumHash);
+			savedSearchAlbumHash = PhotoFloat.convertHashToCacheBase(savedSearchAlbumHash);
+			foundAlbumHash = PhotoFloat.convertHashToCacheBase(foundAlbumHash);
 		}
 
 		if (media !== null) {
@@ -1268,7 +1268,7 @@
 		var hashParts, hashPartsCount, albumHash, mediaFolderHash = null, mediaHash = null;
 		var savedSearchAlbumHash = null, foundAlbumHash = null;
 
-		hash = PhotoFloat.cleanHash(hash);
+		hash = PhotoFloat.convertHashToCacheBase(hash);
 
 		if (! hash.length) {
 			albumHash = env.options.folders_string;
@@ -2108,7 +2108,7 @@
 	// 	return singleMedia.cacheBase;
 	// };
 
-	PhotoFloat.cleanHash = function(hash) {
+	PhotoFloat.convertHashToCacheBase = function(hash) {
 		while (hash.length) {
 			if (hash.charAt(0) === "#")
 				hash = hash.substring(1);
@@ -2134,7 +2134,7 @@
 	PhotoFloat.prototype.getAlbum = PhotoFloat.getAlbum;
 	PhotoFloat.prototype.mediaHash = PhotoFloat.mediaHash;
 	PhotoFloat.prototype.encodeHash = PhotoFloat.encodeHash;
-	PhotoFloat.prototype.cleanHash = PhotoFloat.cleanHash;
+	PhotoFloat.prototype.convertHashToCacheBase = PhotoFloat.convertHashToCacheBase;
 	PhotoFloat.prototype.decodeHash = PhotoFloat.decodeHash;
 	PhotoFloat.prototype.hashCode = PhotoFloat.hashCode;
 	PhotoFloat.prototype.endPreparingAlbumAndKeepOn = PhotoFloat.endPreparingAlbumAndKeepOn;
