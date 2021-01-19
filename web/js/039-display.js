@@ -271,7 +271,7 @@ $(document).ready(function() {
 
 				if (
 					env.currentAlbum !== null && (
-						env.currentAlbum.isAnyRoot() ||
+						env.currentAlbum.isAnyRoot() || env.currentAlbum.isSelection() || env.currentAlbum.isSearch() || env.currentAlbum.isMap() ||
 						env.currentMedia !== null || env.currentAlbum.isAlbumWithOneMedia()
 						// [
 						// 	env.options.folders_string,
