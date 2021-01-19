@@ -1009,9 +1009,11 @@
 	// };
 
 	Utilities.isAnyRootHashButMap = function(hash) {
-		var cacheBase = hash;
+		var cacheBase;
 		if (hash.indexOf(env.hashBeginning) === 0)
 			cacheBase = hash.substring(env.hashBeginning);
+		else
+			cacheBase = hash;
 		return Utilities.isAnyRootCacheBase(cacheBase) && ! Utilities.isMapCacheBase(cacheBase);
 	};
 
