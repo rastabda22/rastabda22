@@ -2365,7 +2365,7 @@
 		} else if (this.isMap()) {
 			zipFilename += '.' + Utilities._t("#from-map");
 		} else if (this.cacheBase !== env.options.folders_string) {
-			zipFilename += this.nameForShowing(null);
+			zipFilename += '.' + this.nameForShowing(null);
 		}
 
 		zipFilename += ".zip";
