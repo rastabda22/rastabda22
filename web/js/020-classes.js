@@ -6,7 +6,6 @@
 			this.guessedPasswordCodes = [];
 			this.guessedPasswordsMd5 = [];
 			this.searchWordsFromJsonFile = [];
-			this.searchAndSubalbumHash = '';
 			this.searchAlbumCacheBasesFromJsonFile = [];
 			this.searchAlbumSubalbumsFromJsonFile = [];
 			this.fullScreenStatus = false;
@@ -25,9 +24,6 @@
 			this.mapRefreshType = "none";
 			this.selectorClickedToOpenTheMap = false;
 			this.popupRefreshType = "previousAlbum";
-			// destHash = null;
-			// destMedia = null;
-			// destAlbum = null;
 			this.hashBeginning = "#!/";
 			// var nextLink = "", prevLink = "";
 			this.mediaLink = "";

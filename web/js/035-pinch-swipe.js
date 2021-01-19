@@ -728,8 +728,8 @@
 				util.mediaBoxGenerator('left');
 				$(".media-box#left").css("width", $(".media-box#center").attr('width')).css("height", $(".media-box#center").attr('height'));
 
-				var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
-				window.location.href = phFl.encodeHash(env.currentAlbum.cacheBase, self, foundAlbumHash, savedSearchAlbumHash);
+				var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
+				window.location.href = phFl.encodeHash(env.currentAlbum.cacheBase, self, foundAlbumCacheBase, savedSearchAlbumCacheBase);
 			}
 		);
 
@@ -756,8 +756,8 @@
 				// if (! env.isMobile(any))
 				$("#media-box-container").css("transform", "translate(-" + env.windowWidth + "px, 0px)");
 
-				var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
-				window.location.href = phFl.encodeHash(env.currentAlbum.cacheBase, self, foundAlbumHash, savedSearchAlbumHash);
+				var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
+				window.location.href = phFl.encodeHash(env.currentAlbum.cacheBase, self, foundAlbumCacheBase, savedSearchAlbumCacheBase);
 			}
 		);
 

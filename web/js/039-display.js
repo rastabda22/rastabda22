@@ -426,15 +426,15 @@ $(document).ready(function() {
 	// search
 	$('#search-button').off("click").on("click", function() {
 		var searchOptions = '';
-		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
 
 		// save the current hash in order to come back there when exiting from search
-		if (util.isSearchCacheBase(albumHash)) {
+		if (util.isSearchCacheBase(albumCacheBase)) {
 			// a plain search: get the folder to search in from the search album hash
-			env.options.cache_base_to_search_in = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
+			env.options.cache_base_to_search_in = albumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
 		} else {
 			// it's a subalbum of a search or it's not a search hash: use the current album hash
-			env.options.cache_base_to_search_in = albumHash;
+			env.options.cache_base_to_search_in = albumCacheBase;
 
 			env.options.saved_cache_base_to_search_in = env.options.cache_base_to_search_in;
 		}
@@ -771,7 +771,7 @@ $(document).ready(function() {
 			var optionsPromise = f.getOptions();
 			optionsPromise.then(
 				function() {
-					var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+					var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
 
 					if (! util.isSearchHash()) {
 						// reset current album search flag to its default value

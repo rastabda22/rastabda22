@@ -198,16 +198,16 @@
 				$("#by-map-view").addClass("hidden");
 			}
 
-			let [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+			let [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
 			if (
 				! (
 					isAnyRoot && util.somethingIsSearched() ||
 					isSingleMedia && (
 						// util.somethingIsSearched() ||
-						// savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash)
+						// savedSearchAlbumCacheBase && util.isSearchCacheBase(savedSearchAlbumCacheBase)
 						thisAlbum.isSearch() ||
 						thisMedia.isSearched() ||
-						savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash) ||
+						savedSearchAlbumCacheBase && util.isSearchCacheBase(savedSearchAlbumCacheBase) ||
 						thisMedia.isInFoundAlbum() !== false
 					)
 				)
@@ -215,7 +215,7 @@
 				$("#by-search-view").addClass("hidden");
 			}
 
-			if (thisAlbum.isFolder() && ! (savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash))) {
+			if (thisAlbum.isFolder() && ! (savedSearchAlbumCacheBase && util.isSearchCacheBase(savedSearchAlbumCacheBase))) {
 				// folder album: change to by date or by gps view
 				$("#folders-view").addClass("selected");
 			} else if (thisAlbum.isByDate()) {
@@ -226,7 +226,7 @@
 				$("#by-map-view").removeClass("hidden").addClass("selected");
 			} else if (
 				thisAlbum.isSearch() ||
-				savedSearchAlbumHash && util.isSearchCacheBase(savedSearchAlbumHash)
+				savedSearchAlbumCacheBase && util.isSearchCacheBase(savedSearchAlbumCacheBase)
 			) {
 				$("#by-search-view").removeClass("hidden").addClass("selected");
 			} else if (thisAlbum.isSelection()) {
@@ -623,7 +623,7 @@
 			} else {
 				$("ul#right-menu li.media-sort").removeClass("hidden");
 			}
-			
+
 			if (thisAlbum.subalbums.length <= 1 || isMapOrPopup) {
 				// no subalbums or one subalbum
 				$("ul#right-menu li.album-sort").addClass("hidden");
@@ -1522,8 +1522,8 @@
 				if (Object.keys(env.options).length > 0) {
 					if (! util.isSearchHash()) {
 						// reset the return link from search
-						var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(location.hash);
-						env.options.cache_base_to_search_in = phFl.convertHashToCacheBase(albumHash);
+						var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = PhotoFloat.decodeHash(location.hash);
+						env.options.cache_base_to_search_in = phFl.convertHashToCacheBase(albumCacheBase);
 					}
 					resolve_getOptions();
 				} else {
