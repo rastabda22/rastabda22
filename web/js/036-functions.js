@@ -813,6 +813,8 @@
 									$("#added-individually").stop().fadeIn(
 										1000,
 										function() {
+											if (thisAlbum.isSelection())
+												TopFunctions.showAlbum("refreshMedia");
 											Functions.updateMenu();
 											$("#added-individually").stop().fadeOut(3000);
 										}
