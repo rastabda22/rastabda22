@@ -64,7 +64,7 @@
 		return new Promise(
 			function (resolve_setTitle) {
 				var title = "<span class='title-main'>", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, isSelectionTitle, isMapTitle, originalTitle;
-				var titleAnchorClasses, where, initialValue, searchFolderHash;
+				var titleAnchorClasses, where, initialValue, searchFolderCacheBase;
 				var linkCount = 0, linksToLeave = 1, latitude, longitude, arrayCoordinates;
 				var raquo = "&raquo;";
 				// gpsLevelNumber is the number of levels for the by gps tree
@@ -121,7 +121,7 @@
 				if (env.isMobile.any())
 					titleAnchorClasses += ' mobile';
 
-				var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+				var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
 				var fillInSpan = "<span id='fill-in-map-link'></span>";
 
 				var mediaTotalInAlbum, imagesTotalInAlbum, videosTotalInAlbum;
@@ -331,8 +331,8 @@
 						! util.isCollectionCacheBase(env.options.cache_base_to_search_in)
 					) {
 						searchClass = "main-search-link";
-						// searchFolderHash = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
-						searchFolderHash = env.options.cache_base_to_search_in;
+						// searchFolderCacheBase = albumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
+						searchFolderCacheBase = env.options.cache_base_to_search_in;
 					}
 					where =
 						"<a class='" + searchClass + "' href='" + env.hashBeginning + env.currentAlbum.cacheBase + "'>" +
@@ -506,24 +506,24 @@
 					if (components.length > 2 || singleMedia !== null)
 						title += raquo;
 
-					if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null) {
-						searchFolderHash = savedSearchAlbumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
+					if (typeof savedSearchAlbumCacheBase !== "undefined" && savedSearchAlbumCacheBase !== null) {
+						searchFolderCacheBase = savedSearchAlbumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
 						let addSearchFolder = false;
-						if (searchFolderHash.split(env.options.cache_folder_separator).length > 1) {
+						if (searchFolderCacheBase.split(env.options.cache_folder_separator).length > 1) {
 							where =
-								"<a class='main-search-link' href='" + env.hashBeginning + savedSearchAlbumHash + "'>" +
+								"<a class='main-search-link' href='" + env.hashBeginning + savedSearchAlbumCacheBase + "'>" +
 								util._t("#by-search") +
 								"</a>";
 								addSearchFolder = true;
-						} else if (util.isSearchCacheBase(savedSearchAlbumHash)) {
+						} else if (util.isSearchCacheBase(savedSearchAlbumCacheBase)) {
 							where =
-								"<a class='search-link' href='" + env.hashBeginning + savedSearchAlbumHash + "'>" +
+								"<a class='search-link' href='" + env.hashBeginning + savedSearchAlbumCacheBase + "'>" +
 								util._t("#by-search") +
 								"</a>";
 						} else {
 							// album in a selection
 							where =
-								"<a class='search-link' href='" + env.hashBeginning + savedSearchAlbumHash + "'>" +
+								"<a class='search-link' href='" + env.hashBeginning + savedSearchAlbumCacheBase + "'>" +
 								util._t("#by-selection") +
 								"</a>";
 						}
@@ -548,9 +548,9 @@
 					}
 
 					initialValue = 2;
-					if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null && util.isSearchCacheBase(savedSearchAlbumHash)) {
+					if (typeof savedSearchAlbumCacheBase !== "undefined" && savedSearchAlbumCacheBase !== null && util.isSearchCacheBase(savedSearchAlbumCacheBase)) {
 						// the folders from the first until the search folder inclusive must not be shown
-						initialValue = savedSearchAlbumHash.split(env.options.cache_folder_separator).slice(2).length + 1;
+						initialValue = savedSearchAlbumCacheBase.split(env.options.cache_folder_separator).slice(2).length + 1;
 					}
 					for (i = initialValue; i < components.length; ++i) {
 						if (i < components.length - 1 || singleMedia !== null)
@@ -762,7 +762,7 @@
 							toBeResolved = false;
 							// for searches in current folder we must get the names from the album
 							// we must use getAlbum() because the album could not be in the cache yet (as when ctl-r is pressed)
-							var promise = phFl.getAlbum(searchFolderHash, util.errorThenGoUp, {getMedia: true, getPositions: true});
+							var promise = phFl.getAlbum(searchFolderCacheBase, util.errorThenGoUp, {getMedia: true, getPositions: true});
 							promise.then(
 								function(theAlbum) {
 									var whereLinks = '', whereLinksArray = [], thisCacheBase, name, documentTitle;
@@ -875,7 +875,7 @@
 		// trigger piwik tracking. It's here because it needs document.title
 		if (env.options.piwik_server && env.options.piwik_id && (id === "album" || id === "center")) {
 			_paq.push(['setCustomUrl', '/' + window.location.hash.substr(1)]);
-			// _paq.push(['setDocumentTitle', PhotoFloat.cleanHash(location.hash)]);
+			// _paq.push(['setDocumentTitle', PhotoFloat.convertHashToCacheBase(location.hash)]);
 			let titleText, splittedTitle;
 			if (id === "center") {
 				titleText = $(".media-box#center .title-string")[0].textContent;
@@ -1077,9 +1077,9 @@
 		if (id === "center")
 			$("#media-view").removeClass("hidden");
 
-		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
 
-		env.mediaLink = phFl.encodeHash(env.currentAlbum.cacheBase, this, foundAlbumHash, savedSearchAlbumHash);
+		env.mediaLink = phFl.encodeHash(env.currentAlbum.cacheBase, this, foundAlbumCacheBase, savedSearchAlbumCacheBase);
 		env.firstEscKey = true;
 
 		thumbnailSize = env.options.media_thumb_size;
@@ -1294,7 +1294,7 @@
 					if (env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1) {
 						mediaBoxInnerElement.css('cursor', 'default');
 					} else {
-						[albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+						[albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
 
 						$("#next").show();
 						$("#prev").show();
@@ -2075,7 +2075,7 @@
 	Album.prototype.showMedia = function(inPopup = false) {
 		var thumbnailSize = env.options.media_thumb_size;
 		var imageLink;
-		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
 		var self = this;
 		var lazyClass, thumbsSelector;
 		if (inPopup) {
@@ -2166,8 +2166,8 @@
 				"<a id='" + mediaSelectBoxSelectorPart + iMedia + "'>" + img.prop("outerHTML") + "</a>";
 
 			// imageElement.get(0).media = ithMedia;
-			if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
-				mediaHash = phFl.encodeHash(this.cacheBase, ithMedia, foundAlbumHash, savedSearchAlbumHash);
+			if (typeof savedSearchAlbumCacheBase !== "undefined" && savedSearchAlbumCacheBase !== null)
+				mediaHash = phFl.encodeHash(this.cacheBase, ithMedia, foundAlbumCacheBase, savedSearchAlbumCacheBase);
 			else
 				mediaHash = phFl.encodeHash(this.cacheBase, ithMedia);
 
@@ -2270,27 +2270,6 @@
 				imageLink.append(imageElement);
 				$(thumbsSelector).append(imageLink);
 			}
-
-			// if (this.isCollection()) {
-			// 	// the folder name must be added the second line
-			// 	let cacheBase = ithMedia.foldersCacheBase;
-			// 	if (this.isSearch()) {
-			// 		let albumHash = phFl.decodeHash(window.location.hash)[0];
-			// 		let searchStartCacheBase = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
-			// 		if (util.isByDateCacheBase(searchStartCacheBase) && ithMedia.hasOwnProperty("dayAlbumCacheBase"))
-			// 			cacheBase = ithMedia.dayAlbumCacheBase;
-			// 		else if (util.isByGpsCacheBase(searchStartCacheBase) && ithMedia.hasGpsData())
-			// 			cacheBase = ithMedia.gpsAlbumCacheBase;
-			// 	}
-			// 	let parentAlbumPromise = phFl.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
-			// 	parentAlbumPromise.then(
-			// 		function(parentAlbum) {
-			// 			var name = ithMedia.nameForShowing(parentAlbum, true, true);
-			// 			// name = "<span>" + name.replace(/( |<br \/>)/g, "</span>$&<span>") + "</span>";
-			// 			$("#" + imageId + " .media-name").html(name);
-			// 		}
-			// 	);
-			// }
 
 			if (! inPopup && ithMedia.hasGpsData()) {
 				$("#media-map-link-" + iMedia).off("click").on(
@@ -2501,7 +2480,7 @@
 		var selectSrc, titleSelector, id;
 		var caption, captionHtml, buttonAndCaptionHeight, albumButtonAndCaptionHtml;
 
-		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
 
 		if (env.options.albums_slide_style)
 			slideBorder = env.slideBorder;
@@ -2580,7 +2559,7 @@
 				} else {
 					// reset mediaLink
 					if (env.currentAlbum.numsMedia.imagesAndVideosTotal())
-						env.mediaLink = phFl.encodeHash(env.currentAlbum.cacheBase, env.currentAlbum.media[0], foundAlbumHash, savedSearchAlbumHash);
+						env.mediaLink = phFl.encodeHash(env.currentAlbum.cacheBase, env.currentAlbum.media[0], foundAlbumCacheBase, savedSearchAlbumCacheBase);
 					else
 						env.mediaLink = env.hashBeginning + env.currentAlbum.cacheBase;
 
@@ -2719,8 +2698,8 @@
 								if (env.currentAlbum.isSearch() || env.currentAlbum.isSelection()) {
 									subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, ithSubalbum.cacheBase, env.currentAlbum.cacheBase);
 								} else {
-									if (typeof savedSearchAlbumHash !== "undefined" && savedSearchAlbumHash !== null)
-										subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, foundAlbumHash, savedSearchAlbumHash);
+									if (typeof savedSearchAlbumCacheBase !== "undefined" && savedSearchAlbumCacheBase !== null)
+										subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, foundAlbumCacheBase, savedSearchAlbumCacheBase);
 									else
 										subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null);
 								}

@@ -197,7 +197,7 @@
 			// $(document).ready(function() {
 			// 	$(window).hashchange(function() {
 			// 		_paq.push(['setCustomUrl', '/' + window.location.hash]);
-			// 		_paq.push(['setDocumentTitle', PhotoFloat.cleanHash(location.hash)]);
+			// 		_paq.push(['setDocumentTitle', PhotoFloat.convertHashToCacheBase(location.hash)]);
 			// 		_paq.push(['trackPageView']);
 			// 	});
 			// });
@@ -222,7 +222,7 @@
 				$(window).hashchange(function() {
 					window._gaq = window._gaq || [];
 					window._gaq.push(['_trackPageview']);
-					window._gaq.push(['_trackPageview', PhotoFloat.cleanHash(location.hash)]);
+					window._gaq.push(['_trackPageview', PhotoFloat.convertHashToCacheBase(location.hash)]);
 				});
 			});
 		</script>

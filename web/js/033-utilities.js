@@ -234,8 +234,8 @@
 		return newMapAlbum;
 	};
 
-	Utilities.prototype.initializeSearchAlbumBegin = function(albumHash) {
-		var newSearchAlbum = new Album(albumHash);
+	Utilities.prototype.initializeSearchAlbumBegin = function(albumCacheBase) {
+		var newSearchAlbum = new Album(albumCacheBase);
 		// newSearchAlbum.positionsAndMediaInTree = [];
 		// newSearchAlbum.media = [];
 		// newSearchAlbum.subalbums = [];
@@ -243,7 +243,7 @@
 		// newSearchAlbum.numsMediaInSubTree = new ImagesAndVideos();
 		// newSearchAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
 		// newSearchAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
-		// newSearchAlbum.cacheBase = albumHash;
+		// newSearchAlbum.cacheBase = albumCacheBase;
 		newSearchAlbum.path = newSearchAlbum.cacheBase.replace(env.options.cache_folder_separator, "/");
 		newSearchAlbum.ancestorsNames = [env.options.by_search_string, newSearchAlbum.cacheBase];
 		// newSearchAlbum.physicalPath = newSearchAlbum.path;
@@ -1009,9 +1009,11 @@
 	// };
 
 	Utilities.isAnyRootHashButMap = function(hash) {
-		var cacheBase = hash;
+		var cacheBase;
 		if (hash.indexOf(env.hashBeginning) === 0)
 			cacheBase = hash.substring(env.hashBeginning);
+		else
+			cacheBase = hash;
 		return Utilities.isAnyRootCacheBase(cacheBase) && ! Utilities.isMapCacheBase(cacheBase);
 	};
 
@@ -1136,22 +1138,13 @@
 	};
 
 	Utilities.prototype.isSearchHash = function() {
-		var hash = PhotoFloat.cleanHash(location.hash);
-		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
-		if (Utilities.isSearchCacheBase(hash) || savedSearchAlbumHash !== null)
+		var cacheBase = PhotoFloat.convertHashToCacheBase(location.hash);
+		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = PhotoFloat.decodeHash(cacheBase);
+		if (Utilities.isSearchCacheBase(cacheBase) || savedSearchAlbumCacheBase !== null)
 			return true;
 		else
 			return false;
 	};
-
-	// Utilities.prototype.isMapHash = function(hash) {
-	// 	hash = PhotoFloat.cleanHash(hash);
-	// 	var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
-	// 	if (this.isMapCacheBase(hash) || savedSearchAlbumHash !== null)
-	// 		return true;
-	// 	else
-	// 		return false;
-	// };
 
 	Utilities.prototype.noResults = function(album, resolveParseHash, selector) {
 		// no media found or other search fail, show the message
@@ -2093,7 +2086,7 @@
 	};
 
 	SingleMedia.prototype.mediaPath = function(size) {
-		var suffix = env.options.cache_folder_separator, hash, rootString = "root-";
+		var suffix = env.options.cache_folder_separator, cacheBase, rootString = "root-";
 		if (
 			this.mimeType.indexOf("image/") === 0 ||
 			this.mimeType.indexOf("video/") === 0 && [env.options.album_thumb_size, env.options.media_thumb_size].indexOf(size) != -1
@@ -2126,27 +2119,27 @@
 			suffix += "transcoded.mp4";
 		}
 
-		hash = this.foldersCacheBase + env.options.cache_folder_separator + this.cacheBase + suffix;
-		if (hash.indexOf(rootString) === 0)
-			hash = hash.substring(rootString.length);
+		cacheBase = this.foldersCacheBase + env.options.cache_folder_separator + this.cacheBase + suffix;
+		if (cacheBase.indexOf(rootString) === 0)
+			cacheBase = cacheBase.substring(rootString.length);
 		else {
-			if (Utilities.isFolderCacheBase(hash))
-				hash = hash.substring(env.options.foldersStringWithTrailingSeparator.length);
-			else if (Utilities.isByDateCacheBase(hash))
-				hash = hash.substring(env.options.byDateStringWithTrailingSeparator.length);
-			else if (Utilities.isByGpsCacheBase(hash))
-				hash = hash.substring(env.options.byGpsStringWithTrailingSeparator.length);
-			else if (Utilities.isSearchCacheBase(hash))
-				hash = hash.substring(env.options.bySearchStringWithTrailingSeparator.length);
-			else if (Utilities.isSelectionCacheBase(hash))
-				hash = hash.substring(env.options.bySelectionStringWithTrailingSeparator.length);
-			else if (Utilities.isMapCacheBase(hash))
-				hash = hash.substring(env.options.byMapStringWithTrailingSeparator.length);
+			if (Utilities.isFolderCacheBase(cacheBase))
+				cacheBase = cacheBase.substring(env.options.foldersStringWithTrailingSeparator.length);
+			else if (Utilities.isByDateCacheBase(cacheBase))
+				cacheBase = cacheBase.substring(env.options.byDateStringWithTrailingSeparator.length);
+			else if (Utilities.isByGpsCacheBase(cacheBase))
+				cacheBase = cacheBase.substring(env.options.byGpsStringWithTrailingSeparator.length);
+			else if (Utilities.isSearchCacheBase(cacheBase))
+				cacheBase = cacheBase.substring(env.options.bySearchStringWithTrailingSeparator.length);
+			else if (Utilities.isSelectionCacheBase(cacheBase))
+				cacheBase = cacheBase.substring(env.options.bySelectionStringWithTrailingSeparator.length);
+			else if (Utilities.isMapCacheBase(cacheBase))
+				cacheBase = cacheBase.substring(env.options.byMapStringWithTrailingSeparator.length);
 		}
 		if (this.cacheSubdir)
-			return Utilities.pathJoin([env.server_cache_path, this.cacheSubdir, hash]);
+			return Utilities.pathJoin([env.server_cache_path, this.cacheSubdir, cacheBase]);
 		else
-			return Utilities.pathJoin([env.server_cache_path, hash]);
+			return Utilities.pathJoin([env.server_cache_path, cacheBase]);
 	};
 
 	Utilities.mediaBoxContainerHeight = function() {
@@ -2372,7 +2365,7 @@
 		} else if (this.isMap()) {
 			zipFilename += '.' + Utilities._t("#from-map");
 		} else if (this.cacheBase !== env.options.folders_string) {
-			zipFilename += this.nameForShowing(null);
+			zipFilename += '.' + this.nameForShowing(null);
 		}
 
 		zipFilename += ".zip";
@@ -3294,41 +3287,41 @@
 	};
 
 	Utilities.upHash = function(hash) {
-		var resultHash;
+		var resultCacheBase;
 		if (typeof hash === "undefined")
 			hash = window.location.hash;
-		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = PhotoFloat.decodeHash(hash);
+		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = PhotoFloat.decodeHash(hash);
 
-		if (mediaHash === null || env.currentAlbum !== null && env.currentAlbum.isAlbumWithOneMedia()) {
+		if (mediaCacheBase === null || env.currentAlbum !== null && env.currentAlbum.isAlbumWithOneMedia()) {
 			// hash of an album: go up in the album tree
-			if (savedSearchAlbumHash !== null) {
-				if (albumHash === foundAlbumHash)
-					resultHash = savedSearchAlbumHash;
+			if (savedSearchAlbumCacheBase !== null) {
+				if (albumCacheBase === foundAlbumCacheBase)
+					resultCacheBase = savedSearchAlbumCacheBase;
 				else {
 					// we must go up in the sub folder
-					albumHash = albumHash.split(env.options.cache_folder_separator).slice(0, -1).join(env.options.cache_folder_separator);
-					resultHash = Utilities.pathJoin([
-						albumHash,
-						foundAlbumHash,
-						savedSearchAlbumHash
+					albumCacheBase = albumCacheBase.split(env.options.cache_folder_separator).slice(0, -1).join(env.options.cache_folder_separator);
+					resultCacheBase = Utilities.pathJoin([
+						albumCacheBase,
+						foundAlbumCacheBase,
+						savedSearchAlbumCacheBase
 					]);
 				}
 			} else {
-				if (albumHash === env.options.folders_string) {
+				if (albumCacheBase === env.options.folders_string) {
 					// stay there
-					resultHash = albumHash;
-				} else if (Utilities.isAnyRootHashButMap(albumHash)) {
+					resultCacheBase = albumCacheBase;
+				} else if (Utilities.isAnyRootHashButMap(albumCacheBase)) {
 					// go to folders root
-					resultHash = env.options.folders_string;
-				} else if (Utilities.isSearchCacheBase(albumHash) || Utilities.isMapCacheBase(albumHash)) {
+					resultCacheBase = env.options.folders_string;
+				} else if (Utilities.isSearchCacheBase(albumCacheBase) || Utilities.isMapCacheBase(albumCacheBase)) {
 					// the return folder must be extracted from the album hash
-					// resultHash = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
-					resultHash = env.options.cache_base_to_search_in;
+					// resultCacheBase = albumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
+					resultCacheBase = env.options.cache_base_to_search_in;
 				} else {
-					let album = env.cache.getAlbum(albumHash);
-					if (Utilities.isSelectionCacheBase(albumHash) && ! album) {
-						resultHash = env.options.folders_string;
-					} else if (Utilities.isSelectionCacheBase(albumHash) && album.media.length > 1) {
+					let album = env.cache.getAlbum(albumCacheBase);
+					if (Utilities.isSelectionCacheBase(albumCacheBase) && ! album) {
+						resultCacheBase = env.options.folders_string;
+					} else if (Utilities.isSelectionCacheBase(albumCacheBase) && album.media.length > 1) {
 						// if all the media belong to the same album => the parent
 						// other ways => the common root of the selected media
 						let minimumLength = 100000;
@@ -3349,37 +3342,37 @@
 									parts[iPart][iMedia] = parts[iPart - 1][iMedia] + env.options.cache_folder_separator + splittedSelectedMediaCacheBase[iPart];
 							}
 						}
-						resultHash = '';
+						resultCacheBase = '';
 						for (let iPart = 0; iPart < minimumLength; iPart ++) {
 							if (parts[iPart].some((val, i, arr) => val !== arr[0])) {
 								break;
 							} else {
-								resultHash = parts[iPart][0];
+								resultCacheBase = parts[iPart][0];
 							}
 						}
-					} else if (Utilities.isSelectionCacheBase(albumHash) && album.media.length === 1) {
-						resultHash = album.media[0].foldersCacheBase;
+					} else if (Utilities.isSelectionCacheBase(albumCacheBase) && album.media.length === 1) {
+						resultCacheBase = album.media[0].foldersCacheBase;
 					} else {
 						// we must go up in the sub folders tree
-						resultHash = albumHash.split(env.options.cache_folder_separator).slice(0, -1).join(env.options.cache_folder_separator);
+						resultCacheBase = albumCacheBase.split(env.options.cache_folder_separator).slice(0, -1).join(env.options.cache_folder_separator);
 					}
 				}
 			}
 		} else {
 			// hash of a media: remove the media
-			if (savedSearchAlbumHash !== null || Utilities.isFolderCacheBase(albumHash))
+			if (savedSearchAlbumCacheBase !== null || Utilities.isFolderCacheBase(albumCacheBase))
 				// media in found album or in one of its subalbum
 				// or
 				// media in folder hash:
 				// remove the trailing media
-				resultHash = Utilities.pathJoin(hash.split("/").slice(1, -1));
+				resultCacheBase = Utilities.pathJoin(hash.split("/").slice(1, -1));
 			else
 				// all the other cases
 				// remove the trailing media and the folder it's inside
-				resultHash = Utilities.pathJoin(hash.split("/").slice(1, -2));
+				resultCacheBase = Utilities.pathJoin(hash.split("/").slice(1, -2));
 		}
 
-		return env.hashBeginning + resultHash;
+		return env.hashBeginning + resultCacheBase;
 	};
 
 
