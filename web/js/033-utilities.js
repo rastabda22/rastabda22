@@ -3232,7 +3232,8 @@
 		// $("#description").css("bottom", 0);
 		$("#description").css("height", "");
 		$("#description").css("max-height", "");
-		$("#description").css("width", (env.windowWidth / 3) + "px");
+		// $("#description").css("width", "fit-content");
+		// $("#description").css("width", (env.windowWidth / 3) + "px");
 		$("#description").css("max-width", (env.windowWidth / 3) + "px");
 		// $("#description").css("height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
 		$("#description").css("height", "auto");
