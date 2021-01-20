@@ -2943,6 +2943,18 @@
 		var left = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
 		$("#media-select-box .select-box").css("left", "");
 		$("#media-select-box .select-box").css("left", left.toString() + "px").css("bottom", bottom.toString() + "px");
+		if (env.isMobile.any() && env.currentMedia !== null) {
+			// move the box above the media bar
+			while (Utilities.isColliding($("#media-select-box .select-box"), $(".media-box#center .media-bar"))) {
+				$("#media-select-box .select-box").css("bottom", (parseInt($("#media-select-box .select-box").css("bottom")) + 5) + "px");
+			}
+			// let currentMediaBarTop = parseInt($(".media-box#center .media-bar").css("bottom")) + $(".media-box#center .media-bar").outerHeight();
+			// $("#media-select-box .select-box").css("bottom", (parseInt($("#media-select-box .select-box").css("bottom")) + distanceFromImageBorder) + "px");
+			while (Utilities.isColliding($("#media-select-box .select-box"), $("#prev"))) {
+				$("#media-select-box .select-box").css("left", (parseInt($("#media-select-box .select-box").css("left")) + 5) + "px");
+			}
+		}
+
 		return true;
 	};
 
@@ -3237,6 +3249,16 @@
 		// $("#description").css("height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
 		$("#description").css("height", "auto");
 		$("#description").css("max-height", (env.windowHeight / 2.5) + "px");
+		if (env.isMobile.any() && env.currentMedia !== null) {
+			// move the box above the media bar
+			// let currentMediaBarTop = parseInt($(".media-box#center .media-bar").css("bottom")) + $(".media-box#center .media-bar").outerHeight();
+			while (Utilities.isColliding($("#description"), $(".media-box#center .media-bar"))) {
+				$("#description").css("bottom", (parseInt($("#description").css("bottom")) + 5) + "px");
+			}
+			while (Utilities.isColliding($("#description"), $("#next"))) {
+				$("#description").css("right", (parseInt($("#description").css("right")) + 5) + "px");
+			}
+		}
 		// }
 	};
 
