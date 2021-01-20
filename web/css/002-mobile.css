@@ -54,4 +54,9 @@
 	#my-modal .modal-close {
 	    top: 35px !important;
 	}
+
+	#description {
+		padding: .2em;
+		border-width: 2px;
+	}
 }

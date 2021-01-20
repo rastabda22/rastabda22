@@ -3249,6 +3249,7 @@
 		// $("#description").css("height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
 		$("#description").css("height", "auto");
 		$("#description").css("max-height", (env.windowHeight / 2.5) + "px");
+		$("#description-text").css("max-height", ($("#description").innerHeight() - $("#description-title").outerHeight() - $("#description-tags").outerHeight() - 2 * parseInt($("#description").css("padding"))) + "px");
 		if (env.isMobile.any() && env.currentMedia !== null) {
 			// move the box above the media bar
 			// let currentMediaBarTop = parseInt($(".media-box#center .media-bar").css("bottom")) + $(".media-box#center .media-bar").outerHeight();
