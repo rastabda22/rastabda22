@@ -1129,8 +1129,8 @@
 	};
 
 	Utilities.prototype.isSearchHash = function() {
+		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = PhotoFloat.decodeHash(location.hash);
 		var cacheBase = PhotoFloat.convertHashToCacheBase(location.hash);
-		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = PhotoFloat.decodeHash(cacheBase);
 		if (Utilities.isSearchCacheBase(cacheBase) || savedSearchAlbumCacheBase !== null)
 			return true;
 		else
@@ -3279,7 +3279,7 @@
 
 	Utilities.upHash = function(hash) {
 		var resultCacheBase;
-		if (typeof hash === "undefined")
+		if (hash === undefined)
 			hash = window.location.hash;
 		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = PhotoFloat.decodeHash(hash);
 
