@@ -1,3 +1,6 @@
+* bug fixes
+* css trims
+
 ### version v4.9.27 (Jan 19, 2021)
 
 * bug fixes
