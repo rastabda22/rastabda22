@@ -31,6 +31,7 @@
 	<title><?php if ($options['page_title'])
 			echo $options['page_title'];
 	?></title>
+	
 	<link rel="icon" href="favicon.ico" type="image/x-icon"/>
 
 	<?php	if (strcasecmp($options['debug_css'], "false") == 0 || $options['debug_css'] == "0") { ?>

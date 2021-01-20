@@ -544,12 +544,17 @@ video {
 	background-color: #222222;
 	opacity: 0.5;
 	filter: alpha(opacity=50); /* For IE8 and earlier */
-	width: 30%;
+	width: fit-content;
 	max-width: 30%;
 	overflow-y: hidden;
-	padding: 0.4em;
+	padding: 0.6em;
 	word-wrap: break-word;
 	line-height: 1em;
+	border: 3px white solid;
+}
+
+#description:hover {
+	opacity: 0.7;
 }
 
 #description-tags {
@@ -616,6 +621,8 @@ video {
 	margin-top: .5em;
 	margin-bottom: .5em;
 	background-color: black;
+	float: right;
+	width: fit-content;
 }
 
 #description-title p, #description-text p, #description-text ul {

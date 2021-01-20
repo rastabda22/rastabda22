@@ -128,7 +128,7 @@
 		var isAlbumWithOneMedia = thisAlbum.isAlbumWithOneMedia();
 		var isTransversalAlbum = thisAlbum.isTransversal();
 		var isSingleMedia = (env.currentMedia !== null || isAlbumWithOneMedia);
-		var isAnyRoot = thisAlbum.isAnyRoot() || thisAlbum.isSelection() || thisAlbum.isSearch() || thisAlbum.isMap();
+		var isAnyRoot = thisAlbum.isAnyRoot();
 
 		var nothingIsSelected = util.nothingIsSelected();
 		var everySubalbumIsSelected;
