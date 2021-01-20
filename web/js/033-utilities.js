@@ -1008,15 +1008,6 @@
 	// 	return cacheBase.indexOf(env.options.by_selection_string) === 0 && cacheBase.split(env.options.cache_folder_separator).length === 2;
 	// };
 
-	Utilities.isAnyRootHashButMap = function(hash) {
-		var cacheBase;
-		if (hash.indexOf(env.hashBeginning) === 0)
-			cacheBase = hash.substring(env.hashBeginning);
-		else
-			cacheBase = hash;
-		return Utilities.isAnyRootCacheBase(cacheBase) && ! Utilities.isMapCacheBase(cacheBase);
-	};
-
 	Utilities.isAnyRootCacheBase = function(cacheBase) {
 		var result =
 			[env.options.folders_string, env.options.by_date_string, env.options.by_gps_string].indexOf(cacheBase) !== -1;
@@ -3310,7 +3301,7 @@
 				if (albumCacheBase === env.options.folders_string) {
 					// stay there
 					resultCacheBase = albumCacheBase;
-				} else if (Utilities.isAnyRootHashButMap(albumCacheBase)) {
+				} else if ([env.options.by_date_string, env.options.by_gps_string].indexOf(albumCacheBase) !== -1) {
 					// go to folders root
 					resultCacheBase = env.options.folders_string;
 				} else if (Utilities.isSearchCacheBase(albumCacheBase) || Utilities.isMapCacheBase(albumCacheBase)) {
