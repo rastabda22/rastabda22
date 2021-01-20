@@ -621,6 +621,8 @@ video {
 	margin-top: .5em;
 	margin-bottom: .5em;
 	background-color: black;
+	float: right;
+	width: fit-content;
 }
 
 #description-title p, #description-text p, #description-text ul {
