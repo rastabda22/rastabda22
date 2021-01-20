@@ -2935,7 +2935,6 @@
 		if ($("#album-view").is(":visible"))
 			albumHeight = Math.max($("#album-view").height(), parseInt($("#album-view").css("height")));
 		var distanceFromImageBorder = 15;
-		// if (containerHeight === undefined) {
 		containerHeight = env.windowHeight - titleHeight - albumHeight;
 		containerWidth = env.windowWidth;
 		// }
@@ -2948,8 +2947,6 @@
 			while (Utilities.isColliding($("#media-select-box .select-box"), $(".media-box#center .media-bar"))) {
 				$("#media-select-box .select-box").css("bottom", (parseInt($("#media-select-box .select-box").css("bottom")) + 5) + "px");
 			}
-			// let currentMediaBarTop = parseInt($(".media-box#center .media-bar").css("bottom")) + $(".media-box#center .media-bar").outerHeight();
-			// $("#media-select-box .select-box").css("bottom", (parseInt($("#media-select-box .select-box").css("bottom")) + distanceFromImageBorder) + "px");
 			while (Utilities.isColliding($("#media-select-box .select-box"), $("#prev"))) {
 				$("#media-select-box .select-box").css("left", (parseInt($("#media-select-box .select-box").css("left")) + 5) + "px");
 			}
@@ -3203,36 +3200,6 @@
 	};
 
 	Utilities.prototype.setDescriptionPosition = function(captionType) {
-		// // Size of description varies if on album or media
-		// // var titleHeight = parseInt($(".media-box#center .title").css("height"));
-		// // var mediaBoxHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
-		// // var bottomThumbnailsHeight = parseInt($("#album-view.media-view-container").css("height"));
-		// if (captionType === 'singleMedia') {
-		// 	let thumbsHeight = 0;
-		// 	if (! env.options.hide_bottom_thumbnails && env.currentAlbum.media.length > 1)
-		// 		thumbsHeight = env.options.media_thumb_size + 20;
-		// 		// thumbsHeight = parseInt($("#album-view").css("height"));
-		//
-		// 	let mediaHeight = parseInt($(".media-box#center .media-box-inner #media-center").css("height"));
-		// 	if (! mediaHeight) {
-		// 		mediaHeight = env.windowHeight / 4;
-		// 	}
-		//
-		// 	$("#description").css("bottom", thumbsHeight + 20);
-		// 	// $("#description").css("height", "auto");
-		// 	$("#description").css("right", 20);
-		// 	$("#description").css("max-height", "");
-		// 	$("#description").css("max-height", mediaHeight * 0.4);
-		// 	$("#description-text").css("height", "");
-		// 	$("#description-text").css("max-height", "");
-		// 	$("#description-text").css("max-height", $("#description").height() - 2 * parseInt($("#description").css("padding-top")) - $("#description-title").height() - $("#description-tags").height());
-		// } else if (captionType === 'album') {
-		// var titleHeight = parseInt($("#album-view .title").css("height"));
-		// var albumTop = parseInt($("#album-view").css("top"));
-		// var albumHeight = parseInt($("#album-view").css("height"));
-		// var thumbsHeight = parseInt($("#thumbs").css("height"));
-		// var subalbumsHeight = parseInt($("#subalbums").css("height"));
-		// TODO: How to adapt height to different platforms?
 		let thumbsHeight = 0;
 		if (captionType === 'singleMedia' && $("#album-view").is(":visible"))
 			thumbsHeight = env.options.media_thumb_size + 20;
@@ -3240,19 +3207,14 @@
 		$("#description").css("right", 20);
 		$("#description").css("top", "");
 		$("#description").css("bottom", thumbsHeight + 20);
-		// $("#description").css("bottom", (env.windowHeight / 10) + "px");
-		// $("#description").css("bottom", 0);
 		$("#description").css("height", "");
 		$("#description").css("max-height", "");
-		// $("#description").css("width", (env.windowWidth / 3) + "px");
 		$("#description").css("max-width", (env.windowWidth / 3) + "px");
-		// $("#description").css("height", (albumHeight + thumbsHeight + subalbumsHeight) * 0.6);
 		$("#description").css("height", "auto");
 		$("#description").css("max-height", (env.windowHeight / 2.5) + "px");
 		$("#description-text").css("max-height", ($("#description").innerHeight() - $("#description-title").outerHeight() - $("#description-tags").outerHeight() - 2 * parseInt($("#description").css("padding"))) + "px");
 		if (env.isMobile.any() && env.currentMedia !== null) {
 			// move the box above the media bar
-			// let currentMediaBarTop = parseInt($(".media-box#center .media-bar").css("bottom")) + $(".media-box#center .media-bar").outerHeight();
 			while (Utilities.isColliding($("#description"), $(".media-box#center .media-bar"))) {
 				$("#description").css("bottom", (parseInt($("#description").css("bottom")) + 5) + "px");
 			}
