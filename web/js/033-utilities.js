@@ -3211,7 +3211,8 @@
 
 		$("#description-wrapper, #description-tags").css("right", 20);
 		// $("#description").css("top", "");
-		$("#description-wrapper, #description-tags").css("bottom", thumbsHeight + 20);
+		$("#description-wrapper").css("bottom", thumbsHeight + 20);
+		$("#description-tags").css("bottom", (parseInt($("#description-wrapper").css("bottom")) - parseInt($("#description-tags").css("bottom"))) + "px");
 		$("#description-wrapper, #description").css("height", env.windowHeight.toString() + "px");
 		// $("#description-text").css("height", (env.windowHeight / 2) + "px");
 		$("#description-text").css("height", "auto");
@@ -3243,8 +3244,9 @@
 		// 	) + "px"
 		// );
 		$("#description-text").css("height", (parseInt($("#description-text").css("height")) + 5) + "px");
-		// $("#description-text").css("height", (parseInt($("#description-wrapper").css("height")) - parseInt($("#description-hide").css("height")) - parseInt($("#description-title").css("height")) - parseInt($("#description-tags").css("height")) + 5) + "px");
+		$("#description-text").css("height", (parseInt($("#description-wrapper").css("height")) - $("#description-title").outerHeight()) + "px");
 		$("#description-text").css("max-height", (env.windowHeight / 2) + "px");
+		$("#description-wrapper").css("padding-bottom", ($("#description-tags").outerHeight()) + "px");
 
 		if (env.isMobile.any() && env.currentMedia !== null) {
 			// move the box above the media bar
