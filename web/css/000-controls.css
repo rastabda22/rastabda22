@@ -609,17 +609,20 @@ video {
 #description-title {
 	top: 0;
 	font-weight: bold;
+	padding-bottom: .3em;
 }
 
 #description-text {
 	overflow-y: auto;
+	/* padding-top: .3em;
+	padding-bottom: .3em; */
 	/* color: #FFAD27; */
 }
 
 #description-tags {
 	bottom: 0;
-	margin-top: .5em;
-	margin-bottom: .5em;
+	padding-top: .3em;
+	padding-bottom: .3em;
 	background-color: black;
 	float: right;
 	width: fit-content;

@@ -31,7 +31,7 @@
 	<title><?php if ($options['page_title'])
 			echo $options['page_title'];
 	?></title>
-	
+
 	<link rel="icon" href="favicon.ico" type="image/x-icon"/>
 
 	<?php	if (strcasecmp($options['debug_css'], "false") == 0 || $options['debug_css'] == "0") { ?>
@@ -543,9 +543,7 @@
 
 	<div id="description">
 		<div id="description-title"></div>
-		<div id="description-text">
-			<div class="description"></div>
-		</div>
+		<div id="description-text"></div>
 		<div id="description-tags"></div>
 	</div>
 

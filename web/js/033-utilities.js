@@ -3172,6 +3172,8 @@
 			var nullDescription = (typeof description === "undefined") || ! description;
 			var nullTags = (typeof tags === "undefined") || ! tags.length;
 
+			// $("#description").css("max-height", (env.windowHeight / 2) + "px");
+
 			if (! nullTitle) {
 				$("#description-title").html(Utilities.formatDescription(title));
 			} else {
@@ -3179,10 +3181,10 @@
 			}
 
 			if (! nullDescription) {
-				$("#description-text .description").html(Utilities.formatDescription(description));
+				$("#description-text").html(Utilities.formatDescription(description));
 				$("#description-text p").addClass("description-text");
 			} else {
-				$("#description-text .description").html("");
+				$("#description-text").html("");
 			}
 			if (! nullTags) {
 				// let textualTags = "<p class='tags'> " + Utilities._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span></p>";
@@ -3208,14 +3210,35 @@
 			thumbsHeight = env.options.media_thumb_size + 20;
 
 		$("#description").css("right", 20);
-		$("#description").css("top", "");
+		// $("#description").css("top", "");
 		$("#description").css("bottom", thumbsHeight + 20);
-		$("#description").css("height", "");
-		$("#description").css("max-height", "");
-		$("#description").css("max-width", (env.windowWidth / 3) + "px");
+		$("#description").css("height", (env.windowHeight / 2) + "px");
+		// $("#description-text").css("height", (env.windowHeight / 2) + "px");
+		$("#description-text").css("height", "auto");
+		// $("#description-text").css("height", (parseInt($("#description-text").css("height")) + 5 * parseInt($("#description-text").css("padding"))) + "px");
 		$("#description").css("height", "auto");
-		$("#description").css("max-height", (env.windowHeight / 2.5) + "px");
-		$("#description-text").css("max-height", ($("#description").innerHeight() - $("#description-title").outerHeight() - $("#description-tags").outerHeight() - 2 * parseInt($("#description").css("padding"))) + "px");
+		$("#description").css("max-width", (env.windowWidth / 2) + "px");
+		$("#description").css("max-height", (env.windowHeight / 2) + "px");
+		// $("#description-text").css("max-height", $("#description").css("height").toString() + "px");
+		// $("#description-text").css("max-height", (env.windowHeight / 2.5) + "px");
+		// $("#description").css("height", $("#description").css("height") + "px");
+		// $("#description-text").css(
+		// 	"height",
+		// 	(
+		// 		$("#description").height() -
+		// 		$("#description-title").outerHeight() -
+		// 		$("#description-tags").outerHeight()
+		// 		// parseInt($("#description-title").css("padding-top")) -
+		// 		// parseInt($("#description-title").css("padding-bottom")) -
+		// 		// parseInt($("#description-text").css("padding-top")) -
+		// 		// parseInt($("#description-text").css("padding-bottom"))
+		// 		// parseInt($("#description-tags").css("padding-top")) -
+		// 		// parseInt($("#description-tags").css("padding-bottom"))
+		// 	) + "px"
+		// );
+		$("#description-text").css("height", (parseInt($("#description-text").css("height")) + 5) + "px");
+		$("#description-text").css("max-height", (env.windowHeight / 2) + "px");
+
 		if (env.isMobile.any() && env.currentMedia !== null) {
 			// move the box above the media bar
 			while (Utilities.isColliding($("#description"), $(".media-box#center .media-bar"))) {
