@@ -2173,9 +2173,9 @@
 				if (event.data.resize && id === "center") {
 					// this is executed only when resizing, it's not needed when first scaling
 					$("#media-box-container").css("width", env.windowWidth * 3).css("transform", "translate(-" + env.windowWidth + "px, 0px)");
-					$(".media-box").css("width", env.windowWidth);
-					$(".media-box .media-box-inner").css("width", env.windowWidth);
-					$(".media-box").show();
+					$(".media-box#" + id).css("width", env.windowWidth);
+					$(".media-box#" + id + " .media-box-inner").css("width", env.windowWidth);
+					$(".media-box#" + id).show();
 				}
 				if ($(".media-box#" + id + " .title").is(":visible"))
 					titleHeight = $(".media-box#" + id + " .title").outerHeight();
@@ -2184,9 +2184,9 @@
 
 				heightForMedia = heightForMediaAndTitle - titleHeight;
 				$("#media-box-container").css("height", heightForMediaAndTitle);
-				$(".media-box").css("height", heightForMediaAndTitle);
-				$(".media-box .media-box-inner").css("height", heightForMedia);
-				$(".media-box").show();
+				$(".media-box#" + id).css("height", heightForMediaAndTitle);
+				$(".media-box#" + id + " .media-box-inner").css("height", heightForMedia);
+				$(".media-box#" + id).show();
 
 				if (self.mimeType.indexOf("image/") === 0)
 					mediaElement = $(".media-box#" + id + " .media-box-inner img");
