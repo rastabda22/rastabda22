@@ -3116,8 +3116,10 @@
 	Utilities.formatDescription = function(text) {
 		// Replace CRLF by <p> and remove all useless <br>.
 		text = text.replace(/<(\/?\w+)>\s*\n\s*<(\/?\w+)>/g, "<$1><$2>");
-		text = text.replace(/\n/g, "</p><p class='description-text'>");
-		return "<p class='description-text'>" + text + "</p>";
+		text = text.replace(/\n/g, "</p><p>");
+		if (! text.substring(0, 3) === "<p ")
+			text = "<p>" + text + "</p>";
+		return text;
 	};
 
 	Utilities.prototype.adaptCaptionHeight = function() {
@@ -3178,6 +3180,7 @@
 
 			if (! nullDescription) {
 				$("#description-text .description").html(Utilities.formatDescription(description));
+				$("#description-text p").addClass("description-text");
 			} else {
 				$("#description-text .description").html("");
 			}
