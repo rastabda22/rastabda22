@@ -56,7 +56,12 @@
 	}
 
 	#description {
-		padding: .2em;
+		padding: .3em 0;
+		border-width: 2px;
+	}
+
+	#description-text {
+		padding: .3em;
 		border-width: 2px;
 	}
 }
