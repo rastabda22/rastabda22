@@ -707,19 +707,22 @@
 							title += "</span>";
 						}
 
-						if (env.isMobile.any()) {
+						if (env.isMobile.any() && id == "center") {
 							// leave only the last link on mobile
 							// separate on "&raquo;""
-
-							var titleArray = title.split(raquo);
+							let titleObject = $(title);
+							let titleHtml = titleObject.html();
+							let titleArray = titleHtml.split("»");
 
 							for (i = titleArray.length - 1; i >= 0; i --) {
-								if (titleArray[i].indexOf(" href='#!") != -1) {
+								if (titleArray[i].indexOf(' href="#!') !== -1) {
 									linkCount ++;
 									if (linkCount > linksToLeave) {
-										title =
+										titleHtml =
 											"<span class='dots-surroundings'><span class='title-no-anchor dots'>...</span></span>" +
 											"<span class='hidden-title'>" + titleArray.slice(0, i + 1).join(raquo) + "</span>" + raquo + titleArray.slice(i + 1).join(raquo);
+										titleObject.html(titleHtml);
+										title = titleObject.prop("outerHTML");
 										break;
 									}
 								}
@@ -732,13 +735,20 @@
 							$(".media-box#" + id + " .title-string").html(title);
 
 
-						if (env.isMobile.any()) {
+						if (env.isMobile.any() && id == "center") {
 							$(".dots").off("click").on(
 								"click",
+								{singleMedia: singleMedia},
 								function(ev) {
 									if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 										$(".dots-surroundings").hide();
 										$(".hidden-title").show();
+
+										let event = {data: {}};
+										event.data.resize = true;
+										event.data.id = "center";
+										ev.data.singleMedia.scale(event);
+
 										return false;
 									}
 								}
