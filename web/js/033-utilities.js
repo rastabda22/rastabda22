@@ -2135,7 +2135,7 @@
 
 	Utilities.mediaBoxContainerHeight = function() {
 		var heightForMediaAndTitle;
-		env.windowHeight = $(window).innerHeight();
+		// env.windowHeight = $(window).innerHeight();
 		heightForMediaAndTitle = env.windowHeight;
 		if ($("#album-view").is(":visible"))
 			heightForMediaAndTitle -= $("#album-view")[0].offsetHeight;
@@ -2173,10 +2173,10 @@
 				if (event.data.resize && id === "center") {
 					// this is executed only when resizing, it's not needed when first scaling
 					$("#media-box-container").css("width", env.windowWidth * 3).css("transform", "translate(-" + env.windowWidth + "px, 0px)");
-					$(".media-box#" + id).css("width", env.windowWidth);
-					$(".media-box#" + id + " .media-box-inner").css("width", env.windowWidth);
-					$(".media-box#" + id).show();
 				}
+				$(".media-box#" + id).css("width", env.windowWidth);
+				$(".media-box#" + id + " .media-box-inner").css("width", env.windowWidth);
+				$(".media-box#" + id).show();
 				if ($(".media-box#" + id + " .title").is(":visible"))
 					titleHeight = $(".media-box#" + id + " .title").outerHeight();
 				else
