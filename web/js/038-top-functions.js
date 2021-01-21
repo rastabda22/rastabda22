@@ -700,7 +700,7 @@
 							);
 						}
 
-						if (env.isMobile.any() && id == "center") {
+						if (env.isMobile.any()) {
 							// leave only the last link on mobile
 							// separate on "&raquo;""
 							let titleArray = title.split(raquo);
@@ -726,13 +726,13 @@
 							$(".media-box#" + id + " .title-string").html(title);
 
 						if (env.isMobile.any() && id == "center") {
-							$(".dots").off("click").on(
+							$("#center .dots").off("click").on(
 								"click",
 								{singleMedia: singleMedia},
 								function(ev) {
 									if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-										$(".dots-surroundings").hide();
-										$(".hidden-title").show();
+										$("#center .dots-surroundings").hide();
+										$("#center .hidden-title").show();
 
 										let event = {data: {}};
 										event.data.resize = true;
