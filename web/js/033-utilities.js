@@ -3117,7 +3117,7 @@
 		// Replace CRLF by <p> and remove all useless <br>.
 		text = text.replace(/<(\/?\w+)>\s*\n\s*<(\/?\w+)>/g, "<$1><$2>");
 		text = text.replace(/\n/g, "</p><p>");
-		if (! text.substring(0, 3) === "<p ")
+		if (text.substring(0, 3) !== "<p ")
 			text = "<p>" + text + "</p>";
 		return text;
 	};
