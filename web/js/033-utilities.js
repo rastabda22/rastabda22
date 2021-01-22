@@ -3271,6 +3271,10 @@
 		);
 	};
 
+	Utilities.prototype.numClassesInWorking = function() {
+		return $("#working")[0].classList.length > 1;
+	};
+
 	Utilities.mediaBoxGenerator = function(id) {
 		if (id === 'left')
 			$("#media-box-container").prepend(Utilities.originalMediaBoxContainerContent.replace('id="center"', 'id="left"'));
