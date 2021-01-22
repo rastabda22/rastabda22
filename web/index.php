@@ -31,7 +31,7 @@
 	<title><?php if ($options['page_title'])
 			echo $options['page_title'];
 	?></title>
-	
+
 	<link rel="icon" href="favicon.ico" type="image/x-icon"/>
 
 	<?php	if (strcasecmp($options['debug_css'], "false") == 0 || $options['debug_css'] == "0") { ?>
@@ -541,12 +541,16 @@
 	<div id="by-name-media-sorting" class="sort-message"></div>
 	<div id="by-name-reverse-media-sorting" class="sort-message"></div>
 
-	<div id="description">
-		<div id="description-title"></div>
-		<div id="description-text">
-			<div class="description"></div>
+	<div id="description-wrapper">
+		<div id="description-hide-show">
+			<div id="description-hide"></div>
+			<div id="description-show"></div>
 		</div>
 		<div id="description-tags"></div>
+		<div id="description">
+			<div id="description-title"></div>
+			<div id="description-text"></div>
+		</div>
 	</div>
 
 </body>

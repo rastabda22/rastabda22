@@ -2135,7 +2135,7 @@
 
 	Utilities.mediaBoxContainerHeight = function() {
 		var heightForMediaAndTitle;
-		env.windowHeight = $(window).innerHeight();
+		// env.windowHeight = $(window).innerHeight();
 		heightForMediaAndTitle = env.windowHeight;
 		if ($("#album-view").is(":visible"))
 			heightForMediaAndTitle -= $("#album-view")[0].offsetHeight;
@@ -2173,10 +2173,10 @@
 				if (event.data.resize && id === "center") {
 					// this is executed only when resizing, it's not needed when first scaling
 					$("#media-box-container").css("width", env.windowWidth * 3).css("transform", "translate(-" + env.windowWidth + "px, 0px)");
-					$(".media-box").css("width", env.windowWidth);
-					$(".media-box .media-box-inner").css("width", env.windowWidth);
-					$(".media-box").show();
 				}
+				$(".media-box#" + id).css("width", env.windowWidth);
+				$(".media-box#" + id + " .media-box-inner").css("width", env.windowWidth);
+				$(".media-box#" + id).show();
 				if ($(".media-box#" + id + " .title").is(":visible"))
 					titleHeight = $(".media-box#" + id + " .title").outerHeight();
 				else
@@ -2184,9 +2184,9 @@
 
 				heightForMedia = heightForMediaAndTitle - titleHeight;
 				$("#media-box-container").css("height", heightForMediaAndTitle);
-				$(".media-box").css("height", heightForMediaAndTitle);
-				$(".media-box .media-box-inner").css("height", heightForMedia);
-				$(".media-box").show();
+				$(".media-box#" + id).css("height", heightForMediaAndTitle);
+				$(".media-box#" + id + " .media-box-inner").css("height", heightForMedia);
+				$(".media-box#" + id).show();
 
 				if (self.mimeType.indexOf("image/") === 0)
 					mediaElement = $(".media-box#" + id + " .media-box-inner img");
@@ -3116,8 +3116,10 @@
 	Utilities.formatDescription = function(text) {
 		// Replace CRLF by <p> and remove all useless <br>.
 		text = text.replace(/<(\/?\w+)>\s*\n\s*<(\/?\w+)>/g, "<$1><$2>");
-		text = text.replace(/\n/g, "</p><p class='description-text'>");
-		return "<p class='description-text'>" + text + "</p>";
+		text = text.replace(/\n/g, "</p><p>");
+		if (text.substring(0, 3) !== "<p ")
+			text = "<p>" + text + "</p>";
+		return text;
 	};
 
 	Utilities.prototype.adaptCaptionHeight = function() {
@@ -3158,9 +3160,9 @@
 	Utilities.setDescription = function(object) {
 
 		if (! Utilities.hasSomeDescription(object)) {
-			$("#description").addClass("hidden");
+			$("#description-wrapper").addClass("hidden");
 		} else {
-			$("#description").removeClass("hidden");
+			$("#description-wrapper").removeClass("hidden");
 
 			var title = object.title;
 			var description = object.description;
@@ -3170,6 +3172,8 @@
 			var nullDescription = (typeof description === "undefined") || ! description;
 			var nullTags = (typeof tags === "undefined") || ! tags.length;
 
+			// $("#description").css("max-height", (env.windowHeight / 2) + "px");
+
 			if (! nullTitle) {
 				$("#description-title").html(Utilities.formatDescription(title));
 			} else {
@@ -3177,9 +3181,10 @@
 			}
 
 			if (! nullDescription) {
-				$("#description-text .description").html(Utilities.formatDescription(description));
+				$("#description-text").html(Utilities.formatDescription(description));
+				$("#description-text p").addClass("description-text");
 			} else {
-				$("#description-text .description").html("");
+				$("#description-text").html("");
 			}
 			if (! nullTags) {
 				// let textualTags = "<p class='tags'> " + Utilities._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span></p>";
@@ -3204,25 +3209,70 @@
 		if (captionType === 'singleMedia' && $("#album-view").is(":visible"))
 			thumbsHeight = env.options.media_thumb_size + 20;
 
-		$("#description").css("right", 20);
-		$("#description").css("top", "");
-		$("#description").css("bottom", thumbsHeight + 20);
-		$("#description").css("height", "");
-		$("#description").css("max-height", "");
-		$("#description").css("max-width", (env.windowWidth / 3) + "px");
-		$("#description").css("height", "auto");
-		$("#description").css("max-height", (env.windowHeight / 2.5) + "px");
-		$("#description-text").css("max-height", ($("#description").innerHeight() - $("#description-title").outerHeight() - $("#description-tags").outerHeight() - 2 * parseInt($("#description").css("padding"))) + "px");
+		// $("#description-wrapper, #description-tags").css("right", 20);
+		// $("#description").css("top", "");
+		$("#description-wrapper").css("bottom", thumbsHeight + 20);
+		// $("#description-tags").css("bottom", (parseInt($("#description-wrapper").css("bottom")) - parseInt($("#description-tags").css("bottom"))) + "px");
+		$("#description-wrapper, #description").css("height", env.windowHeight.toString() + "px");
+		$("#description-text").css("max-height", (env.windowHeight / 2) + "px");
+		$("#description-text").css("max-height", ($("#description-wrapper").height() - $("#description-title").outerHeight() - $("#description-tags").outerHeight()) + "px");
+		$("#description-wrapper").css("max-height", (env.windowHeight / 2.5) + "px");
+		$("#description").css("max-height", (env.windowHeight / 2.5 - 4) + "px");
+		$("#description-wrapper, #description").css("height", "auto");
+		$("#description-text").css("height", "auto");
+		$("#description-text").css("margin-bottom", ($("#description-tags").outerHeight()) + "px");
+		// $("#description-text").css("height", (env.windowHeight / 2) + "px");
+		// $("#description-text").css("height", (parseInt($("#description-text").css("height")) + 5 * parseInt($("#description-text").css("padding"))) + "px");
+
+		let width = Math.min(env.windowWidth / 2, 500);
+		if (env.isMobile.any())
+			width = Math.min(env.windowWidth / 2, 400);
+		$("#description-wrapper, #description").css("max-width", width.toString() + "px");
+		$("#description-tags").css("max-width", (width - 20) + "px");
+		// $("#description-tags").css("right", (parseInt($("#description").css("width")) / 30) + "px");
+		// $("#description").css("max-height", (parseInt($("#description-wrapper").css("max-height")) - parseInt($("#description-tags").css("max-height"))) + "px");
+		// $("#description-text").css("max-height", $("#description").css("height").toString() + "px");
+		// $("#description-text").css("max-height", (env.windowHeight / 2.5) + "px");
+		// $("#description").css("height", $("#description").css("height") + "px");
+		// $("#description-text").css(
+		// 	"height",
+		// 	(
+		// 		$("#description").height() -
+		// 		$("#description-title").outerHeight() -
+		// 		$("#description-tags").outerHeight()
+		// 		// parseInt($("#description-title").css("padding-top")) -
+		// 		// parseInt($("#description-title").css("padding-bottom")) -
+		// 		// parseInt($("#description-text").css("padding-top")) -
+		// 		// parseInt($("#description-text").css("padding-bottom"))
+		// 		// parseInt($("#description-tags").css("padding-top")) -
+		// 		// parseInt($("#description-tags").css("padding-bottom"))
+		// 	) + "px"
+		// );
+		// $("#description-text").css("height", (parseInt($("#description-text").css("height")) + 5) + "px");
+		// $("#description-text").css("height", (parseInt($("#description-wrapper").css("height")) - $("#description-title").outerHeight()) + "px");
+		// $("#description-wrapper").css("padding-bottom", ($("#description-tags").outerHeight()) + "px");
+
 		if (env.isMobile.any() && env.currentMedia !== null) {
 			// move the box above the media bar
-			while (Utilities.isColliding($("#description"), $(".media-box#center .media-bar"))) {
-				$("#description").css("bottom", (parseInt($("#description").css("bottom")) + 5) + "px");
+			while (Utilities.isColliding($("#description-wrapper"), $(".media-box#center .media-bar"))) {
+				$("#description-wrapper").css("bottom", (parseInt($("#description-wrapper").css("bottom")) + 5) + "px");
 			}
-			while (Utilities.isColliding($("#description"), $("#next"))) {
-				$("#description").css("right", (parseInt($("#description").css("right")) + 5) + "px");
+			while (Utilities.isColliding($("#description-wrapper"), $("#next"))) {
+				$("#description-wrapper").css("right", (parseInt($("#description-wrapper").css("right")) + 5) + "px");
 			}
 		}
-		// }
+
+		$("#description-hide, #description-show").off("click").on(
+			"click",
+			function() {
+				$("#description-hide, #description-show").toggle();
+				$("#description-title, #description-text, #description-tags").toggle();
+			}
+		);
+	};
+
+	Utilities.prototype.numClassesInWorking = function() {
+		return $("#working")[0].classList.length > 1;
 	};
 
 	Utilities.mediaBoxGenerator = function(id) {

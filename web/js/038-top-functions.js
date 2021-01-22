@@ -63,7 +63,7 @@
 	TopFunctions.setTitle = function(id, singleMedia, self) {
 		return new Promise(
 			function (resolve_setTitle) {
-				var title = "<span class='title-main'>", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, isSelectionTitle, isMapTitle, originalTitle;
+				var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, isSelectionTitle, isMapTitle, originalTitle;
 				var titleAnchorClasses, where, initialValue, searchFolderCacheBase;
 				var linkCount = 0, linksToLeave = 1, latitude, longitude, arrayCoordinates;
 				var raquo = "&raquo;";
@@ -640,8 +640,6 @@
 							if (singleMedia === null)
 								singleMedia = env.currentAlbum.media[0];
 							title += "<span class='media-name'>" + singleMedia.nameForShowing(env.currentAlbum, true) + "</span>";
-							// close the .title-main span
-							title += "</span>";
 
 							if (env.currentMedia.hasGpsData()) {
 								let imgHtml = "<img class='title-img' height='20px' src='img/ic_place_white_24dp_2x.png'>";
@@ -657,8 +655,6 @@
 							let replace = "";
 							let shortcutAdded = false;
 							let marker = "<marker>";
-							// close the .title-main span
-							replace += "</span>";
 
 							let showSingleMarker = (env.currentAlbum.numPositionsInMedia > 0 && env.currentAlbum.numPositionsInTree !== env.currentAlbum.numPositionsInSubalbums);
 							let showDoubleMarker = (env.currentAlbum.numPositionsInSubalbums > 0);
@@ -702,19 +698,15 @@
 								fillInSpan,
 								replace
 							);
-						} else {
-							// close the .title-main span
-							title += "</span>";
 						}
 
 						if (env.isMobile.any()) {
 							// leave only the last link on mobile
 							// separate on "&raquo;""
-
-							var titleArray = title.split(raquo);
+							let titleArray = title.split(raquo);
 
 							for (i = titleArray.length - 1; i >= 0; i --) {
-								if (titleArray[i].indexOf(" href='#!") != -1) {
+								if (titleArray[i].indexOf(" href='#!") !== -1) {
 									linkCount ++;
 									if (linkCount > linksToLeave) {
 										title =
@@ -726,19 +718,27 @@
 							}
 						}
 
+						title = "<span class='title-main'>" + title + "</span>";
+
 						if (id === "album")
 							$("#album-view .title-string").html(title);
 						else
 							$(".media-box#" + id + " .title-string").html(title);
 
-
-						if (env.isMobile.any()) {
-							$(".dots").off("click").on(
+						if (env.isMobile.any() && id == "center") {
+							$("#center .dots").off("click").on(
 								"click",
+								{singleMedia: singleMedia},
 								function(ev) {
 									if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-										$(".dots-surroundings").hide();
-										$(".hidden-title").show();
+										$("#center .dots-surroundings").hide();
+										$("#center .hidden-title").show();
+
+										let event = {data: {}};
+										event.data.resize = true;
+										event.data.id = "center";
+										ev.data.singleMedia.scale(event);
+
 										return false;
 									}
 								}
