@@ -3261,7 +3261,14 @@
 				$("#description-wrapper").css("right", (parseInt($("#description-wrapper").css("right")) + 5) + "px");
 			}
 		}
-		// }
+
+		$("#description-hide, #description-show").off("click").on(
+			"click",
+			function() {
+				$("#description-hide, #description-show").toggle();
+				$("#description-title, #description-text, #description-tags").toggle();
+			}
+		);
 	};
 
 	Utilities.mediaBoxGenerator = function(id) {

@@ -599,7 +599,7 @@ video {
 	/* float: right; */
 }
 
-#description-hide {
+#description-hide-show {
 	font-size: 80%;
 	height: fit-content;
 	text-align: center;
@@ -611,6 +611,14 @@ video {
 	width: fit-content;
 	float: right;
 	padding: 3px;
+}
+
+#description-show {
+	display: none;
+}
+
+#description-hide, #description-show {
+	cursor: pointer;
 }
 
 #description-title, #description-text, #description-tags {
