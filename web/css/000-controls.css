@@ -593,7 +593,7 @@ video {
 }
 
 #description {
-	padding: 0.6em 0;
+	padding: 0.6em 0 0.6em 0.3em;
 	border: 3px white solid;
 	background-color: #222222;
 	/* float: right; */
@@ -613,18 +613,15 @@ video {
 	padding: 3px;
 }
 
-#description-title, #description-tags {
-	height: auto;
-}
-
-#description-tags {
-	position: relative;
+#description-title, #description-text, #description-tags {
+	height: fit-content;
+	display: block;
 }
 
 #description-title {
 	top: 0;
 	font-weight: bold;
-	padding: 0 0.3em 0.3em 0.3em;
+	padding: 0 0.3em 0.4em 0.3em;
 }
 
 #description-text {
@@ -636,11 +633,12 @@ video {
 }
 
 #description-tags {
-	position: fixed;
+	position: absolute;
 	bottom: 0;
 	padding: .3em;
 	background-color: black;
 	float: right;
+	right: 0;
 	width: fit-content;
 	height: fit-content;
 	font-size: 85%;

@@ -543,11 +543,11 @@
 
 	<div id="description-wrapper">
 		<div id="description-hide"></div>
+		<div id="description-tags"></div>
 		<div id="description">
 			<div id="description-title"></div>
 			<div id="description-text"></div>
 		</div>
-		<div id="description-tags"></div>
 	</div>
 
 </body>
