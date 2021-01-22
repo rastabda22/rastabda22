@@ -1,3 +1,4 @@
+* the description box has now a show/hide button
 * bug fixes
 * css trims
 
