@@ -3160,9 +3160,9 @@
 	Utilities.setDescription = function(object) {
 
 		if (! Utilities.hasSomeDescription(object)) {
-			$("#description").addClass("hidden");
+			$("#description-wrapper").addClass("hidden");
 		} else {
-			$("#description").removeClass("hidden");
+			$("#description-wrapper").removeClass("hidden");
 
 			var title = object.title;
 			var description = object.description;
