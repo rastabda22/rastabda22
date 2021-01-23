@@ -1385,7 +1385,7 @@
 		}
 	};
 
-	Functions.prototype.pinchSwipeInitialization = function() {
+	Functions.pinchSwipeInitialization = function() {
 		pS.initialize();
 		util.setPinchButtonsPosition();
 		pS.setPinchButtonsVisibility();
@@ -1805,6 +1805,7 @@
 	Functions.prototype.focusSearchField = Functions.focusSearchField;
 	Functions.prototype.toggleMetadata = Functions.toggleMetadata;
 	Functions.prototype.humanFileSize = Functions.humanFileSize;
+	Functions.prototype.pinchSwipeInitialization = Functions.pinchSwipeInitialization;
 
 	window.Functions = Functions;
 }());

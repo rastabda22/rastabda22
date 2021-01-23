@@ -2245,6 +2245,15 @@
 					$("#next, #prev").css("top", titleHeight + (mediaBoxInnerHeight - prevNextHeight) / 2);
 
 					Utilities.setLinksVisibility();
+					if (self.mimeType.indexOf("image/") === 0) {
+						Functions.pinchSwipeInitialization();
+						Utilities.setPinchButtonsPosition();
+						PinchSwipe.setPinchButtonsVisibility();
+					}
+					Utilities.setSelectButtonPosition();
+					Utilities.correctPrevNextPosition();
+					Utilities.setDescriptionPosition();
+
 				}
 
 				if (Utilities.bottomSocialButtons()) {
@@ -2867,7 +2876,7 @@
 		return folderMapTitle;
 	};
 
-	Utilities.prototype.setPinchButtonsPosition = function(containerHeight, containerWidth) {
+	Utilities.setPinchButtonsPosition = function(containerHeight, containerWidth) {
 		// calculate and set pinch buttons position
 
 		var mediaElement = $(".media-box#center .media-box-inner img");
@@ -2919,7 +2928,7 @@
 		return thickness;
 	};
 
-	Utilities.prototype.setSelectButtonPosition = function(containerHeight, containerWidth) {
+	Utilities.setSelectButtonPosition = function(containerHeight, containerWidth) {
 		// calculate and set pinch buttons position
 		if ($(".select-box").attr("src") === undefined)
 			return false;
@@ -3093,7 +3102,7 @@
 		$(id).hide();
 	};
 
-	Utilities.prototype.correctPrevNextPosition = function() {
+	Utilities.correctPrevNextPosition = function() {
 		$("#next").css("right", "");
 		$("#prev").css("left", "");
 		if (! env.fullScreenStatus && env.currentAlbum.numsMedia.imagesAndVideosTotal() > 1) {
@@ -3203,7 +3212,7 @@
 		Utilities.setDescription(this.metadata);
 	};
 
-	Utilities.prototype.setDescriptionPosition = function() {
+	Utilities.setDescriptionPosition = function() {
 		let thumbsHeight = 0;
 		if (env.currentMedia !== null && $("#album-view").is(":visible"))
 			thumbsHeight = env.options.media_thumb_size + 20;
@@ -3626,6 +3635,10 @@
 	Utilities.prototype.stripHtmlAndReplaceEntities = Utilities.stripHtmlAndReplaceEntities;
 	Utilities.prototype.isPopup = Utilities.isPopup;
 	Utilities.prototype.arrayUnion = Utilities.arrayUnion;
+	Utilities.prototype.setPinchButtonsPosition = Utilities.setPinchButtonsPosition;
+	Utilities.prototype.setSelectButtonPosition = Utilities.setSelectButtonPosition;
+	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
+	Utilities.prototype.setDescriptionPosition = Utilities.setDescriptionPosition;
 
 	window.Utilities = Utilities;
 }());
