@@ -1853,18 +1853,9 @@
 		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_descriptions = ! env.options.hide_descriptions;
 			f.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
+			f.setOptions();
 			f.updateMenu();
-			if (env.options.hide_descriptions && env.options.hide_tags) {
-				$("#description-wrapper").addClass("hidden-by-option");
-			} else {
-				$("#description-wrapper").removeClass("hidden-by-option");
-			}
-			if (env.options.hide_descriptions) {
-				$("#description-title, #description-text, .media-description, .album-description").addClass("hidden-by-option");
-			} else {
-				$("#description-title, #description-text, .media-description, .album-description").removeClass("hidden-by-option");
-				// TopFunctions.showAlbum("refreshMedia");
-			}
+
 			if (env.currentMedia !== null) {
 				let event = {data: {}};
 				event.data.resize = true;
@@ -1895,18 +1886,9 @@
 		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_tags = ! env.options.hide_tags;
 			f.setBooleanCookie("hideTags", env.options.hide_tags);
+			f.setOptions()
 			f.updateMenu();
-			if (env.options.hide_descriptions && env.options.hide_tags) {
-				$("#description-wrapper").addClass("hidden-by-option");
-			} else {
-				$("#description-wrapper").removeClass("hidden-by-option");
-			}
-			if (env.options.hide_tags) {
-				$("#description-tags, .media-tags, .album-tags").addClass("hidden-by-option");
-			} else {
-				$("#description-tags, .media-tags, .album-tags").removeClass("hidden-by-option");
-				// TopFunctions.showAlbum("refreshMedia");
-			}
+
 			if (env.currentMedia !== null) {
 				let event = {data: {}};
 				event.data.resize = true;
