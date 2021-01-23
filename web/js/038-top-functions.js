@@ -1408,11 +1408,10 @@
 					// When there is both a media and an album, we display the media's description; else it's the album's one
 					if (env.currentMedia === null || ! env.currentMedia.hasSomeDescription()) {
 						env.currentAlbum.setDescription();
-						util.setDescriptionPosition;
 					} else {
 						env.currentMedia.setDescription();
-						util.setDescriptionPosition();
 					}
+					util.setDescriptionPosition();
 
 					f.updateMenu();
 				}
@@ -2823,11 +2822,10 @@
 							// When there is both a media and an album, we display the media's description; else it's the album's one
 							if (env.currentMedia === null || ! env.currentMedia.hasSomeDescription()) {
 								env.currentAlbum.setDescription();
-								util.setDescriptionPosition;
 							} else {
 								env.currentMedia.setDescription();
-								util.setDescriptionPosition();
 							}
+							util.setDescriptionPosition();
 						},
 						function() {
 							console.trace();

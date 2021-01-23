@@ -1373,9 +1373,10 @@
 				$("#description-tags").addClass("hidden-by-option");
 			else
 				$("#description-tags").removeClass("hidden-by-option");
+
+			util.setDescriptionPosition();
 		}
 
-		util.setDescriptionPosition();
 
 		if (env.options.hide_bottom_thumbnails && (env.currentMedia != null || env.currentAlbum.isAlbumWithOneMedia())) {
 			$("#album-view").addClass("hidden-by-option");
