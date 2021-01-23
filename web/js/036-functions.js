@@ -1342,6 +1342,14 @@
 		else
 			$(".thumb-and-caption-container .media-name").removeClass("hidden-by-option");
 
+		// if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs || ! env.options.show_album_media_count)
+		if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs)
+			$(".album-name").addClass("hidden-by-option");
+
+		if (! env.options.show_album_media_count)
+			$(".album-caption-count").addClass("hidden-by-option");
+
+
 		if (env.options.show_album_media_count)
 			$(".title-count").removeClass("hidden-by-option");
 		else

@@ -1083,35 +1083,13 @@
 		thumbnailSize = env.options.media_thumb_size;
 
 		if (id === "center") {
-			if (env.options.hide_title) {
-				$("#" + id + " .title").addClass("hidden-by-option");
-			} else {
-				$("#" + id + " .title").removeClass("hidden-by-option");
-			}
-
 			if (env.fullScreenStatus) {
 				$("#" + id + " .title").addClass("hidden-by-fullscreen");
 			} else {
 				$("#" + id + " .title").removeClass("hidden-by-fullscreen");
 			}
 
-			if (env.options.hide_descriptions) {
-				$("#description-title, #description-text, .media-description").addClass("hidden-by-option");
-			} else {
-				$("#description-title, #description-text, .media-description").removeClass("hidden-by-option");
-			}
-
-			if (env.options.hide_tags) {
-				$("#description-tags, .media-tags").addClass("hidden-by-option");
-			} else {
-				$("#description-tags, .media-tags").removeClass("hidden-by-option");
-			}
-
-			if (env.options.hide_bottom_thumbnails) {
-				$("#album-view").addClass("hidden-by-option");
-			} else {
-				$("#album-view").removeClass("hidden-by-option");
-			}
+			f.setOptions();
 
 			if (env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1) {
 				$("#album-view").addClass("hidden");
@@ -2851,20 +2829,7 @@
 						subalbumsPromises.push(subalbumPromise);
 					}
 
-					// if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs || ! env.options.show_album_media_count)
-					if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs)
-						$(".album-name").addClass("hidden-by-option");
-
-					if (! env.options.show_album_media_count)
-						$(".album-caption-count").addClass("hidden-by-option");
-
-					if (env.options.hide_descriptions)
-						$("#description-title, #description-text, .media-description, .album-description").addClass("hidden-by-option");
-
-					if (env.options.hide_tags)
-						$("#description-tags, .media-tags, .album-tags").addClass("hidden-by-option");
-
-
+					f.setOptions();
 
 					Promise.all(subalbumsPromises).then(
 						function allRandomImagesGot() {
