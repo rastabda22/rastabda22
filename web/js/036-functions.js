@@ -1361,14 +1361,13 @@
 			$(".title").removeClass("hidden-by-option");
 
 		if (env.options.hide_descriptions && env.options.hide_tags) {
-			$("#description").addClass("hidden-by-option");
+			$("#description-wrapper").addClass("hidden-by-option");
 		} else {
-			$("#description").removeClass("hidden-by-option");
-
+			$("#description-wrapper").removeClass("hidden-by-option");
 			if (env.options.hide_descriptions)
-				$("#description-title, #description-text").addClass("hidden-by-option");
+				$("#description").addClass("hidden-by-option");
 			else
-				$("#description-title, #description-text").removeClass("hidden-by-option");
+				$("#description").removeClass("hidden-by-option");
 
 			if (env.options.hide_tags)
 				$("#description-tags").addClass("hidden-by-option");

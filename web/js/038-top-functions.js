@@ -1859,9 +1859,9 @@
 			f.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
 			f.updateMenu();
 			if (env.options.hide_descriptions && env.options.hide_tags) {
-				$("#description").addClass("hidden-by-option");
+				$("#description-wrapper").addClass("hidden-by-option");
 			} else {
-				$("#description").removeClass("hidden-by-option");
+				$("#description-wrapper").removeClass("hidden-by-option");
 			}
 			if (env.options.hide_descriptions) {
 				$("#description-title, #description-text, .media-description, .album-description").addClass("hidden-by-option");
@@ -1901,9 +1901,9 @@
 			f.setBooleanCookie("hideTags", env.options.hide_tags);
 			f.updateMenu();
 			if (env.options.hide_descriptions && env.options.hide_tags) {
-				$("#description").addClass("hidden-by-option");
+				$("#description-wrapper").addClass("hidden-by-option");
 			} else {
-				$("#description").removeClass("hidden-by-option");
+				$("#description-wrapper").removeClass("hidden-by-option");
 			}
 			if (env.options.hide_tags) {
 				$("#description-tags, .media-tags, .album-tags").addClass("hidden-by-option");
