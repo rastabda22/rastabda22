@@ -1085,8 +1085,10 @@
 		if (id === "center") {
 			if (env.fullScreenStatus) {
 				$("#" + id + " .title").addClass("hidden-by-fullscreen");
+				$("#album-view").addClass("hidden-by-fullscreen");
 			} else {
 				$("#" + id + " .title").removeClass("hidden-by-fullscreen");
+				$("#album-view").removeClass("hidden-by-fullscreen");
 			}
 
 			f.setOptions();
@@ -1095,12 +1097,6 @@
 				$("#album-view").addClass("hidden");
 			} else {
 				$("#album-view, #album-view #subalbums").removeClass("hidden");
-			}
-
-			if (env.fullScreenStatus) {
-				$("#album-view").addClass("hidden-by-fullscreen");
-			} else {
-				$("#album-view").removeClass("hidden-by-fullscreen");
 			}
 
 			if ($("#album-view").is(":visible")) {
