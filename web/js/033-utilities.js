@@ -3266,7 +3266,7 @@
 			"click",
 			function() {
 				$("#description-hide, #description-show").toggle();
-				$("#description-title, #description-text, #description-tags").toggle();
+				$("#description, #description-tags").toggle();
 			}
 		);
 	};

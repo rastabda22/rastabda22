@@ -1739,9 +1739,9 @@
 			$("#album-view").removeClass("hidden-by-option");
 		}
 		if (env.options.hide_descriptions) {
-			$("#description-title, #description-text, .media-description, .album-description").addClass("hidden-by-option");
+			$("#description, .media-description, .album-description").addClass("hidden-by-option");
 		} else {
-			$("#description-title, #description-text, .media-description, .album-description").removeClass("hidden-by-option");
+			$("#description, .media-description, .album-description").removeClass("hidden-by-option");
 		}
 		if (env.options.hide_tags) {
 			$("#description-tags, .media-tags, .album-tags").addClass("hidden-by-option");
@@ -2523,7 +2523,7 @@
 			}
 
 			if (env.options.hide_descriptions)
-				$("#description-title, #description-text, .media-description, .album-description").addClass("hidden-by-option");
+				$("#description, .media-description, .album-description").addClass("hidden-by-option");
 
 			if (env.options.hide_tags)
 				$("#description-tags, .media-tags, .album-tags").addClass("hidden-by-option");
