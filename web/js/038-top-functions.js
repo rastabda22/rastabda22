@@ -998,9 +998,10 @@
 			if (self.mimeType.indexOf("image/") === 0) {
 				pS.addMediaGesturesDetection();
 				util.setPinchButtonsPosition();
+				pS.setPinchButtonsVisibility();
 			}
-			util.correctPrevNextPosition();
 			util.setSelectButtonPosition();
+			util.correctPrevNextPosition();
 			util.setDescriptionPosition();
 
 			if (album.numsMedia.imagesAndVideosTotal() > 1) {
@@ -1029,10 +1030,11 @@
 							if (self.mimeType.indexOf("image/") === 0) {
 								f.pinchSwipeInitialization();
 								util.setPinchButtonsPosition();
+								pS.setPinchButtonsVisibility();
 							}
 							util.setSelectButtonPosition();
-							util.setDescriptionPosition();
 							util.correctPrevNextPosition();
+							util.setDescriptionPosition();
 						}
 					);
 
@@ -1827,11 +1829,13 @@
 				let scalePromise = env.currentMedia.scale(event);
 				scalePromise.then(
 					function() {
-						util.setPinchButtonsPosition();
-						PinchSwipe.setPinchButtonsVisibility();
+						if (env.currentMedia.mimeType.indexOf("image/") === 0) {
+							util.setPinchButtonsPosition();
+							pS.setPinchButtonsVisibility();
+						}
 						util.setSelectButtonPosition();
-						util.setDescriptionPosition();
 						util.correctPrevNextPosition();
+						util.setDescriptionPosition();
 					}
 				);
 				if (env.nextMedia !== null) {

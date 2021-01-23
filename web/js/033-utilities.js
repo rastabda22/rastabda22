@@ -2257,8 +2257,6 @@
 					resolve_scale([containerHeight, containerWidth]);
 
 				$("#loading").hide();
-				// Utilities.setPinchButtonsPosition();
-				// Utilities.correctPrevNextPosition();
 			}
 		);
 	};
@@ -3095,20 +3093,21 @@
 		$(id).hide();
 	};
 
-	Utilities.correctPrevNextPosition = function() {
-		var correctionForPinch =
-			Utilities.isColliding($("#pinch-container"), $("#next")) ?
-				$("#pinch-container").outerWidth() + parseInt($("#pinch-container").css("right")) : 0;
-		var correctionForSocial =
-			Utilities.lateralSocialButtons() && Utilities.isColliding($(".ssk-left"), $("#prev")) ?
-				$(".ssk").outerWidth() : 0;
-
+	Utilities.prototype.correctPrevNextPosition = function() {
 		$("#next").css("right", "");
 		$("#prev").css("left", "");
 		if (! env.fullScreenStatus && env.currentAlbum.numsMedia.imagesAndVideosTotal() > 1) {
 			// correct next button position when pinch buttons collide
+			let correctionForPinch =
+				Utilities.isColliding($("#pinch-container"), $("#next")) ?
+					$("#pinch-container").outerWidth() + parseInt($("#pinch-container").css("right")) : 0;
 			$("#next").css("right", correctionForPinch.toString() + "px");
+
 			// correct prev button position when social buttons are on the left
+			let correctionForSocial =
+				Utilities.lateralSocialButtons() && Utilities.isColliding($(".ssk-left"), $("#prev")) ?
+					$(".ssk").outerWidth() : 0;
+
 			$("#prev").css("left", correctionForSocial.toString() + "px");
 		}
 	};
@@ -3597,7 +3596,6 @@
 	Utilities.prototype.xDistanceBetweenCoordinatePoints = Utilities.xDistanceBetweenCoordinatePoints;
 	Utilities.prototype.yDistanceBetweenCoordinatePoints = Utilities.yDistanceBetweenCoordinatePoints;
 	Utilities.prototype.degreesToRadians = Utilities.degreesToRadians;
-	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
 	Utilities.prototype.mediaBoxContainerHeight = Utilities.mediaBoxContainerHeight;
 	Utilities.prototype.isByDateCacheBase = Utilities.isByDateCacheBase;
 	Utilities.prototype.isByGpsCacheBase = Utilities.isByGpsCacheBase;
