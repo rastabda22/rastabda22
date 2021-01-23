@@ -3211,13 +3211,22 @@
 
 		$("#description-wrapper").css("bottom", thumbsHeight + 20);
 		$("#description-wrapper, #description").css("height", env.windowHeight.toString() + "px");
-		$("#description-text").css("max-height", (env.windowHeight / 2) + "px");
-		$("#description-text").css("max-height", ($("#description-wrapper").height() - $("#description-title").outerHeight() - $("#description-tags").outerHeight()) + "px");
+		if ($("#description-text").is(":visible")) {
+			$("#description-text").css("max-height", (env.windowHeight / 2) + "px");
+			$("#description-text").css("max-height", ($("#description-wrapper").height() - $("#description-title").outerHeight() - $("#description-tags").outerHeight()) + "px");
+		} else {
+			$("#description-text").css("max-height", "");
+		}
 		$("#description-wrapper").css("max-height", (env.windowHeight / 2.5) + "px");
 		$("#description").css("max-height", (env.windowHeight / 2.5 - 4) + "px");
 		$("#description-wrapper, #description").css("height", "auto");
-		$("#description-text").css("height", "auto");
-		$("#description-text").css("margin-bottom", ($("#description-tags").outerHeight()) + "px");
+		if ($("#description-text").is(":visible")) {
+			$("#description-text").css("height", "auto");
+			$("#description-text").css("margin-bottom", ($("#description-tags").outerHeight()) + "px");
+		} else {
+			$("#description-text").css("height", "");
+			$("#description-text").css("margin-bottom", "");
+		}
 
 		let width = Math.min(env.windowWidth / 2, 500);
 		if (env.isMobile.any())
