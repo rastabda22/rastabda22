@@ -177,7 +177,7 @@
 				util.setPinchButtonsPosition();
 				PinchSwipe.setPinchButtonsVisibility();
 				util.setSelectButtonPosition();
-				util.setDescriptionPosition('singleMedia');
+				util.setDescriptionPosition();
 				util.correctPrevNextPosition();
 
 				currentZoom = finalZoom;
@@ -230,7 +230,7 @@
 								util.setPinchButtonsPosition();
 								PinchSwipe.setPinchButtonsVisibility();
 								util.setSelectButtonPosition();
-								util.setDescriptionPosition('singleMedia');
+								util.setDescriptionPosition();
 								util.correctPrevNextPosition();
 
 								mediaWidth = $(mediaSelector).css("width");
@@ -337,7 +337,7 @@
 					util.setPinchButtonsPosition();
 					PinchSwipe.setPinchButtonsVisibility();
 					util.setSelectButtonPosition();
-					util.setDescriptionPosition('singleMedia');
+					util.setDescriptionPosition();
 					util.correctPrevNextPosition();
 
 					mediaWidth = $(mediaSelector).css("width");

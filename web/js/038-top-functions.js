@@ -1001,7 +1001,7 @@
 			}
 			util.correctPrevNextPosition();
 			util.setSelectButtonPosition();
-			util.setDescriptionPosition('singleMedia');
+			util.setDescriptionPosition();
 
 			if (album.numsMedia.imagesAndVideosTotal() > 1) {
 				env.prevMedia.show(album, 'left');
@@ -1031,7 +1031,7 @@
 								util.setPinchButtonsPosition();
 							}
 							util.setSelectButtonPosition();
-							util.setDescriptionPosition('singleMedia');
+							util.setDescriptionPosition();
 							util.correctPrevNextPosition();
 						}
 					);
@@ -1408,10 +1408,10 @@
 					// When there is both a media and an album, we display the media's description; else it's the album's one
 					if (env.currentMedia === null || ! env.currentMedia.hasSomeDescription()) {
 						env.currentAlbum.setDescription();
-						util.setDescriptionPosition('album');
+						util.setDescriptionPosition;
 					} else {
 						env.currentMedia.setDescription();
-						util.setDescriptionPosition('singleMedia');
+						util.setDescriptionPosition();
 					}
 
 					f.updateMenu();
@@ -1831,7 +1831,7 @@
 						util.setPinchButtonsPosition();
 						PinchSwipe.setPinchButtonsVisibility();
 						util.setSelectButtonPosition();
-						util.setDescriptionPosition('singleMedia');
+						util.setDescriptionPosition();
 						util.correctPrevNextPosition();
 					}
 				);
@@ -2819,10 +2819,10 @@
 							// When there is both a media and an album, we display the media's description; else it's the album's one
 							if (env.currentMedia === null || ! env.currentMedia.hasSomeDescription()) {
 								env.currentAlbum.setDescription();
-								util.setDescriptionPosition('album');
+								util.setDescriptionPosition;
 							} else {
 								env.currentMedia.setDescription();
-								util.setDescriptionPosition('singleMedia');
+								util.setDescriptionPosition();
 							}
 						},
 						function() {

@@ -3204,9 +3204,9 @@
 		Utilities.setDescription(this.metadata);
 	};
 
-	Utilities.prototype.setDescriptionPosition = function(captionType) {
+	Utilities.prototype.setDescriptionPosition = function() {
 		let thumbsHeight = 0;
-		if (captionType === 'singleMedia' && $("#album-view").is(":visible"))
+		if (env.currentMedia !== null && $("#album-view").is(":visible"))
 			thumbsHeight = env.options.media_thumb_size + 20;
 
 		// $("#description-wrapper, #description-tags").css("right", 20);
