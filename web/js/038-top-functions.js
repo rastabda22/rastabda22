@@ -1853,7 +1853,9 @@
 		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_descriptions = ! env.options.hide_descriptions;
 			f.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
+
 			f.setOptions();
+			util.setDescriptionPosition();
 			f.updateMenu();
 
 			if (env.currentMedia !== null) {
@@ -1886,7 +1888,9 @@
 		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_tags = ! env.options.hide_tags;
 			f.setBooleanCookie("hideTags", env.options.hide_tags);
-			f.setOptions()
+
+			f.setOptions();
+			util.setDescriptionPosition();
 			f.updateMenu();
 
 			if (env.currentMedia !== null) {
