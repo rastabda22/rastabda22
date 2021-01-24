@@ -1858,7 +1858,6 @@
 			f.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
 
 			f.setOptions();
-			util.setDescriptionPosition();
 			f.updateMenu();
 
 			if (env.currentMedia !== null) {
@@ -1893,7 +1892,6 @@
 			f.setBooleanCookie("hideTags", env.options.hide_tags);
 
 			f.setOptions();
-			util.setDescriptionPosition();
 			f.updateMenu();
 
 			if (env.currentMedia !== null) {
