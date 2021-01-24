@@ -2988,19 +2988,21 @@
 		return result;
 	};
 
-	Utilities.isColliding = function(div1, div2) {
+	Utilities.isColliding = function(jQueryObject1, jQueryObject2) {
 		// from https://gist.github.com/jtsternberg/c272d7de5b967cec2d3d
-		// Div 1 data
-		var d1_offset             = div1.offset();
-		var d1_height             = div1.outerHeight(true);
-		var d1_width              = div1.outerWidth(true);
+
+		if (! jQueryObject1.is(":visible") || ! jQueryObject2.is(":visible"))
+			return false;
+		var d1_offset             = jQueryObject1.offset();
+		var d1_height             = jQueryObject1.outerHeight(true);
+		var d1_width              = jQueryObject1.outerWidth(true);
 		var d1_distance_from_top  = d1_offset.top + d1_height;
 		var d1_distance_from_left = d1_offset.left + d1_width;
 
 		// Div 2 data
-		var d2_offset             = div2.offset();
-		var d2_height             = div2.outerHeight(true);
-		var d2_width              = div2.outerWidth(true);
+		var d2_offset             = jQueryObject2.offset();
+		var d2_height             = jQueryObject2.outerHeight(true);
+		var d2_width              = jQueryObject2.outerWidth(true);
 		var d2_distance_from_top  = d2_offset.top + d2_height;
 		var d2_distance_from_left = d2_offset.left + d2_width;
 
@@ -3277,7 +3279,7 @@
 			}
 		}
 		while (Utilities.isColliding($("#description-wrapper"), $("#next"))) {
-			$("#description-wrapper").css("right", (parseInt($("#description-wrapper").css("right")) + 5) + "px");
+			$("#description-wrapper").css("right", ($("#description-wrapper").right() + 5) + "px");
 		}
 
 		$("#description-hide, #description-show").off("click").on(
