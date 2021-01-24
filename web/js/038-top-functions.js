@@ -2505,11 +2505,11 @@
 				env.currentAlbum.showMedia();
 			}
 
-			if (env.options.hide_descriptions)
-				$("#description, .media-description, .album-description").addClass("hidden-by-option");
-
-			if (env.options.hide_tags)
-				$("#description-tags, .media-tags, .album-tags").addClass("hidden-by-option");
+			// if (env.options.hide_descriptions)
+			// 	$("#description, .media-description, .album-description").addClass("hidden-by-option");
+			//
+			// if (env.options.hide_tags)
+			// 	$("#description-tags, .media-tags, .album-tags").addClass("hidden-by-option");
 
 			if (env.currentMedia === null) {
 				if (env.fromEscKey && env.firstEscKey) {
