@@ -771,6 +771,11 @@ $(document).ready(function() {
 			$("link[rel=video_src]").remove();
 			$("ul#right-menu").removeClass("expand");
 
+			if (util.isMap() || util.isPopup()) {
+				// we are in a map: close it
+				$('.modal-close')[0].click();
+			}
+
 			var optionsPromise = f.getOptions();
 			optionsPromise.then(
 				function() {

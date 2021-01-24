@@ -2245,6 +2245,15 @@
 					$("#next, #prev").css("top", titleHeight + (mediaBoxInnerHeight - prevNextHeight) / 2);
 
 					Utilities.setLinksVisibility();
+					if (self.mimeType.indexOf("image/") === 0) {
+						Functions.pinchSwipeInitialization();
+						Utilities.setPinchButtonsPosition();
+						PinchSwipe.setPinchButtonsVisibility();
+					}
+					Utilities.setSelectButtonPosition();
+					Utilities.correctPrevNextPosition();
+					Utilities.setDescriptionPosition();
+
 				}
 
 				if (Utilities.bottomSocialButtons()) {
@@ -2257,8 +2266,6 @@
 					resolve_scale([containerHeight, containerWidth]);
 
 				$("#loading").hide();
-				// Utilities.setPinchButtonsPosition();
-				// Utilities.correctPrevNextPosition();
 			}
 		);
 	};
@@ -2869,7 +2876,7 @@
 		return folderMapTitle;
 	};
 
-	Utilities.prototype.setPinchButtonsPosition = function(containerHeight, containerWidth) {
+	Utilities.setPinchButtonsPosition = function(containerHeight, containerWidth) {
 		// calculate and set pinch buttons position
 
 		var mediaElement = $(".media-box#center .media-box-inner img");
@@ -2921,7 +2928,7 @@
 		return thickness;
 	};
 
-	Utilities.prototype.setSelectButtonPosition = function(containerHeight, containerWidth) {
+	Utilities.setSelectButtonPosition = function(containerHeight, containerWidth) {
 		// calculate and set pinch buttons position
 		if ($(".select-box").attr("src") === undefined)
 			return false;
@@ -3096,19 +3103,20 @@
 	};
 
 	Utilities.correctPrevNextPosition = function() {
-		var correctionForPinch =
-			Utilities.isColliding($("#pinch-container"), $("#next")) ?
-				$("#pinch-container").outerWidth() + parseInt($("#pinch-container").css("right")) : 0;
-		var correctionForSocial =
-			Utilities.lateralSocialButtons() && Utilities.isColliding($(".ssk-left"), $("#prev")) ?
-				$(".ssk").outerWidth() : 0;
-
 		$("#next").css("right", "");
 		$("#prev").css("left", "");
 		if (! env.fullScreenStatus && env.currentAlbum.numsMedia.imagesAndVideosTotal() > 1) {
 			// correct next button position when pinch buttons collide
+			let correctionForPinch =
+				Utilities.isColliding($("#pinch-container"), $("#next")) ?
+					$("#pinch-container").outerWidth() + parseInt($("#pinch-container").css("right")) : 0;
 			$("#next").css("right", correctionForPinch.toString() + "px");
+
 			// correct prev button position when social buttons are on the left
+			let correctionForSocial =
+				Utilities.lateralSocialButtons() && Utilities.isColliding($(".ssk-left"), $("#prev")) ?
+					$(".ssk").outerWidth() : 0;
+
 			$("#prev").css("left", correctionForSocial.toString() + "px");
 		}
 	};
@@ -3204,53 +3212,50 @@
 		Utilities.setDescription(this.metadata);
 	};
 
-	Utilities.prototype.setDescriptionPosition = function(captionType) {
-		let thumbsHeight = 0;
-		if (captionType === 'singleMedia' && $("#album-view").is(":visible"))
+	Utilities.setDescriptionPosition = function() {
+		var thumbsHeight = 0;
+		if (env.currentMedia !== null && $("#album-view").is(":visible"))
 			thumbsHeight = env.options.media_thumb_size + 20;
 
-		// $("#description-wrapper, #description-tags").css("right", 20);
-		// $("#description").css("top", "");
 		$("#description-wrapper").css("bottom", thumbsHeight + 20);
-		// $("#description-tags").css("bottom", (parseInt($("#description-wrapper").css("bottom")) - parseInt($("#description-tags").css("bottom"))) + "px");
-		$("#description-wrapper, #description").css("height", env.windowHeight.toString() + "px");
-		$("#description-text").css("max-height", (env.windowHeight / 2) + "px");
-		$("#description-text").css("max-height", ($("#description-wrapper").height() - $("#description-title").outerHeight() - $("#description-tags").outerHeight()) + "px");
-		$("#description-wrapper").css("max-height", (env.windowHeight / 2.5) + "px");
-		$("#description").css("max-height", (env.windowHeight / 2.5 - 4) + "px");
-		$("#description-wrapper, #description").css("height", "auto");
-		$("#description-text").css("height", "auto");
-		$("#description-text").css("margin-bottom", ($("#description-tags").outerHeight()) + "px");
-		// $("#description-text").css("height", (env.windowHeight / 2) + "px");
-		// $("#description-text").css("height", (parseInt($("#description-text").css("height")) + 5 * parseInt($("#description-text").css("padding"))) + "px");
+		var maxHeight = Math.min(env.windowHeight / 3, 500);
+		if (env.isMobile.any())
+			maxHeight = Math.min(env.windowHeight / 3, 400);
 
-		let width = Math.min(env.windowWidth / 2, 500);
+		var width = Math.min(env.windowWidth / 2, 500);
 		if (env.isMobile.any())
 			width = Math.min(env.windowWidth / 2, 400);
+
+		var object = env.currentMedia !== null ? env.currentMedia.metadata : env.currentAlbum;
+		var hasDescription = (object.description !== undefined && object.description.length);
+		var hasTags = (object.tags !== undefined && object.tags.length);
+		if ($("#description-text").is(":visible") && ! env.options.hide_descriptions && hasDescription) {
+			$("#description-tags").css("position", "");
+			// $("#description-tags").css("width", "");
+			$("#description-text").css("max-height", maxHeight.toString() + "px");
+		} else if ($("#description-tags").is(":visible") && ! env.options.hide_tags && hasTags) {
+			$("#description-tags").css("position", "static");
+			// $("#description-tags").css("width", width.toString() + "px");
+			$("#description-tags").css("max-height", maxHeight.toString() + "px");
+		} else {
+			$("#description-tags").css("position", "");
+			// $("#description-tags").css("width", "");
+			$("#description").css("max-height", maxHeight.toString() + "px");
+		}
+
+		var bottomSpace = 0;
+		if ($("#description-tags").is(":visible") && ! env.options.hide_tags && hasTags)
+			bottomSpace = $("#description-tags").outerHeight();
+		if ($("#description-text").is(":visible")) {
+			$("#description-text").css("margin-bottom", bottomSpace.toString() + "px");
+			$("#description").css("margin-bottom", "");
+		} else {
+			$("#description-text").css("height", "");
+			$("#description").css("margin-bottom", bottomSpace.toString() + "px");
+		}
+
 		$("#description-wrapper, #description").css("max-width", width.toString() + "px");
-		$("#description-tags").css("max-width", (width - 20) + "px");
-		// $("#description-tags").css("right", (parseInt($("#description").css("width")) / 30) + "px");
-		// $("#description").css("max-height", (parseInt($("#description-wrapper").css("max-height")) - parseInt($("#description-tags").css("max-height"))) + "px");
-		// $("#description-text").css("max-height", $("#description").css("height").toString() + "px");
-		// $("#description-text").css("max-height", (env.windowHeight / 2.5) + "px");
-		// $("#description").css("height", $("#description").css("height") + "px");
-		// $("#description-text").css(
-		// 	"height",
-		// 	(
-		// 		$("#description").height() -
-		// 		$("#description-title").outerHeight() -
-		// 		$("#description-tags").outerHeight()
-		// 		// parseInt($("#description-title").css("padding-top")) -
-		// 		// parseInt($("#description-title").css("padding-bottom")) -
-		// 		// parseInt($("#description-text").css("padding-top")) -
-		// 		// parseInt($("#description-text").css("padding-bottom"))
-		// 		// parseInt($("#description-tags").css("padding-top")) -
-		// 		// parseInt($("#description-tags").css("padding-bottom"))
-		// 	) + "px"
-		// );
-		// $("#description-text").css("height", (parseInt($("#description-text").css("height")) + 5) + "px");
-		// $("#description-text").css("height", (parseInt($("#description-wrapper").css("height")) - $("#description-title").outerHeight()) + "px");
-		// $("#description-wrapper").css("padding-bottom", ($("#description-tags").outerHeight()) + "px");
+		$("#description-tags").css("max-width", (width - 20).toString() + "px");
 
 		if (env.isMobile.any() && env.currentMedia !== null) {
 			// move the box above the media bar
@@ -3266,7 +3271,7 @@
 			"click",
 			function() {
 				$("#description-hide, #description-show").toggle();
-				$("#description-title, #description-text, #description-tags").toggle();
+				$("#description, #description-tags").toggle();
 			}
 		);
 	};
@@ -3615,7 +3620,6 @@
 	Utilities.prototype.xDistanceBetweenCoordinatePoints = Utilities.xDistanceBetweenCoordinatePoints;
 	Utilities.prototype.yDistanceBetweenCoordinatePoints = Utilities.yDistanceBetweenCoordinatePoints;
 	Utilities.prototype.degreesToRadians = Utilities.degreesToRadians;
-	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
 	Utilities.prototype.mediaBoxContainerHeight = Utilities.mediaBoxContainerHeight;
 	Utilities.prototype.isByDateCacheBase = Utilities.isByDateCacheBase;
 	Utilities.prototype.isByGpsCacheBase = Utilities.isByGpsCacheBase;
@@ -3646,6 +3650,10 @@
 	Utilities.prototype.stripHtmlAndReplaceEntities = Utilities.stripHtmlAndReplaceEntities;
 	Utilities.prototype.isPopup = Utilities.isPopup;
 	Utilities.prototype.arrayUnion = Utilities.arrayUnion;
+	Utilities.prototype.setPinchButtonsPosition = Utilities.setPinchButtonsPosition;
+	Utilities.prototype.setSelectButtonPosition = Utilities.setSelectButtonPosition;
+	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
+	Utilities.prototype.setDescriptionPosition = Utilities.setDescriptionPosition;
 
 	window.Utilities = Utilities;
 }());

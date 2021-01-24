@@ -1342,6 +1342,14 @@
 		else
 			$(".thumb-and-caption-container .media-name").removeClass("hidden-by-option");
 
+		// if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs || ! env.options.show_album_media_count)
+		if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs)
+			$(".album-name").addClass("hidden-by-option");
+
+		if (! env.options.show_album_media_count)
+			$(".album-caption-count").addClass("hidden-by-option");
+
+
 		if (env.options.show_album_media_count)
 			$(".title-count").removeClass("hidden-by-option");
 		else
@@ -1353,20 +1361,22 @@
 			$(".title").removeClass("hidden-by-option");
 
 		if (env.options.hide_descriptions && env.options.hide_tags) {
-			$("#description").addClass("hidden-by-option");
+			$("#description-wrapper").addClass("hidden-by-option");
 		} else {
-			$("#description").removeClass("hidden-by-option");
-
+			$("#description-wrapper").removeClass("hidden-by-option");
 			if (env.options.hide_descriptions)
-				$("#description-title, #description-text").addClass("hidden-by-option");
+				$("#description").addClass("hidden-by-option");
 			else
-				$("#description-title, #description-text").removeClass("hidden-by-option");
+				$("#description").removeClass("hidden-by-option");
 
 			if (env.options.hide_tags)
 				$("#description-tags").addClass("hidden-by-option");
 			else
 				$("#description-tags").removeClass("hidden-by-option");
+
+			util.setDescriptionPosition();
 		}
+
 
 		if (env.options.hide_bottom_thumbnails && (env.currentMedia != null || env.currentAlbum.isAlbumWithOneMedia())) {
 			$("#album-view").addClass("hidden-by-option");
@@ -1375,11 +1385,13 @@
 		}
 	};
 
-	Functions.prototype.pinchSwipeInitialization = function() {
+	Functions.pinchSwipeInitialization = function() {
 		pS.initialize();
 		util.setPinchButtonsPosition();
+		pS.setPinchButtonsVisibility();
 		util.setSelectButtonPosition();
 		util.correctPrevNextPosition();
+		util.setDescriptionPosition();
 	};
 
 	Functions.threeYears = function() {
@@ -1793,6 +1805,7 @@
 	Functions.prototype.focusSearchField = Functions.focusSearchField;
 	Functions.prototype.toggleMetadata = Functions.toggleMetadata;
 	Functions.prototype.humanFileSize = Functions.humanFileSize;
+	Functions.prototype.pinchSwipeInitialization = Functions.pinchSwipeInitialization;
 
 	window.Functions = Functions;
 }());

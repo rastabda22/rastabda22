@@ -1,3 +1,8 @@
+### version v4.9.30 (Jan 24, 2021)
+
+* css trims
+* bug fixes
+
 ### version v4.9.29 (Jan 22, 2021)
 
 * the description box has now a show/hide button

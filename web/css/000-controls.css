@@ -603,22 +603,24 @@ video {
 	font-size: 80%;
 	height: fit-content;
 	text-align: center;
-	border-top: 2px white solid;
-	border-right: 2px white solid;
-	border-left: 1px white solid;
-	border-bottom: 1px white solid;
 	background-color: #222222;
 	width: fit-content;
 	float: right;
-	padding: 3px;
 }
 
 #description-show {
 	display: none;
+	border: 1px white solid;
+	opacity: .4;
 }
 
 #description-hide, #description-show {
 	cursor: pointer;
+	border-top: 2px white solid;
+	border-right: 2px white solid;
+	border-left: 1px white solid;
+	border-bottom: 1px white solid;
+	padding: 3px;
 }
 
 #description-title, #description-text, #description-tags {
@@ -1051,7 +1053,11 @@ ul#right-menu ul li.download-album.active {
 }
 
 .download-album.red {
-	color: red;
+	background-color:rgba(255, 0, 0, 0.35);
+}
+
+.download-album.red.active {
+	background-color:rgba(255, 165, 0, 0.35);
 }
 
 .download-album.red:not(.active) {
