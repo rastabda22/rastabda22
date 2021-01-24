@@ -3264,7 +3264,7 @@
 		.setLatLng(env.mapAlbum.positionsAndMediaInTree.averagePosition())
 		.openOn(env.mymap);
 
-		$('.leaflet-popup-close-button').on(
+		$('.leaflet-popup-close-button').off("click").on(
 			"click",
 			function() {
 				$(".modal-close").show();
