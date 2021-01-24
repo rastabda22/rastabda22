@@ -3272,14 +3272,21 @@
 		$("#description-tags").css("width", "");
 		$("#description-tags").css("height", "");
 
-		if (env.isMobile.any() && env.currentMedia !== null) {
-			// move the box above the media bar
-			while (Utilities.isColliding($("#description-wrapper"), $(".media-box#center .media-bar"))) {
-				$("#description-wrapper").css("bottom", (parseInt($("#description-wrapper").css("bottom")) + 5) + "px");
+		if (env.isMobile.any()) {
+			if (env.currentMedia !== null) {
+				// move the box above the media bar
+				while (Utilities.isColliding($("#description-wrapper"), $(".media-box#center .media-bar"))) {
+					$("#description-wrapper").css("bottom", (parseInt($("#description-wrapper").css("bottom")) + 5) + "px");
+				}
+			}
+			if (Utilities.bottomSocialButtons()) {
+				while (Utilities.isColliding($("#description-wrapper"), $("#social > div"))) {
+					$("#description-wrapper").css("bottom", (parseInt($("#description-wrapper").css("bottom")) + 5) + "px");
+				}
 			}
 		}
 		while (Utilities.isColliding($("#description-wrapper"), $("#next"))) {
-			$("#description-wrapper").css("right", ($("#description-wrapper").right() + 5) + "px");
+			$("#description-wrapper").css("right", (parseInt($("#description-wrapper").css("right")) + 5) + "px");
 		}
 
 		$("#description-hide, #description-show").off("click").on(
