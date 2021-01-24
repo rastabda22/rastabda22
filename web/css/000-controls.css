@@ -558,6 +558,7 @@ video {
 
 .tag a:hover {
 	font-style: normal;
+	font-weight: bold;
 }
 
 .album-button-and-caption .tag {
