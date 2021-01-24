@@ -3253,6 +3253,7 @@
 			env.popup.remove();
 			$(".leaflet-popup").remove();
 		}
+		$(".modal-close").hide();
 		env.popup = L.popup(
 			{
 				maxWidth: env.maxWidthForPopupContent,
@@ -3262,6 +3263,13 @@
 		).setContent(env.titleWrapper)
 		.setLatLng(env.mapAlbum.positionsAndMediaInTree.averagePosition())
 		.openOn(env.mymap);
+
+		$('.leaflet-popup-close-button').on(
+			"click",
+			function() {
+				$(".modal-close").show();
+			}
+		);
 
 		map.addPopupMover();
 
