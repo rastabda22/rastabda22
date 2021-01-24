@@ -3213,34 +3213,49 @@
 	};
 
 	Utilities.setDescriptionPosition = function() {
-		let thumbsHeight = 0;
+		var thumbsHeight = 0;
 		if (env.currentMedia !== null && $("#album-view").is(":visible"))
 			thumbsHeight = env.options.media_thumb_size + 20;
 
 		$("#description-wrapper").css("bottom", thumbsHeight + 20);
-		$("#description-wrapper, #description").css("height", env.windowHeight.toString() + "px");
-		if ($("#description-text").is(":visible")) {
-			$("#description-text").css("max-height", (env.windowHeight / 2) + "px");
-			$("#description-text").css("max-height", ($("#description-wrapper").height() - $("#description-title").outerHeight() - $("#description-tags").outerHeight()) + "px");
-		} else {
-			$("#description-text").css("max-height", "");
-		}
-		$("#description-wrapper").css("max-height", (env.windowHeight / 2.5) + "px");
-		$("#description").css("max-height", (env.windowHeight / 2.5 - 4) + "px");
-		$("#description-wrapper, #description").css("height", "auto");
-		if ($("#description-text").is(":visible")) {
-			$("#description-text").css("height", "auto");
-			$("#description-text").css("margin-bottom", ($("#description-tags").outerHeight()) + "px");
-		} else {
-			$("#description-text").css("height", "");
-			$("#description-text").css("margin-bottom", "");
-		}
+		var maxHeight = Math.min(env.windowHeight / 3, 500);
+		if (env.isMobile.any())
+			maxHeight = Math.min(env.windowHeight / 3, 400);
 
-		let width = Math.min(env.windowWidth / 2, 500);
+		var width = Math.min(env.windowWidth / 2, 500);
 		if (env.isMobile.any())
 			width = Math.min(env.windowWidth / 2, 400);
+
+		var object = env.currentMedia !== null ? env.currentMedia.metadata : env.currentAlbum;
+		var hasDescription = (object.description !== undefined && object.description.length);
+		var hasTags = (object.tags !== undefined && object.tags.length);
+		if ($("#description-text").is(":visible") && ! env.options.hide_descriptions && hasDescription) {
+			$("#description-tags").css("position", "");
+			// $("#description-tags").css("width", "");
+			$("#description-text").css("max-height", maxHeight.toString() + "px");
+		} else if ($("#description-tags").is(":visible") && ! env.options.hide_tags && hasTags) {
+			$("#description-tags").css("position", "static");
+			// $("#description-tags").css("width", width.toString() + "px");
+			$("#description-tags").css("max-height", maxHeight.toString() + "px");
+		} else {
+			$("#description-tags").css("position", "");
+			// $("#description-tags").css("width", "");
+			$("#description").css("max-height", maxHeight.toString() + "px");
+		}
+
+		var bottomSpace = 0;
+		if ($("#description-tags").is(":visible") && ! env.options.hide_tags && hasTags)
+			bottomSpace = $("#description-tags").outerHeight();
+		if ($("#description-text").is(":visible")) {
+			$("#description-text").css("margin-bottom", bottomSpace.toString() + "px");
+			$("#description").css("margin-bottom", "");
+		} else {
+			$("#description-text").css("height", "");
+			$("#description").css("margin-bottom", bottomSpace.toString() + "px");
+		}
+
 		$("#description-wrapper, #description").css("max-width", width.toString() + "px");
-		$("#description-tags").css("max-width", (width - 20) + "px");
+		$("#description-tags").css("max-width", (width - 20).toString() + "px");
 
 		if (env.isMobile.any() && env.currentMedia !== null) {
 			// move the box above the media bar
