@@ -1,4 +1,5 @@
 * css trims
+* bug fixes
 
 ### version v4.9.29 (Jan 22, 2021)
 
