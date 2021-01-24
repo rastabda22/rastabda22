@@ -3216,8 +3216,8 @@
 		var thumbsHeight = 0;
 		if (env.currentMedia !== null && $("#album-view").is(":visible"))
 			thumbsHeight = env.options.media_thumb_size + 20;
-
 		$("#description-wrapper").css("bottom", thumbsHeight + 20);
+
 		var maxHeight = Math.min(env.windowHeight / 3, 500);
 		if (env.isMobile.any())
 			maxHeight = Math.min(env.windowHeight / 3, 400);
@@ -3229,28 +3229,28 @@
 		var object = env.currentMedia !== null ? env.currentMedia.metadata : env.currentAlbum;
 		var hasDescription = (object.description !== undefined && object.description.length);
 		var hasTags = (object.tags !== undefined && object.tags.length);
+		$("#description").css("max-height", "");
+		$("#description-text").css("max-height", "");
+		$("#description-tags").css("max-height", "");
+		$("#description-tags").css("position", "");
 		if ($("#description-text").is(":visible") && ! env.options.hide_descriptions && hasDescription) {
-			$("#description-tags").css("position", "");
-			// $("#description-tags").css("width", "");
 			$("#description-text").css("max-height", maxHeight.toString() + "px");
 		} else if ($("#description-tags").is(":visible") && ! env.options.hide_tags && hasTags) {
 			$("#description-tags").css("position", "static");
-			// $("#description-tags").css("width", width.toString() + "px");
 			$("#description-tags").css("max-height", maxHeight.toString() + "px");
 		} else {
-			$("#description-tags").css("position", "");
-			// $("#description-tags").css("width", "");
 			$("#description").css("max-height", maxHeight.toString() + "px");
 		}
 
 		var bottomSpace = 0;
 		if ($("#description-tags").is(":visible") && ! env.options.hide_tags && hasTags)
 			bottomSpace = $("#description-tags").outerHeight();
+		$("#description").css("margin-bottom", "");
+		$("#description-text").css("margin-bottom", "");
+		$("#description-text").css("height", "");
 		if ($("#description-text").is(":visible")) {
 			$("#description-text").css("margin-bottom", bottomSpace.toString() + "px");
-			$("#description").css("margin-bottom", "");
 		} else {
-			$("#description-text").css("height", "");
 			$("#description").css("margin-bottom", bottomSpace.toString() + "px");
 		}
 
@@ -3272,6 +3272,7 @@
 			function() {
 				$("#description-hide, #description-show").toggle();
 				$("#description, #description-tags").toggle();
+				Utilities.setDescriptionPosition();
 			}
 		);
 	};
