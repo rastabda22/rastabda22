@@ -3066,11 +3066,21 @@
 
 		$("#my-modal.modal").css("display", "block");
 		if (env.isMobile.any()) {
-			$("#my-modal .modal-content").css("width", (env.windowWidth - 12).toString() + "px").css("height", (env.windowHeight - 12).toString() + "px").css("padding", "5px");
-			$("#my-modal.modal").css("top", "0").css("padding-top", "0");
-			$("#my-modal.modal-close").css("top", "22px").css("right", "22px");
+			$("#my-modal .modal-content").css("width", (env.windowWidth - 12).toString() + "px");
+			$("#my-modal .modal-content").css("height", (env.windowHeight - 12).toString() + "px");
+			$("#my-modal .modal-content").css("padding", "5px");
+			$("#my-modal.modal").css("top", "0");
+			$("#my-modal.modal").css("padding-top", "0");
+			$("#my-modal.modal-close").css("top", "22px");
+			$("#my-modal.modal-close").css("right", "22px");
 		} else {
-			$("#my-modal .modal-content").css("width", (env.windowWidth - 55).toString() + "px").css("height", (env.windowHeight - 60).toString() + "px");
+			$("#my-modal .modal-content").css("width", (env.windowWidth - 55).toString() + "px");
+			$("#my-modal .modal-content").css("height", (env.windowHeight - 60).toString() + "px");
+			$("#my-modal .modal-content").css("padding", "");
+			$("#my-modal.modal").css("top", "");
+			$("#my-modal.modal").css("padding-top", "");
+			$("#my-modal.modal-close").css("top", "");
+			$("#my-modal.modal-close").css("right", "");
 		}
 
 		if (this) {
