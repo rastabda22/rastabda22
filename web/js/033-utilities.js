@@ -3218,13 +3218,15 @@
 			thumbsHeight = env.options.media_thumb_size + 20;
 		$("#description-wrapper").css("bottom", thumbsHeight + 20);
 
+		$("#description-tags").css("right", $("#description-hide-show").outerWidth().toString() + "px");
+
 		var maxHeight = Math.min(env.windowHeight / 3, 500);
 		if (env.isMobile.any())
 			maxHeight = Math.min(env.windowHeight / 3, 400);
 
-		var width = Math.min(env.windowWidth / 2, 500);
+		var maxWidth = Math.min(env.windowWidth / 2, 500);
 		if (env.isMobile.any())
-			width = Math.min(env.windowWidth / 2, 400);
+			maxWidth = Math.min(env.windowWidth / 2, 400);
 
 		var object = env.currentMedia !== null ? env.currentMedia.metadata : env.currentAlbum;
 		var hasDescription = (object.description !== undefined && object.description.length);
@@ -3236,40 +3238,56 @@
 		if ($("#description-text").is(":visible") && ! env.options.hide_descriptions && hasDescription) {
 			$("#description-text").css("max-height", maxHeight.toString() + "px");
 		} else if ($("#description-tags").is(":visible") && ! env.options.hide_tags && hasTags) {
-			$("#description-tags").css("position", "static");
+			// $("#description-tags").css("position", "static");
 			$("#description-tags").css("max-height", maxHeight.toString() + "px");
 		} else {
 			$("#description").css("max-height", maxHeight.toString() + "px");
 		}
 
-		var bottomSpace = 0;
+		var bottomSpace = $("#description-hide-show").outerHeight();
 		if ($("#description-tags").is(":visible") && ! env.options.hide_tags && hasTags)
-			bottomSpace = $("#description-tags").outerHeight();
+			bottomSpace = Math.max(bottomSpace, $("#description-tags").outerHeight());
 		$("#description").css("margin-bottom", "");
 		$("#description-text").css("margin-bottom", "");
 		$("#description-text").css("height", "");
+		$("#description-wrapper").css("width", "");
+		$("#description-tags").css("position", "");
+		$("#description-tags").css("margin-left", "");
 		if ($("#description-text").is(":visible")) {
 			$("#description-text").css("margin-bottom", bottomSpace.toString() + "px");
 		} else {
 			$("#description").css("margin-bottom", bottomSpace.toString() + "px");
+			$("#description-wrapper").css("width", ($("#description-hide-show").outerWidth() + $("#description-tags").outerWidth()) + "px");
+			$("#description-tags").css("position", "relative");
+			$("#description-tags").css("margin-left", ($("#description-hide-show").outerWidth()) + "px");
 		}
 
-		$("#description-wrapper, #description").css("max-width", width.toString() + "px");
-		$("#description-tags").css("max-width", (width - 20).toString() + "px");
+		$("#description-wrapper, #description").css("max-width", maxWidth.toString() + "px");
+		$("#description-tags").css("max-width", (maxWidth - 20).toString() + "px");
+
+		$("#description-wrapper").css("width", "");
+		$("#description-wrapper").css("height", "");
+		$("#description-tags").css("width", "");
+		$("#description-tags").css("height", "");
 
 		if (env.isMobile.any() && env.currentMedia !== null) {
 			// move the box above the media bar
 			while (Utilities.isColliding($("#description-wrapper"), $(".media-box#center .media-bar"))) {
 				$("#description-wrapper").css("bottom", (parseInt($("#description-wrapper").css("bottom")) + 5) + "px");
 			}
-			while (Utilities.isColliding($("#description-wrapper"), $("#next"))) {
-				$("#description-wrapper").css("right", (parseInt($("#description-wrapper").css("right")) + 5) + "px");
-			}
+		}
+		while (Utilities.isColliding($("#description-wrapper"), $("#next"))) {
+			$("#description-wrapper").css("right", (parseInt($("#description-wrapper").css("right")) + 5) + "px");
 		}
 
 		$("#description-hide, #description-show").off("click").on(
 			"click",
 			function() {
+				$("#description-hide-show").css("position", "");
+				if ($("#description-hide").is(":visible")) {
+					// we are hiding
+					$("#description-hide-show").css("position", "relative");
+				}
 				$("#description-hide, #description-show").toggle();
 				$("#description, #description-tags").toggle();
 				Utilities.setDescriptionPosition();
