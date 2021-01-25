@@ -1044,6 +1044,10 @@
 
 						event.data.id = "right";
 						env.nextMedia.scale(event);
+					} else {
+						// prev and next tree in the DOM must be given the correct sizes
+						$(".media-box#left, .media-box#right").css("width", env.windowWidth);
+						$(".media-box#left, .media-box#right").css("height", env.windowHeight);
 					}
 
 					if (util.isMap()) {
