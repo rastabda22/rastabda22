@@ -4,17 +4,6 @@
 	var lastMapAlbumIndex = 0;
 	/* constructor */
 	function Utilities() {
-		$(document).ready(
-			function() {
-				var originalMediaBoxContainerHtml = $(".media-box#center")[0].outerHTML;
-				if (originalMediaBoxContainerHtml.indexOf('<div class="title">') === -1) {
-					var titleContent = $("#album-view").clone().children().first();
-					Utilities.originalMediaBoxContainerContent = $(originalMediaBoxContainerHtml).prepend(titleContent)[0].outerHTML;
-				} else {
-					Utilities.originalMediaBoxContainerContent = originalMediaBoxContainerHtml;
-				}
-			}
-		);
 	}
 
 	Utilities.prototype.openInNewTab = function(hash) {
@@ -3310,9 +3299,9 @@
 
 	Utilities.mediaBoxGenerator = function(id) {
 		if (id === 'left')
-			$("#media-box-container").prepend(Utilities.originalMediaBoxContainerContent.replace('id="center"', 'id="left"'));
+			$("#media-box-container").prepend(env.originalMediaBoxContainerContent.replace('id="center"', 'id="left"'));
 		else if (id === 'right')
-			$("#media-box-container").append(Utilities.originalMediaBoxContainerContent.replace('id="center"', 'id="right"'));
+			$("#media-box-container").append(env.originalMediaBoxContainerContent.replace('id="center"', 'id="right"'));
 		$(".media-box#" + id + " .metadata").css("display", $(".media-box#center .metadata").css("display"));
 	};
 
@@ -3640,7 +3629,6 @@
 	Utilities.prototype.pathJoin = Utilities.pathJoin;
 	Utilities.prototype.setLinksVisibility = Utilities.setLinksVisibility;
 	Utilities.prototype.mediaBoxGenerator = Utilities.mediaBoxGenerator;
-	Utilities.prototype.originalMediaBoxContainerContent = Utilities.originalMediaBoxContainerContent;
 	Utilities.prototype.currentSizeAndIndex = Utilities.currentSizeAndIndex;
 	Utilities.prototype.nextSizeAndIndex = Utilities.nextSizeAndIndex;
 	Utilities.prototype.isColliding = Utilities.isColliding;
