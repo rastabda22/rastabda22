@@ -422,7 +422,7 @@
 
 		////////////////// UI //////////////////////////////
 
-			// $("ul#right-menu li.protection").removeClass("hidden");
+			// $("#padlock").removeClass("hidden");
 		if (isMap) {
 			$("ul#right-menu li.ui").addClass("hidden");
 		} else {
@@ -1266,7 +1266,7 @@
 
 			if (thisAlbum.hasVeiledProtectedContent()) {
 				// $(".protection").show();
-				$("ul#right-menu li.protection").removeClass("hidden");
+				$("#padlock").removeClass("hidden");
 				$("#padlock").off("click").on(
 					"click",
 					function() {
@@ -1274,12 +1274,10 @@
 					}
 				);
 			} else {
-				// $(".protection").hide();
-				$("ul#right-menu li.protection").addClass("hidden");
+				$("#padlock").addClass("hidden");
 			}
 		} else {
-			// $(".protection").hide();
-			$("ul#right-menu li.protection").addClass("hidden");
+			$("#padlock").addClass("hidden");
 		}
 
 		////////////////// ACCORDION EFFECT //////////////////////////////

@@ -940,7 +940,6 @@ ul#right-menu #padlock {
 	padding: 0;
 	background-color: black;
 	cursor: pointer;
-	display: none;
 }
 
 ul#right-menu.expand {
