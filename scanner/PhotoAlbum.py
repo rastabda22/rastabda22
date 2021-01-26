@@ -167,7 +167,7 @@ class Album(object):
 
 	@property
 	def media_json_file(self):
-		return self.cache_base + ".media.json"
+		return self.cache_base + ".single_media.json"
 
 	@property
 	def subdir(self):
@@ -259,11 +259,11 @@ class Album(object):
 		return len([album for album in albums_list if self.cache_base == album.cache_base]) == 1
 
 
-	def add_single_media(self, media):
+	def add_single_media(self, single_media):
 		# before adding the media, remove any media with the same file name
 		# it could be there because the album was a cache hit but the media wasn't
-		self.media_list = [_media for _media in self.media_list if media.media_file_name != _media.media_file_name]
-		self.media_list.append(media)
+		self.media_list = [_media for _media in self.media_list if single_media.media_file_name != _media.media_file_name]
+		self.media_list.append(single_media)
 		self.media_list_is_sorted = False
 
 	def add_subalbum(self, album):
@@ -500,9 +500,9 @@ class Album(object):
 			save_media_begin = "saving protected media album..."
 			save_media_end = "protected media album  saved!"
 
-		message("sorting album and media...", self.absolute_path, 4)
+		message("sorting subalbums and media...", self.absolute_path, 4)
 		self.sort_subalbums_and_media()
-		indented_message("album and media sorted!", "", 5)
+		indented_message("subalbums and media sorted!", "", 5)
 
 		# media and positions: if few, they can be saved inside the normal json file
 		# otherwise, save them in its own files
@@ -654,7 +654,7 @@ class Album(object):
 			album.password_identifiers_set = dictionary["password_identifiers_set"]
 
 		for single_media_dict in dictionary["media"]:
-			new_media = Media.from_dict(album, single_media_dict, os.path.join(Options.config['album_path'], remove_folders_marker(album.baseless_path)), json_files, json_files_min_mtime)
+			new_media = SingleMedia.from_dict(album, single_media_dict, os.path.join(Options.config['album_path'], remove_folders_marker(album.baseless_path)), json_files, json_files_min_mtime)
 			if new_media.is_valid:
 				album.add_single_media(new_media)
 
@@ -868,14 +868,14 @@ class Album(object):
 
 	def media_from_path(self, path):
 		_path = remove_album_path(path)
-		for media in self.media_list:
-			if _path == media.media_file_name:
-				return media
+		for single_media in self.media_list:
+			if _path == single_media.media_file_name:
+				return single_media
 		return None
 
 	def generate_cache_base(self, subalbum_or_media_path, media_file_name=None):
-		# this method calculate the cache base for a subalbum or a media in self album
-		# for a media, the parameter media_file_name has to be given; in this case subalbum_or_media_path is the media file name without any path info
+		# this method calculate the cache base for a subalbum or a single media in self album
+		# for a single media, the parameter media_file_name has to be given; in this case subalbum_or_media_path is the single media file name without any path info
 		# result only has ascii characters
 
 		prefix = ''
@@ -1185,7 +1185,7 @@ class SizesProtected(object):
 		return copy.deepcopy(self)
 
 
-class Media(object):
+class SingleMedia(object):
 	def __init__(self, album, media_path, json_files, json_files_min_mtime, thumbs_path = None, dictionary = None):
 		self.password_identifiers_set = set()
 		self.album_identifiers_set = set()
@@ -1225,7 +1225,7 @@ class Media(object):
 
 	def generate_media_from_file(self, album, media_path, thumbs_path, json_files, json_files_min_mtime):
 		next_level()
-		message("entered Media init", "", 5)
+		message("entered SingleMedia init", "", 5)
 		self.album = album
 		self.media_path = media_path
 		self.media_file_name = remove_album_path(media_path)
@@ -1284,7 +1284,7 @@ class Media(object):
 				indented_message("PIL OSError opening the image", "is it an svg image?", 5)
 				self.is_valid = False
 			else:
-				indented_message("media opened with PIL!", "", 5)
+				indented_message("image opened with PIL!", "", 5)
 				self._attributes["fileSizes"] = Sizes()
 				self._attributes["fileSizes"].setImage(0, os.path.getsize(media_path))
 
@@ -1858,7 +1858,7 @@ class Media(object):
 				last_index = len(thumbs_and_reduced_size_images) - 1
 				for thumb_or_reduced_size_image in thumbs_and_reduced_size_images:
 					index += 1
-					if index == last_index or Media._thumbnail_is_smaller_than(thumb_or_reduced_size_image, thumb_size, thumb_type, mobile_bigger):
+					if index == last_index or SingleMedia._thumbnail_is_smaller_than(thumb_or_reduced_size_image, thumb_size, thumb_type, mobile_bigger):
 						[thumb, thumb_path] = self.reduce_size_or_make_thumbnail(thumb_or_reduced_size_image, photo_path, thumbs_path, thumb_size, json_files, json_files_min_mtime, thumb_type, mobile_bigger)
 						thumbs_and_reduced_size_images = [thumb] + thumbs_and_reduced_size_images
 						break
@@ -1956,7 +1956,7 @@ class Media(object):
 			album_thumb_size = int(round(album_thumb_size * Options.config['mobile_thumbnail_factor']))
 		thumb_path = os.path.join(thumbs_path_with_subdir, album_prefix + photo_cache_name(self, thumb_size, thumb_type, mobile_bigger))
 
-		_is_thumbnail = Media.is_thumbnail(thumb_type)
+		_is_thumbnail = SingleMedia.is_thumbnail(thumb_type)
 
 		next_level()
 		message("checking reduction/thumbnail...", thumb_path, 5)
@@ -2775,8 +2775,8 @@ class Media(object):
 			del dictionary["date"]
 		except TypeError:
 			# a json file for some test version could bring here
-			media = Media(album, basepath, json_files, json_files_min_mtime, None, dictionary)
-			media.is_valid = False
+			single_media = SingleMedia(album, basepath, json_files, json_files_min_mtime, None, dictionary)
+			single_media.is_valid = False
 			return
 
 		media_path = os.path.join(basepath, dictionary["name"])
@@ -2803,8 +2803,8 @@ class Media(object):
 								# year < 1000 incorrectly inserted in json file ("31" instead of "0031")
 								value1 = "0" + value1
 
-		indented_message("processing media from cached album", media_path, 5)
-		return Media(album, media_path, json_files, json_files_min_mtime, None, dictionary)
+		indented_message("processing single media from cached album", media_path, 5)
+		return SingleMedia(album, media_path, json_files, json_files_min_mtime, None, dictionary)
 
 
 	def to_dict(self):
@@ -2812,42 +2812,42 @@ class Media(object):
 		if self.folders:
 			folders_album = os.path.join(folders_album, self.folders)
 
-		media = self.attributes
+		single_media = self.attributes
 		try:
-			del media["password_identifiers_set"]
+			del single_media["password_identifiers_set"]
 		except:
 			pass
 		try:
-			del media["album_identifiers_set"]
+			del single_media["album_identifiers_set"]
 		except:
 			pass
 
-		media["name"] = self.name
-		media["cacheBase"] = self.cache_base
-		media["date"] = self.date_string
-		media["fileSizes"] = self.file_sizes
-		# media["yearAlbum"] = self.year_album_path
-		# media["monthAlbum"] = self.month_album_path
-		media["dayAlbum"] = self.day_album_path
-		media["dayAlbumCacheBase"] = self.day_album_cache_base
+		single_media["name"] = self.name
+		single_media["cacheBase"] = self.cache_base
+		single_media["date"] = self.date_string
+		single_media["fileSizes"] = self.file_sizes
+		# single_media["yearAlbum"] = self.year_album_path
+		# single_media["monthAlbum"] = self.month_album_path
+		single_media["dayAlbum"] = self.day_album_path
+		single_media["dayAlbumCacheBase"] = self.day_album_cache_base
 		if self.gps_album_path:
-			media["gpsAlbum"] = self.gps_album_path
-			media["gpsAlbumCacheBase"] = self.gps_album_cache_base
+			single_media["gpsAlbum"] = self.gps_album_path
+			single_media["gpsAlbumCacheBase"] = self.gps_album_cache_base
 		if hasattr(self, "words"):
-			media["words"] = self.words
+			single_media["words"] = self.words
 		if Options.config['checksum']:
-			media["checksum"] = self.checksum
+			single_media["checksum"] = self.checksum
 
-		# the following data don't belong properly to media, but to album, but they must be put here in order to work with date, gps and search structure
-		media["albumName"] = self.album_path[:len(self.album_path) - len(self.name) - 1]
-		media["foldersCacheBase"] = self.album.cache_base
-		media["cacheSubdir"] = self.album.subdir
-		media["mimeType"] = self.mime_type
+		# the following data don't belong properly to the single media, but to album, but they must be put here in order to work with date, gps and search structure
+		single_media["albumName"] = self.album_path[:len(self.album_path) - len(self.name) - 1]
+		single_media["foldersCacheBase"] = self.album.cache_base
+		single_media["cacheSubdir"] = self.album.subdir
+		single_media["mimeType"] = self.mime_type
 
 		if hasattr(self, "converted_path"):
-			media["convertedPath"] = self.converted_path
+			single_media["convertedPath"] = self.converted_path
 
-		return media
+		return single_media
 
 
 class PhotoAlbumEncoder(json.JSONEncoder):
@@ -2868,7 +2868,7 @@ class PhotoAlbumEncoder(json.JSONEncoder):
 			return date
 		if isinstance(obj, Album):
 			return obj.to_dict(self.separate_positions, self.separate_media)
-		if isinstance(obj, Media):
+		if isinstance(obj, SingleMedia):
 			return obj.to_dict()
 		if isinstance(obj, Positions):
 			return obj.to_dict(self.type)
@@ -3023,7 +3023,7 @@ class Metadata(object):
 
 		The geonames values must be overwrittent *after* the 'metadata' values
 		because the geonames are retrieved from _attributes['metadata']['latitude'] and
-		_attributes['metadata']['longitude']. You can use Media.has_gps_data to
+		_attributes['metadata']['longitude']. You can use SingleMedia.has_gps_data to
 		determine if you can call this procedure.
 		"""
 		# Country_name

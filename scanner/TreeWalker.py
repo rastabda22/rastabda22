@@ -26,7 +26,7 @@ from Utilities import determine_symlink_number_and_name
 from CachePath import transliterate_to_ascii, remove_accents, remove_non_alphabetic_characters, remove_new_lines_and_tags
 from CachePath import remove_digits, switch_to_lowercase, phrase_to_words, checksum
 from Utilities import message, indented_message, next_level, back_level, report_times, file_mtime, make_dir
-from PhotoAlbum import Media, Album, PhotoAlbumEncoder, Position, Positions, NumsProtected, Sizes, SizesProtected
+from PhotoAlbum import SingleMedia, Album, PhotoAlbumEncoder, Position, Positions, NumsProtected, Sizes, SizesProtected
 from Geonames import Geonames
 import Options
 
@@ -399,7 +399,7 @@ class TreeWalker:
 
 	def generate_by_date_albums(self, origin_album):
 		next_level()
-		# convert the temporary structure where media are organized by year, month, date to a set of albums
+		# convert the temporary structure where the media are organized by year, month, date to a set of albums
 
 		by_date_path = os.path.join(Options.config['album_path'], Options.config['by_date_string'])
 		by_date_album = Album(by_date_path)
@@ -518,7 +518,7 @@ class TreeWalker:
 
 	def generate_by_search_albums(self, origin_album):
 		next_level()
-		# convert the temporary structure where media are organized by words to a set of albums
+		# convert the temporary structure where the media are organized by words to a set of albums
 
 		by_search_path = os.path.join(Options.config['album_path'], Options.config['by_search_string'])
 		by_search_album = Album(by_search_path)
@@ -689,7 +689,7 @@ class TreeWalker:
 
 	def generate_by_geonames_albums(self, origin_album):
 		next_level()
-		# convert the temporary structure where media are organized by country_code, region_code, place_code to a set of albums
+		# convert the temporary structure where the media are organized by country_code, region_code, place_code to a set of albums
 
 		by_geonames_path = os.path.join(Options.config['album_path'], Options.config['by_gps_string'])
 		by_geonames_album = Album(by_geonames_path)
@@ -730,7 +730,7 @@ class TreeWalker:
 					next_level()
 					message("sorting media...", "", 5)
 					media_list.sort(key=lambda m: m.latitude)
-					indented_message("media sorted", "", 5)
+					indented_message("media sorted!", "", 5)
 					# check if there are too many media in album
 					# in case, "place" album will be split in "place (subalbum 1)", "place (subalbum 2)",...
 					# clustering is made with the kmeans algorithm
@@ -754,7 +754,7 @@ class TreeWalker:
 							[big_clusters, remaining_media_list] = self.make_k_means_cluster(cluster_list_ok, remaining_media_list, time_factor)
 							if len(remaining_media_list) > 0:
 								# we must split the big clusters into smaller ones
-								# but firts sort media in cluster by date, so that we get more homogeneus clusters
+								# but, first, sort media in cluster by date, so that we get more homogeneus clusters
 								message("splitting remaining big clusters into smaller ones...", "", 5)
 								n = 0
 								for cluster in big_clusters:
@@ -1010,7 +1010,7 @@ class TreeWalker:
 			TreeWalker.load_stopwords()
 
 	def add_single_media_to_tree_by_date(self, single_media):
-		# add the given media to a temporary structure where media are organized by year, month, date
+		# add the given media to a temporary structure where the media are organized by year, month, date
 
 		if single_media.year not in list(self.tree_by_date.keys()):
 			self.tree_by_date[single_media.year] = {}
@@ -1058,7 +1058,7 @@ class TreeWalker:
 		# works on the words in the file/directory name and in album.ini's description, title, tags
 
 		media_or_album_name = media_or_album.name
-		if isinstance(media_or_album, Media):
+		if isinstance(media_or_album, SingleMedia):
 			# remove the extension
 			media_or_album_name = os.path.splitext(media_or_album_name)[0]
 
@@ -1589,7 +1589,7 @@ class TreeWalker:
 				cached_media = None
 				absolute_cache_file_exists = False
 
-			# checksum is needed for all media, calculate it anyway
+			# checksum is needed for all the media, calculate it anyway
 			if Options.config['checksum']:
 				message("calculating checksum...", "", 5)
 				with open(entry_with_path, 'rb') as media_path_pointer:
@@ -1694,7 +1694,7 @@ class TreeWalker:
 					message("single media cache hit!", "reduced size images and thumbnails OK", 4)
 			else:
 				message("processing media from file", "", 5)
-				single_media = Media(album, entry_with_path, json_file_list, json_files_min_mtime, Options.config['cache_path'], None)
+				single_media = SingleMedia(album, entry_with_path, json_file_list, json_files_min_mtime, Options.config['cache_path'], None)
 				if Options.config['checksum']:
 					single_media._attributes["checksum"] = media_checksum
 
@@ -1802,28 +1802,28 @@ class TreeWalker:
 								photos_without_exif_date_or_geotags_in_dir.append(      "      " + entry_with_path)
 
 					next_level()
-					message("adding media to dates tree...", "", 5)
+					message("adding single media to dates tree...", "", 5)
 					# the following function has a check on media already present
 					self.add_single_media_to_tree_by_date(single_media)
-					indented_message("media added to dates tree!", "", 5)
+					indented_message("single media added to dates tree!", "", 5)
 
 					if single_media.has_gps_data:
-						message("adding media to geonames tree...", "", 5)
+						message("adding single media to geonames tree...", "", 5)
 						# the following function has a check on media already present
 						self.add_single_media_to_tree_by_geonames(single_media)
-						indented_message("media added to geonames tree!", "", 5)
+						indented_message("single media added to geonames tree!", "", 5)
 
-					message("adding media to search tree...", "", 5)
+					message("adding single media to search tree...", "", 5)
 					# the following function has a check on media already present
 					self.add_single_media_to_tree_by_search(single_media)
-					indented_message("media added to search tree", "", 5)
+					indented_message("single media added to search tree", "", 5)
 
 					album.add_single_media(single_media)
 					self.all_media.append(single_media)
 
 					back_level()
 				else:
-					indented_message("media not added to anything...", "it was already there", 5)
+					indented_message("single media not added to anything...", "it was already there", 5)
 
 			elif not single_media.is_valid:
 				indented_message("not image nor video", entry_with_path, 3)

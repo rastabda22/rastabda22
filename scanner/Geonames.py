@@ -252,20 +252,20 @@ class Geonames(object):
 	@staticmethod
 	def cluster_points(media_list, mu, time_factor):
 		clusters = {}
-		for media in media_list:
+		for single_media in media_list:
 			# bestmukey = min([(i[0], np.linalg.norm(x-mu[i[0]])) for i in enumerate(mu)], key=lambda t:t[1])[0]
 			bestmukey = min(
 					[
 						(
 							index_and_point[0],
-							np.linalg.norm(Geonames.coordinates(media, time_factor) - mu[index_and_point[0]])
+							np.linalg.norm(Geonames.coordinates(single_media, time_factor) - mu[index_and_point[0]])
 						) for index_and_point in enumerate(mu)
 					], key=lambda t: t[1]
 				)[0]
 			try:
-				clusters[bestmukey].append(media)
+				clusters[bestmukey].append(single_media)
 			except KeyError:
-				clusters[bestmukey] = [media]
+				clusters[bestmukey] = [single_media]
 		return clusters
 
 
@@ -284,15 +284,15 @@ class Geonames(object):
 
 
 	@staticmethod
-	def coordinates(media, time_factor):
+	def coordinates(single_media, time_factor):
 		# if time_factor is zero, then time isn't considered
-		return np.array((media.latitude, media.longitude, media.date.timestamp() * time_factor))
+		return np.array((single_media.latitude, single_media.longitude, single_media.date.timestamp() * time_factor))
 
 
 	@staticmethod
 	def find_centers(media_list, K, time_factor):
 		# Initialize to K random centers
-		coordinate_list = [Geonames.coordinates(media, time_factor) for media in media_list]
+		coordinate_list = [Geonames.coordinates(single_media, time_factor) for single_media in media_list]
 		try:
 			oldmu = random.sample(coordinate_list, K)
 		except ValueError:
