@@ -167,7 +167,7 @@ class Album(object):
 
 	@property
 	def media_json_file(self):
-		return self.cache_base + ".single_media.json"
+		return self.cache_base + ".media.json"
 
 	@property
 	def subdir(self):
