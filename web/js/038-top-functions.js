@@ -1518,7 +1518,7 @@
 					if ($("#album-view").is(":visible")) {
 						populateAlbum = false;
 						if (
-							env.currentMedia === null && ! env.currentAlbum.isAlbumWithOneMedia() && (
+							env.currentMedia === null && ! isAlbumWithOneMedia && (
 								env.previousAlbum === null ||
 								! env.previousAlbum.isEqual(env.currentAlbum) ||
 								env.previousAlbum.numsMediaInSubTree.imagesAndVideosTotal() !== env.currentAlbum.numsMediaInSubTree.imagesAndVideosTotal()
