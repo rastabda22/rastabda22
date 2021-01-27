@@ -1546,7 +1546,8 @@
 						} else if (clickedMediaIndex < env.currentMediaIndex) {
 							env.currentMediaIndex --;
 						}
-						TopFunctions.showAlbum("refreshMedia");
+						env.currentAlbum.showMedia();
+						// TopFunctions.showAlbum("refreshMedia");
 					}
 				}
 			} else {

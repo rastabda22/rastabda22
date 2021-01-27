@@ -933,9 +933,10 @@
 			if (util.nothingIsSelected())
 				util.initializeSelectionAlbum();
 			this.addToSelection(album, clickedSelector);
-			if (env.currentAlbum.isSelection()) {
-				TopFunctions.showAlbum("refreshMedia");
-			}
+			// the following lines have been commented out because if the single media isn't selected then we cannot be in a selection album
+			// if (env.currentAlbum.isSelection()) {
+			// 	TopFunctions.showAlbum("refreshMedia");
+			// }
 			f.updateMenu();
 		}
 	};
@@ -1502,7 +1503,8 @@
 			env.prevMedia = null;
 			$("#album-view").addClass("media-view-container");
 			if (env.currentMedia !== null && env.previousMedia === null) {
-				TopFunctions.showAlbum("refreshMedia");
+				env.currentAlbum.showMedia();
+				// TopFunctions.showAlbum("refreshMedia");
 			} else {
 				util.scrollToThumb();
 			}
@@ -1767,7 +1769,7 @@
 				$(".title").addClass("hidden-by-option");
 			} else {
 				$(".title").removeClass("hidden-by-option");
-				TopFunctions.showAlbum("refreshMedia");
+				// TopFunctions.showAlbum("refreshMedia");
 			}
 			if (env.currentMedia !== null) {
 				let event = {data: {}};
@@ -1800,7 +1802,8 @@
 			}
 			if (! $("#album-view").hasClass("media-view-container")) {
 				$("#album-view").addClass("media-view-container");
-				TopFunctions.showAlbum("refreshMedia");
+				env.currentAlbum.showMedia();
+				// TopFunctions.showAlbum("refreshMedia");
 			}
 			if (env.currentMedia !== null) {
 				let event = {data: {}};
@@ -2004,7 +2007,8 @@
 				$("#show-hide-them:hover").css("color", "inherit").css("cursor", "auto");
 			f.setBooleanCookie("showBigVirtualFolders", env.options.show_big_virtual_folders);
 			f.updateMenu();
-			TopFunctions.showAlbum("refreshMedia");
+			env.currentAlbum.showMedia();
+			// TopFunctions.showAlbum("refreshMedia");
 			$("#loading").hide();
 		}
 		return false;
