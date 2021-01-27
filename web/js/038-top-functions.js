@@ -1441,7 +1441,6 @@
 
 
 	Album.prototype.prepareForShowing = function(mediaIndex) {
-		var populateAlbum;
 
 		if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0)
 			// stop the video, otherwise it will keep playing
@@ -1492,20 +1491,22 @@
 		if (env.currentMedia === null)
 			env.currentAlbum.sortAlbumsMedia();
 
-		if (env.currentMedia !== null || isAlbumWithOneMedia) {
-			if (isAlbumWithOneMedia) {
-				env.currentMedia = env.currentAlbum.media[0];
-				env.currentMediaIndex = 0;
-				$("#media-view").css("cursor", "default");
-				$("#album-view").addClass("hidden");
-			} else {
-				$("#media-view").css("cursor", "ew-resize");
-			}
+		if (isAlbumWithOneMedia) {
+			env.currentMedia = env.currentAlbum.media[0];
+			env.currentMediaIndex = 0;
+			$("#media-view").css("cursor", "default");
+			$("#album-view").addClass("hidden");
+		} else {
+			$("#media-view").css("cursor", "ew-resize");
+		}
+
+		if (env.currentMedia !== null) {
 			env.nextMedia = null;
 			env.prevMedia = null;
 			$("#album-view").addClass("media-view-container");
-			if (env.currentMedia !== null && env.previousMedia === null) {
-				TopFunctions.showAlbum("refreshMedia");
+			if (true || env.previousMedia === null) {
+				env.currentAlbum.showMedia();
+				// TopFunctions.showAlbum("refreshMedia");
 			} else {
 				util.scrollToThumb();
 			}
@@ -1516,17 +1517,15 @@
 					$("#album-view").removeClass("media-view-container").removeAttr("height");
 
 					if ($("#album-view").is(":visible")) {
-						populateAlbum = false;
+						let populate = false;
 						if (
-							env.currentMedia === null && ! isAlbumWithOneMedia && (
-								env.previousAlbum === null ||
-								! env.previousAlbum.isEqual(env.currentAlbum) ||
-								env.previousAlbum.numsMediaInSubTree.imagesAndVideosTotal() !== env.currentAlbum.numsMediaInSubTree.imagesAndVideosTotal()
-							) ||
-							env.currentMedia !== null && env.previousMedia === null
+							env.previousAlbum === null ||
+							! env.previousAlbum.isEqual(env.currentAlbum) ||
+							// next line is for when protected content is unveiled
+							env.previousAlbum.numsMediaInSubTree.imagesAndVideosTotal() !== env.currentAlbum.numsMediaInSubTree.imagesAndVideosTotal()
 						)
-							populateAlbum = true;
-						TopFunctions.showAlbum(populateAlbum);
+							populate = true;
+						TopFunctions.showAlbum(populate);
 					}
 				}
 			);
