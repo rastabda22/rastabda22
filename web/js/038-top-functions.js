@@ -1502,7 +1502,7 @@
 			env.nextMedia = null;
 			env.prevMedia = null;
 			$("#album-view").addClass("media-view-container");
-			if (true || env.previousMedia === null) {
+			if (env.previousMedia === null && ! env.currentAlbum.isEqual(env.previousAlbum)) {
 				env.currentAlbum.showMedia();
 				// TopFunctions.showAlbum("refreshMedia");
 			} else {
