@@ -1605,7 +1605,6 @@
 		) {
 			env.albumNameSort = true;
 			f.setBooleanCookie("albumNameSortRequested", true);
-			// f.setBooleanCookie("albumReverseSortRequested", this.albumReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
 			TopFunctions.showAlbum("refreshSubalbums");
@@ -1625,7 +1624,6 @@
 		}
 		return false;
 	};
-	// media
 
 	Album.prototype.sortMediaByDate = function (ev) {
 		if (
@@ -1634,15 +1632,9 @@
 		) {
 			env.mediaNameSort = false;
 			f.setBooleanCookie("mediaNameSortRequested", false);
-			// f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			// if (this.isEqual(env.currentAlbum)) {
 			this.showMedia();
-			// } else {
-			// 	this.showMedia(true);
-			// 	map.updatePopup();
-			// }
 			if (util.isPopup()) {
 				env.mapAlbum.sortAlbumsMedia();
 				env.mapAlbum.showMedia(true);
@@ -1660,12 +1652,8 @@
 		) {
 			env.mediaNameSort = true;
 			f.setBooleanCookie("mediaNameSortRequested", true);
-			// f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			// if (this.isEqual(env.currentAlbum)) {
-			// 	TopFunctions.showAlbum("refreshMedia");
-			// } else {
 			this.showMedia();
 
 			if (util.isPopup()) {
@@ -1673,7 +1661,6 @@
 				env.mapAlbum.showMedia(true);
 				map.updatePopup();
 			}
-			// }
 		}
 		return false;
 	};
@@ -1684,9 +1671,6 @@
 			f.setBooleanCookie("mediaReverseSortRequested", env.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			// if (this.cacheBase === env.currentAlbum.cacheBase) {
-			// 	TopFunctions.showAlbum("refreshMedia");
-			// } else {
 			this.showMedia();
 
 			if (util.isPopup()) {
@@ -1694,7 +1678,6 @@
 				env.mapAlbum.showMedia(true);
 				map.updatePopup();
 			}
-			// }
 		}
 		return false;
 	};
@@ -1754,7 +1737,6 @@
 			map.updatePopup();
 		}
 
-		// 	env.currentAlbum.prepareForShowing(env.currentMediaIndex);
 		if (env.currentMedia !== null) {
 			let event = {data: {}};
 			event.data.resize = true;
@@ -1816,13 +1798,10 @@
 			} else {
 				$("#album-view.media-view-container").removeClass("hidden-by-option");
 			}
-			// if ($("#thumbs").children().length)
 			if (! $("#album-view").hasClass("media-view-container")) {
 				$("#album-view").addClass("media-view-container");
 				TopFunctions.showAlbum("refreshMedia");
 			}
-			// else
-			// 	env.currentAlbum.prepareForShowing(env.currentMediaIndex);
 			if (env.currentMedia !== null) {
 				let event = {data: {}};
 				event.data.resize = true;
@@ -1939,8 +1918,6 @@
 				env.options.spacing = env.options.spacingToggle;
 			f.setCookie("spacing", env.options.spacing);
 			f.updateMenu();
-			// if (env.currentAlbum.subalbums.length > 1 && env.currentAlbum.numsMedia.imagesAndVideosTotal() > 1)
-			// 	TopFunctions.showAlbum("refreshBoth");
 			env.currentAlbum.showMedia();
 
 			if (util.isPopup()) {
@@ -3453,11 +3430,8 @@
 						rootMapAlbum.subalbums.push(env.mapAlbum);
 						rootMapAlbum.positionsAndMediaInTree.mergePositionsAndMedia(env.mapAlbum.positionsAndMediaInTree);
 						rootMapAlbum.numPositionsInTree += env.mapAlbum.positionsAndMediaInTree.length;
-						// rootMapAlbum.numPositionsInTree += env.mapAlbum.numPositionsInTree;
-						// rootMapAlbum.numsProtectedMediaInSubTree[","].sum(env.mapAlbum.numsProtectedMediaInSubTree[","]);
 
-						// do not uncomment the following line: bindings have already been set for currentAlbum
-						// env.mapAlbum.bindSortEvents();
+						// do not call bindSortEvents method on env.mapAlbum: bindings have already been set for currentAlbum
 					}
 					resolve_updateMapAlbumOnMapClick();
 				}
