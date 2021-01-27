@@ -1637,7 +1637,7 @@
 			this.showMedia();
 			if (util.isPopup()) {
 				env.mapAlbum.sortAlbumsMedia();
-				env.mapAlbum.showMedia(true);
+				env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
 		}
@@ -1658,7 +1658,7 @@
 
 			if (util.isPopup()) {
 				env.mapAlbum.sortAlbumsMedia();
-				env.mapAlbum.showMedia(true);
+				env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
 		}
@@ -1675,7 +1675,7 @@
 
 			if (util.isPopup()) {
 				env.mapAlbum.sortAlbumsMedia();
-				env.mapAlbum.showMedia(true);
+				env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
 		}
@@ -1733,7 +1733,7 @@
 			$("#album-view").addClass("media-view-container");
 		env.currentAlbum.showMedia();
 		if (util.isPopup()) {
-			env.mapAlbum.showMedia(true);
+			env.mapAlbum.showMedia();
 			map.updatePopup();
 		}
 
@@ -1859,7 +1859,7 @@
 			}
 
 			if (util.isPopup()) {
-				env.mapAlbum.showMedia(true);
+				env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
 		}
@@ -1893,7 +1893,7 @@
 			}
 
 			if (util.isPopup()) {
-				env.mapAlbum.showMedia(true);
+				env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
 		}
@@ -1921,7 +1921,7 @@
 			env.currentAlbum.showMedia();
 
 			if (util.isPopup()) {
-				env.mapAlbum.showMedia(true);
+				env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
 			if (env.currentAlbum.subalbums.length > 1) {
@@ -1959,7 +1959,7 @@
 			env.currentAlbum.showMedia();
 
 			if (util.isPopup()) {
-				env.mapAlbum.showMedia(true);
+				env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
 		}
@@ -1984,7 +1984,7 @@
 			env.currentAlbum.showMedia();
 
 			if (util.isPopup()) {
-				env.mapAlbum.showMedia(true);
+				env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
 		}
@@ -2009,7 +2009,10 @@
 		return false;
 	};
 
-	Album.prototype.showMedia = function(inPopup = false) {
+	Album.prototype.showMedia = function() {
+		var inPopup = false;
+		if (this.isEqual(env.mapAlbum) && util.isPopup())
+			inPopup = true;
 		var thumbnailSize = env.options.media_thumb_size;
 		var imageLink;
 		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
@@ -3239,7 +3242,7 @@
 		var promise = phFl.endPreparingAlbumAndKeepOn(env.mapAlbum, null, null);
 		promise.then(
 			function() {
-				env.mapAlbum.showMedia(true);
+				env.mapAlbum.showMedia();
 				map.updatePopup();
 				$("#loading").hide();
 			}
