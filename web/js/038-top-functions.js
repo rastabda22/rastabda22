@@ -1251,7 +1251,6 @@
 					$("#next").off();
 					$("#prev").off();
 
-					mediaBoxInnerElement.off('mousewheel');
 					if (self.mimeType.indexOf("image/") === 0)
 						mediaBoxInnerElement.off("mousewheel").on("mousewheel", pS.swipeOnWheel);
 
@@ -2434,22 +2433,24 @@
 				}
 			);
 		}
+		// end of pickRandomMediaAndInsertIt function
 
-		var populateMedia;
+		// beginning of showAlbum function
 
-		if (env.currentMedia === null)
+		if (env.currentMedia === null) {
 			$("#album-view").off('mousewheel');
-		if (env.currentMedia === null && env.previousMedia === null)
-			$("html, body").stop().animate({ scrollTop: 0 }, "slow");
+			if (env.previousMedia === null)
+				$("html, body").stop().animate({ scrollTop: 0 }, "slow");
+		}
+
 		if (populate) {
-			populateMedia = populate;
-			let isTransversalAlbum = env.currentAlbum.isTransversal();
+			let populateMedia = populate;
 			let tooBig = env.currentAlbum.path.split("/").length < 4 && env.currentAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold;
-			if (populateMedia === true && isTransversalAlbum)
+			if (populateMedia === true && env.currentAlbum.isTransversal())
 				populateMedia = populateMedia && (! tooBig || env.options.show_big_virtual_folders);
 
-			if (isTransversalAlbum && tooBig) {
-				var tooManyImagesText, isShowing = false;
+			if (env.currentAlbum.isTransversal() && tooBig) {
+				let tooManyImagesText, isShowing = false;
 				if (env.options.show_big_virtual_folders) {
 					tooManyImagesText =
 						"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + env.currentAlbum.numsMedia.imagesAndVideosTotal() +
@@ -2488,21 +2489,14 @@
 			}
 
 			if (
-				! (isTransversalAlbum && tooBig && ! env.options.show_big_virtual_folders) && (
+				! (env.currentAlbum.isTransversal() && tooBig && ! env.options.show_big_virtual_folders) && (
 					populateMedia === true ||
-					populateMedia === "refreshMedia" ||
-					populateMedia === "refreshBoth"
+					populate === "refreshMedia" ||
+					populate === "refreshBoth"
 				)
 			) {
-				// $("#thumbs").empty();
 				env.currentAlbum.showMedia();
 			}
-
-			// if (env.options.hide_descriptions)
-			// 	$("#description, .media-description, .album-description").addClass("hidden-by-option");
-			//
-			// if (env.options.hide_tags)
-			// 	$("#description-tags, .media-tags, .album-tags").addClass("hidden-by-option");
 
 			if (env.currentMedia === null) {
 				let [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
@@ -2523,7 +2517,7 @@
 				if (
 					populate === true ||
 					populate === "refreshSubalbums" ||
-					populateMedia === "refreshBoth"
+					populate === "refreshBoth"
 				) {
 					let scrollBarWidth = window.innerWidth - document.body.clientWidth || 15;
 
