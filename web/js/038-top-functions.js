@@ -2009,10 +2009,11 @@
 		return false;
 	};
 
-	Album.prototype.showMedia = function() {
+	Album.prototype.showMedia = function(populateMedia = true) {
 		var inPopup = false;
 		if (this.isEqual(env.mapAlbum) && util.isPopup())
 			inPopup = true;
+
 		var thumbnailSize = env.options.media_thumb_size;
 		var imageLink;
 		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
@@ -2025,300 +2026,347 @@
 			thumbsSelector = "#thumbs";
 			lazyClass = "lazyload-media";
 		}
-		$(thumbsSelector).empty();
 
-		//
-		// media loop
-		//
-		for (let i = 0; i < this.media.length; ++i) {
-			let iMedia = i;
-			let ithMedia = this.media[iMedia];
+		let tooBig = env.currentAlbum.path.split("/").length < 4 && env.currentAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold;
+		if (populateMedia && env.currentAlbum.isTransversal())
+			populateMedia = populateMedia && (! tooBig || env.options.show_big_virtual_folders);
 
-			let width = ithMedia.metadata.size[0];
-			let height = ithMedia.metadata.size[1];
-			let thumbHash = ithMedia.chooseThumbnail(thumbnailSize);
-			let thumbHeight, thumbWidth, calculatedWidth, calculatedHeight;
-
-			if (env.options.media_thumb_type === "fixed_height") {
-				if (height < env.options.media_thumb_size) {
-					thumbHeight = height;
-					thumbWidth = width;
-				} else {
-					thumbHeight = env.options.media_thumb_size;
-					thumbWidth = thumbHeight * width / height;
-				}
-				calculatedWidth = thumbWidth;
-			} else if (env.options.media_thumb_type === "square") {
-				thumbHeight = thumbnailSize;
-				thumbWidth = thumbnailSize;
-				calculatedWidth = env.options.media_thumb_size;
-			}
-			calculatedHeight = env.options.media_thumb_size;
-
-			var albumViewPadding = $("#album-view").css("padding");
-			if (! albumViewPadding)
-				albumViewPadding = 0;
-			else
-				albumViewPadding = parseInt(albumViewPadding);
-			calculatedWidth = Math.min(
-				calculatedWidth,
-				$(window).innerWidth() - 2 * albumViewPadding
-			);
-			calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
-
-			let mapLinkIcon = "";
-			if (! inPopup) {
-				if (ithMedia.hasGpsData()) {
-					let imgHtml =
-							"<img " +
-								"class='thumbnail-map-link' " +
-								"height='20px' " +
-								"src='img/ic_place_white_24dp_2x.png'" +
-							">";
-					let img = $(imgHtml);
-					img.attr("title", util._t("#show-on-map"));
-					img.attr("alt", util._t("#show-on-map"));
-					mapLinkIcon =
-						"<a id='media-map-link-" + iMedia + "'>" + img.prop("outerHTML") + "</a>";
-				}
-			}
-			let selectSrc = 'img/checkbox-unchecked-48px.png';
-			let titleSelector = "#select-single-media";
-			if (ithMedia.isSelected()) {
-				selectSrc = 'img/checkbox-checked-48px.png';
-				titleSelector = "#unselect-single-media";
-			}
-
-			let imgHtml =
-					"<img " +
-						"class='select-box' " +
-						"src='" + selectSrc + "'" +
-					">";
-			let img = $(imgHtml);
-			img.attr("title", util._t(titleSelector));
-			img.attr("alt", util._t("#selector"));
-
-			let mediaSelectBoxSelectorPart = "media-select-box-";
-			if (inPopup)
-				mediaSelectBoxSelectorPart = "map-" + mediaSelectBoxSelectorPart;
-
-			let selectBoxHtml =
-				"<a id='" + mediaSelectBoxSelectorPart + iMedia + "'>" + img.prop("outerHTML") + "</a>";
-
-			// imageElement.get(0).media = ithMedia;
-			let mediaHash;
-			if (typeof savedSearchAlbumCacheBase !== "undefined" && savedSearchAlbumCacheBase !== null)
-				mediaHash = phFl.encodeHash(this.cacheBase, ithMedia, foundAlbumCacheBase, savedSearchAlbumCacheBase);
-			else
-				mediaHash = phFl.encodeHash(this.cacheBase, ithMedia);
-
-			let data = "";
-			if (inPopup) {
-				data =
-					"data='" +
-						JSON.stringify(
-							{
-								width: ithMedia.metadata.size[0],
-								height: ithMedia.metadata.size[1],
-								albumCacheBase: this.cacheBase,
-								mediaHash: mediaHash
-							}
-						) +
-					"' ";
-			}
-
-			imgHtml =
-				"<img " +
-					"data-src='" + encodeURI(thumbHash) + "' " +
-					"src='img/image-placeholder.png' " +
-					data +
-					"class='thumbnail " + lazyClass + "' " +
-					"height='" + thumbHeight + "' " +
-					"width='" + thumbWidth + "' " +
-					"id='" + util.pathJoin([ithMedia.albumName, ithMedia.name]) + "' " +
-					"style='" +
-						 "width: " + calculatedWidth + "px; " +
-						 "height: " + calculatedHeight + "px;" +
-						 "'" +
-				"/>";
-			img = $(imgHtml);
-			img.attr("title", util.pathJoin([ithMedia.albumName, ithMedia.nameForShowing(this)]));
-			img.attr("alt", util.trimExtension(ithMedia.name));
-
-			let imageString =
-				"<div class='thumb-and-caption-container' style='" +
-							"width: " + calculatedWidth + "px; " +
-							"margin-right: " + env.options.spacing + "px; " +
-				"'>" +
-					"<div class='thumb-container' " + "style='" +
-							// "width: " + calculatedWidth + "px; " +
-							"width: " + calculatedWidth + "px; " +
-							"height: " + calculatedHeight + "px;" +
-					"'>" +
-						mapLinkIcon +
-						selectBoxHtml +
-						"<span class='helper'></span>" +
-						img.prop("outerHTML") +
-					"</div>" +
-					"<div class='media-caption'>";
-			let name;
-			if (util.isPopup() || this.isMap())
-				name = ithMedia.captionForPopup;
-			else if (this.isSearch())
-				name = ithMedia.captionForSearch;
-			else if (this.isSelection())
-				name = ithMedia.captionForSelection;
-			else
-				name = ithMedia.nameForShowing(this, true, true);
-
-			let spanHtml =
-						"<span class='media-name'>" +
-							// "<span>" +
-								name +
-								// ithMedia.nameForShowing(this, true, true).replace(/( |<br \/>)/g, "</span>$&<span>") +
-							// "</span>" +
-						"</span>";
-			let span = $(spanHtml);
-			span.attr("title", ithMedia.nameForShowing(this));
-
-			imageString += span.prop("outerHTML");
-
-			if (ithMedia.metadata.hasOwnProperty("description")) {
-				let description = $("<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithMedia.metadata.description) + "</div>");
-				description.attr("title", util.stripHtmlAndReplaceEntities(ithMedia.metadata.description));
-				imageString +=
-						"<div class='media-description'>" +
-							description.prop("outerHTML") +
-						"</div>";
-			}
-			if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
-				imageString +=
-						"<div class='media-tags'>" +
-							"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithMedia.metadata.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>" +
-						"</div>";
-			}
-			imageString +=
-					"</div>" +
-				"</div>";
-			let imageElement = $(imageString);
-
-			let imageId = "link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase;
-			if (inPopup) {
-				imageElement.attr("id", imageId);
-				$(thumbsSelector).append(imageElement);
+		if (env.currentAlbum.isTransversal() && tooBig) {
+			let tooManyImagesText, isShowing = false;
+			if (env.options.show_big_virtual_folders) {
+				tooManyImagesText =
+					"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + env.currentAlbum.numsMedia.imagesAndVideosTotal() +
+					", <span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + env.options.big_virtual_folders_threshold + "</span>, " +
+					"<span id='show-hide-them'>" + util._t("#hide-them") + "</span>";
 			} else {
-				imageLink = $("<a href='" + mediaHash + "' id='" + imageId + "'></a>");
-				imageLink.append(imageElement);
-				$(thumbsSelector).append(imageLink);
+				$("#thumbs").empty();
+				tooManyImagesText =
+					"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + env.currentAlbum.numsMedia.imagesAndVideosTotal() +
+					", <span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + env.options.big_virtual_folders_threshold + "</span>, " +
+					"<span id='show-hide-them'>" + util._t("#show-them") + "</span>";
+				isShowing = true;
 			}
-
-			if (! inPopup && ithMedia.hasGpsData()) {
-				$("#media-map-link-" + iMedia).off("click").on(
-					"click",
-					{singleMedia: ithMedia, album: this, clickedSelector: "#media-map-link-" + iMedia},
-					function(ev, from) {
-						// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
-						env.selectorClickedToOpenTheMap = ev.data.clickedSelector;
-						ev.stopPropagation();
-						ithMedia.generateMapFromSingleMedia(ev, from);
-					}
-				);
+			$("#message-too-many-images").html(tooManyImagesText).show();
+			if (! $("ul#right-menu").hasClass("expand")) {
+				$("#show-hide-them:hover").css("color", "").css("cursor", "");
+				// $("ul#right-menu").addClass("expand");
+			} else {
+				$("#show-hide-them:hover").css("color", "inherit").css("cursor", "auto");
 			}
-
-			if (
-				! inPopup &&
-				env.selectorClickedToOpenTheMap === "#media-map-link-" + iMedia &&
-				env.previousAlbum !== null &&
-				env.previousAlbum.isMap() && (
-					env.previousMedia === null ||
-					env.previousAlbum.isAlbumWithOneMedia()
-				) &&
-				env.fromEscKey ||
-				env.mapRefreshType === "refresh"
-			) {
-				env.fromEscKey = false;
-				$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
-			}
-
-			$("#" + mediaSelectBoxSelectorPart + iMedia).off("click").on(
+			$("#show-hide-them").off("click").on(
 				"click",
-				{media: ithMedia, clickedSelector: "#" + mediaSelectBoxSelectorPart + iMedia},
-				function(ev) {
-					ev.stopPropagation();
-					ev.preventDefault();
-					ithMedia.toggleSelectedStatus(self, ev.data.clickedSelector);
-					// ev.data.media.toggleSelectedStatus(self, ev.data.clickedSelector);
+				function() {
+					if (isShowing) {
+						$("#loading").fadeIn(
+							500,
+							function() {
+								$("#show-big-albums")[0].click();
+							}
+						);
+					} else {
+						$("#show-big-albums")[0].click();
+					}
 				}
 			);
+		}
 
-			if (
-				typeof isPhp === "function" && (
-					util.somethingIsInMapAlbum() || util.somethingIsSelected() || env.guessedPasswordsMd5.length
-				)
-			) {
-				// execution enters here if we are using index.php
-				$("#link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase).off("auxclick").on(
-					"auxclick",
-					{mediaHash: phFl.encodeHash(this.cacheBase, ithMedia)},
-					function (ev) {
-						if (ev.which === 2) {
-							util.openInNewTab(ev.data.mediaHash);
-							return false;
+		if (populateMedia && (! env.currentAlbum.isTransversal() || ! tooBig || env.options.show_big_virtual_folders)) {
+		// if (! (env.currentAlbum.isTransversal() && tooBig && ! env.options.show_big_virtual_folders) && populateMedia) {
+			$(thumbsSelector).empty();
+
+			//
+			// media loop
+			//
+			for (let i = 0; i < this.media.length; ++i) {
+				let iMedia = i;
+				let ithMedia = this.media[iMedia];
+
+				let width = ithMedia.metadata.size[0];
+				let height = ithMedia.metadata.size[1];
+				let thumbHash = ithMedia.chooseThumbnail(thumbnailSize);
+				let thumbHeight, thumbWidth, calculatedWidth, calculatedHeight;
+
+				if (env.options.media_thumb_type === "fixed_height") {
+					if (height < env.options.media_thumb_size) {
+						thumbHeight = height;
+						thumbWidth = width;
+					} else {
+						thumbHeight = env.options.media_thumb_size;
+						thumbWidth = thumbHeight * width / height;
+					}
+					calculatedWidth = thumbWidth;
+				} else if (env.options.media_thumb_type === "square") {
+					thumbHeight = thumbnailSize;
+					thumbWidth = thumbnailSize;
+					calculatedWidth = env.options.media_thumb_size;
+				}
+				calculatedHeight = env.options.media_thumb_size;
+
+				var albumViewPadding = $("#album-view").css("padding");
+				if (! albumViewPadding)
+					albumViewPadding = 0;
+				else
+					albumViewPadding = parseInt(albumViewPadding);
+				calculatedWidth = Math.min(
+					calculatedWidth,
+					$(window).innerWidth() - 2 * albumViewPadding
+				);
+				calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
+
+				let mapLinkIcon = "";
+				if (! inPopup) {
+					if (ithMedia.hasGpsData()) {
+						let imgHtml =
+								"<img " +
+									"class='thumbnail-map-link' " +
+									"height='20px' " +
+									"src='img/ic_place_white_24dp_2x.png'" +
+								">";
+						let img = $(imgHtml);
+						img.attr("title", util._t("#show-on-map"));
+						img.attr("alt", util._t("#show-on-map"));
+						mapLinkIcon =
+							"<a id='media-map-link-" + iMedia + "'>" + img.prop("outerHTML") + "</a>";
+					}
+				}
+				let selectSrc = 'img/checkbox-unchecked-48px.png';
+				let titleSelector = "#select-single-media";
+				if (ithMedia.isSelected()) {
+					selectSrc = 'img/checkbox-checked-48px.png';
+					titleSelector = "#unselect-single-media";
+				}
+
+				let imgHtml =
+						"<img " +
+							"class='select-box' " +
+							"src='" + selectSrc + "'" +
+						">";
+				let img = $(imgHtml);
+				img.attr("title", util._t(titleSelector));
+				img.attr("alt", util._t("#selector"));
+
+				let mediaSelectBoxSelectorPart = "media-select-box-";
+				if (inPopup)
+					mediaSelectBoxSelectorPart = "map-" + mediaSelectBoxSelectorPart;
+
+				let selectBoxHtml =
+					"<a id='" + mediaSelectBoxSelectorPart + iMedia + "'>" + img.prop("outerHTML") + "</a>";
+
+				// imageElement.get(0).media = ithMedia;
+				let mediaHash;
+				if (typeof savedSearchAlbumCacheBase !== "undefined" && savedSearchAlbumCacheBase !== null)
+					mediaHash = phFl.encodeHash(this.cacheBase, ithMedia, foundAlbumCacheBase, savedSearchAlbumCacheBase);
+				else
+					mediaHash = phFl.encodeHash(this.cacheBase, ithMedia);
+
+				let data = "";
+				if (inPopup) {
+					data =
+						"data='" +
+							JSON.stringify(
+								{
+									width: ithMedia.metadata.size[0],
+									height: ithMedia.metadata.size[1],
+									albumCacheBase: this.cacheBase,
+									mediaHash: mediaHash
+								}
+							) +
+						"' ";
+				}
+
+				imgHtml =
+					"<img " +
+						"data-src='" + encodeURI(thumbHash) + "' " +
+						"src='img/image-placeholder.png' " +
+						data +
+						"class='thumbnail " + lazyClass + "' " +
+						"height='" + thumbHeight + "' " +
+						"width='" + thumbWidth + "' " +
+						"id='" + util.pathJoin([ithMedia.albumName, ithMedia.name]) + "' " +
+						"style='" +
+							 "width: " + calculatedWidth + "px; " +
+							 "height: " + calculatedHeight + "px;" +
+							 "'" +
+					"/>";
+				img = $(imgHtml);
+				img.attr("title", util.pathJoin([ithMedia.albumName, ithMedia.nameForShowing(this)]));
+				img.attr("alt", util.trimExtension(ithMedia.name));
+
+				let imageString =
+					"<div class='thumb-and-caption-container' style='" +
+								"width: " + calculatedWidth + "px; " +
+								"margin-right: " + env.options.spacing + "px; " +
+					"'>" +
+						"<div class='thumb-container' " + "style='" +
+								// "width: " + calculatedWidth + "px; " +
+								"width: " + calculatedWidth + "px; " +
+								"height: " + calculatedHeight + "px;" +
+						"'>" +
+							mapLinkIcon +
+							selectBoxHtml +
+							"<span class='helper'></span>" +
+							img.prop("outerHTML") +
+						"</div>" +
+						"<div class='media-caption'>";
+				let name;
+				if (util.isPopup() || this.isMap())
+					name = ithMedia.captionForPopup;
+				else if (this.isSearch())
+					name = ithMedia.captionForSearch;
+				else if (this.isSelection())
+					name = ithMedia.captionForSelection;
+				else
+					name = ithMedia.nameForShowing(this, true, true);
+
+				let spanHtml =
+							"<span class='media-name'>" +
+								// "<span>" +
+									name +
+									// ithMedia.nameForShowing(this, true, true).replace(/( |<br \/>)/g, "</span>$&<span>") +
+								// "</span>" +
+							"</span>";
+				let span = $(spanHtml);
+				span.attr("title", ithMedia.nameForShowing(this));
+
+				imageString += span.prop("outerHTML");
+
+				if (ithMedia.metadata.hasOwnProperty("description")) {
+					let description = $("<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithMedia.metadata.description) + "</div>");
+					description.attr("title", util.stripHtmlAndReplaceEntities(ithMedia.metadata.description));
+					imageString +=
+							"<div class='media-description'>" +
+								description.prop("outerHTML") +
+							"</div>";
+				}
+				if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
+					imageString +=
+							"<div class='media-tags'>" +
+								"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithMedia.metadata.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>" +
+							"</div>";
+				}
+				imageString +=
+						"</div>" +
+					"</div>";
+				let imageElement = $(imageString);
+
+				let imageId = "link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase;
+				if (inPopup) {
+					imageElement.attr("id", imageId);
+					$(thumbsSelector).append(imageElement);
+				} else {
+					imageLink = $("<a href='" + mediaHash + "' id='" + imageId + "'></a>");
+					imageLink.append(imageElement);
+					$(thumbsSelector).append(imageLink);
+				}
+
+				if (! inPopup && ithMedia.hasGpsData()) {
+					$("#media-map-link-" + iMedia).off("click").on(
+						"click",
+						{singleMedia: ithMedia, album: this, clickedSelector: "#media-map-link-" + iMedia},
+						function(ev, from) {
+							// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
+							env.selectorClickedToOpenTheMap = ev.data.clickedSelector;
+							ev.stopPropagation();
+							ithMedia.generateMapFromSingleMedia(ev, from);
 						}
-					}
-				);
-			}
-		}
+					);
+				}
 
-		if (env.options.hide_descriptions) {
-			$(".media-description").addClass("hidden-by-option");
-		} else {
-			$(".media-description").removeClass("hidden-by-option");
-		}
+				if (
+					! inPopup &&
+					env.selectorClickedToOpenTheMap === "#media-map-link-" + iMedia &&
+					env.previousAlbum !== null &&
+					env.previousAlbum.isMap() && (
+						env.previousMedia === null ||
+						env.previousAlbum.isAlbumWithOneMedia()
+					) &&
+					env.fromEscKey ||
+					env.mapRefreshType === "refresh"
+				) {
+					env.fromEscKey = false;
+					$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
+				}
 
-		if (env.options.hide_tags) {
-			$(".media-tags").addClass("hidden-by-option");
-		} else {
-			$(".media-tags").removeClass("hidden-by-option");
-		}
+				$("#" + mediaSelectBoxSelectorPart + iMedia).off("click").on(
+					"click",
+					{media: ithMedia, clickedSelector: "#" + mediaSelectBoxSelectorPart + iMedia},
+					function(ev) {
+						ev.stopPropagation();
+						ev.preventDefault();
+						ithMedia.toggleSelectedStatus(self, ev.data.clickedSelector);
+						// ev.data.media.toggleSelectedStatus(self, ev.data.clickedSelector);
+					}
+				);
 
-		$(
-			function() {
-				$("img.lazyload-popup-media").Lazy(
-					{
-						afterLoad: map.addClickToPopupPhoto,
-						autoDestroy: true,
-						onError: function(element) {
-							console.log(element[0]);
-						},
-						chainable: false,
-						threshold: env.options.media_thumb_size,
-						removeAttribute: true,
-						appendScroll: $('#popup-images-wrapper')
-					}
-				);
+				if (
+					typeof isPhp === "function" && (
+						util.somethingIsInMapAlbum() || util.somethingIsSelected() || env.guessedPasswordsMd5.length
+					)
+				) {
+					// execution enters here if we are using index.php
+					$("#link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase).off("auxclick").on(
+						"auxclick",
+						{mediaHash: phFl.encodeHash(this.cacheBase, ithMedia)},
+						function (ev) {
+							if (ev.which === 2) {
+								util.openInNewTab(ev.data.mediaHash);
+								return false;
+							}
+						}
+					);
+				}
 			}
-		);
-		$(
-			function() {
-				$("#album-view:not(.media-view-container) img.lazyload-media").Lazy(
-					{
-						// threshold: 2 * env.options.media_thumb_size,
-						appendScroll: $(window)
-					}
-				);
+
+			if (env.options.hide_descriptions) {
+				$(".media-description").addClass("hidden-by-option");
+			} else {
+				$(".media-description").removeClass("hidden-by-option");
 			}
-		);
-		$(
-			function() {
-				$("#album-view.media-view-container img.lazyload-media").Lazy(
-					{
-						// threshold: 2 * env.options.media_thumb_size,
-						appendScroll: $("#album-view")
-					}
-				);
+
+			if (env.options.hide_tags) {
+				$(".media-tags").addClass("hidden-by-option");
+			} else {
+				$(".media-tags").removeClass("hidden-by-option");
 			}
-		);
+
+			$(
+				function() {
+					$("img.lazyload-popup-media").Lazy(
+						{
+							afterLoad: map.addClickToPopupPhoto,
+							autoDestroy: true,
+							onError: function(element) {
+								console.log(element[0]);
+							},
+							chainable: false,
+							threshold: env.options.media_thumb_size,
+							removeAttribute: true,
+							appendScroll: $('#popup-images-wrapper')
+						}
+					);
+				}
+			);
+			$(
+				function() {
+					$("#album-view:not(.media-view-container) img.lazyload-media").Lazy(
+						{
+							// threshold: 2 * env.options.media_thumb_size,
+							appendScroll: $(window)
+						}
+					);
+				}
+			);
+			$(
+				function() {
+					$("#album-view.media-view-container img.lazyload-media").Lazy(
+						{
+							// threshold: 2 * env.options.media_thumb_size,
+							appendScroll: $("#album-view")
+						}
+					);
+				}
+			);
+		}
 	};
 
 
@@ -2424,59 +2472,7 @@
 		}
 
 		if (populate) {
-			let populateMedia = populate;
-			let tooBig = env.currentAlbum.path.split("/").length < 4 && env.currentAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold;
-			if (populateMedia === true && env.currentAlbum.isTransversal())
-				populateMedia = populateMedia && (! tooBig || env.options.show_big_virtual_folders);
-
-			if (env.currentAlbum.isTransversal() && tooBig) {
-				let tooManyImagesText, isShowing = false;
-				if (env.options.show_big_virtual_folders) {
-					tooManyImagesText =
-						"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + env.currentAlbum.numsMedia.imagesAndVideosTotal() +
-						", <span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + env.options.big_virtual_folders_threshold + "</span>, " +
-						"<span id='show-hide-them'>" + util._t("#hide-them") + "</span>";
-				} else {
-					$("#thumbs").empty();
-					tooManyImagesText =
-						"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + env.currentAlbum.numsMedia.imagesAndVideosTotal() +
-						", <span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + env.options.big_virtual_folders_threshold + "</span>, " +
-						"<span id='show-hide-them'>" + util._t("#show-them") + "</span>";
-					isShowing = true;
-				}
-				$("#message-too-many-images").html(tooManyImagesText).show();
-				if (! $("ul#right-menu").hasClass("expand")) {
-					$("#show-hide-them:hover").css("color", "").css("cursor", "");
-					// $("ul#right-menu").addClass("expand");
-				} else {
-					$("#show-hide-them:hover").css("color", "inherit").css("cursor", "auto");
-				}
-				$("#show-hide-them").off("click").on(
-					"click",
-					function() {
-						if (isShowing) {
-							$("#loading").fadeIn(
-								500,
-								function() {
-									$("#show-big-albums")[0].click();
-								}
-							);
-						} else {
-							$("#show-big-albums")[0].click();
-						}
-					}
-				);
-			}
-
-			if (
-				! (env.currentAlbum.isTransversal() && tooBig && ! env.options.show_big_virtual_folders) && (
-					populateMedia === true ||
-					populate === "refreshMedia" ||
-					populate === "refreshBoth"
-				)
-			) {
-				env.currentAlbum.showMedia();
-			}
+			env.currentAlbum.showMedia(populate);
 
 			if (env.currentMedia === null) {
 				let [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
@@ -2496,8 +2492,7 @@
 
 				if (
 					populate === true ||
-					populate === "refreshSubalbums" ||
-					populate === "refreshBoth"
+					populate === "refreshSubalbums"
 				) {
 					let scrollBarWidth = window.innerWidth - document.body.clientWidth || 15;
 
