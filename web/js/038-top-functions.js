@@ -2031,6 +2031,7 @@
 			f.setBooleanCookie("showBigVirtualFolders", env.options.show_big_virtual_folders);
 			f.updateMenu();
 			TopFunctions.showAlbum("refreshMedia");
+			$("#loading").hide();
 		}
 		return false;
 	};
