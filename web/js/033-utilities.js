@@ -2263,7 +2263,7 @@
 		var singleMedia = env.currentMedia, thumb;
 
 
-		if (env.currentMedia !== null || env.previousMedia !== null) {
+		if (! Utilities.isPopup() && $("#album-view").is(":visible") && (env.currentMedia !== null || env.previousMedia !== null)) {
 			if (env.currentMedia === null && env.previousMedia !== null) {
 				singleMedia = env.previousMedia;
 			}
@@ -2297,8 +2297,8 @@
 					);
 				}
 
+				$(".thumb-container").removeClass("current-thumb");
 				if (env.currentMedia !== null) {
-					$(".thumb-container").removeClass("current-thumb");
 					thumb.parent().addClass("current-thumb");
 				}
 			}
