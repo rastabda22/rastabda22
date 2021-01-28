@@ -2303,12 +2303,9 @@
 				}
 			}
 		}
-
-		// add the lazy loader
-		Utilities.addMediaLazyLoader();
 	};
 
-	Utilities.addMediaLazyLoader = function() {
+	Utilities.prototype.addMediaLazyLoader = function() {
 		$(
 			function() {
 				$("img.lazyload-popup-media").Lazy(

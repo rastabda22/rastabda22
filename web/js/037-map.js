@@ -47,6 +47,7 @@
 
 		MapFunctions.setPopupPosition();
 		MapFunctions.panMap();
+		util.addMediaLazyLoader();
 		f.updateMenu();
 	};
 
