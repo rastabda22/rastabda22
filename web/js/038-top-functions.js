@@ -1457,10 +1457,11 @@
 		util.undie();
 		$("#loading").hide();
 
-		if (! this.isEqual(env.currentAlbum)) {
+		if (this !== env.currentAlbum) {
 			// this if condition is required for when a password is guessed
 			env.previousAlbum = env.currentAlbum;
 		}
+		env.albumOfPreviousState = env.currentAlbum;
 		env.currentAlbum = this;
 
 		// if (this !== env.currentAlbum) {
@@ -1504,9 +1505,8 @@
 			env.nextMedia = null;
 			env.prevMedia = null;
 			$("#album-view").addClass("media-view-container");
-			if (env.previousMedia === null && ! env.currentAlbum.isEqual(env.previousAlbum)) {
+			if (env.albumOfPreviousState !== env.currentAlbum) {
 				env.currentAlbum.showMedia();
-				// TopFunctions.showAlbum("refreshMedia");
 			} else {
 				util.scrollToThumb();
 			}
