@@ -2767,6 +2767,40 @@
 				$(".album-button").css("background-color", env.options.album_button_background_color);
 			else
 				$(".album-button").css("border", "none");
+
+			if (! $("#album-view").hasClass("media-view-container")) {
+				$(window).off("resize").on(
+					"resize",
+					function () {
+						var previousWindowWidth = env.windowWidth;
+						env.windowWidth = $(window).outerWidth();
+						env.windowHeight = $(window).outerHeight();
+						if (env.windowWidth === previousWindowWidth)
+							// avoid considering a resize when the mobile browser shows/hides the location bar
+							return;
+
+						$("#loading").show();
+
+						TopFunctions.showAlbum("refreshSubalbums");
+
+						if (util.isMap() || util.isPopup()) {
+							// the map must be generated again including the points that only carry protected content
+							env.mapRefreshType = "resize";
+
+							if (util.isPopup()) {
+								env.popupRefreshType = "mapAlbum";
+								$('.leaflet-popup-close-button')[0].click();
+							} else {
+								env.popupRefreshType = "none";
+							}
+
+							// close the map and reopen it
+							$('.modal-close')[0].click();
+							$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
+						}
+					}
+				);
+			}
 		}
 	};
 
@@ -2818,40 +2852,6 @@
 		f.setOptions();
 
 		env.currentAlbum.bindSortEvents();
-
-		if (! $("#album-view").hasClass("media-view-container")) {
-			$(window).off("resize").on(
-				"resize",
-				function () {
-					var previousWindowWidth = env.windowWidth;
-					env.windowWidth = $(window).outerWidth();
-					env.windowHeight = $(window).outerHeight();
-					if (env.windowWidth === previousWindowWidth)
-						// avoid considering a resize when the mobile browser shows/hides the location bar
-						return;
-
-					$("#loading").show();
-
-					TopFunctions.showAlbum("refreshSubalbums");
-
-					if (util.isMap() || util.isPopup()) {
-						// the map must be generated again including the points that only carry protected content
-						env.mapRefreshType = "resize";
-
-						if (util.isPopup()) {
-							env.popupRefreshType = "mapAlbum";
-							$('.leaflet-popup-close-button')[0].click();
-						} else {
-							env.popupRefreshType = "none";
-						}
-
-						// close the map and reopen it
-						$('.modal-close')[0].click();
-						$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
-					}
-				}
-			);
-		}
 
 		f.updateMenu();
 	};
