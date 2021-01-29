@@ -23,7 +23,8 @@
 						"<li>double check that the directories you set in the web site configuration are the same that you set in the scanner</li>" .
 					"</ul>" .
 				"</li>" .
-			"</ul>";
+			"</ul>" .
+			"If you are not the site owner, please report the issue to him/her";
 		exit;
 	}
 	$options = json_decode($jsonString, true);
