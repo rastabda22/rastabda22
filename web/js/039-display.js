@@ -38,7 +38,7 @@ $(document).ready(function() {
 
 	/* Displays */
 
-	$("#menu-icon").off("click").on("click", f.toggleMenu);
+	$("#menu-icon").off("click").on("click", util.toggleMenu);
 
 	/* Event listeners */
 
@@ -46,10 +46,6 @@ $(document).ready(function() {
 		var isMap = util.isMap();
 		var isPopup = util.isPopup();
 		var isAuth = $("#auth-text").is(":visible");
-
-		// function toggleMenu() {
-		// 	$("#menu-icon")[0].click();
-		// }
 
 		let upLink = util.upHash();
 
@@ -65,7 +61,7 @@ $(document).ready(function() {
 				// util.goUpInHash();
 				return false;
 			} else if ($("ul#right-menu").hasClass("expand")) {
-				f.toggleMenu();
+				util.toggleMenu();
 				return false;
 			} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0 && ! $("video#media-center")[0].paused) {
 				// stop the video, otherwise it keeps playing
@@ -398,7 +394,7 @@ $(document).ready(function() {
 				e.key.toLowerCase() === util._t("#menu-icon-title-shortcut") && e.target.tagName.toLowerCase() != "input" &&  ! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey
 					// "e" opens the menu, and closes it if focus in not in input field
 			) {
-				f.toggleMenu();
+				util.toggleMenu();
 				return false;
 			}
 		}
@@ -687,7 +683,7 @@ $(document).ready(function() {
 	$("ul#right-menu li.square-album-thumbnails").off("click").on("click", tF.toggleAlbumsSquare);
 	$("ul#right-menu li.square-media-thumbnails").off("click").on("click", tF.toggleMediaSquare);
 	$("ul#right-menu #show-big-albums").off("click").on("click", tF.toggleBigAlbumsShow);
-	$("#menu-icon").off("click").on("click", f.toggleMenu);
+	$("#menu-icon").off("click").on("click", util.toggleMenu);
 
 	$("#auth-form").submit(
 		function() {

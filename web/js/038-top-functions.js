@@ -2061,7 +2061,6 @@
 			$("#message-too-many-images").html(tooManyImagesText).show();
 			if (! $("ul#right-menu").hasClass("expand")) {
 				$("#show-hide-them:hover").css("color", "").css("cursor", "");
-				// $("ul#right-menu").addClass("expand");
 			} else {
 				$("#show-hide-them:hover").css("color", "inherit").css("cursor", "auto");
 			}

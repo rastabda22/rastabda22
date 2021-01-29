@@ -1126,11 +1126,24 @@
 			return false;
 	};
 
+	Utilities.toggleMenu = function() {
+		$("ul#right-menu").toggleClass("expand");
+		if ($("ul#right-menu").hasClass("expand")) {
+			if (! $(".sub-menu:not(.hidden)").length)
+				Utilities.focusSearchField();
+			$("#album-view").css("opacity", "0.3");
+			Functions.updateMenu();
+		} else {
+			$("#album-view").css("opacity", "");
+		}
+	};
+
 	Utilities.prototype.noResults = function(album, resolveParseHash, selector) {
 		// no media found or other search fail, show the message
 		env.currentAlbum = album;
 		TopFunctions.setTitle("album", null);
-		$("ul#right-menu").addClass("expand");
+		if (! $("ul#right-menu").hasClass("expand"))
+			Utilities.toggleMenu();
 		$("#album-view #subalbums, #album-view #thumbs").addClass("hidden");
 		$("#media-view").addClass("hidden");
 		$("#loading").hide();
@@ -3716,6 +3729,7 @@
 	Utilities.prototype.setSelectButtonPosition = Utilities.setSelectButtonPosition;
 	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
 	Utilities.prototype.setDescriptionPosition = Utilities.setDescriptionPosition;
+	Utilities.prototype.toggleMenu = Utilities.toggleMenu;
 
 	window.Utilities = Utilities;
 }());
