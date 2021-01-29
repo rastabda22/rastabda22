@@ -817,7 +817,6 @@
 										function() {
 											if (thisAlbum.isSelection())
 												env.currentAlbum.showMedia();
-												// TopFunctions.showAlbum("refreshMedia");
 											Functions.updateMenu();
 											$("#added-individually").stop().fadeOut(3000);
 										}

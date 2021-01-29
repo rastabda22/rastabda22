@@ -1528,7 +1528,6 @@
 					} else {
 						// more than one media has remained after the removal: remove the single media thumbnail
 						$(clickedSelector).parent().parent().parent().remove();
-						// TopFunctions.showAlbum("refreshMedia");
 					}
 				} else {
 					// we are in media view
@@ -1547,7 +1546,6 @@
 							env.currentMediaIndex --;
 						}
 						env.currentAlbum.showMedia();
-						// TopFunctions.showAlbum("refreshMedia");
 					}
 				}
 			} else {
