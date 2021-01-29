@@ -1321,7 +1321,6 @@
 
 	Functions.prototype.setOptions = function() {
 		$("body").css("background-color", env.options.background_color);
-		$(".leaflet-popup-content-wrapper").css("background-color", "slategray");
 
 		$(".title").css("font-size", env.options.title_font_size);
 		$(".title-anchor").css("color", env.options.title_color);

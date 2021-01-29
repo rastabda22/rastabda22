@@ -1132,9 +1132,11 @@
 			if (! $(".sub-menu:not(.hidden)").length)
 				Utilities.focusSearchField();
 			$("#album-view").css("opacity", "0.3");
+			$(".leaflet-popup-content-wrapper").css("background-color", "darkgray");
 			Functions.updateMenu();
 		} else {
 			$("#album-view").css("opacity", "");
+			$(".leaflet-popup-content-wrapper").css("background-color", "");
 		}
 	};
 
