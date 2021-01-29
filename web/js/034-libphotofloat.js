@@ -2073,10 +2073,11 @@
 				return null;
 			}
 		}
-		if (this.isSearch() && mediaIndex === -1) {
-			$("ul#right-menu").addClass("expand");
-			util.focusSearchField();
-		}
+		// if (this.isSearch() && mediaIndex === -1) {
+		// 	if (! $("ul#right-menu").hasClass("expand"))
+		// 		util.toggleMenu();
+		// 	util.focusSearchField();
+		// }
 		return mediaIndex;
 	};
 
