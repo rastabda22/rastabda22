@@ -1769,8 +1769,7 @@
 				env.prevMedia.scale(event);
 			}
 		} else {
-			f.setOptions();
-			// TopFunctions.showAlbum(false);
+			TopFunctions.adaptAlbumOptions();
 		}
 		return false;
 	};
@@ -1801,8 +1800,9 @@
 					event.data.id = "left";
 					env.prevMedia.scale(event);
 				}
-			} else
-				TopFunctions.showAlbum(false);
+			} else {
+				TopFunctions.adaptAlbumOptions();
+			}
 		}
 		return false;
 	};
@@ -1846,8 +1846,9 @@
 					event.data.id = "left";
 					env.prevMedia.scale(event);
 				}
-			} else
-				TopFunctions.showAlbum(false);
+			} else {
+				TopFunctions.adaptAlbumOptions();
+			}
 		}
 		return false;
 	};
@@ -2835,25 +2836,12 @@
 		}
 	};
 
-	TopFunctions.showAlbum = function(populate) {
+	TopFunctions.adaptAlbumOptions = function() {
 		if (env.currentMedia === null) {
 			$("#album-view").off('mousewheel');
 			if (env.previousMedia === null)
 				$("html, body").stop().animate({ scrollTop: 0 }, "slow");
 		}
-
-		// if (populate) {
-		// 	if (env.currentMedia === null) {
-		// 		if (env.currentAlbum.subalbums.length) {
-		// 			env.currentAlbum.showSubalbums(populate);
-		// 		}
-		// 	}
-		//
-		// 	if (env.currentAlbum.media.length)
-		// 		env.currentAlbum.showMedia(populate);
-		//
-		// 	$("#loading").hide();
-		// }
 
 		if (env.currentMedia === null) {
 			$("#media-view").addClass("hidden");
