@@ -10,7 +10,20 @@
 	<?php
 	$jsonString = file_get_contents('cache/options.json');
 	if (! $jsonString) {
-		echo "missing options file";
+		echo "Missing options.json file in cache dir. Either:" .
+			"<ul>" .
+				"<li>Your albums are not indexed yet:" .
+					"<ul>" .
+						"<li>maybe the scanner hasn't completed its run: be patient until it finishes indexing pictures and videos</li>" .
+						"<li>if an error has occurred in the scanner, <a href='https://gitlab.com/paolobenve/myphotoshare/-/issues'>please report the issue</a> so that it can be investigated</li>" .
+					"</ul>" .
+				"</li>" .
+				"<li>Your web site configuration is wrong:" .
+					"<ul>" .
+						"<li>double check that the directories you set in the web site configuration are the same that you set in the scanner</li>" .
+					"</ul>" .
+				"</li>" .
+			"</ul>";
 		exit;
 	}
 	$options = json_decode($jsonString, true);
