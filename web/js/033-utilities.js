@@ -3309,7 +3309,7 @@
 			$("#description-text").css("margin-bottom", bottomSpace.toString() + "px");
 		} else {
 			$("#description").css("margin-bottom", bottomSpace.toString() + "px");
-			$("#description-wrapper").css("width", ($("#description-hide-show").outerWidth() + $("#description-tags").outerWidth()) + "px");
+			// $("#description-wrapper").css("width", ($("#description-hide-show").outerWidth() + $("#description-tags").outerWidth()) + "px");
 			$("#description-tags").css("position", "relative");
 			$("#description-tags").css("margin-left", ($("#description-hide-show").outerWidth()) + "px");
 		}
@@ -3317,10 +3317,10 @@
 		$("#description-wrapper, #description").css("max-width", maxWidth.toString() + "px");
 		$("#description-tags").css("max-width", (maxWidth - 20).toString() + "px");
 
-		$("#description-wrapper").css("width", "");
-		$("#description-wrapper").css("height", "");
-		$("#description-tags").css("width", "");
-		$("#description-tags").css("height", "");
+		// $("#description-wrapper").css("width", "");
+		// $("#description-wrapper").css("height", "");
+		// $("#description-tags").css("width", "");
+		// $("#description-tags").css("height", "");
 
 		if (env.isMobile.any()) {
 			if (env.currentMedia !== null) {
