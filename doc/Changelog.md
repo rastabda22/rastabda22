@@ -1,3 +1,5 @@
+* bug fixes
+
 ### version v4.9.31 (Jan 26, 2021)
 
 * description show/hide button is now in the bottom part of the description, so that it can be clicked multiple times without moving the mouse
