@@ -1788,15 +1788,6 @@
 		}
 	};
 
-	Functions.prototype.toggleMenu = function() {
-		$("ul#right-menu").toggleClass("expand");
-		if ($("ul#right-menu").hasClass("expand")) {
-			if (! $(".sub-menu:not(.hidden)").length)
-				util.focusSearchField();
-			Functions.updateMenu();
-		}
-	};
-
 	Functions.prototype.getBooleanCookie = Functions.getBooleanCookie;
 	Functions.prototype.setBooleanCookie = Functions.setBooleanCookie;
 	Functions.prototype.updateMenu = Functions.updateMenu;

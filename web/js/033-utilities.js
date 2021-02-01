@@ -3309,12 +3309,25 @@
 		$(".media-box#" + id + " .metadata").css("display", $(".media-box#center .metadata").css("display"));
 	};
 
+	Utilities.toggleMenu = function() {
+		$("ul#right-menu").toggleClass("expand");
+		if ($("ul#right-menu").hasClass("expand")) {
+			if (! $(".sub-menu:not(.hidden)").length)
+				Utilities.focusSearchField();
+			Functions.updateMenu();
+		}
+	};
+
 	Utilities.prototype.showAuthForm = function(event, maybeProtectedContent = false) {
 		$("#album-view, #media-view, #my-modal, #no-results").css("opacity", "0.2");
 		$("#loading").hide();
+		if ($("ul#right-menu").hasClass("expand")) {
+			Utilities.toggleMenu();
+		}
 		$("#no-results").hide();
 		$("#auth-text").stop().fadeIn(1000);
 		$("#password").focus();
+
 
 		$('#auth-close').off("click").on(
 			"click",
@@ -3674,6 +3687,7 @@
 	Utilities.prototype.setSelectButtonPosition = Utilities.setSelectButtonPosition;
 	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
 	Utilities.prototype.setDescriptionPosition = Utilities.setDescriptionPosition;
+	Utilities.prototype.toggleMenu = Utilities.toggleMenu;
 
 	window.Utilities = Utilities;
 }());
