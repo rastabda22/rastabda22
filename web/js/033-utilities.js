@@ -2292,7 +2292,7 @@
 			// 	}
 			// );
 
-			if (thumb !== undefined) {
+			if (thumb[0] !== undefined) {
 			 	if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia()) {
 					var scroller = $("#album-view");
 					scroller.stop().animate(

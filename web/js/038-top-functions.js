@@ -2341,7 +2341,8 @@
 			}
 		}
 
-	 	if (! $("#album-view").hasClass("hidden")) {
+	 	if ($(thumbsSelector).is(":visible") || util.isPopup()) {
+	 	// if (! $("#album-view").hasClass("hidden")) {
 			util.scrollToThumb();
 			util.addMediaLazyLoader();
 			// setTimeout(util.scrollToThumb, 1);
