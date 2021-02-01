@@ -3261,6 +3261,10 @@
 		$("#description-tags").css("width", "");
 		$("#description-tags").css("height", "");
 
+		while ($("#description-hide-show").outerWidth() + $("#description-tags").outerWidth() > $("#description-wrapper").innerWidth() && $("#description-wrapper").width() < maxWidth) {
+			$("#description-wrapper").css("width", ($("#description-wrapper").width() + 5) + "px");
+		}
+
 		if (env.isMobile.any()) {
 			if (env.currentMedia !== null) {
 				// move the box above the media bar
