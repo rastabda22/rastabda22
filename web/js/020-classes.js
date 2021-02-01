@@ -14,6 +14,7 @@
 			this.currentMediaIndex = -1;
 			this.previousAlbum = null;
 			this.albumOfPreviousState = null;
+			this.albumInSubalbumDiv = null;
 			this.previousMedia = null;
 			this.nextMedia = null;
 			this.prevMedia = null;

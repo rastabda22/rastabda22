@@ -1768,6 +1768,7 @@
 							env.selectionAlbum.sortAlbumsMedia();
 
 							if (env.currentAlbum.isSelection()) {
+								env.albumInSubalbumDiv = null;
 								if (Utilities.nothingIsSelected()) {
 									Utilities.initializeSelectionAlbum();
 									window.location.href = Utilities.upHash();
