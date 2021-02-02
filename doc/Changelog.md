@@ -1,3 +1,7 @@
+* show a better message when options.json isn't there
+* leave the menu closed by default
+* close the right menu when auth dialog is shown
+* activate pinterest button by default
 * separate showSubalbums function
 * bug fixes
 
