@@ -491,7 +491,7 @@ min_album_thumbnail = 2
 # List the social icons you want to display in a string between spaces or commas.
 # The order of items in the list does not change the order the social icons are displayed (shown
 # in parenthesis in the possible values).
-social = "facebook, twitter, google, email"
+social = "facebook, twitter, pinterest, email"
 
 # Social colored icons or gray ones
 social_color = false

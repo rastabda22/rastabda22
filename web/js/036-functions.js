@@ -242,10 +242,10 @@
 				TopFunctions.showBrowsingModeMessage("#folders-browsing");
 
 				if (isSingleMedia) {
-					window.location.href = env.hashBeginning + util.pathJoin([
-						thisMedia.foldersCacheBase,
-						thisMedia.cacheBase
-					]);
+					$(".title").removeClass("hidden-by-pinch");
+					$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+					window.location.href =
+						env.hashBeginning + util.pathJoin([thisMedia.foldersCacheBase, thisMedia.cacheBase]);
 				} else if (isAnyRoot) {
 					window.location.href = env.hashBeginning + encodeURIComponent(env.options.folders_string);
 				}
@@ -260,11 +260,10 @@
 				TopFunctions.showBrowsingModeMessage("#by-date-browsing");
 
 				if (isSingleMedia) {
-					window.location.href = env.hashBeginning + util.pathJoin([
-						thisMedia.dayAlbumCacheBase,
-						thisMedia.foldersCacheBase,
-						thisMedia.cacheBase
-					]);
+					$(".title").removeClass("hidden-by-pinch");
+					$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+					window.location.href =
+						env.hashBeginning + util.pathJoin([thisMedia.dayAlbumCacheBase, thisMedia.foldersCacheBase, thisMedia.cacheBase]);
 				} else if (isAnyRoot) {
 					window.location.href = env.hashBeginning + encodeURIComponent(env.options.by_date_string);
 				}
@@ -278,11 +277,10 @@
 				TopFunctions.showBrowsingModeMessage("#by-gps-browsing");
 
 				if (isSingleMedia) {
-					window.location.href = env.hashBeginning + util.pathJoin([
-						thisMedia.gpsAlbumCacheBase,
-						thisMedia.foldersCacheBase,
-						thisMedia.cacheBase
-					]);
+					$(".title").removeClass("hidden-by-pinch");
+					$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+					window.location.href =
+						env.hashBeginning + util.pathJoin([thisMedia.gpsAlbumCacheBase, thisMedia.foldersCacheBase, thisMedia.cacheBase]);
 				} else if (isAnyRoot) {
 					window.location.href = env.hashBeginning + encodeURIComponent(env.options.by_gps_string);
 				}
@@ -295,6 +293,8 @@
 			function changeToByMapView() {
 				TopFunctions.showBrowsingModeMessage("#by-map-browsing");
 				if (isSingleMedia) {
+					$(".title").removeClass("hidden-by-pinch");
+					$("#album-view.media-view-container").removeClass("hidden-by-pinch");
 					window.location.href = phFl.encodeHash(env.mapAlbum.cacheBase, thisMedia);
 				} else if (isAnyRoot) {
 					window.location.href = phFl.encodeHash(env.mapAlbum.cacheBase, null);
@@ -308,6 +308,8 @@
 			function changeToBySearchView() {
 				TopFunctions.showBrowsingModeMessage("#by-search-browsing");
 				if (isSingleMedia) {
+					$(".title").removeClass("hidden-by-pinch");
+					$("#album-view.media-view-container").removeClass("hidden-by-pinch");
 					// if (thisMedia.hasOwnProperty("searchHashes") && thisMedia.searchHashes.length)
 					var foundAlbum = thisMedia.isInFoundAlbum();
 					if (foundAlbum !== false) {
@@ -337,6 +339,8 @@
 				}
 
 				if (isSingleMedia) {
+					$(".title").removeClass("hidden-by-pinch");
+					$("#album-view.media-view-container").removeClass("hidden-by-pinch");
 					window.location.href = phFl.encodeHash(env.selectionAlbum.cacheBase, thisMedia);
 				} else {
 					window.location.href = phFl.encodeHash(env.selectionAlbum.cacheBase, null);
@@ -816,7 +820,7 @@
 										1000,
 										function() {
 											if (thisAlbum.isSelection())
-												TopFunctions.showAlbum("refreshMedia");
+												env.currentAlbum.showMedia();
 											Functions.updateMenu();
 											$("#added-individually").stop().fadeOut(3000);
 										}
@@ -1321,7 +1325,6 @@
 
 	Functions.prototype.setOptions = function() {
 		$("body").css("background-color", env.options.background_color);
-		$(".leaflet-popup-content-wrapper").css("background-color", "slategray");
 
 		$(".title").css("font-size", env.options.title_font_size);
 		$(".title-anchor").css("color", env.options.title_color);
@@ -1785,15 +1788,6 @@
 				.animate({ height: 0, paddingTop: 0, paddingBottom: 0 }, "slow", function() {
 					$(this).hide();
 				});
-		}
-	};
-
-	Functions.prototype.toggleMenu = function() {
-		$("ul#right-menu").toggleClass("expand");
-		if ($("ul#right-menu").hasClass("expand")) {
-			if (! $(".sub-menu:not(.hidden)").length)
-				util.focusSearchField();
-			Functions.updateMenu();
 		}
 	};
 

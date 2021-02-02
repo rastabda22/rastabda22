@@ -653,8 +653,6 @@
 							}
 						} else if (title.includes(fillInSpan) && env.currentAlbum.numPositionsInTree) {
 							let replace = "";
-							let shortcutAdded = false;
-							let marker = "<marker>";
 
 							let showSingleMarker = (env.currentAlbum.numPositionsInMedia > 0 && env.currentAlbum.numPositionsInTree !== env.currentAlbum.numPositionsInSubalbums);
 							let showDoubleMarker = (env.currentAlbum.numPositionsInSubalbums > 0);
@@ -935,9 +933,6 @@
 			if (util.nothingIsSelected())
 				util.initializeSelectionAlbum();
 			this.addToSelection(album, clickedSelector);
-			if (env.currentAlbum.isSelection()) {
-				TopFunctions.showAlbum("refreshMedia");
-			}
 			f.updateMenu();
 		}
 	};
@@ -953,7 +948,7 @@
 					if (util.nothingIsSelected()) {
 						util.initializeSelectionAlbum();
 					} else if (env.currentAlbum.isSelection()) {
-						TopFunctions.showAlbum("refreshSubalbums");
+						env.currentAlbum.showSubalbums();
 					}
 					f.updateMenu();
 				}
@@ -1071,7 +1066,7 @@
 		}
 		// end of loadNextPrevMedia auxiliary function
 
-		var text, thumbnailSize, loadEvent, mediaHtml, mediaSelector, mediaSrc;
+		var text, loadEvent, mediaHtml, mediaSelector, mediaSrc;
 		var exposureTime, heightForMedia, heightForMediaAndTitle;
 		var previousMediaIndex, nextMediaIndex, whatMedia;
 
@@ -1086,7 +1081,7 @@
 		env.mediaLink = phFl.encodeHash(env.currentAlbum.cacheBase, this, foundAlbumCacheBase, savedSearchAlbumCacheBase);
 		env.firstEscKey = true;
 
-		thumbnailSize = env.options.media_thumb_size;
+		let thumbnailSize = env.options.media_thumb_size;
 
 		if (id === "center") {
 			if (env.fullScreenStatus) {
@@ -1253,7 +1248,6 @@
 					$("#next").off();
 					$("#prev").off();
 
-					mediaBoxInnerElement.off('mousewheel');
 					if (self.mimeType.indexOf("image/") === 0)
 						mediaBoxInnerElement.off("mousewheel").on("mousewheel", pS.swipeOnWheel);
 
@@ -1504,28 +1498,34 @@
 		if (env.currentMedia !== null) {
 			env.nextMedia = null;
 			env.prevMedia = null;
+			$("#media-view-container").removeClass("hidden");
 			$("#album-view").addClass("media-view-container");
-			if (env.albumOfPreviousState !== env.currentAlbum) {
+			if (env.albumOfPreviousState !== env.currentAlbum || env.albumOfPreviousState !== null && env.albumOfPreviousState.numsMediaInSubTree.imagesAndVideosTotal() !== env.currentAlbum.numsMediaInSubTree.imagesAndVideosTotal()) {
 				env.currentAlbum.showMedia();
 			} else {
 				util.scrollToThumb();
+				util.addMediaLazyLoader();
 			}
 			env.currentMedia.show(env.currentAlbum, 'center');
 		} else {
+			$("#media-view-container").addClass("hidden");
 			TopFunctions.setTitle("album", null).then(
 				function titleSet() {
 					$("#album-view").removeClass("media-view-container").removeAttr("height");
 
 					if ($("#album-view").is(":visible")) {
-						let populate = false;
+						env.currentAlbum.showSubalbums();
 						if (
-							env.previousAlbum === null ||
-							! env.previousAlbum.isEqual(env.currentAlbum) ||
-							// next line is for when protected content is unveiled
-							env.previousAlbum.numsMediaInSubTree.imagesAndVideosTotal() !== env.currentAlbum.numsMediaInSubTree.imagesAndVideosTotal()
-						)
-							populate = true;
-						TopFunctions.showAlbum(populate);
+							env.albumOfPreviousState === null || (
+								env.albumOfPreviousState !== env.currentAlbum ||
+								env.albumOfPreviousState !== null && env.albumOfPreviousState.numsMediaInSubTree.imagesAndVideosTotal() !== env.currentAlbum.numsMediaInSubTree.imagesAndVideosTotal()
+							)
+						) {
+							env.currentAlbum.showMedia();
+						} else {
+							util.scrollToThumb();
+							util.addMediaLazyLoader();
+						}
 					}
 				}
 			);
@@ -1541,12 +1541,12 @@
 		}
 	};
 
-	Album.prototype.bindSortEvents = function() {
+	Album.prototype.bindSubalbumSortEvents = function() {
 		// binds the click events to the sort buttons
 
 		var self = this;
 
-		$("li.sort").off("click");
+		$("li.album-sort").off("click");
 		$("li.album-sort.by-date").on(
 			"click",
 			function(ev) {
@@ -1565,6 +1565,14 @@
 				self.sortSubalbumsReverse(ev);
 			}
 		);
+	};
+
+	Album.prototype.bindMediaSortEvents = function() {
+		// binds the click events to the sort buttons
+
+		var self = this;
+
+		$("li.media-sort").off("click");
 		$("li.media-sort.by-date").on(
 			"click",
 			function(ev) {
@@ -1595,7 +1603,7 @@
 			// f.setBooleanCookie("albumReverseSortRequested", this.albumReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			TopFunctions.showAlbum("refreshSubalbums");
+			env.currentAlbum.showSubalbums();
 		}
 		return false;
 	};
@@ -1607,10 +1615,9 @@
 		) {
 			env.albumNameSort = true;
 			f.setBooleanCookie("albumNameSortRequested", true);
-			// f.setBooleanCookie("albumReverseSortRequested", this.albumReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			TopFunctions.showAlbum("refreshSubalbums");
+			env.currentAlbum.showSubalbums();
 		}
 		return false;
 	};
@@ -1623,11 +1630,10 @@
 			f.setBooleanCookie("albumReverseSortRequested", env.albumReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			TopFunctions.showAlbum("refreshSubalbums");
+			env.currentAlbum.showSubalbums();
 		}
 		return false;
 	};
-	// media
 
 	Album.prototype.sortMediaByDate = function (ev) {
 		if (
@@ -1636,18 +1642,12 @@
 		) {
 			env.mediaNameSort = false;
 			f.setBooleanCookie("mediaNameSortRequested", false);
-			// f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			// if (this.isEqual(env.currentAlbum)) {
 			this.showMedia();
-			// } else {
-			// 	this.showMedia(true);
-			// 	map.updatePopup();
-			// }
 			if (util.isPopup()) {
 				env.mapAlbum.sortAlbumsMedia();
-				env.mapAlbum.showMedia(true);
+				env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
 		}
@@ -1662,20 +1662,15 @@
 		) {
 			env.mediaNameSort = true;
 			f.setBooleanCookie("mediaNameSortRequested", true);
-			// f.setBooleanCookie("mediaReverseSortRequested", this.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			// if (this.isEqual(env.currentAlbum)) {
-			// 	TopFunctions.showAlbum("refreshMedia");
-			// } else {
 			this.showMedia();
 
 			if (util.isPopup()) {
 				env.mapAlbum.sortAlbumsMedia();
-				env.mapAlbum.showMedia(true);
+				env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
-			// }
 		}
 		return false;
 	};
@@ -1686,17 +1681,13 @@
 			f.setBooleanCookie("mediaReverseSortRequested", env.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			// if (this.cacheBase === env.currentAlbum.cacheBase) {
-			// 	TopFunctions.showAlbum("refreshMedia");
-			// } else {
 			this.showMedia();
 
 			if (util.isPopup()) {
 				env.mapAlbum.sortAlbumsMedia();
-				env.mapAlbum.showMedia(true);
+				env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
-			// }
 		}
 		return false;
 	};
@@ -1734,9 +1725,9 @@
 			$(".title").removeClass("hidden-by-option");
 		}
 		if (env.options.hide_bottom_thumbnails) {
-			$("#album-view").addClass("hidden-by-option");
+			$("#album-view.media-view-container").addClass("hidden-by-option");
 		} else {
-			$("#album-view").removeClass("hidden-by-option");
+			$("#album-view.media-view-container").removeClass("hidden-by-option");
 		}
 		if (env.options.hide_descriptions) {
 			$("#description, .media-description, .album-description").addClass("hidden-by-option");
@@ -1750,13 +1741,12 @@
 		}
 		if (! $("#thumbs").children().length)
 			$("#album-view").addClass("media-view-container");
-		env.currentAlbum.showMedia();
+		// env.currentAlbum.showMedia();
 		if (util.isPopup()) {
-			env.mapAlbum.showMedia(true);
+			// env.mapAlbum.showMedia();
 			map.updatePopup();
 		}
 
-		// 	env.currentAlbum.prepareForShowing(env.currentMediaIndex);
 		if (env.currentMedia !== null) {
 			let event = {data: {}};
 			event.data.resize = true;
@@ -1771,7 +1761,7 @@
 				env.prevMedia.scale(event);
 			}
 		} else {
-			TopFunctions.showAlbum(false);
+			TopFunctions.adaptAlbumOptions();
 		}
 		return false;
 	};
@@ -1787,7 +1777,6 @@
 				$(".title").addClass("hidden-by-option");
 			} else {
 				$(".title").removeClass("hidden-by-option");
-				TopFunctions.showAlbum("refreshMedia");
 			}
 			if (env.currentMedia !== null) {
 				let event = {data: {}};
@@ -1802,8 +1791,9 @@
 					event.data.id = "left";
 					env.prevMedia.scale(event);
 				}
-			} else
-				TopFunctions.showAlbum(false);
+			} else {
+				TopFunctions.adaptAlbumOptions();
+			}
 		}
 		return false;
 	};
@@ -1818,13 +1808,10 @@
 			} else {
 				$("#album-view.media-view-container").removeClass("hidden-by-option");
 			}
-			// if ($("#thumbs").children().length)
 			if (! $("#album-view").hasClass("media-view-container")) {
 				$("#album-view").addClass("media-view-container");
-				TopFunctions.showAlbum("refreshMedia");
+				env.currentAlbum.showMedia();
 			}
-			// else
-			// 	env.currentAlbum.prepareForShowing(env.currentMediaIndex);
 			if (env.currentMedia !== null) {
 				let event = {data: {}};
 				event.data.resize = true;
@@ -1849,8 +1836,9 @@
 					event.data.id = "left";
 					env.prevMedia.scale(event);
 				}
-			} else
-				TopFunctions.showAlbum(false);
+			} else {
+				TopFunctions.adaptAlbumOptions();
+			}
 		}
 		return false;
 	};
@@ -1877,12 +1865,12 @@
 					env.prevMedia.scale(event);
 				}
 			} else {
-				TopFunctions.showAlbum("refreshSubalbums");
+				env.currentAlbum.showSubalbums();
 				env.currentAlbum.showMedia();
 			}
 
 			if (util.isPopup()) {
-				env.mapAlbum.showMedia(true);
+				env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
 		}
@@ -1911,12 +1899,12 @@
 					env.prevMedia.scale(event);
 				}
 			} else {
-				TopFunctions.showAlbum("refreshSubalbums");
+				env.currentAlbum.showSubalbums();
 				env.currentAlbum.showMedia();
 			}
 
 			if (util.isPopup()) {
-				env.mapAlbum.showMedia(true);
+				env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
 		}
@@ -1928,7 +1916,7 @@
 			env.options.albums_slide_style = ! env.options.albums_slide_style;
 			f.setBooleanCookie("albumsSlideStyle", env.options.albums_slide_style);
 			f.updateMenu();
-			TopFunctions.showAlbum("refreshSubalbums");
+			env.currentAlbum.showSubalbums();
 		}
 		return false;
 	};
@@ -1941,16 +1929,14 @@
 				env.options.spacing = env.options.spacingToggle;
 			f.setCookie("spacing", env.options.spacing);
 			f.updateMenu();
-			// if (env.currentAlbum.subalbums.length > 1 && env.currentAlbum.numsMedia.imagesAndVideosTotal() > 1)
-			// 	TopFunctions.showAlbum("refreshBoth");
 			env.currentAlbum.showMedia();
 
 			if (util.isPopup()) {
-				env.mapAlbum.showMedia(true);
+				env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
 			if (env.currentAlbum.subalbums.length > 1) {
-				TopFunctions.showAlbum("refreshSubalbums");
+				env.currentAlbum.showSubalbums();
 			}
 		}
 		return false;
@@ -1961,7 +1947,7 @@
 			env.options.show_album_names_below_thumbs = ! env.options.show_album_names_below_thumbs;
 			f.setBooleanCookie("showAlbumNamesBelowThumbs", env.options.show_album_names_below_thumbs);
 			f.updateMenu();
-			TopFunctions.showAlbum("refreshSubalbums");
+			env.currentAlbum.showSubalbums();
 		}
 		return false;
 	};
@@ -1971,7 +1957,7 @@
 			env.options.show_album_media_count = ! env.options.show_album_media_count;
 			f.setBooleanCookie("showAlbumMediaCount", env.options.show_album_media_count);
 			f.updateMenu();
-			TopFunctions.showAlbum("refreshSubalbums");
+			env.currentAlbum.showSubalbums();
 		}
 		return false;
 	};
@@ -1984,7 +1970,7 @@
 			env.currentAlbum.showMedia();
 
 			if (util.isPopup()) {
-				env.mapAlbum.showMedia(true);
+				env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
 		}
@@ -1996,7 +1982,7 @@
 			env.options.album_thumb_type = env.options.album_thumb_type === "square" ? "fit" : "square";
 			f.setCookie("albumThumbType", env.options.album_thumb_type);
 			f.updateMenu();
-			TopFunctions.showAlbum("refreshSubalbums");
+			env.currentAlbum.showSubalbums();
 		}
 		return false;
 	};
@@ -2009,7 +1995,7 @@
 			env.currentAlbum.showMedia();
 
 			if (util.isPopup()) {
-				env.mapAlbum.showMedia(true);
+				env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
 		}
@@ -2029,13 +2015,17 @@
 				$("#show-hide-them:hover").css("color", "inherit").css("cursor", "auto");
 			f.setBooleanCookie("showBigVirtualFolders", env.options.show_big_virtual_folders);
 			f.updateMenu();
-			TopFunctions.showAlbum("refreshMedia");
+			env.currentAlbum.showMedia();
 			$("#loading").hide();
 		}
 		return false;
 	};
 
-	Album.prototype.showMedia = function(inPopup = false) {
+	Album.prototype.showMedia = function(populateMedia = true) {
+		var inPopup = false;
+		if (this.isEqual(env.mapAlbum) && util.isPopup())
+			inPopup = true;
+
 		var thumbnailSize = env.options.media_thumb_size;
 		var imageLink;
 		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
@@ -2048,305 +2038,327 @@
 			thumbsSelector = "#thumbs";
 			lazyClass = "lazyload-media";
 		}
-		$(thumbsSelector).empty();
 
-		//
-		// media loop
-		//
-		for (let i = 0; i < this.media.length; ++i) {
-			let iMedia = i;
-			let ithMedia = this.media[iMedia];
+		let tooBig = env.currentAlbum.path.split("/").length < 4 && env.currentAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold;
+		if (populateMedia && env.currentAlbum.isTransversal())
+			populateMedia = populateMedia && (! tooBig || env.options.show_big_virtual_folders);
 
-			let width = ithMedia.metadata.size[0];
-			let height = ithMedia.metadata.size[1];
-			let thumbHash = ithMedia.chooseThumbnail(thumbnailSize);
-			let thumbHeight, thumbWidth, calculatedWidth, calculatedHeight;
-
-			if (env.options.media_thumb_type === "fixed_height") {
-				if (height < env.options.media_thumb_size) {
-					thumbHeight = height;
-					thumbWidth = width;
-				} else {
-					thumbHeight = env.options.media_thumb_size;
-					thumbWidth = thumbHeight * width / height;
-				}
-				calculatedWidth = thumbWidth;
-			} else if (env.options.media_thumb_type === "square") {
-				thumbHeight = thumbnailSize;
-				thumbWidth = thumbnailSize;
-				calculatedWidth = env.options.media_thumb_size;
-			}
-			calculatedHeight = env.options.media_thumb_size;
-
-			var albumViewPadding = $("#album-view").css("padding");
-			if (! albumViewPadding)
-				albumViewPadding = 0;
-			else
-				albumViewPadding = parseInt(albumViewPadding);
-			calculatedWidth = Math.min(
-				calculatedWidth,
-				$(window).innerWidth() - 2 * albumViewPadding
-			);
-			calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
-
-			let mapLinkIcon = "";
-			if (! inPopup) {
-				if (ithMedia.hasGpsData()) {
-					let imgHtml =
-							"<img " +
-								"class='thumbnail-map-link' " +
-								"height='20px' " +
-								"src='img/ic_place_white_24dp_2x.png'" +
-							">";
-					let img = $(imgHtml);
-					img.attr("title", util._t("#show-on-map"));
-					img.attr("alt", util._t("#show-on-map"));
-					mapLinkIcon =
-						"<a id='media-map-link-" + iMedia + "'>" + img.prop("outerHTML") + "</a>";
-				}
-			}
-			let selectSrc = 'img/checkbox-unchecked-48px.png';
-			let titleSelector = "#select-single-media";
-			if (ithMedia.isSelected()) {
-				selectSrc = 'img/checkbox-checked-48px.png';
-				titleSelector = "#unselect-single-media";
-			}
-
-			let imgHtml =
-					"<img " +
-						"class='select-box' " +
-						"src='" + selectSrc + "'" +
-					">";
-			let img = $(imgHtml);
-			img.attr("title", util._t(titleSelector));
-			img.attr("alt", util._t("#selector"));
-
-			let mediaSelectBoxSelectorPart = "media-select-box-";
-			if (inPopup)
-				mediaSelectBoxSelectorPart = "map-" + mediaSelectBoxSelectorPart;
-
-			let selectBoxHtml =
-				"<a id='" + mediaSelectBoxSelectorPart + iMedia + "'>" + img.prop("outerHTML") + "</a>";
-
-			// imageElement.get(0).media = ithMedia;
-			if (typeof savedSearchAlbumCacheBase !== "undefined" && savedSearchAlbumCacheBase !== null)
-				mediaHash = phFl.encodeHash(this.cacheBase, ithMedia, foundAlbumCacheBase, savedSearchAlbumCacheBase);
-			else
-				mediaHash = phFl.encodeHash(this.cacheBase, ithMedia);
-
-			let data = "";
-			if (inPopup) {
-				data =
-					"data='" +
-						JSON.stringify(
-							{
-								width: ithMedia.metadata.size[0],
-								height: ithMedia.metadata.size[1],
-								albumCacheBase: this.cacheBase,
-								mediaHash: mediaHash
-							}
-						) +
-					"' ";
-			}
-
-			imgHtml =
-				"<img " +
-					"data-src='" + encodeURI(thumbHash) + "' " +
-					"src='img/image-placeholder.png' " +
-					data +
-					"class='thumbnail " + lazyClass + "' " +
-					"height='" + thumbHeight + "' " +
-					"width='" + thumbWidth + "' " +
-					"id='" + Utilities.pathJoin([ithMedia.albumName, ithMedia.name]) + "' " +
-					"style='" +
-						 "width: " + calculatedWidth + "px; " +
-						 "height: " + calculatedHeight + "px;" +
-						 "'" +
-				"/>";
-			img = $(imgHtml);
-			img.attr("title", util.pathJoin([ithMedia.albumName, ithMedia.nameForShowing(this)]));
-			img.attr("alt", util.trimExtension(ithMedia.name));
-
-			let imageString =
-				"<div class='thumb-and-caption-container' style='" +
-							"width: " + calculatedWidth + "px; " +
-							"margin-right: " + env.options.spacing + "px; " +
-				"'>" +
-					"<div class='thumb-container' " + "style='" +
-							// "width: " + calculatedWidth + "px; " +
-							"width: " + calculatedWidth + "px; " +
-							"height: " + calculatedHeight + "px;" +
-					"'>" +
-						mapLinkIcon +
-						selectBoxHtml +
-						"<span class='helper'></span>" +
-						img.prop("outerHTML") +
-					"</div>" +
-					"<div class='media-caption'>";
-			let name;
-			if (util.isPopup() || this.isMap())
-				name = ithMedia.captionForPopup;
-			else if (this.isSearch())
-				name = ithMedia.captionForSearch;
-			else if (this.isSelection())
-				name = ithMedia.captionForSelection;
-			else
-				name = ithMedia.nameForShowing(this, true, true);
-
-			let spanHtml =
-						"<span class='media-name'>" +
-							// "<span>" +
-								name +
-								// ithMedia.nameForShowing(this, true, true).replace(/( |<br \/>)/g, "</span>$&<span>") +
-							// "</span>" +
-						"</span>";
-			let span = $(spanHtml);
-			span.attr("title", ithMedia.nameForShowing(this));
-
-			imageString += span.prop("outerHTML");
-
-			if (ithMedia.metadata.hasOwnProperty("description")) {
-				let description = $("<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithMedia.metadata.description) + "</div>");
-				description.attr("title", Utilities.stripHtmlAndReplaceEntities(ithMedia.metadata.description));
-				imageString +=
-						"<div class='media-description'>" +
-							description.prop("outerHTML") +
-						"</div>";
-			}
-			if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
-				imageString +=
-						"<div class='media-tags'>" +
-							"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithMedia.metadata.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>" +
-						"</div>";
-			}
-			imageString +=
-					"</div>" +
-				"</div>";
-			let imageElement = $(imageString);
-
-			let imageId = "link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase;
-			if (inPopup) {
-				imageElement.attr("id", imageId);
-				$(thumbsSelector).append(imageElement);
+		if (env.currentAlbum.isTransversal() && tooBig) {
+			let tooManyImagesText, isShowing = false;
+			if (env.options.show_big_virtual_folders) {
+				tooManyImagesText =
+					"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + env.currentAlbum.numsMedia.imagesAndVideosTotal() +
+					", <span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + env.options.big_virtual_folders_threshold + "</span>, " +
+					"<span id='show-hide-them'>" + util._t("#hide-them") + "</span>";
 			} else {
-				imageLink = $("<a href='" + mediaHash + "' id='" + imageId + "'></a>");
-				imageLink.append(imageElement);
-				$(thumbsSelector).append(imageLink);
+				$("#thumbs").empty();
+				tooManyImagesText =
+					"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + env.currentAlbum.numsMedia.imagesAndVideosTotal() +
+					", <span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + env.options.big_virtual_folders_threshold + "</span>, " +
+					"<span id='show-hide-them'>" + util._t("#show-them") + "</span>";
+				isShowing = true;
 			}
-
-			if (! inPopup && ithMedia.hasGpsData()) {
-				$("#media-map-link-" + iMedia).off("click").on(
-					"click",
-					{singleMedia: ithMedia, album: this, clickedSelector: "#media-map-link-" + iMedia},
-					function(ev, from) {
-						// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
-						env.selectorClickedToOpenTheMap = ev.data.clickedSelector;
-						ev.stopPropagation();
-						ithMedia.generateMapFromSingleMedia(ev, from);
-					}
-				);
+			$("#message-too-many-images").html(tooManyImagesText).show();
+			if (! $("ul#right-menu").hasClass("expand")) {
+				$("#show-hide-them:hover").css("color", "").css("cursor", "");
+			} else {
+				$("#show-hide-them:hover").css("color", "inherit").css("cursor", "auto");
 			}
-
-			if (
-				! inPopup &&
-				env.selectorClickedToOpenTheMap === "#media-map-link-" + iMedia &&
-				env.previousAlbum !== null &&
-				env.previousAlbum.isMap() && (
-					env.previousMedia === null ||
-					env.previousAlbum.isAlbumWithOneMedia()
-				) &&
-				env.fromEscKey ||
-				env.mapRefreshType === "refresh"
-			) {
-				env.fromEscKey = false;
-				$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
-			}
-
-			$("#" + mediaSelectBoxSelectorPart + iMedia).off("click").on(
+			$("#show-hide-them").off("click").on(
 				"click",
-				{media: ithMedia, clickedSelector: "#" + mediaSelectBoxSelectorPart + iMedia},
-				function(ev) {
-					ev.stopPropagation();
-					ev.preventDefault();
-					ithMedia.toggleSelectedStatus(self, ev.data.clickedSelector);
-					// ev.data.media.toggleSelectedStatus(self, ev.data.clickedSelector);
+				function() {
+					if (isShowing) {
+						$("#loading").fadeIn(
+							500,
+							function() {
+								$("#show-big-albums")[0].click();
+							}
+						);
+					} else {
+						$("#show-big-albums")[0].click();
+					}
 				}
 			);
+		}
 
-			if (
-				typeof isPhp === "function" && (
-					util.somethingIsInMapAlbum() || util.somethingIsSelected() || env.guessedPasswordsMd5.length
-				)
-			) {
-				// execution enters here if we are using index.php
-				$("#link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase).off("auxclick").on(
-					"auxclick",
-					{mediaHash: phFl.encodeHash(this.cacheBase, ithMedia)},
-					function (ev) {
-						if (ev.which === 2) {
-							util.openInNewTab(ev.data.mediaHash);
-							return false;
+		if (populateMedia && (! env.currentAlbum.isTransversal() || ! tooBig || env.options.show_big_virtual_folders)) {
+		// if (! (env.currentAlbum.isTransversal() && tooBig && ! env.options.show_big_virtual_folders) && populateMedia) {
+			$(thumbsSelector).empty();
+
+			//
+			// media loop
+			//
+			for (let i = 0; i < this.media.length; ++i) {
+				let iMedia = i;
+				let ithMedia = this.media[iMedia];
+
+				let width = ithMedia.metadata.size[0];
+				let height = ithMedia.metadata.size[1];
+				let thumbHash = ithMedia.chooseThumbnail(thumbnailSize);
+				let thumbHeight, thumbWidth, calculatedWidth, calculatedHeight;
+
+				if (env.options.media_thumb_type === "fixed_height") {
+					if (height < env.options.media_thumb_size) {
+						thumbHeight = height;
+						thumbWidth = width;
+					} else {
+						thumbHeight = env.options.media_thumb_size;
+						thumbWidth = thumbHeight * width / height;
+					}
+					calculatedWidth = thumbWidth;
+				} else if (env.options.media_thumb_type === "square") {
+					thumbHeight = thumbnailSize;
+					thumbWidth = thumbnailSize;
+					calculatedWidth = env.options.media_thumb_size;
+				}
+				calculatedHeight = env.options.media_thumb_size;
+
+				var albumViewPadding = $("#album-view").css("padding");
+				if (! albumViewPadding)
+					albumViewPadding = 0;
+				else
+					albumViewPadding = parseInt(albumViewPadding);
+				calculatedWidth = Math.min(
+					calculatedWidth,
+					$(window).innerWidth() - 2 * albumViewPadding
+				);
+				calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
+
+				let mapLinkIcon = "";
+				if (! inPopup) {
+					if (ithMedia.hasGpsData()) {
+						let imgHtml =
+								"<img " +
+									"class='thumbnail-map-link' " +
+									"height='20px' " +
+									"src='img/ic_place_white_24dp_2x.png'" +
+								">";
+						let img = $(imgHtml);
+						img.attr("title", util._t("#show-on-map"));
+						img.attr("alt", util._t("#show-on-map"));
+						mapLinkIcon =
+							"<a id='media-map-link-" + iMedia + "'>" + img.prop("outerHTML") + "</a>";
+					}
+				}
+				let selectSrc = 'img/checkbox-unchecked-48px.png';
+				let titleSelector = "#select-single-media";
+				if (ithMedia.isSelected()) {
+					selectSrc = 'img/checkbox-checked-48px.png';
+					titleSelector = "#unselect-single-media";
+				}
+
+				let imgHtml =
+						"<img " +
+							"class='select-box' " +
+							"src='" + selectSrc + "'" +
+						">";
+				let img = $(imgHtml);
+				img.attr("title", util._t(titleSelector));
+				img.attr("alt", util._t("#selector"));
+
+				let mediaSelectBoxSelectorPart = "media-select-box-";
+				if (inPopup)
+					mediaSelectBoxSelectorPart = "map-" + mediaSelectBoxSelectorPart;
+
+				let selectBoxHtml =
+					"<a id='" + mediaSelectBoxSelectorPart + iMedia + "'>" + img.prop("outerHTML") + "</a>";
+
+				// imageElement.get(0).media = ithMedia;
+				let mediaHash;
+				if (typeof savedSearchAlbumCacheBase !== "undefined" && savedSearchAlbumCacheBase !== null)
+					mediaHash = phFl.encodeHash(this.cacheBase, ithMedia, foundAlbumCacheBase, savedSearchAlbumCacheBase);
+				else
+					mediaHash = phFl.encodeHash(this.cacheBase, ithMedia);
+
+				let data = "";
+				if (inPopup) {
+					data =
+						"data='" +
+							JSON.stringify(
+								{
+									width: ithMedia.metadata.size[0],
+									height: ithMedia.metadata.size[1],
+									albumCacheBase: this.cacheBase,
+									mediaHash: mediaHash
+								}
+							) +
+						"' ";
+				}
+
+				imgHtml =
+					"<img " +
+						"data-src='" + encodeURI(thumbHash) + "' " +
+						"src='img/image-placeholder.png' " +
+						data +
+						"class='thumbnail " + lazyClass + "' " +
+						"height='" + thumbHeight + "' " +
+						"width='" + thumbWidth + "' " +
+						"id='" + ithMedia.foldersCacheBase + "--" + ithMedia.cacheBase + "' " +
+						"style='" +
+							 "width: " + calculatedWidth + "px; " +
+							 "height: " + calculatedHeight + "px;" +
+							 "'" +
+					"/>";
+				img = $(imgHtml);
+				img.attr("title", util.pathJoin([ithMedia.albumName, ithMedia.nameForShowing(this)]));
+				img.attr("alt", util.trimExtension(ithMedia.name));
+
+				let imageString =
+					"<div class='thumb-and-caption-container' style='" +
+								"width: " + calculatedWidth + "px; " +
+								"margin-right: " + env.options.spacing + "px; " +
+					"'>" +
+						"<div class='thumb-container' " + "style='" +
+								// "width: " + calculatedWidth + "px; " +
+								"width: " + calculatedWidth + "px; " +
+								"height: " + calculatedHeight + "px;" +
+						"'>" +
+							mapLinkIcon +
+							selectBoxHtml +
+							"<span class='helper'></span>" +
+							img.prop("outerHTML") +
+						"</div>" +
+						"<div class='media-caption'>";
+				let name;
+				if (util.isPopup() || this.isMap())
+					name = ithMedia.captionForPopup;
+				else if (this.isSearch())
+					name = ithMedia.captionForSearch;
+				else if (this.isSelection())
+					name = ithMedia.captionForSelection;
+				else
+					name = ithMedia.nameForShowing(this, true, true);
+
+				let spanHtml =
+							"<span class='media-name'>" +
+								// "<span>" +
+									name +
+									// ithMedia.nameForShowing(this, true, true).replace(/( |<br \/>)/g, "</span>$&<span>") +
+								// "</span>" +
+							"</span>";
+				let span = $(spanHtml);
+				span.attr("title", ithMedia.nameForShowing(this));
+
+				imageString += span.prop("outerHTML");
+
+				if (ithMedia.metadata.hasOwnProperty("description")) {
+					let description = $("<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithMedia.metadata.description) + "</div>");
+					description.attr("title", util.stripHtmlAndReplaceEntities(ithMedia.metadata.description));
+					imageString +=
+							"<div class='media-description'>" +
+								description.prop("outerHTML") +
+							"</div>";
+				}
+				if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
+					imageString +=
+							"<div class='media-tags'>" +
+								"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithMedia.metadata.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>" +
+							"</div>";
+				}
+				imageString +=
+						"</div>" +
+					"</div>";
+				let imageElement = $(imageString);
+
+				let imageId = "link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase;
+				if (inPopup) {
+					imageElement.attr("id", imageId);
+					$(thumbsSelector).append(imageElement);
+				} else {
+					imageLink = $("<a href='" + mediaHash + "' id='" + imageId + "'></a>");
+					imageLink.append(imageElement);
+					$(thumbsSelector).append(imageLink);
+				}
+
+				if (! inPopup && ithMedia.hasGpsData()) {
+					$("#media-map-link-" + iMedia).off("click").on(
+						"click",
+						{singleMedia: ithMedia, album: this, clickedSelector: "#media-map-link-" + iMedia},
+						function(ev, from) {
+							// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
+							env.selectorClickedToOpenTheMap = ev.data.clickedSelector;
+							ev.stopPropagation();
+							ithMedia.generateMapFromSingleMedia(ev, from);
 						}
+					);
+				}
+
+				if (
+					! inPopup &&
+					env.selectorClickedToOpenTheMap === "#media-map-link-" + iMedia &&
+					env.previousAlbum !== null &&
+					env.previousAlbum.isMap() && (
+						env.previousMedia === null ||
+						env.previousAlbum.isAlbumWithOneMedia()
+					) &&
+					env.fromEscKey ||
+					env.mapRefreshType === "refresh"
+				) {
+					env.fromEscKey = false;
+					$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
+				}
+
+				$("#" + mediaSelectBoxSelectorPart + iMedia).off("click").on(
+					"click",
+					{media: ithMedia, clickedSelector: "#" + mediaSelectBoxSelectorPart + iMedia},
+					function(ev) {
+						ev.stopPropagation();
+						ev.preventDefault();
+						ithMedia.toggleSelectedStatus(self, ev.data.clickedSelector);
+						// ev.data.media.toggleSelectedStatus(self, ev.data.clickedSelector);
 					}
 				);
+
+				if (
+					typeof isPhp === "function" && (
+						util.somethingIsInMapAlbum() || util.somethingIsSelected() || env.guessedPasswordsMd5.length
+					)
+				) {
+					// execution enters here if we are using index.php
+					$("#link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase).off("auxclick").on(
+						"auxclick",
+						{mediaHash: phFl.encodeHash(this.cacheBase, ithMedia)},
+						function (ev) {
+							if (ev.which === 2) {
+								util.openInNewTab(ev.data.mediaHash);
+								return false;
+							}
+						}
+					);
+				}
+			}
+
+			if (env.options.hide_descriptions) {
+				$(".media-description").addClass("hidden-by-option");
+			} else {
+				$(".media-description").removeClass("hidden-by-option");
+			}
+
+			if (env.options.hide_tags) {
+				$(".media-tags").addClass("hidden-by-option");
+			} else {
+				$(".media-tags").removeClass("hidden-by-option");
 			}
 		}
 
-		if (env.options.hide_descriptions) {
-			$(".media-description").addClass("hidden-by-option");
-		} else {
-			$(".media-description").removeClass("hidden-by-option");
+	 	if ($(thumbsSelector).is(":visible") || util.isPopup()) {
+	 	// if (! $("#album-view").hasClass("hidden")) {
+			util.scrollToThumb();
+			util.addMediaLazyLoader();
+			// setTimeout(util.scrollToThumb, 1);
 		}
 
-		if (env.options.hide_tags) {
-			$(".media-tags").addClass("hidden-by-option");
-		} else {
-			$(".media-tags").removeClass("hidden-by-option");
-		}
-
-		$(
-			function() {
-				$("img.lazyload-popup-media").Lazy(
-					{
-						afterLoad: map.addClickToPopupPhoto,
-						autoDestroy: true,
-						onError: function(element) {
-							console.log(element[0]);
-						},
-						chainable: false,
-						threshold: env.options.media_thumb_size,
-						removeAttribute: true,
-						appendScroll: $('#popup-images-wrapper')
-					}
-				);
-			}
-		);
-		$(
-			function() {
-				$("#album-view:not(.media-view-container) img.lazyload-media").Lazy(
-					{
-						// threshold: 2 * env.options.media_thumb_size,
-						appendScroll: $(window)
-					}
-				);
-			}
-		);
-		$(
-			function() {
-				$("#album-view.media-view-container img.lazyload-media").Lazy(
-					{
-						// threshold: 2 * env.options.media_thumb_size,
-						appendScroll: $("#album-view")
-					}
-				);
-			}
-		);
+		f.updateMenu();
+		env.currentAlbum.bindMediaSortEvents();
+		$("#loading").hide();
 	};
 
 
-	TopFunctions.showAlbum = function(populate) {
+	Album.prototype.showSubalbums = function(populate = true) {
 		function insertRandomImage(randomSubAlbum, index, iSubalbum) {
 			var titleName, randomMediaLink, goTo, humanGeonames;
+			var thumbWidth, thumbHeight;
+			var mediaWidth, mediaHeight;
 			var randomMedia = randomSubAlbum.media[index];
 			var id = phFl.hashCode(env.currentAlbum.subalbums[iSubalbum].cacheBase);
 			var mediaSrc = randomMedia.chooseThumbnail(env.options.album_thumb_size);
@@ -2433,425 +2445,397 @@
 				}
 			);
 		}
+		// end of pickRandomMediaAndInsertIt function
 
-		var i, linkContainer, imageElement, subalbumsElement;
-		var thumbWidth, thumbHeight, populateMedia;
-		var albumViewWidth;
-		var mediaWidth, mediaHeight, slideBorder = 0, margin;
-		var scrollBarWidth = window.innerWidth - document.body.clientWidth || 15;
-		var tooBig = false, isTransversalAlbum;
-		var selectSrc, titleSelector, id;
-		var caption, captionHtml, buttonAndCaptionHeight, albumButtonAndCaptionHtml;
+		/////////////////////////////////////////////
+		// beginning of showSubalbums function
+		let [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
 
-		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
+		if (env.fromEscKey && env.firstEscKey) {
+			// respect the existing mediaLink (you cannot do it more than once)
+			env.firstEscKey = false;
+		} else {
+			// reset mediaLink
+			if (env.currentAlbum.numsMedia.imagesAndVideosTotal())
+				env.mediaLink = phFl.encodeHash(env.currentAlbum.cacheBase, env.currentAlbum.media[0], foundAlbumCacheBase, savedSearchAlbumCacheBase);
+			else
+				env.mediaLink = env.hashBeginning + env.currentAlbum.cacheBase;
 
-		if (env.options.albums_slide_style)
-			slideBorder = env.slideBorder;
+			env.firstEscKey = true;
+		}
 
-		if (env.currentMedia === null)
-			$("#album-view").off('mousewheel');
-		if (env.currentMedia === null && env.previousMedia === null)
-			$("html, body").stop().animate({ scrollTop: 0 }, "slow");
 		if (populate) {
-			populateMedia = populate;
-			isTransversalAlbum = env.currentAlbum.isTransversal();
-			tooBig = env.currentAlbum.path.split("/").length < 4 && env.currentAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold;
-			if (populateMedia === true && isTransversalAlbum)
-				populateMedia = populateMedia && (! tooBig || env.options.show_big_virtual_folders);
+			// insert into DOM
+			let subalbumsElement = $("#subalbums");
 
-			if (isTransversalAlbum && tooBig) {
-				var tooManyImagesText, isShowing = false;
-				if (env.options.show_big_virtual_folders) {
-					tooManyImagesText =
-						"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + env.currentAlbum.numsMedia.imagesAndVideosTotal() +
-						", <span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + env.options.big_virtual_folders_threshold + "</span>, " +
-						"<span id='show-hide-them'>" + util._t("#hide-them") + "</span>";
-				} else {
-					$("#thumbs").empty();
-					tooManyImagesText =
-						"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + env.currentAlbum.numsMedia.imagesAndVideosTotal() +
-						", <span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + env.options.big_virtual_folders_threshold + "</span>, " +
-						"<span id='show-hide-them'>" + util._t("#show-them") + "</span>";
-					isShowing = true;
+			let subalbumsPromises = [];
+			if (! env.currentAlbum.subalbums.length)
+				subalbumsElement.hide();
+
+			if (env.albumInSubalbumDiv === null || env.currentAlbum === null || env.albumInSubalbumDiv !== env.currentAlbum && env.currentAlbum.subalbums.length) {
+
+				subalbumsElement.empty();
+				env.albumInSubalbumDiv = null;
+				subalbumsElement.insertBefore("#message-too-many-images");
+
+				let scrollBarWidth = window.innerWidth - document.body.clientWidth || 15;
+
+				// resize down the album buttons if they are too wide
+				let albumViewWidth =
+					$("body").width() -
+					parseInt($("#album-view").css("padding-left")) -
+					parseInt($("#album-view").css("padding-right")) -
+					scrollBarWidth;
+				env.captionColor = env.options.albums_slide_style ? env.options.slide_album_caption_color : env.options.album_caption_color;
+				env.correctedAlbumThumbSize = env.options.album_thumb_size;
+				var correctedAlbumButtonSize = util.albumButtonWidth(env.options.album_thumb_size);
+				if (albumViewWidth / (correctedAlbumButtonSize + env.options.spacing) < env.options.min_album_thumbnail) {
+					env.correctedAlbumThumbSize = Math.floor(util.thumbnailWidth(albumViewWidth / env.options.min_album_thumbnail - env.options.spacing)) - 1;
+					correctedAlbumButtonSize = util.albumButtonWidth(env.correctedAlbumThumbSize);
 				}
-				$("#message-too-many-images").html(tooManyImagesText).show();
-				if (! $("ul#right-menu").hasClass("expand")) {
-					$("#show-hide-them:hover").css("color", "").css("cursor", "");
-					// $("ul#right-menu").addClass("expand");
-				} else {
-					$("#show-hide-them:hover").css("color", "inherit").css("cursor", "auto");
-				}
-				$("#show-hide-them").off("click").on(
-					"click",
-					function() {
-						if (isShowing) {
-							$("#loading").fadeIn(
-								500,
-								function() {
-									$("#show-big-albums")[0].click();
+				env.captionFontSize = Math.round(util.em2px("body", 1) * env.correctedAlbumThumbSize / env.options.album_thumb_size);
+				env.captionHeight = parseInt(env.captionFontSize * 1.1) + 1;
+				let margin = 0;
+				if (env.options.albums_slide_style)
+					margin = Math.round(env.correctedAlbumThumbSize * env.slideMarginFactor);
+
+				let buttonAndCaptionHeight = correctedAlbumButtonSize + env.captionHeight;
+
+				var slideBorder = 0;
+				if (env.options.albums_slide_style)
+					slideBorder = env.slideBorder;
+
+				//
+				// subalbums loop
+				//
+				// The promises are needed in order to know when everything has come to its end
+				for (let i = 0; i < env.currentAlbum.subalbums.length; i ++) {
+					let iSubalbum = i;
+					let subalbumPromise = new Promise(
+						function(resolve_subalbumPromise) {
+							var ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
+
+							let nameHtml;
+							if (env.currentAlbum.isSearch())
+								nameHtml = ithSubalbum.captionForSearch;
+							else if (env.currentAlbum.isSelection())
+								nameHtml = ithSubalbum.captionForSelection;
+							else {
+								nameHtml = ithSubalbum.nameForShowing(env.currentAlbum, true, true);
+								if (nameHtml === "")
+									nameHtml = "<span class='italic gray'>(" + util._t("#root-album") + ")</span>";
+							}
+
+							let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
+							let captionHtml =
+								"<div class='album-caption' " +
+									"id='" + captionId + "' " +
+									"style='" +
+										"width: " + env.correctedAlbumThumbSize + "px; " +
+										"font-size: " + env.captionFontSize + "px; " +
+										"height: " + env.captionHeight + "px; " +
+										"color: " + env.captionColor + ";" +
+									"'" +
+									">";
+							captionHtml +=
+									"<div class='album-name'>" + nameHtml + "</div>";
+
+							if (ithSubalbum.hasOwnProperty("description")) {
+								captionHtml +=
+									"<div class='album-description'>" +
+										"<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithSubalbum.description) + "</div>" +
+									"</div>";
+							}
+
+							if (ithSubalbum.hasOwnProperty("tags") && ithSubalbum.tags.length) {
+								captionHtml +=
+									"<div class='album-tags' " +
+										"style='" +
+											"font-size: " + Math.round((env.captionFontSize / 1.5)) + "px; " +
+											// "height: " + env.captionHeight + "px; " +
+											"color: " + env.captionColor + ";" +
+										"'" +
+									">" +
+										"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithSubalbum.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>" +
+									"</div>";
+							}
+
+							captionHtml +=
+									"<div class='album-caption-count'>" +
+										"(" + ithSubalbum.numsMediaInSubTree.imagesAndVideosTotal() + " " +
+										"<span class='title-media'>" + util._t(".title-media") + "</span>" +
+										")" +
+									"</div>" +
+								"</div>";
+
+							let caption = $(captionHtml);
+
+							let selectSrc = 'img/checkbox-unchecked-48px.png';
+							let titleSelector = "#select-subalbum";
+							if (ithSubalbum.isSelected()) {
+								selectSrc = 'img/checkbox-checked-48px.png';
+								titleSelector = "#unselect-subalbum";
+							}
+
+							let positionHtml = "";
+							let folderMapTitleWithoutHtmlTags;
+							if (ithSubalbum.numPositionsInTree.length) {
+								folderMapTitleWithoutHtmlTags = env.currentAlbum.folderMapTitle(ithSubalbum, nameHtml).replace(/<br \/>/gm, ' ').replace(/<[^>]*>?/gm, '');
+								positionHtml =
+									"<a id='subalbum-map-link-" + iSubalbum + "' >" +
+										"<img " +
+											"class='thumbnail-map-link' " +
+											"height='15px' " +
+											"src='img/ic_place_white_24dp_2x.png' " +
+										"/>" +
+									"</a>";
+							}
+
+							// a dot could be present in a cache base, making $("#" + cacheBase) fail, beware...
+							let id = phFl.hashCode(ithSubalbum.cacheBase);
+							let subfolderHash;
+							// TO DO: verify that isMap() is not missing in the following line
+							if (env.currentAlbum.isSearch() || env.currentAlbum.isSelection()) {
+								subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, ithSubalbum.cacheBase, env.currentAlbum.cacheBase);
+							} else {
+								if (typeof savedSearchAlbumCacheBase !== "undefined" && savedSearchAlbumCacheBase !== null)
+									subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, foundAlbumCacheBase, savedSearchAlbumCacheBase);
+								else
+									subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null);
+							}
+
+							let aHrefHtml = "<a href='" + subfolderHash + "'></a>";
+							let aHrefHtmlContainer = $(aHrefHtml);
+							let albumButtonAndCaptionHtml =
+								"<div id='" + id + "' " +
+									"class='album-button-and-caption";
+							let marginBottom = env.options.spacing;
+							if (env.options.albums_slide_style) {
+								albumButtonAndCaptionHtml += " slide";
+							} else {
+								marginBottom += util.em2px("body", 2);
+							}
+							albumButtonAndCaptionHtml +=
+									"' " +
+									"style='" +
+										"margin-right: " + env.options.spacing + "px; " +
+										"margin-bottom: " + marginBottom + "px; " +
+										"height: " + buttonAndCaptionHeight + "px; " +
+										"width: " + (correctedAlbumButtonSize - 2 * slideBorder) + "px; ";
+							if (env.options.albums_slide_style)
+								albumButtonAndCaptionHtml += "background-color:" + env.options.album_button_background_color + ";";
+							albumButtonAndCaptionHtml +=
+									"'" +
+								">" +
+								"</div>";
+							let linkContainer = $(albumButtonAndCaptionHtml);
+
+							let selectBoxHtml =
+								"<a id='subalbum-select-box-" + iSubalbum + "'>" +
+									"<img " +
+										"class='select-box' " +
+										"src='" + selectSrc + "' " +
+										"style='display: none;'" +
+									">" +
+								"</a>";
+
+							let imageElement = $(
+								"<div " +
+									"class='album-button' " +
+									"style='" +
+										"width:" + env.correctedAlbumThumbSize + "px; " +
+										"height:" + env.correctedAlbumThumbSize + "px; " +
+										"margin:" + margin + "px;" +
+									"'" +
+									">" +
+									selectBoxHtml +
+									positionHtml +
+									"<a class='random-media-link' href=''>" +
+										"<img " +
+											"src='img/link-arrow.png' " +
+											"class='album-button-random-media-link'" +
+											">" +
+									"</a>" +
+									"<span class='helper'></span>" +
+									"<img src='img/image-placeholder.png' class='thumbnail lazyload-album-" + id + "'>" +
+								"</div>"
+							);
+							linkContainer.append(imageElement);
+							linkContainer.append(caption);
+							aHrefHtmlContainer.append(linkContainer);
+
+							subalbumsElement.append(aHrefHtmlContainer);
+
+							if (ithSubalbum.numPositionsInTree.length) {
+								$("#subalbum-map-link-" + iSubalbum + " img.thumbnail-map-link").attr("title", folderMapTitleWithoutHtmlTags);
+								$("#subalbum-map-link-" + iSubalbum + " img.thumbnail-map-link").attr("alt", folderMapTitleWithoutHtmlTags);
+							}
+							$("#subalbum-select-box-" + iSubalbum + " img.select-box").attr("title", util._t(titleSelector));
+							$("#subalbum-select-box-" + iSubalbum + " img.select-box").attr("alt", util._t("#selector"));
+
+							if (ithSubalbum.hasOwnProperty("description"))
+								$("#" + captionId + " .description").attr("title", util.stripHtmlAndReplaceEntities(ithSubalbum.description));
+
+							if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
+								$("#subalbum-map-link-" + iSubalbum).off("click").on(
+									"click",
+									{ithSubalbum: ithSubalbum},
+									function(ev, from) {
+										// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
+										ev.preventDefault();
+										env.selectorClickedToOpenTheMap = "#subalbum-map-link-" + iSubalbum;
+										TopFunctions.generateMapFromSubalbum(ev, from);
+									}
+								);
+							}
+
+							if (
+								env.selectorClickedToOpenTheMap === "#subalbum-map-link-" + iSubalbum &&
+								env.previousAlbum !== null &&
+								env.previousAlbum.isMap() &&
+								(
+									env.previousMedia === null ||
+									env.previousAlbum.isAlbumWithOneMedia()
+								) &&
+								env.fromEscKey ||
+								env.mapRefreshType === "refresh"
+							) {
+								env.fromEscKey = false;
+								$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
+							}
+
+							if (
+								typeof isPhp === "function" && (
+									util.somethingIsInMapAlbum() || util.somethingIsSelected() || env.guessedPasswordsMd5.length
+								)
+							) {
+								// execution enters here if we are using index.php
+								$("#" + id).off("auxclick").off("auxclick").on(
+									"auxclick",
+									// {subfolderHash: subfolderHash},
+									function (ev) {
+										if (ev.which === 2) {
+											util.openInNewTab(subfolderHash);
+											return false;
+										}
+									}
+								);
+							}
+
+							$("#subalbum-select-box-" + iSubalbum + " .select-box").show();
+							$("#subalbum-select-box-" + iSubalbum).off("click").on(
+								"click",
+								function(ev) {
+									ev.stopPropagation();
+									ev.preventDefault();
+									env.currentAlbum.toggleSubalbumSelection(iSubalbum, "#subalbum-select-box-" + iSubalbum);
 								}
 							);
-						} else {
-							$("#show-big-albums")[0].click();
+
+							// if (env.currentAlbum.isCollection()) {
+							// 	// the folder name must be added the second line
+							// 	let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: false, getPositions: false});
+							// 	convertSubalbumPromise.then(
+							// 		function(ithSubalbum) {
+							// 			env.currentAlbum.subalbums[iSubalbum] = ithSubalbum;
+							// 			// ithSubalbum.generateCaptionForCollections();
+							// 			let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
+							// 			$("#" + captionId + " .album-name").html(nameHtml);
+							// 		}
+							// 	);
+							// }
+
+							// let ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
+							// let id = phFl.hashCode(ithSubalbum.cacheBase);
+							pickRandomMediaAndInsertIt(iSubalbum, imageElement, resolve_subalbumPromise);
 						}
+					);
+					subalbumsPromises.push(subalbumPromise);
+				}
+			}
+
+			f.setOptions();
+
+			Promise.all(subalbumsPromises).then(
+				function allRandomImagesGot() {
+					// we can run the function that prepare the stuffs for sharing
+					f.socialButtons();
+					if (env.currentAlbum.subalbums.length)
+						util.adaptCaptionHeight();
+
+					// When there is both a media and an album, we display the media's description; else it's the album's one
+					if (env.currentMedia === null || ! env.currentMedia.hasSomeDescription()) {
+						env.currentAlbum.setDescription();
+					} else {
+						env.currentMedia.setDescription();
+					}
+					util.setDescriptionPosition();
+					env.albumInSubalbumDiv = env.currentAlbum;
+					$("#loading").hide();
+				},
+				function() {
+					console.trace();
+				}
+			);
+
+			if (env.currentAlbum.subalbums.length) {
+				$(subalbumsElement).show();
+				$("#album-view").removeClass("media-view-container").removeAttr("height");
+			}
+
+			if (env.options.albums_slide_style)
+				$(".album-button").css("background-color", env.options.album_button_background_color);
+			else
+				$(".album-button").css("border", "none");
+
+			f.updateMenu();
+			env.currentAlbum.bindSubalbumSortEvents();
+
+			if (! $("#album-view").hasClass("media-view-container")) {
+				$(window).off("resize").on(
+					"resize",
+					function () {
+						var previousWindowWidth = env.windowWidth;
+						env.windowWidth = $(window).outerWidth();
+						env.windowHeight = $(window).outerHeight();
+						if (env.windowWidth === previousWindowWidth)
+							// avoid considering a resize when the mobile browser shows/hides the location bar
+							return;
+
+						$("#loading").show();
+
+						env.currentAlbum.showSubalbums();
+
+						if (util.isMap() || util.isPopup()) {
+							// the map must be generated again including the points that only carry protected content
+							env.mapRefreshType = "resize";
+
+							if (util.isPopup()) {
+								env.popupRefreshType = "mapAlbum";
+								$('.leaflet-popup-close-button')[0].click();
+							} else {
+								env.popupRefreshType = "none";
+							}
+
+							// close the map and reopen it
+							$('.modal-close')[0].click();
+							$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
+						}
+						$("#loading").hide();
 					}
 				);
 			}
+		}
+	};
 
-			if (
-				! (isTransversalAlbum && tooBig && ! env.options.show_big_virtual_folders) && (
-					populateMedia === true ||
-					populateMedia === "refreshMedia" ||
-					populateMedia === "refreshBoth"
-				)
-			) {
-				// $("#thumbs").empty();
-				env.currentAlbum.showMedia();
-			}
-
-			// if (env.options.hide_descriptions)
-			// 	$("#description, .media-description, .album-description").addClass("hidden-by-option");
-			//
-			// if (env.options.hide_tags)
-			// 	$("#description-tags, .media-tags, .album-tags").addClass("hidden-by-option");
-
-			if (env.currentMedia === null) {
-				if (env.fromEscKey && env.firstEscKey) {
-					// respect the existing mediaLink (you cannot do it more than once)
-					env.firstEscKey = false;
-				} else {
-					// reset mediaLink
-					if (env.currentAlbum.numsMedia.imagesAndVideosTotal())
-						env.mediaLink = phFl.encodeHash(env.currentAlbum.cacheBase, env.currentAlbum.media[0], foundAlbumCacheBase, savedSearchAlbumCacheBase);
-					else
-						env.mediaLink = env.hashBeginning + env.currentAlbum.cacheBase;
-
-					env.firstEscKey = true;
-				}
-
-				if (
-					populate === true ||
-					populate === "refreshSubalbums" ||
-					populateMedia === "refreshBoth"
-				) {
-					// resize down the album buttons if they are too wide
-					albumViewWidth =
-						$("body").width() -
-						parseInt($("#album-view").css("padding-left")) -
-						parseInt($("#album-view").css("padding-right")) -
-						scrollBarWidth;
-					env.captionColor = env.options.albums_slide_style ? env.options.slide_album_caption_color : env.options.album_caption_color;
-					env.correctedAlbumThumbSize = env.options.album_thumb_size;
-					var correctedAlbumButtonSize = util.albumButtonWidth(env.options.album_thumb_size);
-					if (albumViewWidth / (correctedAlbumButtonSize + env.options.spacing) < env.options.min_album_thumbnail) {
-						env.correctedAlbumThumbSize = Math.floor(util.thumbnailWidth(albumViewWidth / env.options.min_album_thumbnail - env.options.spacing)) - 1;
-						correctedAlbumButtonSize = util.albumButtonWidth(env.correctedAlbumThumbSize);
-					}
-					env.captionFontSize = Math.round(util.em2px("body", 1) * env.correctedAlbumThumbSize / env.options.album_thumb_size);
-					env.captionHeight = parseInt(env.captionFontSize * 1.1) + 1;
-					margin = 0;
-					if (env.options.albums_slide_style)
-						margin = Math.round(env.correctedAlbumThumbSize * env.slideMarginFactor);
-
-					// if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs)
-					// 	heightfactor = 0;
-					// else if (! env.options.show_album_media_count)
-					// 	heightfactor = 1.6;
-					// else
-					// 	heightfactor = 2.8;
-					// buttonAndCaptionHeight = correctedAlbumButtonSize + env.captionHeight * heightfactor;
-					buttonAndCaptionHeight = correctedAlbumButtonSize + env.captionHeight;
-
-					// insert into DOM
-					subalbumsElement = $("#subalbums");
-					subalbumsElement.empty();
-					subalbumsElement.insertBefore("#message-too-many-images");
-
-					//
-					// subalbums loop
-					//
-					// The promises are needed in order to know when everything has come to its end
-					var subalbumsPromises = [];
-					for (i = 0; i < env.currentAlbum.subalbums.length; i ++) {
-						let iSubalbum = i;
-						let subalbumPromise = new Promise(
-							function(resolve_subalbumPromise) {
-								var ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
-
-								let nameHtml;
-								if (env.currentAlbum.isSearch())
-									nameHtml = ithSubalbum.captionForSearch;
-								else if (env.currentAlbum.isSelection())
-									nameHtml = ithSubalbum.captionForSelection;
-								else {
-									nameHtml = ithSubalbum.nameForShowing(env.currentAlbum, true, true);
-									if (nameHtml === "")
-										nameHtml = "<span class='italic gray'>(" + util._t("#root-album") + ")</span>";
-								}
-
-								let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
-								captionHtml =
-									"<div class='album-caption' " +
-										"id='" + captionId + "' " +
-										"style='" +
-											"width: " + env.correctedAlbumThumbSize + "px; " +
-											"font-size: " + env.captionFontSize + "px; " +
-											"height: " + env.captionHeight + "px; " +
-											"color: " + env.captionColor + ";" +
-										"'" +
-										">";
-								captionHtml +=
-										"<div class='album-name'>" + nameHtml + "</div>";
-
-								if (ithSubalbum.hasOwnProperty("description")) {
-									captionHtml +=
-									 	"<div class='album-description'>" +
-											"<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithSubalbum.description) + "</div>" +
-										"</div>";
-								}
-
-								if (ithSubalbum.hasOwnProperty("tags") && ithSubalbum.tags.length) {
-									captionHtml +=
-										"<div class='album-tags' " +
-											"style='" +
-												"font-size: " + Math.round((env.captionFontSize / 1.5)) + "px; " +
-												// "height: " + env.captionHeight + "px; " +
-												"color: " + env.captionColor + ";" +
-											"'" +
-										">" +
-											"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithSubalbum.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>" +
-										"</div>";
-								}
-
-								captionHtml +=
-										"<div class='album-caption-count'>" +
-											"(" + ithSubalbum.numsMediaInSubTree.imagesAndVideosTotal() + " " +
-											"<span class='title-media'>" + util._t(".title-media") + "</span>" +
-											")" +
-										"</div>" +
-									"</div>";
-
-								caption = $(captionHtml);
-
-								selectSrc = 'img/checkbox-unchecked-48px.png';
-								titleSelector = "#select-subalbum";
-								if (ithSubalbum.isSelected()) {
-									selectSrc = 'img/checkbox-checked-48px.png';
-									titleSelector = "#unselect-subalbum";
-								}
-
-								let positionHtml = "";
-								let folderMapTitleWithoutHtmlTags;
-								if (ithSubalbum.numPositionsInTree.length) {
-									folderMapTitleWithoutHtmlTags = env.currentAlbum.folderMapTitle(ithSubalbum, nameHtml).replace(/<br \/>/gm, ' ').replace(/<[^>]*>?/gm, '');
-									positionHtml =
-										"<a id='subalbum-map-link-" + iSubalbum + "' >" +
-											"<img " +
-												"class='thumbnail-map-link' " +
-												"height='15px' " +
-												"src='img/ic_place_white_24dp_2x.png' " +
-											"/>" +
-										"</a>";
-								}
-
-								// a dot could be present in a cache base, making $("#" + cacheBase) fail, beware...
-								id = phFl.hashCode(ithSubalbum.cacheBase);
-								let subfolderHash;
-								// TO DO: verify that isMap() is not missing in the following line
-								if (env.currentAlbum.isSearch() || env.currentAlbum.isSelection()) {
-									subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, ithSubalbum.cacheBase, env.currentAlbum.cacheBase);
-								} else {
-									if (typeof savedSearchAlbumCacheBase !== "undefined" && savedSearchAlbumCacheBase !== null)
-										subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, foundAlbumCacheBase, savedSearchAlbumCacheBase);
-									else
-										subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null);
-								}
-
-								let aHrefHtml = "<a href='" + subfolderHash + "'></a>";
-								let aHrefHtmlContainer = $(aHrefHtml);
-								albumButtonAndCaptionHtml =
-									"<div id='" + id + "' " +
-										"class='album-button-and-caption";
-								let marginBottom = env.options.spacing;
-								if (env.options.albums_slide_style) {
-									albumButtonAndCaptionHtml += " slide";
-								} else {
-									marginBottom += util.em2px("body", 2);
-								}
-								albumButtonAndCaptionHtml +=
-										"' " +
-										"style='" +
-											"margin-right: " + env.options.spacing + "px; " +
-											"margin-bottom: " + marginBottom + "px; " +
-											"height: " + buttonAndCaptionHeight + "px; " +
-											"width: " + (correctedAlbumButtonSize - 2 * slideBorder) + "px; ";
-								if (env.options.albums_slide_style)
-									albumButtonAndCaptionHtml += "background-color:" + env.options.album_button_background_color + ";";
-								albumButtonAndCaptionHtml +=
-										"'" +
-									">" +
-									"</div>";
-								linkContainer = $(albumButtonAndCaptionHtml);
-
-								let selectBoxHtml =
-									"<a id='subalbum-select-box-" + iSubalbum + "'>" +
-										"<img " +
-											"class='select-box' " +
-											"src='" + selectSrc + "' " +
-											"style='display: none;'" +
-										">" +
-									"</a>";
-
-								imageElement = $(
-									"<div " +
-										"class='album-button' " +
-										"style='" +
-											"width:" + env.correctedAlbumThumbSize + "px; " +
-											"height:" + env.correctedAlbumThumbSize + "px; " +
-											"margin:" + margin + "px;" +
-										"'" +
-										">" +
-										selectBoxHtml +
-										positionHtml +
-										"<a class='random-media-link' href=''>" +
-											"<img " +
-												"src='img/link-arrow.png' " +
-												"class='album-button-random-media-link'" +
-												">" +
-										"</a>" +
-										"<span class='helper'></span>" +
-										"<img src='img/image-placeholder.png' class='thumbnail lazyload-album-" + id + "'>" +
-									"</div>"
-								);
-								linkContainer.append(imageElement);
-								linkContainer.append(caption);
-								aHrefHtmlContainer.append(linkContainer);
-
-								subalbumsElement.append(aHrefHtmlContainer);
-
-								if (ithSubalbum.numPositionsInTree.length) {
-									$("#subalbum-map-link-" + iSubalbum + " img.thumbnail-map-link").attr("title", folderMapTitleWithoutHtmlTags);
-									$("#subalbum-map-link-" + iSubalbum + " img.thumbnail-map-link").attr("alt", folderMapTitleWithoutHtmlTags);
-								}
-								$("#subalbum-select-box-" + iSubalbum + " img.select-box").attr("title", util._t(titleSelector));
-								$("#subalbum-select-box-" + iSubalbum + " img.select-box").attr("alt", util._t("#selector"));
-
-								if (ithSubalbum.hasOwnProperty("description"))
-									$("#" + captionId + " .description").attr("title", Utilities.stripHtmlAndReplaceEntities(ithSubalbum.description));
-
-								if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
-									$("#subalbum-map-link-" + iSubalbum).off("click").on(
-										"click",
-										{ithSubalbum: ithSubalbum},
-										function(ev, from) {
-											// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
-											ev.preventDefault();
-											env.selectorClickedToOpenTheMap = "#subalbum-map-link-" + iSubalbum;
-											TopFunctions.generateMapFromSubalbum(ev, from);
-										}
-									);
-								}
-
-								if (
-									env.selectorClickedToOpenTheMap === "#subalbum-map-link-" + iSubalbum &&
-									env.previousAlbum !== null &&
-									env.previousAlbum.isMap() &&
-									(
-										env.previousMedia === null ||
-										env.previousAlbum.isAlbumWithOneMedia()
-									) &&
-									env.fromEscKey ||
-									env.mapRefreshType === "refresh"
-								) {
-									env.fromEscKey = false;
-									$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
-								}
-
-								if (
-									typeof isPhp === "function" && (
-										util.somethingIsInMapAlbum() || util.somethingIsSelected() || env.guessedPasswordsMd5.length
-									)
-								) {
-									// execution enters here if we are using index.php
-									$("#" + id).off("auxclick").off("auxclick").on(
-										"auxclick",
-										// {subfolderHash: subfolderHash},
-										function (ev) {
-											if (ev.which === 2) {
-												util.openInNewTab(subfolderHash);
-												return false;
-											}
-										}
-									);
-								}
-
-								$("#subalbum-select-box-" + iSubalbum + " .select-box").show();
-								$("#subalbum-select-box-" + iSubalbum).off("click").on(
-									"click",
-									function(ev) {
-										ev.stopPropagation();
-										ev.preventDefault();
-										env.currentAlbum.toggleSubalbumSelection(iSubalbum, "#subalbum-select-box-" + iSubalbum);
-									}
-								);
-
-								// if (env.currentAlbum.isCollection()) {
-								// 	// the folder name must be added the second line
-								// 	let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: false, getPositions: false});
-								// 	convertSubalbumPromise.then(
-								// 		function(ithSubalbum) {
-								// 			env.currentAlbum.subalbums[iSubalbum] = ithSubalbum;
-								// 			// ithSubalbum.generateCaptionForCollections();
-								// 			let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
-								// 			$("#" + captionId + " .album-name").html(nameHtml);
-								// 		}
-								// 	);
-								// }
-
-								// let ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
-								// let id = phFl.hashCode(ithSubalbum.cacheBase);
-								pickRandomMediaAndInsertIt(iSubalbum, imageElement, resolve_subalbumPromise);
-							}
-						);
-						subalbumsPromises.push(subalbumPromise);
-					}
-
-					f.setOptions();
-
-					Promise.all(subalbumsPromises).then(
-						function allRandomImagesGot() {
-							// we can run the function that prepare the stuffs for sharing
-							f.socialButtons();
-							if (env.currentAlbum.subalbums.length)
-								util.adaptCaptionHeight();
-
-							// When there is both a media and an album, we display the media's description; else it's the album's one
-							if (env.currentMedia === null || ! env.currentMedia.hasSomeDescription()) {
-								env.currentAlbum.setDescription();
-							} else {
-								env.currentMedia.setDescription();
-							}
-							util.setDescriptionPosition();
-						},
-						function() {
-							console.trace();
-						}
-					);
-
-					$("#subalbums").show();
-					$("#album-view").removeClass("media-view-container").removeAttr("height");
-
-					if (env.options.albums_slide_style)
-						$(".album-button").css("background-color", env.options.album_button_background_color);
-					else
-						$(".album-button").css("border", "none");
-				}
-			}
-
-			$("#loading").hide();
+	TopFunctions.adaptAlbumOptions = function() {
+		if (env.currentMedia === null) {
+			$("#album-view").off('mousewheel');
+			if (env.previousMedia === null)
+				$("html, body").stop().animate({ scrollTop: 0 }, "slow");
 		}
 
-		if (env.currentMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) {
+		if (env.currentMedia === null) {
 			$("#media-view").addClass("hidden");
 			$(".thumb-container").removeClass("current-thumb");
 			$("#album-view").removeClass("media-view-container").removeAttr("height");
@@ -2868,7 +2852,7 @@
 			$("body").off('mousewheel').on('mousewheel', TopFunctions.scrollAlbum);
 		} else {
 			// env.currentMedia !== null
-			$("#media-view").removeClass("hidden");
+			$("#	media-view").removeClass("hidden");
 
 			if (env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1)
 				$("#album-view").addClass("hidden");
@@ -2880,46 +2864,6 @@
 		}
 
 		f.setOptions();
-
-		env.currentAlbum.bindSortEvents();
-
-		if (! $("#album-view").hasClass("hidden"))
-			util.scrollToThumb();
-			// setTimeout(util.scrollToThumb, 1);
-
-		if (! $("#album-view").hasClass("media-view-container")) {
-			$(window).off("resize").on(
-				"resize",
-				function () {
-					var previousWindowWidth = env.windowWidth;
-					env.windowWidth = $(window).outerWidth();
-					env.windowHeight = $(window).outerHeight();
-					if (env.windowWidth === previousWindowWidth)
-						// avoid considering a resize when the mobile browser shows/hides the location bar
-						return;
-
-					$("#loading").show();
-
-					TopFunctions.showAlbum("refreshSubalbums");
-
-					if (util.isMap() || util.isPopup()) {
-						// the map must be generated again including the points that only carry protected content
-						env.mapRefreshType = "resize";
-
-						if (util.isPopup()) {
-							env.popupRefreshType = "mapAlbum";
-							$('.leaflet-popup-close-button')[0].click();
-						} else {
-							env.popupRefreshType = "none";
-						}
-
-						// close the map and reopen it
-						$('.modal-close')[0].click();
-						$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
-					}
-				}
-			);
-		}
 
 		f.updateMenu();
 	};
@@ -3013,7 +2957,7 @@
 				var oneClickPromise = new Promise(
 					function(resolve_oneClickPromise) {
 						env.mymap.setView(clickHistoryElement.center, clickHistoryElement.zoom, {animate: false});
-						ev = {
+						let ev = {
 							latlng: clickHistoryElement.latlng,
 							originalEvent: {
 								shiftKey: clickHistoryElement.shiftKey,
@@ -3278,7 +3222,7 @@
 		var promise = phFl.endPreparingAlbumAndKeepOn(env.mapAlbum, null, null);
 		promise.then(
 			function() {
-				env.mapAlbum.showMedia(true);
+				env.mapAlbum.showMedia();
 				map.updatePopup();
 				$("#loading").hide();
 			}
@@ -3469,11 +3413,8 @@
 						rootMapAlbum.subalbums.push(env.mapAlbum);
 						rootMapAlbum.positionsAndMediaInTree.mergePositionsAndMedia(env.mapAlbum.positionsAndMediaInTree);
 						rootMapAlbum.numPositionsInTree += env.mapAlbum.positionsAndMediaInTree.length;
-						// rootMapAlbum.numPositionsInTree += env.mapAlbum.numPositionsInTree;
-						// rootMapAlbum.numsProtectedMediaInSubTree[","].sum(env.mapAlbum.numsProtectedMediaInSubTree[","]);
 
-						// do not uncomment the following line: bindings have already been set for currentAlbum
-						// env.mapAlbum.bindSortEvents();
+						// do not call bindSortEvents method on env.mapAlbum: bindings have already been set for currentAlbum
 					}
 					resolve_updateMapAlbumOnMapClick();
 				}

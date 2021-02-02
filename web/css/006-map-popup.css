@@ -2,6 +2,7 @@
 
 .leaflet-popup-content-wrapper {
 	color: #FFFFFF !important;
+	background-color: slategray;
 }
 
 .map-popup-trigger {

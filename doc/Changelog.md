@@ -1,3 +1,12 @@
+### version v4.9.32 (Feb 2, 2021)
+
+* show a better message when options.json isn't there
+* leave the menu closed by default
+* close the right menu when auth dialog is shown
+* activate pinterest button by default
+* separate showSubalbums function
+* bug fixes
+
 ### version v4.9.31 (Jan 26, 2021)
 
 * description show/hide button is now in the bottom part of the description, so that it can be clicked multiple times without moving the mouse

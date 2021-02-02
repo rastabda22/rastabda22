@@ -47,6 +47,7 @@
 
 		MapFunctions.setPopupPosition();
 		MapFunctions.panMap();
+		util.addMediaLazyLoader();
 		f.updateMenu();
 	};
 
@@ -116,7 +117,7 @@
 		}
 	};
 
-	MapFunctions.prototype.addClickToPopupPhoto = function(element) {
+	MapFunctions.addClickToPopupPhoto = function(element) {
 		element.parent().parent().off("click").on(
 			"click",
 			function(ev) {
