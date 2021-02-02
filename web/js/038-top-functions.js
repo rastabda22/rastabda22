@@ -1739,6 +1739,10 @@
 		} else {
 			$("#description-tags, .media-tags, .album-tags").removeClass("hidden-by-option");
 		}
+
+		if (env.currentAlbum.subalbums.length)
+			util.adaptCaptionHeight();
+
 		if (! $("#thumbs").children().length)
 			$("#album-view").addClass("media-view-container");
 		// env.currentAlbum.showMedia();
@@ -1848,7 +1852,6 @@
 			env.options.hide_descriptions = ! env.options.hide_descriptions;
 			f.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
 
-			f.setOptions();
 			f.updateMenu();
 
 			if (env.currentMedia !== null) {
@@ -1864,15 +1867,20 @@
 					event.data.id = "left";
 					env.prevMedia.scale(event);
 				}
-			} else {
-				env.currentAlbum.showSubalbums();
-				env.currentAlbum.showMedia();
+			// } else {
+			// 	env.currentAlbum.showSubalbums();
+			// 	env.currentAlbum.showMedia();
 			}
 
 			if (util.isPopup()) {
 				env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
+
+			f.setOptions();
+
+			if (env.currentAlbum.subalbums.length)
+				util.adaptCaptionHeight();
 		}
 		return false;
 	};
@@ -1882,7 +1890,6 @@
 			env.options.hide_tags = ! env.options.hide_tags;
 			f.setBooleanCookie("hideTags", env.options.hide_tags);
 
-			f.setOptions();
 			f.updateMenu();
 
 			if (env.currentMedia !== null) {
@@ -1898,15 +1905,20 @@
 					event.data.id = "left";
 					env.prevMedia.scale(event);
 				}
-			} else {
-				env.currentAlbum.showSubalbums();
-				env.currentAlbum.showMedia();
+			// } else {
+			// 	env.currentAlbum.showSubalbums();
+			// 	env.currentAlbum.showMedia();
 			}
 
 			if (util.isPopup()) {
 				env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
+
+			f.setOptions();
+
+			if (env.currentAlbum.subalbums.length)
+				util.adaptCaptionHeight();
 		}
 		return false;
 	};
@@ -1958,6 +1970,9 @@
 			f.setBooleanCookie("showAlbumMediaCount", env.options.show_album_media_count);
 			f.updateMenu();
 			env.currentAlbum.showSubalbums();
+
+			if (env.currentAlbum.subalbums.length)
+				util.adaptCaptionHeight();
 		}
 		return false;
 	};
@@ -2328,17 +2343,17 @@
 				}
 			}
 
-			if (env.options.hide_descriptions) {
-				$(".media-description").addClass("hidden-by-option");
-			} else {
-				$(".media-description").removeClass("hidden-by-option");
-			}
-
-			if (env.options.hide_tags) {
-				$(".media-tags").addClass("hidden-by-option");
-			} else {
-				$(".media-tags").removeClass("hidden-by-option");
-			}
+			// if (env.options.hide_descriptions) {
+			// 	$(".media-description").addClass("hidden-by-option");
+			// } else {
+			// 	$(".media-description").removeClass("hidden-by-option");
+			// }
+			//
+			// if (env.options.hide_tags) {
+			// 	$(".media-tags").addClass("hidden-by-option");
+			// } else {
+			// 	$(".media-tags").removeClass("hidden-by-option");
+			// }
 		}
 
 	 	if ($(thumbsSelector).is(":visible") || util.isPopup()) {
@@ -2752,6 +2767,18 @@
 					);
 					subalbumsPromises.push(subalbumPromise);
 				}
+
+				// if (env.options.hide_descriptions) {
+				// 	$(".album-description").addClass("hidden-by-option");
+				// } else {
+				// 	$(".album-description").removeClass("hidden-by-option");
+				// }
+				//
+				// if (env.options.hide_tags) {
+				// 	$(".album-tags").addClass("hidden-by-option");
+				// } else {
+				// 	$(".album-tags").removeClass("hidden-by-option");
+				// }
 			}
 
 			f.setOptions();
