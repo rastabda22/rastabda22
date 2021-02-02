@@ -2781,12 +2781,11 @@
 				// }
 			}
 
-			f.setOptions();
-
 			Promise.all(subalbumsPromises).then(
 				function allRandomImagesGot() {
 					// we can run the function that prepare the stuffs for sharing
 					f.socialButtons();
+					f.setOptions();
 					if (env.currentAlbum.subalbums.length)
 						util.adaptCaptionHeight();
 
