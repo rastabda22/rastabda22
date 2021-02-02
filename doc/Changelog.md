@@ -1,3 +1,5 @@
+### version v4.9.32 (Feb 2, 2021)
+
 * show a better message when options.json isn't there
 * leave the menu closed by default
 * close the right menu when auth dialog is shown
