@@ -1867,9 +1867,6 @@
 					event.data.id = "left";
 					env.prevMedia.scale(event);
 				}
-			// } else {
-			// 	env.currentAlbum.showSubalbums();
-			// 	env.currentAlbum.showMedia();
 			}
 
 			if (util.isPopup()) {
@@ -1905,9 +1902,6 @@
 					event.data.id = "left";
 					env.prevMedia.scale(event);
 				}
-			// } else {
-			// 	env.currentAlbum.showSubalbums();
-			// 	env.currentAlbum.showMedia();
 			}
 
 			if (util.isPopup()) {
