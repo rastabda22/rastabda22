@@ -1539,7 +1539,9 @@
 					// we are in album view
 					if (env.currentAlbum.isAlbumWithOneMedia()) {
 						// only one media has remained after the removal
-						env.currentAlbum.prepareForShowing(0);
+						env.currentMedia = env.currentAlbum.media[0];
+						env.currentMedia.show();
+						// env.currentAlbum.prepareForShowing(0);
 					} else {
 						// more than one media has remained after the removal: remove the single media thumbnail
 						$(clickedSelector).parent().parent().parent().remove();
@@ -1556,11 +1558,13 @@
 						// keep showing the same media, but remove the media
 						if (env.currentAlbum.isAlbumWithOneMedia()) {
 							// only one media has remained after the removal
-							env.currentAlbum.prepareForShowing(0);
+							env.currentMedia = env.currentAlbum.media[0];
+							env.currentAlbum.show();
+							// env.currentAlbum.prepareForShowing(0);
 						} else if (clickedMediaIndex < env.currentMediaIndex) {
 							env.currentMediaIndex --;
+							env.currentAlbum.showMedia();
 						}
-						env.currentAlbum.showMedia();
 					}
 				}
 			} else {
