@@ -1935,7 +1935,7 @@
 				env.options.spacing = env.options.spacingSavedValue;
 			f.setCookie("spacing", env.options.spacing);
 			f.updateMenu();
-			env.currentAlbum.showMedia();
+			f.setOptions();
 
 			if (util.isPopup()) {
 				env.mapAlbum.showMedia();
