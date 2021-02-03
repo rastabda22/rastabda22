@@ -1,4 +1,5 @@
-* `title_image_name_color` option changed to `album_or_media_name_color` for consistency sake
+* added `album_name_color` and `album_slide_name_color` option
+* `title_image_name_color` option changed to `media_name_color` for consistency sake
 * `album_button_background_color` option changed to `album_slide_background_color` for consistency sake
 * `slide_album_caption_color` option changed to `album_slide_caption_color` for consistency sake
 
