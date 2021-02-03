@@ -1938,7 +1938,7 @@
 			if (env.options.spacing)
 				env.options.spacing = 0;
 			else
-				env.options.spacing = env.options.spacingToggle;
+				env.options.spacing = env.options.spacingSavedValue;
 			f.setCookie("spacing", env.options.spacing);
 			f.updateMenu();
 			env.currentAlbum.showMedia();

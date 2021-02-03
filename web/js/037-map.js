@@ -68,7 +68,7 @@
 		// 	var thumbSize = env.options.media_thumb_size;
 		// 	var spacing = 0;
 		// 	if (env.options.spacing)
-		// 		spacing = Math.ceil(env.options.spacingToggle);
+		// 		spacing = Math.ceil(env.options.spacingSavedValue);
 		// 	var numThumbnailsInLine = parseInt((env.maxWidthForImagesInPopup - scrollerSize) / (thumbSize + spacing));
 		// 	if (numThumbnailsInLine === 1)
 		// 		env.maxWidthForImagesInPopup = thumbSize + 1;

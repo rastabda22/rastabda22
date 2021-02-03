@@ -1628,9 +1628,9 @@
 								env.options.albums_slide_style = slideCookie;
 
 							if (env.options.thumb_spacing)
-								env.options.spacingToggle = env.options.thumb_spacing;
+								env.options.spacingSavedValue = env.options.thumb_spacing;
 							else
-								env.options.spacingToggle = env.options.media_thumb_size * 0.03;
+								env.options.spacingSavedValue = env.options.media_thumb_size * 0.03;
 
 							var spacingCookie = Functions.getNumberCookie("spacing");
 							if (spacingCookie !== null) {
