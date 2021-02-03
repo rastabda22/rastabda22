@@ -766,10 +766,9 @@ video {
 	padding-top: 96px;
 }
 
-.media-name, .real-name {
+.album-name, .media-name {
 	padding: 0 .5em;
 	margin: 0 0 0 0;
-	color: lime;
 	font-weight: bold;
 	font-size: 110%;
 	font-style: italic;
@@ -783,8 +782,7 @@ video {
 	/* white-space: nowrap; */
 }
 
-.title .real-name {
-	color: white;
+.real-name {
 	padding: 0;
 	font-size: 80%;
 }
@@ -828,7 +826,6 @@ video {
 
 .media-caption {
 	font-size: 75%;
-	/* color: chartreuse; */
 	white-space: normal;
 }
 

@@ -1343,7 +1343,8 @@
 			//mouse out
 			$(this).css("color", env.options.title_color);
 		});
-		$(".media-name").css("color", env.options.title_image_name_color);
+		$(".media-name, .album-name").css("color", env.options.album_or_media_name_color);
+		$(".real-name").css("color", env.options.album_slide_caption_color);
 		$(".thumb-and-caption-container").css("margin-right", env.options.spacing.toString() + "px").css("margin-bottom", env.options.spacing.toString() + "px");
 
 		if (env.currentMedia !== null && ! util.isPopup() || ! env.options.show_media_names_below_thumbs)

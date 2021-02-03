@@ -450,7 +450,7 @@ title_color = white
 title_color_hover = yellow
 
 # the color to use for the photo/video name in title
-title_image_name_color = lime
+album_or_media_name_color = lime
 
 # should be used a slide-like style?
 albums_slide_style = true
@@ -459,7 +459,7 @@ albums_slide_style = true
 album_slide_background_color = cornsilk
 
 # the album buttons background color for slide mode (this is lighter black)
-album_slide_caption_color = #303030
+album_slide_caption_color = gray
 
 # the album buttons background color for no-slide mode
 album_caption_color = white
