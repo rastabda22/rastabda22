@@ -144,7 +144,7 @@ video_crf = 20
 #    medium
 #    slow – default preset
 #    slower
-#    veryslow 
+#    veryslow
 video_preset = slow
 
 # profile limits the output to a specific H.264 profile. Omit this unless your target device only supports a certain
@@ -177,7 +177,7 @@ video_bufsize = 10M
 video_frame_maxsize = hd720
 
 # Additional options to pass to the encoder
-video_add_options = 
+video_add_options =
 
 # The jpg quality parameter for generating the reduced size images and the tumbnails
 # an integer number 1 - 100
@@ -421,9 +421,6 @@ hide_tags = true
 # spacing between thumbnails, pixels (integer)
 thumb_spacing = 4
 
-# should be used a slide-like style?
-albums_slide_style = true
-
 # will photos/videos names be shown below the thumbnail in albums?
 show_media_names_below_thumbs = true
 
@@ -438,26 +435,45 @@ show_album_media_count = true
 # other values: large, small, or a px/em size
 title_font_size = medium
 
-# the tile color
-title_color = white
 
-# the tile color when mouse is over it
-title_color_hover = yellow
-
-# the color to use for the photo/video name in title
-title_image_name_color = lime
+####
+#### Color UI options (be sure not to have inconsistencies) ####
+####
 
 # the page background color (this is ~ gray)
 background_color = #222222
 
+# the title color
+title_color = white
+
+# the title color when mouse is over it
+title_color_hover = yellow
+
+# the color to use for the photo/video name
+media_name_color = lime
+
+# the color to use for the album name
+album_name_color = white
+
+# the color to use for the album name
+album_slide_name_color = olive
+
+# should be used a slide-like style?
+albums_slide_style = true
+
 # the album buttons background color (this is a dirty white, in order to be like an old slide)
-album_button_background_color = Cornsilk
+album_slide_background_color = cornsilk
+
+# the album buttons background color for slide mode (this is lighter black)
+album_slide_caption_color = gray
 
 # the album buttons background color for no-slide mode
 album_caption_color = white
 
-# the album buttons background color for slide mode (this is lighter black)
-slide_album_caption_color = #303030
+
+####
+#### Other UI options ####
+####
 
 # shoud metadata be shown persistently until they are closed?
 persistent_metadata = false

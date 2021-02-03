@@ -1537,13 +1537,15 @@
 					window.location.href = Utilities.upHash();
 				} else if (env.currentMedia === null) {
 					// we are in album view
-					// if (env.currentAlbum.isAlbumWithOneMedia()) {
-					// 	// only one media has remained after the removal
-					// 	env.currentAlbum.prepareForShowing(0);
-					// } else {
-					// more than one media has remained after the removal: remove the single media thumbnail
-					$(clickedSelector).parent().parent().parent().remove();
-					// }
+					if (env.currentAlbum.isAlbumWithOneMedia()) {
+						// only one media has remained after the removal
+						env.currentMedia = env.currentAlbum.media[0];
+						env.currentMedia.show();
+						// env.currentAlbum.prepareForShowing(0);
+					} else {
+						// more than one media has remained after the removal: remove the single media thumbnail
+						$(clickedSelector).parent().parent().parent().remove();
+					}
 				} else {
 					// we are in media view
 					let clickedMediaIndex = parseInt(clickedSelector.split('-').pop());
@@ -1556,11 +1558,13 @@
 						// keep showing the same media, but remove the media
 						if (env.currentAlbum.isAlbumWithOneMedia()) {
 							// only one media has remained after the removal
-							env.currentAlbum.prepareForShowing(0);
+							env.currentMedia = env.currentAlbum.media[0];
+							env.currentAlbum.show();
+							// env.currentAlbum.prepareForShowing(0);
 						} else if (clickedMediaIndex < env.currentMediaIndex) {
 							env.currentMediaIndex --;
+							env.currentAlbum.showMedia();
 						}
-						env.currentAlbum.showMedia();
 					}
 				}
 			} else {
@@ -2830,7 +2834,7 @@
 			else
 				folderName = albumOrSubalbum.name;
 		} else {
-			if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title !== albumOrSubalbum.name) {
+			if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title && albumOrSubalbum.title !== albumOrSubalbum.name) {
 				folderName = albumOrSubalbum.title;
 				if (! br) {
 					// remove the tags fronm the title
@@ -2839,9 +2843,9 @@
 
 				if (albumOrSubalbum.name) {
 					if (html && br)
-						folderName += "<br /><span class='media-real-name'>[" + albumOrSubalbum.name + "]</span>";
+						folderName += "<br /><span class='real-name'>[" + albumOrSubalbum.name + "]</span>";
 					else if (html)
-						folderName += " <span class='media-real-name'>[" + albumOrSubalbum.name + "]</span>";
+						folderName += " <span class='real-name'>[" + albumOrSubalbum.name + "]</span>";
 					else
 						folderName += " [" + albumOrSubalbum.name + "]";
 				}
@@ -2850,7 +2854,7 @@
 			}
 
 			// if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title !== albumOrSubalbum.name) {
-			// 	folderName = albumOrSubalbum.title + "<br /><span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
+			// 	folderName = albumOrSubalbum.title + "<br /><span class='real-name'>(" + albumOrSubalbum.name + ")</span>";
 			// } else {
 			// 	folderName = albumOrSubalbum.name;
 			// }
@@ -2879,7 +2883,7 @@
 		// } else if (album.isSearch() && this.hasOwnProperty("captionForSearch")) {
 		// 	mediaName = this.captionForSearch;
 		// } else {
-		if (this.metadata.hasOwnProperty("title") && this.metadata.title !== this.name) {
+		if (this.metadata.hasOwnProperty("title") && this.metadata.title && this.metadata.title !== this.name) {
 			mediaName = this.metadata.title;
 			if (! br) {
 				// remove the tags fronm the title
@@ -2887,9 +2891,9 @@
 			}
 
 			if (html && br)
-				mediaName += "<br /><span class='media-real-name'>[" + this.name + "]</span>";
+				mediaName += "<br /><span class='real-name'>[" + this.name + "]</span>";
 			else if (html)
-				mediaName += " <span class='media-real-name'>[" + this.name + "]</span>";
+				mediaName += " <span class='real-name'>[" + this.name + "]</span>";
 			else
 				mediaName += " [" + this.name + "]";
 		} else {
@@ -3202,20 +3206,31 @@
 		// }
 	};
 
-	Utilities.hasSomeDescription = function(object) {
-		var hasTitle = (object.title !== undefined && object.title);
-		var hasDescription = (object.description !== undefined && object.description);
-		var hasTags = (object.tags !== undefined && object.tags.length);
+	Utilities.hasSomeDescription = function(object, property = null) {
+		if (property) {
+			if (property === "tags")
+				return (object[property] !== undefined && object[property].length);
+			else
+				return (object[property] !== undefined && object[property]);
+		}
+
+		let hasTitle = (object.title !== undefined && object.title);
+		let hasDescription = (object.description !== undefined && object.description);
+		let hasTags = (object.tags !== undefined && object.tags.length);
 
 		return hasTitle || hasDescription || hasTags;
 	};
 
-	Album.prototype.hasSomeDescription = function() {
-		return Utilities.hasSomeDescription(this);
+	Album.prototype.hasSomeDescription = function(property = null) {
+		return Utilities.hasSomeDescription(this, property);
 	};
 
-	SingleMedia.prototype.hasSomeDescription = function() {
-		return Utilities.hasSomeDescription(this.metadata);
+	Subalbum.prototype.hasSomeDescription = function(property = null) {
+		return Utilities.hasSomeDescription(this, property);
+	};
+
+	SingleMedia.prototype.hasSomeDescription = function(property = null) {
+		return Utilities.hasSomeDescription(this.metadata, property);
 	};
 
 	Utilities.setDescription = function(object) {
