@@ -1537,13 +1537,13 @@
 					window.location.href = Utilities.upHash();
 				} else if (env.currentMedia === null) {
 					// we are in album view
-					// if (env.currentAlbum.isAlbumWithOneMedia()) {
-					// 	// only one media has remained after the removal
-					// 	env.currentAlbum.prepareForShowing(0);
-					// } else {
-					// more than one media has remained after the removal: remove the single media thumbnail
-					$(clickedSelector).parent().parent().parent().remove();
-					// }
+					if (env.currentAlbum.isAlbumWithOneMedia()) {
+						// only one media has remained after the removal
+						env.currentAlbum.prepareForShowing(0);
+					} else {
+						// more than one media has remained after the removal: remove the single media thumbnail
+						$(clickedSelector).parent().parent().parent().remove();
+					}
 				} else {
 					// we are in media view
 					let clickedMediaIndex = parseInt(clickedSelector.split('-').pop());
