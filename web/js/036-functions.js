@@ -442,7 +442,11 @@
 					$("ul#right-menu li.hide-title").removeClass("selected");
 			}
 
-			if (isMap) {
+			if (
+				isMap ||
+				env.currentMedia === null && ! env.currentAlbum.hasSomeDescription("title") && ! env.currentAlbum.hasSomeDescription("description") ||
+				env.currentMedia !== null && ! env.currentMedia.hasSomeDescription("title") && ! env.currentMedia.hasSomeDescription("description")
+			) {
 				$("ul#right-menu li.hide-descriptions").addClass("hidden");
 			} else {
 				$("ul#right-menu li.hide-descriptions").removeClass("hidden");
@@ -452,7 +456,11 @@
 					$("ul#right-menu li.hide-descriptions").removeClass("selected");
 			}
 
-			if (isMap) {
+			if (
+				isMap ||
+				env.currentMedia === null && ! env.currentAlbum.hasSomeDescription("tags") ||
+				env.currentMedia !== null && ! env.currentMedia.hasSomeDescription("tags")
+			) {
 				$("ul#right-menu li.hide-tags").addClass("hidden");
 			} else {
 				$("ul#right-menu li.hide-tags").removeClass("hidden");

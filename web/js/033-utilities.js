@@ -3206,20 +3206,31 @@
 		// }
 	};
 
-	Utilities.hasSomeDescription = function(object) {
-		var hasTitle = (object.title !== undefined && object.title);
-		var hasDescription = (object.description !== undefined && object.description);
-		var hasTags = (object.tags !== undefined && object.tags.length);
+	Utilities.hasSomeDescription = function(object, property = null) {
+		if (property) {
+			if (property === "tags")
+				return (object[property] !== undefined && object[property].length);
+			else
+				return (object[property] !== undefined && object[property]);
+		}
+
+		let hasTitle = (object.title !== undefined && object.title);
+		let hasDescription = (object.description !== undefined && object.description);
+		let hasTags = (object.tags !== undefined && object.tags.length);
 
 		return hasTitle || hasDescription || hasTags;
 	};
 
-	Album.prototype.hasSomeDescription = function() {
-		return Utilities.hasSomeDescription(this);
+	Album.prototype.hasSomeDescription = function(property = null) {
+		return Utilities.hasSomeDescription(this, property);
 	};
 
-	SingleMedia.prototype.hasSomeDescription = function() {
-		return Utilities.hasSomeDescription(this.metadata);
+	Subalbum.prototype.hasSomeDescription = function(property = null) {
+		return Utilities.hasSomeDescription(this, property);
+	};
+
+	SingleMedia.prototype.hasSomeDescription = function(property = null) {
+		return Utilities.hasSomeDescription(this.metadata, property);
 	};
 
 	Utilities.setDescription = function(object) {
