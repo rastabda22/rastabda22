@@ -2004,6 +2004,7 @@
 			f.setCookie("mediaThumbType", env.options.media_thumb_type);
 			f.updateMenu();
 			env.currentAlbum.showMedia();
+			f.setOptions();
 
 			if (util.isPopup()) {
 				env.mapAlbum.showMedia();
