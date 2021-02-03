@@ -2501,7 +2501,7 @@
 					parseInt($("#album-view").css("padding-left")) -
 					parseInt($("#album-view").css("padding-right")) -
 					scrollBarWidth;
-				env.captionColor = env.options.albums_slide_style ? env.options.slide_album_caption_color : env.options.album_caption_color;
+				env.captionColor = env.options.albums_slide_style ? env.options.album_slide_caption_color : env.options.album_caption_color;
 				env.correctedAlbumThumbSize = env.options.album_thumb_size;
 				var correctedAlbumButtonSize = util.albumButtonWidth(env.options.album_thumb_size);
 				if (albumViewWidth / (correctedAlbumButtonSize + env.options.spacing) < env.options.min_album_thumbnail) {
@@ -2638,7 +2638,7 @@
 										"height: " + buttonAndCaptionHeight + "px; " +
 										"width: " + (correctedAlbumButtonSize - 2 * slideBorder) + "px; ";
 							if (env.options.albums_slide_style)
-								albumButtonAndCaptionHtml += "background-color:" + env.options.album_button_background_color + ";";
+								albumButtonAndCaptionHtml += "background-color:" + env.options.album_slide_background_color + ";";
 							albumButtonAndCaptionHtml +=
 									"'" +
 								">" +
@@ -2810,7 +2810,7 @@
 			}
 
 			if (env.options.albums_slide_style)
-				$(".album-button").css("background-color", env.options.album_button_background_color);
+				$(".album-button").css("background-color", env.options.album_slide_background_color);
 			else
 				$(".album-button").css("border", "none");
 

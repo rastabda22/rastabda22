@@ -1,3 +1,6 @@
+* `album_button_background_color` option changed to `album_slide_background_color` for consistency sake
+* `slide_album_caption_color` option changed to `album_slide_caption_color` for consistency sake
+
 ### version v4.9.32 (Feb 2, 2021)
 
 * show a better message when options.json isn't there
