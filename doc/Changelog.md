@@ -1,3 +1,5 @@
+### version v4.9.33 (Feb 3, 2021)
+
 * added `album_name_color` and `album_slide_name_color` option
 * `title_image_name_color` option changed to `media_name_color` for consistency sake
 * `album_button_background_color` option changed to `album_slide_background_color` for consistency sake
