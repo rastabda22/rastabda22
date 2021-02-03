@@ -2223,7 +2223,6 @@
 				let imageString =
 					"<div class='thumb-and-caption-container' style='" +
 								"width: " + calculatedWidth + "px; " +
-								"margin-right: " + env.options.spacing + "px; " +
 					"'>" +
 						"<div class='thumb-container' " + "style='" +
 								// "width: " + calculatedWidth + "px; " +
@@ -2630,17 +2629,12 @@
 						let albumButtonAndCaptionHtml =
 							"<div id='" + id + "' " +
 								"class='album-button-and-caption";
-						let marginBottom = env.options.spacing;
 						if (env.options.albums_slide_style) {
 							albumButtonAndCaptionHtml += " slide";
-						} else {
-							marginBottom += util.em2px("body", 2);
 						}
 						albumButtonAndCaptionHtml +=
 								"' " +
 								"style='" +
-									"margin-right: " + env.options.spacing + "px; " +
-									"margin-bottom: " + marginBottom + "px; " +
 									"height: " + buttonAndCaptionHeight + "px; " +
 									"width: " + (correctedAlbumButtonSize - 2 * slideBorder) + "px; ";
 						// if (env.options.albums_slide_style)

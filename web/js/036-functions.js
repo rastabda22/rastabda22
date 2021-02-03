@@ -1352,7 +1352,13 @@
 			$(".album-button-and-caption").css("background-color", "");
 		}
 		$(".real-name").css("color", env.options.album_slide_caption_color);
-		$(".thumb-and-caption-container").css("margin-right", env.options.spacing.toString() + "px").css("margin-bottom", env.options.spacing.toString() + "px");
+		$(".thumb-and-caption-container").css("margin-right", env.options.spacing.toString() + "px");
+		$(".album-button-and-caption").css("margin-right", env.options.spacing.toString() + "px");
+
+		let marginBottom = env.options.spacing;
+		if (! env.options.albums_slide_style)
+			marginBottom += util.em2px("body", 2);
+		$(".album-button-and-caption").css("margin-bottom", marginBottom.toString() + "px");
 
 		if (env.currentMedia !== null && ! util.isPopup() || ! env.options.show_media_names_below_thumbs)
 			$(".thumb-and-caption-container .media-name").addClass("hidden-by-option");
