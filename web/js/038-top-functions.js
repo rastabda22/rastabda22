@@ -98,9 +98,9 @@
 						components = env.currentAlbum.ancestorsNames;
 						components = components.map(
 							(ithComponent, i) =>
-								i && env.currentAlbum.ancestorsTitles[i] && env.currentAlbum.ancestorsTitles[i] !== ithComponent ? env.currentAlbum.ancestorsTitles[i] + " <span class='media-real-name'>(" + ithComponent + ")" : ithComponent
+								i && env.currentAlbum.ancestorsTitles[i] && env.currentAlbum.ancestorsTitles[i] !== ithComponent ? env.currentAlbum.ancestorsTitles[i] + " <span class='real-name'>(" + ithComponent + ")" : ithComponent
 						);
-						components.unshift(components[0] && originalTitle !== components[0] ? originalTitle + " <span class='media-real-name'>(" + components[0] + ")" : originalTitle);
+						components.unshift(components[0] && originalTitle !== components[0] ? originalTitle + " <span class='real-name'>(" + components[0] + ")" : originalTitle);
 					} else {
 						components = env.currentAlbum.path.split("/");
 						components.unshift(originalTitle);
@@ -766,7 +766,7 @@
 									if (theAlbum.hasOwnProperty('ancestorsNames')) {
 										for (var i = 0; i < theAlbum.ancestorsNames.length; i ++) {
 											if (theAlbum.hasOwnProperty("ancestorsTitles") && theAlbum.ancestorsTitles[i] !== theAlbum.ancestorsNames[i])
-												name = theAlbum.ancestorsTitles[i] + "<span class='media-real-name'>(" + theAlbum.ancestorsNames[i] + ")";
+												name = theAlbum.ancestorsTitles[i] + "<span class='real-name'>(" + theAlbum.ancestorsNames[i] + ")";
 											else
 												name = theAlbum.ancestorsNames[i];
 											if (i === 0) {

@@ -2843,9 +2843,9 @@
 
 				if (albumOrSubalbum.name) {
 					if (html && br)
-						folderName += "<br /><span class='media-real-name'>[" + albumOrSubalbum.name + "]</span>";
+						folderName += "<br /><span class='real-name'>[" + albumOrSubalbum.name + "]</span>";
 					else if (html)
-						folderName += " <span class='media-real-name'>[" + albumOrSubalbum.name + "]</span>";
+						folderName += " <span class='real-name'>[" + albumOrSubalbum.name + "]</span>";
 					else
 						folderName += " [" + albumOrSubalbum.name + "]";
 				}
@@ -2854,7 +2854,7 @@
 			}
 
 			// if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title !== albumOrSubalbum.name) {
-			// 	folderName = albumOrSubalbum.title + "<br /><span class='media-real-name'>(" + albumOrSubalbum.name + ")</span>";
+			// 	folderName = albumOrSubalbum.title + "<br /><span class='real-name'>(" + albumOrSubalbum.name + ")</span>";
 			// } else {
 			// 	folderName = albumOrSubalbum.name;
 			// }
@@ -2891,9 +2891,9 @@
 			}
 
 			if (html && br)
-				mediaName += "<br /><span class='media-real-name'>[" + this.name + "]</span>";
+				mediaName += "<br /><span class='real-name'>[" + this.name + "]</span>";
 			else if (html)
-				mediaName += " <span class='media-real-name'>[" + this.name + "]</span>";
+				mediaName += " <span class='real-name'>[" + this.name + "]</span>";
 			else
 				mediaName += " [" + this.name + "]";
 		} else {
