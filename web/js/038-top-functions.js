@@ -1603,7 +1603,7 @@
 			// f.setBooleanCookie("albumReverseSortRequested", this.albumReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			env.currentAlbum.showSubalbums();
+			env.currentAlbum.showSubalbums(true);
 		}
 		return false;
 	};
@@ -1617,7 +1617,7 @@
 			f.setBooleanCookie("albumNameSortRequested", true);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			env.currentAlbum.showSubalbums();
+			env.currentAlbum.showSubalbums(true);
 		}
 		return false;
 	};
@@ -1630,7 +1630,7 @@
 			f.setBooleanCookie("albumReverseSortRequested", env.albumReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			env.currentAlbum.showSubalbums();
+			env.currentAlbum.showSubalbums(true);
 		}
 		return false;
 	};
@@ -1961,7 +1961,6 @@
 			f.updateMenu();
 			f.setOptions();
 			util.adaptCaptionHeight();
-			// env.currentAlbum.showSubalbums();
 		}
 		return false;
 	};
@@ -1971,7 +1970,7 @@
 			env.options.show_album_media_count = ! env.options.show_album_media_count;
 			f.setBooleanCookie("showAlbumMediaCount", env.options.show_album_media_count);
 			f.updateMenu();
-			env.currentAlbum.showSubalbums();
+			f.setOptions();
 
 			if (env.currentAlbum.subalbums.length)
 				util.adaptCaptionHeight();
@@ -1984,7 +1983,8 @@
 			env.options.show_media_names_below_thumbs = ! env.options.show_media_names_below_thumbs;
 			f.setBooleanCookie("showMediaNamesBelowThumbs", env.options.show_media_names_below_thumbs);
 			f.updateMenu();
-			env.currentAlbum.showMedia();
+			f.setOptions();
+			// env.currentAlbum.showMedia();
 
 			if (util.isPopup()) {
 				env.mapAlbum.showMedia();
@@ -1999,7 +1999,7 @@
 			env.options.album_thumb_type = env.options.album_thumb_type === "square" ? "fit" : "square";
 			f.setCookie("albumThumbType", env.options.album_thumb_type);
 			f.updateMenu();
-			env.currentAlbum.showSubalbums();
+			env.currentAlbum.showSubalbums(true);
 		}
 		return false;
 	};
@@ -2830,7 +2830,7 @@
 
 					$("#loading").show();
 
-					env.currentAlbum.showSubalbums();
+					env.currentAlbum.showSubalbums(true);
 
 					if (util.isMap() || util.isPopup()) {
 						// the map must be generated again including the points that only carry protected content
