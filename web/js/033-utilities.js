@@ -2834,7 +2834,7 @@
 			else
 				folderName = albumOrSubalbum.name;
 		} else {
-			if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title !== albumOrSubalbum.name) {
+			if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title && albumOrSubalbum.title !== albumOrSubalbum.name) {
 				folderName = albumOrSubalbum.title;
 				if (! br) {
 					// remove the tags fronm the title
@@ -2883,7 +2883,7 @@
 		// } else if (album.isSearch() && this.hasOwnProperty("captionForSearch")) {
 		// 	mediaName = this.captionForSearch;
 		// } else {
-		if (this.metadata.hasOwnProperty("title") && this.metadata.title !== this.name) {
+		if (this.metadata.hasOwnProperty("title") && this.metadata.title && this.metadata.title !== this.name) {
 			mediaName = this.metadata.title;
 			if (! br) {
 				// remove the tags fronm the title
