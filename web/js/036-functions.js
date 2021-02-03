@@ -444,7 +444,15 @@
 
 			if (
 				isMap ||
-				env.currentMedia === null && ! env.currentAlbum.hasSomeDescription("title") && ! env.currentAlbum.hasSomeDescription("description") ||
+				env.currentMedia === null &&
+				! env.currentAlbum.hasSomeDescription("title") &&
+				! env.currentAlbum.hasSomeDescription("description") &&
+				! env.currentAlbum.media.some(
+					singleMedia => singleMedia.hasSomeDescription("title")
+				) &&
+				! env.currentAlbum.media.some(
+					singleMedia => singleMedia.hasSomeDescription("description")
+				) ||
 				env.currentMedia !== null && ! env.currentMedia.hasSomeDescription("title") && ! env.currentMedia.hasSomeDescription("description")
 			) {
 				$("ul#right-menu li.hide-descriptions").addClass("hidden");
@@ -458,7 +466,11 @@
 
 			if (
 				isMap ||
-				env.currentMedia === null && ! env.currentAlbum.hasSomeDescription("tags") ||
+				env.currentMedia === null &&
+				! env.currentAlbum.hasSomeDescription("tags") &&
+				! env.currentAlbum.media.some(
+					singleMedia => singleMedia.hasSomeDescription("tags")
+				) ||
 				env.currentMedia !== null && ! env.currentMedia.hasSomeDescription("tags")
 			) {
 				$("ul#right-menu li.hide-tags").addClass("hidden");
