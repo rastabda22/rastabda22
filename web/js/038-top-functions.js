@@ -949,7 +949,7 @@
 					if (util.nothingIsSelected()) {
 						util.initializeSelectionAlbum();
 					} else if (env.currentAlbum.isSelection()) {
-						env.currentAlbum.showSubalbums();
+						// env.currentAlbum.showSubalbums();
 					}
 					f.updateMenu();
 				}
@@ -2495,33 +2495,6 @@
 			env.albumInSubalbumDiv = null;
 			subalbumsElement.insertBefore("#message-too-many-images");
 
-			let scrollBarWidth = window.innerWidth - document.body.clientWidth || 15;
-
-			// resize down the album buttons if they are too wide
-			let albumViewWidth =
-				$("body").width() -
-				parseInt($("#album-view").css("padding-left")) -
-				parseInt($("#album-view").css("padding-right")) -
-				scrollBarWidth;
-			env.captionColor = env.options.albums_slide_style ? env.options.album_slide_caption_color : env.options.album_caption_color;
-			env.correctedAlbumThumbSize = env.options.album_thumb_size;
-			var correctedAlbumButtonSize = util.albumButtonWidth(env.options.album_thumb_size);
-			if (albumViewWidth / (correctedAlbumButtonSize + env.options.spacing) < env.options.min_album_thumbnail) {
-				env.correctedAlbumThumbSize = Math.floor(util.thumbnailWidth(albumViewWidth / env.options.min_album_thumbnail - env.options.spacing)) - 1;
-				correctedAlbumButtonSize = util.albumButtonWidth(env.correctedAlbumThumbSize);
-			}
-			env.captionFontSize = Math.round(util.em2px("body", 1) * env.correctedAlbumThumbSize / env.options.album_thumb_size);
-			env.captionHeight = parseInt(env.captionFontSize * 1.1) + 1;
-			let margin = 0;
-			if (env.options.albums_slide_style)
-				margin = Math.round(env.correctedAlbumThumbSize * env.slideMarginFactor);
-
-			let buttonAndCaptionHeight = correctedAlbumButtonSize + env.captionHeight;
-
-			var slideBorder = 0;
-			if (env.options.albums_slide_style)
-				slideBorder = env.slideBorder;
-
 			//
 			// subalbums loop
 			//
@@ -2546,15 +2519,7 @@
 
 						let captionId = "album-caption-" + id;
 						let captionHtml =
-							"<div class='album-caption' " +
-								"id='" + captionId + "' " +
-								"style='" +
-									"width: " + env.correctedAlbumThumbSize + "px; " +
-									"font-size: " + env.captionFontSize + "px; " +
-									"height: " + env.captionHeight + "px; " +
-									"color: " + env.captionColor + ";" +
-								"'" +
-								">";
+							"<div class='album-caption' id='" + captionId + "'>";
 						captionHtml +=
 								"<div class='album-name'>" + nameHtml + "</div>";
 
@@ -2567,13 +2532,7 @@
 
 						if (ithSubalbum.hasOwnProperty("tags") && ithSubalbum.tags.length) {
 							captionHtml +=
-								"<div class='album-tags' " +
-									"style='" +
-										"font-size: " + Math.round((env.captionFontSize / 1.5)) + "px; " +
-										// "height: " + env.captionHeight + "px; " +
-										"color: " + env.captionColor + ";" +
-									"'" +
-								">" +
+								"<div class='album-tags'>" +
 									"<span class='tags'>" + util._t("#tags") + ": <span class='tag'>" + ithSubalbum.tags.map(tag => util.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span></span>" +
 								"</div>";
 						}
@@ -2624,22 +2583,7 @@
 						let aHrefHtml = "<a href='" + subfolderHash + "'></a>";
 						let aHrefHtmlContainer = $(aHrefHtml);
 						let albumButtonAndCaptionHtml =
-							"<div id='" + id + "' " +
-								"class='album-button-and-caption";
-						if (env.options.albums_slide_style) {
-							albumButtonAndCaptionHtml += " slide";
-						}
-						albumButtonAndCaptionHtml +=
-								"' " +
-								"style='" +
-									"height: " + buttonAndCaptionHeight + "px; " +
-									"width: " + (correctedAlbumButtonSize - 2 * slideBorder) + "px; ";
-						// if (env.options.albums_slide_style)
-						// 	albumButtonAndCaptionHtml += "background-color:" + env.options.album_slide_background_color + ";";
-						albumButtonAndCaptionHtml +=
-								"'" +
-							">" +
-							"</div>";
+							"<div id='" + id + "' class='album-button-and-caption'></div>";
 						let linkContainer = $(albumButtonAndCaptionHtml);
 
 						let selectBoxHtml =
@@ -2652,21 +2596,11 @@
 							"</a>";
 
 						let imageElement = $(
-							"<div " +
-								"class='album-button' " +
-								"style='" +
-									"width:" + env.correctedAlbumThumbSize + "px; " +
-									"height:" + env.correctedAlbumThumbSize + "px; " +
-									"margin:" + margin + "px;" +
-								"'" +
-								">" +
+							"<div class='album-button'>" +
 								selectBoxHtml +
 								positionHtml +
 								"<a class='random-media-link' href=''>" +
-									"<img " +
-										"src='img/link-arrow.png' " +
-										"class='album-button-random-media-link'" +
-										">" +
+									"<img src='img/link-arrow.png' class='album-button-random-media-link'>" +
 								"</a>" +
 								"<span class='helper'></span>" +
 								"<img src='img/image-placeholder.png' class='thumbnail lazyload-album-" + id + "'>" +
@@ -2744,38 +2678,11 @@
 							}
 						);
 
-						// if (env.currentAlbum.isCollection()) {
-						// 	// the folder name must be added the second line
-						// 	let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: false, getPositions: false});
-						// 	convertSubalbumPromise.then(
-						// 		function(ithSubalbum) {
-						// 			env.currentAlbum.subalbums[iSubalbum] = ithSubalbum;
-						// 			// ithSubalbum.generateCaptionForCollections();
-						// 			let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
-						// 			$("#" + captionId + " .album-name").html(nameHtml);
-						// 		}
-						// 	);
-						// }
-
-						// let ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
-						// let id = phFl.hashCode(ithSubalbum.cacheBase);
 						pickRandomMediaAndInsertIt(iSubalbum, imageElement, resolve_subalbumPromise);
 					}
 				);
 				subalbumsPromises.push(subalbumPromise);
 			}
-
-			// if (env.options.hide_descriptions) {
-			// 	$(".album-description").addClass("hidden-by-option");
-			// } else {
-			// 	$(".album-description").removeClass("hidden-by-option");
-			// }
-			//
-			// if (env.options.hide_tags) {
-			// 	$(".album-tags").addClass("hidden-by-option");
-			// } else {
-			// 	$(".album-tags").removeClass("hidden-by-option");
-			// }
 		}
 
 		Promise.all(subalbumsPromises).then(
@@ -2806,10 +2713,52 @@
 			$("#album-view").removeClass("media-view-container").removeAttr("height");
 		}
 
+		let scrollBarWidth = window.innerWidth - document.body.clientWidth || 15;
+
+		// resize down the album buttons if they are too wide
+		let albumViewWidth =
+			$("body").width() -
+			parseInt($("#album-view").css("padding-left")) -
+			parseInt($("#album-view").css("padding-right")) -
+			scrollBarWidth;
+		env.correctedAlbumThumbSize = env.options.album_thumb_size;
+		let correctedAlbumButtonSize = util.albumButtonWidth(env.options.album_thumb_size);
+		if (albumViewWidth / (correctedAlbumButtonSize + env.options.spacing) < env.options.min_album_thumbnail) {
+			env.correctedAlbumThumbSize = Math.floor(util.thumbnailWidth(albumViewWidth / env.options.min_album_thumbnail - env.options.spacing)) - 1;
+			correctedAlbumButtonSize = util.albumButtonWidth(env.correctedAlbumThumbSize);
+		}
+		captionFontSize = Math.round(util.em2px("body", 1) * env.correctedAlbumThumbSize / env.options.album_thumb_size);
+		captionHeight = parseInt(captionFontSize * 1.1) + 1;
+		let margin = 0;
 		if (env.options.albums_slide_style)
+			margin = Math.round(env.correctedAlbumThumbSize * env.slideMarginFactor);
+
+		let buttonAndCaptionHeight = correctedAlbumButtonSize + captionHeight;
+
+		let slideBorder = 0;
+		if (env.options.albums_slide_style)
+			slideBorder = env.slideBorder;
+
+		if (env.options.albums_slide_style) {
+			$(".album-name").css("color", env.options.album_slide_name_color);
+			$(".album-button-and-caption").css("background-color", env.options.album_slide_background_color);
 			$(".album-button").css("background-color", env.options.album_slide_background_color);
-		else
+			$(".album-caption, .album-caption .real-name").css("color", env.options.album_slide_caption_color);
+			$(".album-button-and-caption").addClass("slide");
+		} else {
 			$(".album-button").css("border", "none");
+			$(".album-caption, .album-caption .real-name").css("color", env.options.album_caption_color);
+		}
+
+		$(".album-button-and-caption").css("width", (correctedAlbumButtonSize - 2 * slideBorder) + "px");
+		$(".album-button-and-caption").css("height", buttonAndCaptionHeight + "px");
+		$(".album-caption").css("width", env.correctedAlbumThumbSize + "px");
+		$(".album-caption").css("height", captionHeight + "px");
+		$(".album-caption").css("font-size", captionFontSize + "px");
+		$(".album-tags").css("font-size", (Math.round(captionFontSize * 0.75)) + "px");
+		$(".album-button").css("margin", margin + "px");
+		$(".album-button").css("width", env.correctedAlbumThumbSize + "px");
+		$(".album-button").css("height", env.correctedAlbumThumbSize + "px");
 
 		f.updateMenu();
 		self.bindSubalbumSortEvents();

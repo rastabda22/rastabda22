@@ -1358,12 +1358,16 @@
 		$(".media-name").css("color", env.options.media_name_color);
 		if (env.options.albums_slide_style) {
 			$(".album-name").css("color", env.options.album_slide_name_color);
+			$(".album-button").css("background-color", env.options.album_slide_background_color);
 			$(".album-button-and-caption").css("background-color", env.options.album_slide_background_color);
+			$(".album-caption, .album-caption .real-name").css("color", env.options.album_slide_caption_color);
+			$(".album-button-and-caption").addClass("slide");
 		} else {
-			$(".album-name").css("color", env.options.album_name_color);
+			$(".album-button").css("background-color", "");
 			$(".album-button-and-caption").css("background-color", "");
+			$(".album-caption, .album-caption .real-name").css("color", env.options.album_name_color);
+			$(".album-button-and-caption").removeClass("slide");
 		}
-		$(".real-name").css("color", env.options.album_slide_caption_color);
 		$(".thumb-and-caption-container").css("margin-right", env.options.spacing.toString() + "px");
 		$(".album-button-and-caption").css("margin-right", env.options.spacing.toString() + "px");
 
