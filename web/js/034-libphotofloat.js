@@ -2081,7 +2081,7 @@
 		return mediaIndex;
 	};
 
-	PhotoFloat.prototype.convertCacheBaseToId = function(cacheBase) {
+	PhotoFloat.convertCacheBaseToId = function(cacheBase) {
 		var codedHash, i, chr;
 
 		if (cacheBase.length === 0)
@@ -2134,6 +2134,7 @@
 	PhotoFloat.prototype.getStopWords = PhotoFloat.getStopWords;
 	PhotoFloat.prototype.removeStopWords = PhotoFloat.removeStopWords;
 	PhotoFloat.prototype.hasProtectedContent = PhotoFloat.hasProtectedContent;
+	PhotoFloat.prototype.convertCacheBaseToId = PhotoFloat.convertCacheBaseToId;
 
 	/* expose class globally */
 	window.PhotoFloat = PhotoFloat;

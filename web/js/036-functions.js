@@ -1356,25 +1356,15 @@
 			$(this).css("color", env.options.title_color);
 		});
 		$(".media-name").css("color", env.options.media_name_color);
-		if (env.options.albums_slide_style) {
-			$(".album-name").css("color", env.options.album_slide_name_color);
-			$(".album-button").css("background-color", env.options.album_slide_background_color);
-			$(".album-button-and-caption").css("background-color", env.options.album_slide_background_color);
-			$(".album-caption, .album-caption .real-name").css("color", env.options.album_slide_caption_color);
-			$(".album-button-and-caption").addClass("slide");
-		} else {
-			$(".album-button").css("background-color", "");
-			$(".album-button-and-caption").css("background-color", "");
-			$(".album-caption, .album-caption .real-name").css("color", env.options.album_name_color);
-			$(".album-button-and-caption").removeClass("slide");
-		}
-		$(".thumb-and-caption-container").css("margin-right", env.options.spacing.toString() + "px");
-		$(".album-button-and-caption").css("margin-right", env.options.spacing.toString() + "px");
 
-		let marginBottom = env.options.spacing;
-		if (! env.options.albums_slide_style)
-			marginBottom += util.em2px("body", 2);
-		$(".album-button-and-caption").css("margin-bottom", marginBottom.toString() + "px");
+		if (! env.options.show_album_media_count)
+			$(".title-count").addClass("hidden-by-option");
+		else
+			$(".title-count").removeClass("hidden-by-option");
+
+		util.setSubalbumsOptions();
+
+		$(".thumb-and-caption-container").css("margin-right", env.options.spacing.toString() + "px");
 
 		if (env.currentMedia !== null && ! util.isPopup() || ! env.options.show_media_names_below_thumbs)
 			$(".thumb-and-caption-container .media-name").addClass("hidden-by-option");
@@ -1386,12 +1376,6 @@
 			$(".album-name").addClass("hidden-by-option");
 		else
 			$(".album-name").removeClass("hidden-by-option");
-
-		if (! env.options.show_album_media_count)
-			$(".album-caption-count, .title-count").addClass("hidden-by-option");
-		else
-			$(".album-caption-count, .title-count").removeClass("hidden-by-option");
-
 
 		if (env.options.hide_title)
 			$(".title").addClass("hidden-by-option");

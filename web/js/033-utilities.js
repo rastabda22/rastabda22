@@ -1188,7 +1188,7 @@
 		}
 	};
 
-	Utilities.prototype.albumButtonWidth = function(thumbnailWidth) {
+	Utilities.albumButtonWidth = function(thumbnailWidth) {
 		if (env.options.albums_slide_style) {
 			return Math.ceil(thumbnailWidth * (1 + 2 * env.slideMarginFactor) + 2 * env.slideAlbumButtonBorder + 2 * env.slideBorder);
 		} else {
@@ -1196,7 +1196,7 @@
 		}
 	};
 
-	Utilities.prototype.thumbnailWidth = function(albumButtonWidth) {
+	Utilities.thumbnailWidth = function(albumButtonWidth) {
 		if (env.options.albums_slide_style) {
 			return Math.floor((albumButtonWidth - 2 * env.slideAlbumButtonBorder - 2 * env.slideBorder) / (1 + 2 * env.slideMarginFactor));
 		} else {
@@ -1794,6 +1794,69 @@
 		);
 	};
 
+	Utilities.prototype.setSubalbumsOptions = function() {
+		let scrollBarWidth = window.innerWidth - document.body.clientWidth || 15;
+
+		// resize down the album buttons if they are too wide
+		let albumViewWidth =
+			$("body").width() -
+			parseInt($("#album-view").css("padding-left")) -
+			parseInt($("#album-view").css("padding-right")) -
+			scrollBarWidth;
+		env.correctedAlbumThumbSize = env.options.album_thumb_size;
+		let correctedAlbumButtonSize = Utilities.albumButtonWidth(env.options.album_thumb_size);
+		if (albumViewWidth / (correctedAlbumButtonSize + env.options.spacing) < env.options.min_album_thumbnail) {
+			env.correctedAlbumThumbSize = Math.floor(Utilities.thumbnailWidth(albumViewWidth / env.options.min_album_thumbnail - env.options.spacing)) - 1;
+			correctedAlbumButtonSize = Utilities.albumButtonWidth(env.correctedAlbumThumbSize);
+		}
+		let captionFontSize = Math.round(Utilities.em2px("body", 1) * env.correctedAlbumThumbSize / env.options.album_thumb_size);
+		let captionHeight = parseInt(captionFontSize * 1.1) + 1;
+		let margin = 0;
+		if (env.options.albums_slide_style)
+			margin = Math.round(env.correctedAlbumThumbSize * env.slideMarginFactor);
+
+		let buttonAndCaptionHeight = correctedAlbumButtonSize + captionHeight;
+
+		let slideBorder = 0;
+		if (env.options.albums_slide_style)
+			slideBorder = env.slideBorder;
+
+		if (env.options.albums_slide_style) {
+			$(".album-name").css("color", env.options.album_slide_name_color);
+			$(".album-button-and-caption").css("background-color", env.options.album_slide_background_color);
+			$(".album-button").css("background-color", env.options.album_slide_background_color);
+			$(".album-caption, .album-caption .real-name").css("color", env.options.album_slide_caption_color);
+			$(".album-button-and-caption").addClass("slide");
+		} else {
+			$(".album-button").css("border", "none");
+			$(".album-caption, .album-caption .real-name").css("color", env.options.album_caption_color);
+		}
+
+		let marginBottom = env.options.spacing;
+		if (! env.options.albums_slide_style)
+			marginBottom += Utilities.em2px("body", 2);
+		$(".album-button-and-caption").css("width", (correctedAlbumButtonSize - 2 * slideBorder) + "px");
+		$(".album-button-and-caption").css("height", buttonAndCaptionHeight + "px");
+		$(".album-button-and-caption").css("margin-right", env.options.spacing.toString() + "px");
+		$(".album-button-and-caption").css("margin-bottom", marginBottom.toString() + "px");
+
+		$(".album-button").css("margin", margin + "px");
+		$(".album-button").css("width", env.correctedAlbumThumbSize + "px");
+		$(".album-button").css("height", env.correctedAlbumThumbSize + "px");
+
+		$(".album-caption").css("width", env.correctedAlbumThumbSize + "px");
+		$(".album-caption").css("height", captionHeight + "px");
+		$(".album-caption").css("font-size", captionFontSize + "px");
+
+		$(".album-tags").css("font-size", (Math.round(captionFontSize * 0.75)) + "px");
+
+
+		if (! env.options.show_album_media_count)
+			$(".album-caption-count").addClass("hidden-by-option");
+		else
+			$(".album-caption-count").removeClass("hidden-by-option");
+	};
+
 	Utilities.addTagLink = function(tag) {
 		// tags can be phrases (e.g. with automatic tags from person recognition)
 
@@ -1806,7 +1869,7 @@
 		return "<a href='" + hash + "'>" + tag + "</a>";
 	};
 
-	Utilities.prototype.em2px = function(selector, em) {
+	Utilities.em2px = function(selector, em) {
 		var emSize = parseFloat($(selector).css("font-size"));
 		return (em * emSize);
 	};

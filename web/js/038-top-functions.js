@@ -2713,53 +2713,7 @@
 			$("#album-view").removeClass("media-view-container").removeAttr("height");
 		}
 
-		let scrollBarWidth = window.innerWidth - document.body.clientWidth || 15;
-
-		// resize down the album buttons if they are too wide
-		let albumViewWidth =
-			$("body").width() -
-			parseInt($("#album-view").css("padding-left")) -
-			parseInt($("#album-view").css("padding-right")) -
-			scrollBarWidth;
-		env.correctedAlbumThumbSize = env.options.album_thumb_size;
-		let correctedAlbumButtonSize = util.albumButtonWidth(env.options.album_thumb_size);
-		if (albumViewWidth / (correctedAlbumButtonSize + env.options.spacing) < env.options.min_album_thumbnail) {
-			env.correctedAlbumThumbSize = Math.floor(util.thumbnailWidth(albumViewWidth / env.options.min_album_thumbnail - env.options.spacing)) - 1;
-			correctedAlbumButtonSize = util.albumButtonWidth(env.correctedAlbumThumbSize);
-		}
-		captionFontSize = Math.round(util.em2px("body", 1) * env.correctedAlbumThumbSize / env.options.album_thumb_size);
-		captionHeight = parseInt(captionFontSize * 1.1) + 1;
-		let margin = 0;
-		if (env.options.albums_slide_style)
-			margin = Math.round(env.correctedAlbumThumbSize * env.slideMarginFactor);
-
-		let buttonAndCaptionHeight = correctedAlbumButtonSize + captionHeight;
-
-		let slideBorder = 0;
-		if (env.options.albums_slide_style)
-			slideBorder = env.slideBorder;
-
-		if (env.options.albums_slide_style) {
-			$(".album-name").css("color", env.options.album_slide_name_color);
-			$(".album-button-and-caption").css("background-color", env.options.album_slide_background_color);
-			$(".album-button").css("background-color", env.options.album_slide_background_color);
-			$(".album-caption, .album-caption .real-name").css("color", env.options.album_slide_caption_color);
-			$(".album-button-and-caption").addClass("slide");
-		} else {
-			$(".album-button").css("border", "none");
-			$(".album-caption, .album-caption .real-name").css("color", env.options.album_caption_color);
-		}
-
-		$(".album-button-and-caption").css("width", (correctedAlbumButtonSize - 2 * slideBorder) + "px");
-		$(".album-button-and-caption").css("height", buttonAndCaptionHeight + "px");
-		$(".album-caption").css("width", env.correctedAlbumThumbSize + "px");
-		$(".album-caption").css("height", captionHeight + "px");
-		$(".album-caption").css("font-size", captionFontSize + "px");
-		$(".album-tags").css("font-size", (Math.round(captionFontSize * 0.75)) + "px");
-		$(".album-button").css("margin", margin + "px");
-		$(".album-button").css("width", env.correctedAlbumThumbSize + "px");
-		$(".album-button").css("height", env.correctedAlbumThumbSize + "px");
-
+		util.setSubalbumsOptions();
 		f.updateMenu();
 		self.bindSubalbumSortEvents();
 
