@@ -1542,7 +1542,9 @@
 					if (env.currentAlbum.isAlbumWithOneMedia()) {
 						// only one media has remained after the removal
 						env.currentMedia = env.currentAlbum.media[0];
-						env.currentMedia.show();
+						env.currentMediaIndex = 0;
+						$("#media-view-container").removeClass("hidden");
+						env.currentMedia.show(env.currentAlbum, "center");
 						// env.currentAlbum.prepareForShowing(0);
 					} else {
 						// more than one media has remained after the removal: remove the single media thumbnail
@@ -1561,7 +1563,9 @@
 						if (env.currentAlbum.isAlbumWithOneMedia()) {
 							// only one media has remained after the removal
 							env.currentMedia = env.currentAlbum.media[0];
-							env.currentAlbum.show();
+							env.currentMediaIndex = 0;
+							$("#media-view-container").removeClass("hidden");
+							env.currentMedia.show(env.currentAlbum, "center");
 							// env.currentAlbum.prepareForShowing(0);
 						} else if (clickedMediaIndex < env.currentMediaIndex) {
 							env.currentMediaIndex --;
