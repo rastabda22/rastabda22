@@ -1405,7 +1405,8 @@
 					let subalbumsPromises = [];
 					for (let indexSubalbum = self.subalbums.length - 1; indexSubalbum >= 0; indexSubalbum --) {
 						// let subalbum = self.subalbums[indexSubalbum];
-						let removeSubalbumPromise = self.removeSubalbumFromSelection(indexSubalbum, "#subalbum-select-box-" + indexSubalbum);
+						let id = PhotoFloat.hashCode(self.subalbums[indexSubalbum].cacheBase);
+						let removeSubalbumPromise = self.removeSubalbumFromSelection("#subalbum-select-box-" + id);
 						subalbumsPromises.push(removeSubalbumPromise);
 					}
 					Promise.all(subalbumsPromises).then(
@@ -1699,8 +1700,10 @@
 		);
 	};
 
-	Album.prototype.removeSubalbumFromSelection = function(iSubalbum, clickedSelector) {
+	Album.prototype.removeSubalbumFromSelection = function(clickedSelector) {
+		var iSubalbum = this.subalbums.findIndex(subalbum => subalbum.cacheBase === $(clickedSelector).parent().parent().attr("id"))
 		var subalbum = this.subalbums[iSubalbum];
+		// var subalbum = this.subalbums[iSubalbum];
 		var self = this;
 		return new Promise(
 			function(resolve_removeSubalbum) {

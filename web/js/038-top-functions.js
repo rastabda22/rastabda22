@@ -937,12 +937,13 @@
 		}
 	};
 
-	Album.prototype.toggleSubalbumSelection = function(iSubalbum, clickedSelector) {
+	Album.prototype.toggleSubalbumSelection = function(clickedSelector) {
 		if (env.selectionAlbum.isEmpty())
 			util.initializeSelectionAlbum();
+		var iSubalbum = this.subalbums.findIndex(subalbum => subalbum.cacheBase === $(clickedSelector).parent().parent().attr("id"))
 		var subalbum = this.subalbums[iSubalbum];
 		if (subalbum.isSelected()) {
-			let removeSubalbumPromise = this.removeSubalbumFromSelection(iSubalbum, clickedSelector);
+			let removeSubalbumPromise = this.removeSubalbumFromSelection(clickedSelector);
 			removeSubalbumPromise.then(
 				function subalbumRemoved() {
 					if (util.nothingIsSelected()) {
@@ -2530,6 +2531,7 @@
 				let subalbumPromise = new Promise(
 					function(resolve_subalbumPromise) {
 						var ithSubalbum = self.subalbums[iSubalbum];
+						var id = phFl.hashCode(ithSubalbum.cacheBase);
 
 						let nameHtml;
 						if (self.isSearch())
@@ -2542,7 +2544,7 @@
 								nameHtml = "<span class='italic gray'>(" + util._t("#root-album") + ")</span>";
 						}
 
-						let captionId = "album-caption-" + phFl.hashCode(ithSubalbum.cacheBase);
+						let captionId = "album-caption-" + id;
 						let captionHtml =
 							"<div class='album-caption' " +
 								"id='" + captionId + "' " +
@@ -2598,7 +2600,7 @@
 						if (ithSubalbum.numPositionsInTree.length) {
 							folderMapTitleWithoutHtmlTags = self.folderMapTitle(ithSubalbum, nameHtml).replace(/<br \/>/gm, ' ').replace(/<[^>]*>?/gm, '');
 							positionHtml =
-								"<a id='subalbum-map-link-" + iSubalbum + "' >" +
+								"<a id='subalbum-map-link-" + id + "' >" +
 									"<img " +
 										"class='thumbnail-map-link' " +
 										"height='15px' " +
@@ -2608,7 +2610,6 @@
 						}
 
 						// a dot could be present in a cache base, making $("#" + cacheBase) fail, beware...
-						let id = phFl.hashCode(ithSubalbum.cacheBase);
 						let subfolderHash;
 						// TO DO: verify that isMap() is not missing in the following line
 						if (self.isSearch() || self.isSelection()) {
@@ -2642,7 +2643,7 @@
 						let linkContainer = $(albumButtonAndCaptionHtml);
 
 						let selectBoxHtml =
-							"<a id='subalbum-select-box-" + iSubalbum + "'>" +
+							"<a id='subalbum-select-box-" + id + "'>" +
 								"<img " +
 									"class='select-box' " +
 									"src='" + selectSrc + "' " +
@@ -2678,30 +2679,30 @@
 						subalbumsElement.append(aHrefHtmlContainer);
 
 						if (ithSubalbum.numPositionsInTree.length) {
-							$("#subalbum-map-link-" + iSubalbum + " img.thumbnail-map-link").attr("title", folderMapTitleWithoutHtmlTags);
-							$("#subalbum-map-link-" + iSubalbum + " img.thumbnail-map-link").attr("alt", folderMapTitleWithoutHtmlTags);
+							$("#subalbum-map-link-" + id + " img.thumbnail-map-link").attr("title", folderMapTitleWithoutHtmlTags);
+							$("#subalbum-map-link-" + id + " img.thumbnail-map-link").attr("alt", folderMapTitleWithoutHtmlTags);
 						}
-						$("#subalbum-select-box-" + iSubalbum + " img.select-box").attr("title", util._t(titleSelector));
-						$("#subalbum-select-box-" + iSubalbum + " img.select-box").attr("alt", util._t("#selector"));
+						$("#subalbum-select-box-" + id + " img.select-box").attr("title", util._t(titleSelector));
+						$("#subalbum-select-box-" + id + " img.select-box").attr("alt", util._t("#selector"));
 
 						if (ithSubalbum.hasOwnProperty("description"))
 							$("#" + captionId + " .description").attr("title", util.stripHtmlAndReplaceEntities(ithSubalbum.description));
 
 						if (ithSubalbum.hasOwnProperty("numPositionsInTree") && ithSubalbum.numPositionsInTree) {
-							$("#subalbum-map-link-" + iSubalbum).off("click").on(
+							$("#subalbum-map-link-" + id).off("click").on(
 								"click",
 								{ithSubalbum: ithSubalbum},
 								function(ev, from) {
 									// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
 									ev.preventDefault();
-									env.selectorClickedToOpenTheMap = "#subalbum-map-link-" + iSubalbum;
+									env.selectorClickedToOpenTheMap = "#subalbum-map-link-" + id;
 									TopFunctions.generateMapFromSubalbum(ev, from);
 								}
 							);
 						}
 
 						if (
-							env.selectorClickedToOpenTheMap === "#subalbum-map-link-" + iSubalbum &&
+							env.selectorClickedToOpenTheMap === "#subalbum-map-link-" + id &&
 							env.previousAlbum !== null &&
 							env.previousAlbum.isMap() &&
 							(
@@ -2733,8 +2734,8 @@
 							);
 						}
 
-						$("#subalbum-select-box-" + iSubalbum + " .select-box").show();
-						$("#subalbum-select-box-" + iSubalbum).off("click").on(
+						$("#subalbum-select-box-" + id + " .select-box").show();
+						$("#subalbum-select-box-" + id).off("click").on(
 							"click",
 							function(ev) {
 								ev.stopPropagation();
