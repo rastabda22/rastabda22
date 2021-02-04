@@ -1923,7 +1923,9 @@
 			env.options.albums_slide_style = ! env.options.albums_slide_style;
 			f.setBooleanCookie("albumsSlideStyle", env.options.albums_slide_style);
 			f.updateMenu();
-			env.currentAlbum.showSubalbums(true);
+			util.setSubalbumsOptions();
+			util.adaptCaptionHeight();
+			// env.currentAlbum.showSubalbums(true);
 		}
 		return false;
 	};
@@ -2369,32 +2371,11 @@
 	Album.prototype.showSubalbums = function(forcePopulate = false) {
 		function insertRandomImage(randomSubAlbum, index, iSubalbum) {
 			var titleName, randomMediaLink;
-			var thumbWidth, thumbHeight;
 			var randomMedia = randomSubAlbum.media[index];
 			var id = phFl.convertCacheBaseToId(self.subalbums[iSubalbum].cacheBase);
 			var mediaSrc = randomMedia.chooseThumbnail(env.options.album_thumb_size);
 
 			$("#downloading-media").hide();
-
-			if (env.options.album_thumb_type === "fit") {
-				let mediaWidth = randomMedia.metadata.size[0];
-				let mediaHeight = randomMedia.metadata.size[1];
-				if (mediaWidth < env.correctedAlbumThumbSize && mediaHeight < env.correctedAlbumThumbSize) {
-					thumbWidth = mediaWidth;
-					thumbHeight = mediaHeight;
-				} else {
-					if (mediaWidth > mediaHeight) {
-						thumbWidth = env.correctedAlbumThumbSize;
-						thumbHeight = Math.floor(env.correctedAlbumThumbSize * mediaHeight / mediaWidth);
-					} else {
-						thumbWidth = Math.floor(env.correctedAlbumThumbSize * mediaWidth / mediaHeight);
-						thumbHeight = env.correctedAlbumThumbSize;
-					}
-				}
-			} else if (env.options.album_thumb_type === "square") {
-				thumbWidth = env.correctedAlbumThumbSize;
-				thumbHeight = env.correctedAlbumThumbSize;
-			}
 
 			if (self.isByDate()) {
 				titleName = util.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
@@ -2417,7 +2398,8 @@
 			$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
 			$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName);
 			$("#" + id + " img.thumbnail").attr("data-src", encodeURI(mediaSrc));
-			$("#" + id + " img.thumbnail").css("width", thumbWidth).css("height", thumbHeight);
+
+			util.adaptSubalbumThumbnailSize(id, randomMedia);
 
 			$(
 				function() {
@@ -2728,7 +2710,17 @@
 
 					$("#loading").show();
 
-					self.showSubalbums("refreshDisplay");
+					util.setSubalbumsOptions();
+					self.subalbums.forEach(
+						(ithSubalbum, iSubalbum) => {
+							var id = phFl.convertCacheBaseToId(ithSubalbum.cacheBase);
+							util.adaptSubalbumThumbnailSize(id);
+						}
+					);
+
+
+					util.adaptCaptionHeight();
+					// self.showSubalbums("refreshDisplay");
 
 					if (util.isMap() || util.isPopup()) {
 						// the map must be generated again including the points that only carry protected content
