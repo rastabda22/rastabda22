@@ -2364,7 +2364,7 @@
 					}
 					Utilities.setSelectButtonPosition();
 					Utilities.correctPrevNextPosition();
-					Utilities.setDescriptionPosition();
+					Utilities.setDescriptionOptions();
 
 				}
 
@@ -3385,7 +3385,22 @@
 		Utilities.setDescription(this.metadata);
 	};
 
-	Utilities.setDescriptionPosition = function() {
+	Utilities.setDescriptionOptions = function() {
+		if (env.options.hide_descriptions && env.options.hide_tags)
+			$("#description-wrapper").addClass("hidden-by-option");
+		else
+			$("#description-wrapper").removeClass("hidden-by-option");
+
+		if (env.options.hide_descriptions)
+			$("#description").addClass("hidden-by-option");
+		else
+			$("#descriptiondescription").removeClass("hidden-by-option");
+
+		if (env.options.hide_tags)
+			$("#description-tags").addClass("hidden-by-option");
+		else
+			$("#description-tags").removeClass("hidden-by-option");
+
 		var thumbsHeight = 0;
 		if (env.currentMedia !== null && $("#album-view").is(":visible"))
 			thumbsHeight = env.options.media_thumb_size + 20;
@@ -3474,7 +3489,7 @@
 				}
 				$("#description-hide, #description-show").toggle();
 				$("#description, #description-tags").toggle();
-				Utilities.setDescriptionPosition();
+				Utilities.setDescriptionOptions();
 			}
 		);
 	};
@@ -3868,7 +3883,7 @@
 	Utilities.prototype.setPinchButtonsPosition = Utilities.setPinchButtonsPosition;
 	Utilities.prototype.setSelectButtonPosition = Utilities.setSelectButtonPosition;
 	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
-	Utilities.prototype.setDescriptionPosition = Utilities.setDescriptionPosition;
+	Utilities.prototype.setDescriptionOptions = Utilities.setDescriptionOptions;
 	Utilities.prototype.toggleMenu = Utilities.toggleMenu;
 
 	window.Utilities = Utilities;

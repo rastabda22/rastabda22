@@ -1406,6 +1406,7 @@
 		} else {
 			$("#album-view").removeClass("hidden-by-option");
 		}
+		util.setDescriptionOptions();
 	};
 
 	Functions.pinchSwipeInitialization = function() {
@@ -1414,7 +1415,7 @@
 		pS.setPinchButtonsVisibility();
 		util.setSelectButtonPosition();
 		util.correctPrevNextPosition();
-		util.setDescriptionPosition();
+		util.setDescriptionOptions();
 	};
 
 	Functions.tenYears = function() {
