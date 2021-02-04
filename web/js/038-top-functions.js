@@ -2368,18 +2368,17 @@
 
 	Album.prototype.showSubalbums = function(forcePopulate = false) {
 		function insertRandomImage(randomSubAlbum, index, iSubalbum) {
-			var titleName, randomMediaLink, goTo, humanGeonames;
+			var titleName, randomMediaLink;
 			var thumbWidth, thumbHeight;
-			var mediaWidth, mediaHeight;
 			var randomMedia = randomSubAlbum.media[index];
 			var id = phFl.convertCacheBaseToId(self.subalbums[iSubalbum].cacheBase);
 			var mediaSrc = randomMedia.chooseThumbnail(env.options.album_thumb_size);
 
 			$("#downloading-media").hide();
 
-			mediaWidth = randomMedia.metadata.size[0];
-			mediaHeight = randomMedia.metadata.size[1];
 			if (env.options.album_thumb_type === "fit") {
+				let mediaWidth = randomMedia.metadata.size[0];
+				let mediaHeight = randomMedia.metadata.size[1];
 				if (mediaWidth < env.correctedAlbumThumbSize && mediaHeight < env.correctedAlbumThumbSize) {
 					thumbWidth = mediaWidth;
 					thumbHeight = mediaHeight;
@@ -2400,7 +2399,7 @@
 			if (self.isByDate()) {
 				titleName = util.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
 			} else if (self.isByGps()) {
-				humanGeonames = util.pathJoin([env.options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
+				let humanGeonames = util.pathJoin([env.options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
 				titleName = util.pathJoin([humanGeonames, randomMedia.name]);
 			// } else if (self.isSearch()) {
 			// 	titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
@@ -2413,7 +2412,7 @@
 				randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia);
 
 			titleName = titleName.substr(titleName.indexOf('/') + 1);
-			goTo = util._t(".go-to") + " " + titleName;
+			var goTo = util._t(".go-to") + " " + titleName;
 			$("#" + id + " .album-button a.random-media-link").attr("href", randomMediaLink);
 			$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
 			$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName);
@@ -2490,7 +2489,6 @@
 			self === null ||
 			env.albumInSubalbumDiv !== self && self.subalbums.length
 		) {
-
 			subalbumsElement.empty();
 			env.albumInSubalbumDiv = null;
 			subalbumsElement.insertBefore("#message-too-many-images");
