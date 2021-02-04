@@ -1872,12 +1872,15 @@
 				}
 			}
 
+			util.setSubalbumsOptions();
+			util.setMediaOptions();
+			util.setDescriptionOptions();
+
 			if (util.isPopup()) {
-				env.mapAlbum.showMedia();
+				// env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
 
-			f.setOptions();
 
 			if (env.currentAlbum.subalbums.length)
 				util.adaptCaptionHeight();
@@ -1907,12 +1910,15 @@
 				}
 			}
 
+			util.setSubalbumsOptions();
+			util.setMediaOptions();
+			util.setDescriptionOptions();
+
 			if (util.isPopup()) {
 				// env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
 
-			f.setOptions();
 
 			if (env.currentAlbum.subalbums.length)
 				util.adaptCaptionHeight();
