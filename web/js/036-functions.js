@@ -455,13 +455,13 @@
 				) ||
 				env.currentMedia !== null && ! env.currentMedia.hasSomeDescription("title") && ! env.currentMedia.hasSomeDescription("description")
 			) {
-				$("ul#right-menu li.hide-descriptions").addClass("hidden");
+				$("ul#right-menu li.show-descriptions").addClass("hidden");
 			} else {
-				$("ul#right-menu li.hide-descriptions").removeClass("hidden");
+				$("ul#right-menu li.show-descriptions").removeClass("hidden");
 				if (env.options.hide_descriptions)
-					$("ul#right-menu li.hide-descriptions").addClass("selected");
+					$("ul#right-menu li.show-descriptions").removeClass("selected");
 				else
-					$("ul#right-menu li.hide-descriptions").removeClass("selected");
+					$("ul#right-menu li.show-descriptions").addClass("selected");
 			}
 
 			if (
@@ -473,13 +473,13 @@
 				) ||
 				env.currentMedia !== null && ! env.currentMedia.hasSomeDescription("tags")
 			) {
-				$("ul#right-menu li.hide-tags").addClass("hidden");
+				$("ul#right-menu li.show-tags").addClass("hidden");
 			} else {
-				$("ul#right-menu li.hide-tags").removeClass("hidden");
+				$("ul#right-menu li.show-tags").removeClass("hidden");
 				if (env.options.hide_tags)
-					$("ul#right-menu li.hide-tags").addClass("selected");
+					$("ul#right-menu li.show-tags").removeClass("selected");
 				else
-					$("ul#right-menu li.hide-tags").removeClass("selected");
+					$("ul#right-menu li.show-tags").addClass("selected");
 			}
 
 			if (
@@ -597,8 +597,8 @@
 
 			if (
 				$("ul#right-menu li.hide-title").hasClass("hidden") &&
-				$("ul#right-menu li.hide-descriptions").hasClass("hidden") &&
-				$("ul#right-menu li.hide-tags").hasClass("hidden") &&
+				$("ul#right-menu li.show-descriptions").hasClass("hidden") &&
+				$("ul#right-menu li.show-tags").hasClass("hidden") &&
 				$("ul#right-menu li.media-count").hasClass("hidden") &&
 				$("ul#right-menu li.spaced").hasClass("hidden") &&
 				$("ul#right-menu li.square-album-thumbnails").hasClass("hidden") &&
