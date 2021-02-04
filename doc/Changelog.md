@@ -1,3 +1,4 @@
+* cookies now have a 10-years duration
 * added border to subalbums in no-slide mode
 * code managing subalbums thumbnails simplified
 * respect in a better way color options
