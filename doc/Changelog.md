@@ -1,7 +1,9 @@
+* refreshing of subalbums/media is now performed only when strictly needed
+* display menu entries now are more coherent, all are show- instead of hide-
 * cookies now have a 10-years duration
 * added border to subalbums in no-slide mode
-* code managing subalbums thumbnails simplified
-* respect in a better way color options
+* code managing subalbums thumbnails has been simplified
+* color options are now respected better
 * bug fixes
 
 ### version v4.9.33 (Feb 3, 2021)
