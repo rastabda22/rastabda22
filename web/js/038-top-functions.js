@@ -2372,7 +2372,7 @@
 			var thumbWidth, thumbHeight;
 			var mediaWidth, mediaHeight;
 			var randomMedia = randomSubAlbum.media[index];
-			var id = phFl.hashCode(self.subalbums[iSubalbum].cacheBase);
+			var id = phFl.convertCacheBaseToId(self.subalbums[iSubalbum].cacheBase);
 			var mediaSrc = randomMedia.chooseThumbnail(env.options.album_thumb_size);
 
 			$("#downloading-media").hide();
@@ -2504,7 +2504,7 @@
 				let subalbumPromise = new Promise(
 					function(resolve_subalbumPromise) {
 						var ithSubalbum = self.subalbums[iSubalbum];
-						var id = phFl.hashCode(ithSubalbum.cacheBase);
+						var id = phFl.convertCacheBaseToId(ithSubalbum.cacheBase);
 
 						let nameHtml;
 						if (self.isSearch())

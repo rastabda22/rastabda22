@@ -1385,7 +1385,7 @@
 			function(resolve_addAllSubalbums) {
 				var subalbumsPromises = [];
 				for (let indexSubalbum = self.subalbums.length - 1; indexSubalbum >= 0; indexSubalbum --) {
-					let id = PhotoFloat.hashCode(self.subalbums[indexSubalbum].cacheBase);
+					let id = PhotoFloat.convertCacheBaseToId(self.subalbums[indexSubalbum].cacheBase);
 					let addSubalbumPromise = self.addSubalbumToSelection(indexSubalbum, "#subalbum-select-box-" + id);
 					subalbumsPromises.push(addSubalbumPromise);
 				}
@@ -1406,7 +1406,7 @@
 					let subalbumsPromises = [];
 					for (let indexSubalbum = self.subalbums.length - 1; indexSubalbum >= 0; indexSubalbum --) {
 						// let subalbum = self.subalbums[indexSubalbum];
-						let id = PhotoFloat.hashCode(self.subalbums[indexSubalbum].cacheBase);
+						let id = PhotoFloat.convertCacheBaseToId(self.subalbums[indexSubalbum].cacheBase);
 						let removeSubalbumPromise = self.removeSubalbumFromSelection("#subalbum-select-box-" + id);
 						subalbumsPromises.push(removeSubalbumPromise);
 					}

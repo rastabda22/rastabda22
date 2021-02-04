@@ -2081,7 +2081,7 @@
 		return mediaIndex;
 	};
 
-	PhotoFloat.prototype.hashCode = function(cacheBase) {
+	PhotoFloat.prototype.convertCacheBaseToId = function(cacheBase) {
 		var codedHash, i, chr;
 
 		if (cacheBase.length === 0)
