@@ -1794,35 +1794,35 @@
 		);
 	};
 
-	Utilities.prototype.adaptSubalbumThumbnailSize = function(id, randomMedia = null) {
-		var thumbWidth, thumbHeight, mediaWidth, mediaHeight;
-		if (env.options.album_thumb_type === "fit") {
-			if (randomMedia) {
-				mediaWidth = randomMedia.metadata.size[0];
-				mediaHeight = randomMedia.metadata.size[1];
-			} else {
-				mediaWidth = parseFloat($("#" + id + " img.thumbnail").css("width"));
-				mediaHeight = parseFloat($("#" + id + " img.thumbnail").css("height"));
-			}
-			let ratio = mediaWidth / mediaHeight;
-			if (randomMedia && mediaWidth < env.correctedAlbumThumbSize && mediaHeight < env.correctedAlbumThumbSize) {
-				thumbWidth = mediaWidth;
-				thumbHeight = mediaHeight;
-			} else {
-				if (ratio > 1) {
-					thumbWidth = env.correctedAlbumThumbSize;
-					thumbHeight = env.correctedAlbumThumbSize / ratio;
-				} else {
-					thumbWidth = env.correctedAlbumThumbSize * ratio;
-					thumbHeight = env.correctedAlbumThumbSize;
-				}
-			}
-		} else if (env.options.album_thumb_type === "square") {
-			thumbWidth = env.correctedAlbumThumbSize;
-			thumbHeight = env.correctedAlbumThumbSize;
-		}
-		$("#" + id + " img.thumbnail").css("width", thumbWidth).css("height", thumbHeight);
-	};
+	// Utilities.prototype.adaptSubalbumThumbnailSize = function(id, randomMedia = null) {return;
+	// 	var thumbWidth, thumbHeight, mediaWidth, mediaHeight;
+	// 	if (env.options.album_thumb_type === "fit") {
+	// 		if (randomMedia) {
+	// 			mediaWidth = randomMedia.metadata.size[0];
+	// 			mediaHeight = randomMedia.metadata.size[1];
+	// 		} else {
+	// 			mediaWidth = parseFloat($("#" + id + " img.thumbnail").css("width"));
+	// 			mediaHeight = parseFloat($("#" + id + " img.thumbnail").css("height"));
+	// 		}
+	// 		let ratio = mediaWidth / mediaHeight;
+	// 		if (randomMedia && mediaWidth < env.correctedAlbumThumbSize && mediaHeight < env.correctedAlbumThumbSize) {
+	// 			thumbWidth = mediaWidth;
+	// 			thumbHeight = mediaHeight;
+	// 		} else {
+	// 			if (ratio > 1) {
+	// 				thumbWidth = env.correctedAlbumThumbSize;
+	// 				thumbHeight = env.correctedAlbumThumbSize / ratio;
+	// 			} else {
+	// 				thumbWidth = env.correctedAlbumThumbSize * ratio;
+	// 				thumbHeight = env.correctedAlbumThumbSize;
+	// 			}
+	// 		}
+	// 	} else if (env.options.album_thumb_type === "square") {
+	// 		thumbWidth = env.correctedAlbumThumbSize;
+	// 		thumbHeight = env.correctedAlbumThumbSize;
+	// 	}
+	// 	$("#" + id + " img.thumbnail").css("width", thumbWidth).css("height", thumbHeight);
+	// };
 
 	Utilities.prototype.setSubalbumsOptions = function() {
 		let scrollBarWidth = window.innerWidth - document.body.clientWidth || 15;
@@ -1863,6 +1863,7 @@
 			$(".album-button").css("background-color", "");
 			$(".album-caption, .album-caption .real-name").css("color", env.options.album_caption_color);
 			$(".album-button").css("border", "none");
+			$(".album-button-and-caption").removeClass("slide");
 		}
 
 		let marginBottom = env.options.spacing;

@@ -272,6 +272,7 @@ p.description-text, p.description-text ul {
 .album-button img, .thumb-container img {
 	vertical-align: middle;
 	max-width: 100%;
+	max-height: 100%;
 	height: auto;
 }
 

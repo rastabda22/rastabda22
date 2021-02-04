@@ -2399,7 +2399,7 @@
 			$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName);
 			$("#" + id + " img.thumbnail").attr("data-src", encodeURI(mediaSrc));
 
-			util.adaptSubalbumThumbnailSize(id, randomMedia);
+			// util.adaptSubalbumThumbnailSize(id, randomMedia);
 
 			$(
 				function() {
@@ -2711,12 +2711,12 @@
 					$("#loading").show();
 
 					util.setSubalbumsOptions();
-					self.subalbums.forEach(
-						(ithSubalbum, iSubalbum) => {
-							var id = phFl.convertCacheBaseToId(ithSubalbum.cacheBase);
-							util.adaptSubalbumThumbnailSize(id);
-						}
-					);
+					// self.subalbums.forEach(
+					// 	(ithSubalbum, iSubalbum) => {
+					// 		var id = phFl.convertCacheBaseToId(ithSubalbum.cacheBase);
+					// 		util.adaptSubalbumThumbnailSize(id);
+					// 	}
+					// );
 
 
 					util.adaptCaptionHeight();
