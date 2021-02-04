@@ -735,7 +735,18 @@
 										let event = {data: {}};
 										event.data.resize = true;
 										event.data.id = "center";
-										ev.data.singleMedia.scale(event);
+										let scalePromise = ev.data.currentMedia.scale(event);
+										scalePromise.then(
+											function() {
+												if (ev.data.currentMedia.mimeType.indexOf("image/") === 0) {
+													util.setPinchButtonsPosition();
+													pS.setPinchButtonsVisibility();
+												}
+												util.setSelectButtonPosition();
+												util.correctPrevNextPosition();
+												util.setDescriptionOptions();
+											}
+										);
 
 										return false;
 									}
@@ -1707,6 +1718,11 @@
 			howMany ++;
 		if (env.options.hide_tags)
 			howMany ++;
+
+		if (env.currentMedia !== null) {
+			let previousTitleVisibility = $(".media-box#center .title").is(":visible");
+			let previousBottomThumbnailsVisibility = $("#album-view.media-view-container").is(":visible");
+		}
 		if (howMany > 2) {
 			env.options.hide_title = false;
 			env.options.hide_bottom_thumbnails = false;
@@ -1723,26 +1739,27 @@
 		f.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
 		f.setBooleanCookie("hideTags", env.options.hide_tags);
 		f.updateMenu();
-		if (env.options.hide_title) {
-			$(".title").addClass("hidden-by-option");
-		} else {
-			$(".title").removeClass("hidden-by-option");
-		}
-		if (env.options.hide_bottom_thumbnails) {
-			$("#album-view.media-view-container").addClass("hidden-by-option");
-		} else {
-			$("#album-view.media-view-container").removeClass("hidden-by-option");
-		}
-		if (env.options.hide_descriptions) {
-			$("#description, .media-description, .album-description").addClass("hidden-by-option");
-		} else {
-			$("#description, .media-description, .album-description").removeClass("hidden-by-option");
-		}
-		if (env.options.hide_tags) {
-			$("#description-tags, .media-tags, .album-tags").addClass("hidden-by-option");
-		} else {
-			$("#description-tags, .media-tags, .album-tags").removeClass("hidden-by-option");
-		}
+		// if (env.options.hide_title) {
+		// 	$(".title").addClass("hidden-by-option");
+		// } else {
+		// 	$(".title").removeClass("hidden-by-option");
+		// }
+		// if (env.options.hide_bottom_thumbnails) {
+		// 	$("#album-view.media-view-container").addClass("hidden-by-option");
+		// } else {
+		// 	$("#album-view.media-view-container").removeClass("hidden-by-option");
+		// }
+		// if (env.options.hide_descriptions) {
+		// 	$("#description, .media-description, .album-description").addClass("hidden-by-option");
+		// } else {
+		// 	$("#description, .media-description, .album-description").removeClass("hidden-by-option");
+		// }
+		// if (env.options.hide_tags) {
+		// 	$("#description-tags, .media-tags, .album-tags").addClass("hidden-by-option");
+		// } else {
+		// 	$("#description-tags, .media-tags, .album-tags").removeClass("hidden-by-option");
+		// }
+
 
 		if (env.currentAlbum.subalbums.length)
 			util.adaptCaptionHeight();
@@ -1755,22 +1772,47 @@
 			map.updatePopup();
 		}
 
+		let currentTitleVisibility = $(".media-box#center .title").is(":visible");
 		if (env.currentMedia !== null) {
-			let event = {data: {}};
-			event.data.resize = true;
-			event.data.id = "center";
-			env.currentMedia.scale(event);
-			if (env.nextMedia !== null) {
-				event.data.id = "right";
-				env.nextMedia.scale(event);
+			let currentBottomThumbnailsVisibility = $("#album-view.media-view-container").is(":visible");
+			if (currentTitleVisibility !== previousTitleVisibility || currentBottomThumbnailsVisibility !== previousBottomThumbnailsVisibility) {
+				let event = {data: {}};
+				event.data.resize = true;
+				event.data.id = "center";
+				let scalePromise = env.currentMedia.scale(event);
+				scalePromise.then(
+					function() {
+						if (env.currentMedia.mimeType.indexOf("image/") === 0) {
+							util.setPinchButtonsPosition();
+							pS.setPinchButtonsVisibility();
+						}
+						util.setSelectButtonPosition();
+						util.correctPrevNextPosition();
+						util.setDescriptionOptions();
+					}
+				);
+				if (env.nextMedia !== null) {
+					event.data.id = "right";
+					env.nextMedia.scale(event);
+				}
+				if (env.prevMedia !== null) {
+					event.data.id = "left";
+					env.prevMedia.scale(event);
+				}
 			}
-			if (env.prevMedia !== null) {
-				event.data.id = "left";
-				env.prevMedia.scale(event);
-			}
-		} else {
-			TopFunctions.adaptAlbumOptions();
+		// } else {
+		// 	TopFunctions.adaptAlbumOptions();
 		}
+
+		if (currentTitleVisibility)
+			util.setTitleOptions();
+		// if (env.currentMedia === null)
+		// 	TopFunctions.adaptAlbumOptions();
+		util.setMediaOptions();
+		util.setSubalbumsOptions();
+		if (env.currentAlbum.subalbums.length)
+			util.adaptCaptionHeight();
+
 		return false;
 	};
 
@@ -1790,7 +1832,18 @@
 				let event = {data: {}};
 				event.data.resize = true;
 				event.data.id = "center";
-				env.currentMedia.scale(event);
+				let scalePromise = env.currentMedia.scale(event);
+				scalePromise.then(
+					function() {
+						if (env.currentMedia.mimeType.indexOf("image/") === 0) {
+							util.setPinchButtonsPosition();
+							pS.setPinchButtonsVisibility();
+						}
+						util.setSelectButtonPosition();
+						util.correctPrevNextPosition();
+						util.setDescriptionOptions();
+					}
+				);
 				if (env.nextMedia !== null) {
 					event.data.id = "right";
 					env.nextMedia.scale(event);
@@ -1800,7 +1853,8 @@
 					env.prevMedia.scale(event);
 				}
 			} else {
-				TopFunctions.adaptAlbumOptions();
+				// TopFunctions.adaptAlbumOptions();
+				util.setTitleOptions();
 				if (env.currentAlbum.subalbums.length)
 					util.adaptCaptionHeight();
 			}
@@ -1846,8 +1900,8 @@
 					event.data.id = "left";
 					env.prevMedia.scale(event);
 				}
-			} else {
-				TopFunctions.adaptAlbumOptions();
+			// } else {
+				// TopFunctions.adaptAlbumOptions();
 			}
 		}
 		return false;
@@ -1860,23 +1914,26 @@
 
 			f.updateMenu();
 
-			if (env.currentMedia !== null) {
-				let event = {data: {}};
-				event.data.resize = true;
-				event.data.id = "center";
-				env.currentMedia.scale(event);
-				if (env.nextMedia !== null) {
-					event.data.id = "right";
-					env.nextMedia.scale(event);
-				}
-				if (env.prevMedia !== null) {
-					event.data.id = "left";
-					env.prevMedia.scale(event);
-				}
-			}
+			// if (env.currentMedia !== null) {
+			// 	let event = {data: {}};
+			// 	event.data.resize = true;
+			// 	event.data.id = "center";
+			// 	env.currentMedia.scale(event);
+			// 	if (env.nextMedia !== null) {
+			// 		event.data.id = "right";
+			// 		env.nextMedia.scale(event);
+			// 	}
+			// 	if (env.prevMedia !== null) {
+			// 		event.data.id = "left";
+			// 		env.prevMedia.scale(event);
+			// 	}
+			// }
 
-			util.setSubalbumsOptions();
-			util.setMediaOptions();
+			if (util.isPopup() || env.currentMedia === null) {
+				util.setMediaOptions();
+			}
+			if (! util.isPopup() && env.currentMedia === null)
+				util.setSubalbumsOptions();
 			util.setDescriptionOptions();
 
 			if (util.isPopup()) {
@@ -1898,23 +1955,26 @@
 
 			f.updateMenu();
 
-			if (env.currentMedia !== null) {
-				let event = {data: {}};
-				event.data.resize = true;
-				event.data.id = "center";
-				env.currentMedia.scale(event);
-				if (env.nextMedia !== null) {
-					event.data.id = "right";
-					env.nextMedia.scale(event);
-				}
-				if (env.prevMedia !== null) {
-					event.data.id = "left";
-					env.prevMedia.scale(event);
-				}
-			}
+			// if (env.currentMedia !== null) {
+			// 	let event = {data: {}};
+			// 	event.data.resize = true;
+			// 	event.data.id = "center";
+			// 	env.currentMedia.scale(event);
+			// 	if (env.nextMedia !== null) {
+			// 		event.data.id = "right";
+			// 		env.nextMedia.scale(event);
+			// 	}
+			// 	if (env.prevMedia !== null) {
+			// 		event.data.id = "left";
+			// 		env.prevMedia.scale(event);
+			// 	}
+			// }
 
-			util.setSubalbumsOptions();
-			util.setMediaOptions();
+			if (util.isPopup() || env.currentMedia === null) {
+				util.setMediaOptions();
+			}
+			if (! util.isPopup() && env.currentMedia === null)
+				util.setSubalbumsOptions();
 			util.setDescriptionOptions();
 
 			if (util.isPopup()) {
