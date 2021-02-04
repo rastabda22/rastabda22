@@ -1,3 +1,8 @@
+* added border to subalbums in no-slide mode
+* code managing subalbums thumbnails simplified
+* respect in a better way color options
+* bug fixes
+
 ### version v4.9.33 (Feb 3, 2021)
 
 * added `album_name_color` and `album_slide_name_color` option
