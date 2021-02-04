@@ -1,4 +1,4 @@
-# MyPhotoShare version v4.9.33 (Feb 3, 2021)
+# MyPhotoShare version v4.9.34 (Feb 4, 2021)
 
 ### A Web Photo Gallery Done Right via Static JSON & Dynamic Javascript
 #### by Jason A. Donenfeld (<Jason@zx2c4.com>), Jerome Charaoui (jerome@riseup.net)  Joachim Tingvold (joachim@tingvold.com), Paolo Benvenuto (<paolobenve@gmail.com>), Pierre Métras (<p.metras@videotron.ca>)
@@ -102,7 +102,7 @@ It is available in English, Italian, French and Spanish. Localizing to other lan
 - [x] Scanner uses recursive async randomized tree walking album thumbnail algorithm.
 - [x] HTML5 with minified CSS and JavaScript files for minimal load time.
 
-### Privacy (since v4.0)
+### Privacy
 
 - [x] Albums and photo can be protected by passwords. Passwords may be specified for albums, for files, for both.
 - [x] Patterns are defined in album tree and specify what should every password protect; allowed matching modes: case sensitive/insensitive, whole/part of dir/file name, dir only/files only/both.

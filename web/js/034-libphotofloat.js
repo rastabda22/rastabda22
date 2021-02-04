@@ -2081,20 +2081,20 @@
 		return mediaIndex;
 	};
 
-	PhotoFloat.hashCode = function(hash) {
+	PhotoFloat.convertCacheBaseToId = function(cacheBase) {
 		var codedHash, i, chr;
 
-		if (hash.length === 0)
+		if (cacheBase.length === 0)
 			return 0;
-		else if (hash.indexOf('.') === -1)
-			return hash;
+		else if (cacheBase.indexOf('.') === -1)
+			return cacheBase;
 		else {
-			for (i = 0; i < hash.length; i++) {
-				chr = hash.charCodeAt(i);
+			for (i = 0; i < cacheBase.length; i++) {
+				chr = cacheBase.charCodeAt(i);
 				codedHash = ((codedHash << 5) - codedHash) + chr;
 				codedHash |= 0; // Convert to 32bit integer
 			}
-			return hash.replace(/\./g, '_') + '_' + codedHash;
+			return cacheBase.replace(/\./g, '_') + '_' + codedHash;
 		}
 	};
 
@@ -2130,11 +2130,11 @@
 	PhotoFloat.prototype.encodeHash = PhotoFloat.encodeHash;
 	PhotoFloat.prototype.convertHashToCacheBase = PhotoFloat.convertHashToCacheBase;
 	PhotoFloat.prototype.decodeHash = PhotoFloat.decodeHash;
-	PhotoFloat.prototype.hashCode = PhotoFloat.hashCode;
 	PhotoFloat.prototype.endPreparingAlbumAndKeepOn = PhotoFloat.endPreparingAlbumAndKeepOn;
 	PhotoFloat.prototype.getStopWords = PhotoFloat.getStopWords;
 	PhotoFloat.prototype.removeStopWords = PhotoFloat.removeStopWords;
 	PhotoFloat.prototype.hasProtectedContent = PhotoFloat.hasProtectedContent;
+	PhotoFloat.prototype.convertCacheBaseToId = PhotoFloat.convertCacheBaseToId;
 
 	/* expose class globally */
 	window.PhotoFloat = PhotoFloat;

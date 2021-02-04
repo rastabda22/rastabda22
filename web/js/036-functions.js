@@ -442,44 +442,61 @@
 					$("ul#right-menu li.hide-title").removeClass("selected");
 			}
 
+			let popupHasSomeDescription;
+			if (isPopup)
+				popupHasSomeDescription =
+					env.mapAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("title")) ||
+					env.mapAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("description"));
+			let albumHasSomeDescription =
+				env.currentAlbum.hasSomeDescription("title") ||
+				env.currentAlbum.hasSomeDescription("description");
+			let subalbumsHaveSomeDescription =
+				env.currentAlbum.subalbums.length && (
+					env.currentAlbum.subalbums.some(subalbum => subalbum.hasSomeDescription("title")) ||
+					env.currentAlbum.subalbums.some(subalbum => subalbum.hasSomeDescription("description"))
+				);
+			let mediaHaveSomeDescription =
+				env.currentAlbum.media.length && (
+					env.currentAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("title")) ||
+					env.currentAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("description"))
+				);
+			let singleMediaHasSomeDescription;
+			if (env.currentMedia !== null)
+				singleMediaHasSomeDescription =
+					env.currentMedia.hasSomeDescription("title") ||
+					env.currentMedia.hasSomeDescription("description");
+
 			if (
 				isMap ||
-				env.currentMedia === null &&
-				! env.currentAlbum.hasSomeDescription("title") &&
-				! env.currentAlbum.hasSomeDescription("description") &&
-				! env.currentAlbum.media.some(
-					singleMedia => singleMedia.hasSomeDescription("title")
-				) &&
-				! env.currentAlbum.media.some(
-					singleMedia => singleMedia.hasSomeDescription("description")
-				) ||
-				env.currentMedia !== null && ! env.currentMedia.hasSomeDescription("title") && ! env.currentMedia.hasSomeDescription("description")
+				isPopup && ! popupHasSomeDescription ||
+				env.currentMedia === null && ! albumHasSomeDescription && ! subalbumsHaveSomeDescription && ! mediaHaveSomeDescription ||
+				env.currentMedia !== null && ! singleMediaHasSomeDescription
 			) {
-				$("ul#right-menu li.hide-descriptions").addClass("hidden");
+				$("ul#right-menu li.show-descriptions").addClass("hidden");
 			} else {
-				$("ul#right-menu li.hide-descriptions").removeClass("hidden");
+				$("ul#right-menu li.show-descriptions").removeClass("hidden");
 				if (env.options.hide_descriptions)
-					$("ul#right-menu li.hide-descriptions").addClass("selected");
+					$("ul#right-menu li.show-descriptions").removeClass("selected");
 				else
-					$("ul#right-menu li.hide-descriptions").removeClass("selected");
+					$("ul#right-menu li.show-descriptions").addClass("selected");
 			}
 
 			if (
 				isMap ||
+				isPopup && ! env.mapAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("tags")) ||
 				env.currentMedia === null &&
-				! env.currentAlbum.hasSomeDescription("tags") &&
-				! env.currentAlbum.media.some(
-					singleMedia => singleMedia.hasSomeDescription("tags")
-				) ||
-				env.currentMedia !== null && ! env.currentMedia.hasSomeDescription("tags")
+				! env.currentAlbum.hasSomeDescription("title") &&
+				! env.currentAlbum.subalbums.length || ! env.currentAlbum.subalbums.some(subalbum => subalbum.hasSomeDescription("title")) &&
+				! env.currentAlbum.media.length || ! env.currentAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("title")) ||
+				env.currentMedia !== null && ! env.currentMedia.hasSomeDescription("title")
 			) {
-				$("ul#right-menu li.hide-tags").addClass("hidden");
+				$("ul#right-menu li.show-tags").addClass("hidden");
 			} else {
-				$("ul#right-menu li.hide-tags").removeClass("hidden");
+				$("ul#right-menu li.show-tags").removeClass("hidden");
 				if (env.options.hide_tags)
-					$("ul#right-menu li.hide-tags").addClass("selected");
+					$("ul#right-menu li.show-tags").removeClass("selected");
 				else
-					$("ul#right-menu li.hide-tags").removeClass("selected");
+					$("ul#right-menu li.show-tags").addClass("selected");
 			}
 
 			if (
@@ -583,24 +600,22 @@
 
 			if (
 				isMapOrPopup ||
-				env.currentMedia === null && ! isAlbumWithOneMedia
-				// ||
-				// thisAlbum !== null && thisAlbum.subalbums.length === 0
+				env.currentMedia === null || isAlbumWithOneMedia
 			) {
-				$("ul#right-menu li.hide-bottom-thumbnails").addClass("hidden");
+				$("ul#right-menu li.show-bottom-thumbnails").addClass("hidden");
 			} else {
-				$("ul#right-menu li.hide-bottom-thumbnails").removeClass("hidden");
+				$("ul#right-menu li.show-bottom-thumbnails").removeClass("hidden");
 
 				if (env.options.hide_bottom_thumbnails)
-					$("ul#right-menu li.hide-bottom-thumbnails").addClass("selected");
+					$("ul#right-menu li.show-bottom-thumbnails").removeClass("selected");
 				else
-					$("ul#right-menu li.hide-bottom-thumbnails").removeClass("selected");
+					$("ul#right-menu li.show-bottom-thumbnails").addClass("selected");
 			}
 
 			if (
 				$("ul#right-menu li.hide-title").hasClass("hidden") &&
-				$("ul#right-menu li.hide-descriptions").hasClass("hidden") &&
-				$("ul#right-menu li.hide-tags").hasClass("hidden") &&
+				$("ul#right-menu li.show-descriptions").hasClass("hidden") &&
+				$("ul#right-menu li.show-tags").hasClass("hidden") &&
 				$("ul#right-menu li.media-count").hasClass("hidden") &&
 				$("ul#right-menu li.spaced").hasClass("hidden") &&
 				$("ul#right-menu li.square-album-thumbnails").hasClass("hidden") &&
@@ -608,7 +623,7 @@
 				$("ul#right-menu li.album-names").hasClass("hidden") &&
 				$("ul#right-menu li.square-media-thumbnails").hasClass("hidden") &&
 				$("ul#right-menu li.media-names").hasClass("hidden") &&
-				$("ul#right-menu li.hide-bottom-thumbnails").hasClass("hidden")
+				$("ul#right-menu li.show-bottom-thumbnails").hasClass("hidden")
 			) {
 				$("ul#right-menu li.ui").addClass("hidden");
 			}
@@ -1346,78 +1361,10 @@
 	Functions.prototype.setOptions = function() {
 		$("body").css("background-color", env.options.background_color);
 
-		$(".title").css("font-size", env.options.title_font_size);
-		$(".title-anchor").css("color", env.options.title_color);
-		$(".title-anchor").hover(function() {
-			//mouse over
-			$(this).css("color", env.options.title_color_hover);
-		}, function() {
-			//mouse out
-			$(this).css("color", env.options.title_color);
-		});
-		$(".media-name").css("color", env.options.media_name_color);
-		if (env.options.albums_slide_style) {
-			$(".album-name").css("color", env.options.album_slide_name_color);
-			$(".album-button-and-caption").css("background-color", env.options.album_slide_background_color);
-		} else {
-			$(".album-name").css("color", env.options.album_name_color);
-			$(".album-button-and-caption").css("background-color", "");
-		}
-		$(".real-name").css("color", env.options.album_slide_caption_color);
-		$(".thumb-and-caption-container").css("margin-right", env.options.spacing.toString() + "px");
-		$(".album-button-and-caption").css("margin-right", env.options.spacing.toString() + "px");
-
-		let marginBottom = env.options.spacing;
-		if (! env.options.albums_slide_style)
-			marginBottom += util.em2px("body", 2);
-		$(".album-button-and-caption").css("margin-bottom", marginBottom.toString() + "px");
-
-		if (env.currentMedia !== null && ! util.isPopup() || ! env.options.show_media_names_below_thumbs)
-			$(".thumb-and-caption-container .media-name").addClass("hidden-by-option");
-		else
-			$(".thumb-and-caption-container .media-name").removeClass("hidden-by-option");
-
-		// if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs || ! env.options.show_album_media_count)
-		if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs)
-			$(".album-name").addClass("hidden-by-option");
-		else
-			$(".album-name").removeClass("hidden-by-option");
-
-		if (! env.options.show_album_media_count)
-			$(".album-caption-count, .title-count").addClass("hidden-by-option");
-		else
-			$(".album-caption-count, .title-count").removeClass("hidden-by-option");
-
-
-		if (env.options.hide_title)
-			$(".title").addClass("hidden-by-option");
-		else
-			$(".title").removeClass("hidden-by-option");
-
-		if (env.options.hide_descriptions && env.options.hide_tags)
-			$("#description-wrapper").addClass("hidden-by-option");
-		else
-			$("#description-wrapper").removeClass("hidden-by-option");
-
-		if (env.options.hide_descriptions)
-			$("#description, .media-description, .album-description").addClass("hidden-by-option");
-		else
-			$("#description, .media-description, .album-description").removeClass("hidden-by-option");
-
-		if (env.options.hide_tags)
-			$("#description-tags, .media-tags, .album-tags").addClass("hidden-by-option");
-		else
-			$("#description-tags, .media-tags, .album-tags").removeClass("hidden-by-option");
-
-		if (! env.options.hide_descriptions || ! env.options.hide_tags)
-			util.setDescriptionPosition();
-
-
-		if (env.options.hide_bottom_thumbnails && (env.currentMedia != null || env.currentAlbum.isAlbumWithOneMedia())) {
-			$("#album-view").addClass("hidden-by-option");
-		} else {
-			$("#album-view").removeClass("hidden-by-option");
-		}
+		util.setTitleOptions();
+		util.setMediaOptions();
+		util.setSubalbumsOptions();
+		util.setDescriptionOptions();
 	};
 
 	Functions.pinchSwipeInitialization = function() {
@@ -1426,13 +1373,12 @@
 		pS.setPinchButtonsVisibility();
 		util.setSelectButtonPosition();
 		util.correctPrevNextPosition();
-		util.setDescriptionPosition();
+		util.setDescriptionOptions();
 	};
 
-	Functions.threeYears = function() {
+	Functions.tenYears = function() {
 		// returns the expire interval for the cookies, in seconds
-		// = 1000 days, ~ 3 years
-		return 1000 * 24 * 60 * 60;
+		return 10 * 365 * 24 * 60 * 60;
 	};
 
 	Functions.getBooleanCookie = function(key) {
@@ -1447,7 +1393,7 @@
 
 	Functions.setBooleanCookie = function(key, value) {
 		var expires = new Date();
-		expires.setTime(expires.getTime() + Functions.threeYears() * 1000);
+		expires.setTime(expires.getTime() + Functions.tenYears() * 1000);
 		if (value)
 			value = 1;
 		else
@@ -1474,7 +1420,7 @@
 
 	Functions.prototype.setCookie = function(key, value) {
 		var expires = new Date();
-		expires.setTime(expires.getTime() + Functions.threeYears() * 1000);
+		expires.setTime(expires.getTime() + Functions.tenYears() * 1000);
 		document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
 		return true;
 	};
