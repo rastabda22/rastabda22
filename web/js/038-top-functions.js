@@ -812,7 +812,7 @@
 							TopFunctions.trackPiwik(id);
 						}
 
-						f.setOptions();
+						util.setTitleOptions();
 
 						// activate the map popup trigger in the title
 						$(".map-popup-trigger").off("click").on(
@@ -1067,6 +1067,9 @@
 		}
 		// end of loadNextPrevMedia auxiliary function
 
+		//////////////////////////////////
+		// beginning of show method body
+		//////////////////////////////////
 		var text, loadEvent, mediaHtml, mediaSelector, mediaSrc;
 		var exposureTime, heightForMedia, heightForMediaAndTitle;
 		var previousMediaIndex, nextMediaIndex, whatMedia;
@@ -1093,7 +1096,7 @@
 				$("#album-view").removeClass("hidden-by-fullscreen");
 			}
 
-			f.setOptions();
+			// f.setOptions();
 
 			if (env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1) {
 				$("#album-view").addClass("hidden");
@@ -1478,7 +1481,7 @@
 
 		var isAlbumWithOneMedia = env.currentAlbum.isAlbumWithOneMedia();
 
-		f.setOptions();
+		// f.setOptions();
 
 		let menuIconTitle = util._t("#menu-icon-title");
 		if (! env.isMobile.any())
@@ -1532,8 +1535,8 @@
 			);
 		}
 
-		// options function must be called again in order to set elements previously absent
-		f.setOptions();
+		// // options function must be called again in order to set elements previously absent
+		// f.setOptions();
 		if (env.currentMedia === null && env.currentAlbum !== null && ! env.currentAlbum.subalbums.length) {
 			// no subalbums: set social buttons href's when all the stuff is loaded
 			$(window).off("load").on("load", f.socialButtons());
@@ -1947,7 +1950,9 @@
 				env.options.spacing = env.options.spacingSavedValue;
 			f.setCookie("spacing", env.options.spacing);
 			f.updateMenu();
-			f.setOptions();
+			// f.setOptions();
+			util.setMediaOptions();
+			util.setSubalbumsOptions();
 			if (env.currentAlbum.subalbums.length)
 				util.adaptCaptionHeight();
 
@@ -1967,7 +1972,8 @@
 			env.options.show_album_names_below_thumbs = ! env.options.show_album_names_below_thumbs;
 			f.setBooleanCookie("showAlbumNamesBelowThumbs", env.options.show_album_names_below_thumbs);
 			f.updateMenu();
-			f.setOptions();
+			// f.setOptions();
+			util.setSubalbumsOptions();
 			if (env.currentAlbum.subalbums.length)
 				util.adaptCaptionHeight();
 		}
@@ -1979,8 +1985,9 @@
 			env.options.show_album_media_count = ! env.options.show_album_media_count;
 			f.setBooleanCookie("showAlbumMediaCount", env.options.show_album_media_count);
 			f.updateMenu();
-			f.setOptions();
-
+			// f.setOptions();
+			util.setTitleOptions();
+			util.setSubalbumsOptions();
 			if (env.currentAlbum.subalbums.length)
 				util.adaptCaptionHeight();
 		}
@@ -1992,9 +1999,11 @@
 			env.options.show_media_names_below_thumbs = ! env.options.show_media_names_below_thumbs;
 			f.setBooleanCookie("showMediaNamesBelowThumbs", env.options.show_media_names_below_thumbs);
 			f.updateMenu();
-			f.setOptions();
-			if (env.currentAlbum.subalbums.length)
-				util.adaptCaptionHeight();
+			// f.setOptions();
+			util.setMediaOptions();
+			// util.setSubalbumsOptions();
+			// if (env.currentAlbum.subalbums.length)
+			// 	util.adaptCaptionHeight();
 
 			if (util.isPopup()) {
 				// env.mapAlbum.showMedia();
@@ -2022,9 +2031,9 @@
 			f.setCookie("mediaThumbType", env.options.media_thumb_type);
 			f.updateMenu();
 			env.currentAlbum.showMedia();
-			f.setOptions();
-			if (env.currentAlbum.subalbums.length)
-				util.adaptCaptionHeight();
+			// f.setOptions();
+			// if (env.currentAlbum.subalbums.length)
+			// 	util.adaptCaptionHeight();
 
 			if (util.isPopup()) {
 				env.mapAlbum.showMedia();
@@ -2686,7 +2695,7 @@
 			function allRandomImagesGot() {
 				// we can run the function that prepare the stuffs for sharing
 				f.socialButtons();
-				f.setOptions();
+				util.setSubalbumsOptions();
 				if (self.subalbums.length)
 					util.adaptCaptionHeight();
 
