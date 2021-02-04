@@ -2465,14 +2465,14 @@
 		if (! self.subalbums.length)
 			subalbumsElement.hide();
 
-		if (
+		let populateSubalbums =
 			forcePopulate ||
 			env.albumInSubalbumDiv === null ||
 			self === null ||
-			env.albumInSubalbumDiv !== self && self.subalbums.length
-		) {
+			env.albumInSubalbumDiv !== self && self.subalbums.length;
+
+		if (populateSubalbums) {
 			subalbumsElement.empty();
-			env.albumInSubalbumDiv = null;
 			subalbumsElement.insertBefore("#message-too-many-images");
 
 			//
@@ -2680,7 +2680,8 @@
 					env.currentMedia.setDescription();
 				}
 				util.setDescriptionPosition();
-				env.albumInSubalbumDiv = self;
+				if (populateSubalbums)
+					env.albumInSubalbumDiv = self;
 				$("#loading").hide();
 			},
 			function() {
