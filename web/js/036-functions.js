@@ -585,14 +585,14 @@
 				isMapOrPopup ||
 				env.currentMedia === null || isAlbumWithOneMedia
 			) {
-				$("ul#right-menu li.hide-bottom-thumbnails").addClass("hidden");
+				$("ul#right-menu li.show-bottom-thumbnails").addClass("hidden");
 			} else {
-				$("ul#right-menu li.hide-bottom-thumbnails").removeClass("hidden");
+				$("ul#right-menu li.show-bottom-thumbnails").removeClass("hidden");
 
 				if (env.options.hide_bottom_thumbnails)
-					$("ul#right-menu li.hide-bottom-thumbnails").addClass("selected");
+					$("ul#right-menu li.show-bottom-thumbnails").removeClass("selected");
 				else
-					$("ul#right-menu li.hide-bottom-thumbnails").removeClass("selected");
+					$("ul#right-menu li.show-bottom-thumbnails").addClass("selected");
 			}
 
 			if (
@@ -606,7 +606,7 @@
 				$("ul#right-menu li.album-names").hasClass("hidden") &&
 				$("ul#right-menu li.square-media-thumbnails").hasClass("hidden") &&
 				$("ul#right-menu li.media-names").hasClass("hidden") &&
-				$("ul#right-menu li.hide-bottom-thumbnails").hasClass("hidden")
+				$("ul#right-menu li.show-bottom-thumbnails").hasClass("hidden")
 			) {
 				$("ul#right-menu li.ui").addClass("hidden");
 			}

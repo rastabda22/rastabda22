@@ -674,7 +674,7 @@ $(document).ready(function() {
 	$("ul#right-menu li.hide-title").off("click").on("click", tF.toggleTitle);
 	$("ul#right-menu li.hide-descriptions").off("click").on("click", tF.toggleDescriptions);
 	$("ul#right-menu li.hide-tags").off("click").on("click", tF.toggleTags);
-	$("ul#right-menu li.hide-bottom-thumbnails").off("click").on("click", tF.toggleBottomThumbnails);
+	$("ul#right-menu li.show-bottom-thumbnails").off("click").on("click", tF.toggleBottomThumbnails);
 	$("ul#right-menu li.slide").off("click").on("click", tF.toggleSlideMode);
 	$("ul#right-menu li.spaced").off("click").on("click", tF.toggleSpacing);
 	$("ul#right-menu li.album-names").off("click").on("click", tF.toggleAlbumNames);
