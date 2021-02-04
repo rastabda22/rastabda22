@@ -1908,7 +1908,7 @@
 			}
 
 			if (util.isPopup()) {
-				env.mapAlbum.showMedia();
+				// env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
 
@@ -1946,12 +1946,12 @@
 				util.adaptCaptionHeight();
 
 			if (util.isPopup()) {
-				env.mapAlbum.showMedia();
+				// env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
-			if (env.currentAlbum.subalbums.length > 1) {
-				env.currentAlbum.showSubalbums(true);
-			}
+			// if (env.currentAlbum.subalbums.length > 1) {
+			// 	env.currentAlbum.showSubalbums(true);
+			// }
 		}
 		return false;
 	};
@@ -1991,7 +1991,7 @@
 				util.adaptCaptionHeight();
 
 			if (util.isPopup()) {
-				env.mapAlbum.showMedia();
+				// env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
 		}
