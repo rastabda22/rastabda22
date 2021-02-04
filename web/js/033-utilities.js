@@ -1828,8 +1828,11 @@
 			$(".album-caption, .album-caption .real-name").css("color", env.options.album_slide_caption_color);
 			$(".album-button-and-caption").addClass("slide");
 		} else {
-			$(".album-button").css("border", "none");
+			$(".album-name").css("color", env.options.album_name_color);
+			$(".album-button-and-caption").css("background-color", "");
+			$(".album-button").css("background-color", "");
 			$(".album-caption, .album-caption .real-name").css("color", env.options.album_caption_color);
+			$(".album-button").css("border", "none");
 		}
 
 		let marginBottom = env.options.spacing;
