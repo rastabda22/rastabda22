@@ -1385,7 +1385,8 @@
 			function(resolve_addAllSubalbums) {
 				var subalbumsPromises = [];
 				for (let indexSubalbum = self.subalbums.length - 1; indexSubalbum >= 0; indexSubalbum --) {
-					let addSubalbumPromise = self.addSubalbumToSelection(indexSubalbum, "#subalbum-select-box-" + indexSubalbum);
+					let id = PhotoFloat.hashCode(self.subalbums[indexSubalbum].cacheBase);
+					let addSubalbumPromise = self.addSubalbumToSelection(indexSubalbum, "#subalbum-select-box-" + id);
 					subalbumsPromises.push(addSubalbumPromise);
 				}
 				Promise.all(subalbumsPromises).then(
