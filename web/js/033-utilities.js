@@ -3431,7 +3431,7 @@
 		if (env.options.hide_descriptions)
 			$("#description").addClass("hidden-by-option");
 		else
-			$("#descriptiondescription").removeClass("hidden-by-option");
+			$("#description").removeClass("hidden-by-option");
 
 		if (env.options.hide_tags)
 			$("#description-tags").addClass("hidden-by-option");
