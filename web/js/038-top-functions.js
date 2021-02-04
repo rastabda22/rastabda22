@@ -1798,6 +1798,8 @@
 				}
 			} else {
 				TopFunctions.adaptAlbumOptions();
+				if (env.currentAlbum.subalbums.length)
+					util.adaptCaptionHeight();
 			}
 		}
 		return false;
@@ -1924,7 +1926,8 @@
 			f.setBooleanCookie("albumsSlideStyle", env.options.albums_slide_style);
 			f.updateMenu();
 			util.setSubalbumsOptions();
-			util.adaptCaptionHeight();
+			if (env.currentAlbum.subalbums.length)
+				util.adaptCaptionHeight();
 			// env.currentAlbum.showSubalbums(true);
 		}
 		return false;
@@ -1939,6 +1942,8 @@
 			f.setCookie("spacing", env.options.spacing);
 			f.updateMenu();
 			f.setOptions();
+			if (env.currentAlbum.subalbums.length)
+				util.adaptCaptionHeight();
 
 			if (util.isPopup()) {
 				env.mapAlbum.showMedia();
@@ -1957,7 +1962,8 @@
 			f.setBooleanCookie("showAlbumNamesBelowThumbs", env.options.show_album_names_below_thumbs);
 			f.updateMenu();
 			f.setOptions();
-			util.adaptCaptionHeight();
+			if (env.currentAlbum.subalbums.length)
+				util.adaptCaptionHeight();
 		}
 		return false;
 	};
@@ -1981,7 +1987,8 @@
 			f.setBooleanCookie("showMediaNamesBelowThumbs", env.options.show_media_names_below_thumbs);
 			f.updateMenu();
 			f.setOptions();
-			// env.currentAlbum.showMedia();
+			if (env.currentAlbum.subalbums.length)
+				util.adaptCaptionHeight();
 
 			if (util.isPopup()) {
 				env.mapAlbum.showMedia();
@@ -1997,6 +2004,8 @@
 			f.setCookie("albumThumbType", env.options.album_thumb_type);
 			f.updateMenu();
 			env.currentAlbum.showSubalbums(true);
+			if (env.currentAlbum.subalbums.length)
+				util.adaptCaptionHeight();
 		}
 		return false;
 	};
@@ -2008,6 +2017,8 @@
 			f.updateMenu();
 			env.currentAlbum.showMedia();
 			f.setOptions();
+			if (env.currentAlbum.subalbums.length)
+				util.adaptCaptionHeight();
 
 			if (util.isPopup()) {
 				env.mapAlbum.showMedia();
