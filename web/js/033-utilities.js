@@ -3353,11 +3353,11 @@
 			if (property === "tags")
 				return (object[property] !== undefined && object[property].length);
 			else
-				return (object[property] !== undefined && object[property]);
+				return (object[property] !== undefined && object[property] !== "");
 		}
 
-		let hasTitle = (object.title !== undefined && object.title);
-		let hasDescription = (object.description !== undefined && object.description);
+		let hasTitle = (object.title !== undefined && object.title !== "");
+		let hasDescription = (object.description !== undefined && object.description !== "");
 		let hasTags = (object.tags !== undefined && object.tags.length);
 
 		return hasTitle || hasDescription || hasTags;
