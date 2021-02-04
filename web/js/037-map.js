@@ -33,7 +33,8 @@
 	};
 
 	MapFunctions.prototype.updatePopup = function() {
-		f.setOptions();
+		util.setMediaOptions();
+		// f.setOptions();
 		env.popup.setContent($(".leaflet-popup-content").html());
 		MapFunctions.calculatePopupSizes();
 		$(".leaflet-popup-content").css("max-width", env.maxWidthForPopupContent + "px");
