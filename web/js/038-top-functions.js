@@ -2371,7 +2371,7 @@
 			var thumbWidth, thumbHeight;
 			var mediaWidth, mediaHeight;
 			var randomMedia = randomSubAlbum.media[index];
-			var id = phFl.hashCode(env.currentAlbum.subalbums[iSubalbum].cacheBase);
+			var id = phFl.hashCode(self.subalbums[iSubalbum].cacheBase);
 			var mediaSrc = randomMedia.chooseThumbnail(env.options.album_thumb_size);
 
 			$("#downloading-media").hide();
@@ -2396,18 +2396,18 @@
 				thumbHeight = env.correctedAlbumThumbSize;
 			}
 
-			if (env.currentAlbum.isByDate()) {
+			if (self.isByDate()) {
 				titleName = util.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
-			} else if (env.currentAlbum.isByGps()) {
+			} else if (self.isByGps()) {
 				humanGeonames = util.pathJoin([env.options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
 				titleName = util.pathJoin([humanGeonames, randomMedia.name]);
-			// } else if (env.currentAlbum.isSearch()) {
+			// } else if (self.isSearch()) {
 			// 	titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
 			} else {
 				titleName = util.pathJoin([randomMedia.albumName, randomMedia.nameForShowing(randomSubAlbum)]);
 			}
-			if (env.currentAlbum.isSearch())
-				randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia, randomSubAlbum.cacheBase, env.currentAlbum.cacheBase);
+			if (self.isSearch())
+				randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia, randomSubAlbum.cacheBase, self.cacheBase);
 			else
 				randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia);
 
@@ -2441,7 +2441,7 @@
 				function error() {
 					// executions shoudn't arrive here, if it arrives it's because of some error
 					console.trace();
-					// env.currentAlbum.subalbums.splice(iSubalbum, 1);
+					// self.subalbums.splice(iSubalbum, 1);
 					// theImage.parent().remove();
 					// resolve_subalbumPromise();
 				}
@@ -2461,16 +2461,17 @@
 		/////////////////////////////////////////////
 		// beginning of showSubalbums function
 		let [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
+		var self = this;
 
 		if (env.fromEscKey && env.firstEscKey) {
 			// respect the existing mediaLink (you cannot do it more than once)
 			env.firstEscKey = false;
 		} else {
 			// reset mediaLink
-			if (env.currentAlbum.numsMedia.imagesAndVideosTotal())
-				env.mediaLink = phFl.encodeHash(env.currentAlbum.cacheBase, env.currentAlbum.media[0], foundAlbumCacheBase, savedSearchAlbumCacheBase);
+			if (self.numsMedia.imagesAndVideosTotal())
+				env.mediaLink = phFl.encodeHash(self.cacheBase, self.media[0], foundAlbumCacheBase, savedSearchAlbumCacheBase);
 			else
-				env.mediaLink = env.hashBeginning + env.currentAlbum.cacheBase;
+				env.mediaLink = env.hashBeginning + self.cacheBase;
 
 			env.firstEscKey = true;
 		}
@@ -2479,14 +2480,14 @@
 		let subalbumsElement = $("#subalbums");
 
 		let subalbumsPromises = [];
-		if (! env.currentAlbum.subalbums.length)
+		if (! self.subalbums.length)
 			subalbumsElement.hide();
 
 		if (
 			forcePopulate ||
 			env.albumInSubalbumDiv === null ||
-			env.currentAlbum === null ||
-			env.albumInSubalbumDiv !== env.currentAlbum && env.currentAlbum.subalbums.length
+			self === null ||
+			env.albumInSubalbumDiv !== self && self.subalbums.length
 		) {
 
 			subalbumsElement.empty();
@@ -2524,19 +2525,19 @@
 			// subalbums loop
 			//
 			// The promises are needed in order to know when everything has come to its end
-			for (let i = 0; i < env.currentAlbum.subalbums.length; i ++) {
+			for (let i = 0; i < self.subalbums.length; i ++) {
 				let iSubalbum = i;
 				let subalbumPromise = new Promise(
 					function(resolve_subalbumPromise) {
-						var ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
+						var ithSubalbum = self.subalbums[iSubalbum];
 
 						let nameHtml;
-						if (env.currentAlbum.isSearch())
+						if (self.isSearch())
 							nameHtml = ithSubalbum.captionForSearch;
-						else if (env.currentAlbum.isSelection())
+						else if (self.isSelection())
 							nameHtml = ithSubalbum.captionForSelection;
 						else {
-							nameHtml = ithSubalbum.nameForShowing(env.currentAlbum, true, true);
+							nameHtml = ithSubalbum.nameForShowing(self, true, true);
 							if (nameHtml === "")
 								nameHtml = "<span class='italic gray'>(" + util._t("#root-album") + ")</span>";
 						}
@@ -2595,7 +2596,7 @@
 						let positionHtml = "";
 						let folderMapTitleWithoutHtmlTags;
 						if (ithSubalbum.numPositionsInTree.length) {
-							folderMapTitleWithoutHtmlTags = env.currentAlbum.folderMapTitle(ithSubalbum, nameHtml).replace(/<br \/>/gm, ' ').replace(/<[^>]*>?/gm, '');
+							folderMapTitleWithoutHtmlTags = self.folderMapTitle(ithSubalbum, nameHtml).replace(/<br \/>/gm, ' ').replace(/<[^>]*>?/gm, '');
 							positionHtml =
 								"<a id='subalbum-map-link-" + iSubalbum + "' >" +
 									"<img " +
@@ -2610,8 +2611,8 @@
 						let id = phFl.hashCode(ithSubalbum.cacheBase);
 						let subfolderHash;
 						// TO DO: verify that isMap() is not missing in the following line
-						if (env.currentAlbum.isSearch() || env.currentAlbum.isSelection()) {
-							subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, ithSubalbum.cacheBase, env.currentAlbum.cacheBase);
+						if (self.isSearch() || self.isSelection()) {
+							subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, ithSubalbum.cacheBase, self.cacheBase);
 						} else {
 							if (typeof savedSearchAlbumCacheBase !== "undefined" && savedSearchAlbumCacheBase !== null)
 								subfolderHash = phFl.encodeHash(ithSubalbum.cacheBase, null, foundAlbumCacheBase, savedSearchAlbumCacheBase);
@@ -2738,7 +2739,7 @@
 							function(ev) {
 								ev.stopPropagation();
 								ev.preventDefault();
-								env.currentAlbum.toggleSubalbumSelection(iSubalbum, "#subalbum-select-box-" + iSubalbum);
+								self.toggleSubalbumSelection("#subalbum-select-box-" + id);
 							}
 						);
 
@@ -2781,17 +2782,17 @@
 				// we can run the function that prepare the stuffs for sharing
 				f.socialButtons();
 				f.setOptions();
-				if (env.currentAlbum.subalbums.length)
+				if (self.subalbums.length)
 					util.adaptCaptionHeight();
 
 				// When there is both a media and an album, we display the media's description; else it's the album's one
 				if (env.currentMedia === null || ! env.currentMedia.hasSomeDescription()) {
-					env.currentAlbum.setDescription();
+					self.setDescription();
 				} else {
 					env.currentMedia.setDescription();
 				}
 				util.setDescriptionPosition();
-				env.albumInSubalbumDiv = env.currentAlbum;
+				env.albumInSubalbumDiv = self;
 				$("#loading").hide();
 			},
 			function() {
@@ -2799,7 +2800,7 @@
 			}
 		);
 
-		if (env.currentAlbum.subalbums.length) {
+		if (self.subalbums.length) {
 			$(subalbumsElement).show();
 			$("#album-view").removeClass("media-view-container").removeAttr("height");
 		}
@@ -2810,7 +2811,7 @@
 			$(".album-button").css("border", "none");
 
 		f.updateMenu();
-		env.currentAlbum.bindSubalbumSortEvents();
+		self.bindSubalbumSortEvents();
 
 		if (! $("#album-view").hasClass("media-view-container")) {
 			$(window).off("resize").on(
@@ -2825,7 +2826,7 @@
 
 					$("#loading").show();
 
-					env.currentAlbum.showSubalbums(true);
+					self.showSubalbums("refreshDisplay");
 
 					if (util.isMap() || util.isPopup()) {
 						// the map must be generated again including the points that only carry protected content
