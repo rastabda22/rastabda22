@@ -194,8 +194,6 @@ a.title-anchor.mobile {
 }
 
 .album-description, .media-description {
-	/* font-size: 95%; */
-	color: gray;
 	font-style: italic;
 	padding-left: .7em;
 	padding-right: .7em;
@@ -561,14 +559,6 @@ video {
 	font-weight: bold;
 }
 
-.album-button-and-caption .tag {
-	color: gray;
-}
-
-.thumb-and-caption-container .tag {
-	color: gray;
-}
-
 .leaflet-popup .thumb-and-caption-container .tag a {
 	color: yellow;
 }
@@ -789,7 +779,6 @@ video {
 
 .media-description {
 	font-size: 95%;
-	color: gray;
 }
 
 .leaflet-popup .media-description {
