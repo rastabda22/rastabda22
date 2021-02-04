@@ -583,9 +583,7 @@
 
 			if (
 				isMapOrPopup ||
-				env.currentMedia === null && ! isAlbumWithOneMedia
-				// ||
-				// thisAlbum !== null && thisAlbum.subalbums.length === 0
+				env.currentMedia === null || isAlbumWithOneMedia
 			) {
 				$("ul#right-menu li.hide-bottom-thumbnails").addClass("hidden");
 			} else {
