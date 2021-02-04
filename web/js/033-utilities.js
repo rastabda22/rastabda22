@@ -1798,6 +1798,56 @@
 		);
 	};
 
+	Utilities.prototype.setTitleOptions = function() {
+		if (env.options.hide_title)
+			$(".title").addClass("hidden-by-option");
+		else
+			$(".title").removeClass("hidden-by-option");
+
+		if (! env.options.show_album_media_count)
+			$(".title-count").addClass("hidden-by-option");
+		else
+			$(".title-count").removeClass("hidden-by-option");
+
+		$(".title").css("font-size", env.options.title_font_size);
+		$(".title-anchor").css("color", env.options.title_color);
+		$(".title-anchor").hover(function() {
+			//mouse over
+			$(this).css("color", env.options.title_color_hover);
+		}, function() {
+			//mouse out
+			$(this).css("color", env.options.title_color);
+		});
+	};
+
+	Utilities.prototype.setMediaOptions = function() {
+		$(".media-name").css("color", env.options.media_name_color);
+
+		if (env.currentMedia !== null && ! util.isPopup() || ! env.options.show_media_names_below_thumbs)
+			$(".thumb-and-caption-container .media-name").addClass("hidden-by-option");
+		else
+			$(".thumb-and-caption-container .media-name").removeClass("hidden-by-option");
+
+		$(".thumb-and-caption-container").css("margin-right", env.options.spacing.toString() + "px");
+		$(".thumb-and-caption-container").css("margin-bottom", env.options.spacing.toString() + "px");
+
+		if (env.options.hide_descriptions)
+			$(".media-description").addClass("hidden-by-option");
+		else
+			$(".media-description").removeClass("hidden-by-option");
+
+		if (env.options.hide_tags)
+			$(".media-tags").addClass("hidden-by-option");
+		else
+			$(".media-tags").removeClass("hidden-by-option");
+
+		if (env.options.hide_bottom_thumbnails) {
+			$("#album-view.media-view-container").addClass("hidden-by-option");
+		} else {
+			$("#album-view.media-view-container").removeClass("hidden-by-option");
+		}
+
+	};
 
 	Utilities.prototype.setSubalbumsOptions = function() {
 		let scrollBarWidth = window.innerWidth - document.body.clientWidth || 15;
@@ -1825,6 +1875,11 @@
 		let slideBorder = 0;
 		if (env.options.albums_slide_style)
 			slideBorder = env.slideBorder;
+
+		if (env.currentAlbum.isFolder() && ! env.options.show_album_names_below_thumbs)
+			$(".album-name").addClass("hidden-by-option");
+		else
+			$(".album-name").removeClass("hidden-by-option");
 
 		if (env.options.albums_slide_style) {
 			$(".album-name").css("color", env.options.album_slide_name_color);
@@ -1864,6 +1919,17 @@
 			$(".album-caption-count").addClass("hidden-by-option");
 		else
 			$(".album-caption-count").removeClass("hidden-by-option");
+
+
+		if (env.options.hide_descriptions)
+			$(".album-description").addClass("hidden-by-option");
+		else
+			$(".album-description").removeClass("hidden-by-option");
+
+		if (env.options.hide_tags)
+			$(".album-tags").addClass("hidden-by-option");
+		else
+			$(".album-tags").removeClass("hidden-by-option");
 	};
 
 	Utilities.addTagLink = function(tag) {
