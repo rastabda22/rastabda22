@@ -1,3 +1,5 @@
+### version v4.9.34 (Feb 4, 2021)
+
 * refreshing of subalbums/media is now performed only when strictly needed
 * display menu entries now are more coherent, all are show- instead of hide-
 * cookies now have a 10-years duration
