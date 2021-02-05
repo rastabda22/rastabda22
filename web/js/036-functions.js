@@ -437,9 +437,9 @@
 			} else {
 				$("ul#right-menu li.hide-title").removeClass("hidden");
 				if (env.options.hide_title)
-					$("ul#right-menu li.hide-title").addClass("selected");
-				else
 					$("ul#right-menu li.hide-title").removeClass("selected");
+				else
+					$("ul#right-menu li.hide-title").addClass("selected");
 			}
 
 			let popupHasSomeDescription;
