@@ -2408,19 +2408,9 @@
 					);
 				}
 			}
-
-			// if (env.options.hide_descriptions) {
-			// 	$(".media-description").addClass("hidden-by-option");
-			// } else {
-			// 	$(".media-description").removeClass("hidden-by-option");
-			// }
-			//
-			// if (env.options.hide_tags) {
-			// 	$(".media-tags").addClass("hidden-by-option");
-			// } else {
-			// 	$(".media-tags").removeClass("hidden-by-option");
-			// }
 		}
+
+		util.setMediaOptions();
 
 	 	if ($(thumbsSelector).is(":visible") || util.isPopup()) {
 	 	// if (! $("#album-view").hasClass("hidden")) {
