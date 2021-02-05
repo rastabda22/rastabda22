@@ -1,3 +1,5 @@
+### version v4.9.36 (Feb 5, 2021)
+
 * new option `use_system_js_libraries` to use OS javascript libraries instead of the versions provided by MyPhotoShare. Default: use MyPhotoShare versions
 * select and map buttons are now less invasive
 * add message for when ui options are reset
