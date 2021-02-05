@@ -489,12 +489,12 @@ $(document).ready(function() {
 							function popupReady() {
 								if (env.options.search_any_word) {
 									// at least one word
-									mediaResult = new Media([]);
+									let mediaResult = new Media([]);
 									searchWordsFromUserNormalizedAccordingToOptions.forEach(
 										function(normalizedSearchWord, index) {
 											let mapAlbumClone = env.mapAlbum.clone();
 											mapAlbumClone.filterMediaAgainstOneWord(normalizedSearchWord);
-											mediaResult = util.arrayUnion(mediaResult, mapAlbumClone.media, function(a, b) {return a.isEqual(b)});
+											mediaResult = util.arrayUnion(mediaResult, mapAlbumClone.media, function(a, b) {return a.isEqual(b);});
 										}
 									);
 									env.mapAlbum.media = mediaResult;
@@ -505,7 +505,7 @@ $(document).ready(function() {
 								if (! env.options.search_inside_words && removedStopWords.length) {
 									// say that some search word hasn't been used
 									let stopWordsFound = " - <span class='italic'>" + removedStopWords.length + " " + util._t("#removed-stopwords") + ": ";
-									for (i = 0; i < removedStopWords.length; i ++) {
+									for (let i = 0; i < removedStopWords.length; i ++) {
 										if (i)
 											stopWordsFound += ", ";
 										stopWordsFound += removedStopWords[i];

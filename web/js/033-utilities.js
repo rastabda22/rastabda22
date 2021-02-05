@@ -10,7 +10,7 @@
 		// albums is a list of objects {albumName: album}
 		var typeOfPackedAlbum, stringifiedPackedAlbum, albumName;
 
-		var newForm = jQuery(
+		var newForm = $(
 			"<form>",
 			{
 				action: hash,
@@ -45,7 +45,7 @@
 
 			let iString = iAlbum.toString();
 			newForm.append(
-				jQuery(
+				$(
 					"<input>",
 					{
 						name: "albumName_" + iString,
@@ -54,7 +54,7 @@
 					}
 				)
 			).append(
-				jQuery(
+				$(
 					"<input>",
 					{
 						name: "stringifiedPackedAlbum_" + iString,
@@ -63,7 +63,7 @@
 					}
 				)
 			).append(
-				jQuery(
+				$(
 					"<input>",
 					{
 						name: "typeOfPackedAlbum_" + iString,
@@ -75,7 +75,7 @@
 		}
 
 		newForm.append(
-			jQuery(
+			$(
 				"<input>",
 				{
 					name: "selectorClickedToOpenTheMap",
@@ -91,7 +91,7 @@
 		else if (env.currentAlbum === env.selectionAlbum)
 			currentAlbumIs = "selectionAlbum";
 		newForm.append(
-			jQuery(
+			$(
 				"<input>",
 				{
 					name: "currentAlbumIs",
@@ -103,7 +103,7 @@
 
 		if (env.guessedPasswordsMd5.length) {
 			newForm.append(
-				jQuery(
+				$(
 					"<input>",
 					{
 						name: "guessedPasswordsMd5",
@@ -112,7 +112,7 @@
 					}
 				)
 			).append(
-				jQuery(
+				$(
 					"<input>",
 					{
 						name: "guessedPasswordCodes",
@@ -382,7 +382,7 @@
 				if (selector.length) {
 					let translation = translations[keyLanguage][key];
 					if (! env.isMobile.any() && keysWithShorcut.indexOf(key) !== -1)
-						translation += " [" + translations[keyLanguage][key + "-shortcut"] + "]"
+						translation += " [" + translations[keyLanguage][key + "-shortcut"] + "]";
 					selector.html(translation);
 				}
 			}
@@ -1706,7 +1706,7 @@
 	};
 
 	Album.prototype.removeSubalbumFromSelection = function(clickedSelector) {
-		var iSubalbum = this.subalbums.findIndex(subalbum => subalbum.cacheBase === $(clickedSelector).parent().parent().attr("id"))
+		var iSubalbum = this.subalbums.findIndex(subalbum => subalbum.cacheBase === $(clickedSelector).parent().parent().attr("id"));
 		var subalbum = this.subalbums[iSubalbum];
 		// var subalbum = this.subalbums[iSubalbum];
 		var self = this;

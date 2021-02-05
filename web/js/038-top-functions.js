@@ -951,7 +951,7 @@
 	Album.prototype.toggleSubalbumSelection = function(clickedSelector) {
 		if (env.selectionAlbum.isEmpty())
 			util.initializeSelectionAlbum();
-		var iSubalbum = this.subalbums.findIndex(subalbum => subalbum.cacheBase === $(clickedSelector).parent().parent().attr("id"))
+		var iSubalbum = this.subalbums.findIndex(subalbum => subalbum.cacheBase === $(clickedSelector).parent().parent().attr("id"));
 		var subalbum = this.subalbums[iSubalbum];
 		if (subalbum.isSelected()) {
 			let removeSubalbumPromise = this.removeSubalbumFromSelection(clickedSelector);
@@ -1095,8 +1095,6 @@
 
 		env.mediaLink = phFl.encodeHash(env.currentAlbum.cacheBase, this, foundAlbumCacheBase, savedSearchAlbumCacheBase);
 		env.firstEscKey = true;
-
-		let thumbnailSize = env.options.media_thumb_size;
 
 		if (id === "center") {
 			if (env.fullScreenStatus) {
