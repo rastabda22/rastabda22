@@ -1719,9 +1719,10 @@
 		if (env.options.hide_tags)
 			howMany ++;
 
+		var previousTitleVisibility = $("#album-view .title").is(":visible");
+		var previousBottomThumbnailsVisibility = $("#album-view.media-view-container").is(":visible");
 		if (env.currentMedia !== null) {
-			let previousTitleVisibility = $(".media-box#center .title").is(":visible");
-			let previousBottomThumbnailsVisibility = $("#album-view.media-view-container").is(":visible");
+			previousTitleVisibility = $(".media-box#center .title").is(":visible");
 		}
 		if (howMany > 2) {
 			env.options.hide_title = false;
@@ -1739,42 +1740,33 @@
 		f.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
 		f.setBooleanCookie("hideTags", env.options.hide_tags);
 		f.updateMenu();
-		// if (env.options.hide_title) {
-		// 	$(".title").addClass("hidden-by-option");
-		// } else {
-		// 	$(".title").removeClass("hidden-by-option");
-		// }
-		// if (env.options.hide_bottom_thumbnails) {
-		// 	$("#album-view.media-view-container").addClass("hidden-by-option");
-		// } else {
-		// 	$("#album-view.media-view-container").removeClass("hidden-by-option");
-		// }
-		// if (env.options.hide_descriptions) {
-		// 	$("#description, .media-description, .album-description").addClass("hidden-by-option");
-		// } else {
-		// 	$("#description, .media-description, .album-description").removeClass("hidden-by-option");
-		// }
-		// if (env.options.hide_tags) {
-		// 	$("#description-tags, .media-tags, .album-tags").addClass("hidden-by-option");
-		// } else {
-		// 	$("#description-tags, .media-tags, .album-tags").removeClass("hidden-by-option");
-		// }
 
+		// if (env.currentAlbum.subalbums.length)
+		// 	util.adaptCaptionHeight();
 
-		if (env.currentAlbum.subalbums.length)
-			util.adaptCaptionHeight();
-
-		if (! $("#thumbs").children().length)
-			$("#album-view").addClass("media-view-container");
+		// if (! $("#thumbs").children().length)
+		// 	$("#album-view").addClass("media-view-container");
 		// env.currentAlbum.showMedia();
 		if (util.isPopup()) {
 			// env.mapAlbum.showMedia();
 			map.updatePopup();
 		}
 
-		let currentTitleVisibility = $(".media-box#center .title").is(":visible");
+		util.setTitleOptions();
+		util.setMediaOptions();
+		if (env.currentMedia === null) {
+			util.setSubalbumsOptions();
+			if (env.currentAlbum.subalbums.length)
+				util.adaptCaptionHeight();
+		}
+
+		var currentTitleVisibility = $("#album-view .title").is(":visible");
+		var currentBottomThumbnailsVisibility = $("#album-view.media-view-container").is(":visible");
 		if (env.currentMedia !== null) {
-			let currentBottomThumbnailsVisibility = $("#album-view.media-view-container").is(":visible");
+			currentTitleVisibility = $(".media-box#center .title").is(":visible");
+		}
+
+		if (env.currentMedia !== null) {
 			if (currentTitleVisibility !== previousTitleVisibility || currentBottomThumbnailsVisibility !== previousBottomThumbnailsVisibility) {
 				let event = {data: {}};
 				event.data.resize = true;
@@ -1800,18 +1792,7 @@
 					env.prevMedia.scale(event);
 				}
 			}
-		// } else {
-		// 	TopFunctions.adaptAlbumOptions();
 		}
-
-		if (currentTitleVisibility)
-			util.setTitleOptions();
-		// if (env.currentMedia === null)
-		// 	TopFunctions.adaptAlbumOptions();
-		util.setMediaOptions();
-		util.setSubalbumsOptions();
-		if (env.currentAlbum.subalbums.length)
-			util.adaptCaptionHeight();
 
 		return false;
 	};
@@ -1855,8 +1836,8 @@
 			} else {
 				// TopFunctions.adaptAlbumOptions();
 				util.setTitleOptions();
-				if (env.currentAlbum.subalbums.length)
-					util.adaptCaptionHeight();
+				// if (env.currentAlbum.subalbums.length)
+				// 	util.adaptCaptionHeight();
 			}
 		}
 		return false;
