@@ -1513,7 +1513,11 @@
 			env.prevMedia = null;
 			$("#media-view-container").removeClass("hidden");
 			$("#album-view").addClass("media-view-container");
-			if (env.albumOfPreviousState !== env.currentAlbum || env.albumOfPreviousState !== null && env.albumOfPreviousState.numsMediaInSubTree.imagesAndVideosTotal() !== env.currentAlbum.numsMediaInSubTree.imagesAndVideosTotal()) {
+			if (
+				env.albumOfPreviousState !== env.currentAlbum ||
+				env.albumOfPreviousState !== null && env.albumOfPreviousState.numsMediaInSubTree.imagesAndVideosTotal() !== env.currentAlbum.numsMediaInSubTree.imagesAndVideosTotal() ||
+				! env.options.hide_bottom_thumbnails && env.currentAlbum.media.length > 1 && $("#thumbs").html() === ""
+			) {
 				env.currentAlbum.showMedia();
 			} else {
 				util.scrollToThumb();
