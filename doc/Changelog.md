@@ -1,3 +1,7 @@
+* change order in ui options
+* add menu entry for resetting ui options
+* bug fixes
+
 ### version v4.9.34 (Feb 4, 2021)
 
 * refreshing of subalbums/media is now performed only when strictly needed
