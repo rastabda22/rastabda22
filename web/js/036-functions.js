@@ -437,9 +437,9 @@
 			} else {
 				$("ul#right-menu li.hide-title").removeClass("hidden");
 				if (env.options.hide_title)
-					$("ul#right-menu li.hide-title").addClass("selected");
-				else
 					$("ul#right-menu li.hide-title").removeClass("selected");
+				else
+					$("ul#right-menu li.hide-title").addClass("selected");
 			}
 
 			let popupHasSomeDescription;
@@ -1418,7 +1418,7 @@
 			return parseFloat(keyValue);
 	};
 
-	Functions.prototype.setCookie = function(key, value) {
+	Functions.setCookie = function(key, value) {
 		var expires = new Date();
 		expires.setTime(expires.getTime() + Functions.tenYears() * 1000);
 		document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
@@ -1482,38 +1482,10 @@
 		);
 	};
 
-	// Album.prototype.needMediaNameSort = function() {
-	// 	var result =
-	// 		this.isUndefinedOrFalse(mediaNameSort) &&
-	// 		Functions.getBooleanCookie("mediaNameSortRequested");
-	// 	return result;
-	// };
-	//
-	// Album.prototype.needMediaDateSort = function() {
-	// 	var result =
-	// 		this.isTrue(mediaNameSort) &&
-	// 		! Functions.getBooleanCookie("mediaNameSortRequested");
-	// 	return result;
-	// };
-	//
-	// Album.prototype.needMediaDateReverseSort = function() {
-	// 	var result =
-	// 		this.isUndefinedOrFalse(mediaNameSort) &&
-	// 		this.mediaReverseSort !== Functions.getBooleanCookie("mediaReverseSortRequested");
-	// 	return result;
-	// };
-	//
-	// Album.prototype.needMediaNameReverseSort = function() {
-	// 	var result =
-	// 		this.isTrue(mediaNameSort) &&
-	// 		this.mediaReverseSort !== Functions.getBooleanCookie("mediaReverseSortRequested");
-	// 	return result;
-	// };
-
-	Functions.prototype.getOptions = function() {
+	Functions.prototype.getOptions = function(forceReload = false) {
 		return new Promise(
 			function(resolve_getOptions, reject_getOptions) {
-				if (Object.keys(env.options).length > 0) {
+				if (Object.keys(env.options).length > 0 && ! forceReload) {
 					if (! util.isSearchHash()) {
 						// reset the return link from search
 						var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = PhotoFloat.decodeHash(location.hash);
@@ -1528,199 +1500,225 @@
 						success: function(data) {
 							// for map zoom levels, see http://wiki.openstreetmap.org/wiki/Zoom_levels
 
+							var uiKeys = [
+								'hide_title',
+								'show_album_media_count',
+								'albums_slide_style',
+								'album_thumb_type',
+								'show_album_names_below_thumbs',
+								'media_thumb_type',
+								'show_media_names_below_thumbs',
+								'hide_descriptions',
+								'hide_tags',
+								'thumb_spacing',
+								'hide_bottom_thumbnails'
+							];
+
 							for (var key in data)
 								// if (data.hasOwnProperty(key) && key !== 'request_password_email')
-								if (data.hasOwnProperty(key))
+								if (data.hasOwnProperty(key) && (! forceReload || uiKeys.indexOf(key) !== -1))
 									env.options[key] = data[key];
-							util.translate();
-							// server_cache_path actually is a constant: it cannot be passed as an option, because getOptions need to know it before reading the options
-							// options.json is in this directory
-							env.server_cache_path = 'cache';
 
-							env.maxSize = env.options.reduced_sizes[env.options.reduced_sizes.length - 1];
+							if (forceReload) {
+								Functions.setBooleanCookie("hideTitle", env.options.hide_title);
+								Functions.setBooleanCookie("showAlbumMediaCount", env.options.show_album_media_count);
+								Functions.setBooleanCookie("albumsSlideStyle", env.options.albums_slide_style);
+								Functions.setCookie("albumThumbType", env.options.album_thumb_type);
+								Functions.setBooleanCookie("showAlbumNamesBelowThumbs", env.options.show_album_names_below_thumbs);
+								Functions.setCookie("mediaThumbType", env.options.media_thumb_type);
+								Functions.setBooleanCookie("showMediaNamesBelowThumbs", env.options.show_media_names_below_thumbs);
+								Functions.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
+								Functions.setBooleanCookie("hideTags", env.options.hide_tags);
 
-							// override according to user selections
-
-							// if (Functions.getBooleanCookie("albumNameSortRequested") === null)
-							// 	Functions.setBooleanCookie("albumNameSortRequested", env.options.default_album_name_sort);
-							// if (Functions.getBooleanCookie("albumReverseSortRequested") === null)
-							// 	Functions.setBooleanCookie("albumReverseSortRequested", env.options.default_album_reverse_sort);
-							//
-							// if (Functions.getBooleanCookie("mediaNameSortRequested") === null)
-							// 	Functions.setBooleanCookie("mediaNameSortRequested", env.options.default_media_name_sort);
-							// if (Functions.getBooleanCookie("mediaReverseSortRequested") === null)
-							// 	Functions.setBooleanCookie("mediaReverseSortRequested", env.options.default_media_reverse_sort);
-
-							var albumNameSortCookie = Functions.getBooleanCookie("albumNameSortRequested");
-							env.albumNameSort = env.options.default_album_name_sort;
-							if (albumNameSortCookie !== null)
-								env.albumNameSort = albumNameSortCookie;
-
-							var albumReverseSortCookie = Functions.getBooleanCookie("albumReverseSortRequested");
-							env.albumReverseSort = env.options.default_album_reverse_sort;
-							if (albumReverseSortCookie !== null)
-								env.albumReverseSort = albumReverseSortCookie;
-
-							var mediaNameSortCookie = Functions.getBooleanCookie("mediaNameSortRequested");
-							env.mediaNameSort = env.options.default_media_name_sort;
-							if (mediaNameSortCookie !== null)
-								env.mediaNameSort = mediaNameSortCookie;
-
-							var mediaReverseSortCookie = Functions.getBooleanCookie("mediaReverseSortRequested");
-							env.mediaReverseSort = env.options.default_media_reverse_sort;
-							if (mediaReverseSortCookie !== null)
-								env.mediaReverseSort = mediaReverseSortCookie;
-
-							var titleCookie = Functions.getBooleanCookie("hideTitle");
-							if (titleCookie !== null)
-								env.options.hide_title = titleCookie;
-
-							var descriptionsCookie = Functions.getBooleanCookie("hideDescriptions");
-							if (descriptionsCookie !== null)
-								env.options.hide_descriptions = descriptionsCookie;
-
-							var tagsCookie = Functions.getBooleanCookie("hideTags");
-							if (tagsCookie !== null)
-								env.options.hide_tags = tagsCookie;
-
-							var bottomThumbnailsCookie = Functions.getBooleanCookie("hideBottomThumbnails");
-							if (bottomThumbnailsCookie !== null)
-								env.options.hide_bottom_thumbnails = bottomThumbnailsCookie;
-
-							var slideCookie = Functions.getBooleanCookie("albumsSlideStyle");
-							if (slideCookie !== null)
-								env.options.albums_slide_style = slideCookie;
-
-							if (env.options.thumb_spacing)
-								env.options.spacingSavedValue = env.options.thumb_spacing;
-							else
-								env.options.spacingSavedValue = env.options.media_thumb_size * 0.03;
-
-							var spacingCookie = Functions.getNumberCookie("spacing");
-							if (spacingCookie !== null) {
-								env.options.spacing = spacingCookie;
-							} else {
+								if (env.options.thumb_spacing)
+									env.options.spacingSavedValue = env.options.thumb_spacing;
+								else
+									env.options.spacingSavedValue = env.options.media_thumb_size * 0.03;
 								env.options.spacing = env.options.thumb_spacing;
-							}
+								Functions.setCookie("spacing", env.options.spacing);
 
-							var showAlbumNamesCookie = Functions.getBooleanCookie("showAlbumNamesBelowThumbs");
-							if (showAlbumNamesCookie !== null)
-								env.options.show_album_names_below_thumbs = showAlbumNamesCookie;
-
-							var showMediaCountCookie = Functions.getBooleanCookie("showAlbumMediaCount");
-							if (showMediaCountCookie !== null)
-								env.options.show_album_media_count = showMediaCountCookie;
-
-							var showMediaNamesCookie = Functions.getBooleanCookie("showMediaNamesBelowThumbs");
-							if (showMediaNamesCookie !== null)
-								env.options.show_media_names_below_thumbs = showMediaNamesCookie;
-
-							var squareAlbumsCookie = Functions.getCookie("albumThumbType");
-							if (squareAlbumsCookie !== null)
-								env.options.album_thumb_type = squareAlbumsCookie;
-
-							var squareMediaCookie = Functions.getCookie("mediaThumbType");
-							if (squareMediaCookie !== null)
-								env.options.media_thumb_type = squareMediaCookie;
-
-							env.options.search_inside_words = false;
-							var searchInsideWordsCookie = Functions.getBooleanCookie("searchInsideWords");
-							if (searchInsideWordsCookie !== null)
-								env.options.search_inside_words = searchInsideWordsCookie;
-
-							env.options.search_any_word = false;
-							var searchAnyWordCookie = Functions.getBooleanCookie("searchAnyWord");
-							if (searchAnyWordCookie !== null)
-								env.options.search_any_word = searchAnyWordCookie;
-
-							env.options.search_case_sensitive = false;
-							var searchCaseSensitiveCookie = Functions.getBooleanCookie("searchCaseSensitive");
-							if (searchCaseSensitiveCookie !== null)
-								env.options.search_case_sensitive = searchCaseSensitiveCookie;
-
-							env.options.search_accent_sensitive = false;
-							var searchAccentSensitiveCookie = Functions.getBooleanCookie("searchAccentSensitive");
-							if (searchAccentSensitiveCookie !== null)
-								env.options.search_accent_sensitive = searchAccentSensitiveCookie;
-
-							env.options.search_tags_only = false;
-							var searchTagsOnlyCookie = Functions.getBooleanCookie("searchTagsOnly");
-							if (searchTagsOnlyCookie !== null)
-								env.options.search_tags_only = searchTagsOnlyCookie;
-
-							env.options.search_current_album = true;
-							var searchCurrentAlbumCookie = Functions.getBooleanCookie("searchCurrentAlbum");
-							if (searchCurrentAlbumCookie !== null)
-								env.options.search_current_album = searchCurrentAlbumCookie;
-
-							env.options.show_big_virtual_folders = false;
-							var showBigVirtualFoldersCookie = Functions.getBooleanCookie("showBigVirtualFolders");
-							if (showBigVirtualFoldersCookie !== null)
-								env.options.show_big_virtual_folders = showBigVirtualFoldersCookie;
-
-							if (! env.options.hasOwnProperty('cache_base_to_search_in') || ! env.options.cache_base_to_search_in)
-								env.options.cache_base_to_search_in = env.options.folders_string;
-							if (! env.options.hasOwnProperty('saved_cache_base_to_search_in') || ! env.options.saved_cache_base_to_search_in)
-								env.options.saved_cache_base_to_search_in = env.options.folders_string;
-
-							env.slideAlbumButtonBorder = 1;
-							env.slideBorder = 3;
-							env.slideMarginFactor = 0.05;
-
-							env.options.foldersStringWithTrailingSeparator = env.options.folders_string + env.options.cache_folder_separator;
-							env.options.byDateStringWithTrailingSeparator = env.options.by_date_string + env.options.cache_folder_separator;
-							env.options.byGpsStringWithTrailingSeparator = env.options.by_gps_string + env.options.cache_folder_separator;
-							env.options.bySearchStringWithTrailingSeparator = env.options.by_search_string + env.options.cache_folder_separator;
-							env.options.bySelectionStringWithTrailingSeparator = env.options.by_selection_string + env.options.cache_folder_separator;
-							env.options.byMapStringWithTrailingSeparator = env.options.by_map_string + env.options.cache_folder_separator;
-
-							if (env.options.request_password_email) {
-								$("#request-password").off("click").on("click", util.showPasswordRequestForm);
-								$("#password-request-form").submit(
-									function() {
-										let name = $("#form-name").val().trim();
-										let email = $("#form-email").val().trim();
-										let identity = $("#form-identity").val().trim();
-
-										if (name && email && identity) {
-											// alert(location.href.substr(0, - location.hash) + '?name=' + encodeURI($("#form-name").val()) + '&email=' + encodeURI($("#form-email").val()) + '&identity=' + encodeURI($("#form-identity").val()) + location.hash);
-											var newLocation = location.href.substr(0, - location.hash) +
-											 					'?url=' + encodeURIComponent(location.href) +
-																'&name=' + encodeURIComponent(name) +
-																'&email=' + encodeURIComponent(email) +
-																'&identity=' + encodeURIComponent(identity) +
-																location.hash;
-											$("#auth-text").stop().fadeOut(1000);
-											$("#sending-email").stop().fadeIn(1000);
-											$("#sending-email").fadeOut(3000, function() {
-												location.href = newLocation;
-											});
-										} else {
-											$("#please-fill").css("display", "table");
-											$("#please-fill").fadeOut(5000);
-										}
-										return false;
-									}
-								);
+								Functions.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
 							} else {
-								$("#request-password").hide();
+								util.translate();
+								// server_cache_path actually is a constant: it cannot be passed as an option, because getOptions need to know it before reading the options
+								// options.json is in this directory
+								env.server_cache_path = 'cache';
+
+								env.maxSize = env.options.reduced_sizes[env.options.reduced_sizes.length - 1];
+
+								// override according to user selections
+
+								var albumNameSortCookie = Functions.getBooleanCookie("albumNameSortRequested");
+								env.albumNameSort = env.options.default_album_name_sort;
+								if (albumNameSortCookie !== null)
+									env.albumNameSort = albumNameSortCookie;
+
+								var albumReverseSortCookie = Functions.getBooleanCookie("albumReverseSortRequested");
+								env.albumReverseSort = env.options.default_album_reverse_sort;
+								if (albumReverseSortCookie !== null)
+									env.albumReverseSort = albumReverseSortCookie;
+
+								var mediaNameSortCookie = Functions.getBooleanCookie("mediaNameSortRequested");
+								env.mediaNameSort = env.options.default_media_name_sort;
+								if (mediaNameSortCookie !== null)
+									env.mediaNameSort = mediaNameSortCookie;
+
+								var mediaReverseSortCookie = Functions.getBooleanCookie("mediaReverseSortRequested");
+								env.mediaReverseSort = env.options.default_media_reverse_sort;
+								if (mediaReverseSortCookie !== null)
+									env.mediaReverseSort = mediaReverseSortCookie;
+
+								var titleCookie = Functions.getBooleanCookie("hideTitle");
+								if (titleCookie !== null)
+									env.options.hide_title = titleCookie;
+
+								var descriptionsCookie = Functions.getBooleanCookie("hideDescriptions");
+								if (descriptionsCookie !== null)
+									env.options.hide_descriptions = descriptionsCookie;
+
+								var tagsCookie = Functions.getBooleanCookie("hideTags");
+								if (tagsCookie !== null)
+									env.options.hide_tags = tagsCookie;
+
+								var bottomThumbnailsCookie = Functions.getBooleanCookie("hideBottomThumbnails");
+								if (bottomThumbnailsCookie !== null)
+									env.options.hide_bottom_thumbnails = bottomThumbnailsCookie;
+
+								var slideCookie = Functions.getBooleanCookie("albumsSlideStyle");
+								if (slideCookie !== null)
+									env.options.albums_slide_style = slideCookie;
+
+								if (env.options.thumb_spacing)
+									env.options.spacingSavedValue = env.options.thumb_spacing;
+								else
+									env.options.spacingSavedValue = env.options.media_thumb_size * 0.03;
+
+								var spacingCookie = Functions.getNumberCookie("spacing");
+								if (spacingCookie !== null) {
+									env.options.spacing = spacingCookie;
+								} else {
+									env.options.spacing = env.options.thumb_spacing;
+								}
+
+								var showAlbumNamesCookie = Functions.getBooleanCookie("showAlbumNamesBelowThumbs");
+								if (showAlbumNamesCookie !== null)
+									env.options.show_album_names_below_thumbs = showAlbumNamesCookie;
+
+								var showMediaCountCookie = Functions.getBooleanCookie("showAlbumMediaCount");
+								if (showMediaCountCookie !== null)
+									env.options.show_album_media_count = showMediaCountCookie;
+
+								var showMediaNamesCookie = Functions.getBooleanCookie("showMediaNamesBelowThumbs");
+								if (showMediaNamesCookie !== null)
+									env.options.show_media_names_below_thumbs = showMediaNamesCookie;
+
+								var squareAlbumsCookie = Functions.getCookie("albumThumbType");
+								if (squareAlbumsCookie !== null)
+									env.options.album_thumb_type = squareAlbumsCookie;
+
+								var squareMediaCookie = Functions.getCookie("mediaThumbType");
+								if (squareMediaCookie !== null)
+									env.options.media_thumb_type = squareMediaCookie;
+
+								env.options.search_inside_words = false;
+								var searchInsideWordsCookie = Functions.getBooleanCookie("searchInsideWords");
+								if (searchInsideWordsCookie !== null)
+									env.options.search_inside_words = searchInsideWordsCookie;
+
+								env.options.search_any_word = false;
+								var searchAnyWordCookie = Functions.getBooleanCookie("searchAnyWord");
+								if (searchAnyWordCookie !== null)
+									env.options.search_any_word = searchAnyWordCookie;
+
+								env.options.search_case_sensitive = false;
+								var searchCaseSensitiveCookie = Functions.getBooleanCookie("searchCaseSensitive");
+								if (searchCaseSensitiveCookie !== null)
+									env.options.search_case_sensitive = searchCaseSensitiveCookie;
+
+								env.options.search_accent_sensitive = false;
+								var searchAccentSensitiveCookie = Functions.getBooleanCookie("searchAccentSensitive");
+								if (searchAccentSensitiveCookie !== null)
+									env.options.search_accent_sensitive = searchAccentSensitiveCookie;
+
+								env.options.search_tags_only = false;
+								var searchTagsOnlyCookie = Functions.getBooleanCookie("searchTagsOnly");
+								if (searchTagsOnlyCookie !== null)
+									env.options.search_tags_only = searchTagsOnlyCookie;
+
+								env.options.search_current_album = true;
+								var searchCurrentAlbumCookie = Functions.getBooleanCookie("searchCurrentAlbum");
+								if (searchCurrentAlbumCookie !== null)
+									env.options.search_current_album = searchCurrentAlbumCookie;
+
+								env.options.show_big_virtual_folders = false;
+								var showBigVirtualFoldersCookie = Functions.getBooleanCookie("showBigVirtualFolders");
+								if (showBigVirtualFoldersCookie !== null)
+									env.options.show_big_virtual_folders = showBigVirtualFoldersCookie;
+
+								if (! env.options.hasOwnProperty('cache_base_to_search_in') || ! env.options.cache_base_to_search_in)
+									env.options.cache_base_to_search_in = env.options.folders_string;
+								if (! env.options.hasOwnProperty('saved_cache_base_to_search_in') || ! env.options.saved_cache_base_to_search_in)
+									env.options.saved_cache_base_to_search_in = env.options.folders_string;
+
+								env.slideAlbumButtonBorder = 1;
+								env.slideBorder = 3;
+								env.slideMarginFactor = 0.05;
+
+								env.options.foldersStringWithTrailingSeparator = env.options.folders_string + env.options.cache_folder_separator;
+								env.options.byDateStringWithTrailingSeparator = env.options.by_date_string + env.options.cache_folder_separator;
+								env.options.byGpsStringWithTrailingSeparator = env.options.by_gps_string + env.options.cache_folder_separator;
+								env.options.bySearchStringWithTrailingSeparator = env.options.by_search_string + env.options.cache_folder_separator;
+								env.options.bySelectionStringWithTrailingSeparator = env.options.by_selection_string + env.options.cache_folder_separator;
+								env.options.byMapStringWithTrailingSeparator = env.options.by_map_string + env.options.cache_folder_separator;
+
+								if (env.options.request_password_email) {
+									$("#request-password").off("click").on("click", util.showPasswordRequestForm);
+									$("#password-request-form").submit(
+										function() {
+											let name = $("#form-name").val().trim();
+											let email = $("#form-email").val().trim();
+											let identity = $("#form-identity").val().trim();
+
+											if (name && email && identity) {
+												// alert(location.href.substr(0, - location.hash) + '?name=' + encodeURI($("#form-name").val()) + '&email=' + encodeURI($("#form-email").val()) + '&identity=' + encodeURI($("#form-identity").val()) + location.hash);
+												var newLocation = location.href.substr(0, - location.hash) +
+												 					'?url=' + encodeURIComponent(location.href) +
+																	'&name=' + encodeURIComponent(name) +
+																	'&email=' + encodeURIComponent(email) +
+																	'&identity=' + encodeURIComponent(identity) +
+																	location.hash;
+												$("#auth-text").stop().fadeOut(1000);
+												$("#sending-email").stop().fadeIn(1000);
+												$("#sending-email").fadeOut(3000, function() {
+													location.href = newLocation;
+												});
+											} else {
+												$("#please-fill").css("display", "table");
+												$("#please-fill").fadeOut(5000);
+											}
+											return false;
+										}
+									);
+								} else {
+									$("#request-password").hide();
+								}
+
+								$("#padlock img").attr("alt", util._t("#padlock-img-alt-text"));
+
+								// WARNING: do not initialize the search root album, the app must read it from its json file!
+								util.initializeOrGetMapRootAlbum();
+								util.initializeSelectionRootAlbum();
+
+								env.mapAlbum = new Album();
+
+								env.selectionAlbum = new Album();
+
+								env.searchAlbum = new Album();
+								env.searchAlbum.includedFilesByCodesSimpleCombination = new IncludedFiles();
+
+								if (env.options.version !== undefined)
+									$("#powered-by").attr("title", util._t("#software-version") + ": " + env.options.version + " - " + util._t("#json-version") + ": " + env.options.json_version.toString());
 							}
-
-							$("#padlock img").attr("alt", util._t("#padlock-img-alt-text"));
-
-							// WARNING: do not initialize the search root album, the app must read it from its json file!
-							util.initializeOrGetMapRootAlbum();
-							util.initializeSelectionRootAlbum();
-
-							env.mapAlbum = new Album();
-
-							env.selectionAlbum = new Album();
-
-							env.searchAlbum = new Album();
-							env.searchAlbum.includedFilesByCodesSimpleCombination = new IncludedFiles();
-
-							if (env.options.version !== undefined)
-								$("#powered-by").attr("title", util._t("#software-version") + ": " + env.options.version + " - " + util._t("#json-version") + ": " + env.options.json_version.toString());
 
 							resolve_getOptions();
 						},
@@ -1773,6 +1771,7 @@
 
 	Functions.prototype.getBooleanCookie = Functions.getBooleanCookie;
 	Functions.prototype.setBooleanCookie = Functions.setBooleanCookie;
+	Functions.prototype.setCookie = Functions.setCookie;
 	Functions.prototype.updateMenu = Functions.updateMenu;
 	Functions.prototype.focusSearchField = Functions.focusSearchField;
 	Functions.prototype.toggleMetadata = Functions.toggleMetadata;

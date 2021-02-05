@@ -770,8 +770,8 @@ video {
 	color: white;
 } */
 
-.media-caption .media-name span {
-	/* white-space: nowrap; */
+#album-view.media-view-container #thumbs .media-name {
+	display: none;
 }
 
 .real-name {

@@ -1823,7 +1823,7 @@
 	Utilities.prototype.setMediaOptions = function() {
 		$(".media-name").css("color", env.options.media_name_color);
 
-		if (env.currentMedia !== null && ! Utilities.isPopup() || ! env.options.show_media_names_below_thumbs)
+		if (! env.options.show_media_names_below_thumbs)
 			$(".thumb-and-caption-container .media-name").addClass("hidden-by-option");
 		else
 			$(".thumb-and-caption-container .media-name").removeClass("hidden-by-option");
