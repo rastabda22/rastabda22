@@ -3393,23 +3393,29 @@
 			// $("#description").css("max-height", (env.windowHeight / 2) + "px");
 
 			if (! nullTitle) {
+				$("#description-title").show();
 				$("#description-title").html(Utilities.formatDescription(title));
 			} else {
-				$("#description-title").html("");
+				$("#description-title").hide();
+				// $("#description-title").html("");
 			}
 
 			if (! nullDescription) {
+				$("#description-text").show();
 				$("#description-text").html(Utilities.formatDescription(description));
 				$("#description-text p").addClass("description-text");
 			} else {
-				$("#description-text").html("");
+				$("#description-text").hide();
+				// $("#description-text").html("");
 			}
 			if (! nullTags) {
 				// let textualTags = "<p class='tags'> " + Utilities._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span></p>";
 				let textualTags = Utilities._t("#tags") + ": <span class='tag'>" + tags.map(tag => Utilities.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span>";
+				$("#description-tags").show();
 				$("#description-tags").html(textualTags);
 			} else {
-				$("#description-tags").html("");
+				$("#description-tags").hide();
+				// $("#description-tags").html("");
 			}
 		}
 	};
