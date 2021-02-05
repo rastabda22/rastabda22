@@ -64,8 +64,10 @@
 		<script type="text/javascript" src="js/scripts.min.js"></script>
 	<?php	} else {
 		// Use system wide jQuery if available
-		if ((strcasecmp($options['use_system_js_libraries'], "true") == 0 || $options['use_system_js_libraries'] == "1") &&
-			file_exists("/usr/share/javascript/jquery/jquery.js")) { ?>
+		if (
+			(strcasecmp($options['use_system_js_libraries'], "true") == 0 || $options['use_system_js_libraries'] == "1") &&
+			file_exists("/usr/share/javascript/jquery/jquery.js")
+		) { ?>
 			<script type="text/javascript" src="/javascript/jquery/jquery.js"></script>
 		<?php	} else { ?>
 			<script type="text/javascript" src="js/000-jquery.js"></script>
@@ -78,36 +80,44 @@
 
 		<?php
 		// Use system wide jQuery-mousewheel if available
-		if ((strcasecmp($options['use_system_js_libraries'], "true") == 0 || $options['use_system_js_libraries'] == "1") &&
-			file_exists("/usr/share/javascript/jquery-mousewheel/jquery.mousewheel.js")) { ?>
+		if (
+			(strcasecmp($options['use_system_js_libraries'], "true") == 0 || $options['use_system_js_libraries'] == "1") &&
+			file_exists("/usr/share/javascript/jquery-mousewheel/jquery.mousewheel.js")
+		) { ?>
 			<script type="text/javascript" src="/javascript/jquery-mousewheel/jquery.mousewheel.js"></script>
 		<?php	} else { ?>
 			<script type="text/javascript" src="js/003-mousewheel.js"></script>
 		<?php	}
 
 		// Use system wide jQuery-fullscreen if available
-		if ((strcasecmp($options['use_system_js_libraries'], "true") == 0 || $options['use_system_js_libraries'] == "1") &&
-			file_exists("/usr/share/javascript/jquery-fullscreen/jquery.fullscreen.js")) { ?>
+		if (
+			(strcasecmp($options['use_system_js_libraries'], "true") == 0 || $options['use_system_js_libraries'] == "1") &&
+			file_exists("/usr/share/javascript/jquery-fullscreen/jquery.fullscreen.js")
+		) { ?>
 			<script type="text/javascript" src="/javascript/jquery-fullscreen/jquery.fullscreen.js"></script>
 		<?php	} else { ?>
 			<script type="text/javascript" src="js/004-fullscreen.js"></script>
 		<?php	}
 
 		// Use system wide modernizr if available
-		if (! $options['use_internal_modernizr'] &&
+		if (
+			! $options['use_internal_modernizr'] &&
 			(strcasecmp($options['use_system_js_libraries'], "true") == 0 || $options['use_system_js_libraries'] == "1") &&
-			file_exists("/usr/share/javascript/modernizr/modernizr.min.js")) { ?>
+			file_exists("/usr/share/javascript/modernizr/modernizr.min.js")
+		) { ?>
 			<script type="text/javascript" src="/javascript/modernizr/modernizr.min.js"></script>
 		<?php	} else { ?>
 			<script type="text/javascript" src="js/005-modernizr.js"></script>
 		<?php	} ?>
 
 		<script type="text/javascript" src="js/006-jquery-touchswipe.js"></script>
-		
+
 		<?php
 		// Use system wide jQuery-lazyload if available
-		if ((strcasecmp($options['use_system_js_libraries'], "true") == 0 || $options['use_system_js_libraries'] == "1") &&
-			file_exists("/usr/share/javascript/jquery-lazyload/jquery.lazyload.min.js")) { ?>
+		if (
+			(strcasecmp($options['use_system_js_libraries'], "true") == 0 || $options['use_system_js_libraries'] == "1") &&
+			file_exists("/usr/share/javascript/jquery-lazyload/jquery.lazyload.min.js")
+		) { ?>
 			<script type="text/javascript" src="/javascript/jquery-lazyload/jquery.lazyload.min.js"></script>
 		<?php	} else { ?>
 			<script type="text/javascript" src="js/007-jquery-lazy.js"></script>
