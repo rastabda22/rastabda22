@@ -206,9 +206,9 @@
 				this.parent = album;
 		}
 
-		// clone() {
-		// 	return new SingleMedia(Utilities.cloneObject(this));
-		// }
+		clone() {
+			return new SingleMedia(Utilities.cloneObject(this));
+		}
 
 		cloneAndDeleteParent() {
 			let clonedSingleMedia = this.clone();
@@ -293,7 +293,7 @@
 		}
 
 		toSubalbum() {
-			return this;
+			return (new Album(this)).toSubalbum();
 		}
 
 		isEqual(otherSubalbum) {
