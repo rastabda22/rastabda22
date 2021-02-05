@@ -64,4 +64,8 @@
 		padding: .3em;
 		border-width: 2px;
 	}
+
+	#thumbs .thumbnail-map-link, #subalbums .thumbnail-map-link, #thumbs .select-box, #subalbums .select-box, #media-select-box .select-box, #popup-images-wrapper .select-box {
+		opacity: .5;
+	}
 }

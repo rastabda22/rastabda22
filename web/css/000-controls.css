@@ -300,7 +300,7 @@ p.description-text, p.description-text ul {
 }
 
 #thumbs .thumbnail-map-link, #subalbums .thumbnail-map-link, #thumbs .select-box, #subalbums .select-box, #media-select-box .select-box, #popup-images-wrapper .select-box {
-	opacity: .5;
+	opacity: .3;
 	height: 30px;
 	cursor: pointer;
 }
@@ -324,7 +324,7 @@ p.description-text, p.description-text ul {
 }
 
 .album-button-random-media-link:hover, .thumbnail-map-link:hover, #thumbs .select-box:hover, #subalbums .select-box:hover, #media-select-box .select-box:hover {
-	opacity: 1;
+	opacity: .6;
 	filter: alpha(opacity=100); /* For IE8 and earlier */
 }
 

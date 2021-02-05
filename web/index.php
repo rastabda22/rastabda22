@@ -64,7 +64,10 @@
 		<script type="text/javascript" src="js/scripts.min.js"></script>
 	<?php	} else {
 		// Use system wide jQuery if available
-		if (file_exists("/usr/share/javascript/jquery/jquery.js")) { ?>
+		if (
+			(strcasecmp($options['use_system_js_libraries'], "true") == 0 || $options['use_system_js_libraries'] == "1") &&
+			file_exists("/usr/share/javascript/jquery/jquery.js")
+		) { ?>
 			<script type="text/javascript" src="/javascript/jquery/jquery.js"></script>
 		<?php	} else { ?>
 			<script type="text/javascript" src="js/000-jquery.js"></script>
@@ -77,28 +80,48 @@
 
 		<?php
 		// Use system wide jQuery-mousewheel if available
-		if (file_exists("/usr/share/javascript/jquery-mousewheel/jquery.mousewheel.js")) { ?>
+		if (
+			(strcasecmp($options['use_system_js_libraries'], "true") == 0 || $options['use_system_js_libraries'] == "1") &&
+			file_exists("/usr/share/javascript/jquery-mousewheel/jquery.mousewheel.js")
+		) { ?>
 			<script type="text/javascript" src="/javascript/jquery-mousewheel/jquery.mousewheel.js"></script>
 		<?php	} else { ?>
 			<script type="text/javascript" src="js/003-mousewheel.js"></script>
 		<?php	}
 
 		// Use system wide jQuery-fullscreen if available
-		if (file_exists("/usr/share/javascript/jquery-fullscreen/jquery.fullscreen.js")) { ?>
+		if (
+			(strcasecmp($options['use_system_js_libraries'], "true") == 0 || $options['use_system_js_libraries'] == "1") &&
+			file_exists("/usr/share/javascript/jquery-fullscreen/jquery.fullscreen.js")
+		) { ?>
 			<script type="text/javascript" src="/javascript/jquery-fullscreen/jquery.fullscreen.js"></script>
 		<?php	} else { ?>
 			<script type="text/javascript" src="js/004-fullscreen.js"></script>
 		<?php	}
 
 		// Use system wide modernizr if available
-		if (! $options['use_internal_modernizr'] && file_exists("/usr/share/javascript/modernizr/modernizr.min.js")) { ?>
+		if (
+			! $options['use_internal_modernizr'] &&
+			(strcasecmp($options['use_system_js_libraries'], "true") == 0 || $options['use_system_js_libraries'] == "1") &&
+			file_exists("/usr/share/javascript/modernizr/modernizr.min.js")
+		) { ?>
 			<script type="text/javascript" src="/javascript/modernizr/modernizr.min.js"></script>
 		<?php	} else { ?>
 			<script type="text/javascript" src="js/005-modernizr.js"></script>
 		<?php	} ?>
 
 		<script type="text/javascript" src="js/006-jquery-touchswipe.js"></script>
-		<script type="text/javascript" src="js/007-jquery-lazy.js"></script>
+
+		<?php
+		// Use system wide jQuery-lazyload if available
+		if (
+			(strcasecmp($options['use_system_js_libraries'], "true") == 0 || $options['use_system_js_libraries'] == "1") &&
+			file_exists("/usr/share/javascript/jquery-lazyload/jquery.lazyload.min.js")
+		) { ?>
+			<script type="text/javascript" src="/javascript/jquery-lazyload/jquery.lazyload.min.js"></script>
+		<?php	} else { ?>
+			<script type="text/javascript" src="js/007-jquery-lazy.js"></script>
+		<?php	} ?>
 
 		<script type="text/javascript" src="js/008-leaflet.js"></script>
 		<script type="text/javascript" src="js/009-leaflet-prunecluster.js"></script>
@@ -122,7 +145,7 @@
 
 	// receive the post data, they contain the compressed stringified map/selection album with name packedAlbum
 	function passPostArrayToJavascript(){
-		if(! empty($_POST)) {
+		if (! empty($_POST)) {
 			echo '<script>
 				var postData = ' . json_encode($_POST) . '; // alert(postData["packedAlbum"]);
 				popupRefreshType = "previousAlbum";
@@ -527,6 +550,7 @@
 	<div id="downloading-media" class="messages"></div>
 	<div id="preparing-zip" class="messages"></div>
 	<div id="sending-email" class="messages"></div>
+	<div id="ui-settings-restored" class="messages"></div>
 
 	<div id="folders-browsing" class="browsing-mode-message"></div>
 	<div id="by-date-browsing" class="browsing-mode-message"></div>
