@@ -22,7 +22,7 @@
 		font-size: small;
 		z-index: 1;
 	}
-	.error, .browsing-mode-message, .sort-message, #auth-text, .search-failed, #loading, #downloading-media, #preparing-zip, #sending-email {
+	.error, .browsing-mode-message, .sort-message, #auth-text, .search-failed, .messages {
 		margin-top: 15%;
 	}
 
@@ -31,7 +31,12 @@
 	}
 
 	ul#right-menu li#menu-icon {
-		font-size: 120%;
+		font-size: 140%;
+	}
+
+	ul#right-menu #padlock {
+		margin-left: 1em;
+		padding-bottom: 0;
 	}
 
 	ul#right-menu #padlock img {
@@ -40,10 +45,7 @@
 		float: right;
 		padding-bottom: 10px;
 	}
-	ul#right-menu #padlock {
-		margin-left: 1em;
-		padding-bottom: 0;
-	}
+
 	ul#right-menu #menu-and-padlock {
 		margin-left: ;
 		padding-bottom: 0;
@@ -51,5 +53,15 @@
 
 	#my-modal .modal-close {
 	    top: 35px !important;
+	}
+
+	#description {
+		padding: .3em 0;
+		border-width: 2px;
+	}
+
+	#description-text {
+		padding: .3em;
+		border-width: 2px;
 	}
 }

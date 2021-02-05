@@ -93,7 +93,7 @@ css_minifier = cssmin
 # permitted values:
 #    web_service : https://javascript-minifier.com/
 #    jsmin3 : python3-jsmin (https://github.com/tikitu/jsmin) (Default)
-#    uglifyjs: node-uglify (http://lisperator.net/uglifyjs/)
+#    terser: uglifyjs.terser (https://terser.org/)
 js_minifier = jsmin3
 
 
@@ -117,12 +117,70 @@ metadata_filename = album.ini
 #    (none)	: no subfolders
 subdir_method = md5
 
+# Video encoding options
+########################
+# See https://trac.ffmpeg.org/wiki/Encode/H.264 and ffmpeg documentation if you change these options.
+################################################################################
+# BEWARE:
+# The following video options are EXPERIMENTAL and could be removed in a future version
+# of MyPhotoShare.
+################################################################################
+
 # The transcode bitrate used for videos: an integer, the bitrate in bits/s, even in notation nnk, nnM
 video_transcode_bitrate = 1M
 
 # The crf used for videos (see http://slhck.info/video/2017/02/24/crf-guide.html)
 # a 0 <= integer <= 51
 video_crf = 20
+
+# A preset is a collection of options that will provide a certain encoding speed to compression ratio.
+# A slower preset will provide better compression (compression is quality per filesize). This means that,
+# for example, if you target a certain file size or constant bit rate, you will achieve better quality with
+# a slower preset. Similarly, for constant quality encoding, you will simply save bitrate by choosing a slower preset.
+# Use the slowest preset that you have patience for. The available presets in descending order of speed are:
+#
+#    ultrafast
+#    superfast
+#    veryfast
+#    faster
+#    fast
+#    medium
+#    slow – default preset
+#    slower
+#    veryslow
+video_preset = slow
+
+# profile limits the output to a specific H.264 profile. Omit this unless your target device only supports a certain
+# profile.
+# Current profiles include:
+#    baseline
+#    main
+#    high
+#    high10
+#    high422
+#    high444
+video_profile = baseline
+
+# Profile level, used for platforms compatibility (see https://trac.ffmpeg.org/wiki/Encode/H.264).
+video_profile_level = 3.0
+
+# Audio channels
+video_audio_ac = 2
+
+# Audio bit rate
+video_audio_ab = 160k
+
+# Limits max rate, will degrade CRF if needed
+video_maxrate = 10M
+
+# Define how much the client should buffer
+video_bufsize = 10M
+
+# The video frame maximum size. Can be hd480, hd720 (default) or hd1080.
+video_frame_maxsize = hd720
+
+# Additional options to pass to the encoder
+video_add_options =
 
 # The jpg quality parameter for generating the reduced size images and the tumbnails
 # an integer number 1 - 100
@@ -141,11 +199,6 @@ exclude_tree_marker = .myphotoshare.exclude.tree
 # the directory/file name is matched against every pattern with re.search()
 # use ^ at the beginning and $ at the end of the patterns if you want a match on the whole directory/file name (including extension)
 # lines beginning with # are skipped
-################################################################################
-# BEWARE:
-# if you use this feature and don't change this file name, the user can know what files you aren't scanning,
-# and therefore he/she could try to access them in the `/albums/` tree
-################################################################################
 excluded_patterns_file = myphotoshare.excluded
 
 # marker for passwords: put it in the album you want to protect
@@ -208,8 +261,8 @@ use_stop_words = true
 # What prefence order do you want for the metadata extractors?
 # The first tool will be used, the second will be used in case of no success, and so on
 # Available tools are 'PIL', 'exifread', 'exiftool'
-# - exiftool is the most affordable, but the slowest
-# - exifread sometimes crashes if the metadata are corrupted
+# - exiftool is the most affordable, but the slowest (about half the speed of PIL)
+# - exifread sometimes crashes if the metadata are corrupted; its speed is between exiftool's and PIL's
 # - PIL doesn't find the metadata on some old image
 # If you don't worry with execution time you can let this option to ['exiftool', 'exifread', 'PIL']
 # If you prefer shorter execution times set it to ['PIL', 'exifread', 'exiftool']
@@ -363,55 +416,73 @@ hide_title = false
 # a right menu entry let the user show it
 hide_bottom_thumbnails = false
 
-# spacing between thumbnails, pixels (integer)
-# the user can modify this value
-thumb_spacing = 0
+# Should the description/tags provided by metadata be hidden by default?
+# right menu entries let the user show/hide it
+hide_descriptions = false
+hide_tags = true
 
-# should be used a slide-like style?
-# the user can modify this value
-albums_slide_style = false
+# spacing between thumbnails, pixels (integer)
+thumb_spacing = 4
 
 # will photos/videos names be shown below the thumbnail in albums?
-show_media_names_below_thumbs = false
+show_media_names_below_thumbs = true
 
 # will album names be shown below the thumbnail?
 # this option is not followed for virtual (date and gps) folders
 show_album_names_below_thumbs = true
 
 # should we show the media count in the album thumbnails and in the title?
-show_album_media_count = false
+show_album_media_count = true
 
 # The css font-size value for the title on page top
 # other values: large, small, or a px/em size
 title_font_size = medium
 
-# the tile color
-title_color = white
+# should be used a slide-like style?
+albums_slide_style = true
 
-# the tile color when mouse is over it
-title_color_hover = yellow
-
-# the color to use for the photo/video name in title
-title_image_name_color = lime
+####
+#### Color UI options (be sure not to have inconsistencies) ####
+####
 
 # the page background color (this is ~ gray)
 background_color = #222222
 
+# the title color
+title_color = white
+
+# the title color when mouse is over it
+title_color_hover = yellow
+
+# the color to use for the photo/video name
+media_name_color = lime
+
+# the color to use for the album name
+album_name_color = white
+
+# the color to use for the album name
+album_slide_name_color = olive
+
 # the album buttons background color (this is a dirty white, in order to be like an old slide)
-album_button_background_color = Cornsilk
+album_slide_background_color = cornsilk
+
+# the album buttons background color for slide mode (this is lighter black)
+album_slide_caption_color = gray
 
 # the album buttons background color for no-slide mode
 album_caption_color = white
 
-# the album buttons background color for slide mode (this is lighter black)
-slide_album_caption_color = #303030
+
+####
+#### Other UI options ####
+####
 
 # shoud metadata be shown persistently until they are closed?
 persistent_metadata = false
 
 # default initial sorting criterium: true = name, false = date/time
 default_album_name_sort = true
-default_media_name_sort = false
+default_media_name_sort = true
 
 # should default sorting be reverse (more recent photos/videos top)?
 default_album_reverse_sort = false
@@ -438,7 +509,7 @@ min_album_thumbnail = 2
 # List the social icons you want to display in a string between spaces or commas.
 # The order of items in the list does not change the order the social icons are displayed (shown
 # in parenthesis in the possible values).
-social = "facebook, twitter, google, email"
+social = "facebook, twitter, pinterest, email"
 
 # Social colored icons or gray ones
 social_color = false

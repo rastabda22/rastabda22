@@ -75,3 +75,9 @@ Downloading a whole album is permitted only if the total content is less than a 
 Actually, the limit is browser and ram dependent, so the user can get a notice of preparing the download, but it doesn't ever get an end.
 
 A different approach should be used, saving the zip file while is created.
+
+#### Minified scripts
+
+If you run into strange bugs like photos not displaying, check that this is not caused by minified JavaScript scripts. Set `debug_js = true` into `/etc/myphotoshare/myphotoshare.conf` and run the scanner (or patch `cache/options.json`).
+
+If that's the case, try another minifier. `uglifyjs` is known to create problem while `terser` or `jsmin3` are good options.

@@ -10,7 +10,21 @@
 	<?php
 	$jsonString = file_get_contents('cache/options.json');
 	if (! $jsonString) {
-		echo "missing options file";
+		echo "Missing options.json file in cache dir. Either:" .
+			"<ul>" .
+				"<li>Your albums are not indexed yet:" .
+					"<ul>" .
+						"<li>maybe the scanner hasn't completed its run: be patient until it finishes indexing pictures and videos</li>" .
+						"<li>if an error has occurred in the scanner, <a href='https://gitlab.com/paolobenve/myphotoshare/-/issues'>please report the issue</a> so that it can be investigated</li>" .
+					"</ul>" .
+				"</li>" .
+				"<li>Your web site configuration is wrong:" .
+					"<ul>" .
+						"<li>double check that the directories you set in the web site configuration are the same that you set in the scanner</li>" .
+					"</ul>" .
+				"</li>" .
+			"</ul>" .
+			"If you are not the site owner, please report the issue to him/her";
 		exit;
 	}
 	$options = json_decode($jsonString, true);
@@ -31,6 +45,7 @@
 	<title><?php if ($options['page_title'])
 			echo $options['page_title'];
 	?></title>
+
 	<link rel="icon" href="favicon.ico" type="image/x-icon"/>
 
 	<?php	if (strcasecmp($options['debug_css'], "false") == 0 || $options['debug_css'] == "0") { ?>
@@ -53,7 +68,7 @@
 			file_exists("/usr/share/javascript/jquery/jquery.js")) { ?>
 			<script type="text/javascript" src="/javascript/jquery/jquery.js"></script>
 		<?php	} else { ?>
-			<script type="text/javascript" src="js/000-jquery-3.3.1.js"></script>
+			<script type="text/javascript" src="js/000-jquery.js"></script>
 		<?php	}
 
 		// jQuery-hashchange should be in Debian! ?>
@@ -105,7 +120,6 @@
 		<script type="text/javascript" src="js/012-jszip-utils.js"></script>
 		<script type="text/javascript" src="js/013-md5.js"></script>
 		<script type="text/javascript" src="js/014-file-saver.js"></script>
-		<script type="text/javascript" src="js/015-json-cycle.js"></script>
 		<script type="text/javascript" src="js/016-lzw-compress.js"></script>
 		<script type="text/javascript" src="js/020-classes.js"></script>
 		<script type="text/javascript" src="js/031-translations.js"></script>
@@ -211,7 +225,7 @@
 			// $(document).ready(function() {
 			// 	$(window).hashchange(function() {
 			// 		_paq.push(['setCustomUrl', '/' + window.location.hash]);
-			// 		_paq.push(['setDocumentTitle', PhotoFloat.cleanHash(location.hash)]);
+			// 		_paq.push(['setDocumentTitle', PhotoFloat.convertHashToCacheBase(location.hash)]);
 			// 		_paq.push(['trackPageView']);
 			// 	});
 			// });
@@ -236,7 +250,7 @@
 				$(window).hashchange(function() {
 					window._gaq = window._gaq || [];
 					window._gaq.push(['_trackPageview']);
-					window._gaq.push(['_trackPageview', PhotoFloat.cleanHash(location.hash)]);
+					window._gaq.push(['_trackPageview', PhotoFloat.convertHashToCacheBase(location.hash)]);
 				});
 			});
 		</script>
@@ -359,7 +373,7 @@
 							</span>
 							<a class="menu-map-divider">|</a>
 							<span class="link-button">
-								<a class="menu-map-link"></a>
+								<a class="map-link"></a>
 							</span>
 							<span class="fullscreen">
 								<span class="fullscreen-divider"> | </span>
@@ -412,7 +426,7 @@
 		</li>
 		<li class="expandable search">
 			<form>
-				<input type="text" id="search-field" />
+				<input type="search" id="search-field" />
 				<img id="search-button" src="img/ic_search_black_48dp_2x.png" />
 			</form>
 			<ul class="hidden">
@@ -420,6 +434,7 @@
 				<li id="any-word" class="search active"></li>
 				<li id="case-sensitive" class="search active"></li>
 				<li id="accent-sensitive" class="search active"></li>
+				<li id="tags-only" class="search active"></li>
 				<li id="album-search" class="search active"></li>
 			</ul>
 		</li>
@@ -458,15 +473,17 @@
 			<span class='ui caption'></span>
 			<ul class="sub-menu hidden">
 				<li class='ui hide-title active'></li>
-				<li class='ui hide-media-caption active'></li>
 				<li class='ui media-count active'></li>
-				<li class='ui spaced active'></li>
-				<li class='ui square-album-thumbnails active'></li>
 				<li class='ui slide active'></li>
+				<li class='ui square-album-thumbnails active'></li>
 				<li class='ui album-names active'></li>
 				<li class='ui square-media-thumbnails active'></li>
 				<li class='ui media-names active'></li>
-				<li class='ui hide-bottom-thumbnails active'></li>
+				<li class='ui show-descriptions active'></li>
+				<li class='ui show-tags active'></li>
+				<li class='ui spaced active'></li>
+				<li class='ui show-bottom-thumbnails active'></li>
+				<li class='ui reset active'></li>
 			</ul>
 		</li>
 
@@ -478,6 +495,9 @@
 				<li class='select albums active'></li>
 				<li class='select media active'></li>
 				<li class='select global-reset active'></li>
+				<li class='select nothing active'></li>
+				<li class='select no-albums active'></li>
+				<li class='select no-media active'></li>
 				<li class='select go-to-selected active'></li>
 			</ul>
 		</li>
@@ -515,10 +535,12 @@
 	</ul>
 
 
-	<div id="loading"></div>
-	<div id="downloading-media"></div>
-	<div id="preparing-zip"></div>
-	<div id="sending-email"></div>
+	<div id="loading" class="messages" ></div>
+	<div id="working" class="messages"></div>
+	<div id="downloading-media" class="messages"></div>
+	<div id="preparing-zip" class="messages"></div>
+	<div id="sending-email" class="messages"></div>
+	<div id="ui-settings-restored" class="messages"></div>
 
 	<div id="folders-browsing" class="browsing-mode-message"></div>
 	<div id="by-date-browsing" class="browsing-mode-message"></div>
@@ -548,9 +570,16 @@
 	<div id="by-name-media-sorting" class="sort-message"></div>
 	<div id="by-name-reverse-media-sorting" class="sort-message"></div>
 
-	<div id="caption">
-		<div id="caption-title"></div>
-		<div id="caption-description"></div>
+	<div id="description-wrapper">
+		<div id="description">
+			<div id="description-title"></div>
+			<div id="description-text"></div>
+		</div>
+		<div id="description-tags"></div>
+		<div id="description-hide-show">
+			<div id="description-hide"></div>
+			<div id="description-show"></div>
+		</div>
 	</div>
 
 </body>

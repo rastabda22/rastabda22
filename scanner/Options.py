@@ -70,7 +70,16 @@ options_requiring_thumbnails_regeneration = [
 ]
 options_requiring_videos_regeneration = [
 	{'name': 'video_transcode_bitrate', 'default': '1M'},
-	{'name': 'video_crf', 'default': 20}
+	{'name': 'video_crf', 'default': 20},
+	{'name': 'video_preset', 'default': 'slow'},
+	{'name': 'video_profile', 'default': 'baseline'},
+	{'name': 'video_profile_level', 'default': '3.0'},
+	{'name': 'video_audio_ac', 'default': 2},
+	{'name': 'video_audio_ab', 'default': '160k'},
+	{'name': 'video_maxrate', 'default': '10M'},
+	{'name': 'video_bufsize', 'default': '10M'},
+	{'name': 'video_frame_maxsize', 'default': 'hd720'},
+	{'name': 'video_add_options', 'default': None},
 ]
 
 # lets put here all unicode combining code points, in order to be sure to use the same in both python and js
@@ -101,8 +110,8 @@ max_random = 999999999
 config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x-tga']
 
 
-# set this variable to a new value (previously was a number, now it may include letters)
-# whenever the json files structure changes (the app version can be used)
+# set this variable to a new value whenever the json files structure changes
+# - previously was a string, now it must be a float number
 # json_version = 0 is debug mode: json files are always considered invalid
 # json_version = 1 since ...
 # json_version = 2 since checksums have been added
@@ -130,9 +139,17 @@ config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x
 # json_version = 4.2 since numMediaInSubTree and numMedia are changed to numsMediaInSubTree and numsMedia
 # json_version = 4.21 since mediaNameList changed to mediaList
 # json_version = 4.22 since albumCacheBase removed from mediaList elements
+# json_version = 4.23 since subalbums have complete path
+# json_version = 4.24 since default albums and media sorting implemented
+# json_version = 4.25 since the bugs in reading exif metadata have been corrected
+# json_version = 4.26 since tags have been added to subalbums
+# json_version = 4.27 since ancestorsTitles list have been added to albums
 
 # json_version = 0
-json_version = 4.22
+json_version = 4.27
+
+# the release version number (a string)
+version = "v4.9.35"
 
 
 def set_obsolete_json_version_flag():
@@ -256,11 +273,14 @@ def get_options():
 			except configparser.Error:
 				indented_message("PRE WARNING: option " + option + " in user config file", "is not integer, using default value", 2)
 				config[option] = default_config.getint('options', option)
-		elif option in ('follow_symlinks',
+		elif option in (
+				'follow_symlinks',
 				'checksum',
 				'different_album_thumbnails',
 				'hide_title',
 				'hide_bottom_thumbnails',
+				'hide_descriptions',
+				'hide_tags',
 				'albums_slide_style',
 				'show_media_names_below_thumbs',
 				'show_album_names_below_thumbs',

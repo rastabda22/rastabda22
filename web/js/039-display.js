@@ -38,18 +38,14 @@ $(document).ready(function() {
 
 	/* Displays */
 
-	$("#menu-icon").off().on("click", f.toggleMenu);
+	$("#menu-icon").off("click").on("click", util.toggleMenu);
 
 	/* Event listeners */
 
-	$(document).on('keydown', function(e) {
-		var isMap = $('#mapdiv').html() ? true : false;
-		var isPopup = $('.leaflet-popup').html() ? true : false;
+	$(document).off("keydown").on("keydown", function(e) {
+		var isMap = util.isMap();
+		var isPopup = util.isPopup();
 		var isAuth = $("#auth-text").is(":visible");
-
-		function toggleMenu() {
-			$("#menu-icon")[0].click();
-		}
 
 		let upLink = util.upHash();
 
@@ -65,26 +61,26 @@ $(document).ready(function() {
 				// util.goUpInHash();
 				return false;
 			} else if ($("ul#right-menu").hasClass("expand")) {
-				toggleMenu();
+				util.toggleMenu();
 				return false;
-			} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video") === 0 && ! $("#media-center")[0].paused) {
-					// stop the video, otherwise it keeps playing
-					$("#media-center")[0].pause();
+			} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0 && ! $("video#media-center")[0].paused) {
+				// stop the video, otherwise it keeps playing
+				$("video#media-center")[0].pause();
+				return false;
+			} else if (isPopup) {
+				// the popup is there: close it
+				$('.leaflet-popup-close-button')[0].click();
+				env.mapAlbum = util.initializeMapAlbum();
+				// env.mapAlbum = {};
+				// $('#popup #popup-content').html("");
+				return false;
 			} else if (isMap) {
-				if (isPopup) {
-					// the popup is there: close it
-					$('.leaflet-popup-close-button')[0].click();
-					env.mapAlbum = util.initializeMapAlbum();
-					// env.mapAlbum = {};
-					// $('#popup #popup-content').html("");
-				} else {
-					// we are in a map: close it
-					$('.modal-close')[0].click();
-					env.popupRefreshType = "previousAlbum";
-					env.mapRefreshType = "none";
-					// the menu must be updated here in order to have the browsing mode shortcuts workng
-					f.updateMenu();
-				}
+				// we are in a map: close it
+				$('.modal-close')[0].click();
+				env.popupRefreshType = "previousAlbum";
+				env.mapRefreshType = "none";
+				// the menu must be updated here in order to have the browsing mode shortcuts workng
+				f.updateMenu();
 				return false;
 			} else if (pS.getCurrentZoom() > pS.getInitialZoom() || $(".media-box#center .title").hasClass("hidden-by-pinch")) {
 				pS.pinchOut(null, null);
@@ -93,10 +89,13 @@ $(document).ready(function() {
 				tF.goFullscreen(e);
 				return false;
 			} else if (upLink) {
-				if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video") === 0)
+				if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0)
 					// stop the video, otherwise it keeps playing
-					$("#media-center")[0].pause();
-				if (env.currentMedia !== null || env.currentAlbum.cacheBase !== env.options.folders_string) {
+					$("video#media-center")[0].pause();
+				if (
+					env.currentAlbum.cacheBase == env.options.folders_string && util.isSearchHash() ||
+					env.currentAlbum.cacheBase !== env.options.folders_string || env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia()
+				) {
 					env.fromEscKey = true;
 					$("#loading").show();
 					pS.swipeDown(upLink);
@@ -110,17 +109,14 @@ $(document).ready(function() {
 		} else if (! isAuth) {
 			if (! $("#search-field").is(':focus')) {
 				if (! e.ctrlKey && ! e.altKey) {
-					if (e.key === "Tab") {
+					if (e.key === util._t("#hide-everytyhing-shortcut")) {
 						e.preventDefault();
-						if (pS.getCurrentZoom() == pS.getInitialZoom() && ! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
-							tF.toggleTitleThumbnailAndCaption(e);
-							// $("ul#right-menu li.hide-title")[0].click();
-							// $("ul#right-menu li.hide-bottom-thumbnails")[0].click();
-							// $("ul#right-menu li.hide-media-caption")[0].click();
+						if (pS.getCurrentZoom() === pS.getInitialZoom() && ! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
+							tF.toggleTitleAndBottomThumbnailsAndDescriptionsAndTags(e);
 							return false;
 						}
 					} else if (e.key === "ArrowRight" && (pS.getCurrentZoom() !== pS.getInitialZoom() || env.prevMedia) && env.currentMedia !== null && ! isMap) {
-						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
+						if (pS.getCurrentZoom() === pS.getInitialZoom()) {
 							$("#album-view.media-view-container").removeClass("hidden-by-pinch");
 							$("#next")[0].click();
 							// media.swipeLeft();
@@ -133,15 +129,16 @@ $(document).ready(function() {
 								pS.drag(env.windowWidth / 3, {x: -1, y: 0});
 						}
 						return false;
-					} else if (e.key === " " && env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video") === 0) {
-						if ($("#media-center")[0].paused)
+					} else if (e.key === " " && ! e.shiftKey && env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0) {
+						if ($("video#media-center")[0].paused)
 							// play the video
-							$("#media-center")[0].play();
+							$("video#media-center")[0].play();
 						else
 							// stop the video
-							$("#media-center")[0].pause();
+							$("video#media-center")[0].pause();
+						return false;
 					} else if (
-						(e.key.toLowerCase() === "n" || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
+						(e.key.toLowerCase() === util._t("#next-media-title-shortcut") || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
 						env.nextMedia && env.currentMedia !== null && ! isMap
 					) {
 						$("#album-view.media-view-container").removeClass("hidden-by-pinch");
@@ -149,7 +146,7 @@ $(document).ready(function() {
 						// env.nextMedia.swipeLeft();
 						return false;
 					} else if (
-						(e.key.toLowerCase() === "p" || e.key === "Backspace" && ! e.shiftKey || (e.key === "Enter" || e.key === " ") && e.shiftKey) &&
+						(e.key.toLowerCase() === util._t("#prev-media-title-shortcut") || e.key === "Backspace" && ! e.shiftKey || (e.key === "Enter" || e.key === " ") && e.shiftKey) &&
 						env.prevMedia && env.currentMedia !== null && ! isMap
 					) {
 						$("#album-view.media-view-container").removeClass("hidden-by-pinch");
@@ -157,7 +154,7 @@ $(document).ready(function() {
 						// env.prevMedia.swipeRight();
 						return false;
 					} else if (e.key === "ArrowLeft" && (pS.getCurrentZoom() !== pS.getInitialZoom() || env.prevMedia) && env.currentMedia !== null && ! isMap) {
-						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
+						if (pS.getCurrentZoom() === pS.getInitialZoom()) {
 							$("#album-view.media-view-container").removeClass("hidden-by-pinch");
 							$("#prev")[0].click();
 							// media.swipeRight();
@@ -171,9 +168,11 @@ $(document).ready(function() {
 						}
 						return false;
 					} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink && ! isMap) {
-						if (pS.getCurrentZoom() == pS.getInitialZoom()) {
-							if (! $("#center .title").hasClass("hidden-by-pinch"))
+						if (pS.getCurrentZoom() === pS.getInitialZoom()) {
+							if (e.shiftKey && ! $("#center .title").hasClass("hidden-by-pinch")) {
 								pS.swipeDown(upLink);
+								return false;
+							}
 						} else {
 							// drag
 							if (! e.shiftKey)
@@ -181,10 +180,10 @@ $(document).ready(function() {
 							else
 								// faster
 								pS.drag(env.windowHeight / 3, {x: 0, y: 1});
+							return false;
 						}
-						return false;
 					} else if (e.key === "ArrowDown" || e.key === "PageDown" && ! isMap) {
-					 	if (env.mediaLink && env.currentMedia === null) {
+					 	if (e.shiftKey && env.mediaLink && env.currentMedia === null) {
 							pS.swipeUp(env.mediaLink);
 							return false;
 						} else if (pS.getCurrentZoom() > pS.getInitialZoom()) {
@@ -195,17 +194,17 @@ $(document).ready(function() {
 								PinchSwipe.drag(env.windowHeight / 3, {x: 0, y: -1});
 							return false;
 						}
-					} else if (e.key.toLowerCase() === "d" && ! isMap) {
+					} else if (e.key.toLowerCase() === util._t(".download-link-shortcut") && ! isMap) {
 						if (env.currentMedia !== null)
 							$(".download-single-media .download-link")[0].click();
 						return false;
-					} else if (e.key.toLowerCase() === "f" && env.currentMedia !== null && ! isMap) {
+					} else if (e.key.toLowerCase() === util._t(".enter-fullscreen-shortcut") && env.currentMedia !== null && ! isMap) {
 						tF.goFullscreen(e);
 						return false;
-					} else if (e.key.toLowerCase() === "m" && env.currentMedia !== null && ! isMap) {
+					} else if (e.key.toLowerCase() === util._t(".metadata-hide-shortcut") && env.currentMedia !== null && ! isMap) {
 						f.toggleMetadata();
 						return false;
-					} else if (e.key.toLowerCase() === "o" && env.currentMedia !== null && ! isMap) {
+					} else if (e.key.toLowerCase() === util._t(".original-link-shortcut") && env.currentMedia !== null && ! isMap) {
 						$("#center .original-link")[0].click();
 						return false;
 					} else if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].indexOf(e.key) > -1) {
@@ -222,19 +221,19 @@ $(document).ready(function() {
 					} else if (e.key === "+") {
 						if (isMap) {
 							// return false;
-						} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("image") === 0) {
+						} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("image/") === 0) {
 							pS.pinchIn(null);
 							return false;
 						}
 					} else if (e.key === "-") {
 						if (isMap) {
 							// return false;
-						} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("image") === 0) {
+						} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("image/") === 0) {
 							pS.pinchOut(null, null);
 							return false;
 						}
 					} else if (
-						e.key.toLowerCase() === "s" &&
+						e.key.toLowerCase() === util._t(".map-link-shortcut") &&
 						! isMap &&
 						(
 							env.currentMedia !== null && env.currentMedia.hasGpsData() ||
@@ -247,17 +246,18 @@ $(document).ready(function() {
 							$(".map-popup-trigger")[0].click();
 						return false;
 					} else if (
-						e.key.toLowerCase() === "u" &&
+						e.key.toLowerCase() === util._t("#protected-content-unveil-shortcut") &&
 						env.currentAlbum !== null
 					) {
-						var numPasswords;
-						if (env.currentAlbum.isSearch())
-							numPasswords = env.cache.getAlbum(env.currentAlbum.ancestorsCacheBase[0]).numPasswords();
-						else
-							numPasswords = env.currentAlbum.numPasswords();
+						// var numPasswords;
+						// if (env.currentAlbum.isSearch())
+						// 	numPasswords = env.cache.getAlbum(env.currentAlbum.ancestorsCacheBase[0]).numPasswords();
+						// else
+							// numPasswords = env.currentAlbum.numPasswords();
 
 						if (
-							numPasswords && PhotoFloat.guessedPasswordCodes.length < numPasswords
+							env.currentAlbum.hasVeiledProtectedContent()
+							// numPasswords && env.guessedPasswordCodes.length < numPasswords
 						) {
 							$("#protected-content-unveil")[0].click();
 							return false;
@@ -267,15 +267,17 @@ $(document).ready(function() {
 
 				if (
 					env.currentAlbum !== null && (
-						[
-							env.options.folders_string,
-							env.options.by_date_string,
-							env.options.by_gps_string,
-							env.options.by_map_string,
-							env.options.by_selection_string,
-							env.options.by_search_string
-						].indexOf(env.currentAlbum.cacheBase) !== -1 ||
-						env.currentMedia !== null || env.currentAlbum.isAlbumWithOneMedia() || util.somethingIsSelected()
+						env.currentAlbum.isAnyRoot() ||
+						env.currentMedia !== null || env.currentAlbum.isAlbumWithOneMedia()
+						// [
+						// 	env.options.folders_string,
+						// 	env.options.by_date_string,
+						// 	env.options.by_gps_string,
+						// 	env.options.by_map_string,
+						// 	env.options.by_selection_string,
+						// 	env.options.by_search_string
+						// ].indexOf(env.currentAlbum.cacheBase) !== -1 ||
+						// env.currentMedia !== null || env.currentAlbum.isAlbumWithOneMedia() || util.somethingIsSelected() || util.somethingIsSearched() || env.currentAlbum.isMap()
 					) && ! isMap
 				) {
 					// browsing mode switchers
@@ -303,17 +305,16 @@ $(document).ready(function() {
 				}
 			}
 
-			if (e.key.toLowerCase() === 'a' && e.ctrlKey) {
-				if (! e.shiftKey && ! $(".select.everything").hasClass("hidden") && ! $(".select.everything").hasClass("selected")) {
+			if (
+				! $("#search-field").is(':focus') &&
+				e.key.toLowerCase() === util._t("#select-everything-shortcut")
+			) {
+				if (! e.shiftKey) {
 					// select everything
-					$(".select.everything").click();
+					$(".select.everything:not(.hidden):not(.selected)").click();
 				} else if (e.shiftKey) {
 					// unselect everything
-					if (! $(".select.everything-individual").hasClass("hidden") && $(".select.everything-individual").hasClass("selected")) {
-						$(".select.everything-individual").click();
-					} else if (! $(".select.everything").hasClass("hidden") && $(".select.everything").hasClass("selected")) {
-						$(".select.everything").click();
-					}
+					$(".select.nothing").click();
 				}
 				return false;
 			}
@@ -322,7 +323,7 @@ $(document).ready(function() {
 				! $("#search-field").is(':focus') &&
 				env.currentMedia === null && ! isMap && (
 					['[', ']'].indexOf(e.key) !== -1 && ! isPopup && env.currentAlbum.subalbums.length > 1 ||
-					['{', '}'].indexOf(e.key) !== -1 && env.currentAlbum.media.length > 1
+					['{', '}'].indexOf(e.key) !== -1 && (env.currentAlbum.media.length > 1 || env.mapAlbum.media.length > 1)
 				)
 			) {
 				if (env.currentMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) {
@@ -385,14 +386,15 @@ $(document).ready(function() {
 						$(".sort." + mode + "-sort" + nextSelector)[0].click();
 						// console.log(".sort." + mode + "-sort" + nextSelector + " ------- " + nextSortingModeMessageId);
 					}
+					return false;
 				}
 			}
 
 			if (
-				e.key.toLowerCase() === "e" && e.target.tagName.toLowerCase() != 'input' &&  ! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey
+				e.key.toLowerCase() === util._t("#menu-icon-title-shortcut") && e.target.tagName.toLowerCase() != "input" &&  ! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey
 					// "e" opens the menu, and closes it if focus in not in input field
 			) {
-				toggleMenu();
+				util.toggleMenu();
 				return false;
 			}
 		}
@@ -403,8 +405,14 @@ $(document).ready(function() {
 	util.setLinksVisibility();
 	util.setNextPrevVisibility();
 
-	$("#next").attr("title", util._t("#next-media-title")).attr("alt", util._t("#next-media-title"));
-	$("#prev").attr("title", util._t("#prev-media-title")).attr("alt", util._t("#prev-media-title"));
+	let nextTitle  = util._t("#next-media-title");
+	let prevTitle  = util._t("#prev-media-title");
+	if (! env.isMobile.any()) {
+		nextTitle  += " [" + util._t("#next-media-title-shortcut") + "]";
+		prevTitle  += " [" + util._t("#prev-media-title-shortcut") + "]";
+	}
+	$("#next").attr("title", nextTitle).attr("alt", nextTitle);
+	$("#prev").attr("title", prevTitle).attr("alt", prevTitle);
 	$("#pinch-in").attr("title", util._t("#pinch-in-title")).attr("alt", util._t("#pinch-in-title"));
 	$("#pinch-out").attr("title", util._t("#pinch-out-title")).attr("alt", util._t("#pinch-out-title"));
 	if (env.isMobile.any()) {
@@ -415,17 +423,17 @@ $(document).ready(function() {
 	// $("#pinch-out").on("click", pS.pinchOut);
 
 	// search
-	$('#search-button').on("click", function() {
+	$('#search-button').off("click").on("click", function() {
 		var searchOptions = '';
-		var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
 
 		// save the current hash in order to come back there when exiting from search
-		if (util.isSearchCacheBase(albumHash)) {
+		if (util.isSearchCacheBase(albumCacheBase)) {
 			// a plain search: get the folder to search in from the search album hash
-			env.options.cache_base_to_search_in = albumHash.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
+			env.options.cache_base_to_search_in = albumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
 		} else {
 			// it's a subalbum of a search or it's not a search hash: use the current album hash
-			env.options.cache_base_to_search_in = albumHash;
+			env.options.cache_base_to_search_in = albumCacheBase;
 
 			env.options.saved_cache_base_to_search_in = env.options.cache_base_to_search_in;
 		}
@@ -436,22 +444,34 @@ $(document).ready(function() {
 		var bySearchViewHash = env.hashBeginning + env.options.by_search_string;
 
 		// build the search album part of the hash
-		var wordsStringOriginal = $("#search-field").val().normalize().trim().replace(/  /g, ' ');
-		var wordsString = encodeURIComponent(wordsStringOriginal.replace(/ /g, '_'));
+		var wordsStringOriginal, wordsString;
+		if (env.options.search_tags_only) {
+			wordsStringOriginal = util.encodeNonLetters($("#search-field").val()).normalize().replace(/  /g, ' ').trim();
+		} else {
+			wordsStringOriginal = $("#search-field").val().normalize().replace(/[^\p{L}]/ug, ' ').replace(/  /g, ' ').trim();
+		}
+		wordsString = encodeURIComponent(wordsStringOriginal.replace(/ /g, '_'));
 		// TO DO: non-alphabitic words have to be filtered out
 		if (wordsString) {
-			var isPopup = $('.leaflet-popup').html() ? true : false;
-			if (isPopup) {
-				// refine the popup content!
+			if (util.isPopup()) {
+				// refine the original popup content!
 
 				// normalize the search terms
 				// the normalized words are needed in order to compare with the search cache json files names, which are normalized
 				var wordsStringNormalizedAccordingToOptions = util.normalizeAccordingToOptions(wordsStringOriginal);
-				var wordsStringNormalized = util.removeAccents(wordsStringOriginal.toLowerCase());
+				var wordsStringNormalized = wordsStringOriginal.toLowerCase();
+				wordsStringNormalized = util.removeAccents(wordsStringNormalized);
 
-				var searchWordsFromUser = wordsStringOriginal.split(' ');
-				var searchWordsFromUserNormalizedAccordingToOptions = wordsStringNormalizedAccordingToOptions.split(' ');
-				var searchWordsFromUserNormalized = wordsStringNormalized.split(' ');
+				var searchWordsFromUser = [], searchWordsFromUserNormalized = [], searchWordsFromUserNormalizedAccordingToOptions = [];
+				if (env.options.search_tags_only) {
+					searchWordsFromUser = [decodeURIComponent(wordsString).replace(/_/g, " ")];
+					searchWordsFromUserNormalizedAccordingToOptions = [decodeURIComponent(wordsStringNormalizedAccordingToOptions)];
+					searchWordsFromUserNormalized = [decodeURIComponent(wordsStringNormalized)];
+				} else {
+					searchWordsFromUser = wordsString.split('_');
+					searchWordsFromUserNormalizedAccordingToOptions = wordsStringNormalizedAccordingToOptions.split(' ');
+					searchWordsFromUserNormalized = wordsStringNormalized.split(' ');
+				}
 				var removedStopWords;
 
 				// remove the stopwords from the search terms
@@ -461,29 +481,40 @@ $(document).ready(function() {
 						[searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions, removedStopWords] =
 							phFl.removeStopWords(searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions);
 
-						// every normalized single media name must match the search terms
-						var matchingMedia = [];
-						for (let iMedia = 0; iMedia < env.mapAlbum.media.length; iMedia ++) {
-							// TO DO, BUG: it's not the media name to be used for matching, but the words in media name!!!!!!!
-							// TO DO: the description (caption) must be matched too
-							let words = util.normalizeAccordingToOptions(env.mapAlbum.media[iMedia].words);
-							if (
-								! env.options.search_any_word &&
-								searchWordsFromUserNormalizedAccordingToOptions.every(searchWord =>
-									env.options.search_inside_words && words.some(word => word.indexOf(searchWord) > -1) ||
-									! env.options.search_inside_words && words.some(word => word === searchWord)
-								) ||
-								env.options.search_any_word &&
-								searchWordsFromUserNormalizedAccordingToOptions.some(searchWord =>
-									env.options.search_inside_words && words.some(word => word.indexOf(searchWord) > -1) ||
-									! env.options.search_inside_words && words.some(word => word === searchWord)
-								)
-							)
-								matchingMedia.push(env.mapAlbum.media[iMedia]);
-						}
-						env.mapAlbum.media = matchingMedia;
-						tF.prepareAndDoPopupUpdate();
-
+						// re-build the original map album
+						var clickHistory = env.mapAlbum.clickHistory;
+						env.mapAlbum = new Album();
+						let playPromise = tF.playClickElement(clickHistory, 0);
+						playPromise.then(
+							function popupReady() {
+								if (env.options.search_any_word) {
+									// at least one word
+									mediaResult = new Media([]);
+									searchWordsFromUserNormalizedAccordingToOptions.forEach(
+										function(normalizedSearchWord, index) {
+											let mapAlbumClone = env.mapAlbum.clone();
+											mapAlbumClone.filterMediaAgainstOneWord(normalizedSearchWord);
+											mediaResult = util.arrayUnion(mediaResult, mapAlbumClone.media, function(a, b) {return a.isEqual(b)});
+										}
+									);
+									env.mapAlbum.media = mediaResult;
+								} else {
+									env.mapAlbum.filterMediaAgainstEveryWord(searchWordsFromUserNormalizedAccordingToOptions);
+								}
+								tF.prepareAndDoPopupUpdate();
+								if (! env.options.search_inside_words && removedStopWords.length) {
+									// say that some search word hasn't been used
+									let stopWordsFound = " - <span class='italic'>" + removedStopWords.length + " " + util._t("#removed-stopwords") + ": ";
+									for (i = 0; i < removedStopWords.length; i ++) {
+										if (i)
+											stopWordsFound += ", ";
+										stopWordsFound += removedStopWords[i];
+									}
+									stopWordsFound += "</span>";
+									$("#popup-photo-count").append(stopWordsFound);
+								}
+							}
+						);
 					},
 					function() {
 						console.trace();
@@ -500,13 +531,18 @@ $(document).ready(function() {
 					searchOptions += 'c' + env.options.search_options_separator;
 				if (env.options.search_accent_sensitive)
 					searchOptions += 'a' + env.options.search_options_separator;
+				if (env.options.search_tags_only)
+					searchOptions += 't' + env.options.search_options_separator;
 				if (env.options.search_current_album)
 					searchOptions += 'o' + env.options.search_options_separator;
 				bySearchViewHash += searchOptions + wordsString;
 
 				bySearchViewHash += env.options.cache_folder_separator + env.options.cache_base_to_search_in;
 
-				window.location.href = bySearchViewHash;
+				if (bySearchViewHash !== window.location.hash) {
+					$("#loading").show();
+					window.location.hash = bySearchViewHash;
+				}
 			}
 		}
 
@@ -527,131 +563,133 @@ $(document).ready(function() {
 		}
 	});
 
-	$("li#inside-words").on('click', f.toggleInsideWordsSearch);
-	$("li#any-word").on('click', f.toggleAnyWordSearch);
-	$("li#case-sensitive").on('click', f.toggleCaseSensitiveSearch);
-	$("li#accent-sensitive").on('click', f.toggleAccentSensitiveSearch);
-	$("li#album-search").on('click', f.toggleCurrentAbumSearch);
+	$("li#inside-words").off("click").on("click", util.toggleInsideWordsSearch);
+	$("li#any-word").off("click").on("click", util.toggleAnyWordSearch);
+	$("li#case-sensitive").off("click").on("click", util.toggleCaseSensitiveSearch);
+	$("li#accent-sensitive").off("click").on("click", util.toggleAccentSensitiveSearch);
+	$("li#tags-only").off("click").on("click", util.toggleTagsOnlySearch);
+	$("li#album-search").off("click").on("click", util.toggleCurrentAbumSearch);
 
-	$(".download-album.everything.all.full").on(
-		'click',
+	$(".download-album.everything.all.full").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.everything.all.full").hasClass("active")) {
-				Utilities.downloadAlbum(true);
+				env.currentAlbum.downloadAlbum(true);
 			}
 		}
 	);
-	$(".download-album.everything.all.sized").on(
-		'click',
+	$(".download-album.everything.all.sized").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.everything.all.sized").hasClass("active")) {
-				Utilities.downloadAlbum(true, "all", $(".download-album.everything.all.sized").attr("size"));
+				env.currentAlbum.downloadAlbum(true, "all", $(".download-album.everything.all.sized").attr("size"));
 			}
 		}
 	);
-	$(".download-album.everything.images.full").on(
-		'click',
+	$(".download-album.everything.images.full").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.everything.images.full").hasClass("active")) {
-				Utilities.downloadAlbum(true, "images");
+				env.currentAlbum.downloadAlbum(true, "images");
 			}
 		}
 	);
-	$(".download-album.everything.images.sized").on(
-		'click',
+	$(".download-album.everything.images.sized").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.everything.images.sized").hasClass("active")) {
-				Utilities.downloadAlbum(true, "images", $(".download-album.everything.images.sized").attr("size"));
+				env.currentAlbum.downloadAlbum(true, "images", $(".download-album.everything.images.sized").attr("size"));
 			}
 		}
 	);
-	$(".download-album.everything.videos.full").on(
-		'click',
+	$(".download-album.everything.videos.full").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.everything.videos.full").hasClass("active")) {
-				Utilities.downloadAlbum(true, "videos");
+				env.currentAlbum.downloadAlbum(true, "videos");
 			}
 		}
 	);
-	$(".download-album.everything.videos.sized").on(
-		'click',
+	$(".download-album.everything.videos.sized").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.everything.videos.sized").hasClass("active")) {
-				Utilities.downloadAlbum(true, "videos", $(".download-album.everything.videos.sized").attr("size"));
+				env.currentAlbum.downloadAlbum(true, "videos", $(".download-album.everything.videos.sized").attr("size"));
 			}
 		}
 	);
 
-	$(".download-album.media-only.all.full").on(
-		'click',
+	$(".download-album.media-only.all.full").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.media-only.all").hasClass("active")) {
-				Utilities.downloadAlbum(false, "all");
+				env.currentAlbum.downloadAlbum(false, "all");
 			}
 		}
 	);
-	$(".download-album.media-only.all.sized").on(
-		'click',
+	$(".download-album.media-only.all.sized").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.media-only.all.sized").hasClass("active")) {
-				Utilities.downloadAlbum(false, "all", $(".download-album.media-only.all.sized").attr("size"));
+				env.currentAlbum.downloadAlbum(false, "all", $(".download-album.media-only.all.sized").attr("size"));
 			}
 		}
 	);
-	$(".download-album.media-only.images.full").on(
-		'click',
+	$(".download-album.media-only.images.full").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.media-only.images").hasClass("active")) {
-				Utilities.downloadAlbum(false, "images");
+				env.currentAlbum.downloadAlbum(false, "images");
 			}
 		}
 	);
-	$(".download-album.media-only.images.sized").on(
-		'click',
+	$(".download-album.media-only.images.sized").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.media-only.images.sized").hasClass("active")) {
-				Utilities.downloadAlbum(false, "images", $(".download-album.media-only.images.sized").attr("size"));
+				env.currentAlbum.downloadAlbum(false, "images", $(".download-album.media-only.images.sized").attr("size"));
 			}
 		}
 	);
-	$(".download-album.media-only.videos.full").on(
-		'click',
+	$(".download-album.media-only.videos.full").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.media-only.videos").hasClass("active")) {
-				Utilities.downloadAlbum(false, "videos");
+				env.currentAlbum.downloadAlbum(false, "videos");
 			}
 		}
 	);
-	$(".download-album.media-only.videos.sized").on(
-		'click',
+	$(".download-album.media-only.videos.sized").off("click").on(
+		"click",
 		function() {
 			if ($(".download-album.media-only.videos.sized").hasClass("active")) {
-				Utilities.downloadAlbum(false, "videos", $(".download-album.media-only.videos.sized").attr("size"));
+				env.currentAlbum.downloadAlbum(false, "videos", $(".download-album.media-only.videos.sized").attr("size"));
 			}
 		}
 	);
-	$("#protected-content-unveil").on('click', util.showAuthForm);
+	$("#protected-content-unveil").off("click").on("click", util.showAuthForm);
 
 	// binds the click events to the sort buttons
 
-	$("ul#right-menu li.hide-title").on('click', tF.toggleTitle);
-	$("ul#right-menu li.hide-media-caption").on('click', tF.toggleCaption);
-	$("ul#right-menu li.hide-bottom-thumbnails").on('click', tF.toggleBottomThumbnails);
-	$("ul#right-menu li.slide").on('click', tF.toggleSlideMode);
-	$("ul#right-menu li.spaced").on('click', tF.toggleSpacing);
-	$("ul#right-menu li.album-names").on('click', tF.toggleAlbumNames);
-	$("ul#right-menu li.media-count").on('click', tF.toggleMediaCount);
-	$("ul#right-menu li.media-names").on('click', tF.toggleMediaNames);
-	$("ul#right-menu li.square-album-thumbnails").on('click', tF.toggleAlbumsSquare);
-	$("ul#right-menu li.square-media-thumbnails").on('click', tF.toggleMediaSquare);
-	$("ul#right-menu #show-big-albums").on('click', tF.toggleBigAlbumsShow);
-	$("#menu-icon").off();
-	$("#menu-icon").on("click", f.toggleMenu);
+	$("ul#right-menu li.hide-title").off("click").on("click", tF.toggleTitle);
+	$("ul#right-menu li.show-descriptions").off("click").on("click", tF.toggleDescriptions);
+	$("ul#right-menu li.show-tags").off("click").on("click", tF.toggleTags);
+	$("ul#right-menu li.show-bottom-thumbnails").off("click").on("click", tF.toggleBottomThumbnails);
+	$("ul#right-menu li.slide").off("click").on("click", tF.toggleSlideMode);
+	$("ul#right-menu li.spaced").off("click").on("click", tF.toggleSpacing);
+	$("ul#right-menu li.album-names").off("click").on("click", tF.toggleAlbumNames);
+	$("ul#right-menu li.media-count").off("click").on("click", tF.toggleMediaCount);
+	$("ul#right-menu li.media-names").off("click").on("click", tF.toggleMediaNames);
+	$("ul#right-menu li.square-album-thumbnails").off("click").on("click", tF.toggleAlbumsSquare);
+	$("ul#right-menu li.square-media-thumbnails").off("click").on("click", tF.toggleMediaSquare);
+	$("ul#right-menu li.reset").off("click").on("click", tF.resetDisplaySettings);
+	$("ul#right-menu #show-big-albums").off("click").on("click", tF.toggleBigAlbumsShow);
+	$("#menu-icon").off("click").on("click", util.toggleMenu);
 
 	$("#auth-form").submit(
 		function() {
 			// This function checks the password looking for a file with the encrypted password name in the passwords subdir
-			// the code in the found password file is inserted into PhotoFloat.guessedPasswordsMd5, and at the hash change the content unveiled by that password will be shown
+			// the code in the found password file is inserted into env.guessedPasswordsMd5, and at the hash change the content unveiled by that password will be shown
 
 			var password = $("#password");
 			var encryptedPassword = md5(password.val());
@@ -660,38 +698,42 @@ $(document).ready(function() {
 			var ajaxOptions = {
 				type: "GET",
 				dataType: "json",
-				url: util.pathJoin([env.options.server_cache_path, env.options.passwords_subdir, encryptedPassword]),
+				url: util.pathJoin([env.server_cache_path, env.options.passwords_subdir, encryptedPassword]),
 				success: function(jsonCode) {
 					password.css("background-color", "rgb(200, 200, 200)");
 					var passwordCode = jsonCode.passwordCode;
 
-					if (! PhotoFloat.guessedPasswordCodes.includes(passwordCode))
-						PhotoFloat.guessedPasswordCodes.push(passwordCode);
-					if (! PhotoFloat.guessedPasswordsMd5.includes(encryptedPassword))
-						PhotoFloat.guessedPasswordsMd5.push(encryptedPassword);
+					if (env.guessedPasswordCodes.length && env.guessedPasswordCodes.includes(passwordCode)) {
+						password.css("background-color", "red");
+						password.on(
+							'input',
+							function() {
+								password.css("background-color", "");
+								password.off('input');
+							}
+						);
+					} else {
+						env.guessedPasswordCodes.push(passwordCode);
+						env.guessedPasswordsMd5.push(encryptedPassword);
 
-					$("#loading").show();
+						$("#loading").show();
 
-					// phFl.removeAllProtectedAlbumsFromCache();
+						if (util.isMap()) {
+							// the map must be generated again including the points that only carry protected content
+							env.mapRefreshType = "refresh";
 
-					var isPopup = $('.leaflet-popup').html() ? true : false;
-					var isMap = $('#mapdiv').html() ? true : false;
-
-					if (isMap) {
-						// the map must be generated again including the points that only carry protected content
-						env.mapRefreshType = "refresh";
-
-						if (isPopup) {
-							env.popupRefreshType = "mapAlbum";
-							$('.leaflet-popup-close-button')[0].click();
-						} else {
-							env.popupRefreshType = "none";
+							if (util.isPopup()) {
+								env.popupRefreshType = "mapAlbum";
+								$('.leaflet-popup-close-button')[0].click();
+							} else {
+								env.popupRefreshType = "none";
+							}
+							// close the map
+							$('.modal-close')[0].click();
 						}
-						// close the map
-						$('.modal-close')[0].click();
-					}
 
-					$(window).hashchange();
+						$(window).hashchange();
+					}
 				},
 				error: function() {
 					password.css("background-color", "red");
@@ -710,10 +752,11 @@ $(document).ready(function() {
 		}
 	);
 
-	// scrollbarWidth = util.detectScrollbarWidth();
+	// scrollbarWidth = util.windowVerticalScrollbarWidth();
 
 	$(window).hashchange(
 		function() {
+			util.translate();
 			$("#auth-text").hide();
 			$("#album-view, #media-view, #my-modal").css("opacity", "");
 
@@ -725,15 +768,20 @@ $(document).ready(function() {
 			$("link[rel=video_src]").remove();
 			$("ul#right-menu").removeClass("expand");
 
+			if (util.isMap() || util.isPopup()) {
+				// we are in a map: close it
+				$('.modal-close')[0].click();
+			}
+
 			var optionsPromise = f.getOptions();
 			optionsPromise.then(
 				function() {
-					var [albumHash, mediaHash, mediaFolderHash, foundAlbumHash, savedSearchAlbumHash] = phFl.decodeHash(location.hash);
+					var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
 
 					if (! util.isSearchHash()) {
 						// reset current album search flag to its default value
 						env.options.search_current_album = true;
-						f.setBooleanCookie("search_current_album", env.options.search_current_album);
+						f.setBooleanCookie("searchCurrentAlbum", env.options.search_current_album);
 					}
 
 					if (typeof isPhp === "function" && typeof postData !== "undefined" && postData !== null) {
@@ -749,21 +797,23 @@ $(document).ready(function() {
 						function([album, mediaIndex]) {
 							album.prepareForShowing(mediaIndex);
 						},
-						function() {
+						function(album) {
 							function checkHigherAncestor() {
 								let upHash = util.upHash(hash);
 								if (! hash.length || upHash === hash) {
 									// the top album has been reached and no unprotected nor protected content has been found
-									util.showAuthForm();
+									if (album.isEmpty || album.hasVeiledProtectedContent())
+										$("#protected-content-unveil")[0].click();
 								} else {
 									hash = upHash;
 									let cacheBase = hash.substring(env.hashBeginning.length);
 									let getAlbumPromise = phFl.getAlbum(cacheBase, checkHigherAncestor, {getMedia: false, getPositions: false});
 									getAlbumPromise.then(
 										function(upAlbum) {
-											if (upAlbum.hasMoreProtectedContent() && ! env.fromEscKey) {
+											if (upAlbum.hasVeiledProtectedContent() && ! env.fromEscKey) {
+											// if (upAlbum.hasVeiledProtectedContent() && ! env.fromEscKey) {
 												$("#loading").hide();
-												util.showAuthForm();
+												$("#protected-content-unveil")[0].click();
 											} else {
 												util.errorThenGoUp();
 											}

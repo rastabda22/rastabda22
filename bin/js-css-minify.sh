@@ -44,6 +44,23 @@ else
 	unset OS_JS
 fi
 
+# Check that js and css directories exist and are writable
+if [ ! -d "$PROJECT_DIR/web/js" ] || [ ! -w "$PROJECT_DIR/web/js" ]; then
+	( >&2 echo "$PROJECT_DIR/web/js is not a writable directory with MyPhotoShare js files" )
+	( >&2 echo "Run $0 from MyPhotoShare root directory." )
+	( >&2 echo )
+	( >&2 echo "Quitting" )
+	exit 1
+fi
+if [ ! -d "$PROJECT_DIR/web/css" ] || [ ! -w "$PROJECT_DIR/web/css" ]; then
+	( >&2 echo "$PROJECT_DIR/web/css is not a writable directory with MyPhotoShare css files" )
+	( >&2 echo "Run $0 from MyPhotoShare root directory." )
+	( >&2 echo )
+	( >&2 echo "Quitting" )
+	exit 1
+fi
+
+
 # Parse which minifiers to use from configuration file
 MINIFY_JS="$(sed -nr 's/^\s*js_minifier\s*=\s*(\w+)\s*.*$/\1/p' $CONF)"
 DEFAULT_MINIFY_JS="$(sed -nr 's/^\s*js_minifier\s*=\s*(\w+)\s*.*$/\1/p' $DEFAULT_CONF)"
@@ -82,21 +99,13 @@ case $MINIFY_JS in
 			exit 1
 		fi
 	;;
-	uglifyjs)
-		buble -v > /dev/null 2>&1
+	terser)
+		uglifyjs.terser -V > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
-			( >&2 echo "'buble' is not installed and is required for using 'uglifyjs' minifier." )
-			( >&2 echo "Look for package 'node-buble' or 'https://github.com/Rich-Harris/buble'" )
+			( >&2 echo "'uglifyjs.terser' is not installed. Look for package 'uglifyjs.terser' or 'https://terser.org/'" )
 			( >&2 echo "Aborting..." )
 			exit 1
 		fi
-		uglifyjs -V > /dev/null 2>&1
-		if [ $? -ne 0 ]; then
-			( >&2 echo "'uglifyjs' is not installed. Look for package 'node-uglifyjs' or 'http://lisperator.net/uglifyjs/'" )
-			( >&2 echo "Aborting..." )
-			exit 1
-		fi
-	;;
 esac
 
 case $MINIFY_CSS in
@@ -129,7 +138,7 @@ esac
 # minify all .js-files
 cd "$PROJECT_DIR/web/js"
 echo
-echo == Minifying js files in js directory with $MINIFY_JS ==
+echo "== Minifying js files in $PROJECT_DIR/web/js directory with $MINIFY_JS =="
 echo
 CAT_LIST=""
 rm -f *.min.js
@@ -195,9 +204,8 @@ while read jsfile; do
 			python3 -m jsmin $jsfile > $newfile
 		;;
 
-		uglifyjs)
-			# We need to use 'buble' first to convert from ES6 to ES5 as uglifyjs only parses ES5.
-			buble $jsfile | uglifyjs - -o $newfile
+		terser)
+			uglifyjs.terser -o $newfile $jsfile
 		;;
 
 		*)
@@ -217,7 +225,7 @@ cat $CAT_LIST > scripts.min.js
 # minify all .css-files
 cd "$PROJECT_DIR/web/css"
 echo
-echo == Minifying css files in css directory with $MINIFY_CSS ==
+echo "== Minifying css files in $PROJECT_DIR/web/css directory with $MINIFY_CSS =="
 echo
 rm -f *.min.css
 if [ $? -ne 0 ]; then

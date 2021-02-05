@@ -3,11 +3,18 @@
 
 	class Env {
 		constructor() {
+			this.guessedPasswordCodes = [];
+			this.guessedPasswordsMd5 = [];
+			this.searchWordsFromJsonFile = [];
+			this.searchAlbumCacheBasesFromJsonFile = [];
+			this.searchAlbumSubalbumsFromJsonFile = [];
 			this.fullScreenStatus = false;
 			this.currentAlbum = null;
 			this.currentMedia = null;
 			this.currentMediaIndex = -1;
 			this.previousAlbum = null;
+			this.albumOfPreviousState = null;
+			this.albumInSubalbumDiv = null;
 			this.previousMedia = null;
 			this.nextMedia = null;
 			this.prevMedia = null;
@@ -19,9 +26,6 @@
 			this.mapRefreshType = "none";
 			this.selectorClickedToOpenTheMap = false;
 			this.popupRefreshType = "previousAlbum";
-			// destHash = null;
-			// destMedia = null;
-			// destAlbum = null;
 			this.hashBeginning = "#!/";
 			// var nextLink = "", prevLink = "";
 			this.mediaLink = "";
@@ -65,6 +69,22 @@
 			this.maxSize = 0;
 			this.language = "en";
 			// var nextLink = "", prevLink = "";
+
+			this.titleWrapper = "";
+			this.maxWidthForPopupContent = 0;
+			this.maxWidthForImagesInPopup = 0;
+			this.maxHeightForPopupContent = 0;
+			this.mymap = null;
+			this.popup = null;
+
+			var originalMediaBoxContainerHtml = $(".media-box#center")[0].outerHTML;
+			if (originalMediaBoxContainerHtml.indexOf('<div class="title">') === -1) {
+				var titleContent = $("#album-view").clone().children().first();
+				this.originalMediaBoxContainerContent = $(originalMediaBoxContainerHtml).prepend(titleContent)[0].outerHTML;
+			} else {
+				this.originalMediaBoxContainerContent = originalMediaBoxContainerHtml;
+			}
+
 		}
 	}
 
@@ -94,7 +114,7 @@
 
 	class ImagesAndVideos {
 		constructor(object) {
-			if (object === undefined) {
+			if (typeof object === "undefined") {
 				this.images = 0;
 				this.videos = 0;
 			} else {
@@ -106,7 +126,7 @@
 
 	class IncludedFiles {
 		constructor(object) {
-			if (object === undefined) {
+			if (typeof object === "undefined") {
 				// do nothing, the resulting object will be the void object
 			} else  {
 				Object.keys(object).forEach(
@@ -120,7 +140,7 @@
 
 	class NumsProtected {
 		constructor(object) {
-			if (object === undefined) {
+			if (typeof object === "undefined") {
 				this[","] = new ImagesAndVideos();
 			} else {
 				Object.keys(object).forEach(
@@ -134,7 +154,7 @@
 
 	class Sizes {
 		constructor(object) {
-			if (object === undefined) {
+			if (typeof object === "undefined") {
 				this[0] = new ImagesAndVideos();
 				for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize ++) {
 					this[env.options.reduced_sizes[iSize]] = new ImagesAndVideos();
@@ -186,9 +206,9 @@
 				this.parent = album;
 		}
 
-		clone() {
-			return Utilities.cloneObject(this);
-		}
+		// clone() {
+		// 	return new SingleMedia(Utilities.cloneObject(this));
+		// }
 
 		cloneAndDeleteParent() {
 			let clonedSingleMedia = this.clone();
@@ -216,25 +236,22 @@
 			);
 		}
 
-		generatePositionsAndMedia() {
-			return new PositionsAndMedia([this.generatePositionAndMedia()]);
-		}
-
 		isEqual(otherMedia) {
-			return this.foldersCacheBase === otherMedia.foldersCacheBase && this.cacheBase === otherMedia.cacheBase;
+			return otherMedia !== null && this.foldersCacheBase === otherMedia.foldersCacheBase && this.cacheBase === otherMedia.cacheBase;
 		}
 
 		hasGpsData() {
-			return this.mimeType.indexOf("image") === 0 && typeof this.metadata.latitude !== "undefined";
+			return this.metadata.latitude !== undefined && this.metadata.longitude !== undefined;
 		}
 	}
 
 	class Media extends Array {
 		constructor(media) {
-			if (Array.isArray(media))
-				super(... media.map(singleMedia => new SingleMedia(singleMedia)));
-			else
+			if (Array.isArray(media)) {
+				super(... media.map(singleMedia => new SingleMedia(singleMedia))).getAndPutIntoCache();
+			} else {
 				super(media);
+			}
 		}
 
 		getAndPutIntoCache() {
@@ -260,17 +277,6 @@
 				this[i].addParent(album);
 			}
 		}
-
-		generatePositionsAndMedia() {
-			var result = new PositionsAndMedia([]);
-			this.forEach(
-				function(singleMedia) {
-					result.addPositionAndMedia(singleMedia.generatePositionAndMedia());
-				}
-			);
-			// return new PositionsAndMedia([... this.map(singleMedia => singleMedia.generatePositionAndMedia())]);
-			return result;
-		}
 	}
 
 	class Subalbum {
@@ -290,13 +296,45 @@
 			return this;
 		}
 
-		isGenerated() {
-			return this.isTransversal() || this.isCollection();
+		isEqual(otherSubalbum) {
+			return otherSubalbum !== null && this.cacheBase === otherSubalbum.cacheBase;
 		}
 
-		isEqual(otherAlbum) {
-			return this.cacheBase === otherAlbum.cacheBase;
+		toAlbum(error, {getMedia = false, getPositions = false}) {
+			var self = this;
+			return new Promise(
+				function(resolve_convertIntoAlbum) {
+					let promise;
+					if (self.hasOwnProperty("numsProtectedMediaInSubTree"))
+						promise = PhotoFloat.getAlbum(self.cacheBase, error, {getMedia: getMedia, getPositions: getPositions}, self.numsProtectedMediaInSubTree);
+					else
+						promise = PhotoFloat.getAlbum(self.cacheBase, error, {getMedia: getMedia, getPositions: getPositions});
+					promise.then(
+						function(convertedSubalbum) {
+							let properties = [
+								"captionForSelection",
+								"captionForSelectionSorting",
+								"captionForSearch",
+								"captionForSearchSorting",
+								"unicodeWords",
+								"words",
+								"tags"
+							];
+							properties.forEach(
+								function(property) {
+									if (self.hasOwnProperty(property)) {
+										// transfer subalbums properties to the album
+										convertedSubalbum[property] = self[property];
+									}
+								}
+							);
+							resolve_convertIntoAlbum(convertedSubalbum);
+						}
+					);
+				}
+			);
 		}
+
 	}
 
 	class Subalbums extends Array {
@@ -323,7 +361,7 @@
 		// - virtual albums: by map and by selection: they are generated through user direct choices, and for this reason they cannot be represented by a cache base
 		// - collection albums: by search, by map and by selection albums
 
-		constructor(objectOrCacheBase) {
+		constructor(objectOrCacheBase, putIntoCache = true) {
 			if (typeof objectOrCacheBase === "string") {
 				let cacheBase = objectOrCacheBase;
 				this.cacheBase = cacheBase;
@@ -335,7 +373,7 @@
 				this.subalbums = new Subalbums([]);
 				this.positionsAndMediaInTree = new PositionsAndMedia([]);
 				this.numPositionsInTree = 0;
-				this.numsProtectedMediaInSubTree = new NumsProtected();
+				// this.numsProtectedMediaInSubTree = new NumsProtected();
 				if (cacheBase.split(env.options.cache_folder_separator).length === 1)
 					this.ancestorsCacheBase = [cacheBase];
 				// this.path = cacheBase.replace(env.options.cache_folder_separator, "/");
@@ -345,10 +383,9 @@
 					this.clickHistory = [];
 				}
 			} else if (typeof objectOrCacheBase === "object") {
-				let object = objectOrCacheBase;
-				Object.keys(object).forEach(
-					(key) => {
-						this[key] = object[key];
+				Object.keys(objectOrCacheBase).forEach(
+					key => {
+						this[key] = objectOrCacheBase[key];
 					}
 				);
 
@@ -360,7 +397,7 @@
 					// newMediaArray = this.media.map(singleMedia => new SingleMedia(singleMedia));
 					// this.media = newMediaArray;
 					this.media = new Media(this.media);
-					this.media.getAndPutIntoCache();
+					// this.media.getAndPutIntoCache();
 
 					this.numsMedia = this.media.imagesAndVideosCount();
 				}
@@ -375,50 +412,52 @@
 					this.numsProtectedMediaInSubTree = new NumsProtected(this.numsProtectedMediaInSubTree);
 				}
 				this.subalbums = new Subalbums(this.subalbums);
+
+				this.removeUnnecessaryPropertiesAndAddParentToMedia();
 			} else if (objectOrCacheBase === undefined) {
 				this.empty = true;
 			}
 
-
-			if (objectOrCacheBase !== undefined) {
-				this.removeUnnecessaryPropertiesAndAddParentToMedia();
-				if (! this.hasOwnProperty("includedFilesByCodesSimpleCombination")) {
-					this.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
-				}
-				if (this.codesComplexCombination === undefined)
-					env.cache.putAlbum(this);
+			// if (objectOrCacheBase !== undefined) {
+			// 	if (! this.hasOwnProperty("includedFilesByCodesSimpleCombination")) {
+			// 		this.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
+			// 	}
+			// }
+			if (putIntoCache && objectOrCacheBase !== undefined && this.codesComplexCombination === undefined) {
+				env.cache.putAlbum(this);
 			}
 		}
 
+		generatePositionsAndMedia() {
+			this.positionsAndMediaInMedia = new PositionsAndMedia([]);
+			var self = this;
+			this.media.forEach(
+				function(singleMedia) {
+					if (singleMedia.hasGpsData())
+						self.positionsAndMediaInMedia.addPositionAndMedia(singleMedia.generatePositionAndMedia(self));
+				}
+			);
+		}
 		isEmpty() {
 			return this.empty !== undefined && this.empty;
 		}
 
-		convertSubalbum(subalbumIndex, error, {getMedia = false, getPositions = false}) {
+		toAlbum(error, {getMedia = false, getPositions = false}) {
 			var self = this;
-			var wasASubalbum = this.subalbums[subalbumIndex] instanceof Subalbum;
 			return new Promise(
 				function(resolve_convertIntoAlbum) {
-					let promise = PhotoFloat.getAlbum(self.subalbums[subalbumIndex].cacheBase, error, {getMedia: getMedia, getPositions: getPositions});
+					let promise = PhotoFloat.getAlbum(self.cacheBase, error, {getMedia: getMedia, getPositions: getPositions});
 					promise.then(
 						function(convertedSubalbum) {
-							if (wasASubalbum) {
-								if (self.subalbums[subalbumIndex].hasOwnProperty("captionForSelection")) {
-									// transfer subalbums properties to the album
-									convertedSubalbum.captionForSelection = self.subalbums[subalbumIndex].captionForSelection;
-									convertedSubalbum.captionForSelectionSorting = self.subalbums[subalbumIndex].captionForSelectionSorting;
-								}
-								self.subalbums[subalbumIndex] = convertedSubalbum;
-							}
-							resolve_convertIntoAlbum(subalbumIndex);
+							resolve_convertIntoAlbum(convertedSubalbum);
 						}
 					);
 				}
 			);
 		}
 
-		clone() {
-			return Utilities.cloneObject(this);
+		clone(putIntoCache = false) {
+			return new Album(Utilities.cloneObject(this), putIntoCache);
 		}
 
 		toSubalbum() {
@@ -432,9 +471,13 @@
 				'path',
 				'captionForSelection',
 				'captionForSelectionSorting',
+				'captionForSearch',
+				'captionForSearchSorting',
 				'sizesOfAlbum',
 				'sizesOfSubTree',
-				'words'
+				'unicodeWords',
+				'words',
+				'tags'
 			];
 			var clonedAlbum = this.clone();
 			Object.keys(this).forEach(
@@ -450,6 +493,7 @@
 		toJson() {
 			var albumProperties = [
 				'ancestorsNames',
+				'ancestorsTitles',
 				'cacheBase',
 				'cacheSubdir',
 				'date',
@@ -464,6 +508,9 @@
 				'physicalPath',
 				'positionsAndMediaInTree',
 				'captionForSelection',
+				'captionForSelectionSorting',
+				'captionForSearch',
+				'captionForSearchSorting',
 				'sizesOfAlbum',
 				'sizesOfSubTree',
 				'subalbums',
@@ -501,33 +548,25 @@
 				this.media.removeUnnecessaryPropertiesAndAddParent(this);
 		}
 
-		hasPositions() {
+		hasPositionsInMedia() {
 			var result =
-				this.numPositionsInTree &&
+				// this.numPositionsInTree &&
 				this.media.length &&
-				this.media.some(
-					function(singleMedia) {
-						return singleMedia.hasGpsData();
-					}
-				);
+				this.media.some(singleMedia => singleMedia.hasGpsData());
 			return result;
 		}
 
-		isGenerated() {
-			return this.isTransversal() || this.isCollection();
+		hasValidPositionsAndMediaInMediaAndSubalbums() {
+			return this.hasOwnProperty("positionsAndMediaInMedia");
 		}
 
-		hasValidAuxiliaryPositionsAndMedia() {
-			return this.hasOwnProperty("positionsAndMedia");
-		}
-
-		invalidateAuxiliaryPositionsAndMedia() {
-			if (this.hasOwnProperty("positionsAndMedia"))
-				delete this.positionsAndMedia;
+		invalidatePositionsAndMediaInAlbumAndSubalbums() {
+			if (this.hasOwnProperty("positionsAndMediaInMedia"))
+				delete this.positionsAndMediaInMedia;
 		}
 
 		isEqual(otherAlbum) {
-			return this.cacheBase === otherAlbum.cacheBase;
+			return otherAlbum !== null && this.cacheBase === otherAlbum.cacheBase;
 		}
 	}
 
@@ -543,6 +582,8 @@
 			this.albums.index = {};
 
 			this.media = {};
+
+			this.inexistentFiles = [];
 		}
 
 		putAlbum(album) {

@@ -24,8 +24,8 @@ MyPhotoShare needs:
 * `python3-opencv`: if found, face detection is used when cropping images to square.
   * OpenCV libraries and data (`opencv-data`), if opencv is used
   * `locate`, if opencv is used; the program must be run and the database generate
-* `cssmin` (`https://github.com/zacharyvoase/cssmin`, debian/ubuntu packages `cssmin`), unless using external web service
-* `jsmin` (`https://github.com/tikitu/jsmin`, debian/ubuntu package `python3-jsmin`) or `uglifyjs` (`https://github.com/mishoo/UglifyJS`, debian/ubuntu package `uglifyjs`, but `node-buble` is requiered too, and is not available in _debian stable_ yet), unless using external web service
+* `cssmin` (`https://github.com/zacharyvoase/cssmin`, debian/ubuntu packages `cssmin`), unless using external web service.
+* `jsmin3` (`https://github.com/tikitu/jsmin`, debian/ubuntu package `python3-jsmin`) or `uglifyjs.terser` (`https://terser.org/`, ubuntu package `uglifyjs.terser`; not available in _debian stable_ yet), unless using external web service.
 
 
 ### Why PHP? Isn't it enough with JavaScript?
@@ -174,6 +174,10 @@ Go to the folder you cloned the repository in and execute:
     $ git pull https://gitlab.com/paolobenve/myphotoshare.git
     $ ./bin/js-css-minify.sh
 ```
+
+If you aren't using `git`, all the system files must be deleted and the [new package](https://gitlab.com/paolobenve/myphotoshare/-/archive/master/myphotoshare-master.zip) unzipped in the same place. You can, however, preserve the cache directory inside `web/`, expecially if you have many photos; the scanner knows how to respect the cache content and only generates again the json files/reductions/thumbnails when strictly required.
+
+If you are using a package, like `debian` one, simply update the package; in `debian`, `sudo apt install myphotoshare`.
 
 Obviously the scanner should be launched too; next section explains how you can do it.
 

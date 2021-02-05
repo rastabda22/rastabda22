@@ -2,12 +2,11 @@
 
 Various scripts are stored in the `bin` directory.
 
-
 ## The album scanner: `scanner`
 
 This is MyPhotoShare's main program used to scan media files in directories. You must give a configuration file as parameter. A typical run looks like:
 
-```
+```sh
 $ bin/scanner /etc/myphotoshare/myphotoshare.conf
     853349 2018-02-23 20:43:15.318259   [importer]                 No opencv library available, not using it
      26805 2018-02-23 20:43:15.345064   [Options]                  asterisk denotes options changed by config file
@@ -21,18 +20,17 @@ $ bin/scanner /etc/myphotoshare/myphotoshare.conf
 
 The scanner outputs various stats when browsing into the albums and parsing media files. At the end, it prints performance data.
 
-
 ## `js-css-minify.sh`
 
 This script has to be run once when you first setup MyPhotoShare. It minifies (compress) JavaScript and CSS resources using either locally installed minifiers or web services. You must give the configuration file as parameter where your prefered minifiers are defined.
 
 Minifying JavaScript and CSS reduces the bandwidth used to display MyPhotoShare web pages and reduces the number of requests sent to the server. You will probably use it on your production server. You can disable minifying in the configuration file if you want to view human-readable source files in your browser.
 
-```
+```sh
 $ bin/js-css-minify.sh /etc/myphotoshare/myphotoshare.conf
 
 Using cssmin as CSS minifier
-Using uglifyjs as JS minifier
+Using terser as JS minifier
 
 == Minifying js files in js directory ==
 
@@ -42,7 +40,6 @@ minifying 001-hashchange.js
 ...
 ```
 
-
 ## `get_alternate_names.py`
 
 This script downloads the alternate locations file from [GeoNames.org](https://www.geonames.org/) and prepares the locations files used by MyPhotoShare.
@@ -51,7 +48,7 @@ If the script is run with additional language code parameters like 'ru', it will
 
 The resulting files are stored into `scanner/geonames/alternate_names_LN` where `LN` is a language code.
 
-```
+```sh
 $ bin/get_alternate_names.py
 
 getting alternateNames.zip from geonames.org and extracting it to file...
@@ -64,18 +61,22 @@ generating local files...
 local files generated!
 ```
 
-
 ## `make_album_ini.sh`
 
-`album.ini` files contain user-defined metadata. The user can create them into album directories with media. Running this script with a directory parameter creates a default `album.ini` file in that directory with sections for all media found.
+`album.ini` files contain user-defined metadata. The user can create them into album directories with media. Running this script with a directory parameter creates a default `album.ini` file in that directory with sections for all found media.
 
 The metadata added is commented in each section and you only have to uncomment it and add values:
+
 ```ini
 #[DEFAULT]
-#tags =
+#tags = %(auto_tags)s,
+auto_tags = %(auto_faces)s, %(auto_scenes)s
+auto_scenes =
+auto_faces =
 #date =
 #latitude =
 #longitude =
+#altitude =
 #place_name =
 #region_name =
 #country_name =
@@ -83,14 +84,16 @@ The metadata added is commented in each section and you only have to uncomment i
 [album]
 #title = ALBUM_NAME
 #description =
-#tags =
+#tags = %(auto_tags)s,
 
 [MEDIA_FILENAME]
 #title = MEDIA_FILENAME_WITHOUT_EXTENSION
 #description =
-#tags =
+#tags = %(auto_tags)s,
 #latitude =
 #longitude =
 ```
 
 If an `album.ini` file already exists in the directory, new media found in the album is added to `album.ini`. When an error occurs, the script exits with error code `1`.
+
+`make_album_ini.sh` must be run with `bash`: it wouldn't run with `sh`, and trying to run it with `sh` produces an error and the script doesn't make anything.

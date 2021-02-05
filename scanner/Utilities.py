@@ -26,7 +26,7 @@ def make_dir(absolute_path, message_part):
 			os.chmod(absolute_path, 0o777)
 			indented_message("permissions set", "", 5)
 		except OSError:
-			message("FATAL ERROR", "couldn't create " + message_part, "('" + relative_path + "')' quitting", 0)
+			message("FATAL ERROR", "couldn't create " + message_part + " ('" + relative_path + "') quitting", 0)
 			sys.exit(-97)
 	else:
 		message(message_part + " already existent, not creating it", relative_path, 5)

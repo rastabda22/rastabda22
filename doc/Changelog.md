@@ -1,6 +1,228 @@
-### version v4.9.1 (Unreleased)
-
 * new option `use_system_js_libraries` to use OS javascript libraries instead of the versions provided by MyPhotoShare. Default uses MyPhotoShare versions.
+
+### version v4.9.35 (Feb 5, 2021)
+
+* change order in ui options
+* add menu entry for resetting ui options
+* bug fixes
+
+### version v4.9.34 (Feb 4, 2021)
+
+* refreshing of subalbums/media is now performed only when strictly needed
+* display menu entries now are more coherent, all are show- instead of hide-
+* cookies now have a 10-years duration
+* added border to subalbums in no-slide mode
+* code managing subalbums thumbnails has been simplified
+* color options are now respected better
+* bug fixes
+
+### version v4.9.33 (Feb 3, 2021)
+
+* added `album_name_color` and `album_slide_name_color` option
+* `title_image_name_color` option changed to `media_name_color` for consistency sake
+* `album_button_background_color` option changed to `album_slide_background_color` for consistency sake
+* `slide_album_caption_color` option changed to `album_slide_caption_color` for consistency sake
+* bug fixes
+* do not show menu entries for description and tags if not needed
+
+### version v4.9.32 (Feb 2, 2021)
+
+* show a better message when options.json isn't there
+* leave the menu closed by default
+* close the right menu when auth dialog is shown
+* activate pinterest button by default
+* separate showSubalbums function
+* bug fixes
+
+### version v4.9.31 (Jan 26, 2021)
+
+* description show/hide button is now in the bottom part of the description, so that it can be clicked multiple times without moving the mouse
+* bug fixes
+* css trims
+
+### version v4.9.30 (Jan 24, 2021)
+
+* css trims
+* bug fixes
+
+### version v4.9.29 (Jan 22, 2021)
+
+* the description box has now a show/hide button
+* bug fixes
+* css trims
+
+### version v4.9.28 (Jan 20, 2021)
+
+* bug fixes
+* css trims
+
+### version v4.9.27 (Jan 19, 2021)
+
+* bug fixes
+
+### version v4.9.26 (Jan 18, 2021)
+
+* shortcuts are now customizable by language in translation file
+* leaflet updated to 1.7.1
+* bug fixes
+
+### version v4.9.25 (Jan 17, 2021)
+
+* optimized fetching of albums in searches
+* jquery and jquery.touchSwipe updated
+* bug fixes
+
+### version v4.9.24 (Jan 16, 2021)
+
+* searching in popup refines the media in it
+* updated italian and spanish stopwords removing many of them
+* menu tweaks
+* bug fixes
+
+### version v4.9.23 (Jan 13, 2021)
+
+* many ui trims
+* `make_album_ini` now manages in a better way old album.ini files
+* bug fixes
+
+### version v4.9.22 (Jan 12, 2021)
+
+* better managing of album.ini
+* make multi-word-with-dash tags work
+* documentation improved
+* css trimmings
+* select box has been moved from right to left bottom position
+* shortcut _h_ is managed in a better way
+* multi-word and non-letter tags are managed correctly
+* bug fixes
+* french translation updated
+
+### version v4.9.21 (Jan 10, 2021)
+
+* search by tag now works even if tag contains spaces
+* in search albums, make the random media link go to a hash below the search album
+* bug fixes
+
+### version v4.9.20 (Jan 8, 2021)
+
+* now album and media in searches/popup/selections show their ancestors
+* align media in popup centered
+* make popup background dark
+* bug fixes
+
+### version v4.9.19 (Jan 7, 2021)
+
+* bug fixes
+
+### version v4.9.18 (Jan 6, 2021)
+
+* media are now created by the same function in regular albums and in popups
+* descriptions and tags are shown (and possibly hidden) in popup too
+* support for auto-tagging extensions
+* css tweaks
+* ui menu entry names and sorting reorganized
+* bug fixes
+
+### version v4.9.17 (Jan 4, 2021)
+
+* in searches, treat all non-letter characters as spaces
+* do not consider (0, 0) coordinates (they are in offshore in the Atlantic Ocean)
+* bug fixes
+
+### version v4.9.16 (Jan 3, 2021)
+
+* bug fixes
+
+### version v4.9.15 (Jan 3, 2021)
+
+* fixed downloading: only one copy of every media
+* fixed addition of subalbum to selection
+* bug fixes
+
+### version v4.9.14 (Jan 2, 2021)
+
+* fix bugs
+
+### version v4.9.13 (Jan 2, 2021)
+
+* refine description position
+* reduce description to one line in subalbums and media thumbnails: the whole description is avaiilable as a tooltip
+* css refinement in album view no slide
+* album/media title is now used everywhere the name was displayed
+
+### version v4.9.12 (Jan 1, 2021)
+
+* use metadata titles in zip filename and in top title too
+* add options `hide_descriptions` (default false) and `hide_tags` (default true) in options file; in js code descriptions and tags can now be shown/hidden separately
+* fix search by tag
+* bug fixes
+
+### version v4.9.11 (Dec 29, 2020)
+
+* a message is presented during slow operations
+* every tag has link to a search to all content with that tag
+* add control to hide descriptions and tags
+* if present, show media description below its name/title in album view
+* if present, use media title instead of media name
+* add search option: restrict the search to tags
+
+### version v4.9.10 (Dec 28, 2020)
+
+* fix deselection shortcut and add menu entries to deselect subalbums/media
+* add a cache that avoids requesting inexistent files more than once
+* changed shortcut for hiding title, bottom thumbnails and description: from TAB to "h"
+* album view: add tags to subalbums and media
+* media view: reposition description and add tags
+* bug fixes
+
+### version v4.9.9 (Dec 27, 2020)
+
+* add indexing of title, description and tags in root folder
+* correctly detect when protected content must be added
+* do not accept the same password twice
+* bug fixes
+
+### version v4.9.8 (Dec 17, 2020)
+
+* the download script now informs the user about what is doing and the corresponding percent of work done
+* bug fix in scanner when using PIL
+
+### version v4.9.7 (Dec 16, 2020)
+
+* bug fixes
+
+### version v4.9.6 (Dec 14, 2020)
+
+* show videos' on map (with gps data from album.ini)
+* bug fixes
+
+### version v4.9.5 (Dec 13, 2020)
+
+* bug fixes
+
+### version v4.9.4 (Dec 13, 2020)
+
+* fixed sorting procedure
+* other bug fixes
+* replace `uglifyjs` minifier by `uglifyjs.terser` (pmetras)
+
+### version v4.9.3 (Dec 11, 2020)
+
+* fixed bugs in reading image exif metadata, only exiftool was reading them correctly
+* changed default sorting of albums and media, now they are sorted by name not reverse
+
+### version v4.9.2 (Dec 10, 2020)
+
+* many bug fixes
+* implemented python albums and media sortings
+
+### version v4.9.1 (Dec 10, 2020)
+
+* many bug fixes
+* updated french translation
+* execution of js code optimized removing multiple loading of albums
+* js code convertion to OOP continued
+* scanner: fragmentation of gps albums clustering has been reduced
 
 ### version v4.9.0 (Dec 1st, 2020)
 

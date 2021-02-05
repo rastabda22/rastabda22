@@ -1,4 +1,4 @@
-# MyPhotoShare v4.9.0 (Dec 1, 2020)
+# MyPhotoShare version v4.9.35 (Feb 5, 2021)
 
 ### A Web Photo Gallery Done Right via Static JSON & Dynamic Javascript
 #### by Jason A. Donenfeld (<Jason@zx2c4.com>), Jerome Charaoui (jerome@riseup.net)  Joachim Tingvold (joachim@tingvold.com), Paolo Benvenuto (<paolobenve@gmail.com>), Pierre Métras (<p.metras@videotron.ca>)
@@ -7,7 +7,7 @@
 
 **MyPhotoShare** is an open source web photo gallery aimed at sleekness and speed. It works over directory structures rather than esoteric photo database management software. Everything it generates is static, which means it's extremely fast and secure.
 
-It permits browsing the media by folder, date, search terms, geotags and maps. You can associate metadata (i.e. title, description, tags) with pictures and albums and search media content by keywords or display captions.
+It permits browsing the media by folder, date, search terms, geotags and maps. You can associate metadata (i.e. title, description, multi-word-any-character tags) with pictures and albums and search media content by keywords or display descriptions.
 
 Whenever geotagged photos are found, a map with the photo(s) position can be shown using Leaflet, and clicking the photo markers the photo thumbnails for that point are shown.
 
@@ -23,7 +23,7 @@ It is available in English, Italian, French and Spanish. Localizing to other lan
 
 ![Screenshot](doc/img/myphotoshare-3.8-map-and-popup.png)
 
-[What's great in version 4.0](doc/Features-4.0.md)
+[What's great in version 5.0](doc/Features-5.0.md)
 
 ## Read more
 
@@ -33,6 +33,8 @@ It is available in English, Italian, French and Spanish. Localizing to other lan
 * [Geotagging](doc/GPS.md)
 * [Tweaking metadata with `album.ini`](doc/Metadata.md)
 * [Make some content private](doc/Authentication.md)
+* [User interface](doc/Navigation.md)
+* [FAQ](doc/FAQ.md)
 * [Versions changelog](doc/Changelog.md)
 * [Debugging memory usage](doc/Debugging.md)
 * [Known issues](doc/Issues.md)
@@ -49,6 +51,7 @@ It is available in English, Italian, French and Spanish. Localizing to other lan
 - [x] Media can be searched by file/album name, title, description, tags; search may be whole word or inside words, considering accents and capitals or not, in current album (in virtual albums too) or in the whole tree.
 - [x] Thumbnails can be square (cropped, with optional face detection by [OpenCV](https://opencv.org/)) or full-content.
 - [x] Albums can be downloaded via the right menu, either with or without subalbums, either images only, videos only, or both.
+- [x] Pictures can be automatically indexed and tagged with ML-based extensions.
 
 ### For Photographers
 
@@ -99,16 +102,21 @@ It is available in English, Italian, French and Spanish. Localizing to other lan
 - [x] Scanner uses recursive async randomized tree walking album thumbnail algorithm.
 - [x] HTML5 with minified CSS and JavaScript files for minimal load time.
 
-### Privacy (_new_ in v4.0)
+### Privacy
 
 - [x] Albums and photo can be protected by passwords. Passwords may be specified for albums, for files, for both.
 - [x] Patterns are defined in album tree and specify what should every password protect; allowed matching modes: case sensitive/insensitive, whole/part of dir/file name, dir only/files only/both.
 - [x] Passwords aren't exposed in javascript, and sensitive data and media are extremely difficult to find in cache.
 
-### Selecting media and albums (_new_ in v5.0)
+### Selecting media and albums (_new_ in [v5.0](doc/Features-5.0.md))
 
 - [x] Albums and media can be seleted via a click or massively, either in _hard_ albums (the default tree, by date, by place) and virtual ones (by search, by gps, by map).
 - [x] Selected media and albums can be seen as an album, and can be browsed, downloaded, sorted, shown on map, etc.
+
+### Add features with MyPhotoShare extensions (_new_ in [v5.0](doc/Features-5.0.md))
+
+- [x] Automatic face recognition in pictures with [mps_autofaces](https://gitlab.com/pmetras/mps_autofaces).
+- [x] Automatic scenes recognition and indexing in pictures with [mps_autoscenes](https://gitlab.com/pmetras/mps_autoscenes).
 
 ### And More...
 
@@ -121,13 +129,11 @@ It is available in English, Italian, French and Spanish. Localizing to other lan
 - [x] Developer friendly with debug mode for using unminimized css's and js's.
 - [x] Photos metadata can be overloaded by user defined values in special file `album.ini`.
 - [x] Consistent hash URL format.
-- [x] Create Debian/Ubuntu package with (mps_debian)[https://github.com/pmetras/mps_debian] for easy install.
-
+- [x] Create Debian/Ubuntu package with [mps_debian](https://gitlab.com/pmetras/mps_debian) for easy install.
 
 ## Python version
 
 The python code (basically the _scanner_) is run with `python3`.
-
 
 ## Community
 

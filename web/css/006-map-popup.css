@@ -1,162 +1,169 @@
 /* Popup box BEGIN */
 
+.leaflet-popup-content-wrapper {
+	color: #FFFFFF !important;
+	background-color: slategray;
+}
+
 .map-popup-trigger {
-    cursor: pointer;
-    /* font-size: 20px;
-    margin: 20px;
-    display: inline-block;
-    font-weight: bold; */
+	cursor: pointer;
+	/* font-size: 20px;
+	margin: 20px;
+	display: inline-block;
+	font-weight: bold; */
 }
 
 .map-container{
-    background:rgba(0,0,0,.4);
-    cursor:pointer;
-    display:none;
-    height:100%;
-    position:fixed;
-    text-align:center;
-    top:0;
-    width:100%;
-    z-index:10000;
+	background:rgba(0,0,0,.4);
+	cursor:pointer;
+	display:none;
+	height:100%;
+	position:fixed;
+	text-align:center;
+	top:0;
+	width:100%;
+	z-index:10000;
 }
 
 @media (max-height: 700px) {
-  .map-container{
-    height: unset !important;
-    /* width: 95%; */
-    top: 5%;
-  }
+	.map-container{
+		height: unset !important;
+		/* width: 95%; */
+		top: 5%;
+	}
 }
 .map-container .helper{
-    display: inline-block;
-    height: 100%;
-    vertical-align: middle;
+	display: inline-block;
+	height: 100%;
+	vertical-align: middle;
 }
 .map-container > div {
-    background-color: #fff;
-    box-shadow: 10px 10px 60px #555;
-    display: inline-block;
-    height: auto;
-    /* max-width: 85%; */
-    min-height: 100px;
-    vertical-align: middle;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    border-radius: 8px;
-    padding: 10px;
+	background-color: #fff;
+	box-shadow: 10px 10px 60px #555;
+	display: inline-block;
+	height: auto;
+	/* max-width: 85%; */
+	min-height: 100px;
+	vertical-align: middle;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	border-radius: 8px;
+	padding: 10px;
 }
 .map-container #mapdiv {
-    /* width: 99%;
-    height: 99%; */
-    color: black !important;
+	/* width: 99%;
+	height: 99%; */
+	color: black !important;
 }
 
 .modal-close, #mapdiv .leaflet-popup-close-button, .popup-mover, #auth-close {
-    background-color: #fff;
-    border: 3px solid #999;
-    border-radius: 50px;
-    cursor: pointer;
-    display: inline-block;
-    font-family: arial;
-    font-weight: bold;
-    position: absolute;
-    right: -20px;
-    font-size: 0;
-    line-height: 30px;
-    width: 30px;
-    height: 30px;
-    text-align: center;
-    color: white;
-    z-index: 1;
+	background-color: #fff;
+	border: 3px solid #999;
+	border-radius: 50px;
+	cursor: pointer;
+	display: inline-block;
+	font-family: arial;
+	font-weight: bold;
+	position: absolute;
+	right: -20px;
+	font-size: 0;
+	line-height: 30px;
+	width: 30px;
+	height: 30px;
+	text-align: center;
+	color: white;
+	z-index: 1;
 }
 
 .modal-close, #mapdiv .leaflet-popup-close-button, #auth-close {
-    top: -20px;
+	top: -20px;
 }
 
 .modal-close::after, #mapdiv .leaflet-popup-close-button::after, #auth-close::after {
-  content: "✖";
+	content: "✖";
 }
 .modal-close::after, #mapdiv .leaflet-popup-close-button::after, .popup-mover::after, #auth-close::after {
-  color: gray;
-  font-size: 25px;
+	color: gray;
+	font-size: 25px;
 }
 
 .popup-mover {
-    bottom: -20px;
+	bottom: -20px;
 }
 
 .SE .popup-mover {
-    left: -20px
+	left: -20px
 }
 
 .NW .popup-mover {
-    right: -20px
+	right: -20px
 }
 
 .SE .popup-mover::after {
-  content: "⭦";
+	content: "⭦";
 }
 
 .NW .popup-mover::after {
-  content: "⭨";
+	content: "⭨";
 }
 
 .modal-close:hover, a.leaflet-popup-close-button:hover, a.popup-mover:hover, #auth-close:hover {
-    background-color: #ccc;
-    color: gray;
+	background-color: #ccc;
+	color: gray;
 }
 
 #mapdiv {
-  height: 100%;
-  cursor: pointer;
-  color: black !important;
+	height: 100%;
+	cursor: pointer;
+	color: black !important;
 }
 
 /* Popup box END */
 
 
 .leaflet-popup-content {
-  margin: 15px;
+	margin: 15px;
 }
 
 .leaflet-popup-content .media-caption {
-  color: black;
+	color: white;
 }
 
 /* .leaflet-popup-content {
-  overflow-y: auto;
+	overflow-y: auto;
 } */
 #popup-images-wrapper {
-  overflow-y: auto;
+	overflow-y: auto;
+	text-align: center;
 }
 
 .leaflet-popup-content .thumb-and-caption-container {
-  display: inline-block;
-  vertical-align: top;
-  cursor: pointer;
+	display: inline-block;
+	vertical-align: top;
+	cursor: pointer;
 }
 
 /* .leaflet-popup {
-  position: absolute;
-  background-color: white;
-  -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
-  filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
-  padding: 15px;
-  border-radius: 10px;
-  border: 1px solid #cccccc;
-  width: max-content;
+	position: absolute;
+	background-color: white;
+	-webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+	filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+	padding: 15px;
+	border-radius: 10px;
+	border: 1px solid #cccccc;
+	width: max-content;
 } */
 
 /* .popup::after, .popup:before { */
 #mapdiv .leaflet-popup::after {
-  position: absolute;
-  border: 18px solid transparent;
-  content: "";
-  height: 0;
-  width: 0;
-  pointer-events: none;
+	position: absolute;
+	border: 18px solid transparent;
+	content: "";
+	height: 0;
+	width: 0;
+	pointer-events: none;
+	color: black;
 }
 
 .leaflet-popup-scrolled {
@@ -164,21 +171,21 @@
 }
 
 /* .popup:before {
-  border-top-color: #cccccc;
-  border-width: 11px;
-  left: 48px;
-  margin-left: -11px;
+	border-top-color: #cccccc;
+	border-width: 11px;
+	left: 48px;
+	margin-left: -11px;
 } */
 
 #mapdiv .leaflet-popup.SE {
-  left: -25px !important;
-  top: 17px;
+	left: -25px !important;
+	top: 17px;
 }
 
 #mapdiv .leaflet-popup.SE::after {
 	top: 0;
-  left: 40px;
-	border-bottom-color: white;
+	left: 40px;
+	border-bottom-color: slategray;
 	border-top: 0;
 	margin-left: -18px;
 	margin-top: -18px;
@@ -186,26 +193,26 @@
 }
 
 #mapdiv .leaflet-popup.NW {
-  right: -25px;
-  bottom: 16px;
-  left: unset !important;
+	right: -25px;
+	bottom: 16px;
+	left: unset !important;
 }
 
 #mapdiv .leaflet-popup.NW::after {
-  bottom: 0;
-  right: 20px;
-	border-top-color: white;
+	bottom: 0;
+	right: 20px;
+	border-top-color: slategray;
 	border-bottom: 0;
 	margin-bottom: -18px;
   border-width: 18px 4px 0px 4px;
 }
 
 #mapdiv .leaflet-marker-pane {
-  text-align: left;
+	text-align: left;
 }
 
 #mapdiv .leaflet-popup-tip {
-  display: none;
+	display: none;
 }
 
 /* for numbered markers */
@@ -239,51 +246,57 @@
 
 #popup-photo-count:hover {
 	background-color: lightgray;
+	color: black;
+}
+
+.leaflet-popup-scrolled {
+	border-top: 0;
+	border-bottom: 0;
 }
 
 /* The Modal (background) */
 #my-modal.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 11; /* Sit on top */
-  padding-top: 10px; /* Location of the box */
-  left: 0;
-  top: 10px;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+	display: none; /* Hidden by default */
+	position: fixed; /* Stay in place */
+	z-index: 11; /* Sit on top */
+	/* padding-top: 10px; /* Location of the box */
+	left: 0;
+	top: 35px;
+	width: 100%; /* Full width */
+	height: 100%; /* Full height */
+	overflow: auto; /* Enable scroll if needed */
+	background-color: rgb(0,0,0); /* Fallback color */
+	background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
 /* Modal Content */
 #my-modal .modal-content {
-  background-color: #fefefe;
-  margin: auto;
-  padding: 10px;
-  border: 1px solid #888;
-  width: 90%;
-  height: 92%;
-  overflow: auto;
+	background-color: #fefefe;
+	margin: auto;
+	padding: 10px;
+	border: 1px solid #888;
+	width: 90%;
+	height: 92%;
+	overflow: auto;
 }
 
 /* The Close Button */
 #my-modal .modal-close, #auth-close {
-  color: #aaaaaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  position: absolute;
-  top: 25px;
-  right: 25px;
-  z-index: 500;
+	color: #aaaaaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+	position: absolute;
+	top: 25px;
+	right: 25px;
+	z-index: 500;
 }
 
 #my-modal .modal-close:hover, #my-modal .modal-close:focus, #auth-close:hover, #auth-close:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
-  background-color: lightgray
+	color: #000;
+	text-decoration: none;
+	cursor: pointer;
+	background-color: lightgray
 }
 
 /* this class is needed in order to calculate the scrollbar width */

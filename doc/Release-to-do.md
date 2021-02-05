@@ -7,7 +7,8 @@ The things to do before releasing a new version are:
   * Update the features
 
 * `scanner/Options.py`
-  * Update `json_version` value
+	* Update `version` to the new version number
+  * Update `json_version` value (if needed)
 
 * `doc/Changelog.md`
   * Update the version number and the changes

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # do not remove previous line: it's not a comment!
 
+import re
 import os.path
 from datetime import datetime
 import hashlib
@@ -40,6 +41,20 @@ def remove_non_alphabetic_characters(phrase):
 
 	return phrase
 
+def remove_new_lines_and_tags(phrase):
+	# remove tags
+	phrase = re.sub('<[^<]+?>', ' ', phrase)
+	# remove new lines
+	phrase = ' '.join(phrase.splitlines())
+
+	return phrase
+
+def reduce_spaces(phrase):
+	while phrase.find('  ') != -1:
+		phrase = phrase.replace('  ', ' ')
+	return phrase
+
+
 def remove_all_but_alphanumeric_chars_dashes_slashes(phrase):
 	# normalize unicode, see https://stackoverflow.com/questions/16467479/normalizing-unicode
 	phrase = unicodedata.normalize('NFC', phrase)
@@ -76,7 +91,7 @@ def switch_to_lowercase(phrase):
 
 	return phrase
 
-def convert_to_ascii_only(phrase):
+def transliterate_to_ascii(phrase):
 	# convert accented characters to ascii, from https://stackoverflow.com/questions/517923/what-is-the-best-way-to-remove-accents-in-a-python-unicode-string
 
 	# the following line generate a problem with chinese, because unidecode translate every ideogram with a word
@@ -93,6 +108,7 @@ def convert_to_ascii_only(phrase):
 	return phrase
 
 def phrase_to_words(phrase):
+	phrase = reduce_spaces(phrase)
 	# splits the phrase into a list
 	return list(phrase.split(' '))
 
