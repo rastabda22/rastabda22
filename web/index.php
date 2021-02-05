@@ -462,14 +462,15 @@
 				<li class='ui hide-title active'></li>
 				<li class='ui media-count active'></li>
 				<li class='ui slide active'></li>
-				<li class='ui album-names active'></li>
 				<li class='ui square-album-thumbnails active'></li>
-				<li class='ui media-names active'></li>
+				<li class='ui album-names active'></li>
 				<li class='ui square-media-thumbnails active'></li>
+				<li class='ui media-names active'></li>
 				<li class='ui show-descriptions active'></li>
 				<li class='ui show-tags active'></li>
 				<li class='ui spaced active'></li>
 				<li class='ui show-bottom-thumbnails active'></li>
+				<li class='ui reset active'></li>
 			</ul>
 		</li>
 

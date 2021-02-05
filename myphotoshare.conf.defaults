@@ -435,6 +435,8 @@ show_album_media_count = true
 # other values: large, small, or a px/em size
 title_font_size = medium
 
+# should be used a slide-like style?
+albums_slide_style = true
 
 ####
 #### Color UI options (be sure not to have inconsistencies) ####
@@ -457,9 +459,6 @@ album_name_color = white
 
 # the color to use for the album name
 album_slide_name_color = olive
-
-# should be used a slide-like style?
-albums_slide_style = true
 
 # the album buttons background color (this is a dirty white, in order to be like an old slide)
 album_slide_background_color = cornsilk

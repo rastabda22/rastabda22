@@ -2084,6 +2084,18 @@
 		return false;
 	};
 
+	TopFunctions.prototype.resetDisplaySettings = function(ev) {
+		var promise = f.getOptions(true);
+		promise.then(
+			function optionsHaveBeenReset() {
+				f.setOptions();
+				if (env.currentMedia !== null || env.currentAlbum.subalbums.length)
+					util.adaptCaptionHeight();
+				f.updateMenu();
+			}
+		);
+	};
+
 	TopFunctions.prototype.toggleBigAlbumsShow = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			if ($("#message-too-many-images").is(":visible")) {
