@@ -2089,8 +2089,16 @@
 		promise.then(
 			function optionsHaveBeenReset() {
 				f.setOptions();
-				if (env.currentMedia !== null || env.currentAlbum.subalbums.length)
+				if (env.currentMedia !== null || env.currentAlbum.subalbums.length) {
 					util.adaptCaptionHeight();
+					$("#ui-settings-restored").stop().fadeIn(
+						200,
+						function() {
+							$("#ui-settings-restored").fadeOut(2500);
+						}
+					);
+				}
+
 				f.updateMenu();
 			}
 		);
