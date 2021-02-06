@@ -2879,13 +2879,13 @@
 		} else {
 			if (! env.fullScreenStatus) {
 				$(".title").addClass("hidden-by-fullscreen");
-				$("#album-view").addClass('hidden-by-fullscreen');
+				$("#album-view.media-view-container").addClass('hidden-by-fullscreen');
 				$(".enter-fullscreen").toggle();
 				$(".exit-fullscreen").toggle();
 				env.fullScreenStatus = true;
 			} else {
 				$(".title").removeClass("hidden-by-fullscreen");
-				$("#album-view").removeClass('hidden-by-fullscreen');
+				$("#album-view.media-view-container").removeClass('hidden-by-fullscreen');
 				$(".enter-fullscreen").toggle();
 				$(".exit-fullscreen").toggle();
 				env.fullScreenStatus = false;
