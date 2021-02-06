@@ -1340,7 +1340,7 @@
 					$(".media-box#center .metadata-show").off("click").on("click", f.toggleMetadataFromMouse);
 					$(".media-box#center .metadata-hide").off("click").on("click", f.toggleMetadataFromMouse);
 					$(".media-box#center .metadata").off("click").on("click", f.toggleMetadataFromMouse);
-					$(".media-box#center .fullscreen").off("click").on("click", TopFunctions.goFullscreenFromMouse);
+					$(".media-box#center .fullscreen").off("click").on("click", TopFunctions.toggleFullscreenFromMouse);
 
 					// set social buttons events
 					if (env.currentMedia.mimeType.indexOf("video/") === 0)
@@ -2863,7 +2863,7 @@
 		f.updateMenu();
 	};
 
-	TopFunctions.goFullscreen = function(e) {
+	TopFunctions.toggleFullscreen = function(e) {
 		if (Modernizr.fullscreen) {
 			e.preventDefault();
 			$("#album-view").addClass('hidden');
@@ -2894,9 +2894,9 @@
 		}
 	};
 
-	TopFunctions.goFullscreenFromMouse = function(ev) {
+	TopFunctions.toggleFullscreenFromMouse = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-			TopFunctions.goFullscreen(ev);
+			TopFunctions.toggleFullscreen(ev);
 			return false;
 		}
 	};
@@ -3417,7 +3417,7 @@
 		);
 	};
 
-	TopFunctions.prototype.goFullscreen = TopFunctions.goFullscreen;
+	TopFunctions.prototype.toggleFullscreen = TopFunctions.toggleFullscreen;
 	TopFunctions.prototype.showBrowsingModeMessage = TopFunctions.showBrowsingModeMessage;
 	TopFunctions.prototype.prepareAndDoPopupUpdate = TopFunctions.prepareAndDoPopupUpdate;
 	TopFunctions.prototype.playClickElement = TopFunctions.playClickElement;

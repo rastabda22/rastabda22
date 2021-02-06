@@ -86,7 +86,7 @@ $(document).ready(function() {
 				pS.pinchOut(null, null);
 				return false;
 			} else if (! Modernizr.fullscreen && env.fullScreenStatus) {
-				tF.goFullscreen(e);
+				tF.toggleFullscreen(e);
 				return false;
 			} else if (upLink) {
 				if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0)
@@ -199,7 +199,7 @@ $(document).ready(function() {
 							$(".download-single-media .download-link")[0].click();
 						return false;
 					} else if (e.key.toLowerCase() === util._t(".enter-fullscreen-shortcut") && env.currentMedia !== null && ! isMap) {
-						tF.goFullscreen(e);
+						tF.toggleFullscreen(e);
 						return false;
 					} else if (e.key.toLowerCase() === util._t(".metadata-hide-shortcut") && env.currentMedia !== null && ! isMap) {
 						f.toggleMetadata();
