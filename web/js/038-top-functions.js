@@ -2871,8 +2871,22 @@
 			$("#fullscreen-wrapper").fullScreen(
 				{
 					callback: function(isFullscreen) {
-						env.fullScreenStatus = isFullscreen;
-					}
+						let event = {data: {}};
+						event.data.resize = true;
+						event.data.id = "center";
+						let scalePromise = env.currentMedia.scale(event);
+						scalePromise.then(
+							function() {
+								if (ev.data.currentMedia.mimeType.indexOf("image/") === 0) {
+									util.setPinchButtonsPosition();
+									pS.setPinchButtonsVisibility();
+								}
+								util.setSelectButtonPosition();
+								util.correctPrevNextPosition();
+								util.setDescriptionOptions();
+							}
+						);
+				}
 				}
 			);
 		}
