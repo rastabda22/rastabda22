@@ -198,7 +198,8 @@ $(document).ready(function() {
 						if (env.currentMedia !== null)
 							$(".download-single-media .download-link")[0].click();
 						return false;
-					} else if (e.key.toLowerCase() === util._t(".enter-fullscreen-shortcut") && env.currentMedia !== null && ! isMap) {
+					} else if (e.key.toLowerCase() === util._t(".enter-fullscreen-shortcut")  && ! isMap && ! isPopup) {
+					// } else if (e.key.toLowerCase() === util._t(".enter-fullscreen-shortcut") && env.currentMedia !== null && ! isMap) {
 						tF.toggleFullscreen(e);
 						return false;
 					} else if (e.key.toLowerCase() === util._t(".metadata-hide-shortcut") && env.currentMedia !== null && ! isMap) {
