@@ -1277,7 +1277,7 @@
 							"contextmenu",
 							function(ev) {
 								if (! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-									if (pS.getCurrentZoom() === 1) {
+									if (pS.getCurrentZoom() === pS.getInitialZoom()) {
 										ev.preventDefault();
 										env.prevMedia.swipeRight();
 										return false;
