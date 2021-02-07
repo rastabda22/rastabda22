@@ -2886,7 +2886,7 @@
 								util.setDescriptionOptions();
 							}
 						);
-				}
+					}
 				}
 			);
 		}

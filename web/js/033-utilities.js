@@ -2411,10 +2411,13 @@
 				$(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
 
 				Utilities.scrollToThumb();
-				if (id === "center")
+				if (id === "center") {
+					Utilities.addMediaLazyLoader();
 					resolve_scale([containerHeight, containerWidth]);
+				}
 
 				$("#loading").hide();
+
 			}
 		);
 	};
@@ -2465,7 +2468,7 @@
 		}
 	};
 
-	Utilities.prototype.addMediaLazyLoader = function() {
+	Utilities.addMediaLazyLoader = function() {
 		$(
 			function() {
 				$("img.lazyload-popup-media").Lazy(
@@ -3928,6 +3931,7 @@
 	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
 	Utilities.prototype.setDescriptionOptions = Utilities.setDescriptionOptions;
 	Utilities.prototype.toggleMenu = Utilities.toggleMenu;
+	Utilities.prototype.addMediaLazyLoader = Utilities.addMediaLazyLoader;
 
 	window.Utilities = Utilities;
 }());
