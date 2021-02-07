@@ -53,8 +53,12 @@ a:hover {
 	cursor: pointer;
 }
 
-.hidden, .hidden-by-option, .hidden-by-fullscreen, .hidden-by-pinch {
+.hidden, .hidden-by-option, .hidden-by-pinch {
 	display: none !important;
+}
+
+#fullscreen-wrapper.fullscreen #album-view.media-view-container, #fullscreen-wrapper.fullscreen .title {
+	display: none;
 }
 
 img.title-img {

@@ -1097,16 +1097,6 @@
 		env.firstEscKey = true;
 
 		if (id === "center") {
-			if (env.fullScreenStatus) {
-				$("#" + id + " .title").addClass("hidden-by-fullscreen");
-				$("#album-view").addClass("hidden-by-fullscreen");
-			} else {
-				$("#" + id + " .title").removeClass("hidden-by-fullscreen");
-				$("#album-view").removeClass("hidden-by-fullscreen");
-			}
-
-			// f.setOptions();
-
 			if (env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1) {
 				$("#album-view").addClass("hidden");
 			} else {
@@ -2864,33 +2854,29 @@
 	};
 
 	TopFunctions.toggleFullscreen = function(e) {
+		if (! env.fullScreenStatus) {
+			$("#fullscreen-wrapper").addClass("fullscreen");
+			$(".enter-fullscreen").hide();
+			$(".exit-fullscreen").show();
+			env.fullScreenStatus = true;
+		} else {
+			$("#fullscreen-wrapper").removeClass("fullscreen");
+			$(".enter-fullscreen").show();
+			$(".exit-fullscreen").hide();
+			env.fullScreenStatus = false;
+		}
+		$("#loading").hide();
+
 		if (Modernizr.fullscreen) {
 			e.preventDefault();
-			$("#album-view").addClass('hidden');
-			$("#media-view-container").fullScreen({
-				callback: function(isFullscreen) {
-					$("#loading").hide();
-					env.fullScreenStatus = isFullscreen;
-					$(".enter-fullscreen").toggle();
-					$(".exit-fullscreen").toggle();
-					env.currentMedia.show(env.currentAlbum, 'center');
+
+			$("#fullscreen-wrapper").fullScreen(
+				{
+					callback: function(isFullscreen) {
+						env.fullScreenStatus = isFullscreen;
+					}
 				}
-			});
-		} else {
-			if (! env.fullScreenStatus) {
-				$(".title").addClass("hidden-by-fullscreen");
-				$("#album-view.media-view-container").addClass('hidden-by-fullscreen');
-				$(".enter-fullscreen").toggle();
-				$(".exit-fullscreen").toggle();
-				env.fullScreenStatus = true;
-			} else {
-				$(".title").removeClass("hidden-by-fullscreen");
-				$("#album-view.media-view-container").removeClass('hidden-by-fullscreen');
-				$(".enter-fullscreen").toggle();
-				$(".exit-fullscreen").toggle();
-				env.fullScreenStatus = false;
-			}
-			env.currentMedia.show(env.currentAlbum, 'center');
+			);
 		}
 	};
 
