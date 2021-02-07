@@ -2855,16 +2855,36 @@
 	};
 
 	TopFunctions.toggleFullscreen = function(e) {
-		if (! env.fullScreenStatus) {
-			$(".enter-fullscreen").hide();
-			$(".exit-fullscreen").show();
-			env.fullScreenStatus = true;
-		} else {
-			$(".enter-fullscreen").show();
-			$(".exit-fullscreen").hide();
-			env.fullScreenStatus = false;
+		function afterToggling() {
+			if (! env.fullScreenStatus) {
+				$(".enter-fullscreen").hide();
+				$(".exit-fullscreen").show();
+				env.fullScreenStatus = true;
+			} else {
+				$(".enter-fullscreen").show();
+				$(".exit-fullscreen").hide();
+				env.fullScreenStatus = false;
+			}
+			$("#loading").hide();
+
+			if (env.currentMedia !== null) {
+				let event = {data: {}};
+				event.data.resize = true;
+				event.data.id = "center";
+				let scalePromise = env.currentMedia.scale(event);
+				scalePromise.then(
+					function() {
+						if (env.currentMedia.mimeType.indexOf("image/") === 0) {
+							util.setPinchButtonsPosition();
+							pS.setPinchButtonsVisibility();
+						}
+						util.setSelectButtonPosition();
+						util.correctPrevNextPosition();
+						util.setDescriptionOptions();
+					}
+				);
+			}
 		}
-		$("#loading").hide();
 
 		if (Modernizr.fullscreen) {
 			e.preventDefault();
@@ -2872,26 +2892,12 @@
 			$("#fullscreen-wrapper").fullScreen(
 				{
 					callback: function(isFullscreen) {
-						if (env.currentMedia !== null) {
-							let event = {data: {}};
-							event.data.resize = true;
-							event.data.id = "center";
-							let scalePromise = env.currentMedia.scale(event);
-							scalePromise.then(
-								function() {
-									if (env.currentMedia.mimeType.indexOf("image/") === 0) {
-										util.setPinchButtonsPosition();
-										pS.setPinchButtonsVisibility();
-									}
-									util.setSelectButtonPosition();
-									util.correctPrevNextPosition();
-									util.setDescriptionOptions();
-								}
-							);
-						}
+						afterToggling();
 					}
 				}
 			);
+		} else {
+			afterToggling();
 		}
 	};
 
