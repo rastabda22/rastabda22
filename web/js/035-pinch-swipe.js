@@ -448,7 +448,7 @@
 							env.prevMedia.swipeRight();
 						} else if (direction === "left") {
 							env.nextMedia.swipeLeft();
-						} else if (direction === "down") {
+						} else if (direction === "down" || direction === "up") {
 							PinchSwipe.swipeDown(util.upHash());
 						}
 					}
