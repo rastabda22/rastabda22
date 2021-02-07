@@ -420,7 +420,6 @@
 		function swipeStatus(event, phase, direction, distance, duration, fingerCount) {
 			//If we are moving before swipe, and we are going L or R in X mode, or U or D in Y mode then drag.
 
-			// if (event.buttons > 0) {
 			if (event.button === 2 && (event.shiftKey || event.ctrlKey || event.altKey)) {
 				return;
 			}
@@ -431,17 +430,18 @@
 				isLongTap = false;
 			}
 
+			// if (true || event.buttons > 0) {
 			// when dragging with the mouse, fingerCount is 0
 			if (event.touches === undefined || fingerCount === 1) {
 				if (currentZoom === initialZoom) {
 					// zoom = 1: swipe
-					if (phase === "move") {
+					if (phase === "move" && event.buttons > 0) {
 						if (direction === "left") {
 							PinchSwipe.scrollMedia(env.windowWidth + distance);
 						} else if (direction === "right") {
 							PinchSwipe.scrollMedia(env.windowWidth - distance);
 						}
-					} else if (phase === "cancel") {
+					} else if (phase === "cancel" && event.buttons > 0) {
 						PinchSwipe.swipeMedia(env.windowWidth);
 					} else if (phase === "end") {
 						if (direction === "right") {
@@ -465,7 +465,7 @@
 						clientX = event.changedTouches[0].clientX;
 						clientY = event.changedTouches[0].clientY;
 					}
-					if (phase === "start" || phase === "end" || phase === "cancel" || distance === 0) {
+					if (phase === "start"  && event.buttons > 0 || phase === "end" || phase === "cancel"  && event.buttons > 0 || distance === 0) {
 						if (phase === "start") {
 							previousClientX = clientX;
 							previousClientY = clientY;
@@ -473,7 +473,7 @@
 						// distance = 0
 						// baseTranslateX = currentTranslateX;
 						// baseTranslateY = currentTranslateY;
-					} else {
+					} else if (event.buttons > 0){
 						var dragVectorX = clientX - previousClientX;
 						var dragVectorY = clientY - previousClientY;
 						previousClientX = clientX;
