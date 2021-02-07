@@ -167,9 +167,10 @@ $(document).ready(function() {
 								pS.drag(env.windowWidth / 3, {x: 1, y: 0});
 						}
 						return false;
-					} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink && ! isMap) {
+					} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink && ! isMap && env.currentMedia !== null) {
 						if (pS.getCurrentZoom() === pS.getInitialZoom()) {
-							if (e.shiftKey && ! $("#center .title").hasClass("hidden-by-pinch")) {
+							if (e.shiftKey) {
+							// if (e.shiftKey && ! $("#center .title").hasClass("hidden-by-pinch")) {
 								pS.swipeDown(upLink);
 								return false;
 							}
@@ -186,13 +187,21 @@ $(document).ready(function() {
 					 	if (e.shiftKey && env.mediaLink && env.currentMedia === null) {
 							pS.swipeUp(env.mediaLink);
 							return false;
-						} else if (pS.getCurrentZoom() > pS.getInitialZoom()) {
-							if (! e.shiftKey)
-								PinchSwipe.drag(env.windowHeight / 10, {x: 0, y: -1});
-							else
-								// faster
-								PinchSwipe.drag(env.windowHeight / 3, {x: 0, y: -1});
-							return false;
+						} else if (env.currentMedia !== null) {
+							if (pS.getCurrentZoom() === pS.getInitialZoom()) {
+								if (e.shiftKey) {
+								// if (e.shiftKey && ! $("#center .title").hasClass("hidden-by-pinch")) {
+									pS.swipeDown(upLink);
+									return false;
+								}
+							} else {
+								if (! e.shiftKey)
+									pS.drag(env.windowHeight / 10, {x: 0, y: -1});
+								else
+									// faster
+									pS.drag(env.windowHeight / 3, {x: 0, y: -1});
+								return false;
+							}
 						}
 					} else if (e.key.toLowerCase() === util._t(".download-link-shortcut") && ! isMap) {
 						if (env.currentMedia !== null)
