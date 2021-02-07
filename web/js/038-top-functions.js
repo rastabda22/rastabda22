@@ -2871,21 +2871,23 @@
 			$("#fullscreen-wrapper").fullScreen(
 				{
 					callback: function(isFullscreen) {
-						let event = {data: {}};
-						event.data.resize = true;
-						event.data.id = "center";
-						let scalePromise = env.currentMedia.scale(event);
-						scalePromise.then(
-							function() {
-								if (ev.data.currentMedia.mimeType.indexOf("image/") === 0) {
-									util.setPinchButtonsPosition();
-									pS.setPinchButtonsVisibility();
+						if (env.currentMedia !== null) {
+							let event = {data: {}};
+							event.data.resize = true;
+							event.data.id = "center";
+							let scalePromise = env.currentMedia.scale(event);
+							scalePromise.then(
+								function() {
+									if (env.currentMedia.mimeType.indexOf("image/") === 0) {
+										util.setPinchButtonsPosition();
+										pS.setPinchButtonsVisibility();
+									}
+									util.setSelectButtonPosition();
+									util.correctPrevNextPosition();
+									util.setDescriptionOptions();
 								}
-								util.setSelectButtonPosition();
-								util.correctPrevNextPosition();
-								util.setDescriptionOptions();
-							}
-						);
+							);
+						}
 					}
 				}
 			);
