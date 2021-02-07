@@ -167,21 +167,27 @@ $(document).ready(function() {
 								pS.drag(env.windowWidth / 3, {x: 1, y: 0});
 						}
 						return false;
-					} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink && ! isMap && env.currentMedia !== null) {
-						if (pS.getCurrentZoom() === pS.getInitialZoom()) {
-							if (e.shiftKey) {
-							// if (e.shiftKey && ! $("#center .title").hasClass("hidden-by-pinch")) {
-								pS.swipeDown(upLink);
+					} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink && ! isMap) {
+						if (e.shiftKey && env.currentMedia === null) {
+							$("#loading").show();
+							pS.swipeDown(upLink);
+							return false;
+						} else if (env.currentMedia !== null) {
+							if (pS.getCurrentZoom() === pS.getInitialZoom()) {
+								if (e.shiftKey) {
+								// if (e.shiftKey && ! $("#center .title").hasClass("hidden-by-pinch")) {
+									pS.swipeDown(upLink);
+									return false;
+								}
+							} else {
+								// drag
+								if (! e.shiftKey)
+									pS.drag(env.windowHeight / 10, {x: 0, y: 1});
+								else
+									// faster
+									pS.drag(env.windowHeight / 3, {x: 0, y: 1});
 								return false;
 							}
-						} else {
-							// drag
-							if (! e.shiftKey)
-								pS.drag(env.windowHeight / 10, {x: 0, y: 1});
-							else
-								// faster
-								pS.drag(env.windowHeight / 3, {x: 0, y: 1});
-							return false;
 						}
 					} else if (e.key === "ArrowDown" || e.key === "PageDown" && ! isMap) {
 					 	if (e.shiftKey && env.mediaLink && env.currentMedia === null) {
