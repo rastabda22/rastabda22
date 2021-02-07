@@ -57,7 +57,7 @@ a:hover {
 	display: none !important;
 }
 
-#fullscreen-wrapper.fullscreen #album-view.media-view-container, #fullscreen-wrapper.fullscreen .title {
+#fullscreen-wrapper.fullScreen #album-view.media-view-container, #fullscreen-wrapper.fullScreen .title {
 	display: none;
 }
 

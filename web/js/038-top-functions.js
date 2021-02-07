@@ -2855,12 +2855,10 @@
 
 	TopFunctions.toggleFullscreen = function(e) {
 		if (! env.fullScreenStatus) {
-			$("#fullscreen-wrapper").addClass("fullscreen");
 			$(".enter-fullscreen").hide();
 			$(".exit-fullscreen").show();
 			env.fullScreenStatus = true;
 		} else {
-			$("#fullscreen-wrapper").removeClass("fullscreen");
 			$(".enter-fullscreen").show();
 			$(".exit-fullscreen").hide();
 			env.fullScreenStatus = false;
