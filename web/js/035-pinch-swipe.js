@@ -648,11 +648,11 @@
 		// 	return $(mediaSelector)[0].height / parseInt($("#center .media-box-inner").css("height"));
 	};
 
-	PinchSwipe.prototype.getCurrentZoom = function () {
+	PinchSwipe.getCurrentZoom = function () {
 		return currentZoom;
 	};
 
-	PinchSwipe.prototype.getInitialZoom = function () {
+	PinchSwipe.getInitialZoom = function () {
 		return initialZoom;
 	};
 
@@ -664,8 +664,11 @@
 		photoWidth = env.currentMedia.metadata.size[0];
 		photoHeight = env.currentMedia.metadata.size[1];
 
-		initialZoom = PinchSwipe.screenZoom();
-		currentZoom = initialZoom;
+		// initialZoom = PinchSwipe.screenZoom();
+		var newInitialZoom = PinchSwipe.screenZoom();
+		if (newInitialZoom === initialZoom)
+			currentZoom = newInitialZoom;
+		initialZoom = newInitialZoom;
 
 		PinchSwipe.setPinchButtonsVisibility();
 	};
@@ -812,6 +815,8 @@
 	PinchSwipe.prototype.setPinchButtonsVisibility = PinchSwipe.setPinchButtonsVisibility;
 	PinchSwipe.prototype.swipeUp = PinchSwipe.swipeUp;
 	PinchSwipe.prototype.initialize = PinchSwipe.initialize;
+	PinchSwipe.prototype.getCurrentZoom = PinchSwipe.getCurrentZoom;
+	PinchSwipe.prototype.getInitialZoom = PinchSwipe.getInitialZoom;
 
 	window.PinchSwipe = PinchSwipe;
 }());

@@ -1035,7 +1035,8 @@
 					scalePromise.then(
 						function() {
 							if (self.mimeType.indexOf("image/") === 0) {
-								f.pinchSwipeInitialization();
+								if (pS.getCurrentZoom() === pS.getInitialZoom())
+									f.pinchSwipeInitialization();
 								util.setPinchButtonsPosition();
 								pS.setPinchButtonsVisibility();
 							}

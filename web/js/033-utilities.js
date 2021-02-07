@@ -2395,7 +2395,8 @@
 
 					Utilities.setLinksVisibility();
 					if (self.mimeType.indexOf("image/") === 0) {
-						Functions.pinchSwipeInitialization();
+						if (PinchSwipe.getCurrentZoom() === PinchSwipe.getInitialZoom())
+							Functions.pinchSwipeInitialization();
 						Utilities.setPinchButtonsPosition();
 						PinchSwipe.setPinchButtonsVisibility();
 					}
