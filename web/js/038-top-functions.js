@@ -1254,17 +1254,17 @@
 					if (self.mimeType.indexOf("image/") === 0)
 						mediaBoxInnerElement.off("mousewheel").on("mousewheel", pS.swipeOnWheel);
 
-					$(".media-box#center .media-box-inner .media-bar").off("click").on(
-						"click",
-						function(ev) {
-							ev.stopPropagation();
-						}
-					).off("contextmenu").on(
-						"contextmenu",
-						function(ev) {
-							ev.stopPropagation();
-						}
-					);
+					// $(".media-box#center .media-box-inner .media-bar").off("click").on(
+					// 	"click",
+					// 	function(ev) {
+					// 		ev.stopPropagation();
+					// 	}
+					// ).off("contextmenu").on(
+					// 	"contextmenu",
+					// 	function(ev) {
+					// 		ev.stopPropagation();
+					// 	}
+					// );
 
 					if (env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1) {
 						mediaBoxInnerElement.css('cursor', 'default');
