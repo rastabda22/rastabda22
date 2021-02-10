@@ -1846,12 +1846,10 @@
 		else
 			$(".media-tags").removeClass("hidden-by-option");
 
+		$("#album-and-media-container #thumbs").removeClass("hidden-by-option");
 		if (env.options.hide_bottom_thumbnails) {
-			$("#album-view.media-view-container").addClass("hidden-by-option");
-		} else {
-			$("#album-view.media-view-container").removeClass("hidden-by-option");
+			$("#album-and-media-container.show-media #thumbs").addClass("hidden-by-option");
 		}
-
 	};
 
 	Utilities.prototype.setSubalbumsOptions = function() {
@@ -2315,9 +2313,9 @@
 				var id = event.data.id;
 				var heightForMedia, heightForMediaAndTitle, titleHeight;
 
-				if ($("#album-view").is(":visible")) {
-					let height = env.options.media_thumb_size + Utilities.horizontalScrollBarThickness($("#album-view")[0]);
-					$("#album-view").css("height", height.toString() + "px");
+				if ($("#thumbs").is(":visible")) {
+					let height = env.options.media_thumb_size + Utilities.horizontalScrollBarThickness($("#thumbs")[0]);
+					$("#thumbs").css("height", height.toString() + "px");
 				}
 
 				env.windowWidth = $(window).innerWidth();
@@ -2432,7 +2430,7 @@
 		var singleMedia = env.currentMedia, thumb;
 
 
-		if (! Utilities.isPopup() && $("#album-view").is(":visible") && (env.currentMedia !== null || env.previousMedia !== null)) {
+		if (! Utilities.isPopup() && $("#thumbs").is(":visible") && (env.currentMedia !== null || env.previousMedia !== null)) {
 			if (env.currentMedia === null && env.previousMedia !== null) {
 				singleMedia = env.previousMedia;
 			}
@@ -2494,7 +2492,7 @@
 		);
 		$(
 			function() {
-				$("#album-view:not(.media-view-container) img.lazyload-media").Lazy(
+				$("#album-and-media-container:not(.show-media) #thumbs img.lazyload-media").Lazy(
 					{
 						// threshold: 2 * env.options.media_thumb_size,
 						appendScroll: $(window)
@@ -2504,10 +2502,10 @@
 		);
 		$(
 			function() {
-				$("#album-view.media-view-container img.lazyload-media").Lazy(
+				$("#album-and-media-container.show-media #thumbs img.lazyload-media").Lazy(
 					{
 						// threshold: 2 * env.options.media_thumb_size,
-						appendScroll: $("#album-view")
+						appendScroll: $("#thumbs")
 					}
 				);
 			}
@@ -3088,18 +3086,18 @@
 		var mediaElement = $(".media-box#center .media-box-inner img");
 		var actualHeight = mediaElement.height();
 		var actualWidth = mediaElement.width();
-		var titleHeight, albumHeight;
+		var titleHeight, thumbsHeight;
 		if ($(".media-box#center .title").is(":visible"))
 			titleHeight = $(".media-box#center .title").height();
 		else
 			titleHeight = 0;
-		if ($("#album-view").is(":visible"))
-			albumHeight = $("#album-view").height();
+		if ($("#thumbs").is(":visible"))
+			thumbsHeight = $("#thumbs").height();
 		else
-			albumHeight = 0;
+			thumbsHeight = 0;
 		var distanceFromImageBorder = 15;
 		// if (containerHeight === undefined) {
-		containerHeight = env.windowHeight - titleHeight - albumHeight;
+		containerHeight = env.windowHeight - titleHeight - thumbsHeight;
 		containerWidth = env.windowWidth;
 		// }
 		var pinchTop = Math.round(titleHeight + (containerHeight - actualHeight) / 2 + distanceFromImageBorder);
@@ -3142,16 +3140,16 @@
 		var mediaElement = $(".media-box#center .media-box-inner img");
 		var actualHeight = mediaElement.height();
 		var actualWidth = mediaElement.width();
-		var titleHeight = 0, albumHeight = 0;
+		var titleHeight = 0, thumbsHeight = 0;
 		if ($(".media-box#center .title").is(":visible"))
 			titleHeight = $(".media-box#center .title").height();
-		if ($("#album-view").is(":visible"))
-			albumHeight = Math.max($("#album-view").height(), parseInt($("#album-view").css("height")));
+		if ($("#thumbs").is(":visible"))
+			thumbsHeight = Math.max($("#thumbs").height(), parseInt($("#thumbs").css("height")));
 		var distanceFromImageBorder = 15;
-		containerHeight = env.windowHeight - titleHeight - albumHeight;
+		containerHeight = env.windowHeight - titleHeight - thumbsHeight;
 		containerWidth = env.windowWidth;
 		// }
-		var bottom = Math.round(albumHeight + (containerHeight - actualHeight) / 2 + distanceFromImageBorder);
+		var bottom = Math.round(thumbsHeight + (containerHeight - actualHeight) / 2 + distanceFromImageBorder);
 		var left = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
 		$("#media-select-box .select-box").css("left", "");
 		$("#media-select-box .select-box").css("left", left.toString() + "px").css("bottom", bottom.toString() + "px");
@@ -3454,7 +3452,7 @@
 			$("#description-tags").removeClass("hidden-by-option");
 
 		var thumbsHeight = 0;
-		if (env.currentMedia !== null && $("#album-view").is(":visible"))
+		if (env.currentMedia !== null && $("#thumbs").is(":visible"))
 			thumbsHeight = env.options.media_thumb_size + 20;
 		$("#description-wrapper").css("bottom", thumbsHeight + 20);
 

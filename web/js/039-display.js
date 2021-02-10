@@ -111,14 +111,11 @@ $(document).ready(function() {
 				if (! e.ctrlKey && ! e.altKey) {
 					if (e.key === util._t("#hide-everytyhing-shortcut")) {
 						e.preventDefault();
-						if (! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
-						// if (pS.getCurrentZoom() === pS.getInitialZoom() && ! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
-							tF.toggleTitleAndBottomThumbnailsAndDescriptionsAndTags(e);
-							return false;
-						}
+						tF.toggleTitleAndBottomThumbnailsAndDescriptionsAndTags(e);
+						return false;
 					} else if (e.key === "ArrowRight" && (pS.getCurrentZoom() !== pS.getInitialZoom() || env.prevMedia) && env.currentMedia !== null && ! isMap) {
 						if (pS.getCurrentZoom() === pS.getInitialZoom()) {
-							$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+							$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 							$("#next")[0].click();
 							// media.swipeLeft();
 						} else {
@@ -142,7 +139,7 @@ $(document).ready(function() {
 						(e.key.toLowerCase() === util._t("#next-media-title-shortcut") || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
 						env.nextMedia && env.currentMedia !== null && ! isMap
 					) {
-						$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+						$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 						$("#next")[0].click();
 						// env.nextMedia.swipeLeft();
 						return false;
@@ -150,13 +147,13 @@ $(document).ready(function() {
 						(e.key.toLowerCase() === util._t("#prev-media-title-shortcut") || e.key === "Backspace" && ! e.shiftKey || (e.key === "Enter" || e.key === " ") && e.shiftKey) &&
 						env.prevMedia && env.currentMedia !== null && ! isMap
 					) {
-						$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+						$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 						$("#prev")[0].click();
 						// env.prevMedia.swipeRight();
 						return false;
 					} else if (e.key === "ArrowLeft" && (pS.getCurrentZoom() !== pS.getInitialZoom() || env.prevMedia) && env.currentMedia !== null && ! isMap) {
 						if (pS.getCurrentZoom() === pS.getInitialZoom()) {
-							$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+							$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 							$("#prev")[0].click();
 							// media.swipeRight();
 						} else {

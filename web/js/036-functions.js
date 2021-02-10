@@ -243,7 +243,7 @@
 
 				if (isSingleMedia) {
 					$(".title").removeClass("hidden-by-pinch");
-					$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+					$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 					window.location.href =
 						env.hashBeginning + util.pathJoin([thisMedia.foldersCacheBase, thisMedia.cacheBase]);
 				} else if (isAnyRoot) {
@@ -261,7 +261,7 @@
 
 				if (isSingleMedia) {
 					$(".title").removeClass("hidden-by-pinch");
-					$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+					$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 					window.location.href =
 						env.hashBeginning + util.pathJoin([thisMedia.dayAlbumCacheBase, thisMedia.foldersCacheBase, thisMedia.cacheBase]);
 				} else if (isAnyRoot) {
@@ -278,7 +278,7 @@
 
 				if (isSingleMedia) {
 					$(".title").removeClass("hidden-by-pinch");
-					$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+					$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 					window.location.href =
 						env.hashBeginning + util.pathJoin([thisMedia.gpsAlbumCacheBase, thisMedia.foldersCacheBase, thisMedia.cacheBase]);
 				} else if (isAnyRoot) {
@@ -294,7 +294,7 @@
 				TopFunctions.showBrowsingModeMessage("#by-map-browsing");
 				if (isSingleMedia) {
 					$(".title").removeClass("hidden-by-pinch");
-					$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+					$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 					window.location.href = phFl.encodeHash(env.mapAlbum.cacheBase, thisMedia);
 				} else if (isAnyRoot) {
 					window.location.href = phFl.encodeHash(env.mapAlbum.cacheBase, null);
@@ -309,7 +309,7 @@
 				TopFunctions.showBrowsingModeMessage("#by-search-browsing");
 				if (isSingleMedia) {
 					$(".title").removeClass("hidden-by-pinch");
-					$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+					$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 					// if (thisMedia.hasOwnProperty("searchHashes") && thisMedia.searchHashes.length)
 					var foundAlbum = thisMedia.isInFoundAlbum();
 					if (foundAlbum !== false) {
@@ -340,7 +340,7 @@
 
 				if (isSingleMedia) {
 					$(".title").removeClass("hidden-by-pinch");
-					$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+					$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 					window.location.href = phFl.encodeHash(env.selectionAlbum.cacheBase, thisMedia);
 				} else {
 					window.location.href = phFl.encodeHash(env.selectionAlbum.cacheBase, null);
