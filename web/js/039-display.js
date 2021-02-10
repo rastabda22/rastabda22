@@ -36,10 +36,6 @@ $(document).ready(function() {
 	util.mediaBoxGenerator('left');
 	util.mediaBoxGenerator('right');
 
-	/* Displays */
-
-	$("#menu-icon").off("click").on("click", util.toggleMenu);
-
 	/* Event listeners */
 
 	$(document).off("keydown").on("keydown", function(e) {
@@ -777,7 +773,7 @@ $(document).ready(function() {
 			if (env.isABrowsingModeChange)
 				env.isABrowsingModeChange = false;
 			$("#loading").show();
-			$("#album-view").removeClass("hidden");
+			// $("#album-view").removeClass("hidden");
 			$("link[rel=image_src]").remove();
 			$("link[rel=video_src]").remove();
 			$("ul#right-menu").removeClass("expand");

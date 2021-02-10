@@ -1131,7 +1131,7 @@
 		if ($("ul#right-menu").hasClass("expand")) {
 			if (! $(".sub-menu:not(.hidden)").length)
 				Utilities.focusSearchField();
-			$("#album-view").css("opacity", "0.3");
+			$("#album-and-media-container:not(.show-media) #album-view").css("opacity", "0.3");
 			$(".leaflet-popup-content-wrapper").css("background-color", "darkgray");
 			Functions.updateMenu();
 		} else {
@@ -3554,15 +3554,6 @@
 		else if (id === 'right')
 			$("#media-box-container").append(env.originalMediaBoxContainerContent.replace('id="center"', 'id="right"'));
 		$(".media-box#" + id + " .metadata").css("display", $(".media-box#center .metadata").css("display"));
-	};
-
-	Utilities.toggleMenu = function() {
-		$("ul#right-menu").toggleClass("expand");
-		if ($("ul#right-menu").hasClass("expand")) {
-			if (! $(".sub-menu:not(.hidden)").length)
-				Utilities.focusSearchField();
-			Functions.updateMenu();
-		}
 	};
 
 	Utilities.prototype.showAuthForm = function(event, maybeProtectedContent = false) {
