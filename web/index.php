@@ -337,34 +337,34 @@
 				</div>
 			</div>
 
-			<div id="media-view-container">
-				<div id="auth-text">
-					<div id="auth-close" style="top: 22px; right: 22px;"></div>
-					<form id="auth-form">
-						<div id="auth-question"></div>
-						<input type="text" value="username" autocomplete="username" style="display: none;" />
-						<input id="password" type="password" autocomplete="current-password" />
+			<div id="auth-text">
+				<div id="auth-close" style="top: 22px; right: 22px;"></div>
+				<form id="auth-form">
+					<div id="auth-question"></div>
+					<input type="text" value="username" autocomplete="username" style="display: none;" />
+					<input id="password" type="password" autocomplete="current-password" />
+					<input type="submit" value="⏎" class="button"/>
+				</form>
+				<div>
+					<div id="request-password"></div>
+					<form id="password-request-form">
+						<div id="enter-your-data"></div>
+						<div id="please-fill"></div>
+						<input type="hidden" name="requestpassword" />
+						<span id="name-label"></span>
+						<input id="form-name" type="text" name="name" />
+						<span id="email-label" class="space-before"></span>
+						<input id="form-email" type="text" name="email" />
+						<span id="identity" class="space-before">
+							<span id="identity-label"></span>
+							<input id="form-identity" type="text" name="identity" />
+						</span>
 						<input type="submit" value="⏎" class="button"/>
 					</form>
-					<div>
-						<div id="request-password"></div>
-						<form id="password-request-form">
-							<div id="enter-your-data"></div>
-							<div id="please-fill"></div>
-							<input type="hidden" name="requestpassword" />
-							<span id="name-label"></span>
-							<input id="form-name" type="text" name="name" />
-							<span id="email-label" class="space-before"></span>
-							<input id="form-email" type="text" name="email" />
-							<span id="identity" class="space-before">
-								<span id="identity-label"></span>
-								<input id="form-identity" type="text" name="identity" />
-							</span>
-							<input type="submit" value="⏎" class="button"/>
-						</form>
-					</div>
 				</div>
+			</div>
 
+			<div id="media-view-container">
 				<div id="media-view">
 					<div id="media-box-container">
 						<div class="media-box" id="center">
