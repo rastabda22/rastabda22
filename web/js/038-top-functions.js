@@ -1086,7 +1086,6 @@
 		var exposureTime, heightForMedia, heightForMediaAndTitle;
 		var previousMediaIndex, nextMediaIndex, whatMedia;
 
-		$(".media-bar").show();
 		$("#downloading-media").hide();
 
 		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
@@ -1095,6 +1094,7 @@
 		env.firstEscKey = true;
 
 		if (id === "center") {
+			$(".media-bar").show();
 			whatMedia = this;
 		} else if (id === "left") {
 			whatMedia = env.prevMedia;
@@ -1472,11 +1472,11 @@
 			env.currentMedia = env.currentAlbum.media[0];
 			env.currentMediaIndex = 0;
 			$("#media-view").css("cursor", "default");
-			$("#album-view, #media-view").addClass("one-media");
+			$("#album-and-media-container").addClass("one-media");
 			env.nextMedia = null;
 			env.prevMedia = null;
 		} else {
-			$("#album-view, #media-view").removeClass("one-media");
+			$("#album-and-media-container").removeClass("one-media");
 			$("#media-view").css("cursor", "ew-resize");
 		}
 
@@ -1485,7 +1485,7 @@
 		if (env.currentMedia !== null) {
 			env.nextMedia = null;
 			env.prevMedia = null;
-			$("#media-view-container").removeClass("hidden");
+			$("#media-view").removeClass("hidden");
 			$("#album-view").addClass("media-view-container");
 			if (
 				env.albumOfPreviousState !== env.currentAlbum ||
@@ -1500,7 +1500,7 @@
 			env.currentMedia.show(env.currentAlbum, 'center');
 			$("#powered-by").hide();
 		} else {
-			$("#media-view-container").addClass("hidden");
+			$("#media-view").addClass("hidden");
 			$("#album-view").removeClass("media-view-container").removeAttr("height");
 			TopFunctions.setTitle("album", null).then(
 				function titleSet() {

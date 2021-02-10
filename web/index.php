@@ -364,7 +364,7 @@
 				</div>
 			</div>
 
-			<div id="media-view-container">
+			<div id="album-and-media-container">
 				<div id="media-view">
 					<div id="media-box-container">
 						<div class="media-box" id="center">
@@ -410,20 +410,19 @@
 						<img src="img/pinch-minus.png" id="pinch-out" class="pinch disabled" width="25" height="25">
 					</div>
 				</div>
-			</div>
 
-			<div id="album-view">
+				<div id="album-view">
+					<div class="title">
+						<span class="title-string"></span>
+					</div>
 
-				<div class="title">
-					<span class="title-string"></span>
-				</div>
-
-				<div id="subalbums"></div>
-				<div id="message-too-many-images" role="alert"></div>
-				<div id="thumbs"></div>
-				<div id="powered-by">
-					<span id="powered-by-string">Powered by</span>
-					<a href="https://gitlab.com/paolobenve/myphotoshare" target="_blank">MyPhotoShare</a>
+					<div id="subalbums"></div>
+					<div id="message-too-many-images" role="alert"></div>
+					<div id="thumbs"></div>
+					<div id="powered-by">
+						<span id="powered-by-string">Powered by</span>
+						<a href="https://gitlab.com/paolobenve/myphotoshare" target="_blank">MyPhotoShare</a>
+					</div>
 				</div>
 			</div>
 

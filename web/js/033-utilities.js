@@ -1540,16 +1540,20 @@
 					window.location.href = Utilities.upHash();
 				} else if (env.currentMedia === null) {
 					// we are in album view
+
+					$(clickedSelector).parent().parent().parent().remove();
+					// the Lazy loaders must be re-applied, otherwise it won't work
+					Utilities.addMediaLazyLoader();
+
 					if (env.currentAlbum.isAlbumWithOneMedia()) {
 						// only one media has remained after the removal
 						env.currentMedia = env.currentAlbum.media[0];
 						env.currentMediaIndex = 0;
-						$("#media-view-container").removeClass("hidden");
+						// $("#album-and-media-container").addClass("one-media");
 						env.currentMedia.show(env.currentAlbum, "center");
 						// env.currentAlbum.prepareForShowing(0);
 					} else {
 						// more than one media has remained after the removal: remove the single media thumbnail
-						$(clickedSelector).parent().parent().parent().remove();
 					}
 				} else {
 					// we are in media view
@@ -1565,7 +1569,7 @@
 							// only one media has remained after the removal
 							env.currentMedia = env.currentAlbum.media[0];
 							env.currentMediaIndex = 0;
-							$("#media-view-container").removeClass("hidden");
+							$("#media-view").removeClass("hidden");
 							env.currentMedia.show(env.currentAlbum, "center");
 							// env.currentAlbum.prepareForShowing(0);
 						} else if (clickedMediaIndex < env.currentMediaIndex) {
