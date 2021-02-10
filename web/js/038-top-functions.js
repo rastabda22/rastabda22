@@ -1512,6 +1512,7 @@
 			if (env.previousMedia === null)
 				$("html, body").stop().animate({ scrollTop: 0 }, "slow");
 			$("#thumbs").off('mousewheel');
+			$("#thumbs").css("height", "");
 			$(".thumb-container").removeClass("current-thumb");
 			$("#media-view, #album-view").removeClass("no-bottom-space");
 			$("#album-view, #album-view #subalbums").removeClass("hidden");
@@ -1821,10 +1822,7 @@
 					env.prevMedia.scale(event);
 				}
 			} else {
-				// TopFunctions.adaptAlbumOptions();
 				util.setTitleOptions();
-				// if (env.currentAlbum.subalbums.length)
-				// 	util.adaptCaptionHeight();
 			}
 		}
 		return false;
@@ -1868,8 +1866,6 @@
 					event.data.id = "left";
 					env.prevMedia.scale(event);
 				}
-			// } else {
-				// TopFunctions.adaptAlbumOptions();
 			}
 		}
 		return false;
@@ -2807,17 +2803,6 @@
 				}
 			);
 		}
-	};
-
-	TopFunctions.adaptAlbumOptions = function() {
-		if (env.currentMedia === null) {
-		} else {
-			// env.currentMedia !== null
-		}
-
-		f.setOptions();
-
-		f.updateMenu();
 	};
 
 	TopFunctions.toggleFullscreen = function(e) {
