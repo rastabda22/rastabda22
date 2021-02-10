@@ -394,8 +394,7 @@
 										</span>
 									</span>
 								</div>
-								<div class="metadata">
-								</div>
+								<div class="metadata"></div>
 							</div>
 
 						</div>
