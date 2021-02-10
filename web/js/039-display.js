@@ -111,7 +111,8 @@ $(document).ready(function() {
 				if (! e.ctrlKey && ! e.altKey) {
 					if (e.key === util._t("#hide-everytyhing-shortcut")) {
 						e.preventDefault();
-						if (pS.getCurrentZoom() === pS.getInitialZoom() && ! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
+						if (! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
+						// if (pS.getCurrentZoom() === pS.getInitialZoom() && ! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
 							tF.toggleTitleAndBottomThumbnailsAndDescriptionsAndTags(e);
 							return false;
 						}
