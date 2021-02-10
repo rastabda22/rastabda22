@@ -1316,7 +1316,7 @@
 				var indexWords, indexAlbums, wordsWithOptionsString;
 				// this vars are defined here and not at the beginning of the file because the options must have been read
 
-				$("#message-too-many-images").hide();
+				$("#message-too-many-images").css("display", "");
 				$(".search-failed").hide();
 				// $("#media-view").removeClass("hidden");
 				// $("ul#right-menu li#album-search").removeClass("hidden");

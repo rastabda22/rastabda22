@@ -1146,8 +1146,9 @@
 		TopFunctions.setTitle("album", null);
 		if (! $("ul#right-menu").hasClass("expand"))
 			Utilities.toggleMenu();
-		$("#album-view #subalbums, #album-view #thumbs").addClass("hidden");
-		$("#media-view").addClass("hidden");
+		$("#album-view #subalbums, #album-view #thumbs, #media-view").addClass("hidden-by-no-results");
+		// $("#album-view #subalbums, #album-view #thumbs").addClass("hidden");
+		// $("#media-view").addClass("hidden");
 		$("#loading").hide();
 		if (typeof selector === "undefined")
 			selector = '#no-results';

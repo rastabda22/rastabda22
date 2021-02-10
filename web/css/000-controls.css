@@ -53,7 +53,7 @@ a:hover {
 	cursor: pointer;
 }
 
-.hidden, .hidden-by-option, .hidden-by-pinch {
+.hidden, .hidden-by-option, .hidden-by-pinch, .hidden-by-no-results {
 	display: none !important;
 }
 
@@ -454,7 +454,7 @@ video {
 	text-align: center;
 }
 
-#album-view.media-view-container .media-caption {
+#album-view.media-view-container #subalbums, #album-view.one-media #thumbs, #album-view.media-view-container .media-caption, #media-view.one-media #next, #media-view.one-media #prev {
 	display: none;
 }
 
@@ -773,10 +773,6 @@ video {
 /* .leaflet-popup .media-name {
 	color: white;
 } */
-
-#album-view.media-view-container #thumbs .media-name {
-	display: none;
-}
 
 .real-name {
 	padding: 0;

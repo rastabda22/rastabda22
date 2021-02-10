@@ -1089,24 +1089,12 @@
 		$(".media-bar").show();
 		$("#downloading-media").hide();
 
-		if (id === "center")
-			$("#media-view").removeClass("hidden");
-
 		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
 
 		env.mediaLink = phFl.encodeHash(env.currentAlbum.cacheBase, this, foundAlbumCacheBase, savedSearchAlbumCacheBase);
 		env.firstEscKey = true;
 
 		if (id === "center") {
-			if (env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1) {
-				$("#album-view").addClass("hidden");
-			} else {
-				$("#album-view, #album-view #subalbums").removeClass("hidden");
-			}
-
-			if ($("#album-view").is(":visible")) {
-				$("#album-view").addClass("media-view-container");
-			}
 			whatMedia = this;
 		} else if (id === "left") {
 			whatMedia = env.prevMedia;
@@ -1132,23 +1120,13 @@
 					$(".media-box .media-box-inner").css("width", env.windowWidth).css("height", heightForMedia);
 					$(".media-box").show();
 
-					if (env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1) {
-						$("#next").hide();
-						$("#prev").hide();
-					} else {
-						$("#next").show();
-						$("#prev").show();
-					}
-
 					env.currentAlbum.media[env.currentMediaIndex].byDateName =
 						util.pathJoin([env.currentAlbum.media[env.currentMediaIndex].dayAlbum, env.currentAlbum.media[env.currentMediaIndex].name]);
 					if (env.currentAlbum.media[env.currentMediaIndex].hasOwnProperty("gpsAlbum"))
 						env.currentAlbum.media[env.currentMediaIndex].byGpsName =
 							util.pathJoin([env.currentAlbum.media[env.currentMediaIndex].gpsAlbum, env.currentAlbum.media[env.currentMediaIndex].name]);
 
-					env.nextMedia = null;
-					env.prevMedia = null;
-					if (env.currentAlbum.numsMedia.imagesAndVideosTotal() > 1) {
+					if (! env.currentAlbum.isAlbumWithOneMedia()) {
 						// prepare for previous media
 						previousMediaIndex = (env.currentMediaIndex === 0 ?
 												env.currentAlbum.numsMedia.imagesAndVideosTotal() - 1 :
@@ -1255,25 +1233,25 @@
 					if (self.mimeType.indexOf("image/") === 0)
 						mediaBoxInnerElement.off("mousewheel").on("mousewheel", pS.swipeOnWheel);
 
-					// $(".media-box#center .media-box-inner .media-bar").off("click").on(
-					// 	"click",
-					// 	function(ev) {
-					// 		ev.stopPropagation();
-					// 	}
-					// ).off("contextmenu").on(
-					// 	"contextmenu",
-					// 	function(ev) {
-					// 		ev.stopPropagation();
-					// 	}
-					// );
+					$(".media-box#center .media-box-inner .media-bar").off("click").on(
+						"click",
+						function(ev) {
+							ev.stopPropagation();
+						}
+					).off("contextmenu").on(
+						"contextmenu",
+						function(ev) {
+							ev.stopPropagation();
+						}
+					);
 
 					if (env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1) {
 						mediaBoxInnerElement.css('cursor', 'default');
 					} else {
 						[albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
 
-						$("#next").show();
-						$("#prev").show();
+						// $("#next").show();
+						// $("#prev").show();
 						mediaBoxInnerElement.css('cursor', '').off("contextmenu").on(
 							"contextmenu",
 							function(ev) {
@@ -1494,10 +1472,15 @@
 			env.currentMedia = env.currentAlbum.media[0];
 			env.currentMediaIndex = 0;
 			$("#media-view").css("cursor", "default");
-			$("#album-view").addClass("hidden");
+			$("#album-view, #media-view").addClass("one-media");
+			env.nextMedia = null;
+			env.prevMedia = null;
 		} else {
+			$("#album-view, #media-view").removeClass("one-media");
 			$("#media-view").css("cursor", "ew-resize");
 		}
+
+		$("#album-view #subalbums, #album-view #thumbs, #media-view").removeClass("hidden-by-no-results");
 
 		if (env.currentMedia !== null) {
 			env.nextMedia = null;
@@ -1515,12 +1498,12 @@
 				util.addMediaLazyLoader();
 			}
 			env.currentMedia.show(env.currentAlbum, 'center');
+			$("#powered-by").hide();
 		} else {
 			$("#media-view-container").addClass("hidden");
+			$("#album-view").removeClass("media-view-container").removeAttr("height");
 			TopFunctions.setTitle("album", null).then(
 				function titleSet() {
-					$("#album-view").removeClass("media-view-container").removeAttr("height");
-
 					if ($("#album-view").is(":visible")) {
 						env.currentAlbum.showSubalbums();
 						if (
@@ -1537,6 +1520,7 @@
 					}
 				}
 			);
+			$("#powered-by").show();
 		}
 
 		// // options function must be called again in order to set elements previously absent
@@ -2100,7 +2084,7 @@
 	TopFunctions.prototype.toggleBigAlbumsShow = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			if ($("#message-too-many-images").is(":visible")) {
-				$("#message-too-many-images").hide();
+				$("#message-too-many-images").css("display", "");
 			}
 			$("#loading").show();
 			env.options.show_big_virtual_folders = ! env.options.show_big_virtual_folders;
@@ -2825,15 +2809,12 @@
 			$("#media-view").addClass("hidden");
 			$(".thumb-container").removeClass("current-thumb");
 			$("#album-view").removeClass("media-view-container").removeAttr("height");
-			if (env.currentAlbum.subalbums.length > 0)
-				$("#subalbums").show();
-			else
-				$("#subalbums").hide();
-			$("#media-view").removeClass("no-bottom-space");
-			$("#album-view").removeClass("no-bottom-space");
+			// if (env.currentAlbum.subalbums.length > 0)
+			// 	$("#subalbums").show();
+			// else
+			// 	$("#subalbums").hide();
+			$("#media-view, #album-view").removeClass("no-bottom-space");
 			$("#album-view, #album-view #subalbums").removeClass("hidden");
-
-			$("#powered-by").show();
 
 			$("body").off('mousewheel').on('mousewheel', TopFunctions.scrollAlbum);
 		} else {
