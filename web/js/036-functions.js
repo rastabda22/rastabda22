@@ -116,6 +116,57 @@
 		);
 	};
 
+	Functions.hideDescriptionMenuEntry = function() {
+		var isPopup = util.isPopup();
+		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
+
+		var popupHasSomeDescription;
+		if (isPopup)
+			popupHasSomeDescription =
+				env.mapAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("title")) ||
+				env.mapAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("description"));
+		var albumHasSomeDescription =
+			env.currentAlbum.hasSomeDescription("title") ||
+			env.currentAlbum.hasSomeDescription("description");
+		var subalbumsHaveSomeDescription =
+			env.currentAlbum.subalbums.length && (
+				env.currentAlbum.subalbums.some(subalbum => subalbum.hasSomeDescription("title")) ||
+				env.currentAlbum.subalbums.some(subalbum => subalbum.hasSomeDescription("description"))
+			);
+		var mediaHaveSomeDescription =
+			env.currentAlbum.media.length && (
+				env.currentAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("title")) ||
+				env.currentAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("description"))
+			);
+		var singleMediaHasSomeDescription;
+		if (env.currentMedia !== null)
+			singleMediaHasSomeDescription =
+				env.currentMedia.hasSomeDescription("title") ||
+				env.currentMedia.hasSomeDescription("description");
+
+		return (
+			isMap ||
+			isPopup && ! popupHasSomeDescription ||
+			env.currentMedia === null && ! albumHasSomeDescription && ! subalbumsHaveSomeDescription && ! mediaHaveSomeDescription ||
+			env.currentMedia !== null && ! (singleMediaHasSomeDescription || ! env.currentMedia.hasSomeDescription("tags") && ! albumHasSomeDescription)
+		);
+	};
+
+	Functions.hideTagsMenuEntry = function() {
+		var isPopup = util.isPopup();
+		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
+		return (
+			isMap ||
+			isPopup && ! env.mapAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("tags")) ||
+			env.currentMedia === null &&
+			! env.currentAlbum.hasSomeDescription("tags") && (
+				! env.currentAlbum.subalbums.length || ! env.currentAlbum.subalbums.some(subalbum => subalbum.hasSomeDescription("tags"))
+			) && (
+				! env.currentAlbum.media.length || ! env.currentAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("tags"))
+			) ||
+			env.currentMedia !== null && ! env.currentMedia.hasSomeDescription("tags")
+		);
+	};
 
 	Functions.updateMenu = function(thisAlbum) {
 		var albumOrMedia;
@@ -442,36 +493,7 @@
 					$("ul#right-menu li.hide-title").addClass("selected");
 			}
 
-			let popupHasSomeDescription;
-			if (isPopup)
-				popupHasSomeDescription =
-					env.mapAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("title")) ||
-					env.mapAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("description"));
-			let albumHasSomeDescription =
-				env.currentAlbum.hasSomeDescription("title") ||
-				env.currentAlbum.hasSomeDescription("description");
-			let subalbumsHaveSomeDescription =
-				env.currentAlbum.subalbums.length && (
-					env.currentAlbum.subalbums.some(subalbum => subalbum.hasSomeDescription("title")) ||
-					env.currentAlbum.subalbums.some(subalbum => subalbum.hasSomeDescription("description"))
-				);
-			let mediaHaveSomeDescription =
-				env.currentAlbum.media.length && (
-					env.currentAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("title")) ||
-					env.currentAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("description"))
-				);
-			let singleMediaHasSomeDescription;
-			if (env.currentMedia !== null)
-				singleMediaHasSomeDescription =
-					env.currentMedia.hasSomeDescription("title") ||
-					env.currentMedia.hasSomeDescription("description");
-
-			if (
-				isMap ||
-				isPopup && ! popupHasSomeDescription ||
-				env.currentMedia === null && ! albumHasSomeDescription && ! subalbumsHaveSomeDescription && ! mediaHaveSomeDescription ||
-				env.currentMedia !== null && ! singleMediaHasSomeDescription && ! albumHasSomeDescription
-			) {
+			if (Functions.hideDescriptionMenuEntry()) {
 				$("ul#right-menu li.show-descriptions").addClass("hidden");
 			} else {
 				$("ul#right-menu li.show-descriptions").removeClass("hidden");
@@ -481,17 +503,7 @@
 					$("ul#right-menu li.show-descriptions").addClass("selected");
 			}
 
-			if (
-				isMap ||
-				isPopup && ! env.mapAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("tags")) ||
-				env.currentMedia === null &&
-				! env.currentAlbum.hasSomeDescription("tags") && (
-					! env.currentAlbum.subalbums.length || ! env.currentAlbum.subalbums.some(subalbum => subalbum.hasSomeDescription("tags"))
-				) && (
-					! env.currentAlbum.media.length || ! env.currentAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("tags"))
-				) ||
-				env.currentMedia !== null && ! env.currentMedia.hasSomeDescription("tags")
-			) {
+			if (Functions.hideTagsMenuEntry()) {
 				$("ul#right-menu li.show-tags").addClass("hidden");
 			} else {
 				$("ul#right-menu li.show-tags").removeClass("hidden");
