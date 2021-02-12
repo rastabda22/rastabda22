@@ -3001,25 +3001,8 @@
 			} else {
 				folderName = albumOrSubalbum.name;
 			}
-
-			// if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title !== albumOrSubalbum.name) {
-			// 	folderName = albumOrSubalbum.title + "<br /><span class='real-name'>(" + albumOrSubalbum.name + ")</span>";
-			// } else {
-			// 	folderName = albumOrSubalbum.name;
-			// }
 		}
 
-		// if (parentAlbum && parentAlbum.isSelection())
-		// 	albumOrSubalbum.captionForSelection = folderName;
-		// else if (parentAlbum && parentAlbum.isSearch())
-		// 	albumOrSubalbum.captionForSearch = folderName;
-
-		// if (! html || ! br) {
-		// 	folderName = folderName.replace(/<br \/>/g, " ");
-		// 	if (! html) {
-		// 		folderName = Utilities.stripHtmlAndReplaceEntities(folderName);
-		// 	}
-		// }
 		return folderName;
 	};
 
