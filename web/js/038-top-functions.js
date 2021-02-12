@@ -1876,8 +1876,6 @@
 			env.options.hide_descriptions = ! env.options.hide_descriptions;
 			f.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
 
-			f.updateMenu();
-
 			if (util.isPopup() || env.currentMedia === null) {
 				util.setMediaOptions();
 			}
@@ -1885,6 +1883,7 @@
 				util.setSubalbumsOptions();
 			util.setDescriptionOptions();
 
+			f.updateMenu();
 			if (util.isPopup()) {
 				// env.mapAlbum.showMedia();
 				map.updatePopup();
@@ -1901,8 +1900,6 @@
 			env.options.hide_tags = ! env.options.hide_tags;
 			f.setBooleanCookie("hideTags", env.options.hide_tags);
 
-			f.updateMenu();
-
 
 			if (util.isPopup() || env.currentMedia === null) {
 				util.setMediaOptions();
@@ -1911,6 +1908,7 @@
 				util.setSubalbumsOptions();
 			util.setDescriptionOptions();
 
+			f.updateMenu();
 			if (util.isPopup()) {
 				// env.mapAlbum.showMedia();
 				map.updatePopup();
