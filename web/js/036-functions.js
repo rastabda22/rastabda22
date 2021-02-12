@@ -470,7 +470,7 @@
 				isMap ||
 				isPopup && ! popupHasSomeDescription ||
 				env.currentMedia === null && ! albumHasSomeDescription && ! subalbumsHaveSomeDescription && ! mediaHaveSomeDescription ||
-				env.currentMedia !== null && ! singleMediaHasSomeDescription
+				env.currentMedia !== null && ! singleMediaHasSomeDescription && ! albumHasSomeDescription
 			) {
 				$("ul#right-menu li.show-descriptions").addClass("hidden");
 			} else {
@@ -485,10 +485,12 @@
 				isMap ||
 				isPopup && ! env.mapAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("tags")) ||
 				env.currentMedia === null &&
-				! env.currentAlbum.hasSomeDescription("title") &&
-				! env.currentAlbum.subalbums.length || ! env.currentAlbum.subalbums.some(subalbum => subalbum.hasSomeDescription("title")) &&
-				! env.currentAlbum.media.length || ! env.currentAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("title")) ||
-				env.currentMedia !== null && ! env.currentMedia.hasSomeDescription("title")
+				! env.currentAlbum.hasSomeDescription("tags") && (
+					! env.currentAlbum.subalbums.length || ! env.currentAlbum.subalbums.some(subalbum => subalbum.hasSomeDescription("tags"))
+				) && (
+					! env.currentAlbum.media.length || ! env.currentAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("tags"))
+				) ||
+				env.currentMedia !== null && ! env.currentMedia.hasSomeDescription("tags")
 			) {
 				$("ul#right-menu li.show-tags").addClass("hidden");
 			} else {

@@ -638,7 +638,7 @@ video {
 	padding: 3px;
 }
 
-#description-title, #description-text, #description-tags {
+#description, #description-title, #description-text, #description-tags {
 	height: fit-content;
 	display: block;
 }

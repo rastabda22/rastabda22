@@ -3355,19 +3355,37 @@
 		// }
 	};
 
-	Utilities.hasSomeDescription = function(object, property = null) {
-		if (property) {
-			if (property === "tags")
-				return (object[property] !== undefined && object[property].length);
-			else
-				return (object[property] !== undefined && object[property] !== "");
-		}
+	Utilities.hasProperty = function(object, property) {
+		if (! object.hasOwnProperty(property))
+			return false;
+		else
+			// this[property] is array or string
+			return object[property].length > 0;
+	};
 
-		let hasTitle = (object.title !== undefined && object.title !== "");
-		let hasDescription = (object.description !== undefined && object.description !== "");
-		let hasTags = (object.tags !== undefined && object.tags.length);
+	SingleMedia.prototype.hasProperty = function(property) {
+		return Utilities.hasProperty(this.metadata, property);
+	};
 
-		return hasTitle || hasDescription || hasTags;
+	Album.prototype.hasProperty = function(property) {
+		return Utilities.hasProperty(this, property);
+	};
+
+	Subalbum.prototype.hasProperty = function(property) {
+		return Utilities.hasProperty(this, property);
+	};
+
+	Utilities.hasSomeDescription = function(albumOrSingleMedia, property = null) {
+		var myObject;
+		if (albumOrSingleMedia instanceof SingleMedia)
+			myObject = albumOrSingleMedia.metadata;
+		else
+			myObject = albumOrSingleMedia;
+
+		if (property)
+			return Utilities.hasProperty(myObject, property);
+		else
+			return Utilities.hasProperty(myObject, "title") || Utilities.hasProperty(myObject, "description") || Utilities.hasProperty(myObject, "tags");
 	};
 
 	Album.prototype.hasSomeDescription = function(property = null) {
@@ -3379,7 +3397,7 @@
 	};
 
 	SingleMedia.prototype.hasSomeDescription = function(property = null) {
-		return Utilities.hasSomeDescription(this.metadata, property);
+		return Utilities.hasSomeDescription(this, property);
 	};
 
 	Utilities.setDescription = function(object) {
@@ -3389,40 +3407,42 @@
 		} else {
 			$("#description-wrapper").removeClass("hidden");
 
-			var title = object.title;
-			var description = object.description;
-			var tags = object.tags;
-
-			var nullTitle = (typeof title === "undefined") || ! title;
-			var nullDescription = (typeof description === "undefined") || ! description;
-			var nullTags = (typeof tags === "undefined") || ! tags.length;
+			var hasTitle = Utilities.hasProperty(object, "title");
+			var hasDescription = Utilities.hasProperty(object, "description");
+			var hasTags = Utilities.hasProperty(object, "tags");
 
 			// $("#description").css("max-height", (env.windowHeight / 2) + "px");
 
-			if (! nullTitle) {
-				$("#description-title").show();
-				$("#description-title").html(Utilities.formatDescription(title));
+			if (! hasTitle && ! hasDescription) {
+				$("#description-title").html("");
+				$("#description-text").html("");
 			} else {
-				$("#description-title").hide();
-				// $("#description-title").html("");
+				// $("#description").show();
+				if (! hasTitle) {
+					$("#description-title").hide();
+					$("#description-title").html("");
+				} else {
+					$("#description-title").show();
+					$("#description-title").html(Utilities.formatDescription(object.title));
+				}
+
+				if (! hasDescription) {
+					$("#description-text").hide();
+					$("#description-text").html("");
+				} else {
+					$("#description-text").show();
+					$("#description-text").html(Utilities.formatDescription(object.description));
+					$("#description-text p").addClass("description-text");
+				}
 			}
 
-			if (! nullDescription) {
-				$("#description-text").show();
-				$("#description-text").html(Utilities.formatDescription(description));
-				$("#description-text p").addClass("description-text");
+			if (! hasTags) {
+				$("#description-tags").hide();
+				$("#description-tags").html("");
 			} else {
-				$("#description-text").hide();
-				// $("#description-text").html("");
-			}
-			if (! nullTags) {
-				// let textualTags = "<p class='tags'> " + Utilities._t("#tags") + ": <span class='tag'>" + tags.join("</span>, <span class='tag'>") + "</span></p>";
-				let textualTags = Utilities._t("#tags") + ": <span class='tag'>" + tags.map(tag => Utilities.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span>";
+				let textualTags = Utilities._t("#tags") + ": <span class='tag'>" + object.tags.map(tag => Utilities.addTagLink(tag)).join("</span>, <span class='tag'>") + "</span>";
 				$("#description-tags").show();
 				$("#description-tags").html(textualTags);
-			} else {
-				$("#description-tags").hide();
-				// $("#description-tags").html("");
 			}
 		}
 	};
@@ -3438,78 +3458,76 @@
 	Utilities.setDescriptionOptions = function() {
 		if (env.options.hide_descriptions && env.options.hide_tags)
 			$("#description-wrapper").addClass("hidden-by-option");
-		else
+		else {
 			$("#description-wrapper").removeClass("hidden-by-option");
 
-		if (env.options.hide_descriptions)
-			$("#description").addClass("hidden-by-option");
-		else
-			$("#description").removeClass("hidden-by-option");
+			if (env.options.hide_descriptions)
+				$("#description").addClass("hidden-by-option");
+			else
+				$("#description").removeClass("hidden-by-option");
 
-		if (env.options.hide_tags)
-			$("#description-tags").addClass("hidden-by-option");
-		else
-			$("#description-tags").removeClass("hidden-by-option");
+			if (env.options.hide_tags)
+				$("#description-tags").addClass("hidden-by-option");
+			else
+				$("#description-tags").removeClass("hidden-by-option");
 
-		var thumbsHeight = 0;
-		if (env.currentMedia !== null && $("#thumbs").is(":visible"))
-			thumbsHeight = env.options.media_thumb_size + 20;
-		$("#description-wrapper").css("bottom", thumbsHeight + 20);
+			var thumbsHeight = 0;
+			if (env.currentMedia !== null && $("#thumbs").is(":visible"))
+				thumbsHeight = env.options.media_thumb_size + 20;
+			$("#description-wrapper").css("bottom", thumbsHeight + 20);
 
-		$("#description-tags").css("right", $("#description-hide-show").outerWidth().toString() + "px");
+			$("#description-tags").css("right", $("#description-hide-show").outerWidth().toString() + "px");
 
-		var maxHeight = Math.min(env.windowHeight / 3, 500);
-		if (env.isMobile.any())
-			maxHeight = Math.min(env.windowHeight / 3, 400);
+			var maxHeight = Math.min(env.windowHeight / 3, 500);
+			if (env.isMobile.any())
+				maxHeight = Math.min(env.windowHeight / 3, 400);
 
-		var maxWidth = Math.min(env.windowWidth / 2, 500);
-		if (env.isMobile.any())
-			maxWidth = Math.min(env.windowWidth / 2, 400);
+			var maxWidth = Math.min(env.windowWidth / 2, 500);
+			if (env.isMobile.any())
+				maxWidth = Math.min(env.windowWidth / 2, 400);
 
-		var object = env.currentMedia !== null ? env.currentMedia.metadata : env.currentAlbum;
-		var hasDescription = (object.description !== undefined && object.description.length);
-		var hasTags = (object.tags !== undefined && object.tags.length);
-		$("#description").css("max-height", "");
-		$("#description-text").css("max-height", "");
-		$("#description-tags").css("max-height", "");
-		$("#description-tags").css("position", "");
-		if ($("#description-text").is(":visible") && ! env.options.hide_descriptions && hasDescription) {
-			$("#description-text").css("max-height", maxHeight.toString() + "px");
-		} else if ($("#description-tags").is(":visible") && ! env.options.hide_tags && hasTags) {
-			// $("#description-tags").css("position", "static");
-			$("#description-tags").css("max-height", maxHeight.toString() + "px");
-		} else {
-			$("#description").css("max-height", maxHeight.toString() + "px");
-		}
+			var object = env.currentMedia !== null ? env.currentMedia.metadata : env.currentAlbum;
+			var hasDescription = Utilities.hasProperty(object, "title") || Utilities.hasProperty(object, "description");
+			var hasTags = Utilities.hasProperty(object, "tags");
+			$("#description").css("max-height", "");
+			$("#description-text").css("max-height", "");
+			$("#description-tags").css("max-height", "");
+			$("#description-tags").css("position", "");
+			if ($("#description-text").is(":visible") && ! env.options.hide_descriptions && hasDescription) {
+				$("#description-text").css("max-height", maxHeight.toString() + "px");
+			} else if ($("#description-tags").is(":visible") && ! env.options.hide_tags && hasTags) {
+				$("#description-tags").css("max-height", maxHeight.toString() + "px");
+			} else {
+				$("#description").css("max-height", maxHeight.toString() + "px");
+			}
 
-		var bottomSpace = $("#description-hide-show").outerHeight();
-		if ($("#description-tags").is(":visible") && ! env.options.hide_tags && hasTags)
-			bottomSpace = Math.max(bottomSpace, $("#description-tags").outerHeight());
-		$("#description").css("margin-bottom", "");
-		$("#description-text").css("margin-bottom", "");
-		$("#description-text").css("height", "");
-		$("#description-wrapper").css("width", "");
-		$("#description-tags").css("position", "");
-		$("#description-tags").css("margin-left", "");
-		if ($("#description-text").is(":visible")) {
-			$("#description-text").css("margin-bottom", bottomSpace.toString() + "px");
-		} else {
-			$("#description").css("margin-bottom", bottomSpace.toString() + "px");
-			// $("#description-wrapper").css("width", ($("#description-hide-show").outerWidth() + $("#description-tags").outerWidth()) + "px");
-			$("#description-tags").css("position", "relative");
-			$("#description-tags").css("margin-left", ($("#description-hide-show").outerWidth()) + "px");
-		}
+			var bottomSpace = $("#description-hide-show").outerHeight();
+			if ($("#description-tags").is(":visible") && ! env.options.hide_tags && hasTags)
+				bottomSpace = Math.max(bottomSpace, $("#description-tags").outerHeight());
+			$("#description-text").css("margin-bottom", "");
+			$("#description-title").css("margin-bottom", "");
+			$("#description-text").css("height", "");
+			$("#description-wrapper").css("width", "");
+			$("#description-wrapper").css("height", "");
+			$("#description").css("border", "");
+			$("#description-tags").css("position", "");
+			$("#description-tags").css("margin-left", "");
+			if ($("#description-text").is(":visible") && $("#description-text").height() > 0) {
+				$("#description-text").css("margin-bottom", bottomSpace.toString() + "px");
+			} else if ($("#description-title").is(":visible") && $("#description-title").height() > 0) {
+				$("#description-title").css("margin-bottom", bottomSpace.toString() + "px");
+			} else {
+				$("#description").css("border", "0");
+				$("#description-tags").css("position", "relative");
+				$("#description-tags").css("margin-left", ($("#description-hide-show").outerWidth()) + "px");
+			}
 
-		$("#description-wrapper, #description").css("max-width", maxWidth.toString() + "px");
-		$("#description-tags").css("max-width", (maxWidth - 20).toString() + "px");
+			$("#description-wrapper, #description").css("max-width", maxWidth.toString() + "px");
+			$("#description-tags").css("max-width", (maxWidth - 20).toString() + "px");
 
-		// $("#description-wrapper").css("width", "");
-		// $("#description-wrapper").css("height", "");
-		// $("#description-tags").css("width", "");
-		// $("#description-tags").css("height", "");
-
-		while ($("#description-hide-show").outerWidth() + $("#description-tags").outerWidth() > $("#description-wrapper").innerWidth() && $("#description-wrapper").width() < maxWidth) {
-			$("#description-wrapper").css("width", ($("#description-wrapper").width() + 5) + "px");
+			while ($("#description-hide-show").outerWidth() + $("#description-tags").outerWidth() > $("#description-wrapper").innerWidth() && $("#description-wrapper").width() < maxWidth) {
+				$("#description-wrapper").css("width", ($("#description-wrapper").width() + 5) + "px");
+			}
 		}
 
 		if (env.isMobile.any()) {
