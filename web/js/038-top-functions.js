@@ -1878,21 +1878,6 @@
 
 			f.updateMenu();
 
-			// if (env.currentMedia !== null) {
-			// 	let event = {data: {}};
-			// 	event.data.resize = true;
-			// 	event.data.id = "center";
-			// 	env.currentMedia.scale(event);
-			// 	if (env.nextMedia !== null) {
-			// 		event.data.id = "right";
-			// 		env.nextMedia.scale(event);
-			// 	}
-			// 	if (env.prevMedia !== null) {
-			// 		event.data.id = "left";
-			// 		env.prevMedia.scale(event);
-			// 	}
-			// }
-
 			if (util.isPopup() || env.currentMedia === null) {
 				util.setMediaOptions();
 			}
@@ -1904,7 +1889,6 @@
 				// env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
-
 
 			if (env.currentAlbum.subalbums.length)
 				util.adaptCaptionHeight();
@@ -1919,20 +1903,6 @@
 
 			f.updateMenu();
 
-			// if (env.currentMedia !== null) {
-			// 	let event = {data: {}};
-			// 	event.data.resize = true;
-			// 	event.data.id = "center";
-			// 	env.currentMedia.scale(event);
-			// 	if (env.nextMedia !== null) {
-			// 		event.data.id = "right";
-			// 		env.nextMedia.scale(event);
-			// 	}
-			// 	if (env.prevMedia !== null) {
-			// 		event.data.id = "left";
-			// 		env.prevMedia.scale(event);
-			// 	}
-			// }
 
 			if (util.isPopup() || env.currentMedia === null) {
 				util.setMediaOptions();
@@ -1945,7 +1915,6 @@
 				// env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
-
 
 			if (env.currentAlbum.subalbums.length)
 				util.adaptCaptionHeight();
