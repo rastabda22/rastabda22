@@ -3022,12 +3022,12 @@
 				mediaName = mediaName.replace(/<[^>]*>?/gm, ' ');
 			}
 
-			if (html && br)
-				mediaName += "<br /><span class='real-name'>[" + this.name + "]</span>";
-			else if (html)
-				mediaName += " <span class='real-name'>[" + this.name + "]</span>";
-			else
-				mediaName += " [" + this.name + "]";
+			// if (html && br)
+			// 	mediaName += "<br /><span class='real-name'>[" + this.name + "]</span>";
+			// else if (html)
+			// 	mediaName += " <span class='real-name'>[" + this.name + "]</span>";
+			// else
+			// 	mediaName += " [" + this.name + "]";
 		} else {
 			mediaName = this.name;
 		}

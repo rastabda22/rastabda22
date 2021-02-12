@@ -1338,6 +1338,8 @@
 				$(".media-box#" + id + " .metadata tr.gps").off("click");
 				text = "<table>";
 				// Here we keep only the technical metadata
+				if (self.metadata.hasOwnProperty("title") && self.metadata.title && self.metadata.title !== self.name)
+					text += "<tr><td class='metadata-data-name'></td><td>" + self.name + "</td></tr>";
 				if (self.date !== undefined)
 					text += "<tr><td class='metadata-data-date'></td><td>" + self.date + "</td></tr>";
 				var fileSize = self.fileSizes[0].images;
