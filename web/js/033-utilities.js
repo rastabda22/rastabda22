@@ -1541,20 +1541,19 @@
 				} else if (env.currentMedia === null) {
 					// we are in album view
 
+					// remove the single media thumbnail
 					$(clickedSelector).parent().parent().parent().remove();
-					// the Lazy loaders must be re-applied, otherwise it won't work
-					Utilities.addMediaLazyLoader();
 
 					if (env.currentAlbum.isAlbumWithOneMedia()) {
 						// only one media has remained after the removal
 						env.currentMedia = env.currentAlbum.media[0];
 						env.currentMediaIndex = 0;
 						// $("#album-and-media-container").addClass("one-media");
-						env.currentMedia.show(env.currentAlbum, "center");
-						// env.currentAlbum.prepareForShowing(0);
-					} else {
-						// more than one media has remained after the removal: remove the single media thumbnail
+						// env.currentMedia.show(env.currentAlbum, "center");
+						env.currentAlbum.prepareForShowing(0);
 					}
+					// the Lazy loaders must be re-applied, otherwise it won't work
+					Utilities.addMediaLazyLoader();
 				} else {
 					// we are in media view
 					let clickedMediaIndex = parseInt(clickedSelector.split('-').pop());
