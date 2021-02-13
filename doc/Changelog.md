@@ -1,3 +1,8 @@
+* do not show file name in album view if there is a description title, and show it in the media metadata
+* make arrowDown and PageDown go to album like arrowUp and PageUp
+* fullscreen has been simplified and now includes everything
+* bug fixes
+
 ### version v4.9.36 (Feb 5, 2021)
 
 * new option `use_system_js_libraries` to use OS javascript libraries instead of the versions provided by MyPhotoShare. Default: use MyPhotoShare versions
