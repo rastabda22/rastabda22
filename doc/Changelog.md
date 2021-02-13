@@ -1,3 +1,5 @@
+### version v4.9.37 (Feb 13, 2021)
+
 * do not show file name in album view if there is a description title, and show it in the media metadata
 * make arrowDown and PageDown go to album like arrowUp and PageUp
 * fullscreen has been simplified and now includes everything
