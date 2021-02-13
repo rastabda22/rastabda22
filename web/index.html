@@ -1,280 +1,279 @@
 <!DOCTYPE html>
 <html lang="en">
 <!-- FROM HTML -->
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta name="viewport" content="width=device-width, user-scalable=no">
-	<meta name="fragment" content="!" />
-	<meta name="medium" content="image" />
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, user-scalable=no">
+		<meta name="fragment" content="!" />
+		<meta name="medium" content="image" />
 
-	<title>My photos</title>
+		<title>My photos</title>
 
-	<link rel="icon" href="favicon.ico" type="image/x-icon"/>
+		<link rel="icon" href="favicon.ico" type="image/x-icon"/>
 
-	<link href="css/styles.min.css" rel="stylesheet" type="text/css" />
-	<script type="text/javascript" src="js/scripts.min.js"></script>
+		<link href="css/styles.min.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="js/scripts.min.js"></script>
 	</head>
-<body>
-	<div id="no-search-string" class="search-failed"></div>
-	<div id="no-search-string-after-stopwords-removed" class="search-failed"></div>
-	<div id="no-results" class="search-failed"></div>
-	<div id="search-too-wide" class="search-failed"></div>
-	<!-- <div id="social">
-			<div class="ssk-group ssk-rounded ssk-sticky ssk-left ssk-center ssk-sm ssk-grayscale">
-					<a href="" class="ssk ssk-facebook"></a>
-					<a href="" class="ssk ssk-twitter"></a>
-					<a href="" class="ssk ssk-google-plus"></a>
-					<a href="" class="ssk ssk-email"></a>
-				</div>
-	</div> -->
-
-	<!-- The Modal -->
-	<div id="my-modal" class="modal">
-		<!-- Modal content -->
-		<div class="modal-content">
-			<div class="modal-close"></div>
-			<div id="mapdiv"></div>
-		</div>
-	</div>
-
-	<div id="media-view-container">
-		<div id="auth-text">
-			<div id="auth-close" style="top: 22px; right: 22px;"></div>
-			<form id="auth-form">
-				<div id="auth-question"></div>
-				<input type="text" value="username" autocomplete="username" style="display: none;" />
-				<input id="password" type="password" autocomplete="current-password" />
-				<input type="submit" value="⏎" class="button"/>
-			</form>
-		</div>
-
-		<div id="media-view">
-			<div id="media-box-container">
-				<div class="media-box" id="center">
-
-					<div class="media-box-inner">
-					</div>
-
-					<div class="media-bar">
-						<div class="links">
-							<span class="link-button">
-								<a class="metadata-show"></a>
-								<a class="metadata-hide"></a>
-							</span>
-							|
-							<span class="link-button">
-								<a class="original-link"></a>
-							</span>
-							<a class="menu-map-divider">|</a>
-							<span class="link-button">
-								<a class="map-link"></a>
-							</span>
-							<span class="fullscreen">
-								<span class="fullscreen-divider"> | </span>
-								<span class="link-button">
-									<a class="enter-fullscreen"></a>
-									<a class="exit-fullscreen"></a>
-								</span>
-							</span>
+	<body>
+		<div id="fullscreen-wrapper">
+			<div id="no-search-string" class="search-failed"></div>
+			<div id="no-search-string-after-stopwords-removed" class="search-failed"></div>
+			<div id="no-results" class="search-failed"></div>
+			<div id="search-too-wide" class="search-failed"></div>
+			<!-- <div id="social">
+					<div class="ssk-group ssk-rounded ssk-sticky ssk-left ssk-center ssk-sm ssk-grayscale">
+							<a href="" class="ssk ssk-facebook"></a>
+							<a href="" class="ssk ssk-twitter"></a>
+							<a href="" class="ssk ssk-google-plus"></a>
+							<a href="" class="ssk ssk-email"></a>
 						</div>
-						<div class="metadata">
-						</div>
-					</div>
+			</div> -->
 
+			<!-- The Modal -->
+			<div id="my-modal" class="modal">
+				<!-- Modal content -->
+				<div class="modal-content">
+					<div class="modal-close"></div>
+					<div id="mapdiv"></div>
 				</div>
 			</div>
 
-			<img id="prev" width="42" height="88" src="img/prev.png">
-			<img id="next" width="42" height="88" src="img/next.png">
-			<a id="media-select-box">
-				<img class="select-box">
-			</a>
-			<div id="pinch-container" class="hidden">
-				<img src="img/pinch-plus.png" id="pinch-in" class="pinch" width="25" height="25">
-				<img src="img/pinch-minus.png" id="pinch-out" class="pinch disabled" width="25" height="25">
+			<div id="auth-text">
+				<div id="auth-close" style="top: 22px; right: 22px;"></div>
+				<form id="auth-form">
+					<div id="auth-question"></div>
+					<input type="text" value="username" autocomplete="username" style="display: none;" />
+					<input id="password" type="password" autocomplete="current-password" />
+					<input type="submit" value="⏎" class="button"/>
+				</form>
 			</div>
-		</div>
-	</div>
 
-	<div id="album-view">
+			<div id="album-and-media-container">
+				<div id="media-view">
+					<div id="media-box-container">
+						<div class="media-box" id="center">
 
-		<div class="title">
-			<span class="title-string"></span>
-		</div>
+							<div class="media-box-inner">
+							</div>
 
-		<div id="subalbums"></div>
-		<div id="message-too-many-images"></div>
-		<div id="thumbs"></div>
-		<div id="powered-by">
-			<span id="powered-by-string">Powered by</span>
-			<a href="https://gitlab.com/paolobenve/myphotoshare" target="_blank">MyPhotoShare</a>
-		</div>
-	</div>
+							<div class="media-bar">
+								<div class="links">
+									<span class="link-button">
+										<a class="metadata-show"></a>
+										<a class="metadata-hide"></a>
+									</span>
+									|
+									<span class="link-button">
+										<a class="original-link"></a>
+									</span>
+									<a class="menu-map-divider">|</a>
+									<span class="link-button">
+										<a class="map-link"></a>
+									</span>
+									<span class="fullscreen">
+										<span class="fullscreen-divider"> | </span>
+										<span class="link-button">
+											<a class="enter-fullscreen"></a>
+											<a class="exit-fullscreen"></a>
+										</span>
+									</span>
+								</div>
+								<div class="metadata"></div>
+							</div>
 
-	<ul id="right-menu">
-		<li id="menu-and-padlock">
-			<span id="menu-icon"> ☰ </span>
-			<span id="padlock" class="protection">
-				<img width="12px" height="16px" src="img/padlock.png" />
-			</span>
-		</li>
-		<li class="expandable search">
-			<form>
-				<input type="search" id="search-field" />
-				<img id="search-button" src="img/ic_search_black_48dp_2x.png" />
-			</form>
-			<ul class="hidden">
-				<li id="inside-words" class="search active"></li>
-				<li id="any-word" class="search active"></li>
-				<li id="case-sensitive" class="search active"></li>
-				<li id="accent-sensitive" class="search active"></li>
-				<li id="tags-only" class="search active"></li>
-				<li id="album-search" class="search active"></li>
-			</ul>
-		</li>
+						</div>
+					</div>
 
-		<li class="expandable browsing-mode-switcher active">
-			<span class="browsing-mode-switcher caption"></span>
-			<ul class="sub-menu hidden">
-				<li id="folders-view" class="browsing-mode-switcher radio"></li>
-				<li id="by-date-view" class="browsing-mode-switcher radio"></li>
-				<li id="by-gps-view" class="browsing-mode-switcher radio"></li>
-				<li id="by-map-view" class="browsing-mode-switcher radio"></li>
-				<li id="by-search-view" class="browsing-mode-switcher radio"></li>
-				<li id="by-selection-view" class="browsing-mode-switcher radio"></li>
-			</ul>
-		</li>
+					<img id="prev" width="42" height="88" src="img/prev.png">
+					<img id="next" width="42" height="88" src="img/next.png">
+					<a id="media-select-box">
+						<img class="select-box">
+					</a>
+					<div id="pinch-container" class="hidden">
+						<img src="img/pinch-plus.png" id="pinch-in" class="pinch" width="25" height="25">
+						<img src="img/pinch-minus.png" id="pinch-out" class="pinch disabled" width="25" height="25">
+					</div>
+				</div>
 
-		<li class="expandable sort album-sort active">
-			<span class="sort album-sort caption"></span>
-			<ul class="sub-menu hidden">
-				<li class='sort album-sort by-date radio'></li>
-				<li class='sort album-sort by-name radio'></li>
-				<li class='sort album-sort reverse active'></li>
-			</ul>
-		</li>
+				<div id="album-view">
+					<div class="title">
+						<span class="title-string"></span>
+					</div>
 
-		<li class="expandable sort media-sort active">
-			<span class="sort media-sort caption"></span>
-			<ul class="sub-menu hidden">
-				<li class='sort media-sort by-date radio'></li>
-				<li class='sort media-sort by-name radio'></li>
-				<li class='sort media-sort reverse active'></li>
-			</ul>
-		</li>
+					<div id="subalbums"></div>
+					<div id="message-too-many-images"></div>
+					<div id="thumbs"></div>
+					<div id="powered-by">
+						<span id="powered-by-string">Powered by</span>
+						<a href="https://gitlab.com/paolobenve/myphotoshare" target="_blank">MyPhotoShare</a>
+					</div>
+				</div>
+			</div>
 
-		<li class='expandable ui active'>
-			<span class='ui caption'></span>
-			<ul class="sub-menu hidden">
-				<li class='ui hide-title active'></li>
-				<li class='ui media-count active'></li>
-				<li class='ui slide active'></li>
-				<li class='ui square-album-thumbnails active'></li>
-				<li class='ui album-names active'></li>
-				<li class='ui square-media-thumbnails active'></li>
-				<li class='ui media-names active'></li>
-				<li class='ui show-descriptions active'></li>
-				<li class='ui show-tags active'></li>
-				<li class='ui spaced active'></li>
-				<li class='ui show-bottom-thumbnails active'></li>
-				<li class='ui reset active'></li>
-			</ul>
-		</li>
-
-		<li class='expandable select active'>
-			<span class='select caption'></span>
-			<ul class="sub-menu hidden">
-				<li class='select everything active'></li>
-				<li class='select everything-individual active'></li>
-				<li class='select albums active'></li>
-				<li class='select media active'></li>
-				<li class='select global-reset active'></li>
-				<li class='select nothing active'></li>
-				<li class='select no-albums active'></li>
-				<li class='select no-media active'></li>
-				<li class='select go-to-selected active'></li>
-			</ul>
-		</li>
-
-		<li class='big-albums active'>
-			<span id='show-big-albums' class="big-albums caption"></span>
-		</li>
-
-		<li class='expandable download-album active'>
-			<span class='download-album caption'></span>
-			<ul class="sub-menu hidden">
-				<li class='download-single-media active'>
-					<a class='download-link'></a>
+			<ul id="right-menu">
+				<li id="menu-and-padlock">
+					<span id="menu-icon"> ☰ </span>
+					<span id="padlock" class="protection">
+						<img width="12px" height="16px" src="img/padlock.png" />
+					</span>
 				</li>
-				<li class='download-album everything all full active'></li>
-				<li class='download-album everything all sized active'></li>
-				<li class='download-album everything images full active'></li>
-				<li class='download-album everything images sized active'></li>
-				<li class='download-album everything videos full active'></li>
-				<li class='download-album everything videos sized active'></li>
-				<li class='download-album media-only all full active'></li>
-				<li class='download-album media-only all sized active'></li>
-				<li class='download-album media-only images full active'></li>
-				<li class='download-album media-only images sized active'></li>
-				<li class='download-album media-only videos full active'></li>
-				<li class='download-album media-only videos sized active'></li>
-				<li class='download-album selected active'></li>
-				<li class='download-album selection active'></li>
+				<li class="expandable search">
+					<form>
+						<input type="search" id="search-field" />
+						<img id="search-button" src="img/ic_search_black_48dp_2x.png" />
+					</form>
+					<ul class="hidden">
+						<li id="inside-words" class="search active"></li>
+						<li id="any-word" class="search active"></li>
+						<li id="case-sensitive" class="search active"></li>
+						<li id="accent-sensitive" class="search active"></li>
+						<li id="tags-only" class="search active"></li>
+						<li id="album-search" class="search active"></li>
+					</ul>
+				</li>
+
+				<li class="expandable browsing-mode-switcher active">
+					<span class="browsing-mode-switcher caption"></span>
+					<ul class="sub-menu hidden">
+						<li id="folders-view" class="browsing-mode-switcher radio"></li>
+						<li id="by-date-view" class="browsing-mode-switcher radio"></li>
+						<li id="by-gps-view" class="browsing-mode-switcher radio"></li>
+						<li id="by-map-view" class="browsing-mode-switcher radio"></li>
+						<li id="by-search-view" class="browsing-mode-switcher radio"></li>
+						<li id="by-selection-view" class="browsing-mode-switcher radio"></li>
+					</ul>
+				</li>
+
+				<li class="expandable sort album-sort active">
+					<span class="sort album-sort caption"></span>
+					<ul class="sub-menu hidden">
+						<li class='sort album-sort by-date radio'></li>
+						<li class='sort album-sort by-name radio'></li>
+						<li class='sort album-sort reverse active'></li>
+					</ul>
+				</li>
+
+				<li class="expandable sort media-sort active">
+					<span class="sort media-sort caption"></span>
+					<ul class="sub-menu hidden">
+						<li class='sort media-sort by-date radio'></li>
+						<li class='sort media-sort by-name radio'></li>
+						<li class='sort media-sort reverse active'></li>
+					</ul>
+				</li>
+
+				<li class='expandable ui active'>
+					<span class='ui caption'></span>
+					<ul class="sub-menu hidden">
+						<li class='ui hide-title active'></li>
+						<li class='ui media-count active'></li>
+						<li class='ui slide active'></li>
+						<li class='ui square-album-thumbnails active'></li>
+						<li class='ui album-names active'></li>
+						<li class='ui square-media-thumbnails active'></li>
+						<li class='ui media-names active'></li>
+						<li class='ui show-descriptions active'></li>
+						<li class='ui show-tags active'></li>
+						<li class='ui spaced active'></li>
+						<li class='ui show-bottom-thumbnails active'></li>
+						<li class='ui reset active'></li>
+					</ul>
+				</li>
+
+				<li class='expandable select active'>
+					<span class='select caption'></span>
+					<ul class="sub-menu hidden">
+						<li class='select everything active'></li>
+						<li class='select everything-individual active'></li>
+						<li class='select albums active'></li>
+						<li class='select media active'></li>
+						<li class='select global-reset active'></li>
+						<li class='select nothing active'></li>
+						<li class='select no-albums active'></li>
+						<li class='select no-media active'></li>
+						<li class='select go-to-selected active'></li>
+					</ul>
+				</li>
+
+				<li class='big-albums active'>
+					<span id='show-big-albums' class="big-albums caption"></span>
+				</li>
+
+				<li class='expandable download-album active'>
+					<span class='download-album caption'></span>
+					<ul class="sub-menu hidden">
+						<li class='download-single-media active'>
+							<a class='download-link'></a>
+						</li>
+						<li class='download-album everything all full active'></li>
+						<li class='download-album everything all sized active'></li>
+						<li class='download-album everything images full active'></li>
+						<li class='download-album everything images sized active'></li>
+						<li class='download-album everything videos full active'></li>
+						<li class='download-album everything videos sized active'></li>
+						<li class='download-album media-only all full active'></li>
+						<li class='download-album media-only all sized active'></li>
+						<li class='download-album media-only images full active'></li>
+						<li class='download-album media-only images sized active'></li>
+						<li class='download-album media-only videos full active'></li>
+						<li class='download-album media-only videos sized active'></li>
+						<li class='download-album selected active'></li>
+						<li class='download-album selection active'></li>
+					</ul>
+				</li>
+
+				<li class='protection active'>
+					<span id="protected-content-unveil" class='protection caption'></span>
+				</li>
 			</ul>
-		</li>
 
-		<li class='protection active'>
-			<span id="protected-content-unveil" class='protection caption'></span>
-		</li>
-	</ul>
-
-	<div id="loading" class="messages" ></div>
-	<div id="working" class="messages"></div>
-	<div id="downloading-media" class="messages"></div>
-	<div id="preparing-zip" class="messages"></div>
-	<div id="ui-settings-restored" class="messages"></div>
+			<div id="loading" class="messages" ></div>
+			<div id="working" class="messages"></div>
+			<div id="downloading-media" class="messages"></div>
+			<div id="preparing-zip" class="messages"></div>
+			<div id="ui-settings-restored" class="messages"></div>
 
 
-	<div id="folders-browsing" class="browsing-mode-message"></div>
-	<div id="by-date-browsing" class="browsing-mode-message"></div>
-	<div id="by-gps-browsing" class="browsing-mode-message"></div>
-	<div id="by-search-browsing" class="browsing-mode-message"></div>
-	<div id="by-selection-browsing" class="browsing-mode-message"></div>
-	<div id="by-map-browsing" class="browsing-mode-message"></div>
+			<div id="folders-browsing" class="browsing-mode-message"></div>
+			<div id="by-date-browsing" class="browsing-mode-message"></div>
+			<div id="by-gps-browsing" class="browsing-mode-message"></div>
+			<div id="by-search-browsing" class="browsing-mode-message"></div>
+			<div id="by-selection-browsing" class="browsing-mode-message"></div>
+			<div id="by-map-browsing" class="browsing-mode-message"></div>
 
-	<div id="added-individually" class="selection-message"></div>
-	<div id="removed-individually" class="selection-message"></div>
+			<div id="added-individually" class="selection-message"></div>
+			<div id="removed-individually" class="selection-message"></div>
 
-	<div id="error-overlay"></div>
-	<div id="error-options-file" class="error"></div>
-	<div id="error-text-folder" class="error"></div>
-	<div id="error-root-folder" class="error"></div>
-	<div id="error-text-image" class="error"></div>
-	<div id="error-nonexistent-map-album" class="error"></div>
-	<div id="error-nonexistent-selection-album" class="error"></div>
-	<div id="warning-no-geolocated-media" class="error"></div>
+			<div id="error-overlay"></div>
+			<div id="error-options-file" class="error"></div>
+			<div id="error-text-folder" class="error"></div>
+			<div id="error-root-folder" class="error"></div>
+			<div id="error-text-image" class="error"></div>
+			<div id="error-nonexistent-map-album" class="error"></div>
+			<div id="error-nonexistent-selection-album" class="error"></div>
+			<div id="warning-no-geolocated-media" class="error"></div>
 
-	<div id="by-date-album-sorting" class="sort-message"></div>
-	<div id="by-date-reverse-album-sorting" class="sort-message"></div>
-	<div id="by-name-album-sorting" class="sort-message"></div>
-	<div id="by-name-reverse-album-sorting" class="sort-message"></div>
-	<div id="by-date-media-sorting" class="sort-message"></div>
-	<div id="by-date-reverse-media-sorting" class="sort-message"></div>
-	<div id="by-name-media-sorting" class="sort-message"></div>
-	<div id="by-name-reverse-media-sorting" class="sort-message"></div>
+			<div id="by-date-album-sorting" class="sort-message"></div>
+			<div id="by-date-reverse-album-sorting" class="sort-message"></div>
+			<div id="by-name-album-sorting" class="sort-message"></div>
+			<div id="by-name-reverse-album-sorting" class="sort-message"></div>
+			<div id="by-date-media-sorting" class="sort-message"></div>
+			<div id="by-date-reverse-media-sorting" class="sort-message"></div>
+			<div id="by-name-media-sorting" class="sort-message"></div>
+			<div id="by-name-reverse-media-sorting" class="sort-message"></div>
 
-	<div id="description-wrapper">
-		<div id="description">
-			<div id="description-title"></div>
-			<div id="description-text"></div>
+			<div id="description-wrapper">
+				<div id="description">
+					<div id="description-title"></div>
+					<div id="description-text"></div>
+				</div>
+				<div id="description-tags"></div>
+				<div id="description-hide-show">
+					<div id="description-hide"></div>
+					<div id="description-show"></div>
+				</div>
+			</div>
 		</div>
-		<div id="description-tags"></div>
-		<div id="description-hide-show">
-			<div id="description-hide"></div>
-			<div id="description-show"></div>
-		</div>
-	</div>
-
-</body>
+	</body>
 </html>

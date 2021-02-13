@@ -36,10 +36,6 @@ $(document).ready(function() {
 	util.mediaBoxGenerator('left');
 	util.mediaBoxGenerator('right');
 
-	/* Displays */
-
-	$("#menu-icon").off("click").on("click", util.toggleMenu);
-
 	/* Event listeners */
 
 	$(document).off("keydown").on("keydown", function(e) {
@@ -86,7 +82,7 @@ $(document).ready(function() {
 				pS.pinchOut(null, null);
 				return false;
 			} else if (! Modernizr.fullscreen && env.fullScreenStatus) {
-				tF.goFullscreen(e);
+				tF.toggleFullscreen(e);
 				return false;
 			} else if (upLink) {
 				if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0)
@@ -111,13 +107,11 @@ $(document).ready(function() {
 				if (! e.ctrlKey && ! e.altKey) {
 					if (e.key === util._t("#hide-everytyhing-shortcut")) {
 						e.preventDefault();
-						if (pS.getCurrentZoom() === pS.getInitialZoom() && ! $("#album-view.media-view-container").hasClass("hidden-by-pinch")) {
-							tF.toggleTitleAndBottomThumbnailsAndDescriptionsAndTags(e);
-							return false;
-						}
+						tF.toggleTitleAndBottomThumbnailsAndDescriptionsAndTags(e);
+						return false;
 					} else if (e.key === "ArrowRight" && (pS.getCurrentZoom() !== pS.getInitialZoom() || env.prevMedia) && env.currentMedia !== null && ! isMap) {
 						if (pS.getCurrentZoom() === pS.getInitialZoom()) {
-							$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+							$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 							$("#next")[0].click();
 							// media.swipeLeft();
 						} else {
@@ -141,7 +135,7 @@ $(document).ready(function() {
 						(e.key.toLowerCase() === util._t("#next-media-title-shortcut") || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
 						env.nextMedia && env.currentMedia !== null && ! isMap
 					) {
-						$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+						$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 						$("#next")[0].click();
 						// env.nextMedia.swipeLeft();
 						return false;
@@ -149,13 +143,13 @@ $(document).ready(function() {
 						(e.key.toLowerCase() === util._t("#prev-media-title-shortcut") || e.key === "Backspace" && ! e.shiftKey || (e.key === "Enter" || e.key === " ") && e.shiftKey) &&
 						env.prevMedia && env.currentMedia !== null && ! isMap
 					) {
-						$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+						$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 						$("#prev")[0].click();
 						// env.prevMedia.swipeRight();
 						return false;
 					} else if (e.key === "ArrowLeft" && (pS.getCurrentZoom() !== pS.getInitialZoom() || env.prevMedia) && env.currentMedia !== null && ! isMap) {
 						if (pS.getCurrentZoom() === pS.getInitialZoom()) {
-							$("#album-view.media-view-container").removeClass("hidden-by-pinch");
+							$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 							$("#prev")[0].click();
 							// media.swipeRight();
 						} else {
@@ -168,38 +162,54 @@ $(document).ready(function() {
 						}
 						return false;
 					} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink && ! isMap) {
-						if (pS.getCurrentZoom() === pS.getInitialZoom()) {
-							if (e.shiftKey && ! $("#center .title").hasClass("hidden-by-pinch")) {
-								pS.swipeDown(upLink);
+						if (e.shiftKey && env.currentMedia === null) {
+							$("#loading").show();
+							pS.swipeDown(upLink);
+							return false;
+						} else if (env.currentMedia !== null) {
+							if (pS.getCurrentZoom() === pS.getInitialZoom()) {
+								if (e.shiftKey) {
+								// if (e.shiftKey && ! $("#center .title").hasClass("hidden-by-pinch")) {
+									pS.swipeDown(upLink);
+									return false;
+								}
+							} else {
+								// drag
+								if (! e.shiftKey)
+									pS.drag(env.windowHeight / 10, {x: 0, y: 1});
+								else
+									// faster
+									pS.drag(env.windowHeight / 3, {x: 0, y: 1});
 								return false;
 							}
-						} else {
-							// drag
-							if (! e.shiftKey)
-								pS.drag(env.windowHeight / 10, {x: 0, y: 1});
-							else
-								// faster
-								pS.drag(env.windowHeight / 3, {x: 0, y: 1});
-							return false;
 						}
 					} else if (e.key === "ArrowDown" || e.key === "PageDown" && ! isMap) {
 					 	if (e.shiftKey && env.mediaLink && env.currentMedia === null) {
 							pS.swipeUp(env.mediaLink);
 							return false;
-						} else if (pS.getCurrentZoom() > pS.getInitialZoom()) {
-							if (! e.shiftKey)
-								PinchSwipe.drag(env.windowHeight / 10, {x: 0, y: -1});
-							else
-								// faster
-								PinchSwipe.drag(env.windowHeight / 3, {x: 0, y: -1});
-							return false;
+						} else if (env.currentMedia !== null) {
+							if (pS.getCurrentZoom() === pS.getInitialZoom()) {
+								if (e.shiftKey) {
+								// if (e.shiftKey && ! $("#center .title").hasClass("hidden-by-pinch")) {
+									pS.swipeDown(upLink);
+									return false;
+								}
+							} else {
+								if (! e.shiftKey)
+									pS.drag(env.windowHeight / 10, {x: 0, y: -1});
+								else
+									// faster
+									pS.drag(env.windowHeight / 3, {x: 0, y: -1});
+								return false;
+							}
 						}
 					} else if (e.key.toLowerCase() === util._t(".download-link-shortcut") && ! isMap) {
 						if (env.currentMedia !== null)
 							$(".download-single-media .download-link")[0].click();
 						return false;
-					} else if (e.key.toLowerCase() === util._t(".enter-fullscreen-shortcut") && env.currentMedia !== null && ! isMap) {
-						tF.goFullscreen(e);
+					} else if (e.key.toLowerCase() === util._t(".enter-fullscreen-shortcut")  && ! isMap && ! isPopup) {
+					// } else if (e.key.toLowerCase() === util._t(".enter-fullscreen-shortcut") && env.currentMedia !== null && ! isMap) {
+						tF.toggleFullscreen(e);
 						return false;
 					} else if (e.key.toLowerCase() === util._t(".metadata-hide-shortcut") && env.currentMedia !== null && ! isMap) {
 						f.toggleMetadata();
@@ -489,12 +499,12 @@ $(document).ready(function() {
 							function popupReady() {
 								if (env.options.search_any_word) {
 									// at least one word
-									mediaResult = new Media([]);
+									let mediaResult = new Media([]);
 									searchWordsFromUserNormalizedAccordingToOptions.forEach(
 										function(normalizedSearchWord, index) {
 											let mapAlbumClone = env.mapAlbum.clone();
 											mapAlbumClone.filterMediaAgainstOneWord(normalizedSearchWord);
-											mediaResult = util.arrayUnion(mediaResult, mapAlbumClone.media, function(a, b) {return a.isEqual(b)});
+											mediaResult = util.arrayUnion(mediaResult, mapAlbumClone.media, function(a, b) {return a.isEqual(b);});
 										}
 									);
 									env.mapAlbum.media = mediaResult;
@@ -505,7 +515,7 @@ $(document).ready(function() {
 								if (! env.options.search_inside_words && removedStopWords.length) {
 									// say that some search word hasn't been used
 									let stopWordsFound = " - <span class='italic'>" + removedStopWords.length + " " + util._t("#removed-stopwords") + ": ";
-									for (i = 0; i < removedStopWords.length; i ++) {
+									for (let i = 0; i < removedStopWords.length; i ++) {
 										if (i)
 											stopWordsFound += ", ";
 										stopWordsFound += removedStopWords[i];
@@ -763,7 +773,7 @@ $(document).ready(function() {
 			if (env.isABrowsingModeChange)
 				env.isABrowsingModeChange = false;
 			$("#loading").show();
-			$("#album-view").removeClass("hidden");
+			// $("#album-view").removeClass("hidden");
 			$("link[rel=image_src]").remove();
 			$("link[rel=video_src]").remove();
 			$("ul#right-menu").removeClass("expand");
