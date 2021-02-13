@@ -2403,8 +2403,8 @@
 						PinchSwipe.setPinchButtonsVisibility();
 					}
 					Utilities.setSelectButtonPosition();
-					Utilities.correctPrevNextPosition();
 					Utilities.setDescriptionOptions();
+					Utilities.correctElementPositions();
 
 				}
 
@@ -3135,18 +3135,74 @@
 		var left = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
 		$("#media-select-box .select-box").css("left", "");
 		$("#media-select-box .select-box").css("left", left.toString() + "px").css("bottom", bottom.toString() + "px");
-		if (env.isMobile.any() && env.currentMedia !== null) {
-			// move the box above the media bar
+		// if (env.isMobile.any() && env.currentMedia !== null) {
+		// 	// move the box above the media bar
+		// 	while (Utilities.isColliding($("#media-select-box .select-box"), $(".media-box#center .media-bar"))) {
+		// 		$("#media-select-box .select-box").css("bottom", (parseInt($("#media-select-box .select-box").css("bottom")) + 5) + "px");
+		// 	}
+		// 	while (Utilities.isColliding($("#media-select-box .select-box"), $("#prev"))) {
+		// 		$("#media-select-box .select-box").css("left", (parseInt($("#media-select-box .select-box").css("left")) + 5) + "px");
+		// 	}
+		// }
+
+		return true;
+	};
+
+	Utilities.correctElementPositions = function() {
+
+		// move the select box above the media bar
+		if (env.currentMedia !== null) {
 			while (Utilities.isColliding($("#media-select-box .select-box"), $(".media-box#center .media-bar"))) {
 				$("#media-select-box .select-box").css("bottom", (parseInt($("#media-select-box .select-box").css("bottom")) + 5) + "px");
 			}
+			// move the select box at the right of the prev button
 			while (Utilities.isColliding($("#media-select-box .select-box"), $("#prev"))) {
 				$("#media-select-box .select-box").css("left", (parseInt($("#media-select-box .select-box").css("left")) + 5) + "px");
 			}
 		}
 
-		return true;
+		$("#next").css("right", "");
+		$("#prev").css("left", "");
+		// correct next and prev buttons position
+		if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia()) {
+			// correct pinch buttons position
+			while (Utilities.isColliding($("#pinch-container"), $("#next"))) {
+				$("#pinch-container").css("right", (parseInt($("#pinch-container").css("right")) + 5) + "px");
+			}
+			$("#pinch-container").css("right", (parseInt($("#pinch-container").css("right")) + 5) + "px");
+
+
+			// let correctionForPinch =
+			// 	Utilities.isColliding($("#pinch-container"), $("#next")) ?
+			// 		$("#pinch-container").outerWidth() + parseInt($("#pinch-container").css("right")) : 0;
+			// $("#next").css("right", correctionForPinch.toString() + "px");
+
+			// correct prev button position when social buttons are on the left
+			let correctionForSocial =
+				Utilities.lateralSocialButtons() && Utilities.isColliding($(".ssk-left"), $("#prev")) ?
+					$(".ssk").outerWidth() : 0;
+
+			$("#prev").css("left", correctionForSocial.toString() + "px");
+		}
+
+		if (env.isMobile.any()) {
+			if (env.currentMedia !== null) {
+				// move the box above the media bar
+				while (Utilities.isColliding($("#description-wrapper"), $(".media-box#center .media-bar"))) {
+					$("#description-wrapper").css("bottom", (parseInt($("#description-wrapper").css("bottom")) + 5) + "px");
+				}
+			}
+			if (Utilities.bottomSocialButtons()) {
+				while (Utilities.isColliding($("#description-wrapper"), $("#social > div"))) {
+					$("#description-wrapper").css("bottom", (parseInt($("#description-wrapper").css("bottom")) + 5) + "px");
+				}
+			}
+		}
+		while (Utilities.isColliding($("#description-wrapper"), $("#next"))) {
+			$("#description-wrapper").css("right", (parseInt($("#description-wrapper").css("right")) + 5) + "px");
+		}
 	};
+
 
 	NumsProtected.prototype.sumUpNumsProtectedMedia = function() {
 		var result = new ImagesAndVideos(), codesComplexcombination;
@@ -3288,25 +3344,6 @@
 
 	Utilities.prototype.HideId = function(id) {
 		$(id).hide();
-	};
-
-	Utilities.correctPrevNextPosition = function() {
-		$("#next").css("right", "");
-		$("#prev").css("left", "");
-		if (! env.fullScreenStatus && env.currentAlbum.numsMedia.imagesAndVideosTotal() > 1) {
-			// correct next button position when pinch buttons collide
-			let correctionForPinch =
-				Utilities.isColliding($("#pinch-container"), $("#next")) ?
-					$("#pinch-container").outerWidth() + parseInt($("#pinch-container").css("right")) : 0;
-			$("#next").css("right", correctionForPinch.toString() + "px");
-
-			// correct prev button position when social buttons are on the left
-			let correctionForSocial =
-				Utilities.lateralSocialButtons() && Utilities.isColliding($(".ssk-left"), $("#prev")) ?
-					$(".ssk").outerWidth() : 0;
-
-			$("#prev").css("left", correctionForSocial.toString() + "px");
-		}
 	};
 
 	Utilities.formatDescription = function(text) {
@@ -3512,23 +3549,23 @@
 			}
 		}
 
-		if (env.isMobile.any()) {
-			if (env.currentMedia !== null) {
-				// move the box above the media bar
-				while (Utilities.isColliding($("#description-wrapper"), $(".media-box#center .media-bar"))) {
-					$("#description-wrapper").css("bottom", (parseInt($("#description-wrapper").css("bottom")) + 5) + "px");
-				}
-			}
-			if (Utilities.bottomSocialButtons()) {
-				while (Utilities.isColliding($("#description-wrapper"), $("#social > div"))) {
-					$("#description-wrapper").css("bottom", (parseInt($("#description-wrapper").css("bottom")) + 5) + "px");
-				}
-			}
-		}
-		while (Utilities.isColliding($("#description-wrapper"), $("#next"))) {
-			$("#description-wrapper").css("right", (parseInt($("#description-wrapper").css("right")) + 5) + "px");
-		}
-
+		// if (env.isMobile.any()) {
+		// 	if (env.currentMedia !== null) {
+		// 		// move the box above the media bar
+		// 		while (Utilities.isColliding($("#description-wrapper"), $(".media-box#center .media-bar"))) {
+		// 			$("#description-wrapper").css("bottom", (parseInt($("#description-wrapper").css("bottom")) + 5) + "px");
+		// 		}
+		// 	}
+		// 	if (Utilities.bottomSocialButtons()) {
+		// 		while (Utilities.isColliding($("#description-wrapper"), $("#social > div"))) {
+		// 			$("#description-wrapper").css("bottom", (parseInt($("#description-wrapper").css("bottom")) + 5) + "px");
+		// 		}
+		// 	}
+		// }
+		// while (Utilities.isColliding($("#description-wrapper"), $("#next"))) {
+		// 	$("#description-wrapper").css("right", (parseInt($("#description-wrapper").css("right")) + 5) + "px");
+		// }
+		//
 		$("#description-hide, #description-show").off("click").on(
 			"click",
 			function() {
@@ -3540,6 +3577,7 @@
 				$("#description-hide, #description-show").toggle();
 				$("#description, #description-tags").toggle();
 				Utilities.setDescriptionOptions();
+				Utilities.correctElementPositions();
 			}
 		);
 	};
@@ -3886,7 +3924,7 @@
 	Utilities.prototype.mediaBoxGenerator = Utilities.mediaBoxGenerator;
 	Utilities.prototype.currentSizeAndIndex = Utilities.currentSizeAndIndex;
 	Utilities.prototype.nextSizeAndIndex = Utilities.nextSizeAndIndex;
-	Utilities.prototype.isColliding = Utilities.isColliding;
+	// Utilities.prototype.isColliding = Utilities.isColliding;
 	Utilities.prototype.distanceBetweenCoordinatePoints = Utilities.distanceBetweenCoordinatePoints;
 	Utilities.prototype.xDistanceBetweenCoordinatePoints = Utilities.xDistanceBetweenCoordinatePoints;
 	Utilities.prototype.yDistanceBetweenCoordinatePoints = Utilities.yDistanceBetweenCoordinatePoints;
@@ -3923,8 +3961,8 @@
 	Utilities.prototype.arrayUnion = Utilities.arrayUnion;
 	Utilities.prototype.setPinchButtonsPosition = Utilities.setPinchButtonsPosition;
 	Utilities.prototype.setSelectButtonPosition = Utilities.setSelectButtonPosition;
-	Utilities.prototype.correctPrevNextPosition = Utilities.correctPrevNextPosition;
 	Utilities.prototype.setDescriptionOptions = Utilities.setDescriptionOptions;
+	Utilities.prototype.correctElementPositions = Utilities.correctElementPositions;
 	Utilities.prototype.toggleMenu = Utilities.toggleMenu;
 	Utilities.prototype.addMediaLazyLoader = Utilities.addMediaLazyLoader;
 

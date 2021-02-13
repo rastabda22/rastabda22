@@ -1379,6 +1379,7 @@
 		util.setMediaOptions();
 		util.setSubalbumsOptions();
 		util.setDescriptionOptions();
+		util.correctElementPositions();
 	};
 
 	Functions.pinchSwipeInitialization = function() {
@@ -1386,8 +1387,8 @@
 		util.setPinchButtonsPosition();
 		pS.setPinchButtonsVisibility();
 		util.setSelectButtonPosition();
-		util.correctPrevNextPosition();
 		util.setDescriptionOptions();
+		util.correctElementPositions();
 	};
 
 	Functions.tenYears = function() {

@@ -743,8 +743,8 @@
 													pS.setPinchButtonsVisibility();
 												}
 												util.setSelectButtonPosition();
-												util.correctPrevNextPosition();
 												util.setDescriptionOptions();
+												util.correctElementPositions();
 											}
 										);
 
@@ -1008,8 +1008,8 @@
 				pS.setPinchButtonsVisibility();
 			}
 			util.setSelectButtonPosition();
-			util.correctPrevNextPosition();
 			util.setDescriptionOptions();
+			util.correctElementPositions();
 
 			if (album.numsMedia.imagesAndVideosTotal() > 1) {
 				env.prevMedia.show(album, 'left');
@@ -1041,8 +1041,8 @@
 								pS.setPinchButtonsVisibility();
 							}
 							util.setSelectButtonPosition();
-							util.correctPrevNextPosition();
 							util.setDescriptionOptions();
+							util.correctElementPositions();
 						}
 					);
 
@@ -1413,6 +1413,7 @@
 						env.currentMedia.setDescription();
 					}
 					util.setDescriptionOptions();
+					util.correctElementPositions();
 					util.setMediaOptions();
 
 					f.updateMenu();
@@ -1769,8 +1770,8 @@
 							pS.setPinchButtonsVisibility();
 						}
 						util.setSelectButtonPosition();
-						util.correctPrevNextPosition();
 						util.setDescriptionOptions();
+						util.correctElementPositions();
 					}
 				);
 				if (env.nextMedia !== null) {
@@ -1811,8 +1812,8 @@
 							pS.setPinchButtonsVisibility();
 						}
 						util.setSelectButtonPosition();
-						util.correctPrevNextPosition();
 						util.setDescriptionOptions();
+						util.correctElementPositions();
 					}
 				);
 				if (env.nextMedia !== null) {
@@ -1856,8 +1857,8 @@
 							pS.setPinchButtonsVisibility();
 						}
 						util.setSelectButtonPosition();
-						util.correctPrevNextPosition();
 						util.setDescriptionOptions();
+						util.correctElementPositions();
 					}
 				);
 				if (env.nextMedia !== null) {
@@ -1884,6 +1885,7 @@
 			if (! util.isPopup() && env.currentMedia === null)
 				util.setSubalbumsOptions();
 			util.setDescriptionOptions();
+			util.correctElementPositions();
 
 			f.updateMenu();
 			if (util.isPopup()) {
@@ -1909,6 +1911,7 @@
 			if (! util.isPopup() && env.currentMedia === null)
 				util.setSubalbumsOptions();
 			util.setDescriptionOptions();
+			util.correctElementPositions();
 
 			f.updateMenu();
 			if (util.isPopup()) {
@@ -2709,6 +2712,7 @@
 					env.currentMedia.setDescription();
 				}
 				util.setDescriptionOptions();
+				util.correctElementPositions();
 				if (populateSubalbums)
 					env.albumInSubalbumDiv = self;
 				$("#loading").hide();
@@ -2799,8 +2803,8 @@
 							pS.setPinchButtonsVisibility();
 						}
 						util.setSelectButtonPosition();
-						util.correctPrevNextPosition();
 						util.setDescriptionOptions();
+						util.correctElementPositions();
 					}
 				);
 			}
