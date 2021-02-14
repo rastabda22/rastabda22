@@ -2307,7 +2307,6 @@
 			function(resolve_scale) {
 				var mediaElement, container, photoSrc, previousSrc;
 				var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth(), containerRatio;
-				var mediaBarBottom = 0;
 				var mediaWidth, mediaHeight, attrWidth, attrHeight;
 				var id = event.data.id;
 				var heightForMedia, heightForMediaAndTitle, titleHeight;
@@ -2390,10 +2389,10 @@
 				// $("#media-view").removeClass("hidden");
 
 				if (id === "center") {
-					// position next/prev buttons verticallly centered in media-box-inner
-					var mediaBoxInnerHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
-					var prevNextHeight = parseInt($("#next").outerHeight());
-					$("#next, #prev").css("top", titleHeight + (mediaBoxInnerHeight - prevNextHeight) / 2);
+					// // position next/prev buttons verticallly centered in media-box-inner
+					// var mediaBoxInnerHeight = parseInt($(".media-box#center .media-box-inner").css("height"));
+					// var prevNextHeight = parseInt($("#next").outerHeight());
+					// $("#next, #prev").css("top", titleHeight + (mediaBoxInnerHeight - prevNextHeight) / 2);
 
 					Utilities.setLinksVisibility();
 					if (self.mimeType.indexOf("image/") === 0) {
@@ -2408,10 +2407,11 @@
 
 				}
 
-				if (Utilities.bottomSocialButtons()) {
-					mediaBarBottom = $(".ssk").outerHeight();
-				}
-				$(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
+				// var mediaBarBottom = 0;
+				// if (Utilities.bottomSocialButtons()) {
+				// 	mediaBarBottom = $(".ssk").outerHeight();
+				// }
+				// $(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
 
 				Utilities.scrollToThumb();
 				if (id === "center") {
