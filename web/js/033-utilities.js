@@ -2413,9 +2413,11 @@
 				// }
 				// $(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
 
-				Utilities.scrollToThumb();
+				if ($("#thumbs").is(":visible"))
+					Utilities.scrollToThumb();
 				if (id === "center") {
-					Utilities.addMediaLazyLoader();
+					if ($("#thumbs").is(":visible"))
+						Utilities.addMediaLazyLoader();
 					resolve_scale([containerHeight, containerWidth]);
 				}
 
