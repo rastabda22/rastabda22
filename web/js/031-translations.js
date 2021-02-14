@@ -147,7 +147,7 @@ var translations =
 			"#album-sort": "Sort albums:",
 			"#media-sort": "Sort media:",
 			".ui.caption": "Display",
-			".ui.": "Title: show it",
+			".ui.hide-title": "Title: show it",
 			".ui.media-count": "Media counts: show",
 			".ui.show-descriptions": "Descriptions: show them",
 			".ui.show-tags": "Tags: show them",
