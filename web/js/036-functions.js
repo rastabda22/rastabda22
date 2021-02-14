@@ -182,8 +182,8 @@
 		var isAnyRoot = thisAlbum.isAnyRoot();
 
 		var nothingIsSelected = util.nothingIsSelected();
-		var everySubalbumIsSelected;
-		if (isPopup)
+		var everySubalbumIsSelected = false;
+		if (! isPopup)
 			everySubalbumIsSelected = thisAlbum.everySubalbumIsSelected();
 		var noSubalbumIsSelected = thisAlbum.noSubalbumIsSelected();
 		var everyMediaIsSelected;
