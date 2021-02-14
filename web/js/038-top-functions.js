@@ -1332,9 +1332,9 @@
 
 					// set social buttons events
 					if (env.currentMedia.mimeType.indexOf("video/") === 0)
-						$("#media-center").off("loadstart").on("loadstart", f.socialButtons);
+						$("#media-center").off("loadstart").on("loadstart", util.socialButtons);
 					else
-						$("#media-center").off("load").on("load", f.socialButtons);
+						$("#media-center").off("load").on("load", util.socialButtons);
 				}
 
 				$(".media-box#" + id + " .metadata tr.gps").off("click");
@@ -1550,7 +1550,7 @@
 		// f.setOptions();
 		if (env.currentMedia === null && env.currentAlbum !== null && ! env.currentAlbum.subalbums.length) {
 			// no subalbums: set social buttons href's when all the stuff is loaded
-			$(window).off("load").on("load", f.socialButtons());
+			$(window).off("load").on("load", util.socialButtons());
 		} else {
 			// subalbums are present, we have to wait when all the random thumbnails will be loaded
 		}
@@ -2702,7 +2702,7 @@
 		Promise.all(subalbumsPromises).then(
 			function allRandomImagesGot() {
 				// we can run the function that prepare the stuffs for sharing
-				f.socialButtons();
+				util.socialButtons();
 				util.setSubalbumsOptions();
 				if (self.subalbums.length)
 					util.adaptCaptionHeight();
