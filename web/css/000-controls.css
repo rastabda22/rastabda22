@@ -344,6 +344,7 @@ p.description-text, p.description-text ul {
 
 #next:hover, #prev:hover {
 	cursor: pointer;
+	opacity: 0.6;
 }
 
 #prev {
