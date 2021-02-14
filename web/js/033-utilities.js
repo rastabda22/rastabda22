@@ -3228,7 +3228,7 @@
 	Utilities.correctElementPositions = function() {
 
 		$("#social > div").removeClass("ssk-bottom").addClass("ssk-center");
-		$("#social > div").css("left", "");
+		$("#social > div").css("left", "").css("top", "");
 		Utilities.socialButtons();
 
 		$(".media-box#center .media-bar").css("bottom", "");
@@ -3240,7 +3240,7 @@
 		if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia() && Utilities.lateralSocialButtons() && Utilities.areColliding($("#social > div"), $("#prev"))) {
 			if (parseFloat($("#prev").css("bottom")) > $("#social > div").outerHeight()) {
 				// move social buttons below prev button
-				$("#social > div").removeClass("ssk-center").addClass("ssk-bottom");
+				$("#social > div").removeClass("ssk-center").css("top", (parseFloat($("#prev").css("top")) + $("#prev").outerHeight()) + "px" );
 			} else {
 				// move social buttons to the right of prev button
 				$("#social > div").css("left", ($("#prev").outerWidth()) + "px");
@@ -3252,7 +3252,7 @@
 			$("#media-select-box .select-box").css("bottom", ($("#social > div").outerHeight() + 10) + "px");
 		}
 		if (env.currentMedia !== null && Utilities.areColliding($("#media-select-box .select-box"), $(".media-box#center .media-bar"))) {
-			$("#media-select-box .select-box").css("bottom", (parseInt($(".media-box#center .media-bar").css("bottom")) + $(".media-box#center .media-bar").outerHeight() + 10) + "px");
+			$("#media-select-box .select-box").css("bottom", (parseInt($(".media-box#center .media-bar").css("bottom")) + mediaBarHeigth + 10) + "px");
 		}
 
 		// move the select box at the right of the prev button and lateral social buttons
@@ -3278,7 +3278,7 @@
 		}
 		if (env.currentMedia !== null && Utilities.areColliding($("#description-wrapper"), $(".media-box#center .media-bar"))) {
 			// move the descriptiont/tags box above the media bar
-			$("#description-wrapper").css("bottom", (parseInt($(".media-box#center .media-bar").css("bottom")) + $(".media-box#center .media-bar").outerHeight() + 10) + "px");
+			$("#description-wrapper").css("bottom", (parseInt($("#thumbs").outerHeight()) + parseInt($(".media-box#center .media-bar").css("bottom")) + mediaBarHeigth + 10) + "px");
 		}
 		if (env.currentMedia !== null && Utilities.areColliding($("#description-wrapper"), $("#pinch-container"))) {
 			// move the descriptiont/tags box to the left of the pinch buttons
