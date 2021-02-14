@@ -2747,6 +2747,7 @@
 
 					$("#loading").show();
 
+					util.socialButtons();
 					util.setSubalbumsOptions();
 					// self.subalbums.forEach(
 					// 	(ithSubalbum, iSubalbum) => {

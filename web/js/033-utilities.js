@@ -3225,16 +3225,20 @@
 
 	Utilities.correctElementPositions = function() {
 
-		// move the media bar above the social buttons
+		$("#social > div").removeClass("ssk-bottom").addClass("ssk-center");
+		$("#social > div").css("left", "");
+		Utilities.socialButtons();
+
+		$(".media-box#center .media-bar").css("bottom", "");
 		if (env.currentMedia !== null && Utilities.bottomSocialButtons() && Utilities.areColliding($(".media-box#center .media-bar"), $("#social > div"))) {
+			// move the media bar above the social buttons
 			$(".media-box#center .media-bar").css("bottom", ($("#social > div").outerHeight()) + "px");
 		}
 
 		if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia() && Utilities.lateralSocialButtons() && Utilities.areColliding($("#social > div"), $("#prev"))) {
-			$("#social > div").addClass("ssk-center");
 			if (parseFloat($("#prev").css("bottom")) > $("#social > div").outerHeight()) {
 				// move social buttons below prev button
-				$("#social > div").removeClass("ssk-center").css("top", (parseFloat($("#prev").css("top")) + $("#prev").outerHeight()) + "px" );
+				$("#social > div").removeClass("ssk-center").addClass("ssk-bottom");
 			} else {
 				// move social buttons to the right of prev button
 				$("#social > div").css("left", ($("#prev").outerWidth()) + "px");
