@@ -3266,6 +3266,88 @@
 	};
 
 	Utilities.correctElementPositions = function() {
+		function MoveMediaBarAboveBottomSocial() {
+			if (env.currentMedia !== null && Utilities.bottomSocialButtons() && Utilities.areColliding($(".media-box#center .media-bar"), $("#social > div"))) {
+				// move the media bar above the social buttons
+				$(".media-box#center .media-bar").css("bottom", ($("#social > div").outerHeight()) + "px");
+			}
+		}
+
+		function separateLateralSocialAndPrev() {
+			if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia() && Utilities.lateralSocialButtons() && Utilities.areColliding($("#social > div"), $("#prev"))) {
+				if (parseFloat($("#prev").css("bottom")) > $("#social > div").outerHeight()) {
+					// move social buttons below prev button
+					$("#social > div").removeClass("ssk-center").css("top", (parseFloat($("#prev").css("top")) + $("#prev").outerHeight()) + "px" );
+				} else {
+					// move social buttons to the right of prev button
+					$("#social > div").css("left", ($("#prev").outerWidth()) + "px");
+				}
+			}
+		}
+
+		function moveSelectBoxAboveBottomSocial() {
+			// move the select box above the social buttons and the media bar
+			if (env.currentMedia !== null && Utilities.bottomSocialButtons() && Utilities.areColliding($("#media-select-box .select-box"), $("#social > div"))) {
+				$("#media-select-box .select-box").css("bottom", ($("#social > div").outerHeight() + 10) + "px");
+			}
+		}
+
+		function moveSelectBoxAboveMediaBar() {
+			if (env.currentMedia !== null && Utilities.areColliding($("#media-select-box .select-box"), $(".media-box#center .media-bar"))) {
+				$("#media-select-box .select-box").css("bottom", (parseInt($(".media-box#center .media-bar").css("bottom")) + mediaBarHeigth + 10) + "px");
+			}
+		}
+
+		function moveSelectBoxAtTheRightOfPrev() {
+			// move the select box at the right of the prev button and lateral social buttons
+			if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia() && Utilities.areColliding($("#media-select-box .select-box"), $("#prev"))) {
+				$("#media-select-box .select-box").css("left", ($("#prev").outerWidth() + 20) + "px");
+			}
+		}
+
+		function moveSelectBoxAtTheRightOfLateralSocial() {
+			if (env.currentMedia !== null && Utilities.lateralSocialButtons() && Utilities.areColliding($("#media-select-box .select-box"), $("#social > div"))) {
+				$("#media-select-box .select-box").css("left", ($("#social > div").outerWidth() + 20) + "px");
+			}
+		}
+
+		function movePinchAtTheLeftOfNext() {
+			// correct pinch buttons position
+			if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia() && Utilities.areColliding($("#pinch-container"), $("#next"))) {
+				$("#pinch-container").css("right", ($("#prev").outerWidth() + 20) + "px");
+			}
+		}
+
+		function moveDescriptionAtTheLeftOfNext() {
+			// correct description/tags box position
+			if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia() && Utilities.areColliding($("#description-wrapper"), $("#next"))) {
+				$("#description-wrapper").css("right", ($("#next").outerWidth() + 10) + "px");
+			}
+		}
+
+		function moveDescriptionAboveBottomSocial() {
+			if (Utilities.bottomSocialButtons() && Utilities.areColliding($("#description-wrapper"), $("#social > div"))) {
+				// move the descriptiont/tags box above the social buttons
+				$("#description-wrapper").css("bottom", ($("#social > div").outerHeight() + 10) + "px");
+			}
+		}
+
+		function MoveDescriptionAboveMediaBar() {
+			if (env.currentMedia !== null && Utilities.areColliding($("#description-wrapper"), $(".media-box#center .media-bar"))) {
+				// move the descriptiont/tags box above the media bar
+				let thumbsHeight = 0;
+				if ($("#thumbs").is(":visible"))
+					thumbsHeight = $("#thumbs").outerHeight();
+				$("#description-wrapper").css("bottom", (thumbsHeight + parseInt($(".media-box#center .media-bar").css("bottom")) + mediaBarHeigth + 10) + "px");
+			}
+		}
+
+		function moveDescriptionAtTheLeftOfPinch() {
+			if (env.currentMedia !== null && Utilities.areColliding($("#description-wrapper"), $("#pinch-container"))) {
+				// move the descriptiont/tags box to the left of the pinch buttons
+				$("#description-wrapper").css("right", (parseFloat($("#pinch-container").css("right")) + $("#pinch-container").outerWidth() + 10) + "px");
+			}
+		}
 
 		$("#social > div").removeClass("ssk-bottom").addClass("ssk-center");
 		$("#social > div").css("left", "").css("top", "");
@@ -3275,66 +3357,21 @@
 		if (! mediaBarHeigth)
 			mediaBarHeigth = 30;
 		var mediaBarDisplay;
-		// if (! $(".media-box#center .media-bar .links").is(":visible")) {
-		// 	mediaBarDisplay = $(".media-box#center .media-bar .links").css("display");
-		// 	$(".media-box#center .media-bar .links").css("display", "inline");
-		// }
 		$(".media-box#center .media-bar").css("bottom", "");
-		if (env.currentMedia !== null && Utilities.bottomSocialButtons() && Utilities.areColliding($(".media-box#center .media-bar"), $("#social > div"))) {
-			// move the media bar above the social buttons
-			$(".media-box#center .media-bar").css("bottom", ($("#social > div").outerHeight()) + "px");
-		}
 
-		if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia() && Utilities.lateralSocialButtons() && Utilities.areColliding($("#social > div"), $("#prev"))) {
-			if (parseFloat($("#prev").css("bottom")) > $("#social > div").outerHeight()) {
-				// move social buttons below prev button
-				$("#social > div").removeClass("ssk-center").css("top", (parseFloat($("#prev").css("top")) + $("#prev").outerHeight()) + "px" );
-			} else {
-				// move social buttons to the right of prev button
-				$("#social > div").css("left", ($("#prev").outerWidth()) + "px");
-			}
-		}
-
-		// move the select box above the social buttons and the media bar
-		if (env.currentMedia !== null && Utilities.bottomSocialButtons() && Utilities.areColliding($("#media-select-box .select-box"), $("#social > div"))) {
-			$("#media-select-box .select-box").css("bottom", ($("#social > div").outerHeight() + 10) + "px");
-		}
-		if (env.currentMedia !== null && Utilities.areColliding($("#media-select-box .select-box"), $(".media-box#center .media-bar"))) {
-			$("#media-select-box .select-box").css("bottom", (parseInt($(".media-box#center .media-bar").css("bottom")) + mediaBarHeigth + 10) + "px");
-		}
-
-		// move the select box at the right of the prev button and lateral social buttons
-		if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia() && Utilities.areColliding($("#media-select-box .select-box"), $("#prev"))) {
-			$("#media-select-box .select-box").css("left", ($("#prev").outerWidth() + 20) + "px");
-		}
-		if (env.currentMedia !== null && Utilities.lateralSocialButtons() && Utilities.areColliding($("#media-select-box .select-box"), $("#social > div"))) {
-			$("#media-select-box .select-box").css("left", ($("#social > div").outerWidth() + 20) + "px");
-		}
-
-		// correct pinch buttons position
-		if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia() && Utilities.areColliding($("#pinch-container"), $("#next"))) {
-			$("#pinch-container").css("right", ($("#prev").outerWidth() + 20) + "px");
-		}
-
-		// correct description/tags box position
-		if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia() && Utilities.areColliding($("#description-wrapper"), $("#next"))) {
-			$("#description-wrapper").css("right", ($("#next").outerWidth() + 10) + "px");
-		}
-		if (Utilities.bottomSocialButtons() && Utilities.areColliding($("#description-wrapper"), $("#social > div"))) {
-			// move the descriptiont/tags box above the social buttons
-			$("#description-wrapper").css("bottom", ($("#social > div").outerHeight() + 10) + "px");
-		}
-		if (env.currentMedia !== null && Utilities.areColliding($("#description-wrapper"), $(".media-box#center .media-bar"))) {
-			// move the descriptiont/tags box above the media bar
-			let thumbsHeight = 0;
-			if ($("#thumbs").is(":visible"))
-				thumbsHeight = $("#thumbs").outerHeight();
-			$("#description-wrapper").css("bottom", (thumbsHeight + parseInt($(".media-box#center .media-bar").css("bottom")) + mediaBarHeigth + 10) + "px");
-		}
-		if (env.currentMedia !== null && Utilities.areColliding($("#description-wrapper"), $("#pinch-container"))) {
-			// move the descriptiont/tags box to the left of the pinch buttons
-			$("#description-wrapper").css("right", (parseFloat($("#pinch-container").css("right")) + $("#pinch-container").outerWidth() + 10) + "px");
-		}
+		MoveMediaBarAboveBottomSocial()
+		separateLateralSocialAndPrev();
+		moveSelectBoxAboveBottomSocial();
+		moveSelectBoxAboveMediaBar();
+		moveSelectBoxAtTheRightOfPrev();
+		moveSelectBoxAtTheRightOfLateralSocial();
+		movePinchAtTheLeftOfNext();
+		moveDescriptionAtTheLeftOfNext();
+		moveDescriptionAtTheLeftOfPinch();
+		moveDescriptionAboveBottomSocial();
+		MoveDescriptionAboveMediaBar();
+		moveDescriptionAtTheLeftOfNext();
+		moveDescriptionAtTheLeftOfPinch();
 	};
 
 
@@ -3372,17 +3409,17 @@
 		var d1_offset             = jQueryObject1.offset();
 		var d1_height             = jQueryObject1.outerHeight(true);
 		var d1_width              = jQueryObject1.outerWidth(true);
-		var d1_distance_from_top  = d1_offset.top + d1_height;
-		var d1_distance_from_left = d1_offset.left + d1_width;
+		var d1_distance_of_bottom_from_top = d1_offset.top + d1_height;
+		var d1_distance_of_right_from_left = d1_offset.left + d1_width;
 
 		// Div 2 data
 		var d2_offset             = jQueryObject2.offset();
 		var d2_height             = jQueryObject2.outerHeight(true);
 		var d2_width              = jQueryObject2.outerWidth(true);
-		var d2_distance_from_top  = d2_offset.top + d2_height;
-		var d2_distance_from_left = d2_offset.left + d2_width;
+		var d2_distance_of_bottom_from_top = d2_offset.top + d2_height;
+		var d2_distance_of_right_from_left = d2_offset.left + d2_width;
 
-		var not_colliding = ( d1_distance_from_top < d2_offset.top || d1_offset.top > d2_distance_from_top || d1_distance_from_left < d2_offset.left || d1_offset.left > d2_distance_from_left );
+		var not_colliding = ( d1_distance_of_bottom_from_top < d2_offset.top || d1_offset.top > d2_distance_of_bottom_from_top || d1_distance_of_right_from_left < d2_offset.left || d1_offset.left > d2_distance_of_right_from_left );
 
 		// Return whether it IS colliding
 		return ! not_colliding;
