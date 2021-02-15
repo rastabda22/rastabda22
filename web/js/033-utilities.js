@@ -3271,6 +3271,14 @@
 		$("#social > div").css("left", "").css("top", "");
 		Utilities.socialButtons();
 
+		var mediaBarHeigth = parseFloat($(".media-box#center .media-bar").outerHeight());
+		if (! mediaBarHeigth)
+			mediaBarHeigth = 30;
+		var mediaBarDisplay;
+		// if (! $(".media-box#center .media-bar .links").is(":visible")) {
+		// 	mediaBarDisplay = $(".media-box#center .media-bar .links").css("display");
+		// 	$(".media-box#center .media-bar .links").css("display", "inline");
+		// }
 		$(".media-box#center .media-bar").css("bottom", "");
 		if (env.currentMedia !== null && Utilities.bottomSocialButtons() && Utilities.areColliding($(".media-box#center .media-bar"), $("#social > div"))) {
 			// move the media bar above the social buttons
@@ -3318,7 +3326,10 @@
 		}
 		if (env.currentMedia !== null && Utilities.areColliding($("#description-wrapper"), $(".media-box#center .media-bar"))) {
 			// move the descriptiont/tags box above the media bar
-			$("#description-wrapper").css("bottom", (parseInt($("#thumbs").outerHeight()) + parseInt($(".media-box#center .media-bar").css("bottom")) + mediaBarHeigth + 10) + "px");
+			let thumbsHeight = 0;
+			if ($("#thumbs").is(":visible"))
+				thumbsHeight = $("#thumbs").outerHeight();
+			$("#description-wrapper").css("bottom", (thumbsHeight + parseInt($(".media-box#center .media-bar").css("bottom")) + mediaBarHeigth + 10) + "px");
 		}
 		if (env.currentMedia !== null && Utilities.areColliding($("#description-wrapper"), $("#pinch-container"))) {
 			// move the descriptiont/tags box to the left of the pinch buttons
@@ -3613,6 +3624,7 @@
 			else
 				$("#description-tags").removeClass("hidden-by-option");
 
+			$("#description-wrapper").css("right", "");
 			var thumbsHeight = 0;
 			if (env.currentMedia !== null && $("#thumbs").is(":visible"))
 				thumbsHeight = env.options.media_thumb_size + 20;
