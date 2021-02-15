@@ -1031,8 +1031,6 @@
 					event.data.resize = true;
 
 					event.data.id = "center";
-					event.data.currentZoom = pS.getCurrentZoom();
-					event.data.initialZoom = pS.getInitialZoom();
 
 					// prev and next tree in the DOM must be given the correct sizes
 					$(".media-box#left, .media-box#right").css("width", env.windowWidth);
@@ -1042,7 +1040,7 @@
 					scalePromise.then(
 						function() {
 							if (self.isImage()) {
-								if (pS.getCurrentZoom() === pS.getInitialZoom())
+								if (env.currentZoom === env.initialZoom)
 									f.pinchSwipeInitialization();
 								util.setPinchButtonsPosition();
 								util.setPinchButtonsVisibility();
