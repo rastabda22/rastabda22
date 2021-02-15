@@ -2407,7 +2407,7 @@
 						if (PinchSwipe.getCurrentZoom() === PinchSwipe.getInitialZoom())
 							Functions.pinchSwipeInitialization();
 						Utilities.setPinchButtonsPosition();
-						PinchSwipe.setPinchButtonsVisibility();
+						Utilities.setPinchButtonsVisibility();
 					}
 					Utilities.setSelectButtonPosition();
 					Utilities.setDescriptionOptions();
@@ -3171,6 +3171,38 @@
 		// var pinchTop = Math.round((containerHeight - actualHeight) / 2 + distanceFromImageBorder);
 		var pinchRight = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
 		$("#pinch-container").css("right", pinchRight.toString() + "px").css("top", pinchTop.toString() + "px");
+	};
+
+	Utilities.setPinchButtonsVisibility = function() {
+		$("#pinch-container").removeClass("hidden");
+
+		if (env.currentMedia.isVideo()) {
+			$("#pinch-container").hide();
+		} else {
+			$("#pinch-container").show();
+
+			$("#pinch-in").off("click");
+			$("#pinch-in").off("click").on(
+				"click",
+				function(ev) {
+					PinchSwipe.pinchIn(null, null);
+				}
+			);
+			$("#pinch-in").removeClass("disabled");
+
+			$("#pinch-out").off("click");
+			if (currentZoom === initialZoom && ! $("#center .title").hasClass("hidden-by-pinch")) {
+				$("#pinch-out").addClass("disabled");
+			} else {
+				$("#pinch-out").off("click").on(
+					"click",
+					function(ev) {
+						PinchSwipe.pinchOut(null, null);
+					}
+				);
+				$("#pinch-out").removeClass("disabled");
+			}
+		}
 	};
 
 	Utilities.horizontalScrollBarThickness = function(element) {
@@ -4051,6 +4083,7 @@
 	Utilities.prototype.isPopup = Utilities.isPopup;
 	Utilities.prototype.arrayUnion = Utilities.arrayUnion;
 	Utilities.prototype.setPinchButtonsPosition = Utilities.setPinchButtonsPosition;
+	Utilities.prototype.setPinchButtonsVisibility = Utilities.setPinchButtonsVisibility;
 	Utilities.prototype.setSelectButtonPosition = Utilities.setSelectButtonPosition;
 	Utilities.prototype.setDescriptionOptions = Utilities.setDescriptionOptions;
 	Utilities.prototype.correctElementPositions = Utilities.correctElementPositions;

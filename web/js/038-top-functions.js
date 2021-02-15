@@ -741,7 +741,7 @@
 												function() {
 													if (ev.data.currentMedia.isImage()) {
 														util.setPinchButtonsPosition();
-														pS.setPinchButtonsVisibility();
+														util.setPinchButtonsVisibility();
 													}
 													util.setSelectButtonPosition();
 													util.setDescriptionOptions();
@@ -1007,7 +1007,7 @@
 			if (self.isImage()) {
 				pS.addMediaGesturesDetection();
 				util.setPinchButtonsPosition();
-				pS.setPinchButtonsVisibility();
+				util.setPinchButtonsVisibility();
 			}
 			util.setSelectButtonPosition();
 			util.setDescriptionOptions();
@@ -1040,7 +1040,7 @@
 								if (pS.getCurrentZoom() === pS.getInitialZoom())
 									f.pinchSwipeInitialization();
 								util.setPinchButtonsPosition();
-								pS.setPinchButtonsVisibility();
+								util.setPinchButtonsVisibility();
 							}
 							util.setSelectButtonPosition();
 							util.setDescriptionOptions();
@@ -1769,7 +1769,7 @@
 					function() {
 						if (env.currentMedia.isImage()) {
 							util.setPinchButtonsPosition();
-							pS.setPinchButtonsVisibility();
+							util.setPinchButtonsVisibility();
 						}
 						util.setSelectButtonPosition();
 						util.setDescriptionOptions();
@@ -1811,7 +1811,7 @@
 					function() {
 						if (env.currentMedia.isImage()) {
 							util.setPinchButtonsPosition();
-							pS.setPinchButtonsVisibility();
+							util.setPinchButtonsVisibility();
 						}
 						util.setSelectButtonPosition();
 						util.setDescriptionOptions();
@@ -1856,7 +1856,7 @@
 					function() {
 						if (env.currentMedia.isImage()) {
 							util.setPinchButtonsPosition();
-							pS.setPinchButtonsVisibility();
+							util.setPinchButtonsVisibility();
 						}
 						util.setSelectButtonPosition();
 						util.setDescriptionOptions();
@@ -2803,7 +2803,7 @@
 					function() {
 						if (env.currentMedia.isImage()) {
 							util.setPinchButtonsPosition();
-							pS.setPinchButtonsVisibility();
+							util.setPinchButtonsVisibility();
 						}
 						util.setSelectButtonPosition();
 						util.setDescriptionOptions();

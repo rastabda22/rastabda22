@@ -1310,7 +1310,7 @@
 	Functions.pinchSwipeInitialization = function() {
 		pS.initialize();
 		util.setPinchButtonsPosition();
-		pS.setPinchButtonsVisibility();
+		util.setPinchButtonsVisibility();
 		util.setSelectButtonPosition();
 		util.setDescriptionOptions();
 		util.correctElementPositions();

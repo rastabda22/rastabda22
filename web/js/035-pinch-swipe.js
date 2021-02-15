@@ -175,7 +175,7 @@
 				}
 
 				util.setPinchButtonsPosition();
-				PinchSwipe.setPinchButtonsVisibility();
+				util.setPinchButtonsVisibility();
 				util.setSelectButtonPosition();
 				util.setDescriptionOptions();
 				util.correctElementPositions();
@@ -228,7 +228,7 @@
 								// currentZoom = currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
 								// zoomAfterFirstPinch = currentZoom;
 								util.setPinchButtonsPosition();
-								PinchSwipe.setPinchButtonsVisibility();
+								util.setPinchButtonsVisibility();
 								util.setSelectButtonPosition();
 								util.setDescriptionOptions();
 								util.correctElementPositions();
@@ -335,7 +335,7 @@
 					// currentZoom = 1;
 					// zoomAfterFirstPinch = currentZoom;
 					util.setPinchButtonsPosition();
-					PinchSwipe.setPinchButtonsVisibility();
+					util.setPinchButtonsVisibility();
 					util.setSelectButtonPosition();
 					util.setDescriptionOptions();
 					util.correctElementPositions();
@@ -346,38 +346,6 @@
 					currentZoom = initialZoom;
 				}
 			);
-		}
-	};
-
-	PinchSwipe.setPinchButtonsVisibility = function() {
-		$("#pinch-container").removeClass("hidden");
-
-		if (env.currentMedia.mimeType.indexOf("video/") === 0) {
-			$("#pinch-container").hide();
-		} else {
-			$("#pinch-container").show();
-
-			$("#pinch-in").off("click");
-			$("#pinch-in").off("click").on(
-				"click",
-				function(ev) {
-					PinchSwipe.pinchIn(null, null);
-				}
-			);
-			$("#pinch-in").removeClass("disabled");
-
-			$("#pinch-out").off("click");
-			if (currentZoom === initialZoom && ! $("#center .title").hasClass("hidden-by-pinch")) {
-				$("#pinch-out").addClass("disabled");
-			} else {
-				$("#pinch-out").off("click").on(
-					"click",
-					function(ev) {
-						PinchSwipe.pinchOut(null, null);
-					}
-				);
-				$("#pinch-out").removeClass("disabled");
-			}
 		}
 	};
 
@@ -670,7 +638,7 @@
 			currentZoom = newInitialZoom;
 		initialZoom = newInitialZoom;
 
-		PinchSwipe.setPinchButtonsVisibility();
+		util.setPinchButtonsVisibility();
 	};
 
 	PinchSwipe.prototype.swipeOnWheel = function(event, delta) {
@@ -812,7 +780,6 @@
 	PinchSwipe.prototype.pinchIn = PinchSwipe.pinchIn;
 	PinchSwipe.prototype.pinchOut = PinchSwipe.pinchOut;
 	PinchSwipe.prototype.addAlbumGesturesDetection = PinchSwipe.addAlbumGesturesDetection;
-	PinchSwipe.prototype.setPinchButtonsVisibility = PinchSwipe.setPinchButtonsVisibility;
 	PinchSwipe.prototype.swipeUp = PinchSwipe.swipeUp;
 	PinchSwipe.prototype.initialize = PinchSwipe.initialize;
 	PinchSwipe.prototype.getCurrentZoom = PinchSwipe.getCurrentZoom;
