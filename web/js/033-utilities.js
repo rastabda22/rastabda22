@@ -2369,7 +2369,7 @@
 					photoSrc = self.chooseReducedPhoto(container, env.fullScreenStatus);
 					previousSrc = mediaElement.attr("src");
 
-					if (encodeURI(photoSrc) != previousSrc && event.data.currentZoom === event.data.initialZoom) {
+					if (encodeURI(photoSrc) != previousSrc && env.currentZoom === env.initialZoom) {
 						// resizing had the effect that a different reduction has been choosed
 
 						// chooseReducedPhoto() sets env.maxSize to 0 if it returns the original media
@@ -2404,7 +2404,7 @@
 
 					Utilities.setLinksVisibility();
 					if (self.isImage()) {
-						if (PinchSwipe.getCurrentZoom() === PinchSwipe.getInitialZoom())
+						if (env.currentZoom === env.initialZoom)
 							Functions.pinchSwipeInitialization();
 						Utilities.setPinchButtonsPosition();
 						Utilities.setPinchButtonsVisibility();
@@ -3191,7 +3191,7 @@
 			$("#pinch-in").removeClass("disabled");
 
 			$("#pinch-out").off("click");
-			if (currentZoom === initialZoom && ! $("#center .title").hasClass("hidden-by-pinch")) {
+			if (env.currentZoom === env.initialZoom && ! $("#center .title").hasClass("hidden-by-pinch")) {
 				$("#pinch-out").addClass("disabled");
 			} else {
 				$("#pinch-out").off("click").on(
@@ -3672,23 +3672,6 @@
 			}
 		}
 
-		// if (env.isMobile.any()) {
-		// 	if (env.currentMedia !== null) {
-		// 		// move the box above the media bar
-		// 		while (Utilities.areColliding($("#description-wrapper"), $(".media-box#center .media-bar"))) {
-		// 			$("#description-wrapper").css("bottom", (parseInt($("#description-wrapper").css("bottom")) + 5) + "px");
-		// 		}
-		// 	}
-		// 	if (Utilities.bottomSocialButtons()) {
-		// 		while (Utilities.areColliding($("#description-wrapper"), $("#social > div"))) {
-		// 			$("#description-wrapper").css("bottom", (parseInt($("#description-wrapper").css("bottom")) + 5) + "px");
-		// 		}
-		// 	}
-		// }
-		// while (Utilities.areColliding($("#description-wrapper"), $("#next"))) {
-		// 	$("#description-wrapper").css("right", (parseInt($("#description-wrapper").css("right")) + 5) + "px");
-		// }
-		//
 		$("#description-hide, #description-show").off("click").on(
 			"click",
 			function() {
@@ -4047,7 +4030,6 @@
 	Utilities.prototype.mediaBoxGenerator = Utilities.mediaBoxGenerator;
 	Utilities.prototype.currentSizeAndIndex = Utilities.currentSizeAndIndex;
 	Utilities.prototype.nextSizeAndIndex = Utilities.nextSizeAndIndex;
-	// Utilities.prototype.areColliding = Utilities.areColliding;
 	Utilities.prototype.distanceBetweenCoordinatePoints = Utilities.distanceBetweenCoordinatePoints;
 	Utilities.prototype.xDistanceBetweenCoordinatePoints = Utilities.xDistanceBetweenCoordinatePoints;
 	Utilities.prototype.yDistanceBetweenCoordinatePoints = Utilities.yDistanceBetweenCoordinatePoints;
