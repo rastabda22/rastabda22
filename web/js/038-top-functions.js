@@ -739,7 +739,7 @@
 											let scalePromise = ev.data.currentMedia.scale(event);
 											scalePromise.then(
 												function() {
-													if (ev.data.currentMedia.mimeType.indexOf("image/") === 0) {
+													if (ev.data.currentMedia.isImage()) {
 														util.setPinchButtonsPosition();
 														pS.setPinchButtonsVisibility();
 													}
@@ -1004,7 +1004,7 @@
 				}
 			);
 
-			if (self.mimeType.indexOf("image/") === 0) {
+			if (self.isImage()) {
 				pS.addMediaGesturesDetection();
 				util.setPinchButtonsPosition();
 				pS.setPinchButtonsVisibility();
@@ -1036,7 +1036,7 @@
 					let scalePromise = self.scale(event);
 					scalePromise.then(
 						function() {
-							if (self.mimeType.indexOf("image/") === 0) {
+							if (self.isImage()) {
 								if (pS.getCurrentZoom() === pS.getInitialZoom())
 									f.pinchSwipeInitialization();
 								util.setPinchButtonsPosition();
@@ -1169,14 +1169,14 @@
 				var mediaBoxInnerElement = $(".media-box#" + id + " .media-box-inner");
 				// empty the img container: another image will be put in there
 
-				if (self.mimeType.indexOf("video/") === 0 && ! f.videoOK()) {
+				if (self.isVideo() && ! f.videoOK()) {
 					mediaBoxInnerElement.empty();
 					f.addVideoUnsupportedMarker(id);
 					if (id === "center")
 						loadNextPrevMedia(self);
 				} else {
 					let newMedia;
-					if (self.mimeType.indexOf("video/") === 0) {
+					if (self.isVideo()) {
 						mediaSelector = ".media-box#" + id + " .media-box-inner video";
 						newMedia = $("<video>");
 					} else {
@@ -1249,7 +1249,7 @@
 					$("#next").off();
 					$("#prev").off();
 
-					if (self.mimeType.indexOf("image/") === 0)
+					if (self.isImage())
 						mediaBoxInnerElement.off("mousewheel").on("mousewheel", pS.swipeOnWheel);
 
 					$(".media-box#center .media-box-inner .media-bar").off("click").on(
@@ -1331,7 +1331,7 @@
 					$(".media-box#center .fullscreen").off("click").on("click", TopFunctions.toggleFullscreenFromMouse);
 
 					// set social buttons events
-					if (env.currentMedia.mimeType.indexOf("video/") === 0)
+					if (env.currentMedia.isVideo())
 						$("#media-center").off("loadstart").on("loadstart", util.socialButtons);
 					else
 						$("#media-center").off("load").on("load", util.socialButtons);
@@ -1345,7 +1345,7 @@
 				if (self.date !== undefined)
 					text += "<tr><td class='metadata-data-date'></td><td>" + self.date + "</td></tr>";
 				var fileSize = self.fileSizes[0].images;
-				if (self.mimeType.indexOf("video/") === 0)
+				if (self.isVideo())
 					fileSize = self.fileSizes[0].videos;
 				text += "<tr><td class='metadata-data-file-size'></td><td>" + f.humanFileSize(fileSize) + "</td></tr>";
 				if (self.metadata.size !== undefined)
@@ -1441,7 +1441,7 @@
 
 	Album.prototype.prepareForShowing = function(mediaIndex) {
 
-		if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0)
+		if (env.currentMedia !== null && env.currentMedia.isVideo())
 			// stop the video, otherwise it will keep playing
 			$("video#media-center")[0].pause();
 
@@ -1767,7 +1767,7 @@
 				let scalePromise = env.currentMedia.scale(event);
 				scalePromise.then(
 					function() {
-						if (env.currentMedia.mimeType.indexOf("image/") === 0) {
+						if (env.currentMedia.isImage()) {
 							util.setPinchButtonsPosition();
 							pS.setPinchButtonsVisibility();
 						}
@@ -1809,7 +1809,7 @@
 				let scalePromise = env.currentMedia.scale(event);
 				scalePromise.then(
 					function() {
-						if (env.currentMedia.mimeType.indexOf("image/") === 0) {
+						if (env.currentMedia.isImage()) {
 							util.setPinchButtonsPosition();
 							pS.setPinchButtonsVisibility();
 						}
@@ -1854,7 +1854,7 @@
 				let scalePromise = env.currentMedia.scale(event);
 				scalePromise.then(
 					function() {
-						if (env.currentMedia.mimeType.indexOf("image/") === 0) {
+						if (env.currentMedia.isImage()) {
 							util.setPinchButtonsPosition();
 							pS.setPinchButtonsVisibility();
 						}
@@ -2801,7 +2801,7 @@
 				let scalePromise = env.currentMedia.scale(event);
 				scalePromise.then(
 					function() {
-						if (env.currentMedia.mimeType.indexOf("image/") === 0) {
+						if (env.currentMedia.isImage()) {
 							util.setPinchButtonsPosition();
 							pS.setPinchButtonsVisibility();
 						}

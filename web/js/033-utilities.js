@@ -2010,14 +2010,14 @@
 		// chooses the proper reduction to use depending on the container size
 		var container, mediaSrc;
 
-		if (this.mimeType.indexOf("video/") === 0) {
+		if (this.isVideo()) {
 			if (fullScreenStatus && this.name.match(/\.avi$/) === null) {
 				mediaSrc = this.originalMediaPath();
 			} else {
 				// .avi videos are not played by browsers, use the transcoded one
 				mediaSrc = this.mediaPath("");
 			}
-		} else if (this.mimeType.indexOf("image/") === 0) {
+		} else if (this.isImage()) {
 			if (fullScreenStatus && Modernizr.fullscreen)
 				container = $(window);
 			else
@@ -2150,7 +2150,7 @@
 		var mediaSrc, mediaElement, container;
 		var attrWidth = mediaWidth, attrHeight = mediaHeight;
 
-		if (this.mimeType.indexOf("video/") === 0) {
+		if (this.isVideo()) {
 			if (fullScreenStatus && this.name.match(/\.avi$/) === null) {
 				mediaSrc = this.originalMediaPath();
 			} else {
@@ -2159,7 +2159,7 @@
 			}
 
 			mediaElement = $('<video/>', {controls: true });
-		} else if (this.mimeType.indexOf("image/") === 0) {
+		} else if (this.isImage()) {
 			if (fullScreenStatus && Modernizr.fullscreen)
 				container = $(window);
 			else
@@ -2199,9 +2199,9 @@
 	SingleMedia.prototype.createMediaLinkTag = function(mediaSrc) {
 		// creates a link tag to be inserted in <head>
 
-		if (this.mimeType.indexOf("video/") === 0) {
+		if (this.isVideo()) {
 			return '<link rel="video_src" href="' + encodeURI(mediaSrc) + '" />';
-		} else if (this.mimeType.indexOf("image/") === 0) {
+		} else if (this.isImage()) {
 			return '<link rel="image_src" href="' + encodeURI(mediaSrc) + '" />';
 		}
 	};
@@ -2209,11 +2209,19 @@
 	SingleMedia.prototype.chooseTriggerEvent = function() {
 		// choose the event that must trigger the scale function
 
-		if (this.mimeType.indexOf("video/") === 0) {
+		if (this.isVideo()) {
 			return "loadstart";
-		} else if (this.mimeType.indexOf("image/") === 0) {
+		} else if (this.isImage()) {
 			return "load";
 		}
+	};
+
+	SingleMedia.prototype.isVideo = function() {
+		return this.mimeType.indexOf("video/") === 0;
+	};
+
+	SingleMedia.prototype.isImage = function() {
+		return this.mimeType.indexOf("image/") === 0;
 	};
 
 	SingleMedia.prototype.originalMediaPath = function() {
@@ -2230,8 +2238,8 @@
 	SingleMedia.prototype.mediaPath = function(size) {
 		var suffix = env.options.cache_folder_separator, cacheBase, rootString = "root-";
 		if (
-			this.mimeType.indexOf("image/") === 0 ||
-			this.mimeType.indexOf("video/") === 0 && [env.options.album_thumb_size, env.options.media_thumb_size].indexOf(size) != -1
+			this.isImage() ||
+			this.isVideo() && [env.options.album_thumb_size, env.options.media_thumb_size].indexOf(size) != -1
 		) {
 			var actualSize = size;
 			var albumThumbSize = env.options.album_thumb_size;
@@ -2257,7 +2265,7 @@
 					suffix += "f";
 			}
 			suffix += ".jpg";
-		} else if (this.mimeType.indexOf("video/") === 0) {
+		} else if (this.isVideo()) {
 			suffix += "transcoded.mp4";
 		}
 
@@ -2338,9 +2346,9 @@
 				$(".media-box#" + id + " .media-box-inner").css("height", heightForMedia);
 				$(".media-box#" + id).show();
 
-				if (self.mimeType.indexOf("image/") === 0)
+				if (self.isImage())
 					mediaElement = $(".media-box#" + id + " .media-box-inner img");
-				else if (self.mimeType.indexOf("video/") === 0)
+				else if (self.isVideo())
 					mediaElement = $(".media-box#" + id + " .media-box-inner video");
 
 				mediaWidth = self.metadata.size[0];
@@ -2357,7 +2365,7 @@
 				containerHeight = heightForMedia;
 				containerRatio = containerWidth / containerHeight;
 
-				if (self.mimeType.indexOf("image/") === 0) {
+				if (self.isImage()) {
 					photoSrc = self.chooseReducedPhoto(container, env.fullScreenStatus);
 					previousSrc = mediaElement.attr("src");
 
@@ -2395,7 +2403,7 @@
 					$("#next, #prev").css("top", titleHeight + (mediaBoxInnerHeight - prevNextHeight) / 2);
 
 					Utilities.setLinksVisibility();
-					if (self.mimeType.indexOf("image/") === 0) {
+					if (self.isImage()) {
 						if (PinchSwipe.getCurrentZoom() === PinchSwipe.getInitialZoom())
 							Functions.pinchSwipeInitialization();
 						Utilities.setPinchButtonsPosition();
@@ -2504,12 +2512,12 @@
 			var prefix = Utilities.removeFolderString(env.currentMedia.foldersCacheBase);
 			if (prefix)
 				prefix += env.options.cache_folder_separator;
-			if (env.currentMedia.mimeType.indexOf("video/") === 0) {
+			if (env.currentMedia.isVideo()) {
 				mediaParameter = Utilities.pathJoin([
 					env.server_cache_path,
 					env.currentMedia.cacheSubdir,
 				]) + prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + "transcoded.mp4";
-			} else if (env.currentMedia.mimeType.indexOf("image/") === 0) {
+			} else if (env.currentMedia.isImage()) {
 				mediaParameter = Utilities.pathJoin([
 					env.server_cache_path,
 					env.currentMedia.cacheSubdir,
@@ -2605,9 +2613,9 @@
 	Media.prototype.imagesAndVideosCount = function() {
 		var result = new ImagesAndVideos();
 		for (let i = 0; i < this.length; i ++) {
-			if (this[i].mimeType.indexOf("image/") === 0)
+			if (this[i].isImage())
 				result.images += 1;
-			else if (this[i].mimeType.indexOf("video/") === 0)
+			else if (this[i].isVideo())
 				result.videos += 1;
 		}
 		return result;
@@ -2683,8 +2691,8 @@
 						for (let iMedia = 0; iMedia < album.media.length; iMedia ++) {
 							let ithMedia = album.media[iMedia];
 							if (
-								ithMedia.mimeType.indexOf("image/") === 0 && what === "videos" ||
-								ithMedia.mimeType.indexOf("video/") === 0 && what === "images" ||
+								ithMedia.isImage() && what === "videos" ||
+								ithMedia.isVideo() && what === "images" ||
 								includedMedia.some(singleMedia => singleMedia.isEqual(ithMedia))
 							)
 								continue;

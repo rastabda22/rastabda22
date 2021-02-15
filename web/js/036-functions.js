@@ -1031,7 +1031,7 @@
 					// let numImages = 0;
 					// let numVideos = 0;
 					// for (let iMedia = 0; iMedia < albumForDownload.numsMedia.imagesAndVideosTotal(); iMedia ++) {
-					// 	if (albumForDownload.media[iMedia].mimeType.indexOf("image/") === 0) {
+					// 	if (albumForDownload.media[iMedia].isImage()) {
 					// 		numImages ++;
 					// 	} else {
 					// 		numVideos ++;
@@ -1110,7 +1110,7 @@
 				// let numImages = 0;
 				// let numVideos = 0;
 				// for (let iMedia = 0; iMedia < albumForDownload.numsMedia.imagesAndVideosTotal(); iMedia ++) {
-				// 	if (albumForDownload.media[iMedia].mimeType.indexOf("image/") === 0) {
+				// 	if (albumForDownload.media[iMedia].isImage()) {
 				// 		numImages ++;
 				// 	} else {
 				// 		numVideos ++;

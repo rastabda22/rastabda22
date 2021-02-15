@@ -677,7 +677,7 @@
 		if (env.currentMedia === null)
 			return true;
 		if (! event.shiftKey && ! event.altKey && ! event.ctrlKey) {
-			if (env.currentMedia.mimeType.indexOf("video/") === 0 || env.currentMedia.mimeType.indexOf("image/") === 0 && currentZoom === initialZoom) {
+			if (env.currentMedia.isVideo() || env.currentMedia.isImage() && currentZoom === initialZoom) {
 				// mouse wheel with no key: swipe
 				if (delta < 0) {
 					env.nextMedia.swipeLeft();
@@ -702,7 +702,7 @@
 					return false;
 				}
 			}
-		} else if (env.currentMedia.mimeType.indexOf("image/") === 0) {
+		} else if (env.currentMedia.isImage()) {
 			// mouse wheel with shift/control/alt key: pinch
 			if (delta < 0) {
 				PinchSwipe.pinchOut(event, currentZoom * 0.95, 0);

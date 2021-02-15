@@ -59,7 +59,7 @@ $(document).ready(function() {
 			} else if ($("ul#right-menu").hasClass("expand")) {
 				util.toggleMenu();
 				return false;
-			} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0 && ! $("video#media-center")[0].paused) {
+			} else if (env.currentMedia !== null && env.currentMedia.isVideo() && ! $("video#media-center")[0].paused) {
 				// stop the video, otherwise it keeps playing
 				$("video#media-center")[0].pause();
 				return false;
@@ -85,7 +85,7 @@ $(document).ready(function() {
 				tF.toggleFullscreen(e);
 				return false;
 			} else if (upLink) {
-				if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0)
+				if (env.currentMedia !== null && env.currentMedia.isVideo())
 					// stop the video, otherwise it keeps playing
 					$("video#media-center")[0].pause();
 				if (
@@ -123,7 +123,7 @@ $(document).ready(function() {
 								pS.drag(env.windowWidth / 3, {x: -1, y: 0});
 						}
 						return false;
-					} else if (e.key === " " && ! e.shiftKey && env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0) {
+					} else if (e.key === " " && ! e.shiftKey && env.currentMedia !== null && env.currentMedia.isVideo()) {
 						if ($("video#media-center")[0].paused)
 							// play the video
 							$("video#media-center")[0].play();
@@ -231,14 +231,14 @@ $(document).ready(function() {
 					} else if (e.key === "+") {
 						if (isMap) {
 							// return false;
-						} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("image/") === 0) {
+						} else if (env.currentMedia !== null && env.currentMedia.isImage()) {
 							pS.pinchIn(null);
 							return false;
 						}
 					} else if (e.key === "-") {
 						if (isMap) {
 							// return false;
-						} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("image/") === 0) {
+						} else if (env.currentMedia !== null && env.currentMedia.isImage()) {
 							pS.pinchOut(null, null);
 							return false;
 						}
