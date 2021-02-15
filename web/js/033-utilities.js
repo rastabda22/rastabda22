@@ -1205,7 +1205,7 @@
 		}
 	};
 
-	Utilities.prototype.removeFolderString = function (cacheBase) {
+	Utilities.removeFolderString = function (cacheBase) {
 		if (this.isFolderCacheBase(cacheBase)) {
 			cacheBase = cacheBase.substring(env.options.folders_string.length);
 			if (cacheBase.length > 0)
@@ -2010,14 +2010,14 @@
 		// chooses the proper reduction to use depending on the container size
 		var container, mediaSrc;
 
-		if (this.mimeType.indexOf("video/") === 0) {
+		if (this.isVideo()) {
 			if (fullScreenStatus && this.name.match(/\.avi$/) === null) {
 				mediaSrc = this.originalMediaPath();
 			} else {
 				// .avi videos are not played by browsers, use the transcoded one
 				mediaSrc = this.mediaPath("");
 			}
-		} else if (this.mimeType.indexOf("image/") === 0) {
+		} else if (this.isImage()) {
 			if (fullScreenStatus && Modernizr.fullscreen)
 				container = $(window);
 			else
@@ -2150,7 +2150,7 @@
 		var mediaSrc, mediaElement, container;
 		var attrWidth = mediaWidth, attrHeight = mediaHeight;
 
-		if (this.mimeType.indexOf("video/") === 0) {
+		if (this.isVideo()) {
 			if (fullScreenStatus && this.name.match(/\.avi$/) === null) {
 				mediaSrc = this.originalMediaPath();
 			} else {
@@ -2159,7 +2159,7 @@
 			}
 
 			mediaElement = $('<video/>', {controls: true });
-		} else if (this.mimeType.indexOf("image/") === 0) {
+		} else if (this.isImage()) {
 			if (fullScreenStatus && Modernizr.fullscreen)
 				container = $(window);
 			else
@@ -2199,9 +2199,9 @@
 	SingleMedia.prototype.createMediaLinkTag = function(mediaSrc) {
 		// creates a link tag to be inserted in <head>
 
-		if (this.mimeType.indexOf("video/") === 0) {
+		if (this.isVideo()) {
 			return '<link rel="video_src" href="' + encodeURI(mediaSrc) + '" />';
-		} else if (this.mimeType.indexOf("image/") === 0) {
+		} else if (this.isImage()) {
 			return '<link rel="image_src" href="' + encodeURI(mediaSrc) + '" />';
 		}
 	};
@@ -2209,11 +2209,19 @@
 	SingleMedia.prototype.chooseTriggerEvent = function() {
 		// choose the event that must trigger the scale function
 
-		if (this.mimeType.indexOf("video/") === 0) {
+		if (this.isVideo()) {
 			return "loadstart";
-		} else if (this.mimeType.indexOf("image/") === 0) {
+		} else if (this.isImage()) {
 			return "load";
 		}
+	};
+
+	SingleMedia.prototype.isVideo = function() {
+		return this.mimeType.indexOf("video/") === 0;
+	};
+
+	SingleMedia.prototype.isImage = function() {
+		return this.mimeType.indexOf("image/") === 0;
 	};
 
 	SingleMedia.prototype.originalMediaPath = function() {
@@ -2230,8 +2238,8 @@
 	SingleMedia.prototype.mediaPath = function(size) {
 		var suffix = env.options.cache_folder_separator, cacheBase, rootString = "root-";
 		if (
-			this.mimeType.indexOf("image/") === 0 ||
-			this.mimeType.indexOf("video/") === 0 && [env.options.album_thumb_size, env.options.media_thumb_size].indexOf(size) != -1
+			this.isImage() ||
+			this.isVideo() && [env.options.album_thumb_size, env.options.media_thumb_size].indexOf(size) != -1
 		) {
 			var actualSize = size;
 			var albumThumbSize = env.options.album_thumb_size;
@@ -2257,7 +2265,7 @@
 					suffix += "f";
 			}
 			suffix += ".jpg";
-		} else if (this.mimeType.indexOf("video/") === 0) {
+		} else if (this.isVideo()) {
 			suffix += "transcoded.mp4";
 		}
 
@@ -2307,7 +2315,6 @@
 			function(resolve_scale) {
 				var mediaElement, container, photoSrc, previousSrc;
 				var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth(), containerRatio;
-				var mediaBarBottom = 0;
 				var mediaWidth, mediaHeight, attrWidth, attrHeight;
 				var id = event.data.id;
 				var heightForMedia, heightForMediaAndTitle, titleHeight;
@@ -2339,9 +2346,9 @@
 				$(".media-box#" + id + " .media-box-inner").css("height", heightForMedia);
 				$(".media-box#" + id).show();
 
-				if (self.mimeType.indexOf("image/") === 0)
+				if (self.isImage())
 					mediaElement = $(".media-box#" + id + " .media-box-inner img");
-				else if (self.mimeType.indexOf("video/") === 0)
+				else if (self.isVideo())
 					mediaElement = $(".media-box#" + id + " .media-box-inner video");
 
 				mediaWidth = self.metadata.size[0];
@@ -2358,11 +2365,11 @@
 				containerHeight = heightForMedia;
 				containerRatio = containerWidth / containerHeight;
 
-				if (self.mimeType.indexOf("image/") === 0) {
+				if (self.isImage()) {
 					photoSrc = self.chooseReducedPhoto(container, env.fullScreenStatus);
 					previousSrc = mediaElement.attr("src");
 
-					if (encodeURI(photoSrc) != previousSrc && event.data.currentZoom === event.data.initialZoom) {
+					if (encodeURI(photoSrc) != previousSrc && env.currentZoom === env.initialZoom) {
 						// resizing had the effect that a different reduction has been choosed
 
 						// chooseReducedPhoto() sets env.maxSize to 0 if it returns the original media
@@ -2396,11 +2403,11 @@
 					$("#next, #prev").css("top", titleHeight + (mediaBoxInnerHeight - prevNextHeight) / 2);
 
 					Utilities.setLinksVisibility();
-					if (self.mimeType.indexOf("image/") === 0) {
-						if (PinchSwipe.getCurrentZoom() === PinchSwipe.getInitialZoom())
+					if (self.isImage()) {
+						if (env.currentZoom === env.initialZoom)
 							Functions.pinchSwipeInitialization();
 						Utilities.setPinchButtonsPosition();
-						PinchSwipe.setPinchButtonsVisibility();
+						Utilities.setPinchButtonsVisibility();
 					}
 					Utilities.setSelectButtonPosition();
 					Utilities.setDescriptionOptions();
@@ -2408,14 +2415,17 @@
 
 				}
 
-				if (Utilities.bottomSocialButtons()) {
-					mediaBarBottom = $(".ssk").outerHeight();
-				}
-				$(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
+				// var mediaBarBottom = 0;
+				// if (Utilities.bottomSocialButtons()) {
+				// 	mediaBarBottom = $(".ssk").outerHeight();
+				// }
+				// $(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
 
-				Utilities.scrollToThumb();
+				if ($("#thumbs").is(":visible"))
+					Utilities.scrollToThumb();
 				if (id === "center") {
-					Utilities.addMediaLazyLoader();
+					if ($("#thumbs").is(":visible"))
+						Utilities.addMediaLazyLoader();
 					resolve_scale([containerHeight, containerWidth]);
 				}
 
@@ -2468,6 +2478,81 @@
 					thumb.parent().addClass("current-thumb");
 				}
 			}
+		}
+	};
+
+	Utilities.socialButtons = function() {
+		var url, hash, myShareUrl = "";
+		var mediaParameter;
+		var folders, myShareText, myShareTextAdd;
+
+		if (! env.isMobile.any()) {
+			$(".ssk-whatsapp").hide();
+		} else {
+			// with touchscreens luminosity on hover cannot be used
+			$(".album-button-and-caption").css("opacity", 1);
+			$(".thumb-container").css("opacity", 1);
+			$(".album-button-random-media-link").css("opacity", 1);
+		}
+
+		url = location.protocol + "//" + location.host;
+		folders = location.pathname;
+		folders = folders.substring(0, folders.lastIndexOf('/'));
+		url += folders;
+		if (env.currentMedia === null || env.currentAlbum !== null && ! env.currentAlbum.subalbums.length && env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1) {
+			mediaParameter = Utilities.pathJoin([
+				env.server_cache_path,
+				env.options.cache_album_subdir,
+				env.currentAlbum.cacheBase
+				]) + ".jpg";
+		} else {
+			var reducedSizesIndex = 1;
+			if (env.options.reduced_sizes.length === 1)
+				reducedSizesIndex = 0;
+			var prefix = Utilities.removeFolderString(env.currentMedia.foldersCacheBase);
+			if (prefix)
+				prefix += env.options.cache_folder_separator;
+			if (env.currentMedia.isVideo()) {
+				mediaParameter = Utilities.pathJoin([
+					env.server_cache_path,
+					env.currentMedia.cacheSubdir,
+				]) + prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + "transcoded.mp4";
+			} else if (env.currentMedia.isImage()) {
+				mediaParameter = Utilities.pathJoin([
+					env.server_cache_path,
+					env.currentMedia.cacheSubdir,
+					prefix + env.currentMedia.cacheBase
+				]) + env.options.cache_folder_separator + env.options.reduced_sizes[reducedSizesIndex] + ".jpg";
+			}
+		}
+
+		myShareUrl = url + '?';
+		// disable the image parameter, because of issue #169
+		// myShareUrl += 'm=' + mediaParameter;
+		hash = location.hash;
+		if (hash)
+			myShareUrl += '#' + hash.substring(1);
+
+		myShareText = env.options.page_title;
+		myShareTextAdd = env.currentAlbum.physicalPath;
+		if (myShareTextAdd)
+			myShareText += ": " + myShareTextAdd.substring(myShareTextAdd.lastIndexOf('/') + 1);
+
+		jQuery.removeData(".ssk");
+		$('.ssk').attr('data-text', myShareText);
+		$('.ssk-facebook').attr('data-url', myShareUrl);
+		$('.ssk-whatsapp').attr('data-url', location.href);
+		$('.ssk-twitter').attr('data-url', location.href);
+		$('.ssk-google-plus').attr('data-url', myShareUrl);
+		$('.ssk-email').attr('data-url', location.href);
+
+		// initialize social buttons (http://socialsharekit.com/)
+		SocialShareKit.init({
+		});
+		if (! Modernizr.flexbox && Utilities.bottomSocialButtons()) {
+			var numSocial = 5;
+			var socialWidth = Math.floor(window.innerWidth / numSocial);
+			$('.ssk').width(socialWidth * 2 + "px");
 		}
 	};
 
@@ -2528,9 +2613,9 @@
 	Media.prototype.imagesAndVideosCount = function() {
 		var result = new ImagesAndVideos();
 		for (let i = 0; i < this.length; i ++) {
-			if (this[i].mimeType.indexOf("image/") === 0)
+			if (this[i].isImage())
 				result.images += 1;
-			else if (this[i].mimeType.indexOf("video/") === 0)
+			else if (this[i].isVideo())
 				result.videos += 1;
 		}
 		return result;
@@ -2606,8 +2691,8 @@
 						for (let iMedia = 0; iMedia < album.media.length; iMedia ++) {
 							let ithMedia = album.media[iMedia];
 							if (
-								ithMedia.mimeType.indexOf("image/") === 0 && what === "videos" ||
-								ithMedia.mimeType.indexOf("video/") === 0 && what === "images" ||
+								ithMedia.isImage() && what === "videos" ||
+								ithMedia.isVideo() && what === "images" ||
 								includedMedia.some(singleMedia => singleMedia.isEqual(ithMedia))
 							)
 								continue;
@@ -3088,6 +3173,38 @@
 		$("#pinch-container").css("right", pinchRight.toString() + "px").css("top", pinchTop.toString() + "px");
 	};
 
+	Utilities.setPinchButtonsVisibility = function() {
+		$("#pinch-container").removeClass("hidden");
+
+		if (env.currentMedia.isVideo()) {
+			$("#pinch-container").hide();
+		} else {
+			$("#pinch-container").show();
+
+			$("#pinch-in").off("click");
+			$("#pinch-in").off("click").on(
+				"click",
+				function(ev) {
+					PinchSwipe.pinchIn(null, null);
+				}
+			);
+			$("#pinch-in").removeClass("disabled");
+
+			$("#pinch-out").off("click");
+			if (env.currentZoom === env.initialZoom && ! $("#center .title").hasClass("hidden-by-pinch")) {
+				$("#pinch-out").addClass("disabled");
+			} else {
+				$("#pinch-out").off("click").on(
+					"click",
+					function(ev) {
+						PinchSwipe.pinchOut(null, null);
+					}
+				);
+				$("#pinch-out").removeClass("disabled");
+			}
+		}
+	};
+
 	Utilities.horizontalScrollBarThickness = function(element) {
 		var thickness = element.offsetHeight - element.clientHeight;
 		if (! thickness && env.currentAlbum.hasOwnProperty("media")) {
@@ -3137,10 +3254,10 @@
 		$("#media-select-box .select-box").css("left", left.toString() + "px").css("bottom", bottom.toString() + "px");
 		// if (env.isMobile.any() && env.currentMedia !== null) {
 		// 	// move the box above the media bar
-		// 	while (Utilities.isColliding($("#media-select-box .select-box"), $(".media-box#center .media-bar"))) {
+		// 	while (Utilities.areColliding($("#media-select-box .select-box"), $(".media-box#center .media-bar"))) {
 		// 		$("#media-select-box .select-box").css("bottom", (parseInt($("#media-select-box .select-box").css("bottom")) + 5) + "px");
 		// 	}
-		// 	while (Utilities.isColliding($("#media-select-box .select-box"), $("#prev"))) {
+		// 	while (Utilities.areColliding($("#media-select-box .select-box"), $("#prev"))) {
 		// 		$("#media-select-box .select-box").css("left", (parseInt($("#media-select-box .select-box").css("left")) + 5) + "px");
 		// 	}
 		// }
@@ -3149,58 +3266,112 @@
 	};
 
 	Utilities.correctElementPositions = function() {
-
-		// move the select box above the media bar
-		if (env.currentMedia !== null) {
-			while (Utilities.isColliding($("#media-select-box .select-box"), $(".media-box#center .media-bar"))) {
-				$("#media-select-box .select-box").css("bottom", (parseInt($("#media-select-box .select-box").css("bottom")) + 5) + "px");
-			}
-			// move the select box at the right of the prev button
-			while (Utilities.isColliding($("#media-select-box .select-box"), $("#prev"))) {
-				$("#media-select-box .select-box").css("left", (parseInt($("#media-select-box .select-box").css("left")) + 5) + "px");
+		function MoveMediaBarAboveBottomSocial() {
+			if (env.currentMedia !== null && Utilities.bottomSocialButtons() && Utilities.areColliding($(".media-box#center .media-bar"), $("#social > div"))) {
+				// move the media bar above the social buttons
+				$(".media-box#center .media-bar").css("bottom", ($("#social > div").outerHeight()) + "px");
 			}
 		}
 
-		$("#next").css("right", "");
-		$("#prev").css("left", "");
-		// correct next and prev buttons position
-		if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia()) {
+		function separateLateralSocialAndPrev() {
+			if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia() && Utilities.lateralSocialButtons() && Utilities.areColliding($("#social > div"), $("#prev"))) {
+				if (parseFloat($("#prev").css("bottom")) > $("#social > div").outerHeight()) {
+					// move social buttons below prev button
+					$("#social > div").removeClass("ssk-center").css("top", (parseFloat($("#prev").css("top")) + $("#prev").outerHeight()) + "px" );
+				} else {
+					// move social buttons to the right of prev button
+					$("#social > div").css("left", ($("#prev").outerWidth()) + "px");
+				}
+			}
+		}
+
+		function moveSelectBoxAboveBottomSocial() {
+			// move the select box above the social buttons and the media bar
+			if (env.currentMedia !== null && Utilities.bottomSocialButtons() && Utilities.areColliding($("#media-select-box .select-box"), $("#social > div"))) {
+				$("#media-select-box .select-box").css("bottom", ($("#social > div").outerHeight() + 10) + "px");
+			}
+		}
+
+		function moveSelectBoxAboveMediaBar() {
+			if (env.currentMedia !== null && Utilities.areColliding($("#media-select-box .select-box"), $(".media-box#center .media-bar"))) {
+				$("#media-select-box .select-box").css("bottom", (parseInt($(".media-box#center .media-bar").css("bottom")) + mediaBarHeigth + 10) + "px");
+			}
+		}
+
+		function moveSelectBoxAtTheRightOfPrev() {
+			// move the select box at the right of the prev button and lateral social buttons
+			if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia() && Utilities.areColliding($("#media-select-box .select-box"), $("#prev"))) {
+				$("#media-select-box .select-box").css("left", ($("#prev").outerWidth() + 20) + "px");
+			}
+		}
+
+		function moveSelectBoxAtTheRightOfLateralSocial() {
+			if (env.currentMedia !== null && Utilities.lateralSocialButtons() && Utilities.areColliding($("#media-select-box .select-box"), $("#social > div"))) {
+				$("#media-select-box .select-box").css("left", ($("#social > div").outerWidth() + 20) + "px");
+			}
+		}
+
+		function movePinchAtTheLeftOfNext() {
 			// correct pinch buttons position
-			while (Utilities.isColliding($("#pinch-container"), $("#next"))) {
-				$("#pinch-container").css("right", (parseInt($("#pinch-container").css("right")) + 5) + "px");
-			}
-			$("#pinch-container").css("right", (parseInt($("#pinch-container").css("right")) + 5) + "px");
-
-
-			// let correctionForPinch =
-			// 	Utilities.isColliding($("#pinch-container"), $("#next")) ?
-			// 		$("#pinch-container").outerWidth() + parseInt($("#pinch-container").css("right")) : 0;
-			// $("#next").css("right", correctionForPinch.toString() + "px");
-
-			// correct prev button position when social buttons are on the left
-			let correctionForSocial =
-				Utilities.lateralSocialButtons() && Utilities.isColliding($(".ssk-left"), $("#prev")) ?
-					$(".ssk").outerWidth() : 0;
-
-			$("#prev").css("left", correctionForSocial.toString() + "px");
-		}
-
-		if (env.isMobile.any()) {
-			if (env.currentMedia !== null) {
-				// move the box above the media bar
-				while (Utilities.isColliding($("#description-wrapper"), $(".media-box#center .media-bar"))) {
-					$("#description-wrapper").css("bottom", (parseInt($("#description-wrapper").css("bottom")) + 5) + "px");
-				}
-			}
-			if (Utilities.bottomSocialButtons()) {
-				while (Utilities.isColliding($("#description-wrapper"), $("#social > div"))) {
-					$("#description-wrapper").css("bottom", (parseInt($("#description-wrapper").css("bottom")) + 5) + "px");
-				}
+			if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia() && Utilities.areColliding($("#pinch-container"), $("#next"))) {
+				$("#pinch-container").css("right", ($("#prev").outerWidth() + 20) + "px");
 			}
 		}
-		while (Utilities.isColliding($("#description-wrapper"), $("#next"))) {
-			$("#description-wrapper").css("right", (parseInt($("#description-wrapper").css("right")) + 5) + "px");
+
+		function moveDescriptionAtTheLeftOfNext() {
+			// correct description/tags box position
+			if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia() && Utilities.areColliding($("#description-wrapper"), $("#next"))) {
+				$("#description-wrapper").css("right", ($("#next").outerWidth() + 10) + "px");
+			}
 		}
+
+		function moveDescriptionAboveBottomSocial() {
+			if (Utilities.bottomSocialButtons() && Utilities.areColliding($("#description-wrapper"), $("#social > div"))) {
+				// move the descriptiont/tags box above the social buttons
+				$("#description-wrapper").css("bottom", ($("#social > div").outerHeight() + 10) + "px");
+			}
+		}
+
+		function MoveDescriptionAboveMediaBar() {
+			if (env.currentMedia !== null && Utilities.areColliding($("#description-wrapper"), $(".media-box#center .media-bar"))) {
+				// move the descriptiont/tags box above the media bar
+				let thumbsHeight = 0;
+				if ($("#thumbs").is(":visible"))
+					thumbsHeight = $("#thumbs").outerHeight();
+				$("#description-wrapper").css("bottom", (thumbsHeight + parseInt($(".media-box#center .media-bar").css("bottom")) + mediaBarHeigth + 10) + "px");
+			}
+		}
+
+		function moveDescriptionAtTheLeftOfPinch() {
+			if (env.currentMedia !== null && Utilities.areColliding($("#description-wrapper"), $("#pinch-container"))) {
+				// move the descriptiont/tags box to the left of the pinch buttons
+				$("#description-wrapper").css("right", (parseFloat($("#pinch-container").css("right")) + $("#pinch-container").outerWidth() + 10) + "px");
+			}
+		}
+
+		$("#social > div").removeClass("ssk-bottom").addClass("ssk-center");
+		$("#social > div").css("left", "").css("top", "");
+		Utilities.socialButtons();
+
+		var mediaBarHeigth = parseFloat($(".media-box#center .media-bar").outerHeight());
+		if (! mediaBarHeigth)
+			mediaBarHeigth = 30;
+		var mediaBarDisplay;
+		$(".media-box#center .media-bar").css("bottom", "");
+
+		MoveMediaBarAboveBottomSocial()
+		separateLateralSocialAndPrev();
+		moveSelectBoxAboveBottomSocial();
+		moveSelectBoxAboveMediaBar();
+		moveSelectBoxAtTheRightOfPrev();
+		moveSelectBoxAtTheRightOfLateralSocial();
+		movePinchAtTheLeftOfNext();
+		moveDescriptionAtTheLeftOfNext();
+		moveDescriptionAtTheLeftOfPinch();
+		moveDescriptionAboveBottomSocial();
+		MoveDescriptionAboveMediaBar();
+		moveDescriptionAtTheLeftOfNext();
+		moveDescriptionAtTheLeftOfPinch();
 	};
 
 
@@ -3230,7 +3401,7 @@
 		return result;
 	};
 
-	Utilities.isColliding = function(jQueryObject1, jQueryObject2) {
+	Utilities.areColliding = function(jQueryObject1, jQueryObject2) {
 		// from https://gist.github.com/jtsternberg/c272d7de5b967cec2d3d
 
 		if (! jQueryObject1.is(":visible") || ! jQueryObject2.is(":visible"))
@@ -3238,17 +3409,17 @@
 		var d1_offset             = jQueryObject1.offset();
 		var d1_height             = jQueryObject1.outerHeight(true);
 		var d1_width              = jQueryObject1.outerWidth(true);
-		var d1_distance_from_top  = d1_offset.top + d1_height;
-		var d1_distance_from_left = d1_offset.left + d1_width;
+		var d1_distance_of_bottom_from_top = d1_offset.top + d1_height;
+		var d1_distance_of_right_from_left = d1_offset.left + d1_width;
 
 		// Div 2 data
 		var d2_offset             = jQueryObject2.offset();
 		var d2_height             = jQueryObject2.outerHeight(true);
 		var d2_width              = jQueryObject2.outerWidth(true);
-		var d2_distance_from_top  = d2_offset.top + d2_height;
-		var d2_distance_from_left = d2_offset.left + d2_width;
+		var d2_distance_of_bottom_from_top = d2_offset.top + d2_height;
+		var d2_distance_of_right_from_left = d2_offset.left + d2_width;
 
-		var not_colliding = ( d1_distance_from_top < d2_offset.top || d1_offset.top > d2_distance_from_top || d1_distance_from_left < d2_offset.left || d1_offset.left > d2_distance_from_left );
+		var not_colliding = ( d1_distance_of_bottom_from_top < d2_offset.top || d1_offset.top > d2_distance_of_bottom_from_top || d1_distance_of_right_from_left < d2_offset.left || d1_offset.left > d2_distance_of_right_from_left );
 
 		// Return whether it IS colliding
 		return ! not_colliding;
@@ -3490,6 +3661,7 @@
 			else
 				$("#description-tags").removeClass("hidden-by-option");
 
+			$("#description-wrapper").css("right", "");
 			var thumbsHeight = 0;
 			if (env.currentMedia !== null && $("#thumbs").is(":visible"))
 				thumbsHeight = env.options.media_thumb_size + 20;
@@ -3549,23 +3721,6 @@
 			}
 		}
 
-		// if (env.isMobile.any()) {
-		// 	if (env.currentMedia !== null) {
-		// 		// move the box above the media bar
-		// 		while (Utilities.isColliding($("#description-wrapper"), $(".media-box#center .media-bar"))) {
-		// 			$("#description-wrapper").css("bottom", (parseInt($("#description-wrapper").css("bottom")) + 5) + "px");
-		// 		}
-		// 	}
-		// 	if (Utilities.bottomSocialButtons()) {
-		// 		while (Utilities.isColliding($("#description-wrapper"), $("#social > div"))) {
-		// 			$("#description-wrapper").css("bottom", (parseInt($("#description-wrapper").css("bottom")) + 5) + "px");
-		// 		}
-		// 	}
-		// }
-		// while (Utilities.isColliding($("#description-wrapper"), $("#next"))) {
-		// 	$("#description-wrapper").css("right", (parseInt($("#description-wrapper").css("right")) + 5) + "px");
-		// }
-		//
 		$("#description-hide, #description-show").off("click").on(
 			"click",
 			function() {
@@ -3924,7 +4079,6 @@
 	Utilities.prototype.mediaBoxGenerator = Utilities.mediaBoxGenerator;
 	Utilities.prototype.currentSizeAndIndex = Utilities.currentSizeAndIndex;
 	Utilities.prototype.nextSizeAndIndex = Utilities.nextSizeAndIndex;
-	// Utilities.prototype.isColliding = Utilities.isColliding;
 	Utilities.prototype.distanceBetweenCoordinatePoints = Utilities.distanceBetweenCoordinatePoints;
 	Utilities.prototype.xDistanceBetweenCoordinatePoints = Utilities.xDistanceBetweenCoordinatePoints;
 	Utilities.prototype.yDistanceBetweenCoordinatePoints = Utilities.yDistanceBetweenCoordinatePoints;
@@ -3960,11 +4114,13 @@
 	Utilities.prototype.isPopup = Utilities.isPopup;
 	Utilities.prototype.arrayUnion = Utilities.arrayUnion;
 	Utilities.prototype.setPinchButtonsPosition = Utilities.setPinchButtonsPosition;
+	Utilities.prototype.setPinchButtonsVisibility = Utilities.setPinchButtonsVisibility;
 	Utilities.prototype.setSelectButtonPosition = Utilities.setSelectButtonPosition;
 	Utilities.prototype.setDescriptionOptions = Utilities.setDescriptionOptions;
 	Utilities.prototype.correctElementPositions = Utilities.correctElementPositions;
 	Utilities.prototype.toggleMenu = Utilities.toggleMenu;
 	Utilities.prototype.addMediaLazyLoader = Utilities.addMediaLazyLoader;
+	Utilities.prototype.socialButtons = Utilities.socialButtons;
 
 	window.Utilities = Utilities;
 }());

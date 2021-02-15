@@ -59,7 +59,7 @@ $(document).ready(function() {
 			} else if ($("ul#right-menu").hasClass("expand")) {
 				util.toggleMenu();
 				return false;
-			} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0 && ! $("video#media-center")[0].paused) {
+			} else if (env.currentMedia !== null && env.currentMedia.isVideo() && ! $("video#media-center")[0].paused) {
 				// stop the video, otherwise it keeps playing
 				$("video#media-center")[0].pause();
 				return false;
@@ -78,14 +78,14 @@ $(document).ready(function() {
 				// the menu must be updated here in order to have the browsing mode shortcuts workng
 				f.updateMenu();
 				return false;
-			} else if (pS.getCurrentZoom() > pS.getInitialZoom() || $(".media-box#center .title").hasClass("hidden-by-pinch")) {
+			} else if (env.currentZoom > env.initialZoom || $(".media-box#center .title").hasClass("hidden-by-pinch")) {
 				pS.pinchOut(null, null);
 				return false;
 			} else if (! Modernizr.fullscreen && env.fullScreenStatus) {
 				tF.toggleFullscreen(e);
 				return false;
 			} else if (upLink) {
-				if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0)
+				if (env.currentMedia !== null && env.currentMedia.isVideo())
 					// stop the video, otherwise it keeps playing
 					$("video#media-center")[0].pause();
 				if (
@@ -109,8 +109,8 @@ $(document).ready(function() {
 						e.preventDefault();
 						tF.toggleTitleAndBottomThumbnailsAndDescriptionsAndTags(e);
 						return false;
-					} else if (e.key === "ArrowRight" && (pS.getCurrentZoom() !== pS.getInitialZoom() || env.prevMedia) && env.currentMedia !== null && ! isMap) {
-						if (pS.getCurrentZoom() === pS.getInitialZoom()) {
+					} else if (e.key === "ArrowRight" && (env.currentZoom !== env.initialZoom || env.prevMedia) && env.currentMedia !== null && ! isMap) {
+						if (env.currentZoom === env.initialZoom) {
 							$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 							$("#next")[0].click();
 							// media.swipeLeft();
@@ -123,7 +123,7 @@ $(document).ready(function() {
 								pS.drag(env.windowWidth / 3, {x: -1, y: 0});
 						}
 						return false;
-					} else if (e.key === " " && ! e.shiftKey && env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0) {
+					} else if (e.key === " " && ! e.shiftKey && env.currentMedia !== null && env.currentMedia.isVideo()) {
 						if ($("video#media-center")[0].paused)
 							// play the video
 							$("video#media-center")[0].play();
@@ -147,8 +147,8 @@ $(document).ready(function() {
 						$("#prev")[0].click();
 						// env.prevMedia.swipeRight();
 						return false;
-					} else if (e.key === "ArrowLeft" && (pS.getCurrentZoom() !== pS.getInitialZoom() || env.prevMedia) && env.currentMedia !== null && ! isMap) {
-						if (pS.getCurrentZoom() === pS.getInitialZoom()) {
+					} else if (e.key === "ArrowLeft" && (env.currentZoom !== env.initialZoom || env.prevMedia) && env.currentMedia !== null && ! isMap) {
+						if (env.currentZoom === env.initialZoom) {
 							$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 							$("#prev")[0].click();
 							// media.swipeRight();
@@ -167,7 +167,7 @@ $(document).ready(function() {
 							pS.swipeDown(upLink);
 							return false;
 						} else if (env.currentMedia !== null) {
-							if (pS.getCurrentZoom() === pS.getInitialZoom()) {
+							if (env.currentZoom === env.initialZoom) {
 								if (e.shiftKey) {
 								// if (e.shiftKey && ! $("#center .title").hasClass("hidden-by-pinch")) {
 									pS.swipeDown(upLink);
@@ -188,7 +188,7 @@ $(document).ready(function() {
 							pS.swipeUp(env.mediaLink);
 							return false;
 						} else if (env.currentMedia !== null) {
-							if (pS.getCurrentZoom() === pS.getInitialZoom()) {
+							if (env.currentZoom === env.initialZoom) {
 								if (e.shiftKey) {
 								// if (e.shiftKey && ! $("#center .title").hasClass("hidden-by-pinch")) {
 									pS.swipeDown(upLink);
@@ -222,7 +222,7 @@ $(document).ready(function() {
 							// return false;
 						} else if (env.currentMedia !== null) {
 							let number = parseInt(e.key);
-							if (number > pS.getCurrentZoom())
+							if (number > env.currentZoom)
 								pS.pinchIn(null, number);
 							else
 								pS.pinchOut(null, number);
@@ -231,14 +231,14 @@ $(document).ready(function() {
 					} else if (e.key === "+") {
 						if (isMap) {
 							// return false;
-						} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("image/") === 0) {
+						} else if (env.currentMedia !== null && env.currentMedia.isImage()) {
 							pS.pinchIn(null);
 							return false;
 						}
 					} else if (e.key === "-") {
 						if (isMap) {
 							// return false;
-						} else if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("image/") === 0) {
+						} else if (env.currentMedia !== null && env.currentMedia.isImage()) {
 							pS.pinchOut(null, null);
 							return false;
 						}

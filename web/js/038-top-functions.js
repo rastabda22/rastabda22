@@ -739,9 +739,9 @@
 											let scalePromise = ev.data.currentMedia.scale(event);
 											scalePromise.then(
 												function() {
-													if (ev.data.currentMedia.mimeType.indexOf("image/") === 0) {
+													if (ev.data.currentMedia.isImage()) {
 														util.setPinchButtonsPosition();
-														pS.setPinchButtonsVisibility();
+														util.setPinchButtonsVisibility();
 													}
 													util.setSelectButtonPosition();
 													util.setDescriptionOptions();
@@ -1004,10 +1004,10 @@
 				}
 			);
 
-			if (self.mimeType.indexOf("image/") === 0) {
+			if (self.isImage()) {
 				pS.addMediaGesturesDetection();
 				util.setPinchButtonsPosition();
-				pS.setPinchButtonsVisibility();
+				util.setPinchButtonsVisibility();
 			}
 			util.setSelectButtonPosition();
 			util.setDescriptionOptions();
@@ -1031,16 +1031,19 @@
 					event.data.resize = true;
 
 					event.data.id = "center";
-					event.data.currentZoom = pS.getCurrentZoom();
-					event.data.initialZoom = pS.getInitialZoom();
+
+					// prev and next tree in the DOM must be given the correct sizes
+					$(".media-box#left, .media-box#right").css("width", env.windowWidth);
+					$(".media-box#left, .media-box#right").css("height", env.windowHeight);
+
 					let scalePromise = self.scale(event);
 					scalePromise.then(
 						function() {
-							if (self.mimeType.indexOf("image/") === 0) {
-								if (pS.getCurrentZoom() === pS.getInitialZoom())
+							if (self.isImage()) {
+								if (env.currentZoom === env.initialZoom)
 									f.pinchSwipeInitialization();
 								util.setPinchButtonsPosition();
-								pS.setPinchButtonsVisibility();
+								util.setPinchButtonsVisibility();
 							}
 							util.setSelectButtonPosition();
 							util.setDescriptionOptions();
@@ -1054,10 +1057,6 @@
 
 						event.data.id = "right";
 						env.nextMedia.scale(event);
-					} else {
-						// prev and next tree in the DOM must be given the correct sizes
-						$(".media-box#left, .media-box#right").css("width", env.windowWidth);
-						$(".media-box#left, .media-box#right").css("height", env.windowHeight);
 					}
 
 					if (util.isMap()) {
@@ -1084,7 +1083,7 @@
 		//////////////////////////////////
 		// beginning of show method body
 		//////////////////////////////////
-		var text, loadEvent, mediaHtml, mediaSelector, mediaSrc;
+		var text, mediaSelector;
 		var exposureTime, heightForMedia, heightForMediaAndTitle;
 		var previousMediaIndex, nextMediaIndex, whatMedia;
 
@@ -1169,14 +1168,14 @@
 				var mediaBoxInnerElement = $(".media-box#" + id + " .media-box-inner");
 				// empty the img container: another image will be put in there
 
-				if (self.mimeType.indexOf("video/") === 0 && ! f.videoOK()) {
+				if (self.isVideo() && ! f.videoOK()) {
 					mediaBoxInnerElement.empty();
 					f.addVideoUnsupportedMarker(id);
 					if (id === "center")
 						loadNextPrevMedia(self);
 				} else {
 					let newMedia;
-					if (self.mimeType.indexOf("video/") === 0) {
+					if (self.isVideo()) {
 						mediaSelector = ".media-box#" + id + " .media-box-inner video";
 						newMedia = $("<video>");
 					} else {
@@ -1184,10 +1183,10 @@
 						newMedia = $("<img>");
 					}
 					// is the following line correct for videos?
-					mediaSrc = self.chooseMediaReduction(id, env.fullScreenStatus);
-					mediaHtml = self.createMediaHtml(album, id, env.fullScreenStatus);
+					let mediaSrc = self.chooseMediaReduction(id, env.fullScreenStatus);
+					let mediaHtml = self.createMediaHtml(album, id, env.fullScreenStatus);
 
-					loadEvent = self.chooseTriggerEvent();
+					let loadEvent = self.chooseTriggerEvent();
 
 					if (mediaBoxInnerElement.html() !== mediaHtml) {
 						// only replace the media-box-inner content if it's not yet there
@@ -1229,11 +1228,6 @@
 						}
 					);
 					newMedia.attr("src", $(mediaSelector).attr("src"));
-
-					// // in case the image has been already loaded, trigger the event
-					// if ($(mediaSelector)[0].complete)
-					// 	$(mediaSelector).trigger(loadEvent);
-
 					if (id === "center") {
 						if (! env.options.persistent_metadata) {
 							$(".media-box .metadata").hide();
@@ -1249,7 +1243,7 @@
 					$("#next").off();
 					$("#prev").off();
 
-					if (self.mimeType.indexOf("image/") === 0)
+					if (self.isImage())
 						mediaBoxInnerElement.off("mousewheel").on("mousewheel", pS.swipeOnWheel);
 
 					$(".media-box#center .media-box-inner .media-bar").off("click").on(
@@ -1264,7 +1258,7 @@
 						}
 					);
 
-					if (env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1) {
+					if (env.currentAlbum.isAlbumWithOneMedia()) {
 						mediaBoxInnerElement.css('cursor', 'default');
 					} else {
 						[albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
@@ -1275,7 +1269,7 @@
 							"contextmenu",
 							function(ev) {
 								if (! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-									if (pS.getCurrentZoom() === pS.getInitialZoom()) {
+									if (env.currentZoom === env.initialZoom) {
 										ev.preventDefault();
 										env.prevMedia.swipeRight();
 										return false;
@@ -1331,10 +1325,10 @@
 					$(".media-box#center .fullscreen").off("click").on("click", TopFunctions.toggleFullscreenFromMouse);
 
 					// set social buttons events
-					if (env.currentMedia.mimeType.indexOf("video/") === 0)
-						$("#media-center").off("loadstart").on("loadstart", f.socialButtons);
+					if (env.currentMedia.isVideo())
+						$("#media-center").off("loadstart").on("loadstart", util.socialButtons);
 					else
-						$("#media-center").off("load").on("load", f.socialButtons);
+						$("#media-center").off("load").on("load", util.socialButtons);
 				}
 
 				$(".media-box#" + id + " .metadata tr.gps").off("click");
@@ -1345,7 +1339,7 @@
 				if (self.date !== undefined)
 					text += "<tr><td class='metadata-data-date'></td><td>" + self.date + "</td></tr>";
 				var fileSize = self.fileSizes[0].images;
-				if (self.mimeType.indexOf("video/") === 0)
+				if (self.isVideo())
 					fileSize = self.fileSizes[0].videos;
 				text += "<tr><td class='metadata-data-file-size'></td><td>" + f.humanFileSize(fileSize) + "</td></tr>";
 				if (self.metadata.size !== undefined)
@@ -1441,7 +1435,7 @@
 
 	Album.prototype.prepareForShowing = function(mediaIndex) {
 
-		if (env.currentMedia !== null && env.currentMedia.mimeType.indexOf("video/") === 0)
+		if (env.currentMedia !== null && env.currentMedia.isVideo())
 			// stop the video, otherwise it will keep playing
 			$("video#media-center")[0].pause();
 
@@ -1550,7 +1544,7 @@
 		// f.setOptions();
 		if (env.currentMedia === null && env.currentAlbum !== null && ! env.currentAlbum.subalbums.length) {
 			// no subalbums: set social buttons href's when all the stuff is loaded
-			$(window).off("load").on("load", f.socialButtons());
+			$(window).off("load").on("load", util.socialButtons());
 		} else {
 			// subalbums are present, we have to wait when all the random thumbnails will be loaded
 		}
@@ -1767,9 +1761,9 @@
 				let scalePromise = env.currentMedia.scale(event);
 				scalePromise.then(
 					function() {
-						if (env.currentMedia.mimeType.indexOf("image/") === 0) {
+						if (env.currentMedia.isImage()) {
 							util.setPinchButtonsPosition();
-							pS.setPinchButtonsVisibility();
+							util.setPinchButtonsVisibility();
 						}
 						util.setSelectButtonPosition();
 						util.setDescriptionOptions();
@@ -1809,9 +1803,9 @@
 				let scalePromise = env.currentMedia.scale(event);
 				scalePromise.then(
 					function() {
-						if (env.currentMedia.mimeType.indexOf("image/") === 0) {
+						if (env.currentMedia.isImage()) {
 							util.setPinchButtonsPosition();
-							pS.setPinchButtonsVisibility();
+							util.setPinchButtonsVisibility();
 						}
 						util.setSelectButtonPosition();
 						util.setDescriptionOptions();
@@ -1854,9 +1848,9 @@
 				let scalePromise = env.currentMedia.scale(event);
 				scalePromise.then(
 					function() {
-						if (env.currentMedia.mimeType.indexOf("image/") === 0) {
+						if (env.currentMedia.isImage()) {
 							util.setPinchButtonsPosition();
-							pS.setPinchButtonsVisibility();
+							util.setPinchButtonsVisibility();
 						}
 						util.setSelectButtonPosition();
 						util.setDescriptionOptions();
@@ -2702,7 +2696,7 @@
 		Promise.all(subalbumsPromises).then(
 			function allRandomImagesGot() {
 				// we can run the function that prepare the stuffs for sharing
-				f.socialButtons();
+				util.socialButtons();
 				util.setSubalbumsOptions();
 				if (self.subalbums.length)
 					util.adaptCaptionHeight();
@@ -2747,6 +2741,7 @@
 
 					$("#loading").show();
 
+					util.socialButtons();
 					util.setSubalbumsOptions();
 					// self.subalbums.forEach(
 					// 	(ithSubalbum, iSubalbum) => {
@@ -2800,9 +2795,9 @@
 				let scalePromise = env.currentMedia.scale(event);
 				scalePromise.then(
 					function() {
-						if (env.currentMedia.mimeType.indexOf("image/") === 0) {
+						if (env.currentMedia.isImage()) {
 							util.setPinchButtonsPosition();
-							pS.setPinchButtonsVisibility();
+							util.setPinchButtonsVisibility();
 						}
 						util.setSelectButtonPosition();
 						util.setDescriptionOptions();

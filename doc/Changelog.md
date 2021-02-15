@@ -1,3 +1,10 @@
+### version v4.9.38 (Feb 15, 2021)
+
+* make description and other elements darker on hover
+* use caps as first letter in ui submenu
+* trim correction of element positions
+* bug fixes
+
 ### version v4.9.37 (Feb 13, 2021)
 
 * do not show file name in album view if there is a description title, and show it in the media metadata

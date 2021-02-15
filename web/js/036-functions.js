@@ -11,81 +11,6 @@
 
 	/* Displays */
 
-	Functions.prototype.socialButtons = function() {
-		var url, hash, myShareUrl = "";
-		var mediaParameter;
-		var folders, myShareText, myShareTextAdd;
-
-		if (! env.isMobile.any()) {
-			$(".ssk-whatsapp").hide();
-		} else {
-			// with touchscreens luminosity on hover cannot be used
-			$(".album-button-and-caption").css("opacity", 1);
-			$(".thumb-container").css("opacity", 1);
-			$(".album-button-random-media-link").css("opacity", 1);
-		}
-
-		url = location.protocol + "//" + location.host;
-		folders = location.pathname;
-		folders = folders.substring(0, folders.lastIndexOf('/'));
-		url += folders;
-		if (env.currentMedia === null || env.currentAlbum !== null && ! env.currentAlbum.subalbums.length && env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1) {
-			mediaParameter = util.pathJoin([
-				env.server_cache_path,
-				env.options.cache_album_subdir,
-				env.currentAlbum.cacheBase
-				]) + ".jpg";
-		} else {
-			var reducedSizesIndex = 1;
-			if (env.options.reduced_sizes.length === 1)
-				reducedSizesIndex = 0;
-			var prefix = util.removeFolderString(env.currentMedia.foldersCacheBase);
-			if (prefix)
-				prefix += env.options.cache_folder_separator;
-			if (env.currentMedia.mimeType.indexOf("video/") === 0) {
-				mediaParameter = util.pathJoin([
-					env.server_cache_path,
-					env.currentMedia.cacheSubdir,
-				]) + prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + "transcoded.mp4";
-			} else if (env.currentMedia.mimeType.indexOf("image/") === 0) {
-				mediaParameter = util.pathJoin([
-					env.server_cache_path,
-					env.currentMedia.cacheSubdir,
-					prefix + env.currentMedia.cacheBase
-				]) + env.options.cache_folder_separator + env.options.reduced_sizes[reducedSizesIndex] + ".jpg";
-			}
-		}
-
-		myShareUrl = url + '?';
-		// disable the image parameter, because of issue #169
-		// myShareUrl += 'm=' + mediaParameter;
-		hash = location.hash;
-		if (hash)
-			myShareUrl += '#' + hash.substring(1);
-
-		myShareText = env.options.page_title;
-		myShareTextAdd = env.currentAlbum.physicalPath;
-		if (myShareTextAdd)
-			myShareText += ": " + myShareTextAdd.substring(myShareTextAdd.lastIndexOf('/') + 1);
-
-		jQuery.removeData(".ssk");
-		$('.ssk').attr('data-text', myShareText);
-		$('.ssk-facebook').attr('data-url', myShareUrl);
-		$('.ssk-whatsapp').attr('data-url', location.href);
-		$('.ssk-twitter').attr('data-url', location.href);
-		$('.ssk-google-plus').attr('data-url', myShareUrl);
-		$('.ssk-email').attr('data-url', location.href);
-
-		// initialize social buttons (http://socialsharekit.com/)
-		SocialShareKit.init({
-		});
-		if (! Modernizr.flexbox && util.bottomSocialButtons()) {
-			var numSocial = 5;
-			var socialWidth = Math.floor(window.innerWidth / numSocial);
-			$('.ssk').width(socialWidth * 2 + "px");
-		}
-	};
-
 	Functions.getAlbumNameFromCacheBase = function(cacheBase) {
 		return new Promise(
 			function(resolve_getAlbumNameFromAlbumHash) {
@@ -182,8 +107,8 @@
 		var isAnyRoot = thisAlbum.isAnyRoot();
 
 		var nothingIsSelected = util.nothingIsSelected();
-		var everySubalbumIsSelected;
-		if (isPopup)
+		var everySubalbumIsSelected = false;
+		if (! isPopup)
 			everySubalbumIsSelected = thisAlbum.everySubalbumIsSelected();
 		var noSubalbumIsSelected = thisAlbum.noSubalbumIsSelected();
 		var everyMediaIsSelected;
@@ -1106,7 +1031,7 @@
 					// let numImages = 0;
 					// let numVideos = 0;
 					// for (let iMedia = 0; iMedia < albumForDownload.numsMedia.imagesAndVideosTotal(); iMedia ++) {
-					// 	if (albumForDownload.media[iMedia].mimeType.indexOf("image/") === 0) {
+					// 	if (albumForDownload.media[iMedia].isImage()) {
 					// 		numImages ++;
 					// 	} else {
 					// 		numVideos ++;
@@ -1185,7 +1110,7 @@
 				// let numImages = 0;
 				// let numVideos = 0;
 				// for (let iMedia = 0; iMedia < albumForDownload.numsMedia.imagesAndVideosTotal(); iMedia ++) {
-				// 	if (albumForDownload.media[iMedia].mimeType.indexOf("image/") === 0) {
+				// 	if (albumForDownload.media[iMedia].isImage()) {
 				// 		numImages ++;
 				// 	} else {
 				// 		numVideos ++;
@@ -1385,7 +1310,7 @@
 	Functions.pinchSwipeInitialization = function() {
 		pS.initialize();
 		util.setPinchButtonsPosition();
-		pS.setPinchButtonsVisibility();
+		util.setPinchButtonsVisibility();
 		util.setSelectButtonPosition();
 		util.setDescriptionOptions();
 		util.correctElementPositions();
