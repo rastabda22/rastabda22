@@ -1,3 +1,5 @@
+### version v4.9.38 (Feb 15, 2021)
+
 * make description and other elements darker on hover
 * use caps as first letter in ui submenu
 * trim correction of element positions
