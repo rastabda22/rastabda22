@@ -1,3 +1,4 @@
+* make description and other elements darker on hover
 * use caps as first letter in ui submenu
 * trim correction of element positions
 * bug fixes
