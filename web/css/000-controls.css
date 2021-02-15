@@ -344,7 +344,7 @@ p.description-text, p.description-text ul {
 
 #next:hover, #prev:hover {
 	cursor: pointer;
-	opacity: 0.6;
+	opacity: 0.7;
 }
 
 #prev {
@@ -374,7 +374,7 @@ img.pinch {
 }
 
 img.pinch:hover {
-	opacity: 0.6;
+	opacity: 0.7;
 }
 
 img.pinch.disabled {
@@ -590,7 +590,7 @@ video {
 }
 
 #description-wrapper:hover {
-	opacity: 0.7;
+	opacity: 0.85;
 }
 
 #description {
@@ -936,7 +936,7 @@ ul#right-menu #padlock {
 }
 
 ul#right-menu.expand {
-	background-color:rgba(0, 0, 0, 0.6);
+	background-color:rgba(0, 0, 0, 0.7);
 	min-width: 15em;
 }
 
