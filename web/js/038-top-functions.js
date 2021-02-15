@@ -1084,7 +1084,7 @@
 		//////////////////////////////////
 		// beginning of show method body
 		//////////////////////////////////
-		var text, loadEvent, mediaHtml, mediaSelector, mediaSrc;
+		var text, mediaSelector;
 		var exposureTime, heightForMedia, heightForMediaAndTitle;
 		var previousMediaIndex, nextMediaIndex, whatMedia;
 
@@ -1184,10 +1184,10 @@
 						newMedia = $("<img>");
 					}
 					// is the following line correct for videos?
-					mediaSrc = self.chooseMediaReduction(id, env.fullScreenStatus);
-					mediaHtml = self.createMediaHtml(album, id, env.fullScreenStatus);
+					let mediaSrc = self.chooseMediaReduction(id, env.fullScreenStatus);
+					let mediaHtml = self.createMediaHtml(album, id, env.fullScreenStatus);
 
-					loadEvent = self.chooseTriggerEvent();
+					let loadEvent = self.chooseTriggerEvent();
 
 					if (mediaBoxInnerElement.html() !== mediaHtml) {
 						// only replace the media-box-inner content if it's not yet there
@@ -1229,11 +1229,6 @@
 						}
 					);
 					newMedia.attr("src", $(mediaSelector).attr("src"));
-
-					// // in case the image has been already loaded, trigger the event
-					// if ($(mediaSelector)[0].complete)
-					// 	$(mediaSelector).trigger(loadEvent);
-
 					if (id === "center") {
 						if (! env.options.persistent_metadata) {
 							$(".media-box .metadata").hide();
@@ -1264,7 +1259,7 @@
 						}
 					);
 
-					if (env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1) {
+					if (env.currentAlbum.isAlbumWithOneMedia()) {
 						mediaBoxInnerElement.css('cursor', 'default');
 					} else {
 						[albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
