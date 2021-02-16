@@ -1,3 +1,7 @@
+* do not move description button when hiding
+* make collision function more reliable
+* bug fixes
+
 ### version v4.9.38 (Feb 15, 2021)
 
 * make description and other elements darker on hover
