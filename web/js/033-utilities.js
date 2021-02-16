@@ -3702,9 +3702,6 @@
 				$("#description").css("max-height", maxHeight.toString() + "px");
 			}
 
-			var bottomSpace = $("#description-hide-show").outerHeight();
-			if ($("#description-tags").is(":visible") && ! env.options.hide_tags && hasTags)
-				bottomSpace = Math.max(bottomSpace, $("#description-tags").outerHeight());
 			$("#description-text").css("margin-bottom", "");
 			$("#description-title").css("margin-bottom", "");
 			$("#description-text").css("height", "");
@@ -3713,6 +3710,9 @@
 			$("#description").css("border", "");
 			$("#description-tags").css("position", "");
 			$("#description-tags").css("margin-left", "");
+			var bottomSpace = $("#description-hide-show").outerHeight();
+			if ($("#description-tags").is(":visible") && ! env.options.hide_tags && hasTags)
+				bottomSpace = Math.max(bottomSpace, $("#description-tags").outerHeight());
 			if ($("#description-text").is(":visible") && $("#description-text").height() > 0) {
 				$("#description-text").css("margin-bottom", bottomSpace.toString() + "px");
 			} else if ($("#description-title").is(":visible") && $("#description-title").height() > 0) {
