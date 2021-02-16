@@ -3280,7 +3280,7 @@
 					$("#social > div").removeClass("ssk-center").css("top", (parseFloat($("#prev").css("top")) + $("#prev").outerHeight()) + "px" );
 				} else {
 					// move social buttons to the right of prev button
-					$("#social > div").css("left", ($("#prev").outerWidth()) + "px");
+					$("#social > div").css("left", ($("#prev").outerWidth(true)) + "px");
 				}
 			}
 		}
@@ -3301,27 +3301,27 @@
 		function moveSelectBoxAtTheRightOfPrev() {
 			// move the select box at the right of the prev button and lateral social buttons
 			if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia() && Utilities.areColliding($("#media-select-box .select-box"), $("#prev"))) {
-				$("#media-select-box .select-box").css("left", ($("#prev").outerWidth() + 20) + "px");
+				$("#media-select-box .select-box").css("left", ($("#prev").outerWidth(true) + 20) + "px");
 			}
 		}
 
 		function moveSelectBoxAtTheRightOfLateralSocial() {
 			if (env.currentMedia !== null && Utilities.lateralSocialButtons() && Utilities.areColliding($("#media-select-box .select-box"), $("#social > div"))) {
-				$("#media-select-box .select-box").css("left", ($("#social > div").outerWidth() + 20) + "px");
+				$("#media-select-box .select-box").css("left", ($("#social > div").outerWidth(true) + 20) + "px");
 			}
 		}
 
 		function movePinchAtTheLeftOfNext() {
 			// correct pinch buttons position
 			if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia() && Utilities.areColliding($("#pinch-container"), $("#next"))) {
-				$("#pinch-container").css("right", ($("#prev").outerWidth() + 20) + "px");
+				$("#pinch-container").css("right", ($("#prev").outerWidth(true) + 20) + "px");
 			}
 		}
 
 		function moveDescriptionAtTheLeftOfNext() {
 			// correct description/tags box position
 			if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia() && Utilities.areColliding($("#description-wrapper"), $("#next"))) {
-				$("#description-wrapper").css("right", ($("#next").outerWidth() + 10) + "px");
+				$("#description-wrapper").css("right", ($("#next").outerWidth(true) + 10) + "px");
 			}
 		}
 
@@ -3345,7 +3345,7 @@
 		function moveDescriptionAtTheLeftOfPinch() {
 			if (env.currentMedia !== null && Utilities.areColliding($("#description-wrapper"), $("#pinch-container"))) {
 				// move the descriptiont/tags box to the left of the pinch buttons
-				$("#description-wrapper").css("right", (parseFloat($("#pinch-container").css("right")) + $("#pinch-container").outerWidth() + 10) + "px");
+				$("#description-wrapper").css("right", (parseFloat($("#pinch-container").css("right")) + $("#pinch-container").outerWidth(true) + 10) + "px");
 			}
 		}
 
@@ -3677,7 +3677,7 @@
 				thumbsHeight = env.options.media_thumb_size + 20;
 			$("#description-wrapper").css("bottom", thumbsHeight + 20);
 
-			$("#description-tags").css("right", $("#description-hide-show").outerWidth().toString() + "px");
+			$("#description-tags").css("right", $("#description-hide-show").outerWidth(true).toString() + "px");
 
 			var maxHeight = Math.min(env.windowHeight / 3, 500);
 			if (env.isMobile.any())
@@ -3720,13 +3720,13 @@
 			} else {
 				$("#description").css("border", "0");
 				$("#description-tags").css("position", "relative");
-				$("#description-tags").css("margin-left", ($("#description-hide-show").outerWidth()) + "px");
+				$("#description-tags").css("margin-left", ($("#description-hide-show").outerWidth(true)) + "px");
 			}
 
 			$("#description-wrapper, #description").css("max-width", maxWidth.toString() + "px");
 			$("#description-tags").css("max-width", (maxWidth - 20).toString() + "px");
 
-			while ($("#description-hide-show").outerWidth() + $("#description-tags").outerWidth() > $("#description-wrapper").innerWidth() && $("#description-wrapper").width() < maxWidth) {
+			while ($("#description-hide-show").outerWidth(true) + $("#description-tags").outerWidth(true) > $("#description-wrapper").innerWidth() && $("#description-wrapper").width() < maxWidth) {
 				$("#description-wrapper").css("width", ($("#description-wrapper").width() + 5) + "px");
 			}
 		}
