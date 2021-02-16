@@ -53,7 +53,7 @@ a:hover {
 	cursor: pointer;
 }
 
-.hidden, .hidden-by-option, .hidden-by-pinch, .hidden-by-no-results {
+.hidden, .hidden-by-option, .hidden-by-pinch, .hidden-by-no-results, .hidden-by-button {
 	display: none !important;
 }
 

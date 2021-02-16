@@ -3740,9 +3740,12 @@
 					$("#description-hide-show").css("position", "relative");
 				}
 				$("#description-hide, #description-show").toggle();
-				$("#description, #description-tags").toggle();
-				Utilities.setDescriptionOptions();
-				Utilities.correctElementPositions();
+				$("#description, #description-tags").toggleClass("hidden-by-button");
+				// only reposition the button when hiding
+				if (! $("#description").hasClass("hidden-by-button")) {
+					Utilities.setDescriptionOptions();
+					Utilities.correctElementPositions();
+				}
 			}
 		);
 	};
