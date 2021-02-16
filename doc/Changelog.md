@@ -1,3 +1,5 @@
+### version v4.9.39 (Feb 16, 2021)
+
 * do not move description button when hiding
 * make collision function more reliable
 * bug fixes
