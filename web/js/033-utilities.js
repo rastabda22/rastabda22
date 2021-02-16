@@ -3602,14 +3602,22 @@
 
 	Utilities.setDescription = function(object) {
 
-		if (! Utilities.hasSomeDescription(object)) {
+		var hasTitle = Utilities.hasProperty(object, "title");
+		var hasDescription = Utilities.hasProperty(object, "description");
+		var hasTags = Utilities.hasProperty(object, "tags");
+
+		if (
+			! Utilities.hasSomeDescription(object) || (
+				(
+					! (hasTitle || hasDescription) || env.options.hide_descriptions
+				) && (
+					! hasTags || env.options.hide_tags
+				)
+			)
+		) {
 			$("#description-wrapper").addClass("hidden");
 		} else {
 			$("#description-wrapper").removeClass("hidden");
-
-			var hasTitle = Utilities.hasProperty(object, "title");
-			var hasDescription = Utilities.hasProperty(object, "description");
-			var hasTags = Utilities.hasProperty(object, "tags");
 
 			// $("#description").css("max-height", (env.windowHeight / 2) + "px");
 
