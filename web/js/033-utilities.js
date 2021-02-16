@@ -3575,12 +3575,12 @@
 		return Utilities.hasProperty(this, property);
 	};
 
-	Utilities.hasSomeDescription = function(albumOrSingleMedia, property = null) {
+	Utilities.hasSomeDescription = function(albumOrSingleMediaOrMetadata, property = null) {
 		var myObject;
-		if (albumOrSingleMedia instanceof SingleMedia)
-			myObject = albumOrSingleMedia.metadata;
+		if (albumOrSingleMediaOrMetadata instanceof SingleMedia)
+			myObject = albumOrSingleMediaOrMetadata.metadata;
 		else
-			myObject = albumOrSingleMedia;
+			myObject = albumOrSingleMediaOrMetadata;
 
 		if (property)
 			return Utilities.hasProperty(myObject, property);
