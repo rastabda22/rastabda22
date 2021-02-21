@@ -174,8 +174,8 @@
 					$(mediaSelector).css("cursor", "");
 				}
 
-				util.setPinchButtonsPosition();
-				util.setPinchButtonsVisibility();
+				// util.setPinchButtonsPosition();
+				// util.setPinchButtonsVisibility();
 				util.setSelectButtonPosition();
 				util.setDescriptionOptions();
 				util.correctElementPositions();
@@ -208,6 +208,7 @@
 				event = {};
 			event.data = {};
 			event.data.resize = true;
+			event.data.pinch = true;
 			event.data.id = "center";
 
 			let scalePromise = env.currentMedia.scale(event);
@@ -225,8 +226,8 @@
 								// mediaWidthOnScreen = $(mediaSelector)[0].width;
 								// env.currentZoom = env.currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
 								// zoomAfterFirstPinch = env.currentZoom;
-								util.setPinchButtonsPosition();
-								util.setPinchButtonsVisibility();
+								// util.setPinchButtonsPosition();
+								// util.setPinchButtonsVisibility();
 								util.setSelectButtonPosition();
 								util.setDescriptionOptions();
 								util.correctElementPositions();
@@ -321,6 +322,7 @@
 			$(mediaSelector).css("transform", "scale(1)");
 			var event = {data: {}};
 			event.data.resize = true;
+			event.data.pinch = true;
 			event.data.id = "center";
 			pastMediaWidthOnScreen = $(mediaSelector)[0].width;
 			let scalePromise = env.currentMedia.scale(event);
@@ -330,8 +332,8 @@
 					// env.currentZoom = env.currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
 					// env.currentZoom = 1;
 					// zoomAfterFirstPinch = env.currentZoom;
-					util.setPinchButtonsPosition();
-					util.setPinchButtonsVisibility();
+					// util.setPinchButtonsPosition();
+					// util.setPinchButtonsVisibility();
 					util.setSelectButtonPosition();
 					util.setDescriptionOptions();
 					util.correctElementPositions();
@@ -437,7 +439,7 @@
 						// distance = 0
 						// baseTranslateX = currentTranslateX;
 						// baseTranslateY = currentTranslateY;
-					} else if (event.buttons > 0){
+					} else {
 						var dragVectorX = clientX - previousClientX;
 						var dragVectorY = clientY - previousClientY;
 						previousClientX = clientX;
