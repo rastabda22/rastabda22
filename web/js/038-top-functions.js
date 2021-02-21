@@ -120,12 +120,12 @@
 
 				linksForTitleComponents = env.currentAlbum.ancestorsCacheBase;
 
-				isFolderTitle = (titleComponents[0] === env.options.folders_string);
-				isDateTitle = (titleComponents[0] === env.options.by_date_string);
-				isGpsTitle = (titleComponents[0] === env.options.by_gps_string);
-				isSearchTitle = (titleComponents[0] === env.options.by_search_string);
-				isSelectionTitle = (titleComponents[0] === env.options.by_selection_string);
-				isMapTitle = (titleComponents[0] === env.options.by_map_string);
+				isFolderTitle = (linksForTitleComponents[0] === env.options.folders_string);
+				isDateTitle = (linksForTitleComponents[0] === env.options.by_date_string);
+				isGpsTitle = (linksForTitleComponents[0] === env.options.by_gps_string);
+				isSearchTitle = (linksForTitleComponents[0] === env.options.by_search_string);
+				isSelectionTitle = (linksForTitleComponents[0] === env.options.by_selection_string);
+				isMapTitle = (linksForTitleComponents[0] === env.options.by_map_string);
 
 				// 'textComponents = titleComponents' doesn't work: textComponents becomes a pointer to titleComponents
 				var textComponents = titleComponents.slice();
@@ -161,9 +161,15 @@
 					else
 						titleComponents.unshift(util._t(".title-string"));
 					linksForTitleComponents.unshift(env.options.folders_string);
+				} else {
+					if (env.options.page_title !== "")
+						titleComponents[0] = env.options.page_title;
+					else
+						titleComponents[0] = util._t(".title-string");
 				}
 
-				var addSearchFolder = false;
+				var addSearchMarker = false;
+				var addSelectionMarker = false;
 
 				if (isDateTitle) {
 					titleComponents[1] = "(" + util._t("#by-date") + ")";
@@ -274,7 +280,7 @@
 						classesForTitleComponents[1] = ["main-search-link"];
 						// searchFolderCacheBase = albumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
 						searchFolderCacheBase = env.options.cache_base_to_search_in;
-						addSearchFolder = true;
+						addSearchMarker = true;
 					}
 					titleComponents.pop();
 					linksForTitleComponents.pop();
@@ -452,13 +458,13 @@
 						classes = ["search-link"];
 						if (util.isSearchCacheBase(savedSearchAlbumCacheBase)) {
 							titleElement = util._t("#by-search");
+							addSearchMarker = true;
 							if (searchFolderCacheBase.split(env.options.cache_folder_separator).length > 1 && env.options.search_current_album) {
 								classes = ["main-search-link"];
 								// where =
 								// 	"<a class='main-search-link' href='" + env.hashBeginning + savedSearchAlbumCacheBase + "'>" +
 								// 	util._t("#by-search") +
 								// 	"</a>";
-								addSearchFolder = true;
 							} else if (searchFolderCacheBase.split(env.options.cache_folder_separator).length <= 1 || ! env.options.search_current_album) {
 								// where =
 								// 	"<a class='search-link' href='" + env.hashBeginning + savedSearchAlbumCacheBase + "'>" +
@@ -468,13 +474,14 @@
 						} else {
 							// album in a selection
 							titleElement = util._t("#by-selection");
+							addSelectionMarker = true;
 							// where =
 							// 	"<a class='search-link' href='" + env.hashBeginning + savedSearchAlbumCacheBase + "'>" +
 							// 	util._t("#by-selection") +
 							// 	"</a>";
 						}
 
-						// if (addSearchFolder) {
+						// if (addSearchMarker) {
 						// 	title += "<span id='search-album-to-be-filled'></span>";
 						// 	title += raquo;
 						// }
@@ -581,6 +588,12 @@
 					// 			documentTitle = raquoForTitle + documentTitle;
 					// 	}
 					// }
+				}
+
+				if (addSearchMarker) {
+					numElements = searchFolderCacheBase.split(env.options.cache_folder_separator).length;
+					titleComponents.splice(numElements, 0, " (" + util._t("#by-search") + ")");
+					linksForTitleComponents.splice(numElements, 0, env.options.by_search_string);
 				}
 
 				let promise = env.currentAlbum.generatePositionsAndMediaInMediaAndSubalbums();
@@ -741,7 +754,7 @@
 						// }
 
 						var toBeResolved = true;
-						if (addSearchFolder) {
+						if (addSearchMarker) {
 							toBeResolved = false;
 							// for searches in current folder we must get the names from the album
 							// we must use getAlbum() because the album could not be in the cache yet (as when ctl-r is pressed)
