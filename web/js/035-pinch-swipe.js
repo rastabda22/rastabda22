@@ -437,7 +437,7 @@
 						// distance = 0
 						// baseTranslateX = currentTranslateX;
 						// baseTranslateY = currentTranslateY;
-					} else if (event.buttons > 0){
+					} else {
 						var dragVectorX = clientX - previousClientX;
 						var dragVectorY = clientY - previousClientY;
 						previousClientX = clientX;
