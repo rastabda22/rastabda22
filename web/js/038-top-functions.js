@@ -1074,15 +1074,16 @@
 		$("#media-view").removeClass("hidden");
 		$("#album-and-media-container").addClass("show-media");
 		if (
+			! env.options.hide_bottom_thumbnails && ! env.currentAlbum.isAlbumWithOneMedia() && $("#thumbs").html() === "" ||
 			env.albumOfPreviousState !== env.currentAlbum ||
-			env.albumOfPreviousState !== null && env.albumOfPreviousState.numsMediaInSubTree.imagesAndVideosTotal() !== env.currentAlbum.numsMediaInSubTree.imagesAndVideosTotal() ||
-			! env.options.hide_bottom_thumbnails && ! env.currentAlbum.isAlbumWithOneMedia() && $("#thumbs").html() === ""
+			env.albumOfPreviousState !== null && env.isFromAuthForm
 		) {
 			env.currentAlbum.showMedia();
 		} else {
 			util.scrollToThumb();
-			util.addMediaLazyLoader();
 		}
+		util.addMediaLazyLoader();
+		env.isFromAuthForm = false;
 		$("#powered-by").hide();
 
 		$("#thumbs").off('mousewheel').on('mousewheel', TopFunctions.scrollBottomThumbs);
@@ -1472,6 +1473,7 @@
 			env.prevMedia = null;
 			env.currentMedia.show(env.currentAlbum, 'center');
 		} else {
+			// currentMedia is null
 			$("#media-view").addClass("hidden");
 			$("#album-and-media-container").removeClass("show-media");
 			$("#album-view").removeAttr("height");
@@ -1494,14 +1496,15 @@
 						if (
 							env.albumOfPreviousState === null || (
 								env.albumOfPreviousState !== env.currentAlbum ||
-								env.albumOfPreviousState !== null && env.albumOfPreviousState.numsMediaInSubTree.imagesAndVideosTotal() !== env.currentAlbum.numsMediaInSubTree.imagesAndVideosTotal()
+								env.albumOfPreviousState !== null && env.isFromAuthForm
 							)
 						) {
 							env.currentAlbum.showMedia();
 						} else {
 							util.scrollToThumb();
-							util.addMediaLazyLoader();
 						}
+						util.addMediaLazyLoader();
+						env.isFromAuthForm = false;
 					}
 				}
 			);
@@ -2465,7 +2468,7 @@
 			forcePopulate ||
 			env.albumInSubalbumDiv === null ||
 			self === null ||
-			env.albumInSubalbumDiv !== self && self.subalbums.length;
+			(env.albumInSubalbumDiv !== self || env.isFromAuthForm) && self.subalbums.length;
 
 		if (populateSubalbums) {
 			subalbumsElement.empty();

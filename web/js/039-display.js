@@ -742,6 +742,7 @@ $(document).ready(function() {
 							$('.modal-close')[0].click();
 						}
 
+						env.isFromAuthForm = true;
 						$(window).hashchange();
 					}
 				},
