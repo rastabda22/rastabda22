@@ -63,15 +63,28 @@
 	TopFunctions.setTitle = function(id, singleMedia, self) {
 		return new Promise(
 			function (resolve_setTitle) {
-				var title = "", documentTitle = "", components, i, isDateTitle, isGpsTitle, isSearchTitle, isSelectionTitle, isMapTitle, originalTitle;
+				function isSearchInCurrentAlbumOnly(savedSearchAlbumCacheBase) {
+					return savedSearchAlbumCacheBase.split(env.options.cache_folder_separator)[1].split(env.options.search_options_separator).slice(0, -1).indexOf('o') > -1;
+				}
+
+				function getSearchFolderCacheBase(savedSearchAlbumCacheBase) {
+					return savedSearchAlbumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
+				}
+
+				var title, titleCount, documentTitle, i, isFolderTitle, isDateTitle, isGpsTitle, isSearchTitle, isSelectionTitle, isMapTitle;
 				var titleAnchorClasses, where, initialValue, searchFolderCacheBase;
 				var linkCount = 0, linksToLeave = 1, latitude, longitude, arrayCoordinates;
 				var raquo = "&raquo;";
+				var raquoForTitle = " \u00ab ";
 				// gpsLevelNumber is the number of levels for the by gps tree
 				// current levels are country, region, place => 3
 				var gpsLevelNumber = 3;
 				var gpsName = '';
 				var setDocumentTitle = (id === "center" || id === "album");
+				var titleComponents = [];
+				var linksForTitleComponents = [];
+				var titlesForTitleComponents = [];
+				var classesForTitleComponents = [];
 
 				// f.updateMenu();
 
@@ -84,37 +97,38 @@
 					$("#album-view .title-string").html("");
 				}
 
-
-				if (env.options.page_title !== "")
-					originalTitle = env.options.page_title;
-				else
-					originalTitle = util._t(".title-string");
-
-
-				if (! env.currentAlbum.path.length)
-					components = [originalTitle];
-				else {
-					if (env.currentAlbum.hasOwnProperty("ancestorsTitles")) {
-						components = env.currentAlbum.ancestorsNames;
-						components = components.map(
-							(ithComponent, i) =>
-								i && env.currentAlbum.ancestorsTitles[i] && env.currentAlbum.ancestorsTitles[i] !== ithComponent ? env.currentAlbum.ancestorsTitles[i] + " <span class='real-name'>(" + ithComponent + ")" : ithComponent
-						);
-						components.unshift(components[0] && originalTitle !== components[0] ? originalTitle + " <span class='real-name'>(" + components[0] + ")" : originalTitle);
-					} else {
-						components = env.currentAlbum.path.split("/");
-						components.unshift(originalTitle);
-					}
+				if (env.currentAlbum.hasOwnProperty("ancestorsTitles") && env.currentAlbum.hasOwnProperty("ancestorsNames")) {
+					titleComponents = env.currentAlbum.ancestorsNames.map(
+						(ithComponent, i) => {
+							if (
+								env.currentAlbum.ancestorsTitles[i] &&
+								env.currentAlbum.ancestorsNames[i] &&
+								env.currentAlbum.ancestorsTitles[i] !== env.currentAlbum.ancestorsNames[i]
+							)
+								return env.currentAlbum.ancestorsTitles[i] + " <span class='real-name'>(" + env.currentAlbum.ancestorsNames[i] + ")";
+							else if (env.currentAlbum.ancestorsTitles[i])
+								return env.currentAlbum.ancestorsTitles[i];
+							else
+								return env.currentAlbum.ancestorsNames[i];
+						}
+					);
+				} else if (env.currentAlbum.hasOwnProperty("ancestorsNames")) {
+					titleComponents = env.currentAlbum.ancestorsNames;
+				} else {
+					titleComponents = env.currentAlbum.path.split("/");
 				}
 
-				isDateTitle = (components.length > 1 && components[1] === env.options.by_date_string);
-				isGpsTitle = (components.length > 1 && components[1] === env.options.by_gps_string);
-				isSearchTitle = (components.length > 1 && components[1] === env.options.by_search_string);
-				isSelectionTitle = (components.length > 1 && components[1] === env.options.by_selection_string);
-				isMapTitle = (components.length > 1 && components[1] === env.options.by_map_string);
+				linksForTitleComponents = env.currentAlbum.ancestorsCacheBase;
 
-				// 'textComponents = components' doesn't work: textComponents becomes a pointer to components
-				var textComponents = components.slice();
+				isFolderTitle = (titleComponents[0] === env.options.folders_string);
+				isDateTitle = (titleComponents[0] === env.options.by_date_string);
+				isGpsTitle = (titleComponents[0] === env.options.by_gps_string);
+				isSearchTitle = (titleComponents[0] === env.options.by_search_string);
+				isSelectionTitle = (titleComponents[0] === env.options.by_selection_string);
+				isMapTitle = (titleComponents[0] === env.options.by_map_string);
+
+				// 'textComponents = titleComponents' doesn't work: textComponents becomes a pointer to titleComponents
+				var textComponents = titleComponents.slice();
 
 				// generate the title in the page top
 				titleAnchorClasses = 'title-anchor';
@@ -139,174 +153,100 @@
 					videosTotalInSubAlbums = videosTotalInSubTree - videosTotalInAlbum;
 				}
 
+				// title = "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + titleComponents[0] + "</a>";
+				if (! isFolderTitle) {
+					if (env.options.page_title !== "")
+						titleComponents.unshift(env.options.page_title);
+					else
+						titleComponents.unshift(util._t(".title-string"));
+					linksForTitleComponents.unshift(env.options.folders_string);
+				}
+
 				if (isDateTitle) {
-					title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + components[0] + "</a>" + raquo;
-					title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + env.options.by_date_string + "'>(" + util._t("#by-date") + ")</a>";
+					titleComponents[1] = "(" + util._t("#by-date") + ")";
 
-					if (components.length > 2 || singleMedia !== null)
-						title += raquo;
-
-					if (setDocumentTitle) {
-						documentTitle += components[0];
-						if (components.length > 2 || singleMedia !== null)
-							documentTitle = " \u00ab " + documentTitle;
-						documentTitle += " (" + util._t("#by-date") + ")";
-					}
-
-					for (i = 2; i < components.length; ++i) {
-						if (i < components.length - 1 || singleMedia !== null)
-							title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + encodeURI(env.currentAlbum.ancestorsCacheBase[i - 1]) + "'>";
-						else
-							title += "<span class='title-no-anchor'>";
-
-						if (i === 3) {
-							textComponents[i] = util._t("#month-" + textComponents[i]);
-							title += textComponents[i];
-						} else if (i === 2 || i === 4) {
-							textComponents[i] = parseInt(textComponents[i]);
-							title += textComponents[i];
-						} else
-							title += textComponents[i];
-
-
-						if (i < components.length - 1 || singleMedia !== null)
-							title += "</a>";
-						else
-							title += "</span>";
-						if (i < components.length - 1 || singleMedia !== null)
-							title += raquo;
-
-						if (setDocumentTitle) {
-							// keep building the html page title
-							documentTitle = textComponents[i] + documentTitle;
-							if (i < components.length - 1 || singleMedia !== null)
-								documentTitle = " \u00ab " + documentTitle;
+					if (titleComponents.length > 2) {
+						titleComponents[2] = parseInt(titleComponents[2]).toString();
+						if (titleComponents.length > 3) {
+							titleComponents[3] = util._t("#month-" + titleComponents[3]);
+							if (titleComponents.length > 4) {
+								titleComponents[4] = parseInt(titleComponents[4]).toString();
+							}
 						}
 					}
-
-					title += fillInSpan;
 
 					if (
-						components.length > 1 &&
-						(singleMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) &&
+						(singleMedia === null) &&
 						! env.isMobile.any()
 					) {
-						title += "<span class='title-count'>(";
-						if (components.length === 2)
-							title += mediaTotalInSubAlbums + " ";
+						titleCount = "<span class='title-count'>(";
+						if (titleComponents.length === 2)
+							titleCount += mediaTotalInSubAlbums + " ";
 						else
-							title += mediaTotalInAlbum + " ";
+							titleCount += mediaTotalInAlbum + " ";
 						if (! imagesTotalInAlbum && videosTotalInAlbum)
-							title += util._t(".title-videos");
+							titleCount += util._t(".title-videos");
 						else if (imagesTotalInAlbum && ! videosTotalInAlbum)
-							title += util._t(".title-images");
+							titleCount += util._t(".title-images");
 						else {
 							let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
-							let titleCount = $(titleCountHtml);
-							if (components.length === 2)
-								titleCount.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
+							let titleCountObject = $(titleCountHtml);
+							if (titleComponents.length === 2)
+								titleCountObject.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
 							else
-								titleCount.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
-							title += titleCount.prop("outerHTML");
+								titleCountObject.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
+							titleCount += titleCountObject.prop("outerHTML");
 						}
-						if (components.length >= 5)
-							title += " " + util._t(".title-in-day-album");
-						else if (components.length >= 3)
-							title += " " + util._t(".title-in-date-album");
-						title += ")</span>";
+						if (titleComponents.length >= 5)
+							titleCount += " " + util._t(".title-in-day-album");
+						else if (titleComponents.length >= 3)
+							titleCount += " " + util._t(".title-in-date-album");
+						titleCount += ")</span>";
 					}
 				} else if (isGpsTitle) {
-					title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + components[0] + "</a>" + raquo;
-					title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + env.options.by_gps_string + "'>(" + util._t("#by-gps") + ")</a>";
+					titleComponents[1] = "(" + util._t("#by-gps") + ")";
 
-					if (components.length > 2 || singleMedia !== null)
-						title += raquo;
-
-					if (setDocumentTitle) {
-						documentTitle += components[0];
-						if (components.length > 2 || singleMedia !== null)
-							documentTitle = " \u00ab " + documentTitle;
-						documentTitle += " (" + util._t("#by-gps") + ")";
-					}
-
-					for (i = 2; i < components.length; ++i) {
-						if (i === components.length - 1) {
-							gpsName = util.transformAltPlaceName(env.currentAlbum.ancestorsNames[i - 1]);
+					for (i = 2; i < titleComponents.length; i ++) {
+						if (i === titleComponents.length - 1) {
+							gpsName = util.transformAltPlaceName(titleComponents[i]);
 						} else {
-							gpsName = env.currentAlbum.ancestorsNames[i - 1];
+							gpsName = titleComponents[i];
 						}
 
 						if (gpsName === '')
 							gpsName = util._t('.not-specified');
-						// gpsHtmlTitle = util._t("#place-icon-title") + gpsName;
 
-						if (i < components.length - 1 || singleMedia !== null) {
-							let aHtml = "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + encodeURI(env.currentAlbum.ancestorsCacheBase[i - 1]) + "'></a>";
-							let a = $(aHtml);
-							a. attr("title", util._t("#place-icon-title") + gpsName + util._t("#place-icon-title-end"));
-							let aString = a.prop("outerHTML");
-							title += aString.substring(0, aString.length -4);
-							// title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + encodeURI(env.currentAlbum.ancestorsCacheBase[i - 1]) + "'";
-							// title += " title='" +  + "'";
-							// title += ">";
-						} else
-							title += "<span class='title-no-anchor'>";
-						title += gpsName;
-						if (i < components.length - 1 || singleMedia !== null)
-							title += "</a>";
-						else
-							title += "</span>";
+						let a = $("<a></a>");
+						a.attr("title", util._t("#place-icon-title") + gpsName + util._t("#place-icon-title-end"));
+						titlesForTitleComponents[i] = a.attr("title");
 
-						if (singleMedia !== null) {
-							latitude = singleMedia.metadata.latitude;
-							longitude = singleMedia.metadata.longitude;
-						} else {
-							arrayCoordinates = env.currentAlbum.ancestorsCenters[i - 1];
-							latitude = arrayCoordinates.latitude;
-							longitude = arrayCoordinates.longitude;
-						}
-
-						if (i < components.length - 1 || singleMedia !== null)
-							title += raquo;
-
-						if (setDocumentTitle) {
-							// keep buildimg the html page title
-							documentTitle = gpsName + documentTitle;
-							if (i < components.length - 1 || singleMedia !== null)
-								documentTitle = " \u00ab " + documentTitle;
-						}
+						titleComponents[i] = gpsName;
 					}
 
-					title += fillInSpan;
-
-					if (
-						components.length > 1 &&
-						(singleMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) &&
-						! env.isMobile.any()
-					) {
-						title += "<span class='title-count'>(";
-						if (components.length === 2)
-							title += mediaTotalInSubAlbums + " ";
+					if (singleMedia === null && ! env.isMobile.any()) {
+						titleCount = "<span class='title-count'>(";
+						if (titleComponents.length === 2)
+							titleCount += mediaTotalInSubAlbums + " ";
 						else
-							title += mediaTotalInAlbum + " ";
+							titleCount += mediaTotalInAlbum + " ";
 						if (! imagesTotalInAlbum && videosTotalInAlbum)
-							title += util._t(".title-videos");
+							titleCount += util._t(".title-videos");
 						else if (imagesTotalInAlbum && ! videosTotalInAlbum)
-							title += util._t(".title-images");
+							titleCount += util._t(".title-images");
 						else {
 							let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
-							let titleCount = $(titleCountHtml);
-							if (components.length === 2)
-								titleCount.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
+							let titleCountObject = $(titleCountHtml);
+							if (titleComponents.length === 2)
+								titleCountObject.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
 							else
-								titleCount.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
-							title += titleCount.prop("outerHTML");
+								titleCountObject.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
+							titleCount += titleCountObject.prop("outerHTML");
 						}
-						if (components.length >= gpsLevelNumber + 2)
-							title += " " + util._t(".title-in-gps-album");
-						else if (components.length >= 3)
-							title += " " + util._t(".title-in-gpss-album");
-						title += ")</span>";
+						if (titleComponents.length >= gpsLevelNumber + 2)
+							titleCount += " " + util._t(".title-in-gps-album");
+						else if (titleComponents.length >= 3)
+							titleCount += " " + util._t(".title-in-gpss-album");
+						titleCount += ")</span>";
 					}
 				} else if (isSearchTitle) {
 					// i=0: title
@@ -315,89 +255,91 @@
 					// (optional) i=3 up: folder or image
 					// (optional) i=n: image
 
-					title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + components[0] + "</a>" + raquo;
-					if (
-						env.options.search_current_album &&
-						! util.isAnyRootCacheBase(env.options.cache_base_to_search_in)
-					) {
-						title += "<span id='search-album-to-be-filled'></span>" + raquo;
-					}
-					var searchClass = "search-link";
+					// if (
+					// 	env.options.search_current_album &&
+					// 	! util.isAnyRootCacheBase(env.options.cache_base_to_search_in)
+					// ) {
+					// 	title += "<span id='search-album-to-be-filled'></span>" + raquo;
+					// }
+					classesForTitleComponents[1] = ["search-link"];
 
 					if (
 						env.options.search_current_album &&
 						! util.isAnyRootCacheBase(env.options.cache_base_to_search_in)
 					) {
-						searchClass = "main-search-link";
+						classesForTitleComponents[1] = ["main-search-link"];
 						// searchFolderCacheBase = albumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
 						searchFolderCacheBase = env.options.cache_base_to_search_in;
 					}
-					where =
-						"<a class='" + searchClass + "' href='" + env.hashBeginning + env.currentAlbum.cacheBase + "'>" +
-						util._t("#by-search") +
-						"</a>";
+					titleComponents[1] = "(" + util._t("#by-search") + ")";
+					linksForTitleComponents[1] = env.currentAlbum.cacheBase;
+					titleComponents.pop();
+					linksForTitleComponents.pop();
+					// where =
+					// 	"<a class='" + searchClass + "' href='" + env.hashBeginning + env.currentAlbum.cacheBase + "'>" +
+					// 	util._t("#by-search") +
+					// 	"</a>";
 
-					title += "<span class='title-no-anchor'>(" + where + ")</span>";
-					where = util.stripHtmlAndReplaceEntities(where);
-
-					// do not show the options and the search words, they are visible in the menu
-					// show the image name, if it is there
-					if (singleMedia !== null) {
-						title += raquo;
-					}
-
-					title += fillInSpan;
+					// title += "<span class='title-no-anchor'>(" + where + ")</span>";
+					// where = util.stripHtmlAndReplaceEntities(where);
+					//
+					// // do not show the options and the search words, they are visible in the menu
+					// // show the image name, if it is there
+					// if (singleMedia !== null) {
+					// 	title += raquo;
+					// }
+					//
+					// title += fillInSpan;
 
 					if (
-						components.length > 2 &&
-						(singleMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) &&
+						singleMedia === null &&
 						(env.currentAlbum.numsMedia.imagesAndVideosTotal() || env.currentAlbum.subalbums.length) &&
 						! env.isMobile.any()
 					) {
-						title += "<span class='title-count'>(";
-						title += util._t(".title-found") + ' ';
+						titleCount = "<span class='title-count'>(";
+						titleCount += util._t(".title-found") + ' ';
 						if (env.currentAlbum.numsMedia.imagesAndVideosTotal()) {
-							title += mediaTotalInAlbum + " ";
+							titleCount += mediaTotalInAlbum + " ";
 							if (! imagesTotalInAlbum && videosTotalInAlbum)
-								title += util._t(".title-videos");
+								titleCount += util._t(".title-videos");
 							else if (imagesTotalInAlbum && ! videosTotalInAlbum)
-								title += util._t(".title-images");
+								titleCount += util._t(".title-images");
 							else
-								title += util._t(".title-media");
+								titleCount += util._t(".title-media");
 							if (env.currentAlbum.subalbums.length)
-								title += " " + util._t(".title-and");
+								titleCount += " " + util._t(".title-and");
 						}
 						if (env.currentAlbum.subalbums.length) {
-							title += " " + env.currentAlbum.subalbums.length;
-							title += " " + util._t(".title-albums");
+							titleCount += " " + env.currentAlbum.subalbums.length;
+							titleCount += " " + util._t(".title-albums");
 						}
 
 						if (env.currentAlbum.hasOwnProperty("removedStopWords") && env.currentAlbum.removedStopWords.length) {
 							// say that some search word hasn't been used
-							title += " - " + env.currentAlbum.removedStopWords.length + " " + util._t("#removed-stopwords") + ": ";
+							titleCount += " - " + env.currentAlbum.removedStopWords.length + " " + util._t("#removed-stopwords") + ": ";
 							for (i = 0; i < env.currentAlbum.removedStopWords.length; i ++) {
 								if (i)
-									title += ", ";
-								title += env.currentAlbum.removedStopWords[i];
+									titleCount += ", ";
+								titleCount += env.currentAlbum.removedStopWords[i];
 							}
 						}
 
-						title += ")</span>";
+						titleCount += ")</span>";
 					}
 
-					if (setDocumentTitle) {
-						// build the html page title
-						documentTitle += " (" + where +") \u00ab " + components[0];
-						if (singleMedia !== null)
-							documentTitle = " \u00ab " + documentTitle;
-					}
+					// if (setDocumentTitle) {
+					// 	// build the html page title
+					// 	documentTitle += " (" + where +") \u00ab " + documentTitle;
+					// 	if (singleMedia !== null)
+					// 		documentTitle = raquoForTitle + documentTitle;
+					// }
 				} else if (isSelectionTitle) {
 					// i=0: title
 					// i=1: env.options.by_selection_string
 					// (optional) i=2: media folder cache base
 					// (optional) i=3: media cache base
 
-					title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + components[0] + "</a>" + raquo;
+					title += raquo;
 					title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + env.options.by_selection_string + "'>(" + util._t("#by-selection") + ")</a>";
 					if (singleMedia !== null) {
 						title += raquo;
@@ -406,10 +348,9 @@
 					title += fillInSpan;
 
 					if (setDocumentTitle) {
-						documentTitle += components[0];
-						documentTitle += " (" + util._t("#by-selection") + ")";
+						documentTitle = " (" + util._t("#by-selection") + ")";
 						if (singleMedia !== null)
-							documentTitle += " \u00ab " + documentTitle;
+							documentTitle += raquoForTitle + documentTitle;
 					}
 
 					if (
@@ -439,9 +380,8 @@
 					}
 
 					if (setDocumentTitle) {
-						// documentTitle += " (" + where +") \u00ab " + components[0];
 						if (singleMedia !== null)
-							documentTitle = " \u00ab " + documentTitle;
+							documentTitle = raquoForTitle + documentTitle;
 					}
 				} else if (isMapTitle) {
 					// i=0: title
@@ -449,7 +389,7 @@
 					// (optional) i=2: image cache or folder
 					// (optional) i=3 up: folder or image
 					// (optional) i=n: image
-					title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + components[0] + "</a>" + raquo;
+					title += raquo;
 
 					where =
 						"<a class='search-link' href='" + env.hashBeginning + env.currentAlbum.cacheBase + "'>" +
@@ -468,7 +408,7 @@
 					title += fillInSpan;
 
 					if (
-						components.length > 2 &&
+						titleComponents.length > 2 &&
 						(singleMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) &&
 						(env.currentAlbum.numsMedia.imagesAndVideosTotal() || env.currentAlbum.subalbums.length) &&
 						! env.isMobile.any()
@@ -494,30 +434,32 @@
 
 					if (setDocumentTitle) {
 						// build the html page title
-						documentTitle += " (" + where + ") \u00ab " + components[0];
+						documentTitle += " (" + where + ") \u00ab " + titleComponents[0];
 						if (singleMedia !== null)
-							documentTitle = " \u00ab " + documentTitle;
+							documentTitle = raquoForTitle + documentTitle;
 					}
 				} else {
 					// folders title
-					title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + components[0] + "</a>";
-					if (components.length > 2 || singleMedia !== null)
+					if (titleComponents.length > 2 || singleMedia !== null)
 						title += raquo;
 
-					if (typeof savedSearchAlbumCacheBase !== "undefined" && savedSearchAlbumCacheBase !== null) {
-						searchFolderCacheBase = savedSearchAlbumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
+					if (savedSearchAlbumCacheBase !== undefined && savedSearchAlbumCacheBase !== null) {
+						searchFolderCacheBase = getSearchFolderCacheBase(savedSearchAlbumCacheBase);
 						let addSearchFolder = false;
-						if (searchFolderCacheBase.split(env.options.cache_folder_separator).length > 1) {
-							where =
-								"<a class='main-search-link' href='" + env.hashBeginning + savedSearchAlbumCacheBase + "'>" +
-								util._t("#by-search") +
-								"</a>";
+						let searchIsInCurrentAlbumOnly = isSearchInCurrentAlbumOnly(savedSearchAlbumCacheBase);
+						if (util.isSearchCacheBase(savedSearchAlbumCacheBase)) {
+							if (searchFolderCacheBase.split(env.options.cache_folder_separator).length > 1 && searchIsInCurrentAlbumOnly) {
+								where =
+									"<a class='main-search-link' href='" + env.hashBeginning + savedSearchAlbumCacheBase + "'>" +
+									util._t("#by-search") +
+									"</a>";
 								addSearchFolder = true;
-						} else if (util.isSearchCacheBase(savedSearchAlbumCacheBase)) {
-							where =
-								"<a class='search-link' href='" + env.hashBeginning + savedSearchAlbumCacheBase + "'>" +
-								util._t("#by-search") +
-								"</a>";
+							} else if (searchFolderCacheBase.split(env.options.cache_folder_separator).length <= 1 || ! searchIsInCurrentAlbumOnly) {
+								where =
+									"<a class='search-link' href='" + env.hashBeginning + savedSearchAlbumCacheBase + "'>" +
+									util._t("#by-search") +
+									"</a>";
+							}
 						} else {
 							// album in a selection
 							where =
@@ -540,37 +482,40 @@
 					}
 
 					if (setDocumentTitle) {
-						documentTitle += components[0];
-						if (components.length > 2 || singleMedia !== null)
-							documentTitle = " \u00ab " + documentTitle;
+						if (titleComponents.length > 2 || singleMedia !== null)
+							documentTitle = raquoForTitle + documentTitle;
 					}
 
 					initialValue = 2;
-					if (typeof savedSearchAlbumCacheBase !== "undefined" && savedSearchAlbumCacheBase !== null && util.isSearchCacheBase(savedSearchAlbumCacheBase)) {
+					if (
+						savedSearchAlbumCacheBase !== undefined &&
+						savedSearchAlbumCacheBase !== null &&
+						util.isSearchCacheBase(savedSearchAlbumCacheBase)
+					) {
 						// the folders from the first until the search folder inclusive must not be shown
 						initialValue = savedSearchAlbumCacheBase.split(env.options.cache_folder_separator).slice(2).length + 1;
 					}
-					for (i = initialValue; i < components.length; ++i) {
-						if (i < components.length - 1 || singleMedia !== null)
+					for (i = initialValue; i < titleComponents.length; ++i) {
+						if (i < titleComponents.length - 1 || singleMedia !== null)
 							title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + encodeURI(env.currentAlbum.ancestorsCacheBase[i - 1]) + "'>";
 						else
 							title += "<span class='title-no-anchor'>";
 
 						title += textComponents[i];
 
-						if (i < components.length - 1 || singleMedia !== null)
+						if (i < titleComponents.length - 1 || singleMedia !== null)
 							title += "</a>";
 						else
 							title += "</span>";
 
-						if (i < components.length - 1 || singleMedia !== null)
+						if (i < titleComponents.length - 1 || singleMedia !== null)
 							title += raquo;
 					}
 
 					title += fillInSpan;
 
 					if (
-						components.length > 1 &&
+						titleComponents.length > 1 &&
 						(singleMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) &&
 						! env.isMobile.any()
 					) {
@@ -584,12 +529,12 @@
 							else {
 
 								let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
-								let titleCount = $(titleCountHtml);
-								if (components.length === 2)
-									titleCount.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
+								let titleCountObject = $(titleCountHtml);
+								if (titleComponents.length === 2)
+									titleCountObject.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
 								else
-									titleCount.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
-								title += titleCount.prop("outerHTML");
+									titleCountObject.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
+								title += titleCountObject.prop("outerHTML");
 							}
 							title += util._t(".title-in-album");
 							if (mediaTotalInSubAlbums)
@@ -603,9 +548,9 @@
 								title += util._t(".title-images");
 							else {
 								let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
-								let titleCount = $(titleCountHtml);
-								titleCount.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
-								title += titleCount.prop("outerHTML");
+								let titleCountObject = $(titleCountHtml);
+								titleCountObject.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
+								title += titleCountObject.prop("outerHTML");
 							}
 							title += " " + util._t(".title-in-subalbums");
 						}
@@ -623,11 +568,11 @@
 					}
 
 					if (setDocumentTitle) {
-						for (i = initialValue; i < components.length; ++i) {
+						for (i = initialValue; i < titleComponents.length; ++i) {
 							// keep building the html page title
 							documentTitle = textComponents[i] + documentTitle;
-							if (i < components.length - 1 || singleMedia !== null)
-								documentTitle = " \u00ab " + documentTitle;
+							if (i < titleComponents.length - 1 || singleMedia !== null)
+								documentTitle = raquoForTitle + documentTitle;
 						}
 					}
 				}
@@ -636,10 +581,10 @@
 
 				promise.then(
 					function() {
-						if (singleMedia !== null || env.currentAlbum.isAlbumWithOneMedia()) {
-							if (singleMedia === null)
-								singleMedia = env.currentAlbum.media[0];
-							title += "<span class='media-name'>" + singleMedia.nameForShowing(env.currentAlbum, true) + "</span>";
+						if (singleMedia !== null) {
+							let singleMediaNameHtml = "<span class='media-name'>" + singleMedia.nameForShowing(env.currentAlbum, true) + "</span>";
+
+							// title += "<span class='media-name'>" + singleMedia.nameForShowing(env.currentAlbum, true) + "</span>";
 
 							if (env.currentMedia.hasGpsData()) {
 								let imgHtml = "<img class='title-img' height='20px' src='img/ic_place_white_24dp_2x.png'>";
@@ -649,10 +594,32 @@
 									imgTitle += " [" + util._t(".map-link-shortcut") + "]";
 								img.attr("title", imgTitle);
 								img.attr("alt", imgTitle);
-								title += "<a class='map-popup-trigger'>" + img.prop("outerHTML") + "</a>";
+								singleMediaNameHtml += "<a class='map-popup-trigger'>" + img.prop("outerHTML") + "</a>";
 							}
-						} else if (title.includes(fillInSpan) && env.currentAlbum.numPositionsInTree) {
-							let replace = "";
+							titleComponents.push(singleMediaNameHtml);
+						}
+
+						title = titleComponents.map(
+							(component, i) => {
+								let titleElement;
+								if (linksForTitleComponents[i] !== undefined) {
+									let a = $("<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + encodeURI(linksForTitleComponents[i]) + "'>" + component + "</a>");
+									if (classesForTitleComponents[i] !== undefined)
+										classesForTitleComponents[i].forEach(singleClass => a.addClass(singleClass));
+									if (titlesForTitleComponents[i] !== undefined)
+										a.attr("title", titlesForTitleComponents[i]);
+									titleElement = a.prop("outerHTML");
+								} else {
+									titleElement = "<span class='title-no-anchor'>" + component + "</span>";
+								}
+								return titleElement;
+							}
+						).join(raquo);
+
+						documentTitle = titleComponents.slice().reverse().join(raquoForTitle);
+
+						if (singleMedia === null && env.currentAlbum.numPositionsInTree) {
+							let markers = "";
 
 							let showSingleMarker = (env.currentAlbum.numPositionsInMedia > 0 && env.currentAlbum.numPositionsInTree !== env.currentAlbum.numPositionsInSubalbums);
 							let showDoubleMarker = (env.currentAlbum.numPositionsInSubalbums > 0);
@@ -682,20 +649,21 @@
 									imgTitle1 += " [" + util._t(".map-link-shortcut") + "]";
 								img.attr("title", imgTitle1);
 								img.attr("src", imgSrc1);
-								replace += "<a class='map-popup-trigger'>" + img.prop("outerHTML") + "</a>";
+								markers += "<a class='map-popup-trigger'>" + img.prop("outerHTML") + "</a>";
 							}
 							if (showDoubleMarker) {
 								if (! env.isMobile.any())
 									imgTitle2 += " [" + util._t(".map-link-shortcut") + "]";
 								img.attr("title", imgTitle2);
 								img.attr("src", imgSrc2);
-								replace += "<a class='map-popup-trigger-double'>" + img.prop("outerHTML") + "</a>";
+								markers += "<a class='map-popup-trigger-double'>" + img.prop("outerHTML") + "</a>";
 							}
 
-							title = title.replace(
-								fillInSpan,
-								replace
-							);
+							// title = title.markers(
+							// 	fillInSpan,
+							// 	markers
+							// );
+							title += markers;
 						}
 
 						if (env.isMobile.any()) {
@@ -761,7 +729,7 @@
 							if (singleMedia !== null)
 								documentTitle = singleMedia.nameForShowing(env.currentAlbum) + documentTitle;
 							else if (env.currentAlbum !== null && ! env.currentAlbum.subalbums.length && env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1)
-								documentTitle = util.trimExtension(env.currentAlbum.media[0].name) + " \u00ab " + documentTitle;
+								documentTitle = util.trimExtension(env.currentAlbum.media[0].name) + raquoForTitle + documentTitle;
 
 							document.title = documentTitle;
 						}
@@ -808,7 +776,7 @@
 										documentTitle = $(document).attr('title');
 										documentTitle = documentTitle.replace(
 											"(" + util._t("#by-search") + ")",
-											"(" + util._t("#by-search") + ") \u00ab " + util.stripHtmlAndReplaceEntities(whereLinksArray.reverse().join(" \u00ab "))
+											"(" + util._t("#by-search") + ") \u00ab " + util.stripHtmlAndReplaceEntities(whereLinksArray.reverse().join(raquoForTitle))
 										);
 										document.title = documentTitle;
 									}
