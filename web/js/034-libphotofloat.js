@@ -1114,14 +1114,17 @@
 			var i;
 			this.ancestorsCacheBase = [];
 			var splittedCacheBase = this.cacheBase.split(env.options.cache_folder_separator);
-			this.ancestorsCacheBase[0] = splittedCacheBase[0];
 			var length = splittedCacheBase.length;
-			if (this.isSearch())
-				length = 2;
-			for (i = 1; i < length; i ++) {
-				this.ancestorsCacheBase[i] = [this.ancestorsCacheBase[i - 1], splittedCacheBase[i]].join(env.options.cache_folder_separator);
+			this.ancestorsCacheBase[0] = splittedCacheBase[0];
+			if (this.isSearch()) {
+				this.ancestorsCacheBase[1] = this.cacheBase;
+			} else {
+				for (i = 1; i < length; i ++) {
+					this.ancestorsCacheBase[i] = [this.ancestorsCacheBase[i - 1], splittedCacheBase[i]].join(env.options.cache_folder_separator);
+				}
 			}
 		}
+
 
 		return;
 	};
