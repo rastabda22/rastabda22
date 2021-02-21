@@ -339,50 +339,51 @@
 					// (optional) i=2: media folder cache base
 					// (optional) i=3: media cache base
 
-					title += raquo;
-					title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + env.options.by_selection_string + "'>(" + util._t("#by-selection") + ")</a>";
-					if (singleMedia !== null) {
-						title += raquo;
-					}
-
-					title += fillInSpan;
-
-					if (setDocumentTitle) {
-						documentTitle = " (" + util._t("#by-selection") + ")";
-						if (singleMedia !== null)
-							documentTitle += raquoForTitle + documentTitle;
-					}
+					titleComponents[1] = "(" + util._t("#by-selection") + ")";
+					// title += raquo;
+					// title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + env.options.by_selection_string + "'>(" + util._t("#by-selection") + ")</a>";
+					// if (singleMedia !== null) {
+					// 	title += raquo;
+					// }
+					//
+					// title += fillInSpan;
+					//
+					// if (setDocumentTitle) {
+					// 	documentTitle = " (" + util._t("#by-selection") + ")";
+					// 	if (singleMedia !== null)
+					// 		documentTitle += raquoForTitle + documentTitle;
+					// }
 
 					if (
-						(singleMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) &&
+						singleMedia === null &&
 						(env.currentAlbum.numsMedia.imagesAndVideosTotal() || env.currentAlbum.subalbums.length) &&
 						! env.isMobile.any()
 					) {
-						title += "<span class='title-count'>(";
-						// title += util._t(".title-selected") + ' ';
+						titleCount += "<span class='title-count'>(";
+						// titleCount += util._t(".title-selected") + ' ';
 						if (env.currentAlbum.numsMedia.imagesAndVideosTotal()) {
-							title += mediaTotalInAlbum + " ";
+							titleCount += mediaTotalInAlbum + " ";
 							if (! imagesTotalInAlbum && videosTotalInAlbum)
-								title += util._t(".title-videos");
+								titleCount += util._t(".title-videos");
 							else if (imagesTotalInAlbum && ! videosTotalInAlbum)
-								title += util._t(".title-images");
+								titleCount += util._t(".title-images");
 							else
-								title += util._t(".title-media");
+								titleCount += util._t(".title-media");
 							if (env.currentAlbum.subalbums.length)
-								title += " " + util._t(".title-and");
+								titleCount += " " + util._t(".title-and");
 						}
 						if (env.currentAlbum.subalbums.length) {
-							title += " " + env.currentAlbum.subalbums.length;
-							title += " " + util._t(".title-albums");
+							titleCount += " " + env.currentAlbum.subalbums.length;
+							titleCount += " " + util._t(".title-albums");
 						}
 
-						title += ")</span>";
+						titleCount += ")</span>";
 					}
 
-					if (setDocumentTitle) {
-						if (singleMedia !== null)
-							documentTitle = raquoForTitle + documentTitle;
-					}
+					// if (setDocumentTitle) {
+					// 	if (singleMedia !== null)
+					// 		documentTitle = raquoForTitle + documentTitle;
+					// }
 				} else if (isMapTitle) {
 					// i=0: title
 					// i=1: env.options.by_search_string
