@@ -322,6 +322,7 @@
 			$(mediaSelector).css("transform", "scale(1)");
 			var event = {data: {}};
 			event.data.resize = true;
+			event.data.pinch = true;
 			event.data.id = "center";
 			pastMediaWidthOnScreen = $(mediaSelector)[0].width;
 			let scalePromise = env.currentMedia.scale(event);
