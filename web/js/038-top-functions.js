@@ -2500,9 +2500,7 @@
 			forcePopulate ||
 			env.albumInSubalbumDiv === null ||
 			self === null ||
-			(
-				env.albumInSubalbumDiv !== self || env.isFromAuthForm
-			) && self.subalbums.length;
+			(env.albumInSubalbumDiv !== self || env.isFromAuthForm) && self.subalbums.length;
 
 		if (populateSubalbums) {
 			subalbumsElement.empty();
