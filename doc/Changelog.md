@@ -1,3 +1,5 @@
+### version v4.9.40 (Feb 21, 2021)
+
 * avoid moving the pinch buttons when pinching
 * bug fixes
 
