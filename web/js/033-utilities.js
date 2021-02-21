@@ -2404,10 +2404,13 @@
 
 					Utilities.setLinksVisibility();
 					if (self.isImage()) {
-						if (env.currentZoom === env.initialZoom)
-							Functions.pinchSwipeInitialization();
-						Utilities.setPinchButtonsPosition();
-						Utilities.setPinchButtonsVisibility();
+						if (env.currentZoom === env.initialZoom) {
+							if (! event.data.pinch) {
+								Functions.pinchSwipeInitialization();
+								Utilities.setPinchButtonsPosition();
+							}
+							Utilities.setPinchButtonsVisibility();
+						}
 					}
 					Utilities.setSelectButtonPosition();
 					Utilities.setDescriptionOptions();

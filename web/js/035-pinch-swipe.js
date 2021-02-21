@@ -174,8 +174,8 @@
 					$(mediaSelector).css("cursor", "");
 				}
 
-				util.setPinchButtonsPosition();
-				util.setPinchButtonsVisibility();
+				// util.setPinchButtonsPosition();
+				// util.setPinchButtonsVisibility();
 				util.setSelectButtonPosition();
 				util.setDescriptionOptions();
 				util.correctElementPositions();
@@ -208,6 +208,7 @@
 				event = {};
 			event.data = {};
 			event.data.resize = true;
+			event.data.pinch = true;
 			event.data.id = "center";
 
 			let scalePromise = env.currentMedia.scale(event);
@@ -225,8 +226,8 @@
 								// mediaWidthOnScreen = $(mediaSelector)[0].width;
 								// env.currentZoom = env.currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
 								// zoomAfterFirstPinch = env.currentZoom;
-								util.setPinchButtonsPosition();
-								util.setPinchButtonsVisibility();
+								// util.setPinchButtonsPosition();
+								// util.setPinchButtonsVisibility();
 								util.setSelectButtonPosition();
 								util.setDescriptionOptions();
 								util.correctElementPositions();
@@ -330,8 +331,8 @@
 					// env.currentZoom = env.currentZoom * mediaWidthOnScreen / pastMediaWidthOnScreen;
 					// env.currentZoom = 1;
 					// zoomAfterFirstPinch = env.currentZoom;
-					util.setPinchButtonsPosition();
-					util.setPinchButtonsVisibility();
+					// util.setPinchButtonsPosition();
+					// util.setPinchButtonsVisibility();
 					util.setSelectButtonPosition();
 					util.setDescriptionOptions();
 					util.correctElementPositions();
