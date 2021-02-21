@@ -1791,6 +1791,7 @@
 								} else {
 									// env.currentAlbum.prepareForShowing(-1);
 									$(clickedSelector).parent().parent().parent().remove();
+									TopFunctions.setTitle("album", null);
 								}
 							}
 
