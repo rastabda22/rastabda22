@@ -113,7 +113,7 @@
 						}
 					);
 				} else if (env.currentAlbum.hasOwnProperty("ancestorsNames")) {
-					titleComponents = env.currentAlbum.ancestorsNames;
+					titleComponents = env.currentAlbum.ancestorsNames.slice();
 				} else {
 					titleComponents = env.currentAlbum.path.split("/");
 				}
