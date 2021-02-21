@@ -1,3 +1,6 @@
+* avoid moving the pinch buttons when pinching
+* bug fixes
+
 ### version v4.9.39 (Feb 16, 2021)
 
 * do not move description button when hiding
