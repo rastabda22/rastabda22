@@ -359,7 +359,7 @@
 						(env.currentAlbum.numsMedia.imagesAndVideosTotal() || env.currentAlbum.subalbums.length) &&
 						! env.isMobile.any()
 					) {
-						titleCount += "<span class='title-count'>(";
+						titleCount = "<span class='title-count'>(";
 						// titleCount += util._t(".title-selected") + ' ';
 						if (env.currentAlbum.numsMedia.imagesAndVideosTotal()) {
 							titleCount += mediaTotalInAlbum + " ";
@@ -390,55 +390,48 @@
 					// (optional) i=2: image cache or folder
 					// (optional) i=3 up: folder or image
 					// (optional) i=n: image
-					title += raquo;
-
-					where =
-						"<a class='search-link' href='" + env.hashBeginning + env.currentAlbum.cacheBase + "'>" +
-						util._t("#by-map") +
-						"</a>";
-
-					title += "<span class='title-no-anchor'>(" + where + ")</span>";
-					where = util.stripHtmlAndReplaceEntities(where);
-
-					// do not show the options and the search words, they are visible in the menu
-					// show the image name, if it is there
-					if (singleMedia !== null) {
-						title += raquo;
-					}
-
-					title += fillInSpan;
+					titleComponents[1] = "(" + util._t("#by-map") + ")";
+					// title += raquo;
+					//
+					// where =
+					// 	"<a class='search-link' href='" + env.hashBeginning + env.currentAlbum.cacheBase + "'>" +
+					// 	util._t("#by-map") +
+					// 	"</a>";
+					//
+					// title += "<span class='title-no-anchor'>(" + where + ")</span>";
+					// where = util.stripHtmlAndReplaceEntities(where);
+					//
+					// // do not show the options and the search words, they are visible in the menu
+					// // show the image name, if it is there
+					// if (singleMedia !== null) {
+					// 	title += raquo;
+					// }
+					//
+					// title += fillInSpan;
 
 					if (
 						titleComponents.length > 2 &&
-						(singleMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) &&
-						(env.currentAlbum.numsMedia.imagesAndVideosTotal() || env.currentAlbum.subalbums.length) &&
+						singleMedia === null &&
+						(env.currentAlbum.numsMedia.imagesAndVideosTotal()) &&
 						! env.isMobile.any()
 					) {
-						title += "<span class='title-count'>(";
-						if (env.currentAlbum.numsMedia.imagesAndVideosTotal()) {
-							title += mediaTotalInAlbum + " ";
-							if (! imagesTotalInAlbum && videosTotalInAlbum)
-								title += util._t(".title-videos");
-							else if (imagesTotalInAlbum && ! videosTotalInAlbum)
-								title += util._t(".title-images");
-							else
-								title += util._t(".title-media");
-							if (env.currentAlbum.subalbums.length)
-								title += " " + util._t(".title-and");
-						}
-						if (env.currentAlbum.subalbums.length) {
-							title += " " + env.currentAlbum.subalbums.length;
-							title += " " + util._t(".title-albums");
-						}
-						title += ")</span>";
+						titleCount = "<span class='title-count'>(";
+						titleCount += mediaTotalInAlbum + " ";
+						if (! imagesTotalInAlbum && videosTotalInAlbum)
+							titleCount += util._t(".title-videos");
+						else if (imagesTotalInAlbum && ! videosTotalInAlbum)
+							titleCount += util._t(".title-images");
+						else
+							titleCount += util._t(".title-media");
+						titleCount += ")</span>";
 					}
 
-					if (setDocumentTitle) {
-						// build the html page title
-						documentTitle += " (" + where + ") \u00ab " + titleComponents[0];
-						if (singleMedia !== null)
-							documentTitle = raquoForTitle + documentTitle;
-					}
+					// if (setDocumentTitle) {
+					// 	// build the html page title
+					// 	documentTitle += " (" + where + ") \u00ab " + titleComponents[0];
+					// 	if (singleMedia !== null)
+					// 		documentTitle = raquoForTitle + documentTitle;
+					// }
 				} else {
 					// folders title
 					if (titleComponents.length > 2 || singleMedia !== null)
