@@ -1113,8 +1113,8 @@
 			env.currentAlbum.showMedia();
 		} else {
 			util.scrollToThumb();
-			util.addMediaLazyLoader();
 		}
+		util.addMediaLazyLoader();
 		env.isFromAuthForm = false;
 		$("#powered-by").hide();
 
@@ -1534,8 +1534,8 @@
 							env.currentAlbum.showMedia();
 						} else {
 							util.scrollToThumb();
-							util.addMediaLazyLoader();
 						}
+						util.addMediaLazyLoader();
 						env.isFromAuthForm = false;
 					}
 				}
