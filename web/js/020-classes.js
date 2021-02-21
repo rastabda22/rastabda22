@@ -27,6 +27,7 @@
 			this.selectorClickedToOpenTheMap = false;
 			this.popupRefreshType = "previousAlbum";
 			this.hashBeginning = "#!/";
+			this.isFromAuthForm = false;
 			// var nextLink = "", prevLink = "";
 			this.mediaLink = "";
 			// scrollbarWidth;
