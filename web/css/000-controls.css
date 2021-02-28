@@ -867,6 +867,14 @@ video {
 	display: none;
 }
 
+#media-name-second-part {
+	display: none;
+}
+
+.media-name.with-second-part:hover #media-name-second-part {
+	display: inline;
+}
+
 /****************************/
 /* right menu */
 

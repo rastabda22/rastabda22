@@ -2887,12 +2887,25 @@
 	};
 
 	Utilities.generateAlbumCaptionForCollections = function(album) {
-		var firstLine, secondLine = '';
-
 		var raquo = " <span class='gray'>&raquo;</span> ";
 		var folderArray = album.cacheBase.split(env.options.cache_folder_separator);
+
+		var firstLine;
 		if (album.isByDate()) {
 			firstLine = Utilities.dateElementForFolderName(folderArray, folderArray.length - 1);
+		} else if (album.isByGps()) {
+			if (album.name === '')
+				firstLine = Utilities._t('.not-specified');
+			else if (album.hasOwnProperty('altName'))
+				firstLine = Utilities.transformAltPlaceName(album.altName);
+			else
+				firstLine = album.nameForShowing(null, true, true);
+		} else {
+			firstLine = album.nameForShowing(null, true, true);
+		}
+
+		var secondLine = '';
+		if (album.isByDate()) {
 			secondLine += "<span class='gray'>(";
 			if (folderArray.length === 2) {
 				secondLine += Utilities._t("#year-album");
@@ -2909,13 +2922,6 @@
 			}
 			secondLine += "<span class='gray'>)</span>";
 		} else if (album.isByGps()) {
-			if (album.name === '')
-				firstLine = Utilities._t('.not-specified');
-			else if (album.hasOwnProperty('altName'))
-				firstLine = Utilities.transformAltPlaceName(album.altName);
-			else
-				firstLine = album.nameForShowing(null, true, true);
-
 			for (let iCacheBase = 1; iCacheBase < album.ancestorsCacheBase.length - 1; iCacheBase ++) {
 				let albumName;
 				if (album.ancestorsNames[iCacheBase] === '')
@@ -2937,7 +2943,6 @@
 			if (! secondLine)
 				secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album") + ")</span>";
 		} else {
-			firstLine = album.nameForShowing(null, true, true);
 			for (let iCacheBase = 0; iCacheBase < album.ancestorsCacheBase.length - 1; iCacheBase ++) {
 				if (iCacheBase === 0 && album.ancestorsCacheBase.length === 2) {
 					secondLine = "<span class='gray'>(" + Utilities._t("#regular-album") + ")</span> ";
@@ -2973,10 +2978,10 @@
 	};
 
 	Utilities.generateSingleMediaCaptionForCollections = function(singleMedia, album) {
-		var secondLine = '';
 		var raquo = " <span class='gray'>&raquo;</span> ";
 		var folderArray = album.cacheBase.split(env.options.cache_folder_separator);
 
+		var secondLine = '';
 		if (album.isByDate()) {
 			secondLine += "<span class='gray'>(";
 			if (folderArray.length === 2) {

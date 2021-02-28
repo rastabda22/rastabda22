@@ -71,6 +71,7 @@
 					return savedSearchAlbumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
 				}
 
+				var br = '<br />';
 				var title, titleCount, documentTitle, i, isFolderTitle, isDateTitle, isGpsTitle, isSearchTitle, isSelectionTitle, isMapTitle;
 				var titleAnchorClasses, where, initialValue, searchFolderCacheBase;
 				var linkCount = 0, linksToLeave = 1, latitude, longitude, arrayCoordinates;
@@ -601,9 +602,25 @@
 				promise.then(
 					function() {
 						documentTitleComponents = titleComponents.slice();
+						var mediaNamePosition, mediaNamePositionMarker = "<span id='media-name-second-part'></span>";
 						if (singleMedia !== null) {
+							let singleMediaNameHtml;
 							let singleMediaName = singleMedia.nameForShowing(env.currentAlbum, true);
-							let singleMediaNameHtml = "<span class='media-name'>" + singleMediaName + "</span>";
+							if (isSearchTitle || isSelectionTitle) {
+								let name;
+								if (isSearchTitle)
+									[name, mediaNamePosition] = singleMedia.captionForSearch.split(br);
+								else if (isSelectionTitle)
+									[name, mediaNamePosition] = singleMedia.captionForSelection.split(br);
+								singleMediaNameHtml =
+									"<span class='media-name with-second-part'>" +
+										name +
+										mediaNamePositionMarker +
+									"</span> ";
+							} else {
+								singleMediaNameHtml = "<span class='media-name'>" + singleMediaName + "</span>";
+							}
+
 
 							// title += "<span class='media-name'>" + singleMedia.nameForShowing(env.currentAlbum, true) + "</span>";
 
@@ -705,6 +722,8 @@
 								}
 							}
 						}
+						if (title.indexOf(mediaNamePositionMarker) !== -1)
+							title = title.replace(mediaNamePositionMarker, mediaNamePositionMarker.split("><").join("> " + mediaNamePosition + "<"));
 
 						title = "<span class='title-main'>" + title + "</span>";
 
