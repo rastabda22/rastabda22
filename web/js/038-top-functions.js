@@ -118,7 +118,7 @@
 					titleComponents = env.currentAlbum.path.split("/");
 				}
 
-				linksForTitleComponents = env.currentAlbum.ancestorsCacheBase;
+				linksForTitleComponents = env.currentAlbum.ancestorsCacheBase.slice();
 
 				isFolderTitle = (linksForTitleComponents[0] === env.options.folders_string);
 				isDateTitle = (linksForTitleComponents[0] === env.options.by_date_string);
@@ -746,15 +746,15 @@
 							);
 						}
 
-						// if (setDocumentTitle) {
+						if (setDocumentTitle) {
 						// 	// keep generating the html page title
 						// 	if (singleMedia !== null)
 						// 		documentTitle = singleMedia.nameForShowing(env.currentAlbum) + documentTitle;
 						// 	else if (env.currentAlbum !== null && ! env.currentAlbum.subalbums.length)
 						// 		documentTitle = util.trimExtension(env.currentAlbum.media[0].name) + raquoForTitle + documentTitle;
 						//
-						// 	document.title = documentTitle;
-						// }
+							document.title = documentTitle;
+						}
 
 						var toBeResolved = true;
 						if (addSearchMarker) {
@@ -764,7 +764,7 @@
 							var promise = phFl.getAlbum(searchFolderCacheBase, util.errorThenGoUp, {getMedia: true, getPositions: true});
 							promise.then(
 								function(theAlbum) {
-									var whereLinks = '', whereLinksArray = [], thisCacheBase, name, documentTitle;
+									var whereLinks = '', whereLinksArray = [], thisCacheBase, name;
 
 									if (theAlbum.hasOwnProperty('ancestorsNames')) {
 										for (var i = 0; i < theAlbum.ancestorsNames.length; i ++) {
@@ -795,7 +795,7 @@
 
 									if (setDocumentTitle) {
 										// correct the page title too
-										documentTitle = $(document).attr('title');
+										// documentTitle = $(document).attr('title');
 										documentTitle = documentTitle.replace(
 											"(" + util._t("#by-search") + ")",
 											"(" + util._t("#by-search") + ")" + raquoForTitle + util.stripHtmlAndReplaceEntities(whereLinksArray.reverse().join(raquoForTitle))
