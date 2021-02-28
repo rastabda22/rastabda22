@@ -1265,9 +1265,11 @@
 			"click",
 			function() {
 				$("#right-menu li ul").addClass("hidden");
-				$("#right-menu li span.caption").removeClass("expanded");
+				$("#right-menu li").removeClass("expanded");
+				// $("#right-menu li span.caption").removeClass("expanded");
 				$("ul", this).removeClass("hidden");
-				$("span.caption", this).addClass("expanded");
+				$(this).addClass("expanded");
+				// $("span.caption", this).addClass("expanded");
 			}
 		);
 	};

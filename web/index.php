@@ -451,12 +451,12 @@
 				<li class="expandable browsing-mode-switcher active">
 					<span class="browsing-mode-switcher caption"></span>
 					<ul class="sub-menu hidden">
-						<li id="folders-view" class="browsing-mode-switcher radio"></li>
-						<li id="by-date-view" class="browsing-mode-switcher radio"></li>
-						<li id="by-gps-view" class="browsing-mode-switcher radio"></li>
-						<li id="by-map-view" class="browsing-mode-switcher radio"></li>
-						<li id="by-search-view" class="browsing-mode-switcher radio"></li>
-						<li id="by-selection-view" class="browsing-mode-switcher radio"></li>
+						<li id="folders-view" class="browsing-mode-switcher radio active"></li>
+						<li id="by-date-view" class="browsing-mode-switcher radio active"></li>
+						<li id="by-gps-view" class="browsing-mode-switcher radio active"></li>
+						<li id="by-map-view" class="browsing-mode-switcher radio active"></li>
+						<li id="by-search-view" class="browsing-mode-switcher radio active"></li>
+						<li id="by-selection-view" class="browsing-mode-switcher radio active"></li>
 					</ul>
 				</li>
 
