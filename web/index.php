@@ -551,6 +551,7 @@
 			<div id="sending-email" class="messages"></div>
 			<div id="ui-settings-restored" class="messages"></div>
 
+
 			<div id="folders-browsing" class="browsing-mode-message"></div>
 			<div id="by-date-browsing" class="browsing-mode-message"></div>
 			<div id="by-gps-browsing" class="browsing-mode-message"></div>
