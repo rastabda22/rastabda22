@@ -74,8 +74,8 @@
 				var title, titleCount, documentTitle, i, isFolderTitle, isDateTitle, isGpsTitle, isSearchTitle, isSelectionTitle, isMapTitle;
 				var titleAnchorClasses, where, initialValue, searchFolderCacheBase;
 				var linkCount = 0, linksToLeave = 1, latitude, longitude, arrayCoordinates;
-				var raquo = "&raquo;";
-				var raquoForTitle = " \u00ab ";
+				const raquo = "&raquo;";
+				const raquoForTitle = " \u00ab ";
 				// gpsLevelNumber is the number of levels for the by gps tree
 				// current levels are country, region, place => 3
 				var gpsLevelNumber = 3;
@@ -338,7 +338,7 @@
 
 					// if (setDocumentTitle) {
 					// 	// build the html page title
-					// 	documentTitle += " (" + where +") " + raquoForTitle + " " + documentTitle;
+					// 	documentTitle += " (" + where +")" + raquoForTitle + documentTitle;
 					// 	if (singleMedia !== null)
 					// 		documentTitle = raquoForTitle + documentTitle;
 					// }
@@ -437,7 +437,7 @@
 
 					// if (setDocumentTitle) {
 					// 	// build the html page title
-					// 	documentTitle += " (" + where + ") " + raquoForTitle + " " + titleComponents[0];
+					// 	documentTitle += " (" + where + ")" + raquoForTitle + titleComponents[0];
 					// 	if (singleMedia !== null)
 					// 		documentTitle = raquoForTitle + documentTitle;
 					// }
@@ -490,7 +490,7 @@
 						// where = util.stripHtmlAndReplaceEntities(where);
 						//
 						// if (setDocumentTitle) {
-						// 	documentTitle += " (" + where +") " + raquoForTitle + " " + documentTitle;
+						// 	documentTitle += " (" + where +")" + raquoForTitle + documentTitle;
 						// }
 					}
 
@@ -795,7 +795,7 @@
 										documentTitle = $(document).attr('title');
 										documentTitle = documentTitle.replace(
 											"(" + util._t("#by-search") + ")",
-											"(" + util._t("#by-search") + ") " + raquoForTitle + " " + util.stripHtmlAndReplaceEntities(whereLinksArray.reverse().join(raquoForTitle))
+											"(" + util._t("#by-search") + ")" + raquoForTitle + util.stripHtmlAndReplaceEntities(whereLinksArray.reverse().join(raquoForTitle))
 										);
 										document.title = documentTitle;
 									}
