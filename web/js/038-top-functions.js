@@ -600,8 +600,10 @@
 
 				promise.then(
 					function() {
+						documentTitleComponents = titleComponents.slice();
 						if (singleMedia !== null) {
-							let singleMediaNameHtml = "<span class='media-name'>" + singleMedia.nameForShowing(env.currentAlbum, true) + "</span>";
+							let singleMediaName = singleMedia.nameForShowing(env.currentAlbum, true);
+							let singleMediaNameHtml = "<span class='media-name'>" + singleMediaName + "</span>";
 
 							// title += "<span class='media-name'>" + singleMedia.nameForShowing(env.currentAlbum, true) + "</span>";
 
@@ -616,6 +618,7 @@
 								singleMediaNameHtml += "<a class='map-popup-trigger'>" + img.prop("outerHTML") + "</a>";
 							}
 							titleComponents.push(singleMediaNameHtml);
+							documentTitleComponents.push(singleMediaName);
 						}
 
 						title = titleComponents.map(
@@ -635,7 +638,7 @@
 							}
 						).join(raquo);
 
-						documentTitle = titleComponents.slice().reverse().join(raquoForTitle);
+						documentTitle = documentTitleComponents.reverse().join(raquoForTitle);
 
 						if (singleMedia === null && env.currentAlbum.numPositionsInTree) {
 							let markers = "";
