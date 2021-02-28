@@ -3412,7 +3412,7 @@
 
 	Utilities.areColliding = function(jQueryObject1, jQueryObject2) {
 		function isInside(corner, square) {
-			return square[0] < corner[0] && corner[0] < square[2] && square[1] < corner[1] && corner[1] < square[3];
+			return square[0] <= corner[0] && corner[0] <= square[2] && square[1] <= corner[1] && corner[1] <= square[3];
 		}
 
 		if (! jQueryObject1.is(":visible") || ! jQueryObject2.is(":visible"))
