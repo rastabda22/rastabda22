@@ -281,7 +281,7 @@
 						classesForTitleComponents[1] = ["main-search-link"];
 						// searchFolderCacheBase = albumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
 						searchFolderCacheBase = env.options.cache_base_to_search_in;
-						addSearchMarker = true;
+						// addSearchMarker = true;
 					}
 					titleComponents.pop();
 					linksForTitleComponents.pop();
