@@ -206,10 +206,10 @@
 				// ' -f' . $options['request_password_email']
 			if (! $result) {
 				echo "mail not sent:" . error_get_last()['message'];
-				// echo "<br>mail command = mail(" .$options['request_password_email'] . ", " . $subject . ", " . $message . ", " . 'Reply-To:' . $_GET['email'] . ")";
-				echo "<br>mail command = mail('" .$options['request_password_email'] . "', '" . $subject . "', '" . $message . "')";
-				echo "<br>subject = " . $subject;
-				echo "<br>nessage = " . $message;
+				// echo "<br />mail command = mail(" .$options['request_password_email'] . ", " . $subject . ", " . $message . ", " . 'Reply-To:' . $_GET['email'] . ")";
+				echo "<br />mail command = mail('" .$options['request_password_email'] . "', '" . $subject . "', '" . $message . "')";
+				echo "<br />subject = " . $subject;
+				echo "<br />nessage = " . $message;
 				exit;
 			} else {
 				header($_GET['url']);
