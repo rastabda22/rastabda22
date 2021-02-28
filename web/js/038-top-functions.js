@@ -736,10 +736,10 @@
 											let event = {data: {}};
 											event.data.resize = true;
 											event.data.id = "center";
-											let scalePromise = ev.data.currentMedia.scale(event);
+											let scalePromise = ev.data.singleMedia.scale(event);
 											scalePromise.then(
 												function() {
-													if (ev.data.currentMedia.isImage()) {
+													if (ev.data.singleMedia.isImage()) {
 														util.setPinchButtonsPosition();
 														util.setPinchButtonsVisibility();
 													}
