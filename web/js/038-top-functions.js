@@ -338,7 +338,7 @@
 
 					// if (setDocumentTitle) {
 					// 	// build the html page title
-					// 	documentTitle += " (" + where +") \u00ab " + documentTitle;
+					// 	documentTitle += " (" + where +") " + raquoForTitle + " " + documentTitle;
 					// 	if (singleMedia !== null)
 					// 		documentTitle = raquoForTitle + documentTitle;
 					// }
@@ -437,7 +437,7 @@
 
 					// if (setDocumentTitle) {
 					// 	// build the html page title
-					// 	documentTitle += " (" + where + ") \u00ab " + titleComponents[0];
+					// 	documentTitle += " (" + where + ") " + raquoForTitle + " " + titleComponents[0];
 					// 	if (singleMedia !== null)
 					// 		documentTitle = raquoForTitle + documentTitle;
 					// }
@@ -490,7 +490,7 @@
 						// where = util.stripHtmlAndReplaceEntities(where);
 						//
 						// if (setDocumentTitle) {
-						// 	documentTitle += " (" + where +") \u00ab " + documentTitle;
+						// 	documentTitle += " (" + where +") " + raquoForTitle + " " + documentTitle;
 						// }
 					}
 
@@ -795,7 +795,7 @@
 										documentTitle = $(document).attr('title');
 										documentTitle = documentTitle.replace(
 											"(" + util._t("#by-search") + ")",
-											"(" + util._t("#by-search") + ") \u00ab " + util.stripHtmlAndReplaceEntities(whereLinksArray.reverse().join(raquoForTitle))
+											"(" + util._t("#by-search") + ") " + raquoForTitle + " " + util.stripHtmlAndReplaceEntities(whereLinksArray.reverse().join(raquoForTitle))
 										);
 										document.title = documentTitle;
 									}
