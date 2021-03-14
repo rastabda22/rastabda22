@@ -331,8 +331,12 @@
 							if (env.currentAlbum.subalbums.length)
 								titleCount += " " + util._t(".title-and");
 						}
+
+						if (env.currentAlbum.numsMedia.imagesAndVideosTotal() && env.currentAlbum.subalbums.length)
+							titleCount += " ";
+
 						if (env.currentAlbum.subalbums.length) {
-							titleCount += " " + env.currentAlbum.subalbums.length;
+							titleCount += env.currentAlbum.subalbums.length;
 							titleCount += " " + util._t(".title-albums");
 						}
 
