@@ -571,7 +571,8 @@
 
 						title = "<span class='title-main'>" + title + "</span>";
 
-						title += titleCount;
+						if (titleCount)
+							title += titleCount;
 
 						if (id === "album")
 							$("#album-view .title-string").html(title);
