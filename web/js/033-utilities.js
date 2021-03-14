@@ -1825,6 +1825,28 @@
 		});
 	};
 
+	Utilities.prototype.changeToBySelectionView = function(thisMedia = null) {
+		TopFunctions.showBrowsingModeMessage("#by-selection-browsing");
+		var isPopup = Utilities.isPopup();
+		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;		if (isPopup) {
+			// the popup is there: close it
+			$('.leaflet-popup-close-button')[0].click();
+		}
+		if (isMap || isPopup) {
+			// we are in a map: close it
+			$('.modal-close')[0].click();
+		}
+
+		if (thisMedia) {
+			$(".title").removeClass("hidden-by-pinch");
+			$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
+			window.location.href = PhotoFloat.encodeHash(env.selectionAlbum.cacheBase, thisMedia);
+		} else {
+			window.location.href = PhotoFloat.encodeHash(env.selectionAlbum.cacheBase, null);
+		}
+		return false;
+	};
+
 	Utilities.prototype.setMediaOptions = function() {
 		$(".media-name").css("color", env.options.media_name_color);
 

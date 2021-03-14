@@ -303,25 +303,8 @@
 		// WARNING: the ":not(.hidden)" is missing intentionally, in order to permit to trigger a click even if the menu item isn't shown
 		$("#by-selection-view:not(.selected)").off("click").on(
 			"click",
-			function changeToBySelectionView() {
-				TopFunctions.showBrowsingModeMessage("#by-selection-browsing");
-				if (isPopup) {
-					// the popup is there: close it
-					$('.leaflet-popup-close-button')[0].click();
-				}
-				if (isMap || isPopup) {
-					// we are in a map: close it
-					$('.modal-close')[0].click();
-				}
-
-				if (isSingleMedia) {
-					$(".title").removeClass("hidden-by-pinch");
-					$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
-					window.location.href = phFl.encodeHash(env.selectionAlbum.cacheBase, thisMedia);
-				} else {
-					window.location.href = phFl.encodeHash(env.selectionAlbum.cacheBase, null);
-				}
-				return false;
+			function() {
+				util.changeToBySelectionView(thisMedia);
 			}
 		);
 
@@ -936,7 +919,7 @@
 			$(".select.go-to-selected:not(.hidden)").off("click").on(
 				"click",
 				function() {
-					$("#by-selection-view")[0].click();
+					util.changeToBySelectionView();
 				}
 			);
 		}
