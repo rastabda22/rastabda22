@@ -349,6 +349,9 @@
 					// (optional) i=2: media folder cache base
 					// (optional) i=3: media cache base
 
+					titleComponents.pop();
+					linksForTitleComponents.pop();
+
 					titleComponents[1] = "(" + util._t("#by-selection") + ")";
 					// title += raquo;
 					// title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + env.options.by_selection_string + "'>(" + util._t("#by-selection") + ")</a>";
@@ -400,6 +403,9 @@
 					// (optional) i=2: image cache or folder
 					// (optional) i=3 up: folder or image
 					// (optional) i=n: image
+					titleComponents.pop();
+					linksForTitleComponents.pop();
+
 					titleComponents[1] = "(" + util._t("#by-map") + ")";
 					// title += raquo;
 					//
