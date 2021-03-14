@@ -259,18 +259,6 @@
 						titleCount += ")</span>";
 					}
 				} else if (isSearchTitle) {
-					// i=0: title
-					// i=1: env.options.by_search_string
-					// (optional) i=2: image cache or folder
-					// (optional) i=3 up: folder or image
-					// (optional) i=n: image
-
-					// if (
-					// 	env.options.search_current_album &&
-					// 	! util.isAnyRootCacheBase(env.options.cache_base_to_search_in)
-					// ) {
-					// 	title += "<span id='search-album-to-be-filled'></span>" + raquo;
-					// }
 					titleComponents[1] = "(" + util._t("#by-search") + ")";
 					linksForTitleComponents[1] = env.currentAlbum.cacheBase;
 					classesForTitleComponents[1] = ["search-link"];
@@ -279,27 +267,10 @@
 						! util.isAnyRootCacheBase(env.options.cache_base_to_search_in)
 					) {
 						classesForTitleComponents[1] = ["main-search-link"];
-						// searchFolderCacheBase = albumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
 						searchFolderCacheBase = env.options.cache_base_to_search_in;
-						// addSearchMarker = true;
 					}
 					titleComponents.pop();
 					linksForTitleComponents.pop();
-					// where =
-					// 	"<a class='" + searchClass + "' href='" + env.hashBeginning + env.currentAlbum.cacheBase + "'>" +
-					// 	util._t("#by-search") +
-					// 	"</a>";
-
-					// title += "<span class='title-no-anchor'>(" + where + ")</span>";
-					// where = util.stripHtmlAndReplaceEntities(where);
-					//
-					// // do not show the options and the search words, they are visible in the menu
-					// // show the image name, if it is there
-					// if (singleMedia !== null) {
-					// 	title += raquo;
-					// }
-					//
-					// title += fillInSpan;
 
 					if (
 						singleMedia === null &&
@@ -336,36 +307,11 @@
 
 						titleCount += ")</span>";
 					}
-
-					// if (setDocumentTitle) {
-					// 	// build the html page title
-					// 	documentTitle += " (" + where +")" + raquoForTitle + documentTitle;
-					// 	if (singleMedia !== null)
-					// 		documentTitle = raquoForTitle + documentTitle;
-					// }
 				} else if (isSelectionTitle) {
-					// i=0: title
-					// i=1: env.options.by_selection_string
-					// (optional) i=2: media folder cache base
-					// (optional) i=3: media cache base
-
 					titleComponents.pop();
 					linksForTitleComponents.pop();
 
 					titleComponents[1] = "(" + util._t("#by-selection") + ")";
-					// title += raquo;
-					// title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + env.options.by_selection_string + "'>(" + util._t("#by-selection") + ")</a>";
-					// if (singleMedia !== null) {
-					// 	title += raquo;
-					// }
-					//
-					// title += fillInSpan;
-					//
-					// if (setDocumentTitle) {
-					// 	documentTitle = " (" + util._t("#by-selection") + ")";
-					// 	if (singleMedia !== null)
-					// 		documentTitle += raquoForTitle + documentTitle;
-					// }
 
 					if (
 						singleMedia === null &&
@@ -392,38 +338,11 @@
 
 						titleCount += ")</span>";
 					}
-
-					// if (setDocumentTitle) {
-					// 	if (singleMedia !== null)
-					// 		documentTitle = raquoForTitle + documentTitle;
-					// }
 				} else if (isMapTitle) {
-					// i=0: title
-					// i=1: env.options.by_search_string
-					// (optional) i=2: image cache or folder
-					// (optional) i=3 up: folder or image
-					// (optional) i=n: image
 					titleComponents.pop();
 					linksForTitleComponents.pop();
 
 					titleComponents[1] = "(" + util._t("#by-map") + ")";
-					// title += raquo;
-					//
-					// where =
-					// 	"<a class='search-link' href='" + env.hashBeginning + env.currentAlbum.cacheBase + "'>" +
-					// 	util._t("#by-map") +
-					// 	"</a>";
-					//
-					// title += "<span class='title-no-anchor'>(" + where + ")</span>";
-					// where = util.stripHtmlAndReplaceEntities(where);
-					//
-					// // do not show the options and the search words, they are visible in the menu
-					// // show the image name, if it is there
-					// if (singleMedia !== null) {
-					// 	title += raquo;
-					// }
-					//
-					// title += fillInSpan;
 
 					if (
 						titleComponents.length > 2 &&
@@ -441,26 +360,14 @@
 							titleCount += util._t(".title-media");
 						titleCount += ")</span>";
 					}
-
-					// if (setDocumentTitle) {
-					// 	// build the html page title
-					// 	documentTitle += " (" + where + ")" + raquoForTitle + titleComponents[0];
-					// 	if (singleMedia !== null)
-					// 		documentTitle = raquoForTitle + documentTitle;
-					// }
 				} else {
 					// folders title
-
-					// if (titleComponents.length > 2 || singleMedia !== null)
-					// 	title += raquo;
 
 					let classes, link, titleElement;
 					classes = ["search-link"];
 
 					if (savedSearchAlbumCacheBase !== undefined && savedSearchAlbumCacheBase !== null) {
 						searchFolderCacheBase = env.options.cache_base_to_search_in;
-						// searchFolderCacheBase = getSearchFolderCacheBase(savedSearchAlbumCacheBase);
-						// let searchIsInCurrentAlbumOnly = isSearchInCurrentAlbumOnly(savedSearchAlbumCacheBase);
 						link = savedSearchAlbumCacheBase;
 						classes = ["search-link"];
 						if (util.isSearchCacheBase(savedSearchAlbumCacheBase)) {
@@ -468,71 +375,14 @@
 							addSearchMarker = true;
 							if (searchFolderCacheBase.split(env.options.cache_folder_separator).length > 1 && env.options.search_current_album) {
 								classes = ["main-search-link"];
-								// where =
-								// 	"<a class='main-search-link' href='" + env.hashBeginning + savedSearchAlbumCacheBase + "'>" +
-								// 	util._t("#by-search") +
-								// 	"</a>";
-							} else if (searchFolderCacheBase.split(env.options.cache_folder_separator).length <= 1 || ! env.options.search_current_album) {
-								// where =
-								// 	"<a class='search-link' href='" + env.hashBeginning + savedSearchAlbumCacheBase + "'>" +
-								// 	util._t("#by-search") +
-								// 	"</a>";
+							// } else if (searchFolderCacheBase.split(env.options.cache_folder_separator).length <= 1 || ! env.options.search_current_album) {
 							}
 						} else {
 							// album in a selection
 							titleElement = util._t("#by-selection");
 							addSelectionMarker = true;
-							// where =
-							// 	"<a class='search-link' href='" + env.hashBeginning + savedSearchAlbumCacheBase + "'>" +
-							// 	util._t("#by-selection") +
-							// 	"</a>";
 						}
-
-						// if (addSearchMarker) {
-						// 	title += "<span id='search-album-to-be-filled'></span>";
-						// 	title += raquo;
-						// }
-						// title += "<span class='title-no-anchor'>(" + where + ")</span>";
-						// title += raquo;
-						// where = util.stripHtmlAndReplaceEntities(where);
-						//
-						// if (setDocumentTitle) {
-						// 	documentTitle += " (" + where +")" + raquoForTitle + documentTitle;
-						// }
 					}
-
-					// if (setDocumentTitle) {
-					// 	if (titleComponents.length > 2 || singleMedia !== null)
-					// 		documentTitle = raquoForTitle + documentTitle;
-					// }
-
-					// initialValue = 2;
-					// if (
-					// 	savedSearchAlbumCacheBase !== undefined &&
-					// 	savedSearchAlbumCacheBase !== null &&
-					// 	util.isSearchCacheBase(savedSearchAlbumCacheBase)
-					// ) {
-					// 	// the folders from the first until the search folder inclusive must not be shown
-					// 	initialValue = savedSearchAlbumCacheBase.split(env.options.cache_folder_separator).slice(2).length + 1;
-					// }
-					// for (i = initialValue; i < titleComponents.length; ++i) {
-					// 	if (i < titleComponents.length - 1 || singleMedia !== null)
-					// 		title += "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + encodeURI(env.currentAlbum.ancestorsCacheBase[i - 1]) + "'>";
-					// 	else
-					// 		title += "<span class='title-no-anchor'>";
-					//
-					// 	title += textComponents[i];
-					//
-					// 	if (i < titleComponents.length - 1 || singleMedia !== null)
-					// 		title += "</a>";
-					// 	else
-					// 		title += "</span>";
-					//
-					// 	if (i < titleComponents.length - 1 || singleMedia !== null)
-					// 		title += raquo;
-					// }
-					//
-					// title += fillInSpan;
 
 					if (
 						titleComponents.length > 1 &&
@@ -586,15 +436,6 @@
 						}
 						titleCount += ")</span>";
 					}
-
-					// if (setDocumentTitle) {
-					// 	for (i = initialValue; i < titleComponents.length; ++i) {
-					// 		// keep building the html page title
-					// 		documentTitle = textComponents[i] + documentTitle;
-					// 		if (i < titleComponents.length - 1 || singleMedia !== null)
-					// 			documentTitle = raquoForTitle + documentTitle;
-					// 	}
-					// }
 				}
 
 				if (addSearchMarker) {
@@ -626,9 +467,6 @@
 							} else {
 								singleMediaNameHtml = "<span class='media-name'>" + singleMediaName + "</span>";
 							}
-
-
-							// title += "<span class='media-name'>" + singleMedia.nameForShowing(env.currentAlbum, true) + "</span>";
 
 							if (env.currentMedia.hasGpsData()) {
 								let imgHtml = "<img class='title-img' height='20px' src='img/ic_place_white_24dp_2x.png'>";
@@ -704,10 +542,6 @@
 								markers += "<a class='map-popup-trigger-double'>" + img.prop("outerHTML") + "</a>";
 							}
 
-							// title = title.markers(
-							// 	fillInSpan,
-							// 	markers
-							// );
 							title += markers;
 						}
 
@@ -772,12 +606,6 @@
 						}
 
 						if (setDocumentTitle) {
-						// 	// keep generating the html page title
-						// 	if (singleMedia !== null)
-						// 		documentTitle = singleMedia.nameForShowing(env.currentAlbum) + documentTitle;
-						// 	else if (env.currentAlbum !== null && ! env.currentAlbum.subalbums.length)
-						// 		documentTitle = util.trimExtension(env.currentAlbum.media[0].name) + raquoForTitle + documentTitle;
-						//
 							document.title = documentTitle;
 						}
 
