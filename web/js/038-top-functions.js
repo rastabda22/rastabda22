@@ -389,7 +389,7 @@
 					}
 
 					if (
-						titleComponents.length > 1 &&
+						// titleComponents.length > 1 &&
 						(singleMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) &&
 						! env.isMobile.any()
 					) {
