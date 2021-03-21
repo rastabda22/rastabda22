@@ -1294,11 +1294,11 @@
 
 	Functions.pinchSwipeInitialization = function() {
 		pS.initialize();
-		util.setPinchButtonsPosition();
-		util.setPinchButtonsVisibility();
-		util.setSelectButtonPosition();
-		util.setDescriptionOptions();
-		util.correctElementPositions();
+		// util.setPinchButtonsPosition();
+		// util.setPinchButtonsVisibility();
+		// util.setSelectButtonPosition();
+		// util.setDescriptionOptions();
+		// util.correctElementPositions();
 	};
 
 	Functions.tenYears = function() {
