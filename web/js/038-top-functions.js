@@ -1374,8 +1374,11 @@
 			TopFunctions.setTitle("album", null).then(
 				function titleSet() {
 					if ($("#album-view").is(":visible")) {
-						if (env.currentAlbum.subalbums.length)
+						if (env.currentAlbum.subalbums.length) {
 							env.currentAlbum.showSubalbums();
+						} else {
+							$("#subalbums").hide();
+						}
 						if (
 							env.albumOfPreviousState === null || (
 								env.albumOfPreviousState !== env.currentAlbum ||

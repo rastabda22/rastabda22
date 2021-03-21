@@ -770,6 +770,7 @@ $(document).ready(function() {
 			util.translate();
 			$("#auth-text").hide();
 			$("#thumbs").show();
+			$("#subalbums").show();
 			$("#album-view, #media-view, #my-modal").css("opacity", "");
 
 			if (env.isABrowsingModeChange)
