@@ -3918,16 +3918,17 @@
 			}
 		} else {
 			// hash of a media: remove the media
-			if (savedSearchAlbumCacheBase !== null || Utilities.isFolderCacheBase(albumCacheBase))
+			if (savedSearchAlbumCacheBase !== null || Utilities.isFolderCacheBase(albumCacheBase)) {
 				// media in found album or in one of its subalbum
 				// or
 				// media in folder hash:
 				// remove the trailing media
 				resultCacheBase = Utilities.pathJoin(hash.split("/").slice(1, -1));
-			else
+			} else {
 				// all the other cases
 				// remove the trailing media and the folder it's inside
 				resultCacheBase = Utilities.pathJoin(hash.split("/").slice(1, -2));
+			}
 		}
 
 		return env.hashBeginning + resultCacheBase;

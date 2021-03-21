@@ -2072,7 +2072,7 @@
 
 				// imageElement.get(0).media = ithMedia;
 				let mediaHash;
-				if (typeof savedSearchAlbumCacheBase !== "undefined" && savedSearchAlbumCacheBase !== null)
+				if (savedSearchAlbumCacheBase !== undefined && savedSearchAlbumCacheBase !== null)
 					mediaHash = phFl.encodeHash(this.cacheBase, ithMedia, foundAlbumCacheBase, savedSearchAlbumCacheBase);
 				else
 					mediaHash = phFl.encodeHash(this.cacheBase, ithMedia);

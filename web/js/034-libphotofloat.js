@@ -1213,7 +1213,7 @@
 	PhotoFloat.encodeHash = function(cacheBase, singleMedia, foundAlbumCacheBase, savedSearchAlbumCacheBase) {
 		var hash;
 
-		if (typeof savedSearchAlbumCacheBase !== "undefined" && savedSearchAlbumCacheBase !== null) {
+		if (savedSearchAlbumCacheBase !== undefined && savedSearchAlbumCacheBase !== null) {
 			savedSearchAlbumCacheBase = PhotoFloat.convertHashToCacheBase(savedSearchAlbumCacheBase);
 			foundAlbumCacheBase = PhotoFloat.convertHashToCacheBase(foundAlbumCacheBase);
 		}
@@ -1221,7 +1221,7 @@
 		if (singleMedia !== null) {
 			// media hash
 			if (util.isFolderCacheBase(cacheBase)) {
-				if (typeof savedSearchAlbumCacheBase === "undefined" || savedSearchAlbumCacheBase === null)
+				if (savedSearchAlbumCacheBase === undefined || savedSearchAlbumCacheBase === null)
 					// media in folders album, count = 2
 					hash = util.pathJoin([
 						cacheBase,
@@ -1238,7 +1238,7 @@
 			} else if (
 				util.isByDateCacheBase(cacheBase) ||
 				util.isByGpsCacheBase(cacheBase) ||
-				util.isSearchCacheBase(cacheBase) && (typeof savedSearchAlbumCacheBase === "undefined" || savedSearchAlbumCacheBase === null) ||
+				util.isSearchCacheBase(cacheBase) && (savedSearchAlbumCacheBase === undefined || savedSearchAlbumCacheBase === null) ||
 				util.isSelectionCacheBase(cacheBase) ||
 				util.isMapCacheBase(cacheBase)
 			)
@@ -1250,7 +1250,7 @@
 				]);
 		} else {
 			// no media: album hash
-			if (typeof savedSearchAlbumCacheBase !== "undefined" && savedSearchAlbumCacheBase !== null)
+			if (savedSearchAlbumCacheBase !== undefined && savedSearchAlbumCacheBase !== null)
 				// found album or one of its subalbums, count = 3
 				hash = util.pathJoin([
 					cacheBase,
