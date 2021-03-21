@@ -1418,7 +1418,10 @@
 						! albumFromCache.media.length
 					) {
 						// it's a search with no results
-						util.noResults(albumFromCache, resolve_parseHash);
+						if (albumFromCache.hasOwnProperty("removedStopWords") && albumFromCache.removedStopWords.length > 0)
+							util.noResults(albumFromCache, resolve_parseHash, '#no-search-string-after-stopwords-removed');
+						else
+							util.noResults(albumFromCache, resolve_parseHash);
 						// // the resolve function is needed at least in order to show the title
 						// resolve_parseHash([albumFromCache, -1]);
 					} else {
