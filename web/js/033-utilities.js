@@ -243,11 +243,17 @@
 		return newSearchAlbum;
 	};
 
+	Utilities.initializeSearchRootAlbum = function() {
+		rootSearchAlbum = new Album(env.options.by_search_string);
+		env.cache.putAlbum(rootSearchAlbum);
+	};
+
+
 	Album.prototype.initializeSearchAlbumEnd = function() {
 		var rootSearchAlbum = env.cache.getAlbum(env.options.by_search_string);
 		if (! rootSearchAlbum) {
-			rootSearchAlbum = new Album(env.options.by_search_string);
-			env.cache.putAlbum(rootSearchAlbum);
+			Utilities.initializeSearchRootAlbum();
+			rootSearchAlbum = env.cache.getAlbum(env.options.by_search_string);
 		}
 
 		rootSearchAlbum.numsMediaInSubTree.sum(this.numsMediaInSubTree);
