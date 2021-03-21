@@ -1210,7 +1210,7 @@
 		}
 	};
 
-	PhotoFloat.encodeHash = function(cacheBase, media, foundAlbumCacheBase, savedSearchAlbumCacheBase) {
+	PhotoFloat.encodeHash = function(cacheBase, singleMedia, foundAlbumCacheBase, savedSearchAlbumCacheBase) {
 		var hash;
 
 		if (typeof savedSearchAlbumCacheBase !== "undefined" && savedSearchAlbumCacheBase !== null) {
@@ -1218,14 +1218,14 @@
 			foundAlbumCacheBase = PhotoFloat.convertHashToCacheBase(foundAlbumCacheBase);
 		}
 
-		if (media !== null) {
+		if (singleMedia !== null) {
 			// media hash
 			if (util.isFolderCacheBase(cacheBase)) {
 				if (typeof savedSearchAlbumCacheBase === "undefined" || savedSearchAlbumCacheBase === null)
 					// media in folders album, count = 2
 					hash = util.pathJoin([
 						cacheBase,
-						media.cacheBase
+						singleMedia.cacheBase
 					]);
 				else
 					// media in found album or in one of its subalbum, count = 4
@@ -1233,7 +1233,7 @@
 						cacheBase,
 						foundAlbumCacheBase,
 						savedSearchAlbumCacheBase,
-						media.cacheBase
+						singleMedia.cacheBase
 					]);
 			} else if (
 				util.isByDateCacheBase(cacheBase) ||
@@ -1245,8 +1245,8 @@
 				// media in date or gps album, count = 3
 				hash = util.pathJoin([
 					cacheBase,
-					media.foldersCacheBase,
-					media.cacheBase
+					singleMedia.foldersCacheBase,
+					singleMedia.cacheBase
 				]);
 		} else {
 			// no media: album hash
