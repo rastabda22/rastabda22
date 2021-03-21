@@ -1374,7 +1374,8 @@
 			TopFunctions.setTitle("album", null).then(
 				function titleSet() {
 					if ($("#album-view").is(":visible")) {
-						env.currentAlbum.showSubalbums();
+						if (env.currentAlbum.subalbums.length)
+							env.currentAlbum.showSubalbums();
 						if (
 							env.albumOfPreviousState === null || (
 								env.albumOfPreviousState !== env.currentAlbum ||
