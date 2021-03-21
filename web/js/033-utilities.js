@@ -1149,6 +1149,7 @@
 	Utilities.prototype.noResults = function(album, resolveParseHash, selector) {
 		// no media found or other search fail, show the message
 		env.currentAlbum = album;
+		$("#thumbs").hide();
 		TopFunctions.setTitle("album", null);
 		if (! $("ul#right-menu").hasClass("expand")) {
 			// the search root album could not be in the cache, get it, toggleMenu needs it

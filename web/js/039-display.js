@@ -769,6 +769,7 @@ $(document).ready(function() {
 		function() {
 			util.translate();
 			$("#auth-text").hide();
+			$("#thumbs").show();
 			$("#album-view, #media-view, #my-modal").css("opacity", "");
 
 			if (env.isABrowsingModeChange)
