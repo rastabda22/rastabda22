@@ -3324,8 +3324,8 @@
 		}
 
 		function moveSelectBoxAboveMediaBar() {
-			if (env.currentMedia !== null && Utilities.areColliding($("#media-select-box .select-box"), $(".media-box#center .media-bar"))) {
-				$("#media-select-box .select-box").css("bottom", (parseInt($(".media-box#center .media-bar").css("bottom")) + mediaBarHeigth + 10) + "px");
+			if (env.currentMedia !== null && Utilities.areColliding($("#media-select-box .select-box"), $(".media-box#center .media-bar .links"))) {
+				$("#media-select-box .select-box").css("bottom", (env.windowHeight - $(".media-box#center .media-bar .links").offset().top + 10).toString() + "px");
 			}
 		}
 
@@ -3364,12 +3364,12 @@
 		}
 
 		function MoveDescriptionAboveMediaBar() {
-			if (env.currentMedia !== null && Utilities.areColliding($("#description-wrapper"), $(".media-box#center .media-bar"))) {
+			if (env.currentMedia !== null && Utilities.areColliding($("#description-wrapper"), $(".media-box#center .media-bar .links"))) {
 				// move the descriptiont/tags box above the media bar
 				let thumbsHeight = 0;
 				if ($("#thumbs").is(":visible"))
 					thumbsHeight = $("#thumbs").outerHeight();
-				$("#description-wrapper").css("bottom", (thumbsHeight + parseInt($(".media-box#center .media-bar").css("bottom")) + mediaBarHeigth + 10) + "px");
+				$("#description-wrapper").css("bottom", (env.windowHeight - $(".media-box#center .media-bar .links").offset().top + 10).toString() + "px");
 			}
 		}
 
