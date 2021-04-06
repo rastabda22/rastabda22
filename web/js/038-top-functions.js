@@ -2644,6 +2644,12 @@
 			if (env.currentMedia !== null) {
 				let event = {data: {}};
 				event.data.resize = true;
+				if (! env.currentAlbum.isAlbumWithOneMedia()) {
+					event.data.id = "left";
+					let scalePromise = env.prevMedia.scale(event);
+					event.data.id = "right";
+					scalePromise = env.nextMedia.scale(event);
+				}
 				event.data.id = "center";
 				let scalePromise = env.currentMedia.scale(event);
 				scalePromise.then(
