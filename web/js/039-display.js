@@ -103,7 +103,7 @@ $(document).ready(function() {
 				}
 			}
 		} else if (! isAuth) {
-			if (! $("#search-field").is(':focus')) {
+			if (e.key !== undefined && ! $("#search-field").is(':focus')) {
 				if (! e.ctrlKey && ! e.altKey) {
 					if (e.key === util._t("#hide-everytyhing-shortcut")) {
 						e.preventDefault();
@@ -316,6 +316,7 @@ $(document).ready(function() {
 			}
 
 			if (
+				e.key !== undefined &&
 				! $("#search-field").is(':focus') &&
 				e.key.toLowerCase() === util._t("#select-everything-shortcut")
 			) {
@@ -401,6 +402,7 @@ $(document).ready(function() {
 			}
 
 			if (
+				e.key !== undefined &&
 				e.key.toLowerCase() === util._t("#menu-icon-title-shortcut") && e.target.tagName.toLowerCase() != "input" &&  ! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey
 					// "e" opens the menu, and closes it if focus in not in input field
 			) {

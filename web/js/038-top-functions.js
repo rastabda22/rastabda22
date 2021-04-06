@@ -2129,11 +2129,11 @@
 						"</div>" +
 						"<div class='media-caption'>";
 				let name;
-				if (util.isPopup() || this.isMap())
+				if ((util.isPopup() || this.isMap()) && ithMedia.hasOwnProperty("captionForPopup") && ithMedia.captionForPopup)
 					name = ithMedia.captionForPopup;
-				else if (this.isSearch())
+				else if (this.isSearch() && ithMedia.hasOwnProperty("captionForSearch") && ithMedia.captionForSearch)
 					name = ithMedia.captionForSearch;
-				else if (this.isSelection())
+				else if (this.isSelection() && ithMedia.hasOwnProperty("captionForSelection") && ithMedia.captionForSelection)
 					name = ithMedia.captionForSelection;
 				else
 					name = ithMedia.nameForShowing(this, true, true);
@@ -2648,6 +2648,12 @@
 			if (env.currentMedia !== null) {
 				let event = {data: {}};
 				event.data.resize = true;
+				if (! env.currentAlbum.isAlbumWithOneMedia()) {
+					event.data.id = "left";
+					let scalePromise = env.prevMedia.scale(event);
+					event.data.id = "right";
+					scalePromise = env.nextMedia.scale(event);
+				}
 				event.data.id = "center";
 				let scalePromise = env.currentMedia.scale(event);
 				scalePromise.then(
