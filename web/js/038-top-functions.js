@@ -917,7 +917,7 @@
 			env.isFromAuthForm = false;
 			$("#powered-by").hide();
 
-		$("#thumbs").off('mousewheel').on('mousewheel', TopFunctions.scrollBottomThumbs);
+			$("#album-view").off('mousewheel').on('mousewheel', TopFunctions.scrollBottomThumbs);
 		}
 
 
@@ -1312,7 +1312,7 @@
 
 			if (env.previousMedia === null)
 				$("html, body").stop().animate({ scrollTop: 0 }, "slow");
-			$("#thumbs").off('mousewheel');
+			$("#album-view").off('mousewheel');
 			$("#thumbs").css("height", "");
 			$(".thumb-container").removeClass("current-thumb");
 			$("#media-view, #album-view").removeClass("no-bottom-space");
