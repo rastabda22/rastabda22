@@ -1599,7 +1599,7 @@
 		return $('.leaflet-popup').html() ? true : false;
 	};
 
-	Utilities.prototype.isMap = function() {
+	Utilities.isMap = function() {
 		return ($('#mapdiv').html() ? true : false) && ! Utilities.isPopup();
 	};
 
@@ -2337,6 +2337,62 @@
 			// heightForMediaAndTitle -= env.options.media_thumb_size + 22 + 5;
 
 		return heightForMediaAndTitle;
+	};
+
+	Utilities.prototype.resizeSingleMediaWithPrevAndNext = function(self, album) {
+		env.windowWidth = $(window).outerWidth();
+		env.windowHeight = $(window).outerHeight();
+
+		$("#loading").show();
+
+		var event = {data: {}};
+
+		event.data.resize = true;
+
+		event.data.id = "center";
+
+		// prev and next tree in the DOM must be given the correct sizes
+		$(".media-box#left, .media-box#right").css("width", env.windowWidth);
+		$(".media-box#left, .media-box#right").css("height", env.windowHeight);
+
+		let scalePromise = self.scale(event);
+		scalePromise.then(
+			function() {
+				if (self.isImage()) {
+					if (env.currentZoom === env.initialZoom)
+						Functions.pinchSwipeInitialization();
+					Utilities.setPinchButtonsPosition();
+					Utilities.setPinchButtonsVisibility();
+				}
+				Utilities.setSelectButtonPosition();
+				Utilities.setDescriptionOptions();
+				Utilities.correctElementPositions();
+			}
+		);
+
+		if (album.numsMedia.imagesAndVideosTotal() > 1) {
+			event.data.id = "left";
+			env.prevMedia.scale(event);
+
+			event.data.id = "right";
+			env.nextMedia.scale(event);
+		}
+
+		if (Utilities.isMap()) {
+			// the map must be generated again including the points that only carry protected content
+			env.mapRefreshType = "resize";
+
+			if (Utilities.isPopup()) {
+				env.popupRefreshType = "mapAlbum";
+				$('.leaflet-popup-close-button')[0].click();
+			} else {
+				env.popupRefreshType = "none";
+			}
+
+			// close the map and reopen it
+			$('.modal-close')[0].click();
+			$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
+		}
 	};
 
 	SingleMedia.prototype.scale = function(event) {
@@ -4184,6 +4240,7 @@
 	Utilities.prototype.toggleMenu = Utilities.toggleMenu;
 	Utilities.prototype.addMediaLazyLoader = Utilities.addMediaLazyLoader;
 	Utilities.prototype.socialButtons = Utilities.socialButtons;
+	Utilities.prototype.isMap = Utilities.isMap;
 
 	window.Utilities = Utilities;
 }());

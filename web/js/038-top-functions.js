@@ -870,60 +870,8 @@
 
 			$(window).off("resize").on(
 				"resize",
-				function () {
-					env.windowWidth = $(window).outerWidth();
-					env.windowHeight = $(window).outerHeight();
-
-					$("#loading").show();
-
-					var event = {data: {}};
-
-					event.data.resize = true;
-
-					event.data.id = "center";
-
-					// prev and next tree in the DOM must be given the correct sizes
-					$(".media-box#left, .media-box#right").css("width", env.windowWidth);
-					$(".media-box#left, .media-box#right").css("height", env.windowHeight);
-
-					let scalePromise = self.scale(event);
-					scalePromise.then(
-						function() {
-							if (self.isImage()) {
-								if (env.currentZoom === env.initialZoom)
-									f.pinchSwipeInitialization();
-								util.setPinchButtonsPosition();
-								util.setPinchButtonsVisibility();
-							}
-							util.setSelectButtonPosition();
-							util.setDescriptionOptions();
-							util.correctElementPositions();
-						}
-					);
-
-					if (album.numsMedia.imagesAndVideosTotal() > 1) {
-						event.data.id = "left";
-						env.prevMedia.scale(event);
-
-						event.data.id = "right";
-						env.nextMedia.scale(event);
-					}
-
-					if (util.isMap()) {
-						// the map must be generated again including the points that only carry protected content
-						env.mapRefreshType = "resize";
-
-						if (util.isPopup()) {
-							env.popupRefreshType = "mapAlbum";
-							$('.leaflet-popup-close-button')[0].click();
-						} else {
-							env.popupRefreshType = "none";
-						}
-
-						// close the map and reopen it
-						$('.modal-close')[0].click();
-						$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
-					}
+				function() {
+					util.resizeSingleMediaWithPrevAndNext(self, album);
 				}
 			);
 			// }
