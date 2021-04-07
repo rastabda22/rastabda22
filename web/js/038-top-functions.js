@@ -901,22 +901,24 @@
 			whatMedia = env.nextMedia;
 		}
 
-		$("#media-view").removeClass("hidden");
-		$("#album-and-media-container").addClass("show-media");
-		if (
-			! env.options.hide_bottom_thumbnails && ! env.currentAlbum.isAlbumWithOneMedia() && $("#thumbs").html() === "" ||
-			env.albumOfPreviousState !== env.currentAlbum ||
-			env.albumOfPreviousState !== null && env.isFromAuthForm
-		) {
-			env.currentAlbum.showMedia();
-		} else {
-			util.scrollToThumb();
-		}
-		util.addMediaLazyLoader();
-		env.isFromAuthForm = false;
-		$("#powered-by").hide();
+		if (id === "center") {
+			$("#media-view").removeClass("hidden");
+			$("#album-and-media-container").addClass("show-media");
+			if (
+				! env.options.hide_bottom_thumbnails && ! env.currentAlbum.isAlbumWithOneMedia() && $("#thumbs").html() === "" ||
+				env.albumOfPreviousState !== env.currentAlbum ||
+				env.albumOfPreviousState !== null && env.isFromAuthForm
+			) {
+				env.currentAlbum.showMedia();
+			} else {
+				util.scrollToThumb();
+			}
+			util.addMediaLazyLoader();
+			env.isFromAuthForm = false;
+			$("#powered-by").hide();
 
 		$("#thumbs").off('mousewheel').on('mousewheel', TopFunctions.scrollBottomThumbs);
+		}
 
 
 		var setTitlePromise = TopFunctions.setTitle(id, whatMedia, this);
