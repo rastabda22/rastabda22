@@ -2681,7 +2681,7 @@
 				$("#album-and-media-container.show-media #thumbs img.lazyload-media").Lazy(
 					{
 						// threshold: 2 * env.options.media_thumb_size,
-						appendScroll: $("#thumbs")
+						appendScroll: $("#album-view")
 					}
 				);
 			}
