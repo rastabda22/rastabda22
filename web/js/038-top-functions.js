@@ -2581,8 +2581,8 @@
 	};
 
 	TopFunctions.toggleFullscreen = function(e) {
-		function afterToggling() {
-			if (! env.fullScreenStatus) {
+		function afterToggling(isFullscreen) {
+			if (! isFullscreen) {
 				$(".enter-fullscreen").hide();
 				$(".exit-fullscreen").show();
 				env.fullScreenStatus = true;
@@ -2626,7 +2626,7 @@
 			$("#fullscreen-wrapper").fullScreen(
 				{
 					callback: function(isFullscreen) {
-						afterToggling();
+						afterToggling(isFullscreen);
 					}
 				}
 			);
