@@ -771,7 +771,7 @@ $(document).ready(function() {
 		function() {
 			util.translate();
 			$("#auth-text").hide();
-			$("#thumbs").show();
+			// $("#thumbs").show();
 			$("#subalbums").show();
 			$("#album-view, #media-view, #my-modal").css("opacity", "");
 
