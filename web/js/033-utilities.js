@@ -2330,7 +2330,7 @@
 		// env.windowHeight = $(window).innerHeight();
 		heightForMediaAndTitle = env.windowHeight;
 		if ($("#album-view").is(":visible"))
-			heightForMediaAndTitle -= $("#album-view")[0].offsetHeight;
+			heightForMediaAndTitle -= $("#thumbs")[0].offsetHeight;
 			// heightForMediaAndTitle -= parseInt($("#album-view").css("height"));
 			// // 22 is for the scroll bar and the current media marker
 			// // 5 is an extra space
