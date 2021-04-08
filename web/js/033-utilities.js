@@ -1866,7 +1866,10 @@
 			$(".thumb-and-caption-container .media-name").removeClass("hidden-by-option");
 
 		$(".thumb-and-caption-container").css("margin-right", env.options.spacing.toString() + "px");
-		$(".thumb-and-caption-container").css("margin-bottom", env.options.spacing.toString() + "px");
+		if ($("#album-and-media-container").hasClass("show-media"))
+			$(".thumb-and-caption-container").css("margin-bottom", "0");
+		else
+			$(".thumb-and-caption-container").css("margin-bottom", env.options.spacing.toString() + "px");
 
 		if (env.options.hide_descriptions)
 			$(".media-description").addClass("hidden-by-option");
@@ -2330,7 +2333,7 @@
 		// env.windowHeight = $(window).innerHeight();
 		heightForMediaAndTitle = env.windowHeight;
 		if ($("#album-view").is(":visible"))
-			heightForMediaAndTitle -= $("#thumbs")[0].offsetHeight;
+			heightForMediaAndTitle -= $("#album-view")[0].offsetHeight;
 			// heightForMediaAndTitle -= parseInt($("#album-view").css("height"));
 			// // 22 is for the scroll bar and the current media marker
 			// // 5 is an extra space
@@ -2409,7 +2412,8 @@
 				var heightForMedia, heightForMediaAndTitle, titleHeight;
 
 				if ($("#thumbs").is(":visible")) {
-					let height = env.options.media_thumb_size + Utilities.horizontalScrollBarThickness($("#thumbs")[0]);
+					// the last 6 is the top border, which is yellow for the current thumbnail when in media view
+					let height = env.options.media_thumb_size + Utilities.horizontalScrollBarThickness($("#thumbs")[0]) + 6;
 					$("#thumbs").css("height", height.toString() + "px");
 				}
 
@@ -3584,14 +3588,18 @@
 			$(".media-box .links").css("display", "inline").css("opacity", 0.5).stop().fadeTo("slow", 0.25);
 		} else {
 			$("#media-view").off();
-			$("#media-view").off('mouseenter').on(
-				'mouseenter',
+			$("#media-view").off('mouseover').on(
+				'mouseover',
+			// $("#media-view").off('mouseenter').on(
+			// 	'mouseenter',
 				function() {
 					$(".media-box .links").stop().fadeTo("slow", 0.50).css("display", "inline");
 				}
 			);
-			$("#media-view").off('mouseleave').on(
-				'mouseleave',
+			$("#media-view").off('mouseout').on(
+				'mouseout',
+			// $("#media-view").off('mouseleave').on(
+			// 	'mouseleave',
 				function() {
 					$(".media-box .links").stop().fadeOut("slow");
 				}
