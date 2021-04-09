@@ -2371,7 +2371,7 @@
 
 						let positionHtml = "";
 						let folderMapTitleWithoutHtmlTags;
-						if (ithSubalbum.numPositionsInTree.length) {
+						if (ithSubalbum.numPositionsInTree) {
 							folderMapTitleWithoutHtmlTags = self.folderMapTitle(ithSubalbum, nameHtml).replace(/<br \/>/gm, ' ').replace(/<[^>]*>?/gm, '');
 							positionHtml =
 								"<a id='subalbum-map-link-" + id + "' >" +
@@ -2427,7 +2427,7 @@
 
 						subalbumsElement.append(aHrefHtmlContainer);
 
-						if (ithSubalbum.numPositionsInTree.length) {
+						if (ithSubalbum.numPositionsInTree) {
 							$("#subalbum-map-link-" + id + " img.thumbnail-map-link").attr("title", folderMapTitleWithoutHtmlTags);
 							$("#subalbum-map-link-" + id + " img.thumbnail-map-link").attr("alt", folderMapTitleWithoutHtmlTags);
 						}
