@@ -684,6 +684,7 @@
 								// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
 								env.selectorClickedToOpenTheMap = ".map-popup-trigger";
 								if (env.currentMedia !== null && env.currentMedia.hasGpsData() || env.currentMedia === null && env.currentAlbum.numPositionsInTree) {
+								if (env.currentMedia !== null && env.currentMedia.hasGpsData()) {
 									TopFunctions.generateMapFromTitle(ev, from);
 								} else {
 									TopFunctions.generateMapFromTitleWithoutSubalbums(ev, from);
