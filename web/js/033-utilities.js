@@ -2608,12 +2608,12 @@
 			var prefix = Utilities.removeFolderString(env.currentMedia.foldersCacheBase);
 			if (prefix)
 				prefix += env.options.cache_folder_separator;
-			if (env.currentMedia.isVideo()) {
+			if (env.currentMedia && env.currentMedia.isVideo()) {
 				mediaParameter = Utilities.pathJoin([
 					env.server_cache_path,
 					env.currentMedia.cacheSubdir,
 				]) + prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + "transcoded.mp4";
-			} else if (env.currentMedia.isImage()) {
+			} else if (env.currentMedia && env.currentMedia.isImage()) {
 				mediaParameter = Utilities.pathJoin([
 					env.server_cache_path,
 					env.currentMedia.cacheSubdir,
@@ -3277,7 +3277,7 @@
 	Utilities.setPinchButtonsVisibility = function() {
 		$("#pinch-container").removeClass("hidden");
 
-		if (env.currentMedia.isVideo()) {
+		if (! env.currentMedia || env.currentMedia.isVideo()) {
 			$("#pinch-container").hide();
 		} else {
 			$("#pinch-container").show();
