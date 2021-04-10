@@ -2343,8 +2343,8 @@
 	};
 
 	Utilities.prototype.resizeSingleMediaWithPrevAndNext = function(self, album) {
-		env.windowWidth = $(window).outerWidth();
-		env.windowHeight = $(window).outerHeight();
+		// env.windowWidth = $(window).innerWidth();
+		// env.windowHeight = $(window).innerHeight();
 
 		$("#loading").show();
 

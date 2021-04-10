@@ -683,7 +683,6 @@
 							function(ev, from) {
 								// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
 								env.selectorClickedToOpenTheMap = ".map-popup-trigger";
-								if (env.currentMedia !== null && env.currentMedia.hasGpsData() || env.currentMedia === null && env.currentAlbum.numPositionsInTree) {
 								if (env.currentMedia !== null && env.currentMedia.hasGpsData()) {
 									TopFunctions.generateMapFromTitle(ev, from);
 								} else {
@@ -812,8 +811,6 @@
 				function subalbumRemoved() {
 					if (util.nothingIsSelected()) {
 						util.initializeSelectionAlbum();
-					} else if (env.currentAlbum.isSelection()) {
-						// env.currentAlbum.showSubalbums();
 					}
 					f.updateMenu();
 				}
@@ -1341,6 +1338,51 @@
 							util.scrollToThumb();
 						}
 						util.addMediaLazyLoader();
+
+						$(window).off("resize").on(
+							"resize",
+							function () {
+								var previousWindowWidth = env.windowWidth;
+								env.windowWidth = $(window).innerWidth();
+								env.windowHeight = $(window).innerHeight();
+								if (env.windowWidth === previousWindowWidth)
+									// avoid considering a resize when the mobile browser shows/hides the location bar
+									return;
+
+								$("#loading").show();
+
+								util.socialButtons();
+								util.setSubalbumsOptions();
+								// self.subalbums.forEach(
+								// 	(ithSubalbum, iSubalbum) => {
+								// 		var id = phFl.convertCacheBaseToId(ithSubalbum.cacheBase);
+								// 		util.adaptSubalbumThumbnailSize(id);
+								// 	}
+								// );
+
+
+								util.adaptCaptionHeight();
+								// self.showSubalbums("refreshDisplay");
+
+								if (util.isMap() || util.isPopup()) {
+									// the map must be generated again including the points that only carry protected content
+									env.mapRefreshType = "resize";
+
+									if (util.isPopup()) {
+										env.popupRefreshType = "mapAlbum";
+										$('.leaflet-popup-close-button')[0].click();
+									} else {
+										env.popupRefreshType = "none";
+									}
+
+									// close the map and reopen it
+									$('.modal-close')[0].click();
+									$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
+								}
+								$("#loading").hide();
+							}
+						);
+
 						env.isFromAuthForm = false;
 					}
 				}
@@ -1737,7 +1779,6 @@
 			util.setSubalbumsOptions();
 			if (env.currentAlbum.subalbums.length)
 				util.adaptCaptionHeight();
-			// env.currentAlbum.showSubalbums(true);
 		}
 		return false;
 	};
@@ -1760,9 +1801,6 @@
 				// env.mapAlbum.showMedia();
 				map.updatePopup();
 			}
-			// if (env.currentAlbum.subalbums.length > 1) {
-			// 	env.currentAlbum.showSubalbums(true);
-			// }
 		}
 		return false;
 	};
@@ -2535,52 +2573,6 @@
 		util.setSubalbumsOptions();
 		f.updateMenu();
 		self.bindSubalbumSortEvents();
-
-		if (! $("#album-and-media-container").hasClass("show-media")) {
-			$(window).off("resize").on(
-				"resize",
-				function () {
-					var previousWindowWidth = env.windowWidth;
-					env.windowWidth = $(window).outerWidth();
-					env.windowHeight = $(window).outerHeight();
-					if (env.windowWidth === previousWindowWidth)
-						// avoid considering a resize when the mobile browser shows/hides the location bar
-						return;
-
-					$("#loading").show();
-
-					util.socialButtons();
-					util.setSubalbumsOptions();
-					// self.subalbums.forEach(
-					// 	(ithSubalbum, iSubalbum) => {
-					// 		var id = phFl.convertCacheBaseToId(ithSubalbum.cacheBase);
-					// 		util.adaptSubalbumThumbnailSize(id);
-					// 	}
-					// );
-
-
-					util.adaptCaptionHeight();
-					// self.showSubalbums("refreshDisplay");
-
-					if (util.isMap() || util.isPopup()) {
-						// the map must be generated again including the points that only carry protected content
-						env.mapRefreshType = "resize";
-
-						if (util.isPopup()) {
-							env.popupRefreshType = "mapAlbum";
-							$('.leaflet-popup-close-button')[0].click();
-						} else {
-							env.popupRefreshType = "none";
-						}
-
-						// close the map and reopen it
-						$('.modal-close')[0].click();
-						$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
-					}
-					$("#loading").hide();
-				}
-			);
-		}
 	};
 
 	TopFunctions.toggleFullscreen = function(e) {
