@@ -922,6 +922,7 @@
 		var setTitlePromise = TopFunctions.setTitle(id, whatMedia, this);
 		setTitlePromise.then(
 			function titleSet(self) {
+				$("#subalbums").hide();
 				heightForMediaAndTitle = util.mediaBoxContainerHeight();
 
 				var titleHeight = 0;
