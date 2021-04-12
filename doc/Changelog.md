@@ -1,4 +1,7 @@
+### version v4.9.42 (Apr 12, 2021)
+
 * bug fixes
+* ui tweaks
 
 ### version v4.9.41 (Feb 21, 2021)
 
