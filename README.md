@@ -199,12 +199,12 @@ However, showing an album or clicking on a marker with more than 1,000 photos, s
 
 Of course, static web performance is traded against cache size on disk. We tried to keep it reasonable. The cache size ratio to the original albums size depends on multiple factors, like the number of intermediate picture sizes you want (see option `reduced_sizes` in configuraton file) and the video encoding options (see `video_preset` for instance) or video length.
 
-| Site               | Number of Media        | Album Size | Cache Size | Cache / Album Ratio |
-| ------------------ | ---------------------- | ---------: | ---------: | ------------------: |
-| AlternaTV Demo     | 95 pictures            |     675 MB |     116 MB |                 17% |
-| Production Site #1 | 14K media (20 videos)  |      95 GB |      25 GB |                 26% |
-| Production Site #2 | 20K media (439 videos) |      92 GB |      66 GB |                 71% |
-| Production Site #3 | 26K media (430 videos) |     232 GB |      82 GB |                 35% |
+| Site                | Number of Media        | Album Size | Cache Size | Cache / Album Ratio |
+| ------------------- | ---------------------- | ---------: | ---------: | ------------------: |
+| AlternaTV Demo      | 95 pictures            |     675 MB |     116 MB |                 17% |
+| Production Site # 1 | 14K media (20 videos)  |      95 GB |      25 GB |                 26% |
+| Production Site # 2 | 20K media (439 videos) |      92 GB |      66 GB |                 71% |
+| Production Site # 3 | 26K media (430 videos) |     232 GB |      82 GB |                 35% |
 
 ## MyPhotoShare History and License
 
