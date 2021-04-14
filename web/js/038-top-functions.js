@@ -63,18 +63,24 @@
 	TopFunctions.setTitle = function(id, singleMedia, self) {
 		return new Promise(
 			function (resolve_setTitle) {
-				function isSearchInCurrentAlbumOnly(savedSearchAlbumCacheBase) {
-					return savedSearchAlbumCacheBase.split(env.options.cache_folder_separator)[1].split(env.options.search_options_separator).slice(0, -1).indexOf('o') > -1;
+				function searchCacheBaseIsCurrentAlbumOnly(savedSearchAlbumCacheBase) {
+					if (savedSearchAlbumCacheBase)
+						return savedSearchAlbumCacheBase.split(env.options.cache_folder_separator)[1].split(env.options.search_options_separator).slice(0, -1).indexOf('o') > -1;
+					else
+						return false;
 				}
 
-				function getSearchFolderCacheBase(savedSearchAlbumCacheBase) {
-					return savedSearchAlbumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
-				}
+				// function getSearchFolderCacheBase(savedSearchAlbumCacheBase) {
+				// 	if (savedSearchAlbumCacheBase)
+				// 		return savedSearchAlbumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
+				// 	else
+				// 		return false;
+				// }
 
 				var br = '<br />';
-				var title, titleCount, documentTitle, i, isFolderTitle, isDateTitle, isGpsTitle, isSearchTitle, isSelectionTitle, isMapTitle;
-				var titleAnchorClasses, where, initialValue, searchFolderCacheBase;
-				var linkCount = 0, linksToLeave = 1, latitude, longitude, arrayCoordinates;
+				var title, titleCount, documentTitle, i, isFolderTitle, isDateTitle, isGpsTitle, isSearchTitle, isInsideSearchTitle, isSelectionTitle, isMapTitle;
+				var titleAnchorClasses, searchFolderCacheBase;
+				var linkCount = 0, linksToLeave = 1;
 				const raquo = "&raquo;";
 				const raquoForTitle = " \u00ab ";
 				// gpsLevelNumber is the number of levels for the by gps tree
@@ -120,24 +126,27 @@
 				}
 
 				linksForTitleComponents = env.currentAlbum.ancestorsCacheBase.slice();
+				classesForTitleComponents = env.currentAlbum.ancestorsCacheBase.map(x => [""]);
+
+				var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
 
 				isFolderTitle = (linksForTitleComponents[0] === env.options.folders_string);
 				isDateTitle = (linksForTitleComponents[0] === env.options.by_date_string);
 				isGpsTitle = (linksForTitleComponents[0] === env.options.by_gps_string);
 				isSearchTitle = (linksForTitleComponents[0] === env.options.by_search_string);
+				isInsideSearchTitle = savedSearchAlbumCacheBase && searchCacheBaseIsCurrentAlbumOnly(savedSearchAlbumCacheBase) || isSearchTitle && searchCacheBaseIsCurrentAlbumOnly(albumCacheBase);
 				isSelectionTitle = (linksForTitleComponents[0] === env.options.by_selection_string);
 				isMapTitle = (linksForTitleComponents[0] === env.options.by_map_string);
 
 				// 'textComponents = titleComponents' doesn't work: textComponents becomes a pointer to titleComponents
-				var textComponents = titleComponents.slice();
+				// var textComponents = titleComponents.slice();
 
 				// generate the title in the page top
 				titleAnchorClasses = 'title-anchor';
 				if (env.isMobile.any())
 					titleAnchorClasses += ' mobile';
 
-				var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
-				var fillInSpan = "<span id='fill-in-map-link'></span>";
+				// var fillInSpan = "<span id='fill-in-map-link'></span>";
 
 				var mediaTotalInAlbum, imagesTotalInAlbum, videosTotalInAlbum;
 				var mediaTotalInSubTree, imagesTotalInSubTree, videosTotalInSubTree;
@@ -162,6 +171,7 @@
 					else
 						titleComponents.unshift(util._t(".title-string"));
 					linksForTitleComponents.unshift(env.options.folders_string);
+					classesForTitleComponents.unshift([""]);
 				} else {
 					if (env.options.page_title !== "")
 						titleComponents[0] = env.options.page_title;
@@ -258,7 +268,7 @@
 							titleCount += " " + util._t(".title-in-gpss-album");
 						titleCount += ")</span>";
 					}
-				} else if (isSearchTitle) {
+				} else if (isSearchTitle || isInsideSearchTitle) {
 					titleComponents[1] = "(" + util._t("#by-search") + ")";
 					linksForTitleComponents[1] = env.currentAlbum.cacheBase;
 					classesForTitleComponents[1] = ["search-link"];
@@ -269,6 +279,41 @@
 						classesForTitleComponents[1] = ["main-search-link"];
 						searchFolderCacheBase = env.options.cache_base_to_search_in;
 					}
+
+					// // add the album searched in before the search element
+					// if (isSearchTitle) {
+					// 	searchFolderCacheBase = getSearchFolderCacheBase(albumCacheBase);
+					// } else if (isInsideSearchTitle) {
+					// 	searchFolderCacheBase = getSearchFolderCacheBase(savedSearchAlbumCacheBase);
+					// }
+					let splittedCacheBaseSearchedIn = searchFolderCacheBase.split(env.options.cache_folder_separator);
+					let linksToAdd = splittedCacheBaseSearchedIn.map((x, i) => splittedCacheBaseSearchedIn.slice(0, i + 1).join(env.options.cache_folder_separator));
+					let classesToAdd = splittedCacheBaseSearchedIn.map((x, i) => ["cache-base-" + id + "-" + i]);
+					let add = 0;
+					if (splittedCacheBaseSearchedIn[0] === env.options.folders_string) {
+						splittedCacheBaseSearchedIn.shift();
+						linksToAdd.shift();
+						classesToAdd.shift();
+						add = 1;
+					}
+
+					// substitute each album cache base with the right name
+					let thisId = id;
+					linksToAdd.forEach(
+						function(link, index) {
+							let linkPromise = phFl.getAlbum(link, null, {getMedia: false, getPositions: false});
+							linkPromise.then(
+								function(theAlbum) {
+									$(".cache-base-" + thisId + "-" + (index + 1)).html(theAlbum.nameForShowing());
+								}
+							);
+						}
+					);
+
+					titleComponents.splice(1, 0, ... splittedCacheBaseSearchedIn);
+					linksForTitleComponents.splice(1, 0, ... linksToAdd);
+					classesForTitleComponents.splice(1, 0, ... classesToAdd);
+
 					titleComponents.pop();
 					linksForTitleComponents.pop();
 
@@ -443,7 +488,7 @@
 				}
 
 				if (addSearchMarker) {
-					numElements = searchFolderCacheBase.split(env.options.cache_folder_separator).length;
+					let numElements = searchFolderCacheBase.split(env.options.cache_folder_separator).length;
 					titleComponents.splice(numElements, 0, " (" + util._t("#by-search") + ")");
 					linksForTitleComponents.splice(numElements, 0, env.options.by_search_string);
 				}
@@ -452,7 +497,7 @@
 
 				promise.then(
 					function() {
-						documentTitleComponents = titleComponents.slice();
+						let documentTitleComponents = titleComponents.slice();
 						var mediaNamePosition, mediaNamePositionMarker = "<span id='media-name-second-part'></span>";
 						if (singleMedia !== null) {
 							let singleMediaNameHtml;
