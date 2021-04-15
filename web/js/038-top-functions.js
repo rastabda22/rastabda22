@@ -304,7 +304,7 @@
 							let linkPromise = phFl.getAlbum(link, null, {getMedia: false, getPositions: false});
 							linkPromise.then(
 								function(theAlbum) {
-									$(".cache-base-" + thisId + "-" + (index + 1)).html(theAlbum.nameForShowing());
+									$(".cache-base-" + thisId + "-" + (index + add)).html(theAlbum.nameForShowing());
 								}
 							);
 						}
