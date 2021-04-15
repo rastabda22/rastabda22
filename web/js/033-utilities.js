@@ -3152,7 +3152,11 @@
 		// } else if (parentAlbum && parentAlbum.isSearch() && albumOrSubalbum.hasOwnProperty("captionForSearch")) {
 		// 	folderName = albumOrSubalbum.captionForSearch;
 		// } else if (parentAlbum && parentAlbum.isByDate()) {
-		if (parentAlbum && parentAlbum.isByDate()) {
+		if (albumOrSubalbum.cacheBase === env.options.by_date_string) {
+			folderName = Utilities._t("#by-date");
+		} else if (albumOrSubalbum.cacheBase === env.options.by_gps_string) {
+			folderName = Utilities._t("#by-gps");
+		} else if (parentAlbum && parentAlbum.isByDate() || albumOrSubalbum.isByDate()) {
 			let folderArray = albumOrSubalbum.cacheBase.split(env.options.cache_folder_separator);
 			if (folderArray.length === 2) {
 				folderName += parseInt(folderArray[1]);
@@ -3160,7 +3164,7 @@
 				folderName += " " + Utilities._t("#month-" + folderArray[2]);
 			else if (folderArray.length === 4)
 				folderName += Utilities._t("#day") + " " + parseInt(folderArray[3]);
-		} else if (parentAlbum && parentAlbum.isByGps()) {
+		} else if (parentAlbum && parentAlbum.isByGps() || albumOrSubalbum.isByGps()) {
 			if (albumOrSubalbum.name === '')
 				folderName = Utilities._t('.not-specified');
 			else if (albumOrSubalbum.hasOwnProperty('altName'))
