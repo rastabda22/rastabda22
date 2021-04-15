@@ -70,12 +70,12 @@
 						return false;
 				}
 
-				// function getSearchFolderCacheBase(savedSearchAlbumCacheBase) {
-				// 	if (savedSearchAlbumCacheBase)
-				// 		return savedSearchAlbumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
-				// 	else
-				// 		return false;
-				// }
+				function getSearchFolderCacheBase(savedSearchAlbumCacheBase) {
+					if (savedSearchAlbumCacheBase)
+						return savedSearchAlbumCacheBase.split(env.options.cache_folder_separator).slice(2).join(env.options.cache_folder_separator);
+					else
+						return false;
+				}
 
 				var br = '<br />';
 				var title, titleCount, documentTitle, i, isFolderTitle, isDateTitle, isGpsTitle, isSearchTitle, isInsideSearchTitle, isSelectionTitle, isMapTitle;
@@ -268,16 +268,18 @@
 							titleCount += " " + util._t(".title-in-gpss-album");
 						titleCount += ")</span>";
 					}
-				} else if (isSearchTitle || isInsideSearchTitle) {
+				} else if (isSearchTitle || isFolderTitle && isInsideSearchTitle) {
 					titleComponents[1] = "(" + util._t("#by-search") + ")";
 					linksForTitleComponents[1] = env.currentAlbum.cacheBase;
 					classesForTitleComponents[1] = ["search-link"];
 					if (
-						env.options.search_current_album &&
+						isSearchTitle && env.options.search_current_album &&
 						! util.isAnyRootCacheBase(env.options.cache_base_to_search_in)
 					) {
 						classesForTitleComponents[1] = ["main-search-link"];
 						searchFolderCacheBase = env.options.cache_base_to_search_in;
+					} else if (savedSearchAlbumCacheBase) {
+						searchFolderCacheBase = getSearchFolderCacheBase(savedSearchAlbumCacheBase);
 					}
 
 					// // add the album searched in before the search element
