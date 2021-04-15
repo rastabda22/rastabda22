@@ -78,8 +78,8 @@
 				}
 
 				var br = '<br />';
-				var title, titleCount, documentTitle, i, isFolderTitle, isDateTitle, isGpsTitle, isSearchTitle, isInsideSearchTitle, isSelectionTitle, isMapTitle;
-				var titleAnchorClasses, searchFolderCacheBase;
+				var title, titleCount, documentTitle, i, isFolderTitle, isDateTitle, isGpsTitle, isSearchTitle, isInsideSearchTitle, isCurrentAlbumOnly, isSelectionTitle, isMapTitle;
+				var titleAnchorClasses, searchFolderCacheBase, searchCacheBase;
 				var linkCount = 0, linksToLeave = 1;
 				const raquo = "&raquo;";
 				const raquoForTitle = " \u00ab ";
@@ -89,7 +89,7 @@
 				var gpsName = '';
 				var setDocumentTitle = (id === "center" || id === "album");
 				var titleComponents = [];
-				var linksForTitleComponents = [];
+				var cacheBasesForTitleComponents = [];
 				var titlesForTitleComponents = [];
 				var classesForTitleComponents = [];
 
@@ -104,49 +104,35 @@
 					$("#album-view .title-string").html("");
 				}
 
-				if (env.currentAlbum.hasOwnProperty("ancestorsTitles") && env.currentAlbum.hasOwnProperty("ancestorsNames")) {
-					titleComponents = env.currentAlbum.ancestorsNames.map(
-						(ithComponent, i) => {
-							if (
-								env.currentAlbum.ancestorsTitles[i] &&
-								env.currentAlbum.ancestorsNames[i] &&
-								env.currentAlbum.ancestorsTitles[i] !== env.currentAlbum.ancestorsNames[i]
-							)
-								return env.currentAlbum.ancestorsTitles[i] + " <span class='real-name'>(" + env.currentAlbum.ancestorsNames[i] + ")";
-							else if (env.currentAlbum.ancestorsTitles[i])
-								return env.currentAlbum.ancestorsTitles[i];
-							else
-								return env.currentAlbum.ancestorsNames[i];
-						}
-					);
-				} else if (env.currentAlbum.hasOwnProperty("ancestorsNames")) {
-					titleComponents = env.currentAlbum.ancestorsNames.slice();
-				} else {
-					titleComponents = env.currentAlbum.path.split("/");
-				}
-
-				linksForTitleComponents = env.currentAlbum.ancestorsCacheBase.slice();
-				classesForTitleComponents = env.currentAlbum.ancestorsCacheBase.map(x => [""]);
-
 				var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
 
-				isFolderTitle = (linksForTitleComponents[0] === env.options.folders_string);
-				isDateTitle = (linksForTitleComponents[0] === env.options.by_date_string);
-				isGpsTitle = (linksForTitleComponents[0] === env.options.by_gps_string);
-				isSearchTitle = (linksForTitleComponents[0] === env.options.by_search_string);
-				isInsideSearchTitle = savedSearchAlbumCacheBase && searchCacheBaseIsCurrentAlbumOnly(savedSearchAlbumCacheBase) || isSearchTitle && searchCacheBaseIsCurrentAlbumOnly(albumCacheBase);
-				isSelectionTitle = (linksForTitleComponents[0] === env.options.by_selection_string);
-				isMapTitle = (linksForTitleComponents[0] === env.options.by_map_string);
+				isFolderTitle = (env.currentAlbum.ancestorsCacheBase[0] === env.options.folders_string);
+				isDateTitle = (env.currentAlbum.ancestorsCacheBase[0] === env.options.by_date_string);
+				isGpsTitle = (env.currentAlbum.ancestorsCacheBase[0] === env.options.by_gps_string);
+				isSearchTitle = (env.currentAlbum.ancestorsCacheBase[0] === env.options.by_search_string);
+				isSelectionTitle = (env.currentAlbum.ancestorsCacheBase[0] === env.options.by_selection_string);
+				isMapTitle = (env.currentAlbum.ancestorsCacheBase[0] === env.options.by_map_string);
+				isInsideSearchTitle = false;
+				isCurrentAlbumOnly = false;
+				if (isFolderTitle && savedSearchAlbumCacheBase) {
+					isInsideSearchTitle = true;
+					searchCacheBase = savedSearchAlbumCacheBase;
+					if (searchCacheBaseIsCurrentAlbumOnly(savedSearchAlbumCacheBase)) {
+						isCurrentAlbumOnly = true;
+						searchFolderCacheBase = getSearchFolderCacheBase(savedSearchAlbumCacheBase);
+					}
+				} else if (isSearchTitle) {
+					searchCacheBase = savedSearchAlbumCacheBase;
+					if (searchCacheBaseIsCurrentAlbumOnly(albumCacheBase)) {
+						isCurrentAlbumOnly = true;
+						searchFolderCacheBase = getSearchFolderCacheBase(albumCacheBase);
+					}
+				}
+				isCurrentAlbumOnly = (isCurrentAlbumOnly && searchFolderCacheBase !== util.isAnyRootCacheBase(searchFolderCacheBase));
 
-				// 'textComponents = titleComponents' doesn't work: textComponents becomes a pointer to titleComponents
-				// var textComponents = titleComponents.slice();
-
-				// generate the title in the page top
 				titleAnchorClasses = 'title-anchor';
 				if (env.isMobile.any())
 					titleAnchorClasses += ' mobile';
-
-				// var fillInSpan = "<span id='fill-in-map-link'></span>";
 
 				var mediaTotalInAlbum, imagesTotalInAlbum, videosTotalInAlbum;
 				var mediaTotalInSubTree, imagesTotalInSubTree, videosTotalInSubTree;
@@ -163,191 +149,104 @@
 					videosTotalInSubAlbums = videosTotalInSubTree - videosTotalInAlbum;
 				}
 
-				// title = "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + "'>" + titleComponents[0] + "</a>";
-				if (! isFolderTitle) {
-				// if (! isFolderTitle && (! isSearchTitle || titleComponents[0] === env.options.by_search_string)) {
-					if (env.options.page_title !== "")
-						titleComponents.unshift(env.options.page_title);
-					else
-						titleComponents.unshift(util._t(".title-string"));
-					linksForTitleComponents.unshift(env.options.folders_string);
-					classesForTitleComponents.unshift([""]);
-				} else {
-					if (env.options.page_title !== "")
-						titleComponents[0] = env.options.page_title;
-					else
-						titleComponents[0] = util._t(".title-string");
-				}
-
 				var addSearchMarker = false;
 				var addSelectionMarker = false;
 
-				if (isDateTitle) {
-					titleComponents[1] = "(" + util._t("#by-date") + ")";
+				// the first component of the title is always the root album
+				if (env.options.page_title !== "")
+					titleComponents[0] = env.options.page_title;
+				else
+					titleComponents[0] = util._t(".title-string");
+				cacheBasesForTitleComponents[0] = env.options.folders_string;
+				classesForTitleComponents[0] = [""];
 
-					if (titleComponents.length > 2) {
-						titleComponents[2] = parseInt(titleComponents[2]).toString();
-						if (titleComponents.length > 3) {
-							titleComponents[3] = util._t("#month-" + titleComponents[3]);
-							if (titleComponents.length > 4) {
-								titleComponents[4] = parseInt(titleComponents[4]).toString();
-							}
+				if (isSearchTitle || isInsideSearchTitle) {
+					if (isCurrentAlbumOnly) {
+						// put the components of the album searched in
+						let splittedCacheBaseSearchedIn = searchFolderCacheBase.split(env.options.cache_folder_separator);
+						let cacheBasesToAdd = splittedCacheBaseSearchedIn.map((x, i) => splittedCacheBaseSearchedIn.slice(0, i + 1).join(env.options.cache_folder_separator));
+						if (splittedCacheBaseSearchedIn[0] === env.options.folders_string) {
+							splittedCacheBaseSearchedIn.shift();
+							cacheBasesToAdd.shift();
 						}
-					}
+						let classesToAdd = splittedCacheBaseSearchedIn.map((x, i) => ["pre-cache-base-" + id + "-" + i]);
 
-					if (
-						(singleMedia === null) &&
-						! env.isMobile.any()
-					) {
-						titleCount = "<span class='title-count'>(";
-						if (titleComponents.length === 2)
-							titleCount += mediaTotalInSubAlbums + " ";
-						else
-							titleCount += mediaTotalInAlbum + " ";
-						if (! imagesTotalInAlbum && videosTotalInAlbum)
-							titleCount += util._t(".title-videos");
-						else if (imagesTotalInAlbum && ! videosTotalInAlbum)
-							titleCount += util._t(".title-images");
-						else {
-							let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
-							let titleCountObject = $(titleCountHtml);
-							if (titleComponents.length === 2)
-								titleCountObject.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
-							else
-								titleCountObject.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
-							titleCount += titleCountObject.prop("outerHTML");
-						}
-						if (titleComponents.length >= 5)
-							titleCount += " " + util._t(".title-in-day-album");
-						else if (titleComponents.length >= 3)
-							titleCount += " " + util._t(".title-in-date-album");
-						titleCount += ")</span>";
-					}
-				} else if (isGpsTitle) {
-					titleComponents[1] = "(" + util._t("#by-gps") + ")";
-
-					for (i = 2; i < titleComponents.length; i ++) {
-						if (i === titleComponents.length - 1) {
-							gpsName = util.transformAltPlaceName(titleComponents[i]);
-						} else {
-							gpsName = titleComponents[i];
-						}
-
-						if (gpsName === '')
-							gpsName = util._t('.not-specified');
-
-						let a = $("<a></a>");
-						a.attr("title", util._t("#place-icon-title") + gpsName + util._t("#place-icon-title-end"));
-						titlesForTitleComponents[i] = a.attr("title");
-
-						titleComponents[i] = gpsName;
-					}
-
-					if (singleMedia === null && ! env.isMobile.any()) {
-						titleCount = "<span class='title-count'>(";
-						if (titleComponents.length === 2)
-							titleCount += mediaTotalInSubAlbums + " ";
-						else
-							titleCount += mediaTotalInAlbum + " ";
-						if (! imagesTotalInAlbum && videosTotalInAlbum)
-							titleCount += util._t(".title-videos");
-						else if (imagesTotalInAlbum && ! videosTotalInAlbum)
-							titleCount += util._t(".title-images");
-						else {
-							let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
-							let titleCountObject = $(titleCountHtml);
-							if (titleComponents.length === 2)
-								titleCountObject.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
-							else
-								titleCountObject.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
-							titleCount += titleCountObject.prop("outerHTML");
-						}
-						if (titleComponents.length >= gpsLevelNumber + 2)
-							titleCount += " " + util._t(".title-in-gps-album");
-						else if (titleComponents.length >= 3)
-							titleCount += " " + util._t(".title-in-gpss-album");
-						titleCount += ")</span>";
-					}
-				} else if (isSearchTitle || isFolderTitle && isInsideSearchTitle) {
-					titleComponents[1] = "(" + util._t("#by-search") + ")";
-					linksForTitleComponents[1] = env.currentAlbum.cacheBase;
-					classesForTitleComponents[1] = ["search-link"];
-					if (
-						isSearchTitle && env.options.search_current_album &&
-						! util.isAnyRootCacheBase(env.options.cache_base_to_search_in)
-					) {
-						classesForTitleComponents[1] = ["main-search-link"];
-						searchFolderCacheBase = getSearchFolderCacheBase(albumCacheBase);
-					} else if (savedSearchAlbumCacheBase) {
-						searchFolderCacheBase = getSearchFolderCacheBase(savedSearchAlbumCacheBase);
-						splittedAlbumCacheBase = albumCacheBase.split(env.options.cache_folder_separator);
-						splittedFoundAlbumCacheBase = foundAlbumCacheBase.split(env.options.cache_folder_separator);
-						linksForSplittedAlbumCacheBase = splittedAlbumCacheBase.map((x, i) => splittedAlbumCacheBase.slice(0, i + 1).join(env.options.cache_folder_separator)).slice(splittedFoundAlbumCacheBase.length - 1);
-
-						titleComponents = titleComponents.slice(0, 2);
-						linksForTitleComponents = linksForTitleComponents.slice(0, 2);
-						classesForTitleComponents = classesForTitleComponents.slice(0, 2);
-
-						let linksToAdd = linksForSplittedAlbumCacheBase.slice();
-						let classesToAdd = linksForSplittedAlbumCacheBase.map((x, i) => ["post-cache-base-" + id + "-" + i]);
-
-						titleComponents.splice(2, 0, ... linksForSplittedAlbumCacheBase);
-						linksForTitleComponents.splice(2, 0, ... linksToAdd);
-						classesForTitleComponents.splice(2, 0, ... classesToAdd);
+						// substitute each album cache base with the right name
 						let thisId = id;
-						linksToAdd.forEach(
-							function(link, index) {
-								let linkPromise = phFl.getAlbum(link, null, {getMedia: false, getPositions: false});
-								linkPromise.then(
+						cacheBasesToAdd.forEach(
+							function(cacheBase, i) {
+								let cacheBasePromise = phFl.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
+								cacheBasePromise.then(
 									function(theAlbum) {
-										$(".post-cache-base-" + thisId + "-" + index).html(theAlbum.nameForShowing());
+										$(
+											function() {
+												$(".pre-cache-base-" + thisId + "-" + i).html(theAlbum.nameForShowing());
+											}
+										);
 									}
 								);
 							}
 						);
 
+						titleComponents = titleComponents.concat(splittedCacheBaseSearchedIn);
+						cacheBasesForTitleComponents = cacheBasesForTitleComponents.concat(cacheBasesToAdd);
+						classesForTitleComponents = classesForTitleComponents.concat(classesToAdd);
 					}
 
-					let splittedCacheBaseSearchedIn = searchFolderCacheBase.split(env.options.cache_folder_separator);
-					let linksToAdd = splittedCacheBaseSearchedIn.map((x, i) => splittedCacheBaseSearchedIn.slice(0, i + 1).join(env.options.cache_folder_separator));
-					let classesToAdd = splittedCacheBaseSearchedIn.map((x, i) => ["pre-cache-base-" + id + "-" + i]);
-					let add = 0;
-					if (splittedCacheBaseSearchedIn[0] === env.options.folders_string) {
-						splittedCacheBaseSearchedIn.shift();
-						linksToAdd.shift();
-						classesToAdd.shift();
-						add = 1;
+					// put the search cacheBase
+					titleComponents.push("(" + util._t("#by-search") + ")");
+					cacheBasesForTitleComponents.push(searchCacheBase);
+					classesForTitleComponents.push(["search-link"]);
+
+					if (isInsideSearchTitle) {
+						// put the components of the found album and (if any) its subalbums
+						let splittedAlbumCacheBase = albumCacheBase.split(env.options.cache_folder_separator);
+						let splittedFoundAlbumCacheBase = foundAlbumCacheBase.split(env.options.cache_folder_separator);
+						let cacheBasesForSplittedAlbumCacheBase = splittedAlbumCacheBase.map((x, i) => splittedAlbumCacheBase.slice(0, i + 1).join(env.options.cache_folder_separator)).slice(splittedFoundAlbumCacheBase.length - 1);
+
+						let cacheBasesToAdd = cacheBasesForSplittedAlbumCacheBase.slice();
+						let classesToAdd = cacheBasesForSplittedAlbumCacheBase.map((x, i) => ["post-cache-base-" + id + "-" + i]);
+
+						titleComponents = titleComponents.concat(cacheBasesForSplittedAlbumCacheBase);
+						cacheBasesForTitleComponents = cacheBasesForTitleComponents.concat(cacheBasesToAdd);
+						classesForTitleComponents = classesForTitleComponents.concat(classesToAdd);
+						let thisId = id;
+						cacheBasesToAdd.forEach(
+							function(cacheBase, i) {
+								let cacheBasePromise = phFl.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
+								cacheBasePromise.then(
+									function(theAlbum) {
+										theAlbum.generateCaptionForSearch();
+										let name = theAlbum.nameForShowing();
+										let [fakeName, subalbumPosition] = theAlbum.captionForSearch.split(br);
+										if (i === 0) {
+											name =
+												"<span class='with-second-part'>" +
+													name +
+													" <span id='album-name-second-part'>" + subalbumPosition + "</span>" +
+												"</span> ";
+										}
+
+										$(
+											function() {
+												$(".post-cache-base-" + thisId + "-" + i).html(name);
+											}
+										);
+									}
+								);
+							}
+						);
 					}
 
-					// substitute each album cache base with the right name
-					let thisId = id;
-					linksToAdd.forEach(
-						function(link, index) {
-							let linkPromise = phFl.getAlbum(link, null, {getMedia: false, getPositions: false});
-							linkPromise.then(
-								function(theAlbum) {
-									$(".pre-cache-base-" + thisId + "-" + (index + add)).html(theAlbum.nameForShowing());
-								}
-							);
-						}
-					);
-
-					titleComponents.splice(1, 0, ... splittedCacheBaseSearchedIn);
-					linksForTitleComponents.splice(1, 0, ... linksToAdd);
-					classesForTitleComponents.splice(1, 0, ... classesToAdd);
-
-					if (isSearchTitle) {
-						titleComponents.pop();
-						linksForTitleComponents.pop();
-					}
-
+					// the counts for when is inside a search are generated further
 					if (
+						isSearchTitle &&
 						singleMedia === null &&
 						(env.currentAlbum.numsMedia.imagesAndVideosTotal() || env.currentAlbum.subalbums.length) &&
 						! env.isMobile.any()
 					) {
 						titleCount = "<span class='title-count'>(";
-						titleCount += util._t(".title-found") + ' ';
+						titleCount += util._t(".title-found") + " ";
 						if (env.currentAlbum.numsMedia.imagesAndVideosTotal()) {
 							titleCount += mediaTotalInAlbum + " ";
 							if (! imagesTotalInAlbum && videosTotalInAlbum)
@@ -376,20 +275,165 @@
 
 						titleCount += ")</span>";
 					}
-				} else if (isSelectionTitle) {
-					titleComponents.pop();
-					linksForTitleComponents.pop();
+				} else {
+					if (env.currentAlbum.hasOwnProperty("ancestorsTitles") && env.currentAlbum.hasOwnProperty("ancestorsNames")) {
+						titleComponents = env.currentAlbum.ancestorsNames.map(
+							(ithComponent, i) => {
+								if (
+									env.currentAlbum.ancestorsTitles[i] &&
+									env.currentAlbum.ancestorsNames[i] &&
+									env.currentAlbum.ancestorsTitles[i] !== env.currentAlbum.ancestorsNames[i]
+								)
+									return env.currentAlbum.ancestorsTitles[i] + " <span class='real-name'>(" + env.currentAlbum.ancestorsNames[i] + ")";
+								else if (env.currentAlbum.ancestorsTitles[i])
+									return env.currentAlbum.ancestorsTitles[i];
+								else
+									return env.currentAlbum.ancestorsNames[i];
+							}
+						);
+					} else if (env.currentAlbum.hasOwnProperty("ancestorsNames")) {
+						titleComponents = env.currentAlbum.ancestorsNames.slice();
+					} else {
+						titleComponents = env.currentAlbum.path.split("/");
+					}
 
-					titleComponents[1] = "(" + util._t("#by-selection") + ")";
+					cacheBasesForTitleComponents = env.currentAlbum.ancestorsCacheBase.slice();
+					classesForTitleComponents = env.currentAlbum.ancestorsCacheBase.map(x => [""]);
 
-					if (
-						singleMedia === null &&
-						(env.currentAlbum.numsMedia.imagesAndVideosTotal() || env.currentAlbum.subalbums.length) &&
-						! env.isMobile.any()
-					) {
-						titleCount = "<span class='title-count'>(";
-						// titleCount += util._t(".title-selected") + ' ';
-						if (env.currentAlbum.numsMedia.imagesAndVideosTotal()) {
+					if (isDateTitle) {
+						titleComponents[1] = "(" + util._t("#by-date") + ")";
+
+						if (titleComponents.length > 2) {
+							titleComponents[2] = parseInt(titleComponents[2]).toString();
+							if (titleComponents.length > 3) {
+								titleComponents[3] = util._t("#month-" + titleComponents[3]);
+								if (titleComponents.length > 4) {
+									titleComponents[4] = parseInt(titleComponents[4]).toString();
+								}
+							}
+						}
+
+						if (
+							(singleMedia === null) &&
+							! env.isMobile.any()
+						) {
+							titleCount = "<span class='title-count'>(";
+							if (titleComponents.length === 2)
+								titleCount += mediaTotalInSubAlbums + " ";
+							else
+								titleCount += mediaTotalInAlbum + " ";
+							if (! imagesTotalInAlbum && videosTotalInAlbum)
+								titleCount += util._t(".title-videos");
+							else if (imagesTotalInAlbum && ! videosTotalInAlbum)
+								titleCount += util._t(".title-images");
+							else {
+								let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
+								let titleCountObject = $(titleCountHtml);
+								if (titleComponents.length === 2)
+									titleCountObject.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
+								else
+									titleCountObject.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
+								titleCount += titleCountObject.prop("outerHTML");
+							}
+							if (titleComponents.length >= 5)
+								titleCount += " " + util._t(".title-in-day-album");
+							else if (titleComponents.length >= 3)
+								titleCount += " " + util._t(".title-in-date-album");
+							titleCount += ")</span>";
+						}
+					} else if (isGpsTitle) {
+						titleComponents[1] = "(" + util._t("#by-gps") + ")";
+
+						for (i = 2; i < titleComponents.length; i ++) {
+							if (i === titleComponents.length - 1) {
+								gpsName = util.transformAltPlaceName(titleComponents[i]);
+							} else {
+								gpsName = titleComponents[i];
+							}
+
+							if (gpsName === '')
+								gpsName = util._t('.not-specified');
+
+							let a = $("<a></a>");
+							a.attr("title", util._t("#place-icon-title") + gpsName + util._t("#place-icon-title-end"));
+							titlesForTitleComponents[i] = a.attr("title");
+
+							titleComponents[i] = gpsName;
+						}
+
+						if (singleMedia === null && ! env.isMobile.any()) {
+							titleCount = "<span class='title-count'>(";
+							if (titleComponents.length === 2)
+								titleCount += mediaTotalInSubAlbums + " ";
+							else
+								titleCount += mediaTotalInAlbum + " ";
+							if (! imagesTotalInAlbum && videosTotalInAlbum)
+								titleCount += util._t(".title-videos");
+							else if (imagesTotalInAlbum && ! videosTotalInAlbum)
+								titleCount += util._t(".title-images");
+							else {
+								let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
+								let titleCountObject = $(titleCountHtml);
+								if (titleComponents.length === 2)
+									titleCountObject.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
+								else
+									titleCountObject.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
+								titleCount += titleCountObject.prop("outerHTML");
+							}
+							if (titleComponents.length >= gpsLevelNumber + 2)
+								titleCount += " " + util._t(".title-in-gps-album");
+							else if (titleComponents.length >= 3)
+								titleCount += " " + util._t(".title-in-gpss-album");
+							titleCount += ")</span>";
+						}
+					} else if (isSelectionTitle) {
+						titleComponents.pop();
+						cacheBasesForTitleComponents.pop();
+
+						titleComponents[1] = "(" + util._t("#by-selection") + ")";
+
+						if (
+							singleMedia === null &&
+							(env.currentAlbum.numsMedia.imagesAndVideosTotal() || env.currentAlbum.subalbums.length) &&
+							! env.isMobile.any()
+						) {
+							titleCount = "<span class='title-count'>(";
+							// titleCount += util._t(".title-selected") + ' ';
+							if (env.currentAlbum.numsMedia.imagesAndVideosTotal()) {
+								titleCount += mediaTotalInAlbum + " ";
+								if (! imagesTotalInAlbum && videosTotalInAlbum)
+									titleCount += util._t(".title-videos");
+								else if (imagesTotalInAlbum && ! videosTotalInAlbum)
+									titleCount += util._t(".title-images");
+								else
+									titleCount += util._t(".title-media");
+								if (env.currentAlbum.subalbums.length)
+									titleCount += " " + util._t(".title-and");
+							}
+
+							if (env.currentAlbum.numsMedia.imagesAndVideosTotal() && env.currentAlbum.subalbums.length)
+								titleCount += " ";
+
+							if (env.currentAlbum.subalbums.length) {
+								titleCount += env.currentAlbum.subalbums.length;
+								titleCount += " " + util._t(".title-albums");
+							}
+
+							titleCount += ")</span>";
+						}
+					} else if (isMapTitle) {
+						titleComponents.pop();
+						cacheBasesForTitleComponents.pop();
+
+						titleComponents[1] = "(" + util._t("#by-map") + ")";
+
+						if (
+							titleComponents.length > 2 &&
+							singleMedia === null &&
+							(env.currentAlbum.numsMedia.imagesAndVideosTotal()) &&
+							! env.isMobile.any()
+						) {
+							titleCount = "<span class='title-count'>(";
 							titleCount += mediaTotalInAlbum + " ";
 							if (! imagesTotalInAlbum && videosTotalInAlbum)
 								titleCount += util._t(".title-videos");
@@ -397,66 +441,35 @@
 								titleCount += util._t(".title-images");
 							else
 								titleCount += util._t(".title-media");
-							if (env.currentAlbum.subalbums.length)
-								titleCount += " " + util._t(".title-and");
+							titleCount += ")</span>";
 						}
+					} else {
+						// folders title
 
-						if (env.currentAlbum.numsMedia.imagesAndVideosTotal() && env.currentAlbum.subalbums.length)
-							titleCount += " ";
-
-						if (env.currentAlbum.subalbums.length) {
-							titleCount += env.currentAlbum.subalbums.length;
-							titleCount += " " + util._t(".title-albums");
-						}
-
-						titleCount += ")</span>";
-					}
-				} else if (isMapTitle) {
-					titleComponents.pop();
-					linksForTitleComponents.pop();
-
-					titleComponents[1] = "(" + util._t("#by-map") + ")";
-
-					if (
-						titleComponents.length > 2 &&
-						singleMedia === null &&
-						(env.currentAlbum.numsMedia.imagesAndVideosTotal()) &&
-						! env.isMobile.any()
-					) {
-						titleCount = "<span class='title-count'>(";
-						titleCount += mediaTotalInAlbum + " ";
-						if (! imagesTotalInAlbum && videosTotalInAlbum)
-							titleCount += util._t(".title-videos");
-						else if (imagesTotalInAlbum && ! videosTotalInAlbum)
-							titleCount += util._t(".title-images");
-						else
-							titleCount += util._t(".title-media");
-						titleCount += ")</span>";
-					}
-				} else {
-					// folders title
-
-					let classes, link, titleElement;
-					classes = ["search-link"];
-
-					if (savedSearchAlbumCacheBase !== undefined && savedSearchAlbumCacheBase !== null) {
-						searchFolderCacheBase = env.options.cache_base_to_search_in;
-						link = savedSearchAlbumCacheBase;
+						let classes, cacheBase, titleElement;
 						classes = ["search-link"];
-						if (util.isSearchCacheBase(savedSearchAlbumCacheBase)) {
-							titleElement = util._t("#by-search");
-							addSearchMarker = true;
-							if (searchFolderCacheBase.split(env.options.cache_folder_separator).length > 1 && env.options.search_current_album) {
-								classes = ["main-search-link"];
-							// } else if (searchFolderCacheBase.split(env.options.cache_folder_separator).length <= 1 || ! env.options.search_current_album) {
+
+						if (savedSearchAlbumCacheBase !== undefined && savedSearchAlbumCacheBase !== null) {
+							searchFolderCacheBase = env.options.cache_base_to_search_in;
+							cacheBase = savedSearchAlbumCacheBase;
+							classes = ["search-link"];
+							if (util.isSearchCacheBase(savedSearchAlbumCacheBase)) {
+								titleElement = util._t("#by-search");
+								addSearchMarker = true;
+								if (searchFolderCacheBase.split(env.options.cache_folder_separator).length > 1 && env.options.search_current_album) {
+									classes = ["main-search-link"];
+								// } else if (searchFolderCacheBase.split(env.options.cache_folder_separator).length <= 1 || ! env.options.search_current_album) {
+								}
+							} else {
+								// album in a selection
+								titleElement = util._t("#by-selection");
+								addSelectionMarker = true;
 							}
-						} else {
-							// album in a selection
-							titleElement = util._t("#by-selection");
-							addSelectionMarker = true;
 						}
 					}
+				}
 
+				if (isInsideSearchTitle || isFolderTitle) {
 					if (
 						// titleComponents.length > 1 &&
 						(singleMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) &&
@@ -514,7 +527,7 @@
 				if (addSearchMarker) {
 					let numElements = searchFolderCacheBase.split(env.options.cache_folder_separator).length;
 					titleComponents.splice(numElements, 0, " (" + util._t("#by-search") + ")");
-					linksForTitleComponents.splice(numElements, 0, env.options.by_search_string);
+					cacheBasesForTitleComponents.splice(numElements, 0, env.options.by_search_string);
 				}
 
 				let promise = env.currentAlbum.generatePositionsAndMediaInMediaAndSubalbums();
@@ -522,12 +535,11 @@
 				promise.then(
 					function() {
 						let documentTitleComponents = titleComponents.slice();
-						var mediaNamePosition, mediaNamePositionMarker = "<span id='media-name-second-part'></span>";
 						if (singleMedia !== null) {
 							let singleMediaNameHtml;
 							let singleMediaName = singleMedia.nameForShowing(env.currentAlbum, true);
 							if (isSearchTitle || isSelectionTitle) {
-								let name;
+								let name, mediaNamePosition;
 								if (isSearchTitle)
 									[name, mediaNamePosition] = singleMedia.captionForSearch.split(br);
 								else if (isSelectionTitle)
@@ -535,7 +547,7 @@
 								singleMediaNameHtml =
 									"<span class='media-name with-second-part'>" +
 										name +
-										mediaNamePositionMarker +
+										" <span id='media-name-second-part'>" + mediaNamePosition + "</span>" +
 									"</span> ";
 							} else {
 								singleMediaNameHtml = "<span class='media-name'>" + singleMediaName + "</span>";
@@ -558,8 +570,8 @@
 						title = titleComponents.map(
 							(component, i) => {
 								let titleElement;
-								if (linksForTitleComponents[i] !== undefined) {
-									let a = $("<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + encodeURI(linksForTitleComponents[i]) + "'>" + component + "</a>");
+								if (cacheBasesForTitleComponents[i] !== undefined) {
+									let a = $("<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + encodeURI(cacheBasesForTitleComponents[i]) + "'>" + component + "</a>");
 									if (classesForTitleComponents[i] !== undefined)
 										classesForTitleComponents[i].forEach(singleClass => a.addClass(singleClass));
 									if (titlesForTitleComponents[i] !== undefined)
@@ -635,8 +647,8 @@
 								}
 							}
 						}
-						if (title.indexOf(mediaNamePositionMarker) !== -1)
-							title = title.replace(mediaNamePositionMarker, mediaNamePositionMarker.split("><").join("> " + mediaNamePosition + "<"));
+						// if (title.indexOf(mediaNamePositionMarker) !== -1)
+						// 	title = title.replace(mediaNamePositionMarker, mediaNamePositionMarker.split("><").join("> " + mediaNamePosition + "<"));
 
 						title = "<span class='title-main'>" + title + "</span>";
 
