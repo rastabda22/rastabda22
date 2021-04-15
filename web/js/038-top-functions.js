@@ -277,20 +277,40 @@
 						! util.isAnyRootCacheBase(env.options.cache_base_to_search_in)
 					) {
 						classesForTitleComponents[1] = ["main-search-link"];
-						searchFolderCacheBase = env.options.cache_base_to_search_in;
+						searchFolderCacheBase = getSearchFolderCacheBase(albumCacheBase);
 					} else if (savedSearchAlbumCacheBase) {
 						searchFolderCacheBase = getSearchFolderCacheBase(savedSearchAlbumCacheBase);
+						splittedAlbumCacheBase = albumCacheBase.split(env.options.cache_folder_separator);
+						splittedFoundAlbumCacheBase = foundAlbumCacheBase.split(env.options.cache_folder_separator);
+						linksForSplittedAlbumCacheBase = splittedAlbumCacheBase.map((x, i) => splittedAlbumCacheBase.slice(0, i + 1).join(env.options.cache_folder_separator)).slice(splittedFoundAlbumCacheBase.length - 1);
+
+						titleComponents = titleComponents.slice(0, 2);
+						linksForTitleComponents = linksForTitleComponents.slice(0, 2);
+						classesForTitleComponents = classesForTitleComponents.slice(0, 2);
+
+						let linksToAdd = linksForSplittedAlbumCacheBase.slice();
+						let classesToAdd = linksForSplittedAlbumCacheBase.map((x, i) => ["post-cache-base-" + id + "-" + i]);
+
+						titleComponents.splice(2, 0, ... linksForSplittedAlbumCacheBase);
+						linksForTitleComponents.splice(2, 0, ... linksToAdd);
+						classesForTitleComponents.splice(2, 0, ... classesToAdd);
+						let thisId = id;
+						linksToAdd.forEach(
+							function(link, index) {
+								let linkPromise = phFl.getAlbum(link, null, {getMedia: false, getPositions: false});
+								linkPromise.then(
+									function(theAlbum) {
+										$(".post-cache-base-" + thisId + "-" + index).html(theAlbum.nameForShowing());
+									}
+								);
+							}
+						);
+
 					}
 
-					// // add the album searched in before the search element
-					// if (isSearchTitle) {
-					// 	searchFolderCacheBase = getSearchFolderCacheBase(albumCacheBase);
-					// } else if (isInsideSearchTitle) {
-					// 	searchFolderCacheBase = getSearchFolderCacheBase(savedSearchAlbumCacheBase);
-					// }
 					let splittedCacheBaseSearchedIn = searchFolderCacheBase.split(env.options.cache_folder_separator);
 					let linksToAdd = splittedCacheBaseSearchedIn.map((x, i) => splittedCacheBaseSearchedIn.slice(0, i + 1).join(env.options.cache_folder_separator));
-					let classesToAdd = splittedCacheBaseSearchedIn.map((x, i) => ["cache-base-" + id + "-" + i]);
+					let classesToAdd = splittedCacheBaseSearchedIn.map((x, i) => ["pre-cache-base-" + id + "-" + i]);
 					let add = 0;
 					if (splittedCacheBaseSearchedIn[0] === env.options.folders_string) {
 						splittedCacheBaseSearchedIn.shift();
@@ -306,7 +326,7 @@
 							let linkPromise = phFl.getAlbum(link, null, {getMedia: false, getPositions: false});
 							linkPromise.then(
 								function(theAlbum) {
-									$(".cache-base-" + thisId + "-" + (index + add)).html(theAlbum.nameForShowing());
+									$(".pre-cache-base-" + thisId + "-" + (index + add)).html(theAlbum.nameForShowing());
 								}
 							);
 						}
@@ -316,8 +336,10 @@
 					linksForTitleComponents.splice(1, 0, ... linksToAdd);
 					classesForTitleComponents.splice(1, 0, ... classesToAdd);
 
-					titleComponents.pop();
-					linksForTitleComponents.pop();
+					if (isSearchTitle) {
+						titleComponents.pop();
+						linksForTitleComponents.pop();
+					}
 
 					if (
 						singleMedia === null &&
