@@ -3085,11 +3085,11 @@
 			}
 			secondLine += "</span>";
 			if (folderArray.length > 3)
-				secondLine += Utilities.dateElementForFolderName(folderArray, 3) + " ";
+				secondLine += "<a href='" + env.hashBeginning + album.ancestorsCacheBase[3] + "'>" + Utilities.dateElementForFolderName(folderArray, 3) + "</a>" + " ";
 			if (folderArray.length > 2)
-				secondLine += Utilities.dateElementForFolderName(folderArray, 2) + " ";
+				secondLine += "<a href='" + env.hashBeginning + album.ancestorsCacheBase[2] + "'>" + Utilities.dateElementForFolderName(folderArray, 2 + "</a>") + " ";
 			if (folderArray.length > 1)
-				secondLine += Utilities.dateElementForFolderName(folderArray, 1);
+				secondLine += "<a href='" + env.hashBeginning + album.ancestorsCacheBase[1] + "'>" + Utilities.dateElementForFolderName(folderArray, 1) + "</a>";
 			secondLine += "<span class='gray'>)</span>";
 		} else if (album.isByGps()) {
 			for (let iCacheBase = 1; iCacheBase < album.ancestorsCacheBase.length; iCacheBase ++) {
