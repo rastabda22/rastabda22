@@ -1017,7 +1017,7 @@ ul#right-menu.expand li.dimmed:hover {
 }
 
 ul#right-menu.expand li:not(.active, .sub-menu) {
-	color: darkgray;
+	/* color: darkgray; */
 }
 
 ul#right-menu li:not(.expanded) .caption:hover, ul#right-menu ul li.active:hover, ul#right-menu #menu-icon:hover, ul#right-menu #padlock img:hover, ul#right-menu #padlock:hover {
