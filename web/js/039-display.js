@@ -437,7 +437,7 @@ $(document).ready(function() {
 	// search
 	$('#search-button').off("click").on("click", function() {
 		var searchOptions = '';
-		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
+		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
 
 		// save the current hash in order to come back there when exiting from search
 		if (util.isSearchCacheBase(albumCacheBase)) {
@@ -791,7 +791,7 @@ $(document).ready(function() {
 			var optionsPromise = f.getOptions();
 			optionsPromise.then(
 				function() {
-					var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
+					var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
 
 					if (! util.isSearchHash()) {
 						// reset current album search flag to its default value

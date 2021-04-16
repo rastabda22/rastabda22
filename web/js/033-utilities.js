@@ -1124,9 +1124,9 @@
 	};
 
 	Utilities.prototype.isSearchHash = function() {
-		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = PhotoFloat.decodeHash(location.hash);
+		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = PhotoFloat.decodeHash(location.hash);
 		var cacheBase = PhotoFloat.convertHashToCacheBase(location.hash);
-		if (Utilities.isSearchCacheBase(cacheBase) || savedSearchAlbumCacheBase !== null)
+		if (Utilities.isSearchCacheBase(cacheBase) || collectionCacheBase !== null)
 			return true;
 		else
 			return false;
@@ -3916,20 +3916,20 @@
 		var resultCacheBase;
 		if (hash === undefined)
 			hash = window.location.hash;
-		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = PhotoFloat.decodeHash(hash);
+		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = PhotoFloat.decodeHash(hash);
 
 		if (mediaCacheBase === null || env.currentAlbum !== null && env.currentAlbum.isAlbumWithOneMedia()) {
 			// hash of an album: go up in the album tree
-			if (savedSearchAlbumCacheBase !== null) {
+			if (collectionCacheBase !== null) {
 				if (albumCacheBase === foundAlbumCacheBase)
-					resultCacheBase = savedSearchAlbumCacheBase;
+					resultCacheBase = collectionCacheBase;
 				else {
 					// we must go up in the sub folder
 					albumCacheBase = albumCacheBase.split(env.options.cache_folder_separator).slice(0, -1).join(env.options.cache_folder_separator);
 					resultCacheBase = Utilities.pathJoin([
 						albumCacheBase,
 						foundAlbumCacheBase,
-						savedSearchAlbumCacheBase
+						collectionCacheBase
 					]);
 				}
 			} else {
@@ -3986,7 +3986,7 @@
 			}
 		} else {
 			// hash of a media: remove the media
-			if (savedSearchAlbumCacheBase !== null || Utilities.isFolderCacheBase(albumCacheBase)) {
+			if (collectionCacheBase !== null || Utilities.isFolderCacheBase(albumCacheBase)) {
 				// media in found album or in one of its subalbum
 				// or
 				// media in folder hash:

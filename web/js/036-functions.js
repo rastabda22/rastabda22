@@ -174,16 +174,16 @@
 				$("#by-map-view").addClass("hidden");
 			}
 
-			let [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = phFl.decodeHash(location.hash);
+			let [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
 			if (
 				! (
 					isAnyRoot && util.somethingIsSearched() ||
 					isSingleMedia && (
 						// util.somethingIsSearched() ||
-						// savedSearchAlbumCacheBase && util.isSearchCacheBase(savedSearchAlbumCacheBase)
+						// collectionCacheBase && util.isSearchCacheBase(collectionCacheBase)
 						thisAlbum.isSearch() ||
 						thisMedia.isSearched() ||
-						savedSearchAlbumCacheBase && util.isSearchCacheBase(savedSearchAlbumCacheBase) ||
+						collectionCacheBase && util.isSearchCacheBase(collectionCacheBase) ||
 						thisMedia.isInFoundAlbum() !== false
 					)
 				)
@@ -191,7 +191,7 @@
 				$("#by-search-view").addClass("hidden");
 			}
 
-			if (thisAlbum.isFolder() && ! (savedSearchAlbumCacheBase && util.isSearchCacheBase(savedSearchAlbumCacheBase))) {
+			if (thisAlbum.isFolder() && ! (collectionCacheBase && util.isSearchCacheBase(collectionCacheBase))) {
 				// folder album: change to by date or by gps view
 				$("#folders-view").addClass("selected");
 			} else if (thisAlbum.isByDate()) {
@@ -202,7 +202,7 @@
 				$("#by-map-view").removeClass("hidden").addClass("selected");
 			} else if (
 				thisAlbum.isSearch() ||
-				savedSearchAlbumCacheBase && util.isSearchCacheBase(savedSearchAlbumCacheBase)
+				collectionCacheBase && util.isSearchCacheBase(collectionCacheBase)
 			) {
 				$("#by-search-view").removeClass("hidden").addClass("selected");
 			} else if (thisAlbum.isSelection()) {
@@ -1413,7 +1413,7 @@
 				if (Object.keys(env.options).length > 0 && ! forceReload) {
 					if (! util.isSearchHash()) {
 						// reset the return link from search
-						var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, savedSearchAlbumCacheBase] = PhotoFloat.decodeHash(location.hash);
+						var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = PhotoFloat.decodeHash(location.hash);
 						env.options.cache_base_to_search_in = phFl.convertHashToCacheBase(albumCacheBase);
 					}
 					resolve_getOptions();
