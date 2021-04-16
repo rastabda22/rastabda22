@@ -79,7 +79,7 @@
 
 				var br = '<br />';
 				var title, titleCount, documentTitle, i, isFolderTitle, isDateTitle, isGpsTitle, isSearchTitle, isInsideCollectionTitle, isSearchCurrentAlbumOnly, isSelectionTitle, isMapTitle;
-				var titleAnchorClasses, searchFolderCacheBase, collectionCacheBase;
+				var titleAnchorClasses, searchFolderCacheBase, searchCacheBase;
 				var linkCount = 0, linksToLeave = 1;
 				const raquo = "&raquo;";
 				const raquoForTitle = " \u00ab ";
