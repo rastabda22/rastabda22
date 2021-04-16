@@ -543,12 +543,14 @@
 						if (singleMedia !== null) {
 							let singleMediaNameHtml;
 							let singleMediaName = singleMedia.nameForShowing(env.currentAlbum, true);
-							if (isSearchTitle || isSelectionTitle) {
+							if (isSearchTitle || isSelectionTitle || isMapTitle) {
 								let name, mediaNamePosition;
 								if (isSearchTitle)
 									[name, mediaNamePosition] = singleMedia.captionForSearch.split(br);
 								else if (isSelectionTitle)
 									[name, mediaNamePosition] = singleMedia.captionForSelection.split(br);
+								else if (isMapTitle)
+									[name, mediaNamePosition] = singleMedia.captionForPopup.split(br);
 								singleMediaNameHtml =
 									"<span class='media-name with-second-part'>" +
 										name +
