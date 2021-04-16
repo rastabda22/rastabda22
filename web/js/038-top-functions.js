@@ -570,6 +570,8 @@
 								singleMediaNameHtml += "<a class='map-popup-trigger'>" + img.prop("outerHTML") + "</a>";
 							}
 							titleComponents.push(singleMediaNameHtml);
+							classesForTitleComponents.push([""]);
+							titlesForTitleComponents.push([""]);
 							documentTitleComponents.push(singleMediaName);
 						}
 
