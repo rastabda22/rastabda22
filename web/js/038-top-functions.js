@@ -276,8 +276,9 @@
 						titleCount += ")</span>";
 					}
 				} else {
+					let titleComponentsToAdd;
 					if (env.currentAlbum.hasOwnProperty("ancestorsTitles") && env.currentAlbum.hasOwnProperty("ancestorsNames")) {
-						titleComponents = env.currentAlbum.ancestorsNames.map(
+						titleComponentsToAdd = env.currentAlbum.ancestorsNames.map(
 							(ithComponent, i) => {
 								if (
 									env.currentAlbum.ancestorsTitles[i] &&
@@ -292,13 +293,23 @@
 							}
 						);
 					} else if (env.currentAlbum.hasOwnProperty("ancestorsNames")) {
-						titleComponents = env.currentAlbum.ancestorsNames.slice();
+						titleComponentsToAdd = env.currentAlbum.ancestorsNames.slice();
 					} else {
-						titleComponents = env.currentAlbum.path.split("/");
+						titleComponentsToAdd = env.currentAlbum.path.split("/");
 					}
 
-					cacheBasesForTitleComponents = env.currentAlbum.ancestorsCacheBase.slice();
-					classesForTitleComponents = env.currentAlbum.ancestorsCacheBase.map(x => [""]);
+					let cacheBasesToAdd = env.currentAlbum.ancestorsCacheBase.slice();
+					let classesToAdd = env.currentAlbum.ancestorsCacheBase.map(x => [""]);
+
+					if (cacheBasesToAdd[0] === env.options.folders_string) {
+						titleComponentsToAdd = titleComponentsToAdd.slice(1);
+						cacheBasesToAdd = cacheBasesToAdd.slice(1);
+						classesToAdd = classesToAdd.slice(1);
+					}
+
+					titleComponents = titleComponents.concat(titleComponentsToAdd);
+					cacheBasesForTitleComponents = cacheBasesForTitleComponents.concat(cacheBasesToAdd);
+					classesForTitleComponents = classesForTitleComponents.concat(classesToAdd);
 
 					if (isDateTitle) {
 						titleComponents[1] = "(" + util._t("#by-date") + ")";
