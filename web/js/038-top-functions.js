@@ -149,9 +149,6 @@
 					videosTotalInSubAlbums = videosTotalInSubTree - videosTotalInAlbum;
 				}
 
-				var addSearchMarker = false;
-				var addSelectionMarker = false;
-
 				// the first component of the title is always the root album
 				if (env.options.page_title !== "")
 					titleComponents[0] = env.options.page_title;
@@ -513,11 +510,11 @@
 					}
 				}
 
-				if (addSearchMarker) {
-					let numElements = searchFolderCacheBase.split(env.options.cache_folder_separator).length;
-					titleComponents.splice(numElements, 0, " (" + util._t("#by-search") + ")");
-					cacheBasesForTitleComponents.splice(numElements, 0, env.options.by_search_string);
-				}
+				// if (addSearchMarker) {
+				// 	let numElements = searchFolderCacheBase.split(env.options.cache_folder_separator).length;
+				// 	titleComponents.splice(numElements, 0, " (" + util._t("#by-search") + ")");
+				// 	cacheBasesForTitleComponents.splice(numElements, 0, env.options.by_search_string);
+				// }
 
 				let promise = env.currentAlbum.generatePositionsAndMediaInMediaAndSubalbums();
 
@@ -683,64 +680,64 @@
 							document.title = documentTitle;
 						}
 
-						var toBeResolved = true;
-						if (addSearchMarker) {
-							toBeResolved = false;
-							// for searches in current folder we must get the names from the album
-							// we must use getAlbum() because the album could not be in the cache yet (as when ctl-r is pressed)
-							var promise = phFl.getAlbum(searchFolderCacheBase, util.errorThenGoUp, {getMedia: true, getPositions: true});
-							promise.then(
-								function(theAlbum) {
-									var whereLinks = '', whereLinksArray = [], thisCacheBase, name;
-
-									if (theAlbum.hasOwnProperty('ancestorsNames')) {
-										for (var i = 0; i < theAlbum.ancestorsNames.length; i ++) {
-											if (theAlbum.hasOwnProperty("ancestorsTitles") && theAlbum.ancestorsTitles[i] !== theAlbum.ancestorsNames[i])
-												name = theAlbum.ancestorsTitles[i] + "<span class='real-name'>(" + theAlbum.ancestorsNames[i] + ")";
-											else
-												name = theAlbum.ancestorsNames[i];
-											if (i === 0) {
-												if (name === env.options.by_date_string)
-													name = "(" + util._t("#by-date") + ")";
-												else if (name === env.options.by_gps_string)
-													name = "(" + util._t("#by-gps") + ")";
-												if (name === env.options.by_map_string)
-													name = "(" + util._t("#by-map") + ")";
-											} else if (i === 2 && util.isByDateCacheBase(env.options.cache_base_to_search_in)) {
-											// convert the month number to the localized month name
-												name = util._t("#month-" + name);
-											}
-											thisCacheBase = env.hashBeginning + theAlbum.ancestorsCacheBase[i];
-											if (name)
-												whereLinksArray.push("<a class='search-link' href='" + thisCacheBase + "'>" + name + "</a>");
-										}
-										whereLinks = whereLinksArray.join(raquo);
-									}
-
-									// insert the album tree links in DOM (if )
-									$("#search-album-to-be-filled").replaceWith(whereLinks);
-
-									if (setDocumentTitle) {
-										// correct the page title too
-										// documentTitle = $(document).attr('title');
-										documentTitle = documentTitle.replace(
-											"(" + util._t("#by-search") + ")",
-											"(" + util._t("#by-search") + ")" + raquoForTitle + util.stripHtmlAndReplaceEntities(whereLinksArray.reverse().join(raquoForTitle))
-										);
-										document.title = documentTitle;
-									}
-
-									TopFunctions.trackPiwik(id);
-
-									resolve_setTitle(self);
-								},
-								function() {
-									console.trace();
-								}
-							);
-						} else {
-							TopFunctions.trackPiwik(id);
-						}
+						// var toBeResolved = true;
+						// if (addSearchMarker) {
+						// 	toBeResolved = false;
+						// 	// for searches in current folder we must get the names from the album
+						// 	// we must use getAlbum() because the album could not be in the cache yet (as when ctl-r is pressed)
+						// 	var promise = phFl.getAlbum(searchFolderCacheBase, util.errorThenGoUp, {getMedia: true, getPositions: true});
+						// 	promise.then(
+						// 		function(theAlbum) {
+						// 			var whereLinks = '', whereLinksArray = [], thisCacheBase, name;
+						//
+						// 			if (theAlbum.hasOwnProperty('ancestorsNames')) {
+						// 				for (var i = 0; i < theAlbum.ancestorsNames.length; i ++) {
+						// 					if (theAlbum.hasOwnProperty("ancestorsTitles") && theAlbum.ancestorsTitles[i] !== theAlbum.ancestorsNames[i])
+						// 						name = theAlbum.ancestorsTitles[i] + "<span class='real-name'>(" + theAlbum.ancestorsNames[i] + ")";
+						// 					else
+						// 						name = theAlbum.ancestorsNames[i];
+						// 					if (i === 0) {
+						// 						if (name === env.options.by_date_string)
+						// 							name = "(" + util._t("#by-date") + ")";
+						// 						else if (name === env.options.by_gps_string)
+						// 							name = "(" + util._t("#by-gps") + ")";
+						// 						if (name === env.options.by_map_string)
+						// 							name = "(" + util._t("#by-map") + ")";
+						// 					} else if (i === 2 && util.isByDateCacheBase(env.options.cache_base_to_search_in)) {
+						// 					// convert the month number to the localized month name
+						// 						name = util._t("#month-" + name);
+						// 					}
+						// 					thisCacheBase = env.hashBeginning + theAlbum.ancestorsCacheBase[i];
+						// 					if (name)
+						// 						whereLinksArray.push("<a class='search-link' href='" + thisCacheBase + "'>" + name + "</a>");
+						// 				}
+						// 				whereLinks = whereLinksArray.join(raquo);
+						// 			}
+						//
+						// 			// insert the album tree links in DOM (if )
+						// 			$("#search-album-to-be-filled").replaceWith(whereLinks);
+						//
+						// 			if (setDocumentTitle) {
+						// 				// correct the page title too
+						// 				// documentTitle = $(document).attr('title');
+						// 				documentTitle = documentTitle.replace(
+						// 					"(" + util._t("#by-search") + ")",
+						// 					"(" + util._t("#by-search") + ")" + raquoForTitle + util.stripHtmlAndReplaceEntities(whereLinksArray.reverse().join(raquoForTitle))
+						// 				);
+						// 				document.title = documentTitle;
+						// 			}
+						//
+						// 			TopFunctions.trackPiwik(id);
+						//
+						// 			resolve_setTitle(self);
+						// 		},
+						// 		function() {
+						// 			console.trace();
+						// 		}
+						// 	);
+						// } else {
+						TopFunctions.trackPiwik(id);
+						// }
 
 						util.setTitleOptions();
 
@@ -789,8 +786,8 @@
 								$('#mapdiv').empty();
 							}
 						);
-						if (toBeResolved)
-							resolve_setTitle(self);
+						// if (toBeResolved)
+						resolve_setTitle(self);
 					}
 				);
 			}
