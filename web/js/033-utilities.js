@@ -3153,9 +3153,9 @@
 		// 	folderName = albumOrSubalbum.captionForSearch;
 		// } else if (parentAlbum && parentAlbum.isByDate()) {
 		if (albumOrSubalbum.cacheBase === env.options.by_date_string) {
-			folderName = Utilities._t("#by-date");
+			folderName = "+" + Utilities._t("#by-date") + ")";
 		} else if (albumOrSubalbum.cacheBase === env.options.by_gps_string) {
-			folderName = Utilities._t("#by-gps");
+			folderName = "(" + Utilities._t("#by-gps") + ")";
 		} else if (parentAlbum && parentAlbum.isByDate() || albumOrSubalbum.isByDate()) {
 			let folderArray = albumOrSubalbum.cacheBase.split(env.options.cache_folder_separator);
 			if (folderArray.length === 2) {

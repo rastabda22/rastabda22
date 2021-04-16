@@ -116,16 +116,16 @@
 				isSearchCurrentAlbumOnly = false;
 				if (isFolderTitle && collectionCacheBase) {
 					isInsideCollectionTitle = true;
-					collectionCacheBase = collectionCacheBase;
-					if (util.isSearchCacheBase(collectionCacheBase) && searchCacheBaseIsCurrentAlbumOnly(collectionCacheBase)) {
+					searchCacheBase = collectionCacheBase;
+					if (util.isSearchCacheBase(searchCacheBase) && searchCacheBaseIsCurrentAlbumOnly(searchCacheBase)) {
 						isSearchCurrentAlbumOnly = true;
-						searchFolderCacheBase = getSearchFolderCacheBase(collectionCacheBase);
+						searchFolderCacheBase = getSearchFolderCacheBase(searchCacheBase);
 					}
 				} else if (isSearchTitle) {
-					collectionCacheBase = collectionCacheBase;
-					if (searchCacheBaseIsCurrentAlbumOnly(albumCacheBase)) {
+					searchCacheBase = albumCacheBase;
+					if (searchCacheBaseIsCurrentAlbumOnly(searchCacheBase)) {
 						isSearchCurrentAlbumOnly = true;
-						searchFolderCacheBase = getSearchFolderCacheBase(albumCacheBase);
+						searchFolderCacheBase = getSearchFolderCacheBase(searchCacheBase);
 					}
 				}
 				isSearchCurrentAlbumOnly = (isSearchCurrentAlbumOnly && searchFolderCacheBase !== util.isAnyRootCacheBase(searchFolderCacheBase));
@@ -194,12 +194,14 @@
 					}
 
 					// put the search cacheBase
-					cacheBasesForTitleComponents.push(collectionCacheBase);
-					classesForTitleComponents.push(["search-link"]);
-					if (util.isSearchCacheBase(collectionCacheBase)) {
-						titleComponents.push("(" + util._t("#by-search") + ")");
-					} else if (util.isSelectionCacheBase(collectionCacheBase)) {
-						titleComponents.push("(" + util._t("#by-selection") + ")");
+					if (searchCacheBase) {
+						cacheBasesForTitleComponents.push(searchCacheBase);
+						classesForTitleComponents.push(["search-link"]);
+						if (util.isSearchCacheBase(searchCacheBase)) {
+							titleComponents.push("(" + util._t("#by-search") + ")");
+						} else if (util.isSelectionCacheBase(searchCacheBase)) {
+							titleComponents.push("(" + util._t("#by-selection") + ")");
+						}
 					}
 
 					if (isInsideCollectionTitle) {
@@ -455,26 +457,8 @@
 					} else {
 						// folders title
 
-						let classes, cacheBase, titleElement;
-						classes = ["search-link"];
-
-						if (collectionCacheBase !== undefined && collectionCacheBase !== null) {
-							searchFolderCacheBase = env.options.cache_base_to_search_in;
-							cacheBase = collectionCacheBase;
-							classes = ["search-link"];
-							if (util.isSearchCacheBase(collectionCacheBase)) {
-								titleElement = util._t("#by-search");
-								addSearchMarker = true;
-								if (searchFolderCacheBase.split(env.options.cache_folder_separator).length > 1 && env.options.search_current_album) {
-									classes = ["main-search-link"];
-								// } else if (searchFolderCacheBase.split(env.options.cache_folder_separator).length <= 1 || ! env.options.search_current_album) {
-								}
-							} else {
-								// album in a selection
-								titleElement = util._t("#by-selection");
-								addSelectionMarker = true;
-							}
-						}
+						// counts are added further
+						// nothing to do
 					}
 				}
 
@@ -1380,7 +1364,8 @@
 			$("#media-view").css("cursor", "ew-resize");
 		}
 
-		$("#album-view #subalbums, #album-view #thumbs, #media-view").removeClass("hidden-by-no-results");
+		if (! util.isSearchHash() || env.currentAlbum.subalbums.length || env.currentAlbum.media.length)
+			$("#album-view #subalbums, #album-view #thumbs, #media-view").removeClass("hidden-by-no-results");
 
 		if (env.currentMedia !== null) {
 			env.nextMedia = null;
