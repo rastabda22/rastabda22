@@ -157,6 +157,8 @@
 				cacheBasesForTitleComponents[0] = env.options.folders_string;
 				classesForTitleComponents[0] = [""];
 
+				let promises = [];
+
 				if (isSearchTitle || isInsideCollectionTitle) {
 					if (isSearchCurrentAlbumOnly) {
 						// put the components of the album searched in
@@ -172,16 +174,23 @@
 						let thisId = id;
 						cacheBasesToAdd.forEach(
 							function(cacheBase, i) {
-								let cacheBasePromise = phFl.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
-								cacheBasePromise.then(
-									function(theAlbum) {
-										$(
-											function() {
-												$(".pre-cache-base-" + thisId + "-" + i).html(theAlbum.nameForShowing());
+								let ithPromise = new Promise(
+									function(resolve_ithPromise) {
+										let cacheBasePromise = phFl.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
+										cacheBasePromise.then(
+											function(theAlbum) {
+												titleComponents[1 + i] = theAlbum.nameForShowing();
+												resolve_ithPromise();
+												// $(
+												// 	function() {
+												// 		$(".pre-cache-base-" + thisId + "-" + i).html(theAlbum.nameForShowing());
+												// 	}
+												// );
 											}
 										);
 									}
 								);
+								promises.push(ithPromise);
 							}
 						);
 
@@ -210,33 +219,41 @@
 						let cacheBasesToAdd = cacheBasesForSplittedAlbumCacheBase.slice();
 						let classesToAdd = cacheBasesForSplittedAlbumCacheBase.map((x, i) => ["post-cache-base-" + id + "-" + i]);
 
+						let titleComponentsLenghtBeforeConcatenating = titleComponents.length;
+
 						titleComponents = titleComponents.concat(cacheBasesForSplittedAlbumCacheBase);
 						cacheBasesForTitleComponents = cacheBasesForTitleComponents.concat(cacheBasesToAdd);
 						classesForTitleComponents = classesForTitleComponents.concat(classesToAdd);
 						let thisId = id;
 						cacheBasesToAdd.forEach(
 							function(cacheBase, i) {
-								let cacheBasePromise = phFl.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
-								cacheBasePromise.then(
-									function(theAlbum) {
-										theAlbum.generateCaptionForSearch();
-										let name = theAlbum.nameForShowing();
-										let [fakeName, subalbumPosition] = theAlbum.captionForSearch.split(br);
-										if (i === 0) {
-											name =
-												"<span class='with-second-part'>" +
-													name +
-													" <span id='album-name-second-part'>" + subalbumPosition + "</span>" +
-												"</span> ";
-										}
-
-										$(
-											function() {
-												$(".post-cache-base-" + thisId + "-" + i).html(name);
+								let ithPromise = new Promise(
+									function(resolve_ithPromise) {
+										let cacheBasePromise = phFl.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
+										cacheBasePromise.then(
+											function(theAlbum) {
+												theAlbum.generateCaptionForSearch();
+												let name = theAlbum.nameForShowing();
+												let [fakeName, subalbumPosition] = theAlbum.captionForSearch.split(br);
+												if (i === 0) {
+													name =
+														"<span class='with-second-part'>" +
+															name +
+															" <span id='album-name-second-part'>" + subalbumPosition + "</span>" +
+														"</span> ";
+												}
+												titleComponents[titleComponentsLenghtBeforeConcatenating + i] = name;
+												resolve_ithPromise();
+												// $(
+												// 	function() {
+												// 		$(".post-cache-base-" + thisId + "-" + i).html(name);
+												// 	}
+												// );
 											}
 										);
 									}
 								);
+								promises.push(ithPromise);
 							}
 						);
 					}
@@ -516,9 +533,10 @@
 				// 	cacheBasesForTitleComponents.splice(numElements, 0, env.options.by_search_string);
 				// }
 
-				let promise = env.currentAlbum.generatePositionsAndMediaInMediaAndSubalbums();
+				promises.push(env.currentAlbum.generatePositionsAndMediaInMediaAndSubalbums());
+				// let promise = env.currentAlbum.generatePositionsAndMediaInMediaAndSubalbums();
 
-				promise.then(
+				Promise.all(promises).then(
 					function() {
 						let documentTitleComponents = titleComponents.slice();
 						if (singleMedia !== null) {
@@ -558,11 +576,27 @@
 						title = titleComponents.map(
 							(component, i) => {
 								let titleElement;
-								if (cacheBasesForTitleComponents[i] !== undefined) {
-									let a = $("<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + encodeURI(cacheBasesForTitleComponents[i]) + "'>" + component + "</a>");
-									if (classesForTitleComponents[i] !== undefined)
+								if (cacheBasesForTitleComponents[i] !== "") {
+									let aTagBegin = "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + encodeURI(cacheBasesForTitleComponents[i]) + "'>";
+									let aTagEnd = "</a>";
+									let spanTagEnd = "</span>";
+									let a;
+									if (component.indexOf("<a href=") !== -1) {
+										let firstClosingAngularBracketPosition = component.indexOf(">");
+										let secondOpeningAngularBracketPosition = component.indexOf(" <", 2);
+										a = $(
+											component.substring(0, firstClosingAngularBracketPosition + 1) + // <span class='with-second-part'>
+											aTagBegin +
+											component.substring(firstClosingAngularBracketPosition + 1, secondOpeningAngularBracketPosition) + // the album name
+											aTagEnd +
+											component.substring(secondOpeningAngularBracketPosition)
+										);
+									} else {
+										a = $(aTagBegin + component + aTagEnd);
+									}
+									if (classesForTitleComponents[i] !== "")
 										classesForTitleComponents[i].forEach(singleClass => a.addClass(singleClass));
-									if (titlesForTitleComponents[i] !== undefined)
+									if (titlesForTitleComponents[i] !== "")
 										a.attr("title", titlesForTitleComponents[i]);
 									titleElement = a.prop("outerHTML");
 								} else {
