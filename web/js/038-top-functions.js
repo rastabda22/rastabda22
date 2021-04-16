@@ -194,9 +194,13 @@
 					}
 
 					// put the search cacheBase
-					titleComponents.push("(" + util._t("#by-search") + ")");
 					cacheBasesForTitleComponents.push(collectionCacheBase);
 					classesForTitleComponents.push(["search-link"]);
+					if (util.isSearchCacheBase(collectionCacheBase)) {
+						titleComponents.push("(" + util._t("#by-search") + ")");
+					} else if (util.isSelectionCacheBase(collectionCacheBase)) {
+						titleComponents.push("(" + util._t("#by-selection") + ")");
+					}
 
 					if (isInsideCollectionTitle) {
 						// put the components of the found album and (if any) its subalbums
