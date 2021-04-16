@@ -131,8 +131,8 @@
 				isCurrentAlbumOnly = (isCurrentAlbumOnly && searchFolderCacheBase !== util.isAnyRootCacheBase(searchFolderCacheBase));
 
 				titleAnchorClasses = 'title-anchor';
-				if (env.isMobile.any())
-					titleAnchorClasses += ' mobile';
+				// if (env.isMobile.any())
+				// 	titleAnchorClasses += ' mobile';
 
 				var mediaTotalInAlbum, imagesTotalInAlbum, videosTotalInAlbum;
 				var mediaTotalInSubTree, imagesTotalInSubTree, videosTotalInSubTree;
@@ -242,8 +242,7 @@
 					if (
 						isSearchTitle &&
 						singleMedia === null &&
-						(env.currentAlbum.numsMedia.imagesAndVideosTotal() || env.currentAlbum.subalbums.length) &&
-						! env.isMobile.any()
+						(env.currentAlbum.numsMedia.imagesAndVideosTotal() || env.currentAlbum.subalbums.length)
 					) {
 						titleCount = "<span class='title-count'>(";
 						titleCount += util._t(".title-found") + " ";
@@ -324,10 +323,7 @@
 							}
 						}
 
-						if (
-							(singleMedia === null) &&
-							! env.isMobile.any()
-						) {
+						if (singleMedia === null) {
 							titleCount = "<span class='title-count'>(";
 							if (titleComponents.length === 2)
 								titleCount += mediaTotalInSubAlbums + " ";
@@ -372,7 +368,7 @@
 							titleComponents[i] = gpsName;
 						}
 
-						if (singleMedia === null && ! env.isMobile.any()) {
+						if (singleMedia === null) {
 							titleCount = "<span class='title-count'>(";
 							if (titleComponents.length === 2)
 								titleCount += mediaTotalInSubAlbums + " ";
@@ -405,8 +401,7 @@
 
 						if (
 							singleMedia === null &&
-							(env.currentAlbum.numsMedia.imagesAndVideosTotal() || env.currentAlbum.subalbums.length) &&
-							! env.isMobile.any()
+							(env.currentAlbum.numsMedia.imagesAndVideosTotal() || env.currentAlbum.subalbums.length)
 						) {
 							titleCount = "<span class='title-count'>(";
 							// titleCount += util._t(".title-selected") + ' ';
@@ -441,8 +436,7 @@
 						if (
 							titleComponents.length > 2 &&
 							singleMedia === null &&
-							(env.currentAlbum.numsMedia.imagesAndVideosTotal()) &&
-							! env.isMobile.any()
+							(env.currentAlbum.numsMedia.imagesAndVideosTotal())
 						) {
 							titleCount = "<span class='title-count'>(";
 							titleCount += mediaTotalInAlbum + " ";
@@ -481,11 +475,7 @@
 				}
 
 				if (isInsideSearchTitle || isFolderTitle) {
-					if (
-						// titleComponents.length > 1 &&
-						(singleMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) &&
-						! env.isMobile.any()
-					) {
+					if (singleMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) {
 						titleCount = "<span class='title-count'>(";
 						if (env.currentAlbum.numsMedia.imagesAndVideosTotal()) {
 							titleCount += mediaTotalInAlbum + " ";
@@ -641,25 +631,20 @@
 							title += markers;
 						}
 
-						if (env.isMobile.any()) {
-							// leave only the last link on mobile
-							// separate on "&raquo;""
-							let titleArray = title.split(raquo);
-
-							for (i = titleArray.length - 1; i >= 0; i --) {
-								if (titleArray[i].indexOf(" href='#!") !== -1) {
-									linkCount ++;
-									if (linkCount > linksToLeave) {
-										title =
-											"<span class='dots-surroundings'><span class='title-no-anchor dots'>...</span></span>" +
-											"<span class='hidden-title'>" + titleArray.slice(0, i + 1).join(raquo) + "</span>" + raquo + titleArray.slice(i + 1).join(raquo);
-										break;
-									}
+						// leave only the last link on mobile
+						// separate on "&raquo;""
+						let titleArray = title.split(raquo);
+						for (i = titleArray.length - 1; i >= 0; i --) {
+							if (titleArray[i].indexOf(" href=") !== -1) {
+								linkCount ++;
+								if (linkCount > linksToLeave) {
+									title =
+										"<span class='dots-surroundings'><span class='title-no-anchor dots'>...</span></span>" +
+										"<span class='hidden-title'>" + titleArray.slice(0, i + 1).join(raquo) + "</span>" + raquo + titleArray.slice(i + 1).join(raquo);
+									break;
 								}
 							}
 						}
-						// if (title.indexOf(mediaNamePositionMarker) !== -1)
-						// 	title = title.replace(mediaNamePositionMarker, mediaNamePositionMarker.split("><").join("> " + mediaNamePosition + "<"));
 
 						title = "<span class='title-main'>" + title + "</span>";
 
@@ -671,7 +656,7 @@
 						else
 							$(".media-box#" + id + " .title-string").html(title);
 
-						if (env.isMobile.any() && (id == "center" || id == "album")) {
+						if (id == "center" || id == "album") {
 							$(".dots").off("click").on(
 								"click",
 								{singleMedia: singleMedia},

@@ -1,4 +1,4 @@
-@media (max-height: 700px) {
+	@media (max-height: 700px) {
 	#media-view {
 		top: 0;
 		bottom: 0;
@@ -63,5 +63,21 @@
 
 	#thumbs .thumbnail-map-link, #subalbums .thumbnail-map-link, #thumbs .select-box, #subalbums .select-box, #media-select-box .select-box, #popup-images-wrapper .select-box {
 		opacity: .5;
+	}
+
+	.title-count {
+		display: none;
+	}
+
+	a.title-anchor {
+		color: orange !important;
+	}
+
+	.dots-surroundings {
+		display: inline-block;
+	}
+
+	.hidden-title {
+		display: none;
 	}
 }

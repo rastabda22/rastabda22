@@ -95,13 +95,13 @@ img.thumbnail-img {
 	font-style: italic;
 }
 
-a.title-anchor.mobile {
-	color: orange !important;
-}
-
 .italic {
 	font-style: italic;
 	/* color: gray; */
+}
+
+.dots-surroundings {
+	display: none;
 }
 
 .messages .browsing-mode-message {
@@ -866,10 +866,6 @@ video {
 
 #social:hover {
 	opacity: 1;
-}
-
-.hidden-title {
-	display: none;
 }
 
 #media-name-second-part, #album-name-second-part {
