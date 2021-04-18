@@ -149,7 +149,7 @@ config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x
 json_version = 4.27
 
 # the release version number (a string)
-version = "v4.9.42"
+version = "v4.9.43"
 
 
 def set_obsolete_json_version_flag():

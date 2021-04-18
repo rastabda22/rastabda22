@@ -1,3 +1,5 @@
+### version v4.9.43 (Apr 21, 2021)
+
 * bug fixes
 * title for searches in current album only are presented in a more correct way
 * when in subalbums of searched or selected albums, the searched/selected album is shown directly after the search/selected marker, its position is shown hovering the album name as for searched media
