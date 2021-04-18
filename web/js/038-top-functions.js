@@ -578,32 +578,34 @@
 						title = titleComponents.map(
 							(component, i) => {
 								let titleElement;
-								if (cacheBasesForTitleComponents[i] !== "") {
-									let aTagBegin = "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + encodeURI(cacheBasesForTitleComponents[i]) + "'>";
-									let aTagEnd = "</a>";
-									let spanTagEnd = "</span>";
-									let a;
-									if (component.indexOf("<a href=") !== -1) {
-										let firstClosingAngularBracketPosition = component.indexOf(">");
-										let secondOpeningAngularBracketPosition = component.indexOf(" <", 2);
-										a = $(
-											component.substring(0, firstClosingAngularBracketPosition + 1) + // <span class='with-second-part'>
-											aTagBegin +
-											component.substring(firstClosingAngularBracketPosition + 1, secondOpeningAngularBracketPosition) + // the album name
-											aTagEnd +
-											component.substring(secondOpeningAngularBracketPosition)
-										);
-									} else {
-										a = $(aTagBegin + component + aTagEnd);
-									}
-									if (classesForTitleComponents[i] !== "")
-										classesForTitleComponents[i].forEach(singleClass => a.addClass(singleClass));
-									if (titlesForTitleComponents[i] !== "")
-										a.attr("title", titlesForTitleComponents[i]);
-									titleElement = a.prop("outerHTML");
-								} else {
-									titleElement = "<span class='title-no-anchor'>" + component + "</span>";
+								let aTagBegin = "";
+								let aTagEnd = "";
+								if (cacheBasesForTitleComponents[i] !== undefined && cacheBasesForTitleComponents[i] !== "") {
+									aTagBegin = "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + encodeURI(cacheBasesForTitleComponents[i]) + "'>";
+									aTagEnd = "</a>";
 								}
+								let a;
+								if (component.indexOf("<a href=") !== -1) {
+									let firstClosingAngularBracketPosition = component.indexOf(">");
+									let secondOpeningAngularBracketPosition = component.indexOf(" <", 2);
+									a = $(
+										component.substring(0, firstClosingAngularBracketPosition + 1) + // <span class='with-second-part'>
+										aTagBegin +
+										component.substring(firstClosingAngularBracketPosition + 1, secondOpeningAngularBracketPosition) + // the album name
+										aTagEnd +
+										component.substring(secondOpeningAngularBracketPosition)
+									);
+								} else {
+									a = $(aTagBegin + component + aTagEnd);
+								}
+								if (classesForTitleComponents[i] !== "")
+									classesForTitleComponents[i].forEach(singleClass => a.addClass(singleClass));
+								if (titlesForTitleComponents[i] !== "")
+									a.attr("title", titlesForTitleComponents[i]);
+								titleElement = a.wrapAll('<div>').parent().html();
+								// } else {
+								// 	titleElement = "<span class='title-no-anchor'>" + component + "</span>";
+								// }
 								return titleElement;
 							}
 						).join(raquo);
