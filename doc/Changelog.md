@@ -1,4 +1,8 @@
 * bug fixes
+* title for searches in current album only are presented in a more correct way
+* when in subalbums of searched or selected albums, the searched/selected album is shown directly after the search/selected marker, its position is shown hovering the album name as for searched media
+* media name in title now always show the position (hovering) in searches/selections/map albums
+* more mobile differences are now implemented via css
 
 ### version v4.9.42 (Apr 12, 2021)
 
