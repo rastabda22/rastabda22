@@ -538,7 +538,7 @@
 
 				Promise.all(promises).then(
 					function() {
-						let documentTitleComponents = titleComponents.slice();
+						let documentTitleComponents = titleComponents.map(component => util.stripHtmlAndReplaceEntities(component));
 						if (singleMedia !== null) {
 							let singleMediaNameHtml;
 							let singleMediaName = singleMedia.nameForShowing(env.currentAlbum, true);
@@ -572,7 +572,7 @@
 							titleComponents.push(singleMediaNameHtml);
 							classesForTitleComponents.push([""]);
 							titlesForTitleComponents.push([""]);
-							documentTitleComponents.push(singleMediaName);
+							documentTitleComponents.push(util.stripHtmlAndReplaceEntities(singleMediaName));
 						}
 
 						title = titleComponents.map(
