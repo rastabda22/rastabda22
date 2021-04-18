@@ -360,7 +360,7 @@
 									titleCountObject.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
 								else
 									titleCountObject.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
-								titleCount += titleCountObject.prop("outerHTML");
+								titleCount += titleCountObject.wrapAll('<div>').parent().html();
 							}
 							if (titleComponents.length >= 5)
 								titleCount += " " + util._t(".title-in-day-album");
@@ -405,7 +405,7 @@
 									titleCountObject.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
 								else
 									titleCountObject.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
-								titleCount += titleCountObject.prop("outerHTML");
+								titleCount += titleCountObject.wrapAll('<div>').parent().html();
 							}
 							if (titleComponents.length >= gpsLevelNumber + 2)
 								titleCount += " " + util._t(".title-in-gps-album");
@@ -493,7 +493,7 @@
 									titleCountObject.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
 								else
 									titleCountObject.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
-								titleCount += titleCountObject.prop("outerHTML");
+								titleCount += titleCountObject.wrapAll('<div>').parent().html();
 							}
 							titleCount += util._t(".title-in-album");
 							if (mediaTotalInSubAlbums)
@@ -509,7 +509,7 @@
 								let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
 								let titleCountObject = $(titleCountHtml);
 								titleCountObject.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
-								titleCount += titleCountObject.prop("outerHTML");
+								titleCount += titleCountObject.wrapAll('<div>').parent().html();
 							}
 							titleCount += " " + util._t(".title-in-subalbums");
 						}
@@ -521,7 +521,7 @@
 							let titleSpan = $(titleSpanHtml);
 							titleSpan.attr("title", spanTitle);
 
-							titleCount += titleSpan.prop("outerHTML") + " ";
+							titleCount += titleSpan.wrapAll('<div>').parent().html() + " ";
 						}
 						titleCount += ")</span>";
 					}
@@ -567,7 +567,7 @@
 									imgTitle += " [" + util._t(".map-link-shortcut") + "]";
 								img.attr("title", imgTitle);
 								img.attr("alt", imgTitle);
-								singleMediaNameHtml += "<a class='map-popup-trigger'>" + img.prop("outerHTML") + "</a>";
+								singleMediaNameHtml += "<a class='map-popup-trigger'>" + img.wrapAll('<div>').parent().html() + "</a>";
 							}
 							titleComponents.push(singleMediaNameHtml);
 							classesForTitleComponents.push([""]);
@@ -641,14 +641,14 @@
 									imgTitle1 += " [" + util._t(".map-link-shortcut") + "]";
 								img.attr("title", imgTitle1);
 								img.attr("src", imgSrc1);
-								markers += "<a class='map-popup-trigger'>" + img.prop("outerHTML") + "</a>";
+								markers += "<a class='map-popup-trigger'>" + img.wrapAll('<div>').parent().html() + "</a>";
 							}
 							if (showDoubleMarker) {
 								if (! env.isMobile.any())
 									imgTitle2 += " [" + util._t(".map-link-shortcut") + "]";
 								img.attr("title", imgTitle2);
 								img.attr("src", imgSrc2);
-								markers += "<a class='map-popup-trigger-double'>" + img.prop("outerHTML") + "</a>";
+								markers += "<a class='map-popup-trigger-double'>" + img.wrapAll('<div>').parent().html() + "</a>";
 							}
 
 							title += markers;
@@ -2138,7 +2138,7 @@
 						img.attr("title", util._t("#show-on-map"));
 						img.attr("alt", util._t("#show-on-map"));
 						mapLinkIcon =
-							"<a id='media-map-link-" + iMedia + "'>" + img.prop("outerHTML") + "</a>";
+							"<a id='media-map-link-" + iMedia + "'>" + img.wrapAll('<div>').parent().html() + "</a>";
 					}
 				}
 				let selectSrc = 'img/checkbox-unchecked-48px.png';
@@ -2162,7 +2162,7 @@
 					mediaSelectBoxSelectorPart = "map-" + mediaSelectBoxSelectorPart;
 
 				let selectBoxHtml =
-					"<a id='" + mediaSelectBoxSelectorPart + iMedia + "'>" + img.prop("outerHTML") + "</a>";
+					"<a id='" + mediaSelectBoxSelectorPart + iMedia + "'>" + img.wrapAll('<div>').parent().html() + "</a>";
 
 				// imageElement.get(0).media = ithMedia;
 				let mediaHash;
@@ -2216,7 +2216,7 @@
 							mapLinkIcon +
 							selectBoxHtml +
 							"<span class='helper'></span>" +
-							img.prop("outerHTML") +
+							img.wrapAll('<div>').parent().html() +
 						"</div>" +
 						"<div class='media-caption'>";
 				let name;
@@ -2239,14 +2239,14 @@
 				let span = $(spanHtml);
 				span.attr("title", ithMedia.nameForShowing(this));
 
-				imageString += span.prop("outerHTML");
+				imageString += span.wrapAll('<div>').parent().html();
 
 				if (ithMedia.metadata.hasOwnProperty("description")) {
 					let description = $("<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithMedia.metadata.description) + "</div>");
 					description.attr("title", util.stripHtmlAndReplaceEntities(ithMedia.metadata.description));
 					imageString +=
 							"<div class='media-description'>" +
-								description.prop("outerHTML") +
+								description.wrapAll('<div>').parent().html() +
 							"</div>";
 				}
 				if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
