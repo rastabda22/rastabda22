@@ -213,8 +213,13 @@
 					if (isInsideCollectionTitle) {
 						// put the components of the found album and (if any) its subalbums
 						let splittedAlbumCacheBase = albumCacheBase.split(env.options.cache_folder_separator);
-						let splittedFoundAlbumCacheBase = foundAlbumCacheBase.split(env.options.cache_folder_separator);
-						let cacheBasesForSplittedAlbumCacheBase = splittedAlbumCacheBase.map((x, i) => splittedAlbumCacheBase.slice(0, i + 1).join(env.options.cache_folder_separator)).slice(splittedFoundAlbumCacheBase.length - 1);
+						let splittedFoundAlbumCacheBase, cacheBasesForSplittedAlbumCacheBase;
+						if (isSearchCurrentAlbumOnly) {
+							splittedFoundAlbumCacheBase = foundAlbumCacheBase.split(env.options.cache_folder_separator);
+							cacheBasesForSplittedAlbumCacheBase = splittedAlbumCacheBase.map((x, i) => splittedAlbumCacheBase.slice(0, i + 1).join(env.options.cache_folder_separator)).slice(splittedFoundAlbumCacheBase.length - 1);
+						} else {
+							cacheBasesForSplittedAlbumCacheBase = splittedAlbumCacheBase.map((x, i) => splittedAlbumCacheBase.slice(0, i + 1).join(env.options.cache_folder_separator)).slice(1);
+						}
 
 						let cacheBasesToAdd = cacheBasesForSplittedAlbumCacheBase.slice();
 						let classesToAdd = cacheBasesForSplittedAlbumCacheBase.map((x, i) => ["post-cache-base-" + id + "-" + i]);
