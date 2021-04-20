@@ -258,9 +258,10 @@
 
 		rootSearchAlbum.numsMediaInSubTree.sum(this.numsMediaInSubTree);
 		// rootSearchAlbum.subalbums.push(newSearchAlbum);
-		rootSearchAlbum.positionsAndMediaInTree.mergePositionsAndMedia(this.positionsAndMediaInTree);
-		rootSearchAlbum.numPositionsInTree = rootSearchAlbum.positionsAndMediaInTree.length;
-		// rootSearchAlbum.numPositionsInTree += this.numPositionsInTree;
+		if (rootSearchAlbum.hasOwnProperty("positionsAndMediaInTree") && this.hasOwnProperty("positionsAndMediaInTree")) {
+			rootSearchAlbum.positionsAndMediaInTree.mergePositionsAndMedia(this.positionsAndMediaInTree);
+		}
+		rootSearchAlbum.numPositionsInTree += this.numPositionsInTree;
 		// rootSearchAlbum.numsProtectedMediaInSubTree[","].sum(this.numsProtectedMediaInSubTree[","]);
 
 		this.ancestorsCacheBase = rootSearchAlbum.ancestorsCacheBase.slice();

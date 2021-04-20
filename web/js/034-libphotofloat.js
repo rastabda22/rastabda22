@@ -1563,7 +1563,8 @@
 					}
 
 					// get the search root album before getting the search words ones
-					var promise = PhotoFloat.getAlbum(env.options.by_search_string, reject_parseHash, {getMedia: true, getPositions: true});
+					var promise = PhotoFloat.getAlbum(env.options.by_search_string, reject_parseHash, {getMedia: false, getPositions: false});
+					// var promise = PhotoFloat.getAlbum(env.options.by_search_string, reject_parseHash, {getMedia: true, getPositions: true});
 					promise.then(
 						function(bySearchRootAlbum) {
 							var lastIndex, i, j, wordCacheBases, numSearchAlbumsReady = 0, numSubAlbumsToGet = 0;
