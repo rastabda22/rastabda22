@@ -3463,7 +3463,7 @@
 		var mediaBarDisplay;
 		$(".media-box#center .media-bar").css("bottom", "");
 
-		MoveMediaBarAboveBottomSocial()
+		MoveMediaBarAboveBottomSocial();
 		separateLateralSocialAndPrev();
 		moveSelectBoxAboveBottomSocial();
 		moveSelectBoxAboveMediaBar();

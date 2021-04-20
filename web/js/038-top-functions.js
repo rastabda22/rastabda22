@@ -171,7 +171,6 @@
 						let classesToAdd = splittedCacheBaseSearchedIn.map((x, i) => ["pre-cache-base-" + id + "-" + i]);
 
 						// substitute each album cache base with the right name
-						let thisId = id;
 						cacheBasesToAdd.forEach(
 							function(cacheBase, i) {
 								let ithPromise = new Promise(
@@ -181,11 +180,6 @@
 											function(theAlbum) {
 												titleComponents[1 + i] = theAlbum.nameForShowing();
 												resolve_ithPromise();
-												// $(
-												// 	function() {
-												// 		$(".pre-cache-base-" + thisId + "-" + i).html(theAlbum.nameForShowing());
-												// 	}
-												// );
 											}
 										);
 									}
@@ -229,7 +223,6 @@
 						titleComponents = titleComponents.concat(cacheBasesForSplittedAlbumCacheBase);
 						cacheBasesForTitleComponents = cacheBasesForTitleComponents.concat(cacheBasesToAdd);
 						classesForTitleComponents = classesForTitleComponents.concat(classesToAdd);
-						let thisId = id;
 						cacheBasesToAdd.forEach(
 							function(cacheBase, i) {
 								let ithPromise = new Promise(
@@ -249,11 +242,6 @@
 												}
 												titleComponents[titleComponentsLenghtBeforeConcatenating + i] = name;
 												resolve_ithPromise();
-												// $(
-												// 	function() {
-												// 		$(".post-cache-base-" + thisId + "-" + i).html(name);
-												// 	}
-												// );
 											}
 										);
 									}
@@ -2452,8 +2440,6 @@
 		}
 
 		// insert into DOM
-		let subalbumsElement = $("#subalbums");
-
 		let subalbumsPromises = [];
 		if (! self.subalbums.length)
 			$("#subalbums").addClass("hidden");
