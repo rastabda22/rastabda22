@@ -1531,17 +1531,17 @@
 									);
 									subalbumPromises.push(subalbumPromise);
 								}
-								Promise.all(subalbumPromises).then(
-									function() {
-										var promise = PhotoFloat.endPreparingAlbumAndKeepOn(env.searchAlbum, mediaCacheBase, mediaFolderCacheBase);
-										promise.then(
-											function(i) {
-												resolve_parseHash([env.searchAlbum, i]);
-											}
-										);
-									}
-								);
 							}
+							Promise.all(subalbumPromises).then(
+								function() {
+									var promise = PhotoFloat.endPreparingAlbumAndKeepOn(env.searchAlbum, mediaCacheBase, mediaFolderCacheBase);
+									promise.then(
+										function(i) {
+											resolve_parseHash([env.searchAlbum, i]);
+										}
+									);
+								}
+							);
 						} else {
 							var promise = PhotoFloat.endPreparingAlbumAndKeepOn(env.searchAlbum, mediaCacheBase, mediaFolderCacheBase);
 							promise.then(
