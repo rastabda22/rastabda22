@@ -772,7 +772,7 @@ $(document).ready(function() {
 			util.translate();
 			$("#auth-text").hide();
 			// $("#thumbs").show();
-			$("#subalbums").show();
+			$("#subalbums").removeClass("hidden");
 			$("#album-view, #media-view, #my-modal").css("opacity", "");
 
 			if (env.isABrowsingModeChange)

@@ -1325,7 +1325,7 @@
 
 				util.translate();
 
-				$("#album-view #subalbums").addClass("hidden");
+				$("#subalbums").addClass("hidden");
 			}
 		);
 	};
@@ -1406,7 +1406,7 @@
 		}
 
 		if (! util.isSearchHash() || env.currentAlbum.subalbums.length || env.currentAlbum.media.length)
-			$("#album-view #subalbums, #album-view #thumbs, #media-view").removeClass("hidden-by-no-results");
+			$("#subalbums, #thumbs, #media-view").removeClass("hidden-by-no-results");
 
 		if (env.currentMedia !== null) {
 			env.nextMedia = null;
@@ -1440,7 +1440,7 @@
 						if (env.currentAlbum.subalbums.length) {
 							env.currentAlbum.showSubalbums();
 						} else {
-							$("#album-view #subalbums").addClass("hidden");
+							$("#subalbums").addClass("hidden");
 						}
 						if (
 							env.albumOfPreviousState === null || (
@@ -2456,8 +2456,8 @@
 
 		let subalbumsPromises = [];
 		if (! self.subalbums.length)
-			subalbumsElement.addClass("hidden");
-			// subalbumsElement.hide();
+			$("#subalbums").addClass("hidden");
+			// $("#subalbums").hide();
 
 		let populateSubalbums =
 			forcePopulate ||
@@ -2466,8 +2466,8 @@
 			(env.albumInSubalbumDiv !== self || env.isFromAuthForm) && self.subalbums.length;
 
 		if (populateSubalbums) {
-			subalbumsElement.empty();
-			subalbumsElement.insertBefore("#message-too-many-images");
+			$("#subalbums").empty();
+			$("#subalbums").insertBefore("#message-too-many-images");
 
 			//
 			// subalbums loop
@@ -2584,7 +2584,7 @@
 						linkContainer.append(caption);
 						aHrefHtmlContainer.append(linkContainer);
 
-						subalbumsElement.append(aHrefHtmlContainer);
+						$("#subalbums").append(aHrefHtmlContainer);
 
 						if (ithSubalbum.numPositionsInTree) {
 							$("#subalbum-map-link-" + id + " img.thumbnail-map-link").attr("title", folderMapTitleWithoutHtmlTags);
@@ -2686,8 +2686,8 @@
 
 		if (self.subalbums.length) {
 			$("#album-and-media-container").removeClass("show-media");
-			subalbumsElement.removeClass("hidden");
-			// subalbumsElement.show();
+			$("#subalbums").removeClass("hidden");
+			// $("#subalbums").show();
 			$("#album-view").removeAttr("height");
 		}
 

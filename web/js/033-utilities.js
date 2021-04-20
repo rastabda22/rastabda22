@@ -1155,7 +1155,7 @@
 			let promise = PhotoFloat.getAlbum(env.options.by_search_string, null, {getMedia: false, getPositions: false});
 			promise.then(Utilities.toggleMenu);
 		}
-		$("#album-view #subalbums, #album-view #thumbs, #media-view").addClass("hidden-by-no-results");
+		$("#subalbums, #thumbs, #media-view").addClass("hidden-by-no-results");
 		// $("#album-view #subalbums, #album-view #thumbs").addClass("hidden");
 		// $("#media-view").addClass("hidden");
 		$("#loading").hide();
