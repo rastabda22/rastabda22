@@ -1,7 +1,8 @@
+### version v4.9.44 (Apr 20, 2021)
+
 * bug fixes
 
-
-### version v4.9.43 (Apr 21, 2021)
+### version v4.9.43 (Apr 19, 2021)
 
 * bug fixes
 * title for searches in current album only are presented in a more correct way
