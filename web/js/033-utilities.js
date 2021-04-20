@@ -244,7 +244,7 @@
 	};
 
 	Utilities.initializeSearchRootAlbum = function() {
-		rootSearchAlbum = new Album(env.options.by_search_string);
+		var rootSearchAlbum = new Album(env.options.by_search_string);
 		env.cache.putAlbum(rootSearchAlbum);
 	};
 
