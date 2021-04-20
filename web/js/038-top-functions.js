@@ -2347,6 +2347,10 @@
 
 		f.updateMenu();
 		env.currentAlbum.bindMediaSortEvents();
+
+		util.setDescriptionOptions();
+		util.correctElementPositions();
+		
 		$("#loading").hide();
 	};
 
@@ -2656,7 +2660,7 @@
 				if (self.subalbums.length)
 					util.adaptCaptionHeight();
 
-				// When there is both a media and an album, we display the media's description; else it's the album's one
+				// When there is both a single media and an album, we display the single media description; else the album's one
 				if (env.currentMedia === null || ! env.currentMedia.hasSomeDescription()) {
 					self.setDescription();
 				} else {
