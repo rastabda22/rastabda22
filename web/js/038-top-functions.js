@@ -2137,8 +2137,7 @@
 						let img = $(imgHtml);
 						img.attr("title", util._t("#show-on-map"));
 						img.attr("alt", util._t("#show-on-map"));
-						mapLinkIcon =
-							"<a id='media-map-link-" + iMedia + "'>" + img.wrapAll('<div>').parent().html() + "</a>";
+						mapLinkIcon = "<a id='media-map-link-" + iMedia + "'>" + img.wrapAll('<div>').parent().html() + "</a>";
 					}
 				}
 				let selectSrc = 'img/checkbox-unchecked-48px.png';
