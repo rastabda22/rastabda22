@@ -1135,8 +1135,7 @@
 	Utilities.toggleMenu = function() {
 		$("ul#right-menu").toggleClass("expand");
 		if ($("ul#right-menu").hasClass("expand")) {
-			if (! $(".sub-menu:not(.hidden)").length)
-				Utilities.focusSearchField();
+			Utilities.focusSearchField();
 			$("#album-and-media-container:not(.show-media) #album-view").css("opacity", "0.3");
 			$(".leaflet-popup-content-wrapper").css("background-color", "darkgray");
 			Functions.updateMenu();
