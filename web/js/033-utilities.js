@@ -2652,12 +2652,65 @@
 		}
 	};
 
+	Utilities.addClickToPopupPhoto = function(element) {
+		element.parent().parent().off("click").on(
+			"click",
+			function(ev) {
+				$("#album-and-media-container").addClass("show-media");
+				ev.stopPropagation();
+				ev.preventDefault();
+				var imgData = JSON.parse(element.attr("data"));
+				// called after an element was successfully handled
+				$('.leaflet-popup-close-button')[0].click();
+				// $('#popup #popup-content').html("");
+				$('.modal-close')[0].click();
+				env.popupRefreshType = "previousAlbum";
+				env.mapRefreshType = "none";
+				window.location.href = imgData.mediaHash;
+			}
+		);
+		if (typeof isPhp === "function") {
+			// execution enters here if we are using index.php
+			element.parent().parent().off("auxclick").on(
+				"auxclick",
+				function (ev) {
+					if (ev.which === 2) {
+						var imgData = JSON.parse(element.attr("data"));
+						util.openInNewTab(imgData.mediaHash);
+						return false;
+					}
+				}
+			);
+		}
+
+		var mediaBoxSelectElement = element.siblings('a');
+		var id = mediaBoxSelectElement.attr("id");
+		mediaBoxSelectElement.off("click").on(
+			"click",
+			{id: id},
+			function(ev) {
+				ev.stopPropagation();
+				ev.preventDefault();
+				var imgData = JSON.parse(element.attr("data"));
+				var cachedAlbum = env.cache.getAlbum(imgData.albumCacheBase);
+				var name = imgData.mediaHash.split('/').pop();
+				var matchedMedia = cachedAlbum.media.find(singleMedia => name === singleMedia.cacheBase);
+				var promise = phFl.getAlbum(matchedMedia.foldersCacheBase, null, {getMedia: true, getPositions: true});
+				promise.then(
+					function(foldersAlbum) {
+						matchedMedia.toggleSelectedStatus(foldersAlbum, '#' + id);
+					}
+				);
+			}
+		);
+	};
+
 	Utilities.addMediaLazyLoader = function() {
 		$(
 			function() {
 				$("img.lazyload-popup-media").Lazy(
 					{
-						afterLoad: MapFunctions.addClickToPopupPhoto,
+						afterLoad: Utilities.addClickToPopupPhoto,
 						autoDestroy: true,
 						onError: function(element) {
 							console.log(element[0]);

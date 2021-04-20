@@ -1013,7 +1013,6 @@
 			$("#album-view").off('mousewheel').on('mousewheel', TopFunctions.scrollBottomThumbs);
 		}
 
-
 		var setTitlePromise = TopFunctions.setTitle(id, whatMedia, this);
 		setTitlePromise.then(
 			function titleSet(self) {
