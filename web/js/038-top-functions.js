@@ -479,11 +479,11 @@
 
 						if (env.currentAlbum.numsMedia.imagesAndVideosTotal()) {
 							titleCount += mediaTotalInAlbum + " ";
-							if (! imagesTotalInAlbum && videosTotalInAlbum)
+							if (! imagesTotalInAlbum && videosTotalInAlbum) {
 								titleCount += util._t(".title-videos") + " ";
-							else if (imagesTotalInAlbum && ! videosTotalInAlbum)
+							} else if (imagesTotalInAlbum && ! videosTotalInAlbum) {
 								titleCount += util._t(".title-images") + " ";
-							else {
+							} else {
 
 								let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
 								let titleCountObject = $(titleCountHtml);
@@ -491,7 +491,7 @@
 									titleCountObject.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
 								else
 									titleCountObject.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
-								titleCount += titleCountObject.wrapAll('<div>').parent().html();
+								titleCount += titleCountObject.wrapAll('<div>').parent().html() + " ";
 							}
 							titleCount += util._t(".title-in-album");
 							if (mediaTotalInSubAlbums)

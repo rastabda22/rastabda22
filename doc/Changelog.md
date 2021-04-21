@@ -1,3 +1,7 @@
+* title counts reworked, albums count is showed before media count
+* loading times optimized
+* bug fixes
+
 ### version v4.9.44 (Apr 20, 2021)
 
 * bug fixes
