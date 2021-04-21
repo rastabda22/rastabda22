@@ -2028,7 +2028,6 @@
 			inPopup = true;
 
 		var thumbnailSize = env.options.media_thumb_size;
-		var imageLink;
 		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
 		var self = this;
 		var lazyClass, thumbsSelector;
@@ -2135,8 +2134,6 @@
 									"src='img/ic_place_white_24dp_2x.png'" +
 								">";
 						let img = $(imgHtml);
-						img.attr("title", util._t("#show-on-map"));
-						img.attr("alt", util._t("#show-on-map"));
 						mapLinkIcon = "<a id='media-map-link-" + iMedia + "'>" + img.wrapAll('<div>').parent().html() + "</a>";
 					}
 				}
@@ -2153,8 +2150,6 @@
 							"src='" + selectSrc + "'" +
 						">";
 				let img = $(imgHtml);
-				img.attr("title", util._t(titleSelector));
-				img.attr("alt", util._t("#selector"));
 
 				let mediaSelectBoxSelectorPart = "media-select-box-";
 				if (inPopup)
@@ -2163,7 +2158,6 @@
 				let selectBoxHtml =
 					"<a id='" + mediaSelectBoxSelectorPart + iMedia + "'>" + img.wrapAll('<div>').parent().html() + "</a>";
 
-				// imageElement.get(0).media = ithMedia;
 				let mediaHash;
 				if (collectionCacheBase !== undefined && collectionCacheBase !== null)
 					mediaHash = phFl.encodeHash(this.cacheBase, ithMedia, foundAlbumCacheBase, collectionCacheBase);
@@ -2200,8 +2194,6 @@
 							 "'" +
 					"/>";
 				img = $(imgHtml);
-				img.attr("title", util.pathJoin([ithMedia.albumName, ithMedia.nameForShowing(this)]));
-				img.attr("alt", util.trimExtension(ithMedia.name));
 
 				let imageString =
 					"<div class='thumb-and-caption-container' style='" +
@@ -2236,13 +2228,11 @@
 								// "</span>" +
 							"</span>";
 				let span = $(spanHtml);
-				span.attr("title", ithMedia.nameForShowing(this));
 
 				imageString += span.wrapAll('<div>').parent().html();
 
 				if (ithMedia.metadata.hasOwnProperty("description")) {
 					let description = $("<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithMedia.metadata.description) + "</div>");
-					description.attr("title", util.stripHtmlAndReplaceEntities(ithMedia.metadata.description));
 					imageString +=
 							"<div class='media-description'>" +
 								description.wrapAll('<div>').parent().html() +
@@ -2264,9 +2254,18 @@
 					imageElement.attr("id", imageId);
 					$(thumbsSelector).append(imageElement);
 				} else {
-					imageLink = $("<a href='" + mediaHash + "' id='" + imageId + "'></a>");
+					let imageLink = $("<a href='" + mediaHash + "' id='" + imageId + "'></a>");
 					imageLink.append(imageElement);
 					$(thumbsSelector).append(imageLink);
+				}
+
+				if (! inPopup && ithMedia.hasGpsData())
+					$("#" + imageId + " img.thumbnail-map-link").attr("title", util._t("#show-on-map")).attr("alt", util._t("#show-on-map"));
+				$("#" + imageId + " img.select-box").attr("title", util._t(titleSelector)).attr("alt", util._t("#selector"));
+				$("#" + imageId + " img.thumbnail").attr("title", util.pathJoin([ithMedia.albumName, ithMedia.nameForShowing(this)])).attr("alt", util.trimExtension(ithMedia.name));
+				$("#" + imageId + " .media-caption .media-name").attr("title", ithMedia.nameForShowing(this));
+				if (ithMedia.metadata.hasOwnProperty("description")) {
+					$("#" + imageId + " .description ellipsis").attr("title", util.stripHtmlAndReplaceEntities(ithMedia.metadata.description));
 				}
 
 				if (! inPopup && ithMedia.hasGpsData()) {
