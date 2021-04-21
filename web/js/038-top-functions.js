@@ -2133,8 +2133,9 @@
 									"height='20px' " +
 									"src='img/ic_place_white_24dp_2x.png'" +
 								">";
-						let img = $(imgHtml);
-						mapLinkIcon = "<a id='media-map-link-" + iMedia + "'>" + img.wrapAll('<div>').parent().html() + "</a>";
+						// let img = $(imgHtml);
+						// mapLinkIcon = "<a id='media-map-link-" + iMedia + "'>" + img.wrapAll('<div>').parent().html() + "</a>";
+						mapLinkIcon = "<a id='media-map-link-" + iMedia + "'>" + imgHtml + "</a>";
 					}
 				}
 				let selectSrc = 'img/checkbox-unchecked-48px.png';
@@ -2149,14 +2150,14 @@
 							"class='select-box' " +
 							"src='" + selectSrc + "'" +
 						">";
-				let img = $(imgHtml);
+				// let img = $(imgHtml);
 
 				let mediaSelectBoxSelectorPart = "media-select-box-";
 				if (inPopup)
 					mediaSelectBoxSelectorPart = "map-" + mediaSelectBoxSelectorPart;
 
-				let selectBoxHtml =
-					"<a id='" + mediaSelectBoxSelectorPart + iMedia + "'>" + img.wrapAll('<div>').parent().html() + "</a>";
+				let selectBoxHtml = "<a id='" + mediaSelectBoxSelectorPart + iMedia + "'>" + imgHtml + "</a>";
+				// let selectBoxHtml = "<a id='" + mediaSelectBoxSelectorPart + iMedia + "'>" + img.wrapAll('<div>').parent().html() + "</a>";
 
 				let mediaHash;
 				if (collectionCacheBase !== undefined && collectionCacheBase !== null)
@@ -2193,7 +2194,7 @@
 							 "height: " + calculatedHeight + "px;" +
 							 "'" +
 					"/>";
-				img = $(imgHtml);
+				// img = $(imgHtml);
 
 				let imageString =
 					"<div class='thumb-and-caption-container' style='" +
@@ -2207,7 +2208,8 @@
 							mapLinkIcon +
 							selectBoxHtml +
 							"<span class='helper'></span>" +
-							img.wrapAll('<div>').parent().html() +
+							imgHtml +
+							// img.wrapAll('<div>').parent().html() +
 						"</div>" +
 						"<div class='media-caption'>";
 				let name;
@@ -2227,15 +2229,16 @@
 									// ithMedia.nameForShowing(this, true, true).replace(/( |<br \/>)/g, "</span>$&<span>") +
 								// "</span>" +
 							"</span>";
-				let span = $(spanHtml);
+				// let span = $(spanHtml);
 
-				imageString += span.wrapAll('<div>').parent().html();
+				imageString += spanHtml;
+				// imageString += span.wrapAll('<div>').parent().html();
 
 				if (ithMedia.metadata.hasOwnProperty("description")) {
-					let description = $("<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithMedia.metadata.description) + "</div>");
+					// let description = $("<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithMedia.metadata.description) + "</div>");
 					imageString +=
 							"<div class='media-description'>" +
-								description.wrapAll('<div>').parent().html() +
+								"<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithMedia.metadata.description) + "</div>" +
 							"</div>";
 				}
 				if (ithMedia.metadata.hasOwnProperty("tags") && ithMedia.metadata.tags.length) {
