@@ -257,8 +257,14 @@
 						singleMedia === null &&
 						(env.currentAlbum.numsMedia.imagesAndVideosTotal() || env.currentAlbum.subalbums.length)
 					) {
-						titleCount = "<span class='title-count'>(";
-						titleCount += util._t(".title-found") + " ";
+						titleCount = "<span class='title-count'>(" + util._t(".title-found") + " ";
+						if (env.currentAlbum.subalbums.length) {
+							titleCount += env.currentAlbum.subalbums.length + " " + util._t(".title-albums");
+						}
+
+						if (env.currentAlbum.numsMedia.imagesAndVideosTotal() && env.currentAlbum.subalbums.length)
+							titleCount += " " + util._t(".title-and") + " ";
+
 						if (env.currentAlbum.numsMedia.imagesAndVideosTotal()) {
 							titleCount += mediaTotalInAlbum + " ";
 							if (! imagesTotalInAlbum && videosTotalInAlbum)
@@ -267,12 +273,6 @@
 								titleCount += util._t(".title-images");
 							else
 								titleCount += util._t(".title-media");
-							if (env.currentAlbum.subalbums.length)
-								titleCount += " " + util._t(".title-and");
-						}
-						if (env.currentAlbum.subalbums.length) {
-							titleCount += " " + env.currentAlbum.subalbums.length;
-							titleCount += " " + util._t(".title-albums");
 						}
 
 						if (env.currentAlbum.hasOwnProperty("removedStopWords") && env.currentAlbum.removedStopWords.length) {
@@ -418,6 +418,14 @@
 						) {
 							titleCount = "<span class='title-count'>(";
 							// titleCount += util._t(".title-selected") + ' ';
+							if (env.currentAlbum.subalbums.length) {
+								titleCount += env.currentAlbum.subalbums.length;
+								titleCount += " " + util._t(".title-albums");
+							}
+
+							if (env.currentAlbum.numsMedia.imagesAndVideosTotal() && env.currentAlbum.subalbums.length)
+								titleCount += " " + util._t(".title-and") + " ";
+
 							if (env.currentAlbum.numsMedia.imagesAndVideosTotal()) {
 								titleCount += mediaTotalInAlbum + " ";
 								if (! imagesTotalInAlbum && videosTotalInAlbum)
@@ -426,16 +434,6 @@
 									titleCount += util._t(".title-images");
 								else
 									titleCount += util._t(".title-media");
-								if (env.currentAlbum.subalbums.length)
-									titleCount += " " + util._t(".title-and");
-							}
-
-							if (env.currentAlbum.numsMedia.imagesAndVideosTotal() && env.currentAlbum.subalbums.length)
-								titleCount += " ";
-
-							if (env.currentAlbum.subalbums.length) {
-								titleCount += env.currentAlbum.subalbums.length;
-								titleCount += " " + util._t(".title-albums");
 							}
 
 							titleCount += ")</span>";
@@ -472,6 +470,13 @@
 				if (isInsideCollectionTitle || isFolderTitle) {
 					if (singleMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) {
 						titleCount = "<span class='title-count'>(";
+						if (env.currentAlbum.subalbums.length) {
+							titleCount += env.currentAlbum.subalbums.length + " " + util._t(".title-albums");
+						}
+
+						if ((mediaTotalInAlbum || mediaTotalInSubAlbums) && env.currentAlbum.subalbums.length)
+							titleCount += ", ";
+
 						if (env.currentAlbum.numsMedia.imagesAndVideosTotal()) {
 							titleCount += mediaTotalInAlbum + " ";
 							if (! imagesTotalInAlbum && videosTotalInAlbum)
@@ -510,7 +515,7 @@
 							titleCount += ", ";
 
 							let spanTitle = imagesTotalInSubTree + " " + util._t(".title-images") + ", " + videosTotalInSubTree + " " + util._t(".title-videos");
-							let titleSpanHtml = "<span class='title-count-detail'>" + util._t(".title-total") + " " + mediaTotalInSubTree + "</span>";
+							let titleSpanHtml = "<span class='title-count-detail'>" + util._t(".title-total") + " " + mediaTotalInSubTree + " " + util._t(".title-media") + "</span>";
 							let titleSpan = $(titleSpanHtml);
 							titleSpan.attr("title", spanTitle);
 
