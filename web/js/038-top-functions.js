@@ -2268,7 +2268,7 @@
 				$("#" + imageId + " img.thumbnail").attr("title", util.pathJoin([ithMedia.albumName, ithMedia.nameForShowing(this)])).attr("alt", util.trimExtension(ithMedia.name));
 				$("#" + imageId + " .media-caption .media-name").attr("title", ithMedia.nameForShowing(this));
 				if (ithMedia.metadata.hasOwnProperty("description")) {
-					$("#" + imageId + " .description ellipsis").attr("title", util.stripHtmlAndReplaceEntities(ithMedia.metadata.description));
+					$("#" + imageId + " .description.ellipsis").attr("title", util.stripHtmlAndReplaceEntities(ithMedia.metadata.description));
 				}
 
 				if (! inPopup && ithMedia.hasGpsData()) {
