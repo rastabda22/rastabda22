@@ -2118,10 +2118,7 @@
 					albumViewPadding = 0;
 				else
 					albumViewPadding = parseInt(albumViewPadding);
-				calculatedWidth = Math.min(
-					calculatedWidth,
-					$(window).innerWidth() - 2 * albumViewPadding
-				);
+				calculatedWidth = Math.min(calculatedWidth, env.windowWidth - 2 * albumViewPadding);
 				calculatedHeight = calculatedWidth / thumbWidth * thumbHeight;
 
 				let mapLinkIcon = "";
@@ -2133,8 +2130,6 @@
 									"height='20px' " +
 									"src='img/ic_place_white_24dp_2x.png'" +
 								">";
-						// let img = $(imgHtml);
-						// mapLinkIcon = "<a id='media-map-link-" + iMedia + "'>" + img.wrapAll('<div>').parent().html() + "</a>";
 						mapLinkIcon = "<a id='media-map-link-" + iMedia + "'>" + imgHtml + "</a>";
 					}
 				}
@@ -2150,14 +2145,12 @@
 							"class='select-box' " +
 							"src='" + selectSrc + "'" +
 						">";
-				// let img = $(imgHtml);
 
 				let mediaSelectBoxSelectorPart = "media-select-box-";
 				if (inPopup)
 					mediaSelectBoxSelectorPart = "map-" + mediaSelectBoxSelectorPart;
 
 				let selectBoxHtml = "<a id='" + mediaSelectBoxSelectorPart + iMedia + "'>" + imgHtml + "</a>";
-				// let selectBoxHtml = "<a id='" + mediaSelectBoxSelectorPart + iMedia + "'>" + img.wrapAll('<div>').parent().html() + "</a>";
 
 				let mediaHash;
 				if (collectionCacheBase !== undefined && collectionCacheBase !== null)
@@ -2194,12 +2187,17 @@
 							 "height: " + calculatedHeight + "px;" +
 							 "'" +
 					"/>";
-				// img = $(imgHtml);
+
+				let imageId = "link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase;
 
 				let imageString =
 					"<div class='thumb-and-caption-container' style='" +
-								"width: " + calculatedWidth + "px; " +
-					"'>" +
+								"width: " + calculatedWidth + "px;" +
+								"'";
+				if (inPopup)
+					imageString += " id='" + imageId + "'";
+				imageString +=
+					">" +
 						"<div class='thumb-container' " + "style='" +
 								// "width: " + calculatedWidth + "px; " +
 								"width: " + calculatedWidth + "px; " +
@@ -2209,7 +2207,6 @@
 							selectBoxHtml +
 							"<span class='helper'></span>" +
 							imgHtml +
-							// img.wrapAll('<div>').parent().html() +
 						"</div>" +
 						"<div class='media-caption'>";
 				let name;
@@ -2229,13 +2226,10 @@
 									// ithMedia.nameForShowing(this, true, true).replace(/( |<br \/>)/g, "</span>$&<span>") +
 								// "</span>" +
 							"</span>";
-				// let span = $(spanHtml);
 
 				imageString += spanHtml;
-				// imageString += span.wrapAll('<div>').parent().html();
 
 				if (ithMedia.metadata.hasOwnProperty("description")) {
-					// let description = $("<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithMedia.metadata.description) + "</div>");
 					imageString +=
 							"<div class='media-description'>" +
 								"<div class='description ellipsis'>" + util.stripHtmlAndReplaceEntities(ithMedia.metadata.description) + "</div>" +
@@ -2250,16 +2244,13 @@
 				imageString +=
 						"</div>" +
 					"</div>";
-				let imageElement = $(imageString);
 
-				let imageId = "link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase;
 				if (inPopup) {
-					imageElement.attr("id", imageId);
-					$(thumbsSelector).append(imageElement);
+					$(thumbsSelector).append(imageString);
 				} else {
-					let imageLink = $("<a href='" + mediaHash + "' id='" + imageId + "'></a>");
-					imageLink.append(imageElement);
-					$(thumbsSelector).append(imageLink);
+					let aHtml = "<a href='" + mediaHash + "' id='" + imageId + "'></a>";
+					$(thumbsSelector).append(aHtml);
+					$(thumbsSelector + " #" + imageId).append(imageString);
 				}
 
 				if (! inPopup && ithMedia.hasGpsData())
