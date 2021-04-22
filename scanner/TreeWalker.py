@@ -685,7 +685,7 @@ class TreeWalker:
 				indented_message("clustering with k-means algorithm not ok", "biggest cluster has " + str(max_cluster_length) + " photos, doubling the k factor", 5)
 				media_list = remaining_media
 				k = k * 2
-		return [big_clusters, media_list]
+		return [big_clusters, remaining_media]
 
 	def generate_by_geonames_albums(self, origin_album):
 		next_level()
