@@ -1426,7 +1426,7 @@ class TreeWalker:
 				must_process_passwords = True
 
 		# check album name against passwords
-		if must_process_passwords:
+		if must_process_passwords and album_cache_base != Options.config['folders_string']:
 			# if passwords are to be processed, this invalidates the cache albums
 			album_cache_hit = False
 
@@ -1474,7 +1474,7 @@ class TreeWalker:
 								3
 							)
 			back_level()
-			indented_message("passwords for album processed!", "", 4)
+			indented_message("passwords processed for album!", "", 4)
 			back_level()
 		else:
 			indented_message("no need to process passwords for album", "", 5)
