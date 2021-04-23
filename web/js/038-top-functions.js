@@ -977,7 +977,7 @@
 		// end of loadNextPrevMedia auxiliary function
 
 		//////////////////////////////////
-		// beginning of show method body
+		// beginning of SingleMedia show method body
 		//////////////////////////////////
 		var text, mediaSelector;
 		var exposureTime, heightForMedia, heightForMediaAndTitle;
@@ -1009,7 +1009,7 @@
 			) {
 				env.currentAlbum.showThumbs();
 			} else {
-				util.scrollToThumb();
+				util.scrollToBottomThumb();
 			}
 			util.addMediaLazyLoader();
 			env.isFromAuthForm = false;
@@ -1435,6 +1435,7 @@
 					if ($("#album-view").is(":visible")) {
 						if (env.currentAlbum.subalbums.length) {
 							env.currentAlbum.showSubalbums();
+							util.scrollToSubalbum();
 						} else {
 							$("#subalbums").addClass("hidden");
 						}
@@ -1446,7 +1447,7 @@
 						) {
 							env.currentAlbum.showThumbs();
 						} else {
-							util.scrollToThumb();
+							util.scrollToAlbumViewThumb();
 						}
 						util.addMediaLazyLoader();
 
@@ -2333,10 +2334,11 @@
 		util.setMediaOptions();
 
 	 	if ($(thumbsSelector).is(":visible") || util.isPopup()) {
-	 	// if (! $("#album-view").hasClass("hidden")) {
-			util.scrollToThumb();
+			if ($("#album-and-media-container").hasClass("show-media"))
+				util.scrollToBottomThumb();
+			else
+				util.scrollToAlbumViewThumb();
 			util.addMediaLazyLoader();
-			// setTimeout(util.scrollToThumb, 1);
 		}
 
 		f.updateMenu();
