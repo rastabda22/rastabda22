@@ -1429,7 +1429,8 @@
 			env.currentAlbum.setDescription();
 			util.setDescriptionOptions();
 
-			TopFunctions.setTitle("album", null).then(
+			let titlePromise = TopFunctions.setTitle("album", null);
+			titlePromise.then(
 				function titleSet() {
 					if ($("#album-view").is(":visible")) {
 						if (env.currentAlbum.subalbums.length) {
