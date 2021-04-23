@@ -2542,6 +2542,10 @@
 						},
 						"fast"
 					);
+
+					$(".thumb-container").removeClass("current-thumb");
+					if (env.currentMedia !== null)
+						thumb.parent().addClass("current-thumb");
 				} else {
 					$("html, body").stop().animate(
 						{
@@ -2551,10 +2555,6 @@
 					);
 				}
 
-				$(".thumb-container").removeClass("current-thumb");
-				if (env.currentMedia !== null) {
-					thumb.parent().addClass("current-thumb");
-				}
 			}
 		}
 	};
