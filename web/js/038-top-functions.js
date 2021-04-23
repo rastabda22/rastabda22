@@ -1302,7 +1302,7 @@
 				);
 
 				if (id === "center") {
-					// When there is both a media and an album, we display the media's description; else it's the album's one
+					// When there is both a single media and an album, we display the media's description; else it's the album's one
 					if (env.currentMedia === null || ! env.currentMedia.hasSomeDescription()) {
 						env.currentAlbum.setDescription();
 					} else {
@@ -1425,6 +1425,9 @@
 			$("body").off('mousewheel').on('mousewheel', TopFunctions.scrollAlbum);
 
 			util.setMediaOptions();
+
+			env.currentAlbum.setDescription();
+			util.setDescriptionOptions();
 
 			TopFunctions.setTitle("album", null).then(
 				function titleSet() {
@@ -2643,20 +2646,6 @@
 
 		Promise.all(subalbumsPromises).then(
 			function allRandomImagesGot() {
-				// we can run the function that prepare the stuffs for sharing
-				util.socialButtons();
-				util.setSubalbumsOptions();
-				if (self.subalbums.length)
-					util.adaptCaptionHeight();
-
-				// When there is both a single media and an album, we display the single media description; else the album's one
-				if (env.currentMedia === null || ! env.currentMedia.hasSomeDescription()) {
-					self.setDescription();
-				} else {
-					env.currentMedia.setDescription();
-				}
-				util.setDescriptionOptions();
-				util.correctElementPositions();
 				if (populateSubalbums)
 					env.albumInSubalbumDiv = self;
 				$("#loading").hide();
@@ -2674,6 +2663,13 @@
 		}
 
 		util.setSubalbumsOptions();
+		if (self.subalbums.length)
+			util.adaptCaptionHeight();
+		util.correctElementPositions();
+
+		// we can run the function that prepare the stuffs for sharing
+		util.socialButtons();
+
 		f.updateMenu();
 		self.bindSubalbumSortEvents();
 	};
