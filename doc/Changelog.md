@@ -1,6 +1,9 @@
+### version v4.9.45 (Apr 23, 2021)
+
 * title counts reworked, albums count is showed before media count
 * loading times optimized
 * bug fixes
+* fixed wrong media count in gps albums
 
 ### version v4.9.44 (Apr 20, 2021)
 
