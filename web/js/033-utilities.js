@@ -10,7 +10,7 @@
 		// albums is a list of objects {albumName: album}
 		var typeOfPackedAlbum, stringifiedPackedAlbum, albumName;
 
-		var newForm = $(
+		var newFormObject = $(
 			"<form>",
 			{
 				action: hash,
@@ -44,7 +44,7 @@
 				albumName = "mapAlbum";
 
 			let iString = iAlbum.toString();
-			newForm.append(
+			newFormObject.append(
 				$(
 					"<input>",
 					{
@@ -74,7 +74,7 @@
 			);
 		}
 
-		newForm.append(
+		newFormObject.append(
 			$(
 				"<input>",
 				{
@@ -90,7 +90,7 @@
 			currentAlbumIs = "mapAlbum";
 		else if (env.currentAlbum === env.selectionAlbum)
 			currentAlbumIs = "selectionAlbum";
-		newForm.append(
+		newFormObject.append(
 			$(
 				"<input>",
 				{
@@ -102,7 +102,7 @@
 		);
 
 		if (env.guessedPasswordsMd5.length) {
-			newForm.append(
+			newFormObject.append(
 				$(
 					"<input>",
 					{
@@ -122,7 +122,7 @@
 				)
 			);
 		}
-		newForm.hide().appendTo("body").submit().remove();
+		newFormObject.hide().appendTo("body").submit().remove();
 		return false;
 	};
 
@@ -362,7 +362,6 @@
 	};
 
 	Utilities.prototype.translate = function() {
-		var selector, keyLanguage;
 		var keysWithShorcut = [
 			"#next-media-title",
 			"#prev-media-title",
@@ -378,19 +377,19 @@
 		env.language = Utilities.getLanguage();
 		for (var key in translations.en) {
 			if (translations[env.language].hasOwnProperty(key) || translations.en.hasOwnProperty(key)) {
-				keyLanguage = env.language;
+				let keyLanguage = env.language;
 				if (! translations[env.language].hasOwnProperty(key))
 					keyLanguage = 'en';
 
 				if (key === '.title-string' && document.title.substr(0, 5) != "<?php")
 					// don't set page title, php has already set it
 					continue;
-				selector = $(key);
-				if (selector.length) {
+				let keyObject = $(key);
+				if (keyObject.length) {
 					let translation = translations[keyLanguage][key];
 					if (! env.isMobile.any() && keysWithShorcut.indexOf(key) !== -1)
 						translation += " [" + translations[keyLanguage][key + "-shortcut"] + "]";
-					selector.html(translation);
+					keyObject.html(translation);
 				}
 			}
 		}
@@ -1991,7 +1990,7 @@
 		return this !== null && ! this.subalbums.length && this.numsMedia.imagesAndVideosTotal() === 1;
 	};
 
-	SingleMedia.prototype.chooseReducedPhoto = function(container, fullScreenStatus) {
+	SingleMedia.prototype.chooseReducedPhoto = function(containerObject, fullScreenStatus) {
 		var chosenMedia, reducedWidth, reducedHeight;
 		var mediaWidth = this.metadata.size[0], mediaHeight = this.metadata.size[1];
 		var mediaSize = Math.max(mediaWidth, mediaHeight);
@@ -2000,18 +1999,18 @@
 		chosenMedia = this.originalMediaPath();
 		env.maxSize = 0;
 
-		if (container === null) {
+		if (containerObject === null) {
 			// try with what is more probable to be the container
 			if (fullScreenStatus)
-				container = $(window);
+				containerObject = $(window);
 			else {
-				container = $(".media-box#center .media-box-inner");
+				containerObject = $(".media-box#center .media-box-inner");
 			}
 		}
 
-		var containerWidth = container.width();
-		var containerHeight = container.height();
-		containerRatio = container.width() / container.height();
+		var containerWidth = containerObject.width();
+		var containerHeight = containerObject.height();
+		containerRatio = containerObject.width() / containerObject.height();
 
 		if (
 			mediaRatio >= containerRatio && mediaWidth <= containerWidth * env.devicePixelRatio ||
@@ -2044,7 +2043,7 @@
 
 	SingleMedia.prototype.chooseMediaReduction = function(id, fullScreenStatus) {
 		// chooses the proper reduction to use depending on the container size
-		var container, mediaSrc;
+		var containerObject, mediaSrc;
 
 		if (this.isVideo()) {
 			if (fullScreenStatus && this.name.match(/\.avi$/) === null) {
@@ -2055,11 +2054,11 @@
 			}
 		} else if (this.isImage()) {
 			if (fullScreenStatus && Modernizr.fullscreen)
-				container = $(window);
+				containerObject = $(window);
 			else
-				container = $(".media-box#" + id + " .media-box-inner");
+				containerObject = $(".media-box#" + id + " .media-box-inner");
 
-			mediaSrc = this.chooseReducedPhoto(container, fullScreenStatus);
+			mediaSrc = this.chooseReducedPhoto(containerObject, fullScreenStatus);
 		}
 
 		return mediaSrc;
@@ -2183,7 +2182,7 @@
 
 		// the actual sizes of the image
 		var mediaWidth = this.metadata.size[0], mediaHeight = this.metadata.size[1];
-		var mediaSrc, mediaElement, container;
+		var mediaSrc, mediaElement, containerObject;
 		var attrWidth = mediaWidth, attrHeight = mediaHeight;
 
 		if (this.isVideo()) {
@@ -2197,11 +2196,11 @@
 			mediaElement = $('<video/>', {controls: true });
 		} else if (this.isImage()) {
 			if (fullScreenStatus && Modernizr.fullscreen)
-				container = $(window);
+				containerObject = $(window);
 			else
-				container = $(".media-box#" + id + " .media-box-inner");
+				containerObject = $(".media-box#" + id + " .media-box-inner");
 
-			mediaSrc = this.chooseReducedPhoto(container, fullScreenStatus);
+			mediaSrc = this.chooseReducedPhoto(containerObject, fullScreenStatus);
 
 			if (env.maxSize) {
 				// correct phisical width and height according to reduction sizes
@@ -2405,7 +2404,7 @@
 		var self = this;
 		return new Promise(
 			function(resolve_scale) {
-				var mediaElement, container, photoSrc, previousSrc;
+				var mediaElement, containerObject, photoSrc, previousSrc;
 				var containerHeight = $(window).innerHeight(), containerWidth = $(window).innerWidth(), containerRatio;
 				var mediaWidth, mediaHeight, attrWidth, attrHeight;
 				var id = event.data.id;
@@ -2450,16 +2449,16 @@
 				attrHeight = mediaHeight;
 
 				if (env.fullScreenStatus && Modernizr.fullscreen)
-					container = $(window);
+					containerObject = $(window);
 				else {
-					container = $(".media-box#" + id + " .media-box-inner");
+					containerObject = $(".media-box#" + id + " .media-box-inner");
 				}
 
 				containerHeight = heightForMedia;
 				containerRatio = containerWidth / containerHeight;
 
 				if (self.isImage()) {
-					photoSrc = self.chooseReducedPhoto(container, env.fullScreenStatus);
+					photoSrc = self.chooseReducedPhoto(containerObject, env.fullScreenStatus);
 					previousSrc = mediaElement.attr("src");
 
 					if (encodeURI(photoSrc) != previousSrc && env.currentZoom === env.initialZoom) {
@@ -3514,7 +3513,6 @@
 		var mediaBarHeigth = parseFloat($(".media-box#center .media-bar").outerHeight());
 		if (! mediaBarHeigth)
 			mediaBarHeigth = 30;
-		var mediaBarDisplay;
 		$(".media-box#center .media-bar").css("bottom", "");
 
 		MoveMediaBarAboveBottomSocial();

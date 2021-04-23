@@ -374,9 +374,9 @@
 							if (gpsName === '')
 								gpsName = util._t('.not-specified');
 
-							let a = $("<a></a>");
-							a.attr("title", util._t("#place-icon-title") + gpsName + util._t("#place-icon-title-end"));
-							titlesForTitleComponents[i] = a.attr("title");
+							let aObject = $("<a></a>");
+							aObject.attr("title", util._t("#place-icon-title") + gpsName + util._t("#place-icon-title-end"));
+							titlesForTitleComponents[i] = aObject.attr("title");
 
 							titleComponents[i] = gpsName;
 						}
@@ -516,10 +516,10 @@
 
 							let spanTitle = imagesTotalInSubTree + " " + util._t(".title-images") + ", " + videosTotalInSubTree + " " + util._t(".title-videos");
 							let titleSpanHtml = "<span class='title-count-detail'>" + util._t(".title-total") + " " + mediaTotalInSubTree + " " + util._t(".title-media") + "</span>";
-							let titleSpan = $(titleSpanHtml);
-							titleSpan.attr("title", spanTitle);
+							let titleSpanObject = $(titleSpanHtml);
+							titleSpanObject.attr("title", spanTitle);
 
-							titleCount += titleSpan.wrapAll('<div>').parent().html() + " ";
+							titleCount += titleSpanObject.wrapAll('<div>').parent().html() + " ";
 						}
 						titleCount += ")</span>";
 					}
@@ -559,13 +559,13 @@
 
 							if (env.currentMedia.hasGpsData()) {
 								let imgHtml = "<img class='title-img' height='20px' src='img/ic_place_white_24dp_2x.png'>";
-								let img = $(imgHtml);
+								let imgObject = $(imgHtml);
 								let imgTitle = util._t("#show-on-map");
 								if (! env.isMobile.any())
 									imgTitle += " [" + util._t(".map-link-shortcut") + "]";
-								img.attr("title", imgTitle);
-								img.attr("alt", imgTitle);
-								singleMediaNameHtml += "<a class='map-popup-trigger'>" + img.wrapAll('<div>').parent().html() + "</a>";
+								imgObject.attr("title", imgTitle);
+								imgObject.attr("alt", imgTitle);
+								singleMediaNameHtml += "<a class='map-popup-trigger'>" + imgObject.wrapAll('<div>').parent().html() + "</a>";
 							}
 							titleComponents.push(singleMediaNameHtml);
 							classesForTitleComponents.push([""]);
@@ -582,11 +582,11 @@
 									aTagBegin = "<a class='" + titleAnchorClasses + "' href='" + env.hashBeginning + encodeURI(cacheBasesForTitleComponents[i]) + "'>";
 									aTagEnd = "</a>";
 								}
-								let a;
+								let aObject;
 								if (component.indexOf("<a href=") !== -1) {
 									let firstClosingAngularBracketPosition = component.indexOf(">");
 									let secondOpeningAngularBracketPosition = component.indexOf(" <", 2);
-									a = $(
+									aObject = $(
 										component.substring(0, firstClosingAngularBracketPosition + 1) + // <span class='with-second-part'>
 										aTagBegin +
 										component.substring(firstClosingAngularBracketPosition + 1, secondOpeningAngularBracketPosition) + // the album name
@@ -594,13 +594,13 @@
 										component.substring(secondOpeningAngularBracketPosition)
 									);
 								} else {
-									a = $(aTagBegin + component + aTagEnd);
+									aObject = $(aTagBegin + component + aTagEnd);
 								}
 								if (classesForTitleComponents[i] !== "")
-									classesForTitleComponents[i].forEach(singleClass => a.addClass(singleClass));
+									classesForTitleComponents[i].forEach(singleClass => aObject.addClass(singleClass));
 								if (titlesForTitleComponents[i] !== "")
-									a.attr("title", titlesForTitleComponents[i]);
-								titleElement = a.wrapAll('<div>').parent().html();
+									aObject.attr("title", titlesForTitleComponents[i]);
+								titleElement = aObject.wrapAll('<div>').parent().html();
 								// } else {
 								// 	titleElement = "<span class='title-no-anchor'>" + component + "</span>";
 								// }
@@ -633,22 +633,22 @@
 									"height='20px' " +
 									"src='" + imgSrc1 + "'" +
 								">";
-							let img = $(imgHtml);
-							img.attr("alt", imgAlt);
+							let imgObject = $(imgHtml);
+							imgObject.attr("alt", imgAlt);
 
 							if (showSingleMarker) {
 								if (! env.isMobile.any() && ! showDoubleMarker)
 									imgTitle1 += " [" + util._t(".map-link-shortcut") + "]";
-								img.attr("title", imgTitle1);
-								img.attr("src", imgSrc1);
-								markers += "<a class='map-popup-trigger'>" + img.wrapAll('<div>').parent().html() + "</a>";
+								imgObject.attr("title", imgTitle1);
+								imgObject.attr("src", imgSrc1);
+								markers += "<a class='map-popup-trigger'>" + imgObject.wrapAll('<div>').parent().html() + "</a>";
 							}
 							if (showDoubleMarker) {
 								if (! env.isMobile.any())
 									imgTitle2 += " [" + util._t(".map-link-shortcut") + "]";
-								img.attr("title", imgTitle2);
-								img.attr("src", imgSrc2);
-								markers += "<a class='map-popup-trigger-double'>" + img.wrapAll('<div>').parent().html() + "</a>";
+								imgObject.attr("title", imgTitle2);
+								imgObject.attr("src", imgSrc2);
+								markers += "<a class='map-popup-trigger-double'>" + imgObject.wrapAll('<div>').parent().html() + "</a>";
 							}
 
 							title += markers;
@@ -1065,22 +1065,22 @@
 					}
 				}
 
-				var mediaBoxInnerElement = $(".media-box#" + id + " .media-box-inner");
+				var mediaBoxInnerObject = $(".media-box#" + id + " .media-box-inner");
 				// empty the img container: another image will be put in there
 
 				if (self.isVideo() && ! f.videoOK()) {
-					mediaBoxInnerElement.empty();
+					mediaBoxInnerObject.empty();
 					f.addVideoUnsupportedMarker(id);
 					if (id === "center")
 						loadNextPrevMedia(self);
 				} else {
-					let newMedia;
+					let newMediaObject;
 					if (self.isVideo()) {
 						mediaSelector = ".media-box#" + id + " .media-box-inner video";
-						newMedia = $("<video>");
+						newMediaObject = $("<video>");
 					} else {
 						mediaSelector = ".media-box#" + id + " .media-box-inner img";
-						newMedia = $("<img>");
+						newMediaObject = $("<img>");
 					}
 					// is the following line correct for videos?
 					let mediaSrc = self.chooseMediaReduction(id, env.fullScreenStatus);
@@ -1088,10 +1088,10 @@
 
 					let loadEvent = self.chooseTriggerEvent();
 
-					if (mediaBoxInnerElement.html() !== mediaHtml) {
+					if (mediaBoxInnerObject.html() !== mediaHtml) {
 						// only replace the media-box-inner content if it's not yet there
-						mediaBoxInnerElement.empty();
-						mediaBoxInnerElement.show().append(mediaHtml);
+						mediaBoxInnerObject.empty();
+						mediaBoxInnerObject.show().append(mediaHtml);
 
 						if (id === "center") {
 							$("link[rel=image_src]").remove();
@@ -1101,13 +1101,13 @@
 					}
 
 					if (id === "center") {
-						$(mediaBoxInnerElement).css("opacity", 1);
+						mediaBoxInnerObject.css("opacity", 1);
 						self.setDescription();
 					}
 
 					// we use a trick in order to manage the loading of the image/video, from https://www.seancdavis.com/blog/wait-until-all-images-loaded/
 					// the trick is to bind the event to a generic element not in the DOM, and to set its source after the onload event is bound
-					newMedia.off(loadEvent).on(
+					newMediaObject.off(loadEvent).on(
 					// $(mediaSelector).off(loadEvent).on(
 						loadEvent,
 						{
@@ -1127,7 +1127,7 @@
 							);
 						}
 					);
-					newMedia.attr("src", $(mediaSelector).attr("src"));
+					newMediaObject.attr("src", $(mediaSelector).attr("src"));
 					if (id === "center") {
 						if (! env.options.persistent_metadata) {
 							$(".media-box .metadata").hide();
@@ -1138,13 +1138,13 @@
 				}
 
 				if (id === "center") {
-					mediaBoxInnerElement.off('contextmenu click mousewheel');
+					mediaBoxInnerObject.off('contextmenu click mousewheel');
 					$(".media-box#center .media-box-inner .media-bar").off();
 					$("#next").off();
 					$("#prev").off();
 
 					if (self.isImage())
-						mediaBoxInnerElement.off("mousewheel").on("mousewheel", pS.swipeOnWheel);
+						mediaBoxInnerObject.off("mousewheel").on("mousewheel", pS.swipeOnWheel);
 
 					$(".media-box#center .media-box-inner .media-bar").off("click").on(
 						"click",
@@ -1159,13 +1159,13 @@
 					);
 
 					if (env.currentAlbum.isAlbumWithOneMedia()) {
-						mediaBoxInnerElement.css('cursor', 'default');
+						mediaBoxInnerObject.css('cursor', 'default');
 					} else {
 						[albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
 
 						// $("#next").show();
 						// $("#prev").show();
-						mediaBoxInnerElement.css('cursor', '').off("contextmenu").on(
+						mediaBoxInnerObject.css('cursor', '').off("contextmenu").on(
 							"contextmenu",
 							function(ev) {
 								if (! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
@@ -2501,7 +2501,7 @@
 								"</div>" +
 							"</div>";
 
-						let caption = $(captionHtml);
+						let captionObject = $(captionHtml);
 
 						let selectSrc = 'img/checkbox-unchecked-48px.png';
 						let titleSelector = "#select-subalbum";
@@ -2537,10 +2537,10 @@
 						}
 
 						let aHrefHtml = "<a href='" + subfolderHash + "'></a>";
-						let aHrefHtmlContainer = $(aHrefHtml);
+						let aHrefObject = $(aHrefHtml);
 						let albumButtonAndCaptionHtml =
 							"<div id='" + id + "' class='album-button-and-caption'></div>";
-						let linkContainer = $(albumButtonAndCaptionHtml);
+						let albumButtonAndCaptionObject = $(albumButtonAndCaptionHtml);
 
 						let selectBoxHtml =
 							"<a id='subalbum-select-box-" + id + "'>" +
@@ -2551,7 +2551,7 @@
 								">" +
 							"</a>";
 
-						let imageElement = $(
+						let imageObject = $(
 							"<div class='album-button'>" +
 								selectBoxHtml +
 								positionHtml +
@@ -2562,11 +2562,11 @@
 								"<img src='img/image-placeholder.png' class='thumbnail lazyload-album-" + id + "'>" +
 							"</div>"
 						);
-						linkContainer.append(imageElement);
-						linkContainer.append(caption);
-						aHrefHtmlContainer.append(linkContainer);
+						albumButtonAndCaptionObject.append(imageObject);
+						albumButtonAndCaptionObject.append(captionObject);
+						aHrefObject.append(albumButtonAndCaptionObject);
 
-						$("#subalbums").append(aHrefHtmlContainer);
+						$("#subalbums").append(aHrefObject);
 
 						if (ithSubalbum.numPositionsInTree) {
 							$("#subalbum-map-link-" + id + " img.thumbnail-map-link").attr("title", folderMapTitleWithoutHtmlTags);
@@ -2634,7 +2634,7 @@
 							}
 						);
 
-						pickRandomMediaAndInsertIt(iSubalbum, imageElement, resolve_subalbumPromise);
+						pickRandomMediaAndInsertIt(iSubalbum, imageObject, resolve_subalbumPromise);
 					}
 				);
 				subalbumsPromises.push(subalbumPromise);

@@ -703,25 +703,25 @@ $(document).ready(function() {
 			// This function checks the password looking for a file with the encrypted password name in the passwords subdir
 			// the code in the found password file is inserted into env.guessedPasswordsMd5, and at the hash change the content unveiled by that password will be shown
 
-			var password = $("#password");
-			var encryptedPassword = md5(password.val());
-			password.val("");
+			var passwordObject = $("#password");
+			var encryptedPassword = md5(passwordObject.val());
+			passwordObject.val("");
 
 			var ajaxOptions = {
 				type: "GET",
 				dataType: "json",
 				url: util.pathJoin([env.server_cache_path, env.options.passwords_subdir, encryptedPassword]),
 				success: function(jsonCode) {
-					password.css("background-color", "rgb(200, 200, 200)");
+					passwordObject.css("background-color", "rgb(200, 200, 200)");
 					var passwordCode = jsonCode.passwordCode;
 
 					if (env.guessedPasswordCodes.length && env.guessedPasswordCodes.includes(passwordCode)) {
-						password.css("background-color", "red");
-						password.on(
+						passwordObject.css("background-color", "red");
+						passwordObject.on(
 							'input',
 							function() {
-								password.css("background-color", "");
-								password.off('input');
+								passwordObject.css("background-color", "");
+								passwordObject.off('input');
 							}
 						);
 					} else {
@@ -749,12 +749,12 @@ $(document).ready(function() {
 					}
 				},
 				error: function() {
-					password.css("background-color", "red");
-					password.on(
+					passwordObject.css("background-color", "red");
+					passwordObject.on(
 						'input',
 						function() {
-							password.css("background-color", "");
-							password.off('input');
+							passwordObject.css("background-color", "");
+							passwordObject.off('input');
 						}
 					);
 				}
