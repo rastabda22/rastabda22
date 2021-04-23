@@ -2486,7 +2486,6 @@
 				}
 
 				mediaElement.show();
-				// $("#media-view").removeClass("hidden");
 
 				if (id === "center") {
 					// position next/prev buttons verticallly centered in media-box-inner
@@ -2510,12 +2509,6 @@
 
 				}
 
-				// var mediaBarBottom = 0;
-				// if (Utilities.bottomSocialButtons()) {
-				// 	mediaBarBottom = $(".ssk").outerHeight();
-				// }
-				// $(".media-box#" + id + " .media-bar").css("bottom", mediaBarBottom);
-
 				if ($("#thumbs").is(":visible"))
 					Utilities.scrollToThumb();
 				if (id === "center") {
@@ -2533,22 +2526,12 @@
 	Utilities.scrollToThumb = function() {
 		var singleMedia = env.currentMedia, thumb;
 
-
 		if (! Utilities.isPopup() && $("#thumbs").is(":visible") && (env.currentMedia !== null || env.previousMedia !== null)) {
 			if (env.currentMedia === null && env.previousMedia !== null) {
 				singleMedia = env.previousMedia;
 			}
 
 			thumb = $("#" + singleMedia.foldersCacheBase + "--" + singleMedia.cacheBase);
-			// let id = Utilities.pathJoin([singleMedia.foldersCacheBase, singleMedia.cacheBase]);
-			// $("#thumbs img.thumbnail").each(
-			// 	function() {
-			// 		if (this.id === id) {
-			// 			thumb = $(this);
-			// 			return false;
-			// 		}
-			// 	}
-			// );
 
 			if (thumb[0] !== undefined) {
 			 	if (env.currentMedia !== null && ! env.currentAlbum.isAlbumWithOneMedia()) {
