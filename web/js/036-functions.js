@@ -658,9 +658,9 @@
 				$(".select.no-media").addClass("hidden");
 			}
 
-			if (isSingleMedia) {
-				$(".select.albums, .select.everything, .select.everything-individual", ".select.nothing", ".select.no-albums").addClass("hidden");
-			} else if (
+			// if (isSingleMedia) {
+			// 	$(".select.albums, .select.everything, .select.everything-individual, .select.nothing, .select.no-albums").addClass("hidden");
+			if (
 				! isPopup && (
 					! thisAlbum.numsMedia.imagesAndVideosTotal() || ! thisAlbum.subalbums.length
 				)
