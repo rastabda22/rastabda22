@@ -1472,7 +1472,6 @@
 								// 	}
 								// );
 
-
 								util.adaptCaptionHeight();
 								// self.showSubalbums("refreshDisplay");
 
@@ -1491,6 +1490,12 @@
 									$('.modal-close')[0].click();
 									$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 								}
+
+								if (env.currentAlbum.subalbums.length && $(".album-button-and-caption.selected")[0] !== undefined)
+									util.scrollToSubalbum();
+								if (env.currentAlbum.media.length && $(".thumb-and-caption-container.selected")[0] !== undefined)
+									util.scrollToAlbumViewThumb();
+
 								$("#loading").hide();
 							}
 						);
