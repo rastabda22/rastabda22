@@ -1,3 +1,5 @@
+* bug fixes
+
 ### version v4.9.47 (Apr 24, 2021)
 
 * mark single media as selected in album view when coming from it in media view
