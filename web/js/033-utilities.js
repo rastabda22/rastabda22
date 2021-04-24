@@ -2345,12 +2345,17 @@
 		// env.windowWidth = $(window).innerWidth();
 		// env.windowHeight = $(window).innerHeight();
 
+		var previousWindowWidth = env.windowWidth;
+		env.windowWidth = $(window).innerWidth();
+		env.windowHeight = $(window).innerHeight();
+		if (env.windowWidth === previousWindowWidth)
+			// avoid considering a resize when the mobile browser shows/hides the location bar
+			return;
+
 		$("#loading").show();
 
 		var event = {data: {}};
-
 		event.data.resize = true;
-
 		event.data.id = "center";
 
 		// prev and next tree in the DOM must be given the correct sizes
