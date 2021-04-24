@@ -6,7 +6,7 @@
 	function Utilities() {
 	}
 
-	Utilities.prototype.openInNewTab = function(hash) {
+	Utilities.openInNewTab = function(hash) {
 		// albums is a list of objects {albumName: album}
 		var typeOfPackedAlbum, stringifiedPackedAlbum, albumName;
 
@@ -2671,7 +2671,7 @@
 				function (ev) {
 					if (ev.which === 2) {
 						var imgData = JSON.parse(element.attr("data"));
-						util.openInNewTab(imgData.mediaHash);
+						Utilities.openInNewTab(imgData.mediaHash);
 						return false;
 					}
 				}
@@ -2690,7 +2690,7 @@
 				var cachedAlbum = env.cache.getAlbum(imgData.albumCacheBase);
 				var name = imgData.mediaHash.split('/').pop();
 				var matchedMedia = cachedAlbum.media.find(singleMedia => name === singleMedia.cacheBase);
-				var promise = phFl.getAlbum(matchedMedia.foldersCacheBase, null, {getMedia: true, getPositions: true});
+				var promise = PhotoFloat.getAlbum(matchedMedia.foldersCacheBase, null, {getMedia: true, getPositions: true});
 				promise.then(
 					function(foldersAlbum) {
 						matchedMedia.toggleSelectedStatus(foldersAlbum, '#' + id);
@@ -4299,6 +4299,7 @@
 	Utilities.prototype.toggleMenu = Utilities.toggleMenu;
 	Utilities.prototype.addMediaLazyLoader = Utilities.addMediaLazyLoader;
 	Utilities.prototype.socialButtons = Utilities.socialButtons;
+	Utilities.prototype.openInNewTab = Utilities.openInNewTab;
 	Utilities.prototype.isMap = Utilities.isMap;
 
 	window.Utilities = Utilities;
