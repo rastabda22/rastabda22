@@ -2536,6 +2536,7 @@
 					},
 					"fast"
 				);
+				$(".thumb-and-caption-container").removeClass("selected");
 				$(".album-button-and-caption").removeClass("selected");
 				subalbumObject.addClass("selected");
 			}
@@ -2553,6 +2554,7 @@
 					"fast"
 				);
 				$(".thumb-and-caption-container").removeClass("selected");
+				$(".album-button-and-caption").removeClass("selected");
 				thumbObject.parent().parent().addClass("selected");
 			}
 		}
