@@ -131,6 +131,7 @@ Find [answers to your remaining questions in the FAQ](doc/FAQ.md) and [in the do
 
 ## Try It By Yourself
 
+- **[Primary demo site](https://myphotosharedemo.qumran2.net/)** - English UI with Multilingual content. Latest development version updated constantly to gitlab's development branch. Protected content available, the password is _pwd_.
 - [Demo AlternaTV](https://www.alterna.tv/myphotoshare_demo/) - English UI with Multilingual content. Latest development version updated daily running on a netbook.
 - [Assunta Palmaro](http://palmaro.qumran2.net/) - in Italian
 - [Fiori](http://fiori.qumran2.net/) - in Italian
