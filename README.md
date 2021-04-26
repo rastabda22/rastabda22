@@ -210,4 +210,4 @@ Of course, static web performance is traded against cache size on disk. We tried
 
 **MyPhotoShare** is a [Jason A. Donenfeld's photofloat](https://git.zx2c4.com/PhotoFloat/about/) fork when Jason stopped development in 2016, enriched by Jerome Charaoui's patches to support videos, and Paolo Benvenuto and Pierre Métras following development.
 
-It is free software licensed under the GNU General Public License v2.
+It is free software licensed under the GNU General Public License v3, see [the license](LICENSE).
