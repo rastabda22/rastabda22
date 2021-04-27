@@ -1,4 +1,7 @@
+### version v5.0.0 (Apr 27, 2021)
+
 * bug fixes
+* licence updated to GPL v3
 
 ### version v4.9.47 (Apr 24, 2021)
 
