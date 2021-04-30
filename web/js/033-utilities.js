@@ -2526,9 +2526,13 @@
 		);
 	};
 
-	Utilities.prototype.scrollToSubalbum = function() {
-		if (! Utilities.isPopup() && $("#subalbums").is(":visible") && env.currentAlbum.subalbums.length && env.previousAlbum !== null) {
-			let subalbumObject = $("#" + env.previousAlbum.cacheBase);
+	Utilities.prototype.scrollToSubalbum = function(object = null) {
+		if (! Utilities.isPopup() && $("#subalbums").is(":visible") && env.currentAlbum.subalbums.length && (object || env.previousAlbum !== null)) {
+			let subalbumObject;
+			if (object)
+				subalbumObject = object;
+			else
+				subalbumObject = $("#" + env.previousAlbum.cacheBase);
 			if (subalbumObject[0] !== undefined) {
 				$("html, body").stop().animate(
 					{
@@ -2536,16 +2540,22 @@
 					},
 					"fast"
 				);
-				$(".thumb-and-caption-container").removeClass("selected");
-				$(".album-button-and-caption").removeClass("selected");
-				subalbumObject.addClass("selected");
+				if (! object) {
+					$(".thumb-and-caption-container").removeClass("selected");
+					$(".album-button-and-caption").removeClass("selected");
+					subalbumObject.addClass("selected");
+				}
 			}
 		}
 	};
 
-	Utilities.prototype.scrollToAlbumViewThumb = function() {
-		if (! Utilities.isPopup() && $("#thumbs").is(":visible") && env.previousMedia !== null) {
-			let thumbObject = $("#" + env.previousMedia.foldersCacheBase + "--" + env.previousMedia.cacheBase);
+	Utilities.prototype.scrollToAlbumViewThumb = function(object = null) {
+		if (! Utilities.isPopup() && $("#thumbs").is(":visible") && (object || env.previousMedia !== null)) {
+			let thumbObject;
+			if (object)
+				thumbObject = object.children(".thumb-container").children(".thumbnail");
+			else
+				thumbObject = $("#" + env.previousMedia.foldersCacheBase + "--" + env.previousMedia.cacheBase);
 			if (thumbObject[0] !== undefined) {
 				$("html, body").stop().animate(
 					{
@@ -2553,9 +2563,11 @@
 					},
 					"fast"
 				);
-				$(".thumb-and-caption-container").removeClass("selected");
-				$(".album-button-and-caption").removeClass("selected");
-				thumbObject.parent().parent().addClass("selected");
+				if (! object) {
+					$(".thumb-and-caption-container").removeClass("selected");
+					$(".album-button-and-caption").removeClass("selected");
+					thumbObject.parent().parent().addClass("selected");
+				}
 			}
 		}
 	};

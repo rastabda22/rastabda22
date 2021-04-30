@@ -1422,6 +1422,8 @@
 				$("#subalbums").removeClass("hidden");
 			else
 				$("#subalbums").addClass("hidden");
+			$(".thumb-and-caption-container").removeClass("selected");
+			$(".album-button-and-caption").removeClass("selected");
 			$("body").off('mousewheel').on('mousewheel', TopFunctions.scrollAlbum);
 
 			util.setMediaOptions();
