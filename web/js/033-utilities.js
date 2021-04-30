@@ -2184,6 +2184,7 @@
 		var mediaWidth = this.metadata.size[0], mediaHeight = this.metadata.size[1];
 		var mediaSrc, mediaElement, containerObject;
 		var attrWidth = mediaWidth, attrHeight = mediaHeight;
+		var singleMediaName, singleMediaTitle;
 
 		if (this.isVideo()) {
 			if (fullScreenStatus && this.name.match(/\.avi$/) === null) {
@@ -2214,10 +2215,12 @@
 			}
 
 			mediaElement = $('<img/>');
-			if (env.currentAlbum.isFolder())
+			if (env.currentAlbum.isFolder()) {
 				mediaElement.attr("title", this.date);
-			else
-				mediaElement.attr("title", Utilities.pathJoin([this.albumName, this.nameForShowing(album)]));
+			} else {
+				[singleMediaName, singleMediaTitle] = this.nameAndTitleForShowing(album, true);
+				mediaElement.attr("title", Utilities.pathJoin([this.albumName, singleMediaName]));
+			}
 		}
 
 		mediaElement
@@ -2226,7 +2229,7 @@
 			.attr("height", attrHeight)
 			.attr("ratio", mediaWidth / mediaHeight)
 			.attr("src", encodeURI(mediaSrc))
-			.attr("alt", this.nameForShowing(album));
+			.attr("alt", singleMediaTitle);
 
 		return mediaElement[0].outerHTML;
 	};
@@ -3129,15 +3132,15 @@
 	};
 
 	SingleMedia.prototype.generateCaptionForPopup = function(album) {
-		[this.captionForPopup, this.captionForPopupSorting] = Utilities.generateSingleMediaCaptionForCollections(this, album);
+		[this.captionForPopup, this.captionForPopupSorting, this.titleForShowing] = Utilities.generateSingleMediaCaptionForCollections(this, album);
 	};
 
 	SingleMedia.prototype.generateCaptionForSelection = function(album) {
-		[this.captionForSelection, this.captionForSelectionSorting] = Utilities.generateSingleMediaCaptionForCollections(this, album);
+		[this.captionForSelection, this.captionForSelectionSorting, this.titleForShowing] = Utilities.generateSingleMediaCaptionForCollections(this, album);
 	};
 
 	SingleMedia.prototype.generateCaptionForSearch = function(album) {
-		[this.captionForSearch, this.captionForSearchSorting] = Utilities.generateSingleMediaCaptionForCollections(this, album);
+		[this.captionForSearch, this.captionForSearchSorting, this.titleForShowing] = Utilities.generateSingleMediaCaptionForCollections(this, album);
 	};
 
 	Utilities.generateSingleMediaCaptionForCollections = function(singleMedia, album) {
@@ -3204,10 +3207,10 @@
 			}
 		}
 
-		var nameForShowing = singleMedia.nameForShowing(album, true, true);
+		var [nameForShowing, titleForShowing] = singleMedia.nameAndTitleForShowing(album, true, true);
 		var captionForCollection = Utilities.combineFirstAndSecondLine(nameForShowing, secondLine);
 		var captionForCollectionSorting = nameForShowing + env.options.cache_folder_separator + Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
-		return [captionForCollection, captionForCollectionSorting];
+		return [captionForCollection, captionForCollectionSorting, titleForShowing];
 	};
 
 	Album.prototype.nameForShowing = function(parentAlbum, html = false, br = false) {
@@ -3266,8 +3269,9 @@
 		return folderName;
 	};
 
-	SingleMedia.prototype.nameForShowing = function(album, html = false, br = false) {
+	SingleMedia.prototype.nameAndTitleForShowing = function(album, html = false, br = false) {
 		var mediaName = '';
+		var mediaTitle = '';
 		// if (Utilities.isPopup() && this.hasOwnProperty("captionForPopup")) {
 		// 	mediaName = this.captionForPopup;
 		// } else if (album.isSelection() && this.hasOwnProperty("captionForSelection")) {
@@ -3277,6 +3281,7 @@
 		// } else {
 		if (this.metadata.hasOwnProperty("title") && this.metadata.title && this.metadata.title !== this.name) {
 			mediaName = this.metadata.title;
+			mediaTitle = this.name;
 			if (! br) {
 				// remove the tags fronm the title
 				mediaName = mediaName.replace(/<[^>]*>?/gm, ' ');
@@ -3299,7 +3304,7 @@
 		// } else if (! br) {
 		// 	return mediaName.replace("<br />", " ");
 		// } else {
-		return mediaName;
+		return [mediaName, mediaTitle];
 		// }
 	};
 

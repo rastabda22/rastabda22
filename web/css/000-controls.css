@@ -899,6 +899,8 @@ video {
 
 .with-second-part:hover #media-name-second-part, .with-second-part:hover #album-name-second-part {
 	display: inline;
+	font-size: 80%;
+	font-variant: small-caps;
 }
 
 /****************************/

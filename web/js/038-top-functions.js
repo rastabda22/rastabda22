@@ -539,7 +539,7 @@
 						let documentTitleComponents = titleComponents.map(component => util.stripHtmlAndReplaceEntities(component));
 						if (singleMedia !== null) {
 							let singleMediaNameHtml;
-							let singleMediaName = singleMedia.nameForShowing(env.currentAlbum, true);
+							let [singleMediaName, singleMediaTitle] = singleMedia.nameAndTitleForShowing(env.currentAlbum, true);
 							if (isSearchTitle || isSelectionTitle || isMapTitle) {
 								let name, mediaNamePosition;
 								if (isSearchTitle)
@@ -548,10 +548,12 @@
 									[name, mediaNamePosition] = singleMedia.captionForSelection.split(br);
 								else if (isMapTitle)
 									[name, mediaNamePosition] = singleMedia.captionForPopup.split(br);
+								if (! mediaNamePosition)
+									mediaNamePosition = singleMedia.titleForShowing;
 								singleMediaNameHtml =
 									"<span class='media-name with-second-part'>" +
 										name +
-										" <span id='media-name-second-part'>" + mediaNamePosition + "</span>" +
+										" <span id='media-name-second-part'>(" + mediaNamePosition + ")</span>" +
 									"</span> ";
 							} else {
 								singleMediaNameHtml = "<span class='media-name'>" + singleMediaName + "</span>";
@@ -569,7 +571,7 @@
 							}
 							titleComponents.push(singleMediaNameHtml);
 							classesForTitleComponents.push([""]);
-							titlesForTitleComponents.push([""]);
+							titlesForTitleComponents.push([singleMediaTitle]);
 							documentTitleComponents.push(util.stripHtmlAndReplaceEntities(singleMediaName));
 						}
 
@@ -2226,22 +2228,21 @@
 							imgHtml +
 						"</div>" +
 						"<div class='media-caption'>";
-				let name;
+				let name, title;
 				if ((util.isPopup() || this.isMap()) && ithMedia.hasOwnProperty("captionForPopup") && ithMedia.captionForPopup)
 					name = ithMedia.captionForPopup;
 				else if (this.isSearch() && ithMedia.hasOwnProperty("captionForSearch") && ithMedia.captionForSearch)
 					name = ithMedia.captionForSearch;
 				else if (this.isSelection() && ithMedia.hasOwnProperty("captionForSelection") && ithMedia.captionForSelection)
 					name = ithMedia.captionForSelection;
-				else
-					name = ithMedia.nameForShowing(this, true, true);
+				else {
+
+					[name, title] = ithMedia.nameAndTitleForShowing(this, true, true);
+				}
 
 				let spanHtml =
 							"<span class='media-name'>" +
-								// "<span>" +
 									name +
-									// ithMedia.nameForShowing(this, true, true).replace(/( |<br \/>)/g, "</span>$&<span>") +
-								// "</span>" +
 							"</span>";
 
 				imageString += spanHtml;
@@ -2273,8 +2274,9 @@
 				if (! inPopup && ithMedia.hasGpsData())
 					$("#" + imageId + " img.thumbnail-map-link").attr("title", util._t("#show-on-map")).attr("alt", util._t("#show-on-map"));
 				$("#" + imageId + " img.select-box").attr("title", util._t(titleSelector)).attr("alt", util._t("#selector"));
-				$("#" + imageId + " img.thumbnail").attr("title", util.pathJoin([ithMedia.albumName, ithMedia.nameForShowing(this)])).attr("alt", util.trimExtension(ithMedia.name));
-				$("#" + imageId + " .media-caption .media-name").attr("title", ithMedia.nameForShowing(this));
+				let [nameForShowing, titleForShowing] = ithMedia.nameAndTitleForShowing(this);
+				$("#" + imageId + " img.thumbnail").attr("title", util.pathJoin([ithMedia.albumName, nameForShowing])).attr("alt", util.trimExtension(ithMedia.name));
+				$("#" + imageId + " .media-caption .media-name").attr("title", titleForShowing);
 				if (ithMedia.metadata.hasOwnProperty("description")) {
 					$("#" + imageId + " .description.ellipsis").attr("title", util.stripHtmlAndReplaceEntities(ithMedia.metadata.description));
 				}
@@ -2375,7 +2377,8 @@
 			// } else if (self.isSearch()) {
 			// 	titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
 			} else {
-				titleName = util.pathJoin([randomMedia.albumName, randomMedia.nameForShowing(randomSubAlbum)]);
+				let [name, title] = randomMedia.nameAndTitleForShowing(randomSubAlbum);
+				titleName = util.pathJoin([randomMedia.albumName, name]);
 			}
 			if (self.isSearch())
 				randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia, randomSubAlbum.cacheBase, self.cacheBase);

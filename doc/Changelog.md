@@ -1,5 +1,7 @@
 * added navigation in albums with enter and left/arrow arrow keys
 * identify root album in search result
+* make img title more significant
+* bug fixes
 
 ### version v5.0.0 (Apr 27, 2021)
 
