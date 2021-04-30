@@ -2966,9 +2966,13 @@
 	};
 
 	Utilities.combineFirstAndSecondLine = function(firstLine, secondLine) {
-		var result = firstLine;
+		var result = "";
+		if (firstLine)
+			result = firstLine;
+		if (firstLine && secondLine)
+			result += "<br />";
 		if (secondLine)
-			result += "<br /><span class='second-line'>" + secondLine + "</span>";
+			result += "<span class='second-line'>" + secondLine + "</span>";
 		return result;
 	};
 
@@ -3099,6 +3103,8 @@
 			}
 			if (! secondLine)
 				secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album") + ")</span>";
+		} else if (album.cacheBase === env.options.folders_string) {
+			secondLine += "<span class='gray'>(" + Utilities._t("#root-album") + ")</span>";
 		} else {
 			for (let iCacheBase = 0; iCacheBase < album.ancestorsCacheBase.length - 1; iCacheBase ++) {
 				if (iCacheBase === 0 && album.ancestorsCacheBase.length === 2) {
@@ -3177,6 +3183,8 @@
 			}
 			if (! secondLine)
 				secondLine = "<span class='gray'>(" + Utilities._t("#by-gps-album") + ")</span>";
+		// } else if (album.cacheBase === env.options.folders_string) {
+		// 	secondLine += "<span class='gray'>(" + Utilities._t("#root-album") + ")</span>";
 		} else {
 			for (let iCacheBase = 1; iCacheBase < album.ancestorsCacheBase.length; iCacheBase ++) {
 				if (iCacheBase === 0 && album.ancestorsCacheBase.length === 2) {
@@ -3236,25 +3244,23 @@
 				folderName = Utilities.transformAltPlaceName(albumOrSubalbum.altName);
 			else
 				folderName = albumOrSubalbum.name;
-		} else {
-			if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title && albumOrSubalbum.title !== albumOrSubalbum.name) {
-				folderName = albumOrSubalbum.title;
-				if (! br) {
-					// remove the tags fronm the title
-					folderName = folderName.replace(/<[^>]*>?/gm, ' ');
-				}
-
-				if (albumOrSubalbum.name) {
-					if (html && br)
-						folderName += "<br /><span class='real-name'>[" + albumOrSubalbum.name + "]</span>";
-					else if (html)
-						folderName += " <span class='real-name'>[" + albumOrSubalbum.name + "]</span>";
-					else
-						folderName += " [" + albumOrSubalbum.name + "]";
-				}
-			} else {
-				folderName = albumOrSubalbum.name;
+		} else if (albumOrSubalbum.hasOwnProperty("title") && albumOrSubalbum.title && albumOrSubalbum.title !== albumOrSubalbum.name) {
+			folderName = albumOrSubalbum.title;
+			if (! br) {
+				// remove the tags fronm the title
+				folderName = folderName.replace(/<[^>]*>?/gm, ' ');
 			}
+
+			if (albumOrSubalbum.name) {
+				if (html && br)
+					folderName += "<br /><span class='real-name'>[" + albumOrSubalbum.name + "]</span>";
+				else if (html)
+					folderName += " <span class='real-name'>[" + albumOrSubalbum.name + "]</span>";
+				else
+					folderName += " [" + albumOrSubalbum.name + "]";
+			}
+		} else {
+			folderName = albumOrSubalbum.name;
 		}
 
 		return folderName;
