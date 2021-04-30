@@ -2364,8 +2364,8 @@
 		scalePromise.then(
 			function() {
 				if (self.isImage()) {
-					if (env.currentZoom === env.initialZoom)
-						Functions.pinchSwipeInitialization();
+					// if (env.currentZoom === env.initialZoom)
+					Functions.pinchSwipeInitialization();
 					Utilities.setPinchButtonsPosition();
 					Utilities.setPinchButtonsVisibility();
 				}
