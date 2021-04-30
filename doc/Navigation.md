@@ -9,7 +9,10 @@ MyPhotoShare can be used entirely with a keyboard.
 | single media     | Left arrow         | Previous media                                             |
 | single media     | Right arrow        | Next media                                                 |
 | single media     | Shift-Up Arrow     | Album view                                                 |
-| album view       | Shift-Down Arrow   | first media in album                                       |
+| album            | Shift-Down Arrow   | first media in album                                       |
+| album            | Enter              | enter selected album/single media                          |
+| album            | Left arrow         | move selection backward circularly                         |
+| album            | Right arrow        | move selection forward circularly                          |
 | enlarged picture | Arrows             | Drag                                                       |
 | enlarged picture | Shift-Arrows       | Drag faster                                                |
 | single media     | Enter              | Next media                                                 |
@@ -33,7 +36,7 @@ MyPhotoShare can be used entirely with a keyboard.
 | single media     | p                  | Previous media                                             |
 | single media     | Shift-p            | Next media                                                 |
 | single media     | Shift-Page Up      | Album view                                                 |
-| album view       | Shift-Page Down    | first media in album                                       |
+| album            | Shift-Page Down    | first media in album                                       |
 | enlarged picture | Page Up/Down       | Drag                                                       |
 | enlarged picture | Shift-Page Up/Down | Drag faster                                                |
 |                  | >                  | Browse folders by album > date > GPS > search > selection  |
