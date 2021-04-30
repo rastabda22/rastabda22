@@ -105,7 +105,10 @@ $(document).ready(function() {
 		} else if (! isAuth) {
 			if (e.key !== undefined && ! $("#search-field").is(':focus')) {
 				if (! e.ctrlKey && ! e.altKey) {
-					if (e.key === util._t("#hide-everytyhing-shortcut")) {
+					if (env.currentMedia === null && e.key === "Enter") {
+						$(".selected").click();
+						return false;
+					} else if (e.key === util._t("#hide-everytyhing-shortcut")) {
 						e.preventDefault();
 						tF.toggleTitleAndBottomThumbnailsAndDescriptionsAndTags(e);
 						return false;
