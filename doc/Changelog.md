@@ -1,3 +1,5 @@
+* added navigation in albums with enter and left/arrow arrow keys
+
 ### version v5.0.0 (Apr 27, 2021)
 
 * bug fixes
