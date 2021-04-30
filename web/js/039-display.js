@@ -105,53 +105,51 @@ $(document).ready(function() {
 		} else if (! isAuth) {
 			if (e.key !== undefined && ! $("#search-field").is(':focus')) {
 				if (! e.ctrlKey && ! e.altKey) {
-					if (env.currentMedia === null) {
-						if (e.key === "Enter") {
-							$("#album-and-media-container .selected").click();
-							return false;
-						} else if (e.key === "ArrowLeft") {
-							if (! $("#album-and-media-container .selected").length) {
-								if (env.currentAlbum.media.length)
-									nextObject = $(".thumb-and-caption-container").last();
-								else
-									nextObject = $(".album-button-and-caption").last();
-							} else if ($("#album-and-media-container .selected").parent().is(":first-child")) {
-								if ($("#album-and-media-container .selected").hasClass("thumb-and-caption-container") && env.currentAlbum.subalbums.length || $("#album-and-media-container .selected").hasClass("album-button-and-caption") && ! env.currentAlbum.media.length)
-									nextObject = $(".album-button-and-caption").last();
-								else
-									nextObject = $(".thumb-and-caption-container").last();
-							} else {
-								nextObject = $("#album-and-media-container .selected").parent().prev().children();
-							}
-							$("#album-and-media-container .selected").removeClass("selected");
-							if (nextObject.hasClass("thumb-and-caption-container"))
-								util.scrollToAlbumViewThumb(nextObject);
+					if (env.currentMedia === null && e.key === "Enter") {
+						$("#album-and-media-container .selected").click();
+						return false;
+					} else if (env.currentMedia === null && e.key === "ArrowLeft") {
+						if (! $("#album-and-media-container .selected").length) {
+							if (env.currentAlbum.media.length)
+								nextObject = $(".thumb-and-caption-container").last();
 							else
-								util.scrollToSubalbum(nextObject);
-							nextObject.addClass("selected");
-							return false;
-						} else if (e.key === "ArrowRight") {
-							if (! $("#album-and-media-container .selected").length) {
-								if (env.currentAlbum.subalbums.length)
-									nextObject = $(".album-button-and-caption").first();
-								else
-									nextObject = $(".thumb-and-caption-container").first();
-							} else if ($("#album-and-media-container .selected").parent().is(":last-child")) {
-								if ($("#album-and-media-container .selected").hasClass("thumb-and-caption-container") && env.currentAlbum.subalbums.length || $("#album-and-media-container .selected").hasClass("album-button-and-caption") && ! env.currentAlbum.media.length)
-									nextObject = $(".album-button-and-caption").first();
-								else
-									nextObject = $(".thumb-and-caption-container").first();
-							} else {
-								nextObject = $("#album-and-media-container .selected").parent().next().children();
-							}
-							$("#album-and-media-container .selected").removeClass("selected");
-							if (nextObject.hasClass("thumb-and-caption-container"))
-								util.scrollToAlbumViewThumb(nextObject);
+								nextObject = $(".album-button-and-caption").last();
+						} else if ($("#album-and-media-container .selected").parent().is(":first-child")) {
+							if ($("#album-and-media-container .selected").hasClass("thumb-and-caption-container") && env.currentAlbum.subalbums.length || $("#album-and-media-container .selected").hasClass("album-button-and-caption") && ! env.currentAlbum.media.length)
+								nextObject = $(".album-button-and-caption").last();
 							else
-								util.scrollToSubalbum(nextObject);
-							nextObject.addClass("selected");
-							return false;
+								nextObject = $(".thumb-and-caption-container").last();
+						} else {
+							nextObject = $("#album-and-media-container .selected").parent().prev().children();
 						}
+						$("#album-and-media-container .selected").removeClass("selected");
+						if (nextObject.hasClass("thumb-and-caption-container"))
+							util.scrollToAlbumViewThumb(nextObject);
+						else
+							util.scrollToSubalbum(nextObject);
+						nextObject.addClass("selected");
+						return false;
+					} else if (env.currentMedia === null && e.key === "ArrowRight") {
+						if (! $("#album-and-media-container .selected").length) {
+							if (env.currentAlbum.subalbums.length)
+								nextObject = $(".album-button-and-caption").first();
+							else
+								nextObject = $(".thumb-and-caption-container").first();
+						} else if ($("#album-and-media-container .selected").parent().is(":last-child")) {
+							if ($("#album-and-media-container .selected").hasClass("thumb-and-caption-container") && env.currentAlbum.subalbums.length || $("#album-and-media-container .selected").hasClass("album-button-and-caption") && ! env.currentAlbum.media.length)
+								nextObject = $(".album-button-and-caption").first();
+							else
+								nextObject = $(".thumb-and-caption-container").first();
+						} else {
+							nextObject = $("#album-and-media-container .selected").parent().next().children();
+						}
+						$("#album-and-media-container .selected").removeClass("selected");
+						if (nextObject.hasClass("thumb-and-caption-container"))
+							util.scrollToAlbumViewThumb(nextObject);
+						else
+							util.scrollToSubalbum(nextObject);
+						nextObject.addClass("selected");
+						return false;
 					} else if (e.key === util._t("#hide-everytyhing-shortcut")) {
 						e.preventDefault();
 						tF.toggleTitleAndBottomThumbnailsAndDescriptionsAndTags(e);
