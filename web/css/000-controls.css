@@ -150,7 +150,8 @@ img.thumbnail-img {
 }
 
 .thumb-and-caption-container {
-	border-top: 6px solid #222222 !important;
+	border-top: 4px solid #222222 !important;
+	border-bottom: 4px solid #222222 !important;
 	margin-top: 0;
 }
 
@@ -172,12 +173,16 @@ img.thumbnail-img {
 	cursor: pointer;
 	border: 1px solid white;
 }
-.album-button-and-caption.selected:not(.slide) {
-	background-color: black !important;
-	border: 1px solid red !important;
+
+.album-button-and-caption.selected {
+	filter: invert(1);
+	-webkit-filter: invert(1);
 }
-.album-button-and-caption.selected:not(.slide) .album-button {
-	background-color: black !important;
+
+.album-button-and-caption.selected img.thumbnail {
+	filter: invert(1) brightness(.7);
+	-webkit-filter: invert(1) brightness(.7);
+
 }
 
 .album-button-and-caption.slide {
@@ -185,14 +190,7 @@ img.thumbnail-img {
 	border-left-color: whitesmoke;
 	border-top-color: whitesmoke;
 }
-.album-button-and-caption.slide.selected {
-	background-color: white !important;
-	border: 3px solid red !important;
-}
-.album-button-and-caption.slide.selected .album-button {
-	border-color: gray !important;
-	background-color: white !important;
-}
+
 .album-button-and-caption.slide:hover {
 	border: 3px solid gray;
 	border-right-color: whitesmoke;
@@ -822,10 +820,17 @@ video {
 	margin-bottom: 0;
 	display: block;
 }
+
 #album-and-media-container:not(.show-media) .thumb-and-caption-container.selected {
-	background-color: red;
-	border: 2px solid red !important;
+	filter: invert(1);
+	-webkit-filter: invert(1);
 }
+
+#album-and-media-container:not(.show-media) .thumb-and-caption-container.selected img.thumbnail {
+	filter: invert(1) brightness(.7);
+	-webkit-filter: invert(1) brightness(.7);
+}
+
 .thumb-container {
 	position: relative;
 	top: 0;
