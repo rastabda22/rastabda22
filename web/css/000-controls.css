@@ -326,6 +326,7 @@ p.description-text, p.description-text ul {
 	opacity: .3;
 	height: 30px;
 	cursor: pointer;
+	z-index: 1;
 }
 
 #thumbs .thumbnail-map-link, #subalbums .thumbnail-map-link {
