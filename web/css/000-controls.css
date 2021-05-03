@@ -180,8 +180,8 @@ img.thumbnail-img {
 }
 
 .album-button-and-caption.selected img.thumbnail {
-	filter: invert(1) brightness(.7);
-	-webkit-filter: invert(1) brightness(.7);
+	filter: invert(1) brightness(.9);
+	-webkit-filter: invert(1) brightness(.9);
 
 }
 
@@ -283,8 +283,8 @@ p.description-text, p.description-text ul {
 }
 
 .album-button-and-caption, .thumb-container {
-	opacity: .9;
-	filter: alpha(opacity=90); /* For IE8 and earlier */
+	/* opacity: .9; */
+	/* filter: alpha(opacity=90); /* For IE8 and earlier */ */
 }
 
 .album-button-and-caption:hover, .thumb-and-caption-container:hover .thumb-container {
@@ -828,8 +828,8 @@ video {
 }
 
 #album-and-media-container:not(.show-media) .thumb-and-caption-container.selected img.thumbnail {
-	filter: invert(1) brightness(.7);
-	-webkit-filter: invert(1) brightness(.7);
+	filter: invert(1) brightness(.9);
+	-webkit-filter: invert(1) brightness(.9);
 }
 
 .thumb-container {
