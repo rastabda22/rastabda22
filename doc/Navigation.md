@@ -10,7 +10,7 @@ MyPhotoShare can be used entirely with a keyboard.
 | single media     | Right arrow        | Next media                                                 |
 | single media     | Shift-Up Arrow     | Album view                                                 |
 | album            | Shift-Down Arrow   | first media in album                                       |
-| album            | Enter              | enter selected album/single media                          |
+| album            | Enter              | enter highlighted album/single media                          |
 | album            | Left arrow         | move selection backward circularly                         |
 | album            | Right arrow        | move selection forward circularly                          |
 | enlarged picture | Arrows             | Drag                                                       |

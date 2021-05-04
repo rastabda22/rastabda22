@@ -2544,9 +2544,9 @@
 					"fast"
 				);
 				if (! object) {
-					$(".thumb-and-caption-container").removeClass("selected");
-					$(".album-button-and-caption").removeClass("selected");
-					subalbumObject.addClass("selected");
+					$(".thumb-and-caption-container").removeClass("highlighted");
+					$(".album-button-and-caption").removeClass("highlighted");
+					subalbumObject.addClass("highlighted");
 				}
 			}
 		}
@@ -2567,9 +2567,9 @@
 					"fast"
 				);
 				if (! object) {
-					$(".thumb-and-caption-container").removeClass("selected");
-					$(".album-button-and-caption").removeClass("selected");
-					thumbObject.parent().parent().addClass("selected");
+					$(".thumb-and-caption-container").removeClass("highlighted");
+					$(".album-button-and-caption").removeClass("highlighted");
+					thumbObject.parent().parent().addClass("highlighted");
 				}
 			}
 		}
@@ -4169,7 +4169,6 @@
 				this.sortByPath();
 				this.albumNameSort = true;
 				this.albumReverseSort = false;
-				// $("li.album-sort.by-name").addClass("selected");
 			} else if (this.needAlbumDateSort()) {
 				Utilities.sortByDate(this.subalbums);
 				this.albumNameSort = false;

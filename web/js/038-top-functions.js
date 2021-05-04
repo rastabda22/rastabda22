@@ -417,7 +417,6 @@
 							(env.currentAlbum.numsMedia.imagesAndVideosTotal() || env.currentAlbum.subalbums.length)
 						) {
 							titleCount = "<span class='title-count'>(";
-							// titleCount += util._t(".title-selected") + ' ';
 							if (env.currentAlbum.subalbums.length) {
 								titleCount += env.currentAlbum.subalbums.length;
 								titleCount += " " + util._t(".title-albums");
@@ -1424,8 +1423,8 @@
 				$("#subalbums").removeClass("hidden");
 			else
 				$("#subalbums").addClass("hidden");
-			$(".thumb-and-caption-container").removeClass("selected");
-			$(".album-button-and-caption").removeClass("selected");
+			$(".thumb-and-caption-container").removeClass("highlighted");
+			$(".album-button-and-caption").removeClass("highlighted");
 			$("body").off('mousewheel').on('mousewheel', TopFunctions.scrollAlbum);
 
 			util.setMediaOptions();
@@ -1495,9 +1494,9 @@
 									$(env.selectorClickedToOpenTheMap).trigger("click", ["fromTrigger"]);
 								}
 
-								if (env.currentAlbum.subalbums.length && $(".album-button-and-caption.selected")[0] !== undefined)
+								if (env.currentAlbum.subalbums.length && $(".album-button-and-caption.highlighted")[0] !== undefined)
 									util.scrollToSubalbum();
-								if (env.currentAlbum.media.length && $(".thumb-and-caption-container.selected")[0] !== undefined)
+								if (env.currentAlbum.media.length && $(".thumb-and-caption-container.highlighted")[0] !== undefined)
 									util.scrollToAlbumViewThumb();
 
 								$("#loading").hide();

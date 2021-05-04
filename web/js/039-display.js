@@ -106,49 +106,49 @@ $(document).ready(function() {
 			if (e.key !== undefined && ! $("#search-field").is(':focus')) {
 				if (! e.ctrlKey && ! e.altKey) {
 					if (env.currentMedia === null && e.key === "Enter") {
-						$("#album-and-media-container .selected").click();
+						$("#album-and-media-container .highlighted").click();
 						return false;
 					} else if (env.currentMedia === null && e.key === "ArrowLeft") {
-						if (! $("#album-and-media-container .selected").length) {
+						if (! $("#album-and-media-container .highlighted").length) {
 							if (env.currentAlbum.media.length)
 								nextObject = $(".thumb-and-caption-container").last();
 							else
 								nextObject = $(".album-button-and-caption").last();
-						} else if ($("#album-and-media-container .selected").parent().is(":first-child")) {
-							if ($("#album-and-media-container .selected").hasClass("thumb-and-caption-container") && env.currentAlbum.subalbums.length || $("#album-and-media-container .selected").hasClass("album-button-and-caption") && ! env.currentAlbum.media.length)
+						} else if ($("#album-and-media-container .highlighted").parent().is(":first-child")) {
+							if ($("#album-and-media-container .highlighted").hasClass("thumb-and-caption-container") && env.currentAlbum.subalbums.length || $("#album-and-media-container .highlighted").hasClass("album-button-and-caption") && ! env.currentAlbum.media.length)
 								nextObject = $(".album-button-and-caption").last();
 							else
 								nextObject = $(".thumb-and-caption-container").last();
 						} else {
-							nextObject = $("#album-and-media-container .selected").parent().prev().children();
+							nextObject = $("#album-and-media-container .highlighted").parent().prev().children();
 						}
-						$("#album-and-media-container .selected").removeClass("selected");
+						$("#album-and-media-container .highlighted").removeClass("highlighted");
 						if (nextObject.hasClass("thumb-and-caption-container"))
 							util.scrollToAlbumViewThumb(nextObject);
 						else
 							util.scrollToSubalbum(nextObject);
-						nextObject.addClass("selected");
+						nextObject.addClass("highlighted");
 						return false;
 					} else if (env.currentMedia === null && e.key === "ArrowRight") {
-						if (! $("#album-and-media-container .selected").length) {
+						if (! $("#album-and-media-container .highlighted").length) {
 							if (env.currentAlbum.subalbums.length)
 								nextObject = $(".album-button-and-caption").first();
 							else
 								nextObject = $(".thumb-and-caption-container").first();
-						} else if ($("#album-and-media-container .selected").parent().is(":last-child")) {
-							if ($("#album-and-media-container .selected").hasClass("thumb-and-caption-container") && env.currentAlbum.subalbums.length || $("#album-and-media-container .selected").hasClass("album-button-and-caption") && ! env.currentAlbum.media.length)
+						} else if ($("#album-and-media-container .highlighted").parent().is(":last-child")) {
+							if ($("#album-and-media-container .highlighted").hasClass("thumb-and-caption-container") && env.currentAlbum.subalbums.length || $("#album-and-media-container .highlighted").hasClass("album-button-and-caption") && ! env.currentAlbum.media.length)
 								nextObject = $(".album-button-and-caption").first();
 							else
 								nextObject = $(".thumb-and-caption-container").first();
 						} else {
-							nextObject = $("#album-and-media-container .selected").parent().next().children();
+							nextObject = $("#album-and-media-container .highlighted").parent().next().children();
 						}
-						$("#album-and-media-container .selected").removeClass("selected");
+						$("#album-and-media-container .highlighted").removeClass("highlighted");
 						if (nextObject.hasClass("thumb-and-caption-container"))
 							util.scrollToAlbumViewThumb(nextObject);
 						else
 							util.scrollToSubalbum(nextObject);
-						nextObject.addClass("selected");
+						nextObject.addClass("highlighted");
 						return false;
 					} else if (e.key === util._t("#hide-everytyhing-shortcut")) {
 						e.preventDefault();

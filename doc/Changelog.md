@@ -10,10 +10,10 @@
 
 ### version v4.9.47 (Apr 24, 2021)
 
-* mark single media as selected in album view when coming from it in media view
-* mark subalbum as selected when coming from it
+* mark single media as highlighted in album view when coming from it in media view
+* mark subalbum as highlighted when coming from it
 * make page scroll to subalbum when going up in album tree
-* keep selected subalbum/thumbnail visible when resizing
+* keep highlighted subalbum/thumbnail visible when resizing
 * bug fixes
 
 ### version v4.9.46 (Apr 23, 2021)

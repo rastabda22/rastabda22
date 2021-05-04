@@ -174,12 +174,12 @@ img.thumbnail-img {
 	border: 1px solid white;
 }
 
-.album-button-and-caption.selected {
+.album-button-and-caption.highlighted {
 	filter: invert(1);
 	-webkit-filter: invert(1);
 }
 
-.album-button-and-caption.selected img.thumbnail {
+.album-button-and-caption.highlighted img.thumbnail {
 	filter: invert(1) brightness(.9);
 	-webkit-filter: invert(1) brightness(.9);
 
@@ -822,12 +822,12 @@ video {
 	display: block;
 }
 
-#album-and-media-container:not(.show-media) .thumb-and-caption-container.selected {
+#album-and-media-container:not(.show-media) .thumb-and-caption-container.highlighted {
 	filter: invert(1);
 	-webkit-filter: invert(1);
 }
 
-#album-and-media-container:not(.show-media) .thumb-and-caption-container.selected img.thumbnail {
+#album-and-media-container:not(.show-media) .thumb-and-caption-container.highlighted img.thumbnail {
 	filter: invert(1) brightness(.9);
 	-webkit-filter: invert(1) brightness(.9);
 }
