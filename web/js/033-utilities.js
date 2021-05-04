@@ -2529,6 +2529,26 @@
 		);
 	};
 
+	Utilities.removeHighligths = function() {
+		$(".highlighted").removeClass("highlighted");
+	};
+
+	Utilities.addHighlight = function(object) {
+		object.addClass("highlighted");
+	};
+
+	Utilities.prototype.highlightedObject = function() {
+		return $(".highlighted");
+	};
+
+	Utilities.prototype.aSubalbumIsHighlighted = function() {
+		return $(".album-button-and-caption.highlighted").length > 0;
+	};
+
+	Utilities.prototype.aSingleMediaIsHighlighted = function() {
+		return $(".thumb-and-caption-container.highlighted").length > 0;
+	};
+
 	Utilities.prototype.scrollToSubalbum = function(object = null) {
 		if (! Utilities.isPopup() && $("#subalbums").is(":visible") && env.currentAlbum.subalbums.length && (object || env.previousAlbum !== null)) {
 			let subalbumObject;
@@ -2544,9 +2564,8 @@
 					"fast"
 				);
 				if (! object) {
-					$(".thumb-and-caption-container").removeClass("highlighted");
-					$(".album-button-and-caption").removeClass("highlighted");
-					subalbumObject.addClass("highlighted");
+					Utilities.removeHighligths();
+					Utilities.addHighlight(subalbumObject);
 				}
 			}
 		}
@@ -2567,9 +2586,8 @@
 					"fast"
 				);
 				if (! object) {
-					$(".thumb-and-caption-container").removeClass("highlighted");
-					$(".album-button-and-caption").removeClass("highlighted");
-					thumbObject.parent().parent().addClass("highlighted");
+					Utilities.removeHighligths();
+					Utilities.addHighlight(thumbObject.parent().parent());
 				}
 			}
 		}
@@ -4328,6 +4346,8 @@
 	Utilities.prototype.socialButtons = Utilities.socialButtons;
 	Utilities.prototype.openInNewTab = Utilities.openInNewTab;
 	Utilities.prototype.isMap = Utilities.isMap;
+	Utilities.prototype.removeHighligths = Utilities.removeHighligths;
+	Utilities.prototype.addHighlight = Utilities.addHighlight;
 
 	window.Utilities = Utilities;
 }());
