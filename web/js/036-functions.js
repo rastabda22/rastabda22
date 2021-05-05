@@ -43,7 +43,7 @@
 
 	Functions.hideDescriptionMenuEntry = function() {
 		var isPopup = util.isPopup();
-		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
+		var isMap = util.isMap();
 
 		var popupHasSomeDescription;
 		if (isPopup)

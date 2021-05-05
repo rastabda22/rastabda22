@@ -108,7 +108,7 @@ $(document).ready(function() {
 					if (env.currentMedia === null && e.key === "Enter") {
 						util.highlightedObject().click();
 						return false;
-					} else if (env.currentMedia === null && e.key === "ArrowLeft") {
+					} else if (env.currentMedia === null && e.key === "ArrowLeft" && ! isMap) {
 						if (! (util.aSingleMediaIsHighlighted() || util.aSubalbumIsHighlighted())) {
 							if (env.currentAlbum.media.length)
 								nextObject = $(".thumb-and-caption-container").last();
@@ -128,7 +128,7 @@ $(document).ready(function() {
 							util.scrollToSubalbum(nextObject);
 						util.addHighlight(nextObject);
 						return false;
-					} else if (env.currentMedia === null && e.key === "ArrowRight") {
+					} else if (env.currentMedia === null && e.key === "ArrowRight" && ! isMap) {
 						if (! (util.aSingleMediaIsHighlighted() || util.aSubalbumIsHighlighted())) {
 							if (env.currentAlbum.subalbums.length)
 								nextObject = $(".album-button-and-caption").first();
