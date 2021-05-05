@@ -122,7 +122,6 @@ $(document).ready(function() {
 						} else {
 							nextObject = util.highlightedObject().parent().prev().children();
 						}
-						Utilities.removeHighligths();
 						if (nextObject.hasClass("thumb-and-caption-container"))
 							util.scrollToAlbumViewThumb(nextObject);
 						else
@@ -143,7 +142,6 @@ $(document).ready(function() {
 						} else {
 							nextObject = util.highlightedObject().parent().next().children();
 						}
-						Utilities.removeHighligths();
 						if (nextObject.hasClass("thumb-and-caption-container"))
 							util.scrollToAlbumViewThumb(nextObject);
 						else

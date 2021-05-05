@@ -2534,6 +2534,7 @@
 	};
 
 	Utilities.addHighlight = function(object) {
+		Utilities.removeHighligths();
 		object.addClass("highlighted");
 	};
 
@@ -2550,13 +2551,15 @@
 	};
 
 	Utilities.prototype.scrollToSubalbum = function(object = null) {
-		if (! Utilities.isPopup() && $("#subalbums").is(":visible") && env.currentAlbum.subalbums.length && (object || env.previousAlbum !== null)) {
+		if (! Utilities.isPopup() && $("#subalbums").is(":visible") && env.currentAlbum.subalbums.length) {
 			let subalbumObject;
 			if (object)
 				subalbumObject = object;
-			else
+			else if (env.previousAlbum !== null && env.previousAlbum.cacheBase.indexOf(env.currentAlbum.cacheBase) === 0)
 				subalbumObject = $("#" + env.previousAlbum.cacheBase);
-			if (subalbumObject[0] !== undefined) {
+			else
+				subalbumObject = $("#subalbums").children().first().children();
+			if (subalbumObject !== undefined) {
 				$("html, body").stop().animate(
 					{
 						scrollTop: subalbumObject.offset().top + subalbumObject.height() / 2 - env.windowHeight / 2
@@ -2564,7 +2567,6 @@
 					"fast"
 				);
 				if (! object) {
-					Utilities.removeHighligths();
 					Utilities.addHighlight(subalbumObject);
 				}
 			}
@@ -2572,13 +2574,15 @@
 	};
 
 	Utilities.prototype.scrollToAlbumViewThumb = function(object = null) {
-		if (! Utilities.isPopup() && $("#thumbs").is(":visible") && (object || env.previousMedia !== null)) {
+		if (! Utilities.isPopup() && $("#thumbs").is(":visible")) {
 			let thumbObject;
 			if (object)
 				thumbObject = object.children(".thumb-container").children(".thumbnail");
-			else
+			else if (env.previousMedia !== null)
 				thumbObject = $("#" + env.previousMedia.foldersCacheBase + "--" + env.previousMedia.cacheBase);
-			if (thumbObject[0] !== undefined) {
+			else if (env.currentAlbum.subalbums.length === 0)
+				thumbObject = $("#thumbs img.thumbnail").first();
+			if (thumbObject !== undefined) {
 				$("html, body").stop().animate(
 					{
 						scrollTop: thumbObject.offset().top + thumbObject.height() / 2 - env.windowHeight / 2
@@ -2586,7 +2590,6 @@
 					"fast"
 				);
 				if (! object) {
-					Utilities.removeHighligths();
 					Utilities.addHighlight(thumbObject.parent().parent());
 				}
 			}
