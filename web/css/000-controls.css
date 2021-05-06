@@ -831,18 +831,22 @@ video {
 	background-color: #FFAD27 !important;
 }
 
-#popup-images-wrapper .highlighted .media-caption .media-name[style],
-#popup-images-wrapper .highlighted .media-caption .description,
-#popup-images-wrapper .highlighted .media-caption .tags,
-#popup-images-wrapper .highlighted .media-caption .tag a,
-#popup-images-wrapper .highlighted .media-caption .second-line .gray,
-#popup-images-wrapper .highlighted .media-caption .second-line a {
+.highlighted .album-name[style],
+.highlighted .real-name[style],
+.highlighted .media-name[style],
+.highlighted .description,
+.highlighted .tags,
+.highlighted .tag a,
+.highlighted .album-caption-count,
+.highlighted .title-media,
+.highlighted .second-line .gray,
+.highlighted .second-line a {
 	color: black !important;
 }
 
-#thumbs .highlighted .media-caption .media-name[style], #thumbs .highlighted .media-caption .description, #thumbs .highlighted .media-caption .tags {
+/* #thumbs .highlighted .media-caption .media-name[style], #thumbs .highlighted .media-caption .description, #thumbs .highlighted .media-caption .tags {
 	color: white !important;
-}
+} */
 
 .thumb-container {
 	position: relative;
