@@ -1487,9 +1487,12 @@
 								}
 
 								if (env.currentAlbum.subalbums.length && util.aSubalbumIsHighlighted())
-									util.scrollToSubalbum();
-								if (env.currentAlbum.media.length && util.aSingleMediaIsHighlighted())
-									util.scrollToAlbumViewThumb();
+									util.scrollToSubalbum($("#subalbums .highlighted"));
+								if (env.currentAlbum.media.length && util.aSingleMediaIsHighlighted()) {
+									util.scrollToAlbumViewThumb($("#thumbs .highlighted"), true);
+									if (util.isPopup())
+										util.scrollToAlbumViewThumb($("#popup-images-wrapper .highlighted"));
+								}
 
 								$("#loading").hide();
 							}

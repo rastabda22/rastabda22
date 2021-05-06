@@ -2582,31 +2582,23 @@
 		}
 	};
 
-	Utilities.prototype.scrollToAlbumViewThumb = function(object = null) {
+	Utilities.prototype.scrollToAlbumViewThumb = function(object = null, evenIfIsNotPopup = false) {
 		if (Utilities.isPopup() || $("#thumbs").is(":visible")) {
-		// if (! Utilities.isPopup() && $("#thumbs").is(":visible")) {
 			let thumbObject;
-			let thumbsSelector = "#thumbs";
-			let scrollableObject = $("html, body");
-			let windowOrPopupHeight = env.windowHeight;
+		// if (! Utilities.isPopup() && $("#thumbs").is(":visible")) {
 			if (Utilities.isPopup()) {
-				thumbsSelector = "#popup-images-wrapper";
-				scrollableObject = $(thumbsSelector);
-				windowOrPopupHeight = scrollableObject.height();
-			}
+				let scrollableObject = $("#popup-images-wrapper");
+				let popupHeight = scrollableObject.height();
 
-			if (object)
-				thumbObject = object.children(".thumb-container").children(".thumbnail");
-			else if (env.previousMedia !== null)
-				thumbObject = $("#" + env.previousMedia.foldersCacheBase + "--" + env.previousMedia.cacheBase);
-			else if (Utilities.isPopup() || env.currentAlbum.subalbums.length === 0)
-				thumbObject = $(thumbsSelector + " img.thumbnail").first();
-			if (thumbObject !== undefined) {
-				let offset;
-				if (Utilities.isPopup())
-					offset = scrollableObject.scrollTop() + thumbObject.offset().top - scrollableObject.offset().top + thumbObject.height() / 2 - windowOrPopupHeight / 2;
+				if (object)
+					thumbObject = object.children(".thumb-container").children(".thumbnail");
+				else if (env.previousMedia !== null)
+					thumbObject = $("#" + env.previousMedia.foldersCacheBase + "--" + env.previousMedia.cacheBase);
 				else
-					offset = thumbObject.offset().top - scrollableObject.offset().top + thumbObject.height() / 2 - windowOrPopupHeight / 2;
+					thumbObject = $("#popup-images-wrapper img.thumbnail").first();
+
+				let offset;
+				offset = scrollableObject.scrollTop() + thumbObject.offset().top - scrollableObject.offset().top + thumbObject.height() / 2 - popupHeight / 2;
 				if (offset < 0)
 					offset = 0;
 				// scrollableObject.scrollTop(offset);
@@ -2620,6 +2612,35 @@
 					Utilities.addHighlight(object);
 				else
 					Utilities.addHighlight(thumbObject.parent().parent());
+			}
+			if (! Utilities.isPopup() || evenIfIsNotPopup) {
+				// not in popup
+				let scrollableObject = $("html, body");
+
+				if (object)
+					thumbObject = object.children(".thumb-container").children(".thumbnail");
+				else if (env.previousMedia !== null)
+					thumbObject = $("#" + env.previousMedia.foldersCacheBase + "--" + env.previousMedia.cacheBase);
+				else if (env.currentAlbum.subalbums.length === 0)
+					thumbObject = $("#thumbs img.thumbnail").first();
+
+				if (thumbObject !== undefined) {
+					let offset;
+					offset = thumbObject.offset().top - scrollableObject.offset().top + thumbObject.height() / 2 - env.windowHeight / 2;
+					if (offset < 0)
+						offset = 0;
+					// scrollableObject.scrollTop(offset);
+					scrollableObject.stop().animate(
+						{
+							scrollTop: offset
+						},
+						"fast"
+					);
+					if (object)
+						Utilities.addHighlight(object);
+					else
+						Utilities.addHighlight(thumbObject.parent().parent());
+				}
 			}
 		}
 	};
