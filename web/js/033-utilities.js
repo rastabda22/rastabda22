@@ -2530,7 +2530,12 @@
 	};
 
 	Utilities.removeHighligths = function() {
-		$(".highlighted").removeClass("highlighted");
+		if (Utilities.isPopup()) {
+			$("#popup-images-wrapper .highlighted").removeClass("highlighted");
+		} else {
+			$("#thumbs .highlighted").removeClass("highlighted");
+			$("#subalbums .highlighted").removeClass("highlighted");
+		}
 	};
 
 	Utilities.addHighlight = function(object) {
@@ -2539,15 +2544,19 @@
 	};
 
 	Utilities.prototype.highlightedObject = function() {
-		return $(".highlighted");
+		if (Utilities.isPopup()) {
+			return $("#popup-images-wrapper .highlighted");
+		} else {
+			return $(".highlighted");
+		}
 	};
 
 	Utilities.prototype.aSubalbumIsHighlighted = function() {
-		return $(".album-button-and-caption.highlighted").length > 0;
+		return $("#subalbums .highlighted").length > 0;
 	};
 
 	Utilities.prototype.aSingleMediaIsHighlighted = function() {
-		return $(".thumb-and-caption-container.highlighted").length > 0;
+		return $("#thumbs .highlighted").length > 0 || $("#popup-images-wrapper .highlighted").length > 0;
 	};
 
 	Utilities.prototype.scrollToSubalbum = function(object = null) {
@@ -2574,24 +2583,43 @@
 	};
 
 	Utilities.prototype.scrollToAlbumViewThumb = function(object = null) {
-		if (! Utilities.isPopup() && $("#thumbs").is(":visible")) {
+		if (Utilities.isPopup() || $("#thumbs").is(":visible")) {
+		// if (! Utilities.isPopup() && $("#thumbs").is(":visible")) {
 			let thumbObject;
+			let thumbsSelector = "#thumbs";
+			let scrollableObject = $("html, body");
+			let windowOrPopupHeight = env.windowHeight;
+			if (Utilities.isPopup()) {
+				thumbsSelector = "#popup-images-wrapper";
+				scrollableObject = $(thumbsSelector);
+				windowOrPopupHeight = scrollableObject.height();
+			}
+
 			if (object)
 				thumbObject = object.children(".thumb-container").children(".thumbnail");
 			else if (env.previousMedia !== null)
 				thumbObject = $("#" + env.previousMedia.foldersCacheBase + "--" + env.previousMedia.cacheBase);
-			else if (env.currentAlbum.subalbums.length === 0)
-				thumbObject = $("#thumbs img.thumbnail").first();
+			else if (Utilities.isPopup() || env.currentAlbum.subalbums.length === 0)
+				thumbObject = $(thumbsSelector + " img.thumbnail").first();
 			if (thumbObject !== undefined) {
-				$("html, body").stop().animate(
+				let offset;
+				if (Utilities.isPopup())
+					offset = scrollableObject.scrollTop() + thumbObject.offset().top - scrollableObject.offset().top + thumbObject.height() / 2 - windowOrPopupHeight / 2;
+				else
+					offset = thumbObject.offset().top - scrollableObject.offset().top + thumbObject.height() / 2 - windowOrPopupHeight / 2;
+				if (offset < 0)
+					offset = 0;
+				// scrollableObject.scrollTop(offset);
+				scrollableObject.stop().animate(
 					{
-						scrollTop: thumbObject.offset().top + thumbObject.height() / 2 - env.windowHeight / 2
+						scrollTop: offset
 					},
 					"fast"
 				);
-				if (! object) {
+				if (object)
+					Utilities.addHighlight(object);
+				else
 					Utilities.addHighlight(thumbObject.parent().parent());
-				}
 			}
 		}
 	};

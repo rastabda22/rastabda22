@@ -109,17 +109,17 @@ $(document).ready(function() {
 						util.highlightedObject().click();
 						return false;
 					} else if (env.currentMedia === null && e.key === "ArrowLeft" && ! isMap) {
-						if (! (util.aSingleMediaIsHighlighted() || util.aSubalbumIsHighlighted())) {
-							if (env.currentAlbum.media.length)
-								nextObject = $(".thumb-and-caption-container").last();
+						let selector = "";
+						if (isPopup)
+							selector = "#popup-images-wrapper ";
+						if (! isPopup && util.highlightedObject().parent().is(":first-child") || isPopup && util.highlightedObject().is(":first-child")) {
+							if (! isPopup && (util.aSingleMediaIsHighlighted() && env.currentAlbum.subalbums.length || util.aSubalbumIsHighlighted() && ! env.currentAlbum.media.length))
+								nextObject = $(selector + ".album-button-and-caption").last();
 							else
-								nextObject = $(".album-button-and-caption").last();
-						} else if (util.highlightedObject().parent().is(":first-child")) {
-							if (util.aSingleMediaIsHighlighted() && env.currentAlbum.subalbums.length || util.aSubalbumIsHighlighted() && ! env.currentAlbum.media.length)
-								nextObject = $(".album-button-and-caption").last();
-							else
-								nextObject = $(".thumb-and-caption-container").last();
-						} else {
+								nextObject = $(selector + ".thumb-and-caption-container").last();
+						} else if (isPopup){
+							nextObject = util.highlightedObject().prev();
+						} else if (! isPopup){
 							nextObject = util.highlightedObject().parent().prev().children();
 						}
 						if (nextObject.hasClass("thumb-and-caption-container"))
@@ -129,18 +129,18 @@ $(document).ready(function() {
 						util.addHighlight(nextObject);
 						return false;
 					} else if (env.currentMedia === null && e.key === "ArrowRight" && ! isMap) {
-						if (! (util.aSingleMediaIsHighlighted() || util.aSubalbumIsHighlighted())) {
-							if (env.currentAlbum.subalbums.length)
-								nextObject = $(".album-button-and-caption").first();
+						let selector = "";
+						if (isPopup)
+							selector = "#popup-images-wrapper ";
+						if (! isPopup && util.highlightedObject().parent().is(":last-child") || isPopup && util.highlightedObject().is(":last-child")) {
+							if (! isPopup && (util.aSingleMediaIsHighlighted() && env.currentAlbum.subalbums.length || util.aSubalbumIsHighlighted() && ! env.currentAlbum.media.length))
+								nextObject = $(selector + ".album-button-and-caption").first();
 							else
-								nextObject = $(".thumb-and-caption-container").first();
-						} else if (util.highlightedObject().parent().is(":last-child")) {
-							if (util.aSingleMediaIsHighlighted() && env.currentAlbum.subalbums.length || util.aSubalbumIsHighlighted() && ! env.currentAlbum.media.length)
-								nextObject = $(".album-button-and-caption").first();
-							else
-								nextObject = $(".thumb-and-caption-container").first();
-						} else {
+								nextObject = $(selector + ".thumb-and-caption-container").first();
+						} else if (! isPopup){
 							nextObject = util.highlightedObject().parent().next().children();
+						} else if (isPopup){
+							nextObject = util.highlightedObject().next();
 						}
 						if (nextObject.hasClass("thumb-and-caption-container"))
 							util.scrollToAlbumViewThumb(nextObject);

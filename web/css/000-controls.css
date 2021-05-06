@@ -150,8 +150,8 @@ img.thumbnail-img {
 }
 
 .thumb-and-caption-container {
-	border-top: 4px solid #222222 !important;
-	border-bottom: 4px solid #222222 !important;
+	/* border-top: 4px solid #222222 !important;
+	border-bottom: 4px solid #222222 !important; */
 	margin-top: 0;
 }
 
@@ -280,11 +280,6 @@ p.description-text, p.description-text ul {
 	border-top-color: whitesmoke;
 	border-right-color: lightgray;
 	border-bottom-color: lightgray;
-}
-
-.album-button-and-caption, .thumb-container {
-	/* opacity: .9; */
-	/* filter: alpha(opacity=90); /* For IE8 and earlier */ */
 }
 
 .album-button-and-caption:hover, .thumb-and-caption-container:hover .thumb-container {
@@ -822,14 +817,31 @@ video {
 	display: block;
 }
 
-#album-and-media-container:not(.show-media) .thumb-and-caption-container.highlighted {
+/* #album-and-media-container:not(.show-media) .thumb-and-caption-container.highlighted {
 	filter: invert(1);
 	-webkit-filter: invert(1);
+} */
+
+#album-and-media-container:not(.show-media) .thumb-and-caption-container.highlighted img.thumbnail, #popup-images-wrapper .highlighted .media-caption {
+	filter: brightness(.9);
+	-webkit-filter: brightness(.9);
 }
 
-#album-and-media-container:not(.show-media) .thumb-and-caption-container.highlighted img.thumbnail {
-	filter: invert(1) brightness(.9);
-	-webkit-filter: invert(1) brightness(.9);
+.thumb-and-caption-container.highlighted .media-caption {
+	background-color: #FFAD27 !important;
+}
+
+#popup-images-wrapper .highlighted .media-caption .media-name[style],
+#popup-images-wrapper .highlighted .media-caption .description,
+#popup-images-wrapper .highlighted .media-caption .tags,
+#popup-images-wrapper .highlighted .media-caption .tag a,
+#popup-images-wrapper .highlighted .media-caption .second-line .gray,
+#popup-images-wrapper .highlighted .media-caption .second-line a {
+	color: black !important;
+}
+
+#thumbs .highlighted .media-caption .media-name[style], #thumbs .highlighted .media-caption .description, #thumbs .highlighted .media-caption .tags {
+	color: white !important;
 }
 
 .thumb-container {

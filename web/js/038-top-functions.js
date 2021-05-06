@@ -1467,15 +1467,8 @@
 
 								util.socialButtons();
 								util.setSubalbumsOptions();
-								// self.subalbums.forEach(
-								// 	(ithSubalbum, iSubalbum) => {
-								// 		var id = phFl.convertCacheBaseToId(ithSubalbum.cacheBase);
-								// 		util.adaptSubalbumThumbnailSize(id);
-								// 	}
-								// );
 
 								util.adaptCaptionHeight();
-								// self.showSubalbums("refreshDisplay");
 
 								if (util.isMap() || util.isPopup()) {
 									// the map must be generated again including the points that only carry protected content
