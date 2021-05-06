@@ -174,17 +174,6 @@ img.thumbnail-img {
 	border: 1px solid white;
 }
 
-.album-button-and-caption.highlighted {
-	filter: invert(1);
-	-webkit-filter: invert(1);
-}
-
-.album-button-and-caption.highlighted img.thumbnail {
-	filter: invert(1) brightness(.9);
-	-webkit-filter: invert(1) brightness(.9);
-
-}
-
 .album-button-and-caption.slide {
 	border: 3px solid gray;
 	border-left-color: whitesmoke;
@@ -817,6 +806,16 @@ video {
 	display: block;
 }
 
+/* .album-button-and-caption.highlighted {
+	filter: invert(1);
+	-webkit-filter: invert(1);
+}
+
+.album-button-and-caption.highlighted img.thumbnail {
+	filter: invert(1) brightness(.9);
+	-webkit-filter: invert(1) brightness(.9);
+} */
+
 /* #album-and-media-container:not(.show-media) .thumb-and-caption-container.highlighted {
 	filter: invert(1);
 	-webkit-filter: invert(1);
@@ -827,7 +826,8 @@ video {
 	-webkit-filter: brightness(.9);
 }
 
-.thumb-and-caption-container.highlighted .media-caption {
+.thumb-and-caption-container.highlighted .media-caption,
+.album-button-and-caption.highlighted .album-caption {
 	background-color: #FFAD27 !important;
 }
 
