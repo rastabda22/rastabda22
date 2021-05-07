@@ -549,7 +549,7 @@ $(document).ready(function() {
 									searchWordsFromUserNormalizedAccordingToOptions.forEach(
 										function(normalizedSearchWord, index) {
 											let mapAlbumClone = env.mapAlbum.clone();
-											mapAlbumClone.filterMediaAgainstOneWord(normalizedSearchWord);
+											mapAlbumClone.filterMediaAgainstOneWordAndAlbumSearchedIn(normalizedSearchWord);
 											mediaResult = util.arrayUnion(mediaResult, mapAlbumClone.media, function(a, b) {return a.isEqual(b);});
 										}
 									);

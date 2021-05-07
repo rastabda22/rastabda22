@@ -1644,8 +1644,8 @@
 
 												var resultAlbum = wordAlbum.clone();
 												// media in the album still has to be filtered according to search criteria
-												resultAlbum.filterMediaAgainstOneWord(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
-												resultAlbum.filterSubalbumsAgainstOneWord(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
+												resultAlbum.filterMediaAgainstOneWordAndAlbumSearchedIn(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
+												resultAlbum.filterSubalbumsAgainstOneWordAndAlbumSearchedIn(searchWordsFromUserNormalizedAccordingToOptions[thisIndexWords]);
 
 												if (! (thisIndexWords in searchResultsMedia)) {
 													searchResultsMedia[thisIndexWords] = resultAlbum.media;
@@ -1789,7 +1789,7 @@
 		);
 	};
 
-	Album.prototype.filterMediaAgainstOneWord = function(normalizedWord) {
+	Album.prototype.filterMediaAgainstOneWordAndAlbumSearchedIn = function(normalizedWord) {
 		var normalizedWords, normalizedTags;
 		for (let indexMedia = this.media.length - 1; indexMedia >= 0 ; indexMedia --) {
 			let ithMedia = this.media[indexMedia];
@@ -1849,7 +1849,7 @@
 		}
 	};
 
-	Album.prototype.filterSubalbumsAgainstOneWord = function(normalizedWord) {
+	Album.prototype.filterSubalbumsAgainstOneWordAndAlbumSearchedIn = function(normalizedWord) {
 		var normalizedWords, normalizedTags;
 		for (let indexSubalbums = this.subalbums.length - 1; indexSubalbums >= 0; indexSubalbums --) {
 			let ithSubalbum = this.subalbums[indexSubalbums];
