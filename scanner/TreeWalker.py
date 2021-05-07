@@ -1302,7 +1302,7 @@ class TreeWalker:
 			if not os.access(album_ini_file, os.R_OK):
 				message("album.ini file unreadable", "", 2)
 			elif os.path.getsize(album_ini_file) == 0:
-				message("album.ini file has zero lenght", "", 2)
+				message("album.ini file has zero length", "", 2)
 			else:
 				album_ini_good = True
 

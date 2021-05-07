@@ -3231,7 +3231,7 @@
 			if (folderArray.length > 3)
 				secondLine += "<a href='" + env.hashBeginning + album.ancestorsCacheBase[3] + "'>" + Utilities.dateElementForFolderName(folderArray, 3) + "</a>" + " ";
 			if (folderArray.length > 2)
-				secondLine += "<a href='" + env.hashBeginning + album.ancestorsCacheBase[2] + "'>" + Utilities.dateElementForFolderName(folderArray, 2 + "</a>") + " ";
+				secondLine += "<a href='" + env.hashBeginning + album.ancestorsCacheBase[2] + "'>" + Utilities.dateElementForFolderName(folderArray, 2) + "</a>" + " ";
 			if (folderArray.length > 1)
 				secondLine += "<a href='" + env.hashBeginning + album.ancestorsCacheBase[1] + "'>" + Utilities.dateElementForFolderName(folderArray, 1) + "</a>";
 			secondLine += "<span class='gray'>)</span>";
@@ -3299,7 +3299,7 @@
 		// 	folderName = albumOrSubalbum.captionForSearch;
 		// } else if (parentAlbum && parentAlbum.isByDate()) {
 		if (albumOrSubalbum.cacheBase === env.options.by_date_string) {
-			folderName = "+" + Utilities._t("#by-date") + ")";
+			folderName = "(" + Utilities._t("#by-date") + ")";
 		} else if (albumOrSubalbum.cacheBase === env.options.by_gps_string) {
 			folderName = "(" + Utilities._t("#by-gps") + ")";
 		} else if (parentAlbum && parentAlbum.isByDate() || albumOrSubalbum.isByDate()) {
