@@ -354,7 +354,7 @@
 				$("ul#right-menu li#tags-only").addClass("selected");
 			else
 				$("ul#right-menu li#tags-only").removeClass("selected");
-			if (util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || isPopup) {
+			if (env.options.cache_base_to_search_in === env.options.folders_string || isPopup) {
 				$("ul#right-menu li#album-search").addClass("dimmed").removeClass("selected").removeClass("active").off("click").attr("title", "");
 			} else {
 				$("ul#right-menu li#album-search").removeClass("dimmed").addClass("active").off("click").on("click", util.toggleCurrentAbumSearch);

@@ -1867,7 +1867,8 @@
 						normalizedTags.includes(normalizedWord)
 					) || ! (
 						! env.options.search_current_album ||
-						util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || (
+						env.options.cache_base_to_search_in === env.options.folders_string || (
+						// util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || (
 							// check whether the media is inside the current album tree
 							ithSubalbum.cacheBase.indexOf(env.options.cache_base_to_search_in) === 0 &&
 							ithSubalbum.cacheBase != env.options.cache_base_to_search_in
@@ -1890,7 +1891,8 @@
 						normalizedTags.some(element => element.includes(normalizedWord))
 					) || ! (
 						! env.options.search_current_album ||
-						util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || (
+						env.options.cache_base_to_search_in === env.options.folders_string || (
+						// util.isAnyRootCacheBase(env.options.cache_base_to_search_in) || (
 							// check whether the media is inside the current album tree
 							ithSubalbum.cacheBase.indexOf(env.options.cache_base_to_search_in) === 0 &&
 							ithSubalbum.cacheBase != env.options.cache_base_to_search_in
