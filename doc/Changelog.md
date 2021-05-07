@@ -1,5 +1,5 @@
 * added navigation in albums with enter and left/arrow arrow keys
-* identify root album in search result
+* identify root album when got in search result
 * make img title more significant
 * bug fixes
 

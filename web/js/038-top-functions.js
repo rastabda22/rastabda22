@@ -3017,7 +3017,7 @@
 				}
 			);
 
-			if (typeof from !== "undefined") {
+			if (from !== undefined) {
 				if (env.popupRefreshType === "previousAlbum")
 					TopFunctions.prepareAndDoPopupUpdate();
 				else if (env.popupRefreshType === "mapAlbum") {
