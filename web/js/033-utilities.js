@@ -1838,7 +1838,8 @@
 	Utilities.prototype.changeToBySelectionView = function(thisMedia = null) {
 		TopFunctions.showBrowsingModeMessage("#by-selection-browsing");
 		var isPopup = Utilities.isPopup();
-		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;		if (isPopup) {
+		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
+		if (isPopup) {
 			// the popup is there: close it
 			$('.leaflet-popup-close-button')[0].click();
 		}
