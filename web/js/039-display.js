@@ -105,22 +105,23 @@ $(document).ready(function() {
 		} else if (! isAuth) {
 			if (e.key !== undefined && ! $("#search-field").is(':focus')) {
 				if (! e.ctrlKey && ! e.altKey) {
+					let highlightedObject = util.highlightedObject();
 					if (env.currentMedia === null && e.key === "Enter") {
-						util.highlightedObject().click();
+						highlightedObject.click();
 						return false;
 					} else if (env.currentMedia === null && e.key === "ArrowLeft" && ! isMap) {
 						let selector = "";
 						if (isPopup)
 							selector = "#popup-images-wrapper ";
-						if (! isPopup && util.highlightedObject().parent().is(":first-child") || isPopup && util.highlightedObject().is(":first-child")) {
+						if (! isPopup && highlightedObject.parent().is(":first-child") || isPopup && highlightedObject.is(":first-child")) {
 							if (! isPopup && (util.aSingleMediaIsHighlighted() && env.currentAlbum.subalbums.length || util.aSubalbumIsHighlighted() && ! env.currentAlbum.media.length))
 								nextObject = $(selector + ".album-button-and-caption").last();
 							else
 								nextObject = $(selector + ".thumb-and-caption-container").last();
 						} else if (isPopup){
-							nextObject = util.highlightedObject().prev();
+							nextObject = highlightedObject.prev();
 						} else if (! isPopup){
-							nextObject = util.highlightedObject().parent().prev().children();
+							nextObject = highlightedObject.parent().prev().children();
 						}
 						if (nextObject.hasClass("thumb-and-caption-container"))
 							util.scrollToAlbumViewThumb(nextObject);
@@ -132,15 +133,15 @@ $(document).ready(function() {
 						let selector = "";
 						if (isPopup)
 							selector = "#popup-images-wrapper ";
-						if (! isPopup && util.highlightedObject().parent().is(":last-child") || isPopup && util.highlightedObject().is(":last-child")) {
+						if (! isPopup && highlightedObject.parent().is(":last-child") || isPopup && highlightedObject.is(":last-child")) {
 							if (! isPopup && (util.aSingleMediaIsHighlighted() && env.currentAlbum.subalbums.length || util.aSubalbumIsHighlighted() && ! env.currentAlbum.media.length))
 								nextObject = $(selector + ".album-button-and-caption").first();
 							else
 								nextObject = $(selector + ".thumb-and-caption-container").first();
 						} else if (! isPopup){
-							nextObject = util.highlightedObject().parent().next().children();
+							nextObject = highlightedObject.parent().next().children();
 						} else if (isPopup){
-							nextObject = util.highlightedObject().next();
+							nextObject = highlightedObject.next();
 						}
 						if (nextObject.hasClass("thumb-and-caption-container"))
 							util.scrollToAlbumViewThumb(nextObject);

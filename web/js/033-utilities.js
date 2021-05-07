@@ -1595,6 +1595,7 @@
 	};
 
 	Utilities.isPopup = function() {
+		// return $('.leaflet-popup-content-wrapper').html() ? true : false;
 		return $('.leaflet-popup').html() ? true : false;
 	};
 
@@ -2585,17 +2586,21 @@
 	Utilities.prototype.scrollToAlbumViewThumb = function(object = null, evenIfIsNotPopup = false) {
 		if (Utilities.isPopup() || $("#thumbs").is(":visible")) {
 			let thumbObject;
-		// if (! Utilities.isPopup() && $("#thumbs").is(":visible")) {
+			if (object)
+				thumbObject = object.children(".thumb-container").children(".thumbnail");
+			else if (env.previousMedia !== null)
+				thumbObject = $("#" + env.previousMedia.foldersCacheBase + "--" + env.previousMedia.cacheBase);
+
 			if (Utilities.isPopup()) {
 				let scrollableObject = $("#popup-images-wrapper");
 				let popupHeight = scrollableObject.height();
 
-				if (object)
-					thumbObject = object.children(".thumb-container").children(".thumbnail");
-				else if (env.previousMedia !== null)
-					thumbObject = $("#" + env.previousMedia.foldersCacheBase + "--" + env.previousMedia.cacheBase);
-				else
-					thumbObject = $("#popup-images-wrapper img.thumbnail").first();
+				if (! object && env.previousMedia == null) {
+					if ($("#popup-images-wrapper .highlighted").length)
+						thumbObject = $("#popup-images-wrapper .highlighted").children(".thumb-container").children(".thumbnail");
+					else
+						thumbObject = $("#popup-images-wrapper img.thumbnail").first();
+				}
 
 				let offset;
 				offset = scrollableObject.scrollTop() + thumbObject.offset().top - scrollableObject.offset().top + thumbObject.height() / 2 - popupHeight / 2;
@@ -2617,12 +2622,12 @@
 				// not in popup
 				let scrollableObject = $("html, body");
 
-				if (object)
-					thumbObject = object.children(".thumb-container").children(".thumbnail");
-				else if (env.previousMedia !== null)
-					thumbObject = $("#" + env.previousMedia.foldersCacheBase + "--" + env.previousMedia.cacheBase);
-				else if (env.currentAlbum.subalbums.length === 0)
-					thumbObject = $("#thumbs img.thumbnail").first();
+				if (! object && env.previousMedia == null && env.currentAlbum.subalbums.length === 0) {
+					if ($("#thumbs .highlighted").length)
+						thumbObject = $("#thumbs .highlighted").children(".thumb-container").children(".thumbnail");
+					else
+						thumbObject = $("#thumbs img.thumbnail").first();
+				}
 
 				if (thumbObject !== undefined) {
 					let offset;
