@@ -1457,9 +1457,10 @@
 							"resize",
 							function () {
 								var previousWindowWidth = env.windowWidth;
+								var previousWindowHeight = env.windowHeight;
 								env.windowWidth = $(window).innerWidth();
 								env.windowHeight = $(window).innerHeight();
-								if (env.windowWidth === previousWindowWidth)
+								if (env.windowWidth === previousWindowWidth && (env.isMobile.any() || env.windowHeight === previousWindowHeight))
 									// avoid considering a resize when the mobile browser shows/hides the location bar
 									return;
 
