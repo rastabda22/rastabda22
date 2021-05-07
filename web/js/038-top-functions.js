@@ -1474,6 +1474,8 @@
 								if (util.isMap() || util.isPopup()) {
 									// the map must be generated again including the points that only carry protected content
 									env.mapRefreshType = "resize";
+									if ($("#popup-images-wrapper .highlighted").length)
+										env.highlightedObjectId = $("#popup-images-wrapper .highlighted").attr("id");
 
 									if (util.isPopup()) {
 										env.popupRefreshType = "mapAlbum";
@@ -3062,6 +3064,9 @@
 			function() {
 				env.mapAlbum.showThumbs();
 				map.updatePopup();
+				if (env.highlightedObjectId) {
+					util.scrollToAlbumViewThumb($("#" + env.highlightedObjectId));
+				}
 				$("#loading").hide();
 			}
 		);

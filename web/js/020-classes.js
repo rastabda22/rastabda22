@@ -28,6 +28,7 @@
 			this.popupRefreshType = "previousAlbum";
 			this.hashBeginning = "#!/";
 			this.isFromAuthForm = false;
+			this.highlightedObjectId = null;
 			// var nextLink = "", prevLink = "";
 			this.mediaLink = "";
 			// scrollbarWidth;
