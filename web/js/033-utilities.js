@@ -2560,7 +2560,7 @@
 	};
 
 	Utilities.prototype.aSingleMediaIsHighlighted = function() {
-		return $("#thumbs .highlighted").length > 0 || $("#popup-images-wrapper .highlighted").length > 0;
+		return $("#thumbs .highlighted").length > 0;
 	};
 
 	Utilities.prototype.scrollToHighlightedSubalbum = function(object = null) {
@@ -2585,26 +2585,25 @@
 	};
 
 	Utilities.prototype.scrollAlbumViewToHighlightedThumb = function(object = null) {
-		if (Utilities.isPopup() || $("#thumbs").is(":visible")) {
+		if ($("#thumbs").is(":visible")) {
 			let thumbObject;
 			if (object)
 				thumbObject = object.children(".thumb-container").children(".thumbnail");
 			else if (env.previousMedia !== null)
 				thumbObject = $("#" + env.previousMedia.foldersCacheBase + "--" + env.previousMedia.cacheBase);
 
-			if (Utilities.isPopup()) {
-				let scrollableObject = $("#popup-images-wrapper");
-				let popupHeight = scrollableObject.height();
+			let scrollableObject = $("html, body");
 
-				if (! object && env.previousMedia == null) {
-					if ($("#popup-images-wrapper .highlighted").length)
-						thumbObject = $("#popup-images-wrapper .highlighted").children(".thumb-container").children(".thumbnail");
-					else
-						thumbObject = $("#popup-images-wrapper img.thumbnail").first();
-				}
+			if (! object && env.previousMedia == null && env.currentAlbum.subalbums.length === 0) {
+				if ($("#thumbs .highlighted").length)
+					thumbObject = $("#thumbs .highlighted").children(".thumb-container").children(".thumbnail");
+				else
+					thumbObject = $("#thumbs img.thumbnail").first();
+			}
 
+			if (thumbObject !== undefined && thumbObject.length > 0) {
 				let offset;
-				offset = scrollableObject.scrollTop() + thumbObject.offset().top - scrollableObject.offset().top + thumbObject.height() / 2 - popupHeight / 2;
+				offset = thumbObject.offset().top - scrollableObject.offset().top + thumbObject.height() / 2 - env.windowHeight / 2;
 				if (offset < 0)
 					offset = 0;
 				// scrollableObject.scrollTop(offset);
@@ -2619,36 +2618,39 @@
 				else
 					Utilities.addHighlight(thumbObject.parent().parent());
 			}
-			if (! Utilities.isPopup() || evenIfIsNotPopup) {
-				// not in popup
-				let scrollableObject = $("html, body");
-
-				if (! object && env.previousMedia == null && env.currentAlbum.subalbums.length === 0) {
-					if ($("#thumbs .highlighted").length)
-						thumbObject = $("#thumbs .highlighted").children(".thumb-container").children(".thumbnail");
-					else
-						thumbObject = $("#thumbs img.thumbnail").first();
-				}
-
-				if (thumbObject !== undefined) {
-					let offset;
-					offset = thumbObject.offset().top - scrollableObject.offset().top + thumbObject.height() / 2 - env.windowHeight / 2;
-					if (offset < 0)
-						offset = 0;
-					// scrollableObject.scrollTop(offset);
-					scrollableObject.stop().animate(
-						{
-							scrollTop: offset
-						},
-						"fast"
-					);
-					if (object)
-						Utilities.addHighlight(object);
-					else
-						Utilities.addHighlight(thumbObject.parent().parent());
-				}
-			}
 		}
+	};
+
+	Utilities.prototype.scrollPopupToHighlightedThumb = function(object = null) {
+		let thumbObject;
+		if (object)
+			thumbObject = object.children(".thumb-container").children(".thumbnail");
+
+		let scrollableObject = $("#popup-images-wrapper");
+		let popupHeight = scrollableObject.height();
+
+		if (! object) {
+			if ($("#popup-images-wrapper .highlighted").length)
+				thumbObject = $("#popup-images-wrapper .highlighted").children(".thumb-container").children(".thumbnail");
+			else
+				thumbObject = $("#popup-images-wrapper img.thumbnail").first();
+		}
+
+		let offset;
+		offset = scrollableObject.scrollTop() + thumbObject.offset().top - scrollableObject.offset().top + thumbObject.height() / 2 - popupHeight / 2;
+		if (offset < 0)
+			offset = 0;
+		// scrollableObject.scrollTop(offset);
+		scrollableObject.stop().animate(
+			{
+				scrollTop: offset
+			},
+			"fast"
+		);
+		if (object)
+			Utilities.addHighlight(object);
+		else
+			Utilities.addHighlight(thumbObject.parent().parent());
 	};
 
 	Utilities.scrollBottomMediaToHighlightedThumb = function() {

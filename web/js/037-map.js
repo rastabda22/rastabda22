@@ -50,7 +50,7 @@
 		MapFunctions.panMap();
 		util.addMediaLazyLoader();
 
-		util.scrollAlbumViewToHighlightedThumb();
+		util.scrollPopupToHighlightedThumb();
 
 		f.updateMenu();
 	};

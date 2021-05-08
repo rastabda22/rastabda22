@@ -124,10 +124,14 @@ $(document).ready(function() {
 						} else if (! isPopup){
 							nextObject = highlightedObject.parent().prev().children();
 						}
-						if (nextObject.hasClass("thumb-and-caption-container"))
-							util.scrollAlbumViewToHighlightedThumb(nextObject);
-						else
+						if (nextObject.hasClass("thumb-and-caption-container")) {
+							if (isPopup)
+								util.scrollPopupToHighlightedThumb(nextObject);
+							else
+								util.scrollAlbumViewToHighlightedThumb(nextObject);
+						} else {
 							util.scrollToHighlightedSubalbum(nextObject);
+						}
 						util.addHighlight(nextObject);
 						return false;
 					} else if (env.currentMedia === null && e.key === "ArrowRight" && ! isMap) {
@@ -144,10 +148,14 @@ $(document).ready(function() {
 						} else if (isPopup){
 							nextObject = highlightedObject.next();
 						}
-						if (nextObject.hasClass("thumb-and-caption-container"))
-							util.scrollAlbumViewToHighlightedThumb(nextObject);
-						else
+						if (nextObject.hasClass("thumb-and-caption-container")) {
+							if (isPopup)
+								util.scrollPopupToHighlightedThumb(nextObject);
+							else
+								util.scrollAlbumViewToHighlightedThumb(nextObject);
+						} else {
 							util.scrollToHighlightedSubalbum(nextObject);
+						}
 						util.addHighlight(nextObject);
 						return false;
 					} else if (e.key === util._t("#hide-everytyhing-shortcut")) {
