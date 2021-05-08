@@ -2338,6 +2338,8 @@
 		}
 
 		util.setMediaOptions();
+		if (self.media.length)
+			util.adaptMediaCaptionHeight();
 
 	 	if ($(thumbsSelector).is(":visible") || util.isPopup()) {
 			if ($("#album-and-media-container").hasClass("show-media"))

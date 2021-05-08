@@ -839,6 +839,10 @@ video {
 	clear: both;
 }
 
+.media-caption {
+	padding: .4em;
+}
+
 .media-caption.hidden, .album-caption.hidden {
 	margin-bottom: 0;
 }
