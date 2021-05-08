@@ -2388,7 +2388,7 @@
 			env.nextMedia.scale(event);
 		}
 
-		if (Utilities.isMap()) {
+		if (Utilities.isMap() || Utilities.isPopup()) {
 			// the map must be generated again including the points that only carry protected content
 			env.mapRefreshType = "resize";
 
