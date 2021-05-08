@@ -1469,7 +1469,7 @@
 								util.socialButtons();
 								util.setSubalbumsOptions();
 
-								util.adaptCaptionHeight();
+								util.adaptSubalbumCaptionHeight();
 
 								if (util.isMap() || util.isPopup()) {
 									// the map must be generated again including the points that only carry protected content
@@ -1712,7 +1712,7 @@
 		if (env.currentMedia === null) {
 			util.setSubalbumsOptions();
 			if (env.currentAlbum.subalbums.length)
-				util.adaptCaptionHeight();
+				util.adaptSubalbumCaptionHeight();
 		}
 
 		var currentTitleVisibility = $("#album-view .title").is(":visible");
@@ -1858,7 +1858,7 @@
 			}
 
 			if (env.currentAlbum.subalbums.length)
-				util.adaptCaptionHeight();
+				util.adaptSubalbumCaptionHeight();
 		}
 		return false;
 	};
@@ -1884,7 +1884,7 @@
 			}
 
 			if (env.currentAlbum.subalbums.length)
-				util.adaptCaptionHeight();
+				util.adaptSubalbumCaptionHeight();
 		}
 		return false;
 	};
@@ -1896,7 +1896,7 @@
 			f.updateMenu();
 			util.setSubalbumsOptions();
 			if (env.currentAlbum.subalbums.length)
-				util.adaptCaptionHeight();
+				util.adaptSubalbumCaptionHeight();
 		}
 		return false;
 	};
@@ -1913,7 +1913,7 @@
 			util.setMediaOptions();
 			util.setSubalbumsOptions();
 			if (env.currentAlbum.subalbums.length)
-				util.adaptCaptionHeight();
+				util.adaptSubalbumCaptionHeight();
 
 			if (util.isPopup()) {
 				// env.mapAlbum.showThumbs();
@@ -1931,7 +1931,7 @@
 			// f.setOptions();
 			util.setSubalbumsOptions();
 			if (env.currentAlbum.subalbums.length)
-				util.adaptCaptionHeight();
+				util.adaptSubalbumCaptionHeight();
 		}
 		return false;
 	};
@@ -1945,7 +1945,7 @@
 			util.setTitleOptions();
 			util.setSubalbumsOptions();
 			if (env.currentAlbum.subalbums.length)
-				util.adaptCaptionHeight();
+				util.adaptSubalbumCaptionHeight();
 		}
 		return false;
 	};
@@ -1959,7 +1959,7 @@
 			util.setMediaOptions();
 			// util.setSubalbumsOptions();
 			// if (env.currentAlbum.subalbums.length)
-			// 	util.adaptCaptionHeight();
+			// 	util.adaptSubalbumCaptionHeight();
 
 			if (util.isPopup()) {
 				// env.mapAlbum.showThumbs();
@@ -1976,7 +1976,7 @@
 			f.updateMenu();
 			env.currentAlbum.showSubalbums(true);
 			if (env.currentAlbum.subalbums.length)
-				util.adaptCaptionHeight();
+				util.adaptSubalbumCaptionHeight();
 		}
 		return false;
 	};
@@ -1989,7 +1989,7 @@
 			env.currentAlbum.showThumbs();
 			// f.setOptions();
 			// if (env.currentAlbum.subalbums.length)
-			// 	util.adaptCaptionHeight();
+			// 	util.adaptSubalbumCaptionHeight();
 
 			if (util.isPopup()) {
 				env.mapAlbum.showThumbs();
@@ -2005,7 +2005,7 @@
 			function optionsHaveBeenReset() {
 				f.setOptions();
 				if (env.currentMedia !== null || env.currentAlbum.subalbums.length) {
-					util.adaptCaptionHeight();
+					util.adaptSubalbumCaptionHeight();
 					$("#ui-settings-restored").stop().fadeIn(
 						200,
 						function() {
@@ -2674,7 +2674,7 @@
 
 		util.setSubalbumsOptions();
 		if (self.subalbums.length)
-			util.adaptCaptionHeight();
+			util.adaptSubalbumCaptionHeight();
 		util.correctElementPositions();
 
 		// we can run the function that prepare the stuffs for sharing

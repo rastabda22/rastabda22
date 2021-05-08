@@ -3799,7 +3799,7 @@
 		return text;
 	};
 
-	Utilities.prototype.adaptCaptionHeight = function() {
+	Utilities.prototype.adaptSubalbumCaptionHeight = function() {
 		// check for overflow in album-caption class in order to adapt album caption height to the string length
 		// when diving into search subalbum, the whole album path is showed and it can be lengthy
 		// if (env.options.show_album_names_below_thumbs) {
