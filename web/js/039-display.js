@@ -65,6 +65,7 @@ $(document).ready(function() {
 				return false;
 			} else if (isPopup) {
 				// the popup is there: close it
+				env.highlightedObjectId = null;
 				$('.leaflet-popup-close-button')[0].click();
 				env.mapAlbum = util.initializeMapAlbum();
 				// env.mapAlbum = {};

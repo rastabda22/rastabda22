@@ -91,6 +91,7 @@
 		$("#popup-photo-count").off("click").on(
 			"click",
 			function() {
+				env.highlightedObjectId = null;
 				$('.leaflet-popup-close-button')[0].click();
 				// $('#popup #popup-content').html("");
 				$('.modal-close')[0].click();

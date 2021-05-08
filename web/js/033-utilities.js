@@ -1841,6 +1841,7 @@
 		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
 		if (isPopup) {
 			// the popup is there: close it
+			env.highlightedObjectId = null;
 			$('.leaflet-popup-close-button')[0].click();
 		}
 		if (isMap || isPopup) {
@@ -2394,6 +2395,7 @@
 
 			if (Utilities.isPopup()) {
 				env.popupRefreshType = "mapAlbum";
+				env.highlightedObjectId = null;
 				$('.leaflet-popup-close-button')[0].click();
 			} else {
 				env.popupRefreshType = "none";
@@ -2752,6 +2754,7 @@
 				ev.preventDefault();
 				var imgData = JSON.parse(element.attr("data"));
 				// called after an element was successfully handled
+				env.highlightedObjectId = null;
 				$('.leaflet-popup-close-button')[0].click();
 				// $('#popup #popup-content').html("");
 				$('.modal-close')[0].click();
