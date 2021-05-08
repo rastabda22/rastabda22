@@ -289,7 +289,7 @@ $(document).ready(function() {
 						}
 					} else if (
 						e.key.toLowerCase() === util._t(".map-link-shortcut") &&
-						! isMap &&
+						! isMap && ! isPopup &&
 						(
 							env.currentMedia !== null && env.currentMedia.hasGpsData() ||
 							env.currentMedia === null && env.currentAlbum.positionsAndMediaInTree.length
