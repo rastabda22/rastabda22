@@ -2579,9 +2579,7 @@
 					},
 					"fast"
 				);
-				if (! object) {
-					Utilities.addHighlight(subalbumObject);
-				}
+				Utilities.addHighlight(subalbumObject);
 			}
 		}
 	};
@@ -3817,6 +3815,7 @@
 	Utilities.prototype.adaptMediaCaptionHeight = function() {
 		// check for overflow in media-caption class in order to adapt media caption height to the string length
 		var maxHeight = 0;
+		$(".media-caption").css("height", 0);
 		$('.media-caption').each(
 			function() {
 				var thisHeight = $(this)[0].scrollHeight;
