@@ -125,9 +125,9 @@ $(document).ready(function() {
 							nextObject = highlightedObject.parent().prev().children();
 						}
 						if (nextObject.hasClass("thumb-and-caption-container"))
-							util.scrollToAlbumViewThumb(nextObject);
+							util.scrollAlbumViewToHighlightedThumb(nextObject);
 						else
-							util.scrollToSubalbum(nextObject);
+							util.scrollToHighlightedSubalbum(nextObject);
 						util.addHighlight(nextObject);
 						return false;
 					} else if (env.currentMedia === null && e.key === "ArrowRight" && ! isMap) {
@@ -145,9 +145,9 @@ $(document).ready(function() {
 							nextObject = highlightedObject.next();
 						}
 						if (nextObject.hasClass("thumb-and-caption-container"))
-							util.scrollToAlbumViewThumb(nextObject);
+							util.scrollAlbumViewToHighlightedThumb(nextObject);
 						else
-							util.scrollToSubalbum(nextObject);
+							util.scrollToHighlightedSubalbum(nextObject);
 						util.addHighlight(nextObject);
 						return false;
 					} else if (e.key === util._t("#hide-everytyhing-shortcut")) {

@@ -2520,7 +2520,7 @@
 				}
 
 				if ($("#thumbs").is(":visible"))
-					Utilities.scrollToBottomThumb();
+					Utilities.scrollBottomMediaToHighlightedThumb();
 				if (id === "center") {
 					if ($("#thumbs").is(":visible"))
 						Utilities.addMediaLazyLoader();
@@ -2563,7 +2563,7 @@
 		return $("#thumbs .highlighted").length > 0 || $("#popup-images-wrapper .highlighted").length > 0;
 	};
 
-	Utilities.prototype.scrollToSubalbum = function(object = null) {
+	Utilities.prototype.scrollToHighlightedSubalbum = function(object = null) {
 		if (! Utilities.isPopup() && $("#subalbums").is(":visible") && env.currentAlbum.subalbums.length) {
 			let subalbumObject;
 			if (object)
@@ -2584,7 +2584,7 @@
 		}
 	};
 
-	Utilities.prototype.scrollToAlbumViewThumb = function(object = null, evenIfIsNotPopup = false) {
+	Utilities.prototype.scrollAlbumViewToHighlightedThumb = function(object = null) {
 		if (Utilities.isPopup() || $("#thumbs").is(":visible")) {
 			let thumbObject;
 			if (object)
@@ -2651,7 +2651,7 @@
 		}
 	};
 
-	Utilities.scrollToBottomThumb = function() {
+	Utilities.scrollBottomMediaToHighlightedThumb = function() {
 		if (! Utilities.isPopup() && $("#thumbs").is(":visible") && env.currentMedia !== null) {
 			let thumbObject = $("#" + env.currentMedia.foldersCacheBase + "--" + env.currentMedia.cacheBase);
 			if (thumbObject[0] !== undefined && ! env.currentAlbum.isAlbumWithOneMedia()) {
@@ -4399,7 +4399,7 @@
 	Utilities.prototype.normalizeAccordingToOptions = Utilities.normalizeAccordingToOptions;
 	Utilities.prototype.removeAccents = Utilities.removeAccents;
 	Utilities.prototype.arrayIntersect = Utilities.arrayIntersect;
-	Utilities.prototype.scrollToBottomThumb = Utilities.scrollToBottomThumb;
+	Utilities.prototype.scrollBottomMediaToHighlightedThumb = Utilities.scrollBottomMediaToHighlightedThumb;
 	Utilities.prototype.focusSearchField = Utilities.focusSearchField;
 	Utilities.prototype.addTagLink = Utilities.addTagLink;
 	Utilities.prototype.formatDescription = Utilities.formatDescription;
