@@ -1752,7 +1752,7 @@
 		return false;
 	};
 
-	TopFunctions.prototype.toggleTitle = function(ev) {
+	TopFunctions.toggleTitle = function(ev) {
 		// next line: why [1, 9].indexOf(ev.which) !== -1 ?!?!?
 		// if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
@@ -1838,7 +1838,7 @@
 		return false;
 	};
 
-	TopFunctions.prototype.toggleDescriptions = function(ev) {
+	TopFunctions.toggleDescriptions = function(ev) {
 		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_descriptions = ! env.options.hide_descriptions;
 			f.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
@@ -1863,7 +1863,7 @@
 		return false;
 	};
 
-	TopFunctions.prototype.toggleTags = function(ev) {
+	TopFunctions.toggleTags = function(ev) {
 		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_tags = ! env.options.hide_tags;
 			f.setBooleanCookie("hideTags", env.options.hide_tags);
@@ -1889,7 +1889,7 @@
 		return false;
 	};
 
-	TopFunctions.prototype.toggleSlideMode = function(ev) {
+	TopFunctions.toggleSlideMode = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.albums_slide_style = ! env.options.albums_slide_style;
 			f.setBooleanCookie("albumsSlideStyle", env.options.albums_slide_style);
@@ -1901,7 +1901,7 @@
 		return false;
 	};
 
-	TopFunctions.prototype.toggleSpacing = function(ev) {
+	TopFunctions.toggleSpacing = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			if (env.options.spacing)
 				env.options.spacing = 0;
@@ -1923,7 +1923,7 @@
 		return false;
 	};
 
-	TopFunctions.prototype.toggleAlbumNames = function(ev) {
+	TopFunctions.toggleAlbumNames = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.show_album_names_below_thumbs = ! env.options.show_album_names_below_thumbs;
 			f.setBooleanCookie("showAlbumNamesBelowThumbs", env.options.show_album_names_below_thumbs);
@@ -1936,7 +1936,7 @@
 		return false;
 	};
 
-	TopFunctions.prototype.toggleMediaCount = function(ev) {
+	TopFunctions.toggleMediaCount = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.show_album_media_count = ! env.options.show_album_media_count;
 			f.setBooleanCookie("showAlbumMediaCount", env.options.show_album_media_count);
@@ -1950,7 +1950,7 @@
 		return false;
 	};
 
-	TopFunctions.prototype.toggleMediaNames = function(ev) {
+	TopFunctions.toggleMediaNames = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.show_media_names_below_thumbs = ! env.options.show_media_names_below_thumbs;
 			f.setBooleanCookie("showMediaNamesBelowThumbs", env.options.show_media_names_below_thumbs);
@@ -1969,7 +1969,7 @@
 		return false;
 	};
 
-	TopFunctions.prototype.toggleAlbumsSquare = function(ev) {
+	TopFunctions.toggleAlbumsSquare = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.album_thumb_type = env.options.album_thumb_type === "square" ? "fit" : "square";
 			f.setCookie("albumThumbType", env.options.album_thumb_type);
@@ -1981,7 +1981,7 @@
 		return false;
 	};
 
-	TopFunctions.prototype.toggleMediaSquare = function(ev) {
+	TopFunctions.toggleMediaSquare = function(ev) {
 		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.media_thumb_type = env.options.media_thumb_type === "square" ? "fixed_height" : "square";
 			f.setCookie("mediaThumbType", env.options.media_thumb_type);
@@ -2000,10 +2000,79 @@
 	};
 
 	TopFunctions.prototype.resetDisplaySettings = function(ev) {
+		var oldOptions = {};
+		oldOptions.hide_title = env.options.hide_title;
+		oldOptions.show_album_media_count = env.options.show_album_media_count;
+
+		oldOptions.albums_slide_style = env.options.albums_slide_style;
+		oldOptions.album_thumb_type = env.options.album_thumb_type;
+		oldOptions.show_album_names_below_thumbs = env.options.show_album_names_below_thumbs;
+
+		oldOptions.media_thumb_type = env.options.media_thumb_type;
+		oldOptions.show_media_names_below_thumbs = env.options.show_media_names_below_thumbs;
+
+		oldOptions.hide_descriptions = env.options.hide_descriptions;
+		oldOptions.hide_tags = env.options.hide_tags;
+		oldOptions.spacing = env.options.spacing;
+		oldOptions.hide_bottom_thumbnails = env.options.hide_bottom_thumbnails;
+		// oldOptions.default_album_name_sort = env.options.default_album_name_sort;
+		// oldOptions.default_album_reverse_sort = env.options.default_album_reverse_sort;
+		// oldOptions.default_media_name_sort = env.options.default_media_name_sort;
+		// oldOptions.default_media_reverse_sort = env.options.default_media_reverse_sort;
 		var promise = f.getOptions(true);
 		promise.then(
 			function optionsHaveBeenReset() {
-				f.setOptions();
+				// f.setOptions();
+
+				if (oldOptions.show_album_media_count !== env.options.show_album_media_count) {
+					env.options.show_album_media_count = oldOptions.show_album_media_count;
+
+					TopFunctions.toggleMediaCount(ev);
+				}
+				if (oldOptions.hide_title !== env.options.hide_title) {
+					env.options.hide_title = oldOptions.hide_title;
+					TopFunctions.toggleTitle(ev);
+				}
+
+				if (oldOptions.albums_slide_style !== env.options.albums_slide_style) {
+					env.options.albums_slide_style = oldOptions.albums_slide_style;
+					TopFunctions.toggleSlideMode(ev);
+				}
+				if (oldOptions.album_thumb_type !== env.options.album_thumb_type) {
+					env.options.album_thumb_type = oldOptions.album_thumb_type;
+					TopFunctions.toggleAlbumsSquare(ev);
+				}
+				if (oldOptions.show_album_names_below_thumbs !== env.options.show_album_names_below_thumbs) {
+					env.options.show_album_names_below_thumbs = oldOptions.show_album_names_below_thumbs;
+					TopFunctions.toggleAlbumNames(ev);
+				}
+
+				if (oldOptions.media_thumb_type !== env.options.media_thumb_type) {
+					env.options.media_thumb_type = oldOptions.media_thumb_type;
+					TopFunctions.toggleMediaSquare(ev);
+				}
+				if (oldOptions.show_media_names_below_thumbs !== env.options.show_media_names_below_thumbs) {
+					env.options.show_media_names_below_thumbs = oldOptions.show_media_names_below_thumbs;
+					TopFunctions.toggleMediaNames(ev);
+				}
+
+				if (oldOptions.hide_descriptions !== env.options.hide_descriptions) {
+					env.options.hide_descriptions = oldOptions.hide_descriptions;
+					TopFunctions.toggleDescriptions(ev);
+				}
+				if (oldOptions.hide_tags !== env.options.hide_tags) {
+					env.options.hide_tags = oldOptions.hide_tags;
+					TopFunctions.toggleTags(ev);
+				}
+				if (oldOptions.spacing !== env.options.spacing) {
+					env.options.spacing = oldOptions.spacing;
+					TopFunctions.toggleSpacing(ev);
+				}
+				if (oldOptions.hide_bottom_thumbnails !== env.options.hide_bottom_thumbnails) {
+					env.options.hide_bottom_thumbnails = oldOptions.hide_bottom_thumbnails;
+					TopFunctions.toggleBottomThumbnails(ev);
+				}
+
 				if (env.currentMedia !== null || env.currentAlbum.subalbums.length) {
 					util.adaptSubalbumCaptionHeight();
 					$("#ui-settings-restored").stop().fadeIn(
@@ -3271,6 +3340,17 @@
 	TopFunctions.prototype.showBrowsingModeMessage = TopFunctions.showBrowsingModeMessage;
 	TopFunctions.prototype.prepareAndDoPopupUpdate = TopFunctions.prepareAndDoPopupUpdate;
 	TopFunctions.prototype.playClickElement = TopFunctions.playClickElement;
+	TopFunctions.prototype.toggleMediaCount = TopFunctions.toggleMediaCount;
+	TopFunctions.prototype.toggleMediaNames = TopFunctions.toggleMediaNames;
+	TopFunctions.prototype.toggleTitle = TopFunctions.toggleTitle;
+	TopFunctions.prototype.toggleSlideMode = TopFunctions.toggleSlideMode;
+	TopFunctions.prototype.toggleAlbumsSquare = TopFunctions.toggleAlbumsSquare;
+	TopFunctions.prototype.toggleAlbumNames = TopFunctions.toggleAlbumNames;
+	TopFunctions.prototype.toggleMediaSquare = TopFunctions.toggleMediaSquare;
+	TopFunctions.prototype.toggleDescriptions = TopFunctions.toggleDescriptions;
+	TopFunctions.prototype.toggleTags = TopFunctions.toggleTags;
+	TopFunctions.prototype.toggleSpacing = TopFunctions.toggleSpacing;
+	TopFunctions.prototype.toggleBottomThumbnails = TopFunctions.toggleBottomThumbnails;
 
 	window.TopFunctions = TopFunctions;
 }());
