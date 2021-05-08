@@ -1177,7 +1177,10 @@
 		} else {
 			$("#search-field").blur();
 		}
-		$("ul#right-menu li.search ul").removeClass("hidden");
+		$("#right-menu li").removeClass("expanded");
+		$("#right-menu li.search ul").addClass("expanded");
+		$("#right-menu li ul").addClass("hidden");
+		$("#right-menu li.search ul").removeClass("hidden");
 	};
 
 	Utilities.stripHtmlAndReplaceEntities = function(htmlString) {

@@ -1249,10 +1249,8 @@
 			function() {
 				$("#right-menu li ul").addClass("hidden");
 				$("#right-menu li").removeClass("expanded");
-				// $("#right-menu li span.caption").removeClass("expanded");
 				$("ul", this).removeClass("hidden");
 				$(this).addClass("expanded");
-				// $("span.caption", this).addClass("expanded");
 			}
 		);
 	};
