@@ -143,15 +143,21 @@ $(document).ready(function() {
 							nextObject = util.nextObjectForHighlighting(startObject);
 							topOfNextObject = nextObject.offset().top;
 							leftOfNextObject = nextObject.offset().left;
+							rightOfNextObject = leftOfNextObject + nextObject.outerWidth();
 							verticalDistance = topOfNextObject - topOffset;
 							if (
 								// top, vertical aligned:
-								verticalDistance < 0 && leftOfNextObject - leftOffset >= 0 ||
+								verticalDistance < 0 && (leftOffset <= leftOfNextObject || leftOfNextObject < leftOffset && leftOffset < rightOfNextObject) ||
 								// next line, vertical aligned:
-								verticalDistance > 0 && leftOfNextObject - leftOffset >= 0
+								verticalDistance > 0 && (leftOffset <= leftOfNextObject || leftOfNextObject < leftOffset && leftOffset < rightOfNextObject)
 							)
 								break;
-							if (verticalDistance > 0 && verticalDistance > oldVerticalDistance && oldVerticalDistance > 0) {
+							if (
+								oldVerticalDistance > 0 && (
+									verticalDistance > 0 && verticalDistance > oldVerticalDistance ||
+									verticalDistance < 0
+								)
+							) {
 								// two lines, use the previous object
 								nextObject = startObject;
 								break;
@@ -171,6 +177,7 @@ $(document).ready(function() {
 					} else if (env.currentMedia === null && e.key === "ArrowUp" && ! isMap) {
 						let prevObject;
 						let leftOffset = highlightedObject.offset().left;
+						let rightOffset = leftOffset + highlightedObject.outerWidth();
 						let topOffset = highlightedObject.offset().top;
 						let topOfPrevObject, leftOfPrevObject;
 						let startObject = highlightedObject;
@@ -179,12 +186,13 @@ $(document).ready(function() {
 							prevObject = util.prevObjectForHighlighting(startObject);
 							topOfPrevObject = prevObject.offset().top;
 							leftOfPrevObject = prevObject.offset().left;
+							rightOfNextObject = leftOfPrevObject + prevObject.outerWidth();
 							verticalDistance = topOfPrevObject - topOffset;
 							if (
 								// bottom, vertical aligned:
-								verticalDistance > 0 && leftOfPrevObject - leftOffset <= 0 ||
+								verticalDistance > 0 && (rightOffset >= rightOfNextObject || rightOfNextObject > rightOffset && rightOffset > leftOfPrevObject) ||
 								// previous line, vertical aligned:
-								verticalDistance < 0 && leftOfPrevObject - leftOffset <= 0
+								verticalDistance < 0 && (rightOffset >= rightOfNextObject || rightOfNextObject > rightOffset && rightOffset > leftOfPrevObject)
 							)
 								break;
 							if (verticalDistance < 0 && verticalDistance < oldVerticalDistance && oldVerticalDistance < 0) {
