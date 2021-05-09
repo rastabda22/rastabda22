@@ -144,17 +144,16 @@ $(document).ready(function() {
 							topOfNextObject = nextObject.offset().top;
 							leftOfNextObject = nextObject.offset().left;
 							verticalDistance = topOfNextObject - topOffset;
+							if (
+								// top, vertical aligned:
+								verticalDistance < 0 && leftOfNextObject - leftOffset >= 0 ||
+								// next line, vertical aligned:
+								verticalDistance > 0 && leftOfNextObject - leftOffset >= 0
+							) {
+								break;
 							if (verticalDistance > 0 && verticalDistance > oldVerticalDistance && oldVerticalDistance > 0) {
 								// two lines, use the previous object
 								nextObject = startObject;
-								break;
-							}
-							if (verticalDistance > 0 && leftOfNextObject - leftOffset >= 0) {
-								// next line, vertical aligned
-								break;
-							}
-							if (verticalDistance < 0 && leftOfNextObject - leftOffset >= 0) {
-								// top, vertical aligned
 								break;
 							}
 							oldVerticalDistance = verticalDistance;
@@ -181,16 +180,17 @@ $(document).ready(function() {
 							topOfPrevObject = prevObject.offset().top;
 							leftOfPrevObject = prevObject.offset().left;
 							verticalDistance = topOfPrevObject - topOffset;
+							if (
+								// bottom, vertical aligned:
+								verticalDistance > 0 && leftOfPrevObject - leftOffset <= 0 ||
+								// previous line, vertical aligned:
+								verticalDistance < 0 && leftOfPrevObject - leftOffset <= 0
+							) {
+								break;
+							}
 							if (verticalDistance < 0 && verticalDistance < oldVerticalDistance && oldVerticalDistance < 0) {
 								//two lines, use the previous object
 								prevObject = startObject;
-								break;
-							}
-							if (verticalDistance < 0 && leftOfPrevObject - leftOffset <= 0) {
-								break;
-							}
-							if (verticalDistance > 0 && leftOfPrevObject - leftOffset <= 0) {
-								// bottom, vertical aligned
 								break;
 							}
 							oldVerticalDistance = verticalDistance;
