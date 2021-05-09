@@ -149,7 +149,7 @@ $(document).ready(function() {
 								verticalDistance < 0 && leftOfNextObject - leftOffset >= 0 ||
 								// next line, vertical aligned:
 								verticalDistance > 0 && leftOfNextObject - leftOffset >= 0
-							) {
+							)
 								break;
 							if (verticalDistance > 0 && verticalDistance > oldVerticalDistance && oldVerticalDistance > 0) {
 								// two lines, use the previous object
@@ -185,9 +185,8 @@ $(document).ready(function() {
 								verticalDistance > 0 && leftOfPrevObject - leftOffset <= 0 ||
 								// previous line, vertical aligned:
 								verticalDistance < 0 && leftOfPrevObject - leftOffset <= 0
-							) {
+							)
 								break;
-							}
 							if (verticalDistance < 0 && verticalDistance < oldVerticalDistance && oldVerticalDistance < 0) {
 								//two lines, use the previous object
 								prevObject = startObject;
