@@ -114,39 +114,56 @@ $(document).ready(function() {
 						let selector = "";
 						if (isPopup)
 							selector = "#popup-images-wrapper ";
-						if (! isPopup && highlightedObject.parent().is(":first-child") || isPopup && highlightedObject.is(":first-child")) {
-							if (! isPopup && (util.aSingleMediaIsHighlighted() && env.currentAlbum.subalbums.length || util.aSubalbumIsHighlighted() && ! env.currentAlbum.media.length))
-								nextObject = $(selector + ".album-button-and-caption").last();
-							else
-								nextObject = $(selector + ".thumb-and-caption-container").last();
-						} else if (isPopup){
-							nextObject = highlightedObject.prev();
-						} else if (! isPopup){
-							nextObject = highlightedObject.parent().prev().children();
-						}
-						if (nextObject.hasClass("thumb-and-caption-container")) {
+						let prevObject = util.prevObjectForHighlighting(highlightedObject);
+						if (prevObject.hasClass("thumb-and-caption-container")) {
 							if (isPopup)
-								util.scrollPopupToHighlightedThumb(nextObject);
+								util.scrollPopupToHighlightedThumb(prevObject);
 							else
-								util.scrollAlbumViewToHighlightedThumb(nextObject);
+								util.scrollAlbumViewToHighlightedThumb(prevObject);
 						} else {
-							util.scrollToHighlightedSubalbum(nextObject);
+							util.scrollToHighlightedSubalbum(prevObject);
 						}
-						util.addHighlight(nextObject);
+						// util.addHighlight(prevObject);
 						return false;
 					} else if (env.currentMedia === null && e.key === "ArrowRight" && ! isMap) {
-						let selector = "";
-						if (isPopup)
-							selector = "#popup-images-wrapper ";
-						if (! isPopup && highlightedObject.parent().is(":last-child") || isPopup && highlightedObject.is(":last-child")) {
-							if (! isPopup && (util.aSingleMediaIsHighlighted() && env.currentAlbum.subalbums.length || util.aSubalbumIsHighlighted() && ! env.currentAlbum.media.length))
-								nextObject = $(selector + ".album-button-and-caption").first();
+						let nextObject = util.nextObjectForHighlighting(highlightedObject);
+						if (nextObject.hasClass("thumb-and-caption-container")) {
+							if (isPopup)
+								util.scrollPopupToHighlightedThumb(nextObject);
 							else
-								nextObject = $(selector + ".thumb-and-caption-container").first();
-						} else if (! isPopup){
-							nextObject = highlightedObject.parent().next().children();
-						} else if (isPopup){
-							nextObject = highlightedObject.next();
+								util.scrollAlbumViewToHighlightedThumb(nextObject);
+						} else {
+							util.scrollToHighlightedSubalbum(nextObject);
+						}
+						// util.addHighlight(nextObject);
+						return false;
+					} else if (env.currentMedia === null && e.key === "ArrowDown" && ! isMap) {
+						let nextObject;
+						let leftOffset = highlightedObject.offset().left;
+						let topOffset = highlightedObject.offset().top;
+						let topOfNextObject, leftOfNextObject;
+						let startObject = highlightedObject;
+						let verticalDistance = 0, oldVerticalDistance = 0;
+						while (true) {
+							nextObject = util.nextObjectForHighlighting(startObject);
+							topOfNextObject = nextObject.offset().top;
+							leftOfNextObject = nextObject.offset().left;
+							verticalDistance = topOfNextObject - topOffset;
+							if (verticalDistance > 0 && verticalDistance > oldVerticalDistance && oldVerticalDistance > 0) {
+								// two lines, use the previous object
+								nextObject = startObject;
+								break;
+							}
+							if (verticalDistance > 0 && leftOfNextObject - leftOffset >= 0) {
+								// next line, vertical aligned
+								break;
+							}
+							if (verticalDistance < 0 && leftOfNextObject - leftOffset >= 0) {
+								// top, vertical aligned
+								break;
+							}
+							oldVerticalDistance = verticalDistance;
+							startObject = nextObject;
 						}
 						if (nextObject.hasClass("thumb-and-caption-container")) {
 							if (isPopup)
@@ -156,7 +173,44 @@ $(document).ready(function() {
 						} else {
 							util.scrollToHighlightedSubalbum(nextObject);
 						}
-						util.addHighlight(nextObject);
+						// util.addHighlight(nextObject);
+						return false;
+					} else if (env.currentMedia === null && e.key === "ArrowUp" && ! isMap) {
+						let prevObject;
+						let leftOffset = highlightedObject.offset().left;
+						let topOffset = highlightedObject.offset().top;
+						let topOfPrevObject, leftOfPrevObject;
+						let startObject = highlightedObject;
+						let verticalDistance = 0, oldVerticalDistance = 0;
+						while (true) {
+							prevObject = util.prevObjectForHighlighting(startObject);
+							topOfPrevObject = prevObject.offset().top;
+							leftOfPrevObject = prevObject.offset().left;
+							verticalDistance = topOfPrevObject - topOffset;
+							if (verticalDistance < 0 && verticalDistance < oldVerticalDistance && oldVerticalDistance < 0) {
+								//two lines, use the previous object
+								prevObject = startObject;
+								break;
+							}
+							if (verticalDistance < 0 && leftOfPrevObject - leftOffset <= 0) {
+								break;
+							}
+							if (verticalDistance > 0 && leftOfPrevObject - leftOffset <= 0) {
+								// bottom, vertical aligned
+								break;
+							}
+							oldVerticalDistance = verticalDistance;
+							startObject = prevObject;
+						}
+						if (prevObject.hasClass("thumb-and-caption-container")) {
+							if (isPopup)
+								util.scrollPopupToHighlightedThumb(prevObject);
+							else
+								util.scrollAlbumViewToHighlightedThumb(prevObject);
+						} else {
+							util.scrollToHighlightedSubalbum(prevObject);
+						}
+						// util.addHighlight(prevObject);
 						return false;
 					} else if (e.key === util._t("#hide-everytyhing-shortcut")) {
 						e.preventDefault();

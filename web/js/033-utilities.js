@@ -2536,6 +2536,42 @@
 		);
 	};
 
+	Utilities.prototype.nextObjectForHighlighting = function(highlightedObject) {
+		var isPopup = Utilities.isPopup();
+		var selector = "", nextObject;
+		if (isPopup)
+			selector = "#popup-images-wrapper ";
+		if (! isPopup && highlightedObject.parent().is(":last-child") || isPopup && highlightedObject.is(":last-child")) {
+			if (! isPopup && (Utilities.aSingleMediaIsHighlighted() && env.currentAlbum.subalbums.length || Utilities.aSubalbumIsHighlighted() && ! env.currentAlbum.media.length))
+				nextObject = $(selector + ".album-button-and-caption").first();
+			else
+				nextObject = $(selector + ".thumb-and-caption-container").first();
+		} else if (! isPopup){
+			nextObject = highlightedObject.parent().next().children();
+		} else if (isPopup){
+			nextObject = highlightedObject.next();
+		}
+		return nextObject;
+	};
+
+	Utilities.prototype.prevObjectForHighlighting = function(highlightedObject) {
+		var isPopup = Utilities.isPopup();
+		var selector = "", prevObject;
+		if (isPopup)
+			selector = "#popup-images-wrapper ";
+		if (! isPopup && highlightedObject.parent().is(":first-child") || isPopup && highlightedObject.is(":first-child")) {
+			if (! isPopup && (Utilities.aSingleMediaIsHighlighted() && env.currentAlbum.subalbums.length || Utilities.aSubalbumIsHighlighted() && ! env.currentAlbum.media.length))
+				prevObject = $(selector + ".album-button-and-caption").last();
+			else
+				prevObject = $(selector + ".thumb-and-caption-container").last();
+		} else if (isPopup){
+			prevObject = highlightedObject.prev();
+		} else if (! isPopup){
+			prevObject = highlightedObject.parent().prev().children();
+		}
+		return prevObject;
+	};
+
 	Utilities.removeHighligths = function() {
 		if (Utilities.isPopup()) {
 			$("#popup-images-wrapper .highlighted").removeClass("highlighted");
@@ -2558,11 +2594,11 @@
 		}
 	};
 
-	Utilities.prototype.aSubalbumIsHighlighted = function() {
+	Utilities.aSubalbumIsHighlighted = function() {
 		return $("#subalbums .highlighted").length > 0;
 	};
 
-	Utilities.prototype.aSingleMediaIsHighlighted = function() {
+	Utilities.aSingleMediaIsHighlighted = function() {
 		return $("#thumbs .highlighted").length > 0;
 	};
 
@@ -3636,7 +3672,6 @@
 		moveDescriptionAtTheLeftOfPinch();
 	};
 
-
 	NumsProtected.prototype.sumUpNumsProtectedMedia = function() {
 		var result = new ImagesAndVideos(), codesComplexcombination;
 		for (codesComplexcombination in this) {
@@ -4423,6 +4458,8 @@
 	Utilities.prototype.isMap = Utilities.isMap;
 	Utilities.prototype.removeHighligths = Utilities.removeHighligths;
 	Utilities.prototype.addHighlight = Utilities.addHighlight;
+	Utilities.prototype.aSingleMediaIsHighlighted = Utilities.aSingleMediaIsHighlighted;
+	Utilities.prototype.aSubalbumIsHighlighted = Utilities.aSubalbumIsHighlighted;
 
 	window.Utilities = Utilities;
 }());
