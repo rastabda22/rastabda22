@@ -111,9 +111,6 @@ $(document).ready(function() {
 						highlightedObject.click();
 						return false;
 					} else if (env.currentMedia === null && e.key === "ArrowLeft" && ! isMap) {
-						let selector = "";
-						if (isPopup)
-							selector = "#popup-images-wrapper ";
 						let prevObject = util.prevObjectForHighlighting(highlightedObject);
 						if (prevObject.hasClass("thumb-and-caption-container")) {
 							if (isPopup)
@@ -123,7 +120,6 @@ $(document).ready(function() {
 						} else {
 							util.scrollToHighlightedSubalbum(prevObject);
 						}
-						// util.addHighlight(prevObject);
 						return false;
 					} else if (env.currentMedia === null && e.key === "ArrowRight" && ! isMap) {
 						let nextObject = util.nextObjectForHighlighting(highlightedObject);
@@ -135,7 +131,6 @@ $(document).ready(function() {
 						} else {
 							util.scrollToHighlightedSubalbum(nextObject);
 						}
-						// util.addHighlight(nextObject);
 						return false;
 					} else if (env.currentMedia === null && e.key === "ArrowDown" && ! isMap) {
 						let nextObject;
@@ -173,7 +168,6 @@ $(document).ready(function() {
 						} else {
 							util.scrollToHighlightedSubalbum(nextObject);
 						}
-						// util.addHighlight(nextObject);
 						return false;
 					} else if (env.currentMedia === null && e.key === "ArrowUp" && ! isMap) {
 						let prevObject;
@@ -210,7 +204,6 @@ $(document).ready(function() {
 						} else {
 							util.scrollToHighlightedSubalbum(prevObject);
 						}
-						// util.addHighlight(prevObject);
 						return false;
 					} else if (e.key === util._t("#hide-everytyhing-shortcut")) {
 						e.preventDefault();
