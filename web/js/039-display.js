@@ -137,10 +137,10 @@ $(document).ready(function() {
 						let leftOffset = highlightedObject.offset().left;
 						let topOffset = highlightedObject.offset().top;
 						let topOfNextObject, leftOfNextObject;
-						let startObject = highlightedObject;
+						let currentObject = highlightedObject;
 						let verticalDistance = 0, oldVerticalDistance = 0;
 						while (true) {
-							nextObject = util.nextObjectForHighlighting(startObject);
+							nextObject = util.nextObjectForHighlighting(currentObject);
 							topOfNextObject = nextObject.offset().top;
 							leftOfNextObject = nextObject.offset().left;
 							rightOfNextObject = leftOfNextObject + nextObject.outerWidth();
@@ -159,11 +159,11 @@ $(document).ready(function() {
 								)
 							) {
 								// two lines, use the previous object
-								nextObject = startObject;
+								nextObject = currentObject;
 								break;
 							}
 							oldVerticalDistance = verticalDistance;
-							startObject = nextObject;
+							currentObject = nextObject;
 						}
 						if (nextObject.hasClass("thumb-and-caption-container")) {
 							if (isPopup)
@@ -180,10 +180,10 @@ $(document).ready(function() {
 						let rightOffset = leftOffset + highlightedObject.outerWidth();
 						let topOffset = highlightedObject.offset().top;
 						let topOfPrevObject, leftOfPrevObject;
-						let startObject = highlightedObject;
+						let currentObject = highlightedObject;
 						let verticalDistance = 0, oldVerticalDistance = 0;
 						while (true) {
-							prevObject = util.prevObjectForHighlighting(startObject);
+							prevObject = util.prevObjectForHighlighting(currentObject);
 							topOfPrevObject = prevObject.offset().top;
 							leftOfPrevObject = prevObject.offset().left;
 							rightOfNextObject = leftOfPrevObject + prevObject.outerWidth();
@@ -197,11 +197,11 @@ $(document).ready(function() {
 								break;
 							if (verticalDistance < 0 && verticalDistance < oldVerticalDistance && oldVerticalDistance < 0) {
 								//two lines, use the previous object
-								prevObject = startObject;
+								prevObject = currentObject;
 								break;
 							}
 							oldVerticalDistance = verticalDistance;
-							startObject = prevObject;
+							currentObject = prevObject;
 						}
 						if (prevObject.hasClass("thumb-and-caption-container")) {
 							if (isPopup)
