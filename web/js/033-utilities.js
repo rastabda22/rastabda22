@@ -2536,38 +2536,38 @@
 		);
 	};
 
-	Utilities.prototype.nextObjectForHighlighting = function(highlightedObject) {
+	Utilities.prototype.nextObjectForHighlighting = function(object) {
 		var isPopup = Utilities.isPopup();
 		var selector = "", nextObject;
 		if (isPopup)
 			selector = "#popup-images-wrapper ";
-		if (! isPopup && highlightedObject.parent().is(":last-child") || isPopup && highlightedObject.is(":last-child")) {
-			if (! isPopup && (Utilities.aSingleMediaIsHighlighted() && env.currentAlbum.subalbums.length || Utilities.aSubalbumIsHighlighted() && ! env.currentAlbum.media.length))
+		if (! isPopup && object.parent().is(":last-child") || isPopup && object.is(":last-child")) {
+			if (! isPopup && (Utilities.objectIsASingleMedia(object) && env.currentAlbum.subalbums.length || Utilities.objectIsASubalbum(object) && ! env.currentAlbum.media.length))
 				nextObject = $(selector + ".album-button-and-caption").first();
 			else
 				nextObject = $(selector + ".thumb-and-caption-container").first();
 		} else if (! isPopup){
-			nextObject = highlightedObject.parent().next().children();
+			nextObject = object.parent().next().children();
 		} else if (isPopup){
-			nextObject = highlightedObject.next();
+			nextObject = object.next();
 		}
 		return nextObject;
 	};
 
-	Utilities.prototype.prevObjectForHighlighting = function(highlightedObject) {
+	Utilities.prototype.prevObjectForHighlighting = function(object) {
 		var isPopup = Utilities.isPopup();
 		var selector = "", prevObject;
 		if (isPopup)
 			selector = "#popup-images-wrapper ";
-		if (! isPopup && highlightedObject.parent().is(":first-child") || isPopup && highlightedObject.is(":first-child")) {
-			if (! isPopup && (Utilities.aSingleMediaIsHighlighted() && env.currentAlbum.subalbums.length || Utilities.aSubalbumIsHighlighted() && ! env.currentAlbum.media.length))
+		if (! isPopup && object.parent().is(":first-child") || isPopup && object.is(":first-child")) {
+			if (! isPopup && (Utilities.objectIsASingleMedia(object) && env.currentAlbum.subalbums.length || Utilities.objectIsASubalbum(object) && ! env.currentAlbum.media.length))
 				prevObject = $(selector + ".album-button-and-caption").last();
 			else
 				prevObject = $(selector + ".thumb-and-caption-container").last();
 		} else if (isPopup){
-			prevObject = highlightedObject.prev();
+			prevObject = object.prev();
 		} else if (! isPopup){
-			prevObject = highlightedObject.parent().prev().children();
+			prevObject = object.parent().prev().children();
 		}
 		return prevObject;
 	};
@@ -2592,6 +2592,14 @@
 		} else {
 			return $(".highlighted");
 		}
+	};
+
+	Utilities.objectIsASubalbum = function(object) {
+		return object.hasClass("album-button-and-caption");
+	};
+
+	Utilities.objectIsASingleMedia = function(object) {
+		return object.hasClass("thumb-and-caption-container");
 	};
 
 	Utilities.aSubalbumIsHighlighted = function() {
@@ -4403,6 +4411,22 @@
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
 		Utilities.focusSearchField();
+	};
+
+	Utilities.prototype.horizontalDistance = function(object1, object2) {
+		var leftOffset1 = object1.offset().left;
+		var leftOffset2 = object2.offset().left;
+		var rightOffset1 = leftOffset1 + object1.outerWidth();
+		var rightOffset2 = leftOffset2 + object2.outerWidth();
+		return ((rightOffset2 + leftOffset2) / 2 - (rightOffset1 + leftOffset1) / 2);
+	};
+
+	Utilities.prototype.verticalDistance = function(object1, object2) {
+		var topOffset1 = object1.offset().top;
+		var topOffset2 = object2.offset().top;
+		var bottomOffset1 = topOffset1 + object1.outerHeight();
+		var bottomOffset2 = topOffset2 + object2.outerHeight();
+		return ((topOffset2 + bottomOffset2) / 2 - (topOffset1 + bottomOffset1) / 2);
 	};
 
 	/* make static methods callable as member functions */

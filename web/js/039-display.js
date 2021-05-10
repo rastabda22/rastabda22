@@ -110,19 +110,11 @@ $(document).ready(function() {
 					if (env.currentMedia === null && e.key === "Enter") {
 						highlightedObject.click();
 						return false;
-					} else if (env.currentMedia === null && e.key === "ArrowLeft" && ! isMap) {
-						let prevObject = util.prevObjectForHighlighting(highlightedObject);
-						if (prevObject.hasClass("thumb-and-caption-container")) {
-							if (isPopup)
-								util.scrollPopupToHighlightedThumb(prevObject);
-							else
-								util.scrollAlbumViewToHighlightedThumb(prevObject);
-						} else {
-							util.scrollToHighlightedSubalbum(prevObject);
-						}
-						return false;
-					} else if (env.currentMedia === null && e.key === "ArrowRight" && ! isMap) {
-						let nextObject = util.nextObjectForHighlighting(highlightedObject);
+					} else if (env.currentMedia === null && ! isMap && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
+						let nextObjectFunction = util.nextObjectForHighlighting;
+						if (e.key === "ArrowLeft")
+							nextObjectFunction = util.prevObjectForHighlighting;
+						let nextObject = nextObjectFunction(highlightedObject);
 						if (nextObject.hasClass("thumb-and-caption-container")) {
 							if (isPopup)
 								util.scrollPopupToHighlightedThumb(nextObject);
@@ -132,84 +124,54 @@ $(document).ready(function() {
 							util.scrollToHighlightedSubalbum(nextObject);
 						}
 						return false;
-					} else if (env.currentMedia === null && e.key === "ArrowDown" && ! isMap) {
+					} else if (env.currentMedia === null && ! isMap && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
 						let nextObject;
-						let leftOffset = highlightedObject.offset().left;
-						let topOffset = highlightedObject.offset().top;
-						let topOfNextObject, leftOfNextObject;
+						let nextObjectFunction = util.nextObjectForHighlighting;
+						if (e.key === "ArrowUp")
+							nextObjectFunction = util.prevObjectForHighlighting;
 						let currentObject = highlightedObject;
-						let verticalDistance = 0, oldVerticalDistance = 0;
+						let arrayDistances = [], objectsInLine = [];
+						let verticalDistance;
+						// first, we must reach the next line
 						while (true) {
-							nextObject = util.nextObjectForHighlighting(currentObject);
-							topOfNextObject = nextObject.offset().top;
-							leftOfNextObject = nextObject.offset().left;
-							rightOfNextObject = leftOfNextObject + nextObject.outerWidth();
-							verticalDistance = topOfNextObject - topOffset;
-							if (
-								// top, vertical aligned:
-								verticalDistance < 0 && (leftOffset <= leftOfNextObject || leftOfNextObject < leftOffset && leftOffset < rightOfNextObject) ||
-								// next line, vertical aligned:
-								verticalDistance > 0 && (leftOffset <= leftOfNextObject || leftOfNextObject < leftOffset && leftOffset < rightOfNextObject)
-							)
-								break;
-							if (
-								oldVerticalDistance > 0 && (
-									verticalDistance > 0 && verticalDistance > oldVerticalDistance ||
-									verticalDistance < 0
-								)
-							) {
-								// two lines, use the previous object
-								nextObject = currentObject;
+							nextObject = nextObjectFunction(currentObject);
+							if (nextObject.html() === highlightedObject.html()) {
+								// we have returned to the original object
+								return false;
+							} else if (util.verticalDistance(highlightedObject, nextObject) !== 0) {
+								// we aren't on the original line any more!
 								break;
 							}
-							oldVerticalDistance = verticalDistance;
+							// we are still on the original line
 							currentObject = nextObject;
 						}
-						if (nextObject.hasClass("thumb-and-caption-container")) {
-							if (isPopup)
-								util.scrollPopupToHighlightedThumb(nextObject);
-							else
-								util.scrollAlbumViewToHighlightedThumb(nextObject);
-						} else {
-							util.scrollToHighlightedSubalbum(nextObject);
-						}
-						return false;
-					} else if (env.currentMedia === null && e.key === "ArrowUp" && ! isMap) {
-						let prevObject;
-						let leftOffset = highlightedObject.offset().left;
-						let rightOffset = leftOffset + highlightedObject.outerWidth();
-						let topOffset = highlightedObject.offset().top;
-						let topOfPrevObject, leftOfPrevObject;
-						let currentObject = highlightedObject;
-						let verticalDistance = 0, oldVerticalDistance = 0;
+						// we have reached the next line
+
+						currentObject = nextObject;
+						let firstObjectInLine = currentObject;
 						while (true) {
-							prevObject = util.prevObjectForHighlighting(currentObject);
-							topOfPrevObject = prevObject.offset().top;
-							leftOfPrevObject = prevObject.offset().left;
-							rightOfNextObject = leftOfPrevObject + prevObject.outerWidth();
-							verticalDistance = topOfPrevObject - topOffset;
-							if (
-								// bottom, vertical aligned:
-								verticalDistance > 0 && (rightOffset >= rightOfNextObject || rightOfNextObject > rightOffset && rightOffset > leftOfPrevObject) ||
-								// previous line, vertical aligned:
-								verticalDistance < 0 && (rightOffset >= rightOfNextObject || rightOfNextObject > rightOffset && rightOffset > leftOfPrevObject)
-							)
-								break;
-							if (verticalDistance < 0 && verticalDistance < oldVerticalDistance && oldVerticalDistance < 0) {
-								//two lines, use the previous object
-								prevObject = currentObject;
+							arrayDistances.push(Math.abs(util.horizontalDistance(highlightedObject, currentObject)));
+							objectsInLine.push(nextObject);
+							nextObject = nextObjectFunction(currentObject);
+							if (util.verticalDistance(firstObjectInLine, nextObject) !== 0) {
+								// we aren't on the following line any more!
 								break;
 							}
-							oldVerticalDistance = verticalDistance;
-							currentObject = prevObject;
+							// we are still on the following line
+							currentObject = nextObject;
 						}
-						if (prevObject.hasClass("thumb-and-caption-container")) {
-							if (isPopup)
-								util.scrollPopupToHighlightedThumb(prevObject);
-							else
-								util.scrollAlbumViewToHighlightedThumb(prevObject);
-						} else {
-							util.scrollToHighlightedSubalbum(prevObject);
+						// choose the object which have the minimum horizontal distance
+						if (objectsInLine.length) {
+							let minimumDistanceIndex = arrayDistances.indexOf(Math.min(... arrayDistances));
+							nextObject = objectsInLine[minimumDistanceIndex];
+							if (nextObject.hasClass("thumb-and-caption-container")) {
+								if (isPopup)
+									util.scrollPopupToHighlightedThumb(nextObject);
+								else
+									util.scrollAlbumViewToHighlightedThumb(nextObject);
+							} else {
+								util.scrollToHighlightedSubalbum(nextObject);
+							}
 						}
 						return false;
 					} else if (e.key === util._t("#hide-everytyhing-shortcut")) {
