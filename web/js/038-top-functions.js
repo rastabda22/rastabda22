@@ -2290,8 +2290,7 @@
 					">" +
 						"<div class='thumb-container' " + "style='" +
 								// "width: " + calculatedWidth + "px; " +
-								"width: " + calculatedWidth + "px; " +
-								"height: " + calculatedHeight + "px;" +
+								"height: " + env.options.media_thumb_size + "px;" +
 						"'>" +
 							mapLinkIcon +
 							selectBoxHtml +
