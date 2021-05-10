@@ -112,7 +112,7 @@ $(document).ready(function() {
 						return false;
 					} else if (env.currentMedia === null && ! isMap && (e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === "ArrowUp")) {
 						let nextObjectFunction = util.nextObjectForHighlighting;
-						if (e.key === "ArrowLeft")
+						if (e.key === "ArrowLeft" || e.key === "ArrowUp")
 							nextObjectFunction = util.prevObjectForHighlighting;
 						let nextObject;
 
