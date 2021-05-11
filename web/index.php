@@ -365,7 +365,7 @@
 			</div>
 
 			<div id="album-and-media-container">
-				<div id="media-view">
+				<div class="hidden" id="media-view">
 					<div id="media-box-container">
 						<div class="media-box" id="center">
 
@@ -580,7 +580,7 @@
 			<div id="by-name-media-sorting" class="sort-message"></div>
 			<div id="by-name-reverse-media-sorting" class="sort-message"></div>
 
-			<div id="description-wrapper">
+			<div class="hidden" id="description-wrapper">
 				<div id="description">
 					<div id="description-title"></div>
 					<div id="description-text"></div>
