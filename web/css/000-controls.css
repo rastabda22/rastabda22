@@ -923,7 +923,7 @@ ul#right-menu li {
 	/* cursor: pointer; */
 	font-size: 90%;
 }
-ul#right-menu.expand #search-field {
+ul#right-menu.expanded #search-field {
 	min-width: 14em;
 }
 
@@ -939,7 +939,7 @@ ul#right-menu span a#menu-icon:hover {
 	background-color: transparent;
 }
 
-ul#right-menu:not(.expand) li:not(#menu-and-padlock) {
+ul#right-menu:not(.expanded) li:not(#menu-and-padlock) {
 	display: none !important;
 }
 
@@ -948,12 +948,12 @@ ul#right-menu span#menu-icon, ul#right-menu li#menu-line {
 	display: list-item;
 }
 
-ul#right-menu span#menu-icon, ul#right-menu #padlock img, ul#right-menu.expand li {
+ul#right-menu span#menu-icon, ul#right-menu #padlock img, ul#right-menu.expanded li {
 	float: none;
 	text-align: right;
 }
 
-ul#right-menu.expand li:not(#menu-and-padlock) {
+ul#right-menu.expanded li:not(#menu-and-padlock) {
 	padding: .1em 0;
 }
 
@@ -968,18 +968,18 @@ ul#right-menu #padlock {
 	cursor: pointer;
 }
 
-ul#right-menu.expand {
+ul#right-menu.expanded {
 	background-color:rgba(0, 0, 0, 0.7);
 	min-width: 15em;
 }
 
-ul#right-menu.expand li {
+ul#right-menu.expanded li {
 	display: list-item;
 	text-align: left;
 	font-style: italic;
 }
 
-ul#right-menu.expand li.caption {
+ul#right-menu.expanded li.caption {
 	/*text-align: left;*/
 	padding-right: 2em;
 	font-variant: small-caps;
@@ -987,7 +987,7 @@ ul#right-menu.expand li.caption {
 	font-style: normal;
 }
 
-ul#right-menu.expand li {
+ul#right-menu.expanded li {
 	clear: both;
 }
 
@@ -1024,23 +1024,23 @@ ul#right-menu img#search-button {
 	top: 7px;
 }
 
-ul#right-menu.expand .selected {
+ul#right-menu.expanded .selected {
 	background-image: url(../img/ic_check_circle_black_24dp_1x.png);
 	background-repeat: no-repeat;
 	background-position: right;
 }
 
-ul#right-menu.expand li.dimmed {
+ul#right-menu.expanded li.dimmed {
 	color: gray;
 	cursor: default !important;
 }
 
-ul#right-menu.expand li.dimmed:hover {
+ul#right-menu.expanded li.dimmed:hover {
 	color: ligthgray;
 	/* background-color: black !important; */
 }
 
-ul#right-menu.expand li:not(.active, .sub-menu) {
+ul#right-menu.expanded li:not(.active, .sub-menu) {
 	/* color: darkgray; */
 }
 
@@ -1048,12 +1048,12 @@ ul#right-menu li:not(.expanded) .caption:hover, ul#right-menu ul li.active:hover
 	background-color: gray !important;
 }
 
-ul#right-menu.expand li a, ul#right-menu.expand li span:not(#padlock):not(#menu-icon) {
+ul#right-menu.expanded li a, ul#right-menu.expanded li span:not(#padlock):not(#menu-icon) {
 	display: inline-block;
 	width: 100%;
 }
 
-ul#right-menu.expand ul li:not(.active):hover {
+ul#right-menu.expanded ul li:not(.active):hover {
 	/* background-color: black !important; */
 }
 
@@ -1069,7 +1069,7 @@ ul#right-menu #padlock:hover {
 	padding-bottom: 0;
 }
 
-ul#right-menu.expand ul {
+ul#right-menu.expanded ul {
 	list-style: none;
 	padding-inline-start: 1em;
 }

@@ -1133,8 +1133,8 @@
 	};
 
 	Utilities.toggleMenu = function() {
-		$("ul#right-menu").toggleClass("expand");
-		if ($("ul#right-menu").hasClass("expand")) {
+		$("ul#right-menu").toggleClass("expanded");
+		if ($("ul#right-menu").hasClass("expanded")) {
 			Utilities.focusSearchField();
 			$("#album-and-media-container:not(.show-media) #album-view").css("opacity", "0.3");
 			$(".leaflet-popup-content-wrapper").css("background-color", "darkgray");
@@ -1150,7 +1150,7 @@
 		env.currentAlbum = album;
 		// $("#thumbs").hide();
 		TopFunctions.setTitle("album", null);
-		if (! $("ul#right-menu").hasClass("expand")) {
+		if (! $("ul#right-menu").hasClass("expanded")) {
 			// the search root album could not be in the cache, get it, toggleMenu needs it
 			let promise = PhotoFloat.getAlbum(env.options.by_search_string, null, {getMedia: false, getPositions: false});
 			promise.then(Utilities.toggleMenu);
@@ -4093,7 +4093,7 @@
 	Utilities.prototype.showAuthForm = function(event, maybeProtectedContent = false) {
 		$("#album-view, #media-view, #my-modal, #no-results").css("opacity", "0.2");
 		$("#loading").hide();
-		if ($("ul#right-menu").hasClass("expand")) {
+		if ($("ul#right-menu").hasClass("expanded")) {
 			Utilities.toggleMenu();
 		}
 		$("#no-results").hide();

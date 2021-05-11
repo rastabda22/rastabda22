@@ -2149,7 +2149,7 @@
 				isShowing = true;
 			}
 			$("#message-too-many-images").html(tooManyImagesText).show();
-			if (! $("ul#right-menu").hasClass("expand")) {
+			if (! $("ul#right-menu").hasClass("expanded")) {
 				$("#show-hide-them:hover").css("color", "").css("cursor", "");
 			} else {
 				$("#show-hide-them:hover").css("color", "inherit").css("cursor", "auto");

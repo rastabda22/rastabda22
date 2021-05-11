@@ -56,7 +56,7 @@ $(document).ready(function() {
 				// $("#album-view, #media-view, #my-modal").css("opacity", "");
 				// util.goUpInHash();
 				return false;
-			} else if ($("ul#right-menu").hasClass("expand")) {
+			} else if ($("ul#right-menu").hasClass("expanded")) {
 				util.toggleMenu();
 				return false;
 			} else if (env.currentMedia !== null && env.currentMedia.isVideo() && ! $("video#media-center")[0].paused) {
@@ -845,7 +845,7 @@ $(document).ready(function() {
 			// $("#album-view").removeClass("hidden");
 			$("link[rel=image_src]").remove();
 			$("link[rel=video_src]").remove();
-			$("ul#right-menu").removeClass("expand");
+			$("ul#right-menu").removeClass("expanded");
 
 			if (util.isMap() || util.isPopup()) {
 				// we are in a map: close it
