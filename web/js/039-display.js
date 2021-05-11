@@ -110,61 +110,63 @@ $(document).ready(function() {
 					if (env.currentMedia === null && e.key === "Enter") {
 						highlightedObject.click();
 						return false;
-					} else if (env.currentMedia === null && ! isMap && (e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === "ArrowUp")) {
-						let nextObjectFunction = util.nextObjectForHighlighting;
-						if (e.key === "ArrowLeft" || e.key === "ArrowUp")
-							nextObjectFunction = util.prevObjectForHighlighting;
-						let nextObject;
+					} else if (env.currentMedia === null && (e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === "ArrowUp")) {
+						if (! isMap) {
+							let nextObjectFunction = util.nextObjectForHighlighting;
+							if (e.key === "ArrowLeft" || e.key === "ArrowUp")
+								nextObjectFunction = util.prevObjectForHighlighting;
+							let nextObject;
 
-						if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
-							nextObject = nextObjectFunction(highlightedObject);
-						} else {
-							// e.key is "ArrowDown" or "ArrowUp"
-							let currentObject = highlightedObject;
-							let arrayDistances = [], objectsInLine = [];
-							let verticalDistance;
-							// first, we must reach the next line
-							while (true) {
-								nextObject = nextObjectFunction(currentObject);
-								if (nextObject.html() === highlightedObject.html()) {
-									// we have returned to the original object
+							if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+								nextObject = nextObjectFunction(highlightedObject);
+							} else {
+								// e.key is "ArrowDown" or "ArrowUp"
+								let currentObject = highlightedObject;
+								let arrayDistances = [], objectsInLine = [];
+								let verticalDistance;
+								// first, we must reach the next line
+								while (true) {
+									nextObject = nextObjectFunction(currentObject);
+									if (nextObject.html() === highlightedObject.html()) {
+										// we have returned to the original object
+										return false;
+									} else if (util.verticalDistance(highlightedObject, nextObject) !== 0) {
+										// we aren't on the original line any more!
+										break;
+									}
+									// we are still on the original line
+									currentObject = nextObject;
+								}
+								// we have reached the next line
+
+								currentObject = nextObject;
+								let firstObjectInLine = currentObject;
+								while (true) {
+									arrayDistances.push(Math.abs(util.horizontalDistance(highlightedObject, currentObject)));
+									objectsInLine.push(nextObject);
+									nextObject = nextObjectFunction(currentObject);
+									if (util.verticalDistance(firstObjectInLine, nextObject) !== 0) {
+										// we aren't on the following line any more!
+										break;
+									}
+									// we are still on the following line
+									currentObject = nextObject;
+								}
+								// choose the object which have the minimum horizontal distance
+								if (! objectsInLine.length)
 									return false;
-								} else if (util.verticalDistance(highlightedObject, nextObject) !== 0) {
-									// we aren't on the original line any more!
-									break;
-								}
-								// we are still on the original line
-								currentObject = nextObject;
+								let minimumDistanceIndex = arrayDistances.indexOf(Math.min(... arrayDistances));
+								nextObject = objectsInLine[minimumDistanceIndex];
 							}
-							// we have reached the next line
 
-							currentObject = nextObject;
-							let firstObjectInLine = currentObject;
-							while (true) {
-								arrayDistances.push(Math.abs(util.horizontalDistance(highlightedObject, currentObject)));
-								objectsInLine.push(nextObject);
-								nextObject = nextObjectFunction(currentObject);
-								if (util.verticalDistance(firstObjectInLine, nextObject) !== 0) {
-									// we aren't on the following line any more!
-									break;
-								}
-								// we are still on the following line
-								currentObject = nextObject;
+							if (nextObject.hasClass("thumb-and-caption-container")) {
+								if (isPopup)
+									util.scrollPopupToHighlightedThumb(nextObject);
+								else
+									util.scrollAlbumViewToHighlightedThumb(nextObject);
+							} else {
+								util.scrollToHighlightedSubalbum(nextObject);
 							}
-							// choose the object which have the minimum horizontal distance
-							if (! objectsInLine.length)
-								return false;
-							let minimumDistanceIndex = arrayDistances.indexOf(Math.min(... arrayDistances));
-							nextObject = objectsInLine[minimumDistanceIndex];
-						}
-
-						if (nextObject.hasClass("thumb-and-caption-container")) {
-							if (isPopup)
-								util.scrollPopupToHighlightedThumb(nextObject);
-							else
-								util.scrollAlbumViewToHighlightedThumb(nextObject);
-						} else {
-							util.scrollToHighlightedSubalbum(nextObject);
 						}
 						return false;
 					} else if (e.key === util._t("#hide-everytyhing-shortcut")) {
