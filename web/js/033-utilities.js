@@ -1135,7 +1135,7 @@
 	Utilities.toggleMenu = function() {
 		$("ul#right-menu").toggleClass("expanded");
 		if ($("ul#right-menu").hasClass("expanded")) {
-			Utilities.focusSearchField();
+			Utilities.highlightMenu();
 			$("#album-and-media-container:not(.show-media) #album-view").css("opacity", "0.3");
 			$(".leaflet-popup-content-wrapper").css("background-color", "darkgray");
 			Functions.updateMenu();
@@ -1177,10 +1177,16 @@
 		} else {
 			$("#search-field").blur();
 		}
-		$("#right-menu li").removeClass("expanded");
-		$("#right-menu li.search ul").addClass("expanded");
+		$("#right-menu li.expandable").removeClass("expanded");
 		$("#right-menu li ul").addClass("hidden");
+		$("#right-menu li.search").addClass("expanded");
 		$("#right-menu li.search ul").removeClass("hidden");
+		Utilities.highlightMenu();
+	};
+
+	Utilities.highlightMenu = function() {
+		if (! $("#right-menu .highlighted").length)
+			$("#right-menu form").addClass("highlighted");
 	};
 
 	Utilities.stripHtmlAndReplaceEntities = function(htmlString) {
@@ -2581,16 +2587,86 @@
 		}
 	};
 
+	Utilities.removeHighligthsToItems = function() {
+		$("#right-menu .highlighted").removeClass("highlighted");
+	};
+
+	Utilities.prototype.prevItemForHighlighting = function(object) {
+		var isFirstLevel = object.hasClass("caption");
+		if (isFirstLevel) {
+			prevFirstLevelObject = object.parent().prevAll(".active:not(.hidden):not(#menu-and-padlock)").first();
+			if (! prevFirstLevelObject.length)
+				prevFirstLevelObject = object.parent().nextAll(".active:not(.hidden)").last();
+
+			if (
+				prevFirstLevelObject.hasClass("expandable") &&
+				prevFirstLevelObject.hasClass("expanded")  &&
+				prevFirstLevelObject.children("ul").children(".active:not(.hidden)").length
+			) {
+				// go to the last child of the previous first level menu item
+				return prevFirstLevelObject.children("ul").children(".active:not(.hidden)").last();
+			} else {
+				// go to the previous first-level menu entry
+				return prevFirstLevelObject.children(".caption");
+			}
+		} else if (! object.prevAll(".active:not(.hidden)").length) {
+			// go to its first-level menu entry
+			return object.parent().prev();
+		} else {
+			// go to the previous second-level menu entry
+			return object.prevAll(".active:not(.hidden)").first();
+		}
+	};
+
+	Utilities.prototype.nextItemForHighlighting = function(object) {
+		var isFirstLevel = object.hasClass("caption");
+		if (isFirstLevel) {
+			if (
+				! object.parent().hasClass("expandable") ||
+				object.parent().hasClass("expandable") && ! object.parent().hasClass("expanded") ||
+				object.parent().hasClass("expandable") && object.parent().hasClass("expanded") && ! object.next("ul").children(".active:not(.hidden)").length
+			) {
+				// go to the next first-level menu entry
+				let nextFirstLevelObject = object.parent().nextAll(".active:not(.hidden)").first();
+				if (nextFirstLevelObject.length)
+					return nextFirstLevelObject.children(".caption");
+				else
+					return object.parent().siblings(":not(.hidden):not(#menu-and-padlock)").first().children(".caption");
+			} else if (object.parent().hasClass("expandable") && object.parent().hasClass("expanded")) {
+				// go to its first child
+				return object.next("ul").children(".active:not(.hidden)").first();
+			}
+		} else if (! object.nextAll(".active:not(.hidden)").length) {
+			// go to the next first-level menu entry
+			let nextFirstLevelObject = object.parent().parent().nextAll(":not(.hidden)").first();
+			if (nextFirstLevelObject.length)
+				return nextFirstLevelObject.children(".caption");
+			else
+				return object.parent().parent().siblings(":not(.hidden)").first().children(".caption");
+		} else {
+			return object.nextAll(".active:not(.hidden)").first();
+		}
+	};
+
 	Utilities.addHighlight = function(object) {
 		Utilities.removeHighligths();
 		object.addClass("highlighted");
+	};
+
+	Utilities.prototype.addHighlightToItem = function(object) {
+		Utilities.removeHighligthsToItems();
+		object.addClass("highlighted");
+	};
+
+	Utilities.prototype.highlightedItemObject = function() {
+		return $("#right-menu .highlighted");
 	};
 
 	Utilities.prototype.highlightedObject = function() {
 		if (Utilities.isPopup()) {
 			return $("#popup-images-wrapper .highlighted");
 		} else {
-			return $(".highlighted");
+			return $("#album-and-media-container .highlighted");
 		}
 	};
 
@@ -4465,6 +4541,7 @@
 	Utilities.prototype.arrayIntersect = Utilities.arrayIntersect;
 	Utilities.prototype.scrollBottomMediaToHighlightedThumb = Utilities.scrollBottomMediaToHighlightedThumb;
 	Utilities.prototype.focusSearchField = Utilities.focusSearchField;
+	Utilities.prototype.highlightMenu = Utilities.highlightMenu;
 	Utilities.prototype.addTagLink = Utilities.addTagLink;
 	Utilities.prototype.formatDescription = Utilities.formatDescription;
 	Utilities.prototype.stripHtmlAndReplaceEntities = Utilities.stripHtmlAndReplaceEntities;

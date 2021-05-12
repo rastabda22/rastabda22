@@ -325,6 +325,7 @@
 			// $("ul#right-menu li#no-results").is(":visible") ||
 			// $("ul#right-menu li#search-too-wide").is(":visible")
 		) {
+			$("ul#right-menu li.search.expandable").removeClass("expanded");
 			$("ul#right-menu li.search ul").addClass("hidden");
 		} else {
 			if (isPopup)
@@ -332,6 +333,7 @@
 			else
 				$("ul#right-menu li.search #search-field, ul#right-menu li.search #search-button").attr("title", util._t("#real-search"));
 
+			$("ul#right-menu li.search.expandable").addClass("expanded");
 			$("ul#right-menu li.search ul").removeClass("hidden");
 			// $("ul#right-menu li#refine-search").removeClass("hidden");
 			if (env.options.search_inside_words)
@@ -355,9 +357,9 @@
 			else
 				$("ul#right-menu li#tags-only").removeClass("selected");
 			if (env.options.cache_base_to_search_in === env.options.folders_string || isPopup) {
-				$("ul#right-menu li#album-search").addClass("dimmed").removeClass("selected").removeClass("active").off("click").attr("title", "");
+				$("ul#right-menu li#album-search").removeClass("selected").removeClass("active").off("click").attr("title", "");
 			} else {
-				$("ul#right-menu li#album-search").removeClass("dimmed").addClass("active").off("click").on("click", util.toggleCurrentAbumSearch);
+				$("ul#right-menu li#album-search").addClass("active").off("click").on("click", util.toggleCurrentAbumSearch);
 				let albumNamePromise = Functions.getAlbumNameFromCacheBase(env.options.cache_base_to_search_in);
 				albumNamePromise.then(
 					function(path) {
@@ -376,6 +378,7 @@
 			"focus",
 			function() {
 				$(".sub-menu").addClass("hidden");
+				$("#right-menu li.search.expandable").addClass("expanded");
 				$("#right-menu li.search ul").removeClass("hidden");
 				// if ($("ul", this).is(':hidden'))
 				// 	$('#right-menu ul').slideUp(300);
@@ -559,13 +562,13 @@
 			thisAlbum.numsMedia.imagesAndVideosTotal() < env.options.big_virtual_folders_threshold ||
 			! isTransversalAlbum
 		) {
-			$("ul#right-menu #show-big-albums").addClass("hidden");
+			$("ul#right-menu #big-albums").addClass("hidden");
 		} else {
-			$("ul#right-menu #show-big-albums").removeClass("hidden");
+			$("ul#right-menu #big-albums").removeClass("hidden");
 			if (env.options.show_big_virtual_folders)
-			 	$("ul#right-menu #show-big-albums").addClass("selected");
+			 	$("ul#right-menu #big-albums").addClass("selected");
 			else
-				$("ul#right-menu #show-big-albums").removeClass("selected");
+				$("ul#right-menu #big-albums").removeClass("selected");
 		}
 
 		////////////////// SORT //////////////////////////////
@@ -1248,7 +1251,7 @@
 			"click",
 			function() {
 				$("#right-menu li ul").addClass("hidden");
-				$("#right-menu li").removeClass("expanded");
+				$("#right-menu li.expandable").removeClass("expanded");
 				$("ul", this).removeClass("hidden");
 				$(this).addClass("expanded");
 			}
@@ -1696,7 +1699,6 @@
 	Functions.prototype.setBooleanCookie = Functions.setBooleanCookie;
 	Functions.prototype.setCookie = Functions.setCookie;
 	Functions.prototype.updateMenu = Functions.updateMenu;
-	Functions.prototype.focusSearchField = Functions.focusSearchField;
 	Functions.prototype.toggleMetadata = Functions.toggleMetadata;
 	Functions.prototype.humanFileSize = Functions.humanFileSize;
 	Functions.prototype.pinchSwipeInitialization = Functions.pinchSwipeInitialization;

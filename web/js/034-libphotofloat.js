@@ -1323,7 +1323,7 @@
 				$(".search-failed").hide();
 				// $("#media-view").removeClass("hidden");
 				// $("ul#right-menu li#album-search").removeClass("hidden");
-				$("ul#right-menu li#any-word").removeClass("dimmed").off("click").on("click", util.toggleAnyWordSearch);
+				$("ul#right-menu li#any-word").addClass("active").off("click").on("click", util.toggleAnyWordSearch);
 				$("#album-view, #subalbums, #thumbs").removeClass("hidden");
 
 				if (albumCacheBase) {
@@ -1371,7 +1371,7 @@
 						}
 
 						if (searchWordsFromUser.length === 1)
-							$("ul#right-menu li#any-word").addClass("dimmed").off("click");
+							$("ul#right-menu li#any-word").removeClass("active").off("click");
 
 
 						if (albumCacheBase === env.options.by_search_string) {

@@ -807,7 +807,8 @@ video {
 }
 
 .thumb-and-caption-container.highlighted .media-caption,
-.album-button-and-caption.highlighted .album-caption {
+.album-button-and-caption.highlighted .album-caption,
+#right-menu .highlighted {
 	background-color: #FFAD27 !important;
 }
 
@@ -1030,12 +1031,12 @@ ul#right-menu.expanded .selected {
 	background-position: right;
 }
 
-ul#right-menu.expanded li.dimmed {
+ul#right-menu.expanded li li li:not(.active) {
 	color: gray;
 	cursor: default !important;
 }
 
-ul#right-menu.expanded li.dimmed:hover {
+ul#right-menu.expanded li li li:not(.active):hover {
 	color: ligthgray;
 	/* background-color: black !important; */
 }

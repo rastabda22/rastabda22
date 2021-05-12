@@ -104,7 +104,22 @@ $(document).ready(function() {
 				}
 			}
 		} else if (! isAuth) {
-			if (e.key !== undefined && ! $("#search-field").is(':focus')) {
+			if (e.key !== undefined && $("#right-menu").hasClass("expanded") && ! $("#search-field").is(':focus')) {
+				if (! e.ctrlKey && ! e.altKey) {
+					let highlightedItemObject = util.highlightedItemObject();
+					if (e.key === "Enter") {
+						highlightedItemObject.click();
+						return false;
+					} else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+						let nextItemFunction = util.nextItemForHighlighting;
+						if (e.key === "ArrowUp")
+							nextItemFunction = util.prevItemForHighlighting;
+						let nextItem = nextItemFunction(highlightedItemObject);
+						util.addHighlightToItem(nextItem);
+						return false;
+					}
+				}
+			} else if (e.key !== undefined && ! $("#right-menu").hasClass("expanded")) {
 				if (! e.ctrlKey && ! e.altKey) {
 					let highlightedObject = util.highlightedObject();
 					if (env.currentMedia === null && e.key === "Enter") {
@@ -622,7 +637,7 @@ $(document).ready(function() {
 			}
 		}
 
-		util.focusSearchField();
+		util.highlightMenu();
 		return false;
 	});
 
