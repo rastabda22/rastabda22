@@ -14,7 +14,6 @@
 			"<form>",
 			{
 				action: hash,
-				// "action": imgData.hash,
 				target: "_blank",
 				method: "post"
 			}
@@ -168,19 +167,6 @@
 			rootMapAlbum = new Album(env.options.by_map_string);
 			env.cache.putAlbum(rootMapAlbum);
 		}
-		// rootMapAlbum.cacheBase = env.options.by_map_string;
-		// rootMapAlbum.media = [];
-		// rootMapAlbum.numsMedia = new ImagesAndVideos();
-		// rootMapAlbum.numsMediaInSubTree = new ImagesAndVideos();
-		// rootMapAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
-		// rootMapAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
-		// rootMapAlbum.subalbums = [];
-		// rootMapAlbum.positionsAndMediaInTree = [];
-		// rootMapAlbum.numPositionsInTree = 0;
-		// rootMapAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
-		// rootMapAlbum.ancestorsCacheBase = [env.options.by_map_string];
-		// rootMapAlbum.includedFilesByCodesSimpleCombination = {};
-		// rootMapAlbum.includedFilesByCodesSimpleCombination[","] = false;
 		return rootMapAlbum;
 	};
 
@@ -193,29 +179,12 @@
 
 		// initializes the map album
 		var newMapAlbum = new Album(env.options.by_map_string + env.options.cache_folder_separator + lastMapAlbumIndex + env.options.cache_folder_separator + env.currentAlbum.cacheBase);
-		// newMapAlbum.media = [];
-		// newMapAlbum.numsMedia = new ImagesAndVideos();
-		// newMapAlbum.numsMediaInSubTree = new ImagesAndVideos();
-		// newMapAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
-		// newMapAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
-		// newMapAlbum.subalbums = [];
-		// newMapAlbum.positionsAndMediaInTree = [];
-		// newMapAlbum.numPositionsInTree = 0;
-		// newMapAlbum.cacheBase = env.options.by_map_string + env.options.cache_folder_separator + lastMapAlbumIndex + env.options.cache_folder_separator + env.currentAlbum.cacheBase;
 		newMapAlbum.path = newMapAlbum.cacheBase.replace(env.options.cache_folder_separator, "/");
-		// newMapAlbum.physicalPath = newMapAlbum.path;
-		// newMapAlbum.clickHistory = [];
-		// newMapAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
-		// newMapAlbum.includedFilesByCodesSimpleCombination = {};
-		// newMapAlbum.includedFilesByCodesSimpleCombination[","] = false;
-
 
 		rootMapAlbum.numsMediaInSubTree.sum(newMapAlbum.numsMediaInSubTree);
 		rootMapAlbum.subalbums.push(newMapAlbum);
 		rootMapAlbum.positionsAndMediaInTree.mergePositionsAndMedia(newMapAlbum.positionsAndMediaInTree);
 		rootMapAlbum.numPositionsInTree = rootMapAlbum.positionsAndMediaInTree.length;
-		// rootMapAlbum.numPositionsInTree += newMapAlbum.numPositionsInTree;
-		// rootMapAlbum.numsProtectedMediaInSubTree[","].sum(newMapAlbum.numsProtectedMediaInSubTree[","]);
 
 		newMapAlbum.ancestorsCacheBase = rootMapAlbum.ancestorsCacheBase.slice();
 		newMapAlbum.ancestorsCacheBase.push(newMapAlbum.cacheBase);
@@ -225,20 +194,9 @@
 
 	Utilities.prototype.initializeSearchAlbumBegin = function(albumCacheBase) {
 		var newSearchAlbum = new Album(albumCacheBase);
-		// newSearchAlbum.positionsAndMediaInTree = [];
-		// newSearchAlbum.media = [];
-		// newSearchAlbum.subalbums = [];
-		// newSearchAlbum.numsMedia = new ImagesAndVideos();
-		// newSearchAlbum.numsMediaInSubTree = new ImagesAndVideos();
-		// newSearchAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
-		// newSearchAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
-		// newSearchAlbum.cacheBase = albumCacheBase;
 		newSearchAlbum.path = newSearchAlbum.cacheBase.replace(env.options.cache_folder_separator, "/");
 		newSearchAlbum.ancestorsNames = [env.options.by_search_string, newSearchAlbum.cacheBase];
-		// newSearchAlbum.physicalPath = newSearchAlbum.path;
-		// newSearchAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
 		newSearchAlbum.includedFilesByCodesSimpleCombination = new IncludedFiles({",": {}});
-		// newSearchAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
 		return newSearchAlbum;
 	};
@@ -262,7 +220,6 @@
 			rootSearchAlbum.positionsAndMediaInTree.mergePositionsAndMedia(this.positionsAndMediaInTree);
 		}
 		rootSearchAlbum.numPositionsInTree += this.numPositionsInTree;
-		// rootSearchAlbum.numsProtectedMediaInSubTree[","].sum(this.numsProtectedMediaInSubTree[","]);
 
 		this.ancestorsCacheBase = rootSearchAlbum.ancestorsCacheBase.slice();
 		this.ancestorsCacheBase.push(this.cacheBase);
@@ -275,19 +232,6 @@
 			rootSelectionAlbum = new Album(env.options.by_selection_string);
 			env.cache.putAlbum(rootSelectionAlbum);
 		}
-		// rootSelectionAlbum.cacheBase = env.options.by_selection_string;
-		// rootSelectionAlbum.media = [];
-		// rootSelectionAlbum.numsMedia = new ImagesAndVideos();
-		// rootSelectionAlbum.numsMediaInSubTree = new ImagesAndVideos();
-		// rootSelectionAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
-		// rootSelectionAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
-		// rootSelectionAlbum.subalbums = [];
-		// rootSelectionAlbum.positionsAndMediaInTree = [];
-		// rootSelectionAlbum.numPositionsInTree = 0;
-		// rootSelectionAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
-		// rootSelectionAlbum.ancestorsCacheBase = [env.options.by_selection_string];
-		// rootSelectionAlbum.includedFilesByCodesSimpleCombination = {};
-		// rootSelectionAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
 		return rootSelectionAlbum;
 	};
@@ -296,33 +240,16 @@
 		// initializes the selection album
 
 		var rootSelectionAlbum = env.cache.getAlbum(env.options.by_selection_string);
-		// if (! rootSelectionAlbum)
-		// 	rootSelectionAlbum = Utilities.initializeSelectionRootAlbum();
 
 		lastSelectionAlbumIndex ++;
 
 		env.selectionAlbum = new Album(env.options.by_selection_string + env.options.cache_folder_separator + lastSelectionAlbumIndex);
-		// newSelectionAlbum.media = [];
-		// newSelectionAlbum.numsMedia = new ImagesAndVideos();
-		// newSelectionAlbum.numsMediaInSubTree = new ImagesAndVideos();
-		// newSelectionAlbum.sizesOfAlbum = JSON.parse(JSON.stringify(initialSizes));
-		// newSelectionAlbum.sizesOfSubTree = JSON.parse(JSON.stringify(initialSizes));
-		// newSelectionAlbum.subalbums = [];
-		// newSelectionAlbum.positionsAndMediaInTree = [];
-		// newSelectionAlbum.numPositionsInTree = 0;
-		// newSelectionAlbum.cacheBase = env.options.by_selection_string + env.options.cache_folder_separator + lastSelectionAlbumIndex;
 		env.selectionAlbum.path = env.selectionAlbum.cacheBase.replace(env.options.cache_folder_separator, "/");
-		// newSelectionAlbum.physicalPath = newSelectionAlbum.path;
-		// newSelectionAlbum.numsProtectedMediaInSubTree = {",": new ImagesAndVideos()};
-		// newSelectionAlbum.includedFilesByCodesSimpleCombination = {};
-		// newSelectionAlbum.includedFilesByCodesSimpleCombination[","] = false;
 
 		rootSelectionAlbum.numsMediaInSubTree.sum(env.selectionAlbum.numsMediaInSubTree);
 		rootSelectionAlbum.subalbums.push(env.selectionAlbum);
 		rootSelectionAlbum.positionsAndMediaInTree.mergePositionsAndMedia(env.selectionAlbum.positionsAndMediaInTree);
 		rootSelectionAlbum.numPositionsInTree = rootSelectionAlbum.positionsAndMediaInTree.length;
-		// rootSelectionAlbum.numPositionsInTree += env.selectionAlbum.numPositionsInTree;
-		// rootSelectionAlbum.numsProtectedMediaInSubTree[","].sum(env.selectionAlbum.numsProtectedMediaInSubTree[","]);
 
 		env.selectionAlbum.ancestorsCacheBase = rootSelectionAlbum.ancestorsCacheBase.slice();
 		env.selectionAlbum.ancestorsCacheBase.push(env.selectionAlbum.cacheBase);
@@ -992,16 +919,7 @@
 
 	Utilities.prototype.isSearchRootCacheBase = function(cacheBase) {
 		return cacheBase.indexOf(env.options.by_search_string) === 0;
-		// return cacheBase.indexOf(env.options.by_search_string) === 0 && cacheBase.split(env.options.cache_folder_separator).length === 3;
 	};
-
-	// Utilities.isMapRootCacheBase = function(cacheBase) {
-	// 	return cacheBase.indexOf(env.options.by_map_string) === 0 && cacheBase.split(env.options.cache_folder_separator).length === 3;
-	// };
-	//
-	// Utilities.isSelectionRootCacheBase = function(cacheBase) {
-	// 	return cacheBase.indexOf(env.options.by_selection_string) === 0 && cacheBase.split(env.options.cache_folder_separator).length === 2;
-	// };
 
 	Utilities.isAnyRootCacheBase = function(cacheBase) {
 		var result =
@@ -1148,7 +1066,6 @@
 	Utilities.prototype.noResults = function(album, resolveParseHash, selector) {
 		// no media found or other search fail, show the message
 		env.currentAlbum = album;
-		// $("#thumbs").hide();
 		TopFunctions.setTitle("album", null);
 		if (! $("ul#right-menu").hasClass("expanded")) {
 			// the search root album could not be in the cache, get it, toggleMenu needs it
@@ -1156,8 +1073,6 @@
 			promise.then(Utilities.toggleMenu);
 		}
 		$("#subalbums, #thumbs, #media-view").addClass("hidden-by-no-results");
-		// $("#album-view #subalbums, #album-view #thumbs").addClass("hidden");
-		// $("#media-view").addClass("hidden");
 		$("#loading").hide();
 		if (typeof selector === "undefined")
 			selector = '#no-results';
@@ -1168,7 +1083,6 @@
 				resolveParseHash([album, -1]);
 			}
 		);
-		// $(selector).fadeOut(4000);
 	};
 
 	Utilities.focusSearchField = function() {
@@ -3635,15 +3549,6 @@
 		var left = Math.round((containerWidth - actualWidth) / 2 + distanceFromImageBorder);
 		$("#media-select-box .select-box").css("left", "");
 		$("#media-select-box .select-box").css("left", left.toString() + "px").css("bottom", bottom.toString() + "px");
-		// if (env.isMobile.any() && env.currentMedia !== null) {
-		// 	// move the box above the media bar
-		// 	while (Utilities.areColliding($("#media-select-box .select-box"), $(".media-box#center .media-bar"))) {
-		// 		$("#media-select-box .select-box").css("bottom", (parseInt($("#media-select-box .select-box").css("bottom")) + 5) + "px");
-		// 	}
-		// 	while (Utilities.areColliding($("#media-select-box .select-box"), $("#prev"))) {
-		// 		$("#media-select-box .select-box").css("left", (parseInt($("#media-select-box .select-box").css("left")) + 5) + "px");
-		// 	}
-		// }
 
 		return true;
 	};
@@ -3870,16 +3775,12 @@
 			$("#media-view").off();
 			$("#media-view").off('mouseover').on(
 				'mouseover',
-			// $("#media-view").off('mouseenter').on(
-			// 	'mouseenter',
 				function() {
 					$(".media-box .links").stop().fadeTo("slow", 0.50).css("display", "inline");
 				}
 			);
 			$("#media-view").off('mouseout').on(
 				'mouseout',
-			// $("#media-view").off('mouseleave').on(
-			// 	'mouseleave',
 				function() {
 					$(".media-box .links").stop().fadeOut("slow");
 				}
