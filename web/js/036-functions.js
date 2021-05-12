@@ -562,13 +562,13 @@
 			thisAlbum.numsMedia.imagesAndVideosTotal() < env.options.big_virtual_folders_threshold ||
 			! isTransversalAlbum
 		) {
-			$("ul#right-menu #big-albums").addClass("hidden");
+			$("ul#right-menu .big-albums").addClass("hidden");
 		} else {
-			$("ul#right-menu #big-albums").removeClass("hidden");
+			$("ul#right-menu .big-albums").removeClass("hidden");
 			if (env.options.show_big_virtual_folders)
-			 	$("ul#right-menu #big-albums").addClass("selected");
+			 	$("ul#right-menu .big-albums").addClass("selected");
 			else
-				$("ul#right-menu #big-albums").removeClass("selected");
+				$("ul#right-menu .big-albums").removeClass("selected");
 		}
 
 		////////////////// SORT //////////////////////////////

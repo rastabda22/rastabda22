@@ -1,4 +1,6 @@
+* added arrow navigation in rigth menu
 * ui tweaks
+* bug fixes
 
 ### version v5.1.1 (May 10, 2021)
 
