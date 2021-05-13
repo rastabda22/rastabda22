@@ -1572,7 +1572,7 @@
 	Album.prototype.sortSubalbumsByDate = function(ev) {
 		if (
 			this.isUndefinedOrTrue("albumNameSort") &&
-			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
+			(ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			env.albumNameSort = false;
 			f.setBooleanCookie("albumNameSortRequested", false);
@@ -1587,7 +1587,7 @@
 	Album.prototype.sortSubalbumsByName = function(ev) {
 		if (
 			this.isUndefinedOrFalse("albumNameSort") &&
-			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
+			(ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			env.albumNameSort = true;
 			f.setBooleanCookie("albumNameSortRequested", true);
@@ -1600,7 +1600,7 @@
 
 	Album.prototype.sortSubalbumsReverse = function(ev) {
 		if (
-			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
+			(ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			env.albumReverseSort = ! env.albumReverseSort;
 			f.setBooleanCookie("albumReverseSortRequested", env.albumReverseSort);
@@ -1614,7 +1614,7 @@
 	Album.prototype.sortMediaByDate = function (ev) {
 		if (
 			this.mediaNameSort &&
-			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
+			(ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			env.mediaNameSort = false;
 			f.setBooleanCookie("mediaNameSortRequested", false);
@@ -1634,7 +1634,7 @@
 	Album.prototype.sortMediaByName = function(ev) {
 		if (
 			! this.mediaNameSort &&
-			ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
+			(ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
 			env.mediaNameSort = true;
 			f.setBooleanCookie("mediaNameSortRequested", true);
@@ -1652,7 +1652,7 @@
 	};
 
 	Album.prototype.sortMediaReverse = function(ev) {
-		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.mediaReverseSort = ! env.mediaReverseSort;
 			f.setBooleanCookie("mediaReverseSortRequested", env.mediaReverseSort);
 			this.sortAlbumsMedia();
@@ -1754,7 +1754,7 @@
 	TopFunctions.toggleTitle = function(ev) {
 		// next line: why [1, 9].indexOf(ev.which) !== -1 ?!?!?
 		// if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_title = ! env.options.hide_title;
 			f.setBooleanCookie("hideTitle", env.options.hide_title);
 			f.updateMenu();
@@ -1889,7 +1889,7 @@
 	};
 
 	TopFunctions.toggleSlideMode = function(ev) {
-		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.albums_slide_style = ! env.options.albums_slide_style;
 			f.setBooleanCookie("albumsSlideStyle", env.options.albums_slide_style);
 			f.updateMenu();
@@ -1901,7 +1901,7 @@
 	};
 
 	TopFunctions.toggleSpacing = function(ev) {
-		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			if (env.options.spacing)
 				env.options.spacing = 0;
 			else
@@ -1923,7 +1923,7 @@
 	};
 
 	TopFunctions.toggleAlbumNames = function(ev) {
-		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.show_album_names_below_thumbs = ! env.options.show_album_names_below_thumbs;
 			f.setBooleanCookie("showAlbumNamesBelowThumbs", env.options.show_album_names_below_thumbs);
 			f.updateMenu();
@@ -1936,7 +1936,7 @@
 	};
 
 	TopFunctions.toggleMediaCount = function(ev) {
-		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.show_album_media_count = ! env.options.show_album_media_count;
 			f.setBooleanCookie("showAlbumMediaCount", env.options.show_album_media_count);
 			f.updateMenu();
@@ -1950,7 +1950,7 @@
 	};
 
 	TopFunctions.toggleMediaNames = function(ev) {
-		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.show_media_names_below_thumbs = ! env.options.show_media_names_below_thumbs;
 			f.setBooleanCookie("showMediaNamesBelowThumbs", env.options.show_media_names_below_thumbs);
 			f.updateMenu();
@@ -1969,7 +1969,7 @@
 	};
 
 	TopFunctions.toggleAlbumsSquare = function(ev) {
-		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.album_thumb_type = env.options.album_thumb_type === "square" ? "fit" : "square";
 			f.setCookie("albumThumbType", env.options.album_thumb_type);
 			f.updateMenu();
@@ -1983,7 +1983,7 @@
 	};
 
 	TopFunctions.toggleMediaSquare = function(ev) {
-		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.media_thumb_type = env.options.media_thumb_type === "square" ? "fixed_height" : "square";
 			f.setCookie("mediaThumbType", env.options.media_thumb_type);
 			f.updateMenu();
@@ -2094,7 +2094,7 @@
 	};
 
 	TopFunctions.prototype.toggleBigAlbumsShow = function(ev) {
-		if (ev.button === 0 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			if ($("#message-too-many-images").is(":visible")) {
 				$("#message-too-many-images").css("display", "");
 			}
