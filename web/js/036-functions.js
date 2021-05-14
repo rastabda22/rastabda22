@@ -316,18 +316,8 @@
 			$("ul#right-menu li.search").removeClass("hidden-by-map");
 
 		if (
-			thisAlbum === null ||
-			$(".sub-menu:not(.hidden)").length
-			// thisAlbum !== null &&
-			// (thisAlbum.isSearch() || thisAlbum.cacheBase === env.options.by_search_string)
-			// ||
-			// $("ul#right-menu li#no-search-string").is(":visible") ||
-			// $("ul#right-menu li#no-results").is(":visible") ||
-			// $("ul#right-menu li#search-too-wide").is(":visible")
+			thisAlbum !== null
 		) {
-			// $("ul#right-menu li.search.expandable").removeClass("expanded");
-			// $("ul#right-menu li.search ul").addClass("hidden");
-		} else {
 			if (isPopup)
 				$("ul#right-menu li.search #search-field, ul#right-menu li.search #search-button").attr("title", util._t("#refine-popup-content"));
 			else
