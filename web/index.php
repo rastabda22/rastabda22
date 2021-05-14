@@ -429,26 +429,27 @@
 			<ul id="right-menu">
 				<li id="menu-and-padlock">
 					<span id="menu-icon"> ☰ </span>
+					<img id="search-icon" src="img/ic_search_black_48dp_2x.png">
 					<span id="padlock" class="protection">
 						<img width="12px" height="16px" src="img/padlock.png" />
 					</span>
 				</li>
-				<li class="expandable search active">
+				<li class="search active hidden-by-menu-selection">
 					<form class="caption">
 						<input type="search" id="search-field" />
 						<img id="search-button" src="img/ic_search_black_48dp_2x.png" />
 					</form>
-					<ul class="hidden">
-						<li id="inside-words" class="search active"></li>
-						<li id="any-word" class="search active"></li>
-						<li id="case-sensitive" class="search active"></li>
-						<li id="accent-sensitive" class="search active"></li>
-						<li id="tags-only" class="search active"></li>
-						<li id="album-search" class="search active"></li>
+					<ul>
+						<li id="inside-words" class="active"></li>
+						<li id="any-word" class="active"></li>
+						<li id="case-sensitive" class="active"></li>
+						<li id="accent-sensitive" class="active"></li>
+						<li id="tags-only" class="active"></li>
+						<li id="album-search" class="active"></li>
 					</ul>
 				</li>
 
-				<li class="expandable browsing-mode-switcher active">
+				<li class="first-level expandable browsing-mode-switcher active">
 					<span class="browsing-mode-switcher caption"></span>
 					<ul class="sub-menu hidden">
 						<li id="folders-view" class="browsing-mode-switcher radio active"></li>
@@ -460,7 +461,7 @@
 					</ul>
 				</li>
 
-				<li class="expandable sort album-sort active">
+				<li class="first-level expandable sort album-sort active">
 					<span class="sort album-sort caption"></span>
 					<ul class="sub-menu hidden">
 						<li class='sort album-sort by-date radio'></li>
@@ -469,7 +470,7 @@
 					</ul>
 				</li>
 
-				<li class="expandable sort media-sort active">
+				<li class="first-level expandable sort media-sort active">
 					<span class="sort media-sort caption"></span>
 					<ul class="sub-menu hidden">
 						<li class='sort media-sort by-date radio'></li>
@@ -478,7 +479,7 @@
 					</ul>
 				</li>
 
-				<li class='expandable ui active'>
+				<li class="first-level expandable ui active">
 					<span class='ui caption'></span>
 					<ul class="sub-menu hidden">
 						<li class='ui hide-title active'></li>
@@ -496,7 +497,7 @@
 					</ul>
 				</li>
 
-				<li class='expandable select active'>
+				<li class='first-level expandable select active'>
 					<span class='select caption'></span>
 					<ul class="sub-menu hidden">
 						<li class='select everything active'></li>
@@ -511,11 +512,11 @@
 					</ul>
 				</li>
 
-				<li class='big-albums active'>
+				<li class='first-level big-albums active'>
 					<span id='show-big-albums' class="big-albums caption"></span>
 				</li>
 
-				<li class='expandable download-album active'>
+				<li class='first-level expandable download-album active'>
 					<span class='download-album caption'></span>
 					<ul class="sub-menu hidden">
 						<li class='download-single-media active'>
@@ -538,7 +539,7 @@
 					</ul>
 				</li>
 
-				<li class='protection active'>
+				<li class='first-level protection active'>
 					<span id="protected-content-unveil" class='protection caption'></span>
 				</li>
 			</ul>

@@ -311,9 +311,9 @@
 		////////////////// SEARCH //////////////////////////////
 
 		if (isMap)
-			$("ul#right-menu li.search").addClass("hidden");
+			$("ul#right-menu li.search").addClass("hidden-by-map");
 		else
-			$("ul#right-menu li.search").removeClass("hidden");
+			$("ul#right-menu li.search").removeClass("hidden-by-map");
 
 		if (
 			thisAlbum === null ||
@@ -325,17 +325,16 @@
 			// $("ul#right-menu li#no-results").is(":visible") ||
 			// $("ul#right-menu li#search-too-wide").is(":visible")
 		) {
-			$("ul#right-menu li.search.expandable").removeClass("expanded");
-			$("ul#right-menu li.search ul").addClass("hidden");
+			// $("ul#right-menu li.search.expandable").removeClass("expanded");
+			// $("ul#right-menu li.search ul").addClass("hidden");
 		} else {
 			if (isPopup)
 				$("ul#right-menu li.search #search-field, ul#right-menu li.search #search-button").attr("title", util._t("#refine-popup-content"));
 			else
 				$("ul#right-menu li.search #search-field, ul#right-menu li.search #search-button").attr("title", util._t("#real-search"));
 
-			$("ul#right-menu li.search.expandable").addClass("expanded");
-			$("ul#right-menu li.search ul").removeClass("hidden");
-			// $("ul#right-menu li#refine-search").removeClass("hidden");
+			// $("ul#right-menu li.search.expandable").addClass("expanded");
+			// $("ul#right-menu li.search ul").removeClass("hidden");
 			if (env.options.search_inside_words)
 				$("ul#right-menu li#inside-words").addClass("selected");
 			else
@@ -377,12 +376,12 @@
 		$("#search-field").off("focus").on(
 			"focus",
 			function() {
-				$(".sub-menu").addClass("hidden");
-				$("#right-menu li.search.expandable").addClass("expanded");
-				$("#right-menu li.search ul").removeClass("hidden");
-				// if ($("ul", this).is(':hidden'))
-				// 	$('#right-menu ul').slideUp(300);
-				// $("ul", this).slideToggle(300);
+				// $(".sub-menu").addClass("hidden");
+				// $("#right-menu li.search.expandable").addClass("expanded");
+				// $("#right-menu li.search ul").removeClass("hidden");
+				// // if ($("ul", this).is(':hidden'))
+				// // 	$('#right-menu ul').slideUp(300);
+				// // $("ul", this).slideToggle(300);
 			}
 		);
 
@@ -1250,7 +1249,7 @@
 		$("#right-menu li.expandable").off("click").on(
 			"click",
 			function() {
-				$("#right-menu li ul").addClass("hidden");
+				$("#right-menu li:not(.search) ul").addClass("hidden");
 				$("#right-menu li.expandable").removeClass("expanded");
 				$("ul", this).removeClass("hidden");
 				$(this).addClass("expanded");

@@ -117,6 +117,13 @@ $(document).ready(function() {
 						let nextItem = nextItemFunction(highlightedItemObject);
 						util.addHighlightToItem(nextItem);
 						return false;
+					} else if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+						$("#right-menu li.first-level.hidden-by-menu-selection .caption.was-highlighted, #right-menu li.search.hidden-by-menu-selection .caption.was-highlighted").addClass("highlighted").removeClass("was-highlighted");
+						$("#right-menu li.first-level:not(.hidden-by-menu-selection) .caption.highlighted, #right-menu li.search:not(.hidden-by-menu-selection) .caption.highlighted").removeClass("highlighted").addClass("was-highlighted");
+						$("#right-menu li.first-level, #right-menu li.search").toggleClass("hidden-by-menu-selection");
+						$("#menu-icon, #search-icon").toggleClass("expanded")
+						util.highlightMenu();
+						util.focusSearchField();
 					}
 				}
 			} else if (e.key !== undefined && ! $("#right-menu").hasClass("expanded")) {
@@ -645,7 +652,7 @@ $(document).ready(function() {
 	/* Entry point for most events */
 
 	$('#search-field').keypress(function(ev) {
-		$("#right-menu li.search ul").removeClass("hidden");
+		// $("#right-menu li.search ul").removeClass("hidden");
 		if (ev.which === 13 || ev.keyCode === 13) {
 			//Enter key pressed, trigger search button click event
 			$('#search-button').click();

@@ -53,7 +53,7 @@ a:hover {
 	cursor: pointer;
 }
 
-.hidden, .hidden-by-option, .hidden-by-pinch, .hidden-by-no-results, .hidden-by-button {
+.hidden, .hidden-by-option, .hidden-by-pinch, .hidden-by-no-results, .hidden-by-button, .hidden-by-map, .hidden-by-menu-selection {
 	display: none !important;
 }
 
@@ -904,7 +904,7 @@ video {
 /****************************/
 /* right menu */
 
-ul#right-menu {
+#right-menu {
 	list-style-type: none;
 	list-style: none;
 	margin: 0;
@@ -919,68 +919,81 @@ ul#right-menu {
 	cursor: default;
 }
 
-ul#right-menu li {
+#right-menu li {
 	/* padding: 0 .5em; */
 	/* cursor: pointer; */
 	font-size: 90%;
 }
-ul#right-menu.expanded #search-field {
+#right-menu.expanded #search-field {
 	min-width: 14em;
 }
 
-ul#right-menu li.caption, ul#right-menu li:not(.active) {
+#right-menu li.caption, #right-menu li:not(.active) {
 	cursor: default;
 }
 
-ul#right-menu li:not(.expanded) span.caption, ul#right-menu li ul:not(.hidden) li.radio:not(.selected), ul#right-menu li ul:not(.hidden) li:not(.radio) {
+#right-menu li:not(.expanded) span.caption, #right-menu li ul:not(.hidden) li.radio:not(.selected), #right-menu li ul:not(.hidden) li:not(.radio) {
 	cursor: pointer;
 }
 
-ul#right-menu span a#menu-icon:hover {
+#right-menu #menu-icon:hover, #right-menu #search-icon:hover {
 	background-color: transparent;
 }
 
-ul#right-menu:not(.expanded) li:not(#menu-and-padlock) {
+#right-menu:not(.expanded) li:not(#menu-and-padlock) {
 	display: none !important;
 }
 
-ul#right-menu span#menu-icon, ul#right-menu li#menu-line {
-	/*float: right;*/
-	display: list-item;
+#right-menu #search-icon {
+	height: 20px;
 }
 
-ul#right-menu span#menu-icon, ul#right-menu #padlock img, ul#right-menu.expanded li {
+#right-menu #search-icon:hover, #right-menu #search-icon.expanded {
+	height: 30px;
+}
+
+#right-menu.expanded li {
 	float: none;
 	text-align: right;
 }
 
-ul#right-menu.expanded li:not(#menu-and-padlock) {
+#right-menu.expanded li:not(#menu-and-padlock) {
 	padding: .1em 0;
 }
 
-ul#right-menu span#menu-icon, ul#right-menu #padlock img {
+#right-menu #menu-icon, #right-menu #search-icon, #right-menu #padlock img {
 	padding: .1em .5em;
 }
 
-ul#right-menu #padlock {
+#right-menu #menu-icon, #right-menu #search-icon {
+	float: right;
+	display: list-item;
+}
+
+#right-menu li.search {
+	margin-right: 30px;
+}
+
+#right-menu #padlock {
+	display: list-item;
 	float: right;
 	padding: 0;
 	background-color: black;
 	cursor: pointer;
 }
 
-ul#right-menu.expanded {
+#right-menu.expanded {
 	background-color:rgba(0, 0, 0, 0.7);
 	min-width: 15em;
 }
 
-ul#right-menu.expanded li {
+#right-menu.expanded li {
 	display: list-item;
 	text-align: left;
 	font-style: italic;
 }
 
-ul#right-menu.expanded li.caption {
+#right-menu.expanded li.caption {
 	/*text-align: left;*/
 	padding-right: 2em;
 	font-variant: small-caps;
@@ -988,16 +1001,20 @@ ul#right-menu.expanded li.caption {
 	font-style: normal;
 }
 
-ul#right-menu.expanded li {
+#right-menu.expanded li {
 	clear: both;
 }
 
-ul#right-menu span#menu-icon {
+#right-menu #menu-icon {
 	width: 1em;
 	cursor: pointer;
 	float: right;
 	text-align: right;
 	font-style: normal;
+	font-size: 100%;
+}
+
+#right-menu #menu-icon:hover, #right-menu #menu-icon.expanded {
 	font-size: 150%;
 }
 
@@ -1017,7 +1034,7 @@ a.search-link:hover {
 	color: orangered;
 }
 
-ul#right-menu img#search-button {
+#right-menu img#search-button {
 	width: 1.7em;
 	height: 1.7em;
 	cursor: pointer;
@@ -1025,57 +1042,57 @@ ul#right-menu img#search-button {
 	top: 7px;
 }
 
-ul#right-menu.expanded .selected {
+#right-menu.expanded .selected {
 	background-image: url(../img/ic_check_circle_black_24dp_1x.png);
 	background-repeat: no-repeat;
 	background-position: right;
 }
 
-ul#right-menu.expanded li li:not(.active) {
+#right-menu.expanded li li:not(.active) {
 	color: gray;
 	cursor: default !important;
 }
 
-ul#right-menu.expanded li li:not(.active):hover {
+#right-menu.expanded li li:not(.active):hover {
 	color: ligthgray;
 	/* background-color: black !important; */
 }
 
-ul#right-menu.expanded li:not(.active, .sub-menu) {
+#right-menu.expanded li:not(.active, .sub-menu) {
 	/* color: darkgray; */
 }
 
-ul#right-menu li:not(.expanded) .caption:hover, ul#right-menu ul li.active:hover, ul#right-menu #menu-icon:hover, ul#right-menu #padlock img:hover, ul#right-menu #padlock:hover {
+#right-menu li:not(.expanded) .caption:hover, #right-menu ul li.active:hover, #right-menu #menu-icon:hover, #right-menu #padlock img:hover, #right-menu #padlock:hover {
 	background-color: gray !important;
 }
 
-ul#right-menu.expanded li a, ul#right-menu.expanded li span:not(#padlock):not(#menu-icon) {
+#right-menu.expanded li a, #right-menu.expanded li span:not(#padlock):not(#menu-icon) {
 	display: inline-block;
 	width: 100%;
 }
 
-ul#right-menu.expanded ul li:not(.active):hover {
+#right-menu.expanded ul li:not(.active):hover {
 	/* background-color: black !important; */
 }
 
-ul#right-menu #padlock img:hover {
+#right-menu #padlock img:hover {
 	width: 18px;
 	height: 23px;
 	float: right;
 	padding-bottom: 10px;
 }
 
-ul#right-menu #padlock:hover {
+#right-menu #padlock:hover {
 	margin-left: 1em;
 	padding-bottom: 0;
 }
 
-ul#right-menu.expanded ul {
+#right-menu.expanded ul {
 	list-style: none;
 	padding-inline-start: 1em;
 }
 
-ul#right-menu ul li.download-album.active {
+#right-menu ul li.download-album.active {
 	cursor: pointer;
 }
 

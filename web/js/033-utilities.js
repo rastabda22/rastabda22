@@ -1051,13 +1051,18 @@
 	};
 
 	Utilities.toggleMenu = function() {
-		$("ul#right-menu").toggleClass("expanded");
-		if ($("ul#right-menu").hasClass("expanded")) {
+		$("#right-menu").toggleClass("expanded");
+		if ($("#right-menu").hasClass("expanded")) {
+			if (! $(".search").hasClass("hidden-by-menu-selection"))
+				$("#search-icon").addClass("expanded");
+			else
+				$("#menu-icon").addClass("expanded");
 			Utilities.highlightMenu();
 			$("#album-and-media-container:not(.show-media) #album-view").css("opacity", "0.3");
 			$(".leaflet-popup-content-wrapper").css("background-color", "darkgray");
 			Functions.updateMenu();
 		} else {
+			$("#search-icon, #menu-icon").removeClass("expanded");
 			$("#album-view").css("opacity", "");
 			$(".leaflet-popup-content-wrapper").css("background-color", "");
 		}
@@ -1087,20 +1092,21 @@
 
 	Utilities.focusSearchField = function() {
 		if (! env.isMobile.any()) {
-			$("#search-field").focus();
+			$("#search-button").focus();
 		} else {
-			$("#search-field").blur();
+			$("#search-button").blur();
 		}
-		$("#right-menu li.expandable").removeClass("expanded");
-		$("#right-menu li ul").addClass("hidden");
-		$("#right-menu li.search").addClass("expanded");
-		$("#right-menu li.search ul").removeClass("hidden");
-		Utilities.highlightMenu();
+		if (! $("#right-menu li.search .highlighted").length && ! $("#right-menu li.search .was-highlighted").length)
+			$("#right-menu li.search:not(.hidden-by-menu-selection) .caption").addClass("highlighted");
+		else if(! $("#right-menu li.search .highlighted").length && $("#right-menu li.search .was-highlighted").length)
+			$("#right-menu li.search:not(.hidden-by-menu-selection) .was-highlighted").removeClass("was-highlighted").addClass("highlighted");
 	};
 
 	Utilities.highlightMenu = function() {
-		if (! $("#right-menu .highlighted").length)
-			$("#right-menu form").addClass("highlighted");
+		if (! $("#right-menu li.first-level .highlighted").length && ! $("#right-menu li.first-level .was-highlighted").length)
+			$("#right-menu li.first-level:not(.hidden-by-menu-selection) .caption").first().addClass("highlighted");
+		else if(! $("#right-menu li.first-level .highlighted").length && $("#right-menu li.first-level .was-highlighted").length)
+			$("#right-menu li.first-level:not(.hidden-by-menu-selection) .was-highlighted").removeClass("was-highlighted").addClass("highlighted");
 	};
 
 	Utilities.stripHtmlAndReplaceEntities = function(htmlString) {
@@ -2502,15 +2508,21 @@
 	};
 
 	Utilities.removeHighligthsToItems = function() {
-		$("#right-menu .highlighted").removeClass("highlighted");
+		if (! $(".search").hasClass("hidden-by-menu-selection"))
+			$("#right-menu .search .highlighted").removeClass("highlighted");
+		else
+			$("#right-menu .first-level .highlighted").removeClass("highlighted");
 	};
 
 	Utilities.prototype.prevItemForHighlighting = function(object) {
-		var isFirstLevel = object.hasClass("caption");
-		if (isFirstLevel) {
-			prevFirstLevelObject = object.parent().prevAll(".active:not(.hidden):not(#menu-and-padlock)").first();
+		var isSearchMother = object.parent().hasClass("search");
+		var isFirstLevel = object.parent().hasClass("first-level");
+		if (isSearchMother) {
+			return object.next().children(".active:not(.hidden)").last();
+		} else if (isFirstLevel) {
+			prevFirstLevelObject = object.parent().prevAll(".first-level.active:not(.hidden)").first();
 			if (! prevFirstLevelObject.length)
-				prevFirstLevelObject = object.parent().nextAll(".active:not(.hidden)").last();
+				prevFirstLevelObject = object.parent().nextAll(".first-level.active:not(.hidden)").last();
 
 			if (
 				prevFirstLevelObject.hasClass("expandable") &&
@@ -2533,30 +2545,37 @@
 	};
 
 	Utilities.prototype.nextItemForHighlighting = function(object) {
-		var isFirstLevel = object.hasClass("caption");
+		var isSearchMother = object.parent().hasClass("search");
+		var isFirstLevel = isSearchMother || object.parent().hasClass("first-level");
 		if (isFirstLevel) {
 			if (
+				! isSearchMother &&
 				! object.parent().hasClass("expandable") ||
 				object.parent().hasClass("expandable") && ! object.parent().hasClass("expanded") ||
-				object.parent().hasClass("expandable") && object.parent().hasClass("expanded") && ! object.next("ul").children(".active:not(.hidden)").length
+				object.parent().hasClass("expandable") && object.parent().hasClass("expanded") && ! object.next().children(".active:not(.hidden)").length
 			) {
 				// go to the next first-level menu entry
-				let nextFirstLevelObject = object.parent().nextAll(".active:not(.hidden)").first();
+				let nextFirstLevelObject = object.parent().nextAll(".first-level.active:not(.hidden)").first().children(".caption");
 				if (nextFirstLevelObject.length)
-					return nextFirstLevelObject.children(".caption");
+					return nextFirstLevelObject;
 				else
-					return object.parent().siblings(":not(.hidden):not(#menu-and-padlock)").first().children(".caption");
-			} else if (object.parent().hasClass("expandable") && object.parent().hasClass("expanded")) {
+					return object.parent().siblings(".first-level:not(.hidden)").first().children(".caption");
+			} else if (isSearchMother || object.parent().hasClass("expandable") && object.parent().hasClass("expanded")) {
 				// go to its first child
-				return object.next("ul").children(".active:not(.hidden)").first();
+				return object.siblings().children(".active:not(.hidden)").first();
 			}
-		} else if (! object.nextAll(".active:not(.hidden)").length) {
+		}
+
+		var isSearchChild = object.parent().parent().hasClass("search");
+		if (isSearchChild && ! object.nextAll(".active:not(.hidden)").length) {
+			return object.parent().parent().children(".caption");
+		} else if (! isSearchChild && ! object.nextAll(".active:not(.hidden)").length) {
 			// go to the next first-level menu entry
-			let nextFirstLevelObject = object.parent().parent().nextAll(":not(.hidden)").first();
+			let nextFirstLevelObject = object.parent().parent().nextAll(".first-level.active:not(.hidden)").first().children(".caption");
 			if (nextFirstLevelObject.length)
-				return nextFirstLevelObject.children(".caption");
+				return nextFirstLevelObject;
 			else
-				return object.parent().parent().siblings(":not(.hidden)").first().children(".caption");
+				return object.parent().parent().siblings(".first-level.active:not(.hidden)").first().children(".caption");
 		} else {
 			return object.nextAll(".active:not(.hidden)").first();
 		}
@@ -2573,7 +2592,10 @@
 	};
 
 	Utilities.prototype.highlightedItemObject = function() {
-		return $("#right-menu .highlighted");
+		if (! $(".search").hasClass("hidden-by-menu-selection"))
+			return $("#right-menu .search .highlighted");
+		else
+			return $("#right-menu .first-level .highlighted");
 	};
 
 	Utilities.prototype.highlightedObject = function() {
