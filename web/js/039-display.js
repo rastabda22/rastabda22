@@ -125,7 +125,7 @@ $(document).ready(function() {
 					$("#right-menu li.first-level.hidden-by-menu-selection.was-highlighted, #right-menu li.search.hidden-by-menu-selection.was-highlighted").addClass("highlighted").removeClass("was-highlighted");
 					$("#right-menu li.first-level:not(.hidden-by-menu-selection).highlighted, #right-menu li.search:not(.hidden-by-menu-selection).highlighted").removeClass("highlighted").addClass("was-highlighted");
 					$("#right-menu li.first-level, #right-menu li.search").toggleClass("hidden-by-menu-selection");
-					$("#menu-icon, #search-icon").toggleClass("expanded")
+					$("#menu-icon, #search-icon").toggleClass("expanded");
 					util.highlightMenu();
 					util.focusSearchField();
 					return false;
@@ -149,7 +149,6 @@ $(document).ready(function() {
 								// e.key is "ArrowDown" or "ArrowUp"
 								let currentObject = highlightedObject;
 								let arrayDistances = [], objectsInLine = [];
-								let verticalDistance;
 								// first, we must reach the next line
 								while (true) {
 									nextObject = nextObjectFunction(currentObject);

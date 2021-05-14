@@ -2520,7 +2520,7 @@
 		if (isSearchMother) {
 			return object.children("ul").children(".active:not(.hidden)").last();
 		} else if (isFirstLevel) {
-			prevFirstLevelObject = object.prevAll(".first-level.active:not(.hidden)").first();
+			let prevFirstLevelObject = object.prevAll(".first-level.active:not(.hidden)").first();
 			if (! prevFirstLevelObject.length)
 				prevFirstLevelObject = object.nextAll(".first-level.active:not(.hidden)").last();
 
@@ -3869,7 +3869,7 @@
 				maxHeight = (thisHeight > maxHeight) ? thisHeight : maxHeight;
 			}
 		);
-		var difference = maxHeight - parseFloat($(".media-caption").css("height"));
+		// var difference = maxHeight - parseFloat($(".media-caption").css("height"));
 		// $(".album-button-and-caption").css("height", ($(".album-button-and-caption").height() + difference) + 'px');
 		$(".media-caption").css("height", maxHeight + 'px');
 	};
