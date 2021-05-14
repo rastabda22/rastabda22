@@ -808,7 +808,8 @@ video {
 
 .thumb-and-caption-container.highlighted .media-caption,
 .album-button-and-caption.highlighted .album-caption,
-#right-menu .highlighted {
+#right-menu li.highlighted .caption,
+#right-menu ul li.highlighted {
 	background-color: #FFAD27 !important;
 }
 

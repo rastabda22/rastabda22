@@ -122,8 +122,8 @@ $(document).ready(function() {
 					util.addHighlightToItem(nextItem);
 					return false;
 				} else if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
-					$("#right-menu li.first-level.hidden-by-menu-selection .caption.was-highlighted, #right-menu li.search.hidden-by-menu-selection .caption.was-highlighted").addClass("highlighted").removeClass("was-highlighted");
-					$("#right-menu li.first-level:not(.hidden-by-menu-selection) .caption.highlighted, #right-menu li.search:not(.hidden-by-menu-selection) .caption.highlighted").removeClass("highlighted").addClass("was-highlighted");
+					$("#right-menu li.first-level.hidden-by-menu-selection.was-highlighted, #right-menu li.search.hidden-by-menu-selection.was-highlighted").addClass("highlighted").removeClass("was-highlighted");
+					$("#right-menu li.first-level:not(.hidden-by-menu-selection).highlighted, #right-menu li.search:not(.hidden-by-menu-selection).highlighted").removeClass("highlighted").addClass("was-highlighted");
 					$("#right-menu li.first-level, #right-menu li.search").toggleClass("hidden-by-menu-selection");
 					$("#menu-icon, #search-icon").toggleClass("expanded")
 					util.highlightMenu();

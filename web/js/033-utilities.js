@@ -1097,16 +1097,16 @@
 			$("#search-button").blur();
 		}
 		if (! $("#right-menu li.search .highlighted").length && ! $("#right-menu li.search .was-highlighted").length)
-			$("#right-menu li.search:not(.hidden-by-menu-selection) .caption").addClass("highlighted");
+			$("#right-menu li.search:not(.hidden-by-menu-selection)").addClass("highlighted");
 		else if(! $("#right-menu li.search .highlighted").length && $("#right-menu li.search .was-highlighted").length)
 			$("#right-menu li.search:not(.hidden-by-menu-selection) .was-highlighted").removeClass("was-highlighted").addClass("highlighted");
 	};
 
 	Utilities.highlightMenu = function() {
-		if (! $("#right-menu li.first-level .highlighted").length && ! $("#right-menu li.first-level .was-highlighted").length)
-			$("#right-menu li.first-level:not(.hidden-by-menu-selection) .caption").first().addClass("highlighted");
-		else if(! $("#right-menu li.first-level .highlighted").length && $("#right-menu li.first-level .was-highlighted").length)
-			$("#right-menu li.first-level:not(.hidden-by-menu-selection) .was-highlighted").removeClass("was-highlighted").addClass("highlighted");
+		if (! $("#right-menu li.first-level.highlighted").length && ! $("#right-menu li.first-level.was-highlighted").length)
+			$("#right-menu li.first-level:not(.hidden-by-menu-selection)").first().addClass("highlighted");
+		else if(! $("#right-menu li.first-level.highlighted").length && $("#right-menu li.first-level.was-highlighted").length)
+			$("#right-menu li.first-level:not(.hidden-by-menu-selection).was-highlighted").removeClass("was-highlighted").addClass("highlighted");
 	};
 
 	Utilities.stripHtmlAndReplaceEntities = function(htmlString) {
@@ -2509,20 +2509,20 @@
 
 	Utilities.removeHighligthsToItems = function() {
 		if (! $(".search").hasClass("hidden-by-menu-selection"))
-			$("#right-menu .search .highlighted").removeClass("highlighted");
+			$("#right-menu .search.highlighted, #right-menu .search .highlighted").removeClass("highlighted");
 		else
-			$("#right-menu .first-level .highlighted").removeClass("highlighted");
+			$("#right-menu .first-level.highlighted, #right-menu .first-level .highlighted").removeClass("highlighted");
 	};
 
 	Utilities.prototype.prevItemForHighlighting = function(object) {
-		var isSearchMother = object.parent().hasClass("search");
-		var isFirstLevel = object.parent().hasClass("first-level");
+		var isSearchMother = object.hasClass("search");
+		var isFirstLevel = object.hasClass("first-level");
 		if (isSearchMother) {
-			return object.next().children(".active:not(.hidden)").last();
+			return object.children("ul").children(".active:not(.hidden)").last();
 		} else if (isFirstLevel) {
-			prevFirstLevelObject = object.parent().prevAll(".first-level.active:not(.hidden)").first();
+			prevFirstLevelObject = object.prevAll(".first-level.active:not(.hidden)").first();
 			if (! prevFirstLevelObject.length)
-				prevFirstLevelObject = object.parent().nextAll(".first-level.active:not(.hidden)").last();
+				prevFirstLevelObject = object.nextAll(".first-level.active:not(.hidden)").last();
 
 			if (
 				prevFirstLevelObject.hasClass("expandable") &&
@@ -2533,11 +2533,11 @@
 				return prevFirstLevelObject.children("ul").children(".active:not(.hidden)").last();
 			} else {
 				// go to the previous first-level menu entry
-				return prevFirstLevelObject.children(".caption");
+				return prevFirstLevelObject;
 			}
 		} else if (! object.prevAll(".active:not(.hidden)").length) {
 			// go to its first-level menu entry
-			return object.parent().prev();
+			return object.parent().parent();
 		} else {
 			// go to the previous second-level menu entry
 			return object.prevAll(".active:not(.hidden)").first();
@@ -2545,37 +2545,37 @@
 	};
 
 	Utilities.prototype.nextItemForHighlighting = function(object) {
-		var isSearchMother = object.parent().hasClass("search");
-		var isFirstLevel = isSearchMother || object.parent().hasClass("first-level");
+		var isSearchMother = object.hasClass("search");
+		var isFirstLevel = isSearchMother || object.hasClass("first-level");
 		if (isFirstLevel) {
 			if (
 				! isSearchMother &&
-				! object.parent().hasClass("expandable") ||
-				object.parent().hasClass("expandable") && ! object.parent().hasClass("expanded") ||
-				object.parent().hasClass("expandable") && object.parent().hasClass("expanded") && ! object.next().children(".active:not(.hidden)").length
+				! object.hasClass("expandable") ||
+				object.hasClass("expandable") && ! object.hasClass("expanded") ||
+				object.hasClass("expandable") && object.hasClass("expanded") && ! object.children("ul").children(".active:not(.hidden)").length
 			) {
 				// go to the next first-level menu entry
-				let nextFirstLevelObject = object.parent().nextAll(".first-level.active:not(.hidden)").first().children(".caption");
+				let nextFirstLevelObject = object.nextAll(".first-level.active:not(.hidden)").first();
 				if (nextFirstLevelObject.length)
 					return nextFirstLevelObject;
 				else
-					return object.parent().siblings(".first-level:not(.hidden)").first().children(".caption");
-			} else if (isSearchMother || object.parent().hasClass("expandable") && object.parent().hasClass("expanded")) {
+					return object.siblings(".first-level:not(.hidden)").first();
+			} else if (isSearchMother || object.hasClass("expandable") && object.hasClass("expanded")) {
 				// go to its first child
-				return object.siblings().children(".active:not(.hidden)").first();
+				return object.children("ul").children(".active:not(.hidden)").first();
 			}
 		}
 
 		var isSearchChild = object.parent().parent().hasClass("search");
 		if (isSearchChild && ! object.nextAll(".active:not(.hidden)").length) {
-			return object.parent().parent().children(".caption");
+			return object.parent().parent();
 		} else if (! isSearchChild && ! object.nextAll(".active:not(.hidden)").length) {
 			// go to the next first-level menu entry
-			let nextFirstLevelObject = object.parent().parent().nextAll(".first-level.active:not(.hidden)").first().children(".caption");
+			let nextFirstLevelObject = object.parent().parent().nextAll(".first-level.active:not(.hidden)").first();
 			if (nextFirstLevelObject.length)
 				return nextFirstLevelObject;
 			else
-				return object.parent().parent().siblings(".first-level.active:not(.hidden)").first().children(".caption");
+				return object.parent().parent().siblings(".first-level.active:not(.hidden)").first();
 		} else {
 			return object.nextAll(".active:not(.hidden)").first();
 		}
@@ -2593,9 +2593,9 @@
 
 	Utilities.prototype.highlightedItemObject = function() {
 		if (! $(".search").hasClass("hidden-by-menu-selection"))
-			return $("#right-menu .search .highlighted");
+			return $("#right-menu .search.highlighted, #right-menu .search .highlighted");
 		else
-			return $("#right-menu .first-level .highlighted");
+			return $("#right-menu .first-level.highlighted, #right-menu .first-level .highlighted");
 	};
 
 	Utilities.prototype.highlightedObject = function() {
