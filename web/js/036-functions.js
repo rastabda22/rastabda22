@@ -323,8 +323,6 @@
 			else
 				$("ul#right-menu li.search #search-field, ul#right-menu li.search #search-button").attr("title", util._t("#real-search"));
 
-			// $("ul#right-menu li.search.expandable").addClass("expanded");
-			// $("ul#right-menu li.search ul").removeClass("hidden");
 			if (env.options.search_inside_words)
 				$("ul#right-menu li#inside-words").addClass("selected");
 			else
@@ -363,21 +361,20 @@
 			}
 		}
 
-		$("#search-field").off("focus").on(
-			"focus",
-			function() {
-				// $(".sub-menu").addClass("hidden");
-				// $("#right-menu li.search.expandable").addClass("expanded");
-				// $("#right-menu li.search ul").removeClass("hidden");
-				// // if ($("ul", this).is(':hidden'))
-				// // 	$('#right-menu ul').slideUp(300);
-				// // $("ul", this).slideToggle(300);
-			}
-		);
+		// $("#search-field").off("focus").on(
+		// 	"focus",
+		// 	function() {
+		// 		// $(".sub-menu").addClass("hidden");
+		// 		// $("#right-menu li.search.expandable").addClass("expanded");
+		// 		// $("#right-menu li.search ul").removeClass("hidden");
+		// 		// // if ($("ul", this).is(':hidden'))
+		// 		// // 	$('#right-menu ul').slideUp(300);
+		// 		// // $("ul", this).slideToggle(300);
+		// 	}
+		// );
 
 		////////////////// UI //////////////////////////////
 
-			// $("#padlock").removeClass("hidden");
 		if (isMap) {
 			$("ul#right-menu li.ui").addClass("hidden");
 		} else {
@@ -650,8 +647,6 @@
 				$(".select.no-media").addClass("hidden");
 			}
 
-			// if (isSingleMedia) {
-			// 	$(".select.albums, .select.everything, .select.everything-individual, .select.nothing, .select.no-albums").addClass("hidden");
 			if (
 				! isPopup && (
 					! thisAlbum.numsMedia.imagesAndVideosTotal() || ! thisAlbum.subalbums.length
@@ -954,7 +949,6 @@
 					albumForDownload = env.mapAlbum;
 
 				if (albumForDownload.subalbums.length) {
-				// if (albumForDownload.subalbums.length && ! albumForDownload.isTransversal()) {
 					$(".download-album.everything.all.full").removeClass("hidden");
 					// reset the html
 					$(".download-album.everything.all").html(util._t(".download-album.everything.all"));
@@ -1002,16 +996,6 @@
 						}
 					}
 					showDownloadEverything = true;
-
-					// let numImages = 0;
-					// let numVideos = 0;
-					// for (let iMedia = 0; iMedia < albumForDownload.numsMedia.imagesAndVideosTotal(); iMedia ++) {
-					// 	if (albumForDownload.media[iMedia].isImage()) {
-					// 		numImages ++;
-					// 	} else {
-					// 		numVideos ++;
-					// 	}
-					// }
 
 					let mediaInThisAlbum = albumForDownload.numsMedia.imagesAndVideosTotal();
 					let mediaInThisTree = albumForDownload.numsMediaInSubTree.imagesAndVideosTotal();
@@ -1215,8 +1199,6 @@
 		////////////////// PROTECTED CONTENT //////////////////////////////
 
 		if (thisAlbum !== null) {
-			// let numPasswords = thisAlbum.numPasswords();
-
 			if (thisAlbum.hasVeiledProtectedContent()) {
 				// $(".protection").show();
 				$("#padlock").removeClass("hidden");
@@ -1284,11 +1266,6 @@
 
 	Functions.pinchSwipeInitialization = function() {
 		pS.initialize();
-		// util.setPinchButtonsPosition();
-		// util.setPinchButtonsVisibility();
-		// util.setSelectButtonPosition();
-		// util.setDescriptionOptions();
-		// util.correctElementPositions();
 	};
 
 	Functions.tenYears = function() {
@@ -1348,9 +1325,6 @@
 		return ! this.hasOwnProperty(property) || this[property];
 	};
 
-	// Album.prototype.isTrue = function(property) {
-	// 	return ! this.isUndefinedOrFalse(property);
-	// }
 
 	// this function refer to the need that the html showed be sorted
 	Album.prototype.needAlbumNameSort = function() {
@@ -1430,7 +1404,6 @@
 							];
 
 							for (var key in data)
-								// if (data.hasOwnProperty(key) && key !== 'request_password_email')
 								if (data.hasOwnProperty(key) && (! forceReload || uiKeys.indexOf(key) !== -1))
 									env.options[key] = data[key];
 
