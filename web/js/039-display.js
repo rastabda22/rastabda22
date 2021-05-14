@@ -104,27 +104,31 @@ $(document).ready(function() {
 				}
 			}
 		} else if (! isAuth) {
-			if (e.key !== undefined && $("#right-menu").hasClass("expanded") && ! $("#search-field").is(':focus')) {
-				if (! e.ctrlKey && ! e.altKey) {
-					let highlightedItemObject = util.highlightedItemObject();
-					if (e.key === "Enter") {
-						highlightedItemObject.click();
-						return false;
-					} else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-						let nextItemFunction = util.nextItemForHighlighting;
-						if (e.key === "ArrowUp")
-							nextItemFunction = util.prevItemForHighlighting;
-						let nextItem = nextItemFunction(highlightedItemObject);
-						util.addHighlightToItem(nextItem);
-						return false;
-					} else if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
-						$("#right-menu li.first-level.hidden-by-menu-selection .caption.was-highlighted, #right-menu li.search.hidden-by-menu-selection .caption.was-highlighted").addClass("highlighted").removeClass("was-highlighted");
-						$("#right-menu li.first-level:not(.hidden-by-menu-selection) .caption.highlighted, #right-menu li.search:not(.hidden-by-menu-selection) .caption.highlighted").removeClass("highlighted").addClass("was-highlighted");
-						$("#right-menu li.first-level, #right-menu li.search").toggleClass("hidden-by-menu-selection");
-						$("#menu-icon, #search-icon").toggleClass("expanded")
-						util.highlightMenu();
-						util.focusSearchField();
-					}
+			if (
+				e.key !== undefined &&
+				$("#right-menu").hasClass("expanded") &&
+				! $("#search-field").is(":focus") &&
+				! e.ctrlKey && ! e.altKey
+			) {
+				let highlightedItemObject = util.highlightedItemObject();
+				if (e.key === "Enter") {
+					highlightedItemObject.click();
+					return false;
+				} else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+					let nextItemFunction = util.nextItemForHighlighting;
+					if (e.key === "ArrowUp")
+						nextItemFunction = util.prevItemForHighlighting;
+					let nextItem = nextItemFunction(highlightedItemObject);
+					util.addHighlightToItem(nextItem);
+					return false;
+				} else if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+					$("#right-menu li.first-level.hidden-by-menu-selection .caption.was-highlighted, #right-menu li.search.hidden-by-menu-selection .caption.was-highlighted").addClass("highlighted").removeClass("was-highlighted");
+					$("#right-menu li.first-level:not(.hidden-by-menu-selection) .caption.highlighted, #right-menu li.search:not(.hidden-by-menu-selection) .caption.highlighted").removeClass("highlighted").addClass("was-highlighted");
+					$("#right-menu li.first-level, #right-menu li.search").toggleClass("hidden-by-menu-selection");
+					$("#menu-icon, #search-icon").toggleClass("expanded")
+					util.highlightMenu();
+					util.focusSearchField();
+					return false;
 				}
 			} else if (e.key !== undefined && ! $("#right-menu").hasClass("expanded")) {
 				if (! e.ctrlKey && ! e.altKey) {
@@ -403,7 +407,7 @@ $(document).ready(function() {
 
 			if (
 				e.key !== undefined &&
-				! $("#search-field").is(':focus') &&
+				! $("#right-menu").hasClass("expanded") &&
 				e.key.toLowerCase() === util._t("#select-everything-shortcut")
 			) {
 				if (! e.shiftKey) {
@@ -417,7 +421,7 @@ $(document).ready(function() {
 			}
 
 			if (
-				! $("#search-field").is(':focus') &&
+				! $("#right-menu").hasClass("expanded") &&
 				env.currentMedia === null && ! isMap && (
 					['[', ']'].indexOf(e.key) !== -1 && ! isPopup && env.currentAlbum.subalbums.length > 1 ||
 					['{', '}'].indexOf(e.key) !== -1 && (env.currentAlbum.media.length > 1 || env.mapAlbum.media.length > 1)
@@ -495,6 +499,11 @@ $(document).ready(function() {
 				util.toggleMenu();
 				return false;
 			}
+		}
+
+		if ($("#right-menu").hasClass("expanded") && ! $(".search").hasClass("hidden-by-menu-selection") && ! $("#search-field").is(":focus") && e.key !== undefined) {
+			// focus the search field, so that the typed text is added
+			$("#search-field").focus();
 		}
 
 		return true;

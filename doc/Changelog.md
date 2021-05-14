@@ -1,4 +1,5 @@
-* added arrow navigation in rigth menu
+* added arrow navigation in right menu
+* separate search form from remaining menu
 * ui tweaks
 * bug fixes
 
