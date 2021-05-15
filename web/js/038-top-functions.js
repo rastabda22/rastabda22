@@ -2411,7 +2411,7 @@
 		}
 
 		util.setMediaOptions();
-		if (self.media.length)
+		if (self.media.length && env.currentMedia === null)
 			util.adaptMediaCaptionHeight();
 
 	 	if ($(thumbsSelector).is(":visible") || util.isPopup()) {
