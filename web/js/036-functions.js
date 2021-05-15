@@ -146,7 +146,8 @@
 		if (
 			isMapOrPopup ||
 			thisAlbum === null ||
-			! isSingleMedia && ! isAnyRoot
+			! isSingleMedia && ! isAnyRoot ||
+			thisAlbum.isSearch()
 		) {
 			$(".browsing-mode-switcher").addClass("hidden");
 		} else {
