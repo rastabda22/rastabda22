@@ -813,6 +813,8 @@ video {
 	background-color: #FFAD27 !important;
 }
 
+#right-menu li.highlighted .caption,
+#right-menu ul li.highlighted,
 .highlighted .album-name[style],
 .highlighted .real-name[style],
 .highlighted .media-name[style],
@@ -1060,15 +1062,22 @@ a.search-link:hover {
 
 #right-menu.expanded li li:not(.active):hover {
 	color: ligthgray;
-	/* background-color: black !important; */
 }
 
 #right-menu.expanded li:not(.active, .sub-menu) {
-	/* color: darkgray; */
 }
 
-#right-menu li:not(.expanded) .caption:hover, #right-menu ul li.active:hover, #right-menu #menu-icon:hover, #right-menu #padlock img:hover, #right-menu #padlock:hover {
+#right-menu li:not(.expanded) .caption:hover,
+#right-menu ul li.active:hover,
+#right-menu #menu-icon:hover,
+#right-menu #padlock img:hover,
+#right-menu #padlock:hover {
 	background-color: gray !important;
+}
+
+#right-menu li.highlighted:not(.expanded) .caption:hover,
+#right-menu ul li.active.highlighted:hover {
+	background-color: gold !important;
 }
 
 #right-menu.expanded li a, #right-menu.expanded li span:not(#padlock):not(#menu-icon) {
