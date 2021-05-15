@@ -1206,6 +1206,8 @@
 					"click",
 					function() {
 						$(".first-level.protection")[0].click();
+						if ($("#right-menu").hasClass("expanded"))
+							util.toggleMenu();
 					}
 				);
 			} else {

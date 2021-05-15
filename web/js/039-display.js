@@ -790,6 +790,7 @@ $(document).ready(function() {
 	$("ul#right-menu li.square-media-thumbnails").off("click").on("click", tF.toggleMediaSquare);
 	$("ul#right-menu li.reset").off("click").on("click", tF.resetDisplaySettings);
 	$("ul#right-menu #show-big-albums").off("click").on("click", tF.toggleBigAlbumsShow);
+	$("#search-icon").off("click").on("click", util.toggleSearch);
 	$("#menu-icon").off("click").on("click", util.toggleMenu);
 
 	$("#auth-form").submit(

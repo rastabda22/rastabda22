@@ -1006,6 +1006,10 @@ video {
 	clear: both;
 }
 
+#right-menu #search-icon {
+	cursor: pointer;
+}
+
 #right-menu #menu-icon {
 	width: 1em;
 	cursor: pointer;
