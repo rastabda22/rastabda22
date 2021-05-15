@@ -1,3 +1,5 @@
+### version v5.2 (May 15, 2021)
+
 * added arrow navigation in right menu
 * separate search form from remaining menu
 * ui tweaks
