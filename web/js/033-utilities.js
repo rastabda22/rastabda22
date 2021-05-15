@@ -917,10 +917,6 @@
 		this.reverse();
 	};
 
-	Utilities.prototype.isSearchRootCacheBase = function(cacheBase) {
-		return cacheBase.indexOf(env.options.by_search_string) === 0;
-	};
-
 	Utilities.isAnyRootCacheBase = function(cacheBase) {
 		var result =
 			[env.options.folders_string, env.options.by_date_string, env.options.by_gps_string].indexOf(cacheBase) !== -1 ||
@@ -1056,7 +1052,7 @@
 		} else if (! $(".search").hasClass("hidden-by-menu-selection")) {
 			$("#right-menu").removeClass("expanded");
 		}
-		
+
 		if ($("#right-menu").hasClass("expanded")) {
 			$(".search").removeClass("hidden-by-menu-selection");
 			$(".first-level").addClass("hidden-by-menu-selection");

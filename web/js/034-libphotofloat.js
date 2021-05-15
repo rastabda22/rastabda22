@@ -823,13 +823,12 @@
 							function() {
 								// execution arrives here when all the protected json has been loaded and processed
 
-								// if (! util.isSearchRootCacheBase(self.cacheBase)) {
 								delete self.mediaNameSort;
 								delete self.mediaReverseSort;
 								delete self.albumNameSort;
 								delete self.albumReverseSort;
 								self.sortAlbumsMedia();
-								// }
+
 								resolve_continueAddProtectedContent();
 							}
 						);
