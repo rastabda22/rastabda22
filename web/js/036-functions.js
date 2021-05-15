@@ -1205,7 +1205,7 @@
 				$("#padlock").off("click").on(
 					"click",
 					function() {
-						$("#protected-content-unveil")[0].click();
+						$(".first-level.protection")[0].click();
 					}
 				);
 			} else {
