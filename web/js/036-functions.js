@@ -1221,8 +1221,8 @@
 		$("#right-menu li.expandable").off("click").on(
 			"click",
 			function() {
-				$("#right-menu li:not(.search) ul").addClass("hidden");
 				$("#right-menu li.expandable").removeClass("expanded");
+				$("#right-menu li.first-level ul").addClass("hidden");
 				$("ul", this).removeClass("hidden");
 				$(this).addClass("expanded");
 			}
