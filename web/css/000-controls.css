@@ -1069,6 +1069,7 @@ a.search-link:hover {
 
 #right-menu li:not(.expanded) .caption:hover,
 #right-menu ul li.active:hover,
+#right-menu #search-icon:hover,
 #right-menu #menu-icon:hover,
 #right-menu #padlock img:hover,
 #right-menu #padlock:hover {

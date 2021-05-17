@@ -1046,7 +1046,7 @@
 			return false;
 	};
 
-	Utilities.prototype.toggleSearch = function() {
+	Utilities.toggleSearch = function() {
 		if (! $("#right-menu").hasClass("expanded")) {
 			$("#right-menu").addClass("expanded");
 		} else if (! $(".search").hasClass("hidden-by-menu-selection")) {
@@ -1101,7 +1101,7 @@
 		if (! $("ul#right-menu").hasClass("expanded")) {
 			// the search root album could not be in the cache, get it, toggleMenu needs it
 			let promise = PhotoFloat.getAlbum(env.options.by_search_string, null, {getMedia: false, getPositions: false});
-			promise.then(Utilities.toggleMenu);
+			promise.then(Utilities.toggleSearch);
 		}
 		$("#subalbums, #thumbs, #media-view").addClass("hidden-by-no-results");
 		$("#loading").hide();
@@ -4533,6 +4533,7 @@
 	Utilities.prototype.setDescriptionOptions = Utilities.setDescriptionOptions;
 	Utilities.prototype.correctElementPositions = Utilities.correctElementPositions;
 	Utilities.prototype.toggleMenu = Utilities.toggleMenu;
+	Utilities.prototype.toggleSearch = Utilities.toggleSearch;
 	Utilities.prototype.addMediaLazyLoader = Utilities.addMediaLazyLoader;
 	Utilities.prototype.socialButtons = Utilities.socialButtons;
 	Utilities.prototype.openInNewTab = Utilities.openInNewTab;
