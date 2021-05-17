@@ -1079,10 +1079,8 @@
 		if ($("#right-menu").hasClass("expanded")) {
 			$(".first-level").removeClass("hidden-by-menu-selection");
 			$(".search").addClass("hidden-by-menu-selection");
-			if (! $(".search").hasClass("hidden-by-menu-selection"))
-				$("#search-icon").addClass("expanded");
-			else
-				$("#menu-icon").addClass("expanded");
+			$("#search-icon").removeClass("expanded");
+			$("#menu-icon").addClass("expanded");
 			Utilities.highlightMenu();
 			$("#album-and-media-container:not(.show-media) #album-view").css("opacity", "0.3");
 			$(".leaflet-popup-content-wrapper").css("background-color", "darkgray");
@@ -4422,7 +4420,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		Utilities.focusSearchField();
+		// Utilities.focusSearchField();
 	};
 
 	Utilities.prototype.toggleAnyWordSearch = function() {
@@ -4431,7 +4429,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		Utilities.focusSearchField();
+		// Utilities.focusSearchField();
 	};
 
 	Utilities.prototype.toggleCaseSensitiveSearch = function() {
@@ -4440,7 +4438,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		Utilities.focusSearchField();
+		// Utilities.focusSearchField();
 
 	};
 
@@ -4450,7 +4448,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		Utilities.focusSearchField();
+		// Utilities.focusSearchField();
 	};
 
 	Utilities.prototype.toggleTagsOnlySearch = function() {
@@ -4459,7 +4457,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		Utilities.focusSearchField();
+		// Utilities.focusSearchField();
 	};
 
 	Utilities.prototype.toggleCurrentAbumSearch = function() {
@@ -4468,7 +4466,7 @@
 		Functions.updateMenu();
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
-		Utilities.focusSearchField();
+		// Utilities.focusSearchField();
 	};
 
 	Utilities.prototype.horizontalDistance = function(object1, object2) {

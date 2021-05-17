@@ -56,8 +56,11 @@ $(document).ready(function() {
 				// $("#album-view, #media-view, #my-modal").css("opacity", "");
 				// util.goUpInHash();
 				return false;
-			} else if ($("ul#right-menu").hasClass("expanded")) {
+			} else if ($("#menu-icon").hasClass("expanded")) {
 				util.toggleMenu();
+				return false;
+			} else if ($("#search-icon").hasClass("expanded")) {
+				util.toggleSearch();
 				return false;
 			} else if (env.currentMedia !== null && env.currentMedia.isVideo() && ! $("video#media-center")[0].paused) {
 				// stop the video, otherwise it keeps playing
