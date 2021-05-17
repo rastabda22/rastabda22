@@ -1223,10 +1223,13 @@
 		$("#right-menu li.expandable").off("click").on(
 			"click",
 			function() {
+				var wasExpanded = $("#right-menu li.expandable").hasClass("expanded");
 				$("#right-menu li.expandable").removeClass("expanded");
 				$("#right-menu li.first-level ul").addClass("hidden");
-				$("ul", this).removeClass("hidden");
-				$(this).addClass("expanded");
+				if (! wasExpanded) {
+					$("ul", this).removeClass("hidden");
+					$(this).addClass("expanded");
+				}
 			}
 		);
 	};
