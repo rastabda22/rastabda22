@@ -1144,9 +1144,10 @@
 			$("#right-menu li.search:not(.hidden-by-menu-selection)").addClass("highlighted");
 		else if(
 			! $("#right-menu li.search.highlighted").length &&
-			! $("#right-menu li.search .highlighted").length &&
-			$("#right-menu li.search.was-highlighted").length &&
-			$("#right-menu li.search .was-highlighted").length
+			! $("#right-menu li.search .highlighted").length && (
+				$("#right-menu li.search.was-highlighted").length ||
+				$("#right-menu li.search .was-highlighted").length
+			)
 		)
 			$("#right-menu li.search:not(.hidden-by-menu-selection).was-highlighted").removeClass("was-highlighted").addClass("highlighted");
 
@@ -1159,9 +1160,10 @@
 			$("#right-menu li.first-level:not(.hidden-by-menu-selection)").first().addClass("highlighted");
 		else if(
 			! $("#right-menu li.first-level.highlighted").length &&
-			! $("#right-menu li.first-level .highlighted").length &&
-			$("#right-menu li.first-level.was-highlighted").length &&
-			$("#right-menu li.first-level .was-highlighted").length
+			! $("#right-menu li.first-level .highlighted").length && (
+				$("#right-menu li.first-level.was-highlighted").length ||
+				$("#right-menu li.first-level .was-highlighted").length
+			)
 		)
 			$("#right-menu li.first-level:not(.hidden-by-menu-selection).was-highlighted").removeClass("was-highlighted").addClass("highlighted");
 	};
