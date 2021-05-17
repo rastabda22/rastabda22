@@ -876,7 +876,7 @@ $(document).ready(function() {
 			// $("#album-view").removeClass("hidden");
 			$("link[rel=image_src]").remove();
 			$("link[rel=video_src]").remove();
-			$("ul#right-menu").removeClass("expanded");
+			// $("ul#right-menu").removeClass("expanded");
 
 			if (util.isMap() || util.isPopup()) {
 				// we are in a map: close it
