@@ -1223,7 +1223,7 @@
 		$("#right-menu li.expandable").off("click").on(
 			"click",
 			function() {
-				var wasExpanded = $("#right-menu li.expandable").hasClass("expanded");
+				var wasExpanded = $(this).hasClass("expanded");
 				$("#right-menu li.expandable").removeClass("expanded");
 				$("#right-menu li.first-level ul").addClass("hidden");
 				if (! wasExpanded) {
