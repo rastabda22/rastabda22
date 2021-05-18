@@ -668,6 +668,7 @@ $(document).ready(function() {
 			//Enter key pressed, trigger search button click event
 			$('#search-button').click();
 			util.focusSearchField();
+			$("#search-field").blur();
 			return false;
 		}
 	});
