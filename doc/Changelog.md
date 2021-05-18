@@ -1,3 +1,6 @@
+* permit unexpanding first level menu entries
+* bug fixes
+
 ### version v5.2 (May 15, 2021)
 
 * added arrow navigation in right menu
