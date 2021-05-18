@@ -26,23 +26,23 @@
 		font-size: 1em;
 	}
 
-	ul#right-menu li#menu-icon {
+	#menu-icon {
 		font-size: 140%;
 	}
 
-	ul#right-menu #padlock {
+	#padlock {
 		margin-left: 1em;
 		padding-bottom: 0;
 	}
 
-	ul#right-menu #padlock img {
+	#padlock img {
 		width: 18px;
 		height: 23px;
 		float: right;
 		padding-bottom: 10px;
 	}
 
-	ul#right-menu #menu-and-padlock {
+	#menu-and-padlock {
 		margin-left: ;
 		padding-bottom: 0;
 	}

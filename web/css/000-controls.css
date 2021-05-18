@@ -964,10 +964,6 @@ video {
 	padding: .1em 0;
 }
 
-#right-menu #menu-icon, #right-menu #search-icon, #right-menu #padlock img {
-	padding: .1em .5em;
-}
-
 #right-menu #menu-icon, #right-menu #search-icon {
 	float: right;
 	display: list-item;
@@ -981,7 +977,6 @@ video {
 	display: list-item;
 	float: right;
 	padding: 0;
-	background-color: black;
 	cursor: pointer;
 }
 
@@ -1019,6 +1014,16 @@ video {
 	text-align: right;
 	font-style: normal;
 	font-size: 100%;
+}
+
+#menu-icon, #search-icon, #padlock img {
+	background-color: black;
+	opacity: 50%;
+	padding: .1em .5em;
+}
+
+#padlock img {
+	height: 20px;
 }
 
 #right-menu #menu-icon:hover, #right-menu #menu-icon.expanded {
