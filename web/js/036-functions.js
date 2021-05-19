@@ -923,8 +923,13 @@
 
 			$(".download-single-media").addClass("hidden").addClass("active");
 			$(".download-album").addClass("hidden").removeClass("red");
-			$("ul li.download-album").addClass("active");
+			$("ul li.download-album:not(.selection)").addClass("active");
 			$(".download-album.sized").addClass("hidden");
+
+			if (env.selectionAlbum.numsMediaInSubTree.imagesAndVideosTotal()) {
+				$(".download-album.selection").removeClass("hidden");
+				$(".download-album.selection").attr("title", util._t("#how-to-download-selection"));
+			}
 
 			// $(".download-album .sub-menu").addClass("hidden");
 			if (thisAlbum.isSearch() && ! thisAlbum.media.length && ! thisAlbum.subalbums.length) {
