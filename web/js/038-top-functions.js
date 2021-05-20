@@ -1987,19 +1987,21 @@
 			env.options.media_thumb_type = env.options.media_thumb_type === "square" ? "fixed_height" : "square";
 			f.setCookie("mediaThumbType", env.options.media_thumb_type);
 			f.updateMenu();
-			let highlightedSingleMediaId = $("#thumbs .highlighted img.thumbnail").attr("id");
-			let highlightedSingleMediaInPopupId = $("#popup-images-wrapper .highlighted img.thumbnail").attr("id");
-			env.currentAlbum.showThumbs();
-			if (env.currentMedia !== null) {
-				util.scrollBottomMediaToHighlightedThumb($("#" + highlightedSingleMediaId).parent().parent());
-			} else {
-				util.scrollAlbumViewToHighlightedThumb($("#" + highlightedSingleMediaId).parent().parent());
-				util.scrollPopupToHighlightedThumb($("#" + highlightedSingleMediaInPopupId).parent().parent());
+			if (env.currentAlbum.media.length) {
+				let highlightedSingleMediaId = $("#thumbs .highlighted img.thumbnail").attr("id");
+				env.currentAlbum.showThumbs();
+				if (env.currentMedia !== null) {
+					util.scrollBottomMediaToHighlightedThumb($("#" + highlightedSingleMediaId).parent().parent());
+				} else {
+					util.scrollAlbumViewToHighlightedThumb($("#" + highlightedSingleMediaId).parent().parent());
+				}
 			}
 
 			if (util.isPopup()) {
 				env.mapAlbum.showThumbs();
 				map.updatePopup();
+				let highlightedSingleMediaInPopupId = $("#popup-images-wrapper .highlighted img.thumbnail").attr("id");
+				util.scrollPopupToHighlightedThumb($("#" + highlightedSingleMediaInPopupId).parent().parent());
 			}
 		}
 		return false;
