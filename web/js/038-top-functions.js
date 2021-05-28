@@ -2093,6 +2093,7 @@
 				f.updateMenu();
 			}
 		);
+		return false;
 	};
 
 	TopFunctions.prototype.toggleBigAlbumsShow = function(ev) {
