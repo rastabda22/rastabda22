@@ -366,18 +366,6 @@
 			}
 		}
 
-		// $("#search-field").off("focus").on(
-		// 	"focus",
-		// 	function() {
-		// 		// $(".sub-menu").addClass("hidden");
-		// 		// $("#right-menu li.search.expandable").addClass("expanded");
-		// 		// $("#right-menu li.search ul").removeClass("hidden");
-		// 		// // if ($("ul", this).is(':hidden'))
-		// 		// // 	$('#right-menu ul').slideUp(300);
-		// 		// // $("ul", this).slideToggle(300);
-		// 	}
-		// );
-
 		////////////////// UI //////////////////////////////
 
 		if (isMap) {
@@ -936,11 +924,9 @@
 				$(".download-album.selection").attr("title", util._t("#how-to-download-selection"));
 			}
 
-			// $(".download-album .sub-menu").addClass("hidden");
 			if (thisAlbum.isSearch() && ! thisAlbum.media.length && ! thisAlbum.subalbums.length) {
 				// download menu item remains hidden
 			} else if (env.currentMedia !== null || isAlbumWithOneMedia) {
-				$(".download-album .sub-menu").removeClass("hidden");
 				$(".download-album.expandable, .download-album.caption").removeClass("hidden");
 				$(".download-single-media").removeClass("hidden");
 				let trueOriginalMediaPath;
