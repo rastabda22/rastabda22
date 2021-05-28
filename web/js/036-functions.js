@@ -45,24 +45,26 @@
 		var isPopup = util.isPopup();
 		var isMap = util.isMap();
 
-		var popupHasSomeDescription;
+		var popupHasSomeDescription, albumHasSomeDescription, subalbumsHaveSomeDescription, mediaHaveSomeDescription;
 		if (isPopup)
 			popupHasSomeDescription =
 				env.mapAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("title")) ||
 				env.mapAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("description"));
-		var albumHasSomeDescription =
-			env.currentAlbum.hasSomeDescription("title") ||
-			env.currentAlbum.hasSomeDescription("description");
-		var subalbumsHaveSomeDescription =
-			env.currentAlbum.subalbums.length > 0 && (
-				env.currentAlbum.subalbums.some(subalbum => subalbum.hasSomeDescription("title")) ||
-				env.currentAlbum.subalbums.some(subalbum => subalbum.hasSomeDescription("description"))
-			);
-		var mediaHaveSomeDescription =
-			env.currentAlbum.media.length > 0 && (
-				env.currentAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("title")) ||
-				env.currentAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("description"))
-			);
+		if (env.currentAlbum !== null) {
+			albumHasSomeDescription =
+				env.currentAlbum.hasSomeDescription("title") ||
+				env.currentAlbum.hasSomeDescription("description");
+			subalbumsHaveSomeDescription =
+				env.currentAlbum.subalbums.length > 0 && (
+					env.currentAlbum.subalbums.some(subalbum => subalbum.hasSomeDescription("title")) ||
+					env.currentAlbum.subalbums.some(subalbum => subalbum.hasSomeDescription("description"))
+				);
+			mediaHaveSomeDescription =
+				env.currentAlbum.media.length > 0 && (
+					env.currentAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("title")) ||
+					env.currentAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("description"))
+				);
+		}
 		var singleMediaHasSomeDescription;
 		if (env.currentMedia !== null)
 			singleMediaHasSomeDescription =
@@ -82,12 +84,15 @@
 		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
 		return (
 			isMap ||
-			isPopup && ! env.mapAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("tags")) ||
-			env.currentMedia === null &&
-			! env.currentAlbum.hasSomeDescription("tags") && (
-				! env.currentAlbum.subalbums.length || ! env.currentAlbum.subalbums.some(subalbum => subalbum.hasSomeDescription("tags"))
-			) && (
-				! env.currentAlbum.media.length || ! env.currentAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("tags"))
+			isPopup && ! env.mapAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("tags")) || (
+				env.currentMedia === null &&
+				env.currentAlbum === null || (
+					! env.currentAlbum.hasSomeDescription("tags") && (
+						! env.currentAlbum.subalbums.length || ! env.currentAlbum.subalbums.some(subalbum => subalbum.hasSomeDescription("tags"))
+					) && (
+						! env.currentAlbum.media.length || ! env.currentAlbum.media.some(singleMedia => singleMedia.hasSomeDescription("tags"))
+					)
+				)
 			) ||
 			env.currentMedia !== null && ! env.currentMedia.hasSomeDescription("tags")
 		);
@@ -390,7 +395,7 @@
 					$("ul#right-menu li.hide-title").addClass("selected");
 			}
 
-			if (Functions.hideDescriptionMenuEntry()) {
+			if (Functions.hideDescriptionMenuEntry(thisAlbum)) {
 				$("ul#right-menu li.show-descriptions").addClass("hidden");
 			} else {
 				$("ul#right-menu li.show-descriptions").removeClass("hidden");
