@@ -1216,8 +1216,7 @@
 					"click",
 					function() {
 						$(".first-level.protection")[0].click();
-						if ($("#right-menu").hasClass("expanded"))
-							util.toggleMenu();
+						util.closeMenu();
 					}
 				);
 			} else {
@@ -1247,6 +1246,10 @@
 				if (! wasExpanded) {
 					$("ul", this).removeClass("hidden");
 					$(this).addClass("expanded");
+				} else if ($(".first-level ul li.highlighted.hidden").length) {
+					// the highlingting is inside a closed first-level menu entry, move it to the parent
+					$(".first-level ul li.highlighted").parent().parent().addClass("highlighted");
+					$(".first-level ul li.highlighted").removeClass("highlighted");
 				}
 			}
 		);

@@ -1,4 +1,5 @@
 * permit unexpanding first level menu entries
+* improve menu behaviour
 * bug fixes
 
 ### version v5.2 (May 15, 2021)

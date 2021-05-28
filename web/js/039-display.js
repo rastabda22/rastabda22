@@ -57,10 +57,10 @@ $(document).ready(function() {
 				// util.goUpInHash();
 				return false;
 			} else if ($("#menu-icon").hasClass("expanded")) {
-				util.toggleMenu();
+				util.closeMenu();
 				return false;
 			} else if ($("#search-icon").hasClass("expanded")) {
-				util.toggleSearch();
+				util.closeSearch();
 				return false;
 			} else if (env.currentMedia !== null && env.currentMedia.isVideo() && ! $("video#media-center")[0].paused) {
 				// stop the video, otherwise it keeps playing
@@ -495,10 +495,15 @@ $(document).ready(function() {
 
 			if (
 				e.key !== undefined &&
-				e.key.toLowerCase() === util._t("#menu-icon-title-shortcut") && e.target.tagName.toLowerCase() != "input" &&  ! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey
-					// "e" opens the menu, and closes it if focus in not in input field
+				e.key.toLowerCase() === util._t("#menu-icon-title-shortcut") && (
+					! $("#right-menu").hasClass("expanded") ||
+					$(".search").hasClass("hidden-by-menu-selection")
+				) &&
+				e.target.tagName.toLowerCase() != "input" &&
+				! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey
+					// "e" opens the menu, and closes it if focus is not in input field
 			) {
-				util.toggleMenu();
+				$("#menu-icon").click();
 				return false;
 			}
 		}
@@ -777,6 +782,7 @@ $(document).ready(function() {
 			}
 		}
 	);
+
 	$(".first-level.protection").off("click").on("click", util.showAuthForm);
 
 	// binds the click events to the sort buttons
@@ -909,10 +915,15 @@ $(document).ready(function() {
 					var hashPromise = phFl.parseHashAndReturnAlbumAndMedia(location.hash);
 					hashPromise.then(
 						function([album, mediaIndex]) {
+							if (album.isSearch())
+								util.openSearch(album);
 							album.prepareForShowing(mediaIndex);
 						},
 						function(album) {
 							function checkHigherAncestor() {
+								if (album.isSearch())
+									util.openSearch(album);
+
 								let upHash = util.upHash(hash);
 								if (! hash.length || upHash === hash) {
 									// the top album has been reached and no unprotected nor protected content has been found

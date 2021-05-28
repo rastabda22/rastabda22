@@ -1046,61 +1046,73 @@
 			return false;
 	};
 
-	Utilities.toggleSearch = function() {
-		if (! $("#right-menu").hasClass("expanded")) {
-			$("#right-menu").addClass("expanded");
-		} else if (! $(".search").hasClass("hidden-by-menu-selection")) {
-			$("#right-menu").removeClass("expanded");
-		}
+	Utilities.openSearch = function(album) {
+		$("#right-menu").addClass("expanded");
+		$("#search-icon").addClass("expanded");
+		$("#menu-icon").removeClass("expanded");
 
-		if ($("#right-menu").hasClass("expanded")) {
-			$(".search").removeClass("hidden-by-menu-selection");
-			$(".first-level").addClass("hidden-by-menu-selection");
-			$("#search-icon").addClass("expanded");
-			$("#menu-icon").removeClass("expanded");
-			Utilities.highlightMenu();
-			$("#album-and-media-container:not(.show-media) #album-view").css("opacity", "0.3");
-			$(".leaflet-popup-content-wrapper").css("background-color", "darkgray");
-			Functions.updateMenu();
-		} else {
-			$("#search-icon, #menu-icon").removeClass("expanded");
-			$("#album-view").css("opacity", "");
-			$(".leaflet-popup-content-wrapper").css("background-color", "");
-		}
+		$(".search").removeClass("hidden-by-menu-selection");
+		$(".first-level").addClass("hidden-by-menu-selection");
+
+		Utilities.highlightMenu();
+
+		$("#album-and-media-container:not(.show-media) #album-view").css("opacity", "0.3");
+		$(".leaflet-popup-content-wrapper").css("background-color", "darkgray");
+
+		Functions.updateMenu(album);
 	};
 
-	Utilities.toggleMenu = function() {
-		if (! $("#right-menu").hasClass("expanded")) {
-			$("#right-menu").addClass("expanded");
-		} else if (! $(".first-level").hasClass("hidden-by-menu-selection")) {
-			$("#right-menu").removeClass("expanded");
-		}
+	Utilities.closeSearch = function() {
+		$("#right-menu").removeClass("expanded");
+		$("#search-icon, #menu-icon").removeClass("expanded");
 
-		if ($("#right-menu").hasClass("expanded")) {
-			$(".first-level").removeClass("hidden-by-menu-selection");
-			$(".search").addClass("hidden-by-menu-selection");
-			$("#search-icon").removeClass("expanded");
-			$("#menu-icon").addClass("expanded");
-			Utilities.highlightMenu();
-			$("#album-and-media-container:not(.show-media) #album-view").css("opacity", "0.3");
-			$(".leaflet-popup-content-wrapper").css("background-color", "darkgray");
-			Functions.updateMenu();
-		} else {
-			$("#search-icon, #menu-icon").removeClass("expanded");
-			$("#album-view").css("opacity", "");
-			$(".leaflet-popup-content-wrapper").css("background-color", "");
-		}
+		$("#album-view").css("opacity", "");
+		$(".leaflet-popup-content-wrapper").css("background-color", "");
+	};
+
+	Utilities.prototype.toggleSearch = function(ev, album) {
+		if (! $("#right-menu").hasClass("expanded") || ! $("#search-icon").hasClass("expanded"))
+			Utilities.openSearch(album);
+		else
+			Utilities.closeSearch();
+	};
+
+	Utilities.openMenu = function(album) {
+		$("#right-menu").addClass("expanded");
+		$("#search-icon").removeClass("expanded");
+		$("#menu-icon").addClass("expanded");
+
+		$(".first-level").removeClass("hidden-by-menu-selection");
+		$(".search").addClass("hidden-by-menu-selection");
+
+		Utilities.highlightMenu();
+
+		$("#album-and-media-container:not(.show-media) #album-view").css("opacity", "0.3");
+		$(".leaflet-popup-content-wrapper").css("background-color", "darkgray");
+
+		Functions.updateMenu(album);
+	};
+
+	Utilities.closeMenu = function() {
+		$("#right-menu").removeClass("expanded");
+		$("#search-icon, #menu-icon").removeClass("expanded");
+
+		$("#album-view").css("opacity", "");
+		$(".leaflet-popup-content-wrapper").css("background-color", "");
+	};
+
+	Utilities.prototype.toggleMenu = function(ev, album) {
+		if (! $("#right-menu").hasClass("expanded") || ! $("#menu-icon").hasClass("expanded"))
+			Utilities.openMenu(album);
+		else
+			Utilities.closeMenu();
 	};
 
 	Utilities.prototype.noResults = function(album, resolveParseHash, selector) {
 		// no media found or other search fail, show the message
 		env.currentAlbum = album;
 		TopFunctions.setTitle("album", null);
-		if (! $("ul#right-menu").hasClass("expanded")) {
-			// the search root album could not be in the cache, get it, toggleMenu needs it
-			let promise = PhotoFloat.getAlbum(env.options.by_search_string, null, {getMedia: false, getPositions: false});
-			promise.then(Utilities.toggleSearch);
-		}
+		Utilities.openSearch();
 		$("#subalbums, #thumbs, #media-view").addClass("hidden-by-no-results");
 		$("#loading").hide();
 		if (typeof selector === "undefined")
@@ -4149,13 +4161,12 @@
 	Utilities.prototype.showAuthForm = function(event, maybeProtectedContent = false) {
 		$("#album-view, #media-view, #my-modal, #no-results").css("opacity", "0.2");
 		$("#loading").hide();
-		if ($("ul#right-menu").hasClass("expanded")) {
-			Utilities.toggleMenu();
-		}
+
+		Utilities.closeMenu();
+
 		$("#no-results").hide();
 		$("#auth-text").stop().fadeIn(1000);
 		$("#password").focus();
-
 
 		$('#auth-close').off("click").on(
 			"click",
@@ -4532,8 +4543,9 @@
 	Utilities.prototype.setSelectButtonPosition = Utilities.setSelectButtonPosition;
 	Utilities.prototype.setDescriptionOptions = Utilities.setDescriptionOptions;
 	Utilities.prototype.correctElementPositions = Utilities.correctElementPositions;
-	Utilities.prototype.toggleMenu = Utilities.toggleMenu;
-	Utilities.prototype.toggleSearch = Utilities.toggleSearch;
+	Utilities.prototype.closeMenu = Utilities.closeMenu;
+	Utilities.prototype.openSearch = Utilities.openSearch;
+	Utilities.prototype.closeSearch = Utilities.closeSearch;
 	Utilities.prototype.addMediaLazyLoader = Utilities.addMediaLazyLoader;
 	Utilities.prototype.socialButtons = Utilities.socialButtons;
 	Utilities.prototype.openInNewTab = Utilities.openInNewTab;

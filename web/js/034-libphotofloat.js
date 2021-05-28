@@ -2087,7 +2087,7 @@
 		}
 		// if (this.isSearch() && mediaIndex === -1) {
 		// 	if (! $("ul#right-menu").hasClass("expanded"))
-		// 		util.toggleMenu();
+		// 		util.openMenu();
 		// 	util.focusSearchField();
 		// }
 		return mediaIndex;
