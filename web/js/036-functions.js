@@ -1222,6 +1222,14 @@
 			$("#padlock").addClass("hidden");
 		}
 
+		////////////////// be sure that the highlighted menu entry is visible //////////////////////////////
+
+		if ($(".first-level ul li.highlighted.hidden").length) {
+			// the highlingting is inside a closed first-level menu entry, move it to the parent
+			$(".first-level ul li.highlighted").parent().parent().addClass("highlighted");
+			$(".first-level ul li.highlighted").removeClass("highlighted");
+		}
+
 		////////////////// ACCORDION EFFECT //////////////////////////////
 
 		// accordion effect on right menu
