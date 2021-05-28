@@ -690,6 +690,7 @@ $(document).ready(function() {
 		function() {
 			if ($(".download-album.everything.all.full").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(true);
+				return false;
 			}
 		}
 	);
@@ -698,6 +699,7 @@ $(document).ready(function() {
 		function() {
 			if ($(".download-album.everything.all.sized").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(true, "all", $(".download-album.everything.all.sized").attr("size"));
+				return false;
 			}
 		}
 	);
@@ -706,6 +708,7 @@ $(document).ready(function() {
 		function() {
 			if ($(".download-album.everything.images.full").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(true, "images");
+				return false;
 			}
 		}
 	);
@@ -714,6 +717,7 @@ $(document).ready(function() {
 		function() {
 			if ($(".download-album.everything.images.sized").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(true, "images", $(".download-album.everything.images.sized").attr("size"));
+				return false;
 			}
 		}
 	);
@@ -722,6 +726,7 @@ $(document).ready(function() {
 		function() {
 			if ($(".download-album.everything.videos.full").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(true, "videos");
+				return false;
 			}
 		}
 	);
@@ -730,6 +735,7 @@ $(document).ready(function() {
 		function() {
 			if ($(".download-album.everything.videos.sized").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(true, "videos", $(".download-album.everything.videos.sized").attr("size"));
+				return false;
 			}
 		}
 	);
@@ -739,6 +745,7 @@ $(document).ready(function() {
 		function() {
 			if ($(".download-album.media-only.all").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(false, "all");
+				return false;
 			}
 		}
 	);
@@ -747,6 +754,7 @@ $(document).ready(function() {
 		function() {
 			if ($(".download-album.media-only.all.sized").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(false, "all", $(".download-album.media-only.all.sized").attr("size"));
+				return false;
 			}
 		}
 	);
@@ -755,6 +763,7 @@ $(document).ready(function() {
 		function() {
 			if ($(".download-album.media-only.images").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(false, "images");
+				return false;
 			}
 		}
 	);
@@ -763,6 +772,7 @@ $(document).ready(function() {
 		function() {
 			if ($(".download-album.media-only.images.sized").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(false, "images", $(".download-album.media-only.images.sized").attr("size"));
+				return false;
 			}
 		}
 	);
@@ -779,6 +789,7 @@ $(document).ready(function() {
 		function() {
 			if ($(".download-album.media-only.videos.sized").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(false, "videos", $(".download-album.media-only.videos.sized").attr("size"));
+				return false;
 			}
 		}
 	);

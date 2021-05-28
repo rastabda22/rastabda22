@@ -310,6 +310,7 @@
 			"click",
 			function() {
 				util.changeToBySelectionView(thisMedia);
+				return false;
 			}
 		);
 
@@ -717,6 +718,7 @@
 							}
 						);
 					}
+					return false;
 				}
 			);
 
@@ -766,6 +768,7 @@
 							);
 						}
 					);
+					return false;
 				}
 			);
 
@@ -785,6 +788,7 @@
 						albumToUse.addAllMediaToSelection();
 					}
 					Functions.updateMenu();
+					return false;
 				}
 			);
 
@@ -816,6 +820,7 @@
 							}
 						);
 					}
+					return false;
 				}
 			);
 
@@ -836,6 +841,7 @@
 							Functions.updateMenu();
 						}
 					);
+					return false;
 				}
 			);
 
@@ -861,6 +867,7 @@
 							Functions.updateMenu();
 						}
 					);
+					return false;
 				}
 			);
 
@@ -880,6 +887,7 @@
 							Functions.updateMenu();
 						}
 					);
+					return false;
 				}
 			);
 
@@ -893,6 +901,8 @@
 						albumToUse = thisAlbum;
 
 					albumToUse.removeAllMediaFromSelection();
+
+					return false;
 				}
 			);
 
@@ -900,6 +910,7 @@
 				"click",
 				function() {
 					util.changeToBySelectionView();
+					return false;
 				}
 			);
 		}
