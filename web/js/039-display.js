@@ -926,8 +926,10 @@ $(document).ready(function() {
 					var hashPromise = phFl.parseHashAndReturnAlbumAndMedia(location.hash);
 					hashPromise.then(
 						function([album, mediaIndex]) {
-							if (album.isSearch())
+							if (album.isSearch() && ! album.numsMediaInSubTree.imagesAndVideosTotal())
 								util.openSearch(album);
+							else
+								util.closeMenu();
 							album.prepareForShowing(mediaIndex);
 						},
 						function(album) {
