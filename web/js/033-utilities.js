@@ -1112,7 +1112,6 @@
 		// no media found or other search fail, show the message
 		env.currentAlbum = album;
 		TopFunctions.setTitle("album", null);
-		Utilities.openSearch();
 		$("#subalbums, #thumbs, #media-view").addClass("hidden-by-no-results");
 		$("#loading").hide();
 		if (typeof selector === "undefined")
