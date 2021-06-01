@@ -1553,19 +1553,19 @@
 				}
 
 				function buildSearchResult() {
-					env.searchAlbum.removedStopWords = removedStopWords;
-					// has any word remained after stop words have been removed?
-					if (searchWordsFromUser.length === 0) {
-						util.noResults(env.searchAlbum, resolve_parseHash, '#no-search-string-after-stopwords-removed');
-						resolve_parseHash([env.searchAlbum, -1]);
-						return;
-					}
-
 					// get the search root album before getting the search words ones
 					var promise = PhotoFloat.getAlbum(env.options.by_search_string, reject_parseHash, {getMedia: false, getPositions: false});
 					// var promise = PhotoFloat.getAlbum(env.options.by_search_string, reject_parseHash, {getMedia: true, getPositions: true});
 					promise.then(
 						function(bySearchRootAlbum) {
+							env.searchAlbum.removedStopWords = removedStopWords;
+							// has any word remained after stop words have been removed?
+							if (searchWordsFromUser.length === 0) {
+								util.noResults(env.searchAlbum, resolve_parseHash, '#no-search-string-after-stopwords-removed');
+								// resolve_parseHash([env.searchAlbum, -1]);
+								return;
+							}
+
 							var lastIndex, i, j, wordCacheBases, numSearchAlbumsReady = 0, numSubAlbumsToGet = 0;
 							var searchResultsMedia = [];
 							var searchResultsSubalbums = [];
