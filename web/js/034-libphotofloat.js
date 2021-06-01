@@ -1378,8 +1378,6 @@
 							// no search term
 							// TO DO: does execution actually arrive here?
 							util.noResults(env.searchAlbum, resolve_parseHash, '#no-search-string');
-							// // the resolve function is needed at least in order to show the title
-							// resolve_parseHash([env.searchAlbum, -1]);
 							return;
 						}
 					}
@@ -1421,8 +1419,6 @@
 							util.noResults(albumFromCache, resolve_parseHash, '#no-search-string-after-stopwords-removed');
 						else
 							util.noResults(albumFromCache, resolve_parseHash);
-						// // the resolve function is needed at least in order to show the title
-						// resolve_parseHash([albumFromCache, -1]);
 					} else {
 						// it's not a search without results: everything is ok, resolve!
 						let result = albumFromCache.getMediaIndex(mediaFolderCacheBase, mediaCacheBase);
@@ -1479,7 +1475,6 @@
 						util.noResults(env.searchAlbum, resolve_parseHash);
 					} else {
 						$(".search-failed").hide();
-					// }
 
 						for (indexMedia = 0; indexMedia < env.searchAlbum.media.length; indexMedia ++) {
 							let ithMedia = env.searchAlbum.media[indexMedia];
@@ -1555,7 +1550,6 @@
 				function buildSearchResult() {
 					// get the search root album before getting the search words ones
 					var promise = PhotoFloat.getAlbum(env.options.by_search_string, reject_parseHash, {getMedia: false, getPositions: false});
-					// var promise = PhotoFloat.getAlbum(env.options.by_search_string, reject_parseHash, {getMedia: true, getPositions: true});
 					promise.then(
 						function(bySearchRootAlbum) {
 							env.searchAlbum.removedStopWords = removedStopWords;
@@ -1623,10 +1617,8 @@
 
 							if (numSubAlbumsToGet === 0) {
 								util.noResults(env.searchAlbum, resolve_parseHash);
-								// resolve_parseHash([env.searchAlbum, -1]);
 							} else if (numSubAlbumsToGet > env.options.max_search_album_number) {
 								util.noResults(env.searchAlbum, resolve_parseHash, '#search-too-wide');
-								// resolve_parseHash([env.searchAlbum, -1]);
 							} else {
 								$(".search-failed").hide();
 								env.searchAlbum.initializeSearchAlbumEnd();
