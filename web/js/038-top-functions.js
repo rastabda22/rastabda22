@@ -902,6 +902,10 @@
 	};
 
 	Album.prototype.toggleSubalbumSelection = function(clickedSelector) {
+		if (env.selectingSelectors.indexOf(clickedSelector) !== -1)
+			// do not run the function for the same selector while it's already running for it
+			return;
+		env.selectingSelectors.push(clickedSelector);
 		if (env.selectionAlbum.isEmpty())
 			util.initializeSelectionAlbum();
 		var iSubalbum = this.subalbums.findIndex(subalbum => subalbum.cacheBase === $(clickedSelector).parent().parent().attr("id"));
@@ -910,6 +914,8 @@
 			let removeSubalbumPromise = this.removeSubalbumFromSelection(clickedSelector);
 			removeSubalbumPromise.then(
 				function subalbumRemoved() {
+					env.selectingSelectors = env.selectingSelectors.filter(selector => selector !== clickedSelector);
+
 					if (util.nothingIsSelected()) {
 						util.initializeSelectionAlbum();
 					}
@@ -920,6 +926,8 @@
 			let addSubalbumPromise = this.addSubalbumToSelection(iSubalbum, clickedSelector);
 			addSubalbumPromise.then(
 				function subalbumAdded() {
+					env.selectingSelectors = env.selectingSelectors.filter(selector => selector !== clickedSelector);
+
 					f.updateMenu();
 				}
 			);

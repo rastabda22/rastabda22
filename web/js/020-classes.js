@@ -29,6 +29,7 @@
 			this.hashBeginning = "#!/";
 			this.isFromAuthForm = false;
 			this.highlightedObjectId = null;
+			this.selectingSelectors = [];
 			// var nextLink = "", prevLink = "";
 			this.mediaLink = "";
 			// scrollbarWidth;
