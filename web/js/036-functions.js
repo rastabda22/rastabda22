@@ -641,12 +641,8 @@
 				$(".select.no-media").addClass("hidden");
 			}
 
-			if (
-				! isPopup && (
-					! thisAlbum.numsMedia.imagesAndVideosTotal() || ! thisAlbum.subalbums.length
-				)
-			) {
-				$(".select.media, .select.albums, .select.no-media, .select.no-albums").addClass("hidden");
+			if (! isPopup && (! thisAlbum.numsMedia.imagesAndVideosTotal() || ! thisAlbum.subalbums.length)) {
+				$(".select.media, .select.albums, .select.no-media, .select.no-albums, .select.everything, .select.everything-individual").addClass("hidden");
 			} else if (isPopup) {
 				$(".select.albums, .select.no-albums").addClass("hidden");
 				$(".select.media, .select.no-media").addClass("hidden");
@@ -681,6 +677,9 @@
 					}
 				);
 			}
+
+			if ($(".select .sub-menu").hasClass("hidden"))
+				$(".select").addClass("hidden");
 
 
 			$(".select.everything:not(.hidden)").off("click").on(

@@ -56,11 +56,8 @@ $(document).ready(function() {
 				// $("#album-view, #media-view, #my-modal").css("opacity", "");
 				// util.goUpInHash();
 				return false;
-			} else if ($("#menu-icon").hasClass("expanded")) {
+			} else if ($("#menu-icon").hasClass("expanded") || $("#search-icon").hasClass("expanded")) {
 				util.closeMenu();
-				return false;
-			} else if ($("#search-icon").hasClass("expanded")) {
-				util.closeSearch();
 				return false;
 			} else if (env.currentMedia !== null && env.currentMedia.isVideo() && ! $("video#media-center")[0].paused) {
 				// stop the video, otherwise it keeps playing
@@ -109,20 +106,24 @@ $(document).ready(function() {
 		} else if (! isAuth) {
 			if (
 				e.key !== undefined &&
-				$("#right-menu").hasClass("expanded") &&
-				! $("#search-field").is(":focus") &&
+				$("#right-menu").hasClass("expanded") && (
+					! $("#search-field").is(":focus") || e.key === "Tab"
+				) &&
 				! e.ctrlKey && ! e.altKey
 			) {
 				let highlightedItemObject = util.highlightedItemObject();
 				if (e.key === "Enter") {
 					highlightedItemObject.click();
 					return false;
-				} else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-					let nextItemFunction = util.nextItemForHighlighting;
-					if (e.key === "ArrowUp")
+				} else if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Tab") {
+					let nextItemFunction;
+					if (e.key === "ArrowUp" && ! e.shiftKey || e.key === "ArrowDown" && e.shiftKey || e.key === "Tab" && e.shiftKey)
 						nextItemFunction = util.prevItemForHighlighting;
+					else
+						nextItemFunction = util.nextItemForHighlighting;
 					let nextItem = nextItemFunction(highlightedItemObject);
 					util.addHighlightToItem(nextItem);
+					$("#search-field").blur();
 					return false;
 				} else if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
 					$("#right-menu li.first-level.hidden-by-menu-selection.was-highlighted, #right-menu li.search.hidden-by-menu-selection.was-highlighted").addClass("highlighted").removeClass("was-highlighted");
@@ -141,11 +142,13 @@ $(document).ready(function() {
 						return false;
 					} else if (env.currentMedia === null && (e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === "ArrowUp")) {
 						if (! isMap) {
-							let nextObjectFunction = util.nextObjectForHighlighting;
+							let nextObjectFunction;
 							if (e.key === "ArrowLeft" || e.key === "ArrowUp")
 								nextObjectFunction = util.prevObjectForHighlighting;
-							let nextObject;
+							else
+								nextObjectFunction = util.nextObjectForHighlighting;
 
+							let nextObject;
 							if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
 								nextObject = nextObjectFunction(highlightedObject);
 							} else {
@@ -493,17 +496,16 @@ $(document).ready(function() {
 				}
 			}
 
+			// "e" opens the menu, and closes it if focus is not in input field
 			if (
 				e.key !== undefined &&
+				! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey &&
 				e.key.toLowerCase() === util._t("#menu-icon-title-shortcut") && (
 					! $("#right-menu").hasClass("expanded") ||
 					$(".search").hasClass("hidden-by-menu-selection")
-				) &&
-				e.target.tagName.toLowerCase() != "input" &&
-				! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey
-					// "e" opens the menu, and closes it if focus is not in input field
+				)
 			) {
-				$("#menu-icon").click();
+				util.toggleMenu();
 				return false;
 			}
 		}
@@ -811,8 +813,8 @@ $(document).ready(function() {
 	$("ul#right-menu li.square-media-thumbnails").off("click").on("click", tF.toggleMediaSquare);
 	$("ul#right-menu li.reset").off("click").on("click", tF.resetDisplaySettings);
 	$("ul#right-menu #show-big-albums").off("click").on("click", tF.toggleBigAlbumsShow);
-	$("#search-icon").off("click").on("click", util.toggleSearch);
-	$("#menu-icon").off("click").on("click", util.toggleMenu);
+	$("#search-icon").off("click").on("click", util.toggleSearchMenu);
+	$("#menu-icon").off("click").on("click", util.toggleRightMenu);
 
 	$("#auth-form").submit(
 		function() {
@@ -927,7 +929,7 @@ $(document).ready(function() {
 					hashPromise.then(
 						function([album, mediaIndex]) {
 							if (album.isSearch() && ! album.numsMediaInSubTree.imagesAndVideosTotal())
-								util.openSearch(album);
+								util.openSearchMenu(album);
 							else
 								util.closeMenu();
 							album.prepareForShowing(mediaIndex);
@@ -935,7 +937,7 @@ $(document).ready(function() {
 						function(album) {
 							function checkHigherAncestor() {
 								if (album.isSearch())
-									util.openSearch(album);
+									util.openSearchMenu(album);
 
 								let upHash = util.upHash(hash);
 								if (! hash.length || upHash === hash) {

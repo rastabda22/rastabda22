@@ -1046,7 +1046,7 @@
 			return false;
 	};
 
-	Utilities.openSearch = function(album) {
+	Utilities.openSearchMenu = function(album) {
 		$("#right-menu").addClass("expanded");
 		$("#search-icon").addClass("expanded");
 		$("#menu-icon").removeClass("expanded");
@@ -1062,22 +1062,14 @@
 		Functions.updateMenu(album);
 	};
 
-	Utilities.closeSearch = function() {
-		$("#right-menu").removeClass("expanded");
-		$("#search-icon, #menu-icon").removeClass("expanded");
-
-		$("#album-view").css("opacity", "");
-		$(".leaflet-popup-content-wrapper").css("background-color", "");
-	};
-
-	Utilities.prototype.toggleSearch = function(ev, album) {
+	Utilities.prototype.toggleSearchMenu = function(ev, album) {
 		if (! $("#right-menu").hasClass("expanded") || ! $("#search-icon").hasClass("expanded"))
-			Utilities.openSearch(album);
+			Utilities.openSearchMenu(album);
 		else
-			Utilities.closeSearch();
+			Utilities.closeMenu();
 	};
 
-	Utilities.openMenu = function(album) {
+	Utilities.openRightMenu = function(album) {
 		$("#right-menu").addClass("expanded");
 		$("#search-icon").removeClass("expanded");
 		$("#menu-icon").addClass("expanded");
@@ -1089,8 +1081,23 @@
 
 		$("#album-and-media-container:not(.show-media) #album-view").css("opacity", "0.3");
 		$(".leaflet-popup-content-wrapper").css("background-color", "darkgray");
-
 		Functions.updateMenu(album);
+	};
+
+	Utilities.prototype.toggleRightMenu = function(ev, album) {
+		if (! $("#right-menu").hasClass("expanded") || ! $("#menu-icon").hasClass("expanded"))
+			Utilities.openRightMenu(album);
+		else
+			Utilities.closeMenu();
+	};
+
+	Utilities.openMenu = function(album) {
+		if ($(".first-level").hasClass("hidden-by-menu-selection")) {
+			Utilities.openSearchMenu();
+		} else {
+			Utilities.openRightMenu();
+		}
+
 	};
 
 	Utilities.closeMenu = function() {
@@ -1102,7 +1109,7 @@
 	};
 
 	Utilities.prototype.toggleMenu = function(ev, album) {
-		if (! $("#right-menu").hasClass("expanded") || ! $("#menu-icon").hasClass("expanded"))
+		if (! $("#right-menu").hasClass("expanded"))
 			Utilities.openMenu(album);
 		else
 			Utilities.closeMenu();
@@ -4543,8 +4550,7 @@
 	Utilities.prototype.setDescriptionOptions = Utilities.setDescriptionOptions;
 	Utilities.prototype.correctElementPositions = Utilities.correctElementPositions;
 	Utilities.prototype.closeMenu = Utilities.closeMenu;
-	Utilities.prototype.openSearch = Utilities.openSearch;
-	Utilities.prototype.closeSearch = Utilities.closeSearch;
+	Utilities.prototype.openSearchMenu = Utilities.openSearchMenu;
 	Utilities.prototype.addMediaLazyLoader = Utilities.addMediaLazyLoader;
 	Utilities.prototype.socialButtons = Utilities.socialButtons;
 	Utilities.prototype.openInNewTab = Utilities.openInNewTab;
