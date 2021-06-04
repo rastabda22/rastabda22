@@ -1141,8 +1141,8 @@
 						// var album = env.currentAlbum.subalbums[iSubalbum];
 						// index = 0;
 						let nMedia = album.numsMediaInSubTree.imagesAndVideosTotal();
-						if (album.isTransversal() && album.subalbums.length > 0)
-							nMedia -= album.numsMedia.imagesAndVideosTotal();
+						// if (album.isTransversal() && album.subalbums.length > 0)
+						// 	nMedia -= album.numsMedia.imagesAndVideosTotal();
 
 						index = Math.floor(Math.random() * nMedia);
 						nextAlbum(album, resolve_pickRandomMedia);
