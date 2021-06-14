@@ -1556,6 +1556,26 @@
 				} else if (env.currentMedia === null) {
 					// we are in album view
 
+					let highlightedObject = Utilities.highlightedObject();
+					if (highlightedObject.children(".thumb-container").children(clickedSelector).length > 0) {
+						// the clicked object is the highlighted one:
+						// before removing it, highlight the previous or next object
+						let nextObject;
+						if (highlightedObject.parent().parent().children().length === 1 && env.currentAlbum.subalbums.length) {
+							nextObject = Utilities.prevObjectForHighlighting(highlightedObject);
+							Utilities.scrollToHighlightedSubalbum(nextObject);
+						} else {
+							if (highlightedObject.parent().is(":last-child"))
+								nextObject = Utilities.prevObjectForHighlighting(highlightedObject);
+							else
+								nextObject = Utilities.nextObjectForHighlighting(highlightedObject);
+							if (Utilities.isPopup())
+								Utilities.scrollPopupToHighlightedThumb(nextObject);
+							else
+								Utilities.scrollAlbumViewToHighlightedThumb(nextObject);
+						}
+					}
+
 					// remove the single media thumbnail
 					$(clickedSelector).parent().parent().parent().remove();
 
@@ -1805,7 +1825,24 @@
 									Utilities.initializeSelectionAlbum();
 									window.location.href = Utilities.upHash();
 								} else {
-									// env.currentAlbum.prepareForShowing(-1);
+									let highlightedObject = Utilities.highlightedObject();
+									if (highlightedObject.children(".album-button").children(clickedSelector).length > 0) {
+										// the clicked object is the highlighted one:
+										// before removing it, highlight the previous or next object
+										let nextObject;
+										if (highlightedObject.parent().parent().children().length === 1 && env.currentAlbum.media.length) {
+											nextObject = Utilities.nextObjectForHighlighting(highlightedObject);
+											Utilities.scrollAlbumViewToHighlightedThumb(nextObject);
+										} else {
+											if (highlightedObject.parent().is(":last-child")) {
+												nextObject = Utilities.prevObjectForHighlighting(highlightedObject);
+											} else {
+												nextObject = Utilities.nextObjectForHighlighting(highlightedObject);
+											}
+											Utilities.scrollToHighlightedSubalbum(nextObject);
+										}
+									}
+
 									$(clickedSelector).parent().parent().parent().remove();
 									TopFunctions.setTitle("album", null);
 								}
@@ -2539,7 +2576,7 @@
 		);
 	};
 
-	Utilities.prototype.nextObjectForHighlighting = function(object) {
+	Utilities.nextObjectForHighlighting = function(object) {
 		var isPopup = Utilities.isPopup();
 		var selector = "", nextObject;
 		if (isPopup)
@@ -2557,7 +2594,7 @@
 		return nextObject;
 	};
 
-	Utilities.prototype.prevObjectForHighlighting = function(object) {
+	Utilities.prevObjectForHighlighting = function(object) {
 		var isPopup = Utilities.isPopup();
 		var selector = "", prevObject;
 		if (isPopup)
@@ -2689,7 +2726,7 @@
 			return $("#right-menu .first-level.highlighted, #right-menu .first-level .highlighted");
 	};
 
-	Utilities.prototype.highlightedObject = function() {
+	Utilities.highlightedObject = function() {
 		if (Utilities.isPopup()) {
 			return $("#popup-images-wrapper .highlighted");
 		} else {
@@ -2713,7 +2750,7 @@
 		return $("#thumbs .highlighted").length > 0;
 	};
 
-	Utilities.prototype.scrollToHighlightedSubalbum = function(object = null) {
+	Utilities.scrollToHighlightedSubalbum = function(object = null) {
 		if (! Utilities.isPopup() && $("#subalbums").is(":visible") && env.currentAlbum.subalbums.length) {
 			let subalbumObject;
 			if (object)
@@ -2734,7 +2771,7 @@
 		}
 	};
 
-	Utilities.prototype.scrollAlbumViewToHighlightedThumb = function(object = null) {
+	Utilities.scrollAlbumViewToHighlightedThumb = function(object = null) {
 		if ($("#thumbs").is(":visible")) {
 			let thumbObject;
 			if (object)
@@ -2771,7 +2808,7 @@
 		}
 	};
 
-	Utilities.prototype.scrollPopupToHighlightedThumb = function(object = null) {
+	Utilities.scrollPopupToHighlightedThumb = function(object = null) {
 		let thumbObject;
 		if (object)
 			thumbObject = object.children(".thumb-container").children(".thumbnail");
@@ -4575,6 +4612,12 @@
 	Utilities.prototype.addHighlight = Utilities.addHighlight;
 	Utilities.prototype.aSingleMediaIsHighlighted = Utilities.aSingleMediaIsHighlighted;
 	Utilities.prototype.aSubalbumIsHighlighted = Utilities.aSubalbumIsHighlighted;
+	Utilities.prototype.highlightedObject = Utilities.highlightedObject;
+	Utilities.prototype.prevObjectForHighlighting = Utilities.prevObjectForHighlighting;
+	Utilities.prototype.nextObjectForHighlighting = Utilities.nextObjectForHighlighting;
+	Utilities.prototype.scrollPopupToHighlightedThumb = Utilities.scrollPopupToHighlightedThumb;
+	Utilities.prototype.scrollAlbumViewToHighlightedThumb = Utilities.scrollAlbumViewToHighlightedThumb;
+	Utilities.prototype.scrollToHighlightedSubalbum = Utilities.scrollToHighlightedSubalbum;
 
 	window.Utilities = Utilities;
 }());

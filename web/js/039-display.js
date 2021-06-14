@@ -136,7 +136,7 @@ $(document).ready(function() {
 				}
 			} else if (e.key !== undefined && ! $("#right-menu").hasClass("expanded")) {
 				if (! e.altKey && e.key === " ") {
-					if (env.currentMedia === null) {
+					if (env.currentMedia === null || env.currentAlbum.isAlbumWithOneMedia()) {
 						let highlightedObject = util.highlightedObject();
 						util.selectBoxObject(highlightedObject).click();
 						return false;
