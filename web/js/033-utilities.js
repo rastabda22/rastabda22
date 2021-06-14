@@ -189,6 +189,8 @@
 		newMapAlbum.ancestorsCacheBase = rootMapAlbum.ancestorsCacheBase.slice();
 		newMapAlbum.ancestorsCacheBase.push(newMapAlbum.cacheBase);
 
+		newMapAlbum.ancestorsNames = [env.options.by_map_string, newMapAlbum.cacheBase];
+
 		return newMapAlbum;
 	};
 
