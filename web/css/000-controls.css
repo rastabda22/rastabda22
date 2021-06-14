@@ -809,7 +809,9 @@ video {
 .thumb-and-caption-container.highlighted .media-caption,
 .album-button-and-caption.highlighted .album-caption,
 #right-menu li.highlighted .caption,
-#right-menu ul li.highlighted {
+#right-menu ul li.highlighted,
+#menu-icon.expanded,
+#search-icon.expanded {
 	background-color: #FFAD27 !important;
 }
 
@@ -1020,6 +1022,11 @@ video {
 	background-color: black;
 	opacity: 50%;
 	padding: .1em .5em;
+}
+
+#menu-icon.expanded,
+#search-icon.expanded {
+	opacity: 100%;
 }
 
 #padlock img {
