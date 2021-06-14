@@ -2573,6 +2573,20 @@
 		return prevObject;
 	};
 
+	Utilities.prototype.selectBoxObject = function(object) {
+		var isPopup = Utilities.isPopup();
+		var selector = "", selectBoxObject;
+		if (isPopup)
+			selector = "#popup-images-wrapper ";
+		if (Utilities.objectIsASubalbum(object) || isPopup) {
+			selector += "#" + object.attr("id");
+		} else {
+			selector += "#" + object.parent().attr("id");
+		}
+		selectBoxObject = $(selector + " .select-box");
+		return selectBoxObject;
+	};
+
 	Utilities.removeHighligths = function() {
 		if (Utilities.isPopup()) {
 			$("#popup-images-wrapper .highlighted").removeClass("highlighted");

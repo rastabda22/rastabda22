@@ -34,6 +34,7 @@ MyPhotoShare can be used entirely with a keyboard.
 | album                 | h                  | Show/hide title                                                  |
 | album                 | a                  | Select all media                                                 |
 | album                 | Shift-a            | Unselect all media                                               |
+| album                 | Space, Ctrl-Space  | toggle selection status of highlighted subalbum/media            |
 |-----------------------|--------------------|------------------------------------------------------------------|
 | single media          | Enter              | Next media                                                       |
 | single media          | Shift-Enter        | Previous media                                                   |
@@ -58,7 +59,8 @@ MyPhotoShare can be used entirely with a keyboard.
 | single media          | h                  | Show/hide title and bottom thumbnails                            |
 | single media          | 0 .. 9             | Zoom level                                                       |
 | single media          | a                  | Select current media                                             |
-| single media          | shift-a            | Unselect current media                                           |
+| single media          | Shift-a            | Unselect current media                                           |
+| single media          | Crtl-Space         | toggle selection status                                          |
 | video                 | Space              | play/stop                                                        |
 | picture               | Space              | Next picture                                                     |
 | enlarged picture      | Arrows             | Drag                                                             |

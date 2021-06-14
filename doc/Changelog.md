@@ -1,3 +1,5 @@
+* space (with control in single media view) toggles selection status of single media or subalbum
+
 ### version v5.2.1 (June 4, 2021)
 
 * permit unexpanding first level menu entries

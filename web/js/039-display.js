@@ -135,6 +135,16 @@ $(document).ready(function() {
 					return false;
 				}
 			} else if (e.key !== undefined && ! $("#right-menu").hasClass("expanded")) {
+				if (! e.altKey && e.key === " ") {
+					if (env.currentMedia === null) {
+						let highlightedObject = util.highlightedObject();
+						util.selectBoxObject(highlightedObject).click();
+						return false;
+					} else if (e.ctrlKey){
+						$("#media-select-box .select-box").click();
+						return false;
+					}
+				}
 				if (! e.ctrlKey && ! e.altKey) {
 					let highlightedObject = util.highlightedObject();
 					if (env.currentMedia === null && e.key === "Enter") {
