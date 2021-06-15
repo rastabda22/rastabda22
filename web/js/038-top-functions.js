@@ -789,6 +789,8 @@
 								} else {
 									TopFunctions.generateMapFromTitleWithoutSubalbums(ev, from);
 								}
+								// focus the map, so that the arrows and +/- work
+								$("#mapdiv").focus();
 							}
 						);
 
@@ -798,6 +800,8 @@
 								// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
 								env.selectorClickedToOpenTheMap = ".map-popup-trigger-double";
 								TopFunctions.generateMapFromTitle(ev, from);
+								// focus the map, so that the arrows and +/- work
+								$("#mapdiv").focus();
 							}
 						);
 
@@ -3142,6 +3146,8 @@
 			"click",
 			function() {
 				$(".modal-close").show();
+				// focus the map, so that the arrows and +/- work
+				$("#mapdiv").focus();
 			}
 		);
 

@@ -1,3 +1,5 @@
+* make map shortcuts work
+
 ### version v5.2.2 (June 15, 2021)
 
 * added a more visible message for downloading the selection
