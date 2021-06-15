@@ -534,7 +534,6 @@
 						<li class='download-album media-only images sized active'></li>
 						<li class='download-album media-only videos full active'></li>
 						<li class='download-album media-only videos sized active'></li>
-						<li class='download-album selected active'></li>
 						<li class='download-album selection'></li>
 					</ul>
 				</li>
