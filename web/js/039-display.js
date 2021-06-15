@@ -39,6 +39,10 @@ $(document).ready(function() {
 	/* Event listeners */
 
 	$(document).off("keydown").on("keydown", function(e) {
+		if (e.key === undefined) {
+			return true;
+		}
+
 		var isMap = util.isMap();
 		var isPopup = util.isPopup();
 		var isAuth = $("#auth-text").is(":visible");
@@ -104,40 +108,47 @@ $(document).ready(function() {
 					return false;
 				}
 			}
-		} else if (! isAuth) {
-			if (
-				e.key !== undefined &&
-				$("#right-menu").hasClass("expanded") && (
-					! $("#search-field").is(":focus") || e.key === "Tab"
-				) &&
-				! e.ctrlKey && ! e.altKey
-			) {
-				let highlightedItemObject = util.highlightedItemObject();
-				if (e.key === "Enter") {
-					highlightedItemObject.click();
-					return false;
-				} else if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Tab") {
-					let nextItemFunction;
-					if (e.key === "ArrowUp" && ! e.shiftKey || e.key === "ArrowDown" && e.shiftKey || e.key === "Tab" && e.shiftKey)
-						nextItemFunction = util.prevItemForHighlighting;
-					else
-						nextItemFunction = util.nextItemForHighlighting;
-					let nextItem = nextItemFunction(highlightedItemObject);
-					util.addHighlightToItem(nextItem);
-					$("#search-field").blur();
-					util.downloadSelectionInfo();
-					return false;
-				} else if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
-					$("#right-menu li.first-level.hidden-by-menu-selection.was-highlighted, #right-menu li.search.hidden-by-menu-selection.was-highlighted").addClass("highlighted").removeClass("was-highlighted");
-					$("#right-menu li.first-level:not(.hidden-by-menu-selection).highlighted, #right-menu li.search:not(.hidden-by-menu-selection).highlighted").removeClass("highlighted").addClass("was-highlighted");
-					$("#right-menu li.first-level, #right-menu li.search").toggleClass("hidden-by-menu-selection");
-					$("#menu-icon, #search-icon").toggleClass("expanded");
-					util.highlightMenu();
-					util.focusSearchField();
-					util.downloadSelectionInfo();
-					return false;
+		} else if (! isAuth && ! isMap) {
+			if ($("#right-menu").hasClass("expanded")) {
+				if (
+					(
+						! $("#search-field").is(":focus") || e.key === "Tab"
+					) &&
+					! e.ctrlKey && ! e.altKey
+				) {
+					let highlightedItemObject = util.highlightedItemObject();
+					if (e.key === "Enter") {
+						highlightedItemObject.click();
+						return false;
+					} else if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Tab") {
+						let nextItemFunction;
+						if (e.key === "ArrowUp" && ! e.shiftKey || e.key === "ArrowDown" && e.shiftKey || e.key === "Tab" && e.shiftKey)
+							nextItemFunction = util.prevItemForHighlighting;
+						else
+							nextItemFunction = util.nextItemForHighlighting;
+						let nextItem = nextItemFunction(highlightedItemObject);
+						util.addHighlightToItem(nextItem);
+						$("#search-field").blur();
+						util.downloadSelectionInfo();
+						return false;
+					} else if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+						$("#right-menu li.first-level.hidden-by-menu-selection.was-highlighted, #right-menu li.search.hidden-by-menu-selection.was-highlighted").addClass("highlighted").removeClass("was-highlighted");
+						$("#right-menu li.first-level:not(.hidden-by-menu-selection).highlighted, #right-menu li.search:not(.hidden-by-menu-selection).highlighted").removeClass("highlighted").addClass("was-highlighted");
+						$("#right-menu li.first-level, #right-menu li.search").toggleClass("hidden-by-menu-selection");
+						$("#menu-icon, #search-icon").toggleClass("expanded");
+						util.highlightMenu();
+						util.focusSearchField();
+						util.downloadSelectionInfo();
+						return false;
+					}
 				}
-			} else if (e.key !== undefined && ! $("#right-menu").hasClass("expanded")) {
+
+				if (! $(".search").hasClass("hidden-by-menu-selection") && ! $("#search-field").is(":focus")) {
+					// focus the search field, so that the typed text is added
+					$("#search-field").focus();
+				}
+			} else {
+				// no class "expanded" in $("#right-menu")
 				if (! e.altKey && e.key === " ") {
 					if (env.currentMedia === null || env.currentAlbum.isAlbumWithOneMedia()) {
 						let highlightedObject = util.highlightedObject();
@@ -154,70 +165,68 @@ $(document).ready(function() {
 						highlightedObject.click();
 						return false;
 					} else if (env.currentMedia === null && (e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === "ArrowUp")) {
-						if (! isMap) {
-							let nextObjectFunction;
-							if (e.key === "ArrowLeft" || e.key === "ArrowUp")
-								nextObjectFunction = util.prevObjectForHighlighting;
-							else
-								nextObjectFunction = util.nextObjectForHighlighting;
+						let nextObjectFunction;
+						if (e.key === "ArrowLeft" || e.key === "ArrowUp")
+							nextObjectFunction = util.prevObjectForHighlighting;
+						else
+							nextObjectFunction = util.nextObjectForHighlighting;
 
-							let nextObject;
-							if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
-								nextObject = nextObjectFunction(highlightedObject);
-							} else {
-								// e.key is "ArrowDown" or "ArrowUp"
-								let currentObject = highlightedObject;
-								let arrayDistances = [], objectsInLine = [];
-								// first, we must reach the next line
-								while (true) {
-									nextObject = nextObjectFunction(currentObject);
-									if (nextObject.html() === highlightedObject.html()) {
-										// we have returned to the original object
-										return false;
-									} else if (util.verticalDistance(highlightedObject, nextObject) !== 0) {
-										// we aren't on the original line any more!
-										break;
-									}
-									// we are still on the original line
-									currentObject = nextObject;
-								}
-								// we have reached the next line
-
-								currentObject = nextObject;
-								let firstObjectInLine = currentObject;
-								while (true) {
-									arrayDistances.push(Math.abs(util.horizontalDistance(highlightedObject, currentObject)));
-									objectsInLine.push(nextObject);
-									nextObject = nextObjectFunction(currentObject);
-									if (util.verticalDistance(firstObjectInLine, nextObject) !== 0) {
-										// we aren't on the following line any more!
-										break;
-									}
-									// we are still on the following line
-									currentObject = nextObject;
-								}
-								// choose the object which have the minimum horizontal distance
-								if (! objectsInLine.length)
+						let nextObject;
+						if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+							nextObject = nextObjectFunction(highlightedObject);
+						} else {
+							// e.key is "ArrowDown" or "ArrowUp"
+							let currentObject = highlightedObject;
+							let arrayDistances = [], objectsInLine = [];
+							// first, we must reach the next line
+							while (true) {
+								nextObject = nextObjectFunction(currentObject);
+								if (nextObject.html() === highlightedObject.html()) {
+									// we have returned to the original object
 									return false;
-								let minimumDistanceIndex = arrayDistances.indexOf(Math.min(... arrayDistances));
-								nextObject = objectsInLine[minimumDistanceIndex];
+								} else if (util.verticalDistance(highlightedObject, nextObject) !== 0) {
+									// we aren't on the original line any more!
+									break;
+								}
+								// we are still on the original line
+								currentObject = nextObject;
 							}
+							// we have reached the next line
 
-							if (nextObject.hasClass("thumb-and-caption-container")) {
-								if (isPopup)
-									util.scrollPopupToHighlightedThumb(nextObject);
-								else
-									util.scrollAlbumViewToHighlightedThumb(nextObject);
-							} else {
-								util.scrollToHighlightedSubalbum(nextObject);
+							currentObject = nextObject;
+							let firstObjectInLine = currentObject;
+							while (true) {
+								arrayDistances.push(Math.abs(util.horizontalDistance(highlightedObject, currentObject)));
+								objectsInLine.push(nextObject);
+								nextObject = nextObjectFunction(currentObject);
+								if (util.verticalDistance(firstObjectInLine, nextObject) !== 0) {
+									// we aren't on the following line any more!
+									break;
+								}
+								// we are still on the following line
+								currentObject = nextObject;
 							}
+							// choose the object which have the minimum horizontal distance
+							if (! objectsInLine.length)
+								return false;
+							let minimumDistanceIndex = arrayDistances.indexOf(Math.min(... arrayDistances));
+							nextObject = objectsInLine[minimumDistanceIndex];
+						}
+
+						if (nextObject.hasClass("thumb-and-caption-container")) {
+							if (isPopup)
+								util.scrollPopupToHighlightedThumb(nextObject);
+							else
+								util.scrollAlbumViewToHighlightedThumb(nextObject);
+						} else {
+							util.scrollToHighlightedSubalbum(nextObject);
 						}
 						return false;
 					} else if (e.key === util._t("#hide-everytyhing-shortcut")) {
 						e.preventDefault();
 						tF.toggleTitleAndBottomThumbnailsAndDescriptionsAndTags(e);
 						return false;
-					} else if (e.key === "ArrowRight" && (env.currentZoom !== env.initialZoom || env.prevMedia) && env.currentMedia !== null && ! isMap) {
+					} else if (e.key === "ArrowRight" && (env.currentZoom !== env.initialZoom || env.prevMedia) && env.currentMedia !== null) {
 						if (env.currentZoom === env.initialZoom) {
 							$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 							$("#next")[0].click();
@@ -241,7 +250,7 @@ $(document).ready(function() {
 						return false;
 					} else if (
 						(e.key.toLowerCase() === util._t("#next-media-title-shortcut") || e.key === "Backspace" && e.shiftKey || (e.key === "Enter" || e.key === " ") && ! e.shiftKey) &&
-						env.nextMedia && env.currentMedia !== null && ! isMap
+						env.nextMedia && env.currentMedia !== null
 					) {
 						$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 						$("#next")[0].click();
@@ -249,13 +258,13 @@ $(document).ready(function() {
 						return false;
 					} else if (
 						(e.key.toLowerCase() === util._t("#prev-media-title-shortcut") || e.key === "Backspace" && ! e.shiftKey || (e.key === "Enter" || e.key === " ") && e.shiftKey) &&
-						env.prevMedia && env.currentMedia !== null && ! isMap
+						env.prevMedia && env.currentMedia !== null
 					) {
 						$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 						$("#prev")[0].click();
 						// env.prevMedia.swipeRight();
 						return false;
-					} else if (e.key === "ArrowLeft" && (env.currentZoom !== env.initialZoom || env.prevMedia) && env.currentMedia !== null && ! isMap) {
+					} else if (e.key === "ArrowLeft" && (env.currentZoom !== env.initialZoom || env.prevMedia) && env.currentMedia !== null) {
 						if (env.currentZoom === env.initialZoom) {
 							$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
 							$("#prev")[0].click();
@@ -269,7 +278,7 @@ $(document).ready(function() {
 								pS.drag(env.windowWidth / 3, {x: 1, y: 0});
 						}
 						return false;
-					} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink && ! isMap) {
+					} else if ((e.key === "ArrowUp" || e.key === "PageUp") && upLink) {
 						if (e.shiftKey && env.currentMedia === null) {
 							$("#loading").show();
 							pS.swipeDown(upLink);
@@ -291,7 +300,7 @@ $(document).ready(function() {
 								return false;
 							}
 						}
-					} else if (e.key === "ArrowDown" || e.key === "PageDown" && ! isMap) {
+					} else if (e.key === "ArrowDown" || e.key === "PageDown") {
 					 	if (e.shiftKey && env.mediaLink && env.currentMedia === null) {
 							pS.swipeUp(env.mediaLink);
 							return false;
@@ -311,24 +320,22 @@ $(document).ready(function() {
 								return false;
 							}
 						}
-					} else if (e.key.toLowerCase() === util._t(".download-link-shortcut") && ! isMap) {
+					} else if (e.key.toLowerCase() === util._t(".download-link-shortcut")) {
 						if (env.currentMedia !== null)
 							$(".download-single-media .download-link")[0].click();
 						return false;
-					} else if (e.key.toLowerCase() === util._t(".enter-fullscreen-shortcut")  && ! isMap && ! isPopup) {
-					// } else if (e.key.toLowerCase() === util._t(".enter-fullscreen-shortcut") && env.currentMedia !== null && ! isMap) {
+					} else if (e.key.toLowerCase() === util._t(".enter-fullscreen-shortcut") && ! isPopup) {
+					// } else if (e.key.toLowerCase() === util._t(".enter-fullscreen-shortcut") && env.currentMedia !== null) {
 						tF.toggleFullscreen(e);
 						return false;
-					} else if (e.key.toLowerCase() === util._t(".metadata-hide-shortcut") && env.currentMedia !== null && ! isMap) {
+					} else if (e.key.toLowerCase() === util._t(".metadata-hide-shortcut") && env.currentMedia !== null) {
 						f.toggleMetadata();
 						return false;
-					} else if (e.key.toLowerCase() === util._t(".original-link-shortcut") && env.currentMedia !== null && ! isMap) {
+					} else if (e.key.toLowerCase() === util._t(".original-link-shortcut") && env.currentMedia !== null) {
 						$("#center .original-link")[0].click();
 						return false;
 					} else if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].indexOf(e.key) > -1) {
-						if (isMap) {
-							// return false;
-						} else if (env.currentMedia !== null) {
+						if (env.currentMedia !== null) {
 							let number = parseInt(e.key);
 							if (number > env.currentZoom)
 								pS.pinchIn(null, number);
@@ -337,22 +344,17 @@ $(document).ready(function() {
 							return false;
 						}
 					} else if (e.key === "+") {
-						if (isMap) {
-							// return false;
-						} else if (env.currentMedia !== null && env.currentMedia.isImage()) {
+						if (env.currentMedia !== null && env.currentMedia.isImage()) {
 							pS.pinchIn(null);
 							return false;
 						}
 					} else if (e.key === "-") {
-						if (isMap) {
-							// return false;
-						} else if (env.currentMedia !== null && env.currentMedia.isImage()) {
+						if (env.currentMedia !== null && env.currentMedia.isImage()) {
 							pS.pinchOut(null, null);
 							return false;
 						}
 					} else if (
-						e.key.toLowerCase() === util._t(".map-link-shortcut") &&
-						! isMap && ! isPopup &&
+						e.key.toLowerCase() === util._t(".map-link-shortcut") && ! isPopup &&
 						(
 							env.currentMedia !== null && env.currentMedia.hasGpsData() ||
 							env.currentMedia === null && env.currentAlbum.positionsAndMediaInTree.length
@@ -381,22 +383,92 @@ $(document).ready(function() {
 							return false;
 						}
 					}
+
+					if (e.key.toLowerCase() === util._t("#select-everything-shortcut")) {
+						if (! e.shiftKey) {
+							// select everything
+							$(".select.everything:not(.hidden):not(.selected)").click();
+						} else if (e.shiftKey) {
+							// unselect everything
+							$(".select.nothing").click();
+						}
+						return false;
+					}
+
+					if (
+						env.currentMedia === null && (
+							['[', ']'].indexOf(e.key) !== -1 && ! isPopup && env.currentAlbum.subalbums.length > 1 ||
+							['{', '}'].indexOf(e.key) !== -1 && (env.currentAlbum.media.length > 1 || env.mapAlbum.media.length > 1)
+						) && env.currentMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()
+					) {
+						// media and subalbums sort switcher
+
+						var mode;
+						var prevSortingModeMessageId, nextSortingModeMessageId;
+						var sortingMessageIds = ['by-date', 'by-name', 'by-name-reverse', 'by-date-reverse'];
+						var currentSortingIndex, prevSortingIndex, nextSortingIndex, prevSelector, nextSelector;
+
+						if (['[', ']'].indexOf(e.key) !== -1) {
+							mode = 'album';
+						} else {
+							mode = 'media';
+						}
+
+						if (
+							$(".sort." + mode + "-sort.by-date").hasClass("selected") &&
+							! $(".sort." + mode + "-sort.reverse").hasClass("selected")
+						) {
+							currentSortingIndex = 0;
+							// console.log("currentSortingIndex = ", currentSortingIndex);
+						} else if (
+							$(".sort." + mode + "-sort.by-name").hasClass("selected") &&
+							! $(".sort." + mode + "-sort.reverse").hasClass("selected")
+						) {
+							currentSortingIndex = 1;
+							// console.log("currentSortingIndex = ", currentSortingIndex);
+						} else if (
+							$(".sort." + mode + "-sort.by-name").hasClass("selected") &&
+							$(".sort." + mode + "-sort.reverse").hasClass("selected")
+						) {
+							currentSortingIndex = 2;
+							// console.log("currentSortingIndex = ", currentSortingIndex);
+						} else if (
+							$(".sort." + mode + "-sort.by-date").hasClass("selected") &&
+							$(".sort." + mode + "-sort.reverse").hasClass("selected")
+						) {
+							currentSortingIndex = 3;
+							// console.log("currentSortingIndex = ", currentSortingIndex);
+						}
+
+						$(".sort-message").stop().hide().css("opacity", "");
+						if (['[', '{'].indexOf(e.key) !== -1) {
+							var prevSelectors = [".reverse", ".by-date", ".reverse", ".by-name", ];
+							prevSelector = prevSelectors[currentSortingIndex];
+							prevSortingIndex = (currentSortingIndex + 4 - 1) % 4;
+							prevSortingModeMessageId = sortingMessageIds[prevSortingIndex] + "-" + mode + "-sorting";
+							$("#" + prevSortingModeMessageId).show();
+							$("#" + prevSortingModeMessageId).fadeOut(5000);
+							$(".sort." + mode + "-sort" + prevSelector)[0].click();
+							// console.log(".sort." + mode + "-sort" + prevSelector + " ------- " + prevSortingModeMessageId);
+						} else {
+							var nextSelectors = [".by-name", ".reverse", ".by-date", ".reverse"];
+							nextSelector = nextSelectors[currentSortingIndex];
+							nextSortingIndex = (currentSortingIndex + 1) % 4;
+							nextSortingModeMessageId = sortingMessageIds[nextSortingIndex] + "-" + mode + "-sorting";
+							$("#" + nextSortingModeMessageId).show();
+							$("#" + nextSortingModeMessageId).fadeOut(5000);
+							$(".sort." + mode + "-sort" + nextSelector)[0].click();
+							// console.log(".sort." + mode + "-sort" + nextSelector + " ------- " + nextSortingModeMessageId);
+						}
+						return false;
+					}
 				}
 
 				if (
 					env.currentAlbum !== null && (
 						env.currentAlbum.isAnyRoot() ||
 						env.currentMedia !== null || env.currentAlbum.isAlbumWithOneMedia()
-						// [
-						// 	env.options.folders_string,
-						// 	env.options.by_date_string,
-						// 	env.options.by_gps_string,
-						// 	env.options.by_map_string,
-						// 	env.options.by_selection_string,
-						// 	env.options.by_search_string
-						// ].indexOf(env.currentAlbum.cacheBase) !== -1 ||
-						// env.currentMedia !== null || env.currentAlbum.isAlbumWithOneMedia() || util.somethingIsSelected() || util.somethingIsSearched() || env.currentAlbum.isMap()
-					) && ! isMap
+					)
 				) {
 					// browsing mode switchers
 					let nextBrowsingModeRequested = (e.key === '>');
@@ -423,95 +495,8 @@ $(document).ready(function() {
 				}
 			}
 
-			if (
-				e.key !== undefined &&
-				! $("#right-menu").hasClass("expanded") &&
-				e.key.toLowerCase() === util._t("#select-everything-shortcut")
-			) {
-				if (! e.shiftKey) {
-					// select everything
-					$(".select.everything:not(.hidden):not(.selected)").click();
-				} else if (e.shiftKey) {
-					// unselect everything
-					$(".select.nothing").click();
-				}
-				return false;
-			}
-
-			if (
-				! $("#right-menu").hasClass("expanded") &&
-				env.currentMedia === null && ! isMap && (
-					['[', ']'].indexOf(e.key) !== -1 && ! isPopup && env.currentAlbum.subalbums.length > 1 ||
-					['{', '}'].indexOf(e.key) !== -1 && (env.currentAlbum.media.length > 1 || env.mapAlbum.media.length > 1)
-				)
-			) {
-				if (env.currentMedia === null && ! env.currentAlbum.isAlbumWithOneMedia()) {
-					// media and subalbums sort switcher
-
-					var mode;
-					var prevSortingModeMessageId, nextSortingModeMessageId;
-					var sortingMessageIds = ['by-date', 'by-name', 'by-name-reverse', 'by-date-reverse'];
-					var currentSortingIndex, prevSortingIndex, nextSortingIndex, prevSelector, nextSelector;
-
-					if (['[', ']'].indexOf(e.key) !== -1) {
-						mode = 'album';
-					} else {
-						mode = 'media';
-					}
-
-					if (
-						$(".sort." + mode + "-sort.by-date").hasClass("selected") &&
-						! $(".sort." + mode + "-sort.reverse").hasClass("selected")
-					) {
-						currentSortingIndex = 0;
-						// console.log("currentSortingIndex = ", currentSortingIndex);
-					} else if (
-						$(".sort." + mode + "-sort.by-name").hasClass("selected") &&
-						! $(".sort." + mode + "-sort.reverse").hasClass("selected")
-					) {
-						currentSortingIndex = 1;
-						// console.log("currentSortingIndex = ", currentSortingIndex);
-					} else if (
-						$(".sort." + mode + "-sort.by-name").hasClass("selected") &&
-						$(".sort." + mode + "-sort.reverse").hasClass("selected")
-					) {
-						currentSortingIndex = 2;
-						// console.log("currentSortingIndex = ", currentSortingIndex);
-					} else if (
-						$(".sort." + mode + "-sort.by-date").hasClass("selected") &&
-						$(".sort." + mode + "-sort.reverse").hasClass("selected")
-					) {
-						currentSortingIndex = 3;
-						// console.log("currentSortingIndex = ", currentSortingIndex);
-					}
-
-					$(".sort-message").stop().hide().css("opacity", "");
-					if (['[', '{'].indexOf(e.key) !== -1) {
-						var prevSelectors = [".reverse", ".by-date", ".reverse", ".by-name", ];
-						prevSelector = prevSelectors[currentSortingIndex];
-						prevSortingIndex = (currentSortingIndex + 4 - 1) % 4;
-						prevSortingModeMessageId = sortingMessageIds[prevSortingIndex] + "-" + mode + "-sorting";
-						$("#" + prevSortingModeMessageId).show();
-						$("#" + prevSortingModeMessageId).fadeOut(5000);
-						$(".sort." + mode + "-sort" + prevSelector)[0].click();
-						// console.log(".sort." + mode + "-sort" + prevSelector + " ------- " + prevSortingModeMessageId);
-					} else {
-						var nextSelectors = [".by-name", ".reverse", ".by-date", ".reverse"];
-						nextSelector = nextSelectors[currentSortingIndex];
-						nextSortingIndex = (currentSortingIndex + 1) % 4;
-						nextSortingModeMessageId = sortingMessageIds[nextSortingIndex] + "-" + mode + "-sorting";
-						$("#" + nextSortingModeMessageId).show();
-						$("#" + nextSortingModeMessageId).fadeOut(5000);
-						$(".sort." + mode + "-sort" + nextSelector)[0].click();
-						// console.log(".sort." + mode + "-sort" + nextSelector + " ------- " + nextSortingModeMessageId);
-					}
-					return false;
-				}
-			}
-
 			// "e" opens the menu, and closes it if focus is not in input field
 			if (
-				e.key !== undefined &&
 				! e.shiftKey &&  ! e.ctrlKey &&  ! e.altKey &&
 				e.key.toLowerCase() === util._t("#menu-icon-title-shortcut") && (
 					! $("#right-menu").hasClass("expanded") ||
@@ -522,11 +507,6 @@ $(document).ready(function() {
 				util.downloadSelectionInfo();
 				return false;
 			}
-		}
-
-		if ($("#right-menu").hasClass("expanded") && ! $(".search").hasClass("hidden-by-menu-selection") && ! $("#search-field").is(":focus") && e.key !== undefined) {
-			// focus the search field, so that the typed text is added
-			$("#search-field").focus();
 		}
 
 		return true;
