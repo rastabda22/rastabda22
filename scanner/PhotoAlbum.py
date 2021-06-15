@@ -39,6 +39,7 @@ from Utilities import convert_combination_to_set, convert_set_to_combination, co
 from Geonames import Geonames
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
+from PIL.TiffImagePlugin import IFDRational, Fraction
 from VideoToolWrapper import VideoProbeWrapper, VideoTranscodeWrapper
 import Options
 # WARNING: pyexiftool has been modified, do not overwrite with new versions unless you know what you are doing
@@ -2880,6 +2881,11 @@ class PhotoAlbumEncoder(json.JSONEncoder):
 			return obj.to_dict()
 		if isinstance(obj, set):
 			return list(obj)
+		if isinstance(obj, (IFDRational, Fraction)):
+			try:
+				return float(obj)
+			except ZeroDivisionError:
+				return float(0)
 		return json.JSONEncoder.default(self, obj)
 
 
