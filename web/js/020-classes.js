@@ -19,8 +19,9 @@
 			this.nextMedia = null;
 			this.prevMedia = null;
 			this.isABrowsingModeChange = false;
-			this.windowWidth = $(window).outerWidth();
-			this.windowHeight = $(window).outerHeight();
+			// beware: $(window).innerWidth(); doesn't cosider the scroll bar yet
+			this.windowWidth = $(window).innerWidth();
+			this.windowHeight = $(window).innerHeight();
 			this.fromEscKey = false;
 			this.firstEscKey = true;
 			this.mapRefreshType = "none";

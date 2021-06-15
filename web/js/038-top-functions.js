@@ -1464,6 +1464,7 @@
 							util.scrollAlbumViewToHighlightedThumb();
 						}
 						util.addMediaLazyLoader();
+						env.windowWidth = $(window).innerWidth();
 
 						$(window).off("resize").on(
 							"resize",

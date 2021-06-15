@@ -1,4 +1,5 @@
 * make map shortcuts work
+* fix map closer position
 
 ### version v5.2.2 (June 15, 2021)
 

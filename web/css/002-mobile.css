@@ -48,7 +48,8 @@
 	}
 
 	#my-modal .modal-close {
-	    top: 35px !important;
+	    top: 22px !important;
+	    right: 22px !important;
 	}
 
 	#description {
