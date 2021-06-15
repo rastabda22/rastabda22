@@ -519,6 +519,7 @@ $(document).ready(function() {
 				)
 			) {
 				util.toggleMenu();
+				util.downloadSelectionInfo();
 				return false;
 			}
 		}
