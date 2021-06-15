@@ -931,7 +931,7 @@
 
 			if (env.selectionAlbum.numsMediaInSubTree.imagesAndVideosTotal()) {
 				$(".download-album.selection").removeClass("hidden");
-				$(".download-album.selection").attr("title", util._t("#how-to-download-selection"));
+				$(".download-album.selection").attr("title", util._t("#how-to-download-selection").replace(/<br \/>/gm, ' '));
 			}
 
 			if (thisAlbum.isSearch() && ! thisAlbum.media.length && ! thisAlbum.subalbums.length) {
