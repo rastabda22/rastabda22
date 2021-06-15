@@ -1,4 +1,10 @@
+### version v5.2.2 (June 15, 2021)
+
+* added a more visible message for downloading the selection
 * space (with control in single media view) toggles selection status of single media or subalbum
+* now it's more understandable what menu (search or the other) is active
+* updated navigation keys doc
+* bug fixes
 
 ### version v5.2.1 (June 4, 2021)
 
