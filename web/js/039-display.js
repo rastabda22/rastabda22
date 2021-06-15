@@ -58,6 +58,7 @@ $(document).ready(function() {
 				return false;
 			} else if ($("#menu-icon").hasClass("expanded") || $("#search-icon").hasClass("expanded")) {
 				util.closeMenu();
+				util.downloadSelectionInfo();
 				return false;
 			} else if (env.currentMedia !== null && env.currentMedia.isVideo() && ! $("video#media-center")[0].paused) {
 				// stop the video, otherwise it keeps playing
@@ -124,6 +125,7 @@ $(document).ready(function() {
 					let nextItem = nextItemFunction(highlightedItemObject);
 					util.addHighlightToItem(nextItem);
 					$("#search-field").blur();
+					util.downloadSelectionInfo();
 					return false;
 				} else if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
 					$("#right-menu li.first-level.hidden-by-menu-selection.was-highlighted, #right-menu li.search.hidden-by-menu-selection.was-highlighted").addClass("highlighted").removeClass("was-highlighted");
@@ -132,6 +134,7 @@ $(document).ready(function() {
 					$("#menu-icon, #search-icon").toggleClass("expanded");
 					util.highlightMenu();
 					util.focusSearchField();
+					util.downloadSelectionInfo();
 					return false;
 				}
 			} else if (e.key !== undefined && ! $("#right-menu").hasClass("expanded")) {

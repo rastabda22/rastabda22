@@ -1620,6 +1620,19 @@
 		}
 	};
 
+	Utilities.prototype.downloadSelectionInfo = function() {
+		if ($(".download-album.selection").hasClass("highlighted") && $("#right-menu").hasClass("expanded") && $("#menu-icon").hasClass("expanded")) {
+			$("#how-to-download-selection").show();
+			$("#how-to-download-selection").off("click").on(
+				"click",
+				function(e) {
+					$("#how-to-download-selection").hide();
+				}
+			);
+		} else {
+			$("#how-to-download-selection").hide();
+		}
+	};
 	Utilities.isPopup = function() {
 		// return $('.leaflet-popup-content-wrapper').html() ? true : false;
 		return $('.leaflet-popup').html() ? true : false;
