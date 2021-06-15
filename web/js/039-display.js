@@ -809,6 +809,13 @@ $(document).ready(function() {
 			}
 		}
 	);
+	$(".download-album.selection.active").off("click").on(
+		"click",
+		function() {
+			$("#how-to-download-selection").toggle();
+			return false;
+		}
+	);
 
 	$(".first-level.protection").off("click").on("click", util.showAuthForm);
 
