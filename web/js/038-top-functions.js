@@ -1983,7 +1983,7 @@
 
 	TopFunctions.toggleAlbumsSquare = function(ev) {
 		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-			env.options.album_thumb_type = env.options.album_thumb_type === "square" ? "fit" : "square";
+			env.options.album_thumb_type = env.options.album_thumb_type === "album_square" ? "album_fit" : "album_square";
 			f.setCookie("albumThumbType", env.options.album_thumb_type);
 			f.updateMenu();
 			let highlightedSubalbumId = $("#subalbums .highlighted").attr("id");
@@ -1997,7 +1997,7 @@
 
 	TopFunctions.toggleMediaSquare = function(ev) {
 		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
-			env.options.media_thumb_type = env.options.media_thumb_type === "square" ? "fixed_height" : "square";
+			env.options.media_thumb_type = env.options.media_thumb_type === "media_square" ? "media_fixed_height" : "media_square";
 			f.setCookie("mediaThumbType", env.options.media_thumb_type);
 			f.updateMenu();
 			if (env.currentAlbum.media.length) {
@@ -2200,7 +2200,7 @@
 
 				let width = ithMedia.metadata.size[0];
 				let height = ithMedia.metadata.size[1];
-				let thumbHash = ithMedia.chooseThumbnail(thumbnailSize);
+				let thumbHash = ithMedia.chooseMediaThumbnail(thumbnailSize);
 				let thumbHeight, thumbWidth, calculatedWidth, calculatedHeight;
 
 				if (env.options.media_thumb_type === "fixed_height") {
@@ -2212,7 +2212,7 @@
 						thumbWidth = thumbHeight * width / height;
 					}
 					calculatedWidth = thumbWidth;
-				} else if (env.options.media_thumb_type === "square") {
+				} else if (env.options.media_thumb_type === "media_square") {
 					thumbHeight = thumbnailSize;
 					thumbWidth = thumbnailSize;
 					calculatedWidth = env.options.media_thumb_size;
@@ -2455,7 +2455,7 @@
 			var titleName, randomMediaLink;
 			var randomMedia = randomSubAlbum.media[index];
 			var id = phFl.convertCacheBaseToId(self.subalbums[iSubalbum].cacheBase);
-			var mediaSrc = randomMedia.chooseThumbnail(env.options.album_thumb_size);
+			var mediaSrc = randomMedia.chooseSubalbumThumbnail(env.options.album_thumb_size);
 
 			$("#downloading-media").hide();
 

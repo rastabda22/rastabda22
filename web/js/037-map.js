@@ -68,7 +68,7 @@
 		// the space for the images: remove the margin
 		env.maxWidthForImagesInPopup = env.maxWidthForPopupContent - 15 - 15;
 		// square thumbnails: set the value to a shorter one, in order to avoid right white space
-		// if (env.options.media_thumb_type === "square") {
+		// if (env.options.media_thumb_type === "media_square") {
 		// 	var thumbSize = env.options.media_thumb_size;
 		// 	var spacing = 0;
 		// 	if (env.options.spacing)

@@ -1835,11 +1835,11 @@ class SingleMedia(object):
 		max_image_size = max(image_width, image_height)
 		corrected_thumb_size = int(round(thumb_size * Options.config['mobile_thumbnail_factor'])) if mobile_bigger else thumb_size
 		if (
-			thumb_type == "fixed_height" and
+			thumb_type == "media_fixed_height" and
 			image_width > image_height
 		):
 			veredict = (corrected_thumb_size < image_height)
-		elif thumb_type == "square":
+		elif thumb_type == "album_square" or thumb_type == "media_square":
 			min_image_size = min(image_width, image_height)
 			veredict = (corrected_thumb_size < min_image_size)
 		else:
@@ -1986,11 +1986,11 @@ class SingleMedia(object):
 
 		original_thumb_size = actual_thumb_size
 		info_string = str(original_thumb_size)
-		if thumb_type == "square":
+		if thumb_type == "album_square" or thumb_type == "media_square":
 			info_string += ", square"
-		if thumb_size == Options.config['album_thumb_size'] and thumb_type == "fit":
+		if thumb_size == Options.config['album_thumb_size'] and thumb_type == "album_fit":
 			info_string += ", fit size"
-		elif thumb_size == Options.config['media_thumb_size'] and thumb_type == "fixed_height":
+		elif thumb_size == Options.config['media_thumb_size'] and thumb_type == "media_fixed_height":
 			info_string += ", fixed height"
 		if mobile_bigger:
 			info_string += " (mobile)"
@@ -1999,7 +1999,7 @@ class SingleMedia(object):
 		start_image_height = start_image.size[1]
 		must_crop = False
 		try_shifting = False
-		if thumb_type == "square":
+		if thumb_type == "album_square" or thumb_type == "media_square":
 			# image is to be cropped: calculate the cropping values
 			# if opencv is installed, crop it, taking into account the faces
 			if (
@@ -2163,7 +2163,7 @@ class SingleMedia(object):
 		else:
 			if (
 				original_thumb_size == media_thumb_size and
-				thumb_type == "fixed_height" and
+				thumb_type == "media_fixed_height" and
 				start_image_width > start_image_height
 			):
 				# the thumbnail size will not be thumb_size, the image will be greater
@@ -2225,7 +2225,7 @@ class SingleMedia(object):
 
 		# if the crop results smaller than the required size, extend it with a background
 		start_image_copy_filled = start_image_copy
-		if thumb_type == "square" and min(start_image_copy.size[0], start_image_copy.size[1]) < actual_thumb_size:
+		if (thumb_type == "album_square" or thumb_type == "media_square") and min(start_image_copy.size[0], start_image_copy.size[1]) < actual_thumb_size:
 			# it's smaller than the square we need: fill it
 			message("small crop: filling...", "background color: " + Options.config['small_square_crops_background_color'], 5)
 			new_image = Image.new('RGBA', (actual_thumb_size, actual_thumb_size), Options.config['small_square_crops_background_color'])

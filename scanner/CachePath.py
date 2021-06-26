@@ -119,17 +119,17 @@ def photo_cache_name(photo, size, thumb_type="", mobile_bigger=False):
 	if mobile_bigger:
 		actual_size = int(actual_size * Options.config['mobile_thumbnail_factor'])
 	photo_suffix += str(actual_size)
-	if size == Options.config['album_thumb_size']:
+	if (thumb_type == "album_square" or thumb_type == "album_fit") and size == Options.config['album_thumb_size']:
 		photo_suffix += "a"
-		if thumb_type == "square":
+		if thumb_type == "album_square":
 			photo_suffix += "s"
-		elif thumb_type == "fit":
+		elif thumb_type == "album_fit":
 			photo_suffix += "f"
-	if size == Options.config['media_thumb_size']:
+	if (thumb_type == "media_square" or thumb_type == "media_fixed_height") and size == Options.config['media_thumb_size']:
 		photo_suffix += "t"
-		if thumb_type == "square":
+		if thumb_type == "media_square":
 			photo_suffix += "s"
-		elif thumb_type == "fixed_height":
+		elif thumb_type == "media_fixed_height":
 			photo_suffix += "f"
 	photo_suffix += ".jpg"
 	result = photo.cache_base + photo_suffix
@@ -185,10 +185,17 @@ def modified_size(tuple_arg):
 def thumbnail_types_and_sizes():
 	# collect all the square sizes needed
 	# album size: square thumbnail are generated anyway, because they are needed by the code that generates composite images for sharing albums
+	if Options.config['mobile_thumbnail_factor'] > 1:
+		album_thumbnail_types = [(Options.config['album_thumb_size'], True), (Options.config['album_thumb_size'], False)]
+		media_thumbnail_types = [(Options.config['media_thumb_size'], True), (Options.config['media_thumb_size'], False)]
+	else:
+		album_thumbnail_types = [(Options.config['album_thumb_size'], False)]
+		media_thumbnail_types = [(Options.config['media_thumb_size'], False)]
 	_thumbnail_types_and_sizes = {
-		"square": square_thumbnail_sizes(),
-		"fit": [(Options.config['album_thumb_size'], True), (Options.config['album_thumb_size'], False)],
-		"fixed_height": [(Options.config['media_thumb_size'], True), (Options.config['media_thumb_size'], False)]
+		"album_square": album_thumbnail_types,
+		"album_fit": album_thumbnail_types,
+		"media_square": media_thumbnail_types,
+		"media_fixed_height": media_thumbnail_types
 	}
 
 	return _thumbnail_types_and_sizes

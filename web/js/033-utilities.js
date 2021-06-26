@@ -2332,35 +2332,56 @@
 		return Utilities.pathJoin([this.albumName, this.name]);
 	};
 
+	SingleMedia.prototype.thumbnailPath = function(size, subalbumOrMedia) {
+		var suffix = env.options.cache_folder_separator, cacheBase, rootString = "root-";
+
+		var actualSize = size;
+		if (env.devicePixelRatio > 1) {
+			actualSize = Math.round(actualSize * env.options.mobile_thumbnail_factor);
+		}
+		suffix += actualSize.toString();
+		if (subalbumOrMedia === "subalbum") {
+			suffix += "a";
+			if (env.options.album_thumb_type === "album_square")
+				suffix += "s";
+			else if (env.options.album_thumb_type === "album_fit")
+				suffix += "f";
+		} else {
+			suffix += "t";
+			if (env.options.media_thumb_type === "media_square")
+				suffix += "s";
+			else if (env.options.media_thumb_type === "media_fixed_height")
+				suffix += "f";
+		}
+		suffix += ".jpg";
+
+		cacheBase = this.foldersCacheBase + env.options.cache_folder_separator + this.cacheBase + suffix;
+		if (cacheBase.indexOf(rootString) === 0)
+			cacheBase = cacheBase.substring(rootString.length);
+		else {
+			if (Utilities.isFolderCacheBase(cacheBase))
+				cacheBase = cacheBase.substring(env.options.foldersStringWithTrailingSeparator.length);
+			else if (Utilities.isByDateCacheBase(cacheBase))
+				cacheBase = cacheBase.substring(env.options.byDateStringWithTrailingSeparator.length);
+			else if (Utilities.isByGpsCacheBase(cacheBase))
+				cacheBase = cacheBase.substring(env.options.byGpsStringWithTrailingSeparator.length);
+			else if (Utilities.isSearchCacheBase(cacheBase))
+				cacheBase = cacheBase.substring(env.options.bySearchStringWithTrailingSeparator.length);
+			else if (Utilities.isSelectionCacheBase(cacheBase))
+				cacheBase = cacheBase.substring(env.options.bySelectionStringWithTrailingSeparator.length);
+			else if (Utilities.isMapCacheBase(cacheBase))
+				cacheBase = cacheBase.substring(env.options.byMapStringWithTrailingSeparator.length);
+		}
+		if (this.cacheSubdir)
+			return Utilities.pathJoin([env.server_cache_path, this.cacheSubdir, cacheBase]);
+		else
+			return Utilities.pathJoin([env.server_cache_path, cacheBase]);
+	};
+
 	SingleMedia.prototype.mediaPath = function(size) {
 		var suffix = env.options.cache_folder_separator, cacheBase, rootString = "root-";
-		if (
-			this.isImage() ||
-			this.isVideo() && [env.options.album_thumb_size, env.options.media_thumb_size].indexOf(size) != -1
-		) {
-			var actualSize = size;
-			var albumThumbSize = env.options.album_thumb_size;
-			var mediaThumbSize = env.options.media_thumb_size;
-			if ((size === albumThumbSize || size === mediaThumbSize) && env.devicePixelRatio > 1) {
-				actualSize = Math.round(actualSize * env.options.mobile_thumbnail_factor);
-				albumThumbSize = Math.round(albumThumbSize * env.options.mobile_thumbnail_factor);
-				mediaThumbSize = Math.round(mediaThumbSize * env.options.mobile_thumbnail_factor);
-			}
-			suffix += actualSize.toString();
-			if (size === env.options.album_thumb_size) {
-				suffix += "a";
-				if (env.options.album_thumb_type === "square")
-					suffix += "s";
-				else if (env.options.album_thumb_type === "fit")
-					suffix += "f";
-			}
-			else if (size === env.options.media_thumb_size) {
-				suffix += "t";
-				if (env.options.media_thumb_type === "square")
-					suffix += "s";
-				else if (env.options.media_thumb_type === "fixed_height")
-					suffix += "f";
-			}
+		if (this.isImage()) {
+			suffix += size.toString();
 			suffix += ".jpg";
 		} else if (this.isVideo()) {
 			suffix += "transcoded.mp4";
@@ -4428,8 +4449,12 @@
 		$("body, html").css("overflow", "auto");
 	};
 
-	SingleMedia.prototype.chooseThumbnail	= function(thumbnailSize) {
-		return this.mediaPath(thumbnailSize);
+	SingleMedia.prototype.chooseMediaThumbnail	= function(thumbnailSize) {
+		return this.thumbnailPath(thumbnailSize, "media");
+	};
+
+	SingleMedia.prototype.chooseSubalbumThumbnail	= function(thumbnailSize) {
+		return this.thumbnailPath(thumbnailSize, "subalbum");
 	};
 
 	Album.prototype.sortAlbumsMedia = function() {

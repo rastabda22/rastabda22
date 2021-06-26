@@ -310,6 +310,10 @@ def get_options():
 			config[option] = usr_config.getfloat('options', option)
 			if config[option] < 1:
 				config[option] = 1
+		elif option == 'album_thumb_type':
+			config[option] = 'album_' + usr_config.get('options', option)
+		elif option == 'media_thumb_type':
+			config[option] = 'media_' + usr_config.get('options', option)
 		else:
 			config[option] = usr_config.get('options', option)
 			if option in ('js_cache_levels'):
