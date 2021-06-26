@@ -293,7 +293,8 @@ max_media_from_positions_in_json_file = 100
 
 # The sizes for the reduced images
 # they must be reverse ordered, i.e. from biggest to smallest
-reduced_sizes = [1200, 1000, 800]
+# a void array is allowed: this way the original image will be used all the ways, possibly the load times will be higher
+reduced_sizes = [1200, 800]
 
 # The sizes for the thumbnails to use for albums
 album_thumb_size = 200
