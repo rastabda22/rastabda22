@@ -1255,7 +1255,7 @@ class SingleMedia(object):
 		self._attributes["dateTimeFile"] = mtime
 		self._attributes["dateTimeDir"] = dir_mtime
 
-		self.mime_type = magic.from_file(media_path, mime = True)
+		self.mime_type = magic.detect_from_filename(media_path).mime_type
 
 		# temporary fix for "ISO Media, MPEG-4 (.MP4) for SonyPSP" files whose mime type is incorrectly reported as audio/mp4
 		# TO DO: remove when libmagic1's Bug#941420 is fixed
