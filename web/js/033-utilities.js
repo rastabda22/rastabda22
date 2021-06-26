@@ -3692,7 +3692,7 @@
 			// sometimes thickness is 0, but the scroll bar could be there
 			// let's try to suppose if it's there
 			let totalThumbsSize = env.options.media_thumb_size * env.currentAlbum.media.length;
-			if (env.options.media_thumb_type === "fixed_height") {
+			if (env.options.media_thumb_type === "media_fixed_height") {
 				let sum = 0;
 				totalThumbsSize = env.currentAlbum.media.forEach(
 					singleMedia => {

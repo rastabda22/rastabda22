@@ -2203,7 +2203,7 @@
 				let thumbHash = ithMedia.chooseMediaThumbnail(thumbnailSize);
 				let thumbHeight, thumbWidth, calculatedWidth, calculatedHeight;
 
-				if (env.options.media_thumb_type === "fixed_height") {
+				if (env.options.media_thumb_type === "media_fixed_height") {
 					if (height < env.options.media_thumb_size) {
 						thumbHeight = height;
 						thumbWidth = width;
