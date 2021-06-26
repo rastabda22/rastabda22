@@ -2186,7 +2186,11 @@ class SingleMedia(object):
 		except:
 			# we try again to work around PIL bug
 			message("making copy (2nd try)...", info_string, 5)
-			start_image_copy = start_image.copy()
+			try:
+				start_image_copy = start_image.copy()
+			except OSError:
+				message("Error in image copy", info_string, 5)
+				start_image_copy = Image.new('RGBA', (actual_thumb_size, actual_thumb_size), Options.config['small_square_crops_background_color'])
 			indented_message("copy made (2nd try)", info_string, 5)
 
 		# both width and height of thumbnail are less then width and height of start_image, no blurring will happen
