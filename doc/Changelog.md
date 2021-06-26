@@ -1,3 +1,5 @@
+* fix bug with removing stale files
+
 ### version v5.2.3 (June 26, 2021)
 
 * make map shortcuts work
