@@ -1,5 +1,10 @@
+### version v5.2.3 (June 26, 2021)
+
 * make map shortcuts work
+* keep highlighted thumbnail when changing aspect options
 * fix map closer position
+* fix bug with removed magic.from_file method
+* other bug fixes (thanks to Dan Fandrich)
 
 ### version v5.2.2 (June 15, 2021)
 
