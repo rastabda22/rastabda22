@@ -2160,11 +2160,14 @@ class TreeWalker:
 						cache_file = os.fsdecode(cache_file)
 					except KeyboardInterrupt:
 						raise
-					if cache_file not in json_dict['files']:
-						message("removing stale cache file...", cache_file, 4)
-						file_to_delete = os.path.join(Options.config['cache_path'], subdir, cache_file)
-						os.unlink(file_to_delete)
-						indented_message("stale cache file removed", "", 5)
+					try:
+						if cache_file not in json_dict['files']:
+							message("removing stale cache file...", cache_file, 4)
+							file_to_delete = os.path.join(Options.config['cache_path'], subdir, cache_file)
+							os.unlink(file_to_delete)
+							indented_message("stale cache file removed", "", 5)
+					except KeyError:
+						pass
 				else:
 					indented_message("not a stale cache file, keeping it", "", 2)
 					back_level()
