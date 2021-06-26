@@ -2760,8 +2760,8 @@
 			return $("#right-menu .first-level.highlighted, #right-menu .first-level .highlighted");
 	};
 
-	Utilities.highlightedObject = function() {
-		if (Utilities.isPopup()) {
+	Utilities.highlightedObject = function(inThumbs = false) {
+		if (Utilities.isPopup() && ! inThumbs) {
 			return $("#popup-images-wrapper .highlighted");
 		} else {
 			return $("#album-and-media-container .highlighted");

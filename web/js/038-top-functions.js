@@ -1592,7 +1592,9 @@
 			// f.setBooleanCookie("albumReverseSortRequested", this.albumReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
+			let highlightedObjectSelector = "#" + util.highlightedObject().attr("id");
 			env.currentAlbum.showSubalbums(true);
+			$(highlightedObjectSelector).addClass("highlighted");
 		}
 		return false;
 	};
@@ -1606,7 +1608,9 @@
 			f.setBooleanCookie("albumNameSortRequested", true);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
+			let highlightedObjectSelector = "#" + util.highlightedObject().attr("id");
 			env.currentAlbum.showSubalbums(true);
+			$(highlightedObjectSelector).addClass("highlighted");
 		}
 		return false;
 	};
@@ -1619,7 +1623,9 @@
 			f.setBooleanCookie("albumReverseSortRequested", env.albumReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
+			let highlightedObjectSelector = "#" + util.highlightedObject().attr("id");
 			env.currentAlbum.showSubalbums(true);
+			$(highlightedObjectSelector).addClass("highlighted");
 		}
 		return false;
 	};
@@ -1633,10 +1639,22 @@
 			f.setBooleanCookie("mediaNameSortRequested", false);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
+			let inThumbs = true;
+			let highlightedObjectSelector = "#" + util.highlightedObject(inThumbs).parent().attr("id");
 			this.showThumbs();
+			if (env.currentMedia !== null) {
+				util.scrollBottomMediaToHighlightedThumb($(highlightedObjectSelector).children());
+			} else {
+				util.scrollAlbumViewToHighlightedThumb($(highlightedObjectSelector).children());
+			}
+
 			if (util.isPopup()) {
 				env.mapAlbum.sortAlbumsMedia();
+				let highlightedObjectSelector = "#" + util.highlightedObject().attr("id");
 				env.mapAlbum.showThumbs();
+				$("#popup-images-wrapper .highlighted").removeClass("highlighted");
+				$(highlightedObjectSelector).addClass("highlighted");
+				util.scrollPopupToHighlightedThumb();
 				map.updatePopup();
 			}
 		}
@@ -1653,11 +1671,22 @@
 			f.setBooleanCookie("mediaNameSortRequested", true);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
+			let inThumbs = true;
+			let highlightedObjectSelector = "#" + util.highlightedObject(inThumbs).parent().attr("id");
 			this.showThumbs();
+			if (env.currentMedia !== null) {
+				util.scrollBottomMediaToHighlightedThumb($(highlightedObjectSelector).children());
+			} else {
+				util.scrollAlbumViewToHighlightedThumb($(highlightedObjectSelector).children());
+			}
 
 			if (util.isPopup()) {
 				env.mapAlbum.sortAlbumsMedia();
+				let highlightedObjectSelector = "#" + util.highlightedObject().attr("id");
 				env.mapAlbum.showThumbs();
+				$("#popup-images-wrapper .highlighted").removeClass("highlighted");
+				$(highlightedObjectSelector).addClass("highlighted");
+				util.scrollPopupToHighlightedThumb();
 				map.updatePopup();
 			}
 		}
@@ -1670,11 +1699,22 @@
 			f.setBooleanCookie("mediaReverseSortRequested", env.mediaReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
+			let inThumbs = true;
+			let highlightedObjectSelector = "#" + util.highlightedObject(inThumbs).parent().attr("id");
 			this.showThumbs();
+			if (env.currentMedia !== null) {
+				util.scrollBottomMediaToHighlightedThumb($(highlightedObjectSelector).children());
+			} else {
+				util.scrollAlbumViewToHighlightedThumb($(highlightedObjectSelector).children());
+			}
 
 			if (util.isPopup()) {
 				env.mapAlbum.sortAlbumsMedia();
+				let highlightedObjectSelector = "#" + util.highlightedObject().attr("id");
 				env.mapAlbum.showThumbs();
+				$("#popup-images-wrapper .highlighted").removeClass("highlighted");
+				$(highlightedObjectSelector).addClass("highlighted");
+				util.scrollPopupToHighlightedThumb();
 				map.updatePopup();
 			}
 		}
@@ -2011,9 +2051,10 @@
 			}
 
 			if (util.isPopup()) {
-				env.mapAlbum.showThumbs();
 				map.updatePopup();
 				let highlightedSingleMediaInPopupId = $("#popup-images-wrapper .highlighted img.thumbnail").attr("id");
+				env.mapAlbum.showThumbs();
+				$("#popup-images-wrapper .highlighted").removeClass("highlighted");
 				util.scrollPopupToHighlightedThumb($("#" + highlightedSingleMediaInPopupId).parent().parent());
 			}
 		}
@@ -2264,7 +2305,7 @@
 				else
 					mediaHash = phFl.encodeHash(this.cacheBase, ithMedia);
 
-				let data = "";
+				let data = "", popupPrefix = "";
 				if (inPopup) {
 					data =
 						"data='" +
@@ -2277,6 +2318,7 @@
 								}
 							) +
 						"' ";
+					popupPrefix = "popup-";
 				}
 
 				imgHtml =
@@ -2287,14 +2329,18 @@
 						"class='thumbnail " + lazyClass + "' " +
 						"height='" + thumbHeight + "' " +
 						"width='" + thumbWidth + "' " +
-						"id='" + ithMedia.foldersCacheBase + "--" + ithMedia.cacheBase + "' " +
+						"id='" + popupPrefix + ithMedia.foldersCacheBase + "--" + ithMedia.cacheBase + "' " +
 						"style='" +
 							 "width: " + calculatedWidth + "px; " +
 							 "height: " + calculatedHeight + "px;" +
 							 "'" +
 					"/>";
 
-				let imageId = "link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase;
+				let imageId = ithMedia.foldersCacheBase + "--" + ithMedia.cacheBase;
+				if (! inPopup)
+					imageId = "album-view-" + imageId;
+				else
+					imageId = "popup-" + imageId;
 
 				let imageString =
 					"<div class='thumb-and-caption-container' style='" +
@@ -2412,7 +2458,8 @@
 					)
 				) {
 					// execution enters here if we are using index.php
-					$("#link-" + ithMedia.foldersCacheBase + "-" + ithMedia.cacheBase).off("auxclick").on(
+					let imageId = ithMedia.foldersCacheBase + "--" + ithMedia.cacheBase;
+					$("#album-view-" + imageId + ", #popup-" + imageId).off("auxclick").on(
 						"auxclick",
 						{mediaHash: phFl.encodeHash(this.cacheBase, ithMedia)},
 						function (ev) {
