@@ -4583,11 +4583,15 @@
 			let selector = ".title .media-name, #description, #description-tags .tag";
 			if (baseSelector)
 				selector += ", " + baseSelector + " .first-line, .media-description, .media-tags";
+			const options = {
+				caseSensitive: env.options.search_case_sensitive,
+				diacritics: env.options.search_accent_sensitive,
+				separateWordSearch: env.options.search_any_word,
+				accuracy: env.options.search_inside_words ? "partially" : "exactly",
+			};
 			$(selector).mark(
 				env.searchWords.user,
-				{
-					"caseSensitive": env.options.search_case_sensitive,
-				}
+				options
 			);
 		}
 	};
