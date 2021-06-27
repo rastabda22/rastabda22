@@ -75,6 +75,8 @@ img.thumbnail-img {
 
 .second-line {
 	font-size: 75%;
+	margin-top: 5px;
+	line-height: 150%;
 }
 
 .gray {
@@ -803,7 +805,7 @@ video {
 
 .thumb-and-caption-container {
 	margin-bottom: 0;
-	display: block;
+	display: inline-block;
 }
 
 .thumb-and-caption-container.highlighted .media-caption,
@@ -867,7 +869,7 @@ video {
 	cursor: pointer;
 }
 
-#thumbs a {
+#thumbs + a {
 	display: inline-flex;
 	text-decoration: none;
 	cursor: pointer;
