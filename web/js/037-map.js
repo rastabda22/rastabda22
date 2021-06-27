@@ -52,6 +52,8 @@
 
 		util.scrollPopupToHighlightedThumb();
 
+		util.highlightSearchedWords("#popup-images-wrapper");
+
 		f.updateMenu();
 	};
 

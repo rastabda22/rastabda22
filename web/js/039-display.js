@@ -590,6 +590,11 @@ $(document).ready(function() {
 					function () {
 						[searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions, removedStopWords] =
 							phFl.removeStopWords(searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions);
+						env.searchWords = {
+							user: searchWordsFromUser,
+							normalized: searchWordsFromUserNormalized,
+							normalizedAccordingToOptions: searchWordsFromUserNormalizedAccordingToOptions
+						}
 
 						// re-build the original map album
 						var clickHistory = env.mapAlbum.clickHistory;

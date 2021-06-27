@@ -33,6 +33,7 @@
 			this.selectingSelectors = [];
 			// var nextLink = "", prevLink = "";
 			this.mediaLink = "";
+			this.searchWords = {};
 			// scrollbarWidth;
 			// contextMenu = false;
 

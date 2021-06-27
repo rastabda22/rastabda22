@@ -1039,7 +1039,7 @@
 		return this.isTransversal() || this.isCollection();
 	};
 
-	Utilities.prototype.isSearchHash = function() {
+	Utilities.isSearchHash = function() {
 		var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = PhotoFloat.decodeHash(location.hash);
 		var cacheBase = PhotoFloat.convertHashToCacheBase(location.hash);
 		if (Utilities.isSearchCacheBase(cacheBase) || collectionCacheBase !== null)
@@ -4577,6 +4577,18 @@
 		// Utilities.focusSearchField();
 	};
 
+	Utilities.prototype.highlightSearchedWords = function(baseSelector) {
+		if (Utilities.isSearchHash()) {
+			// highlight the searched text
+			$(baseSelector + " .album-name").children().first().mark(
+				env.searchWords.user,
+				{
+					"caseSensitive": env.options.search_case_sensitive,
+				}
+			);
+		}
+	};
+
 	Utilities.prototype.horizontalDistance = function(object1, object2) {
 		var leftOffset1 = object1.offset().left;
 		var leftOffset2 = object2.offset().left;
@@ -4656,6 +4668,7 @@
 	Utilities.prototype.scrollPopupToHighlightedThumb = Utilities.scrollPopupToHighlightedThumb;
 	Utilities.prototype.scrollAlbumViewToHighlightedThumb = Utilities.scrollAlbumViewToHighlightedThumb;
 	Utilities.prototype.scrollToHighlightedSubalbum = Utilities.scrollToHighlightedSubalbum;
+	Utilities.prototype.isSearchHash = Utilities.isSearchHash;
 
 	window.Utilities = Utilities;
 }());

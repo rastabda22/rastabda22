@@ -1459,6 +1459,11 @@
 						function () {
 							[searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions, removedStopWords] =
 								PhotoFloat.removeStopWords(searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions);
+							env.searchWords = {
+								user: searchWordsFromUser,
+								normalized: searchWordsFromUserNormalized,
+								normalizedAccordingToOptions: searchWordsFromUserNormalizedAccordingToOptions
+							}
 
 							buildSearchResult();
 						},
