@@ -547,13 +547,20 @@
 									[name, mediaNamePosition] = singleMedia.captionForSelection.split(br);
 								else if (isMapTitle)
 									[name, mediaNamePosition] = singleMedia.captionForPopup.split(br);
-								if (! mediaNamePosition)
+								if (name.indexOf("<div") === 0 ) {
+									let classes = $(name).attr("class").split(/\s+/);
+									name = "<span class='" + classes + "'>" + name.substring(name.indexOf(">") + 1).substring(0, name.lastIndexOf("<")) + "</span>";
+								}
+								if (! mediaNamePosition && singleMedia.titleForShowing) {
 									mediaNamePosition = singleMedia.titleForShowing;
-								singleMediaNameHtml =
+									singleMediaNameHtml =
 									"<span class='media-name with-second-part'>" +
-										name +
-										" <span id='media-name-second-part'>(" + mediaNamePosition + ")</span>" +
+									name +
+									" <span id='media-name-second-part'>(" + mediaNamePosition + ")</span>" +
 									"</span> ";
+								} else {
+									singleMediaNameHtml = "<span class='media-name'>" + name + "</span>";
+								}
 							} else {
 								singleMediaNameHtml = "<span class='media-name'>" + singleMediaName + "</span>";
 							}

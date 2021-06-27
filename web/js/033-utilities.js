@@ -3271,11 +3271,11 @@
 	Utilities.combineFirstAndSecondLine = function(firstLine, secondLine) {
 		var result = "";
 		if (firstLine)
-			result = firstLine;
-		if (firstLine && secondLine)
-			result += "<br />";
+			result = "<div class='first-line'>" + firstLine + "</div>";
+		// if (firstLine && secondLine)
+		// 	result += "<br />";
 		if (secondLine)
-			result += "<span class='second-line'>" + secondLine + "</span>";
+			result += "<div class='second-line'>" + secondLine + "</div>";
 		return result;
 	};
 
@@ -4580,7 +4580,7 @@
 	Utilities.prototype.highlightSearchedWords = function(baseSelector) {
 		if (Utilities.isSearchHash()) {
 			// highlight the searched text
-			$(baseSelector + " .album-name").children().first().mark(
+			$(baseSelector + " .first-line").mark(
 				env.searchWords.user,
 				{
 					"caseSensitive": env.options.search_case_sensitive,

@@ -73,6 +73,11 @@ img.thumbnail-img {
 	padding: 0 .5em;
 }
 
+.first-line, .second-line {
+	display: inline-block;
+	line-height: 150%;
+}
+
 .second-line {
 	font-size: 75%;
 	margin-top: 5px;
