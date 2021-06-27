@@ -4535,6 +4535,8 @@
 		env.options.search_any_word = ! env.options.search_any_word;
 		Functions.setBooleanCookie("searchAnyWord", env.options.search_any_word);
 		Functions.updateMenu();
+		if (env.searchWords.user.length < 2)
+			return;
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
 		// Utilities.focusSearchField();
