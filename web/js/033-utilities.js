@@ -4580,7 +4580,10 @@
 	Utilities.prototype.highlightSearchedWords = function(baseSelector) {
 		if (Utilities.isSearchHash()) {
 			// highlight the searched text
-			$(baseSelector + " .first-line").mark(
+			let selector = ".title .media-name, #description, #description-tags .tag";
+			if (baseSelector)
+				selector += ", " + baseSelector + " .first-line, .media-description, .media-tags";
+			$(selector).mark(
 				env.searchWords.user,
 				{
 					"caseSensitive": env.options.search_case_sensitive,

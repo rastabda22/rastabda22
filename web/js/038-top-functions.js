@@ -1338,6 +1338,7 @@
 				util.translate();
 
 				$("#subalbums").addClass("hidden");
+				util.highlightSearchedWords();
 			}
 		);
 	};
