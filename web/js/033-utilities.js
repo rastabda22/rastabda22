@@ -2342,15 +2342,15 @@
 		suffix += actualSize.toString();
 		if (subalbumOrMedia === "subalbum") {
 			suffix += "a";
-			if (env.options.album_thumb_type === "album_square")
+			if (env.options.album_thumb_type.indexOf("square") > -1)
 				suffix += "s";
-			else if (env.options.album_thumb_type === "album_fit")
+			else if (env.options.album_thumb_type.indexOf("fit") > -1)
 				suffix += "f";
 		} else {
 			suffix += "t";
-			if (env.options.media_thumb_type === "media_square")
+			if (env.options.media_thumb_type.indexOf("square") > -1)
 				suffix += "s";
-			else if (env.options.media_thumb_type === "media_fixed_height")
+			else if (env.options.media_thumb_type.indexOf("fixed_height") > -1)
 				suffix += "f";
 		}
 		suffix += ".jpg";
@@ -3692,7 +3692,7 @@
 			// sometimes thickness is 0, but the scroll bar could be there
 			// let's try to suppose if it's there
 			let totalThumbsSize = env.options.media_thumb_size * env.currentAlbum.media.length;
-			if (env.options.media_thumb_type === "media_fixed_height") {
+			if (env.options.media_thumb_type.indexOf("fixed_height") > -1) {
 				let sum = 0;
 				totalThumbsSize = env.currentAlbum.media.forEach(
 					singleMedia => {

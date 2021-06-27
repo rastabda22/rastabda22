@@ -438,7 +438,7 @@
 				$("ul#right-menu li.square-album-thumbnails").addClass("hidden");
 			} else {
 				$("ul#right-menu li.square-album-thumbnails").removeClass("hidden");
-				if (env.options.album_thumb_type === "album_square")
+				if (env.options.album_thumb_type.indexOf("square") > -1)
 					$("ul#right-menu li.square-album-thumbnails").addClass("selected");
 				else
 					$("ul#right-menu li.square-album-thumbnails").removeClass("selected");
@@ -478,7 +478,7 @@
 				$("ul#right-menu li.square-media-thumbnails").addClass("hidden");
 			else
 				$("ul#right-menu li.square-media-thumbnails").removeClass("hidden");
-			if (env.options.media_thumb_type === "media_square")
+			if (env.options.media_thumb_type.indexOf("square") > -1)
 			 	$("ul#right-menu li.square-media-thumbnails").addClass("selected");
 			else
 				$("ul#right-menu li.square-media-thumbnails").removeClass("selected");
