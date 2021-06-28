@@ -74,8 +74,11 @@ img.thumbnail-img {
 }
 
 .first-line, .second-line {
-	display: block;
 	line-height: 150%;
+}
+
+.media-name .first-line, .media-name .second-line {
+	display: inline-block;
 }
 
 .second-line {
