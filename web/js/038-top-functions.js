@@ -236,8 +236,8 @@
 												if (i === 0) {
 													name =
 														"<span class='with-second-part'>" +
-															name +
-															" <span id='album-name-second-part'>" + subalbumPosition + "</span>" +
+															"<span id='album-name-first-part'>" + name + "</span> " +
+															"<span id='album-name-second-part'>" + subalbumPosition + "</span>" +
 														"</span> ";
 												}
 												titleComponents[titleComponentsLenghtBeforeConcatenating + i] = name;
