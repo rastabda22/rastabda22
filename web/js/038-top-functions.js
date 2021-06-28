@@ -3155,7 +3155,7 @@
 			function() {
 				env.mapAlbum.showThumbs();
 				map.updatePopup();
-				if (env.highlightedObjectId) {
+				if ($("#" + env.highlightedObjectId).length) {
 					util.scrollPopupToHighlightedThumb($("#" + env.highlightedObjectId));
 				}
 				$("#loading").hide();
