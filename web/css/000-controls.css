@@ -243,6 +243,7 @@ p.description-text, p.description-text ul {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+	text-align: center;
 }
 
 
