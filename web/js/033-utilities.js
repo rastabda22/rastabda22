@@ -4604,7 +4604,7 @@
 				let adapt = false;
 				$(selector + " .description.ellipsis").each(
 					function() {
-						if ($(this).html().indexOf('<mark data-markjs="true">') !== -1) {
+						if ($(this).html().indexOf("<mark data-markjs") !== -1) {
 							$(this).css("text-overflow", "unset").css("overflow", "visible").css("white-space", "unset");
 							adapt = true;
 						}
