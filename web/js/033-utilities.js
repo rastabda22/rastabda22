@@ -4618,6 +4618,12 @@
 					}
 				}
 			}
+
+			// make visible the file name if it's highlighted
+			let html = $("#media-name-second-part").html();
+			if (html && html.indexOf("<mark data-markjs=") !== -1) {
+				$(".with-second-part").addClass("hovered");
+			}
 		}
 	};
 
