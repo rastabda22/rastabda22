@@ -1,3 +1,5 @@
+### version v5.3.0 (June 28, 2021)
+
 * the searched text is now highlighted (thanks to mark.js)
 * bug fix in removing stale files
 * search menu tweaks

@@ -100,7 +100,7 @@ passwords_file_mtime = None
 config['cv2_installed'] = True
 face_cascade = None
 eye_cascade = None
-config['available_map_popup_positions'] = ['SE', 'NW' ]
+config['available_map_popup_positions'] = ['SE', 'NW']
 # the minimum and maximum values to use for random password codes
 # min_random ensures that all the codes has the same length
 min_random = 100000000
@@ -149,7 +149,7 @@ config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x
 json_version = 4.27
 
 # the release version number (a string)
-version = "v5.2.3"
+version = "v5.3.0"
 
 
 def set_obsolete_json_version_flag():
