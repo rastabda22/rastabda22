@@ -75,6 +75,7 @@ It's not because your photo gallery is in a static web site that it can't have a
 - [x] Media animation when passing to next/previous media.
 - [x] Available in English, Italian, Spanish, French. User interface translated via separate translation file. Add your language!
 - [x] Lazy thumbnails load for a faster page load.
+- [x] Searched text is highlighted (thanks to [mark.js](https://github.com/julmot/mark.js/)).
 
 [Discover more about keyboard navigation](doc/Navigation.md).
 

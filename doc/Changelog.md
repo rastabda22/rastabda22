@@ -1,4 +1,6 @@
+* highlight the searched text (thanks to mark.js)
 * fix bug with removing stale files
+* search menu tweaks
 
 ### version v5.2.3 (June 26, 2021)
 
