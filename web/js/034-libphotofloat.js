@@ -1372,7 +1372,7 @@
 							searchWordsFromUserNormalizedAccordingToOptions = wordsStringNormalizedAccordingToOptions.split(' ');
 							searchWordsFromUserNormalized = wordsStringNormalized.split(' ');
 							env.searchWords = {
-								user: wordsStringOriginal.split('_'),
+								user: wordsStringOriginal.split(' '),
 								normalizedAccordingToOptions: searchWordsFromUserNormalizedAccordingToOptions
 							};
 						}
