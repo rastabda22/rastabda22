@@ -41,6 +41,7 @@
 			// initialSizes[0] = new ImagesAndVideos();
 			this.positionMarker = "<marker>position</marker>";
 			this.markTagBegin = "<mark data-markjs";
+			this.br = "<br />";
 
 			this.options = {};
 			this.cache = new Cache();

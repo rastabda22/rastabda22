@@ -3093,7 +3093,7 @@
 		// what is one of "all", "images" or "videos"
 
 		$("#downloading-media").html(Utilities._t("#downloading-media")).show();
-		$("#downloading-media").append("<br /><span id='file-name'></span>");
+		$("#downloading-media").append(env.br + "<span id='file-name'></span>");
 		size = parseInt(size);
 
 		var zip = new JSZip();
@@ -3128,12 +3128,12 @@
 			function() {
 				$("#downloading-media").hide();
 				$("#preparing-zip").html(Utilities._t("#preparing-zip")).show();
-				$("#preparing-zip").append("<br /><div id='file-name'></div>");
+				$("#preparing-zip").append(env.br + "<div id='file-name'></div>");
 				zip.generateAsync(
 					{type:'blob'},
 					function onUpdate(meta) {
 						if (meta.currentFile)
-							$("#preparing-zip #file-name").html(meta.currentFile + "<br />" + meta.percent.toFixed(1) + "%");
+							$("#preparing-zip #file-name").html(meta.currentFile + env.br + meta.percent.toFixed(1) + "%");
 					}
 				).then(
 					function(content) {
@@ -3556,7 +3556,7 @@
 
 			if (albumOrSubalbum.name) {
 				if (html && br)
-					folderName += "<br /><span class='real-name'>[" + albumOrSubalbum.name + "]</span>";
+					folderName += env.br + "<span class='real-name'>[" + albumOrSubalbum.name + "]</span>";
 				else if (html)
 					folderName += " <span class='real-name'>[" + albumOrSubalbum.name + "]</span>";
 				else
@@ -3588,7 +3588,7 @@
 			}
 
 			// if (html && br)
-			// 	mediaName += "<br /><span class='real-name'>[" + this.name + "]</span>";
+			// 	mediaName += env.br + "<span class='real-name'>[" + this.name + "]</span>";
 			// else if (html)
 			// 	mediaName += " <span class='real-name'>[" + this.name + "]</span>";
 			// else
@@ -3602,7 +3602,7 @@
 		// 	mediaName = mediaName.replace(/<br \/>/g, " ");
 		// 	return Utilities.stripHtmlAndReplaceEntities(mediaName);
 		// } else if (! br) {
-		// 	return mediaName.replace("<br />", " ");
+		// 	return mediaName.replace(env.br, " ");
 		// } else {
 		return [mediaName, mediaTitle];
 		// }
@@ -3611,7 +3611,7 @@
 	Album.prototype.folderMapTitle = function(subalbum, folderName) {
 		var folderMapTitle;
 		if (this.isSelection() && subalbum.isByDate()) {
-			let reducedFolderName = folderName.substring(0, folderName.indexOf("<br />"));
+			let reducedFolderName = folderName.substring(0, folderName.indexOf(env.br));
 			folderMapTitle = Utilities._t('#place-icon-title') + reducedFolderName;
 		} else if (this.isSelection() && subalbum.isByGps()) {
 			if (subalbum.name === '')

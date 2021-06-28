@@ -77,7 +77,6 @@
 						return false;
 				}
 
-				var br = '<br />';
 				var title, titleCount, documentTitle, i, isFolderTitle, isDateTitle, isGpsTitle, isSearchTitle, isInsideCollectionTitle, isSearchCurrentAlbumOnly, isSelectionTitle, isMapTitle;
 				var titleAnchorClasses, searchFolderCacheBase, searchCacheBase;
 				var linkCount = 0, linksToLeave = 1;
@@ -232,7 +231,7 @@
 											function(theAlbum) {
 												theAlbum.generateCaptionForSearch();
 												let name = theAlbum.nameForShowing();
-												let [fakeName, subalbumPosition] = theAlbum.captionForSearch.split(br);
+												let [fakeName, subalbumPosition] = theAlbum.captionForSearch.split(env.br);
 												if (i === 0) {
 													name =
 														"<span class='with-second-part'>" +
@@ -542,15 +541,15 @@
 							if (isSearchTitle || isSelectionTitle || isMapTitle) {
 								let name, mediaNamePosition;
 								if (isSearchTitle)
-									[name, mediaNamePosition] = singleMedia.captionForSearch.split(br);
+									[name, mediaNamePosition] = singleMedia.captionForSearch.split(env.br);
 								else if (isSelectionTitle)
-									[name, mediaNamePosition] = singleMedia.captionForSelection.split(br);
+									[name, mediaNamePosition] = singleMedia.captionForSelection.split(env.br);
 								else if (isMapTitle)
-									[name, mediaNamePosition] = singleMedia.captionForPopup.split(br);
 								if (name.indexOf("<div") === 0 ) {
 									let classes = $(name).attr("class").split(/\s+/);
 									name = "<span class='" + classes + "'>" + name.substring(name.indexOf(">") + 1).substring(0, name.lastIndexOf("<")) + "</span>";
 								}
+									[name, mediaNamePosition] = singleMedia.captionForPopup.split(env.br);
 								if (! mediaNamePosition && singleMedia.titleForShowing) {
 									mediaNamePosition = singleMedia.titleForShowing;
 									singleMediaNameHtml =
@@ -2966,7 +2965,6 @@
 			// calculate the center
 			var center = this.averagePosition();
 
-			var br = '<br />';
 			// var thumbAndCaptionHeight = 0;
 
 			// default zoom is used for single media or media list with one point
