@@ -4599,13 +4599,21 @@
 				options
 			);
 
-			// make visible the descritpion if it's highlighted
+			// make the descritpion and the tags visible if highlighted
 			for (let selector of ["#subalbums", "#thumbs"]) {
 				let adapt = false;
 				$(selector + " .description.ellipsis").each(
 					function() {
 						if ($(this).html().indexOf("<mark data-markjs") !== -1) {
 							$(this).css("text-overflow", "unset").css("overflow", "visible").css("white-space", "unset");
+							adapt = true;
+						}
+					}
+				);
+				$(selector + " .album-tags, " + selector + " .media-tags").each(
+					function() {
+						if ($(this).html().indexOf("<mark data-markjs") !== -1) {
+							$(this).removeClass("hidden-by-option");
 							adapt = true;
 						}
 					}
