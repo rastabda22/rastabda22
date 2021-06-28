@@ -229,9 +229,9 @@
 										let cacheBasePromise = phFl.getAlbum(cacheBase, null, {getMedia: false, getPositions: false});
 										cacheBasePromise.then(
 											function(theAlbum) {
-												theAlbum.generateCaptionForSearch();
+												theAlbum.generateCaptionsForSearch();
 												let name = theAlbum.nameForShowing();
-												let [fakeName, subalbumPosition] = theAlbum.captionForSearch.split(env.br);
+												let [fakeName, subalbumPosition] = theAlbum.captionsForSearch;
 												if (i === 0) {
 													name =
 														"<span class='with-second-part'>" +
@@ -541,20 +541,16 @@
 							if (isSearchTitle || isSelectionTitle || isMapTitle) {
 								let name, mediaNamePosition;
 								if (isSearchTitle)
-									[name, mediaNamePosition] = singleMedia.captionForSearch.split(env.br);
+									[name, mediaNamePosition] = singleMedia.captionsForSearch;
 								else if (isSelectionTitle)
-									[name, mediaNamePosition] = singleMedia.captionForSelection.split(env.br);
+									[name, mediaNamePosition] = singleMedia.captionsForSelection;
 								else if (isMapTitle)
-								if (name.indexOf("<div") === 0 ) {
-									let classes = $(name).attr("class").split(/\s+/);
-									name = "<span class='" + classes + "'>" + name.substring(name.indexOf(">") + 1).substring(0, name.lastIndexOf("<")) + "</span>";
-								}
-									[name, mediaNamePosition] = singleMedia.captionForPopup.split(env.br);
+									[name, mediaNamePosition] = singleMedia.captionsForPopup;
 								if (! mediaNamePosition && singleMedia.titleForShowing) {
 									mediaNamePosition = singleMedia.titleForShowing;
 									singleMediaNameHtml =
 									"<span class='media-name with-second-part'>" +
-									name +
+									" <span id='media-name-first-part'>" + name + "</span>" +
 									" <span id='media-name-second-part'>(" + mediaNamePosition + ")</span>" +
 									"</span> ";
 								} else {
@@ -2311,12 +2307,12 @@
 						"</div>" +
 						"<div class='media-caption'>";
 				let name, title;
-				if ((util.isPopup() || this.isMap()) && ithMedia.hasOwnProperty("captionForPopup") && ithMedia.captionForPopup)
-					name = ithMedia.captionForPopup;
-				else if (this.isSearch() && ithMedia.hasOwnProperty("captionForSearch") && ithMedia.captionForSearch)
-					name = ithMedia.captionForSearch;
-				else if (this.isSelection() && ithMedia.hasOwnProperty("captionForSelection") && ithMedia.captionForSelection)
-					name = ithMedia.captionForSelection;
+				if ((util.isPopup() || this.isMap()) && ithMedia.hasOwnProperty("captionsForPopup") && ithMedia.captionsForPopup[0])
+					name = ithMedia.captionsForPopup.join(env.br);
+				else if (this.isSearch() && ithMedia.hasOwnProperty("captionsForSearch") && ithMedia.captionsForSearch[0])
+					name = ithMedia.captionsForSearch.join(env.br);
+				else if (this.isSelection() && ithMedia.hasOwnProperty("captionsForSelection") && ithMedia.captionsForSelection[0])
+					name = ithMedia.captionsForSelection.join(env.br);
 				else {
 
 					[name, title] = ithMedia.nameAndTitleForShowing(this, true, true);
@@ -2567,9 +2563,9 @@
 
 						let nameHtml;
 						if (self.isSearch())
-							nameHtml = ithSubalbum.captionForSearch;
+							nameHtml = ithSubalbum.captionsForSearch.join(env.br);
 						else if (self.isSelection())
-							nameHtml = ithSubalbum.captionForSelection;
+							nameHtml = ithSubalbum.captionsForSelection.join(env.br);
 						else {
 							nameHtml = ithSubalbum.nameForShowing(self, true, true);
 							if (nameHtml === "")

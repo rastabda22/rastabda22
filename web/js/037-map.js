@@ -209,7 +209,7 @@
 								for (mediaIndex = 0; mediaIndex < theAlbum.numsMedia.imagesAndVideosTotal(); mediaIndex ++) {
 									for (photoIndex = 0; photoIndex < photosInAlbum.length; photoIndex ++) {
 										if (theAlbum.media[mediaIndex].cacheBase === photosInAlbum[photoIndex].element.cacheBase) {
-											theAlbum.media[mediaIndex].generateCaptionForPopup(theAlbum);
+											theAlbum.media[mediaIndex].generateCaptionsForPopup(theAlbum);
 											self.media.push(theAlbum.media[mediaIndex]);
 											self.sizesOfAlbum.sum(theAlbum.media[mediaIndex].fileSizes);
 											self.sizesOfSubTree.sum(theAlbum.media[mediaIndex].fileSizes);

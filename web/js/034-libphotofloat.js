@@ -1715,7 +1715,7 @@
 																			function albumGot(parentAlbum) {
 																				cacheBaseAndMedia.media.forEach(
 																					singleMedia => {
-																						singleMedia.generateCaptionForSearch(parentAlbum);
+																						singleMedia.generateCaptionsForSearch(parentAlbum);
 																					}
 																				);
 																				resolve_getAlbum();
@@ -1738,7 +1738,7 @@
 																		convertAlbumPromise.then(
 																			function(subalbum) {
 																				env.searchAlbum.subalbums[iSubalbum] = subalbum;
-																				env.searchAlbum.subalbums[iSubalbum].generateCaptionForSearch();
+																				env.searchAlbum.subalbums[iSubalbum].generateCaptionsForSearch();
 																				resolve_subalbum();
 																			},
 																			function() {

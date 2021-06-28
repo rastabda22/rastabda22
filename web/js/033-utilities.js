@@ -1491,9 +1491,9 @@
 
 			// if (! Utilities.isPopup())
 			if (album === null) {
-				this.generateCaptionForSelection(env.cache.getAlbum(this.foldersCacheBase));
+				this.generateCaptionsForSelection(env.cache.getAlbum(this.foldersCacheBase));
 			} else {
-				this.generateCaptionForSelection(album);
+				this.generateCaptionsForSelection(album);
 			}
 			delete env.selectionAlbum.mediaNameSort;
 			delete env.selectionAlbum.mediaReverseSort;
@@ -1697,7 +1697,7 @@
 				function continue_addSubalbumToSelection(album) {
 					env.selectionAlbum.subalbums.push(album);
 
-					album.generateCaptionForSelection();
+					album.generateCaptionsForSelection();
 					delete env.selectionAlbum.albumNameSort;
 					delete env.selectionAlbum.albumReverseSort;
 					env.selectionAlbum.sortAlbumsMedia();
@@ -3268,14 +3268,14 @@
 			return Utilities._t("#month-" + folderArray[index]);
 	};
 
-	Utilities.combineFirstAndSecondLine = function(firstLine, secondLine) {
-		var result = "";
-		if (firstLine)
-			result = "<div class='first-line'>" + firstLine + "</div>";
-		// if (firstLine && secondLine)
-		// 	result += "<br />";
+	Utilities.addSpanToFirstAndSecondLine = function(firstLine, secondLine) {
+		var result = [], index = 0;
+		if (firstLine) {
+			result[index] = "<span class='first-line'>" + firstLine + "</span>";
+			index ++;
+		}
 		if (secondLine)
-			result += "<div class='second-line'>" + secondLine + "</div>";
+			result[index] = "<span class='second-line'>" + secondLine + "</span>";
 		return result;
 	};
 
@@ -3290,67 +3290,67 @@
 
 	};
 
-	Album.prototype.getCaptionForSelection = function(html, br) {
-		return this.getCaptionForCollection("Selection", html, br);
+	// Album.prototype.getCaptionForSelection = function(html, br) {
+	// 	return this.getCaptionForCollection("Selection", html, br);
+	// };
+	//
+	// Album.prototype.getCaptionForSearch = function(html, br) {
+	// 	return this.getCaptionForCollection("Search", html, br);
+	// };
+	//
+	// Album.prototype.getCaptionForPopup = function(html, br) {
+	// 	return this.getCaptionForCollection("Popup", html, br);
+	// };
+	//
+	// Album.prototype.getCaptionForCollection = function(type, html, br) {
+	// 	return Utilities.getCaptionForCollection(this, type, html, br);
+	// };
+	//
+	// SingleMedia.prototype.getCaptionForSelection = function(html, br) {
+	// 	return this.getCaptionForCollection("Selection", html, br);
+	// };
+	//
+	// SingleMedia.prototype.getCaptionForSearch = function(html, br) {
+	// 	return this.getCaptionForCollection("Search", html, br);
+	// };
+	//
+	// SingleMedia.prototype.getCaptionForPopup = function(html, br) {
+	// 	return this.getCaptionForCollection("Popup", html, br);
+	// };
+	//
+	// SingleMedia.prototype.getCaptionForCollection = function(type, html, br) {
+	// 	return Utilities.getCaptionForCollection(this, type, html, br);
+	// };
+	//
+	// Utilities.getCaptionForCollection = function(albumOrSingleMedia, type, html, br) {
+	// 	if (! albumOrSingleMedia.hasOwnProperty(type)) {
+	// 		if (albumOrSingleMedia === "Selection")
+	// 			albumOrSingleMedia.generateCaptionsForSelection();
+	// 		else if (albumOrSingleMedia === "Search")
+	// 			albumOrSingleMedia.generateCaptionsForSearch();
+	// 		else if (type === "Popup")
+	// 			albumOrSingleMedia.generateCaptionsForPopup();
+	// 	}
+	// 	var caption = albumOrSingleMedia["captionFor" + type];
+	//
+	// 	if (! html || ! br) {
+	// 		caption = caption.replace(/<br \/>/g, " ");
+	// 		if (! html) {
+	// 			caption = Utilities.stripHtmlAndReplaceEntities(caption);
+	// 		}
+	// 	}
+	// 	return caption;
+	// };
+	
+	Album.prototype.generateCaptionsForSelection = function() {
+		[this.captionsForSelection, this.captionForSelectionSorting] = Utilities.generateAlbumCaptionsForCollections(this);
 	};
 
-	Album.prototype.getCaptionForSearch = function(html, br) {
-		return this.getCaptionForCollection("Search", html, br);
+	Album.prototype.generateCaptionsForSearch = function() {
+		[this.captionsForSearch, this.captionForSearchSorting] = Utilities.generateAlbumCaptionsForCollections(this);
 	};
 
-	Album.prototype.getCaptionForPopup = function(html, br) {
-		return this.getCaptionForCollection("Popup", html, br);
-	};
-
-	Album.prototype.getCaptionForCollection = function(type, html, br) {
-		return Utilities.getCaptionForCollection(this, type, html, br);
-	};
-
-	SingleMedia.prototype.getCaptionForSelection = function(html, br) {
-		return this.getCaptionForCollection("Selection", html, br);
-	};
-
-	SingleMedia.prototype.getCaptionForSearch = function(html, br) {
-		return this.getCaptionForCollection("Search", html, br);
-	};
-
-	SingleMedia.prototype.getCaptionForPopup = function(html, br) {
-		return this.getCaptionForCollection("Popup", html, br);
-	};
-
-	SingleMedia.prototype.getCaptionForCollection = function(type, html, br) {
-		return Utilities.getCaptionForCollection(this, type, html, br);
-	};
-
-	Utilities.getCaptionForCollection = function(albumOrSingleMedia, type, html, br) {
-		if (! albumOrSingleMedia.hasOwnProperty(type)) {
-			if (albumOrSingleMedia === "Selection")
-				albumOrSingleMedia.generateCaptionForSelection();
-			else if (albumOrSingleMedia === "Search")
-				albumOrSingleMedia.generateCaptionForSearch();
-			else if (type === "Popup")
-				albumOrSingleMedia.generateCaptionForPopup();
-		}
-		var caption = albumOrSingleMedia["captionFor" + type];
-
-		if (! html || ! br) {
-			caption = caption.replace(/<br \/>/g, " ");
-			if (! html) {
-				caption = Utilities.stripHtmlAndReplaceEntities(caption);
-			}
-		}
-		return caption;
-	};
-
-	Album.prototype.generateCaptionForSelection = function() {
-		[this.captionForSelection, this.captionForSelectionSorting] = Utilities.generateAlbumCaptionForCollections(this);
-	};
-
-	Album.prototype.generateCaptionForSearch = function() {
-		[this.captionForSearch, this.captionForSearchSorting] = Utilities.generateAlbumCaptionForCollections(this);
-	};
-
-	Utilities.generateAlbumCaptionForCollections = function(album) {
+	Utilities.generateAlbumCaptionsForCollections = function(album) {
 		var raquo = " <span class='gray'>&raquo;</span> ";
 		var folderArray = album.cacheBase.split(env.options.cache_folder_separator);
 
@@ -3426,24 +3426,24 @@
 				}
 			}
 		}
-		var captionForCollection = Utilities.combineFirstAndSecondLine(firstLine, secondLine);
+		var captionsForCollection = Utilities.addSpanToFirstAndSecondLine(firstLine, secondLine);
 		var captionForCollectionSorting = Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
-		return [captionForCollection, captionForCollectionSorting];
+		return [captionsForCollection, captionForCollectionSorting];
 	};
 
-	SingleMedia.prototype.generateCaptionForPopup = function(album) {
-		[this.captionForPopup, this.captionForPopupSorting, this.titleForShowing] = Utilities.generateSingleMediaCaptionForCollections(this, album);
+	SingleMedia.prototype.generateCaptionsForPopup = function(album) {
+		[this.captionsForPopup, this.captionForPopupSorting, this.titleForShowing] = Utilities.generateSingleMediaCaptionsForCollections(this, album);
 	};
 
-	SingleMedia.prototype.generateCaptionForSelection = function(album) {
-		[this.captionForSelection, this.captionForSelectionSorting, this.titleForShowing] = Utilities.generateSingleMediaCaptionForCollections(this, album);
+	SingleMedia.prototype.generateCaptionsForSelection = function(album) {
+		[this.captionsForSelection, this.captionForSelectionSorting, this.titleForShowing] = Utilities.generateSingleMediaCaptionsForCollections(this, album);
 	};
 
-	SingleMedia.prototype.generateCaptionForSearch = function(album) {
-		[this.captionForSearch, this.captionForSearchSorting, this.titleForShowing] = Utilities.generateSingleMediaCaptionForCollections(this, album);
+	SingleMedia.prototype.generateCaptionsForSearch = function(album) {
+		[this.captionsForSearch, this.captionForSearchSorting, this.titleForShowing] = Utilities.generateSingleMediaCaptionsForCollections(this, album);
 	};
 
-	Utilities.generateSingleMediaCaptionForCollections = function(singleMedia, album) {
+	Utilities.generateSingleMediaCaptionsForCollections = function(singleMedia, album) {
 		var raquo = " <span class='gray'>&raquo;</span> ";
 		var folderArray = album.cacheBase.split(env.options.cache_folder_separator);
 
@@ -3508,9 +3508,9 @@
 		}
 
 		var [nameForShowing, titleForShowing] = singleMedia.nameAndTitleForShowing(album, true, true);
-		var captionForCollection = Utilities.combineFirstAndSecondLine(nameForShowing, secondLine);
+		var captionsForCollection = Utilities.addSpanToFirstAndSecondLine(nameForShowing, secondLine);
 		var captionForCollectionSorting = nameForShowing + env.options.cache_folder_separator + Utilities.convertByDateAncestorNames(album.ancestorsNames).slice(1).reverse().join(env.options.cache_folder_separator).replace(/^0+/, '');
-		return [captionForCollection, captionForCollectionSorting, titleForShowing];
+		return [captionsForCollection, captionForCollectionSorting, titleForShowing];
 	};
 
 	Album.prototype.nameForShowing = function(parentAlbum, html = false, br = false) {
@@ -3523,11 +3523,6 @@
 
 	Utilities.nameForShowing = function(albumOrSubalbum, parentAlbum, html, br) {
 		var folderName = '';
-		// if (parentAlbum && parentAlbum.isSelection() && albumOrSubalbum.hasOwnProperty("captionForSelection")) {
-		// 	folderName = albumOrSubalbum.captionForSelection;
-		// } else if (parentAlbum && parentAlbum.isSearch() && albumOrSubalbum.hasOwnProperty("captionForSearch")) {
-		// 	folderName = albumOrSubalbum.captionForSearch;
-		// } else if (parentAlbum && parentAlbum.isByDate()) {
 		if (albumOrSubalbum.cacheBase === env.options.by_date_string) {
 			folderName = "(" + Utilities._t("#by-date") + ")";
 		} else if (albumOrSubalbum.cacheBase === env.options.by_gps_string) {
@@ -3572,13 +3567,6 @@
 	SingleMedia.prototype.nameAndTitleForShowing = function(album, html = false, br = false) {
 		var mediaName = '';
 		var mediaTitle = '';
-		// if (Utilities.isPopup() && this.hasOwnProperty("captionForPopup")) {
-		// 	mediaName = this.captionForPopup;
-		// } else if (album.isSelection() && this.hasOwnProperty("captionForSelection")) {
-		// 	mediaName = this.captionForSelection;
-		// } else if (album.isSearch() && this.hasOwnProperty("captionForSearch")) {
-		// 	mediaName = this.captionForSearch;
-		// } else {
 		if (this.metadata.hasOwnProperty("title") && this.metadata.title && this.metadata.title !== this.name) {
 			mediaName = this.metadata.title;
 			mediaTitle = this.name;
@@ -3587,25 +3575,10 @@
 				mediaName = mediaName.replace(/<[^>]*>?/gm, ' ');
 			}
 
-			// if (html && br)
-			// 	mediaName += env.br + "<span class='real-name'>[" + this.name + "]</span>";
-			// else if (html)
-			// 	mediaName += " <span class='real-name'>[" + this.name + "]</span>";
-			// else
-			// 	mediaName += " [" + this.name + "]";
 		} else {
 			mediaName = this.name;
 		}
-		// }
-
-		// if (! html) {
-		// 	mediaName = mediaName.replace(/<br \/>/g, " ");
-		// 	return Utilities.stripHtmlAndReplaceEntities(mediaName);
-		// } else if (! br) {
-		// 	return mediaName.replace(env.br, " ");
-		// } else {
 		return [mediaName, mediaTitle];
-		// }
 	};
 
 	Album.prototype.folderMapTitle = function(subalbum, folderName) {
@@ -3620,7 +3593,6 @@
 				folderMapTitle = Utilities.transformAltPlaceName(subalbum.altName);
 			else
 				folderMapTitle = subalbum.nameForShowing(this);
-			// folderName += folderMapTitle;
 			folderMapTitle = Utilities._t('#place-icon-title') + folderMapTitle;
 		} else {
 			folderMapTitle = Utilities._t('#place-icon-title') + folderName;
