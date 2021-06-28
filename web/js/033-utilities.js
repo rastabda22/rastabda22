@@ -4584,7 +4584,7 @@
 			// highlight the searched text
 			let selector = ".title .media-name, #description, #description-tags .tag";
 			if (baseSelector)
-				selector += ", " + baseSelector + " .first-line, .media-description, .album-description, .media-tags";
+				selector += ", " + baseSelector + " .first-line, .media-description, .album-description, .album-tags, .media-tags";
 			const options = {
 				caseSensitive: env.options.search_case_sensitive,
 				diacritics: ! env.options.search_accent_sensitive,
