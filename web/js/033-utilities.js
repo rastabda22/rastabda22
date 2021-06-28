@@ -4006,7 +4006,7 @@
 		return text;
 	};
 
-	Utilities.prototype.adaptSubalbumCaptionHeight = function() {
+	Utilities.adaptSubalbumCaptionHeight = function() {
 		// check for overflow in album-caption class in order to adapt album caption height to the string length
 		// when diving into search subalbum, the whole album path is showed and it can be lengthy
 		var maxHeight = 0;
@@ -4021,7 +4021,7 @@
 		$(".album-caption").css("height", maxHeight + 'px');
 	};
 
-	Utilities.prototype.adaptMediaCaptionHeight = function() {
+	Utilities.adaptMediaCaptionHeight = function() {
 		// check for overflow in media-caption class in order to adapt media caption height to the string length
 		var maxHeight = 0;
 		$(".media-caption").css("height", 0);
@@ -4598,6 +4598,26 @@
 				// env.searchWords.normalizedAccordingToOptions,
 				options
 			);
+
+			// make visible the descritpion if it's highlighted
+			for (let selector of ["#subalbums", "#thumbs"]) {
+				let adapt = false;
+				$(selector + " .description.ellipsis").each(
+					function() {
+						if ($(this).html().indexOf('<mark data-markjs="true">') !== -1) {
+							$(this).css("text-overflow", "unset").css("overflow", "visible").css("white-space", "unset");
+							adapt = true;
+						}
+					}
+				);
+				if (adapt) {
+					if (selector === "#subalbums") {
+						Utilities.adaptSubalbumCaptionHeight();
+					} else {
+						Utilities.adaptMediaCaptionHeight();
+					}
+				}
+			}
 		}
 	};
 
@@ -4681,6 +4701,8 @@
 	Utilities.prototype.scrollAlbumViewToHighlightedThumb = Utilities.scrollAlbumViewToHighlightedThumb;
 	Utilities.prototype.scrollToHighlightedSubalbum = Utilities.scrollToHighlightedSubalbum;
 	Utilities.prototype.isSearchHash = Utilities.isSearchHash;
+	Utilities.prototype.adaptSubalbumCaptionHeight = Utilities.adaptSubalbumCaptionHeight;
+	Utilities.prototype.adaptMediaCaptionHeight = Utilities.adaptMediaCaptionHeight;
 
 	window.Utilities = Utilities;
 }());
