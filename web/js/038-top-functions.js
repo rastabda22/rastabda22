@@ -1872,7 +1872,6 @@
 			env.options.hide_tags = ! env.options.hide_tags;
 			f.setBooleanCookie("hideTags", env.options.hide_tags);
 
-
 			if (util.isPopup() || env.currentMedia === null) {
 				util.setMediaOptions();
 			}

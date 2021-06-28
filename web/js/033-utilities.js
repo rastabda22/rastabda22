@@ -4145,7 +4145,11 @@
 	};
 
 	Utilities.setDescriptionOptions = function() {
-		if (env.options.hide_descriptions && env.options.hide_tags)
+		var forceShowTags = false;
+		if ($("#description-tags").html().indexOf(env.markTagBegin) > -1)
+			forceShowTags = true;
+
+		if (! forceShowTags && env.options.hide_descriptions && env.options.hide_tags)
 			$("#description-wrapper").addClass("hidden-by-option");
 		else {
 			$("#description-wrapper").removeClass("hidden-by-option");
@@ -4155,7 +4159,7 @@
 			else
 				$("#description").removeClass("hidden-by-option");
 
-			if (env.options.hide_tags)
+			if (! forceShowTags && env.options.hide_tags)
 				$("#description-tags").addClass("hidden-by-option");
 			else
 				$("#description-tags").removeClass("hidden-by-option");
@@ -4582,6 +4586,7 @@
 	Utilities.prototype.highlightSearchedWords = function(baseSelector) {
 		if (Utilities.isSearchHash()) {
 			// highlight the searched text
+
 			let selector = ".title .media-name, #description, #description-tags .tag";
 			if (baseSelector)
 				selector += ", " + baseSelector + " .first-line, .media-description, .album-description, .album-tags, .media-tags";
@@ -4604,7 +4609,7 @@
 				let adapt = false;
 				$(selector + " .description.ellipsis").each(
 					function() {
-						if ($(this).html().indexOf("<mark data-markjs") !== -1) {
+						if ($(this).html().indexOf(env.markTagBegin) !== -1) {
 							$(this).css("text-overflow", "unset").css("overflow", "visible").css("white-space", "unset");
 							adapt = true;
 						}
@@ -4612,7 +4617,7 @@
 				);
 				$(selector + " .album-tags, " + selector + " .media-tags").each(
 					function() {
-						if ($(this).html().indexOf("<mark data-markjs") !== -1) {
+						if ($(this).html().indexOf(env.markTagBegin) !== -1) {
 							$(this).removeClass("hidden-by-option");
 							adapt = true;
 						}
@@ -4626,6 +4631,8 @@
 					}
 				}
 			}
+
+			// bottom right tags will be made visible if highlighted in Utilities.setDescriptionOptions()
 
 			// make visible the file name if it's highlighted
 			let html = $("#media-name-second-part").html();
