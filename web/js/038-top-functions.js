@@ -549,13 +549,19 @@
 								if (! mediaNamePosition && singleMedia.titleForShowing) {
 									mediaNamePosition = singleMedia.titleForShowing;
 									singleMediaNameHtml =
-									"<span class='media-name with-second-part'>" +
-									" <span id='media-name-first-part'>" + name + "</span>" +
-									" <span id='media-name-second-part'>(" + mediaNamePosition + ")</span>" +
-									"</span> ";
+										"<span class='media-name with-second-part'>" +
+										"<span id='media-name-first-part'>" + name + "</span> " +
+										"<span id='media-name-second-part'>(" + mediaNamePosition + ")</span>" +
+										"</span> ";
 								} else {
 									singleMediaNameHtml = "<span class='media-name'>" + name + "</span>";
 								}
+							} else if (singleMediaTitle) {
+								singleMediaNameHtml =
+									"<span class='media-name with-second-part'>" +
+									"<span id='media-name-first-part'>" + singleMediaName + "</span> " +
+									"<span id='media-name-second-part'>(" + singleMediaTitle + ")</span>" +
+									"</span> ";
 							} else {
 								singleMediaNameHtml = "<span class='media-name'>" + singleMediaName + "</span>";
 							}
