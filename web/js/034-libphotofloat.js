@@ -1363,10 +1363,18 @@
 							searchWordsFromUser = [decodeURIComponent(wordsString).replace(/_/g, " ")];
 							searchWordsFromUserNormalizedAccordingToOptions = [decodeURIComponent(wordsStringNormalizedAccordingToOptions)];
 							searchWordsFromUserNormalized = [decodeURIComponent(wordsStringNormalized)];
+							env.searchWords = {
+								user: [decodeURIComponent(wordsStringOriginal).replace(/_/g, " ")],
+								normalizedAccordingToOptions: searchWordsFromUserNormalizedAccordingToOptions
+							};
 						} else {
 							searchWordsFromUser = wordsString.split('_');
 							searchWordsFromUserNormalizedAccordingToOptions = wordsStringNormalizedAccordingToOptions.split(' ');
 							searchWordsFromUserNormalized = wordsStringNormalized.split(' ');
+							env.searchWords = {
+								user: wordsStringOriginal.split('_'),
+								normalizedAccordingToOptions: searchWordsFromUserNormalizedAccordingToOptions
+							};
 						}
 
 						// if (searchWordsFromUser.length === 1)
@@ -1458,12 +1466,6 @@
 						function () {
 							[searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions, removedStopWords] =
 								PhotoFloat.removeStopWords(searchWordsFromUser, searchWordsFromUserNormalized, searchWordsFromUserNormalizedAccordingToOptions);
-							env.searchWords = {
-								user: searchWordsFromUser,
-								normalized: searchWordsFromUserNormalized,
-								normalizedAccordingToOptions: searchWordsFromUserNormalizedAccordingToOptions
-							}
-
 							buildSearchResult();
 						},
 						function() {

@@ -4587,12 +4587,15 @@
 				selector += ", " + baseSelector + " .first-line, .media-description, .media-tags";
 			const options = {
 				caseSensitive: env.options.search_case_sensitive,
-				diacritics: env.options.search_accent_sensitive,
+				diacritics: ! env.options.search_accent_sensitive,
 				separateWordSearch: env.options.search_any_word,
 				accuracy: env.options.search_inside_words ? "partially" : "exactly",
+				ignorePunctuation: ":;.,-–—‒_(){}[]¡!`´·#|@~&/*^¨'+=?¿<>\\\"".split("")
 			};
+			$(selector).unmark(options);
 			$(selector).mark(
 				env.searchWords.user,
+				// env.searchWords.normalizedAccordingToOptions,
 				options
 			);
 		}
