@@ -74,7 +74,7 @@ img.thumbnail-img {
 }
 
 .first-line, .second-line {
-	display: inline-block;
+	display: block;
 	line-height: 150%;
 }
 
