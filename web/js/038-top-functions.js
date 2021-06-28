@@ -560,7 +560,7 @@
 								singleMediaNameHtml = "<span class='media-name'>" + singleMediaName + "</span>";
 							}
 
-							if (env.currentMedia.hasGpsData()) {
+							if (singleMedia.hasGpsData()) {
 								let imgHtml = "<img class='title-img' height='20px' src='img/ic_place_white_24dp_2x.png'>";
 								let imgObject = $(imgHtml);
 								let imgTitle = util._t("#show-on-map");
