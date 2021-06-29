@@ -3341,7 +3341,7 @@
 	// 	}
 	// 	return caption;
 	// };
-	
+
 	Album.prototype.generateCaptionsForSelection = function() {
 		[this.captionsForSelection, this.captionForSelectionSorting] = Utilities.generateAlbumCaptionsForCollections(this);
 	};
@@ -4511,7 +4511,7 @@
 		env.options.search_any_word = ! env.options.search_any_word;
 		Functions.setBooleanCookie("searchAnyWord", env.options.search_any_word);
 		Functions.updateMenu();
-		if (env.searchWords.user.length < 2)
+		if (env.searchWords.hasOwnProperty("user") && env.searchWords.user.length < 2)
 			return;
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
@@ -4572,7 +4572,6 @@
 			$(selector).unmark(options);
 			$(selector).mark(
 				env.searchWords.user,
-				// env.searchWords.normalizedAccordingToOptions,
 				options
 			);
 
