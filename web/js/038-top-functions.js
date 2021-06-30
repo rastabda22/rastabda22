@@ -1543,9 +1543,9 @@
 			// f.setBooleanCookie("albumReverseSortRequested", this.albumReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			let highlightedObjectSelector = "#" + util.highlightedObject().attr("id");
+			let highlightedSubalbumId = $("#subalbums .highlighted").attr("id");
 			env.currentAlbum.showSubalbums(true);
-			$(highlightedObjectSelector).addClass("highlighted");
+			util.scrollToHighlightedSubalbum($("#" + highlightedSubalbumId));
 		}
 		return false;
 	};
@@ -1559,9 +1559,10 @@
 			f.setBooleanCookie("albumNameSortRequested", true);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			let highlightedObjectSelector = "#" + util.highlightedObject().attr("id");
+
+			let highlightedSubalbumId = $("#subalbums .highlighted").attr("id");
 			env.currentAlbum.showSubalbums(true);
-			$(highlightedObjectSelector).addClass("highlighted");
+			util.scrollToHighlightedSubalbum($("#" + highlightedSubalbumId));
 		}
 		return false;
 	};
@@ -1574,9 +1575,9 @@
 			f.setBooleanCookie("albumReverseSortRequested", env.albumReverseSort);
 			this.sortAlbumsMedia();
 			f.updateMenu(this);
-			let highlightedObjectSelector = "#" + util.highlightedObject().attr("id");
+			let highlightedSubalbumId = $("#subalbums .highlighted").attr("id");
 			env.currentAlbum.showSubalbums(true);
-			$(highlightedObjectSelector).addClass("highlighted");
+			util.scrollToHighlightedSubalbum($("#" + highlightedSubalbumId));
 		}
 		return false;
 	};
@@ -1896,7 +1897,9 @@
 			env.options.albums_slide_style = ! env.options.albums_slide_style;
 			f.setBooleanCookie("albumsSlideStyle", env.options.albums_slide_style);
 			f.updateMenu();
+			let highlightedSubalbumId = $("#subalbums .highlighted").attr("id");
 			util.setSubalbumsOptions();
+			util.scrollToHighlightedSubalbum($("#" + highlightedSubalbumId));
 			if (env.currentAlbum.subalbums.length)
 				util.adaptSubalbumCaptionHeight();
 		}
