@@ -2010,19 +2010,20 @@
 
 		$(".album-tags").css("font-size", (Math.round(captionFontSize * 0.75)) + "px");
 
-		var mustBeSquare = env.options.album_thumb_type.indexOf("square") > -1;
-		var isSquare = $("#subalbums .album-button img.thumbnail").attr("src").substr(-5, 1) === "s";
-		if (isSquare !== mustBeSquare) {
-			$("#subalbums .album-button img.thumbnail").each(
-				function() {
-					var srcArray = $(this).attr("src").split("");
-					var charPosition = srcArray.length - 5;
-					srcArray[charPosition] = srcArray[charPosition] === "s" ? "f" : "s";
-					$(this).attr("src", srcArray.join(""));
-				}
-			);
+		if ($("#subalbums").children().length && $("#subalbums").is(":visible")) {
+			var mustBeSquare = env.options.album_thumb_type.indexOf("square") > -1;
+			var isSquare = $("#subalbums .album-button img.thumbnail").attr("src").substr(-5, 1) === "s";
+			if (isSquare !== mustBeSquare) {
+				$("#subalbums .album-button img.thumbnail").each(
+					function() {
+						var srcArray = $(this).attr("src").split("");
+						var charPosition = srcArray.length - 5;
+						srcArray[charPosition] = srcArray[charPosition] === "s" ? "f" : "s";
+						$(this).attr("src", srcArray.join(""));
+					}
+				);
+			}
 		}
-
 
 
 		if (! env.options.show_album_media_count)
