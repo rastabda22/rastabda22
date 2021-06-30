@@ -1534,6 +1534,7 @@
 	};
 
 	Album.prototype.sortSubalbumsByDate = function(ev) {
+		ev.stopPropagation();
 		if (
 			this.isUndefinedOrTrue("albumNameSort") &&
 			(ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
@@ -1551,6 +1552,7 @@
 	};
 
 	Album.prototype.sortSubalbumsByName = function(ev) {
+		ev.stopPropagation();
 		if (
 			this.isUndefinedOrFalse("albumNameSort") &&
 			(ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
@@ -1568,6 +1570,7 @@
 	};
 
 	Album.prototype.sortSubalbumsReverse = function(ev) {
+		ev.stopPropagation();
 		if (
 			(ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
 		) {
@@ -1583,6 +1586,7 @@
 	};
 
 	Album.prototype.sortMediaByDate = function (ev) {
+		ev.stopPropagation();
 		if (
 			this.mediaNameSort &&
 			(ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
@@ -1615,6 +1619,7 @@
 
 
 	Album.prototype.sortMediaByName = function(ev) {
+		ev.stopPropagation();
 		if (
 			! this.mediaNameSort &&
 			(ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey
@@ -1646,6 +1651,7 @@
 	};
 
 	Album.prototype.sortMediaReverse = function(ev) {
+		ev.stopPropagation();
 		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.mediaReverseSort = ! env.mediaReverseSort;
 			f.setBooleanCookie("mediaReverseSortRequested", env.mediaReverseSort);
@@ -1907,6 +1913,7 @@
 	};
 
 	TopFunctions.toggleSpacing = function(ev) {
+		ev.stopPropagation();
 		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			if (env.options.spacing)
 				env.options.spacing = 0;
@@ -1941,6 +1948,7 @@
 	};
 
 	TopFunctions.toggleMediaCount = function(ev) {
+		ev.stopPropagation();
 		if ((ev.button === 0 || ev.button === undefined) && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.show_album_media_count = ! env.options.show_album_media_count;
 			f.setBooleanCookie("showAlbumMediaCount", env.options.show_album_media_count);
@@ -2086,15 +2094,16 @@
 					TopFunctions.toggleBottomThumbnails(ev);
 				}
 
-				if (env.currentMedia !== null || env.currentAlbum.subalbums.length) {
+				if (env.currentMedia === null && env.currentAlbum.subalbums.length && $("#subalbums").is(":visible")) {
 					util.adaptSubalbumCaptionHeight();
-					$("#ui-settings-restored").stop().fadeIn(
-						200,
-						function() {
-							$("#ui-settings-restored").fadeOut(2500);
-						}
-					);
 				}
+
+				$("#ui-settings-restored").stop().fadeIn(
+					200,
+					function() {
+						$("#ui-settings-restored").fadeOut(2500);
+					}
+				);
 
 				f.updateMenu();
 			}
