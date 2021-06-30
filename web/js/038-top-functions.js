@@ -1488,20 +1488,19 @@
 
 		var self = this;
 
-		$("li.album-sort").off("click");
-		$("li.album-sort.by-date").on(
+		$("li.album-sort.by-date").off("click").on(
 			"click",
 			function(ev) {
 				self.sortSubalbumsByDate(ev);
 			}
 		);
-		$("li.album-sort.by-name").on(
+		$("li.album-sort.by-name").off("click").on(
 			"click",
 			function(ev) {
 				self.sortSubalbumsByName(ev);
 			}
 		);
-		$("li.album-sort.reverse").on(
+		$("li.album-sort.reverse").off("click").on(
 			"click",
 			function(ev) {
 				self.sortSubalbumsReverse(ev);
@@ -1514,20 +1513,19 @@
 
 		var self = this;
 
-		$("li.media-sort").off("click");
-		$("li.media-sort.by-date").on(
+		$("li.media-sort.by-date").off("click").on(
 			"click",
 			function(ev) {
 				self.sortMediaByDate(ev);
 			}
 		);
-		$("li.media-sort.by-name").on(
+		$("li.media-sort.by-name").off("click").on(
 			"click",
 			function(ev) {
 				self.sortMediaByName(ev);
 			}
 		);
-		$("li.media-sort.reverse").on(
+		$("li.media-sort.reverse").off("click").on(
 			"click",
 			function(ev) {
 				self.sortMediaReverse(ev);
