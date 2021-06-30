@@ -494,7 +494,7 @@
 						<li class='ui show-tags active'></li>
 						<li class='ui spaced active'></li>
 						<li class='ui show-bottom-thumbnails active'></li>
-						<li class='ui reset active'></li>
+						<li class='ui restore active'></li>
 					</ul>
 				</li>
 

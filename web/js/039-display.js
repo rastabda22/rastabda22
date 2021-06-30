@@ -812,7 +812,7 @@ $(document).ready(function() {
 	$("ul#right-menu li.media-names").off("click").on("click", tF.toggleMediaNames);
 	$("ul#right-menu li.square-album-thumbnails").off("click").on("click", tF.toggleAlbumsSquare);
 	$("ul#right-menu li.square-media-thumbnails").off("click").on("click", tF.toggleMediaSquare);
-	$("ul#right-menu li.reset").off("click").on("click", tF.resetDisplaySettings);
+	$("ul#right-menu li.restore").off("click").on("click", tF.restoreDisplaySettings);
 	$("ul#right-menu #show-big-albums").off("click").on("click", tF.toggleBigAlbumsShow);
 	$("#search-icon").off("click").on("click", util.toggleSearchMenu);
 	$("#menu-icon").off("click").on("click", util.toggleRightMenu);
@@ -913,7 +913,7 @@ $(document).ready(function() {
 					var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
 
 					if (! util.isSearchHash()) {
-						// reset current album search flag to its default value
+						// restore current album search flag to its default value
 						env.options.search_current_album = true;
 						f.setBooleanCookie("searchCurrentAlbum", env.options.search_current_album);
 					}

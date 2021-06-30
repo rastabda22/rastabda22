@@ -2013,7 +2013,7 @@
 		return false;
 	};
 
-	TopFunctions.prototype.resetDisplaySettings = function(ev) {
+	TopFunctions.prototype.restoreDisplaySettings = function(ev) {
 		var oldOptions = {};
 		oldOptions.hide_title = env.options.hide_title;
 		oldOptions.show_album_media_count = env.options.show_album_media_count;
