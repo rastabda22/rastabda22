@@ -1933,7 +1933,6 @@
 			env.options.show_album_names_below_thumbs = ! env.options.show_album_names_below_thumbs;
 			f.setBooleanCookie("showAlbumNamesBelowThumbs", env.options.show_album_names_below_thumbs);
 			f.updateMenu();
-			// f.setOptions();
 			util.setSubalbumsOptions();
 			if (env.currentAlbum.subalbums.length)
 				util.adaptSubalbumCaptionHeight();
@@ -1980,7 +1979,7 @@
 			f.setCookie("albumThumbType", env.options.album_thumb_type);
 			f.updateMenu();
 			let highlightedSubalbumId = $("#subalbums .highlighted").attr("id");
-			env.currentAlbum.showSubalbums(true);
+			util.setSubalbumsOptions();
 			util.scrollToHighlightedSubalbum($("#" + highlightedSubalbumId));
 			if (env.currentAlbum.subalbums.length)
 				util.adaptSubalbumCaptionHeight();
