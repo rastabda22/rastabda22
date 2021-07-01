@@ -1048,8 +1048,6 @@ $(document).ready(function() {
 			$("#subalbums").removeClass("hidden");
 			$("#album-view, #media-view, #my-modal").css("opacity", "");
 
-			if (env.isABrowsingModeChange)
-				env.isABrowsingModeChange = false;
 			$("#loading").show();
 			// $("#album-view").removeClass("hidden");
 			$("link[rel=image_src]").remove();
@@ -1083,7 +1081,10 @@ $(document).ready(function() {
 					var hashPromise = phFl.parseHashAndReturnAlbumAndMedia(location.hash);
 					hashPromise.then(
 						function([album, mediaIndex]) {
-							if (album.isSearch() && ! album.numsMediaInSubTree.imagesAndVideosTotal())
+							if (env.isABrowsingModeChange) {
+								env.isABrowsingModeChange = false;
+								util.openRightMenu();
+							} else if (album.isSearch() && ! album.numsMediaInSubTree.imagesAndVideosTotal())
 								util.openSearchMenu(album);
 							else
 								util.closeMenu();

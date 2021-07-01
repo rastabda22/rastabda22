@@ -4723,6 +4723,7 @@
 	Utilities.prototype.isSearchHash = Utilities.isSearchHash;
 	Utilities.prototype.adaptSubalbumCaptionHeight = Utilities.adaptSubalbumCaptionHeight;
 	Utilities.prototype.adaptMediaCaptionHeight = Utilities.adaptMediaCaptionHeight;
+	Utilities.prototype.openRightMenu = Utilities.openRightMenu;
 
 	window.Utilities = Utilities;
 }());
