@@ -3084,7 +3084,7 @@
 				for(var iPhoto = 0; iPhoto < this[iPoint].mediaList.length; iPhoto ++) {
 					// we must get the media corresponding to the name in the point
 					if (cacheBases)
-						cacheBases += br;
+						cacheBases += env.br;
 					cacheBases += this[iPoint].mediaList[iPhoto].cacheBase;
 				}
 
