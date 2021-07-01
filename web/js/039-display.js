@@ -674,12 +674,48 @@ $(document).ready(function() {
 		}
 	});
 
-	$("li#inside-words").off("click").on("click", util.toggleInsideWordsSearch);
-	$("li#any-word").off("click").on("click", util.toggleAnyWordSearch);
-	$("li#case-sensitive").off("click").on("click", util.toggleCaseSensitiveSearch);
-	$("li#accent-sensitive").off("click").on("click", util.toggleAccentSensitiveSearch);
-	$("li#tags-only").off("click").on("click", util.toggleTagsOnlySearch);
-	$("li#album-search").off("click").on("click", util.toggleCurrentAbumSearch);
+	$("li#inside-words").off("click").on(
+		"click",
+		function() {
+			util.addHighlightToItem($(this));
+			util.toggleInsideWordsSearch();
+		}
+	);
+	$("li#any-word").off("click").on(
+		"click",
+		function() {
+			util.addHighlightToItem($(this));
+			util.toggleAnyWordSearch();
+		}
+	);
+	$("li#case-sensitive").off("click").on(
+		"click",
+		function() {
+			util.addHighlightToItem($(this));
+			util.toggleCaseSensitiveSearch();
+		}
+	);
+	$("li#accent-sensitive").off("click").on(
+		"click",
+		function() {
+			util.addHighlightToItem($(this));
+			util.toggleAccentSensitiveSearch();
+		}
+	);
+	$("li#tags-only").off("click").on(
+		"click",
+		function() {
+			util.addHighlightToItem($(this));
+			util.toggleTagsOnlySearch();
+		}
+	);
+	$("li#album-search").off("click").on(
+		"click",
+		function() {
+			util.addHighlightToItem($(this));
+			util.toggleCurrentAbumSearch();
+		}
+	);
 
 	$(".download-album.everything.all.full").off("click").on(
 		"click",
