@@ -720,6 +720,7 @@ $(document).ready(function() {
 	$(".download-album.everything.all.full").off("click").on(
 		"click",
 		function() {
+			util.addHighlightToItem($(this));
 			if ($(".download-album.everything.all.full").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(true);
 				return false;
@@ -729,6 +730,7 @@ $(document).ready(function() {
 	$(".download-album.everything.all.sized").off("click").on(
 		"click",
 		function() {
+			util.addHighlightToItem($(this));
 			if ($(".download-album.everything.all.sized").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(true, "all", $(".download-album.everything.all.sized").attr("size"));
 				return false;
@@ -738,6 +740,7 @@ $(document).ready(function() {
 	$(".download-album.everything.images.full").off("click").on(
 		"click",
 		function() {
+			util.addHighlightToItem($(this));
 			if ($(".download-album.everything.images.full").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(true, "images");
 				return false;
@@ -747,6 +750,7 @@ $(document).ready(function() {
 	$(".download-album.everything.images.sized").off("click").on(
 		"click",
 		function() {
+			util.addHighlightToItem($(this));
 			if ($(".download-album.everything.images.sized").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(true, "images", $(".download-album.everything.images.sized").attr("size"));
 				return false;
@@ -756,6 +760,7 @@ $(document).ready(function() {
 	$(".download-album.everything.videos.full").off("click").on(
 		"click",
 		function() {
+			util.addHighlightToItem($(this));
 			if ($(".download-album.everything.videos.full").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(true, "videos");
 				return false;
@@ -765,6 +770,7 @@ $(document).ready(function() {
 	$(".download-album.everything.videos.sized").off("click").on(
 		"click",
 		function() {
+			util.addHighlightToItem($(this));
 			if ($(".download-album.everything.videos.sized").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(true, "videos", $(".download-album.everything.videos.sized").attr("size"));
 				return false;
@@ -775,6 +781,7 @@ $(document).ready(function() {
 	$(".download-album.media-only.all.full").off("click").on(
 		"click",
 		function() {
+			util.addHighlightToItem($(this));
 			if ($(".download-album.media-only.all").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(false, "all");
 				return false;
@@ -784,6 +791,7 @@ $(document).ready(function() {
 	$(".download-album.media-only.all.sized").off("click").on(
 		"click",
 		function() {
+			util.addHighlightToItem($(this));
 			if ($(".download-album.media-only.all.sized").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(false, "all", $(".download-album.media-only.all.sized").attr("size"));
 				return false;
@@ -793,6 +801,7 @@ $(document).ready(function() {
 	$(".download-album.media-only.images.full").off("click").on(
 		"click",
 		function() {
+			util.addHighlightToItem($(this));
 			if ($(".download-album.media-only.images").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(false, "images");
 				return false;
@@ -802,6 +811,7 @@ $(document).ready(function() {
 	$(".download-album.media-only.images.sized").off("click").on(
 		"click",
 		function() {
+			util.addHighlightToItem($(this));
 			if ($(".download-album.media-only.images.sized").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(false, "images", $(".download-album.media-only.images.sized").attr("size"));
 				return false;
@@ -811,6 +821,7 @@ $(document).ready(function() {
 	$(".download-album.media-only.videos.full").off("click").on(
 		"click",
 		function() {
+			util.addHighlightToItem($(this));
 			if ($(".download-album.media-only.videos").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(false, "videos");
 			}
@@ -819,6 +830,7 @@ $(document).ready(function() {
 	$(".download-album.media-only.videos.sized").off("click").on(
 		"click",
 		function() {
+			util.addHighlightToItem($(this));
 			if ($(".download-album.media-only.videos.sized").hasClass("active")) {
 				env.currentAlbum.downloadAlbum(false, "videos", $(".download-album.media-only.videos.sized").attr("size"));
 				return false;
@@ -828,6 +840,7 @@ $(document).ready(function() {
 	$(".download-album.selection.active").off("click").on(
 		"click",
 		function() {
+			util.addHighlightToItem($(this));
 			$("#how-to-download-selection").toggle();
 			return false;
 		}
@@ -837,21 +850,126 @@ $(document).ready(function() {
 
 	// binds the click events to the sort buttons
 
-	$("ul#right-menu li.hide-title").off("click").on("click", tF.toggleTitle);
-	$("ul#right-menu li.show-descriptions").off("click").on("click", tF.toggleDescriptions);
-	$("ul#right-menu li.show-tags").off("click").on("click", tF.toggleTags);
-	$("ul#right-menu li.show-bottom-thumbnails").off("click").on("click", tF.toggleBottomThumbnails);
-	$("ul#right-menu li.slide").off("click").on("click", tF.toggleSlideMode);
-	$("ul#right-menu li.spaced").off("click").on("click", tF.toggleSpacing);
-	$("ul#right-menu li.album-names").off("click").on("click", tF.toggleAlbumNames);
-	$("ul#right-menu li.media-count").off("click").on("click", tF.toggleMediaCount);
-	$("ul#right-menu li.media-names").off("click").on("click", tF.toggleMediaNames);
-	$("ul#right-menu li.square-album-thumbnails").off("click").on("click", tF.toggleAlbumsSquare);
-	$("ul#right-menu li.square-media-thumbnails").off("click").on("click", tF.toggleMediaSquare);
-	$("ul#right-menu li.restore").off("click").on("click", tF.restoreDisplaySettings);
-	$("ul#right-menu #show-big-albums").off("click").on("click", tF.toggleBigAlbumsShow);
-	$("#search-icon").off("click").on("click", util.toggleSearchMenu);
-	$("#menu-icon").off("click").on("click", util.toggleRightMenu);
+	$("ul#right-menu li.hide-title").off("click").on(
+		"click",
+		function(ev) {
+			ev.stopPropagation();
+			util.addHighlightToItem($(this));
+			tF.toggleTitle(ev);
+		}
+	);
+	$("ul#right-menu li.show-descriptions").off("click").on(
+		"click",
+		function(ev) {
+			ev.stopPropagation();
+			util.addHighlightToItem($(this));
+			tF.toggleDescriptions(ev);
+		}
+	);
+	$("ul#right-menu li.show-tags").off("click").on(
+		"click",
+		function(ev) {
+			ev.stopPropagation();
+			util.addHighlightToItem($(this));
+			tF.toggleTags(ev);
+		}
+	);
+	$("ul#right-menu li.show-bottom-thumbnails").off("click").on(
+		"click",
+		function(ev) {
+			ev.stopPropagation();
+			util.addHighlightToItem($(this));
+			tF.toggleBottomThumbnails(ev);
+		}
+	);
+	$("ul#right-menu li.slide").off("click").on(
+		"click",
+		function(ev) {
+			ev.stopPropagation();
+			util.addHighlightToItem($(this));
+			tF.toggleSlideMode(ev);
+		}
+	);
+	$("ul#right-menu li.spaced").off("click").on(
+		"click",
+		function(ev) {
+			ev.stopPropagation();
+			util.addHighlightToItem($(this));
+			tF.toggleSpacing(ev);
+		}
+	);
+	$("ul#right-menu li.album-names").off("click").on(
+		"click",
+		function(ev) {
+			ev.stopPropagation();
+			util.addHighlightToItem($(this));
+			tF.toggleAlbumNames(ev);
+		}
+	);
+	$("ul#right-menu li.media-count").off("click").on(
+		"click",
+		function(ev) {
+			ev.stopPropagation();
+			util.addHighlightToItem($(this));
+			tF.toggleMediaCount(ev);
+		}
+	);
+	$("ul#right-menu li.media-names").off("click").on(
+		"click",
+		function(ev) {
+			ev.stopPropagation();
+			util.addHighlightToItem($(this));
+			tF.toggleMediaNames(ev);
+		}
+	);
+	$("ul#right-menu li.square-album-thumbnails").off("click").on(
+		"click",
+		function(ev) {
+			ev.stopPropagation();
+			util.addHighlightToItem($(this));
+			tF.toggleAlbumsSquare(ev);
+		}
+	);
+	$("ul#right-menu li.square-media-thumbnails").off("click").on(
+		"click",
+		function(ev) {
+			ev.stopPropagation();
+			util.addHighlightToItem($(this));
+			tF.toggleMediaSquare(ev);
+		}
+	);
+	$("ul#right-menu li.restore").off("click").on(
+		"click",
+		function(ev) {
+			ev.stopPropagation();
+			util.addHighlightToItem($(this));
+			tF.restoreDisplaySettings(ev);
+		}
+	);
+	$("ul#right-menu #show-big-albums").off("click").on(
+		"click",
+		function(ev) {
+			ev.stopPropagation();
+			util.addHighlightToItem($(this));
+			tF.toggleBigAlbumsShow(ev);
+		}
+	);
+	$("#search-icon").off("click").on(
+		"click",
+		function(ev) {
+			ev.stopPropagation();
+			util.addHighlightToItem($(this));
+			util.toggleSearchMenu(ev);
+		}
+	);
+	$("#menu-icon").off("click").on(
+		"click",
+		function(ev) {
+			ev.stopPropagation();
+			util.addHighlightToItem($(this));
+			util.toggleRightMenu(ev);
+		}
+	);
 
 	$("#auth-form").submit(
 		function() {

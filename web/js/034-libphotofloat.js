@@ -1322,7 +1322,7 @@
 				$(".search-failed").hide();
 				// $("#media-view").removeClass("hidden");
 				// $("ul#right-menu li#album-search").removeClass("hidden");
-				$("ul#right-menu li#any-word").addClass("active").off("click").on("click", util.toggleAnyWordSearch);
+				// $("ul#right-menu li#any-word").addClass("active").off("click").on("click", util.toggleAnyWordSearch);
 				$("#album-view, #subalbums, #thumbs").removeClass("hidden");
 
 				if (albumCacheBase) {

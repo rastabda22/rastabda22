@@ -1,3 +1,5 @@
+* menu entries are now highlighted when clicked
+
 ### version v5.3.1 (July 1, 2021)
 
 * bug fixes

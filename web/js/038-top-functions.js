@@ -1491,18 +1491,21 @@
 		$("li.album-sort.by-date").off("click").on(
 			"click",
 			function(ev) {
+				util.addHighlightToItem($(this));
 				self.sortSubalbumsByDate(ev);
 			}
 		);
 		$("li.album-sort.by-name").off("click").on(
 			"click",
 			function(ev) {
+				util.addHighlightToItem($(this));
 				self.sortSubalbumsByName(ev);
 			}
 		);
 		$("li.album-sort.reverse").off("click").on(
 			"click",
 			function(ev) {
+				util.addHighlightToItem($(this));
 				self.sortSubalbumsReverse(ev);
 			}
 		);
@@ -1516,18 +1519,21 @@
 		$("li.media-sort.by-date").off("click").on(
 			"click",
 			function(ev) {
+				util.addHighlightToItem($(this));
 				self.sortMediaByDate(ev);
 			}
 		);
 		$("li.media-sort.by-name").off("click").on(
 			"click",
 			function(ev) {
+				util.addHighlightToItem($(this));
 				self.sortMediaByName(ev);
 			}
 		);
 		$("li.media-sort.reverse").off("click").on(
 			"click",
 			function(ev) {
+				util.addHighlightToItem($(this));
 				self.sortMediaReverse(ev);
 			}
 		);

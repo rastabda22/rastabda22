@@ -685,6 +685,7 @@
 			$(".select.everything:not(.hidden)").off("click").on(
 				"click",
 				function() {
+					util.addHighlightToItem($(this));
 					var albumToUse;
 					if (isPopup)
 						albumToUse = env.mapAlbum;
@@ -724,6 +725,7 @@
 			$(".select.everything-individual:not(.hidden)").off("click").on(
 				"click",
 				function() {
+					util.addHighlightToItem($(this));
 					$("#working").addClass("select-everything-individual");
 					$("#working").show();
 					let everythingIndividualPromise = thisAlbum.recursivelyAllMediaAreSelected();
@@ -774,6 +776,7 @@
 			$(".select.media:not(.hidden)").off("click").on(
 				"click",
 				function() {
+					util.addHighlightToItem($(this));
 					var albumToUse;
 					if (isPopup)
 						albumToUse = env.mapAlbum;
@@ -794,6 +797,7 @@
 			$(".select.albums:not(.hidden)").off("click").on(
 				"click",
 				function() {
+					util.addHighlightToItem($(this));
 					$("#working").addClass("select-albums");
 					$("#working").show();
 					if (thisAlbum.everySubalbumIsSelected()) {
@@ -826,6 +830,7 @@
 			$(".select.global-reset:not(.hidden)").off("click").on(
 				"click",
 				function() {
+					util.addHighlightToItem($(this));
 					$("#working").addClass("select-global-reset");
 					$("#working").show();
 					env.selectionAlbum.removeAllMediaFromSelection();
@@ -847,6 +852,7 @@
 			$(".select.nothing:not(.hidden)").off("click").on(
 				"click",
 				function() {
+					util.addHighlightToItem($(this));
 					$("#working").addClass("select-nothing");
 						$("#working").show();
 					var albumToUse;
@@ -873,6 +879,7 @@
 			$(".select.no-albums:not(.hidden)").off("click").on(
 				"click",
 				function() {
+					util.addHighlightToItem($(this));
 					$("#working").addClass("select-no-albums");
 					$("#working").show();
 					let subalbumsPromise = thisAlbum.removeAllSubalbumsFromSelection();
@@ -893,6 +900,7 @@
 			$(".select.no-media:not(.hidden)").off("click").on(
 				"click",
 				function() {
+					util.addHighlightToItem($(this));
 					var albumToUse;
 					if (isPopup)
 						albumToUse = env.mapAlbum;
@@ -908,6 +916,7 @@
 			$(".select.go-to-selected:not(.hidden)").off("click").on(
 				"click",
 				function() {
+					util.addHighlightToItem($(this));
 					util.changeToBySelectionView();
 					return false;
 				}
@@ -1236,6 +1245,7 @@
 		$("#right-menu li.expandable").off("click").on(
 			"click",
 			function() {
+				util.addHighlightToItem($(this));
 				var wasExpanded = $(this).hasClass("expanded");
 				$("#right-menu li.expandable").removeClass("expanded");
 				$("#right-menu li.first-level ul").addClass("hidden");
