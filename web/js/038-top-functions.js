@@ -2016,7 +2016,7 @@
 				let highlightedSingleMediaInPopupId = $("#popup-images-wrapper .highlighted img.thumbnail").attr("id");
 				env.mapAlbum.showThumbs();
 				$("#popup-images-wrapper .highlighted").removeClass("highlighted");
-				util.scrollPopupToHighlightedThumb($("#" + highlightedSingleMediaInPopupId).parent().parent());
+				util.scrollPopupToHighlightedThumb($("#" + highlightedSingleMediaInPopupId));
 			}
 		}
 		return false;
