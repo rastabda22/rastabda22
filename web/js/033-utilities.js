@@ -2010,18 +2010,31 @@
 
 		$(".album-tags").css("font-size", (Math.round(captionFontSize * 0.75)) + "px");
 
-		if ($("#subalbums").children().length && $("#subalbums").is(":visible")) {
-			var mustBeSquare = env.options.album_thumb_type.indexOf("square") > -1;
-			var isSquare = $("#subalbums .album-button img.thumbnail").attr("src").substr(-5, 1) === "s";
-			if (isSquare !== mustBeSquare) {
-				$("#subalbums .album-button img.thumbnail").each(
-					function() {
-						var srcArray = $(this).attr("src").split("");
-						var charPosition = srcArray.length - 5;
-						srcArray[charPosition] = srcArray[charPosition] === "s" ? "f" : "s";
-						$(this).attr("src", srcArray.join(""));
-					}
-				);
+		if (
+			$("#subalbums .album-button img.thumbnail").length &&
+			$("#subalbums").is(":visible")
+		) {
+			let firstThumbnail = $("#subalbums .album-button img.thumbnail").first();
+			if (firstThumbnail.attr("src") !== "img/image-placeholder.png") {
+				var mustBeSquare = (env.options.album_thumb_type.indexOf("square") > -1);
+				var isSquare = (firstThumbnail.attr("src").substr(-5, 1) === "s");
+				if (isSquare !== mustBeSquare) {
+					$("#subalbums .album-button img.thumbnail").each(
+						function() {
+							var attribute;
+							if (["af.jpg", "as.jpg"].indexOf($(this).attr("src").substr(-6)) !== -1)
+								attribute = "src";
+							else
+								// this value is for thumbnails not processed by LazyLoad yet
+								attribute = "data-src";
+
+							var srcArray = $(this).attr(attribute).split("");
+							var charPosition = srcArray.length - 5;
+							srcArray[charPosition] = srcArray[charPosition] === "s" ? "f" : "s";
+							$(this).attr(attribute, srcArray.join(""));
+						}
+					);
+				}
 			}
 		}
 
