@@ -349,22 +349,22 @@
 				$("ul#right-menu li#tags-only").addClass("selected");
 			else
 				$("ul#right-menu li#tags-only").removeClass("selected");
-			if (env.options.cache_base_to_search_in === env.options.folders_string || isPopup) {
-				$("ul#right-menu li#album-search").removeClass("selected").removeClass("active").off("click").attr("title", "");
-			} else {
-				$("ul#right-menu li#album-search").addClass("active").off("click").on("click", util.toggleCurrentAbumSearch);
-				let albumNamePromise = Functions.getAlbumNameFromCacheBase(env.options.cache_base_to_search_in);
-				albumNamePromise.then(
-					function(path) {
-						$("#album-search").attr('title', util._t("#current-album-is") + '"' + path + '"');
-					}
-				);
+			// if (env.options.cache_base_to_search_in === env.options.folders_string || isPopup) {
+				// $("ul#right-menu li#album-search").removeClass("selected").removeClass("active").off("click").attr("title", "");
+			// } else {
+				// $("ul#right-menu li#album-search").addClass("active").off("click").on("click", util.toggleCurrentAbumSearch);
+			let albumNamePromise = Functions.getAlbumNameFromCacheBase(env.options.cache_base_to_search_in);
+			albumNamePromise.then(
+				function(path) {
+					$("#album-search").attr('title', util._t("#current-album-is") + '"' + path + '"');
+				}
+			);
 
-				if (env.options.search_current_album)
-					$("ul#right-menu li#album-search").addClass("selected");
-				else
-					$("ul#right-menu li#album-search").removeClass("selected");
-			}
+			if (env.options.search_current_album)
+				$("ul#right-menu li#album-search").addClass("selected");
+			else
+				$("ul#right-menu li#album-search").removeClass("selected");
+			// }
 		}
 
 		////////////////// UI //////////////////////////////
