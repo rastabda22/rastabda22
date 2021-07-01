@@ -1976,6 +1976,7 @@
 			if (util.isPopup()) {
 				// env.mapAlbum.showThumbs();
 				map.updatePopup();
+				util.adaptMediaCaptionHeight();
 			}
 		}
 		return false;
