@@ -220,6 +220,7 @@
 		$("#folders-view:not(.hidden):not(.selected)").off("click").on(
 			"click",
 			function changeToFoldersView() {
+				util.addHighlightToItem($(this));
 				TopFunctions.showBrowsingModeMessage("#folders-browsing");
 
 				if (isSingleMedia) {
@@ -238,6 +239,7 @@
 		$("#by-date-view:not(.hidden):not(.selected)").off("click").on(
 			"click",
 			function changeToByDateView() {
+				util.addHighlightToItem($(this));
 				TopFunctions.showBrowsingModeMessage("#by-date-browsing");
 
 				if (isSingleMedia) {
@@ -255,6 +257,7 @@
 		$("#by-gps-view:not(.hidden):not(.selected)").off("click").on(
 			"click",
 			function changeToByGpsView() {
+				util.addHighlightToItem($(this));
 				TopFunctions.showBrowsingModeMessage("#by-gps-browsing");
 
 				if (isSingleMedia) {
@@ -272,6 +275,7 @@
 		$("#by-map-view:not(.hidden):not(.selected)").off("click").on(
 			"click",
 			function changeToByMapView() {
+				util.addHighlightToItem($(this));
 				TopFunctions.showBrowsingModeMessage("#by-map-browsing");
 				if (isSingleMedia) {
 					$(".title").removeClass("hidden-by-pinch");
@@ -287,6 +291,7 @@
 		$("#by-search-view:not(.hidden):not(.selected)").off("click").on(
 			"click",
 			function changeToBySearchView() {
+				util.addHighlightToItem($(this));
 				TopFunctions.showBrowsingModeMessage("#by-search-browsing");
 				if (isSingleMedia) {
 					$(".title").removeClass("hidden-by-pinch");
@@ -309,6 +314,7 @@
 		$("#by-selection-view:not(.selected)").off("click").on(
 			"click",
 			function() {
+				util.addHighlightToItem($(this));
 				util.changeToBySelectionView(thisMedia);
 				return false;
 			}
