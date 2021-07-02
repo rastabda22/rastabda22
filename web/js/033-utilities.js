@@ -4021,11 +4021,14 @@
 		$(".album-caption").css("height", maxHeight + 'px');
 	};
 
-	Utilities.adaptMediaCaptionHeight = function() {
+	Utilities.adaptMediaCaptionHeight = function(inPopup) {
 		// check for overflow in media-caption class in order to adapt media caption height to the string length
+		var baseSelector = "#thumbs";
+		if (inPopup)
+			baseSelector = "#popup-images-wrapper";
 		var maxHeight = 0;
-		$(".media-caption").css("height", 0);
-		$('.media-caption').each(
+		$(baseSelector + " .media-caption").css("height", 0);
+		$(baseSelector + " .media-caption").each(
 			function() {
 				var thisHeight = $(this)[0].scrollHeight;
 				maxHeight = (thisHeight > maxHeight) ? thisHeight : maxHeight;
@@ -4033,7 +4036,7 @@
 		);
 		// var difference = maxHeight - parseFloat($(".media-caption").css("height"));
 		// $(".album-button-and-caption").css("height", ($(".album-button-and-caption").height() + difference) + 'px');
-		$(".media-caption").css("height", maxHeight + 'px');
+		$(baseSelector + " .media-caption").css("height", maxHeight + 'px');
 	};
 
 	Utilities.hasProperty = function(object, property) {
@@ -4626,7 +4629,8 @@
 					if (selector === "#subalbums") {
 						Utilities.adaptSubalbumCaptionHeight();
 					} else {
-						Utilities.adaptMediaCaptionHeight();
+						Utilities.adaptMediaCaptionHeight(false);
+						Utilities.adaptMediaCaptionHeight(true);
 					}
 				}
 			}

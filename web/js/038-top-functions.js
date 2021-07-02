@@ -1859,11 +1859,13 @@
 			env.options.hide_descriptions = ! env.options.hide_descriptions;
 			f.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
 
-			if (util.isPopup() || env.currentMedia === null) {
+			if (util.isPopup() || env.currentMedia === null && env.currentAlbum.media.length) {
 				util.setMediaOptions();
 			}
-			if (! util.isPopup() && env.currentMedia === null)
+			util.adaptMediaCaptionHeight(false);
+			if (! util.isPopup() && env.currentMedia === null && env.currentAlbum.subalbums.length) {
 				util.setSubalbumsOptions();
+			}
 			util.setDescriptionOptions();
 			util.correctElementPositions();
 
@@ -1871,6 +1873,7 @@
 			if (util.isPopup()) {
 				// env.mapAlbum.showThumbs();
 				map.updatePopup();
+				util.adaptMediaCaptionHeight(true);
 			}
 
 			if (env.currentAlbum.subalbums.length)
@@ -1884,11 +1887,13 @@
 			env.options.hide_tags = ! env.options.hide_tags;
 			f.setBooleanCookie("hideTags", env.options.hide_tags);
 
-			if (util.isPopup() || env.currentMedia === null) {
+			if (util.isPopup() || env.currentMedia === null && env.currentAlbum.media.length) {
 				util.setMediaOptions();
 			}
-			if (! util.isPopup() && env.currentMedia === null)
+			util.adaptMediaCaptionHeight(false);
+			if (! util.isPopup() && env.currentMedia === null && env.currentAlbum.subalbums.length) {
 				util.setSubalbumsOptions();
+			}
 			util.setDescriptionOptions();
 			util.correctElementPositions();
 
@@ -1896,6 +1901,7 @@
 			if (util.isPopup()) {
 				// env.mapAlbum.showThumbs();
 				map.updatePopup();
+				util.adaptMediaCaptionHeight(true);
 			}
 
 			if (env.currentAlbum.subalbums.length)
@@ -1977,12 +1983,11 @@
 			util.setMediaOptions();
 			// util.setSubalbumsOptions();
 			if (env.currentAlbum.media.length)
-				util.adaptMediaCaptionHeight();
+				util.adaptMediaCaptionHeight(false);
 
 			if (util.isPopup()) {
-				// env.mapAlbum.showThumbs();
 				map.updatePopup();
-				util.adaptMediaCaptionHeight();
+				util.adaptMediaCaptionHeight(true);
 			}
 		}
 		return false;
@@ -2443,7 +2448,7 @@
 
 		util.setMediaOptions();
 		if (self.media.length && env.currentMedia === null)
-			util.adaptMediaCaptionHeight();
+			util.adaptMediaCaptionHeight(inPopup);
 
 	 	if ($(thumbsSelector).is(":visible") || util.isPopup()) {
 			if ($("#album-and-media-container").hasClass("show-media"))
