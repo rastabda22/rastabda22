@@ -594,7 +594,7 @@ $(document).ready(function() {
 						// re-build the original map album
 						var clickHistory = env.mapAlbum.clickHistory;
 						env.mapAlbum = new Album();
-						let playPromise = tF.playClickElement(clickHistory, 0);
+						let playPromise = tF.playClickElement(clickHistory);
 						playPromise.then(
 							function popupReady() {
 								if (env.options.search_any_word) {

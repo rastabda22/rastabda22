@@ -2903,7 +2903,7 @@
 			env.currentAlbum.positionsAndMediaInMedia.generateMap(ev, from);
 	};
 
-	TopFunctions.playClickElement = function(clickHistory, iClick) {
+	TopFunctions.playClickElement = function(clickHistory, iClick = 0) {
 		return new Promise(
 			function(resolve_playClickElement) {
 				var clickHistoryElement = clickHistory[iClick];
@@ -3138,7 +3138,7 @@
 				else if (env.popupRefreshType === "mapAlbum") {
 					var clickHistory = env.mapAlbum.clickHistory;
 					env.mapAlbum = new Album();
-					TopFunctions.playClickElement(clickHistory, 0);
+					TopFunctions.playClickElement(clickHistory);
 				}
 			}
 		}
