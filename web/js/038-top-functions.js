@@ -2956,7 +2956,20 @@
 	};
 
 	PositionsAndMedia.prototype.generateMap = function(ev, from) {
-		// this is an array of uniq points with a list of the media geolocated there
+		function updateMapAndContinue(ev, isLongTap = false) {
+			var updatePromise;
+			if (isLongTap) {
+				updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, env.pruneCluster.Cluster._clusters, true, "shift");
+			} else {
+				updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, env.pruneCluster.Cluster._clusters);
+			}
+			updatePromise.then(
+				TopFunctions.prepareAndDoPopupUpdate,
+				function() {
+					console.trace();
+				}
+			);
+		}
 
 		var i;
 		env.titleWrapper =
@@ -3033,13 +3046,16 @@
 				m.off("click").on(
 					"click",
 					function(ev) {
-						var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, env.pruneCluster.Cluster._clusters);
-						updatePromise.then(
-							TopFunctions.prepareAndDoPopupUpdate,
-							function() {
-								console.trace();
-							}
-						);
+						updateMapAndContinue(ev);
+					}
+				);
+				m.off("contextmenu").on(
+					"contextmenu",
+					function(ev) {
+						if (env.isMobile.any() && ev.originalEvent.button === 0) {
+							updateMapAndContinue(ev, true);
+							return false;
+						}
 					}
 				);
 				return m;
@@ -3124,14 +3140,16 @@
 			env.mymap.off("click").on(
 				"click",
 				function(ev) {
-					var updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, env.pruneCluster.Cluster._clusters);
-					updatePromise.then(
-						TopFunctions.prepareAndDoPopupUpdate,
-						function() {
-							console.trace();
-						}
-					);
-
+					updateMapAndContinue(ev);
+				}
+			);
+			env.mymap.off("contextmenu").on(
+				"contextmenu",
+				function(ev) {
+					if (env.isMobile.any() && ev.originalEvent.button === 0) {
+						updateMapAndContinue(ev, true);
+						return false;
+					}
 				}
 			);
 
@@ -3189,12 +3207,14 @@
 		);
 	};
 
-	TopFunctions.updateMapAlbumOnMapClick = function(evt, clusters, updateMapAlbum = true) {
+	TopFunctions.updateMapAlbumOnMapClick = function(evt, clusters, updateMapAlbum = true, shiftOrControl = "") {
 
 		return new Promise(
 			function(resolve_updateMapAlbumOnMapClick, reject_updateMapAlbumOnMapClick) {
 				var i;
 				var clickHistoryElement;
+				var shiftKey = shiftOrControl === "shift" ? true : evt.originalEvent.shiftKey;
+				var ctrlKey = shiftOrControl === "control" ? true : evt.originalEvent.ctrlKey;
 
 				$("#loading").show();
 
@@ -3204,8 +3224,8 @@
 					clickHistoryElement = {
 							// warning: the value of latlng here is provisional: it will be updated to the cluster latlng
 							latlng: clickedPosition,
-							shiftKey: evt.originalEvent.shiftKey,
-							ctrlKey: evt.originalEvent.ctrlKey,
+							shiftKey: shiftKey,
+							ctrlKey: ctrlKey,
 							zoom: env.mymap.getZoom(),
 							center: env.mymap.getCenter()
 					};
@@ -3213,7 +3233,7 @@
 
 
 				// reset the thumbnails if not shift- nor ctrl-clicking
-				if (! evt.originalEvent.shiftKey && ! evt.originalEvent.ctrlKey) {
+				if (! shiftKey && ! ctrlKey) {
 					$("#popup-images-wrapper").html("");
 				}
 
@@ -3259,7 +3279,7 @@
 				}
 
 				var indexPositions, imageLoadPromise, mediaListElement;
-				if (evt.originalEvent.ctrlKey) {
+				if (ctrlKey) {
 					if (! env.mapAlbum.isEmpty()) {
 						// control click: remove the points
 
@@ -3310,7 +3330,7 @@
 						function(resolve_imageLoad) {
 							var indexPositions, positionsAndCountsElement;
 
-							if (env.mapAlbum.isEmpty() || env.mapAlbum.numsMedia.imagesAndVideosTotal() === 0 || ! evt.originalEvent.shiftKey) {
+							if (env.mapAlbum.isEmpty() || env.mapAlbum.numsMedia.imagesAndVideosTotal() === 0 || ! shiftKey) {
 								// normal click or shift click without previous content
 
 								env.mapAlbum = util.initializeMapAlbum();

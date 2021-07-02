@@ -1,3 +1,4 @@
+* long tap on map on mobile simulates shift-click
 * make show/hide media description/tags work in popup too
 * bug fixes
 
