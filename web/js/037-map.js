@@ -216,7 +216,6 @@
 										}
 									}
 								}
-								self.numsMedia = self.media.imagesAndVideosCount();
 								resolve_cacheBasePromise();
 							},
 							function() {
@@ -230,6 +229,7 @@
 		}
 		Promise.all(cacheBasesPromises).then(
 			function() {
+				self.numsMedia = self.media.imagesAndVideosCount();
 				self.positionsAndMediaInTree.mergePositionsAndMedia(positionsAndCounts);
 				self.numPositionsInTree = self.positionsAndMediaInTree.length;
 				resolve_imageLoad(self);
