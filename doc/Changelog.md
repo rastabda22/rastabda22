@@ -1,3 +1,5 @@
+* make show/hide media description/tags work in popup too
+
 ### version v5.3.2 (July 2, 2021)
 
 * menu entries are now highlighted when clicked
