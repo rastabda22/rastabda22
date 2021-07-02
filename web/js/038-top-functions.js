@@ -2910,6 +2910,9 @@
 				var oneClickPromise = new Promise(
 					function(resolve_oneClickPromise) {
 						env.mymap.setView(clickHistoryElement.center, clickHistoryElement.zoom, {animate: false});
+						// sometimes on mobile after resizing the cluster may be out of the map bounds -> move the cluster to the center of the map
+						if (! env.mymap.getBounds().contains(clickHistoryElement.latlng))
+							env.mymap.setView(clickHistoryElement.latlng, clickHistoryElement.zoom, {animate: false});
 						let ev = {
 							latlng: clickHistoryElement.latlng,
 							originalEvent: {
@@ -3195,9 +3198,12 @@
 
 				$("#loading").show();
 
+				var clickedPosition = evt.latlng;
+
 				if (evt !== null && evt.latlng !== undefined) {
 					clickHistoryElement = {
-							latlng: evt.latlng,
+							// warning: the value of latlng here is provisional: it will be updated to the cluster latlng
+							latlng: clickedPosition,
 							shiftKey: evt.originalEvent.shiftKey,
 							ctrlKey: evt.originalEvent.ctrlKey,
 							zoom: env.mymap.getZoom(),
@@ -3205,7 +3211,6 @@
 					};
 				}
 
-				var clickedPosition = evt.latlng;
 
 				// reset the thumbnails if not shift- nor ctrl-clicking
 				if (! evt.originalEvent.shiftKey && ! evt.originalEvent.ctrlKey) {
@@ -3234,6 +3239,8 @@
 					}
 				}
 				var currentCluster = clusters[index];
+				// update the value of latlng property to the cluster latlng
+				clickHistoryElement.latlng = clusters[index].averagePosition;
 				currentCluster.data.mediaList = [];
 
 				// build the cluster's media name list

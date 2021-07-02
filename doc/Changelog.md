@@ -1,4 +1,5 @@
 * make show/hide media description/tags work in popup too
+* bug fixes
 
 ### version v5.3.2 (July 2, 2021)
 

@@ -216,6 +216,7 @@
 										}
 									}
 								}
+								self.numsMedia = self.media.imagesAndVideosCount();
 								resolve_cacheBasePromise();
 							},
 							function() {
