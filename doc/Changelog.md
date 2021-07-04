@@ -1,3 +1,5 @@
+### version v5.3.3 (July 4, 2021)
+
 * long tap on map on mobile simulates shift-click
 * make show/hide media description/tags work in popup too
 * bug fixes
