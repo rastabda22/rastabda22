@@ -51,7 +51,7 @@ It's not because your photo gallery is in a static web site that it can't have a
 
 - [x] A popup map shows markers for the photos positions, using [Leaflet](https://leafletjs.com/).
 - [x] Click on the map and the thumbnails for the nearest marker are shown.
-- [x] More photos can be added (with shift-click) and removed (with ctl-click) from the popup map.
+- [x] More photos can be added (with shift-click, with long tap on mobile) and removed (with ctl-click) from the popup map.
 - [x] Photos shown in the popup map are clickable.
 - [x] Near markers are automatically clustered, and the photos number is shown in the cluster marker.
 - [x] Images collected by map clicks can be shown as an album, browsed and sorted.
