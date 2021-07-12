@@ -223,7 +223,7 @@
 			function changeToFoldersView(ev) {
 				ev.stopPropagation();
 				util.addHighlightToItem($(this).parent().parent());
-				TopFunctions.showBrowsingModeMessage("#folders-browsing");
+				TopFunctions.showBrowsingModeMessage(ev, "#folders-browsing");
 
 				if (isSingleMedia) {
 					$(".title").removeClass("hidden-by-pinch");
@@ -243,7 +243,7 @@
 			function changeToByDateView(ev) {
 				ev.stopPropagation();
 				util.addHighlightToItem($(this).parent().parent());
-				TopFunctions.showBrowsingModeMessage("#by-date-browsing");
+				TopFunctions.showBrowsingModeMessage(ev, "#by-date-browsing");
 
 				if (isSingleMedia) {
 					$(".title").removeClass("hidden-by-pinch");
@@ -263,7 +263,7 @@
 			function changeToByGpsView(ev) {
 				ev.stopPropagation();
 				util.addHighlightToItem($(this).parent().parent());
-				TopFunctions.showBrowsingModeMessage("#by-gps-browsing");
+				TopFunctions.showBrowsingModeMessage(ev, "#by-gps-browsing");
 
 				if (isSingleMedia) {
 					$(".title").removeClass("hidden-by-pinch");
@@ -283,7 +283,7 @@
 			function changeToByMapView(ev) {
 				ev.stopPropagation();
 				util.addHighlightToItem($(this).parent().parent());
-				TopFunctions.showBrowsingModeMessage("#by-map-browsing");
+				TopFunctions.showBrowsingModeMessage(ev, "#by-map-browsing");
 				if (isSingleMedia) {
 					$(".title").removeClass("hidden-by-pinch");
 					$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
@@ -301,7 +301,7 @@
 			function changeToBySearchView(ev) {
 				ev.stopPropagation();
 				util.addHighlightToItem($(this).parent().parent());
-				TopFunctions.showBrowsingModeMessage("#by-search-browsing");
+				TopFunctions.showBrowsingModeMessage(ev, "#by-search-browsing");
 				if (isSingleMedia) {
 					$(".title").removeClass("hidden-by-pinch");
 					$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
@@ -326,7 +326,7 @@
 			function(ev) {
 				ev.stopPropagation();
 				util.addHighlightToItem($(this).parent().parent());
-				util.changeToBySelectionView(thisMedia);
+					util.changeToBySelectionView(ev, thisMedia);
 
 				return false;
 			}
@@ -933,9 +933,9 @@
 
 			$(".select.go-to-selected:not(.hidden)").off("click").on(
 				"click",
-				function() {
+				function(ev) {
 					util.addHighlightToItem($(this));
-					util.changeToBySelectionView();
+					util.changeToBySelectionView(ev);
 					return false;
 				}
 			);

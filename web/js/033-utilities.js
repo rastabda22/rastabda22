@@ -1891,8 +1891,8 @@
 		});
 	};
 
-	Utilities.prototype.changeToBySelectionView = function(thisMedia = null) {
-		TopFunctions.showBrowsingModeMessage("#by-selection-browsing");
+	Utilities.prototype.changeToBySelectionView = function(ev, thisMedia = null) {
+		TopFunctions.showBrowsingModeMessage(ev, "#by-selection-browsing");
 		var isPopup = Utilities.isPopup();
 		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
 		if (isPopup) {

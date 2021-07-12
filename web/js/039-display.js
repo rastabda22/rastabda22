@@ -1081,8 +1081,8 @@ $(document).ready(function() {
 					var hashPromise = phFl.parseHashAndReturnAlbumAndMedia(location.hash);
 					hashPromise.then(
 						function([album, mediaIndex]) {
-							if (env.isABrowsingModeChange) {
-								env.isABrowsingModeChange = false;
+							if (env.isABrowsingModeChangeFromMouseClick) {
+								env.isABrowsingModeChangeFromMouseClick = false;
 								util.openRightMenu();
 							} else if (album.isSearch() && ! album.numsMediaInSubTree.imagesAndVideosTotal())
 								util.openSearchMenu(album);

@@ -814,7 +814,7 @@
 		}
 	};
 
-	TopFunctions.showBrowsingModeMessage = function(selector) {
+	TopFunctions.showBrowsingModeMessage = function(ev, selector) {
 		$(".browsing-mode-message").stop().hide().css("opacity", "");
 		$(selector).show();
 		$(selector).fadeOut(
@@ -823,7 +823,8 @@
 				util.HideId(selector);
 			}
 		);
-		env.isABrowsingModeChange = true;
+		if (ev.originalEvent.x !== 0 && ev.originalEvent.y !== 0)
+			env.isABrowsingModeChangeFromMouseClick = true;
 	};
 
 	SingleMedia.prototype.toggleSelectedStatus = function(album, clickedSelector) {

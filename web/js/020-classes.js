@@ -18,7 +18,7 @@
 			this.previousMedia = null;
 			this.nextMedia = null;
 			this.prevMedia = null;
-			this.isABrowsingModeChange = false;
+			this.isABrowsingModeChangeFromMouseClick = false;
 			// beware: $(window).innerWidth(); doesn't cosider the scroll bar yet
 			this.windowWidth = $(window).innerWidth();
 			this.windowHeight = $(window).innerHeight();
