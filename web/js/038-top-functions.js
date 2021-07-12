@@ -2575,7 +2575,7 @@
 
 		if (populateSubalbums) {
 			$("#subalbums").empty();
-			$("#subalbums").insertBefore("#message-too-many-images");
+			// $("#subalbums").insertBefore("#message-too-many-images");
 
 			//
 			// subalbums loop
