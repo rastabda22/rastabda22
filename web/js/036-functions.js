@@ -222,18 +222,16 @@
 			"click",
 			function changeToFoldersView(ev) {
 				ev.stopPropagation();
-				if (! $(this).hasClass("selected")) {
-					util.addHighlightToItem($(this).parent().parent());
-					TopFunctions.showBrowsingModeMessage("#folders-browsing");
+				util.addHighlightToItem($(this).parent().parent());
+				TopFunctions.showBrowsingModeMessage("#folders-browsing");
 
-					if (isSingleMedia) {
-						$(".title").removeClass("hidden-by-pinch");
-						$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
-						window.location.href =
-							env.hashBeginning + util.pathJoin([thisMedia.foldersCacheBase, thisMedia.cacheBase]);
-					} else if (isAnyRoot) {
-						window.location.href = env.hashBeginning + encodeURIComponent(env.options.folders_string);
-					}
+				if (isSingleMedia) {
+					$(".title").removeClass("hidden-by-pinch");
+					$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
+					window.location.href =
+						env.hashBeginning + util.pathJoin([thisMedia.foldersCacheBase, thisMedia.cacheBase]);
+				} else if (isAnyRoot) {
+					window.location.href = env.hashBeginning + encodeURIComponent(env.options.folders_string);
 				}
 
 				return false;
@@ -244,18 +242,16 @@
 			"click",
 			function changeToByDateView(ev) {
 				ev.stopPropagation();
-				if (! $(this).hasClass("selected")) {
-					util.addHighlightToItem($(this).parent().parent());
-					TopFunctions.showBrowsingModeMessage("#by-date-browsing");
+				util.addHighlightToItem($(this).parent().parent());
+				TopFunctions.showBrowsingModeMessage("#by-date-browsing");
 
-					if (isSingleMedia) {
-						$(".title").removeClass("hidden-by-pinch");
-						$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
-						window.location.href =
-							env.hashBeginning + util.pathJoin([thisMedia.dayAlbumCacheBase, thisMedia.foldersCacheBase, thisMedia.cacheBase]);
-					} else if (isAnyRoot) {
-						window.location.href = env.hashBeginning + encodeURIComponent(env.options.by_date_string);
-					}
+				if (isSingleMedia) {
+					$(".title").removeClass("hidden-by-pinch");
+					$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
+					window.location.href =
+						env.hashBeginning + util.pathJoin([thisMedia.dayAlbumCacheBase, thisMedia.foldersCacheBase, thisMedia.cacheBase]);
+				} else if (isAnyRoot) {
+					window.location.href = env.hashBeginning + encodeURIComponent(env.options.by_date_string);
 				}
 
 				return false;
@@ -266,18 +262,16 @@
 			"click",
 			function changeToByGpsView(ev) {
 				ev.stopPropagation();
-				if (! $(this).hasClass("selected")) {
-					util.addHighlightToItem($(this).parent().parent());
-					TopFunctions.showBrowsingModeMessage("#by-gps-browsing");
+				util.addHighlightToItem($(this).parent().parent());
+				TopFunctions.showBrowsingModeMessage("#by-gps-browsing");
 
-					if (isSingleMedia) {
-						$(".title").removeClass("hidden-by-pinch");
-						$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
-						window.location.href =
-							env.hashBeginning + util.pathJoin([thisMedia.gpsAlbumCacheBase, thisMedia.foldersCacheBase, thisMedia.cacheBase]);
-					} else if (isAnyRoot) {
-						window.location.href = env.hashBeginning + encodeURIComponent(env.options.by_gps_string);
-					}
+				if (isSingleMedia) {
+					$(".title").removeClass("hidden-by-pinch");
+					$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
+					window.location.href =
+						env.hashBeginning + util.pathJoin([thisMedia.gpsAlbumCacheBase, thisMedia.foldersCacheBase, thisMedia.cacheBase]);
+				} else if (isAnyRoot) {
+					window.location.href = env.hashBeginning + encodeURIComponent(env.options.by_gps_string);
 				}
 
 				return false;
@@ -288,16 +282,14 @@
 			"click",
 			function changeToByMapView(ev) {
 				ev.stopPropagation();
-				if (! $(this).hasClass("selected")) {
-					util.addHighlightToItem($(this).parent().parent());
-					TopFunctions.showBrowsingModeMessage("#by-map-browsing");
-					if (isSingleMedia) {
-						$(".title").removeClass("hidden-by-pinch");
-						$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
-						window.location.href = phFl.encodeHash(env.mapAlbum.cacheBase, thisMedia);
-					} else if (isAnyRoot) {
-						window.location.href = phFl.encodeHash(env.mapAlbum.cacheBase, null);
-					}
+				util.addHighlightToItem($(this).parent().parent());
+				TopFunctions.showBrowsingModeMessage("#by-map-browsing");
+				if (isSingleMedia) {
+					$(".title").removeClass("hidden-by-pinch");
+					$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
+					window.location.href = phFl.encodeHash(env.mapAlbum.cacheBase, thisMedia);
+				} else if (isAnyRoot) {
+					window.location.href = phFl.encodeHash(env.mapAlbum.cacheBase, null);
 				}
 
 				return false;
@@ -308,22 +300,20 @@
 			"click",
 			function changeToBySearchView(ev) {
 				ev.stopPropagation();
-				if (! $(this).hasClass("selected")) {
-					util.addHighlightToItem($(this).parent().parent());
-					TopFunctions.showBrowsingModeMessage("#by-search-browsing");
-					if (isSingleMedia) {
-						$(".title").removeClass("hidden-by-pinch");
-						$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
-						// if (thisMedia.hasOwnProperty("searchHashes") && thisMedia.searchHashes.length)
-						var foundAlbum = thisMedia.isInFoundAlbum();
-						if (foundAlbum !== false) {
-							window.location.href = phFl.encodeHash(thisMedia.foldersCacheBase, thisMedia, foundAlbum.cacheBase, env.searchAlbum.cacheBase);
-						} else {
-							window.location.href = phFl.encodeHash(env.searchAlbum.cacheBase, thisMedia);
-						}
-					} else if (isAnyRoot) {
-						window.location.href = phFl.encodeHash(env.searchAlbum.cacheBase, null);
+				util.addHighlightToItem($(this).parent().parent());
+				TopFunctions.showBrowsingModeMessage("#by-search-browsing");
+				if (isSingleMedia) {
+					$(".title").removeClass("hidden-by-pinch");
+					$("#album-and-media-container.show-media #thumbs").removeClass("hidden-by-pinch");
+					// if (thisMedia.hasOwnProperty("searchHashes") && thisMedia.searchHashes.length)
+					var foundAlbum = thisMedia.isInFoundAlbum();
+					if (foundAlbum !== false) {
+						window.location.href = phFl.encodeHash(thisMedia.foldersCacheBase, thisMedia, foundAlbum.cacheBase, env.searchAlbum.cacheBase);
+					} else {
+						window.location.href = phFl.encodeHash(env.searchAlbum.cacheBase, thisMedia);
 					}
+				} else if (isAnyRoot) {
+					window.location.href = phFl.encodeHash(env.searchAlbum.cacheBase, null);
 				}
 
 				return false;
@@ -335,10 +325,8 @@
 			"click",
 			function(ev) {
 				ev.stopPropagation();
-				if (! $(this).hasClass("selected")) {
-					util.addHighlightToItem($(this).parent().parent());
-					util.changeToBySelectionView(thisMedia);
-				}
+				util.addHighlightToItem($(this).parent().parent());
+				util.changeToBySelectionView(thisMedia);
 
 				return false;
 			}
