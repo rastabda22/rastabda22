@@ -932,7 +932,7 @@ video {
 	top: 0;
 	right: 0;
 	z-index: 200;
-	cursor: default;
+	/* cursor: default; */
 }
 
 #right-menu li {
@@ -944,9 +944,9 @@ video {
 	min-width: 14em;
 }
 
-#right-menu li.caption, #right-menu li:not(.active) {
+/* #right-menu li.caption, #right-menu li:not(.active) {
 	cursor: default;
-}
+} */
 
 #right-menu li:not(.expanded) span.caption, #right-menu li ul:not(.hidden) li.radio:not(.selected), #right-menu li ul:not(.hidden) li:not(.radio) {
 	cursor: pointer;
@@ -1017,6 +1017,10 @@ video {
 }
 
 #right-menu #search-icon {
+	cursor: pointer;
+}
+
+#right-menu {
 	cursor: pointer;
 }
 
