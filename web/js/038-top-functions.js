@@ -1419,7 +1419,7 @@
 						util.addMediaLazyLoader();
 						env.windowWidth = $(window).innerWidth();
 
-						util.highlightSearchedWords("#album-and-media-container");
+						util.highlightSearchedWords();
 
 						$(window).off("resize").on(
 							"resize",

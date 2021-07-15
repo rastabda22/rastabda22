@@ -663,16 +663,29 @@ $(document).ready(function() {
 
 	/* Entry point for most events */
 
-	$('#search-field').keypress(function(ev) {
-		// $("#right-menu li.search ul").removeClass("hidden");
-		if (ev.which === 13 || ev.keyCode === 13) {
-			//Enter key pressed, trigger search button click event
-			$('#search-button').click();
-			util.focusSearchField();
-			$("#search-field").blur();
-			return false;
+	$('#search-field').keypress(
+		function(ev) {
+			// $("#right-menu li.search ul").removeClass("hidden");
+			if (ev.which === 13 || ev.keyCode === 13) {
+				//Enter key pressed, trigger search button click event
+				$('#search-button').click();
+				util.focusSearchField();
+				$("#search-field").blur();
+				return false;
+			}
 		}
-	});
+	);
+
+	$("input[id='search-field']").on(
+		"input",
+		function() {
+			if ($("input[id='search-field']").val() || ! util.isSearchHash())
+				util.highlightSearchedWords(true);
+			else if (util.isSearchHash())
+				util.highlightSearchedWords();
+		}
+	);
+
 
 	$("li#inside-words").off("click").on(
 		"click",

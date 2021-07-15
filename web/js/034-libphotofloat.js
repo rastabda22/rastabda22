@@ -1363,18 +1363,12 @@
 							searchWordsFromUser = [decodeURIComponent(wordsString).replace(/_/g, " ")];
 							searchWordsFromUserNormalizedAccordingToOptions = [decodeURIComponent(wordsStringNormalizedAccordingToOptions)];
 							searchWordsFromUserNormalized = [decodeURIComponent(wordsStringNormalized)];
-							env.searchWords = {
-								user: [decodeURIComponent(wordsStringOriginal).replace(/_/g, " ")],
-								normalizedAccordingToOptions: searchWordsFromUserNormalizedAccordingToOptions
-							};
+							env.searchWords = [decodeURIComponent(wordsStringOriginal).replace(/_/g, " ")];
 						} else {
 							searchWordsFromUser = wordsString.split('_');
 							searchWordsFromUserNormalizedAccordingToOptions = wordsStringNormalizedAccordingToOptions.split(' ');
 							searchWordsFromUserNormalized = wordsStringNormalized.split(' ');
-							env.searchWords = {
-								user: wordsStringOriginal.split(' '),
-								normalizedAccordingToOptions: searchWordsFromUserNormalizedAccordingToOptions
-							};
+							env.searchWords = wordsStringOriginal.split(' ');
 						}
 
 						// if (searchWordsFromUser.length === 1)

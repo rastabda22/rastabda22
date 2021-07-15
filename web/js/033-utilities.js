@@ -4540,7 +4540,7 @@
 		env.options.search_any_word = ! env.options.search_any_word;
 		Functions.setBooleanCookie("searchAnyWord", env.options.search_any_word);
 		Functions.updateMenu();
-		if (env.searchWords.hasOwnProperty("user") && env.searchWords.user.length < 2)
+		if (env.searchWords.length < 2)
 			return;
 		if ($("#search-field").val().trim())
 			$('#search-button').click();
@@ -4584,24 +4584,64 @@
 		// Utilities.focusSearchField();
 	};
 
-	Utilities.prototype.highlightSearchedWords = function(baseSelector) {
-		if (Utilities.isSearchHash()) {
+	Utilities.prototype.highlightSearchedWords = function(whenTyping = false) {
+		var isSearch = Utilities.isSearchHash();
+		if (isSearch || whenTyping) {
 			// highlight the searched text
 
+			let searchWords;
+			if (whenTyping) {
+				let searchString = $("#search-field").val().trim();
+				if (env.options.search_tags_only) {
+					searchWords = [searchString];
+				} else {
+					searchWords = searchString.split(' ');
+				}
+			} else {
+				searchWords = env.searchWords;
+			}
+
 			let selector = ".title .media-name, #description, #description-tags .tag";
-			if (baseSelector)
-				selector += ", " + baseSelector + " .first-line, .media-description, .album-description, .album-tags, .media-tags";
+
+			let baseSelector = "";
+			if (Utilities.isPopup())
+				baseSelector = "#popup-images-wrapper";
+			else if (env.currentMedia === null)
+				baseSelector = "#album-and-media-container";
+
+			let mediaNameSelector = ".media-name";
+			let albumNameSelector = ".album-name";
+			if ($("#subalbums .first-line, #thumbs .first-line").length) {
+				mediaNameSelector += " .first-line";
+				albumNameSelector += " .first-line";
+			}
+
+			if (baseSelector.length) {
+				selector += ", " +
+					baseSelector + " " + mediaNameSelector + ", " +
+					baseSelector + " " + albumNameSelector + ", " +
+					baseSelector + " .media-description, " +
+					baseSelector + " .album-description, " +
+					baseSelector + " .album-tags, " +
+					baseSelector + " .media-tags";
+			}
+
 			const options = {
 				caseSensitive: env.options.search_case_sensitive,
 				diacritics: ! env.options.search_accent_sensitive,
-				separateWordSearch: env.options.search_any_word,
-				accuracy: env.options.search_inside_words ? "partially" : "exactly",
+				separateWordSearch: whenTyping ? true : env.options.search_any_word,
+				accuracy: env.options.search_inside_words || whenTyping ? "partially" : "exactly",
 				ignorePunctuation: ":;.,-–—‒_(){}[]¡!`´·#|@~&/*^¨'+=?¿<>\\\"".split("")
 			};
-			$(selector).unmark(options);
-			$(selector).mark(
-				env.searchWords.user,
-				options
+			$(selector).unmark(
+				{
+					done: function() {
+						$(selector).mark(
+							searchWords,
+							options
+						);
+					}
+				}
 			);
 
 			// make the descritpion and the tags visible if highlighted

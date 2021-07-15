@@ -52,7 +52,7 @@
 
 		util.scrollPopupToHighlightedThumb();
 
-		util.highlightSearchedWords("#popup-images-wrapper");
+		util.highlightSearchedWords();
 
 		f.updateMenu();
 	};
