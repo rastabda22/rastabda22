@@ -1813,8 +1813,8 @@
 		return false;
 	};
 
-	TopFunctions.prototype.toggleBottomThumbnails = function(ev) {
-		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+	TopFunctions.toggleBottomThumbnails = function(ev) {
+		if (ev.which === undefined || [1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_bottom_thumbnails = ! env.options.hide_bottom_thumbnails;
 			f.setBooleanCookie("hideBottomThumbnails", env.options.hide_bottom_thumbnails);
 			f.updateMenu();
@@ -1857,7 +1857,7 @@
 	};
 
 	TopFunctions.toggleDescriptions = function(ev) {
-		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if (ev.which === undefined || [1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_descriptions = ! env.options.hide_descriptions;
 			f.setBooleanCookie("hideDescriptions", env.options.hide_descriptions);
 
@@ -1885,7 +1885,7 @@
 	};
 
 	TopFunctions.toggleTags = function(ev) {
-		if ([1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
+		if (ev.which === undefined || [1, 9].indexOf(ev.which) !== -1 && ! ev.shiftKey && ! ev.ctrlKey && ! ev.altKey) {
 			env.options.hide_tags = ! env.options.hide_tags;
 			f.setBooleanCookie("hideTags", env.options.hide_tags);
 
