@@ -1413,6 +1413,7 @@
 						) {
 							env.currentAlbum.showThumbs();
 						} else {
+							util.adaptMediaCaptionHeight(false);
 							util.scrollAlbumViewToHighlightedThumb();
 						}
 						util.addMediaLazyLoader();
