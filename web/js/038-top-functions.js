@@ -823,7 +823,7 @@
 				util.HideId(selector);
 			}
 		);
-		if (ev.originalEvent.x !== 0 && ev.originalEvent.y !== 0)
+		if (ev.originalEvent !== undefined && ev.originalEvent.x !== 0 && ev.originalEvent.y !== 0)
 			env.isABrowsingModeChangeFromMouseClick = true;
 	};
 
