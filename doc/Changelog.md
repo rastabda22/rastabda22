@@ -1,3 +1,4 @@
+* modernizr is now at version 3.6.0
 * text typed in the search field is now highlighted during typing
 * bug fixes
 

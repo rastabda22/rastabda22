@@ -1,6 +1,6 @@
 /*!
- * modernizr v3.5.0
- * Build https://modernizr.com/download?-flexbox-flexboxlegacy-flexboxtweener-flexwrap-fullscreen-video-dontmin
+ * modernizr v3.6.0
+ * Build https://modernizr.com/download?-flexbox-flexboxlegacy-flexboxtweener-flexwrap-fullscreen-video-setclasses-dontmin
  *
  * Copyright (c)
  *  Faruk Ates
@@ -23,8 +23,11 @@
 */
 
 ;(function(window, document, undefined){
+  var classes = [];
+
+
   var tests = [];
-  
+
 
   /**
    *
@@ -36,7 +39,7 @@
 
   var ModernizrProto = {
     // The current version, dummy
-    _version: '3.5.0',
+    _version: '3.6.0',
 
     // Any settings that don't work as separate modules
     // can go in here as configuration.
@@ -73,7 +76,7 @@
     }
   };
 
-  
+
 
   // Fake some of Object.create so we can force non test results to be non "own" properties.
   var Modernizr = function() {};
@@ -83,10 +86,7 @@
   // Overwrite name so constructor name is nicer :D
   Modernizr = new Modernizr();
 
-  
 
-  var classes = [];
-  
 
   /**
    * is returns a boolean if the typeof an obj is exactly type.
@@ -174,23 +174,6 @@
   ;
 
   /**
-   * cssToDOM takes a kebab-case string and converts it to camelCase
-   * e.g. box-sizing -> boxSizing
-   *
-   * @access private
-   * @function cssToDOM
-   * @param {string} name - String name of kebab-case prop we want to convert
-   * @returns {string} The camelCase version of the supplied name
-   */
-
-  function cssToDOM(name) {
-    return name.replace(/([a-z])-([a-z])/g, function(str, m1, m2) {
-      return m1 + m2.toUpperCase();
-    }).replace(/^-/, '');
-  }
-  ;
-
-  /**
    * docElement is a convenience wrapper to grab the root element of the document
    *
    * @access private
@@ -198,7 +181,7 @@
    */
 
   var docElement = document.documentElement;
-  
+
 
   /**
    * A convenience helper to check if the document we are running in is an SVG document
@@ -208,7 +191,46 @@
    */
 
   var isSVG = docElement.nodeName.toLowerCase() === 'svg';
-  
+
+
+  /**
+   * setClasses takes an array of class names and adds them to the root element
+   *
+   * @access private
+   * @function setClasses
+   * @param {string[]} classes - Array of class names
+   */
+
+  // Pass in an and array of class names, e.g.:
+  //  ['no-webp', 'borderradius', ...]
+  function setClasses(classes) {
+    var className = docElement.className;
+    var classPrefix = Modernizr._config.classPrefix || '';
+
+    if (isSVG) {
+      className = className.baseVal;
+    }
+
+    // Change `no-js` to `js` (independently of the `enableClasses` option)
+    // Handle classPrefix on this too
+    if (Modernizr._config.enableJSClass) {
+      var reJS = new RegExp('(^|\\s)' + classPrefix + 'no-js(\\s|$)');
+      className = className.replace(reJS, '$1' + classPrefix + 'js$2');
+    }
+
+    if (Modernizr._config.enableClasses) {
+      // Add the new classes
+      className += ' ' + classPrefix + classes.join(' ' + classPrefix);
+      if (isSVG) {
+        docElement.className.baseVal = className;
+      } else {
+        docElement.className = className;
+      }
+    }
+
+  }
+
+  ;
 
   /**
    * createElement is a convenience wrapper around document.createElement. Since we
@@ -298,6 +320,23 @@ Modernizr.video.ogg     // 'probably'
 
 
   /**
+   * cssToDOM takes a kebab-case string and converts it to camelCase
+   * e.g. box-sizing -> boxSizing
+   *
+   * @access private
+   * @function cssToDOM
+   * @param {string} name - String name of kebab-case prop we want to convert
+   * @returns {string} The camelCase version of the supplied name
+   */
+
+  function cssToDOM(name) {
+    return name.replace(/([a-z])-([a-z])/g, function(str, m1, m2) {
+      return m1 + m2.toUpperCase();
+    }).replace(/^-/, '');
+  }
+  ;
+
+  /**
    * If the browsers follow the spec, then they would expose vendor-specific styles as:
    *   elem.style.WebkitBorderRadius
    * instead of something like the following (which is technically incorrect):
@@ -314,11 +353,11 @@ Modernizr.video.ogg     // 'probably'
    */
 
   var omPrefixes = 'Moz O ms Webkit';
-  
+
 
   var cssomPrefixes = (ModernizrProto._config.usePrefixes ? omPrefixes.split(' ') : []);
   ModernizrProto._cssomPrefixes = cssomPrefixes;
-  
+
 
   /**
    * atRule returns a given CSS property at-rule (eg @keyframes), possibly in
@@ -385,7 +424,7 @@ Modernizr.video.ogg     // 'probably'
 
   ModernizrProto.atRule = atRule;
 
-  
+
 
   /**
    * List of JavaScript DOM values used for tests
@@ -407,7 +446,7 @@ Modernizr.video.ogg     // 'probably'
 
   var domPrefixes = (ModernizrProto._config.usePrefixes ? omPrefixes.toLowerCase().split(' ') : []);
   ModernizrProto._domPrefixes = domPrefixes;
-  
+
 
 
   /**
@@ -498,7 +537,7 @@ Modernizr.video.ogg     // 'probably'
     delete modElem.elem;
   });
 
-  
+
 
   var mStyle = {
     style: modElem.elem.style
@@ -510,7 +549,7 @@ Modernizr.video.ogg     // 'probably'
     delete mStyle.style;
   });
 
-  
+
 
   /**
    * domToCSS takes a camelCase string and converts it to kebab-case
@@ -840,7 +879,7 @@ Modernizr.video.ogg     // 'probably'
   // Modernizr.testAllProps('boxSizing')
   ModernizrProto.testAllProps = testPropsAll;
 
-  
+
 
   /**
    * prefixed returns the prefixed or nonprefixed property name variant of your input
@@ -924,7 +963,7 @@ Modernizr.video.ogg     // 'probably'
     }
   };
 
-  
+
 /*!
 {
   "name": "Fullscreen API",
@@ -987,7 +1026,7 @@ Detects support for the ability to make the current website take over the user's
     return testPropsAll(prop, undefined, undefined, value, skipValueTest);
   }
   ModernizrProto.testAllProps = testAllProps;
-  
+
 /*!
 {
   "name": "Flexbox",
@@ -1074,6 +1113,9 @@ else {
 
   // Run each test
   testRunner();
+
+  // Remove the "no-js" class if it exists
+  setClasses(classes);
 
   delete ModernizrProto.addTest;
   delete ModernizrProto.addAsyncTest;
