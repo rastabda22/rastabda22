@@ -422,6 +422,7 @@ img.pinch.disabled {
 	transition-timing-function: ease-out;
 	transform: translate(0px, 0px);
 	transition-duration: 0s;
+	overflow: hidden;
 }
 
 video {

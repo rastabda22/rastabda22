@@ -2535,10 +2535,8 @@
 				heightForMediaAndTitle = Utilities.mediaBoxContainerHeight();
 
 				// widths must be set before calculating title height
-				if (event.data.resize && id === "center") {
-					// this is executed only when resizing, it's not needed when first scaling
-					$("#media-box-container").css("width", env.windowWidth * 3).css("transform", "translate(-" + env.windowWidth + "px, 0px)");
-				}
+				$("#media-box-container").css("width", env.windowWidth * 3).css("transform", "translate(-" + env.windowWidth + "px, 0px)");
+
 				$(".media-box#" + id).css("width", env.windowWidth);
 				$(".media-box#" + id + " .media-box-inner").css("width", env.windowWidth);
 				$(".media-box#" + id).show();
