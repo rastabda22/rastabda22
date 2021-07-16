@@ -2812,7 +2812,8 @@
 			}
 			$("#loading").hide();
 
-			util.resizeSingleMediaWithPrevAndNext(env.currentMedia, env.currentAlbum);
+			if (env.currentMedia !== null)
+				util.resizeSingleMediaWithPrevAndNext(env.currentMedia, env.currentAlbum);
 
 			// if (env.currentMedia !== null) {
 			// 	let event = {data: {}};
