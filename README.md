@@ -1,4 +1,4 @@
-# MyPhotoShare v5.3.4 - A Static Web Photo Gallery with Advanced Features (July 15, 2021)
+# MyPhotoShare v5.3.5 - A Static Web Photo Gallery with Advanced Features (July 16, 2021)
 
 Expose your media (pictures and videos) on the web and share them with family and friends. Publish them on a fast and secure static web site.
 
