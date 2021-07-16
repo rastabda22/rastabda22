@@ -2452,12 +2452,12 @@
 		return heightForMediaAndTitle;
 	};
 
-	Utilities.prototype.resizeSingleMediaWithPrevAndNext = function(self, album) {
+	Utilities.prototype.resizeSingleMediaWithPrevAndNext = function(self, album, isFullScreenToggling = false) {
 		var previousWindowWidth = env.windowWidth;
 		var previousWindowHeight = env.windowHeight;
 		env.windowWidth = $(window).innerWidth();
 		env.windowHeight = $(window).innerHeight();
-		if (env.windowWidth === previousWindowWidth && env.windowHeight === previousWindowHeight)
+		if (env.windowWidth === previousWindowWidth && env.windowHeight === previousWindowHeight && ! isFullScreenToggling)
 			// avoid considering a resize when the mobile browser shows/hides the location bar
 			return;
 
