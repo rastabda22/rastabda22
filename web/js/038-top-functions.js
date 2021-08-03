@@ -1874,7 +1874,6 @@
 
 			f.updateMenu();
 			if (util.isPopup()) {
-				// env.mapAlbum.showThumbs();
 				map.updatePopup();
 				util.adaptMediaCaptionHeight(true);
 			}
@@ -1902,7 +1901,6 @@
 
 			f.updateMenu();
 			if (util.isPopup()) {
-				// env.mapAlbum.showThumbs();
 				map.updatePopup();
 				util.adaptMediaCaptionHeight(true);
 			}
@@ -1943,7 +1941,6 @@
 				util.adaptSubalbumCaptionHeight();
 
 			if (util.isPopup()) {
-				// env.mapAlbum.showThumbs();
 				map.updatePopup();
 			}
 		}
