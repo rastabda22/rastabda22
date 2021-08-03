@@ -2159,21 +2159,21 @@
 			lazyClass = "lazyload-media";
 		}
 
-		let tooBig = env.currentAlbum.path.split("/").length < 4 && env.currentAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold;
-		if (populateMedia && env.currentAlbum.isTransversal())
+		let tooBig = this.path.split("/").length < 4 && this.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold;
+		if (populateMedia && this.isTransversal())
 			populateMedia = populateMedia && (! tooBig || env.options.show_big_virtual_folders);
 
-		if (env.currentAlbum.isTransversal() && tooBig) {
+		if (this.isTransversal() && tooBig) {
 			let tooManyImagesText, isShowing = false;
 			if (env.options.show_big_virtual_folders) {
 				tooManyImagesText =
-					"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + env.currentAlbum.numsMedia.imagesAndVideosTotal() +
+					"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + this.numsMedia.imagesAndVideosTotal() +
 					", <span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + env.options.big_virtual_folders_threshold + "</span>, " +
 					"<span id='show-hide-them'>" + util._t("#hide-them") + "</span>";
 			} else {
 				$("#thumbs").empty();
 				tooManyImagesText =
-					"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + env.currentAlbum.numsMedia.imagesAndVideosTotal() +
+					"<span id='too-many-images'>" + util._t('#too-many-images') + "</span>: " + this.numsMedia.imagesAndVideosTotal() +
 					", <span id='too-many-images-limit-is'>" + util._t('#too-many-images-limit-is') + "</span> " + env.options.big_virtual_folders_threshold + "</span>, " +
 					"<span id='show-hide-them'>" + util._t("#show-them") + "</span>";
 				isShowing = true;
@@ -2201,8 +2201,8 @@
 			);
 		}
 
-		if (populateMedia && (! env.currentAlbum.isTransversal() || ! tooBig || env.options.show_big_virtual_folders)) {
-		// if (! (env.currentAlbum.isTransversal() && tooBig && ! env.options.show_big_virtual_folders) && populateMedia) {
+		if (populateMedia && (! this.isTransversal() || ! tooBig || env.options.show_big_virtual_folders)) {
+		// if (! (this.isTransversal() && tooBig && ! env.options.show_big_virtual_folders) && populateMedia) {
 			$(thumbsSelector).empty();
 
 			//
@@ -2461,7 +2461,7 @@
 		}
 
 		f.updateMenu();
-		env.currentAlbum.bindMediaSortEvents();
+		this.bindMediaSortEvents();
 
 		util.setDescriptionOptions();
 		util.correctElementPositions();
