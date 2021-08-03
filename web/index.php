@@ -539,6 +539,10 @@
 					</ul>
 				</li>
 
+				<li class='first-level non-geotagged-only active'>
+					<span id="hide-geotagged-media" class='non-geotagged-only caption'></span>
+				</li>
+
 				<li class='first-level protection active'>
 					<span id="protected-content-unveil" class='protection caption'></span>
 				</li>

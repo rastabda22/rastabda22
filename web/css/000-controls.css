@@ -53,6 +53,14 @@ a:hover {
 	cursor: pointer;
 }
 
+#album-and-media-container.hide-geotagged .title .hidden-geotagged-media {
+	display: inline;
+}
+
+#album-and-media-container:not(.hide-geotagged) .title .hidden-geotagged-media {
+	display: none;
+}
+
 .hidden, .hidden-by-option, .hidden-by-pinch, .hidden-by-no-results, .hidden-by-button, .hidden-by-map, .hidden-by-menu-selection {
 	display: none !important;
 }

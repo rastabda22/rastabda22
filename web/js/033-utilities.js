@@ -520,6 +520,16 @@
 		Utilities.mediaOrSubalbumsIntersectionForSearches(this, other);
 	};
 
+	PositionsAndMedia.prototype.countMedia = function() {
+		var count = 0;
+		this.forEach(
+			function(positionAndMedia) {
+				count += positionAndMedia.mediaList.count;
+			}
+		);
+		return count;
+	};
+	
 	PositionsAndMedia.prototype.addPositionAndMedia = function(newPositionAndMedia) {
 		var positionAndMedia, newMediaNameListElement;
 		for (var iOld = 0; iOld < this.length; iOld ++) {

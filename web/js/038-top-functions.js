@@ -663,6 +663,7 @@
 							title += markers;
 						}
 
+						title += "<span class='hidden-geotagged-media'>[" + util._t(".hidden-geotagged-media") + "]</span> ";
 						// leave only the last link on mobile
 						// separate on "&raquo;""
 						let titleArray = title.split(raquo);

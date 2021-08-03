@@ -1055,6 +1055,8 @@ $(document).ready(function() {
 
 	$(window).hashchange(
 		function() {
+			var hideGeotaggedMedia = $("#album-and-media-container").hasClass("hide-geotagged");
+			
 			util.translate();
 			$("#auth-text").hide();
 			// $("#thumbs").show();
