@@ -1308,7 +1308,7 @@
 		return [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase];
 	};
 
-	PhotoFloat.prototype.parseHashAndReturnAlbumAndMedia = function(hash) {
+	PhotoFloat.prototype.parseHashAndReturnAlbumAndMediaIndex = function(hash) {
 		return new Promise(
 			function(resolve_parseHash, reject_parseHash) {
 				var removedStopWords = [];
@@ -1467,7 +1467,7 @@
 						}
 					);
 				}
-				// end of parseHashAndReturnAlbumAndMedia promise code
+				// end of parseHashAndReturnAlbumAndMediaIndex promise code
 
 				function subalbumsAbsentOrGot() {
 					var indexMedia, indexSubalbums;

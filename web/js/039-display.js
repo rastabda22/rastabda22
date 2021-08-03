@@ -1089,11 +1089,10 @@ $(document).ready(function() {
 						util.readPostData();
 					}
 
-					// parseHashAndReturnAlbumAndMedia returns an array of 3 elements:
+					// parseHashAndReturnAlbumAndMediaIndex returns an array of 2 elements:
 					// - the requested album
-					// - the requested media (if applicable)
 					// - the requested media index (if applicable)
-					var hashPromise = phFl.parseHashAndReturnAlbumAndMedia(location.hash);
+					var hashPromise = phFl.parseHashAndReturnAlbumAndMediaIndex(location.hash);
 					hashPromise.then(
 						function([album, mediaIndex]) {
 							if (env.isABrowsingModeChangeFromMouseClick) {
