@@ -61,6 +61,11 @@ a:hover {
 	display: none;
 }
 
+.hidden-geotagged-media {
+	color: black;
+	background-color: red;
+}
+
 .hidden, .hidden-by-option, .hidden-by-pinch, .hidden-by-no-results, .hidden-by-button, .hidden-by-map, .hidden-by-menu-selection {
 	display: none !important;
 }
