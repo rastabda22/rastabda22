@@ -2829,7 +2829,7 @@
 				subalbumObject = $("#" + env.previousAlbum.cacheBase);
 			else
 				subalbumObject = $("#subalbums").children().first().children();
-			if (subalbumObject !== undefined) {
+			if (subalbumObject !== undefined && subalbumObject.length) {
 				$("html, body").stop().animate(
 					{
 						scrollTop: subalbumObject.offset().top + subalbumObject.height() / 2 - env.windowHeight / 2
@@ -2858,7 +2858,7 @@
 					thumbObject = $("#thumbs img.thumbnail").first();
 			}
 
-			if (thumbObject !== undefined && thumbObject.length > 0) {
+			if (thumbObject !== undefined && thumbObject.length) {
 				let offset;
 				offset = thumbObject.offset().top - scrollableObject.offset().top + thumbObject.height() / 2 - env.windowHeight / 2;
 				if (offset < 0)

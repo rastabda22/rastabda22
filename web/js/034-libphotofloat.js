@@ -1371,9 +1371,6 @@
 							env.searchWords = wordsStringOriginal.split(' ');
 						}
 
-						// if (searchWordsFromUser.length === 1)
-						// 	$("ul#right-menu li#any-word").removeClass("active").off("click");
-
 						if (albumCacheBase === env.options.by_search_string) {
 							env.searchAlbum = util.initializeSearchAlbumBegin(albumCacheBase, mediaFolderCacheBase);
 							// no search term
@@ -1402,6 +1399,7 @@
 					mediaFolderCacheBase = decodeURI(mediaFolderCacheBase);
 
 				var albumFromCache = env.cache.getAlbum(albumCacheBaseToGet), promise;
+
 				if (
 					albumFromCache &&
 					! albumFromCache.isEmpty() &&
