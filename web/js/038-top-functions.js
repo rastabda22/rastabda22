@@ -689,6 +689,8 @@
 						else
 							$(".media-box#" + id + " .title-string").html(title);
 
+						$(".hidden-geotagged-media").attr("title", util._t("#hide-geotagged-media"));
+
 						if (id == "center" || id == "album") {
 							$(".dots").off("click").on(
 								"click",

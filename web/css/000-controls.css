@@ -61,6 +61,7 @@ a:hover {
 .hidden-geotagged-media {
 	color: black;
 	background-color: red;
+	cursor: pointer;
 }
 
 .hidden, .hidden-by-option, .hidden-by-pinch, .hidden-by-no-results, .hidden-by-button, .hidden-by-map, .hidden-by-menu-selection {

@@ -1250,6 +1250,14 @@
 				function() {
 					$("#fullscreen-wrapper").toggleClass("hide-geotagged");
 					Functions.updateMenu();
+					if ($(".hidden-geotagged-media").is(":visible")) {
+						$(".hidden-geotagged-media").off("click").on(
+							"click",
+							function() {
+								$("#hide-geotagged-media").click();
+							}
+						);
+					}
 				}
 			);
 		}
