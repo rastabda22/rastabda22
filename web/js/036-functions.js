@@ -1233,11 +1233,14 @@
 
 		var mediaCount = thisAlbum.numsMediaInSubTree.imagesAndVideosTotal();
 		var geotaggedMediaCount = thisAlbum.positionsAndMediaInTree.countMedia();
-		if (! $("#album-and-media-container").hasClass("hide-geotagged") && (geotaggedMediaCount === 0 || geotaggedMediaCount === mediaCount)) {
+		if (
+			isPopup ||
+			! $("#fullscreen-wrapper").hasClass("hide-geotagged") && (geotaggedMediaCount === 0 || geotaggedMediaCount === mediaCount)
+		) {
 			$(".non-geotagged-only").addClass("hidden");
 		} else {
 			$(".non-geotagged-only").removeClass("hidden");
-			if ($("#album-and-media-container").hasClass("hide-geotagged"))
+			if ($("#fullscreen-wrapper").hasClass("hide-geotagged"))
 				$("#hide-geotagged-media").addClass("selected");
 			else
 				$("#hide-geotagged-media").removeClass("selected");
@@ -1245,8 +1248,8 @@
 			$("#hide-geotagged-media").off("click").on(
 				"click",
 				function() {
-					$("#album-and-media-container").toggleClass("hide-geotagged")
-					$(window).hashchange();
+					$("#fullscreen-wrapper").toggleClass("hide-geotagged");
+					Functions.updateMenu();
 				}
 			);
 		}

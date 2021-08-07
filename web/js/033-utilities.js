@@ -524,12 +524,12 @@
 		var count = 0;
 		this.forEach(
 			function(positionAndMedia) {
-				count += positionAndMedia.mediaList.count;
+				count += positionAndMedia.mediaList.length;
 			}
 		);
 		return count;
 	};
-	
+
 	PositionsAndMedia.prototype.addPositionAndMedia = function(newPositionAndMedia) {
 		var positionAndMedia, newMediaNameListElement;
 		for (var iOld = 0; iOld < this.length; iOld ++) {

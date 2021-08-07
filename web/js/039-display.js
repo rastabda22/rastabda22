@@ -354,7 +354,9 @@ $(document).ready(function() {
 							return false;
 						}
 					} else if (
-						e.key.toLowerCase() === util._t(".map-link-shortcut") && ! isPopup &&
+						e.key.toLowerCase() === util._t(".map-link-shortcut") &&
+					 	! isPopup &&
+						! $("#fullscreen-wrapper").hasClass("hide-geotagged") &&
 						(
 							env.currentMedia !== null && env.currentMedia.hasGpsData() ||
 							env.currentMedia === null && env.currentAlbum.positionsAndMediaInTree.length
@@ -1055,8 +1057,6 @@ $(document).ready(function() {
 
 	$(window).hashchange(
 		function() {
-			var hideGeotaggedMedia = $("#album-and-media-container").hasClass("hide-geotagged");
-			
 			util.translate();
 			$("#auth-text").hide();
 			// $("#thumbs").show();
