@@ -567,7 +567,7 @@
 							}
 
 							if (singleMedia.hasGpsData()) {
-								let imgHtml = "<img class='title-img' height='20px' src='img/ic_place_white_24dp_2x.png'>";
+								let imgHtml = "<img class='title-img gps' height='20px' src='img/ic_place_white_24dp_2x.png'>";
 								let imgObject = $(imgHtml);
 								let imgTitle = util._t("#show-on-map");
 								if (! env.isMobile.any())
@@ -638,7 +638,7 @@
 							let imgAlt = util._t("#show-markers-on-map");
 							let imgHtml =
 								"<img " +
-									"class='title-img' " +
+									"class='title-img gps' " +
 									"height='20px' " +
 									"src='" + imgSrc1 + "'" +
 								">";
@@ -2649,7 +2649,7 @@
 									positionHtml =
 										"<a id='subalbum-map-link-" + id + "' >" +
 											"<img " +
-												"class='thumbnail-map-link' " +
+												"class='thumbnail-map-link gps' " +
 												"height='15px' " +
 												"src='img/ic_place_white_24dp_2x.png' " +
 											"/>" +
@@ -2859,7 +2859,7 @@
 	};
 
 	TopFunctions.generateMapFromSubalbum = function(ev, from) {
-		var subalbumPromise = ev.data.ithSubalbum.toAlbum(util.errorThenGoUp, {getMedia: false, getPositions: true});
+		var subalbumPromise = ev.data.ithAlbum.toAlbum(util.errorThenGoUp, {getMedia: false, getPositions: true});
 		subalbumPromise.then(
 			function(album) {
 				// var album = env.currentAlbum.subalbums[iSubalbum];
