@@ -1805,6 +1805,11 @@ class SingleMedia(object):
 			if album_prefix == Options.config["cache_folder_separator"]:
 				album_prefix = ""
 			thumbs_path_with_subdir = os.path.join(thumbs_path, self.album.subdir)
+			try:
+				os.stat(thumbs_path_with_subdir)
+			except OSError:
+				make_dir(thumbs_path_with_subdir, "cache directory")
+
 			converted_path_without_cache_path = os.path.join(self.album.subdir, album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.jpg")
 			converted_path = os.path.join(thumbs_path_with_subdir, album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.jpg")
 
@@ -1823,6 +1828,7 @@ class SingleMedia(object):
 				converted_path_without_cache_path = os.path.join(self.album.subdir, album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.png")
 				message("saving the original image as png...", converted_path_without_cache_path, 4)
 				converted_path = os.path.join(thumbs_path_with_subdir, album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.png")
+				print(converted_path)
 				if hasattr(image, 'exif_by_PIL'):
 					image.save(converted_path, compress_level = 9, exif=exif)
 				else:
