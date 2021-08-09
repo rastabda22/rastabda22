@@ -1263,7 +1263,7 @@ class SingleMedia(object):
 			self.mime_type = "video/mp4"
 
 		if self.is_image:
-			indented_message("it's an image!", "", 5)
+			indented_message("it's an image!", self.mime_type, 5)
 			message("opening image file...", "", 5)
 			media_path_pointer = open(media_path, 'rb')
 			next_level()
@@ -1814,7 +1814,7 @@ class SingleMedia(object):
 				indented_message("original image saved as jpg!", "", 4)
 			except OSError:
 				indented_message("error saving the original image as jpg", "", 4)
-				# this is when the image has transparecy, jpg cannot handel it -> save as png
+				# this is when the image has transparecy, jpg cannot handle it -> save as png
 				# note: png doesn't know exif data
 				converted_path_without_cache_path = os.path.join(self.album.subdir, album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.png")
 				message("saving the original image as png...", converted_path_without_cache_path, 4)
