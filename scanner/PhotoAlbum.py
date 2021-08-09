@@ -1283,6 +1283,10 @@ class SingleMedia(object):
 				# PIL throws this exceptcion with svg files
 				indented_message("PIL OSError opening the image", "is it an svg image?", 5)
 				self.is_valid = False
+			except RuntimeError:
+				# PIL throws this exceptcion with truncated webp files
+				indented_message("PIL RuntimeError opening the image", "maybe a truncated WebP image?", 5)
+				self.is_valid = False
 			else:
 				indented_message("image opened with PIL!", "", 5)
 				self._attributes["fileSizes"] = Sizes()
