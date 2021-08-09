@@ -2591,7 +2591,7 @@
 				let subalbumPromise = new Promise(
 					function(resolve_subalbumPromise) {
 						var ithSubalbum = self.subalbums[iSubalbum];
-						var ithSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: false, getPositions: false});
+						var ithSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: false, getPositions: true});
 						ithSubalbumPromise.then(
 							function(ithAlbum) {
 								var id = phFl.convertCacheBaseToId(ithAlbum.cacheBase);
