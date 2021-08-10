@@ -2775,7 +2775,8 @@
 	};
 
 	Utilities.prototype.addHighlightToItem = function(object) {
-		Utilities.removeHighligthsToItems();
+		if(object.attr("id") !== "menu-icon" && object.attr("id") !== "search-icon")
+			Utilities.removeHighligthsToItems();
 		object.addClass("highlighted");
 	};
 
