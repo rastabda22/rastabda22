@@ -1262,24 +1262,17 @@
 				$("#hide-geotagged-media").addClass("selected");
 			else
 				$("#hide-geotagged-media").removeClass("selected");
-
-			$("#hide-geotagged-media").off("click").on(
-				"click",
-				function() {
-					util.addHighlightToItem($(this).parent());
-					$("#fullscreen-wrapper").toggleClass("hide-geotagged");
-					Functions.updateMenu();
-					if ($(".hidden-geotagged-media").is(":visible")) {
-						$(".hidden-geotagged-media").off("click").on(
-							"click",
-							function() {
-								$("#hide-geotagged-media").click();
-							}
-						);
-					}
-				}
-			);
 		}
+
+		$("#hide-geotagged-media").off("click").on(
+			"click",
+			function() {
+				util.addHighlightToItem($(this).parent());
+				$("#fullscreen-wrapper").toggleClass("hide-geotagged");
+				Functions.updateMenu();
+				util.addClickToHiddenGeotaggedMediaPhrase();
+			}
+		);
 
 		////////////////// PROTECTED CONTENT //////////////////////////////
 

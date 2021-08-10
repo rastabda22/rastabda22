@@ -2686,6 +2686,17 @@
 		return selectBoxObject;
 	};
 
+	Utilities.prototype.addClickToHiddenGeotaggedMediaPhrase = function() {
+		// if ($(".hidden-geotagged-media").is(":visible")) {
+		$(".hidden-geotagged-media").off("click").on(
+			"click",
+			function() {
+				$("#hide-geotagged-media").click();
+			}
+		);
+		// }
+	};
+
 	Utilities.removeHighligths = function() {
 		if (Utilities.isPopup()) {
 			$("#popup-images-wrapper .highlighted").removeClass("highlighted");
