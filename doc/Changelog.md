@@ -1,3 +1,6 @@
+* add the possibility to hide geotagged content
+* bug fixes
+
 ### version v5.3.5 (July 16, 2021)
 
 * modernizr is now at version 3.6.0
