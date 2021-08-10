@@ -1886,6 +1886,9 @@ class SingleMedia(object):
 		indented_message("reduced sizes checked!", "", 5)
 
 		message("checking thumbnails", "", 5)
+
+		if len(reduced_size_images) == 0:
+			reduced_size_images = [image]
 		self.generate_all_thumbnails(reduced_size_images, photo_path, thumbs_path, json_files, json_files_min_mtime)
 		indented_message("thumbnails checked!", "", 5)
 
