@@ -1266,6 +1266,7 @@
 			$("#hide-geotagged-media").off("click").on(
 				"click",
 				function() {
+					util.addHighlightToItem($(this).parent());
 					$("#fullscreen-wrapper").toggleClass("hide-geotagged");
 					Functions.updateMenu();
 					if ($(".hidden-geotagged-media").is(":visible")) {
