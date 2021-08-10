@@ -1015,13 +1015,16 @@
 						$(".download-album.everything.all.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
 					}
 
-					if (treeSize >= bigZipSize) {
+					if (treeSize >= bigZipSize && env.options.reduced_sizes.length) {
 						// propose to download the resized media
 						for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
 							let reducedSize = env.options.reduced_sizes[iSize];
 							treeSize = albumForDownload.sizesOfSubTree[reducedSize].imagesAndVideosTotal();
 							if (treeSize < bigZipSize) {
-								$(".download-album.everything.all.sized").append(", " + reducedSize + " px: " + albumForDownload.numsMediaInSubTree.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(treeSize));
+								$(".download-album.everything.all.sized").append(
+									", " + reducedSize + " px: " +
+									albumForDownload.numsMediaInSubTree.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(treeSize)
+								);
 								$(".download-album.everything.all.sized").attr("size", reducedSize);
 								$(".download-album.everything.all.sized").removeClass("hidden");
 								break;
@@ -1052,12 +1055,15 @@
 							$(".download-album.everything.images.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
 						}
 
-						if (imagesSize >= bigZipSize) {
+						if (imagesSize >= bigZipSize && env.options.reduced_sizes.length) {
 							// propose to download the resized media
 							for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
 								let reducedSize = env.options.reduced_sizes[iSize];
 								if (albumForDownload.sizesOfSubTree[reducedSize].images < bigZipSize) {
-									$(".download-album.everything.images.sized").append(", " + reducedSize + " px: " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(albumForDownload.sizesOfSubTree[reducedSize].images));
+									$(".download-album.everything.images.sized").append(
+										", " + reducedSize + " px: " +
+										numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(albumForDownload.sizesOfSubTree[reducedSize].images)
+									);
 									$(".download-album.everything.images.sized").attr("size", reducedSize);
 									$(".download-album.everything.images.sized").removeClass("hidden");
 									break;
@@ -1086,12 +1092,15 @@
 							$(".download-album.everything.videos.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
 						}
 
-						if (videosSize >= bigZipSize) {
+						if (videosSize >= bigZipSize && env.options.reduced_sizes.length) {
 							// propose to download the resized video
 							// in albumForDownload.sizesOfSubTree[iSize] all the reduced sizes have the same value, corresponding to the transcoded videos
 							let reducedSize = env.options.reduced_sizes[0];
 							if (albumForDownload.sizesOfSubTree[reducedSize].videos < bigZipSize) {
-								$(".download-album.everything.videos.sized").append(", " + util._t(".title-transcoded") + ": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(albumForDownload.sizesOfSubTree[reducedSize].videos));
+								$(".download-album.everything.videos.sized").append(
+									", " + util._t(".title-transcoded") + ": " +
+									numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(albumForDownload.sizesOfSubTree[reducedSize].videos)
+								);
 								// $(".download-album.everything.videos.sized").attr("size", reducedSize);
 								$(".download-album.everything.videos.sized").removeClass("hidden");
 							}
@@ -1140,13 +1149,16 @@
 						$(".download-album.media-only.all.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
 					}
 
-					if (albumSize >= bigZipSize) {
+					if (albumSize >= bigZipSize && env.options.reduced_sizes.length) {
 						// propose to download the resized media
 						for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
 							let reducedSize = env.options.reduced_sizes[iSize];
 							albumSize = albumForDownload.sizesOfAlbum[reducedSize].images + albumForDownload.sizesOfAlbum[reducedSize].videos;
 							if (albumSize < bigZipSize) {
-								$(".download-album.media-only.all.sized").append(", " + reducedSize + " px: " + albumForDownload.numsMedia.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(albumSize));
+								$(".download-album.media-only.all.sized").append(
+									", " + reducedSize + " px: " +
+									albumForDownload.numsMedia.imagesAndVideosTotal() + " " + what + ", " + Functions.humanFileSize(albumSize)
+								);
 								$(".download-album.media-only.all.sized").attr("size", reducedSize);
 								$(".download-album.media-only.all.sized").removeClass("hidden");
 								break;
@@ -1178,12 +1190,15 @@
 						$(".download-album.media-only.images.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
 					}
 
-					if (imagesSize >= bigZipSize) {
+					if (imagesSize >= bigZipSize && env.options.reduced_sizes.length) {
 						// propose to download the resized media
 						for (let iSize = 0; iSize < env.options.reduced_sizes.length; iSize++) {
 							let reducedSize = env.options.reduced_sizes[iSize];
 							if (albumForDownload.sizesOfAlbum[reducedSize].images < bigZipSize) {
-								$(".download-album.media-only.images.sized").append(", " + reducedSize + " px: " + numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(albumForDownload.sizesOfAlbum[reducedSize].images));
+								$(".download-album.media-only.images.sized").append(
+									", " + reducedSize + " px: " +
+									numImages + " " + util._t(".title-images") + ", " + Functions.humanFileSize(albumForDownload.sizesOfAlbum[reducedSize].images)
+								);
 								$(".download-album.media-only.images.sized").attr("size", reducedSize);
 								$(".download-album.media-only.images.sized").removeClass("hidden");
 								break;
@@ -1215,12 +1230,15 @@
 						$(".download-album.media-only.videos.full").addClass("red").removeClass("active").attr("title", util._t("#cant-download"));
 					}
 
-					if (videosSize >= bigZipSize) {
+					if (videosSize >= bigZipSize && env.options.reduced_sizes.length) {
 						// propose to download the resized video
 						// in albumForDownload.sizesOfSubTree[iSize] all the reduced sizes have the same value, corresponding to the transcoded videos
 						let reducedSize = env.options.reduced_sizes[0];
 						if (albumForDownload.sizesOfSubTree[reducedSize].videos < bigZipSize) {
-							$(".download-album.media-only.videos.sized").append(", " + util._t(".title-transcoded") + ": " + numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(albumForDownload.sizesOfSubTree[reducedSize].videos));
+							$(".download-album.media-only.videos.sized").append(
+								", " + util._t(".title-transcoded") + ": " +
+								numVideos + " " + util._t(".title-videos") + ", " + Functions.humanFileSize(albumForDownload.sizesOfSubTree[reducedSize].videos)
+							);
 							// $(".download-album.everything.videos.sized").attr("size", reducedSize);
 							$(".download-album.media-only.videos.sized").removeClass("hidden");
 						}

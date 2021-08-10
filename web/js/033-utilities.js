@@ -2246,16 +2246,6 @@
 			return [Math.max(env.currentMedia.metadata.size[0], env.currentMedia.metadata.size[1]), -1];
 
 		return [env.options.reduced_sizes[currentReductionIndex - 1], currentReductionIndex - 1];
-
-
-		// var theNextSizeIndex = Utilities.nextSizeIndex();
-		//
-		// if (theNextSizeIndex === false)
-		// 	return false;
-		// else if (theNextSizeIndex === -1)
-		// 	return 0;
-		// else
-		// 	return env.options.reduced_sizes[theNextSizeIndex];
 	};
 
 	Utilities.prototype.nextReduction = function() {
@@ -2945,7 +2935,11 @@
 		folders = location.pathname;
 		folders = folders.substring(0, folders.lastIndexOf('/'));
 		url += folders;
-		if (env.currentMedia === null || env.currentAlbum !== null && ! env.currentAlbum.subalbums.length && env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1) {
+		if (
+			env.currentMedia === null ||
+			env.currentAlbum !== null && ! env.currentAlbum.subalbums.length && env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1 ||
+			! env.options.reduced_sizes.length
+		) {
 			mediaParameter = Utilities.pathJoin([
 				env.server_cache_path,
 				env.options.cache_album_subdir,
