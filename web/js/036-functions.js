@@ -1271,6 +1271,7 @@
 				$("#fullscreen-wrapper").toggleClass("hide-geotagged");
 				Functions.updateMenu();
 				util.addClickToHiddenGeotaggedMediaPhrase();
+				util.adaptSubalbumCaptionHeight();
 			}
 		);
 
