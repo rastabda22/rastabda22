@@ -629,8 +629,8 @@
 						function(resolve_ithPromise) {
 							let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: false});
 							convertSubalbumPromise.then(
-								function(ithSubalbum) {
-									self.subalbums[iSubalbum] = ithSubalbum;
+								function(ithAlbum) {
+									self.subalbums[iSubalbum] = ithAlbum;
 									let promise = self.subalbums[iSubalbum].recursivelySelectMedia();
 									promise.then(
 										function() {
@@ -665,8 +665,8 @@
 						function(resolve_ithPromise) {
 							let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: false});
 							convertSubalbumPromise.then(
-								function(ithSubalbum) {
-									self.subalbums[iSubalbum] = ithSubalbum;
+								function(ithAlbum) {
+									self.subalbums[iSubalbum] = ithAlbum;
 									let promise = self.subalbums[iSubalbum].recursivelyRemoveMedia();
 									promise.then(
 										function() {
@@ -703,8 +703,8 @@
 							function(resolve_ithPromise, reject_ithPromise) {
 								let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: false});
 								convertSubalbumPromise.then(
-									function(ithSubalbum) {
-										self.subalbums[iSubalbum] = ithSubalbum;
+									function(ithAlbum) {
+										self.subalbums[iSubalbum] = ithAlbum;
 										let promise = self.subalbums[iSubalbum].recursivelyAllMediaAreSelected();
 										promise.then(
 											function() {
