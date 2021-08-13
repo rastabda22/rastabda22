@@ -87,6 +87,8 @@ class TreeWalker:
 
 			self.origin_album.nums_protected_media_in_sub_tree.merge(folders_album.nums_protected_media_in_sub_tree)
 			self.origin_album.sizes_protected_media_in_sub_tree.merge(folders_album.sizes_protected_media_in_sub_tree)
+			self.origin_album.nums_protected_media_in_sub_tree_non_geotagged.merge(folders_album.nums_protected_media_in_sub_tree_non_geotagged)
+			self.origin_album.sizes_protected_media_in_sub_tree_non_geotagged.merge(folders_album.sizes_protected_media_in_sub_tree_non_geotagged)
 			self.origin_album.add_subalbum(folders_album)
 
 			# self.all_json_files.append(Options.config['folders_string'] + ".json")
@@ -98,6 +100,8 @@ class TreeWalker:
 				# self.all_json_files.append(Options.config['by_date_string'] + ".json")
 				self.origin_album.nums_protected_media_in_sub_tree.merge(by_date_album.nums_protected_media_in_sub_tree)
 				self.origin_album.sizes_protected_media_in_sub_tree.merge(by_date_album.sizes_protected_media_in_sub_tree)
+				self.origin_album.nums_protected_media_in_sub_tree_non_geotagged.merge(by_date_album.nums_protected_media_in_sub_tree_non_geotagged)
+				self.origin_album.sizes_protected_media_in_sub_tree_non_geotagged.merge(by_date_album.sizes_protected_media_in_sub_tree_non_geotagged)
 				self.origin_album.add_subalbum(by_date_album)
 			report_mem()
 
@@ -108,6 +112,8 @@ class TreeWalker:
 				# self.all_json_files.append(Options.config['by_gps_string'] + ".json")
 				self.origin_album.nums_protected_media_in_sub_tree.merge(by_geonames_album.nums_protected_media_in_sub_tree)
 				self.origin_album.sizes_protected_media_in_sub_tree.merge(by_geonames_album.sizes_protected_media_in_sub_tree)
+				self.origin_album.nums_protected_media_in_sub_tree_non_geotagged.merge(by_geonames_album.nums_protected_media_in_sub_tree_non_geotagged)
+				self.origin_album.sizes_protected_media_in_sub_tree_non_geotagged.merge(by_geonames_album.sizes_protected_media_in_sub_tree_non_geotagged)
 				self.origin_album.add_subalbum(by_geonames_album)
 			report_mem()
 
@@ -118,6 +124,8 @@ class TreeWalker:
 				# self.all_json_files.append(Options.config['by_search_string'] + ".json")
 				self.origin_album.nums_protected_media_in_sub_tree.merge(by_search_album.nums_protected_media_in_sub_tree)
 				self.origin_album.sizes_protected_media_in_sub_tree.merge(by_search_album.sizes_protected_media_in_sub_tree)
+				self.origin_album.nums_protected_media_in_sub_tree_non_geotagged.merge(by_search_album.nums_protected_media_in_sub_tree_non_geotagged)
+				self.origin_album.sizes_protected_media_in_sub_tree_non_geotagged.merge(by_search_album.sizes_protected_media_in_sub_tree_non_geotagged)
 				self.origin_album.add_subalbum(by_search_album)
 			report_mem()
 
@@ -231,7 +239,6 @@ class TreeWalker:
 				)
 			)
 		):
-		# if len(album.subalbums) == 0 and len(album.media_list) == 0:
 			if complex_identifiers_combination is None:
 				indented_message("empty album, not saving it", album.absolute_path, 4)
 			else:
@@ -450,6 +457,18 @@ class TreeWalker:
 							month_album.nums_media_in_sub_tree.incrementVideos()
 							year_album.nums_media_in_sub_tree.incrementVideos()
 							by_date_album.nums_media_in_sub_tree.incrementVideos()
+
+						if not single_media.has_gps_data:
+							if single_media.is_image:
+								day_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+								month_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+								year_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+								by_date_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+							else:
+								day_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
+								month_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
+								year_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
+								by_date_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
 						if single_media.has_gps_data:
 							day_album.positions_and_media_in_tree.add_single_media(single_media)
 							month_album.positions_and_media_in_tree.add_single_media(single_media)
@@ -476,6 +495,28 @@ class TreeWalker:
 						month_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 						year_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 						by_date_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+
+						if (not single_media.has_gps_data):
+							if single_media.is_image:
+								day_album.nums_protected_media_in_sub_tree_non_geotagged.incrementImages(complex_identifiers_combination)
+								month_album.nums_protected_media_in_sub_tree_non_geotagged.incrementImages(complex_identifiers_combination)
+								year_album.nums_protected_media_in_sub_tree_non_geotagged.incrementImages(complex_identifiers_combination)
+								by_date_album.nums_protected_media_in_sub_tree_non_geotagged.incrementImages(complex_identifiers_combination)
+							else:
+								day_album.nums_protected_media_in_sub_tree_non_geotagged.incrementVideos(complex_identifiers_combination)
+								month_album.nums_protected_media_in_sub_tree_non_geotagged.incrementVideos(complex_identifiers_combination)
+								year_album.nums_protected_media_in_sub_tree_non_geotagged.incrementVideos(complex_identifiers_combination)
+								by_date_album.nums_protected_media_in_sub_tree_non_geotagged.incrementVideos(complex_identifiers_combination)
+
+							day_album.sizes_protected_media_in_sub_tree_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+							month_album.sizes_protected_media_in_sub_tree_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+							year_album.sizes_protected_media_in_sub_tree_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+							by_date_album.sizes_protected_media_in_sub_tree_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+
+							day_album.sizes_protected_media_in_album_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+							month_album.sizes_protected_media_in_album_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+							year_album.sizes_protected_media_in_album_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+							by_date_album.sizes_protected_media_in_album_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
 
 						single_media_date = max(single_media.datetime_file, single_media.datetime_dir)
 						if day_max_file_date:
@@ -550,6 +591,16 @@ class TreeWalker:
 					# actually, this counter for the search root album is not significant
 					by_search_album.nums_media_in_sub_tree.incrementVideos()
 
+				if not single_media.has_gps_data:
+					if single_media.is_image:
+						word_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+						# actually, this counter for the search root album is not significant
+						by_search_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+					else:
+						word_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
+						# actually, this counter for the search root album is not significant
+						by_search_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
+
 				single_media_date = max(single_media.datetime_file, single_media.datetime_dir)
 				# if word_max_file_date:
 				# 	word_max_file_date = max(word_max_file_date, single_media_date)
@@ -580,6 +631,21 @@ class TreeWalker:
 				word_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 				by_search_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 
+				if not single_media.has_gps_data:
+					if single_media.is_image:
+						word_album.nums_protected_media_in_sub_tree_non_geotagged.incrementImages(complex_identifiers_combination)
+						# nums_protected_media_in_sub_tree matters for the search root albums!
+						by_search_album.nums_protected_media_in_sub_tree_non_geotagged.incrementImages(complex_identifiers_combination)
+					else:
+						word_album.nums_protected_media_in_sub_tree_non_geotagged.incrementVideos(complex_identifiers_combination)
+						by_search_album.nums_protected_media_in_sub_tree_non_geotagged.incrementVideos(complex_identifiers_combination)
+
+					word_album.sizes_protected_media_in_sub_tree_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+					by_search_album.sizes_protected_media_in_sub_tree_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+
+					word_album.sizes_protected_media_in_album_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+					by_search_album.sizes_protected_media_in_album_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+
 			for single_album in media_album_and_words["albums_list"]:
 				word_album.add_subalbum(single_album)
 				# if word_max_file_date:
@@ -594,6 +660,10 @@ class TreeWalker:
 				word_album.nums_protected_media_in_sub_tree.merge(single_album.nums_protected_media_in_sub_tree)
 				word_album.sizes_protected_media_in_sub_tree.merge(single_album.sizes_protected_media_in_sub_tree)
 				word_album.sizes_protected_media_in_album.merge(single_album.sizes_protected_media_in_album)
+
+				word_album.nums_protected_media_in_sub_tree_non_geotagged.merge(single_album.nums_protected_media_in_sub_tree_non_geotagged)
+				word_album.sizes_protected_media_in_sub_tree_non_geotagged.merge(single_album.sizes_protected_media_in_sub_tree_non_geotagged)
+				word_album.sizes_protected_media_in_album_non_geotagged.merge(single_album.sizes_protected_media_in_album_non_geotagged)
 
 			word_album.unicode_words = media_album_and_words["unicode_words"]
 			Options.all_albums.append(word_album)
@@ -845,6 +915,18 @@ class TreeWalker:
 								country_album.nums_media_in_sub_tree.incrementVideos()
 								by_geonames_album.nums_media_in_sub_tree.incrementVideos()
 
+							if not single_media.has_gps_data:
+								if single_media.is_image:
+									place_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+									region_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+									country_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+									by_geonames_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+								else:
+									place_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
+									region_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
+									country_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
+									by_geonames_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
+
 							if place_album.center == {}:
 								place_album.center['latitude'] = single_media.latitude
 								place_album.center['longitude'] = single_media.longitude
@@ -909,6 +991,28 @@ class TreeWalker:
 							region_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 							country_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
 							by_geonames_album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+
+							if not single_media.has_gps_data:
+								if single_media.is_image:
+									place_album.nums_protected_media_in_sub_tree_non_geotagged.incrementImages(complex_identifiers_combination)
+									region_album.nums_protected_media_in_sub_tree_non_geotagged.incrementImages(complex_identifiers_combination)
+									country_album.nums_protected_media_in_sub_tree_non_geotagged.incrementImages(complex_identifiers_combination)
+									by_geonames_album.nums_protected_media_in_sub_tree_non_geotagged.incrementImages(complex_identifiers_combination)
+								else:
+									place_album.nums_protected_media_in_sub_tree_non_geotagged.incrementVideos(complex_identifiers_combination)
+									region_album.nums_protected_media_in_sub_tree_non_geotagged.incrementVideos(complex_identifiers_combination)
+									country_album.nums_protected_media_in_sub_tree_non_geotagged.incrementVideos(complex_identifiers_combination)
+									by_geonames_album.nums_protected_media_in_sub_tree_non_geotagged.incrementVideos(complex_identifiers_combination)
+
+								place_album.sizes_protected_media_in_sub_tree_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+								region_album.sizes_protected_media_in_sub_tree_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+								country_album.sizes_protected_media_in_sub_tree_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+								by_geonames_album.sizes_protected_media_in_sub_tree_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+
+								place_album.sizes_protected_media_in_album_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+								region_album.sizes_protected_media_in_album_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+								country_album.sizes_protected_media_in_album_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+								by_geonames_album.sizes_protected_media_in_album_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
 
 						message("calculating album date", "based on media and subalbums dates", 5)
 						place_album.date = place_album.album_date()
@@ -1486,6 +1590,10 @@ class TreeWalker:
 		album.sizes_protected_media_in_sub_tree = SizesProtected()
 		album.sizes_protected_media_in_album = SizesProtected()
 
+		album.nums_protected_media_in_sub_tree_non_geotagged = NumsProtected()
+		album.sizes_protected_media_in_sub_tree_non_geotagged = SizesProtected()
+		album.sizes_protected_media_in_album_non_geotagged = SizesProtected()
+
 		message("reading directory", absolute_path, 5)
 		message("subdir for cache files", " " + album.subdir, 4)
 
@@ -1541,9 +1649,14 @@ class TreeWalker:
 				if next_walked_album is not None:
 					max_file_date = max(max_file_date, sub_max_file_date)
 					album.nums_media_in_sub_tree.sum(next_walked_album.nums_media_in_sub_tree)
-					album.positions_and_media_in_tree.merge(next_walked_album.positions_and_media_in_tree)
 					album.nums_protected_media_in_sub_tree.merge(next_walked_album.nums_protected_media_in_sub_tree)
 					album.sizes_protected_media_in_sub_tree.merge(next_walked_album.sizes_protected_media_in_sub_tree)
+
+					album.nums_media_in_sub_tree_non_geotagged.sum(next_walked_album.nums_media_in_sub_tree_non_geotagged)
+					album.nums_protected_media_in_sub_tree_non_geotagged.merge(next_walked_album.nums_protected_media_in_sub_tree_non_geotagged)
+					album.sizes_protected_media_in_sub_tree_non_geotagged.merge(next_walked_album.sizes_protected_media_in_sub_tree_non_geotagged)
+
+					album.positions_and_media_in_tree.merge(next_walked_album.positions_and_media_in_tree)
 
 					album.add_subalbum(next_walked_album)
 					next_level()
@@ -1766,13 +1879,29 @@ class TreeWalker:
 						album.nums_protected_media_in_sub_tree.incrementImages(complex_identifiers_combination)
 					else:
 						album.nums_protected_media_in_sub_tree.incrementVideos(complex_identifiers_combination)
+
 					album.sizes_protected_media_in_sub_tree.sum(complex_identifiers_combination, single_media.file_sizes)
 					album.sizes_protected_media_in_album.sum(complex_identifiers_combination, single_media.file_sizes)
+
+					if not single_media.has_gps_data:
+						if single_media.is_image:
+							album.nums_protected_media_in_sub_tree_non_geotagged.incrementImages(complex_identifiers_combination)
+						else:
+							album.nums_protected_media_in_sub_tree_non_geotagged.incrementVideos(complex_identifiers_combination)
+
+						album.sizes_protected_media_in_sub_tree_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
+						album.sizes_protected_media_in_album_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
 
 					if single_media.is_image:
 						album.nums_media_in_sub_tree.incrementImages()
 					else:
 						album.nums_media_in_sub_tree.incrementVideos()
+
+					if not single_media.has_gps_data:
+						if single_media.is_image:
+							album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+						else:
+							album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
 					if single_media.has_gps_data:
 						album.positions_and_media_in_tree.add_single_media(single_media)
 

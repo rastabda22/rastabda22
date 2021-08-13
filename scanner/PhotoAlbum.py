@@ -68,10 +68,14 @@ class Album(object):
 			self.subalbums_list_is_sorted = True
 			self._subdir = ""
 			self.nums_media_in_sub_tree = ImageAndVideo()
+			self.nums_media_in_sub_tree_non_geotagged = ImageAndVideo()
 			self.complex_combination = ','
 			self.nums_protected_media_in_sub_tree = NumsProtected()
-			self.sizes_protected_media_in_album = SizesProtected()
 			self.sizes_protected_media_in_sub_tree = SizesProtected()
+			self.sizes_protected_media_in_album = SizesProtected()
+			self.nums_protected_media_in_sub_tree_non_geotagged = NumsProtected()
+			self.sizes_protected_media_in_sub_tree_non_geotagged = SizesProtected()
+			self.sizes_protected_media_in_album_non_geotagged = SizesProtected()
 			self.positions_and_media_in_tree = Positions(None)
 			self.parent_cache_base = None
 			self.album_ini = None
@@ -380,10 +384,23 @@ class Album(object):
 		else:
 			self.nums_media_in_sub_tree = ImageAndVideo()
 			self.sizes_of_sub_tree = Sizes()
+
 		if ',' in list(self.sizes_protected_media_in_album.keys()):
 			self.sizes_of_album = self.sizes_protected_media_in_album.sizes(',')
 		else:
 			self.sizes_of_album = Sizes()
+
+		if ',' in list(self.nums_protected_media_in_sub_tree_non_geotagged.keys()):
+			self.nums_media_in_sub_tree_non_geotagged = self.nums_protected_media_in_sub_tree_non_geotagged.value(',')
+			self.sizes_of_sub_tree_non_geotagged = self.sizes_protected_media_in_sub_tree_non_geotagged.sizes(',')
+		else:
+			self.nums_media_in_sub_tree_non_geotagged = ImageAndVideo()
+			self.sizes_of_sub_tree_non_geotagged = Sizes()
+
+		if ',' in list(self.sizes_protected_media_in_album_non_geotagged.keys()):
+			self.sizes_of_album_non_geotagged = self.sizes_protected_media_in_album_non_geotagged.sizes(',')
+		else:
+			self.sizes_of_album_non_geotagged = Sizes()
 
 		self.date = self.album_date()
 
@@ -455,6 +472,18 @@ class Album(object):
 			self.sizes_of_album = self.sizes_protected_media_in_album.sizes(self.complex_combination)
 		else:
 			self.sizes_of_album = Sizes()
+
+		if self.complex_combination in list(self.nums_protected_media_in_sub_tree_non_geotagged.keys()):
+			self.nums_media_in_sub_tree_non_geotagged = self.nums_protected_media_in_sub_tree_non_geotagged.value(self.complex_combination)
+			self.sizes_of_sub_tree_non_geotagged = self.sizes_protected_media_in_sub_tree_non_geotagged.sizes(self.complex_combination)
+		else:
+			self.nums_media_in_sub_tree_non_geotagged = ImageAndVideo()
+			self.sizes_of_sub_tree_non_geotagged = Sizes()
+
+		if self.complex_combination in list(self.sizes_protected_media_in_album_non_geotagged.keys()):
+			self.sizes_of_album_non_geotagged = self.sizes_protected_media_in_album_non_geotagged.sizes(self.complex_combination)
+		else:
+			self.sizes_of_album_non_geotagged = Sizes()
 
 		self.date = self.album_date()
 
@@ -710,7 +739,12 @@ class Album(object):
 					"numPositionsInTree": len(subalbum.positions_and_media_in_tree.positions),
 					"numsMediaInSubTree": subalbum.nums_media_in_sub_tree,
 					"sizesOfSubTree": subalbum.sizes_of_sub_tree,
-					"sizesOfAlbum": subalbum.sizes_of_album
+					"sizesOfAlbum": subalbum.sizes_of_album,
+					"nonGeotagged": {
+						"numsMediaInSubTree": subalbum.nums_media_in_sub_tree_non_geotagged,
+						"sizesOfSubTree": self.sizes_of_sub_tree_non_geotagged,
+						"sizesOfAlbum": self.sizes_of_album_non_geotagged
+					}
 				}
 				nums_protected_by_code = {}
 				for complex_identifiers_combination in list(subalbum.nums_protected_media_in_sub_tree.keys()):
@@ -813,6 +847,11 @@ class Album(object):
 			"numsMediaInSubTree": self.nums_media_in_sub_tree,
 			"sizesOfSubTree": self.sizes_of_sub_tree,
 			"sizesOfAlbum": self.sizes_of_album,
+			"nonGeotagged": {
+				"numsMediaInSubTree": self.nums_media_in_sub_tree_non_geotagged,
+				"sizesOfSubTree": self.sizes_of_sub_tree_non_geotagged,
+				"sizesOfAlbum": self.sizes_of_album_non_geotagged
+			},
 			"numPositionsInTree": len(self.positions_and_media_in_tree.positions),
 			"albumIniMTime": self.album_ini_mtime,
 			"passwordMarkerMTime": self.passwords_marker_mtime,
