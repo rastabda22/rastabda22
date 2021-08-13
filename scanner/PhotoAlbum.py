@@ -1214,6 +1214,8 @@ class SingleMedia(object):
 			self.album_identifiers_set = dictionary['album_identifiers_set']
 		# else:
 		# 	self.album_identifiers_set = set()
+		if "convertedPath" in dictionary:
+			self.converted_path = dictionary['convertedPath']
 
 		self.is_valid = True
 
