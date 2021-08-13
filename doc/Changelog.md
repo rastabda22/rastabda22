@@ -1,5 +1,5 @@
 * add the possibility to hide geotagged content
-* bug fixes
+* bug fixes in pyrhon and js
 
 ### version v5.3.5 (July 16, 2021)
 
