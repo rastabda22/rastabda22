@@ -14,7 +14,7 @@
 	Functions.getAlbumNameFromCacheBase = function(cacheBase) {
 		return new Promise(
 			function(resolve_getAlbumNameFromAlbumHash) {
-				let getAlbumPromise = PhotoFloat.getAlbum(cacheBase, util.noOp, {getMedia: false, getPositions: false});
+				let getAlbumPromise = phFl.getAlbum(cacheBase, util.noOp, {getMedia: false, getPositions: false});
 				getAlbumPromise.then(
 					function(theAlbum) {
 						var path;
@@ -1473,7 +1473,7 @@
 				if (Object.keys(env.options).length > 0 && ! forceReload) {
 					if (! util.isSearchHash()) {
 						// reset the return link from search
-						var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = PhotoFloat.decodeHash(location.hash);
+						var [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
 						env.options.cache_base_to_search_in = phFl.convertHashToCacheBase(albumCacheBase);
 					}
 					resolve_getOptions();
