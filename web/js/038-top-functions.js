@@ -2869,7 +2869,8 @@
 
 		Promise.all(subalbumsPromises).then(
 			function allRandomImagesGot() {
-				util.scrollToHighlightedSubalbum();
+				if (! Utilities.aSingleMediaIsHighlighted())
+					util.scrollToHighlightedSubalbum();
 				if (populateSubalbums)
 					env.albumInSubalbumDiv = self;
 				$("#loading").hide();
