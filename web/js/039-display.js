@@ -118,7 +118,10 @@ $(document).ready(function() {
 				) {
 					let highlightedItemObject = util.highlightedItemObject();
 					if (e.key === "Enter") {
-						highlightedItemObject.click();
+						if (highlightedItemObject.hasClass("first-level") && ! highlightedItemObject.hasClass("expandable"))
+							highlightedItemObject.children().click();
+						else
+							highlightedItemObject.click();
 						return false;
 					} else if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Tab") {
 						let nextItemFunction;
