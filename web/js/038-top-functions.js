@@ -1046,24 +1046,45 @@
 						env.currentAlbum.media[env.currentMediaIndex].byGpsName =
 							util.pathJoin([env.currentAlbum.media[env.currentMediaIndex].gpsAlbum, env.currentAlbum.media[env.currentMediaIndex].name]);
 
+					let numVisibleMedia = env.currentAlbum.numsMedia.imagesAndVideosTotal();
+					let onlyShowNonGeotaggedContent = $("#fullscreen-wrapper").hasClass("hide-geotagged");
+					if (onlyShowNonGeotaggedContent)
+						numVisibleMedia = $("#thumbs > a:not(.gps)").length;
+
 					if (! env.currentAlbum.isAlbumWithOneMedia()) {
 						// prepare for previous media
-						previousMediaIndex = (env.currentMediaIndex === 0 ?
-												env.currentAlbum.numsMedia.imagesAndVideosTotal() - 1 :
-												env.currentMediaIndex - 1);
-						env.prevMedia = env.currentAlbum.media[previousMediaIndex];
-						env.prevMedia.byDateName = util.pathJoin([env.prevMedia.dayAlbum, env.prevMedia.name]);
-						if (env.prevMedia.hasOwnProperty("gpsAlbum"))
-							env.prevMedia.byGpsName = util.pathJoin([env.prevMedia.gpsAlbum, env.prevMedia.name]);
+						previousMediaIndex = env.currentMediaIndex;
+						while (true) {
+							previousMediaIndex --;
+							if (previousMediaIndex < 0)
+								previousMediaIndex = env.currentAlbum.numsMedia.imagesAndVideosTotal() - 1;
+							if (previousMediaIndex === env.currentMediaIndex)
+								break
+							if (! onlyShowNonGeotaggedContent || ! env.currentAlbum.media[previousMediaIndex].hasGpsData()) {
+								env.prevMedia = env.currentAlbum.media[previousMediaIndex];
+								env.prevMedia.byDateName = util.pathJoin([env.prevMedia.dayAlbum, env.prevMedia.name]);
+								if (env.prevMedia.hasOwnProperty("gpsAlbum"))
+									env.prevMedia.byGpsName = util.pathJoin([env.prevMedia.gpsAlbum, env.prevMedia.name]);
+								break;
+							}
+						}
 
 						// prepare for next media
-						nextMediaIndex = (env.currentMediaIndex === env.currentAlbum.numsMedia.imagesAndVideosTotal() - 1 ?
-											0 :
-											env.currentMediaIndex + 1);
-						env.nextMedia = env.currentAlbum.media[nextMediaIndex];
-						env.nextMedia.byDateName = util.pathJoin([env.nextMedia.dayAlbum, env.nextMedia.name]);
-						if (env.nextMedia.hasOwnProperty("gpsAlbum"))
-							env.nextMedia.byGpsName = util.pathJoin([env.nextMedia.gpsAlbum, env.nextMedia.name]);
+						nextMediaIndex = env.currentMediaIndex;
+						while (true) {
+							nextMediaIndex ++;
+							if (nextMediaIndex > env.currentAlbum.numsMedia.imagesAndVideosTotal() - 1)
+								nextMediaIndex = 0;
+							if (nextMediaIndex === env.currentMediaIndex)
+								break
+							if (! onlyShowNonGeotaggedContent || ! env.currentAlbum.media[nextMediaIndex].hasGpsData()) {
+								env.nextMedia = env.currentAlbum.media[nextMediaIndex];
+								env.nextMedia.byDateName = util.pathJoin([env.nextMedia.dayAlbum, env.nextMedia.name]);
+								if (env.nextMedia.hasOwnProperty("gpsAlbum"))
+									env.nextMedia.byGpsName = util.pathJoin([env.nextMedia.gpsAlbum, env.nextMedia.name]);
+								break;
+							}
+						}
 					}
 				}
 
