@@ -1457,7 +1457,6 @@
 			if ($("#album-view").is(":visible")) {
 				if (env.currentAlbum.subalbums.length) {
 					env.currentAlbum.showSubalbums();
-					util.scrollToHighlightedSubalbum();
 				} else {
 					$("#subalbums").addClass("hidden");
 				}
@@ -2844,6 +2843,7 @@
 
 		Promise.all(subalbumsPromises).then(
 			function allRandomImagesGot() {
+				util.scrollToHighlightedSubalbum();
 				if (populateSubalbums)
 					env.albumInSubalbumDiv = self;
 				$("#loading").hide();
