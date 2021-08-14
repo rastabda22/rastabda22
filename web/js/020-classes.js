@@ -294,9 +294,12 @@
 				}
 			);
 			this.numsMediaInSubTree = new ImagesAndVideos(this.numsMediaInSubTree);
-			this.numsProtectedMediaInSubTree = new NumsProtected(this.numsProtectedMediaInSubTree);
 			this.sizesOfAlbum = new Sizes(this.sizesOfAlbum);
 			this.sizesOfSubTree = new Sizes(this.sizesOfSubTree);
+			this.nonGeotagged.numsMediaInSubTree = new ImagesAndVideos(this.nonGeotagged.numsMediaInSubTree);
+			this.nonGeotagged.sizesOfSubTree = new Sizes(this.nonGeotagged.sizesOfSubTree);
+			this.nonGeotagged.sizesOfAlbum = new Sizes(this.nonGeotagged.sizesOfAlbum);
+			this.numsProtectedMediaInSubTree = new NumsProtected(this.numsProtectedMediaInSubTree);
 		}
 
 		toSubalbum() {
@@ -375,11 +378,15 @@
 				this.media = new Media([]);
 				this.numsMedia = new ImagesAndVideos();
 				this.numsMediaInSubTree = new ImagesAndVideos();
-				this.sizesOfAlbum = new Sizes();
 				this.sizesOfSubTree = new Sizes();
+				this.sizesOfAlbum = new Sizes();
 				this.subalbums = new Subalbums([]);
 				this.positionsAndMediaInTree = new PositionsAndMedia([]);
 				this.numPositionsInTree = 0;
+				this.nonGeotagged = {};
+				this.nonGeotagged.numsMediaInSubTree = new ImagesAndVideos();
+				this.nonGeotagged.sizesOfAlbum = new Sizes();
+				this.nonGeotagged.sizesOfSubTree = new Sizes();
 				// this.numsProtectedMediaInSubTree = new NumsProtected();
 				if (cacheBase.split(env.options.cache_folder_separator).length === 1)
 					this.ancestorsCacheBase = [cacheBase];
@@ -413,8 +420,11 @@
 					// this.positionsAndMediaInTree = this.positionsAndMediaInTree.map(positionAndMedia => new PositionAndMedia(positionAndMedia));
 				}
 				this.numsMediaInSubTree = new ImagesAndVideos(this.numsMediaInSubTree);
-				this.sizesOfAlbum = new Sizes(this.sizesOfAlbum);
 				this.sizesOfSubTree = new Sizes(this.sizesOfSubTree);
+				this.sizesOfAlbum = new Sizes(this.sizesOfAlbum);
+				this.nonGeotagged.numsMediaInSubTree = new ImagesAndVideos(this.nonGeotagged.numsMediaInSubTree);
+				this.nonGeotagged.sizesOfSubTree = new Sizes(this.nonGeotagged.sizesOfSubTree);
+				this.nonGeotagged.sizesOfAlbum = new Sizes(this.nonGeotagged.sizesOfAlbum);
 				if (this.hasOwnProperty("numsProtectedMediaInSubTree")) {
 					this.numsProtectedMediaInSubTree = new NumsProtected(this.numsProtectedMediaInSubTree);
 				}

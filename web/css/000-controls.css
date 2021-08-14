@@ -58,6 +58,10 @@ a:hover {
 	display: none;
 }
 
+#fullscreen-wrapper:not(.hide-geotagged) .non-gps {
+	display: none;
+}
+
 .hidden-geotagged-media {
 	color: black;
 	background-color: red;
