@@ -2647,21 +2647,36 @@
 		} else {
 			let onlyShowNonGeotaggedContent = $("#fullscreen-wrapper").hasClass("hide-geotagged");
 			let numVisibleSubalbums = env.currentAlbum.subalbums.length;
-			let filter = "";
+			let numVisibleMedia = env.currentAlbum.media.length;
+			let filter = "*";
+			let mediaFilter = "*";
+			let subalbumsFilter = "*";
 			if (onlyShowNonGeotaggedContent) {
 				numVisibleSubalbums = $("#subalbums > a:not(.all-gps)").length;
-				filter = ":not(.gps)";
+				numVisibleMedia = $("#thumbs > a:not(.gps)").length;
+				mediaFilter = ":not(.gps)";
+				subalbumsFilter = ":not(.all-gps)";
+				filter = mediaFilter;
 				if (Utilities.objectIsASubalbum(object))
-					filter = ":not(.all-gps)";
+					filter = subalbumsFilter;
 			}
 			let nextObjectParent = object.parent().nextAll(filter).first();
 			if (nextObjectParent.length) {
 				nextObject = nextObjectParent.children();
 			} else {
-				if (Utilities.objectIsASingleMedia(object) && numVisibleSubalbums || Utilities.objectIsASubalbum(object) && ! numVisibleSubalbums)
-					nextObject = $(".album-button-and-caption").first();
-				else
-					nextObject = $(".thumb-and-caption-container").first();
+				if (
+					Utilities.objectIsASingleMedia(object) && numVisibleMedia === 1 && ! numVisibleSubalbums ||
+					Utilities.objectIsASubalbum(object) && numVisibleSubalbums === 1 && ! numVisibleMedia
+				)
+					return object;
+				else if (Utilities.objectIsASingleMedia(object) && numVisibleSubalbums)
+					nextObject = $(".album-button-and-caption").parent().filter(subalbumsFilter).first().children();
+				else if (Utilities.objectIsASingleMedia(object) && ! numVisibleSubalbums)
+					nextObject = $(".thumb-and-caption-container").parent().prevAll(mediaFilter).last().children();
+				else if (Utilities.objectIsASubalbum(object) && numVisibleMedia)
+					nextObject = $(".thumb-and-caption-container").parent().filter(mediaFilter).first().children();
+				else if (Utilities.objectIsASubalbum(object) && ! numVisibleMedia)
+					nextObject = $(".album-button-and-caption").parent().prevAll(subalbumsFilter).last().children();
 			}
 		}
 
@@ -2679,21 +2694,36 @@
 		} else {
 			let onlyShowNonGeotaggedContent = $("#fullscreen-wrapper").hasClass("hide-geotagged");
 			let numVisibleSubalbums = env.currentAlbum.subalbums.length;
-			let filter = "";
+			let numVisibleMedia = env.currentAlbum.media.length;
+			let filter = "*";
+			let mediaFilter = "*";
+			let subalbumsFilter = "*";
 			if (onlyShowNonGeotaggedContent) {
 				numVisibleSubalbums = $("#subalbums > a:not(.all-gps)").length;
-				filter = ":not(.gps)";
+				numVisibleMedia = $("#thumbs > a:not(.gps)").length;
+				mediaFilter = ":not(.gps)";
+				subalbumsFilter = ":not(.all-gps)";
+				filter = mediaFilter;
 				if (Utilities.objectIsASubalbum(object))
-					filter = ":not(.all-gps)";
+					filter = subalbumsFilter;
 			}
 			let prevObjectParent = object.parent().prevAll(filter).first();
 			if (prevObjectParent.length) {
 				prevObject = prevObjectParent.children();
 			} else {
-				if (Utilities.objectIsASingleMedia(object) && numVisibleSubalbums || Utilities.objectIsASubalbum(object) && ! numVisibleSubalbums)
-					prevObject = $(".album-button-and-caption").last();
-				else
-					prevObject = $(".thumb-and-caption-container").last();
+				if (
+					Utilities.objectIsASingleMedia(object) && numVisibleMedia === 1 && ! numVisibleSubalbums ||
+					Utilities.objectIsASubalbum(object) && numVisibleSubalbums === 1 && ! numVisibleMedia
+				)
+					return object;
+				else if (Utilities.objectIsASingleMedia(object) && numVisibleSubalbums)
+					prevObject = $(".album-button-and-caption").parent().filter(subalbumsFilter).last().children();
+				else if (Utilities.objectIsASingleMedia(object) && ! numVisibleSubalbums)
+					prevObject = $(".thumb-and-caption-container").parent().nextAll(mediaFilter).last().children();
+				else if (Utilities.objectIsASubalbum(object) && numVisibleMedia)
+					prevObject = $(".thumb-and-caption-container").parent().filter(mediaFilter).last().children();
+				else if (Utilities.objectIsASubalbum(object) && ! numVisibleMedia)
+					prevObject = $(".album-button-and-caption").parent().nextAll(subalbumsFilter).last().children();
 			}
 		}
 
