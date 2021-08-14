@@ -77,18 +77,6 @@
 						return false;
 				}
 
-				var numSubalbums = {
-					gps: env.currentAlbum.subalbums.length,
-					"non-gps": env.currentAlbum.subalbums.filter(
-						ithAlbum =>
-							ithAlbum.numsMediaInSubTree.imagesAndVideosTotal() &&
-							ithAlbum.numsMediaInSubTree.imagesAndVideosTotal() === ithAlbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()
-					).length
-				};
-				var numMedia = {
-					gps: env.currentAlbum.numsMedia.imagesAndVideosTotal(),
-					"non-gps": env.currentAlbum.media.filter(ithMedia => ! ithMedia.hasGpsData()).length
-				};
 				var title, titleCount = {}, documentTitle, i, isFolderTitle, isDateTitle, isGpsTitle, isSearchTitle, isInsideCollectionTitle, isSearchCurrentAlbumOnly, isSelectionTitle, isMapTitle;
 				var titleAnchorClasses, searchFolderCacheBase, searchCacheBase;
 				var linkCount = 0, linksToLeave = 1;
@@ -148,16 +136,51 @@
 				var mediaTotalInAlbum, imagesTotalInAlbum, videosTotalInAlbum;
 				var mediaTotalInSubTree, imagesTotalInSubTree, videosTotalInSubTree;
 				var mediaTotalInSubAlbums, imagesTotalInSubAlbums, videosTotalInSubAlbums;
+				var numSubalbums = {
+					gps: env.currentAlbum.subalbums.length,
+					nonGps: env.currentAlbum.subalbums.filter(
+						ithAlbum =>
+							ithAlbum.numsMediaInSubTree.imagesAndVideosTotal() &&
+							ithAlbum.numsMediaInSubTree.imagesAndVideosTotal() === ithAlbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()
+					).length
+				};
 				if (singleMedia === null) {
-					mediaTotalInAlbum = env.currentAlbum.numsMedia.imagesAndVideosTotal();
-					imagesTotalInAlbum = env.currentAlbum.numsMedia.images;
-					videosTotalInAlbum = env.currentAlbum.numsMedia.videos;
-					mediaTotalInSubTree = env.currentAlbum.numsMediaInSubTree.imagesAndVideosTotal();
-					imagesTotalInSubTree = env.currentAlbum.numsMediaInSubTree.images;
-					videosTotalInSubTree = env.currentAlbum.numsMediaInSubTree.videos;
-					mediaTotalInSubAlbums = mediaTotalInSubTree - mediaTotalInAlbum;
-					imagesTotalInSubAlbums = imagesTotalInSubTree - imagesTotalInAlbum;
-					videosTotalInSubAlbums = videosTotalInSubTree - videosTotalInAlbum;
+					mediaTotalInAlbum = {
+						gps: env.currentAlbum.numsMedia.imagesAndVideosTotal(),
+						nonGps: env.currentAlbum.media.filter(ithMedia => ! ithMedia.hasGpsData()).length
+					};
+					imagesTotalInAlbum = {
+						gps: env.currentAlbum.numsMedia.images,
+						nonGps: env.currentAlbum.media.filter(ithMedia => ithMedia.isImage() && ! ithMedia.hasGpsData()).length
+					};
+					videosTotalInAlbum = {
+						gps: env.currentAlbum.numsMedia.videos,
+						nonGps: env.currentAlbum.media.filter(ithMedia => ithMedia.isVideo() && ! ithMedia.hasGpsData()).length
+					};
+					mediaTotalInSubTree = {
+						gps: env.currentAlbum.numsMediaInSubTree.imagesAndVideosTotal(),
+						nonGps: env.currentAlbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()
+					};
+					imagesTotalInSubTree = {
+						gps: env.currentAlbum.numsMediaInSubTree.images,
+						nonGps: env.currentAlbum.nonGeotagged.numsMediaInSubTree.images
+					};
+					videosTotalInSubTree = {
+						gps: env.currentAlbum.numsMediaInSubTree.videos,
+						nonGps: env.currentAlbum.nonGeotagged.numsMediaInSubTree.videos
+					};
+					mediaTotalInSubAlbums = {
+						gps: mediaTotalInSubTree.gps - mediaTotalInAlbum.gps,
+						nonGps: mediaTotalInSubTree.nonGps - mediaTotalInAlbum.nonGps
+					};
+					imagesTotalInSubAlbums = {
+						gps: imagesTotalInSubTree.gps - imagesTotalInAlbum.gps,
+						nonGps: imagesTotalInSubTree.nonGps - imagesTotalInAlbum.nonGps
+					};
+					videosTotalInSubAlbums = {
+						gps: videosTotalInSubTree.gps - videosTotalInAlbum.gps,
+						nonGps: videosTotalInSubTree.nonGps - videosTotalInAlbum.nonGps
+					};
 				}
 
 				// the first component of the title is always the root album
@@ -267,21 +290,21 @@
 						if (
 							isSearchTitle &&
 							singleMedia === null &&
-							(numMedia[mode] || numSubalbums[mode])
+							(mediaTotalInAlbum[mode] || numSubalbums[mode])
 						) {
 							titleCount[mode] = "<span class='title-count'>(" + util._t(".title-found") + " ";
 							if (numSubalbums[mode]) {
 								titleCount[mode] += numSubalbums[mode] + " " + util._t(".title-albums");
 							}
 
-							if (numMedia[mode] && numSubalbums[mode])
+							if (mediaTotalInAlbum[mode] && numSubalbums[mode])
 								titleCount[mode] += " " + util._t(".title-and") + " ";
 
-							if (numMedia[mode]) {
-								titleCount[mode] += mediaTotalInAlbum + " ";
-								if (! imagesTotalInAlbum && videosTotalInAlbum)
+							if (mediaTotalInAlbum[mode]) {
+								titleCount[mode] += mediaTotalInAlbum[mode] + " ";
+								if (! imagesTotalInAlbum[mode] && videosTotalInAlbum[mode])
 									titleCount[mode] += util._t(".title-videos");
-								else if (imagesTotalInAlbum && ! videosTotalInAlbum)
+								else if (imagesTotalInAlbum[mode] && ! videosTotalInAlbum[mode])
 									titleCount[mode] += util._t(".title-images");
 								else
 									titleCount[mode] += util._t(".title-media");
@@ -353,20 +376,20 @@
 							for (const mode in numSubalbums) {
 								titleCount[mode] = "<span class='title-count'>(";
 								if (titleComponents.length === 2)
-									titleCount[mode] += mediaTotalInSubAlbums + " ";
+									titleCount[mode] += mediaTotalInSubAlbums[mode] + " ";
 								else
-									titleCount[mode] += mediaTotalInAlbum + " ";
-								if (! imagesTotalInAlbum && videosTotalInAlbum)
+									titleCount[mode] += mediaTotalInAlbum[mode] + " ";
+								if (! imagesTotalInAlbum[mode] && videosTotalInAlbum[mode])
 									titleCount[mode] += util._t(".title-videos");
-								else if (imagesTotalInAlbum && ! videosTotalInAlbum)
+								else if (imagesTotalInAlbum[mode] && ! videosTotalInAlbum[mode])
 									titleCount[mode] += util._t(".title-images");
 								else {
 									let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
 									let titleCountObject = $(titleCountHtml);
 									if (titleComponents.length === 2)
-										titleCountObject.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
+										titleCountObject.attr("title", imagesTotalInSubAlbums[mode] + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums[mode] + " " + util._t(".title-videos"));
 									else
-										titleCountObject.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
+										titleCountObject.attr("title", imagesTotalInAlbum[mode] + " " + util._t(".title-images") + ", " + videosTotalInAlbum[mode] + " " + util._t(".title-videos"));
 									titleCount[mode] += titleCountObject.wrapAll('<div>').parent().html();
 								}
 								if (titleComponents.length >= 5)
@@ -400,20 +423,20 @@
 							for (const mode in numSubalbums) {
 								titleCount[mode] = "<span class='title-count'>(";
 								if (titleComponents.length === 2)
-									titleCount[mode] += mediaTotalInSubAlbums + " ";
+									titleCount[mode] += mediaTotalInSubAlbums[mode] + " ";
 								else
-									titleCount[mode] += mediaTotalInAlbum + " ";
-								if (! imagesTotalInAlbum && videosTotalInAlbum)
+									titleCount[mode] += mediaTotalInAlbum[mode] + " ";
+								if (! imagesTotalInAlbum[mode] && videosTotalInAlbum[mode])
 									titleCount[mode] += util._t(".title-videos");
-								else if (imagesTotalInAlbum && ! videosTotalInAlbum)
+								else if (imagesTotalInAlbum[mode] && ! videosTotalInAlbum[mode])
 									titleCount[mode] += util._t(".title-images");
 								else {
 									let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
 									let titleCountObject = $(titleCountHtml);
 									if (titleComponents.length === 2)
-										titleCountObject.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
+										titleCountObject.attr("title", imagesTotalInSubAlbums[mode] + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums[mode] + " " + util._t(".title-videos"));
 									else
-										titleCountObject.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
+										titleCountObject.attr("title", imagesTotalInAlbum[mode] + " " + util._t(".title-images") + ", " + videosTotalInAlbum[mode] + " " + util._t(".title-videos"));
 									titleCount[mode] += titleCountObject.wrapAll('<div>').parent().html();
 								}
 								if (titleComponents.length >= gpsLevelNumber + 2)
@@ -432,7 +455,7 @@
 						for (const mode in numSubalbums) {
 							if (
 								singleMedia === null &&
-								(numMedia[mode] || numSubalbums[mode])
+								(mediaTotalInAlbum[mode] || numSubalbums[mode])
 							) {
 								titleCount[mode] = "<span class='title-count'>(";
 								if (numSubalbums[mode]) {
@@ -440,14 +463,14 @@
 									titleCount[mode] += " " + util._t(".title-albums");
 								}
 
-								if (numMedia[mode] && numSubalbums[mode])
+								if (mediaTotalInAlbum[mode] && numSubalbums[mode])
 									titleCount[mode] += " " + util._t(".title-and") + " ";
 
-								if (numMedia[mode]) {
-									titleCount[mode] += mediaTotalInAlbum + " ";
-									if (! imagesTotalInAlbum && videosTotalInAlbum)
+								if (mediaTotalInAlbum[mode]) {
+									titleCount[mode] += mediaTotalInAlbum[mode] + " ";
+									if (! imagesTotalInAlbum[mode] && videosTotalInAlbum[mode])
 										titleCount[mode] += util._t(".title-videos");
-									else if (imagesTotalInAlbum && ! videosTotalInAlbum)
+									else if (imagesTotalInAlbum[mode] && ! videosTotalInAlbum[mode])
 										titleCount[mode] += util._t(".title-images");
 									else
 										titleCount[mode] += util._t(".title-media");
@@ -466,13 +489,13 @@
 							if (
 								titleComponents.length > 2 &&
 								singleMedia === null &&
-								(numMedia[mode])
+								(mediaTotalInAlbum[mode])
 							) {
 								titleCount[mode] = "<span class='title-count'>(";
-								titleCount[mode] += mediaTotalInAlbum + " ";
-								if (! imagesTotalInAlbum && videosTotalInAlbum)
+								titleCount[mode] += mediaTotalInAlbum[mode] + " ";
+								if (! imagesTotalInAlbum[mode] && videosTotalInAlbum[mode])
 									titleCount[mode] += util._t(".title-videos");
-								else if (imagesTotalInAlbum && ! videosTotalInAlbum)
+								else if (imagesTotalInAlbum[mode] && ! videosTotalInAlbum[mode])
 									titleCount[mode] += util._t(".title-images");
 								else
 									titleCount[mode] += util._t(".title-media");
@@ -489,29 +512,29 @@
 
 				if (isInsideCollectionTitle || isFolderTitle) {
 					for (const mode in numSubalbums) {
-						if (singleMedia === null && numMedia[mode] > 1) {
+						if (singleMedia === null && mediaTotalInAlbum[mode] > 1) {
 							titleCount[mode] = "<span class='title-count'>(";
 							if (numSubalbums[mode]) {
 								titleCount[mode] += numSubalbums[mode] + " " + util._t(".title-albums");
 							}
 
-							if ((mediaTotalInAlbum || mediaTotalInSubAlbums) && numSubalbums[mode])
+							if ((mediaTotalInAlbum[mode] || mediaTotalInSubAlbums) && numSubalbums[mode])
 								titleCount[mode] += ", ";
 
-							if (numMedia[mode]) {
-								titleCount[mode] += mediaTotalInAlbum + " ";
-								if (! imagesTotalInAlbum && videosTotalInAlbum) {
+							if (mediaTotalInAlbum[mode]) {
+								titleCount[mode] += mediaTotalInAlbum[mode] + " ";
+								if (! imagesTotalInAlbum[mode] && videosTotalInAlbum[mode]) {
 									titleCount[mode] += util._t(".title-videos") + " ";
-								} else if (imagesTotalInAlbum && ! videosTotalInAlbum) {
+								} else if (imagesTotalInAlbum[mode] && ! videosTotalInAlbum[mode]) {
 									titleCount[mode] += util._t(".title-images") + " ";
 								} else {
 
 									let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
 									let titleCountObject = $(titleCountHtml);
 									if (titleComponents.length === 2)
-										titleCountObject.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
+										titleCountObject.attr("title", imagesTotalInSubAlbums[mode] + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums[mode] + " " + util._t(".title-videos"));
 									else
-										titleCountObject.attr("title", imagesTotalInAlbum + " " + util._t(".title-images") + ", " + videosTotalInAlbum + " " + util._t(".title-videos"));
+										titleCountObject.attr("title", imagesTotalInAlbum[mode] + " " + util._t(".title-images") + ", " + videosTotalInAlbum[mode] + " " + util._t(".title-videos"));
 									titleCount[mode] += titleCountObject.wrapAll('<div>').parent().html() + " ";
 								}
 								titleCount[mode] += util._t(".title-in-album");
@@ -519,24 +542,24 @@
 									titleCount[mode] += ", ";
 							}
 							if (mediaTotalInSubAlbums) {
-								titleCount[mode] += mediaTotalInSubAlbums + " ";
-								if (! imagesTotalInSubAlbums && videosTotalInSubAlbums)
+								titleCount[mode] += mediaTotalInSubAlbums[mode] + " ";
+								if (! imagesTotalInSubAlbums[mode] && videosTotalInSubAlbums[mode])
 									titleCount[mode] += util._t(".title-videos");
-								else if (imagesTotalInSubAlbums && ! videosTotalInSubAlbums)
+								else if (imagesTotalInSubAlbums[mode] && ! videosTotalInSubAlbums[mode])
 									titleCount[mode] += util._t(".title-images");
 								else {
 									let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
 									let titleCountObject = $(titleCountHtml);
-									titleCountObject.attr("title", imagesTotalInSubAlbums + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums + " " + util._t(".title-videos"));
+									titleCountObject.attr("title", imagesTotalInSubAlbums[mode] + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums[mode] + " " + util._t(".title-videos"));
 									titleCount[mode] += titleCountObject.wrapAll('<div>').parent().html();
 								}
 								titleCount[mode] += " " + util._t(".title-in-subalbums");
 							}
-							if (mediaTotalInAlbum && mediaTotalInSubAlbums) {
+							if (mediaTotalInAlbum[mode] && mediaTotalInSubAlbums[mode]) {
 								titleCount[mode] += ", ";
 
-								let spanTitle = imagesTotalInSubTree + " " + util._t(".title-images") + ", " + videosTotalInSubTree + " " + util._t(".title-videos");
-								let titleSpanHtml = "<span class='title-count-detail'>" + util._t(".title-total") + " " + mediaTotalInSubTree + " " + util._t(".title-media") + "</span>";
+								let spanTitle = imagesTotalInSubTree[mode] + " " + util._t(".title-images") + ", " + videosTotalInSubTree[mode] + " " + util._t(".title-videos");
+								let titleSpanHtml = "<span class='title-count-detail'>" + util._t(".title-total") + " " + mediaTotalInSubTree[mode] + " " + util._t(".title-media") + "</span>";
 								let titleSpanObject = $(titleSpanHtml);
 								titleSpanObject.attr("title", spanTitle);
 
@@ -710,7 +733,10 @@
 
 						if (Object.keys(titleCount).length > 0) {
 							for (const mode in titleCount) {
-								title += "<span class='" + mode + "'>" + titleCount[mode] + "</span>";
+								let modeClass = mode;
+								if (mode === "nonGps")
+									modeClass = "non-gps";
+								title += "<span class='" + modeClass + "'>" + titleCount[mode] + "</span>";
 							}
 						}
 
@@ -2730,7 +2756,7 @@
 								let gpsClass = "";
 								if (
 									ithAlbum.numPositionsInTree &&
-									ithAlbum.numsMediaInSubTree.imagesAndVideosTotal() === ithAlbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()
+									! ithAlbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()
 								)
 									gpsClass = " class='all-gps'";
 
