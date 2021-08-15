@@ -2587,10 +2587,15 @@
 			var goTo = util._t(".go-to") + " " + titleName;
 			$("#" + id + " .album-button a.random-media-link").attr("href", randomMediaLink);
 			$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
+			// replacing is needed in order to reactivate the lazy loader
+			$("#" + id + " img.thumbnail").replaceWith($("#" + id + " img.thumbnail")[0].outerHTML);
 			$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName);
 			$("#" + id + " img.thumbnail").attr("data-src", encodeURI(mediaSrc));
 
-			// util.adaptSubalbumThumbnailSize(id, randomMedia);
+			var onlyShowNonGeotaggedContent = $("#fullscreen-wrapper").hasClass("hide-geotagged");
+			if (onlyShowNonGeotaggedContent) {
+				$("#" + id + " img.thumbnail").attr("src", "img/image-placeholder.png");
+			}
 
 			$(
 				function() {
@@ -2757,7 +2762,7 @@
 
 								let gpsClass = "";
 								if (
-									ithAlbum.numPositionsInTree &&
+									// ithAlbum.numPositionsInTree &&
 									! ithAlbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()
 								)
 									gpsClass = " class='all-gps'";

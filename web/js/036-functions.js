@@ -1267,11 +1267,20 @@
 		$("#hide-geotagged-media").off("click").on(
 			"click",
 			function() {
-				util.addHighlightToItem($(this).parent());
+				// css manages the showing/hiding of media/subalbums, the title change and the subalbums caption change
+				// this function performs additional operation about highlighting the correct object and showing the correct image in subalbums
+
+
+				// toggle the class that hides/shows/changes
 				$("#fullscreen-wrapper").toggleClass("hide-geotagged");
-				Functions.updateMenu();
+
+				// highlight the menu item
+				util.addHighlightToItem($(this).parent());
+				// Functions.updateMenu();
+
 				util.addClickToHiddenGeotaggedMediaPhrase();
-				util.adaptSubalbumCaptionHeight();
+
+				// correct highlighting
 				let currentObject = util.highlightedObject();
 				let currentObjectIsASubalbums = util.aSubalbumIsHighlighted();
 				let newObject = currentObject;
@@ -1293,6 +1302,25 @@
 					util.scrollToHighlightedSubalbum(newObject);
 				else
 					util.scrollAlbumViewToHighlightedThumb(newObject);
+
+				// adapt subalbums caption height
+				util.adaptSubalbumCaptionHeight();
+
+				// check and possibly correct the subalbum image
+				$("#subalbums > a:not(.all-gps) img.thumbnail").each(
+					function() {
+						var splittedSrc = $(this).parent().children(".random-media-link").attr("href").split("/");
+						var randomMediaAlbumCacheBase = splittedSrc[1];
+						var randomMediaCacheBase = splittedSrc[2];
+						var randomMedia = env.cache.getMedia(randomMediaAlbumCacheBase, randomMediaCacheBase);
+						if (! randomMedia.hasGpsData()) {
+							return;
+						} else  {
+							let iSubalbum = env.currentAlbum.subalbums.findIndex(subalbum => randomMediaAlbumCacheBase.indexOf(subalbum.cacheBase) === 0);
+							env.currentAlbum.pickRandomMediaAndInsertIt(iSubalbum, function() {});
+						}
+					}
+				)
 			}
 		);
 

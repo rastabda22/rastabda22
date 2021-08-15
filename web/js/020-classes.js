@@ -255,7 +255,8 @@
 	class Media extends Array {
 		constructor(media) {
 			if (Array.isArray(media)) {
-				super(... media.map(singleMedia => new SingleMedia(singleMedia))).getAndPutIntoCache();
+				super(... media.map(singleMedia => new SingleMedia(singleMedia)));
+				this.getAndPutIntoCache();
 			} else {
 				super(media);
 			}
@@ -407,12 +408,7 @@
 					this.numsMedia = new ImagesAndVideos(this.numsMedia);
 				}
 				if (this.hasOwnProperty("media")) {
-					// let newMediaArray = new Media(this.media);
-					// newMediaArray = this.media.map(singleMedia => new SingleMedia(singleMedia));
-					// this.media = newMediaArray;
 					this.media = new Media(this.media);
-					// this.media.getAndPutIntoCache();
-
 					this.numsMedia = this.media.imagesAndVideosCount();
 				}
 				if (this.hasOwnProperty("positionsAndMediaInTree")) {
@@ -682,6 +678,10 @@
 			} else {
 				return this.media[foldersCacheBase][cacheBase];
 			}
+		}
+
+		getMedia(foldersCacheBase, cacheBase) {
+			return this.media[foldersCacheBase][cacheBase];
 		}
 	}
 

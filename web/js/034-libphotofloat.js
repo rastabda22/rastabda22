@@ -94,7 +94,6 @@
 						promise.then(
 							function(object) {
 								var media = new Media (object);
-								// media.getAndPutIntoCache();
 								resolve_getMedia(media);
 							},
 							function() {
@@ -1131,6 +1130,7 @@
 	PhotoFloat.prototype.pickRandomMedia = function(iSubalbum, error) {
 		var index;
 		var ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
+		var onlyShowNonGeotaggedContent = $("#fullscreen-wrapper").hasClass("hide-geotagged");
 
 		return new Promise(
 			function(resolve_pickRandomMedia) {
@@ -1141,6 +1141,8 @@
 						// var album = env.currentAlbum.subalbums[iSubalbum];
 						// index = 0;
 						let nMedia = album.numsMediaInSubTree.imagesAndVideosTotal();
+						if (onlyShowNonGeotaggedContent)
+							nMedia = album.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal();
 						// if (album.isTransversal() && album.subalbums.length > 0)
 						// 	nMedia -= album.numsMedia.imagesAndVideosTotal();
 
@@ -1158,31 +1160,47 @@
 		function nextAlbum(album, resolve_pickRandomMedia) {
 			var i, nMediaInAlbum;
 
-			if (! album.numsMediaInSubTree.imagesAndVideosTotal()) {
+			if (
+				! onlyShowNonGeotaggedContent && ! album.numsMediaInSubTree.imagesAndVideosTotal() ||
+				onlyShowNonGeotaggedContent && ! album.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()
+			) {
 				error();
 				return;
 			}
 
+			var filtereAlbum = album.clone();
+			if (onlyShowNonGeotaggedContent) {
+				filtereAlbum.media = filtereAlbum.media.filter(singleMedia => ! singleMedia.hasGpsData());
+			}
+			if (onlyShowNonGeotaggedContent) {
+				filtereAlbum.subalbums = filtereAlbum.subalbums.filter(
+					subalbum =>
+						// ! subalbum.numPositionsInTree ||
+						subalbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()
+				);
+			}
+
+			nMediaInAlbum = filtereAlbum.media.length;
 			if (album.isTransversal() && album.subalbums.length > 0) {
 				// do not get the random media from the year/country nor the month/state albums
 				// this way loading of albums is much faster
 				nMediaInAlbum = 0;
-			} else {
-				nMediaInAlbum = album.numsMedia.imagesAndVideosTotal();
 			}
 			if (index >= nMediaInAlbum) {
 				index -= nMediaInAlbum;
-				if (album.subalbums.length) {
+				if (filtereAlbum.subalbums.length) {
 					let found = false;
-					for (i = 0; i < album.subalbums.length; i ++) {
-						if (index >= album.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal())
-							index -= album.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal();
-						else {
-							var promise = album.subalbums[i].toAlbum(error, {getMedia: false, getPositions: false});
+					for (i = 0; i < filtereAlbum.subalbums.length; i ++) {
+						if (! onlyShowNonGeotaggedContent || index >= filtereAlbum.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal()) {
+							index -= filtereAlbum.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal();
+						} else if (onlyShowNonGeotaggedContent || index >= filtereAlbum.subalbums[i].nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()) {
+							index -= filtereAlbum.subalbums[i].nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal();
+						} else {
+							var promise = filtereAlbum.subalbums[i].toAlbum(error, {getMedia: false, getPositions: false});
 							promise.then(
-								function(targetSubalbum) {
-									album.subalbums[i] = targetSubalbum;
-									nextAlbum(targetSubalbum, resolve_pickRandomMedia);
+								function(convertedAlbum) {
+									filtereAlbum.subalbums[i] = convertedAlbum;
+									nextAlbum(convertedAlbum, resolve_pickRandomMedia);
 								},
 								function() {
 									console.trace();
@@ -1196,10 +1214,10 @@
 						error();
 				}
 			} else {
-				var lastPromise = PhotoFloat.getAlbum(album, error, {getMedia: true, getPositions: true});
+				var lastPromise = PhotoFloat.getAlbum(filtereAlbum, error, {getMedia: true, getPositions: true});
 				lastPromise.then(
-					function(album) {
-						resolve_pickRandomMedia([album, index]);
+					function(filtereAlbum) {
+						resolve_pickRandomMedia([filtereAlbum, index]);
 					},
 					function() {
 						console.trace();
