@@ -489,7 +489,7 @@
 							if (
 								titleComponents.length > 2 &&
 								singleMedia === null &&
-								(mediaTotalInAlbum[mode])
+								mediaTotalInAlbum[mode]
 							) {
 								titleCount[mode] = "<span class='title-count'>(";
 								titleCount[mode] += mediaTotalInAlbum[mode] + " ";
@@ -512,7 +512,7 @@
 
 				if (isInsideCollectionTitle || isFolderTitle) {
 					for (const mode in numSubalbums) {
-						if (singleMedia === null && mediaTotalInAlbum[mode] > 1) {
+						if (singleMedia === null) {
 							titleCount[mode] = "<span class='title-count'>(";
 							if (numSubalbums[mode]) {
 								titleCount[mode] += numSubalbums[mode] + " " + util._t(".title-albums");
