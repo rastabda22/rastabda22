@@ -2712,7 +2712,14 @@
 
 								captionHtml +=
 										"<div class='album-caption-count'>" +
-											"(" + ithAlbum.numsMediaInSubTree.imagesAndVideosTotal() + " " +
+											"(" +
+											"<span class='gps'>" +
+											ithAlbum.numsMediaInSubTree.imagesAndVideosTotal() +
+											"</span>" +
+											"<span class='non-gps'>" +
+											ithAlbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal() +
+											"</span>" +
+											" " +
 											"<span class='title-media'>" + util._t(".title-media") + "</span>" +
 											")" +
 										"</div>" +
