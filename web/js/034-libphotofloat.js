@@ -1171,13 +1171,7 @@
 			var filteredAlbum = album;
 			nMediaInAlbum = filteredAlbum.numsMedia.imagesAndVideosTotal();
 			if (onlyShowNonGeotaggedContent) {
-				filteredAlbum = album.clone();
-				filteredAlbum.media = filteredAlbum.media.filter(singleMedia => ! singleMedia.hasGpsData());
-				filteredAlbum.subalbums = filteredAlbum.subalbums.filter(
-					subalbum =>
-						// ! subalbum.numPositionsInTree ||
-						subalbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()
-				);
+				filteredAlbum = album.removeGeotaggedContent();
 				nMediaInAlbum = filteredAlbum.media.length;
 			}
 

@@ -551,6 +551,28 @@
 			return JSON.stringify(clonedAlbum);
 		}
 
+		removeGeotaggedContent() {
+			var filteredAlbum = this.clone();
+			if (filteredAlbum.media !== undefined) {
+				filteredAlbum.media = new Media(filteredAlbum.media.filter(singleMedia => ! singleMedia.hasGpsData()));
+				filteredAlbum.numsMedia = filteredAlbum.media.imagesAndVideosCount();
+			}
+			filteredAlbum.subalbums = new Subalbums(
+				filteredAlbum.subalbums.filter(
+					subalbum =>
+						subalbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()
+				)
+			);
+			filteredAlbum.numsMediaInSubTree = filteredAlbum.nonGeotagged.numsMediaInSubTree;
+			filteredAlbum.sizesOfAlbum = filteredAlbum.nonGeotagged.sizesOfAlbum;
+			filteredAlbum.sizesOfSubTree = filteredAlbum.nonGeotagged.sizesOfSubTree;
+
+			filteredAlbum.positionsAndMediaInTree = new PositionsAndMedia();
+			filteredAlbum.numPositionsInTree = 0;
+
+			return filteredAlbum;
+		}
+
 		removeUnnecessaryPropertiesAndAddParentToMedia() {
 			// remove unnecessary properties from album
 			var unnecessaryProperties = ['albumIniMTime', 'passwordMarkerMTime'];

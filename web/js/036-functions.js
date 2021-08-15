@@ -98,14 +98,21 @@
 		);
 	};
 
-	Functions.updateMenu = function(thisAlbum) {
+	Functions.updateMenu = function(album) {
 		var albumOrMedia;
 		var isPopup = util.isPopup();
 		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
 		var isMapOrPopup = isMap || isPopup;
+		var onlyShowNonGeotaggedContent = $("#fullscreen-wrapper").hasClass("hide-geotagged");
 
-		if (typeof thisAlbum === "undefined")
+		if (typeof album === "undefined")
 			thisAlbum = env.currentAlbum;
+		else
+			thisAlbum = album;
+
+		if (onlyShowNonGeotaggedContent)
+			thisAlbum = thisAlbum.removeGeotaggedContent();
+
 		var isAlbumWithOneMedia = thisAlbum.isAlbumWithOneMedia();
 		var isTransversalAlbum = thisAlbum.isTransversal();
 		var isSingleMedia = (env.currentMedia !== null || isAlbumWithOneMedia);
@@ -129,8 +136,6 @@
 		var highMediaNumberInTransversalAlbum = isTransversalAlbum && ! env.options.show_big_virtual_folders && thisAlbum.numsMedia.imagesAndVideosTotal() > env.options.big_virtual_folders_threshold;
 
 		var hasGpsData, thisMedia;
-
-		var onlyShowNonGeotaggedContent = $("#fullscreen-wrapper").hasClass("hide-geotagged");
 
 		if (isSingleMedia) {
 			if (env.currentMedia !== null)
@@ -1278,7 +1283,7 @@
 
 				// highlight the menu item
 				util.addHighlightToItem($(this).parent());
-				// Functions.updateMenu();
+				Functions.updateMenu();
 
 				util.addClickToHiddenGeotaggedMediaPhrase();
 
