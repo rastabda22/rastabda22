@@ -2881,14 +2881,22 @@
 	};
 
 	Utilities.scrollToHighlightedSubalbum = function(object = null) {
-		if (! Utilities.isPopup() && $("#subalbums").is(":visible") && env.currentAlbum.subalbums.length) {
+		var onlyShowNonGeotaggedContent = $("#fullscreen-wrapper").hasClass("hide-geotagged");
+		var numVisibleSubalbums = env.currentAlbum.subalbums.length;
+		filter = "*";
+		if (onlyShowNonGeotaggedContent) {
+			numVisibleSubalbums = $("#subalbums > a:not(.all-gps)").length;
+			filter = ":not(.all-gps)";
+		}
+
+		if (! Utilities.isPopup() && $("#subalbums").is(":visible") && numVisibleSubalbums) {
 			let subalbumObject;
 			if (object)
 				subalbumObject = object;
 			else if (env.previousAlbum !== null && env.previousAlbum.cacheBase.indexOf(env.currentAlbum.cacheBase) === 0)
 				subalbumObject = $("#" + env.previousAlbum.cacheBase);
 			else
-				subalbumObject = $("#subalbums").children().first().children();
+				subalbumObject = $("#subalbums").children(filter).first().children();
 			if (subalbumObject !== undefined && subalbumObject.length) {
 				$("html, body").stop().animate(
 					{
@@ -2902,6 +2910,13 @@
 	};
 
 	Utilities.scrollAlbumViewToHighlightedThumb = function(object = null) {
+		var onlyShowNonGeotaggedContent = $("#fullscreen-wrapper").hasClass("hide-geotagged");
+		var numVisibleMedia = env.currentAlbum.subalbums.length;
+		filter = "*";
+		if (onlyShowNonGeotaggedContent) {
+			numVisibleMedia = $("#thumbs > a:not(.gps)").length;
+			filter = ":not(.	gps)";
+		}
 		if ($("#thumbs").is(":visible")) {
 			let thumbObject;
 			if (object)
@@ -2915,7 +2930,7 @@
 				if ($("#thumbs .highlighted").length)
 					thumbObject = $("#thumbs .highlighted").children(".thumb-container").children(".thumbnail");
 				else
-					thumbObject = $("#thumbs img.thumbnail").first();
+					thumbObject = $("#thumbs img.thumbnail").filter(filter).first();
 			}
 
 			if (thumbObject !== undefined && thumbObject.length) {

@@ -1272,6 +1272,27 @@
 				Functions.updateMenu();
 				util.addClickToHiddenGeotaggedMediaPhrase();
 				util.adaptSubalbumCaptionHeight();
+				let currentObject = util.highlightedObject();
+				let currentObjectIsASubalbums = util.aSubalbumIsHighlighted();
+				let newObject = currentObject;
+				if (
+					currentObjectIsASubalbums && currentObject.parent().hasClass("all-gps") ||
+					! currentObjectIsASubalbums && currentObject.parent().hasClass("gps")
+				) {
+					newObject = util.nextObjectForHighlighting(currentObject);
+					util.addHighlight(newObject);
+					if (
+						currentObjectIsASubalbums && ! util.aSubalbumIsHighlighted() ||
+						! currentObjectIsASubalbums && util.aSubalbumIsHighlighted()
+					) {
+						newObject = util.prevObjectForHighlighting(newObject);
+						util.addHighlight(newObject);
+					}
+				}
+				if (currentObjectIsASubalbums)
+					util.scrollToHighlightedSubalbum(newObject);
+				else
+					util.scrollAlbumViewToHighlightedThumb(newObject);
 			}
 		);
 
