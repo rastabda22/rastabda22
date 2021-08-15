@@ -934,8 +934,9 @@ class Album(object):
 		if media_file_name is None:
 			subalbum_or_media_path = subalbum_or_media_path.replace(Options.config['cache_folder_separator'], ' ')
 
-		# convert spaces to underscores
+		# convert spaces and dashes to underscores
 		subalbum_or_media_path = subalbum_or_media_path.replace(' ', '_')
+		subalbum_or_media_path = subalbum_or_media_path.replace(Options.config['cache_folder_separator'], '_')
 
 		# convert to ascii only characters
 		subalbum_or_media_path = '/'.join([transliterate_to_ascii(part).replace('/', '_') for part in subalbum_or_media_path.split('/')])
