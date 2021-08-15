@@ -1169,6 +1169,7 @@
 			}
 
 			var filteredAlbum = album;
+			nMediaInAlbum = filteredAlbum.numsMedia.imagesAndVideosTotal();
 			if (onlyShowNonGeotaggedContent) {
 				filteredAlbum = album.clone();
 				filteredAlbum.media = filteredAlbum.media.filter(singleMedia => ! singleMedia.hasGpsData());
@@ -1177,9 +1178,9 @@
 						// ! subalbum.numPositionsInTree ||
 						subalbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()
 				);
+				nMediaInAlbum = filteredAlbum.media.length;
 			}
 
-			nMediaInAlbum = filteredAlbum.media.length;
 			if (album.isTransversal() && album.subalbums.length > 0) {
 				// do not get the random media from the year/country nor the month/state albums
 				// this way loading of albums is much faster
