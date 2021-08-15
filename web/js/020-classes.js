@@ -675,7 +675,6 @@
 
 			if (! this.media.hasOwnProperty(foldersCacheBase)) {
 				this.media[foldersCacheBase] = {};
-				return false;
 			}
 			if (! this.media[foldersCacheBase].hasOwnProperty(cacheBase)) {
 				this.media[foldersCacheBase][cacheBase] = singleMedia;
