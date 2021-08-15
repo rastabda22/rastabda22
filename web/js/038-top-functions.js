@@ -2558,78 +2558,76 @@
 	};
 
 
-	Album.prototype.showSubalbums = function(forcePopulate = false) {
-		function pickRandomMediaAndInsertIt(iSubalbum, resolve_subalbumPromise) {
-			function insertRandomImage(randomSubAlbum, index, iSubalbum) {
-				var titleName, randomMediaLink;
-				var randomMedia = randomSubAlbum.media[index];
-				var id = phFl.convertCacheBaseToId(self.subalbums[iSubalbum].cacheBase);
-				var mediaSrc = randomMedia.chooseSubalbumThumbnail(env.options.album_thumb_size);
+	Album.prototype.pickRandomMediaAndInsertIt = function(iSubalbum, resolve_subalbumPromise) {
+		function insertRandomImage(randomSubAlbum, index, iSubalbum) {
+			var titleName, randomMediaLink;
+			var randomMedia = randomSubAlbum.media[index];
+			var id = phFl.convertCacheBaseToId(self.subalbums[iSubalbum].cacheBase);
+			var mediaSrc = randomMedia.chooseSubalbumThumbnail(env.options.album_thumb_size);
 
-				$("#downloading-media").hide();
+			$("#downloading-media").hide();
 
-				if (self.isByDate()) {
-					titleName = util.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
-				} else if (self.isByGps()) {
-					let humanGeonames = util.pathJoin([env.options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
-					titleName = util.pathJoin([humanGeonames, randomMedia.name]);
-				// } else if (self.isSearch()) {
-				// 	titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
-				} else {
-					let [name, title] = randomMedia.nameAndTitleForShowing(randomSubAlbum);
-					titleName = util.pathJoin([randomMedia.albumName, name]);
-				}
-				if (self.isSearch())
-					randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia, randomSubAlbum.cacheBase, self.cacheBase);
-				else
-					randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia);
-
-				titleName = titleName.substr(titleName.indexOf('/') + 1);
-				var goTo = util._t(".go-to") + " " + titleName;
-				$("#" + id + " .album-button a.random-media-link").attr("href", randomMediaLink);
-				$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
-				$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName);
-				$("#" + id + " img.thumbnail").attr("data-src", encodeURI(mediaSrc));
-
-				// util.adaptSubalbumThumbnailSize(id, randomMedia);
-
-				$(
-					function() {
-						$("img.lazyload-album-" + id).Lazy(
-							{
-								chainable: false,
-								threshold: env.options.media_thumb_size,
-								bind: 'event',
-								removeAttribute: true
-							}
-						);
-					}
-				);
+			if (self.isByDate()) {
+				titleName = util.pathJoin([randomMedia.dayAlbum, randomMedia.name]);
+			} else if (self.isByGps()) {
+				let humanGeonames = util.pathJoin([env.options.by_gps_string, randomMedia.geoname.country_name, randomMedia.geoname.region_name, randomMedia.geoname.place_name]);
+				titleName = util.pathJoin([humanGeonames, randomMedia.name]);
+			// } else if (self.isSearch()) {
+			// 	titleName = util.pathJoin([randomMedia.albumName, randomMedia.name]);
+			} else {
+				let [name, title] = randomMedia.nameAndTitleForShowing(randomSubAlbum);
+				titleName = util.pathJoin([randomMedia.albumName, name]);
 			}
-			// end of insertRandomImage function
-			// body of pickRandomMediaAndInsertIt function begins
+			if (self.isSearch())
+				randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia, randomSubAlbum.cacheBase, self.cacheBase);
+			else
+				randomMediaLink = phFl.encodeHash(randomSubAlbum.cacheBase, randomMedia);
 
-			var promise = phFl.pickRandomMedia(
-				iSubalbum,
-				function error() {
-					// executions shoudn't arrive here, if it arrives it's because of some error
-					console.trace();
-				}
-			);
-			promise.then(
-				function([album, index]) {
-					insertRandomImage(album, index, iSubalbum);
-					resolve_subalbumPromise();
-				},
-				function(album) {
-					console.trace();
+			titleName = titleName.substr(titleName.indexOf('/') + 1);
+			var goTo = util._t(".go-to") + " " + titleName;
+			$("#" + id + " .album-button a.random-media-link").attr("href", randomMediaLink);
+			$("#" + id + " img.album-button-random-media-link").attr("title", goTo).attr("alt", goTo);
+			$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName);
+			$("#" + id + " img.thumbnail").attr("data-src", encodeURI(mediaSrc));
+
+			// util.adaptSubalbumThumbnailSize(id, randomMedia);
+
+			$(
+				function() {
+					$("img.lazyload-album-" + id).Lazy(
+						{
+							chainable: false,
+							threshold: env.options.media_thumb_size,
+							bind: 'event',
+							removeAttribute: true
+						}
+					);
 				}
 			);
 		}
-		// end of pickRandomMediaAndInsertIt function
+		// end of insertRandomImage function
+		// body of pickRandomMediaAndInsertIt function begins
 
-		/////////////////////////////////////////////
-		// beginning of showSubalbums function
+		var self = this;
+		var promise = phFl.pickRandomMedia(
+			iSubalbum,
+			function error() {
+				// executions shoudn't arrive here, if it arrives it's because of some error
+				console.trace();
+			}
+		);
+		promise.then(
+			function([album, index]) {
+				insertRandomImage(album, index, iSubalbum);
+				resolve_subalbumPromise();
+			},
+			function(album) {
+				console.trace();
+			}
+		);
+	}
+
+	Album.prototype.showSubalbums = function(forcePopulate = false) {
 		let [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
 		var self = this;
 
@@ -2862,7 +2860,7 @@
 									}
 								);
 
-								pickRandomMediaAndInsertIt(iSubalbum, resolve_subalbumPromise);
+								self.pickRandomMediaAndInsertIt(iSubalbum, resolve_subalbumPromise);
 							}
 						);
 					}
