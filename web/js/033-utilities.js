@@ -2915,7 +2915,7 @@
 		filter = "*";
 		if (onlyShowNonGeotaggedContent) {
 			numVisibleMedia = $("#thumbs > a:not(.gps)").length;
-			filter = ":not(.	gps)";
+			filter = ":not(.gps)";
 		}
 		if ($("#thumbs").is(":visible")) {
 			let thumbObject;
