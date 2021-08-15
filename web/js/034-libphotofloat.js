@@ -1191,9 +1191,9 @@
 				if (filteredAlbum.subalbums.length) {
 					let found = false;
 					for (i = 0; i < filteredAlbum.subalbums.length; i ++) {
-						if (! onlyShowNonGeotaggedContent || index >= filteredAlbum.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal()) {
+						if (! onlyShowNonGeotaggedContent && index >= filteredAlbum.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal()) {
 							index -= filteredAlbum.subalbums[i].numsMediaInSubTree.imagesAndVideosTotal();
-						} else if (onlyShowNonGeotaggedContent || index >= filteredAlbum.subalbums[i].nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()) {
+						} else if (onlyShowNonGeotaggedContent && index >= filteredAlbum.subalbums[i].nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()) {
 							index -= filteredAlbum.subalbums[i].nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal();
 						} else {
 							var promise = filteredAlbum.subalbums[i].toAlbum(error, {getMedia: false, getPositions: false});
