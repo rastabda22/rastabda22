@@ -359,7 +359,7 @@ $(document).ready(function() {
 					} else if (
 						e.key.toLowerCase() === util._t(".map-link-shortcut") &&
 					 	! isPopup &&
-						! $("#fullscreen-wrapper").hasClass("hide-geotagged") &&
+						! onlyShowNonGeotaggedContent &&
 						(
 							env.currentMedia !== null && env.currentMedia.hasGpsData() ||
 							env.currentMedia === null && env.currentAlbum.positionsAndMediaInTree.length

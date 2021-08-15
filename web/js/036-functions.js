@@ -130,6 +130,8 @@
 
 		var hasGpsData, thisMedia;
 
+		var onlyShowNonGeotaggedContent = $("#fullscreen-wrapper").hasClass("hide-geotagged");
+
 		if (isSingleMedia) {
 			if (env.currentMedia !== null)
 				thisMedia = env.currentMedia;
@@ -1253,12 +1255,12 @@
 		var geotaggedMediaCount = thisAlbum.positionsAndMediaInTree.countMedia();
 		if (
 			isPopup ||
-			! $("#fullscreen-wrapper").hasClass("hide-geotagged") && (geotaggedMediaCount === 0 || geotaggedMediaCount === mediaCount)
+			! onlyShowNonGeotaggedContent && (geotaggedMediaCount === 0 || geotaggedMediaCount === mediaCount)
 		) {
 			$(".non-geotagged-only").addClass("hidden");
 		} else {
 			$(".non-geotagged-only").removeClass("hidden");
-			if ($("#fullscreen-wrapper").hasClass("hide-geotagged"))
+			if (onlyShowNonGeotaggedContent)
 				$("#hide-geotagged-media").addClass("selected");
 			else
 				$("#hide-geotagged-media").removeClass("selected");
