@@ -105,13 +105,13 @@
 		var isMapOrPopup = isMap || isPopup;
 		var onlyShowNonGeotaggedContent = util.onlyShowNonGeotaggedContent();
 
-		if (typeof album === "undefined")
-			thisAlbum = env.currentAlbum;
-		else
-			thisAlbum = album;
+		if (album === undefined)
+			album = env.currentAlbum;
 
 		if (onlyShowNonGeotaggedContent)
-			thisAlbum = thisAlbum.cloneAndRemoveGeotaggedContent();
+			thisAlbum = album.cloneAndRemoveGeotaggedContent();
+		else
+			thisAlbum = album;
 
 		var isAlbumWithOneMedia = thisAlbum.isAlbumWithOneMedia();
 		var isTransversalAlbum = thisAlbum.isTransversal();
@@ -1256,7 +1256,7 @@
 
 		////////////////// NON-GEOTAGGED ONLY MODE //////////////////////////////
 
-		// WARNING: album is used here because the album with geotagged content is needed here 
+		// WARNING: album is used here because the album with geotagged content is needed here
 		var mediaCount = album.numsMediaInSubTree.imagesAndVideosTotal();
 		var geotaggedMediaCount = mediaCount - album.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal();
 		if (
