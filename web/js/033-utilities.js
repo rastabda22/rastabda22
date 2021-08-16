@@ -3265,16 +3265,19 @@
 			return new Promise(
 				function(resolve_addMediaAndSubalbumsFromAlbum) {
 					var onlyShowNonGeotaggedContent = Utilities.onlyShowNonGeotaggedContent();
+					filteredAlbum = album;
+					if (onlyShowNonGeotaggedContent) {
+						filteredAlbum = album.cloneAndRemoveGeotaggedContent();
+					}
 					var albumPromises = [];
 
-					if (! album.isTransversal() || album.ancestorsNames.length >= 4) {
-						for (let iMedia = 0; iMedia < album.media.length; iMedia ++) {
-							let ithMedia = album.media[iMedia];
+					if (! filteredAlbum.isTransversal() || filteredAlbum.ancestorsNames.length >= 4) {
+						for (let iMedia = 0; iMedia < filteredAlbum.media.length; iMedia ++) {
+							let ithMedia = filteredAlbum.media[iMedia];
 							if (
 								ithMedia.isImage() && what === "videos" ||
 								ithMedia.isVideo() && what === "images" ||
-								includedMedia.some(singleMedia => singleMedia.isEqual(ithMedia)) ||
-								onlyShowNonGeotaggedContent && ithMedia.hasGpsData()
+								includedMedia.some(singleMedia => singleMedia.isEqual(ithMedia))
 							)
 								continue;
 
@@ -3312,8 +3315,8 @@
 						// sort subalbums: regular albums, then by date ones, then by gps ones, then searches, then maps
 						let regulars = [], byDate = [], byGps = [], searches = [], fromMap = [], selections = [];
 						let sortedSubalbums = [];
-						for (let iSubalbum = 0; iSubalbum < album.subalbums.length; iSubalbum ++) {
-							let ithSubalbum = album.subalbums[iSubalbum];
+						for (let iSubalbum = 0; iSubalbum < filteredAlbum.subalbums.length; iSubalbum ++) {
+							let ithSubalbum = filteredAlbum.subalbums[iSubalbum];
 							if (ithSubalbum.isFolder())
 								regulars.push(ithSubalbum);
 							if (ithSubalbum.isByDate())
@@ -3335,25 +3338,21 @@
 						sortedSubalbums.push(... selections);
 
 						for (let i = 0; i < sortedSubalbums.length; i ++) {
-							let iSubalbum = album.subalbums.findIndex(subalbum => sortedSubalbums[i].isEqual(subalbum));
+							let iSubalbum = filteredAlbum.subalbums.findIndex(subalbum => sortedSubalbums[i].isEqual(subalbum));
 							let ithSubalbum = sortedSubalbums[i];
 							let subalbumPromise = new Promise(
 								function(resolveSubalbumPromise) {
 									let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: false});
 									convertSubalbumPromise.then(
 										function(ithAlbum) {
-											let allContentIsGeotagged = ithAlbum.positionsAndMediaInTree.countMedia() === ithAlbum.numsMediaInSubTree.imagesAndVideosTotal();
-											if (onlyShowNonGeotaggedContent && allContentIsGeotagged)
-												resolveSubalbumPromise();
-
-											album.subalbums[iSubalbum] = ithAlbum;
+											filteredAlbum.subalbums[iSubalbum] = ithAlbum;
 											let ancestorsNamesList = ithAlbum.ancestorsNames.slice(1);
 											if (ancestorsNamesList.length > 2) {
 												ancestorsNamesList[2] = Utilities.transformAltPlaceName(ancestorsNamesList[2]);
 											}
 											let albumPath = ancestorsNamesList.join('/');
 											// let albumPath = ithAlbum.path;
-											// // if (true || album.isSearch() || album.isSelection())
+											// // if (true || filteredAlbum.isSearch() || filteredAlbum.isSelection())
 											// // 	// remove the leading folders/date/gps/map string
 											// albumPath = albumPath.split('/').splice(1).join('/');
 											// else
