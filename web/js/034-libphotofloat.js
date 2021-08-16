@@ -1129,23 +1129,18 @@
 
 	Album.prototype.pickRandomMedia = function(iSubalbum, error) {
 		var index;
-		var self = this;
-		var ithSubalbum = self.subalbums[iSubalbum];
-		var onlyShowNonGeotaggedContent = util.onlyShowNonGeotaggedContent();
+		var ithSubalbum = this.subalbums[iSubalbum];
+		var filteredAlbum = this;
+		if (util.onlyShowNonGeotaggedContent())
+			filteredAlbum = this.cloneAndRemoveGeotaggedContent();
 
 		return new Promise(
 			function(resolve_pickRandomMedia) {
 				var promise = ithSubalbum.toAlbum(error, {getMedia: false, getPositions: false});
 				promise.then(
 					function beginPick(ithAlbum) {
-						self.subalbums[iSubalbum] = ithAlbum;
-						// var ithAlbum = self.subalbums[iSubalbum];
-						// index = 0;
+						filteredAlbum.subalbums[iSubalbum] = ithAlbum;
 						let nMedia = ithAlbum.numsMediaInSubTree.imagesAndVideosTotal();
-						if (onlyShowNonGeotaggedContent)
-							nMedia = ithAlbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal();
-						// if (ithAlbum.isTransversal() && ithAlbum.subalbums.length > 0)
-						// 	nMedia -= ithAlbum.numsMedia.imagesAndVideosTotal();
 
 						index = Math.floor(Math.random() * nMedia);
 						nextAlbum(ithAlbum, resolve_pickRandomMedia);
@@ -1160,10 +1155,6 @@
 
 		function nextAlbum(album, resolve_pickRandomMedia) {
 			var i, nMediaInAlbum;
-
-			var filteredAlbum = album;
-			if (onlyShowNonGeotaggedContent)
-				filteredAlbum = album.cloneAndRemoveGeotaggedContent();
 
 			if (! filteredAlbum.numsMediaInSubTree.imagesAndVideosTotal()) {
 				error();
