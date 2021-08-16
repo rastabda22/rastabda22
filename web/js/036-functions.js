@@ -111,7 +111,7 @@
 			thisAlbum = album;
 
 		if (onlyShowNonGeotaggedContent)
-			thisAlbum = thisAlbum.removeGeotaggedContent();
+			thisAlbum = thisAlbum.cloneAndRemoveGeotaggedContent();
 
 		var isAlbumWithOneMedia = thisAlbum.isAlbumWithOneMedia();
 		var isTransversalAlbum = thisAlbum.isTransversal();

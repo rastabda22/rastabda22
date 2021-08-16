@@ -551,7 +551,7 @@
 			return JSON.stringify(clonedAlbum);
 		}
 
-		removeGeotaggedContent() {
+		cloneAndRemoveGeotaggedContent() {
 			var filteredAlbum = this.clone();
 			if (filteredAlbum.media !== undefined) {
 				filteredAlbum.media = new Media(filteredAlbum.media.filter(singleMedia => ! singleMedia.hasGpsData()));

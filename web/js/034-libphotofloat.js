@@ -1171,7 +1171,7 @@
 			var filteredAlbum = album;
 			nMediaInAlbum = filteredAlbum.numsMedia.imagesAndVideosTotal();
 			if (onlyShowNonGeotaggedContent) {
-				filteredAlbum = album.removeGeotaggedContent();
+				filteredAlbum = album.cloneAndRemoveGeotaggedContent();
 				nMediaInAlbum = filteredAlbum.media.length;
 			}
 
