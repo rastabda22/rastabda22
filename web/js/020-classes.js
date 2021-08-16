@@ -351,7 +351,16 @@
 	class Subalbums extends Array {
 		constructor(subalbums) {
 			if (Array.isArray(subalbums))
-				super(... subalbums.map(subalbum => new Subalbum(subalbum)));
+				super(
+					... subalbums.map(
+						albumOrSubalbum => {
+							if (albumOrSubalbum instanceof Album)
+								return new Album(albumOrSubalbum);
+							else
+								return new Subalbum(albumOrSubalbum);
+						}
+					)
+				);
 			else
 				super(subalbums);
 		}
