@@ -1073,7 +1073,7 @@
 							util.pathJoin([env.currentAlbum.media[env.currentMediaIndex].gpsAlbum, env.currentAlbum.media[env.currentMediaIndex].name]);
 
 					let numVisibleMedia = env.currentAlbum.numsMedia.imagesAndVideosTotal();
-					let onlyShowNonGeotaggedContent = $("#fullscreen-wrapper").hasClass("hide-geotagged");
+					let onlyShowNonGeotaggedContent = util.onlyShowNonGeotaggedContent();
 					if (onlyShowNonGeotaggedContent)
 						numVisibleMedia = $("#thumbs > a:not(.gps)").length;
 
@@ -2592,8 +2592,7 @@
 			$("#" + id + " img.thumbnail").attr("title", titleName).attr("alt", titleName);
 			$("#" + id + " img.thumbnail").attr("data-src", encodeURI(mediaSrc));
 
-			var onlyShowNonGeotaggedContent = $("#fullscreen-wrapper").hasClass("hide-geotagged");
-			if (onlyShowNonGeotaggedContent) {
+			if (util.onlyShowNonGeotaggedContent()) {
 				$("#" + id + " img.thumbnail").attr("src", "img/image-placeholder.png");
 			}
 

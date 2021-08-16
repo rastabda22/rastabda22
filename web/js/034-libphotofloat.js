@@ -1130,7 +1130,7 @@
 	PhotoFloat.prototype.pickRandomMedia = function(iSubalbum, error) {
 		var index;
 		var ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
-		var onlyShowNonGeotaggedContent = $("#fullscreen-wrapper").hasClass("hide-geotagged");
+		var onlyShowNonGeotaggedContent = util.onlyShowNonGeotaggedContent();
 
 		return new Promise(
 			function(resolve_pickRandomMedia) {

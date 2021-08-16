@@ -103,7 +103,7 @@
 		var isPopup = util.isPopup();
 		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
 		var isMapOrPopup = isMap || isPopup;
-		var onlyShowNonGeotaggedContent = $("#fullscreen-wrapper").hasClass("hide-geotagged");
+		var onlyShowNonGeotaggedContent = util.onlyShowNonGeotaggedContent();
 
 		if (typeof album === "undefined")
 			thisAlbum = env.currentAlbum;

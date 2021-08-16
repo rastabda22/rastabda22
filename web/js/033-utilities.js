@@ -2636,6 +2636,10 @@
 		);
 	};
 
+	Utilities.onlyShowNonGeotaggedContent = function() {
+		return $("#fullscreen-wrapper").hasClass("hide-geotagged");
+	};
+
 	Utilities.nextObjectForHighlighting = function(object) {
 		var isPopup = Utilities.isPopup();
 		var nextObject;
@@ -2645,13 +2649,12 @@
 			if (! nextObject.length)
 				 nextObject = object.parent().children().first();
 		} else {
-			let onlyShowNonGeotaggedContent = $("#fullscreen-wrapper").hasClass("hide-geotagged");
 			let numVisibleSubalbums = env.currentAlbum.subalbums.length;
 			let numVisibleMedia = env.currentAlbum.media.length;
 			let filter = "*";
 			let mediaFilter = "*";
 			let subalbumsFilter = "*";
-			if (onlyShowNonGeotaggedContent) {
+			if (Utilities.onlyShowNonGeotaggedContent()) {
 				numVisibleSubalbums = $("#subalbums > a:not(.all-gps)").length;
 				numVisibleMedia = $("#thumbs > a:not(.gps)").length;
 				mediaFilter = ":not(.gps)";
@@ -2692,13 +2695,12 @@
 			if (! prevObject.length)
 				 prevObject = object.parent().children().last();
 		} else {
-			let onlyShowNonGeotaggedContent = $("#fullscreen-wrapper").hasClass("hide-geotagged");
 			let numVisibleSubalbums = env.currentAlbum.subalbums.length;
 			let numVisibleMedia = env.currentAlbum.media.length;
 			let filter = "*";
 			let mediaFilter = "*";
 			let subalbumsFilter = "*";
-			if (onlyShowNonGeotaggedContent) {
+			if (Utilities.onlyShowNonGeotaggedContent()) {
 				numVisibleSubalbums = $("#subalbums > a:not(.all-gps)").length;
 				numVisibleMedia = $("#thumbs > a:not(.gps)").length;
 				mediaFilter = ":not(.gps)";
@@ -2881,10 +2883,9 @@
 	};
 
 	Utilities.scrollToHighlightedSubalbum = function(object = null) {
-		var onlyShowNonGeotaggedContent = $("#fullscreen-wrapper").hasClass("hide-geotagged");
 		var numVisibleSubalbums = env.currentAlbum.subalbums.length;
 		filter = "*";
-		if (onlyShowNonGeotaggedContent) {
+		if (Utilities.onlyShowNonGeotaggedContent()) {
 			numVisibleSubalbums = $("#subalbums > a:not(.all-gps)").length;
 			filter = ":not(.all-gps)";
 		}
@@ -2910,10 +2911,9 @@
 	};
 
 	Utilities.scrollAlbumViewToHighlightedThumb = function(object = null) {
-		var onlyShowNonGeotaggedContent = $("#fullscreen-wrapper").hasClass("hide-geotagged");
 		var numVisibleMedia = env.currentAlbum.subalbums.length;
 		filter = "*";
-		if (onlyShowNonGeotaggedContent) {
+		if (Utilities.onlyShowNonGeotaggedContent()) {
 			numVisibleMedia = $("#thumbs > a:not(.gps)").length;
 			filter = ":not(.gps)";
 		}
@@ -3264,7 +3264,7 @@
 		function addMediaAndSubalbumsFromAlbum(album, subalbum = "") {
 			return new Promise(
 				function(resolve_addMediaAndSubalbumsFromAlbum) {
-					var onlyShowNonGeotaggedContent = $("#fullscreen-wrapper").hasClass("hide-geotagged");
+					var onlyShowNonGeotaggedContent = Utilities.onlyShowNonGeotaggedContent();
 					var albumPromises = [];
 
 					if (! album.isTransversal() || album.ancestorsNames.length >= 4) {
@@ -3342,7 +3342,7 @@
 									let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: false});
 									convertSubalbumPromise.then(
 										function(ithAlbum) {
-											let allContentIsGeotagged = ithAlbum.numPositionsInTree && ithAlbum.positionsAndMediaInTree.countMedia() === ithAlbum.numsMediaInSubTree.imagesAndVideosTotal();
+											let allContentIsGeotagged = ithAlbum.positionsAndMediaInTree.countMedia() === ithAlbum.numsMediaInSubTree.imagesAndVideosTotal();
 											if (onlyShowNonGeotaggedContent && allContentIsGeotagged)
 												resolveSubalbumPromise();
 
@@ -4861,6 +4861,7 @@
 	Utilities.prototype.adaptSubalbumCaptionHeight = Utilities.adaptSubalbumCaptionHeight;
 	Utilities.prototype.adaptMediaCaptionHeight = Utilities.adaptMediaCaptionHeight;
 	Utilities.prototype.openRightMenu = Utilities.openRightMenu;
+	Utilities.prototype.onlyShowNonGeotaggedContent = Utilities.onlyShowNonGeotaggedContent;
 
 	window.Utilities = Utilities;
 }());
