@@ -563,6 +563,17 @@
 						subalbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()
 				)
 			);
+
+			filteredAlbum.subalbums = filteredAlbum.subalbums.map(
+				subalbum => {
+					subalbum.numPositionsInTree = 0;
+					subalbum.numsMediaInSubTree = subalbum.nonGeotagged.numsMediaInSubTree;
+					subalbum.sizesOfAlbum = subalbum.nonGeotagged.sizesOfAlbum;
+					subalbum.sizesOfSubTree = subalbum.nonGeotagged.sizesOfSubTree;
+					return subalbum;
+				}
+			);
+
 			filteredAlbum.numsMediaInSubTree = filteredAlbum.nonGeotagged.numsMediaInSubTree;
 			filteredAlbum.sizesOfAlbum = filteredAlbum.nonGeotagged.sizesOfAlbum;
 			filteredAlbum.sizesOfSubTree = filteredAlbum.nonGeotagged.sizesOfSubTree;
