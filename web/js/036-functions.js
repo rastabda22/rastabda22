@@ -1256,10 +1256,11 @@
 
 		////////////////// NON-GEOTAGGED ONLY MODE //////////////////////////////
 
-		var mediaCount = thisAlbum.numsMediaInSubTree.imagesAndVideosTotal();
-		var geotaggedMediaCount = thisAlbum.positionsAndMediaInTree.countMedia();
+		// WARNING: album is used here because the album with geotagged content is needed here 
+		var mediaCount = album.numsMediaInSubTree.imagesAndVideosTotal();
+		var geotaggedMediaCount = mediaCount - album.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal();
 		if (
-			isPopup ||
+			isMap || isPopup ||
 			! onlyShowNonGeotaggedContent && (geotaggedMediaCount === 0 || geotaggedMediaCount === mediaCount)
 		) {
 			$(".non-geotagged-only").addClass("hidden");
