@@ -2613,7 +2613,7 @@
 		// body of pickRandomMediaAndInsertIt function begins
 
 		var self = this;
-		var promise = phFl.pickRandomMedia(
+		var promise = this.pickRandomMedia(
 			iSubalbum,
 			function error() {
 				// executions shoudn't arrive here, if it arrives it's because of some error

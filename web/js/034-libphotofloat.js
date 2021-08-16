@@ -1127,27 +1127,28 @@
 		return;
 	};
 
-	PhotoFloat.prototype.pickRandomMedia = function(iSubalbum, error) {
+	Album.prototype.pickRandomMedia = function(iSubalbum, error) {
 		var index;
-		var ithSubalbum = env.currentAlbum.subalbums[iSubalbum];
+		var self = this;
+		var ithSubalbum = self.subalbums[iSubalbum];
 		var onlyShowNonGeotaggedContent = util.onlyShowNonGeotaggedContent();
 
 		return new Promise(
 			function(resolve_pickRandomMedia) {
 				var promise = ithSubalbum.toAlbum(error, {getMedia: false, getPositions: false});
 				promise.then(
-					function beginPick(album) {
-						env.currentAlbum.subalbums[iSubalbum] = album;
-						// var album = env.currentAlbum.subalbums[iSubalbum];
+					function beginPick(ithAlbum) {
+						self.subalbums[iSubalbum] = ithAlbum;
+						// var ithAlbum = self.subalbums[iSubalbum];
 						// index = 0;
-						let nMedia = album.numsMediaInSubTree.imagesAndVideosTotal();
+						let nMedia = ithAlbum.numsMediaInSubTree.imagesAndVideosTotal();
 						if (onlyShowNonGeotaggedContent)
-							nMedia = album.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal();
-						// if (album.isTransversal() && album.subalbums.length > 0)
-						// 	nMedia -= album.numsMedia.imagesAndVideosTotal();
+							nMedia = ithAlbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal();
+						// if (ithAlbum.isTransversal() && ithAlbum.subalbums.length > 0)
+						// 	nMedia -= ithAlbum.numsMedia.imagesAndVideosTotal();
 
 						index = Math.floor(Math.random() * nMedia);
-						nextAlbum(album, resolve_pickRandomMedia);
+						nextAlbum(ithAlbum, resolve_pickRandomMedia);
 					},
 					function() {
 						console.trace();
