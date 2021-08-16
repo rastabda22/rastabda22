@@ -377,7 +377,7 @@ $(document).ready(function() {
 						if (
 							env.currentAlbum.hasVeiledProtectedContent()
 						) {
-							$(".first-level.protection")[0].click();
+							$("#protected-content-unveil")[0].click();
 							return false;
 						}
 					}
@@ -857,7 +857,7 @@ $(document).ready(function() {
 		}
 	);
 
-	$(".first-level.protection").off("click").on("click", util.showAuthForm);
+	$("#protected-content-unveil").off("click").on("click", util.showAuthForm);
 
 	// binds the click events to the sort buttons
 
@@ -1109,7 +1109,7 @@ $(document).ready(function() {
 								if (! hash.length || upHash === hash) {
 									// the top album has been reached and no unprotected nor protected content has been found
 									if (album.isEmpty || album.hasVeiledProtectedContent())
-										$(".first-level.protection")[0].click();
+										$("#protected-content-unveil")[0].click();
 								} else {
 									hash = upHash;
 									let cacheBase = hash.substring(env.hashBeginning.length);
@@ -1119,7 +1119,7 @@ $(document).ready(function() {
 											if (upAlbum.hasVeiledProtectedContent() && ! env.fromEscKey) {
 											// if (upAlbum.hasVeiledProtectedContent() && ! env.fromEscKey) {
 												$("#loading").hide();
-												$(".first-level.protection")[0].click();
+												$("#protected-conteddnt-unveil")[0].click();
 											} else {
 												util.errorThenGoUp();
 											}

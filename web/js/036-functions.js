@@ -1341,7 +1341,7 @@
 				$("#padlock").off("click").on(
 					"click",
 					function() {
-						$(".first-level.protection")[0].click();
+						$("#protected-content-unveil")[0].click();
 						util.closeMenu();
 					}
 				);
