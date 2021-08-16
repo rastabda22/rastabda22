@@ -359,7 +359,7 @@ $(document).ready(function() {
 					} else if (
 						e.key.toLowerCase() === util._t(".map-link-shortcut") &&
 					 	! isPopup &&
-						! onlyShowNonGeotaggedContent &&
+						! util.onlyShowNonGeotaggedContent() &&
 						(
 							env.currentMedia !== null && env.currentMedia.hasGpsData() ||
 							env.currentMedia === null && env.currentAlbum.positionsAndMediaInTree.length
@@ -374,15 +374,8 @@ $(document).ready(function() {
 						e.key.toLowerCase() === util._t("#protected-content-unveil-shortcut") &&
 						env.currentAlbum !== null
 					) {
-						// var numPasswords;
-						// if (env.currentAlbum.isSearch())
-						// 	numPasswords = env.cache.getAlbum(env.currentAlbum.ancestorsCacheBase[0]).numPasswords();
-						// else
-							// numPasswords = env.currentAlbum.numPasswords();
-
 						if (
 							env.currentAlbum.hasVeiledProtectedContent()
-							// numPasswords && env.guessedPasswordCodes.length < numPasswords
 						) {
 							$(".first-level.protection")[0].click();
 							return false;
