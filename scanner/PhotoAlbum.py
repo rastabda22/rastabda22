@@ -759,6 +759,12 @@ class Album(object):
 						nums_protected_by_code[complex_codes_combination] = subalbum.nums_protected_media_in_sub_tree.value(complex_identifiers_combination)
 				sub_dict["numsProtectedMediaInSubTree"] = nums_protected_by_code
 
+				sub_dict["numsMedia"] = ImageAndVideo();
+				sub_dict["numsMedia"].setImage(len([_media for _media in subalbum.media_list if _media.is_image]))
+				sub_dict["numsMedia"].setVideo(len([_media for _media in subalbum.media_list if _media.is_video]))
+				sub_dict["nonGeotagged"]["numsMedia"] = ImageAndVideo();
+				sub_dict["nonGeotagged"]["numsMedia"].setImage(len([_media for _media in subalbum.media_list if _media.is_image and not _media.has_gps_data]))
+				sub_dict["nonGeotagged"]["numsMedia"].setVideo(len([_media for _media in subalbum.media_list if _media.is_video and not _media.has_gps_data]))
 				if hasattr(subalbum, "center"):
 					sub_dict["center"] = subalbum.center
 				if hasattr(subalbum, "name"):
@@ -883,6 +889,9 @@ class Album(object):
 			dictionary["numsMedia"] = ImageAndVideo();
 			dictionary["numsMedia"].setImage(len([_media for _media in self.media_list if _media.is_image]))
 			dictionary["numsMedia"].setVideo(len([_media for _media in self.media_list if _media.is_video]))
+		dictionary["nonGeotagged"]["numsMedia"] = ImageAndVideo();
+		dictionary["nonGeotagged"]["numsMedia"].setImage(len([_media for _media in self.media_list if _media.is_image and not _media.has_gps_data]))
+		dictionary["nonGeotagged"]["numsMedia"].setVideo(len([_media for _media in self.media_list if _media.is_video and not _media.has_gps_data]))
 		if hasattr(self, "symlink_codes_and_numbers"):
 			dictionary["symlinkCodesAndNumbers"] = self.symlink_codes_and_numbers
 		if hasattr(self, "center"):

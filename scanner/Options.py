@@ -146,9 +146,10 @@ config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x
 # json_version = 4.27 since ancestorsTitles list have been added to albums
 # json_version = 4.28 since data for non geotagged media have been added to albums
 # json_version = 4.29 since a bug in media cache bases has been fixed
+# json_version = 4.30 since numsMedia has beed added to subalbums
 
 # json_version = 0
-json_version = 4.29
+json_version = 4.30
 
 # the release version number (a string)
 version = "v5.3.5"

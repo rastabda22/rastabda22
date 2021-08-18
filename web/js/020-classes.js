@@ -297,6 +297,7 @@
 			this.numsMediaInSubTree = new ImagesAndVideos(this.numsMediaInSubTree);
 			this.sizesOfAlbum = new Sizes(this.sizesOfAlbum);
 			this.sizesOfSubTree = new Sizes(this.sizesOfSubTree);
+			this.nonGeotagged.numsMedia = new ImagesAndVideos(this.nonGeotagged.numsMedia);
 			this.nonGeotagged.numsMediaInSubTree = new ImagesAndVideos(this.nonGeotagged.numsMediaInSubTree);
 			this.nonGeotagged.sizesOfSubTree = new Sizes(this.nonGeotagged.sizesOfSubTree);
 			this.nonGeotagged.sizesOfAlbum = new Sizes(this.nonGeotagged.sizesOfAlbum);
@@ -394,6 +395,7 @@
 				this.positionsAndMediaInTree = new PositionsAndMedia([]);
 				this.numPositionsInTree = 0;
 				this.nonGeotagged = {};
+				this.nonGeotagged.numsMedia = new ImagesAndVideos();
 				this.nonGeotagged.numsMediaInSubTree = new ImagesAndVideos();
 				this.nonGeotagged.sizesOfAlbum = new Sizes();
 				this.nonGeotagged.sizesOfSubTree = new Sizes();
@@ -427,6 +429,7 @@
 				this.numsMediaInSubTree = new ImagesAndVideos(this.numsMediaInSubTree);
 				this.sizesOfSubTree = new Sizes(this.sizesOfSubTree);
 				this.sizesOfAlbum = new Sizes(this.sizesOfAlbum);
+				this.nonGeotagged.numsMedia = new ImagesAndVideos(this.nonGeotagged.numsMedia);
 				this.nonGeotagged.numsMediaInSubTree = new ImagesAndVideos(this.nonGeotagged.numsMediaInSubTree);
 				this.nonGeotagged.sizesOfSubTree = new Sizes(this.nonGeotagged.sizesOfSubTree);
 				this.nonGeotagged.sizesOfAlbum = new Sizes(this.nonGeotagged.sizesOfAlbum);
@@ -576,6 +579,7 @@
 			filteredAlbum.subalbums = filteredAlbum.subalbums.map(
 				subalbum => {
 					subalbum.numPositionsInTree = 0;
+					subalbum.numsMedia = subalbum.nonGeotagged.numsMedia;
 					subalbum.numsMediaInSubTree = subalbum.nonGeotagged.numsMediaInSubTree;
 					subalbum.sizesOfAlbum = subalbum.nonGeotagged.sizesOfAlbum;
 					subalbum.sizesOfSubTree = subalbum.nonGeotagged.sizesOfSubTree;
@@ -583,6 +587,7 @@
 				}
 			);
 
+			filteredAlbum.numsMedia = filteredAlbum.nonGeotagged.numsMedia;
 			filteredAlbum.numsMediaInSubTree = filteredAlbum.nonGeotagged.numsMediaInSubTree;
 			filteredAlbum.sizesOfAlbum = filteredAlbum.nonGeotagged.sizesOfAlbum;
 			filteredAlbum.sizesOfSubTree = filteredAlbum.nonGeotagged.sizesOfSubTree;
