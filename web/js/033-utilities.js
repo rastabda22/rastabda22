@@ -3381,6 +3381,29 @@
 		}
 	};
 
+	Utilities.prototype.getMediaFromImgObject = function(object) {
+		var splittedSrc = object.attr("src").split("/")[2].split(env.options.cache_folder_separator);
+		var randomMediaAlbumCacheBase;
+		if (splittedSrc.length === 2) {
+			randomMediaAlbumCacheBase = env.options.folders_string;
+		} else {
+			randomMediaAlbumCacheBase = splittedSrc.slice(0, -2).join(env.options.cache_folder_separator);
+			if (
+				[
+					env.options.by_date_string,
+					env.options.by_gps_string,
+					env.options.by_search_string,
+					env.options.by_map_string,
+					env.options.by_selection_string
+				].indexOf(splittedSrc[0]) === -1
+			)
+				randomMediaAlbumCacheBase = env.options.folders_string + env.options.cache_folder_separator + randomMediaAlbumCacheBase;
+		}
+		var randomMediaCacheBase = splittedSrc[splittedSrc.length - 2];
+		var randomMedia = env.cache.getMedia(randomMediaAlbumCacheBase, randomMediaCacheBase);
+		return [randomMedia, randomMediaAlbumCacheBase];
+	};
+
 	Utilities.dateElementForFolderName = function(folderArray, index) {
 		if (index === 1 || index === 3)
 			return parseInt(folderArray[index]);

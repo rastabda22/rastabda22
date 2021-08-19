@@ -1278,7 +1278,6 @@
 				// css manages the showing/hiding of media/subalbums, the title change and the subalbums caption change
 				// this function performs additional operation about highlighting the correct object and showing the correct image in subalbums
 
-
 				// toggle the class that hides/shows/changes
 				$("#fullscreen-wrapper").toggleClass("hide-geotagged");
 				var onlyShowNonGeotaggedContent = util.onlyShowNonGeotaggedContent();
@@ -1322,30 +1321,12 @@
 					// check and possibly correct the subalbum image
 					$("#subalbums > a:not(.all-gps) img.thumbnail").each(
 						function() {
-							var splittedSrc = $(this).attr("src").split("/")[2].split(env.options.cache_folder_separator);
-							var randomMediaAlbumCacheBase;
-							if (splittedSrc.length === 2) {
-								randomMediaAlbumCacheBase = env.options.folders_string;
-							} else {
-								randomMediaAlbumCacheBase = splittedSrc.slice(0, -2).join(env.options.cache_folder_separator);
-								if (
-									[
-										env.options.by_date_string,
-										env.options.by_gps_string,
-										env.options.by_search_string,
-										env.options.by_map_string,
-										env.options.by_selection_string
-									].indexOf(splittedSrc[0]) === -1
-								)
-									randomMediaAlbumCacheBase = env.options.folders_string + env.options.cache_folder_separator + randomMediaAlbumCacheBase;
-							}
-							var randomMediaCacheBase = splittedSrc[splittedSrc.length - 2];
-							var randomMedia = env.cache.getMedia(randomMediaAlbumCacheBase, randomMediaCacheBase);
+							var [randomMedia, randomMediaAlbumCacheBase] = util.getMediaFromImgObject($(this));
 							if (! randomMedia.hasGpsData()) {
 								return;
 							} else  {
 								let iSubalbum = env.currentAlbum.subalbums.findIndex(subalbum => randomMediaAlbumCacheBase.indexOf(subalbum.cacheBase) === 0);
-								env.currentAlbum.pickRandomMediaAndInsertIt(iSubalbum, function() {});
+								env.currentAlbum.pickRandomMediaAndInsertIt(iSubalbum, function() {}, onlyShowNonGeotaggedContent);
 							}
 						}
 					)

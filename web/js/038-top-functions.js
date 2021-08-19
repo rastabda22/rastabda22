@@ -2558,7 +2558,7 @@
 	};
 
 
-	Album.prototype.pickRandomMediaAndInsertIt = function(iSubalbum, resolve_subalbumPromise) {
+	Album.prototype.pickRandomMediaAndInsertIt = function(iSubalbum, resolve_subalbumPromise, onlyShowNonGeotaggedContent = false) {
 		function insertRandomImage(randomSubAlbum, index, iSubalbum) {
 			var titleName, randomMediaLink;
 			var randomMedia = randomSubAlbum.media[index];
@@ -2610,20 +2610,27 @@
 			);
 		}
 		// end of insertRandomImage function
-		// body of pickRandomMediaAndInsertIt function begins
 
+		// body of pickRandomMediaAndInsertIt function begins
 		var self = this;
 		var promise = self.pickRandomMedia(
 			iSubalbum,
 			function error() {
 				// executions shoudn't arrive here, if it arrives it's because of some error
 				console.trace();
-			}
+			},
+			onlyShowNonGeotaggedContent
 		);
 		promise.then(
-			function([album, index]) {
-				insertRandomImage(album, index, iSubalbum);
-				resolve_subalbumPromise();
+			function([randomAlbum, index]) {
+				var subalbumsCacheBases = env.currentAlbum.subalbums.map(subalbum => subalbum.cacheBase);
+				var thisSubalbumCacheBase = subalbumsCacheBases.filter(cacheBase => cacheBase.indexOf(randomAlbum.cacheBase) === 0)[0];
+				if (util.onlyShowNonGeotaggedContent() && randomAlbum.media[index].hasGpsData() && $("#" + thisSubalbumCacheBase).is(":visible")) {
+					env.currentAlbum.pickRandomMediaAndInsertIt(iSubalbum, resolve_subalbumPromise, true);
+				} else {
+					insertRandomImage(randomAlbum, index, iSubalbum);
+					resolve_subalbumPromise();
+				}
 			},
 			function(album) {
 				console.trace();
@@ -2863,7 +2870,6 @@
 										self.toggleSubalbumSelection("#subalbum-select-box-" + id);
 									}
 								);
-
 								self.pickRandomMediaAndInsertIt(iSubalbum, resolve_subalbumPromise);
 							}
 						);
