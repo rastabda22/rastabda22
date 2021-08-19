@@ -2074,7 +2074,7 @@
 		// all non-letter character must be converted to space
 		tagForHref = tagForHref.replace(/([^\p{L}_])/ug, match => match === "-" ? "%2D" : encodeURIComponent(match));
 
-		var hash = "#!/_bs" + env.options.cache_folder_separator +  "t" + env.options.search_options_separator + "o" + env.options.search_options_separator + tagForHref + env.options.cache_folder_separator + env.currentAlbum.cacheBase;
+		var hash = env.hashBeginning + env.options.by_search_string + env.options.cache_folder_separator +  "t" + env.options.search_options_separator + "o" + env.options.search_options_separator + tagForHref + env.options.cache_folder_separator + env.currentAlbum.cacheBase;
 		return "<a href='" + hash + "'>" + tag + "</a>";
 	};
 
