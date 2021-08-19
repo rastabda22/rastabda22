@@ -592,8 +592,10 @@
 			filteredAlbum.sizesOfAlbum = filteredAlbum.nonGeotagged.sizesOfAlbum;
 			filteredAlbum.sizesOfSubTree = filteredAlbum.nonGeotagged.sizesOfSubTree;
 
-			filteredAlbum.positionsAndMediaInTree = new PositionsAndMedia();
+			if (filteredAlbum.positionsAndMediaInTree !== undefined)
+				filteredAlbum.positionsAndMediaInTree = new PositionsAndMedia([]);
 			filteredAlbum.numPositionsInTree = 0;
+			// delete filteredAlbum.nonGeotagged;
 
 			return filteredAlbum;
 		}
