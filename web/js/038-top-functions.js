@@ -139,9 +139,7 @@
 				var numSubalbums = {
 					gps: env.currentAlbum.subalbums.length,
 					nonGps: env.currentAlbum.subalbums.filter(
-						ithAlbum =>
-							ithAlbum.numsMediaInSubTree.imagesAndVideosTotal() &&
-							ithAlbum.numsMediaInSubTree.imagesAndVideosTotal() === ithAlbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()
+						ithAlbum => ithAlbum.nonGeotagged.numsMediaInSubTree.imagesAndVideosTotal()
 					).length
 				};
 				if (singleMedia === null) {
