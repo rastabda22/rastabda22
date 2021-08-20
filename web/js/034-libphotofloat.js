@@ -1481,10 +1481,16 @@
 							let ithMedia = env.searchAlbum.media[indexMedia];
 							// add the parent to the media
 							ithMedia.addParent(env.searchAlbum);
+							let ithMediaArray = new Media([ithMedia]);
+							env.searchAlbum.numsMediaInSubTree.sum(ithMediaArray.imagesAndVideosCount());
 							if (ithMedia.hasGpsData()) {
 								// add the media position
 								env.searchAlbum.positionsAndMediaInTree.addSingleMedia(ithMedia);
 								env.searchAlbum.numPositionsInTree = env.searchAlbum.positionsAndMediaInTree.length;
+							} else {
+								env.searchAlbum.nonGeotagged.numsMediaInSubTree.sum(ithMediaArray.imagesAndVideosCount());
+								env.searchAlbum.nonGeotagged.sizesOfSubTree.sum(ithMedia.fileSizes);
+								env.searchAlbum.nonGeotagged.sizesOfAlbum.sum(ithMedia.fileSizes);
 							}
 							env.searchAlbum.sizesOfSubTree.sum(ithMedia.fileSizes);
 							env.searchAlbum.sizesOfAlbum.sum(ithMedia.fileSizes);
@@ -1495,11 +1501,14 @@
 							for (indexSubalbums = 0; indexSubalbums < env.searchAlbum.subalbums.length; indexSubalbums ++) {
 								let thisSubalbum = env.searchAlbum.subalbums[indexSubalbums];
 								let thisIndex = indexSubalbums;
-								// update the media count
+								// update the media counts
 								env.searchAlbum.numsMediaInSubTree.sum(thisSubalbum.numsMediaInSubTree);
+								env.searchAlbum.nonGeotagged.numsMediaInSubTree.sum(thisSubalbum.nonGeotagged.numsMediaInSubTree);
 								// update the size totals
 								env.searchAlbum.sizesOfSubTree.sum(thisSubalbum.sizesOfSubTree);
-								// env.searchAlbum.sizesOfAlbum.sum(thisSubalbum.sizesOfAlbum);
+								env.searchAlbum.sizesOfAlbum.sum(thisSubalbum.sizesOfAlbum);
+								env.searchAlbum.nonGeotagged.sizesOfSubTree.sum(thisSubalbum.nonGeotagged.sizesOfSubTree);
+								env.searchAlbum.nonGeotagged.sizesOfAlbum.sum(thisSubalbum.nonGeotagged.sizesOfAlbum);
 
 								// add the points from the subalbums
 
@@ -2013,8 +2022,14 @@
 		return new Promise(
 			function(resolve_endPreparingAlbumAndKeepOn) {
 				// add the various counts
-				resultsAlbumFinal.numsMediaInSubTree = resultsAlbumFinal.media.imagesAndVideosCount();
+				// resultsAlbumFinal.numsMediaInSubTree = resultsAlbumFinal.media.imagesAndVideosCount();
 				resultsAlbumFinal.numsMedia = resultsAlbumFinal.media.imagesAndVideosCount();
+				resultsAlbumFinal.numPositionsInTree = resultsAlbumFinal.positionsAndMediaInTree.length;
+
+				resultsAlbumFinal.nonGeotagged.numsMedia = resultsAlbumFinal.media.filter(
+					singleMedia => ! singleMedia.hasGpsData()
+				).imagesAndVideosCount();
+
 				resultsAlbumFinal.numPositionsInTree = resultsAlbumFinal.positionsAndMediaInTree.length;
 				// save in the cache array
 				if (! env.cache.getAlbum(resultsAlbumFinal.cacheBase))
