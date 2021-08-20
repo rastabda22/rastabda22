@@ -1499,13 +1499,13 @@
 				}
 				util.addMediaLazyLoader();
 				env.windowWidth = $(window).innerWidth();
-
-				util.highlightSearchedWords();
 			}
 
 			let titlePromise = TopFunctions.setTitle("album", null);
 			titlePromise.then(
 				function titleSet() {
+					util.highlightSearchedWords();
+
 					if ($("#album-view").is(":visible")) {
 						$(window).off("resize").on(
 							"resize",
