@@ -1,4 +1,4 @@
-# MyPhotoShare v5.3.5 - A Static Web Photo Gallery with Advanced Features (July 16, 2021)
+# MyPhotoShare v5.3.6 - A Static Web Photo Gallery with Advanced Features (August 19, 2021)
 
 Expose your media (pictures and videos) on the web and share them with family and friends. Publish them on a fast and secure static web site.
 
@@ -55,6 +55,7 @@ It's not because your photo gallery is in a static web site that it can't have a
 - [x] Photos shown in the popup map are clickable.
 - [x] Near markers are automatically clustered, and the photos number is shown in the cluster marker.
 - [x] Images collected by map clicks can be shown as an album, browsed and sorted.
+- [x] A special mode showes only the non-geotagged content.
 
 [Discover more about GPS](doc/GPS.md).
 
