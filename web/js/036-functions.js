@@ -1314,8 +1314,9 @@
 				else
 					util.scrollAlbumViewToHighlightedThumb(newObject);
 
-				// adapt subalbums caption height
+				// adapt subalbums and media caption height
 				util.adaptSubalbumCaptionHeight();
+				util.adaptMediaCaptionHeight();
 
 				if (onlyShowNonGeotaggedContent) {
 					// check and possibly correct the subalbum image
