@@ -2550,6 +2550,8 @@
 		util.setDescriptionOptions();
 		util.correctElementPositions();
 
+		util.highlightSearchedWords();
+
 		$("#loading").hide();
 	};
 
