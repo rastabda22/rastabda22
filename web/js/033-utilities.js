@@ -1700,14 +1700,14 @@
 	};
 
 	Album.prototype.addSubalbumToSelection = function(iSubalbum, clickedSelector) {
-		var subalbum = this.subalbums[iSubalbum];
+		var ithSubalbum = this.subalbums[iSubalbum];
 		var self = this;
 		return new Promise(
 			function(resolve_addSubalbum) {
-				function continue_addSubalbumToSelection(album) {
-					env.selectionAlbum.subalbums.push(album);
+				function continue_addSubalbumToSelection(ithAlbum) {
+					env.selectionAlbum.subalbums.push(ithAlbum);
 
-					album.generateCaptionsForSelection();
+					ithAlbum.generateCaptionsForSelection();
 					delete env.selectionAlbum.albumNameSort;
 					delete env.selectionAlbum.albumReverseSort;
 					env.selectionAlbum.sortAlbumsMedia();
@@ -1718,22 +1718,22 @@
 					resolve_addSubalbum();
 				}
 
-				if (subalbum.isSelected()) {
+				if (ithSubalbum.isSelected()) {
 					resolve_addSubalbum();
 				} else {
 					if (Utilities.nothingIsSelected())
 						Utilities.initializeSelectionAlbum();
 
-					let convertSubalbumPromise = subalbum.toAlbum(null, {getMedia: true, getPositions: true});
+					let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: true});
 					convertSubalbumPromise.then(
-						function(album) {
-							self.subalbums[iSubalbum] = album;
+						function(ithAlbum) {
+							self.subalbums[iSubalbum] = ithAlbum;
 
-							var albumIsInsideSelectedAlbums = album.isInsideSelectedAlbums();
+							var albumIsInsideSelectedAlbums = ithAlbum.isInsideSelectedAlbums();
 							if (albumIsInsideSelectedAlbums) {
-								continue_addSubalbumToSelection(album);
+								continue_addSubalbumToSelection(ithAlbum);
 							} else {
-								var collectPromise = album.collectMediaInTree();
+								var collectPromise = ithAlbum.collectMediaInTree();
 								collectPromise.then(
 									function(mediaInAlbumTree) {
 										var mediaInAlbumNotSelectedNorInsideSelectedAlbums = [];
@@ -1743,7 +1743,6 @@
 													mediaInAlbumNotSelectedNorInsideSelectedAlbums.push(singleMedia);
 											}
 										);
-										// var mediaInAlbumNotSelectedNorInsideSelectedAlbums = Utilities.arrayUnion(mediaInAlbumNotSelected, mediaInAlbumNotInsideSelectedAlbums);
 
 										mediaInAlbumNotSelectedNorInsideSelectedAlbums.forEach(
 											singleMedia => {
@@ -1752,12 +1751,12 @@
 												env.selectionAlbum.sizesOfSubTree.sum(singleMedia.fileSizes);
 											}
 										);
-										// env.selectionAlbum.positionsAndMediaInTree.mergePositionsAndMedia(album.positionsAndMediaInTree);
+										// env.selectionAlbum.positionsAndMediaInTree.mergePositionsAndMedia(ithAlbum.positionsAndMediaInTree);
 										env.selectionAlbum.numPositionsInTree = env.selectionAlbum.positionsAndMediaInTree.length;
 
 										env.selectionAlbum.numsMediaInSubTree.sum(new Media(mediaInAlbumNotSelectedNorInsideSelectedAlbums).imagesAndVideosCount());
 
-										continue_addSubalbumToSelection(album);
+										continue_addSubalbumToSelection(ithAlbum);
 									}
 								);
 							}
@@ -1770,20 +1769,20 @@
 
 	Album.prototype.removeSubalbumFromSelection = function(clickedSelector) {
 		var iSubalbum = this.subalbums.findIndex(subalbum => subalbum.cacheBase === $(clickedSelector).parent().parent().attr("id"));
-		var subalbum = this.subalbums[iSubalbum];
-		// var subalbum = this.subalbums[iSubalbum];
+		var ithSubalbum = this.subalbums[iSubalbum];
+		// var ithSubalbum = this.subalbums[iSubalbum];
 		var self = this;
 		return new Promise(
 			function(resolve_removeSubalbum) {
-				if (! subalbum.isSelected()) {
-					if (subalbum.isEmpty())
+				if (! ithSubalbum.isSelected()) {
+					if (ithSubalbum.isEmpty())
 						Utilities.initializeSelectionAlbum();
 					resolve_removeSubalbum();
 				} else {
-					let convertSubalbumPromise = subalbum.toAlbum(null, {getMedia: true, getPositions: true});
+					let convertSubalbumPromise = ithSubalbum.toAlbum(null, {getMedia: true, getPositions: true});
 					convertSubalbumPromise.then(
-						function(subalbum) {
-							self.subalbums[iSubalbum] = subalbum;
+						function(ithAlbum) {
+							self.subalbums[iSubalbum] = ithAlbum;
 
 							var selectedMediaInsideSelectedAlbums = [];
 							env.selectionAlbum.media.forEach(
@@ -1793,13 +1792,13 @@
 								}
 							);
 
-							var subalbumIsInsideSelectedAlbums = subalbum.isInsideSelectedAlbums();
+							var subalbumIsInsideSelectedAlbums = ithAlbum.isInsideSelectedAlbums();
 
-							var indexInSelection = env.selectionAlbum.subalbums.findIndex(selectedSubalbum => selectedSubalbum.isEqual(subalbum));
+							var indexInSelection = env.selectionAlbum.subalbums.findIndex(selectedSubalbum => selectedSubalbum.isEqual(ithAlbum));
 							env.selectionAlbum.subalbums.splice(indexInSelection, 1);
 
-							if (subalbum.positionsAndMediaInTree.length) {
-								if (subalbum.numPositionsInTree >  env.selectionAlbum.numPositionsInTree / 10) {
+							if (ithAlbum.positionsAndMediaInTree.length) {
+								if (ithAlbum.numPositionsInTree >  env.selectionAlbum.numPositionsInTree / 10) {
 									let newPos = new PositionsAndMedia();
 									let firstTime = true;
 									env.selectionAlbum.subalbums.forEach(
@@ -1813,24 +1812,24 @@
 										}
 									);
 								} else {
-									env.selectionAlbum.positionsAndMediaInTree.removePositionsAndMedia(subalbum.positionsAndMediaInTree);
+									env.selectionAlbum.positionsAndMediaInTree.removePositionsAndMedia(ithAlbum.positionsAndMediaInTree);
 								}
 								env.selectionAlbum.numPositionsInTree = env.selectionAlbum.positionsAndMediaInTree.length;
 							}
 
 							if (! subalbumIsInsideSelectedAlbums) {
-								env.selectionAlbum.numsMediaInSubTree.subtract(subalbum.numsMediaInSubTree);
-								env.selectionAlbum.sizesOfSubTree.subtract(subalbum.sizesOfSubTree);
+								env.selectionAlbum.numsMediaInSubTree.subtract(ithAlbum.numsMediaInSubTree);
+								env.selectionAlbum.sizesOfSubTree.subtract(ithAlbum.sizesOfSubTree);
 								selectedMediaInsideSelectedAlbums.forEach(
 									function(singleMedia) {
 										if (! singleMedia.isInsideSelectedAlbums()) {
-											var singleMediaArray = new Media([singleMedia]);
-											env.selectionAlbum.numsMediaInSubTree.sum(singleMediaArray.imagesAndVideosCount());
+											var singleMediaArrayCounts = new Media([singleMedia]).imagesAndVideosCount();
+											env.selectionAlbum.numsMediaInSubTree.sum(singleMediaArrayCounts);
 											env.selectionAlbum.sizesOfSubTree.sum(singleMedia.fileSizes);
 										}
 									}
 								);
-								// env.selectionAlbum.numsProtectedMediaInSubTree.subtract(subalbum.numsProtectedMediaInSubTree);
+								// env.selectionAlbum.numsProtectedMediaInSubTree.subtract(ithAlbum.numsProtectedMediaInSubTree);
 							}
 
 							if (! env.currentAlbum.isSelection()) {
