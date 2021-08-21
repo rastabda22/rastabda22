@@ -4773,12 +4773,16 @@
 					baseSelector + " .media-tags";
 			}
 
+			var punctuationArray = ":;.,-–—‒_(){}[]¡!`´·#|@~&/*^¨'+=?¿<>\\\"".split("");
 			const options = {
 				caseSensitive: env.options.search_case_sensitive,
 				diacritics: ! env.options.search_accent_sensitive,
 				separateWordSearch: whenTyping ? true : env.options.search_any_word,
-				accuracy: env.options.search_inside_words || whenTyping ? "partially" : "exactly",
-				ignorePunctuation: ":;.,-–—‒_(){}[]¡!`´·#|@~&/*^¨'+=?¿<>\\\"".split("")
+				accuracy: env.options.search_inside_words || whenTyping ? "partially" : {
+					value: "exactly",
+					limiters: punctuationArray
+				},
+				ignorePunctuation: punctuationArray
 			};
 			$(selector).unmark(
 				{
