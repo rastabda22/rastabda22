@@ -1820,15 +1820,16 @@
 							if (! subalbumIsInsideSelectedAlbums) {
 								env.selectionAlbum.numsMediaInSubTree.subtract(ithAlbum.numsMediaInSubTree);
 								env.selectionAlbum.sizesOfSubTree.subtract(ithAlbum.sizesOfSubTree);
-								selectedMediaInsideSelectedAlbums.forEach(
-									function(singleMedia) {
-										if (! singleMedia.isInsideSelectedAlbums()) {
-											var singleMediaArrayCounts = new Media([singleMedia]).imagesAndVideosCount();
-											env.selectionAlbum.numsMediaInSubTree.sum(singleMediaArrayCounts);
-											env.selectionAlbum.sizesOfSubTree.sum(singleMedia.fileSizes);
-										}
-									}
-								);
+								env.selectionAlbum.nonGeotagged.sizesOfSubTree.subtract(ithAlbum.nonGeotagged.sizesOfSubTree);
+								// selectedMediaInsideSelectedAlbums.forEach(
+								// 	function(singleMedia) {
+								// 		if (! singleMedia.isInsideSelectedAlbums()) {
+								// 			var singleMediaArrayCounts = new Media([singleMedia]).imagesAndVideosCount();
+								// 			env.selectionAlbum.numsMediaInSubTree.sum(singleMediaArrayCounts);
+								// 			env.selectionAlbum.sizesOfSubTree.sum(singleMedia.fileSizes);
+								// 		}
+								// 	}
+								// );
 								// env.selectionAlbum.numsProtectedMediaInSubTree.subtract(ithAlbum.numsProtectedMediaInSubTree);
 							}
 
