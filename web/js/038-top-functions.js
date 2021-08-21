@@ -1502,8 +1502,6 @@
 			let titlePromise = TopFunctions.setTitle("album", null);
 			titlePromise.then(
 				function titleSet() {
-					util.highlightSearchedWords();
-
 					if ($("#album-view").is(":visible")) {
 						$(window).off("resize").on(
 							"resize",
@@ -2899,6 +2897,8 @@
 
 				// we can run the function that prepare the stuffs for sharing
 				util.socialButtons();
+
+				util.highlightSearchedWords();
 
 				f.updateMenu();
 				self.bindSubalbumSortEvents();
