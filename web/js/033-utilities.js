@@ -1491,12 +1491,20 @@
 				env.selectionAlbum.positionsAndMediaInTree.addSingleMedia(this);
 				env.selectionAlbum.numPositionsInTree = env.selectionAlbum.positionsAndMediaInTree.length;
 			}
-			var singleMediaArray = new Media([this]);
-			env.selectionAlbum.numsMedia.sum(singleMediaArray.imagesAndVideosCount());
+			var singleMediaArrayCounts = new Media([this]).imagesAndVideosCount();
+			env.selectionAlbum.numsMedia.sum(singleMediaArrayCounts);
 			env.selectionAlbum.sizesOfAlbum.sum(this.fileSizes);
+			if (! this.hasGpsData()) {
+				env.selectionAlbum.nonGeotagged.numsMedia.sum(singleMediaArrayCounts);
+				env.selectionAlbum.nonGeotagged.sizesOfAlbum.sum(this.fileSizes);
+			}
 			if (! this.isInsideSelectedAlbums()) {
-				env.selectionAlbum.numsMediaInSubTree.sum(singleMediaArray.imagesAndVideosCount());
+				env.selectionAlbum.numsMediaInSubTree.sum(singleMediaArrayCounts);
 				env.selectionAlbum.sizesOfSubTree.sum(this.fileSizes);
+				if (! this.hasGpsData()) {
+					env.selectionAlbum.nonGeotagged.numsMediaInSubTree.sum(singleMediaArrayCounts);
+					env.selectionAlbum.nonGeotagged.sizesOfSubTree.sum(this.fileSizes);
+				}
 			}
 
 			// if (! Utilities.isPopup())
@@ -1535,12 +1543,20 @@
 				env.selectionAlbum.positionsAndMediaInTree.removeSingleMedia(this);
 				env.selectionAlbum.numPositionsInTree = env.selectionAlbum.positionsAndMediaInTree.length;
 			}
-			var singleMediaArray = new Media([this]);
-			env.selectionAlbum.numsMedia.subtract(singleMediaArray.imagesAndVideosCount());
+			var singleMediaArrayCounts = new Media([this]).imagesAndVideosCount();
+			env.selectionAlbum.numsMedia.subtract(singleMediaArrayCounts);
 			env.selectionAlbum.sizesOfAlbum.subtract(this.fileSizes);
+			if (! this.hasGpsData()) {
+				env.selectionAlbum.nonGeotagged.numsMedia.subtract(singleMediaArrayCounts);
+				env.selectionAlbum.nonGeotagged.sizesOfAlbum.subtract(this.fileSizes);
+			}
 			if (! this.isInsideSelectedAlbums()) {
-				env.selectionAlbum.numsMediaInSubTree.subtract(singleMediaArray.imagesAndVideosCount());
+				env.selectionAlbum.numsMediaInSubTree.subtract(singleMediaArrayCounts);
 				env.selectionAlbum.sizesOfSubTree.subtract(this.fileSizes);
+				if (! this.hasGpsData()) {
+					env.selectionAlbum.nonGeotagged.numsMediaInSubTree.subtract(singleMediaArrayCounts);
+					env.selectionAlbum.nonGeotagged.sizesOfSubTree.subtract(this.fileSizes);
+				}
 			}
 
 			var singleMediaSelector = "#media-select-box";
@@ -1704,6 +1720,7 @@
 		var self = this;
 		return new Promise(
 			function(resolve_addSubalbum) {
+				///// sub-function //////////
 				function continue_addSubalbumToSelection(ithAlbum) {
 					env.selectionAlbum.subalbums.push(ithAlbum);
 
@@ -1717,6 +1734,7 @@
 
 					resolve_addSubalbum();
 				}
+				///// end of sub-function //////////
 
 				if (ithSubalbum.isSelected()) {
 					resolve_addSubalbum();
@@ -1737,24 +1755,35 @@
 								collectPromise.then(
 									function(mediaInAlbumTree) {
 										var mediaInAlbumNotSelectedNorInsideSelectedAlbums = [];
+										var mediaInAlbumNotSelectedNorInsideSelectedAlbumsNorGeotagged = [];
 										mediaInAlbumTree.forEach(
 											function(singleMedia) {
-												if (! singleMedia.isInsideSelectedAlbums() && ! singleMedia.isSelected())
+												if (! singleMedia.isInsideSelectedAlbums() && ! singleMedia.isSelected()) {
 													mediaInAlbumNotSelectedNorInsideSelectedAlbums.push(singleMedia);
+													if (! singleMedia.hasGpsData())
+														mediaInAlbumNotSelectedNorInsideSelectedAlbumsNorGeotagged.push(singleMedia);
+												}
 											}
 										);
 
 										mediaInAlbumNotSelectedNorInsideSelectedAlbums.forEach(
 											singleMedia => {
-												if (singleMedia.hasGpsData())
+												if (singleMedia.hasGpsData()) {
 													env.selectionAlbum.positionsAndMediaInTree.addSingleMedia(singleMedia);
+												}
 												env.selectionAlbum.sizesOfSubTree.sum(singleMedia.fileSizes);
+											}
+										);
+										mediaInAlbumNotSelectedNorInsideSelectedAlbumsNorGeotagged.forEach(
+											singleMedia => {
+												env.selectionAlbum.nonGeotagged.sizesOfSubTree.sum(singleMedia.fileSizes);
 											}
 										);
 										// env.selectionAlbum.positionsAndMediaInTree.mergePositionsAndMedia(ithAlbum.positionsAndMediaInTree);
 										env.selectionAlbum.numPositionsInTree = env.selectionAlbum.positionsAndMediaInTree.length;
 
 										env.selectionAlbum.numsMediaInSubTree.sum(new Media(mediaInAlbumNotSelectedNorInsideSelectedAlbums).imagesAndVideosCount());
+										env.selectionAlbum.nonGeotagged.numsMediaInSubTree.sum(new Media(mediaInAlbumNotSelectedNorInsideSelectedAlbumsNorGeotagged).imagesAndVideosCount());
 
 										continue_addSubalbumToSelection(ithAlbum);
 									}
@@ -1819,6 +1848,7 @@
 
 							if (! subalbumIsInsideSelectedAlbums) {
 								env.selectionAlbum.numsMediaInSubTree.subtract(ithAlbum.numsMediaInSubTree);
+								env.selectionAlbum.nonGeotagged.numsMediaInSubTree.subtract(ithAlbum.nonGeotagged.numsMediaInSubTree);
 								env.selectionAlbum.sizesOfSubTree.subtract(ithAlbum.sizesOfSubTree);
 								env.selectionAlbum.nonGeotagged.sizesOfSubTree.subtract(ithAlbum.nonGeotagged.sizesOfSubTree);
 								// selectedMediaInsideSelectedAlbums.forEach(
