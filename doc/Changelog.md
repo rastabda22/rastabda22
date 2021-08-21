@@ -1,3 +1,6 @@
+* non-geotagged mode now works with searches too
+* bug fixes
+
 ### version v5.3.6 (August 19, 2021)
 
 * add the possibility to hide geotagged content, and correct all the counts accordingly
