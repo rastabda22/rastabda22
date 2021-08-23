@@ -197,17 +197,6 @@
 						// execution arrives here if the json file doesn't exist
 						var emptyAlbum = new Album(unprotectedCacheBase);
 						emptyAlbum.empty = true;
-						// var emptyAlbum = {
-						// 	"cacheBase": unprotectedCacheBase,
-						// 	"subalbums": [],
-						// 	"numsMedia": new ImagesAndVideos(),
-						// 	"numsMediaInSubTree": new ImagesAndVideos(),
-						// 	"sizesOfAlbum": JSON.parse(JSON.stringify(initialSizes)),
-						// 	"sizesOfSubTree": JSON.parse(JSON.stringify(initialSizes)),
-						// 	"numPositionsInTree": 0,
-						// 	// "includedProtectedDirectories": [],
-						// 	"empty": true
-						// };
 						emptyAlbum.includedFilesByCodesSimpleCombination = new IncludedFiles({",": false});
 
 						reject_getSingleUnprotectedCacheBase(emptyAlbum);
@@ -218,8 +207,6 @@
 	};
 
 	Album.prototype.initializeIncludedFilesByCodesSimpleCombinationProperty = function(codesSimpleCombination, number) {
-		// if (! this.hasOwnProperty("includedFilesByCodesSimpleCombination"))
-		// 	this.includedFilesByCodesSimpleCombination = new IncludedFiles();
 		if (typeof codesSimpleCombination !== "undefined") {
 			if (! this.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination))
 				this.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
@@ -298,10 +285,15 @@
 
 								self.numsMedia.sum(protectedAlbum.numsMedia);
 								if (! self.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.hasOwnProperty("countsGot")) {
+									self.nonGeotagged.numsMedia.sum(protectedAlbum.nonGeotagged.numsMedia);
 									self.numsMediaInSubTree.sum(protectedAlbum.numsMediaInSubTree);
 									self.sizesOfSubTree.sum(protectedAlbum.sizesOfSubTree);
 									self.sizesOfAlbum.sum(protectedAlbum.sizesOfAlbum);
 									self.numPositionsInTree += protectedAlbum.numPositionsInTree;
+
+									self.nonGeotagged.numsMediaInSubTree.sum(protectedAlbum.nonGeotagged.numsMediaInSubTree);
+									self.nonGeotagged.sizesOfSubTree.sum(protectedAlbum.nonGeotagged.sizesOfSubTree);
+									self.nonGeotagged.sizesOfAlbum.sum(protectedAlbum.nonGeotagged.sizesOfAlbum);
 								}
 								if (! self.hasOwnProperty("path"))
 									self.path = protectedAlbum.path;
@@ -597,16 +589,13 @@
 		subalbum.sizesOfAlbum.sum(protectedSubalbum.sizesOfAlbum);
 		subalbum.numPositionsInTree += protectedSubalbum.numPositionsInTree;
 
+		subalbum.nonGeotagged.numsMedia.sum(protectedSubalbum.nonGeotagged.numsMedia);
+		subalbum.nonGeotagged.numsMediaInSubTree.sum(protectedSubalbum.nonGeotagged.numsMediaInSubTree);
+		subalbum.nonGeotagged.sizesOfSubTree.sum(protectedSubalbum.nonGeotagged.sizesOfSubTree);
+		subalbum.nonGeotagged.sizesOfAlbum.sum(protectedSubalbum.nonGeotagged.sizesOfAlbum);
+
 		if (subalbum instanceof Album) {
 			subalbum.initializeIncludedFilesByCodesSimpleCombinationProperty(codesSimpleCombination, number);
-			// if (! subalbum.hasOwnProperty("includedFilesByCodesSimpleCombination"))
-			// 	subalbum.includedFilesByCodesSimpleCombination = new IncludedFiles();
-			// if (! subalbum.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination))
-			// 	subalbum.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
-			// if (codesSimpleCombination !== "," && ! subalbum.includedFilesByCodesSimpleCombination[codesSimpleCombination].hasOwnProperty(number)) {
-			// 	subalbum.includedFilesByCodesSimpleCombination[codesSimpleCombination][number] = {};
-			// 	subalbum.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album = {};
-			// }
 			subalbum.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.countsGot = true;
 		}
 	};
@@ -627,14 +616,6 @@
 
 					if (ithProtectedSubalbum instanceof Album) {
 						ithProtectedSubalbum.initializeIncludedFilesByCodesSimpleCombinationProperty(codesSimpleCombination, number);
-						// if (! ithProtectedSubalbum.hasOwnProperty("includedFilesByCodesSimpleCombination"))
-						// 	ithProtectedSubalbum.includedFilesByCodesSimpleCombination = new IncludedFiles();
-						// if (! ithProtectedSubalbum.includedFilesByCodesSimpleCombination.hasOwnProperty(codesSimpleCombination))
-						// 	ithProtectedSubalbum.includedFilesByCodesSimpleCombination[codesSimpleCombination] = {};
-						// if (codesSimpleCombination !== "," && ! ithProtectedSubalbum.includedFilesByCodesSimpleCombination[codesSimpleCombination].hasOwnProperty(number)) {
-						// 	ithProtectedSubalbum.includedFilesByCodesSimpleCombination[codesSimpleCombination][number] = {};
-						// 	ithProtectedSubalbum.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album = {};
-						// }
 						ithProtectedSubalbum.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.countsGot = true;
 					}
 				} else {
@@ -2024,7 +2005,7 @@
 				// add the various counts
 				// resultsAlbumFinal.numsMediaInSubTree = resultsAlbumFinal.media.imagesAndVideosCount();
 				resultsAlbumFinal.numsMedia = resultsAlbumFinal.media.imagesAndVideosCount();
-				resultsAlbumFinal.numPositionsInTree = resultsAlbumFinal.positionsAndMediaInTree.length;
+				// resultsAlbumFinal.numPositionsInTree = resultsAlbumFinal.positionsAndMediaInTree.length;
 
 				resultsAlbumFinal.nonGeotagged.numsMedia = resultsAlbumFinal.media.filter(
 					singleMedia => ! singleMedia.hasGpsData()
