@@ -4,21 +4,41 @@ Albums and media can be protected by password. Various passwords can be used for
 
 ### Configuration
 
-The passwords cannot be in the album tree: the album tree will have _password_ files (the actual name is set by the option `passwords_marker`), whose lines may be:
+MyPhotoShare manages the password using two types of file:
 
-* a _password identifier_: the album and all its subalbums will be protected by the password assigned to the identifier; can consist of every non-space character except '-' (dash) and ',' (comma);
-* a _password identifier_ followed by the some flag (or a dash if none) and a _pattern_ (shell wildcards are understood): the subalbums/media matched by the pattern will be protected by the password assigned to the identifier;
+#### The file that sets the passwords (passwords file)
 
-The _password identifier_ is used to pick the password from a _passwords file_ whose name is set by option `password_file`. The _password file_ is needed because putting the passwords inside the albums would expose them.
+This files resides usually in the configuration directory (usually /etc); its name (without the path) is set by option `password_file`.
 
-The flags are some of the available flags, comma-separated (or a dash if none), without any space withing them:
+The passwords file is in the configuration directory because putting the passwords declaration inside the albums would expose them.
+
+The _passwords file_ has many lines: each line has:
+- a _password identifier_; an identifier can have every non-space character except '-' (dash) and ',' (comma);
+- the corresponding password;
+
+identifier and password are separated by one or more _spaces_.
+
+After the identifier and the following spaces, _everything_ till the end of line is the password, i.e., the password includes the trailing spaces, if any; this is a feature, it is intended to make more secure passwords.
+
+#### The files that apply the passwords (password markers)
+
+The album tree will have _password markers_ (the actual name is set by the option `passwords_marker`), whose lines may be either:
+
+* a _password identifier_ without anything else: in this case the album and all its subalbums will be protected by the password assigned to the identifier;
+* a _password identifier_ followed by some flag (or a dash if none) and a _pattern_ (shell wildcards are understood): the subalbums/media matched by the pattern will be protected by the password assigned to the identifier;
+
+The _password identifier_ is used to pick the password from the _passwords file_ whose
+
+The flags field contains some of the available flags, comma-separated (or a dash if none), without any space withing them:
 - "ci/cs": case sensitive/insensitive (default: ci)
 - "part/whole": whole name/part o it (default: part)
 - "filesonly/dirsonly/both": only check against file names/dir names (default: both)
 
-The _pattern_ will match the entire file/album name or a part of it, according to the "part/whole" flag: if "whole", `jpg` will only match the `jpg` file (that is, probably nothing), in order to match files ending in `jpg` you must use `*.jpg`; if "part", `jpg` will match all the files which begin, contain or end with "jpg";. The available wildcards are documented at https://docs.python.org/3.4/library/fnmatch.html.
+The _pattern_ will match the entire file/album name or a part of it, according to the "part/whole" flag:
+- if "whole", `jpg` will only match the `jpg` file (that is, probably nothing), in order to match files ending in `jpg` you must use `*.jpg`;
+- if "part", `jpg` will match all the files which begin, contain or end with "jpg";
 
-The _passwords file_ has many lines, each one has with a _password identifier_ and the corresponding password separated by _spaces_. After the identifier and the following spaces, _everything_ till the end of line is the password, i.e., the password includes the trailing spaces, if any; this is a feature, it is intended to make more secure passwords.
+The available wildcards are documented at https://docs.python.org/3.4/library/fnmatch.html.
 
 ### How the scanner manages the passwords
 
