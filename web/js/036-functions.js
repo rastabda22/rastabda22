@@ -1327,7 +1327,7 @@
 								return;
 							} else  {
 								let iSubalbum = env.currentAlbum.subalbums.findIndex(subalbum => randomMediaAlbumCacheBase.indexOf(subalbum.cacheBase) === 0);
-								env.currentAlbum.pickRandomMediaAndInsertIt(iSubalbum, function() {}, onlyShowNonGeotaggedContent);
+								env.currentAlbum.pickRandomMediaAndInsertIt(iSubalbum, onlyShowNonGeotaggedContent);
 							}
 						}
 					)
