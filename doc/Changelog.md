@@ -1,3 +1,6 @@
+### version v5.3.7 (August 27, 2021)
+
+* subalbums showing is now faster
 * non-geotagged mode now works with searches too
 * bug fixes
 
