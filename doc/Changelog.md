@@ -1,3 +1,5 @@
+* better explication of password files
+
 ### version v5.3.7 (August 27, 2021)
 
 * subalbums showing is now faster

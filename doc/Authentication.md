@@ -6,11 +6,11 @@ Albums and media can be protected by password. Various passwords can be used for
 
 MyPhotoShare manages the password using two types of file:
 
-#### The file that sets the passwords (passwords file)
+#### The file that sets the passwords (passwords setter)
 
-This files resides usually in the configuration directory (usually /etc); its name (without the path) is set by option `password_file`.
+This files resides in the configuration directory (usually /etc); its name (without the path) is set by option `password_file`.
 
-The passwords file is in the configuration directory because putting the passwords declaration inside the albums would expose them.
+The _passwords file_ is in the configuration directory because putting the passwords declaration inside the albums would expose them.
 
 The _passwords file_ has many lines: each line has:
 - a _password identifier_; an identifier can have every non-space character except '-' (dash) and ',' (comma);
@@ -20,9 +20,9 @@ identifier and password are separated by one or more _spaces_.
 
 After the identifier and the following spaces, _everything_ till the end of line is the password, i.e., the password includes the trailing spaces, if any; this is a feature, it is intended to make more secure passwords.
 
-#### The files that apply the passwords (password markers)
+#### The files that apply the passwords (password appliers)
 
-The album tree will have _password markers_ (the actual name is set by the option `passwords_marker`), whose lines may be either:
+The album tree will have _password appliers_ (the actual name is set by the option `passwords_marker`), whose lines may be either:
 
 * a _password identifier_ without anything else: in this case the album and all its subalbums will be protected by the password assigned to the identifier;
 * a _password identifier_ followed by some flag (or a dash if none) and a _pattern_ (shell wildcards are understood): the subalbums/media matched by the pattern will be protected by the password assigned to the identifier;
