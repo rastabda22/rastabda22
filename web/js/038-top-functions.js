@@ -3167,7 +3167,8 @@
 				m.off("contextmenu").on(
 					"contextmenu",
 					function(ev) {
-						if (env.isMobile.any() && ev.originalEvent.button === 0) {
+						if (env.isMobile.any()) {
+						// if (env.isMobile.any() && ev.originalEvent.button === 0) {
 							updateMapAndContinue(ev, true);
 							return false;
 						}
