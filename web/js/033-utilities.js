@@ -2996,6 +2996,9 @@
 				thumbObject = $("#popup-images-wrapper .highlighted").children(".thumb-container").children(".thumbnail");
 			else
 				thumbObject = $("#popup-images-wrapper img.thumbnail").first();
+
+			if (thumbObject[0] === undefined)
+				return;
 		}
 
 		let offset;
