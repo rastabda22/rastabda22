@@ -3130,7 +3130,29 @@
 			env.pruneCluster = new PruneClusterForLeaflet(150, 70);
 			PruneCluster.Cluster.ENABLE_MARKERS_LIST = true;
 
-			// modify the prunecluster so that the click can be managed in order to show the photo popup
+			// modify the marker and the prunecluster so that the click can be managed in order to show the photo popup
+			env.pruneCluster.BuildLeafletMarker	 = function (marker, position) {
+				var m = new L.Marker(position);
+				this.PrepareLeafletMarker(m, marker.data, marker.category);
+				m.off("click").on(
+					"click",
+					function(ev) {
+						updateMapAndContinue(ev);
+					}
+				);
+				m.off("contextmenu").on(
+					"contextmenu",
+					function(ev) {
+						if (env.isMobile.any()) {
+						// if (env.isMobile.any() && ev.originalEvent.button === 0) {
+							updateMapAndContinue(ev, true);
+							return false;
+						}
+					}
+				);
+				return m;
+			};
+			
 			env.pruneCluster.BuildLeafletCluster = function (cluster, position) {
 				var m = new L.Marker(position, {
 					icon: env.pruneCluster.BuildLeafletClusterIcon(cluster)
