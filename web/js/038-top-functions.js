@@ -3410,10 +3410,11 @@
 							}
 						}
 
-						if (! env.mapAlbum.numsMedia.imagesAndVideosTotal()) {
+						if (! env.mapAlbum.media.length) {
 							$("#loading").hide();
 							env.popup.remove();
 						} else {
+							env.mapAlbum.numsMedia = env.mapAlbum.media.imagesAndVideosCount();
 							endPreparingMapAlbumAndUpdatePopup();
 						}
 					}
