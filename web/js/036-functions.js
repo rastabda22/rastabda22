@@ -1,4 +1,3 @@
-/*jshint esversion: 6 */
 (function() {
 
 	var phFl = new PhotoFloat();

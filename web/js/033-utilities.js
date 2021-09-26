@@ -1,4 +1,3 @@
-/*jshint esversion: 6 */
 (function() {
 	var lastSelectionAlbumIndex = 0;
 	var lastMapAlbumIndex = 0;
