@@ -3444,16 +3444,6 @@
 							for (iMediaPosition = 0; iMediaPosition < positionsAndMediaElement.mediaList.length; iMediaPosition ++) {
 								mediaListElement = positionsAndMediaElement.mediaList[iMediaPosition];
 								matchingIndex = env.mapAlbum.media.findIndex(singleMedia => singleMedia.isEqual(mediaListElement));
-								// if (
-								// 	env.mapAlbum.media.some(
-								// 		function(singleMedia, index) {
-								// 			matchingMedia = index;
-								// 			var match = singleMedia.isEqual(mediaListElement);
-								// 			return match;
-								// 		}
-								// 	)
-								// )
-								// 	env.mapAlbum.media.splice(matchingMedia, 1);
 								env.mapAlbum.media.splice(matchingIndex, 1);
 							}
 						}
