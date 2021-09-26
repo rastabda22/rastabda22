@@ -1090,7 +1090,7 @@
 							if (previousMediaIndex < 0)
 								previousMediaIndex = env.currentAlbum.numsMedia.imagesAndVideosTotal() - 1;
 							if (previousMediaIndex === env.currentMediaIndex)
-								break
+								break;
 							if (! onlyShowNonGeotaggedContent || ! env.currentAlbum.media[previousMediaIndex].hasGpsData()) {
 								env.prevMedia = env.currentAlbum.media[previousMediaIndex];
 								env.prevMedia.byDateName = util.pathJoin([env.prevMedia.dayAlbum, env.prevMedia.name]);
@@ -1107,7 +1107,7 @@
 							if (nextMediaIndex > env.currentAlbum.numsMedia.imagesAndVideosTotal() - 1)
 								nextMediaIndex = 0;
 							if (nextMediaIndex === env.currentMediaIndex)
-								break
+								break;
 							if (! onlyShowNonGeotaggedContent || ! env.currentAlbum.media[nextMediaIndex].hasGpsData()) {
 								env.nextMedia = env.currentAlbum.media[nextMediaIndex];
 								env.nextMedia.byDateName = util.pathJoin([env.nextMedia.dayAlbum, env.nextMedia.name]);
@@ -2640,7 +2640,7 @@
 				console.trace();
 			}
 		);
-	}
+	};
 
 	Album.prototype.showSubalbums = function(forcePopulate = false) {
 		let [albumCacheBase, mediaCacheBase, mediaFolderCacheBase, foundAlbumCacheBase, collectionCacheBase] = phFl.decodeHash(location.hash);
