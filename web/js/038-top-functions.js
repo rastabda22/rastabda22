@@ -3450,7 +3450,7 @@
 
 						if (! env.mapAlbum.media.length) {
 							$("#loading").hide();
-							env.popup.remove();
+							$('.leaflet-popup-close-button')[0].click();
 						} else {
 							env.mapAlbum.numsMedia = env.mapAlbum.media.imagesAndVideosCount();
 							endPreparingMapAlbumAndUpdatePopup();
