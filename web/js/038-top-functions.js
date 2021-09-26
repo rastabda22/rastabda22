@@ -284,40 +284,42 @@
 
 					// the counts for inside a search are generated further
 					for (const mode in numSubalbums) {
-						if (
-							isSearchTitle &&
-							singleMedia === null &&
-							(mediaTotalInAlbum[mode] || numSubalbums[mode])
-						) {
-							titleCount[mode] = "<span class='title-count'>(" + util._t(".title-found") + " ";
-							if (numSubalbums[mode]) {
-								titleCount[mode] += numSubalbums[mode] + " " + util._t(".title-albums");
-							}
-
-							if (mediaTotalInAlbum[mode] && numSubalbums[mode])
-								titleCount[mode] += " " + util._t(".title-and") + " ";
-
-							if (mediaTotalInAlbum[mode]) {
-								titleCount[mode] += mediaTotalInAlbum[mode] + " ";
-								if (! imagesTotalInAlbum[mode] && videosTotalInAlbum[mode])
-									titleCount[mode] += util._t(".title-videos");
-								else if (imagesTotalInAlbum[mode] && ! videosTotalInAlbum[mode])
-									titleCount[mode] += util._t(".title-images");
-								else
-									titleCount[mode] += util._t(".title-media");
-							}
-
-							if (env.currentAlbum.hasOwnProperty("removedStopWords") && env.currentAlbum.removedStopWords.length) {
-								// say that some search word hasn't been used
-								titleCount[mode] += " - " + env.currentAlbum.removedStopWords.length + " " + util._t("#removed-stopwords") + ": ";
-								for (i = 0; i < env.currentAlbum.removedStopWords.length; i ++) {
-									if (i)
-										titleCount[mode] += ", ";
-									titleCount[mode] += env.currentAlbum.removedStopWords[i];
+						if (numSubalbums.hasOwnProperty("mode")) {
+							if (
+								isSearchTitle &&
+								singleMedia === null &&
+								(mediaTotalInAlbum[mode] || numSubalbums[mode])
+							) {
+								titleCount[mode] = "<span class='title-count'>(" + util._t(".title-found") + " ";
+								if (numSubalbums[mode]) {
+									titleCount[mode] += numSubalbums[mode] + " " + util._t(".title-albums");
 								}
-							}
 
-							titleCount[mode] += ")</span>";
+								if (mediaTotalInAlbum[mode] && numSubalbums[mode])
+									titleCount[mode] += " " + util._t(".title-and") + " ";
+
+								if (mediaTotalInAlbum[mode]) {
+									titleCount[mode] += mediaTotalInAlbum[mode] + " ";
+									if (! imagesTotalInAlbum[mode] && videosTotalInAlbum[mode])
+										titleCount[mode] += util._t(".title-videos");
+									else if (imagesTotalInAlbum[mode] && ! videosTotalInAlbum[mode])
+										titleCount[mode] += util._t(".title-images");
+									else
+										titleCount[mode] += util._t(".title-media");
+								}
+
+								if (env.currentAlbum.hasOwnProperty("removedStopWords") && env.currentAlbum.removedStopWords.length) {
+									// say that some search word hasn't been used
+									titleCount[mode] += " - " + env.currentAlbum.removedStopWords.length + " " + util._t("#removed-stopwords") + ": ";
+									for (i = 0; i < env.currentAlbum.removedStopWords.length; i ++) {
+										if (i)
+											titleCount[mode] += ", ";
+										titleCount[mode] += env.currentAlbum.removedStopWords[i];
+									}
+								}
+
+								titleCount[mode] += ")</span>";
+							}
 						}
 					}
 				} else {
@@ -371,29 +373,31 @@
 
 						if (singleMedia === null) {
 							for (const mode in numSubalbums) {
-								titleCount[mode] = "<span class='title-count'>(";
-								if (titleComponents.length === 2)
-									titleCount[mode] += mediaTotalInSubAlbums[mode] + " ";
-								else
-									titleCount[mode] += mediaTotalInAlbum[mode] + " ";
-								if (! imagesTotalInAlbum[mode] && videosTotalInAlbum[mode])
-									titleCount[mode] += util._t(".title-videos");
-								else if (imagesTotalInAlbum[mode] && ! videosTotalInAlbum[mode])
-									titleCount[mode] += util._t(".title-images");
-								else {
-									let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
-									let titleCountObject = $(titleCountHtml);
+								if (numSubalbums.hasOwnProperty("mode")) {
+									titleCount[mode] = "<span class='title-count'>(";
 									if (titleComponents.length === 2)
-										titleCountObject.attr("title", imagesTotalInSubAlbums[mode] + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums[mode] + " " + util._t(".title-videos"));
+										titleCount[mode] += mediaTotalInSubAlbums[mode] + " ";
 									else
-										titleCountObject.attr("title", imagesTotalInAlbum[mode] + " " + util._t(".title-images") + ", " + videosTotalInAlbum[mode] + " " + util._t(".title-videos"));
-									titleCount[mode] += titleCountObject.wrapAll('<div>').parent().html();
+										titleCount[mode] += mediaTotalInAlbum[mode] + " ";
+									if (! imagesTotalInAlbum[mode] && videosTotalInAlbum[mode])
+										titleCount[mode] += util._t(".title-videos");
+									else if (imagesTotalInAlbum[mode] && ! videosTotalInAlbum[mode])
+										titleCount[mode] += util._t(".title-images");
+									else {
+										let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
+										let titleCountObject = $(titleCountHtml);
+										if (titleComponents.length === 2)
+											titleCountObject.attr("title", imagesTotalInSubAlbums[mode] + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums[mode] + " " + util._t(".title-videos"));
+										else
+											titleCountObject.attr("title", imagesTotalInAlbum[mode] + " " + util._t(".title-images") + ", " + videosTotalInAlbum[mode] + " " + util._t(".title-videos"));
+										titleCount[mode] += titleCountObject.wrapAll('<div>').parent().html();
+									}
+									if (titleComponents.length >= 5)
+										titleCount[mode] += " " + util._t(".title-in-day-album");
+									else if (titleComponents.length >= 3)
+										titleCount[mode] += " " + util._t(".title-in-date-album");
+									titleCount[mode] += ")</span>";
 								}
-								if (titleComponents.length >= 5)
-									titleCount[mode] += " " + util._t(".title-in-day-album");
-								else if (titleComponents.length >= 3)
-									titleCount[mode] += " " + util._t(".title-in-date-album");
-								titleCount[mode] += ")</span>";
 							}
 						}
 					} else if (isGpsTitle) {
@@ -418,29 +422,31 @@
 
 						if (singleMedia === null) {
 							for (const mode in numSubalbums) {
-								titleCount[mode] = "<span class='title-count'>(";
-								if (titleComponents.length === 2)
-									titleCount[mode] += mediaTotalInSubAlbums[mode] + " ";
-								else
-									titleCount[mode] += mediaTotalInAlbum[mode] + " ";
-								if (! imagesTotalInAlbum[mode] && videosTotalInAlbum[mode])
-									titleCount[mode] += util._t(".title-videos");
-								else if (imagesTotalInAlbum[mode] && ! videosTotalInAlbum[mode])
-									titleCount[mode] += util._t(".title-images");
-								else {
-									let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
-									let titleCountObject = $(titleCountHtml);
+								if (numSubalbums.hasOwnProperty("mode")) {
+									titleCount[mode] = "<span class='title-count'>(";
 									if (titleComponents.length === 2)
-										titleCountObject.attr("title", imagesTotalInSubAlbums[mode] + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums[mode] + " " + util._t(".title-videos"));
+										titleCount[mode] += mediaTotalInSubAlbums[mode] + " ";
 									else
-										titleCountObject.attr("title", imagesTotalInAlbum[mode] + " " + util._t(".title-images") + ", " + videosTotalInAlbum[mode] + " " + util._t(".title-videos"));
-									titleCount[mode] += titleCountObject.wrapAll('<div>').parent().html();
+										titleCount[mode] += mediaTotalInAlbum[mode] + " ";
+									if (! imagesTotalInAlbum[mode] && videosTotalInAlbum[mode])
+										titleCount[mode] += util._t(".title-videos");
+									else if (imagesTotalInAlbum[mode] && ! videosTotalInAlbum[mode])
+										titleCount[mode] += util._t(".title-images");
+									else {
+										let titleCountHtml = "<span class='title-count-detail'>" + util._t(".title-media") + "</span>";
+										let titleCountObject = $(titleCountHtml);
+										if (titleComponents.length === 2)
+											titleCountObject.attr("title", imagesTotalInSubAlbums[mode] + " " + util._t(".title-images") + ", " + videosTotalInSubAlbums[mode] + " " + util._t(".title-videos"));
+										else
+											titleCountObject.attr("title", imagesTotalInAlbum[mode] + " " + util._t(".title-images") + ", " + videosTotalInAlbum[mode] + " " + util._t(".title-videos"));
+										titleCount[mode] += titleCountObject.wrapAll('<div>').parent().html();
+									}
+									if (titleComponents.length >= gpsLevelNumber + 2)
+										titleCount[mode] += " " + util._t(".title-in-gps-album");
+									else if (titleComponents.length >= 3)
+										titleCount[mode] += " " + util._t(".title-in-gpss-album");
+									titleCount[mode] += ")</span>";
 								}
-								if (titleComponents.length >= gpsLevelNumber + 2)
-									titleCount[mode] += " " + util._t(".title-in-gps-album");
-								else if (titleComponents.length >= 3)
-									titleCount[mode] += " " + util._t(".title-in-gpss-album");
-								titleCount[mode] += ")</span>";
 							}
 						}
 					} else if (isSelectionTitle) {
@@ -730,10 +736,12 @@
 
 						if (Object.keys(titleCount).length > 0) {
 							for (const mode in titleCount) {
-								let modeClass = mode;
-								if (mode === "nonGps")
-									modeClass = "non-gps";
-								title += "<span class='" + modeClass + "'>" + titleCount[mode] + "</span>";
+								if (numSubalbums.hasOwnProperty("mode")) {
+									let modeClass = mode;
+									if (mode === "nonGps")
+										modeClass = "non-gps";
+									title += "<span class='" + modeClass + "'>" + titleCount[mode] + "</span>";
+								}
 							}
 						}
 
