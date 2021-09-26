@@ -3059,7 +3059,7 @@
 		function updateMapAndContinue(ev, isLongTap = false) {
 			var updatePromise;
 			if (isLongTap) {
-				updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, env.pruneCluster.Cluster._clusters, true, "shift");
+				updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, env.pruneCluster.Cluster._clusters, true, true);
 			} else {
 				updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, env.pruneCluster.Cluster._clusters);
 			}
@@ -3330,35 +3330,14 @@
 		);
 	};
 
-	TopFunctions.updateMapAlbumOnMapClick = function(evt, clusters, updateMapAlbum = true, shiftOrControl = "") {
+	TopFunctions.updateMapAlbumOnMapClick = function(evt, clusters, updateMapAlbum = true, shiftOrControl = false) {
 
 		return new Promise(
 			function(resolve_updateMapAlbumOnMapClick, reject_updateMapAlbumOnMapClick) {
 				var i;
-				var clickHistoryElement;
-				var shiftKey = shiftOrControl === "shift" ? true : evt.originalEvent.shiftKey;
-				var ctrlKey = shiftOrControl === "control" ? true : evt.originalEvent.ctrlKey;
-
-				$("#loading").show();
-
 				var clickedPosition = evt.latlng;
 
-				if (evt !== null && evt.latlng !== undefined) {
-					clickHistoryElement = {
-							// warning: the value of latlng here is provisional: it will be updated to the cluster latlng
-							latlng: clickedPosition,
-							shiftKey: shiftKey,
-							ctrlKey: ctrlKey,
-							zoom: env.mymap.getZoom(),
-							center: env.mymap.getCenter()
-					};
-				}
-
-
-				// reset the thumbnails if not shift- nor ctrl-clicking
-				if (! shiftKey && ! ctrlKey) {
-					$("#popup-images-wrapper").html("");
-				}
+				$("#loading").show();
 
 				// decide what point is to be used: the nearest to the clicked position
 				var minimumDistance = false, newMinimumDistance, distance, index, iMediaPosition;
@@ -3382,8 +3361,6 @@
 					}
 				}
 				var currentCluster = clusters[index];
-				// update the value of latlng property to the cluster latlng
-				clickHistoryElement.latlng = clusters[index].averagePosition;
 				currentCluster.data.mediaList = [];
 
 				// build the cluster's media name list
@@ -3401,6 +3378,53 @@
 					);
 				}
 
+				var positionsAlreadyInPopup = new PositionsAndMedia([]);
+				var positionsNotYetInPopup = new PositionsAndMedia([]);
+				if (! env.mapAlbum.isEmpty()) {
+					for (indexPositions = 0; indexPositions < positionsAndMediaInCluster.length; indexPositions ++) {
+						let positionsAndMediaElement = positionsAndMediaInCluster[indexPositions];
+						if (env.mapAlbum.positionsAndMediaInTree.findIndex(element => positionsAndMediaElement.matchPosition(element)) !== -1)
+							// the position was present
+							positionsAlreadyInPopup.push(positionsAndMediaElement);
+						else
+							// the position was not present
+							positionsNotYetInPopup.push(positionsAndMediaElement);
+					}
+				} else {
+					positionsNotYetInPopup = positionsAndMediaInCluster;
+				}
+
+				var clickHistoryElement;
+				var shiftKey = evt.originalEvent.shiftKey;
+				var ctrlKey = evt.originalEvent.ctrlKey;
+				if (shiftOrControl) {
+					if (env.mapAlbum.isEmpty() || ! positionsAlreadyInPopup.length) {
+						shiftKey = true;
+						ctrlKey = false;
+					} else if (! positionsNotYetInPopup.length) {
+						shiftKey = false;
+						ctrlKey = true;
+					} else {
+						// show a popup with + and - in order to tell the app if we must add (shift) or remove (control)
+					}
+				}
+
+				if (evt !== null && evt.latlng !== undefined) {
+					clickHistoryElement = {
+							// warning: the value of latlng here is provisional: it will be updated to the cluster latlng
+							latlng: clusters[index].averagePosition,
+							shiftKey: shiftKey,
+							ctrlKey: ctrlKey,
+							zoom: env.mymap.getZoom(),
+							center: env.mymap.getCenter()
+					};
+				}
+
+				// reset the thumbnails if not shift- nor ctrl-clicking
+				if (! shiftKey && ! ctrlKey) {
+					$("#popup-images-wrapper").html("");
+				}
+
 				var indexPositions, imageLoadPromise, mediaListElement;
 				if (ctrlKey) {
 					if (! env.mapAlbum.isEmpty()) {
@@ -3408,35 +3432,29 @@
 
 						env.mapAlbum.clickHistory.push(clickHistoryElement);
 
-						var matchingIndex, matchingMedia, positionsAndMediaElement;
-						for (indexPositions = 0; indexPositions < positionsAndMediaInCluster.length; indexPositions ++) {
-							positionsAndMediaElement = positionsAndMediaInCluster[indexPositions];
-							if (
-								env.mapAlbum.positionsAndMediaInTree.some(
-									function(element, index) {
-										matchingIndex = index;
-										return positionsAndMediaElement.matchPosition(element);
-									}
-								)
-							) {
-								// the position was present: remove the position itself...
-								env.mapAlbum.positionsAndMediaInTree.splice(matchingIndex, 1);
-								env.mapAlbum.numPositionsInTree = env.mapAlbum.positionsAndMediaInTree.length;
+						var matchingIndex, matchingMedia;
+						for (indexPositions = 0; indexPositions < positionsAlreadyInPopup.length; indexPositions ++) {
+							let positionsAndMediaElement = positionsAlreadyInPopup[indexPositions];
+							matchingIndex = env.mapAlbum.positionsAndMediaInTree.findIndex((element) => positionsAndMediaElement.matchPosition(element));
+							// remove the position from the positions list
+							env.mapAlbum.positionsAndMediaInTree.splice(matchingIndex, 1);
+							env.mapAlbum.numPositionsInTree = env.mapAlbum.positionsAndMediaInTree.length;
 
-								// ...and the corresponding photos
-								for (iMediaPosition = 0; iMediaPosition < positionsAndMediaElement.mediaList.length; iMediaPosition ++) {
-									mediaListElement = positionsAndMediaElement.mediaList[iMediaPosition];
-									if (
-										env.mapAlbum.media.some(
-											function(media, index) {
-												matchingMedia = index;
-												var match = media.isEqual(mediaListElement);
-												return match;
-											}
-										)
-									)
-										env.mapAlbum.media.splice(matchingMedia, 1);
-								}
+							// ...and the corresponding photos from the media list
+							for (iMediaPosition = 0; iMediaPosition < positionsAndMediaElement.mediaList.length; iMediaPosition ++) {
+								mediaListElement = positionsAndMediaElement.mediaList[iMediaPosition];
+								matchingIndex = env.mapAlbum.media.findIndex(singleMedia => singleMedia.isEqual(mediaListElement));
+								// if (
+								// 	env.mapAlbum.media.some(
+								// 		function(singleMedia, index) {
+								// 			matchingMedia = index;
+								// 			var match = singleMedia.isEqual(mediaListElement);
+								// 			return match;
+								// 		}
+								// 	)
+								// )
+								// 	env.mapAlbum.media.splice(matchingMedia, 1);
+								env.mapAlbum.media.splice(matchingIndex, 1);
 							}
 						}
 
@@ -3452,43 +3470,29 @@
 					// not control click: add (with shift) or replace (without shift) the positions
 					imageLoadPromise = new Promise(
 						function(resolve_imageLoad) {
-							var indexPositions, positionsAndMediaElement;
+							var indexPositions;
 
 							if (env.mapAlbum.isEmpty() || env.mapAlbum.numsMedia.imagesAndVideosTotal() === 0 || ! shiftKey) {
 								// normal click or shift click without previous content
 
 								env.mapAlbum = util.initializeMapAlbum();
-
 								env.mapAlbum.clickHistory = [clickHistoryElement];
-
 								env.mapAlbum.addMediaFromPositionsToMapAlbum(positionsAndMediaInCluster, resolve_imageLoad);
-							} else {
+							} else if (positionsNotYetInPopup.length){
 								// shift-click with previous content
 								env.mapAlbum.clickHistory.push(clickHistoryElement);
 
 								// determine what positions aren't yet in selectedPositions array
-								var missingPositions = new PositionsAndMedia([]);
-								for (indexPositions = 0; indexPositions < positionsAndMediaInCluster.length; indexPositions ++) {
-									positionsAndMediaElement = positionsAndMediaInCluster[indexPositions];
-									if (
-										env.mapAlbum.positionsAndMediaInTree.every(
-											function(element) {
-												return ! positionsAndMediaElement.matchPosition(element);
-											}
-										)
-									) {
-										missingPositions.push(positionsAndMediaElement);
-										env.mapAlbum.positionsAndMediaInTree.push(positionsAndMediaElement);
-										env.mapAlbum.numPositionsInTree = env.mapAlbum.positionsAndMediaInTree.length;
-									}
+								for (indexPositions = 0; indexPositions < positionsNotYetInPopup.length; indexPositions ++) {
+									let positionsAndMediaElement = positionsNotYetInPopup[indexPositions];
+									env.mapAlbum.positionsAndMediaInTree.push(positionsAndMediaElement);
+									env.mapAlbum.numPositionsInTree = env.mapAlbum.positionsAndMediaInTree.length;
 								}
-								positionsAndMediaInCluster = missingPositions;
-								if (missingPositions.length > 0)
-									env.mapAlbum.addMediaFromPositionsToMapAlbum(positionsAndMediaInCluster, resolve_imageLoad);
+								if (positionsNotYetInPopup.length)
+									env.mapAlbum.addMediaFromPositionsToMapAlbum(positionsNotYetInPopup, resolve_imageLoad);
 								else
 									$("#loading").hide();
 							}
-
 						}
 					);
 
