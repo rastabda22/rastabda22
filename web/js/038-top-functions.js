@@ -3152,7 +3152,7 @@
 				);
 				return m;
 			};
-			
+
 			env.pruneCluster.BuildLeafletCluster = function (cluster, position) {
 				var m = new L.Marker(position, {
 					icon: env.pruneCluster.BuildLeafletClusterIcon(cluster)
@@ -3380,10 +3380,10 @@
 				currentCluster.data.mediaList = [];
 
 				// build the cluster's media name list
-				var positionsAndCounts = new PositionsAndMedia([]);
+				var positionsAndMediaInCluster = new PositionsAndMedia([]);
 				for(i = 0; i < currentCluster._clusterMarkers.length; i ++) {
 					currentCluster.data.mediaList = currentCluster.data.mediaList.concat(currentCluster._clusterMarkers[i].data.mediaList);
-					positionsAndCounts.push(new PositionAndMedia(
+					positionsAndMediaInCluster.push(new PositionAndMedia(
 							{
 								lat: currentCluster._clusterMarkers[i].position.lat,
 								lng: currentCluster._clusterMarkers[i].position.lng,
@@ -3401,14 +3401,14 @@
 
 						env.mapAlbum.clickHistory.push(clickHistoryElement);
 
-						var matchingIndex, matchingMedia, positionsAndCountsElement;
-						for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
-							positionsAndCountsElement = positionsAndCounts[indexPositions];
+						var matchingIndex, matchingMedia, positionsAndMediaElement;
+						for (indexPositions = 0; indexPositions < positionsAndMediaInCluster.length; indexPositions ++) {
+							positionsAndMediaElement = positionsAndMediaInCluster[indexPositions];
 							if (
 								env.mapAlbum.positionsAndMediaInTree.some(
 									function(element, index) {
 										matchingIndex = index;
-										return positionsAndCountsElement.matchPosition(element);
+										return positionsAndMediaElement.matchPosition(element);
 									}
 								)
 							) {
@@ -3417,8 +3417,8 @@
 								env.mapAlbum.numPositionsInTree = env.mapAlbum.positionsAndMediaInTree.length;
 
 								// ...and the corresponding photos
-								for (iMediaPosition = 0; iMediaPosition < positionsAndCountsElement.mediaList.length; iMediaPosition ++) {
-									mediaListElement = positionsAndCountsElement.mediaList[iMediaPosition];
+								for (iMediaPosition = 0; iMediaPosition < positionsAndMediaElement.mediaList.length; iMediaPosition ++) {
+									mediaListElement = positionsAndMediaElement.mediaList[iMediaPosition];
 									if (
 										env.mapAlbum.media.some(
 											function(media, index) {
@@ -3445,7 +3445,7 @@
 					// not control click: add (with shift) or replace (without shift) the positions
 					imageLoadPromise = new Promise(
 						function(resolve_imageLoad) {
-							var indexPositions, positionsAndCountsElement;
+							var indexPositions, positionsAndMediaElement;
 
 							if (env.mapAlbum.isEmpty() || env.mapAlbum.numsMedia.imagesAndVideosTotal() === 0 || ! shiftKey) {
 								// normal click or shift click without previous content
@@ -3454,30 +3454,30 @@
 
 								env.mapAlbum.clickHistory = [clickHistoryElement];
 
-								env.mapAlbum.addMediaFromPositionsToMapAlbum(positionsAndCounts, resolve_imageLoad);
+								env.mapAlbum.addMediaFromPositionsToMapAlbum(positionsAndMediaInCluster, resolve_imageLoad);
 							} else {
 								// shift-click with previous content
 								env.mapAlbum.clickHistory.push(clickHistoryElement);
 
 								// determine what positions aren't yet in selectedPositions array
 								var missingPositions = new PositionsAndMedia([]);
-								for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
-									positionsAndCountsElement = positionsAndCounts[indexPositions];
+								for (indexPositions = 0; indexPositions < positionsAndMediaInCluster.length; indexPositions ++) {
+									positionsAndMediaElement = positionsAndMediaInCluster[indexPositions];
 									if (
 										env.mapAlbum.positionsAndMediaInTree.every(
 											function(element) {
-												return ! positionsAndCountsElement.matchPosition(element);
+												return ! positionsAndMediaElement.matchPosition(element);
 											}
 										)
 									) {
-										missingPositions.push(positionsAndCountsElement);
-										env.mapAlbum.positionsAndMediaInTree.push(positionsAndCountsElement);
+										missingPositions.push(positionsAndMediaElement);
+										env.mapAlbum.positionsAndMediaInTree.push(positionsAndMediaElement);
 										env.mapAlbum.numPositionsInTree = env.mapAlbum.positionsAndMediaInTree.length;
 									}
 								}
-								positionsAndCounts = missingPositions;
+								positionsAndMediaInCluster = missingPositions;
 								if (missingPositions.length > 0)
-									env.mapAlbum.addMediaFromPositionsToMapAlbum(positionsAndCounts, resolve_imageLoad);
+									env.mapAlbum.addMediaFromPositionsToMapAlbum(positionsAndMediaInCluster, resolve_imageLoad);
 								else
 									$("#loading").hide();
 							}

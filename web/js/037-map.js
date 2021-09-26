@@ -171,19 +171,19 @@
 		MapFunctions.setPopupPosition();
 	};
 
-	Album.prototype.addMediaFromPositionsToMapAlbum = function(positionsAndCounts, resolve_imageLoad) {
+	Album.prototype.addMediaFromPositionsToMapAlbum = function(positionsAndMedia, resolve_imageLoad) {
 
 		var mediaListElement, indexPositions, indexPhoto, markerClass, photoIndex, mediaIndex;
-		var photosByAlbum = {}, positionsAndCountsElement;
+		var photosByAlbum = {}, positionsAndMediaElement;
 		var self = this;
 
 		// in order to add the html code for the images to a string,
 		// we group the photos by album: this way we rationalize the process of getting them
-		for (indexPositions = 0; indexPositions < positionsAndCounts.length; indexPositions ++) {
-			positionsAndCountsElement = positionsAndCounts[indexPositions];
-			markerClass = getMarkerClass(positionsAndCountsElement);
-			for (indexPhoto = 0; indexPhoto < positionsAndCountsElement.mediaList.length; indexPhoto ++) {
-				mediaListElement = positionsAndCountsElement.mediaList[indexPhoto];
+		for (indexPositions = 0; indexPositions < positionsAndMedia.length; indexPositions ++) {
+			positionsAndMediaElement = positionsAndMedia[indexPositions];
+			markerClass = getMarkerClass(positionsAndMediaElement);
+			for (indexPhoto = 0; indexPhoto < positionsAndMediaElement.mediaList.length; indexPhoto ++) {
+				mediaListElement = positionsAndMediaElement.mediaList[indexPhoto];
 				if (! photosByAlbum.hasOwnProperty(mediaListElement.foldersCacheBase)) {
 					photosByAlbum[mediaListElement.foldersCacheBase] = [];
 				}
@@ -230,7 +230,7 @@
 		Promise.all(cacheBasesPromises).then(
 			function() {
 				self.numsMedia = self.media.imagesAndVideosCount();
-				self.positionsAndMediaInTree.mergePositionsAndMedia(positionsAndCounts);
+				self.positionsAndMediaInTree.mergePositionsAndMedia(positionsAndMedia);
 				self.numPositionsInTree = self.positionsAndMediaInTree.length;
 				resolve_imageLoad(self);
 			}
