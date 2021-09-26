@@ -2886,7 +2886,7 @@
 
 		Promise.all(subalbumsPromises).then(
 			function allRandomImagesGot() {
-				if (! Utilities.aSingleMediaIsHighlighted())
+				if (! util.aSingleMediaIsHighlighted())
 					util.scrollToHighlightedSubalbum();
 				if (populateSubalbums)
 					env.albumInSubalbumDiv = self;
