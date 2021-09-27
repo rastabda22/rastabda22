@@ -177,12 +177,12 @@
 	margin-left: -11px;
 } */
 
-#mapdiv .leaflet-popup.SE {
-	left: -25px !important;
+#mapdiv .leaflet-popup.SE, #mapdiv .shift-or-control {
+	left: -26px !important;
 	top: 17px;
 }
 
-#mapdiv .leaflet-popup.SE::after {
+#mapdiv .leaflet-popup.SE::after, #mapdiv .shift-or-control::after {
 	top: 0;
 	left: 40px;
 	border-bottom-color: slategray;
@@ -190,6 +190,47 @@
 	margin-left: -18px;
 	margin-top: -18px;
   border-width: 0px 4px 18px;
+}
+
+#mapdiv .shift-or-control {
+	margin-top: 18px;
+	top: 0;
+}
+
+#mapdiv .shift-or-control .leaflet-popup-content-wrapper {
+	box-shadow: none;
+}
+
+#mapdiv .shift-or-control .leaflet-popup-content {
+	text-align: center;
+	font-size: 150%;
+	width: 33px !important;
+	min-width: 0 !important;
+	cursor: pointer;
+	z-index: 900;
+	margin: 10px;
+}
+
+#mapdiv .shift-or-control .cluster-add, #mapdiv .shift-or-control .cluster-subtract {
+	background-color: white;
+	padding: 3px;
+	display: block;
+	width: 25px;
+	height: 25px;
+	text-align: center;
+	text-decoration: none;
+	font: bold 25px 'Lucida Console', Monaco, monospace;
+	line-height: 25px;
+	color: black !important;
+	border: 2px solid black;
+}
+
+#mapdiv .shift-or-control .cluster-subtract {
+	border-top: 1px solid #ccc;
+}
+
+#mapdiv .shift-or-control .cluster-add {
+	border-bottom: 1px solid #ccc;
 }
 
 #mapdiv .leaflet-popup.NW {

@@ -3150,6 +3150,7 @@
 				m.off("contextmenu").on(
 					"contextmenu",
 					function(ev) {
+						ev.originalEvent.preventDefault();
 						if (env.isMobile.any()) {
 						// if (env.isMobile.any() && ev.originalEvent.button === 0) {
 							updateMapAndContinue(ev, true);
@@ -3174,6 +3175,7 @@
 				m.off("contextmenu").on(
 					"contextmenu",
 					function(ev) {
+						ev.originalEvent.preventDefault();
 						if (env.isMobile.any()) {
 						// if (env.isMobile.any() && ev.originalEvent.button === 0) {
 							updateMapAndContinue(ev, true);
@@ -3269,6 +3271,7 @@
 			env.mymap.off("contextmenu").on(
 				"contextmenu",
 				function(ev) {
+					ev.originalEvent.preventDefault();
 					if (env.isMobile.any() && ev.originalEvent.button === 0) {
 						updateMapAndContinue(ev, true);
 						return false;
@@ -3378,40 +3381,85 @@
 					);
 				}
 
-				var positionsAlreadyInPopup = new PositionsAndMedia([]);
-				var positionsNotYetInPopup = new PositionsAndMedia([]);
+				var clusterPositionsAlreadyInPopup = new PositionsAndMedia([]);
+				var clusterPositionsNotYetInPopup = new PositionsAndMedia([]);
 				if (! env.mapAlbum.isEmpty()) {
 					for (indexPositions = 0; indexPositions < positionsAndMediaInCluster.length; indexPositions ++) {
 						let positionsAndMediaElement = positionsAndMediaInCluster[indexPositions];
 						if (env.mapAlbum.positionsAndMediaInTree.findIndex(element => positionsAndMediaElement.matchPosition(element)) !== -1)
 							// the position was present
-							positionsAlreadyInPopup.push(positionsAndMediaElement);
+							clusterPositionsAlreadyInPopup.push(positionsAndMediaElement);
 						else
 							// the position was not present
-							positionsNotYetInPopup.push(positionsAndMediaElement);
+							clusterPositionsNotYetInPopup.push(positionsAndMediaElement);
 					}
 				} else {
-					positionsNotYetInPopup = positionsAndMediaInCluster;
+					clusterPositionsNotYetInPopup = positionsAndMediaInCluster;
 				}
 
-				var clickHistoryElement;
-				var shiftKey = evt.originalEvent.shiftKey;
-				var ctrlKey = evt.originalEvent.ctrlKey;
-				if (shiftOrControl) {
-					if (env.mapAlbum.isEmpty() || ! positionsAlreadyInPopup.length) {
+				var clickHistoryElement, shiftKey, ctrlKey;
+				if (evt.shiftKey !== undefined) {
+					shiftKey = evt.shiftKey;
+					ctrlKey = evt.ctrlKey;
+				} else {
+					shiftKey = evt.originalEvent.shiftKey;
+					ctrlKey = evt.originalEvent.ctrlKey;
+				}
+				if (shiftOrControl && evt.fromAddOrSubtract === undefined) {
+					if ($('.shift-or-control').length)
+						$('.shift-or-control .leaflet-popup-close-button')[0].click();
+					if (env.mapAlbum.isEmpty() || ! clusterPositionsAlreadyInPopup.length) {
 						shiftKey = true;
 						ctrlKey = false;
-					} else if (! positionsNotYetInPopup.length) {
+					} else if (! clusterPositionsNotYetInPopup.length) {
 						shiftKey = false;
 						ctrlKey = true;
 					} else {
 						// show a popup with + and - in order to tell the app if we must add (shift) or remove (control)
+						L.popup({className: "shift-or-control"})
+							.setLatLng(currentCluster.averagePosition)
+							.setContent('<div class="cluster-add">+</div><div class="cluster-subtract">-</div>')
+							.addTo(env.mymap)
+							.openOn(env.mymap);
+						$("#loading").hide();
+						$(".cluster-add").off("click").on(
+							"click",
+							function(ev) {
+								ev.shiftKey = true;
+								ev.ctrlKey = false;
+								ev.latlng = evt.latlng;
+								ev.fromAddOrSubtract = true;
+								updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, clusters, updateMapAlbum);
+								updatePromise.then(
+									TopFunctions.prepareAndDoPopupUpdate,
+									function() {
+										console.trace();
+									}
+								);
+							}
+						);
+						$(".cluster-subtract").off("click").on(
+							"click",
+							function(ev) {
+								ev.shiftKey = false;
+								ev.ctrlKey = true;
+								ev.latlng = evt.latlng;
+								ev.fromAddOrSubtract = true;
+								updatePromise = TopFunctions.updateMapAlbumOnMapClick(ev, clusters, updateMapAlbum);
+								updatePromise.then(
+									TopFunctions.prepareAndDoPopupUpdate,
+									function() {
+										console.trace();
+									}
+								);
+							}
+						);
+						return;
 					}
 				}
 
 				if (evt !== null && evt.latlng !== undefined) {
 					clickHistoryElement = {
-							// warning: the value of latlng here is provisional: it will be updated to the cluster latlng
 							latlng: clusters[index].averagePosition,
 							shiftKey: shiftKey,
 							ctrlKey: ctrlKey,
@@ -3433,8 +3481,8 @@
 						env.mapAlbum.clickHistory.push(clickHistoryElement);
 
 						var matchingIndex, matchingMedia;
-						for (indexPositions = 0; indexPositions < positionsAlreadyInPopup.length; indexPositions ++) {
-							let positionsAndMediaElement = positionsAlreadyInPopup[indexPositions];
+						for (indexPositions = 0; indexPositions < clusterPositionsAlreadyInPopup.length; indexPositions ++) {
+							let positionsAndMediaElement = clusterPositionsAlreadyInPopup[indexPositions];
 							matchingIndex = env.mapAlbum.positionsAndMediaInTree.findIndex((element) => positionsAndMediaElement.matchPosition(element));
 							// remove the position from the positions list
 							env.mapAlbum.positionsAndMediaInTree.splice(matchingIndex, 1);
@@ -3468,21 +3516,19 @@
 								env.mapAlbum = util.initializeMapAlbum();
 								env.mapAlbum.clickHistory = [clickHistoryElement];
 								env.mapAlbum.addMediaFromPositionsToMapAlbum(positionsAndMediaInCluster, resolve_imageLoad);
-							} else if (positionsNotYetInPopup.length){
+							} else if (clusterPositionsNotYetInPopup.length){
 								// shift-click with previous content
 								env.mapAlbum.clickHistory.push(clickHistoryElement);
 
 								// determine what positions aren't yet in selectedPositions array
-								for (indexPositions = 0; indexPositions < positionsNotYetInPopup.length; indexPositions ++) {
-									let positionsAndMediaElement = positionsNotYetInPopup[indexPositions];
+								for (indexPositions = 0; indexPositions < clusterPositionsNotYetInPopup.length; indexPositions ++) {
+									let positionsAndMediaElement = clusterPositionsNotYetInPopup[indexPositions];
 									env.mapAlbum.positionsAndMediaInTree.push(positionsAndMediaElement);
 									env.mapAlbum.numPositionsInTree = env.mapAlbum.positionsAndMediaInTree.length;
 								}
-								if (positionsNotYetInPopup.length)
-									env.mapAlbum.addMediaFromPositionsToMapAlbum(positionsNotYetInPopup, resolve_imageLoad);
-								else
-									$("#loading").hide();
+								env.mapAlbum.addMediaFromPositionsToMapAlbum(clusterPositionsNotYetInPopup, resolve_imageLoad);
 							}
+							$("#loading").hide();
 						}
 					);
 

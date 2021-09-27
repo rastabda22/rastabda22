@@ -67,6 +67,10 @@ $(document).ready(function() {
 				// stop the video, otherwise it keeps playing
 				$("video#media-center")[0].pause();
 				return false;
+			} else if (isPopup && $(".shift-or-control").length) {
+				// the +/- popup is there: close it
+				$('.shift-or-control .leaflet-popup-close-button')[0].click();
+				return false;
 			} else if (isPopup) {
 				// the popup is there: close it
 				env.highlightedObjectId = null;
