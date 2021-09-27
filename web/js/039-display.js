@@ -1122,7 +1122,7 @@ $(document).ready(function() {
 											if (upAlbum.hasVeiledProtectedContent() && ! env.fromEscKey) {
 											// if (upAlbum.hasVeiledProtectedContent() && ! env.fromEscKey) {
 												$("#loading").hide();
-												$("#protected-conteddnt-unveil")[0].click();
+												$("#protected-content-unveil")[0].click();
 											} else {
 												util.errorThenGoUp();
 											}
