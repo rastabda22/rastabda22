@@ -69,12 +69,12 @@ $(document).ready(function() {
 				return false;
 			} else if (isPopup && $(".shift-or-control").length) {
 				// the +/- popup is there: close it
-				$('.shift-or-control .leaflet-popup-close-button')[0].click();
+				$('.shift-or-control .leaflet-popup-close-button').click();
 				return false;
 			} else if (isPopup) {
 				// the popup is there: close it
 				env.highlightedObjectId = null;
-				$('.leaflet-popup-close-button')[0].click();
+				$(".leaflet-popup-close-button").click();
 				env.mapAlbum = util.initializeMapAlbum();
 				// env.mapAlbum = {};
 				// $('#popup #popup-content').html("");
@@ -1023,7 +1023,7 @@ $(document).ready(function() {
 
 							if (util.isPopup()) {
 								env.popupRefreshType = "mapAlbum";
-								$('.leaflet-popup-close-button')[0].click();
+								$(".leaflet-popup-close-button").click();
 							} else {
 								env.popupRefreshType = "none";
 							}

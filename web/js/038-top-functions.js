@@ -902,7 +902,7 @@
 		if (this.isSelected()) {
 			this.removeFromSelection(clickedSelector);
 			if (util.isPopup() && env.currentAlbum.isSelection()) {
-				$('.leaflet-popup-close-button')[0].click();
+				$(".leaflet-popup-close-button").click();
 				if (env.mapAlbum.media.length > 1) {
 					env.popupRefreshType = "mapAlbum";
 					// close the map and reopen it
@@ -1536,7 +1536,7 @@
 
 									if (util.isPopup()) {
 										env.popupRefreshType = "mapAlbum";
-										$('.leaflet-popup-close-button')[0].click();
+										$(".leaflet-popup-close-button").click();
 									} else {
 										env.popupRefreshType = "none";
 									}
@@ -3303,13 +3303,14 @@
 			{
 				maxWidth: env.maxWidthForPopupContent,
 				maxHeight: env.maxHeightForPopupContent,
-				autoPan: false
+				autoPan: false,
+				className: "media-popup"
 			}
 		).setContent(env.titleWrapper)
 		.setLatLng(env.mapAlbum.positionsAndMediaInTree.averagePosition())
 		.openOn(env.mymap);
 
-		$('.leaflet-popup-close-button').off("click").on(
+		$(".media-popup .leaflet-popup-close-button").off("click").on(
 			"click",
 			function() {
 				$(".modal-close").show();
@@ -3425,6 +3426,7 @@
 						$(".cluster-add").off("click").on(
 							"click",
 							function(ev) {
+								$('.shift-or-control .leaflet-popup-close-button').click();
 								ev.shiftKey = true;
 								ev.ctrlKey = false;
 								ev.latlng = evt.latlng;
@@ -3441,6 +3443,7 @@
 						$(".cluster-subtract").off("click").on(
 							"click",
 							function(ev) {
+								$('.shift-or-control .leaflet-popup-close-button').click();
 								ev.shiftKey = false;
 								ev.ctrlKey = true;
 								ev.latlng = evt.latlng;
@@ -3498,7 +3501,7 @@
 
 						if (! env.mapAlbum.media.length) {
 							$("#loading").hide();
-							$('.leaflet-popup-close-button')[0].click();
+							$(".leaflet-popup-close-button").click();
 						} else {
 							env.mapAlbum.numsMedia = env.mapAlbum.media.imagesAndVideosCount();
 							endPreparingMapAlbumAndUpdatePopup();

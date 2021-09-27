@@ -1068,7 +1068,7 @@
 		Utilities.highlightMenu();
 
 		$("#album-and-media-container:not(.show-media) #album-view").css("opacity", "0.3");
-		$(".leaflet-popup-content-wrapper").css("background-color", "darkgray");
+		$(".media-popup .leaflet-popup-content-wrapper").css("background-color", "darkgray");
 
 		Functions.updateMenu(album);
 	};
@@ -1091,7 +1091,7 @@
 		Utilities.highlightMenu();
 
 		$("#album-and-media-container:not(.show-media) #album-view").css("opacity", "0.3");
-		$(".leaflet-popup-content-wrapper").css("background-color", "darkgray");
+		$(".media-popup .leaflet-popup-content-wrapper").css("background-color", "darkgray");
 		Functions.updateMenu(album);
 	};
 
@@ -1116,7 +1116,7 @@
 		$("#search-icon, #menu-icon").removeClass("expanded");
 
 		$("#album-view").css("opacity", "");
-		$(".leaflet-popup-content-wrapper").css("background-color", "");
+		$(".media-popup .leaflet-popup-content-wrapper").css("background-color", "");
 	};
 
 	Utilities.prototype.toggleMenu = function(ev, album) {
@@ -1659,8 +1659,7 @@
 		}
 	};
 	Utilities.isPopup = function() {
-		// return $('.leaflet-popup-content-wrapper').html() ? true : false;
-		return $('.leaflet-popup').html() ? true : false;
+		return $(".media-popup.leaflet-popup").html() ? true : false;
 	};
 
 	Utilities.isMap = function() {
@@ -1937,7 +1936,7 @@
 		if (isPopup) {
 			// the popup is there: close it
 			env.highlightedObjectId = null;
-			$('.leaflet-popup-close-button')[0].click();
+			$(".leaflet-popup-close-button").click();
 		}
 		if (isMap || isPopup) {
 			// we are in a map: close it
@@ -2530,7 +2529,7 @@
 			if (Utilities.isPopup()) {
 				env.popupRefreshType = "mapAlbum";
 				env.highlightedObjectId = null;
-				$('.leaflet-popup-close-button')[0].click();
+				$(".leaflet-popup-close-button").click();
 			} else {
 				env.popupRefreshType = "none";
 			}
@@ -3123,7 +3122,7 @@
 				var imgData = JSON.parse(element.attr("data"));
 				// called after an element was successfully handled
 				env.highlightedObjectId = null;
-				$('.leaflet-popup-close-button')[0].click();
+				$(".leaflet-popup-close-button").click();
 				// $('#popup #popup-content').html("");
 				$('.modal-close')[0].click();
 				env.popupRefreshType = "previousAlbum";
