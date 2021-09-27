@@ -93,7 +93,8 @@
 			"click",
 			function() {
 				env.highlightedObjectId = null;
-				$(".leaflet-popup-close-button").click();
+				$(".shift-or-control .leaflet-popup-close-button")[0].click();
+				$(".media-popup .leaflet-popup-close-button")[0].click();
 				// $('#popup #popup-content').html("");
 				$('.modal-close')[0].click();
 				env.popupRefreshType = "previousAlbum";

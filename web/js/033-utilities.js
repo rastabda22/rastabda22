@@ -1658,6 +1658,11 @@
 			$("#how-to-download-selection").hide();
 		}
 	};
+
+	Utilities.isShiftOrControl = function() {
+		return $(".shift-or-control").length ? true : false;
+	};
+
 	Utilities.isPopup = function() {
 		return $(".media-popup.leaflet-popup").html() ? true : false;
 	};
@@ -1931,12 +1936,17 @@
 
 	Utilities.prototype.changeToBySelectionView = function(ev, thisMedia = null) {
 		TopFunctions.showBrowsingModeMessage(ev, "#by-selection-browsing");
+		var isShiftOrControl = Utilities.isShiftOrControl();
 		var isPopup = Utilities.isPopup();
 		var isMap = ($('#mapdiv').html() ? true : false) && ! isPopup;
+		if (isShiftOrControl) {
+			// close the shift/control buttons
+			$(".shift-or-control .leaflet-popup-close-button")[0].click();
+		}
 		if (isPopup) {
 			// the popup is there: close it
 			env.highlightedObjectId = null;
-			$(".leaflet-popup-close-button").click();
+			$("media-popup .leaflet-popup-close-button")[0].click();
 		}
 		if (isMap || isPopup) {
 			// we are in a map: close it
@@ -2529,7 +2539,8 @@
 			if (Utilities.isPopup()) {
 				env.popupRefreshType = "mapAlbum";
 				env.highlightedObjectId = null;
-				$(".leaflet-popup-close-button").click();
+				$(".shift-or-control .leaflet-popup-close-button")[0].click();
+				$(".media-popup .leaflet-popup-close-button")[0].click();
 			} else {
 				env.popupRefreshType = "none";
 			}
@@ -3122,7 +3133,8 @@
 				var imgData = JSON.parse(element.attr("data"));
 				// called after an element was successfully handled
 				env.highlightedObjectId = null;
-				$(".leaflet-popup-close-button").click();
+				$(".shift-or-control .leaflet-popup-close-button")[0].click();
+				$(".media-popup .leaflet-popup-close-button")[0].click();
 				// $('#popup #popup-content').html("");
 				$('.modal-close')[0].click();
 				env.popupRefreshType = "previousAlbum";
