@@ -2539,7 +2539,8 @@
 			if (Utilities.isPopup()) {
 				env.popupRefreshType = "mapAlbum";
 				env.highlightedObjectId = null;
-				$(".shift-or-control .leaflet-popup-close-button")[0].click();
+				if (Utilities.isShiftOrControl())
+					$(".shift-or-control .leaflet-popup-close-button")[0].click();
 				$(".media-popup .leaflet-popup-close-button")[0].click();
 			} else {
 				env.popupRefreshType = "none";
@@ -3133,7 +3134,8 @@
 				var imgData = JSON.parse(element.attr("data"));
 				// called after an element was successfully handled
 				env.highlightedObjectId = null;
-				$(".shift-or-control .leaflet-popup-close-button")[0].click();
+				if (Utilities.isShiftOrControl())
+					$(".shift-or-control .leaflet-popup-close-button")[0].click();
 				$(".media-popup .leaflet-popup-close-button")[0].click();
 				// $('#popup #popup-content').html("");
 				$('.modal-close')[0].click();
@@ -4903,6 +4905,7 @@
 	Utilities.prototype.addTagLink = Utilities.addTagLink;
 	Utilities.prototype.formatDescription = Utilities.formatDescription;
 	Utilities.prototype.stripHtmlAndReplaceEntities = Utilities.stripHtmlAndReplaceEntities;
+	Utilities.prototype.isShiftOrControl = Utilities.isShiftOrControl;
 	Utilities.prototype.isPopup = Utilities.isPopup;
 	Utilities.prototype.arrayUnion = Utilities.arrayUnion;
 	Utilities.prototype.setPinchButtonsPosition = Utilities.setPinchButtonsPosition;

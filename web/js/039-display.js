@@ -67,7 +67,7 @@ $(document).ready(function() {
 				// stop the video, otherwise it keeps playing
 				$("video#media-center")[0].pause();
 				return false;
-			} else if (isPopup && $(".shift-or-control").length) {
+			} else if (util.isShiftOrControl()) {
 				// the +/- popup is there: close it
 				$(".shift-or-control .leaflet-popup-close-button")[0].click();
 				return false;
@@ -1023,7 +1023,8 @@ $(document).ready(function() {
 
 							if (util.isPopup()) {
 								env.popupRefreshType = "mapAlbum";
-								$(".shift-or-control .leaflet-popup-close-button")[0].click();
+								if (util.isShiftOrControl())
+									$(".shift-or-control .leaflet-popup-close-button")[0].click();
 								$(".media-popup .leaflet-popup-close-button")[0].click();
 							} else {
 								env.popupRefreshType = "none";
