@@ -1,4 +1,6 @@
+* map view: permit adding/removing points and clusters from popup
 * better explication of password files
+* bug fixes
 
 ### version v5.3.7 (August 27, 2021)
 
