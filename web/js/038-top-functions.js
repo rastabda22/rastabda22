@@ -3155,11 +3155,8 @@
 					"contextmenu",
 					function(ev) {
 						ev.originalEvent.preventDefault();
-						if (env.isMobile.any()) {
-						// if (env.isMobile.any() && ev.originalEvent.button === 0) {
-							updateMapAndContinue(ev, true);
-							return false;
-						}
+						updateMapAndContinue(ev, true);
+						return false;
 					}
 				);
 				return m;
@@ -3180,11 +3177,8 @@
 					"contextmenu",
 					function(ev) {
 						ev.originalEvent.preventDefault();
-						if (env.isMobile.any()) {
-						// if (env.isMobile.any() && ev.originalEvent.button === 0) {
-							updateMapAndContinue(ev, true);
-							return false;
-						}
+						updateMapAndContinue(ev, true);
+						return false;
 					}
 				);
 				return m;
@@ -3276,10 +3270,8 @@
 				"contextmenu",
 				function(ev) {
 					ev.originalEvent.preventDefault();
-					if (env.isMobile.any() && ev.originalEvent.button === 0) {
-						updateMapAndContinue(ev, true);
-						return false;
-					}
+					updateMapAndContinue(ev, true);
+					return false;
 				}
 			);
 
