@@ -245,6 +245,12 @@
 	border: 2px solid black;
 }
 
+#mapdiv .shift-or-control .dimmed {
+	opacity: 0.2;
+	font-weight: normal;
+	cursor: default;
+}
+
 #mapdiv .shift-or-control .cluster-subtract {
 	border-top: 1px solid #ccc;
 }

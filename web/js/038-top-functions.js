@@ -3405,20 +3405,28 @@
 				if (shiftOrControl && evt.fromAddOrSubtract === undefined) {
 					if ($('.shift-or-control').length)
 						$('.shift-or-control .leaflet-popup-close-button')[0].click();
+
+					let addDimmed = "", subtractDimmed = "";
 					if (env.mapAlbum.isEmpty() || ! clusterPositionsAlreadyInPopup.length) {
-						shiftKey = true;
-						ctrlKey = false;
+						// shiftKey = true;
+						// ctrlKey = false;
+						subtractDimmed = " dimmed";
 					} else if (! clusterPositionsNotYetInPopup.length) {
-						shiftKey = false;
-						ctrlKey = true;
-					} else {
-						// show a popup with + and - in order to tell the app if we must add (shift) or remove (control)
-						L.popup({className: "shift-or-control"})
-							.setLatLng(currentCluster.averagePosition)
-							.setContent('<div class="cluster-add">+</div><div class="cluster-subtract">-</div>')
-							.addTo(env.mymap)
-							.openOn(env.mymap);
-						$("#loading").hide();
+						// shiftKey = false;
+						// ctrlKey = true;
+						addDimmed = " dimmed";
+					}
+
+					// show a popup with + and - in order to tell the app if we must add (shift) or remove (control)
+					L.popup({className: "shift-or-control"})
+						.setLatLng(currentCluster.averagePosition)
+						.setContent('<div class="cluster-add' + addDimmed + '">+</div><div class="cluster-subtract' + subtractDimmed + '">-</div>')
+						.addTo(env.mymap)
+						.openOn(env.mymap);
+
+					$("#loading").hide();
+
+					if (! addDimmed) {
 						$(".cluster-add").off("click").on(
 							"click",
 							function(ev) {
@@ -3436,6 +3444,9 @@
 								);
 							}
 						);
+					}
+
+					if (! subtractDimmed) {
 						$(".cluster-subtract").off("click").on(
 							"click",
 							function(ev) {
@@ -3453,8 +3464,8 @@
 								);
 							}
 						);
-						return;
 					}
+					return;
 				}
 
 				if (evt !== null && evt.latlng !== undefined) {
