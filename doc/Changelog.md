@@ -1,3 +1,5 @@
+* map view: +/- contextual menu is always shown when right clicking (long tapping on mobile) on a point/cluster; the contextual meny is not bypassed when only one of +/- is allowed
+
 ### version v5.3.8 (September 27, 2021)
 
 * map view: permit adding/removing points and clusters from popup

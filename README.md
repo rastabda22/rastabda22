@@ -47,15 +47,15 @@ It's not because your photo gallery is in a static web site that it can't have a
 
 [Discover more about metadata](doc/Metadata.md).
 
-### Geotag Your Media
+### Geotag Your Media, And Enjoy Your Geotagged Media
 
 - [x] A popup map shows markers for the photos positions, using [Leaflet](https://leafletjs.com/).
-- [x] Click on the map and the thumbnails for the nearest marker are shown.
-- [x] More photos can be added (with shift-click, with long tap on mobile) and removed (with ctl-click) from the popup map.
-- [x] Photos shown in the popup map are clickable.
-- [x] Near markers are automatically clustered, and the photos number is shown in the cluster marker.
-- [x] Images collected by map clicks can be shown as an album, browsed and sorted.
-- [x] A special mode showes only the non-geotagged content.
+- [x] The positions of the photos on the map are shown by markers; near markers are automatically clustered, and the photos number is shown in the cluster marker.
+- [x] Click on the map and a photo popup with the thumbnails for the nearest marker/cluster are shown.
+- [x] More photos can be added (with shift-click) to the photo popup and removed (with control-click) from it. Instead of using shift/control-click, a custom contextual menu with "+" (for adding) and "-" (for removing) is shown right-clicking on a marker/cluster; get it with a long tap on mobile.
+- [x] Photos shown in the photo popup are clickable.
+- [x] Images collected in the photo popup can be shown as an album, browsed and sorted.
+- [x] A special mode shows only the non-geotagged content.
 
 [Discover more about GPS](doc/GPS.md).
 
