@@ -1439,13 +1439,11 @@
 	};
 
 	Functions.setBooleanCookie = function(key, value) {
-		var expires = new Date();
-		expires.setTime(expires.getTime() + Functions.tenYears() * 1000);
 		if (value)
 			value = 1;
 		else
 			value = 0;
-		document.cookie = key + '=' + value + ';expires=' + expires.toUTCString() + ';samesite=lax';
+		Functions.setCookie(key, value);
 		return true;
 	};
 
