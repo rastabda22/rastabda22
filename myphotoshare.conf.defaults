@@ -117,14 +117,15 @@ metadata_filename = album.ini
 #    (none)	: no subfolders
 subdir_method = md5
 
+# #######################
 # Video encoding options
-########################
+#
 # See https://trac.ffmpeg.org/wiki/Encode/H.264 and ffmpeg documentation if you change these options.
-################################################################################
-# BEWARE:
-# The following video options are EXPERIMENTAL and could be removed in a future version
-# of MyPhotoShare.
-################################################################################
+#    ###############################################################################
+#    BEWARE:
+#    The following video options are EXPERIMENTAL and could be removed in a future version
+#    of MyPhotoShare.
+#    ###############################################################################
 
 # The transcode bitrate used for videos: an integer, the bitrate in bits/s, even in notation nnk, nnM
 video_transcode_bitrate = 1M
@@ -182,16 +183,20 @@ video_frame_maxsize = hd720
 # Additional options to pass to the encoder
 video_add_options =
 
+# End of video encoding options
+# #######################
+
+
 # The jpg quality parameter for generating the reduced size images and the tumbnails
 # an integer number 1 - 100
 jpeg_quality = 95
 
 # markers that permit not to scan files in folder or whole trees
-################################################################################
-# BEWARE:
-# if you use this feature and don't change this options, the user can know what files/trees you are hiding,
-# and therefore he/she could try to access them in the `/albums/` tree
-################################################################################
+#     ###############################################################################
+#     BEWARE:
+#     if you use this feature and don't change this options, the user can know what files/trees you are hiding,
+#     and therefore he/she could try to access them in the `/albums/` tree
+#     ###############################################################################
 exclude_files_marker = .myphotoshare.exclude.files
 exclude_tree_marker = .myphotoshare.exclude.tree
 
@@ -210,11 +215,11 @@ excluded_patterns_file = myphotoshare.excluded
 # - "ci/cs": case sensitive/insensitive (default: ci)
 # - "part/whole": whole name/part o it (default: part)
 # - "filesonly/dirsonly/both": only check against file names/dir names (default: both)
-################################################################################
-# BEWARE:
-# if you have protected content and don't change this option, the user can know what files you are protecting,
-# and therefore he/she could try to access them in the `/albums/` tree
-################################################################################
+#    ###############################################################################
+#    BEWARE:
+#    if you have protected content and don't change this option, the user can know what files you are protecting,
+#    and therefore he/she could try to access them in the `/albums/` tree
+#    ###############################################################################
 passwords_marker = .myphotoshare.passwords
 
 # password file, relative to the directory of the configuration file
@@ -397,6 +402,7 @@ use_internal_modernizr = true
 # - keep in cache all the albums with less than 200 media
 js_cache_levels = [{"mediaThreshold": 10000, "max": 1}, {"mediaThreshold": 2000, "max": 2}, {"mediaThreshold": 1000, "max": 4}, {"mediaThreshold": 200, "max": 20}]
 
+
 ###########################################################
 # user interface options
 ###########################################################
@@ -442,9 +448,9 @@ title_font_size = medium
 # should be used a slide-like style?
 albums_slide_style = true
 
-####
-#### Color UI options (be sure not to have inconsistencies) ####
-####
+#    ###
+#    Color UI options (be sure not to have inconsistencies) ####
+#    ###
 
 # the page background color (this is ~ gray)
 background_color = #222222
@@ -474,9 +480,9 @@ album_slide_caption_color = gray
 album_caption_color = white
 
 
-####
-#### Other UI options ####
-####
+#    ###
+#    Other UI options ####
+#    ###
 
 # shoud metadata be shown persistently until they are closed?
 persistent_metadata = false
