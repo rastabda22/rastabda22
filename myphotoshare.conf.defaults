@@ -117,6 +117,14 @@ metadata_filename = album.ini
 #    (none)	: no subfolders
 subdir_method = md5
 
+# PIL (actually Pillow) protects its users from the Decompression Bomb Attacch
+# See https://pillow.readthedocs.io/en/stable/reference/Image.html?highlight=DecompressionBombWarning
+# This options sets the image size (in pixels?) which will trigger the error
+# The default value is PIL default value, and corresponds to int(1024 * 1024 * 1024 / 4 / 3), roughly 89M
+# If the images are secure, the Decompression Bomb Attacch protection can be disabled setting this option to -1
+pil_size_for_decompression_bomb_error = 89478485
+
+
 # #######################
 # Video encoding options
 #

@@ -50,6 +50,7 @@ options_requiring_json_regeneration = [
 	'geonames_language',
 	'unspecified_geonames_code',
 	'get_geonames_online',
+	'pil_size_for_decompression_bomb_error',
 	'metadata_tools_preference',
 	'subdir_method',
 	'cache_folders_num_digits_array',
@@ -60,9 +61,11 @@ options_requiring_json_regeneration = [
 # every option is given in a dictionary with a value which represent the pre-option default value
 options_requiring_reduced_images_regeneration = [
 	{'name': 'jpeg_quality', 'default': False},
+	{'name': 'pil_size_for_decompression_bomb_error', 'default': 89478485},
 	{'name': 'copy_exif_into_reductions', 'default': False}
 ]
 options_requiring_thumbnails_regeneration = [
+	{'name': 'pil_size_for_decompression_bomb_error', 'default': 89478485},
 	{'name': 'face_cascade_scale_factor', 'default': False},
 	{'name': 'small_square_crops_background_color', 'default': False},
 	{'name': 'cv2_installed', 'default': False},
@@ -251,6 +254,7 @@ def get_options():
 	for option in default_config.options('options'):
 		if option in (
 				'max_verbose',
+				'pil_size_for_decompression_bomb_error',
 				'jpeg_quality',
 				'video_crf',
 				'thumb_spacing',

@@ -65,6 +65,13 @@ class TreeWalker:
 		self.origin_album = Album(Options.config['album_path'])
 		self.origin_album.cache_base = "root"
 
+		if Options.config['pil_size_for_decompression_bomb_error'] == -1:
+			Image.MAX_IMAGE_PIXELS = None
+		else:
+			# We devide by 2 because PIL parameter triggers the warning,
+			# the error is thrown when the size twice the warning threshold
+			Image.MAX_IMAGE_PIXELS = int(Options.config['pil_size_for_decompression_bomb_error'] / 2)
+
 		message("Browsing", "start!", 1)
 
 		next_level()

@@ -1,3 +1,6 @@
+* new option `pil_size_for_decompression_bomb_error`: manages issue #310
+* bug fixes
+
 ### version v5.3.9 (September 28, 2021)
 
 * map view: +/- contextual menu is always shown when right clicking (long tapping on mobile) on a point/cluster; the contextual meny is not bypassed when only one of +/- is allowed

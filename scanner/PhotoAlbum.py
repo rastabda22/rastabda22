@@ -1336,7 +1336,13 @@ class SingleMedia(object):
 				self.is_valid = False
 			except RuntimeError:
 				# PIL throws this exceptcion with truncated webp files
-				indented_message("PIL RuntimeError opening the image", "maybe a truncated WebP image?", 5)
+				indented_message("PIL: RuntimeError opening the image", "maybe a truncated WebP image?", 5)
+				self.is_valid = False
+			except Image.DecompressionBombError:
+				# PIL throws this exception when the image size is greater
+				# than the value given in pil_size_for_decompression_bomb_error option
+				limit_mb = str(int(Options.config['pil_size_for_decompression_bomb_error'] / 1024 / 1024 * 1000) / 1000)
+				indented_message("PIL: DecompressionBombError opening the image", "image size is greater than " + limit_mb + "MB, not using it", 5)
 				self.is_valid = False
 			else:
 				indented_message("image opened with PIL!", "", 5)
