@@ -1971,8 +1971,8 @@ class TreeWalker:
 			Options.num_video += num_video_in_dir
 			Options.num_video_processed += num_video_processed_in_dir
 
+		max_digit = len(str(Options.config['num_media_in_tree']))
 		if num_photo_in_dir:
-			max_digit = len(str(Options.config['num_media_in_tree']))
 			_lpadded_num_photo_in_dir = str(num_photo_in_dir).rjust(max_digit)
 			_rpadded_num_photo_in_dir = str(num_photo_in_dir).ljust(max_digit)
 			_all_photos_in_path = _lpadded_num_photo_in_dir + "/" + _rpadded_num_photo_in_dir + " photos in " + absolute_path
@@ -2006,11 +2006,11 @@ class TreeWalker:
 				Options.photos_without_exif_date_or_geotags.append(str(len(photos_without_exif_date_or_geotags_in_dir)).rjust(max_digit) + _some_photo_in_path)
 				Options.photos_without_exif_date_or_geotags.extend(photos_without_exif_date_or_geotags_in_dir)
 
-			if len(unrecognized_files_in_dir):
-				Options.num_unrecognized_files += len(unrecognized_files_in_dir)
-				Options.unrecognized_files.append(str(len(unrecognized_files_in_dir)).rjust(max_digit) + " files in " + absolute_path + ":")
-				Options.unrecognized_files.extend(unrecognized_files_in_dir)
-				Options.config['num_media_in_tree'] -= len(unrecognized_files_in_dir)
+		if len(unrecognized_files_in_dir):
+			Options.num_unrecognized_files += len(unrecognized_files_in_dir)
+			Options.unrecognized_files.append(str(len(unrecognized_files_in_dir)).rjust(max_digit) + " files in " + absolute_path + ":")
+			Options.unrecognized_files.extend(unrecognized_files_in_dir)
+			Options.config['num_media_in_tree'] -= len(unrecognized_files_in_dir)
 
 		message("calculating album date", "based on media and subalbums dates", 5)
 		album.date = album.album_date()
