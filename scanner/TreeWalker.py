@@ -1277,8 +1277,6 @@ class TreeWalker:
 							if len(indexes) == 0:
 								indented_message("WARNING: using an unknown password identifier", identifier + ": not protecting the directory", 2)
 							elif len(indexes) == 1:
-								password_md5 = indexes[0]['md5']
-								password_code = indexes[0]['code']
 								patterns_and_passwords.append(
 									{
 										"pattern": '*',
