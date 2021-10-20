@@ -1,4 +1,6 @@
-* new option `pil_size_for_decompression_bomb_error`: manages issue #310
+### version v5.3.10 (Octuber 20, 2021)
+
+* new option `pil_size_for_decompression_bomb_error`, manages issue #310: DecompressionBombError
 * bug fixes
 
 ### version v5.3.9 (September 28, 2021)
