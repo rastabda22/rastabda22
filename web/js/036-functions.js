@@ -1336,11 +1336,11 @@
 
 		////////////////// PROTECTED CONTENT //////////////////////////////
 
+		let selectors = "#padlock, .first-level.protection";
 		if (thisAlbum !== null) {
 			if (thisAlbum.hasVeiledProtectedContent()) {
-				// $(".protection").show();
-				$("#padlock").removeClass("hidden");
-				$("#padlock").off("click").on(
+				$(selectors).removeClass("hidden");
+				$(selectors).off("click").on(
 					"click",
 					function() {
 						$("#protected-content-unveil")[0].click();
@@ -1348,10 +1348,10 @@
 					}
 				);
 			} else {
-				$("#padlock").addClass("hidden");
+				$(selectors).addClass("hidden");
 			}
 		} else {
-			$("#padlock").addClass("hidden");
+			$(selectors).addClass("hidden");
 		}
 
 		////////////////// be sure that the highlighted menu entry is visible //////////////////////////////
