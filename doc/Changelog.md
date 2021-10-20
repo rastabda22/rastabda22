@@ -1,3 +1,5 @@
+* hide/show protection unveiling menu entry together with padlock
+
 ### version v5.3.10 (Octuber 20, 2021)
 
 * new option `pil_size_for_decompression_bomb_error`, manages issue #310: DecompressionBombError
