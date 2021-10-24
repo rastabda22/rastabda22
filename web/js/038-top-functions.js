@@ -3236,6 +3236,7 @@
 					attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
 					maxZoom: 21,
 					maxNativeZoom: maxOSMZoom,
+					subdomains: 'abc',
 					id: 'mapbox.streets'
 				}
 			).addTo(env.mymap);
