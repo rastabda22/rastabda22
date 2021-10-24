@@ -1054,7 +1054,6 @@ $(document).ready(function() {
 		}
 	);
 
-	// scrollbarWidth = util.windowVerticalScrollbarWidth();
 
 	$(window).hashchange(
 		function() {
