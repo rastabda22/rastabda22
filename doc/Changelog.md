@@ -1,3 +1,4 @@
+* new option `user_may_suggest_location`, manages issue #330: permit the user to point the location of one or more photos
 * hide/show protection unveiling menu entry together with padlock
 
 ### version v5.3.10 (Octuber 20, 2021)

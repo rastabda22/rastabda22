@@ -301,6 +301,7 @@ def get_options():
 				'copy_exif_into_reductions',
 				'get_geonames_online',
 				'use_internal_modernizr',
+				'user_may_suggest_location',
 				'show_faces',
 				'use_stop_words',
 				'debug_memory',

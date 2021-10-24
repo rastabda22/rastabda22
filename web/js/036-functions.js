@@ -1744,6 +1744,29 @@
 									$("#request-password").hide();
 								}
 
+								if (env.options.user_may_suggest_location && env.options.request_password_email) {
+									$(".map-marker-centered-send-suggestion").off("click").on(
+										"click",
+										function() {
+											var center = env.mymap.getCenter();
+											var popupUrl = location.href.substring(0, location.href.length - location.hash.length) +
+																'?url=' + encodeURIComponent(location.href) +
+																'&photo=' + encodeURIComponent(env.currentMedia.albumName + '/' + env.currentMedia.name) +
+																'&lat=' + encodeURIComponent(center.lat) +
+																'&lng=' + encodeURIComponent(center.lng);
+											$("#sending-photo-position").stop().fadeIn(1000);
+											var popup = window.open(popupUrl, "Sending the email", "height=300 ,width=600");
+											setTimeout(
+												function() {
+													popup.close();
+												},
+												3000
+											);
+											$("#sending-photo-position").fadeOut(3000);
+										}
+									);
+								}
+
 								$("#padlock img").attr("alt", util._t("#padlock-img-alt-text"));
 
 								// WARNING: do not initialize the search root album, the app must read it from its json file!

@@ -616,16 +616,23 @@
 								singleMediaNameHtml = "<span class='media-name'>" + singleMediaName + "</span>";
 							}
 
-							if (singleMedia.hasGpsData()) {
-								let imgHtml = "<img class='title-img gps' height='20px' src='img/ic_place_white_24dp_2x.png'>";
-								let imgObject = $(imgHtml);
-								let imgTitle = util._t("#show-on-map");
-								if (! env.isMobile.any())
-									imgTitle += " [" + util._t(".map-link-shortcut") + "]";
-								imgObject.attr("title", imgTitle);
-								imgObject.attr("alt", imgTitle);
-								singleMediaNameHtml += "<a class='map-popup-trigger'>" + imgObject.wrapAll('<div>').parent().html() + "</a>";
-							}
+							let imgHtml;
+							if (singleMedia.hasGpsData())
+								imgHtml = "<img class='title-img gps' height='20px' src='img/ic_place_white_24dp_2x.png'>";
+							else
+								imgHtml = "<img class='title-img' height='20px' src='img/ic_place_white_24dp_2x_with_plus.png'>";
+							let imgObject = $(imgHtml);
+							let imgTitle;
+							if (singleMedia.hasGpsData())
+								imgTitle = util._t("#show-on-map");
+							else
+								imgTitle = util._t("#suggest-position-on-map");
+							if (! env.isMobile.any())
+								imgTitle += " [" + util._t(".map-link-shortcut") + "]";
+							imgObject.attr("title", imgTitle);
+							imgObject.attr("alt", imgTitle);
+							singleMediaNameHtml += "<a class='map-popup-trigger'>" + imgObject.wrapAll('<div>').parent().html() + "</a>";
+
 							titleComponents.push(singleMediaNameHtml);
 							classesForTitleComponents.push([""]);
 							titlesForTitleComponents.push([singleMediaTitle]);
@@ -836,6 +843,8 @@
 						$('.modal-close').off("click").on(
 							"click",
 							function() {
+								$(".map-marker-centered").hide();
+								$(".map-marker-centered-send-suggestion").hide();
 								$("#my-modal.modal").css("display", "none");
 								// env.popupRefreshType = "previousAlbum";
 								$('#mapdiv').empty();
@@ -3231,6 +3240,12 @@
 				}
 			).addTo(env.mymap);
 			L.control.scale().addTo(env.mymap);
+
+			if (env.options.user_may_suggest_location && env.options.request_password_email) {
+				// save the central point, in order to send by email the position of one or more photos
+				$(".map-marker-centered").show();
+				$(".map-marker-centered-send-suggestion").show();
+			}
 
 			var cacheBases;
 			for (var iPoint = 0; iPoint < this.length; iPoint ++) {

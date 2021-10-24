@@ -270,6 +270,42 @@
 	</head>
 	<body>
 		<?php
+
+			// send the email for suggesting a photo geolocation
+			if (! empty($_GET['photo']) && $options['request_password_email'] && $options['user_may_suggest_location']) {
+				echo "preparing the email...";
+				$subject = "Suggestion for geolocation of " . $_GET['photo'];
+				$photorealpath = realpath($_GET['photo']);
+				$message =
+					"Someone at " . $_GET['url'] . "\r\n\r\n" .
+					"suggested that the photo" . "\r\n\r\n" .
+					$photorealpath . "\r\n\r\n" .
+					"be geolocated at:" . "\r\n\r\n" .
+					"lat = " . $_GET['lat'] . "\r\n" .
+					"lng = " . $_GET['lng'];
+				$from = '"myphotoshare" <' . $options['request_password_email'] . '>';
+				$headers =
+					"From: " . $from . "\r\n" .
+					"X-Mailer: PHP/" . phpversion();
+				echo "<br /><br />sending the email with message:<br /><br />";
+				echo $message;
+				echo "<br /><br />to " . $options['request_password_email'] . "...";
+				$result = mail($options['request_password_email'], $subject, $message, $headers, '-f ' . $from);
+					// ' -f' . $options['request_password_email']
+				if (! $result) {
+					echo "<br /><br />mail not sent: " . error_get_last()['message'];
+					// echo "<br />mail command = mail(" .$options['request_password_email'] . ", " . $subject . ", " . $message . ", " . 'Reply-To:' . $_GET['email'] . ")";
+					echo "<br />mail command = mail('" . $options['request_password_email'] . "', '" . $subject . "', '" . $message . "')";
+					echo "<br />subject = " . $subject;
+					echo "<br />message = " . $message;
+				} else {
+					echo "<br /><br />email sent!";
+					// header($_GET['url']);
+				}
+				exit;
+				// header(urldecode($_GET['url']));
+			}
+
 			if ($_GET)
 				// redirect to same page without parameter
 				echo "
@@ -333,8 +369,10 @@
 			<div id="my-modal" class="modal">
 				<!-- Modal content -->
 				<div class="modal-content">
-					<div class="modal-close"></div>
 					<div id="mapdiv"></div>
+					<div class="modal-close"></div>
+					<div class="map-marker-centered"></div>
+					<div class="map-marker-centered-send-suggestion"></div>
 				</div>
 			</div>
 
@@ -554,6 +592,7 @@
 			<div id="downloading-media" class="messages"></div>
 			<div id="preparing-zip" class="messages"></div>
 			<div id="sending-email" class="messages"></div>
+			<div id="sending-photo-position" class="messages"></div>
 			<div id="ui-settings-restored" class="messages"></div>
 
 

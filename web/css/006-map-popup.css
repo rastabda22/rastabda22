@@ -90,6 +90,33 @@
 	font-size: 25px;
 }
 
+.map-marker-centered {
+  background-image: url("images/fixed-marker.png");
+  width: 47px;
+  height: 47px;
+  position: absolute;
+  z-index: 500;
+  left: calc(50% - 24px);
+  top: calc(50% - 67px);
+  transition: all 0.4s ease;
+	display: none;
+}
+
+.map-marker-centered-send-suggestion {
+	background-color: #fff;
+	border: 3px solid #999;
+	background-image: url("images/email.png");
+	top: calc(50% - 67px);
+	left: calc(50% + 30px);
+	width: 34px;
+	height: 31px;
+	z-index: 500;
+	cursor: pointer;
+	position: absolute;
+	display: none;
+}
+
+
 #mapdiv .shift-or-control .leaflet-popup-close-button {
 	top: -10px;
 	border-radius: 18px;

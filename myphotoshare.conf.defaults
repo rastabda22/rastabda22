@@ -244,6 +244,10 @@ protected_directories_prefix = protected_
 # put here the email address for requesting the password(s)
 request_password_email =
 
+# when this options is true the user is allowed to point the location of one or more photos
+# the location is sent by email to the address set in `request_password_email`
+user_may_suggest_location = true
+
 # recreate fixed height media thumbnails if their ratio (width/height) is > 1,
 # in order to get rid of a past bug in thumbnail generator
 recreate_fixed_height_thumbnails = false
