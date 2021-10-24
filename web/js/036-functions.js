@@ -1722,7 +1722,7 @@
 
 											if (name && email && identity) {
 												// alert(location.href.substr(0, - location.hash) + '?name=' + encodeURI($("#form-name").val()) + '&email=' + encodeURI($("#form-email").val()) + '&identity=' + encodeURI($("#form-identity").val()) + location.hash);
-												var newLocation = location.href.substr(0, - location.hash) +
+												var newHref = // location.href.substr(0, - location.hash) +
 												 					'?url=' + encodeURIComponent(location.href) +
 																	'&name=' + encodeURIComponent(name) +
 																	'&email=' + encodeURIComponent(email) +
@@ -1730,9 +1730,12 @@
 																	location.hash;
 												$("#auth-text").stop().fadeOut(1000);
 												$("#sending-email").stop().fadeIn(1000);
-												$("#sending-email").fadeOut(3000, function() {
-													location.href = newLocation;
-												});
+												$("#sending-email").fadeOut(
+													3000,
+													function() {
+														location.href = newHref;
+													}
+												);
 											} else {
 												$("#please-fill").css("display", "table");
 												$("#please-fill").fadeOut(5000);
