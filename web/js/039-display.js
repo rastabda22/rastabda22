@@ -364,7 +364,9 @@ $(document).ready(function() {
 					 	! isPopup &&
 						! util.onlyShowNonGeotaggedContent() &&
 						(
-							env.currentMedia !== null && env.currentMedia.hasGpsData() ||
+							env.currentMedia !== null && (
+								env.currentMedia.hasGpsData() || env.options.user_may_suggest_location && env.options.request_password_email
+							) ||
 							env.currentMedia === null && env.currentAlbum.positionsAndMediaInTree.length
 						)
 					) {
