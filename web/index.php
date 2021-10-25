@@ -592,6 +592,7 @@
 			<div id="downloading-media" class="messages"></div>
 			<div id="preparing-zip" class="messages"></div>
 			<div id="sending-email" class="messages"></div>
+			<div id="you-can-suggest-photo-position" class="messages"></div>
 			<div id="sending-photo-position" class="messages"></div>
 			<div id="ui-settings-restored" class="messages"></div>
 

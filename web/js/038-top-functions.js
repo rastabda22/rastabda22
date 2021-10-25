@@ -845,6 +845,7 @@
 							function() {
 								$(".map-marker-centered").hide();
 								$(".map-marker-centered-send-suggestion").hide();
+								$("#you-can-suggest-photo-position").hide();
 								$("#my-modal.modal").css("display", "none");
 								// env.popupRefreshType = "previousAlbum";
 								$('#mapdiv').empty();
@@ -3242,11 +3243,32 @@
 			).addTo(env.mymap);
 			L.control.scale().addTo(env.mymap);
 
-			if (env.options.user_may_suggest_location && env.options.request_password_email) {
-				// show the central marker, in order permit the user to send by email the geoposition of current media
+			if (env.options.user_may_suggest_location && env.options.request_password_email && env.currentMedia !== null && ! env.currentMedia.hasGpsData()) {
+				// show the central marker, in order to permit the user to suggest by email the geolocation of current media
 				$(".map-marker-centered").show();
 				$(".map-marker-centered-send-suggestion").show();
-				alert(util._t("#you-can-send-photo-position"));
+				$(".map-marker-centered-send-suggestion").attr("title", util._t("#click-to-suggest-position-on-map"));
+				if (env.keepShowingGeolocationSuggestText) {
+					$("#you-can-suggest-photo-position").stop().fadeIn(500);
+					$("#you-can-suggest-photo-position").stop().fadeIn(500);
+					if ($("#you-can-suggest-photo-position").children().length === 2) {
+						$("#you-can-suggest-photo-position").append('<div class="keep-showing suggest-button">' + util._t("#keep-showing") + '</div>');
+						$("#you-can-suggest-photo-position").append('<div class="stop-showing suggest-button">' + util._t("#stop-showing") + '</div>');
+						$(".stop-showing").on(
+							"click",
+							function() {
+								env.keepShowingGeolocationSuggestText = false;
+								$("#you-can-suggest-photo-position").fadeOut(1000);
+							}
+						);
+						$(".keep-showing").on(
+							"click",
+							function() {
+								$("#you-can-suggest-photo-position").fadeOut(1000);
+							}
+						);
+					}
+				}
 			}
 
 			var cacheBases;

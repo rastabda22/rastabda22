@@ -731,6 +731,10 @@ video {
 	font-style: italic;
 }
 
+#you-can-suggest-photo-position.messages {
+	font-size: 2em;
+}
+
 .browsing-mode-message, .sort-message, .selection-message, .messages {
 	background-color: black;
 	z-index: 1000;
