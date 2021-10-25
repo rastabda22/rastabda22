@@ -3243,9 +3243,10 @@
 			L.control.scale().addTo(env.mymap);
 
 			if (env.options.user_may_suggest_location && env.options.request_password_email) {
-				// save the central point, in order to send by email the position of one or more photos
+				// show the central marker, in order permit the user to send by email the geoposition of current media
 				$(".map-marker-centered").show();
 				$(".map-marker-centered-send-suggestion").show();
+				alert(util._t("#you-can-send-photo-position"));
 			}
 
 			var cacheBases;

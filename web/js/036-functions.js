@@ -1763,7 +1763,7 @@
 												function() {
 													popup.close();
 												},
-												3000
+												300
 											);
 											$("#sending-photo-position").fadeOut(3000);
 										}
