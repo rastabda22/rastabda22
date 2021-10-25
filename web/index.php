@@ -276,24 +276,44 @@
 				echo "preparing the email...";
 				$subject = "Suggestion for geolocation of " . $_GET['photo'];
 				$photorealpath = realpath($_GET['photo']);
+				$exiftoolArguments =
+					" -GPSLatitudeRef=" . ($_GET['lat'] > 0 ? "N" : "S") .
+					" -GPSLatitude=" . abs($_GET['lat']) .
+					" -GPSLongitudeRef=" . ($_GET['lng'] > 0 ? "E" : "W") .
+					" -GPSLongitude=" . abs($_GET['lng']) .
+					" " . str_replace(" ", "\ ", $photorealpath);
+
 				$message =
-					"Someone at " . $_GET['url'] . "\r\n\r\n" .
-					"suggested that the photo" . "\r\n\r\n" .
-					$photorealpath . "\r\n\r\n" .
-					"be geolocated at:" . "\r\n\r\n" .
-					"lat = " . $_GET['lat'] . "\r\n" .
-					"lng = " . $_GET['lng'] .
-					"\r\n\r\n" .
-					"Check the new position:\r\n\r\n" .
-					"https://www.openstreetmap.org/#map=10/" . $_GET['lat'] . "/" . $_GET['lng'] .
-					"\r\n\r\n" .
-					"Apply it with the command\r\n\r\n" .
-					"exiftool -overwrite_original" .
-						" -GPSLatitudeRef=" . ($_GET['lat'] > 0 ? "N" : "S") .
-						" -GPSLatitude=" . abs($_GET['lat']) .
-						" -GPSLongitudeRef=" . ($_GET['lng'] > 0 ? "E" : "W") .
-						" -GPSLongitude=" . abs($_GET['lng']) .
-						" " . str_replace(" ", "\ ", $photorealpath);
+					"Someone at" .
+					"\r\n" .
+						"    " . $_GET['url'] .
+						"\r\n" .
+					"suggested that the photo" .
+					"\r\n" .
+						"    " . $photorealpath .
+						"\r\n" .
+					"be geolocated at:" .
+					"\r\n" .
+						"    lat = " . $_GET['lat'] . "\r\n" .
+						"    lng = " . $_GET['lng'] .
+						"\r\n" .
+						"\r\n" .
+					"Check the new position:" .
+					"\r\n" .
+						"    https://www.openstreetmap.org/#map=10/" . $_GET['lat'] . "/" . $_GET['lng'] .
+						"\r\n" .
+						"\r\n" .
+					"Apply it" .
+					"\r\n" .
+					 	"    overwriting the original non-geotagged photo:" .
+						"\r\n" .
+							"        exiftool -overwrite_original" . $exiftoolArguments .
+						"\r\n" .
+						"\r\n" .
+						"    without overwriting the original non-geotagged photo:" .
+							"\r\n" .
+							"        exiftool " . $exiftoolArguments;
+
 				$from = 'myphotoshare <' . $options['request_password_email'] . '>';
 				$headers =
 					"From: " . $from . "\r\n" .

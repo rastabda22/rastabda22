@@ -52,6 +52,10 @@
 	    right: 22px !important;
 	}
 
+	#you-can-suggest-photo-position.messages {
+		font-size: 1em;
+	}
+
 	#description {
 		padding: .3em 0;
 		border-width: 2px;
