@@ -59,6 +59,9 @@ $(document).ready(function() {
 				// $("#album-view, #media-view, #my-modal").css("opacity", "");
 				// util.goUpInHash();
 				return false;
+			} else if ($("#you-can-suggest-photo-position").is(":visible")) {
+				$("#you-can-suggest-photo-position").hide();
+					return false;
 			} else if ($("#menu-icon").hasClass("expanded") || $("#search-icon").hasClass("expanded")) {
 				util.closeMenu();
 				util.downloadSelectionInfo();
