@@ -107,7 +107,9 @@
 	border: 3px solid #999;
 	background-image: url("images/email.png");
 	top: calc(50% - 67px);
-	left: calc(50% + 30px);
+	/* left: calc(50% + 30px);
+	work around for #317: what makes problem with minifying is the + sign */
+	left: calc(50% - 30px * (-1));
 	width: 34px;
 	height: 31px;
 	z-index: 500;
