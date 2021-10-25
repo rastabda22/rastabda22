@@ -282,8 +282,19 @@
 					$photorealpath . "\r\n\r\n" .
 					"be geolocated at:" . "\r\n\r\n" .
 					"lat = " . $_GET['lat'] . "\r\n" .
-					"lng = " . $_GET['lng'];
-				$from = '"myphotoshare" <' . $options['request_password_email'] . '>';
+					"lng = " . $_GET['lng'] .
+					"\r\n\r\n" .
+					"Check the new position:\r\n\r\n" .
+					"https://www.openstreetmap.org/#map=10/" . $_GET['lat'] . "/" . $_GET['lng'] .
+					"\r\n\r\n" .
+					"Apply it with the command\r\n\r\n" .
+					"exiftool -overwrite_original" .
+						" -GPSLatitudeRef=" . ($_GET['lat'] > 0 ? "N" : "S") .
+						" -GPSLatitude=" . abs($_GET['lat']) .
+						" -GPSLongitudeRef=" . ($_GET['lng'] > 0 ? "E" : "W") .
+						" -GPSLongitude=" . abs($_GET['lng']) .
+						" " . str_replace(" ", "\ ", $photorealpath);
+				$from = 'myphotoshare <' . $options['request_password_email'] . '>';
 				$headers =
 					"From: " . $from . "\r\n" .
 					"X-Mailer: PHP/" . phpversion();
@@ -295,9 +306,9 @@
 				if (! $result) {
 					echo "<br /><br />mail not sent: " . error_get_last()['message'];
 					// echo "<br />mail command = mail(" .$options['request_password_email'] . ", " . $subject . ", " . $message . ", " . 'Reply-To:' . $_GET['email'] . ")";
-					echo "<br />mail command = mail('" . $options['request_password_email'] . "', '" . $subject . "', '" . $message . "')";
-					echo "<br />subject = " . $subject;
-					echo "<br />message = " . $message;
+					// echo "<br />mail command = mail('" . $options['request_password_email'] . "', '" . $subject . "', '" . $message . "')";
+					// echo "<br />subject = " . $subject;
+					// echo "<br />message = " . $message;
 				} else {
 					echo "<br /><br />email sent!";
 					// header($_GET['url']);
