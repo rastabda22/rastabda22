@@ -633,10 +633,11 @@
 								imgObject.attr("title", imgTitle);
 								imgObject.attr("alt", imgTitle);
 								singleMediaNameHtml += "<a class='map-popup-trigger'>" + imgObject.wrapAll('<div>').parent().html() + "</a>";
-								titleComponents.push(singleMediaNameHtml);
-								classesForTitleComponents.push([""]);
-								titlesForTitleComponents.push([singleMediaTitle]);
 							}
+
+							titleComponents.push(singleMediaNameHtml);
+							classesForTitleComponents.push([""]);
+							titlesForTitleComponents.push([singleMediaTitle]);
 
 							documentTitleComponents.push(util.stripHtmlAndReplaceEntities(singleMediaName));
 						}
