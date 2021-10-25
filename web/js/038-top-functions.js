@@ -843,6 +843,7 @@
 						$('.modal-close').off("click").on(
 							"click",
 							function() {
+								env.lastMapPositionAndZoom = {center: env.mymap.getCenter(), zoom: env.mymap.getZoom()};
 								$(".map-marker-centered").hide();
 								$(".map-marker-centered-send-suggestion").hide();
 								$("#you-can-suggest-photo-position").hide();
@@ -3245,6 +3246,8 @@
 
 			if (env.options.user_may_suggest_location && env.options.request_password_email && env.currentMedia !== null && ! env.currentMedia.hasGpsData()) {
 				// show the central marker, in order to permit the user to suggest by email the geolocation of current media
+				if (env.lastMapPositionAndZoom.center !== false)
+					env.mymap.setView(env.lastMapPositionAndZoom.center, env.lastMapPositionAndZoom.zoom, {animate: false});
 				$(".map-marker-centered").show();
 				$(".map-marker-centered-send-suggestion").show();
 				$(".map-marker-centered-send-suggestion").attr("title", util._t("#click-to-suggest-position-on-map"));

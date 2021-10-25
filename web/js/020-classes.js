@@ -42,6 +42,12 @@
 			this.markTagBegin = "<mark data-markjs";
 			this.br = "<br />";
 
+			this.lastMapPositionAndZoom = {
+				center: false,
+				zoom: false
+			};
+			this.keepShowingGeolocationSuggestText = true;
+
 			this.options = {};
 			this.cache = new Cache();
 			var self = this;

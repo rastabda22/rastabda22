@@ -1766,6 +1766,7 @@
 												300
 											);
 											$("#sending-photo-position").fadeOut(3000);
+											env.lastMapPositionAndZoom = {center: center, zoom: env.mymap.getZoom()};
 										}
 									);
 								}
