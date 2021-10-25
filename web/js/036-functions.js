@@ -1756,15 +1756,14 @@
 																'?url=' + encodeURIComponent(location.href) +
 																'&photo=' + encodeURIComponent(env.currentMedia.albumName + '/' + env.currentMedia.name) +
 																'&lat=' + encodeURIComponent(center.lat) +
-																'&lng=' + encodeURIComponent(center.lng);
+																'&lng=' + encodeURIComponent(center.lng) +
+																// the following line is needed in order to bypass the browser (?) cache; without the random number the php code isn't executed
+																'&random=' + Math.floor(Math.random() * 10000000);
 											$("#sending-photo-position").stop().fadeIn(1000);
 											var popup = window.open(popupUrl, "Sending the email", "height=300 ,width=600");
-											setTimeout(
-												function() {
-													popup.close();
-												},
-												300
-											);
+											popup.onload = function() {
+												popup.close();
+											};
 											$("#sending-photo-position").fadeOut(3000);
 											env.lastMapPositionAndZoom = {center: center, zoom: env.mymap.getZoom()};
 										}
