@@ -616,27 +616,29 @@
 								singleMediaNameHtml = "<span class='media-name'>" + singleMediaName + "</span>";
 							}
 
-							let imgHtml;
-							if (singleMedia.hasGpsData())
-								imgHtml = "<img class='title-img gps' height='20px' src='img/ic_place_white_24dp_2x.png'>";
-							else
-								imgHtml = "<img class='title-img' height='20px' src='img/ic_place_white_24dp_2x_with_plus.png'>";
-							let imgObject = $(imgHtml);
-							let imgTitle;
-							if (singleMedia.hasGpsData())
-								imgTitle = util._t("#show-on-map");
-							else
-								imgTitle = util._t("#suggest-position-on-map");
-							if (! env.isMobile.any())
-								imgTitle += " [" + util._t(".map-link-shortcut") + "]";
-							imgObject.attr("title", imgTitle);
-							imgObject.attr("alt", imgTitle);
-							singleMediaNameHtml += "<a class='map-popup-trigger'>" + imgObject.wrapAll('<div>').parent().html() + "</a>";
+							if (singleMedia.hasGpsData() || env.options.user_may_suggest_location && env.options.request_password_email) {
+								let imgHtml;
+								if (singleMedia.hasGpsData())
+									imgHtml = "<img class='title-img gps' height='20px' src='img/ic_place_white_24dp_2x.png'>";
+								else
+									imgHtml = "<img class='title-img' height='20px' src='img/ic_place_white_24dp_2x_with_plus.png'>";
+								let imgObject = $(imgHtml);
+								let imgTitle;
+								if (singleMedia.hasGpsData())
+									imgTitle = util._t("#show-on-map");
+								else
+									imgTitle = util._t("#suggest-position-on-map");
+								if (! env.isMobile.any())
+									imgTitle += " [" + util._t(".map-link-shortcut") + "]";
+								imgObject.attr("title", imgTitle);
+								imgObject.attr("alt", imgTitle);
+								singleMediaNameHtml += "<a class='map-popup-trigger'>" + imgObject.wrapAll('<div>').parent().html() + "</a>";
 
-							titleComponents.push(singleMediaNameHtml);
-							classesForTitleComponents.push([""]);
-							titlesForTitleComponents.push([singleMediaTitle]);
-							documentTitleComponents.push(util.stripHtmlAndReplaceEntities(singleMediaName));
+								titleComponents.push(singleMediaNameHtml);
+								classesForTitleComponents.push([""]);
+								titlesForTitleComponents.push([singleMediaTitle]);
+								documentTitleComponents.push(util.stripHtmlAndReplaceEntities(singleMediaName));
+							}
 						}
 
 						title = titleComponents.map(
