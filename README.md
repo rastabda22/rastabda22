@@ -56,6 +56,7 @@ It's not because your photo gallery is in a static web site that it can't have a
 - [x] Photos shown in the photo popup are clickable.
 - [x] Images collected in the photo popup can be shown as an album, browsed and sorted.
 - [x] A special mode shows only the non-geotagged content.
+- [x] Users can be allowed to suggest geolocation of non-geotagged content.
 
 [Discover more about GPS](doc/GPS.md).
 
