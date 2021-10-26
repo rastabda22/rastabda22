@@ -1287,49 +1287,55 @@
 
 				util.addClickToHiddenGeotaggedMediaPhrase();
 
-
-				let currentObject = util.highlightedObject();
-				let currentObjectIsASubalbums = util.aSubalbumIsHighlighted();
-				let newObject = currentObject;
-				if (onlyShowNonGeotaggedContent) {
-					// correct subalbum or media highlighting
-					if (
-						currentObjectIsASubalbums && currentObject.parent().hasClass("all-gps") ||
-						! currentObjectIsASubalbums && currentObject.parent().hasClass("gps")
-					) {
-						newObject = util.nextObjectForHighlighting(currentObject);
-						util.addHighlight(newObject);
+				if (onlyShowNonGeotaggedContent && env.currentMedia !== null && env.currentMedia.hasGpsData()) {
+					// I cannot keep showing the current media
+					env.fromEscKey = true;
+					$("#loading").show();
+					pS.swipeDown(util.upHash());
+				} else {
+					let currentObject = util.highlightedObject();
+					let currentObjectIsASubalbums = util.aSubalbumIsHighlighted();
+					let newObject = currentObject;
+					if (onlyShowNonGeotaggedContent) {
+						// correct subalbum or media highlighting
 						if (
-							currentObjectIsASubalbums && ! util.aSubalbumIsHighlighted() ||
-							! currentObjectIsASubalbums && util.aSubalbumIsHighlighted()
+							currentObjectIsASubalbums && currentObject.parent().hasClass("all-gps") ||
+							! currentObjectIsASubalbums && currentObject.parent().hasClass("gps")
 						) {
-							newObject = util.prevObjectForHighlighting(newObject);
+							newObject = util.nextObjectForHighlighting(currentObject);
 							util.addHighlight(newObject);
-						}
-					}
-				}
-				if (currentObjectIsASubalbums)
-					util.scrollToHighlightedSubalbum(newObject);
-				else
-					util.scrollAlbumViewToHighlightedThumb(newObject);
-
-				// adapt subalbums and media caption height
-				util.adaptSubalbumCaptionHeight();
-				util.adaptMediaCaptionHeight();
-
-				if (onlyShowNonGeotaggedContent) {
-					// check and possibly correct the subalbum image
-					$("#subalbums > a:not(.all-gps) img.thumbnail").each(
-						function() {
-							var [randomMedia, randomMediaAlbumCacheBase] = util.getMediaFromImgObject($(this));
-							if (! randomMedia.hasGpsData()) {
-								return;
-							} else  {
-								let iSubalbum = env.currentAlbum.subalbums.findIndex(subalbum => randomMediaAlbumCacheBase.indexOf(subalbum.cacheBase) === 0);
-								env.currentAlbum.pickRandomMediaAndInsertIt(iSubalbum, onlyShowNonGeotaggedContent);
+							if (
+								currentObjectIsASubalbums && ! util.aSubalbumIsHighlighted() ||
+								! currentObjectIsASubalbums && util.aSubalbumIsHighlighted()
+							) {
+								newObject = util.prevObjectForHighlighting(newObject);
+								util.addHighlight(newObject);
 							}
 						}
-					)
+					}
+					if (currentObjectIsASubalbums)
+					util.scrollToHighlightedSubalbum(newObject);
+					else
+					util.scrollAlbumViewToHighlightedThumb(newObject);
+
+					// adapt subalbums and media caption height
+					util.adaptSubalbumCaptionHeight();
+					util.adaptMediaCaptionHeight();
+
+					if (onlyShowNonGeotaggedContent) {
+						// check and possibly correct the subalbum image
+						$("#subalbums > a:not(.all-gps) img.thumbnail").each(
+							function() {
+								var [randomMedia, randomMediaAlbumCacheBase] = util.getMediaFromImgObject($(this));
+								if (! randomMedia.hasGpsData()) {
+									return;
+								} else  {
+									let iSubalbum = env.currentAlbum.subalbums.findIndex(subalbum => randomMediaAlbumCacheBase.indexOf(subalbum.cacheBase) === 0);
+									env.currentAlbum.pickRandomMediaAndInsertIt(iSubalbum, onlyShowNonGeotaggedContent);
+								}
+							}
+						)
+					}
 				}
 			}
 		);
