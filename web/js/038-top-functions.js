@@ -872,26 +872,17 @@
 		// trigger piwik tracking. It's here because it needs document.title
 		if (env.options.piwik_server && env.options.piwik_id && (id === "album" || id === "center")) {
 			_paq.push(['setCustomUrl', '/' + window.location.hash.substr(1)]);
-			// _paq.push(['setDocumentTitle', PhotoFloat.convertHashToCacheBase(location.hash)]);
 			let titleText, splittedTitle;
 			if (id === "center") {
 				titleText = $(".media-box#center .title-string")[0].textContent;
 			} else {
 				// id is "album"
-				// let titleCount = $("#album-view .title-string .title-count").detach();
-				// let tags = $("#album-view .title-string .tags").detach();
-				// titleText = $("#album-view .title-string")[0].textContent;
-				// $("#album-view .title-string").append(titleCount);
-				// $("#album-view .title-string").append(tags);
 				titleText = $("#album-view .title-string .title-main")[0].innerText;
 			}
 			splittedTitle = titleText.split("»");
 			if (splittedTitle.length > 1)
 				splittedTitle.shift();
 			titleText = splittedTitle.join(" » ");
-			// let title = $(".media-box#center .title-string")[0].textContent.replace(/»/g, " » ").replace(/&#(\d+);/g, function(match, dec) {
-			// 	return String.fromCharCode(dec);
-			// });
 			_paq.push(['setDocumentTitle', titleText]);
 			_paq.push(['trackPageView']);
 		}
