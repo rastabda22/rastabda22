@@ -883,7 +883,7 @@
 				// titleText = $("#album-view .title-string")[0].textContent;
 				// $("#album-view .title-string").append(titleCount);
 				// $("#album-view .title-string").append(tags);
-				titleText = $("#album-view .title-string .title-main")[0].textContent;
+				titleText = $("#album-view .title-string .title-main")[0].innerText;
 			}
 			splittedTitle = titleText.split("»");
 			if (splittedTitle.length > 1)
