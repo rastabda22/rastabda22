@@ -1287,11 +1287,16 @@
 
 				util.addClickToHiddenGeotaggedMediaPhrase();
 
-				if (onlyShowNonGeotaggedContent && env.currentMedia !== null && env.currentMedia.hasGpsData()) {
-					// I cannot keep showing the current media
-					env.fromEscKey = true;
-					$("#loading").show();
-					pS.swipeDown(util.upHash());
+				if (onlyShowNonGeotaggedContent && env.currentMedia !== null) {
+					if (env.currentMedia.hasGpsData()) {
+						// I cannot keep showing the current media, show the album
+						env.fromEscKey = true;
+						$("#loading").show();
+						pS.swipeDown(util.upHash());
+					} else {
+						// reload, so that if previous or next media is geotagged, new media will be loaded
+						$(window).hashchange();
+					}
 				} else {
 					let currentObject = util.highlightedObject();
 					let currentObjectIsASubalbums = util.aSubalbumIsHighlighted();
