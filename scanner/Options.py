@@ -288,7 +288,7 @@ def get_options(args):
 				config[option] = default_config.getint('options', option)
 		elif option in (
 				'follow_symlinks',
-				'repeat_if_timeout,'
+				'repeat_if_timeout',
 				'checksum',
 				'different_album_thumbnails',
 				'hide_title',
@@ -460,8 +460,8 @@ def get_options(args):
 	except OSError:
 		make_dir(config['cache_path'], "cache directory")
 
-	if len(sys.argv) == 2:
-		# 1 arguments: the config files: the password file is in the same directory
+	if args.cache_path == "":
+		# 1 argument: the config file: the password file is in the same directory
 		old_password_codes = get_old_password_codes()
 
 		passwords_subdir_with_path = os.path.join(config['cache_path'], config['passwords_subdir'])
