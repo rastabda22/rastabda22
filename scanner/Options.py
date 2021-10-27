@@ -3,6 +3,7 @@
 from datetime import datetime
 import os
 import sys
+import argparse
 import json
 import ast
 import math
@@ -228,7 +229,7 @@ def initialize_opencv():
 		config['cv2_installed'] = False
 		message("PRE importer", "No opencv library available, not using it", 2)
 
-def get_options():
+def get_options(args):
 	global passwords_file_mtime, old_password_codes, global_pattern
 
 	initialize_opencv()
@@ -242,13 +243,15 @@ def get_options():
 	for option in default_config.options('options'):
 		usr_config.set("options", option, default_config.get("options", option))
 
-	if len(sys.argv) == 2:
+
+	if args.cache_path == "":
 		# 1 arguments: the config files
 		# which modifies the default options
-		usr_config.readfp(open(sys.argv[1], "r"))
+		usr_config.readfp(open(args.config_file_or_album_path, "r"))
 	else:
-		usr_config.set('options', 'album_path', sys.argv[1])
-		usr_config.set('options', 'cache_path', sys.argv[2])
+		usr_config.set('options', 'album_path', args.config_file_or_album_path)
+		usr_config.set('options', 'cache_path', args.cache_path)
+
 
 	message("PRE Options", "asterisk denotes options changed by config file", 0)
 	next_level()
@@ -285,6 +288,7 @@ def get_options():
 				config[option] = default_config.getint('options', option)
 		elif option in (
 				'follow_symlinks',
+				'repeat_if_timeout,'
 				'checksum',
 				'different_album_thumbnails',
 				'hide_title',
@@ -581,6 +585,13 @@ def get_options():
 		else:
 			message("PRE cache folders schema determined", "few media, using default subdir: " + config['default_cache_album'], 4)
 		back_level()
+
+
+	# override config file options with command line options
+	if args.periodic_save != -1:
+		config['max_scanner_duration'] = args.periodic_save
+		config['repeat_if_timeout'] = True
+
 
 	# get old options: they are revised in order to decide whether to recreate something
 	json_options_file = os.path.join(config['cache_path'], "options.json")

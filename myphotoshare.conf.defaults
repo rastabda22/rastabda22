@@ -128,7 +128,11 @@ pil_size_for_decompression_bomb_error = 89478485
 # When this time limit is reached, directory scanning terminates and the json files are generated
 # Set this value taking into account the extra time for the scanner ending up its work
 # This extra time should be consistently less than the time needed to scan the directories
-max_scanner_duration = 0
+# Default value is 12 hours = 60 minutes/hour * 12 hours = 720 minutes
+max_scanner_duration = 720
+
+# restart the scanner if it exits with timeout condition
+repeat_if_timeout = false
 
 
 # #######################
