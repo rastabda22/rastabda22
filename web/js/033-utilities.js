@@ -325,14 +325,13 @@
 
 	Utilities.getLanguage = function() {
 		var language = "en";
-		if (env.options.language && translations[env.options.language] !== undefined)
+		var userLang = navigator.language || navigator.userLanguage || navigator.browserLanguage || navigator.systemLanguage;
+		userLang = userLang.split('-')[0];
+		if (translations[userLang] !== undefined)
+			language = userLang;
+		else if (env.options.language && translations[env.options.language] !== undefined)
 			language = env.options.language;
-		else {
-			var userLang = navigator.language || navigator.userLanguage || navigator.browserLanguage || navigator.systemLanguage;
-			userLang = userLang.split('-')[0];
-			if (translations[userLang] !== undefined)
-				language = userLang;
-		}
+
 		return language;
 	};
 
