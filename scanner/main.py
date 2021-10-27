@@ -13,7 +13,7 @@ import os
 # 	pass
 
 import Options
-from Utilities import report_times, message
+from Utilities import report_times, message, next_level, back_level
 
 
 def main():
@@ -35,7 +35,7 @@ def main():
 		"--periodic-save",
 		nargs="?",
 		type=int,
-		const=60,
+		const=1,
 		default=-1,
 		dest="periodic_save",
 		metavar="MINUTES",
@@ -60,11 +60,27 @@ def main():
 
 		os.umask(0o02)
 
+		if Options.config['repeat_if_timeout']:
+			message("Safe mode, begin", "every " + str(Options.config['max_scanner_duration']) + " minutes all the json files are saved and scanning begins again", 3)
+			next_level()
+		count = 1
+
 		repeat = True
 		while repeat:
 			TreeWalker()
 			if not Options.config['repeat_if_timeout'] or not Options.timeout:
 				repeat = False
+			else:
+				back_level()
+				message("Safe mode, end of pass", "This was pass " + str(count), 3)
+				count += 1
+				message("Safe mode, begin of new pass", "This is pass " + str(count), 3)
+				next_level()
+
+		back_level()
+		if Options.config['repeat_if_timeout']:
+			back_level()
+			message("Safe mode, end of last pass", "This was pass " + str(count), 3)
 
 		report_times(True)
 

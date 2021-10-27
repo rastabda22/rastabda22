@@ -310,6 +310,7 @@ copy_exif_into_reductions = false
 # What is the maximum number of media that will be put in the album json files?
 # 0 = never separate media file
 max_media_in_json_file = 100
+
 # What is the maximum number of media in positions that will make positions be put in the album json files?
 # 0 = never separate positions file
 max_media_from_positions_in_json_file = 100
