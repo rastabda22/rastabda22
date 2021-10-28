@@ -591,6 +591,31 @@ def get_options(args):
 	if args.periodic_save != -1:
 		config['max_scanner_duration'] = args.periodic_save
 		config['repeat_if_timeout'] = True
+		message("COMMAND LINE option", "periodic save set to " + str(config['max_scanner_duration']) + " minutes", 3)
+
+	config['recreate_json_files'] = False
+	config['recreate_reduced_photos'] = False
+	config['recreate_transcoded_videos'] = False
+	config['recreate_thumbnails'] = False
+	if args.recreate_all:
+		config['recreate_json_files'] = True
+		config['recreate_reduced_photos'] = True
+		config['recreate_transcoded_videos'] = True
+		config['recreate_thumbnails'] = True
+		message("COMMAND LINE option", "forced recreation of all the cache content", 3)
+	else:
+		if args.recreate_json_files:
+			config['recreate_json_files'] = True
+			message("COMMAND LINE option", "forced recreation of json files", 3)
+		if args.recreate_transcoded_videos == True:
+			config['recreate_transcoded_videos'] = True
+			message("COMMAND LINE option", "forced recreation of transcoded videos", 3)
+		if args.recreate_reduced_photos == True:
+			config['recreate_reduced_photos'] = True
+			message("COMMAND LINE option", "forced recreation of reduced photos", 3)
+		if args.recreate_thumbnails == True:
+			config['recreate_thumbnails'] = True
+			message("COMMAND LINE option", "forced recreation of thumbnails", 3)
 
 
 	# get old options: they are revised in order to decide whether to recreate something
@@ -599,63 +624,63 @@ def get_options(args):
 		with open(json_options_file) as old_options_file:
 			old_options = json.load(old_options_file)
 
-		config['recreate_reduced_photos'] = False
-		for option_dict in options_requiring_reduced_images_regeneration:
-			option = option_dict['name']
-			default_value = option_dict['default']
-			try:
-				if old_options[option] != config[option]:
-					config['recreate_reduced_photos'] = True
-					message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of reduced size images", 3)
-			except KeyError:
-				if config[option] != default_value:
-					config['recreate_reduced_photos'] = True
-					message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of reduced size images", 3)
-				else:
-					message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of reduced size images", 3)
+		if not config['recreate_reduced_photos']:
+			for option_dict in options_requiring_reduced_images_regeneration:
+				option = option_dict['name']
+				default_value = option_dict['default']
+				try:
+					if old_options[option] != config[option]:
+						config['recreate_reduced_photos'] = True
+						message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of reduced size images", 3)
+				except KeyError:
+					if config[option] != default_value:
+						config['recreate_reduced_photos'] = True
+						message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of reduced size images", 3)
+					else:
+						message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of reduced size images", 3)
 
-		config['recreate_transcoded_videos'] = False
-		for option_dict in options_requiring_videos_regeneration:
-			option = option_dict['name']
-			default_value = option_dict['default']
-			try:
-				if old_options[option] != config[option]:
-					config['recreate_transcoded_videos'] = True
-					message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of videos", 3)
-			except KeyError:
-				if config[option] != default_value:
-					config['recreate_transcoded_videos'] = True
-					message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of videos", 3)
-				else:
-					message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of videos", 3)
+		if not config['recreate_transcoded_videos']:
+			for option_dict in options_requiring_videos_regeneration:
+				option = option_dict['name']
+				default_value = option_dict['default']
+				try:
+					if old_options[option] != config[option]:
+						config['recreate_transcoded_videos'] = True
+						message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of videos", 3)
+				except KeyError:
+					if config[option] != default_value:
+						config['recreate_transcoded_videos'] = True
+						message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of videos", 3)
+					else:
+						message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of videos", 3)
 
-		config['recreate_thumbnails'] = False
-		for option_dict in options_requiring_thumbnails_regeneration:
-			option = option_dict['name']
-			default_value = option_dict['default']
-			try:
-				if old_options[option] != config[option]:
-					config['recreate_thumbnails'] = True
-					message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of thumbnails", 3)
-			except KeyError:
-				if config[option] != default_value:
-					config['recreate_thumbnails'] = True
-					message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of thumbnails", 3)
-				else:
-					message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of thumbnails", 3)
+		if not config['recreate_thumbnails']:
+			for option_dict in options_requiring_thumbnails_regeneration:
+				option = option_dict['name']
+				default_value = option_dict['default']
+				try:
+					if old_options[option] != config[option]:
+						config['recreate_thumbnails'] = True
+						message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of thumbnails", 3)
+				except KeyError:
+					if config[option] != default_value:
+						config['recreate_thumbnails'] = True
+						message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of thumbnails", 3)
+					else:
+						message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of thumbnails", 3)
 
-		config['recreate_json_files'] = False
-		for option in options_requiring_json_regeneration:
-			try:
-				if old_options[option] != config[option]:
-					config['recreate_json_files'] = True
-					message("PRE options", "'" + option + "' has changed from previous scanner run('" + json.dumps(old_options[option]) + "' != '" + json.dumps(config[option]) + "' ), forcing recreation of json files", 3)
-					break
-			except KeyError:
-				if option != 'excluded_patterns' or config[option] != []:
-					config['recreate_json_files'] = True
-					message("PRE options", "'" + option + "' wasn't set on previous scanner run, forcing recreation of json files", 3)
-					break
+		if not config['recreate_json_files']:
+			for option in options_requiring_json_regeneration:
+				try:
+					if old_options[option] != config[option]:
+						config['recreate_json_files'] = True
+						message("PRE options", "'" + option + "' has changed from previous scanner run('" + json.dumps(old_options[option]) + "' != '" + json.dumps(config[option]) + "' ), forcing recreation of json files", 3)
+						break
+				except KeyError:
+					if option != 'excluded_patterns' or config[option] != []:
+						config['recreate_json_files'] = True
+						message("PRE options", "'" + option + "' wasn't set on previous scanner run, forcing recreation of json files", 3)
+						break
 
 	except IOError:
 		message("PRE options", "unexisting options.json file, forcing recreation of everything", 3)
