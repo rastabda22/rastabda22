@@ -1621,6 +1621,7 @@ class TreeWalker:
 		photos_without_exif_date_and_with_geotags_in_dir = []
 		photos_without_exif_date_or_geotags_in_dir = []
 		files_in_dir = []
+		dirs_in_dir = []
 		unrecognized_files_in_dir = []
 		for entry in self._listdir_sorted_alphabetically(absolute_path):
 			try:
@@ -1650,39 +1651,12 @@ class TreeWalker:
 			elif os.path.isdir(entry_with_path):
 				if os.path.islink(entry_with_path) and Options.config['follow_symlinks']:
 					indented_message("symlink to dir, following it as per 'follow_symlinks' option", entry_with_path, 3)
-				trimmed_path = trim_base_custom(absolute_path, Options.config['album_path'])
-				entry_for_cache_base = os.path.join(Options.config['folders_string'], trimmed_path, entry)
-				next_level()
-				message("determining cache base...", "", 5)
-				next_album_cache_base = album.generate_cache_base(entry_for_cache_base)
-				indented_message("cache base determined", "", 5)
-				back_level()
-				[next_walked_album, sub_max_file_date, _passwords_or_album_ini_processed] = self.walk(entry_with_path, next_album_cache_base, patterns_and_passwords, passwords_marker_mtime, album.password_identifiers_set, album)
-				passwords_or_album_ini_processed = passwords_or_album_ini_processed or _passwords_or_album_ini_processed
-				if next_walked_album is not None:
-					max_file_date = max(max_file_date, sub_max_file_date)
-					album.nums_protected_media_in_sub_tree.merge(next_walked_album.nums_protected_media_in_sub_tree)
-					album.sizes_protected_media_in_sub_tree.merge(next_walked_album.sizes_protected_media_in_sub_tree)
-					# album.nums_media_in_sub_tree.sum(next_walked_album.nums_media_in_sub_tree)
-
-					album.nums_protected_media_in_sub_tree_non_geotagged.merge(next_walked_album.nums_protected_media_in_sub_tree_non_geotagged)
-					album.sizes_protected_media_in_sub_tree_non_geotagged.merge(next_walked_album.sizes_protected_media_in_sub_tree_non_geotagged)
-					# album.nums_media_in_sub_tree_non_geotagged.sum(next_walked_album.nums_media_in_sub_tree_non_geotagged)
-
-					album.positions_and_media_in_tree.merge(next_walked_album.positions_and_media_in_tree)
-
-					album.add_subalbum(next_walked_album)
-					next_level()
-					message("adding album to search tree...", "", 5)
-					self.add_album_to_tree_by_search(next_walked_album)
-					indented_message("album added to search tree", "", 5)
-					back_level()
-
+				dirs_in_dir.append(entry_with_path)
 			elif os.path.isfile(entry_with_path):
 				if skip_files:
 					continue
 				if os.path.islink(entry_with_path) and Options.config['follow_symlinks']:
-					indented_message("symlink to file, following it as per 'follow_symlinks' option", entry_with_path, 3)
+					indented_message("symlink to file, working with it as per 'follow_symlinks' option", entry_with_path, 3)
 
 				# save the file name for the end of the cycle, so that subdirs are processed first
 				files_in_dir.append(entry_with_path)
@@ -1972,6 +1946,38 @@ class TreeWalker:
 				unrecognized_files_in_dir.append("      " + entry_with_path + "      mime type: " + single_media.mime_type )
 			back_level()
 		back_level()
+
+		message("working with subdirs in dir", absolute_path, 3)
+		next_level()
+		for entry_with_path in dirs_in_dir:
+			trimmed_path = trim_base_custom(absolute_path, Options.config['album_path'])
+			entry_for_cache_base = os.path.join(Options.config['folders_string'], trimmed_path, entry)
+			next_level()
+			message("determining cache base...", "", 5)
+			next_album_cache_base = album.generate_cache_base(entry_for_cache_base)
+			indented_message("cache base determined", "", 5)
+			back_level()
+			[next_walked_album, sub_max_file_date, _passwords_or_album_ini_processed] = self.walk(entry_with_path, next_album_cache_base, patterns_and_passwords, passwords_marker_mtime, album.password_identifiers_set, album)
+			passwords_or_album_ini_processed = passwords_or_album_ini_processed or _passwords_or_album_ini_processed
+			if next_walked_album is not None:
+				max_file_date = max(max_file_date, sub_max_file_date)
+				album.nums_protected_media_in_sub_tree.merge(next_walked_album.nums_protected_media_in_sub_tree)
+				album.sizes_protected_media_in_sub_tree.merge(next_walked_album.sizes_protected_media_in_sub_tree)
+				# album.nums_media_in_sub_tree.sum(next_walked_album.nums_media_in_sub_tree)
+
+				album.nums_protected_media_in_sub_tree_non_geotagged.merge(next_walked_album.nums_protected_media_in_sub_tree_non_geotagged)
+				album.sizes_protected_media_in_sub_tree_non_geotagged.merge(next_walked_album.sizes_protected_media_in_sub_tree_non_geotagged)
+				# album.nums_media_in_sub_tree_non_geotagged.sum(next_walked_album.nums_media_in_sub_tree_non_geotagged)
+
+				album.positions_and_media_in_tree.merge(next_walked_album.positions_and_media_in_tree)
+
+				album.add_subalbum(next_walked_album)
+				next_level()
+				message("adding album to search tree...", "", 5)
+				self.add_album_to_tree_by_search(next_walked_album)
+				indented_message("album added to search tree", "", 5)
+				back_level()
+
 
 		if num_video_in_dir:
 			Options.num_video += num_video_in_dir
