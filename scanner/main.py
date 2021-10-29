@@ -36,11 +36,11 @@ def main():
 		"--periodic-save",
 		nargs="?",
 		type=int,
-		const=1,
-		default=-1,
+		const=5,
+		default=0,
 		dest="periodic_save",
 		metavar="MINUTES",
-		help="runs the scanner in a more robust way, saving json files every X minutes, where X is the value given, or 1 if no value is given"
+		help="runs the scanner in a more robust way, saving json files every X minutes, where X is the value given, or 5 if no value is given; 0 means non autosaving"
 	)
 	parser.add_argument(
 		"-j",
@@ -96,28 +96,29 @@ def main():
 
 		os.umask(0o02)
 
-		if Options.config['repeat_if_timeout']:
-			message("Safe mode, begin", "every " + str(Options.config['max_scanner_duration']) + " minutes all the json files are saved and scanning begins again", 3)
+		if Options.config['auto_save_time'] > 0:
+			message("SAFE MODE begin", "every " + str(Options.config['auto_save_time']) + " minutes all the json files will be saved and scanning will begin again", 3)
 			next_level()
 		count = 1
 
 		repeat = True
+		Options.initial_time_for_timeout = datetime.now()
 		while repeat:
-			Options.initial_time = datetime.now()
+			Options.initial_time_for_auto_save = datetime.now()
 			TreeWalker()
-			if not Options.config['repeat_if_timeout'] or not Options.timeout:
+			if Options.config['auto_save_time'] == 0 or Options.timeout:
 				repeat = False
 			else:
 				back_level()
-				message("Safe mode, end of pass", "This was pass " + str(count), 3)
+				message("SAFE MODE end of pass", "This was pass " + str(count), 3)
 				count += 1
-				message("Safe mode, begin of new pass", "This is pass " + str(count), 3)
+				message("SAFE MODE begin of new pass", "This is pass " + str(count), 3)
 				next_level()
 
 		back_level()
-		if Options.config['repeat_if_timeout']:
+		if Options.config['auto_save_time'] > 0:
 			back_level()
-			message("Safe mode, end of last pass", "This was pass " + str(count), 3)
+			message("SAFE MODE end of last pass", "This was pass " + str(count), 3)
 
 		report_times(True)
 

@@ -131,8 +131,11 @@ pil_size_for_decompression_bomb_error = 89478485
 # Default value is 12 hours = 60 minutes/hour * 12 hours = 720 minutes
 max_scanner_duration = 720
 
-# restart the scanner if it exits with timeout condition
-repeat_if_timeout = false
+# time interval in minutes for saving json files
+# when this scannnin time is reached no more directories are scanned, and files are saved
+# afterwards, scanning begins again
+# a value of 0 means no autosaving
+auto_save_time = 60
 
 
 # #######################

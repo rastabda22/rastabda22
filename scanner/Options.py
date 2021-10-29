@@ -21,11 +21,13 @@ all_albums = []
 date_time_format = "%Y-%m-%d %H:%M:%S"
 exif_date_time_format = "%Y:%m:%d %H:%M:%S"
 video_date_time_format = "%Y-%m-%d %H:%M:%S"
-initial_time = datetime.now()
+initial_time_for_timeout = datetime.now()
+initial_time_for_auto_save = datetime.now()
 last_time = datetime.now()
 elapsed_times = {}
 elapsed_times_counter = {}
 timeout = False
+do_auto_save = False
 global_pattern = ""
 num_photo = 0
 num_photo_processed = 0
@@ -253,13 +255,12 @@ def get_options(args):
 		usr_config.set('options', 'cache_path', args.cache_path)
 
 
-	message("PRE Options", "asterisk denotes options changed by config file", 0)
-	next_level()
 	# pass config values to a dict, because ConfigParser objects are not reliable
 	for option in default_config.options('options'):
 		if option in (
 				'max_verbose',
 				'max_scanner_duration',
+				'auto_save_time',
 				'pil_size_for_decompression_bomb_error',
 				'jpeg_quality',
 				'video_crf',
@@ -288,7 +289,6 @@ def get_options(args):
 				config[option] = default_config.getint('options', option)
 		elif option in (
 				'follow_symlinks',
-				'repeat_if_timeout',
 				'checksum',
 				'different_album_thumbnails',
 				'hide_title',
@@ -335,6 +335,39 @@ def get_options(args):
 				config[option] = json.loads(config[option])
 
 
+	# override config file options with command line options
+	if args.periodic_save != 0:
+		config['auto_save_time'] = args.periodic_save
+		message("COMMAND LINE option", "periodic save set to " + str(config['auto_save_time']) + " minutes", 3)
+
+	config['recreate_json_files'] = False
+	config['recreate_reduced_photos'] = False
+	config['recreate_transcoded_videos'] = False
+	config['recreate_thumbnails'] = False
+	if args.recreate_all:
+		config['recreate_json_files'] = True
+		config['recreate_reduced_photos'] = True
+		config['recreate_transcoded_videos'] = True
+		config['recreate_thumbnails'] = True
+		message("COMMAND LINE option", "forced recreation of all the cache content", 3)
+	else:
+		if args.recreate_json_files:
+			config['recreate_json_files'] = True
+			message("COMMAND LINE option", "forced recreation of json files", 3)
+		if args.recreate_transcoded_videos == True:
+			config['recreate_transcoded_videos'] = True
+			message("COMMAND LINE option", "forced recreation of transcoded videos", 3)
+		if args.recreate_reduced_photos == True:
+			config['recreate_reduced_photos'] = True
+			message("COMMAND LINE option", "forced recreation of reduced photos", 3)
+		if args.recreate_thumbnails == True:
+			config['recreate_thumbnails'] = True
+			message("COMMAND LINE option", "forced recreation of thumbnails", 3)
+
+
+	message("PRE Options", "asterisk denotes options changed by config file", 0)
+	next_level()
+	for option in default_config.options('options'):
 		option_value = str(config[option])
 		option_length = len(option_value)
 		max_length = 40
@@ -585,37 +618,6 @@ def get_options(args):
 		else:
 			message("PRE cache folders schema determined", "few media, using default subdir: " + config['default_cache_album'], 4)
 		back_level()
-
-
-	# override config file options with command line options
-	if args.periodic_save != -1:
-		config['max_scanner_duration'] = args.periodic_save
-		config['repeat_if_timeout'] = True
-		message("COMMAND LINE option", "periodic save set to " + str(config['max_scanner_duration']) + " minutes", 3)
-
-	config['recreate_json_files'] = False
-	config['recreate_reduced_photos'] = False
-	config['recreate_transcoded_videos'] = False
-	config['recreate_thumbnails'] = False
-	if args.recreate_all:
-		config['recreate_json_files'] = True
-		config['recreate_reduced_photos'] = True
-		config['recreate_transcoded_videos'] = True
-		config['recreate_thumbnails'] = True
-		message("COMMAND LINE option", "forced recreation of all the cache content", 3)
-	else:
-		if args.recreate_json_files:
-			config['recreate_json_files'] = True
-			message("COMMAND LINE option", "forced recreation of json files", 3)
-		if args.recreate_transcoded_videos == True:
-			config['recreate_transcoded_videos'] = True
-			message("COMMAND LINE option", "forced recreation of transcoded videos", 3)
-		if args.recreate_reduced_photos == True:
-			config['recreate_reduced_photos'] = True
-			message("COMMAND LINE option", "forced recreation of reduced photos", 3)
-		if args.recreate_thumbnails == True:
-			config['recreate_thumbnails'] = True
-			message("COMMAND LINE option", "forced recreation of thumbnails", 3)
 
 
 	# get old options: they are revised in order to decide whether to recreate something
