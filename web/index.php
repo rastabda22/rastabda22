@@ -408,7 +408,7 @@
 			</div>
 
 			<div id="auth-text">
-				<div id="auth-close" style="top: 22px; right: 22px;"></div>
+				<div id="auth-close"></div>
 				<form id="auth-form">
 					<div id="auth-question"></div>
 					<input type="text" value="username" autocomplete="username" style="display: none;" />
