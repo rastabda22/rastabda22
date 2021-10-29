@@ -808,7 +808,12 @@
 							function(ev, from) {
 								// do not remove the from parameter, it is valored when the click is activated via the trigger() jquery function
 								env.selectorClickedToOpenTheMap = ".map-popup-trigger";
-								if (env.currentMedia !== null && env.currentMedia.hasGpsData()) {
+								if (
+									env.currentMedia !== null && (
+										env.currentMedia.hasGpsData() ||
+										env.options.user_may_suggest_location && env.options.request_password_email
+									)
+								) {
 									TopFunctions.generateMapFromTitle(ev, from);
 								} else {
 									TopFunctions.generateMapFromTitleWithoutSubalbums(ev, from);
@@ -2998,8 +3003,12 @@
 
 	TopFunctions.generateMapFromTitle = function(ev, from) {
 		var pointList;
-		if (env.currentMedia !== null && env.currentMedia.hasGpsData()) {
-			pointList = new PositionsAndMedia([env.currentMedia.generatePositionAndMedia()]);
+		if (env.currentMedia !== null) {
+			if (env.currentMedia.hasGpsData()) {
+				pointList = new PositionsAndMedia([env.currentMedia.generatePositionAndMedia()]);
+			} else if (env.options.user_may_suggest_location && env.options.request_password_email) {
+				pointList = new PositionsAndMedia([]);
+			}
 		} else if (env.currentAlbum.positionsAndMediaInTree.length) {
 			pointList = env.currentAlbum.positionsAndMediaInTree;
 		}
@@ -3111,7 +3120,13 @@
 			// maximum OSM zoom is 19
 			const maxOSMZoom = 19;
 			// calculate the center
-			var center = this.averagePosition();
+			var center;
+			if (this.length)
+				center = this.averagePosition();
+			else if (env.lastMapPositionAndZoom.center)
+				center = env.lastMapPositionAndZoom.center;
+			else
+				center = {lat: 0, lng: 0};
 
 			// var thumbAndCaptionHeight = 0;
 
@@ -3134,6 +3149,9 @@
 			var xZoom = Math.min(maxOSMZoom, parseInt(Math.log2((env.windowWidth / 2 * 0.9) * earthCircumference * Math.cos(util.degreesToRadians(center.lat)) / 256 / maxXDistance)));
 			var yZoom = Math.min(maxOSMZoom, parseInt(Math.log2((env.windowHeight / 2 * 0.9) * earthCircumference * Math.cos(util.degreesToRadians(center.lat)) / 256 / maxYDistance)));
 			var zoom = Math.min(xZoom, yZoom);
+
+			if (! this.length)
+				zoom = 3;
 
 			$("#loading").hide();
 
