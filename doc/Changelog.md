@@ -1,8 +1,7 @@
-* the scanner can be given a maximum processing time; new option `max_scanner_duration`, value in minutes
-* the scanner has now a rough auto save feature, new option `auto_save_time`
+* the scanner can be given a maximum processing time; new option `max_scanner_duration`
+* the scanner has now a rough auto save feature: new option `auto_save_time`
 * command line arguments and options are now parsed with argparse library
-* the user can now suggest the geo-location of the media which still miss it: a mail is sent to the site owner
-* new option `user_may_suggest_location`, manages issue #330: permit the user to point the location of one or more photos
+* the user can now suggest the geo-location of the media which still miss it: a mail is sent to the site owner; new option `user_may_suggest_location`
 * hide/show protection unveiling menu entry together with padlock
 * bug fixes
 
