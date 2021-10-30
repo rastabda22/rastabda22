@@ -1,4 +1,6 @@
-* new option `user_may_suggest_location`, manages issue #330: permit the user to point the location of one or more photos
+### version v5.3.11 (Octuber 29, 2021)
+
+* new option `user_may_suggest_location`, manages issue #330: permit the user to point the location of non-geotagged photos
 * hide/show protection unveiling menu entry together with padlock
 * bug fixes
 
