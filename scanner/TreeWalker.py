@@ -12,7 +12,7 @@ import fnmatch
 import shutil
 import copy
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from pprint import pprint
 
 from PIL import Image
@@ -1231,10 +1231,6 @@ class TreeWalker:
 		message(">>>>>>>>>>>  Entering directory", absolute_path, 1)
 		next_level()
 		message("cache base", album_cache_base, 4)
-		if Options.config['max_scanner_duration'] > 0 and datetime.now() - Options.initial_time > timedelta(minutes=Options.config['max_scanner_duration']):
-			Options.timeout = True
-			message("scanning time > " + str(Options.config['max_scanner_duration']) + " minutes", "non going on", 1)
-			return [None, None, None]
 		if not os.access(absolute_path, os.R_OK | os.X_OK):
 			message("access denied to directory", os.path.basename(absolute_path), 1)
 			back_level()

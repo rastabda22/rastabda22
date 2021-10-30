@@ -124,12 +124,6 @@ subdir_method = md5
 # If the images are secure, the Decompression Bomb Attacch protection can be disabled setting this option to -1
 pil_size_for_decompression_bomb_error = 89478485
 
-# Limit the scanning of directories to the given time in minutes (integer value). A value of zero means no limit
-# When this time limit is reached, directory scanning terminates and the json files are generated
-# Set this value taking into account the extra time for the scanner ending up its work
-# This extra time should be consistently less than the time needed to scan the directories
-max_scanner_duration = 0
-
 
 # #######################
 # Video encoding options

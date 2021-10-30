@@ -400,11 +400,6 @@ def report_times(final):
 		_num_unrecognized_files = str(Options.num_unrecognized_files)
 		max_digit = len(_num_media)
 
-		if Options.timeout:
-			print("WARNING: scanner timeout, scanning time > " + str(Options.config['max_scanner_duration']) + " minutes")
-			print("  Some (many?) directories hasn't been scanned, hopefully they will be scanned at next scanner run")
-			print()
-
 		media_count_and_time = "Media    " + _num_media.rjust(max_digit) + ' / ' + str(Options.config['num_media_in_tree']) + ' (' + str(int(num_media * 1000 / Options.config['num_media_in_tree']) / 10) + '%)'
 		if num_media:
 			mean_time = int(time_till_now / 1000000 / num_media * 1000) / 1000

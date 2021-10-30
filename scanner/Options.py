@@ -20,11 +20,9 @@ all_albums = []
 date_time_format = "%Y-%m-%d %H:%M:%S"
 exif_date_time_format = "%Y:%m:%d %H:%M:%S"
 video_date_time_format = "%Y-%m-%d %H:%M:%S"
-initial_time = datetime.now()
 last_time = datetime.now()
 elapsed_times = {}
 elapsed_times_counter = {}
-timeout = False
 global_pattern = ""
 num_photo = 0
 num_photo_processed = 0
@@ -256,7 +254,6 @@ def get_options():
 	for option in default_config.options('options'):
 		if option in (
 				'max_verbose',
-				'max_scanner_duration',
 				'pil_size_for_decompression_bomb_error',
 				'jpeg_quality',
 				'video_crf',
