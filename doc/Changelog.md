@@ -1,6 +1,5 @@
 * the scanner can be given a maximum processing time; new option `max_scanner_duration`, value in minutes
 * new option `repeat_if_timeout`, defaults to false
-* command line arguments and options are now parsed with argparse library
 * the user can now suggest the geo-location of the media which still miss it: a mail is sent to the site owner
 * new option `user_may_suggest_location`, manages issue #330: permit the user to point the location of one or more photos
 * hide/show protection unveiling menu entry together with padlock
