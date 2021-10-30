@@ -99,30 +99,26 @@ def main():
 		if Options.config['auto_save_time'] > 0:
 			message("SAFE MODE begin", "every " + str(Options.config['auto_save_time']) + " minutes all the json files will be saved and scanning will begin again", 3)
 			next_level()
-		count = 0
+		count = 1
 
+		repeat = True
 		Options.initial_time_for_timeout = datetime.now()
-		while True:
-			if Options.config['auto_save_time'] > 0:
-				count += 1
-				Options.initial_time_for_auto_save = datetime.now()
-				message("SAFE MODE begin of new pass", "This is pass " + str(count), 3)
-				next_level()
+		while repeat:
+			Options.initial_time_for_auto_save = datetime.now()
 			TreeWalker()
-			if Options.config['auto_save_time'] > 0:
+			if Options.config['auto_save_time'] == 0 or Options.timeout:
+				repeat = False
+			else:
 				back_level()
 				message("SAFE MODE end of pass", "This was pass " + str(count), 3)
-				if Options.timeout or not Options.do_auto_save:
-					break
-			if Options.timeout:
-				break
+				count += 1
+				message("SAFE MODE begin of new pass", "This is pass " + str(count), 3)
+				next_level()
 
-
+		back_level()
 		if Options.config['auto_save_time'] > 0:
 			back_level()
-			message("SAFE MODE end", str(count) + " passes in safe mode", 3)
-		if Options.timeout:
-			message("TIMEOUT", "", 3)
+			message("SAFE MODE end of last pass", "This was pass " + str(count), 3)
 
 		report_times(True)
 
