@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
 import sys
 import argparse
 import os
@@ -40,42 +39,7 @@ def main():
 		default=-1,
 		dest="periodic_save",
 		metavar="MINUTES",
-		help="runs the scanner in a more robust way, saving json files every X minutes, where X is the value given, or 1 if no value is given"
-	)
-	parser.add_argument(
-		"-j",
-		"--recreate-json-files",
-		action='store_true',
-		dest="recreate_json_files",
-		help="completely recreate the json files cache"
-	)
-	parser.add_argument(
-		"-r",
-		"--recreate-reduced-photos",
-		action='store_true',
-		dest="recreate_reduced_photos",
-		help="completely recreate reduced photo cache files"
-	)
-	parser.add_argument(
-		"-t",
-		"--recreate-thumbnails",
-		action='store_true',
-		dest="recreate_thumbnails",
-		help="completely recreate thumbnail cache files"
-	)
-	parser.add_argument(
-		"-v",
-		"--recreate-transcoded-videos",
-		action='store_true',
-		dest="recreate_transcoded_videos",
-		help="completely recreate transcoded video cache files"
-	)
-	parser.add_argument(
-		"-a",
-		"--recreate-all",
-		action='store_true',
-		dest="recreate_all",
-		help="completely recreate the cache: json files, reduced photos, thumbnails and transcoded videos; same as -jrtv"
+		help="runs the scanner in a more robust way, saving json files every X minutes, where X is the value given, or 60 if no value is given"
 	)
 	parser.add_argument("--version", action="version", version='%(prog)s v5.3.10')
 	args = parser.parse_args()
@@ -103,7 +67,6 @@ def main():
 
 		repeat = True
 		while repeat:
-			Options.initial_time = datetime.now()
 			TreeWalker()
 			if not Options.config['repeat_if_timeout'] or not Options.timeout:
 				repeat = False
