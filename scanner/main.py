@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import argparse
 import os
 
 # # @python2
@@ -17,34 +16,11 @@ from Utilities import report_times, message
 
 
 def main():
-	parser = argparse.ArgumentParser(
-		description='Scan a media tree in order to generate cache files suitable for showing a beautiful web gallery',
-	)
-	parser.add_argument(
-		"config_file_or_album_path",
-		help="the config file, if it's the only positional argument, or the album path, if two positional arguments are supplied"
-	)
-	parser.add_argument(
-		"cache_path",
-		nargs="?",
-		default="",
-		help="the cache path, if two positional arguments are supplied; otherwise, nothing"
-	)
-	parser.add_argument(
-		"-s",
-		"--periodic-save",
-		nargs="?",
-		type=int,
-		const=60,
-		default=-1,
-		dest="periodic_save",
-		metavar="MINUTES",
-		help="runs the scanner in a more robust way, saving json files every X minutes, where X is the value given, or 60 if no value is given"
-	)
-	parser.add_argument("--version", action="version", version='%(prog)s v5.3.10')
-	args = parser.parse_args()
+	if len(sys.argv) != 3 and len(sys.argv) != 2:
+		print("usage: {0} ALBUM_PATH CACHE_PATH - or {1} CONFIG_FILE".format(sys.argv[0], sys.argv[0]))
+		return
 
-	Options.get_options(args)
+	Options.get_options()
 
 	from TreeWalker import TreeWalker
 
@@ -59,13 +35,7 @@ def main():
 				Debug.profile_start()
 
 		os.umask(0o02)
-
-		repeat = True
-		while repeat:
-			TreeWalker()
-			if not Options.config['repeat_if_timeout'] or not Options.timeout:
-				repeat = False
-
+		TreeWalker()
 		report_times(True)
 
 		if sys.version_info >= (3, 4):
