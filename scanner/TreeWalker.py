@@ -1231,13 +1231,9 @@ class TreeWalker:
 		message(">>>>>>>>>>>  Entering directory", absolute_path, 1)
 		next_level()
 		message("cache base", album_cache_base, 4)
-		if Options.config['max_scanner_duration'] > 0 and datetime.now() - Options.initial_time_for_timeout > timedelta(minutes=Options.config['max_scanner_duration']):
+		if Options.config['max_scanner_duration'] > 0 and datetime.now() - Options.initial_time > timedelta(minutes=Options.config['max_scanner_duration']):
 			Options.timeout = True
-			message("scanning time > " + str(Options.config['max_scanner_duration']) + " minutes", "not going on", 3)
-			return [None, None, None]
-		if Options.config['auto_save_time'] > 0 and datetime.now() - Options.initial_time_for_auto_save > timedelta(minutes=Options.config['auto_save_time']):
-			Options.do_auto_save = True
-			message("scanning time > " + str(Options.config['auto_save_time']) + " minutes", "not going on in order to save json files", 3)
+			message("scanning time > " + str(Options.config['max_scanner_duration']) + " minutes", "non going on", 1)
 			return [None, None, None]
 		if not os.access(absolute_path, os.R_OK | os.X_OK):
 			message("access denied to directory", os.path.basename(absolute_path), 1)
