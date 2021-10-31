@@ -454,13 +454,12 @@ def get_options():
 		make_dir(config['cache_path'], "cache directory")
 
 	config['excluded_patterns'] = []
-	
+	passwords_subdir_with_path = os.path.join(config['cache_path'], config['passwords_subdir'])
+	make_dir(passwords_subdir_with_path, "passwords subdir")
+
 	if len(sys.argv) == 2:
 		# 1 arguments: the config files: the password file is in the same directory
 		old_password_codes = get_old_password_codes()
-
-		passwords_subdir_with_path = os.path.join(config['cache_path'], config['passwords_subdir'])
-		make_dir(passwords_subdir_with_path, "passwords subdir")
 
 		passwords_file_name = os.path.join(os.path.dirname(sys.argv[1]), config['passwords_file'])
 		password_codes = []
