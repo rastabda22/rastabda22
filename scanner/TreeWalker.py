@@ -1117,7 +1117,7 @@ class TreeWalker:
 		Get the set of lowercase stopwords used when searching albums.
 		Loads the stopwords from resource file if necessary.
 		"""
-		if TreeWalker.lowercase_stopwords == {}:
+		if isinstance(TreeWalker.lowercase_stopwords, dict):
 			TreeWalker.load_stopwords()
 
 	def add_single_media_to_tree_by_date(self, single_media):
@@ -1185,7 +1185,7 @@ class TreeWalker:
 		search_normalized_words = list(map(lambda word: remove_accents(word), lowercase_words))
 		ascii_words = list(map(lambda word: transliterate_to_ascii(word), search_normalized_words))
 
-		if (Options.config['use_stop_words']):
+		if Options.config['use_stop_words'] and isinstance(TreeWalker.lowercase_stopwords, dict):
 			# remove stop words: do it according to the words in lower case, different words could be removed if performing remotion from every list
 			next_level()
 			alphabetic_words, search_normalized_words, ascii_words = self.remove_stopwords(alphabetic_words, search_normalized_words, ascii_words)
