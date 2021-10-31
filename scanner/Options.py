@@ -453,6 +453,8 @@ def get_options():
 	except OSError:
 		make_dir(config['cache_path'], "cache directory")
 
+	config['excluded_patterns'] = []
+	
 	if len(sys.argv) == 2:
 		# 1 arguments: the config files: the password file is in the same directory
 		old_password_codes = get_old_password_codes()
@@ -513,7 +515,6 @@ def get_options():
 		# read the excluded patterns file
 		# it must exist and be readable, otherwise skip it
 		excluded_patterns_file_name = os.path.join(os.path.dirname(sys.argv[1]), config['excluded_patterns_file'])
-		config['excluded_patterns'] = []
 
 		try:
 			with open(excluded_patterns_file_name, 'r') as excluded_patterns_file:
