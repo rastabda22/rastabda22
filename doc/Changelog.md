@@ -1,3 +1,7 @@
+### version v5.3.12 (Octuber 30, 2021)
+
+* bug fixes
+
 ### version v5.3.11 (Octuber 29, 2021)
 
 * new option `user_may_suggest_location`, manages issue #330: permit the user to point the location of non-geotagged photos
