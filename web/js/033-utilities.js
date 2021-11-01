@@ -3064,7 +3064,7 @@
 		url += folders;
 		if (
 			env.currentMedia === null ||
-			env.currentAlbum !== null && ! env.currentAlbum.subalbums.length && env.currentAlbum.numsMedia.imagesAndVideosTotal() === 1 ||
+			env.currentAlbum.isAlbumWithOneMedia() ||
 			! env.options.reduced_sizes.length
 		) {
 			mediaParameter = Utilities.pathJoin([
