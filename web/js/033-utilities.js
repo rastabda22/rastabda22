@@ -3072,7 +3072,7 @@
 				env.options.cache_album_subdir,
 				env.currentAlbum.cacheBase
 				]) + ".jpg";
-			if (env.currentAlbum.hasOwnProperty("compositeImageSize") {
+			if (env.currentAlbum.hasOwnProperty("compositeImageSize")) {
 				widthParameter = env.currentAlbum.compositeImageSize;
 				heightParameter = env.currentAlbum.compositeImageSize;
 			}
