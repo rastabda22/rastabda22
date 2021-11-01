@@ -616,7 +616,10 @@
 								singleMediaNameHtml = "<span class='media-name'>" + singleMediaName + "</span>";
 							}
 
-							if (singleMedia.hasGpsData() || env.options.user_may_suggest_location && env.options.request_password_email) {
+							if (
+								singleMedia.hasGpsData() ||
+								typeof isPhp === "function" && env.options.user_may_suggest_location && env.options.request_password_email
+							) {
 								let imgHtml;
 								if (singleMedia.hasGpsData())
 									imgHtml = "<img class='title-img gps' height='20px' src='img/ic_place_white_24dp_2x.png'>";
@@ -811,7 +814,7 @@
 								if (
 									env.currentMedia !== null && (
 										env.currentMedia.hasGpsData() ||
-										env.options.user_may_suggest_location && env.options.request_password_email
+										typeof isPhp === "function" && env.options.user_may_suggest_location && env.options.request_password_email
 									)
 								) {
 									TopFunctions.generateMapFromTitle(ev, from);
@@ -3006,7 +3009,7 @@
 		if (env.currentMedia !== null) {
 			if (env.currentMedia.hasGpsData()) {
 				pointList = new PositionsAndMedia([env.currentMedia.generatePositionAndMedia()]);
-			} else if (env.options.user_may_suggest_location && env.options.request_password_email) {
+			} else if (typeof isPhp === "function" && env.options.user_may_suggest_location && env.options.request_password_email) {
 				pointList = new PositionsAndMedia([]);
 			}
 		} else if (env.currentAlbum.positionsAndMediaInTree.length) {
@@ -3256,7 +3259,10 @@
 			).addTo(env.mymap);
 			L.control.scale().addTo(env.mymap);
 
-			if (env.options.user_may_suggest_location && env.options.request_password_email && env.currentMedia !== null && ! env.currentMedia.hasGpsData()) {
+			if (
+				env.currentMedia !== null && ! env.currentMedia.hasGpsData() &&
+				typeof isPhp === "function" && env.options.user_may_suggest_location && env.options.request_password_email
+			) {
 				// show the central marker, in order to permit the user to suggest by email the geolocation of current media
 				if (env.lastMapPositionAndZoom.center !== false)
 					env.mymap.setView(env.lastMapPositionAndZoom.center, env.lastMapPositionAndZoom.zoom, {animate: false});
