@@ -171,11 +171,11 @@
 				return false;
 		}
 
-		// put the <link rel=".."> tag in <head> for letting facebook/google+ load the image/video when sharing
 		if (! empty($_GET['m'])) {
 			// Prevent directory traversal security vulnerability
 			$realPath = realpath($_GET['m']);
 			if (strpos($realPath, realpath('cache')) === 0  && url_exist($realPath)) {
+				// put the <link rel=".."> tag in <head> for letting facebook/google+ load the image/video when sharing
 				$linkTag = '<link rel="';
 				$videoEnd = ".mp4";
 				if (substr($_GET['m'], - strlen($videoEnd)) === $videoEnd)
@@ -187,6 +187,14 @@
 				$linkTag .= '" href="' . $_GET['m'] . '"';
 				$linkTag .= '>';
 				echo "$linkTag\n";
+
+				// put the <meta property=".."> tags in <head> for letting facebook/google+/etc load the image/video when sharing
+				echo '<meta property="og:image" content="' . $_GET['m'] . '">' . "\n";
+				echo '<meta property="og:image:type" content="image/jpg">' . "\n";
+				if (ctype_digit($_GET['w']))
+					echo '<meta property="og:image:width" content="' . $_GET['w'] . '">' . "\n";
+				if (ctype_digit($_GET['h']))
+					echo '<meta property="og:image:height" content="' . $_GET['h'] . '">' . "\n";
 			}
 		}
 

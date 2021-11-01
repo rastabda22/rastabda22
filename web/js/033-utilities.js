@@ -3046,7 +3046,7 @@
 
 	Utilities.socialButtons = function() {
 		var url, hash, myShareUrl = "";
-		var mediaParameter;
+		var mediaParameter, mediaWidth, mediaHeight, widthParameter, heightParameter;
 		var folders, myShareText, myShareTextAdd;
 
 		if (! env.isMobile.any()) {
@@ -3079,6 +3079,7 @@
 			var prefix = Utilities.removeFolderString(env.currentMedia.foldersCacheBase);
 			if (prefix)
 				prefix += env.options.cache_folder_separator;
+
 			if (env.currentMedia && env.currentMedia.isVideo()) {
 				mediaParameter = Utilities.pathJoin([
 					env.server_cache_path,
@@ -3090,12 +3091,23 @@
 					env.currentMedia.cacheSubdir,
 					prefix + env.currentMedia.cacheBase
 				]) + env.options.cache_folder_separator + env.options.reduced_sizes[reducedSizesIndex] + ".jpg";
+				mediaWidth = env.currentMedia.metadata.size[0];
+				mediaHeight = env.currentMedia.metadata.size[1];
+				if (mediaWidth > mediaHeight) {
+					widthParameter = env.options.reduced_sizes[reducedSizesIndex];
+					heightParameter = env.options.reduced_sizes[reducedSizesIndex] * mediaHeight / mediaWidth;
+				} else {
+					heightParameter = env.options.reduced_sizes[reducedSizesIndex];
+					widthParameter = env.options.reduced_sizes[reducedSizesIndex] * mediaWidth / mediaHeight;
+				}
 			}
 		}
 
-		myShareUrl = url + '?';
-		// disable the image parameter, because of issue #169
-		// myShareUrl += 'm=' + mediaParameter;
+		myShareUrl = url;
+		// should the image parameter be disabled, because of issue #169?
+		myShareUrl += '?m=' + mediaParameter;
+		myShareUrl += '&w=' + widthParameter;
+		myShareUrl += '&h=' + heightParameter;
 		hash = location.hash;
 		if (hash)
 			myShareUrl += '#' + hash.substring(1);
@@ -3108,8 +3120,8 @@
 		jQuery.removeData(".ssk");
 		$('.ssk').attr('data-text', myShareText);
 		$('.ssk-facebook').attr('data-url', myShareUrl);
-		$('.ssk-whatsapp').attr('data-url', location.href);
-		$('.ssk-twitter').attr('data-url', location.href);
+		$('.ssk-whatsapp').attr('data-url', myShareUrl);
+		$('.ssk-twitter').attr('data-url', myShareUrl);
 		$('.ssk-google-plus').attr('data-url', myShareUrl);
 		$('.ssk-email').attr('data-url', location.href);
 

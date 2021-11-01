@@ -193,7 +193,7 @@ var SocialShareKit = (function() {
 		} else {
 			win = window.open(url);
 		}
-		if (url.indexOf("whatsapp:") !== 0 || env.isMobile.any() !== null)
+		if (win !== null && (url.indexOf("whatsapp:") !== 0 || env.isMobile.any() !== null))
 			win.focus();
 		return win;
 	}
