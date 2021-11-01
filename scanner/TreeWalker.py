@@ -545,20 +545,23 @@ class TreeWalker:
 					message("calculating album date", "based on media and subalbums dates", 5)
 					day_album.date = day_album.album_date()
 					Options.all_albums.append(day_album)
-					day_album.composite_image_size = self.generate_composite_image(day_album, day_max_file_date)
+					if day_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
+						day_album.composite_image_size = self.generate_composite_image(day_album, day_max_file_date)
 					indented_message("day album worked out", media_list[0].year + "-" + media_list[0].month + "-" + media_list[0].day, 4)
 				message("calculating album date", "based on media and subalbums dates", 5)
 				month_album.date = month_album.album_date()
 				Options.all_albums.append(month_album)
-				month_album.composite_image_size = self.generate_composite_image(month_album, month_max_file_date)
+				if month_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
+					month_album.composite_image_size = self.generate_composite_image(month_album, month_max_file_date)
 			message("calculating album date", "based on media and subalbums dates", 5)
 			year_album.date = year_album.album_date()
 			Options.all_albums.append(year_album)
-			year_album.composite_image_size = self.generate_composite_image(year_album, year_max_file_date)
+			if year_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
+				year_album.composite_image_size = self.generate_composite_image(year_album, year_max_file_date)
 		message("calculating album date", "based on media and subalbums dates", 5)
 		by_date_album.date = by_date_album.album_date()
 		Options.all_albums.append(by_date_album)
-		if by_date_album.nums_media_in_sub_tree.total() > 0:
+		if by_date_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
 			by_date_album.composite_image_size = self.generate_composite_image(by_date_album, by_date_max_file_date)
 		back_level()
 		return by_date_album
@@ -1024,7 +1027,8 @@ class TreeWalker:
 						message("calculating album date", "based on media and subalbums dates", 5)
 						place_album.date = place_album.album_date()
 						Options.all_albums.append(place_album)
-						place_album.composite_image_size = self.generate_composite_image(place_album, place_max_file_date)
+						if place_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
+							place_album.composite_image_size = self.generate_composite_image(place_album, place_max_file_date)
 						if set_alt_place:
 							indented_message("cluster worked out", str(i + 1) + "-th cluster: " + cluster[0].country_code + "-" + cluster[0].region_code + "-" + alt_place_name, 4)
 							back_level()
@@ -1040,15 +1044,17 @@ class TreeWalker:
 				message("calculating album date", "based on media and subalbums dates", 5)
 				region_album.date = region_album.album_date()
 				Options.all_albums.append(region_album)
-				region_album.composite_image_size = self.generate_composite_image(region_album, region_max_file_date)
+				if region_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
+					region_album.composite_image_size = self.generate_composite_image(region_album, region_max_file_date)
 			message("calculating album date", "based on media and subalbums dates", 5)
 			country_album.date = country_album.album_date()
 			Options.all_albums.append(country_album)
-			country_album.composite_image_size = self.generate_composite_image(country_album, country_max_file_date)
+			if country_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
+				country_album.composite_image_size = self.generate_composite_image(country_album, country_max_file_date)
 		message("calculating album date", "based on media and subalbums dates", 5)
 		by_geonames_album.date = by_geonames_album.album_date()
 		Options.all_albums.append(by_geonames_album)
-		if by_geonames_album.nums_media_in_sub_tree.total() > 0:
+		if by_geonames_album.nums_protected_media_in_sub_tree.nums_protected[','].total():
 			by_geonames_album.composite_image_size = self.generate_composite_image(by_geonames_album, by_geonames_max_file_date)
 		back_level()
 		return by_geonames_album
@@ -2022,7 +2028,7 @@ class TreeWalker:
 		else:
 			message("VOID: no media in this directory", os.path.basename(absolute_path), 4)
 
-		if album.nums_media_in_sub_tree.total():
+		if album.nums_protected_media_in_sub_tree.nums_protected[','].total():
 			# generate the album composite image for sharing
 			album.composite_image_size = self.generate_composite_image(album, max_file_date)
 		back_level()
@@ -2044,16 +2050,19 @@ class TreeWalker:
 
 
 	def pick_random_image(self, album, random_number):
-		if random_number < len(album.media_list):
-			return [album.media_list[random_number], random_number]
+		good_media = [single_media for single_media in album.media_list if not len(single_media.password_identifiers_set)]
+		good_media_number = len(good_media)
+		if random_number < good_media_number:
+			return [good_media[random_number], random_number]
 		else:
-			random_number -= len(album.media_list)
+			random_number -= good_media_number
 			for subalbum in album.subalbums_list:
-				if random_number < subalbum.nums_media_in_sub_tree.total():
+				subalbum_good_media_number = subalbum.nums_protected_media_in_sub_tree.nums_protected[','].total()
+				if random_number < subalbum_good_media_number:
 					[picked_image, random_number] = self.pick_random_image(subalbum, random_number)
 					if picked_image:
 						return [picked_image, random_number]
-				random_number -= subalbum.nums_media_in_sub_tree.total()
+				random_number -= subalbum_good_media_number
 		return [None, random_number]
 
 	def generate_composite_image(self, album, max_file_date):
@@ -2088,15 +2097,15 @@ class TreeWalker:
 		# and generate a square composite image
 
 		# determine the number of images to use
-		if album.nums_media_in_sub_tree.total() == 1 or Options.config['max_album_share_thumbnails_number'] == 1:
+		if album.nums_protected_media_in_sub_tree.nums_protected[','].total() == 1 or Options.config['max_album_share_thumbnails_number'] == 1:
 			max_thumbnail_number = 1
-		elif album.nums_media_in_sub_tree.total() < 9 or Options.config['max_album_share_thumbnails_number'] == 4:
+		elif album.nums_protected_media_in_sub_tree.nums_protected[','].total() < 9 or Options.config['max_album_share_thumbnails_number'] == 4:
 			max_thumbnail_number = 4
-		elif album.nums_media_in_sub_tree.total() < 16 or Options.config['max_album_share_thumbnails_number'] == 9:
+		elif album.nums_protected_media_in_sub_tree.nums_protected[','].total() < 16 or Options.config['max_album_share_thumbnails_number'] == 9:
 			max_thumbnail_number = 9
-		elif album.nums_media_in_sub_tree.total() < 25 or Options.config['max_album_share_thumbnails_number'] == 16:
+		elif album.nums_protected_media_in_sub_tree.nums_protected[','].total() < 25 or Options.config['max_album_share_thumbnails_number'] == 16:
 			max_thumbnail_number = 16
-		elif album.nums_media_in_sub_tree.total() < 36 or Options.config['max_album_share_thumbnails_number'] == 25:
+		elif album.nums_protected_media_in_sub_tree.nums_protected[','].total() < 36 or Options.config['max_album_share_thumbnails_number'] == 25:
 			max_thumbnail_number = 25
 		else:
 			max_thumbnail_number = Options.config['max_album_share_thumbnails_number']
@@ -2105,21 +2114,20 @@ class TreeWalker:
 		random_thumbnails = list()
 		random_list = list()
 		bad_list = list()
-		num_random_thumbnails = min(max_thumbnail_number, album.nums_media_in_sub_tree.total())
+		good_media_number = album.nums_protected_media_in_sub_tree.nums_protected[','].total()
+		num_random_thumbnails = min(max_thumbnail_number, good_media_number)
 		i = 0
-		good_media_number = album.nums_media_in_sub_tree.total()
+		# for security safe only use unprotected media
+		# anyway, if no unprotected album this function is not invoked
 		while True:
 			if i >= good_media_number:
 				break
-			if len(album.media_list) and num_random_thumbnails == 1:
-				random_media = album.media_list[0]
-			else:
-				while True:
-					random_number = random.randint(0, album.nums_media_in_sub_tree.total() - 1)
-					if random_number not in random_list and random_number not in bad_list:
-						break
-				random_list.append(random_number)
-				[random_media, random_number] = self.pick_random_image(album, random_number)
+			while True:
+				random_number = random.randint(0, good_media_number - 1)
+				if random_number not in random_list and random_number not in bad_list:
+					break
+			random_list.append(random_number)
+			[random_media, random_number] = self.pick_random_image(album, random_number)
 			folder_prefix = remove_folders_marker(random_media.album.cache_base)
 			if folder_prefix:
 				folder_prefix += Options.config['cache_folder_separator']
