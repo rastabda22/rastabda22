@@ -3115,6 +3115,8 @@
 		myShareTextAdd = env.currentAlbum.physicalPath;
 		if (myShareTextAdd)
 			myShareText += ": " + myShareTextAdd.substring(myShareTextAdd.lastIndexOf('/') + 1);
+		if (env.currentMedia !== null)
+			myShareText += " / " + env.currentMedia.name;
 
 		myShareUrl = url;
 		// should the image parameter be disabled, because of issue #169?
