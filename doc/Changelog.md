@@ -1,3 +1,5 @@
+* check for php before using functions depending on it
+
 ### version v5.3.12 (Octuber 30, 2021)
 
 * bug fixes

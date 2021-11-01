@@ -242,10 +242,12 @@ passwords_subdir = pwd
 protected_directories_prefix = protected_
 
 # put here the email address for requesting the password(s)
+# requires php
 request_password_email =
 
 # when this options is true the user is allowed to point the location of one or more photos
 # the location is sent by email to the address set in `request_password_email`
+# requires php
 user_may_suggest_location = true
 
 # recreate fixed height media thumbnails if their ratio (width/height) is > 1,
@@ -528,6 +530,8 @@ min_album_thumbnail = 2
 # List the social icons you want to display in a string between spaces or commas.
 # The order of items in the list does not change the order the social icons are displayed (shown
 # in parenthesis in the possible values).
+# Please note that, when sharing on a social media,  php is neededin order to get the image/album displayed in the post
+# Without php, sharing is possible, but the social media won't have any possibility to show the image/album in the post 
 social = "facebook, twitter, pinterest, email"
 
 # Social colored icons or gray ones
