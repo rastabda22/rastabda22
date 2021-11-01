@@ -3111,20 +3111,23 @@
 			}
 		}
 
-		myShareUrl = url;
-		// should the image parameter be disabled, because of issue #169?
-		myShareUrl += '?m=' + mediaParameter;
-		myShareUrl += '&w=' + widthParameter;
-		myShareUrl += '&h=' + heightParameter;
-		myShareUrl += '&hash=' + location.hash;
-		hash = location.hash;
-		if (hash)
-			myShareUrl += '#' + hash.substring(1);
-
 		myShareText = env.options.page_title;
 		myShareTextAdd = env.currentAlbum.physicalPath;
 		if (myShareTextAdd)
 			myShareText += ": " + myShareTextAdd.substring(myShareTextAdd.lastIndexOf('/') + 1);
+
+		myShareUrl = url;
+		// should the image parameter be disabled, because of issue #169?
+		myShareUrl += '?m=' + encodeURIComponent(mediaParameter);
+		myShareUrl += '&w=' + widthParameter;
+		myShareUrl += '&h=' + heightParameter;
+		myShareUrl += '&url=' + encodeURIComponent(url);
+		myShareUrl += '&title=' + encodeURIComponent(myShareText);
+		hash = location.hash;
+		if (hash) {
+			myShareUrl += '&hash=' + hash.substring(1);
+			myShareUrl += '#' + hash.substring(1);
+		}
 
 		jQuery.removeData(".ssk");
 		$('.ssk').attr('data-text', myShareText);
