@@ -3095,10 +3095,10 @@
 				mediaHeight = env.currentMedia.metadata.size[1];
 				if (mediaWidth > mediaHeight) {
 					widthParameter = env.options.reduced_sizes[reducedSizesIndex];
-					heightParameter = env.options.reduced_sizes[reducedSizesIndex] * mediaHeight / mediaWidth;
+					heightParameter = Math.round(env.options.reduced_sizes[reducedSizesIndex] * mediaHeight / mediaWidth);
 				} else {
 					heightParameter = env.options.reduced_sizes[reducedSizesIndex];
-					widthParameter = env.options.reduced_sizes[reducedSizesIndex] * mediaWidth / mediaHeight;
+					widthParameter = Math.round(env.options.reduced_sizes[reducedSizesIndex] * mediaWidth / mediaHeight);
 				}
 			}
 		}
