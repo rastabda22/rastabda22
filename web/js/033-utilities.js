@@ -3072,6 +3072,10 @@
 				env.options.cache_album_subdir,
 				env.currentAlbum.cacheBase
 				]) + ".jpg";
+			if (env.currentAlbum.hasOwnProperty("compositeImageSize") {
+				widthParameter = env.currentAlbum.compositeImageSize;
+				heightParameter = env.currentAlbum.compositeImageSize;
+			}
 		} else {
 			var reducedSizesIndex = 1;
 			if (env.options.reduced_sizes.length === 1)
@@ -3112,6 +3116,7 @@
 		myShareUrl += '?m=' + mediaParameter;
 		myShareUrl += '&w=' + widthParameter;
 		myShareUrl += '&h=' + heightParameter;
+		myShareUrl += '&hash=' + location.hash;
 		hash = location.hash;
 		if (hash)
 			myShareUrl += '#' + hash.substring(1);

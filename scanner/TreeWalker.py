@@ -454,28 +454,28 @@ class TreeWalker:
 						day_album.add_single_media(single_media)
 						month_album.add_single_media(single_media)
 						year_album.add_single_media(single_media)
-						# if single_media.is_image:
-						# 	day_album.nums_media_in_sub_tree.incrementImages()
-						# 	month_album.nums_media_in_sub_tree.incrementImages()
-						# 	year_album.nums_media_in_sub_tree.incrementImages()
-						# 	by_date_album.nums_media_in_sub_tree.incrementImages()
-						# else:
-						# 	day_album.nums_media_in_sub_tree.incrementVideos()
-						# 	month_album.nums_media_in_sub_tree.incrementVideos()
-						# 	year_album.nums_media_in_sub_tree.incrementVideos()
-						# 	by_date_album.nums_media_in_sub_tree.incrementVideos()
-						#
-						# if not single_media.has_gps_data:
-						# 	if single_media.is_image:
-						# 		day_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
-						# 		month_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
-						# 		year_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
-						# 		by_date_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
-						# 	else:
-						# 		day_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
-						# 		month_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
-						# 		year_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
-						# 		by_date_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
+						if single_media.is_image:
+							day_album.nums_media_in_sub_tree.incrementImages()
+							month_album.nums_media_in_sub_tree.incrementImages()
+							year_album.nums_media_in_sub_tree.incrementImages()
+							by_date_album.nums_media_in_sub_tree.incrementImages()
+						else:
+							day_album.nums_media_in_sub_tree.incrementVideos()
+							month_album.nums_media_in_sub_tree.incrementVideos()
+							year_album.nums_media_in_sub_tree.incrementVideos()
+							by_date_album.nums_media_in_sub_tree.incrementVideos()
+
+						if not single_media.has_gps_data:
+							if single_media.is_image:
+								day_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+								month_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+								year_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+								by_date_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+							else:
+								day_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
+								month_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
+								year_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
+								by_date_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
 						if single_media.has_gps_data:
 							day_album.positions_and_media_in_tree.add_single_media(single_media)
 							month_album.positions_and_media_in_tree.add_single_media(single_media)
@@ -545,21 +545,21 @@ class TreeWalker:
 					message("calculating album date", "based on media and subalbums dates", 5)
 					day_album.date = day_album.album_date()
 					Options.all_albums.append(day_album)
-					self.generate_composite_image(day_album, day_max_file_date)
+					day_album.composite_image_size = self.generate_composite_image(day_album, day_max_file_date)
 					indented_message("day album worked out", media_list[0].year + "-" + media_list[0].month + "-" + media_list[0].day, 4)
 				message("calculating album date", "based on media and subalbums dates", 5)
 				month_album.date = month_album.album_date()
 				Options.all_albums.append(month_album)
-				self.generate_composite_image(month_album, month_max_file_date)
+				month_album.composite_image_size = self.generate_composite_image(month_album, month_max_file_date)
 			message("calculating album date", "based on media and subalbums dates", 5)
 			year_album.date = year_album.album_date()
 			Options.all_albums.append(year_album)
-			self.generate_composite_image(year_album, year_max_file_date)
+			year_album.composite_image_size = self.generate_composite_image(year_album, year_max_file_date)
 		message("calculating album date", "based on media and subalbums dates", 5)
 		by_date_album.date = by_date_album.album_date()
 		Options.all_albums.append(by_date_album)
 		if by_date_album.nums_media_in_sub_tree.total() > 0:
-			self.generate_composite_image(by_date_album, by_date_max_file_date)
+			by_date_album.composite_image_size = self.generate_composite_image(by_date_album, by_date_max_file_date)
 		back_level()
 		return by_date_album
 
@@ -911,28 +911,28 @@ class TreeWalker:
 							place_album.add_single_media(single_media)
 							region_album.add_single_media(single_media)
 							country_album.add_single_media(single_media)
-							# if single_media.is_image:
-							# 	place_album.nums_media_in_sub_tree.incrementImages()
-							# 	region_album.nums_media_in_sub_tree.incrementImages()
-							# 	country_album.nums_media_in_sub_tree.incrementImages()
-							# 	by_geonames_album.nums_media_in_sub_tree.incrementImages()
-							# else:
-							# 	place_album.nums_media_in_sub_tree.incrementVideos()
-							# 	region_album.nums_media_in_sub_tree.incrementVideos()
-							# 	country_album.nums_media_in_sub_tree.incrementVideos()
-							# 	by_geonames_album.nums_media_in_sub_tree.incrementVideos()
-							#
-							# if not single_media.has_gps_data:
-							# 	if single_media.is_image:
-							# 		place_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
-							# 		region_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
-							# 		country_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
-							# 		by_geonames_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
-							# 	else:
-							# 		place_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
-							# 		region_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
-							# 		country_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
-							# 		by_geonames_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
+							if single_media.is_image:
+								place_album.nums_media_in_sub_tree.incrementImages()
+								region_album.nums_media_in_sub_tree.incrementImages()
+								country_album.nums_media_in_sub_tree.incrementImages()
+								by_geonames_album.nums_media_in_sub_tree.incrementImages()
+							else:
+								place_album.nums_media_in_sub_tree.incrementVideos()
+								region_album.nums_media_in_sub_tree.incrementVideos()
+								country_album.nums_media_in_sub_tree.incrementVideos()
+								by_geonames_album.nums_media_in_sub_tree.incrementVideos()
+
+							if not single_media.has_gps_data:
+								if single_media.is_image:
+									place_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+									region_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+									country_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+									by_geonames_album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+								else:
+									place_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
+									region_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
+									country_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
+									by_geonames_album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
 
 							if place_album.center == {}:
 								place_album.center['latitude'] = single_media.latitude
@@ -1024,7 +1024,7 @@ class TreeWalker:
 						message("calculating album date", "based on media and subalbums dates", 5)
 						place_album.date = place_album.album_date()
 						Options.all_albums.append(place_album)
-						self.generate_composite_image(place_album, place_max_file_date)
+						place_album.composite_image_size = self.generate_composite_image(place_album, place_max_file_date)
 						if set_alt_place:
 							indented_message("cluster worked out", str(i + 1) + "-th cluster: " + cluster[0].country_code + "-" + cluster[0].region_code + "-" + alt_place_name, 4)
 							back_level()
@@ -1040,16 +1040,16 @@ class TreeWalker:
 				message("calculating album date", "based on media and subalbums dates", 5)
 				region_album.date = region_album.album_date()
 				Options.all_albums.append(region_album)
-				self.generate_composite_image(region_album, region_max_file_date)
+				region_album.composite_image_size = self.generate_composite_image(region_album, region_max_file_date)
 			message("calculating album date", "based on media and subalbums dates", 5)
 			country_album.date = country_album.album_date()
 			Options.all_albums.append(country_album)
-			self.generate_composite_image(country_album, country_max_file_date)
+			country_album.composite_image_size = self.generate_composite_image(country_album, country_max_file_date)
 		message("calculating album date", "based on media and subalbums dates", 5)
 		by_geonames_album.date = by_geonames_album.album_date()
 		Options.all_albums.append(by_geonames_album)
 		if by_geonames_album.nums_media_in_sub_tree.total() > 0:
-			self.generate_composite_image(by_geonames_album, by_geonames_max_file_date)
+			by_geonames_album.composite_image_size = self.generate_composite_image(by_geonames_album, by_geonames_max_file_date)
 		back_level()
 		return by_geonames_album
 
@@ -1655,11 +1655,11 @@ class TreeWalker:
 					max_file_date = max(max_file_date, sub_max_file_date)
 					album.nums_protected_media_in_sub_tree.merge(next_walked_album.nums_protected_media_in_sub_tree)
 					album.sizes_protected_media_in_sub_tree.merge(next_walked_album.sizes_protected_media_in_sub_tree)
-					# album.nums_media_in_sub_tree.sum(next_walked_album.nums_media_in_sub_tree)
+					album.nums_media_in_sub_tree.sum(next_walked_album.nums_media_in_sub_tree)
 
 					album.nums_protected_media_in_sub_tree_non_geotagged.merge(next_walked_album.nums_protected_media_in_sub_tree_non_geotagged)
 					album.sizes_protected_media_in_sub_tree_non_geotagged.merge(next_walked_album.sizes_protected_media_in_sub_tree_non_geotagged)
-					# album.nums_media_in_sub_tree_non_geotagged.sum(next_walked_album.nums_media_in_sub_tree_non_geotagged)
+					album.nums_media_in_sub_tree_non_geotagged.sum(next_walked_album.nums_media_in_sub_tree_non_geotagged)
 
 					album.positions_and_media_in_tree.merge(next_walked_album.positions_and_media_in_tree)
 
@@ -1897,16 +1897,16 @@ class TreeWalker:
 						album.sizes_protected_media_in_sub_tree_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
 						album.sizes_protected_media_in_album_non_geotagged.sum(complex_identifiers_combination, single_media.file_sizes)
 
-					# if single_media.is_image:
-					# 	album.nums_media_in_sub_tree.incrementImages()
-					# else:
-					# 	album.nums_media_in_sub_tree.incrementVideos()
-					#
-					# if not single_media.has_gps_data:
-					# 	if single_media.is_image:
-					# 		album.nums_media_in_sub_tree_non_geotagged.incrementImages()
-					# 	else:
-					# 		album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
+					if single_media.is_image:
+						album.nums_media_in_sub_tree.incrementImages()
+					else:
+						album.nums_media_in_sub_tree.incrementVideos()
+
+					if not single_media.has_gps_data:
+						if single_media.is_image:
+							album.nums_media_in_sub_tree_non_geotagged.incrementImages()
+						else:
+							album.nums_media_in_sub_tree_non_geotagged.incrementVideos()
 					if single_media.has_gps_data:
 						album.positions_and_media_in_tree.add_single_media(single_media)
 
@@ -2024,7 +2024,7 @@ class TreeWalker:
 
 		if album.nums_media_in_sub_tree.total():
 			# generate the album composite image for sharing
-			self.generate_composite_image(album, max_file_date)
+			album.composite_image_size = self.generate_composite_image(album, max_file_date)
 		back_level()
 
 		report_times(False)
@@ -2057,10 +2057,11 @@ class TreeWalker:
 		return [None, random_number]
 
 	def generate_composite_image(self, album, max_file_date):
+		# returns the size of the image
 
 		# I'm short-circuiting this function because of issue #169
 		# remove the following return when the issue has been solved
-		return
+		# return
 
 		next_level()
 		composite_image_name = album.cache_base + ".jpg"
@@ -2078,7 +2079,8 @@ class TreeWalker:
 				os.utime(composite_image_path, None)
 			indented_message("composite image OK, touched", composite_image_path, 4)
 			back_level()
-			return
+			im = Image.open(composite_image_path)
+			return im.size[0]
 
 		message("generating composite image...", composite_image_path, 5)
 
@@ -2175,6 +2177,7 @@ class TreeWalker:
 		img.save(composite_image_path, "JPEG", quality=Options.config['jpeg_quality'])
 		indented_message("composite image generated", "", 5)
 		back_level()
+		return map_width
 
 
 	@staticmethod

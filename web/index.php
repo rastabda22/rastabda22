@@ -189,6 +189,9 @@
 				echo "$linkTag\n";
 
 				// put the <meta property=".."> tags in <head> for letting facebook/google+/etc load the image/video when sharing
+				$hash = preg_replace(/[^-_a-z0-9]/i, "", $_GET['hash']);
+				$url = $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["HTTP_HOST"] . $_SERVER["PHP_SELF"] . $hash;
+				echo '<meta property="og:url" content="' . $url . '">' . "\n";
 				echo '<meta property="og:image" content="' . $_GET['m'] . '">' . "\n";
 				echo '<meta property="og:image:type" content="image/jpg">' . "\n";
 				if (ctype_digit($_GET['w']))

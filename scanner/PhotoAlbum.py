@@ -692,6 +692,8 @@ class Album(object):
 		album.passwords_marker_mtime = dictionary["passwordMarkerMTime"]
 		if "symlinkCodesAndNumbers" in dictionary:
 			album.symlink_codes_and_numbers = dictionary["symlinkCodesAndNumbers"]
+		if "compositeImageSize" in dictionary:
+			album.composite_image_size = dictionary["compositeImageSize"]
 
 		if "title" in dictionary and dictionary["title"]:
 			album._attributes["metadata"]["title"] = dictionary["title"]
@@ -894,6 +896,8 @@ class Album(object):
 		dictionary["nonGeotagged"]["numsMedia"].setVideo(len([_media for _media in self.media_list if _media.is_video and not _media.has_gps_data]))
 		if hasattr(self, "symlink_codes_and_numbers"):
 			dictionary["symlinkCodesAndNumbers"] = self.symlink_codes_and_numbers
+		if hasattr(self, "composite_image_size"):
+			dictionary["compositeImageSize"] = self.composite_image_size
 		if hasattr(self, "center"):
 			dictionary["center"] = self.center
 		if hasattr(self, "name"):
