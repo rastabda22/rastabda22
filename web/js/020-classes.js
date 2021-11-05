@@ -89,14 +89,15 @@
 			this.mymap = null;
 			this.popup = null;
 
-			var originalMediaBoxContainerHtml = $(".media-box#center")[0].outerHTML;
-			if (originalMediaBoxContainerHtml.indexOf('<div class="title">') === -1) {
-				var titleContent = $("#album-view").clone().children().first();
-				this.originalMediaBoxContainerContent = $(originalMediaBoxContainerHtml).prepend(titleContent)[0].outerHTML;
-			} else {
-				this.originalMediaBoxContainerContent = originalMediaBoxContainerHtml;
+			if ($(".media-box#center").length) {
+				var originalMediaBoxContainerHtml = $(".media-box#center")[0].outerHTML;
+				if (originalMediaBoxContainerHtml.indexOf('<div class="title">') === -1) {
+					var titleContent = $("#album-view").clone().children().first();
+					this.originalMediaBoxContainerContent = $(originalMediaBoxContainerHtml).prepend(titleContent)[0].outerHTML;
+				} else {
+					this.originalMediaBoxContainerContent = originalMediaBoxContainerHtml;
+				}
 			}
-
 		}
 	}
 
