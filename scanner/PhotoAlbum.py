@@ -51,7 +51,11 @@ if 'exifread' in Options.config['metadata_tools_preference']:
 # this is needed in order to avoid complains from exifread
 import logging
 
-locale.setlocale(locale.LC_ALL, '')
+try:
+	locale.setlocale(locale.LC_ALL, '')
+except locale.Error:
+	message("FATAL ERROR", "the default locale is unset on the system, quitting", 0)
+	sys.exit(-97)
 # this is needed in order to avoid complains from exifread
 logging.basicConfig()
 
