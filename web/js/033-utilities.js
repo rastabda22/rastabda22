@@ -3128,6 +3128,10 @@
 		myShareUrl += '&h=' + heightParameter;
 		myShareUrl += '&url=' + encodeURIComponent(urlWithoutHash);
 		myShareUrl += '&title=' + encodeURIComponent(myShareText);
+		if (env.currentMedia !== null && env.currentMedia.metadata.hasOwnProperty("title") && env.currentMedia.metadata.title)
+			myShareUrl += '&desc=' + encodeURIComponent(env.currentMedia.metadata.title);
+		else if (env.currentMedia === null && env.currentAlbum.hasOwnProperty("title") && env.currentAlbum.title)
+			myShareUrl += '&desc=' + encodeURIComponent(env.currentAlbum.title);
 		hash = location.hash;
 		if (hash) {
 			myShareUrl += '&hash=' + encodeURIComponent(hash.substring(1));
