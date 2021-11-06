@@ -3115,9 +3115,9 @@
 		myShareText = env.options.page_title;
 		myShareTextAdd = env.currentAlbum.physicalPath;
 		if (myShareTextAdd)
-			myShareText += ": " + myShareTextAdd.substring(myShareTextAdd.lastIndexOf('/') + 1);
+			myShareText += " : " + myShareTextAdd;
 		if (env.currentMedia !== null)
-			myShareText += " / " + env.currentMedia.name;
+			myShareText += "/" + env.currentMedia.name;
 
 		myShareUrl = urlWithoutHash;
 		// the following line is needed in order to bypass the browser (?) cache;
