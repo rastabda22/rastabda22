@@ -3078,9 +3078,18 @@
 				heightParameter = env.currentAlbum.compositeImageSize;
 			}
 		} else {
-			var reducedSizesIndex = 1;
-			if (env.options.reduced_sizes.length === 1)
-				reducedSizesIndex = 0;
+			// image size must be > 200 and ~ 1200x630, https://kaydee.net/blog/open-graph-image/
+			var reducedSizesIndex;
+			if (! env.options.reduced_sizes.length || Math.max(env.options.reduced_sizes) < 200)
+				// false means original image
+				reducedSizesIndex = false
+			else {
+				// use the size nearest to optimal
+				let optimalSize = 1200;
+				let absoluteDifferences = env.options.reduced_sizes.map(size => Math.abs(size - optimalSize));
+				let minimumDifference = Math.min(absoluteDifferences);
+				reducedSizesIndex = absoluteDifferences.findIndex(size => size === minimumDifference);
+			}
 
 			var prefix = Utilities.removeFolderString(env.currentMedia.foldersCacheBase);
 			if (prefix)
@@ -3094,20 +3103,27 @@
 				widthParameter = env.currentMedia.metadata.size[0];
 				heightParameter = env.currentMedia.metadata.size[1];
 			} else if (env.currentMedia && env.currentMedia.isImage()) {
-				mediaParameter = Utilities.pathJoin([
-					env.server_cache_path,
-					env.currentMedia.cacheSubdir,
-					prefix + env.currentMedia.cacheBase
-				]) + env.options.cache_folder_separator + env.options.reduced_sizes[reducedSizesIndex] + ".jpg";
-
 				mediaWidth = env.currentMedia.metadata.size[0];
 				mediaHeight = env.currentMedia.metadata.size[1];
-				if (mediaWidth > mediaHeight) {
-					widthParameter = env.options.reduced_sizes[reducedSizesIndex];
-					heightParameter = Math.round(env.options.reduced_sizes[reducedSizesIndex] * mediaHeight / mediaWidth);
+
+				if (reducedSizesIndex === false) {
+					mediaParameter = env.currentMedia.originalMediaPath();
+					widthParameter = mediaWidth;
+					heightParameter = mediaHeight;
 				} else {
-					heightParameter = env.options.reduced_sizes[reducedSizesIndex];
-					widthParameter = Math.round(env.options.reduced_sizes[reducedSizesIndex] * mediaWidth / mediaHeight);
+					mediaParameter = Utilities.pathJoin([
+						env.server_cache_path,
+						env.currentMedia.cacheSubdir,
+						prefix + env.currentMedia.cacheBase
+					]) + env.options.cache_folder_separator + env.options.reduced_sizes[reducedSizesIndex] + ".jpg";
+
+					if (mediaWidth > mediaHeight) {
+						widthParameter = env.options.reduced_sizes[reducedSizesIndex];
+						heightParameter = Math.round(env.options.reduced_sizes[reducedSizesIndex] * mediaHeight / mediaWidth);
+					} else {
+						heightParameter = env.options.reduced_sizes[reducedSizesIndex];
+						widthParameter = Math.round(env.options.reduced_sizes[reducedSizesIndex] * mediaWidth / mediaHeight);
+					}
 				}
 			}
 		}
