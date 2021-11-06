@@ -198,8 +198,10 @@
 				// security: myphotoshare hashes only has letter, numbers, underscores and dashes
 				$hash = preg_replace("/[^-_a-z0-9]/i", "", urldecode($_GET['hash']));
 				$urlWithoutHash = urldecode($_GET['url']);
-				$urlWithHash = $hash ? $urlWithoutHash . "#" . $hash : $urlWithoutHash;
-				//echo '<meta property="og:url" content="' . htmlentities($urlWithoutHash . $mediaPath) . '" />' . "\n";
+				//$urlWithHash = $hash ? $urlWithoutHash . "#" . $hash : $urlWithoutHash;
+
+				$pageUrl = "http" . (($_SERVER['SERVER_PORT'] == 443) ? "s" : "") . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+				echo '<meta property="og:url" content="' . htmlentities($pageUrl) . '" />' . "\n";
 
 				echo '<meta property="og:description" content="' . $title . '" />' . "\n";
 
