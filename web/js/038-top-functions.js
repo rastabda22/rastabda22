@@ -1162,11 +1162,11 @@
 						mediaBoxInnerObject.empty();
 						mediaBoxInnerObject.show().append(mediaHtml);
 
-						if (id === "center") {
-							$("link[rel=image_src]").remove();
-							$('link[rel="video_src"]').remove();
+						if (id === "center" && ! ($("link[rel=image_src]").length || $("link[rel=video_src]").length)) {
+							// $("link[rel=image_src]").remove();
+							// $('link[rel=video_src]').remove();
+							$("head").append(self.createMediaLinkTag(mediaSrc));
 						}
-						$("head").append(self.createMediaLinkTag(mediaSrc));
 					}
 
 					if (id === "center") {

@@ -29,11 +29,13 @@ $(document).ready(function() {
 	// var map = new MapFunctions();
 	var tF = new TopFunctions();
 
-	// triplicate the #mediaview content in order to swipe the media
-	var titleContent = $("#album-view").clone().children().first();
-	$(".media-box#center").prepend(titleContent[0].outerHTML);
-	util.mediaBoxGenerator('left');
-	util.mediaBoxGenerator('right');
+	if ($(".media-box#center").length) {
+		// triplicate the #mediaview content in order to swipe the media
+		var titleContent = $("#album-view").clone().children().first();
+		$(".media-box#center").prepend(titleContent[0].outerHTML);
+		util.mediaBoxGenerator('left');
+		util.mediaBoxGenerator('right');
+	}
 
 	/* Event listeners */
 

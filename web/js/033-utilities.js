@@ -3045,7 +3045,7 @@
 	};
 
 	Utilities.socialButtons = function() {
-		var url, hash, myShareUrl = "";
+		var hash, myShareUrl = "";
 		var mediaParameter, mediaWidth, mediaHeight, widthParameter, heightParameter;
 		var folders, myShareText, myShareTextAdd;
 
@@ -3058,10 +3058,11 @@
 			$(".album-button-random-media-link").css("opacity", 1);
 		}
 
-		url = location.protocol + "//" + location.host;
-		folders = location.pathname;
-		folders = folders.substring(0, folders.lastIndexOf('/'));
-		url += folders;
+		// url = location.protocol + "//" + location.host;
+		// folders = location.pathname;
+		// folders = folders.substring(0, folders.lastIndexOf('/'));
+		// url += folders;
+		var urlWithoutHash = location.href.split("#")[0];
 		if (
 			env.currentMedia === null ||
 			// env.currentAlbum.isAlbumWithOneMedia() ||
@@ -3118,17 +3119,20 @@
 		if (env.currentMedia !== null)
 			myShareText += " / " + env.currentMedia.name;
 
-		myShareUrl = url;
+		myShareUrl = urlWithoutHash;
 		// should the image parameter be disabled, because of issue #169?
 		myShareUrl += '?m=' + encodeURIComponent(mediaParameter);
 		myShareUrl += '&w=' + widthParameter;
 		myShareUrl += '&h=' + heightParameter;
-		myShareUrl += '&url=' + encodeURIComponent(url);
+		myShareUrl += '&url=' + encodeURIComponent(urlWithoutHash);
 		myShareUrl += '&title=' + encodeURIComponent(myShareText);
+		// the following line is needed in order to bypass the browser (?) cache;
+		// without the random number the php code isn't executed
+		myShareUrl += '&random=' + Math.floor(Math.random() * 10000000);
 		hash = location.hash;
 		if (hash) {
-			myShareUrl += '&hash=' + hash.substring(1);
-			myShareUrl += '#' + hash.substring(1);
+			myShareUrl += '&hash=' + encodeURIComponent(hash.substring(1));
+			myShareUrl += hash;
 		}
 
 		jQuery.removeData(".ssk");

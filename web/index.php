@@ -190,14 +190,18 @@
 
 				// put the <meta property=".."> tags in <head> for letting facebook/google+/etc load the image/video when sharing
 				$hash = preg_replace("/[^-_a-z0-9]/i", "", $_GET['hash']);
-				echo '<meta property="og:url" content="' . $_GET['url'] . '">' . "\n";
-				echo '<meta property="og:image" content="' . $_GET['url'] . '/' . $_GET['m'] . '">' . "\n";
+				$urlWithHash = $_GET['url'];
+				if ($hash)
+					$urlWithHash .= "#" . $hash;
+				echo '<meta property="og:url" content="' . $urlWithHash . '">' . "\n";
+				echo '<meta property="og:image" content="' . $_GET['url'] . $_GET['m'] . '">' . "\n";
 				echo '<meta property="og:image:type" content="image/jpg">' . "\n";
 				echo '<meta property="og:title" content="' . $_GET['title'] . '">' . "\n";
 				if (ctype_digit($_GET['w']))
 					echo '<meta property="og:image:width" content="' . $_GET['w'] . '">' . "\n";
 				if (ctype_digit($_GET['h']))
 					echo '<meta property="og:image:height" content="' . $_GET['h'] . '">' . "\n";
+				exit;
 			}
 		}
 
@@ -277,7 +281,7 @@
 					echo "<br />nessage = " . $message;
 					exit;
 				} else {
-					header($_GET['url']);
+					// header($_GET['url']);
 				}
 				// header(urldecode($_GET['url']));
 			}
@@ -348,7 +352,7 @@
 				// header(urldecode($_GET['url']));
 			}
 
-			if ($_GET)
+			if (false && $_GET)
 				// redirect to same page without parameter
 				echo "
 		<script>
