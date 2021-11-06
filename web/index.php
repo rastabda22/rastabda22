@@ -214,7 +214,7 @@
 					echo '<meta property="og:image:width" content="' . $_GET['w'] . '">' . "\n";
 				if (ctype_digit($_GET['h']))
 					echo '<meta property="og:image:height" content="' . $_GET['h'] . '">' . "\n";
-				exit;
+				// exit;
 			}
 		}
 
@@ -365,7 +365,7 @@
 				// header(urldecode($_GET['url']));
 			}
 
-			if (false && $_GET)
+			if ($_GET)
 				// redirect to same page without parameter
 				echo "
 		<script>
