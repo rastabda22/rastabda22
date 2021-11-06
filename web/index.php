@@ -194,6 +194,8 @@
 				if ($hash)
 					$urlWithHash .= "#" . $hash;
 				echo '<meta property="og:url" content="' . $urlWithHash . '">' . "\n";
+				echo '<meta property="og:type" content="website">' . "\n";
+				echo '<meta property="og:description" content="' . $_GET['title'] . '">' . "\n";
 				echo '<meta property="og:image" content="' . $_GET['url'] . $_GET['m'] . '">' . "\n";
 				echo '<meta property="og:image:type" content="image/jpg">' . "\n";
 				echo '<meta property="og:title" content="' . $_GET['title'] . '">' . "\n";
