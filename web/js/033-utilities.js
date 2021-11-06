@@ -3122,8 +3122,8 @@
 		myShareUrl = urlWithoutHash;
 		// the following line is needed in order to bypass the browser (?) cache;
 		// without the random number the php code isn't executed
-		myShareUrl += '&random=' + Math.floor(Math.random() * 10000000);
-		myShareUrl += '?m=' + encodeURIComponent(mediaParameter);
+		myShareUrl += '?random=' + Math.floor(Math.random() * 10000000);
+		myShareUrl += '&m=' + encodeURIComponent(mediaParameter);
 		myShareUrl += '&w=' + widthParameter;
 		myShareUrl += '&h=' + heightParameter;
 		myShareUrl += '&url=' + encodeURIComponent(urlWithoutHash);
