@@ -189,16 +189,25 @@
 				echo "$linkTag\n";
 
 				// put the <meta property=".."> tags in <head> for letting facebook/google+/etc load the image/video when sharing
-				$hash = preg_replace("/[^-_a-z0-9]/i", "", $_GET['hash']);
-				$urlWithHash = $_GET['url'];
-				if ($hash)
-					$urlWithHash .= "#" . $hash;
-				echo '<meta property="og:title" content="' . $_GET['title'] . '" />' . "\n";
+
+				$title = urldecode($_GET['title']);
+				echo '<meta property="og:title" content="' . $title . '" />' . "\n";
+
 				echo '<meta property="og:type" content="website" />' . "\n";
+
+				// security: myphotoshare hashes only has letter, numbers, underscores and dashes
+				$hash = preg_replace("/[^-_a-z0-9]/i", "", urldecode($_GET['hash']));
+				$urlWithoutHash = urldecode($_GET['url']);
+				$urlWithHash = $hash ? $urlWithoutHash . "#" . $hash : $urlWithoutHash;
 				echo '<meta property="og:url" content="' . $urlWithHash . '" />' . "\n";
-				echo '<meta property="og:description" content="' . $_GET['title'] . '" />' . "\n";
-				echo '<meta property="og:image" content="' . $_GET['url'] . $_GET['m'] . '" />' . "\n";
+
+				echo '<meta property="og:description" content="' . $title . '" />' . "\n";
+
+				$mediaPath = urldecode($_GET['m']);
+				echo '<meta property="og:image" content="' . $urlWithoutHash . $mediaPath . '" />' . "\n";
+
 				echo '<meta property="og:image:type" content="image/jpg" />' . "\n";
+				
 				if (ctype_digit($_GET['w']))
 					echo '<meta property="og:image:width" content="' . $_GET['w'] . '">' . "\n";
 				if (ctype_digit($_GET['h']))
