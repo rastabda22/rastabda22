@@ -3087,7 +3087,7 @@
 				// use the size nearest to optimal
 				let optimalSize = 1200;
 				let absoluteDifferences = env.options.reduced_sizes.map(size => Math.abs(size - optimalSize));
-				let minimumDifference = Math.min(absoluteDifferences);
+				let minimumDifference = Math.min(... absoluteDifferences);
 				reducedSizesIndex = absoluteDifferences.findIndex(size => size === minimumDifference);
 			}
 
