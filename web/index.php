@@ -193,7 +193,7 @@
 				$urlWithHash = $_GET['url'];
 				if ($hash)
 					$urlWithHash .= "#" . $hash;
-				echo '<meta property="og:title" content="' . $_GET['title'] . '">' . "\n";
+				echo '<meta property="og:title" content="' . $_GET['title'] . '" />' . "\n";
 				echo '<meta property="og:type" content="website" />' . "\n";
 				echo '<meta property="og:url" content="' . $urlWithHash . '" />' . "\n";
 				echo '<meta property="og:description" content="' . $_GET['title'] . '" />' . "\n";
