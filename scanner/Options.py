@@ -244,7 +244,11 @@ def get_options():
 	if len(sys.argv) == 2:
 		# 1 arguments: the config files
 		# which modifies the default options
-		usr_config.readfp(open(sys.argv[1], "r"))
+		try:
+			usr_config.readfp(open(sys.argv[1], "r"))
+		except FileNotFoundError:
+			message("PRE FATAL ERROR", "config file '" + sys.argv[1] + "' unexistent or unreadable, quitting", 0)
+			sys.exit(-97)
 	else:
 		usr_config.set('options', 'album_path', sys.argv[1])
 		usr_config.set('options', 'cache_path', sys.argv[2])
