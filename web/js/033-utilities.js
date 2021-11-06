@@ -3090,7 +3090,7 @@
 				mediaParameter = Utilities.pathJoin([
 					env.server_cache_path,
 					env.currentMedia.cacheSubdir,
-				]) + prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + "transcoded.mp4";
+				]) + "/" + prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + "transcoded.mp4";
 				widthParameter = env.currentMedia.metadata.size[0];
 				heightParameter = env.currentMedia.metadata.size[1];
 			} else if (env.currentMedia && env.currentMedia.isImage()) {
