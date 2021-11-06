@@ -199,15 +199,15 @@
 				$hash = preg_replace("/[^-_a-z0-9]/i", "", urldecode($_GET['hash']));
 				$urlWithoutHash = urldecode($_GET['url']);
 				$urlWithHash = $hash ? $urlWithoutHash . "#" . $hash : $urlWithoutHash;
-				echo '<meta property="og:url" content="' . $urlWithHash . '" />' . "\n";
+				//echo '<meta property="og:url" content="' . htmlentities($urlWithoutHash . $mediaPath) . '" />' . "\n";
 
 				echo '<meta property="og:description" content="' . $title . '" />' . "\n";
 
 				$mediaPath = urldecode($_GET['m']);
-				echo '<meta property="og:image" content="' . $urlWithoutHash . $mediaPath . '" />' . "\n";
+				echo '<meta property="og:image" content="' . htmlentities($urlWithoutHash . $mediaPath) . '" />' . "\n";
 
 				echo '<meta property="og:image:type" content="image/jpg" />' . "\n";
-				
+
 				if (ctype_digit($_GET['w']))
 					echo '<meta property="og:image:width" content="' . $_GET['w'] . '">' . "\n";
 				if (ctype_digit($_GET['h']))
