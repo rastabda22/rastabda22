@@ -299,6 +299,7 @@
 								self.includedFilesByCodesSimpleCombination[codesSimpleCombination][number].album.protectedAlbumGot = true;
 
 								if (protectedAlbum.hasOwnProperty("media")) {
+									protectedAlbum.media.forEach(singleMedia => {singleMedia.protected = true;})
 									if (! self.hasOwnProperty("media"))
 										self.media = protectedAlbum.media;
 									else
@@ -377,6 +378,7 @@
 								promise.then(
 									function([mediaGot, positionsGot]) {
 										if (mediaGot) {
+											mediaGot.forEach(singleMedia => {singleMedia.protected = true;})
 											if (! self.hasOwnProperty("media"))
 												self.media = mediaGot;
 											else
