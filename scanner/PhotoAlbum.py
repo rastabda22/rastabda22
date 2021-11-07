@@ -2534,14 +2534,14 @@ class SingleMedia(object):
 			transcode_cmd.append('-s')
 			transcode_cmd.append(frame_maxsize)
 
-    # Rotate picture if necessary
-		if "rotate" in self._attributes["metadata"]:
-			if self._attributes["metadata"]["rotate"] == "90":
-				filters.append('transpose=1')
-			elif self._attributes["metadata"]["rotate"] == "180":
-				filters.append('vflip,hflip')
-			elif self._attributes["metadata"]["rotate"] == "270":
-				filters.append('transpose=2')
+		# # Rotate picture if necessary
+		# if "rotate" in self._attributes["metadata"]:
+		# 	if self._attributes["metadata"]["rotate"] == "90":
+		# 		filters.append('transpose=1')
+		# 	elif self._attributes["metadata"]["rotate"] == "180":
+		# 		filters.append('vflip,hflip')
+		# 	elif self._attributes["metadata"]["rotate"] == "270":
+		# 		filters.append('transpose=2')
 
 		if len(filters):
 			transcode_cmd.append('-vf')
