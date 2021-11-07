@@ -173,10 +173,10 @@
 
 		if (! empty($_GET['m'])) {
 			// Prevent directory traversal security vulnerability
-			$mediaPath = realpath(urldecode($_GET['m']));
-			if (strpos($mediaPath, realpath('cache')) !== 0 || ! url_exist($mediaPath))
+			$mediaPath = urldecode($_GET['m']);
+			if (strpos(realpath($mediaPath), realpath('cache')) !== 0 || ! url_exist($mediaPath))
 				// use the MyPhotoShare logo instead
-				$mediaPath = realpath('img/myphotoshareLogo.jpg');
+				$mediaPath = 'img/myphotoshareLogo.jpg';
 
 			// put the <link rel=".."> tag in <head> for letting facebook/google+ load the image/video when sharing
 			$linkTag = '<link rel="';
