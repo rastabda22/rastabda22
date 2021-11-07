@@ -122,10 +122,10 @@ Add the following lines in the `<VirtualHost>` section:
     <Directory /my/path/myphotoshare>
         Options FollowSymLinks
         Options -Indexes
-                AllowOverride All
-                Order allow,deny
-                allow from all
-        </Directory>
+        AllowOverride All
+        Order allow,deny
+        allow from all
+    </Directory>
 </VirtualHost>
 ```
 
