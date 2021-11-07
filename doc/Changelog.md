@@ -1,4 +1,6 @@
-* new logo
+* use the logo when sharing a protected album or media
+* when creating composite images, now they aren't repeated: the logo is used instead
+* new logo for the project
 * images for sharing on social networks have been restored (for albums and for media)
 * check for php before using functions depending on it
 * bug fixes
