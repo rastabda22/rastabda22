@@ -271,7 +271,7 @@ face_cascade_scale_factor = 1.1
 
 # How many thumbnails should we put at most in the image that php generates for sharing albums?
 # it must be an integer, and a square: 4, 9, 16,..
-max_album_share_thumbnails_number = 16
+max_album_share_thumbnails_number = 9
 
 # should stop words be used?
 # for a small set of media/albums it's not needed, while perhaps it's necessary if working with many media
