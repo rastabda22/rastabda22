@@ -174,7 +174,7 @@
 		if (! empty($_GET['m'])) {
 			// Prevent directory traversal security vulnerability
 			$mediaPath = urldecode($_GET['m']);
-			if (strpos(realpath($mediaPath), realpath('cache')) !== 0 || ! url_exist($mediaPath))
+			if (strpos(realpath($mediaPath), realpath('cache')) !== 0 || ! url_exist(realpath($mediaPath)))
 				// use the MyPhotoShare logo instead
 				$mediaPath = 'img/myphotoshareLogo.jpg';
 
