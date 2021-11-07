@@ -3078,7 +3078,6 @@
 
 		if (
 			env.currentMedia === null ||
-			env.currentMedia.hasOwnProperty("protected") ||
 			! env.options.reduced_sizes.length ||
 			reducedSizesIndex === false
 		) {
@@ -3097,28 +3096,28 @@
 				heightParameter = logoSize;
 			}
 		} else {
-			// current media !== null and not protected
-			var prefix = Utilities.removeFolderString(env.currentMedia.foldersCacheBase);
-			if (prefix)
-				prefix += env.options.cache_folder_separator;
+			// current media !== null
+			if (env.currentMedia.hasOwnProperty("protected")) {
+				mediaParameter = logo;
+				widthParameter = logoSize;
+				heightParameter = logoSize;
+			} else {
+				let prefix = Utilities.removeFolderString(env.currentMedia.foldersCacheBase);
+				if (prefix)
+					prefix += env.options.cache_folder_separator;
 
-			if (env.currentMedia && env.currentMedia.isVideo()) {
-				mediaParameter = Utilities.pathJoin([
-					env.server_cache_path,
-					env.currentMedia.cacheSubdir,
-					prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + env.currentMedia.imageSize + ".jpg"
-				]);
-				widthParameter = env.currentMedia.metadata.size[0];
-				heightParameter = env.currentMedia.metadata.size[1];
-			} else if (env.currentMedia && env.currentMedia.isImage()) {
-				mediaWidth = env.currentMedia.metadata.size[0];
-				mediaHeight = env.currentMedia.metadata.size[1];
+				if (env.currentMedia && env.currentMedia.isVideo()) {
+					mediaParameter = Utilities.pathJoin([
+						env.server_cache_path,
+						env.currentMedia.cacheSubdir,
+						prefix + env.currentMedia.cacheBase + env.options.cache_folder_separator + env.currentMedia.imageSize + ".jpg"
+					]);
+					widthParameter = env.currentMedia.metadata.size[0];
+					heightParameter = env.currentMedia.metadata.size[1];
+				} else if (env.currentMedia && env.currentMedia.isImage()) {
+					mediaWidth = env.currentMedia.metadata.size[0];
+					mediaHeight = env.currentMedia.metadata.size[1];
 
-				if (reducedSizesIndex === false) {
-					mediaParameter = env.currentMedia.originalMediaPath();
-					widthParameter = mediaWidth;
-					heightParameter = mediaHeight;
-				} else {
 					mediaParameter = Utilities.pathJoin([
 						env.server_cache_path,
 						env.currentMedia.cacheSubdir,
