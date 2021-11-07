@@ -3058,39 +3058,46 @@
 			$(".album-button-random-media-link").css("opacity", 1);
 		}
 
-		// url = location.protocol + "//" + location.host;
-		// folders = location.pathname;
-		// folders = folders.substring(0, folders.lastIndexOf('/'));
-		// url += folders;
 		var urlWithoutHash = location.href.split("#")[0];
+
+		// image size for sharing must be > 200 and ~ 1200x630, https://kaydee.net/blog/open-graph-image/
+		var reducedSizesIndex;
+		if (! env.options.reduced_sizes.length || Math.max(... env.options.reduced_sizes) < 200)
+			// false means original image: it won't be used
+			reducedSizesIndex = false
+		else {
+			// use the size nearest to optimal
+			let optimalSize = 1200;
+			let absoluteDifferences = env.options.reduced_sizes.map(size => Math.abs(size - optimalSize));
+			let minimumDifference = Math.min(... absoluteDifferences);
+			reducedSizesIndex = absoluteDifferences.findIndex(size => size === minimumDifference);
+		}
+
+		var logo = "img/myphotoshareLogo.jpg";
+		var logoSize = 1024;
+
 		if (
 			env.currentMedia === null ||
-			// env.currentAlbum.isAlbumWithOneMedia() ||
-			! env.options.reduced_sizes.length
+			env.currentMedia.hasOwnProperty("protected") ||
+			! env.options.reduced_sizes.length ||
+			reducedSizesIndex === false
 		) {
-			mediaParameter = Utilities.pathJoin([
-				env.server_cache_path,
-				env.options.cache_album_subdir,
-				env.currentAlbum.cacheBase
-				]) + ".jpg";
+			// use the album composite image, if it exists; otherwise, use MyPhotoShare logo
 			if (env.currentAlbum.hasOwnProperty("compositeImageSize")) {
+				mediaParameter = Utilities.pathJoin([
+					env.server_cache_path,
+					env.options.cache_album_subdir,
+					env.currentAlbum.cacheBase + ".jpg"
+					]);
 				widthParameter = env.currentAlbum.compositeImageSize;
 				heightParameter = env.currentAlbum.compositeImageSize;
+			} else {
+				mediaParameter = logo;
+				widthParameter = logoSize;
+				heightParameter = logoSize;
 			}
 		} else {
-			// image size must be > 200 and ~ 1200x630, https://kaydee.net/blog/open-graph-image/
-			var reducedSizesIndex;
-			if (! env.options.reduced_sizes.length || Math.max(... env.options.reduced_sizes) < 200)
-				// false means original image
-				reducedSizesIndex = false
-			else {
-				// use the size nearest to optimal
-				let optimalSize = 1200;
-				let absoluteDifferences = env.options.reduced_sizes.map(size => Math.abs(size - optimalSize));
-				let minimumDifference = Math.min(... absoluteDifferences);
-				reducedSizesIndex = absoluteDifferences.findIndex(size => size === minimumDifference);
-			}
-
+			// current media !== null and not protected
 			var prefix = Utilities.removeFolderString(env.currentMedia.foldersCacheBase);
 			if (prefix)
 				prefix += env.options.cache_folder_separator;
