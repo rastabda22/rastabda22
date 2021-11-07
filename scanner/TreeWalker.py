@@ -2151,7 +2151,7 @@ class TreeWalker:
 			for i in range(max_thumbnail_number - len(random_thumbnails)):
 				random_thumbnails.append(logo)
 
-		shuffle(random_thumbnails)
+		random.shuffle(random_thumbnails)
 
 		# generate the composite image
 		# following code inspired from
@@ -2180,7 +2180,7 @@ class TreeWalker:
 			# the logo has size 1024x1024: reduce it
 			if tile_img_width == 1024:
 				if not logo_already_resized:
-					logo = tile.resize((Options.config['album_thumb_size'], Options.config['album_thumb_size'])
+					logo = tile.resize((Options.config['album_thumb_size'], Options.config['album_thumb_size']))
 					logo_already_resized = True
 				tile = logo
 			[x, y] = self._index_to_coords(index, tile_width, px_between_tiles, side_off_set, linear_number_of_tiles)
