@@ -334,7 +334,7 @@ class Album(object):
 		if len(self.password_identifiers_set) == 0:
 			# the album isn't protected, but media and subalbums may be protected
 			# besides that, for virtual media the physical album password is included in the media and must be taken into account
-			self.media_list = [single_media for single_media in self.media if len(single_media.album_identifiers_set) ==  0 and len(single_media.password_identifiers_set) == 0]
+			self.media_list = [single_media for single_media in self.media if len(single_media.album_identifiers_set) == 0 and len(single_media.password_identifiers_set) == 0]
 			if not (
 				len(self.cache_base.split(Options.config['cache_folder_separator'])) < 4 and (
 					self.cache_base.find(Options.config['by_date_string']) == 0 or
@@ -530,9 +530,9 @@ class Album(object):
 			save_begin = "saving protected album..."
 			save_end = "protected album saved!"
 			save_positions_begin = "saving protected positions album..."
-			save_positions_end = "protected positions album  saved!"
+			save_positions_end = "protected positions album saved!"
 			save_media_begin = "saving protected media album..."
-			save_media_end = "protected media album  saved!"
+			save_media_end = "protected media album saved!"
 
 		message("sorting subalbums and media...", self.absolute_path, 4)
 		self.sort_subalbums_and_media()
@@ -2488,23 +2488,23 @@ class SingleMedia(object):
 
 		indented_message("re-transcoding video", info_string, 3)
 		transcode_cmd = [
-			'-i', original_path,                  # original file to be encoded
-			'-c:v', 'libx264',                    # set h264 as videocodec
+			'-i', original_path,                                  # original file to be encoded
+			'-c:v', 'libx264',                                    # set h264 as videocodec
 			'-preset', str(Options.config['video_preset']),       # set specific preset that provides a certain encoding speed to compression ratio
 			'-profile:v', str(Options.config['video_profile']),   # set output to specific h264 profile
 			'-level', str(Options.config['video_profile_level']), # sets highest compatibility with target devices
 			'-crf', str(Options.config['video_crf']),             # set quality
 			'-b:v', Options.config['video_transcode_bitrate'],    # set videobitrate
-			'-strict', 'experimental',            # allow native aac codec below
-			'-c:a', 'aac',                        # set aac as audiocodec
+			'-strict', 'experimental',                            # allow native aac codec below
+			'-c:a', 'aac',                                        # set aac as audiocodec
 			'-ac', str(Options.config['video_audio_ac']),         # force two audiochannels
 			'-ab', str(Options.config['video_audio_ab']),         # set audiobitrate to 160Kbps
 			'-maxrate', str(Options.config['video_maxrate']),     # limits max rate, will degrade CRF if needed
 			'-bufsize', str(Options.config['video_bufsize']),     # define how much the client should buffer
-			'-f', 'mp4',                          # fileformat mp4
+			'-f', 'mp4',                                          # fileformat mp4
 			'-threads', str(Options.config['num_processors']),    # number of cores to use
-			'-loglevel', 'quiet',                 # don't display anything
-			'-y'                                  # don't prompt for overwrite
+			'-loglevel', 'quiet',                                 # don't display anything
+			'-y'                                                  # don't prompt for overwrite
 		]
 		filters = []
 
@@ -2521,7 +2521,7 @@ class SingleMedia(object):
 		elif Options.config['recreate_transcoded_videos']:
 			indented_message("some option change requests transcoded video recreation", "", 5)
 
-    # Limit frame size. Default is HD 720p
+		# Limit frame size. Default is HD 720p
 		frame_maxsize = Options.config['video_frame_maxsize']
 		if frame_maxsize == 'hd480':
 			dim_max_size = 480
@@ -2547,7 +2547,7 @@ class SingleMedia(object):
 			transcode_cmd.append('-vf')
 			transcode_cmd.append(','.join(filters))
 
-    # Add user-defined options
+		# Add user-defined options
 		if len(str(Options.config['video_add_options'])):
 			transcode_cmd.append(str(Options.config['video_add_options']))
 
