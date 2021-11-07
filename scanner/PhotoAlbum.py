@@ -1274,6 +1274,8 @@ class SingleMedia(object):
 		# 	self.album_identifiers_set = set()
 		if "convertedPath" in dictionary:
 			self.converted_path = dictionary['convertedPath']
+		if "imageSize" in dictionary:
+			self.image_size = dictionary['imageSize']
 
 		self.is_valid = True
 
@@ -1952,7 +1954,6 @@ class SingleMedia(object):
 		indented_message("reduced sizes checked!", "", 5)
 
 		message("checking thumbnails", "", 5)
-
 		if len(reduced_size_images) == 0:
 			reduced_size_images = [image]
 		self.generate_all_thumbnails(reduced_size_images, photo_path, thumbs_path, json_files, json_files_min_mtime)
@@ -2444,6 +2445,18 @@ class SingleMedia(object):
 			elif self._attributes["metadata"]["rotate"] == "270":
 				mirror = image.transpose(Image.ROTATE_90)
 
+		size = Options.config['reduced_size_for_videos']
+		width, height = mirror.size
+		if max(width, height) < size:
+			size = max(width, height)
+		# generate the reduce size image used for sharing on social media
+		message("checking reduced size image", "", 5)
+		[reduced_size_image, thumb_path] = self.reduce_size_or_make_thumbnail(
+			mirror, original_path, thumbs_path, size, json_files, json_files_min_mtime
+		)
+		self.image_size = size
+		indented_message("reduced size image checked!", "", 5)
+
 		# generate the thumbnails
 		self.generate_all_thumbnails([mirror], original_path, thumbs_path, json_files, json_files_min_mtime)
 
@@ -2647,12 +2660,21 @@ class SingleMedia(object):
 		album_prefix = remove_folders_marker(self.album.cache_base) + Options.config["cache_folder_separator"]
 		if album_prefix == Options.config["cache_folder_separator"]:
 			album_prefix = ""
-		# TO DO: the converted image for unsupported browser image types is missing
 
 		if self.is_video:
 			# transcoded video path
 			caches.append(os.path.join(self.album.subdir, album_prefix + video_cache_name(self)))
+			# image for sharing on social media
+			caches.append(os.path.join(self.album.subdir, album_prefix + photo_cache_name(self, self.image_size)))
 		else:
+			# converted image for unsupported browser image types
+			if self.mime_type in Options.config['browser_unsupported_mime_types']:
+				caches.append(
+					os.path.join(
+						self.album.subdir,
+						album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.jpg"
+					)
+				)
 			# reduced sizes paths
 			for thumb_size in Options.config['reduced_sizes']:
 				caches.append(
@@ -2924,6 +2946,9 @@ class SingleMedia(object):
 
 		if hasattr(self, "converted_path"):
 			single_media["convertedPath"] = self.converted_path
+
+		if self.is_video:
+			single_media["imageSize"] = self.image_size
 
 		return single_media
 

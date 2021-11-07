@@ -151,9 +151,10 @@ config['browser_unsupported_mime_types'] = ['image/tiff', 'image/webp', 'image/x
 # json_version = 4.29 since a bug in media cache bases has been fixed
 # json_version = 4.30 since numsMedia has beed added to subalbums
 # json_version = 4.31 since compositeImageSize has beed added to albums
+# json_version = 4.32 since imageSize has beed added to videos in albums
 
 # json_version = 0
-json_version = 4.31
+json_version = 4.32
 
 # the release version number (a string)
 version = "v5.3.12"
@@ -654,3 +655,7 @@ def get_options():
 		config['recreate_transcoded_videos'] = True
 		config['recreate_thumbnails'] = True
 		config['recreate_json_files'] = True
+
+	config['reduced_sizes'].sort(reverse=True)
+	# image size must be > 200 and ~ 1200x630, https://kaydee.net/blog/open-graph-image/
+	config['reduced_size_for_videos'] = 1200

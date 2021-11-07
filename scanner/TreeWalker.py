@@ -42,8 +42,6 @@ class TreeWalker:
 			self.all_json_files.append('stopwords.json')
 			self.get_lowercase_stopwords()
 
-		Options.config['reduced_sizes'].sort(reverse=True)
-
 		geonames = Geonames()
 		self.tree_by_date = {}
 		self.tree_by_geonames = {}
