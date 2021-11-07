@@ -21,11 +21,12 @@ class VideoToolWrapper(object):
 					returncode = subprocess.check_output((tool, ) + args)
 				else:
 					returncode = subprocess.call((tool, ) + args)
-					indented_message("Return code", returncode, 5)
 					back_level()
 					if returncode > 0:
+						indented_message("Return code", "no luck :-(", 5)
 						return False
 					else:
+						indented_message("Return code", "success!", 5)
 						return "SUCCESS"
 			except KeyboardInterrupt:
 				if self.cleanup:
