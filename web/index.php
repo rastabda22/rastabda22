@@ -173,50 +173,50 @@
 
 		if (! empty($_GET['m'])) {
 			// Prevent directory traversal security vulnerability
-			$realPath = realpath($_GET['m']);
-			if (strpos($realPath, realpath('cache')) === 0  && url_exist($realPath)) {
-				// put the <link rel=".."> tag in <head> for letting facebook/google+ load the image/video when sharing
-				$linkTag = '<link rel="';
-				$videoEnd = ".mp4";
-				if (substr($_GET['m'], - strlen($videoEnd)) === $videoEnd)
-					// video
-					$linkTag .= 'video_src';
-				else
-					// image
-					$linkTag .= 'image_src';
-				$linkTag .= '" href="' . $_GET['m'] . '"';
-				$linkTag .= '>';
-				echo "$linkTag\n";
+			$mediaPath = realpath(urldecode($_GET['m']));
+			if (strpos($mediaPath, realpath('cache')) !== 0 || ! url_exist($mediaPath))
+				// use the MyPhotoShare logo instead
+				$mediaPath = realpath('img/myphotoshareLogo.jpg');
 
-				// put the <meta property=".."> tags in <head> for letting facebook/google+/etc load the image/video when sharing
+			// put the <link rel=".."> tag in <head> for letting facebook/google+ load the image/video when sharing
+			$linkTag = '<link rel="';
+			$videoEnd = ".mp4";
+			if (substr($mediaPath, - strlen($videoEnd)) === $videoEnd)
+				// video
+				$linkTag .= 'video_src';
+			else
+				// image
+				$linkTag .= 'image_src';
+			$linkTag .= '" href="' . $mediaPath . '"';
+			$linkTag .= '>';
+			echo "$linkTag\n";
 
-				$title = urldecode($_GET['title']);
-				echo '<meta property="og:title" content="' . $title . '" />' . "\n";
+			// put the <meta property=".."> tags in <head> for letting facebook/google+/etc load the image/video when sharing
 
-				echo '<meta property="og:type" content="website" />' . "\n";
+			$title = urldecode($_GET['title']);
+			echo '<meta property="og:title" content="' . $title . '" />' . "\n";
 
-				// security: myphotoshare hashes only has letter, numbers, underscores and dashes
-				$hash = preg_replace("/[^-_a-z0-9]/i", "", urldecode($_GET['hash']));
-				$urlWithoutHash = urldecode($_GET['url']);
-				//$urlWithHash = $hash ? $urlWithoutHash . "#" . $hash : $urlWithoutHash;
+			echo '<meta property="og:type" content="website" />' . "\n";
 
-				$pageUrl = "http" . (($_SERVER['SERVER_PORT'] == 443) ? "s" : "") . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-				echo '<meta property="og:url" content="' . htmlentities($pageUrl) . '" />' . "\n";
+			// security: myphotoshare hashes only has letter, numbers, underscores and dashes
+			$hash = preg_replace("/[^-_a-z0-9]/i", "", urldecode($_GET['hash']));
+			$urlWithoutHash = urldecode($_GET['url']);
+			//$urlWithHash = $hash ? $urlWithoutHash . "#" . $hash : $urlWithoutHash;
 
-				$description = empty($_GET['desc']) ? $title : urldecode($_GET['desc']);
-				echo '<meta property="og:description" content="' . $description . '" />' . "\n";
+			$pageUrl = "http" . (($_SERVER['SERVER_PORT'] == 443) ? "s" : "") . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+			echo '<meta property="og:url" content="' . htmlentities($pageUrl) . '" />' . "\n";
 
-				$mediaPath = urldecode($_GET['m']);
-				echo '<meta property="og:image" content="' . htmlentities($urlWithoutHash . $mediaPath) . '" />' . "\n";
+			$description = empty($_GET['desc']) ? $title : urldecode($_GET['desc']);
+			echo '<meta property="og:description" content="' . $description . '" />' . "\n";
 
-				echo '<meta property="og:image:type" content="image/jpg" />' . "\n";
+			echo '<meta property="og:image" content="' . htmlentities($urlWithoutHash . $mediaPath) . '" />' . "\n";
 
-				if (ctype_digit($_GET['w']))
-					echo '<meta property="og:image:width" content="' . $_GET['w'] . '">' . "\n";
-				if (ctype_digit($_GET['h']))
-					echo '<meta property="og:image:height" content="' . $_GET['h'] . '">' . "\n";
-				// exit;
-			}
+			echo '<meta property="og:image:type" content="image/jpg" />' . "\n";
+
+			if (ctype_digit($_GET['w']))
+				echo '<meta property="og:image:width" content="' . $_GET['w'] . '">' . "\n";
+			if (ctype_digit($_GET['h']))
+				echo '<meta property="og:image:height" content="' . $_GET['h'] . '">' . "\n";
 		}
 
 		?>
