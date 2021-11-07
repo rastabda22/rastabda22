@@ -2095,15 +2095,16 @@ class TreeWalker:
 		# and generate a square composite image
 
 		# determine the number of images to use
-		if album.nums_protected_media_in_sub_tree.nums_protected[','].total() == 1 or Options.config['max_album_share_thumbnails_number'] == 1:
+		num_unprotected = album.nums_protected_media_in_sub_tree.nums_protected[','].total()
+		if num_unprotected == 1 or Options.config['max_album_share_thumbnails_number'] == 1:
 			max_thumbnail_number = 1
-		elif album.nums_protected_media_in_sub_tree.nums_protected[','].total() < 9 or Options.config['max_album_share_thumbnails_number'] == 4:
+		elif num_unprotected < 9 or Options.config['max_album_share_thumbnails_number'] == 4:
 			max_thumbnail_number = 4
-		elif album.nums_protected_media_in_sub_tree.nums_protected[','].total() < 16 or Options.config['max_album_share_thumbnails_number'] == 9:
+		elif num_unprotected < 16 or Options.config['max_album_share_thumbnails_number'] == 9:
 			max_thumbnail_number = 9
-		elif album.nums_protected_media_in_sub_tree.nums_protected[','].total() < 25 or Options.config['max_album_share_thumbnails_number'] == 16:
+		elif num_unprotected < 25 or Options.config['max_album_share_thumbnails_number'] == 16:
 			max_thumbnail_number = 16
-		elif album.nums_protected_media_in_sub_tree.nums_protected[','].total() < 36 or Options.config['max_album_share_thumbnails_number'] == 25:
+		elif num_unprotected < 36 or Options.config['max_album_share_thumbnails_number'] == 25:
 			max_thumbnail_number = 25
 		else:
 			max_thumbnail_number = Options.config['max_album_share_thumbnails_number']
@@ -2112,7 +2113,7 @@ class TreeWalker:
 		random_thumbnails = list()
 		random_list = list()
 		bad_list = list()
-		good_media_number = album.nums_protected_media_in_sub_tree.nums_protected[','].total()
+		good_media_number = num_unprotected
 		num_random_thumbnails = min(max_thumbnail_number, good_media_number)
 		i = 0
 		# for security safe only use unprotected media
@@ -2132,8 +2133,8 @@ class TreeWalker:
 			thumbnail = os.path.join(
 					Options.config['cache_path'],
 					random_media.album.subdir,
-					folder_prefix + random_media.cache_base
-				) + Options.config['cache_folder_separator'] + str(Options.config['album_thumb_size']) + "as.jpg"
+					folder_prefix + random_media.cache_base + Options.config['cache_folder_separator'] + str(Options.config['album_thumb_size']) + "as.jpg"
+				)
 			if os.path.exists(thumbnail):
 				random_thumbnails.append(thumbnail)
 				i += 1
