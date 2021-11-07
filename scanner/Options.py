@@ -248,7 +248,7 @@ def get_options():
 		try:
 			usr_config.readfp(open(sys.argv[1], "r"))
 		except FileNotFoundError:
-			message("PRE FATAL ERROR", "config file '" + sys.argv[1] + "' unexistent or unreadable, quitting", 0)
+			message("PRE FATAL ERROR", "config file '" + sys.argv[1] + "' doesn't exist or unreadable, quitting", 0)
 			sys.exit(-97)
 	else:
 		usr_config.set('options', 'album_path', sys.argv[1])
