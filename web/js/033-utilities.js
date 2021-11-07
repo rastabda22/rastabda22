@@ -3080,7 +3080,7 @@
 		} else {
 			// image size must be > 200 and ~ 1200x630, https://kaydee.net/blog/open-graph-image/
 			var reducedSizesIndex;
-			if (! env.options.reduced_sizes.length || Math.max(env.options.reduced_sizes) < 200)
+			if (! env.options.reduced_sizes.length || Math.max(... env.options.reduced_sizes) < 200)
 				// false means original image
 				reducedSizesIndex = false
 			else {
