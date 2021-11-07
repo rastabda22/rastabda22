@@ -2146,9 +2146,12 @@ class TreeWalker:
 				good_media_number -= 1
 
 		if len(random_thumbnails) < max_thumbnail_number:
-			# add the missing images: repeat the present ones
+			# missing images: use the myphotoshare logo
+			logo = os.path.join(os.path.dirname(__file__), "../web/img/myphotoshareLogo.jpg")
 			for i in range(max_thumbnail_number - len(random_thumbnails)):
-				random_thumbnails.append(random_thumbnails[i])
+				random_thumbnails.append(logo)
+
+		shuffle(random_thumbnails)
 
 		# generate the composite image
 		# following code inspired from
@@ -2168,11 +2171,18 @@ class TreeWalker:
 
 		# PUT SRC IMAGES ON BASE IMAGE
 		index = -1
+		logo_already_resized = False
 		for thumbnail in random_thumbnails:
 			index += 1
 			tile = Image.open(thumbnail)
 			tile_img_width = tile.size[0]
 			tile_img_height = tile.size[1]
+			# the logo has size 1024x1024: reduce it
+			if tile_img_width == 1024:
+				if not logo_already_resized:
+					logo = tile.resize((Options.config['album_thumb_size'], Options.config['album_thumb_size'])
+					logo_already_resized = True
+				tile = logo
 			[x, y] = self._index_to_coords(index, tile_width, px_between_tiles, side_off_set, linear_number_of_tiles)
 			if tile_img_width < tile_width:
 				x += int(float(tile_width - tile_img_width) / 2)
