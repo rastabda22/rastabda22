@@ -1,4 +1,5 @@
-* album and single media image for sharing on social networks have been restored
+* new logo
+* images for sharing on social networks have been restored (for albums and for media)
 * check for php before using functions depending on it
 * bug fixes
 
