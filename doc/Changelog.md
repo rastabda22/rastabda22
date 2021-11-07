@@ -1,3 +1,4 @@
+* album and single media image for sharing on social networks have been restored
 * check for php before using functions depending on it
 * bug fixes
 
