@@ -1903,17 +1903,21 @@ class SingleMedia(object):
 			image = image.convert('RGB')
 			try:
 				message("saving the original image as " + format + "...", converted_path_without_cache_path, 4)
-				if format == "jpg":
-					if hasattr(image, 'exif_by_PIL'):
-						image.save(converted_path, quality=Options.config['jpeg_quality'], exif=self.exif_by_PIL)
-					else:
-						image.save(converted_path, quality=95)
-				else:
-					if hasattr(image, 'exif_by_PIL'):
-						image.save(converted_path, exif=self.exif_by_PIL)
-					else:
-						image.save(converted_path)
-				indented_message("original image saved as " + format + "!", "", 4)
+				if format == "jpg" or format == "webp":
+					if format == "jpg":
+						quality = Options.config['jpeg_quality']
+					elif format == "webp":
+						quality = Options.config['webp_quality']
+					try:
+						image.save(converted_path, quality = quality, exif = self.exif_by_PIL)
+					except AttributeError:
+						image.save(converted_path, quality = quality)
+				elif format == "png":
+					try:
+						image.save(converted_path, compress_level = Options.config['png_compress_level'], exif = self.exif_by_PIL)
+					except AttributeError:
+						image.save(converted_path, compress_level = Options.config['png_compress_level'])
+				indented_message("original image saved as " + format + "!", "", 5)
 			except OSError:
 				indented_message("error saving the original image as " + format, "", 4)
 				# this is when the image has transparecy, jpg cannot handle it -> save as png
@@ -1921,10 +1925,10 @@ class SingleMedia(object):
 				converted_path_without_cache_path = os.path.join(self.album.subdir, album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.png")
 				message("saving the original image as png...", converted_path_without_cache_path, 4)
 				converted_path = os.path.join(thumbs_path_with_subdir, album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.png")
-				if hasattr(image, 'exif_by_PIL'):
-					image.save(converted_path, compress_level = 9, exif=self.exif_by_PIL)
-				else:
-					image.save(converted_path, compress_level = 9)
+				try:
+					image.save(converted_path, compress_level = Options.config['png_compress_level'], exif = self.exif_by_PIL)
+				except AttributeError:
+					image.save(converted_path, compress_level = Options.config['png_compress_level'])
 				indented_message("original image saved as png!", "", 4)
 			self.converted_path = converted_path_without_cache_path
 			back_level()
@@ -2361,20 +2365,23 @@ class SingleMedia(object):
 
 		message("saving...", "", 5)
 		try:
-			if format == "jpg":
-				jpeg_quality = Options.config['jpeg_quality']
+			if format == "jpg" or format == "webp":
+				if format == "jpg":
+					quality = Options.config['jpeg_quality']
+				else:
+					quality = Options.config['webp_quality']
 				if thumb_type:
 					# use maximum quality for album and media thumbnails
-					jpeg_quality = 95
-				if hasattr(start_image, 'exif_by_PIL'):
-					start_image_copy_for_saving.save(thumb_path, quality=jpeg_quality, exif=self.exif_by_PIL)
-				else:
-					start_image_copy_for_saving.save(thumb_path, quality=jpeg_quality)
-			else:
-				if hasattr(start_image, 'exif_by_PIL'):
-					start_image_copy_for_saving.save(thumb_path, exif=self.exif_by_PIL)
-				else:
-					start_image_copy_for_saving.save(thumb_path)
+					quality = 95
+				try:
+					start_image_copy_for_saving.save(thumb_path, quality = quality, exif = self.exif_by_PIL)
+				except AttributeError:
+					start_image_copy_for_saving.save(thumb_path, quality = quality)
+			elif format == "png":
+				try:
+					start_image_copy_for_saving.save(thumb_path, compress_level = Options.config['png_compress_level'], exif = self.exif_by_PIL)
+				except AttributeError:
+					start_image_copy_for_saving.save(thumb_path, compress_level = Options.config['png_compress_level'])
 
 			next_level()
 			if original_thumb_size > Options.config['album_thumb_size']:
@@ -2399,16 +2406,20 @@ class SingleMedia(object):
 		except IOError:
 			message("saving (2nd try)...", "", 5)
 			try:
-				if format == "jpg":
-					if hasattr(start_image, 'exif_by_PIL'):
-						start_image_copy_for_saving.convert('RGB').save(thumb_path, quality=Options.config['jpeg_quality'], exif=self.exif_by_PIL)
+				if format == "jpg" or format == "webp":
+					if format == "jpg":
+						quality = Options.config['jpeg_quality']
 					else:
-						start_image_copy_for_saving.convert('RGB').save(thumb_path, quality=Options.config['jpeg_quality'])
-				else:
-					if hasattr(start_image, 'exif_by_PIL'):
-						start_image_copy_for_saving.convert('RGB').save(thumb_path, exif=self.exif_by_PIL)
-					else:
-						start_image_copy_for_saving.convert('RGB').save(thumb_path)
+						quality = Options.config['webp_quality']
+					try:
+						start_image_copy_for_saving.convert('RGB').save(thumb_path, quality = quality, exif = self.exif_by_PIL)
+					except AttributeError:
+						start_image_copy_for_saving.convert('RGB').save(thumb_path, quality = quality)
+				elif format == "png":
+					try:
+						start_image_copy_for_saving.convert('RGB').save(thumb_path, compress_level = Options.config['png_compress_level'], exif = self.exif_by_PIL)
+					except AttributeError:
+						start_image_copy_for_saving.convert('RGB').save(thumb_path, compress_level = Options.config['png_compress_level'])
 				next_level()
 				if original_thumb_size > Options.config['album_thumb_size']:
 					msg = "saved reduced (2nd try, " + str(original_thumb_size) + ")"
@@ -2429,7 +2440,7 @@ class SingleMedia(object):
 			back_level()
 			return [start_image_copy, thumb_path]
 		except Exception as e:
-			indented_message("thumbnail save failure with error: " + e, str(original_thumb_size) + " -> " + os.path.basename(thumb_path), 2)
+			indented_message("thumbnail save failure with error: " + str(e), str(original_thumb_size) + " -> " + os.path.basename(thumb_path), 2)
 			try:
 				os.unlink(thumb_path)
 			except OSError:

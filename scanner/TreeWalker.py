@@ -2132,7 +2132,6 @@ class TreeWalker:
 					Options.config['cache_path'],
 					random_media.album.subdir,
 					album_prefix + photo_cache_name(random_media, Options.config['album_thumb_size'], Options.config['cache_images_formats'][0], "album_square")
-					# album_prefix + random_media.cache_base + Options.config['cache_folder_separator'] + str(Options.config['album_thumb_size']) + "as.jpg"
 				)
 			if os.path.exists(thumbnail):
 				random_thumbnails.append(thumbnail)
@@ -2271,7 +2270,7 @@ class TreeWalker:
 			# reduced sizes, thumbnails, old style thumbnails
 			if subdir == Options.config['cache_album_subdir']:
 				# self.all_json_files_by_subdir[subdir] = list()
-				deletable_files_re = r"\.jpg$"
+				deletable_files_re = r"\.(jpg|png|webp)$"
 			elif subdir == Options.config['passwords_subdir']:
 				deletable_files_re = r"[a-f0-9]{32}"
 			elif re.search(protected_directory_re, subdir):
@@ -2279,9 +2278,9 @@ class TreeWalker:
 			else:
 				deletable_files_re = r"(" + Options.config['cache_folder_separator'] + r"|_)" + \
 					r"transcoded(_([1-9][0-9]{0,3}[kKmM]|[1-9][0-9]{3,10})(_[1-5]?[0-9])?)?\.mp4$" + \
-					r"|(" + Options.config['cache_folder_separator'] + r"|_)[1-9][0-9]{1,4}(a|t|s|[at][sf])?\.jpg$" + \
-					r"|" + Options.config['cache_folder_separator'] + r"original\.(jpg|png)$"
-				# deletable_files_re = r(-|_)transcoded(_([1-9][0-9]{0,3}[kKmM]|[1-9][0-9]{3,10})(_[1-5]?[0-9])?)?\.mp4$|(-|_)[1-9][0-9]{1,4}(a|t|s|[at][sf])?\.jpg$"
+					r"|(" + Options.config['cache_folder_separator'] + r"|_)[1-9][0-9]{1,4}(a|t|s|[at][sf])?\.(jpg|png|webp)$" + \
+					r"|" + Options.config['cache_folder_separator'] + r"original\.(jpg|png|webp)$"
+				# deletable_files_re = r(-|_)transcoded(_([1-9][0-9]{0,3}[kKmM]|[1-9][0-9]{3,10})(_[1-5]?[0-9])?)?\.mp4$|(-|_)[1-9][0-9]{1,4}(a|t|s|[at][sf])?\.(jpg|png|webp)$"
 			info = "in subdir " + subdir
 
 		message("searching for stale cache files", info, 4)
@@ -2326,7 +2325,7 @@ class TreeWalker:
 					except KeyError:
 						pass
 				else:
-					indented_message("not a stale cache file, keeping it", "", 2)
+					indented_message("not a stale cache file, keeping it", cache_file, 2)
 					back_level()
 					continue
 				back_level()

@@ -31,6 +31,7 @@ It's not because your photo gallery is in a static web site that it can't have a
 - [x] Media and folders can be sorted ascending/descending, by date or by name.
 - [x] Search media by file/album name, title, description or tags. Search whole word or inside words, considering accents and capitals or not, in current album (in virtual albums too) or in the whole albums tree.
 - [x] Thumbnails can be square (cropped, with optional face detection by [OpenCV](https://opencv.org/)) or full-content.
+- [x] Reduced images and thumbnails can be generated as `webp` too; `webp` files are about one half the size of `jpg` ones; the browser will use them if it support them, otherwise will use `jpg`'s'. The format can be `png`, too, but it's not convenient, because `png` files are bigger
 - [x] Albums can be downloaded via the right `☰` menu, with or without subalbums, either images only, videos only, or both.
 - [x] Pictures can be automatically indexed and tagged with ML-based extensions.
 
