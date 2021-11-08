@@ -2082,6 +2082,12 @@ class SingleMedia(object):
 			json_file = os.path.join(thumbs_path, self.album.json_file)
 			indented_message("reduction/thumbnail newer than json files", thumb_path + ", " + files, 5)
 		elif (
+			format == "jpg" and Options.config['recreate_jpg'] or
+			format == "webp" and Options.config['recreate_webp'] or
+			format == "png" and Options.config['recreate_png']
+		):
+			indented_message("some option change requests this format recreation", format, 5)
+		elif (
 			not _is_thumbnail and Options.config['recreate_reduced_photos'] or
 			_is_thumbnail and Options.config['recreate_thumbnails']
 		):

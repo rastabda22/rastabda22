@@ -67,11 +67,23 @@ options_requiring_reduced_images_regeneration = [
 	{'name': 'copy_exif_into_reductions', 'default': False}
 ]
 options_requiring_thumbnails_regeneration = [
+	{'name': 'jpeg_quality', 'default': False},
+	{'name': 'webp_quality', 'default': False},
+	{'name': 'png_compress_level', 'default': False},
 	{'name': 'pil_size_for_decompression_bomb_error', 'default': 89478485},
 	{'name': 'face_cascade_scale_factor', 'default': False},
 	{'name': 'small_square_crops_background_color', 'default': False},
 	{'name': 'cv2_installed', 'default': False},
 	{'name': 'copy_exif_into_reductions', 'default': False}
+]
+options_requiring_jpg_regeneration = [
+	{'name': 'jpeg_quality', 'default': False}
+]
+options_requiring_webp_regeneration = [
+	{'name': 'webp_quality', 'default': False}
+]
+options_requiring_png_regeneration = [
+	{'name': 'png_compress_level', 'default': False}
 ]
 options_requiring_videos_regeneration = [
 	{'name': 'video_transcode_bitrate', 'default': '1M'},
@@ -650,6 +662,51 @@ def get_options():
 				else:
 					message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of thumbnails", 3)
 
+		config['recreate_jpg'] = False
+		for option_dict in options_requiring_jpg_regeneration:
+			option = option_dict['name']
+			default_value = option_dict['default']
+			try:
+				if old_options[option] != config[option]:
+					config['recreate_jpg'] = True
+					message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of jpg images", 3)
+			except KeyError:
+				if config[option] != default_value:
+					config['recreate_jpg'] = True
+					message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of jpg images", 3)
+				else:
+					message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of jpg images", 3)
+
+		config['recreate_webp'] = False
+		for option_dict in options_requiring_webp_regeneration:
+			option = option_dict['name']
+			default_value = option_dict['default']
+			try:
+				if old_options[option] != config[option]:
+					config['recreate_webp'] = True
+					message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of webp images", 3)
+			except KeyError:
+				if config[option] != default_value:
+					config['recreate_webp'] = True
+					message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of webp images", 3)
+				else:
+					message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of webp images", 3)
+
+		config['recreate_png'] = False
+		for option_dict in options_requiring_png_regeneration:
+			option = option_dict['name']
+			default_value = option_dict['default']
+			try:
+				if old_options[option] != config[option]:
+					config['recreate_png'] = True
+					message("PRE options", "'" + option + "' has changed from previous scanner run, forcing recreation of png images", 3)
+			except KeyError:
+				if config[option] != default_value:
+					config['recreate_png'] = True
+					message("PRE options", "'" + option + "' wasn't set on previous scanner run and hasn't the default value, forcing recreation of png images", 3)
+				else:
+					message("PRE options", "'" + option + "' wasn't set on previous scanner run, but has the default value, not forcing recreation of png images", 3)
+
 		config['recreate_json_files'] = False
 		for option in options_requiring_json_regeneration:
 			try:
@@ -668,6 +725,9 @@ def get_options():
 		config['recreate_reduced_photos'] = True
 		config['recreate_transcoded_videos'] = True
 		config['recreate_thumbnails'] = True
+		config['recreate_jpg'] = True
+		config['recreate_webp'] = True
+		config['recreate_png'] = True
 		config['recreate_json_files'] = True
 
 	config['reduced_sizes'].sort(reverse=True)

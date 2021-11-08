@@ -1807,6 +1807,18 @@ class TreeWalker:
 								indented_message("not a single media cache hit", "thumbnail recreation requested", 4)
 								single_media_cache_hit = False
 								break
+							if Options.config['recreate_jpg']:
+								indented_message("not a single media cache hit", "jpg recreation requested", 4)
+								single_media_cache_hit = False
+								break
+							if Options.config['recreate_webp']:
+								indented_message("not a single media cache hit", "webp recreation requested", 4)
+								single_media_cache_hit = False
+								break
+							if Options.config['recreate_png']:
+								indented_message("not a single media cache hit", "png recreation requested", 4)
+								single_media_cache_hit = False
+								break
 				# back_level()
 
 			if single_media_cache_hit:
