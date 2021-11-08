@@ -3167,7 +3167,6 @@
 		hash = location.hash;
 		if (hash) {
 			myShareUrl += '&hash=' + encodeURIComponent(hash.substring(1));
-			myShareUrl += hash;
 		}
 		whatsAppUrl = myShareUrl;
 		myShareUrl += '&m=' + encodeURIComponent(mediaParameter);
@@ -3175,6 +3174,11 @@
 			whatsAppUrl += '&m=' + encodeURIComponent(whatsAppParameter);
 		else
 			whatsAppUrl = myShareUrl;
+		if (hash) {
+			myShareUrl += hash;
+			whatsAppUrl += hash;
+		}
+
 		jQuery.removeData(".ssk");
 		$('.ssk').attr('data-text', myShareText);
 		$('.ssk-facebook').attr('data-url', myShareUrl);
