@@ -1905,12 +1905,12 @@ class SingleMedia(object):
 				message("saving the original image as " + format + "...", converted_path_without_cache_path, 4)
 				if format == "jpg":
 					if hasattr(image, 'exif_by_PIL'):
-						image.save(converted_path, quality=Options.config['jpeg_quality'], exif=exif)
+						image.save(converted_path, quality=Options.config['jpeg_quality'], exif=self.exif_by_PIL)
 					else:
 						image.save(converted_path, quality=95)
 				else:
 					if hasattr(image, 'exif_by_PIL'):
-						image.save(converted_path, exif=exif)
+						image.save(converted_path, exif=self.exif_by_PIL)
 					else:
 						image.save(converted_path)
 				indented_message("original image saved as " + format + "!", "", 4)
@@ -1922,7 +1922,7 @@ class SingleMedia(object):
 				message("saving the original image as png...", converted_path_without_cache_path, 4)
 				converted_path = os.path.join(thumbs_path_with_subdir, album_prefix + self.cache_base + Options.config['cache_folder_separator'] + "original.png")
 				if hasattr(image, 'exif_by_PIL'):
-					image.save(converted_path, compress_level = 9, exif=exif)
+					image.save(converted_path, compress_level = 9, exif=self.exif_by_PIL)
 				else:
 					image.save(converted_path, compress_level = 9)
 				indented_message("original image saved as png!", "", 4)
@@ -2367,12 +2367,12 @@ class SingleMedia(object):
 					# use maximum quality for album and media thumbnails
 					jpeg_quality = 95
 				if hasattr(start_image, 'exif_by_PIL'):
-					start_image_copy_for_saving.save(thumb_path, quality=jpeg_quality, exif=exif)
+					start_image_copy_for_saving.save(thumb_path, quality=jpeg_quality, exif=self.exif_by_PIL)
 				else:
 					start_image_copy_for_saving.save(thumb_path, quality=jpeg_quality)
 			else:
 				if hasattr(start_image, 'exif_by_PIL'):
-					start_image_copy_for_saving.save(thumb_path, exif=exif)
+					start_image_copy_for_saving.save(thumb_path, exif=self.exif_by_PIL)
 				else:
 					start_image_copy_for_saving.save(thumb_path)
 
@@ -2401,12 +2401,12 @@ class SingleMedia(object):
 			try:
 				if format == "jpg":
 					if hasattr(start_image, 'exif_by_PIL'):
-						start_image_copy_for_saving.convert('RGB').save(thumb_path, quality=Options.config['jpeg_quality'], exif=exif)
+						start_image_copy_for_saving.convert('RGB').save(thumb_path, quality=Options.config['jpeg_quality'], exif=self.exif_by_PIL)
 					else:
 						start_image_copy_for_saving.convert('RGB').save(thumb_path, quality=Options.config['jpeg_quality'])
 				else:
 					if hasattr(start_image, 'exif_by_PIL'):
-						start_image_copy_for_saving.convert('RGB').save(thumb_path, exif=exif)
+						start_image_copy_for_saving.convert('RGB').save(thumb_path, exif=self.exif_by_PIL)
 					else:
 						start_image_copy_for_saving.convert('RGB').save(thumb_path)
 				next_level()

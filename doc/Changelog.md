@@ -1,3 +1,4 @@
+* now a different format than jpg can be used for cached reductions and thumbnail; available formats: jpg, png, webp 
 * use the logo when sharing a protected album or media
 * when creating composite images, now they aren't repeated: the logo is used instead
 * new logo for the project
